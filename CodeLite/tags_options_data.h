@@ -123,7 +123,7 @@ public:
 
 public:
     TagsOptionsData();
-    virtual ~TagsOptionsData();
+    virtual ~TagsOptionsData() = default;
 
     void AddDefaultTokens();
 

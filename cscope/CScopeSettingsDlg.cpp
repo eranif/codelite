@@ -13,5 +13,3 @@ CScopeSettingsDlg::CScopeSettingsDlg(wxWindow* parent)
     SetName("CScopeSettingsDlg");
     WindowAttrManager::Load(this);
 }
-
-CScopeSettingsDlg::~CScopeSettingsDlg() {}

@@ -92,7 +92,7 @@ public:
     void SetCompiler(const wxString& compiler) { this->m_compiler = compiler; }
     const wxString& GetCompiler() const { return m_compiler; }
     clFileSystemWorkspaceConfig();
-    ~clFileSystemWorkspaceConfig() {}
+    ~clFileSystemWorkspaceConfig() = default;
     void SetRemoteFolder(const wxString& remoteFolder) { this->m_remoteFolder = remoteFolder; }
     const wxString& GetRemoteFolder() const { return m_remoteFolder; }
     void SetRemoteAccount(const wxString& remoteAccount) { this->m_remoteAccount = remoteAccount; }
@@ -155,7 +155,7 @@ protected:
 
 public:
     clFileSystemWorkspaceSettings();
-    virtual ~clFileSystemWorkspaceSettings();
+    virtual ~clFileSystemWorkspaceSettings() = default;
 
     bool Save(const wxFileName& filename, const wxFileName& localSettings = {});
     bool Load(const wxFileName& filename, const wxFileName& localSettings = {});

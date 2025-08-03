@@ -8,7 +8,7 @@ class WXDLLIMPEXP_SDK ThemeImporterJson : public ThemeImporterBase
 {
 public:
     ThemeImporterJson();
-    virtual ~ThemeImporterJson();
+    ~ThemeImporterJson() override = default;
 
 public:
     LexerConf::Ptr_t Import(const wxFileName& theme_file) override;

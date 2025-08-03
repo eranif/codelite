@@ -46,7 +46,7 @@ class QMakeProFileGenerator {
 
 public:
 	QMakeProFileGenerator(IManager *manager, const wxString &project, const wxString &configuration);
-	virtual ~QMakeProFileGenerator();
+    virtual ~QMakeProFileGenerator() = default;
 
 	/**
 	 * @brief generate .pro file to build the project with its dependencies

@@ -61,8 +61,6 @@ clConsoleGnomeTerminal::clConsoleGnomeTerminal()
     SetEmptyTerminalCommand("gnome-terminal --working-directory=%WD%");
 }
 
-clConsoleGnomeTerminal::~clConsoleGnomeTerminal() {}
-
 bool clConsoleGnomeTerminal::Start() { return StartProcess(PrepareCommand()); }
 
 bool clConsoleGnomeTerminal::StartForDebugger()

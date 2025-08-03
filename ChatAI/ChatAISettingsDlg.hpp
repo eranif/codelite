@@ -7,7 +7,7 @@ class ChatAISettingsDlg : public AssistanceAISettingsBaseDlg
 {
 public:
     ChatAISettingsDlg(wxWindow* parent, ChatAIConfig& config);
-    virtual ~ChatAISettingsDlg();
+    virtual ~ChatAISettingsDlg() = default;
 
 protected:
     void OnSearchModels(wxHyperlinkEvent& event) override;

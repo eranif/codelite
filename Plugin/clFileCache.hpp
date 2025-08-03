@@ -18,8 +18,8 @@ public:
     typedef std::vector<wxFileName>::iterator iterator;
 
 public:
-    clFileCache() {}
-    ~clFileCache() {}
+    clFileCache() = default;
+    ~clFileCache() = default;
 
     const std::vector<wxFileName>& GetFiles() const { return m_files; }
     const_iterator begin() const { return m_files.begin(); }

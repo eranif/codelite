@@ -34,7 +34,7 @@ class WXDLLIMPEXP_SDK ThemeImporterInnoSetup : public ThemeImporterBase
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
     ThemeImporterInnoSetup();
-    virtual ~ThemeImporterInnoSetup();
+    virtual ~ThemeImporterInnoSetup() = default;
 };
 
 #endif // ECLIPSEINNOSETUPTHEMEIMPORTER_H

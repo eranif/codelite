@@ -71,7 +71,7 @@ protected:
 public:
     clScrolledPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxDefaultSize, long style = 0);
-    clScrolledPanel() {}
+    clScrolledPanel() = default;
     virtual ~clScrolledPanel();
 
     ScrollBar_t* GetHScrollBar() { return m_hsb; }

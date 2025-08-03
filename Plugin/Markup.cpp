@@ -122,5 +122,3 @@ MarkupSearchPattern::MarkupSearchPattern(const wxString& search, int type, bool 
         m_pattern = search;
     }
 }
-
-MarkupSearchPattern::~MarkupSearchPattern() {}

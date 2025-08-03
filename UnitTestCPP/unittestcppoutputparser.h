@@ -57,7 +57,7 @@ class UnitTestCppOutputParser
 
 public:
     UnitTestCppOutputParser(const wxArrayString& output);
-    ~UnitTestCppOutputParser();
+    ~UnitTestCppOutputParser() = default;
 
     void Parse(TestSummary* summary);
 };

@@ -32,7 +32,7 @@ public:
     virtual JSONItem ToJSON() const;
 
     clDockerSettings();
-    virtual ~clDockerSettings();
+    virtual ~clDockerSettings() = default;
 
     void Load();
     void Save();

@@ -9,6 +9,6 @@ class ThemeImporterGo : public ThemeImporterBase
 {
 public:
     ThemeImporterGo();
-    virtual ~ThemeImporterGo();
+    virtual ~ThemeImporterGo() = default;
     virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
 };

@@ -10,8 +10,6 @@ DebuggerPaused::DebuggerPaused()
 {
 }
 
-DebuggerPaused::~DebuggerPaused() {}
-
 void DebuggerPaused::Process(clWebSocketClient& socket, const JSONItem& json)
 {
     m_stopReason = json.namedObject("reason").toString();

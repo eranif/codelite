@@ -8,7 +8,7 @@ class ModelPage : public ModelPageBase
 {
 public:
     ModelPage(wxWindow* parent, std::shared_ptr<ChatAIConfig::Model> model);
-    virtual ~ModelPage();
+    virtual ~ModelPage() = default;
     void Save();
     std::shared_ptr<ChatAIConfig::Model> GetModel() const { return m_model; }
 

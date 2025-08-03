@@ -13,5 +13,3 @@ ThemeImporterCobraAlt::ThemeImporterCobraAlt()
     SetFileExtensions("*.cobra-A");
     m_langName = "cobraalt";
 }
-
-ThemeImporterCobraAlt::~ThemeImporterCobraAlt() {}

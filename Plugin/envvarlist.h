@@ -37,8 +37,8 @@ class WXDLLIMPEXP_SDK EnvMap
     wxArrayString m_values;
 
 public:
-    EnvMap();
-    ~EnvMap();
+    EnvMap() = default;
+    ~EnvMap() = default;
 
     void Put(const wxString& key, const wxString& val);
     bool Get(const wxString& key, wxString& val);
@@ -59,7 +59,7 @@ protected:
 
 public:
     EnvVarList();
-    virtual ~EnvVarList();
+    virtual ~EnvVarList() = default;
 
     void SetActiveSet(const wxString& activeSet)
     {

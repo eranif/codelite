@@ -7,8 +7,8 @@
 class WXDLLIMPEXP_SDK WorkspaceHelper
 {
 public:
-    WorkspaceHelper();
-    ~WorkspaceHelper();
+    WorkspaceHelper() = default;
+    ~WorkspaceHelper() = default;
 
     /// read a workspace private file. "private" files are files kept under `WORKSPACE_PATH/.codelite` folder
     /// this method handles both remote and local workspaces

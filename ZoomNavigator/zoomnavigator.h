@@ -63,7 +63,7 @@ protected:
 
 public:
     explicit ZoomNavigator(IManager* manager);
-    ~ZoomNavigator() override;
+    ~ZoomNavigator() override = default;
 
     //--------------------------------------------
     // Abstract methods

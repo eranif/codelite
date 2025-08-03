@@ -7,8 +7,6 @@ WordCompletionSettings::WordCompletionSettings()
 {
 }
 
-WordCompletionSettings::~WordCompletionSettings() {}
-
 void WordCompletionSettings::FromJSON(const JSONItem& json)
 {
     m_comparisonMethod = json.namedObject("m_comparisonMethod").toInt(m_comparisonMethod);

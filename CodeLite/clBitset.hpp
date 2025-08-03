@@ -14,7 +14,7 @@ class WXDLLIMPEXP_CL clBitset
 
 public:
     clBitset();
-    ~clBitset();
+    ~clBitset() = default;
 
     void set(size_t pos, bool b = true);
     bool test(size_t pos) const;

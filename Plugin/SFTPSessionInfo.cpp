@@ -5,10 +5,6 @@
 
 #include <algorithm>
 
-SFTPSessionInfo::SFTPSessionInfo() {}
-
-SFTPSessionInfo::~SFTPSessionInfo() {}
-
 void SFTPSessionInfo::FromJSON(const JSONItem& json)
 {
     m_files.clear();
@@ -69,7 +65,6 @@ SFTPSessionInfoList::SFTPSessionInfoList()
     : clConfigItem("sessions")
 {
 }
-SFTPSessionInfoList::~SFTPSessionInfoList() {}
 
 void SFTPSessionInfoList::FromJSON(const JSONItem& json)
 {

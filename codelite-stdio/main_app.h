@@ -33,7 +33,7 @@ protected:
     void OnProcessTerminated(clProcessEvent& event);
 
 public:
-    MainApp();
+    MainApp() = default;
     virtual ~MainApp();
 
     /**

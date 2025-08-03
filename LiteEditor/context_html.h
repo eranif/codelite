@@ -33,7 +33,7 @@ class ContextHtml : public ContextBase
 public:
     ContextHtml();
     ContextHtml(clEditor *Editor);
-    virtual ~ContextHtml();
+    virtual ~ContextHtml() = default;
 
 public:
     virtual int GetActiveKeywordSet() const;

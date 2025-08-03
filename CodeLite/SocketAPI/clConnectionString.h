@@ -25,7 +25,7 @@ protected:
 
 public:
     clConnectionString(const wxString& connectionString);
-    ~clConnectionString();
+    ~clConnectionString() = default;
 
     void SetHost(const wxString& host) { this->m_host = host; }
     void SetIsOK(bool isOK) { this->m_isOK = isOK; }

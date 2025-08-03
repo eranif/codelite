@@ -18,8 +18,6 @@ XDebugRunCmdHandler::XDebugRunCmdHandler(XDebugManager* mgr, int transcationId)
 {
 }
 
-XDebugRunCmdHandler::~XDebugRunCmdHandler() {}
-
 void XDebugRunCmdHandler::Process(const wxXmlNode* response)
 {
     // a reply to the "Run" command has arrived

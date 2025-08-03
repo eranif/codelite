@@ -9,7 +9,7 @@ class ChatAIConfig : clConfigItem
 {
 public:
     ChatAIConfig();
-    virtual ~ChatAIConfig();
+    virtual ~ChatAIConfig() = default;
 
     struct Model {
         wxString m_name;

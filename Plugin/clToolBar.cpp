@@ -31,8 +31,6 @@ clToolBarNative::clToolBarNative(
 {
 }
 
-clToolBarNative::~clToolBarNative() {}
-
 wxToolBarToolBase* clToolBarNative::AddTool(
     wxWindowID id, const wxString& label, size_t bitmapIndex, const wxString& helpString, wxItemKind kind)
 {

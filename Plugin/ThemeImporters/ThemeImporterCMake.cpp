@@ -22,8 +22,6 @@ ThemeImporterCMake::ThemeImporterCMake()
     SetFileExtensions("*.cmake;*.CMAKE;*CMakeLists.txt");
 }
 
-ThemeImporterCMake::~ThemeImporterCMake() {}
-
 LexerConf::Ptr_t ThemeImporterCMake::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, "cmake", wxSTC_LEX_CMAKE);

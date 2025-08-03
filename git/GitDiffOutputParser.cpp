@@ -1,10 +1,6 @@
 #include "GitDiffOutputParser.h"
 #include <wx/tokenzr.h>
 
-GitDiffOutputParser::GitDiffOutputParser() {}
-
-GitDiffOutputParser::~GitDiffOutputParser() {}
-
 void GitDiffOutputParser::GetDiffMap(const wxString& rawDiff, wxStringMap_t& M, wxArrayString* commitMessage) const
 {
     wxStringTokenizer tokenizer(rawDiff, wxT("\n"), wxTOKEN_RET_EMPTY_ALL);

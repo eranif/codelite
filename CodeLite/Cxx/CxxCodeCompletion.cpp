@@ -64,8 +64,6 @@ CxxCodeCompletion::CxxCodeCompletion(ITagsStoragePtr lookup, const wxString& cod
     m_template_manager.reset(new TemplateManager(this));
 }
 
-CxxCodeCompletion::~CxxCodeCompletion() {}
-
 void CxxCodeCompletion::determine_current_scope()
 {
     if(m_current_function_tag || m_filename.empty() || m_line_number == wxNOT_FOUND) {

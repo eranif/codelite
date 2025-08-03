@@ -207,7 +207,7 @@ class VimBaseCommand
 public:
     VimBaseCommand(wxString fullpath_name);
     VimBaseCommand(const VimBaseCommand& command);
-    ~VimBaseCommand();
+    ~VimBaseCommand() = default;
 
     bool isCurrentEditor(const wxString& fullpath_name);
     void saveCurrentStatus(const VimCommand& command);
@@ -254,7 +254,7 @@ public:
 
 public:
     VimCommand(IManager* m_mgr);
-    ~VimCommand();
+    ~VimCommand() = default;
 
     /*~~~~~~~ EVENT HANLDER ~~~~~~~~~~~~~~~~*/
     bool OnNewKeyDown(wxChar ch, int modifier);

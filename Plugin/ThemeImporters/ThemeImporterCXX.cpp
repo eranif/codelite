@@ -51,8 +51,6 @@ ThemeImporterCXX::ThemeImporterCXX()
     SetFileExtensions("*.cxx;*.hpp;*.cc;*.h;*.c;*.cpp;*.l;*.y;*.c++;*.hh;*.ipp;*.hxx;*.h++");
 }
 
-ThemeImporterCXX::~ThemeImporterCXX() {}
-
 LexerConf::Ptr_t ThemeImporterCXX::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_CPP);

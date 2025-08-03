@@ -1,9 +1,5 @@
 #include "StdioTransport.hpp"
 
-dap::StdioTransport::StdioTransport() {}
-
-dap::StdioTransport::~StdioTransport() {}
-
 bool dap::StdioTransport::Read(std::string& buffer, int msTimeout)
 {
     wxUnusedVar(buffer);

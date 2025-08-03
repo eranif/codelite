@@ -24,9 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "tagsmanagementconf.h"
-TagsManagementConf::TagsManagementConf() {}
-
-TagsManagementConf::~TagsManagementConf() {}
 
 void TagsManagementConf::DeSerialize(Archive& arch) { arch.Read(wxT("m_files"), m_files); }
 

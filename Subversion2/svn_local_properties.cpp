@@ -42,8 +42,6 @@ SubversionLocalProperties::SubversionLocalProperties(const wxString& url)
 {
 }
 
-SubversionLocalProperties::~SubversionLocalProperties() {}
-
 wxString SubversionLocalProperties::ReadProperty(const wxString& propName)
 {
     ReadProperties();

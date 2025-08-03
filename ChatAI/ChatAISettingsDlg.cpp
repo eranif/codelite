@@ -31,8 +31,6 @@ ChatAISettingsDlg::ChatAISettingsDlg(wxWindow* parent, ChatAIConfig& config)
     }
 }
 
-ChatAISettingsDlg::~ChatAISettingsDlg() {}
-
 void ChatAISettingsDlg::OnNewModel(wxCommandEvent& event)
 {
     wxUnusedVar(event);

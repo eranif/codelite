@@ -17,7 +17,7 @@ class ImportFromwxFB
 
 public:
     ImportFromwxFB(wxWindow* parent);
-    ~ImportFromwxFB();
+    ~ImportFromwxFB() = default;
 
     bool ImportProject(ImportDlg::ImportFileData& data, const wxString& sourceFile = "") const;
     static wxString ConvertFBOptionsString(const wxString& content, const wxString& separator = ";");

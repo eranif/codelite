@@ -63,8 +63,6 @@ DbSettingDialog::DbSettingDialog(DbViewerPanel* parent, wxWindow* pWindowParent)
     CentreOnParent();
 }
 
-DbSettingDialog::~DbSettingDialog() {}
-
 void DbSettingDialog::OnCancelClick(wxCommandEvent& event) { event.Skip(); }
 
 void DbSettingDialog::OnMySqlOkClick(wxCommandEvent& event)

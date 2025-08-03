@@ -7,7 +7,7 @@ class BreakpointResolved : public NodeMessageBase
 {
 public:
     BreakpointResolved();
-    virtual ~BreakpointResolved();
+    virtual ~BreakpointResolved() = default;
 
 public:
     virtual NodeMessageBase::Ptr_t Clone();

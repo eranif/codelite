@@ -50,7 +50,7 @@ class WXDLLIMPEXP_SDK QuickDebugInfo : public SerializedObject
 
 public:
     QuickDebugInfo();
-    ~QuickDebugInfo();
+    ~QuickDebugInfo() = default;
 
 public:
     virtual void DeSerialize(Archive& arch);

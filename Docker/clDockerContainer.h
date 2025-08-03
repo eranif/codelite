@@ -22,8 +22,8 @@ protected:
     int m_state = kStateUnknown;
 
 public:
-    clDockerContainer();
-    virtual ~clDockerContainer();
+    clDockerContainer() = default;
+    virtual ~clDockerContainer() = default;
 
     void SetCommand(const wxString& command) { this->m_command = command; }
     void SetCreated(const wxString& created) { this->m_created = created; }

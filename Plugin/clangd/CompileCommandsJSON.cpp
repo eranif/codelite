@@ -32,5 +32,3 @@ CompileCommandsJSON::CompileCommandsJSON(const wxString& filename)
     m_macros = StringUtils::MakeUniqueArray(all_macros);
     m_others = StringUtils::MakeUniqueArray(all_others);
 }
-
-CompileCommandsJSON::~CompileCommandsJSON() {}

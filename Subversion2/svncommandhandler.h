@@ -54,7 +54,7 @@ public:
     {
     }
 
-    virtual ~SvnCommandHandler() {}
+    virtual ~SvnCommandHandler() = default;
 
     Subversion2* GetPlugin() { return m_plugin; }
 

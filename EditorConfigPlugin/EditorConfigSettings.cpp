@@ -6,8 +6,6 @@ EditorConfigSettings::EditorConfigSettings()
 {
 }
 
-EditorConfigSettings::~EditorConfigSettings() {}
-
 EditorConfigSettings& EditorConfigSettings::Load()
 {
     m_flags = clConfig::Get().Read("EditorConfig/Flags", m_flags);

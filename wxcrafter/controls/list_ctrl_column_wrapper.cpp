@@ -23,8 +23,6 @@ ListCtrlColumnWrapper::ListCtrlColumnWrapper()
           "extend to fill all the remaining space for the last column\nValue > 0 will set the width in pixels"));
 }
 
-ListCtrlColumnWrapper::~ListCtrlColumnWrapper() {}
-
 wxcWidget* ListCtrlColumnWrapper::Clone() const { return new ListCtrlColumnWrapper(); }
 
 wxString ListCtrlColumnWrapper::CppCtorCode() const

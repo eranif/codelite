@@ -103,7 +103,6 @@ wxRibbonMetroArtProvider::wxRibbonMetroArtProvider(bool set_colour_scheme)
     m_gallery_bitmap_padding_bottom_size = 4;
 }
 
-wxRibbonMetroArtProvider::~wxRibbonMetroArtProvider() {}
 void wxRibbonMetroArtProvider::GetColourScheme(wxColour* primary, wxColour* secondary, wxColour* tertiary) const
 {
     if(primary != NULL)

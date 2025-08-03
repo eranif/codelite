@@ -69,13 +69,13 @@ class ReconcileFileItemData : public wxClientData
     wxString m_virtualFolder;
 
 public:
-    ReconcileFileItemData() {}
+    ReconcileFileItemData() = default;
     ReconcileFileItemData(const wxString& filename, const wxString& vd)
         : m_filename(filename)
         , m_virtualFolder(vd)
     {
     }
-    virtual ~ReconcileFileItemData() {}
+    virtual ~ReconcileFileItemData() = default;
     void SetFilename(const wxString& filename) { this->m_filename = filename; }
     void SetVirtualFolder(const wxString& virtualFolder) { this->m_virtualFolder = virtualFolder; }
     const wxString& GetFilename() const { return m_filename; }
@@ -93,8 +93,6 @@ ReconcileProjectDlg::ReconcileProjectDlg(wxWindow* parent, const wxString& projn
                                   wxDataViewEventHandler(ReconcileProjectDlg::OnDVLCContextMenu), this);
     ::clSetDialogBestSizeAndPosition(this);
 }
-
-ReconcileProjectDlg::~ReconcileProjectDlg() {}
 
 bool ReconcileProjectDlg::LoadData()
 {
@@ -641,8 +639,6 @@ ReconcileProjectFiletypesDlg::ReconcileProjectFiletypesDlg(wxWindow* parent, con
     ::clSetDialogBestSizeAndPosition(this);
 }
 
-ReconcileProjectFiletypesDlg::~ReconcileProjectFiletypesDlg() {}
-
 void ReconcileProjectFiletypesDlg::SetData()
 {
     ProjectPtr proj = ManagerST::Get()->GetProject(m_projname);
@@ -836,8 +832,6 @@ ReconcileByRegexDlg::ReconcileByRegexDlg(wxWindow* parent, const wxString& projn
     SetName("ReconcileByRegexDlg");
     WindowAttrManager::Load(this);
 }
-
-ReconcileByRegexDlg::~ReconcileByRegexDlg() {}
 
 void ReconcileByRegexDlg::OnTextEnter(wxCommandEvent& event)
 {

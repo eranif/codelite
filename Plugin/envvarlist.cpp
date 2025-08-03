@@ -35,8 +35,6 @@ EnvVarList::EnvVarList()
 {
 }
 
-EnvVarList::~EnvVarList() {}
-
 void EnvVarList::DeSerialize(Archive& arch)
 {
     arch.Read(wxT("m_envVarSets"), m_envVarSets);
@@ -158,9 +156,6 @@ wxString EnvVarList::DoGetSetVariablesStr(const wxString& setName, wxString& sel
 bool EnvVarList::IsSetExist(const wxString& setName) { return m_envVarSets.find(setName) != m_envVarSets.end(); }
 
 // Env Map helper class
-EnvMap::EnvMap() {}
-
-EnvMap::~EnvMap() {}
 
 bool EnvMap::Get(const wxString& key, wxString& val)
 {

@@ -47,10 +47,6 @@ void clMarkdownRenderer::UpdateFont(wxDC& dc, const mdparser::Style& style)
     dc.SetFont(f);
 }
 
-clMarkdownRenderer::clMarkdownRenderer() {}
-
-clMarkdownRenderer::~clMarkdownRenderer() {}
-
 wxSize clMarkdownRenderer::Render(wxWindow* win, wxDC& dc, const wxString& text, const wxRect& rect)
 {
     return DoRender(win, dc, text, rect, true);

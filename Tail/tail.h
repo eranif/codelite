@@ -23,8 +23,8 @@ protected:
     
 public:
     Tail(IManager* manager);
-    ~Tail() override;
-    
+    ~Tail() override = default;
+
     /**
      * @brief detach the tail window from the output notebook
      */

@@ -11,8 +11,8 @@ class GitDiffOutputParser
     };
 
 public:
-    GitDiffOutputParser();
-    virtual ~GitDiffOutputParser();
+    GitDiffOutputParser() = default;
+    virtual ~GitDiffOutputParser() = default;
 
     /**
      * @brief parse the output of 'git diff...' command and return a map

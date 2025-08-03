@@ -18,13 +18,13 @@ public:
     typedef std::map<wxString, FolderColour> Map_t;
 
 public:
-    FolderColour();
+    FolderColour() = default;
     FolderColour(const wxString& path, const wxColour& colour)
         : m_path(path)
         , m_colour(colour)
     {
     }
-    virtual ~FolderColour();
+    virtual ~FolderColour() = default;
 
     bool IsOk() const { return !m_path.IsEmpty(); }
     FolderColour& SetColour(const wxColour& colour)

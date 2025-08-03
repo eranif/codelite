@@ -79,8 +79,6 @@ CompilersDetectorManager::CompilersDetectorManager()
     m_detectors.push_back(ICompilerLocator::Ptr_t(new CompilerLocatorRustc()));
 }
 
-CompilersDetectorManager::~CompilersDetectorManager() {}
-
 bool CompilersDetectorManager::Locate()
 {
     // Apply the enviroment before searching for compilers

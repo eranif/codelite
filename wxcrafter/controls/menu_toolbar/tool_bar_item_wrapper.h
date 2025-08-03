@@ -29,7 +29,7 @@ class ToolBarItemSpaceWrapper : public ToolBarItemWrapper
 {
 public:
     ToolBarItemSpaceWrapper();
-    virtual ~ToolBarItemSpaceWrapper() {}
+    virtual ~ToolBarItemSpaceWrapper() = default;
 
     virtual bool IsEventHandler() const { return false; }
 
@@ -42,7 +42,7 @@ class ToolBarItemSeparatorWrapper : public ToolBarItemWrapper
 {
 public:
     ToolBarItemSeparatorWrapper();
-    virtual ~ToolBarItemSeparatorWrapper();
+    virtual ~ToolBarItemSeparatorWrapper() = default;
 
     virtual bool IsEventHandler() const { return false; }
 
@@ -55,7 +55,7 @@ class AuiToolBarLabelWrapper : public wxcWidget
 {
 public:
     AuiToolBarLabelWrapper(int type = ID_WXAUITOOLBARLABEL);
-    virtual ~AuiToolBarLabelWrapper() {}
+    virtual ~AuiToolBarLabelWrapper() = default;
     virtual bool IsEventHandler() const { return false; }
     virtual wxcWidget* Clone() const;
     virtual wxString CppCtorCode() const;
@@ -70,7 +70,7 @@ class AuiToolBarItemSpaceWrapper : public ToolBarItemWrapper
 {
 public:
     AuiToolBarItemSpaceWrapper();
-    virtual ~AuiToolBarItemSpaceWrapper() {}
+    virtual ~AuiToolBarItemSpaceWrapper() = default;
 
     virtual bool IsEventHandler() const { return false; }
     virtual wxcWidget* Clone() const { return new AuiToolBarItemSpaceWrapper(); }
@@ -83,7 +83,7 @@ class AuiToolBarItemNonStretchSpaceWrapper : public ToolBarItemWrapper
 {
 public:
     AuiToolBarItemNonStretchSpaceWrapper();
-    virtual ~AuiToolBarItemNonStretchSpaceWrapper() {}
+    virtual ~AuiToolBarItemNonStretchSpaceWrapper() = default;
 
     virtual bool IsEventHandler() const { return false; }
     virtual wxcWidget* Clone() const { return new AuiToolBarItemNonStretchSpaceWrapper(); }

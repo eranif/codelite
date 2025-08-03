@@ -13,8 +13,6 @@ ThemeImporterLua::ThemeImporterLua()
     SetLangName("lua");
 }
 
-ThemeImporterLua::~ThemeImporterLua() {}
-
 LexerConf::Ptr_t ThemeImporterLua::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_LUA);

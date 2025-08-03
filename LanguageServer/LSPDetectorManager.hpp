@@ -11,7 +11,7 @@ class LSPDetectorManager
 
 public:
     LSPDetectorManager();
-    virtual ~LSPDetectorManager();
+    virtual ~LSPDetectorManager() = default;
 
     /**
      * @brief scan for language servers installed on this machine

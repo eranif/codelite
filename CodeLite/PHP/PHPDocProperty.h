@@ -21,7 +21,7 @@ protected:
     
 public:
     PHPDocProperty(PHPSourceFile& sourceFile, const wxString& comment);
-    ~PHPDocProperty();
+    ~PHPDocProperty() = default;
 
     /**
      * @brief parse comment for @params

@@ -35,8 +35,6 @@ RemoteFileInfo::RemoteFileInfo()
 {
 }
 
-RemoteFileInfo::~RemoteFileInfo() {}
-
 void RemoteFileInfo::SetRemoteFile(const wxString& remoteFile)
 {
     this->m_remoteFile = remoteFile;

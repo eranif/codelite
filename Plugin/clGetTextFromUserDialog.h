@@ -32,7 +32,7 @@ class WXDLLIMPEXP_SDK clGetTextFromUserDialog : public clGetTextFromUserBaseDial
 public:
     clGetTextFromUserDialog(wxWindow* parent, const wxString& title, const wxString& message,
                             const wxString& initialValue, int charsToSelect = wxNOT_FOUND);
-    virtual ~clGetTextFromUserDialog();
+    virtual ~clGetTextFromUserDialog() = default;
 
     wxString GetValue() const { return m_textCtrl->GetValue(); }
 };

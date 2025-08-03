@@ -7,7 +7,7 @@ class WXDLLIMPEXP_SDK ThemeImporterYAML : public ThemeImporterBase
 {
 public:
     ThemeImporterYAML();
-    virtual ~ThemeImporterYAML();
+    virtual ~ThemeImporterYAML() = default;
 
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);

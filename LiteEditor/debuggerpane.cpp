@@ -276,8 +276,6 @@ DebuggerPaneConfig::DebuggerPaneConfig()
 {
 }
 
-DebuggerPaneConfig::~DebuggerPaneConfig() {}
-
 wxString DebuggerPaneConfig::WindowName(eDebuggerWindows flag) const
 {
     switch(flag) {

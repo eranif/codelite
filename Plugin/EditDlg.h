@@ -31,7 +31,7 @@ class WXDLLIMPEXP_SDK EditDlg : public EditDlgBase
 {
 public:
     EditDlg(wxWindow* parent, const wxString& text);
-    virtual ~EditDlg();
+    virtual ~EditDlg() = default;
 
     wxString GetText() const { return m_stc10->GetText(); }
 };

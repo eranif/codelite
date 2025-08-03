@@ -50,7 +50,7 @@ protected:
 public:
     /** Constructor */
     NewQtProjDlg( wxWindow* parent, QmakeConf *conf, IManager *mgr );
-    virtual ~NewQtProjDlg();
+    virtual ~NewQtProjDlg() = default;
 
     wxString GetProjectName    () const;
     wxString GetProjectPath    () const;

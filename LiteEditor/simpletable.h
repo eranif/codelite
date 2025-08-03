@@ -50,7 +50,7 @@ public:
         : m_parent(parent)
     {
     }
-    virtual ~WatchDropTarget() {}
+    virtual ~WatchDropTarget() = default;
     virtual bool OnDropText(wxCoord x, wxCoord y, const wxString& text);
 };
 

@@ -44,8 +44,6 @@ EditDlg::EditDlg(wxWindow* parent, const wxString& text)
     ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
-EditDlg::~EditDlg() {}
-
 wxString clGetStringFromUser(const wxString& initialValue, wxWindow* parent)
 {
     EditDlg dlg(parent, initialValue);

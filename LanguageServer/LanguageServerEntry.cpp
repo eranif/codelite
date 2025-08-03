@@ -10,8 +10,6 @@ LanguageServerEntry::LanguageServerEntry()
 {
 }
 
-LanguageServerEntry::~LanguageServerEntry() {}
-
 void LanguageServerEntry::FromJSON(const JSONItem& json)
 {
     m_name = json.namedObject("name").toString();

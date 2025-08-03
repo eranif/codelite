@@ -10,7 +10,7 @@ class WXDLLIMPEXP_SDK clToolBarControl : public clToolBarButtonBase
 
 public:
     clToolBarControl(clToolBarGeneric* parent, wxWindow* control);
-    virtual ~clToolBarControl();
+    virtual ~clToolBarControl() = default;
     wxWindow* GetControl() { return m_ctrl; }
 
 public:

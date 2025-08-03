@@ -64,7 +64,7 @@ protected:
 
 public:
     LocalsTable(wxWindow* parent);
-    virtual ~LocalsTable();
+    virtual ~LocalsTable() = default;
 
 public:
     /**

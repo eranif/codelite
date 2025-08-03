@@ -10,8 +10,6 @@ clDockerComposeFile::clDockerComposeFile()
 {
 }
 
-clDockerComposeFile::~clDockerComposeFile() {}
-
 void clDockerComposeFile::FromJSON(const JSONItem& json, const wxString& workspaceDir)
 {
     clDockerBuildableFile::FromJSON(json, workspaceDir);

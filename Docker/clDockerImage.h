@@ -14,8 +14,8 @@ class clDockerImage : public wxClientData
     wxString m_size;
 
 public:
-    clDockerImage();
-    virtual ~clDockerImage();
+    clDockerImage() = default;
+    virtual ~clDockerImage() = default;
     
     void SetCreated(const wxString& created) { this->m_created = created; }
     void SetId(const wxString& id) { this->m_id = id; }

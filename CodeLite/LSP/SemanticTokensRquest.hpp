@@ -13,7 +13,7 @@ class WXDLLIMPEXP_CL SemanticTokensRquest : public Request
 
 public:
     SemanticTokensRquest(const wxString& filename);
-    ~SemanticTokensRquest();
+    ~SemanticTokensRquest() = default;
 
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
 };

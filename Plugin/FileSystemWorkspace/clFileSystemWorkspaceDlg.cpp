@@ -43,8 +43,6 @@ clFileSystemWorkspaceDlg::clFileSystemWorkspaceDlg(wxWindow* parent, clFileSyste
     CenterOnParent();
 }
 
-clFileSystemWorkspaceDlg::~clFileSystemWorkspaceDlg() {}
-
 void clFileSystemWorkspaceDlg::SelectConfig(const wxString& config)
 {
     for(size_t i = 0; i < m_notebook->GetPageCount(); ++i) {

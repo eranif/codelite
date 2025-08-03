@@ -37,8 +37,8 @@ class WXDLLIMPEXP_SDK DebuggerCmdData : public SerializedObject
     wxString m_dbgCommand;
 
 public:
-    DebuggerCmdData();
-    virtual ~DebuggerCmdData();
+    DebuggerCmdData() = default;
+    virtual ~DebuggerCmdData() = default;
 
     void Serialize(Archive& arhc);
     void DeSerialize(Archive& arhc);
@@ -65,7 +65,7 @@ class WXDLLIMPEXP_SDK DebuggerPreDefinedTypes : public SerializedObject
 
 public:
     DebuggerPreDefinedTypes();
-    virtual ~DebuggerPreDefinedTypes();
+    virtual ~DebuggerPreDefinedTypes() = default;
 
     void Serialize(Archive& arch);
     void DeSerialize(Archive& arch);
@@ -87,8 +87,8 @@ class WXDLLIMPEXP_SDK DebuggerSettingsPreDefMap : public SerializedObject
     std::map<wxString, DebuggerPreDefinedTypes> m_cmds;
 
 public:
-    DebuggerSettingsPreDefMap();
-    virtual ~DebuggerSettingsPreDefMap();
+    DebuggerSettingsPreDefMap() = default;
+    virtual ~DebuggerSettingsPreDefMap() = default;
 
     void Serialize(Archive& arch);
     void DeSerialize(Archive& arch);

@@ -33,7 +33,7 @@ class WXDLLIMPEXP_SDK ThemeImporterLua : public ThemeImporterBase
 {
 public:
     ThemeImporterLua();
-    virtual ~ThemeImporterLua();
+    virtual ~ThemeImporterLua() = default;
 
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);

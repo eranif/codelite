@@ -7,7 +7,7 @@ class EOSProjectWizard : public EOSProjectWizardBase
 {
 public:
     EOSProjectWizard(wxWindow* parent);
-    virtual ~EOSProjectWizard();
+    virtual ~EOSProjectWizard() = default;
 
     wxString GetName() const;
     wxString GetPath() const;

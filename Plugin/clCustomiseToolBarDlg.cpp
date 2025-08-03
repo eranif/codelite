@@ -32,8 +32,6 @@ clCustomiseToolBarDlg::clCustomiseToolBarDlg(wxWindow* parent, clToolBarGeneric*
     ::clFitColumnWidth(m_dvListCtrlItems);
 }
 
-clCustomiseToolBarDlg::~clCustomiseToolBarDlg() {}
-
 void clCustomiseToolBarDlg::OnOK(wxCommandEvent& event)
 {
     event.Skip();

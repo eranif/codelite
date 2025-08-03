@@ -66,10 +66,6 @@ bool OSXFindBrewClang(wxFileName& clang)
 }
 #endif
 
-CompilerLocatorCLANG::CompilerLocatorCLANG() {}
-
-CompilerLocatorCLANG::~CompilerLocatorCLANG() {}
-
 bool CompilerLocatorCLANG::Locate()
 {
     clDEBUG() << "Searching for clang compilers..." << endl;

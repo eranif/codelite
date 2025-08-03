@@ -24,8 +24,6 @@ LanguageServerSettingsDlg::LanguageServerSettingsDlg(wxWindow* parent, bool trig
     }
 }
 
-LanguageServerSettingsDlg::~LanguageServerSettingsDlg() {}
-
 void LanguageServerSettingsDlg::OnAddServer(wxCommandEvent& event)
 {
     NewLanguageServerDlg dlg(this);

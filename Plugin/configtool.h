@@ -44,7 +44,7 @@ class WXDLLIMPEXP_SDK ConfigTool
 
 public:
     ConfigTool();
-    ~ConfigTool();
+    ~ConfigTool() = default;
 
     bool Load(const wxString& basename, const wxString& version);
     bool WriteObject(const wxString& name, SerializedObject* obj);

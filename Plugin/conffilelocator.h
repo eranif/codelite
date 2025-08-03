@@ -37,8 +37,8 @@ class WXDLLIMPEXP_SDK ConfFileLocator
     wxString m_startupPath;
 
 private:
-    ConfFileLocator(const ConfFileLocator& rhs);
-    ConfFileLocator& operator=(const ConfFileLocator& rhs);
+    ConfFileLocator(const ConfFileLocator& rhs) = delete;
+    ConfFileLocator& operator=(const ConfFileLocator& rhs) = delete;
 
 public:
     static ConfFileLocator* Instance();
@@ -51,7 +51,7 @@ public:
     void DeleteLocalCopy(const wxString& basename);
 
 private:
-    ConfFileLocator();
-    virtual ~ConfFileLocator();
+    ConfFileLocator() = default;
+    virtual ~ConfFileLocator() = default;
 };
 #endif // __conffilelocator__

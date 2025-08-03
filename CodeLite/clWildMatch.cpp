@@ -34,8 +34,6 @@ clFileExtensionMatcher::clFileExtensionMatcher(const wxString& mask)
     m_always_matches = false;
 }
 
-clFileExtensionMatcher::~clFileExtensionMatcher() {}
-
 bool clFileExtensionMatcher::matches(const wxString& filename) const
 {
     if(m_always_matches) {
@@ -66,8 +64,6 @@ clPathExcluder::clPathExcluder(const wxString& mask)
     std::vector<_Mask> includeMask;
     split_mask(m_mask, includeMask, m_exclude_mask);
 }
-
-clPathExcluder::~clPathExcluder() {}
 
 bool clPathExcluder::is_exclude_path(const wxString& str) const
 {

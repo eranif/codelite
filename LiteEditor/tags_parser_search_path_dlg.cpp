@@ -56,8 +56,6 @@ wxArrayString TagsParserSearchPathsDlg::GetSearchPaths() const
     return paths;
 }
 
-TagsParserSearchPathsDlg::~TagsParserSearchPathsDlg() {}
-
 wxArrayString TagsParserSearchPathsDlg::GetExcludePath() const
 {
     wxArrayString paths;

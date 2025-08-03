@@ -34,10 +34,6 @@
 #include <wx/filefn.h>
 #include <wx/tokenzr.h>
 
-CompilerLocatorCrossGCC::CompilerLocatorCrossGCC() {}
-
-CompilerLocatorCrossGCC::~CompilerLocatorCrossGCC() {}
-
 CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder) { return Locate(folder, true); }
 
 CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)

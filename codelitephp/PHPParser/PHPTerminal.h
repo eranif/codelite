@@ -32,8 +32,7 @@ class PHPTerminal : public TerminalEmulatorFrame
 {
 public:
     PHPTerminal(wxWindow* parent);
-    virtual ~PHPTerminal();
-
+    virtual ~PHPTerminal() = default;
 };
 
 #endif // PHPTERMINAL_H

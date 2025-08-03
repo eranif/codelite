@@ -13,10 +13,6 @@
 
 #include <wx/tokenzr.h>
 
-clRemoteFinderHelper::clRemoteFinderHelper() {}
-
-clRemoteFinderHelper::~clRemoteFinderHelper() {}
-
 void clRemoteFinderHelper::ProcessSearchOutput(const clFindInFilesEvent& event, bool is_completed)
 {
     auto search_tab = GetSearchTab();

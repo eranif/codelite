@@ -37,7 +37,7 @@ protected:
 
 public:
     ChannelSocket(const wxString& ip, int port);
-    virtual ~ChannelSocket();
+    virtual ~ChannelSocket() = default;
 
     void open() override;
     bool write_reply(const wxString& message) override;

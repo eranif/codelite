@@ -69,8 +69,6 @@ ThemeImporterASM::ThemeImporterASM()
     SetFileExtensions("*.asm;*.s;*.S");
 }
 
-ThemeImporterASM::~ThemeImporterASM() {}
-
 LexerConf::Ptr_t ThemeImporterASM::Import(const wxFileName& theme_file)
 {
     // Initialize the import

@@ -89,8 +89,6 @@ void QMakeSettingsDlg::OnOK(wxCommandEvent& event)
     EndModal(wxID_OK);
 }
 
-QMakeSettingsDlg::~QMakeSettingsDlg() {}
-
 void QMakeSettingsDlg::OnRightDown(wxMouseEvent& event)
 {
     long flags(0);

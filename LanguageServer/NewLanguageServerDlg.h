@@ -13,7 +13,7 @@ class NewLanguageServerDlg : public NewLanguageServerDlgBase
 
 public:
     NewLanguageServerDlg(wxWindow* parent);
-    virtual ~NewLanguageServerDlg();
+    virtual ~NewLanguageServerDlg() = default;
 
     LanguageServerEntry GetData() const;
 

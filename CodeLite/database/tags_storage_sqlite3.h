@@ -100,7 +100,7 @@ protected:
     void DoStore(const wxString& key, const std::vector<TagEntryPtr>& tags);
 
 public:
-    TagsStorageSQLiteCache();
+    TagsStorageSQLiteCache() = default;
     virtual ~TagsStorageSQLiteCache();
 
     bool Get(const wxString& sql, std::vector<TagEntryPtr>& tags);

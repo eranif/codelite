@@ -11,8 +11,6 @@ NewThemeDialog::NewThemeDialog(wxWindow* parent, LexerConf::Ptr_t lexer)
     DoInitialize(lexer);
 }
 
-NewThemeDialog::~NewThemeDialog() {  }
-
 void NewThemeDialog::OnOkUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlName->IsEmpty()); }
 
 void NewThemeDialog::OnLexerSelected(wxCommandEvent& event)

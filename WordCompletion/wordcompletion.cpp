@@ -58,8 +58,6 @@ WordCompletionPlugin::WordCompletionPlugin(IManager* manager)
     m_completer = new WordCompleter(this);
 }
 
-WordCompletionPlugin::~WordCompletionPlugin() {}
-
 void WordCompletionPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void WordCompletionPlugin::CreatePluginMenu(wxMenu* pluginsMenu)

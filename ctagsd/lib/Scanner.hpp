@@ -22,8 +22,8 @@ private:
     wxString fix_include_line(const wxString& include_line);
 
 public:
-    Scanner();
-    ~Scanner();
+    Scanner() = default;
+    ~Scanner() = default;
 
     void scan(const wxFileName& current_file, const wxArrayString& search_path, wxStringSet_t* includes_set,
               wxStringSet_t* using_ns_set);

@@ -45,7 +45,7 @@ class WXDLLIMPEXP_SDK clFileOrFolderDropTarget : public wxFileDropTarget
 
 public:
     clFileOrFolderDropTarget(wxEvtHandler* eventSink);
-    virtual ~clFileOrFolderDropTarget();
+    virtual ~clFileOrFolderDropTarget() = default;
     virtual bool OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames);
 };
 

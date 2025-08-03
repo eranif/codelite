@@ -53,7 +53,7 @@ protected:
 
 public:
     PHPClassDetails() : m_flags(0), m_type("class") {}
-    virtual ~PHPClassDetails() {}
+    virtual ~PHPClassDetails() = default;
 
     wxString ToString(const wxString& EOL, const wxString& indent) const;
     void SetType(const wxString& type) {
@@ -112,7 +112,7 @@ class NewPHPClass : public NewPHPClassBase
     wxString m_outputPath;
 public:
     NewPHPClass(wxWindow* parent, const wxString &classPath);
-    virtual ~NewPHPClass();
+    virtual ~NewPHPClass() = default;
 
 protected:
     virtual void OnEditExtends(wxCommandEvent& event);

@@ -7,10 +7,6 @@
 #include <wx/filename.h>
 #include <wx/thread.h>
 
-CompilerLocatorEosCDT::CompilerLocatorEosCDT() {}
-
-CompilerLocatorEosCDT::~CompilerLocatorEosCDT() {}
-
 bool CompilerLocatorEosCDT::Locate()
 {
     clDEBUG() << "CompilerLocatorEosCDT locate..." << endl;

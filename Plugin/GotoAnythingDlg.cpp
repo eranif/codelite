@@ -18,8 +18,6 @@ GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent, const std::vector<clGotoEntry
     ::clSetDialogBestSizeAndPosition(this);
 }
 
-GotoAnythingDlg::~GotoAnythingDlg() {}
-
 void GotoAnythingDlg::OnKeyDown(wxKeyEvent& event)
 {
     event.Skip();

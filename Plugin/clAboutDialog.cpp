@@ -43,5 +43,3 @@ clAboutDialog::clAboutDialog(wxWindow* parent, const wxString& version)
     m_stcCredits->SetReadOnly(true);
     ::clSetSmallDialogBestSizeAndPosition(this);
 }
-
-clAboutDialog::~clAboutDialog() {}

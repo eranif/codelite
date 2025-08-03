@@ -5,8 +5,6 @@
 
 clConsoleOSXTerminal::clConsoleOSXTerminal() { SetTerminalApp("Terminal"); }
 
-clConsoleOSXTerminal::~clConsoleOSXTerminal() {}
-
 bool clConsoleOSXTerminal::Start()
 {
     wxString commandToExecute = PrepareCommand();

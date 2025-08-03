@@ -25,8 +25,8 @@
 class ExtToolsMyProcess : public wxProcess
 {
 public:
-    ExtToolsMyProcess() {}
-    virtual ~ExtToolsMyProcess() {}
+    ExtToolsMyProcess() = default;
+    virtual ~ExtToolsMyProcess() = default;
     void OnTerminate(int pid, int status)
     {
         ToolsTaskManager::Instance()->ProcessTerminated(pid);

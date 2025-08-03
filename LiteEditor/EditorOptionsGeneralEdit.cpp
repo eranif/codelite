@@ -32,5 +32,3 @@ EditorOptionsGeneralEdit::EditorOptionsGeneralEdit(wxWindow* parent, OptionsConf
                 UPDATE_BOOL_CB(SetMouseZoomEnabled));
     AddProperty(_("Indent line comments"), m_options->GetIndentedComments(), UPDATE_BOOL_CB(SetIndentedComments));
 }
-
-EditorOptionsGeneralEdit::~EditorOptionsGeneralEdit() {}

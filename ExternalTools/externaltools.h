@@ -49,7 +49,7 @@ protected:
 
 public:
     ExternalToolsPlugin(IManager* manager);
-    ~ExternalToolsPlugin() override;
+    ~ExternalToolsPlugin() override = default;
 
     //--------------------------------------------
     // Abstract methods

@@ -118,7 +118,7 @@ public:
         , m_filename(filename)
     {
     }
-    ~DiffCmdHandler() {}
+    ~DiffCmdHandler() = default;
 
     virtual void OnProcessOutput(const wxString& str)
     {

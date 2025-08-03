@@ -20,8 +20,6 @@ BuildTargetDlg::BuildTargetDlg(wxWindow* parent, const wxString& name, const wxS
     ::clSetDialogBestSizeAndPosition(this);
 }
 
-BuildTargetDlg::~BuildTargetDlg() {}
-
 wxString BuildTargetDlg::GetTargetName() const
 {
     wxString s = m_textCtrlaName->GetValue();

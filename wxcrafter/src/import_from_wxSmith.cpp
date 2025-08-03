@@ -20,8 +20,6 @@ ImportFromwxSmith::ImportFromwxSmith(wxWindow* parent)
 {
 }
 
-ImportFromwxSmith::~ImportFromwxSmith() {}
-
 bool ImportFromwxSmith::ImportProject(ImportDlg::ImportFileData& data, const wxString& sourceFile) const
 {
     ImportDlg dlg(ImportDlg::IPD_Smith, m_Parent, sourceFile);

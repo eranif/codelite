@@ -145,8 +145,6 @@ clControlWithItems::clControlWithItems(wxWindow* parent, wxWindowID id, const wx
     DoInitialize();
 }
 
-clControlWithItems::clControlWithItems() {}
-
 bool clControlWithItems::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
     if (!clScrolledPanel::Create(parent, id, pos, size, style)) {
@@ -633,9 +631,6 @@ wxFont clControlWithItems::GetDefaultFont() const
 //===---------------------------------------------------
 // clSearchText
 //===---------------------------------------------------
-clSearchText::clSearchText() {}
-
-clSearchText::~clSearchText() {}
 
 bool clSearchText::Matches(const wxString& findWhat, size_t col, const wxString& text, size_t searchFlags,
                            clMatchResult* matches)

@@ -12,8 +12,6 @@ ModelPage::ModelPage(wxWindow* parent, std::shared_ptr<ChatAIConfig::Model> mode
     }
 }
 
-ModelPage::~ModelPage() {}
-
 void ModelPage::Save()
 {
     m_model->m_name = m_textCtrlModelName->GetValue();

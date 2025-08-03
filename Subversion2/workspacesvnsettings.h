@@ -36,7 +36,7 @@ class WorkspaceSvnSettings : public clConfigItem
 public:
     WorkspaceSvnSettings(const wxFileName& fn);
     WorkspaceSvnSettings();
-    virtual ~WorkspaceSvnSettings();
+    virtual ~WorkspaceSvnSettings() = default;
 
 public:
     virtual void FromJSON(const JSONItem& json);

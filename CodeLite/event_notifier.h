@@ -35,8 +35,8 @@
 class WXDLLIMPEXP_CL EventNotifier : public wxEvtHandler
 {
 private:
-    EventNotifier();
-    virtual ~EventNotifier();
+    EventNotifier() = default;
+    virtual ~EventNotifier() = default;
 
 public:
     static EventNotifier* Get();

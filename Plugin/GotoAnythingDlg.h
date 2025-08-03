@@ -24,7 +24,7 @@ protected:
 
 public:
     GotoAnythingDlg(wxWindow* parent, const std::vector<clGotoEntry>& entries);
-    virtual ~GotoAnythingDlg();
+    virtual ~GotoAnythingDlg() = default;
 
 protected:
     virtual void OnEnter(wxCommandEvent& event);

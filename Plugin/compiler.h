@@ -132,7 +132,7 @@ public:
     typedef std::map<wxString, wxString>::const_iterator ConstIterator;
 
     Compiler(wxXmlNode* node, Compiler::eRegexType regexType = Compiler::kRegexGNU);
-    virtual ~Compiler();
+    virtual ~Compiler() = default;
 
     /**
      * @brief attempt to parse line and provide details about the parsed data

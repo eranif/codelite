@@ -6,7 +6,7 @@ class BuildTargetDlg : public BuildTargetDlgBase
 {
 public:
     BuildTargetDlg(wxWindow* parent, const wxString& name, const wxString& command);
-    virtual ~BuildTargetDlg();
+    virtual ~BuildTargetDlg() = default;
 
     wxString GetTargetName() const;
     wxString GetTargetCommand() const;

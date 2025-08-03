@@ -1,10 +1,6 @@
 #include "clDockerContainer.h"
 #include <wx/tokenzr.h>
 
-clDockerContainer::clDockerContainer() {}
-
-clDockerContainer::~clDockerContainer() {}
-
 #if 0
 #define CHOP_STRING(s) ((s.length() > 20) ? s.Mid(0, 12) : s)
 #else

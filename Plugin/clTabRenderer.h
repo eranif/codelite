@@ -113,7 +113,7 @@ public:
     wxColour markerColour;
 
     clTabColours();
-    virtual ~clTabColours() {}
+    virtual ~clTabColours() = default;
 
     /**
      * @brief update colours based on the current theme
@@ -165,7 +165,7 @@ public:
 
     clTabInfo(clTabCtrl* tabCtrl);
     clTabInfo(clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxString& text, int bitmapId = wxNOT_FOUND);
-    virtual ~clTabInfo() {}
+    virtual ~clTabInfo() = default;
 
     void CreateDisabledBitmap();
     bool IsValid() const { return m_window != NULL; }
@@ -222,7 +222,7 @@ protected:
 
 public:
     clTabRenderer(const wxString& name, const wxWindow* parent);
-    virtual ~clTabRenderer() {}
+    virtual ~clTabRenderer() = default;
     virtual void Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, size_t tabIndex,
                       size_t activeTabIndex, const clTabColours& colours, size_t style, eButtonState tabState,
                       eButtonState xButtonState) = 0;

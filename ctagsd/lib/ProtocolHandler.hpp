@@ -102,7 +102,7 @@ private:
     wxStringSet_t setdiff(const wxStringSet_t& a, const wxStringSet_t& b);
 
 public:
-    ProtocolHandler();
+    ProtocolHandler() = default;
     ~ProtocolHandler();
 
     void on_initialize(std::unique_ptr<JSON>&& msg, Channel::ptr_t channel);

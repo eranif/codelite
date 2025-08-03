@@ -39,7 +39,7 @@ enum tabgrouptype { TGT_group, TGT_item };
 class TabGrpTreeItemData : public wxTreeItemData
 {
 public:
-    TabGrpTreeItemData() {}
+    TabGrpTreeItemData() = default;
     TabGrpTreeItemData(const wxString& fp, enum tabgrouptype type = TGT_item)
         : m_filepath(fp)
         , m_type(type)

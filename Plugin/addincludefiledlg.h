@@ -52,7 +52,7 @@ protected:
 public:
     /** Constructor */
     AddIncludeFileDlg(wxWindow* parent, const wxString& fullpath, const wxString& text, int lineNo);
-    virtual ~AddIncludeFileDlg();
+    virtual ~AddIncludeFileDlg() = default;
     const wxString& GetLineToAdd() const { return m_lineToAdd; }
     int GetLine() const { return m_line; }
 };

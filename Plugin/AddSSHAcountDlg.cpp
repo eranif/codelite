@@ -55,8 +55,6 @@ AddSSHAcountDlg::AddSSHAcountDlg(wxWindow* parent, const SSHAccountInfo& account
     WindowAttrManager::Load(this);
 }
 
-AddSSHAcountDlg::~AddSSHAcountDlg() {}
-
 void AddSSHAcountDlg::OnOKUI(wxUpdateUIEvent& event)
 {
     wxString homeFolder = m_textCtrlHomeFolder->GetValue();

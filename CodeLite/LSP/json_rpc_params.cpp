@@ -5,7 +5,6 @@
 //===----------------------------------------------------------------------------------
 namespace LSP
 {
-TextDocumentPositionParams::TextDocumentPositionParams() {}
 
 void TextDocumentPositionParams::FromJSON(const JSONItem& json)
 {
@@ -24,7 +23,6 @@ JSONItem TextDocumentPositionParams::ToJSON(const wxString& name) const
 //===----------------------------------------------
 // SemanticTokensParams
 //===----------------------------------------------
-SemanticTokensParams::SemanticTokensParams() {}
 
 void SemanticTokensParams::FromJSON(const JSONItem& json) { m_textDocument.FromJSON(json["textDocument"]); }
 
@@ -38,7 +36,6 @@ JSONItem SemanticTokensParams::ToJSON(const wxString& name) const
 //===----------------------------------------------------------------------------------
 // DidOpenTextDocumentParams
 //===----------------------------------------------------------------------------------
-DidOpenTextDocumentParams::DidOpenTextDocumentParams() {}
 
 void DidOpenTextDocumentParams::FromJSON(const JSONItem& json) { m_textDocument.FromJSON(json["textDocument"]); }
 
@@ -52,7 +49,6 @@ JSONItem DidOpenTextDocumentParams::ToJSON(const wxString& name) const
 //===----------------------------------------------------------------------------------
 // DidCloseTextDocumentParams
 //===----------------------------------------------------------------------------------
-DidCloseTextDocumentParams::DidCloseTextDocumentParams() {}
 
 void DidCloseTextDocumentParams::FromJSON(const JSONItem& json) { m_textDocument.FromJSON(json["textDocument"]); }
 
@@ -66,7 +62,6 @@ JSONItem DidCloseTextDocumentParams::ToJSON(const wxString& name) const
 //===----------------------------------------------------------------------------------
 // DidChangeTextDocumentParams
 //===----------------------------------------------------------------------------------
-DidChangeTextDocumentParams::DidChangeTextDocumentParams() {}
 
 void DidChangeTextDocumentParams::FromJSON(const JSONItem& json)
 {
@@ -98,7 +93,6 @@ JSONItem DidChangeTextDocumentParams::ToJSON(const wxString& name) const
 //===----------------------------------------------------------------------------------
 // DidSaveTextDocumentParams
 //===----------------------------------------------------------------------------------
-DidSaveTextDocumentParams::DidSaveTextDocumentParams() {}
 
 void DidSaveTextDocumentParams::FromJSON(const JSONItem& json)
 {
@@ -117,7 +111,6 @@ JSONItem DidSaveTextDocumentParams::ToJSON(const wxString& name) const
 //===----------------------------------------------------------------------------------
 // CompletionParams
 //===----------------------------------------------------------------------------------
-CompletionParams::CompletionParams() {}
 
 void CompletionParams::FromJSON(const JSONItem& json) { TextDocumentPositionParams::FromJSON(json); }
 
@@ -154,7 +147,6 @@ JSONItem ExecuteCommandParams::ToJSON(const wxString& name) const
 //===----------------------------------------------------------------------------------
 // CodeActionParams
 //===----------------------------------------------------------------------------------
-CodeActionParams::CodeActionParams() {}
 
 void CodeActionParams::FromJSON(const JSONItem& json) { wxUnusedVar(json); }
 
@@ -176,7 +168,6 @@ JSONItem CodeActionParams::ToJSON(const wxString& name) const
 //===----------------------------------------------------------------------------------
 // DocumentSymbolParams
 //===----------------------------------------------------------------------------------
-DocumentSymbolParams::DocumentSymbolParams() {}
 
 void DocumentSymbolParams::FromJSON(const JSONItem& json) { m_textDocument.FromJSON(json["textDocument"]); }
 
@@ -205,8 +196,6 @@ JSONItem ReferenceParams::ToJSON(const wxString& name) const
     context.addProperty("includeDeclaration", m_includeDeclaration);
     return json;
 }
-
-RenameParams::RenameParams() {}
 
 void RenameParams::FromJSON(const JSONItem& json) { wxUnusedVar(json); }
 

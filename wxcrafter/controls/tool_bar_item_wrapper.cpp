@@ -376,8 +376,6 @@ ToolBarItemSeparatorWrapper::ToolBarItemSeparatorWrapper()
     SetName(GenerateName());
 }
 
-ToolBarItemSeparatorWrapper::~ToolBarItemSeparatorWrapper() {}
-
 wxString ToolBarItemSeparatorWrapper::CppCtorCode() const
 {
     return wxString() << GetWindowParent() << "->AddSeparator();\n";

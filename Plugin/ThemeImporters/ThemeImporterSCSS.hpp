@@ -32,7 +32,7 @@ class WXDLLIMPEXP_SDK ThemeImporterSCSS : public ThemeImporterBase
 {
 public:
     ThemeImporterSCSS();
-    virtual ~ThemeImporterSCSS();
+    virtual ~ThemeImporterSCSS() = default;
 
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);

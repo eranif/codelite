@@ -10,7 +10,7 @@ class WXDLLIMPEXP_SDK NewFileSystemWorkspaceDialog : public NewFileSystemWorkspa
 
 public:
     NewFileSystemWorkspaceDialog(wxWindow* parent, bool autoSetNameFromPath = true);
-    virtual ~NewFileSystemWorkspaceDialog();
+    virtual ~NewFileSystemWorkspaceDialog() = default;
 
     wxString GetWorkspaceName() const;
     wxString GetWorkspacePath() const;

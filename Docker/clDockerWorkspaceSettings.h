@@ -22,7 +22,7 @@ public:
 
 public:
     clDockerWorkspaceSettings();
-    virtual ~clDockerWorkspaceSettings();
+    virtual ~clDockerWorkspaceSettings() = default;
 
     clDockerBuildableFile::Map_t& GetFiles() { return m_files; }
 

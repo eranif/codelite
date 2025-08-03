@@ -11,10 +11,6 @@ XDebugUnknownCommand::XDebugUnknownCommand(XDebugManager* mgr, int transcationId
 {
 }
 
-XDebugUnknownCommand::~XDebugUnknownCommand()
-{
-}
-
 void XDebugUnknownCommand::Process(const wxXmlNode* response)
 {
     wxXmlDocument doc;

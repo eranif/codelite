@@ -51,7 +51,7 @@ protected:
 public:
     /** Constructor */
     QMakeSettingsDlg(wxWindow* parent, IManager* manager, QmakeConf* conf);
-    virtual ~QMakeSettingsDlg();
+    virtual ~QMakeSettingsDlg() = default;
 };
 
 #endif // __qmakesettingsdlg__

@@ -53,7 +53,7 @@ public:
         : m_itemType(type)
     {
     }
-    virtual ~MyVdTreeItemData() {}
+    virtual ~MyVdTreeItemData() = default;
 
     bool IsFolder() const { return m_itemType == ProjectItem::TypeVirtualDirectory; }
     bool IsProject() const { return m_itemType == ProjectItem::TypeProject; }
@@ -72,8 +72,6 @@ VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg(wxWindow* parent, clCxx
     GetSizer()->Fit(this);
     CentreOnParent();
 }
-
-VirtualDirectorySelectorDlg::~VirtualDirectorySelectorDlg() {}
 
 void VirtualDirectorySelectorDlg::OnItemSelected(wxTreeEvent& event)
 {

@@ -34,8 +34,6 @@
 
 WX_DEFINE_OBJARRAY(ErrorLineInfoArray);
 
-UnitTestCppOutputParser::~UnitTestCppOutputParser() {}
-
 UnitTestCppOutputParser::UnitTestCppOutputParser(const wxArrayString& output)
     : m_output(output)
 {

@@ -8,8 +8,6 @@ CMakeBuilder::CMakeBuilder()
 {
 }
 
-CMakeBuilder::~CMakeBuilder() {}
-
 bool CMakeBuilder::Export(const wxString& project, const wxString& confToBuild, const wxString& arguments,
                           bool isProjectOnly, bool force, wxString& errMsg)
 {

@@ -38,8 +38,6 @@ CompilerLocatorMSVC::CompilerLocatorMSVC()
 {
 }
 
-CompilerLocatorMSVC::~CompilerLocatorMSVC() {}
-
 bool CompilerLocatorMSVC::Locate()
 {
     m_compilers.clear();

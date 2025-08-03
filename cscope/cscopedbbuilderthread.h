@@ -91,8 +91,8 @@ protected:
     void SendStatusEvent(const wxString& msg, int percent, const wxString& findWhat, wxEvtHandler* owner);
 
 public:
-    CscopeDbBuilderThread();
-    ~CscopeDbBuilderThread();
+    CscopeDbBuilderThread() = default;
+    ~CscopeDbBuilderThread() = default;
 };
 
 typedef Singleton<CscopeDbBuilderThread> CScopeThreadST;

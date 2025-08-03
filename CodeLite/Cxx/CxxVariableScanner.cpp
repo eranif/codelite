@@ -37,8 +37,6 @@ CxxVariableScanner::CxxVariableScanner(const wxString& buffer, eCxxStandard stan
     DoOptimizeBuffer();
 }
 
-CxxVariableScanner::~CxxVariableScanner() {}
-
 CxxVariable::Vec_t CxxVariableScanner::GetVariables(bool sort)
 {
     // this call does nothing if the buffer was already optimized

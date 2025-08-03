@@ -90,8 +90,6 @@ ShellTab::ShellTab(wxWindow* parent, wxWindowID id, const wxString& name)
     InitStyle(m_sci);
 }
 
-ShellTab::~ShellTab() {}
-
 void ShellTab::InitStyle(wxStyledTextCtrl* sci)
 {
     LexerConf::Ptr_t text = EditorConfigST::Get()->GetLexer("text");

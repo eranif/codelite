@@ -20,7 +20,7 @@ protected:
     wxString m_ifBlock; // In case this event should be wrapped with #if / #endif block, mark it here
 
 public:
-    ConnectDetails() {}
+    ConnectDetails() = default;
 
     ConnectDetails(const wxString& eventName, const wxString& eventClass, const wxString& description,
                    bool noBody = false, const wxString& functionNameAndSignature = "")
@@ -87,7 +87,7 @@ protected:
     MapMenuIdToName_t m_menuIdToName;
 
 public:
-    EventsDatabase();
+    EventsDatabase() = default;
     virtual ~EventsDatabase();
 
     // API

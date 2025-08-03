@@ -19,8 +19,6 @@ clAnsiEscapeCodeColourBuilder::clAnsiEscapeCodeColourBuilder(wxString* string)
 {
 }
 
-clAnsiEscapeCodeColourBuilder::~clAnsiEscapeCodeColourBuilder() {}
-
 clAnsiEscapeCodeColourBuilder& clAnsiEscapeCodeColourBuilder::Add(const wxString& text, int textColour, bool bold)
 {
     DoAddTextToBuffer(m_string, text, textColour, bold);

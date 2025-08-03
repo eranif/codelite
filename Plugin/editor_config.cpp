@@ -41,18 +41,12 @@
 #include <wx/xml/xml.h>
 
 //-------------------------------------------------------------------------------------------
-SimpleLongValue::SimpleLongValue() {}
-
-SimpleLongValue::~SimpleLongValue() {}
 
 void SimpleLongValue::Serialize(Archive& arch) { arch.Write(wxT("m_value"), m_value); }
 
 void SimpleLongValue::DeSerialize(Archive& arch) { arch.Read(wxT("m_value"), m_value); }
 
 //-------------------------------------------------------------------------------------------
-SimpleStringValue::SimpleStringValue() {}
-
-SimpleStringValue::~SimpleStringValue() {}
 
 void SimpleStringValue::Serialize(Archive& arch) { arch.Write(wxT("m_value"), m_value); }
 
@@ -356,9 +350,6 @@ bool EditorConfig::DoSave() const
 //--------------------------------------------------
 // Simple rectangle class wrapper
 //--------------------------------------------------
-SimpleRectValue::SimpleRectValue() {}
-
-SimpleRectValue::~SimpleRectValue() {}
 
 void SimpleRectValue::DeSerialize(Archive& arch)
 {

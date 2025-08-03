@@ -1,10 +1,6 @@
 #include "NodeFileManager.h"
 #include "NodeJSDebuggerBreakpoint.h"
 
-NodeJSBreakpoint::NodeJSBreakpoint() {}
-
-NodeJSBreakpoint::~NodeJSBreakpoint() {}
-
 void NodeJSBreakpoint::FromJSON(const JSONItem& json)
 {
     m_filename = json.namedObject("url").toString();

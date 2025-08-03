@@ -43,8 +43,6 @@ ThemeImporterInnoSetup::ThemeImporterInnoSetup()
     m_langName = "innosetup";
 }
 
-ThemeImporterInnoSetup::~ThemeImporterInnoSetup() {}
-
 LexerConf::Ptr_t ThemeImporterInnoSetup::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_INNOSETUP);

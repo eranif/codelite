@@ -33,7 +33,7 @@ enum {
 class WXDLLIMPEXP_SDK wxTerminalCtrl : public wxPanel
 {
 public:
-    wxTerminalCtrl();
+    wxTerminalCtrl() = default;
     wxTerminalCtrl(wxWindow* parent, wxWindowID winid, const wxString& working_directory,
                    const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
                    long style = wxTAB_TRAVERSAL | wxNO_BORDER | wxTERMINAL_CTRL_USE_EVENTS,

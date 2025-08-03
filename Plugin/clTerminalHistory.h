@@ -17,7 +17,7 @@ protected:
 
 public:
     clTerminalHistory();
-    virtual ~clTerminalHistory();
+    virtual ~clTerminalHistory() = default;
 
     void Add(const wxString& command);
     const wxString& ArrowUp();

@@ -45,7 +45,7 @@ public:
     virtual JSONItem ToJSON() const;
 
     NodeJSWorkspaceConfiguration(const wxFileName& filename);
-    virtual ~NodeJSWorkspaceConfiguration();
+    virtual ~NodeJSWorkspaceConfiguration() = default;
 
     NodeJSWorkspaceConfiguration& Load();
     NodeJSWorkspaceConfiguration& Save();

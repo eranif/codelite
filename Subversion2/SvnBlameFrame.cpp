@@ -46,5 +46,3 @@ SvnBlameFrame::SvnBlameFrame(wxWindow* parent, const wxFileName& filename, const
     SetName("SvnBlameFrame");
     WindowAttrManager::Load(this);
 }
-
-SvnBlameFrame::~SvnBlameFrame() {}

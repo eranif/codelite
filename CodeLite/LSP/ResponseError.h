@@ -30,8 +30,8 @@ public:
 
 public:
     ResponseError(const wxString& message);
-    ResponseError();
-    virtual ~ResponseError();
+    ResponseError() = default;
+    virtual ~ResponseError() = default;
     void FromJSON(const JSONItem& json);
     JSONItem ToJSON(const wxString& name) const;
     virtual std::string ToString() const;

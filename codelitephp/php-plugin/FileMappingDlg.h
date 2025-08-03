@@ -31,8 +31,8 @@ class FileMappingDlg : public FileMappingDlgBase
 {
 public:
     FileMappingDlg(wxWindow* parent);
-    virtual ~FileMappingDlg();
-    
+    virtual ~FileMappingDlg() = default;
+
     wxString GetSourceFolder() const {
         return m_dirPickerSource->GetPath();
     }

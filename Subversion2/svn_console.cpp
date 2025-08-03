@@ -61,8 +61,6 @@ SvnConsole::SvnConsole(wxStyledTextCtrl* stc, Subversion2* plugin)
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &SvnConsole::OnProcessEnd, this);
 }
 
-SvnConsole::~SvnConsole() {}
-
 void SvnConsole::OnReadProcessOutput(clProcessEvent& event)
 {
     m_output.Append(event.GetOutput());

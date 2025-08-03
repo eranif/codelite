@@ -29,10 +29,6 @@ ConfFormBuilder::ConfFormBuilder()
 {
 }
 
-ConfFormBuilder::~ConfFormBuilder()
-{
-}
-
 void ConfFormBuilder::DeSerialize(Archive& arch)
 {
 	arch.Read(wxT("m_command"), m_command);

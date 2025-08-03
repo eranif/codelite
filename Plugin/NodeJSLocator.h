@@ -41,8 +41,8 @@ protected:
     bool TryPaths(const wxArrayString& paths, const wxString& fullname, wxFileName& fullpath);
 
 public:
-    NodeJSLocator();
-    ~NodeJSLocator();
+    NodeJSLocator() = default;
+    ~NodeJSLocator() = default;
 
     /**
      * @brief attempt to auto locate nodejs installation

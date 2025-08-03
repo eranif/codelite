@@ -48,7 +48,7 @@ public:
         : m_data(data)
     {
     }
-    virtual ~MyStringClientData() {}
+    virtual ~MyStringClientData() = default;
 
     void SetData(const wxString& data) { m_data = data; }
     const wxString& GetData() const { return m_data; }

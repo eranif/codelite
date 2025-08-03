@@ -60,7 +60,7 @@ public:
         m_what.erase(0, m_what.find_first_not_of(trimString));
         m_what.erase(m_what.find_last_not_of(trimString) + 1);
     }
-    ~clSocketException() {}
+    ~clSocketException() = default;
     const std::string& what() const { return m_what; }
 };
 

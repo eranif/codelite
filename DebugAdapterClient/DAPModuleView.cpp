@@ -5,8 +5,6 @@ DAPModuleView::DAPModuleView(wxWindow* parent, clModuleLogger& log)
 {
 }
 
-DAPModuleView::~DAPModuleView() {}
-
 void DAPModuleView::AddModuleEvent(dap::ModuleEvent* event)
 {
     LOG_DEBUG(LOG) << "Adding module event..." << endl;

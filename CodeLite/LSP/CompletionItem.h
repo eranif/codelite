@@ -62,8 +62,8 @@ public:
     typedef std::vector<CompletionItem::Ptr_t> Vec_t;
 
 public:
-    CompletionItem();
-    virtual ~CompletionItem();
+    CompletionItem() = default;
+    virtual ~CompletionItem() = default;
     virtual JSONItem ToJSON(const wxString& name) const;
     virtual void FromJSON(const JSONItem& json);
     void SetDetail(const wxString& detail) { this->m_detail = detail; }

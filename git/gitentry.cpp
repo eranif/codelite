@@ -66,8 +66,6 @@ GitEntry::GitEntry()
     locator.MSWGetGitShellCommand(m_gitShellCommand);
 }
 
-GitEntry::~GitEntry() {}
-
 void GitEntry::FromJSON(const JSONItem& json)
 {
     m_entries = json.namedObject("m_entries").toStringMap();

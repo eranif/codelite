@@ -55,7 +55,7 @@ protected:
 public:
     BuilderGnuMake();
     BuilderGnuMake(const wxString& name, const wxString& buildTool, const wxString& buildToolOptions);
-    virtual ~BuilderGnuMake();
+    virtual ~BuilderGnuMake() = default;
 
     // Implement the Builder Interface
     virtual bool Export(const wxString& project, const wxString& confToBuild, const wxString& arguments,

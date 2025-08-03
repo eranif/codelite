@@ -29,8 +29,8 @@ class WorkspaceSymbolParams : public Params
     wxString m_query;
 
 public:
-    WorkspaceSymbolParams() {}
-    virtual ~WorkspaceSymbolParams() {}
+    WorkspaceSymbolParams() = default;
+    virtual ~WorkspaceSymbolParams() = default;
 
     virtual void FromJSON(const JSONItem& json) { m_query = json["query"].toString(); }
 
@@ -53,8 +53,6 @@ LSP::WorkspaceSymbolRequest::WorkspaceSymbolRequest(const wxString& query)
     m_params.reset(new WorkspaceSymbolParams());
     m_params->As<WorkspaceSymbolParams>()->SetQuery(query);
 }
-
-LSP::WorkspaceSymbolRequest::~WorkspaceSymbolRequest() {}
 
 void LSP::WorkspaceSymbolRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {

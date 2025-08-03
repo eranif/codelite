@@ -13,8 +13,6 @@ SelectDropTargetDlg::SelectDropTargetDlg(wxWindow* parent, const wxArrayString& 
     Initialize();
 }
 
-SelectDropTargetDlg::~SelectDropTargetDlg() {}
-
 void SelectDropTargetDlg::Initialize()
 {
     m_views = clGetManager()->GetWorkspaceView()->GetAllPages();

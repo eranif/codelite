@@ -21,8 +21,6 @@ PHPConfigurationData::PHPConfigurationData()
     m_phpOptions.Load();
 }
 
-PHPConfigurationData::~PHPConfigurationData() {}
-
 void PHPConfigurationData::FromJSON(const JSONItem& json)
 {
     m_findInFilesMask = json.namedObject("m_findInFilesMask").toString(m_findInFilesMask);

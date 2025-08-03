@@ -12,8 +12,6 @@ PHPRefactoringDlg::PHPRefactoringDlg(wxWindow* parent)
     CentreOnParent();
 }
 
-PHPRefactoringDlg::~PHPRefactoringDlg() {}
-
 void PHPRefactoringDlg::InitDialog()
 {
     PHPRefactoringOptions settings;

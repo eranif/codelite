@@ -96,8 +96,8 @@ wxString get_dap_settings_file()
 class StdioTransport : public dap::Transport
 {
 public:
-    StdioTransport() {}
-    ~StdioTransport() override {}
+    StdioTransport() = default;
+    ~StdioTransport() override = default;
 
     void SetProcess(DapProcess::Ptr_t process) { m_dap_server = process; }
 
@@ -310,8 +310,6 @@ void DebugAdapterClient::UnPlug()
     m_client.Unbind(wxEVT_DAP_MODULE_EVENT, &DebugAdapterClient::OnDapModuleEvent, this);
     EventNotifier::Get()->Unbind(wxEVT_NOTIFY_PAGE_CLOSING, &DebugAdapterClient::OnPageClosing, this);
 }
-
-DebugAdapterClient::~DebugAdapterClient() {}
 
 void DebugAdapterClient::RegisterDebuggers()
 {

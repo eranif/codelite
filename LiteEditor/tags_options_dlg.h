@@ -56,7 +56,7 @@ protected:
 
 public:
     CodeCompletionSettingsDialog(wxWindow* parent, const TagsOptionsData& data);
-    virtual ~CodeCompletionSettingsDialog();
+    virtual ~CodeCompletionSettingsDialog() = default;
     TagsOptionsData& GetData() { return m_data; }
 };
 

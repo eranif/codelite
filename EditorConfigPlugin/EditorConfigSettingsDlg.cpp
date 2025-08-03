@@ -9,5 +9,3 @@ EditorConfigSettingsDlg::EditorConfigSettingsDlg(wxWindow* parent)
     settings.Load();
     m_checkBoxEnable->SetValue(settings.IsEnabled());
 }
-
-EditorConfigSettingsDlg::~EditorConfigSettingsDlg() {}

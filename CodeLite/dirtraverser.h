@@ -55,7 +55,7 @@ public:
      * Construct a DirTraverser with a given file spec
      */
     DirTraverser(const wxString &filespec);
-    virtual ~DirTraverser();
+    virtual ~DirTraverser() = default;
 
     /**
      * This function is called once a file is found. The traverse of the directories

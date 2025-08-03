@@ -18,5 +18,3 @@ fmtJQ::fmtJQ()
     SetCommand({ jq_exe.value_or("jq"), ".", "-S", R"#("$(CurrentFileRelPath)")#" });
     SetEnabled(jq_exe.has_value());
 }
-
-fmtJQ::~fmtJQ() {}

@@ -22,7 +22,7 @@ protected:
     void SetCaretEnd();
 
 public:
-    wxTerminalColourHandler();
+    wxTerminalColourHandler() = default;
     ~wxTerminalColourHandler();
 
     void Append(const wxString& buffer, wxString* window_title);

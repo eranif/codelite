@@ -59,7 +59,7 @@ public:
     {
     }
 
-    virtual ~ColumnInfo() {}
+    virtual ~ColumnInfo() = default;
 
     void SetName(const wxString& name) { this->m_name = name; }
     void SetType(int type) { this->m_type = type; }

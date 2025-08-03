@@ -4,10 +4,6 @@
 #include "PHPEntityClass.h"
 #include "PHPLookupTable.h"
 
-PHPEntityVariable::PHPEntityVariable() {}
-
-PHPEntityVariable::~PHPEntityVariable() {}
-
 void PHPEntityVariable::PrintStdout(int indent) const
 {
     wxString indentString(' ', indent);

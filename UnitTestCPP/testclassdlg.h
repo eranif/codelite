@@ -59,7 +59,7 @@ protected:
 public:
     /** Constructor */
     TestClassDlg(wxWindow* parent, IManager* mgr, UnitTestPP* plugin);
-    virtual ~TestClassDlg();
+    virtual ~TestClassDlg() = default;
     wxArrayString GetTestsList();
 
     wxString GetFileName() { return m_textCtrlFileName->GetValue(); }

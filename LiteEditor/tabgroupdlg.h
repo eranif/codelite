@@ -36,7 +36,7 @@ class LoadTabGroupDlg : public LoadTabGroupBaseDlg
 
 public:
 	LoadTabGroupDlg(wxWindow* parent, const wxString& path, const wxArrayString& previousgroups);
-	virtual ~LoadTabGroupDlg();
+    virtual ~LoadTabGroupDlg() = default;
 
 	void SetListTabs(const wxArrayString& tabs) {
 		m_listBox->Set(tabs);
@@ -65,7 +65,7 @@ class SaveTabGroupDlg : public SaveTabGroupBaseDlg
 	virtual void OnClearAllUpdateUI( wxUpdateUIEvent& event );
 public:
 	SaveTabGroupDlg(wxWindow* parent, const wxArrayString& previousgroups);
-	virtual ~SaveTabGroupDlg();
+    virtual ~SaveTabGroupDlg() = default;
 	void SetListTabs(const wxArrayString& tabs) {
 		m_ListTabs->Set(tabs);
 		for ( unsigned int n=0; n < m_ListTabs->GetCount(); ++n ) {

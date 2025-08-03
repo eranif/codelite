@@ -8,10 +8,6 @@ namespace
 const wxString EMPTY_STRING;
 }
 
-FileContentTracker::FileContentTracker() {}
-
-FileContentTracker::~FileContentTracker() {}
-
 bool FileContentTracker::exists(const wxString& filepath)
 {
     FileState* dummy = nullptr;

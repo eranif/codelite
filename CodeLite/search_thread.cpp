@@ -103,8 +103,6 @@ SearchThread::SearchThread()
     m_stopWatch.Start();
 }
 
-SearchThread::~SearchThread() {}
-
 wxRegEx& SearchThread::GetRegex(const wxString& expr, bool matchCase)
 {
     if (m_reExpr == expr && matchCase == m_matchCase) {

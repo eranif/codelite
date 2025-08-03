@@ -63,7 +63,7 @@ protected:
 public:
     /** Constructor */
     AccelTableDlg(wxWindow* parent);
-    virtual ~AccelTableDlg();
+    virtual ~AccelTableDlg() = default;
 };
 
 #endif // __acceltabledlg__

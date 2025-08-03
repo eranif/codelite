@@ -66,7 +66,7 @@ public:
               const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
               long style = wxDP_USE_TEXTCTRL);
 
-    virtual ~DirPicker();
+    virtual ~DirPicker() = default;
 
     /**
      * \return the path

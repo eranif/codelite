@@ -6,8 +6,6 @@ clScrollBar::clScrollBar(wxWindow* parent, wxWindowID id, const wxPoint& pos, co
     Hide();
 }
 
-clScrollBar::~clScrollBar() {}
-
 void clScrollBar::SetScrollbar(int position, int thumbSize, int range, int pageSize, bool refresh)
 {
     m_thumb_size = thumbSize;

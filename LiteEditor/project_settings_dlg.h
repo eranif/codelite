@@ -46,8 +46,8 @@ class WorkspaceTab;
 class IProjectSettingsPage
 {
 public:
-    IProjectSettingsPage() {}
-    virtual ~IProjectSettingsPage() {}
+    IProjectSettingsPage() = default;
+    virtual ~IProjectSettingsPage() = default;
 
     virtual void Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr) = 0;
     virtual void Load(BuildConfigPtr buildConf) = 0;

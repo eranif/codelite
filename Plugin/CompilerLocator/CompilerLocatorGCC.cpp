@@ -33,10 +33,6 @@
 #include <wx/filename.h>
 #include <wx/regex.h>
 
-CompilerLocatorGCC::CompilerLocatorGCC() {}
-
-CompilerLocatorGCC::~CompilerLocatorGCC() {}
-
 CompilerPtr CompilerLocatorGCC::Locate(const wxString& folder)
 {
     m_compilers.clear();

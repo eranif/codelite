@@ -63,9 +63,9 @@ public:
     BreakpointOrigin origin = BO_Other;
 
     clDebuggerBreakpoint(const clDebuggerBreakpoint& BI);
-    clDebuggerBreakpoint();
+    clDebuggerBreakpoint() = default;
     clDebuggerBreakpoint& operator=(const clDebuggerBreakpoint& BI);
-    ~clDebuggerBreakpoint();
+    ~clDebuggerBreakpoint() = default;
 
     bool IsConditional()
     {

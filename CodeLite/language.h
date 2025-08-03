@@ -54,8 +54,8 @@ class TemplateHelper
     wxString typeName;
 
 public:
-    TemplateHelper() {}
-    ~TemplateHelper() {}
+    TemplateHelper() = default;
+    ~TemplateHelper() = default;
 
     void SetTemplateInstantiation(const wxString& templateInstantiation);
 
@@ -148,7 +148,7 @@ private:
     /**
      * Private destructor
      */
-    virtual ~Language();
+    virtual ~Language() = default;
 
     void ParseTemplateArgs(const wxString& argListStr, wxArrayString& argsList);
     void ParseTemplateInitList(const wxString& argListStr, wxArrayString& argsList);

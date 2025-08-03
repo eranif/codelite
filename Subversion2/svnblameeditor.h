@@ -45,7 +45,7 @@ public:
                    const wxPoint& pos = wxDefaultPosition,
                    const wxSize& size = wxDefaultSize, long style = 0,
                    const wxString& name = wxSTCNameStr);
-    virtual ~SvnBlameEditor();
+    virtual ~SvnBlameEditor() = default;
 
     void SetText(const wxString &text);
     void Initialize();

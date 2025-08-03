@@ -11,7 +11,7 @@ class WXDLLIMPEXP_CL CodeActionRequest : public Request
 public:
     CodeActionRequest(const LSP::TextDocumentIdentifier& textDocument, const LSP::Range& range,
                       const std::vector<LSP::Diagnostic>& diags = {});
-    virtual ~CodeActionRequest();
+    ~CodeActionRequest() override = default;
 
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
 };

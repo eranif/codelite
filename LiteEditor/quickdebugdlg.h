@@ -49,7 +49,7 @@ protected:
 
 public:
     QuickDebugDlg(wxWindow* parent);
-    virtual ~QuickDebugDlg();
+    virtual ~QuickDebugDlg() = default;
 };
 
 #endif // __quickdebugdlg__

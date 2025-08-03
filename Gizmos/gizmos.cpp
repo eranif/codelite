@@ -88,8 +88,6 @@ WizardsPlugin::WizardsPlugin(IManager* manager)
     m_shortName = "Wizards";
 }
 
-WizardsPlugin::~WizardsPlugin() {}
-
 void WizardsPlugin::CreateToolBar(clToolBarGeneric* toolbar)
 {
     wxUnusedVar(toolbar);

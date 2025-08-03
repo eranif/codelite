@@ -11,7 +11,7 @@ protected:
     void ApplyTheme();
 
 public:
-    clThemedChoice();
+    clThemedChoice() = default;
     clThemedChoice(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
                    const wxArrayString& choices, long style = 0, const wxValidator& validator = wxDefaultValidator,
                    const wxString& name = wxChoiceNameStr);

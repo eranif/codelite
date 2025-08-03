@@ -273,7 +273,7 @@ public:
 
 private:
     Allocator();
-    virtual ~Allocator();
+    virtual ~Allocator() = default;
 
 public:
     wxcWidget* Create(int id);

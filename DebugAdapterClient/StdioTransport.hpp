@@ -15,8 +15,8 @@ private:
     StdioTransport& operator=(StdioTransport&&) = delete;
 
 public:
-    StdioTransport();
-    virtual ~StdioTransport();
+    StdioTransport() = default;
+    virtual ~StdioTransport() = default;
 
     /**
      * @brief return a buffer from the network with a given timeout

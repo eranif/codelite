@@ -13,10 +13,6 @@
 
 wxDEFINE_EVENT(wxEVT_NODE_COMMAND_TERMINATED, clProcessEvent);
 
-clNodeJS::clNodeJS() {}
-
-clNodeJS::~clNodeJS() {}
-
 bool clNodeJS::Initialise(const wxArrayString& hints)
 {
     if(!IsInitialised()) {

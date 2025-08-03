@@ -1,8 +1,6 @@
 #include "ObjectPreview.h"
 #include "PropertyPreview.h"
 
-PropertyPreview::PropertyPreview() {}
-
 PropertyPreview::~PropertyPreview() { wxDELETE(m_valuePreview); }
 
 void PropertyPreview::FromJSON(const JSONItem& json)

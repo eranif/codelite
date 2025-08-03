@@ -9,8 +9,8 @@
 class WXDLLIMPEXP_SDK clTreeNodeVisitor
 {
 public:
-    clTreeNodeVisitor();
-    virtual ~clTreeNodeVisitor();
+    clTreeNodeVisitor() = default;
+    virtual ~clTreeNodeVisitor() = default;
 
     /**
      * @brief Visit the tree in order

@@ -31,8 +31,8 @@
 class UnitTestData : public SerializedObject {
 
 public:
-	UnitTestData();
-	~UnitTestData();
+	UnitTestData() = default;
+	~UnitTestData() = default;
 
 public:
 	virtual void DeSerialize(Archive &arch);

@@ -15,7 +15,7 @@ protected:
 
 public:
     NodeMessageBase(const wxString& eventName);
-    virtual ~NodeMessageBase();
+    virtual ~NodeMessageBase() = default;
     /**
      * @brief process message in JSON format
      */

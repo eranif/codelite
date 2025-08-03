@@ -37,8 +37,6 @@ clProcess::clProcess(int id, const wxString& cmdLine, bool redirect)
 {
 }
 
-clProcess::~clProcess() {}
-
 long clProcess::GetPid() { return m_pid; }
 
 void clProcess::SetPid(long pid) { m_pid = pid; }

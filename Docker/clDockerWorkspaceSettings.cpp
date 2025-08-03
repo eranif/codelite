@@ -7,8 +7,6 @@ clDockerWorkspaceSettings::clDockerWorkspaceSettings()
 {
 }
 
-clDockerWorkspaceSettings::~clDockerWorkspaceSettings() {}
-
 void clDockerWorkspaceSettings::FromJSON(const JSONItem& json)
 {
     m_files.clear();

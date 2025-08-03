@@ -7,7 +7,7 @@ class RustWorkspace : public LocalWorkspaceCommon
 {
 public:
     RustWorkspace();
-    virtual ~RustWorkspace();
+    ~RustWorkspace() override = default;
 
 public:
     wxString GetActiveProjectName() const override { return wxEmptyString; }

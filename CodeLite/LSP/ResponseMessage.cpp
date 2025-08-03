@@ -9,8 +9,6 @@ LSP::ResponseMessage::ResponseMessage(std::unique_ptr<JSON>&& json)
     FromJSON(m_json->toElement());
 }
 
-LSP::ResponseMessage::~ResponseMessage() {}
-
 std::string LSP::ResponseMessage::ToString() const
 {
     if(!m_json || !m_json->isOk()) {

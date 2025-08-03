@@ -89,8 +89,6 @@ Copyright::Copyright(IManager* manager)
                                               {"batch_insert_copyrights", _("Settings...")}});
 }
 
-Copyright::~Copyright() {}
-
 void Copyright::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void Copyright::CreatePluginMenu(wxMenu* pluginsMenu)

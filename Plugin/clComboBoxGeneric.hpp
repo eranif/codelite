@@ -35,7 +35,7 @@ protected:
     void OnFocus(wxFocusEvent& event);
 
 public:
-    clComboBoxGeneric();
+    clComboBoxGeneric() = default;
     clComboBoxGeneric(wxWindow* parent, wxWindowID id, const wxString& value = wxEmptyString,
                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, size_t n = 0,
                       const wxString choices[] = NULL, long style = 0,
@@ -50,7 +50,7 @@ public:
     bool Create(wxWindow* parent, wxWindowID id, const wxString& value, const wxPoint& pos, const wxSize& size,
                 const wxArrayString& choices, long style = 0, const wxValidator& validator = wxDefaultValidator,
                 const wxString& name = wxComboBoxNameStr);
-    virtual ~clComboBoxGeneric();
+    virtual ~clComboBoxGeneric() = default;
 
     /**
      * @brief set the focus to the text entry

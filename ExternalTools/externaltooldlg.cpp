@@ -38,8 +38,6 @@ ExternalToolDlg::ExternalToolDlg(wxWindow* parent, IManager* mgr)
     CentreOnParent();
 }
 
-ExternalToolDlg::~ExternalToolDlg() {}
-
 void ExternalToolDlg::OnItemActivated(wxDataViewEvent& event) { DoEditEntry(event.GetItem()); }
 
 void ExternalToolDlg::OnButtonNew(wxCommandEvent& event)

@@ -38,7 +38,7 @@ class NewItemDlg : public NewItemBaseDlg
 {
 public:
     NewItemDlg(wxWindow* parent, const wxString& cwd);
-    virtual ~NewItemDlg();
+    virtual ~NewItemDlg() = default;
     wxFileName GetFileName() const;
 
 protected:

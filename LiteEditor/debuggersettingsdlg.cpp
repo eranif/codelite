@@ -66,8 +66,6 @@ DebuggerPageMisc::DebuggerPageMisc(wxWindow* parent, const wxString& title)
 #endif
 }
 
-DebuggerPageMisc::~DebuggerPageMisc() {}
-
 void DebuggerPageMisc::OnDebugAssert(wxCommandEvent& event) {}
 
 void DebuggerPageMisc::OnWindowsUI(wxUpdateUIEvent& event) {}
@@ -90,8 +88,6 @@ DebuggerPageStartupCmds::DebuggerPageStartupCmds(wxWindow* parent, const wxStrin
         m_textCtrlStartupCommands->SetText(info.initFileCommands);
     }
 }
-
-DebuggerPageStartupCmds::~DebuggerPageStartupCmds() {}
 
 ///////////////////////////////////////////////////
 // General Page
@@ -121,8 +117,6 @@ DebuggerPage::DebuggerPage(wxWindow* parent, wxString title)
         m_checkBoxDefaultHexDisplay->SetValue(info.defaultHexDisplay);
     }
 }
-
-DebuggerPage::~DebuggerPage() {}
 
 void DebuggerPage::OnBrowse(wxCommandEvent& e)
 {
@@ -168,8 +162,6 @@ DbgPagePreDefTypes::DbgPagePreDefTypes(wxWindow* parent)
             new PreDefinedTypesPage(m_notebookPreDefTypes, p.second), p.first, p.second.IsActive());
     }
 }
-
-DbgPagePreDefTypes::~DbgPagePreDefTypes() {}
 
 void DbgPagePreDefTypes::Save()
 {
@@ -386,8 +378,6 @@ void DebuggerSettingsDlg::OnButtonCancel(wxCommandEvent& e)
     wxUnusedVar(e);
     EndModal(wxID_CANCEL);
 }
-
-DebuggerSettingsDlg::~DebuggerSettingsDlg() {}
 
 void DebuggerPage::OnSuperuserUI(wxUpdateUIEvent& event)
 {

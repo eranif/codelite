@@ -1,8 +1,6 @@
 #include "ObjectPreview.h"
 #include "PropertyPreview.h"
 
-ObjectPreview::ObjectPreview() {}
-
 ObjectPreview::~ObjectPreview() { DeleteProperties(); }
 
 void ObjectPreview::FromJSON(const JSONItem& json)

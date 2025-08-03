@@ -5,10 +5,6 @@ NavBar::NavBar(wxWindow* parent)
 {
 }
 
-NavBar::~NavBar()
-{
-}
-
 void NavBar::OnFunction(wxCommandEvent& event)
 {
 }

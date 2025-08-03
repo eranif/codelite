@@ -167,8 +167,6 @@ MemCheckIterTools::LocationListIterator::LocationListIterator(LocationList & l,
         ++p;
 }
 
-MemCheckIterTools::LocationListIterator::~LocationListIterator() {}
-
 LocationList::iterator& MemCheckIterTools::LocationListIterator::operator++()
 {
     ++p;
@@ -207,8 +205,6 @@ MemCheckIterTools::ErrorListIterator::ErrorListIterator(ErrorList & l, const Ite
     while (p != m_end && m_iterTool.omitSuppressed && p->suppressed)
         ++p;
 }
-
-MemCheckIterTools::ErrorListIterator::~ErrorListIterator() {}
 
 ErrorList::iterator& MemCheckIterTools::ErrorListIterator::operator++()
 {

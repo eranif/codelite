@@ -54,7 +54,7 @@ struct wxCodeCompletionClientData : public wxClientData {
         : m_connected(false)
     {
     }
-    virtual ~wxCodeCompletionClientData() {}
+    ~wxCodeCompletionClientData() override = default;
 };
 } // namespace
 

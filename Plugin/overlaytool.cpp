@@ -47,8 +47,6 @@ OverlayTool::OverlayTool()
     ms_bmpConflict = bl->LoadBitmap("overlay/16/conflicted");
 }
 
-OverlayTool::~OverlayTool() {}
-
 wxBitmap OverlayTool::DoAddBitmap(const wxBitmap& bmp, const wxColour& colour) const
 {
     wxMemoryDC dcMem;

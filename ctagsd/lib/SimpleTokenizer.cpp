@@ -7,8 +7,6 @@ SimpleTokenizer::SimpleTokenizer(const wxString& str)
 {
 }
 
-SimpleTokenizer::~SimpleTokenizer() {}
-
 #define __PEEK_LOOKAHEAD_N(__N, c)       \
     if((m_pos + __N) < m_str.length()) { \
         c = m_str[m_pos + __N];          \

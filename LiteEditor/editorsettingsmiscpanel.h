@@ -37,7 +37,7 @@ private:
 
 public:
     EditorSettingsMiscPanel(wxWindow* parent, OptionsConfigPtr options);
-    virtual ~EditorSettingsMiscPanel() {}
+    ~EditorSettingsMiscPanel() override = default;
 };
 
 #endif // __EDITORSETTINGSMISCPANEL__

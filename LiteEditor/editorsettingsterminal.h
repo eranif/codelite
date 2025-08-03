@@ -32,7 +32,7 @@ class EditorSettingsTerminal : public OptionsConfigPage
 {
 public:
     EditorSettingsTerminal(wxWindow* parent, OptionsConfigPtr options);
-    virtual ~EditorSettingsTerminal() {}
+    ~EditorSettingsTerminal() override = default;
 };
 
 #endif // __editorsettingsterminal__

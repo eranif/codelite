@@ -204,8 +204,6 @@ CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip, bool strip
     Bind(wxEVT_ERASE_BACKGROUND, &CCBoxTipWindow::OnEraseBG, this);
 }
 
-CCBoxTipWindow::~CCBoxTipWindow() {}
-
 void CCBoxTipWindow::DoInitialize(size_t numOfTips)
 {
     m_numOfTips = numOfTips;

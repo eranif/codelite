@@ -19,8 +19,8 @@ class WXDLLIMPEXP_SDK clLocaleManager : public wxEvtHandler
     int m_system_default_locale = wxNOT_FOUND;
 
 private:
-    clLocaleManager();
-    ~clLocaleManager();
+    clLocaleManager() = default;
+    ~clLocaleManager() = default;
 
     void OnScanCompleted(const LocaleParams& params);
 

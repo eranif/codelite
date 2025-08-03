@@ -13,8 +13,8 @@ class CallFrameScope : public nSerializableObject
 public:
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
-    CallFrameScope();
-    virtual ~CallFrameScope();
+    CallFrameScope() = default;
+    virtual ~CallFrameScope() = default;
 
     void SetRemoteObject(const RemoteObject& remoteObject) { this->m_remoteObject = remoteObject; }
     void SetType(const wxString& type) { this->m_type = type; }

@@ -41,8 +41,6 @@ SFTPWorkerThread::SFTPWorkerThread()
 {
 }
 
-SFTPWorkerThread::~SFTPWorkerThread() {}
-
 SFTPWorkerThread* SFTPWorkerThread::Instance()
 {
     if (ms_instance == 0) {
@@ -285,8 +283,6 @@ SFTPThreadRequet& SFTPThreadRequet::operator=(const SFTPThreadRequet& other)
     return *this;
 }
 
-SFTPThreadRequet::~SFTPThreadRequet() {}
-
 ThreadRequest* SFTPThreadRequet::Clone() const { return new SFTPThreadRequet(*this); }
 
 // -----------------------------------------
@@ -297,5 +293,3 @@ SFTPThreadMessage::SFTPThreadMessage()
     : m_status(STATUS_NONE)
 {
 }
-
-SFTPThreadMessage::~SFTPThreadMessage() {}

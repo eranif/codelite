@@ -23,5 +23,3 @@ GitStatusCode::GitStatusCode(const wxString& message)
         }
     }
 }
-
-GitStatusCode::~GitStatusCode() {}

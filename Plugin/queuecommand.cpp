@@ -70,8 +70,6 @@ QueueCommand::QueueCommand(int kind)
     }
 }
 
-QueueCommand::~QueueCommand() {}
-
 void QueueCommand::SetConfiguration(const wxString& configuration) { this->m_configuration = configuration; }
 
 void QueueCommand::SetProject(const wxString& project) { this->m_project = project; }

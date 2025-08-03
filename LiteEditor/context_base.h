@@ -80,7 +80,7 @@ public:
     ContextBase(clEditor* container);
     ContextBase(const wxString& name);
 
-    virtual ~ContextBase();
+    virtual ~ContextBase() = default;
 
     /**
      * @brief user typed '@' inside a block comment. Code complete possible keywords

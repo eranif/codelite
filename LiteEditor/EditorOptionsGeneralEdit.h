@@ -32,6 +32,6 @@ class EditorOptionsGeneralEdit : public OptionsConfigPage
 {
 public:
     EditorOptionsGeneralEdit(wxWindow* parent, OptionsConfigPtr options);
-    virtual ~EditorOptionsGeneralEdit();
+    virtual ~EditorOptionsGeneralEdit() = default;
 };
 #endif // EDITOROPTIONSGENERALEDIT_H

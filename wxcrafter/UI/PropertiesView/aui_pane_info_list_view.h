@@ -10,7 +10,7 @@ class AuiPaneInfoListView
 
 public:
     AuiPaneInfoListView();
-    virtual ~AuiPaneInfoListView();
+    virtual ~AuiPaneInfoListView() = default;
     void Changed(wxPropertyGrid* pg, wxPropertyGridEvent& e);
     void Construct(wxPropertyGrid* pg, wxcWidget* wb);
 };

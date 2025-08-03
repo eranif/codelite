@@ -26,10 +26,6 @@
 #include "build_custom_targets_menu_manager.h"
 #include "macros.h"
 
-CustomTargetsMgr::CustomTargetsMgr() {}
-
-CustomTargetsMgr::~CustomTargetsMgr() {}
-
 CustomTargetsMgr& CustomTargetsMgr::Get()
 {
     static CustomTargetsMgr theMgr;

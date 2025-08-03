@@ -7,7 +7,7 @@ class fmtJQ : public GenericFormatter
 {
 public:
     fmtJQ();
-    virtual ~fmtJQ();
+    ~fmtJQ() override = default;
 };
 
 #endif // FMTJQ_HPP

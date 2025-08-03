@@ -2,8 +2,6 @@
 
 clFunction::clFunction() { Reset(); }
 
-clFunction::~clFunction() {}
-
 void clFunction::Reset()
 {
     m_name = "";

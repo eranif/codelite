@@ -16,10 +16,6 @@ XDebugStackGetCmdHandler::XDebugStackGetCmdHandler(XDebugManager* mgr, int trans
 {
 }
 
-XDebugStackGetCmdHandler::~XDebugStackGetCmdHandler()
-{
-}
-
 void XDebugStackGetCmdHandler::Process(const wxXmlNode* response)
 {
     wxArrayString stackTrace;

@@ -95,8 +95,6 @@ wxFormBuilder::wxFormBuilder(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &wxFormBuilder::OnShowFileContextMenu, this);
 }
 
-wxFormBuilder::~wxFormBuilder() {}
-
 void wxFormBuilder::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void wxFormBuilder::CreatePluginMenu(wxMenu* pluginsMenu)

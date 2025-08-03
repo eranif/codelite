@@ -62,8 +62,6 @@ Project::Project()
     m_settings = std::make_shared<ProjectSettings>(nullptr);
 }
 
-Project::~Project() {}
-
 bool Project::Create(const wxString& name, const wxString& description, const wxString& path, const wxString& projType)
 {
     m_fileName = wxFileName(path, name);

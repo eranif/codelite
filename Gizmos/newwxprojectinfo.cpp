@@ -33,8 +33,3 @@ NewWxProjectInfo::NewWxProjectInfo()
 	flags |= wxWidgetsUnicode;
 	SetFlags(flags);
 }
-
-NewWxProjectInfo::~NewWxProjectInfo()
-{
-}
-

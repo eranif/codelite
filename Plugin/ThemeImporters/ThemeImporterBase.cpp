@@ -72,10 +72,6 @@ wxString adjust_colour(const wxString& col, bool is_dark)
 
 } // namespace
 
-ThemeImporterBase::ThemeImporterBase() {}
-
-ThemeImporterBase::~ThemeImporterBase() {}
-
 void ThemeImporterBase::GetEclipseXmlProperty(const wxString& bg_prop,
                                               const wxString& fg_prop,
                                               ThemeImporterBase::Property& prop) const

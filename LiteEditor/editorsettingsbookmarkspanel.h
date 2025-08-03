@@ -32,7 +32,7 @@ class EditorSettingsBookmarksPanel : public OptionsConfigPage
 {
 public:
     EditorSettingsBookmarksPanel(wxWindow* parent, OptionsConfigPtr options);
-    virtual ~EditorSettingsBookmarksPanel() {}
+    ~EditorSettingsBookmarksPanel() override = default;
 };
 
 #endif // __EDITORSETTHINGSBOOKMARKSPANEL__

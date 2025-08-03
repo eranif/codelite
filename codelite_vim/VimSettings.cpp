@@ -6,8 +6,6 @@ VimSettings::VimSettings()
 {
 }
 
-VimSettings::~VimSettings() {}
-
 void VimSettings::FromJSON(const JSONItem& json) { m_enabled = json.namedObject("enabled").toBool(m_enabled); }
 
 JSONItem VimSettings::ToJSON() const

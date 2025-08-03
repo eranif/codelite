@@ -15,7 +15,7 @@ struct DAPVariableListCtrlItemData : public wxTreeItemData {
         , value(v)
     {
     }
-    virtual ~DAPVariableListCtrlItemData() {}
+    virtual ~DAPVariableListCtrlItemData() = default;
 };
 
 class DAPVariableListCtrl : public clThemedTreeCtrl
@@ -34,7 +34,7 @@ public:
     DAPVariableListCtrl(wxWindow* parent, dap::Client* client, dap::EvaluateContext dapContext,
                         wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                         const wxSize& size = wxDefaultSize);
-    virtual ~DAPVariableListCtrl();
+    virtual ~DAPVariableListCtrl() = default;
     /**
      * @brief add a watch to the list of watches
      */

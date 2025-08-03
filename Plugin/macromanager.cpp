@@ -39,10 +39,6 @@
 
 #include <wx/regex.h>
 
-MacroManager::MacroManager() {}
-
-MacroManager::~MacroManager() {}
-
 MacroManager* MacroManager::Instance()
 {
     static MacroManager ms_instance;

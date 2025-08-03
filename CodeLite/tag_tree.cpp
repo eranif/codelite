@@ -32,10 +32,6 @@ TagTree::TagTree(const wxString& key, const TagEntry& data)
 {
 }
 
-TagTree::~TagTree()
-{
-}
-
 /// Util function to help us to build a tree from tags
 TagNode* TagTree::AddEntry(TagEntry& tag)
 {

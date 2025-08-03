@@ -13,8 +13,8 @@ class WXDLLIMPEXP_SDK clShellHelper
     wxArrayString m_cleanup_scripts;
 
 public:
-    clShellHelper();
-    ~clShellHelper();
+    clShellHelper() = default;
+    ~clShellHelper() = default;
     /**
      * @brief attempt to process an input command
      * return true if the command was modified

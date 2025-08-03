@@ -23,8 +23,8 @@ public:
 protected:
     wxFileName GetFileName(const wxString& bin_dir, const wxString& fullname) const;
 
-    CompilerLocatorMSYS2();
-    virtual ~CompilerLocatorMSYS2();
+    CompilerLocatorMSYS2() = default;
+    virtual ~CompilerLocatorMSYS2() = default;
 
     CompilerPtr TryToolchain(const wxString& folder, const std::unordered_map<wxString, wxString>& toolchain);
 
@@ -36,28 +36,28 @@ class WXDLLIMPEXP_SDK CompilerLocatorMSYS2Usr : public CompilerLocatorMSYS2
 {
 public:
     CompilerLocatorMSYS2Usr();
-    virtual ~CompilerLocatorMSYS2Usr();
+    virtual ~CompilerLocatorMSYS2Usr() = default;
 };
 
 class WXDLLIMPEXP_SDK CompilerLocatorMSYS2Clang64 : public CompilerLocatorMSYS2
 {
 public:
     CompilerLocatorMSYS2Clang64();
-    virtual ~CompilerLocatorMSYS2Clang64();
+    virtual ~CompilerLocatorMSYS2Clang64() = default;
 };
 
 class WXDLLIMPEXP_SDK CompilerLocatorMSYS2Mingw64 : public CompilerLocatorMSYS2
 {
 public:
     CompilerLocatorMSYS2Mingw64();
-    virtual ~CompilerLocatorMSYS2Mingw64();
+    virtual ~CompilerLocatorMSYS2Mingw64() = default;
 };
 
 class WXDLLIMPEXP_SDK CompilerLocatorMSYS2Env : public CompilerLocatorMSYS2
 {
 public:
     CompilerLocatorMSYS2Env();
-    virtual ~CompilerLocatorMSYS2Env();
+    virtual ~CompilerLocatorMSYS2Env() = default;
 
     /**
      * @brief locate all compilers based on the PATH env variable

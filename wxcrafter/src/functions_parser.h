@@ -16,7 +16,7 @@ protected:
 
 public:
     FunctionsParser(wxcWidget::Map_t& connectedEvents, const wxString& clsname, const wxString& header);
-    virtual ~FunctionsParser();
+    virtual ~FunctionsParser() = default;
 
     const wxcWidget::Map_t& GetAllEvents() const { return m_allEvents; }
     void Parse();

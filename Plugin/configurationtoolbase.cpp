@@ -39,8 +39,6 @@ ConfigurationToolBase::ConfigurationToolBase()
 {
 }
 
-ConfigurationToolBase::~ConfigurationToolBase() {}
-
 bool ConfigurationToolBase::Load(const wxString& fileName)
 {
     // Try to open the file from the user data settings first

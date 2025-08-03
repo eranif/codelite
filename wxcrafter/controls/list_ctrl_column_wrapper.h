@@ -7,7 +7,7 @@ class ListCtrlColumnWrapper : public wxcWidget
 {
 public:
     ListCtrlColumnWrapper();
-    ~ListCtrlColumnWrapper() override;
+    ~ListCtrlColumnWrapper() override = default;
 
 public:
     wxcWidget* Clone() const override;

@@ -38,7 +38,7 @@ protected:
 
 public:
     PHPSettingsDlg(wxWindow* parent);
-    virtual ~PHPSettingsDlg();
+    virtual ~PHPSettingsDlg() = default;
     void OnOK(wxCommandEvent& event);
 };
 

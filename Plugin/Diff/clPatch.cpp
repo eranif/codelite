@@ -16,8 +16,6 @@ clPatch::clPatch()
     ::FileUtils::FindExe("patch", m_patch, hints);
 }
 
-clPatch::~clPatch() {}
-
 void clPatch::Patch(const wxFileName& patchFile, const wxString& workingDirectory, const wxString& args)
 {
     // Sanity

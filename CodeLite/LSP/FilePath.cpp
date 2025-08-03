@@ -10,6 +10,3 @@ LSP::FilePath::FilePath(const wxString& path)
 #endif
 }
 
-LSP::FilePath::FilePath() {}
-
-LSP::FilePath::~FilePath() {}

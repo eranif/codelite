@@ -41,8 +41,6 @@ SQLiteDbAdapter::SQLiteDbAdapter(const wxString& fileName)
     m_adapterType = atSQLITE;
 }
 
-SQLiteDbAdapter::~SQLiteDbAdapter() {}
-
 void SQLiteDbAdapter::CloseConnection() {}
 DatabaseLayerPtr SQLiteDbAdapter::GetDatabaseLayer(const wxString& dbName)
 {

@@ -232,7 +232,7 @@ public:
     /**
      *	Destructor
      */
-    virtual ~TagEntry();
+    virtual ~TagEntry() = default;
 
     /**
      * @brief return if this tag entry is a function template

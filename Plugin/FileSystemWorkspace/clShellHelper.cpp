@@ -6,10 +6,6 @@
 
 #include <wx/tokenzr.h>
 
-clShellHelper::clShellHelper() {}
-
-clShellHelper::~clShellHelper() {}
-
 bool clShellHelper::ProcessCommand(const wxString& cmd)
 {
     // Check if multiline command

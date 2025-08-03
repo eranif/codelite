@@ -28,7 +28,7 @@ protected:
 
 public:
     clHeaderBar(clControlWithItems* parent, const clColours& colours);
-    virtual ~clHeaderBar();
+    virtual ~clHeaderBar() = default;
 
     void SetHeaderFont(const wxFont& headerFont) { this->m_headerFont = headerFont; }
     const wxFont& GetHeaderFont() const { return m_headerFont; }

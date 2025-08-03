@@ -20,8 +20,6 @@ FilesCollector::FilesCollector(wxArrayString& filesAndFolders,
     m_excludeFolders.insert(arrFolders.begin(), arrFolders.end());
 }
 
-FilesCollector::~FilesCollector() {}
-
 bool FilesCollector::IsFileOK(const wxString& filename) const
 {
     if (FileUtils::WildMatch(m_specArray, filename)) {

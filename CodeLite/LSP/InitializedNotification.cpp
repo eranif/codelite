@@ -18,6 +18,4 @@ InitializedNotification::InitializedNotification()
     m_params.reset(new InitializedParams());
 }
 
-InitializedNotification::~InitializedNotification() {}
-
 } // namespace LSP

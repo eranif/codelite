@@ -14,8 +14,6 @@ NewPHPClass::NewPHPClass(wxWindow* parent, const wxString& classPath)
     WindowAttrManager::Load(this);
 }
 
-NewPHPClass::~NewPHPClass() {  }
-
 void NewPHPClass::OnOKUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlClassName->GetValue().IsEmpty()); }
 
 PHPClassDetails NewPHPClass::GetDetails() const

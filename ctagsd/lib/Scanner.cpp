@@ -5,10 +5,6 @@
 #include "Cxx/CxxTokenizer.h"
 #include "fileutils.h"
 
-Scanner::Scanner() {}
-
-Scanner::~Scanner() {}
-
 void Scanner::scan(const wxFileName& current_file, const wxArrayString& search_path, wxStringSet_t* includes_set,
                    wxStringSet_t* using_ns_set)
 {

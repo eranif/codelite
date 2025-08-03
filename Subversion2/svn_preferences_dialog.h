@@ -53,7 +53,7 @@ protected:
 public:
 	/** Constructor */
 	SvnPreferencesDialog( wxWindow* parent, Subversion2 *plugin );
-	virtual ~SvnPreferencesDialog();
+	virtual ~SvnPreferencesDialog() = default;
 };
 
 #endif // __svn_preferences_dialog__

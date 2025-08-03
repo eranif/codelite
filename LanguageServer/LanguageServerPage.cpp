@@ -42,8 +42,6 @@ LanguageServerPage::LanguageServerPage(wxWindow* parent)
     }
 }
 
-LanguageServerPage::~LanguageServerPage() {}
-
 LanguageServerEntry LanguageServerPage::GetData() const
 {
     // build the command

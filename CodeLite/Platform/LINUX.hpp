@@ -16,8 +16,8 @@ protected:
     std::optional<wxString> get_rustup_bin_folder();
 
 public:
-    LINUX() {}
-    virtual ~LINUX() {}
+    LINUX() = default;
+    virtual ~LINUX() = default;
 
     static LINUX* Get();
 

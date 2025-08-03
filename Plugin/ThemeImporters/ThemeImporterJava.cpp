@@ -38,8 +38,6 @@ ThemeImporterJava::ThemeImporterJava()
     SetLangName("java");
 }
 
-ThemeImporterJava::~ThemeImporterJava() {}
-
 LexerConf::Ptr_t ThemeImporterJava::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_CPP);

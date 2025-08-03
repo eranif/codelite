@@ -71,5 +71,3 @@ EditorOptionsGeneralGuidesPanel::EditorOptionsGeneralGuidesPanel(wxWindow* paren
         }
     });
 }
-
-EditorOptionsGeneralGuidesPanel::~EditorOptionsGeneralGuidesPanel() {}

@@ -7,7 +7,7 @@ class fmtRustfmt : public GenericFormatter
 {
 public:
     fmtRustfmt();
-    virtual ~fmtRustfmt();
+    ~fmtRustfmt() override = default;
 };
 
 #endif // FMTRUSTFMT_HPP

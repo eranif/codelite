@@ -41,7 +41,7 @@ class CScopeConfData : public SerializedObject
 
 public:
 	CScopeConfData();
-	virtual ~CScopeConfData();
+    virtual ~CScopeConfData() = default;
 
 public:
 	virtual void DeSerialize(Archive &arch);

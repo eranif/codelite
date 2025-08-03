@@ -30,8 +30,6 @@ SFTPWorkspaceSettings::SFTPWorkspaceSettings()
 {
 }
 
-SFTPWorkspaceSettings::~SFTPWorkspaceSettings() {}
-
 void SFTPWorkspaceSettings::FromJSON(const JSONItem& json)
 {
     m_remoteWorkspacePath = json.namedObject("m_remoteWorkspacePath").toString();

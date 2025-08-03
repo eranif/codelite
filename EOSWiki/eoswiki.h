@@ -21,7 +21,7 @@ protected:
 
 public:
     EOSWiki(IManager* manager);
-    ~EOSWiki() override;
+    ~EOSWiki() override = default;
 
     //--------------------------------------------
     // Abstract methods

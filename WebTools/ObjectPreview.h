@@ -20,7 +20,7 @@ public:
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
 
-    ObjectPreview();
+    ObjectPreview() = default;
     virtual ~ObjectPreview();
     
     bool IsEmpty() const { return m_type.IsEmpty(); }

@@ -1,9 +1,5 @@
 #include "clTreeNodeVisitor.h"
 
-clTreeNodeVisitor::clTreeNodeVisitor() {}
-
-clTreeNodeVisitor::~clTreeNodeVisitor() {}
-
 void clTreeNodeVisitor::Visit(clRowEntry* item, bool expandedItemsOnly, std::function<bool(clRowEntry*, bool)>& func)
 {
     clRowEntry* current = item;

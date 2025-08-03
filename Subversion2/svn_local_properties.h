@@ -50,7 +50,7 @@ protected:
 
 public:
 	SubversionLocalProperties(const wxString &url);
-	virtual ~SubversionLocalProperties();
+	virtual ~SubversionLocalProperties() = default;
 
 	wxString ReadProperty (const wxString &propName);
 	void     WriteProperty(const wxString &name, const wxString &val);

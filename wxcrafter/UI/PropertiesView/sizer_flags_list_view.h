@@ -13,7 +13,7 @@ class SizerFlagsListView
 
 public:
     SizerFlagsListView();
-    virtual ~SizerFlagsListView();
+    virtual ~SizerFlagsListView() = default;
 
     void Changed(wxPropertyGrid* pg, wxPropertyGridEvent& e);
     void Construct(wxPropertyGrid* pg, wxcWidget* wb);

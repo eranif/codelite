@@ -3,14 +3,6 @@
 
 Tester* Tester::ms_instance = 0;
 
-Tester::Tester()
-{
-}
-
-Tester::~Tester()
-{
-}
-
 Tester* Tester::Instance()
 {
     if(ms_instance == 0) {

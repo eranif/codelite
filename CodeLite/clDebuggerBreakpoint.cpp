@@ -6,10 +6,6 @@
 #define is_windows false
 #endif
 
-clDebuggerBreakpoint::clDebuggerBreakpoint() {}
-
-clDebuggerBreakpoint::~clDebuggerBreakpoint() {}
-
 clDebuggerBreakpoint::clDebuggerBreakpoint(const clDebuggerBreakpoint& BI)
 {
     if(this == &BI) {

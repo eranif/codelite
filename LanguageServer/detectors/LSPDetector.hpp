@@ -29,7 +29,7 @@ protected:
 
 public:
     LSPDetector(const wxString& name);
-    virtual ~LSPDetector();
+    virtual ~LSPDetector() = default;
     bool IsOk() const { return !m_command.IsEmpty(); }
     void SetCommand(const wxString& command) { this->m_command = command; }
     const wxString& GetCommand() const { return m_command; }

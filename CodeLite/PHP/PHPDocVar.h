@@ -31,7 +31,7 @@ public:
 public:
     PHPDocVar(PHPSourceFile& sourceFile, const wxString& doc);
     PHPDocVar();
-    virtual ~PHPDocVar();
+    virtual ~PHPDocVar() = default;
 
     bool IsOk() const { return m_isOk; }
 

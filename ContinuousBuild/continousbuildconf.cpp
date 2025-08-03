@@ -30,10 +30,6 @@ ContinousBuildConf::ContinousBuildConf()
 {
 }
 
-ContinousBuildConf::~ContinousBuildConf()
-{
-}
-
 void ContinousBuildConf::DeSerialize(Archive& arch)
 {
 	arch.Read(wxT("m_enabled"), m_enabled);

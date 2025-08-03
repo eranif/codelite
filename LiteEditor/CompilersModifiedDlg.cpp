@@ -52,11 +52,6 @@ CompilersModifiedDlg::CompilersModifiedDlg(wxWindow* parent, const wxStringSet_t
     WindowAttrManager::Load(this);
 }
 
-CompilersModifiedDlg::~CompilersModifiedDlg()
-{
-    
-}
-
 void CompilersModifiedDlg::OnOKUI(wxUpdateUIEvent& event)
 {
     event.Enable( m_enableOKButton );

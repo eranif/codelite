@@ -7,7 +7,7 @@ class LSPTypeScriptDetector : public LSPDetector
 {
 public:
     LSPTypeScriptDetector();
-    ~LSPTypeScriptDetector();
+    ~LSPTypeScriptDetector() override = default;
 
     bool DoLocate() override;
 };

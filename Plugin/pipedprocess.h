@@ -42,7 +42,7 @@ public:
      */
     PipedProcess(int id, const wxString& cmdLine);
 
-    virtual ~PipedProcess();
+    virtual ~PipedProcess() = default;
 
     /**
      * \return return the process id

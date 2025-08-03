@@ -14,7 +14,7 @@ class LintOptions : public clConfigItem
 
 public:
     LintOptions();
-    virtual ~LintOptions();
+    virtual ~LintOptions() = default;
 
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;

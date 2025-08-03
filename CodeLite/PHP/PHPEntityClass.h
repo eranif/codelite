@@ -55,8 +55,8 @@ public:
      */
     wxArrayString GetInheritanceArray() const;
 
-    PHPEntityClass();
-    virtual ~PHPEntityClass();
+    PHPEntityClass() = default;
+    virtual ~PHPEntityClass() = default;
     void SetExtends(const wxString& extends) { this->m_extends = extends; }
     const wxString& GetExtends() const { return m_extends; }
     void SetImplements(const wxArrayString& implements) { this->m_implements = implements; }

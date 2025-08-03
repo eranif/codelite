@@ -1,7 +1,5 @@
 #include "LSPStartupInfo.h"
 
-LSPStartupInfo::LSPStartupInfo() {}
-
 LSPStartupInfo::LSPStartupInfo(const LSPStartupInfo& other) { *this = other; }
 
 LSPStartupInfo& LSPStartupInfo::operator=(const LSPStartupInfo& other)
@@ -14,5 +12,3 @@ LSPStartupInfo& LSPStartupInfo::operator=(const LSPStartupInfo& other)
     m_env = other.m_env;
     return *this;
 }
-
-LSPStartupInfo::~LSPStartupInfo() {}

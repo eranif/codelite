@@ -44,8 +44,6 @@ TabInfo::TabInfo()
 {
 }
 
-TabInfo::~TabInfo() {}
-
 void TabInfo::DeSerialize(Archive& arch)
 {
     arch.Read(wxT("FileName"), m_fileName);
@@ -69,8 +67,6 @@ Archive::Archive()
     : m_root(NULL)
 {
 }
-
-Archive::~Archive() {}
 
 bool Archive::Write(const wxString& name, SerializedObject* obj)
 {

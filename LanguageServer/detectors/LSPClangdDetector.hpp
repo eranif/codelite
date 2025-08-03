@@ -13,7 +13,7 @@ protected:
 
 public:
     LSPClangdDetector();
-    virtual ~LSPClangdDetector();
+    virtual ~LSPClangdDetector() = default;
 };
 
 #endif // LSPCLANGDDETECTOR_HPP

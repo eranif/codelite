@@ -12,8 +12,6 @@ SizerFlagsListView::SizerFlagsListView()
 {
 }
 
-SizerFlagsListView::~SizerFlagsListView() {}
-
 void SizerFlagsListView::Changed(wxPropertyGrid* pg, wxPropertyGridEvent& e)
 {
     CHECK_POINTER(m_flags);

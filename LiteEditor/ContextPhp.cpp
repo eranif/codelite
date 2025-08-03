@@ -44,8 +44,6 @@ ContextPhp::ContextPhp()
 {
 }
 
-ContextPhp::~ContextPhp() {}
-
 void ContextPhp::AddMenuDynamicContent(wxMenu* menu) { wxUnusedVar(menu); }
 
 void ContextPhp::ApplySettings()

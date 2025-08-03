@@ -12,5 +12,5 @@ protected:
 
 public:
     LSPGoplsDetector();
-    virtual ~LSPGoplsDetector();
+    virtual ~LSPGoplsDetector() = default;
 };

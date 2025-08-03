@@ -33,8 +33,6 @@ QuickDebugInfo::QuickDebugInfo()
 {
 }
 
-QuickDebugInfo::~QuickDebugInfo() {}
-
 void QuickDebugInfo::DeSerialize(Archive& arch)
 {
     ARCHIVE_READ(m_arguments);

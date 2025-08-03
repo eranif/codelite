@@ -14,7 +14,7 @@ class Docker : public IPlugin
 
 public:
     Docker(IManager* manager);
-    ~Docker() override;
+    ~Docker() override = default;
 
     //--------------------------------------------
     // Abstract methods

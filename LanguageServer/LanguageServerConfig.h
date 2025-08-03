@@ -29,7 +29,7 @@ private:
     }
 
 public:
-    virtual ~LanguageServerConfig();
+    virtual ~LanguageServerConfig() = default;
     LanguageServerConfig& Load();
     LanguageServerConfig& Save();
     static LanguageServerConfig& Get();

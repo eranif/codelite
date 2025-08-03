@@ -10,10 +10,6 @@
 #include <wx/filename.h>
 #include <wx/tokenzr.h>
 
-clFilesScanner::clFilesScanner() {}
-
-clFilesScanner::~clFilesScanner() {}
-
 size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxFileName>& filesOutput, const wxString& filespec,
                             const wxString& excludeFilespec, const wxString& excludeFoldersSpec)
 

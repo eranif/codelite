@@ -32,7 +32,7 @@ class EditorOptionsGeneralSavePanel : public OptionsConfigPage
 {
 public:
     EditorOptionsGeneralSavePanel(wxWindow* parent, OptionsConfigPtr options);
-    virtual ~EditorOptionsGeneralSavePanel() {}
+    ~EditorOptionsGeneralSavePanel() override = default;
 };
 
 #endif // __editoroptionsgeneralsavepanel__

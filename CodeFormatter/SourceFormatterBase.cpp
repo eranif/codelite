@@ -6,10 +6,6 @@
 wxDEFINE_EVENT(wxEVT_FORMAT_COMPELTED, clSourceFormatEvent);
 wxDEFINE_EVENT(wxEVT_FORMAT_INPLACE_COMPELTED, clSourceFormatEvent);
 
-SourceFormatterBase::SourceFormatterBase() {}
-
-SourceFormatterBase::~SourceFormatterBase() {}
-
 void SourceFormatterBase::FromJSON(const JSONItem& json)
 {
     m_languages = json["languages"].toArrayString();

@@ -54,7 +54,7 @@ class WXDLLIMPEXP_SDK wxRibbonMetroArtProvider : public wxRibbonMSWArtProvider
 {
 public:
     wxRibbonMetroArtProvider(bool set_colour_scheme = true);
-    virtual ~wxRibbonMetroArtProvider();
+    virtual ~wxRibbonMetroArtProvider() = default;
     void SetFlags(long flags);
 
     void GetColourScheme(wxColour* primary, wxColour* secondary, wxColour* tertiary) const;

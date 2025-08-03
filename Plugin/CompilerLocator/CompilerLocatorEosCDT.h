@@ -12,8 +12,8 @@ protected:
     CompilerPtr CreateCompiler(const wxString& path) const;
 
 public:
-    CompilerLocatorEosCDT();
-    virtual ~CompilerLocatorEosCDT();
+    CompilerLocatorEosCDT() = default;
+    virtual ~CompilerLocatorEosCDT() = default;
 
 public:
     virtual bool Locate();

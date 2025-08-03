@@ -18,8 +18,6 @@ clTableLineEditorDlg::clTableLineEditorDlg(wxWindow* parent, const wxArrayString
     CenterOnParent();
 }
 
-clTableLineEditorDlg::~clTableLineEditorDlg() {}
-
 void clTableLineEditorDlg::OnColumnSelected(wxCommandEvent& event) { DoItemSelected(event.GetSelection()); }
 
 void clTableLineEditorDlg::DoItemSelected(int index)

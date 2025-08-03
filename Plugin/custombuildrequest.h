@@ -45,7 +45,7 @@ protected:
 
 public:
     CustomBuildRequest(const QueueCommand& buildInfo, const wxString& fileName);
-    virtual ~CustomBuildRequest();
+    virtual ~CustomBuildRequest() = default;
 
 public:
     // process the request

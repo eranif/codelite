@@ -7,7 +7,7 @@ class LSPPythonDetector : public LSPDetector
 {
 public:
     LSPPythonDetector();
-    virtual ~LSPPythonDetector();
+    virtual ~LSPPythonDetector() = default;
 
 protected:
     virtual bool DoLocate();

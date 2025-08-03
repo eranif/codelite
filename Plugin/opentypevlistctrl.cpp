@@ -31,8 +31,6 @@ OpenTypeVListCtrl::OpenTypeVListCtrl(wxWindow* parent, wxWindowID id, const wxPo
 {
 }
 
-OpenTypeVListCtrl::~OpenTypeVListCtrl() {}
-
 wxListItemAttr* OpenTypeVListCtrl::OnGetItemAttr(long item) const { return NULL; }
 
 int OpenTypeVListCtrl::OnGetItemColumnImage(long item, long column) const

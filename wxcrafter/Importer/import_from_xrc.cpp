@@ -18,8 +18,6 @@ ImportFromXrc::ImportFromXrc(wxWindow* parent)
 {
 }
 
-ImportFromXrc::~ImportFromXrc() {}
-
 bool ImportFromXrc::ImportProject(ImportDlg::ImportFileData& data) const
 {
     ImportDlg dlg(ImportDlg::IPD_XRC, m_Parent);

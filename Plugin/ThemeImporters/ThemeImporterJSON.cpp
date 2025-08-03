@@ -14,8 +14,6 @@ ThemeImporterJson::ThemeImporterJson()
     m_langName = "json";
 }
 
-ThemeImporterJson::~ThemeImporterJson() {}
-
 LexerConf::Ptr_t ThemeImporterJson::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_JSON);

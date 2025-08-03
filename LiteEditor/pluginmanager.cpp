@@ -109,8 +109,6 @@ void PluginManager::UnLoad()
     m_dl.clear();
 }
 
-PluginManager::~PluginManager() {}
-
 PluginManager::PluginManager()
 {
     m_menusToBeHooked.insert(MenuTypeFileExplorer);

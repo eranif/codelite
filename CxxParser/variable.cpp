@@ -6,10 +6,6 @@ Variable::Variable()
     Reset();
 }
 
-Variable::~Variable()
-{
-}
-
 Variable::Variable(const Variable &src)
 {
     *this = src;

@@ -34,8 +34,8 @@ class CScopeStatusMessage
 	wxString m_findWhat;
 
 public:
-	CScopeStatusMessage();
-	virtual ~CScopeStatusMessage();
+	CScopeStatusMessage() = default;
+	virtual ~CScopeStatusMessage() = default;
 
 	// Setters
 	void SetMessage   (const wxString& message ) ;

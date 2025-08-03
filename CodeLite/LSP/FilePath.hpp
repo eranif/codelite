@@ -12,9 +12,9 @@ class WXDLLIMPEXP_CL FilePath
     bool m_isRemoteFile = false;
 
 public:
-    FilePath();
+    FilePath() = default;
     FilePath(const wxString& path);
-    virtual ~FilePath();
+    virtual ~FilePath() = default;
 
     void SetIsRemoteFile(bool isRemoteFile) { this->m_isRemoteFile = isRemoteFile; }
     void SetPath(const wxString& path) { this->m_path = path; }

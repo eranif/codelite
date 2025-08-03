@@ -30,8 +30,6 @@ wxTreeTraverser::wxTreeTraverser(wxTreeCtrl* tree)
 {
 }
 
-wxTreeTraverser::~wxTreeTraverser() {}
-
 void wxTreeTraverser::DoTraverse(const wxTreeItemId& item)
 {
     if(item.IsOk() == false)

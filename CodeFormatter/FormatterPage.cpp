@@ -35,8 +35,6 @@ FormatterPage::FormatterPage(wxWindow* parent)
 {
 }
 
-FormatterPage::~FormatterPage() {}
-
 void FormatterPage::Load(std::shared_ptr<GenericFormatter> formatter)
 {
     Clear();

@@ -37,9 +37,6 @@ int ReadHeaders(const std::string& message, std::unordered_map<std::string, std:
 }
 
 } // namespace
-LSP::Message::Message() {}
-
-LSP::Message::~Message() {}
 
 JSONItem LSP::Message::ToJSON(const wxString& name) const
 {

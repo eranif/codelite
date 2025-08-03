@@ -9,8 +9,6 @@ NodeJSWorkspaceConfiguration::NodeJSWorkspaceConfiguration(const wxFileName& fil
 {
 }
 
-NodeJSWorkspaceConfiguration::~NodeJSWorkspaceConfiguration() {}
-
 void NodeJSWorkspaceConfiguration::FromJSON(const JSONItem& json)
 {
     m_folders = json.namedObject("folders").toArrayString();

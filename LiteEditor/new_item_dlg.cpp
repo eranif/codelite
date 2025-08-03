@@ -48,8 +48,6 @@ NewItemDlg::NewItemDlg(wxWindow* parent, const wxString& cwd)
     CentreOnParent();
 }
 
-NewItemDlg::~NewItemDlg() {}
-
 void NewItemDlg::OnBrowseButton(wxCommandEvent& event)
 {
     wxString path = ::wxDirSelector(_("select a folder"), m_location->GetValue());

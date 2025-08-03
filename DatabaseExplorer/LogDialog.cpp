@@ -33,10 +33,6 @@ LogDialog::LogDialog(wxWindow* parent):_LogDialog(parent)
 	m_textCtrl11->SetValue(m_text);	
 }
 
-LogDialog::~LogDialog()
-{
-}
-
 void LogDialog::AppendText(const wxString& txt)
 {
 	m_text.Append(txt + wxT("\n"));

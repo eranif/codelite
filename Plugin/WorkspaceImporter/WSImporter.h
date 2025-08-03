@@ -38,7 +38,7 @@ class WXDLLIMPEXP_SDK WSImporter
 {
 public:
     WSImporter();
-    ~WSImporter();
+    ~WSImporter() = default;
 
     void Load(const wxString& filename, const wxString& defaultCompiler);
     bool Import(wxString& errMsg);

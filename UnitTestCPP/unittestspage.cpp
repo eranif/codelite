@@ -41,7 +41,7 @@ public:
         : m_info(info)
     {
     }
-    virtual ~UTLineInfo() {}
+    ~UTLineInfo() override = default;
 };
 
 UnitTestsPage::UnitTestsPage(wxWindow* parent, IManager* mgr)

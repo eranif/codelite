@@ -120,7 +120,7 @@ public:
     /**
      * @brief Destructor.
      */
-    ~CMakePlugin() override;
+    ~CMakePlugin() override = default;
 
     // Public Accessors
 public:

@@ -5,10 +5,6 @@
 #include <wx/filename.h>
 #include <wx/utils.h>
 
-clConsoleCMD::clConsoleCMD() {}
-
-clConsoleCMD::~clConsoleCMD() {}
-
 bool clConsoleCMD::Start()
 {
     DirSaver ds; // restore the directory upon exiting this function

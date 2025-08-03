@@ -85,7 +85,7 @@ protected:
 
 public:
     PHPExpression(const wxString& fulltext, const wxString& exprText = wxString(), bool functionCalltipExpr = false);
-    virtual ~PHPExpression();
+    virtual ~PHPExpression() = default;
 
     const phpLexerToken::Vet_t& GetExpression() const { return m_expression; }
     /**

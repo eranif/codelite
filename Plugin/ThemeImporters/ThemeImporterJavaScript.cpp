@@ -65,8 +65,6 @@ ThemeImporterJavaScript::ThemeImporterJavaScript()
     SetFileExtensions("*.js;*.javascript;*.qml;*.json;*.ts;*.tsx");
 }
 
-ThemeImporterJavaScript::~ThemeImporterJavaScript() {}
-
 LexerConf::Ptr_t ThemeImporterJavaScript::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_CPP);

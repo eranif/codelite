@@ -92,8 +92,6 @@ SymbolTree::SymbolTree(wxWindow* parent, const wxWindowID id, const wxPoint& pos
     SetSortFunction(func);
 }
 
-SymbolTree::~SymbolTree() {}
-
 void SymbolTree::InitialiseSymbolMap()
 {
     //--------------------------------------------------------

@@ -49,8 +49,6 @@ clMakeGeneratorApp::clMakeGeneratorApp()
 {
 }
 
-clMakeGeneratorApp::~clMakeGeneratorApp() {}
-
 int clMakeGeneratorApp::OnExit()
 {
     BuildSettingsConfigST::Free();

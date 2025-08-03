@@ -41,8 +41,6 @@ EditorConfigPlugin::EditorConfigPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &EditorConfigPlugin::OnActiveEditorChanged, this);
 }
 
-EditorConfigPlugin::~EditorConfigPlugin() {}
-
 void EditorConfigPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void EditorConfigPlugin::CreatePluginMenu(wxMenu* pluginsMenu)

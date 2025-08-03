@@ -43,7 +43,7 @@ class RustPlugin : public IPlugin
 
 public:
     RustPlugin(IManager* manager);
-    ~RustPlugin() override;
+    ~RustPlugin() override = default;
 
 protected:
     void OnFolderContextMenu(clContextMenuEvent& event);

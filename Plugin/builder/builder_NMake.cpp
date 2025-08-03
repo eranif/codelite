@@ -84,8 +84,6 @@ BuilderNMake::BuilderNMake(const wxString& name, const wxString& buildTool, cons
 {
 }
 
-BuilderNMake::~BuilderNMake() {}
-
 wxString BuilderNMake::GetIntermediateDirectory(ProjectPtr proj, BuildConfigPtr bldConf) const
 {
     wxString workspacePath = clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetPath();

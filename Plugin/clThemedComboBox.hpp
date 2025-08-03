@@ -10,7 +10,7 @@ protected:
     void ApplyTheme();
 
 public:
-    clThemedComboBox();
+    clThemedComboBox() = default;
     clThemedComboBox(wxWindow* parent, wxWindowID id, const wxString& value, const wxPoint& pos, const wxSize& size,
                      const wxArrayString& choices, long style = 0, const wxValidator& validator = wxDefaultValidator,
                      const wxString& name = wxChoiceNameStr);

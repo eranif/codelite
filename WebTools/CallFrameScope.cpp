@@ -1,9 +1,5 @@
 #include "CallFrameScope.h"
 
-CallFrameScope::CallFrameScope() {}
-
-CallFrameScope::~CallFrameScope() {}
-
 void CallFrameScope::FromJSON(const JSONItem& json)
 {
     m_type = json.namedObject("type").toString();

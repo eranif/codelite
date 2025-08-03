@@ -6,7 +6,7 @@ class NewFileTemplateDialog : public NewFileTemplateDialogBase
 {
 public:
     NewFileTemplateDialog(wxWindow* parent);
-    virtual ~NewFileTemplateDialog();
+    virtual ~NewFileTemplateDialog() = default;
     
     wxString GetPattern() const;
     wxString GetKind() const;

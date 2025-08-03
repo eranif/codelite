@@ -27,8 +27,8 @@ private:
     bool find(const wxString& filepath, FileState** state);
 
 public:
-    FileContentTracker();
-    virtual ~FileContentTracker();
+    FileContentTracker() = default;
+    virtual ~FileContentTracker() = default;
 
     /**
      * @brief do we track `filepath`?

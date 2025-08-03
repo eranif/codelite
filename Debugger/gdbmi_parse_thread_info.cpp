@@ -25,14 +25,6 @@
 
 #include "gdbmi_parse_thread_info.h"
 
-GdbMIThreadInfoParser::GdbMIThreadInfoParser()
-{
-}
-
-GdbMIThreadInfoParser::~GdbMIThreadInfoParser()
-{
-}
-
 void GdbMIThreadInfoParser::Parse(const wxString& info)
 {
     m_threads.clear();

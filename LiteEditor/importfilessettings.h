@@ -36,7 +36,7 @@ class ImportFilesSettings : public SerializedObject
 
 public:
     ImportFilesSettings();
-    virtual ~ImportFilesSettings();
+    virtual ~ImportFilesSettings() = default;
 
     virtual void DeSerialize(Archive& arch);
     virtual void Serialize(Archive& arch);

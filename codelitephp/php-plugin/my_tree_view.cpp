@@ -17,5 +17,3 @@ MyTreeView::MyTreeView(wxWindow* parent, wxWindowID id, const wxPoint& pos, cons
     };
     SetSortFunction(SortFunc);
 }
-
-MyTreeView::~MyTreeView() {}

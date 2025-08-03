@@ -7,10 +7,6 @@ ExpressionResult::ExpressionResult()
 	Reset();
 }
 
-ExpressionResult::~ExpressionResult()
-{
-}
-
 void ExpressionResult::Print()
 {
 	printf("%s\n", ToString().c_str());

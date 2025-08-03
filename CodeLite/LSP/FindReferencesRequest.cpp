@@ -14,8 +14,6 @@ LSP::FindReferencesRequest::FindReferencesRequest(const wxString& filename, size
     m_params->As<ReferenceParams>()->SetPosition(Position(line, column));
 }
 
-LSP::FindReferencesRequest::~FindReferencesRequest() {}
-
 void LSP::FindReferencesRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     wxUnusedVar(owner);

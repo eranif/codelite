@@ -40,8 +40,6 @@ ZombieReaperPOSIX::ZombieReaperPOSIX()
 {
 }
 
-ZombieReaperPOSIX::~ZombieReaperPOSIX() {}
-
 void* ZombieReaperPOSIX::Entry()
 {
     while(!TestDestroy()) {

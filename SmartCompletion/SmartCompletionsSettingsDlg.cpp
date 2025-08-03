@@ -10,8 +10,6 @@ SmartCompletionsSettingsDlg::SmartCompletionsSettingsDlg(wxWindow* parent, Smart
     WindowAttrManager::Load(this);
 }
 
-SmartCompletionsSettingsDlg::~SmartCompletionsSettingsDlg() {}
-
 void SmartCompletionsSettingsDlg::OnOK(wxCommandEvent& event)
 {
     event.Skip();

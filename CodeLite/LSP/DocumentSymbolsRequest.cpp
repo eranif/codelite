@@ -36,8 +36,6 @@ LSP::DocumentSymbolsRequest::DocumentSymbolsRequest(const wxString& filename, si
     m_params->As<DocumentSymbolParams>()->SetTextDocument(TextDocumentIdentifier(filename));
 }
 
-LSP::DocumentSymbolsRequest::~DocumentSymbolsRequest() {}
-
 void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_response, wxEvtHandler* owner)
 {
     LSP_DEBUG() << "LSP::DocumentSymbolsRequest::OnResponse() is called!" << endl;

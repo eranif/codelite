@@ -62,11 +62,6 @@ IMPLEMENT_DYNAMIC_CLASS(swString,swBase)
 IMPLEMENT_DYNAMIC_CLASS(swStringSet,wxObject)
 IMPLEMENT_DYNAMIC_CLASS(swStringDb,wxObject)
 //------------------------------------------------------------
-// Constructor
-swStringSet::swStringSet()
-{
-
-}
 
 //------------------------------------------------------------
 // Destructor

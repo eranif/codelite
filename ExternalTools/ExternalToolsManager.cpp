@@ -11,8 +11,6 @@ ExternalToolsManager::ExternalToolsManager(wxWindow* parent)
     DoPopulateTable();
 }
 
-ExternalToolsManager::~ExternalToolsManager() {}
-
 void ExternalToolsManager::OnKill(wxCommandEvent& event)
 {
     wxDataViewItemArray arr;

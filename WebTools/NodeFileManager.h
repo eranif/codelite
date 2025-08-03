@@ -13,8 +13,8 @@ protected:
     wxString DoGetFilePath(const wxString& id) const;
 
 public:
-    NodeFileManager();
-    virtual ~NodeFileManager();
+    NodeFileManager() = default;
+    virtual ~NodeFileManager() = default;
     static NodeFileManager& Get();
 
     void Clear();

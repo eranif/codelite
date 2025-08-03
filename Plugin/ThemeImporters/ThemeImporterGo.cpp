@@ -22,8 +22,6 @@ ThemeImporterGo::ThemeImporterGo()
     SetFileExtensions("*.go");
 }
 
-ThemeImporterGo::~ThemeImporterGo() {}
-
 LexerConf::Ptr_t ThemeImporterGo::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_CPP);

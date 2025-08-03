@@ -40,8 +40,6 @@ ChangeLogPage::ChangeLogPage(wxWindow* parent, Subversion2* plugin)
     m_rmacrosMap[wxT("@@3@@")] = wxT("$(FRID)");
 }
 
-ChangeLogPage::~ChangeLogPage() {}
-
 void ChangeLogPage::AppendText(const wxString& text)
 {
     // search the lines for a pattern match

@@ -7,8 +7,6 @@ NewFileTemplateDialog::NewFileTemplateDialog(wxWindow* parent)
     clSetDialogBestSizeAndPosition(this);
 }
 
-NewFileTemplateDialog::~NewFileTemplateDialog() {}
-
 wxString NewFileTemplateDialog::GetPattern() const
 {
     wxString pattern = m_stc->GetText();

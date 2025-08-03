@@ -39,8 +39,6 @@ PipedProcess::PipedProcess(int id, const wxString& cmdLine)
 {
 }
 
-PipedProcess::~PipedProcess() {}
-
 long PipedProcess::GetPid() { return m_pid; }
 
 void PipedProcess::SetPid(long pid) { m_pid = pid; }

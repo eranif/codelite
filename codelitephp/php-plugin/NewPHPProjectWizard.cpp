@@ -19,8 +19,6 @@ NewPHPProjectWizard::NewPHPProjectWizard(wxWindow* parent, bool createProjectFro
     m_dirPickerPath->SetPath(PHPWorkspace::Get()->GetFilename().GetPath());
 }
 
-NewPHPProjectWizard::~NewPHPProjectWizard() {}
-
 void NewPHPProjectWizard::OnFinish(wxWizardEvent& event) { event.Skip(); }
 
 void NewPHPProjectWizard::OnPageChanging(wxWizardEvent& event)

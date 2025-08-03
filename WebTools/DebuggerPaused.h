@@ -9,7 +9,7 @@ class DebuggerPaused : public NodeMessageBase
 
 public:
     DebuggerPaused();
-    virtual ~DebuggerPaused();
+    virtual ~DebuggerPaused() = default;
 
 public:
     void Process(clWebSocketClient& socket, const JSONItem& json);

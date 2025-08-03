@@ -35,7 +35,7 @@ class TipTreeData : public wxTreeItemData
 	wxString m_displayString;
 public:
 	TipTreeData(const wxString &displayStr) : m_displayString(displayStr){}
-	virtual ~TipTreeData(){}
+	~TipTreeData() override = default;
 };
 
 class TipTree : public wxTreeCtrl

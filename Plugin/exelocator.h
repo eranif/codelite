@@ -32,8 +32,8 @@
 class WXDLLIMPEXP_SDK ExeLocator
 {
 public:
-    ExeLocator() {}
-    ~ExeLocator() {}
+    ExeLocator() = default;
+    ~ExeLocator() = default;
 
     static bool Locate(const wxString& name, wxString& where);
 };

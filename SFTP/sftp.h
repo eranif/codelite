@@ -51,7 +51,7 @@ class SFTP : public IPlugin
 
 public:
     SFTP(IManager* manager);
-    ~SFTP() override;
+    ~SFTP() override = default;
 
     void FileDownloadedSuccessfully(const SFTPClientData& cd);
     void OpenWithDefaultApp(const wxString& localFileName);

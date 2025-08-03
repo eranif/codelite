@@ -34,7 +34,7 @@ class WXDLLIMPEXP_SDK ThemeImporterJava : public ThemeImporterBase
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
     ThemeImporterJava();
-    virtual ~ThemeImporterJava();
+    virtual ~ThemeImporterJava() = default;
 };
 
 #endif // ECLIPSEJAVATHEMEIMPORTER_H

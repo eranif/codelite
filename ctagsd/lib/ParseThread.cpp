@@ -3,8 +3,6 @@
 #include "ProtocolHandler.hpp"
 #include "file_logger.h"
 
-ParseThread::ParseThread() {}
-
 ParseThread::~ParseThread() { stop(); }
 
 void ParseThread::start(const wxString& settings_folder, const wxString& indexer_path)

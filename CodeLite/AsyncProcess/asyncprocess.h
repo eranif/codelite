@@ -96,7 +96,7 @@ public:
         , m_flags(0)
     {
     }
-    virtual ~IProcess() {}
+    virtual ~IProcess() = default;
 
 public:
     // Handle process exit code. This is done this way this

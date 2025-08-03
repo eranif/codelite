@@ -35,7 +35,7 @@ class SFTPWorkspaceSettings : public clConfigItem
 
 public:
     SFTPWorkspaceSettings();
-    virtual ~SFTPWorkspaceSettings();
+    virtual ~SFTPWorkspaceSettings() = default;
 
     static void Load(SFTPWorkspaceSettings& settings, const wxFileName& workspaceFile);
     static void Save(const SFTPWorkspaceSettings& settings, const wxFileName& workspaceFile);

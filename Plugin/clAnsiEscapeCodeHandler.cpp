@@ -336,8 +336,6 @@ clAnsiEscapeCodeHandler::clAnsiEscapeCodeHandler()
     m_colours = &m_colours_normal;
 }
 
-clAnsiEscapeCodeHandler::~clAnsiEscapeCodeHandler() {}
-
 #define NEXT(__is_eol)                                \
     chunk->is_eol = __is_eol;                         \
     if (chunk->is_style_reset || !chunk->d.empty()) { \
@@ -1054,8 +1052,6 @@ wxTextAttr wxSTCStyleProvider::GetDefaultStyle() const
     attr.SetBackgroundColour(m_ctrl->StyleGetBackground(0));
     return attr;
 }
-
-wxSTCStyleProvider::~wxSTCStyleProvider() {}
 
 wxSTCStyleProvider::wxSTCStyleProvider(wxStyledTextCtrl* ctrl)
     : m_ctrl(ctrl)

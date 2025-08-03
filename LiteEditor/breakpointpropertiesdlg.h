@@ -52,7 +52,7 @@ protected:
 
 public:
     BreakptPropertiesDlg(wxWindow* parent);
-    ~BreakptPropertiesDlg();
+    ~BreakptPropertiesDlg() = default;
 
     /**
      * \brief Insert the data from an existing breakpoint into the dialog fields

@@ -19,8 +19,8 @@ protected:
     size_t m_flags = SEARCH_PATH_ENV;
 
 public:
-    PlatformCommon() {}
-    virtual ~PlatformCommon() {}
+    PlatformCommon() = default;
+    virtual ~PlatformCommon() = default;
 
 public:
     /**

@@ -46,7 +46,7 @@ public:
     DiffDialog( wxWindow* parent, IManager *manager );
     //// end generated class members
 
-    virtual ~DiffDialog();
+    virtual ~DiffDialog() = default;
     wxString GetFromRevision() const;
     wxString GetToRevision() const;
     bool IgnoreWhitespaces() const;

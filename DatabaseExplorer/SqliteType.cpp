@@ -57,9 +57,6 @@ SqliteType::SqliteType(const wxString& typeName, long propertyFlags, UNIVERSAL_T
 	InitSerialize();
 }
 
-SqliteType::~SqliteType() {
-}
-
 wxString SqliteType::ReturnSql() {
 	wxString sql;
 	sql = wxString::Format(wxT(" %s"), m_typeName.c_str());

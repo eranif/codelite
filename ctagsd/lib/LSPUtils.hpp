@@ -27,8 +27,8 @@ private:
                                       std::unordered_set<wxString>* parents_seen = nullptr);
 
 public:
-    LSPUtils();
-    ~LSPUtils();
+    LSPUtils() = default;
+    ~LSPUtils() = default;
 
     static void encode_semantic_tokens(const std::vector<TokenWrapper>& tokens_vec, std::vector<int>* encoded_arr);
     static LSP::eSymbolKind get_symbol_kind(const TagEntry* tag);

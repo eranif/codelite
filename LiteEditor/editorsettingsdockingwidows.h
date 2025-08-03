@@ -32,7 +32,7 @@ class EditorSettingsDockingWindows : public OptionsConfigPage
 {
 public:
     EditorSettingsDockingWindows(wxWindow* parent, OptionsConfigPtr options);
-    virtual ~EditorSettingsDockingWindows() {}
+    ~EditorSettingsDockingWindows() override = default;
 };
 
 #endif // __EDITORSETTINGSDOCKINGWIDOWS__

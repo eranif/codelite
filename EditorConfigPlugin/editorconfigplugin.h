@@ -18,7 +18,7 @@ protected:
 
 public:
     EditorConfigPlugin(IManager* manager);
-    ~EditorConfigPlugin() override;
+    ~EditorConfigPlugin() override = default;
 
     //--------------------------------------------
     // Abstract methods

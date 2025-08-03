@@ -36,8 +36,6 @@ DAPDebuggerPane::DAPDebuggerPane(wxWindow* parent, DebugAdapterClient* adapter, 
     GetSizer()->Fit(this);
 }
 
-DAPDebuggerPane::~DAPDebuggerPane() {}
-
 DAPOutputPane* DAPDebuggerPane::GetOutputView() const { return m_mainView->GetOutputPane(); }
 
 void DAPDebuggerPane::Clear()

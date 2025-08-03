@@ -8,7 +8,7 @@ class LanguageServerSettingsDlg : public LanguageServerSettingsDlgBase
 
 public:
     LanguageServerSettingsDlg(wxWindow* parent, bool triggerScan);
-    virtual ~LanguageServerSettingsDlg();
+    virtual ~LanguageServerSettingsDlg() = default;
     void Save();
 
 protected:

@@ -162,7 +162,7 @@ public:
         m_shutdown.store(false);
     }
 
-    ~WinWriterThread() {}
+    ~WinWriterThread() = default;
 
     void Start() { m_thread = new std::thread(&WinWriterThread::Entry, this, m_hStdin); }
     void Stop()

@@ -50,8 +50,6 @@ SvnOverlayTool::SvnOverlayTool()
     ms_bmpDeleted = bmpLoader.LoadBitmap(wxT("overlay/16/deleted"));
 }
 
-SvnOverlayTool::~SvnOverlayTool() {}
-
 SvnOverlayTool& SvnOverlayTool::Get()
 {
     static SvnOverlayTool theTool;

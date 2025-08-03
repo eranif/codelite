@@ -44,8 +44,6 @@ EOSWiki::EOSWiki(IManager* manager)
     wxTheApp->Bind(wxEVT_MENU, &EOSWiki::OnNewProject, this, XRCID("eosio_new_project"));
 }
 
-EOSWiki::~EOSWiki() {}
-
 void EOSWiki::CreateToolBar(clToolBarGeneric* toolbar)
 {
     // You can add items to the main toolbar here

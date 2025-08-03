@@ -37,8 +37,8 @@ protected:
 public:
 	DbItem(Database* pDatabase, Table* pTable);
 	DbItem(xsSerializable* data);
-	virtual ~DbItem();
-	
+	virtual ~DbItem() = default;
+
 	Database* GetDatabase(){ return this->m_pDatabase; }
 	Table* GetTable(){ return this->m_pTable; }
 	xsSerializable* GetData() { return this->m_pData; }

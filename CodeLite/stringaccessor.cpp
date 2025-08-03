@@ -29,10 +29,6 @@ StringAccessor::StringAccessor(const wxString &str)
 {
 }
 
-StringAccessor::~StringAccessor()
-{
-}
-
 char StringAccessor::safeAt(size_t pos)
 {
     if( pos >= m_str.size() ) {

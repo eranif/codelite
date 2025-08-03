@@ -40,8 +40,6 @@ clRegistery::clRegistery(const wxString& key)
 #endif
 }
 
-clRegistery::~clRegistery() {}
-
 wxString clRegistery::ReadValueString(const wxString& valueName)
 {
     wxUnusedVar(valueName);

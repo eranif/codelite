@@ -52,8 +52,8 @@ public:
     std::size_t RunTests();
 
 private:
-    Tester();
-    ~Tester();
+    Tester() = default;
+    ~Tester() = default;
 };
 
 /**
@@ -74,7 +74,7 @@ public:
     {
         Tester::Instance()->AddTest(this);
     }
-    virtual ~ITest() {}
+    virtual ~ITest() = default;
     virtual bool test() = 0;
 };
 

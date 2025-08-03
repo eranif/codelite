@@ -1,7 +1,5 @@
 #include "clCellValue.h"
 
-clCellValue::clCellValue() {}
-
 clCellValue::clCellValue(const wxString& text, int bmpIndex, int bmpOpenIndex)
     : m_stringValue(text)
     , m_type(kTypeString)
@@ -18,8 +16,6 @@ clCellValue::clCellValue(bool bValue, const wxString& label, int bmpIndex, int b
     , m_bitmapSelectedIndex(bmpOpenIndex)
 {
 }
-
-clCellValue::~clCellValue() {}
 
 clCellValue::clCellValue(const char* ptext, int bmpIndex, int bmpOpenIndex)
     : clCellValue(ptext ? wxString(ptext) : wxString(), bmpIndex, bmpOpenIndex)

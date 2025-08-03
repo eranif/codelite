@@ -32,10 +32,6 @@
 #include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
 
-SvnXML::SvnXML() {}
-
-SvnXML::~SvnXML() {}
-
 void SvnXML::GetFiles(const wxString& input, wxArrayString& modifiedFiles, wxArrayString& conflictedFiles,
                       wxArrayString& unversionedFiles, wxArrayString& newFiles, wxArrayString& deletedFiles,
                       wxArrayString& lockedFiles, wxArrayString& ignoredFiles)

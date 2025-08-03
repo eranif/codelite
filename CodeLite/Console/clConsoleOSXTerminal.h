@@ -9,7 +9,7 @@ class WXDLLIMPEXP_CL clConsoleOSXTerminal : public clConsoleBash
 
 public:
     clConsoleOSXTerminal();
-    virtual ~clConsoleOSXTerminal();
+    virtual ~clConsoleOSXTerminal() = default;
 
     void SetTerminalApp(const wxString& terminalApp) { this->m_terminalApp = terminalApp; }
     const wxString& GetTerminalApp() const { return m_terminalApp; }

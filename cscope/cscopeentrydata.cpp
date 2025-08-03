@@ -28,8 +28,3 @@ CscopeEntryData::CscopeEntryData()
 , m_kind(KindSingleEntry)
 {
 }
-
-CscopeEntryData::~CscopeEntryData()
-{
-}
-

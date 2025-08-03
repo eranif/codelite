@@ -10,7 +10,7 @@ class NodeJSExecutable
 public:
     NodeJSExecutable();
     NodeJSExecutable(const wxFileName& exePath);
-    virtual ~NodeJSExecutable();
+    virtual ~NodeJSExecutable() = default;
     bool Exists() const;
     int GetMajorVersion() const;
 };

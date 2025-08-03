@@ -40,8 +40,8 @@ class SvnPropsDlg : public SvnPropsBaseDlg
 
 public:
     /** Constructor */
-    SvnPropsDlg(wxWindow* parent, const wxString& url, Subversion2* plugin);
-    virtual ~SvnPropsDlg();
+    SvnPropsDlg(wxWindow* parent, const wxString& url, Subversion2 *plugin);
+    virtual ~SvnPropsDlg() = default;
 
     wxString GetBugTrackerURL() const;
     wxString GetFRTrackerURL() const;

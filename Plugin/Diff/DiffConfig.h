@@ -57,7 +57,7 @@ protected:
 
 public:
     DiffConfig();
-    virtual ~DiffConfig();
+    virtual ~DiffConfig() = default;
 
 public:
     virtual void FromJSON(const JSONItem& json);

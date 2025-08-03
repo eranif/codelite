@@ -8,8 +8,6 @@ LSPCMakeDetector::LSPCMakeDetector()
 {
 }
 
-LSPCMakeDetector::~LSPCMakeDetector() {}
-
 bool LSPCMakeDetector::DoLocate()
 {
     wxString name = "cmake-language-server";

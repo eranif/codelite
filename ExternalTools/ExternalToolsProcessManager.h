@@ -42,7 +42,7 @@ struct ExternalToolItemData {
     }
 
     ExternalToolItemData* Clone() const { return new ExternalToolItemData(m_command, m_pid); }
-    ~ExternalToolItemData() {}
+    ~ExternalToolItemData() = default;
     typedef std::map<int, ExternalToolItemData> Map_t;
 };
 

@@ -74,7 +74,7 @@ protected:
 public:
     CxxVariableScanner(const wxString& buffer, eCxxStandard standard, const wxStringTable_t& macros,
                        bool isFuncSignature);
-    virtual ~CxxVariableScanner();
+    virtual ~CxxVariableScanner() = default;
 
     /**
      * @brief return the optimized buffer

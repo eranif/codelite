@@ -41,8 +41,6 @@ BreakptPropertiesDlg::BreakptPropertiesDlg(wxWindow* parent)
     CentreOnParent();
 }
 
-BreakptPropertiesDlg::~BreakptPropertiesDlg() {}
-
 // Insert the data from an existing breakpoint into the dialog fields
 void BreakptPropertiesDlg::EnterBPData(const clDebuggerBreakpoint& bp)
 {

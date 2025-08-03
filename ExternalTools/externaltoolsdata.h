@@ -46,7 +46,7 @@ class ToolInfo : public SerializedObject
 
 public:
     ToolInfo();
-    ~ToolInfo();
+    ~ToolInfo() = default;
 
     enum {
         kCallOnFileSave = (1 << 0),
@@ -95,8 +95,8 @@ class ExternalToolsData : public SerializedObject
     std::vector<ToolInfo> m_tools;
 
 public:
-    ExternalToolsData();
-    virtual ~ExternalToolsData();
+    ExternalToolsData() = default;
+    virtual ~ExternalToolsData() = default;
 
     const std::vector<ToolInfo>& GetTools() const;
     void SetTools(const std::vector<ToolInfo>& tools);

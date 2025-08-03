@@ -14,8 +14,6 @@ LSP::GotoDefinitionRequest::GotoDefinitionRequest(const wxString& filename, size
     m_params->As<TextDocumentPositionParams>()->SetPosition(Position(line, column));
 }
 
-LSP::GotoDefinitionRequest::~GotoDefinitionRequest() {}
-
 void LSP::GotoDefinitionRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     JSONItem result = response.Get("result");

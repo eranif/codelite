@@ -3,10 +3,6 @@
 #include "build_settings_config.h"
 #include "file_logger.h"
 
-CompilerLocatorRustc::CompilerLocatorRustc() {}
-
-CompilerLocatorRustc::~CompilerLocatorRustc() {}
-
 bool CompilerLocatorRustc::Locate()
 {
     // This is a dummy compiler, we dont really need it

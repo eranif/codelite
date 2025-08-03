@@ -107,8 +107,6 @@ UnitTestPP::UnitTestPP(IManager* manager)
                                                { "run_unit_tests", _("Run Project as UnitTest++ and report") } });
 }
 
-UnitTestPP::~UnitTestPP() {}
-
 void UnitTestPP::CreateToolBar(clToolBarGeneric* toolbar)
 {
     int size = m_mgr->GetToolbarIconSize();

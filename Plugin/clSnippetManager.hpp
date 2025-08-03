@@ -13,8 +13,8 @@ protected:
     void SetCaretAt(wxStyledTextCtrl* ctrl, int pos);
 
 public:
-    clSnippetManager();
-    virtual ~clSnippetManager();
+    clSnippetManager() = default;
+    virtual ~clSnippetManager() = default;
 
     static clSnippetManager& Get();
     /**

@@ -2,10 +2,6 @@
 #include <wx/arrstr.h>
 #include <wx/tokenzr.h>
 
-clDockerImage::clDockerImage() {}
-
-clDockerImage::~clDockerImage() {}
-
 #if 0
 #define CHOP_STRING(s) ((s.length() > 20) ? s.Mid(0, 12) : s)
 #else

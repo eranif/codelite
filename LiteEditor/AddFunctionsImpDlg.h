@@ -42,7 +42,7 @@ protected:
 
 public:
     AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector_t& tags, const wxString& targetFile);
-    virtual ~AddFunctionsImpDlg();
+    virtual ~AddFunctionsImpDlg() = default;
 
     wxString GetText() const;
     wxString GetFileName() const;

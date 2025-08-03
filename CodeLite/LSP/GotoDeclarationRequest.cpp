@@ -17,8 +17,6 @@ LSP::GotoDeclarationRequest::GotoDeclarationRequest(const wxString& filename, si
     m_params->As<TextDocumentPositionParams>()->SetPosition(Position(line, column));
 }
 
-LSP::GotoDeclarationRequest::~GotoDeclarationRequest() {}
-
 void LSP::GotoDeclarationRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     LOG_IF_TRACE { LSP_TRACE() << "GotoDeclarationRequest::OnResponse() is called" << endl; }

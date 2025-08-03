@@ -152,8 +152,6 @@ SFTP::SFTP(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &SFTP::OnInitDone, this);
 }
 
-SFTP::~SFTP() {}
-
 void SFTP::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void SFTP::CreatePluginMenu(wxMenu* pluginsMenu)

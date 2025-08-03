@@ -13,8 +13,6 @@
 
 #include <wx/filename.h>
 
-CodeFormatterManager::CodeFormatterManager() {}
-
 CodeFormatterManager::~CodeFormatterManager() { clear(); }
 
 std::shared_ptr<GenericFormatter> CodeFormatterManager::GetFormatter(const wxString& filepath) const

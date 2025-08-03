@@ -15,7 +15,7 @@ struct BreakpointClientData {
         : m_breapoint(breakpoint)
     {
     }
-    ~BreakpointClientData() {}
+    ~BreakpointClientData() = default;
 };
 
 class DAPBreakpointsView : public DAPBreakpointsViewBase

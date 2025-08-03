@@ -66,8 +66,6 @@ BuilderGnuMakeOneStep::BuilderGnuMakeOneStep()
 {
 }
 
-BuilderGnuMakeOneStep::~BuilderGnuMakeOneStep() {}
-
 void BuilderGnuMakeOneStep::CreateListMacros(ProjectPtr proj, const wxString& confToBuild, wxString& text)
 {
     // create a list of Sources

@@ -79,8 +79,8 @@ public:
     void SetFindInFilesMask(const wxString& findInFilesMask) { this->m_findInFilesMask = findInFilesMask; }
     const wxString& GetFindInFilesMask() const { return m_findInFilesMask; }
 
-    SessionEntry();
-    virtual ~SessionEntry();
+    SessionEntry() = default;
+    virtual ~SessionEntry() = default;
 
     void Serialize(Archive& arch);
     void DeSerialize(Archive& arch);
@@ -95,8 +95,8 @@ class WXDLLIMPEXP_SDK TabGroupEntry : public SessionEntry
     wxString m_tabgroupName;
 
 public:
-    TabGroupEntry() {}
-    virtual ~TabGroupEntry() {}
+    TabGroupEntry() = default;
+    virtual ~TabGroupEntry() = default;
 
     void Serialize(Archive& arch);
     void DeSerialize(Archive& arch);
@@ -160,7 +160,7 @@ class WXDLLIMPEXP_SDK SessionManager : public wxEvtHandler
 
 private:
     SessionManager();
-    ~SessionManager();
+    ~SessionManager() = default;
 
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnWorkspaceClosed(clWorkspaceEvent& event);

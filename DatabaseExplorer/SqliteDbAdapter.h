@@ -44,7 +44,7 @@ class SQLiteDbAdapter : public IDbAdapter {
 public:
 	SQLiteDbAdapter();
 	SQLiteDbAdapter(const wxString& fileName) ;
-	~SQLiteDbAdapter();
+	~SQLiteDbAdapter() = default;
 	virtual void CloseConnection();
 	virtual DatabaseLayerPtr GetDatabaseLayer(const wxString& dbName) ;
 

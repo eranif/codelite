@@ -56,7 +56,7 @@ protected:
     wxString to_string(bool for_ui) const;
 
 public:
-    clKeyboardShortcut() {}
+    clKeyboardShortcut() = default;
     explicit clKeyboardShortcut(wxKeyCode ctrl, bool alt, bool shift, const wxString& keyCode)
         : m_control_type(ctrl)
         , m_alt(alt)

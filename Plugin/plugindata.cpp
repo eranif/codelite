@@ -29,8 +29,6 @@ PluginInfo::PluginInfo()
 {
 }
 
-PluginInfo::~PluginInfo() {}
-
 void PluginInfo::FromJSON(const JSONItem& json)
 {
     m_name = json.namedObject("name").toString();
@@ -59,8 +57,6 @@ PluginInfoArray::PluginInfoArray()
     : clConfigItem("codelite-plugins")
 {
 }
-
-PluginInfoArray::~PluginInfoArray() {}
 
 bool PluginInfoArray::CanLoad(const PluginInfo& plugin) const
 {

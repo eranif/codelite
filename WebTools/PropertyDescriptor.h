@@ -12,12 +12,12 @@ class PropertyDescriptor : public nSerializableObject
 public:
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
-    PropertyDescriptor();
+    PropertyDescriptor() = default;
     void SetName(const wxString& name) { this->m_name = name; }
     void SetValue(const RemoteObject& value) { this->m_value = value; }
     const wxString& GetName() const { return m_name; }
     const RemoteObject& GetValue() const { return m_value; }
-    virtual ~PropertyDescriptor();
+    virtual ~PropertyDescriptor() = default;
     wxString ToString() const;
     bool IsEmpty() const;
     wxString GetTextPreview() const;

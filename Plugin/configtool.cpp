@@ -38,8 +38,6 @@ ConfigTool::ConfigTool()
 {
 }
 
-ConfigTool::~ConfigTool() {}
-
 bool ConfigTool::Load(const wxString& basename, const wxString& version)
 {
     wxString initialSettings = ConfFileLocator::Instance()->Locate(basename);

@@ -446,8 +446,6 @@ TagsOptionsData::TagsOptionsData()
     SyncData();
 }
 
-TagsOptionsData::~TagsOptionsData() {}
-
 void TagsOptionsData::AddDefaultTokens()
 {
     m_tokens.reserve(m_tokens.size() + DEFAULT_TOKENS.size());

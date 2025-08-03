@@ -32,7 +32,7 @@ class XDebugStopCmdHandler : public XDebugCommandHandler
 {
 public:
     XDebugStopCmdHandler(XDebugManager* mgr, int transcationId);
-    virtual ~XDebugStopCmdHandler();
+    virtual ~XDebugStopCmdHandler() = default;
 
 public:
     virtual void Process(const wxXmlNode* response);

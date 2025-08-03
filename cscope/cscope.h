@@ -43,7 +43,7 @@ class Cscope : public IPlugin
 
 public:
     Cscope(IManager* manager);
-    ~Cscope() override;
+    ~Cscope() override = default;
 
     //--------------------------------------------
     // Abstract methods

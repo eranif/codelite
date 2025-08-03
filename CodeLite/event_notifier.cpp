@@ -45,10 +45,6 @@ void EventNotifier::Release()
     eventNotifier = NULL;
 }
 
-EventNotifier::EventNotifier() {}
-
-EventNotifier::~EventNotifier() {}
-
 bool EventNotifier::SendCommandEvent(int eventId, void* clientData)
 {
     wxCommandEvent evt(eventId);

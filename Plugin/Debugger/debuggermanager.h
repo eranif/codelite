@@ -85,7 +85,7 @@ class WXDLLIMPEXP_SDK DebuggerMgr
     EnvironmentConfig* m_env;
 
 private:
-    DebuggerMgr();
+    DebuggerMgr() = default;
     virtual ~DebuggerMgr();
 
 public:

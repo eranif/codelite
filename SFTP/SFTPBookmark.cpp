@@ -25,14 +25,6 @@
 
 #include "SFTPBookmark.h"
 
-SFTPBookmark::SFTPBookmark()
-{
-}
-
-SFTPBookmark::~SFTPBookmark()
-{
-}
-
 void SFTPBookmark::FromJSON(const JSONItem& json)
 {
     m_account.FromJSON( json.namedObject("m_account") );

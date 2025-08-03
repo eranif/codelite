@@ -12,7 +12,7 @@ private:
 
 public:
     LSPCTagsdDetector();
-    ~LSPCTagsdDetector();
+    ~LSPCTagsdDetector() = default;
 
     bool DoLocate() override;
 };

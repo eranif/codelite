@@ -67,7 +67,7 @@ struct NewClassInfo {
     {
     }
 
-    ~NewClassInfo() {}
+    ~NewClassInfo() = default;
 };
 
 /** Implementing NewClassBaseDlg */

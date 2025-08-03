@@ -53,8 +53,6 @@ QMakeProFileGenerator::QMakeProFileGenerator(IManager* manager, const wxString& 
 {
 }
 
-QMakeProFileGenerator::~QMakeProFileGenerator() {}
-
 bool QMakeProFileGenerator::Generate()
 {
     wxString errMsg;

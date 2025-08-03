@@ -32,7 +32,7 @@ class EditorSettingsCaret : public OptionsConfigPage
 {
 public:
     EditorSettingsCaret(wxWindow* parent, OptionsConfigPtr options);
-    virtual ~EditorSettingsCaret() {}
+    ~EditorSettingsCaret() override = default;
 };
 
 #endif // __EDITORSETTINGSCARET__

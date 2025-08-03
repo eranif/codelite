@@ -13,8 +13,6 @@ DockerfileSettingsDlg::DockerfileSettingsDlg(wxWindow* parent, clDockerBuildable
     lexer->Apply(m_stcRun);
 }
 
-DockerfileSettingsDlg::~DockerfileSettingsDlg() {}
-
 void DockerfileSettingsDlg::OnOK(wxCommandEvent& event)
 {
     event.Skip();

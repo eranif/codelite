@@ -64,8 +64,8 @@ class WXDLLIMPEXP_SDK BOM
 
 public:
     BOM(const char* buffer, size_t len);
-    BOM();
-    ~BOM();
+    BOM() = default;
+    ~BOM() = default;
 
     void Clear();
     int Len() const;

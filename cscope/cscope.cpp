@@ -102,8 +102,6 @@ Cscope::Cscope(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &Cscope::OnEditorContentMenu, this);
 }
 
-Cscope::~Cscope() {}
-
 void Cscope::CreateToolBar(clToolBarGeneric* toolbar)
 {
     // support both toolbars icon size

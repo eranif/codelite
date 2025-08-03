@@ -38,8 +38,8 @@ public:
     
 public:
     FilesModifiedDlg(wxWindow* parent);
-    virtual ~FilesModifiedDlg();
-    
+    virtual ~FilesModifiedDlg() = default;
+
     bool GetRememberMyAnswer() const {
         return m_checkBoxRemember->IsChecked();
     }

@@ -1,10 +1,6 @@
 #include "PropertyPreview.h"
 #include "RemoteObject.h"
 
-RemoteObject::RemoteObject() {}
-
-RemoteObject::~RemoteObject() {}
-
 void RemoteObject::FromJSON(const JSONItem& json)
 {
     m_type = json.namedObject("type").toString();

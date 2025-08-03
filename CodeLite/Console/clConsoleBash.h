@@ -14,8 +14,8 @@ protected:
     wxFileName PrepareExecScript() const;
 
 public:
-    clConsoleBash();
-    virtual ~clConsoleBash();
+    clConsoleBash() = default;
+    ~clConsoleBash() override = default;
 };
 
 #endif // CLCONSOLEBASH_H

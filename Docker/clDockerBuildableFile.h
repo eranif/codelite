@@ -28,8 +28,8 @@ public:
     typedef std::unordered_map<wxString, clDockerBuildableFile::Ptr_t> Map_t;
 
     clDockerBuildableFile(const wxString& path, eDockerFileType type);
-    clDockerBuildableFile();
-    virtual ~clDockerBuildableFile();
+    clDockerBuildableFile() = default;
+    virtual ~clDockerBuildableFile() = default;
 
     void SetBuildOptions(const wxString& buildOptions) { this->m_buildOptions = buildOptions; }
     void SetPath(const wxString& path) { this->m_path = path; }

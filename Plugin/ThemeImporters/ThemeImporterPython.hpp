@@ -34,7 +34,7 @@ class WXDLLIMPEXP_SDK ThemeImporterPython : public ThemeImporterBase
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
     ThemeImporterPython();
-    ~ThemeImporterPython();
+    ~ThemeImporterPython() = default;
 };
 
 #endif // ECLIPSEPYTHONTHEMEIMPORTER_H

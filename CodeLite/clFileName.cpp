@@ -53,8 +53,6 @@ bool is_cygwin_env()
 }
 } // namespace
 
-clFileName::clFileName() {}
-
 clFileName::clFileName(const wxString& fullpath)
     : wxFileName(FromCygwin(fullpath))
 {
@@ -64,8 +62,6 @@ clFileName::clFileName(const wxString& dir, const wxString& name)
     : wxFileName(FromCygwin(dir + wxFileName::GetPathSeparator() + name))
 {
 }
-
-clFileName::~clFileName() {}
 
 wxString clFileName::FromCygwin(const wxString& fullpath)
 {

@@ -57,8 +57,6 @@ DotWriter::DotWriter()
     dwstripparams = false;
 }
 
-DotWriter::~DotWriter() {}
-
 void DotWriter::SetLineParser(LineParserList* pLines) //, int numOfLines)
 {
     mlines = pLines;

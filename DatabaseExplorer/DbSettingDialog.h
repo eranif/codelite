@@ -52,7 +52,7 @@ protected:
 
 public:
     DbSettingDialog(DbViewerPanel* parent, wxWindow* pWindowParent);
-    virtual ~DbSettingDialog();
+    virtual ~DbSettingDialog() = default;
 
 protected:
     void DoSaveSqliteHistory();

@@ -13,8 +13,8 @@ namespace LSP
 class WXDLLIMPEXP_CL Serializable
 {
 public:
-    Serializable() {}
-    virtual ~Serializable() {}
+    Serializable() = default;
+    virtual ~Serializable() = default;
     virtual JSONItem ToJSON(const wxString& name) const = 0;
     virtual void FromJSON(const JSONItem& json) = 0;
 };

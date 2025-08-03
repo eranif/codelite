@@ -31,7 +31,8 @@ class PHPXDebugSetupWizard : public PHPXDebugSetupWizardBase
 {
 public:
     PHPXDebugSetupWizard(wxWindow* parent);
-    virtual ~PHPXDebugSetupWizard();
+    virtual ~PHPXDebugSetupWizard() = default;
+
 protected:
     virtual void OnFinished(wxWizardEvent& event);
     virtual void OnPageChanging(wxWizardEvent& event);

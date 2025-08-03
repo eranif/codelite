@@ -59,7 +59,7 @@ class WXDLLIMPEXP_CL Archive
 
 public:
     Archive();
-    virtual ~Archive();
+    virtual ~Archive() = default;
 
     /**
      * \brief set a root node for this Archive object, all Write operations will append their nodes

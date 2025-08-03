@@ -56,7 +56,7 @@ public:
 	/**
 	 * Destructor
 	 */
-	virtual ~TagTree();
+	virtual ~TagTree() = default;
 
 	/**
 	 * Add an entry to the tree.

@@ -99,8 +99,8 @@ private:
     SeqLinePair_t m_sequences;
 
 public:
-    clDTL();
-    virtual ~clDTL();
+    clDTL() = default;
+    virtual ~clDTL() = default;
 
     /**
      * @brief "diff" two files and store the result in the m_result member

@@ -39,7 +39,7 @@ class WXDLLIMPEXP_SDK OpenTypeVListCtrl : public wxListView
 public:
     OpenTypeVListCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                       const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL);
-    virtual ~OpenTypeVListCtrl();
+    virtual ~OpenTypeVListCtrl() = default;
 
 public:
     void SetItems(const std::vector<TagEntryPtr>& tags) { m_tags = tags; }

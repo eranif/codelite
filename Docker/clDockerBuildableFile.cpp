@@ -14,8 +14,6 @@ clDockerBuildableFile::clDockerBuildableFile(const wxString& path, eDockerFileTy
     , m_type(type)
 {
 }
-clDockerBuildableFile::clDockerBuildableFile() {}
-clDockerBuildableFile::~clDockerBuildableFile() {}
 
 void clDockerBuildableFile::FromJSON(const JSONItem& json, const wxString& workspaceDir)
 {

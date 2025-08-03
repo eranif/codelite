@@ -42,7 +42,7 @@ protected:
     
 public:
     AutoSave(IManager* manager);
-    ~AutoSave() override;
+    ~AutoSave() override = default;
 
     //--------------------------------------------
     // Abstract methods

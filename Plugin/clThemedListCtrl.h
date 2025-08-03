@@ -26,7 +26,7 @@ class WXDLLIMPEXP_SDK clThemedListCtrl : public clThemedListCtrlBase
 public:
     clThemedListCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                      const wxSize& size = wxDefaultSize, long style = 0);
-    virtual ~clThemedListCtrl();
+    virtual ~clThemedListCtrl() = default;
 };
 
 class WXDLLIMPEXP_SDK clThemedOrderedListCtrl : public clThemedListCtrlBase
@@ -36,7 +36,7 @@ class WXDLLIMPEXP_SDK clThemedOrderedListCtrl : public clThemedListCtrlBase
 public:
     clThemedOrderedListCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                             const wxSize& size = wxDefaultSize, long style = 0);
-    virtual ~clThemedOrderedListCtrl();
+    virtual ~clThemedOrderedListCtrl() = default;
 
     void SetSortedColumn(size_t sortedColumn) { this->m_sortedColumn = sortedColumn; }
     size_t GetSortedColumn() const { return m_sortedColumn; }

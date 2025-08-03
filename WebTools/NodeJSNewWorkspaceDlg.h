@@ -36,7 +36,7 @@ protected:
 
 public:
     NodeJSNewWorkspaceDlg(wxWindow* parent);
-    virtual ~NodeJSNewWorkspaceDlg();
+    virtual ~NodeJSNewWorkspaceDlg() = default;
     wxString GetWorkspaceFilename() const { return m_staticTextPreview->GetLabel(); }
 
 protected:

@@ -17,8 +17,6 @@ PHPProjectSettingsData::PHPProjectSettingsData()
 {
 }
 
-PHPProjectSettingsData::~PHPProjectSettingsData() {}
-
 wxArrayString PHPProjectSettingsData::GetIncludePathAsArray() const
 {
     PHPProjectSettingsData s = *this;

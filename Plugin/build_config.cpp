@@ -313,8 +313,6 @@ BuildConfig::BuildConfig(wxXmlNode* node)
     }
 }
 
-BuildConfig::~BuildConfig() {}
-
 BuildConfig* BuildConfig::Clone() const
 {
     wxXmlNode* node = ToXml();

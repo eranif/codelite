@@ -6,7 +6,7 @@ class GitResetDlg : public GitResetDlgBase
 {
 public:
     GitResetDlg(wxWindow* parent, const wxArrayString& filesToRemove,  const wxArrayString& filesToRevert);
-    virtual ~GitResetDlg();
+    virtual ~GitResetDlg() = default;
     
     wxArrayString GetItemsToRevert() const;
     wxArrayString GetItemsToRemove() const;

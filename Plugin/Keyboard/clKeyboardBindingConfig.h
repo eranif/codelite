@@ -37,8 +37,8 @@ class WXDLLIMPEXP_SDK clKeyboardBindingConfig
     MenuItemDataMap_t m_bindings;
 
 public:
-    clKeyboardBindingConfig();
-    virtual ~clKeyboardBindingConfig();
+    clKeyboardBindingConfig() = default;
+    virtual ~clKeyboardBindingConfig() = default;
 
     clKeyboardBindingConfig& Load();
     clKeyboardBindingConfig& Save();

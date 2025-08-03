@@ -21,7 +21,7 @@ class ChildProcess : public wxEvtHandler
     UnixProcess* m_childProcess = nullptr;
 #endif
 public:
-    ChildProcess();
+    ChildProcess() = default;
     virtual ~ChildProcess();
 
     void Start(const wxArrayString& args);

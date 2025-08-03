@@ -36,7 +36,7 @@ public:
     
 public:
     clFunction();
-    virtual ~clFunction();
+    virtual ~clFunction() = default;
 
     // clear the class content
     void Reset();

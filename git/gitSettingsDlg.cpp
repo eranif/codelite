@@ -59,8 +59,6 @@ GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath, 
     WindowAttrManager::Load(this);
 }
 
-GitSettingsDlg::~GitSettingsDlg() {}
-
 void GitSettingsDlg::OnOK(wxCommandEvent& event)
 {
     GitEntry data;

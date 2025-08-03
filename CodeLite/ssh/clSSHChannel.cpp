@@ -33,7 +33,7 @@ public:
         , m_wantStderr(false)
     {
     }
-    virtual ~clSSHChannelReader() {}
+    virtual ~clSSHChannelReader() = default;
 
     void* Entry()
     {

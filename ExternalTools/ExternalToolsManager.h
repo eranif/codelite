@@ -31,7 +31,7 @@ class ExternalToolsManager : public ExternalToolsManagerBase
 {
 public:
     ExternalToolsManager(wxWindow* parent);
-    virtual ~ExternalToolsManager();
+    virtual ~ExternalToolsManager() = default;
 
 protected:
     virtual void OnRefresh(wxCommandEvent& event);

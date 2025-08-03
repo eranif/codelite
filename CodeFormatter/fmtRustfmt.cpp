@@ -16,5 +16,3 @@ fmtRustfmt::fmtRustfmt()
     SetCommand({ rustfmt_exe.value_or("rustfmt"), "--edition", "2021", R"#("$(CurrentFileRelPath)")#" });
     SetEnabled(rustfmt_exe.has_value());
 }
-
-fmtRustfmt::~fmtRustfmt() {}

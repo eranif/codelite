@@ -12,8 +12,6 @@ PHPXDebugSetupWizard::PHPXDebugSetupWizard(wxWindow* parent)
     m_textCtrlPort->ChangeValue(wxString() << conf.GetXdebugPort());
 }
 
-PHPXDebugSetupWizard::~PHPXDebugSetupWizard() {}
-
 void PHPXDebugSetupWizard::OnPageChanging(wxWizardEvent& event)
 {
     event.Skip();

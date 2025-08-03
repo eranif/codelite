@@ -33,7 +33,7 @@ class WebToolsSettings : public WebToolsSettingsBase
 
 public:
     WebToolsSettings(wxWindow* parent);
-    virtual ~WebToolsSettings();
+    virtual ~WebToolsSettings() = default;
 
 private:
     void DoSave();

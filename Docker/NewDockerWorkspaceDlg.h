@@ -7,7 +7,7 @@ class NewDockerWorkspaceDlg : public NewDockerWorkspaceDlgBase
 {
 public:
     NewDockerWorkspaceDlg(wxWindow* parent);
-    virtual ~NewDockerWorkspaceDlg();
+    virtual ~NewDockerWorkspaceDlg() = default;
     wxFileName GetWorkspaceFile() const;
 
 protected:

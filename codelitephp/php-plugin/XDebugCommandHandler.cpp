@@ -5,8 +5,3 @@ XDebugCommandHandler::XDebugCommandHandler(XDebugManager* mgr, int transcationId
     , m_transactionId(transcationId)
 {
 }
-
-XDebugCommandHandler::~XDebugCommandHandler()
-{
-}
-

@@ -6,5 +6,3 @@ OpenFolderDlg::OpenFolderDlg(wxWindow* parent)
     SetName("OpenFolderDlg");
     WindowAttrManager::Load(this);
 }
-
-OpenFolderDlg::~OpenFolderDlg() {}

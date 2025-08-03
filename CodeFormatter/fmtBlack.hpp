@@ -7,7 +7,7 @@ class fmtBlack : public GenericFormatter
 {
 public:
     fmtBlack();
-    virtual ~fmtBlack();
+    ~fmtBlack() override = default;
 };
 
 #endif // FMTBLACK_HPP

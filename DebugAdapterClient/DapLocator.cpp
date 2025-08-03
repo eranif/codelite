@@ -6,10 +6,6 @@
 #include "globals.h"
 #include "procutils.h"
 
-DapLocator::DapLocator() {}
-
-DapLocator::~DapLocator() {}
-
 size_t DapLocator::Locate(std::vector<DapEntry>* entries)
 {
     find_lldb_dap(entries);

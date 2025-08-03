@@ -30,8 +30,6 @@ clDockerSettings::clDockerSettings()
     }
 }
 
-clDockerSettings::~clDockerSettings() {}
-
 void clDockerSettings::FromJSON(const JSONItem& json)
 {
     wxString v;

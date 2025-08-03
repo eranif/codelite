@@ -43,7 +43,7 @@ public:
 	View(const View& obj);
 	View(IDbAdapter* dbAdapter,const wxString& name, const wxString& parentName, const wxString& select);
 	/*! \brief Default destructors */
-	virtual ~View();
+	virtual ~View() = default;
 
 	/*! \brief Set view name */
 	void SetName(const wxString & name) {

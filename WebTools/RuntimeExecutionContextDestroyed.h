@@ -7,7 +7,7 @@ class RuntimeExecutionContextDestroyed : public NodeMessageBase
 {
 public:
     RuntimeExecutionContextDestroyed();
-    virtual ~RuntimeExecutionContextDestroyed();
+    virtual ~RuntimeExecutionContextDestroyed() = default;
 
 public:
     virtual NodeMessageBase::Ptr_t Clone();

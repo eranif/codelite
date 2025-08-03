@@ -42,8 +42,8 @@ class WXDLLIMPEXP_SDK clTreeNodeIndex
     std::unordered_map<wxString, wxTreeItemId> m_children;
 
 public:
-    clTreeNodeIndex() {}
-    virtual ~clTreeNodeIndex() {}
+    clTreeNodeIndex() = default;
+    virtual ~clTreeNodeIndex() = default;
 
     wxTreeItemId Find(const wxString& path);
     void Add(const wxString& path, const wxTreeItemId& item);
@@ -130,7 +130,7 @@ public:
     clFileViewerTreeCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                          const wxSize& size = wxDefaultSize,
                          long style = wxTR_DEFAULT_STYLE | wxTR_MULTIPLE | wxTR_HIDE_ROOT | wxBORDER_STATIC);
-    virtual ~clFileViewerTreeCtrl();
+    virtual ~clFileViewerTreeCtrl() = default;
 };
 
 #endif // CLFILEVIWERTREECTRL_H

@@ -14,7 +14,6 @@ CompilerLocatorMSYS2ClangUsr::CompilerLocatorMSYS2ClangUsr()
     m_repository = "";
     m_msys2.SetChroot("\\usr");
 }
-CompilerLocatorMSYS2ClangUsr::~CompilerLocatorMSYS2ClangUsr() {}
 
 CompilerLocatorMSYS2ClangMingw64::CompilerLocatorMSYS2ClangMingw64()
 {
@@ -22,21 +21,14 @@ CompilerLocatorMSYS2ClangMingw64::CompilerLocatorMSYS2ClangMingw64()
     m_msys2.SetChroot("\\mingw64");
 }
 
-CompilerLocatorMSYS2ClangMingw64::~CompilerLocatorMSYS2ClangMingw64() {}
-
 CompilerLocatorMSYS2ClangClang64::CompilerLocatorMSYS2ClangClang64()
 {
     m_repository = "clang64";
     m_msys2.SetChroot("\\clang64");
 }
-CompilerLocatorMSYS2ClangClang64::~CompilerLocatorMSYS2ClangClang64() {}
 
 // --------------------------------------------------
 // --------------------------------------------------
-
-CompilerLocatorMSYS2Clang::CompilerLocatorMSYS2Clang() {}
-
-CompilerLocatorMSYS2Clang::~CompilerLocatorMSYS2Clang() {}
 
 bool CompilerLocatorMSYS2Clang::Locate()
 {

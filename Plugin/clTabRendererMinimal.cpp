@@ -46,8 +46,6 @@ clTabRendererMinimal::clTabRendererMinimal(const wxWindow* parent)
 {
 }
 
-clTabRendererMinimal::~clTabRendererMinimal() {}
-
 void clTabRendererMinimal::InitDarkColours(clTabColours& colours, const wxColour& activeTabBGColour)
 {
     wxUnusedVar(colours);

@@ -86,7 +86,7 @@ public:
     /**
      * Destructor
      */
-    virtual ~ProjectSettings();
+    virtual ~ProjectSettings() = default;
 
     /**
      * Serialize the object to XML representation

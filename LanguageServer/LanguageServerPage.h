@@ -9,7 +9,7 @@ class LanguageServerPage : public LanguageServerPageBase
 public:
     LanguageServerPage(wxWindow* parent, const LanguageServerEntry& data);
     LanguageServerPage(wxWindow* parent);
-    virtual ~LanguageServerPage();
+    virtual ~LanguageServerPage() = default;
 
     wxArrayString GetLanguages() const;
     LanguageServerEntry GetData() const;

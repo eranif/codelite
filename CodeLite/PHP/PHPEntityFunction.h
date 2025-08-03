@@ -55,8 +55,8 @@ protected:
     wxString m_strSignature;
 
 public:
-    PHPEntityFunction();
-    virtual ~PHPEntityFunction();
+    PHPEntityFunction() = default;
+    virtual ~PHPEntityFunction() = default;
     const wxString& GetReturnValue() const { return m_strReturnValue; }
     void SetReturnValue(const wxString& strReturnValue) { this->m_strReturnValue = strReturnValue; }
 

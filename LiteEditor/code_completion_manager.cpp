@@ -65,7 +65,7 @@ struct EditorDimmerDisabler {
         }
     }
 
-    ~EditorDimmerDisabler() {}
+    ~EditorDimmerDisabler() = default;
 };
 
 CodeCompletionManager::CodeCompletionManager()

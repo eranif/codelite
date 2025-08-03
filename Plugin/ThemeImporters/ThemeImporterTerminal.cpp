@@ -16,8 +16,6 @@ ThemeImporterTerminal::ThemeImporterTerminal()
     m_langName = "terminal";
 }
 
-ThemeImporterTerminal::~ThemeImporterTerminal() {}
-
 LexerConf::Ptr_t ThemeImporterTerminal::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, m_langName, wxSTC_LEX_TERMINAL);

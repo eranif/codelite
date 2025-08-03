@@ -40,7 +40,7 @@ class WXDLLIMPEXP_SDK BuilderGnuMakeOneStep : public BuilderGNUMakeClassic
 {
 public:
     BuilderGnuMakeOneStep();
-    virtual ~BuilderGnuMakeOneStep();
+    virtual ~BuilderGnuMakeOneStep() = default;
 
     /*	These methods available but supplied by baseclass BuilderGnuMake
             virtual bool Export(const wxString &project, const wxString &confToBuild, bool isProjectOnly, bool force,

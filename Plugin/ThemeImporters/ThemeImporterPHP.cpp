@@ -26,8 +26,6 @@ ThemeImporterPHP::ThemeImporterPHP()
     SetFileExtensions("*.php;*.php3;*.phtml;*.inc;*.php5");
 }
 
-ThemeImporterPHP::~ThemeImporterPHP() {}
-
 LexerConf::Ptr_t ThemeImporterPHP::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, "php", wxSTC_LEX_HTML);

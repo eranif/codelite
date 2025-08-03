@@ -86,7 +86,7 @@ public:
 
 public:
     DebuggerPaneConfig();
-    virtual ~DebuggerPaneConfig();
+    virtual ~DebuggerPaneConfig() = default;
 };
 
 class DebuggerPane : public wxPanel

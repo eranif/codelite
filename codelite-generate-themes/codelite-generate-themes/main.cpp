@@ -77,8 +77,8 @@ size_t import_files(const wxString& input_dir, const wxString& output_dir)
 class MainApp : public wxApp
 {
 public:
-    MainApp() {}
-    virtual ~MainApp() {}
+    MainApp() = default;
+    virtual ~MainApp() = default;
 
     virtual bool OnInit()
     {

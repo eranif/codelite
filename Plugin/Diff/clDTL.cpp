@@ -32,10 +32,6 @@
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
 
-clDTL::clDTL() {}
-
-clDTL::~clDTL() {}
-
 void clDTL::Diff(const wxFileName& fnLeft, const wxFileName& fnRight, DiffMode mode)
 {
     wxString leftFile, rightFile;

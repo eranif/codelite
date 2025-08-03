@@ -9,8 +9,6 @@ AuiPaneInfoListView::AuiPaneInfoListView()
 {
 }
 
-AuiPaneInfoListView::~AuiPaneInfoListView() {}
-
 void AuiPaneInfoListView::Construct(wxPropertyGrid* pg, wxcWidget* wb)
 {
     pg->Clear();

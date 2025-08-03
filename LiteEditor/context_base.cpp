@@ -53,8 +53,6 @@ ContextBase::ContextBase(const wxString& name)
 {
 }
 
-ContextBase::~ContextBase() {}
-
 // provide basic indentation
 void ContextBase::AutoIndent(const wxChar& ch)
 {

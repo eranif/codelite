@@ -7,10 +7,6 @@
 #include <wx/regex.h>
 #include <wx/filesys.h>
 
-NodeFileManager::NodeFileManager() {}
-
-NodeFileManager::~NodeFileManager() {}
-
 NodeFileManager& NodeFileManager::Get()
 {
     static NodeFileManager mgr;

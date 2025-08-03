@@ -32,8 +32,6 @@ ThemeImporterSQL::ThemeImporterSQL()
     m_langName = "sql";
 }
 
-ThemeImporterSQL::~ThemeImporterSQL() {}
-
 LexerConf::Ptr_t ThemeImporterSQL::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_SQL);

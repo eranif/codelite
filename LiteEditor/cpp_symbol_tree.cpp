@@ -39,8 +39,6 @@ IMPLEMENT_DYNAMIC_CLASS(CppSymbolTree, SymbolTree)
 
 const wxEventType wxEVT_CMD_CPP_SYMBOL_ITEM_SELECTED = wxNewEventType();
 
-CppSymbolTree::CppSymbolTree() {}
-
 CppSymbolTree::CppSymbolTree(wxWindow* parent, const wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : SymbolTree(parent, id, pos, size, style)
 {

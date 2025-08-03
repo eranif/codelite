@@ -19,7 +19,7 @@ protected:
 
 public:
     PHPDocParam(PHPSourceFile& sourceFile, const wxString& comment);
-    ~PHPDocParam();
+    ~PHPDocParam() = default;
 
     /**
      * @brief parse comment and map of params found in it

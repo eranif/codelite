@@ -15,7 +15,7 @@ class WXDLLIMPEXP_CL SignatureHelpRequest : public LSP::Request
 
 public:
     explicit SignatureHelpRequest(const wxString& filename, size_t line, size_t column);
-    virtual ~SignatureHelpRequest();
+    virtual ~SignatureHelpRequest() = default;
 
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
     bool IsPositionDependantRequest() const { return true; }

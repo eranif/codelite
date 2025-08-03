@@ -31,6 +31,6 @@ class OpenFolderDlg : public OpenFolderDlgBase
 {
 public:
     OpenFolderDlg(wxWindow* parent);
-    virtual ~OpenFolderDlg();
+    ~OpenFolderDlg() override = default;
 };
 #endif // OPENFOLDERDLG_H

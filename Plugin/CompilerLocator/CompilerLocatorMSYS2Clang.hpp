@@ -16,8 +16,8 @@ protected:
 protected:
     wxFileName GetFileName(const wxString& bin_dir, const wxString& fullname) const;
 
-    CompilerLocatorMSYS2Clang();
-    virtual ~CompilerLocatorMSYS2Clang();
+    CompilerLocatorMSYS2Clang() = default;
+    virtual ~CompilerLocatorMSYS2Clang() = default;
 
 public:
     /**
@@ -35,20 +35,20 @@ class WXDLLIMPEXP_SDK CompilerLocatorMSYS2ClangUsr : public CompilerLocatorMSYS2
 {
 public:
     CompilerLocatorMSYS2ClangUsr();
-    virtual ~CompilerLocatorMSYS2ClangUsr();
+    virtual ~CompilerLocatorMSYS2ClangUsr() = default;
 };
 
 class WXDLLIMPEXP_SDK CompilerLocatorMSYS2ClangClang64 : public CompilerLocatorMSYS2Clang
 {
 public:
     CompilerLocatorMSYS2ClangClang64();
-    virtual ~CompilerLocatorMSYS2ClangClang64();
+    virtual ~CompilerLocatorMSYS2ClangClang64() = default;
 };
 
 class WXDLLIMPEXP_SDK CompilerLocatorMSYS2ClangMingw64 : public CompilerLocatorMSYS2Clang
 {
 public:
     CompilerLocatorMSYS2ClangMingw64();
-    virtual ~CompilerLocatorMSYS2ClangMingw64();
+    virtual ~CompilerLocatorMSYS2ClangMingw64() = default;
 };
 #endif // CompilerLocatorMSYS2Clang_HPP

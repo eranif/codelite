@@ -61,7 +61,7 @@ public:
     {
     }
 
-    virtual ~IDbAdapter() {}
+    virtual ~IDbAdapter() = default;
     
     /*! \brief Return opened DatabaseLayer for selected database. If dbName is empty, DatabaseLayer will be opened without default database. */
     virtual DatabaseLayerPtr GetDatabaseLayer(const wxString& dbName) = 0;

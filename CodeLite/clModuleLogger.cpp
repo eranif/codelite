@@ -6,8 +6,6 @@
 #include <wx/crt.h>
 #include <wx/datetime.h>
 
-clModuleLogger::clModuleLogger() {}
-
 clModuleLogger::~clModuleLogger() { Flush(); }
 
 bool clModuleLogger::CanLog() const { return FileLogger::CanLog(m_current_log_level); }

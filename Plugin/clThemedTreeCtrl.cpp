@@ -35,8 +35,6 @@ bool clThemedTreeCtrl::Create(wxWindow* parent, wxWindowID id, const wxPoint& po
     return true;
 }
 
-clThemedTreeCtrl::clThemedTreeCtrl() {}
-
 clThemedTreeCtrl::~clThemedTreeCtrl()
 {
     m_keyboard.reset(nullptr);

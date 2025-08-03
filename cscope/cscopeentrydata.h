@@ -42,7 +42,7 @@ class CscopeEntryData
 
 public:
 	CscopeEntryData();
-	~CscopeEntryData();
+	~CscopeEntryData() = default;
 
 
 //Setters

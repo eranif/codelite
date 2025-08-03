@@ -13,7 +13,7 @@ protected:
 
 public:
     MessageManager();
-    virtual ~MessageManager();
+    virtual ~MessageManager() = default;
     NodeMessageBase::Ptr_t GetHandler(const wxString& eventName);
 };
 

@@ -9,8 +9,6 @@ ThemeImporterDockerfile::ThemeImporterDockerfile()
     m_langName = "dockerfile";
 }
 
-ThemeImporterDockerfile::~ThemeImporterDockerfile() {}
-
 LexerConf::Ptr_t ThemeImporterDockerfile::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_BASH);

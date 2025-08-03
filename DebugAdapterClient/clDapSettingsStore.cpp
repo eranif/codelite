@@ -29,10 +29,6 @@ void DapEntry::From(const JSONItem& json)
 //////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////
 
-clDapSettingsStore::clDapSettingsStore() {}
-
-clDapSettingsStore::~clDapSettingsStore() {}
-
 void clDapSettingsStore::Clear() { m_entries.clear(); }
 
 void clDapSettingsStore::Load(const wxFileName& file)

@@ -52,7 +52,7 @@ protected:
 
 public:
     DebuggerPage(wxWindow* parent, wxString title);
-    virtual ~DebuggerPage();
+    virtual ~DebuggerPage() = default;
 };
 
 ///////////////////////////////////////////////////
@@ -68,7 +68,7 @@ public:
     virtual void OnWindowsUI(wxUpdateUIEvent& event);
 
     DebuggerPageMisc(wxWindow* parent, const wxString& title);
-    virtual ~DebuggerPageMisc();
+    virtual ~DebuggerPageMisc() = default;
 };
 
 ///////////////////////////////////////////////////
@@ -81,7 +81,7 @@ class DebuggerPageStartupCmds : public DbgPageStartupCmdsBase
 
 public:
     DebuggerPageStartupCmds(wxWindow* parent, const wxString& title);
-    virtual ~DebuggerPageStartupCmds();
+    virtual ~DebuggerPageStartupCmds() = default;
 };
 
 ///////////////////////////////////////////////////
@@ -93,7 +93,7 @@ class DbgPagePreDefTypes : public DbgPagePreDefTypesBase
 
 public:
     DbgPagePreDefTypes(wxWindow* parent);
-    virtual ~DbgPagePreDefTypes();
+    virtual ~DbgPagePreDefTypes() = default;
 
     virtual void OnDeleteSet(wxCommandEvent& event);
     virtual void OnDeleteSetUI(wxUpdateUIEvent& event);
@@ -115,7 +115,7 @@ protected:
 public:
     /** Constructor */
     DebuggerSettingsDlg(wxWindow* parent);
-    virtual ~DebuggerSettingsDlg();
+    virtual ~DebuggerSettingsDlg() = default;
 };
 
 class NewPreDefinedSetDlg : public NewPreDefinedSetBaseDlg
@@ -126,7 +126,7 @@ public:
         : NewPreDefinedSetBaseDlg(parent)
     {
     }
-    virtual ~NewPreDefinedSetDlg() {}
+    virtual ~NewPreDefinedSetDlg() = default;
 
     wxTextCtrl* GetNameTextctl() { return m_textCtrlName; }
     wxChoice* GetChoiceCopyFrom() { return m_choiceCopyFrom; }

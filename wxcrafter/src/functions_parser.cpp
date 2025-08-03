@@ -9,8 +9,6 @@ FunctionsParser::FunctionsParser(wxcWidget::Map_t& connectedEvents, const wxStri
     m_scanner.SetText(header.mb_str(wxConvUTF8).data());
 }
 
-FunctionsParser::~FunctionsParser() {}
-
 //////////////////////////////////////////////////////////
 // Macros
 //////////////////////////////////////////////////////////

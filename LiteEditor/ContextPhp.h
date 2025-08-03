@@ -33,8 +33,8 @@ class ContextPhp : public ContextGeneric
 public:
     ContextPhp();
     ContextPhp(clEditor *Editor);
-    virtual ~ContextPhp();
-    
+    virtual ~ContextPhp() = default;
+
 public:
     bool IsStringTriggerCodeComplete(const wxString& str) const;
     virtual int GetActiveKeywordSet() const;

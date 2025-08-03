@@ -9,8 +9,6 @@ AutoSaveDlg::AutoSaveDlg(wxWindow* parent)
     m_spinCtrlInterval->SetValue(conf.GetCheckInterval());
 }
 
-AutoSaveDlg::~AutoSaveDlg() {}
-
 void AutoSaveDlg::OnEnabledUI(wxUpdateUIEvent& event) { event.Enable(m_checkBoxEnabled->IsChecked()); }
 
 void AutoSaveDlg::OnOK(wxCommandEvent& event)

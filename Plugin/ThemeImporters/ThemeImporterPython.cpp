@@ -10,8 +10,6 @@ ThemeImporterPython::ThemeImporterPython()
     SetLangName("python");
 }
 
-ThemeImporterPython::~ThemeImporterPython() {}
-
 LexerConf::Ptr_t ThemeImporterPython::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_PYTHON);

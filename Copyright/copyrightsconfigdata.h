@@ -36,7 +36,7 @@ class CopyrightsConfigData : public SerializedObject
 
 public:
 	CopyrightsConfigData();
-	virtual ~CopyrightsConfigData();
+	virtual ~CopyrightsConfigData() = default;
 
 public:
 	virtual void DeSerialize(Archive &arch);

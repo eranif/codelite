@@ -15,8 +15,6 @@ XDebugBreakpointCmdHandler::XDebugBreakpointCmdHandler(XDebugManager* mgr, int t
 {
 }
 
-XDebugBreakpointCmdHandler::~XDebugBreakpointCmdHandler() {}
-
 void XDebugBreakpointCmdHandler::Process(const wxXmlNode* response)
 {
     // Breakpoint assigned successfully (or not)

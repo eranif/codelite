@@ -36,7 +36,7 @@ class ThreadListClientData : public wxClientData
 public:
     ThreadListClientData(const ThreadEntry& te) { m_threadEntry = te; }
 
-    virtual ~ThreadListClientData() {}
+    ~ThreadListClientData() override = default;
     const ThreadEntry& GetThreadEntry() const { return m_threadEntry; }
     ThreadEntry& GetThreadEntry() { return m_threadEntry; }
 };
@@ -45,8 +45,6 @@ ThreadListPanel::ThreadListPanel(wxWindow* parent)
     : ThreadListBasePanel(parent)
 {
 }
-
-ThreadListPanel::~ThreadListPanel() {}
 
 void ThreadListPanel::OnItemActivated(wxDataViewEvent& event)
 {

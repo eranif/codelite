@@ -40,9 +40,6 @@ Language::Language()
 {
 }
 
-/// Destructor
-Language::~Language() {}
-
 void Language::ParseTemplateArgs(const wxString& argListStr, wxArrayString& argsList)
 {
     CppScanner scanner;

@@ -64,7 +64,7 @@ public:
     void OnContextMenu(clContextMenuEvent& event);
 
     CodeFormatter(IManager* manager);
-    ~CodeFormatter() override;
+    ~CodeFormatter() override = default;
     void CreateToolBar(clToolBarGeneric* toolbar) override;
     void CreatePluginMenu(wxMenu* pluginsMenu) override;
     void HookPopupMenu(wxMenu* menu, MenuType type) override;

@@ -287,8 +287,6 @@ GitPlugin::GitPlugin(IManager* manager)
     m_configFlags = data.GetFlags();
 }
 
-GitPlugin::~GitPlugin() {}
-
 void GitPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void GitPlugin::CreatePluginMenu(wxMenu* pluginsMenu)

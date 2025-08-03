@@ -6,10 +6,6 @@
 #include <wx/arrstr.h>
 #include <wx/filename.h>
 
-clRustLocator::clRustLocator() {}
-
-clRustLocator::~clRustLocator() {}
-
 bool clRustLocator::Locate()
 {
     const auto tool_exe = ThePlatform->Which("cargo");

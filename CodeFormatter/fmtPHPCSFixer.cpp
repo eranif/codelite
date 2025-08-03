@@ -20,5 +20,3 @@ fmtPHPCSFixer::fmtPHPCSFixer()
                  R"#("$(CurrentFileRelPath)")#" });
     SetEnabled(php_exe.has_value());
 }
-
-fmtPHPCSFixer::~fmtPHPCSFixer() {}

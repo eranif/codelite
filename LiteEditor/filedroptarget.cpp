@@ -30,10 +30,6 @@ FileDropTarget::FileDropTarget()
 {
 }
 
-FileDropTarget::~FileDropTarget()
-{
-}
-
 bool FileDropTarget::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString &filenames)
 {
 	wxUnusedVar(x);

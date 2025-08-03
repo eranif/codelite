@@ -7,9 +7,6 @@
 #include <wx/wxprec.h>
 
 using namespace std;
-clLocaleManager::clLocaleManager() {}
-
-clLocaleManager::~clLocaleManager() {}
 
 void clLocaleManager::load()
 {

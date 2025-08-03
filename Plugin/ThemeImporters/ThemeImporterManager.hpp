@@ -37,7 +37,7 @@ class WXDLLIMPEXP_SDK ThemeImporterManager
 
 public:
     ThemeImporterManager();
-    virtual ~ThemeImporterManager();
+    virtual ~ThemeImporterManager() = default;
 
     ThemeImporterManager(const ThemeImporterManager&) = delete;
     ThemeImporterManager& operator=(const ThemeImporterManager&) = delete;

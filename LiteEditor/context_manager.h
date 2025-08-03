@@ -52,6 +52,6 @@ public:
 
 private:
     ContextManager();
-    virtual ~ContextManager();
+    virtual ~ContextManager() = default;
 };
 #endif // CONTEXT_MANAGER_H

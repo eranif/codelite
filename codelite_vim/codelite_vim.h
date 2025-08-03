@@ -14,7 +14,7 @@ private:
 
 public:
     CodeliteVim(IManager* manager);
-    ~CodeliteVim() override;
+    ~CodeliteVim() override = default;
 
     //--------------------------------------------
     // Abstract methods

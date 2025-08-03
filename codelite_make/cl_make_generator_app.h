@@ -35,7 +35,7 @@ protected:
     
 public:
     clMakeGeneratorApp();
-    virtual ~clMakeGeneratorApp();
+    virtual ~clMakeGeneratorApp() = default;
 
     void DoExitApp();
     virtual bool OnInit();

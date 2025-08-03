@@ -23,8 +23,8 @@ protected:
     wxString m_statusMessage; // A custom message to be displayed to the user when this message is being processed
 
 public:
-    MessageWithParams();
-    virtual ~MessageWithParams();
+    MessageWithParams() = default;
+    virtual ~MessageWithParams() = default;
     virtual JSONItem ToJSON(const wxString& name) const;
     virtual void FromJSON(const JSONItem& json);
     virtual std::string ToString() const;

@@ -20,7 +20,7 @@ private:
 
 public:
     LSPOutlineViewDlg(wxWindow* parent);
-    virtual ~LSPOutlineViewDlg();
+    virtual ~LSPOutlineViewDlg() = default;
 
     void SetSymbols(const std::vector<SymbolInformation>& symbols);
 

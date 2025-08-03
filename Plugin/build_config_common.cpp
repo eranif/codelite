@@ -89,8 +89,6 @@ BuildConfigCommon::BuildConfigCommon(wxXmlNode* node, wxString confType)
     }
 }
 
-BuildConfigCommon::~BuildConfigCommon() {}
-
 wxXmlNode* BuildConfigCommon::ToXml() const
 {
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, m_confType);

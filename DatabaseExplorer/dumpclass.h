@@ -38,7 +38,7 @@ class DumpClass {
 
 public:
 	DumpClass(IDbAdapter* pDbAdapter, xsSerializable* pItems, const wxString& fileName);
-	virtual ~DumpClass();
+	virtual ~DumpClass() = default;
 	
 	/*! \brief start dumping data. Return finally status */
 	wxString DumpData();

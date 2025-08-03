@@ -16,7 +16,7 @@ class WXDLLIMPEXP_CL GotoDeclarationRequest : public LSP::Request
 
 public:
     explicit GotoDeclarationRequest(const wxString& filename, size_t line, size_t column, bool for_add_missing_header);
-    virtual ~GotoDeclarationRequest();
+    virtual ~GotoDeclarationRequest() = default;
 
     void SetColumn(size_t column) { this->m_column = column; }
     void SetFilename(const wxString& filename) { this->m_filename = filename; }

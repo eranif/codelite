@@ -5,10 +5,6 @@
 #include <sstream>
 #include <wx/string.h>
 
-LSP::MessageWithParams::MessageWithParams() {}
-
-LSP::MessageWithParams::~MessageWithParams() {}
-
 JSONItem LSP::MessageWithParams::ToJSON(const wxString& name) const
 {
     JSONItem json = Message::ToJSON(name);

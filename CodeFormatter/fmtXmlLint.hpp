@@ -7,7 +7,7 @@ class fmtXmlLint : public GenericFormatter
 {
 public:
     fmtXmlLint();
-    virtual ~fmtXmlLint();
+    ~fmtXmlLint() override = default;
 };
 
 #endif // FMTXMLLINT_HPP

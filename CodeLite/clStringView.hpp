@@ -12,12 +12,12 @@ class WXDLLIMPEXP_CL clStringView
 
 private:
     // No copy
-    clStringView& operator=(const clStringView& other);
-    clStringView(const clStringView& other);
+    clStringView& operator=(const clStringView& other) = delete;
+    clStringView(const clStringView& other) = delete;
 
 public:
-    ~clStringView();
-    clStringView();
+    ~clStringView() = default;
+    clStringView() = default;
     clStringView(const wxString& buffer)
         : clStringView(buffer.c_str(), buffer.length())
     {

@@ -71,8 +71,8 @@ protected:
     }
 
 public:
-    ICompilerLocator();
-    virtual ~ICompilerLocator();
+    ICompilerLocator() = default;
+    virtual ~ICompilerLocator() = default;
 
     /**
      * @brief locate the compiler

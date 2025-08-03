@@ -43,10 +43,6 @@ ProjectCustomBuildTragetDlg::ProjectCustomBuildTragetDlg(wxWindow* parent, const
     clSetSmallDialogBestSizeAndPosition(this);
 }
 
-ProjectCustomBuildTragetDlg::~ProjectCustomBuildTragetDlg()
-{
-    
-}
 void ProjectCustomBuildTragetDlg::OnEditTargetNameUI(wxUpdateUIEvent& event)
 {
     event.Enable( !IsPredefinedTarget(GetTargetName()) );

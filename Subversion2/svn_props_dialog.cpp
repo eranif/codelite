@@ -45,8 +45,6 @@ SvnPropsDlg::SvnPropsDlg(wxWindow* parent, const wxString& url, Subversion2* plu
     GetSizer()->Fit(this);
 }
 
-SvnPropsDlg::~SvnPropsDlg() {}
-
 wxString SvnPropsDlg::GetBugTrackerURL() const { return m_textCtrlBugURL->GetValue(); }
 
 wxString SvnPropsDlg::GetFRTrackerURL() const { return m_textCtrlFrURL->GetValue(); }

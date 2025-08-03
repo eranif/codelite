@@ -11,7 +11,7 @@ class DockerfileSettingsDlg : public DockerfileSettingsDlgBase
 
 public:
     DockerfileSettingsDlg(wxWindow* parent, clDockerBuildableFile::Ptr_t info);
-    virtual ~DockerfileSettingsDlg();
+    virtual ~DockerfileSettingsDlg() = default;
 
 protected:
     virtual void OnOK(wxCommandEvent& event);

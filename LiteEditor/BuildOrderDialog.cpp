@@ -45,8 +45,6 @@ BuildOrderDialog::BuildOrderDialog(wxWindow* parent, const wxString& projectName
     ::clSetDialogBestSizeAndPosition(this);
 }
 
-BuildOrderDialog::~BuildOrderDialog() {}
-
 void BuildOrderDialog::OnApplyButton(wxCommandEvent& event)
 {
     wxUnusedVar(event);

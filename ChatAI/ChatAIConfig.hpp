@@ -6,7 +6,7 @@ class ChatAIConfig : clConfigItem
 {
 public:
     ChatAIConfig();
-    virtual ~ChatAIConfig();
+    virtual ~ChatAIConfig() = default;
     void SetSelectedModelName(const wxString& selectedModel) { m_selectedModel = selectedModel; }
     const wxString& GetSelectedModel() const { return m_selectedModel; }
 

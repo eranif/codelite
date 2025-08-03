@@ -50,7 +50,7 @@ public:
         , m_isOpen(true)
     {
     }
-    virtual ~CLCommand() {}
+    virtual ~CLCommand() = default;
 
     int GetCommandType() const { return m_commandType; }
     wxString GetName() const { return m_commandName; }

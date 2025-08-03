@@ -12,7 +12,7 @@ protected:
 
 public:
     SvnShowRecentChangesDlg(wxWindow* parent, const SvnShowDiffChunk::List_t& changes);
-    virtual ~SvnShowRecentChangesDlg();
+    virtual ~SvnShowRecentChangesDlg() = default;
 
 protected:
     virtual void OnRevisionSelected(wxCommandEvent& event);

@@ -192,8 +192,6 @@ void AccelTableDlg::OnText(wxCommandEvent& event)
     CallAfter(&AccelTableDlg::PopulateTable, m_textCtrlFilter->GetValue());
 }
 
-AccelTableDlg::~AccelTableDlg() {}
-
 void AccelTableDlg::OnDVItemActivated(wxDataViewEvent& event)
 {
     wxUnusedVar(event);

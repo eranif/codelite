@@ -31,7 +31,7 @@ class DbgCommandDlg : public DbgCommandBaseDlg
 public:
     /** Constructor */
     DbgCommandDlg(wxWindow* parent);
-    virtual ~DbgCommandDlg();
+    virtual ~DbgCommandDlg() = default;
 
     wxString GetExpression() { return m_textCtrlCommand->GetValue(); }
     wxString GetName() { return m_textCtrlName->GetValue(); }

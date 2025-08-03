@@ -8,7 +8,7 @@ class WXDLLIMPEXP_CL clConsoleRXVTTerminal : public clConsoleGnomeTerminal
 {
 public:
     clConsoleRXVTTerminal();
-    virtual ~clConsoleRXVTTerminal();
+    virtual ~clConsoleRXVTTerminal() = default;
 };
 
 #endif // CLCONSOLELXTERMINAL_H

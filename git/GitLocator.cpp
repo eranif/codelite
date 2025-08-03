@@ -8,10 +8,6 @@
 #include <wx/msw/registry.h>
 #endif
 
-GitLocator::GitLocator() {}
-
-GitLocator::~GitLocator() {}
-
 bool GitLocator::GetExecutable(wxFileName& gitpath) const
 {
     // Common to all platforms:

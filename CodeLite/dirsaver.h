@@ -36,6 +36,6 @@ public:
         : clDirChanger("")
     {
     }
-    virtual ~DirSaver() {}
+    ~DirSaver() override = default;
 };
 #endif // DIR_SAVER_H

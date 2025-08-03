@@ -35,7 +35,7 @@ class XDebugRunCmdHandler : public XDebugCommandHandler
 {
 public:
     XDebugRunCmdHandler(XDebugManager* mgr, int transcationId);
-    virtual ~XDebugRunCmdHandler();
+    virtual ~XDebugRunCmdHandler() = default;
 
 public:
     virtual void Process(const wxXmlNode* response);

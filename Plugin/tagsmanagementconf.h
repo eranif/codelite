@@ -33,8 +33,8 @@ class TagsManagementConf : public SerializedObject
     wxArrayString m_files;
 
 public:
-    TagsManagementConf();
-    virtual ~TagsManagementConf();
+    TagsManagementConf() = default;
+    virtual ~TagsManagementConf() = default;
 
 public:
     virtual void DeSerialize(Archive& arch);

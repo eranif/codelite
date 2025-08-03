@@ -49,7 +49,7 @@ protected:
 
 public:
     PreferencesDialog(wxWindow* parent);
-    virtual ~PreferencesDialog();
+    virtual ~PreferencesDialog() = default;
     bool restartRquired = false;
 };
 

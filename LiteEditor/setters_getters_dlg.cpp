@@ -512,7 +512,6 @@ SettersGetterData::SettersGetterData()
 {
 }
 
-SettersGetterData::~SettersGetterData() {}
 void SettersGetterData::FromJSON(const JSONItem& json) { m_flags = json.namedObject("m_flags").toSize_t(m_flags); }
 
 JSONItem SettersGetterData::ToJSON() const

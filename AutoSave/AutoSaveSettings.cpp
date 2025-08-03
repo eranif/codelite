@@ -7,8 +7,6 @@ AutoSaveSettings::AutoSaveSettings()
 {
 }
 
-AutoSaveSettings::~AutoSaveSettings() {}
-
 void AutoSaveSettings::FromJSON(const JSONItem& json)
 {
     m_flags = json.namedObject("m_flags").toSize_t(m_flags);

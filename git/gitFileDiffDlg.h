@@ -39,7 +39,7 @@ class GitFileDiffDlg : public GitFileDiffDlgBase
 {
 public:
     GitFileDiffDlg(wxWindow* parent);
-    ~GitFileDiffDlg();
+    virtual ~GitFileDiffDlg() = default;
 
 protected:
     virtual void OnCloseDialog(wxCommandEvent& event);

@@ -64,7 +64,7 @@ public:
     SFTPThreadRequet(const SSHAccountInfo& accountInfo);
     SFTPThreadRequet(const SFTPThreadRequet& other);
     SFTPThreadRequet& operator=(const SFTPThreadRequet& other);
-    virtual ~SFTPThreadRequet();
+    virtual ~SFTPThreadRequet() = default;
 
     void SetUploadSuccess(bool uploadSuccess) { this->m_uploadSuccess = uploadSuccess; }
     bool IsUploadSuccess() const { return m_uploadSuccess; }
@@ -103,7 +103,7 @@ public:
 
 public:
     SFTPThreadMessage();
-    virtual ~SFTPThreadMessage();
+    virtual ~SFTPThreadMessage() = default;
 
     void SetAccount(const wxString& account) { this->m_account = account; }
     void SetMessage(const wxString& message) { this->m_message = message; }
@@ -125,7 +125,7 @@ public:
 
 private:
     SFTPWorkerThread();
-    virtual ~SFTPWorkerThread();
+    virtual ~SFTPWorkerThread() = default;
     void DoConnect(SFTPThreadRequet* req);
     void DoReportMessage(const wxString& account, const wxString& message, int status);
     void DoReportStatusBarMessage(const wxString& message);

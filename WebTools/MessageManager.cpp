@@ -12,8 +12,6 @@ MessageManager::MessageManager()
     AddHandler(NodeMessageBase::Ptr_t(new RuntimeExecutionContextDestroyed()));
 }
 
-MessageManager::~MessageManager() {}
-
 void MessageManager::AddHandler(NodeMessageBase::Ptr_t handler)
 {
     m_events.insert({ handler->GetEventName(), handler });

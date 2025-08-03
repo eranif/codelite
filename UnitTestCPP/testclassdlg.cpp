@@ -58,8 +58,6 @@ TestClassDlg::TestClassDlg(wxWindow* parent, IManager* mgr, UnitTestPP* plugin)
     ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
-TestClassDlg::~TestClassDlg() {}
-
 void TestClassDlg::OnUseActiveEditor(wxCommandEvent& event)
 {
     if(event.IsChecked()) {

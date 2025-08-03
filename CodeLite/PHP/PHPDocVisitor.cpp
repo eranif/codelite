@@ -13,8 +13,6 @@ PHPDocVisitor::PHPDocVisitor(PHPSourceFile& sourceFile, const std::vector<phpLex
     }
 }
 
-PHPDocVisitor::~PHPDocVisitor() {}
-
 void PHPDocVisitor::OnEntity(PHPEntityBase::Ptr_t entity)
 {
     // Locate a comment for this entity

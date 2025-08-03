@@ -64,8 +64,6 @@ clRegistry::clRegistry()
     }
 }
 
-clRegistry::~clRegistry() {}
-
 bool clRegistry::Read(const wxString& key, wxString& val)
 {
     std::map<wxString, wxString>::iterator iter = m_entries.find(key);

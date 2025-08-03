@@ -29,8 +29,6 @@ clBacktickCache::clBacktickCache(const wxString& directory)
     }
 }
 
-clBacktickCache::~clBacktickCache() {}
-
 void clBacktickCache::Save()
 {
     wxString content;

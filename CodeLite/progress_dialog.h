@@ -45,7 +45,7 @@ class clProgressDlg : public wxProgressDialog
 {
 public:
     clProgressDlg(wxWindow* parent, const wxString& title, const wxString& msg, int maxValue);
-    virtual ~clProgressDlg();
+    virtual ~clProgressDlg() = default;
     bool Update(int value, const wxString& msg);
     bool Pulse(const wxString& msg);
 };
@@ -58,7 +58,7 @@ class WXDLLIMPEXP_CL clProgressDlg : public clProgressDlgBase
 public:
     /** Constructor */
     clProgressDlg(wxWindow* parent, const wxString& title, const wxString& msg, int maxValue);
-    virtual ~clProgressDlg();
+    virtual ~clProgressDlg() = default;
 
     //// end generated class members
     bool Update(int value, const wxString& msg);

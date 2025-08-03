@@ -52,7 +52,7 @@ private:
 
 public:
     GCCMetadata(const wxString& basename = "GCC");
-    ~GCCMetadata();
+    ~GCCMetadata() = default;
 
     /**
      * @brief locate compiler paths by querying the compiler itself

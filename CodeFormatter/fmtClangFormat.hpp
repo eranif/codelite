@@ -7,7 +7,7 @@ class fmtClangFormat : public GenericFormatter
 {
 public:
     fmtClangFormat();
-    virtual ~fmtClangFormat();
+    ~fmtClangFormat() override = default;
 };
 
 #endif // FMTCLANGFORMAT_HPP

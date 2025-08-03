@@ -8,8 +8,6 @@ SvnShowFileChangesHandler::SvnShowFileChangesHandler(Subversion2* plugin, int cm
 {
 }
 
-SvnShowFileChangesHandler::~SvnShowFileChangesHandler() {}
-
 void SvnShowFileChangesHandler::Process(const wxString& output)
 {
     clDEBUG() << "Show file changes returned:" << clEndl;

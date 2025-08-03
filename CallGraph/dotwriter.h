@@ -88,7 +88,7 @@ public:
 	/**
 	 * @brief Default destructor.
 	 */
-	~DotWriter();
+    ~DotWriter() = default;
 	/**
 	 * @brief Function sets object DotWriter and assign the pointer pLines.
 	 * @param pLines

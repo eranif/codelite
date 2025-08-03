@@ -76,7 +76,7 @@ protected:
         {
         }
 
-        Tab() {}
+        Tab() = default;
     };
 
 protected:

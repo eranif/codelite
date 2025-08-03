@@ -11,8 +11,6 @@ clFileOrFolderDropTarget::clFileOrFolderDropTarget(wxEvtHandler* eventSink)
 {
 }
 
-clFileOrFolderDropTarget::~clFileOrFolderDropTarget() {}
-
 bool clFileOrFolderDropTarget::OnDropFiles(wxCoord x, wxCoord y, const wxArrayString& filenames)
 {
     wxUnusedVar(x);

@@ -10,8 +10,6 @@ clAnagram::clAnagram(const wxString& needle, size_t flags)
     Reset(needle, m_flags);
 }
 
-clAnagram::~clAnagram() {}
-
 bool clAnagram::MatchesInOrder(const wxString& haystack) const
 {
     if(m_needle.IsEmpty()) { return true; }

@@ -64,11 +64,11 @@ protected:
     void doInit();
 
 public:
-    CppWordScanner() {}
+    CppWordScanner() = default;
     CppWordScanner(const wxString& file_name);
     CppWordScanner(const wxString& file_name, const wxString& text, int offset);
 
-    ~CppWordScanner();
+    ~CppWordScanner() = default;
 
     void FindAll(CppTokensMap& l);
 };

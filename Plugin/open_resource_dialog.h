@@ -76,7 +76,7 @@ public:
     {
     }
 
-    virtual ~OpenResourceDialogItemData() {}
+    virtual ~OpenResourceDialogItemData() = default;
 
     bool IsOk() const;
 };

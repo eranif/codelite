@@ -11,7 +11,7 @@ class WXDLLIMPEXP_CL WorkspaceExecuteCommand : public LSP::Request
 
 public:
     WorkspaceExecuteCommand(const wxString& filepath, const LSP::Command& command);
-    virtual ~WorkspaceExecuteCommand();
+    virtual ~WorkspaceExecuteCommand() = default;
 
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
 };

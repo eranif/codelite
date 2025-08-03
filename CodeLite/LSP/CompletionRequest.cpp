@@ -14,8 +14,6 @@ LSP::CompletionRequest::CompletionRequest(const LSP::TextDocumentIdentifier& tex
     m_params->As<CompletionParams>()->SetTextDocument(textDocument);
 }
 
-LSP::CompletionRequest::~CompletionRequest() {}
-
 void LSP::CompletionRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     JSONItem result = response.Get("result");

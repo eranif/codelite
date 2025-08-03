@@ -47,8 +47,8 @@ public:
     virtual void FromResultSet(wxSQLite3ResultSet& res);
     virtual void Store(PHPLookupTable* lookup);
     virtual void PrintStdout(int indent) const;
-    PHPEntityNamespace();
-    virtual ~PHPEntityNamespace();
+    PHPEntityNamespace() = default;
+    virtual ~PHPEntityNamespace() = default;
     
     /**
      * @brief build namespace from 2 strings

@@ -40,7 +40,7 @@ protected:
 
 public:
     Copyright(IManager* manager);
-    ~Copyright() override;
+    ~Copyright() override = default;
 
     //--------------------------------------------
     // Abstract methods

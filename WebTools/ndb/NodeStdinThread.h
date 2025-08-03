@@ -11,7 +11,7 @@ class NodeStdinThread : public clJoinableThread
 
 public:
     NodeStdinThread(wxEvtHandler* owner);
-    virtual ~NodeStdinThread();
+    virtual ~NodeStdinThread() = default;
 
     void* Entry();
     void Write(const wxString& command);

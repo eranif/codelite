@@ -42,7 +42,7 @@ class WXDLLIMPEXP_CL CxxPreProcessor
 
 public:
     CxxPreProcessor();
-    virtual ~CxxPreProcessor();
+    virtual ~CxxPreProcessor() = default;
 
     void SetOptions(size_t options) { this->m_options = options; }
     size_t GetOptions() const { return m_options; }

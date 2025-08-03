@@ -55,10 +55,6 @@ wxString wrap_lines(const wxString& str)
 
 } // namespace
 
-CompletionHelper::CompletionHelper() {}
-
-CompletionHelper::~CompletionHelper() {}
-
 wxString CompletionHelper::get_expression(const wxString& file_content, bool for_calltip, wxString* last_word) const
 {
 #define LAST_TOKEN_IS(token_type) (!types.empty() && (types[types.size() - 1] == token_type))

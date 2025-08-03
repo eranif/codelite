@@ -44,7 +44,7 @@ protected:
 public:
 	/** Constructor */
 	SvnSelectLocalRepoDlg( wxWindow* parent, Subversion2* plugin, const wxString &curpath );
-	virtual ~SvnSelectLocalRepoDlg();
+	virtual ~SvnSelectLocalRepoDlg() = default;
 	wxString GetPath() const;
 };
 

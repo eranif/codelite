@@ -283,8 +283,6 @@ clFileSystemWorkspaceSettings::clFileSystemWorkspaceSettings()
     Clear(); // Create with the default "Debug" target
 }
 
-clFileSystemWorkspaceSettings::~clFileSystemWorkspaceSettings() {}
-
 void clFileSystemWorkspaceSettings::ToJSON(JSONItem& shared, JSONItem& local) const
 {
     // add the shared items

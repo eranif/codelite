@@ -7,7 +7,7 @@ class WXDLLIMPEXP_SDK clToolBarSeparator : public clToolBarButtonBase
 {
 public:
     clToolBarSeparator(clToolBarGeneric* parent);
-    virtual ~clToolBarSeparator();
+    virtual ~clToolBarSeparator() = default;
 
     void Render(wxDC& dc, const wxRect& rect);
 

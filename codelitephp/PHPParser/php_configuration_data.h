@@ -58,7 +58,7 @@ public:
     PHPConfigurationData& Load();
     void Save();
 
-    virtual ~PHPConfigurationData();
+    virtual ~PHPConfigurationData() = default;
 
     PHPConfigurationData& SetWorkspaceType(int workspaceType)
     {

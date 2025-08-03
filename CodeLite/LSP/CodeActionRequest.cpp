@@ -14,8 +14,6 @@ LSP::CodeActionRequest::CodeActionRequest(const LSP::TextDocumentIdentifier& tex
     LSP_DEBUG() << ToJSON(wxEmptyString).format(true) << endl;
 }
 
-LSP::CodeActionRequest::~CodeActionRequest() {}
-
 void LSP::CodeActionRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     wxUnusedVar(owner);

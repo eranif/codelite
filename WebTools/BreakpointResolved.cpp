@@ -5,10 +5,6 @@ BreakpointResolved::BreakpointResolved()
 {
 }
 
-BreakpointResolved::~BreakpointResolved()
-{
-}
-
 NodeMessageBase::Ptr_t BreakpointResolved::Clone()
 {
     return NodeMessageBase::Ptr_t(new BreakpointResolved());

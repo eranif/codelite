@@ -3,8 +3,6 @@
 #include "wxCustomControls.hpp"
 
 #if wxUSE_NATIVE_CHOICE
-clChoice::clChoice() {}
-
 clChoice::~clChoice() {}
 
 bool clChoice::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
@@ -28,8 +26,6 @@ void clChoice::SetText(const wxString& text) { SetStringSelection(text); }
 #include <wx/xrc/xmlres.h>
 
 wxDEFINE_EVENT(wxEVT_CHOICE_MENU_SHOWING, wxNotifyEvent);
-
-clChoice::clChoice() {}
 
 clChoice::~clChoice() { Unbind(wxEVT_BUTTON, &clChoice::OnClick, this); }
 

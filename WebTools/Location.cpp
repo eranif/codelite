@@ -1,7 +1,5 @@
 #include "Location.h"
 
-Location::~Location() {}
-
 JSONItem Location::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);

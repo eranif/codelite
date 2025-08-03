@@ -18,10 +18,6 @@
 #include <wx/tokenzr.h>
 #include <wx/uri.h>
 
-PHPExecutor::PHPExecutor() {}
-
-PHPExecutor::~PHPExecutor() {}
-
 bool PHPExecutor::Exec(const wxString& projectName, const wxString& urlOrFilePath, const wxString& xdebugSessionName,
                        bool neverPauseOnExit)
 {

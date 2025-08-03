@@ -35,7 +35,7 @@ class WXDLLIMPEXP_CL clStandardPaths
 {
 private:
     clStandardPaths();
-    virtual ~clStandardPaths();
+    virtual ~clStandardPaths() = default;
 
     wxString m_path;
     wxString m_dataDir;

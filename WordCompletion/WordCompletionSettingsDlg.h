@@ -32,7 +32,8 @@ class WordCompletionSettingsDlg : public WordCompletionSettingsBaseDlg
     bool m_modified;
 public:
     WordCompletionSettingsDlg(wxWindow* parent);
-    virtual ~WordCompletionSettingsDlg();
+    virtual ~WordCompletionSettingsDlg() = default;
+
 protected:
     virtual void OnOk(wxCommandEvent& event);
     virtual void OnOkUI(wxUpdateUIEvent& event);

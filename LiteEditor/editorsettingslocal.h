@@ -37,7 +37,7 @@ public:
     EditorSettingsLocal(OptionsConfigPtr higherOptions, wxXmlNode* node, enum prefsLevel level = pLevel_dunno,
                         wxWindow* parent = NULL, wxWindowID id = wxID_ANY,
                         const wxString& title = _("Local Preferences"));
-    ~EditorSettingsLocal();
+    ~EditorSettingsLocal() = default;
 
     LocalOptionsConfigPtr GetLocalOpts() const { return localOptions; }
 

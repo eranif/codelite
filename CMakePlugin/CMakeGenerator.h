@@ -121,7 +121,7 @@ protected:
 
 public:
     CMakeGenerator();
-    ~CMakeGenerator();
+    ~CMakeGenerator() = default;
 
     /**
      * @brief Generate CMakeLists.txt for workspace.

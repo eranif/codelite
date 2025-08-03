@@ -45,10 +45,6 @@ GitFileDiffDlg::GitFileDiffDlg(wxWindow* parent)
 }
 
 /*******************************************************************************/
-
-GitFileDiffDlg::~GitFileDiffDlg() {}
-
-/*******************************************************************************/
 void GitFileDiffDlg::OnSaveAsPatch(wxCommandEvent& event)
 {
     wxString path = ::wxFileSelector(_("Save as"), "", "untitled", "patch", wxFileSelectorDefaultWildcardStr,

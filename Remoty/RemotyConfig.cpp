@@ -11,10 +11,6 @@ const wxString REMOTY_RECENT_WORKSPACES = "remoty/recent_remote_workspaces";
 const wxString REMOTY_OPEN_WORKSPACE_TYPE = "remoty/open_workspace_type";
 } // namespace
 
-RemotyConfig::RemotyConfig() {}
-
-RemotyConfig::~RemotyConfig() {}
-
 std::vector<RemoteWorkspaceInfo> RemotyConfig::GetRecentWorkspaces() const
 {
     std::vector<RemoteWorkspaceInfo> res;

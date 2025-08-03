@@ -43,11 +43,6 @@ NewCompilerDlg::NewCompilerDlg(wxWindow* parent)
     WindowAttrManager::Load(this);
 }
 
-NewCompilerDlg::~NewCompilerDlg()
-{
-    
-}
-
 void NewCompilerDlg::OnOkUI(wxUpdateUIEvent& event)
 {
     event.Enable( !m_textCtrlCompilerName->IsEmpty() );

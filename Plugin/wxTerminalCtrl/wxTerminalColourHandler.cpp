@@ -12,8 +12,6 @@
 #include <wx/tokenzr.h>
 #include <wx/wupdlock.h>
 
-wxTerminalColourHandler::wxTerminalColourHandler() {}
-
 wxTerminalColourHandler::~wxTerminalColourHandler() { wxDELETE(m_style_provider); }
 
 void wxTerminalColourHandler::Append(const wxString& buffer, wxString* window_title)

@@ -48,7 +48,7 @@ public:
 
 public:
     wxCustomStatusBarArt(const wxString& name);
-    virtual ~wxCustomStatusBarArt() {}
+    virtual ~wxCustomStatusBarArt() = default;
 
     virtual void DrawText(wxDC& dc, wxCoord x, wxCoord y, const wxString& text);
     virtual void DrawFieldSeparator(wxDC& dc, const wxRect& fieldRect);
@@ -86,7 +86,7 @@ public:
         : m_parent(parent)
     {
     }
-    virtual ~wxCustomStatusBarField() {}
+    virtual ~wxCustomStatusBarField() = default;
 
     bool IsAutoWidth() const { return m_flags & AUTO_WIDTH; }
     void SetAutoWidth(bool b) { m_flags |= AUTO_WIDTH; }
@@ -141,7 +141,7 @@ public:
         , m_textAlign(wxALIGN_CENTER)
     {
     }
-    virtual ~wxCustomStatusBarFieldText() {}
+    virtual ~wxCustomStatusBarFieldText() = default;
     virtual void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art);
     void SetText(const wxString& text);
     const wxString& GetText() const { return m_text; }
@@ -164,7 +164,7 @@ public:
         , m_width(width)
     {
     }
-    virtual ~wxCustomStatusBarSpacerField() {}
+    virtual ~wxCustomStatusBarSpacerField() = default;
     virtual void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art);
     void SetWidth(size_t width) { this->m_width = width; }
     size_t GetWidth() const { return m_width; }
@@ -185,7 +185,7 @@ public:
         , m_width(width)
     {
     }
-    virtual ~wxCustomStatusBarBitmapField() {}
+    virtual ~wxCustomStatusBarBitmapField() = default;
     virtual void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art);
     void SetWidth(size_t width) { this->m_width = width; }
     size_t GetWidth() const { return m_width; }
@@ -213,7 +213,7 @@ public:
     wxCustomStatusBarAnimationField(wxCustomStatusBar* parent, const wxBitmap& sprite, wxOrientation spriteOrientation,
                                     const wxSize& animSize);
 
-    virtual ~wxCustomStatusBarAnimationField();
+    virtual ~wxCustomStatusBarAnimationField() = default;
     virtual void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art);
     void SetWidth(size_t width) { this->m_width = width; }
     size_t GetWidth() const { return m_width; }
@@ -252,7 +252,7 @@ public:
      */
     wxCustomStatusBarControlField(wxCustomStatusBar* parent, wxControl* control);
 
-    virtual ~wxCustomStatusBarControlField();
+    virtual ~wxCustomStatusBarControlField() = default;
     virtual void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art);
 
     void SetSize(const wxSize& size)

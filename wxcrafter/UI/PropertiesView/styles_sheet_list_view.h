@@ -12,7 +12,7 @@ class StylesSheetListView
 
 public:
     StylesSheetListView();
-    virtual ~StylesSheetListView();
+    virtual ~StylesSheetListView() = default;
 
     void Changed(wxPropertyGrid* pg, wxPropertyGridEvent& e);
     void Construct(wxPropertyGrid* pg, wxcWidget* wb);

@@ -20,8 +20,6 @@ ImportFromwxFB::ImportFromwxFB(wxWindow* parent)
 {
 }
 
-ImportFromwxFB::~ImportFromwxFB() {}
-
 bool ImportFromwxFB::ImportProject(ImportDlg::ImportFileData& data, const wxString& sourceFile) const
 {
     ImportDlg dlg(ImportDlg::IPD_FB, m_Parent, sourceFile);

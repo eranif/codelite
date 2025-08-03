@@ -6,8 +6,6 @@ TerminalEmulatorUI::TerminalEmulatorUI(wxWindow* parent)
 {
 }
 
-TerminalEmulatorUI::~TerminalEmulatorUI() {}
-
 void TerminalEmulatorUI::OnSendCommand(wxCommandEvent& event) {}
 
 void TerminalEmulatorUI::SetTerminal(TerminalEmulator* terminal)

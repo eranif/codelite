@@ -6,7 +6,8 @@ class NavBar : public NavBarControlBaseClass
 {
 public:
     NavBar(wxWindow* parent);
-    virtual ~NavBar();
+    virtual ~NavBar() = default;
+
 protected:
     virtual void OnFunction(wxCommandEvent& event);
     virtual void OnScope(wxCommandEvent& event);

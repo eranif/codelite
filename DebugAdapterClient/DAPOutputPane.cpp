@@ -17,8 +17,6 @@ DAPOutputPane::DAPOutputPane(wxWindow* parent, clModuleLogger& log)
     m_notebook->AddPage(m_moduleTab, _("Modules"), false);
 }
 
-DAPOutputPane::~DAPOutputPane() {}
-
 void DAPOutputPane::AddEvent(dap::ModuleEvent* event)
 {
     m_moduleTab->AddModuleEvent(event);

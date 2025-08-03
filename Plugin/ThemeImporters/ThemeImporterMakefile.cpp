@@ -5,8 +5,6 @@
 
 ThemeImporterMakefile::ThemeImporterMakefile() { SetFileExtensions("*.mk;makefile;Makefile;*.mak;*.make"); }
 
-ThemeImporterMakefile::~ThemeImporterMakefile() {}
-
 LexerConf::Ptr_t ThemeImporterMakefile::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, "makefile", wxSTC_LEX_MAKEFILE);

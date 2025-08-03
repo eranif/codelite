@@ -73,7 +73,6 @@ void init_from_colour(clColours* colours, const wxColour& baseColour)
         is_light ? colours->bgColour.ChangeLightness(30) : colours->bgColour.ChangeLightness(150);
 }
 } // namespace
-clColours::clColours() {}
 
 void clColours::InitDefaults()
 {

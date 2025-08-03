@@ -8,8 +8,6 @@ clConnectionString::clConnectionString(const wxString& connectionString)
     DoParse(connectionString);
 }
 
-clConnectionString::~clConnectionString() {}
-
 void clConnectionString::DoParse(const wxString& connectionString)
 {
     m_isOK = false; // default

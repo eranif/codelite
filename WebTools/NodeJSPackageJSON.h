@@ -38,8 +38,8 @@ class NodeJSPackageJSON
     wxArrayString m_args;
 
 public:
-    NodeJSPackageJSON();
-    virtual ~NodeJSPackageJSON();
+    NodeJSPackageJSON() = default;
+    virtual ~NodeJSPackageJSON() = default;
     
     /**
      * @brief load the local package.json file stored under the .codelite folder

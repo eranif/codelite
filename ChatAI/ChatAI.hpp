@@ -47,7 +47,7 @@ class ChatAI : public IPlugin
 {
 public:
     ChatAI(IManager* manager);
-    ~ChatAI() override;
+    ~ChatAI() override = default;
     void CreateToolBar(clToolBarGeneric* toolbar) override;
     void CreatePluginMenu(wxMenu* pluginsMenu) override;
     void HookPopupMenu(wxMenu* menu, MenuType type) override;

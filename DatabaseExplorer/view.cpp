@@ -47,11 +47,6 @@ View::View(IDbAdapter* dbAdapter,const wxString& name, const wxString& parentNam
 	m_pDbAdapter = dbAdapter;
 	initSerializable();
 }
-View::~View()
-{
-}
-
-
 
 void View::initSerializable()
 {

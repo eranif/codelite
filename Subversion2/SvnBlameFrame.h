@@ -35,6 +35,6 @@ class SvnBlameFrame : public SvnBlameFrameBase
 
 public:
     SvnBlameFrame(wxWindow* parent, const wxFileName& filename, const wxString &content);
-    virtual ~SvnBlameFrame();
+    virtual ~SvnBlameFrame() = default;
 };
 #endif // SVNBLAMEFRAME_H

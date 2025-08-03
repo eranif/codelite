@@ -47,12 +47,12 @@ protected:
     wxControl* m_control = nullptr;
 
 public:
-    clCellValue();
+    clCellValue() = default;
     explicit clCellValue(const wxString& text, int bmpIndex = wxNOT_FOUND, int bmpOpenIndex = wxNOT_FOUND);
     explicit clCellValue(const char* ptext, int bmpIndex = wxNOT_FOUND, int bmpOpenIndex = wxNOT_FOUND);
     explicit clCellValue(bool bValue, const wxString& label, int bmpIndex = wxNOT_FOUND,
                          int bmpOpenIndex = wxNOT_FOUND);
-    virtual ~clCellValue();
+    virtual ~clCellValue() = default;
     bool IsOk() const { return m_type != kTypeNull; }
     bool IsString() const { return m_type == kTypeString; }
     bool IsBool() const { return m_type == kTypeBool; }

@@ -61,7 +61,7 @@ public:
 
 public:
     WordCompletionPlugin(IManager* manager);
-    ~WordCompletionPlugin() override;
+    ~WordCompletionPlugin() override = default;
 
     //--------------------------------------------
     // Abstract methods

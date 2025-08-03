@@ -9,8 +9,6 @@ clEditorXmlHelper::clEditorXmlHelper(wxStyledTextCtrl* stc)
     m_chars.insert(wordChars.begin(), wordChars.end());
 }
 
-clEditorXmlHelper::~clEditorXmlHelper() {}
-
 wxString clEditorXmlHelper::GetXmlTagAt(int pos, int& startPos, int& endPos) const
 {
     startPos = wxNOT_FOUND;

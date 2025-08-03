@@ -36,10 +36,6 @@ SvnDefaultCommandHandler::SvnDefaultCommandHandler(Subversion2 *plugin, int comm
 {
 }
 
-SvnDefaultCommandHandler::~SvnDefaultCommandHandler()
-{
-}
-
 void SvnDefaultCommandHandler::Process(const wxString &output)
 {
     wxUnusedVar(output);

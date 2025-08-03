@@ -8,8 +8,6 @@ RuntimeExecutionContextDestroyed::RuntimeExecutionContextDestroyed()
 {
 }
 
-RuntimeExecutionContextDestroyed::~RuntimeExecutionContextDestroyed() {}
-
 NodeMessageBase::Ptr_t RuntimeExecutionContextDestroyed::Clone()
 {
     return NodeMessageBase::Ptr_t(new RuntimeExecutionContextDestroyed());

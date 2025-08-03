@@ -49,7 +49,7 @@ class GeneralInfo : public SerializedObject
 
 public:
     GeneralInfo();
-    virtual ~GeneralInfo();
+    virtual ~GeneralInfo() = default;
 
     const wxSize& GetFrameSize() const { return m_frameSize; }
     void SetFrameSize(const wxSize& sz) { m_frameSize = sz; }

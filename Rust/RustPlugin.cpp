@@ -82,8 +82,6 @@ RustPlugin::RustPlugin(IManager* manager)
     AddRustcCompilerIfMissing(); // make sure we got the rustc compiler if missing
 }
 
-RustPlugin::~RustPlugin() {}
-
 void RustPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void RustPlugin::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(pluginsMenu); }

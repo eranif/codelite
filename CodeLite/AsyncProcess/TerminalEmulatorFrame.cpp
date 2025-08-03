@@ -7,9 +7,4 @@ TerminalEmulatorFrame::TerminalEmulatorFrame(wxWindow* parent)
     GetSizer()->Add(m_terminal, 1, wxEXPAND|wxALL);
     
 }
-
-TerminalEmulatorFrame::~TerminalEmulatorFrame()
-{
-}
-
 #endif // LIBCODELITE_WITH_UI

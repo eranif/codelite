@@ -50,7 +50,7 @@ protected:
 public:
 	/** Constructor */
 	WorkspaceSettingsDlg( wxWindow* parent, LocalWorkspace *localWorkspace);
-	virtual ~WorkspaceSettingsDlg();
+	virtual ~WorkspaceSettingsDlg() = default;
 
 	wxArrayString GetIncludePaths() const;
 };

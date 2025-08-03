@@ -4,8 +4,6 @@
 
 ThemeImporterXML::ThemeImporterXML() { SetFileExtensions("*.xml;*.project;*.xrc;*.plist"); }
 
-ThemeImporterXML::~ThemeImporterXML() {}
-
 LexerConf::Ptr_t ThemeImporterXML::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, "xml", 5);

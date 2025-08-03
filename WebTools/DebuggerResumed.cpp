@@ -8,8 +8,6 @@ DebuggerResumed::DebuggerResumed()
 {
 }
 
-DebuggerResumed::~DebuggerResumed() {}
-
 void DebuggerResumed::Process(clWebSocketClient& socket, const JSONItem& json)
 {
     // Notify the UI that the debugger paused

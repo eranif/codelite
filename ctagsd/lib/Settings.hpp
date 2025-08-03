@@ -24,7 +24,7 @@ private:
 
 public:
     CTagsdSettings();
-    ~CTagsdSettings();
+    ~CTagsdSettings() = default;
 
     void Load(const wxFileName& filepath);
     void Save(const wxFileName& filepath);

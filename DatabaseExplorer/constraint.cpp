@@ -53,9 +53,6 @@ Constraint::Constraint(const wxString& name, const wxString& localColumn, constr
 	m_onUpdate = onUpdate;
 	InitSerializable();
 }
-Constraint::~Constraint()
-{
-}
 
 void Constraint::InitSerializable()
 {

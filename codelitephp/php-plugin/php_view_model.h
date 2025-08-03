@@ -28,7 +28,7 @@ public:
         , active(false)
     {}
 
-    virtual ~ItemData() {}
+    virtual ~ItemData() = default;
 
     void SetProjectName(const wxString& projectName) {
         this->projectName = projectName;

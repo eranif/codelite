@@ -90,8 +90,6 @@ BuilderGNUMakeClassic::BuilderGNUMakeClassic(const wxString& name, const wxStrin
 {
 }
 
-BuilderGNUMakeClassic::~BuilderGNUMakeClassic() {}
-
 bool BuilderGNUMakeClassic::Export(const wxString& project, const wxString& confToBuild, const wxString& arguments,
                                    bool isProjectOnly, bool force, wxString& errMsg)
 {

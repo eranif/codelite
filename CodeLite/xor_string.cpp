@@ -26,14 +26,6 @@
 #include <wx/crt.h>
 #include "xor_string.h"
 
-XORString::XORString()
-{
-}
-
-XORString::~XORString()
-{
-}
-
 wxString XORString::Decrypt(const wxChar byte) const
 {
     wxString dec = fromHexString(m_value);

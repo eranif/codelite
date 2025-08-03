@@ -45,7 +45,7 @@ class WXDLLIMPEXP_SDK BuilderNMake : public Builder
 public:
     BuilderNMake();
     BuilderNMake(const wxString& name, const wxString& buildTool, const wxString& buildToolOptions);
-    virtual ~BuilderNMake();
+    virtual ~BuilderNMake() = default;
 
     // Implement the Builder Interface
     virtual bool Export(const wxString& project, const wxString& confToBuild, const wxString& arguments,

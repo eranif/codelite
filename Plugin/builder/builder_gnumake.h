@@ -52,7 +52,7 @@ protected:
 public:
     BuilderGNUMakeClassic();
     BuilderGNUMakeClassic(const wxString& name, const wxString& buildTool, const wxString& buildToolOptions);
-    virtual ~BuilderGNUMakeClassic();
+    virtual ~BuilderGNUMakeClassic() = default;
 
     // Implement the Builder Interface
     virtual bool Export(const wxString& project, const wxString& confToBuild, const wxString& arguments,

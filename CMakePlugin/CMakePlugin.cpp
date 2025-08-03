@@ -169,13 +169,6 @@ CMakePlugin::CMakePlugin(IManager* manager)
 
 /* ************************************************************************ */
 
-CMakePlugin::~CMakePlugin()
-{
-    // Nothing to do
-}
-
-/* ************************************************************************ */
-
 wxArrayString CMakePlugin::GetSupportedGenerators() const
 {
 #ifdef __WXMSW__

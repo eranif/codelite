@@ -43,7 +43,7 @@ public:
     ~SvnCommitHandler() override = default;
 
 public:
-    virtual void Process(const wxString &output);
+    void Process(const wxString& output) override;
 };
 
 //----------------------------------------------------
@@ -61,7 +61,7 @@ public:
     ~SvnUpdateHandler() override = default;
 
 public:
-    virtual void Process(const wxString &output);
+    void Process(const wxString& output) override;
 };
 
 //----------------------------------------------------
@@ -79,7 +79,7 @@ public:
     ~SvnDiffHandler() override = default;
 
 public:
-    virtual void Process(const wxString &output);
+    void Process(const wxString& output) override;
 };
 
 //----------------------------------------------------
@@ -100,7 +100,7 @@ public:
     ~SvnPatchHandler() override = default;
 
 public:
-    virtual void Process(const wxString &output);
+    void Process(const wxString& output) override;
 };
 
 //----------------------------------------------------
@@ -122,7 +122,7 @@ public:
     ~SvnPatchDryRunHandler() override = default;
 
 public:
-    virtual void Process(const wxString &output);
+    void Process(const wxString& output) override;
 };
 
 //----------------------------------------------------
@@ -140,7 +140,7 @@ public:
     ~SvnVersionHandler() override = default;
 
 public:
-    virtual void Process(const wxString &output);
+    void Process(const wxString& output) override;
 };
 
 //----------------------------------------------------
@@ -161,10 +161,10 @@ public:
         , m_url(url)
     {}
 
-    virtual ~SvnLogHandler() {}
+    ~SvnLogHandler() override = default;
 
 public:
-    virtual void Process(const wxString &output);
+    void Process(const wxString& output) override;
 };
 
 //----------------------------------------------------
@@ -181,7 +181,7 @@ public:
     ~SvnCheckoutHandler() override = default;
 
 public:
-    virtual void Process(const wxString &output);
+    void Process(const wxString& output) override;
 };
 
 //----------------------------------------------------
@@ -200,7 +200,7 @@ public:
     ~SvnBlameHandler() override = default;
 
 public:
-    virtual void Process(const wxString &output);
+    void Process(const wxString& output) override;
 };
 
 //----------------------------------------------------
@@ -232,7 +232,7 @@ public:
     ~SvnRepoListHandler() override = default;
 
 public:
-    virtual void Process(const wxString &output);
+    void Process(const wxString& output) override;
 };
 
 #endif // SVNCOMMITHANDLER_H

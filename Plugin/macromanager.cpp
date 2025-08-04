@@ -25,17 +25,17 @@
 
 #include "macromanager.h"
 
-#include "IWorkspace.h"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
+#include "IWorkspace.h"
 #include "build_config.h"
 #include "clWorkspaceManager.h"
 #include "environmentconfig.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
 #include "project.h"
 #include "workspace.h"
 #include "wxStringHash.h"
-#include "fileutils.h"
 
 #include <wx/regex.h>
 
@@ -49,17 +49,21 @@ MacroManager* MacroManager::Instance()
     return &ms_instance;
 }
 
-wxString MacroManager::Expand(const wxString& expression, IManager* manager, const wxString& project,
+wxString MacroManager::Expand(const wxString& expression,
+                              IManager* manager,
+                              const wxString& project,
                               const wxString& confToBuild)
 {
     return DoExpand(expression, manager, project, true, confToBuild);
 }
 
-wxString MacroManager::Replace(const wxString& inString, const wxString& variableName, const wxString& replaceWith,
+wxString MacroManager::Replace(const wxString& inString,
+                               const wxString& variableName,
+                               const wxString& replaceWith,
                                bool bIgnoreCase)
 {
     size_t flags = wxRE_DEFAULT;
-    if(bIgnoreCase) {
+    if (bIgnoreCase) {
         flags |= wxRE_ICASE;
     }
 
@@ -79,19 +83,19 @@ wxString MacroManager::Replace(const wxString& inString, const wxString& variabl
     wxRegEx reFour(strRe4, flags);  // %variable%
 
     wxString result = inString;
-    if(reOne.Matches(result)) {
+    if (reOne.Matches(result)) {
         reOne.ReplaceAll(&result, replaceWith);
     }
 
-    if(reTwo.Matches(result)) {
+    if (reTwo.Matches(result)) {
         reTwo.ReplaceAll(&result, replaceWith);
     }
 
-    if(reThree.Matches(result)) {
+    if (reThree.Matches(result)) {
         reThree.ReplaceAll(&result, replaceWith);
     }
 
-    if(reFour.Matches(result)) {
+    if (reFour.Matches(result)) {
         reFour.ReplaceAll(&result, replaceWith);
     }
     return result;
@@ -124,25 +128,25 @@ bool MacroManager::FindVariable(const wxString& inString, wxString& name, wxStri
     wxRegEx reThree(strRe3, flags); // $variable
     wxRegEx reFour(strRe4, flags);  // %variable%
 
-    if(reOne.Matches(inString)) {
+    if (reOne.Matches(inString)) {
         name = reOne.GetMatch(inString, 1);
         fullname = reOne.GetMatch(inString);
         return true;
     }
 
-    if(reTwo.Matches(inString)) {
+    if (reTwo.Matches(inString)) {
         name = reTwo.GetMatch(inString, 1);
         fullname = reTwo.GetMatch(inString);
         return true;
     }
 
-    if(reThree.Matches(inString)) {
+    if (reThree.Matches(inString)) {
         name = reThree.GetMatch(inString, 1);
         fullname = reThree.GetMatch(inString);
         return true;
     }
 
-    if(reFour.Matches(inString)) {
+    if (reFour.Matches(inString)) {
         name = reFour.GetMatch(inString, 1);
         fullname = reFour.GetMatch(inString);
         return true;
@@ -208,13 +212,13 @@ wxString MacroManager::ExpandNoEnv(const wxString& expression, const wxString& p
     return DoExpand(expression, NULL, project, false, confToBuild);
 }
 
-wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, const wxString& project, bool applyEnv,
-                                const wxString& confToBuild)
+wxString MacroManager::DoExpand(
+    const wxString& expression, IManager* manager, const wxString& project, bool applyEnv, const wxString& confToBuild)
 {
     wxString expandedString(expression);
     clCxxWorkspace* workspace = nullptr;
 
-    if(!manager) {
+    if (!manager) {
         manager = clGetManager();
     }
 
@@ -229,7 +233,7 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
     wxString ssh_user;
 
     auto w = clWorkspaceManager::Get().GetWorkspace();
-    if(w && w->IsRemote()) {
+    if (w && w->IsRemote()) {
         wxString ssh_account = w->GetSshAccount();
         auto account = SSHAccountInfo::LoadAccount(ssh_account);
         ssh_host = account.GetHost();
@@ -237,21 +241,21 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
         ssh_user = account.GetUsername();
     }
 
-    if(clCxxWorkspaceST::Get()->IsOpen()) {
+    if (clCxxWorkspaceST::Get()->IsOpen()) {
         wspName = clCxxWorkspaceST::Get()->GetName();
         wspConfig = clCxxWorkspaceST::Get()->GetSelectedConfig()
                         ? clCxxWorkspaceST::Get()->GetSelectedConfig()->GetName()
                         : wxString();
         wspPath = clCxxWorkspaceST::Get()->GetDir();
         workspace = clCxxWorkspaceST::Get();
-    } else if(clFileSystemWorkspace::Get().IsOpen()) {
+    } else if (clFileSystemWorkspace::Get().IsOpen()) {
         wspName = clFileSystemWorkspace::Get().GetName();
-        if(clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig()) {
+        if (clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig()) {
             program_to_run = clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig()->GetExecutable();
             wspConfig = clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig()->GetName();
         }
         wspPath = clFileSystemWorkspace::Get().GetDir();
-    } else if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
+    } else if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
         wspPath = clWorkspaceManager::Get().GetWorkspace()->GetDir();
         wspName = clWorkspaceManager::Get().GetWorkspace()->GetName();
     }
@@ -260,7 +264,7 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
 
     size_t retries = 0;
     wxString dummyname, dummfullname;
-    while((retries < 5) && FindVariable(expandedString, dummyname, dummyname)) {
+    while ((retries < 5) && FindVariable(expandedString, dummyname, dummyname)) {
         ++retries;
         DollarEscaper de(expandedString);
         expandedString.Replace("$(WorkspaceName)", wspName);
@@ -268,9 +272,9 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
         expandedString.Replace("$(WorkspacePath)", wspPath);
         expandedString.Replace("$(WorkspaceRealPath)", wspRealPath);
 
-        if(workspace) {
+        if (workspace) {
             ProjectPtr proj = workspace->GetProject(project);
-            if(proj) {
+            if (proj) {
                 wxString prjBuildWd;
                 wxString prjRunWd;
                 wxString project_name(proj->GetName());
@@ -279,7 +283,7 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
                 project_name.Replace(" ", "_");
 
                 BuildConfigPtr bldConf = workspace->GetProjBuildConf(proj->GetName(), confToBuild);
-                if(bldConf) {
+                if (bldConf) {
                     bool isCustom = bldConf->IsCustomBuild();
                     expandedString.Replace("$(OutputDirectory)", bldConf->GetOutputDirectory());
                     expandedString.Replace("$(ProjectOutputFile)", bldConf->GetOutputFileName());
@@ -299,7 +303,7 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
                 expandedString.Replace("$(WorkspacePath)", workspace->GetWorkspaceFileName().GetPath());
                 expandedString.Replace("$(ProjectName)", project_name);
 
-                if(bldConf) {
+                if (bldConf) {
                     expandedString.Replace("$(IntermediateDirectory)", bldConf->GetIntermediateDirectory());
                     expandedString.Replace("$(ConfigurationName)", bldConf->GetName());
                     expandedString.Replace("$(OutDir)", bldConf->GetIntermediateDirectory());
@@ -339,23 +343,23 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
                     expandedString.Replace("$(LinkLibraries)", bldConf->GetLibraries());
                 }
 
-                if(expandedString.Find("$(ProjectFiles)") != wxNOT_FOUND) {
+                if (expandedString.Find("$(ProjectFiles)") != wxNOT_FOUND) {
                     expandedString.Replace("$(ProjectFiles)", proj->GetFilesAsString(false));
                 }
 
-                if(expandedString.Find("$(ProjectFilesAbs)") != wxNOT_FOUND) {
+                if (expandedString.Find("$(ProjectFilesAbs)") != wxNOT_FOUND) {
                     expandedString.Replace("$(ProjectFilesAbs)", proj->GetFilesAsString(true));
                 }
             }
         }
 
-        if(!program_to_run.empty()) {
+        if (!program_to_run.empty()) {
             expandedString.Replace("$(Program)", program_to_run);
         }
 
-        if(manager) {
+        if (manager) {
             IEditor* editor = manager->GetActiveEditor();
-            if(editor) {
+            if (editor) {
                 wxFileName fn(editor->GetRemotePathOrLocal());
 
                 expandedString.Replace("$(CurrentFileName)", fn.GetName());
@@ -364,7 +368,7 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
 
                 // build the relative path
                 wxString rel_path = fn.GetFullPath();
-                if(w) {
+                if (w) {
                     wxFileName _f(fn);
                     _f.MakeRelativeTo(w->GetDir());
                     rel_path = _f.GetFullPath(w->IsRemote() ? wxPATH_UNIX : wxPATH_NATIVE);
@@ -380,7 +384,7 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
                 ffullpath.Replace("\\", "/");
                 expandedString.Replace("$(CurrentFileFullPath)", ffullpath);
                 expandedString.Replace("$(CurrentSelection)", editor->GetSelection());
-                if(expandedString.Find("$(CurrentSelectionRange)") != wxNOT_FOUND) {
+                if (expandedString.Find("$(CurrentSelectionRange)") != wxNOT_FOUND) {
                     int start = editor->GetSelectionStart(), end = editor->GetSelectionEnd();
 
                     wxString output = wxString::Format("%i:%i", start, end);
@@ -399,13 +403,13 @@ wxString MacroManager::DoExpand(const wxString& expression, IManager* manager, c
         expandedString.Replace("$(SSH_Host)", ssh_host);
         expandedString.Replace("$(SSH_User)", ssh_user);
 
-        if(manager && applyEnv) {
+        if (manager && applyEnv) {
             expandedString.Replace("$(CodeLitePath)", manager->GetInstallDirectory());
 
             // Apply the environment and expand the variables
             EnvSetter es(NULL, NULL, project, confToBuild);
             expandedString = manager->GetEnv()->ExpandVariables(expandedString, false);
-        } else if(applyEnv) {
+        } else if (applyEnv) {
             expandedString = EnvironmentConfig::Instance()->ExpandVariables(expandedString, false);
         }
     }
@@ -419,7 +423,7 @@ wxString MacroManager::ExpandFileMacros(const wxString& expression, const wxStri
     wxString wsp_dir;
     bool is_remote = false;
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    if(workspace) {
+    if (workspace) {
         is_remote = workspace->IsRemote();
         wsp_dir = workspace->GetDir();
     }
@@ -431,7 +435,7 @@ wxString MacroManager::ExpandFileMacros(const wxString& expression, const wxStri
     wxString fullpath = filepath;
 
     wxFileName fn{ filepath };
-    if(!wsp_dir.empty()) {
+    if (!wsp_dir.empty()) {
         fn.MakeRelativeTo(wsp_dir);
     }
 
@@ -643,4 +647,3 @@ wxString ExpandVariables(const wxString& expression, ProjectPtr proj, IEditor* e
 }
 
 #endif
-

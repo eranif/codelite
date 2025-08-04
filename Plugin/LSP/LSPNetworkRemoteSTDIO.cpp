@@ -4,6 +4,7 @@
 #include "LSP/basic_types.h"
 #include "clModuleLogger.hpp"
 #include "clRemoteHost.hpp"
+#include "macromanager.h"
 
 INITIALISE_MODULE_LOG(LOG, "LSPNetworkRemoteSTDIO", "lsp.log");
 
@@ -22,7 +23,7 @@ void LSPNetworkRemoteSTDIO::Open(const LSPStartupInfo& info)
 
 void LSPNetworkRemoteSTDIO::DoClose()
 {
-    if(m_process) {
+    if (m_process) {
         m_process->Terminate();
         m_process = nullptr;
     }
@@ -33,13 +34,21 @@ void LSPNetworkRemoteSTDIO::DoStartRemoteProcess()
     LOG_DEBUG(LOG()) << "Starting remote process:" << endl;
     LOG_DEBUG(LOG()) << m_startupInfo.GetLspServerCommand() << endl;
     LOG_DEBUG(LOG()) << m_startupInfo.GetWorkingDirectory() << endl;
-    for(const auto& p : m_startupInfo.GetEnv()) {
-        LOG_DEBUG(LOG()) << p.first << "=" << p.second << endl;
+
+    clEnvList_t expanded_env;
+    for (const auto& p : m_startupInfo.GetEnv()) {
+        auto key = p.first;
+        auto value = MacroManager::Instance()->ExpandNoEnv(p.second, wxEmptyString, wxEmptyString);
+        expanded_env.push_back({ key, value });
+        LOG_DEBUG(LOG()) << key << "=" << value << endl;
     }
 
-    m_process = clRemoteHost::Instance()->run_interactive_process(
-        this, m_startupInfo.GetLspServerCommand(), IProcessStderrEvent, m_startupInfo.GetWorkingDirectory(),
-        m_startupInfo.GetEnv());
+    m_startupInfo.SetEnv(expanded_env);
+    m_process = clRemoteHost::Instance()->run_interactive_process(this,
+                                                                  m_startupInfo.GetLspServerCommand(),
+                                                                  IProcessStderrEvent,
+                                                                  m_startupInfo.GetWorkingDirectory(),
+                                                                  m_startupInfo.GetEnv());
     BindEvents();
 
     clCommandEvent evtReady(m_process ? wxEVT_LSP_NET_CONNECTED : wxEVT_LSP_NET_ERROR);
@@ -49,7 +58,7 @@ void LSPNetworkRemoteSTDIO::DoStartRemoteProcess()
 void LSPNetworkRemoteSTDIO::Send(const std::string& data)
 {
     LOG_IF_DEBUG { LOG_DEBUG(LOG()) << ">" << data << endl; }
-    if(!m_process) {
+    if (!m_process) {
         LOG_WARNING(LOG()) << "remote server is not running" << endl;
         return;
     }
@@ -87,11 +96,11 @@ void LSPNetworkRemoteSTDIO::OnProcessStderr(clProcessEvent& event)
 
 void LSPNetworkRemoteSTDIO::BindEvents()
 {
-    if(!m_process) {
+    if (!m_process) {
         LOG_WARNING(LOG()) << "failed to bind events. process is not running" << endl;
         return;
     }
-    if(!m_eventsBound) {
+    if (!m_eventsBound) {
         m_eventsBound = true;
         m_process->Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &LSPNetworkRemoteSTDIO::OnProcessOutput, this);
         m_process->Bind(wxEVT_ASYNC_PROCESS_STDERR, &LSPNetworkRemoteSTDIO::OnProcessStderr, this);

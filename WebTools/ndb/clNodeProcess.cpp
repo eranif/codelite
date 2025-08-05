@@ -35,7 +35,7 @@ public:
     {
     }
 
-    virtual ~UnixHelperThread() {}
+    virtual ~UnixHelperThread() = default;
 
     void Terminate() { Stop(); }
     

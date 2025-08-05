@@ -44,8 +44,6 @@ clFileViewerTreeCtrl::clFileViewerTreeCtrl(wxWindow* parent, wxWindowID id, cons
     SetSortFunction(SortFunc);
 }
 
-clFileViewerTreeCtrl::~clFileViewerTreeCtrl() {}
-
 wxTreeItemId clTreeNodeIndex::Find(const wxString& path)
 {
 #ifdef __WXMSW__

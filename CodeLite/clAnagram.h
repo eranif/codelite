@@ -25,7 +25,7 @@ public:
     {
     }
     clAnagram(const wxString& needle, size_t flags = 0);
-    virtual ~clAnagram();
+    virtual ~clAnagram() = default;
 
     /**
      * @brief reset the anagram with a new pattern

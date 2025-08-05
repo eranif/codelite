@@ -214,8 +214,6 @@ void NewKeyShortcutDlg::OnClearUI(wxUpdateUIEvent& event)
                  !m_textCtrl1->IsEmpty());
 }
 
-NewKeyShortcutDlg::~NewKeyShortcutDlg() {}
-
 wxArrayString NewKeyShortcutDlg::GetSuggestions() const
 {
     clKeyboardShortcut::Vec_t unassignedShortcuts = clKeyboardManager::Get()->GetAllUnassignedKeyboardShortcuts();

@@ -15,8 +15,6 @@ clSingleChoiceDialog::clSingleChoiceDialog(wxWindow* parent, const wxArrayString
     ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
-clSingleChoiceDialog::~clSingleChoiceDialog() {}
-
 void clSingleChoiceDialog::OnOKUI(wxUpdateUIEvent& event)
 {
     wxDataViewItem item = m_dvListCtrl->GetSelection();

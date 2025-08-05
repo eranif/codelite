@@ -36,7 +36,7 @@ class WXDLLIMPEXP_SDK clImageViewer : public clImageViewerBase
 
 public:
     clImageViewer(wxWindow* parent, const wxFileName& filename);
-    virtual ~clImageViewer();
+    virtual ~clImageViewer() = default;
     void DoLayout();
 };
 

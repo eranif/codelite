@@ -13,8 +13,6 @@ DiffSelectFoldersDlg::DiffSelectFoldersDlg(wxWindow* parent, const wxString& lef
     CentreOnParent();
 }
 
-DiffSelectFoldersDlg::~DiffSelectFoldersDlg() {}
-
 void DiffSelectFoldersDlg::OnOKUI(wxUpdateUIEvent& event)
 {
     wxString left(m_dirPickerLeft->GetPath());

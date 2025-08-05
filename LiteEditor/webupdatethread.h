@@ -54,7 +54,7 @@ public:
     {
     }
 
-    ~WebUpdateJobData() {}
+    ~WebUpdateJobData() = default;
 
     const wxString& GetCurVersion() const { return m_curVersion; }
     const wxString& GetNewVersion() const { return m_newVersion; }

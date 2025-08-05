@@ -17,8 +17,6 @@ EnvVarImporterDlg::EnvVarImporterDlg(wxWindow* parent, const wxString& projectNa
     m_envVars->SetValue(value);
 }
 
-EnvVarImporterDlg::~EnvVarImporterDlg() {}
-
 void EnvVarImporterDlg::OnImport(wxCommandEvent& event)
 {
     le_conf->SetEnvvars(m_envVars->GetValue());

@@ -70,10 +70,6 @@ clShellProcessEvent::clShellProcessEvent(wxEventType commandType, int winid)
 // clShellProcessEvent
 //-------------------------------------------------------------------
 
-ProcUtils::ProcUtils() {}
-
-ProcUtils::~ProcUtils() {}
-
 std::set<unsigned long> ProcUtils::GetProcTree(long pid)
 {
 #ifdef __WXMSW__
@@ -579,7 +575,7 @@ public:
         , m_output_file(output_file)
     {
     }
-    virtual ~ProcessHelper() {}
+    virtual ~ProcessHelper() = default;
 
     // Notify about the process termination
     void OnTerminate(int pid, int status) override

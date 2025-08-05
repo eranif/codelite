@@ -17,8 +17,6 @@ LSP::SemanticTokensRquest::SemanticTokensRquest(const wxString& filename)
     m_params->As<SemanticTokensParams>()->SetTextDocument(filename);
 }
 
-LSP::SemanticTokensRquest::~SemanticTokensRquest() {}
-
 void LSP::SemanticTokensRquest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     // build set of classes, locals so we can colour them

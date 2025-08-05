@@ -236,7 +236,7 @@ public:
         IterTool m_iterTool;
     public:
         LocationListIterator(LocationList & l, const IterTool &iterTool);
-        ~LocationListIterator();
+        ~LocationListIterator() = default;
         LocationList::iterator& operator++();
         LocationList::iterator operator++(int);
         bool operator==(const LocationList::iterator& rhs);
@@ -252,7 +252,7 @@ public:
         IterTool m_iterTool;
     public:
         ErrorListIterator(ErrorList & l, const IterTool & iterTool);
-        ~ErrorListIterator();
+        ~ErrorListIterator() = default;
         ErrorList::iterator& operator++();
         ErrorList::iterator operator++(int);
         bool operator==(const ErrorList::iterator& rhs);

@@ -109,8 +109,6 @@ ExternalToolsPlugin::ExternalToolsPlugin(IManager* manager)
     m_mgr->GetConfigTool()->ReadObject("ExternalTools", &m_externalTools);
 }
 
-ExternalToolsPlugin::~ExternalToolsPlugin() {}
-
 void ExternalToolsPlugin::CreateToolBar(clToolBarGeneric* toolbar)
 {
     // support both toolbars icon size

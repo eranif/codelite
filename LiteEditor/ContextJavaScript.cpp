@@ -41,8 +41,6 @@ ContextJavaScript::ContextJavaScript()
 {
 }
 
-ContextJavaScript::~ContextJavaScript() {}
-
 void ContextJavaScript::AddMenuDynamicContent(wxMenu* menu) { wxUnusedVar(menu); }
 
 void ContextJavaScript::ApplySettings()

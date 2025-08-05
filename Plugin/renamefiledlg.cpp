@@ -54,8 +54,6 @@ RenameFileDlg::RenameFileDlg(wxWindow* parent, const wxString& replaceWith, std:
 
 void RenameFileDlg::OnFileSelected(wxCommandEvent& event) { DoSelectItem(event.GetSelection()); }
 
-RenameFileDlg::~RenameFileDlg() {}
-
 void RenameFileDlg::DoSelectItem(int idx)
 {
     std::map<int, IncludeStatement>::iterator iter = m_entries.find(idx);

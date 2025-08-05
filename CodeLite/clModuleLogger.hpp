@@ -19,7 +19,7 @@ class WXDLLIMPEXP_CL clModuleLogger
     wxString m_module;
 
 public:
-    clModuleLogger();
+    clModuleLogger() = default;
     ~clModuleLogger();
 
     clModuleLogger(clModuleLogger&&) = default;

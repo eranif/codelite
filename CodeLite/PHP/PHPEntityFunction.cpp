@@ -5,10 +5,6 @@
 #include "commentconfigdata.h"
 #include "file_logger.h"
 
-PHPEntityFunction::PHPEntityFunction() {}
-
-PHPEntityFunction::~PHPEntityFunction() {}
-
 void PHPEntityFunction::PrintStdout(int indent) const
 {
     wxString indentString(' ', indent);

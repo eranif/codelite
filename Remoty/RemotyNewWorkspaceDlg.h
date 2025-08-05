@@ -8,7 +8,7 @@ class RemotyNewWorkspaceDlg : public RemotyNewWorkspaceDlgBase
 
 public:
     RemotyNewWorkspaceDlg(wxWindow* parent);
-    virtual ~RemotyNewWorkspaceDlg();
+    virtual ~RemotyNewWorkspaceDlg() = default;
 
     void GetData(wxString& name, wxString& path, wxString& account);
 

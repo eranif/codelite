@@ -19,7 +19,7 @@ protected:
 public:
     DAPTooltip(dap::Client* client, const wxString& expression, const wxString& result, const wxString& type,
                int variableReference);
-    virtual ~DAPTooltip();
+    virtual ~DAPTooltip() = default;
     void UpdateChildren(int varId, dap::VariablesResponse* response);
 };
 

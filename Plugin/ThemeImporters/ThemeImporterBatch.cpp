@@ -13,7 +13,6 @@ ThemeImporterBatch::ThemeImporterBatch()
     SetFileExtensions("*.bat;*.batch");
 }
 
-ThemeImporterBatch::~ThemeImporterBatch() {}
 LexerConf::Ptr_t ThemeImporterBatch::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, "batch", wxSTC_LEX_BATCH);

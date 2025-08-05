@@ -27,7 +27,7 @@ class AuiPaneInfo
 
 public:
     AuiPaneInfo();
-    virtual ~AuiPaneInfo();
+    virtual ~AuiPaneInfo() = default;
 
     void Reset();
 

@@ -68,7 +68,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Include File:",
-					"m_value":	""
+					"m_value":	"codelite_exports.h"
 				}, {
 					"type":	"string",
 					"m_label":	"Style:",
@@ -101,7 +101,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
-					"m_value":	""
+					"m_value":	"WXDLLIMPEXP_SDK"
 				}, {
 					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File (16x16)  :",
@@ -682,7 +682,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"plugin_sdk:FileSystemWorkspace"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",
@@ -954,6 +954,10 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
@@ -1358,7 +1362,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"plugin_sdk:FileSystemWorkspace"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",
@@ -2075,6 +2079,10 @@
 																	"m_value":	"0"
 																}, {
 																	"type":	"bool",
+																	"m_label":	"Enable Spell Checking",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
 																	"m_label":	"Auto Complete Directories:",
 																	"m_value":	false
 																}, {
@@ -2526,6 +2534,10 @@
 															"m_value":	"0"
 														}, {
 															"type":	"bool",
+															"m_label":	"Enable Spell Checking",
+															"m_value":	false
+														}, {
+															"type":	"bool",
 															"m_label":	"Auto Complete Directories:",
 															"m_value":	false
 														}, {
@@ -2686,6 +2698,10 @@
 															"type":	"string",
 															"m_label":	"Max Length:",
 															"m_value":	"0"
+														}, {
+															"type":	"bool",
+															"m_label":	"Enable Spell Checking",
+															"m_value":	false
 														}, {
 															"type":	"bool",
 															"m_label":	"Auto Complete Directories:",
@@ -2879,6 +2895,10 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Enable Spell Checking",
+																	"m_value":	false
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Auto Complete Directories:",
@@ -4303,6 +4323,10 @@
 																	"m_value":	"0"
 																}, {
 																	"type":	"bool",
+																	"m_label":	"Enable Spell Checking",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
 																	"m_label":	"Auto Complete Directories:",
 																	"m_value":	false
 																}, {
@@ -5005,6 +5029,10 @@
 																	"m_value":	"0"
 																}, {
 																	"type":	"bool",
+																	"m_label":	"Enable Spell Checking",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
 																	"m_label":	"Auto Complete Directories:",
 																	"m_value":	false
 																}, {
@@ -5165,6 +5193,10 @@
 																	"type":	"string",
 																	"m_label":	"Max Length:",
 																	"m_value":	"0"
+																}, {
+																	"type":	"bool",
+																	"m_label":	"Enable Spell Checking",
+																	"m_value":	false
 																}, {
 																	"type":	"bool",
 																	"m_label":	"Auto Complete Directories:",
@@ -6607,6 +6639,10 @@
 																	"m_value":	"0"
 																}, {
 																	"type":	"bool",
+																	"m_label":	"Enable Spell Checking",
+																	"m_value":	false
+																}, {
+																	"type":	"bool",
 																	"m_label":	"Auto Complete Directories:",
 																	"m_value":	false
 																}, {
@@ -6899,7 +6935,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"plugin_sdk:FileSystemWorkspace"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",
@@ -7327,6 +7363,10 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",
@@ -7813,6 +7853,10 @@
 											"type":	"string",
 											"m_label":	"Max Length:",
 											"m_value":	"0"
+										}, {
+											"type":	"bool",
+											"m_label":	"Enable Spell Checking",
+											"m_value":	false
 										}, {
 											"type":	"bool",
 											"m_label":	"Auto Complete Directories:",

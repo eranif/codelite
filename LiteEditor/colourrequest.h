@@ -35,8 +35,8 @@ class ColourRequest : public ThreadRequest
 	wxFileName m_fileToColour;
 
 public:
-	ColourRequest();
-	~ColourRequest();
+	ColourRequest() = default;
+	~ColourRequest() = default;
 
 	void SetFileToColour(const wxFileName& fileToColour) ;
 	const wxFileName& GetFileToColour() const ;

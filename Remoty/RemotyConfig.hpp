@@ -13,8 +13,8 @@ struct RemoteWorkspaceInfo {
 class RemotyConfig
 {
 public:
-    RemotyConfig();
-    ~RemotyConfig();
+    RemotyConfig() = default;
+    ~RemotyConfig() = default;
 
     /**
      * @brief read the recent workspaces from the file system

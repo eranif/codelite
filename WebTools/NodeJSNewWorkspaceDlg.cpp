@@ -8,8 +8,6 @@ NodeJSNewWorkspaceDlg::NodeJSNewWorkspaceDlg(wxWindow* parent)
     CenterOnParent();
 }
 
-NodeJSNewWorkspaceDlg::~NodeJSNewWorkspaceDlg() {}
-
 void NodeJSNewWorkspaceDlg::OnFolderSelected(wxFileDirPickerEvent& event)
 {
     event.Skip();

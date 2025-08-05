@@ -307,8 +307,6 @@ Allocator::Allocator()
     DoLinkAll();
 }
 
-Allocator::~Allocator() {}
-
 wxMenu* Allocator::CreateControlsMenu() const
 {
     wxCrafter::ResourceLoader bmpLoader;

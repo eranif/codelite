@@ -16,7 +16,7 @@ class BuildTab : public wxPanel
 {
 public:
     BuildTab(wxWindow* parent);
-    ~BuildTab();
+    ~BuildTab() = default;
 
     void AppendLine(const wxString& text);
     void ClearView();

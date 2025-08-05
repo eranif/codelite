@@ -13,7 +13,7 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspaceDlg : public clFileSystemWorkspaceDlg
 
 public:
     clFileSystemWorkspaceDlg(wxWindow* parent, clFileSystemWorkspaceSettings* settings = nullptr);
-    virtual ~clFileSystemWorkspaceDlg();
+    virtual ~clFileSystemWorkspaceDlg() = default;
     void SetUseRemoteBrowsing(bool useRemoteBrowsing, const wxString& account);
     bool IsUseRemoteBrowsing() const { return m_useRemoteBrowsing; }
 

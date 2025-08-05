@@ -61,7 +61,7 @@ public:
     /** Constructor */
     VirtualDirectorySelectorDlg(wxWindow* parent, clCxxWorkspace* wsp, const wxString& initialPath = wxEmptyString,
                                 const wxString& projectname = wxEmptyString);
-    ~VirtualDirectorySelectorDlg();
+    ~VirtualDirectorySelectorDlg() = default;
     wxString GetVirtualDirectoryPath() const { return m_staticTextPreview->GetLabel(); }
     bool SelectPath(const wxString& path);
     wxTreeItemId FindItemForPath(const wxString& path);

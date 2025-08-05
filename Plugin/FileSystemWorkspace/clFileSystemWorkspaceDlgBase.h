@@ -14,6 +14,7 @@
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
+#include "codelite_exports.h"
 #include <wx/sizer.h>
 #include <wx/choicebk.h>
 #include <wx/button.h>
@@ -52,7 +53,7 @@
 
 // clang-format on
 
-class clFileSystemWorkspaceDlgBase : public wxDialog
+class WXDLLIMPEXP_SDK clFileSystemWorkspaceDlgBase : public wxDialog
 {
 protected:
     wxChoicebook* m_notebook;
@@ -72,10 +73,14 @@ public:
     wxChoicebook* GetNotebook() { return m_notebook; }
     wxButton* GetButtonNew() { return m_buttonNew; }
     wxButton* GetButtonDelete() { return m_buttonDelete; }
-    clFileSystemWorkspaceDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Workspace Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    clFileSystemWorkspaceDlgBase(wxWindow* parent,
+                                 wxWindowID id = wxID_ANY,
+                                 const wxString& title = _("Workspace Settings"),
+                                 const wxPoint& pos = wxDefaultPosition,
+                                 const wxSize& size = wxSize(-1, -1),
+                                 long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~clFileSystemWorkspaceDlgBase();
 };
-
 
 class BuildTargetDlgBase : public wxDialog
 {
@@ -96,10 +101,14 @@ public:
     wxTextCtrl* GetTextCtrlaName() { return m_textCtrlaName; }
     wxStaticText* GetStaticText62() { return m_staticText62; }
     clThemedSTC* GetTextCtrlValue() { return m_textCtrlValue; }
-    BuildTargetDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Build Target"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    BuildTargetDlgBase(wxWindow* parent,
+                       wxWindowID id = wxID_ANY,
+                       const wxString& title = _("Build Target"),
+                       const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxSize(-1, -1),
+                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~BuildTargetDlgBase();
 };
-
 
 class FSConfigPageBase : public wxPanel
 {
@@ -230,10 +239,13 @@ public:
     wxCheckBox* GetCheckBoxRemoteBuild() { return m_checkBoxRemoteBuild; }
     wxPanel* GetPanelRemote() { return m_panelRemote; }
     wxNotebook* GetNotebook() { return m_notebook; }
-    FSConfigPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,-1), long style = wxTAB_TRAVERSAL);
+    FSConfigPageBase(wxWindow* parent,
+                     wxWindowID id = wxID_ANY,
+                     const wxPoint& pos = wxDefaultPosition,
+                     const wxSize& size = wxSize(500, -1),
+                     long style = wxTAB_TRAVERSAL);
     virtual ~FSConfigPageBase();
 };
-
 
 class NewFileSystemWorkspaceDialogBase : public wxDialog
 {
@@ -255,10 +267,14 @@ public:
     wxDirPickerCtrl* GetDirPickerPath() { return m_dirPickerPath; }
     wxStaticText* GetStaticText145() { return m_staticText145; }
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
-    NewFileSystemWorkspaceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Create workspace"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    NewFileSystemWorkspaceDialogBase(wxWindow* parent,
+                                     wxWindowID id = wxID_ANY,
+                                     const wxString& title = _("Create workspace"),
+                                     const wxPoint& pos = wxDefaultPosition,
+                                     const wxSize& size = wxSize(-1, -1),
+                                     long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~NewFileSystemWorkspaceDialogBase();
 };
-
 
 class clFSWNewConfigDlgBase : public wxDialog
 {
@@ -279,7 +295,12 @@ public:
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
     wxStaticText* GetStaticText235() { return m_staticText235; }
     wxChoice* GetChoiceCopyFrom() { return m_choiceCopyFrom; }
-    clFSWNewConfigDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Configurtion"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    clFSWNewConfigDlgBase(wxWindow* parent,
+                          wxWindowID id = wxID_ANY,
+                          const wxString& title = _("New Configurtion"),
+                          const wxPoint& pos = wxDefaultPosition,
+                          const wxSize& size = wxSize(-1, -1),
+                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~clFSWNewConfigDlgBase();
 };
 

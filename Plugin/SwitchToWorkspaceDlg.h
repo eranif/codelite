@@ -6,7 +6,7 @@ class WXDLLIMPEXP_SDK SwitchToWorkspaceDlg : public SwitchToWorkspaceBaseDlg
 {
 public:
     SwitchToWorkspaceDlg(wxWindow* parent);
-    virtual ~SwitchToWorkspaceDlg();
+    virtual ~SwitchToWorkspaceDlg() = default;
     wxString GetPath() const;
 
 protected:

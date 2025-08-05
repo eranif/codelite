@@ -25,8 +25,6 @@
 
 INITIALISE_MODULE_LOG(TERM_LOG, "Terminal", "terminal.log");
 
-wxTerminalCtrl::wxTerminalCtrl() {}
-
 wxTerminalCtrl::wxTerminalCtrl(wxWindow* parent,
                                wxWindowID winid,
                                const wxString& working_directory,

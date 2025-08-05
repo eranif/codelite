@@ -26,7 +26,7 @@ public:
     clToolBarNative(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                     const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER,
                     const wxString& name = "clToolBarNative");
-    virtual ~clToolBarNative();
+    virtual ~clToolBarNative() = default;
     void SetMiniToolBar(bool) {}
     void ShowOverflowButton(bool) {}
     wxToolBarToolBase* AddTool(wxWindowID id, const wxString& label, size_t bitmapIndex,
@@ -125,7 +125,7 @@ protected:
     void OnColoursChanged(clCommandEvent& event);
 
 public:
-    clToolBarGeneric() {}
+    clToolBarGeneric() = default;
     clToolBarGeneric(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                      const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER,
                      const wxString& name = "clToolBarGeneric");

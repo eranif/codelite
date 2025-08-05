@@ -47,8 +47,6 @@ LoadTabGroupDlg::LoadTabGroupDlg(wxWindow* parent, const wxString& path, const w
     WindowAttrManager::Load(this);
 }
 
-LoadTabGroupDlg::~LoadTabGroupDlg() {}
-
 void LoadTabGroupDlg::InsertListItem(const wxString& item)
 {
     if(item.IsEmpty() == false) {
@@ -95,8 +93,6 @@ SaveTabGroupDlg::SaveTabGroupDlg(wxWindow* parent, const wxArrayString& previous
     
     m_radioBoxWorkspaceOrGlobal->Show(ManagerST::Get()->IsWorkspaceOpen());
 }
-
-SaveTabGroupDlg::~SaveTabGroupDlg() {}
 
 bool SaveTabGroupDlg::GetChoices(wxArrayInt& intArr) const
 {

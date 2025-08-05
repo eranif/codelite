@@ -65,8 +65,6 @@ EnvironmentVariablesDlg::EnvironmentVariablesDlg(wxWindow* parent)
     ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
-EnvironmentVariablesDlg::~EnvironmentVariablesDlg() {}
-
 void EnvironmentVariablesDlg::DoAddPage(const wxString& name, const wxString& content, bool select)
 {
     wxStyledTextCtrl* page = new wxStyledTextCtrl(m_book, wxID_ANY, wxDefaultPosition, wxSize(0, 0));

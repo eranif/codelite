@@ -16,8 +16,6 @@ NodeJSExecutable::NodeJSExecutable()
     m_exePath = clNodeJS::Get().GetNode();
 }
 
-NodeJSExecutable::~NodeJSExecutable() {}
-
 bool NodeJSExecutable::Exists() const { return m_exePath.FileExists(); }
 
 int NodeJSExecutable::GetMajorVersion() const

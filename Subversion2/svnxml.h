@@ -33,8 +33,8 @@
 class SvnXML
 {
 public:
-	SvnXML();
-	~SvnXML();
+	SvnXML() = default;
+	~SvnXML() = default;
 
 	static void GetFiles(const wxString& input, wxArrayString& modifiedFiles, wxArrayString& conflictedFiles, wxArrayString& unversionedFiles, wxArrayString& newFiles, wxArrayString& deletedFiles, wxArrayString& lockedFiles, wxArrayString& ignoredFiles);
 

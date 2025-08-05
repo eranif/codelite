@@ -44,7 +44,7 @@ protected:
 
 public:
     NewKeyShortcutDlg(wxWindow* parent, const MenuItemData& mid);
-    virtual ~NewKeyShortcutDlg();
+    virtual ~NewKeyShortcutDlg() = default;
     clKeyboardShortcut GetAccel() const;
 };
 

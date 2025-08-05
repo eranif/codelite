@@ -37,8 +37,6 @@ BuildTab::BuildTab(wxWindow* parent)
     m_buffer_sw.Start();
 }
 
-BuildTab::~BuildTab() {}
-
 void BuildTab::OnBuildStarted(clBuildEvent& e)
 {
     e.Skip();

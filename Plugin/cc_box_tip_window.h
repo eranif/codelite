@@ -53,7 +53,7 @@ protected:
 
 public:
     CCBoxTipWindow(wxWindow* parent, const wxString& tip, bool strip_html_tags);
-    virtual ~CCBoxTipWindow();
+    virtual ~CCBoxTipWindow() = default;
 
     /**
      * @brief position the tip next to 'win' and show it

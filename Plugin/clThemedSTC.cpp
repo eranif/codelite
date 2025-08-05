@@ -28,8 +28,6 @@ clThemedSTC::clThemedSTC(wxWindow* parent, wxWindowID id, const wxString& defaul
     }
 }
 
-clThemedSTC::clThemedSTC() {}
-
 bool clThemedSTC::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
                          const wxString& name)
 {
@@ -42,5 +40,3 @@ bool clThemedSTC::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, co
     }
     return res;
 }
-
-clThemedSTC::~clThemedSTC() {}

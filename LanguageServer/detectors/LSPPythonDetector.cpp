@@ -11,8 +11,6 @@ LSPPythonDetector::LSPPythonDetector()
 {
 }
 
-LSPPythonDetector::~LSPPythonDetector() {}
-
 bool LSPPythonDetector::DoLocate()
 {
     // locate python3

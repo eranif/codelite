@@ -10,7 +10,7 @@ class WXDLLIMPEXP_CL HoverRequest : public LSP::Request
 {
 public:
     explicit HoverRequest(const wxString& filename, size_t line, size_t column);
-    virtual ~HoverRequest();
+    virtual ~HoverRequest() = default;
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
 };
 };     // namespace LSP

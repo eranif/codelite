@@ -12,8 +12,6 @@ NewFileSystemWorkspaceDialog::NewFileSystemWorkspaceDialog(wxWindow* parent, boo
     CenterOnParent();
 }
 
-NewFileSystemWorkspaceDialog::~NewFileSystemWorkspaceDialog() {}
-
 void NewFileSystemWorkspaceDialog::OnOKUI(wxUpdateUIEvent& event)
 {
     event.Enable(!m_textCtrlName->GetValue().IsEmpty() && wxFileName::DirExists(m_dirPickerPath->GetPath()));

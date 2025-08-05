@@ -21,8 +21,6 @@ SelectFileTypesDialog::SelectFileTypesDialog(wxWindow* parent, const wxArrayStri
     m_searchCtrl->CallAfter(&wxSearchCtrl::SetFocus);
 }
 
-SelectFileTypesDialog::~SelectFileTypesDialog() {}
-
 void SelectFileTypesDialog::InitializeList(const wxArrayString& selected_items)
 {
     m_dvListCtrl->DeleteAllItems();

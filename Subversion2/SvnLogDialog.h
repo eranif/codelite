@@ -31,7 +31,7 @@ class SvnLogDialog : public SvnLogDialogBase
 {
 public:
     SvnLogDialog(wxWindow* parent);
-    virtual ~SvnLogDialog();
+    virtual ~SvnLogDialog() = default;
 
     void SetCompact(wxCheckBox* compact) {
         this->m_compact = compact;

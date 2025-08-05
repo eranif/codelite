@@ -172,8 +172,6 @@ void MacrosDlg::AddMacro(const wxString& name, const wxString& desc)
     }
 }
 
-MacrosDlg::~MacrosDlg() {}
-
 void MacrosDlg::OnCopy(wxCommandEvent& e)
 {
     if(m_item != wxNOT_FOUND) {

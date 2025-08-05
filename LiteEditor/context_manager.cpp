@@ -41,8 +41,6 @@
 
 ContextManager::ContextManager() { Initialize(); }
 
-ContextManager::~ContextManager() {}
-
 ContextBasePtr ContextManager::NewContext(clEditor* parent, const wxString& lexerName)
 {
     // this function is actually a big switch ....

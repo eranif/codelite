@@ -16,7 +16,7 @@ class DAPDebuggerPane : public wxPanel
 {
 public:
     DAPDebuggerPane(wxWindow* parent, DebugAdapterClient* adapter, clModuleLogger& log);
-    virtual ~DAPDebuggerPane();
+    virtual ~DAPDebuggerPane() = default;
 
     DAPMainView* GetMainView() const { return m_mainView; }
     DAPBreakpointsView* GetBreakpointsView() const { return m_breakpointsView; }

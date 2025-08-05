@@ -95,8 +95,6 @@ AddIncludeFileDlg::AddIncludeFileDlg(wxWindow* parent, const wxString& fullpath,
     ::clSetDialogBestSizeAndPosition(this);
 }
 
-AddIncludeFileDlg::~AddIncludeFileDlg() {}
-
 void AddIncludeFileDlg::UpdateLineToAdd()
 {
     if(m_isLineToAddProvided) {

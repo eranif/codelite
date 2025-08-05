@@ -15,7 +15,7 @@ class WXDLLIMPEXP_SDK CompileCommandsJSON
 
 public:
     CompileCommandsJSON(const wxString& filename);
-    virtual ~CompileCommandsJSON();
+    virtual ~CompileCommandsJSON() = default;
 
     void SetFilename(const wxFileName& filename) { this->m_filename = filename; }
     void SetIncludes(const wxArrayString& includes) { this->m_includes = includes; }

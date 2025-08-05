@@ -621,10 +621,6 @@ wxString wxIntToString(int val)
 
 BOM::BOM(const char* buffer, size_t len) { m_bom.AppendData(buffer, len); }
 
-BOM::BOM() {}
-
-BOM::~BOM() {}
-
 wxFontEncoding BOM::Encoding()
 {
     wxFontEncoding encoding = Encoding((const char*)m_bom.GetData());

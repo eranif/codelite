@@ -31,7 +31,8 @@ class SFTPUploadDialog : public SFTPUploadDialogBase
 {
 public:
     SFTPUploadDialog(wxWindow* parent);
-    virtual ~SFTPUploadDialog();
+    virtual ~SFTPUploadDialog() = default;
+
 protected:
     virtual void OnOKUI(wxUpdateUIEvent& event);
 };

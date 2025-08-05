@@ -11,8 +11,6 @@ LSPJdtlsDetector::LSPJdtlsDetector()
 {
 }
 
-LSPJdtlsDetector::~LSPJdtlsDetector() {}
-
 bool LSPJdtlsDetector::DoLocate()
 {
     const auto path = ThePlatform->Which("jdtls");

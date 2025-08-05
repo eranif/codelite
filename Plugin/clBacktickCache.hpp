@@ -18,7 +18,7 @@ public:
 
 public:
     clBacktickCache(const wxString& directory);
-    virtual ~clBacktickCache();
+    virtual ~clBacktickCache() = default;
 
     void Save();
 

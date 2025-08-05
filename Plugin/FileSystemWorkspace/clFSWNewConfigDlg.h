@@ -8,7 +8,7 @@ class WXDLLIMPEXP_SDK clFSWNewConfigDlg : public clFSWNewConfigDlgBase
 {
 public:
     clFSWNewConfigDlg(wxWindow* parent);
-    virtual ~clFSWNewConfigDlg();
+    virtual ~clFSWNewConfigDlg() = default;
 
     wxString GetCopyFrom() const;
     wxString GetConfigName() const;

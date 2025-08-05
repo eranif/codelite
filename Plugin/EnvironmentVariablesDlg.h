@@ -10,7 +10,7 @@ class WXDLLIMPEXP_SDK EnvironmentVariablesDlg : public EnvVarsTableDlgBase
 
 public:
     EnvironmentVariablesDlg(wxWindow* parent);
-    virtual ~EnvironmentVariablesDlg();
+    virtual ~EnvironmentVariablesDlg() = default;
 
 protected:
     virtual void OnCancel(wxCommandEvent& event);

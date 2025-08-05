@@ -4,14 +4,10 @@
 
 #include <wx/tokenzr.h>
 
-PHPSetterGetterEntry::PHPSetterGetterEntry() {}
-
 PHPSetterGetterEntry::PHPSetterGetterEntry(PHPEntityBase::Ptr_t entry)
     : m_entry(entry)
 {
 }
-
-PHPSetterGetterEntry::~PHPSetterGetterEntry() {}
 
 wxString PHPSetterGetterEntry::GetGetter(size_t flags) const
 {

@@ -98,8 +98,6 @@ FSConfigPage::FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t 
     }
 }
 
-FSConfigPage::~FSConfigPage() {}
-
 void FSConfigPage::OnDelete(wxCommandEvent& event)
 {
     wxDataViewItem item = m_dvListCtrlTargets->GetSelection();

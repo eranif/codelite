@@ -50,7 +50,7 @@ protected:
 public:
     /** Constructor */
     RenameFileDlg(wxWindow* parent, const wxString& replaceWith, std::vector<IncludeStatement>& matches);
-    virtual ~RenameFileDlg();
+    virtual ~RenameFileDlg() = default;
     std::vector<IncludeStatement> GetMatches() const;
     wxString GetReplaceWith() const;
 };

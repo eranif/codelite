@@ -38,8 +38,6 @@ clDebuggerTerminalPOSIX::clDebuggerTerminalPOSIX()
 {
 }
 
-clDebuggerTerminalPOSIX::~clDebuggerTerminalPOSIX() {}
-
 void clDebuggerTerminalPOSIX::Launch(const wxString& title)
 {
     m_title = title;

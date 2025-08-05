@@ -26,7 +26,7 @@ class ParseThread
     wxString m_indexer_path;
 
 public:
-    ParseThread();
+    ParseThread() = default;
     ~ParseThread();
 
     void start(const wxString& settings_folder, const wxString& indexer_path);

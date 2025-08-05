@@ -11,8 +11,6 @@ RemotyNewWorkspaceDlg::RemotyNewWorkspaceDlg(wxWindow* parent)
     CenterOnParent();
 }
 
-RemotyNewWorkspaceDlg::~RemotyNewWorkspaceDlg() {}
-
 void RemotyNewWorkspaceDlg::OnBrowse(wxCommandEvent& event)
 {
     auto result = ::clRemoteFileSelector(_("Seelct a folder"));

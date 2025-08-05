@@ -14,5 +14,3 @@ clImageViewer::clImageViewer(wxWindow* parent, const wxFileName& filename)
         m_staticBitmap->SetBitmap(m_bitmap);
     }
 }
-
-clImageViewer::~clImageViewer() {}

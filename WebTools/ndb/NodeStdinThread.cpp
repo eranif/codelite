@@ -8,8 +8,6 @@ NodeStdinThread::NodeStdinThread(wxEvtHandler* owner)
 {
 }
 
-NodeStdinThread::~NodeStdinThread() {}
-
 void* NodeStdinThread::Entry()
 {
     while(!TestDestroy()) {

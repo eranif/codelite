@@ -37,8 +37,8 @@ public:
     static MacroManager* Instance();
 
 private:
-    MacroManager();
-    virtual ~MacroManager();
+    MacroManager() = default;
+    virtual ~MacroManager() = default;
 
     wxString DoExpand(const wxString& expression, IManager* manager, const wxString& project, bool applyEnv,
                       const wxString& confToBuild = wxEmptyString);

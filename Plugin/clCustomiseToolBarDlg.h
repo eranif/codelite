@@ -15,7 +15,7 @@ class WXDLLIMPEXP_SDK clCustomiseToolBarDlg : public clCustomiseToolBarBaseDlg
 
 public:
     clCustomiseToolBarDlg(wxWindow* parent, clToolBarGeneric* tb);
-    virtual ~clCustomiseToolBarDlg();
+    virtual ~clCustomiseToolBarDlg() = default;
 
 protected:
     virtual void OnOK(wxCommandEvent& event);

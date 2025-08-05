@@ -39,7 +39,7 @@ class WXDLLIMPEXP_CL CommentConfigData : public SerializedObject
 
 public:
     CommentConfigData();
-    virtual ~CommentConfigData();
+    virtual ~CommentConfigData() = default;
 
 public:
     virtual void DeSerialize(Archive& arch);

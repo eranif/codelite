@@ -16,8 +16,8 @@ class RemoteObject : public nSerializableObject
     wxString m_objectId;
 
 public:
-    RemoteObject();
-    virtual ~RemoteObject();
+    RemoteObject() = default;
+    virtual ~RemoteObject() = default;
 
     void FromJSON(const JSONItem& json);
     JSONItem ToJSON(const wxString& name) const;

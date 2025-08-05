@@ -20,5 +20,3 @@ clGetTextFromUserDialog::clGetTextFromUserDialog(wxWindow* parent, const wxStrin
     SetName("clGetTextFromUserDialog");
     GetSizer()->Fit(this);
 }
-
-clGetTextFromUserDialog::~clGetTextFromUserDialog() {}

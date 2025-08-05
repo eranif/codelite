@@ -15,8 +15,6 @@ SwitchToWorkspaceDlg::SwitchToWorkspaceDlg(wxWindow* parent)
     GetSizer()->Fit(this);
 }
 
-SwitchToWorkspaceDlg::~SwitchToWorkspaceDlg() {}
-
 wxString SwitchToWorkspaceDlg::GetPath() const { return m_comboBoxFiles->GetValue(); }
 void SwitchToWorkspaceDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(!m_comboBoxFiles->GetValue().IsEmpty()); }
 void SwitchToWorkspaceDlg::OnBrowse(wxCommandEvent& event)

@@ -43,8 +43,8 @@ private:
 class WXDLLIMPEXP_CL clINIParser
 {
 public:
-    clINIParser();
-    virtual ~clINIParser();
+    clINIParser() = default;
+    virtual ~clINIParser() = default;
 
     bool ParseFile(const wxString& filepath);
     bool ParseString(const wxString& content);

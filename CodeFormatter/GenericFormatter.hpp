@@ -16,7 +16,7 @@ struct CommandMetadata {
     wxString m_filepath;
     wxEvtHandler* m_sink = nullptr;
 
-    CommandMetadata() {}
+    CommandMetadata() = default;
     CommandMetadata(const wxString& command, const wxString& filepath, wxEvtHandler* sink)
         : m_command(command)
         , m_filepath(filepath)

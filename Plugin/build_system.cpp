@@ -44,8 +44,6 @@ BuilderConfig::BuilderConfig(wxXmlNode* node)
     }
 }
 
-BuilderConfig::~BuilderConfig() {}
-
 wxXmlNode* BuilderConfig::ToXml() const
 {
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("BuildSystem"));

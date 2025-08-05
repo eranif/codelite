@@ -32,7 +32,7 @@ class ContextJavaScript : public ContextBase
 public:
     ContextJavaScript();
     ContextJavaScript(clEditor* Editor);
-    virtual ~ContextJavaScript();
+    virtual ~ContextJavaScript() = default;
 
 public:
     virtual int GetActiveKeywordSet() const;

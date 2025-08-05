@@ -60,7 +60,7 @@ protected:
 public:
     /** Constructor */
     MacrosDlg(wxWindow* parent, int content, ProjectPtr project, IEditor* editor);
-    virtual ~MacrosDlg();
+    virtual ~MacrosDlg() = default;
 };
 
 #endif // __macrosdlg__

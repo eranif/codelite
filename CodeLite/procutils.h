@@ -83,8 +83,8 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SHELL_ASYNC_PROCESS_TERMINATED, c
 class WXDLLIMPEXP_CL ProcUtils
 {
 public:
-    ProcUtils();
-    ~ProcUtils();
+    ProcUtils() = default;
+    ~ProcUtils() = default;
 
     static wxString& WrapInShell(wxString& cmd);
 

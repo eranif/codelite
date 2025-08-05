@@ -26,6 +26,7 @@
 #include "clFileViwerTreeCtrl.h"
 #include <wx/dataview.h>
 #include "clThemedListCtrl.h"
+#include "codelite_exports.h"
 #include <wx/scrolwin.h>
 #include <wx/statbmp.h>
 #include "clThemedButton.h"
@@ -62,8 +63,11 @@ public:
     wxStyledTextCtrl* GetStc10() { return m_stc10; }
     wxButton* GetButton6() { return m_button6; }
     wxButton* GetButton8() { return m_button8; }
-    EditDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Edit Text"),
-                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(300, 300),
+    EditDlgBase(wxWindow* parent,
+                wxWindowID id = wxID_ANY,
+                const wxString& title = _("Edit Text"),
+                const wxPoint& pos = wxDefaultPosition,
+                const wxSize& size = wxSize(300, 300),
                 long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~EditDlgBase();
 };
@@ -112,8 +116,11 @@ public:
     wxPanel* GetSplitterPageRight() { return m_splitterPageRight; }
     clThemedSplitterWindow* GetSplitter() { return m_splitter; }
     wxPanel* GetPanelOverviewFull() { return m_panelOverviewFull; }
-    DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                            const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
+    DiffSideBySidePanelBase(wxWindow* parent,
+                            wxWindowID id = wxID_ANY,
+                            const wxPoint& pos = wxDefaultPosition,
+                            const wxSize& size = wxSize(-1, -1),
+                            long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
     virtual ~DiffSideBySidePanelBase();
 };
 
@@ -130,8 +137,11 @@ protected:
 public:
     wxStaticText* GetStaticTextCaption() { return m_staticTextCaption; }
     wxTextCtrl* GetTextCtrl() { return m_textCtrl; }
-    clGetTextFromUserBaseDialog(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""),
-                                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    clGetTextFromUserBaseDialog(wxWindow* parent,
+                                wxWindowID id = wxID_ANY,
+                                const wxString& title = wxT(""),
+                                const wxPoint& pos = wxDefaultPosition,
+                                const wxSize& size = wxSize(-1, -1),
                                 long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~clGetTextFromUserBaseDialog();
 };
@@ -148,8 +158,11 @@ protected:
 
 public:
     clFileViewerTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
-    clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                        const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
+    clTreeCtrlPanelBase(wxWindow* parent,
+                        wxWindowID id = wxID_ANY,
+                        const wxPoint& pos = wxDefaultPosition,
+                        const wxSize& size = wxSize(-1, -1),
+                        long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
     virtual ~clTreeCtrlPanelBase();
 };
 
@@ -167,8 +180,11 @@ protected:
 public:
     clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxPanel* GetPanel161() { return m_panel161; }
-    NotebookNavigationDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Tab"),
-                              const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400, 200),
+    NotebookNavigationDlgBase(wxWindow* parent,
+                              wxWindowID id = wxID_ANY,
+                              const wxString& title = _("Select Tab"),
+                              const wxPoint& pos = wxDefaultPosition,
+                              const wxSize& size = wxSize(400, 200),
                               long style = wxCAPTION | wxRESIZE_BORDER | wxCLOSE_BOX);
     virtual ~NotebookNavigationDlgBase();
 };
@@ -185,12 +201,15 @@ protected:
 public:
     wxStaticText* GetStaticText177() { return m_staticText177; }
     wxPanel* GetPanel169() { return m_panel169; }
-    clTreeCtrlPanelDefaultPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                                   const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
+    clTreeCtrlPanelDefaultPageBase(wxWindow* parent,
+                                   wxWindowID id = wxID_ANY,
+                                   const wxPoint& pos = wxDefaultPosition,
+                                   const wxSize& size = wxSize(500, 300),
+                                   long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
     virtual ~clTreeCtrlPanelDefaultPageBase();
 };
 
-class clSingleChoiceDialogBase : public wxDialog
+class WXDLLIMPEXP_SDK clSingleChoiceDialogBase : public wxDialog
 {
 protected:
     clThemedListCtrl* m_dvListCtrl;
@@ -204,8 +223,11 @@ protected:
 
 public:
     clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
-    clSingleChoiceDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT(""),
-                             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400, 300),
+    clSingleChoiceDialogBase(wxWindow* parent,
+                             wxWindowID id = wxID_ANY,
+                             const wxString& title = wxT(""),
+                             const wxPoint& pos = wxDefaultPosition,
+                             const wxSize& size = wxSize(400, 300),
                              long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~clSingleChoiceDialogBase();
 };
@@ -220,8 +242,11 @@ protected:
 public:
     wxStaticBitmap* GetStaticBitmap() { return m_staticBitmap; }
     wxScrolledWindow* GetScrollWin196() { return m_scrollWin196; }
-    clImageViewerBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                      const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+    clImageViewerBase(wxWindow* parent,
+                      wxWindowID id = wxID_ANY,
+                      const wxPoint& pos = wxDefaultPosition,
+                      const wxSize& size = wxSize(500, 300),
+                      long style = wxTAB_TRAVERSAL);
     virtual ~clImageViewerBase();
 };
 
@@ -243,8 +268,11 @@ public:
     clThemedButton* GetButtonFilePath() { return m_buttonFilePath; }
     clThemedButton* GetButtonBookmarks() { return m_buttonBookmarks; }
     wxStaticText* GetLabelText() { return m_labelText; }
-    clEditorBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                    const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
+    clEditorBarBase(wxWindow* parent,
+                    wxWindowID id = wxID_ANY,
+                    const wxPoint& pos = wxDefaultPosition,
+                    const wxSize& size = wxSize(-1, -1),
+                    long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
     virtual ~clEditorBarBase();
 };
 
@@ -262,8 +290,11 @@ public:
     wxListBox* GetListBoxColumns() { return m_listBoxColumns; }
     wxStyledTextCtrl* GetStc() { return m_stc; }
     wxPanel* GetPanel344() { return m_panel344; }
-    clTableLineEditorBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Text Viewer"),
-                             const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    clTableLineEditorBaseDlg(wxWindow* parent,
+                             wxWindowID id = wxID_ANY,
+                             const wxString& title = _("Text Viewer"),
+                             const wxPoint& pos = wxDefaultPosition,
+                             const wxSize& size = wxSize(-1, -1),
                              long style = wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT);
     virtual ~clTableLineEditorBaseDlg();
 };

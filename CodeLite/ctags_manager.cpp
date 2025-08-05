@@ -105,8 +105,6 @@ TagsManager::TagsManager()
     m_db->SetSingleSearchLimit(MAX_SEARCH_LIMIT);
 }
 
-TagsManager::~TagsManager() {}
-
 void TagsManager::OpenDatabase(const wxFileName& fileName)
 {
     m_dbFile = fileName;

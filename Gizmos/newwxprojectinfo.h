@@ -56,8 +56,8 @@ class NewWxProjectInfo {
 	
 public:
 	NewWxProjectInfo();
-	~NewWxProjectInfo();
-	
+	~NewWxProjectInfo() = default;
+
 	//Setters
 	void SetFlags(size_t flags) {this->m_flags = flags;}
 	void SetName(const wxString& name) {this->m_name = name;}

@@ -31,8 +31,3 @@ SvnInfoDialog::SvnInfoDialog(wxWindow* parent)
     GetSizer()->Fit(this);
     CenterOnParent();
 }
-
-SvnInfoDialog::~SvnInfoDialog()
-{
-}
-

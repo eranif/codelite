@@ -84,7 +84,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"plugin_sdk:GUI:Dialogs"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",
@@ -551,7 +551,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"plugin_sdk:Diff"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",
@@ -2160,7 +2160,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"plugin_sdk:GUI:Controls"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",
@@ -2608,7 +2608,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"plugin_sdk:GUI:Controls"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",
@@ -2817,7 +2817,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"plugin_sdk:GUI:Notebook"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",
@@ -3237,7 +3237,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"plugin_sdk:GUI:Controls"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",
@@ -3563,7 +3563,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Include File:",
-					"m_value":	""
+					"m_value":	"codelite_exports.h"
 				}, {
 					"type":	"string",
 					"m_label":	"Style:",
@@ -3579,7 +3579,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"plugin_sdk:GUI:Dialogs"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",
@@ -3596,7 +3596,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
-					"m_value":	""
+					"m_value":	"WXDLLIMPEXP_SDK"
 				}, {
 					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File (16x16)  :",
@@ -3963,7 +3963,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"plugin_sdk:GUI:Controls:FileViewers"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",
@@ -4299,7 +4299,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"plugin_sdk:GUI:Controls"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",
@@ -4831,7 +4831,7 @@
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
-					"m_path":	"plugin_sdk:GUI:Controls"
+					"m_path":	""
 				}, {
 					"type":	"choice",
 					"m_label":	"Centre:",

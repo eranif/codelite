@@ -62,8 +62,6 @@ DockablePaneMenuManager::DockablePaneMenuManager(wxAuiManager* aui)
 {
 }
 
-DockablePaneMenuManager::~DockablePaneMenuManager() {}
-
 void DockablePaneMenuManager::RemoveMenu(const wxString& name)
 {
     int itemId = wxXmlResource::GetXRCID(name.c_str());

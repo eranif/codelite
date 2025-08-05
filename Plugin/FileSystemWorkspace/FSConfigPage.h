@@ -26,7 +26,7 @@ protected:
 
 public:
     FSConfigPage(wxWindow* parent, clFileSystemWorkspaceConfig::Ptr_t config, bool enableRemotePage = true);
-    virtual ~FSConfigPage();
+    virtual ~FSConfigPage() = default;
     void Save();
     void SetUseRemoteBrowsing(bool useRemoteBrowsing, const wxString& account)
     {

@@ -161,7 +161,7 @@ public:
         , m_url(url)
     {}
 
-    virtual ~SvnLogHandler() {}
+    virtual ~SvnLogHandler() = default;
 
 public:
     virtual void Process(const wxString &output);

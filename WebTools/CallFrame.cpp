@@ -1,10 +1,6 @@
 #include "CallFrame.h"
 #include "CallFrameScope.h"
 
-CallFrame::CallFrame() {}
-
-CallFrame::~CallFrame() {}
-
 JSONItem CallFrame::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);

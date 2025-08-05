@@ -54,8 +54,6 @@ NewQtProjDlg::NewQtProjDlg(wxWindow* parent, QmakeConf* conf, IManager* mgr)
     WindowAttrManager::Load(this);
 }
 
-NewQtProjDlg::~NewQtProjDlg() {}
-
 void NewQtProjDlg::OnNewQmakeSettings(wxCommandEvent& event)
 {
     QMakeSettingsDlg dlg(this, m_mgr, m_conf);

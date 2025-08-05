@@ -50,7 +50,7 @@ struct TargetRange {
     int end_pos = wxNOT_FOUND;
     FailReason why = NONE;
 
-    TargetRange() {}
+    TargetRange() = default;
 
     // this constructor is required to silence errors on macOS with latest clang
     TargetRange(int start, int end)

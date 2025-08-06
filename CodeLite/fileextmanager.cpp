@@ -93,7 +93,7 @@ void FileExtManager::Init()
         m_map[wxT("h++")] = TypeHeader;
         m_map[wxT("inl")] = TypeHeader;
 
-        m_map[wxT("rc")] = TypeResource;
+        m_map[wxT("rc")] = TypeShellScript;
         m_map[wxT("res")] = TypeResource;
 
         m_map[wxT("y")] = TypeYacc;
@@ -214,8 +214,12 @@ void FileExtManager::Init()
         m_language_bundle.insert({ "Xml", { TypeProject, TypeWorkspace, TypeXml, TypeXRC, TypeSvg, TypeFormbuilder } });
         m_language_bundle.insert({ "Yaml", { TypeYAML } });
         m_language_bundle.insert({ "Json",
-                                   { TypeJSON, TypeWorkspaceFileSystem, TypeWxCrafter, TypeWorkspaceDocker,
-                                     TypeWorkspaceNodeJS, TypeWorkspacePHP } });
+                                   { TypeJSON,
+                                     TypeWorkspaceFileSystem,
+                                     TypeWxCrafter,
+                                     TypeWorkspaceDocker,
+                                     TypeWorkspaceNodeJS,
+                                     TypeWorkspacePHP } });
         m_language_bundle.insert({ "Rust", { TypeRust } });
         m_language_bundle.insert({ "Ruby", { TypeRuby } });
         m_language_bundle.insert({ "Shell script", { TypeShellScript } });

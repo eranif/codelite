@@ -1241,6 +1241,7 @@ void RemotyWorkspace::OpenAndEditCodeLiteRemoteJson()
         wxMessageBox(_("Failed to open file: ") + remote_file_path, "CodeLite", wxICON_ERROR | wxOK);
         return;
     }
+
     editor->SetEditorText(DEFAULT_CODELITE_REMOTE_JSON);
     editor->SetActive();
 }

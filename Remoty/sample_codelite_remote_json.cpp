@@ -90,6 +90,16 @@ const wxString DEFAULT_CODELITE_REMOTE_JSON = R"EOF({
       },
       {
         "command": [
+          "shfmt",
+          "-i",
+          "2",
+          "$(CurrentFileRelPath)"
+        ],
+        "name": "shfmt",
+        "working_directory": "$(WorkspacePath)"
+      },
+      {
+        "command": [
           "rustfmt",
           "--edition",
           "2021",

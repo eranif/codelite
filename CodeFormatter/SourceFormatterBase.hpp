@@ -48,7 +48,7 @@ protected:
 protected:
     void SetFlag(FormatterFlags flag, bool set)
     {
-        if(set) {
+        if (set) {
             __SET_FLAG(m_flags, flag);
         } else {
             __UNSET_FLAG(m_flags, flag);

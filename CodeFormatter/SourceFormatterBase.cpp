@@ -41,9 +41,9 @@ bool SourceFormatterBase::CanHandle(FileExtManager::FileType file_type) const
 void SourceFormatterBase::SetFileTypes(const std::vector<FileExtManager::FileType>& types)
 {
     wxStringSet_t langs;
-    for(auto type : types) {
+    for (auto type : types) {
         wxString lang = FileExtManager::GetLanguageFromType(type);
-        if(lang.empty()) {
+        if (lang.empty()) {
             continue;
         }
         langs.insert(lang);
@@ -51,7 +51,7 @@ void SourceFormatterBase::SetFileTypes(const std::vector<FileExtManager::FileTyp
 
     m_languages.clear();
     m_languages.reserve(langs.size());
-    for(const auto& lang : langs) {
+    for (const auto& lang : langs) {
         m_languages.Add(lang);
     }
 }

@@ -1,8 +1,5 @@
 #include "CodeFormatterManager.hpp"
 
-#include "JSON.h"
-#include "cl_standard_paths.h"
-#include "file_logger.h"
 #include "fmtBlack.hpp"
 #include "fmtCMakeForamt.hpp"
 #include "fmtClangFormat.hpp"
@@ -10,10 +7,10 @@
 #include "fmtPHPCBF.hpp"
 #include "fmtPHPCSFixer.hpp"
 #include "fmtRustfmt.hpp"
+#include "fmtShfmtFormat.hpp"
 #include "fmtXmlLint.hpp"
 #include "fmtYQ.hpp"
 
-#include <algorithm>
 #include <wx/filename.h>
 
 CodeFormatterManager::CodeFormatterManager() {}
@@ -45,6 +42,7 @@ void CodeFormatterManager::initialize_defaults()
     push_back(new fmtBlack);
     push_back(new fmtYQ);
     push_back(new fmtCMakeForamt);
+    push_back(new fmtShfmtFormat);
 }
 
 void CodeFormatterManager::push_back(GenericFormatter* formatter)
@@ -167,7 +165,8 @@ bool CodeFormatterManager::AddCustom(GenericFormatter* formatter)
 
 bool CodeFormatterManager::DeleteFormatter(const wxString& name)
 {
-    auto where = std::find_if(m_formatters.begin(), m_formatters.end(),
+    auto where = std::find_if(m_formatters.begin(),
+                              m_formatters.end(),
                               [&name](std::shared_ptr<GenericFormatter> fmtr) { return fmtr->GetName() == name; });
     if (where == m_formatters.end()) {
         // not found

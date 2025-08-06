@@ -13,7 +13,7 @@ fmtShfmtFormat::fmtShfmtFormat()
 
     // local command
     const auto shfmt_exe = ThePlatform->Which("shfmt");
-    SetCommand({ shfmt_exe.value_or("shfmt"), R"#("$(CurrentFileRelPath)")#" });
+    SetCommand({ shfmt_exe.value_or("shfmt"), "-i", "4", R"#("$(CurrentFileRelPath)")#" });
     SetEnabled(shfmt_exe.has_value());
 }
 

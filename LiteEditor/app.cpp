@@ -74,7 +74,7 @@
 #include "performance.h"
 
 //////////////////////////////////////////////
-// Define the version string for this codelite
+// Define the version string for this CodeLite
 //////////////////////////////////////////////
 
 #if defined(__WXMAC__) || defined(__WXGTK__)
@@ -394,7 +394,7 @@ bool CodeLiteApp::OnInit()
 #endif
 
 #ifndef CL_DEBUG_BUILD
-    // dont show the splash in debug builds
+    // don't show the splash in debug builds
     bool show_splash = clConfig::Get().Read("ShowSplashScreen", true);
     if (show_splash) {
         wxBitmap bitmap;
@@ -445,7 +445,7 @@ bool CodeLiteApp::OnInit()
 
     // When launching CodeLite as a debugger interface, disable the plugins
     if (m_parser.Found(wxT("n")) || IsStartedInDebuggerMode()) {
-        // Load codelite without plugins
+        // Load CodeLite without plugins
         SetPluginLoadPolicy(PP_None);
     }
 
@@ -457,7 +457,7 @@ bool CodeLiteApp::OnInit()
             pluginsArr.Item(i).Trim().Trim(false).MakeLower();
         }
 
-        // Load codelite without plugins
+        // Load CodeLite without plugins
         SetAllowedPlugins(pluginsArr);
         SetPluginLoadPolicy(PP_FromList);
     }
@@ -483,11 +483,11 @@ bool CodeLiteApp::OnInit()
 
     // Copy gdb pretty printers from the installation folder to a writeable location
     // this is  needed because python complies the files and in most cases the user
-    // running codelite has no write permissions to /usr/share/codelite/...
+    // running CodeLite has no write permissions to /usr/share/codelite/...
     DoCopyGdbPrinters();
 
     // Since GCC 4.8.2 gcc has a default colored output
-    // which breaks codelite output parsing
+    // which breaks CodeLite output parsing
     // to disable this, we need to set GCC_COLORS to an empty
     // string.
     // https://sourceforge.net/p/codelite/bugs/946/
@@ -626,7 +626,7 @@ bool CodeLiteApp::OnInit()
     EditorConfig* cfg = EditorConfigST::Get();
     cfg->SetInstallDir(mgr->GetInstallDir());
 
-    // Update codelite revision and Version
+    // Update CodeLite revision and Version
     wxString strVersion = CODELITE_VERSION_STRING;
     cfg->Init(strVersion, wxT("2.0.2"));
     if (!cfg->Load()) {
@@ -938,7 +938,7 @@ void CodeLiteApp::MSWReadRegistry()
 
         // Support for MinGW
         if (strMingw.IsEmpty() == false) {
-            // Make sure that codelite's MinGW comes first before any other
+            // Make sure that CodeLite's MinGW comes first before any other
             // MinGW installation that might exist on the machine
             strMingw << wxFileName::GetPathSeparator() << wxT("bin;");
             pathEnv.Prepend(strMingw);
@@ -1052,7 +1052,7 @@ void CodeLiteApp::AdjustPathForMSYSIfNeeded()
     wxArrayString paths;
 
     wxString rootDir = "/"; // Default
-    // determine the baseroot of the MSYS installation
+    // determine the base root of the MSYS installation
     wxString msysRoot = ProcUtils::SafeExecuteCommand("sh -c 'cd / && pwd -W'");
     if (!msysRoot.IsEmpty()) {
         clSYSTEM() << "MSYS Root folder is set to:" << msysRoot << endl;

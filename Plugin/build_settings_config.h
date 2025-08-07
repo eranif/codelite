@@ -86,7 +86,7 @@ public:
     /**
      * Load the configuration file
      * @param version XML version which to be loaded, any version different from this one, will cause
-     * codelite to override the user version
+     * CodeLite to override the user version
      */
     bool Load(const wxString& version, const wxString& xmlFilePath = "");
 
@@ -156,7 +156,7 @@ public:
     BuilderConfigPtr GetBuilderConfig(const wxString& name);
 
     /**
-     * @brief save builder configurtation to the XML file
+     * @brief save builder configuration to the XML file
      * @param builder
      */
     void SaveBuilderConfig(BuilderPtr builder);

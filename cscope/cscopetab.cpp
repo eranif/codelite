@@ -102,7 +102,7 @@ void CscopeTab::BuildTable(CScopeResultTable_t* table)
 
         // Add the entries for this file
         for (const CscopeEntryData& entry : *vec) {
-            // Dont insert duplicate entries to the match view
+            // Don't insert duplicate entries to the match view
             wxString display_string;
             display_string << _("Line: ") << entry.GetLine() << wxT(", ") << entry.GetScope() << wxT(", ")
                            << entry.GetPattern();

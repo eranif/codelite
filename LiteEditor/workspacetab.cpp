@@ -487,7 +487,7 @@ void WorkspaceTab::OnPinnedCxxProjectContextMenu(wxDataViewEvent& event)
 void WorkspaceTab::OnPinnedCxxProjectSelected(wxDataViewEvent& event)
 {
     // we MUST sync the views, otherwise, the context menu wont work
-    // since it reliese on the current selection in the tree
+    // since it relies on the current selection in the tree
     SyncPinnedProjectsView(event.GetItem());
 }
 
@@ -498,7 +498,7 @@ void WorkspaceTab::AddPinnedProject(const wxString& project)
     }
     m_cxxPinnedProjects.Add(project);
 
-    // Store the pinned projehcts
+    // Store the pinned projects
     SaveCxxPinnedProjects();
 
     // Refresh the view
@@ -585,7 +585,7 @@ void WorkspaceTab::OnExecuteNoDebug(wxCommandEvent& event)
 void WorkspaceTab::OnBuildActiveProjectDropdown(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    // we dont allow showing the dropdown during build process
+    // we don't allow showing the dropdown during build process
     if (m_buildInProgress) {
         return;
     }

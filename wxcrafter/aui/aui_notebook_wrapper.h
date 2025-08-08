@@ -1,7 +1,7 @@
 #ifndef AUINOTEBOOKWRAPPER_H
 #define AUINOTEBOOKWRAPPER_H
 
-#include "notebook_base_wrapper.h" // Base class: NotebookBaseWrapper
+#include "controls/Containers/notebook_base_wrapper.h" // Base class: NotebookBaseWrapper
 
 class AuiNotebookWrapper : public NotebookBaseWrapper
 {

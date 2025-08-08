@@ -1,8 +1,8 @@
 #include "box_sizer_wrapper.h"
 
+#include "Properties/choice_property.h"
 #include "StdToWX.h"
 #include "allocator_mgr.h"
-#include "choice_property.h"
 #include "wxgui_defs.h"
 #include "xmlutils.h"
 

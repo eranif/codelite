@@ -1,5 +1,6 @@
 #include "sizer_wrapper_base.h"
 
+#include "Properties/bool_property.h"
 #include "wxgui_helpers.h"
 
 SizerWrapperBase::SizerWrapperBase()

@@ -1,13 +1,13 @@
 #include "data_view_list_ctrl_column.h"
 
+#include "Properties/category_property.h"
+#include "Properties/choice_property.h"
+#include "Properties/col_header_flags_property.h"
+#include "Properties/string_property.h"
+#include "Properties/multi_strings_property.h"
 #include "StdToWX.h"
 #include "allocator_mgr.h"
-#include "choice_property.h"
-#include "col_header_flags_property.h"
-#include "multi_strings_property.h"
 #include "wxgui_helpers.h"
-
-#include <wx/dataview.h>
 
 DataViewListCtrlColumn::DataViewListCtrlColumn()
     : wxcWidget(ID_WXDATAVIEWCOL)

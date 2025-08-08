@@ -1,7 +1,7 @@
 #ifndef CHOICEBOOKWRAPPER_H
 #define CHOICEBOOKWRAPPER_H
 
-#include "notebook_base_wrapper.h"
+#include "Containers/notebook_base_wrapper.h"
 
 class ChoiceBookWrapper : public NotebookBaseWrapper
 {

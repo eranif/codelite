@@ -1,10 +1,11 @@
 #include "image_list_wrapper.h"
 
+#include "Properties/bool_property.h"
+#include "Properties/category_property.h"
+#include "Properties/int_property.h"
+#include "Properties/string_property.h"
+#include "Properties/virtual_folder_property.h"
 #include "allocator_mgr.h"
-#include "bool_property.h"
-#include "category_property.h"
-#include "int_property.h"
-#include "virtual_folder_property.h"
 
 ImageListWrapper::ImageListWrapper()
     : TopLevelWinWrapper(ID_WXIMAGELIST)

@@ -1,7 +1,7 @@
 #ifndef LISTBOOKWRAPPER_H
 #define LISTBOOKWRAPPER_H
 
-#include "notebook_base_wrapper.h" // Base class: NotebookBaseWrapper
+#include "Containers/notebook_base_wrapper.h" // Base class: NotebookBaseWrapper
 
 class ListBookWrapper : public NotebookBaseWrapper
 {

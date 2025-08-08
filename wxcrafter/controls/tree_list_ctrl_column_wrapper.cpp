@@ -1,9 +1,11 @@
 #include "tree_list_ctrl_column_wrapper.h"
 
+#include "Properties/category_property.h"
+#include "Properties/choice_property.h"
+#include "Properties/col_header_flags_property.h"
+#include "Properties/string_property.h"
 #include "StdToWX.h"
 #include "allocator_mgr.h"
-#include "choice_property.h"
-#include "col_header_flags_property.h"
 #include "wxgui_helpers.h"
 
 #include <wx/headercol.h>

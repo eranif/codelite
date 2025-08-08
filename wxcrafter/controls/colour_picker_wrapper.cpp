@@ -1,7 +1,7 @@
 #include "colour_picker_wrapper.h"
 
+#include "Properties/color_property.h"
 #include "allocator_mgr.h"
-#include "color_property.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"

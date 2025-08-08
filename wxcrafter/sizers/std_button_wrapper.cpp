@@ -1,10 +1,12 @@
 #include "std_button_wrapper.h"
 
+#include "Properties/bool_property.h"
+#include "Properties/category_property.h"
+#include "Properties/choice_property.h"
+#include "Properties/multi_strings_property.h"
+#include "Properties/string_property.h"
 #include "StdToWX.h"
 #include "allocator_mgr.h"
-#include "bool_property.h"
-#include "choice_property.h"
-#include "multi_strings_property.h"
 #include "wxgui_defs.h"
 #include "xmlutils.h"
 

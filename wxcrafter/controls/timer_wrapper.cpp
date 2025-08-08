@@ -1,9 +1,10 @@
 #include "timer_wrapper.h"
 
+#include "Properties/bool_property.h"
+#include "Properties/category_property.h"
+#include "Properties/int_property.h"
+#include "Properties/string_property.h"
 #include "allocator_mgr.h"
-#include "bool_property.h"
-#include "category_property.h"
-#include "int_property.h"
 #include "wxgui_helpers.h"
 
 TimerWrapper::TimerWrapper()

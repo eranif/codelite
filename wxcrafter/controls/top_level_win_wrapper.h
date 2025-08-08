@@ -1,7 +1,6 @@
 #ifndef TOPLEVELWINWRAPPER_H
 #define TOPLEVELWINWRAPPER_H
 
-#include "string_property.h"
 #include "wxc_project_metadata.h"
 #include "wxc_widget.h" // Base class: WrapperBase
 

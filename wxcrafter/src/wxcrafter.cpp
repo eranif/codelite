@@ -19,15 +19,15 @@ wxBorder get_border_simple_theme_aware_bit()
 #else
     return wxBORDER_DEFAULT;
 #endif
-} // DoGetBorderSimpleBit
+} // get_border_simple_theme_aware_bit
 bool bBitmapLoaded = false;
 } // namespace
 
-TextEditorBaseClass::TextEditorBaseClass(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                         long style)
+TextEditorBaseClass::TextEditorBaseClass(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA63InitBitmapResources();
@@ -38,8 +38,8 @@ TextEditorBaseClass::TextEditorBaseClass(wxWindow* parent, wxWindowID id, const 
     wxBoxSizer* boxSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer4);
 
-    m_textCtrl = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                wxTE_RICH2 | wxTE_PROCESS_ENTER);
+    m_textCtrl = new wxTextCtrl(
+        this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_RICH2 | wxTE_PROCESS_ENTER);
 #if wxVERSION_NUMBER >= 3000
     m_textCtrl->SetHint(wxT(""));
 #endif
@@ -48,7 +48,7 @@ TextEditorBaseClass::TextEditorBaseClass(wxWindow* parent, wxWindowID id, const 
 
     SetName(wxT("TextEditorBaseClass"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
     // Connect events
@@ -64,11 +64,11 @@ TextEditorBaseClass::~TextEditorBaseClass()
     m_textCtrl->Unbind(wxEVT_KEY_DOWN, &TextEditorBaseClass::OnKeyDown, this);
 }
 
-FontPickerDlgBaseClass::FontPickerDlgBaseClass(wxWindow* parent, wxWindowID id, const wxString& title,
-                                               const wxPoint& pos, const wxSize& size, long style)
+FontPickerDlgBaseClass::FontPickerDlgBaseClass(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA63InitBitmapResources();
@@ -82,8 +82,8 @@ FontPickerDlgBaseClass::FontPickerDlgBaseClass(wxWindow* parent, wxWindowID id, 
 
     boxSizer32->Add(statixBoxSizer36, 0, wxEXPAND | wxALL, WXC_FROM_DIP(5));
 
-    m_checkBoxPreDefinedFont = new wxCheckBox(this, wxID_ANY, _("Use pre-defined font"), wxDefaultPosition,
-                                              wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxPreDefinedFont = new wxCheckBox(
+        this, wxID_ANY, _("Use pre-defined font"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxPreDefinedFont->SetValue(false);
 
     statixBoxSizer36->Add(m_checkBoxPreDefinedFont, 0, wxEXPAND | wxALL, WXC_FROM_DIP(5));
@@ -133,8 +133,8 @@ FontPickerDlgBaseClass::FontPickerDlgBaseClass(wxWindow* parent, wxWindowID id, 
 
     statixBoxSizer37->Add(m_checkBoxCustomFont, 0, wxEXPAND | wxALL, WXC_FROM_DIP(5));
 
-    m_fontPicker = new wxFontPickerCtrl(this, wxID_ANY, wxNullFont, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                        wxFNTP_DEFAULT_STYLE);
+    m_fontPicker = new wxFontPickerCtrl(
+        this, wxID_ANY, wxNullFont, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxFNTP_DEFAULT_STYLE);
 
     statixBoxSizer37->Add(m_fontPicker, 0, wxEXPAND | wxALL, WXC_FROM_DIP(5));
 
@@ -164,15 +164,15 @@ FontPickerDlgBaseClass::FontPickerDlgBaseClass(wxWindow* parent, wxWindowID id, 
 
     SetName(wxT("FontPickerDlgBaseClass"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -194,8 +194,8 @@ FontPickerDlgBaseClass::FontPickerDlgBaseClass(wxWindow* parent, wxWindowID id, 
 
 FontPickerDlgBaseClass::~FontPickerDlgBaseClass()
 {
-    m_checkBoxPreDefinedFont->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &FontPickerDlgBaseClass::OnUsePreDefinedFont,
-                                     this);
+    m_checkBoxPreDefinedFont->Unbind(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, &FontPickerDlgBaseClass::OnUsePreDefinedFont, this);
     m_choiceSystemFonts->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &FontPickerDlgBaseClass::OnSystemFontSelected, this);
     m_choiceSystemFonts->Unbind(wxEVT_UPDATE_UI, &FontPickerDlgBaseClass::OnUsePreDefinedFontUI, this);
     m_checkBoxBold->Unbind(wxEVT_UPDATE_UI, &FontPickerDlgBaseClass::OnUsePreDefinedFontUI, this);
@@ -209,11 +209,11 @@ FontPickerDlgBaseClass::~FontPickerDlgBaseClass()
     m_fontPicker->Unbind(wxEVT_COMMAND_FONTPICKER_CHANGED, &FontPickerDlgBaseClass::OnFontSelected, this);
 }
 
-MessageDlgBaseClass::MessageDlgBaseClass(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                         const wxSize& size, long style)
+MessageDlgBaseClass::MessageDlgBaseClass(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA63InitBitmapResources();
@@ -223,8 +223,8 @@ MessageDlgBaseClass::MessageDlgBaseClass(wxWindow* parent, wxWindowID id, const 
     wxBoxSizer* boxSizer64 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer64);
 
-    m_panel70 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300, 150)),
-                            wxTAB_TRAVERSAL | wxBORDER_THEME);
+    m_panel70 = new wxPanel(
+        this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300, 150)), wxTAB_TRAVERSAL | wxBORDER_THEME);
     m_panel70->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
     m_panel70->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT));
 
@@ -233,8 +233,12 @@ MessageDlgBaseClass::MessageDlgBaseClass(wxWindow* parent, wxWindowID id, const 
     wxBoxSizer* boxSizer71 = new wxBoxSizer(wxHORIZONTAL);
     m_panel70->SetSizer(boxSizer71);
 
-    m_staticBitmap75 = new wxStaticBitmap(m_panel70, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("info")),
-                                          wxDefaultPosition, wxDLG_UNIT(m_panel70, wxSize(-1, -1)), 0);
+    m_staticBitmap75 = new wxStaticBitmap(m_panel70,
+                                          wxID_ANY,
+                                          wxXmlResource::Get()->LoadBitmap(wxT("info")),
+                                          wxDefaultPosition,
+                                          wxDLG_UNIT(m_panel70, wxSize(-1, -1)),
+                                          0);
 
     boxSizer71->Add(m_staticBitmap75, 0, wxALIGN_CENTER_VERTICAL | wxALL, WXC_FROM_DIP(5));
 
@@ -255,8 +259,8 @@ MessageDlgBaseClass::MessageDlgBaseClass(wxWindow* parent, wxWindowID id, const 
 
     boxSizer74->Add(m_message, 0, wxEXPAND | wxALL, WXC_FROM_DIP(5));
 
-    m_checkBoxDontAnnoy = new wxCheckBox(this, wxID_ANY, _("Don't show this message again"), wxDefaultPosition,
-                                         wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxDontAnnoy = new wxCheckBox(
+        this, wxID_ANY, _("Don't show this message again"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxDontAnnoy->SetValue(false);
     m_checkBoxDontAnnoy->SetToolTip(_("Check this to prevent this dialog from showing up again"));
 
@@ -276,15 +280,15 @@ MessageDlgBaseClass::MessageDlgBaseClass(wxWindow* parent, wxWindowID id, const 
 
     SetName(wxT("MessageDlgBaseClass"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -293,11 +297,10 @@ MessageDlgBaseClass::MessageDlgBaseClass(wxWindow* parent, wxWindowID id, const 
 
 MessageDlgBaseClass::~MessageDlgBaseClass() {}
 
-DefineCustomControlWizardBaseClass::DefineCustomControlWizardBaseClass(wxWindow* parent, wxWindowID id,
-                                                                       const wxString& title, const wxBitmap& bmp,
-                                                                       const wxPoint& pos, long style)
+DefineCustomControlWizardBaseClass::DefineCustomControlWizardBaseClass(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxBitmap& bmp, const wxPoint& pos, long style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA63InitBitmapResources();
@@ -311,16 +314,23 @@ DefineCustomControlWizardBaseClass::DefineCustomControlWizardBaseClass(wxWindow*
     wxBoxSizer* boxSizer84 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageGeneral->SetSizer(boxSizer84);
 
-    m_staticText88 = new wxStaticText(m_wizardPageGeneral, wxID_ANY, _("Set the class name"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_wizardPageGeneral, wxSize(-1, -1)), 0);
+    m_staticText88 = new wxStaticText(m_wizardPageGeneral,
+                                      wxID_ANY,
+                                      _("Set the class name"),
+                                      wxDefaultPosition,
+                                      wxDLG_UNIT(m_wizardPageGeneral, wxSize(-1, -1)),
+                                      0);
     wxFont m_staticText88Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText88Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText88->SetFont(m_staticText88Font);
 
     boxSizer84->Add(m_staticText88, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(5));
 
-    m_staticLine265 = new wxStaticLine(m_wizardPageGeneral, wxID_ANY, wxDefaultPosition,
-                                       wxDLG_UNIT(m_wizardPageGeneral, wxSize(-1, -1)), wxLI_HORIZONTAL);
+    m_staticLine265 = new wxStaticLine(m_wizardPageGeneral,
+                                       wxID_ANY,
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(m_wizardPageGeneral, wxSize(-1, -1)),
+                                       wxLI_HORIZONTAL);
 
     boxSizer84->Add(m_staticLine265, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -331,13 +341,17 @@ DefineCustomControlWizardBaseClass::DefineCustomControlWizardBaseClass(wxWindow*
 
     boxSizer84->Add(flexGridSizer85, 1, wxEXPAND | wxALL, WXC_FROM_DIP(5));
 
-    m_staticText103 = new wxStaticText(m_wizardPageGeneral, wxID_ANY, _("Class:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_wizardPageGeneral, wxSize(-1, -1)), 0);
+    m_staticText103 = new wxStaticText(m_wizardPageGeneral,
+                                       wxID_ANY,
+                                       _("Class:"),
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(m_wizardPageGeneral, wxSize(-1, -1)),
+                                       0);
 
     flexGridSizer85->Add(m_staticText103, 0, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL | wxALL, WXC_FROM_DIP(5));
 
-    m_textClassName = new wxTextCtrl(m_wizardPageGeneral, wxID_ANY, wxT(""), wxDefaultPosition,
-                                     wxDLG_UNIT(m_wizardPageGeneral, wxSize(-1, -1)), 0);
+    m_textClassName = new wxTextCtrl(
+        m_wizardPageGeneral, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_wizardPageGeneral, wxSize(-1, -1)), 0);
 #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
     // wxFONTFAMILY_TELETYPE
@@ -355,14 +369,18 @@ DefineCustomControlWizardBaseClass::DefineCustomControlWizardBaseClass(wxWindow*
 
     flexGridSizer85->Add(m_textClassName, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText109 = new wxStaticText(m_wizardPageGeneral, wxID_ANY, _("XRC Preview class:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_wizardPageGeneral, wxSize(-1, -1)), 0);
+    m_staticText109 = new wxStaticText(m_wizardPageGeneral,
+                                       wxID_ANY,
+                                       _("XRC Preview class:"),
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(m_wizardPageGeneral, wxSize(-1, -1)),
+                                       0);
     m_staticText109->SetToolTip(_("Set here a standard wxWidgets control for preview purposes"));
 
     flexGridSizer85->Add(m_staticText109, 0, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL | wxALL, WXC_FROM_DIP(5));
 
-    m_textCtrlXRCPreviewClass = new wxTextCtrl(m_wizardPageGeneral, wxID_ANY, wxT(""), wxDefaultPosition,
-                                               wxDLG_UNIT(m_wizardPageGeneral, wxSize(-1, -1)), 0);
+    m_textCtrlXRCPreviewClass = new wxTextCtrl(
+        m_wizardPageGeneral, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_wizardPageGeneral, wxSize(-1, -1)), 0);
 #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
     // wxFONTFAMILY_TELETYPE
@@ -386,16 +404,23 @@ DefineCustomControlWizardBaseClass::DefineCustomControlWizardBaseClass(wxWindow*
     wxBoxSizer* boxSizer89 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageHeader->SetSizer(boxSizer89);
 
-    m_staticText91 = new wxStaticText(m_wizardPageHeader, wxID_ANY, _("Additional include file"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_wizardPageHeader, wxSize(-1, -1)), 0);
+    m_staticText91 = new wxStaticText(m_wizardPageHeader,
+                                      wxID_ANY,
+                                      _("Additional include file"),
+                                      wxDefaultPosition,
+                                      wxDLG_UNIT(m_wizardPageHeader, wxSize(-1, -1)),
+                                      0);
     wxFont m_staticText91Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText91Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText91->SetFont(m_staticText91Font);
 
     boxSizer89->Add(m_staticText91, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(5));
 
-    m_staticLine267 = new wxStaticLine(m_wizardPageHeader, wxID_ANY, wxDefaultPosition,
-                                       wxDLG_UNIT(m_wizardPageHeader, wxSize(-1, -1)), wxLI_HORIZONTAL);
+    m_staticLine267 = new wxStaticLine(m_wizardPageHeader,
+                                       wxID_ANY,
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(m_wizardPageHeader, wxSize(-1, -1)),
+                                       wxLI_HORIZONTAL);
 
     boxSizer89->Add(m_staticLine267, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -406,13 +431,17 @@ DefineCustomControlWizardBaseClass::DefineCustomControlWizardBaseClass(wxWindow*
 
     boxSizer89->Add(flexGridSizer90, 1, wxEXPAND | wxALL, WXC_FROM_DIP(5));
 
-    m_staticText92 = new wxStaticText(m_wizardPageHeader, wxID_ANY, _("Include file:"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_wizardPageHeader, wxSize(-1, -1)), 0);
+    m_staticText92 = new wxStaticText(m_wizardPageHeader,
+                                      wxID_ANY,
+                                      _("Include file:"),
+                                      wxDefaultPosition,
+                                      wxDLG_UNIT(m_wizardPageHeader, wxSize(-1, -1)),
+                                      0);
 
     flexGridSizer90->Add(m_staticText92, 0, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL | wxALL, WXC_FROM_DIP(5));
 
-    m_textCtrlIncludeLine = new wxTextCtrl(m_wizardPageHeader, wxID_ANY, wxT(""), wxDefaultPosition,
-                                           wxDLG_UNIT(m_wizardPageHeader, wxSize(-1, -1)), 0);
+    m_textCtrlIncludeLine = new wxTextCtrl(
+        m_wizardPageHeader, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_wizardPageHeader, wxSize(-1, -1)), 0);
 #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
     // wxFONTFAMILY_TELETYPE
@@ -437,20 +466,27 @@ DefineCustomControlWizardBaseClass::DefineCustomControlWizardBaseClass(wxWindow*
     wxBoxSizer* boxSizer98 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageCpp->SetSizer(boxSizer98);
 
-    m_staticText99 = new wxStaticText(m_wizardPageCpp, wxID_ANY, _("Implementation file content"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_wizardPageCpp, wxSize(-1, -1)), 0);
+    m_staticText99 = new wxStaticText(m_wizardPageCpp,
+                                      wxID_ANY,
+                                      _("Implementation file content"),
+                                      wxDefaultPosition,
+                                      wxDLG_UNIT(m_wizardPageCpp, wxSize(-1, -1)),
+                                      0);
     wxFont m_staticText99Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText99Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText99->SetFont(m_staticText99Font);
 
     boxSizer98->Add(m_staticText99, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(5));
 
-    m_staticLine269 = new wxStaticLine(m_wizardPageCpp, wxID_ANY, wxDefaultPosition,
-                                       wxDLG_UNIT(m_wizardPageCpp, wxSize(-1, -1)), wxLI_HORIZONTAL);
+    m_staticLine269 = new wxStaticLine(
+        m_wizardPageCpp, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_wizardPageCpp, wxSize(-1, -1)), wxLI_HORIZONTAL);
 
     boxSizer98->Add(m_staticLine269, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panel107 = new wxPanel(m_wizardPageCpp, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_wizardPageCpp, wxSize(-1, -1)),
+    m_panel107 = new wxPanel(m_wizardPageCpp,
+                             wxID_ANY,
+                             wxDefaultPosition,
+                             wxDLG_UNIT(m_wizardPageCpp, wxSize(-1, -1)),
                              wxTAB_TRAVERSAL | get_border_simple_theme_aware_bit());
     m_panel107->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
 
@@ -460,17 +496,23 @@ DefineCustomControlWizardBaseClass::DefineCustomControlWizardBaseClass(wxWindow*
     m_panel107->SetSizer(boxSizer108);
 
     m_staticText106 =
-        new wxStaticText(m_panel107, wxID_ANY,
+        new wxStaticText(m_panel107,
+                         wxID_ANY,
                          _("You may use here the following macros (the macros expands to the value defined in the "
                            "designer):\n\n$parent - expands to the custom control parent name\n$name - expands to the "
                            "C++ member name\n$id - the control ID\n\nExample:\n$name = new MyControl($parent, $id)"),
-                         wxDefaultPosition, wxDLG_UNIT(m_panel107, wxSize(-1, -1)), 0);
+                         wxDefaultPosition,
+                         wxDLG_UNIT(m_panel107, wxSize(-1, -1)),
+                         0);
     m_staticText106->SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOBK));
     m_staticText106->SetForegroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_INFOTEXT));
 
     boxSizer108->Add(m_staticText106, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_textCtrlInstantiationLine = new wxTextCtrl(m_wizardPageCpp, wxID_ANY, wxT(""), wxDefaultPosition,
+    m_textCtrlInstantiationLine = new wxTextCtrl(m_wizardPageCpp,
+                                                 wxID_ANY,
+                                                 wxT(""),
+                                                 wxDefaultPosition,
                                                  wxDLG_UNIT(m_wizardPageCpp, wxSize(400, -1)),
                                                  wxTE_RICH2 | wxTE_PROCESS_TAB | wxTE_PROCESS_ENTER | wxTE_MULTILINE);
 #ifdef __WXMSW__
@@ -489,8 +531,8 @@ DefineCustomControlWizardBaseClass::DefineCustomControlWizardBaseClass(wxWindow*
 
     m_wizardPageEvents = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageEvents);
-    if(m_pages.size() > 1) {
-        for(size_t i = 1; i < m_pages.size(); i++) {
+    if (m_pages.size() > 1) {
+        for (size_t i = 1; i < m_pages.size(); i++) {
             wxWizardPageSimple::Chain(m_pages.at(i - 1), m_pages.at(i));
         }
     }
@@ -499,16 +541,23 @@ DefineCustomControlWizardBaseClass::DefineCustomControlWizardBaseClass(wxWindow*
     wxBoxSizer* boxSizer275 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageEvents->SetSizer(boxSizer275);
 
-    m_staticText277 = new wxStaticText(m_wizardPageEvents, wxID_ANY, _("Custom Events"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_wizardPageEvents, wxSize(-1, -1)), 0);
+    m_staticText277 = new wxStaticText(m_wizardPageEvents,
+                                       wxID_ANY,
+                                       _("Custom Events"),
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(m_wizardPageEvents, wxSize(-1, -1)),
+                                       0);
     wxFont m_staticText277Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText277Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText277->SetFont(m_staticText277Font);
 
     boxSizer275->Add(m_staticText277, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_staticLine279 = new wxStaticLine(m_wizardPageEvents, wxID_ANY, wxDefaultPosition,
-                                       wxDLG_UNIT(m_wizardPageEvents, wxSize(-1, -1)), wxLI_HORIZONTAL);
+    m_staticLine279 = new wxStaticLine(m_wizardPageEvents,
+                                       wxID_ANY,
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(m_wizardPageEvents, wxSize(-1, -1)),
+                                       wxLI_HORIZONTAL);
 
     boxSizer275->Add(m_staticLine279, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -516,43 +565,53 @@ DefineCustomControlWizardBaseClass::DefineCustomControlWizardBaseClass(wxWindow*
 
     boxSizer275->Add(boxSizer283, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrlEvents =
-        new wxDataViewListCtrl(m_wizardPageEvents, wxID_ANY, wxDefaultPosition,
-                               wxDLG_UNIT(m_wizardPageEvents, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+    m_dvListCtrlEvents = new wxDataViewListCtrl(m_wizardPageEvents,
+                                                wxID_ANY,
+                                                wxDefaultPosition,
+                                                wxDLG_UNIT(m_wizardPageEvents, wxSize(-1, -1)),
+                                                wxDV_ROW_LINES | wxDV_SINGLE);
     m_dvListCtrlEvents->SetToolTip(_("Define here custom events of the control\ne.g. 'Event Type' can be something "
                                      "like wxEVT_MY_BUTTON_CLICKED\nand 'Event Class' can be wxCommandEvent"));
 
     boxSizer283->Add(m_dvListCtrlEvents, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrlEvents->AppendTextColumn(_("Event Type"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT,
-                                         wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrlEvents->AppendTextColumn(_("Event Class"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT,
-                                         wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlEvents->AppendTextColumn(
+        _("Event Type"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlEvents->AppendTextColumn(
+        _("Event Class"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(200), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* boxSizer285 = new wxBoxSizer(wxVERTICAL);
 
     boxSizer283->Add(boxSizer285, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_button287 = new wxButton(m_wizardPageEvents, wxID_NEW, _("&New..."), wxDefaultPosition,
-                               wxDLG_UNIT(m_wizardPageEvents, wxSize(-1, -1)), 0);
+    m_button287 = new wxButton(m_wizardPageEvents,
+                               wxID_NEW,
+                               _("&New..."),
+                               wxDefaultPosition,
+                               wxDLG_UNIT(m_wizardPageEvents, wxSize(-1, -1)),
+                               0);
 
     boxSizer285->Add(m_button287, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_button289 = new wxButton(m_wizardPageEvents, wxID_DELETE, _("Delete"), wxDefaultPosition,
-                               wxDLG_UNIT(m_wizardPageEvents, wxSize(-1, -1)), 0);
+    m_button289 = new wxButton(m_wizardPageEvents,
+                               wxID_DELETE,
+                               _("Delete"),
+                               wxDefaultPosition,
+                               wxDLG_UNIT(m_wizardPageEvents, wxSize(-1, -1)),
+                               0);
 
     boxSizer285->Add(m_button289, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("DefineCustomControlWizardBaseClass"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -572,11 +631,11 @@ DefineCustomControlWizardBaseClass::~DefineCustomControlWizardBaseClass()
     m_button289->Unbind(wxEVT_UPDATE_UI, &DefineCustomControlWizardBaseClass::OnDeleteEventUI, this);
 }
 
-EditCustomControlDlgBaseClass::EditCustomControlDlgBaseClass(wxWindow* parent, wxWindowID id, const wxString& title,
-                                                             const wxPoint& pos, const wxSize& size, long style)
+EditCustomControlDlgBaseClass::EditCustomControlDlgBaseClass(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA63InitBitmapResources();
@@ -608,8 +667,8 @@ EditCustomControlDlgBaseClass::EditCustomControlDlgBaseClass(wxWindow* parent, w
     flexGridSizer117->AddGrowableRow(2);
     m_panel229->SetSizer(flexGridSizer117);
 
-    m_staticText120 = new wxStaticText(m_panel229, wxID_ANY, _("XRC Preview class:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panel229, wxSize(-1, -1)), 0);
+    m_staticText120 = new wxStaticText(
+        m_panel229, wxID_ANY, _("XRC Preview class:"), wxDefaultPosition, wxDLG_UNIT(m_panel229, wxSize(-1, -1)), 0);
 
     flexGridSizer117->Add(m_staticText120, 0, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL | wxALL, WXC_FROM_DIP(5));
 
@@ -631,8 +690,8 @@ EditCustomControlDlgBaseClass::EditCustomControlDlgBaseClass(wxWindow* parent, w
 
     flexGridSizer117->Add(m_textCtrlXRCClass, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText122 = new wxStaticText(m_panel229, wxID_ANY, _("Include file:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panel229, wxSize(-1, -1)), 0);
+    m_staticText122 = new wxStaticText(
+        m_panel229, wxID_ANY, _("Include file:"), wxDefaultPosition, wxDLG_UNIT(m_panel229, wxSize(-1, -1)), 0);
 
     flexGridSizer117->Add(m_staticText122, 0, wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL | wxALL, WXC_FROM_DIP(5));
 
@@ -654,14 +713,17 @@ EditCustomControlDlgBaseClass::EditCustomControlDlgBaseClass(wxWindow* parent, w
 
     flexGridSizer117->Add(m_textCtrlIncludeFile, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_textCtrlInstantiationLineTEXT = new wxStaticText(m_panel229, wxID_ANY, _("Instantiation code:"),
-                                                       wxDefaultPosition, wxDLG_UNIT(m_panel229, wxSize(-1, -1)), 0);
+    m_textCtrlInstantiationLineTEXT = new wxStaticText(
+        m_panel229, wxID_ANY, _("Instantiation code:"), wxDefaultPosition, wxDLG_UNIT(m_panel229, wxSize(-1, -1)), 0);
 
     flexGridSizer117->Add(m_textCtrlInstantiationLineTEXT, 0, wxALIGN_RIGHT | wxALIGN_TOP | wxALL, WXC_FROM_DIP(5));
 
-    m_textCtrlInstantiationLine =
-        new wxTextCtrl(m_panel229, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel229, wxSize(-1, -1)),
-                       wxTE_MULTILINE | wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
+    m_textCtrlInstantiationLine = new wxTextCtrl(m_panel229,
+                                                 wxID_ANY,
+                                                 wxT(""),
+                                                 wxDefaultPosition,
+                                                 wxDLG_UNIT(m_panel229, wxSize(-1, -1)),
+                                                 wxTE_MULTILINE | get_border_simple_theme_aware_bit());
 #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
     // wxFONTFAMILY_TELETYPE
@@ -686,15 +748,15 @@ EditCustomControlDlgBaseClass::EditCustomControlDlgBaseClass(wxWindow* parent, w
 
     boxSizer233->Add(boxSizer237, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrlEvents = new wxDataViewListCtrl(m_panel231, wxID_ANY, wxDefaultPosition,
-                                                wxDLG_UNIT(m_panel231, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
+    m_dvListCtrlEvents = new wxDataViewListCtrl(
+        m_panel231, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel231, wxSize(-1, -1)), wxDV_ROW_LINES | wxDV_SINGLE);
 
     boxSizer237->Add(m_dvListCtrlEvents, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrlEvents->AppendTextColumn(_("Event Type"), wxDATAVIEW_CELL_EDITABLE, WXC_FROM_DIP(200), wxALIGN_LEFT,
-                                         wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrlEvents->AppendTextColumn(_("Event Class"), wxDATAVIEW_CELL_EDITABLE, WXC_FROM_DIP(200), wxALIGN_LEFT,
-                                         wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlEvents->AppendTextColumn(
+        _("Event Type"), wxDATAVIEW_CELL_EDITABLE, WXC_FROM_DIP(200), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrlEvents->AppendTextColumn(
+        _("Event Class"), wxDATAVIEW_CELL_EDITABLE, WXC_FROM_DIP(200), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* boxSizer239 = new wxBoxSizer(wxVERTICAL);
 
     boxSizer237->Add(boxSizer239, 0, wxEXPAND, WXC_FROM_DIP(5));
@@ -705,8 +767,8 @@ EditCustomControlDlgBaseClass::EditCustomControlDlgBaseClass(wxWindow* parent, w
 
     boxSizer239->Add(m_buttonNewEvent, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_buttonDeleteEvent = new wxButton(m_panel231, wxID_DELETE, _("Delete"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panel231, wxSize(-1, -1)), 0);
+    m_buttonDeleteEvent = new wxButton(
+        m_panel231, wxID_DELETE, _("Delete"), wxDefaultPosition, wxDLG_UNIT(m_panel231, wxSize(-1, -1)), 0);
 
     boxSizer239->Add(m_buttonDeleteEvent, 0, wxALL, WXC_FROM_DIP(5));
 
@@ -724,7 +786,7 @@ EditCustomControlDlgBaseClass::EditCustomControlDlgBaseClass(wxWindow* parent, w
     boxSizer113->Add(m_button115, 0, wxALL, WXC_FROM_DIP(5));
 
 #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_notebook)) {
+    if (!wxPersistenceManager::Get().Find(m_notebook)) {
         wxPersistenceManager::Get().RegisterAndRestore(m_notebook);
     } else {
         wxPersistenceManager::Get().Restore(m_notebook);
@@ -733,15 +795,15 @@ EditCustomControlDlgBaseClass::EditCustomControlDlgBaseClass(wxWindow* parent, w
 
     SetName(wxT("EditCustomControlDlgBaseClass"));
     SetSize(wxDLG_UNIT(this, wxSize(400, 400)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -750,10 +812,10 @@ EditCustomControlDlgBaseClass::EditCustomControlDlgBaseClass(wxWindow* parent, w
     m_choiceControls->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &EditCustomControlDlgBaseClass::OnSelectControl, this);
     m_textCtrlXRCClass->Bind(wxEVT_COMMAND_TEXT_UPDATED, &EditCustomControlDlgBaseClass::OnControlModified, this);
     m_textCtrlIncludeFile->Bind(wxEVT_COMMAND_TEXT_UPDATED, &EditCustomControlDlgBaseClass::OnControlModified, this);
-    m_textCtrlInstantiationLine->Bind(wxEVT_COMMAND_TEXT_UPDATED, &EditCustomControlDlgBaseClass::OnControlModified,
-                                      this);
-    m_dvListCtrlEvents->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_DONE, &EditCustomControlDlgBaseClass::OnEventEditDone,
-                             this);
+    m_textCtrlInstantiationLine->Bind(
+        wxEVT_COMMAND_TEXT_UPDATED, &EditCustomControlDlgBaseClass::OnControlModified, this);
+    m_dvListCtrlEvents->Bind(
+        wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_DONE, &EditCustomControlDlgBaseClass::OnEventEditDone, this);
     m_buttonNewEvent->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &EditCustomControlDlgBaseClass::OnNewEvent, this);
     m_buttonDeleteEvent->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &EditCustomControlDlgBaseClass::OnDeleteEvent, this);
     m_buttonDeleteEvent->Bind(wxEVT_UPDATE_UI, &EditCustomControlDlgBaseClass::OnDeleteEventUI, this);
@@ -766,10 +828,10 @@ EditCustomControlDlgBaseClass::~EditCustomControlDlgBaseClass()
     m_choiceControls->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &EditCustomControlDlgBaseClass::OnSelectControl, this);
     m_textCtrlXRCClass->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &EditCustomControlDlgBaseClass::OnControlModified, this);
     m_textCtrlIncludeFile->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &EditCustomControlDlgBaseClass::OnControlModified, this);
-    m_textCtrlInstantiationLine->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &EditCustomControlDlgBaseClass::OnControlModified,
-                                        this);
-    m_dvListCtrlEvents->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_DONE,
-                               &EditCustomControlDlgBaseClass::OnEventEditDone, this);
+    m_textCtrlInstantiationLine->Unbind(
+        wxEVT_COMMAND_TEXT_UPDATED, &EditCustomControlDlgBaseClass::OnControlModified, this);
+    m_dvListCtrlEvents->Unbind(
+        wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_DONE, &EditCustomControlDlgBaseClass::OnEventEditDone, this);
     m_buttonNewEvent->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &EditCustomControlDlgBaseClass::OnNewEvent, this);
     m_buttonDeleteEvent->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &EditCustomControlDlgBaseClass::OnDeleteEvent, this);
     m_buttonDeleteEvent->Unbind(wxEVT_UPDATE_UI, &EditCustomControlDlgBaseClass::OnDeleteEventUI, this);
@@ -777,11 +839,11 @@ EditCustomControlDlgBaseClass::~EditCustomControlDlgBaseClass()
     m_button114->Unbind(wxEVT_UPDATE_UI, &EditCustomControlDlgBaseClass::OnSaveUI, this);
 }
 
-ImportDlgBaseClass::ImportDlgBaseClass(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                       const wxSize& size, long style)
+ImportDlgBaseClass::ImportDlgBaseClass(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA63InitBitmapResources();
@@ -798,8 +860,8 @@ ImportDlgBaseClass::ImportDlgBaseClass(wxWindow* parent, wxWindowID id, const wx
 
     boxSizer127->Add(flexGridSizer138, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText128 = new wxStaticText(this, wxID_ANY, _("Filepath to import:"), wxDefaultPosition,
-                                       wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticText128 = new wxStaticText(
+        this, wxID_ANY, _("Filepath to import:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
     flexGridSizer138->Add(m_staticText128, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -815,8 +877,8 @@ ImportDlgBaseClass::ImportDlgBaseClass(wxWindow* parent, wxWindowID id, const wx
 
     flexGridSizer138->Add(m_buttonBrowse, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_staticText139 = new wxStaticText(this, wxID_ANY, _("Destination Filepath:"), wxDefaultPosition,
-                                       wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticText139 = new wxStaticText(
+        this, wxID_ANY, _("Destination Filepath:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
     flexGridSizer138->Add(m_staticText139, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -834,16 +896,20 @@ ImportDlgBaseClass::ImportDlgBaseClass(wxWindow* parent, wxWindowID id, const wx
 
     flexGridSizer138->Add(0, 0, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_checkBoxAddToProject = new wxCheckBox(this, wxID_ANY, _("Add the new wxcp file to the current project"),
-                                            wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxAddToProject = new wxCheckBox(this,
+                                            wxID_ANY,
+                                            _("Add the new wxcp file to the current project"),
+                                            wxDefaultPosition,
+                                            wxDLG_UNIT(this, wxSize(-1, -1)),
+                                            0);
     m_checkBoxAddToProject->SetValue(false);
 
     flexGridSizer138->Add(m_checkBoxAddToProject, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 
     flexGridSizer138->Add(0, 0, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_staticText148 = new wxStaticText(this, wxID_ANY, _("Destination Virtual Folder:"), wxDefaultPosition,
-                                       wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticText148 = new wxStaticText(
+        this, wxID_ANY, _("Destination Virtual Folder:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
     flexGridSizer138->Add(m_staticText148, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -862,8 +928,12 @@ ImportDlgBaseClass::ImportDlgBaseClass(wxWindow* parent, wxWindowID id, const wx
 
     flexGridSizer138->Add(m_buttonBrowseVD, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_checkBoxLoadWhenDone = new wxCheckBox(this, wxID_ANY, _("Load the .wxcp file when import is completed"),
-                                            wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxLoadWhenDone = new wxCheckBox(this,
+                                            wxID_ANY,
+                                            _("Load the .wxcp file when import is completed"),
+                                            wxDefaultPosition,
+                                            wxDLG_UNIT(this, wxSize(-1, -1)),
+                                            0);
     m_checkBoxLoadWhenDone->SetValue(false);
 
     boxSizer127->Add(m_checkBoxLoadWhenDone, 0, wxALL | wxALIGN_LEFT, WXC_FROM_DIP(5));
@@ -884,15 +954,15 @@ ImportDlgBaseClass::ImportDlgBaseClass(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("ImportDlgBaseClass"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -922,11 +992,11 @@ ImportDlgBaseClass::~ImportDlgBaseClass()
     m_buttonBrowseVD->Unbind(wxEVT_UPDATE_UI, &ImportDlgBaseClass::OnAddFileToProjectUI, this);
 }
 
-wxcTreeViewBaseClass::wxcTreeViewBaseClass(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                           long style)
+wxcTreeViewBaseClass::wxcTreeViewBaseClass(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA63InitBitmapResources();
@@ -941,8 +1011,13 @@ wxcTreeViewBaseClass::wxcTreeViewBaseClass(wxWindow* parent, wxWindowID id, cons
     boxSizer152->Add(boxSizer155, 0, wxEXPAND, WXC_FROM_DIP(2));
 
     wxArrayString m_comboBoxFilesArr;
-    m_comboBoxFiles = new wxComboBox(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                     m_comboBoxFilesArr, wxTE_PROCESS_ENTER);
+    m_comboBoxFiles = new wxComboBox(this,
+                                     wxID_ANY,
+                                     wxT(""),
+                                     wxDefaultPosition,
+                                     wxDLG_UNIT(this, wxSize(-1, -1)),
+                                     m_comboBoxFilesArr,
+                                     wxTE_PROCESS_ENTER);
     m_comboBoxFiles->SetFocus();
 #if wxVERSION_NUMBER >= 3000
     m_comboBoxFiles->SetHint(_("Type part of the file and hit ENTER"));
@@ -954,26 +1029,29 @@ wxcTreeViewBaseClass::wxcTreeViewBaseClass(wxWindow* parent, wxWindowID id, cons
 
     boxSizer155->Add(m_button426, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_splitter347 = new wxSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                         wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxTRANSPARENT_WINDOW);
+    m_splitter347 = new wxSplitterWindow(
+        this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME);
     m_splitter347->SetSashGravity(0.5);
     m_splitter347->SetMinimumPaneSize(10);
 
     boxSizer152->Add(m_splitter347, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_splitterPageTree = new wxPanel(m_splitter347, wxID_ANY, wxDefaultPosition,
-                                     wxDLG_UNIT(m_splitter347, wxSize(-1, 150)), wxTAB_TRAVERSAL);
+    m_splitterPageTree = new wxPanel(
+        m_splitter347, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter347, wxSize(-1, 150)), wxTAB_TRAVERSAL);
 
     wxBoxSizer* boxSizer357 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageTree->SetSizer(boxSizer357);
 
-    m_treeControls = new clTreeCtrl(m_splitterPageTree, wxID_ANY, wxDefaultPosition,
-                                    wxDLG_UNIT(m_splitterPageTree, wxSize(-1, -1)), wxTR_ROW_LINES);
+    m_treeControls = new clTreeCtrl(m_splitterPageTree,
+                                    wxID_ANY,
+                                    wxDefaultPosition,
+                                    wxDLG_UNIT(m_splitterPageTree, wxSize(-1, -1)),
+                                    wxTR_ROW_LINES);
 
     boxSizer357->Add(m_treeControls, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
 
-    m_splitterPageEvents = new wxPanel(m_splitter347, wxID_ANY, wxDefaultPosition,
-                                       wxDLG_UNIT(m_splitter347, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitterPageEvents = new wxPanel(
+        m_splitter347, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter347, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_splitter347->SplitHorizontally(m_splitterPageTree, m_splitterPageEvents, 0);
 
     wxBoxSizer* boxSizer359 = new wxBoxSizer(wxVERTICAL);
@@ -981,7 +1059,7 @@ wxcTreeViewBaseClass::wxcTreeViewBaseClass(wxWindow* parent, wxWindowID id, cons
 
     SetName(wxT("wxcTreeViewBaseClass"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
     // Connect events
@@ -1011,11 +1089,11 @@ wxcTreeViewBaseClass::~wxcTreeViewBaseClass()
     m_treeControls->Unbind(wxEVT_CHAR, &wxcTreeViewBaseClass::OnChar, this);
 }
 
-DeleteCustomControlDlgBaseClass::DeleteCustomControlDlgBaseClass(wxWindow* parent, wxWindowID id, const wxString& title,
-                                                                 const wxPoint& pos, const wxSize& size, long style)
+DeleteCustomControlDlgBaseClass::DeleteCustomControlDlgBaseClass(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA63InitBitmapResources();
@@ -1025,8 +1103,12 @@ DeleteCustomControlDlgBaseClass::DeleteCustomControlDlgBaseClass(wxWindow* paren
     wxBoxSizer* boxSizer158 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer158);
 
-    m_staticText167 = new wxStaticText(this, wxID_ANY, _("Select the controls you wish to delete:"), wxDefaultPosition,
-                                       wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticText167 = new wxStaticText(this,
+                                       wxID_ANY,
+                                       _("Select the controls you wish to delete:"),
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(this, wxSize(-1, -1)),
+                                       0);
     wxFont m_staticText167Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText167Font.SetStyle(wxFONTSTYLE_ITALIC);
     m_staticText167Font.SetWeight(wxFONTWEIGHT_BOLD);
@@ -1034,16 +1116,18 @@ DeleteCustomControlDlgBaseClass::DeleteCustomControlDlgBaseClass(wxWindow* paren
 
     boxSizer158->Add(m_staticText167, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                          wxDV_ROW_LINES | wxDV_SINGLE | wxTRANSPARENT_WINDOW |
-                                              get_border_simple_theme_aware_bit());
+    m_dvListCtrl = new wxDataViewListCtrl(this,
+                                          wxID_ANY,
+                                          wxDefaultPosition,
+                                          wxDLG_UNIT(this, wxSize(-1, -1)),
+                                          wxDV_ROW_LINES | wxDV_SINGLE | get_border_simple_theme_aware_bit());
 
     boxSizer158->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrl->AppendToggleColumn(_("!"), wxDATAVIEW_CELL_ACTIVATABLE, WXC_FROM_DIP(20), wxALIGN_LEFT,
-                                     wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrl->AppendTextColumn(_("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(400), wxALIGN_LEFT,
-                                   wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendToggleColumn(
+        _("!"), wxDATAVIEW_CELL_ACTIVATABLE, WXC_FROM_DIP(20), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(
+        _("Name"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(400), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* boxSizer162 = new wxBoxSizer(wxHORIZONTAL);
 
     boxSizer158->Add(boxSizer162, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
@@ -1060,39 +1144,39 @@ DeleteCustomControlDlgBaseClass::DeleteCustomControlDlgBaseClass(wxWindow* paren
 
     SetName(wxT("DeleteCustomControlDlgBaseClass"));
     SetSize(wxDLG_UNIT(this, wxSize(400, 300)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
     // Connect events
-    m_dvListCtrl->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED, &DeleteCustomControlDlgBaseClass::OnItemValueChanged,
-                       this);
+    m_dvListCtrl->Bind(
+        wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED, &DeleteCustomControlDlgBaseClass::OnItemValueChanged, this);
     m_button163->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &DeleteCustomControlDlgBaseClass::OnDeleteControls, this);
     m_button163->Bind(wxEVT_UPDATE_UI, &DeleteCustomControlDlgBaseClass::OnDeleteUI, this);
 }
 
 DeleteCustomControlDlgBaseClass::~DeleteCustomControlDlgBaseClass()
 {
-    m_dvListCtrl->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED,
-                         &DeleteCustomControlDlgBaseClass::OnItemValueChanged, this);
+    m_dvListCtrl->Unbind(
+        wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED, &DeleteCustomControlDlgBaseClass::OnItemValueChanged, this);
     m_button163->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &DeleteCustomControlDlgBaseClass::OnDeleteControls, this);
     m_button163->Unbind(wxEVT_UPDATE_UI, &DeleteCustomControlDlgBaseClass::OnDeleteUI, this);
 }
 
-wxcAboutDlgBaseClass::wxcAboutDlgBaseClass(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                           const wxSize& size, long style)
+wxcAboutDlgBaseClass::wxcAboutDlgBaseClass(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA63InitBitmapResources();
@@ -1107,8 +1191,8 @@ wxcAboutDlgBaseClass::wxcAboutDlgBaseClass(wxWindow* parent, wxWindowID id, cons
 
     boxSizer169->Add(m_notebook173, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panel174 = new wxPanel(m_notebook173, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook173, wxSize(-1, -1)),
-                             wxTAB_TRAVERSAL);
+    m_panel174 = new wxPanel(
+        m_notebook173, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook173, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook173->AddPage(m_panel174, _("About"), true);
 
     wxBoxSizer* boxSizer176 = new wxBoxSizer(wxVERTICAL);
@@ -1121,8 +1205,8 @@ wxcAboutDlgBaseClass::wxcAboutDlgBaseClass(wxWindow* parent, wxWindowID id, cons
 
     boxSizer176->Add(flexGridSizer179, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText182 = new wxStaticText(m_panel174, wxID_ANY, _("Version:"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panel174, wxSize(-1, -1)), 0);
+    m_staticText182 = new wxStaticText(
+        m_panel174, wxID_ANY, _("Version:"), wxDefaultPosition, wxDLG_UNIT(m_panel174, wxSize(-1, -1)), 0);
     wxFont m_staticText182Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText182Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText182->SetFont(m_staticText182Font);
@@ -1134,8 +1218,8 @@ wxcAboutDlgBaseClass::wxcAboutDlgBaseClass(wxWindow* parent, wxWindowID id, cons
 
     flexGridSizer179->Add(m_staticTextVersion, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText_1 = new wxStaticText(m_panel174, wxID_ANY, _("Build:"), wxDefaultPosition,
-                                      wxDLG_UNIT(m_panel174, wxSize(-1, -1)), 0);
+    m_staticText_1 = new wxStaticText(
+        m_panel174, wxID_ANY, _("Build:"), wxDefaultPosition, wxDLG_UNIT(m_panel174, wxSize(-1, -1)), 0);
     wxFont m_staticText_1Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText_1Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText_1->SetFont(m_staticText_1Font);
@@ -1147,13 +1231,17 @@ wxcAboutDlgBaseClass::wxcAboutDlgBaseClass(wxWindow* parent, wxWindowID id, cons
 
     flexGridSizer179->Add(m_staticTextBuildNumber, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticBitmap178 = new wxStaticBitmap(m_panel174, wxID_ANY, wxXmlResource::Get()->LoadBitmap(wxT("wxc-logo")),
-                                           wxDefaultPosition, wxDLG_UNIT(m_panel174, wxSize(-1, -1)), 0);
+    m_staticBitmap178 = new wxStaticBitmap(m_panel174,
+                                           wxID_ANY,
+                                           wxXmlResource::Get()->LoadBitmap(wxT("wxc-logo")),
+                                           wxDefaultPosition,
+                                           wxDLG_UNIT(m_panel174, wxSize(-1, -1)),
+                                           0);
 
     boxSizer176->Add(m_staticBitmap178, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panel427 = new wxPanel(m_notebook173, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook173, wxSize(-1, -1)),
-                             wxTAB_TRAVERSAL);
+    m_panel427 = new wxPanel(
+        m_notebook173, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook173, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook173->AddPage(m_panel427, _("License"), false);
 
     wxBoxSizer* boxSizer428 = new wxBoxSizer(wxVERTICAL);
@@ -1208,7 +1296,7 @@ wxcAboutDlgBaseClass::wxcAboutDlgBaseClass(wxWindow* parent, wxWindowID id, cons
     boxSizer170->Add(m_button171, 0, wxALL, WXC_FROM_DIP(5));
 
 #if wxVERSION_NUMBER >= 2900
-    if(!wxPersistenceManager::Get().Find(m_notebook173)) {
+    if (!wxPersistenceManager::Get().Find(m_notebook173)) {
         wxPersistenceManager::Get().RegisterAndRestore(m_notebook173);
     } else {
         wxPersistenceManager::Get().Restore(m_notebook173);
@@ -1217,15 +1305,15 @@ wxcAboutDlgBaseClass::wxcAboutDlgBaseClass(wxWindow* parent, wxWindowID id, cons
 
     SetName(wxT("wxcAboutDlgBaseClass"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -1236,11 +1324,11 @@ wxcAboutDlgBaseClass::wxcAboutDlgBaseClass(wxWindow* parent, wxWindowID id, cons
 
 wxcAboutDlgBaseClass::~wxcAboutDlgBaseClass() { this->Unbind(wxEVT_SIZE, &wxcAboutDlgBaseClass::OnSize, this); }
 
-NewCustomEventBaseDlg::NewCustomEventBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                             const wxSize& size, long style)
+NewCustomEventBaseDlg::NewCustomEventBaseDlg(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA63InitBitmapResources();
@@ -1301,15 +1389,15 @@ NewCustomEventBaseDlg::NewCustomEventBaseDlg(wxWindow* parent, wxWindowID id, co
 
     SetName(wxT("NewCustomEventBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -1318,11 +1406,11 @@ NewCustomEventBaseDlg::NewCustomEventBaseDlg(wxWindow* parent, wxWindowID id, co
 
 NewCustomEventBaseDlg::~NewCustomEventBaseDlg() {}
 
-BitmapSelectorDlgBase::BitmapSelectorDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                             const wxSize& size, long style)
+BitmapSelectorDlgBase::BitmapSelectorDlgBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA63InitBitmapResources();
@@ -1336,8 +1424,8 @@ BitmapSelectorDlgBase::BitmapSelectorDlgBase(wxWindow* parent, wxWindowID id, co
 
     boxSizer293->Add(staticBoxSizer325, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_checkBoxSelectFile = new wxCheckBox(this, wxID_ANY, _("Select bitmap from a file"), wxDefaultPosition,
-                                          wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxSelectFile = new wxCheckBox(
+        this, wxID_ANY, _("Select bitmap from a file"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxSelectFile->SetValue(true);
 
     staticBoxSizer325->Add(m_checkBoxSelectFile, 0, wxALL, WXC_FROM_DIP(5));
@@ -1462,15 +1550,15 @@ BitmapSelectorDlgBase::BitmapSelectorDlgBase(wxWindow* parent, wxWindowID id, co
 
     SetName(wxT("BitmapSelectorDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -1481,8 +1569,8 @@ BitmapSelectorDlgBase::BitmapSelectorDlgBase(wxWindow* parent, wxWindowID id, co
     m_buttonBrowseBitmap->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &BitmapSelectorDlgBase::OnBrowseFile, this);
     m_buttonBrowseBitmap->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnSelectBitmapUI, this);
     m_checkBoxConvertToRelativePath->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnSelectBitmapUI, this);
-    m_checkBoxConvertToRelativePath->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &BitmapSelectorDlgBase::OnUseRelativePaths,
-                                          this);
+    m_checkBoxConvertToRelativePath->Bind(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, &BitmapSelectorDlgBase::OnUseRelativePaths, this);
     m_checkBoxArtProvider->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &BitmapSelectorDlgBase::OnUserArtProvider, this);
     m_staticText315->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
     m_choiceArtID->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
@@ -1499,8 +1587,8 @@ BitmapSelectorDlgBase::~BitmapSelectorDlgBase()
     m_buttonBrowseBitmap->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &BitmapSelectorDlgBase::OnBrowseFile, this);
     m_buttonBrowseBitmap->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnSelectBitmapUI, this);
     m_checkBoxConvertToRelativePath->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnSelectBitmapUI, this);
-    m_checkBoxConvertToRelativePath->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &BitmapSelectorDlgBase::OnUseRelativePaths,
-                                            this);
+    m_checkBoxConvertToRelativePath->Unbind(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, &BitmapSelectorDlgBase::OnUseRelativePaths, this);
     m_checkBoxArtProvider->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &BitmapSelectorDlgBase::OnUserArtProvider, this);
     m_staticText315->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
     m_choiceArtID->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
@@ -1510,11 +1598,11 @@ BitmapSelectorDlgBase::~BitmapSelectorDlgBase()
     m_choiceSize->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
 }
 
-EventsEditorPaneBase::EventsEditorPaneBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                           long style)
+EventsEditorPaneBase::EventsEditorPaneBase(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA63InitBitmapResources();
@@ -1537,8 +1625,8 @@ EventsEditorPaneBase::EventsEditorPaneBase(wxWindow* parent, wxWindowID id, cons
 
     boxSizer7->Add(m_notebook14, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
 
-    m_panelControlEvents = new wxPanel(m_notebook14, wxID_ANY, wxDefaultPosition,
-                                       wxDLG_UNIT(m_notebook14, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_panelControlEvents = new wxPanel(
+        m_notebook14, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook14, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook14->AddPage(m_panelControlEvents, _("Control Events"), true);
 
     wxBoxSizer* boxSizer17 = new wxBoxSizer(wxVERTICAL);
@@ -1547,8 +1635,8 @@ EventsEditorPaneBase::EventsEditorPaneBase(wxWindow* parent, wxWindowID id, cons
     m_controlEventsTable = new EventsTableListView(m_panelControlEvents);
     boxSizer17->Add(m_controlEventsTable, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
 
-    m_panelInheritedEvents = new wxPanel(m_notebook14, wxID_ANY, wxDefaultPosition,
-                                         wxDLG_UNIT(m_notebook14, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_panelInheritedEvents = new wxPanel(
+        m_notebook14, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook14, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook14->AddPage(m_panelInheritedEvents, _("Inherited Events"), false);
 
     wxBoxSizer* boxSizer19 = new wxBoxSizer(wxVERTICAL);
@@ -1559,18 +1647,18 @@ EventsEditorPaneBase::EventsEditorPaneBase(wxWindow* parent, wxWindowID id, cons
 
     SetName(wxT("EventsEditorPaneBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
 }
 
 EventsEditorPaneBase::~EventsEditorPaneBase() {}
 
-DuplicateTLWBaseDlg::DuplicateTLWBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                         const wxSize& size, long style)
+DuplicateTLWBaseDlg::DuplicateTLWBaseDlg(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA63InitBitmapResources();
@@ -1585,10 +1673,13 @@ DuplicateTLWBaseDlg::DuplicateTLWBaseDlg(wxWindow* parent, wxWindowID id, const 
     boxSizer2471->Add(boxSizer371, 0, wxALL, WXC_FROM_DIP(5));
 
     m_staticText370 =
-        new wxStaticText(this, wxID_ANY,
+        new wxStaticText(this,
+                         wxID_ANY,
                          _("The new base-class must have a different name.\nIf you don't enter one, it will be created "
                            "for you.\nThe inherited fields are optional, but a good idea."),
-                         wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+                         wxDefaultPosition,
+                         wxDLG_UNIT(this, wxSize(-1, -1)),
+                         0);
 
     boxSizer371->Add(m_staticText370, 0, wxALL, WXC_FROM_DIP(5));
 
@@ -1599,8 +1690,8 @@ DuplicateTLWBaseDlg::DuplicateTLWBaseDlg(wxWindow* parent, wxWindowID id, const 
 
     boxSizer2471->Add(flexGridSizer2552, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText2573 = new wxStaticText(this, wxID_ANY, _("New Base-Class Name:"), wxDefaultPosition,
-                                        wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticText2573 = new wxStaticText(
+        this, wxID_ANY, _("New Base-Class Name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
     flexGridSizer2552->Add(m_staticText2573, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -1617,8 +1708,8 @@ DuplicateTLWBaseDlg::DuplicateTLWBaseDlg(wxWindow* parent, wxWindowID id, const 
 
     flexGridSizer2552->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
-    m_staticText261510 = new wxStaticText(this, wxID_ANY, _("New Inherited-Class Name:"), wxDefaultPosition,
-                                          wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticText261510 = new wxStaticText(
+        this, wxID_ANY, _("New Inherited-Class Name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
     flexGridSizer2552->Add(m_staticText261510, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -1631,8 +1722,8 @@ DuplicateTLWBaseDlg::DuplicateTLWBaseDlg(wxWindow* parent, wxWindowID id, const 
 
     flexGridSizer2552->Add(m_textInheritedName, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText2615 = new wxStaticText(this, wxID_ANY, _("New Inherited-Class Filename:"), wxDefaultPosition,
-                                        wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticText2615 = new wxStaticText(
+        this, wxID_ANY, _("New Inherited-Class Filename:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
     flexGridSizer2552->Add(m_staticText2615, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -1661,15 +1752,15 @@ DuplicateTLWBaseDlg::DuplicateTLWBaseDlg(wxWindow* parent, wxWindowID id, const 
 
     SetName(wxT("DuplicateTLWBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -1685,11 +1776,11 @@ DuplicateTLWBaseDlg::~DuplicateTLWBaseDlg()
     m_textFilename->Unbind(wxEVT_SET_FOCUS, &DuplicateTLWBaseDlg::OnFilenameFocus, this);
 }
 
-BmpTextSelectorDlgBase::BmpTextSelectorDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
-                                               const wxPoint& pos, const wxSize& size, long style)
+BmpTextSelectorDlgBase::BmpTextSelectorDlgBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA63InitBitmapResources();
@@ -1703,16 +1794,18 @@ BmpTextSelectorDlgBase::BmpTextSelectorDlgBase(wxWindow* parent, wxWindowID id, 
 
     boxSizer390->Add(boxSizer379, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrl = new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(300, 200)),
-                                          wxDV_ROW_LINES | wxDV_SINGLE | wxTRANSPARENT_WINDOW |
-                                              get_border_simple_theme_aware_bit());
+    m_dvListCtrl = new wxDataViewListCtrl(this,
+                                          wxID_ANY,
+                                          wxDefaultPosition,
+                                          wxDLG_UNIT(this, wxSize(300, 200)),
+                                          wxDV_ROW_LINES | wxDV_SINGLE | get_border_simple_theme_aware_bit());
 
     boxSizer379->Add(m_dvListCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrl->AppendTextColumn(_("Bitmap"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                   wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrl->AppendTextColumn(_("Text"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                   wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(
+        _("Bitmap"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(
+        _("Text"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     wxBoxSizer* boxSizer389 = new wxBoxSizer(wxVERTICAL);
 
     boxSizer379->Add(boxSizer389, 0, wxEXPAND, WXC_FROM_DIP(5));
@@ -1743,15 +1836,15 @@ BmpTextSelectorDlgBase::BmpTextSelectorDlgBase(wxWindow* parent, wxWindowID id, 
 
     SetName(wxT("BmpTextSelectorDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -1775,11 +1868,11 @@ BmpTextSelectorDlgBase::~BmpTextSelectorDlgBase()
     m_button396->Unbind(wxEVT_UPDATE_UI, &BmpTextSelectorDlgBase::OnDeleteUI, this);
 }
 
-SingleBitmapAndTextDlgBase::SingleBitmapAndTextDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
-                                                       const wxPoint& pos, const wxSize& size, long style)
+SingleBitmapAndTextDlgBase::SingleBitmapAndTextDlgBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCA63InitBitmapResources();
@@ -1840,15 +1933,15 @@ SingleBitmapAndTextDlgBase::SingleBitmapAndTextDlgBase(wxWindow* parent, wxWindo
 
     SetName(wxT("SingleBitmapAndTextDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);

@@ -1,9 +1,12 @@
 #include "generic_dir_ctrl_wrapper.h"
+
+#include "Properties/bool_property.h"
+#include "Properties/string_property.h"
 #include "allocator_mgr.h"
-#include "bool_property.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
+
 #include <wx/dirctrl.h>
 
 GenericDirCtrlWrapper::GenericDirCtrlWrapper()

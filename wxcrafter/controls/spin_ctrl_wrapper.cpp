@@ -1,7 +1,7 @@
 #include "spin_ctrl_wrapper.h"
 
+#include "Properties/string_property.h"
 #include "allocator_mgr.h"
-#include "string_property.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 #include "xmlutils.h"

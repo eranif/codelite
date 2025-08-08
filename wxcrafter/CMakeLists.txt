@@ -61,10 +61,20 @@ configure_file(${CL_SRC_ROOT}/wxcrafter/wxcversion.cpp.in ${CMAKE_BINARY_DIR}/ge
 file(
     GLOB
     SRCS
-    "src/*.cpp"
+    "Importer/*.cpp"
+    "Preview/*.cpp"
+    "Properties/*.cpp"
+    "UI/PropertiesView/*.cpp"
+    "UI/*.cpp"
     "aui/*.cpp"
     "controls/*.cpp"
+    "controls/Containers/*.cpp"
+    "controls/Grid/*.cpp"
+    "controls/PropertyGrid/*.cpp"
+    "controls/RibbonBar/*.cpp"
+    "controls/menu_toolbar/*.cpp"
     "sizers/*.cpp"
+    "src/*.cpp"
     "top_level_windows/*.cpp"
     "xrc_handlers/*.cpp"
     "${CMAKE_BINARY_DIR}/generated/wxcversion.cpp")
@@ -73,13 +83,13 @@ set(WXCLIB_SRCS "wxcLib/json_node.cpp")
 
 include_directories(
     "${CMAKE_CURRENT_LIST_DIR}"
-    "${CMAKE_CURRENT_LIST_DIR}/wxcLib"
-    "${CMAKE_CURRENT_LIST_DIR}/src"
     "${CMAKE_CURRENT_LIST_DIR}/aui"
     "${CMAKE_CURRENT_LIST_DIR}/controls"
     "${CMAKE_CURRENT_LIST_DIR}/sizers"
+    "${CMAKE_CURRENT_LIST_DIR}/src"
     "${CMAKE_CURRENT_LIST_DIR}/top_level_windows"
-    "${CMAKE_CURRENT_LIST_DIR}/xrc_handlers")
+    "${CMAKE_CURRENT_LIST_DIR}/xrc_handlers"
+    "${CMAKE_CURRENT_LIST_DIR}/wxcLib")
 
 add_library(wxcLib STATIC ${WXCLIB_SRCS})
 

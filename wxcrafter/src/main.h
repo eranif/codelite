@@ -2,8 +2,8 @@
 #define __main__
 
 // main wxWidgets header file
+#include "UI/wxcTreeView.h"
 #include "gui.h"
-#include "wxcTreeView.h"
 #include "wxguicraft_main_view.h"
 
 #include <wx/cmdline.h>

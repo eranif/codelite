@@ -3,6 +3,7 @@
 #include "DefaultLexerJSON.cpp"
 #include "FontUtils.hpp"
 #include "JSON.h"
+#include "StringUtils.h"
 #include "ThemeImporters/ThemeImporterManager.hpp"
 #include "cl_command_event.h"
 #include "cl_standard_paths.h"
@@ -204,7 +205,7 @@ void AddFileExtension(LexerConf::Ptr_t lexer, const wxString& extension)
         return;
     }
 
-    wxString as_str = ::clJoin(S, ";");
+    wxString as_str = StringUtils::clJoin(S, ";");
     lexer->SetFileSpec(as_str);
 }
 

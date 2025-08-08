@@ -34,30 +34,27 @@
 // License:
 /////////////////////////////////////////////////////////////////////////////
 // For compilers that support precompilation, includes "wx/wx.h".
-#include "file_logger.h"
-#include "globals.h"
-#include "macros.h"
-
-#include <wx/wxprec.h>
-
-#include <wx/log.h>
-
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
 
-#include "CorrectSpellingDlg.h"
 #include "IHunSpell.h"
-#include "ctags_manager.h"
+
+#include "CorrectSpellingDlg.h"
+#include "StringUtils.h"
+#include "file_logger.h"
+#include "globals.h"
+#include "macros.h"
 #include "scGlobals.h"
 #include "spellcheck.h"
 
-#include <wx/arrimpl.cpp>
 #include <wx/filename.h>
+#include <wx/log.h>
 #include <wx/regex.h>
 #include <wx/stc/stc.h>
 #include <wx/textfile.h>
 #include <wx/tokenzr.h>
+#include <wx/wxprec.h>
 
 namespace
 {
@@ -322,7 +319,7 @@ void IHunSpell::CheckSpelling()
             int pos = tkz.GetPosition() - token.length() + line_start_pos;
             // incase the current token real length is greater than the normal len
             // include it in the offset
-            size_t utf8_len = FileUtils::UTF8Length(token.c_str(), token.length());
+            size_t utf8_len = StringUtils::UTF8Length(token.c_str(), token.length());
             if (utf8_len > token.length()) {
                 offset += (utf8_len - token.length());
             }

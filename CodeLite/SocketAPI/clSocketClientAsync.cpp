@@ -1,10 +1,11 @@
-#include "SocketAPI/clSocketClient.h"
 #include "clSocketClientAsync.h"
-#include <wx/utils.h>
-#include "fileutils.h"
-#include "SocketAPI/clConnectionString.h"
+
+#include "SocketAPI/clSocketClient.h"
 #include "SocketAPI/clSocketServer.h"
+#include "StringUtils.h"
 #include "fileutils.h"
+
+#include <wx/utils.h>
 
 wxDEFINE_EVENT(wxEVT_ASYNC_SOCKET_CONNECTED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, clCommandEvent);
@@ -41,7 +42,7 @@ void clAsyncSocket::Send(const std::string& buffer)
     }
 }
 
-void clAsyncSocket::Send(const wxString& buffer) { Send(FileUtils::ToStdString(buffer)); }
+void clAsyncSocket::Send(const wxString& buffer) { Send(StringUtils::ToStdString(buffer)); }
 
 //-----------------------------------------------------------------------------------------------
 // The helper thread

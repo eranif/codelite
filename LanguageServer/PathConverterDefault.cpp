@@ -1,19 +1,17 @@
 #include "PathConverterDefault.hpp"
 
 #include "SFTPClientData.hpp"
-#include "file_logger.h"
-#include "fileutils.h"
+#include "StringUtils.h"
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
 
 #include <wx/filesys.h>
-#include <wx/regex.h>
 
 LSP::FilePath PathConverterDefault::ConvertFrom(const wxString& path) const
 {
     // convert network path to local path
-    wxString decodedPath = FileUtils::DecodeURI(path);
+    wxString decodedPath = StringUtils::DecodeURI(path);
     if(decodedPath.StartsWith("file://")) {
         decodedPath.Remove(0, wxStrlen("file://"));
     }

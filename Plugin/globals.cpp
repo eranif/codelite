@@ -1226,7 +1226,7 @@ wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol)
         glue = "\n";
         break;
     }
-    return clJoin(lines, glue);
+    return StringUtils::clJoin(lines, glue);
 }
 
 wxSize clGetDisplaySize()

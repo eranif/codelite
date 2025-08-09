@@ -1,15 +1,13 @@
-#include "SemanticTokensRquest.hpp"
+#include "SemanticTokensRequest.hpp"
 
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
 #include "file_logger.h"
 #include "json_rpc_params.h"
 
-#include <thread>
 #include <vector>
-#include <wx/vector.h>
 
-LSP::SemanticTokensRquest::SemanticTokensRquest(const wxString& filename)
+LSP::SemanticTokensRequest::SemanticTokensRequest(const wxString& filename)
     : m_filename(filename)
 {
     SetMethod("textDocument/semanticTokens/full");
@@ -17,12 +15,10 @@ LSP::SemanticTokensRquest::SemanticTokensRquest(const wxString& filename)
     m_params->As<SemanticTokensParams>()->SetTextDocument(filename);
 }
 
-LSP::SemanticTokensRquest::~SemanticTokensRquest() {}
-
-void LSP::SemanticTokensRquest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+void LSP::SemanticTokensRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     // build set of classes, locals so we can colour them
-    if(!owner) {
+    if (!owner) {
         return;
     }
 
@@ -35,7 +31,7 @@ void LSP::SemanticTokensRquest::OnResponse(const LSP::ResponseMessage& response,
 
     // sanity: each token is represented by a set of 5 integers
     // { line, startChar, length, tokenType, tokenModifiers}
-    if(encoded_types.size() % 5 != 0) {
+    if (encoded_types.size() % 5 != 0) {
         return;
     }
 
@@ -44,7 +40,7 @@ void LSP::SemanticTokensRquest::OnResponse(const LSP::ResponseMessage& response,
     std::vector<LSP::SemanticTokenRange> semantic_tokens;
     semantic_tokens.reserve(encoded_types.size() / 5);
 
-    for(size_t i = 0; i < encoded_types.size() / 5; i++) {
+    for (size_t i = 0; i < encoded_types.size() / 5; i++) {
         size_t base_index = 5 * i;
         LSP::SemanticTokenRange t;
         // calculate the token line

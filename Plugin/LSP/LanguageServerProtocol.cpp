@@ -21,7 +21,7 @@
 #include "LSP/Request.h"
 #include "LSP/ResponseError.h"
 #include "LSP/ResponseMessage.h"
-#include "LSP/SemanticTokensRquest.hpp"
+#include "LSP/SemanticTokensRequest.hpp"
 #include "LSP/SignatureHelpRequest.h"
 #include "LSP/WorkspaceExecuteCommand.hpp"
 #include "LSP/WorkspaceSymbolRequest.hpp"
@@ -905,7 +905,7 @@ void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
     // check if this is implemented by the server
     if (IsSemanticTokensSupported()) {
         LSP::DidChangeTextDocumentRequest::Ptr_t req =
-            LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRquest(filepath));
+            LSP::MessageWithParams::MakeRequest(new LSP::SemanticTokensRequest(filepath));
         QueueMessage(req);
 
     } else if (IsDocumentSymbolsSupported()) {

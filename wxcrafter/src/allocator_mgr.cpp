@@ -1,6 +1,6 @@
 #include "allocator_mgr.h"
 
-#include "ActivityrIndicatorWrapper.h"
+#include "ActivityIndicatorWrapper.h"
 #include "AnimationCtrlWrapper.h"
 #include "AuiToolBarTopLevel.h"
 #include "BitmapComboxWrapper.h"
@@ -300,7 +300,7 @@ Allocator::Allocator()
     Register(new BitmapComboxWrapper(), "wxbitmapcombobox");
     Register(new RearrangeListWrapper(), "wxrearrangelist");
     Register(new SimpleHtmlListBoxWrapper(), "wxhtmllistbox");
-    Register(new ActivityrIndicatorWrapper(), "wxactivityindicator");
+    Register(new ActivityIndicatorWrapper(), "wxactivityindicator");
     Register(new TimePickerCtrlWrapper(), "wxtimepickerctrl");
 
     // ADD_NEW_CONTROL

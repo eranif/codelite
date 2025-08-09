@@ -1,13 +1,13 @@
-#ifndef ACTIVITYRINDICATORWRAPPER_H
-#define ACTIVITYRINDICATORWRAPPER_H
+#ifndef ACTIVITYINDICATORWRAPPER_H
+#define ACTIVITYINDICATORWRAPPER_H
 
 #include "wxc_widget.h" // Base class: wxcWidget
 
-class ActivityrIndicatorWrapper : public wxcWidget
+class ActivityIndicatorWrapper : public wxcWidget
 {
 public:
-    ActivityrIndicatorWrapper();
-    ~ActivityrIndicatorWrapper() override = default;
+    ActivityIndicatorWrapper();
+    ~ActivityIndicatorWrapper() override = default;
 
 public:
     void GetIncludeFile(wxArrayString& headers) const override;
@@ -17,7 +17,7 @@ public:
     void LoadPropertiesFromwxFB(const wxXmlNode* node) override;
     void LoadPropertiesFromwxSmith(const wxXmlNode* node) override;
     void ToXRC(wxString& text, XRC_TYPE type) const override;
-    wxcWidget* Clone() const override { return new ActivityrIndicatorWrapper(); }
+    wxcWidget* Clone() const override { return new ActivityIndicatorWrapper(); }
 };
 
 #endif // ACTIVITYRINDICATORWRAPPER_H

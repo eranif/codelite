@@ -12,7 +12,7 @@
 #include "aui_notebook_wrapper.h"
 #include "banner_window_wrapper.h"
 #include "bitmap_button_wrapper.h"
-#include "bitmap_wrapepr.h"
+#include "bitmap_wrapper.h"
 #include "bitmaptogglebuttonwrapper.h"
 #include "box_sizer_wrapper.h"
 #include "button_wrapper.h"
@@ -262,7 +262,7 @@ Allocator::Allocator()
     Register(new InfoBarButtonWrapper(), "wxbutton");
     Register(new WebViewWrapper(), "wxwebview");
     Register(new AuiManagerWrapper(), "wxauimgr");
-    Register(new BitmapWrapepr(), "wxbitmap");
+    Register(new BitmapWrapper(), "wxbitmap");
     Register(new ImageListWrapper(), "wximglist");
     Register(new TimerWrapper(), "wxtimer");
     Register(new PopupWindowWrapper(), "wxpopupwindow");

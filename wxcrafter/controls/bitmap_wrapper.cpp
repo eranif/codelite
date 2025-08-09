@@ -1,4 +1,4 @@
-#include "bitmap_wrapepr.h"
+#include "bitmap_wrapper.h"
 
 #include "Properties/category_property.h"
 #include "Properties/file_ficker_property.h"
@@ -10,7 +10,7 @@
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 
-BitmapWrapepr::BitmapWrapepr()
+BitmapWrapper::BitmapWrapper()
     : wxcWidget(ID_WXBITMAP)
 {
     m_properties.Clear();
@@ -28,29 +28,29 @@ BitmapWrapepr::BitmapWrapepr()
     SetName(GenerateName());
 }
 
-wxcWidget* BitmapWrapepr::Clone() const { return new BitmapWrapepr(); }
+wxcWidget* BitmapWrapper::Clone() const { return new BitmapWrapper(); }
 
-wxString BitmapWrapepr::CppCtorCode() const
+wxString BitmapWrapper::CppCtorCode() const
 {
     const wxArrayString exts = StdToWX::ToArrayString({ "", "@2x", "@1.25x", "@1.5x" });
     wxString bmpPath = PropertyString(PROP_BITMAP_PATH);
     wxFileName fn(bmpPath);
     // Support for hi-res images
     // The logic:
-    // If we find files with the following perfixes: @2x, @1.5x, @1.25x
+    // If we find files with the following prefixes: @2x, @1.5x, @1.25x
     // add them to the resource files as well
-    for(size_t i = 0; i < exts.size(); ++i) {
+    for (size_t i = 0; i < exts.size(); ++i) {
         wxFileName hiResImage = fn;
         hiResImage.MakeAbsolute(wxcProjectMetadata::Get().GetProjectPath());
         hiResImage.SetName(hiResImage.GetName() + exts.Item(i));
-        if(hiResImage.FileExists()) {
+        if (hiResImage.FileExists()) {
             wxcCodeGeneratorHelper::Get().AddBitmap(hiResImage.GetFullPath(), GetName() + exts.Item(i));
         }
     }
 
     wxString cppCode;
-    for(size_t i = 0; i < exts.size(); ++i) {
-        if(wxcCodeGeneratorHelper::Get().Contains(GetName() + exts.Item(i))) {
+    for (size_t i = 0; i < exts.size(); ++i) {
+        if (wxcCodeGeneratorHelper::Get().Contains(GetName() + exts.Item(i))) {
             cppCode << "{\n";
             cppCode << "    wxBitmap bmp;\n";
             cppCode << "    wxIcon icn;\n";
@@ -72,17 +72,17 @@ wxString BitmapWrapepr::CppCtorCode() const
     return cppCode;
 }
 
-void BitmapWrapepr::GetIncludeFile(wxArrayString& headers) const
+void BitmapWrapper::GetIncludeFile(wxArrayString& headers) const
 {
     headers.Add("#include <wx/bitmap.h>");
     headers.Add("#include <wx/icon.h>");
 }
 
-wxString BitmapWrapepr::GetWxClassName() const { return ""; }
+wxString BitmapWrapper::GetWxClassName() const { return ""; }
 
-void BitmapWrapepr::ToXRC(wxString& text, XRC_TYPE type) const
+void BitmapWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    if(type == XRC_DESIGNER) {
+    if (type == XRC_DESIGNER) {
         wxString designerXRC;
         designerXRC << "<object class=\"sizeritem\">"
                     << "<border>5</border>"
@@ -92,7 +92,7 @@ void BitmapWrapepr::ToXRC(wxString& text, XRC_TYPE type) const
                     << XRCSuffix();                                                      // sizeritem
         text << designerXRC;
 
-    } else if(type == XRC_LIVE) {
+    } else if (type == XRC_LIVE) {
         text << XRCPrefix() << PropertyFile(PROP_BITMAP_PATH) << XRCSuffix();
     }
 }

@@ -1,13 +1,13 @@
-#ifndef BITMAPWRAPEPR_H
-#define BITMAPWRAPEPR_H
+#ifndef BITMAPWRAPPER_H
+#define BITMAPWRAPPER_H
 
 #include "wxc_widget.h" // Base class: wxcWidget
 
-class BitmapWrapepr : public wxcWidget
+class BitmapWrapper : public wxcWidget
 {
 public:
-    BitmapWrapepr();
-    ~BitmapWrapepr() override = default;
+    BitmapWrapper();
+    ~BitmapWrapper() override = default;
 
 public:
     wxcWidget* Clone() const override;
@@ -17,4 +17,4 @@ public:
     void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
 
-#endif // BITMAPWRAPEPR_H
+#endif // BITMAPWRAPPER_H

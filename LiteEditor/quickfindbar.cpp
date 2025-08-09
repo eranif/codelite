@@ -799,7 +799,7 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
     bool isUTF8 = false;
 
     wxString input_buffer = m_sci->GetText();
-    unsigned int utfLen = ::clUTF8Length(input_buffer.ToStdWstring().c_str(), input_buffer.length());
+    unsigned int utfLen = StringUtils::UTF8Length(input_buffer.ToStdWstring().c_str(), input_buffer.length());
     isUTF8 = (utfLen != input_buffer.length());
 
     // perform a search

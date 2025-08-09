@@ -1,9 +1,8 @@
 #include "CompilerLocatorEosCDT.h"
 
+#include "StringUtils.h"
 #include "file_logger.h"
-#include "globals.h"
 
-#include <algorithm>
 #include <wx/filename.h>
 #include <wx/thread.h>
 
@@ -41,7 +40,7 @@ void CompilerLocatorEosCDT::AddTool(CompilerPtr compiler, const wxString& toolna
                                     const wxString& args) const
 {
     wxString tool = path;
-    ::WrapWithQuotes(tool);
+    StringUtils::WrapWithQuotes(tool);
     if(!args.IsEmpty()) {
         tool << " " << args;
     }

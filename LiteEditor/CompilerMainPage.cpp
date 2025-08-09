@@ -28,14 +28,13 @@
 #include "EditCmpTemplateDialog.h"
 #include "EditDlg.h"
 #include "NewFileTemplateDialog.h"
+#include "StringUtils.h"
 #include "advanced_settings.h"
 #include "build_config.h"
 #include "build_settings_config.h"
 #include "compiler.h"
 #include "event_notifier.h"
 #include "globals.h"
-#include "imanager.h"
-#include "windowattrmanager.h"
 #include "workspace.h"
 
 #include <wx/menu.h>
@@ -198,7 +197,7 @@ void CompilerMainPage::OnCustomEditorButtonClicked(wxCommandEvent& event)
 
     wxString newPath = ::wxFileSelector(_("Select a file"), fn.GetPath());
     if(!newPath.IsEmpty()) {
-        ::WrapWithQuotes(newPath);
+        StringUtils::WrapWithQuotes(newPath);
         prop->SetValueFromString(newPath);
     }
     m_isDirty = true;

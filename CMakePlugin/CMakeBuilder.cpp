@@ -1,5 +1,6 @@
 #include "CMakeBuilder.h"
-#include "globals.h"
+
+#include "StringUtils.h"
 #include "workspace.h"
 
 #define CMAKE_BUILD_FOLDER_PREFIX "cmake-build-"
@@ -84,7 +85,7 @@ wxString CMakeBuilder::GetWorkspaceBuildFolder(bool wrapWithQuotes)
 
     fn.AppendDir(CMAKE_BUILD_FOLDER_PREFIX + workspaceConfig);
     wxString folder = fn.GetPath();
-    if(wrapWithQuotes) { ::WrapWithQuotes(folder); }
+    if(wrapWithQuotes) { StringUtils::WrapWithQuotes(folder); }
     return folder;
 }
 
@@ -99,7 +100,9 @@ wxString CMakeBuilder::GetProjectBuildFolder(const wxString& project, bool wrapW
 
     wxString folder;
     folder = fn.GetPath();
-    if(wrapWithQuotes) { ::WrapWithQuotes(folder); }
+    if (wrapWithQuotes) {
+        StringUtils::WrapWithQuotes(folder);
+    }
     return folder;
 }
 

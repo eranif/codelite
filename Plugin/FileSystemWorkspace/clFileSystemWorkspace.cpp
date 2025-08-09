@@ -5,7 +5,6 @@
 #include "Console/clConsoleBase.h"
 #include "Debugger/debuggermanager.h"
 #include "ICompilerLocator.h"
-#include "JSON.h"
 #include "Keyboard/clKeyboardManager.h"
 #include "NewFileSystemWorkspaceDialog.h"
 #include "StringUtils.h"
@@ -19,7 +18,6 @@
 #include "clWorkspaceView.h"
 #include "clangd/CompileCommandsGenerator.h"
 #include "codelite_events.h"
-#include "compiler_command_line_parser.h"
 #include "ctags_manager.h"
 #include "editor_config.h"
 #include "environmentconfig.h"
@@ -35,7 +33,6 @@
 
 #include <thread>
 #include <wx/msgdlg.h>
-#include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
 
 #define CHECK_ACTIVE_CONFIG()                 \
@@ -1052,7 +1049,7 @@ void clFileSystemWorkspace::GetExecutable(wxString& exe, wxString& args, wxStrin
         }
         arg.Trim().Trim(false);
         // wrap with quotes if required
-        ::WrapWithQuotes(arg);
+        StringUtils::WrapWithQuotes(arg);
         args << arg;
     }
 
@@ -1111,7 +1108,7 @@ void clFileSystemWorkspace::CreateCompileFlagsFile()
     wxString compile_flags_txt;
     // Include the workspace path by default
     wxString workspacePath = filename.GetPath();
-    ::WrapWithQuotes(workspacePath);
+    StringUtils::WrapWithQuotes(workspacePath);
 
     compile_flags_txt << "-I" << workspacePath << "\n";
     for (const auto& s : includes) {

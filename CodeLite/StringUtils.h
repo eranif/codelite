@@ -52,6 +52,16 @@ public:
      */
     static std::string ToStdString(const wxString& str);
 
+    /**
+     * @brief convert string to integer using range validation and default value
+     */
+    static int wxStringToInt(const wxString& str, int defval, int min = -1, int max = -1);
+
+    /**
+     * @brief convert integer to string
+     */
+    static wxString wxIntToString(int val);
+
     static unsigned int UTF8Length(const wchar_t* uptr, unsigned int tlen);
 
     /**
@@ -120,6 +130,24 @@ public:
     }
 
     /**
+     * @brief join strings with `\n` or `\r\n` (depends on eol)
+     * eol can be wxSTC_EOL_CRLF, wxSTC_EOL_LF etc
+     */
+    static wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol);
+
+    /**
+     * @brief joins array element into a string using 'glue' as the array elements
+     * separator
+     */
+    static wxString wxImplode(const wxArrayString& arr, const wxString& glue = "\n");
+
+    /**
+     * @brief split lines (using CR|LF as the separator), taking into consideration line continuation
+     * @param trim trim the lines with set to true
+     */
+    static wxArrayString SplitString(const wxString& inString, bool trim = true);
+
+    /**
      * @brief build argv out of str
      */
     static char** BuildArgv(const wxString& str, int& argc);
@@ -161,11 +189,16 @@ public:
     static wxString BuildCommandStringFromArray(const wxArrayString& command_arr,
                                                 size_t flags = BuildCommandFlags::ONE_LINER);
 
+    /**
+     * @brief wrap string with quotes if needed
+     */
+    static wxString& WrapWithQuotes(wxString& str);
+
     /// If string contains space, wrap it with double quotes
-    static wxString WrapWithDoubleQuotes(const wxString& str);
+    [[nodiscard]] static wxString WrapWithDoubleQuotes(const wxString& str);
 
     /// If a string is wrapped with double quotes -> strip them
-    static wxString StripDoubleQuotes(const wxString& str);
+    [[nodiscard]] static wxString StripDoubleQuotes(const wxString& str);
 
     /// Append `str` to `arr`. If the array size exceed the truncation size, shrink it to fit
     static wxArrayString AppendAndMakeUnique(const wxArrayString& arr, const wxString& str, size_t truncate_size = 15);

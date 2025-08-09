@@ -3035,7 +3035,7 @@ void Manager::DoRestartCodeLite([[maybe_unused]] bool force)
     // Restore the original working dir and any parameters
     for (int i = 1; i < wxTheApp->argc; ++i) {
         wxString cmdArg = wxTheApp->argv[i];
-        ::WrapWithQuotes(cmdArg);
+        StringUtils::WrapWithQuotes(cmdArg);
         restartCodeLiteCommand << wxT(" ") << cmdArg;
     }
     workingDirectory = GetOriginalCwd();
@@ -3047,7 +3047,7 @@ void Manager::DoRestartCodeLite([[maybe_unused]] bool force)
     bundlePath.RemoveLastDir(); // MacOS
     bundlePath.RemoveLastDir(); // Contents
     wxString bundlePathStr = bundlePath.GetPath();
-    ::WrapWithQuotes(bundlePathStr);
+    StringUtils::WrapWithQuotes(bundlePathStr);
     restartCodeLiteCommand << "sleep 2 && open " << bundlePathStr;
     ::WrapInShell(restartCodeLiteCommand);
 #endif

@@ -26,8 +26,8 @@
 #include "CompilerLocatorMSVC.h"
 
 #include "StdToWX.h"
+#include "StringUtils.h"
 #include "compiler.h"
-#include "globals.h"
 
 #include <wx/regex.h>
 
@@ -148,7 +148,7 @@ void CompilerLocatorMSVC::AddTools(const wxString& name, const wxString& platfor
 
     // include and lib path, check if cl.exe exists
     wxString vcVarsCmd = fnVCvars.GetFullPath();
-    WrapWithQuotes(vcVarsCmd);
+    StringUtils::WrapWithQuotes(vcVarsCmd);
     wxString command = "CMD.EXE /V:ON /C ";
     command << vcVarsCmd << " " << vcVarsArgs << " & echo !INCLUDE! & echo !LIB! & where cl.exe";
 
@@ -217,7 +217,7 @@ void CompilerLocatorMSVC::AddTool(const wxString& toolpath, const wxString& extr
                                   CompilerPtr compiler)
 {
     wxString tool = toolpath;
-    ::WrapWithQuotes(tool);
+    StringUtils::WrapWithQuotes(tool);
 
     if(!extraArgs.IsEmpty()) {
         tool << " " << extraArgs;

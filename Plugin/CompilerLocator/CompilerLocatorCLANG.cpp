@@ -25,22 +25,16 @@
 
 #include "CompilerLocatorCLANG.h"
 
-#include "AsyncProcess/asyncprocess.h"
-#include "GCCMetadata.hpp"
-#include "build_settings_config.h"
+#include "StringUtils.h"
 #include "clFilesCollector.h"
 #include "file_logger.h"
-#include "fileutils.h"
-#include "globals.h"
-#include "procutils.h"
 
 #include <optional>
-#include <wx/regex.h>
-
-#ifdef __WXMSW__
-#include <wx/msw/registry.h>
-#endif
 #include <wx/filename.h>
+
+#ifdef __WXOSX__
+#include <wx/tokenzr.h>
+#endif
 
 #ifdef __WXOSX__
 bool OSXFindBrewClang(wxFileName& clang)
@@ -138,7 +132,7 @@ void CompilerLocatorCLANG::AddTool(CompilerPtr compiler, const wxString& name, c
                                    const wxString& extraArgs)
 {
     wxString tool = fntool.GetFullPath();
-    ::WrapWithQuotes(tool);
+    StringUtils::WrapWithQuotes(tool);
     if (!extraArgs.IsEmpty()) {
         tool << " " << extraArgs;
     }

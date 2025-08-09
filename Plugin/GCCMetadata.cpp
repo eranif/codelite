@@ -26,15 +26,11 @@
 #include "GCCMetadata.hpp"
 
 #include "Cxx/CxxPreProcessor.h"
+#include "StringUtils.h"
 #include "clTempFile.hpp"
-#include "environmentconfig.h"
 #include "file_logger.h"
-#include "fileutils.h"
 #include "globals.h"
-#include "procutils.h"
 
-#include <wx/dir.h>
-#include <wx/fileconf.h>
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
 
@@ -100,7 +96,7 @@ void GCCMetadata::DoLoad(const wxString& tool, const wxString& rootDir, bool is_
 
         // execute the command from the tool directory
         working_directory = cxx.GetPath();
-        ::WrapWithQuotes(working_directory);
+        StringUtils::WrapWithQuotes(working_directory);
         command << cxx.GetFullName() << " -xc++ -E -v " << tmpfile.GetFullPath(true) << " -fsyntax-only";
     }
 #else

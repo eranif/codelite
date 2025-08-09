@@ -2,6 +2,7 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
+#include "StringUtils.h"
 #include "dirsaver.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
@@ -10,7 +11,6 @@
 #include "imanager.h"
 #include "macromanager.h"
 
-#include <algorithm>
 #include <wx/msgdlg.h>
 #include <wx/process.h>
 #include <wx/utils.h>
@@ -87,12 +87,10 @@ void ToolsTaskManager::StartTool(const ToolInfo& ti, const wxString& filename)
 {
     wxString command, working_dir;
     command << ti.GetPath();
-    //::WrapWithQuotes(command);
+    //StringUtils::WrapWithQuotes(command);
     if(!filename.IsEmpty()) {
         // If an input file was given, append it to the command
-        wxString fileName = filename;
-        ::WrapWithQuotes(fileName);
-        command << " " << fileName;
+        command << " " << StringUtils::WrapWithDoubleQuotes(filename);
     }
     working_dir = ti.GetWd();
     command = MacroManager::Instance()->Expand(

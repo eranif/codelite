@@ -7,15 +7,12 @@
 
 #include "memcheck.h"
 
-#include "AsyncProcess/asyncprocess.h"
-#include "AsyncProcess/processreaderthread.h"
-#include "async_executable_cmd.h"
+#include "StringUtils.h"
 #include "build_config.h"
 #include "dirsaver.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"
-#include "globals.h"
 #include "macromanager.h"
 #include "memcheckdefs.h"
 #include "memcheckoutputview.h"
@@ -436,7 +433,7 @@ wxString MemCheckPlugin::PrepareCommand(const wxString& projectName, wxString& w
     wd = workingDir.GetPath();
     cmd = fileExe.GetFullPath();
 
-    cmd = ::WrapWithQuotes(cmd);
+    cmd = StringUtils::WrapWithQuotes(cmd);
     cmd << " " << cmdArgs;
     clDEBUG() << "Command to execute:" << cmd;
     clDEBUG() << "Working directory:" << wd;

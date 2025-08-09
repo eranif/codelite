@@ -4713,7 +4713,7 @@ void clEditor::DoSelectRange(const LSP::Range& range, bool center_line)
         return PositionRelative(linePos, param.GetCharacter());
 #else
         wxString text = GetLine(param.GetLine()).Truncate(param.GetCharacter());
-        return linePos + clUTF8Length(text.wc_str(), text.length());
+        return linePos + StringUtils::UTF8Length(text.wc_str(), text.length());
 #endif
     };
     SetSelectionStart(getPos(range.GetStart()));
@@ -4815,7 +4815,7 @@ bool clEditor::DoFindAndSelect(const wxString& _pattern, const wxString& what, i
                 }
 
                 if (StringFindReplacer::Search(pattern.wc_str(),
-                                               clUTF8Length(pattern.wc_str(), pattern.Len()),
+                                               StringUtils::UTF8Length(pattern.wc_str(), pattern.Len()),
                                                display_name.wc_str(),
                                                flags,
                                                pos1,
@@ -4930,7 +4930,7 @@ bool clEditor::ReplaceAllExactMatch(const wxString& what, const wxString& replac
         txt.Remove(posInChars, match_lenInChars);
         txt.insert(posInChars, replaceWith);
         matchCount++;
-        offset = pos + clUTF8Length(replaceWith.wc_str(), replaceWith.length()); // match_len;
+        offset = pos + StringUtils::UTF8Length(replaceWith.wc_str(), replaceWith.length()); // match_len;
     }
 
     // replace the buffer

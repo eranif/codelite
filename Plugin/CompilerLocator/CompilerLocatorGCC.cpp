@@ -25,10 +25,9 @@
 
 #include "CompilerLocatorGCC.h"
 
+#include "StringUtils.h"
 #include "clFilesCollector.h"
 #include "file_logger.h"
-#include "fileutils.h"
-#include "globals.h"
 
 #include <optional>
 #include <wx/filename.h>
@@ -212,7 +211,7 @@ void CompilerLocatorGCC::AddTool(CompilerPtr compiler, const wxString& toolname,
                                  const wxString& extraArgs)
 {
     wxString tool = toolpath.GetFullPath();
-    ::WrapWithQuotes(tool);
+    StringUtils::WrapWithQuotes(tool);
     if (!extraArgs.IsEmpty()) {
         tool << " " << extraArgs;
     }

@@ -23,11 +23,9 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "free_text_dialog.h"
-#include "globals.h"
-#include "macros.h"
 #include "ps_build_events_page.h"
-#include <wx/tokenzr.h>
+
+#include "StringUtils.h"
 
 PSBuildEventsPage::PSBuildEventsPage(wxWindow* parent, bool preEvents, ProjectSettingsDlg* dlg)
     : PSBuildEventsBasePage(parent)
@@ -73,7 +71,7 @@ void PSBuildEventsPage::Load(BuildConfigPtr buildConf)
 void PSBuildEventsPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSettingsPtr)
 {
     BuildCommandList cmds;
-    wxArrayString commands = ::SplitString(m_textCtrlBuildEvents->GetValue(), true);
+    wxArrayString commands = StringUtils::SplitString(m_textCtrlBuildEvents->GetValue(), true);
     for(size_t i = 0; i < commands.GetCount(); i++) {
         wxString command = commands.Item(i).Trim().Trim(false);
         bool enabled = !command.StartsWith(wxT("#"));

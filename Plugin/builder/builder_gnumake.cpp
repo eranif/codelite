@@ -832,7 +832,7 @@ void BuilderGNUMakeClassic::CreateFileTargets(ProjectPtr proj, const wxString& c
 
                 // set the source file we want to compile
                 wxString source_file_to_compile = rel_paths.at(i).GetFullPath(wxPATH_UNIX);
-                ::WrapWithQuotes(source_file_to_compile);
+                StringUtils::WrapWithQuotes(source_file_to_compile);
 
                 wxString compilerMacro = DoGetCompilerMacro(rel_paths.at(i).GetFullPath(wxPATH_UNIX));
                 if(generateDependenciesFiles) {
@@ -1183,8 +1183,8 @@ void BuilderGNUMakeClassic::CreateConfigsVariables(ProjectPtr proj, BuildConfigP
     text << "ProjectName            :=" << projectName << "\n";
     text << "ConfigurationName      :=" << name << "\n";
     text << "WorkspaceConfiguration :=" << clCxxWorkspaceST::Get()->GetSelectedConfig()->GetName() << "\n";
-    text << "WorkspacePath          :=" << ::WrapWithQuotes(workspacepath) << "\n";
-    text << "ProjectPath            :=" << ::WrapWithQuotes(projectpath) << "\n";
+    text << "WorkspacePath          :=" << StringUtils::WrapWithQuotes(workspacepath) << "\n";
+    text << "ProjectPath            :=" << StringUtils::WrapWithQuotes(projectpath) << "\n";
     text << "IntermediateDirectory  :=" << bldConf->GetIntermediateDirectory() << "\n";
     text << "OutDir                 := $(IntermediateDirectory)\n";
     text << "CurrentFileName        :=\n"; // TODO:: Need implementation
@@ -1192,7 +1192,7 @@ void BuilderGNUMakeClassic::CreateConfigsVariables(ProjectPtr proj, BuildConfigP
     text << "CurrentFileFullPath    :=\n"; // TODO:: Need implementation
     text << "User                   :=" << wxGetUserId() << "\n";
     text << "Date                   :=" << wxDateTime::Now().FormatDate() << "\n";
-    text << "CodeLitePath           :=" << ::WrapWithQuotes(startupdir) << "\n";
+    text << "CodeLitePath           :=" << StringUtils::WrapWithQuotes(startupdir) << "\n";
     text << "LinkerName             :=" << cmp->GetTool("LinkerName") << "\n";
     text << "SharedObjectLinkerName :=" << cmp->GetTool("SharedObjectLinkerName") << "\n";
     text << "ObjectSuffix           :=" << cmp->GetObjectSuffix() << "\n";
@@ -1328,7 +1328,7 @@ wxString BuilderGNUMakeClassic::ParseIncludePath(const wxString& paths, const wx
     while(tkz.HasMoreTokens()) {
         wxString path(tkz.NextToken());
         TrimString(path);
-        ::WrapWithQuotes(path);
+        StringUtils::WrapWithQuotes(path);
         incluedPath << wxT("$(IncludeSwitch)") << path << wxT(" ");
     }
     return incluedPath;
@@ -1345,7 +1345,7 @@ wxString BuilderGNUMakeClassic::ParseLibPath(const wxString& paths, const wxStri
     while(tkz.HasMoreTokens()) {
         wxString path(tkz.NextToken());
         path.Trim().Trim(false);
-        ::WrapWithQuotes(path);
+        StringUtils::WrapWithQuotes(path);
         libPath << wxT("$(LibraryPathSwitch)") << path << wxT(" ");
     }
     return libPath;

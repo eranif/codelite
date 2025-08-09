@@ -1,7 +1,7 @@
 #include "LSPGoplsDetector.hpp"
 
 #include "Platform/Platform.hpp"
-#include "globals.h"
+#include "StringUtils.h"
 
 LSPGoplsDetector::LSPGoplsDetector()
     : LSPDetector("gopls")
@@ -26,7 +26,7 @@ void LSPGoplsDetector::ConfigureFile(const wxFileName& gopls)
     LSP_DEBUG() << "==> Found" << gopls;
     wxString command;
     command << gopls.GetFullPath();
-    ::WrapWithQuotes(command);
+    StringUtils::WrapWithQuotes(command);
 
     SetCommand(command);
     SetEnabled(true);

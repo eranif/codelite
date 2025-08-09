@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "stringsearcher.h"
 
-#include "globals.h"
+#include "StringUtils.h"
 #include "search_thread.h"
 
 #include <algorithm>
@@ -264,11 +264,11 @@ bool StringFindReplacer::Search(const wchar_t* input, int startOffset, const wch
     int iSO = startOffset;
     bool isUTF8 = false;
     if(iSO) {
-        int utfLen = clUTF8Length(input, iSO);
+        int utfLen = StringUtils::UTF8Length(input, iSO);
         isUTF8 = (utfLen != iSO);
     }
 
-    while(isUTF8 && (iSO > 0) && ((int)clUTF8Length(input, iSO) > startOffset))
+    while (isUTF8 && (iSO > 0) && ((int)StringUtils::UTF8Length(input, iSO) > startOffset))
         iSO--;
     startOffset = iSO;
 
@@ -286,11 +286,11 @@ bool StringFindReplacer::Search(const wchar_t* input, int startOffset, const wch
 
     // correct search Pos and Length owing to non plain ASCII multibyte characters
     if(bResult) {
-        pos = clUTF8Length(input, posInChars);
+        pos = StringUtils::UTF8Length(input, posInChars);
         if(flags & wxSD_REGULAREXPRESSION) {
-            matchLen = clUTF8Length(input, posInChars + matchLenInChars) - pos;
+            matchLen = StringUtils::UTF8Length(input, posInChars + matchLenInChars) - pos;
         } else {
-            matchLen = clUTF8Length(find_what, matchLenInChars);
+            matchLen = StringUtils::UTF8Length(find_what, matchLenInChars);
         }
     }
     return bResult;

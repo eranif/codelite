@@ -25,8 +25,8 @@
 
 #include "CompilerLocatorCygwin.h"
 
+#include "StringUtils.h"
 #include "file_logger.h"
-#include "globals.h"
 #include "procutils.h"
 
 #include <wx/regex.h>
@@ -125,7 +125,7 @@ void CompilerLocatorCygwin::AddTool(CompilerPtr compiler, const wxString& toolna
                                     const wxString& extraArgs)
 {
     wxString tool = toolpath;
-    ::WrapWithQuotes(tool);
+    StringUtils::WrapWithQuotes(tool);
 
     // Cygwin does not like backslahes... replace the tools to use /
     tool.Replace("\\", "/");

@@ -24,7 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "globals.h"
 
-#include "AsyncProcess/asyncprocess.h"
 #include "Console/clConsoleBase.h"
 #include "Debugger/debuggermanager.h"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
@@ -52,31 +51,21 @@
 
 #include <vector>
 #include <wx/app.h>
-#include <wx/aui/auibook.h>
 #include <wx/clipbrd.h>
 #include <wx/dataobj.h>
 #include <wx/dataview.h>
 #include <wx/dcscreen.h>
 #include <wx/dir.h>
 #include <wx/display.h>
-#include <wx/ffile.h>
 #include <wx/filename.h>
-#include <wx/graphics.h>
 #include <wx/icon.h>
-#include <wx/imaglist.h>
 #include <wx/listctrl.h>
 #include <wx/log.h>
-#include <wx/persist.h>
 #include <wx/regex.h>
 #include <wx/richmsgdlg.h>
 #include <wx/settings.h>
 #include <wx/sstream.h>
-#include <wx/stc/stc.h>
-#include <wx/stdpaths.h>
-#include <wx/wfstream.h>
 #include <wx/window.h>
-#include <wx/xrc/xmlres.h>
-#include <wx/zipstrm.h>
 
 #ifdef __WXMSW__
 #include "MSWDarkMode.hpp"
@@ -345,12 +334,6 @@ bool CopyToClipboard(const wxString& text)
 
 wxColour MakeColourLighter(wxColour color, float level) { return DrawingUtils::LightColour(color, level); }
 
-void FillFromSemiColonString(wxArrayString& arr, const wxString& str)
-{
-    arr.clear();
-    arr = StringUtils::BuildArgv(str);
-}
-
 namespace
 {
 #ifdef __WXMSW__
@@ -369,7 +352,7 @@ const wxString& __uname()
             clDEBUG() << "Running `uname -s`..." << endl;
             wxString cmd;
             cmd << uname.GetFullPath();
-            WrapWithQuotes(cmd);
+            StringUtils::WrapWithQuotes(cmd);
             cmd << " -s";
             uname_output = ProcUtils::SafeExecuteCommand(cmd);
             clDEBUG() << uname_output << endl;
@@ -578,43 +561,6 @@ wxArrayString ReturnWithStringPrepended(const wxArrayString& oldarray, const wxS
     return array;
 }
 
-wxString wxImplode(const wxArrayString& arr, const wxString& glue)
-{
-    wxString str, tmp;
-    for (size_t i = 0; i < arr.GetCount(); i++) {
-        str << arr.Item(i) << glue;
-    }
-
-    if (str.EndsWith(glue, &tmp)) {
-        str = tmp;
-    }
-    return str;
-}
-
-int wxStringToInt(const wxString& str, int defval, int minval, int maxval)
-{
-    long v;
-    if (!str.ToLong(&v)) {
-        return defval;
-    }
-
-    if (minval != -1 && v < minval) {
-        return defval;
-    }
-    if (maxval != -1 && v > maxval) {
-        return defval;
-    }
-
-    return v;
-}
-
-wxString wxIntToString(int val)
-{
-    wxString s;
-    s << val;
-    return s;
-}
-
 ////////////////////////////////////////
 // BOM
 ////////////////////////////////////////
@@ -701,191 +647,6 @@ void BOM::Clear()
     m_bom.SetDataLen(0);
 }
 
-///////////////////////////////////////////////////////////////////////////////////////////////
-// UTF8/16 conversions methods copied from wxScintilla
-///////////////////////////////////////////////////////////////////////////////////////////////
-enum { SURROGATE_LEAD_FIRST = 0xD800 };
-enum { SURROGATE_TRAIL_FIRST = 0xDC00 };
-enum { SURROGATE_TRAIL_LAST = 0xDFFF };
-
-unsigned int clUTF8Length(const wchar_t* uptr, unsigned int tlen)
-{
-    unsigned int len = 0;
-    for (unsigned int i = 0; i < tlen && uptr[i];) {
-        unsigned int uch = uptr[i];
-        if (uch < 0x80) {
-            len++;
-        } else if (uch < 0x800) {
-            len += 2;
-        } else if ((uch >= SURROGATE_LEAD_FIRST) && (uch <= SURROGATE_TRAIL_LAST)) {
-            len += 4;
-            i++;
-        } else {
-            len += 3;
-        }
-        i++;
-    }
-    return len;
-}
-
-// void UTF8FromUTF16(const wchar_t *uptr, unsigned int tlen, char *putf, unsigned int len)
-//{
-//    int k = 0;
-//    for (unsigned int i = 0; i < tlen && uptr[i];) {
-//        unsigned int uch = uptr[i];
-//        if (uch < 0x80) {
-//            putf[k++] = static_cast<char>(uch);
-//        } else if (uch < 0x800) {
-//            putf[k++] = static_cast<char>(0xC0 | (uch >> 6));
-//            putf[k++] = static_cast<char>(0x80 | (uch & 0x3f));
-//        } else if ((uch >= SURROGATE_LEAD_FIRST) &&
-//                   (uch <= SURROGATE_TRAIL_LAST)) {
-//            // Half a surrogate pair
-//            i++;
-//            unsigned int xch = 0x10000 + ((uch & 0x3ff) << 10) + (uptr[i] & 0x3ff);
-//            putf[k++] = static_cast<char>(0xF0 | (xch >> 18));
-//            putf[k++] = static_cast<char>(0x80 | ((xch >> 12) & 0x3f));
-//            putf[k++] = static_cast<char>(0x80 | ((xch >> 6) & 0x3f));
-//            putf[k++] = static_cast<char>(0x80 | (xch & 0x3f));
-//        } else {
-//            putf[k++] = static_cast<char>(0xE0 | (uch >> 12));
-//            putf[k++] = static_cast<char>(0x80 | ((uch >> 6) & 0x3f));
-//            putf[k++] = static_cast<char>(0x80 | (uch & 0x3f));
-//        }
-//        i++;
-//    }
-//    putf[len] = '\0';
-//}
-
-// unsigned int UTF8CharLength(unsigned char ch)
-//{
-//    if (ch < 0x80) {
-//        return 1;
-//    } else if (ch < 0x80 + 0x40 + 0x20) {
-//        return 2;
-//    } else if (ch < 0x80 + 0x40 + 0x20 + 0x10) {
-//        return 3;
-//    } else {
-//        return 4;
-//    }
-//}
-
-// unsigned int UTF16Length(const char *s, unsigned int len)
-//{
-//    unsigned int ulen = 0;
-//    unsigned int charLen;
-//    for (unsigned int i=0; i<len;) {
-//        unsigned char ch = static_cast<unsigned char>(s[i]);
-//        if (ch < 0x80) {
-//            charLen = 1;
-//        } else if (ch < 0x80 + 0x40 + 0x20) {
-//            charLen = 2;
-//        } else if (ch < 0x80 + 0x40 + 0x20 + 0x10) {
-//            charLen = 3;
-//        } else {
-//            charLen = 4;
-//            ulen++;
-//        }
-//        i += charLen;
-//        ulen++;
-//    }
-//    return ulen;
-//}
-//
-// unsigned int UTF16FromUTF8(const char *s, unsigned int len, wchar_t *tbuf, unsigned int tlen)
-//{
-//    unsigned int ui=0;
-//    const unsigned char *us = reinterpret_cast<const unsigned char *>(s);
-//    unsigned int i=0;
-//    while ((i<len) && (ui<tlen)) {
-//        unsigned char ch = us[i++];
-//        if (ch < 0x80) {
-//            tbuf[ui] = ch;
-//        } else if (ch < 0x80 + 0x40 + 0x20) {
-//            tbuf[ui] = static_cast<wchar_t>((ch & 0x1F) << 6);
-//            ch = us[i++];
-//            tbuf[ui] = static_cast<wchar_t>(tbuf[ui] + (ch & 0x7F));
-//        } else if (ch < 0x80 + 0x40 + 0x20 + 0x10) {
-//            tbuf[ui] = static_cast<wchar_t>((ch & 0xF) << 12);
-//            ch = us[i++];
-//            tbuf[ui] = static_cast<wchar_t>(tbuf[ui] + ((ch & 0x7F) << 6));
-//            ch = us[i++];
-//            tbuf[ui] = static_cast<wchar_t>(tbuf[ui] + (ch & 0x7F));
-//        } else {
-//            // Outside the BMP so need two surrogates
-//            int val = (ch & 0x7) << 18;
-//            ch = us[i++];
-//            val += (ch & 0x3F) << 12;
-//            ch = us[i++];
-//            val += (ch & 0x3F) << 6;
-//            ch = us[i++];
-//            val += (ch & 0x3F);
-//            tbuf[ui] = static_cast<wchar_t>(((val - 0x10000) >> 10) + SURROGATE_LEAD_FIRST);
-//            ui++;
-//            tbuf[ui] = static_cast<wchar_t>((val & 0x3ff) + SURROGATE_TRAIL_FIRST);
-//        }
-//        ui++;
-//    }
-//    return ui;
-//}
-
-// [CHANGED] BEGIN
-// void UTF8FromUCS2(const wchar_t *uptr, unsigned int tlen, char *putf, unsigned int len)
-//{
-//    int k = 0;
-//    for (unsigned int i = 0; i < tlen && uptr[i]; i++) {
-//        unsigned int uch = uptr[i];
-//        if (uch < 0x80) {
-//            putf[k++] = static_cast<char>(uch);
-//        } else if (uch < 0x800) {
-//            putf[k++] = static_cast<char>(0xC0 | (uch >> 6));
-//            putf[k++] = static_cast<char>(0x80 | (uch & 0x3f));
-//        } else {
-//            putf[k++] = static_cast<char>(0xE0 | (uch >> 12));
-//            putf[k++] = static_cast<char>(0x80 | ((uch >> 6) & 0x3f));
-//            putf[k++] = static_cast<char>(0x80 | (uch & 0x3f));
-//        }
-//    }
-//    putf[len] = '\0';
-//}
-
-// unsigned int UCS2Length(const char *s, unsigned int len)
-//{
-//    unsigned int ulen = 0;
-//    for (unsigned int i=0; i<len; i++) {
-//        unsigned char ch = static_cast<unsigned char>(s[i]);
-//        if ((ch < 0x80) || (ch > (0x80 + 0x40)))
-//            ulen++;
-//    }
-//    return ulen;
-//}
-
-// unsigned int UCS2FromUTF8(const char *s, unsigned int len, wchar_t *tbuf, unsigned int tlen)
-//{
-//    unsigned int ui=0;
-//    const unsigned char *us = reinterpret_cast<const unsigned char *>(s);
-//    unsigned int i=0;
-//    while ((i<len) && (ui<tlen)) {
-//        unsigned char ch = us[i++];
-//        if (ch < 0x80) {
-//            tbuf[ui] = ch;
-//        } else if (ch < 0x80 + 0x40 + 0x20) {
-//            tbuf[ui] = static_cast<wchar_t>((ch & 0x1F) << 6);
-//            ch = us[i++];
-//            tbuf[ui] = static_cast<wchar_t>(tbuf[ui] + (ch & 0x7F));
-//        } else {
-//            tbuf[ui] = static_cast<wchar_t>((ch & 0xF) << 12);
-//            ch = us[i++];
-//            tbuf[ui] = static_cast<wchar_t>(tbuf[ui] + ((ch & 0x7F) << 6));
-//            ch = us[i++];
-//            tbuf[ui] = static_cast<wchar_t>(tbuf[ui] + (ch & 0x7F));
-//        }
-//        ui++;
-//    }
-//    return ui;
-//}
-// [CHANGED] END
-
 wxString DbgPrependCharPtrCastIfNeeded(const wxString& expr, const wxString& exprType)
 {
     static wxRegEx reConstArr("(const )?[ ]*(w)?char(_t)? *[\\[0-9\\]]*");
@@ -917,53 +678,6 @@ wxVariant MakeIconText(const wxString& text, const wxBitmap& bmp)
     wxVariant v;
     v << ict;
     return v;
-}
-
-wxArrayString SplitString(const wxString& inString, bool trim)
-{
-    wxArrayString lines;
-    wxString curline;
-
-    bool inContinuation = false;
-    for (size_t i = 0; i < inString.length(); ++i) {
-        wxChar ch = inString.GetChar(i);
-        wxChar ch1 = (i + 1 < inString.length()) ? inString.GetChar(i + 1) : wxUniChar(0);
-        wxChar ch2 = (i + 2 < inString.length()) ? inString.GetChar(i + 2) : wxUniChar(0);
-
-        switch (ch) {
-        case '\r':
-            // do nothing
-            curline << ch;
-            break;
-        case '\n':
-            if (inContinuation) {
-                curline << ch;
-
-            } else {
-                lines.Add(trim ? curline.Trim().Trim(false) : curline);
-                curline.clear();
-            }
-            inContinuation = false;
-            break;
-        case '\\':
-            curline << ch;
-            if ((ch1 == '\n') || (ch1 == '\r' && ch2 == '\n')) {
-                inContinuation = true;
-            }
-            break;
-        default:
-            curline << ch;
-            inContinuation = false;
-            break;
-        }
-    }
-
-    // any leftovers?
-    if (curline.IsEmpty() == false) {
-        lines.Add(trim ? curline.Trim().Trim(false) : curline);
-        curline.clear();
-    }
-    return lines;
 }
 
 void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& realPts, long& pid)
@@ -1026,14 +740,6 @@ wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message,
 {
     return PromptForYesNoCancelDialogWithCheckbox(
         message, dlgId, yesLabel, noLabel, "", checkboxLabel, style, checkboxInitialValue);
-}
-
-wxString& WrapWithQuotes(wxString& str)
-{
-    if (!str.empty() && str.Contains(" ") && !str.StartsWith("\"") && !str.EndsWith("\"")) {
-        str.Prepend("\"").Append("\"");
-    }
-    return str;
 }
 
 bool LoadXmlFile(wxXmlDocument* doc, const wxString& filepath)
@@ -1127,11 +833,6 @@ static IManager* s_pluginManager = NULL;
 void clSetManager(IManager* manager) { s_pluginManager = manager; }
 IManager* clGetManager() { return s_pluginManager; }
 
-void clStripTerminalColouring(const wxString& buffer, wxString& modbuffer)
-{
-    StringUtils::StripTerminalColouring(buffer, modbuffer);
-}
-
 bool clIsValidProjectName(const wxString& name)
 {
     return name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-") == wxString::npos;
@@ -1210,23 +911,6 @@ int clFindMenuItemPosition(wxMenu* menu, int menuItemId)
         }
     }
     return wxNOT_FOUND;
-}
-
-wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol)
-{
-    wxString glue = "\n";
-    switch (eol) {
-    case wxSTC_EOL_CRLF:
-        glue = "\r\n";
-        break;
-    case wxSTC_EOL_CR:
-        glue = "\r";
-        break;
-    default:
-        glue = "\n";
-        break;
-    }
-    return StringUtils::clJoin(lines, glue);
 }
 
 wxSize clGetDisplaySize()

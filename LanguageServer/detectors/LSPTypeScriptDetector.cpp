@@ -1,10 +1,8 @@
 #include "LSPTypeScriptDetector.hpp"
 
-#include "NodeJSLocator.h"
 #include "StdToWX.h"
-#include "clNodeJS.h"
+#include "StringUtils.h"
 #include "fileutils.h"
-#include "globals.h"
 
 LSPTypeScriptDetector::LSPTypeScriptDetector()
     : LSPDetector("TypeScript")
@@ -33,7 +31,7 @@ bool LSPTypeScriptDetector::DoLocate()
 
     wxString command;
     command << typescript_lsp.GetFullPath();
-    WrapWithQuotes(command);
+    StringUtils::WrapWithQuotes(command);
 
     command << " --stdio";
     SetCommand(command);

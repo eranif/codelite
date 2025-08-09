@@ -176,13 +176,6 @@ WXDLLIMPEXP_SDK bool CopyToClipboard(const wxString& text);
 WXDLLIMPEXP_SDK wxColour MakeColourLighter(wxColour color, float level);
 
 /**
- * \brief fill an array with a semi-colon separated string
- * \param arr [out] the array to fill
- * \param str the string to split
- */
-WXDLLIMPEXP_SDK void FillFromSemiColonString(wxArrayString& arr, const wxString& str);
-
-/**
  * @brief wrap a given command in the shell command (e.g. cmd /c "command")
  */
 WXDLLIMPEXP_SDK void WrapInShell(wxString& cmd);
@@ -211,12 +204,6 @@ WXDLLIMPEXP_SDK void MSWSetNativeTheme(wxWindow* win, const wxString& theme = "E
  * based on the selected editor theme. This is dont recursively on win
  */
 WXDLLIMPEXP_SDK void MSWSetWindowDarkTheme(wxWindow* win);
-
-/**
- * @brief joins array element into a string using 'glue' as the array elements
- * separator
- */
-WXDLLIMPEXP_SDK wxString wxImplode(const wxArrayString& arr, const wxString& glue = "\n");
 
 /**
  * @class StringManager
@@ -267,18 +254,6 @@ WXDLLIMPEXP_SDK wxArrayString ReturnWithStringPrepended(const wxArrayString& old
                                                         const wxString& str,
                                                         const size_t maxsize);
 
-/**
- * @brief convert string to integer using range validation and default value
- */
-WXDLLIMPEXP_SDK int wxStringToInt(const wxString& str, int defval, int min = -1, int max = -1);
-
-/**
- * @brief convert integer to string
- */
-WXDLLIMPEXP_SDK wxString wxIntToString(int val);
-
-WXDLLIMPEXP_SDK unsigned int clUTF8Length(const wchar_t* uptr, unsigned int tlen);
-
 WXDLLIMPEXP_SDK wxString DbgPrependCharPtrCastIfNeeded(const wxString& expr, const wxString& exprType);
 
 /**
@@ -295,12 +270,6 @@ WXDLLIMPEXP_SDK wxVariant MakeBitmapIndexText(const wxString& text, int imgIndex
  * @brief create wxVariant from label+checkbox+imgindex
  */
 WXDLLIMPEXP_SDK wxVariant MakeCheckboxVariant(const wxString& label, bool checked, int imgIndex);
-
-/**
- * @brief split lines (using CR|LF as the separator), taking into consideration line continuation
- * @param trim trim the lines with set to true
- */
-WXDLLIMPEXP_SDK wxArrayString SplitString(const wxString& inString, bool trim = true);
 
 /**
  * @brief launch terminal for debugging purposes and return its TTY. This function does nothing under Windows
@@ -350,11 +319,6 @@ PromptForYesNoDialogWithCheckbox(const wxString& message,
                                  const wxString& checkboxLabel = _("Remember my answer and don't ask me again"),
                                  long style = wxYES_NO | wxICON_QUESTION | wxYES_DEFAULT,
                                  bool checkboxInitialValue = false);
-
-/**
- * @brief wrap string with quotes if needed
- */
-WXDLLIMPEXP_SDK wxString& WrapWithQuotes(wxString& str);
 
 /**
  * @brief save an xml document to file
@@ -421,11 +385,6 @@ WXDLLIMPEXP_SDK IManager* clGetManager();
 WXDLLIMPEXP_SDK void clSetManager(IManager* manager);
 
 /**
- * @brief remove terminal colours from buffer
- */
-WXDLLIMPEXP_SDK void clStripTerminalColouring(const wxString& buffer, wxString& modbuffer);
-
-/**
  * @brief return true if the name is valid
  */
 WXDLLIMPEXP_SDK bool clIsValidProjectName(const wxString& name);
@@ -464,12 +423,6 @@ WXDLLIMPEXP_SDK void clSetEditorFontEncoding(const wxString& encoding);
  * @return return the position or wxNOT_FOUND
  */
 WXDLLIMPEXP_SDK int clFindMenuItemPosition(wxMenu* menu, int menuItemId);
-
-/**
- * @brief join strings with `\n` or `\r\n` (depends on eol)
- * eol can be wxSTC_EOL_CRLF, wxSTC_EOL_LF etc
- */
-WXDLLIMPEXP_SDK wxString clJoinLinesWithEOL(const wxArrayString& lines, int eol);
 
 /**
  * @brief fit the dataview columns width to match their content

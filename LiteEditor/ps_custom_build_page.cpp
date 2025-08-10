@@ -90,7 +90,7 @@ void PSCustomBuildPage::OnNewTarget(wxCommandEvent& event)
     if (dlg.ShowModal() == wxID_OK) {
         GetDlg()->SetIsDirty(true);
         if (GetTargetCommand(dlg.GetName()).IsEmpty() == false) {
-            wxMessageBox(wxString::Format(_("Target '%s' already exist!"), dlg.GetName().c_str()), _("CodeLite"),
+            wxMessageBox(wxString::Format(_("Target '%s' already exist!"), dlg.GetName().c_str()), wxT("CodeLite"),
                          wxICON_WARNING | wxCENTER | wxOK, this);
             return;
         }

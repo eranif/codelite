@@ -704,7 +704,7 @@ void PHPWorkspaceView::OnDeleteFolder(wxCommandEvent& e)
 
 void PHPWorkspaceView::OnRetagWorkspace(wxCommandEvent& e)
 {
-    // notify codelite to close the currently opened workspace
+    // notify CodeLite to close the currently opened workspace
     wxCommandEvent retagEvent(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
     retagEvent.SetEventObject(FRAME);
     FRAME->GetEventHandler()->ProcessEvent(retagEvent);
@@ -1376,7 +1376,7 @@ void PHPWorkspaceView::DoGetSelectedFolders(wxArrayString& paths)
 void PHPWorkspaceView::OnFindInFiles(wxCommandEvent& e)
 {
     m_fifFromContextMenu = true;
-    // Open the find in files dialg for the folder path
+    // Open the find in files dialog for the folder path
     wxArrayString paths;
     DoGetSelectedFolders(paths);
     m_mgr->OpenFindInFileForPaths(paths);

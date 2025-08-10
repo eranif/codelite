@@ -65,7 +65,7 @@ void* clSingleInstanceThread::Entry()
             wxArrayString args = root.toElement().namedObject("args").toArrayString();
 
             if(args.IsEmpty()) {
-                // just raise codelite
+                // just raise CodeLite
                 clCommandEvent event(wxEVT_CMD_SINGLE_INSTANCE_THREAD_RAISE_APP);
                 EventNotifier::Get()->AddPendingEvent(event);
             } else {

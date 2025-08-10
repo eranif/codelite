@@ -137,7 +137,7 @@ void BreakpointsHelper::ApplyBreakpoints(const wxString& path)
         }
     }
 
-    // dont pass empty array, it will tell dap to clear all breakpoints
+    // don't pass empty array, it will tell dap to clear all breakpoints
     for(const auto& vt : dap_source_breakpoints) {
         wxFileName filepath(vt.first);
         LOG_DEBUG(LOG) << "Applying breakpoints for file:" << filepath << endl;

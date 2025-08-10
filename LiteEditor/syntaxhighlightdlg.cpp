@@ -714,7 +714,7 @@ void SyntaxHighlightDlg::OnImportEclipseTheme(wxCommandEvent& event)
         notif.Show(5);
 
         if (!themes_imported.empty()) {
-            // Mark the dialg is modified and force a save+reload
+            // Mark the dialog as modified and force a save+reload
             m_isModified = true;
             SaveChanges();
 
@@ -749,7 +749,7 @@ void SyntaxHighlightDlg::OnGlobalFontSelected(wxFontPickerEvent& event)
 void SyntaxHighlightDlg::DoSetGlobalBgColour(const wxColour& colour)
 {
     for (auto& property : m_lexer->GetLexerProperties()) {
-        // Dont change the text selection using the global font picker
+        // Don't change the text selection using the global font picker
         if (property.GetName() == wxT("Text Selection"))
             continue;
         property.SetBgColour(colour.GetAsString(wxC2S_HTML_SYNTAX));

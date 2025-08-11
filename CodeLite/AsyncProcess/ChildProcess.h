@@ -23,7 +23,7 @@ class WXDLLIMPEXP_CL ChildProcess : public wxEvtHandler
     std::unique_ptr<UnixProcess> m_childProcess;
 #endif
 public:
-    ChildProcess();
+    ChildProcess() = default;
     ~ChildProcess() override;
 
     void Start(const wxArrayString& args);

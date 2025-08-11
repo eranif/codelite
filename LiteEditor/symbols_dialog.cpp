@@ -52,8 +52,6 @@ SymbolsDialog::SymbolsDialog(wxWindow* parent)
     WindowAttrManager::Load(this);
 }
 
-SymbolsDialog::~SymbolsDialog() {  }
-
 void SymbolsDialog::AddSymbol(const TagEntryPtr& tag, bool sel)
 {
     //-------------------------------------------------------

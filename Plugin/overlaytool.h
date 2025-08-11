@@ -53,7 +53,7 @@ public:
 
 private:
     OverlayTool();
-    virtual ~OverlayTool();
+    virtual ~OverlayTool() = default;
 
     wxBitmap DoAddBitmap(const wxBitmap& bmp, const wxColour& colour) const;
 

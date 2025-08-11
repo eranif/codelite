@@ -28,7 +28,7 @@ private:
 
 public:
     explicit DocumentSymbolsRequest(const wxString& filename, size_t context);
-    virtual ~DocumentSymbolsRequest();
+    virtual ~DocumentSymbolsRequest() = default;
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
 };
 };     // namespace LSP

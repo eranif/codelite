@@ -56,7 +56,7 @@ protected:
 
 public:
     PHPLint(IManager* manager);
-    ~PHPLint() override;
+    ~PHPLint() override = default;
 
     //--------------------------------------------
     // Abstract methods

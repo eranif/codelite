@@ -45,8 +45,6 @@ Builder::Builder(const wxString& name)
     }
 }
 
-Builder::~Builder() {}
-
 wxString Builder::NormalizeConfigName(const wxString& confgName)
 {
     wxString normalized(confgName);

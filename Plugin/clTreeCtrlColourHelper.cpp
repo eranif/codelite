@@ -9,8 +9,6 @@ clTreeCtrlColourHelper::clTreeCtrlColourHelper(clThemedTreeCtrl* tree)
 {
 }
 
-clTreeCtrlColourHelper::~clTreeCtrlColourHelper() {}
-
 void clTreeCtrlColourHelper::DoSetBgColour(const wxTreeItemId& item, const wxColour& currentBgColour,
                                            const FolderColour::Map_t& coloursMap) const
 {

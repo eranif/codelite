@@ -51,9 +51,9 @@ protected:
     void FormatName(wxString& name, size_t flags) const;
 
 public:
-    PHPSetterGetterEntry();
+    PHPSetterGetterEntry() = default;
     PHPSetterGetterEntry(PHPEntityBase::Ptr_t entry);
-    virtual ~PHPSetterGetterEntry();
+    virtual ~PHPSetterGetterEntry() = default;
 
     /**
      * @brief generate getter for the this PHPEntry

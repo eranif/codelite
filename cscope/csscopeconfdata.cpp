@@ -36,10 +36,6 @@ CScopeConfData::CScopeConfData()
     m_cscopeFilepath = clStandardPaths::Get().GetBinaryFullPath("cscope");
 }
 
-CScopeConfData::~CScopeConfData()
-{
-}
-
 void CScopeConfData::DeSerialize( Archive& arch )
 {
     arch.Read( wxT( "m_cscopeFilepath" ), m_cscopeFilepath );

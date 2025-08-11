@@ -35,7 +35,7 @@ public:
     virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
 
     ThemeImporterINI();
-    ~ThemeImporterINI();
+    ~ThemeImporterINI() = default;
 };
 
 #endif // ECLIPSEINITHEMEIMPORTER_H

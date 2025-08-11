@@ -32,7 +32,7 @@ class XDebugUnknownCommand : public XDebugCommandHandler
 {
 public:
     XDebugUnknownCommand(XDebugManager* mgr, int transcationId);
-    virtual ~XDebugUnknownCommand();
+    virtual ~XDebugUnknownCommand() = default;
 
 public:
     virtual void Process(const wxXmlNode* response);

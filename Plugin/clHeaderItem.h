@@ -42,9 +42,9 @@ public:
     static const int Y_SPACER = 5;
 
 public:
-    clHeaderItem();
+    clHeaderItem() = default;
     clHeaderItem(wxWindow* parent, const wxString& label, const wxBitmap& bmp = wxNullBitmap);
-    virtual ~clHeaderItem();
+    virtual ~clHeaderItem() = default;
 
     void Render(wxDC& dc, const clColours& colours, int flags);
     void SetBitmap(const wxBitmap& bitmap) { this->m_bitmap = bitmap; }

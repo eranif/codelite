@@ -10,8 +10,6 @@ NodeJSWorkspaceUser::NodeJSWorkspaceUser(const wxString& workspacePath)
 {
 }
 
-NodeJSWorkspaceUser::~NodeJSWorkspaceUser() {}
-
 wxFileName NodeJSWorkspaceUser::GetFileName() const
 {
     wxFileName workspaceFile(m_workspacePath);

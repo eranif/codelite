@@ -44,8 +44,6 @@ MemCheckSettingsDialog::MemCheckSettingsDialog(wxWindow* parent, MemCheckSetting
     WindowAttrManager::Load(this);
 }
 
-MemCheckSettingsDialog::~MemCheckSettingsDialog() {}
-
 void MemCheckSettingsDialog::OnOK(wxCommandEvent& event)
 {
     wxString outputFileMsg;

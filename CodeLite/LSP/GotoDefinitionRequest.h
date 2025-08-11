@@ -16,7 +16,7 @@ class WXDLLIMPEXP_CL GotoDefinitionRequest : public LSP::Request
 
 public:
     explicit GotoDefinitionRequest(const wxString& filename, size_t line, size_t column);
-    virtual ~GotoDefinitionRequest();
+    virtual ~GotoDefinitionRequest() = default;
 
     void SetColumn(size_t column) { this->m_column = column; }
     void SetFilename(const wxString& filename) { this->m_filename = filename; }

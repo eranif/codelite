@@ -57,8 +57,8 @@ class WXDLLIMPEXP_SDK SimpleLongValue : public SerializedObject
     long m_value;
 
 public:
-    SimpleLongValue();
-    ~SimpleLongValue();
+    SimpleLongValue() = default;
+    ~SimpleLongValue() = default;
 
     void DeSerialize(Archive& arch);
     void Serialize(Archive& arch);
@@ -74,8 +74,8 @@ class WXDLLIMPEXP_SDK SimpleStringValue : public SerializedObject
     wxString m_value;
 
 public:
-    SimpleStringValue();
-    ~SimpleStringValue();
+    SimpleStringValue() = default;
+    ~SimpleStringValue() = default;
 
     void DeSerialize(Archive& arch);
     void Serialize(Archive& arch);
@@ -89,8 +89,8 @@ class WXDLLIMPEXP_SDK SimpleRectValue : public SerializedObject
     wxRect m_rect;
 
 public:
-    SimpleRectValue();
-    ~SimpleRectValue();
+    SimpleRectValue() = default;
+    ~SimpleRectValue() = default;
 
     void DeSerialize(Archive& arch);
     void Serialize(Archive& arch);

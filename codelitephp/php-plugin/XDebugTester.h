@@ -39,8 +39,8 @@ protected:
     XDebugTester::ResultMap_t m_results;
 
 public:
-    XDebugTester();
-    virtual ~XDebugTester();
+    XDebugTester() = default;
+    virtual ~XDebugTester() = default;
 
     /**
      * @brief run the xdebug test

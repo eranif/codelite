@@ -147,7 +147,7 @@ private:
     struct SelectionInfo {
         std::vector<std::pair<int, int>> selections;
 
-        SelectionInfo() {}
+        SelectionInfo() = default;
 
         /**
          * @brief add selection range

@@ -87,8 +87,6 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg(wxWindow* parent, LocalWorkspace* loc
     ::clSetDialogBestSizeAndPosition(this);
 }
 
-WorkspaceSettingsDlg::~WorkspaceSettingsDlg() {}
-
 wxArrayString WorkspaceSettingsDlg::GetIncludePaths() const { return m_ccPage->GetIncludePaths(); }
 
 void WorkspaceSettingsDlg::OnButtonOK(wxCommandEvent& event)

@@ -6,8 +6,6 @@ SmartCompletionsConfig::SmartCompletionsConfig()
 {
 }
 
-SmartCompletionsConfig::~SmartCompletionsConfig() {}
-
 SmartCompletionsConfig& SmartCompletionsConfig::Load()
 {
     clConfig conf("SmartCompletions.conf");

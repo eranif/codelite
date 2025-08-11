@@ -11,8 +11,6 @@ ChatAIConfig::ChatAIConfig()
     m_llamaCli = defaultCli.GetFullPath();
 }
 
-ChatAIConfig::~ChatAIConfig() {}
-
 void ChatAIConfig::Load() { clConfig::Get().ReadItem(this); }
 
 void ChatAIConfig::Save() { clConfig::Get().WriteItem(this); }

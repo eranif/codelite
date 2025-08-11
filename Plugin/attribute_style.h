@@ -84,7 +84,7 @@ public:
     StyleProperty(int id, const wxString& name, const wxString& fontDesc, const wxString& fgColour,
                   const wxString& bgColour, bool eolFilled);
     StyleProperty();
-    ~StyleProperty() {}
+    ~StyleProperty() = default;
 
     bool IsSubstyle() const { return m_flags & kIsSubStyle; }
     void SetSubstyle() { m_flags |= kIsSubStyle; }

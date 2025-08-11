@@ -7,8 +7,8 @@
 class MainApp : public wxApp
 {
 public:
-    MainApp() {}
-    virtual ~MainApp() {}
+    MainApp() = default;
+    virtual ~MainApp() = default;
 
     virtual bool OnInit()
     {

@@ -38,10 +38,6 @@ m_boxHideNamespaces(false)
 {
 }
 
-ConfCallGraph::~ConfCallGraph()
-{
-}
-
 void ConfCallGraph::DeSerialize(Archive& arch)
 {
 	arch.Read(wxT("m_gprofPath"), m_gprofPath);

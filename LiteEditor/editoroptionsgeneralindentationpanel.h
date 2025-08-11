@@ -32,7 +32,7 @@ class EditorOptionsGeneralIndentationPanel : public OptionsConfigPage
 {
 public:
     EditorOptionsGeneralIndentationPanel(wxWindow* parent, OptionsConfigPtr options);
-    virtual ~EditorOptionsGeneralIndentationPanel() {}
+    ~EditorOptionsGeneralIndentationPanel() override = default;
 };
 
 #endif // __editoroptionsgeneralindentationpanel__

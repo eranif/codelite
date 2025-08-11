@@ -18,5 +18,3 @@ fmtYQ::fmtYQ()
     SetCommand({ yq_exe.value_or("yq"), ".", R"#("$(CurrentFileRelPath)")#" });
     SetEnabled(yq_exe.has_value());
 }
-
-fmtYQ::~fmtYQ() {}

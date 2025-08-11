@@ -7,8 +7,6 @@
 #include "UnixProcess.h"
 #endif
 
-ChildProcess::ChildProcess() {}
-
 ChildProcess::~ChildProcess()
 {
 #if USE_IPROCESS

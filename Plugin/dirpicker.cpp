@@ -51,8 +51,6 @@ DirPicker::DirPicker(wxWindow* parent, wxWindowID id, const wxString& buttonCapt
     ConnectEvents();
 }
 
-DirPicker::~DirPicker() {}
-
 void DirPicker::OnText(wxCommandEvent& event) { GetParent()->GetEventHandler()->ProcessEvent(event); }
 
 void DirPicker::CreateControls()

@@ -52,8 +52,6 @@ PostgreSqlDbAdapter::PostgreSqlDbAdapter(const wxString& serverName, const int p
     this->m_pDbLayer = NULL;
 }
 
-PostgreSqlDbAdapter::~PostgreSqlDbAdapter() {}
-
 void PostgreSqlDbAdapter::CloseConnection()
 {
     if(this->m_pDbLayer)

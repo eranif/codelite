@@ -14,7 +14,7 @@ class CommandHandler
 public:
     ResultFunc_t action = nullptr;
     long m_commandID = wxNOT_FOUND;
-    CommandHandler() {}
+    CommandHandler() = default;
     CommandHandler(long commandID, const ResultFunc_t& func)
         : action(func)
         , m_commandID(commandID)
@@ -33,11 +33,11 @@ protected:
     void SendSimpleCommand(clWebSocketClient& socket, const wxString& command,
                            const JSONItem& params = JSONItem(NULL));
 
-    NodeJSDevToolsProtocol();
+    NodeJSDevToolsProtocol() = default;
 
 public:
     static NodeJSDevToolsProtocol& Get();
-    virtual ~NodeJSDevToolsProtocol();
+    virtual ~NodeJSDevToolsProtocol() = default;
     void Clear();
 
     void SetDebugger(NodeDebugger* debugger) { this->m_debugger = debugger; }

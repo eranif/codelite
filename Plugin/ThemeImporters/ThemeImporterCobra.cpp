@@ -12,5 +12,3 @@ ThemeImporterCobra::ThemeImporterCobra()
     SetFileExtensions("*.cobra;cob");
     m_langName = "cobra";
 }
-
-ThemeImporterCobra::~ThemeImporterCobra() {}

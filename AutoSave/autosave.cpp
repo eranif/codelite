@@ -37,8 +37,6 @@ AutoSave::AutoSave(IManager* manager)
     wxTheApp->Bind(wxEVT_MENU, &AutoSave::OnSettings, this, XRCID("auto_save_settings"));
 }
 
-AutoSave::~AutoSave() {}
-
 void AutoSave::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void AutoSave::CreatePluginMenu(wxMenu* pluginsMenu)

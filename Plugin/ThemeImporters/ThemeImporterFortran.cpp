@@ -48,8 +48,6 @@ ThemeImporterFortran::ThemeImporterFortran()
     m_langName = "fortran";
 }
 
-ThemeImporterFortran::~ThemeImporterFortran() {}
-
 LexerConf::Ptr_t ThemeImporterFortran::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_FORTRAN);

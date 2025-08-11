@@ -22,7 +22,7 @@ protected:
     void OnSocketData(clCommandEvent& event);
 
 public:
-    LSPNetworkSocketClient();
+    LSPNetworkSocketClient() = default;
     virtual ~LSPNetworkSocketClient();
 
 public:

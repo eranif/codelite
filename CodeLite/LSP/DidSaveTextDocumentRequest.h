@@ -11,7 +11,7 @@ class WXDLLIMPEXP_CL DidSaveTextDocumentRequest : public LSP::Notification
 {
 public:
     explicit DidSaveTextDocumentRequest(const wxString& filename, const wxString& fileContent);
-    virtual ~DidSaveTextDocumentRequest();
+    virtual ~DidSaveTextDocumentRequest() = default;
 };
 }; // namespace LSP
 

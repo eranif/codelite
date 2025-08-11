@@ -40,7 +40,7 @@ class SvnOverlayTool {
 	
 private:
 	SvnOverlayTool();
-	virtual ~SvnOverlayTool();
+    virtual ~SvnOverlayTool() = default;
 	
 protected:
 	wxBitmap DoAddBitmap(const wxBitmap& bmp, const wxBitmap &overlayBmp);

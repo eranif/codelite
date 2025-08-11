@@ -36,7 +36,7 @@ class StackWalker : public wxStackWalker
 	
 public:
 	StackWalker(wxTextOutputStream *output);
-	virtual ~StackWalker();
+	virtual ~StackWalker() = default;
 	void OnStackFrame(const wxStackFrame &frame);
 };
 #endif 

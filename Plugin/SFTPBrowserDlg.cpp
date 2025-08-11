@@ -66,7 +66,7 @@ public:
         }
     }
 
-    virtual ~SFTPBrowserEntryClientData() {}
+    virtual ~SFTPBrowserEntryClientData() = default;
 
     const wxString& GetDisplayName() const { return GetAttribute()->GetName(); }
     void SetAttribute(const SFTPAttribute::Ptr_t& attribute) { this->m_attribute = attribute; }

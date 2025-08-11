@@ -56,8 +56,6 @@ static wxString __get_user_name()
 
 clStandardPaths::clStandardPaths() { IgnoreAppSubDir("bin"); }
 
-clStandardPaths::~clStandardPaths() {}
-
 clStandardPaths& clStandardPaths::Get()
 {
     static clStandardPaths codelitePaths;

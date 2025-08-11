@@ -64,7 +64,7 @@ protected:
 
 public:
     PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment);
-    virtual ~PHPDocComment();
+    virtual ~PHPDocComment() = default;
 
     void SetComment(const wxString& comment) { this->m_comment = comment; }
 

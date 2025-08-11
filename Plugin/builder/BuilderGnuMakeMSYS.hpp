@@ -8,7 +8,7 @@ class WXDLLIMPEXP_SDK BuilderGnuMakeMSYS : public BuilderGnuMake
 public:
     BuilderGnuMakeMSYS();
     BuilderGnuMakeMSYS(const wxString& name, const wxString& buildTool, const wxString& buildToolOptions);
-    virtual ~BuilderGnuMakeMSYS();
+    virtual ~BuilderGnuMakeMSYS() = default;
 };
 
 #endif // BUILDERGNUMAKEMSYS_HPP

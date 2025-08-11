@@ -46,7 +46,7 @@ public:
     int GetStyle(const wxColour& fg, const wxColour& bg);
     wxTextAttr GetDefaultStyle() const;
     wxSTCStyleProvider(wxStyledTextCtrl* ctrl);
-    virtual ~wxSTCStyleProvider();
+    virtual ~wxSTCStyleProvider() = default;
     void Clear();
     void OnIdle(wxIdleEvent& event);
 };
@@ -100,7 +100,7 @@ private:
 
 public:
     clAnsiEscapeCodeHandler();
-    ~clAnsiEscapeCodeHandler();
+    ~clAnsiEscapeCodeHandler() = default;
 
     void Parse(const wxString& buffer);
     void Reset();

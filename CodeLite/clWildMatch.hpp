@@ -26,7 +26,7 @@ class WXDLLIMPEXP_CL clFileExtensionMatcher
 
 public:
     clFileExtensionMatcher(const wxString& mask);
-    ~clFileExtensionMatcher();
+    ~clFileExtensionMatcher() = default;
 
     bool matches(const wxString& filename) const;
 };
@@ -43,7 +43,7 @@ public:
      */
     clPathExcluder(const wxArrayString& patterns);
 
-    ~clPathExcluder();
+    ~clPathExcluder() = default;
     bool is_exclude_path(const wxString& path) const;
 };
 

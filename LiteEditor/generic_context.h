@@ -58,7 +58,7 @@ public:
     {
     }
 
-    virtual ~ContextGeneric();
+    virtual ~ContextGeneric() = default;
     virtual ContextBase* NewInstance(clEditor* container);
 
     //---------------------------------------

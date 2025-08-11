@@ -58,7 +58,7 @@ struct WXDLLIMPEXP_SDK WordSetIndex {
         , is_substyle(b)
     {
     }
-    WordSetIndex() {}
+    WordSetIndex() = default;
     JSONItem to_json() const
     {
         auto item = JSONItem::createObject();
@@ -165,7 +165,7 @@ public:
 
 public:
     LexerConf();
-    virtual ~LexerConf();
+    virtual ~LexerConf() = default;
 
     void SetUseCustomTextSelectionFgColour(bool b) { EnableFlag(kUseCustomTextSelectionFgColour, b); }
     bool IsUseCustomTextSelectionFgColour() const { return HasFlag(kUseCustomTextSelectionFgColour); }

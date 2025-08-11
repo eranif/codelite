@@ -8,7 +8,7 @@ class clDockerComposeFile : public clDockerBuildableFile
 public:
     clDockerComposeFile(const wxString& path);
     clDockerComposeFile();
-    virtual ~clDockerComposeFile();
+    virtual ~clDockerComposeFile() = default;
     void FromJSON(const JSONItem& json, const wxString& workspaceDir);
     JSONItem ToJSON(const wxString& workspaceDir) const;
 };

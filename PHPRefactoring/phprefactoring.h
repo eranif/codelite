@@ -32,7 +32,7 @@ private:
 
 public:
     PHPRefactoring(IManager* manager);
-    ~PHPRefactoring() override;
+    ~PHPRefactoring() override = default;
 
     //--------------------------------------------
     // Abstract methods

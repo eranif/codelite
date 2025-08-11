@@ -10,7 +10,7 @@ protected:
 
 public:
     LSPRustAnalyzerDetector();
-    ~LSPRustAnalyzerDetector();
+    ~LSPRustAnalyzerDetector() = default;
 };
 
 #endif // LSPRUSTANALYZERDETECTOR_HPP

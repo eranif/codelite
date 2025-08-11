@@ -21,7 +21,7 @@ protected:
 
 public:
     clConsoleGnomeTerminal();
-    virtual ~clConsoleGnomeTerminal();
+    virtual ~clConsoleGnomeTerminal() = default;
 
 public:
     virtual bool Start();

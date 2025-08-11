@@ -31,7 +31,7 @@ class SFTPManageBookmarkDlg : public SFTPManageBookmarkDlgBase
 {
 public:
     SFTPManageBookmarkDlg(wxWindow* parent, const wxArrayString& bookmarks);
-    virtual ~SFTPManageBookmarkDlg();
+    virtual ~SFTPManageBookmarkDlg() = default;
     wxArrayString GetBookmarks() const;
 
 protected:

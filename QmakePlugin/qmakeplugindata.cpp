@@ -78,13 +78,12 @@ wxString QmakePluginData::ToString()
 {
 	wxString serializedStr (wxEmptyString);
 	serializedStr << wxString::Format(wxT("%04u"), (unsigned int)m_pluginsData.size());
-	std::map<wxString, BuildConfPluginData>::iterator iter = m_pluginsData.begin();
-	for(; iter != m_pluginsData.end(); iter++){
-		writeString( serializedStr, iter->second.m_enabled ? wxT("Y") : wxT("N"));
-		writeString( serializedStr, iter->second.m_buildConfName                );
-		writeString( serializedStr, iter->second.m_qmakeConfig                  );
-		writeString( serializedStr, iter->second.m_qmakeExecutionLine           );
-		writeString( serializedStr, iter->second.m_freeText                     );
+	for (const auto& [_, pluginData] : m_pluginsData){
+		writeString(serializedStr, pluginData.m_enabled ? wxT("Y") : wxT("N"));
+		writeString(serializedStr, pluginData.m_buildConfName                );
+		writeString(serializedStr, pluginData.m_qmakeConfig                  );
+		writeString(serializedStr, pluginData.m_qmakeExecutionLine           );
+		writeString(serializedStr, pluginData.m_freeText                     );
 	}
 	return serializedStr;
 }

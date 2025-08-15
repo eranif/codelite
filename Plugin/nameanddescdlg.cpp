@@ -37,21 +37,19 @@ NameAndDescDlg::NameAndDescDlg(wxWindow* parent, IManager* manager, const wxStri
     GetProjectTemplateList(projectList);
 
     m_choiceType->Clear();
-    std::list<ProjectPtr>::iterator iter = projectList.begin();
     std::set<wxString> categories;
 
     // Add the 'All' category
     categories.insert(wxT("All"));
-    for(; iter != projectList.end(); iter++) {
-        wxString internalType = (*iter)->GetProjectInternalType();
-        if(internalType.IsEmpty())
+    for (const auto& project : projectList) {
+        wxString internalType = project->GetProjectInternalType();
+        if (internalType.IsEmpty())
             internalType = wxT("Others");
         categories.insert(internalType);
     }
 
-    std::set<wxString>::iterator cIter = categories.begin();
-    for(; cIter != categories.end(); cIter++) {
-        m_choiceType->Append((*cIter));
+    for (const auto& category : categories) {
+        m_choiceType->Append(category);
     }
 
     // Select the 'Console' to be the default

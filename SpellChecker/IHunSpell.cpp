@@ -527,22 +527,21 @@ void IHunSpell::InitLanguageList()
 void IHunSpell::GetAvailableLanguageKeyNames(const wxString& path, wxArrayString& lang)
 {
     lang.Clear();
-    languageMap::iterator itLang;
 
-    for (itLang = m_languageList.begin(); itLang != m_languageList.end(); ++itLang) {
+    for (const auto& [langFullName, langCode] : m_languageList) {
         wxFileName fna(path, "");
         wxFileName fnd(path, "");
 
-        fna.SetName(itLang->second);
+        fna.SetName(langCode);
         fna.SetExt("aff");
 
-        fnd.SetName(itLang->second);
+        fnd.SetName(langCode);
         fnd.SetExt("dic");
 
         if (!fna.FileExists() || !fnd.FileExists())
             continue;
 
-        lang.Add(itLang->first);
+        lang.Add(langFullName);
     }
 }
 

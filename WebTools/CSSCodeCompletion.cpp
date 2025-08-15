@@ -100,8 +100,8 @@ void CSSCodeCompletion::CssCodeComplete(IEditor* editor)
             wxCodeCompletionBoxEntry::Vec_t entries;
             const wxArrayString& values = (*iter).values;
 
-            for(size_t i = 0; i < values.size(); ++i) {
-                wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(values.Item(i), 0);
+            for (const auto& value : values) {
+                wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(value, 0);
                 entries.push_back(entry);
             }
             wxCodeCompletionBoxManager::Get().ShowCompletionBox(editor->GetCtrl(), entries, bitmaps, 0,

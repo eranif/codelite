@@ -48,8 +48,8 @@ TestClassDlg::TestClassDlg(wxWindow* parent, IManager* mgr, UnitTestPP* plugin)
 
     // populate the unit tests project list
     std::vector<ProjectPtr> projects = m_plugin->GetUnitTestProjects();
-    for(size_t i = 0; i < projects.size(); i++) {
-        m_choiceProjects->Append(projects.at(i)->GetName());
+    for (const auto& project : projects) {
+        m_choiceProjects->Append(project->GetName());
     }
 
     if(m_choiceProjects->IsEmpty() == false) {
@@ -150,9 +150,7 @@ void TestClassDlg::DoRefreshFunctions(bool repportError)
         // suggest the user a multiple choice
         wxArrayString choices;
 
-        for(size_t i = 0; i < matches.size(); ++i) {
-            wxString option;
-            TagEntryPtr t = matches.at(i);
+        for (const auto& t : matches) {
             choices.Add(t->GetPath());
         }
 

@@ -297,8 +297,7 @@ static void SplitMask(const wxString& maskString, wxArrayString& includeMask, wx
 {
     wxString lcMask = maskString.Lower();
     wxArrayString masks = ::wxStringTokenize(lcMask, ";,", wxTOKEN_STRTOK);
-    for (size_t i = 0; i < masks.size(); ++i) {
-        wxString& mask = masks.Item(i);
+    for (wxString& mask : masks) {
         mask.Trim().Trim(false);
         // exclude mask starts with "!" or "-"
         if ((mask[0] == '!') || (mask[0] == '-')) {
@@ -323,8 +322,7 @@ bool FileUtils::WildMatch(const wxString& mask, const wxFileName& filename)
 
     wxString lcFilename = filename.GetFullName().Lower();
     // Try to the "exclude" masking first
-    for (size_t i = 0; i < excMasks.size(); ++i) {
-        const wxString& pattern = excMasks.Item(i);
+    for (const wxString& pattern : excMasks) {
         if ((!pattern.Contains("*") && lcFilename == pattern) ||
             (pattern.Contains("*") && ::wxMatchWild(pattern, lcFilename, false))) {
             // use exact match
@@ -332,8 +330,7 @@ bool FileUtils::WildMatch(const wxString& mask, const wxFileName& filename)
         }
     }
 
-    for (size_t i = 0; i < incMasks.size(); ++i) {
-        const wxString& pattern = incMasks.Item(i);
+    for (const wxString& pattern : incMasks) {
         if ((!pattern.Contains("*") && lcFilename == pattern) ||
             (pattern.Contains("*") && ::wxMatchWild(pattern, lcFilename, false))) {
             // use exact match
@@ -389,8 +386,7 @@ bool FileUtils::WildMatch(const wxArrayString& masks, const wxString& filename)
         return true;
     }
 
-    for (size_t i = 0; i < masks.size(); ++i) {
-        const wxString& pattern = masks.Item(i);
+    for (const wxString& pattern : masks) {
         if ((!pattern.Contains("*") && filename == pattern) ||
             (pattern.Contains("*") && ::wxMatchWild(pattern, filename, false))) {
             // use exact match
@@ -453,19 +449,19 @@ wxString FileUtils::NormaliseName(const wxString& name)
         memset(invalidChars, 0, sizeof(invalidChars));
         std::vector<int> V = { '@', '-', '^', '%', '&', '$', '#', '@', '!', '(', ')',
                                '{', '}', '[', ']', '+', '=', ';', ',', '.', ' ' };
-        for (size_t i = 0; i < V.size(); ++i) {
-            invalidChars[V[i]] = 1;
+        for (auto ch : V) {
+            invalidChars[ch] = 1;
         }
         initialised = true;
     }
 
     wxString normalisedName;
-    for (size_t i = 0; i < name.size(); ++i) {
-        if (invalidChars[name[i]]) {
+    for (auto c : name) {
+        if (invalidChars[c]) {
             // an invalid char was found
             normalisedName << "_";
         } else {
-            normalisedName << name[i];
+            normalisedName << c;
         }
     }
     return normalisedName;
@@ -591,8 +587,8 @@ bool DoFindExe(const wxString& name, wxFileName& exepath, const wxArrayString& h
     }
     mergedPaths.swap(paths);
 
-    for (size_t i = 0; i < paths.size(); ++i) {
-        const wxString& curpath = paths.Item(i);
+    for (const wxString& curpath : paths) {
+        
         wxFileName fnPath(curpath, name);
         if (fnPath.FileExists()) {
             exepath = fnPath;

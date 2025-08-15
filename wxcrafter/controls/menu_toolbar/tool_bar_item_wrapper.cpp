@@ -62,15 +62,13 @@ static wxString GenerateCppCtorCodeRecursively(wxcWidget* widget) // Helper func
         wxString childcode = widget->CppCtorCode();
         code << childcode;
     }
-    wxcWidget::List_t::const_iterator iter = widget->GetChildren().begin();
-    for(; iter != widget->GetChildren().end(); ++iter) {
-        if(wxCrafter::GetToolType((*iter)->PropertyString(PROP_KIND)) != wxCrafter::TOOL_TYPE_SEPARATOR) {
-            wxString childcode = (*iter)->CppCtorCode();
+    for (auto* child : widget->GetChildren()) {
+        if (wxCrafter::GetToolType(child->PropertyString(PROP_KIND)) != wxCrafter::TOOL_TYPE_SEPARATOR) {
+            wxString childcode = child->CppCtorCode();
             code << childcode;
         }
-        wxcWidget::List_t::const_iterator childiter = (*iter)->GetChildren().begin();
-        for(; childiter != (*iter)->GetChildren().end(); ++childiter) {
-            code << GenerateCppCtorCodeRecursively(*childiter);
+        for (auto* grandChild : child->GetChildren()) {
+            code << GenerateCppCtorCodeRecursively(grandChild);
         }
     }
 

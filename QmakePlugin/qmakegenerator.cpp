@@ -280,9 +280,7 @@ void QMakeProFileGenerator::SetFiles(wxString& pro_file, ProjectPtr proj)
     qresources << wxT("RESOURCES   = \\\n");
     wxString BUFF(wxT("             "));
 
-    for(size_t i = 0; i < files.size(); i++) {
-        wxFileName fn = files.at(i);
-
+    for (wxFileName fn : files) {
         switch(FileExtManager::GetType(fn.GetFullName())) {
         case FileExtManager::TypeSourceC:
         case FileExtManager::TypeSourceCpp:

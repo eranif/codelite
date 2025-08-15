@@ -22,10 +22,8 @@ SFTPQuickConnectDlg::SFTPQuickConnectDlg(wxWindow* parent)
     user = clConfig::Get().Read("SFTPQuickConnect/User", wxString());
     port = clConfig::Get().Read("SFTPQuickConnect/Port", wxString("22"));
 
-    const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
-    SSHAccountInfo::Vect_t::const_iterator iter = accounts.begin();
-    for(; iter != accounts.end(); ++iter) {
-        m_choiceAccount->Append(iter->GetAccountName());
+    for (const auto& account : settings.GetAccounts()) {
+        m_choiceAccount->Append(account.GetAccountName());
     }
     int where = m_choiceAccount->FindString(selectedAccount);
     if(where != wxNOT_FOUND) { m_choiceAccount->SetSelection(where); }

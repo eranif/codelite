@@ -76,10 +76,10 @@ void BitmapComboxWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     wxString options = PropertyString(PROP_CB_CHOICES);
     text << XRCPrefix() << XRCStyle() << XRCSize() << XRCCommonAttributes();
     BmpTextVec_t arr = BmpTextSelectorDlg::FromString(options);
-    for(size_t i = 0; i < arr.size(); ++i) {
+    for (const auto& [bmp, label] : arr) {
         text << "<object class=\"ownerdrawnitem\">";
-        text << "<text>" << wxCrafter::CDATA(arr.at(i).second) << "</text>";
-        text << XRCBitmap("bitmap", arr.at(i).first);
+        text << "<text>" << wxCrafter::CDATA(label) << "</text>";
+        text << XRCBitmap("bitmap", bmp);
         text << "</object>";
     }
 

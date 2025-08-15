@@ -17,11 +17,14 @@ bool clAnagram::MatchesInOrder(const wxString& haystack) const
     if(m_needle.IsEmpty()) { return true; }
     size_t index = 0;
     size_t maxIndex = m_needle.size();
-    for(size_t i = 0; i < haystack.size(); ++i) {
-        wxChar ch = haystack[i];
+    for (wxChar ch : haystack) {
         ch = wxTolower(ch);
-        if(ch == m_needle[index]) { ++index; }
-        if(maxIndex == index) { return true; }
+        if (ch == m_needle[index]) {
+            ++index;
+        }
+        if (maxIndex == index) {
+            return true;
+        }
     }
     return false;
 }
@@ -30,10 +33,11 @@ void clAnagram::Reset(const wxString& needle, size_t flags)
 {
     m_flags = flags;
     m_needle.Clear();
-    if(HasFlag(eAnagramFlag::kIgnoreWhitespace)) {
-        for(size_t i = 0; i < needle.size(); ++i) {
-            wxChar ch = needle[i];
-            if(IS_WHITESPACE(ch)) { continue; }
+    if (HasFlag(eAnagramFlag::kIgnoreWhitespace)) {
+        for (wxChar ch : needle) {
+            if (IS_WHITESPACE(ch)) {
+                continue;
+            }
             m_needle.Append(wxTolower(ch));
         }
     } else {

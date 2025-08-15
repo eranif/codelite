@@ -410,8 +410,8 @@ IEditor* UnitTestPP::DoAddTestFile(const wxString& filename, const wxString& pro
 
         // Search the target file, if it is already exist in the project, open the file
         // and return
-        for(size_t i = 0; i < files.size(); i++) {
-            if(files.at(i) == fn) {
+        for (const auto& file : files) {
+            if (file == fn) {
                 m_mgr->OpenFile(fn.GetFullPath());
                 editor = m_mgr->GetActiveEditor();
                 if(editor && editor->GetFileName() == fn) {
@@ -447,9 +447,8 @@ wxFileName UnitTestPP::FindBestSourceFile(ProjectPtr proj, const wxFileName& fil
 
         // Search the target file, if it is already exist in the project, open the file
         // and return
-        for(size_t i = 0; i < files.size(); i++) {
-            wxFileName fn = files.at(i);
-            if(IsSourceFile(fn.GetExt())) {
+        for (const auto& fn : files) {
+            if (IsSourceFile(fn.GetExt())) {
                 return fn;
             }
         }

@@ -255,9 +255,8 @@ void CommandProcessorBase::PopulateLabelledStatesMenu(wxMenu* menu)
     }
 
     int id = FIRST_MENU_ID;
-    for(CLCommand::Vec_t::const_iterator iter = GetCommands().begin(); iter != GetCommands().end(); ++iter) {
-        CLCommand::Ptr_t command = *iter;
-        if(command && !command->GetUserLabel().empty()) {
+    for (const auto& command : GetCommands()) {
+        if (command && !command->GetUserLabel().empty()) {
             menu->Append(id, command->GetUserLabel());
         }
         ++id; // It's easier in the handler if the event id is the GetCommands() index, rather than a menu index

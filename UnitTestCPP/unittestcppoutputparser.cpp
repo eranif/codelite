@@ -81,13 +81,12 @@ void UnitTestCppOutputParser::Parse(TestSummary* summary)
 
         // Try the GNU pattern first
         bool isAndErrorLine = false;
-        Compiler::CmpListInfoPattern::const_iterator iter = gnuErrors.begin();
-        for(; iter != gnuErrors.end(); ++iter) {
-            wxRegEx re(iter->pattern, wxRE_ADVANCED | wxRE_ICASE);
+        for (const auto& infoPattern : gnuErrors) {
+            wxRegEx re(infoPattern.pattern, wxRE_ADVANCED | wxRE_ICASE);
             long nFileIndex = wxNOT_FOUND;
             long nLineIndex = wxNOT_FOUND;
-            iter->fileNameIndex.ToCLong(&nFileIndex);
-            iter->lineNumberIndex.ToCLong(&nLineIndex);
+            infoPattern.fileNameIndex.ToCLong(&nFileIndex);
+            infoPattern.lineNumberIndex.ToCLong(&nLineIndex);
             ErrorLineInfo info;
             wxString lineNumber, filename;
             if(re.Matches(line)) {
@@ -103,13 +102,12 @@ void UnitTestCppOutputParser::Parse(TestSummary* summary)
         }
 
         if(!isAndErrorLine) {
-            iter = vcErrors.begin();
-            for(; iter != vcErrors.end(); ++iter) {
-                wxRegEx re(iter->pattern, wxRE_ADVANCED | wxRE_ICASE);
+            for (const auto& infoPattern : vcErrors) {
+                wxRegEx re(infoPattern.pattern, wxRE_ADVANCED | wxRE_ICASE);
                 long nFileIndex = wxNOT_FOUND;
                 long nLineIndex = wxNOT_FOUND;
-                iter->fileNameIndex.ToCLong(&nFileIndex);
-                iter->lineNumberIndex.ToCLong(&nLineIndex);
+                infoPattern.fileNameIndex.ToCLong(&nFileIndex);
+                infoPattern.lineNumberIndex.ToCLong(&nLineIndex);
                 ErrorLineInfo info;
                 wxString lineNumber, filename;
                 if(re.Matches(line)) {

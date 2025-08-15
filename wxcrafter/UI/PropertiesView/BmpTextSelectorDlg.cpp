@@ -8,10 +8,10 @@ BmpTextSelectorDlg::BmpTextSelectorDlg(wxWindow* parent, const wxString& initial
     : BmpTextSelectorDlgBase(parent)
 {
     BmpTextVec_t vec = FromString(initialValue);
-    for(size_t i = 0; i < vec.size(); ++i) {
+    for (const auto& [bmp, label] : vec) {
         wxVector<wxVariant> cols;
-        cols.push_back(vec.at(i).first);
-        cols.push_back(vec.at(i).second);
+        cols.push_back(bmp);
+        cols.push_back(label);
         m_dvListCtrl->AppendItem(cols);
     }
     SetName("BmpTextSelectorDlg");
@@ -71,10 +71,10 @@ BmpTextVec_t BmpTextSelectorDlg::FromString(const wxString& text)
 wxString BmpTextSelectorDlg::ToString(const BmpTextVec_t& vec)
 {
     JSONRoot root(cJSON_Array);
-    for(size_t i = 0; i < vec.size(); ++i) {
+    for (const auto& [bmp, label] : vec) {
         JSONElement element = JSONElement::createObject();
-        element.addProperty("bmp", vec.at(i).first);
-        element.addProperty("label", vec.at(i).second);
+        element.addProperty("bmp", bmp);
+        element.addProperty("label", label);
         root.toElement().arrayAppend(element);
     }
     wxString asString(root.toElement().format());

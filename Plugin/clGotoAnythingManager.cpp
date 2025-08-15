@@ -110,10 +110,7 @@ void clGotoAnythingManager::Initialise()
         // Call this to ensure that any checkable items are marked as "checked" if needed
         menu->UpdateUI(mainFrame->GetEventHandler());
 
-        const wxMenuItemList& L = menu->GetMenuItems();
-        wxMenuItemList::const_iterator iter = L.begin();
-        for(; iter != L.end(); ++iter) {
-            wxMenuItem* menuItem = *iter;
+        for (const wxMenuItem* menuItem : menu->GetMenuItems()) {
             if(menuItem->GetSubMenu()) {
                 wxString labelText = menuItem->GetItemLabelText();
                 if((labelText == "Recent Files") || (labelText == "Recent Workspaces")) {

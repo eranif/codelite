@@ -22,9 +22,7 @@ void SFTPGrepStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, boo
     size_t matchStyleLen = 0;
     size_t headerStyleLen = 0;
     size_t i = 0;
-    wxString::const_iterator iter = text.begin();
-    for(; iter != text.end(); ++iter) {
-        const wxUniChar& ch = *iter;
+    for (const wxUniChar& ch : text) {
         size_t chWidth = 1;
         if(!ch.IsAscii()) {
             chWidth = wxString(ch).mb_str(wxConvUTF8).length();

@@ -126,8 +126,8 @@ void clCxxWorkspace::SetBuildMatrix(BuildMatrixPtr mapping)
     GetLocalWorkspace()->SetSelectedBuildConfiguration(mapping->GetSelectedConfigurationName());
 
     // force regeneration of makefiles for all projects
-    for(ProjectMap_t::iterator iter = m_projects.begin(); iter != m_projects.end(); iter++) {
-        iter->second->SetModified(true);
+    for (auto& [_, project] : m_projects) {
+        project->SetModified(true);
     }
 
     DoUpdateBuildMatrix();
@@ -207,10 +207,7 @@ void clCxxWorkspace::AddProjectToBuildMatrix(ProjectPtr prj)
     BuildMatrixPtr matrix = GetBuildMatrix();
     wxString selConfName = matrix->GetSelectedConfigurationName();
 
-    std::list<WorkspaceConfigurationPtr> wspList = matrix->GetConfigurations();
-    std::list<WorkspaceConfigurationPtr>::iterator iter = wspList.begin();
-    for(; iter != wspList.end(); iter++) {
-        WorkspaceConfigurationPtr workspaceConfig = (*iter);
+    for (const auto& workspaceConfig : matrix->GetConfigurations()) {
         WorkspaceConfiguration::ConfigMappingList prjList = workspaceConfig->GetMapping();
         wxString wspCnfName = workspaceConfig->GetName();
 
@@ -248,8 +245,8 @@ void clCxxWorkspace::AddProjectToBuildMatrix(ProjectPtr prj)
 
         ConfigMappingEntry entry(prj->GetName(), matchConf->GetName());
         prjList.push_back(entry);
-        (*iter)->SetConfigMappingList(prjList);
-        matrix->SetConfiguration((*iter));
+        workspaceConfig->SetConfigMappingList(prjList);
+        matrix->SetConfiguration(workspaceConfig);
     }
 
     // and set the configuration name
@@ -265,9 +262,8 @@ void clCxxWorkspace::RemoveProjectFromBuildMatrix(ProjectPtr prj)
     wxString selConfName = matrix->GetSelectedConfigurationName();
 
     std::list<WorkspaceConfigurationPtr> wspList = matrix->GetConfigurations();
-    std::list<WorkspaceConfigurationPtr>::iterator iter = wspList.begin();
-    for(; iter != wspList.end(); iter++) {
-        WorkspaceConfiguration::ConfigMappingList prjList = (*iter)->GetMapping();
+    for (const auto& workspaceConfig : wspList) {
+        WorkspaceConfiguration::ConfigMappingList prjList = workspaceConfig->GetMapping();
 
         WorkspaceConfiguration::ConfigMappingList::iterator it = prjList.begin();
         for(; it != prjList.end(); it++) {
@@ -277,8 +273,8 @@ void clCxxWorkspace::RemoveProjectFromBuildMatrix(ProjectPtr prj)
             }
         }
 
-        (*iter)->SetConfigMappingList(prjList);
-        matrix->SetConfiguration((*iter));
+        workspaceConfig->SetConfigMappingList(prjList);
+        matrix->SetConfiguration(workspaceConfig);
     }
 
     // and set the configuration name
@@ -384,10 +380,7 @@ ProjectPtr clCxxWorkspace::FindProjectByName(const wxString& projName, wxString&
 void clCxxWorkspace::GetProjectList(wxArrayString& list) const
 {
     list.reserve(m_projects.size());
-    ProjectMap_t::const_iterator iter = m_projects.begin();
-    for(; iter != m_projects.end(); iter++) {
-        wxString name;
-        name = iter->first;
+    for (const auto& [name, _] : m_projects) {
         list.Add(name);
     }
 }
@@ -526,10 +519,8 @@ bool clCxxWorkspace::RemoveProject(const wxString& name, wxString& errMsg, const
     }
 
     // go over the dependencies list of each project and remove the project
-    iter = m_projects.begin();
-    for(; iter != m_projects.end(); ++iter) {
-        ProjectPtr p = iter->second;
-        if(p) {
+    for (const auto& [_, p] : m_projects) {
+        if (p) {
             wxArrayString configs;
             // populate the choice control with the list of available configurations for this project
             ProjectSettingsPtr settings = p->GetSettings();
@@ -543,16 +534,15 @@ bool clCxxWorkspace::RemoveProject(const wxString& name, wxString& errMsg, const
             }
 
             // update each configuration of this project
-            for(size_t i = 0; i < configs.GetCount(); i++) {
-
-                wxArrayString deps = p->GetDependencies(configs.Item(i));
+            for (const auto& config : configs) {
+                wxArrayString deps = p->GetDependencies(config);
                 int where = deps.Index(name);
-                if(where != wxNOT_FOUND) {
+                if (where != wxNOT_FOUND) {
                     deps.RemoveAt((size_t)where);
                 }
 
                 // update the configuration
-                p->SetDependencies(deps, configs.Item(i));
+                p->SetDependencies(deps, config);
             }
         }
     }
@@ -768,9 +758,8 @@ void clCxxWorkspace::SyncFromLocalWorkspaceSTParserMacros()
 void clCxxWorkspace::Save()
 {
     if(m_doc.IsOk()) {
-        ProjectMap_t::iterator iter = m_projects.begin();
-        for(; iter != m_projects.end(); iter++) {
-            iter->second->Save();
+        for (const auto& [_, project] : m_projects) {
+            project->Save();
         }
         SaveXmlFile();
     }
@@ -1061,15 +1050,14 @@ cJSON* clCxxWorkspace::CreateCompileCommandsJSON(bool createCompileFlagsTxt, wxA
     }
 
     JSONItem compile_commands = JSONItem::createArray();
-    clCxxWorkspace::ProjectMap_t::const_iterator iter = m_projects.begin();
-    for(; iter != m_projects.end(); ++iter) {
-        BuildConfigPtr buildConf = iter->second->GetBuildConfiguration();
-        if(buildConf && buildConf->IsProjectEnabled() && !buildConf->IsCustomBuild() &&
+    for (const auto& [_, project] : m_projects) {
+        BuildConfigPtr buildConf = project->GetBuildConfiguration();
+        if (buildConf && buildConf->IsProjectEnabled() && !buildConf->IsCustomBuild() &&
            buildConf->IsCompilerRequired()) {
-            iter->second->CreateCompileCommandsJSON(compile_commands, compilersGlobalPaths, createCompileFlagsTxt);
-            if(createCompileFlagsTxt && generated_paths) {
+            project->CreateCompileCommandsJSON(compile_commands, compilersGlobalPaths, createCompileFlagsTxt);
+            if (createCompileFlagsTxt && generated_paths) {
                 // compile_flags.txt files are created under the same path as the project
-                wxFileName project_fn = iter->second->GetFileName();
+                wxFileName project_fn = project->GetFileName();
                 project_fn.SetFullName("compile_flags.txt");
                 generated_paths->Add(project_fn.GetFullPath());
             }
@@ -1097,17 +1085,15 @@ ProjectPtr clCxxWorkspace::GetProject(const wxString& name) const
 
 void clCxxWorkspace::GetCompilers(wxStringSet_t& compilers)
 {
-    clCxxWorkspace::ProjectMap_t::iterator iter = m_projects.begin();
-    for(; iter != m_projects.end(); ++iter) {
-        iter->second->GetCompilers(compilers);
+    for (auto& [_, project] : m_projects) {
+        project->GetCompilers(compilers);
     }
 }
 
 void clCxxWorkspace::ReplaceCompilers(const wxStringMap_t& compilers)
 {
-    clCxxWorkspace::ProjectMap_t::iterator iter = m_projects.begin();
-    for(; iter != m_projects.end(); ++iter) {
-        iter->second->ReplaceCompilers(compilers);
+    for (auto& [_, project] : m_projects) {
+        project->ReplaceCompilers(compilers);
     }
 }
 
@@ -1149,15 +1135,13 @@ void clCxxWorkspace::RenameProject(const wxString& oldname, const wxString& newn
         projectNode = projectNode->GetNext();
     }
     // Update dependenices for each project
-    clCxxWorkspace::ProjectMap_t::iterator iter = m_projects.begin();
-    for(; iter != m_projects.end(); ++iter) {
-        iter->second->ProjectRenamed(oldname, newname);
+    for (const auto& [_, project] : m_projects) {
+        project->ProjectRenamed(oldname, newname);
     }
 
     clCxxWorkspace::ProjectMap_t tmpProjects;
-    iter = m_projects.begin();
-    for(; iter != m_projects.end(); ++iter) {
-        tmpProjects.insert(std::make_pair(iter->first, iter->second));
+    for (const auto& [projectName, project] : m_projects) {
+        tmpProjects.emplace(projectName, project);
     }
     m_projects.swap(tmpProjects);
 
@@ -1189,10 +1173,10 @@ wxString clCxxWorkspace::GetFilesMask() const
 wxString clCxxWorkspace::GetProjectFromFile(const wxFileName& filename) const
 {
     wxString filenameFP = filename.GetFullPath();
-    clCxxWorkspace::ProjectMap_t::const_iterator iter = m_projects.begin();
-    for(; iter != m_projects.end(); ++iter) {
-        if(iter->second->GetFiles().count(filenameFP)) {
-            return iter->first;
+
+    for (const auto& [projectName, project] : m_projects) {
+        if (project->GetFiles().count(filenameFP)) {
+            return projectName;
         }
     }
     return "";

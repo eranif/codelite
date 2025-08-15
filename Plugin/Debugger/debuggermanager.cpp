@@ -59,10 +59,9 @@ DebuggerMgr::DebuggerMgr() {}
 
 DebuggerMgr::~DebuggerMgr()
 {
-    std::vector<clDynamicLibrary*>::iterator iter = m_dl.begin();
-    for(; iter != m_dl.end(); iter++) {
-        (*iter)->Detach();
-        delete(*iter);
+    for (auto* dl : m_dl) {
+        dl->Detach();
+        delete dl;
     }
 
     m_dl.clear();
@@ -180,13 +179,12 @@ wxArrayString DebuggerMgr::GetAvailableDebuggers()
     wxArrayString dbgs;
     dbgs.reserve(m_pluginsDebuggers.size() + m_debuggers.size());
 
-    auto iter = m_debuggers.begin();
-    for(; iter != m_debuggers.end(); iter++) {
-        dbgs.Add(iter->first);
+    for (const auto& [name, _] : m_debuggers) {
+        dbgs.Add(name);
     }
 
     // append all the plugins that were registered themself as debugger
-    for(const auto& vt : m_pluginsDebuggers) {
+    for (const auto& vt : m_pluginsDebuggers) {
         dbgs.insert(dbgs.end(), vt.second.begin(), vt.second.end());
     }
     return dbgs;

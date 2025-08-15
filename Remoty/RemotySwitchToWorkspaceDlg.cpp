@@ -118,9 +118,9 @@ void RemotySwitchToWorkspaceDlg::InitialiseDialog()
             return;
         }
 
-        for (size_t i = 0; i < m_remoteWorkspaces.size(); ++i) {
-            m_comboBoxPath->Append(m_remoteWorkspaces[i].path);
-            S.insert(m_remoteWorkspaces[i].account);
+        for (const auto& remoteWorkspace : m_remoteWorkspaces) {
+            m_comboBoxPath->Append(remoteWorkspace.path);
+            S.insert(remoteWorkspace.account);
         }
 
         // Add accounts that do not have an associated workspace

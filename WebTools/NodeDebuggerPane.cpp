@@ -168,8 +168,7 @@ void NodeDebuggerPane::OnUpdateBreakpoints(clDebugEvent& event)
         wxDELETE(scd);
     });
     const NodeJSBreakpoint::Vec_t& bps = NodeJSWorkspace::Get()->GetDebugger()->GetBreakpointsMgr()->GetBreakpoints();
-    for(size_t i = 0; i < bps.size(); ++i) {
-        const NodeJSBreakpoint& bp = bps[i];
+    for (const auto& bp : bps) {
         wxVector<wxVariant> cols;
         cols.push_back(bp.GetFilename());
         cols.push_back(wxString() << bp.GetLine());
@@ -353,8 +352,7 @@ void NodeDebuggerPane::OnLocalProperties(clDebugEvent& event)
         }
     }
 
-    for(size_t i = 0; i < propVec.size(); ++i) {
-        const PropertyDescriptor& prop = propVec[i];
+    for (const auto& prop : propVec) {
         wxTreeItemId child = m_treeCtrlLocals->AppendItem(item, prop.GetName());
         m_treeCtrlLocals->SetItemText(child, prop.GetTextPreview(), 1);
         m_treeCtrlLocals->SetItemData(child, new LocalTreeItemData(prop.GetValue().GetObjectId()));

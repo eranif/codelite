@@ -1074,13 +1074,12 @@ void BuilderGNUMakeClassic::CreatePostBuildEvents(ProjectPtr proj, BuildConfigPt
     text << wxT("PostBuild:\n");
     text << wxT("\t@echo Executing Post Build commands ...\n");
 
-    BuildCommandList::const_iterator iter = cmds.begin();
-    for(; iter != cmds.end(); iter++) {
-        if(iter->GetEnabled()) {
+    for (const auto& buildCommand : cmds) {
+        if (buildCommand.GetEnabled()) {
             // HACK:
             // If the command is 'copy' under Windows, make sure that
             // we set all slashes to backward slashes
-            wxString command = iter->GetCommand();
+            wxString command = buildCommand.GetCommand();
             command.Trim().Trim(false);
             if(OS_WINDOWS && command.StartsWith(wxT("copy"))) {
                 command.Replace(wxT("/"), wxT("\\"));
@@ -1090,7 +1089,7 @@ void BuilderGNUMakeClassic::CreatePostBuildEvents(ProjectPtr proj, BuildConfigPt
                 command.RemoveLast();
             }
 
-            text << wxT("\t") << iter->GetCommand() << wxT("\n");
+            text << wxT("\t") << buildCommand.GetCommand() << wxT("\n");
         }
     }
     text << wxT("\t@echo Done\n");
@@ -1101,9 +1100,8 @@ bool BuilderGNUMakeClassic::HasPrebuildCommands(BuildConfigPtr bldConf) const
     BuildCommandList cmds;
     bldConf->GetPreBuildCommands(cmds);
 
-    BuildCommandList::const_iterator iter = cmds.begin();
-    for(; iter != cmds.end(); iter++) {
-        if(iter->GetEnabled()) {
+    for (const auto& cmd : cmds) {
+        if (cmd.GetEnabled()) {
             return true;
         }
     }
@@ -1113,7 +1111,6 @@ bool BuilderGNUMakeClassic::HasPrebuildCommands(BuildConfigPtr bldConf) const
 void BuilderGNUMakeClassic::CreatePreBuildEvents(ProjectPtr proj, BuildConfigPtr bldConf, wxString& text)
 {
     BuildCommandList cmds;
-    BuildCommandList::iterator iter;
     wxString name = bldConf->GetName();
     name = NormalizeConfigName(name);
 
@@ -1135,18 +1132,17 @@ void BuilderGNUMakeClassic::CreatePreBuildEvents(ProjectPtr proj, BuildConfigPtr
 
     bool first(true);
     text << wxT("PreBuild:\n");
-    if(!cmds.empty()) {
-        iter = cmds.begin();
-        for(; iter != cmds.end(); iter++) {
-            if(iter->GetEnabled()) {
-                if(first) {
+    if (!cmds.empty()) {
+        for (const auto& cmd : cmds) {
+            if (cmd.GetEnabled()) {
+                if (first) {
                     text << wxT("\t@echo Executing Pre Build commands ...\n");
                     first = false;
                 }
-                text << wxT("\t") << iter->GetCommand() << wxT("\n");
+                text << wxT("\t") << cmd.GetCommand() << wxT("\n");
             }
         }
-        if(!first) {
+        if (!first) {
             text << wxT("\t@echo Done\n");
         }
     }
@@ -1578,20 +1574,17 @@ wxString BuilderGNUMakeClassic::GetCdCmd(const wxFileName& path1, const wxFileNa
 void BuilderGNUMakeClassic::CreateCustomPostBuildEvents(BuildConfigPtr bldConf, wxString& text)
 {
     BuildCommandList cmds;
-    BuildCommandList::iterator iter;
 
-    cmds.clear();
     bldConf->GetPostBuildCommands(cmds);
     bool first(true);
-    if(!cmds.empty()) {
-        iter = cmds.begin();
-        for(; iter != cmds.end(); iter++) {
-            if(iter->GetEnabled()) {
-                if(first) {
+    if (!cmds.empty()) {
+        for (const auto& cmd : cmds) {
+            if (cmd.GetEnabled()) {
+                if (first) {
                     text << wxT("\t@echo Executing Post Build commands ...\n");
                     first = false;
                 }
-                text << wxT("\t") << iter->GetCommand() << wxT("\n");
+                text << wxT("\t") << cmd.GetCommand() << wxT("\n");
             }
         }
         if(!first) {
@@ -1603,20 +1596,17 @@ void BuilderGNUMakeClassic::CreateCustomPostBuildEvents(BuildConfigPtr bldConf, 
 void BuilderGNUMakeClassic::CreateCustomPreBuildEvents(BuildConfigPtr bldConf, wxString& text)
 {
     BuildCommandList cmds;
-    BuildCommandList::iterator iter;
 
-    cmds.clear();
     bldConf->GetPreBuildCommands(cmds);
     bool first(true);
-    if(!cmds.empty()) {
-        iter = cmds.begin();
-        for(; iter != cmds.end(); iter++) {
-            if(iter->GetEnabled()) {
-                if(first) {
+    if (!cmds.empty()) {
+        for (const auto& cmd : cmds) {
+            if (cmd.GetEnabled()) {
+                if (first) {
                     text << wxT("\t@echo Executing Pre Build commands ...\n");
                     first = false;
                 }
-                text << wxT("\t") << iter->GetCommand() << wxT("\n");
+                text << wxT("\t") << cmd.GetCommand() << wxT("\n");
             }
         }
         if(!first) {
@@ -1898,9 +1888,8 @@ bool BuilderGNUMakeClassic::HasPostbuildCommands(BuildConfigPtr bldConf) const
     BuildCommandList cmds;
     bldConf->GetPostBuildCommands(cmds);
 
-    BuildCommandList::const_iterator iter = cmds.begin();
-    for(; iter != cmds.end(); iter++) {
-        if(iter->GetEnabled()) {
+    for (const auto& cmd : cmds) {
+        if (cmd.GetEnabled()) {
             return true;
         }
     }

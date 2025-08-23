@@ -818,12 +818,11 @@ void BuilderNMake::CreateFileTargets(ProjectPtr proj, const wxString& confToBuil
     abs_files.reserve(m_allFiles.size());
     rel_paths.reserve(m_allFiles.size());
 
-    clProjectFile::Vec_t::const_iterator iterFile = m_allFiles.begin();
-    for (; iterFile != m_allFiles.end(); ++iterFile) {
+    for (const auto& file : m_allFiles) {
         // Include only files that don't have the 'exclude from build' flag set
-        if (!(*iterFile)->IsExcludeFromConfiguration(confToBuild)) {
-            abs_files.push_back(wxFileName((*iterFile)->GetFilename()));
-            rel_paths.push_back(wxFileName((*iterFile)->GetFilenameRelpath()));
+        if (!file->IsExcludeFromConfiguration(confToBuild)) {
+            abs_files.push_back(wxFileName(file->GetFilename()));
+            rel_paths.push_back(wxFileName(file->GetFilenameRelpath()));
         }
     }
 
@@ -1140,13 +1139,12 @@ void BuilderNMake::CreatePostBuildEvents(ProjectPtr proj, BuildConfigPtr bldConf
     text << "PostBuild:\n";
     text << "\t@echo Executing Post Build commands ...\n";
 
-    BuildCommandList::const_iterator iter = cmds.begin();
-    for (; iter != cmds.end(); iter++) {
-        if (iter->GetEnabled()) {
+    for (const auto& buildCmd : cmds) {
+        if (buildCmd.GetEnabled()) {
             // HACK:
             // If the command is 'copy' under Windows, make sure that
             // we set all slashes to backward slashes
-            wxString command = iter->GetCommand();
+            wxString command = buildCmd.GetCommand();
             command.Trim().Trim(false);
             if (OS_WINDOWS && command.StartsWith("copy")) {
                 command.Replace("/", "\\");
@@ -1167,9 +1165,8 @@ bool BuilderNMake::HasPrebuildCommands(BuildConfigPtr bldConf) const
     BuildCommandList cmds;
     bldConf->GetPreBuildCommands(cmds);
 
-    BuildCommandList::const_iterator iter = cmds.begin();
-    for (; iter != cmds.end(); iter++) {
-        if (iter->GetEnabled()) {
+    for (const auto& cmd : cmds) {
+        if (cmd.GetEnabled()) {
             return true;
         }
     }
@@ -1179,7 +1176,6 @@ bool BuilderNMake::HasPrebuildCommands(BuildConfigPtr bldConf) const
 void BuilderNMake::CreatePreBuildEvents(ProjectPtr proj, BuildConfigPtr bldConf, wxString& text)
 {
     BuildCommandList cmds;
-    BuildCommandList::iterator iter;
     wxString name = bldConf->GetName();
     name = NormalizeConfigName(name);
 
@@ -1202,14 +1198,13 @@ void BuilderNMake::CreatePreBuildEvents(ProjectPtr proj, BuildConfigPtr bldConf,
     bool first(true);
     text << "PreBuild:\n";
     if (!cmds.empty()) {
-        iter = cmds.begin();
-        for (; iter != cmds.end(); iter++) {
-            if (iter->GetEnabled()) {
+        for (const auto& cmd : cmds) {
+            if (cmd.GetEnabled()) {
                 if (first) {
                     text << "\t@echo Executing Pre Build commands ...\n";
                     first = false;
                 }
-                text << "\t" << iter->GetCommand() << "\n";
+                text << "\t" << cmd.GetCommand() << "\n";
             }
         }
         if (!first) {
@@ -1697,20 +1692,17 @@ wxString BuilderNMake::GetCdCmd(const wxFileName& path1, const wxFileName& path2
 void BuilderNMake::CreateCustomPostBuildEvents(BuildConfigPtr bldConf, wxString& text)
 {
     BuildCommandList cmds;
-    BuildCommandList::iterator iter;
 
-    cmds.clear();
     bldConf->GetPostBuildCommands(cmds);
     bool first(true);
     if (!cmds.empty()) {
-        iter = cmds.begin();
-        for (; iter != cmds.end(); iter++) {
-            if (iter->GetEnabled()) {
+        for (const auto& cmd : cmds) {
+            if (cmd.GetEnabled()) {
                 if (first) {
                     text << "\t@echo Executing Post Build commands ...\n";
                     first = false;
                 }
-                text << "\t" << iter->GetCommand() << "\n";
+                text << "\t" << cmd.GetCommand() << "\n";
             }
         }
         if (!first) {
@@ -1722,20 +1714,17 @@ void BuilderNMake::CreateCustomPostBuildEvents(BuildConfigPtr bldConf, wxString&
 void BuilderNMake::CreateCustomPreBuildEvents(BuildConfigPtr bldConf, wxString& text)
 {
     BuildCommandList cmds;
-    BuildCommandList::iterator iter;
 
-    cmds.clear();
     bldConf->GetPreBuildCommands(cmds);
     bool first(true);
     if (!cmds.empty()) {
-        iter = cmds.begin();
-        for (; iter != cmds.end(); iter++) {
-            if (iter->GetEnabled()) {
+        for (const auto& cmd : cmds) {
+            if (cmd.GetEnabled()) {
                 if (first) {
                     text << "\t@echo Executing Pre Build commands ...\n";
                     first = false;
                 }
-                text << "\t" << iter->GetCommand() << "\n";
+                text << "\t" << cmd.GetCommand() << "\n";
             }
         }
         if (!first) {
@@ -2002,9 +1991,8 @@ bool BuilderNMake::HasPostbuildCommands(BuildConfigPtr bldConf) const
     BuildCommandList cmds;
     bldConf->GetPostBuildCommands(cmds);
 
-    BuildCommandList::const_iterator iter = cmds.begin();
-    for (; iter != cmds.end(); iter++) {
-        if (iter->GetEnabled()) {
+    for (const auto& cmd : cmds) {
+        if (cmd.GetEnabled()) {
             return true;
         }
     }

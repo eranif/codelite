@@ -47,18 +47,15 @@ bool CompilerLocatorMSVC::Locate()
     wxEnvVariableHashMap envvars;
     ::wxGetEnvMap(&envvars);
 
-    for(wxEnvVariableHashMap::const_iterator it = envvars.begin(); it != envvars.end(); ++it) {
-        wxString const& envvarName = it->first;
-        wxString const& envvarPath = it->second;
-
-        if(!envvarName.Matches("VS??*COMNTOOLS") || envvarPath.IsEmpty() || (envvarName.Find('C') < 3)) {
+    for (const auto& [envvarName, envvarPath] : envvars) {
+        if (!envvarName.Matches("VS??*COMNTOOLS") || envvarPath.IsEmpty() || (envvarName.Find('C') < 3)) {
             continue;
         }
 
         wxString vcVersion = envvarName.Mid(2, envvarName.Find('C') - 3);
-        for(size_t j = 0; j < m_vcPlatforms.GetCount(); ++j) {
-            wxString compilerName = "Visual C++ " + vcVersion + " (" + m_vcPlatforms[j] + ")";
-            AddToolsVC2005(envvarPath, compilerName, m_vcPlatforms[j]);
+        for (const auto& vcPlatform : m_vcPlatforms) {
+            wxString compilerName = "Visual C++ " + vcVersion + " (" + vcPlatform + ")";
+            AddToolsVC2005(envvarPath, compilerName, vcPlatform);
         }
     }
 

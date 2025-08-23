@@ -930,9 +930,8 @@ float wxCrafter::ToFloat(const wxString& str, float defaultValue)
 std::set<wxString> wxCrafter::VectorToSet(const std::vector<wxFileName>& v)
 {
     std::set<wxString> s;
-    for(size_t i = 0; i < v.size(); i++) {
-        wxString fullpath = v.at(i).GetFullPath();
-        s.insert(fullpath);
+    for (const auto& filename : v) {
+        s.insert(filename.GetFullPath());
     }
     return s;
 }

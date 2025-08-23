@@ -862,9 +862,8 @@ void Project::SetAllPluginsData(const std::map<wxString, wxString>& pluginsDataM
         delete plugins;
     }
 
-    std::map<wxString, wxString>::const_iterator iter = pluginsDataMap.begin();
-    for (; iter != pluginsDataMap.end(); iter++) {
-        SetPluginData(iter->first, iter->second, saveToFile);
+    for (const auto& [pluginName, pluginData] : pluginsDataMap) {
+        SetPluginData(pluginName, pluginData, saveToFile);
     }
 
     if (saveToFile) {

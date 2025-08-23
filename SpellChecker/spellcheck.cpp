@@ -498,9 +498,8 @@ void SpellCheck::ClearIndicatorsFromEditors()
     // Remove the indicators from all the editors
     IEditor::List_t editors;
     m_mgr->GetAllEditors(editors);
-    IEditor::List_t::iterator iter = editors.begin();
-    for(; iter != editors.end(); ++iter) {
-        (*iter)->ClearUserIndicators();
+    for (auto& editor : editors) {
+        editor->ClearUserIndicators();
     }
 }
 

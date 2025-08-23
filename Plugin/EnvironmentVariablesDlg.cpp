@@ -35,12 +35,9 @@ EnvironmentVariablesDlg::EnvironmentVariablesDlg(wxWindow* parent)
     }
 
     SetName("EnvVarsTableDlg");
-    wxStringMap_t::iterator iter = envSets.begin();
-    for(; iter != envSets.end(); iter++) {
-        wxString name = iter->first;
-        wxString content = iter->second;
 
-        if(name == wxT("Default")) {
+    for (const auto& [name, content] : envSets) {
+        if (name == wxT("Default")) {
             m_textCtrlDefault->SetText(content);
             m_textCtrlDefault->SetSavePoint();
             m_textCtrlDefault->EmptyUndoBuffer();

@@ -1062,13 +1062,12 @@ void BuilderGnuMake::CreatePostBuildEvents(ProjectPtr proj, BuildConfigPtr bldCo
     text << "PostBuild:\n";
     text << "\t@echo Executing Post Build commands ...\n";
 
-    BuildCommandList::const_iterator iter = cmds.begin();
-    for (; iter != cmds.end(); iter++) {
-        if (iter->GetEnabled()) {
+    for (const auto& buildCommand : cmds) {
+        if (buildCommand.GetEnabled()) {
             // HACK:
             // If the command is 'copy' under Windows, make sure that
             // we set all slashes to backward slashes
-            wxString command = iter->GetCommand();
+            wxString command = buildCommand.GetCommand();
             command.Trim().Trim(false);
             if (m_isWindows && command.StartsWith("copy")) {
                 command.Replace("/", "\\");
@@ -1078,7 +1077,7 @@ void BuilderGnuMake::CreatePostBuildEvents(ProjectPtr proj, BuildConfigPtr bldCo
                 command.RemoveLast();
             }
 
-            text << "\t" << iter->GetCommand() << "\n";
+            text << "\t" << buildCommand.GetCommand() << "\n";
         }
     }
     text << "\t@echo Done\n";
@@ -1089,9 +1088,8 @@ bool BuilderGnuMake::HasPrebuildCommands(BuildConfigPtr bldConf) const
     BuildCommandList cmds;
     bldConf->GetPreBuildCommands(cmds);
 
-    BuildCommandList::const_iterator iter = cmds.begin();
-    for (; iter != cmds.end(); iter++) {
-        if (iter->GetEnabled()) {
+    for (const auto& cmd : cmds) {
+        if (cmd.GetEnabled()) {
             return true;
         }
     }
@@ -1101,7 +1099,6 @@ bool BuilderGnuMake::HasPrebuildCommands(BuildConfigPtr bldConf) const
 void BuilderGnuMake::CreatePreBuildEvents(ProjectPtr proj, BuildConfigPtr bldConf, wxString& text)
 {
     BuildCommandList cmds;
-    BuildCommandList::iterator iter;
     wxString name = bldConf->GetName();
     name = NormalizeConfigName(name);
 
@@ -1124,14 +1121,13 @@ void BuilderGnuMake::CreatePreBuildEvents(ProjectPtr proj, BuildConfigPtr bldCon
     bool first(true);
     text << "PreBuild:\n";
     if (!cmds.empty()) {
-        iter = cmds.begin();
-        for (; iter != cmds.end(); iter++) {
-            if (iter->GetEnabled()) {
+        for (const auto& cmd : cmds) {
+            if (cmd.GetEnabled()) {
                 if (first) {
                     text << "\t@echo Executing Pre Build commands ...\n";
                     first = false;
                 }
-                text << "\t" << iter->GetCommand() << "\n";
+                text << "\t" << cmd.GetCommand() << "\n";
             }
         }
         if (!first) {
@@ -1574,20 +1570,17 @@ wxString BuilderGnuMake::GetCdCmd(const wxFileName& path1, const wxFileName& pat
 void BuilderGnuMake::CreateCustomPostBuildEvents(BuildConfigPtr bldConf, wxString& text)
 {
     BuildCommandList cmds;
-    BuildCommandList::iterator iter;
 
-    cmds.clear();
     bldConf->GetPostBuildCommands(cmds);
     bool first(true);
     if (!cmds.empty()) {
-        iter = cmds.begin();
-        for (; iter != cmds.end(); iter++) {
-            if (iter->GetEnabled()) {
+        for (const auto& cmd : cmds) {
+            if (cmd.GetEnabled()) {
                 if (first) {
                     text << "\t@echo Executing Post Build commands ...\n";
                     first = false;
                 }
-                text << "\t" << iter->GetCommand() << "\n";
+                text << "\t" << cmd.GetCommand() << "\n";
             }
         }
         if (!first) {
@@ -1599,20 +1592,17 @@ void BuilderGnuMake::CreateCustomPostBuildEvents(BuildConfigPtr bldConf, wxStrin
 void BuilderGnuMake::CreateCustomPreBuildEvents(BuildConfigPtr bldConf, wxString& text)
 {
     BuildCommandList cmds;
-    BuildCommandList::iterator iter;
 
-    cmds.clear();
     bldConf->GetPreBuildCommands(cmds);
     bool first(true);
     if (!cmds.empty()) {
-        iter = cmds.begin();
-        for (; iter != cmds.end(); iter++) {
-            if (iter->GetEnabled()) {
+        for (const auto& cmd : cmds) {
+            if (cmd.GetEnabled()) {
                 if (first) {
                     text << "\t@echo Executing Pre Build commands ...\n";
                     first = false;
                 }
-                text << "\t" << iter->GetCommand() << "\n";
+                text << "\t" << cmd.GetCommand() << "\n";
             }
         }
         if (!first) {
@@ -1882,9 +1872,8 @@ bool BuilderGnuMake::HasPostbuildCommands(BuildConfigPtr bldConf) const
     BuildCommandList cmds;
     bldConf->GetPostBuildCommands(cmds);
 
-    BuildCommandList::const_iterator iter = cmds.begin();
-    for (; iter != cmds.end(); iter++) {
-        if (iter->GetEnabled()) {
+    for (const auto& cmd : cmds) {
+        if (cmd.GetEnabled()) {
             return true;
         }
     }

@@ -222,8 +222,7 @@ wxArrayString clConsoleBase::SplitArguments(const wxString& args)
     wxArrayString outputArr;
     wxString curtoken;
     wxChar prevChar = 0;
-    for(size_t i = 0; i < args.size(); ++i) {
-        wxChar ch = args[i];
+    for (wxChar ch : args) {
         switch(state) {
         case STATE_NORMAL: {
             switch(ch) {

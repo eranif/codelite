@@ -1168,9 +1168,7 @@ void CxxCodeCompletion::sort_tags(const std::vector<TagEntryPtr>& tags, std::vec
     std::unordered_set<int> visited_by_id;
     std::unordered_set<wxString> visited_by_name;
 
-    for(size_t i = 0; i < tags.size(); ++i) {
-        TagEntryPtr tag = tags[i];
-
+    for (const auto& tag : tags) {
         // only include matches from the provided list of files
         if(!visible_files.empty() && visible_files.count(tag->GetFile()) == 0) {
             continue;

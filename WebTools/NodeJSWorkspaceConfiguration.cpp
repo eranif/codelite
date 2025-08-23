@@ -84,7 +84,7 @@ void NodeJSWorkspaceConfiguration::ConvertToRelative(wxString& folder) const
 
 void NodeJSWorkspaceConfiguration::ConvertToRelative(wxArrayString& folders) const
 {
-    for(size_t i = 0; i < folders.size(); ++i) {
-        ConvertToRelative(folders.Item(i));
+    for (auto& folder : folders) {
+        ConvertToRelative(folder);
     }
 }

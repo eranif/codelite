@@ -165,18 +165,18 @@ wxString SvnCommitDialog::GetMesasge()
         if(bugId.IsEmpty() == false) {
             // Loop over the bug IDs and append message for each bug
             wxArrayString bugs = wxStringTokenize(bugId, wxT(","), wxTOKEN_STRTOK);
-            for(size_t i = 0; i < bugs.size(); i++) {
+            for (auto& bug : bugs) {
 
-                bugs[i].Trim().Trim(false);
-                if(bugs[i].IsEmpty())
+                bug.Trim().Trim(false);
+                if (bug.IsEmpty())
                     continue;
 
                 wxString tmpMsg = bugTrackerMsg;
                 wxString tmpUrl = bugTrackerUrl;
 
-                tmpUrl.Replace(wxT("$(BUGID)"), bugs[i]);
+                tmpUrl.Replace(wxT("$(BUGID)"), bug);
                 tmpMsg.Replace(wxT("$(BUG_URL)"), tmpUrl);
-                tmpMsg.Replace(wxT("$(BUGID)"), bugs[i]);
+                tmpMsg.Replace(wxT("$(BUGID)"), bug);
                 msg << tmpMsg << wxT("\n");
             }
         }

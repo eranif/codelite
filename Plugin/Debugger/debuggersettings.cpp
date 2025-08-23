@@ -143,12 +143,11 @@ DebuggerSettingsPreDefMap::~DebuggerSettingsPreDefMap() {}
 void DebuggerSettingsPreDefMap::Serialize(Archive& arch)
 {
     arch.Write(wxT("size"), m_cmds.size());
-    std::map<wxString, DebuggerPreDefinedTypes>::const_iterator iter = m_cmds.begin();
     size_t i(0);
-    for(; iter != m_cmds.end(); iter++, i++) {
+    for (const auto& [_, preDefinedTypes] : m_cmds) {
         wxString cmdname;
-        cmdname << wxT("PreDefinedSet") << i;
-        arch.Write(cmdname, (SerializedObject*)&(iter->second));
+        cmdname << wxT("PreDefinedSet") << i++;
+        arch.Write(cmdname, &preDefinedTypes);
     }
 }
 
@@ -169,17 +168,15 @@ void DebuggerSettingsPreDefMap::DeSerialize(Archive& arch)
 
 DebuggerPreDefinedTypes DebuggerSettingsPreDefMap::GetActiveSet() const
 {
-    std::map<wxString, DebuggerPreDefinedTypes>::const_iterator iter = m_cmds.begin();
-    for(; iter != m_cmds.end(); iter++) {
-        if(iter->second.IsActive())
-            return iter->second;
+    for (const auto& [_, preDefinedTypes] : m_cmds) {
+        if (preDefinedTypes.IsActive())
+            return preDefinedTypes;
     }
 
     // no match, search for the one with the name 'Default'
-    iter = m_cmds.begin();
-    for(; iter != m_cmds.end(); iter++) {
-        if(iter->second.GetName() == wxT("Default"))
-            return iter->second;
+    for (const auto& [_, preDefinedTypes] : m_cmds) {
+        if (preDefinedTypes.GetName() == wxT("Default"))
+            return preDefinedTypes;
     }
 
     // still no match
@@ -195,8 +192,7 @@ bool DebuggerSettingsPreDefMap::IsSetExist(const wxString& name) { return m_cmds
 
 void DebuggerSettingsPreDefMap::SetActive(const wxString& name)
 {
-    std::map<wxString, DebuggerPreDefinedTypes>::iterator iter = m_cmds.begin();
-    for(; iter != m_cmds.end(); iter++) {
-        m_cmds[iter->first].SetActive(iter->first == name ? true : false);
+    for (auto& [_, preDefinedTypes] : m_cmds) {
+        preDefinedTypes.SetActive(preDefinedTypes.GetName() == name);
     }
 }

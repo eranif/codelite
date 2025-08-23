@@ -466,11 +466,7 @@ wxXmlNode* BuildConfig::ToXml() const
     XmlUtils::SetNodeContent(rebldCmd, m_customRebuildCmd);
 
     // add all 'Targets'
-    std::map<wxString, wxString>::const_iterator ir = m_customTargets.begin();
-    for(; ir != m_customTargets.end(); ir++) {
-        wxString target_name = ir->first;
-        wxString target_cmd = ir->second;
-
+    for (const auto& [target_name, target_cmd] : m_customTargets) {
         wxXmlNode* customTarget = new wxXmlNode(customBuild, wxXML_ELEMENT_NODE, "Target");
         customTarget->AddAttribute("Name", target_name);
         XmlUtils::SetNodeContent(customTarget, target_cmd);

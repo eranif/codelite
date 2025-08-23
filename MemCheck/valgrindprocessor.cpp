@@ -47,17 +47,16 @@ void ValgrindMemcheckProcessor::GetExecutionCommand(const wxString& originalComm
                     wxFileName(clStandardPaths::Get().GetTempDir(), "valgrind.memcheck.log.xml").GetFullPath();
         }
 
-    wxArrayString suppFiles = GetSuppressionFiles();
-    wxString suppresions;
-    for(wxArrayString::iterator it = suppFiles.begin(); it != suppFiles.end(); ++it)
-        suppresions.Append(
-            wxString::Format(" %s=%s", m_settings->GetValgrindSettings().GetSuppressionFileOption(), *it));
+    wxString suppressions;
+    for (const auto& suppressionFile : GetSuppressionFiles())
+        suppressions.Append(
+            wxString::Format(" %s=%s", m_settings->GetValgrindSettings().GetSuppressionFileOption(), suppressionFile));
 
     command = m_settings->GetValgrindSettings().GetBinary();
     command_args = wxString::Format(
         "%s %s %s %s %s", m_settings->GetValgrindSettings().GetMandatoryOptions(),
         wxString::Format("%s=%s", m_settings->GetValgrindSettings().GetOutputFileOption(), m_outputLogFileName),
-        suppresions, m_settings->GetValgrindSettings().GetOptions(), originalCommand);
+        suppressions, m_settings->GetValgrindSettings().GetOptions(), originalCommand);
 }
 
 bool ValgrindMemcheckProcessor::Process(const wxString& outputLogFileName)

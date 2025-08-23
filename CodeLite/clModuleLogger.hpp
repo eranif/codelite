@@ -63,9 +63,9 @@ public:
         }
 
         m_buffer << "[";
-        if(!arr.empty()) {
-            for(size_t i = 0; i < arr.size(); ++i) {
-                m_buffer << arr[i] << ", ";
+        if (!arr.empty()) {
+            for (const auto& s : arr) {
+                m_buffer << s << ", ";
             }
             m_buffer.RemoveLast(2);
         }

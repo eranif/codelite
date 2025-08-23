@@ -21,6 +21,7 @@
 #include "wxgui_helpers.h"
 #include "xmlutils.h"
 
+#include <algorithm>
 #include <wx/regex.h>
 
 size_t wxcWidget::s_objCounter = 0;
@@ -1174,12 +1175,9 @@ void wxcWidget::ImportEventFromFB(const wxString& eventname, const wxString& han
 
 void wxcWidget::RemoveChild(wxcWidget* child)
 {
-    List_t::iterator iter = m_children.begin();
-    for(; iter != m_children.end(); iter++) {
-        if((*iter) == child) {
-            m_children.erase(iter);
-            break;
-        }
+    const auto iter = std::find(m_children.begin(), m_children.end(), child);
+    if (iter != m_children.end()) {
+        m_children.erase(iter);
     }
 }
 
@@ -1199,12 +1197,7 @@ void wxcWidget::MoveDown()
 
     // Locate our pointer in the parent children list
     List_t& list = m_parent->m_children;
-    List_t::iterator iter = list.begin();
-    for(; iter != list.end(); iter++) {
-        if((*iter) == this) {
-            break;
-        }
-    }
+    List_t::iterator iter = std::find(list.begin(), list.end(), this);
 
     // Now move your element two positions forward
     int i = 0;
@@ -1225,12 +1218,7 @@ void wxcWidget::MoveUp()
 
     // Locate our pointer in the parent children list
     List_t& list = m_parent->m_children;
-    List_t::iterator iter = list.begin();
-    for(; iter != list.end(); iter++) {
-        if((*iter) == this) {
-            break;
-        }
-    }
+    List_t::iterator iter = std::find(list.begin(), list.end(), this);
 
     // Now move your element two positions back (let's assume you have the elements in
     // the list to-do that amount of movement, but nevertheless,
@@ -1306,14 +1294,8 @@ bool wxcWidget::CanMoveDown() const
 
     // Locate our pointer in the parent children list
     List_t& list = m_parent->m_children;
-    List_t::iterator iter = list.begin();
-    for(; iter != list.end(); iter++) {
-        if((*iter) == this) {
-            break;
-        }
-    }
-
-    if(iter == list.end()) {
+    List_t::iterator iter = std::find(list.begin(), list.end(), this);
+    if (iter == list.end()) {
         return false;
     }
 
@@ -1329,12 +1311,7 @@ bool wxcWidget::CanMoveUp() const
 
     // Locate our pointer in the parent children list
     List_t& list = m_parent->m_children;
-    List_t::iterator iter = list.begin();
-    for(; iter != list.end(); iter++) {
-        if((*iter) == this) {
-            break;
-        }
-    }
+    List_t::iterator iter = std::find(list.begin(), list.end(), this);
 
     if(iter == list.end()) {
         return false;
@@ -1372,12 +1349,7 @@ wxcWidget::GetAdjacentSibling(bool previous) const // i.e. the previous (or next
 
     // Locate our pointer in the parent children list
     List_t& list = m_parent->m_children;
-    List_t::iterator iter = list.begin();
-    for(; iter != list.end(); ++iter) {
-        if((*iter) == this) {
-            break;
-        }
-    }
+    List_t::iterator iter = std::find(list.begin(), list.end(), this);
 
     if(iter == list.end()) {
         return NULL;
@@ -1479,10 +1451,8 @@ wxString wxcWidget::CreateBaseclassName() const
 wxString wxcWidget::DoGenerateEventStubs() const
 {
     wxString stubsCode;
-    MapEvents_t::const_iterator iter = m_connectedEvents.begin();
-    for(; iter != m_connectedEvents.end(); iter++) {
-        ConnectDetails eventDetails = iter->second;
-        if(eventDetails.GetFunctionNameAndSignature().IsEmpty()) {
+    for (auto [_, eventDetails] : m_connectedEvents) {
+        if (eventDetails.GetFunctionNameAndSignature().IsEmpty()) {
             eventDetails.GenerateFunctionName(GetName());
         }
 
@@ -1501,11 +1471,8 @@ wxString wxcWidget::DoGenerateConnectCode() const
     wxString bind_code;
     wxString scopeName = DoGetScopeName();
 
-    MapEvents_t::const_iterator iter = m_connectedEvents.begin();
-    for(; iter != m_connectedEvents.end(); iter++) {
-        ConnectDetails eventDetails = iter->second;
-
-        if(eventDetails.GetFunctionNameAndSignature().IsEmpty()) {
+    for (auto [_, eventDetails] : m_connectedEvents) {
+        if (eventDetails.GetFunctionNameAndSignature().IsEmpty()) {
             eventDetails.GenerateFunctionName(GetName());
         }
 

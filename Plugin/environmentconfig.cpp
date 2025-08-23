@@ -136,9 +136,8 @@ void EnvironmentConfig::ApplyEnv(wxStringMap_t* overrideMap, const wxString& pro
     // if we have an "override map" place all the entries from the override map
     // into the global map before applying the environment
     if (overrideMap) {
-        wxStringMap_t::iterator it = overrideMap->begin();
-        for (; it != overrideMap->end(); it++) {
-            variables.Put(it->first, it->second);
+        for (const auto& [key, value] : *overrideMap) {
+            variables.Put(key, value);
         }
     }
 
@@ -177,10 +176,7 @@ void EnvironmentConfig::UnApplyEnv()
     --m_envApplied;
     if (m_envApplied == 0) {
         // loop over the old values and restore them
-        wxStringMap_t::iterator iter = m_envSnapshot.begin();
-        for (; iter != m_envSnapshot.end(); iter++) {
-            wxString key = iter->first;
-            wxString value = iter->second;
+        for (const auto& [key, value] : m_envSnapshot) {
             if (value == __NO_SUCH_ENV__) {
                 // Remove the environment completely
                 ::wxUnsetEnv(key);

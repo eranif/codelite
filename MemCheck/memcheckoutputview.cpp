@@ -213,8 +213,8 @@ void MemCheckOutputView::AddTree(const wxDataViewItem& parentItem, MemCheckError
     wxDataViewItem errorItem =
         m_dataViewCtrlErrorsModel->AppendItem(parentItem, cols, new MemCheckErrorReferrer(error));
 
-    for(ErrorList::iterator it = error.nestedErrors.begin(); it != error.nestedErrors.end(); ++it) {
-        AddTree(errorItem, *it);
+    for (auto& nestedError : error.nestedErrors) {
+        AddTree(errorItem, nestedError);
     }
 
     unsigned int flags = 0;
@@ -337,8 +337,8 @@ void MemCheckOutputView::ExpandAll(const wxDataViewItem& item)
     m_dataViewCtrlErrors->Expand(item);
     wxDataViewItemArray subItems;
     m_dataViewCtrlErrorsModel->GetChildren(item, subItems);
-    for(wxDataViewItemArray::iterator it = subItems.begin(); it != subItems.end(); ++it) {
-        ExpandAll(*it);
+    for (const auto& subItem : subItems) {
+        ExpandAll(subItem);
     }
 }
 
@@ -543,8 +543,8 @@ void MemCheckOutputView::MarkAllErrors(bool state)
     wxDataViewItemArray items;
     m_dataViewCtrlErrorsModel->GetChildren(wxDataViewItem(0), items);
 
-    for(wxDataViewItemArray::iterator it = items.begin(); it != items.end(); ++it) {
-        MarkTree(*it, state);
+    for (const auto& item : items) {
+        MarkTree(item, state);
     }
 }
 
@@ -557,8 +557,8 @@ void MemCheckOutputView::GetStatusOfErrors(bool& unmarked, bool& marked)
         return;
     }
     m_dataViewCtrlErrorsModel->GetChildren(wxDataViewItem(0), items);
-    for(wxDataViewItemArray::iterator it = items.begin(); it != items.end(); ++it) {
-        m_dataViewCtrlErrorsModel->GetValue(variant, *it, supColumn);
+    for (const auto& item : items) {
+        m_dataViewCtrlErrorsModel->GetValue(variant, item, supColumn);
         variant.GetBool() ? (marked = true) : (unmarked = true);
     }
 }
@@ -628,10 +628,10 @@ void MemCheckOutputView::OnMarkedErrorsToClip(wxCommandEvent& event)
         return;
     }
     MemCheckErrorReferrer* errorRef;
-    for(wxDataViewItemArray::iterator it = items.begin(); it != items.end(); ++it) {
-        m_dataViewCtrlErrorsModel->GetValue(variant, *it, supColumn);
-        if(variant.GetBool()) {
-            errorRef = dynamic_cast<MemCheckErrorReferrer*>(m_dataViewCtrlErrorsModel->GetClientObject(*it));
+    for (const auto& item : items) {
+        m_dataViewCtrlErrorsModel->GetValue(variant, item, supColumn);
+        if (variant.GetBool()) {
+            errorRef = dynamic_cast<MemCheckErrorReferrer*>(m_dataViewCtrlErrorsModel->GetClientObject(item));
             text.Append(errorRef->Get().toString());
             text.Append(wxT("\n\n"));
         }
@@ -720,11 +720,11 @@ void MemCheckOutputView::SuppressErrors(unsigned int mode, wxDataViewItem* dvIte
                 }
 
                 MemCheckErrorReferrer* errorRef;
-                for(wxDataViewItemArray::iterator it = items.begin(); it != items.end(); ++it) {
-                    m_dataViewCtrlErrorsModel->GetValue(variant, *it, supColumn);
-                    if(variant.GetBool()) {
+                for (const auto& item : items) {
+                    m_dataViewCtrlErrorsModel->GetValue(variant, item, supColumn);
+                    if (variant.GetBool()) {
                         errorRef =
-                            dynamic_cast<MemCheckErrorReferrer*>(m_dataViewCtrlErrorsModel->GetClientObject(*it));
+                            dynamic_cast<MemCheckErrorReferrer*>(m_dataViewCtrlErrorsModel->GetClientObject(item));
                         editor->AppendText(wxString::Format("\n%s", errorRef->Get().getSuppression()));
                         errorRef->Get().suppressed = true;
                     }

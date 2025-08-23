@@ -234,18 +234,14 @@ bool CustomBuildRequest::DoUpdateCommand(IManager* manager, wxString& cmd, Proje
     bldConf->GetPostBuildCommands(postBuildCmds);
 
     // collect all enabled commands
-    BuildCommandList::iterator iter = preBuildCmds.begin();
-    for(; iter != preBuildCmds.end(); iter++) {
-        BuildCommand command = *iter;
-        if(command.GetEnabled()) {
+    for (const BuildCommand& command : preBuildCmds) {
+        if (command.GetEnabled()) {
             pre.Add(command.GetCommand());
         }
     }
 
-    iter = postBuildCmds.begin();
-    for(; iter != postBuildCmds.end(); iter++) {
-        BuildCommand command = *iter;
-        if(command.GetEnabled()) {
+    for (const BuildCommand& command : postBuildCmds) {
+        if (command.GetEnabled()) {
             post.Add(command.GetCommand());
         }
     }

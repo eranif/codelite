@@ -34,8 +34,8 @@ JSONItem ObjectPreview::ToJSON(const wxString& name) const
     json.addProperty("overflow", m_overflow);
     if(!m_properties.empty()) {
         JSONItem arr = JSONItem::createArray("properties");
-        for(size_t i = 0; i < m_properties.size(); ++i) {
-            arr.arrayAppend(m_properties[i]->ToJSON(""));
+        for (const auto* property : m_properties) {
+            arr.arrayAppend(property->ToJSON(""));
         }
     }
     return json;
@@ -43,8 +43,8 @@ JSONItem ObjectPreview::ToJSON(const wxString& name) const
 
 void ObjectPreview::DeleteProperties()
 {
-    for(size_t i = 0; i < m_properties.size(); ++i) {
-        wxDELETE(m_properties[i]);
+    for (auto* property : m_properties) {
+        wxDELETE(property);
     }
     m_properties.clear();
 }
@@ -59,8 +59,8 @@ wxString ObjectPreview::ToString() const
         if(!GetSubtype().IsEmpty()) { str << " (" << GetSubtype() << ")"; }
         if(!GetProperties().empty()) {
             str << ": [";
-            for(size_t i = 0; i < m_properties.size(); ++i) {
-                str << m_properties[i]->ToString() << ", ";
+            for (const auto* property : m_properties) {
+                str << property->ToString() << ", ";
             }
         }
         if(IsOverflow()) {

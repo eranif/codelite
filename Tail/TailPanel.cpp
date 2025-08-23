@@ -163,10 +163,10 @@ void TailPanel::DoPrepareRecentItemsMenu(wxMenu& menu)
 {
     m_recentItemsMap.clear();
     wxArrayString recentItems = clConfig::Get().Read("tail", wxArrayString());
-    for (size_t i = 0; i < recentItems.size(); ++i) {
+    for (const auto& recentItem : recentItems) {
         int id = ::wxNewId();
-        m_recentItemsMap.insert(std::make_pair(id, recentItems.Item(i)));
-        menu.Append(id, recentItems.Item(i));
+        m_recentItemsMap.insert(std::make_pair(id, recentItem));
+        menu.Append(id, recentItem);
     }
 
     menu.Bind(wxEVT_MENU, &TailPanel::OnOpenRecentItem, this);

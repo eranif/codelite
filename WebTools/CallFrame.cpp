@@ -13,8 +13,7 @@ JSONItem CallFrame::ToJSON(const wxString& name) const
     json.append(m_location.ToJSON("location"));
     json.append(m_this.ToJSON("this"));
     JSONItem arr = JSONItem::createArray("scopeChain");
-    for(size_t i = 0; i < m_scopeChain.size(); ++i) {
-        nSerializableObject::Ptr_t p = m_scopeChain[i];
+    for (auto& p : m_scopeChain) {
         arr.arrayAppend(p->To<CallFrameScope>()->ToJSON(""));
     }
     json.append(arr);

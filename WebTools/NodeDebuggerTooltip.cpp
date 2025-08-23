@@ -105,8 +105,7 @@ void NodeDebuggerTooltip::OnObjectProperties(clDebugEvent& event)
     }
 
     m_treeCtrl->DeleteChildren(item);
-    for(size_t i = 0; i < propVec.size(); ++i) {
-        const PropertyDescriptor& prop = propVec[i];
+    for (const auto& prop : propVec) {
         wxTreeItemId child = m_treeCtrl->AppendItem(item, prop.GetName());
         m_treeCtrl->SetItemText(child, prop.GetTextPreview(), 1);
         m_treeCtrl->SetItemData(child, new NodeTreeItemData(prop.GetValue().GetObjectId()));

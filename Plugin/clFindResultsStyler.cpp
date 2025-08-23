@@ -133,15 +133,13 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
     // The scintilla syntax in wx3.1.1 changed
     ctrl->StartStyling(startPos);
 
-    wxString::const_iterator iter = text.begin();
     size_t headerStyleLen = 0;
     size_t filenameStyleLen = 0;
     size_t lineNumberStyleLen = 0;
     size_t scopeStyleLen = 0;
     size_t matchStyleLen = 0;
     size_t i = 0;
-    for(; iter != text.end(); ++iter) {
-        const wxUniChar& ch = *iter;
+    for (const wxUniChar& ch : text) {
         size_t chWidth = 1;
         if(!ch.IsAscii()) {
             chWidth = wxString(ch).mb_str(wxConvUTF8).length();

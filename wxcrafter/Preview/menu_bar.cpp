@@ -59,8 +59,8 @@ MenuBar::MenuBar(wxWindow* parent, wxMenuBar* mb)
 
 MenuBar::~MenuBar()
 {
-    for(size_t i = 0; i < m_menus.size(); i++) {
-        wxDELETE(m_menus.at(i).menu);
+    for (auto& menu : m_menus) {
+        wxDELETE(menu.menu);
     }
     m_menus.clear();
 }

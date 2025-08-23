@@ -125,10 +125,8 @@ void clKeyboardManager::Release()
 void clKeyboardManager::DoGetFrames(wxFrame* parent, clKeyboardManager::FrameList_t& frames)
 {
     frames.push_back(parent);
-    const wxWindowList& children = parent->GetChildren();
-    wxWindowList::const_iterator iter = children.begin();
-    for (; iter != children.end(); ++iter) {
-        wxFrame* frameChild = dynamic_cast<wxFrame*>(*iter);
+    for (auto* child : parent->GetChildren()) {
+        wxFrame* frameChild = dynamic_cast<wxFrame*>(child);
         if (frameChild) {
             if (std::find(frames.begin(), frames.end(), frameChild) == frames.end()) {
                 frames.push_back(frameChild);
@@ -141,9 +139,7 @@ void clKeyboardManager::DoGetFrames(wxFrame* parent, clKeyboardManager::FrameLis
 void clKeyboardManager::DoUpdateMenu(wxMenu* menu, MenuItemDataIntMap_t& accels, std::vector<wxAcceleratorEntry>& table)
 {
     wxMenuItemList items = menu->GetMenuItems();
-    wxMenuItemList::iterator iter = items.begin();
-    for (; iter != items.end(); iter++) {
-        wxMenuItem* item = *iter;
+    for (wxMenuItem* item : items) {
         if (item->GetSubMenu()) {
             DoUpdateMenu(item->GetSubMenu(), accels, table);
             continue;
@@ -292,9 +288,8 @@ bool clKeyboardManager::Exists(const clKeyboardShortcut& accel) const
         return false;
     }
 
-    MenuItemDataMap_t::const_iterator iter = m_accelTable.begin();
-    for (; iter != m_accelTable.end(); ++iter) {
-        if (iter->second.accel == accel) {
+    for (const auto& [_, menuItem] : m_accelTable) {
+        if (menuItem.accel == accel) {
             return true;
         }
     }
@@ -369,9 +364,8 @@ void clKeyboardManager::OnStartupCompleted(wxCommandEvent& event)
 void clKeyboardManager::DoConvertToIntMap(const MenuItemDataMap_t& strMap, MenuItemDataIntMap_t& intMap)
 {
     // Convert the string map into int based map
-    MenuItemDataMap_t::const_iterator iter = strMap.begin();
-    for (; iter != strMap.end(); ++iter) {
-        intMap.insert(std::make_pair(wxXmlResource::GetXRCID(iter->second.resourceID), iter->second));
+    for (const auto& [_, menuItem] : strMap) {
+        intMap.emplace(wxXmlResource::GetXRCID(menuItem.resourceID), menuItem);
     }
 }
 

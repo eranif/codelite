@@ -57,19 +57,11 @@ wxString Builder::NormalizeConfigName(const wxString& confgName)
 
 void Builder::SetActive()
 {
-    std::list<wxString> builders;
-    BuildManagerST::Get()->GetBuilders(builders);
-    std::list<wxString>::iterator iter = builders.begin();
-    for(; iter != builders.end(); iter++) {
-
-        wxString builderName = *iter;
-        BuilderPtr builder = BuildManagerST::Get()->GetBuilder(builderName);
-
-        if(builder && builder->m_name == m_name)
-            builder->m_isActive = true;
-
-        else if(builder)
-            builder->m_isActive = false;
+    std::list<wxString> builderNames;
+    BuildManagerST::Get()->GetBuilders(builderNames);
+    for (wxString builderName : builderNames) {
+        if (BuilderPtr builder = BuildManagerST::Get()->GetBuilder(builderName))
+            builder->m_isActive = (builder->m_name == m_name);
     }
 }
 

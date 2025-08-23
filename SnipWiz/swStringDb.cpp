@@ -79,20 +79,18 @@ swStringSet::~swStringSet()
 // save list
 void swStringSet::Serialize(wxSerialize& ar)
 {
-	swStringList::iterator it;
 	swString* pObj = NULL;
 	wxUint32 size;
-	wxString key, classname;
+	wxString classname;
 	
 	if (ar.IsStoring())
 	{	// storing
 		size = m_list.size();
 		ar << size;
-		for( it = m_list.begin(); it != m_list.end(); ++it ) 
-		{ 
-			key = it->first;
+		for (const auto& [key, base] : m_list)
+		{
 			ar << key;
-			pObj = wxDynamicCast(it->second, swString);
+			pObj = wxDynamicCast(base, swString);
 			classname = pObj->GetClassInfo()->GetClassName();
 			ar << classname;
 			pObj->Serialize(ar);
@@ -104,6 +102,7 @@ void swStringSet::Serialize(wxSerialize& ar)
 		ar	>> size;
 		for(wxUint32 i = 0;i < size;i++)
 		{
+			wxString key;
 			ar >> key;
 			ar >> classname;
 			pObj = wxDynamicCast(::wxCreateDynamicObject(classname), swString);
@@ -121,11 +120,11 @@ void swStringSet::Serialize(wxSerialize& ar)
 void swStringSet::DeleteAll()
 {
 	wxArrayString keys;
-	swStringList::iterator it; 
-	for( it = m_list.begin(); it != m_list.end(); ++it ) 
-		keys.Add(it->first);
-	for(size_t i = 0;i < keys.GetCount();i++)
-		DeleteKey(keys[i]);
+
+	for (const auto& [name, _] : m_list)
+		keys.Add(name);
+	for (const auto& key : keys)
+		DeleteKey(key);
 }
 
 //------------------------------------------------------------
@@ -202,10 +201,8 @@ bool swStringSet::IsKey(const wxString & key)
 void swStringSet::GetAllKeys(wxArrayString &keys)
 {
 	keys.Clear();
-	swStringList::iterator itSet;
-	for( itSet = m_list.begin(); itSet != m_list.end(); ++itSet ) 
+	for (const auto& [key, _] : m_list)
 	{
-		wxString key = itSet->first;
 		keys.Add(key);
 	}
 }
@@ -227,19 +224,12 @@ swStringDb::~swStringDb()
 //------------------------------------------------------------
 void swStringDb::DeleteAll()
 {
-	swStringSetList::iterator it;
-	wxArrayString keys;
-	swStringSet* pObj;
-
-	for( it = m_list.begin(); it != m_list.end(); ++it ) 
+	for (const auto& [_, pObj] : m_list)
 	{
-	   keys.Add(it->first);
-	   pObj	= it->second;
-	   pObj->DeleteAll();
-	   delete pObj;
+		pObj->DeleteAll();
+		delete pObj;
 	}
-	for(size_t i = 0;i < keys.GetCount();i++)
-		m_list.erase(keys[i]);	
+	m_list.clear();
 }
 
 //------------------------------------------------------------
@@ -350,19 +340,16 @@ void swStringDb::Serialize(wxSerialize& ar)
 {
 	swStringSetList::iterator it;
 
-	swStringSet* pObj = NULL;
 	wxUint32 size;
-	wxString key, classname, dummy;
+	wxString classname, dummy;
 	
 	if (ar.IsStoring())
 	{	// storing
 		size = m_list.size();
 		ar << size;
-		for( it = m_list.begin(); it != m_list.end(); ++it ) 
-		{ 
-			key = it->first;
+		for (const auto& [key, pObj] : m_list)
+		{
 			ar << key;
-			pObj = it->second;
 			classname = pObj->GetClassInfo()->GetClassName();
 			ar << classname;
 			pObj->Serialize(ar);
@@ -376,14 +363,15 @@ void swStringDb::Serialize(wxSerialize& ar)
 		ar >> size;
 		for(wxUint32 i = 0;i < size;i++)
 		{
+			wxString key;
 			ar >> key;
 			ar >> classname;
-			pObj = wxDynamicCast(::wxCreateDynamicObject(classname), swStringSet);
+			auto pObj = wxDynamicCast(::wxCreateDynamicObject(classname), swStringSet);
 			if(pObj != NULL)
 			{
-			 	pObj->Serialize(ar);
-				m_list[key]	= pObj;
-			}	
+				pObj->Serialize(ar);
+				m_list[key] = pObj;
+			}
 		}
 		ar >> m_keyOrder;
 		m_snippetSet.DeleteAll();
@@ -396,10 +384,8 @@ void swStringDb::Serialize(wxSerialize& ar)
 void swStringDb::GetAllSets(wxArrayString& sets)
 {
 	sets.Clear();
-	swStringSetList::iterator itSet;
-	for( itSet = m_list.begin(); itSet != m_list.end(); ++itSet ) 
+	for (const auto& [set, _] : m_list)
 	{
-		wxString set = itSet->first;
 		sets.Add(set);
 	}
 }

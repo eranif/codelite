@@ -74,9 +74,8 @@ void NotebookBaseWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 
 NotebookPageWrapper* NotebookBaseWrapper::GetSelection() const
 {
-    List_t::const_iterator iter = m_children.begin();
-    for(; iter != m_children.end(); iter++) {
-        NotebookPageWrapper* page = (NotebookPageWrapper*)*iter;
+    for (auto* child : m_children) {
+        NotebookPageWrapper* page = static_cast<NotebookPageWrapper*>(child);
 
         // Check the children of this page and the page itself
         NotebookPageWrapper* sel = DoGetSelection(page);
@@ -89,23 +88,20 @@ NotebookPageWrapper* NotebookBaseWrapper::GetSelection() const
 
 void NotebookBaseWrapper::SetSelection(wxcWidget* page)
 {
-    List_t::iterator iter = m_children.begin();
-    for(; iter != m_children.end(); iter++) {
-        NotebookPageWrapper* child = (NotebookPageWrapper*)*iter;
-        DoSetSelection(child, page);
+    for (auto* child : m_children) {
+        NotebookPageWrapper* pageChild = static_cast<NotebookPageWrapper*>(child);
+        DoSetSelection(pageChild, page);
     }
 }
 
 void NotebookBaseWrapper::DoSetSelection(NotebookPageWrapper* page, wxcWidget* pageToSelect)
 {
     page->SetSelected(pageToSelect == page);
-    wxcWidget::List_t& list = page->GetChildren();
-    wxcWidget::List_t::iterator iter = list.begin();
-    for(; iter != list.end(); iter++) {
-        NotebookPageWrapper* child = dynamic_cast<NotebookPageWrapper*>(*iter);
-        if(child) {
+    for (auto* child : page->GetChildren()) {
+        NotebookPageWrapper* pageChild = dynamic_cast<NotebookPageWrapper*>(child);
+        if (pageChild) {
             // another notebook page
-            DoSetSelection(child, pageToSelect);
+            DoSetSelection(pageChild, pageToSelect);
         }
     }
 }
@@ -115,14 +111,11 @@ NotebookPageWrapper* NotebookBaseWrapper::DoGetSelection(NotebookPageWrapper* pa
     if(page->IsSelected()) {
         return page;
     }
-
-    wxcWidget::List_t& list = page->GetChildren();
-    wxcWidget::List_t::const_iterator iter = list.begin();
-    for(; iter != list.end(); iter++) {
-        NotebookPageWrapper* child = dynamic_cast<NotebookPageWrapper*>(*iter);
-        if(child) {
-            NotebookPageWrapper* sel = DoGetSelection(child);
-            if(sel) {
+    for (auto* child : page->GetChildren()) {
+        NotebookPageWrapper* pageChild = dynamic_cast<NotebookPageWrapper*>(child);
+        if (pageChild) {
+            NotebookPageWrapper* sel = DoGetSelection(pageChild);
+            if (sel) {
                 return sel;
             }
         }
@@ -154,11 +147,10 @@ bool NotebookBaseWrapper::DoGetPageIndex(const NotebookPageWrapper* page, const 
         return false;
     }
 
-    List_t::const_iterator iter = page->GetChildren().begin();
-    for(; iter != page->GetChildren().end(); iter++) {
-        NotebookPageWrapper* child = dynamic_cast<NotebookPageWrapper*>(*iter);
-        if(child) {
-            if(DoGetPageIndex(child, pageToFind, count)) {
+    for (auto* child : page->GetChildren()) {
+        NotebookPageWrapper* pageChild = dynamic_cast<NotebookPageWrapper*>(child);
+        if (pageChild) {
+            if (DoGetPageIndex(pageChild, pageToFind, count)) {
                 return true;
             }
         }

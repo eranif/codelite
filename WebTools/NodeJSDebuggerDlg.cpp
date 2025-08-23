@@ -127,8 +127,8 @@ void NodeJSDebuggerDlg::GetCommand(wxString& command, wxString& command_args)
     }
 
     wxArrayString args = ::wxStringTokenize(m_stcCommandLineArguments->GetText(), "\n", wxTOKEN_STRTOK);
-    for(size_t i = 0; i < args.size(); ++i) {
-        command_args << " " << StringUtils::WrapWithQuotes(args.Item(i));
+    for (auto& arg : args) {
+        command_args << " " << StringUtils::WrapWithQuotes(arg);
     }
 }
 

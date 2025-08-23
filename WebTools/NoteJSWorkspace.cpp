@@ -214,8 +214,8 @@ bool NodeJSWorkspace::DoOpen(const wxFileName& filename)
     GetView()->ShowHiddenFiles(conf.IsShowHiddenFiles());
 
     const wxArrayString& folders = GetFolders();
-    for(size_t i = 0; i < folders.size(); ++i) {
-        GetView()->AddFolder(folders.Item(i));
+    for (const auto& folder : folders) {
+        GetView()->AddFolder(folder);
     }
 
     // Notify codelite that NodeJS workspace is opened

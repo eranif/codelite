@@ -100,11 +100,9 @@ void SmartCompletion::OnCodeCompletionShowing(clCodeCompletionEvent& event)
     // so we split the list into 2: entries with weight greater than 0 and 0
     wxCodeCompletionBoxEntry::Vec_t importantEntries;
     wxCodeCompletionBoxEntry::Vec_t normalEntries;
-    wxCodeCompletionBoxEntry::Vec_t::iterator iter = entries.begin();
-    for(; iter != entries.end(); ++iter) {
-        wxCodeCompletionBoxEntry::Ptr_t entry = (*iter);
+    for (const auto& entry : entries) {
         wxString k = entry->GetText();
-        if(m_pCCWeight->count(k)) {
+        if (m_pCCWeight->count(k)) {
             entry->SetWeight((*m_pCCWeight)[k]);
             importantEntries.push_back(entry);
         } else {

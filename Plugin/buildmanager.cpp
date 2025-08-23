@@ -63,19 +63,15 @@ void BuildManager::RemoveBuilder(const wxString& name)
 
 void BuildManager::GetBuilders(std::list<wxString>& list)
 {
-    auto iter = m_builders.begin();
-    for(; iter != m_builders.end(); ++iter) {
-        list.push_back(iter->second->GetName());
+    for (const auto& [_, builder] : m_builders) {
+        list.push_back(builder->GetName());
     }
 }
 
 BuilderPtr BuildManager::GetBuilder(const wxString& name)
 {
-    auto iter = m_builders.begin();
-    for(; iter != m_builders.end(); ++iter) {
-        if(iter->first == name) {
-            return iter->second;
-        }
+    if (auto iter = m_builders.find(name); iter != m_builders.end()) {
+        return iter->second;
     }
 
     // return the default builder

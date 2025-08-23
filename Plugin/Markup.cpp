@@ -78,9 +78,8 @@ bool MarkupParser::Next()
 
 bool MarkupParser::IsMatchPattern(wxString& match, int& type)
 {
-    MarkupSearchPattern::List_t::iterator iter = m_patterns.begin();
-    for(; iter != m_patterns.end(); ++iter) {
-        if(iter->Match(m_tip, type, match)) {
+    for (auto& pattern : m_patterns) {
+        if (pattern.Match(m_tip, type, match)) {
             return true;
         }
     }

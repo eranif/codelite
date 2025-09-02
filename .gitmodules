@@ -28,9 +28,6 @@
 [submodule "hunspell"]
 	path = submodules/hunspell
 	url = https://github.com/hunspell/hunspell.git
-[submodule "submodules/llama.cpp"]
-	path = submodules/llama.cpp
-	url = https://github.com/ggerganov/llama.cpp.git
 [submodule "submodules/websocketpp"]
 	path = submodules/websocketpp
 	url = https://github.com/zaphoyd/websocketpp.git
@@ -46,3 +43,6 @@
 [submodule "submodules/lexilla"]
 	path = submodules/lexilla
 	url = https://github.com/eranif/lexilla.git
+[submodule "submodules/assistant"]
+	path = submodules/assistant
+	url = https://github.com/eranif/assistant.git

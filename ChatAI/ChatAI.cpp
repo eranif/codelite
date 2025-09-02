@@ -29,6 +29,7 @@
 #include "event_notifier.h"
 #include "globals.h"
 #include "macromanager.h"
+#include "ollama/ollama.hpp"
 
 #include <wx/app.h> //wxInitialize/wxUnInitialize
 #include <wx/ffile.h>
@@ -93,6 +94,7 @@ void ChatAI::UnPlug()
         m_chatWindow->Destroy();
     }
     m_chatWindow = nullptr;
+    ollama::Manager::GetInstance().Shutdown();
 
     EventNotifier::Get()->Unbind(wxEVT_CHATAI_SEND, &ChatAI::OnPrompt, this);
     EventNotifier::Get()->Unbind(wxEVT_CHATAI_STOP, &ChatAI::OnStopLlamaCli, this);
@@ -126,17 +128,7 @@ void ChatAI::OnShowChatWindow(wxCommandEvent& event)
     m_chatWindow->GetStcInput()->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 
-void ChatAI::OnStopLlamaCli(clCommandEvent& event)
-{
-    wxUnusedVar(event);
-    m_cli.Stop();
-}
-
-void ChatAI::OnStartLlamCli(clCommandEvent& event)
-{
-    wxUnusedVar(event);
-    m_cli.StartProcess();
-}
+bool ChatAI::IsRunning() const { return ollama::Manager::GetInstance().IsRunning(); }
 
 void ChatAI::OnInterrupt(clCommandEvent& event)
 {

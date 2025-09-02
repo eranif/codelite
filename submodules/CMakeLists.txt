@@ -5,8 +5,8 @@ cmake_minimum_required(VERSION 3.18)
 # ######################################################################################################################
 find_path(CTAGS_SUBMODULE CMakeLists.txt PATHS ${CMAKE_CURRENT_SOURCE_DIR}/ctags/)
 if(NOT CTAGS_SUBMODULE)
-    message(STATUS "Could not locate `${CMAKE_CURRENT_SOURCE_DIR}/ctags/CMakeLists.txt` file")
-    message(FATAL_ERROR "Please make sure you have run `git submodule update --init`")
+  message(STATUS "Could not locate `${CMAKE_CURRENT_SOURCE_DIR}/ctags/CMakeLists.txt` file")
+  message(FATAL_ERROR "Please make sure you have run `git submodule update --init`")
 endif()
 
 # ######################################################################################################################
@@ -31,12 +31,12 @@ target_include_directories(wxshapeframework PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}
 target_include_directories(wxshapeframework PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/wxsf-code/include")
 
 if(WIN32)
-    target_compile_definitions(wxshapeframework PRIVATE WXMAKINGDLL_WXXS WXMAKINGDLL_WXSF)
-    target_compile_definitions(wxshapeframework INTERFACE WXUSINGDLL)
+  target_compile_definitions(wxshapeframework PRIVATE WXMAKINGDLL_WXXS WXMAKINGDLL_WXSF)
+  target_compile_definitions(wxshapeframework INTERFACE WXUSINGDLL)
 endif(WIN32)
 
 if(UNIX OR APPLE)
-    set_target_properties(wxshapeframework PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  set_target_properties(wxshapeframework PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
 target_link_libraries(wxshapeframework PRIVATE ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES})

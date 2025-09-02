@@ -2,7 +2,7 @@
 set(PLUGIN_NAME "ChatAI")
 
 # Our project is called 'plugin' this is how it will be called in visual studio, and in our makefiles.
-project(${PLUGIN_NAME})
+project(ChatAI)
 
 # It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
 
@@ -10,25 +10,26 @@ project(${PLUGIN_NAME})
 include("${wxWidgets_USE_FILE}")
 
 if(USE_PCH AND NOT MINGW)
-    add_definitions(-include "${CL_PCH_FILE}")
-    add_definitions(-Winvalid-pch)
+  add_definitions(-include "${CL_PCH_FILE}")
+  add_definitions(-Winvalid-pch)
 endif()
 
 file(GLOB SRCS "*.cpp")
 
 # Define the output
-add_library(${PLUGIN_NAME} SHARED ${SRCS})
+add_library(ChatAI SHARED ${SRCS})
 
 if(UNIX OR APPLE)
-    set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  set_target_properties(ChatAI PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
 if(USE_PCH)
-    target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)
+  target_precompile_headers(ChatAI REUSE_FROM PCH)
 endif()
 
 # Remove the "lib" prefix from the plugin name
-set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} libcodelite plugin)
+set_target_properties(ChatAI PROPERTIES PREFIX "")
+target_link_libraries(ChatAI ${LINKER_OPTIONS} libcodelite plugin)
+target_include_directories(ChatAI PRIVATE "${CL_SRC_ROOT}/submodules/assistant")
 
-cl_install_plugin(${PLUGIN_NAME})
+cl_install_plugin(ChatAI)

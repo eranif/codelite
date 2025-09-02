@@ -3,7 +3,7 @@
 #include "ChatAI.hpp"
 #include "ChatAISettingsDlg.hpp"
 #include "ColoursAndFontsManager.h"
-#include "LLAMCli.hpp"
+#include "OllamaClient.hpp"
 #include "clSTCHelper.hpp"
 #include "codelite_events.h"
 #include "event_notifier.h"

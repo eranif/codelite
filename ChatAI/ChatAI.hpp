@@ -25,7 +25,7 @@
 #pragma once
 
 #include "ChatAIWindow.hpp"
-#include "LLAMCli.hpp"
+#include "OllamaClient.hpp"
 #include "plugin.h"
 
 class ChatAI : public IPlugin
@@ -38,7 +38,7 @@ public:
     void HookPopupMenu(wxMenu* menu, MenuType type) override;
     void UnPlug() override;
     ChatAIConfig& GetConfig() { return m_cli.GetConfig(); }
-    bool IsRunning() const { return m_cli.IsRunning(); }
+    bool IsRunning() const;
 
 private:
     void OnShowChatWindow(wxCommandEvent& event);
@@ -49,5 +49,5 @@ private:
     void OnSettings(wxCommandEvent& event);
 
     ChatAIWindow* m_chatWindow = nullptr;
-    LLAMCli m_cli;
+    OllamaClient m_cli;
 };

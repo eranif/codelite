@@ -24,7 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "ChatAI.hpp"
 
-#include "ChatAISettingsDlg.hpp"
 #include "Keyboard/clKeyboardManager.h"
 #include "event_notifier.h"
 #include "globals.h"
@@ -75,10 +74,7 @@ ChatAI::ChatAI(IManager* manager)
     wxTheApp->Bind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("chatai_show_window"));
 
     m_cli.GetConfig().Load();
-    EventNotifier::Get()->Bind(wxEVT_CHATAI_SEND, &ChatAI::OnPrompt, this);
     EventNotifier::Get()->Bind(wxEVT_CHATAI_INTERRUPT, &ChatAI::OnInterrupt, this);
-    EventNotifier::Get()->Bind(wxEVT_CHATAI_STOP, &ChatAI::OnStopLlamaCli, this);
-    EventNotifier::Get()->Bind(wxEVT_CHATAI_START, &ChatAI::OnStartLlamCli, this);
 
     m_chatWindow = new ChatAIWindow(m_mgr->BookGet(PaneId::BOTTOM_BAR), this);
     m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_chatWindow, CHAT_AI_LABEL, wxEmptyString);
@@ -95,10 +91,6 @@ void ChatAI::UnPlug()
     }
     m_chatWindow = nullptr;
     ollama::Manager::GetInstance().Shutdown();
-
-    EventNotifier::Get()->Unbind(wxEVT_CHATAI_SEND, &ChatAI::OnPrompt, this);
-    EventNotifier::Get()->Unbind(wxEVT_CHATAI_STOP, &ChatAI::OnStopLlamaCli, this);
-    wxTheApp->Unbind(wxEVT_MENU, &ChatAI::OnSettings, this, XRCID("chatai_settings"));
 }
 
 void ChatAI::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
@@ -112,7 +104,6 @@ void ChatAI::CreatePluginMenu(wxMenu* pluginsMenu)
     menu->Append(item);
 
     pluginsMenu->Append(wxID_ANY, _("Chat AI"), menu);
-    wxTheApp->Bind(wxEVT_MENU, &ChatAI::OnSettings, this, XRCID("chatai_settings"));
 }
 
 void ChatAI::HookPopupMenu(wxMenu* menu, MenuType type)
@@ -128,33 +119,8 @@ void ChatAI::OnShowChatWindow(wxCommandEvent& event)
     m_chatWindow->GetStcInput()->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 
-bool ChatAI::IsRunning() const { return ollama::Manager::GetInstance().IsRunning(); }
-
 void ChatAI::OnInterrupt(clCommandEvent& event)
 {
     wxUnusedVar(event);
     m_cli.Interrupt();
-}
-
-void ChatAI::OnPrompt(clCommandEvent& event)
-{
-    if (!m_cli.IsOk()) {
-        wxString message;
-        message << _("llama-cli is not configured properly!\n") << _("Please ensure the following is set:\n")
-                << wxT("•") << _(" Path to llama-cli executable\n") << wxT("•") << _(" An active model is selected\n")
-                << wxT("•") << _(" The active model contains the path to the local model file\n");
-        ::wxMessageBox(message, "CodeLite - ChatAI", wxOK | wxCENTRE | wxICON_WARNING);
-        m_chatWindow->CallAfter(&ChatAIWindow::ShowSettings);
-        return;
-    } else if (!m_cli.IsRunning()) {
-        return;
-    }
-
-    m_cli.Send(event.GetString());
-}
-
-void ChatAI::OnSettings(wxCommandEvent& event)
-{
-    ChatAISettingsDlg dlg(wxTheApp->GetTopWindow(), m_cli.GetConfig());
-    dlg.ShowModal();
 }

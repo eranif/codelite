@@ -29,7 +29,7 @@ endif()
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(ChatAI PROPERTIES PREFIX "")
-target_link_libraries(ChatAI ${LINKER_OPTIONS} libcodelite plugin)
+target_link_libraries(ChatAI ${LINKER_OPTIONS} libcodelite plugin ollamalib)
 target_include_directories(ChatAI PRIVATE "${CL_SRC_ROOT}/submodules/assistant")
 
 cl_install_plugin(ChatAI)

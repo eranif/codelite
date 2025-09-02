@@ -38,15 +38,11 @@ public:
     void HookPopupMenu(wxMenu* menu, MenuType type) override;
     void UnPlug() override;
     ChatAIConfig& GetConfig() { return m_cli.GetConfig(); }
-    bool IsRunning() const;
+    OllamaClient& GetClient() { return m_cli; }
 
 private:
     void OnShowChatWindow(wxCommandEvent& event);
-    void OnPrompt(clCommandEvent& event);
     void OnInterrupt(clCommandEvent& event);
-    void OnStopLlamaCli(clCommandEvent& event);
-    void OnStartLlamCli(clCommandEvent& event);
-    void OnSettings(wxCommandEvent& event);
 
     ChatAIWindow* m_chatWindow = nullptr;
     OllamaClient m_cli;

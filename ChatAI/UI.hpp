@@ -11,25 +11,15 @@
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
-#include <wx/dialog.h>
-#include <wx/iconbndl.h>
+#include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/notebook.h>
-#include <wx/panel.h>
-#include <wx/imaglist.h>
-#include <wx/stattext.h>
-#include <wx/filepicker.h>
-#include <wx/choice.h>
-#include <wx/arrstr.h>
-#include <wx/hyperlink.h>
-#include <wx/button.h>
-#include <wx/textctrl.h>
 #include <wx/splitter.h>
 #include <wx/toolbar.h>
 #include "clToolBar.h"
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
+#include <wx/button.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -47,70 +37,6 @@
 #endif
 
 // clang-format on
-
-class AssistanceAISettingsBaseDlg : public wxDialog
-{
-protected:
-    wxNotebook* m_notebook;
-    wxPanel* m_generalSettings;
-    wxStaticText* m_staticText12;
-    wxFilePickerCtrl* m_filePickerCLI;
-    wxStaticText* m_staticText39;
-    wxChoice* m_choiceModels;
-    wxHyperlinkCtrl* m_hyperLink46;
-    wxButton* m_buttonNew;
-    wxButton* m_button44;
-    wxStdDialogButtonSizer* m_stdBtnSizer2;
-    wxButton* m_button3;
-    wxButton* m_button4;
-
-protected:
-    virtual void OnSearchModels(wxHyperlinkEvent& event) { event.Skip(); }
-    virtual void OnNewModel(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnOK(wxCommandEvent& event) { event.Skip(); }
-
-public:
-    wxStaticText* GetStaticText12() { return m_staticText12; }
-    wxFilePickerCtrl* GetFilePickerCLI() { return m_filePickerCLI; }
-    wxStaticText* GetStaticText39() { return m_staticText39; }
-    wxChoice* GetChoiceModels() { return m_choiceModels; }
-    wxHyperlinkCtrl* GetHyperLink46() { return m_hyperLink46; }
-    wxPanel* GetGeneralSettings() { return m_generalSettings; }
-    wxNotebook* GetNotebook() { return m_notebook; }
-    wxButton* GetButtonNew() { return m_buttonNew; }
-    wxButton* GetButton44() { return m_button44; }
-    AssistanceAISettingsBaseDlg(wxWindow* parent,
-                                wxWindowID id = wxID_ANY,
-                                const wxString& title = _("Chat AI Settings"),
-                                const wxPoint& pos = wxDefaultPosition,
-                                const wxSize& size = wxSize(-1, -1),
-                                long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
-    virtual ~AssistanceAISettingsBaseDlg();
-};
-
-class ModelPageBase : public wxPanel
-{
-protected:
-    wxStaticText* m_staticText17;
-    wxTextCtrl* m_textCtrlModelName;
-    wxStaticText* m_staticText19;
-    wxFilePickerCtrl* m_filePickerModelFile;
-
-protected:
-public:
-    wxStaticText* GetStaticText17() { return m_staticText17; }
-    wxTextCtrl* GetTextCtrlModelName() { return m_textCtrlModelName; }
-    wxStaticText* GetStaticText19() { return m_staticText19; }
-    wxFilePickerCtrl* GetFilePickerModelFile() { return m_filePickerModelFile; }
-    ModelPageBase(wxWindow* parent,
-                  wxWindowID id = wxID_ANY,
-                  const wxPoint& pos = wxDefaultPosition,
-                  const wxSize& size = wxSize(-1, -1),
-                  long style = wxTAB_TRAVERSAL);
-    virtual ~ModelPageBase();
-};
 
 class AssistanceAIChatWindowBase : public wxPanel
 {

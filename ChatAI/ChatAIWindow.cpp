@@ -29,7 +29,9 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     m_toolbar->AddTool(wxID_CLEAR, _("Clear content"), images->Add("clear"));
     m_activeModel = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, GetTextExtent(LONG_MODEL_NAME));
     m_toolbar->AddControl(m_activeModel);
+    m_toolbar->AddTool(wxID_REFRESH, _("Load models list"), images->Add("debugger_restart"));
     m_toolbar->AddSeparator();
+
     PopulateModels();
     m_toolbar->Realize();
     m_activeModel->Bind(wxEVT_CHOICE, &ChatAIWindow::OnModelChanged, this);
@@ -41,6 +43,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     Bind(wxEVT_MENU, &ChatAIWindow::OnClear, this, wxID_CLEAR);
+    Bind(wxEVT_MENU, &ChatAIWindow::OnRefreshModelList, this, wxID_REFRESH);
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);
 }
 
@@ -54,11 +57,17 @@ ChatAIWindow::~ChatAIWindow()
 void ChatAIWindow::OnSend(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    SendPromptEvent();
+    DoSendPrompt();
 }
 
-void ChatAIWindow::SendPromptEvent()
+void ChatAIWindow::DoSendPrompt()
 {
+    wxBusyCursor bc{};
+    if (!m_plugin->GetClient().IsRunning()) {
+        ::wxMessageBox(_("ollama server is not running."), "CodeLite", wxOK | wxCENTER | wxICON_ERROR);
+        return;
+    }
+
     m_plugin->GetClient().Send(m_stcInput->GetText(), m_activeModel->GetStringSelection());
     m_stcInput->ClearAll();
 }
@@ -106,7 +115,7 @@ void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
     case WXK_NUMPAD_ENTER:
         if (win && win == m_stcInput && event.GetModifiers() == wxMOD_SHIFT) {
             // Send the command
-            SendPromptEvent();
+            DoSendPrompt();
         } else {
             event.Skip();
         }
@@ -115,6 +124,12 @@ void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
         event.Skip();
         break;
     }
+}
+
+void ChatAIWindow::OnRefreshModelList(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    PopulateModels();
 }
 
 void ChatAIWindow::OnClear(wxCommandEvent& event)
@@ -137,6 +152,7 @@ void ChatAIWindow::OnInputUI(wxUpdateUIEvent& event) { event.Enable(true); }
 
 void ChatAIWindow::PopulateModels()
 {
+    wxBusyCursor bc{};
     m_activeModel->Clear();
     auto models = m_plugin->GetClient().GetModels();
     for (auto& model : models) {

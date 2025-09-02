@@ -21,8 +21,9 @@ protected:
     void OnModelChanged(wxCommandEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     void OnClear(wxCommandEvent& event);
+    void OnRefreshModelList(wxCommandEvent& event);
     void UpdateTheme();
-    void SendPromptEvent();
+    void DoSendPrompt();
     void OnChatAIOutput(OllamaEvent& event);
     void OnChatAIOutputDone(OllamaEvent& event);
     void PopulateModels();

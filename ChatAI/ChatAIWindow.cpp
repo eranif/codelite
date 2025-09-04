@@ -25,15 +25,16 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     : AssistanceAIChatWindowBase(parent)
     , m_plugin(plugin)
 {
-    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
-    m_toolbar->AddTool(wxID_CLEAR, _("Clear content"), images->Add("clear"));
+    wxBitmap refresh_bmp = clGetManager()->GetStdIcons()->LoadBitmap("debugger_restart");
+    wxBitmap clear_bmp = clGetManager()->GetStdIcons()->LoadBitmap("clear");
+
+    m_toolbar->AddTool(wxID_CLEAR, _("Clear chat"), clear_bmp);
     m_activeModel = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, GetTextExtent(LONG_MODEL_NAME));
     m_toolbar->AddControl(m_activeModel);
-    m_toolbar->AddTool(wxID_REFRESH, _("Load models list"), images->Add("debugger_restart"));
-    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(wxID_REFRESH, _("Load models list"), refresh_bmp);
+    m_toolbar->Realize();
 
     PopulateModels();
-    m_toolbar->Realize();
     m_activeModel->Bind(wxEVT_CHOICE, &ChatAIWindow::OnModelChanged, this);
 
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);

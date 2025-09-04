@@ -16,7 +16,6 @@
 #include <wx/sizer.h>
 #include <wx/splitter.h>
 #include <wx/toolbar.h>
-#include "clToolBar.h"
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
 #include <wx/button.h>
@@ -43,7 +42,7 @@ class AssistanceAIChatWindowBase : public wxPanel
 protected:
     wxSplitterWindow* m_splitter30;
     wxPanel* m_splitterPage32;
-    clToolBar* m_toolbar;
+    wxToolBar* m_toolbar;
     clThemedSTC* m_stcOutput;
     wxPanel* m_splitterPage34;
     clThemedSTC* m_stcInput;
@@ -55,7 +54,7 @@ protected:
     virtual void OnSendUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    clToolBar* GetToolbar() { return m_toolbar; }
+    wxToolBar* GetToolbar() { return m_toolbar; }
     clThemedSTC* GetStcOutput() { return m_stcOutput; }
     wxPanel* GetSplitterPage32() { return m_splitterPage32; }
     clThemedSTC* GetStcInput() { return m_stcInput; }

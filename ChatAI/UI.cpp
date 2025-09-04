@@ -50,7 +50,7 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
     wxBoxSizer* boxSizer35 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage32->SetSizer(boxSizer35);
 
-    m_toolbar = new clToolBar(m_splitterPage32,
+    m_toolbar = new wxToolBar(m_splitterPage32,
                               wxID_ANY,
                               wxDefaultPosition,
                               wxDLG_UNIT(m_splitterPage32, wxSize(-1, -1)),

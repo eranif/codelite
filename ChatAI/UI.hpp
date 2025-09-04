@@ -18,6 +18,7 @@
 #include <wx/imaglist.h>
 #include <wx/splitter.h>
 #include <wx/toolbar.h>
+#include "clToolBar.h"
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
 #include <wx/button.h>
@@ -46,7 +47,7 @@ protected:
     wxPanel* m_panelChat;
     wxSplitterWindow* m_splitter30;
     wxPanel* m_splitterPage32;
-    wxToolBar* m_toolbar;
+    clToolBar* m_toolbar;
     clThemedSTC* m_stcOutput;
     wxPanel* m_splitterPage34;
     clThemedSTC* m_stcInput;
@@ -59,7 +60,7 @@ protected:
     virtual void OnSendUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxToolBar* GetToolbar() { return m_toolbar; }
+    clToolBar* GetToolbar() { return m_toolbar; }
     clThemedSTC* GetStcOutput() { return m_stcOutput; }
     wxPanel* GetSplitterPage32() { return m_splitterPage32; }
     clThemedSTC* GetStcInput() { return m_stcInput; }

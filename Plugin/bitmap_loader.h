@@ -106,9 +106,8 @@ public:
 
 class WXDLLIMPEXP_SDK BitmapLoader : public wxEvtHandler
 {
-    friend class clBitmaps;
-
 public:
+    friend class clBitmaps;
     typedef std::unordered_map<FileExtManager::FileType, wxBitmap> BitmapMap_t;
     typedef std::vector<wxBitmap> Vec_t;
 
@@ -140,23 +139,6 @@ public:
         kSort,
     };
 
-protected:
-    wxFileName m_zipPath;
-    std::unordered_map<wxString, wxBitmap> m_toolbarsBitmaps;
-    std::unordered_map<wxString, wxString> m_manifest;
-    std::unordered_map<int, int> m_fileIndexMap;
-    clMimeBitmaps m_mimeBitmaps;
-
-protected:
-    wxIcon GetIcon(const wxBitmap& bmp) const;
-
-private:
-    BitmapLoader(bool darkTheme);
-    virtual ~BitmapLoader();
-
-    void AddBitmapInternal(const wxBitmapBundle& bundle, const wxString& base_name);
-
-public:
     clMimeBitmaps& GetMimeBitmaps() { return m_mimeBitmaps; }
     const clMimeBitmaps& GetMimeBitmaps() const { return m_mimeBitmaps; }
 
@@ -192,18 +174,28 @@ public:
      */
     int GetMimeImageId(int type, bool disabled = false);
     int GetImageIndex(int type, bool disabled = false) { return GetMimeImageId(type, disabled); }
+    const wxBitmap& LoadBitmap(const wxString& name, int requestedSize = 16);
+    bool GetIconBundle(const wxString& name, wxIconBundle* bundle);
 
 protected:
+    wxIcon GetIcon(const wxBitmap& bmp) const;
     void CreateMimeList();
 
 private:
+    BitmapLoader(wxWindow* win, bool darkTheme);
+    virtual ~BitmapLoader();
+
+    void AddBitmapInternal(const wxBitmapBundle& bundle, const wxString& base_name);
     void Initialize(bool darkTheme);
     void LoadSVGFiles(bool darkTheme);
-    std::unordered_map<wxString, wxBitmapBundle>* GetBundles(bool darkTheme) const;
 
-public:
-    const wxBitmap& LoadBitmap(const wxString& name, int requestedSize = 16);
-    bool GetIconBundle(const wxString& name, wxIconBundle* bundle);
+    wxFileName m_zipPath;
+    std::unordered_map<wxString, wxBitmap> m_toolbarsBitmaps;
+    std::unordered_map<wxString, wxString> m_manifest;
+    std::unordered_map<int, int> m_fileIndexMap;
+    clMimeBitmaps m_mimeBitmaps;
+    std::unordered_map<wxString, wxBitmapBundle>* GetBundles(bool darkTheme) const;
+    wxWindow* m_win{ nullptr };
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BITMAPS_UPDATED, clCommandEvent);
@@ -214,7 +206,7 @@ class WXDLLIMPEXP_SDK clBitmaps : public wxEvtHandler
     BitmapLoader* m_activeBitmaps = nullptr;
 
 protected:
-    void Initialise();
+    void InitialiseInternal(wxWindow* win);
     void OnSysColoursChanged(clCommandEvent& event);
 
 protected:
@@ -223,6 +215,8 @@ protected:
 
 public:
     static clBitmaps& Get();
+    static void Initialise(wxWindow* win);
+
     BitmapLoader* GetLoader();
     void SysColoursChanged();
 };

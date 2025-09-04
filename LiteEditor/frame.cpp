@@ -766,6 +766,9 @@ clMainFrame::clMainFrame(
         return;
     }
 
+    // Initialise the bitmaps once.
+    clBitmaps::Initialise(this);
+
     // constuct the UI
     m_frameGeneralInfo = inf;
     Construct();

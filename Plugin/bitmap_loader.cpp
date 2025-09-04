@@ -56,7 +56,11 @@ std::unordered_map<wxString, wxBitmapBundle> LIGHT_THEME_BMPBUNLES;
 
 BitmapLoader::~BitmapLoader() {}
 
-BitmapLoader::BitmapLoader(bool darkTheme) { Initialize(darkTheme); }
+BitmapLoader::BitmapLoader(wxWindow* win, bool darkTheme)
+    : m_win(win)
+{
+    Initialize(darkTheme);
+}
 
 std::unordered_map<wxString, wxBitmapBundle>* BitmapLoader::GetBundles(bool darkTheme) const
 {
@@ -336,32 +340,30 @@ const wxBitmap& clMimeBitmaps::GetBitmap(int type, bool disabled) const
 // clBitmaps
 // ------------------------------------
 wxDEFINE_EVENT(wxEVT_BITMAPS_UPDATED, clCommandEvent);
-clBitmaps::clBitmaps()
-{
-    Initialise();
-    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clBitmaps::OnSysColoursChanged, this);
-}
+clBitmaps::clBitmaps() { EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clBitmaps::OnSysColoursChanged, this); }
 
 clBitmaps::~clBitmaps()
 {
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clBitmaps::OnSysColoursChanged, this);
 }
 
-clBitmaps& clBitmaps::Get()
+static clBitmaps* pBitmaps = nullptr;
+void clBitmaps::Initialise(wxWindow* win)
 {
-    static clBitmaps* pBitmaps = nullptr;
     if (!pBitmaps) {
         pBitmaps = new clBitmaps();
+        pBitmaps->InitialiseInternal(win);
     }
-    return *pBitmaps;
 }
+
+clBitmaps& clBitmaps::Get() { return *pBitmaps; }
 
 BitmapLoader* clBitmaps::GetLoader() { return m_activeBitmaps; }
 
-void clBitmaps::Initialise()
+void clBitmaps::InitialiseInternal(wxWindow* win)
 {
-    m_darkBitmaps = new BitmapLoader(true);
-    m_lightBitmaps = new BitmapLoader(false);
+    m_darkBitmaps = new BitmapLoader(win, true);
+    m_lightBitmaps = new BitmapLoader(win, false);
     SysColoursChanged();
 }
 

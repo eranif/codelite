@@ -233,7 +233,9 @@ void clToolBarGeneric::RenderGroup(int& xx, const clToolBarGeneric::ToolVect_t& 
             m_overflowButtons.push_back(button);
         } else {
             wxRect r(xx, 0, buttonSize.GetWidth(), clientRect.GetHeight());
-            r.Deflate(1, 2);
+            if (!button->IsControl()) {
+                r.Deflate(1, 2);
+            }
             r = r.CenterIn(clientRect, wxVERTICAL);
             button->Render(gcdc, r);
             m_visibleButtons.push_back(button);

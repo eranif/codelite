@@ -43,6 +43,7 @@ public:
     bool IsRunning() const { return m_ollama.IsRunning(); }
     bool IsBusy() const { return m_processingRequest; }
     wxArrayString GetModels() const;
+    void Clear();
 
 private:
     ChatAIConfig m_config;

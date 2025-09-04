@@ -95,3 +95,5 @@ wxArrayString OllamaClient::GetModels() const
     }
     return m;
 }
+
+void OllamaClient::Clear() { m_ollama.Reset(); }

@@ -136,6 +136,8 @@ void ChatAIWindow::OnClear(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     m_stcOutput->ClearAll();
+    m_stcInput->ClearAll();
+    m_plugin->GetClient().Clear();
 }
 
 void ChatAIWindow::OnChatAIOutput(OllamaEvent& event) { AppendOutputText(event.GetOutput()); }

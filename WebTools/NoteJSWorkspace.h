@@ -27,15 +27,15 @@
 #define NOTEJSWORKSPACE_H
 
 #include "AsyncProcess/TerminalEmulator.h"
-#include "IWorkspace.h"
 #include "NodeDebugger.h"
+#include "clWorkspaceManager.h"
 #include "cl_command_event.h"
 
 #include <wx/filename.h>
 
 class NodeDebugger;
 class NodeJSWorkspaceView;
-class NodeJSWorkspace : public IWorkspace
+class NodeJSWorkspace : public LocalWorkspaceCommon
 {
 protected:
     wxFileName m_filename;

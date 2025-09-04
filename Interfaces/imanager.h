@@ -248,6 +248,11 @@ public:
                               const wxString& projectName = wxEmptyString,
                               int lineno = wxNOT_FOUND,
                               OF_extra flags = OF_AddJump) = 0;
+    /**
+     * @brief open filepath (or create it if does not exist) and load it into an editor.
+     * note: filepath must be a local path.
+     */
+    virtual IEditor* CreateOrOpenLocalFile(const wxString& filepath) = 0;
 
     /**
      * @brief open a file with a given tooltip and bitmap

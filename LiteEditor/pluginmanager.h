@@ -97,12 +97,18 @@ public:
     clTreeCtrl* GetFileExplorerTree() override;
     clTreeCtrl* GetWorkspaceTree() override;
     MainNotebook* GetMainNotebook() override;
-    IEditor* OpenFile(const wxString& fileName, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND,
+    IEditor* OpenFile(const wxString& fileName,
+                      const wxString& projectName = wxEmptyString,
+                      int lineno = wxNOT_FOUND,
                       OF_extra flags = OF_AddJump) override;
-    IEditor* OpenFile(const wxString& fileName, const wxString& bmpResourceName,
+    IEditor* OpenFile(const wxString& fileName,
+                      const wxString& bmpResourceName,
                       const wxString& tooltip = wxEmptyString) override;
     IEditor* OpenFile(const BrowseRecord& rec) override;
-    IEditor* OpenRemoteFile(const wxString& local_path, const wxString& remote_path, const wxString& ssh_account,
+    IEditor* CreateOrOpenLocalFile(const wxString& filepath) override;
+    IEditor* OpenRemoteFile(const wxString& local_path,
+                            const wxString& remote_path,
+                            const wxString& ssh_account,
                             const wxString& tooltip = wxEmptyString) override;
     wxString GetStartupDirectory() const override;
     void AddProject(const wxString& path) override;
@@ -140,8 +146,11 @@ public:
     bool ClosePage(const wxString& title) override;
     bool ClosePage(const wxFileName& filename) override;
     wxWindow* FindPage(const wxString& text) override;
-    bool AddPage(wxWindow* win, const wxString& text, const wxString& tooltip = wxEmptyString,
-                 const wxString& bmpResourceName = wxEmptyString, bool selected = false) override;
+    bool AddPage(wxWindow* win,
+                 const wxString& text,
+                 const wxString& tooltip = wxEmptyString,
+                 const wxString& bmpResourceName = wxEmptyString,
+                 bool selected = false) override;
     bool SelectPage(wxWindow* win) override;
     NavMgr* GetNavigationMgr() override;
     IEditor* NewEditor() override;
@@ -196,7 +205,8 @@ public:
     /**
      * @brief display message to the user using the info bar
      */
-    void DisplayMessage(const wxString& message, int flags = wxICON_INFORMATION,
+    void DisplayMessage(const wxString& message,
+                        int flags = wxICON_INFORMATION,
                         const std::vector<std::pair<wxWindowID, wxString>>& buttons = {}) override;
 
     clInfoBar* GetInfoBar() override;
@@ -206,7 +216,9 @@ public:
     ///--------------------
 
     /// Add a book page
-    void BookAddPage(PaneId pane_id, wxWindow* page, const wxString& label,
+    void BookAddPage(PaneId pane_id,
+                     wxWindow* page,
+                     const wxString& label,
                      const wxString& bmpname = wxEmptyString) override;
 
     /// Find a book page by its label
@@ -245,8 +257,8 @@ public:
 
     // (Un)Hook the project settings tab
     virtual void HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName);
-    virtual void UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName,
-                                          const wxString& configName);
+    virtual void
+    UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName);
 };
 
 #endif // PLUGINMANAGER_H

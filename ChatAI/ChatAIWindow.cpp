@@ -4,6 +4,7 @@
 #include "ColoursAndFontsManager.h"
 #include "OllamaClient.hpp"
 #include "clSTCHelper.hpp"
+#include "clWorkspaceManager.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "globals.h"
@@ -31,6 +32,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
         m_toolbar, wxID_ANY, wxDefaultPosition, wxSize(GetTextExtent(LONG_MODEL_NAME).GetWidth(), wxNOT_FOUND));
     m_toolbar->AddControl(m_activeModel);
     m_toolbar->AddTool(wxID_REFRESH, _("Load models list"), images->Add("debugger_restart"));
+    m_toolbar->AddTool(wxID_SETUP, _("Settings"), images->Add("cog"));
     m_toolbar->Realize();
 
     PopulateModels();
@@ -44,6 +46,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     m_stcOutput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     Bind(wxEVT_MENU, &ChatAIWindow::OnClear, this, wxID_CLEAR);
     Bind(wxEVT_MENU, &ChatAIWindow::OnRefreshModelList, this, wxID_REFRESH);
+    Bind(wxEVT_MENU, &ChatAIWindow::OnSettings, this, wxID_SETUP);
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);
 }
 
@@ -118,6 +121,32 @@ void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
     default:
         event.Skip();
         break;
+    }
+}
+
+void ChatAIWindow::OnSettings(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        auto editor = clWorkspaceManager::Get().GetWorkspace()->CreateOrOpenSettingFile("assistant.json");
+        if (!editor) {
+            ::wxMessageBox(
+                wxString() << _("Could not open file: assistant.jon"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+        }
+
+        if (!editor->GetEditorText().empty()) {
+            return;
+        }
+
+        // Place some default content
+        editor->SetEditorText(
+            R"#({
+  "server_url": "http://127.0.0.1:11434",
+  "use_gpu": true,
+  "history_size": 20,
+  "context_size": 32768,
+  "servers": []
+})#");
     }
 }
 

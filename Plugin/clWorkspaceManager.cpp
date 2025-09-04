@@ -2,6 +2,7 @@
 
 #include "codelite_events.h"
 #include "event_notifier.h"
+#include "globals.h"
 
 #include <algorithm>
 
@@ -49,4 +50,20 @@ wxArrayString clWorkspaceManager::GetUnifiedFilesMask() const
         all.Add(workspace->GetFilesMask());
     }
     return all;
+}
+
+/// ---------------------------------------------------------------------------
+/// ---------------------------------------------------------------------------
+
+IEditor* LocalWorkspaceCommon::CreateOrOpenFile(const wxString& filepath)
+{
+    return clGetManager()->CreateOrOpenLocalFile(filepath);
+}
+
+IEditor* LocalWorkspaceCommon::CreateOrOpenSettingFile(const wxString& filename)
+{
+    wxFileName fullpath{ GetFileName() };
+    fullpath.AppendDir(".codelite");
+    fullpath.SetFullName(filename);
+    return CreateOrOpenFile(fullpath.GetFullPath());
 }

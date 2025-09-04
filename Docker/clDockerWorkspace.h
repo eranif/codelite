@@ -1,13 +1,13 @@
 #ifndef CLDOCKERWORKSPACE_H
 #define CLDOCKERWORKSPACE_H
 
-#include "IWorkspace.h"
 #include "clDockerDriver.h"
 #include "clDockerWorkspaceSettings.h"
+#include "clWorkspaceManager.h"
 #include "cl_command_event.h"
 
 class clDockerWorkspaceView;
-class clDockerWorkspace : public IWorkspace
+class clDockerWorkspace : public LocalWorkspaceCommon
 {
     bool m_bindEvents = false;
     wxFileName m_filename;

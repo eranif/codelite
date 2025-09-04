@@ -33,6 +33,8 @@
 #include <wx/filename.h>
 #include <wx/string.h>
 
+class IEditor;
+
 /**
  * @class IWorkspace
  * @brief an interface representing the workspace concept of CodeLite
@@ -155,6 +157,15 @@ public:
 
     /// Return the workspace specific indentation width
     virtual int GetIndentWidth() { return wxNOT_FOUND; }
+
+    /// Open (create if missing) `filepath` and load it into an editor.
+    virtual IEditor* CreateOrOpenFile(const wxString& filepath) = 0;
+
+    /// Open (create if missing) `filename` and load it into an editor. The file is searched (or created)
+    /// inside the workspace private folder (i.e. `.codelite`).
+    /// `filename`: the file name to open or create. It must not contain the path, only name + extension, e.g.
+    /// `codelite-remote.json`
+    virtual IEditor* CreateOrOpenSettingFile(const wxString& filename) = 0;
 };
 
 #endif // IWORKSPACE_H

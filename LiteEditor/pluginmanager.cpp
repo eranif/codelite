@@ -1237,3 +1237,16 @@ IEditor* PluginManager::GetEditorFromWindow(wxWindow* win)
 
     return dynamic_cast<IEditor*>(editor);
 }
+
+IEditor* PluginManager::CreateOrOpenLocalFile(const wxString& filepath)
+{
+    wxFileName fn{ filepath };
+    if (!fn.Exists()) {
+        // Create the file with an empty content.
+        fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        if (!FileUtils::WriteFileContent(filepath, wxEmptyString)) {
+            return nullptr;
+        }
+    }
+    return clGetManager()->OpenFile(fn.GetFullPath());
+}

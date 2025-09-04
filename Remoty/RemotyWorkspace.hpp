@@ -186,6 +186,9 @@ public:
     clFileSystemWorkspaceSettings& GetSettings() { return m_settings; }
     void BuildTarget(const wxString& kind);
 
+    IEditor* CreateOrOpenFile(const wxString& filepath) override;
+    IEditor* CreateOrOpenSettingFile(const wxString& filename) override;
+
     /**
      * @brief save the settings to the remote machine
      */

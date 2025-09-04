@@ -54,7 +54,7 @@ NodeJSWorkspace::NodeJSWorkspace()
 
 NodeJSWorkspace::~NodeJSWorkspace()
 {
-    if(!m_dummy) {
+    if (!m_dummy) {
         EventNotifier::Get()->Unbind(wxEVT_CMD_CLOSE_WORKSPACE, &NodeJSWorkspace::OnCloseWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &NodeJSWorkspace::OnNewWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_WORKSPACE, &NodeJSWorkspace::OnOpenWorkspace, this);
@@ -77,7 +77,7 @@ bool NodeJSWorkspace::IsProjectSupported() const { return false; }
 
 void NodeJSWorkspace::Free()
 {
-    if(ms_workspace) {
+    if (ms_workspace) {
         delete ms_workspace;
     }
     ms_workspace = NULL;
@@ -85,7 +85,7 @@ void NodeJSWorkspace::Free()
 
 NodeJSWorkspace* NodeJSWorkspace::Get()
 {
-    if(!ms_workspace) {
+    if (!ms_workspace) {
         ms_workspace = new NodeJSWorkspace();
     }
     return ms_workspace;
@@ -95,9 +95,9 @@ bool NodeJSWorkspace::IsOpen() const { return m_filename.IsOk() && m_filename.Ex
 
 bool NodeJSWorkspace::Create(const wxFileName& filename)
 {
-    if(IsOpen())
+    if (IsOpen())
         return false;
-    if(filename.Exists())
+    if (filename.Exists())
         return false;
     DoClear();
     m_filename = filename;
@@ -113,7 +113,7 @@ bool NodeJSWorkspace::Create(const wxFileName& filename)
 
 bool NodeJSWorkspace::Open(const wxFileName& filename)
 {
-    if(IsOpen())
+    if (IsOpen())
         return false;
     m_filename = filename;
     return DoOpen(m_filename);
@@ -121,7 +121,7 @@ bool NodeJSWorkspace::Open(const wxFileName& filename)
 
 void NodeJSWorkspace::Close()
 {
-    if(!IsOpen())
+    if (!IsOpen())
         return;
 
     // Store the session
@@ -165,7 +165,7 @@ void NodeJSWorkspace::Save()
 void NodeJSWorkspace::OnCloseWorkspace(clCommandEvent& e)
 {
     e.Skip();
-    if(IsOpen()) {
+    if (IsOpen()) {
         e.Skip(false);
         Close();
     }
@@ -174,25 +174,26 @@ void NodeJSWorkspace::OnCloseWorkspace(clCommandEvent& e)
 void NodeJSWorkspace::OnNewWorkspace(clCommandEvent& e)
 {
     e.Skip();
-    if(e.GetString() == GetWorkspaceType()) {
+    if (e.GetString() == GetWorkspaceType()) {
         e.Skip(false);
         // Create a new NodeJS workspace
         NodeJSNewWorkspaceDlg dlg(NULL);
-        if(dlg.ShowModal() != wxID_OK)
+        if (dlg.ShowModal() != wxID_OK)
             return;
 
         wxFileName workspaceFile = dlg.GetWorkspaceFilename();
-        if(!workspaceFile.GetDirCount()) {
-            ::wxMessageBox(_("Can not create workspace in the root folder"), _("New Workspace"),
-                           wxICON_ERROR | wxOK | wxCENTER);
+        if (!workspaceFile.GetDirCount()) {
+            ::wxMessageBox(
+                _("Can not create workspace in the root folder"), _("New Workspace"), wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
 
         // Ensure that the path the workspace exists
         workspaceFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
-        if(!Create(workspaceFile)) {
-            ::wxMessageBox(_("Failed to create workspace\nWorkspace already exists"), _("New Workspace"),
+        if (!Create(workspaceFile)) {
+            ::wxMessageBox(_("Failed to create workspace\nWorkspace already exists"),
+                           _("New Workspace"),
                            wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
@@ -204,7 +205,7 @@ bool NodeJSWorkspace::DoOpen(const wxFileName& filename)
 {
     NodeJSWorkspaceConfiguration conf(filename);
     conf.Load();
-    if(!conf.IsOk()) {
+    if (!conf.IsOk()) {
         DoClear();
         return false;
     }
@@ -254,7 +255,7 @@ void NodeJSWorkspace::OnOpenWorkspace(clCommandEvent& event)
     // Test that this is our workspace
     NodeJSWorkspaceConfiguration conf(workspaceFile);
     conf.Load();
-    if(!conf.IsOk()) {
+    if (!conf.IsOk()) {
         return;
     }
     // This is a NodeJS workspace, stop event processing by calling
@@ -262,7 +263,7 @@ void NodeJSWorkspace::OnOpenWorkspace(clCommandEvent& event)
     event.Skip(false);
 
     // Check if this is a PHP workspace
-    if(IsOpen()) {
+    if (IsOpen()) {
         Close();
     }
     Open(workspaceFile);
@@ -271,7 +272,7 @@ void NodeJSWorkspace::OnOpenWorkspace(clCommandEvent& event)
 void NodeJSWorkspace::OnAllEditorsClosed(wxCommandEvent& event)
 {
     event.Skip();
-    if(m_showWelcomePage) {
+    if (m_showWelcomePage) {
         m_showWelcomePage = false;
         // Show the 'Welcome Page'
         wxFrame* frame = EventNotifier::Get()->TopFrame();
@@ -283,7 +284,7 @@ void NodeJSWorkspace::OnAllEditorsClosed(wxCommandEvent& event)
 
 void NodeJSWorkspace::RestoreSession()
 {
-    if(IsOpen()) {
+    if (IsOpen()) {
         clGetManager()->LoadWorkspaceSession(m_filename);
     }
 }
@@ -291,7 +292,7 @@ void NodeJSWorkspace::RestoreSession()
 void NodeJSWorkspace::OnSaveSession(clCommandEvent& event)
 {
     event.Skip();
-    if(IsOpen()) {
+    if (IsOpen()) {
         // Call event.Skip(false) so no other session are kept beside ours
         event.Skip(false);
         clGetManager()->StoreWorkspaceSession(m_filename);
@@ -306,15 +307,16 @@ wxString NodeJSWorkspace::GetFilesMask() const
 void NodeJSWorkspace::OnExecute(clExecuteEvent& event)
 {
     event.Skip();
-    if(IsOpen()) {
-        if(m_terminal.IsRunning()) {
+    if (IsOpen()) {
+        if (m_terminal.IsRunning()) {
             ::wxMessageBox(_("Another instance is already running. Please stop it before executing another one"),
-                           "CodeLite", wxICON_WARNING | wxCENTER | wxOK);
+                           "CodeLite",
+                           wxICON_WARNING | wxCENTER | wxOK);
             return;
         }
         event.Skip(false);
         NodeJSDebuggerDlg dlg(EventNotifier::Get()->TopFrame(), NodeJSDebuggerDlg::kExecute);
-        if(dlg.ShowModal() != wxID_OK) {
+        if (dlg.ShowModal() != wxID_OK) {
             return;
         }
 
@@ -339,7 +341,7 @@ void NodeJSWorkspace::OnProcessTerminated(clCommandEvent& event)
 void NodeJSWorkspace::OnIsExecuteInProgress(clExecuteEvent& event)
 {
     event.Skip();
-    if(IsOpen()) {
+    if (IsOpen()) {
         event.Skip(false);
         event.SetAnswer(m_terminal.IsRunning());
     }
@@ -348,7 +350,7 @@ void NodeJSWorkspace::OnIsExecuteInProgress(clExecuteEvent& event)
 void NodeJSWorkspace::OnStopExecute(clExecuteEvent& event)
 {
     event.Skip();
-    if(IsOpen()) {
+    if (IsOpen()) {
         event.Skip(false);
         m_terminal.Terminate();
     }
@@ -390,7 +392,7 @@ int NodeJSWorkspace::GetNodeJSMajorVersion() const
 
 void NodeJSWorkspace::DoAllocateDebugger()
 {
-    if((GetNodeJSMajorVersion() >= 8)) {
+    if ((GetNodeJSMajorVersion() >= 8)) {
         clDEBUG() << "Successfully allocated new JS debugger";
         m_debugger.reset(new NodeDebugger());
     } else {
@@ -401,8 +403,8 @@ void NodeJSWorkspace::DoAllocateDebugger()
 
 void NodeJSWorkspace::OnDebugStart(clDebugEvent& event)
 {
-    if(IsOpen()) {
-        if(m_debugger) {
+    if (IsOpen()) {
+        if (m_debugger) {
             // let our debugger handle it
             event.Skip();
         } else {

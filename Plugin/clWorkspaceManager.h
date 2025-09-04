@@ -71,4 +71,19 @@ public:
     void RegisterWorkspace(IWorkspace* workspace);
 };
 
+/// A convenience class with common implementation for local workspace (i.e. non remote)
+class WXDLLIMPEXP_SDK IEditor;
+class WXDLLIMPEXP_SDK LocalWorkspaceCommon : public IWorkspace
+{
+public:
+    LocalWorkspaceCommon() {}
+    virtual ~LocalWorkspaceCommon() {}
+    /// Open (create if missing) `filepath` and load it into an editor.
+    IEditor* CreateOrOpenFile(const wxString& filepath) override;
+    /// Open (create if missing) `filename` and load it into an editor. The file is searched (or created)
+    /// inside the workspace private folder (i.e. `.codelite`)
+    /// `filename`: the file name to open or create. It must not contain the path, only name + extension, e.g.
+    /// `codelite-remote.json`
+    IEditor* CreateOrOpenSettingFile(const wxString& filename) override;
+};
 #endif // CLWORKSPACEMANAGER_H

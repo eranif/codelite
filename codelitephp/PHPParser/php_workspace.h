@@ -26,10 +26,10 @@
 #ifndef PHPWORKSPACE_H
 #define PHPWORKSPACE_H
 
-#include "IWorkspace.h"
 #include "JSON.h"
 #include "PHPWrokspaceStorageInterface.h"
 #include "XDebugBreakpoint.h"
+#include "clWorkspaceManager.h"
 #include "imanager.h"
 #include "macros.h"
 #include "php_project.h"
@@ -45,21 +45,21 @@
 // ------------------------------------------------------------------
 // ------------------------------------------------------------------
 
-#define CHECK_PHP_WORKSPACE()          \
-    if(!PHPWorkspace::Get()->IsOpen()) \
+#define CHECK_PHP_WORKSPACE()           \
+    if (!PHPWorkspace::Get()->IsOpen()) \
     return
-#define CHECK_PHP_WORKSPACE_RET_NULL() \
-    if(!PHPWorkspace::Get()->IsOpen()) \
+#define CHECK_PHP_WORKSPACE_RET_NULL()  \
+    if (!PHPWorkspace::Get()->IsOpen()) \
     return NULL
 #define CHECK_PHP_WORKSPACE_RET_FALSE() \
-    if(!PHPWorkspace::Get()->IsOpen())  \
+    if (!PHPWorkspace::Get()->IsOpen()) \
     return NULL
 
 // ------------------------------------------------------------------
 // ------------------------------------------------------------------
 
 class wxProgressDialog;
-class PHPWorkspace : public IWorkspace
+class PHPWorkspace : public LocalWorkspaceCommon
 {
     static PHPWorkspace* ms_instance;
 
@@ -225,7 +225,9 @@ public:
     ////////////////////////////////////////////
     // Project execution
     ////////////////////////////////////////////
-    bool RunProject(bool debugging, const wxString& urlOrFilePath, const wxString& projectName = wxEmptyString,
+    bool RunProject(bool debugging,
+                    const wxString& urlOrFilePath,
+                    const wxString& projectName = wxEmptyString,
                     const wxString& xdebugSessionName = wxEmptyString);
     bool IsProjectRunning() const { return m_executor.IsRunning(); }
     void StopExecutedProgram() { m_executor.Stop(); }

@@ -1224,26 +1224,38 @@ void RemotyWorkspace::OpenAndEditCodeLiteRemoteJson()
         return;
     }
 
-    wxString remote_file_dir = GetRemoteWorkingDir() + "/.codelite";
-    if (!clSFTPManager::Get().NewFolder(remote_file_dir, m_account)) {
-        wxMessageBox(_("Failed to create directory: ") + remote_file_dir, "CodeLite", wxICON_ERROR | wxOK);
-        return;
-    }
-
-    // create a new file
-    if (!clSFTPManager::Get().NewFile(remote_file_path, m_account)) {
-        wxMessageBox(_("Failed to create file: ") + remote_file_path, "CodeLite", wxICON_ERROR | wxOK);
-        return;
-    }
-
-    editor = OpenFile(remote_file_path);
+    editor = CreateOrOpenFile(remote_file_path);
     if (!editor) {
         wxMessageBox(_("Failed to open file: ") + remote_file_path, "CodeLite", wxICON_ERROR | wxOK);
         return;
     }
-
     editor->SetEditorText(DEFAULT_CODELITE_REMOTE_JSON);
+}
+
+IEditor* RemotyWorkspace::CreateOrOpenFile(const wxString& filepath)
+{
+    wxString directory = filepath.BeforeLast('/');
+    if (!clSFTPManager::Get().NewFolder(directory, m_account)) {
+        wxMessageBox(_("Failed to create directory: ") + directory, "CodeLite", wxICON_ERROR | wxOK);
+        return nullptr;
+    }
+
+    // create a new file
+    if (!clSFTPManager::Get().NewFile(filepath, m_account)) {
+        wxMessageBox(_("Failed to create file: ") + filepath, "CodeLite", wxICON_ERROR | wxOK);
+        return nullptr;
+    }
+
+    auto editor = OpenFile(filepath);
     editor->SetActive();
+    return editor;
+}
+
+IEditor* RemotyWorkspace::CreateOrOpenSettingFile(const wxString& filename)
+{
+    wxString fullpath;
+    fullpath << GetDir() << "/.codelite/" << filename;
+    return CreateOrOpenFile(fullpath);
 }
 
 void RemotyWorkspace::OnStopFindInFiles(clFindInFilesEvent& event)

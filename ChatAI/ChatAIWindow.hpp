@@ -22,6 +22,7 @@ protected:
     void OnKeyDown(wxKeyEvent& event);
     void OnClear(wxCommandEvent& event);
     void OnRefreshModelList(wxCommandEvent& event);
+    void OnSettings(wxCommandEvent& event);
     void UpdateTheme();
     void DoSendPrompt();
     void OnChatAIOutput(OllamaEvent& event);

@@ -27,6 +27,7 @@
 
 #include "IWorkspace.h"
 #include "JSON.h"
+#include "clWorkspaceManager.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "configuration_mapping.h"
@@ -53,7 +54,7 @@
  *
  */
 class LocalWorkspace;
-class WXDLLIMPEXP_SDK clCxxWorkspace : public IWorkspace
+class WXDLLIMPEXP_SDK clCxxWorkspace : public LocalWorkspaceCommon
 {
     friend class clCxxWorkspaceST;
 
@@ -253,8 +254,12 @@ public:
      * \returns
      * true on success false otherwise
      */
-    bool CreateProject(const wxString& name, const wxString& path, const wxString& type,
-                       const wxString& workspaceFolder, bool addToBuildMatrix, wxString& errMsg);
+    bool CreateProject(const wxString& name,
+                       const wxString& path,
+                       const wxString& type,
+                       const wxString& workspaceFolder,
+                       bool addToBuildMatrix,
+                       wxString& errMsg);
 
     /**
      * @brief rename a project

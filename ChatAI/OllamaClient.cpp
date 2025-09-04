@@ -39,11 +39,6 @@ bool OllamaClient::IsOk() const { return m_ollama.IsRunning(); }
 
 void OllamaClient::Send(const wxString& prompt, const wxString& model)
 {
-    if (!IsRunning()) {
-        // TODO: prompt the user to start ollama
-        return;
-    }
-
     if (m_processingRequest) {
         return;
     }
@@ -53,7 +48,7 @@ void OllamaClient::Send(const wxString& prompt, const wxString& model)
     clCommandEvent thinking{ wxEVT_OLLAMA_THINKING };
     thinking.SetEventObject(this);
     EventNotifier::Get()->AddPendingEvent(thinking);
-
+    m_ollama.SetPreferCPU(true);
     m_ollama.AsyncChat(
         prompt.ToStdString(),
         [this](std::string msg, ollama::Reason reason) {

@@ -63,11 +63,6 @@ void ChatAIWindow::OnSend(wxCommandEvent& event)
 void ChatAIWindow::DoSendPrompt()
 {
     wxBusyCursor bc{};
-    if (!m_plugin->GetClient().IsRunning()) {
-        ::wxMessageBox(_("ollama server is not running."), "CodeLite", wxOK | wxCENTER | wxICON_ERROR);
-        return;
-    }
-
     m_plugin->GetClient().Send(m_stcInput->GetText(), m_activeModel->GetStringSelection());
     m_stcInput->ClearAll();
 }
@@ -140,10 +135,17 @@ void ChatAIWindow::OnClear(wxCommandEvent& event)
     m_plugin->GetClient().Clear();
 }
 
-void ChatAIWindow::OnChatAIOutput(OllamaEvent& event) { AppendOutputText(event.GetOutput()); }
+void ChatAIWindow::OnChatAIOutput(OllamaEvent& event)
+{
+    if (event.GetReason() == ollama::Reason::kFatalError) {
+        ::wxMessageBox(event.GetOutput(), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+        return;
+    }
+    AppendOutputText(event.GetOutput());
+}
+
 void ChatAIWindow::OnChatAIOutputDone(OllamaEvent& event)
 {
-    wxUnusedVar(event);
     AppendOutputText("\n------\n");
 
     // Move the focus back to the input text control

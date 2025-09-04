@@ -22,7 +22,14 @@ jobs:
     - name: Install Codelite's dependencies
       run: |
         # brew update && brew upgrade # fails somehow
-        brew install git cmake libssh hunspell bison flex mariadb postgresql
+        brew install git || true
+        brew install cmake || true
+        brew install libssh || true
+        brew install hunspell || true
+        brew install bison || true
+        brew install flex || true
+        brew install mariadb || true
+        brew install postgresql || true
 
     # WxWidgets
     - name: Checkout

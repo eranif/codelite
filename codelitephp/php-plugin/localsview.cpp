@@ -16,7 +16,7 @@ public:
         : m_data(data)
     {
     }
-    virtual ~MyStringData() {}
+    virtual ~MyStringData() = default;
     const wxString& GetData() const { return m_data; }
 };
 

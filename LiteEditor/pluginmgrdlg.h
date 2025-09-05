@@ -45,7 +45,7 @@ protected:
 public:
     /** Constructor */
     PluginMgrDlg(wxWindow* parent);
-    virtual ~PluginMgrDlg();
+    virtual ~PluginMgrDlg() = default;
 };
 
 #endif // __pluginmgrdlg__

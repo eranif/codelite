@@ -13,8 +13,6 @@ WebToolsConfig::WebToolsConfig()
 {
 }
 
-WebToolsConfig::~WebToolsConfig() {}
-
 WebToolsConfig& WebToolsConfig::Load()
 {
     clConfig conf("WebTools.conf");

@@ -235,8 +235,8 @@ public:
         m_othersIndex.index = index;
     }
 
-    ThemeImporterBase();
-    virtual ~ThemeImporterBase();
+    ThemeImporterBase() = default;
+    virtual ~ThemeImporterBase() = default;
     /**
      * @brief intiailise the import by reading base parts of the lexer
      */

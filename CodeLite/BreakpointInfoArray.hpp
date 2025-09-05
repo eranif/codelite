@@ -10,8 +10,8 @@ class WXDLLIMPEXP_CL BreakpointInfoArray : public SerializedObject
     clDebuggerBreakpoint::Vec_t m_breakpoints;
 
 public:
-    BreakpointInfoArray();
-    virtual ~BreakpointInfoArray();
+    BreakpointInfoArray() = default;
+    virtual ~BreakpointInfoArray() = default;
     void SetBreakpoints(const clDebuggerBreakpoint::Vec_t& breakpoints) { this->m_breakpoints = breakpoints; }
     const clDebuggerBreakpoint::Vec_t& GetBreakpoints() const { return m_breakpoints; }
     

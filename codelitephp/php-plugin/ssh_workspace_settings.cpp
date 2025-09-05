@@ -7,10 +7,6 @@ SSHWorkspaceSettings::SSHWorkspaceSettings()
 {
 }
 
-SSHWorkspaceSettings::~SSHWorkspaceSettings()
-{
-}
-
 void SSHWorkspaceSettings::FromJSON(const JSONItem& json)
 {
     m_account = json.namedObject("m_account").toString();

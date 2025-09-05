@@ -35,7 +35,7 @@ class WXDLLIMPEXP_SDK ThemeImporterCXX : public ThemeImporterBase
 {
 public:
     ThemeImporterCXX();
-    virtual ~ThemeImporterCXX();
+    virtual ~ThemeImporterCXX() = default;
 
     /**
      * @brief import an eclipse XML colour theme

@@ -23,8 +23,6 @@ WebToolsSettings::WebToolsSettings(wxWindow* parent)
     ::clSetDialogBestSizeAndPosition(this);
 }
 
-WebToolsSettings::~WebToolsSettings() {}
-
 void WebToolsSettings::OnOKUI(wxUpdateUIEvent& event) { event.Enable(m_modified); }
 
 void WebToolsSettings::OnOK(wxCommandEvent& event)

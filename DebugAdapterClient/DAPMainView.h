@@ -22,7 +22,7 @@ struct VariableClientData : public wxTreeItemData {
         , value(v)
     {
     }
-    virtual ~VariableClientData() {}
+    virtual ~VariableClientData() = default;
 };
 
 struct ThreadInfo {

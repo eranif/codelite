@@ -8,8 +8,6 @@ LSPGoplsDetector::LSPGoplsDetector()
 {
 }
 
-LSPGoplsDetector::~LSPGoplsDetector() {}
-
 bool LSPGoplsDetector::DoLocate()
 {
     const auto path = ThePlatform->Which("gopls");

@@ -327,7 +327,7 @@ struct PHPFindSymbol_ClientData : public wxClientData {
     PHPEntityBase::Ptr_t m_ptr;
 
     PHPFindSymbol_ClientData(PHPEntityBase::Ptr_t ptr) { m_ptr = ptr; }
-    virtual ~PHPFindSymbol_ClientData() {}
+    virtual ~PHPFindSymbol_ClientData() = default;
 };
 
 void PHPCodeCompletion::OnFindSymbol(clCodeCompletionEvent& e)

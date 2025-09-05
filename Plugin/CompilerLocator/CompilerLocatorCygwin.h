@@ -33,7 +33,7 @@ class WXDLLIMPEXP_SDK CompilerLocatorCygwin : public ICompilerLocator
 {
 public:
     CompilerLocatorCygwin();
-    virtual ~CompilerLocatorCygwin() {}
+    virtual ~CompilerLocatorCygwin() = default;
     wxString GetGCCVersion(const wxString& gccBinary);
 
     /**

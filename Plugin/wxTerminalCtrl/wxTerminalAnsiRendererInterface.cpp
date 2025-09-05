@@ -5,10 +5,6 @@
 
 INITIALISE_MODULE_LOG(LOG, "AnsiEscapeHandler", "ansi_escape_parser.log");
 
-wxTerminalAnsiRendererInterface::wxTerminalAnsiRendererInterface() {}
-
-wxTerminalAnsiRendererInterface::~wxTerminalAnsiRendererInterface() {}
-
 void wxTerminalAnsiRendererInterface::Bell() { LOG_DEBUG(LOG()) << "Bell!" << endl; }
 void wxTerminalAnsiRendererInterface::Backspace() { LOG_DEBUG(LOG()) << "Backspace!" << endl; }
 void wxTerminalAnsiRendererInterface::Tab() { LOG_DEBUG(LOG()) << "Tab!" << endl; }

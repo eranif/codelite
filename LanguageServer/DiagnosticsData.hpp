@@ -5,7 +5,7 @@
 
 struct DiagnosticsData : public wxClientData {
     LSP::Diagnostic diagnostic;
-    virtual ~DiagnosticsData() {}
+    virtual ~DiagnosticsData() = default;
     DiagnosticsData(const DiagnosticsData&) = default;
     DiagnosticsData(const LSP::Diagnostic& diag) { diagnostic = diag; }
     DiagnosticsData(DiagnosticsData&&) = delete;

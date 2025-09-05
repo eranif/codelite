@@ -19,8 +19,8 @@ protected:
     wxString m_windowTitle;
 
 public:
-    wxTerminalAnsiRendererInterface();
-    virtual ~wxTerminalAnsiRendererInterface();
+    wxTerminalAnsiRendererInterface() = default;
+    virtual ~wxTerminalAnsiRendererInterface() = default;
 
     virtual void Clear()
     {

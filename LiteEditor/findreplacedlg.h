@@ -54,7 +54,7 @@ public:
      */
     virtual JSONItem ToJSON() const;
     FindReplaceData();
-    virtual ~FindReplaceData() {}
+    virtual ~FindReplaceData() = default;
 
     void SetFileScannerFlags(size_t f) { m_file_scanner_flags = f; }
     size_t GetFileScannerFlags() const { return m_file_scanner_flags; }

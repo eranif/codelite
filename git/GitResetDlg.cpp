@@ -32,8 +32,6 @@ GitResetDlg::GitResetDlg(wxWindow* parent, const wxArrayString& filesToRevert, c
     ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
-GitResetDlg::~GitResetDlg() {}
-
 wxArrayString GitResetDlg::GetItemsToRevert() const
 {
     wxArrayString toRevert;

@@ -18,8 +18,6 @@ NewFileComparison::NewFileComparison(wxWindow* parent, const wxFileName& leftFil
     }
 }
 
-NewFileComparison::~NewFileComparison() {}
-
 void NewFileComparison::OnBrowse(wxCommandEvent& event)
 {
     static wxString lastPath;

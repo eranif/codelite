@@ -25,7 +25,7 @@ public:
     /// return the error object
     E error() const { return m_error; }
 
-    clResult() {}
+    clResult() = default;
     clResult(T&& t)
     {
         m_result = std::move(t);

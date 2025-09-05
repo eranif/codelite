@@ -39,5 +39,3 @@ CompileFlagsTxt::CompileFlagsTxt(const wxFileName& filename)
         }
     }
 }
-
-CompileFlagsTxt::~CompileFlagsTxt() {}

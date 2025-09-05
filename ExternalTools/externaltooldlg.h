@@ -72,7 +72,7 @@ public:
     {
     }
 
-    virtual ~ExternalToolData() {}
+    virtual ~ExternalToolData() = default;
 };
 
 class IManager;
@@ -104,7 +104,7 @@ protected:
 public:
     /** Constructor */
     ExternalToolDlg(wxWindow* parent, IManager* mgr);
-    virtual ~ExternalToolDlg();
+    virtual ~ExternalToolDlg() = default;
     std::vector<ToolInfo> GetTools();
     void SetTools(const std::vector<ToolInfo>& tools);
 };

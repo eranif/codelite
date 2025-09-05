@@ -9,7 +9,7 @@ class SmartCompletionsSettingsDlg : public SmartCompletionsSettingsBaseDlg
 
 public:
     SmartCompletionsSettingsDlg(wxWindow* parent, SmartCompletionsConfig& config);
-    virtual ~SmartCompletionsSettingsDlg();
+    virtual ~SmartCompletionsSettingsDlg() = default;
 
 protected:
     virtual void OnClearStats(wxCommandEvent& event);

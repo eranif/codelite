@@ -46,8 +46,8 @@ private:
     bool HasFlag(DapPathFormat flag) const { return m_flags & (size_t)flag; }
 
 public:
-    DapEntry() {}
-    ~DapEntry() {}
+    DapEntry() = default;
+    ~DapEntry() = default;
 
     void SetEnvFormat(const dap::EnvFormat& envFormat) { this->m_envFormat = envFormat; }
     dap::EnvFormat GetEnvFormat() const { return m_envFormat; }
@@ -87,8 +87,8 @@ class clDapSettingsStore
     std::map<wxString, DapEntry> m_entries;
 
 public:
-    clDapSettingsStore();
-    ~clDapSettingsStore();
+    clDapSettingsStore() = default;
+    ~clDapSettingsStore() = default;
 
     void Load(const wxFileName& file);
     void Save(const wxFileName& file);

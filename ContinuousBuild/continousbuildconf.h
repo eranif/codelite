@@ -35,7 +35,7 @@ class ContinousBuildConf : public SerializedObject
 
 public:
 	ContinousBuildConf();
-	virtual ~ContinousBuildConf();
+	virtual ~ContinousBuildConf() = default;
 
 public:
 	virtual void DeSerialize(Archive &arch);

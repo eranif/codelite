@@ -6,10 +6,6 @@ SFTPGrepStyler::SFTPGrepStyler(wxStyledTextCtrl* stc)
     m_curstate = kStartOfLine;
 }
 
-SFTPGrepStyler::SFTPGrepStyler() {}
-
-SFTPGrepStyler::~SFTPGrepStyler() {}
-
 void SFTPGrepStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, bool hasScope)
 {
     int startPos = ctrl->GetEndStyled();

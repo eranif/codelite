@@ -55,8 +55,6 @@ wxDEFINE_EVENT(wxEVT_DEBUGGER_LIST_REGISTERS, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_DEBUGGER_LIST_FRAMES, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_DEBUGGER_FRAME_SELECTED, clCommandEvent);
 
-DebuggerMgr::DebuggerMgr() {}
-
 DebuggerMgr::~DebuggerMgr()
 {
     for (auto* dl : m_dl) {

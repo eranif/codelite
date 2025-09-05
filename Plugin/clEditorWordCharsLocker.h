@@ -18,7 +18,7 @@ protected:
 
 public:
     clEditorXmlHelper(wxStyledTextCtrl* stc);
-    ~clEditorXmlHelper();
+    ~clEditorXmlHelper() = default;
 
     /**
      * @brief return the word from given pos

@@ -9,7 +9,7 @@ class VimSettings : public clConfigItem
 
 public:
     VimSettings();
-    virtual ~VimSettings();
+    virtual ~VimSettings() = default;
 
 public:
     virtual void FromJSON(const JSONItem& json);

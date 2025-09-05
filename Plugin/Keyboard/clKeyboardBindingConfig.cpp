@@ -10,10 +10,6 @@ namespace
 constexpr int BINDING_VERSION = 100;
 }
 
-clKeyboardBindingConfig::clKeyboardBindingConfig() {}
-
-clKeyboardBindingConfig::~clKeyboardBindingConfig() {}
-
 clKeyboardBindingConfig& clKeyboardBindingConfig::Load()
 {
     wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "keybindings.conf");

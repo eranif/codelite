@@ -54,8 +54,6 @@ std::unordered_map<wxString, wxBitmapBundle> DARK_THEME_BMPBUNLES;
 std::unordered_map<wxString, wxBitmapBundle> LIGHT_THEME_BMPBUNLES;
 }; // namespace
 
-BitmapLoader::~BitmapLoader() {}
-
 BitmapLoader::BitmapLoader(bool darkTheme) { Initialize(darkTheme); }
 
 std::unordered_map<wxString, wxBitmapBundle>* BitmapLoader::GetBundles(bool darkTheme) const
@@ -259,10 +257,6 @@ const wxBitmapBundle& BitmapLoader::GetBundle(const wxString& name) const
 //===---------------------------
 // clMimeBitmaps
 //===---------------------------
-
-clMimeBitmaps::clMimeBitmaps() {}
-
-clMimeBitmaps::~clMimeBitmaps() {}
 
 int clMimeBitmaps::GetIndex(int type, bool disabled) const
 {

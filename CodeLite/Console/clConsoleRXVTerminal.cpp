@@ -11,5 +11,3 @@ clConsoleRXVTTerminal::clConsoleRXVTTerminal()
     SetTerminalCommand(executable.value_or("rxvt-unicode") + " -cd %WD% -e /bin/bash -c '%COMMAND%'");
     SetEmptyTerminalCommand(executable.value_or("rxvt-unicode") + " -cd %WD%");
 }
-
-clConsoleRXVTTerminal::~clConsoleRXVTTerminal() {}

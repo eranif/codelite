@@ -36,8 +36,6 @@ DapDebuggerSettingsDlg::DapDebuggerSettingsDlg(wxWindow* parent, clDapSettingsSt
     WindowAttrManager::Load(this);
 }
 
-DapDebuggerSettingsDlg::~DapDebuggerSettingsDlg() {}
-
 void DapDebuggerSettingsDlg::Initialise()
 {
     m_notebook->DeleteAllPages();

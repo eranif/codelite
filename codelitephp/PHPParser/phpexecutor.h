@@ -43,8 +43,8 @@ protected:
     std::pair<wxString, wxString> DoGetCLICommand(const wxString& script, PHPProject::Ptr_t proj, wxString& errmsg);
 
 public:
-    PHPExecutor();
-    virtual ~PHPExecutor();
+    PHPExecutor() = default;
+    virtual ~PHPExecutor() = default;
 
     /**
      * @brief execute project. This function takes into account the project settings

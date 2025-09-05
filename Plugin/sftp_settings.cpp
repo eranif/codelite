@@ -45,8 +45,6 @@ SFTPSettings::SFTPSettings()
 {
 }
 
-SFTPSettings::~SFTPSettings() {}
-
 void SFTPSettings::FromJSON(const JSONItem& json)
 {
     m_accounts.clear();

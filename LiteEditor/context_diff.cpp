@@ -41,8 +41,6 @@ ContextDiff::ContextDiff(clEditor* container)
     ApplySettings();
 }
 
-ContextDiff::~ContextDiff() {}
-
 ContextBase* ContextDiff::NewInstance(clEditor* container) { return new ContextDiff(container); }
 
 void ContextDiff::ApplySettings()

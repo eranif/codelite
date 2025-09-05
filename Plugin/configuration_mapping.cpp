@@ -51,8 +51,6 @@ BuildMatrix::BuildMatrix(wxXmlNode* node, const wxString& selectedConfiguration)
     }
 }
 
-BuildMatrix::~BuildMatrix() {}
-
 wxXmlNode* BuildMatrix::ToXml() const
 {
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("BuildMatrix"));
@@ -165,8 +163,6 @@ WorkspaceConfiguration::WorkspaceConfiguration(wxXmlNode* node)
         m_environmentVariables.Clear();
     }
 }
-
-WorkspaceConfiguration::~WorkspaceConfiguration() {}
 
 wxXmlNode* WorkspaceConfiguration::ToXml() const
 {

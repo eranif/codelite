@@ -60,8 +60,6 @@ CppWordScanner::CppWordScanner(const wxString& fileName, const wxString& text, i
     doInit();
 }
 
-CppWordScanner::~CppWordScanner() {}
-
 void CppWordScanner::FindAll(CppTokensMap& tokensMap) { doFind("", tokensMap, wxNOT_FOUND, wxNOT_FOUND); }
 
 void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l, int from, int to)

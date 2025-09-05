@@ -39,7 +39,7 @@ protected:
 
 public:
     ConfigurationToolBase();
-    virtual ~ConfigurationToolBase();
+    virtual ~ConfigurationToolBase() = default;
 
     bool Load(const wxString& filename);
     bool WriteObject(const wxString& name, SerializedObject* obj);

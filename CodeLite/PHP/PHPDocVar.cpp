@@ -17,8 +17,6 @@ PHPDocVar::PHPDocVar()
 {
 }
 
-PHPDocVar::~PHPDocVar() {}
-
 void PHPDocVar::Parse(PHPSourceFile& sourceFile, const wxString& doc)
 {
     wxString sname;

@@ -50,7 +50,7 @@ protected:
 
 public:
     Builder(const wxString& name);
-    virtual ~Builder();
+    virtual ~Builder() = default;
 
     /**
      * Normalize the configuration name, this is done by removing any trailing and leading

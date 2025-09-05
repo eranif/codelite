@@ -26,8 +26,6 @@ LSPOutlineViewDlg::LSPOutlineViewDlg(wxWindow* parent)
     DoInitialise();
 }
 
-LSPOutlineViewDlg::~LSPOutlineViewDlg() {}
-
 void LSPOutlineViewDlg::DoInitialise()
 {
     auto lexer = ColoursAndFontsManager::Get().GetLexer("python");

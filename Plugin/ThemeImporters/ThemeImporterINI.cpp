@@ -2,8 +2,6 @@
 
 ThemeImporterINI::ThemeImporterINI() { SetFileExtensions("*.ini;*.properties;*.desktop;*.toml"); }
 
-ThemeImporterINI::~ThemeImporterINI() {}
-
 LexerConf::Ptr_t ThemeImporterINI::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, "properties", wxSTC_LEX_PROPERTIES);

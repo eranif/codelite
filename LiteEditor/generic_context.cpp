@@ -38,8 +38,6 @@ ContextGeneric::ContextGeneric(clEditor* container, const wxString& name)
     ApplySettings();
 }
 
-ContextGeneric::~ContextGeneric() {}
-
 ContextBase* ContextGeneric::NewInstance(clEditor* container) { return new ContextGeneric(container, GetName()); }
 
 void ContextGeneric::ApplySettings()

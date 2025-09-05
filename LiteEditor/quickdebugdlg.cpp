@@ -74,8 +74,6 @@ QuickDebugDlg::QuickDebugDlg(wxWindow* parent)
 #endif
 }
 
-QuickDebugDlg::~QuickDebugDlg() {}
-
 void QuickDebugDlg::Initialize()
 {
     QuickDebugInfo info;

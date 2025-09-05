@@ -10,7 +10,7 @@ class WXDLLIMPEXP_CL clConsoleAlacritty : public clConsoleBase
 
 public:
     clConsoleAlacritty();
-    virtual ~clConsoleAlacritty();
+    virtual ~clConsoleAlacritty() = default;
 
 public:
     bool Start() override;

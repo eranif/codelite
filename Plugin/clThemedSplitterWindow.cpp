@@ -12,8 +12,6 @@ clThemedSplitterWindow::clThemedSplitterWindow(wxWindow* parent, wxWindowID id, 
     Create(parent, id, pos, size, style);
 }
 
-clThemedSplitterWindow::~clThemedSplitterWindow() {}
-
 bool clThemedSplitterWindow::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
                                     const wxString& name)
 {

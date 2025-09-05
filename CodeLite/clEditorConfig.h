@@ -129,7 +129,7 @@ private:
 
 public:
     clEditorConfig();
-    ~clEditorConfig();
+    ~clEditorConfig() = default;
 
     /**
      * @brief try and load a .editorconfig settings for 'filename'. We start looking from the current file location

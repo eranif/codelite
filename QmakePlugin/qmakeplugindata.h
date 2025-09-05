@@ -51,7 +51,7 @@ private:
 
 public:
 	QmakePluginData(const wxString &data);
-	~QmakePluginData();
+	~QmakePluginData() = default;
 
 	wxString   ToString();
 	bool       GetDataForBuildConf(const wxString &configName, BuildConfPluginData &bcpd    );

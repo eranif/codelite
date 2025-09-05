@@ -42,7 +42,7 @@ class SpellCheckerOptions : public SerializedObject
 {
 public:
 	SpellCheckerOptions();
-	virtual ~SpellCheckerOptions();
+	virtual ~SpellCheckerOptions() = default;
 
 	void DeSerialize( Archive& arch );
 	void Serialize( Archive& arch );

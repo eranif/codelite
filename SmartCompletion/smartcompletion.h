@@ -25,7 +25,7 @@ protected:
 
 public:
     SmartCompletion(IManager* manager);
-    ~SmartCompletion() override;
+    ~SmartCompletion() override = default;
 
     //--------------------------------------------
     // Abstract methods

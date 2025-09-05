@@ -43,10 +43,6 @@
 #define RESET_ERRNO() errno = 0
 #endif
 
-clSocketClient::clSocketClient() {}
-
-clSocketClient::~clSocketClient() {}
-
 bool clSocketClient::ConnectLocal(const wxString& socketPath)
 {
     DestroySocket();

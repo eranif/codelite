@@ -35,7 +35,7 @@ class EditorSettingsComments : public OptionsConfigPage
 
 public:
     EditorSettingsComments(wxWindow* parent, OptionsConfigPtr options);
-    virtual ~EditorSettingsComments() {}
+    ~EditorSettingsComments() override = default;
 };
 
 #endif // __editorsettingscomments__

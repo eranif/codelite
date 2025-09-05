@@ -70,8 +70,6 @@ ThemeImporterManager::ThemeImporterManager()
     m_importers.push_back(std::make_unique<ThemeImporterTerminal>());
 }
 
-ThemeImporterManager::~ThemeImporterManager() {}
-
 wxString ThemeImporterManager::Import(const wxString& theme_file)
 {
     // we add all or nothing

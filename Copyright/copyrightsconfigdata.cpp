@@ -30,10 +30,6 @@ CopyrightsConfigData::CopyrightsConfigData()
 {
 }
 
-CopyrightsConfigData::~CopyrightsConfigData()
-{
-}
-
 void CopyrightsConfigData::DeSerialize(Archive& arch)
 {
 	arch.Read(wxT("m_templateFilename"), m_templateFilename);

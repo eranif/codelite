@@ -92,8 +92,6 @@ ReplaceInFilesPanel::ReplaceInFilesPanel(wxWindow* parent, int id, const wxStrin
     mainSizer->Layout();
 }
 
-ReplaceInFilesPanel::~ReplaceInFilesPanel() {}
-
 void ReplaceInFilesPanel::OnSearchStart(wxCommandEvent& e)
 {
     e.Skip();

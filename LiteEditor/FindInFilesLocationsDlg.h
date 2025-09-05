@@ -15,7 +15,7 @@ protected:
 
 public:
     FindInFilesLocationsDlg(wxWindow* parent, const wxArrayString& locations);
-    virtual ~FindInFilesLocationsDlg();
+    virtual ~FindInFilesLocationsDlg() = default;
 
     wxArrayString GetLocations() const;
 };

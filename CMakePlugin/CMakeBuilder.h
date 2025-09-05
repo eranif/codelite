@@ -15,7 +15,7 @@ private:
 
 public:
     CMakeBuilder();
-    virtual ~CMakeBuilder();
+    virtual ~CMakeBuilder() = default;
     /**
      * Export the build system specific file (e.g. GNU makefile, Ant file etc)
      * to allow users to invoke them manualy from the command line

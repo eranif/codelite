@@ -1503,7 +1503,7 @@ void GitPlugin::UpdateFileTree()
     wxString error = _("Error obtaining project");
     ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projectName, error);
 
-    proj->BeginTranscation();
+    proj->BeginTransaction();
     wxString path = m_repositoryDirectory;
     if (path.EndsWith(wxT("/")) || path.EndsWith(wxT("\\"))) {
         path.RemoveLast();
@@ -1581,12 +1581,11 @@ void GitPlugin::UpdateFileTree()
         relativePath.Append(wxT(":"));
 
         bool createAndAdd = false;
-        wxArrayString dummyFiles;
-        proj->GetFilesByVirtualDir(relativePath, dummyFiles);
+        wxArrayString dummyFiles = proj->GetFilesByVirtualDir(relativePath);
         if (dummyFiles.GetCount() != 0) {
             createAndAdd = true;
         } else {
-            proj->GetFilesByVirtualDir(relativePath.Left(relativePath.Find(wxT(":"))), dummyFiles);
+            dummyFiles = proj->GetFilesByVirtualDir(relativePath.Left(relativePath.Find(wxT(":"))));
             if (dummyFiles.GetCount() != 0) {
                 createAndAdd = true;
             }
@@ -1599,7 +1598,7 @@ void GitPlugin::UpdateFileTree()
     }
     prgDlg->Update(gitfiles.GetCount() + 2, _("Finished adding files..."));
     prgDlg->Destroy();
-    proj->CommitTranscation();
+    proj->CommitTransaction();
 
     m_mgr->ReloadWorkspace();
 }

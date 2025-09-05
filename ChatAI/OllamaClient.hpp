@@ -44,6 +44,8 @@ public:
     bool IsBusy() const { return m_processingRequest; }
     wxArrayString GetModels() const;
     void Clear();
+    void ReloadConfig(const wxString& configContent);
+    void SetLogSink(std::function<void(ollama::LogLevel, std::string)> log_sink);
 
 private:
     ChatAIConfig m_config;

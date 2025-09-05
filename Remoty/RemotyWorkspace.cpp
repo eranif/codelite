@@ -1253,9 +1253,14 @@ IEditor* RemotyWorkspace::CreateOrOpenFile(const wxString& filepath)
 
 IEditor* RemotyWorkspace::CreateOrOpenSettingFile(const wxString& filename)
 {
+    return CreateOrOpenFile(GetSettingFileFullPath(filename));
+}
+
+wxString RemotyWorkspace::GetSettingFileFullPath(const wxString& filename) const
+{
     wxString fullpath;
     fullpath << GetDir() << "/.codelite/" << filename;
-    return CreateOrOpenFile(fullpath);
+    return fullpath;
 }
 
 void RemotyWorkspace::OnStopFindInFiles(clFindInFilesEvent& event)

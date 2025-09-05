@@ -3,6 +3,7 @@
 #include "ChatAI.hpp"
 #include "ColoursAndFontsManager.h"
 #include "OllamaClient.hpp"
+#include "StringUtils.h"
 #include "clSTCHelper.hpp"
 #include "clWorkspaceManager.h"
 #include "codelite_events.h"
@@ -20,6 +21,7 @@ namespace
 {
 const wxString CHAT_AI_LABEL = _("Chat AI");
 const wxString LONG_MODEL_NAME = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+constexpr const char* kAssistantConfigFile = "assistant.json";
 } // namespace
 
 ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
@@ -41,6 +43,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
     EventNotifier::Get()->Bind(wxEVT_OLLAMA_OUTPUT, &ChatAIWindow::OnChatAIOutput, this);
     EventNotifier::Get()->Bind(wxEVT_OLLAMA_CHAT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &ChatAIWindow::OnFileSaved, this);
 
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
@@ -48,6 +51,11 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     Bind(wxEVT_MENU, &ChatAIWindow::OnRefreshModelList, this, wxID_REFRESH);
     Bind(wxEVT_MENU, &ChatAIWindow::OnSettings, this, wxID_SETUP);
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);
+
+    m_plugin->GetClient().SetLogSink([]([[maybe_unused]] ollama::LogLevel level, std::string message) {
+        // For now, just print it to the log.
+        clDEBUG() << message << endl;
+    });
 }
 
 ChatAIWindow::~ChatAIWindow()
@@ -55,6 +63,7 @@ ChatAIWindow::~ChatAIWindow()
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_OUTPUT, &ChatAIWindow::OnChatAIOutput, this);
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_CHAT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &ChatAIWindow::OnFileSaved, this);
 }
 
 void ChatAIWindow::OnSend(wxCommandEvent& event)
@@ -128,7 +137,7 @@ void ChatAIWindow::OnSettings(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
-        auto editor = clWorkspaceManager::Get().GetWorkspace()->CreateOrOpenSettingFile("assistant.json");
+        auto editor = clWorkspaceManager::Get().GetWorkspace()->CreateOrOpenSettingFile(kAssistantConfigFile);
         if (!editor) {
             ::wxMessageBox(
                 wxString() << _("Could not open file: assistant.jon"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
@@ -143,7 +152,7 @@ void ChatAIWindow::OnSettings(wxCommandEvent& event)
             R"#({
   "server_url": "http://127.0.0.1:11434",
   "use_gpu": true,
-  "history_size": 20,
+  "history_size": 50,
   "context_size": 32768,
   "servers": []
 })#");
@@ -171,6 +180,20 @@ void ChatAIWindow::OnChatAIOutput(OllamaEvent& event)
         return;
     }
     AppendOutputText(event.GetOutput());
+}
+
+void ChatAIWindow::OnFileSaved(clCommandEvent& event)
+{
+    // Always call Skip()
+    event.Skip();
+    CHECK_COND_RET(clWorkspaceManager::Get().IsWorkspaceOpened());
+    CHECK_PTR_RET(clGetManager()->GetActiveEditor());
+
+    wxString filepath = clGetManager()->GetActiveEditor()->GetRemotePathOrLocal();
+    if (filepath == clWorkspaceManager::Get().GetWorkspace()->GetSettingFileFullPath(kAssistantConfigFile)) {
+        // Reload configuration
+        m_plugin->GetClient().ReloadConfig(clGetManager()->GetActiveEditor()->GetEditorText());
+    }
 }
 
 void ChatAIWindow::OnChatAIOutputDone(OllamaEvent& event)

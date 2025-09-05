@@ -166,6 +166,9 @@ public:
     /// `filename`: the file name to open or create. It must not contain the path, only name + extension, e.g.
     /// `codelite-remote.json`
     virtual IEditor* CreateOrOpenSettingFile(const wxString& filename) = 0;
+
+    /// Return the fullpath for a settings file.
+    virtual wxString GetSettingFileFullPath(const wxString& filename) const = 0;
 };
 
 #endif // IWORKSPACE_H

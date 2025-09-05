@@ -188,6 +188,7 @@ public:
 
     IEditor* CreateOrOpenFile(const wxString& filepath) override;
     IEditor* CreateOrOpenSettingFile(const wxString& filename) override;
+    wxString GetSettingFileFullPath(const wxString& filename) const override;
 
     /**
      * @brief save the settings to the remote machine

@@ -62,8 +62,13 @@ IEditor* LocalWorkspaceCommon::CreateOrOpenFile(const wxString& filepath)
 
 IEditor* LocalWorkspaceCommon::CreateOrOpenSettingFile(const wxString& filename)
 {
+    return CreateOrOpenFile(GetSettingFileFullPath(filename));
+}
+
+wxString LocalWorkspaceCommon::GetSettingFileFullPath(const wxString& filename) const
+{
     wxFileName fullpath{ GetFileName() };
     fullpath.AppendDir(".codelite");
     fullpath.SetFullName(filename);
-    return CreateOrOpenFile(fullpath.GetFullPath());
+    return fullpath.GetFullPath();
 }

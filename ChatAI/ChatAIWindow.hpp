@@ -27,6 +27,7 @@ protected:
     void DoSendPrompt();
     void OnChatAIOutput(OllamaEvent& event);
     void OnChatAIOutputDone(OllamaEvent& event);
+    void OnFileSaved(clCommandEvent& event);
     void PopulateModels();
     void SetFocusToActiveEditor();
     void AppendOutputText(const wxString& message);

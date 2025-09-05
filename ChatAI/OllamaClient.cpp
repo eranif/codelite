@@ -4,7 +4,9 @@
 
 #include "OllamaClient.hpp"
 
+#include "clTempFile.hpp"
 #include "event_notifier.h"
+#include "ollama/config.hpp"
 
 #include <wx/msgdlg.h>
 #include <wx/tokenzr.h>
@@ -92,3 +94,16 @@ wxArrayString OllamaClient::GetModels() const
 }
 
 void OllamaClient::Clear() { m_ollama.Reset(); }
+
+void OllamaClient::ReloadConfig(const wxString& configContent)
+{
+    auto config = ollama::Config::FromContent(configContent.ToStdString());
+    if (config.has_value()) {
+        m_ollama.ApplyConfig(&config.value());
+    }
+}
+
+void OllamaClient::SetLogSink(std::function<void(ollama::LogLevel, std::string)> log_sink)
+{
+    ollama::SetLogSink(std::move(log_sink));
+}

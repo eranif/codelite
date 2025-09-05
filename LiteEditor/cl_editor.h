@@ -806,7 +806,7 @@ public:
 
     /**
      *--------------------------------------------------
-     * Implemetation for IEditor interace
+     * Implementation for IEditor interlace
      *--------------------------------------------------
      */
     wxStyledTextCtrl* GetCtrl() override { return static_cast<wxStyledTextCtrl*>(this); }

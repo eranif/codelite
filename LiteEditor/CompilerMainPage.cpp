@@ -206,7 +206,7 @@ void CompilerMainPage::OnCustomEditorButtonClicked(wxCommandEvent& event)
 void CompilerMainPage::OnDeleteCompilerOption(wxCommandEvent& event)
 {
     if(m_selectedCmpOption != wxNOT_FOUND) {
-        if(wxMessageBox(_("Are you sure you want to delete this compiler option?"), _("CodeLite"),
+        if (wxMessageBox(_("Are you sure you want to delete this compiler option?"), wxT("CodeLite"),
                         wxYES_NO | wxCANCEL) == wxYES) {
             m_listCompilerOptions->DeleteItem(m_selectedCmpOption);
             m_listCompilerOptions->SetColumnWidth(1, wxLIST_AUTOSIZE);
@@ -228,7 +228,7 @@ void CompilerMainPage::OnDeleteFileType(wxCommandEvent& event)
     wxDataViewItem item = m_dvListCtrlFileTemplates->RowToItem(sel);
     wxString filetype = m_dvListCtrlFileTemplates->GetItemText(item);
 
-    if(wxMessageBox(wxString() << _("Are you sure you want to delete '") << filetype << "'?", _("CodeLite"),
+    if (wxMessageBox(wxString() << _("Are you sure you want to delete '") << filetype << "'?", wxT("CodeLite"),
                     wxYES_NO | wxCANCEL) == wxYES) {
         m_dvListCtrlFileTemplates->DeleteItem(sel);
         m_isDirty = true;
@@ -238,7 +238,7 @@ void CompilerMainPage::OnDeleteFileType(wxCommandEvent& event)
 void CompilerMainPage::OnDeleteLinkerOption(wxCommandEvent& event)
 {
     if(m_selectedLnkOption != wxNOT_FOUND) {
-        if(wxMessageBox(_("Are you sure you want to delete this linker option?"), _("CodeLite"), wxYES_NO | wxCANCEL) ==
+        if (wxMessageBox(_("Are you sure you want to delete this linker option?"), wxT("CodeLite"), wxYES_NO | wxCANCEL) ==
            wxYES) {
             m_isDirty = true;
             m_listLinkerOptions->DeleteItem(m_selectedLnkOption);
@@ -854,7 +854,7 @@ void CompilerPatternDlg::SetPattern(const wxString& pattern, const wxString& lin
 void CompilerPatternDlg::OnSubmit(wxCommandEvent& event)
 {
     if(GetPattern().Trim().IsEmpty() || GetFileIndex().Trim().IsEmpty() || GetLineIndex().Trim().IsEmpty()) {
-        wxMessageBox(_("Please fill all the fields"), _("CodeLite"), wxOK | wxICON_INFORMATION, this);
+        wxMessageBox(_("Please fill all the fields"), wxT("CodeLite"), wxOK | wxICON_INFORMATION, this);
         return;
     }
     EndModal(wxID_OK);

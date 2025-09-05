@@ -62,7 +62,7 @@ class clProgressDlgBase : public wxDialog
 	
 	public:
 		
-		clProgressDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("CodeLite"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 400,-1 ), long style = wxSTAY_ON_TOP|wxSTATIC_BORDER ); 
+		clProgressDlgBase( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxT("CodeLite"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize( 400,-1 ), long style = wxSTAY_ON_TOP|wxSTATIC_BORDER ); 
 		~clProgressDlgBase();
 	
 };

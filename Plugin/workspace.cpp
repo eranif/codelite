@@ -200,7 +200,7 @@ wxString clCxxWorkspace::GetStringProperty(const wxString& propName, wxString& e
 void clCxxWorkspace::AddProjectToBuildMatrix(ProjectPtr prj)
 {
     if(!prj) {
-        wxMessageBox(_("AddProjectToBuildMatrix was called with NULL project"), _("CodeLite"), wxICON_WARNING | wxOK);
+        wxMessageBox(_("AddProjectToBuildMatrix was called with NULL project"), wxT("CodeLite"), wxICON_WARNING | wxOK);
         return;
     }
 
@@ -424,7 +424,7 @@ bool clCxxWorkspace::AddProject(const wxString& path, wxString& errMsg)
         if(!SaveXmlFile()) {
             wxMessageBox(
                 _("Failed to save workspace file to disk. Please check that you have permission to write to disk"),
-                _("CodeLite"), wxICON_ERROR | wxOK);
+                wxT("CodeLite"), wxICON_ERROR | wxOK);
             return false;
         }
 

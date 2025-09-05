@@ -22,9 +22,13 @@ public:
     inline void SetOutput(std::string message) { this->m_message = std::move(message); }
     inline const std::string& GetOutput() const { return m_message; }
 
+    inline void SetModels(const wxArrayString& models) { this->m_models = models; }
+    inline const wxArrayString& GetModels() const { return m_models; }
+
 private:
     ollama::Reason m_reason{ ollama::Reason::kDone };
     std::string m_message;
+    wxArrayString m_models;
 };
 
 using OllamaEventFunction = void (wxEvtHandler::*)(OllamaEvent&);
@@ -42,7 +46,7 @@ public:
     void Interrupt();
     bool IsRunning() const { return m_ollama.IsRunning(); }
     bool IsBusy() const { return m_processingRequest; }
-    wxArrayString GetModels() const;
+    void GetModels() const;
     void Clear();
     void ReloadConfig(const wxString& configContent);
     void SetLogSink(std::function<void(ollama::LogLevel, std::string)> log_sink);
@@ -56,3 +60,4 @@ private:
 wxDECLARE_EVENT(wxEVT_OLLAMA_THINKING, OllamaEvent);
 wxDECLARE_EVENT(wxEVT_OLLAMA_CHAT_DONE, OllamaEvent);
 wxDECLARE_EVENT(wxEVT_OLLAMA_OUTPUT, OllamaEvent);
+wxDECLARE_EVENT(wxEVT_OLLAMA_LIST_MODELS, OllamaEvent);

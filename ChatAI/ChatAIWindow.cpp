@@ -44,6 +44,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     EventNotifier::Get()->Bind(wxEVT_OLLAMA_OUTPUT, &ChatAIWindow::OnChatAIOutput, this);
     EventNotifier::Get()->Bind(wxEVT_OLLAMA_CHAT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &ChatAIWindow::OnFileSaved, this);
+    EventNotifier::Get()->Bind(wxEVT_OLLAMA_LIST_MODELS, &ChatAIWindow::OnModels, this);
 
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
@@ -64,6 +65,7 @@ ChatAIWindow::~ChatAIWindow()
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_OUTPUT, &ChatAIWindow::OnChatAIOutput, this);
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_CHAT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &ChatAIWindow::OnFileSaved, this);
+    EventNotifier::Get()->Unbind(wxEVT_OLLAMA_LIST_MODELS, &ChatAIWindow::OnModels, this);
 }
 
 void ChatAIWindow::OnSend(wxCommandEvent& event)
@@ -150,11 +152,17 @@ void ChatAIWindow::OnSettings(wxCommandEvent& event)
         // Place some default content
         editor->SetEditorText(
             R"#({
-  "server_url": "http://127.0.0.1:11434",
-  "use_gpu": true,
   "history_size": 50,
-  "context_size": 32768,
-  "servers": []
+  "server_url": "http://127.0.0.1:11434",
+  "servers": {},
+  "models": {
+    "default": {
+      "options": {
+        "num_ctx": 32768,
+        "temperature": 0
+      }
+    }
+  }
 })#");
     }
 }
@@ -196,6 +204,21 @@ void ChatAIWindow::OnFileSaved(clCommandEvent& event)
     }
 }
 
+void ChatAIWindow::OnModels(OllamaEvent& event)
+{
+    m_activeModel->Clear();
+    for (const auto& model : event.GetModels()) {
+        m_activeModel->Append(model);
+    }
+
+    const auto& active_model = m_plugin->GetConfig().GetSelectedModel();
+    if (!active_model.empty()) {
+        m_activeModel->SetStringSelection(active_model);
+    } else if (!event.GetModels().empty()) {
+        m_activeModel->SetSelection(0);
+    }
+}
+
 void ChatAIWindow::OnChatAIOutputDone(OllamaEvent& event)
 {
     AppendOutputText("\n------\n");
@@ -209,18 +232,7 @@ void ChatAIWindow::OnInputUI(wxUpdateUIEvent& event) { event.Enable(true); }
 void ChatAIWindow::PopulateModels()
 {
     wxBusyCursor bc{};
-    m_activeModel->Clear();
-    auto models = m_plugin->GetClient().GetModels();
-    for (auto& model : models) {
-        m_activeModel->Append(model);
-    }
-
-    const auto& active_model = m_plugin->GetConfig().GetSelectedModel();
-    if (!active_model.empty()) {
-        m_activeModel->SetStringSelection(active_model);
-    } else if (!models.empty()) {
-        m_activeModel->SetSelection(0);
-    }
+    m_plugin->GetClient().GetModels();
 }
 
 void ChatAIWindow::SetFocusToActiveEditor()

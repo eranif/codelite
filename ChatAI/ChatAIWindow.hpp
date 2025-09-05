@@ -27,6 +27,7 @@ protected:
     void DoSendPrompt();
     void OnChatAIOutput(OllamaEvent& event);
     void OnChatAIOutputDone(OllamaEvent& event);
+    void OnModels(OllamaEvent& event);
     void OnFileSaved(clCommandEvent& event);
     void PopulateModels();
     void SetFocusToActiveEditor();

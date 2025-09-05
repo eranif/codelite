@@ -19,6 +19,7 @@ OllamaEvent::OllamaEvent(wxEventType commandType, int winid)
 wxDEFINE_EVENT(wxEVT_OLLAMA_THINKING, OllamaEvent);
 wxDEFINE_EVENT(wxEVT_OLLAMA_CHAT_DONE, OllamaEvent);
 wxDEFINE_EVENT(wxEVT_OLLAMA_OUTPUT, OllamaEvent);
+wxDEFINE_EVENT(wxEVT_OLLAMA_LIST_MODELS, OllamaEvent);
 
 #ifdef __WXMSW__
 #include <windows.h>
@@ -78,19 +79,21 @@ void OllamaClient::Send(const wxString& prompt, const wxString& model)
 
 void OllamaClient::Interrupt() {}
 
-wxArrayString OllamaClient::GetModels() const
+void OllamaClient::GetModels() const
 {
-    if (!IsRunning()) {
-        return {};
-    }
+    std::thread thr([]() {
+        auto models = ollama::list_models();
+        wxArrayString m;
+        m.reserve(models.size());
+        for (const auto& model : models) {
+            m.Add(model);
+        }
 
-    auto models = m_ollama.List();
-    wxArrayString m;
-    m.reserve(models.size());
-    for (const auto& model : models) {
-        m.Add(model);
-    }
-    return m;
+        OllamaEvent event_models{ wxEVT_OLLAMA_LIST_MODELS };
+        event_models.SetModels(m);
+        EventNotifier::Get()->AddPendingEvent(event_models);
+    });
+    thr.detach();
 }
 
 void OllamaClient::Clear() { m_ollama.Reset(); }

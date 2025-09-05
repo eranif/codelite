@@ -267,11 +267,11 @@ void clScrolledPanel::OnCharHook(wxKeyEvent& event)
         } else if (event.GetKeyCode() == WXK_PAGEDOWN) {
             ScrollRows(GetPageSize(), wxDOWN);
         } else {
-            // propogate the event (i.e. we did not handle it here)
+            // propagate the event (i.e. we did not handle it here)
             event.Skip();
         }
     } else {
-        // propogate the event (i.e. we did not handle it here)
+        // propagate the event (i.e. we did not handle it here)
         event.Skip();
     }
 }

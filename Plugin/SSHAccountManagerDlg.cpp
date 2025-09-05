@@ -41,9 +41,8 @@ SSHAccountManagerDlg::SSHAccountManagerDlg(wxWindow* parent)
     settings.Load();
 
     const SSHAccountInfo::Vect_t& accounts = settings.GetAccounts();
-    SSHAccountInfo::Vect_t::const_iterator iter = accounts.begin();
-    for(; iter != accounts.end(); ++iter) {
-        DoAddAccount(*iter);
+    for (const auto& account : accounts) {
+        DoAddAccount(account);
     }
     SetName("SSHAccountManagerDlg");
     ::clSetDialogBestSizeAndPosition(this);

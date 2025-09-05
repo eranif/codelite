@@ -3330,12 +3330,12 @@ void GUICraftMainPanel::BatchGenerate(const wxArrayString& files)
         // Lock the UI
         wxWindowUpdateLocker locker(EventNotifier::Get()->TopFrame());
 
-        for (size_t i = 0; i < wxcpFiles.size(); ++i) {
+        for (const auto& filename : wxcpFiles) {
             wxString fileContent;
-            if (FileUtils::ReadFileContent(wxcpFiles.Item(i), fileContent)) {
-                LoadProject(wxcpFiles.Item(i), fileContent);
+            if (FileUtils::ReadFileContent(filename, fileContent)) {
+                LoadProject(filename, fileContent);
                 DoGenerateCode(true);
-                projectsGenerated.Add(wxcpFiles.Item(i));
+                projectsGenerated.Add(filename);
             }
         }
 

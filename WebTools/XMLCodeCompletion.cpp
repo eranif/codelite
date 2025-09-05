@@ -98,9 +98,9 @@ void XMLCodeCompletion::HtmlCodeComplete(IEditor* editor)
         bitmaps.push_back(wxXmlResource::Get()->LoadBitmap("code-tags"));
 
         wxCodeCompletionBoxEntry::Vec_t entries;
-        for(size_t i = 0; i < m_htmlCompletions.size(); ++i) {
-            wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(m_htmlCompletions.at(i).m_tag, 0);
-            entry->SetComment(m_htmlCompletions.at(i).m_comment);
+        for (const auto& htmlCompletion : m_htmlCompletions) {
+            wxCodeCompletionBoxEntry::Ptr_t entry = wxCodeCompletionBoxEntry::New(htmlCompletion.m_tag, 0);
+            entry->SetComment(htmlCompletion.m_comment);
             entries.push_back(entry);
         }
         m_completeReason = kHtmlOpenSequence;

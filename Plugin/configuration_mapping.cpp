@@ -56,9 +56,8 @@ BuildMatrix::~BuildMatrix() {}
 wxXmlNode* BuildMatrix::ToXml() const
 {
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("BuildMatrix"));
-    std::list<WorkspaceConfigurationPtr>::const_iterator iter = m_configurationList.begin();
-    for(; iter != m_configurationList.end(); iter++) {
-        node->AddChild((*iter)->ToXml());
+    for (const auto& configuration : m_configurationList) {
+        node->AddChild(configuration->ToXml());
     }
     return node;
 }
@@ -88,14 +87,11 @@ void BuildMatrix::SetConfiguration(WorkspaceConfigurationPtr conf)
 
 wxString BuildMatrix::GetProjectSelectedConf(const wxString& configName, const wxString& project) const
 {
-    std::list<WorkspaceConfigurationPtr>::const_iterator iter = m_configurationList.begin();
-    for(; iter != m_configurationList.end(); iter++) {
-        if((*iter)->GetName() == configName) {
-            WorkspaceConfiguration::ConfigMappingList list = (*iter)->GetMapping();
-            WorkspaceConfiguration::ConfigMappingList::const_iterator it = list.begin();
-            for(; it != list.end(); it++) {
-                if((*it).m_project == project) {
-                    return (*it).m_name;
+    for (const auto& configuration : m_configurationList) {
+        if (configuration->GetName() == configName) {
+            for (const auto& item : configuration->GetMapping()) {
+                if (item.m_project == project) {
+                    return item.m_name;
                 }
             }
             break;
@@ -111,13 +107,12 @@ WorkspaceConfigurationPtr BuildMatrix::GetConfigurationByName(const wxString& na
 
 WorkspaceConfigurationPtr BuildMatrix::FindConfiguration(const wxString& name) const
 {
-    std::list<WorkspaceConfigurationPtr>::const_iterator iter = m_configurationList.begin();
-    for(; iter != m_configurationList.end(); iter++) {
-        if((*iter)->GetName() == name) {
-            return (*iter);
+    for (const auto& configuration : m_configurationList) {
+        if (configuration->GetName() == name) {
+            return configuration;
         }
     }
-    return NULL;
+    return nullptr;
 }
 
 void BuildMatrix::SetSelectedConfigurationName(const wxString& name)
@@ -182,11 +177,10 @@ wxXmlNode* WorkspaceConfiguration::ToXml() const
     XmlUtils::SetNodeContent(env, m_environmentVariables);
     node->AddChild(env);
 
-    WorkspaceConfiguration::ConfigMappingList::const_iterator iter = m_mappingList.begin();
-    for(; iter != m_mappingList.end(); iter++) {
+    for (const auto& item : m_mappingList) {
         wxXmlNode* projNode = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Project"));
-        projNode->AddAttribute(wxT("Name"), iter->m_project);
-        projNode->AddAttribute(wxT("ConfigName"), iter->m_name);
+        projNode->AddAttribute(wxT("Name"), item.m_project);
+        projNode->AddAttribute(wxT("ConfigName"), item.m_name);
         node->AddChild(projNode);
     }
     return node;
@@ -194,10 +188,9 @@ wxXmlNode* WorkspaceConfiguration::ToXml() const
 
 void WorkspaceConfiguration::RenameProject(const wxString& oldname, const wxString& newname)
 {
-    ConfigMappingList::iterator iter = m_mappingList.begin();
-    for(; iter != m_mappingList.end(); ++iter) {
-        if(iter->m_project == oldname) {
-            iter->m_project = newname;
+    for (auto& item : m_mappingList) {
+        if (item.m_project == oldname) {
+            item.m_project = newname;
         }
     }
 }

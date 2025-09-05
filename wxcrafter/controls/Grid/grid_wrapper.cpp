@@ -182,15 +182,15 @@ void GridWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 
         // Columns
         text << wxT("<columns>");
-        for(size_t i = 0; i < cols.size(); ++i) {
-            cols.at(i)->ToXRC(text, type);
+        for (const auto* col : cols) {
+            col->ToXRC(text, type);
         }
         text << wxT("</columns>");
 
         // Rows
         text << wxT("<rows>");
-        for(size_t i = 0; i < rows.size(); ++i) {
-            rows.at(i)->ToXRC(text, type);
+        for (const auto* row : rows) {
+            row->ToXRC(text, type);
         }
         text << wxT("</rows>");
 

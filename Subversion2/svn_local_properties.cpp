@@ -98,9 +98,7 @@ void SubversionLocalProperties::ReadProperties()
         fp.ReadAll(&content);
 
         wxArrayString lines = wxStringTokenize(content, wxT("\n"), wxTOKEN_STRTOK);
-        for(size_t i = 0; i < lines.size(); i++) {
-            wxString entry = lines[i];
-
+        for (auto entry : lines) {
             // remove the comment part
             entry = entry.BeforeFirst(wxT(';'));
 
@@ -144,17 +142,12 @@ void SubversionLocalProperties::ReadProperties()
 void SubversionLocalProperties::WriteProperties()
 {
     wxFFile fp(GetConfigFile(), wxT("wb"));
-    if(fp.IsOpened()) {
-        GroupTable::const_iterator iter = m_values.begin();
-        for(; iter != m_values.end(); iter++) {
-            SimpleTable tb = iter->second;
-            wxString sectionName = iter->first;
-
-            SimpleTable::const_iterator it = tb.begin();
+    if (fp.IsOpened()) {
+        for (const auto& [sectionName, tb] : m_values) {
             fp.Write(wxString::Format(wxT("[%s]\n"), sectionName.c_str()));
 
-            for(; it != tb.end(); it++) {
-                fp.Write(wxString::Format(wxT("%s=%s\n"), it->first.c_str(), it->second.c_str()));
+            for (const auto& [key, value] : tb) {
+                fp.Write(wxString::Format(wxT("%s=%s\n"), key.c_str(), value.c_str()));
             }
         }
     }

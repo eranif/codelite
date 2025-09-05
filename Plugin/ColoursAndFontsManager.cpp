@@ -381,13 +381,11 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexer(const wxString& lexerName, con
 void ColoursAndFontsManager::Save(const wxFileName& lexer_json)
 {
     bool for_export = lexer_json.IsOk();
-    ColoursAndFontsManager::Map_t::const_iterator iter = m_lexersMap.begin();
     JSON root(cJSON_Array);
     JSONItem element = root.toElement();
-    for (; iter != m_lexersMap.end(); ++iter) {
-        const ColoursAndFontsManager::Vec_t& lexers = iter->second;
-        for (size_t i = 0; i < lexers.size(); ++i) {
-            element.arrayAppend(lexers.at(i)->ToJSON(for_export));
+    for (const auto& [_, lexers] : m_lexersMap) {
+        for (const auto& lexer : lexers) {
+            element.arrayAppend(lexer->ToJSON(for_export));
         }
     }
 

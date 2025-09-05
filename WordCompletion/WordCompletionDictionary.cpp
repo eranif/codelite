@@ -58,8 +58,8 @@ void WordCompletionDictionary::OnEditorChanged(wxCommandEvent& event)
                         openEditors.end(),
                         std::back_inserter(closedEditors));
 
-    for(size_t i = 0; i < closedEditors.size(); ++i) {
-        m_files.erase(closedEditors.Item(i));
+    for (const auto& closedEditorName : closedEditors) {
+        m_files.erase(closedEditorName);
     }
 
     // 2: cache the active editor

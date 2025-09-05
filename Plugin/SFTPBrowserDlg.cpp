@@ -390,9 +390,8 @@ void SFTPBrowserDlg::OnSSHAccountManager(wxCommandEvent& event)
             return;
 
         } else {
-            SSHAccountInfo::Vect_t::const_iterator iter = accounts.begin();
-            for (; iter != accounts.end(); ++iter) {
-                m_choiceAccount->Append(iter->GetAccountName());
+            for (const auto& account : accounts) {
+                m_choiceAccount->Append(account.GetAccountName());
             }
 
             int where = m_choiceAccount->FindString(curselection);

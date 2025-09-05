@@ -228,9 +228,8 @@ void SFTPTreeModel::DeleteItems(const wxDataViewItem& parent, const wxDataViewIt
 void SFTPTreeModel::Clear()
 {
     wxVector<SFTPTreeModel_Item*> roots = m_data;
-    wxVector<SFTPTreeModel_Item*>::iterator iter = roots.begin();
-    for(; iter != roots.end(); ++iter) {
-        DeleteItem(wxDataViewItem(*iter));
+    for (auto* item : roots) {
+        DeleteItem(wxDataViewItem(item));
     }
     m_data.clear();
     Cleared();

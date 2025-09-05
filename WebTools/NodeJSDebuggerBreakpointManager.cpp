@@ -35,18 +35,17 @@ void NodeJSBptManager::OnEditorChanged(wxCommandEvent& e)
     e.Skip();
 
     // Apply breakpoints for this editor
-    if(clGetManager()) {
+    if (clGetManager()) {
         IEditor* editor = clGetManager()->GetActiveEditor();
-        if(editor) {
+        if (editor) {
             NodeJSBreakpoint::Vec_t bps;
-            if(GetBreakpointsForFile(editor->GetFileName().GetFullPath(), bps)) {
-                NodeJSBreakpoint::Vec_t::iterator iter = bps.begin();
-                for(; iter != bps.end(); ++iter) {
-                    int markerMask = editor->GetCtrl()->MarkerGet(iter->GetLine() - 1);
+            if (GetBreakpointsForFile(editor->GetFileName().GetFullPath(), bps)) {
+                for (const auto& bp : bps) {
+                    int markerMask = editor->GetCtrl()->MarkerGet(bp.GetLine() - 1);
                     if(!(markerMask & mmt_breakpoint)) {
                         // No marker on this line yet
                         // add one
-                        editor->GetCtrl()->MarkerAdd(iter->GetLine() - 1, smt_breakpoint);
+                        editor->GetCtrl()->MarkerAdd(bp.GetLine() - 1, smt_breakpoint);
                     }
                 }
             }
@@ -57,9 +56,10 @@ void NodeJSBptManager::OnEditorChanged(wxCommandEvent& e)
 size_t NodeJSBptManager::GetBreakpointsForFile(const wxString& filename, NodeJSBreakpoint::Vec_t& bps) const
 {
     bps.clear();
-    NodeJSBreakpoint::Vec_t::const_iterator iter = m_breakpoints.begin();
-    for(; iter != m_breakpoints.end(); ++iter) {
-        if(iter->GetFilename() == filename) { bps.push_back(*iter); }
+    for (const auto& bp : m_breakpoints) {
+        if (bp.GetFilename() == filename) {
+            bps.push_back(bp);
+        }
     }
     return bps.size();
 }
@@ -96,9 +96,8 @@ void NodeJSBptManager::SetBreakpoints(IEditor* editor)
 
     NodeJSBreakpoint::Vec_t bps;
     GetBreakpointsForFile(editor->GetFileName().GetFullPath(), bps);
-    NodeJSBreakpoint::Vec_t::const_iterator iter = bps.begin();
-    for(; iter != bps.end(); ++iter) {
-        editor->GetCtrl()->MarkerAdd(iter->GetLine() - 1, smt_breakpoint);
+    for (const auto& bp : bps) {
+        editor->GetCtrl()->MarkerAdd(bp.GetLine() - 1, smt_breakpoint);
     }
 }
 
@@ -209,8 +208,8 @@ void NodeJSBptManager::OnFileSaved(clCommandEvent& event)
     // Tell Node to delete these breakpoints
     if(isDebuggerRunning) {
         // Remove all the breakpoints from the debugger
-        for(size_t i = 0; i < nodeBpIds.size(); ++i) {
-            NodeJSWorkspace::Get()->GetDebugger()->DeleteBreakpointByID(nodeBpIds.Item(i));
+        for (const auto& nodeBpId : nodeBpIds) {
+            NodeJSWorkspace::Get()->GetDebugger()->DeleteBreakpointByID(nodeBpId);
         }
     }
 

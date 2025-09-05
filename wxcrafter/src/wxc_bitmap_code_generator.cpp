@@ -60,13 +60,13 @@ bool wxcCodeGeneratorHelper::CreateXRC()
         // The logic:
         // If we find files with the following perfixes: @2x, @1.5x, @1.25x
         // add them to the resource files as well
-        for(size_t i = 0; i < exts.size(); ++i) {
+        for (const auto& ext : exts) {
             wxFileName hiResImage = fn;
             hiResImage.MakeAbsolute(wxcProjectMetadata::Get().GetProjectPath());
-            hiResImage.SetName(hiResImage.GetName() + exts.Item(i));
-            if(hiResImage.FileExists()) {
+            hiResImage.SetName(hiResImage.GetName() + ext);
+            if (hiResImage.FileExists()) {
                 fn.SetName(hiResImage.GetName());
-                text << "<object class=\"wxBitmap\" name=\"" << p.first << exts.Item(i) << "\">" << fn.GetFullPath()
+                text << "<object class=\"wxBitmap\" name=\"" << p.first << ext << "\">" << fn.GetFullPath()
                      << "</object>\n";
             }
         }

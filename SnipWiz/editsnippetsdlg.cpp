@@ -65,10 +65,8 @@ void EditSnippetsDlg::DoItemSelected(const wxString& text)
     }
 
     m_textCtrlAccelerator->SetValue("");
-    MenuItemDataMap_t::iterator iter = accelMap.begin();
-    for(; iter != accelMap.end(); ++iter) {
-        MenuItemData mid = iter->second;
-        if(mid.parentMenu == _("SnipWiz") && mid.action == text) {
+    for (const auto& [_, mid] : accelMap) {
+        if (mid.parentMenu == _("SnipWiz") && mid.action == text) {
             m_textCtrlAccelerator->SetValue(mid.accel.ToString());
         }
     }

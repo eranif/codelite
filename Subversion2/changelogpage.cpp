@@ -115,9 +115,8 @@ void ChangeLogPage::DoMakeRegexFromPattern(const wxString& pattern, wxRegEx& re)
 		return;
 
 	// replace all macros with unique strings
-	std::map<wxString, wxString>::const_iterator iter = m_macrosMap.begin();
-	for(; iter != m_macrosMap.end(); iter++) {
-		tmpPat.Replace(iter->first, iter->second);
+	for (const auto& [key, value] : m_macrosMap) {
+		tmpPat.Replace(key, value);
 	}
 
 	// escape all regex key-chars
@@ -136,9 +135,8 @@ void ChangeLogPage::DoMakeRegexFromPattern(const wxString& pattern, wxRegEx& re)
 
 	// change each macro into regex. We assume that each BUGID/FRID are
 	// alphanumeric
-	std::map<wxString, wxString>::const_iterator riter = m_rmacrosMap.begin();
-	for(; riter != m_rmacrosMap.end(); riter++) {
-		tmpPat.Replace(riter->first, wxT("([a-zA-Z0-9]*)"));
+	for (const auto& [key, _] : m_rmacrosMap) {
+		tmpPat.Replace(key, wxT("([a-zA-Z0-9]*)"));
 	}
 
 	re.Compile(tmpPat);

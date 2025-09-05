@@ -340,8 +340,8 @@ void NodeDebugger::SetBreakpoint(const wxFileName& file, int lineNumber)
 void NodeDebugger::DeleteAllBreakpoints()
 {
     wxArrayString arr = m_bptManager.GetAllAppliedBreakpoints();
-    for(size_t i = 0; i < arr.size(); ++i) {
-        DeleteBreakpointByID(arr.Item(i));
+    for (const auto& bpid : arr) {
+        DeleteBreakpointByID(bpid);
     }
     // Update the UI
     m_bptManager.DeleteAll();

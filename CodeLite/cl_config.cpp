@@ -447,9 +447,9 @@ void clConfig::DoAddRecentItem(const wxString& propName, const wxString& filenam
 
     // Remove non existing items
     wxArrayString existingFiles;
-    for (size_t i = 0; i < recentItems.size(); ++i) {
-        if (wxFileName(recentItems.Item(i)).FileExists()) {
-            existingFiles.Add(recentItems.Item(i));
+    for (const auto& recentItem : recentItems) {
+        if (wxFileName(recentItem).FileExists()) {
+            existingFiles.Add(recentItem);
         }
     }
     recentItems.swap(existingFiles);

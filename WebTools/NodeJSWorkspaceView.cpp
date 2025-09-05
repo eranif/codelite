@@ -150,11 +150,11 @@ void NodeJSWorkspaceView::OnFolderDropped(clCommandEvent& event)
 
     if(NodeJSWorkspace::Get()->IsOpen()) {
         wxArrayString& workspaceFolders = NodeJSWorkspace::Get()->GetFolders();
-        for(size_t i = 0; i < folders.size(); ++i) {
-            if(workspaceFolders.Index(folders.Item(i)) == wxNOT_FOUND) {
+        for (const auto& folder : folders) {
+            if (workspaceFolders.Index(folder) == wxNOT_FOUND) {
                 // New folder, add it to the workspace
-                workspaceFolders.Add(folders.Item(i));
-                AddFolder(folders.Item(i));
+                workspaceFolders.Add(folder);
+                AddFolder(folder);
             }
         }
         NodeJSWorkspace::Get()->Save();
@@ -171,8 +171,8 @@ void NodeJSWorkspaceView::RebuildTree()
 
     Clear();
 
-    for(size_t i = 0; i < paths.size(); ++i) {
-        AddFolder(paths.Item(i));
+    for (const auto& path : paths) {
+        AddFolder(path);
     }
 
     IEditor* editor = clGetManager()->GetActiveEditor();

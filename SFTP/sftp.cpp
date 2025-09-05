@@ -450,9 +450,8 @@ void SFTP::DoFileSaved(const wxString& filename)
 void SFTP::OnReplaceInFiles(clFileSystemEvent& e)
 {
     e.Skip();
-    const wxArrayString& files = e.GetStrings();
-    for (size_t i = 0; i < files.size(); ++i) {
-        DoFileSaved(files.Item(i));
+    for (const auto& file : e.GetStrings()) {
+        DoFileSaved(file);
     }
 }
 
@@ -493,9 +492,8 @@ void SFTP::OnFileRenamed(clFileSystemEvent& e)
 void SFTP::OnFileDeleted(clFileSystemEvent& e)
 {
     e.Skip();
-    const wxArrayString& files = e.GetPaths();
-    for (size_t i = 0; i < files.size(); ++i) {
-        DoFileDeleted(files.Item(i));
+    for (const auto& file : e.GetPaths()) {
+        DoFileDeleted(file);
     }
 }
 

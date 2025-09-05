@@ -345,15 +345,14 @@ CompilerPtr BuildSettingsConfig::GetDefaultCompiler(const wxString& compilerFami
     CompilerPtr defaultComp;
     wxString family = compilerFamilty.IsEmpty() ? DEFAULT_COMPILER : compilerFamilty;
 
-    std::unordered_map<wxString, CompilerPtr>::const_iterator iter = m_compilers.begin();
-    for(; iter != m_compilers.end(); ++iter) {
-        if(iter->second->GetCompilerFamily() == family) {
-            if(!defaultComp) {
+    for (const auto& [_, compiler] : m_compilers) {
+        if (compiler->GetCompilerFamily() == family) {
+            if (!defaultComp) {
                 // keep the first one, just incase
-                defaultComp = iter->second;
+                defaultComp = compiler;
             }
-            if(iter->second->IsDefault()) {
-                return iter->second;
+            if (compiler->IsDefault()) {
+                return compiler;
             }
         }
     }

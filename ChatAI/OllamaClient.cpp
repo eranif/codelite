@@ -81,8 +81,8 @@ void OllamaClient::Interrupt() {}
 
 void OllamaClient::GetModels() const
 {
-    std::thread thr([]() {
-        auto models = ollama::list_models();
+    std::thread thr([this]() {
+        auto models = m_ollama.List();
         wxArrayString m;
         m.reserve(models.size());
         for (const auto& model : models) {

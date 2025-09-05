@@ -90,5 +90,7 @@ public:
 
     /// Return the fullpath for a settings file.
     wxString GetSettingFileFullPath(const wxString& filename) const override;
+
+    std::optional<wxString> ReadSettingFile(const wxString& filename) const override;
 };
 #endif // CLWORKSPACEMANAGER_H

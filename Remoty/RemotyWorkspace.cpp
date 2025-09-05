@@ -1251,6 +1251,23 @@ IEditor* RemotyWorkspace::CreateOrOpenFile(const wxString& filepath)
     return editor;
 }
 
+std::optional<wxString> RemotyWorkspace::ReadSettingFile(const wxString& filename) const
+{
+    wxBusyCursor bc{};
+    wxString fullpath = GetSettingFileFullPath(filename);
+    if (!clSFTPManager::Get().IsFileExists(fullpath, m_account)) {
+        return std::nullopt;
+    }
+
+    // Read the file content.
+    wxMemoryBuffer membuf;
+    if (!clSFTPManager::Get().AwaitReadFile(fullpath, m_account.GetAccountName(), &membuf)) {
+        return std::nullopt;
+    }
+    wxString content{ (const char*)membuf.GetData(), wxConvUTF8, membuf.GetDataLen() };
+    return content;
+}
+
 IEditor* RemotyWorkspace::CreateOrOpenSettingFile(const wxString& filename)
 {
     return CreateOrOpenFile(GetSettingFileFullPath(filename));

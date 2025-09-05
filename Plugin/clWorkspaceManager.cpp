@@ -72,3 +72,13 @@ wxString LocalWorkspaceCommon::GetSettingFileFullPath(const wxString& filename) 
     fullpath.SetFullName(filename);
     return fullpath.GetFullPath();
 }
+
+std::optional<wxString> LocalWorkspaceCommon::ReadSettingFile(const wxString& filename) const
+{
+    wxString fullpath = GetSettingFileFullPath(filename);
+    wxString content;
+    if (!FileUtils::ReadFileContent(fullpath, content)) {
+        return std::nullopt;
+    }
+    return content;
+}

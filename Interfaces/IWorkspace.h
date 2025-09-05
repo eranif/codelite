@@ -29,6 +29,7 @@
 #include "AsyncProcess/asyncprocess.h"
 
 #include <list>
+#include <optional>
 #include <wx/event.h>
 #include <wx/filename.h>
 #include <wx/string.h>
@@ -169,6 +170,9 @@ public:
 
     /// Return the fullpath for a settings file.
     virtual wxString GetSettingFileFullPath(const wxString& filename) const = 0;
+
+    /// Read the content of a setting file. Return its content on success, or None in case of an error.
+    virtual std::optional<wxString> ReadSettingFile(const wxString& filename) const = 0;
 };
 
 #endif // IWORKSPACE_H

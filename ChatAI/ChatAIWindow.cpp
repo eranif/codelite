@@ -43,8 +43,10 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
     EventNotifier::Get()->Bind(wxEVT_OLLAMA_OUTPUT, &ChatAIWindow::OnChatAIOutput, this);
     EventNotifier::Get()->Bind(wxEVT_OLLAMA_CHAT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
-    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &ChatAIWindow::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_OLLAMA_LIST_MODELS, &ChatAIWindow::OnModels, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &ChatAIWindow::OnFileSaved, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &ChatAIWindow::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &ChatAIWindow::OnWorkspaceClosed, this);
 
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
@@ -64,8 +66,10 @@ ChatAIWindow::~ChatAIWindow()
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_OUTPUT, &ChatAIWindow::OnChatAIOutput, this);
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_CHAT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
-    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &ChatAIWindow::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_LIST_MODELS, &ChatAIWindow::OnModels, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &ChatAIWindow::OnFileSaved, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &ChatAIWindow::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &ChatAIWindow::OnWorkspaceClosed, this);
 }
 
 void ChatAIWindow::OnSend(wxCommandEvent& event)
@@ -256,3 +260,15 @@ void ChatAIWindow::AppendOutputText(const wxString& message)
         clSTCHelper::SetCaretAt(m_stcOutput, m_stcOutput->GetLastPosition());
     }
 }
+
+void ChatAIWindow::OnWorkspaceLoaded(clWorkspaceEvent& event)
+{
+    event.Skip();
+    CHECK_COND_RET(clWorkspaceManager::Get().IsWorkspaceOpened());
+
+    auto content = clWorkspaceManager::Get().GetWorkspace()->ReadSettingFile(kAssistantConfigFile);
+    CHECK_COND_RET(content.has_value());
+    m_plugin->GetClient().ReloadConfig(content.value());
+}
+
+void ChatAIWindow::OnWorkspaceClosed(clWorkspaceEvent& event) { event.Skip(); }

@@ -3,6 +3,7 @@
 #include "ChatAIConfig.hpp"
 #include "OllamaClient.hpp"
 #include "UI.hpp"
+#include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 
 class ChatAI;
@@ -11,7 +12,6 @@ class ChatAIWindow : public AssistanceAIChatWindowBase
 public:
     ChatAIWindow(wxWindow* parent, ChatAI* plugin);
     virtual ~ChatAIWindow();
-    void ShowSettings();
 
 protected:
     void OnInputUI(wxUpdateUIEvent& event) override;
@@ -32,6 +32,8 @@ protected:
     void PopulateModels();
     void SetFocusToActiveEditor();
     void AppendOutputText(const wxString& message);
+    void OnWorkspaceLoaded(clWorkspaceEvent& event);
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
 
 private:
     ChatAI* m_plugin = nullptr;

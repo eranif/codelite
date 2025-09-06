@@ -45,46 +45,33 @@
 
 class WXDLLIMPEXP_SDK StyleProperty
 {
-    int m_id = 0;
-    wxString m_name;
-    wxString m_fontDesc;
-    wxString m_fgColour;
-    wxString m_bgColour;
-    int m_fontSize = wxNOT_FOUND;
-    size_t m_flags = 0;
-
 public:
     enum eStyleFlags {
         kNone = 0,
-        kItalic = (1 << 0),
-        kBold = (1 << 1),
-        kUnderline = (1 << 2),
         kEolFilled = (1 << 3),
         kIsSubStyle = (1 << 4),
+        kLargeSizeFont = (1 << 5),
+        kMediumSizeFont = (1 << 6),
     };
-
-public:
     typedef std::vector<StyleProperty> Vec_t;
 
-protected:
-    void EnableFlag(eStyleFlags flag, bool b)
-    {
-        if (b) {
-            m_flags |= flag;
-        } else {
-            m_flags &= ~flag;
-        }
-    }
-
-    bool HasFlag(eStyleFlags flag) const { return m_flags & flag; }
-
-public:
-    StyleProperty(int id, const wxString& name, const wxString& fgColour, const wxString& bgColour, const int fontSize,
-                  bool bold, bool italic, bool underline, bool eolFilled);
-    StyleProperty(int id, const wxString& name, const wxString& fontDesc, const wxString& fgColour,
-                  const wxString& bgColour, bool eolFilled);
+    StyleProperty(int id,
+                  const wxString& name,
+                  const wxString& fgColour,
+                  const wxString& bgColour,
+                  const int fontSize,
+                  bool bold,
+                  bool italic,
+                  bool underline,
+                  bool eolFilled);
+    StyleProperty(int id,
+                  const wxString& name,
+                  const wxString& fontDesc,
+                  const wxString& fgColour,
+                  const wxString& bgColour,
+                  bool eolFilled);
     StyleProperty();
-    ~StyleProperty() {}
+    ~StyleProperty() = default;
 
     bool IsSubstyle() const { return m_flags & kIsSubStyle; }
     void SetSubstyle() { m_flags |= kIsSubStyle; }
@@ -112,23 +99,52 @@ public:
     const wxString& GetBgColour() const { return m_bgColour; }
 
     void SetEolFilled(bool eolFilled) { EnableFlag(kEolFilled, eolFilled); }
+    void SetLargeSizeFont() { EnableFlag(kLargeSizeFont, true); }
+    void SetMediumSizeFont() { EnableFlag(kMediumSizeFont, true); }
     bool GetEolFilled() const { return HasFlag(kEolFilled); }
+    bool IsLargeSizeFont() const { return HasFlag(kLargeSizeFont); }
+    bool IsMediumSizeFont() const { return HasFlag(kMediumSizeFont); }
     wxString GetFontInfoDesc() const;
     bool HasFontInfoDesc() const { return !m_fontDesc.empty(); }
     void SetFontInfoDesc(const wxString& desc);
-    bool IsBold() const { return HasFlag(kBold); }
+    bool IsBold() const { return m_isBold; }
     const wxString& GetName() const { return m_name; }
     int GetId() const { return m_id; }
     void SetBgColour(const wxString& colour) { m_bgColour = colour; }
     void SetFgColour(const wxString& colour) { m_fgColour = colour; }
-    void SetBold(bool bold) { EnableFlag(kBold, bold); }
+    void SetBold(bool bold) { m_isBold = bold; }
     void SetId(int id) { m_id = id; }
-    void SetItalic(bool italic) { EnableFlag(kItalic, italic); }
-    bool GetItalic() const { return HasFlag(kItalic); }
-    void SetUnderlined(bool underlined) { EnableFlag(kUnderline, underlined); }
-    bool GetUnderlined() const { return HasFlag(kUnderline); }
+    void SetItalic(bool italic) { m_isItalic = italic; }
+    bool GetItalic() const { return m_isItalic; }
+    void SetUnderlined(bool underlined) { m_isUnderlined = underlined; }
+    bool GetUnderlined() const { return m_isUnderlined; }
     void SetName(const wxString& name) { this->m_name = name; }
     void FromAttributes(wxFont* font) const;
     void SetFontSize(int size) { m_fontSize = size; }
+    int GetFontSize() const { return m_fontSize; }
+
+protected:
+    void EnableFlag(eStyleFlags flag, bool b)
+    {
+        if (b) {
+            m_flags |= flag;
+        } else {
+            m_flags &= ~flag;
+        }
+    }
+
+    bool HasFlag(eStyleFlags flag) const { return m_flags & flag; }
+
+private:
+    int m_id{ 0 };
+    wxString m_name;
+    wxString m_fontDesc;
+    wxString m_fgColour;
+    wxString m_bgColour;
+    int m_fontSize = wxNOT_FOUND;
+    size_t m_flags = 0;
+    bool m_isBold{ false };
+    bool m_isItalic{ false };
+    bool m_isUnderlined{ false };
 };
 #endif

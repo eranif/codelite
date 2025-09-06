@@ -5,6 +5,7 @@
 #include "UI.hpp"
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
+#include "wxTerminalCtrl/wxTerminalOutputCtrl.hpp"
 
 class ChatAI;
 class ChatAIWindow : public AssistanceAIChatWindowBase
@@ -23,6 +24,7 @@ protected:
     void OnClear(wxCommandEvent& event);
     void OnRefreshModelList(wxCommandEvent& event);
     void OnSettings(wxCommandEvent& event);
+    void OnLog(OllamaEvent& event);
     void UpdateTheme();
     void DoSendPrompt();
     void OnChatAIOutput(OllamaEvent& event);
@@ -39,6 +41,7 @@ private:
     ChatAI* m_plugin = nullptr;
     wxChoice* m_activeModel = nullptr;
     bool m_autoRestart = false;
+    wxTerminalOutputCtrl* m_logView{ nullptr };
 };
 
 wxDECLARE_EVENT(wxEVT_CHATAI_SEND, clCommandEvent);

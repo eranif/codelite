@@ -270,7 +270,7 @@ void ColoursAndFontsManager::Load()
     m_globalFont = clConfig::Get().Read("GlobalThemeFont", FontUtils::GetDefaultMonospacedFont());
 
     // Load the lexers from the old format (json)
-    LoadLexersFromDb();
+    LoadLexersFromJSON();
 }
 
 wxArrayString ColoursAndFontsManager::GetAvailableThemesForLexer(const wxString& lexerName) const
@@ -621,7 +621,19 @@ void ColoursAndFontsManager::RestoreDefaults()
         wxLogNull noLog;
         wxFileName fnLexersJSON(clStandardPaths::Get().GetUserLexersDir(), "lexers.json");
         if (fnLexersJSON.Exists()) {
+            clSYSTEM() << "Deleting user setting file:" << fnLexersJSON.GetFullPath() << endl;
             clRemoveFile(fnLexersJSON.GetFullPath());
+        }
+
+        // Copy the global settings to be the new local file.
+        wxFileName fnInstallLexers(clStandardPaths::Get().GetDataDir(), "lexers.json");
+        fnInstallLexers.AppendDir("lexers");
+
+        bool result = ::wxCopyFile(fnInstallLexers.GetFullPath(), fnLexersJSON.GetFullPath(), true);
+        if (result) {
+            clSYSTEM() << "Successfully copied:" << fnInstallLexers << "->" << fnLexersJSON << endl;
+        } else {
+            clERROR() << "Error occurred when copying" << fnInstallLexers << "->" << fnLexersJSON << endl;
         }
     }
 
@@ -681,7 +693,9 @@ void ColoursAndFontsManager::LoadLexersFromFile()
     m_allLexers.clear();
     m_lexersMap.clear();
 
-    clSYSTEM() << "Loading lexers..." << endl;
+    clSYSTEM() << "Loading lexers. System file:" << fnInstallLexers << endl;
+    clSYSTEM() << "Loading lexers. Local file:" << fnUserLexers << endl;
+
     if (m_lexersVersion < LEXERS_VERSION || !fnUserLexers.FileExists()) {
         clSYSTEM() << "Loading default lexers. CodeLite expected version:" << LEXERS_VERSION
                    << ". Current version found in configuration file:" << m_lexersVersion << endl;
@@ -852,8 +866,9 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     lexer->FromJSON(json);
 
     wxString lexerName = lexer->GetName().Lower();
-    if (lexerName.empty())
-        return NULL;
+    if (lexerName.empty()) {
+        return nullptr;
+    }
 
     // ensure that the theme name is capitalized - this helps
     // when displaying the content in a wxListBox sorted
@@ -1002,7 +1017,24 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
 
     // update script lexer with additional keywords
     if (lexer->GetName() == "script") {
-        AddLexerKeywords(lexer, 0, { "return", "exit", "local", "function", "export", "case", "esac" });
+        AddLexerKeywords(lexer,
+                         0,
+                         { "return",
+                           "exit",
+                           "local",
+                           "function",
+                           "export",
+                           "case",
+                           "esac",
+                           "break",
+                           "continue",
+                           "mkdir",
+                           "rm",
+                           "ls",
+                           "chmod",
+                           "chown",
+                           "pushd",
+                           "popd" });
     }
 
     if (lexer->GetName() == "text") {
@@ -1103,6 +1135,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
             prop.SetFontInfoDesc(font_desc);
         }
     }
+
     return lexer;
 }
 
@@ -1121,8 +1154,6 @@ void ColoursAndFontsManager::SetGlobalFont(const wxFont& font)
         auto& props = lexer->GetLexerProperties();
         for (auto& sp : props) {
             sp.SetFontInfoDesc(FontUtils::GetFontInfo(font));
-            sp.SetBold(font.GetWeight() == wxFONTWEIGHT_BOLD);
-            sp.SetItalic(font.GetStyle() == wxFONTSTYLE_ITALIC);
         }
     }
 }
@@ -1310,15 +1341,10 @@ void ColoursAndFontsManager::LoadDb(const wxFileName& path)
     wxUnusedVar(path);
 }
 
-void ColoursAndFontsManager::LoadLexersFromDb()
+void ColoursAndFontsManager::LoadLexersFromJSON()
 {
-    wxFileName db_file{ clStandardPaths::Get().GetUserDataDir(), "lexers.db" };
-    db_file.AppendDir("lexers");
-
-    if (!db_file.FileExists()) {
-        // load the lexers from the file
-        LoadLexersFromFile();
-    }
+    // load the lexers from the file
+    LoadLexersFromFile();
 }
 
 void ColoursAndFontsManager::SetGlobalLineNumbersColour(const wxColour& col, bool dark_theme)

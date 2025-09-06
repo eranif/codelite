@@ -76,6 +76,7 @@ wxFont LexerConf::GetFontForStyle(int styleId, const wxWindow* win) const
     wxUnusedVar(win);
     const auto& prop = GetProperty(styleId);
     if (prop.IsNull()) {
+        clSYSTEM() << "Using default font! for styleId:" << styleId << endl;
         return FontUtils::GetDefaultMonospacedFont();
     }
     auto font = FontUtils::GetDefaultMonospacedFont();
@@ -167,11 +168,11 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     if (GetName() == "c++") {
         ctrl->SetProperty(wxT("lexer.cpp.track.preprocessor"), "0");
         ctrl->SetProperty(wxT("lexer.cpp.update.preprocessor"), "0");
-    }
-
-    if (GetName() == "scss") {
+    } else if (GetName() == "scss") {
         // Enable SCSS property (will tell the lexer to search for variables)
         ctrl->SetProperty("lexer.css.scss.language", "1");
+    } else if (GetName() == "markdown") {
+        ctrl->SetProperty("lexer.markdown.header.eolfill", "1");
     }
 
 #if HAS_ILEXER
@@ -279,7 +280,6 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
                     LOG_IF_TRACE { clDEBUG1() << "* Parent style:" << sp.GetId() << endl; }
                 }
 
-                // always set the font
                 ctrl->StyleSetFont(style_id, font);
                 ctrl->StyleSetBold(style_id, sp.IsBold());
                 ctrl->StyleSetItalic(style_id, sp.GetItalic());
@@ -507,7 +507,7 @@ void LexerConf::FromJSON(const JSONItem& json)
         // Construct a style property
         StyleProperty p;
         p.FromJSON(prop_json);
-        m_properties.emplace_back(std::move(p));
+        m_properties.push_back(std::move(p));
     }
 }
 

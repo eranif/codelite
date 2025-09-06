@@ -41,6 +41,7 @@ public:
     ~clAnsiEscapeCodeColourBuilder();
 
     clAnsiEscapeCodeColourBuilder& SetTheme(eColourTheme theme);
+    clAnsiEscapeCodeColourBuilder& SetDarkTheme(bool dark_theme);
     clAnsiEscapeCodeColourBuilder& Add(const wxString& text, int textColour, bool bold = false);
     clAnsiEscapeCodeColourBuilder& Add(const wxString& text, const wxColour& colour, bool bold = false);
 

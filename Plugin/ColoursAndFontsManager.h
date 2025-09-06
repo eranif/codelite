@@ -82,7 +82,7 @@ private:
     /**
      * @brief load lexers from lexers.db
      */
-    void LoadLexersFromDb();
+    void LoadLexersFromJSON();
 
 protected:
     void OnAdjustTheme(clCommandEvent& event);

@@ -3,17 +3,24 @@
 #include "FontUtils.hpp"
 #include "macros.h"
 
-StyleProperty::StyleProperty(int id, const wxString& name, const wxString& fgColour, const wxString& bgColour,
-                             const int fontSize, bool bold, bool italic, bool underline, bool eolFilled)
+StyleProperty::StyleProperty(int id,
+                             const wxString& name,
+                             const wxString& fgColour,
+                             const wxString& bgColour,
+                             const int fontSize,
+                             bool bold,
+                             bool italic,
+                             bool underline,
+                             bool eolFilled)
     : m_id(id)
     , m_name(name)
     , m_fgColour(fgColour)
     , m_bgColour(bgColour)
     , m_fontSize(fontSize)
 {
-    EnableFlag(kBold, bold);
-    EnableFlag(kItalic, italic);
-    EnableFlag(kUnderline, underline);
+    SetBold(bold);
+    SetItalic(italic);
+    SetUnderlined(underline);
     EnableFlag(kEolFilled, eolFilled);
 }
 
@@ -23,8 +30,12 @@ StyleProperty::StyleProperty()
 {
 }
 
-StyleProperty::StyleProperty(int id, const wxString& name, const wxString& fontDesc, const wxString& fgColour,
-                             const wxString& bgColour, bool eolFilled)
+StyleProperty::StyleProperty(int id,
+                             const wxString& name,
+                             const wxString& fontDesc,
+                             const wxString& fgColour,
+                             const wxString& bgColour,
+                             bool eolFilled)
     : m_id(id)
     , m_name(name)
     , m_fontDesc(fontDesc)
@@ -44,6 +55,9 @@ void StyleProperty::FromJSON(const JSONItem& json)
     m_fgColour = M["Colour"].toString("BLACK");
     m_bgColour = M["BgColour"].toString("WHITE");
     m_fontSize = M["Size"].toInt(wxNOT_FOUND);
+    m_isBold = M["Bold"].toBool(m_isBold);
+    m_isItalic = M["Italic"].toBool(m_isItalic);
+    m_isUnderlined = M["Underlined"].toBool(m_isUnderlined);
 }
 
 JSONItem StyleProperty::ToJSON(bool portable) const
@@ -56,21 +70,23 @@ JSONItem StyleProperty::ToJSON(bool portable) const
     json.addProperty("Colour", GetFgColour());
     json.addProperty("BgColour", GetBgColour());
     json.addProperty("Size", m_fontSize);
+    json.addProperty("Bold", m_isBold);
+    json.addProperty("Italic", m_isItalic);
+    json.addProperty("Underlined", m_isUnderlined);
     return json;
 }
 
 void StyleProperty::FromAttributes(wxFont* font) const
 {
     CHECK_PTR_RET(font);
-    if(HasFontInfoDesc()) {
+    if (HasFontInfoDesc()) {
         font->SetNativeFontInfo(GetFontInfoDesc());
-    } else {
-        font->SetUnderlined(GetUnderlined());
-        font->SetWeight(IsBold() ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL);
-        font->SetStyle(GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL);
-        if(m_fontSize != wxNOT_FOUND) {
-            font->SetPointSize(m_fontSize);
-        }
+    }
+    font->SetUnderlined(GetUnderlined());
+    font->SetWeight(IsBold() ? wxFONTWEIGHT_HEAVY : wxFONTWEIGHT_NORMAL);
+    font->SetStyle(GetItalic() ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL);
+    if (m_fontSize != wxNOT_FOUND) {
+        font->SetPointSize(m_fontSize);
     }
 }
 

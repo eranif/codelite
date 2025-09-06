@@ -25,10 +25,14 @@ public:
     inline void SetModels(const wxArrayString& models) { this->m_models = models; }
     inline const wxArrayString& GetModels() const { return m_models; }
 
+    inline void SetLogLevel(const ollama::LogLevel& logLevel) { m_logLevel = logLevel; }
+    inline const ollama::LogLevel& GetLogLevel() const { return m_logLevel; }
+
 private:
     ollama::Reason m_reason{ ollama::Reason::kDone };
     std::string m_message;
     wxArrayString m_models;
+    ollama::LogLevel m_logLevel{ ollama::LogLevel::kInfo };
 };
 
 using OllamaEventFunction = void (wxEvtHandler::*)(OllamaEvent&);
@@ -61,3 +65,4 @@ wxDECLARE_EVENT(wxEVT_OLLAMA_THINKING, OllamaEvent);
 wxDECLARE_EVENT(wxEVT_OLLAMA_CHAT_DONE, OllamaEvent);
 wxDECLARE_EVENT(wxEVT_OLLAMA_OUTPUT, OllamaEvent);
 wxDECLARE_EVENT(wxEVT_OLLAMA_LIST_MODELS, OllamaEvent);
+wxDECLARE_EVENT(wxEVT_OLLAMA_LOG, OllamaEvent);

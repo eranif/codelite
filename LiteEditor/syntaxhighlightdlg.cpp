@@ -429,7 +429,7 @@ void SyntaxHighlightDlg::OnItemSelected(wxCommandEvent& event)
 
     for (const auto& p : properties) {
         if (p.GetName() == selectionString) {
-            // update font & color
+            // update font & colour
             wxString colour = p.GetFgColour();
             wxString bgColour = p.GetBgColour();
 

@@ -26,7 +26,7 @@ const wxString& GetFontInfo(const wxFont& font) { return GetFontInfo(font.GetNat
 const wxString& GetFontInfo(const wxString& font_desc)
 {
     // check the cache first
-    if(fixed_fonts_cache.count(font_desc) != 0) {
+    if (fixed_fonts_cache.count(font_desc) != 0) {
         return fixed_fonts_cache[font_desc];
     }
 
@@ -34,12 +34,12 @@ const wxString& GetFontInfo(const wxString& font_desc)
 #ifdef __WXMSW__
     // on MSW, we need to manipulate the info by removing
     // "Semi Bold" (on all its variants) from the font's info
-    for(const wxString& word : words) {
+    for (const wxString& word : words) {
         desc.Replace(word, wxEmptyString);
     }
 
     // replace all double spaces with a single one
-    while(desc.Replace("  ", " "))
+    while (desc.Replace("  ", " "))
         ;
     desc.Trim();
 #endif

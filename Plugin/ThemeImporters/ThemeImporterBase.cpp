@@ -76,7 +76,8 @@ ThemeImporterBase::ThemeImporterBase() {}
 
 ThemeImporterBase::~ThemeImporterBase() {}
 
-void ThemeImporterBase::GetEclipseXmlProperty(const wxString& bg_prop, const wxString& fg_prop,
+void ThemeImporterBase::GetEclipseXmlProperty(const wxString& bg_prop,
+                                              const wxString& fg_prop,
                                               ThemeImporterBase::Property& prop) const
 {
     prop = m_editor;
@@ -140,8 +141,13 @@ wxString ThemeImporterBase::GetOutputFile(const wxString& language) const
     return xmlFileName;
 }
 
-void ThemeImporterBase::AddProperty(LexerConf::Ptr_t lexer, const wxString& id, const wxString& name,
-                                    const wxString& colour, const wxString& bgColour, bool bold, bool italic,
+void ThemeImporterBase::AddProperty(LexerConf::Ptr_t lexer,
+                                    const wxString& id,
+                                    const wxString& name,
+                                    const wxString& colour,
+                                    const wxString& bgColour,
+                                    bool bold,
+                                    bool italic,
                                     bool isEOLFilled)
 {
     wxASSERT(!colour.IsEmpty());
@@ -192,15 +198,15 @@ void ThemeImporterBase::AddCommonProperties(LexerConf::Ptr_t lexer)
     wxString whitespaceColour;
     if (IsDarkTheme()) {
         // dark theme
-        // Whitespace should be a bit lighether
-        whitespaceColour = wxColour(m_editor.bg_colour).ChangeLightness(150).GetAsString(wxC2S_HTML_SYNTAX);
+        // White-space should be a bit lighter
+        whitespaceColour = wxColour(m_editor.bg_colour).ChangeLightness(120).GetAsString(wxC2S_HTML_SYNTAX);
         AddProperty(lexer, "34", "Brace match", "yellow", m_editor.bg_colour, true);
         AddProperty(lexer, "35", "Brace bad match", "red", m_editor.bg_colour, true);
         AddProperty(lexer, "37", "Indent Guide", m_editor.bg_colour, m_editor.bg_colour);
 
     } else {
         // light theme
-        whitespaceColour = wxColour(m_editor.bg_colour).ChangeLightness(50).GetAsString(wxC2S_HTML_SYNTAX);
+        whitespaceColour = wxColour(m_editor.bg_colour).ChangeLightness(80).GetAsString(wxC2S_HTML_SYNTAX);
         AddProperty(lexer, "34", "Brace match", "black", "cyan", true);
         AddProperty(lexer, "35", "Brace bad match", "black", "red", true);
         AddProperty(lexer, "37", "Indent Guide", m_editor.bg_colour, m_editor.bg_colour);
@@ -285,7 +291,9 @@ LexerConf::Ptr_t ThemeImporterBase::ImportEclipseXML(const wxFileName& theme_fil
 }
 
 void ThemeImporterBase::GetEditorVSCodeColour(const std::unordered_map<std::string_view, JSONItem>& colours,
-                                              const wxString& bg_prop, const wxString& fg_prop, Property& colour)
+                                              const wxString& bg_prop,
+                                              const wxString& fg_prop,
+                                              Property& colour)
 {
     colour = m_editor;
 
@@ -304,7 +312,8 @@ void ThemeImporterBase::GetEditorVSCodeColour(const std::unordered_map<std::stri
 }
 
 void ThemeImporterBase::GetVSCodeColour(const std::unordered_map<wxString, VSCodeScope>& lookup,
-                                        const std::vector<wxString>& scopes, Property& colour)
+                                        const std::vector<wxString>& scopes,
+                                        Property& colour)
 {
     // default use editor settings
     colour = m_editor;
@@ -316,8 +325,8 @@ void ThemeImporterBase::GetVSCodeColour(const std::unordered_map<wxString, VSCod
     }
 }
 
-LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyThemeBase(AlacrittyColours& colours, const wxString& langName,
-                                                             int langId)
+LexerConf::Ptr_t
+ThemeImporterBase::ImportAlacrittyThemeBase(AlacrittyColours& colours, const wxString& langName, int langId)
 {
     m_editor.bg_colour = colours.bg;
     m_editor.fg_colour = colours.fg;
@@ -373,8 +382,8 @@ LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyThemeBase(AlacrittyColours& c
     return lexer;
 }
 
-LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyThemeToml(const wxFileName& theme_file, const wxString& langName,
-                                                             int langId)
+LexerConf::Ptr_t
+ThemeImporterBase::ImportAlacrittyThemeToml(const wxFileName& theme_file, const wxString& langName, int langId)
 {
     clDEBUG() << "   > Importing Alacritty Theme (TOML) file:" << theme_file << ". Language:" << langName << endl;
     std::string filename = StringUtils::ToStdString(theme_file.GetFullPath());
@@ -425,8 +434,8 @@ LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyThemeToml(const wxFileName& t
     return ImportAlacrittyThemeBase(colours, langName, langId);
 }
 
-LexerConf::Ptr_t ThemeImporterBase::ImportAlacrittyThemeYAML(const wxFileName& theme_file, const wxString& langName,
-                                                             int langId)
+LexerConf::Ptr_t
+ThemeImporterBase::ImportAlacrittyThemeYAML(const wxFileName& theme_file, const wxString& langName, int langId)
 {
     clDEBUG() << "   > Importing Alacritty Theme (YAML) file:" << theme_file << ". Language:" << langName << endl;
 
@@ -615,13 +624,25 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
 
     // search for class names
     GetVSCodeColour(lookup,
-                    { "storage.type", "storage", "storage.type.class", "entity.name.type.class",
-                      "entity.name.type.class.cpp", "entity.name.type.class.php", "meta.block.class.cpp",
-                      "entity.name.type.namespace", "entity.name.type", "entity.name.class", "entity.name.type",
-                      "class", "entity.name", "entity.name.scope-resolution" },
+                    { "storage.type",
+                      "storage",
+                      "storage.type.class",
+                      "entity.name.type.class",
+                      "entity.name.type.class.cpp",
+                      "entity.name.type.class.php",
+                      "meta.block.class.cpp",
+                      "entity.name.type.namespace",
+                      "entity.name.type",
+                      "entity.name.class",
+                      "entity.name.type",
+                      "class",
+                      "entity.name",
+                      "entity.name.scope-resolution" },
                     m_klass);
     GetVSCodeColour(lookup,
-                    { "entity.name.function", "meta.function-call", "entity.name.function.call.cpp",
+                    { "entity.name.function",
+                      "meta.function-call",
+                      "entity.name.function.call.cpp",
                       "entity.name.function.call.php" },
                     m_function);
 

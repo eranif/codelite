@@ -20,6 +20,7 @@ wxDEFINE_EVENT(wxEVT_OLLAMA_THINKING, OllamaEvent);
 wxDEFINE_EVENT(wxEVT_OLLAMA_CHAT_DONE, OllamaEvent);
 wxDEFINE_EVENT(wxEVT_OLLAMA_OUTPUT, OllamaEvent);
 wxDEFINE_EVENT(wxEVT_OLLAMA_LIST_MODELS, OllamaEvent);
+wxDEFINE_EVENT(wxEVT_OLLAMA_LOG, OllamaEvent);
 
 #ifdef __WXMSW__
 #include <windows.h>

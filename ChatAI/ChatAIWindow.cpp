@@ -4,6 +4,7 @@
 #include "ColoursAndFontsManager.h"
 #include "OllamaClient.hpp"
 #include "StringUtils.h"
+#include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clSTCHelper.hpp"
 #include "clWorkspaceManager.h"
 #include "codelite_events.h"
@@ -19,6 +20,22 @@ wxDEFINE_EVENT(wxEVT_CHATAI_INTERRUPT, clCommandEvent);
 
 namespace
 {
+
+const wxString kDefaultSettings =
+    R"#({
+  "history_size": 50,
+  "server_url": "http://127.0.0.1:11434",
+  "servers": {},
+  "models": {
+    "default": {
+      "options": {
+        "num_ctx": 32768,
+        "temperature": 0
+      }
+    }
+  }
+})#";
+
 const wxString CHAT_AI_LABEL = _("Chat AI");
 const wxString LONG_MODEL_NAME = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 constexpr const char* kAssistantConfigFile = "assistant.json";
@@ -47,6 +64,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &ChatAIWindow::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &ChatAIWindow::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &ChatAIWindow::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_OLLAMA_LOG, &ChatAIWindow::OnLog, this);
 
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
@@ -55,9 +73,16 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     Bind(wxEVT_MENU, &ChatAIWindow::OnSettings, this, wxID_SETUP);
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);
 
-    m_plugin->GetClient().SetLogSink([]([[maybe_unused]] ollama::LogLevel level, std::string message) {
+    m_logView = new wxTerminalOutputCtrl(m_panelLog);
+    m_logView->SetSink(this);
+    m_panelLog->GetSizer()->Add(m_logView, wxSizerFlags(1).Expand());
+
+    m_plugin->GetClient().SetLogSink([](ollama::LogLevel level, std::string message) {
         // For now, just print it to the log.
-        clDEBUG() << message << endl;
+        OllamaEvent log_event{ wxEVT_OLLAMA_LOG };
+        log_event.SetLogLevel(level);
+        log_event.SetStringRaw(message);
+        EventNotifier::Get()->AddPendingEvent(log_event);
     });
 }
 
@@ -70,6 +95,7 @@ ChatAIWindow::~ChatAIWindow()
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &ChatAIWindow::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &ChatAIWindow::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &ChatAIWindow::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_OLLAMA_LOG, &ChatAIWindow::OnLog, this);
 }
 
 void ChatAIWindow::OnSend(wxCommandEvent& event)
@@ -106,6 +132,7 @@ void ChatAIWindow::UpdateTheme()
 
     lexer->Apply(m_stcInput);
     lexer->Apply(m_stcOutput);
+    AnsiColours::SetDarkTheme(lexer->IsDark());
 }
 
 void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
@@ -139,14 +166,41 @@ void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
     }
 }
 
+void ChatAIWindow::OnLog(OllamaEvent& event)
+{
+    clAnsiEscapeCodeColourBuilder builder;
+    switch (event.GetLogLevel()) {
+    case ollama::LogLevel::kError:
+        builder.Add(event.GetStringRaw(), AnsiColours::Red(), true);
+        break;
+    case ollama::LogLevel::kWarning:
+        builder.Add(event.GetStringRaw(), AnsiColours::Yellow(), true);
+        break;
+    case ollama::LogLevel::kTrace:
+    case ollama::LogLevel::kDebug:
+        builder.Add(event.GetStringRaw(), AnsiColours::Gray(), true);
+        break;
+    case ollama::LogLevel::kInfo:
+    default:
+        builder.Add(event.GetStringRaw(), AnsiColours::Green());
+        break;
+    }
+    wxString line = builder.GetString();
+    line.Trim() << "\n";
+
+    wxStringView sv{ line };
+    m_logView->StyleAndAppend(sv, nullptr);
+}
+
 void ChatAIWindow::OnSettings(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
         auto editor = clWorkspaceManager::Get().GetWorkspace()->CreateOrOpenSettingFile(kAssistantConfigFile);
         if (!editor) {
-            ::wxMessageBox(
-                wxString() << _("Could not open file: assistant.jon"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+            ::wxMessageBox(wxString() << _("Could not open file: ") << kAssistantConfigFile,
+                           "CodeLite",
+                           wxICON_ERROR | wxOK | wxCENTER);
         }
 
         if (!editor->GetEditorText().empty()) {
@@ -154,20 +208,7 @@ void ChatAIWindow::OnSettings(wxCommandEvent& event)
         }
 
         // Place some default content
-        editor->SetEditorText(
-            R"#({
-  "history_size": 50,
-  "server_url": "http://127.0.0.1:11434",
-  "servers": {},
-  "models": {
-    "default": {
-      "options": {
-        "num_ctx": 32768,
-        "temperature": 0
-      }
-    }
-  }
-})#");
+        editor->SetEditorText(kDefaultSettings);
     }
 }
 

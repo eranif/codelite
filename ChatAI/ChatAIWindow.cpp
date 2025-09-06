@@ -189,7 +189,7 @@ void ChatAIWindow::OnLog(OllamaEvent& event)
     wxString line = builder.GetString();
     line.Trim() << "\n";
 
-    wxStringView sv{ line };
+    wxStringView sv{ line.c_str(), line.length() };
     m_logView->StyleAndAppend(sv, nullptr);
 }
 

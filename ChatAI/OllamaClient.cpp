@@ -58,7 +58,7 @@ void OllamaClient::Send(const wxString& prompt, const wxString& model)
         [this](std::string msg, ollama::Reason reason) {
             // Translate the callback into wxWidgets event
             OllamaEvent event{ wxEVT_OLLAMA_OUTPUT };
-            event.SetOutput(std::move(msg));
+            event.SetStringRaw(std::move(msg));
             event.SetEventObject(this);
             event.SetReason(reason);
             EventNotifier::Get()->AddPendingEvent(event);

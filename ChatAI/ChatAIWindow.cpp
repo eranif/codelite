@@ -169,20 +169,21 @@ void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
 void ChatAIWindow::OnLog(OllamaEvent& event)
 {
     clAnsiEscapeCodeColourBuilder builder;
+    wxString content = wxString::FromUTF8(event.GetStringRaw());
     switch (event.GetLogLevel()) {
     case ollama::LogLevel::kError:
-        builder.Add(event.GetStringRaw(), AnsiColours::Red(), true);
+        builder.Add(content, AnsiColours::Red(), true);
         break;
     case ollama::LogLevel::kWarning:
-        builder.Add(event.GetStringRaw(), AnsiColours::Yellow(), true);
+        builder.Add(content, AnsiColours::Yellow(), true);
         break;
     case ollama::LogLevel::kTrace:
     case ollama::LogLevel::kDebug:
-        builder.Add(event.GetStringRaw(), AnsiColours::Gray(), true);
+        builder.Add(content, AnsiColours::Gray(), true);
         break;
     case ollama::LogLevel::kInfo:
     default:
-        builder.Add(event.GetStringRaw(), AnsiColours::Green());
+        builder.Add(content, AnsiColours::Green());
         break;
     }
     wxString line = builder.GetString();
@@ -228,11 +229,12 @@ void ChatAIWindow::OnClear(wxCommandEvent& event)
 
 void ChatAIWindow::OnChatAIOutput(OllamaEvent& event)
 {
+    wxString content = wxString::FromUTF8(event.GetStringRaw());
     if (event.GetReason() == ollama::Reason::kFatalError) {
-        ::wxMessageBox(event.GetOutput(), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+        ::wxMessageBox(content, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
-    AppendOutputText(event.GetOutput());
+    AppendOutputText(content);
 }
 
 void ChatAIWindow::OnFileSaved(clCommandEvent& event)

@@ -1,6 +1,7 @@
 #pragma once
 
 #include "ChatAIConfig.hpp"
+#include "MarkdownStyler.hpp"
 #include "OllamaClient.hpp"
 #include "UI.hpp"
 #include "clWorkspaceEvent.hpp"
@@ -33,7 +34,7 @@ protected:
     void OnFileSaved(clCommandEvent& event);
     void PopulateModels();
     void SetFocusToActiveEditor();
-    void AppendOutputText(const wxString& message);
+    void StyleAndPrintOutput(bool allow_partial_line = false);
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnWorkspaceClosed(clWorkspaceEvent& event);
 
@@ -42,6 +43,8 @@ private:
     wxChoice* m_activeModel = nullptr;
     bool m_autoRestart = false;
     wxTerminalOutputCtrl* m_logView{ nullptr };
+    std::unique_ptr<MarkdownStyler> m_markdownStyler;
+    wxString m_bufferedLine;
 };
 
 wxDECLARE_EVENT(wxEVT_CHATAI_SEND, clCommandEvent);

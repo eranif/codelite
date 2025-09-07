@@ -29,7 +29,7 @@ void clGenericSTCStyler::OnStyleNeeded(wxStyledTextEvent& event)
     // The scintilla syntax in wx3.1.1 changed
     m_ctrl->StartStyling(startPos);
     wxString lineText;
-    while(GetNextLine(text, lineText)) {
+    while (GetNextLine(text, lineText)) {
         text = text.Mid(lineText.length());
         int style = GetStyleForLine(lineText);
         m_ctrl->SetStyling(lineText.length(), style);
@@ -40,11 +40,11 @@ bool clGenericSTCStyler::GetNextLine(const wxString& inText, wxString& lineText)
 {
     lineText.Clear();
     wxString::const_iterator iter = inText.begin();
-    while(iter != inText.end()) {
+    while (iter != inText.end()) {
         const wxUniChar& ch = *iter;
         lineText << ch;
         ++iter;
-        if(ch == '\n') {
+        if (ch == '\n') {
             // found EOL
             return true;
         }
@@ -55,8 +55,8 @@ bool clGenericSTCStyler::GetNextLine(const wxString& inText, wxString& lineText)
 int clGenericSTCStyler::GetStyleForLine(const wxString& lineText) const
 {
     wxString lcLine = lineText.Lower();
-    for(size_t i = 0; i < m_words.size(); ++i) {
-        if(lcLine.Contains(m_words[i].first)) {
+    for (size_t i = 0; i < m_words.size(); ++i) {
+        if (lcLine.Contains(m_words[i].first)) {
             return m_words[i].second;
         }
     }
@@ -68,7 +68,7 @@ int clGenericSTCStyler::GetStyleForLine(const wxString& lineText) const
 void clGenericSTCStyler::ResetStyles()
 {
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(!lexer)
+    if (!lexer)
         return;
     lexer->Apply(m_ctrl);
     m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
@@ -77,21 +77,21 @@ void clGenericSTCStyler::ResetStyles()
 
 void clGenericSTCStyler::AddStyle(const wxArrayString& words, clGenericSTCStyler::eStyles style)
 {
-    if(words.IsEmpty()) {
+    if (words.IsEmpty()) {
         return;
     }
-    for(size_t i = 0; i < words.size(); ++i) {
+    for (size_t i = 0; i < words.size(); ++i) {
         m_words.push_back({ words.Item(i).Lower(), (int)style });
     }
 }
 
 void clGenericSTCStyler::AddUserStyle(const wxArrayString& words, const wxColour& fgColour, const wxColour& bgColour)
 {
-    if(words.IsEmpty()) {
+    if (words.IsEmpty()) {
         return;
     }
     m_styleInfo.push_back(std::make_tuple(m_nextAvailStyle, fgColour, bgColour));
-    for(size_t i = 0; i < words.size(); ++i) {
+    for (size_t i = 0; i < words.size(); ++i) {
         m_words.push_back({ words.Item(i).Lower(), m_nextAvailStyle });
     }
     ++m_nextAvailStyle;
@@ -124,15 +124,15 @@ void clGenericSTCStyler::ClearAllStyles()
 void clGenericSTCStyler::InitDefaultStyles()
 {
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(!lexer)
+    if (!lexer)
         return;
 
     const StyleProperty& defaultStyle = lexer->GetProperty(0);
     bool isDark = lexer->IsDark();
     m_styleInfo.resize(kLastStyle);
     m_styleInfo[kDefault] = std::make_tuple(kDefault, defaultStyle.GetFgColour(), defaultStyle.GetBgColour());
-    m_styleInfo[kInfo] = std::make_tuple(kInfo, isDark ? wxColour("rgb(167, 226, 46)") : wxColour("rgb(80, 161, 79)"),
-                                         defaultStyle.GetBgColour());
+    m_styleInfo[kInfo] = std::make_tuple(
+        kInfo, isDark ? wxColour("rgb(167, 226, 46)") : wxColour("rgb(80, 161, 79)"), defaultStyle.GetBgColour());
     m_styleInfo[kWarning] = std::make_tuple(
         kWarning, isDark ? wxColour("rgb(150,155,73)") : wxColour("rgb(255,201,14)"), defaultStyle.GetBgColour());
     m_styleInfo[kError] =

@@ -2,6 +2,7 @@
 
 #include "ChatAI.hpp"
 #include "ColoursAndFontsManager.h"
+#include "MarkdownStyler.hpp"
 #include "OllamaClient.hpp"
 #include "StringUtils.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
@@ -84,6 +85,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
         log_event.SetStringRaw(message);
         EventNotifier::Get()->AddPendingEvent(log_event);
     });
+    m_markdownStyler = std::make_unique<MarkdownStyler>(m_stcOutput);
 }
 
 ChatAIWindow::~ChatAIWindow()
@@ -131,7 +133,6 @@ void ChatAIWindow::UpdateTheme()
     CHECK_PTR_RET(lexer);
 
     lexer->Apply(m_stcInput);
-    lexer->Apply(m_stcOutput);
     AnsiColours::SetDarkTheme(lexer->IsDark());
 }
 
@@ -225,6 +226,8 @@ void ChatAIWindow::OnClear(wxCommandEvent& event)
     m_stcOutput->ClearAll();
     m_stcInput->ClearAll();
     m_plugin->GetClient().Clear();
+    m_bufferedLine.Clear();
+    m_markdownStyler = std::make_unique<MarkdownStyler>(m_stcOutput);
 }
 
 void ChatAIWindow::OnChatAIOutput(OllamaEvent& event)
@@ -234,7 +237,16 @@ void ChatAIWindow::OnChatAIOutput(OllamaEvent& event)
         ::wxMessageBox(content, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
-    AppendOutputText(content);
+    m_bufferedLine << content;
+}
+
+void ChatAIWindow::OnChatAIOutputDone(OllamaEvent& event)
+{
+    m_bufferedLine << "\n⸻⸻⸻\n";
+    StyleAndPrintOutput();
+
+    // Move the focus back to the input text control
+    m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 
 void ChatAIWindow::OnFileSaved(clCommandEvent& event)
@@ -266,14 +278,6 @@ void ChatAIWindow::OnModels(OllamaEvent& event)
     }
 }
 
-void ChatAIWindow::OnChatAIOutputDone(OllamaEvent& event)
-{
-    AppendOutputText("\n------\n");
-
-    // Move the focus back to the input text control
-    m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
-}
-
 void ChatAIWindow::OnInputUI(wxUpdateUIEvent& event) { event.Enable(true); }
 
 void ChatAIWindow::PopulateModels()
@@ -289,19 +293,22 @@ void ChatAIWindow::SetFocusToActiveEditor()
     editor->SetActive();
 }
 
-void ChatAIWindow::AppendOutputText(const wxString& message)
+void ChatAIWindow::StyleAndPrintOutput(bool allow_partial_line)
 {
-    bool scroll_to_end = true;
-    if (wxWindow::FindFocus() == m_stcOutput &&
-        m_stcOutput->GetCurrentLine() != m_stcOutput->LineFromPosition(m_stcOutput->GetLastPosition())) {
+    CHECK_COND_RET(!m_bufferedLine.empty());
+    m_stcOutput->AppendText(m_bufferedLine);
+    m_markdownStyler->StyleText();
+    m_bufferedLine.clear();
+
+    bool scroll_to_end{ true };
+    if (wxWindow::FindFocus() == m_stcOutput) {
         scroll_to_end = false;
     }
 
-    m_stcOutput->AppendText(message);
     if (scroll_to_end) {
         m_stcOutput->ScrollToEnd();
-        clSTCHelper::SetCaretAt(m_stcOutput, m_stcOutput->GetLastPosition());
     }
+    clSTCHelper::SetCaretAt(m_stcOutput, m_stcOutput->GetLastPosition());
 }
 
 void ChatAIWindow::OnWorkspaceLoaded(clWorkspaceEvent& event)

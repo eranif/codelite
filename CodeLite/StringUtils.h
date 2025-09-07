@@ -33,7 +33,17 @@
 #include <wx/combobox.h>
 #include <wx/string.h>
 
-typedef std::basic_string_view<wxChar> wxStringView;
+using wxStringView = std::basic_string_view<wxChar>;
+
+inline bool operator==(wxStringView sv, const wxString& s)
+{
+    return s.length() == sv.length() && ::wxStrncmp(s, sv.data(), sv.length()) == 0;
+}
+
+inline bool operator==(wxStringView sv, const char* cstr)
+{
+    return sv.length() == ::wxStrlen(cstr) && ::wxStrncmp(cstr, sv.data(), sv.length()) == 0;
+}
 
 class WXDLLIMPEXP_CL StringUtils
 {

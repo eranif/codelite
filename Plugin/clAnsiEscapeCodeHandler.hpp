@@ -122,8 +122,8 @@ public:
     /**
      * @brief render line without style
      */
-    void RenderNoStyle(wxDC& dc, const clRenderDefaultStyle& defaultStyle, int line, const wxRect& rect,
-                       bool isLightTheme);
+    void
+    RenderNoStyle(wxDC& dc, const clRenderDefaultStyle& defaultStyle, int line, const wxRect& rect, bool isLightTheme);
 
     size_t GetLineCount() const { return m_chunks.size(); }
 

@@ -1,8 +1,8 @@
-#include "fmtCMakeForamt.hpp"
+#include "fmtCMakeFormat.hpp"
 
 #include "Platform/Platform.hpp"
 
-fmtCMakeForamt::fmtCMakeForamt()
+fmtCMakeFormat::fmtCMakeFormat()
 {
     SetName("cmake-format");
     SetFileTypes({ FileExtManager::TypeCMake });
@@ -16,5 +16,3 @@ fmtCMakeForamt::fmtCMakeForamt()
     SetCommand({ cmake_format.value_or("cmake-format"), R"#(--line-width=120 --tab-size=4 -i "$(CurrentFileFullPath)")#" });
     SetEnabled(cmake_format.has_value());
 }
-
-fmtCMakeForamt::~fmtCMakeForamt() {}

@@ -13,17 +13,43 @@ enum MarkdownStyles {
     kHeader5,
     kHeader6,
     kHeaderText,
-    kCodeBlock,
     kCodeBlockTag,
+    kCodeBlockText,
     kCodeWord,
+    kStrongText,
+    kStrong2Text,
+    kStrongTag,
+    kStrong2Tag,
+    kEmphasisText,
+    kEmphasis2Text,
+    kEmphasisTag,
+    kEmphasis2Tag,
+    kBacktick,
+    kHorizontalLine,
+    kListItem,
+    kNumberedListItem,
+    kNumberedListItemDot,
 };
 
 enum class State {
     kDefault,
     kCodeBlock,
+    kCodeBlockTag,
     kCodeWord,
+    kStrongText,
+    kStrong2Text,
+    kEmphasisText,
+    kEmphasis2Text,
     kHeaderText,
 };
+
+/// Check if `sv` is a number
+bool IsNumber(wxStringView sv)
+{
+    wxString s{ sv.data(), sv.length() };
+    long v{ wxNOT_FOUND };
+    return s.ToCLong(&v);
+}
 
 } // namespace
 
@@ -37,43 +63,52 @@ void MarkdownStyler::Reset() {}
 
 void MarkdownStyler::InitStyles()
 {
-    wxColour default_bg, default_fg;
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("rust");
-    CHECK_PTR_RET(lexer);
+    wxColour default_bg, default_fg, code_bg;
+    auto markdown_lexer = ColoursAndFontsManager::Get().GetLexer("markdown");
+    CHECK_PTR_RET(markdown_lexer);
 
-    auto default_prop = lexer->GetProperty(wxSTC_RUST_DEFAULT);
+    auto rust_lexer = ColoursAndFontsManager::Get().GetLexer("rust");
+    CHECK_PTR_RET(rust_lexer);
+
+    bool is_dark = markdown_lexer->IsDark();
+    auto default_prop = markdown_lexer->GetProperty(wxSTC_MARKDOWN_DEFAULT);
     default_bg = default_prop.GetBgColour();
     default_fg = default_prop.GetFgColour();
+    code_bg = default_bg.ChangeLightness(is_dark ? 110 : 90);
 
     for (int i = 0; i < wxSTC_STYLE_MAX; ++i) {
         m_ctrl->StyleSetBackground(i, default_bg);
     }
 
-    auto macro = lexer->GetProperty(wxSTC_RUST_MACRO);
-    auto string = lexer->GetProperty(wxSTC_RUST_STRING);
-    auto number = lexer->GetProperty(wxSTC_RUST_NUMBER);
-    auto strukt = lexer->GetProperty(wxSTC_RUST_WORD4);
-    auto variable = lexer->GetProperty(wxSTC_RUST_WORD5);
-    auto function = lexer->GetProperty(wxSTC_RUST_WORD6);
-    auto keyword = lexer->GetProperty(wxSTC_RUST_WORD);
+    auto keyword = rust_lexer->GetProperty(wxSTC_RUST_WORD2);
+    auto variable = rust_lexer->GetProperty(wxSTC_RUST_WORD);
+    auto string = rust_lexer->GetProperty(wxSTC_RUST_STRING);
+    auto block_comment = rust_lexer->GetProperty(wxSTC_RUST_COMMENTBLOCK);
+
+    auto header_1 = markdown_lexer->GetProperty(wxSTC_MARKDOWN_HEADER1);
+    auto header_2 = markdown_lexer->GetProperty(wxSTC_MARKDOWN_HEADER2);
+    auto other_headers = markdown_lexer->GetProperty(wxSTC_MARKDOWN_HEADER3);
+    auto function = markdown_lexer->GetProperty(wxSTC_MARKDOWN_CODE);
+    auto link = markdown_lexer->GetProperty(wxSTC_MARKDOWN_LINK);
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kDefault, default_fg);
     m_ctrl->StyleSetBackground(MarkdownStyles::kDefault, default_bg);
 
-    m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlock, default_fg);
-    m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlock, default_bg.ChangeLightness(80));
-    m_ctrl->StyleSetEOLFilled(MarkdownStyles::kCodeBlock, true);
+    m_ctrl->StyleSetForeground(MarkdownStyles::kHorizontalLine, block_comment.GetFgColour());
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockTag, keyword.GetFgColour());
-    m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockTag, default_bg.ChangeLightness(80));
+    m_ctrl->StyleSetForeground(MarkdownStyles::kBacktick, string.GetFgColour());
+
+    m_ctrl->StyleSetEOLFilled(MarkdownStyles::kCodeBlockText, true);
+    m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockText, code_bg);
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kCodeWord, function.GetFgColour());
-    m_ctrl->StyleSetBackground(MarkdownStyles::kCodeWord, default_bg.ChangeLightness(80));
+    m_ctrl->StyleSetBackground(MarkdownStyles::kCodeWord, code_bg);
 
-    m_ctrl->StyleSetForeground(MarkdownStyles::kHeader1, strukt.GetFgColour());
+    m_ctrl->StyleSetForeground(MarkdownStyles::kHeader1, header_1.GetFgColour());
     m_ctrl->StyleSetBold(MarkdownStyles::kHeader1, true);
 
-    m_ctrl->StyleSetForeground(MarkdownStyles::kHeader2, macro.GetFgColour());
+    m_ctrl->StyleSetForeground(MarkdownStyles::kHeader2, header_2.GetFgColour());
     m_ctrl->StyleSetBold(MarkdownStyles::kHeader1, true);
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kHeaderText, default_fg);
@@ -83,8 +118,31 @@ void MarkdownStyler::InitStyles()
 
     const std::vector<int> header_styles = { kHeader2, kHeader3, kHeader4, kHeader5, kHeader6 };
     for (int style : header_styles) {
-        m_ctrl->StyleSetForeground(style, variable.GetFgColour());
+        m_ctrl->StyleSetForeground(style, other_headers.GetFgColour());
     }
+
+    // Strong style
+    m_ctrl->StyleSetForeground(MarkdownStyles::kStrongText, default_fg);
+    m_ctrl->StyleSetItalic(MarkdownStyles::kStrongText, true);
+    m_ctrl->StyleSetForeground(MarkdownStyles::kStrongTag, variable.GetFgColour());
+
+    m_ctrl->StyleSetForeground(MarkdownStyles::kStrong2Text, default_fg);
+    m_ctrl->StyleSetBold(MarkdownStyles::kStrong2Text, true);
+    m_ctrl->StyleSetForeground(MarkdownStyles::kStrong2Tag, variable.GetFgColour());
+
+    // Emphasis style
+    m_ctrl->StyleSetForeground(MarkdownStyles::kEmphasisText, default_fg);
+    m_ctrl->StyleSetItalic(MarkdownStyles::kEmphasisText, true);
+    m_ctrl->StyleSetForeground(MarkdownStyles::kEmphasisTag, variable.GetFgColour());
+
+    m_ctrl->StyleSetForeground(MarkdownStyles::kEmphasis2Text, default_fg);
+    m_ctrl->StyleSetItalic(MarkdownStyles::kEmphasis2Text, true);
+    m_ctrl->StyleSetForeground(MarkdownStyles::kEmphasis2Tag, variable.GetFgColour());
+
+    // List items
+    m_ctrl->StyleSetForeground(MarkdownStyles::kNumberedListItem, string.GetFgColour());
+    m_ctrl->StyleSetForeground(MarkdownStyles::kNumberedListItemDot, header_1.GetFgColour());
+    m_ctrl->StyleSetForeground(MarkdownStyles::kListItem, header_1.GetFgColour());
 
     SetStyleCallback([this](clSTCAccessor& accessor) { this->OnStyle(accessor); });
 }
@@ -93,30 +151,42 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
 {
     State state = State::kDefault;
     while (accessor.CanNext()) {
-        wxChar ch = accessor.Get();
-        wxUniChar uni_char(ch);
+        wxChar ch = accessor.GetCurrentChar();
+        wxUniChar uni_char{ ch };
         int default_step{ 1 };
         if (!uni_char.IsAscii()) {
-            clSYSTEM() << "Non ASCII char found!:" << uni_char << endl;
             wxString as_str(uni_char);
             default_step = StringUtils::UTF8Length(as_str.wc_str(), as_str.length());
-            clSYSTEM() << "Step is set to:" << default_step << endl;
         }
 
         switch (state) {
         case State::kDefault:
+            // we support up to 99 bullets.
+            if (::wxIsdigit(ch) && accessor.IsAtStartOfLine()) {
+                if (::wxIsdigit(accessor.GetCharAt(1)) && accessor.GetCharAt(2) == '.') {
+                    accessor.SetStyle(MarkdownStyles::kNumberedListItem, 2);
+                    accessor.SetStyle(MarkdownStyles::kNumberedListItemDot, 1);
+                    break;
+                } else if (accessor.GetCharAt(1) == '.') {
+                    accessor.SetStyle(MarkdownStyles::kNumberedListItem, 1);
+                    accessor.SetStyle(MarkdownStyles::kNumberedListItemDot, 1);
+                    break;
+                }
+            }
+
+            // not a number, run the switch statement.
             switch (ch) {
             case '#':
                 if (accessor.IsAtStartOfLine()) {
-                    if (accessor.Get(6) == "######") {
+                    if (accessor.GetSubstr(6) == "######") {
                         accessor.SetStyle(MarkdownStyles::kHeader6, 6);
-                    } else if (accessor.Get(5) == "#####") {
+                    } else if (accessor.GetSubstr(5) == "#####") {
                         accessor.SetStyle(MarkdownStyles::kHeader5, 5);
-                    } else if (accessor.Get(4) == "####") {
+                    } else if (accessor.GetSubstr(4) == "####") {
                         accessor.SetStyle(MarkdownStyles::kHeader4, 4);
-                    } else if (accessor.Get(3) == "###") {
+                    } else if (accessor.GetSubstr(3) == "###") {
                         accessor.SetStyle(MarkdownStyles::kHeader3, 3);
-                    } else if (accessor.Get(2) == "##") {
+                    } else if (accessor.GetSubstr(2) == "##") {
                         accessor.SetStyle(MarkdownStyles::kHeader2, 2);
                     } else {
                         accessor.SetStyle(MarkdownStyles::kHeader1, 1);
@@ -126,13 +196,38 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                     accessor.SetStyle(MarkdownStyles::kDefault, 1);
                 }
                 break;
-            case '`':
-                if (accessor.Get(3) == "```") {
-                    // code block
-                    accessor.SetStyle(MarkdownStyles::kCodeBlock, 3);
-                    state = State::kCodeBlock;
+            case '-':
+                if (accessor.IsAtStartOfLine() && accessor.GetCharAt(1) == ' ') {
+                    accessor.SetStyle(MarkdownStyles::kListItem, 2);
                 } else {
-                    accessor.SetStyle(MarkdownStyles::kCodeWord, 1);
+                    accessor.SetStyle(MarkdownStyles::kDefault, 1);
+                }
+                break;
+            case '*':
+                if (accessor.GetSubstr(2) == "**") {
+                    accessor.SetStyle(MarkdownStyles::kStrong2Tag, 2);
+                    state = State::kStrong2Text;
+                } else {
+                    accessor.SetStyle(MarkdownStyles::kStrongTag, 1);
+                    state = State::kStrongText;
+                }
+                break;
+            case '_':
+                if (accessor.GetSubstr(2) == "__") {
+                    accessor.SetStyle(MarkdownStyles::kEmphasis2Tag, 2);
+                    state = State::kEmphasis2Text;
+                } else {
+                    accessor.SetStyle(MarkdownStyles::kEmphasisTag, 1);
+                    state = State::kEmphasisText;
+                }
+                break;
+            case '`':
+                if (accessor.GetSubstr(3) == "```") {
+                    // code block
+                    accessor.SetStyle(MarkdownStyles::kBacktick, 3);
+                    state = State::kCodeBlockTag;
+                } else {
+                    accessor.SetStyle(MarkdownStyles::kBacktick, 1);
                     state = State::kCodeWord;
                 }
                 break;
@@ -141,25 +236,36 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 break;
             }
             break;
+        case State::kCodeBlockTag:
+            switch (ch) {
+            case '\n':
+                accessor.SetStyle(MarkdownStyles::kCodeBlockTag, 1);
+                state = State::kCodeBlock;
+                break;
+            default:
+                accessor.SetStyle(MarkdownStyles::kCodeBlockTag, 1, default_step);
+                break;
+            }
+            break;
         case State::kCodeBlock:
             switch (ch) {
             case '`':
-                if (accessor.Get(3) == "```") {
-                    accessor.SetStyle(MarkdownStyles::kCodeBlock, 3);
+                if (accessor.GetSubstr(3) == "```") {
+                    accessor.SetStyle(MarkdownStyles::kBacktick, 3);
                     state = State::kDefault;
                 } else {
-                    accessor.SetStyle(MarkdownStyles::kCodeBlock, 1);
+                    accessor.SetStyle(MarkdownStyles::kBacktick, 1);
                 }
                 break;
             default:
-                accessor.SetStyle(MarkdownStyles::kCodeBlock, 1, default_step);
+                accessor.SetStyle(MarkdownStyles::kCodeBlockText, 1, default_step);
                 break;
             }
             break;
         case State::kCodeWord:
             switch (ch) {
             case '`':
-                accessor.SetStyle(MarkdownStyles::kCodeWord, 1);
+                accessor.SetStyle(MarkdownStyles::kBacktick, 1);
                 state = State::kDefault;
                 break;
             default:
@@ -175,6 +281,58 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 break;
             default:
                 accessor.SetStyle(MarkdownStyles::kHeaderText, 1, default_step);
+                break;
+            }
+            break;
+        case State::kStrong2Text:
+            switch (ch) {
+            case '*':
+                if (accessor.GetSubstr(2) == "**") {
+                    accessor.SetStyle(MarkdownStyles::kStrong2Tag, 2);
+                    state = State::kDefault;
+                } else {
+                    accessor.SetStyle(MarkdownStyles::kStrong2Text, 1);
+                }
+                break;
+            default:
+                accessor.SetStyle(MarkdownStyles::kStrong2Text, 1, default_step);
+                break;
+            }
+            break;
+        case State::kStrongText:
+            switch (ch) {
+            case '*':
+                accessor.SetStyle(MarkdownStyles::kStrongTag, 1);
+                state = State::kDefault;
+                break;
+            default:
+                accessor.SetStyle(MarkdownStyles::kStrongText, 1, default_step);
+                break;
+            }
+            break;
+        case State::kEmphasis2Text:
+            switch (ch) {
+            case '_':
+                if (accessor.GetSubstr(2) == "__") {
+                    accessor.SetStyle(MarkdownStyles::kEmphasis2Tag, 2);
+                    state = State::kDefault;
+                } else {
+                    accessor.SetStyle(MarkdownStyles::kEmphasis2Text, 1);
+                }
+                break;
+            default:
+                accessor.SetStyle(MarkdownStyles::kEmphasis2Text, 1, default_step);
+                break;
+            }
+            break;
+        case State::kEmphasisText:
+            switch (ch) {
+            case '_':
+                accessor.SetStyle(MarkdownStyles::kEmphasisTag, 1);
+                state = State::kDefault;
+                break;
+            default:
+                accessor.SetStyle(MarkdownStyles::kEmphasisText, 1, default_step);
                 break;
             }
             break;

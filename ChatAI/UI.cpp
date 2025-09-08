@@ -179,6 +179,11 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
 
     boxSizer42->Add(m_button37, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    m_activityIndicator = new wxActivityIndicator(
+        m_splitterPage34, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), 0);
+
+    boxSizer42->Add(m_activityIndicator, 1, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
     m_panelLog = new wxPanel(
         m_notebook47, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook47, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebook47->AddPage(m_panelLog, _("Log"), false);

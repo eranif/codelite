@@ -4,7 +4,7 @@
 
 #include "OllamaClient.hpp"
 
-#include "clTempFile.hpp"
+#include "Tools.hpp"
 #include "event_notifier.h"
 #include "ollama/config.hpp"
 
@@ -35,11 +35,11 @@ const wxString CHATAI_PROMPT_STRING = "Ask me anything...";
 OllamaClient::OllamaClient()
     : m_ollama(ollama::Manager::GetInstance())
 {
+    auto& function_table = m_ollama.GetFunctionTable();
+    ollama::PopulateBuildInFunctions(function_table);
 }
 
 OllamaClient::~OllamaClient() {}
-
-bool OllamaClient::IsOk() const { return m_ollama.IsRunning(); }
 
 void OllamaClient::Send(const wxString& prompt, const wxString& model)
 {
@@ -97,7 +97,12 @@ void OllamaClient::GetModels() const
     thr.detach();
 }
 
-void OllamaClient::Clear() { m_ollama.Reset(); }
+void OllamaClient::Clear()
+{
+    m_ollama.Reset();
+    auto& function_table = m_ollama.GetFunctionTable();
+    ollama::PopulateBuildInFunctions(function_table);
+}
 
 void OllamaClient::ReloadConfig(const wxString& configContent)
 {

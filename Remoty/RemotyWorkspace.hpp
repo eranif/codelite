@@ -186,10 +186,17 @@ public:
     clFileSystemWorkspaceSettings& GetSettings() { return m_settings; }
     void BuildTarget(const wxString& kind);
 
-    IEditor* CreateOrOpenFile(const wxString& filepath) override;
+    /// Open a file, create if missing (configurable). Load the file into an editor
+    IEditor* OpenFileInEditor(const wxString& filepath, bool createIfMissing = true) override;
     IEditor* CreateOrOpenSettingFile(const wxString& filename) override;
     wxString GetSettingFileFullPath(const wxString& filename) const override;
     std::optional<wxString> ReadSettingFile(const wxString& filename) const override;
+
+    /// Write file content into the disk.
+    bool WriteFileContent(const wxString& filepath, const wxString& content) const override;
+
+    /// Read file content.
+    std::optional<wxString> ReadFileContent(const wxString& filepath) const override;
 
     /**
      * @brief save the settings to the remote machine

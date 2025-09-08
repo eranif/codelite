@@ -1213,10 +1213,11 @@ void RemotyWorkspace::OpenAndEditCodeLiteRemoteJson()
 {
     wxString remote_file_path = GetRemoteWorkingDir();
     remote_file_path << "/.codelite/codelite-remote.json";
-    IEditor* editor = OpenFile(remote_file_path);
+    IEditor* editor = OpenFileInEditor(remote_file_path, false);
     if (editor) {
         return;
     }
+
     // Could not find the file, prompt the user
     if (wxMessageBox(_("Could not find codelite-remote.json file\nWould you like to create one?"),
                      "CodeLite",
@@ -1224,7 +1225,7 @@ void RemotyWorkspace::OpenAndEditCodeLiteRemoteJson()
         return;
     }
 
-    editor = CreateOrOpenFile(remote_file_path);
+    editor = OpenFileInEditor(remote_file_path, true);
     if (!editor) {
         wxMessageBox(_("Failed to open file: ") + remote_file_path, "CodeLite", wxICON_ERROR | wxOK);
         return;
@@ -1232,8 +1233,12 @@ void RemotyWorkspace::OpenAndEditCodeLiteRemoteJson()
     editor->SetEditorText(DEFAULT_CODELITE_REMOTE_JSON);
 }
 
-IEditor* RemotyWorkspace::CreateOrOpenFile(const wxString& filepath)
+IEditor* RemotyWorkspace::OpenFileInEditor(const wxString& filepath, bool createIfMissing)
 {
+    if (!createIfMissing && !clSFTPManager::Get().IsFileExists(filepath, m_account)) {
+        return nullptr;
+    }
+
     wxString directory = filepath.BeforeLast('/');
     if (!clSFTPManager::Get().NewFolder(directory, m_account)) {
         wxMessageBox(_("Failed to create directory: ") + directory, "CodeLite", wxICON_ERROR | wxOK);
@@ -1246,31 +1251,52 @@ IEditor* RemotyWorkspace::CreateOrOpenFile(const wxString& filepath)
         return nullptr;
     }
 
-    auto editor = OpenFile(filepath);
+    auto editor = OpenFileInEditor(filepath, true);
     editor->SetActive();
     return editor;
 }
 
-std::optional<wxString> RemotyWorkspace::ReadSettingFile(const wxString& filename) const
+bool RemotyWorkspace::WriteFileContent(const wxString& filepath, const wxString& content) const
+{
+    wxString directory = filepath.BeforeLast('/');
+    if (!clSFTPManager::Get().NewFolder(directory, m_account)) {
+        wxMessageBox(_("Failed to create directory: ") + directory, "CodeLite", wxICON_ERROR | wxOK);
+        return false;
+    }
+
+    // create a new file
+    if (!clSFTPManager::Get().NewFile(filepath, m_account)) {
+        wxMessageBox(_("Failed to create file: ") + filepath, "CodeLite", wxICON_ERROR | wxOK);
+        return false;
+    }
+
+    return clSFTPManager::Get().AwaitWriteFile(content, filepath, m_account.GetAccountName());
+}
+
+std::optional<wxString> RemotyWorkspace::ReadFileContent(const wxString& filepath) const
 {
     wxBusyCursor bc{};
-    wxString fullpath = GetSettingFileFullPath(filename);
-    if (!clSFTPManager::Get().IsFileExists(fullpath, m_account)) {
+    if (!clSFTPManager::Get().IsFileExists(filepath, m_account)) {
         return std::nullopt;
     }
 
-    // Read the file content.
     wxMemoryBuffer membuf;
-    if (!clSFTPManager::Get().AwaitReadFile(fullpath, m_account.GetAccountName(), &membuf)) {
+    if (!clSFTPManager::Get().AwaitReadFile(filepath, m_account.GetAccountName(), &membuf)) {
         return std::nullopt;
     }
     wxString content{ (const char*)membuf.GetData(), wxConvUTF8, membuf.GetDataLen() };
     return content;
 }
 
+std::optional<wxString> RemotyWorkspace::ReadSettingFile(const wxString& filename) const
+{
+    wxString fullpath = GetSettingFileFullPath(filename);
+    return ReadFileContent(fullpath);
+}
+
 IEditor* RemotyWorkspace::CreateOrOpenSettingFile(const wxString& filename)
 {
-    return CreateOrOpenFile(GetSettingFileFullPath(filename));
+    return OpenFileInEditor(GetSettingFileFullPath(filename), true);
 }
 
 wxString RemotyWorkspace::GetSettingFileFullPath(const wxString& filename) const

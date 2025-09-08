@@ -588,7 +588,7 @@ bool DoFindExe(const wxString& name, wxFileName& exepath, const wxArrayString& h
     mergedPaths.swap(paths);
 
     for (const wxString& curpath : paths) {
-        
+
         wxFileName fnPath(curpath, name);
         if (fnPath.FileExists()) {
             exepath = fnPath;

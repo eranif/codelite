@@ -43,7 +43,6 @@ class OllamaClient : public wxEvtHandler
 public:
     OllamaClient();
     virtual ~OllamaClient();
-    bool IsOk() const;
 
     ChatAIConfig& GetConfig() { return m_config; }
     void Send(const wxString& prompt, const wxString& model = wxEmptyString);

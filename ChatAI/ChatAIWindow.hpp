@@ -23,6 +23,7 @@ protected:
     void OnModelChanged(wxCommandEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     void OnClear(wxCommandEvent& event);
+    void OnNewSession(wxCommandEvent& event);
     void OnRefreshModelList(wxCommandEvent& event);
     void OnSettings(wxCommandEvent& event);
     void OnLog(OllamaEvent& event);
@@ -34,17 +35,26 @@ protected:
     void OnFileSaved(clCommandEvent& event);
     void PopulateModels();
     void SetFocusToActiveEditor();
-    void StyleAndPrintOutput(bool allow_partial_line = false);
+    void StyleOutput();
+    void AppendOutput(const wxString& text);
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnWorkspaceClosed(clWorkspaceEvent& event);
 
+    /// Clears the output view, does not change the model history.
+    void DoClearOutputView();
+    /// Clear the view (input & output) and reset the client.
+    void DoReset();
+
+    /// Return the relevant configuration file. If a workspace file is opened, we use the workspace specific
+    /// configuration file. If no workspace is opened, we use the global settings.
+    wxString GetConfigurationFilePath() const;
+
 private:
-    ChatAI* m_plugin = nullptr;
-    wxChoice* m_activeModel = nullptr;
-    bool m_autoRestart = false;
+    ChatAI* m_plugin{ nullptr };
+    wxChoice* m_activeModel{ nullptr };
+    bool m_autoRestart{ false };
     wxTerminalOutputCtrl* m_logView{ nullptr };
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
-    wxString m_bufferedLine;
 };
 
 wxDECLARE_EVENT(wxEVT_CHATAI_SEND, clCommandEvent);

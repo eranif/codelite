@@ -47,11 +47,15 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     , m_plugin(plugin)
 {
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
-    m_toolbar->AddTool(wxID_CLEAR, _("Clear chat"), images->Add("clear"));
+    m_toolbar->AddTool(wxID_NEW, _("New session"), images->Add("file_new"));
+    m_toolbar->AddTool(wxID_CLEAR, _("Clear output"), images->Add("clear"));
+    m_toolbar->AddSeparator();
     m_activeModel = new wxChoice(
         m_toolbar, wxID_ANY, wxDefaultPosition, wxSize(GetTextExtent(LONG_MODEL_NAME).GetWidth(), wxNOT_FOUND));
+    m_activeModel->SetToolTip(_("Change model. Changing a model will also clear your chat history"));
     m_toolbar->AddControl(m_activeModel);
     m_toolbar->AddTool(wxID_REFRESH, _("Load models list"), images->Add("debugger_restart"));
+    m_toolbar->AddSeparator();
     m_toolbar->AddTool(wxID_SETUP, _("Settings"), images->Add("cog"));
     m_toolbar->Realize();
 
@@ -69,9 +73,13 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
 
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
+    m_stcOutput->SetReadOnly(true);
+
     Bind(wxEVT_MENU, &ChatAIWindow::OnClear, this, wxID_CLEAR);
     Bind(wxEVT_MENU, &ChatAIWindow::OnRefreshModelList, this, wxID_REFRESH);
     Bind(wxEVT_MENU, &ChatAIWindow::OnSettings, this, wxID_SETUP);
+    Bind(wxEVT_MENU, &ChatAIWindow::OnNewSession, this, wxID_NEW);
+
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);
 
     m_logView = new wxTerminalOutputCtrl(m_panelLog);
@@ -100,6 +108,17 @@ ChatAIWindow::~ChatAIWindow()
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_LOG, &ChatAIWindow::OnLog, this);
 }
 
+wxString ChatAIWindow::GetConfigurationFilePath() const
+{
+    if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        return clWorkspaceManager::Get().GetWorkspace()->GetSettingFileFullPath(kAssistantConfigFile);
+    } else {
+        wxFileName config_file{ clStandardPaths::Get().GetUserDataDir(), kAssistantConfigFile };
+        config_file.AppendDir("config");
+        return config_file.GetFullPath();
+    }
+}
+
 void ChatAIWindow::OnSend(wxCommandEvent& event)
 {
     wxUnusedVar(event);
@@ -118,6 +137,7 @@ void ChatAIWindow::OnSendUI(wxUpdateUIEvent& event) { event.Enable(!m_plugin->Ge
 void ChatAIWindow::OnModelChanged(wxCommandEvent& event)
 {
     m_plugin->GetConfig().SetSelectedModelName(m_activeModel->GetStringSelection());
+    DoReset();
     m_plugin->GetConfig().Save();
 }
 
@@ -211,6 +231,19 @@ void ChatAIWindow::OnSettings(wxCommandEvent& event)
 
         // Place some default content
         editor->SetEditorText(kDefaultSettings);
+    } else {
+        // Global settings
+        wxFileName global_config{ GetConfigurationFilePath() };
+        if (!global_config.FileExists()) {
+            global_config.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+            if (!FileUtils::WriteFileContent(global_config, kDefaultSettings)) {
+                ::wxMessageBox(wxString() << _("Failed to create configuration file:\n") << global_config.GetFullPath(),
+                               "CodeLite",
+                               wxICON_WARNING | wxOK | wxCENTER);
+                return;
+            }
+        }
+        clGetManager()->OpenFile(global_config.GetFullPath());
     }
 }
 
@@ -220,14 +253,31 @@ void ChatAIWindow::OnRefreshModelList(wxCommandEvent& event)
     PopulateModels();
 }
 
+void ChatAIWindow::DoReset()
+{
+    DoClearOutputView();
+    m_stcInput->ClearAll();
+    m_plugin->GetClient().Clear();
+}
+
+void ChatAIWindow::DoClearOutputView()
+{
+    m_stcOutput->SetReadOnly(false);
+    m_stcOutput->ClearAll();
+    m_stcOutput->SetReadOnly(true);
+    m_markdownStyler = std::make_unique<MarkdownStyler>(m_stcOutput);
+}
+
+void ChatAIWindow::OnNewSession(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    DoReset();
+}
+
 void ChatAIWindow::OnClear(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    m_stcOutput->ClearAll();
-    m_stcInput->ClearAll();
-    m_plugin->GetClient().Clear();
-    m_bufferedLine.Clear();
-    m_markdownStyler = std::make_unique<MarkdownStyler>(m_stcOutput);
+    DoClearOutputView();
 }
 
 void ChatAIWindow::OnChatAIOutput(OllamaEvent& event)
@@ -237,13 +287,13 @@ void ChatAIWindow::OnChatAIOutput(OllamaEvent& event)
         ::wxMessageBox(content, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
-    m_bufferedLine << content;
+    AppendOutput(content);
 }
 
 void ChatAIWindow::OnChatAIOutputDone(OllamaEvent& event)
 {
-    m_bufferedLine << "\n⸻⸻⸻\n";
-    StyleAndPrintOutput();
+    AppendOutput(wxT("\n⸻⸻⸻\n"));
+    StyleOutput();
 
     // Move the focus back to the input text control
     m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
@@ -253,13 +303,14 @@ void ChatAIWindow::OnFileSaved(clCommandEvent& event)
 {
     // Always call Skip()
     event.Skip();
-    CHECK_COND_RET(clWorkspaceManager::Get().IsWorkspaceOpened());
     CHECK_PTR_RET(clGetManager()->GetActiveEditor());
 
     wxString filepath = clGetManager()->GetActiveEditor()->GetRemotePathOrLocal();
-    if (filepath == clWorkspaceManager::Get().GetWorkspace()->GetSettingFileFullPath(kAssistantConfigFile)) {
+    if (filepath == GetConfigurationFilePath()) {
         // Reload configuration
+        wxBusyCursor bc{};
         m_plugin->GetClient().ReloadConfig(clGetManager()->GetActiveEditor()->GetEditorText());
+        clGetManager()->SetStatusMessage(_("ChatAI configuration re-loaded successfully"), 3);
     }
 }
 
@@ -270,11 +321,17 @@ void ChatAIWindow::OnModels(OllamaEvent& event)
         m_activeModel->Append(model);
     }
 
+    const auto& models = event.GetModels();
     const auto& active_model = m_plugin->GetConfig().GetSelectedModel();
-    if (!active_model.empty()) {
-        m_activeModel->SetStringSelection(active_model);
-    } else if (!event.GetModels().empty()) {
-        m_activeModel->SetSelection(0);
+
+    if (!models.empty()) {
+        if (!active_model.empty()) {
+            int where = m_activeModel->FindString(active_model);
+            m_activeModel->SetSelection(where == wxNOT_FOUND ? 0 : where);
+
+        } else {
+            m_activeModel->SetSelection(0);
+        }
     }
 }
 
@@ -293,12 +350,27 @@ void ChatAIWindow::SetFocusToActiveEditor()
     editor->SetActive();
 }
 
-void ChatAIWindow::StyleAndPrintOutput(bool allow_partial_line)
+void ChatAIWindow::AppendOutput(const wxString& text)
 {
-    CHECK_COND_RET(!m_bufferedLine.empty());
-    m_stcOutput->AppendText(m_bufferedLine);
+    CHECK_COND_RET(!text.empty());
+    m_stcOutput->SetReadOnly(false);
+    m_stcOutput->AppendText(text);
+    m_stcOutput->SetReadOnly(true);
+
+    bool scroll_to_end{ true };
+    if (wxWindow::FindFocus() == m_stcOutput) {
+        scroll_to_end = false;
+    }
+
+    if (scroll_to_end) {
+        m_stcOutput->ScrollToEnd();
+    }
+    clSTCHelper::SetCaretAt(m_stcOutput, m_stcOutput->GetLastPosition());
+}
+
+void ChatAIWindow::StyleOutput()
+{
     m_markdownStyler->StyleText();
-    m_bufferedLine.clear();
 
     bool scroll_to_end{ true };
     if (wxWindow::FindFocus() == m_stcOutput) {

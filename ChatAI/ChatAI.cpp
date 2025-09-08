@@ -95,16 +95,7 @@ void ChatAI::UnPlug()
 
 void ChatAI::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
-void ChatAI::CreatePluginMenu(wxMenu* pluginsMenu)
-{
-    wxMenu* menu = new wxMenu();
-    wxMenuItem* item = nullptr;
-
-    item = new wxMenuItem(menu, XRCID("chatai_settings"), _("Settings..."), _("Settings..."), wxITEM_NORMAL);
-    menu->Append(item);
-
-    pluginsMenu->Append(wxID_ANY, _("Chat AI"), menu);
-}
+void ChatAI::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(pluginsMenu); }
 
 void ChatAI::HookPopupMenu(wxMenu* menu, MenuType type)
 {

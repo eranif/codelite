@@ -80,7 +80,7 @@ public:
     virtual ~LocalWorkspaceCommon() {}
 
     /// Open (create if missing) `filepath` and load it into an editor.
-    IEditor* CreateOrOpenFile(const wxString& filepath) override;
+    IEditor* OpenFileInEditor(const wxString& filepath, bool createIfMissing = true) override;
 
     /// Open (create if missing) `filename` and load it into an editor. The file is searched (or created)
     /// inside the workspace private folder (i.e. `.codelite`)
@@ -92,5 +92,11 @@ public:
     wxString GetSettingFileFullPath(const wxString& filename) const override;
 
     std::optional<wxString> ReadSettingFile(const wxString& filename) const override;
+
+    /// Write file content into the disk.
+    bool WriteFileContent(const wxString& filepath, const wxString& content) const override;
+
+    /// Read file content.
+    std::optional<wxString> ReadFileContent(const wxString& filepath) const override;
 };
 #endif // CLWORKSPACEMANAGER_H

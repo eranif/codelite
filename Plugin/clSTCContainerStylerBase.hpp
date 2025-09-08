@@ -25,19 +25,50 @@ public:
         m_buffer = m_ctrl->GetTextRange(m_start_pos, m_end_pos);
     }
 
-    inline wxStringView Get(size_t count) const
+    inline wxStringView GetSubstr(size_t count) const
     {
         CHECK_COND_RET_VAL((m_curpos + count) < m_buffer.length(), {});
         return wxStringView{ m_buffer.data() + m_curpos, count };
     }
 
-    inline wxChar Get() const
+    /// Return the current character pointed by the this object.
+    inline wxChar GetCurrentChar() const
     {
         CHECK_COND_RET_VAL(m_curpos < m_buffer.length(), 0);
         return m_buffer[m_curpos];
     }
 
-    inline bool IsAtStartOfLine() const { return m_curpos == 0 || m_buffer[m_curpos - 1] == '\n'; }
+    /// Return character from the current position and a given offset.
+    /// This is basically like returning `m_buffer[m_curpos + at]`
+    inline wxChar GetCharAt(size_t at) const
+    {
+        CHECK_COND_RET_VAL((m_curpos + at < m_buffer.length()), 0);
+        return m_buffer[m_curpos + at];
+    }
+
+    inline bool IsAtStartOfLine() const
+    {
+        if (m_curpos == 0) {
+            return true;
+        }
+
+        // Walk backward until we find the first non whitespace char
+        int index = static_cast<int>(m_curpos - 1);
+        while (index >= 0) {
+            wxChar ch = m_buffer[index];
+            if (ch == ' ' || ch == '\t') {
+                --index;
+                continue;
+            } else if (ch == '\n') {
+                return true;
+            } else {
+                return false;
+            }
+        }
+
+        // if we reached here, it means we could not find any char which is not a whitespcae or newline.
+        return true;
+    }
 
     /// Apply style to the next `count` bytes. This also moves the last styled position.
     inline void SetStyle(int style, size_t count, size_t utf8_len = std::numeric_limits<size_t>::max())

@@ -55,14 +55,18 @@ wxArrayString clWorkspaceManager::GetUnifiedFilesMask() const
 /// ---------------------------------------------------------------------------
 /// ---------------------------------------------------------------------------
 
-IEditor* LocalWorkspaceCommon::CreateOrOpenFile(const wxString& filepath)
+IEditor* LocalWorkspaceCommon::OpenFileInEditor(const wxString& filepath, bool createIfMissing)
 {
-    return clGetManager()->CreateOrOpenLocalFile(filepath);
+    wxFileName local_file{ filepath };
+    if (!local_file.FileExists() && !createIfMissing) {
+        return nullptr;
+    }
+    return clGetManager()->CreateOrOpenLocalFile(local_file.GetFullPath());
 }
 
 IEditor* LocalWorkspaceCommon::CreateOrOpenSettingFile(const wxString& filename)
 {
-    return CreateOrOpenFile(GetSettingFileFullPath(filename));
+    return OpenFileInEditor(GetSettingFileFullPath(filename), true);
 }
 
 wxString LocalWorkspaceCommon::GetSettingFileFullPath(const wxString& filename) const
@@ -76,9 +80,20 @@ wxString LocalWorkspaceCommon::GetSettingFileFullPath(const wxString& filename) 
 std::optional<wxString> LocalWorkspaceCommon::ReadSettingFile(const wxString& filename) const
 {
     wxString fullpath = GetSettingFileFullPath(filename);
-    wxString content;
-    if (!FileUtils::ReadFileContent(fullpath, content)) {
+    return ReadFileContent(fullpath);
+}
+
+bool LocalWorkspaceCommon::WriteFileContent(const wxString& filepath, const wxString& content) const
+{
+    wxFileName local_file{ filepath };
+    return FileUtils::WriteFileContent(local_file, content);
+}
+
+std::optional<wxString> LocalWorkspaceCommon::ReadFileContent(const wxString& filepath) const
+{
+    wxString data;
+    if (!FileUtils::ReadFileContent(filepath, data)) {
         return std::nullopt;
     }
-    return content;
+    return data;
 }

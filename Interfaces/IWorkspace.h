@@ -159,8 +159,8 @@ public:
     /// Return the workspace specific indentation width
     virtual int GetIndentWidth() { return wxNOT_FOUND; }
 
-    /// Open (create if missing) `filepath` and load it into an editor.
-    virtual IEditor* CreateOrOpenFile(const wxString& filepath) = 0;
+    /// Open (or create if missing) `filepath` and load it into an editor.
+    virtual IEditor* OpenFileInEditor(const wxString& filepath, bool createIfMissing = true) = 0;
 
     /// Open (create if missing) `filename` and load it into an editor. The file is searched (or created)
     /// inside the workspace private folder (i.e. `.codelite`).
@@ -173,6 +173,12 @@ public:
 
     /// Read the content of a setting file. Return its content on success, or None in case of an error.
     virtual std::optional<wxString> ReadSettingFile(const wxString& filename) const = 0;
+
+    /// Write file content.
+    virtual bool WriteFileContent(const wxString& filepath, const wxString& content) const = 0;
+
+    /// Read file content.
+    virtual std::optional<wxString> ReadFileContent(const wxString& filepath) const = 0;
 };
 
 #endif // IWORKSPACE_H

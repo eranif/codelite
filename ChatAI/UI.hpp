@@ -22,6 +22,7 @@
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
 #include <wx/button.h>
+#include <wx/activityindicator.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -52,6 +53,7 @@ protected:
     wxPanel* m_splitterPage34;
     clThemedSTC* m_stcInput;
     wxButton* m_button37;
+    wxActivityIndicator* m_activityIndicator;
     wxPanel* m_panelLog;
 
 protected:
@@ -65,6 +67,7 @@ public:
     wxPanel* GetSplitterPage32() { return m_splitterPage32; }
     clThemedSTC* GetStcInput() { return m_stcInput; }
     wxButton* GetButton37() { return m_button37; }
+    wxActivityIndicator* GetActivityIndicator() { return m_activityIndicator; }
     wxPanel* GetSplitterPage34() { return m_splitterPage34; }
     wxSplitterWindow* GetSplitter30() { return m_splitter30; }
     wxPanel* GetPanelChat() { return m_panelChat; }

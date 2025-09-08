@@ -54,7 +54,7 @@ void OllamaClient::Send(const wxString& prompt, const wxString& model)
     EventNotifier::Get()->AddPendingEvent(thinking);
     m_ollama.SetPreferCPU(true);
     m_ollama.AsyncChat(
-        prompt.ToStdString(),
+        prompt.ToStdString(wxConvUTF8),
         [this](std::string msg, ollama::Reason reason) {
             // Translate the callback into wxWidgets event
             OllamaEvent event{ wxEVT_OLLAMA_OUTPUT };
@@ -75,7 +75,7 @@ void OllamaClient::Send(const wxString& prompt, const wxString& model)
                 break;
             }
         },
-        model.ToStdString());
+        model.ToStdString(wxConvUTF8));
 }
 
 void OllamaClient::Interrupt() {}
@@ -106,7 +106,7 @@ void OllamaClient::Clear()
 
 void OllamaClient::ReloadConfig(const wxString& configContent)
 {
-    auto config = ollama::Config::FromContent(configContent.ToStdString());
+    auto config = ollama::Config::FromContent(configContent.ToStdString(wxConvUTF8));
     if (config.has_value()) {
         m_ollama.ApplyConfig(&config.value());
     }

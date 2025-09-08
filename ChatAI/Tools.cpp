@@ -16,7 +16,7 @@ FunctionResult Success(std::optional<wxString> text)
 {
     FunctionResult result{.isError = false};
     if (text.has_value()) {
-        result.text = text.value().ToStdString();
+        result.text = text.value().ToStdString(wxConvUTF8);
     }
     return result;
 }
@@ -25,7 +25,7 @@ FunctionResult Error(std::optional<wxString> text)
 {
     FunctionResult result{.isError = true};
     if (text.has_value()) {
-        result.text = text.value().ToStdString();
+        result.text = text.value().ToStdString(wxConvUTF8);
     }
     return result;
 }

@@ -292,11 +292,18 @@ void ChatAIWindow::OnClear(wxCommandEvent& event)
 void ChatAIWindow::OnChatAIOutput(OllamaEvent& event)
 {
     wxString content = wxString::FromUTF8(event.GetStringRaw());
-    if (event.GetReason() == ollama::Reason::kFatalError) {
+    switch (event.GetReason()) {
+    case ollama::Reason::kFatalError:
         ::wxMessageBox(content, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
         return;
+    case ollama::Reason::kLogNotice:
+    case ollama::Reason::kLogDebug:
+        clDEBUG() << content << endl;
+        break;
+    default:
+        AppendOutput(content);
+        break;
     }
-    AppendOutput(content);
 }
 
 void ChatAIWindow::OnChatAIOutputDone(OllamaEvent& event)

@@ -3,7 +3,6 @@
     <Compilers>
         <Compiler Name="clang++">
             <Switch Name="ArchiveOutput" Value=" "/>
-            <Switch Name="Debug" Value="-gstab"/>
             <Switch Name="Include" Value="-I"/>
             <Switch Name="Library" Value="-l"/>
             <Switch Name="LibraryPath" Value="-L"/>
@@ -56,7 +55,6 @@
         </Compiler>
         <Compiler Name="clang">
             <Switch Name="ArchiveOutput" Value=" "/>
-            <Switch Name="Debug" Value="-gstab"/>
             <Switch Name="Include" Value="-I"/>
             <Switch Name="Library" Value="-l"/>
             <Switch Name="LibraryPath" Value="-L"/>
@@ -109,7 +107,6 @@
         </Compiler>
         <Compiler Name="gnu g++">
             <Switch Name="ArchiveOutput" Value=" "/>
-            <Switch Name="Debug" Value="-gstab"/>
             <Switch Name="Include" Value="-I"/>
             <Switch Name="Library" Value="-l"/>
             <Switch Name="LibraryPath" Value="-L"/>
@@ -160,7 +157,6 @@
         </Compiler>
         <Compiler Name="gnu gcc">
             <Switch Name="ArchiveOutput" Value=" "/>
-            <Switch Name="Debug" Value="-g "/>
             <Switch Name="Include" Value="-I"/>
             <Switch Name="Library" Value="-l"/>
             <Switch Name="LibraryPath" Value="-L"/>
@@ -212,7 +208,6 @@
         </Compiler>
         <Compiler Name="cobra" GenerateDependenciesFiles="no">
             <Switch Name="ArchiveOutput" Value="-ert"/>
-            <Switch Name="Debug" Value="-debug"/>
             <Switch Name="Include" Value="-ref:"/>
             <Switch Name="Library" Value="-reference:"/>
             <Switch Name="LibraryPath" Value="-lib:"/>

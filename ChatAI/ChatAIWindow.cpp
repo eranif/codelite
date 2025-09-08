@@ -80,6 +80,12 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     Bind(wxEVT_MENU, &ChatAIWindow::OnSettings, this, wxID_SETUP);
     Bind(wxEVT_MENU, &ChatAIWindow::OnNewSession, this, wxID_NEW);
 
+    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_CLEAR);
+    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_REFRESH);
+    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_SETUP);
+    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_NEW);
+    m_activeModel->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this);
+
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);
 
     m_logView = new wxTerminalOutputCtrl(m_panelLog);

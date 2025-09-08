@@ -49,11 +49,13 @@ protected:
     /// configuration file. If no workspace is opened, we use the global settings.
     wxString GetConfigurationFilePath() const;
 
+    void ShowIndicator(bool show);
+
 private:
-    ChatAI* m_plugin{ nullptr };
-    wxChoice* m_activeModel{ nullptr };
-    bool m_autoRestart{ false };
-    wxTerminalOutputCtrl* m_logView{ nullptr };
+    ChatAI* m_plugin{nullptr};
+    wxChoice* m_activeModel{nullptr};
+    bool m_autoRestart{false};
+    wxTerminalOutputCtrl* m_logView{nullptr};
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
 };
 

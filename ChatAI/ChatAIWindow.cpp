@@ -88,12 +88,13 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
 
     m_plugin->GetClient().SetLogSink([](ollama::LogLevel level, std::string message) {
         // For now, just print it to the log.
-        OllamaEvent log_event{ wxEVT_OLLAMA_LOG };
+        OllamaEvent log_event{wxEVT_OLLAMA_LOG};
         log_event.SetLogLevel(level);
         log_event.SetStringRaw(message);
         EventNotifier::Get()->AddPendingEvent(log_event);
     });
     m_markdownStyler = std::make_unique<MarkdownStyler>(m_stcOutput);
+    ShowIndicator(false);
 }
 
 ChatAIWindow::~ChatAIWindow()
@@ -113,7 +114,7 @@ wxString ChatAIWindow::GetConfigurationFilePath() const
     if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
         return clWorkspaceManager::Get().GetWorkspace()->GetSettingFileFullPath(kAssistantConfigFile);
     } else {
-        wxFileName config_file{ clStandardPaths::Get().GetUserDataDir(), kAssistantConfigFile };
+        wxFileName config_file{clStandardPaths::Get().GetUserDataDir(), kAssistantConfigFile};
         config_file.AppendDir("config");
         return config_file.GetFullPath();
     }
@@ -130,6 +131,7 @@ void ChatAIWindow::DoSendPrompt()
     wxBusyCursor bc{};
     m_plugin->GetClient().Send(m_stcInput->GetText(), m_activeModel->GetStringSelection());
     m_stcInput->ClearAll();
+    ShowIndicator(true);
 }
 
 void ChatAIWindow::OnSendUI(wxUpdateUIEvent& event) { event.Enable(!m_plugin->GetClient().IsBusy()); }
@@ -210,7 +212,7 @@ void ChatAIWindow::OnLog(OllamaEvent& event)
     wxString line = builder.GetString();
     line.Trim() << "\n";
 
-    wxStringView sv{ line.c_str(), line.length() };
+    wxStringView sv{line.c_str(), line.length()};
     m_logView->StyleAndAppend(sv, nullptr);
 }
 
@@ -233,7 +235,7 @@ void ChatAIWindow::OnSettings(wxCommandEvent& event)
         editor->SetEditorText(kDefaultSettings);
     } else {
         // Global settings
-        wxFileName global_config{ GetConfigurationFilePath() };
+        wxFileName global_config{GetConfigurationFilePath()};
         if (!global_config.FileExists()) {
             global_config.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
             if (!FileUtils::WriteFileContent(global_config, kDefaultSettings)) {
@@ -258,6 +260,7 @@ void ChatAIWindow::DoReset()
     DoClearOutputView();
     m_stcInput->ClearAll();
     m_plugin->GetClient().Clear();
+    ShowIndicator(false);
 }
 
 void ChatAIWindow::DoClearOutputView()
@@ -297,6 +300,19 @@ void ChatAIWindow::OnChatAIOutputDone(OllamaEvent& event)
 
     // Move the focus back to the input text control
     m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
+    ShowIndicator(false);
+}
+
+void ChatAIWindow::ShowIndicator(bool show)
+{
+    if (show) {
+        m_activityIndicator->Show();
+        m_activityIndicator->Start();
+    } else {
+        m_activityIndicator->Stop();
+        m_activityIndicator->Hide();
+    }
+    m_activityIndicator->GetParent()->SendSizeEvent();
 }
 
 void ChatAIWindow::OnFileSaved(clCommandEvent& event)
@@ -357,7 +373,7 @@ void ChatAIWindow::AppendOutput(const wxString& text)
     m_stcOutput->AppendText(text);
     m_stcOutput->SetReadOnly(true);
 
-    bool scroll_to_end{ true };
+    bool scroll_to_end{true};
     if (wxWindow::FindFocus() == m_stcOutput) {
         scroll_to_end = false;
     }
@@ -372,7 +388,7 @@ void ChatAIWindow::StyleOutput()
 {
     m_markdownStyler->StyleText();
 
-    bool scroll_to_end{ true };
+    bool scroll_to_end{true};
     if (wxWindow::FindFocus() == m_stcOutput) {
         scroll_to_end = false;
     }

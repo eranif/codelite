@@ -118,6 +118,12 @@ FunctionResult WriteFileContent(const ollama::json& args)
                 return Error(msg);
             }
         } else {
+            // No workspace is opened.
+            wxFileName fn{filepath};
+            if (!fn.DirExists()) {
+                fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+            }
+
             if (!FileUtils::WriteFileContent(filepath, file_content)) {
                 msg << "Error while writing file: '" << filepath << "' to disk, check CodeLite logs.";
                 return Error(msg);

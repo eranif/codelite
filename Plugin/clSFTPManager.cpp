@@ -127,8 +127,8 @@ bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
     }
 
     try {
-        clSSH::Ptr_t ssh(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(),
-                                   account.GetKeyFiles(), account.GetPort()));
+        clSSH::Ptr_t ssh(new clSSH(
+            account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetKeyFiles(), account.GetPort()));
         EnvSetter env;
         ssh->Open();
         wxString message;
@@ -143,7 +143,7 @@ bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
         clSFTP::Ptr_t sftp(new clSFTP(ssh));
         sftp->Initialize();
         sftp->SetAccount(account.GetAccountName());
-        m_connections.insert({ account.GetAccountName(), { account, sftp } });
+        m_connections.insert({account.GetAccountName(), {account, sftp}});
 
         // Notify that a session is established
         clSFTPEvent event(wxEVT_SFTP_SESSION_OPENED);
@@ -161,7 +161,7 @@ std::pair<SSHAccountInfo, clSFTP::Ptr_t> clSFTPManager::GetConnectionPair(const 
 {
     auto iter = m_connections.find(account);
     if (iter == m_connections.end()) {
-        return { {}, clSFTP::Ptr_t(nullptr) };
+        return {{}, clSFTP::Ptr_t(nullptr)};
     }
     return iter->second;
 }
@@ -295,7 +295,7 @@ void clSFTPManager::DoAsyncReadFile(const wxString& remotePath, const wxString& 
 
             // convert to string and fire an event
             wxString content((const char*)buffer.GetData(), buffer.GetDataLen());
-            clSFTPEvent event_read{ wxEVT_SFTP_FILE_READ };
+            clSFTPEvent event_read{wxEVT_SFTP_FILE_READ};
             event_read.SetAccount(accountName);
             event_read.SetRemoteFile(remotePath);
             event_read.SetContent(content);
@@ -353,12 +353,15 @@ bool clSFTPManager::DoSyncDownload(const wxString& remotePath, const wxString& l
     info.account_name = accountName;
     info.local_path = localPath;
     info.remote_path = remotePath;
-    m_downloadedFileToAccount.insert({ localPath, info });
+    m_downloadedFileToAccount.insert({localPath, info});
     return true;
 }
 
-void clSFTPManager::DoAsyncSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
-                                    bool delete_local, wxEvtHandler* sink)
+void clSFTPManager::DoAsyncSaveFile(const wxString& localPath,
+                                    const wxString& remotePath,
+                                    const wxString& accountName,
+                                    bool delete_local,
+                                    wxEvtHandler* sink)
 {
     // save file async
     auto conn = GetConnectionPtrAddIfMissing(accountName);
@@ -391,7 +394,9 @@ void clSFTPManager::DoAsyncSaveFile(const wxString& localPath, const wxString& r
     m_q.push_back(std::move(save_func));
 }
 
-bool clSFTPManager::DoSyncSaveFileWithConn(clSFTP::Ptr_t conn, const wxString& localPath, const wxString& remotePath,
+bool clSFTPManager::DoSyncSaveFileWithConn(clSFTP::Ptr_t conn,
+                                           const wxString& localPath,
+                                           const wxString& remotePath,
                                            bool delete_local)
 {
     // prepare the download work
@@ -415,7 +420,9 @@ bool clSFTPManager::DoSyncSaveFileWithConn(clSFTP::Ptr_t conn, const wxString& l
     return future.get();
 }
 
-bool clSFTPManager::DoSyncSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
+bool clSFTPManager::DoSyncSaveFile(const wxString& localPath,
+                                   const wxString& remotePath,
+                                   const wxString& accountName,
                                    bool delete_local)
 {
     // save file async
@@ -424,7 +431,9 @@ bool clSFTPManager::DoSyncSaveFile(const wxString& localPath, const wxString& re
     return DoSyncSaveFileWithConn(conn, localPath, remotePath, delete_local);
 }
 
-void clSFTPManager::AsyncSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
+void clSFTPManager::AsyncSaveFile(const wxString& localPath,
+                                  const wxString& remotePath,
+                                  const wxString& accountName,
                                   wxEvtHandler* sink)
 {
     clDEBUG() << "(AsyncSaveFile):" << remotePath << "for account" << accountName << endl;
@@ -680,9 +689,9 @@ void clSFTPManager::OnTimer(wxTimerEvent& event)
     }
 }
 
-bool clSFTPManager::IsFileExists(const wxString& fullpath, const SSHAccountInfo& accountInfo)
+bool clSFTPManager::IsFileExists(const wxString& fullpath, const wxString& accountName)
 {
-    auto conn = GetConnectionPtrAddIfMissing(accountInfo.GetAccountName());
+    auto conn = GetConnectionPtrAddIfMissing(accountName);
     CHECK_PTR_RET_FALSE(conn);
 
     // prepare the download work
@@ -699,6 +708,11 @@ bool clSFTPManager::IsFileExists(const wxString& fullpath, const SSHAccountInfo&
     };
     m_q.push_back(std::move(func));
     return future.get();
+}
+
+bool clSFTPManager::IsFileExists(const wxString& fullpath, const SSHAccountInfo& accountInfo)
+{
+    return IsFileExists(fullpath, accountInfo.GetAccountName());
 }
 
 bool clSFTPManager::IsDirExists(const wxString& fullpath, const SSHAccountInfo& accountInfo)
@@ -739,7 +753,9 @@ wxFileName clSFTPManager::Download(const wxString& path, const wxString& account
     return {};
 }
 
-void clSFTPManager::AsyncWriteFile(const wxString& content, const wxString& remotePath, const wxString& accountName,
+void clSFTPManager::AsyncWriteFile(const wxString& content,
+                                   const wxString& remotePath,
+                                   const wxString& accountName,
                                    wxEvtHandler* sink)
 {
     clTempFile tmpfile;
@@ -806,7 +822,8 @@ void clSFTPManager::StartWorkerThread()
                 work_func();
             }
         },
-        std::ref(m_q), std::ref(m_shutdown));
+        std::ref(m_q),
+        std::ref(m_shutdown));
 }
 
 void clSFTPManager::OnSaveCompleted(clCommandEvent& e)
@@ -862,15 +879,15 @@ bool clSFTPManager::AwaitReadFile(const wxString& remotePath, const wxString& ac
     return DoSyncReadFile(remotePath, accountName, content);
 }
 
-#define QUEUE_ERROR_EVENT(msg)                                  \
-    {                                                           \
-        clSFTPEvent event_error{ wxEVT_SFTP_ASYNC_EXEC_ERROR }; \
-        event_error.SetString(msg);                             \
-        sink->AddPendingEvent(event_error);                     \
+#define QUEUE_ERROR_EVENT(msg)                                \
+    {                                                         \
+        clSFTPEvent event_error{wxEVT_SFTP_ASYNC_EXEC_ERROR}; \
+        event_error.SetString(msg);                           \
+        sink->AddPendingEvent(event_error);                   \
     }
 
-ReadOutput_t clSFTPManager::AwaitExecute(const wxString& accountName, const wxString& command, const wxString& wd,
-                                         clEnvList_t* env)
+ReadOutput_t
+clSFTPManager::AwaitExecute(const wxString& accountName, const wxString& command, const wxString& wd, clEnvList_t* env)
 {
     clDEBUG() << "SFTP Manager: AwaitExecute:" << command << "for account:" << accountName << endl;
     auto conn = GetConnectionPtrAddIfMissing(accountName);
@@ -923,7 +940,7 @@ ReadOutput_t clSFTPManager::AwaitExecute(const wxString& accountName, const wxSt
         ssh::channel_read_all(channel, &std_err, true);
         int exit_code = ssh::channel_read_all(channel, &std_out, false);
 
-        result = { std_out, std_err, exit_code };
+        result = {std_out, std_err, exit_code};
         exec_promise.set_value(std::move(result));
 
         // release the channel
@@ -934,29 +951,29 @@ ReadOutput_t clSFTPManager::AwaitExecute(const wxString& accountName, const wxSt
     return future.get();
 }
 
-#define QUEUE_ERROR_EVENT(msg)                                  \
-    {                                                           \
-        clSFTPEvent event_error{ wxEVT_SFTP_ASYNC_EXEC_ERROR }; \
-        event_error.SetString(msg);                             \
-        sink->AddPendingEvent(event_error);                     \
-    }
-
-#define QUEUE_OUTPUT_EVENT(output, is_stdout)                                                            \
-    {                                                                                                    \
-        clSFTPEvent event_ok{ is_stdout ? wxEVT_SFTP_ASYNC_EXEC_STDOUT : wxEVT_SFTP_ASYNC_EXEC_STDERR }; \
-        event_ok.SetStringRaw(output);                                                                   \
-        sink->AddPendingEvent(event_ok);                                                                 \
-    }
-
-#define QUEUE_DONE_EVENT(exit_code)                           \
+#define QUEUE_ERROR_EVENT(msg)                                \
     {                                                         \
-        clSFTPEvent event_done{ wxEVT_SFTP_ASYNC_EXEC_DONE }; \
-        event_done.SetInt(exit_code);                         \
-        sink->AddPendingEvent(event_done);                    \
+        clSFTPEvent event_error{wxEVT_SFTP_ASYNC_EXEC_ERROR}; \
+        event_error.SetString(msg);                           \
+        sink->AddPendingEvent(event_error);                   \
     }
 
-void clSFTPManager::AsyncExecute(wxEvtHandler* sink, const wxString& accountName, const wxString& command,
-                                 const wxString& wd, clEnvList_t* env)
+#define QUEUE_OUTPUT_EVENT(output, is_stdout)                                                          \
+    {                                                                                                  \
+        clSFTPEvent event_ok{is_stdout ? wxEVT_SFTP_ASYNC_EXEC_STDOUT : wxEVT_SFTP_ASYNC_EXEC_STDERR}; \
+        event_ok.SetStringRaw(output);                                                                 \
+        sink->AddPendingEvent(event_ok);                                                               \
+    }
+
+#define QUEUE_DONE_EVENT(exit_code)                         \
+    {                                                       \
+        clSFTPEvent event_done{wxEVT_SFTP_ASYNC_EXEC_DONE}; \
+        event_done.SetInt(exit_code);                       \
+        sink->AddPendingEvent(event_done);                  \
+    }
+
+void clSFTPManager::AsyncExecute(
+    wxEvtHandler* sink, const wxString& accountName, const wxString& command, const wxString& wd, clEnvList_t* env)
 {
     clDEBUG() << "SFTP Manager: AsyncExecute:" << command << "for account:" << accountName << endl;
     auto conn = GetConnectionPtrAddIfMissing(accountName);

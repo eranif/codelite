@@ -227,6 +227,11 @@ public:
     bool IsFileExists(const wxString& fullpath, const SSHAccountInfo& accountInfo);
 
     /**
+     * @brief check if a file with a given path exists
+     */
+    bool IsFileExists(const wxString& fullpath, const wxString& accountName);
+
+    /**
      * @brief check if a directory with a given path exists
      */
     bool IsDirExists(const wxString& fullpath, const SSHAccountInfo& accountInfo);

@@ -1,18 +1,19 @@
 #include "Tools.hpp"
 
+#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "clWorkspaceManager.h"
 #include "globals.h"
 #include "ollama/function.hpp"
 
 #include <future>
-#include <wx/msgqueue.h>
+#include <wx/msgdlg.h>
 #include <wx/string.h>
 
 namespace ollama
 {
 namespace
 {
-FunctionResult Success(std::optional<wxString> text)
+FunctionResult Ok(std::optional<wxString> text)
 {
     FunctionResult result{.isError = false};
     if (text.has_value()) {
@@ -21,7 +22,7 @@ FunctionResult Success(std::optional<wxString> text)
     return result;
 }
 
-FunctionResult Error(std::optional<wxString> text)
+FunctionResult Err(std::optional<wxString> text)
 {
     FunctionResult result{.isError = true};
     if (text.has_value()) {
@@ -104,7 +105,7 @@ void PopulateBuildInFunctions(FunctionTable& table)
 FunctionResult WriteFileContent(const ollama::json& args)
 {
     if (args.size() != 2) {
-        return Error("Invalid number of arguments");
+        return Err("Invalid number of arguments");
     }
 
     ASSIGN_FUNC_ARG_OR_RETURN(wxString filepath, ::ollama::GetFunctionArg<std::string>(args, "filepath"));
@@ -115,7 +116,7 @@ FunctionResult WriteFileContent(const ollama::json& args)
         if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
             if (clWorkspaceManager::Get().GetWorkspace()->WriteFileContent(filepath, file_content)) {
                 msg << "Error while writing file: '" << filepath << "' to disk.";
-                return Error(msg);
+                return Err(msg);
             }
         } else {
             // No workspace is opened.
@@ -126,11 +127,11 @@ FunctionResult WriteFileContent(const ollama::json& args)
 
             if (!FileUtils::WriteFileContent(filepath, file_content)) {
                 msg << "Error while writing file: '" << filepath << "' to disk, check CodeLite logs.";
-                return Error(msg);
+                return Err(msg);
             }
         }
         msg << "file: '" << filepath << "' successfully written to disk!.";
-        return Success(msg);
+        return Ok(msg);
     };
     return RunOnMain(std::move(cb));
 }
@@ -138,7 +139,7 @@ FunctionResult WriteFileContent(const ollama::json& args)
 FunctionResult ReadFileContent(const ollama::json& args)
 {
     if (args.size() != 1) {
-        return Error("Invalid number of arguments");
+        return Err("Invalid number of arguments");
     }
 
     ASSIGN_FUNC_ARG_OR_RETURN(wxString filepath, ::ollama::GetFunctionArg<std::string>(args, "filepath"));
@@ -151,15 +152,15 @@ FunctionResult ReadFileContent(const ollama::json& args)
         if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
             auto content = clWorkspaceManager::Get().GetWorkspace()->ReadFileContent(filepath);
             if (!content.has_value()) {
-                return Error(msg);
+                return Err(msg);
             }
             file_content.swap(content.value());
         } else {
             if (!FileUtils::ReadFileContent(filepath, file_content)) {
-                return Error(msg);
+                return Err(msg);
             }
         }
-        return Success(file_content);
+        return Ok(file_content);
     };
     return RunOnMain(std::move(cb));
 }
@@ -167,7 +168,7 @@ FunctionResult ReadFileContent(const ollama::json& args)
 FunctionResult OpenFileInEditor(const ollama::json& args)
 {
     if (args.size() != 1) {
-        return Error("Invalid number of arguments");
+        return Err("Invalid number of arguments");
     }
 
     ASSIGN_FUNC_ARG_OR_RETURN(wxString filepath, ::ollama::GetFunctionArg<std::string>(args, "filepath"));
@@ -185,10 +186,74 @@ FunctionResult OpenFileInEditor(const ollama::json& args)
 
         if (!editor) {
             msg << "Error occurred while loading file '" << filepath << "' into an editor.";
-            return Error(msg);
+            return Err(msg);
         }
         msg << "File '" << filepath << "' has been successfully loaded into an editor.";
-        return Success(msg);
+        return Ok(msg);
+    };
+    return RunOnMain(std::move(cb));
+}
+
+FunctionResult CreateOrOpenLocalWorkspace(const ollama::json& args)
+{
+    if (args.size() != 2) {
+        return Err("Invalid number of arguments");
+    }
+
+    ASSIGN_FUNC_ARG_OR_RETURN(wxString name, ::ollama::GetFunctionArg<std::string>(args, "workspace_name"));
+    ASSIGN_FUNC_ARG_OR_RETURN(wxString folder_path, ::ollama::GetFunctionArg<std::string>(args, "workspace_path"));
+
+    auto cb = [=]() -> FunctionResult {
+        wxString msg;
+        if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
+            msg = _("Please close the current workspace before creating a new one.");
+            ::wxMessageBox(msg, "CodeLite", wxICON_WARNING | wxOK | wxCENTRE);
+            return Err(msg);
+        }
+
+        clFileSystemWorkspace::Get().New(folder_path, name);
+
+        wxFileName workspace_file{folder_path, name};
+        workspace_file.SetExt("workspace");
+
+        if (workspace_file.FileExists()) {
+            msg << _("The workspace: ") << workspace_file.GetFullPath() << " was successfully created and loaded";
+            return Ok(msg);
+        }
+
+        msg << _("Failed to create the workspace: ") << workspace_file.GetFullPath();
+        return Err(msg);
+    };
+    return RunOnMain(std::move(cb));
+}
+
+FunctionResult AddFilesToWorkspace(const ollama::json& args)
+{
+    if (args.size() != 2) {
+        return Err("Invalid number of arguments");
+    }
+
+    ASSIGN_FUNC_ARG_OR_RETURN(std::vector<std::string> files,
+                              ::ollama::GetFunctionArg<std::vector<std::string>>(args, "files"));
+
+    auto cb = [=]() -> FunctionResult {
+        wxString msg;
+        if (!clWorkspaceManager::Get().IsWorkspaceOpened()) {
+            msg = _("No workspace is opened.");
+            ::wxMessageBox(msg, "CodeLite", wxICON_WARNING | wxOK | wxCENTRE);
+            return Err(msg);
+        }
+
+        if (!files.empty()) {
+            msg = _("Please provide at least 1 file to add to the workspace.");
+            ::wxMessageBox(msg, "CodeLite", wxICON_WARNING | wxOK | wxCENTRE);
+            return Err(msg);
+        }
+
+        //        for (const auto& file : files) {
+        //            clWorkspaceManager::Get().GetWorkspace()->
+        //        }
+        return Ok("Files successfully added to the workspace");
     };
     return RunOnMain(std::move(cb));
 }

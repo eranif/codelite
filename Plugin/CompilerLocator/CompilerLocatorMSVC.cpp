@@ -129,7 +129,6 @@ void CompilerLocatorMSVC::AddTools(const wxString& name, const wxString& platfor
     AddTool(fnVCvars.GetFullPath(), vcVarsArgs + " && nmake.exe /nologo", "MAKE", compiler);
 
     compiler->SetSwitch("ArchiveOutput", "/OUT:");
-    compiler->SetSwitch("Debug", "/Zi ");
     compiler->SetSwitch("Include", "/I");
     compiler->SetSwitch("Library", " ");
     compiler->SetSwitch("LibraryPath", "/LIBPATH:");

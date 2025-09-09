@@ -1,6 +1,9 @@
 #include "FileManager.hpp"
 
+#if USE_SFTP
 #include "clSFTPManager.hpp"
+#endif
+
 #include "clWorkspaceManager.h"
 
 wxString FileManager::GetFullPath(const wxString& name)
@@ -59,6 +62,8 @@ wxString FileManager::GetSettingFileFullPath(const wxString& name)
 bool FileManager::Create(const wxString& filepath)
 {
     wxString fullpath = GetFullPath(filepath);
+
+#if USE_SFTP
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     if (workspace && workspace->IsRemote()) {
         // requires clSFTPManager
@@ -70,6 +75,7 @@ bool FileManager::Create(const wxString& filepath)
         // Create it.
         return clSFTPManager::Get().AwaitWriteFile(wxEmptyString, fullpath, workspace->GetSshAccount());
     }
+#endif
 
     // Local file.
     if (wxFileName{fullpath}.FileExists()) {
@@ -87,17 +93,19 @@ bool FileManager::CreateSettingsFile(const wxString& name)
 bool FileManager::FileExists(const wxString& filepath)
 {
     wxString fullpath = GetFullPath(filepath);
+#if USE_SFTP
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     if (workspace && workspace->IsRemote()) {
         return clSFTPManager::Get().IsFileExists(fullpath, workspace->GetSshAccount());
     }
-
+#endif
     return wxFileName{fullpath}.FileExists();
 }
 
 std::optional<wxString> FileManager::ReadContent(const wxString& filepath, const wxMBConv& conv)
 {
     wxString fullpath = GetFullPath(filepath);
+#if USE_SFTP
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     if (workspace && workspace->IsRemote()) {
         wxMemoryBuffer membuf;
@@ -108,6 +116,7 @@ std::optional<wxString> FileManager::ReadContent(const wxString& filepath, const
         wxString content{(const char*)membuf.GetData(), wxConvUTF8, membuf.GetDataLen()};
         return content;
     }
+#endif
 
     // Local file
     wxString content;
@@ -126,10 +135,13 @@ std::optional<wxString> FileManager::ReadSettingsFileContent(const wxString& nam
 bool FileManager::WriteContent(const wxString& filepath, const wxString& content, const wxMBConv& conv)
 {
     wxString fullpath = GetFullPath(filepath);
+
+#if USE_SFTP
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     if (workspace && workspace->IsRemote()) {
         return clSFTPManager::Get().AwaitWriteFile(fullpath, content, workspace->GetSshAccount());
     }
+#endif
 
     return FileUtils::WriteFileContent(fullpath, content, conv);
 }

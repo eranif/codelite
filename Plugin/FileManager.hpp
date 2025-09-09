@@ -2,6 +2,7 @@
 
 #include "codelite_exports.h"
 
+#include <optional>
 #include <wx/string.h>
 
 /// Helper class for managing the file system. The class is workspace aware. What does that mean? if a user requests to

@@ -33,7 +33,11 @@ public:
 
     static std::optional<wxString> ReadContent(const wxString& filepath, const wxMBConv& conv = wxConvUTF8);
     static std::optional<wxString> ReadSettingsFileContent(const wxString& name);
-    static bool WriteContent(const wxString& filepath, const wxString& content, const wxMBConv& conv = wxConvUTF8);
+
+    /// Write file content. If the file already exists and "overwrite" is false, return false.
+    static bool
+    WriteContent(const wxString& filepath, const wxString& content, bool overwrite, const wxMBConv& conv = wxConvUTF8);
+
     static bool
     WriteSettingsFileContent(const wxString& name, const wxString& content, const wxMBConv& conv = wxConvUTF8);
 };

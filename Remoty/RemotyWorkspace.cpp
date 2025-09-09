@@ -4,6 +4,7 @@
 #include "AsyncProcess/processreaderthread.h"
 #include "Console/clConsoleBase.h"
 #include "Debugger/debuggermanager.h"
+#include "FileManager.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "JSON.h"
 #include "Platform/Platform.hpp"
@@ -13,7 +14,6 @@
 #include "RemotyWorkspaceView.hpp"
 #include "StringUtils.h"
 #include "clCodeLiteRemoteProcess.hpp"
-#include "clRemoteFindDialog.h"
 #include "clRemoteHost.hpp"
 #include "clSFTPManager.hpp"
 #include "clTempFile.hpp"
@@ -31,7 +31,6 @@
 #include "open_resource_dialog.h"
 #include "sample_codelite_remote_json.cpp"
 #include "shell_command.h"
-#include "wxStringHash.h"
 
 #include <wx/msgdlg.h>
 #include <wx/stc/stc.h>
@@ -395,7 +394,7 @@ void RemotyWorkspace::OnCustomTargetMenu(clContextMenuEvent& event)
     for (const auto& vt : targets) {
         const wxString& name = vt.first;
         int menuId = wxXmlResource::GetXRCID(vt.first);
-        M.insert({ menuId, name });
+        M.insert({menuId, name});
         menu->Append(menuId, name, name, wxITEM_NORMAL);
         menu->Bind(
             wxEVT_MENU,
@@ -489,7 +488,7 @@ void RemotyWorkspace::OnNewWorkspace(clCommandEvent& event)
         auto acc = SSHAccountInfo::LoadAccount(account);
         // add this file to the list of recently opened workspaces
         RemotyConfig config;
-        RemoteWorkspaceInfo wi{ account, remote_path };
+        RemoteWorkspaceInfo wi{account, remote_path};
         config.UpdateRecentWorkspaces(wi);
         DoOpen(remote_path, account);
     }
@@ -529,7 +528,7 @@ void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
         clGetManager()->SetStatusMessage(_("Retrying to load workspace..."));
     }
 
-    wxFileName userSettings{ clStandardPaths::Get().GetUserDataDir(), localFile.GetFullName() };
+    wxFileName userSettings{clStandardPaths::Get().GetUserDataDir(), localFile.GetFullName()};
     userSettings.AppendDir("Remoty");
     userSettings.AppendDir("LocalWorkspaces");
     userSettings.Mkdir(wxPATH_MKDIR_FULL);
@@ -589,7 +588,7 @@ void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
 
     // update the remote workspace list
     RemotyConfig config;
-    RemoteWorkspaceInfo wi{ m_account.GetAccountName(), m_remoteWorkspaceFile };
+    RemoteWorkspaceInfo wi{m_account.GetAccountName(), m_remoteWorkspaceFile};
     config.UpdateRecentWorkspaces(wi);
 
     CallAfter(&RemotyWorkspace::RestoreSession);
@@ -714,7 +713,7 @@ void RemotyWorkspace::GetExecutable(wxString& exe, wxString& args, wxString& wd)
 IProcess* RemotyWorkspace::DoRunSSHProcess(const wxString& scriptContent, bool sync)
 {
     wxString path = UploadScript(scriptContent);
-    std::vector<wxString> args = { "/bin/bash", path };
+    std::vector<wxString> args = {"/bin/bash", path};
     size_t flags = IProcessCreateDefault | IProcessCreateSSH;
     if (sync) {
         flags |= IProcessCreateSync;
@@ -936,7 +935,7 @@ void RemotyWorkspace::OnCodeLiteRemoteListFilesDone(clCommandEvent& event)
 
     // notify that scan is completed
     clDEBUG() << "Sending wxEVT_WORKSPACE_FILES_SCANNED event..." << endl;
-    clWorkspaceEvent event_scan{ wxEVT_WORKSPACE_FILES_SCANNED };
+    clWorkspaceEvent event_scan{wxEVT_WORKSPACE_FILES_SCANNED};
     event_scan.SetIsRemote(true);
     EventNotifier::Get()->ProcessEvent(event_scan);
 }
@@ -949,7 +948,7 @@ void RemotyWorkspace::ScanForWorkspaceFiles()
     wxString exclude_patterns = GetSettings().GetSelectedConfig()->GetExecludePaths();
 
     auto files_exts = ::wxStringTokenize(file_extensions, ";,", wxTOKEN_STRTOK);
-    std::unordered_set<wxString> S{ files_exts.begin(), files_exts.end() };
+    std::unordered_set<wxString> S{files_exts.begin(), files_exts.end()};
 
     // common file extensions
     S.insert("*.txt");
@@ -1050,7 +1049,7 @@ void RemotyWorkspace::OnCodeLiteRemoteReplaceDone(clFindInFilesEvent& event)
     }
 
     // this event will trigger a git refresh
-    clFileSystemEvent fs_event{ wxEVT_FILES_MODIFIED_REPLACE_IN_FILES };
+    clFileSystemEvent fs_event{wxEVT_FILES_MODIFIED_REPLACE_IN_FILES};
     EventNotifier::Get()->AddPendingEvent(fs_event);
 
     wxString message;
@@ -1152,7 +1151,7 @@ void LSPParams::From(const JSONItem& json)
         wxString name = env_entry["name"].toString();
         wxString value = env_entry["value"].toString();
         if (!name.empty()) {
-            this->env.push_back({ name, value });
+            this->env.push_back({name, value});
         }
     }
 }
@@ -1256,54 +1255,9 @@ IEditor* RemotyWorkspace::OpenFileInEditor(const wxString& filepath, bool create
     return editor;
 }
 
-bool RemotyWorkspace::WriteFileContent(const wxString& filepath, const wxString& content) const
-{
-    wxString directory = filepath.BeforeLast('/');
-    if (!clSFTPManager::Get().NewFolder(directory, m_account)) {
-        wxMessageBox(_("Failed to create directory: ") + directory, "CodeLite", wxICON_ERROR | wxOK);
-        return false;
-    }
-
-    // create a new file
-    if (!clSFTPManager::Get().NewFile(filepath, m_account)) {
-        wxMessageBox(_("Failed to create file: ") + filepath, "CodeLite", wxICON_ERROR | wxOK);
-        return false;
-    }
-
-    return clSFTPManager::Get().AwaitWriteFile(content, filepath, m_account.GetAccountName());
-}
-
-std::optional<wxString> RemotyWorkspace::ReadFileContent(const wxString& filepath) const
-{
-    wxBusyCursor bc{};
-    if (!clSFTPManager::Get().IsFileExists(filepath, m_account)) {
-        return std::nullopt;
-    }
-
-    wxMemoryBuffer membuf;
-    if (!clSFTPManager::Get().AwaitReadFile(filepath, m_account.GetAccountName(), &membuf)) {
-        return std::nullopt;
-    }
-    wxString content{ (const char*)membuf.GetData(), wxConvUTF8, membuf.GetDataLen() };
-    return content;
-}
-
-std::optional<wxString> RemotyWorkspace::ReadSettingFile(const wxString& filename) const
-{
-    wxString fullpath = GetSettingFileFullPath(filename);
-    return ReadFileContent(fullpath);
-}
-
 IEditor* RemotyWorkspace::CreateOrOpenSettingFile(const wxString& filename)
 {
-    return OpenFileInEditor(GetSettingFileFullPath(filename), true);
-}
-
-wxString RemotyWorkspace::GetSettingFileFullPath(const wxString& filename) const
-{
-    wxString fullpath;
-    fullpath << GetDir() << "/.codelite/" << filename;
-    return fullpath;
+    return OpenFileInEditor(FileManager::GetSettingFileFullPath(filename), true);
 }
 
 void RemotyWorkspace::OnStopFindInFiles(clFindInFilesEvent& event)
@@ -1318,13 +1272,13 @@ void RemotyWorkspace::OnStopFindInFiles(clFindInFilesEvent& event)
 
 void RemotyWorkspace::RestoreSession()
 {
-    clCommandEvent event_loading{ wxEVT_SESSION_LOADING };
+    clCommandEvent event_loading{wxEVT_SESSION_LOADING};
     EventNotifier::Get()->AddPendingEvent(event_loading);
 
     // TODO:
     // Do the actual session loading here
 
-    clCommandEvent event_loaded{ wxEVT_SESSION_LOADED };
+    clCommandEvent event_loaded{wxEVT_SESSION_LOADED};
     EventNotifier::Get()->AddPendingEvent(event_loaded);
 }
 
@@ -1408,7 +1362,7 @@ int RemotyWorkspace::GetIndentWidth()
             m_indentWidth = wxNOT_FOUND;
             return wxNOT_FOUND;
         }
-        wxString content{ (const char*)membuf.GetData(), wxConvUTF8, membuf.GetDataLen() };
+        wxString content{(const char*)membuf.GetData(), wxConvUTF8, membuf.GetDataLen()};
         m_indentWidth = ::GetClangFormatIntProperty(content, "IndentWidth");
         return *m_indentWidth;
     } else {

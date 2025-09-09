@@ -248,6 +248,9 @@ public:
     /// Delete a book page, return true on success, false otherwise
     void BookSelectPage(PaneId pane_id, wxWindow* win) override;
 
+    /// Return the build output.
+    wxString GetBuildOutput() const override;
+
     //------------------------------------
     // End of IManager interface
     //------------------------------------

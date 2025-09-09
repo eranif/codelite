@@ -87,16 +87,5 @@ public:
     /// `filename`: the file name to open or create. It must not contain the path, only name + extension, e.g.
     /// `codelite-remote.json`
     IEditor* CreateOrOpenSettingFile(const wxString& filename) override;
-
-    /// Return the fullpath for a settings file.
-    wxString GetSettingFileFullPath(const wxString& filename) const override;
-
-    std::optional<wxString> ReadSettingFile(const wxString& filename) const override;
-
-    /// Write file content into the disk.
-    bool WriteFileContent(const wxString& filepath, const wxString& content) const override;
-
-    /// Read file content.
-    std::optional<wxString> ReadFileContent(const wxString& filepath) const override;
 };
 #endif // CLWORKSPACEMANAGER_H

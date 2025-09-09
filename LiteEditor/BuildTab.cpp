@@ -243,7 +243,7 @@ bool BuildTab::ProcessCargoBuildLine(const wxString& line)
 {
     // An example for such a line:
     //  Compiling hello_rust v0.1.0 (C:\Users\eran\Documents\HelloRust\HelloRust\cargo-project)
-    static wxRegEx re_compiling{ R"#(Compiling[ \t]+.*?\((.*?)\))#" };
+    static wxRegEx re_compiling{R"#(Compiling[ \t]+.*?\((.*?)\))#"};
     wxString strippedLine;
     StringUtils::StripTerminalColouring(line, strippedLine);
 
@@ -269,3 +269,5 @@ void BuildTab::ProcessBuildingProjectLine(const wxString& line)
     // keep the current project name
     m_currentProjectName.swap(s);
 }
+
+wxString BuildTab::GetBuildOutput() const { return m_viewStc->GetText(); }

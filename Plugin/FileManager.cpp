@@ -132,9 +132,13 @@ std::optional<wxString> FileManager::ReadSettingsFileContent(const wxString& nam
     return ReadContent(fullpath, wxConvUTF8);
 }
 
-bool FileManager::WriteContent(const wxString& filepath, const wxString& content, const wxMBConv& conv)
+bool FileManager::WriteContent(const wxString& filepath, const wxString& content, bool overwrite, const wxMBConv& conv)
 {
     wxString fullpath = GetFullPath(filepath);
+
+    if (!overwrite && FileExists(filepath)) {
+        return false;
+    }
 
 #if USE_SFTP
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
@@ -149,5 +153,5 @@ bool FileManager::WriteContent(const wxString& filepath, const wxString& content
 bool FileManager::WriteSettingsFileContent(const wxString& name, const wxString& content, const wxMBConv& conv)
 {
     wxString fullpath = GetSettingFileFullPath(name);
-    return WriteContent(fullpath, content, conv);
+    return WriteContent(fullpath, content, true, conv);
 }

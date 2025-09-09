@@ -219,7 +219,7 @@ void PluginManager::Load()
             PluginInfo* pluginInfo = pfnGetPluginInfo();
 
             wxString pname = pluginInfo->GetName();
-            m_installedPlugins.insert({ pname, *pluginInfo });
+            m_installedPlugins.insert({pname, *pluginInfo});
 
             pname.MakeLower().Trim().Trim(false);
 
@@ -289,7 +289,7 @@ void PluginManager::Load()
 
     // Now that all the plugins are loaded, load from the configuration file
     // list of visible tabs
-    static const wxArrayString DefaultArray = StdToWX::ToArrayString({ "NOT-FOUND" });
+    static const wxArrayString DefaultArray = StdToWX::ToArrayString({"NOT-FOUND"});
 
     DetachedPanesInfo dpi;
     GetConfigTool()->ReadObject(wxT("DetachedPanesList"), &dpi);
@@ -738,7 +738,7 @@ void PluginManager::LoadWorkspaceSession(const wxFileName& workspaceFile)
     SessionEntry session;
     if (SessionManager::Get().GetSession(workspaceFile.GetFullPath(), session)) {
         // notify about session loading starting
-        clCommandEvent event_loading{ wxEVT_SESSION_LOADING };
+        clCommandEvent event_loading{wxEVT_SESSION_LOADING};
         EventNotifier::Get()->ProcessEvent(event_loading);
 
         // Undo any workspace/editor link while loading
@@ -751,7 +751,7 @@ void PluginManager::LoadWorkspaceSession(const wxFileName& workspaceFile)
         SessionManager::Get().SetLastSession(workspaceFile.GetFullPath());
 
         // and we are done
-        clCommandEvent event_loaded{ wxEVT_SESSION_LOADED };
+        clCommandEvent event_loaded{wxEVT_SESSION_LOADED};
         EventNotifier::Get()->AddPendingEvent(event_loaded);
     }
 }
@@ -1228,6 +1228,11 @@ void PluginManager::BookSelectPage(PaneId pane_id, wxWindow* page)
     BookSelectPage(pane_id, label);
 }
 
+wxString PluginManager::GetBuildOutput() const
+{
+    return clMainFrame::Get()->GetOutputPane()->GetBuildTab()->GetBuildOutput();
+}
+
 wxPanel* PluginManager::GetMainPanel() { return clMainFrame::Get()->GetMainPanel(); }
 
 IEditor* PluginManager::GetEditorFromWindow(wxWindow* win)
@@ -1240,7 +1245,7 @@ IEditor* PluginManager::GetEditorFromWindow(wxWindow* win)
 
 IEditor* PluginManager::CreateOrOpenLocalFile(const wxString& filepath)
 {
-    wxFileName fn{ filepath };
+    wxFileName fn{filepath};
     if (!fn.Exists()) {
         // Create the file with an empty content.
         fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);

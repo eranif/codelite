@@ -2,6 +2,7 @@
 
 #include "ChatAI.hpp"
 #include "ColoursAndFontsManager.h"
+#include "FileManager.hpp"
 #include "MarkdownStyler.hpp"
 #include "OllamaClient.hpp"
 #include "StringUtils.h"
@@ -47,8 +48,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     , m_plugin(plugin)
 {
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
-    m_toolbar->AddTool(wxID_NEW, _("New session"), images->Add("file_new"));
-    m_toolbar->AddTool(wxID_CLEAR, _("Clear output"), images->Add("clear"));
+    m_toolbar->AddTool(wxID_CLEAR, _("Clear everything and start a new session"), images->Add("clear"));
     m_toolbar->AddSeparator();
     m_activeModel = new wxChoice(
         m_toolbar, wxID_ANY, wxDefaultPosition, wxSize(GetTextExtent(LONG_MODEL_NAME).GetWidth(), wxNOT_FOUND));
@@ -75,15 +75,13 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     m_stcOutput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->SetReadOnly(true);
 
-    Bind(wxEVT_MENU, &ChatAIWindow::OnClear, this, wxID_CLEAR);
+    Bind(wxEVT_MENU, &ChatAIWindow::OnNewSession, this, wxID_CLEAR);
     Bind(wxEVT_MENU, &ChatAIWindow::OnRefreshModelList, this, wxID_REFRESH);
     Bind(wxEVT_MENU, &ChatAIWindow::OnSettings, this, wxID_SETUP);
-    Bind(wxEVT_MENU, &ChatAIWindow::OnNewSession, this, wxID_NEW);
 
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_CLEAR);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_REFRESH);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_SETUP);
-    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_NEW);
     m_activeModel->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this);
 
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);
@@ -117,13 +115,7 @@ ChatAIWindow::~ChatAIWindow()
 
 wxString ChatAIWindow::GetConfigurationFilePath() const
 {
-    if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
-        return clWorkspaceManager::Get().GetWorkspace()->GetSettingFileFullPath(kAssistantConfigFile);
-    } else {
-        wxFileName config_file{clStandardPaths::Get().GetUserDataDir(), kAssistantConfigFile};
-        config_file.AppendDir("config");
-        return config_file.GetFullPath();
-    }
+    return FileManager::GetSettingFileFullPath(kAssistantConfigFile);
 }
 
 void ChatAIWindow::OnSend(wxCommandEvent& event)
@@ -283,12 +275,6 @@ void ChatAIWindow::OnNewSession(wxCommandEvent& event)
     DoReset();
 }
 
-void ChatAIWindow::OnClear(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    DoClearOutputView();
-}
-
 void ChatAIWindow::OnChatAIOutput(OllamaEvent& event)
 {
     wxString content = wxString::FromUTF8(event.GetStringRaw());
@@ -417,7 +403,7 @@ void ChatAIWindow::OnWorkspaceLoaded(clWorkspaceEvent& event)
     event.Skip();
     CHECK_COND_RET(clWorkspaceManager::Get().IsWorkspaceOpened());
 
-    auto content = clWorkspaceManager::Get().GetWorkspace()->ReadSettingFile(kAssistantConfigFile);
+    auto content = FileManager::ReadSettingsFileContent(kAssistantConfigFile);
     CHECK_COND_RET(content.has_value());
     m_plugin->GetClient().ReloadConfig(content.value());
 }

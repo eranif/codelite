@@ -167,18 +167,6 @@ public:
     /// `filename`: the file name to open or create. It must not contain the path, only name + extension, e.g.
     /// `codelite-remote.json`
     virtual IEditor* CreateOrOpenSettingFile(const wxString& filename) = 0;
-
-    /// Return the fullpath for a settings file.
-    virtual wxString GetSettingFileFullPath(const wxString& filename) const = 0;
-
-    /// Read the content of a setting file. Return its content on success, or None in case of an error.
-    virtual std::optional<wxString> ReadSettingFile(const wxString& filename) const = 0;
-
-    /// Write file content.
-    virtual bool WriteFileContent(const wxString& filepath, const wxString& content) const = 0;
-
-    /// Read file content.
-    virtual std::optional<wxString> ReadFileContent(const wxString& filepath) const = 0;
 };
 
 #endif // IWORKSPACE_H

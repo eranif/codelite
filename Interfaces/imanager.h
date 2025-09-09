@@ -770,6 +770,9 @@ public:
 
     /// Return the main panel of the top level frame
     virtual wxPanel* GetMainPanel() = 0;
+
+    /// Return the build output text.
+    virtual wxString GetBuildOutput() const = 0;
 };
 
 #endif // IMANAGER_H

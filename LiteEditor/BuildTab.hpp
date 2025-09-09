@@ -26,6 +26,7 @@ public:
 
     bool GetBuildEndedSuccessfully() const { return m_viewStc->GetErrorCount() == 0 && !m_buildInterrupted; }
     void SetBuildInterrupted(bool b) { m_buildInterrupted = b; }
+    wxString GetBuildOutput() const;
 
 protected:
     void OnBuildStarted(clBuildEvent& e);

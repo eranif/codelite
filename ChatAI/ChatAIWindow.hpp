@@ -22,7 +22,6 @@ protected:
     void OnUpdateTheme(wxCommandEvent& event);
     void OnModelChanged(wxCommandEvent& event);
     void OnKeyDown(wxKeyEvent& event);
-    void OnClear(wxCommandEvent& event);
     void OnNewSession(wxCommandEvent& event);
     void OnRefreshModelList(wxCommandEvent& event);
     void OnSettings(wxCommandEvent& event);
@@ -54,7 +53,6 @@ protected:
 private:
     ChatAI* m_plugin{nullptr};
     wxChoice* m_activeModel{nullptr};
-    bool m_autoRestart{false};
     wxTerminalOutputCtrl* m_logView{nullptr};
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
 };

@@ -1,6 +1,8 @@
 #include "Tools.hpp"
 
+#include "FileManager.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
+#include "FileSystemWorkspace/clFileSystemWorkspaceView.hpp"
 #include "clWorkspaceManager.h"
 #include "globals.h"
 #include "ollama/function.hpp"
@@ -74,7 +76,7 @@ void ProcessFunctionsQueue(wxIdleEvent& event)
 /// Register CodeLite tools with the model.
 void PopulateBuildInFunctions(FunctionTable& table)
 {
-    table.Add(FunctionBuilder("WriteFileContent")
+    table.Add(FunctionBuilder("Write file content to disk at a given path")
                   .SetDescription(
                       "Write the content 'file_content' to the file system at the given path identified by 'filepath'")
                   .AddRequiredParam("file_content", "The content of the file to be written to the disk.", "string")
@@ -83,7 +85,7 @@ void PopulateBuildInFunctions(FunctionTable& table)
                   .Build());
 
     table.Add(
-        FunctionBuilder("ReadFileContent")
+        FunctionBuilder("Read file from the file system")
             .SetDescription(
                 "Reads the entire content of the file 'filepath' from the disk. On success, this function returns the "
                 "entire file's content.")
@@ -91,10 +93,19 @@ void PopulateBuildInFunctions(FunctionTable& table)
             .SetCallback(ReadFileContent)
             .Build());
 
-    table.Add(FunctionBuilder("OpenFileInEditor")
+    table.Add(FunctionBuilder("Open a file in an editor")
                   .SetDescription("Try to open file 'filepath' and load it into the editor for editing or viewing.")
                   .AddRequiredParam("filepath", "The path of the file to open inside the editor.", "string")
                   .SetCallback(OpenFileInEditor)
+                  .Build());
+
+    table.Add(FunctionBuilder("Read the compiler build output")
+                  .SetDescription(
+                      "Read and fetches the compiler build log output of the most recent build command executed by "
+                      "the user and return it to the caller. Use this method to read the compiler output. This is "
+                      "useful for helping explaining and resolving build issues. On success read, this function return "
+                      "the complete build log output.")
+                  .SetCallback(GetCompilerOutput)
                   .Build());
 
     wxTheApp->Bind(wxEVT_IDLE, ProcessFunctionsQueue);
@@ -113,24 +124,29 @@ FunctionResult WriteFileContent(const ollama::json& args)
 
     auto cb = [=]() -> FunctionResult {
         wxString msg;
-        if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
-            if (clWorkspaceManager::Get().GetWorkspace()->WriteFileContent(filepath, file_content)) {
-                msg << "Error while writing file: '" << filepath << "' to disk.";
-                return Err(msg);
-            }
-        } else {
-            // No workspace is opened.
-            wxFileName fn{filepath};
-            if (!fn.DirExists()) {
-                fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-            }
-
-            if (!FileUtils::WriteFileContent(filepath, file_content)) {
-                msg << "Error while writing file: '" << filepath << "' to disk, check CodeLite logs.";
+        wxString fullpath = FileManager::GetFullPath(filepath);
+        if (FileManager::FileExists(fullpath)) {
+            msg << _("The file: ") << fullpath << _(" already exists.\nWould you like to overwrite it?");
+            if (::wxMessageBox(msg, "CodeLite", wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) != wxYES) {
+                msg.clear();
+                msg << _("The file: ") << fullpath << _(" already exists");
                 return Err(msg);
             }
         }
-        msg << "file: '" << filepath << "' successfully written to disk!.";
+
+        if (!FileManager::WriteContent(filepath, file_content, true)) {
+            msg << "Error while writing file: '" << filepath << "' to disk.";
+            return Err(msg);
+        }
+
+        msg << "file '" << filepath << "' successfully written to disk!.";
+
+        if (clFileSystemWorkspace::Get().IsOpen()) {
+            // refresh the entire view
+            clFileSystemWorkspace::Get().GetView()->RefreshTree();
+            // notify update
+            clFileSystemWorkspace::Get().FileSystemUpdated();
+        }
         return Ok(msg);
     };
     return RunOnMain(std::move(cb));
@@ -145,22 +161,13 @@ FunctionResult ReadFileContent(const ollama::json& args)
     ASSIGN_FUNC_ARG_OR_RETURN(wxString filepath, ::ollama::GetFunctionArg<std::string>(args, "filepath"));
 
     auto cb = [=]() -> FunctionResult {
-        wxString file_content;
-        wxString msg;
-
-        msg << "Error occurred while reading the file: '" << filepath << "' from disk.";
-        if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
-            auto content = clWorkspaceManager::Get().GetWorkspace()->ReadFileContent(filepath);
-            if (!content.has_value()) {
-                return Err(msg);
-            }
-            file_content.swap(content.value());
-        } else {
-            if (!FileUtils::ReadFileContent(filepath, file_content)) {
-                return Err(msg);
-            }
+        auto content = FileManager::ReadContent(filepath);
+        if (!content.has_value()) {
+            wxString msg;
+            msg << "Error occurred while reading the file: '" << filepath << "' from disk.";
+            return Err(msg);
         }
-        return Ok(file_content);
+        return Ok(content.value());
     };
     return RunOnMain(std::move(cb));
 }
@@ -194,67 +201,10 @@ FunctionResult OpenFileInEditor(const ollama::json& args)
     return RunOnMain(std::move(cb));
 }
 
-FunctionResult CreateOrOpenLocalWorkspace(const ollama::json& args)
+FunctionResult GetCompilerOutput(const ollama::json& args)
 {
-    if (args.size() != 2) {
-        return Err("Invalid number of arguments");
-    }
-
-    ASSIGN_FUNC_ARG_OR_RETURN(wxString name, ::ollama::GetFunctionArg<std::string>(args, "workspace_name"));
-    ASSIGN_FUNC_ARG_OR_RETURN(wxString folder_path, ::ollama::GetFunctionArg<std::string>(args, "workspace_path"));
-
-    auto cb = [=]() -> FunctionResult {
-        wxString msg;
-        if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
-            msg = _("Please close the current workspace before creating a new one.");
-            ::wxMessageBox(msg, "CodeLite", wxICON_WARNING | wxOK | wxCENTRE);
-            return Err(msg);
-        }
-
-        clFileSystemWorkspace::Get().New(folder_path, name);
-
-        wxFileName workspace_file{folder_path, name};
-        workspace_file.SetExt("workspace");
-
-        if (workspace_file.FileExists()) {
-            msg << _("The workspace: ") << workspace_file.GetFullPath() << " was successfully created and loaded";
-            return Ok(msg);
-        }
-
-        msg << _("Failed to create the workspace: ") << workspace_file.GetFullPath();
-        return Err(msg);
-    };
+    auto cb = [=]() -> FunctionResult { return Ok(clGetManager()->GetBuildOutput()); };
     return RunOnMain(std::move(cb));
 }
 
-FunctionResult AddFilesToWorkspace(const ollama::json& args)
-{
-    if (args.size() != 2) {
-        return Err("Invalid number of arguments");
-    }
-
-    ASSIGN_FUNC_ARG_OR_RETURN(std::vector<std::string> files,
-                              ::ollama::GetFunctionArg<std::vector<std::string>>(args, "files"));
-
-    auto cb = [=]() -> FunctionResult {
-        wxString msg;
-        if (!clWorkspaceManager::Get().IsWorkspaceOpened()) {
-            msg = _("No workspace is opened.");
-            ::wxMessageBox(msg, "CodeLite", wxICON_WARNING | wxOK | wxCENTRE);
-            return Err(msg);
-        }
-
-        if (!files.empty()) {
-            msg = _("Please provide at least 1 file to add to the workspace.");
-            ::wxMessageBox(msg, "CodeLite", wxICON_WARNING | wxOK | wxCENTRE);
-            return Err(msg);
-        }
-
-        //        for (const auto& file : files) {
-        //            clWorkspaceManager::Get().GetWorkspace()->
-        //        }
-        return Ok("Files successfully added to the workspace");
-    };
-    return RunOnMain(std::move(cb));
-}
 } // namespace ollama

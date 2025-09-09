@@ -19,11 +19,8 @@ FunctionResult ReadFileContent(const ollama::json& args);
 /// Open list of files to open.
 FunctionResult OpenFileInEditor(const ollama::json& args);
 
-/// Create or load a local file system workspace.
-FunctionResult CreateOrOpenLocalWorkspace(const ollama::json& args);
-
-/// Create or load a local file system workspace.
-FunctionResult AddFilesToWorkspace(const ollama::json& args);
+/// Return the current compiler output.
+FunctionResult GetCompilerOutput(const ollama::json& args);
 
 /// Populate the function table with the build-in functions provided by CodeLite to the model.
 void PopulateBuildInFunctions(FunctionTable& table);

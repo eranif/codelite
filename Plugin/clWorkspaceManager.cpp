@@ -1,5 +1,6 @@
 #include "clWorkspaceManager.h"
 
+#include "FileManager.hpp"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "globals.h"
@@ -57,7 +58,7 @@ wxArrayString clWorkspaceManager::GetUnifiedFilesMask() const
 
 IEditor* LocalWorkspaceCommon::OpenFileInEditor(const wxString& filepath, bool createIfMissing)
 {
-    wxFileName local_file{ filepath };
+    wxFileName local_file{filepath};
     if (!local_file.FileExists() && !createIfMissing) {
         return nullptr;
     }
@@ -66,34 +67,5 @@ IEditor* LocalWorkspaceCommon::OpenFileInEditor(const wxString& filepath, bool c
 
 IEditor* LocalWorkspaceCommon::CreateOrOpenSettingFile(const wxString& filename)
 {
-    return OpenFileInEditor(GetSettingFileFullPath(filename), true);
-}
-
-wxString LocalWorkspaceCommon::GetSettingFileFullPath(const wxString& filename) const
-{
-    wxFileName fullpath{ GetFileName() };
-    fullpath.AppendDir(".codelite");
-    fullpath.SetFullName(filename);
-    return fullpath.GetFullPath();
-}
-
-std::optional<wxString> LocalWorkspaceCommon::ReadSettingFile(const wxString& filename) const
-{
-    wxString fullpath = GetSettingFileFullPath(filename);
-    return ReadFileContent(fullpath);
-}
-
-bool LocalWorkspaceCommon::WriteFileContent(const wxString& filepath, const wxString& content) const
-{
-    wxFileName local_file{ filepath };
-    return FileUtils::WriteFileContent(local_file, content);
-}
-
-std::optional<wxString> LocalWorkspaceCommon::ReadFileContent(const wxString& filepath) const
-{
-    wxString data;
-    if (!FileUtils::ReadFileContent(filepath, data)) {
-        return std::nullopt;
-    }
-    return data;
+    return OpenFileInEditor(FileManager::GetSettingFileFullPath(filename), true);
 }

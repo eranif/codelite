@@ -2,6 +2,8 @@
 
 #include "codelite_exports.h"
 
+#include <wx/string.h>
+
 /// Helper class for managing the file system. The class is workspace aware. What does that mean? if a user requests to
 /// create the file "main.cpp" (relative path) and a workspace is currently opened, the file will be created under the
 /// workspace path: /path/to/workspace/main.cpp. This class also handles remote & local files.

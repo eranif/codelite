@@ -22,18 +22,22 @@ wxDEFINE_EVENT(wxEVT_CHATAI_INTERRUPT, clCommandEvent);
 
 namespace
 {
-
 const wxString kDefaultSettings =
     R"#({
   "history_size": 50,
   "server_url": "http://127.0.0.1:11434",
   "servers": {},
+  "http_headers": {
+    "Host": "127.0.0.1"
+  },
   "models": {
     "default": {
       "options": {
         "num_ctx": 32768,
         "temperature": 0
-      }
+      },
+      "think_end_tag": "</think>",
+      "think_start_tag": "</think>"
     }
   }
 })#";
@@ -41,6 +45,18 @@ const wxString kDefaultSettings =
 const wxString CHAT_AI_LABEL = _("Chat AI");
 const wxString LONG_MODEL_NAME = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
 constexpr const char* kAssistantConfigFile = "assistant.json";
+
+std::optional<wxString> GetGlobalSettings()
+{
+    wxFileName global_config{clStandardPaths::Get().GetUserDataDir(), kAssistantConfigFile};
+    global_config.AppendDir("config");
+
+    wxString global_content;
+    if (!FileUtils::ReadFileContent(global_config, global_content)) {
+        return std::nullopt;
+    }
+    return global_content;
+}
 } // namespace
 
 ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
@@ -99,6 +115,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     });
     m_markdownStyler = std::make_unique<MarkdownStyler>(m_stcOutput);
     ShowIndicator(false);
+    CallAfter(&ChatAIWindow::LoadGlobalConfig);
 }
 
 ChatAIWindow::~ChatAIWindow()
@@ -127,6 +144,13 @@ void ChatAIWindow::OnSend(wxCommandEvent& event)
 void ChatAIWindow::DoSendPrompt()
 {
     wxBusyCursor bc{};
+
+    wxString active_model = m_activeModel->GetStringSelection();
+    if (active_model.empty()) {
+        ::wxMessageBox(_("Please choose a model first."), "CodeLite", wxICON_WARNING | wxOK | wxCENTRE);
+        return;
+    }
+
     m_plugin->GetClient().Send(m_stcInput->GetText(), m_activeModel->GetStringSelection());
     m_stcInput->ClearAll();
     ShowIndicator(true);
@@ -187,24 +211,23 @@ void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
     }
 }
 
-void ChatAIWindow::OnLog(OllamaEvent& event)
+void ChatAIWindow::DoLogMessage(const wxString& message, ollama::LogLevel log_level)
 {
     clAnsiEscapeCodeColourBuilder builder;
-    wxString content = wxString::FromUTF8(event.GetStringRaw());
-    switch (event.GetLogLevel()) {
+    switch (log_level) {
     case ollama::LogLevel::kError:
-        builder.Add(content, AnsiColours::Red(), true);
+        builder.Add(message, AnsiColours::Red(), true);
         break;
     case ollama::LogLevel::kWarning:
-        builder.Add(content, AnsiColours::Yellow(), true);
+        builder.Add(message, AnsiColours::Yellow(), true);
         break;
     case ollama::LogLevel::kTrace:
     case ollama::LogLevel::kDebug:
-        builder.Add(content, AnsiColours::Gray(), true);
+        builder.Add(message, AnsiColours::Gray(), true);
         break;
     case ollama::LogLevel::kInfo:
     default:
-        builder.Add(content, AnsiColours::Green());
+        builder.Add(message, AnsiColours::Green());
         break;
     }
     wxString line = builder.GetString();
@@ -214,23 +237,34 @@ void ChatAIWindow::OnLog(OllamaEvent& event)
     m_logView->StyleAndAppend(sv, nullptr);
 }
 
+void ChatAIWindow::OnLog(OllamaEvent& event)
+{
+    wxString content = wxString::FromUTF8(event.GetStringRaw());
+    DoLogMessage(content, event.GetLogLevel());
+}
+
 void ChatAIWindow::OnSettings(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+    /// Create the workspace settings file (do nothing if the file already exists).
+    DoCreateWorkspaceSettings();
+
     if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
         auto editor = clWorkspaceManager::Get().GetWorkspace()->CreateOrOpenSettingFile(kAssistantConfigFile);
         if (!editor) {
             ::wxMessageBox(wxString() << _("Could not open file: ") << kAssistantConfigFile,
                            "CodeLite",
                            wxICON_ERROR | wxOK | wxCENTER);
+            return;
         }
 
         if (!editor->GetEditorText().empty()) {
             return;
         }
 
-        // Place some default content
-        editor->SetEditorText(kDefaultSettings);
+        // Place some default content, if we have a global configuration - copy the settings from that file.
+        wxString default_content = GetGlobalSettings().value_or(kDefaultSettings);
+        editor->SetEditorText(default_content);
     } else {
         // Global settings
         wxFileName global_config{GetConfigurationFilePath()};
@@ -259,6 +293,7 @@ void ChatAIWindow::DoReset()
     m_stcInput->ClearAll();
     m_plugin->GetClient().Clear();
     ShowIndicator(false);
+    m_thinking = false;
 }
 
 void ChatAIWindow::DoClearOutputView()
@@ -277,17 +312,36 @@ void ChatAIWindow::OnNewSession(wxCommandEvent& event)
 
 void ChatAIWindow::OnChatAIOutput(OllamaEvent& event)
 {
+    bool changed_state = (event.IsThinking() != m_thinking);
+    if (changed_state) {
+        if (event.IsThinking()) {
+            // we just started thinking...
+            AppendOutput("**Thinking** ...");
+        } else {
+            AppendOutput(" done");
+        }
+    }
+
+    m_thinking = event.IsThinking();
+
     wxString content = wxString::FromUTF8(event.GetStringRaw());
     switch (event.GetReason()) {
     case ollama::Reason::kFatalError:
         ::wxMessageBox(content, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+        DoReset();
+        m_thinking = false;
         return;
     case ollama::Reason::kLogNotice:
     case ollama::Reason::kLogDebug:
         clDEBUG() << content << endl;
         break;
-    default:
-        AppendOutput(content);
+    case ollama::Reason::kDone:
+        m_thinking = false;
+        break;
+    case ollama::Reason::kPartialResult:
+        if (!event.IsThinking()) {
+            AppendOutput(content);
+        }
         break;
     }
 }
@@ -296,6 +350,7 @@ void ChatAIWindow::OnChatAIOutputDone(OllamaEvent& event)
 {
     AppendOutput(wxT("\n---\n"));
     StyleOutput();
+    m_thinking = false;
 
     // Move the focus back to the input text control
     m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
@@ -401,11 +456,40 @@ void ChatAIWindow::StyleOutput()
 void ChatAIWindow::OnWorkspaceLoaded(clWorkspaceEvent& event)
 {
     event.Skip();
-    CHECK_COND_RET(clWorkspaceManager::Get().IsWorkspaceOpened());
-
-    auto content = FileManager::ReadSettingsFileContent(kAssistantConfigFile);
-    CHECK_COND_RET(content.has_value());
-    m_plugin->GetClient().ReloadConfig(content.value());
+    DoCreateWorkspaceSettings();
+    auto content = FileManager::ReadSettingsFileContent(kAssistantConfigFile).value_or(kDefaultSettings);
+    m_plugin->GetClient().ReloadConfig(content);
 }
 
-void ChatAIWindow::OnWorkspaceClosed(clWorkspaceEvent& event) { event.Skip(); }
+void ChatAIWindow::OnWorkspaceClosed(clWorkspaceEvent& event)
+{
+    event.Skip();
+    DoReset();
+    CallAfter(&ChatAIWindow::LoadGlobalConfig);
+}
+
+bool ChatAIWindow::DoCreateWorkspaceSettings()
+{
+    wxString config_path = FileManager::GetSettingFileFullPath(kAssistantConfigFile);
+
+    clDEBUG() << "Checking if file:" << config_path << "exists..." << endl;
+    if (FileManager::FileExists(config_path)) {
+        clDEBUG() << "Yes." << endl;
+        return true;
+    }
+    clDEBUG() << "No." << endl;
+
+    // New file, create the workspace file content.
+    wxString default_content = kDefaultSettings;
+    if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
+        // Try to copy the content from the global settings.
+        default_content = GetGlobalSettings().value_or(kDefaultSettings);
+    }
+    return FileManager::WriteSettingsFileContent(kAssistantConfigFile, default_content);
+}
+
+void ChatAIWindow::LoadGlobalConfig()
+{
+    wxBusyCursor bc{};
+    m_plugin->GetClient().ReloadConfig(GetGlobalSettings().value_or(kDefaultSettings));
+}

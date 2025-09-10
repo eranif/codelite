@@ -38,12 +38,15 @@ protected:
     void AppendOutput(const wxString& text);
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnWorkspaceClosed(clWorkspaceEvent& event);
+    void LoadGlobalConfig();
 
     /// Clears the output view, does not change the model history.
     void DoClearOutputView();
     /// Clear the view (input & output) and reset the client.
     void DoReset();
+    bool DoCreateWorkspaceSettings();
 
+    void DoLogMessage(const wxString& message, ollama::LogLevel log_level);
     /// Return the relevant configuration file. If a workspace file is opened, we use the workspace specific
     /// configuration file. If no workspace is opened, we use the global settings.
     wxString GetConfigurationFilePath() const;
@@ -55,6 +58,7 @@ private:
     wxChoice* m_activeModel{nullptr};
     wxTerminalOutputCtrl* m_logView{nullptr};
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
+    bool m_thinking{false};
 };
 
 wxDECLARE_EVENT(wxEVT_CHATAI_SEND, clCommandEvent);

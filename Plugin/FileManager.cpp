@@ -143,10 +143,11 @@ bool FileManager::WriteContent(const wxString& filepath, const wxString& content
 #if USE_SFTP
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     if (workspace && workspace->IsRemote()) {
-        return clSFTPManager::Get().AwaitWriteFile(fullpath, content, workspace->GetSshAccount());
+        return clSFTPManager::Get().AwaitWriteFile(content, fullpath, workspace->GetSshAccount());
     }
 #endif
 
+    wxFileName{fullpath}.Mkdir(wxS_DIR_DEFAULT, wxPATH_NATIVE);
     return FileUtils::WriteFileContent(fullpath, content, conv);
 }
 

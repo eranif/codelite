@@ -191,7 +191,7 @@ void clFileSystemWorkspace::CacheFiles(bool force)
         [=](const wxString& rootFolder) {
             clFilesScanner fs;
             std::vector<wxString> files;
-            wxStringSet_t excludeFolders = { ".git/", ".svn/", ".codelite/", ".ctagsd/" };
+            wxStringSet_t excludeFolders = {".git/", ".svn/", ".codelite/", ".ctagsd/"};
 
             wxString excludePaths = GetExcludeFolders();
             wxArrayString paths = StringUtils::BuildArgv(excludePaths);
@@ -445,7 +445,7 @@ void clFileSystemWorkspace::OnScanCompleted(clFileSystemEvent& event)
     Parse(false);
 
     clDEBUG() << "Sending wxEVT_WORKSPACE_FILES_SCANNED event..." << endl;
-    clWorkspaceEvent event_scan{ wxEVT_WORKSPACE_FILES_SCANNED };
+    clWorkspaceEvent event_scan{wxEVT_WORKSPACE_FILES_SCANNED};
     EventNotifier::Get()->ProcessEvent(event_scan);
 }
 
@@ -537,7 +537,7 @@ void clFileSystemWorkspace::Initialise()
     auto accel_manager = clKeyboardManager::Get();
 
     // register global accelerators entries
-    accel_manager->AddAccelerator(_("File System Workspace"), { { "fsw_refresh_current_folder", _("Refresh") } });
+    accel_manager->AddAccelerator(_("File System Workspace"), {{"fsw_refresh_current_folder", _("Refresh")}});
 }
 
 void clFileSystemWorkspace::OnExecute(clExecuteEvent& event)
@@ -696,7 +696,7 @@ void clFileSystemWorkspace::OnCustomTargetMenu(clContextMenuEvent& event)
         int menuId = wxXmlResource::GetXRCID(vt.first);
         menu->Append(menuId, name, name, wxITEM_NORMAL);
         menu->Bind(wxEVT_MENU, &clFileSystemWorkspace::OnMenuCustomTarget, this, menuId);
-        m_buildTargetMenuIdToName.insert({ menuId, name });
+        m_buildTargetMenuIdToName.insert({menuId, name});
     }
 }
 
@@ -736,7 +736,7 @@ void clFileSystemWorkspace::DoBuild(const wxString& target)
     clEnvList_t envList = GetEnvList();
 
     // pass TERM to get colours from the build process
-    envList.push_back({ "TERM", "xterm-256color" });
+    envList.push_back({"TERM", "xterm-256color"});
 
     // Start the process with the environemt
     wxString ssh_account;
@@ -1210,7 +1210,7 @@ clEnvList_t clFileSystemWorkspace::GetEnvironment() const
 void clFileSystemWorkspace::CheckForCMakeLists()
 {
     // Check for the existence of a CMakeLists.txt file
-    wxFileName cmakeListsTxt{ m_filename.GetPath(), "CMakeLists.txt" };
+    wxFileName cmakeListsTxt{m_filename.GetPath(), "CMakeLists.txt"};
     if (!cmakeListsTxt.FileExists()) {
         return;
     }
@@ -1231,7 +1231,7 @@ void clFileSystemWorkspace::CheckForCMakeLists()
 
     // Add 2 configurations: Debug and Release
     auto& settings = GetSettings();
-    const std::vector<wxString> configurations = { "Debug", "Release" };
+    const std::vector<wxString> configurations = {"Debug", "Release"};
 
     for (const auto& config_name : configurations) {
         wxString cmake_generator;
@@ -1261,11 +1261,11 @@ void clFileSystemWorkspace::CheckForCMakeLists()
         }
 
         clDEBUG() << "Configuring workspace config:" << config_name << endl;
-        config->SetBuildTargets({ { "build", wxString() << "cd " << build_dir << " && " << make_command },
-                                  { "clean", wxString() << "cd " << build_dir << " && " << make_command << " clean" },
-                                  { "cmake",
-                                    wxString() << "mkdir -p " << build_dir << " && cd " << build_dir << " && cmake -G"
-                                               << cmake_generator << " .. -DCMAKE_BUILD_TYPE=" << config_name } });
+        config->SetBuildTargets({{"build", wxString() << "cd " << build_dir << " && " << make_command},
+                                 {"clean", wxString() << "cd " << build_dir << " && " << make_command << " clean"},
+                                 {"cmake",
+                                  wxString() << "mkdir -p " << build_dir << " && cd " << build_dir << " && cmake -G"
+                                             << cmake_generator << " .. -DCMAKE_BUILD_TYPE=" << config_name}});
         config->SetCompiler(cmpiler_name);
     }
     settings.Save(m_filename.GetFullPath());
@@ -1281,8 +1281,12 @@ int clFileSystemWorkspace::GetIndentWidth()
         return *m_indentWidth;
     }
 
-    wxFileName clang_format_config{ GetFileName() };
+    wxFileName clang_format_config{GetFileName()};
     clang_format_config.SetFullName(".clang-format");
+    if (!clang_format_config.FileExists()) {
+        return wxNOT_FOUND;
+    }
+
     wxString content;
     if (!FileUtils::ReadFileContent(clang_format_config, content)) {
         return wxNOT_FOUND;

@@ -184,10 +184,10 @@ FunctionResult OpenFileInEditor(const ollama::json& args)
         wxString msg;
         IEditor* editor{nullptr};
         if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
-            clSYSTEM() << "Open file (workspace):" << filepath << endl;
+            clDEBUG() << "Open file (workspace):" << filepath << endl;
             editor = clWorkspaceManager::Get().GetWorkspace()->OpenFileInEditor(filepath, false);
         } else {
-            clSYSTEM() << "Open file:" << filepath << endl;
+            clDEBUG() << "Open file:" << filepath << endl;
             editor = clGetManager()->OpenFile(filepath);
         }
 

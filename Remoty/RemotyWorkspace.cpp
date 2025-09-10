@@ -1234,24 +1234,20 @@ void RemotyWorkspace::OpenAndEditCodeLiteRemoteJson()
 
 IEditor* RemotyWorkspace::OpenFileInEditor(const wxString& filepath, bool createIfMissing)
 {
-    if (!createIfMissing && !clSFTPManager::Get().IsFileExists(filepath, m_account)) {
+    bool exists = FileManager::FileExists(filepath);
+    if (!createIfMissing && !exists) {
         return nullptr;
     }
 
-    wxString directory = filepath.BeforeLast('/');
-    if (!clSFTPManager::Get().NewFolder(directory, m_account)) {
-        wxMessageBox(_("Failed to create directory: ") + directory, "CodeLite", wxICON_ERROR | wxOK);
+    if (!exists && !FileManager::Create(filepath)) {
         return nullptr;
     }
 
-    // create a new file
-    if (!clSFTPManager::Get().NewFile(filepath, m_account)) {
-        wxMessageBox(_("Failed to create file: ") + filepath, "CodeLite", wxICON_ERROR | wxOK);
-        return nullptr;
+    // File exists
+    auto editor = OpenFile(filepath);
+    if (editor) {
+        editor->SetActive();
     }
-
-    auto editor = OpenFileInEditor(filepath, true);
-    editor->SetActive();
     return editor;
 }
 

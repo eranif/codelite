@@ -72,7 +72,7 @@ void OllamaClient::Send(const wxString& prompt, const wxString& model)
         model.ToStdString(wxConvUTF8));
 }
 
-void OllamaClient::Interrupt() {}
+void OllamaClient::Interrupt() { m_ollama.Interrupt(); }
 
 void OllamaClient::GetModels() const
 {

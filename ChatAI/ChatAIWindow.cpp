@@ -493,3 +493,11 @@ void ChatAIWindow::LoadGlobalConfig()
     wxBusyCursor bc{};
     m_plugin->GetClient().ReloadConfig(GetGlobalSettings().value_or(kDefaultSettings));
 }
+
+void ChatAIWindow::OnStop(wxCommandEvent& event)
+{
+    event.Skip();
+    m_plugin->GetClient().Interrupt();
+}
+
+void ChatAIWindow::OnStopUI(wxUpdateUIEvent& event) { event.Enable(m_plugin->GetClient().IsBusy()); }

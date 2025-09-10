@@ -53,6 +53,7 @@ protected:
     wxPanel* m_splitterPage34;
     clThemedSTC* m_stcInput;
     wxButton* m_button37;
+    wxButton* m_button54;
     wxActivityIndicator* m_activityIndicator;
     wxPanel* m_panelLog;
 
@@ -60,6 +61,8 @@ protected:
     virtual void OnInputUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSend(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSendUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnStop(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnStopUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     clToolBar* GetToolbar() { return m_toolbar; }
@@ -67,6 +70,7 @@ public:
     wxPanel* GetSplitterPage32() { return m_splitterPage32; }
     clThemedSTC* GetStcInput() { return m_stcInput; }
     wxButton* GetButton37() { return m_button37; }
+    wxButton* GetButton54() { return m_button54; }
     wxActivityIndicator* GetActivityIndicator() { return m_activityIndicator; }
     wxPanel* GetSplitterPage34() { return m_splitterPage34; }
     wxSplitterWindow* GetSplitter30() { return m_splitter30; }

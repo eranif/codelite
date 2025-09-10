@@ -172,12 +172,21 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
 
     boxSizer36->Add(boxSizer42, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_button37 = new wxButton(
-        m_splitterPage34, wxID_ANY, _("Submit"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), 0);
+    m_button37 = new wxButton(m_splitterPage34,
+                              wxID_EXECUTE,
+                              _("Submit"),
+                              wxDefaultPosition,
+                              wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)),
+                              0);
     m_button37->SetDefault();
     m_button37->SetToolTip(_("Submit prompt\nShift+ENTER"));
 
     boxSizer42->Add(m_button37, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_button54 = new wxButton(
+        m_splitterPage34, wxID_STOP, _("Stop"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), 0);
+
+    boxSizer42->Add(m_button54, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_activityIndicator = new wxActivityIndicator(
         m_splitterPage34, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), 0);
@@ -200,6 +209,8 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
     m_stcInput->Bind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnInputUI, this);
     m_button37->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnSend, this);
     m_button37->Bind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnSendUI, this);
+    m_button54->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnStop, this);
+    m_button54->Bind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnStopUI, this);
 }
 
 AssistanceAIChatWindowBase::~AssistanceAIChatWindowBase()
@@ -207,4 +218,6 @@ AssistanceAIChatWindowBase::~AssistanceAIChatWindowBase()
     m_stcInput->Unbind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnInputUI, this);
     m_button37->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnSend, this);
     m_button37->Unbind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnSendUI, this);
+    m_button54->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnStop, this);
+    m_button54->Unbind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnStopUI, this);
 }

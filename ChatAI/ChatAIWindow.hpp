@@ -16,6 +16,8 @@ public:
     virtual ~ChatAIWindow();
 
 protected:
+    void OnStop(wxCommandEvent& event) override;
+    void OnStopUI(wxUpdateUIEvent& event) override;
     void OnInputUI(wxUpdateUIEvent& event) override;
     void OnSend(wxCommandEvent& event) override;
     void OnSendUI(wxUpdateUIEvent& event) override;

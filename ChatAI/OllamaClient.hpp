@@ -28,11 +28,15 @@ public:
     inline void SetLogLevel(const ollama::LogLevel& logLevel) { m_logLevel = logLevel; }
     inline const ollama::LogLevel& GetLogLevel() const { return m_logLevel; }
 
+    inline bool IsThinking() const { return m_thinking; }
+    inline void SetThinking(bool b) { m_thinking = b; }
+
 private:
-    ollama::Reason m_reason{ ollama::Reason::kDone };
+    ollama::Reason m_reason{ollama::Reason::kDone};
     std::string m_message;
     wxArrayString m_models;
-    ollama::LogLevel m_logLevel{ ollama::LogLevel::kInfo };
+    ollama::LogLevel m_logLevel{ollama::LogLevel::kInfo};
+    bool m_thinking{false};
 };
 
 using OllamaEventFunction = void (wxEvtHandler::*)(OllamaEvent&);
@@ -57,7 +61,7 @@ public:
 private:
     ChatAIConfig m_config;
     ollama::Manager& m_ollama;
-    bool m_processingRequest{ false };
+    bool m_processingRequest{false};
 };
 
 wxDECLARE_EVENT(wxEVT_OLLAMA_THINKING, OllamaEvent);

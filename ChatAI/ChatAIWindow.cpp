@@ -294,7 +294,7 @@ void ChatAIWindow::OnChatAIOutput(OllamaEvent& event)
 
 void ChatAIWindow::OnChatAIOutputDone(OllamaEvent& event)
 {
-    AppendOutput(wxT("\n⸻⸻⸻\n"));
+    AppendOutput(wxT("\n---\n"));
     StyleOutput();
 
     // Move the focus back to the input text control

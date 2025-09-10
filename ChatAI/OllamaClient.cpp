@@ -48,12 +48,13 @@ void OllamaClient::Send(const wxString& prompt, const wxString& model)
     m_ollama.SetPreferCPU(true);
     m_ollama.AsyncChat(
         prompt.ToStdString(wxConvUTF8),
-        [this](std::string msg, ollama::Reason reason) {
+        [this](std::string msg, ollama::Reason reason, bool thinking) {
             // Translate the callback into wxWidgets event
             OllamaEvent event{wxEVT_OLLAMA_OUTPUT};
             event.SetStringRaw(std::move(msg));
             event.SetEventObject(this);
             event.SetReason(reason);
+            event.SetThinking(thinking);
             EventNotifier::Get()->AddPendingEvent(event);
 
             switch (reason) {
@@ -96,7 +97,6 @@ void OllamaClient::Clear()
     auto& function_table = m_ollama.GetFunctionTable();
     ollama::PopulateBuildInFunctions(function_table);
     m_ollama.AddSystemMessage("Your name is CodeLite");
-    m_ollama.AddSystemMessage("Always try to use the provided tools there is no need to confirm this");
 }
 
 void OllamaClient::ReloadConfig(const wxString& configContent)

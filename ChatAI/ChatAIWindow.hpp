@@ -8,6 +8,8 @@
 #include "cl_command_event.h"
 #include "wxTerminalCtrl/wxTerminalOutputCtrl.hpp"
 
+#include <wx/timer.h>
+
 class ChatAI;
 class ChatAIWindow : public AssistanceAIChatWindowBase
 {
@@ -33,6 +35,7 @@ protected:
     void OnChatAIOutput(OllamaEvent& event);
     void OnChatAIOutputDone(OllamaEvent& event);
     void OnModels(OllamaEvent& event);
+    void OnThinking(OllamaEvent& event);
     void OnFileSaved(clCommandEvent& event);
     void PopulateModels();
     void SetFocusToActiveEditor();
@@ -54,6 +57,9 @@ protected:
     wxString GetConfigurationFilePath() const;
 
     void ShowIndicator(bool show);
+    void ShowGauge(bool show);
+    void NotifyThinking(bool thinking);
+    void OnTimer(wxTimerEvent& event);
 
 private:
     ChatAI* m_plugin{nullptr};
@@ -61,6 +67,7 @@ private:
     wxTerminalOutputCtrl* m_logView{nullptr};
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
     bool m_thinking{false};
+    wxTimer* m_timer{nullptr};
 };
 
 wxDECLARE_EVENT(wxEVT_CHATAI_SEND, clCommandEvent);

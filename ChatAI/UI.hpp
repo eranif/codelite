@@ -23,6 +23,7 @@
 #include "clThemedSTC.hpp"
 #include <wx/button.h>
 #include <wx/activityindicator.h>
+#include <wx/gauge.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -55,6 +56,7 @@ protected:
     wxButton* m_button37;
     wxButton* m_button54;
     wxActivityIndicator* m_activityIndicator;
+    wxGauge* m_gaugeThinking;
     wxPanel* m_panelLog;
 
 protected:
@@ -72,6 +74,7 @@ public:
     wxButton* GetButton37() { return m_button37; }
     wxButton* GetButton54() { return m_button54; }
     wxActivityIndicator* GetActivityIndicator() { return m_activityIndicator; }
+    wxGauge* GetGaugeThinking() { return m_gaugeThinking; }
     wxPanel* GetSplitterPage34() { return m_splitterPage34; }
     wxSplitterWindow* GetSplitter30() { return m_splitter30; }
     wxPanel* GetPanelChat() { return m_panelChat; }

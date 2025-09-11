@@ -56,7 +56,7 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
                                         wxDLG_UNIT(m_panelChat, wxSize(-1, -1)),
                                         wxSP_LIVE_UPDATE | wxSP_3DSASH);
     m_splitter30->SetSashGravity(1);
-    m_splitter30->SetMinimumPaneSize(150);
+    m_splitter30->SetMinimumPaneSize(100);
 
     boxSizer50->Add(m_splitter30, 1, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -122,9 +122,13 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
     wxBoxSizer* boxSizer43 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage34->SetSizer(boxSizer43);
 
+    wxBoxSizer* boxSizer55 = new wxBoxSizer(wxVERTICAL);
+
+    boxSizer43->Add(boxSizer55, 1, wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* boxSizer36 = new wxBoxSizer(wxHORIZONTAL);
 
-    boxSizer43->Add(boxSizer36, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer55->Add(boxSizer36, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_stcInput =
         new clThemedSTC(m_splitterPage34, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), 0);
@@ -192,6 +196,16 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
         m_splitterPage34, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), 0);
 
     boxSizer42->Add(m_activityIndicator, 1, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_gaugeThinking = new wxGauge(m_splitterPage34,
+                                  wxID_ANY,
+                                  100,
+                                  wxDefaultPosition,
+                                  wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)),
+                                  wxGA_HORIZONTAL);
+    m_gaugeThinking->SetValue(10);
+
+    boxSizer55->Add(m_gaugeThinking, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_panelLog = new wxPanel(
         m_notebook47, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook47, wxSize(-1, -1)), wxTAB_TRAVERSAL);

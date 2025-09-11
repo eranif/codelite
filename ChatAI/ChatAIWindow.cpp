@@ -86,6 +86,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &ChatAIWindow::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &ChatAIWindow::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_OLLAMA_LOG, &ChatAIWindow::OnLog, this);
+    EventNotifier::Get()->Bind(wxEVT_OLLAMA_THINKING, &ChatAIWindow::OnThinking, this);
 
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
@@ -115,11 +116,17 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     });
     m_markdownStyler = std::make_unique<MarkdownStyler>(m_stcOutput);
     ShowIndicator(false);
+    m_timer = new wxTimer(this, wxID_ANY);
+    Bind(wxEVT_TIMER, &ChatAIWindow::OnTimer, this, m_timer->GetId());
+    ShowGauge(false);
     CallAfter(&ChatAIWindow::LoadGlobalConfig);
 }
 
 ChatAIWindow::~ChatAIWindow()
 {
+    m_timer->Stop();
+    wxDELETE(m_timer);
+
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_OUTPUT, &ChatAIWindow::OnChatAIOutput, this);
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_CHAT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
@@ -128,6 +135,7 @@ ChatAIWindow::~ChatAIWindow()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &ChatAIWindow::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &ChatAIWindow::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_LOG, &ChatAIWindow::OnLog, this);
+    EventNotifier::Get()->Unbind(wxEVT_OLLAMA_THINKING, &ChatAIWindow::OnThinking, this);
 }
 
 wxString ChatAIWindow::GetConfigurationFilePath() const
@@ -293,6 +301,7 @@ void ChatAIWindow::DoReset()
     m_stcInput->ClearAll();
     m_plugin->GetClient().Clear();
     ShowIndicator(false);
+    ShowGauge(false);
     m_thinking = false;
 }
 
@@ -314,29 +323,27 @@ void ChatAIWindow::OnChatAIOutput(OllamaEvent& event)
 {
     bool changed_state = (event.IsThinking() != m_thinking);
     if (changed_state) {
-        if (event.IsThinking()) {
-            // we just started thinking...
-            AppendOutput("**Thinking** ...");
-        } else {
-            AppendOutput(" done");
-        }
+        NotifyThinking(event.IsThinking());
     }
-
-    m_thinking = event.IsThinking();
 
     wxString content = wxString::FromUTF8(event.GetStringRaw());
     switch (event.GetReason()) {
+    case ollama::Reason::kCancelled:
+        ::wxMessageBox(_("Operation cancelled by user."), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+        NotifyThinking(false);
+        DoReset();
+        return;
     case ollama::Reason::kFatalError:
         ::wxMessageBox(content, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+        NotifyThinking(false);
         DoReset();
-        m_thinking = false;
         return;
     case ollama::Reason::kLogNotice:
     case ollama::Reason::kLogDebug:
         clDEBUG() << content << endl;
         break;
     case ollama::Reason::kDone:
-        m_thinking = false;
+        NotifyThinking(false);
         break;
     case ollama::Reason::kPartialResult:
         if (!event.IsThinking()) {
@@ -348,7 +355,6 @@ void ChatAIWindow::OnChatAIOutput(OllamaEvent& event)
 
 void ChatAIWindow::OnChatAIOutputDone(OllamaEvent& event)
 {
-    AppendOutput(wxT("\n---\n"));
     StyleOutput();
     m_thinking = false;
 
@@ -369,6 +375,17 @@ void ChatAIWindow::ShowIndicator(bool show)
     m_activityIndicator->GetParent()->SendSizeEvent();
 }
 
+void ChatAIWindow::ShowGauge(bool show)
+{
+    if (show) {
+        m_gaugeThinking->Show();
+        m_gaugeThinking->Pulse();
+    } else {
+        m_gaugeThinking->Hide();
+    }
+    m_gaugeThinking->GetParent()->SendSizeEvent();
+}
+
 void ChatAIWindow::OnFileSaved(clCommandEvent& event)
 {
     // Always call Skip()
@@ -381,6 +398,18 @@ void ChatAIWindow::OnFileSaved(clCommandEvent& event)
         wxBusyCursor bc{};
         m_plugin->GetClient().ReloadConfig(clGetManager()->GetActiveEditor()->GetEditorText());
         clGetManager()->SetStatusMessage(_("ChatAI configuration re-loaded successfully"), 3);
+    }
+}
+
+void ChatAIWindow::OnThinking(OllamaEvent& event)
+{
+    // change the thinking state
+    m_thinking = event.IsThinking();
+    ShowGauge(m_thinking);
+    if (m_thinking) {
+        m_timer->Start(100, false);
+    } else {
+        m_timer->Stop();
     }
 }
 
@@ -501,3 +530,16 @@ void ChatAIWindow::OnStop(wxCommandEvent& event)
 }
 
 void ChatAIWindow::OnStopUI(wxUpdateUIEvent& event) { event.Enable(m_plugin->GetClient().IsBusy()); }
+
+void ChatAIWindow::NotifyThinking(bool thinking)
+{
+    OllamaEvent think_event{wxEVT_OLLAMA_THINKING};
+    think_event.SetThinking(thinking);
+    EventNotifier::Get()->AddPendingEvent(think_event);
+}
+
+void ChatAIWindow::OnTimer(wxTimerEvent& event)
+{
+    event.Skip();
+    m_gaugeThinking->Pulse();
+}

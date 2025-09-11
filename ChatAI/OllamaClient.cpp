@@ -42,10 +42,6 @@ void OllamaClient::Send(const wxString& prompt, const wxString& model)
 
     // Notify that
     m_processingRequest = true;
-    clCommandEvent thinking{wxEVT_OLLAMA_THINKING};
-    thinking.SetEventObject(this);
-    EventNotifier::Get()->AddPendingEvent(thinking);
-    m_ollama.SetPreferCPU(true);
     m_ollama.AsyncChat(
         prompt.ToStdString(wxConvUTF8),
         [this](std::string msg, ollama::Reason reason, bool thinking) {

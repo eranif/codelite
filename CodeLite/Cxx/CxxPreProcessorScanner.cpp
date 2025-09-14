@@ -25,8 +25,9 @@ CxxPreProcessorScanner::~CxxPreProcessorScanner()
     }
 }
 
-void CxxPreProcessorScanner::GetRestOfPPLine(wxString& rest, bool collectNumberOnly)
+wxString CxxPreProcessorScanner::GetRestOfPPLine(bool collectNumberOnly)
 {
+    wxString rest;
     CxxLexerToken token;
     bool numberFound = false;
     while(m_scanner && ::LexerNext(m_scanner, token) && token.GetType() != T_PP_STATE_EXIT) {
@@ -41,6 +42,7 @@ void CxxPreProcessorScanner::GetRestOfPPLine(wxString& rest, bool collectNumberO
         }
     }
     rest.Trim(false).Trim(true);
+    return rest;
 }
 
 bool CxxPreProcessorScanner::ConsumeBlock()
@@ -170,15 +172,13 @@ void CxxPreProcessorScanner::Parse(CxxPreProcessor* pp)
         case T_PP_DEFINE: {
             if(!::LexerNext(m_scanner, token) || token.GetType() != T_PP_IDENTIFIER) {
                 // Recover
-                wxString dummy;
-                GetRestOfPPLine(dummy);
+                GetRestOfPPLine();
                 break;
             }
             wxString macroName = token.GetWXString();
 
-            wxString macroValue;
             // Optionally get the value
-            GetRestOfPPLine(macroValue, m_options & kLexerOpt_CollectMacroValueNumbers);
+            wxString macroValue = GetRestOfPPLine(m_options & kLexerOpt_CollectMacroValueNumbers);
 
             CxxPreProcessorToken pp;
             pp.name = macroName;

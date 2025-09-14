@@ -229,8 +229,8 @@ public:
     const wxString& GetLinkOptions() const { return m_commonConfig.GetLinkOptions(); }
     wxString GetLibraries() const;
     wxString GetLibPath() const;
-    void GetPreBuildCommands(BuildCommandList& cmds) { cmds = m_preBuildCommands; }
-    void GetPostBuildCommands(BuildCommandList& cmds) { cmds = m_postBuildCommands; }
+    const BuildCommandList& GetPreBuildCommands() const { return m_preBuildCommands; }
+    const BuildCommandList& GetPostBuildCommands() const { return m_postBuildCommands; }
     const wxString& GetName() const { return m_name; }
     bool IsCompilerRequired() const { return m_compilerRequired; }
     bool IsLinkerRequired() const { return m_linkerRequired; }

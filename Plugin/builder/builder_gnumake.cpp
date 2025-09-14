@@ -1061,8 +1061,7 @@ void BuilderGNUMakeClassic::CreatePostBuildEvents(ProjectPtr proj, BuildConfigPt
         return;
 
     // generate postbuild commands
-    BuildCommandList cmds;
-    bldConf->GetPostBuildCommands(cmds);
+    BuildCommandList cmds = bldConf->GetPostBuildCommands();
 
     // Loop over the commands and replace any macros
     for (BuildCommand& cmd : cmds) {
@@ -1097,10 +1096,7 @@ void BuilderGNUMakeClassic::CreatePostBuildEvents(ProjectPtr proj, BuildConfigPt
 
 bool BuilderGNUMakeClassic::HasPrebuildCommands(BuildConfigPtr bldConf) const
 {
-    BuildCommandList cmds;
-    bldConf->GetPreBuildCommands(cmds);
-
-    for (const auto& cmd : cmds) {
+    for (const auto& cmd : bldConf->GetPreBuildCommands()) {
         if (cmd.GetEnabled()) {
             return true;
         }
@@ -1110,7 +1106,6 @@ bool BuilderGNUMakeClassic::HasPrebuildCommands(BuildConfigPtr bldConf) const
 
 void BuilderGNUMakeClassic::CreatePreBuildEvents(ProjectPtr proj, BuildConfigPtr bldConf, wxString& text)
 {
-    BuildCommandList cmds;
     wxString name = bldConf->GetName();
     name = NormalizeConfigName(name);
 
@@ -1122,7 +1117,7 @@ void BuilderGNUMakeClassic::CreatePreBuildEvents(ProjectPtr proj, BuildConfigPtr
         text << bldConf->GetPreBuildCustom() << wxT("\n");
     }
     text << wxT("\n");
-    bldConf->GetPreBuildCommands(cmds);
+    BuildCommandList cmds = bldConf->GetPreBuildCommands();
 
     // Loop over the commands and replace any macros
     for (BuildCommand& cmd : cmds) {
@@ -1573,12 +1568,9 @@ wxString BuilderGNUMakeClassic::GetCdCmd(const wxFileName& path1, const wxFileNa
 
 void BuilderGNUMakeClassic::CreateCustomPostBuildEvents(BuildConfigPtr bldConf, wxString& text)
 {
-    BuildCommandList cmds;
-
-    bldConf->GetPostBuildCommands(cmds);
     bool first(true);
-    if (!cmds.empty()) {
-        for (const auto& cmd : cmds) {
+    if (!bldConf->GetPostBuildCommands().empty()) {
+        for (const auto& cmd : bldConf->GetPostBuildCommands()) {
             if (cmd.GetEnabled()) {
                 if (first) {
                     text << wxT("\t@echo Executing Post Build commands ...\n");
@@ -1595,12 +1587,9 @@ void BuilderGNUMakeClassic::CreateCustomPostBuildEvents(BuildConfigPtr bldConf, 
 
 void BuilderGNUMakeClassic::CreateCustomPreBuildEvents(BuildConfigPtr bldConf, wxString& text)
 {
-    BuildCommandList cmds;
-
-    bldConf->GetPreBuildCommands(cmds);
     bool first(true);
-    if (!cmds.empty()) {
-        for (const auto& cmd : cmds) {
+    if (!bldConf->GetPreBuildCommands().empty()) {
+        for (const auto& cmd : bldConf->GetPreBuildCommands()) {
             if (cmd.GetEnabled()) {
                 if (first) {
                     text << wxT("\t@echo Executing Pre Build commands ...\n");
@@ -1885,10 +1874,7 @@ wxString BuilderGNUMakeClassic::DoGetMarkerFileDir(const wxString& projname, con
 
 bool BuilderGNUMakeClassic::HasPostbuildCommands(BuildConfigPtr bldConf) const
 {
-    BuildCommandList cmds;
-    bldConf->GetPostBuildCommands(cmds);
-
-    for (const auto& cmd : cmds) {
+    for (const auto& cmd : bldConf->GetPostBuildCommands()) {
         if (cmd.GetEnabled()) {
             return true;
         }

@@ -72,16 +72,16 @@ void PHPProjectSettingsData::MergeWithGlobalSettings()
     PHPConfigurationData globalData;
     globalData.Load();
 
-    if(GetPhpExe().IsEmpty()) {
+    if (GetPhpExe().IsEmpty()) {
         SetPhpExe(globalData.GetPhpExe());
     }
 
     // Append the include paths (keep uniqueness)
     wxArrayString paths = ::wxStringTokenize(m_includePath, "\r\n", wxTOKEN_STRTOK);
     const wxArrayString& globalIncPaths = globalData.GetIncludePaths();
-    for(size_t i = 0; i < globalIncPaths.GetCount(); ++i) {
-        wxString path = wxFileName(globalIncPaths.Item(i), "").GetPath(wxPATH_UNIX | wxPATH_GET_VOLUME);
-        if(paths.Index(path) == wxNOT_FOUND) {
+    for (size_t i = 0; i < globalIncPaths.GetCount(); ++i) {
+        wxString path = wxFileName(globalIncPaths.Item(i), "").GetPath(wxPATH_GET_VOLUME, wxPATH_UNIX);
+        if (paths.Index(path) == wxNOT_FOUND) {
             paths.Add(path);
         }
     }
@@ -89,9 +89,9 @@ void PHPProjectSettingsData::MergeWithGlobalSettings()
     // Append the code completion paths (keep uniqueness)
     wxArrayString cc_paths = ::wxStringTokenize(m_ccIncludePath, "\r\n", wxTOKEN_STRTOK);
     const wxArrayString& globalCCIncPaths = globalData.GetCcIncludePath();
-    for(size_t i = 0; i < globalCCIncPaths.GetCount(); ++i) {
-        wxString ccpath = wxFileName(globalCCIncPaths.Item(i), "").GetPath(wxPATH_UNIX | wxPATH_GET_VOLUME);
-        if(cc_paths.Index(ccpath) == wxNOT_FOUND) {
+    for (size_t i = 0; i < globalCCIncPaths.GetCount(); ++i) {
+        wxString ccpath = wxFileName(globalCCIncPaths.Item(i), "").GetPath(wxPATH_GET_VOLUME, wxPATH_UNIX);
+        if (cc_paths.Index(ccpath) == wxNOT_FOUND) {
             cc_paths.Add(ccpath);
         }
     }
@@ -100,7 +100,8 @@ void PHPProjectSettingsData::MergeWithGlobalSettings()
     m_ccIncludePath = ::wxJoin(cc_paths, '\n');
 }
 
-wxString PHPProjectSettingsData::GetMappdPath(const wxString& sourcePath, bool useUrlScheme,
+wxString PHPProjectSettingsData::GetMappdPath(const wxString& sourcePath,
+                                              bool useUrlScheme,
                                               const wxStringMap_t& additionalMapping) const
 {
     wxFileName fnSource(sourcePath);
@@ -114,21 +115,21 @@ wxString PHPProjectSettingsData::GetMappdPath(const wxString& sourcePath, bool u
             sourceFullPath.Remove(0, p.first.length());
             sourceFullPath.Prepend(p.second + "/");
             sourceFullPath.Replace("\\", "/");
-            while(sourceFullPath.Replace("//", "/")) {}
+            while (sourceFullPath.Replace("//", "/")) {}
 
-            if(useUrlScheme) {
+            if (useUrlScheme) {
                 sourceFullPath = ::FileNameToURI(sourceFullPath);
             }
             return sourceFullPath;
         }
     }
 
-    if(useUrlScheme) {
+    if (useUrlScheme) {
 
         wxString asUrlScheme = sourcePath;
         asUrlScheme.Replace("\\", "/");
 
-        while(asUrlScheme.Replace("//", "/"))
+        while (asUrlScheme.Replace("//", "/"))
             ;
 
         asUrlScheme = ::FileNameToURI(asUrlScheme);
@@ -136,7 +137,7 @@ wxString PHPProjectSettingsData::GetMappdPath(const wxString& sourcePath, bool u
 
     } else {
         wxString filePath;
-        if(sourcePath.Contains(" ")) {
+        if (sourcePath.Contains(" ")) {
             filePath = sourcePath;
             filePath.Prepend('"').Append('"');
         }

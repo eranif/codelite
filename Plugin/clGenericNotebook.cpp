@@ -1093,7 +1093,7 @@ void clTabCtrl::DoShowTabList()
         item->Check(tab->IsActive());
         menu.Bind(
             wxEVT_MENU,
-            [=](wxCommandEvent& event) {
+            [=, this](wxCommandEvent& event) {
                 clGenericNotebook* book = dynamic_cast<clGenericNotebook*>(this->GetParent());
                 int newSelection = book->GetPageIndex(pWindow);
                 if (newSelection != curselection) {

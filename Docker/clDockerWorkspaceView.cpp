@@ -19,7 +19,9 @@ clDockerWorkspaceView::clDockerWorkspaceView(wxWindow* parent)
     clDockerSettings settings;
     size_t options = 0;
     settings.Load();
-    if(settings.IsLinkEditor()) { options |= kLinkToEditor; }
+    if (settings.IsLinkEditor()) {
+        options |= kLinkToEditor;
+    }
     SetOptions(options);
 
     SetViewName("Docker");
@@ -54,7 +56,7 @@ void clDockerWorkspaceView::OnWorkspaceClosed(clWorkspaceEvent& event)
 void clDockerWorkspaceView::OnWorkspaceOpened(clWorkspaceEvent& event)
 {
     event.Skip();
-    if(clDockerWorkspace::Get()->IsOpen()) {
+    if (clDockerWorkspace::Get()->IsOpen()) {
         wxFileName workspaceFile(event.GetString());
         AddFolder(workspaceFile.GetPath());
     }
@@ -63,14 +65,18 @@ void clDockerWorkspaceView::OnWorkspaceOpened(clWorkspaceEvent& event)
 void clDockerWorkspaceView::OnFileContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
-    if(event.GetEventObject() != this) { return; }
+    if (event.GetEventObject() != this) {
+        return;
+    }
     const wxArrayString& contextMenuFiles = event.GetStrings();
-    if(contextMenuFiles.size() != 1) { return; }
+    if (contextMenuFiles.size() != 1) {
+        return;
+    }
 
     wxFileName fn(contextMenuFiles.Item(0));
-    if(fn.GetFullName() == "Dockerfile") {
+    if (fn.GetFullName() == "Dockerfile") {
         DoDockerfileContextMenu(event.GetMenu(), contextMenuFiles.Item(0));
-    } else if(fn.GetFullName() == "docker-compose.yml") {
+    } else if (fn.GetFullName() == "docker-compose.yml") {
         DoDockerComposeContextMenu(event.GetMenu(), contextMenuFiles.Item(0));
     }
 }
@@ -82,31 +88,43 @@ void clDockerWorkspaceView::DoDockerfileContextMenu(wxMenu* menu, const wxString
     menu->Prepend(XRCID("build_dockerfile"), _("Build..."));
     menu->AppendSeparator();
     menu->Append(XRCID("ID_DOCKERFILE_SETTINGS"), _("Settings..."));
-    menu->Bind(wxEVT_MENU,
-               [=](wxCommandEvent& evt) {
-                   // Context menu requested for a "Dockerfile"
-                   clDockerBuildableFile::Ptr_t fileInfo;
-                   clDockerWorkspaceSettings& settings = clDockerWorkspace::Get()->GetSettings();
+    menu->Bind(
+        wxEVT_MENU,
+        [=, this](wxCommandEvent& evt) {
+            // Context menu requested for a "Dockerfile"
+            clDockerBuildableFile::Ptr_t fileInfo;
+            clDockerWorkspaceSettings& settings = clDockerWorkspace::Get()->GetSettings();
 
-                   wxArrayString folders, files;
-                   GetSelections(folders, files);
-                   if(files.size() != 1) { return; }
+            wxArrayString folders, files;
+            GetSelections(folders, files);
+            if (files.size() != 1) {
+                return;
+            }
 
-                   fileInfo = settings.GetFileInfo(files.Item(0));
-                   if(!fileInfo) { fileInfo = clDockerBuildableFile::New(eDockerFileType::kDockerfile); }
-                   if(fileInfo->GetType() != eDockerFileType::kDockerfile) return;
+            fileInfo = settings.GetFileInfo(files.Item(0));
+            if (!fileInfo) {
+                fileInfo = clDockerBuildableFile::New(eDockerFileType::kDockerfile);
+            }
+            if (fileInfo->GetType() != eDockerFileType::kDockerfile)
+                return;
 
-                   fileInfo->SetPath(files.Item(0));
-                   DockerfileSettingsDlg dlg(EventNotifier::Get()->TopFrame(), fileInfo);
-                   if(dlg.ShowModal() != wxID_OK) { return; }
-                   settings.SetFileInfo(files.Item(0), fileInfo);
-                   settings.Save(clDockerWorkspace::Get()->GetFileName());
-               },
-               XRCID("ID_DOCKERFILE_SETTINGS"));
-    menu->Bind(wxEVT_MENU, [=](wxCommandEvent& evt) { clDockerWorkspace::Get()->BuildDockerfile(dockerfile); },
-               XRCID("build_dockerfile"));
-    menu->Bind(wxEVT_MENU, [=](wxCommandEvent& evt) { clDockerWorkspace::Get()->RunDockerfile(dockerfile); },
-               XRCID("run_dockerfile"));
+            fileInfo->SetPath(files.Item(0));
+            DockerfileSettingsDlg dlg(EventNotifier::Get()->TopFrame(), fileInfo);
+            if (dlg.ShowModal() != wxID_OK) {
+                return;
+            }
+            settings.SetFileInfo(files.Item(0), fileInfo);
+            settings.Save(clDockerWorkspace::Get()->GetFileName());
+        },
+        XRCID("ID_DOCKERFILE_SETTINGS"));
+    menu->Bind(
+        wxEVT_MENU,
+        [=](wxCommandEvent& evt) { clDockerWorkspace::Get()->BuildDockerfile(dockerfile); },
+        XRCID("build_dockerfile"));
+    menu->Bind(
+        wxEVT_MENU,
+        [=](wxCommandEvent& evt) { clDockerWorkspace::Get()->RunDockerfile(dockerfile); },
+        XRCID("run_dockerfile"));
 }
 
 void clDockerWorkspaceView::DoDockerComposeContextMenu(wxMenu* menu, const wxString& docker_compose)
@@ -116,37 +134,49 @@ void clDockerWorkspaceView::DoDockerComposeContextMenu(wxMenu* menu, const wxStr
     menu->Prepend(XRCID("build_dockerfile"), _("Build..."));
     menu->AppendSeparator();
     menu->Append(XRCID("ID_DOCKERFILE_SETTINGS"), _("Settings..."));
-    menu->Bind(wxEVT_MENU,
-               [=](wxCommandEvent& evt) {
-                   // Context menu requested for a "Dockerfile"
-                   clDockerBuildableFile::Ptr_t fileInfo;
-                   clDockerWorkspaceSettings& settings = clDockerWorkspace::Get()->GetSettings();
+    menu->Bind(
+        wxEVT_MENU,
+        [=, this](wxCommandEvent& evt) {
+            // Context menu requested for a "Dockerfile"
+            clDockerBuildableFile::Ptr_t fileInfo;
+            clDockerWorkspaceSettings& settings = clDockerWorkspace::Get()->GetSettings();
 
-                   wxArrayString folders, files;
-                   GetSelections(folders, files);
-                   if(files.size() != 1) { return; }
+            wxArrayString folders, files;
+            GetSelections(folders, files);
+            if (files.size() != 1) {
+                return;
+            }
 
-                   fileInfo = settings.GetFileInfo(files.Item(0));
-                   if(!fileInfo) { fileInfo = clDockerBuildableFile::New(eDockerFileType::kDockerCompose); }
-                   if(fileInfo->GetType() != eDockerFileType::kDockerCompose) return;
+            fileInfo = settings.GetFileInfo(files.Item(0));
+            if (!fileInfo) {
+                fileInfo = clDockerBuildableFile::New(eDockerFileType::kDockerCompose);
+            }
+            if (fileInfo->GetType() != eDockerFileType::kDockerCompose)
+                return;
 
-                   fileInfo->SetPath(files.Item(0));
-                   DockerfileSettingsDlg dlg(EventNotifier::Get()->TopFrame(), fileInfo);
-                   if(dlg.ShowModal() != wxID_OK) { return; }
-                   settings.SetFileInfo(files.Item(0), fileInfo);
-                   settings.Save(clDockerWorkspace::Get()->GetFileName());
-               },
-               XRCID("ID_DOCKERFILE_SETTINGS"));
-    menu->Bind(wxEVT_MENU, [=](wxCommandEvent& evt) { clDockerWorkspace::Get()->BuildDockerCompose(docker_compose); },
-               XRCID("build_dockerfile"));
-    menu->Bind(wxEVT_MENU, [=](wxCommandEvent& evt) { clDockerWorkspace::Get()->RunDockerCompose(docker_compose); },
-               XRCID("run_dockerfile"));
+            fileInfo->SetPath(files.Item(0));
+            DockerfileSettingsDlg dlg(EventNotifier::Get()->TopFrame(), fileInfo);
+            if (dlg.ShowModal() != wxID_OK) {
+                return;
+            }
+            settings.SetFileInfo(files.Item(0), fileInfo);
+            settings.Save(clDockerWorkspace::Get()->GetFileName());
+        },
+        XRCID("ID_DOCKERFILE_SETTINGS"));
+    menu->Bind(
+        wxEVT_MENU,
+        [=](wxCommandEvent& evt) { clDockerWorkspace::Get()->BuildDockerCompose(docker_compose); },
+        XRCID("build_dockerfile"));
+    menu->Bind(
+        wxEVT_MENU,
+        [=](wxCommandEvent& evt) { clDockerWorkspace::Get()->RunDockerCompose(docker_compose); },
+        XRCID("run_dockerfile"));
 }
 
 void clDockerWorkspaceView::OnFindInFilesDismissed(clFindInFilesEvent& event)
 {
     event.Skip();
-    if(clDockerWorkspace::Get()->IsOpen()) {
+    if (clDockerWorkspace::Get()->IsOpen()) {
         clConfig::Get().Write("FindInFiles/Docker/Mask", event.GetFileMask());
         clConfig::Get().Write("FindInFiles/Docker/LookIn", event.GetPaths());
     }
@@ -156,7 +186,7 @@ void clDockerWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& event)
 {
     event.Skip();
     clTreeCtrlPanel::OnFindInFilesShowing(event);
-    if(clDockerWorkspace::Get()->IsOpen()) {
+    if (clDockerWorkspace::Get()->IsOpen()) {
         // store the find in files mask
         // Load the Docker workspace values from the configuration
         wxString mask = "Dockerfile;docker-compose.yml;*.txt";

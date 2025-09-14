@@ -40,7 +40,7 @@ FileLogger& operator<<(FileLogger& logger, const TagEntry& tag)
 
 FileLogger& operator<<(FileLogger& logger, const std::vector<TagEntryPtr>& tags)
 {
-    for(const auto& tag : tags) {
+    for (const auto& tag : tags) {
         logger << (*tag) << endl;
     }
     return logger;
@@ -50,7 +50,7 @@ void remove_db_if_needed(const wxString& dbpath)
 {
     ITagsStoragePtr db(new TagsStorageSQLite());
     db->OpenDatabase(dbpath);
-    if(db->GetVersion() != db->GetSchemaVersion()) {
+    if (db->GetVersion() != db->GetSchemaVersion()) {
         clSYSTEM() << "DB version schema upgrade is required" << endl;
         clSYSTEM() << "New schema version is:" << db->GetVersion() << endl;
         clSYSTEM() << "Current schema version is:" << db->GetSchemaVersion() << endl;
@@ -64,8 +64,8 @@ void remove_db_if_needed(const wxString& dbpath)
 inline size_t count_lines(const wxString& content)
 {
     size_t lf_count = 0;
-    for(wxChar c : content) {
-        if(c == '\n') {
+    for (wxChar c : content) {
+        if (c == '\n') {
             lf_count++;
         }
     }
@@ -83,24 +83,24 @@ void filter_non_important_files(wxArrayString& files, const CTagsdSettings& sett
     // filter non c/c++ files
     wxArrayString ignore_spec = ::wxStringTokenize(settings.GetIgnoreSpec(), ";", wxTOKEN_STRTOK);
     auto should_skip_file = [&](const wxString& file_full_path) -> bool {
-        for(const wxString& spec : ignore_spec) {
-            if(file_full_path.Contains(spec)) {
+        for (const wxString& spec : ignore_spec) {
+            if (file_full_path.Contains(spec)) {
                 return true;
             }
         }
         return false;
     };
 
-    for(wxString& file : files) {
+    for (wxString& file : files) {
 
         file.Trim().Trim(false);
         wxFileName fn(file);
         wxString fullpath = fn.GetFullPath(wxPATH_UNIX);
-        if(should_skip_file(fullpath)) {
+        if (should_skip_file(fullpath)) {
             continue;
         }
 
-        if(FileExtManager::IsCxxFile(file)) {
+        if (FileExtManager::IsCxxFile(file)) {
             tmparr.Add(file);
         }
     }
@@ -134,7 +134,7 @@ size_t read_file_list(const wxString& settings_dir, const CTagsdSettings& settin
 {
     arr.clear();
     wxFileName file_list(settings_dir, "file_list.txt");
-    if(file_list.FileExists()) {
+    if (file_list.FileExists()) {
         wxString file_list_content;
         FileUtils::ReadFileContent(file_list, file_list_content);
         wxArrayString files = wxStringTokenize(file_list_content, "\n", wxTOKEN_STRTOK);
@@ -178,7 +178,7 @@ void ProtocolHandler::parse_buffer(const wxFileName& filename, const wxString& b
 
     // create/open db
     wxFileName dbfile(settings.GetSettingsDir(), "tags.db");
-    if(!dbfile.FileExists()) {
+    if (!dbfile.FileExists()) {
         clDEBUG() << dbfile << "does not exist, will create it" << endl;
     }
     ITagsStoragePtr db(new TagsStorageSQLite());
@@ -186,7 +186,7 @@ void ProtocolHandler::parse_buffer(const wxFileName& filename, const wxString& b
     clDEBUG() << "Generating ctags file..." << endl;
 
     std::vector<TagEntryPtr> tags;
-    if(CTags::ParseBuffer(filename, buffer, settings.GetCodeliteIndexer(), settings.GetMacroTable(), tags) == 0) {
+    if (CTags::ParseBuffer(filename, buffer, settings.GetCodeliteIndexer(), settings.GetMacroTable(), tags) == 0) {
         clDEBUG() << "Failed to generate ctags file for buffer. file:" << endl;
         return;
     }
@@ -198,7 +198,7 @@ void ProtocolHandler::parse_buffer(const wxFileName& filename, const wxString& b
     time_t update_time = time(nullptr);
     db->Store(tags, false);
 
-    if(db->InsertFileEntry(filename.GetFullPath(), (int)update_time) == TagExist) {
+    if (db->InsertFileEntry(filename.GetFullPath(), (int)update_time) == TagExist) {
         db->UpdateFileEntry(filename.GetFullPath(), (int)update_time);
     }
 
@@ -209,15 +209,17 @@ void ProtocolHandler::parse_buffer(const wxFileName& filename, const wxString& b
 
 void ProtocolHandler::parse_file(const wxFileName& filename, const CTagsdSettings& settings)
 {
-    parse_files({ filename.GetFullPath() }, settings);
+    parse_files({filename.GetFullPath()}, settings);
 }
 
-void ProtocolHandler::do_parse_chunk(ITagsStoragePtr db, const std::vector<wxString>& file_list, size_t chunk_id,
+void ProtocolHandler::do_parse_chunk(ITagsStoragePtr db,
+                                     const std::vector<wxString>& file_list,
+                                     size_t chunk_id,
                                      const CTagsdSettings& settings)
 {
     std::vector<TagEntryPtr> tags;
     LOG_IF_DEBUG { clDEBUG() << "Parsing chunk (" << chunk_id << ") of" << file_list.size() << "files" << endl; }
-    if(CTags::ParseFiles(file_list, settings.GetCodeliteIndexer(), settings.GetMacroTable(), tags) == 0) {
+    if (CTags::ParseFiles(file_list, settings.GetCodeliteIndexer(), settings.GetMacroTable(), tags) == 0) {
         clDEBUG() << "0 tags generated. processed:" << file_list.size()
                   << "files. Indexer:" << settings.GetCodeliteIndexer() << endl;
         return;
@@ -237,8 +239,8 @@ void ProtocolHandler::do_parse_chunk(ITagsStoragePtr db, const std::vector<wxStr
     // update the files table in the database
     // we do this here, since some files might not yield tags
     // but we still want to mark them as "parsed"
-    for(const wxString& file : file_list) {
-        if(db->InsertFileEntry(file, (int)update_time) == TagExist) {
+    for (const wxString& file : file_list) {
+        if (db->InsertFileEntry(file, (int)update_time) == TagExist) {
             db->UpdateFileEntry(file, (int)update_time);
         }
     }
@@ -253,7 +255,7 @@ void ProtocolHandler::parse_files(const std::vector<wxString>& file_list, const 
     clDEBUG() << "Removing un-modified and unwanted files..." << endl;
     // create/open db
     wxFileName dbfile(settings.GetSettingsDir(), "tags.db");
-    if(!dbfile.FileExists()) {
+    if (!dbfile.FileExists()) {
         clDEBUG() << dbfile << "does not exist, will create it" << endl;
     }
     ITagsStoragePtr db(new TagsStorageSQLite());
@@ -261,16 +263,16 @@ void ProtocolHandler::parse_files(const std::vector<wxString>& file_list, const 
 
     wxArrayString files_to_parse;
     files_to_parse.reserve(file_list.size());
-    for(const wxString& file : file_list) {
+    for (const wxString& file : file_list) {
         files_to_parse.Add(file);
     }
 
     TagsManagerST::Get()->FilterNonNeededFilesForRetaging(files_to_parse, db);
-    std::vector<wxString> filtered_file_list = { files_to_parse.begin(), files_to_parse.end() };
+    std::vector<wxString> filtered_file_list = {files_to_parse.begin(), files_to_parse.end()};
     clDEBUG() << "There are total of" << filtered_file_list.size() << "files that require parsing" << endl;
     clDEBUG() << "Generating ctags file..." << endl;
 
-    if(filtered_file_list.empty()) {
+    if (filtered_file_list.empty()) {
         return;
     }
 
@@ -279,21 +281,21 @@ void ProtocolHandler::parse_files(const std::vector<wxString>& file_list, const 
     size_t chunk_size = 2500;
     size_t chunk_count = filtered_file_list.size() / chunk_size + 1;
     clDEBUG() << "Parsing" << filtered_file_list.size() << "files..." << endl;
-    for(size_t i = 0; i < chunk_count; ++i) {
+    for (size_t i = 0; i < chunk_count; ++i) {
         // determine the start/end iterators for each range
         size_t start_offset = i * chunk_size;
         auto iter_start = filtered_file_list.begin() + start_offset;
-        if(iter_start == filtered_file_list.end())
+        if (iter_start == filtered_file_list.end())
             // last chunk is empty...
             // this can happen when our initial file list size divides by 1000
             // with 0 remainder
             break;
 
         auto iter_end = iter_start + chunk_size;
-        if((start_offset + chunk_size) > filtered_file_list.size()) {
+        if ((start_offset + chunk_size) > filtered_file_list.size()) {
             iter_end = filtered_file_list.end();
         }
-        std::vector<wxString> chunk_vec{ iter_start, iter_end };
+        std::vector<wxString> chunk_vec{iter_start, iter_end};
         do_parse_chunk(db, chunk_vec, i, settings);
     }
     clDEBUG() << "Success" << endl;
@@ -303,21 +305,21 @@ std::vector<wxString> ProtocolHandler::update_additional_scopes_for_file(const w
 {
     // we need to visit each node in the file graph and create a set of all the namespaces
     std::vector<wxString> additional_scopes;
-    if(m_additional_scopes.count(filepath)) {
+    if (m_additional_scopes.count(filepath)) {
         additional_scopes = m_additional_scopes[filepath];
     } else {
         wxStringSet_t visited;
         wxStringSet_t ns;
         std::vector<wxString> Q;
         Q.push_back(filepath);
-        while(!Q.empty()) {
+        while (!Q.empty()) {
             // pop the front of queue
             wxString file = Q.front();
             Q.erase(Q.begin());
 
             // sanity
-            if(m_parsed_files_info.count(file) == 0 // no info for this file
-               || visited.count(file))              // already visited this file
+            if (m_parsed_files_info.count(file) == 0 // no info for this file
+                || visited.count(file))              // already visited this file
             {
                 continue;
             }
@@ -333,13 +335,13 @@ std::vector<wxString> ProtocolHandler::update_additional_scopes_for_file(const w
 
         additional_scopes.insert(additional_scopes.end(), ns.begin(), ns.end());
         // cache the result
-        m_additional_scopes.insert({ filepath, additional_scopes });
+        m_additional_scopes.insert({filepath, additional_scopes});
     }
     clDEBUG() << "Setting additional scopes for file:" << filepath << endl;
     clDEBUG() << "Scopes:" << additional_scopes << endl;
-    auto where = find_if(additional_scopes.begin(), additional_scopes.end(),
-                         [](const wxString& scope) { return scope.empty(); });
-    if(where == additional_scopes.end()) {
+    auto where = find_if(
+        additional_scopes.begin(), additional_scopes.end(), [](const wxString& scope) { return scope.empty(); });
+    if (where == additional_scopes.end()) {
         // no globl scope, add it
         additional_scopes.push_back(wxEmptyString);
     }
@@ -348,13 +350,13 @@ std::vector<wxString> ProtocolHandler::update_additional_scopes_for_file(const w
 
 bool ProtocolHandler::ensure_file_content_exists(const wxString& filepath, Channel::ptr_t channel, size_t req_id)
 {
-    if(m_filesOpened.count(filepath) == 0) {
+    if (m_filesOpened.count(filepath) == 0) {
         // check if this file exists on the file system -> and load it instead of complaining about it
         wxString file_content;
-        if(!wxFileExists(filepath) || !FileUtils::ReadFileContent(filepath, file_content)) {
+        if (!wxFileExists(filepath) || !FileUtils::ReadFileContent(filepath, file_content)) {
             clWARNING() << "File:" << filepath << "is not opened" << endl;
-            send_log_message(wxString() << _("File: `") << filepath << _("` is not opened on the server"),
-                             LSP_LOG_WARNING, channel);
+            send_log_message(
+                wxString() << _("File: `") << filepath << _("` is not opened on the server"), LSP_LOG_WARNING, channel);
 
             JSON root(cJSON_Object);
             auto response = root.toElement();
@@ -365,7 +367,7 @@ bool ProtocolHandler::ensure_file_content_exists(const wxString& filepath, Chann
 
         // update the cache
         clDEBUG() << "Updated cache with non existing file:" << filepath << "is not opened" << endl;
-        m_filesOpened.insert({ filepath, file_content });
+        m_filesOpened.insert({filepath, file_content});
     }
     return true;
 }
@@ -373,7 +375,7 @@ bool ProtocolHandler::ensure_file_content_exists(const wxString& filepath, Chann
 void ProtocolHandler::update_comments_for_file(const wxString& filepath)
 {
     wxString file_content;
-    if(FileUtils::ReadFileContent(filepath, file_content)) {
+    if (FileUtils::ReadFileContent(filepath, file_content)) {
         update_comments_for_file(filepath, file_content);
     }
 }
@@ -381,30 +383,30 @@ void ProtocolHandler::update_comments_for_file(const wxString& filepath)
 void ProtocolHandler::update_comments_for_file(const wxString& filepath, const wxString& file_content)
 {
     m_comments_cache.erase(filepath);
-    if(file_content.empty()) {
+    if (file_content.empty()) {
         return;
     }
 
     SimpleTokenizer tokenizer(file_content);
     SimpleTokenizer::Token token;
     CachedComment::Map_t file_cache;
-    while(tokenizer.next_comment(&token)) {
+    while (tokenizer.next_comment(&token)) {
         wxString comment = token.to_string(file_content);
         tokenizer.strip_comment(comment);
-        file_cache.insert({ token.line(), comment });
+        file_cache.insert({token.line(), comment});
     }
-    m_comments_cache.insert({ filepath, file_cache });
+    m_comments_cache.insert({filepath, file_cache});
 }
 
 const wxString& ProtocolHandler::get_comment(const wxString& filepath, long line, const wxString& default_value) const
 {
-    if(m_comments_cache.count(filepath) == 0) {
+    if (m_comments_cache.count(filepath) == 0) {
         return default_value;
     }
     const auto& M = m_comments_cache.find(filepath)->second;
     // try to find a comment, 1 or 2 lines above the requested line
-    for(long curline = line; curline > (line - 3); --curline) {
-        if(M.count(curline)) {
+    for (long curline = line; curline > (line - 3); --curline) {
+        if (M.count(curline)) {
             return M.find(curline)->second;
         }
     }
@@ -482,7 +484,7 @@ void ProtocolHandler::on_initialize(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
 
     // build the workspace file list
     wxArrayString files;
-    if(read_file_list(m_settings_folder, m_settings, files) == 0) {
+    if (read_file_list(m_settings_folder, m_settings, files) == 0) {
         // try the scan dir
         scan_dir(m_root_folder, m_settings, files);
     }
@@ -500,7 +502,7 @@ void ProtocolHandler::on_initialize(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
     remove_db_if_needed(fn_db_path.GetFullPath());
 
     wxString indexer_path = m_settings.GetCodeliteIndexer();
-    std::vector<wxString> files_to_parse = { files.begin(), files.end() };
+    std::vector<wxString> files_to_parse = {files.begin(), files.end()};
     clDEBUG() << "on_initialize(): parsing files..." << endl;
     ProtocolHandler::parse_files(files_to_parse, m_settings);
     clDEBUG() << "on_initialize(): parsing files... Success" << endl;
@@ -560,7 +562,7 @@ void ProtocolHandler::on_did_open(std::unique_ptr<JSON>&& msg, Channel::ptr_t ch
     parse_file(filepath, m_settings);
 
     // keep the file content in-cache
-    m_filesOpened.insert({ filepath, file_content });
+    m_filesOpened.insert({filepath, file_content});
 }
 
 // Notification -->
@@ -594,7 +596,7 @@ void ProtocolHandler::on_did_change(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
     // Check if a real change was made that requires parsing
     size_t line_count_before = 0;
     size_t line_count_after = 0;
-    if(m_filesOpened.count(filepath)) {
+    if (m_filesOpened.count(filepath)) {
         line_count_before = count_lines(m_filesOpened[filepath]);
     }
     wxString file_content = json["params"]["contentChanges"][0]["text"].toString();
@@ -604,7 +606,7 @@ void ProtocolHandler::on_did_change(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
     clDEBUG() << "textDocument/didChange: caching new content for file:" << filepath << endl;
     m_filesOpened.erase(filepath);
     m_comments_cache.erase(filepath);
-    m_filesOpened.insert({ filepath, file_content });
+    m_filesOpened.insert({filepath, file_content});
     clDEBUG() << "Updating content for file:" << filepath << endl;
 
     // we compare the preamble of both before and after the file
@@ -618,23 +620,23 @@ void ProtocolHandler::on_did_change(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
     const auto& curr_preabmle = m_parsed_files_info[filepath].included_files;
     auto diff = setdiff(curr_preabmle, prev_preamble);
     wxArrayString new_includes;
-    if(!diff.empty()) {
+    if (!diff.empty()) {
         // curr_preabmle contains new headers that do not exist in the
         // previous preamble - parse them
         wxArrayString tmp;
-        for(const auto& header_file : diff) {
+        for (const auto& header_file : diff) {
             tmp.Add(header_file);
         }
         new_includes = get_files_to_parse(tmp);
         clDEBUG() << "Need to parse these new file:" << new_includes << endl;
     }
 
-    if(line_count_before != line_count_after || !new_includes.empty()) {
+    if (line_count_before != line_count_after || !new_includes.empty()) {
         // parse the file buffer
         clDEBUG() << "Re-parsing file:" << filepath << endl;
         wxString indexer_path = m_settings.GetCodeliteIndexer();
         wxString settings_folder = m_settings_folder;
-        ParseThreadTaskFunc buffer_parse_task = [=]() {
+        ParseThreadTaskFunc buffer_parse_task = [=, this]() {
             clDEBUG() << "on_did_change(): parsing file task" << filepath << endl;
             ProtocolHandler::parse_buffer(filepath, file_content, m_settings);
             clDEBUG() << "on_did_change(): parsing file task ... Success" << endl;
@@ -644,9 +646,9 @@ void ProtocolHandler::on_did_change(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
         m_parse_thread.queue_parse_request(std::move(buffer_parse_task));
 
         // parse the files included by this file
-        if(!new_includes.empty()) {
-            std::vector<wxString> includes_to_parse{ new_includes.begin(), new_includes.end() };
-            ParseThreadTaskFunc headers_parse_task = [=]() {
+        if (!new_includes.empty()) {
+            std::vector<wxString> includes_to_parse{new_includes.begin(), new_includes.end()};
+            ParseThreadTaskFunc headers_parse_task = [=, this]() {
                 clDEBUG() << "on_did_change(): parsing header files" << includes_to_parse << endl;
                 ProtocolHandler::parse_files(includes_to_parse, m_settings);
                 clDEBUG() << "on_did_change(): parsing header files ... Success" << endl;
@@ -659,7 +661,10 @@ void ProtocolHandler::on_did_change(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
     }
 }
 
-wxString ProtocolHandler::minimize_buffer(const wxString& filepath, int line, int character, const wxString& src_string,
+wxString ProtocolHandler::minimize_buffer(const wxString& filepath,
+                                          int line,
+                                          int character,
+                                          const wxString& src_string,
                                           CompletionHelper::eTruncateStyle flag)
 {
     // optimization: since we know that the file was saved
@@ -671,12 +676,12 @@ wxString ProtocolHandler::minimize_buffer(const wxString& filepath, int line, in
     wxString truncated_text;
     wxString text;
     auto curr_function_tag = m_completer->get_current_function_tag();
-    if(curr_function_tag) {
+    if (curr_function_tag) {
         // remove all the text from the start of text -> scope starting position
         const wxString& orig_text = m_filesOpened[filepath];
 
         wxArrayString lines = ::wxStringTokenize(orig_text, "\n", wxTOKEN_RET_EMPTY_ALL);
-        if((size_t)curr_function_tag->GetLine() < lines.size()) {
+        if ((size_t)curr_function_tag->GetLine() < lines.size()) {
             line -= curr_function_tag->GetLine() - 1;
             lines.erase(lines.begin(), lines.begin() + curr_function_tag->GetLine() - 1);
             truncated_text = wxJoin(lines, '\n');
@@ -705,7 +710,7 @@ void ProtocolHandler::on_completion(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
     wxString filepath = json["params"]["textDocument"]["uri"].toString();
     filepath = wxFileSystem::URLToFileName(filepath).GetFullPath();
 
-    if(!ensure_file_content_exists(filepath, channel, id))
+    if (!ensure_file_content_exists(filepath, channel, id))
         return;
 
     int line = json["params"]["position"]["line"].toInt(0);
@@ -722,7 +727,7 @@ void ProtocolHandler::on_completion(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
     std::vector<TagEntryPtr> candidates;
 
     wxArrayString lines = ::wxStringTokenize(full_buffer, "\n", wxTOKEN_RET_EMPTY_ALL);
-    if(line < (int)lines.size()) {
+    if (line < (int)lines.size()) {
         wxString requested_line = lines[line];
         requested_line.Trim();
 
@@ -730,7 +735,7 @@ void ProtocolHandler::on_completion(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
         is_include_completion = helper.is_line_include_statement(requested_line, &file_name, &suffix);
     }
 
-    if(is_include_completion) {
+    if (is_include_completion) {
         // provide a list of files for code completion
         clDEBUG() << "File Completion:" << filepath << endl;
         m_completer->get_file_completions(file_name, candidates, suffix);
@@ -756,7 +761,7 @@ void ProtocolHandler::on_completion(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
         std::vector<wxString> visible_scopes = update_additional_scopes_for_file(filepath);
         LOG_IF_DEBUG { clDEBUG() << "  -<-- update_additional_scopes_for_file() " << endl; }
 
-        if(is_trigger_char) {
+        if (is_trigger_char) {
             // ----------------------------------
             // code completion
             // ----------------------------------
@@ -771,18 +776,18 @@ void ProtocolHandler::on_completion(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
             TagEntryPtr resolved = m_completer->code_complete(expression, visible_scopes, &remainder);
             LOG_IF_DEBUG { clDEBUG() << "  <-- m_completer->code_complete() " << endl; }
 
-            if(resolved) {
+            if (resolved) {
                 LOG_IF_DEBUG
                 {
                     clDEBUG() << "resolved into:" << resolved->GetPath() << endl;
                     clDEBUG() << "filter:" << remainder.filter << endl;
                 }
-                m_completer->get_completions(resolved, remainder.operand_string, remainder.filter, candidates,
-                                             visible_scopes);
+                m_completer->get_completions(
+                    resolved, remainder.operand_string, remainder.filter, candidates, visible_scopes);
             }
             LOG_IF_DEBUG { clDEBUG() << "Number of completion entries:" << candidates.size() << endl; }
             LOG_IF_TRACE { clDEBUG1() << candidates << endl; }
-        } else if(is_function_calltip) {
+        } else if (is_function_calltip) {
             // TODO:
             // function calltip
         } else {
@@ -791,17 +796,17 @@ void ProtocolHandler::on_completion(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
             // ----------------------------------
             wxStringSet_t visible_files;
             get_includes_recursively(filepath, &visible_files);
-            m_completer->word_complete(filepath, line, expression, minimized_buffer, visible_scopes, false, candidates,
-                                       visible_files);
+            m_completer->word_complete(
+                filepath, line, expression, minimized_buffer, visible_scopes, false, candidates, visible_files);
         }
     }
 
-    if(!candidates.empty()) {
+    if (!candidates.empty()) {
         // ensure all relevant files have been parsed for comments
         clDEBUG() << "Updating comments for matches..." << endl;
-        for(auto tag : candidates) {
+        for (auto tag : candidates) {
             wxFileName fn(tag->GetFile());
-            if(!do_comments_exist_for_file(fn.GetFullPath())) {
+            if (!do_comments_exist_for_file(fn.GetFullPath())) {
                 update_comments_for_file(fn.GetFullPath());
             }
         }
@@ -817,8 +822,8 @@ void ProtocolHandler::on_completion(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
         // send them over the client
         // truncate the list the match the requested settings
         size_t counter = 0;
-        for(TagEntryPtr tag : candidates) {
-            if(counter >= m_settings.GetLimitResults()) {
+        for (TagEntryPtr tag : candidates) {
+            if (counter >= m_settings.GetLimitResults()) {
                 clDEBUG() << "truncated completion list to:" << m_settings.GetLimitResults()
                           << "(original list size was:" << candidates.size() << ")" << endl;
                 break;
@@ -863,7 +868,7 @@ void ProtocolHandler::on_did_save(std::unique_ptr<JSON>&& msg, Channel::ptr_t ch
     clDEBUG() << "new file content size is:" << file_content.size() << endl;
 
     m_filesOpened.erase(filepath);
-    m_filesOpened.insert({ filepath, file_content });
+    m_filesOpened.insert({filepath, file_content});
 
     // update the file using namespace
     clDEBUG() << "did_save: collecting files to parse..." << endl;
@@ -884,7 +889,7 @@ void ProtocolHandler::on_did_save(std::unique_ptr<JSON>&& msg, Channel::ptr_t ch
     // parse this file (async)
     wxString indexer_path = m_settings.GetCodeliteIndexer();
     wxString settings_folder = m_settings_folder;
-    ParseThreadTaskFunc task = [=]() {
+    ParseThreadTaskFunc task = [=, this]() {
         clDEBUG() << "on_did_save: parsing task:" << files.size() << "files..." << endl;
         ProtocolHandler::parse_files(files, m_settings);
         clDEBUG() << "on_did_save: parsing task: ... Success!" << endl;
@@ -902,7 +907,7 @@ namespace
 {
 void add_to_locals_set(const wxString& name, wxStringSet_t& locals, wxStringSet_t& types)
 {
-    if(types.count(name)) {
+    if (types.count(name)) {
         types.erase(name);
     }
     locals.insert(name);
@@ -910,7 +915,7 @@ void add_to_locals_set(const wxString& name, wxStringSet_t& locals, wxStringSet_
 
 void add_to_types_set(const wxString& name, wxStringSet_t& types, const wxStringSet_t& locals)
 {
-    if(locals.count(name)) {
+    if (locals.count(name)) {
         return;
     }
     types.insert(name);
@@ -931,29 +936,29 @@ void ProtocolHandler::on_semantic_tokens(std::unique_ptr<JSON>&& msg, Channel::p
     std::vector<TagEntryPtr> tags;
 
     // get list of local tags
-    CTags::ParseLocals(filepath, m_filesOpened[filepath], m_settings.GetCodeliteIndexer(), m_settings.GetMacroTable(),
-                       tags);
+    CTags::ParseLocals(
+        filepath, m_filesOpened[filepath], m_settings.GetCodeliteIndexer(), m_settings.GetMacroTable(), tags);
 
     LOG_IF_TRACE { clDEBUG1() << "File tags:" << tags.size() << endl; }
     wxStringSet_t locals_set;
     wxStringSet_t types_set;
 
-    for(auto tag : tags) {
-        if(tag->IsLocalVariable() || tag->IsParameter() || tag->IsMember()) {
+    for (auto tag : tags) {
+        if (tag->IsLocalVariable() || tag->IsParameter() || tag->IsMember()) {
             wxString type = tag->GetTypename();
             auto parts = wxStringTokenize(type, ":", wxTOKEN_STRTOK);
-            for(const wxString& part : parts) {
+            for (const wxString& part : parts) {
                 add_to_types_set(part, types_set, locals_set);
             }
             add_to_locals_set(tag->GetName(), locals_set, types_set);
-        } else if(tag->IsMethod()) {
+        } else if (tag->IsMethod()) {
             const wxString& path = tag->GetPath();
             auto parts = wxStringTokenize(path, ":", wxTOKEN_STRTOK);
-            if(!parts.empty()) {
+            if (!parts.empty()) {
                 // the last part is the method name, we don't want to include it
                 parts.pop_back();
             }
-            for(const wxString& part : parts) {
+            for (const wxString& part : parts) {
                 add_to_types_set(part, types_set, locals_set);
             }
 
@@ -961,11 +966,11 @@ void ProtocolHandler::on_semantic_tokens(std::unique_ptr<JSON>&& msg, Channel::p
             wxString signature = tag->GetSignature();
             CxxVariableScanner scanner(signature, eCxxStandard::kCxx11, {}, true);
             auto vars = scanner.ParseFunctionArguments();
-            for(const auto& var : vars) {
+            for (const auto& var : vars) {
                 add_to_locals_set(var->GetName(), locals_set, types_set);
                 const auto& typeParts = var->GetType();
-                for(const auto& p : typeParts) {
-                    if(p.type == T_IDENTIFIER) {
+                for (const auto& p : typeParts) {
+                    if (p.type == T_IDENTIFIER) {
                         add_to_types_set(p.text, types_set, locals_set);
                     }
                 }
@@ -989,42 +994,42 @@ void ProtocolHandler::on_semantic_tokens(std::unique_ptr<JSON>&& msg, Channel::p
     std::unordered_map<wxString, TokenWrapper> classes;
     std::unordered_map<wxString, TokenWrapper> functions;
 
-    while(tokenizer.next(&token_wrapper.token)) {
+    while (tokenizer.next(&token_wrapper.token)) {
         const auto& tok = token_wrapper.token;
         auto word = tok.to_string(buffer);
-        if(!CompletionHelper::is_cxx_keyword(word)) {
-            if(locals_set.count(word)) {
+        if (!CompletionHelper::is_cxx_keyword(word)) {
+            if (locals_set.count(word)) {
                 token_wrapper.type = TYPE_VARIABLE;
-                variables.insert({ word, token_wrapper });
+                variables.insert({word, token_wrapper});
 
-            } else if(types_set.count(word)) {
+            } else if (types_set.count(word)) {
                 token_wrapper.type = TYPE_CLASS;
-                classes.insert({ word, token_wrapper });
+                classes.insert({word, token_wrapper});
 
-            } else if(tok.following_char1_is('(')) {
+            } else if (tok.following_char1_is('(')) {
                 // TOKEN(
                 token_wrapper.type = TYPE_FUNCTION;
-                functions.insert({ word, token_wrapper });
+                functions.insert({word, token_wrapper});
 
-            } else if(tok.following_char1_is('.') || tok.following_char1_is('=')) {
+            } else if (tok.following_char1_is('.') || tok.following_char1_is('=')) {
                 // TOKEN. or TOKEN =
                 token_wrapper.type = TYPE_VARIABLE;
-                variables.insert({ word, token_wrapper });
+                variables.insert({word, token_wrapper});
 
-            } else if(tok.following_char1_is('-') && tok.following_char2_is('>')) {
+            } else if (tok.following_char1_is('-') && tok.following_char2_is('>')) {
                 // TOKEN->
                 token_wrapper.type = TYPE_VARIABLE;
-                variables.insert({ word, token_wrapper });
+                variables.insert({word, token_wrapper});
 
-            } else if(tok.following_char1_is(':') && tok.following_char2_is(':')) {
+            } else if (tok.following_char1_is(':') && tok.following_char2_is(':')) {
                 // TOKEN::
                 token_wrapper.type = TYPE_CLASS;
-                classes.insert({ word, token_wrapper });
+                classes.insert({word, token_wrapper});
 
-            } else if(tok.following_char1_is('&') || tok.following_char1_is('*') || tok.following_char1_is('<')) {
+            } else if (tok.following_char1_is('&') || tok.following_char1_is('*') || tok.following_char1_is('<')) {
                 // TOKEN< || TOKEN& || TOKEN*
                 token_wrapper.type = TYPE_CLASS;
-                classes.insert({ word, token_wrapper });
+                classes.insert({word, token_wrapper});
             }
         }
     }
@@ -1033,26 +1038,26 @@ void ProtocolHandler::on_semantic_tokens(std::unique_ptr<JSON>&& msg, Channel::p
     std::vector<TokenWrapper> tokens_vec;
     tokens_vec.reserve(functions.size() + variables.size() + classes.size());
 
-    for(const auto& vt : classes) {
-        if(functions.count(vt.first)) {
+    for (const auto& vt : classes) {
+        if (functions.count(vt.first)) {
             functions.erase(vt.first);
         }
-        if(variables.count(vt.first)) {
+        if (variables.count(vt.first)) {
             variables.erase(vt.first);
         }
         tokens_vec.emplace_back(vt.second);
     }
 
     // remove all duplicates entries that exist both in variables and classes
-    for(const auto& vt : functions) {
-        if(variables.count(vt.first)) {
+    for (const auto& vt : functions) {
+        if (variables.count(vt.first)) {
             variables.erase(vt.first);
         }
         tokens_vec.emplace_back(vt.second);
     }
 
     // add the variables
-    for(const auto& vt : variables) {
+    for (const auto& vt : variables) {
         tokens_vec.emplace_back(vt.second);
     }
 
@@ -1090,7 +1095,7 @@ void ProtocolHandler::on_workspace_symbol(std::unique_ptr<JSON>&& msg, Channel::
     auto result = build_result(response, id, cJSON_Array);
 
     auto symbols = LSPUtils::to_symbol_information_array(tags, false);
-    for(const LSP::SymbolInformation& symbol : symbols) {
+    for (const LSP::SymbolInformation& symbol : symbols) {
         result.arrayAppend(symbol.ToJSON(wxEmptyString));
     }
     channel->write_reply(response);
@@ -1110,22 +1115,22 @@ void ProtocolHandler::on_document_symbol(std::unique_ptr<JSON>&& msg, Channel::p
     wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
     clDEBUG() << "textDocument/documentSymbol: for file" << filepath << endl;
 
-    if(!ensure_file_content_exists(filepath, channel, id))
+    if (!ensure_file_content_exists(filepath, channel, id))
         return;
 
     // parse hte buffer
     std::vector<TagEntryPtr> tags;
-    CTags::ParseBuffer(filepath, m_filesOpened[filepath], m_settings.GetCodeliteIndexer(), m_settings.GetMacroTable(),
-                       tags);
-    if(tags.empty()) {
+    CTags::ParseBuffer(
+        filepath, m_filesOpened[filepath], m_settings.GetCodeliteIndexer(), m_settings.GetMacroTable(), tags);
+    if (tags.empty()) {
         clDEBUG() << "no tags were found in file:" << filepath << endl;
     }
 
     // remove parameters from the list
     std::vector<TagEntryPtr> tags_no_parameters;
     tags_no_parameters.reserve(tags.size());
-    for(auto tag : tags) {
-        if(tag->IsParameter()) {
+    for (auto tag : tags) {
+        if (tag->IsParameter()) {
             continue;
         }
         tags_no_parameters.emplace_back(tag);
@@ -1138,7 +1143,7 @@ void ProtocolHandler::on_document_symbol(std::unique_ptr<JSON>&& msg, Channel::p
     auto result = build_result(response, id, cJSON_Array);
 
     auto symbols = LSPUtils::to_symbol_information_array(tags, true);
-    for(const LSP::SymbolInformation& symbol : symbols) {
+    for (const LSP::SymbolInformation& symbol : symbols) {
         result.arrayAppend(symbol.ToJSON(wxEmptyString));
     }
     channel->write_reply(response);
@@ -1157,7 +1162,7 @@ void ProtocolHandler::on_document_signature_help(std::unique_ptr<JSON>&& msg, Ch
     wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
     LOG_IF_TRACE { clDEBUG1() << "textDocument/signatureHelp: for file" << filepath << endl; }
 
-    if(!ensure_file_content_exists(filepath, channel, id))
+    if (!ensure_file_content_exists(filepath, channel, id))
         return;
 
     size_t line = json["params"]["position"]["line"].toSize_t();
@@ -1177,12 +1182,12 @@ void ProtocolHandler::on_document_signature_help(std::unique_ptr<JSON>&& msg, Ch
     // filter everything and just keep the methods tags
     std::vector<TagEntryPtr> matches;
     matches.reserve(candidates.size() * 5);
-    for(TagEntryPtr match : candidates) {
-        if(match->IsClass() || match->IsStruct()) {
+    for (TagEntryPtr match : candidates) {
+        if (match->IsClass() || match->IsStruct()) {
             std::vector<TagEntryPtr> ctors;
             m_completer->get_class_constructors(match, ctors);
             matches.insert(matches.end(), ctors.begin(), ctors.end());
-        } else if(match->IsMethod()) {
+        } else if (match->IsMethod()) {
             matches.push_back(match);
         }
     }
@@ -1193,12 +1198,12 @@ void ProtocolHandler::on_document_signature_help(std::unique_ptr<JSON>&& msg, Ch
 
     clCallTipPtr tip = std::make_shared<clCallTip>(candidates);
     LSP::SignatureHelp sh;
-    if(tip) {
+    if (tip) {
         CompletionHelper helper;
         wxString return_value;
         LSP::SignatureInformation::Vec_t signatures;
         signatures.reserve(tip->Count());
-        for(int i = 0; i < tip->Count(); ++i) {
+        for (int i = 0; i < tip->Count(); ++i) {
             wxString tip_text = tip->TipAt(i);
 
             signatures.emplace_back();
@@ -1208,7 +1213,7 @@ void ProtocolHandler::on_document_signature_help(std::unique_ptr<JSON>&& msg, Ch
             auto params = helper.split_function_signature(tip_text, &return_value);
             parameters.reserve(params.size());
 
-            for(const auto& param : params) {
+            for (const auto& param : params) {
                 LSP::ParameterInformation pi;
                 pi.SetLabel(param);
                 parameters.push_back(pi);
@@ -1243,18 +1248,18 @@ void ProtocolHandler::on_hover(std::unique_ptr<JSON>&& msg, Channel::ptr_t chann
 
     wxString tooltip;
 
-    if(!tags.empty()) {
+    if (!tags.empty()) {
         auto first_tag = tags[0];
         tooltip << first_tag->GetKind() << " `" << first_tag->GetName() << "`\n";
         tooltip << "===\n";
-        if(first_tag->IsMethod()) {
+        if (first_tag->IsMethod()) {
             tooltip.clear();
-            if(!first_tag->GetScope().empty()) {
-                if(first_tag->GetScope().StartsWith("__anon")) {
+            if (!first_tag->GetScope().empty()) {
+                if (first_tag->GetScope().StartsWith("__anon")) {
                     tooltip << "function: `" << first_tag->GetName() << "()` of `(anonymous scope)`\n";
-                } else if(first_tag->GetScope().empty() || first_tag->GetScope() == "<global>") {
+                } else if (first_tag->GetScope().empty() || first_tag->GetScope() == "<global>") {
                     tooltip << "function: `" << first_tag->GetName() << "()`\n";
-                } else if(first_tag->is_static()) {
+                } else if (first_tag->is_static()) {
                     tooltip << "class-method: `" << first_tag->GetPath() << "()`";
                 } else {
                     tooltip << "instance-method: `" << first_tag->GetPath() << "()`";
@@ -1263,35 +1268,35 @@ void ProtocolHandler::on_hover(std::unique_ptr<JSON>&& msg, Channel::ptr_t chann
                 tooltip << "function `" << first_tag->GetName() << "()` ";
             }
             tooltip << "\n===\n";
-            if(tags.size() == 1) {
+            if (tags.size() == 1) {
                 // fancy formatting
                 auto args = helper.split_function_signature(first_tag->GetSignature(), nullptr, 0);
                 tooltip << "-> `" << first_tag->GetTypename() << "`\n";
-                if(!args.empty()) {
+                if (!args.empty()) {
                     tooltip << "\n";
                 }
-                for(auto arg : args) {
+                for (auto arg : args) {
                     tooltip << "- `" << arg << "`\n";
                 }
 
                 // build comment string
-                if(!do_comments_exist_for_file(first_tag->GetFile())) {
+                if (!do_comments_exist_for_file(first_tag->GetFile())) {
                     update_comments_for_file(first_tag->GetFile());
                 }
 
-                wxString comment_string = get_comment(wxFileName(first_tag->GetFile()).GetFullPath(),
-                                                      first_tag->GetLine() - 1, wxEmptyString);
+                wxString comment_string = get_comment(
+                    wxFileName(first_tag->GetFile()).GetFullPath(), first_tag->GetLine() - 1, wxEmptyString);
                 wxString doc_comment = helper.format_comment(nullptr, comment_string);
 
-                if(!doc_comment.empty()) {
+                if (!doc_comment.empty()) {
                     tooltip << "\n===\n";
                     tooltip << doc_comment << "\n";
                 }
             } else {
                 // overloading, use one liner per method
-                for(TagEntryPtr tag : tags) {
-                    if(tag->IsMethod()) {
-                        if(visited.insert(helper.normalize_function(tag)).second) {
+                for (TagEntryPtr tag : tags) {
+                    if (tag->IsMethod()) {
+                        if (visited.insert(helper.normalize_function(tag)).second) {
                             function_tag_arr.push_back(tag);
                         }
                     }
@@ -1300,25 +1305,25 @@ void ProtocolHandler::on_hover(std::unique_ptr<JSON>&& msg, Channel::ptr_t chann
 
             tooltip << "```\n";
             bool long_functions = false;
-            for(auto tag : function_tag_arr) {
+            for (auto tag : function_tag_arr) {
                 auto params = helper.split_function_signature(tag->GetSignature(), nullptr, 0);
                 tooltip << tag->GetName() << "(";
                 wxString params_str;
 
                 // more than 4 function parameters, put them over multiple lines
                 bool each_param_on_line = (params.size() > 4);
-                if(each_param_on_line) {
+                if (each_param_on_line) {
                     tooltip << "\n  ";
                 }
 
                 // remember whether we had "long" functions here
-                if(!long_functions) {
+                if (!long_functions) {
                     long_functions = each_param_on_line;
                 }
 
-                for(const auto& param : params) {
-                    if(!params_str.empty()) {
-                        if(each_param_on_line) {
+                for (const auto& param : params) {
+                    if (!params_str.empty()) {
+                        if (each_param_on_line) {
                             params_str << ",\n  ";
                         } else {
                             params_str << ", ";
@@ -1331,17 +1336,17 @@ void ProtocolHandler::on_hover(std::unique_ptr<JSON>&& msg, Channel::ptr_t chann
                 tooltip << "{separator_placeholder}";
             }
             tooltip << "```";
-            if(long_functions) {
+            if (long_functions) {
                 tooltip.Replace("{separator_placeholder}", "```\n```\n");
             } else {
                 tooltip.Replace("{separator_placeholder}", "");
             }
 
-        } else if(first_tag->IsMember()) {
+        } else if (first_tag->IsMember()) {
             tooltip << "```\n";
             tooltip << first_tag->GetTypename() << " " << first_tag->GetScope() << "::" << first_tag->GetName() << "\n";
             tooltip << "```";
-        } else if(first_tag->IsVariable()) {
+        } else if (first_tag->IsVariable()) {
             tooltip << "```\n";
             tooltip << first_tag->GetTypename() << " " << first_tag->GetName() << "\n";
             tooltip << "```";
@@ -1361,8 +1366,10 @@ void ProtocolHandler::on_hover(std::unique_ptr<JSON>&& msg, Channel::ptr_t chann
     channel->write_reply(response);
 }
 
-size_t ProtocolHandler::do_find_definition_tags(std::unique_ptr<JSON>&& msg, Channel::ptr_t channel,
-                                                bool try_definition_first, std::vector<TagEntryPtr>& tags,
+size_t ProtocolHandler::do_find_definition_tags(std::unique_ptr<JSON>&& msg,
+                                                Channel::ptr_t channel,
+                                                bool try_definition_first,
+                                                std::vector<TagEntryPtr>& tags,
                                                 wxString* file_match)
 {
     auto json = msg->toElement();
@@ -1374,7 +1381,7 @@ size_t ProtocolHandler::do_find_definition_tags(std::unique_ptr<JSON>&& msg, Cha
     wxString filepath = wxFileSystem::URLToFileName(filepath_uri).GetFullPath();
     clDEBUG() << "textDocument/definition: for file" << filepath << endl;
 
-    if(!ensure_file_content_exists(filepath, channel, id))
+    if (!ensure_file_content_exists(filepath, channel, id))
         return 0;
 
     size_t line = json["params"]["position"]["line"].toSize_t();
@@ -1389,13 +1396,13 @@ size_t ProtocolHandler::do_find_definition_tags(std::unique_ptr<JSON>&& msg, Cha
     // get the last line
     wxString suffix;
 
-    wxString text2 = helper.truncate_file_to_location(m_filesOpened[filepath], line, character,
-                                                      CompletionHelper::TRUNCATE_COMPLETE_LINES);
+    wxString text2 = helper.truncate_file_to_location(
+        m_filesOpened[filepath], line, character, CompletionHelper::TRUNCATE_COMPLETE_LINES);
     bool is_include_completion = false;
 
-    if(file_match) {
+    if (file_match) {
         is_include_completion = helper.is_include_statement(text2, file_match, &suffix);
-        if(is_include_completion) {
+        if (is_include_completion) {
             clDEBUG() << "Is #include for file:" << *file_match << endl;
         } else {
             clDEBUG() << "Not #include. will call `find_definition` with expression:" << expression
@@ -1403,14 +1410,14 @@ size_t ProtocolHandler::do_find_definition_tags(std::unique_ptr<JSON>&& msg, Cha
         }
     }
 
-    if(file_match && is_include_completion) {
+    if (file_match && is_include_completion) {
         clDEBUG() << "Found include file:" << *file_match << endl;
-        for(const wxString& search_path : m_search_paths) {
+        for (const wxString& search_path : m_search_paths) {
             wxString full_path = search_path + "/" + *file_match;
             LOG_IF_TRACE { clDEBUG1() << "Trying path:" << full_path << endl; }
             wxFileName fn(full_path);
             fn.Normalize(wxPATH_NORM_ENV_VARS | wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ABSOLUTE);
-            if(fn.FileExists()) {
+            if (fn.FileExists()) {
                 // this is our match, construct a response and send it back
                 *file_match = fn.GetFullPath();
                 clDEBUG() << " --> Match found:" << *file_match << endl;
@@ -1440,22 +1447,22 @@ void ProtocolHandler::do_definition(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
     response.addProperty("jsonrpc", "2.0");
     auto result = response.AddArray("result");
 
-    if(!file_match.empty()) {
+    if (!file_match.empty()) {
         // prepare a single file match result
         auto match = result.AddObject(wxEmptyString);
         LSP::Range range;
-        range.SetStart({ 0, 0 }).SetEnd({ 0, 0 });
+        range.SetStart({0, 0}).SetEnd({0, 0});
         match.append(range.ToJSON("range"));
         match.addProperty("uri", FileUtils::FilePathToURI(file_match));
     } else {
         // add all the results
         CompletionHelper helper;
-        for(TagEntryPtr tag : tags) {
+        for (TagEntryPtr tag : tags) {
             clDEBUG() << " --> Adding tag:" << tag->GetName() << tag->GetFile() << ":" << tag->GetLine() << endl;
             auto match = result.AddObject(wxEmptyString);
             // we can only provide line number...
             LSP::Range range;
-            range.SetStart({ tag->GetLine() - 1, 0 }).SetEnd({ tag->GetLine() - 1, 0 });
+            range.SetStart({tag->GetLine() - 1, 0}).SetEnd({tag->GetLine() - 1, 0});
             match.append(range.ToJSON("range"));
             match.addProperty("uri", FileUtils::FilePathToURI(tag->GetFile()));
 
@@ -1463,7 +1470,7 @@ void ProtocolHandler::do_definition(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
             match.addProperty("name", tag->GetName());
 
             // the pattern property is used to display "multi-selection" dialog to the user
-            if(tag->IsMethod()) {
+            if (tag->IsMethod()) {
                 match.addProperty("pattern", helper.normalize_function(tag, 0));
             } else {
                 match.addProperty("pattern", tag->GetKind() + " " + tag->GetName());
@@ -1487,7 +1494,7 @@ void ProtocolHandler::build_search_path()
 {
     // build the workspace file list
     wxArrayString files;
-    if(read_file_list(m_settings_folder, m_settings, files) == 0) {
+    if (read_file_list(m_settings_folder, m_settings, files) == 0) {
         // try the scan dir
         scan_dir(m_root_folder, m_settings, files);
     }
@@ -1495,22 +1502,22 @@ void ProtocolHandler::build_search_path()
     // build search path which is combinbed for the paths of the workspace files
     // and from the settings
     wxStringSet_t unique_paths;
-    for(const wxString& file : files) {
+    for (const wxString& file : files) {
         wxFileName fn(file);
         fn.Normalize(wxPATH_NORM_ENV_VARS | wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ABSOLUTE);
         wxString path = fn.GetPath();
-        if(unique_paths.count(path) == 0) {
+        if (unique_paths.count(path) == 0) {
             m_search_paths.Add(path);
             unique_paths.insert(path);
         }
     }
 
     // add the global search paths
-    for(const auto& file : m_settings.GetSearchPath()) {
+    for (const auto& file : m_settings.GetSearchPath()) {
         wxFileName fn(file, wxEmptyString);
         fn.Normalize(wxPATH_NORM_ENV_VARS | wxPATH_NORM_DOTS | wxPATH_NORM_TILDE | wxPATH_NORM_ABSOLUTE);
         wxString path = fn.GetPath();
-        if(unique_paths.count(path) == 0) {
+        if (unique_paths.count(path) == 0) {
             m_search_paths.Add(path);
             unique_paths.insert(path);
         }
@@ -1523,7 +1530,7 @@ void ProtocolHandler::parse_buffer_for_includes_and_using_namespace(const wxStri
     m_file_scanner.scan_buffer(filepath, buffer, m_search_paths, &entry.included_files, &entry.using_namespace);
 
     m_parsed_files_info.erase(filepath);
-    m_parsed_files_info.insert({ filepath, entry });
+    m_parsed_files_info.insert({filepath, entry});
 }
 
 void ProtocolHandler::parse_file_for_includes_and_using_namespace(const wxString& filepath)
@@ -1532,21 +1539,21 @@ void ProtocolHandler::parse_file_for_includes_and_using_namespace(const wxString
     m_file_scanner.scan(filepath, m_search_paths, &entry.included_files, &entry.using_namespace);
 
     m_parsed_files_info.erase(filepath);
-    m_parsed_files_info.insert({ filepath, entry });
+    m_parsed_files_info.insert({filepath, entry});
 }
 
 wxArrayString ProtocolHandler::get_files_to_parse(const wxArrayString& files)
 {
     clDEBUG() << "Scanning for files to parse (base list contains:" << files.size() << "files)" << endl;
-    std::deque<wxString> files_to_parse{ files.begin(), files.end() };
+    std::deque<wxString> files_to_parse{files.begin(), files.end()};
 
     wxArrayString result;
     result.reserve(10000);
 
-    while(!files_to_parse.empty()) {
+    while (!files_to_parse.empty()) {
         wxString filepath = files_to_parse.front();
         files_to_parse.pop_front();
-        if(m_parsed_files_info.count(filepath)) {
+        if (m_parsed_files_info.count(filepath)) {
             continue;
         }
         result.Add(filepath);
@@ -1566,10 +1573,10 @@ wxArrayString ProtocolHandler::get_first_level_includes(const wxString& filepath
 {
     // get list of files included directly by this file
     wxArrayString files;
-    if(m_parsed_files_info.count(filepath)) {
+    if (m_parsed_files_info.count(filepath)) {
         const ParsedFileInfo& parsed_info = m_parsed_files_info[filepath];
         files.reserve(files.size() + parsed_info.included_files.size());
-        for(const wxString& include : parsed_info.included_files) {
+        for (const wxString& include : parsed_info.included_files) {
             files.Add(include);
         }
     }
@@ -1583,15 +1590,15 @@ size_t ProtocolHandler::get_includes_recursively(const wxString& filepath, wxStr
     output->insert(filepath);
 
     wxStringSet_t visited;
-    while(!Q.empty()) {
+    while (!Q.empty()) {
         wxString filepath = Q.front();
         Q.pop_front();
         output->insert(filepath);
 
-        if(!visited.insert(filepath).second)
+        if (!visited.insert(filepath).second)
             continue;
 
-        if(m_parsed_files_info.count(filepath) == 0)
+        if (m_parsed_files_info.count(filepath) == 0)
             continue;
 
         // append all its children to the vector
@@ -1607,8 +1614,8 @@ wxStringSet_t ProtocolHandler::setdiff(const wxStringSet_t& a, const wxStringSet
     diff.reserve(a.size());
 
     // go over the smaller one collect all
-    for(const auto& item : a) {
-        if(b.count(item) == 0) {
+    for (const auto& item : a) {
+        if (b.count(item) == 0) {
             diff.insert(item);
         }
     }

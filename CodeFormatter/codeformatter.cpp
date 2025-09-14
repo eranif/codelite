@@ -372,7 +372,7 @@ void CodeFormatter::OnFormatFiles(wxCommandEvent& event)
     wxUnusedVar(event);
     clGetManager()->SetStatusMessage(_("Code Formatter: scanning for files..."));
     std::thread thr(
-        [=](const wxString& rootFolder, CodeFormatter* formatter) {
+        [=, this](const wxString& rootFolder, CodeFormatter* formatter) {
             clFilesScanner fs;
             std::vector<wxFileName> files;
             fs.Scan(rootFolder, files, "*", "*.o;*.obj;*.dll;*.a;*.exe;*.dylib;*.db", "build-*;.codelite;.git;.svn");

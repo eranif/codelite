@@ -398,7 +398,7 @@ void RemotyWorkspace::OnCustomTargetMenu(clContextMenuEvent& event)
         menu->Append(menuId, name, name, wxITEM_NORMAL);
         menu->Bind(
             wxEVT_MENU,
-            [=](wxCommandEvent& e) {
+            [=, this](wxCommandEvent& e) {
                 auto iter = M.find(e.GetId());
                 if (iter == M.end()) {
                     return;

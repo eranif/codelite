@@ -54,8 +54,11 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
     wxBoxSizer* boxSizer50 = new wxBoxSizer(wxVERTICAL);
     m_panelChat->SetSizer(boxSizer50);
 
-    m_splitter30 = new wxSplitterWindow(
-        m_panelChat, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelChat, wxSize(-1, -1)), wxSP_LIVE_UPDATE);
+    m_splitter30 = new wxSplitterWindow(m_panelChat,
+                                        wxID_ANY,
+                                        wxDefaultPosition,
+                                        wxDLG_UNIT(m_panelChat, wxSize(-1, -1)),
+                                        wxSP_LIVE_UPDATE | wxSP_3DSASH);
     m_splitter30->SetSashGravity(1);
     m_splitter30->SetMinimumPaneSize(100);
 
@@ -118,7 +121,7 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
 
     m_splitterPage34 = new wxPanel(
         m_splitter30, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter30, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_splitter30->SplitHorizontally(m_splitterPage32, m_splitterPage34, 0);
+    m_splitter30->SplitHorizontally(m_splitterPage32, m_splitterPage34, 100);
 
     wxBoxSizer* boxSizer43 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage34->SetSizer(boxSizer43);

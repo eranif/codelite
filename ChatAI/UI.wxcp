@@ -316,7 +316,7 @@
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	["wxSP_LIVE_UPDATE"],
+													"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_3DSASH"],
 													"m_sizerFlags":	["wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",
@@ -390,7 +390,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Sash Position:",
-															"m_value":	"0"
+															"m_value":	"100"
 														}],
 													"m_events":	[],
 													"m_children":	[{

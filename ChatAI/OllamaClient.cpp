@@ -17,8 +17,9 @@ OllamaEvent::OllamaEvent(wxEventType commandType, int winid)
 }
 
 wxDEFINE_EVENT(wxEVT_OLLAMA_THINKING, OllamaEvent);
+wxDEFINE_EVENT(wxEVT_OLLAMA_CHAT_STARTED, OllamaEvent);
 wxDEFINE_EVENT(wxEVT_OLLAMA_CHAT_DONE, OllamaEvent);
-wxDEFINE_EVENT(wxEVT_OLLAMA_OUTPUT, OllamaEvent);
+wxDEFINE_EVENT(wxEVT_OLLAMA_CHAT_OUTPUT, OllamaEvent);
 wxDEFINE_EVENT(wxEVT_OLLAMA_LIST_MODELS, OllamaEvent);
 wxDEFINE_EVENT(wxEVT_OLLAMA_LOG, OllamaEvent);
 
@@ -77,11 +78,16 @@ void OllamaClient::WorkerThreadMain()
         m_processingRequest.store(true, std::memory_order_relaxed);
         switch (t.kind) {
         case TaskKind::kChat: {
+
+            OllamaEvent chat_start{wxEVT_OLLAMA_CHAT_STARTED};
+            chat_start.SetEventObject(this);
+            EventNotifier::Get()->AddPendingEvent(chat_start);
+
             m_client.Chat(
                 t.content.ToStdString(wxConvUTF8),
                 [this](std::string msg, ollama::Reason reason, bool thinking) {
                     // Translate the callback into wxWidgets event
-                    OllamaEvent event{wxEVT_OLLAMA_OUTPUT};
+                    OllamaEvent event{wxEVT_OLLAMA_CHAT_OUTPUT};
                     event.SetStringRaw(std::move(msg));
                     event.SetEventObject(this);
                     event.SetReason(reason);

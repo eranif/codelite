@@ -75,11 +75,11 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     m_toolbar->AddTool(wxID_SETUP, _("Settings"), images->Add("cog"));
     m_toolbar->Realize();
 
-    PopulateModels();
     m_activeModel->Bind(wxEVT_CHOICE, &ChatAIWindow::OnModelChanged, this);
 
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
-    EventNotifier::Get()->Bind(wxEVT_OLLAMA_OUTPUT, &ChatAIWindow::OnChatAIOutput, this);
+    EventNotifier::Get()->Bind(wxEVT_OLLAMA_CHAT_STARTED, &ChatAIWindow::OnChatStarted, this);
+    EventNotifier::Get()->Bind(wxEVT_OLLAMA_CHAT_OUTPUT, &ChatAIWindow::OnChatAIOutput, this);
     EventNotifier::Get()->Bind(wxEVT_OLLAMA_CHAT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
     EventNotifier::Get()->Bind(wxEVT_OLLAMA_LIST_MODELS, &ChatAIWindow::OnModels, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &ChatAIWindow::OnFileSaved, this);
@@ -120,6 +120,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     Bind(wxEVT_TIMER, &ChatAIWindow::OnTimer, this, m_timer->GetId());
     ShowGauge(false);
     CallAfter(&ChatAIWindow::LoadGlobalConfig);
+    CallAfter(&ChatAIWindow::PopulateModels);
 }
 
 ChatAIWindow::~ChatAIWindow()
@@ -128,7 +129,7 @@ ChatAIWindow::~ChatAIWindow()
     wxDELETE(m_timer);
 
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
-    EventNotifier::Get()->Unbind(wxEVT_OLLAMA_OUTPUT, &ChatAIWindow::OnChatAIOutput, this);
+    EventNotifier::Get()->Unbind(wxEVT_OLLAMA_CHAT_OUTPUT, &ChatAIWindow::OnChatAIOutput, this);
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_CHAT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_LIST_MODELS, &ChatAIWindow::OnModels, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &ChatAIWindow::OnFileSaved, this);
@@ -136,6 +137,7 @@ ChatAIWindow::~ChatAIWindow()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &ChatAIWindow::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_LOG, &ChatAIWindow::OnLog, this);
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_THINKING, &ChatAIWindow::OnThinking, this);
+    EventNotifier::Get()->Unbind(wxEVT_OLLAMA_CHAT_STARTED, &ChatAIWindow::OnChatStarted, this);
 }
 
 wxString ChatAIWindow::GetConfigurationFilePath() const
@@ -159,7 +161,12 @@ void ChatAIWindow::DoSendPrompt()
         return;
     }
 
-    m_plugin->GetClient().Send(m_stcInput->GetText(), m_activeModel->GetStringSelection());
+    wxString prompt = m_stcInput->GetText();
+    prompt.Trim().Trim(false);
+    m_plugin->GetClient().Send(prompt, m_activeModel->GetStringSelection());
+
+    prompt.Prepend(wxString() << "\n**" << ::wxGetUserId() << "**:\n\n");
+    AppendOutput(prompt + "\n\n");
     m_stcInput->ClearAll();
     ShowIndicator(true);
 }
@@ -334,6 +341,12 @@ void ChatAIWindow::OnNewSession(wxCommandEvent& event)
     DoReset();
 }
 
+void ChatAIWindow::OnChatStarted(OllamaEvent& event)
+{
+    event.Skip();
+    AppendOutput("**Assistant**:\n");
+}
+
 void ChatAIWindow::OnChatAIOutput(OllamaEvent& event)
 {
     bool changed_state = (event.IsThinking() != m_thinking);
@@ -359,6 +372,7 @@ void ChatAIWindow::OnChatAIOutput(OllamaEvent& event)
         break;
     case ollama::Reason::kDone:
         NotifyThinking(false);
+        AppendMarker();
         break;
     case ollama::Reason::kPartialResult:
         if (!event.IsThinking()) {
@@ -464,10 +478,19 @@ void ChatAIWindow::SetFocusToActiveEditor()
     editor->SetActive();
 }
 
+void ChatAIWindow::AppendMarker()
+{
+    m_stcOutput->SetReadOnly(false);
+    m_stcOutput->AppendText("\n");
+    m_stcOutput->SetReadOnly(true);
+}
+
 void ChatAIWindow::AppendOutput(const wxString& text)
 {
     CHECK_COND_RET(!text.empty());
+
     m_stcOutput->SetReadOnly(false);
+    m_stcOutput->SetInsertionPointEnd();
     m_stcOutput->AppendText(text);
     m_stcOutput->SetReadOnly(true);
 

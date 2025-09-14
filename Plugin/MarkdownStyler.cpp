@@ -4,33 +4,6 @@
 
 namespace
 {
-enum MarkdownStyles {
-    kDefault,
-    kHeader1,
-    kHeader2,
-    kHeader3,
-    kHeader4,
-    kHeader5,
-    kHeader6,
-    kHeaderText,
-    kCodeBlockTag,
-    kCodeBlockText,
-    kCodeWord,
-    kStrongText,
-    kStrong2Text,
-    kStrongTag,
-    kStrong2Tag,
-    kEmphasisText,
-    kEmphasis2Text,
-    kEmphasisTag,
-    kEmphasis2Tag,
-    kBacktick,
-    kHorizontalLine,
-    kListItem,
-    kNumberedListItem,
-    kNumberedListItemDot,
-};
-
 enum class State {
     kDefault,
     kCodeBlock,

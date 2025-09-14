@@ -32,6 +32,7 @@ protected:
     void OnLog(OllamaEvent& event);
     void UpdateTheme();
     void DoSendPrompt();
+    void OnChatStarted(OllamaEvent& event);
     void OnChatAIOutput(OllamaEvent& event);
     void OnChatAIOutputDone(OllamaEvent& event);
     void OnModels(OllamaEvent& event);
@@ -41,6 +42,7 @@ protected:
     void SetFocusToActiveEditor();
     void StyleOutput();
     void AppendOutput(const wxString& text);
+    void AppendMarker();
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnWorkspaceClosed(clWorkspaceEvent& event);
     void LoadGlobalConfig();

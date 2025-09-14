@@ -22,9 +22,6 @@
 #include "clToolBar.h"
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
-#include <wx/button.h>
-#include <wx/activityindicator.h>
-#include <wx/gauge.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -48,36 +45,24 @@ class AssistanceAIChatWindowBase : public wxPanel
 protected:
     Notebook* m_notebook;
     wxPanel* m_panelChat;
-    wxSplitterWindow* m_splitter30;
-    wxPanel* m_splitterPage32;
+    wxSplitterWindow* m_mainSplitter;
+    wxPanel* m_splitterPageTop;
     clToolBar* m_toolbar;
     clThemedSTC* m_stcOutput;
-    wxPanel* m_splitterPage34;
+    wxPanel* m_splitterPageBottom;
     clThemedSTC* m_stcInput;
-    wxButton* m_button37;
-    wxButton* m_button54;
-    wxActivityIndicator* m_activityIndicator;
-    wxGauge* m_gaugeThinking;
     wxPanel* m_panelLog;
 
 protected:
     virtual void OnInputUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnSend(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnSendUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnStop(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnStopUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     clToolBar* GetToolbar() { return m_toolbar; }
     clThemedSTC* GetStcOutput() { return m_stcOutput; }
-    wxPanel* GetSplitterPage32() { return m_splitterPage32; }
+    wxPanel* GetSplitterPageTop() { return m_splitterPageTop; }
     clThemedSTC* GetStcInput() { return m_stcInput; }
-    wxButton* GetButton37() { return m_button37; }
-    wxButton* GetButton54() { return m_button54; }
-    wxActivityIndicator* GetActivityIndicator() { return m_activityIndicator; }
-    wxGauge* GetGaugeThinking() { return m_gaugeThinking; }
-    wxPanel* GetSplitterPage34() { return m_splitterPage34; }
-    wxSplitterWindow* GetSplitter30() { return m_splitter30; }
+    wxPanel* GetSplitterPageBottom() { return m_splitterPageBottom; }
+    wxSplitterWindow* GetMainSplitter() { return m_mainSplitter; }
     wxPanel* GetPanelChat() { return m_panelChat; }
     wxPanel* GetPanelLog() { return m_panelLog; }
     Notebook* GetNotebook() { return m_notebook; }

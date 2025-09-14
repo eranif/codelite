@@ -1,6 +1,5 @@
 #pragma once
 
-#include "ChatAIConfig.hpp"
 #include "MarkdownStyler.hpp"
 #include "OllamaClient.hpp"
 #include "UI.hpp"
@@ -8,6 +7,8 @@
 #include "cl_command_event.h"
 #include "wxTerminalCtrl/wxTerminalOutputCtrl.hpp"
 
+#include <wx/activityindicator.h>
+#include <wx/stattext.h>
 #include <wx/timer.h>
 
 class ChatAI;
@@ -18,11 +19,11 @@ public:
     virtual ~ChatAIWindow();
 
 protected:
-    void OnStop(wxCommandEvent& event) override;
-    void OnStopUI(wxUpdateUIEvent& event) override;
+    void OnStop(wxCommandEvent& event);
+    void OnStopUI(wxUpdateUIEvent& event);
     void OnInputUI(wxUpdateUIEvent& event) override;
-    void OnSend(wxCommandEvent& event) override;
-    void OnSendUI(wxUpdateUIEvent& event) override;
+    void OnSend(wxCommandEvent& event);
+    void OnSendUI(wxUpdateUIEvent& event);
     void OnUpdateTheme(wxCommandEvent& event);
     void OnModelChanged(wxCommandEvent& event);
     void OnKeyDown(wxKeyEvent& event);
@@ -46,6 +47,7 @@ protected:
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnWorkspaceClosed(clWorkspaceEvent& event);
     void LoadGlobalConfig();
+    void RestoreUI();
 
     /// Clears the output view, does not change the model history.
     void DoClearOutputView();
@@ -59,7 +61,6 @@ protected:
     wxString GetConfigurationFilePath() const;
 
     void ShowIndicator(bool show);
-    void ShowGauge(bool show);
     void NotifyThinking(bool thinking);
     void OnTimer(wxTimerEvent& event);
 
@@ -70,6 +71,8 @@ private:
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
     bool m_thinking{false};
     wxTimer* m_timer{nullptr};
+    wxActivityIndicator* m_activityIndicator{nullptr};
+    wxStaticText* m_statusMessage{nullptr};
 };
 
 wxDECLARE_EVENT(wxEVT_CHATAI_SEND, clCommandEvent);

@@ -35,8 +35,8 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
         bBitmapLoaded = true;
     }
 
-    wxBoxSizer* boxSizer27 = new wxBoxSizer(wxVERTICAL);
-    this->SetSizer(boxSizer27);
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(mainSizer);
 
     m_notebook = new Notebook(this,
                               wxID_ANY,
@@ -45,7 +45,7 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
                               kNotebook_FixedWidth | kNotebook_BottomTabs);
     m_notebook->SetName(wxT("m_notebook"));
 
-    boxSizer27->Add(m_notebook, 1, wxEXPAND, WXC_FROM_DIP(5));
+    mainSizer->Add(m_notebook, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_panelChat =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
@@ -54,33 +54,33 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
     wxBoxSizer* boxSizer50 = new wxBoxSizer(wxVERTICAL);
     m_panelChat->SetSizer(boxSizer50);
 
-    m_splitter30 = new wxSplitterWindow(m_panelChat,
-                                        wxID_ANY,
-                                        wxDefaultPosition,
-                                        wxDLG_UNIT(m_panelChat, wxSize(-1, -1)),
-                                        wxSP_LIVE_UPDATE | wxSP_3DSASH);
-    m_splitter30->SetSashGravity(1);
-    m_splitter30->SetMinimumPaneSize(100);
+    m_mainSplitter = new wxSplitterWindow(m_panelChat,
+                                          wxID_ANY,
+                                          wxDefaultPosition,
+                                          wxDLG_UNIT(m_panelChat, wxSize(-1, -1)),
+                                          wxSP_LIVE_UPDATE | wxSP_3DSASH);
+    m_mainSplitter->SetSashGravity(1);
+    m_mainSplitter->SetMinimumPaneSize(150);
 
-    boxSizer50->Add(m_splitter30, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer50->Add(m_mainSplitter, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_splitterPage32 = new wxPanel(
-        m_splitter30, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter30, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitterPageTop = new wxPanel(
+        m_mainSplitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainSplitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
     wxBoxSizer* boxSizer35 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPage32->SetSizer(boxSizer35);
+    m_splitterPageTop->SetSizer(boxSizer35);
 
-    m_toolbar = new clToolBar(m_splitterPage32,
+    m_toolbar = new clToolBar(m_splitterPageTop,
                               wxID_ANY,
                               wxDefaultPosition,
-                              wxDLG_UNIT(m_splitterPage32, wxSize(-1, -1)),
+                              wxDLG_UNIT(m_splitterPageTop, wxSize(-1, -1)),
                               wxTB_NODIVIDER | wxTB_FLAT);
     m_toolbar->SetToolBitmapSize(wxSize(16, 16));
 
     boxSizer35->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_stcOutput =
-        new clThemedSTC(m_splitterPage32, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage32, wxSize(-1, -1)), 0);
+    m_stcOutput = new clThemedSTC(
+        m_splitterPageTop, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageTop, wxSize(-1, -1)), 0);
     // Configure the fold margin
     m_stcOutput->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcOutput->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -119,23 +119,15 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
 
     boxSizer35->Add(m_stcOutput, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_splitterPage34 = new wxPanel(
-        m_splitter30, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter30, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_splitter30->SplitHorizontally(m_splitterPage32, m_splitterPage34, 100);
+    m_splitterPageBottom = new wxPanel(
+        m_mainSplitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainSplitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_mainSplitter->SplitHorizontally(m_splitterPageTop, m_splitterPageBottom, 150);
 
     wxBoxSizer* boxSizer43 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPage34->SetSizer(boxSizer43);
+    m_splitterPageBottom->SetSizer(boxSizer43);
 
-    wxBoxSizer* boxSizer55 = new wxBoxSizer(wxVERTICAL);
-
-    boxSizer43->Add(boxSizer55, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    wxBoxSizer* boxSizer36 = new wxBoxSizer(wxHORIZONTAL);
-
-    boxSizer55->Add(boxSizer36, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_stcInput =
-        new clThemedSTC(m_splitterPage34, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), 0);
+    m_stcInput = new clThemedSTC(
+        m_splitterPageBottom, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageBottom, wxSize(-1, -1)), 0);
     m_stcInput->SetToolTip(_("Use Shift-ENTER to submit"));
     m_stcInput->SetFocus();
     // Configure the fold margin
@@ -174,42 +166,7 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
     m_stcInput->SetKeyWords(3, wxT(""));
     m_stcInput->SetKeyWords(4, wxT(""));
 
-    boxSizer36->Add(m_stcInput, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    wxBoxSizer* boxSizer42 = new wxBoxSizer(wxVERTICAL);
-
-    boxSizer36->Add(boxSizer42, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_button37 = new wxButton(m_splitterPage34,
-                              wxID_EXECUTE,
-                              _("Submit"),
-                              wxDefaultPosition,
-                              wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)),
-                              0);
-    m_button37->SetDefault();
-    m_button37->SetToolTip(_("Submit prompt\nShift+ENTER"));
-
-    boxSizer42->Add(m_button37, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_button54 = new wxButton(
-        m_splitterPage34, wxID_STOP, _("Stop"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), 0);
-
-    boxSizer42->Add(m_button54, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_activityIndicator = new wxActivityIndicator(
-        m_splitterPage34, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)), 0);
-
-    boxSizer42->Add(m_activityIndicator, 1, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
-
-    m_gaugeThinking = new wxGauge(m_splitterPage34,
-                                  wxID_ANY,
-                                  100,
-                                  wxDefaultPosition,
-                                  wxDLG_UNIT(m_splitterPage34, wxSize(-1, -1)),
-                                  wxGA_HORIZONTAL);
-    m_gaugeThinking->SetValue(10);
-
-    boxSizer55->Add(m_gaugeThinking, 0, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer43->Add(m_stcInput, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_panelLog =
         new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
@@ -225,17 +182,9 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
     }
     // Connect events
     m_stcInput->Bind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnInputUI, this);
-    m_button37->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnSend, this);
-    m_button37->Bind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnSendUI, this);
-    m_button54->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnStop, this);
-    m_button54->Bind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnStopUI, this);
 }
 
 AssistanceAIChatWindowBase::~AssistanceAIChatWindowBase()
 {
     m_stcInput->Unbind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnInputUI, this);
-    m_button37->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnSend, this);
-    m_button37->Unbind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnSendUI, this);
-    m_button54->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnStop, this);
-    m_button54->Unbind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnStopUI, this);
 }

@@ -64,15 +64,17 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     , m_plugin(plugin)
 {
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
+    m_toolbar->SetGroupSpacing(10);
     m_toolbar->AddTool(wxID_CLEAR, _("Clear everything and start a new session"), images->Add("clear"));
+    m_toolbar->AddTool(wxID_SETUP, _("Settings"), images->Add("cog"));
     m_toolbar->AddSeparator();
-    m_activeModel = new wxChoice(
-        m_toolbar, wxID_ANY, wxDefaultPosition, wxSize(GetTextExtent(LONG_MODEL_NAME).GetWidth(), wxNOT_FOUND));
+    m_activeModel = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxDefaultSize);
     m_activeModel->SetToolTip(_("Change model. Changing a model will also clear your chat history"));
     m_toolbar->AddControl(m_activeModel);
     m_toolbar->AddTool(wxID_REFRESH, _("Load models list"), images->Add("debugger_restart"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(wxID_SETUP, _("Settings"), images->Add("cog"));
+    m_toolbar->AddTool(wxID_EXECUTE, _("Submit"), images->Add("run"));
+    m_toolbar->AddTool(wxID_STOP, _("Stop"), images->Add("execute_stop"));
     m_toolbar->Realize();
 
     m_activeModel->Bind(wxEVT_CHOICE, &ChatAIWindow::OnModelChanged, this);
@@ -95,7 +97,11 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     Bind(wxEVT_MENU, &ChatAIWindow::OnNewSession, this, wxID_CLEAR);
     Bind(wxEVT_MENU, &ChatAIWindow::OnRefreshModelList, this, wxID_REFRESH);
     Bind(wxEVT_MENU, &ChatAIWindow::OnSettings, this, wxID_SETUP);
+    Bind(wxEVT_MENU, &ChatAIWindow::OnSend, this, wxID_EXECUTE);
+    Bind(wxEVT_MENU, &ChatAIWindow::OnStop, this, wxID_STOP);
 
+    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_EXECUTE);
+    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnStopUI, this, wxID_STOP);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_CLEAR);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_REFRESH);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_SETUP);
@@ -115,12 +121,27 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
         EventNotifier::Get()->AddPendingEvent(log_event);
     });
     m_markdownStyler = std::make_unique<MarkdownStyler>(m_stcOutput);
-    ShowIndicator(false);
     m_timer = new wxTimer(this, wxID_ANY);
+
+    wxSize panel_size{wxNOT_FOUND, wxSize(GetTextExtent("Tp")).GetHeight()};
+    panel_size.IncBy(0, 10); // The borders
+    wxPanel* panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, panel_size);
+
+    GetSizer()->Add(panel, wxSizerFlags(0).Expand());
+    panel->SetSizer(new wxBoxSizer(wxHORIZONTAL));
+
+    m_statusMessage = new wxStaticText(panel, wxID_ANY, _("Ready"));
+    m_activityIndicator = new wxActivityIndicator(panel);
+
+    panel->GetSizer()->Add(m_statusMessage, wxSizerFlags(0).Border(wxALL, 5).CentreVertical().Expand());
+    panel->GetSizer()->AddStretchSpacer();
+    panel->GetSizer()->Add(m_activityIndicator, wxSizerFlags(0).Border(wxALL, 5).CentreVertical());
+
     Bind(wxEVT_TIMER, &ChatAIWindow::OnTimer, this, m_timer->GetId());
-    ShowGauge(false);
     CallAfter(&ChatAIWindow::LoadGlobalConfig);
     CallAfter(&ChatAIWindow::PopulateModels);
+    CallAfter(&ChatAIWindow::RestoreUI);
+    ShowIndicator(false);
 }
 
 ChatAIWindow::~ChatAIWindow()
@@ -138,6 +159,8 @@ ChatAIWindow::~ChatAIWindow()
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_LOG, &ChatAIWindow::OnLog, this);
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_THINKING, &ChatAIWindow::OnThinking, this);
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_CHAT_STARTED, &ChatAIWindow::OnChatStarted, this);
+
+    clConfig::Get().Write("chat-ai/sash-position", m_mainSplitter->GetSashPosition());
 }
 
 wxString ChatAIWindow::GetConfigurationFilePath() const
@@ -323,7 +346,6 @@ void ChatAIWindow::DoReset()
     m_stcInput->ClearAll();
     m_plugin->GetClient().Clear();
     ShowIndicator(false);
-    ShowGauge(false);
     m_thinking = false;
 }
 
@@ -395,24 +417,15 @@ void ChatAIWindow::OnChatAIOutputDone(OllamaEvent& event)
 void ChatAIWindow::ShowIndicator(bool show)
 {
     if (show) {
+        m_statusMessage->SetLabel(_("Working..."));
         m_activityIndicator->Show();
         m_activityIndicator->Start();
     } else {
+        m_statusMessage->SetLabel(_("Ready"));
         m_activityIndicator->Stop();
         m_activityIndicator->Hide();
     }
     m_activityIndicator->GetParent()->SendSizeEvent();
-}
-
-void ChatAIWindow::ShowGauge(bool show)
-{
-    if (show) {
-        m_gaugeThinking->Show();
-        m_gaugeThinking->Pulse();
-    } else {
-        m_gaugeThinking->Hide();
-    }
-    m_gaugeThinking->GetParent()->SendSizeEvent();
 }
 
 void ChatAIWindow::OnFileSaved(clCommandEvent& event)
@@ -434,10 +447,11 @@ void ChatAIWindow::OnThinking(OllamaEvent& event)
 {
     // change the thinking state
     m_thinking = event.IsThinking();
-    ShowGauge(m_thinking);
     if (m_thinking) {
+        m_statusMessage->SetLabel(_("Thinking..."));
         m_timer->Start(100, false);
     } else {
+        m_statusMessage->SetLabel(_("Ready"));
         m_timer->Stop();
     }
 }
@@ -555,6 +569,15 @@ bool ChatAIWindow::DoCreateWorkspaceSettings()
     return FileManager::WriteSettingsFileContent(kAssistantConfigFile, default_content);
 }
 
+void ChatAIWindow::RestoreUI()
+{
+    int sash_position = clConfig::Get().Read("chat-ai/sash-position", wxNOT_FOUND);
+    if (sash_position != wxNOT_FOUND) {
+        m_mainSplitter->SetSashPosition(sash_position, true);
+        m_mainSplitter->UpdateSize();
+    }
+}
+
 void ChatAIWindow::LoadGlobalConfig()
 {
     wxBusyCursor bc{};
@@ -576,8 +599,4 @@ void ChatAIWindow::NotifyThinking(bool thinking)
     EventNotifier::Get()->AddPendingEvent(think_event);
 }
 
-void ChatAIWindow::OnTimer(wxTimerEvent& event)
-{
-    event.Skip();
-    m_gaugeThinking->Pulse();
-}
+void ChatAIWindow::OnTimer(wxTimerEvent& event) { event.Skip(); }

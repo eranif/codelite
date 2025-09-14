@@ -15,7 +15,6 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/notebook.h>
-#include "Notebook.h"
 #include <wx/imaglist.h>
 #include <wx/splitter.h>
 #include <wx/toolbar.h>
@@ -43,7 +42,7 @@
 class AssistanceAIChatWindowBase : public wxPanel
 {
 protected:
-    Notebook* m_notebook;
+    wxNotebook* m_notebook;
     wxPanel* m_panelChat;
     wxSplitterWindow* m_mainSplitter;
     wxPanel* m_splitterPageTop;
@@ -65,7 +64,7 @@ public:
     wxSplitterWindow* GetMainSplitter() { return m_mainSplitter; }
     wxPanel* GetPanelChat() { return m_panelChat; }
     wxPanel* GetPanelLog() { return m_panelLog; }
-    Notebook* GetNotebook() { return m_notebook; }
+    wxNotebook* GetNotebook() { return m_notebook; }
     AssistanceAIChatWindowBase(wxWindow* parent,
                                wxWindowID id = wxID_ANY,
                                const wxPoint& pos = wxDefaultPosition,

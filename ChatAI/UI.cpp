@@ -38,11 +38,8 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
 
-    m_notebook = new Notebook(this,
-                              wxID_ANY,
-                              wxDefaultPosition,
-                              wxDLG_UNIT(this, wxSize(-1, -1)),
-                              kNotebook_FixedWidth | kNotebook_BottomTabs);
+    m_notebook = new wxNotebook(
+        this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxNB_FIXEDWIDTH | wxBK_DEFAULT);
     m_notebook->SetName(wxT("m_notebook"));
 
     mainSizer->Add(m_notebook, 1, wxEXPAND, WXC_FROM_DIP(5));

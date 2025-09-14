@@ -186,15 +186,15 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
-									"m_value":	"Notebook"
+									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
-									"m_value":	"Notebook.h"
+									"m_value":	""
 								}, {
 									"type":	"string",
 									"m_label":	"Style:",
-									"m_value":	"kNotebook_FixedWidth |kNotebook_BottomTabs"
+									"m_value":	""
 								}],
 							"m_events":	[],
 							"m_children":	[{

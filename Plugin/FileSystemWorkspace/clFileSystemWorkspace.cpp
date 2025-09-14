@@ -958,13 +958,10 @@ void clFileSystemWorkspace::OnDebug(clDebugEvent& event)
 
     // Start the debugger
     DebugSessionInfo session_info;
-    clDebuggerBreakpoint::Vec_t bpList;
     session_info.exeName = exe;
     session_info.cwd = wd;
     session_info.init_file_content = GetConfig()->GetDebuggerCommands();
-
-    clGetManager()->GetBreakpoints(bpList);
-    session_info.bpList = bpList;
+    session_info.bpList = clGetManager()->GetBreakpoints();
 
     // Start terminal (doesn't do anything under MSW)
     m_debuggerTerminal.Clear();

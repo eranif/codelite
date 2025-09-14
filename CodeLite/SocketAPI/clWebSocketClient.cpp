@@ -1,3 +1,5 @@
+#if HAS_ASIO
+
 #include <wx/defs.h>
 #ifdef __WINDOWS__ // __WINDOWS__ defined by wx/defs.h
 // includes windows.h and if wxUSE_WINSOCK2 is true includes winsock2.h
@@ -43,7 +45,7 @@ public:
 
     void* Entry()
     {
-        while(!TestDestroy()) {
+        while (!TestDestroy()) {
             try {
                 // Start the main loop
                 // We use a second try/catch block here to make sure that the error reporting is done
@@ -109,12 +111,12 @@ clWebSocketClient::~clWebSocketClient()
 
 void clWebSocketClient::StartLoop(const wxString& url)
 {
-    if(m_helperThread) {
+    if (m_helperThread) {
         throw clSocketException("A websocket loop is already running");
     }
 
     Client_t* c = GetClient<Client_t>();
-    if(!c) {
+    if (!c) {
         throw clSocketException("Invalid connection!");
     }
     try {
@@ -122,7 +124,7 @@ void clWebSocketClient::StartLoop(const wxString& url)
         // Register our message handler
         websocketpp::lib::error_code ec;
         Client_t::connection_ptr con = c->get_connection(uri, ec);
-        if(ec) {
+        if (ec) {
             throw clSocketException(ec.message());
         }
 
@@ -142,10 +144,10 @@ void clWebSocketClient::StartLoop(const wxString& url)
 void clWebSocketClient::Send(const wxString& data)
 {
     Client_t* c = GetClient<Client_t>();
-    if(!c) {
+    if (!c) {
         throw clSocketException("Invalid connection!");
     }
-    if(m_connection_handle.expired()) {
+    if (m_connection_handle.expired()) {
         throw clSocketException("Invalid connection handle!");
     }
 
@@ -162,7 +164,7 @@ void clWebSocketClient::Send(const wxString& data)
 void clWebSocketClient::Close()
 {
     Client_t* c = GetClient<Client_t>();
-    if(!c) {
+    if (!c) {
         return;
     }
     c->stop();
@@ -190,7 +192,7 @@ void clWebSocketClient::OnHelperThreadExit()
 void clWebSocketClient::DoInit()
 {
     // Dont initialise again
-    if(m_client) {
+    if (m_client) {
         return;
     }
 
@@ -209,3 +211,4 @@ void clWebSocketClient::DoInit()
 }
 
 void clWebSocketClient::Initialise() { DoInit(); }
+#endif // #if HAS_ASIO

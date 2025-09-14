@@ -1,9 +1,11 @@
 #ifndef CLWEBSOCKETCLIENT_H
 #define CLWEBSOCKETCLIENT_H
 
+#if HAS_ASIO
 #include "clJoinableThread.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
+
 #include <memory>
 #include <wx/event.h>
 
@@ -16,9 +18,12 @@ protected:
     clJoinableThread* m_helperThread = nullptr;
 
 protected:
-    template <typename T> T* GetClient()
+    template <typename T>
+    T* GetClient()
     {
-        if(!m_client) { return nullptr; }
+        if (!m_client) {
+            return nullptr;
+        }
         return reinterpret_cast<T*>(m_client);
     }
     void DoCleanup();
@@ -26,16 +31,16 @@ protected:
 
 public:
     void OnHelperThreadExit();
-    
+
 public:
     clWebSocketClient(wxEvtHandler* owner);
     virtual ~clWebSocketClient();
-    
+
     /**
      * @brief prepare the socket before starting the main loop
      */
     void Initialise();
-    
+
     /**
      * @brief connect to a remote URL. This function start a background thread to executes the main loop
      */
@@ -68,5 +73,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WEBSOCKET_CONNECTED, clCommandEve
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WEBSOCKET_DISCONNECTED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WEBSOCKET_ONMESSAGE, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_WEBSOCKET_ERROR, clCommandEvent);
+#endif
 
 #endif // CLWEBSOCKETCLIENT_H

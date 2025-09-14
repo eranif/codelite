@@ -49,7 +49,7 @@ include(OSXDeps)
 # ######################################################################################################################
 project("CodeLite")
 
-set(CMAKE_CXX_STANDARD 17)
+set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
@@ -978,7 +978,11 @@ else()
     add_subdirectory(codelitephp)
     add_subdirectory(WordCompletion)
     add_subdirectory(HelpPlugin)
-    add_subdirectory(WebTools)
+    if(WITH_WEBTOOLS)
+      add_subdirectory(WebTools)
+    else()
+      message(STATUS "WebTools is disabled")
+    endif()
     add_subdirectory(SmartCompletion)
     add_subdirectory(ChatAI)
     if(UNIX

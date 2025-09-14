@@ -4,6 +4,9 @@
 #include "cl_command_event.h"
 #include "ollama/ollama.hpp"
 
+#include <thread>
+#include <wx/msgqueue.h>
+
 // --------------------------------------------------------------
 // Ollama event
 // --------------------------------------------------------------
@@ -45,23 +48,41 @@ using OllamaEventFunction = void (wxEvtHandler::*)(OllamaEvent&);
 class OllamaClient : public wxEvtHandler
 {
 public:
+    enum class TaskKind {
+        kChat,
+        kReloadConfig,
+        kListModels,
+        kShutdown,
+    };
+
+    struct Task {
+        TaskKind kind{TaskKind::kChat};
+        wxString content; // depending on the task this can be the prompt or the configuration content.
+        wxString model;   // the model to use
+    };
+
     OllamaClient();
     virtual ~OllamaClient();
 
     ChatAIConfig& GetConfig() { return m_config; }
-    void Send(const wxString& prompt, const wxString& model = wxEmptyString);
+    void Send(wxString prompt, wxString model = wxEmptyString);
     void Interrupt();
-    bool IsRunning() const { return m_ollama.IsRunning(); }
-    bool IsBusy() const { return m_processingRequest; }
+    bool IsBusy() const { return m_processingRequest.load(std::memory_order_relaxed); }
     void GetModels() const;
     void Clear();
     void ReloadConfig(const wxString& configContent);
     void SetLogSink(std::function<void(ollama::LogLevel, std::string)> log_sink);
 
 private:
+    void WorkerThreadMain();
+    void Shutdown();
+    void Startup();
+
+    ollama::Manager m_client;
     ChatAIConfig m_config;
-    ollama::Manager& m_ollama;
-    bool m_processingRequest{false};
+    std::unique_ptr<std::thread> m_thread;
+    mutable wxMessageQueue<Task> m_queue;
+    std::atomic_bool m_processingRequest{false};
 };
 
 wxDECLARE_EVENT(wxEVT_OLLAMA_THINKING, OllamaEvent);

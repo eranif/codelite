@@ -154,7 +154,7 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Name:",
-									"m_value":	"m_notebook47"
+									"m_value":	"m_notebook"
 								}, {
 									"type":	"multi-string",
 									"m_label":	"Tooltip:",
@@ -186,15 +186,15 @@
 								}, {
 									"type":	"string",
 									"m_label":	"Class Name:",
-									"m_value":	""
+									"m_value":	"Notebook"
 								}, {
 									"type":	"string",
 									"m_label":	"Include File:",
-									"m_value":	""
+									"m_value":	"Notebook.h"
 								}, {
 									"type":	"string",
 									"m_label":	"Style:",
-									"m_value":	""
+									"m_value":	"kNotebook_FixedWidth |kNotebook_BottomTabs"
 								}],
 							"m_events":	[],
 							"m_children":	[{
@@ -316,7 +316,7 @@
 													"border":	5,
 													"gbSpan":	"1,1",
 													"gbPosition":	"0,0",
-													"m_styles":	["wxSP_LIVE_UPDATE", "wxSP_3DSASH"],
+													"m_styles":	["wxSP_LIVE_UPDATE"],
 													"m_sizerFlags":	["wxEXPAND"],
 													"m_properties":	[{
 															"type":	"winid",

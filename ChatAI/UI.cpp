@@ -38,24 +38,24 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
     wxBoxSizer* boxSizer27 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer27);
 
-    m_notebook47 = new wxNotebook(
-        this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxNB_FIXEDWIDTH | wxBK_DEFAULT);
-    m_notebook47->SetName(wxT("m_notebook47"));
+    m_notebook = new Notebook(this,
+                              wxID_ANY,
+                              wxDefaultPosition,
+                              wxDLG_UNIT(this, wxSize(-1, -1)),
+                              kNotebook_FixedWidth | kNotebook_BottomTabs);
+    m_notebook->SetName(wxT("m_notebook"));
 
-    boxSizer27->Add(m_notebook47, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer27->Add(m_notebook, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panelChat = new wxPanel(
-        m_notebook47, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook47, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook47->AddPage(m_panelChat, _("Chat"), true);
+    m_panelChat =
+        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelChat, _("Chat"), true);
 
     wxBoxSizer* boxSizer50 = new wxBoxSizer(wxVERTICAL);
     m_panelChat->SetSizer(boxSizer50);
 
-    m_splitter30 = new wxSplitterWindow(m_panelChat,
-                                        wxID_ANY,
-                                        wxDefaultPosition,
-                                        wxDLG_UNIT(m_panelChat, wxSize(-1, -1)),
-                                        wxSP_LIVE_UPDATE | wxSP_3DSASH);
+    m_splitter30 = new wxSplitterWindow(
+        m_panelChat, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelChat, wxSize(-1, -1)), wxSP_LIVE_UPDATE);
     m_splitter30->SetSashGravity(1);
     m_splitter30->SetMinimumPaneSize(100);
 
@@ -208,9 +208,9 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
 
     boxSizer55->Add(m_gaugeThinking, 0, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panelLog = new wxPanel(
-        m_notebook47, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook47, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook47->AddPage(m_panelLog, _("Log"), false);
+    m_panelLog =
+        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebook->AddPage(m_panelLog, _("Log"), false);
 
     wxBoxSizer* boxSizer51 = new wxBoxSizer(wxVERTICAL);
     m_panelLog->SetSizer(boxSizer51);

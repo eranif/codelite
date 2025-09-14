@@ -185,6 +185,21 @@ void ChatAIWindow::UpdateTheme()
     CHECK_PTR_RET(lexer);
 
     lexer->Apply(m_stcInput);
+
+    wxColour bg_colour;
+    if (lexer->IsDark()) {
+        bg_colour = lexer->GetProperty(0).GetBgColour();
+        bg_colour = bg_colour.ChangeLightness(105);
+
+    } else {
+        bg_colour = lexer->GetProperty(0).GetBgColour();
+        bg_colour = bg_colour.ChangeLightness(95);
+    }
+
+    for (int style = 0; style < wxSTC_STYLE_MAX; ++style) {
+        m_stcInput->StyleSetBackground(style, bg_colour);
+    }
+
     AnsiColours::SetDarkTheme(lexer->IsDark());
 }
 

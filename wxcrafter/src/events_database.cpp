@@ -22,7 +22,7 @@ void ConnectDetails::MakeSignatureForName(const wxString& name)
 {
     wxString tmpname = name;
     tmpname.Trim().Trim(false);
-    if(tmpname.IsEmpty())
+    if (tmpname.IsEmpty())
         return;
 
     m_functionNameAndSignature.Clear();
@@ -32,7 +32,7 @@ void ConnectDetails::MakeSignatureForName(const wxString& name)
 wxString ConnectDetails::GetFunctionDecl() const
 {
     wxString decl;
-    decl << "    virtual void " << GetFunctionNameAndSignature() << ";"
+    decl << "    void " << GetFunctionNameAndSignature() << " override;"
          << "\n";
     wxCrafter::WrapInIfBlock(GetIfBlock(), decl);
     return decl;
@@ -53,9 +53,9 @@ void ConnectDetails::SetFunctionNameAndSignature(const wxString& functionNameAnd
     // In theory the supplied string should be sane. In practice it might instead be:
     //   an import from wxFB, entered by a user who might have typed any daft thing; or
     //   an import from XRCed (in which case it would've been empty had we not constructed a fake one)
-    if(!functionNameAndSignature.empty()) {
+    if (!functionNameAndSignature.empty()) {
         wxString sig = functionNameAndSignature.AfterFirst('(').BeforeFirst(')');
-        if(sig.empty()) {
+        if (sig.empty()) {
             MakeSignatureForName(functionNameAndSignature);
             return;
         }
@@ -77,8 +77,11 @@ void EventsDatabase::Add(const ConnectDetails& ed)
     m_menuIdToName[ed.GetMenuItemId()] = ed.GetEventName();
 }
 
-void EventsDatabase::Add(const wxString& eventName, const wxString& className, const wxString& description,
-                         const wxString& functionNameAndSig /*=""*/, bool noBody /*=false*/)
+void EventsDatabase::Add(const wxString& eventName,
+                         const wxString& className,
+                         const wxString& description,
+                         const wxString& functionNameAndSig /*=""*/,
+                         bool noBody /*=false*/)
 {
     m_events.PushBack(eventName, ConnectDetails(eventName, className, description, noBody, functionNameAndSig));
     m_menuIdToName[m_events.Item(eventName).GetMenuItemId()] = eventName;
@@ -88,7 +91,7 @@ bool EventsDatabase::Exists(int menuId) const { return m_menuIdToName.count(menu
 
 ConnectDetails EventsDatabase::Item(int menuId) const
 {
-    if(Exists(menuId)) {
+    if (Exists(menuId)) {
         MapMenuIdToName_t::const_iterator iter = m_menuIdToName.find(menuId);
         return m_events.Item(iter->second);
     }
@@ -103,21 +106,25 @@ void EventsDatabase::FillCommonEvents()
     Clear();
 
     // Key Events
-    m_events.PushBack("wxEVT_KEY_DOWN", ConnectDetails("wxEVT_KEY_DOWN", "wxKeyEvent",
-                                                       _("Process a wxEVT_KEY_DOWN event (any key has been pressed)")));
-    m_events.PushBack("wxEVT_KEY_UP", ConnectDetails("wxEVT_KEY_UP", "wxKeyEvent",
-                                                     _("Process a wxEVT_KEY_UP event (any key has been released)")));
+    m_events.PushBack(
+        "wxEVT_KEY_DOWN",
+        ConnectDetails("wxEVT_KEY_DOWN", "wxKeyEvent", _("Process a wxEVT_KEY_DOWN event (any key has been pressed)")));
+    m_events.PushBack(
+        "wxEVT_KEY_UP",
+        ConnectDetails("wxEVT_KEY_UP", "wxKeyEvent", _("Process a wxEVT_KEY_UP event (any key has been released)")));
     m_events.PushBack("wxEVT_CHAR", ConnectDetails("wxEVT_CHAR", "wxKeyEvent", _("Process a wxEVT_CHAR event")));
 
     // Menu
     m_events.PushBack(
         "wxEVT_CONTEXT_MENU",
-        ConnectDetails("wxEVT_CONTEXT_MENU", "wxContextMenuEvent",
+        ConnectDetails("wxEVT_CONTEXT_MENU",
+                       "wxContextMenuEvent",
                        _("A right click (or other context menu command depending on platform) has been detected")));
 
     // Mouse Events
     m_events.PushBack("wxEVT_LEFT_DOWN",
-                      ConnectDetails("wxEVT_LEFT_DOWN", "wxMouseEvent",
+                      ConnectDetails("wxEVT_LEFT_DOWN",
+                                     "wxMouseEvent",
                                      _("Process a wxEVT_LEFT_DOWN event. The handler of this event should normally "
                                        "call event.Skip() to allow the default processing to take place as otherwise "
                                        "the window under mouse wouldn't get the focus.")));
@@ -147,7 +154,8 @@ void EventsDatabase::FillCommonEvents()
                       ConnectDetails("wxEVT_MOUSEWHEEL", "wxMouseEvent", _("Process a wxEVT_MOUSEWHEEL event")));
     m_events.PushBack(
         "wxEVT_MOUSE_CAPTURE_LOST",
-        ConnectDetails("wxEVT_MOUSE_CAPTURE_LOST", "wxMouseCaptureLostEvent",
+        ConnectDetails("wxEVT_MOUSE_CAPTURE_LOST",
+                       "wxMouseCaptureLostEvent",
                        wxT("A mouse capture lost event is sent to a window that had obtained mouse capture, which was "
                            "subsequently lost due to an \"external\" event (for example, when a dialog box is shown or "
                            "if another application captures the mouse)")));
@@ -160,11 +168,13 @@ void EventsDatabase::FillCommonEvents()
 
     // UI
     m_events.PushBack("wxEVT_PAINT", ConnectDetails("wxEVT_PAINT", "wxPaintEvent", _("Process a wxEVT_PAINT event")));
-    m_events.PushBack("wxEVT_ERASE_BACKGROUND", ConnectDetails("wxEVT_ERASE_BACKGROUND", "wxEraseEvent",
-                                                               _("Process a wxEVT_ERASE_BACKGROUND event.")));
+    m_events.PushBack(
+        "wxEVT_ERASE_BACKGROUND",
+        ConnectDetails("wxEVT_ERASE_BACKGROUND", "wxEraseEvent", _("Process a wxEVT_ERASE_BACKGROUND event.")));
     m_events.PushBack("wxEVT_SIZE", ConnectDetails("wxEVT_SIZE", "wxSizeEvent", _("Process a wxEVT_SIZE event")));
     m_events.PushBack("wxEVT_MOVE",
-                      ConnectDetails("wxEVT_MOVE", "wxMoveEvent",
+                      ConnectDetails("wxEVT_MOVE",
+                                     "wxMoveEvent",
                                      _("Process a wxEVT_MOVE event, which is generated when a window is moved.")));
     m_events.PushBack("wxEVT_UPDATE_UI",
                       ConnectDetails("wxEVT_UPDATE_UI", "wxUpdateUIEvent", _("Process a wxEVT_UPDATE_UI event")));
@@ -181,7 +191,7 @@ wxMenu* EventsDatabase::CreateMenu() const
 {
     wxMenu* menu = new wxMenu;
     for (const auto& [_, cd] : m_events) {
-        if(cd.GetEventName().IsEmpty()) {
+        if (cd.GetEventName().IsEmpty()) {
             menu->AppendSeparator();
 
         } else {

@@ -59,6 +59,7 @@ GUICraftMainPanel* GUICraftMainPanel::m_MainPanel = NULL;
 const wxString SIMPLE_BORDER_CODE = R"(
 namespace {
 // return the wxBORDER_SIMPLE that matches the current application theme
+[[maybe_unused]]
 wxBorder get_border_simple_theme_aware_bit() {
 #if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
     return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
@@ -68,7 +69,6 @@ wxBorder get_border_simple_theme_aware_bit() {
 } // get_border_simple_theme_aware_bit
 bool bBitmapLoaded = false;
 } // namespace
-
 )";
 
 static bool bManualSelection = false;
@@ -335,18 +335,18 @@ GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, 
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgrSizerFlags->GetGrid());
     m_textCtrlCppSource->Bind(wxEVT_SET_FOCUS, [this](wxFocusEvent& e) {
         e.Skip();
-        clCommandEvent focus_event{ wxEVT_STC_GOT_FOCUS };
+        clCommandEvent focus_event{wxEVT_STC_GOT_FOCUS};
         EventNotifier::Get()->AddPendingEvent(focus_event);
     });
 
     m_textCtrlHeaderSource->Bind(wxEVT_SET_FOCUS, [this](wxFocusEvent& e) {
         e.Skip();
-        clCommandEvent focus_event{ wxEVT_STC_GOT_FOCUS };
+        clCommandEvent focus_event{wxEVT_STC_GOT_FOCUS};
         EventNotifier::Get()->AddPendingEvent(focus_event);
     });
     m_textCtrlXrc->Bind(wxEVT_SET_FOCUS, [this](wxFocusEvent& e) {
         e.Skip();
-        clCommandEvent focus_event{ wxEVT_STC_GOT_FOCUS };
+        clCommandEvent focus_event{wxEVT_STC_GOT_FOCUS};
         EventNotifier::Get()->AddPendingEvent(focus_event);
     });
 }

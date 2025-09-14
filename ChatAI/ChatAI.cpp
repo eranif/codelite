@@ -69,15 +69,15 @@ ChatAI::ChatAI(IManager* manager)
 
     clKeyboardManager::Get()->AddAccelerator(_("Chat AI"),
                                              {
-                                                 { "chatai_show_window", _("Show AI Chat Window"), "Ctrl-Shift-H" },
+                                                 {"chatai_show_window", _("Show AI Chat Window"), "Ctrl-Shift-H"},
                                              });
     wxTheApp->Bind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("chatai_show_window"));
 
     m_cli.GetConfig().Load();
     EventNotifier::Get()->Bind(wxEVT_CHATAI_INTERRUPT, &ChatAI::OnInterrupt, this);
 
-    m_chatWindow = new ChatAIWindow(m_mgr->BookGet(PaneId::BOTTOM_BAR), this);
-    m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_chatWindow, CHAT_AI_LABEL, wxEmptyString);
+    m_chatWindow = new ChatAIWindow(m_mgr->BookGet(PaneId::SIDE_BAR), this);
+    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
 }
 
 ChatAI::~ChatAI() {}
@@ -86,7 +86,7 @@ void ChatAI::UnPlug()
 {
     wxTheApp->Unbind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("chatai_show_window"));
     // before this plugin is un-plugged we must remove the tab we added
-    if (!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_chatWindow)) {
+    if (!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_chatWindow)) {
         m_chatWindow->Destroy();
     }
     m_chatWindow = nullptr;

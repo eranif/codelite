@@ -121,7 +121,6 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
         EventNotifier::Get()->AddPendingEvent(log_event);
     });
     m_markdownStyler = std::make_unique<MarkdownStyler>(m_stcOutput);
-    m_timer = new wxTimer(this, wxID_ANY);
 
     wxSize panel_size{wxNOT_FOUND, wxSize(GetTextExtent("Tp")).GetHeight()};
     panel_size.IncBy(0, 10); // The borders
@@ -137,7 +136,6 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     panel->GetSizer()->AddStretchSpacer();
     panel->GetSizer()->Add(m_activityIndicator, wxSizerFlags(0).Border(wxALL, 5).CentreVertical());
 
-    Bind(wxEVT_TIMER, &ChatAIWindow::OnTimer, this, m_timer->GetId());
     CallAfter(&ChatAIWindow::LoadGlobalConfig);
     CallAfter(&ChatAIWindow::PopulateModels);
     CallAfter(&ChatAIWindow::RestoreUI);
@@ -146,9 +144,6 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
 
 ChatAIWindow::~ChatAIWindow()
 {
-    m_timer->Stop();
-    wxDELETE(m_timer);
-
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_CHAT_OUTPUT, &ChatAIWindow::OnChatAIOutput, this);
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_CHAT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
@@ -449,10 +444,10 @@ void ChatAIWindow::OnThinking(OllamaEvent& event)
     m_thinking = event.IsThinking();
     if (m_thinking) {
         m_statusMessage->SetLabel(_("Thinking..."));
-        m_timer->Start(100, false);
+    } else if (m_plugin->GetClient().IsBusy()) {
+        m_statusMessage->SetLabel(_("Working..."));
     } else {
         m_statusMessage->SetLabel(_("Ready"));
-        m_timer->Stop();
     }
 }
 

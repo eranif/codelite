@@ -34,11 +34,21 @@ public:
     inline bool IsThinking() const { return m_thinking; }
     inline void SetThinking(bool b) { m_thinking = b; }
 
+    inline void RunCallback()
+    {
+        if (m_callback) {
+            m_callback();
+        }
+    }
+
+    inline void SetCallback(std::function<void()> cb) { m_callback = std::move(cb); }
+
 private:
     ollama::Reason m_reason{ollama::Reason::kDone};
     std::string m_message;
     wxArrayString m_models;
     ollama::LogLevel m_logLevel{ollama::LogLevel::kInfo};
+    std::function<void()> m_callback{nullptr};
     bool m_thinking{false};
 };
 
@@ -77,6 +87,7 @@ private:
     void WorkerThreadMain();
     void Shutdown();
     void Startup();
+    void OnRunTool(OllamaEvent& event);
 
     ollama::Manager m_client;
     ChatAIConfig m_config;
@@ -91,3 +102,4 @@ wxDECLARE_EVENT(wxEVT_OLLAMA_CHAT_DONE, OllamaEvent);
 wxDECLARE_EVENT(wxEVT_OLLAMA_CHAT_OUTPUT, OllamaEvent);
 wxDECLARE_EVENT(wxEVT_OLLAMA_LIST_MODELS, OllamaEvent);
 wxDECLARE_EVENT(wxEVT_OLLAMA_LOG, OllamaEvent);
+wxDECLARE_EVENT(wxEVT_OLLAMA_RUN_TOOL, OllamaEvent);

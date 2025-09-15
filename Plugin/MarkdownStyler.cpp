@@ -19,8 +19,8 @@ enum class State {
 /// Check if `sv` is a number
 bool IsNumber(wxStringView sv)
 {
-    wxString s{ sv.data(), sv.length() };
-    long v{ wxNOT_FOUND };
+    wxString s{sv.data(), sv.length()};
+    long v{wxNOT_FOUND};
     return s.ToCLong(&v);
 }
 
@@ -89,7 +89,7 @@ void MarkdownStyler::InitStyles()
     m_ctrl->StyleSetItalic(MarkdownStyles::kHeaderText, true);
     m_ctrl->StyleSetEOLFilled(MarkdownStyles::kHeaderText, true);
 
-    const std::vector<int> header_styles = { kHeader2, kHeader3, kHeader4, kHeader5, kHeader6 };
+    const std::vector<int> header_styles = {kHeader2, kHeader3, kHeader4, kHeader5, kHeader6};
     for (int style : header_styles) {
         m_ctrl->StyleSetForeground(style, other_headers.GetFgColour());
     }
@@ -125,8 +125,8 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
     State state = State::kDefault;
     while (accessor.CanNext()) {
         wxChar ch = accessor.GetCurrentChar();
-        wxUniChar uni_char{ ch };
-        int default_step{ 1 };
+        wxUniChar uni_char{ch};
+        int default_step{1};
         if (!uni_char.IsAscii()) {
             wxString as_str(uni_char);
             default_step = StringUtils::UTF8Length(as_str.wc_str(), as_str.length());
@@ -177,21 +177,19 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 }
                 break;
             case '*':
-                if (accessor.GetSubstr(2) == "**") {
+                if (accessor.GetSubstr(2) == "**" && accessor.CurrentLineContains(2, "**")) {
                     accessor.SetStyle(MarkdownStyles::kStrong2Tag, 2);
                     state = State::kStrong2Text;
                 } else {
-                    accessor.SetStyle(MarkdownStyles::kStrongTag, 1);
-                    state = State::kStrongText;
+                    accessor.SetStyle(MarkdownStyles::kDefault, 1);
                 }
                 break;
             case '_':
-                if (accessor.GetSubstr(2) == "__") {
+                if (accessor.GetSubstr(2) == "__" && accessor.CurrentLineContains(2, "__")) {
                     accessor.SetStyle(MarkdownStyles::kEmphasis2Tag, 2);
                     state = State::kEmphasis2Text;
                 } else {
-                    accessor.SetStyle(MarkdownStyles::kEmphasisTag, 1);
-                    state = State::kEmphasisText;
+                    accessor.SetStyle(MarkdownStyles::kDefault, 1);
                 }
                 break;
             case '`':

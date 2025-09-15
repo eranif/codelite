@@ -22,6 +22,7 @@ wxDEFINE_EVENT(wxEVT_OLLAMA_CHAT_DONE, OllamaEvent);
 wxDEFINE_EVENT(wxEVT_OLLAMA_CHAT_OUTPUT, OllamaEvent);
 wxDEFINE_EVENT(wxEVT_OLLAMA_LIST_MODELS, OllamaEvent);
 wxDEFINE_EVENT(wxEVT_OLLAMA_LOG, OllamaEvent);
+wxDEFINE_EVENT(wxEVT_OLLAMA_RUN_TOOL, OllamaEvent);
 
 #ifdef __WXMSW__
 #include <windows.h>
@@ -31,6 +32,7 @@ OllamaClient::OllamaClient()
 {
     Clear();
     Startup();
+    EventNotifier::Get()->Bind(wxEVT_OLLAMA_RUN_TOOL, &OllamaClient::OnRunTool, this);
 }
 
 OllamaClient::~OllamaClient()
@@ -39,6 +41,7 @@ OllamaClient::~OllamaClient()
     m_queue.Post(shutdown);
     m_thread->join();
     m_thread.reset();
+    EventNotifier::Get()->Unbind(wxEVT_OLLAMA_RUN_TOOL, &OllamaClient::OnRunTool, this);
 }
 
 void OllamaClient::Startup()
@@ -165,4 +168,11 @@ void OllamaClient::ReloadConfig(const wxString& configContent)
 void OllamaClient::SetLogSink(std::function<void(ollama::LogLevel, std::string)> log_sink)
 {
     ollama::SetLogSink(std::move(log_sink));
+}
+
+void OllamaClient::OnRunTool(OllamaEvent& event)
+{
+    // Run the callback
+    clDEBUG() << "Running tool:" << event.GetString() << endl;
+    event.RunCallback();
 }

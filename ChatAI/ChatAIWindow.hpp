@@ -70,7 +70,6 @@ private:
     wxTerminalOutputCtrl* m_logView{nullptr};
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
     bool m_thinking{false};
-    wxTimer* m_timer{nullptr};
     wxActivityIndicator* m_activityIndicator{nullptr};
     wxStaticText* m_statusMessage{nullptr};
 };

@@ -22,6 +22,9 @@ FunctionResult OpenFileInEditor(const ollama::json& args);
 /// Return the current compiler output.
 FunctionResult GetCompilerOutput(const ollama::json& args);
 
+/// Return the current editor's text content.
+FunctionResult GetCurrentEditorText(const ollama::json& args);
+
 /// Populate the function table with the build-in functions provided by CodeLite to the model.
 void PopulateBuildInFunctions(FunctionTable& table);
 

@@ -28,7 +28,7 @@ public:
     inline wxStringView GetSubstr(size_t count) const
     {
         CHECK_COND_RET_VAL((m_curpos + count) < m_buffer.length(), {});
-        return wxStringView{ m_buffer.data() + m_curpos, count };
+        return wxStringView{m_buffer.data() + m_curpos, count};
     }
 
     /// Return the current character pointed by the this object.
@@ -96,10 +96,20 @@ public:
         } else {
             where += 1; // include the "\n"
             size_t count = where - m_curpos;
-            clSYSTEM() << "Styling until EOL(2):" << m_curpos << "->" << count << "chars" << endl;
             m_ctrl->SetStyling(count, style);
             m_curpos = where;
         }
+    }
+
+    /// Check if `sv` exists in the current line.
+    inline bool CurrentLineContains(size_t from, const char* str)
+    {
+        wxString sv{str, strlen(str)};
+        wxStringView substr = GetSubStringUntilNewLine(from);
+        if (substr.empty()) {
+            return false;
+        }
+        return substr.find(sv) != wxStringView::npos;
     }
 
     inline bool CanNext() const { return m_curpos < m_buffer.length(); }
@@ -108,11 +118,26 @@ public:
     inline size_t SizeStyled() const { return m_curpos; }
 
 private:
-    wxStyledTextCtrl* m_ctrl{ nullptr };
+    wxStringView GetSubStringUntilNewLine(size_t from)
+    {
+        CHECK_COND_RET_VAL(m_curpos + from < m_buffer.length(), {});
+        size_t offset = m_curpos + from;
+        size_t len{0};
+        while (offset < m_buffer.length()) {
+            if (m_buffer[offset] == '\n') {
+                break;
+            }
+            ++len;
+            ++offset;
+        }
+        return wxStringView{m_buffer.data() + m_curpos + from, len};
+    }
+
+    wxStyledTextCtrl* m_ctrl{nullptr};
     wxString m_buffer;
-    size_t m_curpos{ 0 };
-    int m_start_pos{ wxNOT_FOUND };
-    int m_end_pos{ wxNOT_FOUND };
+    size_t m_curpos{0};
+    int m_start_pos{wxNOT_FOUND};
+    int m_end_pos{wxNOT_FOUND};
 };
 
 class WXDLLIMPEXP_SDK clSTCContainerStylerBase : public wxEvtHandler
@@ -135,6 +160,6 @@ protected:
     void OnThemChanged(wxCommandEvent& event);
     void InitInternal();
 
-    wxStyledTextCtrl* m_ctrl{ nullptr };
-    std::function<void(clSTCAccessor& styles)> m_on_style_callback{ nullptr };
+    wxStyledTextCtrl* m_ctrl{nullptr};
+    std::function<void(clSTCAccessor& styles)> m_on_style_callback{nullptr};
 };

@@ -3,13 +3,19 @@
 #include "FileManager.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspaceView.hpp"
+#include "OllamaClient.hpp"
 #include "clWorkspaceManager.h"
+#include "event_notifier.h"
 #include "globals.h"
 #include "ollama/function.hpp"
 
 #include <future>
 #include <wx/msgdlg.h>
 #include <wx/string.h>
+
+#ifndef __PRETTY_FUNCTION__
+#define __PRETTY_FUNCTION__ __func__
+#endif
 
 namespace ollama
 {
@@ -35,16 +41,13 @@ FunctionResult Err(std::optional<wxString> text)
 
 } // namespace
 
-std::mutex queue_mutex;
-std::vector<std::function<void()>> functions_queue;
-
 /// Run `callback` in the main thread
-FunctionResult RunOnMain(std::function<FunctionResult()> callback)
+FunctionResult RunOnMain(std::function<FunctionResult()> callback, const wxString& tool_name)
 {
     auto promise_ptr = std::make_shared<std::promise<FunctionResult>>();
     auto f = promise_ptr->get_future();
     if (wxThread::IsMain()) {
-        clDEBUG() << "Processing function in the main thread directly" << endl;
+        clDEBUG() << "Processing function:" << tool_name << "in the main thread directly" << endl;
         promise_ptr->set_value(callback());
     } else {
         auto wrapped_cb = [callback = std::move(callback), promise_ptr]() {
@@ -52,25 +55,13 @@ FunctionResult RunOnMain(std::function<FunctionResult()> callback)
             promise_ptr->set_value(callback());
         };
 
-        // Queue the function call
-        std::unique_lock lock{queue_mutex};
-        functions_queue.push_back(std::move(wrapped_cb));
+        // And post it to the main thread for execution
+        OllamaEvent event_tool{wxEVT_OLLAMA_RUN_TOOL};
+        event_tool.SetCallback(std::move(wrapped_cb));
+        event_tool.SetString(tool_name);
+        EventNotifier::Get()->AddPendingEvent(event_tool);
     }
     return f.get();
-}
-
-void ProcessFunctionsQueue(wxIdleEvent& event)
-{
-    event.Skip();
-    std::unique_lock lock{queue_mutex};
-    if (functions_queue.empty()) {
-        return;
-    }
-
-    clDEBUG() << "Processing function in the idle event" << endl;
-    auto func = functions_queue.front();
-    functions_queue.erase(functions_queue.begin());
-    func();
 }
 
 /// Register CodeLite tools with the model.
@@ -108,7 +99,10 @@ void PopulateBuildInFunctions(FunctionTable& table)
                   .SetCallback(GetCompilerOutput)
                   .Build());
 
-    wxTheApp->Bind(wxEVT_IDLE, ProcessFunctionsQueue);
+    table.Add(FunctionBuilder("Get the text of the active tab inside the editor")
+                  .SetDescription("Return the text of the active tab inside the editor.")
+                  .SetCallback(GetCurrentEditorText)
+                  .Build());
 }
 
 /// Implementation details
@@ -149,7 +143,7 @@ FunctionResult WriteFileContent(const ollama::json& args)
         }
         return Ok(msg);
     };
-    return RunOnMain(std::move(cb));
+    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
 FunctionResult ReadFileContent(const ollama::json& args)
@@ -169,7 +163,7 @@ FunctionResult ReadFileContent(const ollama::json& args)
         }
         return Ok(content.value());
     };
-    return RunOnMain(std::move(cb));
+    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
 FunctionResult OpenFileInEditor(const ollama::json& args)
@@ -198,13 +192,25 @@ FunctionResult OpenFileInEditor(const ollama::json& args)
         msg << "File '" << filepath << "' has been successfully loaded into an editor.";
         return Ok(msg);
     };
-    return RunOnMain(std::move(cb));
+    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
 FunctionResult GetCompilerOutput(const ollama::json& args)
 {
     auto cb = [=]() -> FunctionResult { return Ok(clGetManager()->GetBuildOutput()); };
-    return RunOnMain(std::move(cb));
+    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
+}
+
+FunctionResult GetCurrentEditorText(const ollama::json& args)
+{
+    auto cb = [=]() -> FunctionResult {
+        auto active_editor = clGetManager()->GetActiveEditor();
+        if (!active_editor) {
+            return Err("There is no editor opened");
+        }
+        return Ok(active_editor->GetEditorText());
+    };
+    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
 } // namespace ollama

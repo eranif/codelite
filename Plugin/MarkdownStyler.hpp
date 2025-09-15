@@ -4,6 +4,7 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 
+#include <stack>
 #include <wx/event.h>
 #include <wx/sharedptr.h>
 #include <wx/stc/stc.h>

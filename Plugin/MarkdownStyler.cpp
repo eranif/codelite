@@ -2,19 +2,45 @@
 
 #include "ColoursAndFontsManager.h"
 
+#include <wx/settings.h>
 namespace
 {
-enum class State {
-    kDefault,
-    kCodeBlock,
-    kCodeBlockTag,
-    kCodeWord,
-    kStrongText,
-    kStrong2Text,
-    kEmphasisText,
-    kEmphasis2Text,
-    kHeaderText,
-};
+
+/* ------------------------------------------------------------------ */
+/*  Helper – is this character allowed in a URL without percent‑encoding? */
+inline bool IsValidUrlChar(wxChar c)
+{
+    // Unreserved: ALPHA / DIGIT / "-" / "." / "_" / "~"
+    if (wxIsalnum(c) || c == '-' || c == '.' || c == '_' || c == '~')
+        return true;
+
+    // Reserved: ":" / "/" / "?" / "#" / "[" / "]" / "@"
+    //           "!" / "$" / "&" / "'" / "(" / ")" / "*"
+    //           "+" / "," / ";" / "="
+    switch (c) {
+    case ':':
+    case '/':
+    case '?':
+    case '#':
+    case '[':
+    case ']':
+    case '@':
+    case '!':
+    case '$':
+    case '&':
+    case '\'':
+    case '(':
+    case ')':
+    case '*':
+    case '+':
+    case ',':
+    case ';':
+    case '=':
+        return true;
+    default:
+        return false;
+    }
+}
 
 /// Check if `sv` is a number
 bool IsNumber(wxStringView sv)
@@ -26,10 +52,23 @@ bool IsNumber(wxStringView sv)
 
 } // namespace
 
+wxDEFINE_EVENT(wxEVT_MARKDOWN_LINK_CLICKED, clCommandEvent);
+
 MarkdownStyler::MarkdownStyler(wxStyledTextCtrl* ctrl)
     : clSTCContainerStylerBase(ctrl)
 {
     InitInternal(); // Will call the pure virtual method "InitStyles"
+    m_ctrl->Bind(wxEVT_STC_HOTSPOT_CLICK, &MarkdownStyler::OnHostspotClicked, this);
+}
+
+MarkdownStyler::~MarkdownStyler() { m_ctrl->Unbind(wxEVT_STC_HOTSPOT_CLICK, &MarkdownStyler::OnHostspotClicked, this); }
+
+void MarkdownStyler::OnHostspotClicked(wxStyledTextEvent& event)
+{
+    wxString url = GetUrlFromPosition(event.GetPosition());
+    clCommandEvent event_markdown_url{wxEVT_MARKDOWN_LINK_CLICKED};
+    event_markdown_url.SetString(url);
+    AddPendingEvent(event_markdown_url);
 }
 
 void MarkdownStyler::Reset() {}
@@ -95,19 +134,11 @@ void MarkdownStyler::InitStyles()
     }
 
     // Strong style
-    m_ctrl->StyleSetForeground(MarkdownStyles::kStrongText, default_fg);
-    m_ctrl->StyleSetItalic(MarkdownStyles::kStrongText, true);
-    m_ctrl->StyleSetForeground(MarkdownStyles::kStrongTag, variable.GetFgColour());
-
     m_ctrl->StyleSetForeground(MarkdownStyles::kStrong2Text, default_fg);
     m_ctrl->StyleSetBold(MarkdownStyles::kStrong2Text, true);
     m_ctrl->StyleSetForeground(MarkdownStyles::kStrong2Tag, variable.GetFgColour());
 
     // Emphasis style
-    m_ctrl->StyleSetForeground(MarkdownStyles::kEmphasisText, default_fg);
-    m_ctrl->StyleSetItalic(MarkdownStyles::kEmphasisText, true);
-    m_ctrl->StyleSetForeground(MarkdownStyles::kEmphasisTag, variable.GetFgColour());
-
     m_ctrl->StyleSetForeground(MarkdownStyles::kEmphasis2Text, default_fg);
     m_ctrl->StyleSetItalic(MarkdownStyles::kEmphasis2Text, true);
     m_ctrl->StyleSetForeground(MarkdownStyles::kEmphasis2Tag, variable.GetFgColour());
@@ -117,23 +148,56 @@ void MarkdownStyler::InitStyles()
     m_ctrl->StyleSetForeground(MarkdownStyles::kNumberedListItemDot, header_1.GetFgColour());
     m_ctrl->StyleSetForeground(MarkdownStyles::kListItem, header_1.GetFgColour());
 
+    // URL
+    m_ctrl->StyleSetForeground(MarkdownStyles::kUrl, wxSystemSettings::GetColour(wxSYS_COLOUR_HOTLIGHT));
+    m_ctrl->StyleSetUnderline(MarkdownStyles::kUrl, true);
+    m_ctrl->StyleSetHotSpot(MarkdownStyles::kUrl, true);
+
     SetStyleCallback([this](clSTCAccessor& accessor) { this->OnStyle(accessor); });
+}
+
+wxString MarkdownStyler::GetUrlFromPosition(int pos)
+{
+    int line_number = m_ctrl->LineFromPosition(pos);
+    int start_pos = m_ctrl->PositionFromLine(line_number);
+    int end_pos = m_ctrl->GetLineEndPosition(line_number);
+
+    wxString prefix, suffix;
+    for (int i = pos; i < end_pos; ++i) {
+        char c = m_ctrl->GetCharAt(i);
+        if (IsValidUrlChar(c)) {
+            suffix << c;
+        } else {
+            break;
+        }
+    }
+
+    for (int i = pos - 1; pos >= start_pos; --i) {
+        char c = m_ctrl->GetCharAt(i);
+        if (IsValidUrlChar(c)) {
+            prefix.Prepend(c);
+        } else {
+            break;
+        }
+    }
+    return prefix + suffix;
 }
 
 void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
 {
-    State state = State::kDefault;
-    while (accessor.CanNext()) {
+    m_states.push(MarkdownState::kDefault);
+    while (accessor.CanNext() && !m_states.empty()) {
+        MarkdownState current_state = m_states.top();
         wxChar ch = accessor.GetCurrentChar();
         wxUniChar uni_char{ch};
         int default_step{1};
         if (!uni_char.IsAscii()) {
             wxString as_str(uni_char);
-            default_step = StringUtils::UTF8Length(as_str.wc_str(), as_str.length());
+            default_step = as_str.utf8_length();
         }
 
-        switch (state) {
-        case State::kDefault:
+        switch (current_state) {
+        case MarkdownState::kDefault:
             // we support up to 99 bullets.
             if (::wxIsdigit(ch) && accessor.IsAtStartOfLine()) {
                 if (::wxIsdigit(accessor.GetCharAt(1)) && accessor.GetCharAt(2) == '.') {
@@ -149,6 +213,14 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
 
             // not a number, run the switch statement.
             switch (ch) {
+            case 'h':
+                if (accessor.GetSubstr(7) == "http://" || accessor.GetSubstr(8) == "https://") {
+                    accessor.SetStyle(MarkdownStyles::kUrl, 1);
+                    m_states.push(MarkdownState::kUrl);
+                } else {
+                    accessor.SetStyle(MarkdownStyles::kDefault, 1);
+                }
+                break;
             case '#':
                 if (accessor.IsAtStartOfLine()) {
                     if (accessor.GetSubstr(6) == "######") {
@@ -164,7 +236,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                     } else {
                         accessor.SetStyle(MarkdownStyles::kHeader1, 1);
                     }
-                    state = State::kHeaderText;
+                    m_states.push(MarkdownState::kHeaderText);
                 } else {
                     accessor.SetStyle(MarkdownStyles::kDefault, 1);
                 }
@@ -179,7 +251,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
             case '*':
                 if (accessor.GetSubstr(2) == "**" && accessor.CurrentLineContains(2, "**")) {
                     accessor.SetStyle(MarkdownStyles::kStrong2Tag, 2);
-                    state = State::kStrong2Text;
+                    m_states.push(MarkdownState::kStrong2Text);
                 } else {
                     accessor.SetStyle(MarkdownStyles::kDefault, 1);
                 }
@@ -187,7 +259,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
             case '_':
                 if (accessor.GetSubstr(2) == "__" && accessor.CurrentLineContains(2, "__")) {
                     accessor.SetStyle(MarkdownStyles::kEmphasis2Tag, 2);
-                    state = State::kEmphasis2Text;
+                    m_states.push(MarkdownState::kEmphasis2Text);
                 } else {
                     accessor.SetStyle(MarkdownStyles::kDefault, 1);
                 }
@@ -196,10 +268,11 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 if (accessor.GetSubstr(3) == "```") {
                     // code block
                     accessor.SetStyle(MarkdownStyles::kBacktick, 3);
-                    state = State::kCodeBlockTag;
+                    m_states.push(MarkdownState::kCodeBlock);
+                    m_states.push(MarkdownState::kCodeBlockTag);
                 } else {
                     accessor.SetStyle(MarkdownStyles::kBacktick, 1);
-                    state = State::kCodeWord;
+                    m_states.push(MarkdownState::kCodeWord);
                 }
                 break;
             default:
@@ -207,25 +280,33 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 break;
             }
             break;
-        case State::kCodeBlockTag:
+        case MarkdownState::kUrl:
+            if (IsValidUrlChar(ch)) {
+                accessor.SetStyle(MarkdownStyles::kUrl, 1);
+            } else {
+                accessor.SetStyle(MarkdownStyles::kDefault, default_step);
+                m_states.pop();
+            }
+            break;
+        case MarkdownState::kCodeBlockTag:
             switch (ch) {
             case '\n':
                 accessor.SetStyle(MarkdownStyles::kCodeBlockTag, 1);
-                state = State::kCodeBlock;
+                m_states.pop();
                 break;
             default:
                 accessor.SetStyle(MarkdownStyles::kCodeBlockTag, 1, default_step);
                 break;
             }
             break;
-        case State::kCodeBlock:
+        case MarkdownState::kCodeBlock:
             switch (ch) {
             case '`':
                 if (accessor.GetSubstr(3) == "```") {
                     accessor.SetStyle(MarkdownStyles::kBacktick, 3);
-                    state = State::kDefault;
+                    m_states.pop();
                 } else {
-                    accessor.SetStyle(MarkdownStyles::kBacktick, 1);
+                    accessor.SetStyle(MarkdownStyles::kCodeBlockText, 1);
                 }
                 break;
             default:
@@ -233,34 +314,43 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 break;
             }
             break;
-        case State::kCodeWord:
+        case MarkdownState::kCodeWord:
             switch (ch) {
             case '`':
                 accessor.SetStyle(MarkdownStyles::kBacktick, 1);
-                state = State::kDefault;
+                m_states.pop();
                 break;
             default:
                 accessor.SetStyle(MarkdownStyles::kCodeWord, 1, default_step);
                 break;
             }
             break;
-        case State::kHeaderText:
+        case MarkdownState::kHeaderText:
             switch (ch) {
+            case '`':
+                // we support backticks in header text.
+                if (accessor.GetCharAt(1) != '`') {
+                    accessor.SetStyle(MarkdownStyles::kBacktick, 1);
+                    m_states.push(MarkdownState::kCodeWord);
+                } else {
+                    accessor.SetStyle(MarkdownStyles::kHeaderText, 1);
+                }
+                break;
             case '\n':
                 accessor.SetStyle(MarkdownStyles::kHeaderText, 1);
-                state = State::kDefault;
+                m_states.pop();
                 break;
             default:
                 accessor.SetStyle(MarkdownStyles::kHeaderText, 1, default_step);
                 break;
             }
             break;
-        case State::kStrong2Text:
+        case MarkdownState::kStrong2Text:
             switch (ch) {
             case '*':
                 if (accessor.GetSubstr(2) == "**") {
                     accessor.SetStyle(MarkdownStyles::kStrong2Tag, 2);
-                    state = State::kDefault;
+                    m_states.pop();
                 } else {
                     accessor.SetStyle(MarkdownStyles::kStrong2Text, 1);
                 }
@@ -270,40 +360,18 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 break;
             }
             break;
-        case State::kStrongText:
-            switch (ch) {
-            case '*':
-                accessor.SetStyle(MarkdownStyles::kStrongTag, 1);
-                state = State::kDefault;
-                break;
-            default:
-                accessor.SetStyle(MarkdownStyles::kStrongText, 1, default_step);
-                break;
-            }
-            break;
-        case State::kEmphasis2Text:
+        case MarkdownState::kEmphasis2Text:
             switch (ch) {
             case '_':
                 if (accessor.GetSubstr(2) == "__") {
                     accessor.SetStyle(MarkdownStyles::kEmphasis2Tag, 2);
-                    state = State::kDefault;
+                    m_states.pop();
                 } else {
                     accessor.SetStyle(MarkdownStyles::kEmphasis2Text, 1);
                 }
                 break;
             default:
                 accessor.SetStyle(MarkdownStyles::kEmphasis2Text, 1, default_step);
-                break;
-            }
-            break;
-        case State::kEmphasisText:
-            switch (ch) {
-            case '_':
-                accessor.SetStyle(MarkdownStyles::kEmphasisTag, 1);
-                state = State::kDefault;
-                break;
-            default:
-                accessor.SetStyle(MarkdownStyles::kEmphasisText, 1, default_step);
                 break;
             }
             break;

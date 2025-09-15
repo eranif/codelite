@@ -1,6 +1,7 @@
 #pragma once
 
 #include "clSTCContainerStylerBase.hpp"
+#include "cl_command_event.h"
 #include "codelite_exports.h"
 
 #include <wx/event.h>
@@ -32,16 +33,34 @@ enum MarkdownStyles {
     kListItem,
     kNumberedListItem,
     kNumberedListItemDot,
+    kUrl,
+};
+
+enum class MarkdownState {
+    kDefault,
+    kCodeBlock,
+    kCodeBlockTag,
+    kCodeWord,
+    kStrong2Text,
+    kEmphasis2Text,
+    kHeaderText,
+    kUrl,
 };
 
 class WXDLLIMPEXP_SDK MarkdownStyler : public clSTCContainerStylerBase
 {
 public:
     MarkdownStyler(wxStyledTextCtrl* ctrl);
-    virtual ~MarkdownStyler() = default;
+    virtual ~MarkdownStyler();
     void InitStyles() override;
     void Reset() override;
+    wxString GetUrlFromPosition(int pos);
 
 private:
     void OnStyle(clSTCAccessor& accessor);
+    void OnHostspotClicked(wxStyledTextEvent& event);
+
+    std::stack<MarkdownState> m_states;
 };
+
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_MARKDOWN_LINK_CLICKED, clCommandEvent);

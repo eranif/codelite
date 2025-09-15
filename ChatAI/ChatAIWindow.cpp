@@ -121,6 +121,10 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
         EventNotifier::Get()->AddPendingEvent(log_event);
     });
     m_markdownStyler = std::make_unique<MarkdownStyler>(m_stcOutput);
+    m_markdownStyler->Bind(wxEVT_MARKDOWN_LINK_CLICKED, [](clCommandEvent& event) {
+        wxString url = event.GetString();
+        ::wxLaunchDefaultBrowser(url);
+    });
 
     wxSize panel_size{wxNOT_FOUND, wxSize(GetTextExtent("Tp")).GetHeight()};
     panel_size.IncBy(0, 10); // The borders
@@ -350,6 +354,10 @@ void ChatAIWindow::DoClearOutputView()
     m_stcOutput->ClearAll();
     m_stcOutput->SetReadOnly(true);
     m_markdownStyler = std::make_unique<MarkdownStyler>(m_stcOutput);
+    m_markdownStyler->Bind(wxEVT_MARKDOWN_LINK_CLICKED, [](clCommandEvent& event) {
+        wxString url = event.GetString();
+        ::wxLaunchDefaultBrowser(url);
+    });
 }
 
 void ChatAIWindow::OnNewSession(wxCommandEvent& event)

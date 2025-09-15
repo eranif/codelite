@@ -109,7 +109,7 @@ public:
         if (substr.empty()) {
             return false;
         }
-        return substr.find(sv) != wxStringView::npos;
+        return substr.find(wxStringView{sv.data(), sv.length()}) != wxStringView::npos;
     }
 
     inline bool CanNext() const { return m_curpos < m_buffer.length(); }

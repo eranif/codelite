@@ -28,12 +28,8 @@ void clSTCContainerStylerBase::StyleText()
     CHECK_PTR_RET(m_ctrl);
     CHECK_COND_RET(m_on_style_callback != nullptr);
 
-    int startPos = m_ctrl->GetEndStyled();
-    int endPos = m_ctrl->GetLastPosition();
-    wxString text = m_ctrl->GetTextRange(startPos, endPos);
-    // The scintilla syntax in wx3.1.1 changed
-    m_ctrl->StartStyling(startPos);
-    clSTCAccessor accessor{ m_ctrl, startPos, endPos };
+    m_ctrl->StartStyling(m_ctrl->GetEndStyled());
+    clSTCAccessor accessor{m_ctrl};
     m_on_style_callback(accessor);
 }
 

@@ -92,6 +92,8 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
 
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
+    m_stcOutput->SetCodePage(wxSTC_CP_UTF8);
+    m_stcInput->SetCodePage(wxSTC_CP_UTF8);
     m_stcOutput->SetReadOnly(true);
 
     Bind(wxEVT_MENU, &ChatAIWindow::OnNewSession, this, wxID_CLEAR);
@@ -187,7 +189,7 @@ void ChatAIWindow::DoSendPrompt()
     prompt.Trim().Trim(false);
     m_plugin->GetClient().Send(prompt, m_activeModel->GetStringSelection());
 
-    prompt.Prepend(wxString() << "\n**" << ::wxGetUserId() << "**:\n\n");
+    prompt.Prepend(wxString() << "\n**" << ::wxGetUserId() << "**:\n");
     AppendOutput(prompt + "\n\n");
     m_stcInput->ClearAll();
     ShowIndicator(true);
@@ -379,7 +381,7 @@ void ChatAIWindow::OnChatAIOutput(OllamaEvent& event)
         NotifyThinking(event.IsThinking());
     }
 
-    wxString content = wxString::FromUTF8(event.GetStringRaw());
+    wxString content = wxString(event.GetStringRaw().data(), wxConvUTF8, event.GetStringRaw().length());
     switch (event.GetReason()) {
     case ollama::Reason::kCancelled:
         ::wxMessageBox(_("Operation cancelled by user."), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);

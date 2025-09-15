@@ -189,12 +189,6 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
     while (accessor.CanNext() && !m_states.empty()) {
         MarkdownState current_state = m_states.top();
         wxChar ch = accessor.GetCurrentChar();
-        wxUniChar uni_char{ch};
-        int default_step{1};
-        if (!uni_char.IsAscii()) {
-            wxString as_str(uni_char);
-            default_step = StringUtils::UTF8Length(as_str.c_str(), as_str.length());
-        }
 
         switch (current_state) {
         case MarkdownState::kDefault:
@@ -276,7 +270,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 }
                 break;
             default:
-                accessor.SetStyle(MarkdownStyles::kDefault, 1, default_step);
+                accessor.SetStyle(MarkdownStyles::kDefault, 1);
                 break;
             }
             break;
@@ -284,7 +278,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
             if (IsValidUrlChar(ch)) {
                 accessor.SetStyle(MarkdownStyles::kUrl, 1);
             } else {
-                accessor.SetStyle(MarkdownStyles::kDefault, default_step);
+                accessor.SetStyle(MarkdownStyles::kDefault, 1);
                 m_states.pop();
             }
             break;
@@ -295,7 +289,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 m_states.pop();
                 break;
             default:
-                accessor.SetStyle(MarkdownStyles::kCodeBlockTag, 1, default_step);
+                accessor.SetStyle(MarkdownStyles::kCodeBlockTag, 1);
                 break;
             }
             break;
@@ -310,7 +304,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 }
                 break;
             default:
-                accessor.SetStyle(MarkdownStyles::kCodeBlockText, 1, default_step);
+                accessor.SetStyle(MarkdownStyles::kCodeBlockText, 1);
                 break;
             }
             break;
@@ -321,7 +315,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 m_states.pop();
                 break;
             default:
-                accessor.SetStyle(MarkdownStyles::kCodeWord, 1, default_step);
+                accessor.SetStyle(MarkdownStyles::kCodeWord, 1);
                 break;
             }
             break;
@@ -341,7 +335,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 m_states.pop();
                 break;
             default:
-                accessor.SetStyle(MarkdownStyles::kHeaderText, 1, default_step);
+                accessor.SetStyle(MarkdownStyles::kHeaderText, 1);
                 break;
             }
             break;
@@ -356,7 +350,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 }
                 break;
             default:
-                accessor.SetStyle(MarkdownStyles::kStrong2Text, 1, default_step);
+                accessor.SetStyle(MarkdownStyles::kStrong2Text, 1);
                 break;
             }
             break;
@@ -371,7 +365,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 }
                 break;
             default:
-                accessor.SetStyle(MarkdownStyles::kEmphasis2Text, 1, default_step);
+                accessor.SetStyle(MarkdownStyles::kEmphasis2Text, 1);
                 break;
             }
             break;

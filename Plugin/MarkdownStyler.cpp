@@ -193,7 +193,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
         int default_step{1};
         if (!uni_char.IsAscii()) {
             wxString as_str(uni_char);
-            default_step = as_str.utf8_length();
+            default_step = StringUtils::UTF8Length(as_str.c_str(), as_str.length());
         }
 
         switch (current_state) {

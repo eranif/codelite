@@ -107,7 +107,6 @@ void PopulateToolbarOverflow(clToolBar* toolbar)
         {wxTRANSLATE("Switch to local branch"), XRCID("git_switch_branch"), "split"},
         {wxTRANSLATE("Switch to remote branch"), XRCID("git_switch_to_remote_branch"), "remote-folder"},
         {wxEmptyString, wxID_SEPARATOR, wxEmptyString},
-        {wxTRANSLATE("Refresh"), XRCID("git_refresh"), "file_reload"},
         {wxTRANSLATE("Apply Patch"), XRCID("git_apply_patch"), "patch"},
         {wxEmptyString, wxID_SEPARATOR, wxEmptyString},
         {wxTRANSLATE("Start gitk"), XRCID("git_start_gitk"), "debugger_start"},
@@ -186,6 +185,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_toolbar->SetGroupSpacing(5);
 
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
+    m_toolbar->AddTool(XRCID("git_refresh"), _("Refresh"), images->Add("file_reload"), _("Refresh"));
     m_toolbar->AddTool(XRCID("git_clear_log"), _("Clear Git Log"), images->Add("clear"), _("Clear Git Log"));
     m_toolbar->AddTool(
         XRCID("git_stop_process"), _("Terminate Git Process"), images->Add("execute_stop"), _("Terminate Git Process"));
@@ -193,13 +193,13 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_toolbar->AddTool(XRCID("git_console_add_file"), _("Add File"), images->Add("plus"), _("Add File"));
     m_toolbar->AddTool(XRCID("git_console_reset_file"), _("Reset File"), images->Add("undo"), _("Reset File"));
 
-    m_toolbar->AddTool(XRCID("git_reset_repository"), _("Reset"), images->Add("clean"), _("Reset repository"));
     m_toolbar->AddSeparator();
-
-    m_toolbar->AddTool(XRCID("git_pull"), _("Pull"), images->Add("pull"), _("Pull remote changes"), wxITEM_DROPDOWN);
-
     m_toolbar->AddTool(XRCID("git_commit"), _("Commit"), images->Add("git-commit"), _("Commit local changes"));
     m_toolbar->AddTool(XRCID("git_push"), _("Push"), images->Add("up"), _("Push local changes"));
+    m_toolbar->AddTool(XRCID("git_pull"), _("Pull"), images->Add("pull"), _("Pull remote changes"), wxITEM_DROPDOWN);
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("git_reset_repository"), _("Reset"), images->Add("clean"), _("Reset repository"));
+
     m_toolbar->AddTool(XRCID("git_rebase"), _("Rebase"), images->Add("merge"), _("Rebase"), wxITEM_DROPDOWN);
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(XRCID("git_commit_diff"), _("Diffs"), images->Add("diff"), _("Show current diffs"));

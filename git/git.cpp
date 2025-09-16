@@ -2857,7 +2857,8 @@ void GitPlugin::DoRefreshView(bool ensureVisible)
     m_gitActionQueue.push_back(ga);
     AddDefaultActions();
     if (ensureVisible) {
-        m_mgr->ShowOutputPane("Git");
+        m_mgr->ShowPane(PANE_LEFT_SIDEBAR, true);
+        m_mgr->ShowManagementWindow("Git", true);
     }
     ProcessGitActionQueue();
 }

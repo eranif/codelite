@@ -6,7 +6,6 @@
 #include "codelite_exports.h"
 
 #include <wx/aui/auibook.h>
-#include <wx/aui/serializer.h>
 
 class WXDLLIMPEXP_SDK clAuiBook : public wxAuiNotebook
 {

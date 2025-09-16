@@ -1609,7 +1609,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
         new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
     m_notebookChanges->SetName(wxT("m_notebookChanges"));
 
-    boxSizer711->Add(m_notebookChanges, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer711->Add(m_notebookChanges, 1, wxEXPAND, WXC_FROM_DIP(2));
 
     m_panel674 = new wxPanel(
         m_notebookChanges, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebookChanges, wxSize(-1, -1)), wxTAB_TRAVERSAL);

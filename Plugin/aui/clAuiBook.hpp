@@ -51,8 +51,8 @@ protected:
 
 private:
     clTabHistory::Ptr_t m_history;
-    bool m_eventsEnabled = true;
-    bool m_canHaveCloseButton = true;
+    bool m_eventsEnabled{true};
+    bool m_canHaveCloseButton{false};
 };
 
 class WXDLLIMPEXP_SDK clAuiBookEventsDisabler

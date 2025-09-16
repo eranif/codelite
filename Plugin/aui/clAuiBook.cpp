@@ -42,6 +42,7 @@ clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const 
         NotebookFlagsToAuiBookStyle(style, kNotebook_MouseMiddleClickClosesTab, wxAUI_NB_MIDDLE_CLICK_CLOSE);
     aui_book_style |= NotebookFlagsToAuiBookStyle(style, kNotebook_FixedWidth, wxAUI_NB_TAB_FIXED_WIDTH);
     aui_book_style |= NotebookFlagsToAuiBookStyle(style, kNotebook_AllowDnD, wxAUI_NB_TAB_MOVE);
+    aui_book_style |= NotebookFlagsToAuiBookStyle(style, kNotebook_AllowDnD, wxAUI_NB_TAB_SPLIT);
     if ((aui_book_style & wxAUI_NB_BOTTOM) == 0) {
         aui_book_style |= wxAUI_NB_TOP;
     }

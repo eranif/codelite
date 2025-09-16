@@ -5,6 +5,10 @@
 #include "clTabRenderer.h"
 #include "cl_command_event.h"
 
+#ifdef __WXGTK__
+#include <gtk/gtk.h>
+#endif
+
 #include <unordered_map>
 #include <wx/menu.h>
 #include <wx/notebook.h>
@@ -38,6 +42,9 @@ public:
 
 #if 0
     void TabReordered();
+#endif
+
+#ifdef __WXGTK__
     int FindPageByGTKHandle(WXWidget page) const;
     void GTKLeftDClick(int index);
     void GTKMiddleDown(int index);
@@ -105,12 +112,3 @@ public:
     int ChangeSelection(size_t nPage) override;
 };
 
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CHANGING, wxBookCtrlEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CHANGED, wxBookCtrlEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSING, wxBookCtrlEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSED, wxBookCtrlEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_CONTEXT_MENU, wxBookCtrlEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCtrlEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_NEW_PAGE, wxBookCtrlEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_FILELIST_BUTTON_CLICKED, clContextMenuEvent);

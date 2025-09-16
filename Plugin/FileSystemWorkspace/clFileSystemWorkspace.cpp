@@ -188,7 +188,7 @@ void clFileSystemWorkspace::CacheFiles(bool force)
         m_files.Clear();
     }
     std::thread thr(
-        [=](const wxString& rootFolder) {
+        [=, this](const wxString& rootFolder) {
             clFilesScanner fs;
             std::vector<wxString> files;
             wxStringSet_t excludeFolders = {".git/", ".svn/", ".codelite/", ".ctagsd/"};

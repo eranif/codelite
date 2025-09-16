@@ -56,16 +56,22 @@ class BuildSettingsConfig;
 class NavMgr;
 class wxAuiManager;
 class clInfoBar;
-class clGenericNotebook;
-class clAuiBook;
-class clNativeNotebook;
 
 #if MAINBOOK_AUIBOOK
+
+#include "../Plugin/clAuiBook.hpp"
 using MainNotebook = clAuiBook;
+
 #elif CL_USE_NATIVEBOOK
+
+#include "../Plugin/clNativeNotebook.hpp"
 using MainNotebook = clNativeNotebook;
+
 #else
+
+#include "../Plugin/clGenericNotebook.hpp"
 using MainNotebook = clGenericNotebook;
+
 #endif
 
 //--------------------------

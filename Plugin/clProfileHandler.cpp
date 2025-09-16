@@ -1,14 +1,9 @@
 #include "clProfileHandler.h"
 
-#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
-#include "Notebook.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
-#include "workspace.h"
-
-#include <algorithm>
 
 clProfileHandler::clProfileHandler()
 {
@@ -17,9 +12,14 @@ clProfileHandler::clProfileHandler()
     EventNotifier::Get()->Bind(wxEVT_GOING_DOWN, &clProfileHandler::OnGoingDown, this);
 
     m_cxxOutputTabs = {
-        "UnitTest++", "Trace", "CppCheck", "MemCheck", "CScope", "BuildQ",
+        "UnitTest++",
+        "Trace",
+        "CppCheck",
+        "MemCheck",
+        "CScope",
+        "BuildQ",
     };
-    m_cxxWorkspaceTabs = { "CMake", "wxCrafter", "Groups" };
+    m_cxxWorkspaceTabs = {"CMake", "wxCrafter", "Groups"};
 }
 
 clProfileHandler::~clProfileHandler()
@@ -39,7 +39,7 @@ void clProfileHandler::OnWorkspaceClosed(clWorkspaceEvent& e)
 void clProfileHandler::OnWorkspaceLoaded(clWorkspaceEvent& e)
 {
     e.Skip();
-    if(::clIsCxxWorkspaceOpened()) {
+    if (::clIsCxxWorkspaceOpened()) {
         // we just opened a C++ workspace, restore all C++ related tabs
         HandleOutputTabs(true);
         HandleWorkspaceTabs(true);
@@ -56,23 +56,9 @@ clProfileHandler& clProfileHandler::Get()
     return handler;
 }
 
-void clProfileHandler::HandleWorkspaceTabs(bool show)
-{
-    if(show) {
-        RestoreTabs(m_cxxWorkspaceTabsToRestore, wxEVT_SHOW_WORKSPACE_TAB);
-    } else {
-        HideTabs(m_cxxWorkspaceTabs, PaneId::SIDE_BAR, wxEVT_SHOW_WORKSPACE_TAB, m_cxxWorkspaceTabsToRestore);
-    }
-}
+void clProfileHandler::HandleWorkspaceTabs([[maybe_unused]] bool show) {}
 
-void clProfileHandler::HandleOutputTabs(bool show)
-{
-    if(show) {
-        RestoreTabs(m_cxxOutputTabsToRestore, wxEVT_SHOW_OUTPUT_TAB);
-    } else {
-        HideTabs(m_cxxOutputTabs, PaneId::BOTTOM_BAR, wxEVT_SHOW_OUTPUT_TAB, m_cxxOutputTabsToRestore);
-    }
-}
+void clProfileHandler::HandleOutputTabs([[maybe_unused]] bool show) {}
 
 bool clProfileHandler::IsPageExistsInBook(PaneId pane_id, const wxString& label) const
 {
@@ -89,23 +75,11 @@ void clProfileHandler::RestoreTabs(wxStringSet_t& tabs, wxEventType eventType)
     tabs.clear();
 }
 
-void clProfileHandler::HideTabs(const wxStringSet_t& candidates, PaneId pane_id, wxEventType eventType,
-                                wxStringSet_t& tabsHidden)
+void clProfileHandler::HideTabs([[maybe_unused]] const wxStringSet_t& candidates,
+                                [[maybe_unused]] PaneId pane_id,
+                                [[maybe_unused]] wxEventType eventType,
+                                [[maybe_unused]] wxStringSet_t& tabsHidden)
 {
-    tabsHidden.clear();
-    for(const auto& tab : candidates) {
-        if(IsPageExistsInBook(pane_id, tab)) {
-            tabsHidden.insert(tab);
-            clCommandEvent eventHide(eventType);
-            eventHide.SetSelected(false).SetString(tab);
-            EventNotifier::Get()->AddPendingEvent(eventHide);
-        }
-    }
 }
 
-void clProfileHandler::OnGoingDown(clCommandEvent& e)
-{
-    e.Skip();
-    RestoreTabs(m_cxxOutputTabsToRestore, wxEVT_SHOW_OUTPUT_TAB);
-    RestoreTabs(m_cxxWorkspaceTabsToRestore, wxEVT_SHOW_WORKSPACE_TAB);
-}
+void clProfileHandler::OnGoingDown(clCommandEvent& e) { e.Skip(); }

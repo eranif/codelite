@@ -753,13 +753,13 @@ clMainFrame::clMainFrame(
 
     // Ensure that the position is within the display coords
     if (inf.GetFramePosition().x < 0 || inf.GetFramePosition().y < 0) {
-        inf.SetFramePosition({ 100, 100 });
+        inf.SetFramePosition({100, 100});
     }
 
     wxPoint create_point = inf.GetFramePosition();
 #ifdef __WXMSW__
     // on Windows, create the frame outside of the display
-    create_point = wxPoint{ -20000, -20000 };
+    create_point = wxPoint{-20000, -20000};
 #endif
 
     if (!wxFrame::Create(pParent, id, title, create_point, inf.GetFrameSize(), style)) {
@@ -1029,191 +1029,191 @@ void clMainFrame::AddKeyboardAccelerators()
 {
     clKeyboardManager* mgr = clKeyboardManager::Get();
     mgr->AddAccelerator(_("Build"),
-                        { { "configuration_manager", _("Configuration Manager...") },
-                          { "batch_build", _("Batch Build...") },
-                          { "execute_no_debug", _("Run"), "Ctrl-F5" },
-                          { "stop_executed_program", _("Stop") },
-                          { "build_active_project", _("Build Project"), "F7" },
-                          { "build_workspace", _("Build Workspace"), "Ctrl-Shift-B" },
-                          { "rebuild_workspace", _("Rebuild Workspace") },
-                          { "clean_workspace", _("Clean Workspace") },
-                          { "compile_active_file", _("Compile Current File"), "Ctrl-F7" },
-                          { "compile_active_file_project", _("Compile Current File's Project"), "Ctrl-Shift-F7" },
-                          { "clean_active_project", _("Clean Project") },
-                          { "stop_active_project_build", _("Stop Build") },
-                          { "rebuild_active_project", _("Rebuild Project") },
-                          { "build_n_run_active_project", _("Build and Run Project"), "Ctrl-F9" },
-                          { "next_build_error", _("Next Build Error"), "F4" } });
+                        {{"configuration_manager", _("Configuration Manager...")},
+                         {"batch_build", _("Batch Build...")},
+                         {"execute_no_debug", _("Run"), "Ctrl-F5"},
+                         {"stop_executed_program", _("Stop")},
+                         {"build_active_project", _("Build Project"), "F7"},
+                         {"build_workspace", _("Build Workspace"), "Ctrl-Shift-B"},
+                         {"rebuild_workspace", _("Rebuild Workspace")},
+                         {"clean_workspace", _("Clean Workspace")},
+                         {"compile_active_file", _("Compile Current File"), "Ctrl-F7"},
+                         {"compile_active_file_project", _("Compile Current File's Project"), "Ctrl-Shift-F7"},
+                         {"clean_active_project", _("Clean Project")},
+                         {"stop_active_project_build", _("Stop Build")},
+                         {"rebuild_active_project", _("Rebuild Project")},
+                         {"build_n_run_active_project", _("Build and Run Project"), "Ctrl-F9"},
+                         {"next_build_error", _("Next Build Error"), "F4"}});
     mgr->AddAccelerator(_("C++"),
-                        { { "swap_files", _("Swap Header/Implementation file"), "F12" },
-                          { "find_decl", _("Goto Declaration") },
-                          { "find_impl", _("Goto Implementation") },
-                          { "open_include_file", _("Open Include File") } });
+                        {{"swap_files", _("Swap Header/Implementation file"), "F12"},
+                         {"find_decl", _("Goto Declaration")},
+                         {"find_impl", _("Goto Implementation")},
+                         {"open_include_file", _("Open Include File")}});
     mgr->AddAccelerator(_("C++ | Code Generation / Refactoring"),
-                        { { "setters_getters", _("Generate Setters/Getters...") },
-                          { "move_impl", _("Move Function Implementation to...") },
-                          { "add_impl", _("Add Function Implementation...") },
-                          { "add_multi_impl", _("Implement all Un-implemented Functions...") } });
+                        {{"setters_getters", _("Generate Setters/Getters...")},
+                         {"move_impl", _("Move Function Implementation to...")},
+                         {"add_impl", _("Add Function Implementation...")},
+                         {"add_multi_impl", _("Implement all Un-implemented Functions...")}});
     mgr->AddAccelerator(_("Debugger"),
-                        { { "start_debugger", _("Start/Continue Debugger"), "F5" },
-                          { "restart_debugger", _("Restart Debugger"), "Ctrl-Shift-F5" },
-                          { "attach_debugger", _("Attach to process...") },
-                          { "pause_debugger", _("Pause debugger") },
-                          { "stop_debugger", _("Stop debugger"), "Shift-F5" },
-                          { "dbg_stepin", _("Step Into"), "F11" },
-                          { "dbg_stepout", _("Step Out"), "Shift-F11" },
-                          { "dbg_stepi", _("Step Into Instruction") },
-                          { "dbg_next", _("Next"), "F10" },
-                          { "dbg_nexti", _("Next Instruction"), "Ctrl-F10" },
-                          { "show_cursor", _("Show Cursor") },
-                          { "dbg_run_to_cursor", _("Run to Caret Line") },
-                          { "dbg_jump_cursor", _("Jump to Caret Line") },
-                          { "insert_breakpoint", _("Toggle Breakpoint"), "F9" },
-                          { "disable_all_breakpoints", _("Disable All Breakpoints") },
-                          { "enable_all_breakpoints", _("Enable All Breakpoints") },
-                          { "delete_all_breakpoints", _("Delete All Breakpoints") },
-                          { "quick_debug", _("Quick Debug...") } });
+                        {{"start_debugger", _("Start/Continue Debugger"), "F5"},
+                         {"restart_debugger", _("Restart Debugger"), "Ctrl-Shift-F5"},
+                         {"attach_debugger", _("Attach to process...")},
+                         {"pause_debugger", _("Pause debugger")},
+                         {"stop_debugger", _("Stop debugger"), "Shift-F5"},
+                         {"dbg_stepin", _("Step Into"), "F11"},
+                         {"dbg_stepout", _("Step Out"), "Shift-F11"},
+                         {"dbg_stepi", _("Step Into Instruction")},
+                         {"dbg_next", _("Next"), "F10"},
+                         {"dbg_nexti", _("Next Instruction"), "Ctrl-F10"},
+                         {"show_cursor", _("Show Cursor")},
+                         {"dbg_run_to_cursor", _("Run to Caret Line")},
+                         {"dbg_jump_cursor", _("Jump to Caret Line")},
+                         {"insert_breakpoint", _("Toggle Breakpoint"), "F9"},
+                         {"disable_all_breakpoints", _("Disable All Breakpoints")},
+                         {"enable_all_breakpoints", _("Enable All Breakpoints")},
+                         {"delete_all_breakpoints", _("Delete All Breakpoints")},
+                         {"quick_debug", _("Quick Debug...")}});
     mgr->AddAccelerator(
         _("Edit"),
-        { { "wxID_UNDO", _("Undo"), "Ctrl-Z" },
-          { "wxID_REDO", _("Redo"), "Ctrl-Y" },
-          { "wxID_CUT", _("Cut"), "Ctrl-X" },
-          { "wxID_COPY", _("Copy"), "Ctrl-C" },
-          { "wxID_PASTE", _("Paste"), "Ctrl-V" },
-          { "wxID_DUPLICATE", _("Duplicate Selection / Line"), "Ctrl-D" },
-          { "delete_line_end", _("Delete to Line End") },
-          { "delete_line_start", _("Delete to Line Start") },
-          { "delete_line", _("Delete Line"), "Ctrl-L" },
-          { "copy_line", _("Copy Line") },
-          { "cut_line", _("Cut Line") },
-          { "selection_to_multi_caret", _("Split selection into lines"), "Ctrl-Shift-L" },
-          { "to_lower", _("Make Lowercase"), "Ctrl-U" },
-          { "to_upper", _("Make Uppercase"), "Ctrl-Shift-U" },
-          { "insert_doxy_comment", _("Insert Comment Block"), "Ctrl-Shift-D" },
-          { "comment_line", _("Comment Line"), "Ctrl-/" },
-          { "comment_selection", _("Comment Selection"), "Ctrl-Shift-/" },
-          { "transpose_lines", _("Transpose Lines"), "Ctrl-T" },
-          { "move_line_up", _("Move Line Up"), "Ctrl-Shift-UP" },
-          { "move_line_down", _("Move Line Down"), "Ctrl-Shift-DOWN" },
-          { "convert_indent_to_tabs", _("Convert Indentation to Tabs") },
-          { "convert_indent_to_spaces", _("Convert Indentation to Spaces") },
-          { "center_line_roll", _("Center Line in Editor") },
-          { "wxID_SELECTALL", _("Select All"), "Ctrl-A" },
-          { "match_brace", _("Match Brace"), "Ctrl-]" },
-          { "select_to_brace", _("Select to Brace"), "Ctrl-Shift-E" },
-          { "complete_word", _("Code Complete"), "Ctrl-SPACE" },
-          { "simple_word_completion", _("Complete Word"), "Ctrl-ENTER" },
-          { "function_call_tip", _("Display Function Calltip"), "Ctrl-Shift-SPACE" },
-          { "convert_eol_win", _("Convert to Windows Format") },
-          { "convert_eol_unix", _("Convert to Unix Format") },
-          { "trim_trailing", _("Trim Trailing Spaces") },
-          { "copy_file_relative_path_to_workspace", _("Copy Path Relative to Workspace"), "Ctrl-Alt-Shift-C" },
-          { "copy_file_name", _("Copy Path to Clipboard") },
-          { "copy_file_path", _("Copy Full Path to Clipboard") },
-          { "copy_file_name_only", _("Copy File Name to Clipboard") } });
+        {{"wxID_UNDO", _("Undo"), "Ctrl-Z"},
+         {"wxID_REDO", _("Redo"), "Ctrl-Y"},
+         {"wxID_CUT", _("Cut"), "Ctrl-X"},
+         {"wxID_COPY", _("Copy"), "Ctrl-C"},
+         {"wxID_PASTE", _("Paste"), "Ctrl-V"},
+         {"wxID_DUPLICATE", _("Duplicate Selection / Line"), "Ctrl-D"},
+         {"delete_line_end", _("Delete to Line End")},
+         {"delete_line_start", _("Delete to Line Start")},
+         {"delete_line", _("Delete Line"), "Ctrl-L"},
+         {"copy_line", _("Copy Line")},
+         {"cut_line", _("Cut Line")},
+         {"selection_to_multi_caret", _("Split selection into lines"), "Ctrl-Shift-L"},
+         {"to_lower", _("Make Lowercase"), "Ctrl-U"},
+         {"to_upper", _("Make Uppercase"), "Ctrl-Shift-U"},
+         {"insert_doxy_comment", _("Insert Comment Block"), "Ctrl-Shift-D"},
+         {"comment_line", _("Comment Line"), "Ctrl-/"},
+         {"comment_selection", _("Comment Selection"), "Ctrl-Shift-/"},
+         {"transpose_lines", _("Transpose Lines"), "Ctrl-T"},
+         {"move_line_up", _("Move Line Up"), "Ctrl-Shift-UP"},
+         {"move_line_down", _("Move Line Down"), "Ctrl-Shift-DOWN"},
+         {"convert_indent_to_tabs", _("Convert Indentation to Tabs")},
+         {"convert_indent_to_spaces", _("Convert Indentation to Spaces")},
+         {"center_line_roll", _("Center Line in Editor")},
+         {"wxID_SELECTALL", _("Select All"), "Ctrl-A"},
+         {"match_brace", _("Match Brace"), "Ctrl-]"},
+         {"select_to_brace", _("Select to Brace"), "Ctrl-Shift-E"},
+         {"complete_word", _("Code Complete"), "Ctrl-SPACE"},
+         {"simple_word_completion", _("Complete Word"), "Ctrl-ENTER"},
+         {"function_call_tip", _("Display Function Calltip"), "Ctrl-Shift-SPACE"},
+         {"convert_eol_win", _("Convert to Windows Format")},
+         {"convert_eol_unix", _("Convert to Unix Format")},
+         {"trim_trailing", _("Trim Trailing Spaces")},
+         {"copy_file_relative_path_to_workspace", _("Copy Path Relative to Workspace"), "Ctrl-Alt-Shift-C"},
+         {"copy_file_name", _("Copy Path to Clipboard")},
+         {"copy_file_path", _("Copy Full Path to Clipboard")},
+         {"copy_file_name_only", _("Copy File Name to Clipboard")}});
     mgr->AddAccelerator(_("File"),
-                        { { "new_file", _("New File"), "Ctrl-N" },
-                          { "open_file", _("Open File..."), "Ctrl-O" },
-                          { "refresh_file", _("Reload File"), "Ctrl-R" },
-                          { "save_file", _("Save File"), "Ctrl-S" },
-                          { "duplicate_tab", _("Duplicate Tab") },
-                          { "save_file_as", _("Save As..."), "Ctrl-Shift-S" },
-                          { "save_all", _("Save all files") },
-                          { "close_file", _("Close"), "Ctrl-W" },
-                          { "wxID_CLOSE_ALL", _("Close All") },
-                          { "wxID_PRINT", _("Print..."), "Ctrl-P" },
-                          { "wxID_EXIT", _("Exit"), "Alt-X" } });
-    mgr->AddAccelerator(_("Help"), { { "wxID_ABOUT", _("About...") } });
-    mgr->AddAccelerator(_("Plugins"), { { "manage_plugins", _("Manage Plugins...") } });
+                        {{"new_file", _("New File"), "Ctrl-N"},
+                         {"open_file", _("Open File..."), "Ctrl-O"},
+                         {"refresh_file", _("Reload File"), "Ctrl-R"},
+                         {"save_file", _("Save File"), "Ctrl-S"},
+                         {"duplicate_tab", _("Duplicate Tab")},
+                         {"save_file_as", _("Save As..."), "Ctrl-Shift-S"},
+                         {"save_all", _("Save all files")},
+                         {"close_file", _("Close"), "Ctrl-W"},
+                         {"wxID_CLOSE_ALL", _("Close All")},
+                         {"wxID_PRINT", _("Print..."), "Ctrl-P"},
+                         {"wxID_EXIT", _("Exit"), "Alt-X"}});
+    mgr->AddAccelerator(_("Help"), {{"wxID_ABOUT", _("About...")}});
+    mgr->AddAccelerator(_("Plugins"), {{"manage_plugins", _("Manage Plugins...")}});
     mgr->AddAccelerator(_("Search"),
-                        { { "grep_current_file", _("Grep Selection in the Current File"), "Ctrl-Shift-G" },
-                          { "grep_current_workspace", _("Grep Selection in the Workspace") },
-                          { "web_search_selection", _("Search for Selection with default browser"), "Ctrl-Shift-W" },
-                          { "ID_GOTO_ANYTHING", _("Goto Anything"), "Ctrl-Shift-P" },
-                          { "find_previous", _("Find Previous"), "Shift-F3" },
-                          { "find_resource", _("Find Resource..."), "Ctrl-Shift-R" },
-                          { "find_symbol", _("Quick Outline..."), "Ctrl-Shift-O" },
-                          { "goto_definition", _("Find Symbol"), "Alt-G" } });
+                        {{"grep_current_file", _("Grep Selection in the Current File"), "Ctrl-Shift-G"},
+                         {"grep_current_workspace", _("Grep Selection in the Workspace")},
+                         {"web_search_selection", _("Search for Selection with default browser"), "Ctrl-Shift-W"},
+                         {"ID_GOTO_ANYTHING", _("Goto Anything"), "Ctrl-Shift-P"},
+                         {"find_previous", _("Find Previous"), "Shift-F3"},
+                         {"find_resource", _("Find Resource..."), "Ctrl-Shift-R"},
+                         {"find_symbol", _("Quick Outline..."), "Ctrl-Shift-O"},
+                         {"goto_definition", _("Find Symbol"), "Alt-G"}});
     mgr->AddAccelerator(_("Search | Bookmarks"),
-                        { { "toggle_bookmark", _("Toggle Bookmark"), "Ctrl-B" },
-                          { "next_bookmark", _("Next Bookmark"), "F2" },
-                          { "previous_bookmark", _("Previous Bookmark"), "Shift-F2" },
-                          { "removeall_bookmarks", _("Remove All Bookmarks") },
-                          { "removeall_current_bookmarks", _("Remove All Currently-Active Bookmarks") },
-                          { "open_shell_from_filepath", _("Open Shell From File Path"), "Ctrl-Shift-T" },
-                          { "open_file_explorer", _("Open Containing Folder"), "Ctrl-Alt-Shift-T" } });
+                        {{"toggle_bookmark", _("Toggle Bookmark"), "Ctrl-B"},
+                         {"next_bookmark", _("Next Bookmark"), "F2"},
+                         {"previous_bookmark", _("Previous Bookmark"), "Shift-F2"},
+                         {"removeall_bookmarks", _("Remove All Bookmarks")},
+                         {"removeall_current_bookmarks", _("Remove All Currently-Active Bookmarks")},
+                         {"open_shell_from_filepath", _("Open Shell From File Path"), "Ctrl-Shift-T"},
+                         {"open_file_explorer", _("Open Containing Folder"), "Ctrl-Alt-Shift-T"}});
     mgr->AddAccelerator(_("Search | Find In Files"),
-                        { { "find_in_files", _("Find In Files..."), "Ctrl-Shift-F" },
-                          { "next_fif_match", _("Go to Next 'Find In File' Match"), "F8" },
-                          { "previous_fif_match", _("Go to Previous 'Find In File' Match"), "Ctrl-F8" } });
+                        {{"find_in_files", _("Find In Files..."), "Ctrl-Shift-F"},
+                         {"next_fif_match", _("Go to Next 'Find In File' Match"), "F8"},
+                         {"previous_fif_match", _("Go to Previous 'Find In File' Match"), "Ctrl-F8"}});
     mgr->AddAccelerator(_("Search | Find and Replace"),
-                        { { "id_find", _("Find..."), "Ctrl-F" },
-                          { "ID_QUICK_ADD_NEXT", _("Quick Add Next"), "Ctrl-K" },
-                          { "ID_QUICK_FIND_ALL", _("Quick Find All"), "Ctrl-Shift-K" },
-                          { "id_replace", _("Replace..."), "Ctrl-H" },
-                          { "find_next", _("Find Next"), "F3" },
-                          { "find_next_at_caret", _("Find Word At Caret") },
-                          { "find_previous_at_caret", _("Find Word At Caret Backward") } });
+                        {{"id_find", _("Find..."), "Ctrl-F"},
+                         {"ID_QUICK_ADD_NEXT", _("Quick Add Next"), "Ctrl-K"},
+                         {"ID_QUICK_FIND_ALL", _("Quick Find All"), "Ctrl-Shift-K"},
+                         {"id_replace", _("Replace..."), "Ctrl-H"},
+                         {"find_next", _("Find Next"), "F3"},
+                         {"find_next_at_caret", _("Find Word At Caret")},
+                         {"find_previous_at_caret", _("Find Word At Caret Backward")}});
     mgr->AddAccelerator(_("Search | Go To"),
-                        { { "id_backward", _("Go To Previous Location"), "Ctrl-," },
-                          { "id_forward", _("Go To Forward Location"), "Ctrl-." },
-                          { "goto_linenumber", _("Go To Line..."), "Ctrl-G" } });
+                        {{"id_backward", _("Go To Previous Location"), "Ctrl-,"},
+                         {"id_forward", _("Go To Forward Location"), "Ctrl-."},
+                         {"goto_linenumber", _("Go To Line..."), "Ctrl-G"}});
     mgr->AddAccelerator(_("Settings"),
-                        { { "wxID_PREFERENCES", _("Preferences"), "Alt-O" },
-                          { "syntax_highlight", _("Colours and Fonts...") },
-                          { "configure_accelerators", _("Keyboard shortcuts...") },
-                          { "add_envvar", _("Environment Variables..."), "Ctrl-Shift-V" },
-                          { "advance_settings", _("Build Settings...") },
-                          { "debuger_settings", _("GDB Settings...") },
-                          { "tags_options", _("Code Completion...") } });
+                        {{"wxID_PREFERENCES", _("Preferences"), "Alt-O"},
+                         {"syntax_highlight", _("Colours and Fonts...")},
+                         {"configure_accelerators", _("Keyboard shortcuts...")},
+                         {"add_envvar", _("Environment Variables..."), "Ctrl-Shift-V"},
+                         {"advance_settings", _("Build Settings...")},
+                         {"debuger_settings", _("GDB Settings...")},
+                         {"tags_options", _("Code Completion...")}});
     mgr->AddAccelerator(_("Tab"),
-                        { { "wxEVT_BOOK_NAV_PREV", _("Show Recent Tabs Dialog"), "RawCtrl-TAB" },
-                          { "wxEVT_BOOK_MOVE_TAB_LEFT", _("Move Tab Left"), "RawCtrl-Shift-PGUP" },
-                          { "wxEVT_BOOK_MOVE_TAB_RIGHT", _("Move Tab Right"), "RawCtrl-Shift-PGDN" } });
+                        {{"wxEVT_BOOK_NAV_PREV", _("Show Recent Tabs Dialog"), "RawCtrl-TAB"},
+                         {"wxEVT_BOOK_MOVE_TAB_LEFT", _("Move Tab Left"), "RawCtrl-Shift-PGUP"},
+                         {"wxEVT_BOOK_MOVE_TAB_RIGHT", _("Move Tab Right"), "RawCtrl-Shift-PGDN"}});
 
     mgr->AddAccelerator(_("View"),
-                        { { "word_wrap", _("Word Wrap") },
-                          { "toggle_fold", _("Toggle Current Fold"), "Alt-RIGHT" },
-                          { "fold_all", _("Toggle All Folds") },
-                          { "fold_topmost_in_selection", _("Toggle All Topmost Folds in Selection") },
-                          { "fold_all_in_selection", _("Toggle Every Fold in Selection") },
-                          { "display_eol", _("Display EOL") },
-                          { "next_tab", _("Next tab"), "Ctrl-Alt-RIGHT" },
-                          { "prev_tab", _("Previous tab"), "Ctrl-Alt-LEFT" },
-                          { "full_screen", _("Full Screen..."), "Alt-M" },
-                          { "output_pane", _("Output Pane"), "Ctrl-`" },
-                          { "show_terminal_pane", _("Show Builtin Terminal"), "F6" },
-                          { "workspace_pane", _("Workspace Pane"), "Ctrl-Alt-W" },
-                          { "debugger_pane", _("Debugger Pane"), "Ctrl-Alt-D" },
-                          { "show_nav_toolbar", _("Navigation Bar"), "Ctrl-Alt-N" },
-                          { "toggle_panes", _("Toggle All Panes"), "Ctrl-M" },
-                          { "distraction_free_mode", _("Toggle Minimal View"), "Ctrl-F11" },
+                        {{"word_wrap", _("Word Wrap")},
+                         {"toggle_fold", _("Toggle Current Fold"), "Alt-RIGHT"},
+                         {"fold_all", _("Toggle All Folds")},
+                         {"fold_topmost_in_selection", _("Toggle All Topmost Folds in Selection")},
+                         {"fold_all_in_selection", _("Toggle Every Fold in Selection")},
+                         {"display_eol", _("Display EOL")},
+                         {"next_tab", _("Next tab"), "Ctrl-Alt-RIGHT"},
+                         {"prev_tab", _("Previous tab"), "Ctrl-Alt-LEFT"},
+                         {"full_screen", _("Full Screen..."), "Alt-M"},
+                         {"output_pane", _("Output Pane"), "Ctrl-`"},
+                         {"show_terminal_pane", _("Show Builtin Terminal"), "F6"},
+                         {"workspace_pane", _("Workspace Pane"), "Ctrl-Alt-W"},
+                         {"debugger_pane", _("Debugger Pane"), "Ctrl-Alt-D"},
+                         {"show_nav_toolbar", _("Navigation Bar"), "Ctrl-Alt-N"},
+                         {"toggle_panes", _("Toggle All Panes"), "Ctrl-M"},
+                         {"distraction_free_mode", _("Toggle Minimal View"), "Ctrl-F11"},
 #ifdef __WXGTK__
-                          { "show_menu_bar", _("Show Menu Bar"), "Alt-`" },
+                         {"show_menu_bar", _("Show Menu Bar"), "Alt-`"},
 #endif
-                          { "hide_status_bar", _("Show Status Bar") },
-                          { "hide_tool_bar", _("Show Tool Bar"), "F1" } });
+                         {"hide_status_bar", _("Show Status Bar")},
+                         {"hide_tool_bar", _("Show Tool Bar"), "F1"}});
     mgr->AddAccelerator(_("View | Show Whitespace"),
-                        { { "whitepsace_invisible", _("Invisible"), "Alt-F1" },
-                          { "whitepsace_always", _("Show Always"), "Alt-F2" },
-                          { "whitespace_visiable_after_indent", _("Visible After First Indent"), "Alt-F3" },
-                          { "whitespace_indent_only", _("Indentation Only") } });
+                        {{"whitepsace_invisible", _("Invisible"), "Alt-F1"},
+                         {"whitepsace_always", _("Show Always"), "Alt-F2"},
+                         {"whitespace_visiable_after_indent", _("Visible After First Indent"), "Alt-F3"},
+                         {"whitespace_indent_only", _("Indentation Only")}});
     mgr->AddAccelerator(_("View | Zoom"),
-                        { { "wxID_ZOOM_IN", _("Zoom In") },
-                          { "wxID_ZOOM_OUT", _("Zoom Out") },
-                          { "wxID_ZOOM_FIT", _("Reset Zoom"), "Ctrl-0" } });
+                        {{"wxID_ZOOM_IN", _("Zoom In")},
+                         {"wxID_ZOOM_OUT", _("Zoom Out")},
+                         {"wxID_ZOOM_FIT", _("Reset Zoom"), "Ctrl-0"}});
     mgr->AddAccelerator(_("Workspace"),
-                        { { "new_workspace", _("New Workspace...") },
-                          { "switch_to_workspace", _("Open Workspace...") },
-                          { "close_workspace", _("Close Workspace") },
-                          { "reload_workspace", _("Reload Workspace") },
-                          { "local_workspace_settings", _("Workspace Settings...") },
-                          { "local_workspace_prefs", _("Workspace Editor Preferences...") },
-                          { "import_from_msvs", _("Import other IDEs solution/workspace files...") },
-                          { "project_properties", _("Open Active Project Settings..."), "Alt-F7" },
-                          { "new_project", _("Create New Project") },
-                          { "add_project", _("Add an Existing Project") },
-                          { "full_retag_workspace", _("Parse Workspace") } });
+                        {{"new_workspace", _("New Workspace...")},
+                         {"switch_to_workspace", _("Open Workspace...")},
+                         {"close_workspace", _("Close Workspace")},
+                         {"reload_workspace", _("Reload Workspace")},
+                         {"local_workspace_settings", _("Workspace Settings...")},
+                         {"local_workspace_prefs", _("Workspace Editor Preferences...")},
+                         {"import_from_msvs", _("Import other IDEs solution/workspace files...")},
+                         {"project_properties", _("Open Active Project Settings..."), "Alt-F7"},
+                         {"new_project", _("Create New Project")},
+                         {"add_project", _("Add an Existing Project")},
+                         {"full_retag_workspace", _("Parse Workspace")}});
 }
 
 clMainFrame* clMainFrame::Get() { return m_theFrame; }
@@ -1265,7 +1265,7 @@ void clMainFrame::CreateGUIControls()
     captionSize += 4; // 2 pixles space for bottom and top
 #else
     auto font = DrawingUtils::GetDefaultGuiFont();
-    wxClientDC client_dc{ this };
+    wxClientDC client_dc{this};
     client_dc.SetFont(font);
     double height = client_dc.GetTextExtent("Tp").GetHeight();
     int captionSize = (int)(height * 1.5);
@@ -1455,8 +1455,10 @@ void clMainFrame::CreateGUIControls()
          XRCID("BookmarkTypes[start]"),
          XRCID("BookmarkTypes[end]"));
 
+#if !MAINBOOK_AUIBOOK
     GetDebuggerPane()->GetNotebook()->SetMenu(wxXmlResource::Get()->LoadMenu("debugger_view_rmenu"));
     GetOutputPane()->GetNotebook()->SetMenu(wxXmlResource::Get()->LoadMenu("outputview_view_rmenu"));
+#endif
 
     DoSysColoursChanged();
     SetAutoLayout(true);
@@ -1537,7 +1539,7 @@ namespace
 {
 wxBitmap load_bitmap_from_bundle(const wxString& name, int toolsize, wxWindow* win)
 {
-    wxFileName svg_path{ clStandardPaths::Get().GetDataDir(), wxEmptyString };
+    wxFileName svg_path{clStandardPaths::Get().GetDataDir(), wxEmptyString};
     svg_path.AppendDir("svgs");
     svg_path.AppendDir(clSystemSettings::IsDark() ? "dark-theme" : "light-theme");
     svg_path.SetFullName(name + ".svg");
@@ -3576,35 +3578,35 @@ void clMainFrame::CompleteInitialization()
     clGotoAnythingManager::Get().Initialise();
 
     // Update the toolbar view
-    wxArrayString hiddenItems = clConfig::Get().Read("ToolBarHiddenItems", StdToWX::ToArrayString({ "No Entries" }));
+    wxArrayString hiddenItems = clConfig::Get().Read("ToolBarHiddenItems", StdToWX::ToArrayString({"No Entries"}));
     if (hiddenItems.GetCount() == 1 && hiddenItems.Item(0) == "No Entries") {
         // By default, hide these entries
-        std::vector<wxString> v = { "New",
-                                    "Open",
-                                    "Reload",
-                                    "Save",
-                                    "Close",
-                                    "Cut",
-                                    "Copy",
-                                    "Paste",
-                                    "Undo",
-                                    "Redo",
-                                    "Toggle Bookmark",
-                                    "Find",
-                                    "Replace",
-                                    "Find In Files",
-                                    "Find Resource In Workspace",
-                                    "Format Source",
-                                    "Format Options",
-                                    "Find this Csymbol",
-                                    "Find functions calling this function",
-                                    "Find functions called by this function",
-                                    "Configureexternal tools...",
-                                    "Show Running Tools...",
-                                    "Create new qmake based project",
-                                    "Check spelling...",
-                                    "Checkcontinuous",
-                                    "Run Unit tests..." };
+        std::vector<wxString> v = {"New",
+                                   "Open",
+                                   "Reload",
+                                   "Save",
+                                   "Close",
+                                   "Cut",
+                                   "Copy",
+                                   "Paste",
+                                   "Undo",
+                                   "Redo",
+                                   "Toggle Bookmark",
+                                   "Find",
+                                   "Replace",
+                                   "Find In Files",
+                                   "Find Resource In Workspace",
+                                   "Format Source",
+                                   "Format Options",
+                                   "Find this Csymbol",
+                                   "Find functions calling this function",
+                                   "Find functions called by this function",
+                                   "Configureexternal tools...",
+                                   "Show Running Tools...",
+                                   "Create new qmake based project",
+                                   "Check spelling...",
+                                   "Checkcontinuous",
+                                   "Run Unit tests..."};
         hiddenItems.Clear();
         hiddenItems.reserve(v.size());
         for (const auto& s : v) {
@@ -4244,13 +4246,18 @@ void clMainFrame::OnDetachDebuggerViewTab(wxCommandEvent& e)
     size_t sel = GetDebuggerPane()->GetNotebook()->GetSelection();
     wxWindow* page = GetDebuggerPane()->GetNotebook()->GetCurrentPage();
     wxString text = GetDebuggerPane()->GetNotebook()->GetPageText(sel);
-    int bmp = GetDebuggerPane()->GetNotebook()->GetPageBitmapIndex(sel);
 
     DockablePane* pane = new DockablePane(this, PaneId::DEBUG_BAR, text, false, wxSize(200, 200));
     page->Reparent(pane);
 
     // remove the page from the notebook
-    GetDebuggerPane()->GetNotebook()->RemovePage(sel);
+    GetDebuggerPane()->GetNotebook()->RemovePage(sel
+#if MAINBOOK_AUIBOOK
+                                                 ,
+                                                 false
+#endif
+    );
+
     pane->SetChildNoReparent(page);
     wxUnusedVar(e);
 }
@@ -5895,6 +5902,8 @@ void clMainFrame::OnVersionCheckError(wxCommandEvent& e)
 
 namespace
 {
+
+#if !MAINBOOK_AUIBOOK // If Notebook == clAuiBook, it is similar to the below method.
 void ShowNavDialog(Notebook* book)
 {
     if (!EditorConfigST::Get()->GetOptions()->IsCtrlTabEnabled()) {
@@ -5910,6 +5919,7 @@ void ShowNavDialog(Notebook* book)
         book->SetSelection(dlg.GetSelection());
     }
 }
+#endif
 
 void ShowNavDialog(clAuiBook* book)
 {
@@ -6007,7 +6017,7 @@ void clMainFrame::OnInfobarButton(wxCommandEvent& event)
     event.Skip(); // needed to make sure that the bar is hidden
     int buttonID = event.GetId();
     if (buttonID == XRCID("restart-codelite")) {
-        clCommandEvent restartEvent{ wxEVT_FORCE_RESTART_CODELITE };
+        clCommandEvent restartEvent{wxEVT_FORCE_RESTART_CODELITE};
         ManagerST::Get()->OnForcedRestart(restartEvent);
     } else {
         clCommandEvent buttonEvent(wxEVT_INFO_BAR_BUTTON);

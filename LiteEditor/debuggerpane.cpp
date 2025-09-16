@@ -77,8 +77,8 @@ DebuggerPane::~DebuggerPane()
 
 void DebuggerPane::OnPageChanged(wxBookCtrlEvent& event)
 {
-    if(m_initDone && DebuggerMgr::Get().GetActiveDebugger() && DebuggerMgr::Get().GetActiveDebugger()->IsRunning()) {
-        if(event.GetEventObject() == m_book) {
+    if (m_initDone && DebuggerMgr::Get().GetActiveDebugger() && DebuggerMgr::Get().GetActiveDebugger()->IsRunning()) {
+        if (event.GetEventObject() == m_book) {
             ManagerST::Get()->CallAfter(&Manager::UpdateDebuggerPane);
         } else {
             event.Skip();
@@ -94,17 +94,20 @@ void DebuggerPane::CreateGUIControls()
     SetSizer(mainSizer);
 
     long style = (kNotebook_Default | kNotebook_AllowDnD);
-    if(!EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection()) {
+    if (!EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection()) {
         style |= kNotebook_BottomTabs;
     }
-    if(EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) {
+    if (EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) {
         style |= kNotebook_MouseScrollSwitchTabs;
     }
     style |= kNotebook_UnderlineActiveTab;
 
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
 
+#if !MAINBOOK_AUIBOOK
     m_book->SetTabDirection(EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection());
+#endif
+
     mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 0);
 
     // Calculate the widthest tab (the one with the 'Call Stack' label)
@@ -121,7 +124,7 @@ void DebuggerPane::CreateGUIControls()
     wxString name;
     name = wxGetTranslation(LOCALS);
     // Add the 'Locals View'
-    if(IS_DETACHED(name)) {
+    if (IS_DETACHED(name)) {
         DockablePane* cp =
             new DockablePane(clGetManager()->GetMainPanel(), PaneId::DEBUG_BAR, name, false, wxSize(200, 200));
         m_localsTable = new LocalsTable(cp);
@@ -134,7 +137,7 @@ void DebuggerPane::CreateGUIControls()
 
     // Add the 'watches View'
     name = wxGetTranslation(WATCHES);
-    if(IS_DETACHED(name)) {
+    if (IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), PaneId::DEBUG_BAR, name, false, wxSize(200, 200));
         m_watchesTable = new WatchesTable(cp);
         cp->SetChildNoReparent(m_watchesTable);
@@ -146,7 +149,7 @@ void DebuggerPane::CreateGUIControls()
 
     // Add the 'ASCII Viewer'
     name = wxGetTranslation(ASCII_VIEWER);
-    if(IS_DETACHED(name)) {
+    if (IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), PaneId::DEBUG_BAR, name, false, wxSize(200, 200));
         m_asciiViewer = new DebuggerAsciiViewer(cp);
         cp->SetChildNoReparent(m_asciiViewer);
@@ -158,7 +161,7 @@ void DebuggerPane::CreateGUIControls()
 
     // Add the 'Call Stack'
     name = wxGetTranslation(FRAMES);
-    if(IS_DETACHED(name)) {
+    if (IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), PaneId::DEBUG_BAR, name, false, wxSize(200, 200));
         m_frameList = new DebuggerCallstackView(cp);
         cp->SetChildNoReparent(m_frameList);
@@ -170,7 +173,7 @@ void DebuggerPane::CreateGUIControls()
 
     // Add the 'Breakpoints'
     name = wxGetTranslation(BREAKPOINTS);
-    if(IS_DETACHED(name)) {
+    if (IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), PaneId::DEBUG_BAR, name, false, wxSize(200, 200));
         m_breakpoints = new BreakpointsView(cp);
         cp->SetChildNoReparent(m_breakpoints);
@@ -182,7 +185,7 @@ void DebuggerPane::CreateGUIControls()
 
     // Add the 'Threads'
     name = wxGetTranslation(THREADS);
-    if(IS_DETACHED(name)) {
+    if (IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), PaneId::DEBUG_BAR, name, false, wxSize(200, 200));
         m_threads = new ThreadListPanel(cp);
         cp->SetChildNoReparent(m_threads);
@@ -194,7 +197,7 @@ void DebuggerPane::CreateGUIControls()
 
     // Add the 'Memory View'
     name = wxGetTranslation(MEMORY);
-    if(IS_DETACHED(name)) {
+    if (IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), PaneId::DEBUG_BAR, name, false, wxSize(200, 200));
         m_memory = new MemoryView(cp);
         cp->SetChildNoReparent(m_memory);
@@ -206,7 +209,7 @@ void DebuggerPane::CreateGUIControls()
 
     // Add the "Output" tab
     name = wxGetTranslation(DEBUGGER_OUTPUT);
-    if(IS_DETACHED(name)) {
+    if (IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), PaneId::DEBUG_BAR, name, false, wxSize(200, 200));
         m_outputDebug = new DebugTab(cp, wxID_ANY, wxGetTranslation(DEBUGGER_OUTPUT));
         cp->SetChildNoReparent(m_outputDebug);
@@ -218,7 +221,7 @@ void DebuggerPane::CreateGUIControls()
 
     // Add the "Output" tab
     name = wxGetTranslation(DISASSEMBLY);
-    if(IS_DETACHED(name)) {
+    if (IS_DETACHED(name)) {
         DockablePane* cp = new DockablePane(GetParent(), PaneId::DEBUG_BAR, name, false, wxSize(200, 200));
         m_disassemble = new DebuggerDisassemblyTab(cp, wxGetTranslation(DISASSEMBLY));
         cp->SetChildNoReparent(m_disassemble);
@@ -233,8 +236,8 @@ void DebuggerPane::CreateGUIControls()
 
 void DebuggerPane::SelectTab(const wxString& tabName)
 {
-    for(size_t i = 0; i < m_book->GetPageCount(); i++) {
-        if(m_book->GetPageText(i) == tabName) {
+    for (size_t i = 0; i < m_book->GetPageCount(); i++) {
+        if (m_book->GetPageText(i) == tabName) {
             m_book->SetSelection(i);
             break;
         }
@@ -253,8 +256,10 @@ void DebuggerPane::Clear()
 void DebuggerPane::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
+#if !MAINBOOK_AUIBOOK
     m_book->EnableStyle(kNotebook_BottomTabs,
                         EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection() == wxBOTTOM);
+#endif
 }
 
 //----------------------------------------------------------------
@@ -280,7 +285,7 @@ DebuggerPaneConfig::~DebuggerPaneConfig() {}
 
 wxString DebuggerPaneConfig::WindowName(eDebuggerWindows flag) const
 {
-    switch(flag) {
+    switch (flag) {
     default:
     case All:
         return wxEmptyString;

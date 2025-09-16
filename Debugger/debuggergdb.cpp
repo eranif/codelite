@@ -68,7 +68,7 @@ static BOOL CtrlHandler(DWORD fdwCtrlType)
 
 static BOOL SigHandler(DWORD CtrlType)
 {
-    if(CtrlType == CTRL_C_EVENT) {
+    if (CtrlType == CTRL_C_EVENT) {
         return TRUE;
     }
     return FALSE;
@@ -91,7 +91,7 @@ static wxFFile gfp("debugger.log", "w+");
  */
 static wxString WrapSpaces(const wxString& str)
 {
-    if(str.Contains(" ")) {
+    if (str.Contains(" ")) {
         return wxString() << "\"" << str << "\"";
     } else {
         return str;
@@ -113,9 +113,10 @@ static wxRegEx reConnectionRefused(
 #else
 static wxRegEx reConnectionRefused("[0-9a-zA-Z/\\\\-\\_]*:[0-9]+: Connection refused.");
 #endif
+
 DebuggerInfo GetDebuggerInfo()
 {
-    DebuggerInfo info = { "GNU gdb debugger", "CreateDebuggerGDB", "v2.0", "Eran Ifrah" };
+    DebuggerInfo info = {"GNU gdb debugger", "CreateDebuggerGDB", "v2.0", "Eran Ifrah"};
     return info;
 }
 
@@ -167,15 +168,15 @@ DbgGdb::DbgGdb()
 {
 #ifdef __WXMSW__
     Kernel32Dll = LoadLibraryA("kernel32.dll");
-    if(Kernel32Dll) {
+    if (Kernel32Dll) {
         DebugBreakProcessFunc = (DBG_BREAK_PROC_FUNC_PTR)GetProcAddress(Kernel32Dll, "DebugBreakProcess");
     } else {
         // we dont have DebugBreakProcess, try to work with Control handlers
-        if(SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE) == FALSE) {
+        if (SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE) == FALSE) {
             clLogMessage(wxString::Format("failed to install ConsoleCtrlHandler: %d", GetLastError()));
         }
     }
-    if(SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE) == FALSE) {
+    if (SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE) == FALSE) {
         clLogMessage(wxString::Format("failed to install ConsoleCtrlHandler: %d", GetLastError()));
     }
 #endif
@@ -195,7 +196,7 @@ DbgGdb::DbgGdb()
 DbgGdb::~DbgGdb()
 {
 #ifdef __WXMSW__
-    if(Kernel32Dll) {
+    if (Kernel32Dll) {
         FreeLibrary(Kernel32Dll);
         Kernel32Dll = NULL;
     }
@@ -214,7 +215,7 @@ DbgCmdHandler* DbgGdb::PopHandler(const wxString& id)
     //    wxString oldId = wxString::Format("%08d", (int)nId);
 
     HandlersMap_t::iterator it = m_handlers.find(id);
-    if(it == m_handlers.end()) {
+    if (it == m_handlers.end()) {
         return NULL;
     }
 
@@ -226,7 +227,7 @@ DbgCmdHandler* DbgGdb::PopHandler(const wxString& id)
 void DbgGdb::EmptyQueue()
 {
     HandlersMap_t::iterator iter = m_handlers.begin();
-    while(iter != m_handlers.end()) {
+    while (iter != m_handlers.end()) {
         delete iter->second;
         iter++;
     }
@@ -235,9 +236,9 @@ void DbgGdb::EmptyQueue()
 
 bool DbgGdb::Start(const DebugSessionInfo& si, clEnvList_t* env_list)
 {
-    if(si.isSSHDebugging) {
+    if (si.isSSHDebugging) {
         clDEBUG() << "SSH debugging detected" << endl;
-        if(si.sshAccountName.empty()) {
+        if (si.sshAccountName.empty()) {
             clERROR() << "Failed to start gdb over ssh: account info not provided" << clEndl;
             return false;
         }
@@ -246,12 +247,12 @@ bool DbgGdb::Start(const DebugSessionInfo& si, clEnvList_t* env_list)
 
         wxString dbgExeName = si.debuggerPath;
         wxString cmd = "gdb";
-        if(!si.debuggerPath.empty()) {
+        if (!si.debuggerPath.empty()) {
             cmd = ::WrapSpaces(si.debuggerPath);
         }
         cmd << " --interpreter=mi ";
 
-        if(!si.ttyName.IsEmpty()) {
+        if (!si.ttyName.IsEmpty()) {
             cmd << " --tty=" << si.ttyName << " ";
         }
         cmd << si.exeName;
@@ -269,7 +270,7 @@ bool DbgGdb::Start(const DebugSessionInfo& si, clEnvList_t* env_list)
 
         // Launch gdb
         m_gdbProcess = ::CreateAsyncProcess(this, cmd, IProcessCreateSSH, si.cwd, env_list, si.sshAccountName);
-        if(!m_gdbProcess) {
+        if (!m_gdbProcess) {
             clDEBUG() << "Failed to start command:" << cmd << endl;
             return false;
         }
@@ -279,13 +280,13 @@ bool DbgGdb::Start(const DebugSessionInfo& si, clEnvList_t* env_list)
         EnvSetter env(m_env, NULL, m_debuggeeProjectName, wxEmptyString);
 
         wxString dbgExeName;
-        if(!DoLocateGdbExecutable(si.debuggerPath, dbgExeName, si)) {
+        if (!DoLocateGdbExecutable(si.debuggerPath, dbgExeName, si)) {
             return false;
         }
 
         wxString cmd;
         cmd << dbgExeName;
-        if(!si.ttyName.IsEmpty()) {
+        if (!si.ttyName.IsEmpty()) {
             cmd << " --tty=" << si.ttyName;
         }
         cmd << " --interpreter=mi " << si.exeName;
@@ -306,26 +307,26 @@ bool DbgGdb::Start(const DebugSessionInfo& si, clEnvList_t* env_list)
 #endif
 
         size_t flags = needs_console ? IProcessCreateConsole : IProcessCreateDefault;
-        if(m_info.flags & DebuggerInformation::kRunAsSuperuser) {
+        if (m_info.flags & DebuggerInformation::kRunAsSuperuser) {
             flags |= IProcessCreateAsSuperuser;
         }
 
         m_gdbProcess = ::CreateAsyncProcess(this, cmd, flags, si.cwd, env_list);
-        if(!m_gdbProcess) {
+        if (!m_gdbProcess) {
             return false;
         }
 
 #ifdef __WXMSW__
-        if(GetIsRemoteDebugging()) {
+        if (GetIsRemoteDebugging()) {
             // This doesn't really make sense, but AttachConsole fails without it...
             wxMilliSleep(1000);
 
-            if(!AttachConsole(m_gdbProcess->GetPid())) {
+            if (!AttachConsole(m_gdbProcess->GetPid())) {
                 m_observer->UpdateAddLine(wxString::Format("AttachConsole returned error %d", GetLastError()));
             }
 
             // We can at least make the window invisible if the user doesn't want to see it.
-            if(!m_info.showTerminal) {
+            if (!m_info.showTerminal) {
                 SetWindowPos(GetConsoleWindow(), HWND_BOTTOM, 0, 0, 0, 0, SWP_HIDEWINDOW);
             }
 
@@ -346,11 +347,11 @@ bool DbgGdb::WriteCommand(const wxString& command, DbgCmdHandler* handler)
     cmd << id << command;
 
     // Support for reverse debugging
-    if(IsReverseDebuggingEnabled() && m_reversableCommands.count(command)) {
+    if (IsReverseDebuggingEnabled() && m_reversableCommands.count(command)) {
         cmd << " --reverse";
     }
 
-    if(!ExecuteCmd(cmd)) {
+    if (!ExecuteCmd(cmd)) {
         clWARNING() << "Failed to send command" << cmd << endl;
         return false;
     }
@@ -360,12 +361,12 @@ bool DbgGdb::WriteCommand(const wxString& command, DbgCmdHandler* handler)
 
 bool DbgGdb::Run(const wxString& args, const wxString& comm)
 {
-    if(!GetIsRemoteDebugging()) {
+    if (!GetIsRemoteDebugging()) {
 
         // add handler for this command
         wxString setArgsCommands;
         setArgsCommands << "-exec-arguments " << args;
-        if(!WriteCommand(setArgsCommands, NULL)) {
+        if (!WriteCommand(setArgsCommands, NULL)) {
             return false;
         }
         return WriteCommand("-exec-run ", new DbgCmdHandlerExecRun(m_observer, this));
@@ -374,7 +375,7 @@ bool DbgGdb::Run(const wxString& args, const wxString& comm)
         // attach to the remote gdb server
         wxString cmd;
         // cmd << "-target-select remote " << comm << " " << args;
-        if(GetIsRemoteExtended()) {
+        if (GetIsRemoteExtended()) {
             cmd << "target extended-remote " << comm << " " << args;
         } else {
             cmd << "target remote " << comm << " " << args;
@@ -386,7 +387,7 @@ bool DbgGdb::Run(const wxString& args, const wxString& comm)
 void DbgGdb::DoCleanup()
 {
 #ifdef __WXMSW__
-    if(GetIsRemoteDebugging()) {
+    if (GetIsRemoteDebugging()) {
         SetConsoleCtrlHandler((PHANDLER_ROUTINE)SigHandler, FALSE);
         FreeConsole(); // Disconnect any existing console window.
     }
@@ -427,25 +428,28 @@ bool DbgGdb::Stop()
 {
     m_goingDown = true;
 
-    if(IsSSHDebugging() && m_debuggeePid != wxNOT_FOUND) {
+    if (IsSSHDebugging() && m_debuggeePid != wxNOT_FOUND) {
         // this is a length operation, show busy cursor
         wxBusyCursor bc;
 
         // open ssh connection and send SIGINT to the debuggee PID
         wxString kill_output;
-        std::vector<wxString> command = { "kill", "-9", std::to_string(m_debuggeePid) };
-        IProcess::Ptr_t proc(::CreateAsyncProcess(this, command,
+        std::vector<wxString> command = {"kill", "-9", std::to_string(m_debuggeePid)};
+        IProcess::Ptr_t proc(::CreateAsyncProcess(this,
+                                                  command,
                                                   IProcessCreateDefault | IProcessCreateSSH | IProcessCreateSync,
-                                                  wxEmptyString, nullptr, m_sshAccount));
-        if(proc) {
+                                                  wxEmptyString,
+                                                  nullptr,
+                                                  m_sshAccount));
+        if (proc) {
             proc->WaitForTerminate(kill_output);
         }
-        if(m_gdbProcess) {
+        if (m_gdbProcess) {
             m_gdbProcess->Terminate();
         }
     }
 
-    if(!m_attachedMode) {
+    if (!m_attachedMode) {
         clKill((int)m_debuggeePid, wxSIGKILL, true, (m_info.flags & DebuggerInformation::kRunAsSuperuser));
     }
 
@@ -463,7 +467,7 @@ bool DbgGdb::NextInstruction()
 
 void DbgGdb::SetBreakpoints()
 {
-    for(size_t i = 0; i < m_bpList.size(); i++) {
+    for (size_t i = 0; i < m_bpList.size(); i++) {
         // Without the 'unnecessary' cast in the next line, bpinfo.bp_type is seen as (e.g.) 4 instead of
         // BP_type_tempbreak, ruining switch statements :/
         clDebuggerBreakpoint bpinfo = (clDebuggerBreakpoint)m_bpList.at(i);
@@ -474,13 +478,13 @@ void DbgGdb::SetBreakpoints()
 bool DbgGdb::Break(const clDebuggerBreakpoint& bp)
 {
     wxString breakinsertcmd("-break-insert ");
-    if(m_info.enablePendingBreakpoints) {
+    if (m_info.enablePendingBreakpoints) {
         breakinsertcmd << "-f ";
     }
 
     // by default, use full paths for the file name when setting breakpoints
     wxString tmpfileName = clFileName::ToCygwin(bp.file);
-    if(m_info.useRelativeFilePaths || m_isSSHDebugging) {
+    if (m_info.useRelativeFilePaths || m_isSSHDebugging) {
         // user set the option to use relative paths (file name w/o the full path)
         tmpfileName = wxFileName(tmpfileName).GetFullName();
     }
@@ -488,13 +492,13 @@ bool DbgGdb::Break(const clDebuggerBreakpoint& bp)
     tmpfileName.Replace("\\", "/");
 
     wxString command;
-    switch(bp.bp_type) {
+    switch (bp.bp_type) {
     case BP_type_watchpt:
         //----------------------------------
         // Watchpoints
         //----------------------------------
         command = "-break-watch ";
-        switch(bp.watchpoint_type) {
+        switch (bp.watchpoint_type) {
         case WP_watch:
             // nothing to add, simple watchpoint - triggered when BP is write
             break;
@@ -523,10 +527,10 @@ bool DbgGdb::Break(const clDebuggerBreakpoint& bp)
         // Should be standard breakpts. But if someone tries to make an ignored temp bp
         // it won't have the BP_type_tempbreak type, so check again here
         command << breakinsertcmd;
-        if(bp.is_temp) {
+        if (bp.is_temp) {
             command << " -t ";
         }
-        if(!bp.is_enabled) {
+        if (!bp.is_enabled) {
             command << " -d ";
         }
         break;
@@ -536,18 +540,18 @@ bool DbgGdb::Break(const clDebuggerBreakpoint& bp)
     // prepare the 'break where' string (address, file:line or regex)
     //------------------------------------------------------------------------
     wxString breakWhere, ignoreCounnt, condition, gdbCommand;
-    if(bp.memory_address.IsEmpty() == false) {
+    if (bp.memory_address.IsEmpty() == false) {
 
         // Memory is easy: just prepend *. gdb copes happily with (at least) hex or decimal
         breakWhere << '*' << bp.memory_address;
 
-    } else if(bp.bp_type != BP_type_watchpt) {
+    } else if (bp.bp_type != BP_type_watchpt) {
         // Function and Lineno locations can/should be prepended by a filename (but see later)
-        if(!tmpfileName.IsEmpty() && bp.lineno > 0) {
+        if (!tmpfileName.IsEmpty() && bp.lineno > 0) {
             breakWhere << tmpfileName << ":" << bp.lineno;
             breakWhere.Prepend("\"").Append("\"");
-        } else if(!bp.function_name.IsEmpty()) {
-            if(bp.regex) {
+        } else if (!bp.function_name.IsEmpty()) {
+            if (bp.regex) {
                 // update the command
                 command = breakinsertcmd + "-r ";
             }
@@ -558,8 +562,8 @@ bool DbgGdb::Break(const clDebuggerBreakpoint& bp)
     //------------------------------------------------------------------------
     // prepare the conditions
     //------------------------------------------------------------------------
-    if(bp.conditions.IsEmpty() == false &&
-       bp.bp_type != BP_type_watchpt) { // It isn't possible to set conditions to a watchpoint as it's created
+    if (bp.conditions.IsEmpty() == false &&
+        bp.bp_type != BP_type_watchpt) { // It isn't possible to set conditions to a watchpoint as it's created
         condition << "-c "
                   << "\"" << bp.conditions << "\" ";
     }
@@ -567,7 +571,7 @@ bool DbgGdb::Break(const clDebuggerBreakpoint& bp)
     //------------------------------------------------------------------------
     // prepare the ignore count
     //------------------------------------------------------------------------
-    if(bp.ignore_number > 0) {
+    if (bp.ignore_number > 0) {
         ignoreCounnt << "-i " << bp.ignore_number << " ";
     }
 
@@ -581,7 +585,7 @@ bool DbgGdb::Break(const clDebuggerBreakpoint& bp)
 
 bool DbgGdb::SetIgnoreLevel(double bid, const int ignorecount)
 {
-    if(bid == -1) { // Sanity check
+    if (bid == -1) { // Sanity check
         return false;
     }
 
@@ -592,12 +596,12 @@ bool DbgGdb::SetIgnoreLevel(double bid, const int ignorecount)
 
 bool DbgGdb::SetEnabledState(double bid, const bool enable)
 {
-    if(bid == -1) { // Sanity check
+    if (bid == -1) { // Sanity check
         return false;
     }
 
     wxString command("-break-disable ");
-    if(enable) {
+    if (enable) {
         command = "-break-enable ";
     }
     command << bid;
@@ -606,7 +610,7 @@ bool DbgGdb::SetEnabledState(double bid, const bool enable)
 
 bool DbgGdb::SetCondition(const clDebuggerBreakpoint& bp)
 {
-    if(bp.debugger_id == -1) { // Sanity check
+    if (bp.debugger_id == -1) { // Sanity check
         return false;
     }
 
@@ -617,7 +621,7 @@ bool DbgGdb::SetCondition(const clDebuggerBreakpoint& bp)
 
 bool DbgGdb::SetCommands(const clDebuggerBreakpoint& bp)
 {
-    if(bp.debugger_id == -1) { // Sanity check
+    if (bp.debugger_id == -1) { // Sanity check
         return false;
     }
     // There isn't (currently) a MI command-list command, so use the CLI one
@@ -625,7 +629,7 @@ bool DbgGdb::SetCommands(const clDebuggerBreakpoint& bp)
     wxString command("commands ");
     command << bp.debugger_id << '\n' << bp.commandlist << "\nend";
 
-    if(m_info.enableDebugLog) {
+    if (m_info.enableDebugLog) {
         m_observer->UpdateAddLine(command);
     }
 
@@ -649,9 +653,9 @@ bool DbgGdb::IsRunning() { return m_gdbProcess != NULL; }
 
 bool DbgGdb::Interrupt()
 {
-    if(m_isSSHDebugging) {
+    if (m_isSSHDebugging) {
         // send SIGINT to gdb
-        if(m_debuggeePid == wxNOT_FOUND) {
+        if (m_debuggeePid == wxNOT_FOUND) {
             ::wxMessageBox(_("Can't interrupt debuggee process: I don't know its PID!"), "CodeLite");
             return false;
         }
@@ -661,20 +665,23 @@ bool DbgGdb::Interrupt()
 
         // open ssh connection and send SIGINT to the debuggee PID
         wxString output;
-        std::vector<wxString> command = { "kill", "-INT", std::to_string(m_debuggeePid) };
-        IProcess::Ptr_t proc(::CreateAsyncProcess(this, command,
+        std::vector<wxString> command = {"kill", "-INT", std::to_string(m_debuggeePid)};
+        IProcess::Ptr_t proc(::CreateAsyncProcess(this,
+                                                  command,
                                                   IProcessCreateDefault | IProcessCreateSSH | IProcessCreateSync,
-                                                  wxEmptyString, nullptr, m_sshAccount));
+                                                  wxEmptyString,
+                                                  nullptr,
+                                                  m_sshAccount));
         proc->WaitForTerminate(output);
         clDEBUG() << "Sending SIGINT to debugee PID:" << m_debuggeePid << endl;
         clDEBUG() << output << endl;
         return true;
     } else {
-        if(m_debuggeePid > 0) {
+        if (m_debuggeePid > 0) {
             m_observer->UpdateAddLine(wxString::Format("Interrupting debugee process: %ld", m_debuggeePid));
 
 #ifdef __WXMSW__
-            if(!GetIsRemoteDebugging() && DebugBreakProcessFunc) {
+            if (!GetIsRemoteDebugging() && DebugBreakProcessFunc) {
                 // we have DebugBreakProcess
                 HANDLE process = OpenProcess(PROCESS_ALL_ACCESS, FALSE, (DWORD)m_debuggeePid);
                 BOOL res = DebugBreakProcessFunc(process);
@@ -682,7 +689,7 @@ bool DbgGdb::Interrupt()
                 return res == TRUE;
             }
 
-            if(GetIsRemoteDebugging()) {
+            if (GetIsRemoteDebugging()) {
                 // We need to send GDB a Ctrl-C event.  Using DebugBreakProcess just leaves
                 // it unresponsive.
                 return GenerateConsoleCtrlEvent(CTRL_C_EVENT, 0);
@@ -706,7 +713,7 @@ bool DbgGdb::Interrupt()
 
 bool DbgGdb::QueryFileLine()
 {
-    if(!WriteCommand("-file-list-exec-source-file", new DbgCmdHandlerGetLine(m_observer, this))) {
+    if (!WriteCommand("-file-list-exec-source-file", new DbgCmdHandlerGetLine(m_observer, this))) {
         return false;
     }
     return true;
@@ -721,14 +728,14 @@ bool DbgGdb::QueryLocals()
 bool DbgGdb::ExecuteCmd(const wxString& cmd)
 {
     static wxLongLong commandsCounter = 0;
-    if(m_gdbProcess) {
-        if(m_info.enableDebugLog) {
+    if (m_gdbProcess) {
+        if (m_info.enableDebugLog) {
             clDEBUG() << "DEBUG>>" << cmd << endl;
             m_observer->UpdateAddLine(wxString::Format("DEBUG>>%s", cmd));
         }
 #ifdef __WXMSW__
         // Ugly hack to fix bug https://github.com/eranif/codelite/issues/906
-        if(commandsCounter >= 10) {
+        if (commandsCounter >= 10) {
             ::wxMilliSleep(2);
             commandsCounter = 0;
         }
@@ -754,29 +761,29 @@ bool DbgGdb::FilterMessage(const wxString& msg)
     StripString(tmpmsg);
     tmpmsg.Trim().Trim(false);
 
-    if(tmpmsg.Contains("Variable object not found") || msg.Contains("Variable object not found")) {
+    if (tmpmsg.Contains("Variable object not found") || msg.Contains("Variable object not found")) {
         return true;
     }
 
-    if(tmpmsg.Contains("mi_cmd_var_create: unable to create variable object") ||
-       msg.Contains("mi_cmd_var_create: unable to create variable object")) {
+    if (tmpmsg.Contains("mi_cmd_var_create: unable to create variable object") ||
+        msg.Contains("mi_cmd_var_create: unable to create variable object")) {
         return true;
     }
 
-    if(tmpmsg.Contains("Variable object not found") || msg.Contains("Variable object not found")) {
+    if (tmpmsg.Contains("Variable object not found") || msg.Contains("Variable object not found")) {
         return true;
     }
 
-    if(tmpmsg.Contains("No symbol \"this\" in current context") ||
-       msg.Contains("No symbol \"this\" in current context")) {
+    if (tmpmsg.Contains("No symbol \"this\" in current context") ||
+        msg.Contains("No symbol \"this\" in current context")) {
         return true;
     }
 
-    if(tmpmsg.Contains("*running,thread-id")) {
+    if (tmpmsg.Contains("*running,thread-id")) {
         return true;
     }
 
-    if(tmpmsg.StartsWith(">") || msg.StartsWith(">")) {
+    if (tmpmsg.StartsWith(">") || msg.StartsWith(">")) {
         // shell line
         return true;
     }
@@ -789,21 +796,21 @@ void DbgGdb::Poke()
 
     // poll the debugger output
     wxString curline;
-    if(!m_gdbProcess || m_gdbOutputArr.IsEmpty()) {
+    if (!m_gdbProcess || m_gdbOutputArr.IsEmpty()) {
         return;
     }
 
-    while(DoGetNextLine(curline)) {
+    while (DoGetNextLine(curline)) {
         GetDebugeePID(curline);
 
         // For string manipulations without damaging the original line read
         wxString tmpline(curline);
         StripString(tmpline);
         tmpline.Trim().Trim(false);
-        if(m_info.enableDebugLog) {
+        if (m_info.enableDebugLog) {
             // Is logging enabled?
 
-            if(curline.IsEmpty() == false && !tmpline.StartsWith(">")) {
+            if (curline.IsEmpty() == false && !tmpline.StartsWith(">")) {
                 wxString strdebug("DEBUG>>");
                 strdebug << curline;
                 clDEBUG() << strdebug << clEndl;
@@ -811,7 +818,7 @@ void DbgGdb::Poke()
             }
         }
 
-        if(reConnectionRefused.Matches(curline)) {
+        if (reConnectionRefused.Matches(curline)) {
             StripString(curline);
 #ifdef __WXGTK__
             m_consoleFinder.FreeConsole();
@@ -824,7 +831,7 @@ void DbgGdb::Poke()
         // Check for "Operation not permitted" usually means
         // that the process does not have enough permission to
         // attach to the process
-        if(curline.Contains("Operation not permitted")) {
+        if (curline.Contains("Operation not permitted")) {
 #ifdef __WXGTK__
             m_consoleFinder.FreeConsole();
 #endif
@@ -833,29 +840,29 @@ void DbgGdb::Poke()
             return;
         }
 
-        if(tmpline.StartsWith(">")) {
+        if (tmpline.StartsWith(">")) {
             // Shell line, probably user command line
             continue;
         }
 
         wxChar prefix = curline[0];
-        if(prefix == '~' || prefix == '&' || prefix == '@') {
+        if (prefix == '~' || prefix == '&' || prefix == '@') {
 
             // lines starting with ~ are considered "console stream" message
             // and are important to the CLI handler
             bool consoleStream(false);
             bool targetConsoleStream(false);
 
-            if(curline.StartsWith("~")) {
+            if (curline.StartsWith("~")) {
                 consoleStream = true;
             }
 
-            if(curline.StartsWith("@")) {
+            if (curline.StartsWith("@")) {
                 targetConsoleStream = true;
             }
 
             // Filter out some gdb error lines...
-            if(FilterMessage(curline)) {
+            if (FilterMessage(curline)) {
                 continue;
             }
 
@@ -863,23 +870,23 @@ void DbgGdb::Poke()
 
             // If we got a valid "CLI Handler" instead of writing the output to
             // the output view, concatenate it into the handler buffer
-            if(targetConsoleStream) {
+            if (targetConsoleStream) {
                 m_observer->UpdateAddLine(curline);
 
-            } else if(consoleStream && GetCliHandler()) {
+            } else if (consoleStream && GetCliHandler()) {
                 GetCliHandler()->Append(curline);
 
-            } else if(consoleStream) {
+            } else if (consoleStream) {
                 // log message
                 m_observer->UpdateAddLine(curline);
             }
 
-        } else if(reCommand.Matches(curline)) {
+        } else if (reCommand.Matches(curline)) {
 
             // not a gdb message, get the command associated with the message
             wxString id = reCommand.GetMatch(curline, 1);
 
-            if(GetCliHandler() && GetCliHandler()->GetCommandId() == id) {
+            if (GetCliHandler() && GetCliHandler()->GetCommandId() == id) {
                 // probably the "^done" message of the CLI command
                 GetCliHandler()->ProcessOutput(curline);
                 SetCliHandler(NULL); // we are done processing the CLI
@@ -889,13 +896,13 @@ void DbgGdb::Poke()
                 curline = curline.Mid(8);
                 DoProcessAsyncCommand(curline, id);
             }
-        } else if(curline.StartsWith("^done") || curline.StartsWith("*stopped")) {
+        } else if (curline.StartsWith("^done") || curline.StartsWith("*stopped")) {
             // Unregistered command, use the default AsyncCommand handler to process the line
             DbgCmdHandlerAsyncCmd cmd(m_observer, this);
             cmd.ProcessOutput(curline);
         } else {
             // Unknown format, just log it
-            if(m_info.enableDebugLog && !FilterMessage(curline)) {
+            if (m_info.enableDebugLog && !FilterMessage(curline)) {
                 m_observer->UpdateAddLine(curline);
             }
         }
@@ -904,7 +911,7 @@ void DbgGdb::Poke()
 
 void DbgGdb::DoProcessAsyncCommand(wxString& line, wxString& id)
 {
-    if(line.StartsWith("^error")) {
+    if (line.StartsWith("^error")) {
 
         // the command was error, for example:
         // finish in the outer most frame
@@ -912,42 +919,42 @@ void DbgGdb::DoProcessAsyncCommand(wxString& line, wxString& id)
         DbgCmdHandler* handler = PopHandler(id);
         bool errorProcessed(false);
 
-        if(handler && handler->WantsErrors()) {
+        if (handler && handler->WantsErrors()) {
             errorProcessed = handler->ProcessOutput(line);
         }
 
-        if(handler) {
+        if (handler) {
             delete handler;
         }
 
         StripString(line);
 
         // We also need to pass the control back to the program
-        if(!errorProcessed) {
+        if (!errorProcessed) {
             m_observer->UpdateGotControl(DBG_CMD_ERROR);
         }
 
-        if(!FilterMessage(line) && m_info.enableDebugLog) {
+        if (!FilterMessage(line) && m_info.enableDebugLog) {
             m_observer->UpdateAddLine(line);
         }
 
-    } else if(line.StartsWith("^done") || line.StartsWith("^connected")) {
+    } else if (line.StartsWith("^done") || line.StartsWith("^connected")) {
         // The synchronous operation was successful, results are the return values.
         DbgCmdHandler* handler = PopHandler(id);
-        if(handler) {
+        if (handler) {
             handler->ProcessOutput(line);
             wxDELETE(handler);
         }
 
-    } else if(line.StartsWith("^running")) {
+    } else if (line.StartsWith("^running")) {
         // asynchronous command was executed
         // send event that we dont have the control anymore
         m_observer->UpdateLostControl();
 
-    } else if(line.StartsWith("*stopped")) {
+    } else if (line.StartsWith("*stopped")) {
         // get the stop reason,
-        if(line == "*stopped") {
-            if(m_bpList.empty()) {
+        if (line == "*stopped") {
+            if (m_bpList.empty()) {
 
                 ExecuteCmd("set auto-solib-add off");
                 ExecuteCmd("set stop-on-solib-events 0");
@@ -966,7 +973,7 @@ void DbgGdb::DoProcessAsyncCommand(wxString& line, wxString& id)
             // GDB/MI Out-of-band Records
             // caused by async command, this line indicates that we have the control back
             DbgCmdHandler* handler = PopHandler(id);
-            if(handler) {
+            if (handler) {
                 handler->ProcessOutput(line);
                 wxDELETE(handler);
             }
@@ -984,7 +991,7 @@ bool DbgGdb::EvaluateExpressionToString(const wxString& expression, const wxStri
     command << "-var-create " << watchName << " * " << expression;
     // first create the expression
     bool res = WriteCommand(command, new DbgCmdHandlerVarCreator(m_observer));
-    if(!res) {
+    if (!res) {
         // probably gdb is down
         return false;
     }
@@ -993,7 +1000,7 @@ bool DbgGdb::EvaluateExpressionToString(const wxString& expression, const wxStri
     command << "-var-set-format " << watchName << " " << format;
     // first create the expression
     res = WriteCommand(command, NULL);
-    if(!res) {
+    if (!res) {
         // probably gdb is down
         return false;
     }
@@ -1002,7 +1009,7 @@ bool DbgGdb::EvaluateExpressionToString(const wxString& expression, const wxStri
     command.clear();
     command << "-var-evaluate-expression " << watchName;
     res = WriteCommand(command, new DbgCmdHandlerEvalExpr(m_observer, expression));
-    if(!res) {
+    if (!res) {
         // probably gdb is down
         return false;
     }
@@ -1070,7 +1077,7 @@ bool DbgGdb::WatchMemory(const wxString& address, size_t count, size_t columns)
     // make the line per WORD size
     int divider(columns);
     int factor((int)(count / divider));
-    if(count % divider != 0) {
+    if (count % divider != 0) {
         factor = (int)(count / divider) + 1;
     }
 
@@ -1087,7 +1094,7 @@ bool DbgGdb::SetMemory(const wxString& address, size_t count, const wxString& he
     wxString hexCommaDlimArr;
     wxArrayString hexArr = wxStringTokenize(hex_value, " ", wxTOKEN_STRTOK);
 
-    for(size_t i = 0; i < hexArr.GetCount(); i++) {
+    for (size_t i = 0; i < hexArr.GetCount(); i++) {
         hexCommaDlimArr << hexArr.Item(i) << ",";
     }
 
@@ -1105,17 +1112,18 @@ void DbgGdb::SetDebuggerInformation(const DebuggerInformation& info)
 
 void DbgGdb::BreakList() { (void)WriteCommand("-break-list", new DbgCmdBreakList(this)); }
 
-bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgExeName,
+bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath,
+                                   wxString& dbgExeName,
                                    const DebugSessionInfo& sessionInfo)
 {
-    if(m_gdbProcess) {
+    if (m_gdbProcess) {
         // dont allow second instance of the debugger
         return false;
     }
     wxString cmd;
 
     dbgExeName = debuggerPath;
-    if(dbgExeName.IsEmpty()) {
+    if (dbgExeName.IsEmpty()) {
         dbgExeName = "gdb";
     }
 
@@ -1135,18 +1143,18 @@ bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath, wxString& dbgEx
     // Read the content of the user's file
     wxString fileContent;
     FileUtils::ReadFileContent(userGdbInitFile, fileContent);
-    if(!fileContent.IsEmpty() && !fileContent.EndsWith("\n")) {
+    if (!fileContent.IsEmpty() && !fileContent.EndsWith("\n")) {
         fileContent << "\n";
     }
 
     // Remove cl previous file
-    if(clGdbInitFile.FileExists()) {
+    if (clGdbInitFile.FileExists()) {
         FileUtils::RemoveFile(clGdbInitFile);
     }
 
     gdbinit_file_content.Trim().Trim(false);
     fileContent << gdbinit_file_content;
-    if(FileUtils::WriteFileContent(clGdbInitFile, fileContent)) {
+    if (FileUtils::WriteFileContent(clGdbInitFile, fileContent)) {
         m_observer->UpdateAddLine(wxString() << "Using gdbinit file: " << clGdbInitFile.GetFullPath());
         dbgExeName << " --command=\"" << clGdbInitFile.GetFullPath() << "\"";
     }
@@ -1161,7 +1169,7 @@ bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
     m_goingDown = false;
     m_internalBpId = wxNOT_FOUND;
 
-    if(!m_isSSHDebugging) {
+    if (!m_isSSHDebugging) {
 #ifdef __WXMSW__
         ExecuteCmd("set new-console on");
 #endif
@@ -1169,24 +1177,24 @@ bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
     ExecuteCmd("set unwindonsignal on");
     wxString breakinsertcmd("-break-insert ");
 
-    if(m_info.enablePendingBreakpoints) {
+    if (m_info.enablePendingBreakpoints) {
         ExecuteCmd("set breakpoint pending on");
         breakinsertcmd << "-f ";
     }
 
-    if(m_info.catchThrow) {
+    if (m_info.catchThrow) {
         ExecuteCmd("catch throw");
     }
 
-    if(!m_isSSHDebugging) {
+    if (!m_isSSHDebugging) {
 #ifdef __WXMSW__
-        if(m_info.debugAsserts) {
+        if (m_info.debugAsserts) {
             ExecuteCmd("break assert");
         }
 #endif
     }
 
-    if(!(m_info.flags & DebuggerInformation::kPrintObjectOff)) {
+    if (!(m_info.flags & DebuggerInformation::kPrintObjectOff)) {
         ExecuteCmd("set print object on");
     }
 
@@ -1203,7 +1211,7 @@ bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
     ExecuteCmd(sizeCommand);
 
     // set the project startup commands
-    for(size_t i = 0; i < sessionInfo.cmds.GetCount(); i++) {
+    for (size_t i = 0; i < sessionInfo.cmds.GetCount(); i++) {
         ExecuteCmd(sessionInfo.cmds.Item(i));
     }
 
@@ -1211,19 +1219,19 @@ bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
     m_bpList = sessionInfo.bpList;
 
     bool setBreakpointsAfterMain(m_info.applyBreakpointsAfterProgramStarted);
-    if(GetIsRemoteDebugging() == false && !setBreakpointsAfterMain) {
+    if (GetIsRemoteDebugging() == false && !setBreakpointsAfterMain) {
         // When remote debugging, apply the breakpoints after we connect the
         // gdbserver
         SetBreakpoints();
 
-    } else if(setBreakpointsAfterMain && m_bpList.empty() == false) {
+    } else if (setBreakpointsAfterMain && m_bpList.empty() == false) {
         // Place an 'internal' breakpoint at main. Once this breakpoint is hit
         // set all breakpoints and remove the 'internal' one.
         // Then 'continue', unless the user has said he actually _wants_ to break at main
         WriteCommand(breakinsertcmd + "-t main", new DbgFindMainBreakpointIdHandler(m_observer, this));
     }
 
-    if(m_info.breakAtWinMain) {
+    if (m_info.breakAtWinMain) {
         // Set a breakpoint at WinMain
         // Use a temporary one, so that it isn't duplicated in future sessions
         WriteCommand(breakinsertcmd + "-t main", NULL);
@@ -1235,16 +1243,16 @@ bool DbgGdb::DoInitializeGdb(const DebugSessionInfo& sessionInfo)
     }
 
     // Enable python based pretty printing?
-    if(sessionInfo.enablePrettyPrinting) {
+    if (sessionInfo.enablePrettyPrinting) {
         WriteCommand("-enable-pretty-printing", NULL);
     }
 
     // Add the additional search paths
-    for(size_t i = 0; i < sessionInfo.searchPaths.GetCount(); ++i) {
+    for (size_t i = 0; i < sessionInfo.searchPaths.GetCount(); ++i) {
         wxString dirCmd;
         wxString path = sessionInfo.searchPaths.Item(i);
         path.Trim().Trim(false);
-        if(path.Contains(" ")) {
+        if (path.Contains(" ")) {
             path.Prepend('"').Append('"');
         }
         dirCmd << "-environment-directory " << path;
@@ -1259,11 +1267,11 @@ bool DbgGdb::ExecCLICommand(const wxString& command, DbgCmdCLIHandler* handler)
     wxString id = MakeId();
     cmd << id << command;
     // send the command to gdb
-    if(!ExecuteCmd(cmd)) {
+    if (!ExecuteCmd(cmd)) {
         return false;
     }
 
-    if(handler) {
+    if (handler) {
         handler->SetCommandId(id);
         SetCliHandler(handler);
     }
@@ -1272,7 +1280,7 @@ bool DbgGdb::ExecCLICommand(const wxString& command, DbgCmdCLIHandler* handler)
 
 void DbgGdb::SetCliHandler(DbgCmdCLIHandler* handler)
 {
-    if(m_cliHandler) {
+    if (m_cliHandler) {
         delete m_cliHandler;
     }
     m_cliHandler = handler;
@@ -1284,7 +1292,7 @@ bool DbgGdb::ListChildren(const wxString& name, int userReason)
 {
     wxString cmd;
     cmd << "-var-list-children " << WrapSpaces(name);
-    if(m_info.maxDisplayElements > 0) {
+    if (m_info.maxDisplayElements > 0) {
         cmd << " " << 0 << " " << m_info.maxDisplayElements;
     }
     return WriteCommand(cmd, new DbgCmdListChildren(m_observer, name, userReason));
@@ -1324,24 +1332,24 @@ void DbgGdb::OnDataRead(clProcessEvent& e)
 {
     // Data arrived from the debugger
     const wxString& bufferRead = e.GetOutput();
-    if(!m_gdbProcess || !m_gdbProcess->IsAlive()) {
+    if (!m_gdbProcess || !m_gdbProcess->IsAlive()) {
         return;
     }
 
     wxArrayString lines = wxStringTokenize(bufferRead, "\n", wxTOKEN_STRTOK);
-    if(lines.IsEmpty()) {
+    if (lines.IsEmpty()) {
         return;
     }
 
     // Prepend the partially saved line from previous iteration to the first line
     // of this iteration
-    if(!m_gdbOutputIncompleteLine.empty()) {
+    if (!m_gdbOutputIncompleteLine.empty()) {
         lines.Item(0).Prepend(m_gdbOutputIncompleteLine);
         m_gdbOutputIncompleteLine.Clear();
     }
 
     // If the last line is in-complete, remove it from the array and keep it for next iteration
-    if(!bufferRead.EndsWith("\n")) {
+    if (!bufferRead.EndsWith("\n")) {
         m_gdbOutputIncompleteLine = lines.Last();
         lines.RemoveAt(lines.GetCount() - 1);
     }
@@ -1349,18 +1357,18 @@ void DbgGdb::OnDataRead(clProcessEvent& e)
     // make sure we have enough memory for the new lines
 
     m_gdbOutputArr.reserve(m_gdbOutputArr.size() + lines.size());
-    for(size_t i = 0; i < lines.GetCount(); ++i) {
+    for (size_t i = 0; i < lines.GetCount(); ++i) {
         wxString& line = lines.Item(i);
 
         line.Replace("(gdb)", "");
         line.Trim().Trim(false);
-        if(line.empty()) {
+        if (line.empty()) {
             continue;
         }
         m_gdbOutputArr.Add(line);
     }
 
-    if(!m_gdbOutputArr.empty()) {
+    if (!m_gdbOutputArr.empty()) {
         // Trigger GDB processing
         Poke();
     }
@@ -1369,14 +1377,14 @@ void DbgGdb::OnDataRead(clProcessEvent& e)
 bool DbgGdb::DoGetNextLine(wxString& line)
 {
     line.Clear();
-    if(m_gdbOutputArr.IsEmpty()) {
+    if (m_gdbOutputArr.IsEmpty()) {
         return false;
     }
     line = m_gdbOutputArr.Item(0);
     m_gdbOutputArr.RemoveAt(0);
     line.Replace("(gdb)", "");
     line.Trim().Trim(false);
-    if(line.IsEmpty()) {
+    if (line.IsEmpty()) {
         return false;
     }
     return true;
@@ -1389,7 +1397,7 @@ bool DbgGdb::Restart() { return WriteCommand("-exec-run ", new DbgCmdHandlerExec
 bool DbgGdb::SetVariableObjectDisplayFormat(const wxString& name, DisplayFormat displayFormat)
 {
     wxString df, cmd;
-    switch(displayFormat) {
+    switch (displayFormat) {
     case DBG_DF_BINARY:
         df = "binary";
         break;
@@ -1439,12 +1447,12 @@ void DbgGdb::AssignValue(const wxString& expression, const wxString& newValue)
 void DbgGdb::GetDebugeePID(const wxString& line)
 {
     // if we already found the PID, return
-    if(m_debuggeePid != wxNOT_FOUND) {
+    if (m_debuggeePid != wxNOT_FOUND) {
         return;
     }
 
-    if(m_debuggeePid == wxNOT_FOUND) {
-        if(GetIsRemoteDebugging()) {
+    if (m_debuggeePid == wxNOT_FOUND) {
+        if (GetIsRemoteDebugging()) {
             m_debuggeePid = m_gdbProcess->GetPid();
 
         } else {
@@ -1456,25 +1464,25 @@ void DbgGdb::GetDebugeePID(const wxString& line)
             // test for the debuggee PID
             // in the line with the following pattern:
             // =thread-group-started,id="i1",pid="15599"
-            if(m_debuggeePid < 0 && !line.IsEmpty()) {
+            if (m_debuggeePid < 0 && !line.IsEmpty()) {
                 wxString debuggeePidStr;
 
-                if(line.Contains("=thread-group-started") && reGroupStarted.Matches(line)) {
+                if (line.Contains("=thread-group-started") && reGroupStarted.Matches(line)) {
                     debuggeePidStr = reGroupStarted.GetMatch(line, 1);
 
-                } else if(line.Contains("=thread-group-created") && reGroupStarted.Matches(line)) {
+                } else if (line.Contains("=thread-group-created") && reGroupStarted.Matches(line)) {
                     debuggeePidStr = reGroupStarted.GetMatch(line, 1);
 
-                } else if(reDebuggerPidWin.Matches(line)) {
+                } else if (reDebuggerPidWin.Matches(line)) {
                     debuggeePidStr = reDebuggerPidWin.GetMatch(line, 1);
 
-                } else if(reSwitchToThread.Matches(line)) {
+                } else if (reSwitchToThread.Matches(line)) {
                     debuggeePidStr = reSwitchToThread.GetMatch(line, 1);
                 }
 
-                if(!debuggeePidStr.IsEmpty()) {
+                if (!debuggeePidStr.IsEmpty()) {
                     long iPid(0);
-                    if(debuggeePidStr.ToLong(&iPid)) {
+                    if (debuggeePidStr.ToLong(&iPid)) {
                         m_debuggeePid = iPid;
                         wxString msg;
                         msg << ">> Debuggee process ID: " << m_debuggeePid;
@@ -1487,14 +1495,14 @@ void DbgGdb::GetDebugeePID(const wxString& line)
                 }
             }
         }
-    } else if(!line.IsEmpty() && line.Contains("[New process")) {
+    } else if (!line.IsEmpty() && line.Contains("[New process")) {
         // we already got PID, however, if the process forked we might get a new one
         // e.g. [New process 9659]
         static wxRegEx reProcessPID("New process ([0-9]+)");
-        if(reProcessPID.Matches(line)) {
+        if (reProcessPID.Matches(line)) {
             wxString debuggeePidStr = reProcessPID.GetMatch(line, 1);
             long iPid(0);
-            if(debuggeePidStr.ToCLong(&iPid)) {
+            if (debuggeePidStr.ToCLong(&iPid)) {
                 m_debuggeePid = iPid;
                 m_observer->UpdateAddLine(wxString() << "Debuggee PID is now set to: " << m_debuggeePid);
             }
@@ -1512,7 +1520,7 @@ bool DbgGdb::Jump(wxString filename, int line)
     // by default, use full paths for the file name
     wxFileName fn(filename);
     wxString tmpfileName(fn.GetFullPath());
-    if(m_info.useRelativeFilePaths) {
+    if (m_info.useRelativeFilePaths) {
         // user set the option to use relative paths (file name w/o the full path)
         tmpfileName = fn.GetFullName();
     }
@@ -1536,10 +1544,10 @@ void DbgGdb::OnKillGDB(wxCommandEvent& e)
 bool DbgGdb::Disassemble(const wxString& filename, int lineNumber)
 {
     // Trigger a "disassemble" call
-    if(/*filename.IsEmpty() || lineNumber == wxNOT_FOUND*/ true) {
+    if (/*filename.IsEmpty() || lineNumber == wxNOT_FOUND*/ true) {
         // Use the $pc
-        if(!WriteCommand("-data-disassemble -s \"$pc -100\" -e \"$pc + 100\" -- 0",
-                         new DbgCmdHandlerDisasseble(m_observer, this)))
+        if (!WriteCommand("-data-disassemble -s \"$pc -100\" -e \"$pc + 100\" -- 0",
+                          new DbgCmdHandlerDisasseble(m_observer, this)))
             return false;
 
     } else {
@@ -1547,14 +1555,14 @@ bool DbgGdb::Disassemble(const wxString& filename, int lineNumber)
         wxString tmpfile = filename;
         tmpfile.Replace("\\", "/"); // gdb does not like backslashes...
 
-        if(!WriteCommand(wxString() << "-data-disassemble -f \"" << tmpfile << "\" -l " << lineNumber << " -n -1 -- 0",
-                         new DbgCmdHandlerDisasseble(m_observer, this)))
+        if (!WriteCommand(wxString() << "-data-disassemble -f \"" << tmpfile << "\" -l " << lineNumber << " -n -1 -- 0",
+                          new DbgCmdHandlerDisasseble(m_observer, this)))
             return false;
     }
 
     // get the current instruction
-    if(!WriteCommand("-data-disassemble -s \"$pc\" -e \"$pc + 1\" -- 0",
-                     new DbgCmdHandlerDisassebleCurLine(m_observer, this)))
+    if (!WriteCommand("-data-disassemble -s \"$pc\" -e \"$pc + 1\" -- 0",
+                      new DbgCmdHandlerDisassebleCurLine(m_observer, this)))
         return false;
 
     return true;
@@ -1566,14 +1574,14 @@ bool DbgGdb::Attach(const DebugSessionInfo& si, clEnvList_t* env_list)
     EnvSetter env(m_env, NULL, m_debuggeeProjectName, wxEmptyString);
 
     wxString dbgExeName;
-    if(!DoLocateGdbExecutable(si.debuggerPath, dbgExeName, si)) {
+    if (!DoLocateGdbExecutable(si.debuggerPath, dbgExeName, si)) {
         return false;
     }
 
     wxString cmd;
 #if defined(__WXGTK__) || defined(__WXMAC__)
     cmd << dbgExeName;
-    if(!si.ttyName.IsEmpty()) {
+    if (!si.ttyName.IsEmpty()) {
         cmd << " --tty=" << si.ttyName;
     }
     cmd << " --interpreter=mi ";
@@ -1597,11 +1605,11 @@ bool DbgGdb::Attach(const DebugSessionInfo& si, clEnvList_t* env_list)
 
     // Build the process creation flags
     size_t createFlags = IProcessCreateDefault;
-    if(m_info.flags & DebuggerInformation::kRunAsSuperuser) {
+    if (m_info.flags & DebuggerInformation::kRunAsSuperuser) {
         createFlags |= IProcessCreateAsSuperuser;
     }
     m_gdbProcess = CreateAsyncProcess(this, cmd, createFlags, wxEmptyString, env_list);
-    if(!m_gdbProcess) {
+    if (!m_gdbProcess) {
         return false;
     }
     m_gdbProcess->SetHardKill(true);
@@ -1621,7 +1629,7 @@ void DbgGdb::EnableReverseDebugging(bool b) { m_reverseDebugging = b; }
 
 void DbgGdb::EnableRecording(bool b)
 {
-    if(b) {
+    if (b) {
         WriteCommand("target record-full", new DbgCmdRecordHandler(m_observer, this));
     } else {
         WriteCommand("record stop", NULL);

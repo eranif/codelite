@@ -61,8 +61,8 @@ bool BreakptMgr::AddBreakpointByAddress(const wxString& address)
     return AddBreakpoint(bp);
 }
 
-bool BreakptMgr::AddBreakpointByLineno(const wxString& file, int lineno, const wxString& conditions, bool is_temp,
-                                       bool is_disabled)
+bool BreakptMgr::AddBreakpointByLineno(
+    const wxString& file, int lineno, const wxString& conditions, bool is_temp, bool is_disabled)
 {
     clDebuggerBreakpoint bp;
     bp.Create(file, lineno, GetNextID());
@@ -121,7 +121,8 @@ void BreakptMgr::AddBreakpoint()
     clEditor* const editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
     clDebuggerBreakpoint bp;
     bp.Create(editor ? FileUtils::RealPath(editor->GetFileName().GetFullPath()) : wxString(),
-              editor ? editor->GetCurrentLine() : -1, GetNextID());
+              editor ? editor->GetCurrentLine() : -1,
+              GetNextID());
     dlg.EnterBPData(bp);
 
     if (dlg.ShowModal() != wxID_OK) {
@@ -152,8 +153,9 @@ clDebuggerBreakpoint::Vec_t BreakptMgr::GetBreakpoints()
 // Get all known breakpoints for this line/file
 clDebuggerBreakpoint& BreakptMgr::GetBreakpoint(const wxString& fileName, const int lineno)
 {
-    auto iter = std::find_if(m_bps.begin(), m_bps.end(),
-                             [&](const clDebuggerBreakpoint& a) { return a.file == fileName && a.lineno == lineno; });
+    auto iter = std::find_if(m_bps.begin(), m_bps.end(), [&](const clDebuggerBreakpoint& a) {
+        return a.file == fileName && a.lineno == lineno;
+    });
     if (iter == m_bps.end()) {
         static clDebuggerBreakpoint empty;
         return empty;
@@ -163,8 +165,9 @@ clDebuggerBreakpoint& BreakptMgr::GetBreakpoint(const wxString& fileName, const 
 
 const clDebuggerBreakpoint& BreakptMgr::GetBreakpoint(const wxString& fileName, const int lineno) const
 {
-    auto iter = std::find_if(m_bps.begin(), m_bps.end(),
-                             [&](const clDebuggerBreakpoint& a) { return a.file == fileName && a.lineno == lineno; });
+    auto iter = std::find_if(m_bps.begin(), m_bps.end(), [&](const clDebuggerBreakpoint& a) {
+        return a.file == fileName && a.lineno == lineno;
+    });
     if (iter == m_bps.end()) {
         static clDebuggerBreakpoint empty;
         return empty;
@@ -258,11 +261,11 @@ void BreakptMgr::DoRefreshFileBreakpoints(clEditor* editor)
             wxString unix_path = fn.GetFullPath(wxPATH_UNIX);
             if (remotePath == unix_path && b.lineno != -1) {
                 b.file.swap(unix_path);
-                bps.insert({ b.lineno, b });
+                bps.insert({b.lineno, b});
             }
         } else {
             if ((editor->GetFileName() == b.file) && (b.lineno != -1)) {
-                bps.insert({ b.lineno, b });
+                bps.insert({b.lineno, b});
             }
         }
     }
@@ -412,7 +415,7 @@ bool BreakptMgr::DelBreakpointByLineno(const wxString& file, const int lineno)
     }
 
     double bpId = bp.GetId();
-    if (bpId == wxID_CANCEL || bpId == BP_type_none)
+    if (bpId == static_cast<double>(wxID_CANCEL) || bpId == static_cast<double>(BP_type_none))
         return false;
 
     DelBreakpoint(bpId);
@@ -575,8 +578,8 @@ bool BreakptMgr::IgnoreByLineno(const wxString& file, const int lineno)
         return false;
     }
 
-    long newvalue = ::wxGetNumberFromUser(_("Please enter the new ignore-count"), wxT(""), _("Set ignore-count"),
-                                          bp.ignore_number, 0, 1000000);
+    long newvalue = ::wxGetNumberFromUser(
+        _("Please enter the new ignore-count"), wxT(""), _("Set ignore-count"), bp.ignore_number, 0, 1000000);
     if ((newvalue == -1) || (newvalue == (long)bp.ignore_number)) {
         return false;
     }

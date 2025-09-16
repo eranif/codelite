@@ -31,18 +31,14 @@
 //-----------------------------------
 #include <wx/version.h>
 
-#if defined(__WXMSW__) || defined(__WXMAC__)
-#define MAINBOOK_AUIBOOK 0
-#else
-#define MAINBOOK_AUIBOOK 0
-#endif
-
 // Defaults
 #ifdef __WXGTK__
 
 //-------------------
 // Linux macros
 //-------------------
+#define CL_USE_NATIVEBOOK 1
+#define MAINBOOK_AUIBOOK 0
 
 #ifndef PLUGINS_DIR
 #define PLUGINS_DIR "/usr/lib/codelite"
@@ -52,13 +48,14 @@
 #define INSTALL_DIR "/usr/share/codelite"
 #endif
 
-#define CL_USE_NATIVEBOOK 0
 
 #elif defined(__WXMSW__)
 
 //-------------------
 // Windows
 //-------------------
+#define CL_USE_NATIVEBOOK 0
+#define MAINBOOK_AUIBOOK 1
 
 #ifdef USE_POSIX_LAYOUT
 #ifndef PLUGINS_DIR
@@ -69,13 +66,13 @@
 #endif
 #endif
 
-#define CL_USE_NATIVEBOOK 0
 #else
 
 //-------------------
 // macOS
 //-------------------
 #define CL_USE_NATIVEBOOK 0
+#define MAINBOOK_AUIBOOK 1
 
 #endif
 

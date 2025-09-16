@@ -1,8 +1,10 @@
 #include "clAuiBook.hpp"
 
+#include "Notebook.h" // For the book events.
 #include "clSystemSettings.h"
 #include "editor_config.h"
 #include "event_notifier.h"
+#include "globals.h"
 
 #include <vector>
 #include <wx/aui/tabart.h>
@@ -15,256 +17,35 @@ static constexpr size_t X_SPACER = 10;
 #endif
 
 // Configurable via Settings -> Preferences -> Tabs
-static size_t Y_SPACER = 5;
-
 namespace
 {
-class clAuiBookArt : public wxAuiDefaultTabArt
+int NotebookFlagsToAuiBookStyle(long style_flags, NotebookStyle style, wxAuiNotebookOption option)
 {
-public:
-    wxAuiTabArt* Clone() override { return new clAuiBookArt(); }
-    int GetBorderWidth(wxWindow* wnd) override { return 0; }
-    int GetAdditionalBorderSpace(wxWindow* wnd) override { return 0; }
-    int GetIndentSize() override { return 0; }
-
-    void DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect) override
-    {
-        DrawingUtils::DrawTabBackgroundArea(dc, wnd, rect);
+    if (style_flags & style) {
+        return option;
+    } else {
+        return 0;
     }
-
-    void DrawButton(wxDC& dc, wxWindow* wnd, const wxRect& in_rect, int bitmap_id, int button_state, int orientation,
-                    wxRect* out_rect) override
-    {
-        wxAuiDefaultTabArt::DrawButton(dc, wnd, in_rect, bitmap_id, button_state, orientation, out_rect);
-    }
-
-#if wxCHECK_VERSION(3, 3, 0)
-    wxSize GetTabSize(wxReadOnlyDC& dcRef, wxWindow* wnd, const wxString& caption, const wxBitmapBundle& bitmap,
-                      bool WXUNUSED(active), int close_button_state, int* x_extent) override
-#else
-    wxSize GetTabSize(wxDC& dcRef, wxWindow* wnd, const wxString& caption, const wxBitmapBundle& bitmap,
-                      bool WXUNUSED(active), int close_button_state, int* x_extent) override
-#endif
-    {
-        wxCoord measured_textx, measured_texty, tmp;
-
-        const int xPadding = wnd->FromDIP(X_SPACER);
-        wxFont font = clTabRenderer::GetTabFont(true);
-        dcRef.SetFont(font);
-        dcRef.GetTextExtent(caption, &measured_textx, &measured_texty);
-        dcRef.GetTextExtent(wxT("ABCDEFXj"), &tmp, &measured_texty);
-
-        // add padding around the text
-        // [ _ | text | _ | bmp | _ | x | _ ]
-        wxCoord tab_width = xPadding + measured_textx + xPadding;
-
-        // if there's a bitmap, add space for it
-        if (bitmap.IsOk()) {
-            // we need the correct size of the bitmap to be used on this window in
-            // logical dimensions for drawing
-            const wxSize bitmapSize = bitmap.GetPreferredLogicalSizeFor(wnd);
-
-            // increase by bitmap plus right side bitmap padding
-            tab_width += bitmapSize.x + xPadding;
-        }
-
-        // if the close button is showing, add space for it
-        if (close_button_state != wxAUI_BUTTON_STATE_HIDDEN) {
-            // increase by button size plus the padding
-            tab_width += m_activeCloseBmp.GetBitmapFor(wnd).GetLogicalWidth() + xPadding;
-        }
-
-        dcRef.GetTextExtent(wxT("ABCDEFXj"), &tmp, &measured_texty);
-        int tab_height = measured_texty + (4 * Y_SPACER);
-
-        if (m_flags & wxAUI_NB_TAB_FIXED_WIDTH) {
-            tab_width = m_fixedTabWidth;
-        }
-
-        *x_extent = tab_width;
-        return wxSize(tab_width, tab_height);
-    }
-
-    void DrawTab(wxDC& dc, wxWindow* wnd, const wxAuiNotebookPage& page, const wxRect& inRect, int closeButtonState,
-                 wxRect* outTabRect, wxRect* outButtonRect, int* xExtent) override
-    {
-        wxGCDC gcdc;
-        wxDC& dcref = DrawingUtils::GetGCDC(dc, gcdc);
-        wxFont font = clTabRenderer::GetTabFont(false);
-
-        dcref.SetFont(font);
-
-        bool is_modified = false;
-        bool is_active = page.active;
-        wxColour active_tab_bg_colour = wxNullColour;
-        if (page.window) {
-            auto stc = dynamic_cast<wxStyledTextCtrl*>(page.window);
-            if (stc) {
-                is_modified = stc->GetModify();
-
-                if (is_active) {
-                    active_tab_bg_colour = stc->StyleGetBackground(0);
-                }
-            }
-        }
-
-        if (is_active) {
-            dcref.SetFont(m_selectedFont);
-        }
-
-        bool is_dark = clSystemSettings::GetAppearance().IsDark();
-        wxSize button_size = GetTabSize(dcref, wnd, page.caption, page.bitmap, page.active, closeButtonState, xExtent);
-
-        wxRect tab_rect(inRect.GetTopLeft(), button_size);
-        tab_rect.SetHeight(wnd->GetClientRect().GetHeight());
-        wxRect tab_rect_for_clipping(tab_rect);
-        if (tab_rect_for_clipping.GetRight() >= inRect.GetRight()) {
-            // the tab overflows. Make room for the window drop down list button
-            tab_rect_for_clipping.SetRight(inRect.GetRight() - 10);
-        }
-
-        wxDCClipper clipper(dcref, tab_rect_for_clipping);
-        wxColour bg_colour = clSystemSettings::GetDefaultPanelColour();
-        if (is_active) {
-            if (active_tab_bg_colour.IsOk()) {
-                // If we haev an editor background colour, use this
-                // as the tab active background colour
-                bg_colour = active_tab_bg_colour;
-            } else {
-                if (is_dark) {
-                    bg_colour = bg_colour.ChangeLightness(110);
-
-                } else {
-                    bg_colour = *wxWHITE;
-                }
-            }
-        } else {
-            bg_colour = bg_colour.ChangeLightness(is_dark ? 70 : 90);
-        }
-
-        if (is_active) {
-            tab_rect.SetHeight(wnd->GetClientRect().GetHeight());
-        }
-
-        *outTabRect = tab_rect;
-        dcref.SetPen(bg_colour);
-        dcref.SetBrush(bg_colour);
-        dcref.DrawRectangle(tab_rect);
-
-        if (is_active) {
-            dcref.SetPen(GetPenColour());
-
-            wxPoint bottom_right = tab_rect.GetBottomRight();
-            wxPoint top_right = tab_rect.GetTopRight();
-            wxPoint bottom_left = tab_rect.GetBottomLeft();
-            wxPoint top_left = tab_rect.GetTopLeft();
-
-#ifndef __WXMSW__
-            bottom_left.y += 1;
-            bottom_right.y += 1;
-            bottom_right.x += 1;
-            top_right.x += 1;
-            bottom_left.x -= 1;
-            top_left.x -= 1;
-#endif
-
-#ifdef __WXMSW__
-            dcref.DrawLine(top_right, top_left);
-#endif
-
-            dcref.DrawLine(top_left, bottom_left);
-            dcref.DrawLine(top_right, bottom_right);
-
-        } else {
-            dcref.SetPen(GetPenColour());
-            dcref.DrawLine(tab_rect.GetBottomLeft(), tab_rect.GetBottomRight());
-        }
-
-        // Draw the text
-        {
-            bool is_bg_dark = DrawingUtils::IsDark(bg_colour);
-            wxColour text_colour =
-                is_bg_dark ? (page.active ? *wxWHITE : bg_colour.ChangeLightness(170)) : bg_colour.ChangeLightness(30);
-
-            if (is_modified) {
-                text_colour = is_bg_dark ? "PINK" : "RED";
-            }
-
-            wxDCTextColourChanger text_colour_changer(dcref, text_colour);
-            wxDCFontChanger font_changer(dcref, font);
-            wxRect textRect = dcref.GetTextExtent(page.caption);
-
-            textRect = textRect.CenterIn(tab_rect, wxVERTICAL);
-            textRect.SetX(tab_rect.GetX() + wnd->FromDIP(X_SPACER));
-            dcref.DrawText(page.caption, textRect.GetTopLeft());
-        }
-
-        if (closeButtonState != wxAUI_BUTTON_STATE_HIDDEN) {
-            wxBitmapBundle bb = m_activeCloseBmp;
-            const wxBitmap bmp = bb.GetBitmapFor(wnd);
-
-            int offsetY = tab_rect.GetY() - 1;
-            if (m_flags & wxAUI_NB_BOTTOM)
-                offsetY = 1;
-
-            wxRect button_rect(0, 0, bmp.GetLogicalWidth(), bmp.GetLogicalWidth());
-            button_rect.x = tab_rect.GetX() + tab_rect.GetWidth() - button_rect.GetWidth() - wnd->FromDIP(X_SPACER);
-            button_rect = button_rect.CenterIn(tab_rect, wxVERTICAL);
-            DoDrawButton(dcref, wnd, button_rect, bg_colour, wxAUI_BUTTON_CLOSE, closeButtonState, wxTOP, &button_rect);
-
-            *outButtonRect = button_rect;
-        }
-    }
-
-private:
-    wxColour GetPenColour() const
-    {
-        bool is_dark = clSystemSettings::GetAppearance().IsDark();
-        wxColour pen_colour;
-        if (is_dark) {
-            pen_colour = *wxBLACK;
-        } else {
-            pen_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
-        }
-        return pen_colour;
-    }
-
-    void DoDrawButton(wxDC& dc, wxWindow* wnd, const wxRect& inRect, const wxColour& tab_bg_colour, int bitmapId,
-                      int buttonState, int orientation, wxRect* outRect)
-    {
-        wxGCDC gcdc;
-        wxDC& dcref = DrawingUtils::GetGCDC(dc, gcdc);
-
-        if (bitmapId != wxAUI_BUTTON_CLOSE) {
-            wxAuiDefaultTabArt::DrawButton(dc, wnd, inRect, bitmapId, buttonState, orientation, outRect);
-            return;
-        }
-
-        wxColour pen_colour =
-            DrawingUtils::IsDark(tab_bg_colour) ? "ORANGE" : clSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
-        eButtonState button_state = eButtonState::kNormal;
-        switch (buttonState) {
-        case wxAUI_BUTTON_STATE_HOVER:
-            button_state = eButtonState::kHover;
-            break;
-        case wxAUI_BUTTON_STATE_PRESSED:
-            button_state = eButtonState::kPressed;
-            break;
-        case wxAUI_BUTTON_STATE_HIDDEN:
-            return;
-        default:
-        case wxAUI_BUTTON_STATE_NORMAL:
-            break;
-        }
-        DrawingUtils::DrawButtonX(dcref, wnd, inRect, pen_colour, tab_bg_colour, button_state);
-        *outRect = inRect;
-    }
-};
+}
 } // namespace
 
+static size_t Y_SPACER = 5;
+
 clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-    : wxAuiNotebook(parent, id, pos, size, style)
 {
+    long aui_book_style = 0;
+    aui_book_style |= NotebookFlagsToAuiBookStyle(style, kNotebook_BottomTabs, wxAUI_NB_BOTTOM);
+    aui_book_style |= NotebookFlagsToAuiBookStyle(style, kNotebook_ShowFileListButton, wxAUI_NB_WINDOWLIST_BUTTON);
+    aui_book_style |=
+        NotebookFlagsToAuiBookStyle(style, kNotebook_CloseButtonOnActiveTab, wxAUI_NB_CLOSE_ON_ACTIVE_TAB);
+    aui_book_style |=
+        NotebookFlagsToAuiBookStyle(style, kNotebook_MouseMiddleClickClosesTab, wxAUI_NB_MIDDLE_CLICK_CLOSE);
+    aui_book_style |= NotebookFlagsToAuiBookStyle(style, kNotebook_FixedWidth, wxAUI_NB_TAB_FIXED_WIDTH);
+    aui_book_style |= NotebookFlagsToAuiBookStyle(style, kNotebook_AllowDnD, wxAUI_NB_TAB_MOVE);
+    if ((aui_book_style & wxAUI_NB_BOTTOM) == 0) {
+        aui_book_style |= wxAUI_NB_TOP;
+    }
+    wxAuiNotebook::Create(parent, id, pos, size, aui_book_style);
     SetBookArt();
 
     wxFont font = clTabRenderer::GetTabFont(false);
@@ -310,10 +91,10 @@ size_t clAuiBook::GetAllTabs(clTabInfo::Vec_t& tabs)
 void clAuiBook::MoveActivePage(int newIndex)
 {
     // freeze the UI
-    wxWindowUpdateLocker locker{ this };
+    wxWindowUpdateLocker locker{this};
 
     // no events while we are doing the tab movement
-    clAuiBookEventsDisabler disabler{ this };
+    clAuiBookEventsDisabler disabler{this};
 
     int cursel = GetSelection();
     CHECK_COND_RET(cursel != wxNOT_FOUND);
@@ -472,19 +253,22 @@ void clAuiBook::OnPageClosing(wxAuiNotebookEvent& event)
 
 void clAuiBook::UpdatePreferences()
 {
-    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-    bool show_x_on_tab = options->IsTabHasXButton();
-
     auto style = GetWindowStyle();
-    style &= ~wxAUI_NB_CLOSE_ON_ALL_TABS;
-    if (m_canHaveCloseButton) {
-        if (show_x_on_tab) {
-            style |= wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
+    OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
+    if (clGetManager()->GetMainNotebook() == this) {
+        bool show_x_on_tab = options->IsTabHasXButton();
+
+        auto style = GetWindowStyle();
+        style &= ~wxAUI_NB_CLOSE_ON_ALL_TABS;
+        if (m_canHaveCloseButton) {
+            if (show_x_on_tab) {
+                style |= wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
+            } else {
+                style &= ~wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
+            }
         } else {
             style &= ~wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
         }
-    } else {
-        style &= ~wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
     }
 
     // update the tab height
@@ -514,11 +298,12 @@ void clAuiBook::UpdatePreferences()
 void clAuiBook::SetBookArt()
 {
     wxFont font = clTabRenderer::GetTabFont(false);
-    // auto art = new wxAuiDefaultTabArt();
-    auto art = new clAuiBookArt();
-    art->SetMeasuringFont(font);
+    wxFont bold_font = clTabRenderer::GetTabFont(true);
+
+    auto art = new wxAuiDefaultTabArt();
+    art->SetMeasuringFont(bold_font);
     art->SetNormalFont(font);
-    art->SetSelectedFont(font);
+    art->SetSelectedFont(bold_font);
     SetArtProvider(art);
 }
 
@@ -603,4 +388,15 @@ bool clAuiBook::RemovePage(size_t index, bool notify)
         GetEventHandler()->ProcessEvent(event);
     }
     return true;
+}
+
+int clAuiBook::GetPageBitmapIndex([[maybe_unused]] size_t n) const
+{
+    // Stub method
+    return wxNOT_FOUND;
+}
+
+void clAuiBook::SetTabDirection([[maybe_unused]] wxDirection d)
+{
+    // Stub method
 }

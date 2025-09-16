@@ -23,20 +23,37 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef NOTEBOOK_H
-#define NOTEBOOK_H
+#pragma once
 
+#include "cl_command_event.h"
 #include "cl_defs.h"
+
+#include <wx/notebook.h>
+
+#if MAINBOOK_AUIBOOK
+#include "clAuiBook.hpp"
+using Notebook = clAuiBook;
+#else
 
 #if CL_USE_NATIVEBOOK
 
 #include "clNativeNotebook.hpp"
-typedef clNativeNotebook Notebook;
+using Notebook = clNativeNotebook;
+
 #else // !CL_USE_NATIVEBOOK
 
 #include "clGenericNotebook.hpp"
-typedef clGenericNotebook Notebook;
+using Notebook = clGenericNotebook;
 
 #endif // CL_USE_NATIVEBOOK
+#endif
 
-#endif // NOTEBOOK_H
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CHANGING, wxBookCtrlEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CHANGED, wxBookCtrlEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSING, wxBookCtrlEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSED, wxBookCtrlEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_CONTEXT_MENU, wxBookCtrlEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_PAGE_CLOSE_BUTTON, wxBookCtrlEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_TAB_DCLICKED, wxBookCtrlEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_NEW_PAGE, wxBookCtrlEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BOOK_FILELIST_BUTTON_CLICKED, clContextMenuEvent);

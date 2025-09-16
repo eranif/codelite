@@ -26,6 +26,7 @@
 #define OUTPUT_PANE_H
 
 #include "Notebook.h"
+#include "clAuiBook.hpp"
 #include "cl_command_event.h"
 #include "shelltab.h"
 #include "wxTerminalCtrl/clBuiltinTerminalPane.hpp"

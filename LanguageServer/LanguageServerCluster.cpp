@@ -8,7 +8,7 @@
 #include "clAuiBook.hpp"
 #include "clEditorBar.h"
 #include "clEditorStateLocker.h"
-#include "clResult.hpp"
+#include "clGenericNotebook.hpp"
 #include "clSelectSymbolDialog.h"
 #include "clWorkspaceManager.h"
 #include "cl_calltip.h"
@@ -58,7 +58,7 @@ JSONItem json_get_server_config(JSON* root, const wxString& server_name)
 {
     auto json = root->toElement();
     if (!json.hasNamedObject("servers")) {
-        return JSONItem{ nullptr };
+        return JSONItem{nullptr};
     }
     auto servers = json["servers"];
     int count = servers.arraySize();
@@ -69,7 +69,7 @@ JSONItem json_get_server_config(JSON* root, const wxString& server_name)
         }
         return server;
     }
-    return JSONItem{ nullptr };
+    return JSONItem{nullptr};
 }
 
 wxString json_get_server_config_command(JSON* root, const wxString& server_name)
@@ -117,7 +117,7 @@ clEnvList_t json_get_server_config_env(JSON* root, const wxString& server_name)
         auto env_entry = env[n];
         wxString env_name = env_entry["name"].toString();
         wxString env_value = env_entry["value"].toString();
-        env_list.push_back({ env_name, env_value });
+        env_list.push_back({env_name, env_value});
     }
     return env_list;
 }
@@ -221,7 +221,7 @@ LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForEditor(IEditor*
             return server;
         }
     }
-    return LanguageServerProtocol::Ptr_t{ nullptr };
+    return LanguageServerProtocol::Ptr_t{nullptr};
 }
 
 void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
@@ -267,7 +267,7 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
     open_event.SetLineNumber(location.GetRange().GetStart().GetLine());
     if (EventNotifier::Get()->ProcessEvent(open_event)) {
         // update the navigation
-        BrowseRecord current_location{ location };
+        BrowseRecord current_location{location};
         current_location.filename = open_event.GetFileName();
         NavMgr::Get()->StoreCurrentLocation(from, current_location);
         return;
@@ -284,7 +284,7 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
             // try the range
             editor->SelectRangeAfter(location.GetRange());
         }
-        BrowseRecord current_location{ location };
+        BrowseRecord current_location{location};
         clDEBUG() << "location:" << location.ToJSON("").format() << endl;
         clDEBUG() << "Calling StoreCurrentLocation with:" << current_location << endl;
         NavMgr::Get()->StoreCurrentLocation(from, current_location);
@@ -413,9 +413,9 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
     LSP_TRACE() << "Found the editor!" << endl;
     const auto& semanticTokens = event.GetSemanticTokens();
 
-    wxStringSet_t variables_tokens = { "variable", "parameter", "typeParameter", "property" };
-    wxStringSet_t classes_tokens = { "class", "enum", "namespace", "type", "struct", "trait", "interface" };
-    wxStringSet_t method_tokens = { "function", "method" };
+    wxStringSet_t variables_tokens = {"variable", "parameter", "typeParameter", "property"};
+    wxStringSet_t classes_tokens = {"class", "enum", "namespace", "type", "struct", "trait", "interface"};
+    wxStringSet_t method_tokens = {"function", "method"};
 
     wxStringSet_t classes_set;
     wxStringSet_t variables_set;
@@ -489,7 +489,7 @@ void LanguageServerCluster::OnRestartNeeded(LSPEvent& event)
     LSP_DEBUG() << "LSP:" << event.GetServerName() << "needs to be restarted" << endl;
     auto iter = m_restartCounters.find(event.GetServerName());
     if (iter == m_restartCounters.end()) {
-        iter = m_restartCounters.insert({ event.GetServerName(), {} }).first;
+        iter = m_restartCounters.insert({event.GetServerName(), {}}).first;
     }
 
     time_t curtime = time(nullptr);
@@ -731,7 +731,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
 
     wxString init_options = entry.GetInitOptions();
     if (lsp->Start(startup_info, env_list, init_options, working_directory, entry.GetLanguages())) {
-        m_servers.insert({ entry.GetName(), lsp });
+        m_servers.insert({entry.GetName(), lsp});
     } else {
         clERROR() << "Failed to start language server:" << entry.GetName() << endl;
         clERROR() << "Language Server:" << entry.GetName() << "has been disabled until the problem is fixed" << endl;
@@ -853,7 +853,7 @@ void LanguageServerCluster::OnCompileCommandsGenerated(clCommandEvent& event)
 {
     event.Skip();
     clGetManager()->SetStatusMessage(_("Restarting Language Servers..."));
-    this->Reload({ "c", "cpp" }); // restart c/c++ the servers
+    this->Reload({"c", "cpp"}); // restart c/c++ the servers
     clGetManager()->SetStatusMessage(_("Ready"));
 }
 
@@ -864,7 +864,7 @@ void LanguageServerCluster::OnOulineViewSymbols(LSPEvent& event)
     if (m_symbols_to_file_cache.count(event.GetFileName())) {
         m_symbols_to_file_cache.erase(event.GetFileName());
     }
-    m_symbols_to_file_cache.insert({ event.GetFileName(), event.GetSymbolsInformation() });
+    m_symbols_to_file_cache.insert({event.GetFileName(), event.GetSymbolsInformation()});
     LSP_DEBUG() << "LSP: cached symbols for file" << event.GetFileName() << endl;
     UpdateNavigationBar();
 }
@@ -901,7 +901,7 @@ void LanguageServerCluster::OnSetDiagnostics(LSPEvent& event)
 
         for (const LSP::Diagnostic& d : event.GetDiagnostics()) {
             // LSP uses 1 based line numbers
-            CompilerMessage cm{ d.GetMessage(), std::make_unique<DiagnosticsData>(d) };
+            CompilerMessage cm{d.GetMessage(), std::make_unique<DiagnosticsData>(d)};
             switch (d.GetSeverity()) {
             case LSP::DiagnosticSeverity::Error:
                 editor->SetErrorMarker(d.GetRange().GetStart().GetLine(), std::move(cm));
@@ -1005,7 +1005,7 @@ LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForLanguage(const 
             return thisServer;
         }
     }
-    return LanguageServerProtocol::Ptr_t{ nullptr };
+    return LanguageServerProtocol::Ptr_t{nullptr};
 }
 
 void LanguageServerCluster::OnLogMessage(LSPEvent& event)
@@ -1122,11 +1122,21 @@ void LanguageServerCluster::DiscoverWorkspaceType()
             FileExtManager::FileType cur_type = FileExtManager::TypeOther;
 
             std::unordered_set<int> acceptable_file_types = {
-                FileExtManager::TypeSQL,       FileExtManager::TypeShellScript, FileExtManager::TypeSourceC,
-                FileExtManager::TypeSourceCpp, FileExtManager::TypeCSS,         FileExtManager::TypeHeader,
-                FileExtManager::TypeHtml,      FileExtManager::TypeJS,          FileExtManager::TypeJava,
-                FileExtManager::TypeLua,       FileExtManager::TypeRuby,        FileExtManager::TypeRust,
-                FileExtManager::TypePython,    FileExtManager::TypeDart,        FileExtManager::TypeTypeScript,
+                FileExtManager::TypeSQL,
+                FileExtManager::TypeShellScript,
+                FileExtManager::TypeSourceC,
+                FileExtManager::TypeSourceCpp,
+                FileExtManager::TypeCSS,
+                FileExtManager::TypeHeader,
+                FileExtManager::TypeHtml,
+                FileExtManager::TypeJS,
+                FileExtManager::TypeJava,
+                FileExtManager::TypeLua,
+                FileExtManager::TypeRuby,
+                FileExtManager::TypeRust,
+                FileExtManager::TypePython,
+                FileExtManager::TypeDart,
+                FileExtManager::TypeTypeScript,
             };
             for (const wxString& file : files) {
                 auto file_type = FileExtManager::GetType(file);
@@ -1230,7 +1240,7 @@ void LanguageServerCluster::OnMarginClicked(clEditorEvent& event)
     auto server = GetServerForEditor(editor);
 
     CHECK_PTR_RET(server);
-    server->SendCodeActionRequest(editor, { cd->diagnostic });
+    server->SendCodeActionRequest(editor, {cd->diagnostic});
 }
 
 void LanguageServerCluster::OnCodeActionAvailable(LSPEvent& event)
@@ -1250,7 +1260,7 @@ void LanguageServerCluster::OnCodeActionAvailable(LSPEvent& event)
         std::unordered_map<wxStringView, const LSP::Command*> M;
         for (const auto& cmd : event.GetCommands()) {
             choices.Add(cmd.GetTitle());
-            M.insert({ wxStringView(cmd.GetTitle().data(), cmd.GetTitle().length()), &cmd });
+            M.insert({wxStringView(cmd.GetTitle().data(), cmd.GetTitle().length()), &cmd});
         }
 
         // prompt the user to choose a fix
@@ -1260,7 +1270,7 @@ void LanguageServerCluster::OnCodeActionAvailable(LSPEvent& event)
             return; // user hit cancel
         }
 
-        wxStringView sv_selection{ selection.data(), selection.length() };
+        wxStringView sv_selection{selection.data(), selection.length()};
         command_to_apply = M[sv_selection];
     } else {
         wxRichMessageDialog dlg(wxTheApp->GetTopWindow(),
@@ -1304,7 +1314,7 @@ void LanguageServerCluster::OnApplyEdits(LSPEvent& event)
     }
 
     // lock the book
-    wxWindowUpdateLocker book_locker{ clGetManager()->GetMainNotebook() };
+    wxWindowUpdateLocker book_locker{clGetManager()->GetMainNotebook()};
 
     // capture and restore the current editor state
     clEditorStateLocker state_locker{};
@@ -1317,7 +1327,7 @@ void LanguageServerCluster::OnApplyEdits(LSPEvent& event)
             continue;
         }
 
-        IEditor* editor{ nullptr };
+        IEditor* editor{nullptr};
 #if USE_SFTP
         if (clWorkspaceManager::Get().IsWorkspaceOpened() && clWorkspaceManager::Get().GetWorkspace()->IsRemote()) {
             editor = clSFTPManager::Get().OpenFile(filepath, clWorkspaceManager::Get().GetWorkspace()->GetSshAccount());

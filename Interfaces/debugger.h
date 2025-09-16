@@ -55,10 +55,10 @@ enum DisplayFormat { DBG_DF_NATURAL = 0, DBG_DF_HEXADECIMAL, DBG_DF_BINARY, DBG_
 // Data structures used by the debugger
 //-------------------------------------------------------
 struct DebuggerInfo {
-    wxString name;
-    wxString initFuncName;
-    wxString version;
-    wxString author;
+    const char* name{nullptr};
+    const char* initFuncName{nullptr};
+    const char* version{nullptr};
+    const char* author{nullptr};
 };
 
 struct StackEntry {

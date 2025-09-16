@@ -7,53 +7,49 @@
 #include "globals.h"
 #include "imanager.h"
 
-clTabTogglerHelper::clTabTogglerHelper(const wxString& outputTabName, wxWindow* outputTab,
-                                       const wxString& workspaceTabName, wxWindow* workspaceTab)
+clTabTogglerHelper::clTabTogglerHelper(const wxString& outputTabName,
+                                       wxWindow* outputTab,
+                                       const wxString& workspaceTabName,
+                                       wxWindow* workspaceTab)
     : m_outputTabName(outputTabName)
     , m_outputTab(outputTab)
     , m_workspaceTabName(workspaceTabName)
     , m_workspaceTab(workspaceTab)
 {
-    if(m_workspaceTab && !m_workspaceTabName.IsEmpty()) {
+#if !MAINBOOK_AUIBOOK
+    if (m_workspaceTab && !m_workspaceTabName.IsEmpty()) {
         EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &clTabTogglerHelper::OnToggleWorkspaceTab, this);
         clGetManager()->AddWorkspaceTab(m_workspaceTabName);
     }
-    if(m_outputTab && !m_outputTabName.IsEmpty()) {
+    if (m_outputTab && !m_outputTabName.IsEmpty()) {
         EventNotifier::Get()->Bind(wxEVT_SHOW_OUTPUT_TAB, &clTabTogglerHelper::OnToggleOutputTab, this);
         clGetManager()->AddOutputTab(m_outputTabName);
     }
+#endif
 }
 
 clTabTogglerHelper::~clTabTogglerHelper()
 {
-    if(m_workspaceTab && !m_workspaceTabName.IsEmpty()) {
+#if !MAINBOOK_AUIBOOK
+    if (m_workspaceTab && !m_workspaceTabName.IsEmpty()) {
         EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &clTabTogglerHelper::OnToggleWorkspaceTab, this);
     }
-    if(m_outputTab && !m_outputTabName.IsEmpty()) {
+    if (m_outputTab && !m_outputTabName.IsEmpty()) {
         EventNotifier::Get()->Unbind(wxEVT_SHOW_OUTPUT_TAB, &clTabTogglerHelper::OnToggleOutputTab, this);
     }
+#endif
 }
 
 void clTabTogglerHelper::OnToggleOutputTab(clCommandEvent& event)
 {
-    if(event.GetString() != m_outputTabName) {
+    if (event.GetString() != m_outputTabName) {
         event.Skip();
         return;
     }
     DoShowTab(event.IsSelected(), PaneId::BOTTOM_BAR, m_outputTab, m_outputTabName);
 }
 
-void clTabTogglerHelper::OnToggleWorkspaceTab(clCommandEvent& event)
-{
-    wxUnusedVar(event);
-#if 0
-    if(event.GetString() != m_workspaceTabName) {
-        event.Skip();
-        return;
-    }
-    DoShowTab(event.IsSelected(), PaneId::SIDE_BAR, m_workspaceTab, m_workspaceTabName);
-#endif
-}
+void clTabTogglerHelper::OnToggleWorkspaceTab(clCommandEvent& event) { wxUnusedVar(event); }
 
 bool clTabTogglerHelper::IsTabInNotebook(PaneId pane_id, const wxString& tabname)
 {
@@ -62,9 +58,9 @@ bool clTabTogglerHelper::IsTabInNotebook(PaneId pane_id, const wxString& tabname
 
 void clTabTogglerHelper::DoShowTab(bool show, PaneId pane_id, wxWindow* tab, const wxString& label)
 {
-    if(show) {
+    if (show) {
         // show it
-        if(!IsTabInNotebook(pane_id, label)) {
+        if (!IsTabInNotebook(pane_id, label)) {
             // Only show it if it does not exists in the notebook
             clGetManager()->BookAddPage(pane_id, tab, label);
         } else {

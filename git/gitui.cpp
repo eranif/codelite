@@ -12,6 +12,7 @@ extern void wxCrafterpca4kKInitBitmapResources();
 namespace
 {
 // return the wxBORDER_SIMPLE that matches the current application theme
+[[maybe_unused]]
 wxBorder get_border_simple_theme_aware_bit()
 {
 #if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
@@ -1594,7 +1595,8 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer36 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer36);
 
-    m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_NODIVIDER);
+    m_toolbar =
+        new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_NODIVIDER | wxTB_FLAT);
     m_toolbar->SetToolBitmapSize(wxSize(16, 16));
 
     boxSizer36->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
@@ -1603,27 +1605,11 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
 
     boxSizer36->Add(boxSizer711, 1, wxEXPAND, WXC_FROM_DIP(2));
 
-    m_splitter733 = new clThemedSplitterWindow(this,
-                                               wxID_ANY,
-                                               wxDefaultPosition,
-                                               wxDLG_UNIT(this, wxSize(-1, -1)),
-                                               wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxSP_3DSASH);
-    m_splitter733->SetSashGravity(0.5);
-    m_splitter733->SetMinimumPaneSize(10);
-
-    boxSizer711->Add(m_splitter733, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_splitterPage737 = new wxPanel(
-        m_splitter733, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter733, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-
-    wxBoxSizer* boxSizer715 = new wxBoxSizer(wxHORIZONTAL);
-    m_splitterPage737->SetSizer(boxSizer715);
-
-    m_notebookChanges = new wxNotebook(
-        m_splitterPage737, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage737, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_notebookChanges =
+        new wxNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
     m_notebookChanges->SetName(wxT("m_notebookChanges"));
 
-    boxSizer715->Add(m_notebookChanges, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
+    boxSizer711->Add(m_notebookChanges, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
     m_panel674 = new wxPanel(
         m_notebookChanges, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebookChanges, wxSize(-1, -1)), wxTAB_TRAVERSAL);
@@ -1662,22 +1648,9 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
 
     m_dvListCtrlUnversioned->AppendTextColumn(
         _("Path"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
-    m_splitterPage741 = new wxPanel(
-        m_splitter733, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter733, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_splitter733->SplitVertically(m_splitterPage737, m_splitterPage741, 0);
-
-    wxBoxSizer* boxSizer743 = new wxBoxSizer(wxVERTICAL);
-    m_splitterPage741->SetSizer(boxSizer743);
-
-    m_notebookLog = new wxNotebook(
-        m_splitterPage741, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage741, wxSize(-1, -1)), wxBK_DEFAULT);
-    m_notebookLog->SetName(wxT("m_notebookLog"));
-
-    boxSizer743->Add(m_notebookLog, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
-
     m_panel_log = new wxPanel(
-        m_notebookLog, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebookLog, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebookLog->AddPage(m_panel_log, _("Output"), false);
+        m_notebookChanges, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebookChanges, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_notebookChanges->AddPage(m_panel_log, _("Output"), false);
 
     wxBoxSizer* boxSizer729 = new wxBoxSizer(wxVERTICAL);
     m_panel_log->SetSizer(boxSizer729);
@@ -1694,7 +1667,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     m_gauge = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxGA_HORIZONTAL);
     m_gauge->SetValue(10);
 
-    boxSizer36->Add(m_gauge, 0, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer711->Add(m_gauge, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("GitConsoleBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));

@@ -7,6 +7,7 @@
 #include "globals.h"
 #include "imanager.h"
 #include "clAuiBook.hpp"
+#include "clGenericNotebook.hpp"
 
 namespace
 {

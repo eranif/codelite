@@ -38,6 +38,7 @@
 #include "GitUserEmailDialog.h"
 #include "StringUtils.h"
 #include "bitmap_loader.h"
+#include "clGenericNotebook.hpp"
 #include "clStrings.h"
 #if MAINBOOK_AUIBOOK
 #include "clAuiBook.hpp"
@@ -47,7 +48,6 @@
 #include "clSFTPManager.hpp"
 #include "clStatusBar.h"
 #include "clStrings.h"
-#include "clTempFile.hpp"
 #include "clWorkspaceManager.h"
 #include "dirsaver.h"
 #include "environmentconfig.h"
@@ -57,7 +57,6 @@
 #include "gitCommitDlg.h"
 #include "gitCommitListDlg.h"
 #include "gitDiffDlg.h"
-#include "gitFileDiffDlg.h"
 #include "gitSettingsDlg.h"
 #include "gitentry.h"
 #include "globals.h"
@@ -269,9 +268,8 @@ GitPlugin::GitPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_SOURCE_CONTROL_RESET_FILES, &GitPlugin::OnGitActionDone, this);
 
     // Add the console
-    m_console = new GitConsole(m_mgr->BookGet(PaneId::BOTTOM_BAR), this);
-    m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_console, _("Git"));
-    m_tabToggler.reset(new clTabTogglerHelper(_("Git"), m_console, "", NULL));
+    m_console = new GitConsole(m_mgr->BookGet(PaneId::SIDE_BAR), this);
+    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_console, _("Git"), "git-orange");
     m_progressTimer.SetOwner(this);
 
     m_remoteProcess.Bind(wxEVT_CODELITE_REMOTE_FINDPATH, &GitPlugin::OnFindPath, this);
@@ -479,7 +477,7 @@ void GitPlugin::UnPlug()
 {
     ClearCodeLiteRemoteInfo();
     // before this plugin is un-plugged we must remove the tab we added
-    if (!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_console)) {
+    if (!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_console)) {
         m_console->Destroy();
     }
     m_console = nullptr;
@@ -566,8 +564,6 @@ void GitPlugin::UnPlug()
 
     m_remoteProcess.Unbind(wxEVT_CODELITE_REMOTE_FINDPATH, &GitPlugin::OnFindPath, this);
     m_remoteProcess.Unbind(wxEVT_CODELITE_REMOTE_FINDPATH_DONE, &GitPlugin::OnFindPath, this);
-
-    m_tabToggler.reset(NULL);
 }
 
 void GitPlugin::DoSetRepoPath(const wxString& repo_path)
@@ -1355,8 +1351,8 @@ void GitPlugin::ProcessGitActionQueue()
 
     // Set locale to english
     wxStringMap_t om;
-    om.insert({ "LC_ALL", "C" });
-    om.insert({ "GIT_MERGE_AUTOEDIT", "no" });
+    om.insert({"LC_ALL", "C"});
+    om.insert({"GIT_MERGE_AUTOEDIT", "no"});
 
 #ifdef __WXMSW__
     wxString homeDir;
@@ -1631,7 +1627,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
     if (m_commandOutput.StartsWith(wxT("fatal")) || m_commandOutput.StartsWith(wxT("error"))) {
         // Last action failed, clear queue
         LOG_IF_TRACE { clDEBUG1() << "[git]" << m_commandOutput << clEndl; }
-        static std::unordered_set<int> recoverableActions = { gitBlameSummary };
+        static std::unordered_set<int> recoverableActions = {gitBlameSummary};
         DoRecoverFromGitCommandError(recoverableActions.count(ga.action) == 0);
         GetConsole()->ShowLog();
         return;
@@ -1700,7 +1696,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
     case gitResetFile:
     case gitApplyPatch: {
         // fire modified event (the new one)
-        clFileSystemEvent event_modified{ wxEVT_FILE_MODIFIED_EXTERNALLY };
+        clFileSystemEvent event_modified{wxEVT_FILE_MODIFIED_EXTERNALLY};
         EventNotifier::Get()->AddPendingEvent(event_modified);
 
         gitAction newAction;
@@ -1857,15 +1853,15 @@ void GitPlugin::OnProcessOutput(clProcessEvent& event)
     tmpOutput.Trim().Trim(false);
     tmpOutput.MakeLower();
 
-    static std::unordered_set<int> exclude_commands = { gitDiffRepoCommit, gitDiffFile, gitCommitList,  gitDiffRepoShow,
-                                                        gitBlame,          gitRevlist,  gitBlameSummary };
+    static std::unordered_set<int> exclude_commands = {
+        gitDiffRepoCommit, gitDiffFile, gitCommitList, gitDiffRepoShow, gitBlame, gitRevlist, gitBlameSummary};
     if (process && exclude_commands.count(ga.action) == 0) {
         if (HandleErrorsOnRemoteRepo(tmpOutput)) {
             return;
         }
 
         // Handle possible error code
-        GitStatusCode git_code{ output };
+        GitStatusCode git_code{output};
         switch (git_code.GetCode()) {
         case GitStatusCode::ERROR_USER_REQUIRED: {
             wxString username = ::wxGetTextFromUser(output);
@@ -2300,10 +2296,9 @@ void GitPlugin::RevertCommit(const wxString& commitId)
 
 void GitPlugin::LoadDefaultGitCommands(GitEntry& data, bool overwrite /*= false*/)
 {
-    static const char* commands[] = { //  ID_String|MenuLabel,Command;MenuLabel,Command; ...
-                                      "git_pull|git pull,pull;git pull --rebase,pull --rebase",
-                                      "git_rebase|git rebase,git rebase;git rebase --continue,rebase --continue"
-    };
+    static const char* commands[] = {//  ID_String|MenuLabel,Command;MenuLabel,Command; ...
+                                     "git_pull|git pull,pull;git pull --rebase,pull --rebase",
+                                     "git_rebase|git rebase,git rebase;git rebase --continue,rebase --continue"};
 
     const size_t items = sizeof(commands) / sizeof(char*);
     for (size_t n = 0; n < items; ++n) {
@@ -2939,7 +2934,7 @@ void GitPlugin::DoUpdateBlameInfo(const wxString& info, const wxString& fullpath
     if (m_blameMap.count(fullpath)) {
         m_blameMap.erase(fullpath);
     }
-    m_blameMap.insert({ fullpath, {} });
+    m_blameMap.insert({fullpath, {}});
     auto& V = m_blameMap[fullpath];
     wxArrayString lines = ::wxStringTokenize(info, "\n", wxTOKEN_RET_DELIMS);
     V.reserve(lines.size());

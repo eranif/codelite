@@ -24,17 +24,22 @@ PHPDebugPane::PHPDebugPane(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_ENDED, &PHPDebugPane::OnXDebugSessionEnded, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &PHPDebugPane::OnSettingsChanged, this);
     m_console = new TerminalEmulatorUI(m_auiBook);
+
+#if !MAINBOOK_AUIBOOK
     m_auiBook->SetStyle(kNotebook_Default);
+#endif
 
     m_auiBook->AddPage(m_console, _("Console"), true);
     LexerConf::Ptr_t phpLexer = ColoursAndFontsManager::Get().GetLexer("php");
-    if(phpLexer) {
+    if (phpLexer) {
         phpLexer->Apply(m_console->GetTerminalOutputWindow());
     }
-    m_tbBreakpoints->AddTool(wxID_DELETE, _("Delete"),
-                            wxBitmapBundle(clGetManager()->GetStdIcons()->LoadBitmap("minus")),
+    m_tbBreakpoints->AddTool(wxID_DELETE,
+                             _("Delete"),
+                             wxBitmapBundle(clGetManager()->GetStdIcons()->LoadBitmap("minus")),
                              _("Delete the selected breakpoints"));
-    m_tbBreakpoints->AddTool(wxID_CLEAR, _("Delete all breakpoints"),
+    m_tbBreakpoints->AddTool(wxID_CLEAR,
+                             _("Delete all breakpoints"),
                              wxBitmapBundle(clGetManager()->GetStdIcons()->LoadBitmap("clean")),
                              _("Delete all breakpoints"));
     m_tbBreakpoints->Bind(wxEVT_TOOL, &PHPDebugPane::OnDeleteBreakpoint, this, wxID_DELETE);
@@ -65,9 +70,9 @@ void PHPDebugPane::OnUpdateStackTrace(XDebugEvent& e)
     m_dvListCtrlStackTrace->DeleteAllItems();
 
     const wxArrayString& calls = e.GetStrings();
-    for(size_t i = 0; i < calls.GetCount(); ++i) {
+    for (size_t i = 0; i < calls.GetCount(); ++i) {
         wxArrayString elements = ::wxStringTokenize(calls.Item(i), "|", wxTOKEN_RET_EMPTY);
-        if(elements.GetCount() == 4) {
+        if (elements.GetCount() == 4) {
             wxVector<wxVariant> cols;
             cols.push_back(::MakeBitmapIndexText(elements.Item(0), ((int)i == e.GetInt()) ? 0 : 1)); // Level
             cols.push_back(elements.Item(1));                                                        // Where
@@ -119,7 +124,7 @@ void PHPDebugPane::OnDeleteBreakpoint(wxCommandEvent& event)
     // Send event for every breakpoint id
     wxDataViewItemArray items;
     m_dvListCtrlBreakpoints->GetSelections(items);
-    for(size_t i = 0; i < items.GetCount(); ++i) {
+    for (size_t i = 0; i < items.GetCount(); ++i) {
 
         XDebugBreakpoint bp = GetBreakpoint(items.Item(i));
         PHPEvent eventDelBP(wxEVT_PHP_DELETE_BREAKPOINT);
@@ -137,7 +142,7 @@ void PHPDebugPane::OnDeleteBreakpointUI(wxUpdateUIEvent& event)
 
 XDebugBreakpoint PHPDebugPane::GetBreakpoint(const wxDataViewItem& item) const
 {
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         return XDebugBreakpoint();
     }
 
@@ -182,8 +187,8 @@ void PHPDebugPane::OnBreakpointItemActivated(wxDataViewEvent& event)
 void PHPDebugPane::SelectTab(const wxString& title)
 {
     size_t count = m_auiBook->GetPageCount();
-    for(size_t i = 0; i < count; ++i) {
-        if(m_auiBook->GetPageText(i) == title) {
+    for (size_t i = 0; i < count; ++i) {
+        if (m_auiBook->GetPageText(i) == title) {
             m_auiBook->SetSelection(i);
             break;
         }
@@ -210,7 +215,7 @@ void PHPDebugPane::OnXDebugSessionStarting(XDebugEvent& event)
     event.Skip();
     m_console->SetTerminal(PHPWorkspace::Get()->GetTerminalEmulator());
     LexerConf::Ptr_t phpLexer = ColoursAndFontsManager::Get().GetLexer("php");
-    if(phpLexer) {
+    if (phpLexer) {
         phpLexer->Apply(m_console->GetTerminalOutputWindow());
     }
 }

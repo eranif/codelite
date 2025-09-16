@@ -62,8 +62,8 @@ LocalsTable::LocalsTable(wxWindow* parent)
     m_QUERY_NUM_CHILDS = QUERY_LOCALS_CHILDS;
     m_LIST_CHILDS = LIST_LOCALS_CHILDS;
 
-    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_FRAME_SELECTED, clCommandEventHandler(LocalsTable::OnStackSelected),
-                                  NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_DEBUGGER_FRAME_SELECTED, clCommandEventHandler(LocalsTable::OnStackSelected), NULL, this);
 }
 
 LocalsTable::~LocalsTable() {}
@@ -247,7 +247,8 @@ void LocalsTable::OnItemExpanding(wxTreeEvent& event)
     }
 }
 
-void LocalsTable::DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved, size_t flags,
+void LocalsTable::DoClearNonVariableObjectEntries(wxArrayString& itemsNotRemoved,
+                                                  size_t flags,
                                                   std::map<wxString, wxString>& oldValues)
 {
     wxTreeItemIdValue cookie;
@@ -481,7 +482,7 @@ void LocalsTable::OnSortItems(wxCommandEvent& event)
 void LocalsTable::SetSortingFunction()
 {
     // Should a be placed before b?
-    clSortFunc_t func = [=](clRowEntry* a, clRowEntry* b) {
+    clSortFunc_t func = [=, this](clRowEntry* a, clRowEntry* b) {
         if (m_sortAsc) {
             return (a->GetLabel().CmpNoCase(b->GetLabel()) < 0);
         } else {

@@ -8,6 +8,7 @@
 #include <wx/app.h>
 #include <wx/dynarray.h>
 
+#if !MAINBOOK_AUIBOOK
 NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
     : NotebookNavigationDlgBase(parent)
     , m_notebook(book)
@@ -16,6 +17,7 @@ NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, Notebook* book)
     Initialise(m_notebook);
     FinalizeCtor();
 }
+#endif
 
 NotebookNavigationDlg::NotebookNavigationDlg(wxWindow* parent, clAuiBook* book)
     : NotebookNavigationDlgBase(parent)

@@ -874,6 +874,7 @@ endif()
 
 # add the dtl module include path before we include Plugin folder
 include_directories(submodules/dtl)
+add_compile_options(-Wno-overloaded-virtual)
 
 # Extra lexers required by CodeLite
 add_subdirectory(submodules/lexilla)

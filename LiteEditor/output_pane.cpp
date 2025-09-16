@@ -25,6 +25,8 @@
 #include "output_pane.h"
 
 #include "BuildTab.hpp"
+#include "FileManager.hpp"
+#include "clAuiBookSerialiser.hpp"
 #include "clPropertiesPage.hpp"
 #include "clStrings.h"
 #include "clTabTogglerHelper.h"
@@ -43,6 +45,10 @@
 #include <wx/aui/framemanager.h>
 #include <wx/dcbuffer.h>
 #include <wx/xrc/xmlres.h>
+
+#if MAINBOOK_AUIBOOK
+#include <wx/aui/serializer.h>
+#endif
 
 OutputPane::OutputPane(wxWindow* parent, const wxString& caption, long style)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 250), style)
@@ -96,6 +102,7 @@ void OutputPane::CreateGUIControls()
     if (EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs()) {
         style |= kNotebook_MouseScrollSwitchTabs;
     }
+
     m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     m_book->Bind(wxEVT_BOOK_FILELIST_BUTTON_CLICKED, &OutputPane::OnOutputBookFileListMenu, this);
 
@@ -124,7 +131,7 @@ void OutputPane::CreateGUIControls()
     // Show Usage ("References")
     m_showUsageTab = new FindUsageTab(m_book);
     m_book->AddPage(m_showUsageTab, SHOW_USAGE, false);
-    m_tabs.insert({ SHOW_USAGE, Tab(SHOW_USAGE, m_showUsageTab) });
+    m_tabs.insert({SHOW_USAGE, Tab(SHOW_USAGE, m_showUsageTab)});
     mgr->AddOutputTab(SHOW_USAGE);
 
     // Output tab
@@ -176,6 +183,18 @@ void OutputPane::OnBuildEnded(clBuildEvent& e)
 
 void OutputPane::SaveTabOrder()
 {
+#if MAINBOOK_AUIBOOK
+    clSYSTEM() << "Serializing output pane layout" << endl;
+    clAuiSerializer serializer;
+    m_book->SaveLayout("notebook", serializer);
+    clSYSTEM() << "Serializing output pane layout ... success" << endl;
+    wxString fullpath = FileManager::GetSettingFileFullPath("output-pane-layout.xml");
+    clSYSTEM() << "Saving file:" << fullpath;
+    if (!FileManager::WriteSettingsFileContent(fullpath, serializer.GetXML())) {
+        clWARNING() << "Failed to save output pane layout file:" << fullpath;
+    }
+    clSYSTEM() << "Saving file ... success" << fullpath;
+#else
     wxArrayString panes;
     clTabInfo::Vec_t tabs;
     m_book->GetAllTabs(tabs);
@@ -183,6 +202,7 @@ void OutputPane::SaveTabOrder()
         panes.Add(t->GetLabel());
     }
     clConfig::Get().SetOutputTabOrder(panes, m_book->GetSelection());
+#endif
 }
 
 typedef struct _tagTabInfo {
@@ -191,8 +211,9 @@ typedef struct _tagTabInfo {
     int bmp = wxNOT_FOUND;
 } tagTabInfo;
 
-void OutputPane::ApplySavedTabOrder(bool update_ui) const
+void OutputPane::ApplySavedTabOrder([[maybe_unused]] bool update_ui) const
 {
+#if !MAINBOOK_AUIBOOK
     wxArrayString tabs;
     int index = -1;
     if (!clConfig::Get().GetOutputTabOrder(tabs, index))
@@ -210,7 +231,6 @@ void OutputPane::ApplySavedTabOrder(bool update_ui) const
                 Tab.text = title;
                 Tab.win = m_book->GetPage(n);
                 Tab.bmp = m_book->GetPageBitmapIndex(n);
-
                 vTempstore.push_back(Tab);
                 m_book->RemovePage(n);
                 break;
@@ -238,6 +258,17 @@ void OutputPane::ApplySavedTabOrder(bool update_ui) const
     if (update_ui) {
         clGetManager()->GetDockingManager()->Update();
     }
+#else
+    try {
+        auto xml_content = FileManager::ReadSettingsFileContent("output-pane-layout.xml");
+        if (xml_content.has_value()) {
+            clAuiDeserializer deserializer{xml_content.value()};
+            m_book->LoadLayout("notebook", deserializer);
+        }
+    } catch (const std::exception& e) {
+        clERROR() << "Failed to load notebook layout." << e.what() << endl;
+    }
+#endif
 }
 
 void OutputPane::OnSettingsChanged(wxCommandEvent& event)
@@ -248,6 +279,11 @@ void OutputPane::OnSettingsChanged(wxCommandEvent& event)
 
 void OutputPane::OnToggleTab(clCommandEvent& event)
 {
+#if MAINBOOK_AUIBOOK
+    if (event.IsSelected()) {
+        clGetManager()->BookSelectPage(PaneId::BOTTOM_BAR, event.GetString());
+    }
+#else
     // Handle the core tabs
     if (m_tabs.count(event.GetString()) == 0) {
         event.Skip();
@@ -266,6 +302,7 @@ void OutputPane::OnToggleTab(clCommandEvent& event)
         // hide the tab
         clGetManager()->BookRemovePage(PaneId::BOTTOM_BAR, t.m_label);
     }
+#endif
 }
 
 void OutputPane::OnOutputBookFileListMenu(clContextMenuEvent& event)
@@ -331,7 +368,7 @@ void OutputPane::ShowTab(const wxString& name, bool show)
 void OutputPane::OnPageChanged(wxBookCtrlEvent& event)
 {
     event.Skip();
-    clCommandEvent event_changed{ wxEVT_OUTPUT_VIEW_TAB_CHANGED };
+    clCommandEvent event_changed{wxEVT_OUTPUT_VIEW_TAB_CHANGED};
     wxString tab_name = GetNotebook()->GetPageText(GetNotebook()->GetSelection());
     event_changed.SetString(tab_name);
     event_changed.SetEventObject(GetNotebook());

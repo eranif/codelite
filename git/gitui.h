@@ -463,15 +463,11 @@ class GitConsoleBase : public wxPanel
 {
 protected:
     clToolBar* m_toolbar;
-    clThemedSplitterWindow* m_splitter733;
-    wxPanel* m_splitterPage737;
     wxNotebook* m_notebookChanges;
     wxPanel* m_panel674;
     clThemedOrderedListCtrl* m_dvListCtrl;
     wxPanel* m_panelUnversioned;
     clThemedOrderedListCtrl* m_dvListCtrlUnversioned;
-    wxPanel* m_splitterPage741;
-    wxNotebook* m_notebookLog;
     wxPanel* m_panel_log;
     clTerminalViewCtrl* m_dvListCtrlLog;
     wxGauge* m_gauge;
@@ -489,13 +485,9 @@ public:
     wxPanel* GetPanel674() { return m_panel674; }
     clThemedOrderedListCtrl* GetDvListCtrlUnversioned() { return m_dvListCtrlUnversioned; }
     wxPanel* GetPanelUnversioned() { return m_panelUnversioned; }
-    wxNotebook* GetNotebookChanges() { return m_notebookChanges; }
-    wxPanel* GetSplitterPage737() { return m_splitterPage737; }
     clTerminalViewCtrl* GetDvListCtrlLog() { return m_dvListCtrlLog; }
     wxPanel* GetPanel_log() { return m_panel_log; }
-    wxNotebook* GetNotebookLog() { return m_notebookLog; }
-    wxPanel* GetSplitterPage741() { return m_splitterPage741; }
-    clThemedSplitterWindow* GetSplitter733() { return m_splitter733; }
+    wxNotebook* GetNotebookChanges() { return m_notebookChanges; }
     wxGauge* GetGauge() { return m_gauge; }
     GitConsoleBase(wxWindow* parent,
                    wxWindowID id = wxID_ANY,

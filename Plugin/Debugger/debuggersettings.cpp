@@ -34,7 +34,7 @@ void DebuggerCmdData::DeSerialize(Archive& arch)
 {
     arch.Read(wxT("m_name"), m_name);
     arch.Read(wxT("m_command"), m_command);
-    if(arch.Read(wxT("m_dbgCommand"), m_dbgCommand) == false) {
+    if (arch.Read(wxT("m_dbgCommand"), m_dbgCommand) == false) {
         m_dbgCommand = wxT("print");
     }
 }
@@ -64,7 +64,7 @@ void DebuggerPreDefinedTypes::DeSerialize(Archive& arch)
     arch.Read(wxT("m_name"), m_name);
     arch.Read(wxT("m_active"), m_active);
     arch.Read(wxT("size"), size);
-    for(size_t i = 0; i < size; i++) {
+    for (size_t i = 0; i < size; i++) {
         wxString cmdname;
         cmdname << wxT("DebuggerCmd") << i;
         DebuggerCmdData cmdData;
@@ -80,7 +80,7 @@ void DebuggerPreDefinedTypes::Serialize(Archive& arch)
     arch.Write(wxT("m_active"), m_active);
     arch.Write(wxT("size"), size);
 
-    for(size_t i = 0; i < m_cmds.size(); i++) {
+    for (size_t i = 0; i < m_cmds.size(); i++) {
         wxString cmdname;
         cmdname << wxT("DebuggerCmd") << i;
         arch.Write(cmdname, &m_cmds.at(i));
@@ -97,8 +97,8 @@ wxString GetRealType(const wxString& gdbType)
     // remove any template initialization:
     int depth(0);
     wxString noTemplateType;
-    for(size_t i = 0; i < realType.Length(); i++) {
-        switch((wxChar)realType.GetChar(i)) {
+    for (size_t i = 0; i < realType.Length(); i++) {
+        switch ((wxChar)realType.GetChar(i)) {
         case wxT('<'):
             depth++;
             break;
@@ -106,7 +106,7 @@ wxString GetRealType(const wxString& gdbType)
             depth--;
             break;
         default:
-            if(depth == 0)
+            if (depth == 0)
                 noTemplateType << realType.GetChar(i);
             break;
         }
@@ -119,9 +119,9 @@ wxString GetRealType(const wxString& gdbType)
 wxString DebuggerPreDefinedTypes::GetPreDefinedTypeForTypename(const wxString& expr, const wxString& name)
 {
     wxString realType = GetRealType(expr);
-    for(size_t i = 0; i < m_cmds.size(); i++) {
+    for (size_t i = 0; i < m_cmds.size(); i++) {
         DebuggerCmdData dcd = m_cmds.at(i);
-        if(dcd.GetName() == realType) {
+        if (dcd.GetName() == realType) {
             // Create variable object for this variable
             // and display the content
             wxString expression = dcd.GetCommand();
@@ -144,10 +144,10 @@ void DebuggerSettingsPreDefMap::Serialize(Archive& arch)
 {
     arch.Write(wxT("size"), m_cmds.size());
     size_t i(0);
-    for (const auto& [_, preDefinedTypes] : m_cmds) {
+    for (auto& [_, preDefinedTypes] : m_cmds) {
         wxString cmdname;
         cmdname << wxT("PreDefinedSet") << i++;
-        arch.Write(cmdname, &preDefinedTypes);
+        arch.Write(cmdname, static_cast<SerializedObject*>(&preDefinedTypes));
     }
 }
 
@@ -157,7 +157,7 @@ void DebuggerSettingsPreDefMap::DeSerialize(Archive& arch)
     arch.Read(wxT("size"), count);
     m_cmds.clear();
 
-    for(size_t i = 0; i < count; i++) {
+    for (size_t i = 0; i < count; i++) {
         wxString cmdname;
         cmdname << wxT("PreDefinedSet") << i;
         DebuggerPreDefinedTypes preDefSet;
@@ -181,7 +181,7 @@ DebuggerPreDefinedTypes DebuggerSettingsPreDefMap::GetActiveSet() const
 
     // still no match
     // return the first entry
-    if(m_cmds.empty() == false)
+    if (m_cmds.empty() == false)
         return m_cmds.begin()->second;
 
     // no entries at all?

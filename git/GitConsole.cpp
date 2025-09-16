@@ -103,19 +103,18 @@ struct ToolBarItem {
 void PopulateToolbarOverflow(clToolBar* toolbar)
 {
     std::vector<ToolBarItem> items = {
-        { wxTRANSLATE("Create local branch"), XRCID("git_create_branch"), "file_new" },
-        { wxTRANSLATE("Switch to local branch"), XRCID("git_switch_branch"), "split" },
-        { wxTRANSLATE("Switch to remote branch"), XRCID("git_switch_to_remote_branch"), "remote-folder" },
-        { wxEmptyString, wxID_SEPARATOR, wxEmptyString },
-        { wxTRANSLATE("Refresh"), XRCID("git_refresh"), "file_reload" },
-        { wxTRANSLATE("Apply Patch"), XRCID("git_apply_patch"), "patch" },
-        { wxEmptyString, wxID_SEPARATOR, wxEmptyString },
-        { wxTRANSLATE("Start gitk"), XRCID("git_start_gitk"), "debugger_start" },
-        { wxTRANSLATE("Garbage collect"), XRCID("git_garbage_collection"), "clean" },
-        { wxEmptyString, wxID_SEPARATOR, wxEmptyString },
-        { wxTRANSLATE("Plugin settings"), XRCID("git_settings"), "cog" },
-        { wxTRANSLATE("Clone a git repository"), XRCID("git_clone"), "copy" }
-    };
+        {wxTRANSLATE("Create local branch"), XRCID("git_create_branch"), "file_new"},
+        {wxTRANSLATE("Switch to local branch"), XRCID("git_switch_branch"), "split"},
+        {wxTRANSLATE("Switch to remote branch"), XRCID("git_switch_to_remote_branch"), "remote-folder"},
+        {wxEmptyString, wxID_SEPARATOR, wxEmptyString},
+        {wxTRANSLATE("Refresh"), XRCID("git_refresh"), "file_reload"},
+        {wxTRANSLATE("Apply Patch"), XRCID("git_apply_patch"), "patch"},
+        {wxEmptyString, wxID_SEPARATOR, wxEmptyString},
+        {wxTRANSLATE("Start gitk"), XRCID("git_start_gitk"), "debugger_start"},
+        {wxTRANSLATE("Garbage collect"), XRCID("git_garbage_collection"), "clean"},
+        {wxEmptyString, wxID_SEPARATOR, wxEmptyString},
+        {wxTRANSLATE("Plugin settings"), XRCID("git_settings"), "cog"},
+        {wxTRANSLATE("Clone a git repository"), XRCID("git_clone"), "copy"}};
 
     auto images = toolbar->GetBitmapsCreateIfNeeded();
     for (auto item : items) {
@@ -155,19 +154,19 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_dvListCtrlUnversioned->SetRendererType(eRendererType::RENDERER_DIRECT2D);
 
     // Error messages will be coloured with red
-    m_errorPatterns = { { "fatal:" },
-                        { "error:" },
-                        { "tell me who you are" },
-                        { "hook failure" },
-                        { "not a git repository" },
-                        { "No commit message given, aborting" } };
+    m_errorPatterns = {{"fatal:"},
+                       {"error:"},
+                       {"tell me who you are"},
+                       {"hook failure"},
+                       {"not a git repository"},
+                       {"No commit message given, aborting"}};
 
     m_successPatterns =
         // Informative messages, will be coloured with green
-        { { "up to date" }, { "up-to-date" } };
+        {{"up to date"}, {"up-to-date"}};
 
     // yellow
-    m_warningPatterns = { { "the authenticity of host" }, { "can't be established" }, { "key fingerprint" } };
+    m_warningPatterns = {{"the authenticity of host"}, {"can't be established"}, {"key fingerprint"}};
 
     m_modifiedBmp = m_bitmapLoader->LoadBitmap("modified");
     m_untrackedBmp = m_bitmapLoader->LoadBitmap("info");
@@ -184,6 +183,8 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_isVerbose = (data.GetFlags() & GitEntry::VerboseLog);
 
     // Toolbar
+    m_toolbar->SetGroupSpacing(5);
+
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
     m_toolbar->AddTool(XRCID("git_clear_log"), _("Clear Git Log"), images->Add("clear"), _("Clear Git Log"));
     m_toolbar->AddTool(
@@ -481,7 +482,7 @@ void GitConsole::OnFileActivated(wxDataViewEvent& event)
     wxString difftool = data.GetDifftool();
     if (difftool.empty()) {
         const wxArrayString wx_options =
-            StdToWX::ToArrayString({ "built-in", "vimdiff", "vimdiff1", "vimdiff2", "vimdiff3", "winmerge" });
+            StdToWX::ToArrayString({"built-in", "vimdiff", "vimdiff1", "vimdiff2", "vimdiff3", "winmerge"});
         difftool = ::wxGetSingleChoice(_("Choose a tool to use:"), "CodeLite", wx_options, 0);
         if (difftool.empty()) {
             // user hit cancel

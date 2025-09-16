@@ -26,10 +26,10 @@
 #include "codelitediff.h"
 
 #include "Diff/DiffFoldersFrame.h"
-#include "Diff/DiffSideBySidePanel.h"
 #include "Diff/clDiffFrame.h"
 #include "Keyboard/clKeyboardManager.h"
 #include "NewFileComparison.h"
+#include "clGenericNotebook.hpp"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "macros.h"
@@ -92,8 +92,8 @@ CodeLiteDiff::CodeLiteDiff(IManager* manager)
     wxTheApp->Bind(wxEVT_MENU, &CodeLiteDiff::OnNewDiffFolder, this, XRCID("diff_new_folder"));
 
     clKeyboardManager::Get()->AddAccelerator(_("Diff Tool"),
-                                             { { "diff_new_comparison", _("New File Comparison"), "Ctrl-Shift-C" },
-                                               { "diff_new_folder", _("New Folder Comparison"), "Ctrl-Alt-F" } });
+                                             {{"diff_new_comparison", _("New File Comparison"), "Ctrl-Shift-C"},
+                                              {"diff_new_folder", _("New Folder Comparison"), "Ctrl-Alt-F"}});
 }
 
 CodeLiteDiff::~CodeLiteDiff() {}

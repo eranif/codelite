@@ -1,16 +1,21 @@
-#ifndef CLAUIBOOK_HPP
-#define CLAUIBOOK_HPP
+#pragma once
 
-#include "Notebook.h"
+#include "JSON.h"
+#include "clTabHistory.h"
+#include "clTabRenderer.h"
 #include "codelite_exports.h"
 
 #include <wx/aui/auibook.h>
+#include <wx/aui/serializer.h>
 
 class WXDLLIMPEXP_SDK clAuiBook : public wxAuiNotebook
 {
 public:
-    clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-              const wxSize& size = wxDefaultSize, long style = 0);
+    clAuiBook(wxWindow* parent,
+              wxWindowID id,
+              const wxPoint& pos = wxDefaultPosition,
+              const wxSize& size = wxDefaultSize,
+              long style = 0);
     ~clAuiBook() override;
     size_t GetAllTabs(clTabInfo::Vec_t& tabs);
     clTabHistory::Ptr_t GetHistory() const { return m_history; }
@@ -27,8 +32,10 @@ public:
     void SetCanHaveCloseButton(bool b) { m_canHaveCloseButton = b; }
     int GetPageIndex(const wxString& name) const;
     int GetPageIndex(wxWindow* win) const;
-    bool DeletePage(size_t index, bool notify);
-    bool RemovePage(size_t index, bool notify);
+    bool DeletePage(size_t index, bool notify = true);
+    bool RemovePage(size_t index, bool notify = true);
+    int GetPageBitmapIndex(size_t n) const;
+    void SetTabDirection(wxDirection d);
 
 protected:
     void OnPageClosed(wxAuiNotebookEvent& event);
@@ -71,5 +78,3 @@ private:
     clAuiBook* m_book = nullptr;
     bool m_oldState = true;
 };
-
-#endif // CLAUIBOOK_HPP

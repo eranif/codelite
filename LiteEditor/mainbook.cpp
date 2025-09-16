@@ -36,8 +36,8 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "filechecklist.h"
-#include "frame.h"
 #include "findreplacedlg.h"
+#include "frame.h"
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
@@ -108,21 +108,11 @@ void MainBook::CreateGuiControls()
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
     SetSizer(sz);
 
-#if MAINBOOK_AUIBOOK
-    long style = wxAUI_NB_TOP | wxAUI_NB_TAB_SPLIT | wxAUI_NB_TAB_MOVE | wxAUI_NB_CLOSE_ON_ALL_TABS |
-                 wxAUI_NB_WINDOWLIST_BUTTON | wxAUI_NB_SCROLL_BUTTONS | wxAUI_NB_MIDDLE_CLICK_CLOSE;
-
-    if (!EditorConfigST::Get()->GetOptions()->IsTabHasXButton()) {
-        style &= ~wxAUI_NB_CLOSE_ON_ALL_TABS;
-        style &= ~wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
-    }
-#else
     long style = kNotebook_NewButton | kNotebook_AllowDnD | kNotebook_CloseButtonOnActiveTab |
                  kNotebook_ShowFileListButton | kNotebook_EnableNavigationEvent | kNotebook_MouseMiddleClickClosesTab;
     if (!EditorConfigST::Get()->GetOptions()->IsTabHasXButton()) {
         style &= ~kNotebook_CloseButtonOnActiveTab;
     }
-#endif
 
     // load the notebook style from the configuration settings
     m_book = new MainNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
@@ -346,7 +336,7 @@ void MainBook::SaveSession(SessionEntry& session, wxArrayInt* excludeArr) { Crea
 void MainBook::DoRestoreSession(const SessionEntry& session)
 {
 #if MAINBOOK_AUIBOOK
-    clAuiBookEventsDisabler events_disabler{ m_book };
+    clAuiBookEventsDisabler events_disabler{m_book};
 #endif
 
     size_t sel = session.GetSelectedTab();
@@ -976,7 +966,7 @@ bool MainBook::ClosePage(wxWindow* page)
 bool MainBook::CloseAllButThis(wxWindow* page)
 {
     wxBusyCursor bc;
-    wxWindowUpdateLocker locker{ m_book };
+    wxWindowUpdateLocker locker{m_book};
 
     clEditor::Vec_t editors = GetAllEditors();
 
@@ -986,7 +976,7 @@ bool MainBook::CloseAllButThis(wxWindow* page)
         // collect all modified files, except for "page"
         if (editor->IsEditorModified() && editor->GetCtrl() != page) {
             const wxFileName& fn = editor->GetFileName();
-            files.push_back({ fn, true });
+            files.push_back({fn, true});
             M[fn.GetFullPath()] = editor;
         }
     }
@@ -1018,7 +1008,7 @@ bool MainBook::CloseAllButThis(wxWindow* page)
 bool MainBook::CloseAll(bool cancellable)
 {
     wxBusyCursor bc;
-    clWindowUpdateLocker locker{ m_book };
+    clWindowUpdateLocker locker{m_book};
 
     clEditor::Vec_t editors = GetAllEditors();
 
@@ -1027,7 +1017,7 @@ bool MainBook::CloseAll(bool cancellable)
     size_t n = 0;
     for (size_t i = 0; i < editors.size(); ++i) {
         if (editors[i]->GetModify()) {
-            files.push_back({ editors[i]->GetFileName(), true });
+            files.push_back({editors[i]->GetFileName(), true});
             editors[n++] = editors[i];
         }
     }
@@ -1051,7 +1041,7 @@ bool MainBook::CloseAll(bool cancellable)
 
     // Delete the files without notifications (it will be faster)
 #if MAINBOOK_AUIBOOK
-    clAuiBookEventsDisabler events_disabler{ m_book };
+    clAuiBookEventsDisabler events_disabler{m_book};
 #endif
 
     SendCmdEvent(wxEVT_ALL_EDITORS_CLOSING);
@@ -1435,7 +1425,7 @@ void MainBook::CloseTabsToTheRight(wxWindow* win)
     if (tabsToClose.empty())
         return;
 
-    wxWindowUpdateLocker locker{ m_book };
+    wxWindowUpdateLocker locker{m_book};
     for (size_t i = 0; i < tabsToClose.size(); ++i) {
         ClosePage(tabsToClose.at(i));
     }
@@ -1559,7 +1549,7 @@ void MainBook::DoUpdateEditorsThemes()
 
     if (GetActiveEditor()) {
         // request for new semantics tokens for the active editor
-        clCodeCompletionEvent event_semantic_tokens{ wxEVT_CC_SEMANTICS_HIGHLIGHT };
+        clCodeCompletionEvent event_semantic_tokens{wxEVT_CC_SEMANTICS_HIGHLIGHT};
         event_semantic_tokens.SetFileName(GetActiveEditor()->GetRemotePathOrLocal());
         EventNotifier::Get()->AddPendingEvent(event_semantic_tokens);
     }
@@ -1751,7 +1741,7 @@ clEditor* MainBook::OpenFileAsync(const wxString& file_name, std::function<void(
     if (!wxFileName::Exists(real_path)) {
         // Try a remote approach
         clDEBUG() << "The file:" << real_path << "does not exist locally. Trying to remote downloading it" << endl;
-        clCommandEvent event_download{ wxEVT_DOWNLOAD_FILE };
+        clCommandEvent event_download{wxEVT_DOWNLOAD_FILE};
         event_download.SetFileName(file_name); // we use the original path
 
         if (EventNotifier::Get()->ProcessEvent(event_download)) {
@@ -1784,7 +1774,7 @@ void MainBook::push_callback(std::function<void(IEditor*)>&& callback, const wxS
     // register a callback for this insert
     wxString key = create_platform_filepath(fullpath);
     if (m_callbacksTable.count(key) == 0) {
-        m_callbacksTable.insert({ key, {} });
+        m_callbacksTable.insert({key, {}});
     }
     m_callbacksTable[key].emplace_back(std::move(callback));
 }
@@ -1823,7 +1813,7 @@ void MainBook::OnIdle(wxIdleEvent& event)
     event.Skip();
 
     // The interval between idle events can not be under 200ms
-    static clIdleEventThrottler event_throttler{ 200 };
+    static clIdleEventThrottler event_throttler{200};
     if (!event_throttler.CanHandle()) {
         return;
     }

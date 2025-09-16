@@ -57,7 +57,7 @@ void SecondarySideBar::AddPage(wxWindow* win, const wxString& bmpname, const wxS
     }
 }
 
-void SecondarySideBar::OnContextMenu(wxContextMenuEvent& event)
+void SecondarySideBar::OnContextMenu(clContextMenuEvent& event)
 {
     wxMenu menu;
     menu.Append(XRCID("sidebar-move-to-sidebar"), _("Move to primary sidebar"));

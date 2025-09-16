@@ -39,6 +39,7 @@
 #include "StringUtils.h"
 #include "bitmap_loader.h"
 #include "clGenericNotebook.hpp"
+#include "clSideBarCtrl.hpp"
 #include "clStrings.h"
 #if MAINBOOK_AUIBOOK
 #include "clAuiBook.hpp"
@@ -239,6 +240,7 @@ GitPlugin::GitPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &GitPlugin::OnEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CLOSING, &GitPlugin::OnEditorClosed, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_MODIFIED_EXTERNALLY, &GitPlugin::OnFileModifiedExternally, this);
+    EventNotifier::Get()->Bind(wxEVT_SIDEBAR_SELECTION_CHANGED, &GitPlugin::OnSideBarPageChanged, this);
 
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderPullRebase, this, XRCID("git_pull_rebase_folder"));
     wxTheApp->Bind(wxEVT_MENU, &GitPlugin::OnFolderCommit, this, XRCID("git_commit_folder"));
@@ -538,6 +540,7 @@ void GitPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_PROJECT_CHANGED, &GitPlugin::OnActiveProjectChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CODELITE_MAINFRAME_GOT_FOCUS, &GitPlugin::OnAppActivated, this);
     EventNotifier::Get()->Unbind(wxEVT_FILES_MODIFIED_REPLACE_IN_FILES, &GitPlugin::OnReplaceInFiles, this);
+    EventNotifier::Get()->Unbind(wxEVT_SIDEBAR_SELECTION_CHANGED, &GitPlugin::OnSideBarPageChanged, this);
 
     /*Context Menu*/
     m_eventHandler->Disconnect(
@@ -848,7 +851,7 @@ void GitPlugin::OnCommit(wxCommandEvent& e)
     wxUnusedVar(e);
     gitAction ga(gitDiffRepoCommit, wxT(""));
     m_gitActionQueue.push_back(ga);
-    m_mgr->ShowOutputPane(GIT_TAB_NAME);
+    m_mgr->ShowManagementWindow(GIT_TAB_NAME, true);
     ProcessGitActionQueue();
 }
 
@@ -3136,3 +3139,11 @@ void GitPlugin::OnFindPath(clCommandEvent& event)
 }
 
 void GitPlugin::OpenURLInBrowser(const wxString& url) { ::wxLaunchDefaultBrowser(url); }
+
+void GitPlugin::OnSideBarPageChanged(clCommandEvent& event)
+{
+    event.Skip();
+    if (event.GetString() == "Git") {
+        DoRefreshView(true);
+    }
+}

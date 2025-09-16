@@ -99,7 +99,8 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
         new wxCustomStatusBarBitmapField(this, clGetScaledSize(30) + lable_width));
     STATUSBAR_SCM_IDX = AddField(sourceControl);
 
-    const int lineColWidth = GetTextWidth("Ln 123456, Col 123, Lns 123456, Pos 12345678, Len 12345678, Sel 1234567, SelLn 12345");
+    const int lineColWidth =
+        GetTextWidth("Ln 123456, Col 123, Lns 123456, Pos 12345678, Len 12345678, Sel 1234567, SelLn 12345");
     wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(this, lineColWidth));
     STATUSBAR_LINE_COL_IDX = AddField(lineCol);
 
@@ -304,7 +305,9 @@ void clStatusBar::SetWhitespaceInfo()
     }
 }
 
-void clStatusBar::SetSourceControlBitmap(const wxBitmap& bmp, const wxString& label, const wxString& outputTabName,
+void clStatusBar::SetSourceControlBitmap(const wxBitmap& bmp,
+                                         const wxString& label,
+                                         const wxString& outputTabName,
                                          const wxString& tooltip)
 {
     m_sourceControlTabName = outputTabName;
@@ -384,7 +387,7 @@ void clStatusBar::DoFieldClicked(int fieldIndex)
         CHECK_PTR_RET(field);
         // Open the output view only if the bitmap is valid
         if (field->Cast<wxCustomStatusBarBitmapField>()->GetBitmap().IsOk()) {
-            m_mgr->ToggleOutputPane(m_sourceControlTabName);
+            m_mgr->ShowManagementWindow(m_sourceControlTabName, true);
         }
     } else if (fieldIndex == STATUSBAR_ICON_COL_IDX) {
         wxCustomStatusBarField::Ptr_t field = GetField(STATUSBAR_ICON_COL_IDX);
@@ -634,10 +637,13 @@ clToolBarGeneric* clStatusBar::CreatePaneButtonsToolbar()
 
     clBitmapList* images = toolbar->GetBitmapsCreateIfNeeded();
     toolbar->AddTool(XRCID("sidebar-button"), _("Show sidebar"), images->Add("sidebar"), wxEmptyString, wxITEM_CHECK);
-    toolbar->AddTool(XRCID("bottombar-button"), _("Show output pane"), images->Add("bottombar"), wxEmptyString,
+    toolbar->AddTool(
+        XRCID("bottombar-button"), _("Show output pane"), images->Add("bottombar"), wxEmptyString, wxITEM_CHECK);
+    toolbar->AddTool(XRCID("secondary-sidebar-button"),
+                     _("Show secondary sidebar"),
+                     images->Add("secondary-sidebar"),
+                     wxEmptyString,
                      wxITEM_CHECK);
-    toolbar->AddTool(XRCID("secondary-sidebar-button"), _("Show secondary sidebar"), images->Add("secondary-sidebar"),
-                     wxEmptyString, wxITEM_CHECK);
     toolbar->Realize();
 
     toolbar->Bind(wxEVT_TOOL, &clStatusBar::OnSidebar, this, XRCID("sidebar-button"));

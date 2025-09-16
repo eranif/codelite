@@ -31,6 +31,7 @@
 #include "clToolBar.h"
 #include "clWorkspaceEvent.hpp"
 #include "gitui.h"
+#include "wxTerminalCtrl/wxTerminalOutputCtrl.hpp"
 
 #include <wx/dataview.h>
 
@@ -83,7 +84,6 @@ protected:
     virtual void OnOpenUnversionedFiles(wxCommandEvent& event);
     virtual void OnAddUnversionedFiles(wxCommandEvent& event);
     void OnSysColoursChanged(clCommandEvent& event);
-    void OnLogMenu(wxContextMenuEvent& event);
 
     void OnOpenFile(wxCommandEvent& e);
     void OnWorkspaceClosed(clWorkspaceEvent& e);
@@ -117,5 +117,6 @@ private:
     std::unordered_set<wxString> m_successPatterns;
     std::unordered_set<wxString> m_warningPatterns;
     wxString m_buffer;
+    wxTerminalOutputCtrl* m_log_view{nullptr};
 };
 #endif // GITCONSOLE_H

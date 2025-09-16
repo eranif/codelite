@@ -59,7 +59,7 @@ class clInfoBar;
 
 #if MAINBOOK_AUIBOOK
 
-#include "../Plugin/clAuiBook.hpp"
+#include "../Plugin/aui/clAuiBook.hpp"
 using MainNotebook = clAuiBook;
 
 #elif CL_USE_NATIVEBOOK

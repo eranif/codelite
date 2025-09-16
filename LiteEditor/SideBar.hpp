@@ -25,11 +25,13 @@
 #ifndef SIDEBAR_HPP
 #define SIDEBAR_HPP
 
+// clang-format off
+#include "cl_command_event.h"
 #include "clAuiCaptionEnabler.h"
 #include "clSideBarCtrl.hpp"
 #include "clTabRenderer.h"
-#include "cl_command_event.h"
 #include "cl_defs.h"
+// clang-format on
 
 #include <map>
 #include <wx/bitmap.h>
@@ -85,7 +87,7 @@ protected:
     wxWindow* DoGetControlByName(const wxString& title);
     void OnInitDone(wxCommandEvent& event);
     void OnSettingsChanged(wxCommandEvent& event);
-    void OnContextMenu(wxContextMenuEvent& event);
+    void OnContextMenu(clContextMenuEvent& event);
 
     /// After load, move all tabs to the secondary sidebar
     void MoveToSecondarySideBar();

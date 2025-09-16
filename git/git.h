@@ -233,6 +233,8 @@ private:
     void OnFileMenu(clContextMenuEvent& event);
     void OnFolderMenu(clContextMenuEvent& event);
 
+    void OnSideBarPageChanged(clCommandEvent& event);
+
     void OnFileCreated(clFileSystemEvent& event);
     void OnReplaceInFiles(clFileSystemEvent& event);
     void OnEditorChanged(wxCommandEvent& event);

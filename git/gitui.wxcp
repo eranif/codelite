@@ -12955,74 +12955,7 @@
 															"m_options":	["wxVERTICAL", "wxHORIZONTAL"]
 														}],
 													"m_events":	[],
-													"m_children":	[{
-															"m_type":	4469,
-															"proportion":	1,
-															"border":	5,
-															"gbSpan":	"1,1",
-															"gbPosition":	"0,0",
-															"m_styles":	["wxDV_NO_HEADER", "wxDV_MULTIPLE", "wxDV_SINGLE", "wxBORDER_SIMPLE"],
-															"m_sizerFlags":	["wxEXPAND"],
-															"m_properties":	[{
-																	"type":	"winid",
-																	"m_label":	"ID:",
-																	"m_winid":	"wxID_ANY"
-																}, {
-																	"type":	"string",
-																	"m_label":	"Size:",
-																	"m_value":	"-1,-1"
-																}, {
-																	"type":	"string",
-																	"m_label":	"Minimum Size:",
-																	"m_value":	"-1,-1"
-																}, {
-																	"type":	"string",
-																	"m_label":	"Name:",
-																	"m_value":	"m_dvListCtrlLog"
-																}, {
-																	"type":	"multi-string",
-																	"m_label":	"Tooltip:",
-																	"m_value":	""
-																}, {
-																	"type":	"colour",
-																	"m_label":	"Bg Colour:",
-																	"colour":	"<Default>"
-																}, {
-																	"type":	"colour",
-																	"m_label":	"Fg Colour:",
-																	"colour":	"<Default>"
-																}, {
-																	"type":	"font",
-																	"m_label":	"Font:",
-																	"m_value":	""
-																}, {
-																	"type":	"bool",
-																	"m_label":	"Hidden",
-																	"m_value":	false
-																}, {
-																	"type":	"bool",
-																	"m_label":	"Disabled",
-																	"m_value":	false
-																}, {
-																	"type":	"bool",
-																	"m_label":	"Focused",
-																	"m_value":	false
-																}, {
-																	"type":	"string",
-																	"m_label":	"Class Name:",
-																	"m_value":	"clTerminalViewCtrl"
-																}, {
-																	"type":	"string",
-																	"m_label":	"Include File:",
-																	"m_value":	"clTerminalViewCtrl.hpp"
-																}, {
-																	"type":	"string",
-																	"m_label":	"Style:",
-																	"m_value":	""
-																}],
-															"m_events":	[],
-															"m_children":	[]
-														}]
+													"m_children":	[]
 												}]
 										}]
 								}, {

@@ -1,6 +1,8 @@
-#ifndef CLSIDEBARCTRL_HPP
-#define CLSIDEBARCTRL_HPP
+#pragma once
 
+// clang-format off
+#include "cl_defs.h"
+#include "cl_command_event.h"
 #include "codelite_exports.h"
 
 #include <wx/aui/auibar.h>
@@ -11,12 +13,7 @@
 #include <wx/simplebook.h>
 #include <wx/sizer.h>
 #include <wx/toolbar.h>
-
-#if defined(__WXMSW__) || defined(__WXGTK__)
-#define USE_NATIVETOOLBAR 1
-#else
-#define USE_NATIVETOOLBAR 0
-#endif
+// clang-format on
 
 #if USE_NATIVETOOLBAR
 struct LongClientData : wxObject {
@@ -101,10 +98,13 @@ protected:
     int GetToolIdForBookPos(int book_index) const;
 
 public:
-    clSideBarCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                  const wxSize& size = wxDefaultSize, long style = 0);
+    clSideBarCtrl(wxWindow* parent,
+                  wxWindowID id = wxID_ANY,
+                  const wxPoint& pos = wxDefaultPosition,
+                  const wxSize& size = wxDefaultSize,
+                  long style = 0);
     virtual ~clSideBarCtrl();
-    
+
     /// Return the toolbar
     SideBarToolBar* GetToolBar() { return m_toolbar; }
 
@@ -159,6 +159,5 @@ public:
     void Realize();
 };
 
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SIDEBAR_SELECTION_CHANGED, wxCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SIDEBAR_CONTEXT_MENU, wxContextMenuEvent);
-#endif // CLSIDEBARCTRL_HPP
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SIDEBAR_SELECTION_CHANGED, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SIDEBAR_CONTEXT_MENU, clContextMenuEvent);

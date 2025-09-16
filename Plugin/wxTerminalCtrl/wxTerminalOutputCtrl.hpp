@@ -130,6 +130,7 @@ public:
     int Truncate();
     wxChar GetLastChar() const;
     void Clear();
+    inline bool IsEmpty() const { return m_ctrl->IsEmpty(); }
     void SetAttributes(const wxColour& bg_colour, const wxColour& text_colour, const wxFont& font)
     {
         m_textColour = text_colour;

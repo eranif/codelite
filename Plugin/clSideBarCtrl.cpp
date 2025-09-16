@@ -2,6 +2,7 @@
 
 #include "bitmap_loader.h"
 #include "clSystemSettings.h"
+#include "event_notifier.h"
 
 #include <wx/anybutton.h>
 #include <wx/dcbuffer.h>
@@ -11,8 +12,8 @@
 #include <wx/toolbar.h>
 #include <wx/tooltip.h>
 
-wxDEFINE_EVENT(wxEVT_SIDEBAR_SELECTION_CHANGED, wxCommandEvent);
-wxDEFINE_EVENT(wxEVT_SIDEBAR_CONTEXT_MENU, wxContextMenuEvent);
+wxDEFINE_EVENT(wxEVT_SIDEBAR_SELECTION_CHANGED, clCommandEvent);
+wxDEFINE_EVENT(wxEVT_SIDEBAR_CONTEXT_MENU, clContextMenuEvent);
 
 #define CHECK_POINTER_RETURN(ptr, WHAT) \
     if (!ptr)                           \
@@ -140,7 +141,7 @@ long clSideBarCtrl::AddToolData(clSideBarToolData data)
     static long tool_data_id = 0;
 
     long next_id = ++tool_data_id;
-    m_toolDataMap.insert({ next_id, data });
+    m_toolDataMap.insert({next_id, data});
     return next_id;
 }
 
@@ -315,6 +316,12 @@ void clSideBarCtrl::ChangeSelection(size_t pos)
     CallAfter(&clSideBarCtrl::MSWUpdateToolbarBitmaps, new_tool_id, old_tool_id);
     m_selectedToolId = new_tool_id;
     m_book->ChangeSelection(pos);
+
+    clCommandEvent paged_changed_event{wxEVT_SIDEBAR_SELECTION_CHANGED};
+    paged_changed_event.SetInt(pos);
+    paged_changed_event.SetString(m_book->GetPageText(pos));
+    paged_changed_event.SetEventObject(this);
+    EventNotifier::Get()->AddPendingEvent(paged_changed_event);
 }
 
 size_t clSideBarCtrl::GetPageCount() const { return m_book->GetPageCount(); }
@@ -453,7 +460,7 @@ void clSideBarCtrl::OnContextMenu(
     int book_index = GetPageIndex(tool->GetLabel());
     CHECK_COND_RET(book_index != wxNOT_FOUND);
 
-    wxContextMenuEvent menu_event{ wxEVT_SIDEBAR_CONTEXT_MENU };
+    clContextMenuEvent menu_event{wxEVT_SIDEBAR_CONTEXT_MENU};
     menu_event.SetEventObject(this);
     menu_event.SetInt(book_index);
     GetEventHandler()->ProcessEvent(menu_event);

@@ -7,6 +7,7 @@
 //-------------------
 #define CL_USE_NATIVEBOOK 1
 #define MAINBOOK_AUIBOOK 0
+#define USE_NATIVETOOLBAR 1
 
 #ifndef PLUGINS_DIR
 #define PLUGINS_DIR "/usr/lib/codelite"

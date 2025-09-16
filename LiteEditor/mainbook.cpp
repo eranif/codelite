@@ -116,6 +116,10 @@ void MainBook::CreateGuiControls()
 
     // load the notebook style from the configuration settings
     m_book = new MainNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+#if MAINBOOK_AUIBOOK
+    m_book->SetCanHaveCloseButton(true);
+#endif
+
     sz->Add(m_book, 1, wxEXPAND);
     sz->Layout();
 }

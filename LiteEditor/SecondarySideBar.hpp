@@ -1,17 +1,15 @@
-#ifndef SECONDARYSIDEBAR_HPP
-#define SECONDARYSIDEBAR_HPP
+#pragma once
 
+// clang-format off
+#include "cl_command_event.h"
 #include "clSideBarCtrl.hpp"
+// clang-format on
 
 class SideBar;
 class SecondarySideBar : public wxPanel
 {
-private:
-    clSideBarCtrl* m_book = nullptr;
-    SideBar* m_sidebar = nullptr;
-
 protected:
-    void OnContextMenu(wxContextMenuEvent& event);
+    void OnContextMenu(clContextMenuEvent& event);
     void MoveToPrimarySideBar(int pos);
     void OnSettingsChanged(wxCommandEvent& event);
 
@@ -23,7 +21,8 @@ public:
     void AddPage(wxWindow* win, const wxString& bmpname, const wxString& label);
     void SetSelection(int selection);
     clSideBarCtrl* GetNotebook() { return m_book; }
-    
-};
 
-#endif // SECONDARYSIDEBAR_HPP
+private:
+    clSideBarCtrl* m_book{nullptr};
+    SideBar* m_sidebar{nullptr};
+};

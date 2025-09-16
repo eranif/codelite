@@ -1655,15 +1655,6 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer729 = new wxBoxSizer(wxVERTICAL);
     m_panel_log->SetSizer(boxSizer729);
 
-    m_dvListCtrlLog =
-        new clTerminalViewCtrl(m_panel_log,
-                               wxID_ANY,
-                               wxDefaultPosition,
-                               wxDLG_UNIT(m_panel_log, wxSize(-1, -1)),
-                               wxDV_NO_HEADER | wxDV_MULTIPLE | wxDV_SINGLE | get_border_simple_theme_aware_bit());
-
-    boxSizer729->Add(m_dvListCtrlLog, 1, wxEXPAND, WXC_FROM_DIP(5));
-
     m_gauge = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxGA_HORIZONTAL);
     m_gauge->SetValue(10);
 

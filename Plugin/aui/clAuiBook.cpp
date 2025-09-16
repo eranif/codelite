@@ -254,21 +254,20 @@ void clAuiBook::OnPageClosing(wxAuiNotebookEvent& event)
 void clAuiBook::UpdatePreferences()
 {
     auto style = GetWindowStyle();
+    clSYSTEM() << "Updating editor preferences: (" << m_canHaveCloseButton << ")" << (wxUIntPtr)this
+               << ", MainNotebook:" << (wxUIntPtr)clGetManager()->GetMainNotebook() << endl;
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-    if (static_cast<const wxObject*>(clGetManager()->GetMainNotebook()) == static_cast<const wxObject*>(this)) {
-        bool show_x_on_tab = options->IsTabHasXButton();
+    bool show_x_on_tab = options->IsTabHasXButton();
 
-        auto style = GetWindowStyle();
-        style &= ~wxAUI_NB_CLOSE_ON_ALL_TABS;
-        if (m_canHaveCloseButton) {
-            if (show_x_on_tab) {
-                style |= wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
-            } else {
-                style &= ~wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
-            }
+    style &= ~wxAUI_NB_CLOSE_ON_ALL_TABS;
+    if (m_canHaveCloseButton) {
+        if (show_x_on_tab) {
+            style |= wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
         } else {
             style &= ~wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
         }
+    } else {
+        style &= ~wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
     }
 
     // update the tab height

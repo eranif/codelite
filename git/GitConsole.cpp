@@ -32,6 +32,7 @@
 #include "StringUtils.h"
 #include "bitmap_loader.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
+#include "clSideBarCtrl.hpp"
 #include "clStrings.h"
 #include "clToolBar.h"
 #include "cl_aui_tool_stickness.h"
@@ -45,6 +46,7 @@
 #include "globals.h"
 #include "lexer_configuration.h"
 #include "macros.h"
+#include "wxTerminalCtrl/wxTerminalOutputCtrl.hpp"
 
 #include <algorithm>
 #include <wx/datetime.h>
@@ -197,13 +199,12 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_toolbar->AddTool(XRCID("git_commit"), _("Commit"), images->Add("git-commit"), _("Commit local changes"));
     m_toolbar->AddTool(XRCID("git_push"), _("Push"), images->Add("up"), _("Push local changes"));
     m_toolbar->AddTool(XRCID("git_pull"), _("Pull"), images->Add("pull"), _("Pull remote changes"), wxITEM_DROPDOWN);
+    m_toolbar->AddTool(XRCID("git_browse_commit_list"), _("Log"), images->Add("tasks"), _("Browse commit history"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("git_reset_repository"), _("Reset"), images->Add("clean"), _("Reset repository"));
-
     m_toolbar->AddTool(XRCID("git_rebase"), _("Rebase"), images->Add("merge"), _("Rebase"), wxITEM_DROPDOWN);
+    m_toolbar->AddTool(XRCID("git_reset_repository"), _("Reset"), images->Add("clean"), _("Reset repository"));
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(XRCID("git_commit_diff"), _("Diffs"), images->Add("diff"), _("Show current diffs"));
-    m_toolbar->AddTool(XRCID("git_browse_commit_list"), _("Log"), images->Add("tasks"), _("Browse commit history"));
     m_toolbar->AddTool(XRCID("git_blame"), _("Blame"), images->Add("finger"), _("Git blame"));
 
 #ifdef __WXMSW__
@@ -242,9 +243,10 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     });
 
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &GitConsole::OnSysColoursChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_OUTPUT_VIEW_TAB_CHANGED, &GitConsole::OnOutputViewTabChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_SIDEBAR_SELECTION_CHANGED, &GitConsole::OnOutputViewTabChanged, this);
 
-    m_dvListCtrlLog->Bind(wxEVT_CONTEXT_MENU, &GitConsole::OnLogMenu, this);
+    m_log_view = new wxTerminalOutputCtrl(m_panel_log);
+    m_panel_log->GetSizer()->Add(m_log_view, wxSizerFlags(1).Expand());
 
     // force font/colours update
     clCommandEvent dummy;
@@ -265,7 +267,7 @@ GitConsole::~GitConsole()
 void GitConsole::OnClearGitLog(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    m_dvListCtrlLog->DeleteAllItems();
+    m_log_view->Clear();
 }
 
 void GitConsole::OnStopGitProcess(wxCommandEvent& event)
@@ -284,7 +286,7 @@ void GitConsole::OnStopGitProcessUI(wxUpdateUIEvent& event)
     event.Enable(m_git->GetProcess() || m_git->GetFolderProcess());
 }
 
-void GitConsole::OnClearGitLogUI(wxUpdateUIEvent& event) { event.Enable(!m_dvListCtrlLog->IsEmpty()); }
+void GitConsole::OnClearGitLogUI(wxUpdateUIEvent& event) { event.Enable(!m_log_view->IsEmpty()); }
 
 bool GitConsole::IsPatternFound(const wxString& buffer, const std::unordered_set<wxString>& m) const
 {
@@ -767,78 +769,13 @@ void GitConsole::AddLine(const wxString& line)
     wxString tmp = line;
     bool text_ends_with_cr = line.EndsWith("\r");
     tmp.Replace("\r", wxEmptyString);
-    tmp.Trim();
+    tmp.Trim().Append("\n");
 
-    auto& builder = m_dvListCtrlLog->GetBuilder();
-    builder.Clear();
-
-    if (HasAnsiEscapeSequences(tmp)) {
-        builder.Add(tmp, AnsiColours::NormalText());
-    } else {
-        if (IsPatternFound(tmp, m_errorPatterns)) {
-            builder.Add(tmp, AnsiColours::Red());
-        } else if (IsPatternFound(tmp, m_warningPatterns)) {
-            builder.Add(tmp, AnsiColours::Yellow());
-        } else if (IsPatternFound(tmp, m_successPatterns)) {
-            builder.Add(tmp, AnsiColours::Green());
-        } else {
-            builder.Add(tmp, AnsiColours::NormalText());
-        }
-    }
-    m_dvListCtrlLog->AddLine(builder.GetString(), text_ends_with_cr);
+    wxStringView sv{tmp.c_str(), tmp.length()};
+    m_log_view->StyleAndAppend(sv, nullptr);
 }
 
-void GitConsole::PrintPrompt()
-{
-    auto& builder = m_dvListCtrlLog->GetBuilder();
-    builder.Clear();
-    builder.Add(GetPrompt(), AnsiColours::Green(), true);
-    m_dvListCtrlLog->AddLine(builder.GetString(), false);
-    builder.Clear();
-}
-
-void GitConsole::OnLogMenu(wxContextMenuEvent& event)
-{
-    wxUnusedVar(event);
-    wxDataViewItemArray selected_items;
-    m_dvListCtrlLog->GetSelections(selected_items);
-
-    wxMenu menu;
-    menu.Append(XRCID("git-console-log-copy"), _("Copy"));
-    menu.Append(XRCID("git-console-log-clear"), _("Clear"));
-
-    menu.Bind(
-        wxEVT_MENU,
-        [this](wxCommandEvent& e) {
-            wxUnusedVar(e);
-            wxDataViewItemArray selected_items;
-            m_dvListCtrlLog->GetSelections(selected_items);
-
-            wxArrayString lines;
-            for (auto item : selected_items) {
-                wxString line = m_dvListCtrlLog->GetItemText(item);
-                line.Trim();
-                wxString mod_buffer;
-                StringUtils::StripTerminalColouring(line, mod_buffer);
-                lines.Add(mod_buffer);
-            }
-
-            ::CopyToClipboard(wxJoin(lines, '\n'));
-        },
-        XRCID("git-console-log-copy"));
-
-    menu.Enable(XRCID("git-console-log-copy"), !selected_items.empty());
-    menu.Enable(XRCID("git-console-log-clear"), !selected_items.empty());
-
-    menu.Bind(
-        wxEVT_MENU,
-        [this](wxCommandEvent& e) {
-            wxUnusedVar(e);
-            m_dvListCtrlLog->DeleteAllItems();
-        },
-        XRCID("git-console-log-clear"));
-    m_dvListCtrlLog->PopupMenu(&menu);
-}
+void GitConsole::PrintPrompt() { AddLine(GetPrompt() + "\n"); }
 
 void GitConsole::OnSysColoursChanged(clCommandEvent& event) { event.Skip(); }
 

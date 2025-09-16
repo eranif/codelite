@@ -308,7 +308,7 @@ void SideBar::ShowTab(const wxString& name, bool show)
     EventNotifier::Get()->ProcessEvent(show_event);
 }
 
-void SideBar::OnContextMenu(wxContextMenuEvent& event)
+void SideBar::OnContextMenu(clContextMenuEvent& event)
 {
     wxMenu menu;
     menu.Append(XRCID("sidebar-detach-tab"), _("Move to secondary sidebar"));

@@ -23,61 +23,14 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CL_DEFS_H
-#define CL_DEFS_H
+#pragma once
 
-//-----------------------------------
-// Use new toolbars where possible
-//-----------------------------------
-#include <wx/version.h>
-
-// Defaults
-#ifdef __WXGTK__
-
-//-------------------
-// Linux macros
-//-------------------
-#define CL_USE_NATIVEBOOK 1
-#define MAINBOOK_AUIBOOK 0
-
-#ifndef PLUGINS_DIR
-#define PLUGINS_DIR "/usr/lib/codelite"
-#endif
-
-#ifndef INSTALL_DIR
-#define INSTALL_DIR "/usr/share/codelite"
-#endif
-
-
-#elif defined(__WXMSW__)
-
-//-------------------
-// Windows
-//-------------------
-#define CL_USE_NATIVEBOOK 0
-#define MAINBOOK_AUIBOOK 1
-
-#ifdef USE_POSIX_LAYOUT
-#ifndef PLUGINS_DIR
-#define PLUGINS_DIR "\\lib\\codelite"
-#endif
-#ifndef INSTALL_DIR
-#define INSTALL_DIR "\\share\\codelite"
-#endif
-#endif
-
+#if defined(__WXMSW__)
+#include "cl_defs_msw.h"
+#elif defined(__WXGTK__)
+#include "cl_defs_linux.h"
+#elif defined(__WXMAC__)
+#include "cl_defs_macos.h"
 #else
-
-//-------------------
-// macOS
-//-------------------
-#define CL_USE_NATIVEBOOK 0
-#define MAINBOOK_AUIBOOK 1
-
+#error "Unsupported platform!"
 #endif
-
-// General macros
-#define CL_USE_NEW_BUILD_TAB 1
-#define CL_N0_OF_BOOKMARK_TYPES 5
-
-#endif // CL_DEFS_H

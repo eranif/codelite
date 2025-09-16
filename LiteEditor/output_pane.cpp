@@ -44,6 +44,7 @@
 #include <algorithm>
 #include <wx/aui/framemanager.h>
 #include <wx/dcbuffer.h>
+#include <wx/version.h>
 #include <wx/xrc/xmlres.h>
 
 #if MAINBOOK_AUIBOOK
@@ -184,16 +185,14 @@ void OutputPane::OnBuildEnded(clBuildEvent& e)
 void OutputPane::SaveTabOrder()
 {
 #if MAINBOOK_AUIBOOK
-    clSYSTEM() << "Serializing output pane layout" << endl;
+#if wxCHECK_VERSION(3, 3, 0)
     clAuiSerializer serializer;
     m_book->SaveLayout("notebook", serializer);
-    clSYSTEM() << "Serializing output pane layout ... success" << endl;
     wxString fullpath = FileManager::GetSettingFileFullPath("output-pane-layout.xml");
-    clSYSTEM() << "Saving file:" << fullpath;
     if (!FileManager::WriteSettingsFileContent(fullpath, serializer.GetXML())) {
         clWARNING() << "Failed to save output pane layout file:" << fullpath;
     }
-    clSYSTEM() << "Saving file ... success" << fullpath;
+#endif
 #else
     wxArrayString panes;
     clTabInfo::Vec_t tabs;
@@ -259,6 +258,7 @@ void OutputPane::ApplySavedTabOrder([[maybe_unused]] bool update_ui) const
         clGetManager()->GetDockingManager()->Update();
     }
 #else
+#if wxCEHCK_VERSION(3, 3, 0)
     try {
         auto xml_content = FileManager::ReadSettingsFileContent("output-pane-layout.xml");
         if (xml_content.has_value()) {
@@ -268,6 +268,7 @@ void OutputPane::ApplySavedTabOrder([[maybe_unused]] bool update_ui) const
     } catch (const std::exception& e) {
         clERROR() << "Failed to load notebook layout." << e.what() << endl;
     }
+#endif
 #endif
 }
 

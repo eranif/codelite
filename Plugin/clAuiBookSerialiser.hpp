@@ -2,7 +2,7 @@
 
 #include <wx/version.h>
 
-#if wxCHECK_VERSION(3, 1, 0)
+#if wxCHECK_VERSION(3, 3, 0)
 
 #include "codelite_exports.h"
 #include "file_logger.h"

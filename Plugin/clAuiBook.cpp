@@ -255,7 +255,7 @@ void clAuiBook::UpdatePreferences()
 {
     auto style = GetWindowStyle();
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-    if (clGetManager()->GetMainNotebook() == this) {
+    if (static_cast<const wxObject*>(clGetManager()->GetMainNotebook()) == static_cast<const wxObject*>(this)) {
         bool show_x_on_tab = options->IsTabHasXButton();
 
         auto style = GetWindowStyle();

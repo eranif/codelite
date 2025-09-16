@@ -298,12 +298,11 @@ void clAuiBook::UpdatePreferences()
 void clAuiBook::SetBookArt()
 {
     wxFont font = clTabRenderer::GetTabFont(false);
-    wxFont bold_font = clTabRenderer::GetTabFont(true);
 
     auto art = new wxAuiDefaultTabArt();
-    art->SetMeasuringFont(bold_font);
+    art->SetMeasuringFont(font);
     art->SetNormalFont(font);
-    art->SetSelectedFont(bold_font);
+    art->SetSelectedFont(font);
     SetArtProvider(art);
 }
 

@@ -12,6 +12,7 @@ extern void wxC32BEInitBitmapResources();
 namespace
 {
 // return the wxBORDER_SIMPLE that matches the current application theme
+[[maybe_unused]]
 wxBorder get_border_simple_theme_aware_bit()
 {
 #if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
@@ -19,12 +20,12 @@ wxBorder get_border_simple_theme_aware_bit()
 #else
     return wxBORDER_DEFAULT;
 #endif
-} // DoGetBorderSimpleBit
+} // get_border_simple_theme_aware_bit
 bool bBitmapLoaded = false;
 } // namespace
 
-SFTPStatusPageBase::SFTPStatusPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                       long style)
+SFTPStatusPageBase::SFTPStatusPageBase(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxControl(parent, id, pos, size, style)
 {
     if (!bBitmapLoaded) {
@@ -38,7 +39,7 @@ SFTPStatusPageBase::SFTPStatusPageBase(wxWindow* parent, wxWindowID id, const wx
     this->SetSizer(boxSizer2);
 
     m_notebook =
-        new clGenericNotebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), kNotebook_LeftTabs);
+        new Notebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), kNotebook_FixedWidth);
     m_notebook->SetName(wxT("m_notebook"));
 
     boxSizer2->Add(m_notebook, 1, wxEXPAND, WXC_FROM_DIP(5));
@@ -50,8 +51,8 @@ SFTPStatusPageBase::SFTPStatusPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer195 = new wxBoxSizer(wxVERTICAL);
     m_panelLog->SetSizer(boxSizer195);
 
-    m_stcOutput = new wxStyledTextCtrl(m_panelLog, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelLog, wxSize(-1, -1)),
-                                       wxBORDER_NONE);
+    m_stcOutput = new wxStyledTextCtrl(
+        m_panelLog, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelLog, wxSize(-1, -1)), wxBORDER_NONE);
     // Configure the fold margin
     m_stcOutput->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcOutput->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -96,8 +97,8 @@ SFTPStatusPageBase::SFTPStatusPageBase(wxWindow* parent, wxWindowID id, const wx
     wxBoxSizer* boxSizer197 = new wxBoxSizer(wxVERTICAL);
     m_panelSearch->SetSizer(boxSizer197);
 
-    m_stcSearch = new wxStyledTextCtrl(m_panelSearch, wxID_ANY, wxDefaultPosition,
-                                       wxDLG_UNIT(m_panelSearch, wxSize(-1, -1)), wxBORDER_NONE);
+    m_stcSearch = new wxStyledTextCtrl(
+        m_panelSearch, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelSearch, wxSize(-1, -1)), wxBORDER_NONE);
     // Configure the fold margin
     m_stcSearch->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcSearch->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -195,8 +196,8 @@ SFTPTreeViewBase::SFTPTreeViewBase(wxWindow* parent, wxWindowID id, const wxPoin
 
     flexGridSizer43->Add(m_staticText49, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_textCtrlQuickJump = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                         wxTE_PROCESS_ENTER);
+    m_textCtrlQuickJump = new wxTextCtrl(
+        this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
     m_textCtrlQuickJump->SetToolTip(_("Type a path and hit ENTER"));
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlQuickJump->SetHint(wxT(""));
@@ -222,8 +223,8 @@ SFTPTreeViewBase::~SFTPTreeViewBase()
     m_textCtrlQuickJump->Unbind(wxEVT_UPDATE_UI, &SFTPTreeViewBase::OnGotoLocationUI, this);
 }
 
-SFTPManageBookmarkDlgBase::SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
-                                                     const wxPoint& pos, const wxSize& size, long style)
+SFTPManageBookmarkDlgBase::SFTPManageBookmarkDlgBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
     if (!bBitmapLoaded) {
@@ -241,8 +242,12 @@ SFTPManageBookmarkDlgBase::SFTPManageBookmarkDlgBase(wxWindow* parent, wxWindowI
     boxSizer56->Add(boxSizer64, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxArrayString m_listBoxBookmarksArr;
-    m_listBoxBookmarks = new wxListBox(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                       m_listBoxBookmarksArr, wxLB_NEEDED_SB | wxLB_SINGLE);
+    m_listBoxBookmarks = new wxListBox(this,
+                                       wxID_ANY,
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(this, wxSize(-1, -1)),
+                                       m_listBoxBookmarksArr,
+                                       wxLB_NEEDED_SB | wxLB_SINGLE);
 
     boxSizer64->Add(m_listBoxBookmarks, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -292,8 +297,8 @@ SFTPManageBookmarkDlgBase::~SFTPManageBookmarkDlgBase()
     m_button70->Unbind(wxEVT_UPDATE_UI, &SFTPManageBookmarkDlgBase::OnDeleteUI, this);
 }
 
-SFTPSettingsDialogBase::SFTPSettingsDialogBase(wxWindow* parent, wxWindowID id, const wxString& title,
-                                               const wxPoint& pos, const wxSize& size, long style)
+SFTPSettingsDialogBase::SFTPSettingsDialogBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
     if (!bBitmapLoaded) {
@@ -318,9 +323,14 @@ SFTPSettingsDialogBase::SFTPSettingsDialogBase(wxWindow* parent, wxWindowID id, 
 
     flexGridSizer91->Add(m_staticSSHClient, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_sshClientPath =
-        new wxFilePickerCtrl(this, wxID_ANY, wxEmptyString, _("Select a file"), wxT("*"), wxDefaultPosition,
-                             wxDLG_UNIT(this, wxSize(-1, -1)), wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL | wxFLP_OPEN);
+    m_sshClientPath = new wxFilePickerCtrl(this,
+                                           wxID_ANY,
+                                           wxEmptyString,
+                                           _("Select a file"),
+                                           wxT("*"),
+                                           wxDefaultPosition,
+                                           wxDLG_UNIT(this, wxSize(-1, -1)),
+                                           wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL | wxFLP_OPEN);
 
     flexGridSizer91->Add(m_sshClientPath, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -360,8 +370,8 @@ SFTPSettingsDialogBase::~SFTPSettingsDialogBase()
     m_button87->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SFTPSettingsDialogBase::OnOK, this);
 }
 
-SFTPUploadDialogBase::SFTPUploadDialogBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                           const wxSize& size, long style)
+SFTPUploadDialogBase::SFTPUploadDialogBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
     if (!bBitmapLoaded) {
@@ -374,8 +384,8 @@ SFTPUploadDialogBase::SFTPUploadDialogBase(wxWindow* parent, wxWindowID id, cons
     wxBoxSizer* boxSizer102 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer102);
 
-    m_staticText110 = new wxStaticText(this, wxID_ANY, _("Upload the files to this folder:"), wxDefaultPosition,
-                                       wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticText110 = new wxStaticText(
+        this, wxID_ANY, _("Upload the files to this folder:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
     boxSizer102->Add(m_staticText110, 0, wxALL, WXC_FROM_DIP(5));
 
@@ -437,8 +447,8 @@ SFTPUploadDialogBase::~SFTPUploadDialogBase()
     m_buttonOK->Unbind(wxEVT_UPDATE_UI, &SFTPUploadDialogBase::OnOKUI, this);
 }
 
-SFTPQuickConnectBaseDlg::SFTPQuickConnectBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title,
-                                                 const wxPoint& pos, const wxSize& size, long style)
+SFTPQuickConnectBaseDlg::SFTPQuickConnectBaseDlg(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
     if (!bBitmapLoaded) {
@@ -451,8 +461,8 @@ SFTPQuickConnectBaseDlg::SFTPQuickConnectBaseDlg(wxWindow* parent, wxWindowID id
     wxBoxSizer* boxSizer121 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer121);
 
-    m_checkBoxChooseAccount = new wxCheckBox(this, wxID_ANY, _("Connect to an existing account"), wxDefaultPosition,
-                                             wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxChooseAccount = new wxCheckBox(
+        this, wxID_ANY, _("Connect to an existing account"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxChooseAccount->SetValue(true);
 
     boxSizer121->Add(m_checkBoxChooseAccount, 0, wxALL, WXC_FROM_DIP(5));
@@ -561,8 +571,8 @@ SFTPQuickConnectBaseDlg::SFTPQuickConnectBaseDlg(wxWindow* parent, wxWindowID id
         wxPersistenceManager::Get().Restore(this);
     }
     // Connect events
-    m_checkBoxChooseAccount->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SFTPQuickConnectBaseDlg::OnCheckboxChooseAccount,
-                                  this);
+    m_checkBoxChooseAccount->Bind(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, &SFTPQuickConnectBaseDlg::OnCheckboxChooseAccount, this);
     m_choiceAccount->Bind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnChooseAccountUI, this);
     m_checkBoxQuickConnect->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SFTPQuickConnectBaseDlg::OnQuickConnect, this);
     m_staticText143->Bind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnQuickConnectUI, this);
@@ -578,8 +588,8 @@ SFTPQuickConnectBaseDlg::SFTPQuickConnectBaseDlg(wxWindow* parent, wxWindowID id
 
 SFTPQuickConnectBaseDlg::~SFTPQuickConnectBaseDlg()
 {
-    m_checkBoxChooseAccount->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SFTPQuickConnectBaseDlg::OnCheckboxChooseAccount,
-                                    this);
+    m_checkBoxChooseAccount->Unbind(
+        wxEVT_COMMAND_CHECKBOX_CLICKED, &SFTPQuickConnectBaseDlg::OnCheckboxChooseAccount, this);
     m_choiceAccount->Unbind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnChooseAccountUI, this);
     m_checkBoxQuickConnect->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &SFTPQuickConnectBaseDlg::OnQuickConnect, this);
     m_staticText143->Unbind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnQuickConnectUI, this);
@@ -593,8 +603,8 @@ SFTPQuickConnectBaseDlg::~SFTPQuickConnectBaseDlg()
     m_button125->Unbind(wxEVT_UPDATE_UI, &SFTPQuickConnectBaseDlg::OnOKUI, this);
 }
 
-SFTPGrepBase::SFTPGrepBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                           const wxSize& size, long style)
+SFTPGrepBase::SFTPGrepBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
     if (!bBitmapLoaded) {

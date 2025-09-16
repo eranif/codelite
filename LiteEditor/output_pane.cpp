@@ -258,7 +258,7 @@ void OutputPane::ApplySavedTabOrder([[maybe_unused]] bool update_ui) const
         clGetManager()->GetDockingManager()->Update();
     }
 #else
-#if wxCEHCK_VERSION(3, 3, 0)
+#if wxCHECK_VERSION(3, 3, 0)
     try {
         auto xml_content = FileManager::ReadSettingsFileContent("output-pane-layout.xml");
         if (xml_content.has_value()) {

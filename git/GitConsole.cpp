@@ -246,7 +246,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
 
     m_dvListCtrlLog->Bind(wxEVT_CONTEXT_MENU, &GitConsole::OnLogMenu, this);
 
-    // force font/colours udpate
+    // force font/colours update
     clCommandEvent dummy;
     OnSysColoursChanged(dummy);
 }
@@ -840,14 +840,7 @@ void GitConsole::OnLogMenu(wxContextMenuEvent& event)
     m_dvListCtrlLog->PopupMenu(&menu);
 }
 
-void GitConsole::OnSysColoursChanged(clCommandEvent& event)
-{
-    event.Skip();
-    auto font = ColoursAndFontsManager::Get().GetFixedFont();
-    m_dvListCtrl->SetDefaultFont(font);
-    m_dvListCtrlLog->SetDefaultFont(font);
-    m_dvListCtrlUnversioned->SetDefaultFont(font);
-}
+void GitConsole::OnSysColoursChanged(clCommandEvent& event) { event.Skip(); }
 
 void GitConsole::OnAddUnversionedFilesUI(wxUpdateUIEvent& event)
 {

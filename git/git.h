@@ -213,7 +213,7 @@ private:
     void GetCurrentBranchAction(const gitAction& ga);
     void UpdateFileTree();
 
-    void ShowProgress(const wxString& message, bool pulse = true);
+    void ShowProgress(const wxString& message);
     void HideProgress();
     void DoCleanup();
     void DoAddFiles(const wxArrayString& files);

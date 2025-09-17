@@ -1655,11 +1655,6 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer729 = new wxBoxSizer(wxVERTICAL);
     m_panel_log->SetSizer(boxSizer729);
 
-    m_gauge = new wxGauge(this, wxID_ANY, 100, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxGA_HORIZONTAL);
-    m_gauge->SetValue(10);
-
-    boxSizer711->Add(m_gauge, 0, wxEXPAND, WXC_FROM_DIP(5));
-
     SetName(wxT("GitConsoleBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
     if (GetSizer()) {

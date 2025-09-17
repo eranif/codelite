@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CustomControls/IndicatorPanel.hpp"
 #include "MarkdownStyler.hpp"
 #include "OllamaClient.hpp"
 #include "UI.hpp"
@@ -70,8 +71,7 @@ private:
     wxTerminalOutputCtrl* m_logView{nullptr};
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
     bool m_thinking{false};
-    wxActivityIndicator* m_activityIndicator{nullptr};
-    wxStaticText* m_statusMessage{nullptr};
+    IndicatorPanel* m_statusPanel{nullptr};
 };
 
 wxDECLARE_EVENT(wxEVT_CHATAI_SEND, clCommandEvent);

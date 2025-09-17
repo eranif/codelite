@@ -42,7 +42,6 @@
 #include <wx/radiobut.h>
 #include <wx/spinctrl.h>
 #include <wx/notebook.h>
-#include <wx/gauge.h>
 #include <wx/checklst.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -468,7 +467,6 @@ protected:
     wxPanel* m_panelUnversioned;
     clThemedOrderedListCtrl* m_dvListCtrlUnversioned;
     wxPanel* m_panel_log;
-    wxGauge* m_gauge;
 
 protected:
     virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
@@ -485,7 +483,6 @@ public:
     wxPanel* GetPanelUnversioned() { return m_panelUnversioned; }
     wxPanel* GetPanel_log() { return m_panel_log; }
     wxNotebook* GetNotebookChanges() { return m_notebookChanges; }
-    wxGauge* GetGauge() { return m_gauge; }
     GitConsoleBase(wxWindow* parent,
                    wxWindowID id = wxID_ANY,
                    const wxPoint& pos = wxDefaultPosition,

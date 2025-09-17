@@ -26,6 +26,7 @@
 #ifndef GITCONSOLE_H
 #define GITCONSOLE_H
 
+#include "CustomControls/IndicatorPanel.hpp"
 #include "bitmap_loader.h"
 #include "clGenericSTCStyler.h"
 #include "clToolBar.h"
@@ -56,11 +57,10 @@ public:
     //
     // Progress bar API
     //
-    void ShowProgress(const wxString& message, bool pulse = false);
+    void ShowProgress(const wxString& message);
     void HideProgress();
     void UpdateProgress(unsigned long current, const wxString& message);
     bool IsProgressShown() const;
-    void PulseProgress();
     void ShowLog();
     void SetIndent(size_t depth = 1) { m_indent = depth; }
 
@@ -118,5 +118,6 @@ private:
     std::unordered_set<wxString> m_warningPatterns;
     wxString m_buffer;
     wxTerminalOutputCtrl* m_log_view{nullptr};
+    IndicatorPanel* m_statusBar{nullptr};
 };
 #endif // GITCONSOLE_H

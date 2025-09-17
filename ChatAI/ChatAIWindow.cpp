@@ -128,19 +128,8 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
         ::wxLaunchDefaultBrowser(url);
     });
 
-    wxSize panel_size{wxNOT_FOUND, wxSize(GetTextExtent("Tp")).GetHeight()};
-    panel_size.IncBy(0, 10); // The borders
-    wxPanel* panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, panel_size);
-
-    GetSizer()->Add(panel, wxSizerFlags(0).Expand());
-    panel->SetSizer(new wxBoxSizer(wxHORIZONTAL));
-
-    m_statusMessage = new wxStaticText(panel, wxID_ANY, _("Ready"));
-    m_activityIndicator = new wxActivityIndicator(panel);
-
-    panel->GetSizer()->Add(m_statusMessage, wxSizerFlags(0).Border(wxALL, 5).CentreVertical().Expand());
-    panel->GetSizer()->AddStretchSpacer();
-    panel->GetSizer()->Add(m_activityIndicator, wxSizerFlags(0).Border(wxALL, 5).CentreVertical());
+    m_statusPanel = new IndicatorPanel(this);
+    GetSizer()->Add(m_statusPanel, wxSizerFlags(0).Expand());
 
     CallAfter(&ChatAIWindow::LoadGlobalConfig);
     CallAfter(&ChatAIWindow::PopulateModels);
@@ -422,15 +411,10 @@ void ChatAIWindow::OnChatAIOutputDone(OllamaEvent& event)
 void ChatAIWindow::ShowIndicator(bool show)
 {
     if (show) {
-        m_statusMessage->SetLabel(_("Working..."));
-        m_activityIndicator->Show();
-        m_activityIndicator->Start();
+        m_statusPanel->Start(_("Working..."));
     } else {
-        m_statusMessage->SetLabel(_("Ready"));
-        m_activityIndicator->Stop();
-        m_activityIndicator->Hide();
+        m_statusPanel->Stop(_("Ready"));
     }
-    m_activityIndicator->GetParent()->SendSizeEvent();
 }
 
 void ChatAIWindow::OnFileSaved(clCommandEvent& event)
@@ -453,11 +437,11 @@ void ChatAIWindow::OnThinking(OllamaEvent& event)
     // change the thinking state
     m_thinking = event.IsThinking();
     if (m_thinking) {
-        m_statusMessage->SetLabel(_("Thinking..."));
+        m_statusPanel->SetMessage(_("Thinking..."));
     } else if (m_plugin->GetClient().IsBusy()) {
-        m_statusMessage->SetLabel(_("Working..."));
+        m_statusPanel->SetMessage(_("Working..."));
     } else {
-        m_statusMessage->SetLabel(_("Ready"));
+        m_statusPanel->SetMessage(_("Ready"));
     }
 }
 

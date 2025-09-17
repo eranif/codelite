@@ -229,7 +229,8 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitPullDropdown, this, XRCID("git_pull"));
     m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitRebaseDropdown, this, XRCID("git_rebase"));
-    m_gauge->Hide();
+    m_statusBar = new IndicatorPanel(this, _("Ready"));
+    GetSizer()->Add(m_statusBar, wxSizerFlags(0).Expand());
     GetSizer()->Fit(this);
 
     m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
@@ -600,42 +601,16 @@ void GitConsole::OnDropDownMenuEvent(wxCommandEvent& event)
     conf.Save();
 }
 
-void GitConsole::HideProgress()
+void GitConsole::HideProgress() { m_statusBar->Stop(_("Ready")); }
+
+void GitConsole::ShowProgress(const wxString& message) { m_statusBar->Start(message); }
+
+void GitConsole::UpdateProgress([[maybe_unused]] unsigned long current, const wxString& message)
 {
-    if (m_gauge->IsShown()) {
-        m_gauge->SetValue(0);
-        m_gauge->Hide();
-        GetSizer()->Layout();
-    }
+    m_statusBar->SetMessage(message);
 }
 
-void GitConsole::ShowProgress(const wxString& message, bool pulse)
-{
-    if (!m_gauge->IsShown()) {
-        m_gauge->Show();
-        GetSizer()->Layout();
-    }
-
-    if (pulse) {
-        m_gauge->Pulse();
-        m_gauge->Update();
-
-    } else {
-        m_gauge->SetValue(0);
-        m_gauge->Update();
-    }
-}
-
-void GitConsole::UpdateProgress(unsigned long current, const wxString& message)
-{
-    wxString trimmedMessage = message;
-    m_gauge->SetValue(wxMin(current, m_gauge->GetRange()));
-    // m_staticTextGauge->SetLabel(trimmedMessage.Trim().Trim(false));
-}
-
-bool GitConsole::IsProgressShown() const { return m_gauge->IsShown(); }
-
-void GitConsole::PulseProgress() { m_gauge->Pulse(); }
+bool GitConsole::IsProgressShown() const { return m_statusBar->IsRunning(); }
 
 bool GitConsole::IsDirty() const { return (m_dvListCtrl->GetItemCount() > 0); }
 

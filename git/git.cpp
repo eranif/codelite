@@ -1246,7 +1246,7 @@ void GitPlugin::ProcessGitActionQueue()
         break;
 
     case gitPull:
-        ShowProgress(wxT("Obtaining remote changes"), false);
+        ShowProgress(wxT("Obtaining remote changes"));
         command_args << "--no-pager pull " << ga.arguments;
         command_args << " --log";
         log_message = true;
@@ -1255,7 +1255,7 @@ void GitPlugin::ProcessGitActionQueue()
 
     case gitPush:
         command_args << wxT("--no-pager push ") << ga.arguments;
-        ShowProgress(wxT("Pushing local changes..."), false);
+        ShowProgress(wxT("Pushing local changes..."));
         log_message = true;
         createFlags |= IProcessRawOutput;
         break;
@@ -1292,13 +1292,13 @@ void GitPlugin::ProcessGitActionQueue()
         break;
 
     case gitBranchSwitch:
-        ShowProgress(wxT("Switching to local branch ") + ga.arguments, false);
+        ShowProgress(wxT("Switching to local branch ") + ga.arguments);
         command_args << wxT("--no-pager checkout ") << ga.arguments;
         log_message = true;
         break;
 
     case gitBranchSwitchRemote:
-        ShowProgress(wxT("Switching to remote branch ") + ga.arguments, false);
+        ShowProgress(wxT("Switching to remote branch ") + ga.arguments);
         command_args << wxT("--no-pager checkout -b ") << ga.arguments;
         log_message = true;
         createFlags |= IProcessRawOutput;
@@ -1329,7 +1329,7 @@ void GitPlugin::ProcessGitActionQueue()
         command_args << wxT("--no-pager config ") << ga.arguments;
         break;
     case gitGarbageCollection:
-        ShowProgress(wxT("Cleaning git database. This may take some time..."), false);
+        ShowProgress(wxT("Cleaning git database. This may take some time..."));
         log_message = true;
         command_args << wxT("--no-pager gc");
         break;
@@ -2098,22 +2098,12 @@ void GitPlugin::CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, boo
     }
 }
 
-void GitPlugin::OnProgressTimer(wxTimerEvent& Event)
+void GitPlugin::OnProgressTimer(wxTimerEvent& Event) {}
+
+void GitPlugin::ShowProgress(const wxString& message)
 {
-    if (m_console->IsProgressShown())
-        m_console->PulseProgress();
-}
-
-void GitPlugin::ShowProgress(const wxString& message, bool pulse)
-{
-    m_console->ShowProgress(message, pulse);
-
-    if (pulse) {
-        m_progressTimer.Start(50);
-
-    } else {
-        m_progressMessage = message;
-    }
+    m_console->ShowProgress(message);
+    m_progressMessage = message;
 }
 
 void GitPlugin::HideProgress()

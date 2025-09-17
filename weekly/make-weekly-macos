@@ -11,7 +11,7 @@ mkdir -p ${CODELITE_BUILD_DIR}
 cd ${CODELITE_BUILD_DIR}
 rm -fr codelite.app/
 rm -f ${package_file}
-cmake -DCMAKE_BUILD_TYPE=Release .. -Wno-dev -DWITH_CHATAI=ON
+cmake -DCMAKE_BUILD_TYPE=Release .. -Wno-dev
 make -j${cpu_count} install
 
 # Sign the app

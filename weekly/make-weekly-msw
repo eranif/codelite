@@ -13,7 +13,7 @@ function build_codelite() {
     cd ${CODELITE_BUILD_DIR}
 
     echo "-- Building CodeLite. PWD: ${CODELITE_BUILD_DIR}"
-    cmake .. -DCMAKE_BUILD_TYPE=Release -DWXWIN=$HOME/root -G"MinGW Makefiles" -DWITH_CHATAI=ON
+    cmake .. -DCMAKE_BUILD_TYPE=Release -DWXWIN=$HOME/root -G"MinGW Makefiles"
     mingw32-make -j${cpu_count} install
 }
 

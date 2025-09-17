@@ -2,6 +2,8 @@
 
 #include "drawingutils.h"
 
+#include <wx/settings.h>
+
 // Create a "disabled" version of the given colour by adjusting its lightness
 // in the direction depending on the theme.
 static wxColour wxAuiDimColour(wxColour colour, int delta = 30)

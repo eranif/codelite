@@ -44,6 +44,9 @@ wxString FileManager::GetSettingFileFullPath(const wxString& name, const WriteOp
 {
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     if (workspace == nullptr || options.force_global) {
+        if (wxFileName{name}.IsAbsolute()) {
+            return name;
+        }
         // No workspace is opened, assume local.
         // Local workspace
         wxFileName fn{clStandardPaths::Get().GetUserDataDir(), name};
@@ -104,7 +107,7 @@ bool FileManager::FileExists(const wxString& filepath, const WriteOptions& optio
 
 std::optional<wxString> FileManager::ReadContent(const wxString& filepath, const WriteOptions& options)
 {
-    wxString fullpath = GetFullPath(filepath,options);
+    wxString fullpath = GetFullPath(filepath, options);
 #if USE_SFTP
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     if (workspace && workspace->IsRemote()) {

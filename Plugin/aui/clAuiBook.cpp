@@ -1,7 +1,7 @@
 #include "clAuiBook.hpp"
 
 #include "Notebook.h" // For the book events.
-#include "clSystemSettings.h"
+#include "aui/clAuiFlatTabArt.hpp"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "globals.h"
@@ -255,8 +255,6 @@ void clAuiBook::OnPageClosing(wxAuiNotebookEvent& event)
 void clAuiBook::UpdatePreferences()
 {
     auto style = GetWindowStyle();
-    clSYSTEM() << "Updating editor preferences: (" << m_canHaveCloseButton << ")" << (wxUIntPtr)this
-               << ", MainNotebook:" << (wxUIntPtr)clGetManager()->GetMainNotebook() << endl;
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     bool show_x_on_tab = options->IsTabHasXButton();
 
@@ -299,7 +297,7 @@ void clAuiBook::SetBookArt()
 {
     wxFont font = clTabRenderer::GetTabFont(false);
 
-    auto art = new wxAuiDefaultTabArt();
+    auto art = new clAuiFlatTabArt();
     art->SetMeasuringFont(font);
     art->SetNormalFont(font);
     art->SetSelectedFont(font);

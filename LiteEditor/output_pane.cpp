@@ -53,6 +53,8 @@
 #endif
 #endif
 
+constexpr const char* kOutputPaneLayoutXml = "output-pane-layout.xml";
+
 OutputPane::OutputPane(wxWindow* parent, const wxString& caption, long style)
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(200, 250), style)
     , m_caption(caption)
@@ -191,9 +193,12 @@ void OutputPane::SaveTabOrder()
     clAuiSerializer serializer;
     m_book->SaveLayout("notebook", serializer);
     WriteOptions opts{.force_global = true};
-    wxString fullpath = FileManager::GetSettingFileFullPath("output-pane-layout.xml", opts);
-    if (!FileManager::WriteSettingsFileContent(fullpath, serializer.GetXML())) {
-        clWARNING() << "Failed to save output pane layout file:" << fullpath;
+    if (!FileManager::WriteSettingsFileContent(kOutputPaneLayoutXml, serializer.GetXML(), opts)) {
+        clWARNING() << "Failed to save output pane layout file:"
+                    << FileManager::GetSettingFileFullPath(kOutputPaneLayoutXml, opts);
+    } else {
+        clDEBUG() << "Successfully written layout file: "
+                  << FileManager::GetSettingFileFullPath(kOutputPaneLayoutXml, opts);
     }
 #endif
 #else
@@ -264,7 +269,7 @@ void OutputPane::ApplySavedTabOrder([[maybe_unused]] bool update_ui) const
 #if wxCHECK_VERSION(3, 3, 0)
     try {
         WriteOptions opts{.force_global = true};
-        auto xml_content = FileManager::ReadSettingsFileContent("output-pane-layout.xml", opts);
+        auto xml_content = FileManager::ReadSettingsFileContent(kOutputPaneLayoutXml, opts);
         if (xml_content.has_value()) {
             clAuiDeserializer deserializer{xml_content.value()};
             m_book->LoadLayout("notebook", deserializer);

@@ -81,11 +81,6 @@
 #include <sys/wait.h>
 #endif
 
-#define CHECK_VIEW_SHOWN()                                                                \
-    if (m_isRemoteWorkspace || !clGetManager()->IsPaneShown(PANE_OUTPUT, GIT_TAB_NAME)) { \
-        return;                                                                           \
-    }
-
 namespace
 {
 wxString GetDirFromPath(const wxString& path)
@@ -155,8 +150,17 @@ public:
      */
     void Signal([[maybe_unused]] wxSignal sig) override {}
 };
-
+bool IsPaneShown()
+{
+    return clGetManager()->IsPaneShown(PANE_LEFT_SIDEBAR, GIT_TAB_NAME) ||
+           clGetManager()->IsPaneShown(PANE_RIGHT_SIDEBAR, GIT_TAB_NAME);
+}
 } // namespace
+
+#define CHECK_VIEW_SHOWN()                       \
+    if (m_isRemoteWorkspace || !IsPaneShown()) { \
+        return;                                  \
+    }
 
 #define GIT_MESSAGE_IF(cond, ...)                          \
     if (cond) {                                            \
@@ -930,7 +934,7 @@ void GitPlugin::OnPull(wxCommandEvent& e)
             m_gitActionQueue.push_back(ga);
         }
         AddDefaultActions();
-        m_mgr->ShowOutputPane("Git");
+        m_mgr->ShowManagementWindow(GIT_TAB_NAME, true);
         ProcessGitActionQueue();
     }
 }

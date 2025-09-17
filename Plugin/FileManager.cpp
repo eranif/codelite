@@ -6,10 +6,10 @@
 
 #include "clWorkspaceManager.h"
 
-wxString FileManager::GetFullPath(const wxString& name)
+wxString FileManager::GetFullPath(const wxString& name, const WriteOptions& options)
 {
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    if (workspace == nullptr) {
+    if (workspace == nullptr || options.force_global) {
         // No workspace is opened, assume local.
         // Local workspace
         wxFileName fn{name};
@@ -40,10 +40,10 @@ wxString FileManager::GetFullPath(const wxString& name)
     }
 }
 
-wxString FileManager::GetSettingFileFullPath(const wxString& name)
+wxString FileManager::GetSettingFileFullPath(const wxString& name, const WriteOptions& options)
 {
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    if (workspace == nullptr) {
+    if (workspace == nullptr || options.force_global) {
         // No workspace is opened, assume local.
         // Local workspace
         wxFileName fn{clStandardPaths::Get().GetUserDataDir(), name};
@@ -59,9 +59,9 @@ wxString FileManager::GetSettingFileFullPath(const wxString& name)
     return wxFileName{fullpath}.GetFullPath();
 }
 
-bool FileManager::Create(const wxString& filepath)
+bool FileManager::Create(const wxString& filepath, const WriteOptions& options)
 {
-    wxString fullpath = GetFullPath(filepath);
+    wxString fullpath = GetFullPath(filepath, options);
 
 #if USE_SFTP
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
@@ -84,15 +84,15 @@ bool FileManager::Create(const wxString& filepath)
     return FileUtils::WriteFileContent(fullpath, wxEmptyString);
 }
 
-bool FileManager::CreateSettingsFile(const wxString& name)
+bool FileManager::CreateSettingsFile(const wxString& name, const WriteOptions& options)
 {
-    wxString fullpath = GetSettingFileFullPath(name);
-    return Create(fullpath);
+    wxString fullpath = GetSettingFileFullPath(name, options);
+    return Create(fullpath, options);
 }
 
-bool FileManager::FileExists(const wxString& filepath)
+bool FileManager::FileExists(const wxString& filepath, const WriteOptions& options)
 {
-    wxString fullpath = GetFullPath(filepath);
+    wxString fullpath = GetFullPath(filepath, options);
 #if USE_SFTP
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     if (workspace && workspace->IsRemote()) {
@@ -102,9 +102,9 @@ bool FileManager::FileExists(const wxString& filepath)
     return wxFileName{fullpath}.FileExists();
 }
 
-std::optional<wxString> FileManager::ReadContent(const wxString& filepath, const wxMBConv& conv)
+std::optional<wxString> FileManager::ReadContent(const wxString& filepath, const WriteOptions& options)
 {
-    wxString fullpath = GetFullPath(filepath);
+    wxString fullpath = GetFullPath(filepath,options);
 #if USE_SFTP
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     if (workspace && workspace->IsRemote()) {
@@ -113,30 +113,33 @@ std::optional<wxString> FileManager::ReadContent(const wxString& filepath, const
             return std::nullopt;
         }
 
-        wxString content{(const char*)membuf.GetData(), wxConvUTF8, membuf.GetDataLen()};
+        wxString content{(const char*)membuf.GetData(), options.GetConv(), membuf.GetDataLen()};
         return content;
     }
 #endif
 
     // Local file
     wxString content;
-    if (!FileUtils::ReadFileContent(fullpath, content, conv)) {
+    if (!FileUtils::ReadFileContent(fullpath, content, options.GetConv())) {
         return std::nullopt;
     }
     return content;
 }
 
-std::optional<wxString> FileManager::ReadSettingsFileContent(const wxString& name)
+std::optional<wxString> FileManager::ReadSettingsFileContent(const wxString& name, const WriteOptions& options)
 {
-    wxString fullpath = GetSettingFileFullPath(name);
-    return ReadContent(fullpath, wxConvUTF8);
+    wxString fullpath = GetSettingFileFullPath(name, options);
+    return ReadContent(fullpath, options);
 }
 
-bool FileManager::WriteContent(const wxString& filepath, const wxString& content, bool overwrite, const wxMBConv& conv)
+bool FileManager::WriteContent(const wxString& filepath,
+                               const wxString& content,
+                               bool overwrite,
+                               const WriteOptions& options)
 {
-    wxString fullpath = GetFullPath(filepath);
+    wxString fullpath = GetFullPath(filepath, options);
 
-    if (!overwrite && FileExists(filepath)) {
+    if (!overwrite && FileExists(filepath, options)) {
         return false;
     }
 
@@ -148,11 +151,11 @@ bool FileManager::WriteContent(const wxString& filepath, const wxString& content
 #endif
 
     wxFileName{fullpath}.Mkdir(wxS_DIR_DEFAULT, wxPATH_NATIVE);
-    return FileUtils::WriteFileContent(fullpath, content, conv);
+    return FileUtils::WriteFileContent(fullpath, content, options.GetConv());
 }
 
-bool FileManager::WriteSettingsFileContent(const wxString& name, const wxString& content, const wxMBConv& conv)
+bool FileManager::WriteSettingsFileContent(const wxString& name, const wxString& content, const WriteOptions& options)
 {
-    wxString fullpath = GetSettingFileFullPath(name);
-    return WriteContent(fullpath, content, true, conv);
+    wxString fullpath = GetSettingFileFullPath(name, options);
+    return WriteContent(fullpath, content, true, options);
 }

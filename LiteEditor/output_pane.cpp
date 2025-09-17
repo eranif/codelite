@@ -48,7 +48,9 @@
 #include <wx/xrc/xmlres.h>
 
 #if MAINBOOK_AUIBOOK
+#if wxCHECK_VERSION(3, 3, 0)
 #include <wx/aui/serializer.h>
+#endif
 #endif
 
 OutputPane::OutputPane(wxWindow* parent, const wxString& caption, long style)
@@ -188,7 +190,8 @@ void OutputPane::SaveTabOrder()
 #if wxCHECK_VERSION(3, 3, 0)
     clAuiSerializer serializer;
     m_book->SaveLayout("notebook", serializer);
-    wxString fullpath = FileManager::GetSettingFileFullPath("output-pane-layout.xml");
+    WriteOptions opts{.force_global = true};
+    wxString fullpath = FileManager::GetSettingFileFullPath("output-pane-layout.xml", opts);
     if (!FileManager::WriteSettingsFileContent(fullpath, serializer.GetXML())) {
         clWARNING() << "Failed to save output pane layout file:" << fullpath;
     }
@@ -260,7 +263,8 @@ void OutputPane::ApplySavedTabOrder([[maybe_unused]] bool update_ui) const
 #else
 #if wxCHECK_VERSION(3, 3, 0)
     try {
-        auto xml_content = FileManager::ReadSettingsFileContent("output-pane-layout.xml");
+        WriteOptions opts{.force_global = true};
+        auto xml_content = FileManager::ReadSettingsFileContent("output-pane-layout.xml", opts);
         if (xml_content.has_value()) {
             clAuiDeserializer deserializer{xml_content.value()};
             m_book->LoadLayout("notebook", deserializer);

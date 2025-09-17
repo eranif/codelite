@@ -650,7 +650,7 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
         return;
 
     // Make the git console visible
-    m_mgr->ShowOutputPane("Git");
+    m_mgr->ShowManagementWindow(GIT_TAB_NAME, true);
 
     wxString workingDir = wxFileName(files.Item(0)).GetPath(wxPATH_UNIX);
     if (!GetRepositoryPath().empty()) {
@@ -689,7 +689,7 @@ void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
     }
 
     // Make the git console visible
-    m_mgr->ShowOutputPane("Git");
+    m_mgr->ShowManagementWindow(GIT_TAB_NAME, true);
 
     for (const wxString& filename : files) {
         // Pepare the command:
@@ -722,7 +722,7 @@ void GitPlugin::OnFileResetSelected(wxCommandEvent& e)
         return;
 
     // Make the git console visible
-    m_mgr->ShowOutputPane("Git");
+    m_mgr->ShowManagementWindow(GIT_TAB_NAME, true);
 
     wxString workingDir = wxFileName(files.Item(0)).GetPath(wxPATH_UNIX);
     if (!GetRepositoryPath().empty()) {
@@ -894,16 +894,9 @@ void GitPlugin::OnPush(wxCommandEvent& e)
 
     wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("Push all local commits?"), "GitPromptBeforePush");
     if (res == wxID_YES) {
-        // wxString remote = m_remotes[0];
-        // if(m_remotes.GetCount() > 1) {
-        //     remote = wxGetSingleChoice(_("Select remote to push to."), _("Select remote"), m_remotes,
-        //     EventNotifier::Get()->TopFrame()); if(remote.IsEmpty()) {
-        //         return;
-        //     }
-        // }
         gitAction ga(gitPush, /*remote + wxT(" ") + m_currentBranch*/ wxEmptyString);
         m_gitActionQueue.push_back(ga);
-        m_mgr->ShowOutputPane("Git");
+        m_mgr->ShowManagementWindow(GIT_TAB_NAME, true);
         ProcessGitActionQueue();
     }
 }
@@ -2591,7 +2584,7 @@ void GitPlugin::DoExecuteCommands(const GitCmd::Vec_t& commands, const wxString&
     }
     m_commandProcessor->Bind(wxEVT_COMMAND_PROCESSOR_OUTPUT, &GitPlugin::OnCommandOutput, this);
     m_commandProcessor->Bind(wxEVT_COMMAND_PROCESSOR_ENDED, &GitPlugin::OnCommandEnded, this);
-    m_mgr->ShowOutputPane("Git");
+    m_mgr->ShowManagementWindow(GIT_TAB_NAME, true);
     m_commandProcessor->ExecuteCommand();
 }
 

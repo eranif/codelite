@@ -77,7 +77,11 @@ wxString wxAuiChopText(wxDC& dc, const wxString& text, int max_size)
     return ret;
 }
 
-void Draw3DSash(wxDC& dc, const wxRect& rect, int orientation, const wxColour& bg, const wxColour& light_colour,
+void Draw3DSash(wxDC& dc,
+                const wxRect& rect,
+                int orientation,
+                const wxColour& bg,
+                const wxColour& light_colour,
                 const wxColour& dark_colour)
 {
     dc.SetPen(bg);
@@ -117,8 +121,8 @@ clAuiDockArt::~clAuiDockArt()
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clAuiDockArt::OnSettingsChanged, this);
 }
 
-void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect,
-                                  wxAuiPaneInfo& pane)
+void clAuiDockArt::DrawPaneButton(
+    wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect, wxAuiPaneInfo& pane)
 {
     wxRect buttonRect = _rect;
 
@@ -174,8 +178,8 @@ void clAuiDockArt::DrawPaneButton(wxDC& dc, wxWindow* window, int button, int bu
     }
 }
 
-void clAuiDockArt::DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect,
-                               wxAuiPaneInfo& pane)
+void clAuiDockArt::DrawCaption(
+    wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect, wxAuiPaneInfo& pane)
 {
     if (!IsRectOK(dc, rect))
         return;
@@ -330,9 +334,9 @@ void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const w
 #elif defined(__WXMAC__) || defined(__WXMSW__)
     if (isDark) {
         auto bg_colour = clSystemSettings::GetDefaultPanelColour().ChangeLightness(110);
-        auto light_col = bg_colour.ChangeLightness(120);
-        auto dark_col = bg_colour.ChangeLightness(60);
-        Draw3DSash(dc, rect, orientation, bg_colour, light_col, dark_col);
+        [[maybe_unused]] auto light_col = bg_colour.ChangeLightness(120);
+        [[maybe_unused]] auto dark_col = bg_colour.ChangeLightness(60);
+        Draw3DSash(dc, rect, orientation, bg_colour, bg_colour, bg_colour);
 
     } else {
         auto dark_col = wxColour("LIGHT GREY");

@@ -18,7 +18,8 @@ class ChatAIWindow : public AssistanceAIChatWindowBase
 public:
     ChatAIWindow(wxWindow* parent, ChatAI* plugin);
     virtual ~ChatAIWindow();
-
+    wxString GetActiveModel() const { return m_activeModel->GetStringSelection(); }
+    
 protected:
     void OnStop(wxCommandEvent& event);
     void OnStopUI(wxUpdateUIEvent& event);
@@ -31,14 +32,14 @@ protected:
     void OnNewSession(wxCommandEvent& event);
     void OnRefreshModelList(wxCommandEvent& event);
     void OnSettings(wxCommandEvent& event);
-    void OnLog(OllamaEvent& event);
+    void OnLog(LLMEvent& event);
     void UpdateTheme();
     void DoSendPrompt();
-    void OnChatStarted(OllamaEvent& event);
-    void OnChatAIOutput(OllamaEvent& event);
-    void OnChatAIOutputDone(OllamaEvent& event);
-    void OnModels(OllamaEvent& event);
-    void OnThinking(OllamaEvent& event);
+    void OnChatStarted(LLMEvent& event);
+    void OnChatAIOutput(LLMEvent& event);
+    void OnChatAIOutputDone(LLMEvent& event);
+    void OnModels(LLMEvent& event);
+    void OnThinking(LLMEvent& event);
     void OnFileSaved(clCommandEvent& event);
     void PopulateModels();
     void SetFocusToActiveEditor();
@@ -64,7 +65,7 @@ protected:
     void ShowIndicator(bool show);
     void NotifyThinking(bool thinking);
     void OnTimer(wxTimerEvent& event);
-
+    
 private:
     ChatAI* m_plugin{nullptr};
     wxChoice* m_activeModel{nullptr};
@@ -73,8 +74,3 @@ private:
     bool m_thinking{false};
     IndicatorPanel* m_statusPanel{nullptr};
 };
-
-wxDECLARE_EVENT(wxEVT_CHATAI_SEND, clCommandEvent);
-wxDECLARE_EVENT(wxEVT_CHATAI_STOP, clCommandEvent);
-wxDECLARE_EVENT(wxEVT_CHATAI_START, clCommandEvent);
-wxDECLARE_EVENT(wxEVT_CHATAI_INTERRUPT, clCommandEvent);

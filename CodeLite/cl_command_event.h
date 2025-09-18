@@ -68,7 +68,7 @@ public:
     {
         // Because GetString() can retrieve the string text only on demand, we
         // need to copy it explicitly.
-        if(m_cmdString.empty())
+        if (m_cmdString.empty())
             m_cmdString = event.GetString();
     }
 
@@ -398,7 +398,7 @@ public:
 
     void SetFlag(eFlags f, bool b)
     {
-        if(b) {
+        if (b) {
             m_flags |= f;
         } else {
             m_flags &= ~f;
@@ -451,9 +451,9 @@ class WXDLLIMPEXP_CL clDebugEvent : public clCommandEvent
     wxString m_arguments;        // wxEVT_DBG_UI_QUICK_DEBUG
     wxString m_startupCommands;  // wxEVT_DBG_UI_QUICK_DEBUG
     size_t m_features = kAllFeatures;
-    wxString m_memoryAddress;    // wxEVT_DEBUGGER_SET_MEMORY
-    wxString m_memoryBlockValue; // wxEVT_DEBUGGER_SET_MEMORY
-    size_t m_memoryBlockSize = 32;    // wxEVT_DEBUGGER_SET_MEMORY
+    wxString m_memoryAddress;      // wxEVT_DEBUGGER_SET_MEMORY
+    wxString m_memoryBlockValue;   // wxEVT_DEBUGGER_SET_MEMORY
+    size_t m_memoryBlockSize = 32; // wxEVT_DEBUGGER_SET_MEMORY
     clDebuggerBreakpoint::Vec_t m_breakpoints;
     bool m_isSSHDebugging = false;
     wxString m_alternateDebuggerPath; // Holds the path to an alternate debugger executable

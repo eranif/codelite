@@ -1,6 +1,7 @@
 #include "ChatAIWindow.hpp"
 
 #include "ChatAI.hpp"
+#include "ChatAIEvents.hpp"
 #include "ColoursAndFontsManager.h"
 #include "FileManager.hpp"
 #include "MarkdownStyler.hpp"
@@ -14,11 +15,6 @@
 #include "globals.h"
 
 #include <wx/msgdlg.h>
-
-wxDEFINE_EVENT(wxEVT_CHATAI_SEND, clCommandEvent);
-wxDEFINE_EVENT(wxEVT_CHATAI_STOP, clCommandEvent);
-wxDEFINE_EVENT(wxEVT_CHATAI_START, clCommandEvent);
-wxDEFINE_EVENT(wxEVT_CHATAI_INTERRUPT, clCommandEvent);
 
 namespace
 {
@@ -117,7 +113,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
 
     m_plugin->GetClient().SetLogSink([](ollama::LogLevel level, std::string message) {
         // For now, just print it to the log.
-        OllamaEvent log_event{wxEVT_OLLAMA_LOG};
+        LLMEvent log_event{wxEVT_OLLAMA_LOG};
         log_event.SetLogLevel(level);
         log_event.SetStringRaw(message);
         EventNotifier::Get()->AddPendingEvent(log_event);
@@ -280,7 +276,7 @@ void ChatAIWindow::DoLogMessage(const wxString& message, ollama::LogLevel log_le
     m_logView->StyleAndAppend(sv, nullptr);
 }
 
-void ChatAIWindow::OnLog(OllamaEvent& event)
+void ChatAIWindow::OnLog(LLMEvent& event)
 {
     wxString content = wxString::FromUTF8(event.GetStringRaw());
     DoLogMessage(content, event.GetLogLevel());
@@ -357,13 +353,13 @@ void ChatAIWindow::OnNewSession(wxCommandEvent& event)
     DoReset();
 }
 
-void ChatAIWindow::OnChatStarted(OllamaEvent& event)
+void ChatAIWindow::OnChatStarted(LLMEvent& event)
 {
     event.Skip();
     AppendOutput("**Assistant**:\n");
 }
 
-void ChatAIWindow::OnChatAIOutput(OllamaEvent& event)
+void ChatAIWindow::OnChatAIOutput(LLMEvent& event)
 {
     bool changed_state = (event.IsThinking() != m_thinking);
     if (changed_state) {
@@ -398,7 +394,7 @@ void ChatAIWindow::OnChatAIOutput(OllamaEvent& event)
     }
 }
 
-void ChatAIWindow::OnChatAIOutputDone(OllamaEvent& event)
+void ChatAIWindow::OnChatAIOutputDone(LLMEvent& event)
 {
     StyleOutput();
     m_thinking = false;
@@ -432,7 +428,7 @@ void ChatAIWindow::OnFileSaved(clCommandEvent& event)
     }
 }
 
-void ChatAIWindow::OnThinking(OllamaEvent& event)
+void ChatAIWindow::OnThinking(LLMEvent& event)
 {
     // change the thinking state
     m_thinking = event.IsThinking();
@@ -445,7 +441,7 @@ void ChatAIWindow::OnThinking(OllamaEvent& event)
     }
 }
 
-void ChatAIWindow::OnModels(OllamaEvent& event)
+void ChatAIWindow::OnModels(LLMEvent& event)
 {
     m_activeModel->Clear();
     for (const auto& model : event.GetModels()) {
@@ -583,7 +579,7 @@ void ChatAIWindow::OnStopUI(wxUpdateUIEvent& event) { event.Enable(m_plugin->Get
 
 void ChatAIWindow::NotifyThinking(bool thinking)
 {
-    OllamaEvent think_event{wxEVT_OLLAMA_THINKING};
+    LLMEvent think_event{wxEVT_OLLAMA_THINKING};
     think_event.SetThinking(thinking);
     EventNotifier::Get()->AddPendingEvent(think_event);
 }

@@ -26,6 +26,7 @@
 
 #include "ChatAIWindow.hpp"
 #include "OllamaClient.hpp"
+#include "cl_command_event.h"
 #include "plugin.h"
 
 class ChatAI : public IPlugin
@@ -42,7 +43,8 @@ public:
 
 private:
     void OnShowChatWindow(wxCommandEvent& event);
-    void OnInterrupt(clCommandEvent& event);
+    void OnIsLlmAvailable(clCommandEvent& event);
+    void OnLlmRequest(clCommandEvent& event);
 
     ChatAIWindow* m_chatWindow = nullptr;
     OllamaClient m_cli;

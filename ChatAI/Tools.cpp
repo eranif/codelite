@@ -56,7 +56,7 @@ FunctionResult RunOnMain(std::function<FunctionResult()> callback, const wxStrin
         };
 
         // And post it to the main thread for execution
-        OllamaEvent event_tool{wxEVT_OLLAMA_RUN_TOOL};
+        LLMEvent event_tool{wxEVT_OLLAMA_RUN_TOOL};
         event_tool.SetCallback(std::move(wrapped_cb));
         event_tool.SetString(tool_name);
         EventNotifier::Get()->AddPendingEvent(event_tool);

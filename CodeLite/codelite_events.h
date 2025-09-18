@@ -667,8 +667,8 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_EXPR_TOOLTIP, clDebugEvent);
 // This event is sent by codelite to all plugins to determine whether a plugin is actually a debugger.
 // A plugin should *always* call event.Skip() when handling this event. If the plugin is actually a debugger
 // plugin, it should add itself like this: event.GetStrings().Add("<the-debugger-name")
-// This string is later will be available for codelite to display it in various dialogs (e.g. Quick Debug, project settings
-// etc)
+// This string is later will be available for codelite to display it in various dialogs (e.g. Quick Debug, project
+// settings etc)
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_IS_PLUGIN_DEBUGGER, clDebugEvent);
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL,
@@ -992,5 +992,19 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_EDITOR_MARGIN_CLICKED, clEditorEv
 
 // The output view tab changed. The new active tab can be retrieved from event.GetString()
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_OUTPUT_VIEW_TAB_CHANGED, clCommandEvent);
+
+// LLM events
+
+/// Send request to LLM. Provide the prompt in the "SetString" member function. Use AddPendingEvent.
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LLM_REQUEST, clCommandEvent);
+/// Received a response from the LLM. Use GetString() member function to get
+/// the message.
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LLM_RESPONSE, clCommandEvent);
+
+/// Check if LLM is available. Response is returned using IsAnswer() member function.
+/// Use ProcessEvent()
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LLM_IS_AVAILABLE, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LLM_RESPONSE_ERROR, clCommandEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LLM_RESPONSE_COMPLETED, clCommandEvent);
 
 #endif // CODELITE_EVENTS_H

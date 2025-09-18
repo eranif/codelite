@@ -25,6 +25,7 @@
 #include "ChatAI.hpp"
 
 #include "Keyboard/clKeyboardManager.h"
+#include "codelite_events.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "macromanager.h"
@@ -74,8 +75,6 @@ ChatAI::ChatAI(IManager* manager)
     wxTheApp->Bind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("chatai_show_window"));
 
     m_cli.GetConfig().Load();
-    EventNotifier::Get()->Bind(wxEVT_CHATAI_INTERRUPT, &ChatAI::OnInterrupt, this);
-
     m_chatWindow = new ChatAIWindow(m_mgr->BookGet(PaneId::SIDE_BAR), this);
     m_mgr->BookAddPage(PaneId::SIDE_BAR, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
 }
@@ -110,8 +109,12 @@ void ChatAI::OnShowChatWindow(wxCommandEvent& event)
     m_chatWindow->GetStcInput()->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 
-void ChatAI::OnInterrupt(clCommandEvent& event)
+void ChatAI::OnIsLlmAvailable(clCommandEvent& event) { event.SetAnswer(true); }
+
+void ChatAI::OnLlmRequest(clCommandEvent& event)
 {
-    wxUnusedVar(event);
-    m_cli.Interrupt();
+    wxString prompt = event.GetString();
+    m_cli.Send(dynamic_cast<wxEvtHandler*>(event.GetEventObject()), // response event will be sent here
+               std::move(prompt),
+               m_chatWindow->GetActiveModel());
 }

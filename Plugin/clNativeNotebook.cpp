@@ -18,9 +18,12 @@
 #include <wx/wupdlock.h>
 
 #ifdef __WXGTK__
+
 //===------------------
 // GTK specifics
 //===------------------
+
+#if wxCHECK_VERSION(3, 3, 0)
 class wxGtkNotebookPage
 {
 public:
@@ -30,6 +33,16 @@ public:
     int m_imageIndex;
     wxString m_text;
 };
+#else
+class wxGtkNotebookPage : public wxObject
+{
+public:
+    GtkWidget* m_box;
+    GtkWidget* m_label;
+    GtkWidget* m_image;
+    int m_imageIndex;
+};
+#endif
 
 static void on_action_button_clicked(GtkWidget* widget, clNativeNotebook* book)
 {

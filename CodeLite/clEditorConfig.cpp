@@ -90,7 +90,12 @@ public:
     }
 
 public:
-    void GetPatterns(wxArrayString& patterns) { DoGetPatterns(this, patterns, data); }
+    wxArrayString GetPatterns()
+    {
+        wxArrayString patterns;
+        DoGetPatterns(this, patterns, data);
+        return patterns;
+    }
     void Add(const wxString& pattern)
     {
         wxArrayString arr;
@@ -234,8 +239,7 @@ wxArrayString clEditorConfig::ProcessSection(wxString& strLine)
 
     wxArrayString res;
     for(size_t i = 0; i < trees.size(); ++i) {
-        wxArrayString patterns;
-        trees.at(i)->GetPatterns(patterns);
+        wxArrayString patterns = trees.at(i)->GetPatterns();
         res.insert(res.end(), patterns.begin(), patterns.end());
         delete trees.at(i);
     }

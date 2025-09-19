@@ -57,11 +57,11 @@ const wxEventType wxEVT_SFTP_SETUP_WORKSPACE_MIRRORING = ::wxNewEventType();
 const wxEventType wxEVT_SFTP_DISABLE_WORKSPACE_MIRRORING = ::wxNewEventType();
 
 // Exposed API (via events)
-// SFTP plugin provides SFTP functionality for codelite based on events
-// It uses the event type clCommandEvent to accept requests from codelite's code
+// SFTP plugin provides SFTP functionality for CodeLite based on events
+// It uses the event type clCommandEvent to accept requests from CodeLite's code
 // the SFTP uses the event GetString() method to read a string in the form of JSON format
 // For example, to instruct the plugin to connect over SSH to a remote server and save a remote file:
-// the GetString() should retrun this JSON string:
+// the GetString() should return this JSON string:
 //  {
 //      account : "account-name-to-use",
 //      local_file : "/path/to/local/file",

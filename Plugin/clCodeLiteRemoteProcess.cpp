@@ -749,7 +749,7 @@ bool clCodeLiteRemoteProcess::SyncExec(const wxString& cmd,
     }
 
     // DoExec pushes a callback to the queue - pop it
-    // as we dont really need it
+    // as we don't really need it
     m_completionCallbacks.pop_back();
 
     // read

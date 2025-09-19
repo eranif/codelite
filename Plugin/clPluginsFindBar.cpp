@@ -425,7 +425,7 @@ void clPluginsFindBar::DoReplace()
     size_t replacementLen = replaceWith.length();
     if(searchFlags & wxSTC_FIND_REGEXP) {
 
-        // Regular expresson search
+        // Regular expression search
         if(!(searchFlags & wxSTC_FIND_MATCHCASE)) {
             re_flags |= wxRE_ICASE;
         }
@@ -864,7 +864,7 @@ void clPluginsFindBar::DoEnsureLineIsVisible(wxStyledTextCtrl* sci, int line)
 void clPluginsFindBar::DoFixRegexParen(wxString& findwhat)
 {
     // Scintilla's REGEX group markers are \( and \)
-    // while wxRegEx is usig bare ( and ) and the escaped version for
+    // while wxRegEx is using bare ( and ) and the escaped version for
     // non regex manner
     findwhat.Replace("\\(", "/<!@#$");
     findwhat.Replace("\\)", "/>!@#$");
@@ -970,7 +970,7 @@ void clPluginsFindBar::DoReplaceAll(bool selectionOnly)
                 wxString selectedText = m_sci->GetSelectedText();
                 if(searchFlags & wxSTC_FIND_REGEXP) {
 
-                    // Regular expresson search
+                    // Regular expression search
                     if(!(searchFlags & wxSTC_FIND_MATCHCASE)) {
                         re_flags |= wxRE_ICASE;
                     }
@@ -1003,7 +1003,7 @@ void clPluginsFindBar::DoReplaceAll(bool selectionOnly)
                 // the match is not in the selection range
                 newpos = pos + replacementLen;
                 if(newpos <= pos) {
-                    newpos = pos + 1; // make sure we dont hang
+                    newpos = pos + 1; // make sure we don't hang
                 }
 
                 // Move to the next match

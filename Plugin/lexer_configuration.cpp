@@ -149,7 +149,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     ctrl->SetBufferedDraw(true);
 #elif defined(__WXGTK__)
     ctrl->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
-    // need to force this to false, see thess bugs:
+    // need to force this to false, see these bugs:
     // https://github.com/eranif/codelite/issues/3010
     // https://github.com/eranif/codelite/issues/2992
     ctrl->SetBufferedDraw(false);
@@ -222,7 +222,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
         // handle special cases
         switch (sp.GetId()) {
         case WHITE_SPACE_ATTR_ID: {
-            // whitespace colour. We dont allow changing the background colour, only the foreground colour
+            // whitespace colour. We don't allow changing the background colour, only the foreground colour
             wxColour whitespaceColour = to_wx_colour(sp.GetFgColour());
             if (whitespaceColour.IsOk()) {
                 ctrl->SetWhitespaceForeground(true, whitespaceColour);
@@ -366,7 +366,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     ctrl->SetTabWidth(options->GetTabWidth());
     ctrl->SetIndent(options->GetIndentWidth());
 
-    // Overide TAB vs Space settings incase the file is a makefile
+    // Override TAB vs Space settings incase the file is a makefile
     // It is not an option for Makefile to use SPACES
     if (GetName().Lower() == "makefile") {
         ctrl->SetUseTabs(true);

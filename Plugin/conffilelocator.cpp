@@ -33,10 +33,6 @@
 
 ConfFileLocator* ConfFileLocator::ms_instance = 0;
 
-ConfFileLocator::ConfFileLocator() {}
-
-ConfFileLocator::~ConfFileLocator() {}
-
 ConfFileLocator* ConfFileLocator::Instance()
 {
     if(ms_instance == 0) {

@@ -53,8 +53,8 @@ private:
     static bool handle_cxx_casting(CxxTokenizer& tokenizer, wxString* cast_type);
 
 public:
-    CxxExpression();
-    ~CxxExpression();
+    CxxExpression() = default;
+    ~CxxExpression() = default;
 
     bool ok() const { return !m_type_name.empty() || m_operand != 0; }
 

@@ -17,6 +17,6 @@ struct WXDLLIMPEXP_SDK clTab {
     bool isFile = false;
     wxFileName filename;
     bool isModified = false;
-    clTab() {}
+    clTab() = default;
 };
 #endif // CLTAB_H

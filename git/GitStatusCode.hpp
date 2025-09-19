@@ -22,7 +22,7 @@ private:
 
 public:
     GitStatusCode(const wxString& message);
-    ~GitStatusCode();
+    ~GitStatusCode() = default;
 
     GitStatusCode::Code GetCode() const { return m_code; }
     const wxString& GetSubText() const { return m_subText; }

@@ -12,8 +12,6 @@ LSP::SignatureHelpRequest::SignatureHelpRequest(const wxString& filename, size_t
     m_params->As<TextDocumentPositionParams>()->SetPosition(Position(line, column));
 }
 
-LSP::SignatureHelpRequest::~SignatureHelpRequest() {}
-
 void LSP::SignatureHelpRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     if(!response.Has("result")) {

@@ -41,7 +41,7 @@ protected:
 
 public:
     AutoSaveSettings();
-    ~AutoSaveSettings();
+    ~AutoSaveSettings() = default;
 
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;

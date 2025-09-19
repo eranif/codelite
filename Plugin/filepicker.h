@@ -69,7 +69,7 @@ public:
                const wxString& buttonCaption = _("Browse"), const wxPoint& pos = wxDefaultPosition,
                const wxSize& size = wxDefaultSize, long style = wxFD_DEFAULT_STYLE);
 
-    virtual ~FilePicker();
+    virtual ~FilePicker() = default;
 
     /**
      * \return the path

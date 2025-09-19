@@ -59,7 +59,7 @@ public:
 public:
     XDebugBreakpoint();
     XDebugBreakpoint(const wxString& filename, int line);
-    virtual ~XDebugBreakpoint();
+    virtual ~XDebugBreakpoint() = default;
     bool operator==(const XDebugBreakpoint& other) const;
 
     bool IsApplied() const { return m_breakpointId != wxNOT_FOUND; }

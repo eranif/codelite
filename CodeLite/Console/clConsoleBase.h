@@ -53,8 +53,8 @@ protected:
     void MacAddArgsIfNeeded(wxString* outcmd);
 
 public:
-    clConsoleBase();
-    virtual ~clConsoleBase();
+    clConsoleBase() = default;
+    virtual ~clConsoleBase() = default;
 
     /**
      * @brief when sink is provided, the terminal will send event when its done

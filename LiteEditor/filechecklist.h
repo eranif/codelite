@@ -48,7 +48,7 @@ public:
     /** Constructor */
     FileCheckList( wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = wxEmptyString,
                    const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize);
-    ~FileCheckList();
+    ~FileCheckList() = default;
 
     void SetCancellable(bool can) {
         m_buttonCancel->Show(can);

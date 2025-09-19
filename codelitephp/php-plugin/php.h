@@ -70,7 +70,7 @@ public:
 
 public:
     PhpPlugin(IManager* manager);
-    ~PhpPlugin() override;
+    ~PhpPlugin() override = default;
     void SafelyDetachAndDestroyPane(wxWindow* pane, const wxString& name);
     void EnsureAuiPaneIsVisible(const wxString& paneName, bool update = false);
     void FinalizeStartup();

@@ -45,10 +45,6 @@ public:
     }
 };
 
-clConsoleBase::clConsoleBase() {}
-
-clConsoleBase::~clConsoleBase() {}
-
 clConsoleBase::Ptr_t clConsoleBase::GetTerminal()
 {
     clConsoleBase::Ptr_t terminal;

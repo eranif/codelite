@@ -49,7 +49,7 @@ protected:
 public:
 	/** Constructor */
 	NewWxProjectDlg( wxWindow* parent, IManager *mgr  );
-	virtual ~NewWxProjectDlg();
+    virtual ~NewWxProjectDlg() = default;
 	
 	void GetProjectInfo(NewWxProjectInfo &info);
 };

@@ -19,8 +19,8 @@ protected:
     wxWindow* GetSearchTab();
 
 public:
-    clRemoteFinderHelper();
-    ~clRemoteFinderHelper();
+    clRemoteFinderHelper() = default;
+    ~clRemoteFinderHelper() = default;
 
     void SetCodeLiteRemote(clCodeLiteRemoteProcess* clr);
 

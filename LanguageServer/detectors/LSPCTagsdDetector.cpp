@@ -10,8 +10,6 @@ LSPCTagsdDetector::LSPCTagsdDetector()
 {
 }
 
-LSPCTagsdDetector::~LSPCTagsdDetector() {}
-
 bool LSPCTagsdDetector::DoLocate()
 {
     wxFileName ctagsd(clStandardPaths::Get().GetBinaryFullPath("ctagsd"));

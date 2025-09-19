@@ -37,7 +37,7 @@ public:
     enum eNotebookTheme { kDefault, kDark };
 
 public:
-    clNotebookTheme() {}
+    clNotebookTheme() = default;
 
     static clNotebookTheme GetTheme(clNotebookTheme::eNotebookTheme theme);
 

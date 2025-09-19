@@ -51,8 +51,6 @@ SvnSyncDialog::SvnSyncDialog(wxWindow* parent,
     WindowAttrManager::Load(this);
 }
 
-SvnSyncDialog::~SvnSyncDialog() {}
-
 void SvnSyncDialog::UpdateUrl(const wxString& rootDir)
 {
     SvnInfo svnInfo;

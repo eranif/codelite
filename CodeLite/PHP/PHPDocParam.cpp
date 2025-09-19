@@ -8,8 +8,6 @@ PHPDocParam::PHPDocParam(PHPSourceFile& sourceFile, const wxString& comment)
 {
 }
 
-PHPDocParam::~PHPDocParam() {}
-
 const PHPDocParam::Vec_t& PHPDocParam::Parse()
 {
     wxString sname;

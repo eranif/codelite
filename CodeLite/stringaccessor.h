@@ -35,7 +35,7 @@ class WXDLLIMPEXP_CL StringAccessor
 
 public:
     StringAccessor(const wxString &str);
-    virtual ~StringAccessor();
+    virtual ~StringAccessor() = default;
 
     size_t length() {
         return m_str.size();

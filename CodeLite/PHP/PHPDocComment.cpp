@@ -99,8 +99,6 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
     ProcessMethods();
 }
 
-PHPDocComment::~PHPDocComment() {}
-
 const wxString& PHPDocComment::GetParam(size_t n) const
 {
     if(n >= m_paramsArr.GetCount()) {

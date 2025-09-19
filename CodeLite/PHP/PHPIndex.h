@@ -36,9 +36,9 @@
 class WXDLLIMPEXP_CL PHPIndex
 {
 public:
-    PHPIndex();
-    virtual ~PHPIndex();
-    
+    PHPIndex() = default;
+    virtual ~PHPIndex() = default;
+
     /**
      * @brief index list of files and store them into the database
      */

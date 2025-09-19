@@ -7,7 +7,7 @@ class WXDLLIMPEXP_SDK ThemeImporterDockerfile : public ThemeImporterBase
 {
 public:
     ThemeImporterDockerfile();
-    virtual ~ThemeImporterDockerfile();
+    virtual ~ThemeImporterDockerfile() = default;
 
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);

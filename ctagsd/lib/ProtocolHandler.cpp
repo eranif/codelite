@@ -146,8 +146,6 @@ size_t read_file_list(const wxString& settings_dir, const CTagsdSettings& settin
 
 } // namespace
 
-ProtocolHandler::ProtocolHandler() {}
-
 ProtocolHandler::~ProtocolHandler() { m_parse_thread.stop(); }
 
 void ProtocolHandler::send_log_message(const wxString& message, int level, Channel::ptr_t channel)

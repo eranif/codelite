@@ -95,7 +95,7 @@ public:
 public:
     CppToken();
     CppToken(wxSQLite3ResultSet& res);
-    ~CppToken();
+    ~CppToken() = default;
 
     void reset();
     void append(wxChar ch);
@@ -128,7 +128,7 @@ class WXDLLIMPEXP_CL CppTokensMap
     std::unordered_map<wxString, std::vector<CppToken>*> m_tokens;
 
 public:
-    CppTokensMap();
+    CppTokensMap() = default;
     ~CppTokensMap();
 
     /**

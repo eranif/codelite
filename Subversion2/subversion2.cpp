@@ -212,8 +212,6 @@ Subversion2::Subversion2(IManager* manager)
     // clGotoAnythingManager::Get().Add(clGotoEntry("Svn > Update", "", XRCID("svn_update")));
 }
 
-Subversion2::~Subversion2() {}
-
 void Subversion2::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void Subversion2::CreatePluginMenu(wxMenu* pluginsMenu)

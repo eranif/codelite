@@ -41,7 +41,7 @@ public:
     {
     }
 
-    virtual ~clWebSocketHelperThread() {}
+    virtual ~clWebSocketHelperThread() = default;
 
     void* Entry()
     {

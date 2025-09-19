@@ -34,10 +34,6 @@ DbExplorerSettings::DbExplorerSettings()
 {
 }
 
-DbExplorerSettings::~DbExplorerSettings()
-{
-}
-
 void DbExplorerSettings::SetRecentFiles(const wxArrayString& recentFiles)
 {
     m_recentFiles.Clear();
@@ -124,10 +120,6 @@ JSONItem DbExplorerSettings::ToJSON() const
 DbConnectionInfo::DbConnectionInfo()
     : clConfigItem("connection-info")
     , m_connectionType(DbConnTypeMySQL)
-{
-}
-
-DbConnectionInfo::~DbConnectionInfo()
 {
 }
 

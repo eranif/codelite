@@ -10,8 +10,8 @@ class GrepData
     bool m_wholeWord = true;
 
 public:
-    GrepData() {}
-    ~GrepData() {}
+    GrepData() = default;
+    ~GrepData() = default;
 
     void SetFindWhat(const wxString& findWhat) { this->m_findWhat = findWhat; }
     void SetIgnoreCase(bool ignoreCase) { this->m_ignoreCase = ignoreCase; }

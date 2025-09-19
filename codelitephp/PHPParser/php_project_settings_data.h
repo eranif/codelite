@@ -62,7 +62,7 @@ public:
 
 public:
     PHPProjectSettingsData();
-    virtual ~PHPProjectSettingsData();
+    virtual ~PHPProjectSettingsData() = default;
 
     void FromJSON(const JSONItem& ele);
     JSONItem ToJSON() const;

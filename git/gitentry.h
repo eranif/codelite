@@ -42,7 +42,7 @@
 #include <wx/event.h>
 
 struct GitLabelCommand {
-    GitLabelCommand() {}
+    GitLabelCommand() = default;
 
     GitLabelCommand(const wxString& l, const wxString& c)
         : label(l)
@@ -64,7 +64,7 @@ protected:
     int m_lastUsed;
 
 public:
-    GitCommandsEntries() {}
+    GitCommandsEntries() = default;
     GitCommandsEntries(const wxString& commandName)
         : m_commandName(commandName)
         , m_lastUsed(-1)
@@ -77,7 +77,7 @@ public:
     {
     }
 
-    virtual ~GitCommandsEntries() {}
+    virtual ~GitCommandsEntries() = default;
     void FromJSON(const JSONItem& json);
     void ToJSON(JSONItem& arr) const;
 
@@ -106,7 +106,7 @@ typedef std::unordered_map<wxString, GitCommandsEntries> GitCommandsEntriesMap_t
 class GitWorkspace
 {
 public:
-    GitWorkspace() {}
+    GitWorkspace() = default;
     GitWorkspace(const wxString& name)
         : m_name(name)
     {
@@ -173,7 +173,7 @@ public:
 
 public:
     GitEntry();
-    virtual ~GitEntry();
+    virtual ~GitEntry() = default;
 
 public:
     static GitEntry::GitProperties ReadGitProperties(const wxString& localRepoPath = "");

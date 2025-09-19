@@ -37,7 +37,7 @@ public:
     using Vect_t = std::vector<SSHAccountInfo>;
 
     SSHAccountInfo();
-    virtual ~SSHAccountInfo();
+    virtual ~SSHAccountInfo() = default;
     SSHAccountInfo& operator=(const SSHAccountInfo& other);
 
     bool IsOk() const { return !m_accountName.empty() && !m_host.empty() && !m_username.empty(); }

@@ -55,8 +55,6 @@ PreferencesDialog::PreferencesDialog(wxWindow* parent)
     MSWSetWindowDarkTheme(this);
 }
 
-PreferencesDialog::~PreferencesDialog() {}
-
 void PreferencesDialog::OnButtonOK(wxCommandEvent&)
 {
     DoSave();

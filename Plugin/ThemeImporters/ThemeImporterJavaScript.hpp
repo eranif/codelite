@@ -33,7 +33,7 @@ class WXDLLIMPEXP_SDK ThemeImporterJavaScript : public ThemeImporterBase
 {
 public:
     ThemeImporterJavaScript();
-    virtual ~ThemeImporterJavaScript();
+    virtual ~ThemeImporterJavaScript() = default;
 
     /**
      * @brief import an eclipse XML colour theme

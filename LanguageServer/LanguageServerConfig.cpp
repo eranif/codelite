@@ -11,8 +11,6 @@ LanguageServerConfig::LanguageServerConfig()
     locator.Locate();
 }
 
-LanguageServerConfig::~LanguageServerConfig() {}
-
 LanguageServerConfig& LanguageServerConfig::Load()
 {
     clConfig conf("LanguageServer.conf");

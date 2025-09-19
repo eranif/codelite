@@ -1454,8 +1454,6 @@ clTabCtrlDropTarget::clTabCtrlDropTarget(clGenericNotebook* notebook)
 {
 }
 
-clTabCtrlDropTarget::~clTabCtrlDropTarget() {}
-
 bool clTabCtrlDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data)
 {
     int nTabIndex = s_clTabCtrlDnD_Data.tabIndex;

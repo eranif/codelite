@@ -6,7 +6,7 @@ class GitUserEmailDialog : public GitUserEmailDialogBase
 {
 public:
     GitUserEmailDialog(wxWindow* parent);
-    virtual ~GitUserEmailDialog();
+    virtual ~GitUserEmailDialog() = default;
 
     wxString GetEmail() const { return m_textCtrlEmail->GetValue(); }
     wxString GetUsername() const { return m_textCtrlName->GetValue(); }

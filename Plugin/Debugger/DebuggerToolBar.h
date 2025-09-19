@@ -32,7 +32,7 @@ class WXDLLIMPEXP_SDK DebuggerToolBar : public wxPanel
 
 public:
     DebuggerToolBar(wxWindow* parent);
-    virtual ~DebuggerToolBar();
+    virtual ~DebuggerToolBar() = default;
     bool Show(bool show = true);
 };
 

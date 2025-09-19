@@ -66,7 +66,7 @@ protected:
     WebToolsConfig();
 
 public:
-    virtual ~WebToolsConfig();
+    virtual ~WebToolsConfig() = default;
 
     void SetPortNumber(int portNumber) { this->m_portNumber = portNumber; }
     int GetPortNumber() const { return m_portNumber; }

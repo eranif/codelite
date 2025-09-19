@@ -12,8 +12,6 @@ clConsoleAlacritty::clConsoleAlacritty()
 #endif
 }
 
-clConsoleAlacritty::~clConsoleAlacritty() {}
-
 bool clConsoleAlacritty::StartForDebugger() { return false; }
 
 bool clConsoleAlacritty::Start() { return StartProcess(PrepareCommand()); }

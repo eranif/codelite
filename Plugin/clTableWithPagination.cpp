@@ -50,8 +50,6 @@ clTableWithPagination::clTableWithPagination(wxWindow* parent, wxWindowID winid,
     GetSizer()->Fit(this);
 }
 
-clTableWithPagination::~clTableWithPagination() {}
-
 void clTableWithPagination::SetLinesPerPage(int numLines) { m_linesPerPage = numLines; }
 
 void clTableWithPagination::SetColumns(const wxArrayString& columns)

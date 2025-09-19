@@ -40,7 +40,7 @@ protected:
 
 public:
     ThreadListPanel(wxWindow* parent);
-    virtual ~ThreadListPanel();
+    virtual ~ThreadListPanel() = default;
     void PopulateList(const ThreadEntryArray& threads);
     void Clear();
 };

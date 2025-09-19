@@ -15,5 +15,3 @@ fmtPHPCBF::fmtPHPCBF()
     SetCommand({ php_exe.value_or("php"), "$(WorkspacePath)/vendor/bin/phpcbf", "-q", R"#("$(CurrentFileRelPath)")#" });
     SetEnabled(php_exe.has_value());
 }
-
-fmtPHPCBF::~fmtPHPCBF() {}

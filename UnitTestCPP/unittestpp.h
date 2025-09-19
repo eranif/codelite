@@ -47,7 +47,7 @@ class UnitTestPP : public IPlugin
     
 public:
     UnitTestPP(IManager* manager);
-    ~UnitTestPP() override;
+    ~UnitTestPP() override = default;
 
     //--------------------------------------------
     // Abstract methods

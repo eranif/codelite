@@ -36,11 +36,6 @@ DiffDialog::DiffDialog( wxWindow* parent, IManager *manager )
     WindowAttrManager::Load(this);
 }
 
-DiffDialog::~DiffDialog()
-{
-    
-}
-
 wxString DiffDialog::GetFromRevision() const
 {
     wxString from = m_textCtrlFromRev->GetValue();

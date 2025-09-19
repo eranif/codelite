@@ -3,8 +3,6 @@
 #include "file_logger.h"
 #include <wx/filename.h>
 
-SmartCompletionUsageDB::SmartCompletionUsageDB() {}
-
 SmartCompletionUsageDB::~SmartCompletionUsageDB() { Close(); }
 
 void SmartCompletionUsageDB::Open()

@@ -116,7 +116,7 @@ public:
     }
     /** Constructor */
     SpellCheckerSettings( wxWindow* parent );
-    virtual ~SpellCheckerSettings();
+    virtual ~SpellCheckerSettings() = default;
 };
 
 #endif // __SpellCheckerSettings__

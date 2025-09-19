@@ -32,8 +32,6 @@ ToolInfo::ToolInfo()
 {
 }
 
-ToolInfo::~ToolInfo() {}
-
 void ToolInfo::DeSerialize(Archive& arch)
 {
     arch.Read(wxT("m_id"), m_id);
@@ -69,9 +67,6 @@ void ToolInfo::Serialize(Archive& arch)
 //----------------------------------------------------------------
 // ExternalToolsData
 //----------------------------------------------------------------
-ExternalToolsData::ExternalToolsData() {}
-
-ExternalToolsData::~ExternalToolsData() {}
 
 const std::vector<ToolInfo>& ExternalToolsData::GetTools() const { return m_tools; }
 

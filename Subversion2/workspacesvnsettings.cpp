@@ -39,10 +39,6 @@ WorkspaceSvnSettings::WorkspaceSvnSettings(const wxFileName& fn)
 {
 }
 
-WorkspaceSvnSettings::~WorkspaceSvnSettings()
-{
-}
-
 void WorkspaceSvnSettings::FromJSON(const JSONItem& json)
 {
     m_repoPath = json.namedObject("m_repoPath").toString();

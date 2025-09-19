@@ -49,7 +49,7 @@ class WXDLLIMPEXP_SDK clCaptionButton
 
 public:
     clCaptionButton(clCaptionBar* captionBar) { m_captionBar = captionBar; }
-    ~clCaptionButton() {}
+    ~clCaptionButton() = default;
 
     bool IsPressed() const { return m_state & wxCAPTION_BUTTON_STATE_PRESSED; }
     bool IsHover() const { return m_state & wxCAPTION_BUTTON_STATE_HOVER; }

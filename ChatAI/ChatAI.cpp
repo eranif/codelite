@@ -79,8 +79,6 @@ ChatAI::ChatAI(IManager* manager)
     m_mgr->BookAddPage(PaneId::SIDE_BAR, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
 }
 
-ChatAI::~ChatAI() {}
-
 void ChatAI::UnPlug()
 {
     wxTheApp->Unbind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("chatai_show_window"));

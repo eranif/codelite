@@ -21,8 +21,6 @@
 
 IMPLEMENT_APP_CONSOLE(MainApp)
 
-MainApp::MainApp() {}
-
 MainApp::~MainApp() { wxDELETE(m_child); }
 
 int MainApp::OnExit() { return TRUE; }

@@ -7,7 +7,7 @@ class NewFileComparison : public NewFileComparisonBase
 {
 public:
     NewFileComparison(wxWindow* parent, const wxFileName& leftFile);
-    virtual ~NewFileComparison();
+    virtual ~NewFileComparison() = default;
 
 protected:
     virtual void OnFileSelected(wxCommandEvent& event);

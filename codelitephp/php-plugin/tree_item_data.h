@@ -51,7 +51,7 @@ public:
     }
 
     void SetFolderName(const wxString& folderName) { this->folderName = folderName; }
-    virtual ~ItemData() {}
+    virtual ~ItemData() = default;
 
     void SetProjectName(const wxString& projectName) { this->projectName = projectName; }
     const wxString& GetProjectName() const { return projectName; }

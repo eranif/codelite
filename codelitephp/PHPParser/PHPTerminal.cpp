@@ -14,5 +14,3 @@ PHPTerminal::PHPTerminal(wxWindow* parent)
     SetName("PHPTerminal");
     WindowAttrManager::Load(this);
 }
-
-PHPTerminal::~PHPTerminal() {}

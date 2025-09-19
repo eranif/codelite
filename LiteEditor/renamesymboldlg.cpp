@@ -42,7 +42,7 @@ public:
         : m_token(token)
     {
     }
-    ~RenameSymbolData() {}
+    ~RenameSymbolData() override = default;
 };
 
 RenameSymbol::RenameSymbol(wxWindow* parent, const CppToken::Vec_t& candidates, const CppToken::Vec_t& possCandidates,
@@ -138,8 +138,6 @@ void RenameSymbol::OnSelection(wxDataViewEvent& event)
     RenameSymbolData* data = (RenameSymbolData*)m_dvListCtrl->GetItemData(event.GetItem());
     if(data) { DoSelectFile(data->m_token); }
 }
-
-RenameSymbol::~RenameSymbol() {}
 
 void RenameSymbol::OnCheckAll(wxCommandEvent& event)
 {

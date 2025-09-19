@@ -34,7 +34,7 @@ class WXDLLIMPEXP_SDK ThemeImporterASM : public ThemeImporterBase
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
     ThemeImporterASM();
-    ~ThemeImporterASM();
+    ~ThemeImporterASM() = default;
 };
 
 #endif // ECLIPSEASMTHEMEIMPORTER_H

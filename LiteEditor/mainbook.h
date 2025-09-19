@@ -48,83 +48,8 @@ class WelcomePage;
 
 class MainBook : public wxPanel
 {
-    typedef std::vector<std::function<void(IEditor*)>> CallbackVec_t;
-
-private:
-    FileHistory m_recentFiles;
-    clEditorBar* m_navBar;
-    MainNotebook* m_book = nullptr;
-    bool m_useBuffereLimit;
-    bool m_isWorkspaceReloading;
-    bool m_reloadingDoRaise; // Prevents multiple Raises() during RestoreSession()
-    FilesModifiedDlg* m_filesModifiedDlg;
-    std::unordered_map<wxString, TagEntryPtr> m_currentNavBarTags;
-    WelcomePage* m_welcomePage = nullptr;
-    QuickFindBar* m_findBar;
-    std::unordered_map<wxString, CallbackVec_t> m_callbacksTable;
-    bool m_initDone = false;
-
-private:
-    FilesModifiedDlg* GetFilesModifiedDlg();
-    void DoShowTabLabelContextMenu(size_t tabIdx);
-    void CreateGuiControls();
-    void ConnectEvents();
-    void DoUpdateNotebookTheme();
-    void DoOpenImageViewer(const wxFileName& filename);
-    void DoUpdateEditorsThemes();
-
-    void OnMouseDClick(wxBookCtrlEvent& e);
-    void OnTabDClicked(wxBookCtrlEvent& e);
-    void OnTabLabelContextMenu(wxBookCtrlEvent& e);
-    void OnPageClosing(wxBookCtrlEvent& e);
-    void OnPageClosed(wxBookCtrlEvent& e);
-    void OnPageChanged(wxBookCtrlEvent& e);
-    void OnClosePage(wxBookCtrlEvent& e);
-    void OnPageChanging(wxBookCtrlEvent& e);
-    void OnEditorModified(clCommandEvent& event);
-    void OnEditorSaved(clCommandEvent& event);
-    void OnProjectFileAdded(clCommandEvent& e);
-    void OnProjectFileRemoved(clCommandEvent& e);
-    void OnWorkspaceLoaded(clWorkspaceEvent& e);
-    void OnWorkspaceClosed(clWorkspaceEvent& e);
-    void OnDebugEnded(clDebugEvent& e);
-    void OnInitDone(wxCommandEvent& e);
-    void OnThemeChanged(clCommandEvent& e);
-    void OnColoursAndFontsChanged(clCommandEvent& e);
-    bool DoSelectPage(wxWindow* win);
-    void DoHandleFrameMenu(clEditor* editor);
-    void OnWorkspaceReloadStarted(clWorkspaceEvent& e);
-    void OnWorkspaceReloadEnded(clWorkspaceEvent& e);
-    void OnEditorSettingsChanged(wxCommandEvent& e);
-    void OnSettingsChanged(wxCommandEvent& e);
-    void OnIdle(wxIdleEvent& event);
-    void OnSessionLoaded(clCommandEvent& event);
-    /**
-     * @brief return proper tab label for a given filename
-     */
-    wxString CreateLabel(const wxFileName& fn, bool modified) const;
-    /**
-     * @brief open file and set an alternate content
-     */
-    void DoOpenFile(const wxString& filename, const wxString& content = "");
-
-    /**
-     * @brief display the welcome page
-     */
-    void ShowWelcomePage(bool show);
-    void DoShowWindow(wxWindow* win, bool show);
-
-    void OnEditorChanged(wxCommandEvent& event);
-    void OnAllEditorClosed(wxCommandEvent& event);
-
-    void push_callback(std::function<void(IEditor*)>&& callback, const wxString& fullpath);
-    void execute_callbacks_for_file(const wxString& fullpath);
-    bool has_callbacks(const wxString& fullpath) const;
-
-    int FindEditorIndexByFullPath(const wxString& fullpath);
-    void DoRestoreSession(const SessionEntry& entry);
-
 public:
+    using CallbackVec_t = std::vector<std::function<void(IEditor*)>>;
     MainBook(wxWindow* parent);
     virtual ~MainBook();
 
@@ -214,12 +139,19 @@ public:
     /**
      * @brief open a remote file into the editor mainbook
      */
-    clEditor* OpenRemoteFile(const wxString& local_path, const wxString& remote_path, const wxString& ssh_account,
+    clEditor* OpenRemoteFile(const wxString& local_path,
+                             const wxString& remote_path,
+                             const wxString& ssh_account,
                              const wxString& tooltip = wxEmptyString);
 
-    clEditor* OpenFile(const wxString& file_name, const wxString& projectName = wxEmptyString, int lineno = wxNOT_FOUND,
-                       long position = wxNOT_FOUND, OF_extra extra = OF_AddJump, bool preserveSelection = true,
-                       int bmp = wxNOT_FOUND, const wxString& tooltip = wxEmptyString);
+    clEditor* OpenFile(const wxString& file_name,
+                       const wxString& projectName = wxEmptyString,
+                       int lineno = wxNOT_FOUND,
+                       long position = wxNOT_FOUND,
+                       OF_extra extra = OF_AddJump,
+                       bool preserveSelection = true,
+                       int bmp = wxNOT_FOUND,
+                       const wxString& tooltip = wxEmptyString);
     /**
      * @brief open file based on a browsing record
      */
@@ -236,12 +168,14 @@ public:
     /**
      * @brief add page to the main book
      */
-    bool AddBookPage(wxWindow* win, const wxString& text, const wxString& tooltip, int bmp, bool selected,
-                     int insert_at_index);
+    bool AddBookPage(
+        wxWindow* win, const wxString& text, const wxString& tooltip, int bmp, bool selected, int insert_at_index);
     bool SelectPage(wxWindow* win);
 
-    bool UserSelectFiles(std::vector<std::pair<wxFileName, bool>>& files, const wxString& title,
-                         const wxString& caption, bool cancellable = true);
+    bool UserSelectFiles(std::vector<std::pair<wxFileName, bool>>& files,
+                         const wxString& title,
+                         const wxString& caption,
+                         bool cancellable = true);
 
     bool SaveAll(bool askUser, bool includeUntitled);
 
@@ -281,6 +215,81 @@ public:
     bool GetUseBuffereLimit() const { return m_useBuffereLimit; }
 
     MainNotebook* GetNotebook() { return m_book; }
+
+private:
+    FilesModifiedDlg* GetFilesModifiedDlg();
+    void DoShowTabLabelContextMenu(size_t tabIdx);
+    void CreateGuiControls();
+    void ConnectEvents();
+    void DoUpdateNotebookTheme();
+    void DoOpenImageViewer(const wxFileName& filename);
+    void DoUpdateEditorsThemes();
+
+    void OnMouseDClick(wxBookCtrlEvent& e);
+    void OnTabDClicked(wxBookCtrlEvent& e);
+    void OnTabLabelContextMenu(wxBookCtrlEvent& e);
+    void OnPageClosing(wxBookCtrlEvent& e);
+    void OnPageClosed(wxBookCtrlEvent& e);
+    void OnPageChanged(wxBookCtrlEvent& e);
+    void OnClosePage(wxBookCtrlEvent& e);
+    void OnPageChanging(wxBookCtrlEvent& e);
+    void OnEditorModified(clCommandEvent& event);
+    void OnEditorSaved(clCommandEvent& event);
+    void OnProjectFileAdded(clCommandEvent& e);
+    void OnProjectFileRemoved(clCommandEvent& e);
+    void OnWorkspaceLoaded(clWorkspaceEvent& e);
+    void OnWorkspaceClosed(clWorkspaceEvent& e);
+    void OnDebugEnded(clDebugEvent& e);
+    void OnInitDone(wxCommandEvent& e);
+    void OnThemeChanged(clCommandEvent& e);
+    void OnColoursAndFontsChanged(clCommandEvent& e);
+    bool DoSelectPage(wxWindow* win);
+    void DoHandleFrameMenu(clEditor* editor);
+    void OnWorkspaceReloadStarted(clWorkspaceEvent& e);
+    void OnWorkspaceReloadEnded(clWorkspaceEvent& e);
+    void OnEditorSettingsChanged(wxCommandEvent& e);
+    void OnSettingsChanged(wxCommandEvent& e);
+    void OnIdle(wxIdleEvent& event);
+    void OnSessionLoaded(clCommandEvent& event);
+    void OnHideWelcomePage(clCommandEvent& event);
+
+    /**
+     * @brief return proper tab label for a given filename
+     */
+    wxString CreateLabel(const wxFileName& fn, bool modified) const;
+    /**
+     * @brief open file and set an alternate content
+     */
+    void DoOpenFile(const wxString& filename, const wxString& content = "");
+
+    /**
+     * @brief display the welcome page
+     */
+    void ShowWelcomePage(bool show);
+    void DoShowWindow(wxWindow* win, bool show);
+
+    void OnEditorChanged(wxCommandEvent& event);
+    void OnAllEditorClosed(wxCommandEvent& event);
+
+    void push_callback(std::function<void(IEditor*)>&& callback, const wxString& fullpath);
+    void execute_callbacks_for_file(const wxString& fullpath);
+    bool has_callbacks(const wxString& fullpath) const;
+
+    int FindEditorIndexByFullPath(const wxString& fullpath);
+    void DoRestoreSession(const SessionEntry& entry);
+
+    FileHistory m_recentFiles;
+    clEditorBar* m_navBar{nullptr};
+    MainNotebook* m_book{nullptr};
+    bool m_useBuffereLimit{true};
+    bool m_isWorkspaceReloading{false};
+    bool m_reloadingDoRaise{true}; // Prevents multiple Raises() during RestoreSession()
+    FilesModifiedDlg* m_filesModifiedDlg{nullptr};
+    std::unordered_map<wxString, TagEntryPtr> m_currentNavBarTags;
+    WelcomePage* m_welcomePage{nullptr};
+    QuickFindBar* m_findBar{nullptr};
+    std::unordered_map<wxString, CallbackVec_t> m_callbacksTable;
+    bool m_initDone{false};
 };
 
 #endif // MAINBOOK_H

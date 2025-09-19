@@ -28,6 +28,7 @@
 #include <wx/button.h>
 #include <wx/filepicker.h>
 #include "clThemedSplitterWindow.h"
+#include <wx/bmpbuttn.h>
 #include <wx/treectrl.h>
 #include "clThemedTreeCtrl.h"
 #include <wx/simplebook.h>
@@ -76,7 +77,9 @@ public:
     wxChoice* GetFunc() { return m_func; }
     wxPanel* GetSplitterPage41() { return m_splitterPage41; }
     wxSplitterWindow* GetSplitter() { return m_splitter; }
-    NavBarControlBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+    NavBarControlBaseClass(wxWindow* parent,
+                           wxWindowID id = wxID_ANY,
+                           const wxPoint& pos = wxDefaultPosition,
                            const wxSize& size = wxSize(-1, -1),
                            long style = wxWANTS_CHARS | wxTAB_TRAVERSAL | wxBORDER_NONE);
     virtual ~NavBarControlBaseClass();
@@ -129,9 +132,11 @@ public:
     wxFilePickerCtrl* GetFilePicker() { return m_filePicker; }
     wxButton* GetButton121() { return m_button121; }
     wxButton* GetButton123() { return m_button123; }
-    AddFunctionsImplBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY,
+    AddFunctionsImplBaseDlg(wxWindow* parent,
+                            wxWindowID id = wxID_ANY,
                             const wxString& title = _("Add function implementation"),
-                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                            const wxPoint& pos = wxDefaultPosition,
+                            const wxSize& size = wxSize(-1, -1),
                             long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~AddFunctionsImplBaseDlg();
 };
@@ -141,21 +146,27 @@ class WelcomePageBase : public wxControl
 protected:
     clThemedSplitterWindow* m_mainPanel;
     wxPanel* m_buttonsPage;
+    wxBitmapButton* m_closeButton;
     wxGridSizer* buttons_sizer;
     wxPanel* m_listPage;
     clThemedTreeCtrl* m_dvTreeCtrlWorkspaces;
 
 protected:
     virtual void OnSize(wxSizeEvent& event) { event.Skip(); }
+    virtual void OnCloseButtonClicked(wxCommandEvent& event) { event.Skip(); }
     virtual void OnWorkspaceActivated(wxTreeEvent& event) { event.Skip(); }
 
 public:
+    wxBitmapButton* GetCloseButton() { return m_closeButton; }
     wxPanel* GetButtonsPage() { return m_buttonsPage; }
     clThemedTreeCtrl* GetDvTreeCtrlWorkspaces() { return m_dvTreeCtrlWorkspaces; }
     wxPanel* GetListPage() { return m_listPage; }
     clThemedSplitterWindow* GetMainPanel() { return m_mainPanel; }
-    WelcomePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                    const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
+    WelcomePageBase(wxWindow* parent,
+                    wxWindowID id = wxID_ANY,
+                    const wxPoint& pos = wxDefaultPosition,
+                    const wxSize& size = wxSize(600, 400),
+                    long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
     virtual ~WelcomePageBase();
 };
 
@@ -188,8 +199,11 @@ public:
     clThemedSplitterWindow* GetSplitter() { return m_splitter; }
     wxPanel* GetPanelCxx() { return m_panelCxx; }
     wxSimplebook* GetSimpleBook() { return m_simpleBook; }
-    WorkspaceTabBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+    WorkspaceTabBase(wxWindow* parent,
+                     wxWindowID id = wxID_ANY,
+                     const wxPoint& pos = wxDefaultPosition,
+                     const wxSize& size = wxSize(-1, -1),
+                     long style = wxTAB_TRAVERSAL);
     virtual ~WorkspaceTabBase();
 };
 
@@ -206,8 +220,11 @@ protected:
 public:
     wxStaticText* GetStaticText479() { return m_staticText479; }
     wxTextCtrl* GetTextCtrlFolder() { return m_textCtrlFolder; }
-    OpenFolderDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Open Folder"),
-                      const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    OpenFolderDlgBase(wxWindow* parent,
+                      wxWindowID id = wxID_ANY,
+                      const wxString& title = _("Open Folder"),
+                      const wxPoint& pos = wxDefaultPosition,
+                      const wxSize& size = wxSize(-1, -1),
                       long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~OpenFolderDlgBase();
 };
@@ -222,8 +239,11 @@ protected:
 public:
     wxStaticText* GetStaticText523() { return m_staticText523; }
     wxStaticBitmap* GetStaticBitmap521() { return m_staticBitmap521; }
-    DefaultWorkspacePageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                             const wxSize& size = wxSize(400, 300), long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
+    DefaultWorkspacePageBase(wxWindow* parent,
+                             wxWindowID id = wxID_ANY,
+                             const wxPoint& pos = wxDefaultPosition,
+                             const wxSize& size = wxSize(400, 300),
+                             long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
     virtual ~DefaultWorkspacePageBase();
 };
 
@@ -244,8 +264,11 @@ protected:
 public:
     wxBannerWindow* GetBanner() { return m_banner; }
     wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
-    SelectDropTargetBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select View"),
-                            const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(400, 400),
+    SelectDropTargetBaseDlg(wxWindow* parent,
+                            wxWindowID id = wxID_ANY,
+                            const wxString& title = _("Select View"),
+                            const wxPoint& pos = wxDefaultPosition,
+                            const wxSize& size = wxSize(400, 400),
                             long style = wxDEFAULT_DIALOG_STYLE | wxSTAY_ON_TOP);
     virtual ~SelectDropTargetBaseDlg();
 };

@@ -85,16 +85,7 @@ wxBorder get_border_simple_theme_aware_bit()
 } // namespace
 
 MainBook::MainBook(wxWindow* parent)
-    : m_navBar(NULL)
-    , m_book(NULL)
-    , m_useBuffereLimit(true)
-    , m_isWorkspaceReloading(false)
-    , m_reloadingDoRaise(true)
-    , m_filesModifiedDlg(NULL)
-    , m_welcomePage(NULL)
-    , m_findBar(NULL)
 {
-
     wxPanel::Create(
         parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, get_border_simple_theme_aware_bit() | wxTAB_TRAVERSAL);
     Hide();
@@ -152,7 +143,6 @@ void MainBook::ConnectEvents()
     // we handle a "load file" as if the file was saved
     EventNotifier::Get()->Bind(wxEVT_FILE_LOADED, &MainBook::OnEditorSaved, this);
     EventNotifier::Get()->Bind(wxEVT_SESSION_LOADED, &MainBook::OnSessionLoaded, this);
-
     Bind(wxEVT_IDLE, &MainBook::OnIdle, this);
 }
 
@@ -167,6 +157,9 @@ MainBook::~MainBook()
     m_book->Unbind(wxEVT_BOOK_NEW_PAGE, &MainBook::OnMouseDClick, this);
     m_book->Unbind(wxEVT_BOOK_TAB_DCLICKED, &MainBook::OnTabDClicked, this);
     m_book->Unbind(wxEVT_BOOK_TAB_CONTEXT_MENU, &MainBook::OnTabLabelContextMenu, this);
+    if (m_welcomePage) {
+        m_welcomePage->Unbind(wxEVT_WELCOMEPAGE_CLOSE_BUTTON_CLICKED, &MainBook::OnHideWelcomePage, this);
+    }
     EventNotifier::Get()->Bind(wxEVT_SESSION_LOADED, &MainBook::OnSessionLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &MainBook::OnThemeChanged, this);
 
@@ -1733,6 +1726,7 @@ WelcomePage* MainBook::GetWelcomePage(bool createIfMissing)
         m_welcomePage = new WelcomePage(this);
         m_welcomePage->Hide();
         GetSizer()->Add(m_welcomePage, 1, wxEXPAND);
+        m_welcomePage->Bind(wxEVT_WELCOMEPAGE_CLOSE_BUTTON_CLICKED, &MainBook::OnHideWelcomePage, this);
     }
     return m_welcomePage;
 }
@@ -1838,3 +1832,9 @@ void MainBook::OnEditorModified(clCommandEvent& event) { event.Skip(); }
 void MainBook::OnEditorSaved(clCommandEvent& event) { event.Skip(); }
 
 void MainBook::OnSessionLoaded(clCommandEvent& event) { event.Skip(); }
+
+void MainBook::OnHideWelcomePage(clCommandEvent& event)
+{
+    wxUnusedVar(event);
+    ShowWelcomePage(false);
+}

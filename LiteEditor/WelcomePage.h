@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef WELCOMEPAGE_H
-#define WELCOMEPAGE_H
+#pragma once
 
 #include "clThemedButton.h"
 #include "wxcrafter.h"
@@ -47,12 +46,16 @@ struct WelcomePageItemData : public wxTreeItemData {
 
 class WelcomePage : public WelcomePageBase
 {
-    wxCommandLinkButton* m_buttonGithub = nullptr;
-    wxCommandLinkButton* m_buttonNewWorkspace = nullptr;
-    wxCommandLinkButton* m_buttonOpenWorkspace = nullptr;
-    wxCommandLinkButton* m_buttonGitter = nullptr;
+public:
+    WelcomePage(wxWindow* parent);
+    virtual ~WelcomePage();
+    bool Show(bool show = true) override;
+    wxWindow* GetList() { return m_dvTreeCtrlWorkspaces; }
+    void SelectSomething();
+    void GrabFocus();
 
 protected:
+    void OnCloseButtonClicked(wxCommandEvent& event) override;
     void OnNewWorkspace(wxCommandEvent& event);
     void OnOpenWorkspace(wxCommandEvent& event);
     void OnGitHHub(wxCommandEvent& event);
@@ -63,17 +66,13 @@ protected:
     void OpenBuiltinWorkspace(WelcomePageItemData* cd);
     void OpenPluginWorkspace(WelcomePageItemData* cd);
     void DoSomethingSomething();
-
-public:
-    WelcomePage(wxWindow* parent);
-    virtual ~WelcomePage();
-    bool Show(bool show = true) override;
-    wxWindow* GetList() { return m_dvTreeCtrlWorkspaces; }
-    void SelectSomething();
-    void GrabFocus();
-
-protected:
     void OnSize(wxSizeEvent& event) override;
     void OnThemeChanged(clCommandEvent& e);
+
+    wxCommandLinkButton* m_buttonGithub{nullptr};
+    wxCommandLinkButton* m_buttonNewWorkspace{nullptr};
+    wxCommandLinkButton* m_buttonOpenWorkspace{nullptr};
+    wxCommandLinkButton* m_buttonGitter{nullptr};
 };
-#endif // WELCOMEPAGE_H
+
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_WELCOMEPAGE_CLOSE_BUTTON_CLICKED, clCommandEvent);

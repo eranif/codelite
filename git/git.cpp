@@ -37,10 +37,12 @@
 #include "GitStatusCode.hpp"
 #include "GitUserEmailDialog.h"
 #include "StringUtils.h"
+#include "ai/LLMManager.hpp"
 #include "bitmap_loader.h"
 #include "clGenericNotebook.hpp"
 #include "clSideBarCtrl.hpp"
 #include "clStrings.h"
+
 #if MAINBOOK_AUIBOOK
 #include "clAuiBook.hpp"
 #endif
@@ -2590,7 +2592,6 @@ void GitPlugin::DoExecuteCommands(const GitCmd::Vec_t& commands, const wxString&
 
 void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
 {
-    m_commitDialogIsShown = true;
     wxString lastCommitString, commitHistory;
     // Find the title/body message of the previous commit, in case the user wants to amend it
     DoExecuteCommandSync("log -1 --pretty=format:\"%B\"", &lastCommitString);
@@ -2598,23 +2599,31 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
     DoExecuteCommandSync("log -100 --abbrev-commit --pretty=oneline", &commitHistory);
 
     commitArgs.Clear();
-    GitCommitDlg dlg(EventNotifier::Get()->TopFrame(), this, m_repositoryDirectory);
-    dlg.AppendDiff(diff);
-    dlg.SetPreviousCommitMessage(lastCommitString);
-    dlg.SetHistory(commitHistory);
-    auto res = dlg.ShowModal();
-    m_commitDialogIsShown = false;
+
+    auto deleter = [this](GitCommitDlg* p) {
+        m_commitDialog = nullptr;
+        delete p;
+    };
+
+    std::unique_ptr<GitCommitDlg, decltype(deleter)> dlg(
+        new GitCommitDlg(EventNotifier::Get()->TopFrame(), this, m_repositoryDirectory), deleter);
+    m_commitDialog = dlg.get(); // will be cleared once "dlg" is out of scope;
+    dlg->AppendDiff(diff);
+    dlg->SetPreviousCommitMessage(lastCommitString);
+    dlg->SetHistory(commitHistory);
+    auto res = dlg->ShowModal();
     if (res == wxID_OK) {
-        if (dlg.GetSelectedFiles().IsEmpty() && !dlg.IsAmending())
+        if (dlg->GetSelectedFiles().IsEmpty() && !dlg->IsAmending()) {
             return;
-        wxString message = dlg.GetCommitMessage();
-        if (!message.empty() || dlg.IsAmending()) {
+        }
+        wxString message = dlg->GetCommitMessage();
+        if (!message.empty() || dlg->IsAmending()) {
             // amending?
-            if (dlg.IsAmending()) {
+            if (dlg->IsAmending()) {
                 commitArgs << " --amend ";
             }
 
-            if (dlg.IsSignedOffBy()) {
+            if (dlg->IsSignedOffBy()) {
                 commitArgs << " -s ";
             }
 
@@ -2646,7 +2655,7 @@ void GitPlugin::DoShowCommitDialog(const wxString& diff, wxString& commitArgs)
                 // by passing the --no-edit switch
                 commitArgs << " --no-edit ";
             }
-            wxArrayString selectedFiles = dlg.GetSelectedFiles();
+            wxArrayString selectedFiles = dlg->GetSelectedFiles();
             for (unsigned i = 0; i < selectedFiles.GetCount(); ++i)
                 commitArgs << StringUtils::WrapWithQuotes(selectedFiles.Item(i)) << wxT(" ");
 
@@ -2858,8 +2867,9 @@ void GitPlugin::OnAppActivated(wxCommandEvent& event)
     event.Skip();
     CHECK_ENABLED_RETURN();
     CHECK_VIEW_SHOWN();
-    if (m_commitDialogIsShown)
+    if (m_commitDialog) {
         return;
+    }
     CallAfter(&GitPlugin::DoRefreshView, false);
 }
 
@@ -3133,4 +3143,24 @@ void GitPlugin::OnSideBarPageChanged(clCommandEvent& event)
     if (event.GetString() == "Git") {
         DoRefreshView(true);
     }
+}
+
+std::optional<uint64_t> GitPlugin::GenerateCommitMessage(const wxString& prompt)
+{
+    if (m_commitDialog == nullptr || !LLMManager::GetInstance().IsAvailable()) {
+        return std::nullopt;
+    }
+
+    m_commitDialog->ClearCommitMessage();
+    auto cb = [this](const std::string& message, bool is_completed, [[maybe_unused]] bool is_error) mutable {
+        if (!m_commitDialog) {
+            return;
+        }
+        m_commitDialog->AppendCommitMessage(wxString::FromUTF8(message));
+        if (is_completed) {
+            m_commitDialog->SetCommitMessageGenerationCompleted();
+        }
+    };
+
+    return LLMManager::GetInstance().Chat(prompt, std::move(cb));
 }

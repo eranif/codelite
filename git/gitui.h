@@ -27,12 +27,12 @@
 #include <wx/button.h>
 #include <wx/splitter.h>
 #include "clThemedSplitterWindow.h"
-#include <wx/toolbar.h>
-#include "clToolBar.h"
 #include <wx/dataview.h>
 #include "clThemedListCtrl.h"
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
+#include <wx/toolbar.h>
+#include "clToolBar.h"
 #include <wx/statbox.h>
 #include <wx/srchctrl.h>
 #include <wx/combobox.h>
@@ -135,15 +135,16 @@ public:
 class GitCommitDlgBase : public wxDialog
 {
 protected:
+    wxBoxSizer* m_mainSizer;
     clThemedSplitterWindow* m_splitterMain;
     wxPanel* m_panel3;
-    clToolBar* m_toolbar;
     clThemedSplitterWindow* m_splitterInner;
     wxPanel* m_panel1;
     clThemedOrderedListCtrl* m_dvListCtrlFiles;
     wxPanel* m_panel2;
     clThemedSTC* m_stcDiff;
     wxPanel* m_panel4;
+    clToolBar* m_toolbar;
     clThemedSTC* m_stcCommitMessage;
     wxCheckBox* m_checkBoxSignedOff;
     wxCheckBox* m_checkBoxAmend;
@@ -156,18 +157,18 @@ protected:
     virtual void OnCommitOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    clToolBar* GetToolbar() { return m_toolbar; }
     clThemedOrderedListCtrl* GetDvListCtrlFiles() { return m_dvListCtrlFiles; }
     wxPanel* GetPanel1() { return m_panel1; }
     clThemedSTC* GetStcDiff() { return m_stcDiff; }
     wxPanel* GetPanel2() { return m_panel2; }
     clThemedSplitterWindow* GetSplitterInner() { return m_splitterInner; }
     wxPanel* GetPanel3() { return m_panel3; }
+    clToolBar* GetToolbar() { return m_toolbar; }
     clThemedSTC* GetStcCommitMessage() { return m_stcCommitMessage; }
-    wxCheckBox* GetCheckBoxSignedOff() { return m_checkBoxSignedOff; }
-    wxCheckBox* GetCheckBoxAmend() { return m_checkBoxAmend; }
     wxPanel* GetPanel4() { return m_panel4; }
     clThemedSplitterWindow* GetSplitterMain() { return m_splitterMain; }
+    wxCheckBox* GetCheckBoxSignedOff() { return m_checkBoxSignedOff; }
+    wxCheckBox* GetCheckBoxAmend() { return m_checkBoxAmend; }
     wxButton* GetButtonOK() { return m_buttonOK; }
     wxButton* GetButtonCancel() { return m_buttonCancel; }
     GitCommitDlgBase(wxWindow* parent,

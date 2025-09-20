@@ -47,6 +47,7 @@
 
 #include <map>
 #include <queue>
+#include <optional>
 #include <set>
 #include <vector>
 #include <wx/progdlg.h>
@@ -56,6 +57,7 @@
 
 class clTreeCtrl;
 class clCommandProcessor;
+class GitCommitDlg;
 
 #define GIT_TAB_NAME "Git"
 
@@ -181,7 +183,8 @@ class GitPlugin : public IPlugin
     clCodeLiteRemoteProcess m_remoteProcess;
     wxString m_codeliteRemoteScriptPath;
     bool m_isEnabled = false;
-    bool m_commitDialogIsShown = false;
+    GitCommitDlg* m_commitDialog{nullptr};
+
 #if USE_SFTP
     clSSH::Ptr_t m_ssh;
 #endif
@@ -369,6 +372,8 @@ public:
      */
     void OnCommandOutput(clCommandEvent& event);
     void OnCommandEnded(clCommandEvent& event);
+
+    std::optional<uint64_t> GenerateCommitMessage(const wxString& prompt);
 
     //--------------------------------------------
     // Abstract methods

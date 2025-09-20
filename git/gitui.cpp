@@ -308,6 +308,10 @@ GitCommitDlgBase::GitCommitDlgBase(
     wxBoxSizer* bSizer4 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer4);
 
+    m_mainSizer = new wxBoxSizer(wxVERTICAL);
+
+    bSizer4->Add(m_mainSizer, 1, wxEXPAND, WXC_FROM_DIP(5));
+
     m_splitterMain = new clThemedSplitterWindow(this,
                                                 wxID_ANY,
                                                 wxDefaultPosition,
@@ -316,18 +320,13 @@ GitCommitDlgBase::GitCommitDlgBase(
     m_splitterMain->SetSashGravity(0.5);
     m_splitterMain->SetMinimumPaneSize(150);
 
-    bSizer4->Add(m_splitterMain, 1, wxEXPAND, WXC_FROM_DIP(5));
+    m_mainSizer->Add(m_splitterMain, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_panel3 = new wxPanel(
         m_splitterMain, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterMain, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
     wxBoxSizer* bSizer12 = new wxBoxSizer(wxVERTICAL);
     m_panel3->SetSizer(bSizer12);
-
-    m_toolbar = new clToolBar(m_panel3, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel3, wxSize(-1, -1)), wxTB_FLAT);
-    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
-
-    bSizer12->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_splitterInner = new clThemedSplitterWindow(m_panel3,
                                                  wxID_ANY,
@@ -412,6 +411,11 @@ GitCommitDlgBase::GitCommitDlgBase(
     wxBoxSizer* bSizer13 = new wxBoxSizer(wxVERTICAL);
     m_panel4->SetSizer(bSizer13);
 
+    m_toolbar = new clToolBar(m_panel4, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1, -1)), wxTB_FLAT);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
+
+    bSizer13->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
+
     m_stcCommitMessage = new clThemedSTC(m_panel4,
                                          wxID_ANY,
                                          wxDefaultPosition,
@@ -456,16 +460,12 @@ GitCommitDlgBase::GitCommitDlgBase(
     bSizer13->Add(m_stcCommitMessage, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     wxStaticBoxSizer* staticBoxSizer827 =
-        new wxStaticBoxSizer(new wxStaticBox(m_panel4, wxID_ANY, _("Options:")), wxVERTICAL);
+        new wxStaticBoxSizer(new wxStaticBox(this, wxID_ANY, _("Options:")), wxVERTICAL);
 
-    bSizer13->Add(staticBoxSizer827, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    bSizer4->Add(staticBoxSizer827, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_checkBoxSignedOff = new wxCheckBox(m_panel4,
-                                         wxID_ANY,
-                                         _("Add a Signed-off-by trailer"),
-                                         wxDefaultPosition,
-                                         wxDLG_UNIT(m_panel4, wxSize(-1, -1)),
-                                         0);
+    m_checkBoxSignedOff = new wxCheckBox(
+        this, wxID_ANY, _("Add a Signed-off-by trailer"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxSignedOff->SetValue(false);
     m_checkBoxSignedOff->SetToolTip(
         _("Add a Signed-off-by trailer by the committer at the end of the commit log message"));
@@ -473,7 +473,7 @@ GitCommitDlgBase::GitCommitDlgBase(
     staticBoxSizer827->Add(m_checkBoxSignedOff, 0, wxALL, WXC_FROM_DIP(5));
 
     m_checkBoxAmend = new wxCheckBox(
-        m_panel4, wxID_ANY, _("Amend the previous commit"), wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1, -1)), 0);
+        this, wxID_ANY, _("Amend the previous commit"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxAmend->SetValue(false);
     m_checkBoxAmend->SetToolTip(
         _("The 'git commit --amend' command is a convenient way to fix up the most recent commit. It lets you combine "

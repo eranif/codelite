@@ -77,6 +77,8 @@ ChatAI::ChatAI(IManager* manager)
     m_cli.GetConfig().Load();
     m_chatWindow = new ChatAIWindow(m_mgr->BookGet(PaneId::SIDE_BAR), this);
     m_mgr->BookAddPage(PaneId::SIDE_BAR, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
+    EventNotifier::Get()->Bind(wxEVT_LLM_IS_AVAILABLE, &ChatAI::OnIsLlmAvailable, this);
+    EventNotifier::Get()->Bind(wxEVT_LLM_REQUEST, &ChatAI::OnLlmRequest, this);
 }
 
 ChatAI::~ChatAI() {}
@@ -84,6 +86,9 @@ ChatAI::~ChatAI() {}
 void ChatAI::UnPlug()
 {
     wxTheApp->Unbind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("chatai_show_window"));
+    EventNotifier::Get()->Unbind(wxEVT_LLM_IS_AVAILABLE, &ChatAI::OnIsLlmAvailable, this);
+    EventNotifier::Get()->Unbind(wxEVT_LLM_REQUEST, &ChatAI::OnLlmRequest, this);
+
     // before this plugin is un-plugged we must remove the tab we added
     if (!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_chatWindow)) {
         m_chatWindow->Destroy();

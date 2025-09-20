@@ -33,6 +33,7 @@
 #ifndef __gitCommitDlg__
 #define __gitCommitDlg__
 
+#include "CustomControls/IndicatorPanel.hpp"
 #include "clEditorEditEventsHandler.h"
 #include "gitui.h"
 #include "macros.h"
@@ -44,18 +45,13 @@ class GitPlugin;
 
 class GitCommitDlg : public GitCommitDlgBase
 {
-    GitPlugin* m_plugin;
-    wxString m_workingDir;
-    wxStringMap_t m_diffMap;
-    bool m_toggleChecks;
-    wxString m_previousCommitMessage;
-    wxArrayString m_history;
-    wxString m_stashedMessage;
-    bool m_dismissedWithOk = false;
-
 public:
     GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& workingDir);
     virtual ~GitCommitDlg();
+
+    void AppendCommitMessage(const wxString& message);
+    void ClearCommitMessage();
+    void SetCommitMessageGenerationCompleted();
 
     void AppendDiff(const wxString& diff);
 
@@ -66,14 +62,28 @@ public:
     bool IsAmending() const { return m_checkBoxAmend->IsChecked(); }
     bool IsSignedOffBy() const { return m_checkBoxSignedOff->IsChecked(); }
 
-private:
-    void OnChangeFile(wxDataViewEvent& e);
-
 protected:
     virtual void OnAmendClicked(wxCommandEvent& event);
+    virtual void OnGenerate(wxCommandEvent& event);
+    virtual void OnGenerateUI(wxUpdateUIEvent& event);
     virtual void OnCommitHistory(wxCommandEvent& event);
     virtual void OnToggleCheckAll(wxCommandEvent& event);
     virtual void OnCommitOK(wxCommandEvent& event);
+
+private:
+    void OnChangeFile(wxDataViewEvent& e);
+
+    GitPlugin* m_plugin{nullptr};
+    wxString m_workingDir;
+    wxStringMap_t m_diffMap;
+    bool m_toggleChecks;
+    wxString m_previousCommitMessage;
+    wxArrayString m_history;
+    wxString m_stashedMessage;
+    bool m_dismissedWithOk = false;
+    wxString m_rawDiff;
+    std::optional<uint64_t> m_generate_id;
+    IndicatorPanel* m_indicatorPanel{nullptr};
 };
 
 #endif

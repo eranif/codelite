@@ -39,6 +39,7 @@
 #include "macros.h"
 
 #include <map>
+#include <optional>
 #include <wx/tokenzr.h>
 
 class GitPlugin;

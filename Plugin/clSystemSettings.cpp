@@ -152,7 +152,7 @@ std::once_flag once;
 wxColour clSystemSettings::GetDefaultPanelColour()
 {
     wxColour panel_colour;
-#ifdef __WXMSW__
+#if defined(__WXMAC__) || defined(__WXMSW__)
     static wxColour dlg_bg_colour;
     std::call_once(once, []() {
         MyDialog* dlg = new MyDialog(wxTheApp->GetTopWindow());
@@ -160,7 +160,7 @@ wxColour clSystemSettings::GetDefaultPanelColour()
     });
     panel_colour = dlg_bg_colour;
 #else
-    panel_colour = GetColour(IS_GTK ? wxSYS_COLOUR_WINDOW : wxSYS_COLOUR_3DFACE);
+    panel_colour = GetColour(wxSYS_COLOUR_WINDOW);
 #endif
     return panel_colour;
 }

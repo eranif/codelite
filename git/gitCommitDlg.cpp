@@ -144,10 +144,13 @@ void GitCommitDlg::AppendDiff(const wxString& diff)
     }
 
     if (!names.empty()) {
-        m_dvListCtrlFiles->Select(m_dvListCtrlFiles->RowToItem(0));
-        wxStringMap_t::iterator it = m_diffMap.begin();
-        m_stcDiff->SetText((*it).second);
-        m_stcDiff->SetReadOnly(true);
+        // Set a selection
+        CallAfter([this]() {
+            m_dvListCtrlFiles->Select(m_dvListCtrlFiles->RowToItem(0));
+            wxStringMap_t::iterator it = m_diffMap.begin();
+            m_stcDiff->SetText((*it).second);
+            m_stcDiff->SetReadOnly(true);
+        });
     }
 }
 

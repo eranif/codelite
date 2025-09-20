@@ -3,17 +3,17 @@
 	"name":	"CodeLiteIDE-MSW",
 	"configs":	[{
 			"name":	"Debug",
-			"targets":	[["build", "cd $(WorkspacePath)\\build-debug && mingw32-make -j24 install"], ["clean", "cd $(WorkspacePath)\\build-debug && mingw32-make -j24 clean"]],
+			"targets":	[["build", "cd $(WorkspacePath)/.build-debug && mingw32-make -j24 install"], ["clean", "cd $(WorkspacePath)/.build-debug && mingw32-make -j24 clean"]],
 			"file_extensions":	"*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;*.py;*.php;*.rb;*.html;*.js;*.ts;*.rs;*.iss;*.md;*.bat",
 			"excludeFilesPattern":	"*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
-			"excludePaths":	"",
+			"excludePaths":	".build-release;.build-debug",
 			"debugger":	""
 		}, {
 			"name":	"Release",
 			"targets":	[["build", "cd $(WorkspacePath)/.build-release && mingw32-make -j24 install"], ["clean", "cd $(WorkspacePath)/.build-release && mingw32-make -j24 clean && rm -fr install"]],
 			"file_extensions":	"*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;*.py;*.php;*.rb;*.html;*.js;*.ts;*.rs;*.iss;*.md;*.bat;*.sh;*.xrc;*.cmake;*.rc;*.plist;*.in",
 			"excludeFilesPattern":	"*.o;*.pyc;*.obj;*.workspace;*.o.d;*.exe;*.dll;*.project",
-			"excludePaths":	"build-release;build-debug",
+			"excludePaths":	".build-release;.build-debug",
 			"debugger":	""
 		}]
 }

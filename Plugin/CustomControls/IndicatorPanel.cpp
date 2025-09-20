@@ -1,5 +1,7 @@
 #include "IndicatorPanel.hpp"
 
+#include "clSystemSettings.h"
+
 #include <wx/sizer.h>
 
 IndicatorPanel::IndicatorPanel(wxWindow* parent, const wxString& initialText)
@@ -10,6 +12,7 @@ IndicatorPanel::IndicatorPanel(wxWindow* parent, const wxString& initialText)
         return;
     }
 
+    SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
     m_statusMessage = new wxStaticText(this, wxID_ANY, initialText);

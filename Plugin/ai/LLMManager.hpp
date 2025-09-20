@@ -15,7 +15,14 @@
 class WXDLLIMPEXP_SDK LLMManager : public wxEvtHandler
 {
 public:
-    using Callback = std::function<void(const std::string& message, bool is_completed, bool is_error)>;
+    enum ResponseFlags {
+        kNone = 0,
+        kThinking = (1 << 0),
+        kError = (1 << 1),
+        kCompleted = (1 << 2),
+    };
+
+    using Callback = std::function<void(const std::string& message, size_t flags)>;
     static LLMManager& GetInstance();
 
     /// Send prompt to the available LLM. Return a unique ID to be used when querying for the response.

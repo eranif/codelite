@@ -3152,12 +3152,18 @@ std::optional<uint64_t> GitPlugin::GenerateCommitMessage(const wxString& prompt)
     }
 
     m_commitDialog->ClearCommitMessage();
-    auto cb = [this](const std::string& message, bool is_completed, [[maybe_unused]] bool is_error) mutable {
+    auto cb = [this](const std::string& message, size_t flags) mutable {
         if (!m_commitDialog) {
             return;
+        } else if (flags & LLMManager::kThinking) {
+            m_commitDialog->SetIndicatorMessage(_("Thinking..."));
+            return;
+        } else {
+            m_commitDialog->SetIndicatorMessage(_("Working..."));
         }
+
         m_commitDialog->AppendCommitMessage(wxString::FromUTF8(message));
-        if (is_completed) {
+        if (flags & LLMManager::kCompleted) {
             m_commitDialog->SetCommitMessageGenerationCompleted();
         }
     };

@@ -52,6 +52,7 @@ public:
     void AppendCommitMessage(const wxString& message);
     void ClearCommitMessage();
     void SetCommitMessageGenerationCompleted();
+    void SetIndicatorMessage(const wxString& mesage);
 
     void AppendDiff(const wxString& diff);
 

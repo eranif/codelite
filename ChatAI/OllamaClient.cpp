@@ -76,18 +76,21 @@ void OllamaClient::WorkerThreadMain()
 
         switch (t.kind) {
         case TaskKind::kChat: {
-            LLMEvent chat_start{wxEVT_OLLAMA_CHAT_STARTED};
-            chat_start.SetEventObject(this);
-            EventNotifier::Get()->AddPendingEvent(chat_start);
+            if (owner == nullptr) {
+                LLMEvent chat_start{wxEVT_OLLAMA_CHAT_STARTED};
+                chat_start.SetEventObject(this);
+                EventNotifier::Get()->AddPendingEvent(chat_start);
+            }
 
             m_client.Chat(
                 t.content.ToStdString(wxConvUTF8),
                 [this, owner](std::string msg, ollama::Reason reason, bool thinking) {
                     // Translate the callback into wxWidgets event
                     if (owner) {
-                        LLMEvent event{wxEVT_LLM_RESPONSE};
-                        event.SetStringRaw(msg);
-                        owner->AddPendingEvent(event);
+                        LLMEvent response_event{wxEVT_LLM_RESPONSE};
+                        response_event.SetStringRaw(msg);
+                        response_event.SetInt(thinking ? 1 : 0);
+                        owner->AddPendingEvent(response_event);
 
                     } else {
                         LLMEvent event{wxEVT_OLLAMA_CHAT_OUTPUT};
@@ -100,9 +103,10 @@ void OllamaClient::WorkerThreadMain()
                     switch (reason) {
                     case ollama::Reason::kDone: {
                         if (owner) {
-                            LLMEvent event{wxEVT_LLM_RESPONSE_COMPLETED};
-                            event.SetStringRaw(msg);
-                            owner->AddPendingEvent(event);
+                            LLMEvent done_event{wxEVT_LLM_RESPONSE_COMPLETED};
+                            done_event.SetStringRaw(msg);
+                            done_event.SetInt(0);
+                            owner->AddPendingEvent(done_event);
 
                         } else {
                             LLMEvent chat_end{wxEVT_OLLAMA_CHAT_DONE};
@@ -113,13 +117,15 @@ void OllamaClient::WorkerThreadMain()
                     } break;
                     case ollama::Reason::kFatalError: {
                         if (owner) {
-                            LLMEvent event{wxEVT_LLM_RESPONSE_ERROR};
-                            event.SetStringRaw(msg);
-                            owner->AddPendingEvent(event);
+                            LLMEvent error_event{wxEVT_LLM_RESPONSE_ERROR};
+                            error_event.SetStringRaw(msg);
+                            error_event.SetInt(0);
+                            owner->AddPendingEvent(error_event);
 
                         } else {
                             LLMEvent chat_end{wxEVT_OLLAMA_CHAT_DONE};
                             chat_end.SetEventObject(this);
+                            chat_end.SetInt(0);
                             chat_end.SetReason(reason);
                             EventNotifier::Get()->AddPendingEvent(chat_end);
                         }

@@ -75,4 +75,4 @@ protected:
     wxCommandLinkButton* m_buttonGitter{nullptr};
 };
 
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_WELCOMEPAGE_CLOSE_BUTTON_CLICKED, clCommandEvent);
+wxDECLARE_EVENT(wxEVT_WELCOMEPAGE_CLOSE_BUTTON_CLICKED, clCommandEvent);

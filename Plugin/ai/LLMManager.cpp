@@ -4,6 +4,8 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 
+#include <atomic> // atomic_uint64_t
+
 namespace
 {
 std::atomic_uint64_t id_generator{0};
@@ -60,12 +62,20 @@ void LLMManager::OnTimer(wxTimerEvent& e)
 void LLMManager::OnResponse(clCommandEvent& event)
 {
     bool completed = event.GetEventType() == wxEVT_LLM_RESPONSE_COMPLETED;
+    bool is_thinking = event.GetInt() == 1;
     if (m_requetstQueue.empty()) {
         clWARNING() << "Received LLM response, but no callback is available";
         return;
     }
 
-    (m_requetstQueue.front().second)(event.GetStringRaw(), completed, false);
+    size_t flags{ResponseFlags::kNone};
+    if (completed) {
+        flags |= ResponseFlags::kCompleted;
+    }
+    if (is_thinking) {
+        flags |= ResponseFlags::kThinking;
+    }
+    (m_requetstQueue.front().second)(event.GetStringRaw(), flags);
     if (completed) {
         m_requetstQueue.erase(m_requetstQueue.begin());
     }
@@ -78,6 +88,7 @@ void LLMManager::OnResponseError(clCommandEvent& event)
         return;
     }
 
-    (m_requetstQueue.front().second)(event.GetStringRaw(), true, true);
+    size_t flags{ResponseFlags::kError | ResponseFlags::kCompleted};
+    (m_requetstQueue.front().second)(event.GetStringRaw(), flags);
     m_requetstQueue.erase(m_requetstQueue.begin());
 }

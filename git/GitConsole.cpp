@@ -30,6 +30,7 @@
 #include "GitResetDlg.h"
 #include "StdToWX.h"
 #include "StringUtils.h"
+#include "aui/clAuiToolBarArt.h"
 #include "bitmap_loader.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clSideBarCtrl.hpp"
@@ -185,6 +186,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
 
     // Toolbar
     auto images = clGetManager()->GetStdIcons();
+    m_toolbar->SetArtProvider(new clAuiToolBarArt());
     m_toolbar->AddTool(XRCID("git_refresh"), _("Refresh"), images->LoadBitmap("file_reload"), _("Refresh"));
     m_toolbar->AddTool(XRCID("git_clear_log"), _("Clear Git Log"), images->LoadBitmap("clear"), _("Clear Git Log"));
     m_toolbar->AddTool(XRCID("git_stop_process"),

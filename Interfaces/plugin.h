@@ -32,8 +32,8 @@
 #endif
 #endif
 
+#include "clAuiToolBarArt.h"
 #include "clToolBar.h"
-#include "cl_aui_tb_are.h"
 #include "cl_defs.h"
 #include "codelite_events.h"
 #include "imanager.h"

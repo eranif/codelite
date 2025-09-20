@@ -23,8 +23,9 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "cl_aui_tb_are.h"
+#include "clAuiToolBarArt.h"
 
+#include "clSystemSettings.h"
 #include "codelite_events.h"
 #include "drawingutils.h"
 #include "editor_config.h"
@@ -33,59 +34,47 @@
 #include <wx/dcmemory.h>
 #include <wx/settings.h>
 
-CLMainAuiTBArt::CLMainAuiTBArt(bool isMainBook)
-    : m_isMainBook(isMainBook)
+clAuiToolBarArt::clAuiToolBarArt()
 {
-    EventNotifier::Get()->Connect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CLMainAuiTBArt::OnThemeChanged), NULL,
-                                  this);
+    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clAuiToolBarArt::OnThemeChanged, this);
 }
 
-CLMainAuiTBArt::~CLMainAuiTBArt()
+clAuiToolBarArt::~clAuiToolBarArt()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CLMainAuiTBArt::OnThemeChanged),
-                                     NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clAuiToolBarArt::OnThemeChanged, this);
 }
 
-void CLMainAuiTBArt::DrawPlainBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
+void clAuiToolBarArt::DrawPlainBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
     wxUnusedVar(wnd);
     wxBitmap bmp(rect.GetSize());
     wxMemoryDC dcMem;
     dcMem.SelectObject(bmp);
-    dcMem.SetPen(DrawingUtils::GetPanelBgColour());
-    dcMem.SetBrush(DrawingUtils::GetPanelBgColour());
+    dcMem.SetPen(clSystemSettings::GetDefaultPanelColour());
+    dcMem.SetBrush(clSystemSettings::GetDefaultPanelColour());
     dcMem.DrawRectangle(rect);
     dcMem.SelectObject(wxNullBitmap);
     dc.DrawBitmap(bmp, wxPoint(0, 0));
 }
 
-void CLMainAuiTBArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect) { DrawPlainBackground(dc, wnd, rect); }
-
-void CLMainAuiTBArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect)
+void clAuiToolBarArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
-#ifdef __WXGTK3__
-    if(!item.GetBitmap().IsOk()) {
-        return;
-    }
-#endif
+    DrawPlainBackground(dc, wnd, rect);
+}
+
+void clAuiToolBarArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect)
+{
     wxAuiDefaultToolBarArt::DrawButton(dc, wnd, item, rect);
 }
 
-void CLMainAuiTBArt::DrawDropDownButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect)
+void clAuiToolBarArt::DrawDropDownButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect)
 {
-#ifdef __WXGTK3__
-    if(!item.GetBitmap().IsOk()) {
-        return;
-    }
-#endif
     wxAuiDefaultToolBarArt::DrawDropDownButton(dc, wnd, item, rect);
 }
 
-void CLMainAuiTBArt::OnThemeChanged(wxCommandEvent& event) { event.Skip(); }
+void clAuiToolBarArt::OnThemeChanged(wxCommandEvent& event) { event.Skip(); }
 
-void CLMainAuiTBArt::DrawGripper(wxDC& dc, wxWindow* wnd, const wxRect& rect)
+void clAuiToolBarArt::DrawGripper(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
-    wxUnusedVar(dc);
-    wxUnusedVar(wnd);
-    wxUnusedVar(rect);
+    wxAuiDefaultToolBarArt::DrawGripper(dc, wnd, rect);
 }

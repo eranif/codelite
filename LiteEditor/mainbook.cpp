@@ -227,11 +227,6 @@ void MainBook::OnPageClosed(wxBookCtrlEvent& e)
     if (m_book->GetPageCount() == 0) {
         SendCmdEvent(wxEVT_ALL_EDITORS_CLOSED);
         ShowQuickBar(false);
-
-        // if no workspace is opened, show the "welcome page"
-        if (!clWorkspaceManager::Get().IsWorkspaceOpened()) {
-            ShowWelcomePage(true);
-        }
         // update the title bar
         clMainFrame::Get()->SetFrameTitle(nullptr);
     }
@@ -269,7 +264,7 @@ void MainBook::OnWorkspaceLoaded(clWorkspaceEvent& e)
 {
     e.Skip();
     CloseAll(false); // get ready for session to be restored by clearing out existing pages
-    ShowWelcomePage(false);
+    CallAfter(&MainBook::ShowWelcomePage, false);
 }
 
 void MainBook::OnWorkspaceClosed(clWorkspaceEvent& e)

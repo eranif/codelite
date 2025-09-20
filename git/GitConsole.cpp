@@ -102,7 +102,7 @@ struct ToolBarItem {
     wxString bmp;
 };
 // ---------------------------------------------------------------------
-void PopulateToolbarOverflow(clToolBar* toolbar)
+void PopulateToolbarOverflow(wxAuiToolBar* toolbar)
 {
     std::vector<ToolBarItem> items = {
         {wxTRANSLATE("Create local branch"), XRCID("git_create_branch"), "file_new"},
@@ -117,12 +117,12 @@ void PopulateToolbarOverflow(clToolBar* toolbar)
         {wxTRANSLATE("Plugin settings"), XRCID("git_settings"), "cog"},
         {wxTRANSLATE("Clone a git repository"), XRCID("git_clone"), "copy"}};
 
-    auto images = toolbar->GetBitmapsCreateIfNeeded();
+    auto images = clGetManager()->GetStdIcons();
     for (auto item : items) {
         if (item.id == wxID_SEPARATOR) {
             toolbar->AddSeparator();
         } else {
-            toolbar->AddTool(item.id, wxGetTranslation(item.label), images->Add(item.bmp));
+            toolbar->AddTool(item.id, wxGetTranslation(item.label), images->LoadBitmap(item.bmp));
         }
     }
 }
@@ -184,34 +184,40 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_isVerbose = (data.GetFlags() & GitEntry::VerboseLog);
 
     // Toolbar
-    m_toolbar->SetGroupSpacing(5);
+    auto images = clGetManager()->GetStdIcons();
+    m_toolbar->AddTool(XRCID("git_refresh"), _("Refresh"), images->LoadBitmap("file_reload"), _("Refresh"));
+    m_toolbar->AddTool(XRCID("git_clear_log"), _("Clear Git Log"), images->LoadBitmap("clear"), _("Clear Git Log"));
+    m_toolbar->AddTool(XRCID("git_stop_process"),
+                       _("Terminate Git Process"),
+                       images->LoadBitmap("execute_stop"),
+                       _("Terminate Git Process"));
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("git_console_add_file"), _("Add File"), images->LoadBitmap("plus"), _("Add File"));
+    m_toolbar->AddTool(XRCID("git_console_reset_file"), _("Reset File"), images->LoadBitmap("undo"), _("Reset File"));
 
-    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
-    m_toolbar->AddTool(XRCID("git_refresh"), _("Refresh"), images->Add("file_reload"), _("Refresh"));
-    m_toolbar->AddTool(XRCID("git_clear_log"), _("Clear Git Log"), images->Add("clear"), _("Clear Git Log"));
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("git_commit"), _("Commit"), images->LoadBitmap("git-commit"), _("Commit local changes"));
+    m_toolbar->AddTool(XRCID("git_push"), _("Push"), images->LoadBitmap("up"), _("Push local changes"));
+
+    m_toolbar->AddTool(XRCID("git_pull"), _("Pull"), images->LoadBitmap("pull"), _("Pull remote changes"));
+    m_toolbar->SetToolDropDown(XRCID("git_pull"), true);
+
     m_toolbar->AddTool(
-        XRCID("git_stop_process"), _("Terminate Git Process"), images->Add("execute_stop"), _("Terminate Git Process"));
+        XRCID("git_browse_commit_list"), _("Log"), images->LoadBitmap("tasks"), _("Browse commit history"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("git_console_add_file"), _("Add File"), images->Add("plus"), _("Add File"));
-    m_toolbar->AddTool(XRCID("git_console_reset_file"), _("Reset File"), images->Add("undo"), _("Reset File"));
+    m_toolbar->AddTool(XRCID("git_rebase"), _("Rebase"), images->LoadBitmap("merge"), _("Rebase"));
+    m_toolbar->SetToolDropDown(XRCID("git_rebase"), true);
 
+    m_toolbar->AddTool(XRCID("git_reset_repository"), _("Reset"), images->LoadBitmap("clean"), _("Reset repository"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("git_commit"), _("Commit"), images->Add("git-commit"), _("Commit local changes"));
-    m_toolbar->AddTool(XRCID("git_push"), _("Push"), images->Add("up"), _("Push local changes"));
-    m_toolbar->AddTool(XRCID("git_pull"), _("Pull"), images->Add("pull"), _("Pull remote changes"), wxITEM_DROPDOWN);
-    m_toolbar->AddTool(XRCID("git_browse_commit_list"), _("Log"), images->Add("tasks"), _("Browse commit history"));
-    m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("git_rebase"), _("Rebase"), images->Add("merge"), _("Rebase"), wxITEM_DROPDOWN);
-    m_toolbar->AddTool(XRCID("git_reset_repository"), _("Reset"), images->Add("clean"), _("Reset repository"));
-    m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("git_commit_diff"), _("Diffs"), images->Add("diff"), _("Show current diffs"));
-    m_toolbar->AddTool(XRCID("git_blame"), _("Blame"), images->Add("finger"), _("Git blame"));
+    m_toolbar->AddTool(XRCID("git_commit_diff"), _("Diffs"), images->LoadBitmap("diff"), _("Show current diffs"));
+    m_toolbar->AddTool(XRCID("git_blame"), _("Blame"), images->LoadBitmap("finger"), _("Git blame"));
 
 #ifdef __WXMSW__
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(XRCID("git_msysgit"),
                        _("Open MSYS Git"),
-                       images->Add("console"),
+                       images->LoadBitmap("console"),
                        _("Open MSYS Git at the current file location"));
 #endif
 
@@ -226,9 +232,26 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnStopGitProcessUI, this, XRCID("git_stop_process"));
 
     PopulateToolbarOverflow(m_toolbar);
+
+    for (size_t i = 0; i < m_toolbar->GetToolCount(); ++i) {
+        auto tool = m_toolbar->FindToolByIndex(i);
+        if (tool->GetId() == wxID_SEPARATOR) {
+            continue;
+        }
+
+        auto normal_bmp = tool->GetBitmap();
+        wxBitmap disable_bmp = normal_bmp;
+        if (DrawingUtils::IsThemeDark()) {
+            disable_bmp = disable_bmp.ConvertToDisabled(0);
+        } else {
+            disable_bmp = disable_bmp.ConvertToDisabled(255);
+        }
+        tool->SetDisabledBitmap(disable_bmp);
+    }
+
     m_toolbar->Realize();
-    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitPullDropdown, this, XRCID("git_pull"));
-    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitRebaseDropdown, this, XRCID("git_rebase"));
+    m_toolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &GitConsole::OnGitPullDropdown, this, XRCID("git_pull"));
+    m_toolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &GitConsole::OnGitRebaseDropdown, this, XRCID("git_rebase"));
     m_statusBar = new IndicatorPanel(this, _("Ready"));
     GetSizer()->Add(m_statusBar, wxSizerFlags(0).Expand());
     GetSizer()->Fit(this);
@@ -259,8 +282,8 @@ GitConsole::~GitConsole()
     EventNotifier::Get()->Disconnect(
         wxEVT_GIT_CONFIG_CHANGED, wxCommandEventHandler(GitConsole::OnConfigurationChanged), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &GitConsole::OnWorkspaceClosed, this);
-    m_toolbar->Unbind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitPullDropdown, this, XRCID("git_pull"));
-    m_toolbar->Unbind(wxEVT_TOOL_DROPDOWN, &GitConsole::OnGitRebaseDropdown, this, XRCID("git_rebase"));
+    m_toolbar->Unbind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &GitConsole::OnGitPullDropdown, this, XRCID("git_pull"));
+    m_toolbar->Unbind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &GitConsole::OnGitRebaseDropdown, this, XRCID("git_rebase"));
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &GitConsole::OnSysColoursChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_OUTPUT_VIEW_TAB_CHANGED, &GitConsole::OnOutputViewTabChanged, this);
 }
@@ -554,7 +577,9 @@ void GitConsole::DoOnDropdown(const wxString& commandName, int id)
     {
         clConfig conf("git.conf");
         conf.ReadItem(&data);
-    } // Force conf out of scope, else its dtor clobbers the GitConsole::OnDropDownMenuEvent Save()
+        // Force conf out of scope, else its dtor clobbers the GitConsole::OnDropDownMenuEvent Save()
+    }
+
     GitCommandsEntries& ce = data.GetGitCommandsEntries(commandName);
     vGitLabelCommands_t entries = ce.GetCommands();
     int lastUsed = ce.GetLastUsedCommandIndex();
@@ -573,7 +598,18 @@ void GitConsole::DoOnDropdown(const wxString& commandName, int id)
               arr.GetCount(),
               new GitCommandData(arr, commandName, id));
 
-    m_toolbar->ShowMenuForButton(id, &menu);
+    m_toolbar->SetToolSticky(id, true);
+
+    // line up our menu with the button
+    wxRect rect = m_toolbar->GetToolRect(id);
+    wxPoint pt = m_toolbar->ClientToScreen(rect.GetBottomLeft());
+    pt = ScreenToClient(pt);
+
+    PopupMenu(&menu, pt);
+
+    // make sure the button is "un-stuck"
+    m_toolbar->SetToolSticky(id, false);
+
     menu.Unbind(wxEVT_MENU,
                 wxCommandEventHandler(GitConsole::OnDropDownMenuEvent),
                 this,

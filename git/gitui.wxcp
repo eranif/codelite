@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	828,
+		"m_objCounter":	829,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCrafterpca4kKInitBitmapResources",
 		"m_bitmapsFile":	"gitui_git_bitmaps.cpp",
@@ -12203,61 +12203,6 @@
 						}],
 					"m_events":	[],
 					"m_children":	[{
-							"m_type":	4461,
-							"proportion":	0,
-							"border":	5,
-							"gbSpan":	"1,1",
-							"gbPosition":	"0,0",
-							"m_styles":	["wxTB_NODIVIDER", "wxTB_FLAT"],
-							"m_sizerFlags":	["wxEXPAND"],
-							"m_properties":	[{
-									"type":	"winid",
-									"m_label":	"ID:",
-									"m_winid":	"wxID_ANY"
-								}, {
-									"type":	"string",
-									"m_label":	"Size:",
-									"m_value":	"-1,-1"
-								}, {
-									"type":	"string",
-									"m_label":	"Name:",
-									"m_value":	"m_toolbar"
-								}, {
-									"type":	"string",
-									"m_label":	"Tooltip:",
-									"m_value":	""
-								}, {
-									"type":	"string",
-									"m_label":	"Bitmap Size:",
-									"m_value":	"16,16"
-								}, {
-									"type":	"string",
-									"m_label":	"Margins:",
-									"m_value":	"-1,-1"
-								}, {
-									"type":	"string",
-									"m_label":	"Padding:",
-									"m_value":	"1"
-								}, {
-									"type":	"string",
-									"m_label":	"Separator Size:",
-									"m_value":	"5"
-								}, {
-									"type":	"string",
-									"m_label":	"Class Name:",
-									"m_value":	"clToolBar"
-								}, {
-									"type":	"string",
-									"m_label":	"Include File:",
-									"m_value":	"clToolBar.h"
-								}, {
-									"type":	"string",
-									"m_label":	"Style:",
-									"m_value":	""
-								}],
-							"m_events":	[],
-							"m_children":	[]
-						}, {
 							"m_type":	4401,
 							"proportion":	1,
 							"border":	2,
@@ -12284,7 +12229,7 @@
 								}, {
 									"type":	"choice",
 									"m_label":	"Orientation:",
-									"m_selection":	0,
+									"m_selection":	1,
 									"m_options":	["wxVERTICAL", "wxHORIZONTAL"]
 								}],
 							"m_events":	[],
@@ -12990,6 +12935,41 @@
 													"m_children":	[]
 												}]
 										}]
+								}, {
+									"m_type":	4463,
+									"proportion":	0,
+									"border":	5,
+									"gbSpan":	"1,1",
+									"gbPosition":	"0,0",
+									"m_styles":	["wxAUI_TB_PLAIN_BACKGROUND", "wxAUI_TB_DEFAULT_STYLE", "wxAUI_TB_VERTICAL"],
+									"m_sizerFlags":	["wxEXPAND"],
+									"m_properties":	[{
+											"type":	"winid",
+											"m_label":	"ID:",
+											"m_winid":	"wxID_ANY"
+										}, {
+											"type":	"string",
+											"m_label":	"Size:",
+											"m_value":	"-1,-1"
+										}, {
+											"type":	"string",
+											"m_label":	"Name:",
+											"m_value":	"m_toolbar"
+										}, {
+											"type":	"string",
+											"m_label":	"Tooltip:",
+											"m_value":	""
+										}, {
+											"type":	"string",
+											"m_label":	"Bitmap Size:",
+											"m_value":	"24,24"
+										}, {
+											"type":	"string",
+											"m_label":	"Margins:",
+											"m_value":	"-1,-1"
+										}],
+									"m_events":	[],
+									"m_children":	[]
 								}]
 						}]
 				}]

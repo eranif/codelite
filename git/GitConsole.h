@@ -92,8 +92,20 @@ protected:
     bool IsPatternFound(const wxString& buffer, const std::unordered_set<wxString>& m) const;
     bool HasAnsiEscapeSequences(const wxString& buffer) const;
 
-    void OnGitPullDropdown(wxCommandEvent& event) { DoOnDropdown("git_pull", XRCID("git_pull")); }
-    void OnGitRebaseDropdown(wxCommandEvent& event) { DoOnDropdown("git_rebase", XRCID("git_rebase")); }
+    void OnGitPullDropdown(wxAuiToolBarEvent& event)
+    {
+        if (!event.IsDropDownClicked()) {
+            return;
+        }
+        DoOnDropdown("git_pull", event.GetToolId());
+    }
+    void OnGitRebaseDropdown(wxAuiToolBarEvent& event)
+    {
+        if (!event.IsDropDownClicked()) {
+            return;
+        }
+        DoOnDropdown("git_rebase", event.GetToolId());
+    }
 
     void DoOnDropdown(const wxString& commandName, int id);
     void OnDropDownMenuEvent(wxCommandEvent& e);

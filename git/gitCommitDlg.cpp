@@ -65,6 +65,11 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
         diffLexer->Apply(m_stcDiff);
     }
 
+    LexerConf::Ptr_t markdown_lexer = ColoursAndFontsManager::Get().GetLexer("markdown");
+    if (markdown_lexer) {
+        markdown_lexer->Apply(m_stcCommitMessage);
+    }
+
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
     m_toolbar->AddTool(XRCID("ID_CHECKALL"), _("Toggle files"), images->Add("check-all"));
     m_toolbar->AddTool(XRCID("ID_HISTORY"), _("Show commit history"), images->Add("history"));
@@ -86,7 +91,7 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
     }
 
     m_indicatorPanel = new IndicatorPanel(this);
-    m_mainSizer->Add(m_indicatorPanel, wxSizerFlags(0).Expand().Border(wxALL, 5));
+    m_mainSizer->Add(m_indicatorPanel, wxSizerFlags(0).Expand());
     m_indicatorPanel->Stop(wxEmptyString);
 
     // set the focus to the text control

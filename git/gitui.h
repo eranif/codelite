@@ -42,6 +42,10 @@
 #include <wx/radiobut.h>
 #include <wx/spinctrl.h>
 #include <wx/notebook.h>
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#include <map>
+#include <wx/menu.h>
 #include <wx/checklst.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -461,13 +465,13 @@ public:
 class GitConsoleBase : public wxPanel
 {
 protected:
-    clToolBar* m_toolbar;
     wxNotebook* m_notebookChanges;
     wxPanel* m_panel674;
     clThemedOrderedListCtrl* m_dvListCtrl;
     wxPanel* m_panelUnversioned;
     clThemedOrderedListCtrl* m_dvListCtrlUnversioned;
     wxPanel* m_panel_log;
+    wxAuiToolBar* m_toolbar;
 
 protected:
     virtual void OnContextMenu(wxDataViewEvent& event) { event.Skip(); }
@@ -477,13 +481,13 @@ protected:
     virtual void OnUnversionedFileContextMenu(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    clToolBar* GetToolbar() { return m_toolbar; }
     clThemedOrderedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxPanel* GetPanel674() { return m_panel674; }
     clThemedOrderedListCtrl* GetDvListCtrlUnversioned() { return m_dvListCtrlUnversioned; }
     wxPanel* GetPanelUnversioned() { return m_panelUnversioned; }
     wxPanel* GetPanel_log() { return m_panel_log; }
     wxNotebook* GetNotebookChanges() { return m_notebookChanges; }
+    wxAuiToolBar* GetToolbar() { return m_toolbar; }
     GitConsoleBase(wxWindow* parent,
                    wxWindowID id = wxID_ANY,
                    const wxPoint& pos = wxDefaultPosition,

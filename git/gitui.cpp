@@ -1595,13 +1595,7 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer36 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer36);
 
-    m_toolbar =
-        new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_NODIVIDER | wxTB_FLAT);
-    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
-
-    boxSizer36->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
-
-    wxBoxSizer* boxSizer711 = new wxBoxSizer(wxVERTICAL);
+    wxBoxSizer* boxSizer711 = new wxBoxSizer(wxHORIZONTAL);
 
     boxSizer36->Add(boxSizer711, 1, wxEXPAND, WXC_FROM_DIP(2));
 
@@ -1654,6 +1648,15 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
 
     wxBoxSizer* boxSizer729 = new wxBoxSizer(wxVERTICAL);
     m_panel_log->SetSizer(boxSizer729);
+
+    m_toolbar = new wxAuiToolBar(this,
+                                 wxID_ANY,
+                                 wxDefaultPosition,
+                                 wxDLG_UNIT(this, wxSize(-1, -1)),
+                                 wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_VERTICAL);
+    m_toolbar->SetToolBitmapSize(wxSize(24, 24));
+
+    boxSizer711->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("GitConsoleBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));

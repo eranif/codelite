@@ -8,9 +8,11 @@
 #include "globals.h"
 #include "imanager.h"
 
+#include <mutex>
 #include <optional>
 #include <wx/app.h>
 #include <wx/button.h>
+#include <wx/dialog.h>
 #include <wx/panel.h>
 #include <wx/settings.h>
 
@@ -132,11 +134,31 @@ void clSystemSettings::DoColourChangedEvent()
     EventNotifier::Get()->AddPendingEvent(evtColoursChanged);
 }
 
+namespace
+{
+class MyDialog : public wxDialog
+{
+public:
+    MyDialog(wxWindow* parent)
+        : wxDialog(parent, wxID_ANY, wxEmptyString)
+    {
+        Hide();
+    }
+    ~MyDialog() override = default;
+};
+std::once_flag once;
+} // namespace
+
 wxColour clSystemSettings::GetDefaultPanelColour()
 {
     wxColour panel_colour;
 #ifdef __WXMSW__
-    panel_colour = GetColour(wxSYS_COLOUR_3DFACE);
+    static wxColour dlg_bg_colour;
+    std::call_once(once, []() {
+        MyDialog* dlg = new MyDialog(wxTheApp->GetTopWindow());
+        dlg_bg_colour = dlg->GetBackgroundColour();
+    });
+    panel_colour = dlg_bg_colour;
 #else
     panel_colour = GetColour(IS_GTK ? wxSYS_COLOUR_WINDOW : wxSYS_COLOUR_3DFACE);
 #endif

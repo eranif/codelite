@@ -5,8 +5,8 @@
 #include "ColoursAndFontsManager.h"
 #include "FileManager.hpp"
 #include "MarkdownStyler.hpp"
-#include "OllamaClient.hpp"
 #include "StringUtils.h"
+#include "aui/clAuiToolBarArt.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clSTCHelper.hpp"
 #include "clWorkspaceManager.h"
@@ -53,24 +53,32 @@ std::optional<wxString> GetGlobalSettings()
     }
     return global_content;
 }
+
 } // namespace
 
 ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     : AssistanceAIChatWindowBase(parent)
     , m_plugin(plugin)
 {
-    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
-    m_toolbar->SetGroupSpacing(10);
-    m_toolbar->AddTool(wxID_CLEAR, _("Clear everything and start a new session"), images->Add("clear"));
-    m_toolbar->AddTool(wxID_SETUP, _("Settings"), images->Add("cog"));
+    auto images = clGetManager()->GetStdIcons();
+    m_toolbar->SetArtProvider(new clAuiToolBarArt());
+    m_toolbar->AddTool(wxID_CLEAR, _("Clear everything and start a new session"), images->LoadBitmap("clear"));
+    m_toolbar->AddTool(wxID_SETUP, _("Settings"), images->LoadBitmap("cog"));
     m_toolbar->AddSeparator();
     m_activeModel = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxDefaultSize);
     m_activeModel->SetToolTip(_("Change model. Changing a model will also clear your chat history"));
     m_toolbar->AddControl(m_activeModel);
-    m_toolbar->AddTool(wxID_REFRESH, _("Load models list"), images->Add("debugger_restart"));
+    m_toolbar->AddTool(wxID_REFRESH, _("Load models list"), images->LoadBitmap("debugger_restart"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(wxID_EXECUTE, _("Submit"), images->Add("run"));
-    m_toolbar->AddTool(wxID_STOP, _("Stop"), images->Add("execute_stop"));
+    m_toolbar->AddTool(wxID_EXECUTE, _("Submit"), images->LoadBitmap("run"));
+    m_toolbar->AddTool(wxID_STOP, _("Stop"), images->LoadBitmap("execute_stop"));
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("auto_scroll"),
+                       _("Enable auto scrolling"),
+                       images->LoadBitmap("link_editor"),
+                       wxEmptyString,
+                       wxITEM_CHECK);
+    clAuiToolBarArt::Finalise(m_toolbar);
     m_toolbar->Realize();
 
     m_activeModel->Bind(wxEVT_CHOICE, &ChatAIWindow::OnModelChanged, this);
@@ -97,12 +105,14 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     Bind(wxEVT_MENU, &ChatAIWindow::OnSettings, this, wxID_SETUP);
     Bind(wxEVT_MENU, &ChatAIWindow::OnSend, this, wxID_EXECUTE);
     Bind(wxEVT_MENU, &ChatAIWindow::OnStop, this, wxID_STOP);
+    Bind(wxEVT_MENU, &ChatAIWindow::OnAutoScroll, this, XRCID("auto_scroll"));
 
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_EXECUTE);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnStopUI, this, wxID_STOP);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_CLEAR);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_REFRESH);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_SETUP);
+    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnAutoScrollUI, this, XRCID("auto_scroll"));
     m_activeModel->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this);
 
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);
@@ -490,33 +500,25 @@ void ChatAIWindow::AppendOutput(const wxString& text)
 
     m_stcOutput->SetReadOnly(false);
     m_stcOutput->SetInsertionPointEnd();
+    m_stcOutput->SetSelection(m_stcOutput->GetLastPosition(), m_stcOutput->GetLastPosition());
     m_stcOutput->AppendText(text);
     m_stcOutput->SetReadOnly(true);
 
-    bool scroll_to_end{true};
-    if (wxWindow::FindFocus() == m_stcOutput) {
-        scroll_to_end = false;
-    }
-
-    if (scroll_to_end) {
+    if (m_autoScroll) {
         m_stcOutput->ScrollToEnd();
+        clSTCHelper::SetCaretAt(m_stcOutput, m_stcOutput->GetLastPosition());
     }
-    clSTCHelper::SetCaretAt(m_stcOutput, m_stcOutput->GetLastPosition());
 }
 
 void ChatAIWindow::StyleOutput()
 {
     m_markdownStyler->StyleText();
-
-    bool scroll_to_end{true};
-    if (wxWindow::FindFocus() == m_stcOutput) {
-        scroll_to_end = false;
-    }
-
-    if (scroll_to_end) {
+    if (m_autoScroll) {
         m_stcOutput->ScrollToEnd();
+        clSTCHelper::SetCaretAt(m_stcOutput, m_stcOutput->GetLastPosition());
+    } else {
+        m_stcOutput->ClearSelections();
     }
-    clSTCHelper::SetCaretAt(m_stcOutput, m_stcOutput->GetLastPosition());
 }
 
 void ChatAIWindow::OnWorkspaceLoaded(clWorkspaceEvent& event)
@@ -568,6 +570,10 @@ void ChatAIWindow::LoadGlobalConfig()
     wxBusyCursor bc{};
     m_plugin->GetClient()->ReloadConfig(GetGlobalSettings().value_or(kDefaultSettings));
 }
+
+void ChatAIWindow::OnAutoScroll(wxCommandEvent& event) { m_autoScroll = event.IsChecked(); }
+
+void ChatAIWindow::OnAutoScrollUI(wxUpdateUIEvent& event) { event.Check(m_autoScroll); }
 
 void ChatAIWindow::OnStop(wxCommandEvent& event)
 {

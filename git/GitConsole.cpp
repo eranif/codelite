@@ -234,22 +234,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnStopGitProcessUI, this, XRCID("git_stop_process"));
 
     PopulateToolbarOverflow(m_toolbar);
-
-    for (size_t i = 0; i < m_toolbar->GetToolCount(); ++i) {
-        auto tool = m_toolbar->FindToolByIndex(i);
-        if (tool->GetId() == wxID_SEPARATOR) {
-            continue;
-        }
-
-        auto normal_bmp = tool->GetBitmap();
-        wxBitmap disable_bmp = normal_bmp;
-        if (DrawingUtils::IsThemeDark()) {
-            disable_bmp = disable_bmp.ConvertToDisabled(0);
-        } else {
-            disable_bmp = disable_bmp.ConvertToDisabled(255);
-        }
-        tool->SetDisabledBitmap(disable_bmp);
-    }
+    clAuiToolBarArt::Finalise(m_toolbar);
 
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &GitConsole::OnGitPullDropdown, this, XRCID("git_pull"));

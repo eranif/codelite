@@ -22,6 +22,8 @@ public:
 
 protected:
     void OnStop(wxCommandEvent& event);
+    void OnAutoScroll(wxCommandEvent& event);
+    void OnAutoScrollUI(wxUpdateUIEvent& event);
     void OnStopUI(wxUpdateUIEvent& event);
     void OnInputUI(wxUpdateUIEvent& event) override;
     void OnSend(wxCommandEvent& event);
@@ -73,4 +75,5 @@ private:
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
     bool m_thinking{false};
     IndicatorPanel* m_statusPanel{nullptr};
+    bool m_autoScroll{true};
 };

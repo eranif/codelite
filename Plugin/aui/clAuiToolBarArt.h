@@ -49,6 +49,7 @@ public:
     virtual void DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect);
     virtual void DrawGripper(wxDC& dc, wxWindow* wnd, const wxRect& rect);
     void OnThemeChanged(wxCommandEvent& event);
+    static void Finalise(wxAuiToolBar* toobar);
 };
 
 #endif // CL_AUI_TOOLBAR_ART_H

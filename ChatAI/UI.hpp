@@ -17,8 +17,10 @@
 #include <wx/notebook.h>
 #include <wx/imaglist.h>
 #include <wx/splitter.h>
-#include <wx/toolbar.h>
-#include "clToolBar.h"
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#include <map>
+#include <wx/menu.h>
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
 #if wxVERSION_NUMBER >= 2900
@@ -46,7 +48,7 @@ protected:
     wxPanel* m_panelChat;
     wxSplitterWindow* m_mainSplitter;
     wxPanel* m_splitterPageTop;
-    clToolBar* m_toolbar;
+    wxAuiToolBar* m_toolbar;
     clThemedSTC* m_stcOutput;
     wxPanel* m_splitterPageBottom;
     clThemedSTC* m_stcInput;
@@ -56,7 +58,7 @@ protected:
     virtual void OnInputUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    clToolBar* GetToolbar() { return m_toolbar; }
+    wxAuiToolBar* GetToolbar() { return m_toolbar; }
     clThemedSTC* GetStcOutput() { return m_stcOutput; }
     wxPanel* GetSplitterPageTop() { return m_splitterPageTop; }
     clThemedSTC* GetStcInput() { return m_stcInput; }

@@ -31,6 +31,7 @@
 #include "editor_config.h"
 #include "event_notifier.h"
 
+#include <wx/bitmap.h>
 #include <wx/dcmemory.h>
 #include <wx/settings.h>
 
@@ -77,4 +78,27 @@ void clAuiToolBarArt::OnThemeChanged(wxCommandEvent& event) { event.Skip(); }
 void clAuiToolBarArt::DrawGripper(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
     wxAuiDefaultToolBarArt::DrawGripper(dc, wnd, rect);
+}
+
+void clAuiToolBarArt::Finalise(wxAuiToolBar* toobar)
+{
+    for (size_t i = 0; i < toobar->GetToolCount(); ++i) {
+        auto tool = toobar->FindToolByIndex(i);
+        if (tool->GetId() == wxID_SEPARATOR) {
+            continue;
+        }
+
+        auto normal_bmp = tool->GetBitmap();
+        wxBitmap disable_bmp = normal_bmp;
+        if (DrawingUtils::IsThemeDark()) {
+            disable_bmp = disable_bmp.ConvertToDisabled(0);
+        } else {
+            disable_bmp = disable_bmp.ConvertToDisabled(255);
+        }
+        tool->SetDisabledBitmap(disable_bmp);
+
+        if (tool->GetShortHelp().empty()) {
+            tool->SetShortHelp(tool->GetLabel());
+        }
+    }
 }

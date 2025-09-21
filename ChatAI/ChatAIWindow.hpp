@@ -59,7 +59,6 @@ protected:
     void DoClearOutputView();
     /// Clear the view (input & output) and reset the client.
     void DoReset();
-    bool DoCreateWorkspaceSettings();
     void DoLogMessage(const wxString& message, LLMLogLevel log_level);
 
     /// Return the relevant configuration file. If a workspace file is opened, we use the workspace specific

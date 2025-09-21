@@ -22,10 +22,15 @@ namespace
 const wxString kDefaultSettings =
     R"#({
   "history_size": 50,
-  "server_url": "http://127.0.0.1:11434",
-  "servers": {},
-  "http_headers": {
-    "Host": "127.0.0.1"
+  "mcp_servers": {},
+  "endpoints": {
+    "http://127.0.0.1:11434": {
+      "active": true,
+      "http_headers": {
+        "Host": "127.0.0.1"
+      },
+      "type": "ollama"
+    }
   },
   "models": {
     "default": {
@@ -165,7 +170,8 @@ ChatAIWindow::~ChatAIWindow()
 
 wxString ChatAIWindow::GetConfigurationFilePath() const
 {
-    return FileManager::GetSettingFileFullPath(kAssistantConfigFile);
+    WriteOptions opts{.converter = nullptr, .force_global = true};
+    return FileManager::GetSettingFileFullPath(kAssistantConfigFile, opts);
 }
 
 void ChatAIWindow::OnSend(wxCommandEvent& event)
@@ -303,39 +309,18 @@ void ChatAIWindow::OnLog(LLMEvent& event)
 void ChatAIWindow::OnSettings(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    /// Create the workspace settings file (do nothing if the file already exists).
-    DoCreateWorkspaceSettings();
-
-    if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
-        auto editor = clWorkspaceManager::Get().GetWorkspace()->CreateOrOpenSettingFile(kAssistantConfigFile);
-        if (!editor) {
-            ::wxMessageBox(wxString() << _("Could not open file: ") << kAssistantConfigFile,
+    WriteOptions opts{.force_global = true};
+    wxString global_config_path = FileManager::GetSettingFileFullPath(kAssistantConfigFile, opts);
+    if (!wxFileName::Exists(global_config_path)) {
+        // create it
+        if (!FileUtils::WriteFileContent(global_config_path, kDefaultSettings)) {
+            ::wxMessageBox(wxString() << _("Failed to create configuration file:\n") << global_config_path,
                            "CodeLite",
-                           wxICON_ERROR | wxOK | wxCENTER);
+                           wxICON_WARNING | wxOK | wxCENTER);
             return;
         }
-
-        if (!editor->GetEditorText().empty()) {
-            return;
-        }
-
-        // Place some default content, if we have a global configuration - copy the settings from that file.
-        wxString default_content = GetGlobalSettings().value_or(kDefaultSettings);
-        editor->SetEditorText(default_content);
-    } else {
-        // Global settings
-        wxFileName global_config{GetConfigurationFilePath()};
-        if (!global_config.FileExists()) {
-            global_config.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-            if (!FileUtils::WriteFileContent(global_config, kDefaultSettings)) {
-                ::wxMessageBox(wxString() << _("Failed to create configuration file:\n") << global_config.GetFullPath(),
-                               "CodeLite",
-                               wxICON_WARNING | wxOK | wxCENTER);
-                return;
-            }
-        }
-        clGetManager()->OpenFile(global_config.GetFullPath());
     }
+    clGetManager()->OpenFile(global_config_path);
 }
 
 void ChatAIWindow::OnRefreshModelList(wxCommandEvent& event)
@@ -438,12 +423,17 @@ void ChatAIWindow::OnFileSaved(clCommandEvent& event)
     CHECK_PTR_RET(clGetManager()->GetActiveEditor());
 
     wxString filepath = clGetManager()->GetActiveEditor()->GetRemotePathOrLocal();
-    if (filepath == GetConfigurationFilePath()) {
-        // Reload configuration
-        wxBusyCursor bc{};
-        m_plugin->GetClient()->ReloadConfig(clGetManager()->GetActiveEditor()->GetEditorText());
-        clGetManager()->SetStatusMessage(_("ChatAI configuration re-loaded successfully"), 3);
+    if (filepath != GetConfigurationFilePath()) {
+        return;
     }
+
+    // Reload configuration
+    wxBusyCursor bc{};
+    m_plugin->GetClient()->ReloadConfig(clGetManager()->GetActiveEditor()->GetEditorText());
+    clGetManager()->SetStatusMessage(_("ChatAI configuration re-loaded successfully"), 3);
+
+    // Refresh the model list.
+    PopulateModels();
 }
 
 void ChatAIWindow::OnThinking(LLMEvent& event)
@@ -532,8 +522,8 @@ void ChatAIWindow::StyleOutput()
 void ChatAIWindow::OnWorkspaceLoaded(clWorkspaceEvent& event)
 {
     event.Skip();
-    DoCreateWorkspaceSettings();
-    auto content = FileManager::ReadSettingsFileContent(kAssistantConfigFile).value_or(kDefaultSettings);
+    WriteOptions opts{.converter = nullptr, .force_global = true};
+    auto content = FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts).value_or(kDefaultSettings);
     m_plugin->GetClient()->ReloadConfig(content);
 }
 
@@ -542,26 +532,6 @@ void ChatAIWindow::OnWorkspaceClosed(clWorkspaceEvent& event)
     event.Skip();
     DoReset();
     CallAfter(&ChatAIWindow::LoadGlobalConfig);
-}
-
-bool ChatAIWindow::DoCreateWorkspaceSettings()
-{
-    wxString config_path = FileManager::GetSettingFileFullPath(kAssistantConfigFile);
-
-    clDEBUG() << "Checking if file:" << config_path << "exists..." << endl;
-    if (FileManager::FileExists(config_path)) {
-        clDEBUG() << "Yes." << endl;
-        return true;
-    }
-    clDEBUG() << "No." << endl;
-
-    // New file, create the workspace file content.
-    wxString default_content = kDefaultSettings;
-    if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
-        // Try to copy the content from the global settings.
-        default_content = GetGlobalSettings().value_or(kDefaultSettings);
-    }
-    return FileManager::WriteSettingsFileContent(kAssistantConfigFile, default_content);
 }
 
 void ChatAIWindow::RestoreUI()

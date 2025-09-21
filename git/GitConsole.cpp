@@ -573,51 +573,64 @@ struct GitCommandData : public wxObject {
     int id;            // Holds the id of the command e.g. XRCID("git_pull")
 };
 
-void GitConsole::DoOnDropdown(const wxString& commandName, int id)
+void GitConsole::DoOnDropdown(const wxString& commandName, int id, const wxAuiToolBarEvent& event)
 {
-    GitEntry data;
-    {
-        clConfig conf("git.conf");
-        conf.ReadItem(&data);
-        // Force conf out of scope, else its dtor clobbers the GitConsole::OnDropDownMenuEvent Save()
+    if (event.IsDropDownClicked()) {
+        GitEntry data;
+        {
+            clConfig conf("git.conf");
+            conf.ReadItem(&data);
+            // Force conf out of scope, else its dtor clobbers the GitConsole::OnDropDownMenuEvent Save()
+        }
+
+        GitCommandsEntries& ce = data.GetGitCommandsEntries(commandName);
+        vGitLabelCommands_t entries = ce.GetCommands();
+        int lastUsed = ce.GetLastUsedCommandIndex();
+
+        wxArrayString arr;
+        wxMenu menu;
+        for (size_t n = 0; n < entries.size(); ++n) {
+            wxMenuItem* item = menu.AppendRadioItem(n, entries.at(n).label);
+            item->Check(n == (size_t)lastUsed);
+            arr.Add(entries.at(n).command);
+        }
+        menu.Bind(wxEVT_MENU,
+                  wxCommandEventHandler(GitConsole::OnDropDownMenuEvent),
+                  this,
+                  0,
+                  arr.GetCount(),
+                  new GitCommandData(arr, commandName, id));
+
+        m_toolbar->SetToolSticky(id, true);
+
+        // line up our menu with the button
+        wxRect rect = m_toolbar->GetToolRect(id);
+        wxPoint pt = m_toolbar->ClientToScreen(rect.GetBottomLeft());
+        pt = ScreenToClient(pt);
+
+        PopupMenu(&menu, pt);
+
+        // make sure the button is "un-stuck"
+        m_toolbar->SetToolSticky(id, false);
+
+        menu.Unbind(wxEVT_MENU,
+                    wxCommandEventHandler(GitConsole::OnDropDownMenuEvent),
+                    this,
+                    0,
+                    arr.GetCount(),
+                    new GitCommandData(arr, commandName, id));
+    } else {
+        // button clicked.
+        if (event.GetId() == XRCID("git_pull")) {
+            // do pull
+            wxCommandEvent e;
+            m_git->OnPull(e);
+        } else if (event.GetId() == XRCID("git_rebase")) {
+            // do rebase
+            wxCommandEvent e;
+            m_git->OnRebase(e);
+        }
     }
-
-    GitCommandsEntries& ce = data.GetGitCommandsEntries(commandName);
-    vGitLabelCommands_t entries = ce.GetCommands();
-    int lastUsed = ce.GetLastUsedCommandIndex();
-
-    wxArrayString arr;
-    wxMenu menu;
-    for (size_t n = 0; n < entries.size(); ++n) {
-        wxMenuItem* item = menu.AppendRadioItem(n, entries.at(n).label);
-        item->Check(n == (size_t)lastUsed);
-        arr.Add(entries.at(n).command);
-    }
-    menu.Bind(wxEVT_MENU,
-              wxCommandEventHandler(GitConsole::OnDropDownMenuEvent),
-              this,
-              0,
-              arr.GetCount(),
-              new GitCommandData(arr, commandName, id));
-
-    m_toolbar->SetToolSticky(id, true);
-
-    // line up our menu with the button
-    wxRect rect = m_toolbar->GetToolRect(id);
-    wxPoint pt = m_toolbar->ClientToScreen(rect.GetBottomLeft());
-    pt = ScreenToClient(pt);
-
-    PopupMenu(&menu, pt);
-
-    // make sure the button is "un-stuck"
-    m_toolbar->SetToolSticky(id, false);
-
-    menu.Unbind(wxEVT_MENU,
-                wxCommandEventHandler(GitConsole::OnDropDownMenuEvent),
-                this,
-                0,
-                arr.GetCount(),
-                new GitCommandData(arr, commandName, id));
 }
 
 void GitConsole::OnDropDownMenuEvent(wxCommandEvent& event)

@@ -390,7 +390,7 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Sash Position:",
-															"m_value":	"150"
+															"m_value":	"200"
 														}],
 													"m_events":	[],
 													"m_children":	[{
@@ -491,41 +491,6 @@
 																		}],
 																	"m_events":	[],
 																	"m_children":	[{
-																			"m_type":	4463,
-																			"proportion":	0,
-																			"border":	5,
-																			"gbSpan":	"1,1",
-																			"gbPosition":	"0,0",
-																			"m_styles":	["wxAUI_TB_PLAIN_BACKGROUND", "wxAUI_TB_DEFAULT_STYLE"],
-																			"m_sizerFlags":	["wxEXPAND"],
-																			"m_properties":	[{
-																					"type":	"winid",
-																					"m_label":	"ID:",
-																					"m_winid":	"wxID_ANY"
-																				}, {
-																					"type":	"string",
-																					"m_label":	"Size:",
-																					"m_value":	"-1,-1"
-																				}, {
-																					"type":	"string",
-																					"m_label":	"Name:",
-																					"m_value":	"m_toolbar"
-																				}, {
-																					"type":	"string",
-																					"m_label":	"Tooltip:",
-																					"m_value":	""
-																				}, {
-																					"type":	"string",
-																					"m_label":	"Bitmap Size:",
-																					"m_value":	"16,16"
-																				}, {
-																					"type":	"string",
-																					"m_label":	"Margins:",
-																					"m_value":	"-1,-1"
-																				}],
-																			"m_events":	[],
-																			"m_children":	[]
-																		}, {
 																			"m_type":	4466,
 																			"proportion":	1,
 																			"border":	5,
@@ -744,6 +709,41 @@
 																		}],
 																	"m_events":	[],
 																	"m_children":	[{
+																			"m_type":	4463,
+																			"proportion":	0,
+																			"border":	5,
+																			"gbSpan":	"1,1",
+																			"gbPosition":	"0,0",
+																			"m_styles":	["wxAUI_TB_PLAIN_BACKGROUND", "wxAUI_TB_DEFAULT_STYLE"],
+																			"m_sizerFlags":	["wxEXPAND"],
+																			"m_properties":	[{
+																					"type":	"winid",
+																					"m_label":	"ID:",
+																					"m_winid":	"wxID_ANY"
+																				}, {
+																					"type":	"string",
+																					"m_label":	"Size:",
+																					"m_value":	"-1,-1"
+																				}, {
+																					"type":	"string",
+																					"m_label":	"Name:",
+																					"m_value":	"m_toolbar"
+																				}, {
+																					"type":	"string",
+																					"m_label":	"Tooltip:",
+																					"m_value":	""
+																				}, {
+																					"type":	"string",
+																					"m_label":	"Bitmap Size:",
+																					"m_value":	"16,16"
+																				}, {
+																					"type":	"string",
+																					"m_label":	"Margins:",
+																					"m_value":	"-1,-1"
+																				}],
+																			"m_events":	[],
+																			"m_children":	[]
+																		}, {
 																			"m_type":	4466,
 																			"proportion":	1,
 																			"border":	5,

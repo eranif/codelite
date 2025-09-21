@@ -9,6 +9,7 @@
 #include "aui/clAuiToolBarArt.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clSTCHelper.hpp"
+#include "clSingleChoiceDialog.h"
 #include "clWorkspaceManager.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -73,6 +74,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     m_toolbar->AddTool(wxID_EXECUTE, _("Submit"), images->LoadBitmap("run"));
     m_toolbar->AddTool(wxID_STOP, _("Stop"), images->LoadBitmap("execute_stop"));
     m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("prompt_history"), _("Show prompt history"), images->LoadBitmap("history"));
     m_toolbar->AddTool(XRCID("auto_scroll"),
                        _("Enable auto scrolling"),
                        images->LoadBitmap("link_editor"),
@@ -106,6 +108,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     Bind(wxEVT_MENU, &ChatAIWindow::OnSend, this, wxID_EXECUTE);
     Bind(wxEVT_MENU, &ChatAIWindow::OnStop, this, wxID_STOP);
     Bind(wxEVT_MENU, &ChatAIWindow::OnAutoScroll, this, XRCID("auto_scroll"));
+    Bind(wxEVT_MENU, &ChatAIWindow::OnHistory, this, XRCID("prompt_history"));
 
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_EXECUTE);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnStopUI, this, wxID_STOP);
@@ -113,6 +116,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_REFRESH);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_SETUP);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnAutoScrollUI, this, XRCID("auto_scroll"));
+    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnHistoryUI, this, XRCID("prompt_history"));
     m_activeModel->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this);
 
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);
@@ -183,6 +187,10 @@ void ChatAIWindow::DoSendPrompt()
     wxString prompt = m_stcInput->GetText();
     prompt.Trim().Trim(false);
     m_plugin->GetClient()->Send(prompt, m_activeModel->GetStringSelection());
+
+    // Remember this prompt in the history.
+    m_plugin->GetClient()->GetConfig().AddHistory(prompt);
+    m_plugin->GetClient()->GetConfig().Save();
 
     prompt.Prepend(wxString() << "\n**" << ::wxGetUserId() << "**:\n");
     AppendOutput(prompt + "\n\n");
@@ -574,6 +582,27 @@ void ChatAIWindow::LoadGlobalConfig()
 void ChatAIWindow::OnAutoScroll(wxCommandEvent& event) { m_autoScroll = event.IsChecked(); }
 
 void ChatAIWindow::OnAutoScrollUI(wxUpdateUIEvent& event) { event.Check(m_autoScroll); }
+
+void ChatAIWindow::OnHistory(wxCommandEvent& event)
+{
+    const auto& config = m_plugin->GetClient()->GetConfig();
+    clSingleChoiceDialog dlg(EventNotifier::Get()->TopFrame(), config.GetHistory());
+    dlg.SetLabel(_("Chat history"));
+    if (dlg.ShowModal() != wxID_OK) {
+        return;
+    }
+
+    // Update the prompt field.
+    m_stcInput->SetReadOnly(false);
+    m_stcInput->SetText(dlg.GetSelection());
+    m_stcInput->SetReadOnly(true);
+    m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
+}
+
+void ChatAIWindow::OnHistoryUI(wxUpdateUIEvent& event)
+{
+    event.Enable(!m_plugin->GetClient()->GetConfig().GetHistory().IsEmpty());
+}
 
 void ChatAIWindow::OnStop(wxCommandEvent& event)
 {

@@ -21,9 +21,11 @@ public:
     wxString GetActiveModel() const { return m_activeModel->GetStringSelection(); }
 
 protected:
-    void OnStop(wxCommandEvent& event);
     void OnAutoScroll(wxCommandEvent& event);
     void OnAutoScrollUI(wxUpdateUIEvent& event);
+    void OnHistory(wxCommandEvent& event);
+    void OnHistoryUI(wxUpdateUIEvent& event);
+    void OnStop(wxCommandEvent& event);
     void OnStopUI(wxUpdateUIEvent& event);
     void OnInputUI(wxUpdateUIEvent& event) override;
     void OnSend(wxCommandEvent& event);

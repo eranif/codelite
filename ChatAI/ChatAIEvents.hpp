@@ -5,6 +5,29 @@
 
 #include <wx/event.h>
 
+enum class LLMLogLevel {
+    kTrace,
+    kDebug,
+    kInfo,
+    kWarning,
+    kError,
+};
+
+enum class LLMEventReason {
+    /// The current reason completed successfully.
+    kDone,
+    /// More data to come.
+    kPartialResult,
+    /// A non recoverable error.
+    kFatalError,
+    /// Log messages - NOTICE
+    kLogNotice,
+    /// Log messages - DEBUG
+    kLogDebug,
+    /// Request cancelled by the user.
+    kCancelled,
+};
+
 // --------------------------------------------------------------
 // Ollama event
 // --------------------------------------------------------------
@@ -17,8 +40,8 @@ public:
     ~LLMEvent() override = default;
     wxEvent* Clone() const override { return new LLMEvent(*this); }
 
-    inline ollama::Reason GetReason() const { return m_reason; }
-    inline void SetReason(ollama::Reason reason) { m_reason = reason; }
+    inline LLMEventReason GetReason() const { return m_reason; }
+    inline void SetReason(LLMEventReason reason) { m_reason = reason; }
 
     inline void SetOutput(std::string message) { this->m_message = std::move(message); }
     inline const std::string& GetOutput() const { return m_message; }
@@ -26,8 +49,8 @@ public:
     inline void SetModels(const wxArrayString& models) { this->m_models = models; }
     inline const wxArrayString& GetModels() const { return m_models; }
 
-    inline void SetLogLevel(const ollama::LogLevel& logLevel) { m_logLevel = logLevel; }
-    inline const ollama::LogLevel& GetLogLevel() const { return m_logLevel; }
+    inline void SetLogLevel(const LLMLogLevel& logLevel) { m_logLevel = logLevel; }
+    inline const LLMLogLevel& GetLogLevel() const { return m_logLevel; }
 
     inline bool IsThinking() const { return m_thinking; }
     inline void SetThinking(bool b) { m_thinking = b; }
@@ -42,10 +65,10 @@ public:
     inline void SetCallback(std::function<void()> cb) { m_callback = std::move(cb); }
 
 private:
-    ollama::Reason m_reason{ollama::Reason::kDone};
+    LLMEventReason m_reason{LLMEventReason::kDone};
     std::string m_message;
     wxArrayString m_models;
-    ollama::LogLevel m_logLevel{ollama::LogLevel::kInfo};
+    LLMLogLevel m_logLevel{LLMLogLevel::kInfo};
     std::function<void()> m_callback{nullptr};
     bool m_thinking{false};
 };

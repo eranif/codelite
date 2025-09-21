@@ -7,6 +7,11 @@
 
 #include <wx/aui/auibook.h>
 
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#endif
+
 class WXDLLIMPEXP_SDK clAuiBook : public wxAuiNotebook
 {
 public:
@@ -77,3 +82,7 @@ private:
     clAuiBook* m_book = nullptr;
     bool m_oldState = true;
 };
+
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif

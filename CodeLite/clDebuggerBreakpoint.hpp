@@ -4,6 +4,7 @@
 #include "JSON.h"
 #include "codelite_exports.h"
 #include "serialized_object.h"
+
 #include <vector>
 #include <wx/string.h>
 
@@ -67,10 +68,7 @@ public:
     clDebuggerBreakpoint& operator=(const clDebuggerBreakpoint& BI);
     ~clDebuggerBreakpoint();
 
-    bool IsConditional()
-    {
-        return !conditions.IsEmpty();
-    }
+    bool IsConditional() { return !conditions.IsEmpty(); }
     double GetId() const
     {
         int best_id = (this->debugger_id == -1 ? this->internal_id : this->debugger_id);
@@ -86,7 +84,7 @@ public:
         debugger_id = ext_id;
     }
 
-    bool operator==(const clDebuggerBreakpoint& BI)
+    bool operator==(const clDebuggerBreakpoint& BI) const
     {
         return ((origin == BI.origin) && (what == BI.what) && (at == BI.at) && (file == BI.file) &&
                 (lineno == BI.lineno) && (function_name == BI.function_name) && (memory_address == BI.memory_address) &&
@@ -97,10 +95,7 @@ public:
                 (!function_name.IsEmpty() ? (regex == BI.regex) : true));
     }
 
-    bool IsNull() const
-    {
-        return internal_id == wxNOT_FOUND && debugger_id == wxNOT_FOUND;
-    }
+    bool IsNull() const { return internal_id == wxNOT_FOUND && debugger_id == wxNOT_FOUND; }
 
     // JSON serialization
     JSONItem ToJSON() const;

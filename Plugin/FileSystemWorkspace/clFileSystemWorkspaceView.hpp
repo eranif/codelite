@@ -9,6 +9,11 @@
 
 #include <wx/choice.h>
 
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#endif
+
 class clThemedButton;
 class WXDLLIMPEXP_SDK clFileSystemWorkspaceView : public clTreeCtrlPanel
 {
@@ -47,5 +52,9 @@ public:
     virtual ~clFileSystemWorkspaceView();
     void UpdateConfigs(const wxArrayString& configs, const wxString& selectedConfig);
 };
+
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 
 #endif // CLFILESYSTEMWORKSPACEVIEW_HPP

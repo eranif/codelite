@@ -25,9 +25,11 @@
 #pragma once
 
 #include "ChatAIWindow.hpp"
-#include "OllamaClient.hpp"
+#include "LLMClientBase.hpp"
 #include "cl_command_event.h"
 #include "plugin.h"
+
+#include <memory>
 
 class ChatAI : public IPlugin
 {
@@ -38,8 +40,8 @@ public:
     void CreatePluginMenu(wxMenu* pluginsMenu) override;
     void HookPopupMenu(wxMenu* menu, MenuType type) override;
     void UnPlug() override;
-    ChatAIConfig& GetConfig() { return m_cli.GetConfig(); }
-    OllamaClient& GetClient() { return m_cli; }
+    ChatAIConfig& GetConfig() { return m_cli->GetConfig(); }
+    std::shared_ptr<LLMClientBase> GetClient() { return m_cli; }
 
 private:
     void OnShowChatWindow(wxCommandEvent& event);
@@ -47,5 +49,5 @@ private:
     void OnLlmRequest(clCommandEvent& event);
 
     ChatAIWindow* m_chatWindow = nullptr;
-    OllamaClient m_cli;
+    std::shared_ptr<LLMClientBase> m_cli;
 };

@@ -4705,7 +4705,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"m_labelText"
+											"m_value":	"m_messageText"
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",

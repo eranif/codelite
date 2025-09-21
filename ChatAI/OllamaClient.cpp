@@ -12,14 +12,46 @@
 #include <wx/msgdlg.h>
 #include <wx/tokenzr.h>
 
-LLMEvent::LLMEvent(wxEventType commandType, int winid)
-    : clCommandEvent(commandType, winid)
-{
-}
-
 #ifdef __WXMSW__
 #include <windows.h>
 #endif
+
+namespace
+{
+inline LLMLogLevel FromOllamaLogLevel(ollama::LogLevel level)
+{
+    switch (level) {
+    case ollama::LogLevel::kInfo:
+        return LLMLogLevel::kInfo;
+    case ollama::LogLevel::kDebug:
+        return LLMLogLevel::kDebug;
+    case ollama::LogLevel::kWarning:
+        return LLMLogLevel::kWarning;
+    case ollama::LogLevel::kTrace:
+        return LLMLogLevel::kTrace;
+    case ollama::LogLevel::kError:
+        return LLMLogLevel::kError;
+    }
+}
+
+inline LLMEventReason FromOllamaReason(ollama::Reason reason)
+{
+    switch (reason) {
+    case ollama::Reason::kDone:
+        return LLMEventReason::kDone;
+    case ollama::Reason::kCancelled:
+        return LLMEventReason::kCancelled;
+    case ollama::Reason::kPartialResult:
+        return LLMEventReason::kPartialResult;
+    case ollama::Reason::kFatalError:
+        return LLMEventReason::kFatalError;
+    case ollama::Reason::kLogDebug:
+        return LLMEventReason::kLogDebug;
+    case ollama::Reason::kLogNotice:
+        return LLMEventReason::kLogNotice;
+    }
+}
+}; // namespace
 
 OllamaClient::OllamaClient()
 {
@@ -96,7 +128,7 @@ void OllamaClient::WorkerThreadMain()
                         LLMEvent event{wxEVT_OLLAMA_CHAT_OUTPUT};
                         event.SetStringRaw(std::move(msg));
                         event.SetEventObject(this);
-                        event.SetReason(reason);
+                        event.SetReason(FromOllamaReason(reason));
                         event.SetThinking(thinking);
                         EventNotifier::Get()->AddPendingEvent(event);
                     }
@@ -111,7 +143,7 @@ void OllamaClient::WorkerThreadMain()
                         } else {
                             LLMEvent chat_end{wxEVT_OLLAMA_CHAT_DONE};
                             chat_end.SetEventObject(this);
-                            chat_end.SetReason(reason);
+                            chat_end.SetReason(FromOllamaReason(reason));
                             EventNotifier::Get()->AddPendingEvent(chat_end);
                         }
                     } break;
@@ -126,7 +158,7 @@ void OllamaClient::WorkerThreadMain()
                             LLMEvent chat_end{wxEVT_OLLAMA_CHAT_DONE};
                             chat_end.SetEventObject(this);
                             chat_end.SetInt(0);
-                            chat_end.SetReason(reason);
+                            chat_end.SetReason(FromOllamaReason(reason));
                             EventNotifier::Get()->AddPendingEvent(chat_end);
                         }
                     } break;
@@ -193,9 +225,13 @@ void OllamaClient::ReloadConfig(const wxString& configContent)
     m_queue.Post(std::move(task));
 }
 
-void OllamaClient::SetLogSink(std::function<void(ollama::LogLevel, std::string)> log_sink)
+void OllamaClient::SetLogSink(std::function<void(LLMLogLevel, std::string)> log_sink)
 {
-    ollama::SetLogSink(std::move(log_sink));
+    auto wrapper_cb = [log_sink = std::move(log_sink)](ollama::LogLevel level, std::string message) {
+        auto llm_log_level = FromOllamaLogLevel(level);
+        log_sink(llm_log_level, std::move(message));
+    };
+    ollama::SetLogSink(std::move(wrapper_cb));
 }
 
 void OllamaClient::OnRunTool(LLMEvent& event)

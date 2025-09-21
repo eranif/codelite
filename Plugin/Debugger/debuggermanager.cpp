@@ -146,10 +146,10 @@ bool DebuggerMgr::LoadDebuggers(IDebuggerObserver* observer)
             continue;
         }
 
-        DebuggerInfo info = pfn();
+        const DebuggerInfo* info = pfn();
         // Call the init method to create an instance of the debugger
         success = false;
-        GET_DBG_CREATE_FUNC pfnInitDbg = (GET_DBG_CREATE_FUNC)dl->GetSymbol(info.initFuncName, &success);
+        GET_DBG_CREATE_FUNC pfnInitDbg = (GET_DBG_CREATE_FUNC)dl->GetSymbol(info->initFuncName, &success);
         if (!success) {
             clLogMessage(wxT("Failed to find init function in dll: ") + fileName);
             if (!dl->GetError().IsEmpty()) {
@@ -160,13 +160,13 @@ bool DebuggerMgr::LoadDebuggers(IDebuggerObserver* observer)
             continue;
         }
 
-        clDEBUG() << wxT("Loaded debugger: ") << info.name << wxT(", Version: ") << info.version << endl;
+        clDEBUG() << wxT("Loaded debugger: ") << info->name << wxT(", Version: ") << info->version << endl;
         IDebugger* dbg = pfnInitDbg();
 
         // set the environment
         dbg->SetEnvironment(m_env);
         dbg->SetObserver(observer);
-        m_debuggers[info.name] = dbg;
+        m_debuggers[wxString(info->name)] = dbg;
 
         // keep the dynamic load library
         m_dl.push_back(dl);

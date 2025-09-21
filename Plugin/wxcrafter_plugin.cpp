@@ -14,6 +14,7 @@ extern void wxC9D6CInitBitmapResources();
 namespace
 {
 // return the wxBORDER_SIMPLE that matches the current application theme
+[[maybe_unused]]
 wxBorder get_border_simple_theme_aware_bit()
 {
 #if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
@@ -21,12 +22,12 @@ wxBorder get_border_simple_theme_aware_bit()
 #else
     return wxBORDER_DEFAULT;
 #endif
-} // DoGetBorderSimpleBit
+} // get_border_simple_theme_aware_bit
 bool bBitmapLoaded = false;
 } // namespace
 
-EditDlgBase::EditDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size,
-                         long style)
+EditDlgBase::EditDlgBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
     if (!bBitmapLoaded) {
@@ -111,8 +112,8 @@ EditDlgBase::EditDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
 
 EditDlgBase::~EditDlgBase() {}
 
-DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos,
-                                                 const wxSize& size, long style)
+DiffSideBySidePanelBase::DiffSideBySidePanelBase(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxControl(parent, id, pos, size, style)
 {
     if (!bBitmapLoaded) {
@@ -129,7 +130,10 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
 
     boxSizer13->Add(boxSizer314, 1, wxEXPAND, WXC_FROM_DIP(0));
 
-    m_splitter = new clThemedSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+    m_splitter = new clThemedSplitterWindow(this,
+                                            wxID_ANY,
+                                            wxDefaultPosition,
+                                            wxDLG_UNIT(this, wxSize(-1, -1)),
                                             wxSP_LIVE_UPDATE | wxSP_PERMIT_UNSPLIT | wxSP_3DSASH);
     m_splitter->SetSashGravity(0.5);
     m_splitter->SetMinimumPaneSize(10);
@@ -146,8 +150,8 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
 
     boxSizer111->Add(boxSizer285, 0, wxEXPAND, WXC_FROM_DIP(2));
 
-    m_textCtrlLeftFile = new wxTextCtrl(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition,
-                                        wxDLG_UNIT(m_splitterPageLeft, wxSize(-1, -1)), 0);
+    m_textCtrlLeftFile = new wxTextCtrl(
+        m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_splitterPageLeft, wxSize(-1, -1)), 0);
     m_textCtrlLeftFile->SetFocus();
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlLeftFile->SetHint(wxT(""));
@@ -156,8 +160,12 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
 
     boxSizer285->Add(m_textCtrlLeftFile, 1, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_button290 = new wxButton(m_splitterPageLeft, wxID_ANY, _("..."), wxDefaultPosition,
-                               wxDLG_UNIT(m_splitterPageLeft, wxSize(-1, -1)), wxBU_EXACTFIT);
+    m_button290 = new wxButton(m_splitterPageLeft,
+                               wxID_ANY,
+                               _("..."),
+                               wxDefaultPosition,
+                               wxDLG_UNIT(m_splitterPageLeft, wxSize(-1, -1)),
+                               wxBU_EXACTFIT);
     m_button290->SetToolTip(_("Choose a file"));
 
     boxSizer285->Add(m_button290, 0, wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
@@ -166,8 +174,11 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
 
     boxSizer111->Add(boxSizer310, 1, wxEXPAND, WXC_FROM_DIP(0));
 
-    m_stcLeft = new wxStyledTextCtrl(m_splitterPageLeft, wxID_ANY, wxDefaultPosition,
-                                     wxDLG_UNIT(m_splitterPageLeft, wxSize(500, 300)), wxBORDER_NONE);
+    m_stcLeft = new wxStyledTextCtrl(m_splitterPageLeft,
+                                     wxID_ANY,
+                                     wxDefaultPosition,
+                                     wxDLG_UNIT(m_splitterPageLeft, wxSize(500, 300)),
+                                     wxBORDER_NONE);
     // Configure the fold margin
     m_stcLeft->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcLeft->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -205,13 +216,20 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
 
     boxSizer310->Add(m_stcLeft, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_panelOverviewL = new wxPanel(m_splitterPageLeft, wxID_ANY, wxDefaultPosition,
-                                   wxDLG_UNIT(m_splitterPageLeft, wxSize(6, -1)), wxTAB_TRAVERSAL);
+    m_panelOverviewL = new wxPanel(m_splitterPageLeft,
+                                   wxID_ANY,
+                                   wxDefaultPosition,
+                                   wxDLG_UNIT(m_splitterPageLeft, wxSize(6, -1)),
+                                   wxTAB_TRAVERSAL);
 
     boxSizer310->Add(m_panelOverviewL, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_staticTextLeft = new wxStaticText(m_splitterPageLeft, wxID_ANY, wxT(""), wxDefaultPosition,
-                                        wxDLG_UNIT(m_splitterPageLeft, wxSize(-1, -1)), wxALIGN_CENTRE | wxBORDER_NONE);
+    m_staticTextLeft = new wxStaticText(m_splitterPageLeft,
+                                        wxID_ANY,
+                                        wxT(""),
+                                        wxDefaultPosition,
+                                        wxDLG_UNIT(m_splitterPageLeft, wxSize(-1, -1)),
+                                        wxALIGN_CENTRE | wxBORDER_NONE);
 
     boxSizer111->Add(m_staticTextLeft, 0, wxALL | wxEXPAND | wxALIGN_LEFT, WXC_FROM_DIP(2));
 
@@ -226,8 +244,8 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
 
     boxSizer113->Add(boxSizer286, 0, wxEXPAND, WXC_FROM_DIP(2));
 
-    m_textCtrlRightFile = new wxTextCtrl(m_splitterPageRight, wxID_ANY, wxT(""), wxDefaultPosition,
-                                         wxDLG_UNIT(m_splitterPageRight, wxSize(-1, -1)), 0);
+    m_textCtrlRightFile = new wxTextCtrl(
+        m_splitterPageRight, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_splitterPageRight, wxSize(-1, -1)), 0);
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlRightFile->SetHint(wxT(""));
 #endif
@@ -235,8 +253,12 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
 
     boxSizer286->Add(m_textCtrlRightFile, 1, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_button294 = new wxButton(m_splitterPageRight, wxID_ANY, _("..."), wxDefaultPosition,
-                               wxDLG_UNIT(m_splitterPageRight, wxSize(-1, -1)), wxBU_EXACTFIT);
+    m_button294 = new wxButton(m_splitterPageRight,
+                               wxID_ANY,
+                               _("..."),
+                               wxDefaultPosition,
+                               wxDLG_UNIT(m_splitterPageRight, wxSize(-1, -1)),
+                               wxBU_EXACTFIT);
 
     boxSizer286->Add(m_button294, 0, wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
@@ -244,8 +266,11 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
 
     boxSizer113->Add(boxSizer307, 1, wxEXPAND, WXC_FROM_DIP(0));
 
-    m_stcRight = new wxStyledTextCtrl(m_splitterPageRight, wxID_ANY, wxDefaultPosition,
-                                      wxDLG_UNIT(m_splitterPageRight, wxSize(-1, -1)), wxBORDER_NONE);
+    m_stcRight = new wxStyledTextCtrl(m_splitterPageRight,
+                                      wxID_ANY,
+                                      wxDefaultPosition,
+                                      wxDLG_UNIT(m_splitterPageRight, wxSize(-1, -1)),
+                                      wxBORDER_NONE);
     // Configure the fold margin
     m_stcRight->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcRight->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -283,14 +308,20 @@ DiffSideBySidePanelBase::DiffSideBySidePanelBase(wxWindow* parent, wxWindowID id
 
     boxSizer307->Add(m_stcRight, 1, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_panelOverviewR = new wxPanel(m_splitterPageRight, wxID_ANY, wxDefaultPosition,
-                                   wxDLG_UNIT(m_splitterPageRight, wxSize(6, -1)), wxTAB_TRAVERSAL);
+    m_panelOverviewR = new wxPanel(m_splitterPageRight,
+                                   wxID_ANY,
+                                   wxDefaultPosition,
+                                   wxDLG_UNIT(m_splitterPageRight, wxSize(6, -1)),
+                                   wxTAB_TRAVERSAL);
 
     boxSizer307->Add(m_panelOverviewR, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_staticTextRight =
-        new wxStaticText(m_splitterPageRight, wxID_ANY, wxT(""), wxDefaultPosition,
-                         wxDLG_UNIT(m_splitterPageRight, wxSize(-1, -1)), wxALIGN_CENTRE | wxBORDER_NONE);
+    m_staticTextRight = new wxStaticText(m_splitterPageRight,
+                                         wxID_ANY,
+                                         wxT(""),
+                                         wxDefaultPosition,
+                                         wxDLG_UNIT(m_splitterPageRight, wxSize(-1, -1)),
+                                         wxALIGN_CENTRE | wxBORDER_NONE);
 
     boxSizer113->Add(m_staticTextRight, 0, wxALL | wxEXPAND | wxALIGN_LEFT, WXC_FROM_DIP(2));
 
@@ -343,8 +374,8 @@ DiffSideBySidePanelBase::~DiffSideBySidePanelBase()
     m_panelOverviewFull->Unbind(wxEVT_LEFT_DOWN, &DiffSideBySidePanelBase::OnPaneloverviewLeftDown, this);
 }
 
-clGetTextFromUserBaseDialog::clGetTextFromUserBaseDialog(wxWindow* parent, wxWindowID id, const wxString& title,
-                                                         const wxPoint& pos, const wxSize& size, long style)
+clGetTextFromUserBaseDialog::clGetTextFromUserBaseDialog(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
     if (!bBitmapLoaded) {
@@ -403,8 +434,8 @@ clGetTextFromUserBaseDialog::clGetTextFromUserBaseDialog(wxWindow* parent, wxWin
 
 clGetTextFromUserBaseDialog::~clGetTextFromUserBaseDialog() {}
 
-clTreeCtrlPanelBase::clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                         long style)
+clTreeCtrlPanelBase::clTreeCtrlPanelBase(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxControl(parent, id, pos, size, style)
 {
     if (!bBitmapLoaded) {
@@ -417,7 +448,10 @@ clTreeCtrlPanelBase::clTreeCtrlPanelBase(wxWindow* parent, wxWindowID id, const 
     wxBoxSizer* boxSizer151 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer151);
 
-    m_treeCtrl = new clFileViewerTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+    m_treeCtrl = new clFileViewerTreeCtrl(this,
+                                          wxID_ANY,
+                                          wxDefaultPosition,
+                                          wxDLG_UNIT(this, wxSize(-1, -1)),
                                           wxTR_DEFAULT_STYLE | wxTR_MULTIPLE | wxTR_HIDE_ROOT |
                                               wxTR_FULL_ROW_HIGHLIGHT | wxTR_NO_LINES);
 
@@ -441,8 +475,8 @@ clTreeCtrlPanelBase::~clTreeCtrlPanelBase()
     m_treeCtrl->Unbind(wxEVT_COMMAND_TREE_ITEM_MENU, &clTreeCtrlPanelBase::OnContextMenu, this);
 }
 
-NotebookNavigationDlgBase::NotebookNavigationDlgBase(wxWindow* parent, wxWindowID id, const wxString& title,
-                                                     const wxPoint& pos, const wxSize& size, long style)
+NotebookNavigationDlgBase::NotebookNavigationDlgBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
     if (!bBitmapLoaded) {
@@ -455,25 +489,28 @@ NotebookNavigationDlgBase::NotebookNavigationDlgBase(wxWindow* parent, wxWindowI
     wxBoxSizer* boxSizer157 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer157);
 
-    m_panel161 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                             wxWANTS_CHARS | wxTAB_TRAVERSAL);
+    m_panel161 = new wxPanel(
+        this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxWANTS_CHARS | wxTAB_TRAVERSAL);
 
     boxSizer157->Add(m_panel161, 1, wxEXPAND, WXC_FROM_DIP(0));
 
     wxBoxSizer* boxSizer163 = new wxBoxSizer(wxVERTICAL);
     m_panel161->SetSizer(boxSizer163);
 
-    m_dvListCtrl = new clThemedListCtrl(m_panel161, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel161, wxSize(-1, -1)),
+    m_dvListCtrl = new clThemedListCtrl(m_panel161,
+                                        wxID_ANY,
+                                        wxDefaultPosition,
+                                        wxDLG_UNIT(m_panel161, wxSize(-1, -1)),
                                         wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE | wxWANTS_CHARS |
                                             wxTAB_TRAVERSAL | wxBORDER_STATIC);
     m_dvListCtrl->SetFocus();
 
     boxSizer163->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(2));
 
-    m_dvListCtrl->AppendTextColumn(_("Modified"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(30), wxALIGN_CENTER,
-                                   wxDATAVIEW_COL_RESIZABLE);
-    m_dvListCtrl->AppendIconTextColumn(_("Text"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                       wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(
+        _("Modified"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(30), wxALIGN_CENTER, wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendIconTextColumn(
+        _("Text"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
 
     SetName(wxT("NotebookNavigationDlgBase"));
     SetMinClientSize(wxSize(400, 200));
@@ -508,8 +545,8 @@ NotebookNavigationDlgBase::~NotebookNavigationDlgBase()
     m_dvListCtrl->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &NotebookNavigationDlgBase::OnItemActivated, this);
 }
 
-clTreeCtrlPanelDefaultPageBase::clTreeCtrlPanelDefaultPageBase(wxWindow* parent, wxWindowID id, const wxPoint& pos,
-                                                               const wxSize& size, long style)
+clTreeCtrlPanelDefaultPageBase::clTreeCtrlPanelDefaultPageBase(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxControl(parent, id, pos, size, style)
 {
     if (!bBitmapLoaded) {
@@ -522,8 +559,8 @@ clTreeCtrlPanelDefaultPageBase::clTreeCtrlPanelDefaultPageBase(wxWindow* parent,
     wxBoxSizer* boxSizer167 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer167);
 
-    m_panel169 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                             wxTAB_TRAVERSAL | wxBORDER_NONE);
+    m_panel169 = new wxPanel(
+        this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL | wxBORDER_NONE);
 
     boxSizer167->Add(m_panel169, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
 
@@ -532,8 +569,12 @@ clTreeCtrlPanelDefaultPageBase::clTreeCtrlPanelDefaultPageBase(wxWindow* parent,
 
     boxSizer171->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
-    m_staticText177 = new wxStaticText(m_panel169, wxID_ANY, _("DRAG AND DROP\nA FOLDER HERE"), wxDefaultPosition,
-                                       wxDLG_UNIT(m_panel169, wxSize(-1, -1)), wxALIGN_CENTRE);
+    m_staticText177 = new wxStaticText(m_panel169,
+                                       wxID_ANY,
+                                       _("DRAG AND DROP\nA FOLDER HERE"),
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(m_panel169, wxSize(-1, -1)),
+                                       wxALIGN_CENTRE);
     wxFont m_staticText177Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_staticText177Font.SetWeight(wxFONTWEIGHT_BOLD);
     m_staticText177->SetFont(m_staticText177Font);
@@ -556,8 +597,8 @@ clTreeCtrlPanelDefaultPageBase::~clTreeCtrlPanelDefaultPageBase()
     m_panel169->Unbind(wxEVT_CONTEXT_MENU, &clTreeCtrlPanelDefaultPageBase::OnDefaultPageContextMenu, this);
 }
 
-clSingleChoiceDialogBase::clSingleChoiceDialogBase(wxWindow* parent, wxWindowID id, const wxString& title,
-                                                   const wxPoint& pos, const wxSize& size, long style)
+clSingleChoiceDialogBase::clSingleChoiceDialogBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
     if (!bBitmapLoaded) {
@@ -570,13 +611,16 @@ clSingleChoiceDialogBase::clSingleChoiceDialogBase(wxWindow* parent, wxWindowID 
     wxBoxSizer* boxSizer181 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer181);
 
-    m_dvListCtrl = new clThemedListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
+    m_dvListCtrl = new clThemedListCtrl(this,
+                                        wxID_ANY,
+                                        wxDefaultPosition,
+                                        wxDLG_UNIT(this, wxSize(-1, -1)),
                                         wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
 
     boxSizer181->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrl->AppendTextColumn(_("My Column"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                   wxDATAVIEW_COL_RESIZABLE);
+    m_dvListCtrl->AppendTextColumn(
+        _("My Column"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     m_stdBtnSizer183 = new wxStdDialogButtonSizer();
 
     boxSizer181->Add(m_stdBtnSizer183, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
@@ -616,8 +660,8 @@ clSingleChoiceDialogBase::~clSingleChoiceDialogBase()
     m_button185->Unbind(wxEVT_UPDATE_UI, &clSingleChoiceDialogBase::OnOKUI, this);
 }
 
-clImageViewerBase::clImageViewerBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                     long style)
+clImageViewerBase::clImageViewerBase(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
     if (!bBitmapLoaded) {
@@ -630,8 +674,8 @@ clImageViewerBase::clImageViewerBase(wxWindow* parent, wxWindowID id, const wxPo
     wxBoxSizer* boxSizer194 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer194);
 
-    m_scrollWin196 = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                          wxBORDER_NONE | wxHSCROLL | wxVSCROLL);
+    m_scrollWin196 = new wxScrolledWindow(
+        this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBORDER_NONE | wxHSCROLL | wxVSCROLL);
     m_scrollWin196->SetScrollRate(5, 5);
 
     boxSizer194->Add(m_scrollWin196, 1, wxEXPAND, WXC_FROM_DIP(2));
@@ -641,8 +685,8 @@ clImageViewerBase::clImageViewerBase(wxWindow* parent, wxWindowID id, const wxPo
 
     boxSizer198->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
-    m_staticBitmap = new wxStaticBitmap(m_scrollWin196, wxID_ANY, wxNullBitmap, wxDefaultPosition,
-                                        wxDLG_UNIT(m_scrollWin196, wxSize(-1, -1)), 0);
+    m_staticBitmap = new wxStaticBitmap(
+        m_scrollWin196, wxID_ANY, wxNullBitmap, wxDefaultPosition, wxDLG_UNIT(m_scrollWin196, wxSize(-1, -1)), 0);
 
     boxSizer198->Add(m_staticBitmap, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
 
@@ -694,9 +738,9 @@ clEditorBarBase::clEditorBarBase(wxWindow* parent, wxWindowID id, const wxPoint&
 
     flexGridSizer374->Add(m_buttonBookmarks, 0, wxALL, WXC_FROM_DIP(2));
 
-    m_labelText = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(200, -1)), 0);
+    m_messageText = new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(200, -1)), 0);
 
-    flexGridSizer374->Add(m_labelText, 1, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    flexGridSizer374->Add(m_messageText, 1, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     SetName(wxT("clEditorBarBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
@@ -716,8 +760,8 @@ clEditorBarBase::~clEditorBarBase()
     m_buttonBookmarks->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clEditorBarBase::OnButtonBookmarks, this);
 }
 
-clTableLineEditorBaseDlg::clTableLineEditorBaseDlg(wxWindow* parent, wxWindowID id, const wxString& title,
-                                                   const wxPoint& pos, const wxSize& size, long style)
+clTableLineEditorBaseDlg::clTableLineEditorBaseDlg(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxFrame(parent, id, title, pos, size, style)
 {
     if (!bBitmapLoaded) {
@@ -738,8 +782,12 @@ clTableLineEditorBaseDlg::clTableLineEditorBaseDlg(wxWindow* parent, wxWindowID 
     m_panel344->SetSizer(boxSizer342);
 
     wxArrayString m_listBoxColumnsArr;
-    m_listBoxColumns = new wxListBox(m_panel344, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel344, wxSize(150, -1)),
-                                     m_listBoxColumnsArr, wxLB_SINGLE);
+    m_listBoxColumns = new wxListBox(m_panel344,
+                                     wxID_ANY,
+                                     wxDefaultPosition,
+                                     wxDLG_UNIT(m_panel344, wxSize(150, -1)),
+                                     m_listBoxColumnsArr,
+                                     wxLB_SINGLE);
 
     boxSizer342->Add(m_listBoxColumns, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 

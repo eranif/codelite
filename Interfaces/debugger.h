@@ -671,6 +671,6 @@ public:
 // Each debugger module must implement these two functions
 //-----------------------------------------------------------
 using GET_DBG_CREATE_FUNC = IDebugger* (*)();
-using GET_DBG_INFO_FUNC = DebuggerInfo (*)();
+using GET_DBG_INFO_FUNC = const DebuggerInfo* (*)();
 
 #endif // DEBUGGER_H

@@ -19,7 +19,7 @@ public:
     ChatAIWindow(wxWindow* parent, ChatAI* plugin);
     virtual ~ChatAIWindow();
     wxString GetActiveModel() const { return m_activeModel->GetStringSelection(); }
-    
+
 protected:
     void OnStop(wxCommandEvent& event);
     void OnStopUI(wxUpdateUIEvent& event);
@@ -56,8 +56,8 @@ protected:
     /// Clear the view (input & output) and reset the client.
     void DoReset();
     bool DoCreateWorkspaceSettings();
+    void DoLogMessage(const wxString& message, LLMLogLevel log_level);
 
-    void DoLogMessage(const wxString& message, ollama::LogLevel log_level);
     /// Return the relevant configuration file. If a workspace file is opened, we use the workspace specific
     /// configuration file. If no workspace is opened, we use the global settings.
     wxString GetConfigurationFilePath() const;
@@ -65,7 +65,7 @@ protected:
     void ShowIndicator(bool show);
     void NotifyThinking(bool thinking);
     void OnTimer(wxTimerEvent& event);
-    
+
 private:
     ChatAI* m_plugin{nullptr};
     wxChoice* m_activeModel{nullptr};

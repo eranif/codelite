@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLTREECTRLPANEL_H
-#define CLTREECTRLPANEL_H
+#pragma once
 
 #include "bitmap_loader.h"
 #include "clEnhancedToolBar.hpp"
@@ -35,6 +34,11 @@
 #include "cl_config.h"
 #include "imanager.h"
 #include "wxcrafter_plugin.h"
+
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#endif
 
 class clTreeCtrlPanelDefaultPage;
 class WXDLLIMPEXP_SDK clTreeCtrlPanel : public clTreeCtrlPanelBase
@@ -47,24 +51,6 @@ public:
         kShowRootFullPath = (1 << 3),
     };
 
-protected:
-    clConfig* m_config = nullptr;
-    wxString m_viewName;
-    clTreeCtrlPanelDefaultPage* m_defaultView = nullptr;
-    wxString m_newfileTemplate;
-    size_t m_newfileTemplateHighlightLen = 0;
-    int m_options = (kShowHiddenFiles | kShowHiddenFolders | kLinkToEditor);
-    clToolBar* m_toolbar = nullptr;
-    wxString m_excludeFilePatterns;
-
-protected:
-    void ToggleView();
-    void RefreshNonTopLevelFolder(const wxTreeItemId& item);
-    virtual void OnLinkEditor(wxCommandEvent& event);
-    virtual void OnLinkEditorUI(wxUpdateUIEvent& event);
-    void OnFilesCreated(clFileSystemEvent& event);
-
-public:
     clTreeCtrlPanel(wxWindow* parent);
     virtual ~clTreeCtrlPanel();
 
@@ -149,6 +135,12 @@ public:
     void RefreshSelections();
 
 protected:
+    void ToggleView();
+    void RefreshNonTopLevelFolder(const wxTreeItemId& item);
+    virtual void OnLinkEditor(wxCommandEvent& event);
+    virtual void OnLinkEditorUI(wxUpdateUIEvent& event);
+    void OnFilesCreated(clFileSystemEvent& event);
+
     void UpdateItemDeleted(const wxTreeItemId& item);
     void GetTopLevelFolders(wxArrayString& paths, wxArrayTreeItemIds& items) const;
 
@@ -161,7 +153,9 @@ protected:
      * tree ctrl items. You can always assume that the folders and the folderItems are of the same
      * size. Same for the file arrays
      */
-    void GetSelections(wxArrayString& folders, wxArrayTreeItemIds& folderItems, wxArrayString& files,
+    void GetSelections(wxArrayString& folders,
+                       wxArrayTreeItemIds& folderItems,
+                       wxArrayString& files,
                        wxArrayTreeItemIds& fileItems);
 
     // void version of the expandToFile, so it can be called with CallAfter
@@ -199,5 +193,17 @@ protected:
     wxTreeItemId DoAddFolder(const wxTreeItemId& parent, const wxString& path);
     wxTreeItemId DoAddFile(const wxTreeItemId& parent, const wxString& path);
     void DoCloseFolder(const wxTreeItemId& item);
+
+    clConfig* m_config = nullptr;
+    wxString m_viewName;
+    clTreeCtrlPanelDefaultPage* m_defaultView = nullptr;
+    wxString m_newfileTemplate;
+    size_t m_newfileTemplateHighlightLen = 0;
+    int m_options = (kShowHiddenFiles | kShowHiddenFolders | kLinkToEditor);
+    clToolBar* m_toolbar = nullptr;
+    wxString m_excludeFilePatterns;
 };
-#endif // CLTREECTRLPANEL_H
+
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif

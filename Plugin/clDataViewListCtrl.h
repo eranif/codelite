@@ -7,6 +7,11 @@
 #include <unordered_map>
 #include <wx/dataview.h>
 
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Woverloaded-virtual"
+#endif
+
 // Extra styles supported by this class
 #define wxDV_ENABLE_SEARCH wxTR_ENABLE_SEARCH
 #define wxDV_COLUMN_WIDTH_NEVER_SHRINKS wxTR_COLUMN_WIDTH_NEVER_SHRINKS
@@ -47,8 +52,11 @@ protected:
     void DoSetCellValue(clRowEntry* row, size_t col, const wxVariant& value);
 
 public:
-    clDataViewListCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                       const wxSize& size = wxDefaultSize, long style = 0);
+    clDataViewListCtrl(wxWindow* parent,
+                       wxWindowID id = wxID_ANY,
+                       const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxDefaultSize,
+                       long style = 0);
     virtual ~clDataViewListCtrl();
 
     void ScrollToBottom();
@@ -82,13 +90,17 @@ public:
      * @brief search for an item from pos that matches the "what" string.
      * Pass an invalid item to start the search from the root
      */
-    wxDataViewItem FindNext(const wxDataViewItem& from, const wxString& what, size_t col = 0,
+    wxDataViewItem FindNext(const wxDataViewItem& from,
+                            const wxString& what,
+                            size_t col = 0,
                             size_t searchFlags = wxDV_SEARCH_DEFAULT);
     /**
      * @brief search for an item from pos that matches the "what" string.
      * Pass an invalid item to start the search from the root
      */
-    wxDataViewItem FindPrev(const wxDataViewItem& from, const wxString& what, size_t col = 0,
+    wxDataViewItem FindPrev(const wxDataViewItem& from,
+                            const wxString& what,
+                            size_t col = 0,
                             size_t searchFlags = wxDV_SEARCH_DEFAULT);
 
     /**
@@ -119,21 +131,27 @@ public:
     /**
      * @brief insert item after 'previous'
      */
-    wxDataViewItem InsertItem(const wxDataViewItem& previous, const wxString& text, int image = -1, int selImage = -1,
-                              wxUIntPtr data = 0);
+    wxDataViewItem InsertItem(
+        const wxDataViewItem& previous, const wxString& text, int image = -1, int selImage = -1, wxUIntPtr data = 0);
 
     wxDataViewItem AppendItem(const wxVector<wxVariant>& values, wxUIntPtr data = 0);
 
-    wxDataViewColumn* AppendIconTextColumn(const wxString& label, wxDataViewCellMode mode = wxDATAVIEW_CELL_INERT,
-                                           int width = -1, wxAlignment align = wxALIGN_LEFT,
+    wxDataViewColumn* AppendIconTextColumn(const wxString& label,
+                                           wxDataViewCellMode mode = wxDATAVIEW_CELL_INERT,
+                                           int width = -1,
+                                           wxAlignment align = wxALIGN_LEFT,
                                            int flags = wxDATAVIEW_COL_RESIZABLE);
 
-    wxDataViewColumn* AppendProgressColumn(const wxString& label, wxDataViewCellMode mode = wxDATAVIEW_CELL_INERT,
-                                           int width = -1, wxAlignment align = wxALIGN_LEFT,
+    wxDataViewColumn* AppendProgressColumn(const wxString& label,
+                                           wxDataViewCellMode mode = wxDATAVIEW_CELL_INERT,
+                                           int width = -1,
+                                           wxAlignment align = wxALIGN_LEFT,
                                            int flags = wxDATAVIEW_COL_RESIZABLE);
 
-    wxDataViewColumn* AppendTextColumn(const wxString& label, wxDataViewCellMode mode = wxDATAVIEW_CELL_INERT,
-                                       int width = -1, wxAlignment align = wxALIGN_LEFT,
+    wxDataViewColumn* AppendTextColumn(const wxString& label,
+                                       wxDataViewCellMode mode = wxDATAVIEW_CELL_INERT,
+                                       int width = -1,
+                                       wxAlignment align = wxALIGN_LEFT,
                                        int flags = wxDATAVIEW_COL_RESIZABLE);
 
     wxDataViewItem GetSelection() const { return wxDataViewItem(clTreeCtrl::GetSelection().GetID()); }
@@ -462,5 +480,9 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_SEARCH_TEXT, wxDataView
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_CLEAR_SEARCH, wxDataViewEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_ACTION_BUTTON, wxDataViewEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DATAVIEW_CHOICE, wxDataViewEvent);
+
+#if defined(__clang__) || defined(__GNUC__)
+#pragma GCC diagnostic pop
+#endif
 
 #endif // CLDATAVIEWLISTCTRL_H

@@ -114,10 +114,10 @@ static wxRegEx reConnectionRefused(
 static wxRegEx reConnectionRefused("[0-9a-zA-Z/\\\\-\\_]*:[0-9]+: Connection refused.");
 #endif
 
-DebuggerInfo GetDebuggerInfo()
+const DebuggerInfo* GetDebuggerInfo()
 {
-    DebuggerInfo info = {"GNU gdb debugger", "CreateDebuggerGDB", "v2.0", "Eran Ifrah"};
-    return info;
+    static DebuggerInfo info = {"GNU gdb debugger", "CreateDebuggerGDB", "v2.0", "Eran Ifrah"};
+    return &info;
 }
 
 IDebugger* CreateDebuggerGDB()

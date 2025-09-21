@@ -111,7 +111,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     m_logView->SetSink(this);
     m_panelLog->GetSizer()->Add(m_logView, wxSizerFlags(1).Expand());
 
-    m_plugin->GetClient().SetLogSink([](ollama::LogLevel level, std::string message) {
+    m_plugin->GetClient()->SetLogSink([](LLMLogLevel level, std::string message) {
         // For now, just print it to the log.
         LLMEvent log_event{wxEVT_OLLAMA_LOG};
         log_event.SetLogLevel(level);
@@ -172,7 +172,7 @@ void ChatAIWindow::DoSendPrompt()
 
     wxString prompt = m_stcInput->GetText();
     prompt.Trim().Trim(false);
-    m_plugin->GetClient().Send(prompt, m_activeModel->GetStringSelection());
+    m_plugin->GetClient()->Send(prompt, m_activeModel->GetStringSelection());
 
     prompt.Prepend(wxString() << "\n**" << ::wxGetUserId() << "**:\n");
     AppendOutput(prompt + "\n\n");
@@ -180,7 +180,7 @@ void ChatAIWindow::DoSendPrompt()
     ShowIndicator(true);
 }
 
-void ChatAIWindow::OnSendUI(wxUpdateUIEvent& event) { event.Enable(!m_plugin->GetClient().IsBusy()); }
+void ChatAIWindow::OnSendUI(wxUpdateUIEvent& event) { event.Enable(!m_plugin->GetClient()->IsBusy()); }
 
 void ChatAIWindow::OnModelChanged(wxCommandEvent& event)
 {
@@ -250,21 +250,21 @@ void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
     }
 }
 
-void ChatAIWindow::DoLogMessage(const wxString& message, ollama::LogLevel log_level)
+void ChatAIWindow::DoLogMessage(const wxString& message, LLMLogLevel log_level)
 {
     clAnsiEscapeCodeColourBuilder builder;
     switch (log_level) {
-    case ollama::LogLevel::kError:
+    case LLMLogLevel::kError:
         builder.Add(message, AnsiColours::Red(), true);
         break;
-    case ollama::LogLevel::kWarning:
+    case LLMLogLevel::kWarning:
         builder.Add(message, AnsiColours::Yellow(), true);
         break;
-    case ollama::LogLevel::kTrace:
-    case ollama::LogLevel::kDebug:
+    case LLMLogLevel::kTrace:
+    case LLMLogLevel::kDebug:
         builder.Add(message, AnsiColours::Gray(), true);
         break;
-    case ollama::LogLevel::kInfo:
+    case LLMLogLevel::kInfo:
     default:
         builder.Add(message, AnsiColours::Green());
         break;
@@ -330,7 +330,7 @@ void ChatAIWindow::DoReset()
 {
     DoClearOutputView();
     m_stcInput->ClearAll();
-    m_plugin->GetClient().Clear();
+    m_plugin->GetClient()->Clear();
     ShowIndicator(false);
     m_thinking = false;
 }
@@ -368,25 +368,25 @@ void ChatAIWindow::OnChatAIOutput(LLMEvent& event)
 
     wxString content = wxString(event.GetStringRaw().data(), wxConvUTF8, event.GetStringRaw().length());
     switch (event.GetReason()) {
-    case ollama::Reason::kCancelled:
+    case LLMEventReason::kCancelled:
         ::wxMessageBox(_("Operation cancelled by user."), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
         NotifyThinking(false);
         DoReset();
         return;
-    case ollama::Reason::kFatalError:
+    case LLMEventReason::kFatalError:
         ::wxMessageBox(content, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
         NotifyThinking(false);
         DoReset();
         return;
-    case ollama::Reason::kLogNotice:
-    case ollama::Reason::kLogDebug:
+    case LLMEventReason::kLogNotice:
+    case LLMEventReason::kLogDebug:
         clDEBUG() << content << endl;
         break;
-    case ollama::Reason::kDone:
+    case LLMEventReason::kDone:
         NotifyThinking(false);
         AppendMarker();
         break;
-    case ollama::Reason::kPartialResult:
+    case LLMEventReason::kPartialResult:
         if (!event.IsThinking()) {
             AppendOutput(content);
         }
@@ -423,7 +423,7 @@ void ChatAIWindow::OnFileSaved(clCommandEvent& event)
     if (filepath == GetConfigurationFilePath()) {
         // Reload configuration
         wxBusyCursor bc{};
-        m_plugin->GetClient().ReloadConfig(clGetManager()->GetActiveEditor()->GetEditorText());
+        m_plugin->GetClient()->ReloadConfig(clGetManager()->GetActiveEditor()->GetEditorText());
         clGetManager()->SetStatusMessage(_("ChatAI configuration re-loaded successfully"), 3);
     }
 }
@@ -434,7 +434,7 @@ void ChatAIWindow::OnThinking(LLMEvent& event)
     m_thinking = event.IsThinking();
     if (m_thinking) {
         m_statusPanel->SetMessage(_("Thinking..."));
-    } else if (m_plugin->GetClient().IsBusy()) {
+    } else if (m_plugin->GetClient()->IsBusy()) {
         m_statusPanel->SetMessage(_("Working..."));
     } else {
         m_statusPanel->SetMessage(_("Ready"));
@@ -467,7 +467,7 @@ void ChatAIWindow::OnInputUI(wxUpdateUIEvent& event) { event.Enable(true); }
 void ChatAIWindow::PopulateModels()
 {
     wxBusyCursor bc{};
-    m_plugin->GetClient().GetModels();
+    m_plugin->GetClient()->GetModels();
 }
 
 void ChatAIWindow::SetFocusToActiveEditor()
@@ -524,7 +524,7 @@ void ChatAIWindow::OnWorkspaceLoaded(clWorkspaceEvent& event)
     event.Skip();
     DoCreateWorkspaceSettings();
     auto content = FileManager::ReadSettingsFileContent(kAssistantConfigFile).value_or(kDefaultSettings);
-    m_plugin->GetClient().ReloadConfig(content);
+    m_plugin->GetClient()->ReloadConfig(content);
 }
 
 void ChatAIWindow::OnWorkspaceClosed(clWorkspaceEvent& event)
@@ -566,16 +566,16 @@ void ChatAIWindow::RestoreUI()
 void ChatAIWindow::LoadGlobalConfig()
 {
     wxBusyCursor bc{};
-    m_plugin->GetClient().ReloadConfig(GetGlobalSettings().value_or(kDefaultSettings));
+    m_plugin->GetClient()->ReloadConfig(GetGlobalSettings().value_or(kDefaultSettings));
 }
 
 void ChatAIWindow::OnStop(wxCommandEvent& event)
 {
     event.Skip();
-    m_plugin->GetClient().Interrupt();
+    m_plugin->GetClient()->Interrupt();
 }
 
-void ChatAIWindow::OnStopUI(wxUpdateUIEvent& event) { event.Enable(m_plugin->GetClient().IsBusy()); }
+void ChatAIWindow::OnStopUI(wxUpdateUIEvent& event) { event.Enable(m_plugin->GetClient()->IsBusy()); }
 
 void ChatAIWindow::NotifyThinking(bool thinking)
 {

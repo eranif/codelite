@@ -1,5 +1,10 @@
 #include "ChatAIEvents.hpp"
 
+LLMEvent::LLMEvent(wxEventType commandType, int winid)
+    : clCommandEvent(commandType, winid)
+{
+}
+
 wxDEFINE_EVENT(wxEVT_OLLAMA_THINKING, LLMEvent);
 wxDEFINE_EVENT(wxEVT_OLLAMA_CHAT_STARTED, LLMEvent);
 wxDEFINE_EVENT(wxEVT_OLLAMA_CHAT_DONE, LLMEvent);

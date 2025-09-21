@@ -74,7 +74,9 @@ ChatAI::ChatAI(IManager* manager)
                                              });
     wxTheApp->Bind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("chatai_show_window"));
 
-    m_cli.GetConfig().Load();
+    // For now, we only support Ollama client.
+    m_cli = std::make_shared<OllamaClient>();
+    m_cli->GetConfig().Load();
     m_chatWindow = new ChatAIWindow(m_mgr->BookGet(PaneId::SIDE_BAR), this);
     m_mgr->BookAddPage(PaneId::SIDE_BAR, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
     EventNotifier::Get()->Bind(wxEVT_LLM_IS_AVAILABLE, &ChatAI::OnIsLlmAvailable, this);
@@ -119,7 +121,7 @@ void ChatAI::OnIsLlmAvailable(clCommandEvent& event) { event.SetAnswer(true); }
 void ChatAI::OnLlmRequest(clCommandEvent& event)
 {
     wxString prompt = event.GetString();
-    m_cli.Send(dynamic_cast<wxEvtHandler*>(event.GetEventObject()), // response event will be sent here
-               std::move(prompt),
-               m_chatWindow->GetActiveModel());
+    m_cli->Send(dynamic_cast<wxEvtHandler*>(event.GetEventObject()), // response event will be sent here
+                std::move(prompt),
+                m_chatWindow->GetActiveModel());
 }

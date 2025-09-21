@@ -73,8 +73,9 @@ void clEditorBar::SetScopes(const wxString& filename, const clEditorBar::ScopeEn
 {
     m_scopes = entries;
     m_scopesFile = filename;
-    std::sort(m_scopes.begin(), m_scopes.end(),
-              [](const ScopeEntry& a, const ScopeEntry& b) { return a.line_number < b.line_number; });
+    std::sort(m_scopes.begin(), m_scopes.end(), [](const ScopeEntry& a, const ScopeEntry& b) {
+        return a.line_number < b.line_number;
+    });
     CallAfter(&clEditorBar::DoRefreshColoursAndFonts);
 }
 
@@ -105,8 +106,8 @@ void clEditorBar::DoRefreshColoursAndFonts()
     wxColour textColour = clSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
 
     SetBackgroundColour(bgcolour);
-    m_labelText->SetForegroundColour(textColour);
-    m_labelText->SetBackgroundColour(bgcolour);
+    m_messageText->SetForegroundColour(textColour);
+    m_messageText->SetBackgroundColour(bgcolour);
 
     if (!m_shouldShow) {
         return;
@@ -211,8 +212,7 @@ void clEditorBar::OnButtonActions(wxCommandEvent& event)
 
     // Capture all menu items in a single callback that simply keeps the selected menu item id
     int selection = wxID_NONE;
-    menu.Bind(
-        wxEVT_MENU, [&](wxCommandEvent& evt) { selection = evt.GetId(); }, wxID_ANY);
+    menu.Bind(wxEVT_MENU, [&](wxCommandEvent& evt) { selection = evt.GetId(); }, wxID_ANY);
     m_buttonFilePath->ShowMenu(menu);
 
     if (selection == wxID_NONE)
@@ -255,8 +255,7 @@ void clEditorBar::OnButtonBookmarks(wxCommandEvent& event)
 
         // We got something to display
         int selection = wxID_NONE;
-        menu.Bind(
-            wxEVT_MENU, [&](wxCommandEvent& evt) { selection = evt.GetId(); }, wxID_ANY);
+        menu.Bind(wxEVT_MENU, [&](wxCommandEvent& evt) { selection = evt.GetId(); }, wxID_ANY);
         m_buttonBookmarks->ShowMenu(menu);
 
         if (selection == wxID_NONE)
@@ -289,8 +288,7 @@ void clEditorBar::OnButtonScope(wxCommandEvent& event)
 
     // Popup the menu
     int selection = wxID_NONE;
-    menu.Bind(
-        wxEVT_MENU, [&](wxCommandEvent& evt) { selection = evt.GetId(); }, wxID_ANY);
+    menu.Bind(wxEVT_MENU, [&](wxCommandEvent& evt) { selection = evt.GetId(); }, wxID_ANY);
     m_buttonScope->ShowMenu(menu);
 
     if (selection == wxID_NONE)
@@ -306,9 +304,9 @@ void clEditorBar::OnButtonScope(wxCommandEvent& event)
     }
 }
 
-void clEditorBar::SetLabel(const wxString& text) { m_labelText->SetLabel(text); }
+void clEditorBar::SetLabel(const wxString& text) { m_messageText->SetLabel(text); }
 
-wxString clEditorBar::GetLabel() const { return m_labelText->GetLabel(); }
+wxString clEditorBar::GetLabel() const { return m_messageText->GetLabel(); }
 
 void clEditorBar::OnUpdate(clCodeCompletionEvent& event)
 {

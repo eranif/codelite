@@ -31,24 +31,16 @@
 #include "debugger.h"
 #include "ssh/ssh_account_info.h"
 
-#include <list>
+#include <vector>
 #include <wx/event.h>
 #include <wx/hashmap.h>
 #include <wx/string.h>
 
-#ifdef _MSC_VER
-// declare the debugger function creation
-extern "C++" IDebugger* CreateDebuggerGDB();
-// declare the function that will be called by host application
-// to retrieve the debugger initialization function
-extern "C++" DebuggerInfo GetDebuggerInfo();
-#else
 // declare the debugger function creation
 extern "C" IDebugger* CreateDebuggerGDB();
 // declare the function that will be called by host application
 // to retrieve the debugger initialization function
-extern "C" DebuggerInfo GetDebuggerInfo();
-#endif
+extern "C" const DebuggerInfo* GetDebuggerInfo();
 
 class DbgCmdHandler;
 class DbgCmdCLIHandler;

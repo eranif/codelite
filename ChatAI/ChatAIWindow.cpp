@@ -601,7 +601,8 @@ void ChatAIWindow::OnHistory(wxCommandEvent& event)
 
 void ChatAIWindow::OnHistoryUI(wxUpdateUIEvent& event)
 {
-    event.Enable(!m_plugin->GetClient()->GetConfig().GetHistory().IsEmpty());
+    auto client = m_plugin->GetClient();
+    event.Enable(!client->GetConfig().GetHistory().IsEmpty() && !client->IsBusy());
 }
 
 void ChatAIWindow::OnStop(wxCommandEvent& event)

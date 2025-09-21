@@ -593,9 +593,7 @@ void ChatAIWindow::OnHistory(wxCommandEvent& event)
     }
 
     // Update the prompt field.
-    m_stcInput->SetReadOnly(false);
     m_stcInput->SetText(dlg.GetSelection());
-    m_stcInput->SetReadOnly(true);
     m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 

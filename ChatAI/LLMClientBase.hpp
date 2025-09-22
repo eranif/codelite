@@ -38,8 +38,9 @@ public:
     /// Similar to Send() above, but the events are sent to "owner"
     virtual void Send(wxEvtHandler* owner, wxString prompt, wxString model = wxEmptyString) = 0;
     virtual void Interrupt() = 0;
-    virtual bool IsBusy() const = 0;
-    virtual void GetModels() const = 0;
+    virtual bool IsBusy() = 0;
+    virtual bool IsRunning() = 0;
+    virtual void GetModels() = 0;
     virtual void Clear() = 0;
     virtual void ReloadConfig(const wxString& configContent) = 0;
     virtual void SetLogSink(std::function<void(LLMLogLevel, std::string)> log_sink) = 0;

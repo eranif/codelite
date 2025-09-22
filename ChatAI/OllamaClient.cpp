@@ -54,6 +54,7 @@ inline LLMEventReason FromOllamaReason(ollama::Reason reason)
 }; // namespace
 
 OllamaClient::OllamaClient()
+    : m_client("http://127.0.0.1:11434", {{"Host", "127.0.0.1"}})
 {
     Clear();
     Startup();
@@ -207,7 +208,7 @@ void OllamaClient::Interrupt()
     m_client.Interrupt();
 }
 
-void OllamaClient::GetModels() const
+void OllamaClient::GetModels()
 {
     Task task{.kind = TaskKind::kListModels};
     m_queue.Post(std::move(task));

@@ -96,7 +96,7 @@ void ChatAI::UnPlug()
         m_chatWindow->Destroy();
     }
     m_chatWindow = nullptr;
-    ollama::Manager::GetInstance().Shutdown();
+    m_cli.reset();
 }
 
 void ChatAI::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
@@ -116,7 +116,7 @@ void ChatAI::OnShowChatWindow(wxCommandEvent& event)
     m_chatWindow->GetStcInput()->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 
-void ChatAI::OnIsLlmAvailable(clCommandEvent& event) { event.SetAnswer(true); }
+void ChatAI::OnIsLlmAvailable(clCommandEvent& event) { event.SetAnswer(m_cli && m_cli->IsRunning()); }
 
 void ChatAI::OnLlmRequest(clCommandEvent& event)
 {

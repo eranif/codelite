@@ -3168,5 +3168,5 @@ std::optional<uint64_t> GitPlugin::GenerateCommitMessage(const wxString& prompt)
         }
     };
 
-    return LLMManager::GetInstance().Chat(prompt, std::move(cb));
+    return LLMManager::GetInstance().Chat(prompt, std::move(cb), LLMManager::ChatOptions::kNoTools);
 }

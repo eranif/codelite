@@ -36,7 +36,7 @@ LLMManager::~LLMManager()
     Unbind(wxEVT_LLM_RESPONSE_ERROR, &LLMManager::OnResponseError, this);
 }
 
-std::optional<uint64_t> LLMManager::Chat(const wxString& prompt, Callback cb)
+std::optional<uint64_t> LLMManager::Chat(const wxString& prompt, Callback cb, size_t options, const wxString& model)
 {
     if (!IsAvailable()) {
         return std::nullopt;
@@ -44,9 +44,11 @@ std::optional<uint64_t> LLMManager::Chat(const wxString& prompt, Callback cb)
 
     auto id = id_generator.fetch_add(1);
 
-    clCommandEvent event_chat{wxEVT_LLM_REQUEST};
-    event_chat.SetString(prompt);
+    clLLMEvent event_chat{wxEVT_LLM_REQUEST};
+    event_chat.SetPrompt(prompt);
     event_chat.SetEventObject(this);
+    event_chat.SetEnableTools((options & ChatOptions::kNoTools) != 0);
+    event_chat.SetModelName(model);
     EventNotifier::Get()->AddPendingEvent(event_chat);
     m_requetstQueue.push_back({id, std::move(cb)});
     return id;
@@ -54,15 +56,15 @@ std::optional<uint64_t> LLMManager::Chat(const wxString& prompt, Callback cb)
 
 void LLMManager::OnTimer(wxTimerEvent& e)
 {
-    clCommandEvent event_llm_is_available{wxEVT_LLM_IS_AVAILABLE};
+    clLLMEvent event_llm_is_available{wxEVT_LLM_IS_AVAILABLE};
     EventNotifier::Get()->ProcessEvent(event_llm_is_available);
-    m_isAvailable = event_llm_is_available.IsAnswer();
+    m_isAvailable = event_llm_is_available.IsAvailable();
 }
 
-void LLMManager::OnResponse(clCommandEvent& event)
+void LLMManager::OnResponse(clLLMEvent& event)
 {
     bool completed = event.GetEventType() == wxEVT_LLM_RESPONSE_COMPLETED;
-    bool is_thinking = event.GetInt() == 1;
+    bool is_thinking = event.IsThinking();
     if (m_requetstQueue.empty()) {
         clWARNING() << "Received LLM response, but no callback is available";
         return;
@@ -75,13 +77,13 @@ void LLMManager::OnResponse(clCommandEvent& event)
     if (is_thinking) {
         flags |= ResponseFlags::kThinking;
     }
-    (m_requetstQueue.front().second)(event.GetStringRaw(), flags);
+    (m_requetstQueue.front().second)(event.GetResponseRaw(), flags);
     if (completed) {
         m_requetstQueue.erase(m_requetstQueue.begin());
     }
 }
 
-void LLMManager::OnResponseError(clCommandEvent& event)
+void LLMManager::OnResponseError(clLLMEvent& event)
 {
     if (m_requetstQueue.empty()) {
         clWARNING() << "Received LLM response error, but no callback is available";
@@ -89,6 +91,6 @@ void LLMManager::OnResponseError(clCommandEvent& event)
     }
 
     size_t flags{ResponseFlags::kError | ResponseFlags::kCompleted};
-    (m_requetstQueue.front().second)(event.GetStringRaw(), flags);
+    (m_requetstQueue.front().second)(event.GetResponseRaw(), flags);
     m_requetstQueue.erase(m_requetstQueue.begin());
 }

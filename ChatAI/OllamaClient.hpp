@@ -15,8 +15,11 @@ public:
     OllamaClient();
     ~OllamaClient() override;
 
-    void Send(wxString prompt, wxString model = wxEmptyString) override;
-    void Send(wxEvtHandler* owner, wxString prompt, wxString model = wxEmptyString) override;
+    void Send(wxString prompt, wxString model = wxEmptyString, ChatOptions options = ChatOptions::kDefault) override;
+    void Send(wxEvtHandler* owner,
+              wxString prompt,
+              wxString model = wxEmptyString,
+              ChatOptions options = ChatOptions::kDefault) override;
 
     void Interrupt() override;
     bool IsBusy() override { return m_processingRequest.load(std::memory_order_relaxed); }

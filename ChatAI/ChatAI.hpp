@@ -45,9 +45,9 @@ public:
 
 private:
     void OnShowChatWindow(wxCommandEvent& event);
-    void OnIsLlmAvailable(clCommandEvent& event);
-    void OnLlmRequest(clCommandEvent& event);
+    void OnIsLlmAvailable(clLLMEvent& event);
+    void OnLlmRequest(clLLMEvent& event);
 
-    ChatAIWindow* m_chatWindow = nullptr;
+    ChatAIWindow* m_chatWindow{nullptr};
     std::shared_ptr<LLMClientBase> m_cli;
 };

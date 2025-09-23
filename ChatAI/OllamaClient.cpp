@@ -115,14 +115,19 @@ void OllamaClient::WorkerThreadMain()
                 EventNotifier::Get()->AddPendingEvent(chat_start);
             }
 
+            ollama::ChatOptions chat_options{ollama::ChatOptions::kDefault};
+            if (t.options & LLMClientBase::ChatOptions::kNoTools) {
+                ollama::AddFlagSet(chat_options, ollama::ChatOptions::kNoTools);
+            }
+
             m_client.Chat(
                 t.content.ToStdString(wxConvUTF8),
                 [this, owner](std::string msg, ollama::Reason reason, bool thinking) {
                     // Translate the callback into wxWidgets event
                     if (owner) {
-                        LLMEvent response_event{wxEVT_LLM_RESPONSE};
-                        response_event.SetStringRaw(msg);
-                        response_event.SetInt(thinking ? 1 : 0);
+                        clLLMEvent response_event{wxEVT_LLM_RESPONSE};
+                        response_event.SetResponseRaw(msg);
+                        response_event.SetIsThinking(thinking);
                         owner->AddPendingEvent(response_event);
 
                     } else {
@@ -136,9 +141,9 @@ void OllamaClient::WorkerThreadMain()
                     switch (reason) {
                     case ollama::Reason::kDone: {
                         if (owner) {
-                            LLMEvent done_event{wxEVT_LLM_RESPONSE_COMPLETED};
-                            done_event.SetStringRaw(msg);
-                            done_event.SetInt(0);
+                            clLLMEvent done_event{wxEVT_LLM_RESPONSE_COMPLETED};
+                            done_event.SetResponseRaw(msg);
+                            done_event.SetIsThinking(false);
                             owner->AddPendingEvent(done_event);
 
                         } else {
@@ -150,9 +155,9 @@ void OllamaClient::WorkerThreadMain()
                     } break;
                     case ollama::Reason::kFatalError: {
                         if (owner) {
-                            LLMEvent error_event{wxEVT_LLM_RESPONSE_ERROR};
-                            error_event.SetStringRaw(msg);
-                            error_event.SetInt(0);
+                            clLLMEvent error_event{wxEVT_LLM_RESPONSE_ERROR};
+                            error_event.SetResponseRaw(msg);
+                            error_event.SetIsThinking(false);
                             owner->AddPendingEvent(error_event);
 
                         } else {
@@ -167,7 +172,8 @@ void OllamaClient::WorkerThreadMain()
                         break;
                     }
                 },
-                t.model.ToStdString(wxConvUTF8));
+                t.model.ToStdString(wxConvUTF8),
+                chat_options);
         } break;
         case TaskKind::kReloadConfig: {
             auto config = ollama::Config::FromContent(t.content.ToStdString(wxConvUTF8));
@@ -194,11 +200,15 @@ void OllamaClient::WorkerThreadMain()
     }
 }
 
-void OllamaClient::Send(wxString prompt, wxString model) { Send(nullptr, std::move(prompt), std::move(model)); }
-
-void OllamaClient::Send(wxEvtHandler* owner, wxString prompt, wxString model)
+void OllamaClient::Send(wxString prompt, wxString model, ChatOptions options)
 {
-    Task task{.kind = TaskKind::kChat, .content = std::move(prompt), .model = model, .owner = owner};
+    Send(nullptr, std::move(prompt), std::move(model), options);
+}
+
+void OllamaClient::Send(wxEvtHandler* owner, wxString prompt, wxString model, ChatOptions options)
+{
+    Task task{
+        .kind = TaskKind::kChat, .content = std::move(prompt), .model = model, .owner = owner, .options = options};
     m_queue.Post(std::move(task));
 }
 

@@ -29,7 +29,7 @@
 #include "event_notifier.h"
 #include "globals.h"
 #include "macromanager.h"
-#include "ollama/ollama.hpp"
+#include "ollama/helpers.hpp"
 
 #include <wx/app.h> //wxInitialize/wxUnInitialize
 #include <wx/ffile.h>
@@ -116,12 +116,20 @@ void ChatAI::OnShowChatWindow(wxCommandEvent& event)
     m_chatWindow->GetStcInput()->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 
-void ChatAI::OnIsLlmAvailable(clCommandEvent& event) { event.SetAnswer(m_cli && m_cli->IsRunning()); }
+void ChatAI::OnIsLlmAvailable(clLLMEvent& event) { event.SetAvailable(m_cli && m_cli->IsRunning()); }
 
-void ChatAI::OnLlmRequest(clCommandEvent& event)
+void ChatAI::OnLlmRequest(clLLMEvent& event)
 {
-    wxString prompt = event.GetString();
+    const wxString& prompt = event.GetPrompt();
+    const wxString& model = event.GetModelName();
+
+    LLMClientBase::ChatOptions options{LLMClientBase::ChatOptions::kDefault};
+    if (!event.IsEnableTools()) {
+        ollama::AddFlagSet(options, LLMClientBase::ChatOptions::kNoTools);
+    }
+
     m_cli->Send(dynamic_cast<wxEvtHandler*>(event.GetEventObject()), // response event will be sent here
                 std::move(prompt),
-                m_chatWindow->GetActiveModel());
+                model.empty() ? m_chatWindow->GetActiveModel() : model,
+                options);
 }

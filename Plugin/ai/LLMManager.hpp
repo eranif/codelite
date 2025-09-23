@@ -22,12 +22,18 @@ public:
         kCompleted = (1 << 2),
     };
 
+    enum ChatOptions {
+        kDefault = 0,
+        kNoTools = (1 << 0),
+    };
+
     using Callback = std::function<void(const std::string& message, size_t flags)>;
     static LLMManager& GetInstance();
 
     /// Send prompt to the available LLM. Return a unique ID to be used when querying for the response.
     /// If no LLM is available, return `std::nullopt`.
-    std::optional<uint64_t> Chat(const wxString& prompt, Callback cb);
+    std::optional<uint64_t>
+    Chat(const wxString& prompt, Callback cb, size_t options, const wxString& model = wxEmptyString);
 
     /// Return true if the LLM is available.
     inline bool IsAvailable() const { return m_isAvailable; }
@@ -45,8 +51,8 @@ private:
     LLMManager();
     ~LLMManager();
 
-    void OnResponse(clCommandEvent& event);
-    void OnResponseError(clCommandEvent& event);
+    void OnResponse(clLLMEvent& event);
+    void OnResponseError(clLLMEvent& event);
 
     void OnTimer(wxTimerEvent& e);
 

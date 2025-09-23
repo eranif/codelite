@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef CLCOMMANDEVENT_H
-#define CLCOMMANDEVENT_H
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 #include "LSP/CompletionItem.h"
@@ -931,4 +930,37 @@ public:
 using clLanguageServerEventFunction = void (wxEvtHandler::*)(clLanguageServerEvent&);
 #define clLanguageServerEventHandler(func) wxEVENT_HANDLER_CAST(clLanguageServerEventFunction, func)
 
-#endif // CLCOMMANDEVENT_H
+// --------------------------------------------------------------
+// clLLMEvent event
+// --------------------------------------------------------------
+class WXDLLIMPEXP_CL clLLMEvent : public clCommandEvent
+{
+public:
+    clLLMEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    clLLMEvent(const clLLMEvent&) = default;
+    clLLMEvent& operator=(const clLLMEvent&) = delete;
+    ~clLLMEvent() override = default;
+    wxEvent* Clone() const override { return new clLLMEvent(*this); }
+
+    void SetEnableTools(bool enableTools) { this->m_enableTools = enableTools; }
+    bool IsEnableTools() const { return m_enableTools; }
+    void SetModelName(const wxString& modelName) { this->m_modelName = modelName; }
+    const wxString& GetModelName() const { return m_modelName; }
+    void SetPrompt(const wxString& prompt) { this->m_prompt = prompt; }
+    const wxString& GetPrompt() const { return m_prompt; }
+    void SetAvailable(bool available) { SetAnswer(available); }
+    bool IsAvailable() const { return IsAnswer(); }
+    void SetResponseRaw(const std::string& response) { SetStringRaw(response); }
+    const std::string& GetResponseRaw() const { return GetStringRaw(); }
+    void SetIsThinking(bool isThinking) { this->m_isThinking = isThinking; }
+    bool IsThinking() const { return m_isThinking; }
+
+protected:
+    bool m_enableTools{false};
+    wxString m_modelName;
+    wxString m_prompt;
+    bool m_isThinking{false};
+};
+
+using clLLMEventFunction = void (wxEvtHandler::*)(clLLMEvent&);
+#define clLLMEventHandler(func) wxEVENT_HANDLER_CAST(clLLMEventFunction, func)

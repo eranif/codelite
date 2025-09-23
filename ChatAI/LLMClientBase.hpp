@@ -17,11 +17,16 @@ public:
         kShutdown,
     };
 
+    enum ChatOptions {
+        kDefault = 0,
+        kNoTools = (1 << 0),
+    };
     struct Task {
         TaskKind kind{TaskKind::kChat};
         wxString content; // depending on the task this can be the prompt or the configuration content.
         wxString model;   // the model to use
         wxEvtHandler* owner{nullptr};
+        size_t options{0};
     };
 
     LLMClientBase() = default;
@@ -33,10 +38,13 @@ public:
     /// API.
 
     /// Start a chat. The response is returned in the form of an event.
-    virtual void Send(wxString prompt, wxString model = wxEmptyString) = 0;
+    virtual void Send(wxString prompt, wxString model = wxEmptyString, ChatOptions options = ChatOptions::kDefault) = 0;
 
     /// Similar to Send() above, but the events are sent to "owner"
-    virtual void Send(wxEvtHandler* owner, wxString prompt, wxString model = wxEmptyString) = 0;
+    virtual void Send(wxEvtHandler* owner,
+                      wxString prompt,
+                      wxString model = wxEmptyString,
+                      ChatOptions options = ChatOptions::kDefault) = 0;
     virtual void Interrupt() = 0;
     virtual bool IsBusy() = 0;
     virtual bool IsRunning() = 0;

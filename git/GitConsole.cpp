@@ -424,11 +424,41 @@ void GitConsole::OnContextMenu(wxDataViewEvent& event)
     wxMenu menu;
     menu.Append(XRCID("git_console_open_file"), _("Open File"));
     menu.AppendSeparator();
+    menu.Append(XRCID("git_console_add_file"), _("Add unstaged file"));
+    menu.AppendSeparator();
     menu.Append(XRCID("git_console_reset_file"), _("Reset file"));
 
     menu.Bind(wxEVT_MENU, &GitConsole::OnOpenFile, this, XRCID("git_console_open_file"));
     menu.Bind(wxEVT_MENU, &GitConsole::OnResetFile, this, XRCID("git_console_reset_file"));
+    menu.Bind(wxEVT_MENU, &GitConsole::OnAddUnstagedFiles, this, XRCID("git_console_add_file"));
     m_dvListCtrl->PopupMenu(&menu);
+}
+
+void GitConsole::OnAddUnstagedFiles(wxCommandEvent& event)
+{
+    wxDataViewItemArray items;
+    m_dvListCtrl->GetSelections(items);
+
+    wxArrayString files;
+    files.reserve(items.GetCount());
+
+    for (size_t i = 0; i < items.GetCount(); ++i) {
+        GitClientData* gcd = GIT_ITEM_DATA(items.Item(i));
+        if (gcd) {
+            files.push_back(gcd->GetPath());
+        }
+    }
+
+    if (files.empty()) {
+        event.Skip();
+        return;
+    }
+
+    // open the files
+    for (const wxString& filename : files) {
+        GIT_MESSAGE("Adding file: %s", filename);
+    }
+    m_git->AddFiles(files);
 }
 
 void GitConsole::OnResetFile(wxCommandEvent& event)

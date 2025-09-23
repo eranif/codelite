@@ -76,6 +76,7 @@ protected:
     virtual void OnFileActivated(wxDataViewEvent& event);
     virtual void OnItemSelectedUI(wxUpdateUIEvent& event);
     virtual void OnResetFile(wxCommandEvent& event);
+    virtual void OnAddUnstagedFiles(wxCommandEvent& event);
     virtual void OnContextMenu(wxDataViewEvent& event);
     virtual void OnStopGitProcessUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event);

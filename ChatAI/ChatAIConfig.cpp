@@ -26,7 +26,6 @@ JSONItem ChatAIConfig::ToJSON() const
     auto obj = JSONItem::createObject(GetName());
     if (m_history.size() > kMaxHistorySize) {
         m_history.resize(kMaxHistorySize);
-        m_history.shrink_to_fit();
     }
     obj.addProperty("selected_model", m_selectedModel);
     obj.addProperty("history", m_history);

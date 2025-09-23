@@ -7,6 +7,7 @@
 
 #include <thread>
 #include <wx/msgqueue.h>
+#include <wx/timer.h>
 
 class OllamaClient : public LLMClientBase
 {

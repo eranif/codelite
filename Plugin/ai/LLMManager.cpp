@@ -48,7 +48,8 @@ std::optional<uint64_t> Manager::Chat(const wxString& prompt, Callback cb, size_
     clLLMEvent event_chat{wxEVT_LLM_REQUEST};
     event_chat.SetPrompt(prompt);
     event_chat.SetEventObject(this);
-    event_chat.SetEnableTools((options & ChatOptions::kNoTools) != 0);
+    bool enable_tools = ((options & ChatOptions::kNoTools) == 0);
+    event_chat.SetEnableTools(enable_tools);
     event_chat.SetModelName(model);
     EventNotifier::Get()->AddPendingEvent(event_chat);
     m_requetstQueue.push_back({id, std::move(cb)});

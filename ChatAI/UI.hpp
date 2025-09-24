@@ -14,8 +14,6 @@
 #include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/notebook.h>
-#include <wx/imaglist.h>
 #include <wx/splitter.h>
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
@@ -44,15 +42,12 @@
 class AssistanceAIChatWindowBase : public wxPanel
 {
 protected:
-    wxNotebook* m_notebook;
-    wxPanel* m_panelChat;
     wxSplitterWindow* m_mainSplitter;
     wxPanel* m_splitterPageTop;
     clThemedSTC* m_stcOutput;
     wxPanel* m_splitterPageBottom;
     wxAuiToolBar* m_toolbar;
     clThemedSTC* m_stcInput;
-    wxPanel* m_panelLog;
 
 protected:
     virtual void OnInputUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -64,9 +59,6 @@ public:
     clThemedSTC* GetStcInput() { return m_stcInput; }
     wxPanel* GetSplitterPageBottom() { return m_splitterPageBottom; }
     wxSplitterWindow* GetMainSplitter() { return m_mainSplitter; }
-    wxPanel* GetPanelChat() { return m_panelChat; }
-    wxPanel* GetPanelLog() { return m_panelLog; }
-    wxNotebook* GetNotebook() { return m_notebook; }
     AssistanceAIChatWindowBase(wxWindow* parent,
                                wxWindowID id = wxID_ANY,
                                const wxPoint& pos = wxDefaultPosition,

@@ -5,38 +5,39 @@
 #include "file_logger.h"
 
 #include <atomic> // atomic_uint64_t
-
+namespace llm
+{
 namespace
 {
 std::atomic_uint64_t id_generator{0};
 }
 
-LLMManager& LLMManager::GetInstance()
+Manager& Manager::GetInstance()
 {
-    static LLMManager instance;
+    static Manager instance;
     return instance;
 }
 
-LLMManager::LLMManager()
+Manager::Manager()
 {
     m_timer.SetOwner(this);
     m_timer.Start(500);
-    Bind(wxEVT_TIMER, &LLMManager::OnTimer, this, m_timer.GetId());
-    Bind(wxEVT_LLM_RESPONSE, &LLMManager::OnResponse, this);
-    Bind(wxEVT_LLM_RESPONSE_COMPLETED, &LLMManager::OnResponse, this);
-    Bind(wxEVT_LLM_RESPONSE_ERROR, &LLMManager::OnResponseError, this);
+    Bind(wxEVT_TIMER, &Manager::OnTimer, this, m_timer.GetId());
+    Bind(wxEVT_LLM_RESPONSE, &Manager::OnResponse, this);
+    Bind(wxEVT_LLM_RESPONSE_COMPLETED, &Manager::OnResponse, this);
+    Bind(wxEVT_LLM_RESPONSE_ERROR, &Manager::OnResponseError, this);
 }
 
-LLMManager::~LLMManager()
+Manager::~Manager()
 {
     m_timer.Stop();
-    Unbind(wxEVT_TIMER, &LLMManager::OnTimer, this, m_timer.GetId());
-    Unbind(wxEVT_LLM_RESPONSE, &LLMManager::OnResponse, this);
-    Unbind(wxEVT_LLM_RESPONSE_COMPLETED, &LLMManager::OnResponse, this);
-    Unbind(wxEVT_LLM_RESPONSE_ERROR, &LLMManager::OnResponseError, this);
+    Unbind(wxEVT_TIMER, &Manager::OnTimer, this, m_timer.GetId());
+    Unbind(wxEVT_LLM_RESPONSE, &Manager::OnResponse, this);
+    Unbind(wxEVT_LLM_RESPONSE_COMPLETED, &Manager::OnResponse, this);
+    Unbind(wxEVT_LLM_RESPONSE_ERROR, &Manager::OnResponseError, this);
 }
 
-std::optional<uint64_t> LLMManager::Chat(const wxString& prompt, Callback cb, size_t options, const wxString& model)
+std::optional<uint64_t> Manager::Chat(const wxString& prompt, Callback cb, size_t options, const wxString& model)
 {
     if (!IsAvailable()) {
         return std::nullopt;
@@ -54,14 +55,14 @@ std::optional<uint64_t> LLMManager::Chat(const wxString& prompt, Callback cb, si
     return id;
 }
 
-void LLMManager::OnTimer(wxTimerEvent& e)
+void Manager::OnTimer(wxTimerEvent& e)
 {
     clLLMEvent event_llm_is_available{wxEVT_LLM_IS_AVAILABLE};
     EventNotifier::Get()->ProcessEvent(event_llm_is_available);
     m_isAvailable = event_llm_is_available.IsAvailable();
 }
 
-void LLMManager::OnResponse(clLLMEvent& event)
+void Manager::OnResponse(clLLMEvent& event)
 {
     bool completed = event.GetEventType() == wxEVT_LLM_RESPONSE_COMPLETED;
     bool is_thinking = event.IsThinking();
@@ -77,13 +78,18 @@ void LLMManager::OnResponse(clLLMEvent& event)
     if (is_thinking) {
         flags |= ResponseFlags::kThinking;
     }
-    (m_requetstQueue.front().second)(event.GetResponseRaw(), flags);
+
+    auto& entry = m_requetstQueue.front();
+    if (entry.second != nullptr) {
+        (entry.second)(event.GetResponseRaw(), flags);
+    }
+
     if (completed) {
         m_requetstQueue.erase(m_requetstQueue.begin());
     }
 }
 
-void LLMManager::OnResponseError(clLLMEvent& event)
+void Manager::OnResponseError(clLLMEvent& event)
 {
     if (m_requetstQueue.empty()) {
         clWARNING() << "Received LLM response error, but no callback is available";
@@ -91,6 +97,51 @@ void LLMManager::OnResponseError(clLLMEvent& event)
     }
 
     size_t flags{ResponseFlags::kError | ResponseFlags::kCompleted};
-    (m_requetstQueue.front().second)(event.GetResponseRaw(), flags);
+
+    auto& entry = m_requetstQueue.front();
+    if (entry.second != nullptr) {
+        (entry.second)(event.GetResponseRaw(), flags);
+    }
     m_requetstQueue.erase(m_requetstQueue.begin());
 }
+
+void Manager::Cancel(uint64_t request_id)
+{
+    auto iter = std::find_if(
+        m_requetstQueue.begin(), m_requetstQueue.end(), [request_id](const auto& p) { return p.first == request_id; });
+    if (iter == m_requetstQueue.end()) {
+        return;
+    }
+
+    // We can't really remove the entry, but we can replace the callback with a null.
+    iter->second = nullptr;
+}
+
+bool Manager::RegisterFunction(Function func)
+{
+    std::string name = func.m_name;
+    return m_functions.insert({name, std::move(func)}).second;
+}
+
+void Manager::UnregisterFunction(const std::string& funcname)
+{
+    if (m_functions.count(funcname) != 0) {
+        // Erase it from the local cache.
+        m_functions.erase(funcname);
+    }
+
+    // In case someone already consumed it from the LLMManager, notify that this function should be unregistered.
+    clLLMEvent unregister_event{wxEVT_LLM_UNREGISTER_FUNC};
+    unregister_event.SetStringRaw(funcname);
+    unregister_event.SetString(funcname);
+    EventNotifier::Get()->ProcessEvent(unregister_event);
+}
+
+void Manager::ConsumeFunctions(std::function<void(Function)> cb)
+{
+    for (auto& [_, f] : m_functions) {
+        cb(std::move(f));
+    }
+    m_functions.clear();
+}
+} // namespace llm

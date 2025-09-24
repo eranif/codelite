@@ -31,6 +31,18 @@
 
 #include <memory>
 
+/// Return the log handle of this library
+clModuleLogger& GetLogHandle();
+
+// Helper macros to be used outside of this library
+#define CHATAI_LOG (GetLogHandle())
+
+#define CHATAI_DEBUG() LOG_DEBUG(CHATAI_LOG)
+#define CHATAI_TRACE() LOG_TRACE(CHATAI_LOG)
+#define CHATAI_ERROR() LOG_ERROR(CHATAI_LOG)
+#define CHATAI_WARNING() LOG_WARNING(CHATAI_LOG)
+#define CHATAI_SYSTEM() LOG_SYSTEM(CHATAI_LOG)
+
 class ChatAI : public IPlugin
 {
 public:
@@ -47,6 +59,7 @@ private:
     void OnShowChatWindow(wxCommandEvent& event);
     void OnIsLlmAvailable(clLLMEvent& event);
     void OnLlmRequest(clLLMEvent& event);
+    void OnInitDone(wxCommandEvent& event);
 
     ChatAIWindow* m_chatWindow{nullptr};
     std::shared_ptr<LLMClientBase> m_cli;

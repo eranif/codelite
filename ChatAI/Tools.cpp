@@ -64,8 +64,43 @@ FunctionResult RunOnMain(std::function<FunctionResult()> callback, const wxStrin
     return f.get();
 }
 
+/// Holds all plugin functions.
+std::mutex plugin_functions_mutex;
+std::unordered_map<std::string, std::shared_ptr<FunctionBase>> plugin_functions;
+
+void RegisterPluginFunction(llm::Function func)
+{
+    std::unique_lock lk{plugin_functions_mutex};
+    auto builder = FunctionBuilder(func.m_name).SetDescription(func.m_desc);
+    // Add the arguments
+    for (const auto& param : func.m_params) {
+        builder.AddRequiredParam(param.name, param.desc, param.type);
+    }
+
+    // Wrap CodeLite's callback with ollama's callback.
+    auto wrapper_cb = [func = std::move(func)](const ollama::json& args) -> ollama::FunctionResult {
+        wxString s = args.dump();
+        JSON root{s};
+        JSONItem j = root.toElement();
+        auto result = func.m_func(j);
+        ollama::FunctionResult res{.isError = !result.isOk, .text = std::move(result.text)};
+        return res;
+    };
+    auto f = builder.SetCallback(std::move(wrapper_cb)).Build();
+    plugin_functions.insert({f->GetName(), f});
+}
+
+void PopulatePluginFunctions(FunctionTable& table)
+{
+    std::unique_lock lk{plugin_functions_mutex};
+    /// Add all the plugins functions.
+    for (const auto& [_name, f] : plugin_functions) {
+        table.Add(f);
+    }
+}
+
 /// Register CodeLite tools with the model.
-void PopulateBuildInFunctions(FunctionTable& table)
+void PopulateBuiltInFunctions(FunctionTable& table)
 {
     table.Add(FunctionBuilder("Write file content to disk at a given path")
                   .SetDescription(

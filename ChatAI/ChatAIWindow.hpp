@@ -72,7 +72,6 @@ protected:
 private:
     ChatAI* m_plugin{nullptr};
     wxChoice* m_activeModel{nullptr};
-    wxTerminalOutputCtrl* m_logView{nullptr};
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
     bool m_thinking{false};
     IndicatorPanel* m_statusPanel{nullptr};

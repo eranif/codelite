@@ -260,7 +260,7 @@ void GitCommitDlg::OnGenerate(wxCommandEvent& event)
 void GitCommitDlg::OnGenerateUI(wxUpdateUIEvent& event)
 {
     bool is_generation_active = m_generate_id.has_value();
-    event.Enable(LLMManager::GetInstance().IsAvailable() && !is_generation_active && !m_rawDiff.empty());
+    event.Enable(llm::Manager::GetInstance().IsAvailable() && !is_generation_active && !m_rawDiff.empty());
 }
 
 void GitCommitDlg::ClearCommitMessage() { m_stcCommitMessage->ClearAll(); }

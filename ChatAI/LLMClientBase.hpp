@@ -13,6 +13,7 @@ public:
     enum class TaskKind {
         kChat,
         kReloadConfig,
+        kLoadPluginFunctions,
         kListModels,
         kShutdown,
     };
@@ -52,6 +53,7 @@ public:
     virtual void Clear() = 0;
     virtual void ReloadConfig(const wxString& configContent) = 0;
     virtual void SetLogSink(std::function<void(LLMLogLevel, std::string)> log_sink) = 0;
+    virtual void OnInitDone() {}
 
 protected:
     ChatAIConfig m_config;

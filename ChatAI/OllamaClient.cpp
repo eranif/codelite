@@ -4,6 +4,8 @@
 
 #include "OllamaClient.hpp"
 
+#include "ChatAI.hpp"
+#include "FileManager.hpp"
 #include "Tools.hpp"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -70,11 +72,46 @@ OllamaClient::~OllamaClient()
     EventNotifier::Get()->Unbind(wxEVT_OLLAMA_RUN_TOOL, &OllamaClient::OnRunTool, this);
 }
 
+namespace
+{
+const wxString kDefaultSettings =
+    R"#({
+  "history_size": 50,
+  "mcp_servers": {},
+  "log_level": "info",
+  "stream": true,
+  "keep_alive": "24h",
+  "endpoints": {
+    "http://127.0.0.1:11434": {
+      "active": true,
+      "http_headers": {
+        "Host": "127.0.0.1"
+      },
+      "type": "ollama"
+    }
+  },
+  "models": {
+    "default": {
+      "options": {
+        "num_ctx": 16384,
+        "temperature": 0
+      },
+      "think_end_tag": "</think>",
+      "think_start_tag": "</think>"
+    }
+  }
+})#";
+}
+
 void OllamaClient::Startup()
 {
     if (m_thread) {
         return;
     }
+
+    WriteOptions opts{.converter = nullptr, .force_global = true};
+    auto content = FileManager::ReadSettingsFileContent("assistant.json", opts).value_or(kDefaultSettings);
+    ReloadConfig(content);
     m_thread = std::make_unique<std::thread>([this]() { WorkerThreadMain(); });
 }
 
@@ -95,7 +132,8 @@ void OllamaClient::Shutdown()
 void OllamaClient::WorkerThreadMain()
 {
     auto& function_table = m_client.GetFunctionTable();
-    ollama::PopulateBuildInFunctions(function_table);
+    ollama::PopulateBuiltInFunctions(function_table);
+    ollama::PopulatePluginFunctions(function_table);
     m_client.AddSystemMessage("Your name is CodeLite");
 
     while (true) {
@@ -108,6 +146,9 @@ void OllamaClient::WorkerThreadMain()
         wxEvtHandler* owner = t.owner;
 
         switch (t.kind) {
+        case TaskKind::kLoadPluginFunctions:
+            ollama::PopulatePluginFunctions(function_table);
+            break;
         case TaskKind::kChat: {
             if (owner == nullptr) {
                 LLMEvent chat_start{wxEVT_OLLAMA_CHAT_STARTED};
@@ -179,6 +220,7 @@ void OllamaClient::WorkerThreadMain()
             auto config = ollama::Config::FromContent(t.content.ToStdString(wxConvUTF8));
             if (config.has_value()) {
                 m_client.ApplyConfig(&config.value());
+                ollama::SetLogLevel(config.value().GetLogLevel());
             }
         } break;
         case TaskKind::kShutdown:
@@ -248,6 +290,12 @@ void OllamaClient::SetLogSink(std::function<void(LLMLogLevel, std::string)> log_
 void OllamaClient::OnRunTool(LLMEvent& event)
 {
     // Run the callback
-    clDEBUG() << "Running tool:" << event.GetString() << endl;
+    CHATAI_DEBUG() << "Running tool:" << event.GetString() << endl;
     event.RunCallback();
+}
+
+void OllamaClient::OnInitDone()
+{
+    Task task{.kind = TaskKind::kLoadPluginFunctions};
+    m_queue.Post(std::move(task));
 }

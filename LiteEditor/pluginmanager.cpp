@@ -241,7 +241,7 @@ void PluginManager::Load()
 
             // Can we load it?
             if (!m_pluginsData.CanLoad(*pluginInfo)) {
-                clWARNING() << "Plugin:" << pluginInfo->GetName() << " is not enabled" << endl;
+                clDEBUG() << "Plugin:" << pluginInfo->GetName() << " is not enabled" << endl;
                 wxDELETE(dl);
                 continue;
             }

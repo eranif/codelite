@@ -28,6 +28,7 @@ public:
     void Clear() override;
     void ReloadConfig(const wxString& configContent) override;
     void SetLogSink(std::function<void(LLMLogLevel, std::string)> log_sink) override;
+    void OnInitDone() override;
 
 private:
     void WorkerThreadMain();

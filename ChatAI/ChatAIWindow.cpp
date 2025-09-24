@@ -8,6 +8,7 @@
 #include "StringUtils.h"
 #include "aui/clAuiToolBarArt.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
+#include "clModuleLogger.hpp"
 #include "clSTCHelper.hpp"
 #include "clSingleChoiceDialog.h"
 #include "clWorkspaceManager.h"
@@ -17,12 +18,13 @@
 
 #include <wx/msgdlg.h>
 
-namespace
-{
 const wxString kDefaultSettings =
     R"#({
   "history_size": 50,
   "mcp_servers": {},
+  "log_level": "info",
+  "stream": true,
+  "keep_alive": "24h",
   "endpoints": {
     "http://127.0.0.1:11434": {
       "active": true,
@@ -35,7 +37,7 @@ const wxString kDefaultSettings =
   "models": {
     "default": {
       "options": {
-        "num_ctx": 32768,
+        "num_ctx": 16384,
         "temperature": 0
       },
       "think_end_tag": "</think>",
@@ -44,9 +46,12 @@ const wxString kDefaultSettings =
   }
 })#";
 
+constexpr const char* kAssistantConfigFile = "assistant.json";
+
+namespace
+{
 const wxString CHAT_AI_LABEL = _("Chat AI");
 const wxString LONG_MODEL_NAME = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
-constexpr const char* kAssistantConfigFile = "assistant.json";
 
 std::optional<wxString> GetGlobalSettings()
 {
@@ -126,16 +131,24 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
 
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);
 
-    m_logView = new wxTerminalOutputCtrl(m_panelLog);
-    m_logView->SetSink(this);
-    m_panelLog->GetSizer()->Add(m_logView, wxSizerFlags(1).Expand());
-
     m_plugin->GetClient()->SetLogSink([](LLMLogLevel level, std::string message) {
-        // For now, just print it to the log.
-        LLMEvent log_event{wxEVT_OLLAMA_LOG};
-        log_event.SetLogLevel(level);
-        log_event.SetStringRaw(message);
-        EventNotifier::Get()->AddPendingEvent(log_event);
+        switch (level) {
+        case LLMLogLevel::kInfo:
+            CHATAI_SYSTEM() << message << endl;
+            break;
+        case LLMLogLevel::kDebug:
+            CHATAI_DEBUG() << message << endl;
+            break;
+        case LLMLogLevel::kTrace:
+            CHATAI_TRACE() << message << endl;
+            break;
+        case LLMLogLevel::kError:
+            CHATAI_ERROR() << message << endl;
+            break;
+        case LLMLogLevel::kWarning:
+            CHATAI_WARNING() << message << endl;
+            break;
+        }
     });
     m_markdownStyler = std::make_unique<MarkdownStyler>(m_stcOutput);
     m_markdownStyler->Bind(wxEVT_MARKDOWN_LINK_CLICKED, [](clCommandEvent& event) {
@@ -276,35 +289,11 @@ void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
 
 void ChatAIWindow::DoLogMessage(const wxString& message, LLMLogLevel log_level)
 {
-    clAnsiEscapeCodeColourBuilder builder;
-    switch (log_level) {
-    case LLMLogLevel::kError:
-        builder.Add(message, AnsiColours::Red(), true);
-        break;
-    case LLMLogLevel::kWarning:
-        builder.Add(message, AnsiColours::Yellow(), true);
-        break;
-    case LLMLogLevel::kTrace:
-    case LLMLogLevel::kDebug:
-        builder.Add(message, AnsiColours::Gray(), true);
-        break;
-    case LLMLogLevel::kInfo:
-    default:
-        builder.Add(message, AnsiColours::Green());
-        break;
-    }
-    wxString line = builder.GetString();
-    line.Trim() << "\n";
-
-    wxStringView sv{line.c_str(), line.length()};
-    m_logView->StyleAndAppend(sv, nullptr);
+    wxUnusedVar(message);
+    wxUnusedVar(log_level);
 }
 
-void ChatAIWindow::OnLog(LLMEvent& event)
-{
-    wxString content = wxString::FromUTF8(event.GetStringRaw());
-    DoLogMessage(content, event.GetLogLevel());
-}
+void ChatAIWindow::OnLog(LLMEvent& event) { event.Skip(); }
 
 void ChatAIWindow::OnSettings(wxCommandEvent& event)
 {
@@ -383,7 +372,7 @@ void ChatAIWindow::OnChatAIOutput(LLMEvent& event)
         return;
     case LLMEventReason::kLogNotice:
     case LLMEventReason::kLogDebug:
-        clDEBUG() << content << endl;
+        CHATAI_DEBUG() << content << endl;
         break;
     case LLMEventReason::kDone:
         NotifyThinking(false);

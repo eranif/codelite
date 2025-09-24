@@ -125,8 +125,33 @@ public:
     int toInt(int defaultVal = -1) const;
 
     /// Convert the value into `T` from
-    template <typename T> T fromNumber(T default_value) const { return static_cast<T>(toInt((int)default_value)); }
+    template <typename T>
+    T fromNumber(T default_value) const
+    {
+        return static_cast<T>(toInt((int)default_value));
+    }
 
+    template <typename T>
+    inline T GetValue() const
+    {
+        if constexpr (std::is_same_v<T, bool>) {
+            return toBool();
+        } else if constexpr (std::is_same_v<T, int>) {
+            return toInt();
+        } else if constexpr (std::is_same_v<T, size_t>) {
+            return toSize_t();
+        } else if constexpr (std::is_same_v<T, double>) {
+            return toDouble();
+        } else if constexpr (std::is_same_v<T, std::string>) {
+            return toString().ToStdString(wxConvUTF8);
+        } else if constexpr (std::is_same_v<T, wxString>) {
+            return toString();
+        } else if constexpr (std::is_same_v<T, wxArrayString>) {
+            return toArrayString();
+        } else {
+            static_assert(!std::is_same_v<T, T>, "GetValue called with unsupported type.");
+        }
+    }
     size_t toSize_t(size_t defaultVal = 0) const;
     double toDouble(double defaultVal = -1.0) const;
     wxFileName toFileName() const;

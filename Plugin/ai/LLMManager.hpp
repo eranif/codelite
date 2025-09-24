@@ -1,5 +1,6 @@
 #pragma once
 
+#include "JSON.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 
@@ -12,7 +13,118 @@
 #include <wx/string.h>
 #include <wx/timer.h>
 
-class WXDLLIMPEXP_SDK LLMManager : public wxEvtHandler
+namespace llm
+{
+struct WXDLLIMPEXP_SDK FunctionResult {
+    bool isOk{true};
+    std::string text;
+};
+
+inline FunctionResult CreateErr(const wxString& text)
+{
+    FunctionResult res{.isOk = false, .text = text.ToStdString(wxConvUTF8)};
+    return res;
+}
+
+inline FunctionResult CreateOk(const wxString& text)
+{
+    FunctionResult res{.isOk = true, .text = text.ToStdString(wxConvUTF8)};
+    return res;
+}
+
+struct WXDLLIMPEXP_SDK FunctionArg {
+    /// The argument name
+    std::string name;
+    /// The argument description.
+    std::string desc;
+    /// The type of the argument (boolean, number, string etc.)
+    std::string type;
+};
+
+using FunctionCall = std::function<FunctionResult(const JSONItem& args)>;
+struct WXDLLIMPEXP_SDK Function {
+    /// The function name.
+    std::string m_name;
+    /// The function description.
+    std::string m_desc;
+    /// Name + description of the required params for this function.
+    std::vector<FunctionArg> m_params;
+    /// The function callback.
+    FunctionCall m_func{nullptr};
+    Function() = delete;
+    Function(const std::string& name, const std::string& desc, std::vector<FunctionArg> params, FunctionCall func_call)
+        : m_name(name)
+        , m_desc(desc)
+        , m_params(std::move(params))
+        , m_func(std::move(func_call))
+    {
+    }
+};
+
+/// The proper way to construct LLM function.
+struct WXDLLIMPEXP_SDK FunctionBuilder {
+public:
+    FunctionBuilder(const std::string& name)
+        : m_name(name)
+    {
+    }
+
+    FunctionBuilder& SetDesc(const std::string& desc)
+    {
+        m_desc = desc;
+        return *this;
+    }
+
+    FunctionBuilder& AddParam(const std::string& name, const std::string& desc, const std::string& type)
+    {
+        FunctionArg arg{.name = name, .desc = desc, .type = type};
+        m_params.push_back(std::move(arg));
+        return *this;
+    }
+
+    FunctionBuilder& SetCallback(FunctionCall cb)
+    {
+        m_func = std::move(cb);
+        return *this;
+    }
+
+    Function Build()
+    {
+        Function func{m_name, m_desc, std::move(m_params), std::move(m_func)};
+        return func;
+    }
+
+private:
+    /// The function name.
+    std::string m_name;
+    /// The function description.
+    std::string m_desc;
+    /// Name + description of the required params for this function.
+    std::vector<FunctionArg> m_params;
+    /// The function callback.
+    FunctionCall m_func{nullptr};
+};
+
+#define LLM_ASSIGN_ARG_OR_RETURN_ERR(expr, args, ArgName, ArgType)  \
+    if (!args.hasNamedObject(ArgName)) {                            \
+        std::stringstream ss;                                       \
+        ss << "Missing mandatory param: " << ArgName;               \
+        ::llm::FunctionResult res{.isOk = false, .text = ss.str()}; \
+        return res;                                                 \
+    }                                                               \
+    expr = args[ArgName].GetValue<ArgType>();
+
+#define LLM_STRINGIFY(x) #x
+#define LLM_TOSTRING(x) LLM_STRINGIFY(x)
+#define LLM_CHECK_OR_RETURN_ERR(cond)                                       \
+    if (!(cond)) {                                                          \
+        std::stringstream ss;                                               \
+        ss << "Function argument failed condition. " << LLM_TOSTRING(cond); \
+        ::llm::FunctionResult res{.isOk = false, .text = ss.str()};         \
+        return res;                                                         \
+    }
+
+class WXDLLIMPEXP_SDK Manager : public wxEvtHandler
 {
 public:
     enum ResponseFlags {
@@ -28,7 +140,7 @@ public:
     };
 
     using Callback = std::function<void(const std::string& message, size_t flags)>;
-    static LLMManager& GetInstance();
+    static Manager& GetInstance();
 
     /// Send prompt to the available LLM. Return a unique ID to be used when querying for the response.
     /// If no LLM is available, return `std::nullopt`.
@@ -47,17 +159,28 @@ public:
         return iter != m_requetstQueue.end();
     }
 
+    /// Remove request from the processing queue.
+    void Cancel(uint64_t request_id);
+
+    bool RegisterFunction(Function func);
+    void UnregisterFunction(const std::string& funcname);
+
+    /// Call `cb` for each function. This function consumes the registered function so after it completes,
+    /// `m_functions.empty() == true`.
+    void ConsumeFunctions(std::function<void(Function func)> cb);
+
 private:
-    LLMManager();
-    ~LLMManager();
+    Manager();
+    ~Manager();
 
     void OnResponse(clLLMEvent& event);
     void OnResponseError(clLLMEvent& event);
-
     void OnTimer(wxTimerEvent& e);
 
     std::unordered_map<uint64_t, std::string> m_responses;
     bool m_isAvailable{false};
     wxTimer m_timer;
     std::vector<std::pair<uint64_t, Callback>> m_requetstQueue;
+    std::unordered_map<wxString, Function> m_functions;
 };
+} // namespace llm

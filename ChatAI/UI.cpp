@@ -38,28 +38,12 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
 
-    m_notebook = new wxNotebook(
-        this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxNB_FIXEDWIDTH | wxBK_DEFAULT);
-    m_notebook->SetName(wxT("m_notebook"));
-
-    mainSizer->Add(m_notebook, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_panelChat =
-        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panelChat, _("Chat"), true);
-
-    wxBoxSizer* boxSizer50 = new wxBoxSizer(wxVERTICAL);
-    m_panelChat->SetSizer(boxSizer50);
-
-    m_mainSplitter = new wxSplitterWindow(m_panelChat,
-                                          wxID_ANY,
-                                          wxDefaultPosition,
-                                          wxDLG_UNIT(m_panelChat, wxSize(-1, -1)),
-                                          wxSP_LIVE_UPDATE | wxSP_3DSASH);
+    m_mainSplitter = new wxSplitterWindow(
+        this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxSP_LIVE_UPDATE | wxSP_3DSASH);
     m_mainSplitter->SetSashGravity(1);
     m_mainSplitter->SetMinimumPaneSize(150);
 
-    boxSizer50->Add(m_mainSplitter, 1, wxEXPAND, WXC_FROM_DIP(5));
+    mainSizer->Add(m_mainSplitter, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     m_splitterPageTop = new wxPanel(
         m_mainSplitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainSplitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
@@ -164,13 +148,6 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
     m_stcInput->SetKeyWords(4, wxT(""));
 
     boxSizer43->Add(m_stcInput, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_panelLog =
-        new wxPanel(m_notebook, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebook, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_notebook->AddPage(m_panelLog, _("Log"), false);
-
-    wxBoxSizer* boxSizer51 = new wxBoxSizer(wxVERTICAL);
-    m_panelLog->SetSizer(boxSizer51);
 
     SetName(wxT("AssistanceAIChatWindowBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));

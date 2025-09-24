@@ -46,6 +46,7 @@
 #if MAINBOOK_AUIBOOK
 #include "clAuiBook.hpp"
 #endif
+#include "ai/LLMManager.hpp"
 #include "clEditorBar.h"
 #include "clRemoteHost.hpp"
 #include "clSFTPManager.hpp"
@@ -287,6 +288,29 @@ GitPlugin::GitPlugin(IManager* manager)
     GitEntry data;
     conf.ReadItem(&data);
     m_configFlags = data.GetFlags();
+
+    llm::Manager::GetInstance().RegisterFunction(
+        llm::FunctionBuilder("git_commit_log_history_between_two_commits")
+            .SetDesc("Return git history of commits between range of commits: 'start_commit' and 'end_commit'.")
+            .AddParam("start_commit", "The first commit in the range.", "string")
+            .AddParam("end_commit", "The second commit in the range.", "string")
+            .SetCallback([this](const JSONItem& args) -> llm::FunctionResult {
+                // Function implementation: return list of changes between 2 commits.
+                LLM_ASSIGN_ARG_OR_RETURN_ERR(wxString start_commit, args, "start_commit", wxString);
+                LLM_ASSIGN_ARG_OR_RETURN_ERR(wxString end_commit, args, "end_commit", wxString);
+                LLM_CHECK_OR_RETURN_ERR(!start_commit.empty());
+                LLM_CHECK_OR_RETURN_ERR(!end_commit.empty());
+
+                // Build and execute the command.
+                wxBusyCursor bc{};
+                wxString command, command_output;
+                command << "log " << start_commit << ".." << end_commit << " --oneline";
+                if (!DoExecuteCommandSync(command, &command_output)) {
+                    return llm::CreateErr("Failed to execute git command. " + command_output);
+                }
+                return llm::CreateOk(command_output);
+            })
+            .Build());
 }
 
 GitPlugin::~GitPlugin() {}
@@ -3147,7 +3171,7 @@ void GitPlugin::OnSideBarPageChanged(clCommandEvent& event)
 
 std::optional<uint64_t> GitPlugin::GenerateCommitMessage(const wxString& prompt)
 {
-    if (m_commitDialog == nullptr || !LLMManager::GetInstance().IsAvailable()) {
+    if (m_commitDialog == nullptr || !llm::Manager::GetInstance().IsAvailable()) {
         return std::nullopt;
     }
 
@@ -3155,7 +3179,7 @@ std::optional<uint64_t> GitPlugin::GenerateCommitMessage(const wxString& prompt)
     auto cb = [this](const std::string& message, size_t flags) mutable {
         if (!m_commitDialog) {
             return;
-        } else if (flags & LLMManager::kThinking) {
+        } else if (flags & llm::Manager::kThinking) {
             m_commitDialog->SetIndicatorMessage(_("Thinking..."));
             return;
         } else {
@@ -3163,10 +3187,10 @@ std::optional<uint64_t> GitPlugin::GenerateCommitMessage(const wxString& prompt)
         }
 
         m_commitDialog->AppendCommitMessage(wxString::FromUTF8(message));
-        if (flags & LLMManager::kCompleted) {
+        if (flags & llm::Manager::kCompleted) {
             m_commitDialog->SetCommitMessageGenerationCompleted();
         }
     };
 
-    return LLMManager::GetInstance().Chat(prompt, std::move(cb), LLMManager::ChatOptions::kNoTools);
+    return llm::Manager::GetInstance().Chat(prompt, std::move(cb), llm::Manager::ChatOptions::kNoTools);
 }

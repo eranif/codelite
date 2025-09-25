@@ -224,6 +224,7 @@ void ChatAIWindow::OnModelChanged(wxCommandEvent& event)
 {
     m_plugin->GetConfig().SetSelectedModelName(m_activeModel->GetStringSelection());
     DoReset();
+    llm::Manager::GetInstance().SetModels(m_activeModel->GetStrings(), m_activeModel->GetStringSelection());
     m_plugin->GetConfig().Save();
 }
 

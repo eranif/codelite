@@ -856,52 +856,40 @@ void GitConsole::OnGenerateReleaseNotes(wxCommandEvent& event)
         return;
     }
 
-    m_releaseNodesGenState = {.is_multi_requests = (history.size() > 1), .total_batch_count = history.size()};
-    wxString promp_prefix =
-        "Generate release notes from the following list of git commits history. Use bullets. "
-        "Make sure to include a 'bug fixes' section. Include a major improvements section. Include a section that "
-        "states "
-        "the contributors and the number of "
-        "commits each made, sort the contributors by number of commits.\nThe list of git commits are:\n```\n";
+    m_releaseNotesGenState = {.is_multi_requests = (history.size() > 1)};
+    wxString prompt_template = R"(Generate release notes from the following list of git commits history.
+Make sure to include a "bug fixes"' section. Include a "major improvements" section. Include a section that states
+the contributors and the number of commits each contributor committed. Sort the contributors by number of commits.
+Use bullets.
 
-    m_statusBar->Start(wxString() << "Generating release notes, batch 1/" << m_releaseNodesGenState.total_batch_count);
-    for (size_t i = 0; i < history.size(); ++i) {
-        const wxString& chunk = history[i];
-        wxString prompt;
-        prompt << promp_prefix << chunk << "\n```\n";
-        llm::Manager::GetInstance().Chat(
-            prompt,
-            [this](const std::string& message, size_t flags) mutable {
-                if (m_releaseNodesGenState.tokens_count == 0) {
-                    m_statusBar->Start("Generating release notes");
-                }
+The list of git commits are:
 
-                m_releaseNodesGenState.tokens_count += 1;
-                m_releaseNodesGenState.response.append(message);
+```text
+{{CONTEXT}}
+```
+)";
 
-                if (flags & llm::Manager::kCompleted) {
-                    m_releaseNodesGenState.response.append("\n");
-                    if (m_releaseNodesGenState.total_batch_count == m_releaseNodesGenState.current_batch) {
-                        // this was the last call.
-                        m_statusBar->SetMessage(_("Processing results"));
-                        this->CallAfter(&GitConsole::OnGenerateReleaseNotesDone);
-                    } else {
-                        m_releaseNodesGenState.current_batch++;
-                        m_statusBar->SetMessage(wxString() << "Generating release notes, batch "
-                                                           << m_releaseNodesGenState.current_batch << "/"
-                                                           << m_releaseNodesGenState.total_batch_count);
-                    }
-                }
-            },
-            llm::Manager::ChatOptions::kNoTools | llm::Manager::ChatOptions::kClearHistory);
-    }
+    m_statusBar->Start(_("Generating release notes..."));
+    llm::Manager::GetInstance().Chat(
+        prompt_template, // the prompt template.
+        history,         // the prompt context.
+        [this](const std::string& message, size_t flags) mutable {
+            m_releaseNotesGenState.tokens_count += 1;
+            m_releaseNotesGenState.response.append(message);
+            wxString status_message{_("Generating release notes...")};
+            status_message << " " << m_releaseNotesGenState.tokens_count << _(" tokens");
+            m_statusBar->SetMessage(status_message);
+            if (flags & llm::Manager::kCompleted) {
+                this->CallAfter(&GitConsole::OnGenerateReleaseNotesDone);
+            }
+        },
+        llm::Manager::ChatOptions::kNoTools | llm::Manager::ChatOptions::kClearHistory);
 }
 
 void GitConsole::OnGenerateReleaseNotesDone()
 {
     // Tell the LLM to unified the chunks.
     auto open_file_cb = [this](const wxString& text) {
-        clDEBUG() << "Writing result to file and opening it." << endl;
         clTempFile tmpfile{"md"}; // Markdown file.
         tmpfile.Write(text);
         tmpfile.Persist();
@@ -910,26 +898,30 @@ void GitConsole::OnGenerateReleaseNotesDone()
     };
 
     clDEBUG() << "Release note generation completed." << endl;
-    if (m_releaseNodesGenState.is_multi_requests) {
-        clDEBUG() << "Unifying chunks." << endl;
+    if (m_releaseNotesGenState.is_multi_requests) {
         wxString prompt;
         prompt << "Rephrase the following release notes text. Remove duplicate entries and merge the sections.\nThe "
                   "release notes:\n"
-               << m_releaseNodesGenState.response;
-        m_releaseNodesGenState.response.clear();
-        m_statusBar->SetMessage(_("Merging results..."));
-        std::shared_ptr<wxString> concatenated_release_notes = std::make_shared<wxString>();
+               << m_releaseNotesGenState.response;
+        m_releaseNotesGenState.response.clear();
+        m_statusBar->SetMessage(_("Finalising notes..."));
+        std::shared_ptr<std::string> concatenated_release_notes = std::make_shared<std::string>();
+        std::shared_ptr<size_t> tokens_counter = std::make_shared<size_t>(0);
         llm::Manager::GetInstance().Chat(
             prompt,
             [=, open_file_cb = std::move(open_file_cb)](const std::string& message, size_t flags) mutable {
-                concatenated_release_notes->append(wxString::FromUTF8(message));
+                (*tokens_counter)++;
+                concatenated_release_notes->append(message);
+
+                wxString status_message{_("Finalising notes...")};
+                status_message << " " << (*tokens_counter) << _(" tokens");
                 if (flags & llm::Manager::kCompleted) {
                     concatenated_release_notes->append("\n");
-                    open_file_cb(*concatenated_release_notes);
+                    open_file_cb(wxString::FromUTF8(*concatenated_release_notes));
                 }
             },
             llm::Manager::ChatOptions::kNoTools | llm::Manager::ChatOptions::kClearHistory);
     } else {
-        open_file_cb(m_releaseNodesGenState.response);
+        open_file_cb(m_releaseNotesGenState.response);
     }
 }

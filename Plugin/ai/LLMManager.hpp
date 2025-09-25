@@ -140,13 +140,25 @@ public:
         kClearHistory = (1 << 2),
     };
 
-    using Callback = std::function<void(const std::string& message, size_t flags)>;
+    using ResponseCB = std::function<void(const std::string& message, size_t flags)>;
+
     static Manager& GetInstance();
 
     /// Send prompt to the available LLM. Return a unique ID to be used when querying for the response.
     /// If no LLM is available, return `std::nullopt`.
     std::optional<uint64_t>
-    Chat(const wxString& prompt, Callback cb, size_t options, const wxString& model = wxEmptyString);
+    Chat(const wxString& prompt, ResponseCB cb, size_t options, const wxString& model = wxEmptyString);
+
+    /// Similar to chat, but instead of accepting a single prompt it accepts a prompt template and context array.
+    /// For every context entry in the "prompt_context_arr", a new prompt is constructed and fed to the LLM model.
+    /// If response_cb is provided, every generated token is also passed to that callback.
+    /// Supported macros in the "prompt_template" are:
+    /// {{CONTEXT}}
+    void Chat(const wxString& prompt_template,
+              const wxArrayString& prompt_context_arr,
+              ResponseCB response_cb,
+              size_t options,
+              const wxString& model = wxEmptyString);
 
     /// Return true if the LLM is available.
     inline bool IsAvailable() const { return m_isAvailable; }
@@ -181,7 +193,7 @@ private:
     std::unordered_map<uint64_t, std::string> m_responses;
     bool m_isAvailable{false};
     wxTimer m_timer;
-    std::vector<std::pair<uint64_t, Callback>> m_requetstQueue;
+    std::vector<std::pair<uint64_t, ResponseCB>> m_requetstQueue;
     std::unordered_map<wxString, Function> m_functions;
 };
 } // namespace llm

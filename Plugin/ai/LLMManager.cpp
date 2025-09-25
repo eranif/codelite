@@ -37,7 +37,49 @@ Manager::~Manager()
     Unbind(wxEVT_LLM_RESPONSE_ERROR, &Manager::OnResponseError, this);
 }
 
-std::optional<uint64_t> Manager::Chat(const wxString& prompt, Callback cb, size_t options, const wxString& model)
+namespace
+{
+struct SharedState {
+    /// used for detecting loops in the model.
+    std::vector<std::string> last_tokens;
+    size_t total_batch_count{1};
+    size_t current_batch{1};
+};
+} // namespace
+
+void Manager::Chat(const wxString& prompt_template,
+                   const wxArrayString& prompt_context_arr,
+                   ResponseCB response_cb,
+                   size_t options,
+                   const wxString& model)
+{
+    std::shared_ptr<ResponseCB> shared_cb = std::make_shared<ResponseCB>(response_cb);
+    std::shared_ptr<SharedState> shared_state = std::make_shared<SharedState>();
+    shared_state->total_batch_count = prompt_context_arr.size();
+
+    for (const auto& prompt_context : prompt_context_arr) {
+        wxString prompt = prompt_template;
+        prompt.Replace("{{CONTEXT}}", prompt_context);
+        Chat(
+            prompt,
+            [=](const std::string& message, size_t flags) {
+                if (flags & llm::Manager::kCompleted) {
+                    if (shared_state->total_batch_count == shared_state->current_batch) {
+                        // this was the last token in the batch.
+                        response_cb(message, llm::Manager::kCompleted);
+                    } else {
+                        shared_state->current_batch++;
+                    }
+                } else {
+                    response_cb(message, flags);
+                }
+            },
+            options,
+            model);
+    }
+}
+
+std::optional<uint64_t> Manager::Chat(const wxString& prompt, ResponseCB cb, size_t options, const wxString& model)
 {
     if (!IsAvailable()) {
         return std::nullopt;

@@ -125,13 +125,9 @@ private:
     IndicatorPanel* m_statusBar{nullptr};
 
     struct ReleaseNotesGenerationState {
-        // used for detecting loop of the model.
-        std::vector<std::string> last_tokens;
         std::string response;
         size_t tokens_count{0};
         bool is_multi_requests{false};
-        size_t total_batch_count{1};
-        size_t current_batch{1};
-    } m_releaseNodesGenState;
+    } m_releaseNotesGenState;
 };
 #endif // GITCONSOLE_H

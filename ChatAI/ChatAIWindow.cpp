@@ -6,6 +6,7 @@
 #include "FileManager.hpp"
 #include "MarkdownStyler.hpp"
 #include "StringUtils.h"
+#include "ai/LLMManager.hpp"
 #include "aui/clAuiToolBarArt.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clModuleLogger.hpp"
@@ -137,7 +138,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
             CHATAI_SYSTEM() << message << endl;
             break;
         case LLMLogLevel::kDebug:
-            CHATAI_DEBUG() << message << endl;
+            CHATAI_TRACE() << message << endl;
             break;
         case LLMLogLevel::kTrace:
             CHATAI_TRACE() << message << endl;
@@ -441,12 +442,13 @@ void ChatAIWindow::OnThinking(LLMEvent& event)
 void ChatAIWindow::OnModels(LLMEvent& event)
 {
     m_activeModel->Clear();
+
     for (const auto& model : event.GetModels()) {
         m_activeModel->Append(model);
     }
 
     const auto& models = event.GetModels();
-    const auto& active_model = m_plugin->GetConfig().GetSelectedModel();
+    auto active_model = m_plugin->GetConfig().GetSelectedModel();
 
     if (!models.empty()) {
         if (!active_model.empty()) {
@@ -455,8 +457,10 @@ void ChatAIWindow::OnModels(LLMEvent& event)
 
         } else {
             m_activeModel->SetSelection(0);
+            active_model = m_activeModel->GetString(0);
         }
     }
+    llm::Manager::GetInstance().SetModels(event.GetModels(), active_model);
 }
 
 void ChatAIWindow::OnInputUI(wxUpdateUIEvent& event) { event.Enable(true); }

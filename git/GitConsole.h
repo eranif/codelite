@@ -83,7 +83,7 @@ protected:
     virtual void OnClearGitLog(wxCommandEvent& event);
     virtual void OnGenerateReleaseNotesUI(wxUpdateUIEvent& event);
     virtual void OnGenerateReleaseNotes(wxCommandEvent& event);
-    void OnGenerateReleaseNotesDone();
+    void OnGenerateReleaseNotesDone(const wxString& model);
     virtual void OnStopGitProcess(wxCommandEvent& event);
     virtual void OnOpenUnversionedFiles(wxCommandEvent& event);
     virtual void OnAddUnversionedFiles(wxCommandEvent& event);

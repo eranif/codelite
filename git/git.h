@@ -374,12 +374,13 @@ public:
     void OnCommandOutput(clCommandEvent& event);
     void OnCommandEnded(clCommandEvent& event);
 
-    std::optional<uint64_t> GenerateCommitMessage(const wxString& prompt);
+    std::optional<uint64_t> GenerateCommitMessage(const wxString& prompt, const wxString& model_name);
 
     /// Return the commit log between range of commits. We split the log (line based), to match the `chunk_size`
     /// argument.
     clStatusOr<wxArrayString> FetchLogBetweenCommits(const wxString& start_commit,
                                                      const wxString& end_commit,
+                                                     bool oneline = true,
                                                      size_t chunk_size = wxString::npos);
 
     //--------------------------------------------

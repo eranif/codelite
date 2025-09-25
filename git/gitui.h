@@ -582,18 +582,21 @@ public:
     virtual ~GitUserEmailDialogBase();
 };
 
-class GitGetTwoCommitsBaseDlg : public wxDialog
+class GitReleaseNotesGenerationBaseDlg : public wxDialog
 {
 protected:
     wxStaticText* m_;
     wxTextCtrl* m_textCtrlFirstCommit;
     wxStaticText* m_staticText839;
     wxTextCtrl* m_textCtrlSecondCommit;
+    wxStaticText* m_staticText841;
+    wxChoice* m_choiceModels;
     wxStdDialogButtonSizer* m_stdBtnSizer832;
     wxButton* m_buttonOk;
     wxButton* m_buttonCancel;
 
 protected:
+    virtual void OnChoicemodelsUpdateUi(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnButtonokUpdateUi(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
@@ -601,13 +604,15 @@ public:
     wxTextCtrl* GetTextCtrlFirstCommit() { return m_textCtrlFirstCommit; }
     wxStaticText* GetStaticText839() { return m_staticText839; }
     wxTextCtrl* GetTextCtrlSecondCommit() { return m_textCtrlSecondCommit; }
-    GitGetTwoCommitsBaseDlg(wxWindow* parent,
-                            wxWindowID id = wxID_ANY,
-                            const wxString& title = _("Choose two commits"),
-                            const wxPoint& pos = wxDefaultPosition,
-                            const wxSize& size = wxSize(-1, -1),
-                            long style = wxDEFAULT_DIALOG_STYLE);
-    virtual ~GitGetTwoCommitsBaseDlg();
+    wxStaticText* GetStaticText841() { return m_staticText841; }
+    wxChoice* GetChoiceModels() { return m_choiceModels; }
+    GitReleaseNotesGenerationBaseDlg(wxWindow* parent,
+                                     wxWindowID id = wxID_ANY,
+                                     const wxString& title = _("Generate Release Notes"),
+                                     const wxPoint& pos = wxDefaultPosition,
+                                     const wxSize& size = wxSize(-1, -1),
+                                     long style = wxDEFAULT_DIALOG_STYLE);
+    virtual ~GitReleaseNotesGenerationBaseDlg();
 };
 
 #endif

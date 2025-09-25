@@ -3168,7 +3168,7 @@ void GitPlugin::OnSideBarPageChanged(clCommandEvent& event)
     }
 }
 
-std::optional<uint64_t> GitPlugin::GenerateCommitMessage(const wxString& prompt)
+std::optional<uint64_t> GitPlugin::GenerateCommitMessage(const wxString& prompt, const wxString& model_name)
 {
     if (m_commitDialog == nullptr || !llm::Manager::GetInstance().IsAvailable()) {
         return std::nullopt;
@@ -3191,16 +3191,24 @@ std::optional<uint64_t> GitPlugin::GenerateCommitMessage(const wxString& prompt)
         }
     };
 
-    return llm::Manager::GetInstance().Chat(
-        prompt, std::move(cb), llm::Manager::ChatOptions::kNoTools | llm::Manager::ChatOptions::kClearHistory);
+    return llm::Manager::GetInstance().Chat(prompt,
+                                            std::move(cb),
+                                            llm::Manager::ChatOptions::kNoTools |
+                                                llm::Manager::ChatOptions::kClearHistory,
+                                            model_name);
 }
 
-clStatusOr<wxArrayString>
-GitPlugin::FetchLogBetweenCommits(const wxString& start_commit, const wxString& end_commit, size_t chunk_size)
+clStatusOr<wxArrayString> GitPlugin::FetchLogBetweenCommits(const wxString& start_commit,
+                                                            const wxString& end_commit,
+                                                            bool oneline,
+                                                            size_t chunk_size)
 {
     // Build and execute the command.
     wxString command, command_output;
     command << "log " << start_commit << ".." << end_commit;
+    if (oneline) {
+        command << R"#( --format="Commit (%h), Author (%an): %s")#";
+    }
     if (!DoExecuteCommandSync(command, &command_output)) {
         wxString errmsg;
         errmsg << "An error occurred while running git commit: " << command << ". " << command_output;

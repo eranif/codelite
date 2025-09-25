@@ -5,6 +5,7 @@
 #include "codelite_exports.h"
 
 #include <algorithm>
+#include <atomic>
 #include <optional>
 #include <string>
 #include <unordered_map>
@@ -182,6 +183,38 @@ public:
     /// `m_functions.empty() == true`.
     void ConsumeFunctions(std::function<void(Function func)> cb);
 
+    /// Interrupt the LLM.
+    void Interrupt() { m_interrupt.store(true); }
+
+    /// Return true if a user requested to interrupt the LLM.
+    bool CheckInterrupted()
+    {
+        bool b = m_interrupt;
+        m_interrupt.store(false);
+        return b;
+    }
+
+    /// Return list of the available models.
+    inline wxArrayString GetModels() const
+    {
+        std::unique_lock lk{m_models_mutex};
+        return m_models;
+    }
+
+    /// Set the available models. This function is called from the ChatAI plugin if it is loaded.
+    inline void SetModels(const wxArrayString& models, const wxString activeModel)
+    {
+        std::unique_lock lk{m_models_mutex};
+        m_models = models;
+        m_activeModel = activeModel;
+    }
+
+    inline wxString GetActiveModel() const
+    {
+        std::unique_lock lk{m_models_mutex};
+        return m_activeModel;
+    }
+
 private:
     Manager();
     ~Manager();
@@ -195,5 +228,9 @@ private:
     wxTimer m_timer;
     std::vector<std::pair<uint64_t, ResponseCB>> m_requetstQueue;
     std::unordered_map<wxString, Function> m_functions;
+    std::atomic_bool m_interrupt{false};
+    wxArrayString m_models;
+    wxString m_activeModel;
+    mutable std::mutex m_models_mutex;
 };
 } // namespace llm

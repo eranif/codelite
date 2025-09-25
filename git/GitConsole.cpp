@@ -27,7 +27,7 @@
 
 #include "AsyncProcess/clCommandProcessor.h"
 #include "ColoursAndFontsManager.h"
-#include "GitGetTwoFieldsDlg.h"
+#include "GitReleaseNotesGenerationDlg.h"
 #include "GitResetDlg.h"
 #include "StdToWX.h"
 #include "StringUtils.h"
@@ -829,20 +829,21 @@ void GitConsole::OnGenerateReleaseNotesUI(wxUpdateUIEvent& event)
 void GitConsole::OnGenerateReleaseNotes(wxCommandEvent& event)
 {
     // We need 2 commits to fetch the diff.
-    GitGetTwoFieldsDlg dlg{EventNotifier::Get()->TopFrame()};
+    GitReleaseNotesGenerationDlg dlg{EventNotifier::Get()->TopFrame()};
     if (dlg.ShowModal() != wxID_OK) {
         return;
     }
 
     wxString first_commit = dlg.GetTextCtrlFirstCommit()->GetValue();
     wxString second_commit = dlg.GetTextCtrlSecondCommit()->GetValue();
+    wxString model = dlg.GetChoiceModels()->GetStringSelection();
 
     constexpr size_t kChunkSize = 8 * 1024;
     wxArrayString history;
 
     {
         IndicatorPanelLocker lk{m_statusBar, _("Fetching git log..."), _("Ready")};
-        auto res = m_git->FetchLogBetweenCommits(first_commit, second_commit, kChunkSize);
+        auto res = m_git->FetchLogBetweenCommits(first_commit, second_commit, true, kChunkSize);
         if (!res.ok()) {
             wxMessageBox(wxString() << _("Failed to fetch git log.\n") << res.error_message(),
                          "CodeLite",
@@ -873,20 +874,21 @@ The list of git commits are:
     llm::Manager::GetInstance().Chat(
         prompt_template, // the prompt template.
         history,         // the prompt context.
-        [this](const std::string& message, size_t flags) mutable {
+        [=, this](const std::string& message, size_t flags) mutable {
             m_releaseNotesGenState.tokens_count += 1;
             m_releaseNotesGenState.response.append(message);
             wxString status_message{_("Generating release notes...")};
             status_message << " " << m_releaseNotesGenState.tokens_count << _(" tokens");
             m_statusBar->SetMessage(status_message);
             if (flags & llm::Manager::kCompleted) {
-                this->CallAfter(&GitConsole::OnGenerateReleaseNotesDone);
+                this->CallAfter(&GitConsole::OnGenerateReleaseNotesDone, model);
             }
         },
-        llm::Manager::ChatOptions::kNoTools | llm::Manager::ChatOptions::kClearHistory);
+        llm::Manager::ChatOptions::kNoTools | llm::Manager::ChatOptions::kClearHistory,
+        model);
 }
 
-void GitConsole::OnGenerateReleaseNotesDone()
+void GitConsole::OnGenerateReleaseNotesDone(const wxString& model)
 {
     // Tell the LLM to unified the chunks.
     auto open_file_cb = [this](const wxString& text) {
@@ -920,7 +922,8 @@ void GitConsole::OnGenerateReleaseNotesDone()
                     open_file_cb(wxString::FromUTF8(*concatenated_release_notes));
                 }
             },
-            llm::Manager::ChatOptions::kNoTools | llm::Manager::ChatOptions::kClearHistory);
+            llm::Manager::ChatOptions::kNoTools | llm::Manager::ChatOptions::kClearHistory,
+            model);
     } else {
         open_file_cb(m_releaseNotesGenState.response);
     }

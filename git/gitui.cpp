@@ -1947,7 +1947,7 @@ GitUserEmailDialogBase::~GitUserEmailDialogBase()
     m_button690->Unbind(wxEVT_UPDATE_UI, &GitUserEmailDialogBase::OnOKUI, this);
 }
 
-GitGetTwoCommitsBaseDlg::GitGetTwoCommitsBaseDlg(
+GitReleaseNotesGenerationBaseDlg::GitReleaseNotesGenerationBaseDlg(
     wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
@@ -1993,6 +1993,17 @@ GitGetTwoCommitsBaseDlg::GitGetTwoCommitsBaseDlg(
 
     flexGridSizer836->Add(m_textCtrlSecondCommit, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    m_staticText841 =
+        new wxStaticText(this, wxID_ANY, _("Choose model:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer836->Add(m_staticText841, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceModelsArr;
+    m_choiceModels =
+        new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceModelsArr, 0);
+
+    flexGridSizer836->Add(m_choiceModels, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_stdBtnSizer832 = new wxStdDialogButtonSizer();
 
     boxSizer831->Add(m_stdBtnSizer832, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
@@ -2005,7 +2016,7 @@ GitGetTwoCommitsBaseDlg::GitGetTwoCommitsBaseDlg(
     m_stdBtnSizer832->AddButton(m_buttonCancel);
     m_stdBtnSizer832->Realize();
 
-    SetName(wxT("GitGetTwoCommitsBaseDlg"));
+    SetName(wxT("GitReleaseNotesGenerationBaseDlg"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if (GetSizer()) {
         GetSizer()->Fit(this);
@@ -2021,10 +2032,12 @@ GitGetTwoCommitsBaseDlg::GitGetTwoCommitsBaseDlg(
         wxPersistenceManager::Get().Restore(this);
     }
     // Connect events
-    m_buttonOk->Bind(wxEVT_UPDATE_UI, &GitGetTwoCommitsBaseDlg::OnButtonokUpdateUi, this);
+    m_choiceModels->Bind(wxEVT_UPDATE_UI, &GitReleaseNotesGenerationBaseDlg::OnChoicemodelsUpdateUi, this);
+    m_buttonOk->Bind(wxEVT_UPDATE_UI, &GitReleaseNotesGenerationBaseDlg::OnButtonokUpdateUi, this);
 }
 
-GitGetTwoCommitsBaseDlg::~GitGetTwoCommitsBaseDlg()
+GitReleaseNotesGenerationBaseDlg::~GitReleaseNotesGenerationBaseDlg()
 {
-    m_buttonOk->Unbind(wxEVT_UPDATE_UI, &GitGetTwoCommitsBaseDlg::OnButtonokUpdateUi, this);
+    m_choiceModels->Unbind(wxEVT_UPDATE_UI, &GitReleaseNotesGenerationBaseDlg::OnChoicemodelsUpdateUi, this);
+    m_buttonOk->Unbind(wxEVT_UPDATE_UI, &GitReleaseNotesGenerationBaseDlg::OnButtonokUpdateUi, this);
 }

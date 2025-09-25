@@ -164,6 +164,8 @@ void OllamaClient::WorkerThreadMain()
                 ollama::AddFlagSet(chat_options, ollama::ChatOptions::kNoTools);
             }
 
+            std::string m = t.model.ToStdString(wxConvUTF8);
+            CHATAI_SYSTEM() << "Using model:" << m << endl;
             m_client.Chat(
                 t.content.ToStdString(wxConvUTF8),
                 [this, owner](std::string msg, ollama::Reason reason, bool thinking) {
@@ -216,7 +218,7 @@ void OllamaClient::WorkerThreadMain()
                         break;
                     }
                 },
-                t.model.ToStdString(wxConvUTF8),
+                m,
                 chat_options);
         } break;
         case TaskKind::kReloadConfig: {
@@ -252,13 +254,20 @@ void OllamaClient::Send(wxString prompt, wxString model, ChatOptions options)
 
 void OllamaClient::Send(wxEvtHandler* owner, wxString prompt, wxString model, ChatOptions options)
 {
+    // If kClearHistory is set, clear the chat history before and after this prompt.
     if (options & LLMClientBase::ChatOptions::kClearHistory) {
         Task task{.kind = TaskKind::kClearHistory};
         m_queue.Post(std::move(task));
     }
-    Task task{
-        .kind = TaskKind::kChat, .content = std::move(prompt), .model = model, .owner = owner, .options = options};
-    m_queue.Post(std::move(task));
+    {
+        Task task{
+            .kind = TaskKind::kChat, .content = std::move(prompt), .model = model, .owner = owner, .options = options};
+        m_queue.Post(std::move(task));
+    }
+    if (options & LLMClientBase::ChatOptions::kClearHistory) {
+        Task task{.kind = TaskKind::kClearHistory};
+        m_queue.Post(std::move(task));
+    }
 }
 
 void OllamaClient::Interrupt()

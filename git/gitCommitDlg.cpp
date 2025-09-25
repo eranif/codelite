@@ -246,7 +246,6 @@ void GitCommitDlg::OnGenerate(wxCommandEvent& event)
            << m_rawDiff << "\n"
            << "```\n";
 
-    clSYSTEM() << prompt;
     auto generate_id = m_plugin->GenerateCommitMessage(prompt);
     if (!generate_id.has_value()) {
         ::wxMessageBox(_("Failed to generate commit message"), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);

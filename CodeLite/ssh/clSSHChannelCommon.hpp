@@ -46,11 +46,13 @@ WXDLLIMPEXP_CL int channel_read_all(SSHChannel_t channel, std::string* output, b
 WXDLLIMPEXP_CL wxString build_command(const std::vector<wxString>& command, const wxString& wd, const clEnvList_t& env);
 
 /// Place the command + env into a script string
-WXDLLIMPEXP_CL wxString build_script_content(const std::vector<wxString>& command, const wxString& wd,
+WXDLLIMPEXP_CL wxString build_script_content(const std::vector<wxString>& command,
+                                             const wxString& wd,
                                              const clEnvList_t& env);
 
-WXDLLIMPEXP_CL clResultBool write_remote_file_content(clSSH::Ptr_t ssh, const wxString& remote_path,
-                                                      const wxString& content);
+WXDLLIMPEXP_CL clStatus write_remote_file_content(clSSH::Ptr_t ssh,
+                                                  const wxString& remote_path,
+                                                  const wxString& content);
 
 } // namespace ssh
 #endif

@@ -136,6 +136,10 @@ void ChatAI::OnLlmRequest(clLLMEvent& event)
         ollama::AddFlagSet(options, LLMClientBase::ChatOptions::kNoTools);
     }
 
+    if (event.IsClearHistory()) {
+        ollama::AddFlagSet(options, LLMClientBase::ChatOptions::kClearHistory);
+    }
+
     m_cli->Send(dynamic_cast<wxEvtHandler*>(event.GetEventObject()), // response event will be sent here
                 std::move(prompt),
                 model.empty() ? m_chatWindow->GetActiveModel() : model,

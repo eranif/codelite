@@ -27,14 +27,17 @@
 
 #include "AsyncProcess/clCommandProcessor.h"
 #include "ColoursAndFontsManager.h"
+#include "GitGetTwoFieldsDlg.h"
 #include "GitResetDlg.h"
 #include "StdToWX.h"
 #include "StringUtils.h"
+#include "ai/LLMManager.hpp"
 #include "aui/clAuiToolBarArt.h"
 #include "bitmap_loader.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clSideBarCtrl.hpp"
 #include "clStrings.h"
+#include "clTempFile.hpp"
 #include "clToolBar.h"
 #include "cl_aui_tool_stickness.h"
 #include "cl_config.h"
@@ -102,31 +105,6 @@ struct ToolBarItem {
     int id;
     wxString bmp;
 };
-// ---------------------------------------------------------------------
-void PopulateToolbarOverflow(wxAuiToolBar* toolbar)
-{
-    std::vector<ToolBarItem> items = {
-        {wxTRANSLATE("Create local branch"), XRCID("git_create_branch"), "file_new"},
-        {wxTRANSLATE("Switch to local branch"), XRCID("git_switch_branch"), "split"},
-        {wxTRANSLATE("Switch to remote branch"), XRCID("git_switch_to_remote_branch"), "remote-folder"},
-        {wxEmptyString, wxID_SEPARATOR, wxEmptyString},
-        {wxTRANSLATE("Apply Patch"), XRCID("git_apply_patch"), "patch"},
-        {wxEmptyString, wxID_SEPARATOR, wxEmptyString},
-        {wxTRANSLATE("Start gitk"), XRCID("git_start_gitk"), "debugger_start"},
-        {wxTRANSLATE("Garbage collect"), XRCID("git_garbage_collection"), "clean"},
-        {wxEmptyString, wxID_SEPARATOR, wxEmptyString},
-        {wxTRANSLATE("Plugin settings"), XRCID("git_settings"), "cog"},
-        {wxTRANSLATE("Clone a git repository"), XRCID("git_clone"), "copy"}};
-
-    auto images = clGetManager()->GetStdIcons();
-    for (auto item : items) {
-        if (item.id == wxID_SEPARATOR) {
-            toolbar->AddSeparator();
-        } else {
-            toolbar->AddTool(item.id, wxGetTranslation(item.label), images->LoadBitmap(item.bmp));
-        }
-    }
-}
 
 struct GitFileEntry {
     wxString path;
@@ -210,10 +188,8 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_toolbar->AddTool(XRCID("git_rebase"), _("Rebase"), images->LoadBitmap("merge"), _("Rebase"));
     m_toolbar->SetToolDropDown(XRCID("git_rebase"), true);
 
-    m_toolbar->AddTool(XRCID("git_reset_repository"), _("Reset"), images->LoadBitmap("clean"), _("Reset repository"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("git_commit_diff"), _("Diffs"), images->LoadBitmap("diff"), _("Show current diffs"));
-    m_toolbar->AddTool(XRCID("git_blame"), _("Blame"), images->LoadBitmap("finger"), _("Git blame"));
+    m_toolbar->AddTool(XRCID("git_release_notes"), _("Generate release notes"), images->LoadBitmap("wand"));
 
 #ifdef __WXMSW__
     m_toolbar->AddSeparator();
@@ -229,11 +205,12 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnResetFile, this, XRCID("git_console_reset_file"));
     m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnAddUnversionedFiles, this, XRCID("git_console_add_file"));
     m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnStopGitProcess, this, XRCID("git_stop_process"));
+    m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnGenerateReleaseNotes, this, XRCID("git_release_notes"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnAddUnversionedFilesUI, this, XRCID("git_console_add_file"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnResetFileUI, this, XRCID("git_console_reset_file"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnStopGitProcessUI, this, XRCID("git_stop_process"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnGenerateReleaseNotesUI, this, XRCID("git_release_notes"));
 
-    PopulateToolbarOverflow(m_toolbar);
     clAuiToolBarArt::Finalise(m_toolbar);
 
     m_toolbar->Realize();
@@ -841,5 +818,118 @@ void GitConsole::OnOutputViewTabChanged(clCommandEvent& event)
     }
     if (m_git && event.GetString() == GIT_TAB_NAME) {
         m_git->DoRefreshView(false);
+    }
+}
+
+void GitConsole::OnGenerateReleaseNotesUI(wxUpdateUIEvent& event)
+{
+    event.Enable(m_git->IsGitEnabled() && llm::Manager::GetInstance().IsAvailable());
+}
+
+void GitConsole::OnGenerateReleaseNotes(wxCommandEvent& event)
+{
+    // We need 2 commits to fetch the diff.
+    GitGetTwoFieldsDlg dlg{EventNotifier::Get()->TopFrame()};
+    if (dlg.ShowModal() != wxID_OK) {
+        return;
+    }
+
+    wxString first_commit = dlg.GetTextCtrlFirstCommit()->GetValue();
+    wxString second_commit = dlg.GetTextCtrlSecondCommit()->GetValue();
+
+    constexpr size_t kChunkSize = 8 * 1024;
+    wxArrayString history;
+
+    {
+        IndicatorPanelLocker lk{m_statusBar, _("Fetching git log..."), _("Ready")};
+        auto res = m_git->FetchLogBetweenCommits(first_commit, second_commit, kChunkSize);
+        if (!res.ok()) {
+            wxMessageBox(wxString() << _("Failed to fetch git log.\n") << res.error_message(),
+                         "CodeLite",
+                         wxICON_ERROR | wxOK | wxCENTRE);
+            return;
+        }
+        history = res.value();
+    }
+
+    if (history.empty()) {
+        return;
+    }
+
+    m_releaseNodesGenState = {.is_multi_requests = (history.size() > 1), .total_batch_count = history.size()};
+    wxString promp_prefix =
+        "Generate release notes from the following list of git commits history. Use bullets. "
+        "Make sure to include a 'bug fixes' section. Include a major improvements section. Include a section that "
+        "states "
+        "the contributors and the number of "
+        "commits each made, sort the contributors by number of commits.\nThe list of git commits are:\n```\n";
+
+    m_statusBar->Start(wxString() << "Generating release notes, batch 1/" << m_releaseNodesGenState.total_batch_count);
+    for (size_t i = 0; i < history.size(); ++i) {
+        const wxString& chunk = history[i];
+        wxString prompt;
+        prompt << promp_prefix << chunk << "\n```\n";
+        llm::Manager::GetInstance().Chat(
+            prompt,
+            [this](const std::string& message, size_t flags) mutable {
+                if (m_releaseNodesGenState.tokens_count == 0) {
+                    m_statusBar->Start("Generating release notes");
+                }
+
+                m_releaseNodesGenState.tokens_count += 1;
+                m_releaseNodesGenState.response.append(message);
+
+                if (flags & llm::Manager::kCompleted) {
+                    m_releaseNodesGenState.response.append("\n");
+                    if (m_releaseNodesGenState.total_batch_count == m_releaseNodesGenState.current_batch) {
+                        // this was the last call.
+                        m_statusBar->SetMessage(_("Processing results"));
+                        this->CallAfter(&GitConsole::OnGenerateReleaseNotesDone);
+                    } else {
+                        m_releaseNodesGenState.current_batch++;
+                        m_statusBar->SetMessage(wxString() << "Generating release notes, batch "
+                                                           << m_releaseNodesGenState.current_batch << "/"
+                                                           << m_releaseNodesGenState.total_batch_count);
+                    }
+                }
+            },
+            llm::Manager::ChatOptions::kNoTools | llm::Manager::ChatOptions::kClearHistory);
+    }
+}
+
+void GitConsole::OnGenerateReleaseNotesDone()
+{
+    // Tell the LLM to unified the chunks.
+    auto open_file_cb = [this](const wxString& text) {
+        clDEBUG() << "Writing result to file and opening it." << endl;
+        clTempFile tmpfile{"md"}; // Markdown file.
+        tmpfile.Write(text);
+        tmpfile.Persist();
+        clGetManager()->OpenFile(tmpfile.GetFullPath());
+        m_statusBar->Stop("Ready");
+    };
+
+    clDEBUG() << "Release note generation completed." << endl;
+    if (m_releaseNodesGenState.is_multi_requests) {
+        clDEBUG() << "Unifying chunks." << endl;
+        wxString prompt;
+        prompt << "Rephrase the following release notes text. Remove duplicate entries and merge the sections.\nThe "
+                  "release notes:\n"
+               << m_releaseNodesGenState.response;
+        m_releaseNodesGenState.response.clear();
+        m_statusBar->SetMessage(_("Merging results..."));
+        std::shared_ptr<wxString> concatenated_release_notes = std::make_shared<wxString>();
+        llm::Manager::GetInstance().Chat(
+            prompt,
+            [=, open_file_cb = std::move(open_file_cb)](const std::string& message, size_t flags) mutable {
+                concatenated_release_notes->append(wxString::FromUTF8(message));
+                if (flags & llm::Manager::kCompleted) {
+                    concatenated_release_notes->append("\n");
+                    open_file_cb(*concatenated_release_notes);
+                }
+            },
+            llm::Manager::ChatOptions::kNoTools | llm::Manager::ChatOptions::kClearHistory);
+    } else {
+        open_file_cb(m_releaseNodesGenState.response);
     }
 }

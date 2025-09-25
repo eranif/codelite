@@ -9,6 +9,19 @@
 #include <wx/msgqueue.h>
 #include <wx/timer.h>
 
+class OllamaImpl : public ollama::Client
+{
+public:
+    OllamaImpl(const std::string& url, const std::unordered_map<std::string, std::string>& headers)
+        : ollama::Client(url, headers)
+    {
+    }
+    ~OllamaImpl() override = default;
+
+    /// Clear the history.
+    inline void ClearHistory() { m_messages.clear(); }
+};
+
 class OllamaClient : public LLMClientBase
 {
 public:
@@ -36,7 +49,7 @@ private:
     void Startup();
     void OnRunTool(LLMEvent& event);
 
-    ollama::Client m_client;
+    OllamaImpl m_client;
     std::unique_ptr<std::thread> m_thread;
     mutable wxMessageQueue<Task> m_queue;
     std::atomic_bool m_processingRequest{false};

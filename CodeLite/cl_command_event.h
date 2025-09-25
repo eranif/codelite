@@ -954,9 +954,12 @@ public:
     const std::string& GetResponseRaw() const { return GetStringRaw(); }
     void SetIsThinking(bool isThinking) { this->m_isThinking = isThinking; }
     bool IsThinking() const { return m_isThinking; }
+    void SetClearHistory(bool clearHistory) { this->m_clearHistory = clearHistory; }
+    bool IsClearHistory() const { return m_clearHistory; }
 
 protected:
     bool m_enableTools{false};
+    bool m_clearHistory{false};
     wxString m_modelName;
     wxString m_prompt;
     bool m_isThinking{false};

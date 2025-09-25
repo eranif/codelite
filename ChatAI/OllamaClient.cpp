@@ -146,6 +146,9 @@ void OllamaClient::WorkerThreadMain()
         wxEvtHandler* owner = t.owner;
 
         switch (t.kind) {
+        case TaskKind::kClearHistory:
+            m_client.ClearHistory();
+            break;
         case TaskKind::kLoadPluginFunctions:
             ollama::PopulatePluginFunctions(function_table);
             break;
@@ -249,6 +252,10 @@ void OllamaClient::Send(wxString prompt, wxString model, ChatOptions options)
 
 void OllamaClient::Send(wxEvtHandler* owner, wxString prompt, wxString model, ChatOptions options)
 {
+    if (options & LLMClientBase::ChatOptions::kClearHistory) {
+        Task task{.kind = TaskKind::kClearHistory};
+        m_queue.Post(std::move(task));
+    }
     Task task{
         .kind = TaskKind::kChat, .content = std::move(prompt), .model = model, .owner = owner, .options = options};
     m_queue.Post(std::move(task));

@@ -103,10 +103,7 @@ static const wxString HELP_TAB_NAME = _("CMake");
  *
  * @return CMake plugin instance.
  */
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new CMakePlugin(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new CMakePlugin(manager); }
 
 /* ************************************************************************ */
 
@@ -183,7 +180,7 @@ wxArrayString CMakePlugin::GetSupportedGenerators() const
 {
 #ifdef __WXMSW__
     // Windows supported generators
-    return StdToWX::ToArrayString({ "MinGW Makefiles" });
+    return StdToWX::ToArrayString({"MinGW Makefiles"});
 #else
     // Linux / Mac supported generators
     return StdToWX::ToArrayString({
@@ -282,7 +279,7 @@ void CMakePlugin::OnProjectContextMenu(clContextMenuEvent& event)
     size_t buildPos = 0;
     size_t settingsPos = 0;
     size_t curpos = 0;
-    for (const auto item: items) {
+    for (const auto item : items) {
         if (item->GetId() == XRCID("build_project")) {
             buildPos = curpos;
         }
@@ -500,7 +497,9 @@ void CMakePlugin::DoRunCMake(ProjectPtr p)
     IProcess* proc =
         ::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessWrapInShell, fnWorkingDirectory.GetPath());
     if (!proc) {
-        ::wxMessageBox(_("Failed to execute:\n") + command, "CodeLite", wxICON_ERROR | wxOK | wxCENTER,
+        ::wxMessageBox(_("Failed to execute:\n") + command,
+                       "CodeLite",
+                       wxICON_ERROR | wxOK | wxCENTER,
                        EventNotifier::Get()->TopFrame());
         return;
     }
@@ -513,10 +512,10 @@ void CMakePlugin::DoRunCMake(ProjectPtr p)
 
 bool CMakePlugin::IsCMakeListsExists() const
 {
-    wxFileName cmakelists_txt{ ::wxGetCwd(), "CMakeLists.txt" };
+    wxFileName cmakelists_txt{::wxGetCwd(), "CMakeLists.txt"};
     if (cmakelists_txt.FileExists()) {
-        ::wxMessageBox(_("This folder already contains a CMakeLists.txt file"), "CodeLite",
-                       wxICON_WARNING | wxOK | wxCENTER);
+        ::wxMessageBox(
+            _("This folder already contains a CMakeLists.txt file"), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
         return true;
     }
     return false;
@@ -524,18 +523,18 @@ bool CMakePlugin::IsCMakeListsExists() const
 
 wxString CMakePlugin::WriteCMakeListsAndOpenIt(const std::vector<wxString>& lines) const
 {
-    wxFileName cmakelists_txt{ ::wxGetCwd(), "CMakeLists.txt" };
+    wxFileName cmakelists_txt{::wxGetCwd(), "CMakeLists.txt"};
     const wxArrayString wx_lines = StdToWX::ToArrayString(lines);
     FileUtils::WriteFileContent(cmakelists_txt, wxJoin(wx_lines, '\n'));
     clGetManager()->OpenFile(cmakelists_txt.GetFullPath());
     return cmakelists_txt.GetFullPath();
 }
 
-clResultString CMakePlugin::CreateCMakeListsFile(CMakePlugin::TargetType type) const
+clStatusOr<wxString> CMakePlugin::CreateCMakeListsFile(CMakePlugin::TargetType type) const
 {
     // Check for an already existing CMakeLists.txt in this folder
     if (IsCMakeListsExists()) {
-        return clResultString::make_error(wxEmptyString);
+        return StatusAlreadyExists();
     }
 
     wxString name;
@@ -556,7 +555,7 @@ clResultString CMakePlugin::CreateCMakeListsFile(CMakePlugin::TargetType type) c
     }
 
     if (name.empty()) {
-        return clResultString::make_error(std::move(wxString("User cancelled")));
+        return StatusOther("User cancelled");
     }
 
     wxString cmakelists_txt = WriteCMakeListsAndOpenIt({
@@ -589,7 +588,7 @@ void CMakePlugin::OnCreateCMakeListsExe(wxCommandEvent& event)
     wxUnusedVar(event);
     auto res = CreateCMakeListsFile(CMakePlugin::TargetType::EXECUTABLE);
     CHECK_COND_RET(res);
-    FireCMakeListsFileCreatedEvent(res.success());
+    FireCMakeListsFileCreatedEvent(res.value());
 }
 
 void CMakePlugin::OnCreateCMakeListsDll(wxCommandEvent& event)
@@ -597,7 +596,7 @@ void CMakePlugin::OnCreateCMakeListsDll(wxCommandEvent& event)
     wxUnusedVar(event);
     auto res = CreateCMakeListsFile(CMakePlugin::TargetType::SHARED_LIB);
     CHECK_COND_RET(res);
-    FireCMakeListsFileCreatedEvent(res.success());
+    FireCMakeListsFileCreatedEvent(res.value());
 }
 
 void CMakePlugin::OnCreateCMakeListsLib(wxCommandEvent& event)
@@ -605,7 +604,7 @@ void CMakePlugin::OnCreateCMakeListsLib(wxCommandEvent& event)
     wxUnusedVar(event);
     auto res = CreateCMakeListsFile(CMakePlugin::TargetType::STATIC_LIB);
     CHECK_COND_RET(res);
-    FireCMakeListsFileCreatedEvent(res.success());
+    FireCMakeListsFileCreatedEvent(res.value());
 }
 
 void CMakePlugin::FireCMakeListsFileCreatedEvent(const wxString& cmakelists_txt) const

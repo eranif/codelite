@@ -1,6 +1,7 @@
 #include "IndicatorPanel.hpp"
 
 #include "clSystemSettings.h"
+#include "file_logger.h"
 
 #include <wx/sizer.h>
 

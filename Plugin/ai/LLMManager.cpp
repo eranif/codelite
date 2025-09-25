@@ -51,6 +51,7 @@ std::optional<uint64_t> Manager::Chat(const wxString& prompt, Callback cb, size_
     bool enable_tools = ((options & ChatOptions::kNoTools) == 0);
     event_chat.SetEnableTools(enable_tools);
     event_chat.SetModelName(model);
+    event_chat.SetClearHistory((options & ChatOptions::kClearHistory) != 0);
     EventNotifier::Get()->AddPendingEvent(event_chat);
     m_requetstQueue.push_back({id, std::move(cb)});
     return id;

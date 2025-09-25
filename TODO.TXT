@@ -15,3 +15,8 @@ others:
 - SFTP plugin: use clTerminalViewCtrl for the log view
 - Spell Checker: enable it for the commit dialog
 
+ChatI:
+----
+
+GitConsole: add an option to choose the model to use for the release notes generation + commit message generation.
+GitConsole: add a button to stop the running generation.

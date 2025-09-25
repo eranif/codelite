@@ -137,6 +137,7 @@ public:
     enum ChatOptions {
         kDefault = 0,
         kNoTools = (1 << 0),
+        kClearHistory = (1 << 2),
     };
 
     using Callback = std::function<void(const std::string& message, size_t flags)>;

@@ -16,11 +16,13 @@ public:
         kLoadPluginFunctions,
         kListModels,
         kShutdown,
+        kClearHistory,
     };
 
     enum ChatOptions {
         kDefault = 0,
         kNoTools = (1 << 0),
+        kClearHistory = (1 << 1),
     };
     struct Task {
         TaskKind kind{TaskKind::kChat};

@@ -523,7 +523,7 @@ bool clSFTPManager::DeleteConnection(const wxString& accountName, bool promptUse
     return true;
 }
 
-clResult<SFTPAttribute::List_t, bool> clSFTPManager::List(const wxString& path, const SSHAccountInfo& accountInfo)
+clStatusOr<SFTPAttribute::List_t> clSFTPManager::List(const wxString& path, const SSHAccountInfo& accountInfo)
 {
     wxBusyCursor bc;
     // save file async
@@ -534,21 +534,22 @@ clResult<SFTPAttribute::List_t, bool> clSFTPManager::List(const wxString& path, 
 
     // prepare the download work
     SFTPAttribute::List_t result;
-    std::promise<bool> promise;
+    std::promise<std::pair<bool, wxString>> promise;
     auto future = promise.get_future();
     auto func = [conn, path, &result, &promise]() {
         try {
             auto attr = conn->List(path, clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS);
             result.swap(attr);
-            promise.set_value(true);
+            promise.set_value({true, {}});
         } catch (const clException& e) {
             clERROR() << "List error." << e.What();
-            promise.set_value(false);
+            promise.set_value({false, e.What()});
         }
     };
     m_q.push_back(std::move(func));
-    if (!future.get()) {
-        return clResult<SFTPAttribute::List_t, bool>::make_error(false);
+    auto res = future.get();
+    if (!res.second) {
+        return StatusNetworkError(res.second);
     }
     return result;
 }

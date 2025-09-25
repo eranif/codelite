@@ -157,11 +157,11 @@ wxString build_script_content(const std::vector<wxString>& command, const wxStri
     return content;
 }
 
-clResultBool write_remote_file_content(clSSH::Ptr_t ssh, const wxString& remote_path, const wxString& content)
+clStatus write_remote_file_content(clSSH::Ptr_t ssh, const wxString& remote_path, const wxString& content)
 {
     clTempFile tmpfile;
     if (!tmpfile.Write(content, wxConvUTF8)) {
-        return clResultBool::make_error("failed to write file");
+        return StatusIOError("failed to write file");
     }
 
     try {
@@ -175,10 +175,9 @@ clResultBool write_remote_file_content(clSSH::Ptr_t ssh, const wxString& remote_
     } catch (const clException& e) {
         wxString errmsg;
         errmsg << ssh_get_error(ssh->GetSession()) << ". " << e.What();
-        return clResultBool::make_error(std::move(errmsg));
+        return StatusNetworkError(errmsg);
     }
-
-    return true;
+    return StatusOk();
 }
 
 read_result channel_read(SSHChannel_t channel, std::string* output, bool isStderr, bool wantStderr)

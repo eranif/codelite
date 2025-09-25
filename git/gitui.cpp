@@ -1946,3 +1946,85 @@ GitUserEmailDialogBase::~GitUserEmailDialogBase()
 {
     m_button690->Unbind(wxEVT_UPDATE_UI, &GitUserEmailDialogBase::OnOKUI, this);
 }
+
+GitGetTwoCommitsBaseDlg::GitGetTwoCommitsBaseDlg(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if (!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCrafterpca4kKInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer831 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer831);
+
+    wxFlexGridSizer* flexGridSizer836 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer836->SetFlexibleDirection(wxBOTH);
+    flexGridSizer836->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer836->AddGrowableCol(1);
+
+    boxSizer831->Add(flexGridSizer836, 1, wxALL | wxEXPAND, WXC_FROM_DIP(10));
+
+    m_ = new wxStaticText(this, wxID_ANY, _("First commit:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer836->Add(m_, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlFirstCommit =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(250, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlFirstCommit->SetHint(_("The first commit in the range"));
+#endif
+
+    flexGridSizer836->Add(m_textCtrlFirstCommit, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText839 =
+        new wxStaticText(this, wxID_ANY, _("Second commit:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer836->Add(m_staticText839, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlSecondCommit =
+        new wxTextCtrl(this, wxID_ANY, wxT("HEAD"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlSecondCommit->SetHint(_("The second commit in the range"));
+#endif
+
+    flexGridSizer836->Add(m_textCtrlSecondCommit, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer832 = new wxStdDialogButtonSizer();
+
+    boxSizer831->Add(m_stdBtnSizer832, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+
+    m_buttonOk = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_buttonOk->SetDefault();
+    m_stdBtnSizer832->AddButton(m_buttonOk);
+
+    m_buttonCancel = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer832->AddButton(m_buttonCancel);
+    m_stdBtnSizer832->Realize();
+
+    SetName(wxT("GitGetTwoCommitsBaseDlg"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if (GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+    if (!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+    // Connect events
+    m_buttonOk->Bind(wxEVT_UPDATE_UI, &GitGetTwoCommitsBaseDlg::OnButtonokUpdateUi, this);
+}
+
+GitGetTwoCommitsBaseDlg::~GitGetTwoCommitsBaseDlg()
+{
+    m_buttonOk->Unbind(wxEVT_UPDATE_UI, &GitGetTwoCommitsBaseDlg::OnButtonokUpdateUi, this);
+}

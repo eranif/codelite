@@ -36,6 +36,7 @@
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
 #include "clCodeLiteRemoteProcess.hpp"
+#include "clResult.hpp"
 #include "clTabTogglerHelper.h"
 #include "cl_command_event.h"
 #include "gitentry.h"
@@ -46,8 +47,8 @@
 #include "project.h" // wxStringSet_t
 
 #include <map>
-#include <queue>
 #include <optional>
+#include <queue>
 #include <set>
 #include <vector>
 #include <wx/progdlg.h>
@@ -374,6 +375,12 @@ public:
     void OnCommandEnded(clCommandEvent& event);
 
     std::optional<uint64_t> GenerateCommitMessage(const wxString& prompt);
+
+    /// Return the commit log between range of commits. We split the log (line based), to match the `chunk_size`
+    /// argument.
+    clStatusOr<wxArrayString> FetchLogBetweenCommits(const wxString& start_commit,
+                                                     const wxString& end_commit,
+                                                     size_t chunk_size = wxString::npos);
 
     //--------------------------------------------
     // Abstract methods

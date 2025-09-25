@@ -15,7 +15,7 @@ enum class wxHandleError {
     kNotFound = 3,
 };
 
-typedef clResult<wxStringView, wxHandleError> wxHandlResultStringView;
+using  wxHandlResultStringView = clStatusOr<wxStringView>;
 
 class WXDLLIMPEXP_SDK wxTerminalAnsiEscapeHandler
 {

@@ -81,6 +81,9 @@ protected:
     virtual void OnStopGitProcessUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLog(wxCommandEvent& event);
+    virtual void OnGenerateReleaseNotesUI(wxUpdateUIEvent& event);
+    virtual void OnGenerateReleaseNotes(wxCommandEvent& event);
+    void OnGenerateReleaseNotesDone();
     virtual void OnStopGitProcess(wxCommandEvent& event);
     virtual void OnOpenUnversionedFiles(wxCommandEvent& event);
     virtual void OnAddUnversionedFiles(wxCommandEvent& event);
@@ -120,5 +123,15 @@ private:
     wxString m_buffer;
     wxTerminalOutputCtrl* m_log_view{nullptr};
     IndicatorPanel* m_statusBar{nullptr};
+
+    struct ReleaseNotesGenerationState {
+        // used for detecting loop of the model.
+        std::vector<std::string> last_tokens;
+        std::string response;
+        size_t tokens_count{0};
+        bool is_multi_requests{false};
+        size_t total_batch_count{1};
+        size_t current_batch{1};
+    } m_releaseNodesGenState;
 };
 #endif // GITCONSOLE_H

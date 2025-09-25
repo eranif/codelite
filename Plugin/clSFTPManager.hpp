@@ -66,12 +66,19 @@ protected:
     void StopWorkerThread();
     void OnSaveCompleted(clCommandEvent& e);
     void OnSaveError(clCommandEvent& e);
-    void DoAsyncSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
-                         bool delete_local, wxEvtHandler* sink);
-    bool DoSyncSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
+    void DoAsyncSaveFile(const wxString& localPath,
+                         const wxString& remotePath,
+                         const wxString& accountName,
+                         bool delete_local,
+                         wxEvtHandler* sink);
+    bool DoSyncSaveFile(const wxString& localPath,
+                        const wxString& remotePath,
+                        const wxString& accountName,
                         bool delete_local);
 
-    bool DoSyncSaveFileWithConn(clSFTP::Ptr_t conn, const wxString& localPath, const wxString& remotePath,
+    bool DoSyncSaveFileWithConn(clSFTP::Ptr_t conn,
+                                const wxString& localPath,
+                                const wxString& remotePath,
                                 bool delete_local);
 
 public:
@@ -114,8 +121,8 @@ public:
      * @brief download file, but do not open it in a an editor. Optionally, allow the user set the local file name
      * @return return the *local* file path
      */
-    wxFileName Download(const wxString& path, const wxString& accountName,
-                        const wxString& localFileName = wxEmptyString);
+    wxFileName
+    Download(const wxString& path, const wxString& accountName, const wxString& localFileName = wxEmptyString);
 
     /**
      * @brief save file remotely. this function is async
@@ -124,7 +131,9 @@ public:
      * @param accountName the account name to use
      * @param sink callback object for save file events
      */
-    void AsyncSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName,
+    void AsyncSaveFile(const wxString& localPath,
+                       const wxString& remotePath,
+                       const wxString& accountName,
                        wxEvtHandler* sink = nullptr);
 
     /**
@@ -135,7 +144,9 @@ public:
      * @param sink callback object for save file events.
      * @event wxEVT_SFTP_FILE_READ event
      */
-    void AsyncWriteFile(const wxString& content, const wxString& remotePath, const wxString& accountName,
+    void AsyncWriteFile(const wxString& content,
+                        const wxString& remotePath,
+                        const wxString& accountName,
                         wxEvtHandler* sink = nullptr);
 
     /**
@@ -194,7 +205,7 @@ public:
      * @param path
      * @return
      */
-    clResult<SFTPAttribute::List_t, bool> List(const wxString& path, const SSHAccountInfo& accountInfo);
+    clStatusOr<SFTPAttribute::List_t> List(const wxString& path, const SSHAccountInfo& accountInfo);
 
     /**
      * @brief create new file with a given path
@@ -260,13 +271,15 @@ public:
      * @brief execute a remote command
      * @returns `ReadOutput_t` is a pair: stdout, stderr
      */
-    ReadOutput_t AwaitExecute(const wxString& accountName, const wxString& command, const wxString& wd,
-                              clEnvList_t* env = nullptr);
+    ReadOutput_t
+    AwaitExecute(const wxString& accountName, const wxString& command, const wxString& wd, clEnvList_t* env = nullptr);
     /**
      * @brief execute a remote command
      * @returns `ReadOutput_t` is a pair: stdout and stderr
      */
-    ReadOutput_t AwaitExecute(const wxString& accountName, const std::vector<wxString>& command, const wxString& wd,
+    ReadOutput_t AwaitExecute(const wxString& accountName,
+                              const std::vector<wxString>& command,
+                              const wxString& wd,
                               clEnvList_t* env = nullptr)
     {
         const wxArrayString arr = StdToWX::ToArrayString(command);
@@ -277,14 +290,20 @@ public:
      * @brief execute a remote command
      * @returns this function fires events to report its progress (`wxEVT_SFTP_ASYNC_EXEC_*`)
      */
-    void AsyncExecute(wxEvtHandler* sink, const wxString& accountName, const wxString& command, const wxString& wd,
+    void AsyncExecute(wxEvtHandler* sink,
+                      const wxString& accountName,
+                      const wxString& command,
+                      const wxString& wd,
                       clEnvList_t* env = nullptr);
     /**
      * @brief execute a remote command
      * @returns this function fires events to report its progress (`wxEVT_SFTP_ASYNC_EXEC_*`)
      */
-    void AsyncExecute(wxEvtHandler* sink, const wxString& accountName, const std::vector<wxString>& command,
-                      const wxString& wd, clEnvList_t* env = nullptr)
+    void AsyncExecute(wxEvtHandler* sink,
+                      const wxString& accountName,
+                      const std::vector<wxString>& command,
+                      const wxString& wd,
+                      clEnvList_t* env = nullptr)
     {
         const wxArrayString arr = StdToWX::ToArrayString(command);
         return AsyncExecute(sink, accountName, StringUtils::BuildCommandStringFromArray(arr), wd, env);

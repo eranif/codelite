@@ -582,4 +582,32 @@ public:
     virtual ~GitUserEmailDialogBase();
 };
 
+class GitGetTwoCommitsBaseDlg : public wxDialog
+{
+protected:
+    wxStaticText* m_;
+    wxTextCtrl* m_textCtrlFirstCommit;
+    wxStaticText* m_staticText839;
+    wxTextCtrl* m_textCtrlSecondCommit;
+    wxStdDialogButtonSizer* m_stdBtnSizer832;
+    wxButton* m_buttonOk;
+    wxButton* m_buttonCancel;
+
+protected:
+    virtual void OnButtonokUpdateUi(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    wxStaticText* Get() { return m_; }
+    wxTextCtrl* GetTextCtrlFirstCommit() { return m_textCtrlFirstCommit; }
+    wxStaticText* GetStaticText839() { return m_staticText839; }
+    wxTextCtrl* GetTextCtrlSecondCommit() { return m_textCtrlSecondCommit; }
+    GitGetTwoCommitsBaseDlg(wxWindow* parent,
+                            wxWindowID id = wxID_ANY,
+                            const wxString& title = _("Choose two commits"),
+                            const wxPoint& pos = wxDefaultPosition,
+                            const wxSize& size = wxSize(-1, -1),
+                            long style = wxDEFAULT_DIALOG_STYLE);
+    virtual ~GitGetTwoCommitsBaseDlg();
+};
+
 #endif

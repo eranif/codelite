@@ -132,26 +132,57 @@ wxString MacGetBasePath()
 ///////////////////////////////////////////////////////////////////
 
 static const wxCmdLineEntryDesc cmdLineDesc[] = {
-    { wxCMD_LINE_SWITCH, "v", "version", "Print current version", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_SWITCH, "h", "help", "Print usage", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_SWITCH, "n", "no-plugins", "Start CodeLite without any plugins", wxCMD_LINE_VAL_STRING,
-      wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_OPTION, "g", "dbg", "Start CodeLite's GDB debugger to debug an executable", wxCMD_LINE_VAL_STRING,
-      wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_OPTION, "l", "line", "Open the file at a given line number", wxCMD_LINE_VAL_NUMBER,
-      wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_OPTION, "b", "basedir", "Use this path as the CodeLite installation path (Windows only)",
-      wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_OPTION, "d", "datadir", "Use this path as the CodeLite data path", wxCMD_LINE_VAL_STRING,
-      wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_OPTION, "w", "dbg-dir", "When started with --dbg, set the working directory for the debugger",
-      wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_OPTION, "p", "with-plugins", "Comma separated list of plugins to load", wxCMD_LINE_VAL_STRING,
-      wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_PARAM, NULL, NULL, "Input file", wxCMD_LINE_VAL_STRING,
-      wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_NONE }
-};
+    {wxCMD_LINE_SWITCH, "v", "version", "Print current version", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_SWITCH, "h", "help", "Print usage", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_SWITCH,
+     "n",
+     "no-plugins",
+     "Start CodeLite without any plugins",
+     wxCMD_LINE_VAL_STRING,
+     wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_OPTION,
+     "g",
+     "dbg",
+     "Start CodeLite's GDB debugger to debug an executable",
+     wxCMD_LINE_VAL_STRING,
+     wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_OPTION,
+     "l",
+     "line",
+     "Open the file at a given line number",
+     wxCMD_LINE_VAL_NUMBER,
+     wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_OPTION,
+     "b",
+     "basedir",
+     "Use this path as the CodeLite installation path (Windows only)",
+     wxCMD_LINE_VAL_STRING,
+     wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_OPTION,
+     "d",
+     "datadir",
+     "Use this path as the CodeLite data path",
+     wxCMD_LINE_VAL_STRING,
+     wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_OPTION,
+     "w",
+     "dbg-dir",
+     "When started with --dbg, set the working directory for the debugger",
+     wxCMD_LINE_VAL_STRING,
+     wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_OPTION,
+     "p",
+     "with-plugins",
+     "Comma separated list of plugins to load",
+     wxCMD_LINE_VAL_STRING,
+     wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_PARAM,
+     NULL,
+     NULL,
+     "Input file",
+     wxCMD_LINE_VAL_STRING,
+     wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_NONE}};
 
 static void massCopy(const wxString& sourceDir, const wxString& spec, const wxString& destDir)
 {
@@ -240,7 +271,8 @@ static void WaitForDebugger(int signo)
             wxMessageBox(wxString::Format(wxT("Failed to launch the debugger\nYou may still attach to codelite "
                                               "manually by typing this command in a terminal:\ngdb -p %d"),
                                           getpid()),
-                         wxT("CodeLite Crash Handler"), wxOK | wxCENTER | wxICON_ERROR);
+                         wxT("CodeLite Crash Handler"),
+                         wxOK | wxCENTER | wxICON_ERROR);
             pause();
         }
     }
@@ -402,9 +434,14 @@ bool CodeLiteApp::OnInit()
         splashscreen_png.AppendDir("images");
 
         if (splashscreen_png.FileExists() && bitmap.LoadFile(splashscreen_png.GetFullPath(), wxBITMAP_TYPE_PNG)) {
-            wxSplashScreen* splash =
-                new wxSplashScreen(bitmap, wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_TIMEOUT, 2000, nullptr, -1,
-                                   wxDefaultPosition, wxDefaultSize, wxBORDER_SIMPLE | wxSTAY_ON_TOP);
+            wxSplashScreen* splash = new wxSplashScreen(bitmap,
+                                                        wxSPLASH_CENTRE_ON_SCREEN | wxSPLASH_TIMEOUT,
+                                                        2000,
+                                                        nullptr,
+                                                        -1,
+                                                        wxDefaultPosition,
+                                                        wxDefaultSize,
+                                                        wxBORDER_SIMPLE | wxSTAY_ON_TOP);
             wxUnusedVar(splash);
         }
         wxYield();
@@ -630,12 +667,11 @@ bool CodeLiteApp::OnInit()
     wxString strVersion = CODELITE_VERSION_STRING;
     cfg->Init(strVersion, wxT("2.0.2"));
     if (!cfg->Load()) {
-        clERROR() << "Failed to load configuration file: config/codelite.xml. Working directory:" << wxGetCwd()
-                  << endl;
+        clERROR() << "Failed to load configuration file: config/codelite.xml. Working directory:" << wxGetCwd() << endl;
         return false;
     }
 
-#ifdef __WXGTK__
+#if defined(__WXGTK__) || defined(__WXMAC__)
     bool redirect = clConfig::Get().Read(kConfigRedirectLogOutput, true);
     if (redirect) {
         // Redirect stdout/error to a file
@@ -950,7 +986,7 @@ void CodeLiteApp::MSWReadRegistry()
 
 wxString CodeLiteApp::DoFindMenuFile(const wxString& installDirectory)
 {
-    wxFileName menu_xrc{ installDirectory, MENU_XRC };
+    wxFileName menu_xrc{installDirectory, MENU_XRC};
     menu_xrc.AppendDir("rc");
     return menu_xrc.GetFullPath();
 }

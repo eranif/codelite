@@ -21,3 +21,25 @@ private:
     wxActivityIndicator* m_activityIndicator{nullptr};
     wxStaticText* m_statusMessage{nullptr};
 };
+
+struct WXDLLIMPEXP_SDK IndicatorPanelLocker {
+    IndicatorPanel* m_indicatorPanel{nullptr};
+    wxString m_stop_message;
+    explicit IndicatorPanelLocker(IndicatorPanel* ip, const wxString& message, const wxString& stop_message)
+        : m_indicatorPanel(ip)
+        , m_stop_message(stop_message)
+    {
+        if (m_indicatorPanel && !m_indicatorPanel->IsRunning()) {
+            m_indicatorPanel->Start(message);
+        } else {
+            m_indicatorPanel->SetMessage(message);
+        }
+    }
+
+    ~IndicatorPanelLocker()
+    {
+        if (m_indicatorPanel && m_indicatorPanel->IsRunning()) {
+            m_indicatorPanel->Stop(m_stop_message);
+        }
+    }
+};

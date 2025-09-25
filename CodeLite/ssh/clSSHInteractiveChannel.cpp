@@ -152,8 +152,8 @@ clSSHInteractiveChannel::Ptr_t clSSHInteractiveChannel::Create(wxEvtHandler* par
     wxString remote_script = "/tmp/clssh_" + FileUtils::NormaliseFilename(args[0]);
     LOG_DEBUG(LOG()) << "executing remote script:" << remote_script << endl;
     auto res = ssh::write_remote_file_content(ssh, remote_script, content);
-    if(!res) {
-        LOG_WARNING(LOG()) << "SSH failed to write remote file." << res.error_message() << endl;
+    if(!res.ok()) {
+        LOG_WARNING(LOG()) << "SSH failed to write remote file." << res.message() << endl;
         return nullptr;
     }
 

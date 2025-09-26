@@ -251,6 +251,12 @@ The git diff is:
 ```
 )#";
 
+    if (llm::Manager::GetInstance().GetModels().IsEmpty()) {
+        ::wxMessageBox(
+            _("No models are available. Choose a model and try again."), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
+        return;
+    }
+
     wxString model;
     if (llm::Manager::GetInstance().GetModels().GetCount() > 1) {
         auto models = llm::Manager::GetInstance().GetModels();
@@ -265,38 +271,38 @@ The git diff is:
             return;
         }
     } else {
-        // leave it empty so the default model is used.
+        model = llm::Manager::GetInstance().GetModels().Item(0);
     }
 
     prompt.Replace("{{CONTEXT}}", m_rawDiff);
-    auto generate_id = m_plugin->GenerateCommitMessage(prompt, model);
-    if (!generate_id.has_value()) {
+    m_indicatorPanel->Start(_("Generating commit message..."));
+    m_generationInProgress = m_plugin->GenerateCommitMessage(prompt, model);
+    if (!m_generationInProgress) {
         ::wxMessageBox(_("Failed to generate commit message"), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
         return;
     }
-
-    m_indicatorPanel->Start(_("Generating commit message..."));
-    m_generate_id = generate_id;
 }
 
 void GitCommitDlg::OnGenerateUI(wxUpdateUIEvent& event)
 {
-    bool is_generation_active = m_generate_id.has_value();
-    event.Enable(llm::Manager::GetInstance().IsAvailable() && !is_generation_active && !m_rawDiff.empty());
+    event.Enable(llm::Manager::GetInstance().IsAvailable() && !m_generationInProgress && !m_rawDiff.empty());
 }
 
 void GitCommitDlg::ClearCommitMessage() { m_stcCommitMessage->ClearAll(); }
 
 void GitCommitDlg::SetCommitMessageGenerationCompleted()
 {
-    m_generate_id.reset();
+    m_generationInProgress = false;
     m_indicatorPanel->Stop(wxEmptyString);
 }
 
 void GitCommitDlg::AppendCommitMessage(const wxString& message)
 {
     // Update the commit message
+    m_stcCommitMessage->SetInsertionPointEnd();
     m_stcCommitMessage->AppendText(message);
+    m_stcCommitMessage->ClearSelections();
+    m_stcCommitMessage->EnsureCaretVisible();
 }
 
 void GitCommitDlg::SetIndicatorMessage(const wxString& message)

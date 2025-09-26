@@ -106,8 +106,7 @@ void Draw3DSash(wxDC& dc,
 
 // ------------------------------------------------------------
 
-clAuiDockArt::clAuiDockArt(IManager* manager)
-    : m_manager(manager)
+clAuiDockArt::clAuiDockArt([[maybe_unused]] IManager* manager)
 {
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clAuiDockArt::OnSettingsChanged, this);
 

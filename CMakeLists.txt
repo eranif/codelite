@@ -1,7 +1,7 @@
 # 3.16 and later is required so we can build CodeLite with PCH
 cmake_minimum_required(VERSION 3.16)
 
-# ######################################################################################################################
+# ##############################################################################
 #
 # CodeLite IDE cmake file Typical usage will be (build in release mode):
 #
@@ -26,27 +26,31 @@ cmake_minimum_required(VERSION 3.16)
 #
 # Optional command line arguments:
 #
-# -DCMAKE_BUILD_TYPE=Release|Debug|DebugFull -DCOPY_WX_LIBS=1|0 -DPREVENT_WX_ASSERTS=1|0 -DAUTOGEN_REVISION=1|0
-# -DWITH_PCH=1|0 -DWITH_NATIVEBOOK=1|0 -DWITH_WXPATH=/path/to/different_wx-config/directory/ -DMAKE_DEB=1|0
-# -DENABLE_SFTP=1|0 // When set to 1 codelite is built with SFTP/Remoty support. -DWITH_WX_CONFIG=/path/to/wx-config
+# -DCMAKE_BUILD_TYPE=Release|Debug|DebugFull -DCOPY_WX_LIBS=1|0
+# -DPREVENT_WX_ASSERTS=1|0 -DAUTOGEN_REVISION=1|0 -DWITH_PCH=1|0
+# -DWITH_NATIVEBOOK=1|0 -DWITH_WXPATH=/path/to/different_wx-config/directory/
+# -DMAKE_DEB=1|0 -DENABLE_SFTP=1|0 // When set to 1 codelite is built with
+# SFTP/Remoty support. -DWITH_WX_CONFIG=/path/to/wx-config
 #
 # Windows / MSYS options:
 #
-# -DWXWIN=<fullpath>                          // https://docs.codelite.org/build/build_wx_widgets/#windows
-# -DWITH_POSIX_LAYOUT // When building under Windows, install CodeLite using POSIX layout
+# -DWXWIN=<fullpath>                          //
+# https://docs.codelite.org/build/build_wx_widgets/#windows -DWITH_POSIX_LAYOUT
+# // When building under Windows, install CodeLite using POSIX layout
 #
-# ######################################################################################################################
+# ##############################################################################
 
 if(NOT CMAKE_VERSION VERSION_LESS 3.1) # THIS MUST STAY AT THE TOP OF THE FILE
-  cmake_policy(VERSION 3.1) # Doing this prevents multiple, very verbose warnings about policy CMP0053 not being set
+  cmake_policy(VERSION 3.1) # Doing this prevents multiple, very verbose
+                            # warnings about policy CMP0053 not being set
 endif()
 
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 include(OSXDeps)
 
-# ######################################################################################################################
+# ##############################################################################
 # Defaults
-# ######################################################################################################################
+# ##############################################################################
 project("CodeLite")
 
 set(CMAKE_CXX_STANDARD 20)
@@ -63,8 +67,9 @@ set(RETAIN_CACHED_VALUES
 
 if(UNIX AND NOT APPLE)
   if(CMAKE_INSTALL_PREFIX_INITIALIZED_TO_DEFAULT)
-    # user did not pass -DCMAKE_INSTALL_PREFIX and this is the first time we are executing cmake, the default is set to
-    # /usr/local and we do not want that..
+    # user did not pass -DCMAKE_INSTALL_PREFIX and this is the first time we are
+    # executing cmake, the default is set to /usr/local and we do not want
+    # that..
     set(CMAKE_INSTALL_PREFIX
         "/usr"
         CACHE ON "Install prefix" FORCE)
@@ -94,11 +99,12 @@ endif()
 message(STATUS "CMAKE_INSTALL_PREFIX is set to ${CMAKE_INSTALL_PREFIX}")
 set(CODELITE_VERSION "18.2.0")
 
-# for now, we keep wxCrafter version to be the same as CodeLite version this allows for better support
+# for now, we keep wxCrafter version to be the same as CodeLite version this
+# allows for better support
 set(WXCRAFTER_VERSION ${CODELITE_VERSION})
 
 # Generate compile_commands.json file for code completion
-set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CL_SRC_ROOT ${CMAKE_CURRENT_LIST_DIR})
 
 include(UtilsHelper)
@@ -106,15 +112,23 @@ find_package(SQLite3)
 
 if(NOT SQLite3_FOUND)
   if(UNIX)
-    message(FATAL_ERROR " **** Could not find sqlite3. Please install libsqlite3-dev package")
+    message(
+      FATAL_ERROR
+        " **** Could not find sqlite3. Please install libsqlite3-dev package")
   elseif(APPLE)
-    message(FATAL_ERROR " **** Could not find sqlite3. Please install Sqlite3 via brew")
+    message(
+      FATAL_ERROR
+        " **** Could not find sqlite3. Please install Sqlite3 via brew")
   elseif(MINGW)
     message(
       FATAL_ERROR
-        " **** Could not find sqlite3. Please install sqlite3 package: pacman -S mingw-w64-clang-x86_64-sqlite3")
+        " **** Could not find sqlite3. Please install sqlite3 package: pacman -S mingw-w64-clang-x86_64-sqlite3"
+    )
   else()
-    message(FATAL_ERROR " **** Could not find sqlite3. Please install sqlite3 development package")
+    message(
+      FATAL_ERROR
+        " **** Could not find sqlite3. Please install sqlite3 development package"
+    )
   endif()
 endif()
 
@@ -122,13 +136,18 @@ find_package(BISON REQUIRED)
 
 if(NOT BISON_FOUND)
   if(UNIX)
-    message(FATAL_ERROR " **** Could not find flex. Please install bison package")
+    message(
+      FATAL_ERROR " **** Could not find flex. Please install bison package")
   elseif(APPLE)
     message(FATAL_ERROR " **** Could not find flex. Please install bison")
   elseif(MINGW)
-    message(FATAL_ERROR " **** Could not find flex. Please install bison package: pacman -S bison")
+    message(
+      FATAL_ERROR
+        " **** Could not find flex. Please install bison package: pacman -S bison"
+    )
   else()
-    message(FATAL_ERROR " **** Could not find bison. Please install bison package")
+    message(
+      FATAL_ERROR " **** Could not find bison. Please install bison package")
   endif()
 endif()
 
@@ -136,13 +155,18 @@ find_package(FLEX REQUIRED)
 
 if(NOT FLEX_FOUND)
   if(UNIX)
-    message(FATAL_ERROR " **** Could not find flex. Please install flex package")
+    message(
+      FATAL_ERROR " **** Could not find flex. Please install flex package")
   elseif(APPLE)
     message(FATAL_ERROR " **** Could not find flex. Please install flex")
   elseif(MINGW)
-    message(FATAL_ERROR " **** Could not find flex. Please install flex package: pacman -S flex")
+    message(
+      FATAL_ERROR
+        " **** Could not find flex. Please install flex package: pacman -S flex"
+    )
   else()
-    message(FATAL_ERROR " **** Could not find flex. Please install flex package")
+    message(
+      FATAL_ERROR " **** Could not find flex. Please install flex package")
   endif()
 endif()
 
@@ -157,20 +181,25 @@ set(CL_COPY_WX_LIBS 0)
 set(WITH_SFTP 1)
 
 # Create the post_install.cmake script (no append here)
-write_file("${CMAKE_BINARY_DIR}/post_install.cmake" "message(STATUS \"Running post install script\")")
+write_file("${CMAKE_BINARY_DIR}/post_install.cmake"
+           "message(STATUS \"Running post install script\")")
 
-set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations") # Avoid very multiple warnings spam due to
-                                                                       # deprecated wx methods
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-deprecated-declarations"
+)# Avoid very multiple warnings spam due to deprecated wx methods
 if(UNIX AND NOT APPLE)
-  set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -isystem /usr/include/harfbuzz -isystem /usr/local/include/harfbuzz"
-  )# Needed for fedora 31 so far, but will spread. See https://gitlab.kitware.com/cmake/cmake/issues/19531
+  set(CMAKE_CXX_FLAGS
+      "${CMAKE_CXX_FLAGS} -isystem /usr/include/harfbuzz -isystem /usr/local/include/harfbuzz"
+  ) # Needed for fedora 31 so far, but will spread. See
+    # https://gitlab.kitware.com/cmake/cmake/issues/19531
 endif()
 
 if(UNIX
    AND NOT APPLE
    AND NOT CYGWIN)
-  set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -Wl,--disable-new-dtags")
-  set(CMAKE_SHARED_LINKER_FLAGS "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--disable-new-dtags")
+  set(CMAKE_EXE_LINKER_FLAGS
+      "${CMAKE_EXE_LINKER_FLAGS} -Wl,--disable-new-dtags")
+  set(CMAKE_SHARED_LINKER_FLAGS
+      "${CMAKE_SHARED_LINKER_FLAGS} -Wl,--disable-new-dtags")
 endif()
 
 if(UNIX)
@@ -209,7 +238,8 @@ else(APPLE)
 endif()
 
 # Appstream metadata
-set(METAINFO_FILE "${CMAKE_SOURCE_DIR}/Runtime/org.codelite.codelite.metainfo.xml")
+set(METAINFO_FILE
+    "${CMAKE_SOURCE_DIR}/Runtime/org.codelite.codelite.metainfo.xml")
 install(FILES ${METAINFO_FILE} DESTINATION share/metainfo)
 
 if(WITH_WXPATH)
@@ -233,10 +263,12 @@ if(UNIX AND NOT MINGW)
   if(NOT WX_TOOL)
     message(
       FATAL_ERROR
-        "\nNo functional wx_config script was found in your PATH.\nIs the wxWidgets development package installed?")
+        "\nNo functional wx_config script was found in your PATH.\nIs the wxWidgets development package installed?"
+    )
   else()
-    # cmake find_package() will try env var WX_CONFIG as wx-config tool path before checking its builtin hardcoded
-    # naming conbinations for wx-config tool
+    # cmake find_package() will try env var WX_CONFIG as wx-config tool path
+    # before checking its builtin hardcoded naming conbinations for wx-config
+    # tool
     set(ENV{WX_CONFIG} ${WX_TOOL})
     execute_process(
       COMMAND sh ${WX_TOOL} --version
@@ -244,7 +276,8 @@ if(UNIX AND NOT MINGW)
       OUTPUT_STRIP_TRAILING_WHITESPACE)
     if("${WX_VERSION}" VERSION_LESS "3.1.6")
       message(
-        FATAL_ERROR "I'm afraid your wxWidgets version is too old.\nBuilding CodeLite requires at least wxWidgets-3.1.6"
+        FATAL_ERROR
+          "I'm afraid your wxWidgets version is too old.\nBuilding CodeLite requires at least wxWidgets-3.1.6"
       )
     endif()
     if(MINGW)
@@ -270,24 +303,27 @@ if(UNIX AND NOT MINGW)
   endif()
 endif()
 
-# ######################################################################################################################
+# ##############################################################################
 # Override defaults with user input
-# ######################################################################################################################
+# ##############################################################################
 
 set(CL_INSTALL_LIBDIR "lib")
 
 if(NOT MINGW)
   if(NOT CL_PREFIX)
-    # If the caller hasn't set his own destination, install to a multi-arch lib dir if applicable
+    # If the caller hasn't set his own destination, install to a multi-arch lib
+    # dir if applicable
     if(CMAKE_VERSION VERSION_GREATER 2.8.7 AND (UNIX AND NOT APPLE))
       if(CMAKE_VERSION VERSION_GREATER 3.0.0)
-        # Prior to this, afaict the GNUInstallDirs module worked whatever the prefix Since, it looks at
-        # CMAKE_INSTALL_PREFIX which is /usr/local by default, and refuses to run the multiarch-setting code unless it's
-        # /usr/ So, partly to comply with the default documented above, & partly for packaging, explicitly set it to
-        # /usr
+        # Prior to this, afaict the GNUInstallDirs module worked whatever the
+        # prefix Since, it looks at CMAKE_INSTALL_PREFIX which is /usr/local by
+        # default, and refuses to run the multiarch-setting code unless it's
+        # /usr/ So, partly to comply with the default documented above, & partly
+        # for packaging, explicitly set it to /usr
         set(CMAKE_INSTALL_PREFIX "/usr")
       endif()
-      include(GNUInstallDirs) # defines CMAKE_INSTALL_LIBDIR to lib or lib64 or whatever. Available since cmake 2.8.8
+      include(GNUInstallDirs) # defines CMAKE_INSTALL_LIBDIR to lib or lib64 or
+                              # whatever. Available since cmake 2.8.8
       set(CL_INSTALL_LIBDIR ${CMAKE_INSTALL_LIBDIR})
     endif()
 
@@ -303,7 +339,8 @@ if(MINGW)
 endif()
 
 if(APPLE)
-  set(PLUGINS_DIR ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/plugins)
+  set(PLUGINS_DIR
+      ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/plugins)
   set(CL_INSTALL_BIN ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS)
   set(CL_RESOURCES_DIR ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport)
 elseif(MINGW)
@@ -344,9 +381,9 @@ else()
   set(DISABLE_CXX 0)
 endif()
 
-# ######################################################################################################################
+# ##############################################################################
 # Locate libssh
-# ######################################################################################################################
+# ##############################################################################
 # Enable SFTP support?
 if(ENABLE_SFTP MATCHES 0)
   set(WITH_SFTP 0)
@@ -409,9 +446,11 @@ endif(WITH_SFTP)
 if(UNIX AND NOT APPLE)
   if(GTK_VERSION EQUAL 3)
     set(OLD_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}) # Cache the current value
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
+                          "${CMAKE_SOURCE_DIR}/cmake/Modules/")
     find_package(GTK3)
-    set(CMAKE_MODULE_PATH ${OLD_CMAKE_MODULE_PATH}) # Reset, else the official path isn't used again :/
+    set(CMAKE_MODULE_PATH ${OLD_CMAKE_MODULE_PATH}) # Reset, else the official
+                                                    # path isn't used again :/
     if(GTK3_FOUND)
       include_directories(${GTK3_INCLUDE_DIRS})
     else(GTK3_FOUND)
@@ -514,8 +553,8 @@ else(
   UNIX
   AND NOT APPLE
   OR MINGW)
-  # OSX set( LIBUCHARDET_INCLUDE_DIR ${CL_SRC_ROOT}/sdk/uchardet/include) set( LIBUCHARDET_LIB
-  # ${CL_SRC_ROOT}/sdk/uchardet/lib/osx/uchardet.a)
+  # OSX set( LIBUCHARDET_INCLUDE_DIR ${CL_SRC_ROOT}/sdk/uchardet/include) set(
+  # LIBUCHARDET_LIB ${CL_SRC_ROOT}/sdk/uchardet/lib/osx/uchardet.a)
 endif(
   UNIX
   AND NOT APPLE
@@ -573,9 +612,9 @@ if(NOT RETAIN_CACHED_VALUES)
   unset(CL_GTK_USE_NATIVEBOOK CACHE)
 endif()
 
-# ######################################################################################################################
+# ##############################################################################
 # Global optimizations
-# ######################################################################################################################
+# ##############################################################################
 
 if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
   message("-- Building in ${CMAKE_BUILD_TYPE} mode")
@@ -588,7 +627,8 @@ if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
   set(CL_BIN_DIR bin)
   set(CL_LIB_DIR lib)
   if(APPLE)
-    add_custom_target(distclean COMMAND cd ${CL_SRC_ROOT}/PCH && $(MAKE) type=debug clean)
+    add_custom_target(distclean COMMAND cd ${CL_SRC_ROOT}/PCH && $(MAKE)
+                                        type=debug clean)
   endif(APPLE)
 
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}/${CL_LIB_DIR}")
@@ -596,16 +636,20 @@ if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}/${CL_LIB_DIR}")
   set(CL_LIBPATH "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")
 
-  message("-- Executables will be written into ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-  message("-- Shared Objects will be written into ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+  message(
+    "-- Executables will be written into ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+  message(
+    "-- Shared Objects will be written into ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 
   if(APPLE OR MINGW)
     # Clang compiler on these platforms
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -gdwarf-4 -fstandalone-debug -O0") # No optimization, debug info
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -gdwarf-4 -fstandalone-debug -O0"
+    )# No optimization, debug info
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -gdwarf-4 -fstandalone-debug -O0")
     message(STATUS "Adding Clang debug flags: -gdwarf-4 -fstandalone-debug -O0")
   else()
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0") # No optimization, debug info
+    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0") # No optimization, debug
+                                                     # info
     set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -g -O0")
     message(STATUS "Adding GCC debug flags: -g -O0")
   endif()
@@ -651,7 +695,8 @@ else()
   set(CL_PCH_FILE "${CL_SRC_ROOT}/PCH/precompiled_header_release.h")
   set(CL_PCH_TARGET "precompiled_header_release.h.gch")
   if(APPLE)
-    add_custom_target(distclean COMMAND cd ${CL_SRC_ROOT}/PCH && $(MAKE) type=release clean)
+    add_custom_target(distclean COMMAND cd ${CL_SRC_ROOT}/PCH && $(MAKE)
+                                        type=release clean)
   endif(APPLE)
 
   # Set the libraries output directory
@@ -663,8 +708,10 @@ else()
   set(CMAKE_ARCHIVE_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}/${CL_LIB_DIR}")
   set(CL_LIBPATH "${CMAKE_ARCHIVE_OUTPUT_DIRECTORY}")
 
-  message("-- Executables will be written into ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
-  message("-- Shared Objects will be written into ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
+  message(
+    "-- Executables will be written into ${CMAKE_RUNTIME_OUTPUT_DIRECTORY}")
+  message(
+    "-- Shared Objects will be written into ${CMAKE_LIBRARY_OUTPUT_DIRECTORY}")
 
   set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -O2") # Optimize
   if(CMAKE_COMPILER_IS_GNUCXX)
@@ -683,9 +730,9 @@ if(NOT RETAIN_CACHED_VALUES)
   unset(PREVENT_WX_ASSERTS CACHE)
 endif()
 
-# ######################################################################################################################
+# ##############################################################################
 # Determine if 32 or 64 bit
-# ######################################################################################################################
+# ##############################################################################
 
 set(ARCH 32)
 set(ARCH_NAME i386)
@@ -711,14 +758,16 @@ if(UNIX AND NOT APPLE)
     OUTPUT_STRIP_TRAILING_WHITESPACE ERROR_QUIET)
 
   # replace any tab/space with nothing
-  string(REPLACE " " "" DISTRO_CODENAME "${OS_DISTRO}-${OS_CODENAME}-${OS_ARCH}")
+  string(REPLACE " " "" DISTRO_CODENAME
+                 "${OS_DISTRO}-${OS_CODENAME}-${OS_ARCH}")
   string(REPLACE "\t" "" DISTRO_CODENAME "${DISTRO_CODENAME}")
   string(TOLOWER ${DISTRO_CODENAME} DISTRO_CODENAME)
 
   string(REPLACE " " "" OS_CODENAME "${OS_CODENAME}")
   string(REPLACE "\t" "" OS_CODENAME "${OS_CODENAME}")
-  if(NOT "${OS_CODENAME}" STREQUAL "") # It'll be empty if lsb_release isn't installed, which causes cmake to error out
-                                       # on the next line
+  if(NOT "${OS_CODENAME}" STREQUAL "") # It'll be empty if lsb_release isn't
+                                       # installed, which causes cmake to error
+                                       # out on the next line
     string(TOLOWER ${OS_CODENAME} OS_CODENAME)
   endif()
 
@@ -734,9 +783,9 @@ set(ARCH_NAME ${CMAKE_HOST_SYSTEM_PROCESSOR})
 message("-- ARCH ${ARCH}")
 message("-- ARCH_NAME ${ARCH_NAME}")
 
-# ######################################################################################################################
+# ##############################################################################
 # CPack
-# ######################################################################################################################
+# ##############################################################################
 if(MAKE_DEB)
   get_distro_name(distro)
   message("-- Distro name: ${distro}")
@@ -773,10 +822,12 @@ if(MAKE_DEB)
   set(CPACK_PACKAGE_NAME "CodeLite")
   set(CPACK_PACKAGE_VERSION "${CODELITE_VERSION}-${GTKNAME}")
   set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Eran Ifrah <eran@codelite.org>")
-  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "C/C++/Rust/Python/PHP/Node.js IDE (Integrated Development Environment)")
+  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY
+      "C/C++/Rust/Python/PHP/Node.js IDE (Integrated Development Environment)")
   set(CPACK_DEBIAN_PACKAGE_SECTION "devel")
   set(CPACK_DEBIAN_PACKAGE_PRIORITY "optional")
-  set(CPACK_DEBIAN_PACKAGE_RECOMMENDS "build-essential, git, subversion, gdb, xterm, gcc, g++")
+  set(CPACK_DEBIAN_PACKAGE_RECOMMENDS
+      "build-essential, git, subversion, gdb, xterm, gcc, g++")
   set(CPACK_DEBIAN_PACKAGE_DEPENDS "${DEB_DEPS}")
   set(CPACK_DEBIAN_PACKAGE_SHLIBDEPS ON)
   set(CPACK_PACKAGE_DESCRIPTION_FILE "${CL_SRC_ROOT}/DESC")
@@ -802,7 +853,8 @@ if(MAKE_RPM)
   set(CPACK_RPM_FILE_NAME "CodeLite-${CODELITE_VERSION}-x86_64.rpm")
   set(CPACK_RPM_PACKAGE_VERSION "${CODELITE_VERSION}-${GTKNAME}")
   set(CPACK_PACKAGE_CONTACT "Eran Ifrah <eran@codelite.org>")
-  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "C/C++/Rust/Python/PHP/Node.js IDE (Integrated Development Environment)")
+  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY
+      "C/C++/Rust/Python/PHP/Node.js IDE (Integrated Development Environment)")
   set(CPACK_PACKAGE_VENDOR "The CodeLite Team")
   set(CPACK_STRIP_FILES TRUE)
   include(CPack)
@@ -826,15 +878,16 @@ if(MAKE_RPM_SLIM)
   set(CPACK_RPM_FILE_NAME "CodeLite-slim-${CODELITE_VERSION}-gtk2-x86_64.rpm")
   set(CPACK_RPM_PACKAGE_VERSION "${CODELITE_VERSION}-${GTKNAME}")
   set(CPACK_PACKAGE_CONTACT "Eran Ifrah <eran@codelite.org>")
-  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "C/C++ IDE (Integrated Development Environment)")
+  set(CPACK_PACKAGE_DESCRIPTION_SUMMARY
+      "C/C++ IDE (Integrated Development Environment)")
   set(CPACK_PACKAGE_VENDOR "Eran Ifrah")
   set(CPACK_STRIP_FILES TRUE)
   include(CPack)
 endif(MAKE_RPM_SLIM)
 
-# ######################################################################################################################
+# ##############################################################################
 # SFTP support
-# ######################################################################################################################
+# ##############################################################################
 if(WITH_SFTP)
 
   # Default is set to 1
@@ -848,9 +901,9 @@ else(WITH_SFTP)
 
 endif(WITH_SFTP)
 
-# ######################################################################################################################
+# ##############################################################################
 # RPATH settings
-# ######################################################################################################################
+# ##############################################################################
 
 if(UNIX AND NOT APPLE)
   set(CMAKE_SKIP_BUILD_RPATH TRUE)
@@ -868,13 +921,26 @@ endif()
 
 if(MINGW AND USE_PCH)
   if(CMAKE_VERSION VERSION_LESS 3.16)
-    message(FATAL_ERROR " **** MINGW and PCH requires at least cmake version 3.16 **** ")
+    message(
+      FATAL_ERROR
+        " **** MINGW and PCH requires at least cmake version 3.16 **** ")
   endif()
 endif()
 
 # add the dtl module include path before we include Plugin folder
 include_directories(submodules/dtl)
-add_compile_options(-Wno-overloaded-virtual)
+
+if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES
+                                            "AppleClang")
+  set(IS_CLANG 1)
+else()
+  set(IS_CLANG 0)
+endif()
+
+if(IS_CLANG)
+  add_compile_options(-Wthread-safety
+                      -D_LIBCPP_ENABLE_THREAD_SAFETY_ANNOTATIONS)
+endif()
 
 # Extra lexers required by CodeLite
 add_subdirectory(submodules/lexilla)
@@ -895,7 +961,8 @@ if(DEBUG_BUILD)
   message(STATUS "CMAKE_CXX_FLAGS_RELEASE=${CMAKE_CXX_FLAGS_RELEASE}")
 endif()
 
-add_compile_definitions(wxUSE_GUI=1) # Missing `#include <wx/setup.h>` before `#if wxUse_GUI` for some generated files
+add_compile_definitions(wxUSE_GUI=1) # Missing `#include <wx/setup.h>` before
+                                     # `#if wxUse_GUI` for some generated files
 
 add_subdirectory(CxxParser)
 add_subdirectory(CodeLite)
@@ -1078,10 +1145,12 @@ endif()
 if(MINGW)
   # determine MSYS2 path
   write_file(${CMAKE_BINARY_DIR}/msys2-environment "export WXWIN=${WXWIN}")
-  write_file(${CMAKE_BINARY_DIR}/msys2-environment "export MSYS2_HOME=${MSYS2_BASE}" APPEND)
+  write_file(${CMAKE_BINARY_DIR}/msys2-environment
+             "export MSYS2_HOME=${MSYS2_BASE}" APPEND)
 
   # install DLLs required by MinGW
-  msys_list_deps(${MSYS2_BASE}/clang64/bin/libhunspell-1.7-0.dll LIBHUNSPELL_DEPS)
+  msys_list_deps(${MSYS2_BASE}/clang64/bin/libhunspell-1.7-0.dll
+                 LIBHUNSPELL_DEPS)
   msys_list_deps(${MSYS2_BASE}/clang64/bin/libssh.dll LIBSSH_DEPS)
 
   list(
@@ -1107,19 +1176,28 @@ if(MINGW)
     mv.exe)
 
   execute_process(
-    COMMAND sh -c 'ls ${WXWIN}/*/clang_x64_dll/wxmsw*u_clang_custom.dll|tail -1'
+    COMMAND sh -c
+            'ls ${WXWIN}/lib/clang_x64_dll/wxmsw*u_clang*custom.dll|tail -1'
     OUTPUT_VARIABLE WXDLL
     OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+  if(NOT WXDLL)
+    message(FATAL_ERROR "Could not locate wxWidgets DLL")
+  endif()
+
   message(STATUS "Installing wxWidgets DLL ${WXDLL}")
   list(APPEND WXWIDGETS_DLLS ${WXDLL})
-  list(APPEND CODELITE_RESOURCES ${CMAKE_SOURCE_DIR}/wxcrafter/wxgui.zip ${CMAKE_SOURCE_DIR}/LICENSE)
+  list(APPEND CODELITE_RESOURCES ${CMAKE_SOURCE_DIR}/wxcrafter/wxgui.zip
+       ${CMAKE_SOURCE_DIR}/LICENSE)
 
   foreach(DLL ${SYSTEM_DLLS})
-    install(FILES "${MSYS2_BASE}/clang64/bin/${DLL}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+    install(FILES "${MSYS2_BASE}/clang64/bin/${DLL}"
+            DESTINATION "${CMAKE_INSTALL_PREFIX}")
   endforeach()
 
   foreach(DLL ${MSYS2_CORE_FILES})
-    install(FILES "${MSYS2_BASE}/usr/bin/${DLL}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+    install(FILES "${MSYS2_BASE}/usr/bin/${DLL}"
+            DESTINATION "${CMAKE_INSTALL_PREFIX}")
   endforeach()
 
   foreach(DLL ${WXWIDGETS_DLLS})
@@ -1143,7 +1221,8 @@ endif()
 
 if(MINGW AND NOT WXC_APP)
   # configure the innosetup file
-  configure_file(${CL_SRC_ROOT}/InnoSetup/codelite64_mingw.iss.in ${BUILD_DIRECTORY}/codelite64_mingw.iss)
+  configure_file(${CL_SRC_ROOT}/InnoSetup/codelite64_mingw.iss.in
+                 ${BUILD_DIRECTORY}/codelite64_mingw.iss)
 
   # CodeLite only related installation
   find_program(
@@ -1151,13 +1230,22 @@ if(MINGW AND NOT WXC_APP)
     NAMES "ISCC" "ISCC.exe"
     PATHS "c:/Program Files (x86)/Inno Setup 6")
   if(NOT INNO_SETUP_CMP)
-    message(WARNING "\n** Could not locate ISCC compiler! \"setup\" target is not created **")
-    message(WARNING "\n** You can install InnoSetup compiler from here: https://jrsoftware.org/ **\n")
+    message(
+      WARNING
+        "\n** Could not locate ISCC compiler! \"setup\" target is not created **"
+    )
+    message(
+      WARNING
+        "\n** You can install InnoSetup compiler from here: https://jrsoftware.org/ **\n"
+    )
   else()
     message(STATUS "InnoSetup compiler is set to: ${INNO_SETUP_CMP}")
 
-    # fake target that executes "install". we then use this target as the dependency for the `setup` target
-    add_custom_target(codelite-install COMMAND "${CMAKE_COMMAND}" --build "${BUILD_DIRECTORY}" --target install)
+    # fake target that executes "install". we then use this target as the
+    # dependency for the `setup` target
+    add_custom_target(
+      codelite-install COMMAND "${CMAKE_COMMAND}" --build "${BUILD_DIRECTORY}"
+                               --target install)
 
     add_custom_target(
       setup
@@ -1167,7 +1255,8 @@ if(MINGW AND NOT WXC_APP)
   endif()
 elseif(MINGW AND WXC_APP)
   # configure the innosetup file
-  configure_file(${CL_SRC_ROOT}/wxcrafter/wxcrafter64_mingw.iss.in ${BUILD_DIRECTORY}/wxcrafter64_mingw.iss)
+  configure_file(${CL_SRC_ROOT}/wxcrafter/wxcrafter64_mingw.iss.in
+                 ${BUILD_DIRECTORY}/wxcrafter64_mingw.iss)
 
   # wxCrafter App
   find_program(
@@ -1188,3 +1277,6 @@ endif()
 unset(WITH_CHATAI CACHE)
 unset(DEBUG_BUILD CACHE)
 unset(BUILD_TESTING CACHE)
+
+file(CREATE_LINK "${CMAKE_BINARY_DIR}/compile_commands.json"
+     "${CMAKE_SOURCE_DIR}/compile_commands.json" SYMBOLIC)

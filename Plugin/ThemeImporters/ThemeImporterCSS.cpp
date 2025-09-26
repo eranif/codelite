@@ -78,10 +78,6 @@ LexerConf::Ptr_t ThemeImporterCSS::Import(const wxFileName& theme_file)
     // Set error colour
     wxColour defaultBg(m_editor.bg_colour);
     bool isDark = DrawingUtils::IsDark(defaultBg);
-    wxString errorColour = "RED";
-    if(isDark) {
-        errorColour = "PINK";
-    }
     wxString operatorColour = isDark ? "WHITE" : "BLACK";
 
     /// Lexical states for SCLEX_CSS

@@ -23,10 +23,10 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef GITCONSOLE_H
-#define GITCONSOLE_H
+#pragma once
 
 #include "CustomControls/IndicatorPanel.hpp"
+#include "ai/ResponseCollector.hpp"
 #include "bitmap_loader.h"
 #include "clGenericSTCStyler.h"
 #include "clToolBar.h"
@@ -83,7 +83,7 @@ protected:
     virtual void OnClearGitLog(wxCommandEvent& event);
     virtual void OnGenerateReleaseNotesUI(wxUpdateUIEvent& event);
     virtual void OnGenerateReleaseNotes(wxCommandEvent& event);
-    void OnGenerateReleaseNotesDone(const wxString& model, bool aborted);
+    void FinaliseReleaseNotes(const wxString& prompt, const wxString& model);
     virtual void OnStopGitProcess(wxCommandEvent& event);
     virtual void OnOpenUnversionedFiles(wxCommandEvent& event);
     virtual void OnAddUnversionedFiles(wxCommandEvent& event);
@@ -103,7 +103,6 @@ protected:
     void OnDropDownMenuEvent(wxCommandEvent& e);
     void Clear();
     void OnOutputViewTabChanged(clCommandEvent& event);
-    void OnLLMClientRestarted(clLLMEvent& event);
 
 private:
     wxArrayString GetSelectedUnversionedFiles() const;
@@ -124,11 +123,4 @@ private:
     wxString m_buffer;
     wxTerminalOutputCtrl* m_log_view{nullptr};
     IndicatorPanel* m_statusBar{nullptr};
-
-    struct ReleaseNotesGenerationState {
-        std::string response;
-        size_t tokens_count{0};
-        bool is_multi_requests{false};
-    } m_releaseNotesGenState;
 };
-#endif // GITCONSOLE_H

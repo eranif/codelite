@@ -207,8 +207,8 @@ void DrawingUtils::TruncateText(const wxString& text, int maxWidth, wxDC& dc, wx
     }
 }
 
-void DrawingUtils::PaintStraightGradientBox(wxDC& dc, const wxRect& rect, const wxColour& startColor,
-                                            const wxColour& endColor, bool vertical)
+void DrawingUtils::PaintStraightGradientBox(
+    wxDC& dc, const wxRect& rect, const wxColour& startColor, const wxColour& endColor, bool vertical)
 {
     int rd, gd, bd, high = 0;
     rd = endColor.Red() - startColor.Red();
@@ -251,7 +251,7 @@ int DrawingUtils::GetTabHeight(wxDC& dc, wxWindow* win)
     // get the label height + add spacer based on the notebook requested height
     int spacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight();
     wxFont font = clTabRenderer::GetTabFont(true);
-    wxDCFontChanger font_changer{ dc, font };
+    wxDCFontChanger font_changer{dc, font};
     wxCoord yy, xx;
     dc.GetTextExtent(wxT("Tp"), &xx, &yy);
     wxUnusedVar(xx);
@@ -507,8 +507,13 @@ wxColour update_button_bg_colour(const wxColour& baseColour, eButtonState state)
 }
 } // namespace
 
-void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const wxString& label, const wxBitmap& bmp,
-                              eButtonKind kind, eButtonState state)
+void DrawingUtils::DrawButton(wxDC& dc,
+                              wxWindow* win,
+                              const wxRect& rect,
+                              const wxString& label,
+                              const wxBitmap& bmp,
+                              eButtonKind kind,
+                              eButtonState state)
 {
     wxDCFontChanger font_changer(dc);
     wxDCTextColourChanger text_changer(dc);
@@ -519,7 +524,6 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     // - drop down arrow
     wxRect allocated_text_rect = rect;
     wxRect allocated_bmp_rect;
-    wxRect allocated_dropdown_arrow_rect;
 
     // Draw the background
     wxRect clientRect = rect;
@@ -556,9 +560,6 @@ void DrawingUtils::DrawButton(wxDC& dc, wxWindow* win, const wxRect& rect, const
     if (kind == eButtonKind::kDropDown) {
         // we want a drop down to the right
         int height = rect.GetHeight();
-        allocated_dropdown_arrow_rect =
-            wxRect(allocated_text_rect.GetWidth() - height, allocated_text_rect.GetY(), height, height);
-
         // update the text rectangle
         allocated_text_rect.SetWidth(allocated_text_rect.GetWidth() - height);
     }
@@ -623,8 +624,13 @@ wxColour DrawingUtils::GetButtonBgColour() { return clSystemSettings::GetColour(
 
 wxColour DrawingUtils::GetButtonTextColour() { return clSystemSettings::GetColour(wxSYS_COLOUR_BTNTEXT); }
 
-void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,
-                               const wxColour& bgColouur, eButtonState state, const wxString& unicode_symbol)
+void DrawingUtils::DrawButtonX(wxDC& dc,
+                               wxWindow* win,
+                               const wxRect& rect,
+                               const wxColour& penColour,
+                               const wxColour& bgColouur,
+                               eButtonState state,
+                               const wxString& unicode_symbol)
 {
     // Calculate the circle radius:
     wxColour bg_colour = bgColouur;
@@ -667,8 +673,12 @@ void DrawingUtils::DrawButtonX(wxDC& dc, wxWindow* win, const wxRect& rect, cons
     dc.DrawText(unicode_symbol, xrect.GetTopLeft());
 }
 
-void DrawingUtils::DrawButtonMaximizeRestore(wxDC& dc, wxWindow* win, const wxRect& rect, const wxColour& penColour,
-                                             const wxColour& bgColouur, eButtonState state)
+void DrawingUtils::DrawButtonMaximizeRestore(wxDC& dc,
+                                             wxWindow* win,
+                                             const wxRect& rect,
+                                             const wxColour& penColour,
+                                             const wxColour& bgColouur,
+                                             eButtonState state)
 {
 #if 0
     size_t flags = 0;
@@ -733,7 +743,7 @@ void DrawingUtils::DrawDropDownArrow(wxWindow* win, wxDC& dc, const wxRect& rect
     const wxString arrowSymbol = wxT("\u25BC");
     dc.SetFont(GetDefaultGuiFont());
 
-    wxRect arrowRect{ { 0, 0 }, dc.GetTextExtent(arrowSymbol) };
+    wxRect arrowRect{{0, 0}, dc.GetTextExtent(arrowSymbol)};
     arrowRect = arrowRect.CenterIn(rect);
 
     wxColour buttonColour = colour;
@@ -759,8 +769,13 @@ wxColour DrawingUtils::GetCaptionTextColour() { return clSystemSettings::GetColo
 #define X_MARGIN 4
 #endif
 
-void DrawingUtils::DrawCustomChoice(wxWindow* win, wxDC& dc, const wxRect& rect, const wxString& label,
-                                    const wxColour& baseColour, const wxBitmap& bmp, int align)
+void DrawingUtils::DrawCustomChoice(wxWindow* win,
+                                    wxDC& dc,
+                                    const wxRect& rect,
+                                    const wxString& label,
+                                    const wxColour& baseColour,
+                                    const wxBitmap& bmp,
+                                    int align)
 {
     wxRect choiceRect = rect;
     // Fill the drop down button with the custom base colour
@@ -809,8 +824,8 @@ void DrawingUtils::DrawCustomChoice(wxWindow* win, wxDC& dc, const wxRect& rect,
     dc.DestroyClippingRegion();
 }
 
-void DrawingUtils::DrawNativeChoice(wxWindow* win, wxDC& dc, const wxRect& rect, const wxString& label,
-                                    const wxBitmap& bmp, int align)
+void DrawingUtils::DrawNativeChoice(
+    wxWindow* win, wxDC& dc, const wxRect& rect, const wxString& label, const wxBitmap& bmp, int align)
 {
     wxRect choiceRect = rect;
 #if defined(__WXMSW__) || defined(__WXGTK__)
@@ -883,8 +898,8 @@ clColours& DrawingUtils::GetColours()
 int DrawingUtils::GetFallbackFixedFontSize() { return GetFallbackFixedFont().GetPointSize(); }
 wxString DrawingUtils::GetFallbackFixedFontFace() { return GetFallbackFixedFont().GetFaceName(); }
 
-wxRect DrawingUtils::DrawColourPicker(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& pickerColour,
-                                      eButtonState state)
+wxRect DrawingUtils::DrawColourPicker(
+    wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& pickerColour, eButtonState state)
 {
     wxColour fixed_picker_colour = pickerColour.IsOk() ? pickerColour : *wxBLACK;
     wxString label = fixed_picker_colour.GetAsString(wxC2S_HTML_SYNTAX);

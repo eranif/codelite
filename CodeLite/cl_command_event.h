@@ -942,27 +942,17 @@ public:
     ~clLLMEvent() override = default;
     wxEvent* Clone() const override { return new clLLMEvent(*this); }
 
-    void SetEnableTools(bool enableTools) { this->m_enableTools = enableTools; }
-    bool IsEnableTools() const { return m_enableTools; }
-    void SetModelName(const wxString& modelName) { this->m_modelName = modelName; }
-    const wxString& GetModelName() const { return m_modelName; }
     void SetPrompt(const wxString& prompt) { this->m_prompt = prompt; }
     const wxString& GetPrompt() const { return m_prompt; }
-    void SetAvailable(bool available) { SetAnswer(available); }
-    bool IsAvailable() const { return IsAnswer(); }
     void SetResponseRaw(const std::string& response) { SetStringRaw(response); }
     const std::string& GetResponseRaw() const { return GetStringRaw(); }
-    void SetIsThinking(bool isThinking) { this->m_isThinking = isThinking; }
-    bool IsThinking() const { return m_isThinking; }
-    void SetClearHistory(bool clearHistory) { this->m_clearHistory = clearHistory; }
-    bool IsClearHistory() const { return m_clearHistory; }
+
+    void SetIsError(bool isError) { this->m_isError = isError; }
+    bool IsError() const { return m_isError; }
 
 protected:
-    bool m_enableTools{false};
-    bool m_clearHistory{false};
-    wxString m_modelName;
     wxString m_prompt;
-    bool m_isThinking{false};
+    bool m_isError{false};
 };
 
 using clLLMEventFunction = void (wxEvtHandler::*)(clLLMEvent&);

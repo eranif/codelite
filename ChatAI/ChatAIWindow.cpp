@@ -1,11 +1,9 @@
 #include "ChatAIWindow.hpp"
 
 #include "ChatAI.hpp"
-#include "ChatAIEvents.hpp"
 #include "ColoursAndFontsManager.h"
 #include "FileManager.hpp"
 #include "MarkdownStyler.hpp"
-#include "StringUtils.h"
 #include "ai/LLMManager.hpp"
 #include "aui/clAuiToolBarArt.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
@@ -68,9 +66,8 @@ std::optional<wxString> GetGlobalSettings()
 
 } // namespace
 
-ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
+ChatAIWindow::ChatAIWindow(wxWindow* parent)
     : AssistanceAIChatWindowBase(parent)
-    , m_plugin(plugin)
 {
     auto images = clGetManager()->GetStdIcons();
     m_toolbar->SetArtProvider(new clAuiToolBarArt());
@@ -97,15 +94,17 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     m_activeModel->Bind(wxEVT_CHOICE, &ChatAIWindow::OnModelChanged, this);
 
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
-    EventNotifier::Get()->Bind(wxEVT_OLLAMA_CHAT_STARTED, &ChatAIWindow::OnChatStarted, this);
-    EventNotifier::Get()->Bind(wxEVT_OLLAMA_CHAT_OUTPUT, &ChatAIWindow::OnChatAIOutput, this);
-    EventNotifier::Get()->Bind(wxEVT_OLLAMA_CHAT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
-    EventNotifier::Get()->Bind(wxEVT_OLLAMA_LIST_MODELS, &ChatAIWindow::OnModels, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &ChatAIWindow::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &ChatAIWindow::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &ChatAIWindow::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Bind(wxEVT_OLLAMA_LOG, &ChatAIWindow::OnLog, this);
-    EventNotifier::Get()->Bind(wxEVT_OLLAMA_THINKING, &ChatAIWindow::OnThinking, this);
+
+    /// LLM events
+    Bind(wxEVT_LLM_CHAT_STARTED, &ChatAIWindow::OnChatStarted, this);
+    Bind(wxEVT_LLM_OUTPUT, &ChatAIWindow::OnChatAIOutput, this);
+    Bind(wxEVT_LLM_OUTPUT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
+    Bind(wxEVT_LLM_THINK_SATRTED, &ChatAIWindow::OnThinkingStart, this);
+    Bind(wxEVT_LLM_THINK_ENDED, &ChatAIWindow::OnThinkingEnd, this);
+    Bind(wxEVT_LLM_MODELS_LOADED, &ChatAIWindow::OnModelsLoaded, this);
 
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
@@ -123,34 +122,15 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
 
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_EXECUTE);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnStopUI, this, wxID_STOP);
-    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_CLEAR);
-    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_REFRESH);
+    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnBusyUI, this, wxID_CLEAR);
+    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnBusyUI, this, wxID_REFRESH);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_SETUP);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnAutoScrollUI, this, XRCID("auto_scroll"));
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnHistoryUI, this, XRCID("prompt_history"));
-    m_activeModel->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this);
+    m_activeModel->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnBusyUI, this);
 
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);
 
-    m_plugin->GetClient()->SetLogSink([](LLMLogLevel level, std::string message) {
-        switch (level) {
-        case LLMLogLevel::kInfo:
-            CHATAI_SYSTEM() << message << endl;
-            break;
-        case LLMLogLevel::kDebug:
-            CHATAI_TRACE() << message << endl;
-            break;
-        case LLMLogLevel::kTrace:
-            CHATAI_TRACE() << message << endl;
-            break;
-        case LLMLogLevel::kError:
-            CHATAI_ERROR() << message << endl;
-            break;
-        case LLMLogLevel::kWarning:
-            CHATAI_WARNING() << message << endl;
-            break;
-        }
-    });
     m_markdownStyler = std::make_unique<MarkdownStyler>(m_stcOutput);
     m_markdownStyler->Bind(wxEVT_MARKDOWN_LINK_CLICKED, [](clCommandEvent& event) {
         wxString url = event.GetString();
@@ -164,21 +144,24 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     CallAfter(&ChatAIWindow::PopulateModels);
     CallAfter(&ChatAIWindow::RestoreUI);
     ShowIndicator(false);
+
+    m_cancel_token = std::make_shared<llm::CancellationToken>();
 }
 
 ChatAIWindow::~ChatAIWindow()
 {
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
-    EventNotifier::Get()->Unbind(wxEVT_OLLAMA_CHAT_OUTPUT, &ChatAIWindow::OnChatAIOutput, this);
-    EventNotifier::Get()->Unbind(wxEVT_OLLAMA_CHAT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
-    EventNotifier::Get()->Unbind(wxEVT_OLLAMA_LIST_MODELS, &ChatAIWindow::OnModels, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &ChatAIWindow::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &ChatAIWindow::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &ChatAIWindow::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Unbind(wxEVT_OLLAMA_LOG, &ChatAIWindow::OnLog, this);
-    EventNotifier::Get()->Unbind(wxEVT_OLLAMA_THINKING, &ChatAIWindow::OnThinking, this);
-    EventNotifier::Get()->Unbind(wxEVT_OLLAMA_CHAT_STARTED, &ChatAIWindow::OnChatStarted, this);
 
+    /// LLM events
+    Unbind(wxEVT_LLM_CHAT_STARTED, &ChatAIWindow::OnChatStarted, this);
+    Unbind(wxEVT_LLM_OUTPUT, &ChatAIWindow::OnChatAIOutput, this);
+    Unbind(wxEVT_LLM_OUTPUT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
+    Unbind(wxEVT_LLM_THINK_SATRTED, &ChatAIWindow::OnThinkingStart, this);
+    Unbind(wxEVT_LLM_THINK_ENDED, &ChatAIWindow::OnThinkingEnd, this);
+    Unbind(wxEVT_LLM_MODELS_LOADED, &ChatAIWindow::OnModelsLoaded, this);
     clConfig::Get().Write("chat-ai/sash-position", m_mainSplitter->GetSashPosition());
 }
 
@@ -206,11 +189,15 @@ void ChatAIWindow::DoSendPrompt()
 
     wxString prompt = m_stcInput->GetText();
     prompt.Trim().Trim(false);
-    m_plugin->GetClient()->Send(prompt, m_activeModel->GetStringSelection());
+    m_cancel_token->Reset();
+    llm::Manager::GetInstance().Chat(
+        this, prompt, m_cancel_token, llm::ChatOptions::kDefault, m_activeModel->GetStringSelection());
 
     // Remember this prompt in the history.
-    m_plugin->GetClient()->GetConfig().AddHistory(prompt);
-    m_plugin->GetClient()->GetConfig().Save();
+    if (!prompt.empty()) {
+        llm::Manager::GetInstance().GetConfig().AddHistory(prompt);
+        llm::Manager::GetInstance().GetConfig().Save();
+    }
 
     prompt.Prepend(wxString() << "\n**" << ::wxGetUserId() << "**:\n");
     AppendOutput(prompt + "\n\n");
@@ -218,14 +205,19 @@ void ChatAIWindow::DoSendPrompt()
     ShowIndicator(true);
 }
 
-void ChatAIWindow::OnSendUI(wxUpdateUIEvent& event) { event.Enable(!m_plugin->GetClient()->IsBusy()); }
+void ChatAIWindow::OnSendUI(wxUpdateUIEvent& event)
+{
+    wxString prompt = m_stcInput->GetText();
+    prompt.Trim().Trim(false);
+    event.Enable(!llm::Manager::GetInstance().IsBusy() && !prompt.empty() &&
+                 !m_activeModel->GetStringSelection().empty());
+}
 
 void ChatAIWindow::OnModelChanged(wxCommandEvent& event)
 {
-    m_plugin->GetConfig().SetSelectedModelName(m_activeModel->GetStringSelection());
+    llm::Manager::GetInstance().GetConfig().SetSelectedModelName(m_activeModel->GetStringSelection());
+    llm::Manager::GetInstance().GetConfig().Save();
     DoReset();
-    llm::Manager::GetInstance().SetModels(m_activeModel->GetStrings(), m_activeModel->GetStringSelection());
-    m_plugin->GetConfig().Save();
 }
 
 void ChatAIWindow::OnUpdateTheme(wxCommandEvent& event)
@@ -289,14 +281,6 @@ void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
     }
 }
 
-void ChatAIWindow::DoLogMessage(const wxString& message, LLMLogLevel log_level)
-{
-    wxUnusedVar(message);
-    wxUnusedVar(log_level);
-}
-
-void ChatAIWindow::OnLog(LLMEvent& event) { event.Skip(); }
-
 void ChatAIWindow::OnSettings(wxCommandEvent& event)
 {
     wxUnusedVar(event);
@@ -323,10 +307,7 @@ void ChatAIWindow::OnRefreshModelList(wxCommandEvent& event)
 void ChatAIWindow::DoReset()
 {
     DoClearOutputView();
-    m_stcInput->ClearAll();
-    m_plugin->GetClient()->Clear();
-    ShowIndicator(false);
-    m_thinking = false;
+    llm::Manager::GetInstance().Restart();
 }
 
 void ChatAIWindow::DoClearOutputView()
@@ -344,57 +325,57 @@ void ChatAIWindow::DoClearOutputView()
 void ChatAIWindow::OnNewSession(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+    m_cancel_token->Cancel();
     DoReset();
 }
 
-void ChatAIWindow::OnChatStarted(LLMEvent& event)
+void ChatAIWindow::OnChatStarted(clLLMEvent& event)
 {
     event.Skip();
-    AppendOutput("**Assistant**:\n");
+    m_state = ChatState::kWorking;
+    AppendOutput("**assistant**:\n");
+    ShowIndicator(true);
 }
 
-void ChatAIWindow::OnChatAIOutput(LLMEvent& event)
+void ChatAIWindow::OnThinkingStart(clLLMEvent& event)
 {
-    bool changed_state = (event.IsThinking() != m_thinking);
-    if (changed_state) {
-        NotifyThinking(event.IsThinking());
-    }
+    event.Skip();
+    m_state = ChatState::kThinking;
+    m_statusPanel->SetMessage(_("Thinking..."));
+}
 
-    wxString content = wxString(event.GetStringRaw().data(), wxConvUTF8, event.GetStringRaw().length());
-    switch (event.GetReason()) {
-    case LLMEventReason::kCancelled:
-        ::wxMessageBox(_("Operation cancelled by user."), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
-        NotifyThinking(false);
-        DoReset();
-        return;
-    case LLMEventReason::kFatalError:
-        ::wxMessageBox(content, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
-        NotifyThinking(false);
-        DoReset();
-        return;
-    case LLMEventReason::kLogNotice:
-    case LLMEventReason::kLogDebug:
-        CHATAI_DEBUG() << content << endl;
+void ChatAIWindow::OnThinkingEnd(clLLMEvent& event)
+{
+    event.Skip();
+    m_state = ChatState::kWorking;
+    m_statusPanel->SetMessage(_("Working..."));
+}
+
+void ChatAIWindow::OnChatAIOutput(clLLMEvent& event)
+{
+    const std::string& str = event.GetResponseRaw();
+    wxString content = wxString::FromUTF8(str);
+    switch (m_state) {
+    case ChatState::kThinking:
         break;
-    case LLMEventReason::kDone:
-        NotifyThinking(false);
-        AppendMarker();
-        break;
-    case LLMEventReason::kPartialResult:
-        if (!event.IsThinking()) {
-            AppendOutput(content);
-        }
+    case ChatState::kWorking:
+    case ChatState::kReady:
+        AppendOutput(content);
         break;
     }
 }
 
-void ChatAIWindow::OnChatAIOutputDone(LLMEvent& event)
+void ChatAIWindow::OnChatAIOutputDone(clLLMEvent& event)
 {
+    wxUnusedVar(event);
+    m_state = ChatState::kReady;
+
+    if (m_cancel_token->IsCancelled()) {
+        AppendOutput("\n\n** Generation cancelled by the user**\n");
+    }
+
+    m_cancel_token->Reset();
     StyleOutput();
-    m_thinking = false;
-
-    // Move the focus back to the input text control
-    m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
     ShowIndicator(false);
 }
 
@@ -420,37 +401,22 @@ void ChatAIWindow::OnFileSaved(clCommandEvent& event)
 
     // Reload configuration
     wxBusyCursor bc{};
-    m_plugin->GetClient()->ReloadConfig(clGetManager()->GetActiveEditor()->GetEditorText());
-    clGetManager()->SetStatusMessage(_("ChatAI configuration re-loaded successfully"), 3);
-
-    // Refresh the model list.
-    PopulateModels();
-}
-
-void ChatAIWindow::OnThinking(LLMEvent& event)
-{
-    // change the thinking state
-    m_thinking = event.IsThinking();
-    if (m_thinking) {
-        m_statusPanel->SetMessage(_("Thinking..."));
-    } else if (m_plugin->GetClient()->IsBusy()) {
-        m_statusPanel->SetMessage(_("Working..."));
-    } else {
-        m_statusPanel->SetMessage(_("Ready"));
+    if (llm::Manager::GetInstance().ReloadConfig(clGetManager()->GetActiveEditor()->GetEditorText())) {
+        clGetManager()->SetStatusMessage(_("ChatAI configuration re-loaded successfully"), 3);
+        // Refresh the model list.
+        PopulateModels();
     }
 }
 
-void ChatAIWindow::OnModels(LLMEvent& event)
+void ChatAIWindow::OnInputUI(wxUpdateUIEvent& event) { event.Enable(true); }
+
+void ChatAIWindow::OnModelsLoaded(clLLMEvent& event)
 {
+    wxArrayString models = event.GetStrings();
     m_activeModel->Clear();
+    m_activeModel->Append(models);
 
-    for (const auto& model : event.GetModels()) {
-        m_activeModel->Append(model);
-    }
-
-    const auto& models = event.GetModels();
-    auto active_model = m_plugin->GetConfig().GetSelectedModel();
-
+    auto active_model = llm::Manager::GetInstance().GetConfig().GetSelectedModel();
     if (!models.empty()) {
         if (!active_model.empty()) {
             int where = m_activeModel->FindString(active_model);
@@ -461,16 +427,10 @@ void ChatAIWindow::OnModels(LLMEvent& event)
             active_model = m_activeModel->GetString(0);
         }
     }
-    llm::Manager::GetInstance().SetModels(event.GetModels(), active_model);
+    llm::Manager::GetInstance().SetActiveModel(active_model);
 }
 
-void ChatAIWindow::OnInputUI(wxUpdateUIEvent& event) { event.Enable(true); }
-
-void ChatAIWindow::PopulateModels()
-{
-    wxBusyCursor bc{};
-    m_plugin->GetClient()->GetModels();
-}
+void ChatAIWindow::PopulateModels() { llm::Manager::GetInstance().LoadModels(this); }
 
 void ChatAIWindow::SetFocusToActiveEditor()
 {
@@ -518,7 +478,7 @@ void ChatAIWindow::OnWorkspaceLoaded(clWorkspaceEvent& event)
     event.Skip();
     WriteOptions opts{.converter = nullptr, .force_global = true};
     auto content = FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts).value_or(kDefaultSettings);
-    m_plugin->GetClient()->ReloadConfig(content);
+    llm::Manager::GetInstance().ReloadConfig(content, false);
 }
 
 void ChatAIWindow::OnWorkspaceClosed(clWorkspaceEvent& event)
@@ -540,16 +500,21 @@ void ChatAIWindow::RestoreUI()
 void ChatAIWindow::LoadGlobalConfig()
 {
     wxBusyCursor bc{};
-    m_plugin->GetClient()->ReloadConfig(GetGlobalSettings().value_or(kDefaultSettings));
+    llm::Manager::GetInstance().ReloadConfig(GetGlobalSettings().value_or(kDefaultSettings), false);
 }
 
 void ChatAIWindow::OnAutoScroll(wxCommandEvent& event) { m_autoScroll = event.IsChecked(); }
 
 void ChatAIWindow::OnAutoScrollUI(wxUpdateUIEvent& event) { event.Check(m_autoScroll); }
 
+void ChatAIWindow::OnBusyUI(wxUpdateUIEvent& event)
+{
+    event.Enable(llm::Manager::GetInstance().IsAvailable() && !llm::Manager::GetInstance().IsBusy());
+}
+
 void ChatAIWindow::OnHistory(wxCommandEvent& event)
 {
-    const auto& config = m_plugin->GetClient()->GetConfig();
+    const auto& config = llm::Manager::GetInstance().GetConfig();
     clSingleChoiceDialog dlg(EventNotifier::Get()->TopFrame(), config.GetHistory());
     dlg.SetLabel(_("Chat history"));
     if (dlg.ShowModal() != wxID_OK) {
@@ -563,23 +528,14 @@ void ChatAIWindow::OnHistory(wxCommandEvent& event)
 
 void ChatAIWindow::OnHistoryUI(wxUpdateUIEvent& event)
 {
-    auto client = m_plugin->GetClient();
-    event.Enable(!client->GetConfig().GetHistory().IsEmpty() && !client->IsBusy());
+    const auto& config = llm::Manager::GetInstance().GetConfig();
+    event.Enable(!config.GetHistory().IsEmpty() && m_state == ChatState::kReady);
 }
 
 void ChatAIWindow::OnStop(wxCommandEvent& event)
 {
     event.Skip();
-    m_plugin->GetClient()->Interrupt();
+    llm::Manager::GetInstance().Restart();
 }
 
-void ChatAIWindow::OnStopUI(wxUpdateUIEvent& event) { event.Enable(m_plugin->GetClient()->IsBusy()); }
-
-void ChatAIWindow::NotifyThinking(bool thinking)
-{
-    LLMEvent think_event{wxEVT_OLLAMA_THINKING};
-    think_event.SetThinking(thinking);
-    EventNotifier::Get()->AddPendingEvent(think_event);
-}
-
-void ChatAIWindow::OnTimer(wxTimerEvent& event) { event.Skip(); }
+void ChatAIWindow::OnStopUI(wxUpdateUIEvent& event) { event.Enable(llm::Manager::GetInstance().IsBusy()); }

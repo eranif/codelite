@@ -1,7 +1,9 @@
-# Our project is called 'plugin' this is how it will be called in visual studio, and in our makefiles.
+# Our project is called 'plugin' this is how it will be called in visual studio,
+# and in our makefiles.
 project(plugin)
 
-# It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
+# It was noticed that when using MinGW gcc it is essential that 'core' is
+# mentioned before 'base'.
 
 # wxWidgets include (this will do all the magic to configure everything)
 include("${wxWidgets_USE_FILE}")
@@ -13,8 +15,10 @@ add_library(plugin SHARED ${SRCS})
 # Include paths
 target_include_directories(
   plugin
-  PUBLIC "${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/Interfaces" "${CL_SRC_ROOT}/Plugin/aui"
-  PRIVATE "${CL_SRC_ROOT}/submodules/yaml-cpp/include" "${CL_SRC_ROOT}/ThemeImporters" "${CL_SRC_ROOT}/wxTerminalCtrl")
+  PUBLIC "${CL_SRC_ROOT}/Plugin" "${CL_SRC_ROOT}/Interfaces"
+         "${CL_SRC_ROOT}/Plugin/aui"
+  PRIVATE "${CL_SRC_ROOT}/submodules/yaml-cpp/include"
+          "${CL_SRC_ROOT}/ThemeImporters" "${CL_SRC_ROOT}/wxTerminalCtrl")
 
 # Macros
 if(WIN32)
@@ -33,9 +37,11 @@ endif()
 if(UNIX AND NOT APPLE)
   if(GTK_VERSION EQUAL 3)
     set(OLD_CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}) # Cache the current value
-    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
+    set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH}
+                          "${CMAKE_SOURCE_DIR}/cmake/Modules/")
     find_package(GTK3)
-    set(CMAKE_MODULE_PATH ${OLD_CMAKE_MODULE_PATH}) # Reset, else the official path isn't used again :/
+    set(CMAKE_MODULE_PATH ${OLD_CMAKE_MODULE_PATH}) # Reset, else the official
+                                                    # path isn't used again :/
     if(GTK3_FOUND)
       include_directories(${GTK3_INCLUDE_DIRS})
     else(GTK3_FOUND)
@@ -88,7 +94,8 @@ target_link_libraries(
   ${LIBYAML_CPP}
   -L"${CL_LIBPATH}"
   lexers_extra
-  libcodelite)
+  libcodelite
+  ollamalib)
 
 if(USE_PCH)
   codelite_add_pch(plugin)
@@ -96,7 +103,8 @@ endif()
 
 if(NOT MINGW)
   if(APPLE)
-    install(TARGETS plugin DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
+    install(TARGETS plugin
+            DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
   else()
     install(TARGETS plugin DESTINATION ${PLUGINS_DIR})
   endif()

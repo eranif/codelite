@@ -25,8 +25,6 @@
 #pragma once
 
 #include "ChatAIWindow.hpp"
-#include "LLMClientBase.hpp"
-#include "cl_command_event.h"
 #include "plugin.h"
 
 #include <memory>
@@ -52,16 +50,10 @@ public:
     void CreatePluginMenu(wxMenu* pluginsMenu) override;
     void HookPopupMenu(wxMenu* menu, MenuType type) override;
     void UnPlug() override;
-    ChatAIConfig& GetConfig() { return m_cli->GetConfig(); }
-    std::shared_ptr<LLMClientBase> GetClient() { return m_cli; }
 
 private:
     void OnShowChatWindow(wxCommandEvent& event);
-    void OnIsLlmAvailable(clLLMEvent& event);
-    void OnLlmRequest(clLLMEvent& event);
     void OnInitDone(wxCommandEvent& event);
-    void OnRestart(clLLMEvent& event);
 
     ChatAIWindow* m_chatWindow{nullptr};
-    std::shared_ptr<LLMClientBase> m_cli;
 };

@@ -3178,7 +3178,9 @@ std::optional<uint64_t> GitPlugin::GenerateCommitMessage(const wxString& prompt,
     auto cb = [this](const std::string& message, size_t flags) mutable {
         if (!m_commitDialog) {
             return;
-        } else if (flags & llm::Manager::kThinking) {
+        }
+
+        if (flags & llm::Manager::kThinking) {
             m_commitDialog->SetIndicatorMessage(_("Thinking..."));
             return;
         } else {
@@ -3186,7 +3188,7 @@ std::optional<uint64_t> GitPlugin::GenerateCommitMessage(const wxString& prompt,
         }
 
         m_commitDialog->AppendCommitMessage(wxString::FromUTF8(message));
-        if (flags & llm::Manager::kCompleted) {
+        if (flags & (llm::Manager::kCompleted | llm::Manager::kAborted)) {
             m_commitDialog->SetCommitMessageGenerationCompleted();
         }
     };

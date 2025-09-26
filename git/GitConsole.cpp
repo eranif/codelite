@@ -232,6 +232,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
 
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &GitConsole::OnSysColoursChanged, this);
     EventNotifier::Get()->Bind(wxEVT_SIDEBAR_SELECTION_CHANGED, &GitConsole::OnOutputViewTabChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_LLM_RESTARTED, &GitConsole::OnLLMClientRestarted, this);
 
     m_log_view = new wxTerminalOutputCtrl(m_panel_log);
     m_panel_log->GetSizer()->Add(m_log_view, wxSizerFlags(1).Expand());
@@ -250,6 +251,7 @@ GitConsole::~GitConsole()
     m_toolbar->Unbind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &GitConsole::OnGitRebaseDropdown, this, XRCID("git_rebase"));
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &GitConsole::OnSysColoursChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_OUTPUT_VIEW_TAB_CHANGED, &GitConsole::OnOutputViewTabChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_LLM_RESTARTED, &GitConsole::OnLLMClientRestarted, this);
 }
 
 void GitConsole::OnClearGitLog(wxCommandEvent& event)
@@ -837,13 +839,15 @@ void GitConsole::OnGenerateReleaseNotes(wxCommandEvent& event)
     wxString first_commit = dlg.GetTextCtrlFirstCommit()->GetValue();
     wxString second_commit = dlg.GetTextCtrlSecondCommit()->GetValue();
     wxString model = dlg.GetChoiceModels()->GetStringSelection();
+    int max_tokens = dlg.GetSpinCtrlLimitTokens()->GetValue();
+    bool oneline_commit_format = dlg.GetCheckBoxOneLine()->GetValue();
 
     constexpr size_t kChunkSize = 8 * 1024;
     wxArrayString history;
 
     {
         IndicatorPanelLocker lk{m_statusBar, _("Fetching git log..."), _("Ready")};
-        auto res = m_git->FetchLogBetweenCommits(first_commit, second_commit, true, kChunkSize);
+        auto res = m_git->FetchLogBetweenCommits(first_commit, second_commit, oneline_commit_format, kChunkSize);
         if (!res.ok()) {
             wxMessageBox(wxString() << _("Failed to fetch git log.\n") << res.error_message(),
                          "CodeLite",
@@ -880,15 +884,21 @@ The list of git commits are:
             wxString status_message{_("Generating release notes...")};
             status_message << " " << m_releaseNotesGenState.tokens_count << _(" tokens");
             m_statusBar->SetMessage(status_message);
-            if (flags & llm::Manager::kCompleted) {
-                this->CallAfter(&GitConsole::OnGenerateReleaseNotesDone, model);
+            if (flags & (llm::Manager::kCompleted | llm::Manager::kAborted)) {
+                this->CallAfter(&GitConsole::OnGenerateReleaseNotesDone, model, (flags & llm::Manager::kAborted));
+            }
+
+            if (max_tokens == m_releaseNotesGenState.tokens_count) {
+                llm::Manager::GetInstance().CallAfter(&llm::Manager::RestartClient);
+                clERROR() << "Reached maximum token generation upper limit (" << max_tokens
+                          << "). Cancelling release note generation." << endl;
             }
         },
         llm::Manager::ChatOptions::kNoTools | llm::Manager::ChatOptions::kClearHistory,
         model);
 }
 
-void GitConsole::OnGenerateReleaseNotesDone(const wxString& model)
+void GitConsole::OnGenerateReleaseNotesDone(const wxString& model, bool aborted)
 {
     // Tell the LLM to unified the chunks.
     auto open_file_cb = [this](const wxString& text) {
@@ -900,7 +910,10 @@ void GitConsole::OnGenerateReleaseNotesDone(const wxString& model)
     };
 
     clDEBUG() << "Release note generation completed." << endl;
-    if (m_releaseNotesGenState.is_multi_requests) {
+    if (aborted) {
+        clWARNING() << "Release notes generation was terminted" << endl;
+    }
+    if (m_releaseNotesGenState.is_multi_requests && !aborted) {
         wxString prompt;
         prompt << "Rephrase the following release notes text. Remove duplicate entries and merge the sections.\nThe "
                   "release notes:\n"
@@ -927,4 +940,13 @@ void GitConsole::OnGenerateReleaseNotesDone(const wxString& model)
     } else {
         open_file_cb(m_releaseNotesGenState.response);
     }
+    m_releaseNotesGenState = {};
+}
+
+void GitConsole::OnLLMClientRestarted(clLLMEvent& event)
+{
+    event.Skip();
+    // Do cleanup.
+    m_statusBar->Stop(_("Ready"));
+    m_releaseNotesGenState = {};
 }

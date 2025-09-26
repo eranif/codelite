@@ -83,7 +83,7 @@ protected:
     virtual void OnClearGitLog(wxCommandEvent& event);
     virtual void OnGenerateReleaseNotesUI(wxUpdateUIEvent& event);
     virtual void OnGenerateReleaseNotes(wxCommandEvent& event);
-    void OnGenerateReleaseNotesDone(const wxString& model);
+    void OnGenerateReleaseNotesDone(const wxString& model, bool aborted);
     virtual void OnStopGitProcess(wxCommandEvent& event);
     virtual void OnOpenUnversionedFiles(wxCommandEvent& event);
     virtual void OnAddUnversionedFiles(wxCommandEvent& event);
@@ -103,6 +103,7 @@ protected:
     void OnDropDownMenuEvent(wxCommandEvent& e);
     void Clear();
     void OnOutputViewTabChanged(clCommandEvent& event);
+    void OnLLMClientRestarted(clLLMEvent& event);
 
 private:
     wxArrayString GetSelectedUnversionedFiles() const;

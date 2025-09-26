@@ -87,6 +87,7 @@ ChatAI::ChatAI(IManager* manager)
     m_mgr->BookAddPage(PaneId::SIDE_BAR, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
     EventNotifier::Get()->Bind(wxEVT_LLM_IS_AVAILABLE, &ChatAI::OnIsLlmAvailable, this);
     EventNotifier::Get()->Bind(wxEVT_LLM_REQUEST, &ChatAI::OnLlmRequest, this);
+    EventNotifier::Get()->Bind(wxEVT_LLM_RESTART, &ChatAI::OnRestart, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &ChatAI::OnInitDone, this);
 }
 
@@ -98,6 +99,7 @@ void ChatAI::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_LLM_IS_AVAILABLE, &ChatAI::OnIsLlmAvailable, this);
     EventNotifier::Get()->Unbind(wxEVT_LLM_REQUEST, &ChatAI::OnLlmRequest, this);
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &ChatAI::OnInitDone, this);
+    EventNotifier::Get()->Unbind(wxEVT_LLM_RESTART, &ChatAI::OnRestart, this);
 
     // before this plugin is un-plugged we must remove the tab we added
     if (!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_chatWindow)) {
@@ -144,6 +146,15 @@ void ChatAI::OnLlmRequest(clLLMEvent& event)
                 std::move(prompt),
                 model.empty() ? m_chatWindow->GetActiveModel() : model,
                 options);
+}
+
+void ChatAI::OnRestart(clLLMEvent& event)
+{
+    event.Skip();
+    m_cli->Clear();
+
+    clLLMEvent restarted_event{wxEVT_LLM_RESTARTED};
+    EventNotifier::Get()->AddPendingEvent(restarted_event);
 }
 
 void ChatAI::OnInitDone(wxCommandEvent& event)

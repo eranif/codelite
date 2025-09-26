@@ -60,6 +60,7 @@ private:
     void OnIsLlmAvailable(clLLMEvent& event);
     void OnLlmRequest(clLLMEvent& event);
     void OnInitDone(wxCommandEvent& event);
+    void OnRestart(clLLMEvent& event);
 
     ChatAIWindow* m_chatWindow{nullptr};
     std::shared_ptr<LLMClientBase> m_cli;

@@ -118,14 +118,14 @@ void OllamaClient::Startup()
 void OllamaClient::Shutdown()
 {
     if (m_thread) {
-        // Post a shutdown request and wait for its completion
-        Task shutdown{.kind = TaskKind::kShutdown};
-        m_queue.Post(shutdown);
+        // Clear any messages from the queue
+        m_queue.Clear();
+        m_shutdown_flag.store(true);
         m_thread->join();
         m_thread.reset();
-        // Clear any remaining messages from the queue
-        m_queue.Clear();
         m_client.Reset();
+        m_queue.Clear(); // just in case
+        m_shutdown_flag.store(false);
     }
 }
 
@@ -136,7 +136,7 @@ void OllamaClient::WorkerThreadMain()
     ollama::PopulatePluginFunctions(function_table);
     m_client.AddSystemMessage("Your name is CodeLite");
 
-    while (true) {
+    while (!m_shutdown_flag.load()) {
         Task t;
         m_processingRequest.store(false, std::memory_order_relaxed);
         if (m_queue.ReceiveTimeout(10, t) != wxMSGQUEUE_NO_ERROR) {
@@ -168,7 +168,29 @@ void OllamaClient::WorkerThreadMain()
             CHATAI_SYSTEM() << "Using model:" << m << endl;
             m_client.Chat(
                 t.content.ToStdString(wxConvUTF8),
-                [this, owner](std::string msg, ollama::Reason reason, bool thinking) {
+                [this, owner](std::string msg, ollama::Reason reason, bool thinking) -> bool {
+                    if (m_shutdown_flag.load()) {
+                        const std::string cancel_message = "\n\n==\n\nCancelled by the user\n\n==\n\n";
+                        if (owner) {
+                            clLLMEvent done_event{wxEVT_LLM_RESPONSE_ABORTED};
+                            done_event.SetResponseRaw(cancel_message);
+                            owner->AddPendingEvent(done_event);
+
+                        } else {
+                            LLMEvent event{wxEVT_OLLAMA_CHAT_OUTPUT};
+                            event.SetStringRaw(std::move(cancel_message));
+                            event.SetEventObject(this);
+                            event.SetReason(FromOllamaReason(reason));
+                            event.SetThinking(false);
+                            EventNotifier::Get()->AddPendingEvent(event);
+
+                            LLMEvent chat_end{wxEVT_OLLAMA_CHAT_DONE};
+                            chat_end.SetEventObject(this);
+                            chat_end.SetReason(FromOllamaReason(reason));
+                            EventNotifier::Get()->AddPendingEvent(chat_end);
+                        }
+                        return false;
+                    }
                     // Translate the callback into wxWidgets event
                     if (owner) {
                         clLLMEvent response_event{wxEVT_LLM_RESPONSE};
@@ -217,6 +239,7 @@ void OllamaClient::WorkerThreadMain()
                     default:
                         break;
                     }
+                    return true;
                 },
                 m,
                 chat_options);
@@ -273,6 +296,7 @@ void OllamaClient::Send(wxEvtHandler* owner, wxString prompt, wxString model, Ch
 void OllamaClient::Interrupt()
 {
     // this is the only method which we allow the other thread to access the m_client
+    m_queue.Clear(); // Ensure that we won't process any more requests.
     m_client.Interrupt();
 }
 

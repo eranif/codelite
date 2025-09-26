@@ -7,6 +7,7 @@ GitReleaseNotesGenerationDlg::GitReleaseNotesGenerationDlg(wxWindow* parent)
 {
     m_choiceModels->Append(llm::Manager::GetInstance().GetModels());
     m_choiceModels->SetStringSelection(llm::Manager::GetInstance().GetActiveModel());
+    GetSizer()->Fit(this);
     m_textCtrlFirstCommit->CallAfter(&wxTextCtrl::SetFocus);
 }
 

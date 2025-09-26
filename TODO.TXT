@@ -18,5 +18,11 @@ others:
 ChatI:
 ----
 
-GitConsole: add an option to choose the model to use for the release notes generation + commit message generation.
 GitConsole: add a button to stop the running generation.
+Refreshing the model list -> update llm::Manager with the new list
+
+Notebook:
+----
+
+Add an indicator that a file is modified.
+

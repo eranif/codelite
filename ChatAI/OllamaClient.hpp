@@ -20,6 +20,7 @@ public:
 
     /// Clear the history.
     inline void ClearHistory() { m_messages.clear(); }
+    inline void ClearQueue() { m_queue.clear(); }
 };
 
 class OllamaClient : public LLMClientBase
@@ -53,4 +54,5 @@ private:
     std::unique_ptr<std::thread> m_thread;
     mutable wxMessageQueue<Task> m_queue;
     std::atomic_bool m_processingRequest{false};
+    std::atomic_bool m_shutdown_flag{false};
 };

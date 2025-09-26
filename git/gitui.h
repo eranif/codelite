@@ -591,6 +591,9 @@ protected:
     wxTextCtrl* m_textCtrlSecondCommit;
     wxStaticText* m_staticText841;
     wxChoice* m_choiceModels;
+    wxStaticText* m_staticText843;
+    wxSpinCtrl* m_spinCtrlLimitTokens;
+    wxCheckBox* m_checkBoxOneLine;
     wxStdDialogButtonSizer* m_stdBtnSizer832;
     wxButton* m_buttonOk;
     wxButton* m_buttonCancel;
@@ -606,6 +609,9 @@ public:
     wxTextCtrl* GetTextCtrlSecondCommit() { return m_textCtrlSecondCommit; }
     wxStaticText* GetStaticText841() { return m_staticText841; }
     wxChoice* GetChoiceModels() { return m_choiceModels; }
+    wxStaticText* GetStaticText843() { return m_staticText843; }
+    wxSpinCtrl* GetSpinCtrlLimitTokens() { return m_spinCtrlLimitTokens; }
+    wxCheckBox* GetCheckBoxOneLine() { return m_checkBoxOneLine; }
     GitReleaseNotesGenerationBaseDlg(wxWindow* parent,
                                      wxWindowID id = wxID_ANY,
                                      const wxString& title = _("Generate Release Notes"),

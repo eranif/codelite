@@ -26,6 +26,7 @@ Manager::Manager()
     Bind(wxEVT_LLM_RESPONSE, &Manager::OnResponse, this);
     Bind(wxEVT_LLM_RESPONSE_COMPLETED, &Manager::OnResponse, this);
     Bind(wxEVT_LLM_RESPONSE_ERROR, &Manager::OnResponseError, this);
+    Bind(wxEVT_LLM_RESPONSE_ABORTED, &Manager::OnResponseAborted, this);
 }
 
 Manager::~Manager()
@@ -35,6 +36,7 @@ Manager::~Manager()
     Unbind(wxEVT_LLM_RESPONSE, &Manager::OnResponse, this);
     Unbind(wxEVT_LLM_RESPONSE_COMPLETED, &Manager::OnResponse, this);
     Unbind(wxEVT_LLM_RESPONSE_ERROR, &Manager::OnResponseError, this);
+    Unbind(wxEVT_LLM_RESPONSE_ABORTED, &Manager::OnResponseAborted, this);
 }
 
 namespace
@@ -112,6 +114,7 @@ void Manager::OnResponse(clLLMEvent& event)
     bool is_thinking = event.IsThinking();
     if (m_requetstQueue.empty()) {
         clWARNING() << "Received LLM response, but no callback is available";
+        RestartClient();
         return;
     }
 
@@ -133,10 +136,29 @@ void Manager::OnResponse(clLLMEvent& event)
     }
 }
 
+void Manager::OnResponseAborted(clLLMEvent& event)
+{
+    event.Skip();
+
+    clSYSTEM() << "LLM request cancelled." << endl;
+    if (m_requetstQueue.empty()) {
+        clWARNING() << "Received LLM response ABORT, but no callback is available";
+        return;
+    }
+
+    size_t flags{ResponseFlags::kAborted | ResponseFlags::kCompleted};
+    auto& entry = m_requetstQueue.front();
+    if (entry.second != nullptr) {
+        (entry.second)(event.GetResponseRaw(), flags);
+    }
+    m_requetstQueue.clear();
+}
+
 void Manager::OnResponseError(clLLMEvent& event)
 {
     if (m_requetstQueue.empty()) {
         clWARNING() << "Received LLM response error, but no callback is available";
+        RestartClient();
         return;
     }
 
@@ -187,5 +209,12 @@ void Manager::ConsumeFunctions(std::function<void(Function)> cb)
         cb(std::move(f));
     }
     m_functions.clear();
+}
+
+void llm::Manager::RestartClient()
+{
+    m_requetstQueue.clear();
+    clLLMEvent restart_event{wxEVT_LLM_RESTART};
+    EventNotifier::Get()->ProcessEvent(restart_event);
 }
 } // namespace llm

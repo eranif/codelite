@@ -133,6 +133,7 @@ public:
         kThinking = (1 << 0),
         kError = (1 << 1),
         kCompleted = (1 << 2),
+        kAborted = (1 << 3),
     };
 
     enum ChatOptions {
@@ -183,17 +184,6 @@ public:
     /// `m_functions.empty() == true`.
     void ConsumeFunctions(std::function<void(Function func)> cb);
 
-    /// Interrupt the LLM.
-    void Interrupt() { m_interrupt.store(true); }
-
-    /// Return true if a user requested to interrupt the LLM.
-    bool CheckInterrupted()
-    {
-        bool b = m_interrupt;
-        m_interrupt.store(false);
-        return b;
-    }
-
     /// Return list of the available models.
     inline wxArrayString GetModels() const
     {
@@ -215,20 +205,21 @@ public:
         return m_activeModel;
     }
 
+    void RestartClient();
+
 private:
     Manager();
     ~Manager();
 
     void OnResponse(clLLMEvent& event);
     void OnResponseError(clLLMEvent& event);
+    void OnResponseAborted(clLLMEvent& event);
     void OnTimer(wxTimerEvent& e);
 
-    std::unordered_map<uint64_t, std::string> m_responses;
     bool m_isAvailable{false};
     wxTimer m_timer;
     std::vector<std::pair<uint64_t, ResponseCB>> m_requetstQueue;
     std::unordered_map<wxString, Function> m_functions;
-    std::atomic_bool m_interrupt{false};
     wxArrayString m_models;
     wxString m_activeModel;
     mutable std::mutex m_models_mutex;

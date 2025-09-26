@@ -2004,6 +2004,29 @@ GitReleaseNotesGenerationBaseDlg::GitReleaseNotesGenerationBaseDlg(
 
     flexGridSizer836->Add(m_choiceModels, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    m_staticText843 = new wxStaticText(
+        this, wxID_ANY, _("Limit response tokens:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer836->Add(m_staticText843, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_spinCtrlLimitTokens = new wxSpinCtrl(
+        this, wxID_ANY, wxT("10000"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxSP_ARROW_KEYS);
+    m_spinCtrlLimitTokens->SetToolTip(
+        _("Models are not perfect. This upper limit instructs\nCodeLite to terminate the release note generation "
+          "process\nwhen the number of tokens generated hits this limit."));
+    m_spinCtrlLimitTokens->SetRange(1000, 50000);
+    m_spinCtrlLimitTokens->SetValue(10000);
+
+    flexGridSizer836->Add(m_spinCtrlLimitTokens, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer836->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxOneLine = new wxCheckBox(
+        this, wxID_ANY, _("Use 'oneline' commit format"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxOneLine->SetValue(false);
+
+    flexGridSizer836->Add(m_checkBoxOneLine, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_stdBtnSizer832 = new wxStdDialogButtonSizer();
 
     boxSizer831->Add(m_stdBtnSizer832, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));

@@ -88,7 +88,8 @@ target_link_libraries(
   ${LIBYAML_CPP}
   -L"${CL_LIBPATH}"
   lexers_extra
-  libcodelite)
+  libcodelite
+  ollamalib)
 
 if(USE_PCH)
   codelite_add_pch(plugin)

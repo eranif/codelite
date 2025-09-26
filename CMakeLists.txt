@@ -98,7 +98,7 @@ set(CODELITE_VERSION "18.2.0")
 set(WXCRAFTER_VERSION ${CODELITE_VERSION})
 
 # Generate compile_commands.json file for code completion
-set(CMAKE_EXPORT_COMPILE_COMMANDS 1)
+set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 set(CL_SRC_ROOT ${CMAKE_CURRENT_LIST_DIR})
 
 include(UtilsHelper)
@@ -1188,3 +1188,5 @@ endif()
 unset(WITH_CHATAI CACHE)
 unset(DEBUG_BUILD CACHE)
 unset(BUILD_TESTING CACHE)
+
+file(CREATE_LINK "${CMAKE_BINARY_DIR}/compile_commands.json" "${CMAKE_SOURCE_DIR}/compile_commands.json" SYMBOLIC)

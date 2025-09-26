@@ -26,11 +26,11 @@
 #ifndef NOTEBOOKNAVIGATIONDLG_H
 #define NOTEBOOKNAVIGATIONDLG_H
 
-#include "cl_defs.h"
 #include "Notebook.h"
 #include "clAuiBook.hpp"
 #include "clGenericNotebook.hpp"
 #include "clTab.h"
+#include "cl_defs.h"
 #include "globals.h"
 #include "wxcrafter_plugin.h"
 
@@ -50,7 +50,9 @@ struct TabData {
 
 class WXDLLIMPEXP_SDK NotebookNavigationDlg : public NotebookNavigationDlgBase
 {
+#if !MAINBOOK_AUIBOOK
     Notebook* m_notebook = nullptr;
+#endif
     clAuiBook* m_aui_notebook = nullptr;
     int m_selection = wxNOT_FOUND;
 

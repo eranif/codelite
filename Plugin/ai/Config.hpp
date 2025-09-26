@@ -1,20 +1,37 @@
 #pragma once
 
 #include "cl_config.h"
+#include "codelite_exports.h"
+#include "ollama/attributes.hpp"
 
+#include <mutex>
 #include <wx/arrstr.h>
 
 namespace llm
 {
-class Config : clConfigItem
+class WXDLLIMPEXP_SDK Config : clConfigItem
 {
 public:
     Config();
     virtual ~Config();
-    void SetSelectedModelName(const wxString& selectedModel) { m_selectedModel = selectedModel; }
-    const wxString& GetSelectedModel() const { return m_selectedModel; }
 
-    const wxArrayString& GetHistory() const { return m_history; }
+    void SetSelectedModelName(const wxString& selectedModel)
+    {
+        std::scoped_lock lk{m_mutex};
+        m_selectedModel = selectedModel;
+    }
+    wxString GetSelectedModel() const
+    {
+        std::scoped_lock lk{m_mutex};
+        return m_selectedModel;
+    }
+
+    wxArrayString GetHistory() const
+    {
+        std::scoped_lock lk{m_mutex};
+        return m_history;
+    }
+
     void AddHistory(const wxString& prompt);
 
     void Load();
@@ -24,7 +41,8 @@ public:
     JSONItem ToJSON() const override;
 
 private:
-    wxString m_selectedModel;
-    mutable wxArrayString m_history;
+    mutable std::mutex m_mutex;
+    wxString m_selectedModel GUARDED_BY(m_mutex);
+    mutable wxArrayString m_history GUARDED_BY(m_mutex);
 };
 } // namespace llm

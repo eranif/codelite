@@ -38,7 +38,6 @@
 
 class WXDLLIMPEXP_SDK clAuiDockArt : public wxEvtHandler, public wxAuiDefaultDockArt
 {
-    IManager* m_manager;
     wxColour m_captionColour;
     wxColour m_captionTextColour;
     wxColour m_penColour;
@@ -53,8 +52,8 @@ public:
 
     virtual void DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane);
     virtual void DrawCaption(wxDC& dc, wxWindow* window, const wxString& text, const wxRect& rect, wxAuiPaneInfo& pane);
-    virtual void DrawPaneButton(wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect,
-                                wxAuiPaneInfo& pane);
+    virtual void
+    DrawPaneButton(wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect, wxAuiPaneInfo& pane);
     virtual void DrawBackground(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect);
     virtual void DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect);
 };

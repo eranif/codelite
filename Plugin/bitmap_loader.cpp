@@ -59,6 +59,7 @@ BitmapLoader::~BitmapLoader() {}
 BitmapLoader::BitmapLoader(wxWindow* win, bool darkTheme)
     : m_win(win)
 {
+    wxUnusedVar(m_win);
     Initialize(darkTheme);
 }
 
@@ -98,14 +99,14 @@ void BitmapLoader::AddBitmapInternal(const wxBitmapBundle& bundle, const wxStrin
 {
     wxBitmap bmp = bundle.GetBitmapFor(wxTheApp->GetTopWindow());
     if (bmp.IsOk()) {
-        m_toolbarsBitmaps.insert({ base_name, bmp });
+        m_toolbarsBitmaps.insert({base_name, bmp});
     }
 }
 
 void BitmapLoader::LoadSVGFiles(bool darkTheme)
 {
     // Load the bitmaps based on the current theme background colour
-    wxFileName svg_path{ clStandardPaths::Get().GetDataDir(), wxEmptyString };
+    wxFileName svg_path{clStandardPaths::Get().GetDataDir(), wxEmptyString};
     svg_path.AppendDir("svgs");
     svg_path.AppendDir(darkTheme ? "dark-theme" : "light-theme");
 
@@ -123,7 +124,7 @@ void BitmapLoader::LoadSVGFiles(bool darkTheme)
             for (const wxString& filepath : files) {
                 auto bmpbundle = wxBitmapBundle::FromSVGFile(filepath, wxSize(16, 16));
                 if (bmpbundle.IsOk()) {
-                    bitmap_bundle_cache->insert({ wxFileName(filepath).GetName(), bmpbundle });
+                    bitmap_bundle_cache->insert({wxFileName(filepath).GetName(), bmpbundle});
                 }
             }
             return true;
@@ -301,7 +302,7 @@ void clMimeBitmaps::AddBitmap(const wxBitmap& bitmap, int type)
     m_disabled_bitmaps.push_back(DrawingUtils::CreateDisabledBitmap(bitmap));
 
     int index = (m_bitmaps.size() - 1);
-    m_fileIndexMap.insert({ type, index });
+    m_fileIndexMap.insert({type, index});
 }
 
 void clMimeBitmaps::Clear()
@@ -417,8 +418,8 @@ void clBitmapList::OnBitmapsUpdated(clCommandEvent& event)
         } else {
             new_bmp_info = old_bmp_info;
         }
-        M.insert({ index, new_bmp_info });
-        m_nameToIndex.insert({ new_bmp_info.name, index });
+        M.insert({index, new_bmp_info});
+        m_nameToIndex.insert({new_bmp_info.name, index});
     }
     m_bitmaps.swap(M);
 }
@@ -532,8 +533,8 @@ size_t clBitmapList::DoAdd(const wxBitmap& bmp, const wxBitmap& bmpDisabled, con
         bi.name = bmp_name;
     }
     size_t new_index = m_index;
-    m_bitmaps.insert({ new_index, bi });
-    m_nameToIndex.insert({ bi.name, new_index });
+    m_bitmaps.insert({new_index, bi});
+    m_nameToIndex.insert({bi.name, new_index});
     m_index++;
     return new_index;
 }
@@ -557,7 +558,7 @@ bool BitmapLoader::GetIconBundle(const wxString& name, wxIconBundle* bundle)
     }
 
     const auto& bmp_bundle = bundles->find(name)->second;
-    std::array<int, 5> sizes = { 24, 32, 64, 128, 256 };
+    std::array<int, 5> sizes = {24, 32, 64, 128, 256};
     for (int size : sizes) {
         size = wxTheApp->GetTopWindow()->FromDIP(size);
         wxIcon icn = bmp_bundle.GetIcon(wxSize(size, size));
@@ -585,7 +586,7 @@ static wxBitmap LoadSidebarBitmapInternal(const wxString& name, wxWindow* win, b
         return cache.find(name)->second;
     }
 
-    wxFileName svg_path{ clStandardPaths::Get().GetDataDir(), wxEmptyString };
+    wxFileName svg_path{clStandardPaths::Get().GetDataDir(), wxEmptyString};
     svg_path.AppendDir("svgs");
     svg_path.AppendDir(dark_theme ? "dark-theme" : "light-theme");
     svg_path.SetFullName(name + ".svg");
@@ -595,9 +596,9 @@ static wxBitmap LoadSidebarBitmapInternal(const wxString& name, wxWindow* win, b
     }
 
 #ifdef __WXGTK__
-    wxSize button_size{ 24, 24 };
+    wxSize button_size{24, 24};
 #else
-    wxSize button_size{ 32, 32 };
+    wxSize button_size{32, 32};
 #endif
 
     auto bmpbundle = wxBitmapBundle::FromSVGFile(svg_path.GetFullPath(), button_size);
@@ -606,7 +607,7 @@ static wxBitmap LoadSidebarBitmapInternal(const wxString& name, wxWindow* win, b
     }
 
     auto bmp = bmpbundle.GetBitmapFor(win);
-    cache.insert({ name, bmp });
+    cache.insert({name, bmp});
     return bmp;
 }
 

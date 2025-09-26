@@ -30,34 +30,34 @@ namespace git::blame
 {
 bool LineInfo::FromPorcelainFormat(wxArrayString& lines)
 {
-    if(lines.empty()) {
+    if (lines.empty()) {
         return false;
     }
 
     // locate the last chunk line (it starts with "\t")
     size_t chunk_last_line = 0;
     bool found = false;
-    for(; chunk_last_line < lines.size(); ++chunk_last_line) {
-        if(!lines[chunk_last_line].empty() && lines[chunk_last_line][0] == '\t') {
+    for (; chunk_last_line < lines.size(); ++chunk_last_line) {
+        if (!lines[chunk_last_line].empty() && lines[chunk_last_line][0] == '\t') {
             ++chunk_last_line;
             found = true;
             break;
         }
     }
 
-    if(!found) {
+    if (!found) {
         clWARNING() << "Could not parse blame info. Could not locate line terminator." << lines << endl;
         return false;
     }
 
     LOG_IF_TRACE
     {
-        for(size_t i = 0; i < chunk_last_line; ++i) {
+        for (size_t i = 0; i < chunk_last_line; ++i) {
             clTRACE() << "Line:" << lines[i] << endl;
         }
     }
 
-    if(lines[0].length() < 40) {
+    if (lines[0].length() < 40) {
         clWARNING() << "Could not obtain the commit hash. Line is too short" << endl;
         clWARNING() << "Line:\n" << lines[0] << endl;
         lines.RemoveAt(0, chunk_last_line); // consume this complete record
@@ -68,26 +68,26 @@ bool LineInfo::FromPorcelainFormat(wxArrayString& lines)
     wxString line_number_as_string = lines[0].AfterFirst(' ').BeforeFirst(' ');
     line_number_as_string.ToCLong(&this->line_number);
 
-    std::unordered_map<wxString, wxString*> M = { { "author", &this->author },
-                                                  { "author-mail", &this->author_email },
-                                                  { "author-time", &this->author_time },
-                                                  { "summary", &this->summary } };
+    std::unordered_map<wxString, wxString*> M = {{"author", &this->author},
+                                                 {"author-mail", &this->author_email},
+                                                 {"author-time", &this->author_time},
+                                                 {"summary", &this->summary}};
 
-    for(size_t i = 1; i < chunk_last_line; ++i) {
+    for (size_t i = 1; i < chunk_last_line; ++i) {
         wxString& line = lines[i];
-        if(line.empty()) {
+        if (line.empty()) {
             continue;
         }
 
-        if(line[0] == '\t') {
+        if (line[0] == '\t') {
             this->content = line.AfterFirst('\t');
         } else {
             // space delimited
             wxString key = line.BeforeFirst(' ');
             wxString value = line.AfterFirst(' ');
-            if(M.count(key)) {
+            if (M.count(key)) {
                 M[key]->swap(value);
-            } else if(key == "previous") {
+            } else if (key == "previous") {
                 this->prev_commit_hash = value.BeforeFirst(' ');
             }
         }
@@ -98,8 +98,8 @@ bool LineInfo::FromPorcelainFormat(wxArrayString& lines)
     unsigned long timestamp = 0;
     author_time.ToCULong(&timestamp);
     author_time = wxDateTime((time_t)timestamp).FormatISODate();
-    display_line = wxString::Format("% 10s % 10s %s ", commit_hash.Mid(0, 10),
-                                    author.length() > 10 ? author.Mid(0, 10) : author, author_time);
+    display_line = wxString::Format(
+        "% 10s % 10s %s ", commit_hash.Mid(0, 10), author.length() > 10 ? author.Mid(0, 10) : author, author_time);
     return true;
 }
 }; // namespace git::blame
@@ -112,9 +112,9 @@ git::blame::LineInfo::vec_t ParseBlameOutputInternal(wxArrayString& blameArr, si
     git::blame::LineInfo::vec_t result;
     result.reserve(blameArr.size() / 10);
 
-    while(true) {
+    while (true) {
         git::blame::LineInfo line_info;
-        if(line_info.FromPorcelainFormat(blameArr)) {
+        if (line_info.FromPorcelainFormat(blameArr)) {
             *max_chars = wxMax(line_info.display_line.length(), *max_chars);
             result.push_back(line_info);
         } else {
@@ -124,9 +124,8 @@ git::blame::LineInfo::vec_t ParseBlameOutputInternal(wxArrayString& blameArr, si
     return result;
 }
 
-GitBlamePage::GitBlamePage(wxWindow* parent, GitPlugin* plugin, const wxString& fullpath)
+GitBlamePage::GitBlamePage(wxWindow* parent, const wxString& fullpath)
     : clThemedSTC(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)
-    , m_plugin(plugin)
     , m_filename(fullpath)
 {
     clConfig conf("git.conf");
@@ -168,7 +167,7 @@ void GitBlamePage::ParseBlameOutput(const wxString& blame)
     SetReadOnly(false);
     ClearAll();
 
-    for(size_t i = 0; i < result.size(); ++i) {
+    for (size_t i = 0; i < result.size(); ++i) {
         // We must append each code-line before doing MarginSetText(), which seems to fail if the line doesn't yet exist
         const auto& d = result[i];
         AppendText(d.content + '\n');
@@ -181,7 +180,7 @@ void GitBlamePage::ParseBlameOutput(const wxString& blame)
 const git::blame::LineInfo::vec_t& GitBlamePage::current_info() const
 {
     static git::blame::LineInfo::vec_t EmptyResult;
-    if(m_stack.empty()) {
+    if (m_stack.empty()) {
         return EmptyResult;
     }
     return m_stack.front();
@@ -191,7 +190,7 @@ void GitBlamePage::InitialiseView()
 {
     // Set blame editor style and fonts
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(m_filename);
-    if(!lexer) {
+    if (!lexer) {
         lexer = ColoursAndFontsManager::Get().GetLexer("default");
     }
     lexer->Apply(this, true);
@@ -249,7 +248,7 @@ void GitBlamePage::OnMarginRightClick(wxStyledTextEvent& event)
         wxEVT_MENU,
         [this, line_number](wxCommandEvent& event) {
             wxUnusedVar(event);
-            if(line_number >= current_info().size()) {
+            if (line_number >= current_info().size()) {
                 return;
             }
             ::CopyToClipboard(current_info()[line_number].commit_hash);
@@ -260,7 +259,7 @@ void GitBlamePage::OnMarginRightClick(wxStyledTextEvent& event)
         wxEVT_MENU,
         [this, line_number](wxCommandEvent& event) {
             wxUnusedVar(event);
-            if(line_number >= current_info().size()) {
+            if (line_number >= current_info().size()) {
                 return;
             }
             ::CopyToClipboard(current_info()[line_number].author_time);
@@ -271,7 +270,7 @@ void GitBlamePage::OnMarginRightClick(wxStyledTextEvent& event)
         wxEVT_MENU,
         [this, line_number](wxCommandEvent& event) {
             wxUnusedVar(event);
-            if(line_number >= current_info().size()) {
+            if (line_number >= current_info().size()) {
                 return;
             }
             ::CopyToClipboard(current_info()[line_number].author_email);
@@ -282,7 +281,7 @@ void GitBlamePage::OnMarginRightClick(wxStyledTextEvent& event)
         wxEVT_MENU,
         [this, line_number](wxCommandEvent& event) {
             wxUnusedVar(event);
-            if(line_number >= current_info().size()) {
+            if (line_number >= current_info().size()) {
                 return;
             }
             ::CopyToClipboard(current_info()[line_number].author);
@@ -296,7 +295,7 @@ void GitBlamePage::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
     int first_visible_line = GetFirstVisibleLine();
-    if(first_visible_line != m_first_visible_line) {
+    if (first_visible_line != m_first_visible_line) {
         m_first_visible_line = first_visible_line;
         clSTCHelper::UpdateScrollbarWidth(this);
     }

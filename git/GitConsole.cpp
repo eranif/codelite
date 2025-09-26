@@ -32,6 +32,8 @@
 #include "StdToWX.h"
 #include "StringUtils.h"
 #include "ai/LLMManager.hpp"
+#include "ai/ProgressToken.hpp"
+#include "ai/ResponseCollector.hpp"
 #include "aui/clAuiToolBarArt.h"
 #include "bitmap_loader.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
@@ -93,8 +95,8 @@ public:
 wxVariant MakeFileBitmapLabel(const wxString& filename)
 {
     BitmapLoader* bitmaps = clGetManager()->GetStdIcons();
-    clDataViewTextBitmap tb(filename,
-                            bitmaps->GetMimeImageId(FileExtManager::GetType(filename, FileExtManager::TypeText)));
+    clDataViewTextBitmap tb(
+        filename, bitmaps->GetMimeImageId(FileExtManager::GetType(filename, FileExtManager::TypeText)));
     wxVariant v;
     v << tb;
     return v;
@@ -232,7 +234,6 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
 
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &GitConsole::OnSysColoursChanged, this);
     EventNotifier::Get()->Bind(wxEVT_SIDEBAR_SELECTION_CHANGED, &GitConsole::OnOutputViewTabChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_LLM_RESTARTED, &GitConsole::OnLLMClientRestarted, this);
 
     m_log_view = new wxTerminalOutputCtrl(m_panel_log);
     m_panel_log->GetSizer()->Add(m_log_view, wxSizerFlags(1).Expand());
@@ -251,7 +252,6 @@ GitConsole::~GitConsole()
     m_toolbar->Unbind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &GitConsole::OnGitRebaseDropdown, this, XRCID("git_rebase"));
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &GitConsole::OnSysColoursChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_OUTPUT_VIEW_TAB_CHANGED, &GitConsole::OnOutputViewTabChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_LLM_RESTARTED, &GitConsole::OnLLMClientRestarted, this);
 }
 
 void GitConsole::OnClearGitLog(wxCommandEvent& event)
@@ -861,7 +861,6 @@ void GitConsole::OnGenerateReleaseNotes(wxCommandEvent& event)
         return;
     }
 
-    m_releaseNotesGenState = {.is_multi_requests = (history.size() > 1)};
     wxString prompt_template = R"(Generate release notes from the following list of git commits history.
 Make sure to include a "bug fixes"' section. Include a "major improvements" section. Include a section that states
 the contributors and the number of commits each contributor committed. Sort the contributors by number of commits.
@@ -874,79 +873,63 @@ The list of git commits are:
 ```
 )";
 
+    // Construct a token for cancellation purposes.
+    std::shared_ptr<llm::CancellationToken> cancellation_token = std::make_shared<llm::CancellationToken>(max_tokens);
+    std::shared_ptr<llm::ResponseCollector> collector = std::make_shared<llm::ResponseCollector>(this);
+
     m_statusBar->Start(_("Generating release notes..."));
-    llm::Manager::GetInstance().Chat(
-        prompt_template, // the prompt template.
-        history,         // the prompt context.
-        [=, this](const std::string& message, size_t flags) mutable {
-            m_releaseNotesGenState.tokens_count += 1;
-            m_releaseNotesGenState.response.append(message);
-            wxString status_message{_("Generating release notes...")};
-            status_message << " " << m_releaseNotesGenState.tokens_count << _(" tokens");
-            m_statusBar->SetMessage(status_message);
-            if (flags & (llm::Manager::kCompleted | llm::Manager::kAborted)) {
-                this->CallAfter(&GitConsole::OnGenerateReleaseNotesDone, model, (flags & llm::Manager::kAborted));
+    bool multiple_prompts = history.size() > 1;
+
+    collector->SetFinaliseCallback(
+        [this, cancellation_token, model, multiple_prompts](llm::ResponseCollector* collector) {
+            if (cancellation_token->IsCancelled()) {
+                wxMessageBox(_("Release notes generation was terminated by the user"));
+                return;
             }
 
-            if (max_tokens == m_releaseNotesGenState.tokens_count) {
-                llm::Manager::GetInstance().CallAfter(&llm::Manager::RestartClient);
-                clERROR() << "Reached maximum token generation upper limit (" << max_tokens
-                          << "). Cancelling release note generation." << endl;
+            if (cancellation_token->IsMaxTokenReached()) {
+                wxMessageBox(_("Release notes generation was cancelled due to max token generation reached."));
+                return;
             }
-        },
-        llm::Manager::ChatOptions::kNoTools | llm::Manager::ChatOptions::kClearHistory,
-        model);
+            if (multiple_prompts) {
+                CallAfter(&GitConsole::FinaliseReleaseNotes, wxString::FromUTF8(collector->GetResponse()), model);
+
+            } else {
+                // Just open a file with the result
+                wxString content = wxString::FromUTF8(collector->GetResponse());
+                clTempFile tmpfile{"md"}; // Markdown file.
+                tmpfile.Write(content);
+                tmpfile.Persist();
+                clGetManager()->OpenFile(tmpfile.GetFullPath());
+                m_statusBar->Stop("Ready");
+            }
+        });
+
+    llm::Manager::GetInstance().Chat(this,
+                                     prompt_template, // the prompt template.
+                                     history,         // the prompt context.
+                                     cancellation_token,
+                                     llm::ChatOptions::kNoTools,
+                                     model);
 }
 
-void GitConsole::OnGenerateReleaseNotesDone(const wxString& model, bool aborted)
+void GitConsole::FinaliseReleaseNotes(const wxString& prompt, const wxString& model)
 {
-    // Tell the LLM to unified the chunks.
-    auto open_file_cb = [this](const wxString& text) {
+    wxString full_prompt;
+    full_prompt << "Rephrase the following release notes text. Remove duplicate entries and merge the sections.\nHere "
+                   "are the release notes:\n"
+                << prompt;
+
+    m_statusBar->SetMessage(_("Finalising notes..."));
+    std::shared_ptr<llm::ResponseCollector> collector = std::make_shared<llm::ResponseCollector>(this);
+
+    collector->SetFinaliseCallback([this](llm::ResponseCollector* collector) {
+        wxString content = wxString::FromUTF8(collector->GetResponse());
         clTempFile tmpfile{"md"}; // Markdown file.
-        tmpfile.Write(text);
+        tmpfile.Write(content);
         tmpfile.Persist();
         clGetManager()->OpenFile(tmpfile.GetFullPath());
         m_statusBar->Stop("Ready");
-    };
-
-    clDEBUG() << "Release note generation completed." << endl;
-    if (aborted) {
-        clWARNING() << "Release notes generation was terminted" << endl;
-    }
-    if (m_releaseNotesGenState.is_multi_requests && !aborted) {
-        wxString prompt;
-        prompt << "Rephrase the following release notes text. Remove duplicate entries and merge the sections.\nThe "
-                  "release notes:\n"
-               << m_releaseNotesGenState.response;
-        m_releaseNotesGenState.response.clear();
-        m_statusBar->SetMessage(_("Finalising notes..."));
-        std::shared_ptr<std::string> concatenated_release_notes = std::make_shared<std::string>();
-        std::shared_ptr<size_t> tokens_counter = std::make_shared<size_t>(0);
-        llm::Manager::GetInstance().Chat(
-            prompt,
-            [=, open_file_cb = std::move(open_file_cb)](const std::string& message, size_t flags) mutable {
-                (*tokens_counter)++;
-                concatenated_release_notes->append(message);
-
-                wxString status_message{_("Finalising notes...")};
-                status_message << " " << (*tokens_counter) << _(" tokens");
-                if (flags & llm::Manager::kCompleted) {
-                    concatenated_release_notes->append("\n");
-                    open_file_cb(wxString::FromUTF8(*concatenated_release_notes));
-                }
-            },
-            llm::Manager::ChatOptions::kNoTools | llm::Manager::ChatOptions::kClearHistory,
-            model);
-    } else {
-        open_file_cb(m_releaseNotesGenState.response);
-    }
-    m_releaseNotesGenState = {};
-}
-
-void GitConsole::OnLLMClientRestarted(clLLMEvent& event)
-{
-    event.Skip();
-    // Do cleanup.
-    m_statusBar->Stop(_("Ready"));
-    m_releaseNotesGenState = {};
+    });
+    llm::Manager::GetInstance().Chat(this, prompt, nullptr, llm::ChatOptions::kNoTools, model);
 }

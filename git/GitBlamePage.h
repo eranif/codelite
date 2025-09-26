@@ -30,7 +30,6 @@ struct LineInfo {
 
 class GitBlamePage : public clThemedSTC
 {
-    GitPlugin* m_plugin = nullptr;
     std::vector<git::blame::LineInfo::vec_t> m_stack;
     wxString m_filename;
     int m_first_visible_line = wxNOT_FOUND;
@@ -42,7 +41,7 @@ protected:
     void OnIdle(wxIdleEvent& event);
 
 public:
-    GitBlamePage(wxWindow* parent, GitPlugin* plugin, const wxString& fullpath);
+    GitBlamePage(wxWindow* parent, const wxString& fullpath);
     virtual ~GitBlamePage();
 
     void ParseBlameOutput(const wxString& blame);

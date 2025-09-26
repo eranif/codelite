@@ -1072,9 +1072,15 @@ wxString MainBook::GetPageTitle(wxWindow* page) const
 void MainBook::SetPageTitle(wxWindow* page, const wxString& name)
 {
     int selection = m_book->GetPageIndex(page);
-    if (selection != wxNOT_FOUND) {
-        m_book->SetPageText(selection, name);
+    if (selection == wxNOT_FOUND) {
+        return;
     }
+
+    wxString current_text = m_book->GetPageText(selection);
+    if (current_text == name) {
+        return;
+    }
+    m_book->SetPageText(selection, name);
 }
 
 void MainBook::ApplySettingsChanges()

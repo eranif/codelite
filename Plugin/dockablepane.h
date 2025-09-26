@@ -41,7 +41,6 @@ class WXDLLIMPEXP_SDK DockablePane : public wxPanel
     wxWindow* m_child = nullptr;
     wxString m_text;
     int m_paneId = wxNOT_FOUND;
-    int m_bmp = wxNOT_FOUND;
     bool m_notifiedDestroyed = false;
 
 protected:

@@ -195,7 +195,7 @@ private:
     std::unordered_map<int, int> m_fileIndexMap;
     clMimeBitmaps m_mimeBitmaps;
     std::unordered_map<wxString, wxBitmapBundle>* GetBundles(bool darkTheme) const;
-    wxWindow* m_win{ nullptr };
+    wxWindow* m_win{nullptr};
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_BITMAPS_UPDATED, clCommandEvent);

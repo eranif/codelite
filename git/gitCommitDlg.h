@@ -84,7 +84,7 @@ private:
     wxString m_stashedMessage;
     bool m_dismissedWithOk = false;
     wxString m_rawDiff;
-    std::optional<uint64_t> m_generate_id;
+    bool m_generationInProgress{false};
     IndicatorPanel* m_indicatorPanel{nullptr};
 };
 

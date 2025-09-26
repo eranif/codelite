@@ -77,15 +77,15 @@ DiffSideBySidePanel::DiffSideBySidePanel(wxWindow* parent)
     }
 
     // Send wxEVT_STC_GOT_FOCUS so the "Find" dialog is able to work with these windows
-    m_stcLeft->Bind(wxEVT_SET_FOCUS, [this](wxFocusEvent& e) {
+    m_stcLeft->Bind(wxEVT_SET_FOCUS, [](wxFocusEvent& e) {
         e.Skip();
-        clCommandEvent focus_event{ wxEVT_STC_GOT_FOCUS };
+        clCommandEvent focus_event{wxEVT_STC_GOT_FOCUS};
         EventNotifier::Get()->AddPendingEvent(focus_event);
     });
 
-    m_stcRight->Bind(wxEVT_SET_FOCUS, [this](wxFocusEvent& e) {
+    m_stcRight->Bind(wxEVT_SET_FOCUS, [](wxFocusEvent& e) {
         e.Skip();
-        clCommandEvent focus_event{ wxEVT_STC_GOT_FOCUS };
+        clCommandEvent focus_event{wxEVT_STC_GOT_FOCUS};
         EventNotifier::Get()->AddPendingEvent(focus_event);
     });
 
@@ -778,7 +778,7 @@ void DiffSideBySidePanel::DoSave(wxStyledTextCtrl* stc, const wxFileName& fn)
 
     if (!remote_account.empty() && !remote_path.empty()) {
         // Notify about a remote file being modified externally
-        clFileSystemEvent event_modified{ wxEVT_FILE_MODIFIED_EXTERNALLY };
+        clFileSystemEvent event_modified{wxEVT_FILE_MODIFIED_EXTERNALLY};
         event_modified.SetFileName(remote_path);
         event_modified.SetIsRemoteFile(true);
         event_modified.SetSshAccount(remote_account);
@@ -1243,7 +1243,7 @@ void DiffSideBySidePanel::OnPreferences(wxCommandEvent& event)
 void DiffSideBySidePanel::OnFind(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    wxCommandEvent find_event{ wxEVT_MENU, XRCID("id_find") };
+    wxCommandEvent find_event{wxEVT_MENU, XRCID("id_find")};
     find_event.SetEventObject(EventNotifier::Get()->TopFrame());
     EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(find_event);
 }

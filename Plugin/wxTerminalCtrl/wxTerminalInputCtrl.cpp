@@ -26,12 +26,9 @@ namespace
 {
 class MyEventsHandler : public clEditEventsHandler
 {
-    wxTerminalInputCtrl* m_input_ctrl = nullptr;
-
 public:
-    MyEventsHandler(wxTerminalInputCtrl* input_ctrl, wxStyledTextCtrl* ctrl)
+    MyEventsHandler([[maybe_unused]] wxTerminalInputCtrl* input_ctrl, wxStyledTextCtrl* ctrl)
         : clEditEventsHandler(ctrl)
-        , m_input_ctrl(input_ctrl)
     {
     }
 
@@ -93,12 +90,12 @@ wxTerminalInputCtrl::wxTerminalInputCtrl(wxTerminalCtrl* parent)
     EventNotifier::Get()->Bind(wxEVT_CCBOX_SELECTION_MADE, &wxTerminalInputCtrl::OnCCBoxSelected, this);
 
     std::vector<wxAcceleratorEntry> V;
-    V.push_back(wxAcceleratorEntry{ wxACCEL_RAW_CTRL, (int)'R', XRCID("ID_command") });
-    V.push_back(wxAcceleratorEntry{ wxACCEL_RAW_CTRL, (int)'U', XRCID("ID_clear_line") });
-    V.push_back(wxAcceleratorEntry{ wxACCEL_RAW_CTRL, (int)'L', XRCID("ID_clear_screen") });
-    V.push_back(wxAcceleratorEntry{ wxACCEL_RAW_CTRL, (int)'D', XRCID("ID_logout") });
-    V.push_back(wxAcceleratorEntry{ wxACCEL_RAW_CTRL, (int)'C', XRCID("ID_ctrl_c") });
-    V.push_back(wxAcceleratorEntry{ wxACCEL_RAW_CTRL, (int)'W', XRCID("ID_delete_word") });
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'R', XRCID("ID_command")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'U', XRCID("ID_clear_line")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'L', XRCID("ID_clear_screen")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'D', XRCID("ID_logout")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'C', XRCID("ID_ctrl_c")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'W', XRCID("ID_delete_word")});
 
     wxAcceleratorTable accel_table(V.size(), V.data());
 
@@ -122,14 +119,10 @@ wxTerminalInputCtrl::~wxTerminalInputCtrl()
 
 void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
 {
-    wxArrayString words;
-    int length_typed = 0;
     wxArrayString items;
     if (type == CompletionType::COMMANDS) {
         m_completionType = CompletionType::COMMANDS;
-        wxString filter = GetText();
         items = m_history.ForCompletion(GetText());
-        length_typed = filter.length();
     } else {
         // unknown completion type
         m_completionType = CompletionType::NONE;
@@ -153,11 +146,14 @@ void wxTerminalInputCtrl::ShowCompletionBox(CompletionType type)
         width = wxNOT_FOUND;
     }
 
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(
-        m_ctrl, V,
-        wxCodeCompletionBox::kRefreshOnKeyType | wxCodeCompletionBox::kNoShowingEvent |
-            wxCodeCompletionBox::kAlwaysShow,
-        m_completionType == CompletionType::COMMANDS ? 0 : wxNOT_FOUND, this, wxSize(width, wxNOT_FOUND));
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(m_ctrl,
+                                                        V,
+                                                        wxCodeCompletionBox::kRefreshOnKeyType |
+                                                            wxCodeCompletionBox::kNoShowingEvent |
+                                                            wxCodeCompletionBox::kAlwaysShow,
+                                                        m_completionType == CompletionType::COMMANDS ? 0 : wxNOT_FOUND,
+                                                        this,
+                                                        wxSize(width, wxNOT_FOUND));
 }
 
 void wxTerminalInputCtrl::ProcessKeyDown(wxKeyEvent& event)
@@ -435,11 +431,14 @@ void wxTerminalInputCtrl::NotifyTerminalOutput()
     if (width < 0) {
         width = wxNOT_FOUND;
     }
-    wxCodeCompletionBoxManager::Get().ShowCompletionBox(
-        m_ctrl, completions,
-        wxCodeCompletionBox::kNoShowingEvent | wxCodeCompletionBox::kInsertSingleMatch |
-            wxCodeCompletionBox::kAlwaysShow,
-        m_completionType == CompletionType::COMMANDS ? 0 : wxNOT_FOUND, this, wxSize(width, wxNOT_FOUND));
+    wxCodeCompletionBoxManager::Get().ShowCompletionBox(m_ctrl,
+                                                        completions,
+                                                        wxCodeCompletionBox::kNoShowingEvent |
+                                                            wxCodeCompletionBox::kInsertSingleMatch |
+                                                            wxCodeCompletionBox::kAlwaysShow,
+                                                        m_completionType == CompletionType::COMMANDS ? 0 : wxNOT_FOUND,
+                                                        this,
+                                                        wxSize(width, wxNOT_FOUND));
 }
 
 void wxTerminalInputCtrl::OnCCBoxSelected(clCodeCompletionEvent& event)
@@ -476,7 +475,7 @@ void wxTerminalInputCtrl::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
 
-    static clIdleEventThrottler event_throttler{ 200 };
+    static clIdleEventThrottler event_throttler{200};
     if (!event_throttler.CanHandle()) {
         return;
     }

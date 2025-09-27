@@ -34,8 +34,6 @@ GitApplyPatchDlg::GitApplyPatchDlg(wxWindow* parent)
     WindowAttrManager::Load(this);
 }
 
-GitApplyPatchDlg::~GitApplyPatchDlg() {  }
-
 void GitApplyPatchDlg::OnApplyGitPatchUI(wxUpdateUIEvent& event)
 {
     wxFileName fnPathFile(m_filePickerPatchFile->GetPath());

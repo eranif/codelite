@@ -90,10 +90,6 @@ MenuManager::MenuManager()
     PushHandler(std::make_shared<DebuggerMenuHandler>(XRCID("show_breakpoint_dlg")));
 }
 
-MenuManager::~MenuManager()
-{
-}
-
 void MenuManager::PushHandler(MenuEventHandlerPtr handler)
 {
     m_handlers[handler->GetEventId()] = handler;

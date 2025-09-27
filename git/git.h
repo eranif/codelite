@@ -70,13 +70,13 @@ public:
     wxString workingDirectory;
 
 public:
-    gitAction() {}
+    gitAction() = default;
     gitAction(int act, const wxString& args)
         : action(act)
         , arguments(args)
     {
     }
-    ~gitAction() {}
+    ~gitAction() = default;
 };
 
 class GitConsole;
@@ -299,7 +299,7 @@ private:
 
 public:
     GitPlugin(IManager* manager);
-    ~GitPlugin() override;
+    ~GitPlugin() override = default;
 
     const wxString& GetRepositoryPath() const { return m_repositoryDirectory; }
     void WorkspaceClosed();

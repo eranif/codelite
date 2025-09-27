@@ -33,10 +33,6 @@ PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)
     ::clSetDialogBestSizeAndPosition(this);
 }
 
-PHPSettingsDlg::~PHPSettingsDlg()
-{
-}
-
 void PHPSettingsDlg::OnBrowseForIncludePath(wxCommandEvent& event)
 {
     wxString path = wxDirSelector();

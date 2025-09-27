@@ -32,8 +32,8 @@ class GitLocator
 {
     bool DoCheckGitInFolder(const wxString &folder, wxString& git) const;
 public:
-    GitLocator();
-    virtual ~GitLocator();
+    GitLocator() = default;
+    virtual ~GitLocator() = default;
     
     bool GetExecutable(wxFileName& gitpath) const;
     /**

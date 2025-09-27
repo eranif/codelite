@@ -45,7 +45,7 @@ protected:
 
 public:
     XDebugCommandHandler(XDebugManager* mgr, int transcationId);
-    virtual ~XDebugCommandHandler();
+    virtual ~XDebugCommandHandler() = default;
 
     virtual void Process(const wxXmlNode* response) = 0;
     void SetTransactionId(int transactionId) {

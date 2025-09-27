@@ -38,8 +38,6 @@
 #include <unistd.h>
 #endif
 
-clSocketServer::clSocketServer() {}
-
 clSocketServer::~clSocketServer() { DestroySocket(); }
 
 int clSocketServer::CreateServer(const std::string& pipePath)

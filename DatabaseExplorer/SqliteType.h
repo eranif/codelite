@@ -36,7 +36,7 @@ class SqliteType : public IDbType {
 		SqliteType();
 		SqliteType(const SqliteType& obj);
 		SqliteType(const wxString& typeName, long propertyFlags, UNIVERSAL_TYPE universalType);
-		virtual ~SqliteType();
+		virtual ~SqliteType() = default;
 		void InitSerialize();
 
 	public:

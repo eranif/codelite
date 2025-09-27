@@ -9,7 +9,7 @@ class DebuggerScriptParsed : public NodeMessageBase
 
 public:
     DebuggerScriptParsed();
-    virtual ~DebuggerScriptParsed();
+    virtual ~DebuggerScriptParsed() = default;
 
 public:
     void Process(clWebSocketClient& socket, const JSONItem& json);

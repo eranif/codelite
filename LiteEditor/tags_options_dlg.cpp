@@ -63,8 +63,6 @@ CodeCompletionSettingsDialog::CodeCompletionSettingsDialog(wxWindow* parent, con
     GetSizer()->Fit(this);
 }
 
-CodeCompletionSettingsDialog::~CodeCompletionSettingsDialog() {}
-
 void CodeCompletionSettingsDialog::OnButtonOk(wxCommandEvent& event)
 {
     wxUnusedVar(event);

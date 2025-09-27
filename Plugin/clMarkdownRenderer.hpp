@@ -13,8 +13,8 @@ private:
     wxSize DoRender(wxWindow* win, wxDC& dc, const wxString& text, const wxRect& rect, bool do_draw);
 
 public:
-    clMarkdownRenderer();
-    ~clMarkdownRenderer();
+    clMarkdownRenderer() = default;
+    ~clMarkdownRenderer() = default;
 
     /**
      * @brief do not render, just calculate the size required to draw the text

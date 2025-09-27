@@ -12,8 +12,8 @@ private:
     void find_gdb(std::vector<DapEntry>* entries);
 
 public:
-    DapLocator();
-    ~DapLocator();
+    DapLocator() = default;
+    ~DapLocator() = default;
 
     size_t Locate(std::vector<DapEntry>* entries);
 };

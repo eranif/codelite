@@ -66,8 +66,8 @@ public:
     JSONItem(const wxString& name, const std::string& val);
     JSONItem(const wxString& name, const char* pval, size_t len);
     JSONItem(const wxString& name, bool val);
-    JSONItem() {}
-    virtual ~JSONItem() {}
+    JSONItem() = default;
+    virtual ~JSONItem() = default;
 
     // Walkers
     JSONItem firstChild();

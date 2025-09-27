@@ -70,10 +70,6 @@ QmakePluginData::QmakePluginData(const wxString &data)
 	}
 }
 
-QmakePluginData::~QmakePluginData()
-{
-}
-
 wxString QmakePluginData::ToString()
 {
 	wxString serializedStr (wxEmptyString);

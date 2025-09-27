@@ -2,10 +2,6 @@
 
 #include <algorithm>
 
-FolderColour::FolderColour() {}
-
-FolderColour::~FolderColour() {}
-
 void FolderColour::SortToList(const FolderColour::Map_t& m, FolderColour::List_t& l)
 {
     l.clear();

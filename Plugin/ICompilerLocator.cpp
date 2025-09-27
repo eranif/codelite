@@ -36,10 +36,6 @@
 #include <wx/msw/registry.h>
 #endif
 
-ICompilerLocator::ICompilerLocator() {}
-
-ICompilerLocator::~ICompilerLocator() {}
-
 wxArrayString ICompilerLocator::GetPaths() const
 {
     wxString path;

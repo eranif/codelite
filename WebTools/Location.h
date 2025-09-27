@@ -9,8 +9,8 @@ class Location : public nSerializableObject
     long m_lineNumber = 0;
 
 public:
-    Location() {}
-    virtual ~Location();
+    Location() = default;
+    virtual ~Location() = default;
     JSONItem ToJSON(const wxString& name) const;
     void FromJSON(const JSONItem& json);
     void SetLineNumber(long lineNumber) { this->m_lineNumber = lineNumber; }

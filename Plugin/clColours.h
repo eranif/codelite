@@ -37,8 +37,8 @@ public:
         return *this;
     }
     const wxColour& GetDarkBorderColour() const { return darkBorderColour; }
-    clColours();
-    virtual ~clColours() {}
+    clColours() = default;
+    virtual ~clColours() = default;
     bool IsLightTheme() const;
     void InitDefaults();
     void InitFromColour(const wxColour& baseColour = wxNullColour);

@@ -716,8 +716,6 @@ wxHandlResultStringView ansi_control_sequence(wxStringView buffer, AnsiControlSe
 
 wxTerminalAnsiEscapeHandler::wxTerminalAnsiEscapeHandler() { initialise_colours(); }
 
-wxTerminalAnsiEscapeHandler::~wxTerminalAnsiEscapeHandler() {}
-
 size_t wxTerminalAnsiEscapeHandler::ProcessBuffer(wxStringView input, wxTerminalAnsiRendererInterface* renderer)
 {
     wxStringView sv = input;

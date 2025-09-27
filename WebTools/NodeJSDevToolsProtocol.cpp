@@ -11,9 +11,6 @@
 #include "JSON.h"
 
 class RemoteObject;
-NodeJSDevToolsProtocol::NodeJSDevToolsProtocol() {}
-
-NodeJSDevToolsProtocol::~NodeJSDevToolsProtocol() {}
 
 NodeJSDevToolsProtocol& NodeJSDevToolsProtocol::Get()
 {

@@ -54,7 +54,7 @@ public:
     JSONElement(cJSON* json);
     JSONElement(const wxString& name, const wxVariant& val, int type);
 
-    virtual ~JSONElement() {}
+    virtual ~JSONElement() = default;
 
     // Walkers
     JSONElement firstChild();

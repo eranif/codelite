@@ -123,8 +123,6 @@ void NewToolDlg::OnButtonBrowseIcon24(wxCommandEvent& event)
     if(new_path.IsEmpty() == false) { m_textCtrlIcon24->SetValue(new_path); }
 }
 
-NewToolDlg::~NewToolDlg() {}
-
 void NewToolDlg::OnIdSelected(wxCommandEvent& event) {}
 
 void NewToolDlg::OnButtonOkUI(wxUpdateUIEvent& event)

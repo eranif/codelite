@@ -18,7 +18,7 @@ struct State {
     typedef std::list<State::Ptr_t> List_t;
 
 public:
-    State() {}
+    State() = default;
 
     void Clear()
     {

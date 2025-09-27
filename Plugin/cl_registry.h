@@ -43,7 +43,7 @@ public:
 
 public:
     clRegistry();
-    virtual ~clRegistry();
+    virtual ~clRegistry() = default;
 
     bool Read(const wxString& key, wxString& val);
 };

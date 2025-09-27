@@ -18,8 +18,6 @@ clVersionString::clVersionString(const wxString& version_string)
     }
 }
 
-clVersionString::~clVersionString() {}
-
 int clVersionString::Compare(const wxString& other) const
 {
     clVersionString ver_other(other);

@@ -40,9 +40,9 @@ protected:
     
 public:
     XORString(const wxString &value);
-    XORString();
-    virtual ~XORString();
-    
+    XORString() = default;
+    virtual ~XORString() = default;
+
     wxString Decrypt(const wxChar byte = 's') const;
     wxString Encrypt(const wxChar byte = 's') const;
 };

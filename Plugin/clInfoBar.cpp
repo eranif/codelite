@@ -7,8 +7,6 @@ clInfoBar::clInfoBar(wxWindow* parent, wxWindowID winid)
 {
 }
 
-clInfoBar::~clInfoBar() {}
-
 void clInfoBar::Clear()
 {
     for (const auto& [btnId, _] : m_buttons) {

@@ -20,10 +20,6 @@ clComboBox::clComboBox(wxWindow* parent, wxWindowID id, const wxString& value, c
 {
 }
 
-clComboBox::clComboBox() {}
-
-clComboBox::~clComboBox() {}
-
 bool clComboBox::Create(wxWindow* parent, wxWindowID id, const wxString& value, const wxPoint& pos, const wxSize& size,
                         size_t n, const wxString choices[], long style, const wxValidator& validator,
                         const wxString& name)

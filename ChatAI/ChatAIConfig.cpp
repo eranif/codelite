@@ -9,8 +9,6 @@ ChatAIConfig::ChatAIConfig()
 {
 }
 
-ChatAIConfig::~ChatAIConfig() {}
-
 void ChatAIConfig::Load() { clConfig::Get().ReadItem(this); }
 
 void ChatAIConfig::Save() { clConfig::Get().WriteItem(this); }

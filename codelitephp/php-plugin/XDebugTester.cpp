@@ -9,10 +9,6 @@
 #include <wx/filename.h>
 #include <wx/msgdlg.h>
 
-XDebugTester::XDebugTester() {}
-
-XDebugTester::~XDebugTester() {}
-
 bool XDebugTester::RunTest()
 {
     // Get the path to the xdebug tester script

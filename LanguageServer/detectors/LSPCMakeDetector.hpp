@@ -9,7 +9,7 @@ class LSPCMakeDetector : public LSPDetector
 
 public:
     LSPCMakeDetector();
-    virtual ~LSPCMakeDetector();
+    virtual ~LSPCMakeDetector() = default;
 
     bool DoLocate() override;
 };

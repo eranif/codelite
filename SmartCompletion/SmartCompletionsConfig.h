@@ -24,7 +24,7 @@ protected:
 
 public:
     SmartCompletionsConfig();
-    virtual ~SmartCompletionsConfig();
+    virtual ~SmartCompletionsConfig() = default;
 
     SmartCompletionsConfig& Load();
     SmartCompletionsConfig& Save();

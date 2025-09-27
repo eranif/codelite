@@ -10,7 +10,7 @@ class PHPRefactoringOptions : public clConfigItem
 
 public:
     PHPRefactoringOptions();
-    virtual ~PHPRefactoringOptions();
+    virtual ~PHPRefactoringOptions() = default;
 
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;

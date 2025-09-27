@@ -24,13 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "cscopestatusmessage.h"
-CScopeStatusMessage::CScopeStatusMessage()
-{
-}
-
-CScopeStatusMessage::~CScopeStatusMessage()
-{
-}
 
 void CScopeStatusMessage::SetMessage(const wxString& message)
 {

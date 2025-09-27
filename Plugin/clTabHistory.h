@@ -16,8 +16,8 @@ public:
     typedef wxSharedPtr<clTabHistory> Ptr_t;
 
 public:
-    clTabHistory() {}
-    virtual ~clTabHistory() {}
+    clTabHistory() = default;
+    virtual ~clTabHistory() = default;
 
     /// Compact the history, keeping only windows from the `windows` list
     /// If `add_missing` is true, we update the history with windows that

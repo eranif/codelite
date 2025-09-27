@@ -32,9 +32,6 @@ DumpClass::DumpClass(IDbAdapter* pDbAdapter, xsSerializable* pItems, const wxStr
 
 }
 
-DumpClass::~DumpClass() {
-}
-
 wxString DumpClass::DumpData() {
 	int totalRowCount = 0;
 	int tableCount = 0;

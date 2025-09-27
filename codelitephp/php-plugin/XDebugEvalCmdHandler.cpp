@@ -14,10 +14,6 @@ XDebugEvalCmdHandler::XDebugEvalCmdHandler(const wxString& expression, int evalR
 {
 }
 
-XDebugEvalCmdHandler::~XDebugEvalCmdHandler()
-{
-}
-
 void XDebugEvalCmdHandler::Process(const wxXmlNode* response)
 {
     // Search for the 'property' element

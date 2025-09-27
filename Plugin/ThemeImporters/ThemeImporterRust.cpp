@@ -18,8 +18,6 @@ ThemeImporterRust::ThemeImporterRust()
     SetLangName("rust");
 }
 
-ThemeImporterRust::~ThemeImporterRust() {}
-
 LexerConf::Ptr_t ThemeImporterRust::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_RUST);

@@ -62,8 +62,6 @@ ProjectSettings::ProjectSettings(wxXmlNode* node)
     }
 }
 
-ProjectSettings::~ProjectSettings() {}
-
 ProjectSettings* ProjectSettings::Clone() const
 {
     wxXmlNode* node = ToXml();

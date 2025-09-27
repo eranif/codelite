@@ -47,8 +47,6 @@ EnvironmentConfig::EnvironmentConfig()
 {
 }
 
-EnvironmentConfig::~EnvironmentConfig() {}
-
 EnvironmentConfig* EnvironmentConfig::Instance()
 {
     if (ms_instance == 0) {

@@ -9,8 +9,6 @@ LSP::HoverRequest::HoverRequest(const wxString& filename, size_t line, size_t co
     m_params->As<TextDocumentPositionParams>()->SetPosition(Position(line, column));
 }
 
-LSP::HoverRequest::~HoverRequest() {}
-
 void LSP::HoverRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     if(!response.Has("result")) {

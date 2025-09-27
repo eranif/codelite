@@ -31,10 +31,10 @@
 class WXDLLIMPEXP_SDK DebuggerConfigTool : public ConfigTool
 {
 private:
-    DebuggerConfigTool();
+    DebuggerConfigTool() = default;
 
 public:
-    ~DebuggerConfigTool();
+    ~DebuggerConfigTool() = default;
     static DebuggerConfigTool* Get();
 };
 #endif // DEBUGGERCONFIGTOOL_H

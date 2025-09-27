@@ -32,7 +32,7 @@ class EditorSettingsFolding : public OptionsConfigPage
 {
 public:
     EditorSettingsFolding(wxWindow* parent, OptionsConfigPtr options);
-    virtual ~EditorSettingsFolding() {}
+    ~EditorSettingsFolding() override = default;
 };
 
 #endif // __EDITORSETTINGSFOLDING__

@@ -37,8 +37,6 @@ PluginMgrDlg::PluginMgrDlg(wxWindow* parent)
     ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
-PluginMgrDlg::~PluginMgrDlg() {}
-
 void PluginMgrDlg::Initialize()
 {
     clConfig conf("plugins.conf");

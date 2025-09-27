@@ -6,5 +6,3 @@ clToolBarToggleButton::clToolBarToggleButton(clToolBarGeneric* parent, wxWindowI
 {
     m_flags = kToggleButton;
 }
-
-clToolBarToggleButton::~clToolBarToggleButton() {}

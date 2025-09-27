@@ -7,7 +7,7 @@ class fmtPHPCSFixer : public GenericFormatter
 {
 public:
     fmtPHPCSFixer();
-    virtual ~fmtPHPCSFixer();
+    ~fmtPHPCSFixer() override = default;
 };
 
 #endif // PHPCSFIXER_HPP

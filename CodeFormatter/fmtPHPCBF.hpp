@@ -7,7 +7,7 @@ class fmtPHPCBF : public GenericFormatter
 {
 public:
     fmtPHPCBF();
-    virtual ~fmtPHPCBF();
+    ~fmtPHPCBF() override = default;
 };
 
 #endif // FMTPHPCBF_HPP

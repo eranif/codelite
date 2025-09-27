@@ -10,8 +10,6 @@ WorkspaceExecuteCommand::WorkspaceExecuteCommand(const wxString& filepath, const
     LSP_DEBUG() << ToJSON(wxEmptyString).format(true) << endl;
 }
 
-WorkspaceExecuteCommand::~WorkspaceExecuteCommand() {}
-
 void WorkspaceExecuteCommand::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     wxUnusedVar(owner);

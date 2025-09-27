@@ -43,8 +43,6 @@ ContextHtml::ContextHtml()
 {
 }
 
-ContextHtml::~ContextHtml() {}
-
 void ContextHtml::AddMenuDynamicContent(wxMenu* menu) { wxUnusedVar(menu); }
 
 void ContextHtml::ApplySettings()

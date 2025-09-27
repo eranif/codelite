@@ -735,7 +735,7 @@ public:
     /**
      * @brief return list of all breakpoints
      */
-    virtual void GetBreakpoints(std::vector<clDebuggerBreakpoint>& bpList) = 0;
+    virtual std::vector<clDebuggerBreakpoint> GetBreakpoints() = 0;
 
     /**
      * @brief build and display the build menu for a toolbar button

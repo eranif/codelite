@@ -548,7 +548,7 @@ clStatusOr<SFTPAttribute::List_t> clSFTPManager::List(const wxString& path, cons
     };
     m_q.push_back(std::move(func));
     auto res = future.get();
-    if (!res.second) {
+    if (!res.first) {
         return StatusNetworkError(res.second);
     }
     return result;

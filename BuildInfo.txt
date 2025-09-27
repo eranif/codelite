@@ -56,7 +56,7 @@ Once build is done, you can copy the files to the target directory by running th
 
     codelite-sources/Runtime/update.bat
 
- **** Note that you may need to update the script to point it to the codelite installation directory ****
+ **** Note that you may need to update the script to point it to the CodeLite installation directory ****
  
  
 //---------------------------------------------------------

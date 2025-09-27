@@ -78,7 +78,7 @@ public:
     wxFileName GetFileName() const;
     /**
      * @brief return the location of the CMake (usually compile_commands.json)
-     * Note that this function does not check for the existance of the file
+     * Note that this function does not check for the existence of the file
      */
     FileNameVector_t GetCompileCommandsFiles() const;
     static FileNameVector_t GetCompileCommandsFiles(const wxString& rootFolder);

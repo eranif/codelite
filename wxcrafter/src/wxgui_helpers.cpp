@@ -919,7 +919,7 @@ float wxCrafter::ToFloat(const wxString& str, float defaultValue)
     double v;
 
     /// Use ToCDouble to avoid cases (e.g. German locale)
-    /// where 0.5 is actually 0,5 - which obvisouly breaks compilation
+    /// where 0.5 is actually 0,5 - which obviously breaks compilation
     if(str.ToCDouble(&v)) {
         return v;
     } else {

@@ -588,7 +588,7 @@ void clAnsiEscapeCodeHandler::RenderNoStyle(
     int xx = X_MARGIN;
     dc.SetClippingRegion(rect);
     for (const auto& chunk : v) {
-        // ensure to restore the dont once we are done with this line
+        // ensure to restore the don't once we are done with this line
         wxDCFontChanger font_changer(dc);
         if (chunk.is_text) {
             // draw the text
@@ -628,7 +628,7 @@ void clAnsiEscapeCodeHandler::Render(wxSTCStyleProvider* style_provider, bool is
     int curstyle = 0;
     for (const auto& v : m_chunks) {
         for (const auto& chunk : v) {
-            // ensure to restore the dont once we are done with this line
+            // ensure to restore the don't once we are done with this line
             if (chunk.is_style_reset) {
                 // reset the style
                 curstyle = 0;
@@ -682,7 +682,7 @@ void clAnsiEscapeCodeHandler::Render(wxTextCtrl* ctrl, const wxTextAttr& default
     // render everything
     for (const auto& v : m_chunks) {
         for (const auto& chunk : v) {
-            // ensure to restore the dont once we are done with this line
+            // ensure to restore the don't once we are done with this line
             if (chunk.is_style_reset) {
                 // reset the style
                 ctrl->SetDefaultStyle(defaultStyle);
@@ -741,7 +741,7 @@ void clAnsiEscapeCodeHandler::Render(
     int xx = X_MARGIN;
     dc.SetClippingRegion(rect);
     for (const auto& chunk : v) {
-        // ensure to restore the dont once we are done with this line
+        // ensure to restore the don't once we are done with this line
         wxDCFontChanger font_changer(dc);
         if (chunk.is_style_reset) {
             // reset the style

@@ -278,7 +278,7 @@ void RemotyWorkspace::DoClose(bool notify)
     //    EventNotifier::Get()->ProcessEvent(stop_event);
 
     if (notify) {
-        // notify codelite to close all opened files
+        // notify CodeLite to close all opened files
         wxCommandEvent eventClose(wxEVT_MENU, wxID_CLOSE_ALL);
         eventClose.SetEventObject(EventNotifier::Get()->TopFrame());
         EventNotifier::Get()->TopFrame()->GetEventHandler()->ProcessEvent(eventClose);

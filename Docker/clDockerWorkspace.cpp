@@ -152,7 +152,7 @@ void clDockerWorkspace::Open(const wxFileName& path)
         // Finalize the workspace open process:
         //===------------------------------------------
 
-        // Notify codelite that NodeJS workspace is opened
+        // Notify CodeLite that NodeJS workspace is opened
         clGetManager()->GetWorkspaceView()->SelectPage(GetWorkspaceType());
         clWorkspaceManager::Get().SetWorkspace(this);
 
@@ -169,7 +169,7 @@ void clDockerWorkspace::Open(const wxFileName& path)
         open_event.SetWorkspaceType(GetWorkspaceType());
         EventNotifier::Get()->AddPendingEvent(open_event);
 
-        // and finally, request codelite to keep this workspace in the recently opened workspace list
+        // and finally, request CodeLite to keep this workspace in the recently opened workspace list
         clGetManager()->AddWorkspaceToRecentlyUsedList(m_filename);
 
         // Load the workspace session (if any)
@@ -189,7 +189,7 @@ void clDockerWorkspace::Close()
         // Clear the UI
         GetView()->Clear();
 
-        // notify codelite to close all opened files
+        // notify CodeLite to close all opened files
         wxCommandEvent eventClose(wxEVT_MENU, wxID_CLOSE_ALL);
         eventClose.SetEventObject(EventNotifier::Get()->TopFrame());
         EventNotifier::Get()->TopFrame()->GetEventHandler()->ProcessEvent(eventClose);

@@ -3,9 +3,10 @@
 
 #include "ieditor.h"
 #include "imanager.h"
+
 #include <vector>
 #include <wx/stc/stc.h>
-//#include <wx/chartype.h>
+// #include <wx/chartype.h>
 
 #define VISUAL_BLOCK_INDICATOR 13
 
@@ -95,12 +96,12 @@ enum class COMMANDVI {
     cF,
     ct,
     cT,
-    ci_quot, /*ci"*/
-    ci_apos, /*ci'*/
-    ci_pare, /*ci(*/
+    ci_quot,   /*ci"*/
+    ci_apos,   /*ci'*/
+    ci_pare,   /*ci(*/
     ci_square, /*ci[*/
-    ci_lt, /*ci<*/
-    ci_curly,/*ci{*/
+    ci_lt,     /*ci<*/
+    ci_curly,  /*ci{*/
     C,
     cc,
     s,
@@ -121,12 +122,12 @@ enum class COMMANDVI {
     dF,
     dt,
     dT,
-    di_quot, /*di"*/
-    di_apos, /*di'*/
-    di_pare, /*di(*/
+    di_quot,   /*di"*/
+    di_apos,   /*di'*/
+    di_pare,   /*di(*/
     di_square, /*di[*/
-    di_lt, /*di<*/
-    di_curly,/*di{*/
+    di_lt,     /*di<*/
+    di_curly,  /*di{*/
     dG,
     dgg,
     D,
@@ -155,12 +156,12 @@ enum class COMMANDVI {
     yF,
     yt,
     yT,
-    yi_quot, /*yi"*/
-    yi_apos, /*yi'*/
-    yi_pare, /*yi(*/
+    yi_quot,   /*yi"*/
+    yi_apos,   /*yi'*/
+    yi_pare,   /*yi(*/
     yi_square, /*yi[*/
-    yi_lt, /*yi<*/
-    yi_curly,/*yi{*/
+    yi_lt,     /*yi<*/
+    yi_curly,  /*yi{*/
     yG,
     ygg,
     J,
@@ -226,7 +227,7 @@ private:
     wxChar m_baseCommand;   /*!< base command (first char of the cmd)*/
     wxChar m_actionCommand; /*!< eventual command modifier.In 'c3w', "w" */
     wxChar m_externalCommand;
-    int m_actions;          /*!< repetition of the modifier.In 'c3x', "3" */
+    int m_actions; /*!< repetition of the modifier.In 'c3x', "3" */
 
     /*~~~~~~~~ HELPER ~~~~~~~~~*/
     bool m_repeatCommand;
@@ -311,44 +312,44 @@ private:
     void parse_cmd_string();
     void completing_command(wxChar ch);
     /*~~~~~~~~ INFO ~~~~~~~~~*/
-    COMMANDVI m_commandID; /*!< id of the current command to identify it*/
-    MESSAGES_VIM m_message_ID;
-    COMMAND_PART m_currentCommandPart; /*!< current part of the command */
-    VIM_MODI m_currentModus;           /*!< actual mode the editor is in */
-    bool m_saveCommand;
-    int m_initialVisualPos;  /*!< initial position of cursor when changing to visual mode*/
-    int m_initialVisualLine; /*!< initial line which cursor is on when changing to visual line mode*/
-    
-    /* visual block insert */
-    int m_visualBlockBeginLine;
-    int m_visualBlockEndLine;
-    int m_visualBlockBeginCol;
-    int m_visualBlockEndCol;
-    
-    /*~~~~~~~~ COMMAND ~~~~~~~~~*/
-    int m_repeat;           /*!< number of repetition for the command */
-    wxChar m_baseCommand;   /*!< base command (first char of the cmd)*/
-    wxChar m_actionCommand; /*!< eventual command modifier.In 'c3w', "w" */
-    wxChar m_externalCommand;
-    int m_actions;          /*!< repetition of the modifier.In 'c3x', "3" */
+    COMMANDVI m_commandID{COMMANDVI::NO_COMMAND}; /*!< id of the current command to identify it*/
+    MESSAGES_VIM m_message_ID{MESSAGES_VIM::NO_ERROR_VIM_MSG};
+    COMMAND_PART m_currentCommandPart{COMMAND_PART::REPEAT_NUM}; /*!< current part of the command */
+    VIM_MODI m_currentModus{VIM_MODI::NORMAL_MODUS};             /*!< actual mode the editor is in */
+    bool m_saveCommand{true};
+    int m_initialVisualPos{0};  /*!< initial position of cursor when changing to visual mode*/
+    int m_initialVisualLine{0}; /*!< initial line which cursor is on when changing to visual line mode*/
 
-    int m_cumulativeUndo; /*!< cumulative actions performed in the editor*/
+    /* visual block insert */
+    int m_visualBlockBeginLine{0};
+    int m_visualBlockEndLine{0};
+    int m_visualBlockBeginCol{0};
+    int m_visualBlockEndCol{0};
+
+    /*~~~~~~~~ COMMAND ~~~~~~~~~*/
+    int m_repeat{0};        /*!< number of repetition for the command */
+    wxChar m_baseCommand{'\0'};   /*!< base command (first char of the cmd)*/
+    wxChar m_actionCommand{'\0'}; /*!< eventual command modifier.In 'c3w', "w" */
+    wxChar m_externalCommand{'\0'};
+    int m_actions{0}; /*!< repetition of the modifier.In 'c3x', "3" */
+
+    int m_cumulativeUndo{0}; /*!< cumulative actions performed in the editor*/
                           /*in order to currectly do the undo!*/
     /*~~~~~~~~ HELPER ~~~~~~~~~*/
-    bool m_repeatCommand;
-    int m_modifierKey; /*!< to take into account for some commands*/
+    bool m_repeatCommand{false};
+    int m_modifierKey{0}; /*!< to take into account for some commands*/
     wxString m_tmpbuf;
     wxString m_searchWord;
-    bool m_newLineCopy; /*!< take track if we copy/pase the complete line (dd,yy)*/
-    bool m_visualBlockCopy;
+    bool m_newLineCopy{false}; /*!< take track if we copy/pase the complete line (dd,yy)*/
+    bool m_visualBlockCopy{false};
     std::vector<wxString> m_listCopiedStr;
-    wxChar m_findKey;
-    long m_findStep;
-    bool m_findPosPrev;
+    wxChar m_findKey{'\0'};
+    long m_findStep{1};
+    bool m_findPosPrev{false};
 
     /*~~~~~~~ EDITOR ~~~~~~~~~*/
-    wxStyledTextCtrl* m_ctrl;
-    IManager* m_mgr;
+    wxStyledTextCtrl* m_ctrl{nullptr};
+    IManager* m_mgr{nullptr};
     friend VimBaseCommand;
 };
 

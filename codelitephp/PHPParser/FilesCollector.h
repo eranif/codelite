@@ -27,6 +27,7 @@
 #define FILESCOLLECTOR_H
 
 #include "macros.h"
+
 #include <wx/arrstr.h>
 #include <wx/dir.h>
 #include <wx/progdlg.h>
@@ -37,11 +38,12 @@ class FilesCollector
 {
     wxArrayString m_specArray;
     wxArrayString& m_filesAndFolders;
-    wxProgressDialog* m_progress;
     wxStringSet_t m_excludeFolders;
 
 public:
-    FilesCollector(wxArrayString& filesAndFolders, const wxString& filespec, const wxString& excludeFolders = "",
+    FilesCollector(wxArrayString& filesAndFolders,
+                   const wxString& filespec,
+                   const wxString& excludeFolders = "",
                    wxProgressDialog* progress = NULL);
     virtual ~FilesCollector();
 

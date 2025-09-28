@@ -63,7 +63,6 @@ DebuggerPane::DebuggerPane(wxWindow* parent, const wxString& caption, wxAuiManag
     : wxPanel(parent, wxID_ANY, wxDefaultPosition, wxSize(400, 300), style)
     , m_caption(caption)
     , m_initDone(false)
-    , m_mgr(mgr)
 {
     Hide();
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &DebuggerPane::OnSettingsChanged, this);
@@ -257,8 +256,8 @@ void DebuggerPane::OnSettingsChanged(wxCommandEvent& event)
 {
     event.Skip();
 #if !MAINBOOK_AUIBOOK
-    m_book->EnableStyle(kNotebook_BottomTabs,
-                        EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection() == wxBOTTOM);
+    m_book->EnableStyle(
+        kNotebook_BottomTabs, EditorConfigST::Get()->GetOptions()->GetOutputTabsDirection() == wxBOTTOM);
 #endif
 }
 

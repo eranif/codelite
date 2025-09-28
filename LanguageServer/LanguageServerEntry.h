@@ -19,7 +19,6 @@ class LanguageServerEntry
     wxString m_workingDirectory;
     wxArrayString m_languages;
     wxString m_connectionString;
-    int m_priority = 50;
     bool m_displayDiagnostics = true;
     wxString m_command;
     wxString m_remoteCommand;

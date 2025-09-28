@@ -55,10 +55,7 @@ const wxEventType CR_insert_copyrights = wxNewEventType();
 const wxEventType CR_insert_prj_copyrights = wxNewEventType();
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new Copyright(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new Copyright(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -75,8 +72,6 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 Copyright::Copyright(IManager* manager)
     : IPlugin(manager)
-    , m_projectSepItem(NULL)
-    , m_workspaceSepItem(NULL)
 {
     m_longName = _("Copyright Plugin - Place copyright block on top of your source files");
     m_shortName = "Copyright";
@@ -89,9 +84,9 @@ Copyright::Copyright(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &Copyright::OnEditorContextMenu, this);
 
     clKeyboardManager::Get()->AddAccelerator(_("Copyright"),
-                                             { { "copyrights_options", _("Insert Copyright Block") },
-                                               { "insert_copyrights", _("Batch Insert of Copyright Block") },
-                                               { "batch_insert_copyrights", _("Settings...") } });
+                                             {{"copyrights_options", _("Insert Copyright Block")},
+                                              {"insert_copyrights", _("Batch Insert of Copyright Block")},
+                                              {"batch_insert_copyrights", _("Settings...")}});
 }
 
 Copyright::~Copyright() {}
@@ -103,12 +98,15 @@ void Copyright::CreatePluginMenu(wxMenu* pluginsMenu)
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(NULL);
 
-    item = new wxMenuItem(menu, XRCID("CR_insert_copyrights"), _("Insert Copyright Block"), _("Insert Copyright Block"),
-                          wxITEM_NORMAL);
+    item = new wxMenuItem(
+        menu, XRCID("CR_insert_copyrights"), _("Insert Copyright Block"), _("Insert Copyright Block"), wxITEM_NORMAL);
     menu->Append(item);
 
-    item = new wxMenuItem(menu, XRCID("CR_batch_insert_copyrights"), _("Batch Insert of Copyright Block"),
-                          _("Batch Insert of Copyright Block"), wxITEM_NORMAL);
+    item = new wxMenuItem(menu,
+                          XRCID("CR_batch_insert_copyrights"),
+                          _("Batch Insert of Copyright Block"),
+                          _("Batch Insert of Copyright Block"),
+                          wxITEM_NORMAL);
     menu->Append(item);
 
     menu->AppendSeparator();
@@ -136,23 +134,25 @@ void Copyright::OnInsertCopyrights(wxCommandEvent& e)
     m_mgr->GetConfigTool()->ReadObject("CopyrightsConfig", &data);
 
     // make sure that the template file exists
-    if(!wxFileName::FileExists(data.GetTemplateFilename())) {
+    if (!wxFileName::FileExists(data.GetTemplateFilename())) {
         wxMessageBox(
             wxString::Format(_("Template file name '%s', does not exist!"), data.GetTemplateFilename().GetData()),
-            _("CodeLite"), wxICON_WARNING | wxOK);
+            _("CodeLite"),
+            wxICON_WARNING | wxOK);
         return;
     }
 
     // read the copyrights file
     wxString content;
-    if(!ReadFileWithConversion(data.GetTemplateFilename(), content)) {
+    if (!ReadFileWithConversion(data.GetTemplateFilename(), content)) {
         wxMessageBox(wxString::Format(_("Failed to read template file '%s'"), data.GetTemplateFilename().c_str()),
-                     _("CodeLite"), wxICON_WARNING | wxOK);
+                     _("CodeLite"),
+                     wxICON_WARNING | wxOK);
         return;
     }
 
     IEditor* editor = m_mgr->GetActiveEditor();
-    if(!editor) {
+    if (!editor) {
         wxMessageBox(wxString::Format(_("There is no active editor\n")), _("CodeLite"), wxICON_WARNING | wxOK);
         return;
     }
@@ -163,23 +163,24 @@ void Copyright::OnInsertCopyrights(wxCommandEvent& e)
     CppTokensMap l;
     scanner.FindAll(l);
 
-    if(!l.is_empty()) {
-        if(wxMessageBox(_("Template file contains text which is not comment, continue anyway?"), _("CodeLite"),
-                        wxICON_QUESTION | wxYES_NO) == wxNO) {
+    if (!l.is_empty()) {
+        if (wxMessageBox(_("Template file contains text which is not comment, continue anyway?"),
+                         _("CodeLite"),
+                         wxICON_QUESTION | wxYES_NO) == wxNO) {
             return;
         }
     }
 
     // expand constants
-    wxString _content = ExpandAllVariables(content, m_mgr->GetWorkspace(), wxEmptyString, wxEmptyString,
-                                           editor->GetFileName().GetFullPath());
+    wxString _content = ExpandAllVariables(
+        content, m_mgr->GetWorkspace(), wxEmptyString, wxEmptyString, editor->GetFileName().GetFullPath());
 
     // we are good to go :)
     wxString ignoreString = data.GetIgnoreString();
     ignoreString = ignoreString.Trim().Trim(false);
 
-    if(ignoreString.IsEmpty() == false) {
-        if(editor->GetEditorText().Find(data.GetIgnoreString()) != wxNOT_FOUND) {
+    if (ignoreString.IsEmpty() == false) {
+        if (editor->GetEditorText().Find(data.GetIgnoreString()) != wxNOT_FOUND) {
             clLogMessage(_("File contains ignore string, skipping it"));
             return;
         }
@@ -197,12 +198,12 @@ void Copyright::OnOptions(wxCommandEvent& e)
 void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
 {
     // pop up the projects selection dialog
-    if(m_mgr->IsWorkspaceOpen() == false) {
+    if (m_mgr->IsWorkspaceOpen() == false) {
         wxMessageBox(_("Batch insert requires a workspace to be opened"), _("CodeLite"), wxICON_WARNING | wxOK);
         return;
     }
 
-    if(!m_mgr->SaveAll()) {
+    if (!m_mgr->SaveAll()) {
         return;
     }
 
@@ -211,12 +212,12 @@ void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
     m_mgr->GetConfigTool()->ReadObject("CopyrightsConfig", &data);
 
     wxString content;
-    if(!Validate(content)) {
+    if (!Validate(content)) {
         return;
     }
 
     CopyrightsProjectSelDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr->GetWorkspace());
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         wxArrayString projects;
         dlg.GetProjects(projects);
 
@@ -224,9 +225,9 @@ void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
         std::vector<wxFileName> files;
         std::vector<wxFileName> filtered_files;
         // loop over the project and collect list of files to work with
-        for(size_t i = 0; i < projects.size(); i++) {
+        for (size_t i = 0; i < projects.size(); i++) {
             ProjectPtr p = m_mgr->GetWorkspace()->GetProject(projects.Item(i));
-            if(p) {
+            if (p) {
                 p->GetFilesAsVectorOfFileName(files);
             }
         }
@@ -238,14 +239,14 @@ void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
         wxArrayString exts = ::wxStringTokenize(mask, ";");
 
         // filter out non-matching files (according to masking)
-        for(size_t i = 0; i < files.size(); i++) {
-            if(exts.Index(files.at(i).GetExt(), false) != wxNOT_FOUND) {
+        for (size_t i = 0; i < files.size(); i++) {
+            if (exts.Index(files.at(i).GetExt(), false) != wxNOT_FOUND) {
                 // valid file
                 filtered_files.push_back(files.at(i));
             }
         }
 
-        if(filtered_files.empty() == false) {
+        if (filtered_files.empty() == false) {
             MassUpdate(filtered_files, content);
         }
     }
@@ -254,12 +255,12 @@ void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
 void Copyright::OnProjectInsertCopyrights(wxCommandEvent& e)
 {
     // pop up the projects selection dialog
-    if(m_mgr->IsWorkspaceOpen() == false) {
+    if (m_mgr->IsWorkspaceOpen() == false) {
         wxMessageBox(_("Batch insert requires a workspace to be opened"), _("CodeLite"), wxICON_WARNING | wxOK);
         return;
     }
 
-    if(!m_mgr->SaveAll()) {
+    if (!m_mgr->SaveAll()) {
         return;
     }
 
@@ -268,7 +269,7 @@ void Copyright::OnProjectInsertCopyrights(wxCommandEvent& e)
     m_mgr->GetConfigTool()->ReadObject("CopyrightsConfig", &data);
 
     wxString content;
-    if(!Validate(content)) {
+    if (!Validate(content)) {
         return;
     }
 
@@ -281,7 +282,7 @@ void Copyright::OnProjectInsertCopyrights(wxCommandEvent& e)
     std::vector<wxFileName> filtered_files;
     // loop over the project and collect list of files to work with
     ProjectPtr p = m_mgr->GetWorkspace()->GetProject(project_name);
-    if(!p) {
+    if (!p) {
         return;
     }
 
@@ -295,15 +296,15 @@ void Copyright::OnProjectInsertCopyrights(wxCommandEvent& e)
     wxArrayString exts = wxStringTokenize(mask, ";");
 
     // filter out non-matching files (according to masking)
-    for(size_t i = 0; i < files.size(); i++) {
-        if(exts.Index(files.at(i).GetExt(), false) != wxNOT_FOUND) {
+    for (size_t i = 0; i < files.size(); i++) {
+        if (exts.Index(files.at(i).GetExt(), false) != wxNOT_FOUND) {
             // valid file
             filtered_files.push_back(files.at(i));
         }
     }
 
     // update files
-    if(filtered_files.empty() == false) {
+    if (filtered_files.empty() == false) {
         MassUpdate(filtered_files, content);
     }
 }
@@ -311,9 +312,10 @@ void Copyright::OnProjectInsertCopyrights(wxCommandEvent& e)
 void Copyright::MassUpdate(const std::vector<wxFileName>& filtered_files, const wxString& content)
 {
     // last confirmation from the user
-    if(wxMessageBox(
-           wxString::Format(_("You are about to modify %u files. Continue?"), (unsigned int)filtered_files.size()),
-           _("CodeLite"), wxYES_NO | wxICON_QUESTION) == wxNO) {
+    if (wxMessageBox(
+            wxString::Format(_("You are about to modify %u files. Continue?"), (unsigned int)filtered_files.size()),
+            _("CodeLite"),
+            wxYES_NO | wxICON_QUESTION) == wxNO) {
         return;
     }
 
@@ -324,13 +326,13 @@ void Copyright::MassUpdate(const std::vector<wxFileName>& filtered_files, const 
     m_mgr->GetConfigTool()->ReadObject("CopyrightsConfig", &data);
 
     // now loop over the files and add copyrights block
-    for(size_t i = 0; i < filtered_files.size(); i++) {
+    for (size_t i = 0; i < filtered_files.size(); i++) {
         wxFileName fn = filtered_files.at(i);
 
         wxString file_content;
         wxString _content =
             ExpandAllVariables(content, m_mgr->GetWorkspace(), wxEmptyString, wxEmptyString, fn.GetFullPath());
-        if(ReadFileWithConversion(fn.GetFullPath(), file_content)) {
+        if (ReadFileWithConversion(fn.GetFullPath(), file_content)) {
 
             wxString msg;
 
@@ -338,16 +340,16 @@ void Copyright::MassUpdate(const std::vector<wxFileName>& filtered_files, const 
             wxString ignoreString = data.GetIgnoreString();
             ignoreString = ignoreString.Trim().Trim(false);
 
-            if(ignoreString.IsEmpty() == false && file_content.Find(data.GetIgnoreString()) != wxNOT_FOUND) {
+            if (ignoreString.IsEmpty() == false && file_content.Find(data.GetIgnoreString()) != wxNOT_FOUND) {
                 msg << _("File contains ignore string, skipping it: ") << fn.GetFullName();
-                if(!prgDlg->Update(i, msg)) {
+                if (!prgDlg->Update(i, msg)) {
                     prgDlg->Destroy();
                     return;
                 }
             } else {
 
                 msg << _("Inserting comment to file: ") << fn.GetFullName();
-                if(!prgDlg->Update(i, msg)) {
+                if (!prgDlg->Update(i, msg)) {
                     prgDlg->Destroy();
                     return;
                 }
@@ -366,17 +368,19 @@ bool Copyright::Validate(wxString& content)
     m_mgr->GetConfigTool()->ReadObject("CopyrightsConfig", &data);
 
     // make sure that the template file exists
-    if(!wxFileName::FileExists(data.GetTemplateFilename())) {
+    if (!wxFileName::FileExists(data.GetTemplateFilename())) {
         wxMessageBox(
             wxString::Format(_("Template file name '%s', does not exist!"), data.GetTemplateFilename().GetData()),
-            _("CodeLite"), wxICON_WARNING | wxOK);
+            _("CodeLite"),
+            wxICON_WARNING | wxOK);
         return false;
     }
 
     // read the copyrights file
-    if(!ReadFileWithConversion(data.GetTemplateFilename(), content)) {
+    if (!ReadFileWithConversion(data.GetTemplateFilename(), content)) {
         wxMessageBox(wxString::Format(_("Failed to read template file '%s'"), data.GetTemplateFilename().c_str()),
-                     _("CodeLite"), wxICON_WARNING | wxOK);
+                     _("CodeLite"),
+                     wxICON_WARNING | wxOK);
         return false;
     }
 
@@ -386,9 +390,10 @@ bool Copyright::Validate(wxString& content)
     CppTokensMap l;
     scanner.FindAll(l);
 
-    if(!l.is_empty()) {
-        if(wxMessageBox(_("Template file contains text which is not comment, continue anyways?"), _("CodeLite"),
-                        wxICON_QUESTION | wxYES_NO) == wxNO) {
+    if (!l.is_empty()) {
+        if (wxMessageBox(_("Template file contains text which is not comment, continue anyways?"),
+                         _("CodeLite"),
+                         wxICON_QUESTION | wxYES_NO) == wxNO) {
             return false;
         }
     }

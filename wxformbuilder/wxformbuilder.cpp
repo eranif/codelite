@@ -43,10 +43,7 @@
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new wxFormBuilder(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new wxFormBuilder(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -62,27 +59,39 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 wxFormBuilder::wxFormBuilder(IManager* manager)
     : IPlugin(manager)
-    , m_separatorItem(NULL)
-    , m_openWithWxFbItem(NULL)
-    , m_openWithWxFbSepItem(NULL)
 {
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &wxFormBuilder::OnWxFBTerminated, this);
     m_longName = _("wxFormBuilder integration with CodeLite");
     m_shortName = wxT("wxFormBuilder");
     m_topWin = m_mgr->GetTheApp();
 
-    m_topWin->Connect(XRCID("wxfb_new_dialog"), wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(wxFormBuilder::OnNewDialog), NULL, this);
-    m_topWin->Connect(XRCID("wxfb_new_dialog_with_buttons"), wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(wxFormBuilder::OnNewDialogWithButtons), NULL, this);
-    m_topWin->Connect(XRCID("wxfb_new_frame"), wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(wxFormBuilder::OnNewFrame), NULL, this);
-    m_topWin->Connect(XRCID("wxfb_new_panel"), wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(wxFormBuilder::OnNewPanel), NULL, this);
-    m_topWin->Connect(XRCID("wxfb_open"), wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(wxFormBuilder::OpenWithWxFb), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(wxFormBuilder::OnOpenFile),
-                                  NULL, this);
+    m_topWin->Connect(XRCID("wxfb_new_dialog"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(wxFormBuilder::OnNewDialog),
+                      NULL,
+                      this);
+    m_topWin->Connect(XRCID("wxfb_new_dialog_with_buttons"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(wxFormBuilder::OnNewDialogWithButtons),
+                      NULL,
+                      this);
+    m_topWin->Connect(XRCID("wxfb_new_frame"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(wxFormBuilder::OnNewFrame),
+                      NULL,
+                      this);
+    m_topWin->Connect(XRCID("wxfb_new_panel"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(wxFormBuilder::OnNewPanel),
+                      NULL,
+                      this);
+    m_topWin->Connect(XRCID("wxfb_open"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(wxFormBuilder::OpenWithWxFb),
+                      NULL,
+                      this);
+    EventNotifier::Get()->Connect(
+        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(wxFormBuilder::OnOpenFile), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &wxFormBuilder::OnShowFileContextMenu, this);
 }
 
@@ -100,13 +109,16 @@ void wxFormBuilder::CreatePluginMenu(wxMenu* pluginsMenu)
 
     pluginsMenu->Append(wxID_ANY, _("wxFormBuilder"), menu);
 
-    m_topWin->Connect(XRCID("wxfb_settings"), wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(wxFormBuilder::OnSettings), NULL, this);
+    m_topWin->Connect(XRCID("wxfb_settings"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(wxFormBuilder::OnSettings),
+                      NULL,
+                      this);
 }
 
 void wxFormBuilder::HookPopupMenu(wxMenu* menu, MenuType type)
 {
-    if(type == MenuTypeFileView_Folder) {
+    if (type == MenuTypeFileView_Folder) {
         menu->AppendSeparator();
         menu->Append(XRCID("WXFB_POPUP"), _("wxFormBuilder"), CreatePopupMenu());
     }
@@ -133,8 +145,11 @@ wxMenu* wxFormBuilder::CreatePopupMenu()
     item = new wxMenuItem(menu, XRCID("wxfb_new_dialog"), _("New wxDialog..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
 
-    item = new wxMenuItem(menu, XRCID("wxfb_new_dialog_with_buttons"), _("New wxDialog with Default Buttons..."),
-                          wxEmptyString, wxITEM_NORMAL);
+    item = new wxMenuItem(menu,
+                          XRCID("wxfb_new_dialog_with_buttons"),
+                          _("New wxDialog with Default Buttons..."),
+                          wxEmptyString,
+                          wxITEM_NORMAL);
     menu->Append(item);
 
     item = new wxMenuItem(menu, XRCID("wxfb_new_frame"), _("New wxFrame..."), wxEmptyString, wxITEM_NORMAL);
@@ -150,7 +165,7 @@ void wxFormBuilder::OnNewDialog(wxCommandEvent& e)
 {
     wxFBItemDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr);
     dlg.SetTitle(_("New wxDialog"));
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         wxFBItemInfo info;
         info = dlg.GetData();
         info.kind = wxFBItemKind_Dialog;
@@ -163,7 +178,7 @@ void wxFormBuilder::OnNewFrame(wxCommandEvent& e)
 {
     wxFBItemDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr);
     dlg.SetTitle(_("New wxFrame"));
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         wxFBItemInfo info;
         info = dlg.GetData();
         info.kind = wxFBItemKind_Frame;
@@ -179,7 +194,7 @@ void wxFormBuilder::OnNewPanel(wxCommandEvent& e)
     // no need for title in wxPanel
     dlg.DisableTitleField();
 
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         wxFBItemInfo info;
         info = dlg.GetData();
         info.kind = wxFBItemKind_Panel;
@@ -196,7 +211,7 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
     m_mgr->CreateVirtualDirectory(formbuilderVD, wxT("formbuilder"));
     wxString templateFile(m_mgr->GetInstallDirectory() + wxT("/templates/formbuilder/"));
 
-    switch(data.kind) {
+    switch (data.kind) {
     default:
     case wxFBItemKind_Dialog:
         templateFile << wxT("DialogTemplate.fbp");
@@ -213,9 +228,10 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
     }
 
     wxFileName tmplFile(templateFile);
-    if(!tmplFile.FileExists()) {
+    if (!tmplFile.FileExists()) {
         wxMessageBox(wxString::Format(_("Can't find wxFormBuilder template file '%s'"), tmplFile.GetFullPath().c_str()),
-                     _("CodeLite"), wxOK | wxCENTER | wxICON_WARNING);
+                     _("CodeLite"),
+                     wxOK | wxCENTER | wxICON_WARNING);
         return;
     }
 
@@ -223,19 +239,21 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
     wxString err_msg;
     wxString project = data.virtualFolder.BeforeFirst(wxT(':'));
     ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(project, err_msg);
-    if(proj) {
+    if (proj) {
         wxString files_path = proj->GetFileName().GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME);
         // copy the file to here
         wxFileName fbpFile(files_path, data.file + wxT(".fbp"));
-        if(!wxCopyFile(tmplFile.GetFullPath(), fbpFile.GetFullPath())) {
+        if (!wxCopyFile(tmplFile.GetFullPath(), fbpFile.GetFullPath())) {
             wxMessageBox(wxString::Format(_("Failed to copy template file to '%s'"), fbpFile.GetFullPath().c_str()),
-                         _("CodeLite"), wxOK | wxCENTER | wxICON_WARNING);
+                         _("CodeLite"),
+                         wxOK | wxCENTER | wxICON_WARNING);
             return;
         }
         // open the file, and replace expand its macros
         wxString content;
-        if(!ReadFileWithConversion(fbpFile.GetFullPath().c_str(), content)) {
-            wxMessageBox(wxString::Format(_("Failed to read file '%s'"), fbpFile.GetFullPath().c_str()), _("CodeLite"),
+        if (!ReadFileWithConversion(fbpFile.GetFullPath().c_str(), content)) {
+            wxMessageBox(wxString::Format(_("Failed to read file '%s'"), fbpFile.GetFullPath().c_str()),
+                         _("CodeLite"),
                          wxOK | wxCENTER | wxICON_WARNING);
             return;
         }
@@ -245,8 +263,9 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
         content.Replace(wxT("$(Title)"), data.title);
         content.Replace(wxT("$(ClassName)"), data.className);
 
-        if(!WriteFileWithBackup(fbpFile.GetFullPath().c_str(), content, false)) {
-            wxMessageBox(wxString::Format(_("Failed to write file '%s'"), fbpFile.GetFullPath().c_str()), _("CodeLite"),
+        if (!WriteFileWithBackup(fbpFile.GetFullPath().c_str(), content, false)) {
+            wxMessageBox(wxString::Format(_("Failed to write file '%s'"), fbpFile.GetFullPath().c_str()),
+                         _("CodeLite"),
                          wxOK | wxCENTER | wxICON_WARNING);
             return;
         }
@@ -266,15 +285,15 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
         wxFileName cppFile(fbpFile.GetPath(), data.file + wxT(".cpp"));
         wxFileName headerFile(fbpFile.GetPath(), data.file + wxT(".h"));
 
-        if(cppFile.FileExists()) {
+        if (cppFile.FileExists()) {
             filesToAdd.Add(cppFile.GetFullPath());
         }
 
-        if(headerFile.FileExists()) {
+        if (headerFile.FileExists()) {
             filesToAdd.Add(headerFile.GetFullPath());
         }
 
-        if(filesToAdd.GetCount()) {
+        if (filesToAdd.GetCount()) {
             m_mgr->AddFilesToVirtualFolder(data.virtualFolder, filesToAdd);
         }
 
@@ -286,11 +305,12 @@ void wxFormBuilder::OpenWithWxFb(wxCommandEvent& e)
 {
     // get the file name
     TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
-    if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeFile) {
-        if(item.m_fileName.GetExt() == wxT("fbp")) {
+    if (item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeFile) {
+        if (item.m_fileName.GetExt() == wxT("fbp")) {
             DoLaunchWxFB(item.m_fileName.GetFullPath());
         } else {
-            wxMessageBox(_("Please select a 'fbp' (Form Builder Project) file only"), _("CodeLite"),
+            wxMessageBox(_("Please select a 'fbp' (Form Builder Project) file only"),
+                         _("CodeLite"),
                          wxOK | wxCENTER | wxICON_INFORMATION);
             return;
         }
@@ -323,16 +343,16 @@ wxString wxFormBuilder::GetWxFBPath()
     wxString fbpath = confData.GetFbPath();
 
 #ifdef __WXGTK__
-    if(fbpath.IsEmpty()) {
+    if (fbpath.IsEmpty()) {
         // try to locate the file at '/usr/bin' or '/usr/local/bin'
-        if(wxFileName::FileExists(wxT("/usr/local/bin/wxformbuilder"))) {
+        if (wxFileName::FileExists(wxT("/usr/local/bin/wxformbuilder"))) {
             fbpath = wxT("/usr/local/bin/wxformbuilder");
-        } else if(wxFileName::FileExists(wxT("/usr/bin/wxformbuilder"))) {
+        } else if (wxFileName::FileExists(wxT("/usr/bin/wxformbuilder"))) {
             fbpath = wxT("/usr/bin/wxformbuilder");
         }
     }
 #endif
-    if(fbpath.IsEmpty()) {
+    if (fbpath.IsEmpty()) {
         fbpath = wxT("wxformbuilder");
     }
     return fbpath;
@@ -342,7 +362,7 @@ void wxFormBuilder::OnNewDialogWithButtons(wxCommandEvent& e)
 {
     wxFBItemDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_mgr);
     dlg.SetTitle(_("New wxDialog with Default Buttons"));
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         wxFBItemInfo info;
         info = dlg.GetData();
         info.kind = wxFBItemKind_Dialog_With_Buttons;
@@ -356,7 +376,7 @@ void wxFormBuilder::OnOpenFile(clCommandEvent& e)
     e.Skip();
     // launch it with the default application
     wxFileName fullpath(e.GetFileName());
-    if(fullpath.GetExt().MakeLower() != wxT("fbp")) {
+    if (fullpath.GetExt().MakeLower() != wxT("fbp")) {
         return;
     }
 
@@ -370,10 +390,10 @@ void wxFormBuilder::OnOpenFile(clCommandEvent& e)
 #else
     wxMimeTypesManager* mgr = wxTheMimeTypesManager;
     wxFileType* type = mgr->GetFileTypeFromExtension(fullpath.GetExt());
-    if(type) {
+    if (type) {
         wxString cmd = type->GetOpenCommand(fullpath.GetFullPath());
         wxDELETE(type);
-        if(cmd.IsEmpty() == false) {
+        if (cmd.IsEmpty() == false) {
             e.Skip(false);
             wxExecute(cmd);
         }
@@ -383,7 +403,7 @@ void wxFormBuilder::OnOpenFile(clCommandEvent& e)
 
 void wxFormBuilder::OnWxFBTerminated(clProcessEvent& e)
 {
-    if(e.GetProcess()) {
+    if (e.GetProcess()) {
         delete e.GetProcess();
     }
 }
@@ -392,7 +412,7 @@ void wxFormBuilder::OnShowFileContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
     wxFileName file(event.GetFileName());
-    if(file.GetExt() == "fbp") {
+    if (file.GetExt() == "fbp") {
         wxMenu* menu = event.GetMenu();
         menu->PrependSeparator();
         menu->Prepend(

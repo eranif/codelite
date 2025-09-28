@@ -11,7 +11,6 @@
 class LanguageServerPlugin : public IPlugin
 {
     std::unique_ptr<LanguageServerCluster> m_servers;
-    IProcess* m_process = nullptr;
     clTabTogglerHelper::Ptr_t m_tabToggler;
     LanguageServerLogView* m_logView = nullptr;
 

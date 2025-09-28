@@ -1213,9 +1213,8 @@ bool Manager::MoveFileToVD(const wxString& fileName, const wxString& srcVD, cons
     // to move the file between targets, we need to change the file path, we do this
     // by changing the file to be in absolute path related to the src's project
     // and then making it relative to the target's project
-    wxString srcProject, targetProject;
+    wxString srcProject;
     srcProject = srcVD.BeforeFirst(wxT(':'));
-    targetProject = targetVD.BeforeFirst(wxT(':'));
     wxFileName srcProjWd(GetProjectCwd(srcProject), wxEmptyString);
 
     // set a dir saver point

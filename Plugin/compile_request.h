@@ -31,7 +31,6 @@
 class WXDLLIMPEXP_SDK CompileRequest : public ShellCommand
 {
     wxString m_fileName;
-    bool m_premakeOnly;
     bool m_preprocessOnly;
 
 public:
@@ -41,7 +40,9 @@ public:
      * \param projectName the selected project to build
      * \param configurationName the workspace selected configuration
      */
-    CompileRequest(const QueueCommand& buildInfo, const wxString& fileName = wxEmptyString, bool runPremakeOnly = false,
+    CompileRequest(const QueueCommand& buildInfo,
+                   const wxString& fileName = wxEmptyString,
+                   bool runPremakeOnly = false,
                    bool preprocessOnly = false);
 
     /// dtor

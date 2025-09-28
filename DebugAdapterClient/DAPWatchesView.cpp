@@ -11,6 +11,7 @@ DAPWatchesView::DAPWatchesView(wxWindow* parent, DebugAdapterClient* plugin, clM
     , m_plugin(plugin)
     , LOG(log)
 {
+    wxUnusedVar(LOG);
     m_list = new DAPVariableListCtrl(this, &m_plugin->GetClient(), dap::EvaluateContext::WATCH);
     GetSizer()->Add(m_list, wxSizerFlags(1).Expand());
 

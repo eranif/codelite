@@ -91,7 +91,8 @@ void CodeFormatterDlg::OnSelectionChanging(wxDataViewEvent& event) { event.Skip(
 void CodeFormatterDlg::OnRevert(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if (::wxMessageBox(_("Lose all your modifications and restore default settings?"), "CodeLite",
+    if (::wxMessageBox(_("Lose all your modifications and restore default settings?"),
+                       "CodeLite",
                        wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) != wxYES) {
         return;
     }
@@ -127,7 +128,8 @@ void CodeFormatterDlg::OnDelete(wxCommandEvent& event)
     }
 
     wxString formatter_name = m_dvListCtrl->GetItemText(item);
-    if (::wxMessageBox(_("Delete formatter '") + formatter_name + "'", _("Delete formatter"),
+    if (::wxMessageBox(_("Delete formatter '") + formatter_name + "'",
+                       _("Delete formatter"),
                        wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_QUESTION) != wxYES) {
         return;
     }

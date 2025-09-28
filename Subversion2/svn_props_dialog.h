@@ -36,19 +36,17 @@ class Subversion2;
 /** Implementing SvnPropsBaseDlg */
 class SvnPropsDlg : public SvnPropsBaseDlg
 {
-	Subversion2 *m_plugin;
-	wxString     m_url;
+    wxString m_url;
 
 public:
-	/** Constructor */
-	SvnPropsDlg( wxWindow* parent, const wxString& url, Subversion2 *plugin );
-	virtual ~SvnPropsDlg();
+    /** Constructor */
+    SvnPropsDlg(wxWindow* parent, const wxString& url, Subversion2* plugin);
+    virtual ~SvnPropsDlg();
 
-	wxString GetBugTrackerURL() const;
-	wxString GetFRTrackerURL() const;
-	wxString GetBugMsg() const;
-	wxString GetFRMsg() const;
-
+    wxString GetBugTrackerURL() const;
+    wxString GetFRTrackerURL() const;
+    wxString GetBugMsg() const;
+    wxString GetFRMsg() const;
 };
 
 #endif // __svn_props_dialog__

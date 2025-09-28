@@ -13,8 +13,6 @@ VimManager::VimManager(IManager* manager, VimSettings& settings)
     : m_settings(settings)
     , m_currentCommand(manager)
     , m_lastCommand(manager)
-    , m_tmpBuf()
-    , m_editorStates()
     , m_caretInsertStyle(1)
     , m_caretBlockStyle(2)
 {

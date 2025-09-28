@@ -11,56 +11,55 @@ wxString EventsEditorPane::PANE_NAME = "Control Events";
 EventsEditorPane::EventsEditorPane(wxWindow* parent, wxcWidget* control, wxCrafterPlugin* plugin)
     : EventsEditorPaneBase(parent)
     , m_control(control)
-    , m_plugin(plugin)
 {
     DoInitialize();
-    EventNotifier::Get()->Connect(wxEVT_TREE_ITEM_SELECTED, wxCommandEventHandler(EventsEditorPane::OnWidgetSelected),
-                                  NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_UPDATE_EVENTSEDITORPANE, wxCommandEventHandler(EventsEditorPane::OnUpdatePanes),
-                                  NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WXC_CLOSE_PROJECT, wxCommandEventHandler(EventsEditorPane::OnProjectClosed),
-                                  NULL, this);
-    m_controlEventsTable->Connect(wxEVT_PG_DOUBLE_CLICK, wxPropertyGridEventHandler(EventsEditorPane::OnDoubleClick),
-                                  NULL, this);
-    m_inheritedEventsTable->Connect(wxEVT_PG_DOUBLE_CLICK, wxPropertyGridEventHandler(EventsEditorPane::OnDoubleClick),
-                                    NULL, this);
-    m_controlEventsTable->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsEditorPane::OnValueChanged), NULL,
-                                  this);
-    m_inheritedEventsTable->Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsEditorPane::OnValueChanged),
-                                    NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_TREE_ITEM_SELECTED, wxCommandEventHandler(EventsEditorPane::OnWidgetSelected), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_UPDATE_EVENTSEDITORPANE, wxCommandEventHandler(EventsEditorPane::OnUpdatePanes), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WXC_CLOSE_PROJECT, wxCommandEventHandler(EventsEditorPane::OnProjectClosed), NULL, this);
+    m_controlEventsTable->Connect(
+        wxEVT_PG_DOUBLE_CLICK, wxPropertyGridEventHandler(EventsEditorPane::OnDoubleClick), NULL, this);
+    m_inheritedEventsTable->Connect(
+        wxEVT_PG_DOUBLE_CLICK, wxPropertyGridEventHandler(EventsEditorPane::OnDoubleClick), NULL, this);
+    m_controlEventsTable->Connect(
+        wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsEditorPane::OnValueChanged), NULL, this);
+    m_inheritedEventsTable->Connect(
+        wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsEditorPane::OnValueChanged), NULL, this);
 }
 
 EventsEditorPane::~EventsEditorPane()
 {
 
-    EventNotifier::Get()->Disconnect(wxEVT_TREE_ITEM_SELECTED,
-                                     wxCommandEventHandler(EventsEditorPane::OnWidgetSelected), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_UPDATE_EVENTSEDITORPANE,
-                                     wxCommandEventHandler(EventsEditorPane::OnUpdatePanes), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WXC_CLOSE_PROJECT, wxCommandEventHandler(EventsEditorPane::OnProjectClosed),
-                                     NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_TREE_ITEM_SELECTED, wxCommandEventHandler(EventsEditorPane::OnWidgetSelected), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_UPDATE_EVENTSEDITORPANE, wxCommandEventHandler(EventsEditorPane::OnUpdatePanes), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_WXC_CLOSE_PROJECT, wxCommandEventHandler(EventsEditorPane::OnProjectClosed), NULL, this);
 
-    m_controlEventsTable->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsEditorPane::OnValueChanged),
-                                     NULL, this);
-    m_controlEventsTable->Disconnect(wxEVT_PG_DOUBLE_CLICK, wxPropertyGridEventHandler(EventsEditorPane::OnDoubleClick),
-                                     NULL, this);
+    m_controlEventsTable->Disconnect(
+        wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsEditorPane::OnValueChanged), NULL, this);
+    m_controlEventsTable->Disconnect(
+        wxEVT_PG_DOUBLE_CLICK, wxPropertyGridEventHandler(EventsEditorPane::OnDoubleClick), NULL, this);
 
-    m_inheritedEventsTable->Disconnect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsEditorPane::OnValueChanged),
-                                       NULL, this);
-    m_inheritedEventsTable->Disconnect(wxEVT_PG_DOUBLE_CLICK,
-                                       wxPropertyGridEventHandler(EventsEditorPane::OnDoubleClick), NULL, this);
+    m_inheritedEventsTable->Disconnect(
+        wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsEditorPane::OnValueChanged), NULL, this);
+    m_inheritedEventsTable->Disconnect(
+        wxEVT_PG_DOUBLE_CLICK, wxPropertyGridEventHandler(EventsEditorPane::OnDoubleClick), NULL, this);
 }
 
 void EventsEditorPane::DoInitialize()
 {
-    if(m_control) {
+    if (m_control) {
         m_staticTextEventsPaneTitle->SetLabel(_("Showing events for - ") + m_control->GetName());
     }
 
     m_controlEventsTable->GetGrid()->Clear();
     m_inheritedEventsTable->GetGrid()->Clear();
 
-    if(m_control) {
+    if (m_control) {
         m_controlEventsTable->Construct(this, m_control, m_control->GetControlEvents());
         m_inheritedEventsTable->Construct(this, m_control, Allocator::GetCommonEvents());
     }
@@ -68,7 +67,7 @@ void EventsEditorPane::DoInitialize()
 
 void EventsEditorPane::SplitterPositionChanged()
 {
-    if(m_control) {
+    if (m_control) {
         wxString label = m_control->GetName();
         // Without this rewrite, a name that's too long to display fully disappears forever if the splitter-sash is
         // moved :/
@@ -78,7 +77,8 @@ void EventsEditorPane::SplitterPositionChanged()
     // Try not to let the Description section of the wxPG entirely disappear. Or if it already has, try to show it
     // again.
     int charHt = m_controlEventsTable->GetCharHeight() * 3;
-    if((m_controlEventsTable->GetDescBoxHeight() < charHt) && (m_controlEventsTable->GetClientSize().GetY() > charHt)) {
+    if ((m_controlEventsTable->GetDescBoxHeight() < charHt) &&
+        (m_controlEventsTable->GetClientSize().GetY() > charHt)) {
         m_controlEventsTable->SetDescBoxHeight(charHt / 2);
     }
 }
@@ -86,7 +86,7 @@ void EventsEditorPane::SplitterPositionChanged()
 void EventsEditorPane::Save()
 {
     m_controlEventsTable->Save();
-    if(m_inheritedEventsTable) {
+    if (m_inheritedEventsTable) {
         m_inheritedEventsTable->Save();
     }
 }
@@ -101,7 +101,7 @@ void EventsEditorPane::OnWidgetSelected(wxCommandEvent& e)
     Clear();
 
     CHECK_PTR_RET(selection->m_wxcWidget);
-    if(selection->m_wxcWidget->IsEventHandler()) {
+    if (selection->m_wxcWidget->IsEventHandler()) {
         InitEventsForWidget(selection->m_wxcWidget);
     }
 }
@@ -153,17 +153,17 @@ void EventsEditorPane::OnDoubleClick(wxPropertyGridEvent& e)
     wxString eventHandler = "On";
 
     // for non top level window, append the control name as well
-    if(!m_control->IsTopWindow()) {
+    if (!m_control->IsTopWindow()) {
         wxString controlName = m_control->GetName();
         controlName.Replace("m_", "");
-        if(controlName.StartsWith("_")) {
+        if (controlName.StartsWith("_")) {
             controlName = controlName.Mid(1);
         }
         controlName.MakeCapitalized();
         eventHandler << controlName;
     }
 
-    for(size_t i = 0; i < parts.GetCount(); ++i) {
+    for (size_t i = 0; i < parts.GetCount(); ++i) {
         wxString part = parts.Item(i);
         part.MakeLower();
         part.MakeCapitalized();

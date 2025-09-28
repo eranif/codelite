@@ -621,7 +621,7 @@ bool Archive::Write(const wxString& name, const wxStringSet_t& s)
     node->AddAttribute(wxT("Name"), name);
 
     // add an entry for each wxString in the array
-    for (const auto text : s) {
+    for (const auto& text : s) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("SetEntry"));
         node->AddChild(child);
         XmlUtils::SetNodeContent(child, text);

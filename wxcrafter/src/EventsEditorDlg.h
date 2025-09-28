@@ -10,7 +10,6 @@ class wxCrafterPlugin;
 class EventsEditorPane : public EventsEditorPaneBase
 {
     wxcWidget* m_control;
-    wxCrafterPlugin* m_plugin;
 
 public:
     static wxString PANE_NAME;

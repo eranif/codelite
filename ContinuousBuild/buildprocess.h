@@ -31,15 +31,14 @@
 class BuildProcess
 {
     IProcess* m_process = nullptr;
-    wxEvtHandler* m_evtHandler = nullptr;
     wxString m_fileName;
 
 public:
     BuildProcess();
     virtual ~BuildProcess();
 
-    bool Execute(const wxString& cmd, const wxString& fileName, const wxString& workingDirectory,
-                 wxEvtHandler* evtHandler);
+    bool
+    Execute(const wxString& cmd, const wxString& fileName, const wxString& workingDirectory, wxEvtHandler* evtHandler);
     void Stop();
     bool IsBusy();
 
@@ -48,7 +47,7 @@ public:
 
     int GetPid() const
     {
-        if(m_process) {
+        if (m_process) {
             return m_process->GetPid();
         }
         return wxNOT_FOUND;

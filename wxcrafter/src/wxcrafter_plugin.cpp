@@ -85,8 +85,6 @@ wxCrafterPlugin::wxCrafterPlugin(IManager* manager, bool serverMode)
     : IPlugin(manager)
     , m_mainPanel(NULL)
     , m_allEditorsClosing(false)
-    , m_addFileMenu(true)
-    , m_useFrame(true)
     , m_mainFrame(NULL)
     , m_serverMode(serverMode)
 {

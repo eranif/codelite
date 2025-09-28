@@ -40,9 +40,9 @@ class DbgGdb;
         currentToken = _U(gdb_result_string.c_str()); \
     }
 
-#define GDB_ABORT(ch)     \
-    if(type != (int)ch) { \
-        break;            \
+#define GDB_ABORT(ch)      \
+    if (type != (int)ch) { \
+        break;             \
     }
 
 class DbgCmdHandler
@@ -84,12 +84,11 @@ public:
 
 class DbgCmdHandlerDisasseble : public DbgCmdHandler
 {
-    DbgGdb* m_gdb;
 
 public:
     DbgCmdHandlerDisasseble(IDebuggerObserver* observe, DbgGdb* gdbr)
         : DbgCmdHandler(observe)
-        , m_gdb(gdbr)
+
     {
     }
 
@@ -100,12 +99,11 @@ public:
 
 class DbgCmdHandlerDisassebleCurLine : public DbgCmdHandler
 {
-    DbgGdb* m_gdb;
 
 public:
     DbgCmdHandlerDisassebleCurLine(IDebuggerObserver* observe, DbgGdb* gdbr)
         : DbgCmdHandler(observe)
-        , m_gdb(gdbr)
+
     {
     }
 
@@ -120,12 +118,11 @@ public:
  */
 class DbgCmdHandlerStackDepth : public DbgCmdHandler
 {
-    DbgGdb* m_gdb;
 
 public:
     DbgCmdHandlerStackDepth(IDebuggerObserver* observe, DbgGdb* gdbr)
         : DbgCmdHandler(observe)
-        , m_gdb(gdbr)
+
     {
     }
 
@@ -193,16 +190,17 @@ class DbgCmdHandlerBp : public DbgCmdHandler
     const clDebuggerBreakpoint m_bp;
     std::vector<clDebuggerBreakpoint>* m_bplist;
     int m_bpType; // BP_type_break by default
-    DbgGdb* m_debugger;
 
 public:
-    DbgCmdHandlerBp(IDebuggerObserver* observer, DbgGdb* debugger, clDebuggerBreakpoint bp,
-                    std::vector<clDebuggerBreakpoint>* bplist, int bptype = BP_type_break)
+    DbgCmdHandlerBp(IDebuggerObserver* observer,
+                    DbgGdb* debugger,
+                    clDebuggerBreakpoint bp,
+                    std::vector<clDebuggerBreakpoint>* bplist,
+                    int bptype = BP_type_break)
         : DbgCmdHandler(observer)
         , m_bp(bp)
         , m_bplist(bplist)
         , m_bpType(bptype)
-        , m_debugger(debugger)
     {
     }
 
@@ -390,15 +388,11 @@ public:
 class DbgCmdWatchMemory : public DbgCmdHandler
 {
     wxString m_address;
-    size_t m_count;
-    size_t m_columns;
 
 public:
     DbgCmdWatchMemory(IDebuggerObserver* observer, const wxString& address, size_t count, size_t columns)
         : DbgCmdHandler(observer)
         , m_address(address)
-        , m_count(count)
-        , m_columns(columns)
     {
     }
     virtual ~DbgCmdWatchMemory() {}
@@ -410,14 +404,12 @@ class DbgCmdCreateVarObj : public DbgCmdHandler
 {
     wxString m_expression;
     int m_userReason;
-    DbgGdb* m_debugger;
 
 public:
     DbgCmdCreateVarObj(IDebuggerObserver* observer, DbgGdb* gdb, const wxString& expression, int userReason)
         : DbgCmdHandler(observer)
         , m_expression(expression)
         , m_userReason(userReason)
-        , m_debugger(gdb)
     {
     }
 
@@ -487,14 +479,13 @@ public:
 class DbgVarObjUpdate : public DbgCmdHandler
 {
     wxString m_variableName;
-    DbgGdb* m_debugger;
+
     int m_userReason;
 
 public:
     DbgVarObjUpdate(IDebuggerObserver* observer, DbgGdb* debugger, const wxString& name, int userReason)
         : DbgCmdHandler(observer)
         , m_variableName(name)
-        , m_debugger(debugger)
         , m_userReason(userReason)
     {
     }
@@ -572,13 +563,12 @@ public:
 // +++-----------------------------
 class DbgCmdHandlerRegisterValues : public DbgCmdHandler
 {
-    DbgGdb* m_gdb;
+
     std::map<int, wxString> m_numberToName;
 
 public:
     DbgCmdHandlerRegisterValues(IDebuggerObserver* observer, DbgGdb* gdbr, const std::map<int, wxString>& numberToName)
         : DbgCmdHandler(observer)
-        , m_gdb(gdbr)
     {
         m_numberToName = numberToName;
     }

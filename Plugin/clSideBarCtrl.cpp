@@ -242,7 +242,7 @@ void clSideBarCtrl::AddTool(const wxString& label, const wxString& bmpname, size
 
     m_toolbar->Bind(
         wxEVT_UPDATE_UI,
-        [label, tool_id, this](wxUpdateUIEvent& event) {
+        [label, this](wxUpdateUIEvent& event) {
             int book_index = GetPageIndex(label);
             bool is_checked = m_book->GetSelection() == book_index;
             event.Check(is_checked);

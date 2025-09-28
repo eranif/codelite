@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "macbundler.h"
+
 #include "windowattrmanager.h"
 #include "workspace.h"
 
@@ -51,15 +52,15 @@ public:
     {
         m_image_path = path;
 
-        if(path.EndsWith(wxT(".icns"))) {
+        if (path.EndsWith(wxT(".icns"))) {
             wxExecute(wxT("sips -s format png '") + path + wxT("' --out /tmp/tmpicon.png"), wxEXEC_SYNC);
             path = wxT("/tmp/tmpicon.png");
         }
 
         m_image.LoadFile(path, wxBITMAP_TYPE_ANY);
 
-        if(m_image.IsOk()) {
-            if(m_image.GetWidth() > 50 or m_image.GetHeight() > 50) {
+        if (m_image.IsOk()) {
+            if (m_image.GetWidth() > 50 or m_image.GetHeight() > 50) {
                 wxImage tmp = m_image.ConvertToImage();
                 tmp.Rescale(50, 50, wxIMAGE_QUALITY_HIGH);
                 m_image = wxBitmap(tmp);
@@ -79,13 +80,17 @@ public:
     {
         wxPaintDC dc(this);
 
-        if(m_image.IsOk()) { dc.DrawBitmap(m_image, 10, 10, false); }
+        if (m_image.IsOk()) {
+            dc.DrawBitmap(m_image, 10, 10, false);
+        }
     }
 
     void doubleClick(wxMouseEvent& evt)
     {
         wxString filename = wxFileSelector(_("Choose the icon file"));
-        if(not filename.IsEmpty()) { setImage(filename); }
+        if (not filename.IsEmpty()) {
+            setImage(filename);
+        }
     }
 
     wxString getImagePath() { return m_image_path; }
@@ -112,15 +117,17 @@ class BundleConfigDialog : public wxDialog
     wxTextCtrl* m_icon_file;
     wxTextCtrl* m_identifier;
     wxTextCtrl* m_signature;
-    IManager* m_pluginManager;
 
     wxString m_project_name;
 
 public:
     BundleConfigDialog(ProjectPtr project, wxWindow* parent, const wxArrayString& choices, IManager* manager)
-        : wxDialog(parent, wxID_ANY, _("Mac Bundler Configuration"), wxDefaultPosition, wxDefaultSize,
+        : wxDialog(parent,
+                   wxID_ANY,
+                   _("Mac Bundler Configuration"),
+                   wxDefaultPosition,
+                   wxDefaultSize,
                    wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
-        , m_pluginManager(manager)
     {
         m_accepted = false;
 
@@ -181,12 +188,18 @@ public:
         subsizer->Add(okBtn, 0, wxLEFT | wxRIGHT, 5);
         sizer->Add(subsizer, 0, wxEXPAND | wxALL, 10);
 
-        okBtn->Connect(okBtn->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BundleConfigDialog::onOk),
-                       NULL, this);
-        cancelBtn->Connect(cancelBtn->GetId(), wxEVT_COMMAND_BUTTON_CLICKED,
-                           wxCommandEventHandler(BundleConfigDialog::onCancel), NULL, this);
-        m_info_plist_cb->Connect(m_info_plist_cb->GetId(), wxEVT_COMMAND_CHECKBOX_CLICKED,
-                                 wxCommandEventHandler(BundleConfigDialog::onPlistCheckboxPressed), NULL, this);
+        okBtn->Connect(
+            okBtn->GetId(), wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(BundleConfigDialog::onOk), NULL, this);
+        cancelBtn->Connect(cancelBtn->GetId(),
+                           wxEVT_COMMAND_BUTTON_CLICKED,
+                           wxCommandEventHandler(BundleConfigDialog::onCancel),
+                           NULL,
+                           this);
+        m_info_plist_cb->Connect(m_info_plist_cb->GetId(),
+                                 wxEVT_COMMAND_CHECKBOX_CLICKED,
+                                 wxCommandEventHandler(BundleConfigDialog::onPlistCheckboxPressed),
+                                 NULL,
+                                 this);
 
         this->SetSizerAndFit(sizer);
         this->Centre();
@@ -223,15 +236,17 @@ public:
 
     bool getResults(wxArrayString& out, bool* createInfoPlistFile, bool* createIcon)
     {
-        if(not m_accepted) return false;
+        if (not m_accepted)
+            return false;
 
         *createInfoPlistFile = m_info_plist_cb->IsChecked();
         *createIcon = m_icon_cb->IsChecked();
 
         const wxArrayString& items = m_choices_widget->GetStrings();
         const int count = items.GetCount();
-        for(int n = 0; n < count; n++) {
-            if(m_choices_widget->IsChecked(n)) out.Add(items[n]);
+        for (int n = 0; n < count; n++) {
+            if (m_choices_widget->IsChecked(n))
+                out.Add(items[n]);
         }
 
         return true;
@@ -243,7 +258,7 @@ public:
 
     void writeInfoPlistFile(wxTextFile& file)
     {
-        if(not file.Exists()) {
+        if (not file.Exists()) {
             wxMessageBox(_("Cannot access or create file!"));
             return;
         }
@@ -276,7 +291,7 @@ public:
         file.AddLine(wxT("</dict>"));
         file.AddLine(wxT("</plist>"));
 
-        if(not file.Write()) {
+        if (not file.Write()) {
             wxMessageBox(_("Failed to write Info.plist file!"));
             return;
         }
@@ -284,10 +299,7 @@ public:
 };
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new MacBundler(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new MacBundler(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -314,12 +326,12 @@ void MacBundler::onBundleInvoked_active(wxCommandEvent& evt)
 {
     wxString activeProject = m_mgr->GetWorkspace()->GetActiveProjectName();
 
-    if(activeProject == wxEmptyString) {
+    if (activeProject == wxEmptyString) {
         wxMessageBox(_("No project is active, cannot continue."));
     } else {
         wxString error;
         ProjectPtr project = m_mgr->GetWorkspace()->FindProjectByName(activeProject, error);
-        if(!project) {
+        if (!project) {
             wxMessageBox(_("Cannot retrieve active project, cannot continue."));
         } else {
             showSettingsDialogFor(project);
@@ -329,16 +341,18 @@ void MacBundler::onBundleInvoked_active(wxCommandEvent& evt)
 
 void MacBundler::onBundleInvoked_selected(wxCommandEvent& evt)
 {
-    if(not m_mgr->GetWorkspace() or not m_mgr->IsWorkspaceOpen()) return;
+    if (not m_mgr->GetWorkspace() or not m_mgr->IsWorkspaceOpen())
+        return;
 
     TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
-    if(item.m_itemType == ProjectItem::TypeProject) {
+    if (item.m_itemType == ProjectItem::TypeProject) {
 
         wxString project_name(item.m_text);
         wxString err_msg;
 
         ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(project_name, err_msg);
-        if(not proj) return;
+        if (not proj)
+            return;
 
         showSettingsDialogFor(proj);
     } else {
@@ -354,7 +368,7 @@ void MacBundler::showSettingsDialogFor(ProjectPtr project)
     ProjectSettingsCookie cookie;
 
     ProjectSettingsPtr settings = project->GetSettings();
-    if(not settings) {
+    if (not settings) {
         wxMessageBox(_("Cannot continue, impossible to access project settings."));
         return;
     }
@@ -384,17 +398,18 @@ void MacBundler::showSettingsDialogFor(ProjectPtr project)
         accepted = configDlg.getResults(targetsToSet, &generateInfoPlistFile, &generateIcon);
         iconName = configDlg.getIconDestName();
 
-        if(accepted and generateInfoPlistFile) {
+        if (accepted and generateInfoPlistFile) {
             wxFileName projPath = project->GetFileName();
             projPath.SetFullName(wxT(""));
             const wxString projectDirName = projPath.GetFullPath();
             const wxString infoPlistFile = projectDirName + wxT("/Info.plist");
 
-            if(wxFileExists(infoPlistFile)) {
+            if (wxFileExists(infoPlistFile)) {
                 int out = wxMessageBox(wxString::Format(_("The following file:\n%s\nalready exists, overwrite it?\n"),
                                                         infoPlistFile.c_str()),
-                                       _("Warning"), wxYES_NO);
-                if(out == wxYES) {
+                                       _("Warning"),
+                                       wxYES_NO);
+                if (out == wxYES) {
                     wxTextFile file;
                     file.Open(infoPlistFile);
                     file.Clear();
@@ -403,7 +418,7 @@ void MacBundler::showSettingsDialogFor(ProjectPtr project)
                 }
             } else {
                 wxTextFile file;
-                if(not file.Create(infoPlistFile)) {
+                if (not file.Create(infoPlistFile)) {
                     wxMessageBox(_("Could not create Info.plist file\n") + infoPlistFile);
                 } else {
                     configDlg.writeInfoPlistFile(file);
@@ -411,7 +426,7 @@ void MacBundler::showSettingsDialogFor(ProjectPtr project)
                 }
             }
 
-            if(wxFileExists(infoPlistFile)) {
+            if (wxFileExists(infoPlistFile)) {
                 // FIXME: if the file was already present, it will be added again and appear twice in the file tree
                 wxArrayString paths;
                 paths.Add(infoPlistFile);
@@ -420,9 +435,9 @@ void MacBundler::showSettingsDialogFor(ProjectPtr project)
             }
         } // nend if create info.plist
 
-        if(accepted and generateIcon) {
+        if (accepted and generateIcon) {
             wxString iconSourcePath = configDlg.getIconSource();
-            if(not iconSourcePath.IsEmpty()) {
+            if (not iconSourcePath.IsEmpty()) {
                 // sips doesn't like double slashes in path names
                 iconSourcePath.Replace(wxT("//"), wxT("/"));
 
@@ -436,31 +451,34 @@ void MacBundler::showSettingsDialogFor(ProjectPtr project)
 
                 std::cout << "Copying icon '" << iconSourcePath.mb_str() << "' to project\n";
 
-                if(iconSourcePath.EndsWith(wxT(".icns"))) {
-                    if(not wxCopyFile(iconSourcePath, iconFileDest)) { wxMessageBox(_("Sorry, could not copy icon")); }
+                if (iconSourcePath.EndsWith(wxT(".icns"))) {
+                    if (not wxCopyFile(iconSourcePath, iconFileDest)) {
+                        wxMessageBox(_("Sorry, could not copy icon"));
+                    }
                 } else {
                     wxString cmd =
                         wxT("sips -s format icns '") + iconSourcePath + wxT("' --out '") + iconFileDest + wxT("'");
                     std::cout << cmd.mb_str() << std::endl;
                     wxExecute(cmd, wxEXEC_SYNC);
-                    if(not wxFileExists(iconFileDest)) {
+                    if (not wxFileExists(iconFileDest)) {
                         wxMessageBox(_("Sorry, could not convert selected icon to icns format"));
                     }
                 }
 
                 // FIXME: if the file was already present, it will be added again and appear twice in the file tree
-                if(wxFileExists(iconFileDest)) {
+                if (wxFileExists(iconFileDest)) {
                     wxArrayString paths;
                     paths.Add(iconFileDest);
                     m_mgr->CreateVirtualDirectory(project->GetName(), wxT("osx"));
                     m_mgr->AddFilesToVirtualFolder(project->GetName() + wxT(":osx"), paths);
                 }
             } // end if icon not null
-        }     // end if generate icon
+        } // end if generate icon
     }
-    if(!accepted) return;
+    if (!accepted)
+        return;
 
-    for(int n = 0; n < targetsToSet.GetCount(); n++) {
+    for (int n = 0; n < targetsToSet.GetCount(); n++) {
         BuildConfigPtr buildConfig = configs[targetsToSet[n]];
 
         wxString outputFileName = buildConfig->GetOutputFileName();
@@ -468,7 +486,7 @@ void MacBundler::showSettingsDialogFor(ProjectPtr project)
         buildConfig->SetOutputFileName(wxT("$(IntermediateDirectory)/") + output);
         buildConfig->SetCommand(wxT("./") + output);
 
-        if(generateInfoPlistFile or generateIcon) {
+        if (generateInfoPlistFile or generateIcon) {
             // get existing custom makefile targets, if any
             wxString customPreBuild = buildConfig->GetPreBuildCustom();
 
@@ -482,7 +500,7 @@ void MacBundler::showSettingsDialogFor(ProjectPtr project)
             deps = deps.Trim();
             deps = deps.Trim(false);
 
-            if(generateInfoPlistFile) {
+            if (generateInfoPlistFile) {
                 // augment existing rules with new rules to manage Info.plist file
                 deps.Append(wxT(" $(IntermediateDirectory)/$(ProjectName).app/Contents/Info.plist"));
                 rules.Append(wxString(wxT("\n## rule to copy the Info.plist file into the bundle\n")) +
@@ -490,7 +508,7 @@ void MacBundler::showSettingsDialogFor(ProjectPtr project)
                              wxT("\tmkdir -p '$(IntermediateDirectory)/$(ProjectName).app/Contents' && cp -f "
                                  "Info.plist '$(IntermediateDirectory)/$(ProjectName).app/Contents/Info.plist'"));
             }
-            if(generateIcon) {
+            if (generateIcon) {
                 // augment existing rules with new rules to manage Info.plist file
                 deps.Append(wxT(" $(IntermediateDirectory)/$(ProjectName).app/Contents/Resources/") + iconName);
                 rules.Append(
@@ -539,8 +557,11 @@ void MacBundler::CreatePluginMenu(wxMenu* pluginsMenu)
     // item = new wxMenuItem(menu, wxID_ANY, _("New wxWidgets Project Wizard..."), wxEmptyString, wxITEM_NORMAL);
     // menu->Append(item);
 
-    m_mgr->GetTheApp()->Connect(item->GetId(), wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(MacBundler::onBundleInvoked_active), NULL, this);
+    m_mgr->GetTheApp()->Connect(item->GetId(),
+                                wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(MacBundler::onBundleInvoked_active),
+                                NULL,
+                                this);
 
     pluginsMenu->Append(wxID_ANY, _("MacBundler"), menu);
 
@@ -562,12 +583,15 @@ void MacBundler::CreatePluginMenu(wxMenu* pluginsMenu)
 
 void MacBundler::HookPopupMenu(wxMenu* menu, MenuType type)
 {
-    if(type == MenuTypeFileView_Project) {
-        if(!menu->FindItem(XRCID("MACBUNDLER_PROJECT_MENU"))) {
-            menu->Append(XRCID("MACBUNDLER_PROJECT_MENU"), _("Make this project output a bundle"), wxEmptyString,
-                         wxITEM_NORMAL);
-            m_mgr->GetTheApp()->Connect(XRCID("MACBUNDLER_PROJECT_MENU"), wxEVT_COMMAND_MENU_SELECTED,
-                                        wxCommandEventHandler(MacBundler::onBundleInvoked_selected), NULL, this);
+    if (type == MenuTypeFileView_Project) {
+        if (!menu->FindItem(XRCID("MACBUNDLER_PROJECT_MENU"))) {
+            menu->Append(
+                XRCID("MACBUNDLER_PROJECT_MENU"), _("Make this project output a bundle"), wxEmptyString, wxITEM_NORMAL);
+            m_mgr->GetTheApp()->Connect(XRCID("MACBUNDLER_PROJECT_MENU"),
+                                        wxEVT_COMMAND_MENU_SELECTED,
+                                        wxCommandEventHandler(MacBundler::onBundleInvoked_selected),
+                                        NULL,
+                                        this);
         }
     }
 }

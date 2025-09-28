@@ -1481,7 +1481,7 @@ wxString BuilderGnuMake::GetSingleFileCmd(const wxString& project,
         // Attempting to build a header file, try to see if we got an implementation file instead
         // We had the current extension to the array so incase we loop over the entire array
         // we remain with the original file name unmodified
-        std::vector<wxString> implExtensions = { "cpp", "cxx", "cc", "c++", "c", fn.GetExt() };
+        std::vector<wxString> implExtensions = {"cpp", "cxx", "cc", "c++", "c", fn.GetExt()};
         for (const wxString& ext : implExtensions) {
             fn.SetExt(ext);
             if (fn.FileExists()) {
@@ -1769,7 +1769,6 @@ wxString BuilderGnuMake::GetBuildToolCommand(const wxString& project,
                                              const wxString& arguments,
                                              bool isCommandlineCommand) const
 {
-    wxString jobsCmd;
     wxString buildTool;
 
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
@@ -1786,7 +1785,6 @@ wxString BuilderGnuMake::GetBuildToolCommand(const wxString& project,
         buildTool = compiler->GetTool("MAKE");
 
     } else {
-        jobsCmd = wxEmptyString;
         buildTool = "\"$(MAKE)\"";
     }
 

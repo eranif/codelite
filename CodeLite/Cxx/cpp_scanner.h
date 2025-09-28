@@ -57,7 +57,6 @@ public:
 private:
 	char *m_data;
 	char *m_pcurr;
-	int   m_total;
 	int   m_curr;
 };
 

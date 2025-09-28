@@ -42,7 +42,6 @@ class OpenWindowsPanel : public OpenWindowsPanelBase
     bool m_initDone;
     std::map<wxString, wxDataViewItem> m_editors;
     bool m_workspaceClosing;
-    bool m_workspaceOpened;
     clToolBarGeneric* m_toolbar;
     bool m_sortItems = false;
 

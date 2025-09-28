@@ -21,18 +21,17 @@ void SFTPGrepStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, boo
     size_t lineNumberStyleLen = 0;
     size_t matchStyleLen = 0;
     size_t headerStyleLen = 0;
-    size_t i = 0;
     for (const wxUniChar& ch : text) {
         size_t chWidth = 1;
-        if(!ch.IsAscii()) {
+        if (!ch.IsAscii()) {
             chWidth = wxString(ch).mb_str(wxConvUTF8).length();
         }
 
-        switch(m_curstate) {
+        switch (m_curstate) {
         default:
             break;
         case kStartOfLine:
-            if(ch == '=') {
+            if (ch == '=') {
                 ++headerStyleLen;
                 m_curstate = kHeader;
             } else {
@@ -42,7 +41,7 @@ void SFTPGrepStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, boo
             break;
         case kHeader:
             headerStyleLen += chWidth;
-            if(ch == '\n') {
+            if (ch == '\n') {
                 m_curstate = kStartOfLine;
                 ctrl->SetStyling(headerStyleLen, LEX_FIF_HEADER);
                 headerStyleLen = 0;
@@ -50,7 +49,7 @@ void SFTPGrepStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, boo
             break;
         case kFile:
             filenameStyleLen += chWidth;
-            if(ch == ':') {
+            if (ch == ':') {
                 m_curstate = kLineNumber;
                 ctrl->SetStyling(filenameStyleLen, LEX_FIF_FILE);
                 filenameStyleLen = 0;
@@ -58,7 +57,7 @@ void SFTPGrepStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, boo
             break;
         case kLineNumber:
             ++lineNumberStyleLen;
-            if(ch == ':') {
+            if (ch == ':') {
                 m_curstate = kMatch;
                 ctrl->SetStyling(lineNumberStyleLen, LEX_FIF_LINE_NUMBER);
                 lineNumberStyleLen = 0;
@@ -66,33 +65,31 @@ void SFTPGrepStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, boo
             break;
         case kMatch:
             matchStyleLen += chWidth;
-            if(ch == '\n') {
+            if (ch == '\n') {
                 m_curstate = kStartOfLine;
                 ctrl->SetStyling(matchStyleLen, LEX_FIF_MATCH);
                 matchStyleLen = 0;
             }
             break;
         }
-
-        i += chWidth;
     }
 
     // Left overs...
-    if(filenameStyleLen) {
+    if (filenameStyleLen) {
         ctrl->SetStyling(filenameStyleLen, LEX_FIF_FILE);
         filenameStyleLen = 0;
     }
 
-    if(matchStyleLen) {
+    if (matchStyleLen) {
         ctrl->SetStyling(matchStyleLen, LEX_FIF_MATCH);
         matchStyleLen = 0;
     }
 
-    if(lineNumberStyleLen) {
+    if (lineNumberStyleLen) {
         ctrl->SetStyling(lineNumberStyleLen, LEX_FIF_LINE_NUMBER);
         lineNumberStyleLen = 0;
     }
-    if(headerStyleLen) {
+    if (headerStyleLen) {
         ctrl->SetStyling(headerStyleLen, LEX_FIF_HEADER);
         headerStyleLen = 0;
     }

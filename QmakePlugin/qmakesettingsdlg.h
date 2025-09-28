@@ -34,7 +34,6 @@ class IManager;
 /** Implementing QMakeSettingsBaseDlg */
 class QMakeSettingsDlg : public QMakeSettingsBaseDlg
 {
-    IManager* m_manager;
     QmakeConf* m_conf;
     long m_rightClickTabIdx;
 

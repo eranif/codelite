@@ -41,26 +41,17 @@ class IConfigTool;
  **/
 class NewUnitTestDlg : public NewUnitTestBaseDlg
 {
-	UnitTestPP  *m_plugin;
-	IConfigTool *m_config;
+    UnitTestPP* m_plugin;
 
 public:
-	/** Constructor */
-	NewUnitTestDlg( wxWindow* parent, UnitTestPP *plugin, IConfigTool *conf );
-	virtual ~NewUnitTestDlg();
+    /** Constructor */
+    NewUnitTestDlg(wxWindow* parent, UnitTestPP* plugin, IConfigTool* conf);
+    virtual ~NewUnitTestDlg();
 
-	wxString GetTestName() {
-		return m_textCtrlTestName->GetValue();
-	}
-	wxString GetFixtureName() {
-		return m_textCtrlFixtureName->GetValue();
-	}
-	wxString GetProjectName() {
-		return m_choiceProjects->GetStringSelection();
-	}
-	wxString GetFilename() {
-		return m_textCtrlOutputFile->GetValue();
-	}
+    wxString GetTestName() { return m_textCtrlTestName->GetValue(); }
+    wxString GetFixtureName() { return m_textCtrlFixtureName->GetValue(); }
+    wxString GetProjectName() { return m_choiceProjects->GetStringSelection(); }
+    wxString GetFilename() { return m_textCtrlOutputFile->GetValue(); }
 };
 
 #endif // __newunittestdlg__

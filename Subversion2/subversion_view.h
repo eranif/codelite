@@ -69,7 +69,6 @@ class SubversionView : public SubversionPageBase
     SvnCommand m_diffCommand;
     wxString m_curpath;
     SvnConsole* m_subversionConsole;
-    int m_fileExplorerLastBaseImgIdx;
     wxFileName m_workspaceFile;
 
 public:

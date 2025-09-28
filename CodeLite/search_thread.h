@@ -352,7 +352,6 @@ class WXDLLIMPEXP_CL SearchThread : public WorkerThread
     bool m_matchCase;
     wxCriticalSection m_cs;
     wxStopWatch m_stopWatch;
-    long m_msPassed = 0;
 
 public:
     /**

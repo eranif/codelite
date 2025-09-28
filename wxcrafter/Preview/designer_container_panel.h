@@ -15,7 +15,6 @@ class DesignerContainerPanel : public wxPanel
     int m_height;
     int m_width;
     std::set<wxObject*> m_windows;
-    int m_topLevelType;
     CaptionBar* m_caption;
 
 protected:

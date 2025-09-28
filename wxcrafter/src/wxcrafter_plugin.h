@@ -28,11 +28,8 @@ class wxCrafterPlugin : public IPlugin
 {
     GUICraftMainPanel* m_mainPanel = nullptr;
     wxcTreeView* m_treeView = nullptr;
-    wxMenuItem* m_separatorItem = nullptr;
     GeneratedClass m_generatedClassInfo;
     bool m_allEditorsClosing = false;
-    bool m_addFileMenu = false;
-    bool m_useFrame = true;
     MainFrame* m_mainFrame = nullptr;
     bool m_serverMode = false;
     wxFileName m_selectedFile;

@@ -900,7 +900,7 @@ clSFTPManager::AwaitExecute(const wxString& accountName, const wxString& command
     std::promise<ReadOutput_t> exec_promise;
     auto future = exec_promise.get_future();
 
-    auto exec_func = [command, wd, conn, env, accountName, &exec_promise]() {
+    auto exec_func = [command, wd, conn, accountName, &exec_promise]() {
         // read the file content
         auto session = conn->GetSsh()->GetSession();
         auto channel = ssh_channel_new(conn->GetSsh()->GetSession());
@@ -984,7 +984,7 @@ void clSFTPManager::AsyncExecute(
         return;
     }
 
-    auto exec_func = [command, wd, conn, env, accountName, sink]() {
+    auto exec_func = [command, wd, conn, accountName, sink]() {
         // read the file content
         auto session = conn->GetSsh()->GetSession();
         auto channel = ssh_channel_new(conn->GetSsh()->GetSession());

@@ -383,7 +383,7 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
         // we are starting with a selected text
         // check this range to see if it matches the 'find-what'
         // string
-        TargetRange result = DoFind(FIND_DEFAULT, { m_sci->GetSelectionStart(), m_sci->GetSelectionEnd() });
+        TargetRange result = DoFind(FIND_DEFAULT, {m_sci->GetSelectionStart(), m_sci->GetSelectionEnd()});
         if (result.IsOk()) {
             // the selected text is a match, replace it
             wxString replace_with = m_textCtrlReplace->GetValue();
@@ -405,7 +405,7 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
     }
 
     // perform a search
-    DoFindWithMessage(FIND_DEFAULT | FIND_GOTOLINE, { start_pos, static_cast<int>(m_sci->GetLastPosition()) });
+    DoFindWithMessage(FIND_DEFAULT | FIND_GOTOLINE, {start_pos, static_cast<int>(m_sci->GetLastPosition())});
 }
 
 int QuickFindBar::DoReplace(const TargetRange& range)
@@ -415,7 +415,7 @@ int QuickFindBar::DoReplace(const TargetRange& range)
     if (range.IsOk()) {
         target_range = range;
     } else if (!m_sci->HasSelection()) {
-        target_range = { m_sci->GetSelectionStart(), m_sci->GetSelectionEnd() };
+        target_range = {m_sci->GetSelectionStart(), m_sci->GetSelectionEnd()};
     }
 
     if (!target_range.IsOk()) {
@@ -459,7 +459,7 @@ bool QuickFindBar::Show(const wxString& findWhat, bool showReplace)
 
 bool QuickFindBar::DoShow(bool s, const wxString& findWhat, bool showReplace)
 {
-    wxWindowUpdateLocker locker{ this };
+    wxWindowUpdateLocker locker{this};
     int dummy = wxNOT_FOUND;
     if (!clConfig::Get().Read("FindBar/Height", dummy)) {
         // first time, place it at the top
@@ -615,7 +615,7 @@ TargetRange::Vec_t QuickFindBar::DoFindAll(const TargetRange& target)
         return {};
     }
 
-    TargetRange range{ 0, static_cast<int>(m_sci->GetLastPosition()) };
+    TargetRange range{0, static_cast<int>(m_sci->GetLastPosition())};
     if (target.IsOk()) {
         range = target;
     }
@@ -778,9 +778,9 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
 
     TargetRange target;
     if (selectionOnly) {
-        target = { m_sci->GetSelectionStart(), m_sci->GetSelectionEnd() };
+        target = {m_sci->GetSelectionStart(), m_sci->GetSelectionEnd()};
     } else {
-        target = { 0, static_cast<int>(m_sci->GetLastPosition()) };
+        target = {0, static_cast<int>(m_sci->GetLastPosition())};
     }
 
     // keep the current line, we will restore it after the replacement is done
@@ -796,11 +796,8 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
     // To workaround this, we only apply replacement optimizations for non UTF8
     // strings
 
-    bool isUTF8 = false;
-
     wxString input_buffer = m_sci->GetText();
     unsigned int utfLen = StringUtils::UTF8Length(input_buffer.ToStdWstring().c_str(), input_buffer.length());
-    isUTF8 = (utfLen != input_buffer.length());
 
     // perform a search
     m_sci->BeginUndoAction();
@@ -918,7 +915,7 @@ TargetRange QuickFindBar::DoFind(size_t find_flags, const TargetRange& target)
     }
     // do we have a target?
     if (target_end == target_start) {
-        TargetRange res = { wxNOT_FOUND, wxNOT_FOUND };
+        TargetRange res = {wxNOT_FOUND, wxNOT_FOUND};
         res.why = TargetRange::EMPTY_RANGE;
         return res;
     }
@@ -944,9 +941,9 @@ TargetRange QuickFindBar::DoFind(size_t find_flags, const TargetRange& target)
         if (find_flags & FIND_GOTOLINE) {
             CenterLine(m_sci, target_start, target_end);
         }
-        return { target_start, target_end };
+        return {target_start, target_end};
     } else {
-        TargetRange res = { wxNOT_FOUND, wxNOT_FOUND };
+        TargetRange res = {wxNOT_FOUND, wxNOT_FOUND};
         res.why = find_flags & FIND_PREV ? TargetRange::REACHED_SOF : TargetRange::REACHED_EOF;
         return res;
     }
@@ -1076,7 +1073,7 @@ TargetRange QuickFindBar::DoFindWithWrap(size_t find_flags, const TargetRange& t
     if (!res.IsOk()) {
         // reached end or start of the document
         // start from the beginning (the range will switch if FIND_PREV is set)
-        res = DoFindWithMessage(find_flags, { 0, static_cast<int>(m_sci->GetLastPosition()) });
+        res = DoFindWithMessage(find_flags, {0, static_cast<int>(m_sci->GetLastPosition())});
     }
     return res;
 }
@@ -1088,9 +1085,9 @@ TargetRange QuickFindBar::GetBestTargetRange() const
     }
 
     if (m_inSelection) {
-        return { m_sci->GetSelectionStart(), m_sci->GetSelectionEnd() };
+        return {m_sci->GetSelectionStart(), m_sci->GetSelectionEnd()};
     } else {
-        return { 0, static_cast<int>(m_sci->GetLastPosition()) };
+        return {0, static_cast<int>(m_sci->GetLastPosition())};
     }
 }
 void QuickFindBar::OnReplaceTextEnter(wxCommandEvent& event) {}

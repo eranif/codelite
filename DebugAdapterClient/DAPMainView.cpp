@@ -390,7 +390,7 @@ void DAPMainView::OnThreadsListMenu(wxDataViewEvent& event)
     menu.Append(XRCID("copy_current_thread_backtrace"), _("Copy this thread backtrace"));
     menu.Bind(
         wxEVT_MENU,
-        [this, thread_info](wxCommandEvent& e) {
+        [thread_info](wxCommandEvent& e) {
             wxUnusedVar(e);
             wxString bt;
             ::CopyToClipboard(thread_info->GetBacktrace());

@@ -22,7 +22,6 @@ class wxCrafterPlugin;
 
 class wxcTreeView : public wxcTreeViewBaseClass
 {
-    wxCrafterPlugin* m_plugin;
     EventsEditorPane* m_eventsPane;
     wxArrayString m_fileList;
     bool m_loadingProject;

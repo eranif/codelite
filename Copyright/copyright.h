@@ -25,15 +25,12 @@
 #ifndef __Copyright__
 #define __Copyright__
 
-#include "plugin.h"
 #include "cl_command_event.h"
+#include "plugin.h"
 
 class wxMenuItem;
 class Copyright : public IPlugin
 {
-    wxMenuItem* m_projectSepItem;
-    wxMenuItem* m_workspaceSepItem;
-
 protected:
     bool Validate(wxString& content);
     void MassUpdate(const std::vector<wxFileName>& filtered_files, const wxString& content);

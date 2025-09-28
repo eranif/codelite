@@ -142,7 +142,6 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 Subversion2::Subversion2(IManager* manager)
     : IPlugin(manager)
-    , m_explorerSepItem(NULL)
     , m_projectSepItem(NULL)
     , m_simpleCommand(this)
     , m_diffCommand(this)

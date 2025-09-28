@@ -440,6 +440,6 @@ std::unordered_map<wxString, std::vector<LSP::TextEdit>> ParseWorkspaceEdit(cons
             modifications.insert({ filepath, file_changes });
         }
     }
-    return std::move(modifications);
+    return modifications;
 }
 }; // namespace LSP

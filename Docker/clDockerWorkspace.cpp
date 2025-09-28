@@ -16,7 +16,7 @@
 
 #define CHECK_EVENT(e) \
     e.Skip();          \
-    if(!IsOpen()) {    \
+    if (!IsOpen()) {   \
         return;        \
     }                  \
     e.Skip(false);
@@ -24,10 +24,9 @@
 clDockerWorkspace::clDockerWorkspace(bool bindEvents, Docker* plugin, clDockerDriver::Ptr_t driver)
     : m_bindEvents(bindEvents)
     , m_driver(driver)
-    , m_plugin(plugin)
 {
     SetWorkspaceType("Docker");
-    if(m_bindEvents) {
+    if (m_bindEvents) {
         EventNotifier::Get()->Bind(wxEVT_CMD_OPEN_WORKSPACE, &clDockerWorkspace::OnOpenWorkspace, this);
         EventNotifier::Get()->Bind(wxEVT_CMD_CLOSE_WORKSPACE, &clDockerWorkspace::OnCloseWorkspace, this);
         EventNotifier::Get()->Bind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &clDockerWorkspace::OnNewWorkspace, this);
@@ -44,7 +43,7 @@ clDockerWorkspace::clDockerWorkspace(bool bindEvents, Docker* plugin, clDockerDr
 
 clDockerWorkspace::~clDockerWorkspace()
 {
-    if(m_bindEvents) {
+    if (m_bindEvents) {
         EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_WORKSPACE, &clDockerWorkspace::OnOpenWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_CLOSE_WORKSPACE, &clDockerWorkspace::OnCloseWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &clDockerWorkspace::OnNewWorkspace, this);
@@ -91,7 +90,7 @@ clDockerWorkspace* clDockerWorkspace::Get() { return g_workspace; }
 
 void clDockerWorkspace::Initialise(Docker* plugin)
 {
-    if(!g_workspace) {
+    if (!g_workspace) {
         g_workspace = new clDockerWorkspace(true, plugin, plugin->GetDriver());
     }
 }
@@ -114,7 +113,7 @@ void clDockerWorkspace::OnOpenWorkspace(clCommandEvent& event)
     // Test that this is our workspace
     clDockerWorkspaceSettings conf;
     conf.Load(workspaceFile);
-    if(!conf.IsOk()) {
+    if (!conf.IsOk()) {
         return;
     }
 
@@ -122,7 +121,7 @@ void clDockerWorkspace::OnOpenWorkspace(clCommandEvent& event)
     // event.Skip(false)
     event.Skip(false);
 
-    if(IsOpen()) {
+    if (IsOpen()) {
         Close();
     }
     Open(workspaceFile);
@@ -131,7 +130,7 @@ void clDockerWorkspace::OnOpenWorkspace(clCommandEvent& event)
 void clDockerWorkspace::OnCloseWorkspace(clCommandEvent& event)
 {
     event.Skip();
-    if(IsOpen()) {
+    if (IsOpen()) {
         event.Skip(false);
         Close();
     }
@@ -142,7 +141,7 @@ void clDockerWorkspace::Open(const wxFileName& path)
     m_filename = path;
     m_settings.Load(m_filename);
     m_isOpen = m_settings.Load(m_filename).IsOk();
-    if(!IsOpen()) {
+    if (!IsOpen()) {
         m_filename.Clear();
         m_settings.Clear();
         GetView()->Clear();
@@ -179,7 +178,7 @@ void clDockerWorkspace::Open(const wxFileName& path)
 
 void clDockerWorkspace::Close()
 {
-    if(IsOpen()) {
+    if (IsOpen()) {
         // Store the session
         clGetManager()->StoreWorkspaceSession(m_filename);
 
@@ -209,26 +208,27 @@ bool clDockerWorkspace::IsOpen() const { return m_isOpen; }
 void clDockerWorkspace::OnNewWorkspace(clCommandEvent& event)
 {
     event.Skip();
-    if(event.GetString() == GetWorkspaceType()) {
+    if (event.GetString() == GetWorkspaceType()) {
         event.Skip(false);
 
         // Create a new NodeJS workspace
         NewDockerWorkspaceDlg dlg(EventNotifier::Get()->TopFrame());
-        if(dlg.ShowModal() != wxID_OK)
+        if (dlg.ShowModal() != wxID_OK)
             return;
 
         wxFileName workspaceFile = dlg.GetWorkspaceFile();
-        if(!workspaceFile.GetDirCount()) {
-            ::wxMessageBox(_("Can not create workspace in the root folder"), _("New Workspace"),
-                           wxICON_ERROR | wxOK | wxCENTER);
+        if (!workspaceFile.GetDirCount()) {
+            ::wxMessageBox(
+                _("Can not create workspace in the root folder"), _("New Workspace"), wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
 
         // Ensure that the path the workspace exists
         workspaceFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
 
-        if(!Create(workspaceFile)) {
-            ::wxMessageBox(_("Failed to create workspace\nWorkspace already exists"), _("New Workspace"),
+        if (!Create(workspaceFile)) {
+            ::wxMessageBox(_("Failed to create workspace\nWorkspace already exists"),
+                           _("New Workspace"),
                            wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
@@ -239,7 +239,7 @@ void clDockerWorkspace::OnNewWorkspace(clCommandEvent& event)
 bool clDockerWorkspace::Create(const wxFileName& filename)
 {
     // Already exists
-    if(filename.FileExists()) {
+    if (filename.FileExists()) {
         return false;
     }
     return m_settings.Save(filename).Load(filename).IsOk();
@@ -247,7 +247,7 @@ bool clDockerWorkspace::Create(const wxFileName& filename)
 
 void clDockerWorkspace::RestoreSession()
 {
-    if(IsOpen()) {
+    if (IsOpen()) {
         clGetManager()->LoadWorkspaceSession(m_filename);
     }
 }
@@ -255,7 +255,7 @@ void clDockerWorkspace::RestoreSession()
 void clDockerWorkspace::OnSaveSession(clCommandEvent& event)
 {
     event.Skip();
-    if(IsOpen()) {
+    if (IsOpen()) {
         event.Skip(false);
         clGetManager()->StoreWorkspaceSession(m_filename);
     }
@@ -272,8 +272,8 @@ void clDockerWorkspace::OnBuildStarting(clBuildEvent& event)
     CHECK_EVENT(event);
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    if(editor->GetFileName().GetFullName() == "Dockerfile") {
-        if(event.GetKind() == "build") {
+    if (editor->GetFileName().GetFullName() == "Dockerfile") {
+        if (event.GetKind() == "build") {
             BuildDockerfile(editor->GetFileName());
         }
     }
@@ -282,7 +282,7 @@ void clDockerWorkspace::OnBuildStarting(clBuildEvent& event)
 void clDockerWorkspace::OnStopBuild(clBuildEvent& event)
 {
     CHECK_EVENT(event);
-    if(m_driver->IsRunning()) {
+    if (m_driver->IsRunning()) {
         m_driver->Stop();
     }
 }
@@ -292,7 +292,7 @@ void clDockerWorkspace::OnRun(clExecuteEvent& event)
     CHECK_EVENT(event);
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    if(editor->GetFileName().GetFullName() == "Dockerfile") {
+    if (editor->GetFileName().GetFullName() == "Dockerfile") {
         RunDockerfile(editor->GetFileName());
     }
 }
@@ -300,7 +300,7 @@ void clDockerWorkspace::OnRun(clExecuteEvent& event)
 void clDockerWorkspace::OnStop(clExecuteEvent& event)
 {
     CHECK_EVENT(event);
-    if(m_driver->IsRunning()) {
+    if (m_driver->IsRunning()) {
         m_driver->Stop();
     }
 }

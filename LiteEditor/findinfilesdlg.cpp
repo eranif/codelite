@@ -147,7 +147,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
             }
             wxString encodingName = wxFontMapper::GetEncodingName(fontEnc);
             size_t pos = astrEncodings.Add(encodingName);
-            encodingMap.insert({ encodingName, (int)pos });
+            encodingMap.insert({encodingName, (int)pos});
             if (m_data.encoding == encodingName) {
                 selection = static_cast<int>(pos);
             }
@@ -413,9 +413,7 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
             current_content << ";";
         }
 
-        int selection_start = current_content.length();
         current_content << "-*PATTERN*";
-        selection_start += 1; // skip the `-`
         int selection_end = current_content.length();
         m_comboBoxWhere->SetValue(current_content);
         m_comboBoxWhere->CallAfter(&clComboBox::SetFocus);

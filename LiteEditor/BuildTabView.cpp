@@ -103,9 +103,9 @@ BuildTabView::BuildTabView(wxWindow* parent)
     wxTheApp->Bind(wxEVT_UPDATE_UI, &BuildTabView::OnNextBuildErrorUI, this, XRCID("next_build_error"));
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &BuildTabView::OnThemeChanged, this);
 
-    Bind(wxEVT_SET_FOCUS, [this](wxFocusEvent& e) {
+    Bind(wxEVT_SET_FOCUS, [](wxFocusEvent& e) {
         e.Skip();
-        clCommandEvent focus_gained{ wxEVT_STC_GOT_FOCUS };
+        clCommandEvent focus_gained{wxEVT_STC_GOT_FOCUS};
         EventNotifier::Get()->AddPendingEvent(focus_gained);
     });
 }
@@ -260,11 +260,11 @@ wxString BuildTabView::Add(const wxString& output, bool process_last_line)
             // this colour has no colour associated with it (using ANSI escape)
             // add some
             if (!lineHasColours && line_data != nullptr) {
-                line = WrapLineInColour(line,
-                                        line_data->match_pattern.sev == Compiler::kSevError ? AnsiColours::Red()
-                                                                                            : AnsiColours::Yellow(),
-                                        false,
-                                        is_dark_theme);
+                line = WrapLineInColour(
+                    line,
+                    line_data->match_pattern.sev == Compiler::kSevError ? AnsiColours::Red() : AnsiColours::Yellow(),
+                    false,
+                    is_dark_theme);
             }
             // Associate the match info with the line in the view
             // this will be used later when selecting lines
@@ -276,7 +276,7 @@ wxString BuildTabView::Add(const wxString& output, bool process_last_line)
                 line_data->match_pattern.file_path = MakeAbsolute(line_data->match_pattern.file_path);
 
                 clDEBUG() << "(Build Tab View) Storing line info for line:" << cur_line_number << endl;
-                m_lineInfo.insert({ cur_line_number, line_data });
+                m_lineInfo.insert({cur_line_number, line_data});
             }
             textToAppend << line << "\n";
         }

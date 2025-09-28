@@ -24,13 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "svn_props_dialog.h"
+
+#include "subversion2.h"
 #include "svn_local_properties.h"
 #include "windowattrmanager.h"
-#include "subversion2.h"
 
 SvnPropsDlg::SvnPropsDlg(wxWindow* parent, const wxString& url, Subversion2* plugin)
     : SvnPropsBaseDlg(parent)
-    , m_plugin(plugin)
     , m_url(url)
 {
     m_staticTextURL->SetLabel(m_url);

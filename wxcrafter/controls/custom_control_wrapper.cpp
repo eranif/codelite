@@ -17,7 +17,7 @@ CustomControlWrapper::CustomControlWrapper()
     m_namePattern = wxT("m_custom");
 
     // Generate a name if there isn't one; but don't overwrite e.g. an imported one
-    if(!GetName().empty()) {
+    if (!GetName().empty()) {
         SetName(GenerateName());
     }
 }
@@ -27,7 +27,7 @@ wxcWidget* CustomControlWrapper::Clone() const { return new CustomControlWrapper
 wxString CustomControlWrapper::CppCtorCode() const
 {
     CustomControlTemplate cct = wxcSettings::Get().FindByControlName(m_templInfoName);
-    if(cct.IsValid() == false)
+    if (cct.IsValid() == false)
         return wxT("");
 
     // support for Subclass
@@ -42,11 +42,11 @@ wxString CustomControlWrapper::CppCtorCode() const
     // $name = new MyCustomClassName(...);
     static wxRegEx reNewClass("new[ \\t]+([A-Za-z_]{1}[A-Za-z0-9_]*[ \\t]*\\()");
 
-    if(!subclass.IsEmpty() && reNewClass.IsValid() && reNewClass.Matches(cppCode)) {
+    if (!subclass.IsEmpty() && reNewClass.IsValid() && reNewClass.Matches(cppCode)) {
         reNewClass.Replace(&cppCode, "new " + subclass + "(");
     }
 
-    if(!cppCode.EndsWith(wxT(";"))) {
+    if (!cppCode.EndsWith(wxT(";"))) {
         cppCode << wxT(";");
     }
 
@@ -60,15 +60,15 @@ wxString CustomControlWrapper::CppCtorCode() const
 void CustomControlWrapper::GetIncludeFile(wxArrayString& headers) const
 {
     CustomControlTemplate cct = wxcSettings::Get().FindByControlName(m_templInfoName);
-    if(cct.IsValid() == false)
+    if (cct.IsValid() == false)
         return;
 
     wxString inclLine = cct.GetIncludeFile();
-    if(inclLine.IsEmpty())
+    if (inclLine.IsEmpty())
         return;
 
     inclLine.Trim().Trim(false);
-    if(inclLine.EndsWith(wxT(";"))) {
+    if (inclLine.EndsWith(wxT(";"))) {
         inclLine.RemoveLast();
     }
     headers.Add(inclLine);
@@ -77,7 +77,7 @@ void CustomControlWrapper::GetIncludeFile(wxArrayString& headers) const
 wxString CustomControlWrapper::GetWxClassName() const
 {
     CustomControlTemplate cct = wxcSettings::Get().FindByControlName(m_templInfoName);
-    if(cct.IsValid() == false)
+    if (cct.IsValid() == false)
         return wxT("");
 
     return cct.GetClassName();
@@ -86,7 +86,7 @@ wxString CustomControlWrapper::GetWxClassName() const
 void CustomControlWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
     CustomControlTemplate cct = wxcSettings::Get().FindByControlName(m_templInfoName);
-    if(cct.IsValid() && !cct.GetXrcPreviewClass().IsEmpty())
+    if (cct.IsValid() && !cct.GetXrcPreviewClass().IsEmpty())
         text << wxT("<object class=\"") << cct.GetXrcPreviewClass() << wxT("\" name=\"") << GetName() << wxT("\">");
     else
         text << wxT("<object class=\"unknown\" name=\"") << GetName() << wxT("\">");
@@ -137,42 +137,32 @@ void CustomControlWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     // First call the base-class for the standard things
     wxcWidget::LoadPropertiesFromwxFB(node);
 
-    wxString include, construction, declaration, name, xrcclassname, settings;
-    wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "name");
-    if(propertynode) {
-        name = propertynode->GetNodeContent();
-    }
-
-    propertynode = XmlUtils::FindNodeByName(node, "property", "declaration");
-    if(propertynode) {
+    wxString include, construction, declaration, xrcclassname;
+    wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "declaration");
+    if (propertynode) {
         declaration = propertynode->GetNodeContent();
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "include");
-    if(propertynode) {
+    if (propertynode) {
         include = propertynode->GetNodeContent();
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "construction");
-    if(propertynode) {
+    if (propertynode) {
         construction = propertynode->GetNodeContent();
     }
 
-    propertynode = XmlUtils::FindNodeByName(node, "property", "settings");
-    if(propertynode) {
-        settings = propertynode->GetNodeContent();
-    }
-
     propertynode = XmlUtils::FindNodeByName(node, "property", "class");
-    if(propertynode) {
+    if (propertynode) {
         xrcclassname = propertynode->GetNodeContent();
     }
 
     // The wxFB fields aren't the same as the wxC ones, so we need to do some guesswork here:
     wxString wxclassname = declaration.BeforeFirst('*').Trim(); // Get the real classname from 'MyFoo * m_foo;'
 
-    if(wxclassname.empty() || construction.empty() ||
-       declaration.empty()) { // settings and xrcclassname are optional; 'include' probably is too
+    if (wxclassname.empty() || construction.empty() ||
+        declaration.empty()) { // settings and xrcclassname are optional; 'include' probably is too
         clWARNING() << "Failed to load a Custom Control from wxFB: not all necessary data was available" << endl;
         return;
     }
@@ -200,7 +190,7 @@ void CustomControlWrapper::DoUpdateEvents()
     m_connectedEvents.Clear();
 
     CustomControlTemplate cct = wxcSettings::Get().FindByControlName(m_templInfoName);
-    if(cct.IsValid() == false)
+    if (cct.IsValid() == false)
         return;
 
     for (const auto& [eventName, className] : cct.GetEvents()) {
@@ -209,9 +199,12 @@ void CustomControlWrapper::DoUpdateEvents()
     }
 }
 
-void CustomControlWrapper::DoDeepCopy(const wxcWidget& rhs, enum DuplicatingOptions nametypesToChange,
-                                      const std::set<wxString>& existingNames, const wxString& chosenName,
-                                      const wxString& chosenInheritedName, const wxString& chosenFilename)
+void CustomControlWrapper::DoDeepCopy(const wxcWidget& rhs,
+                                      enum DuplicatingOptions nametypesToChange,
+                                      const std::set<wxString>& existingNames,
+                                      const wxString& chosenName,
+                                      const wxString& chosenInheritedName,
+                                      const wxString& chosenFilename)
 {
     wxcWidget::DoDeepCopy(rhs, nametypesToChange, existingNames, chosenName, chosenInheritedName, chosenFilename);
     /// copy some custom control specific content

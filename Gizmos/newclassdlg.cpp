@@ -45,7 +45,6 @@
 
 NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     : NewClassBaseDlg(parent)
-    , m_selectedItem(wxNOT_FOUND)
     , m_mgr(mgr)
 {
     EditorConfigST::Get()->ReadObject(wxT("NewClassDlgData"), &m_options);

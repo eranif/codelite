@@ -26,16 +26,16 @@
 #ifndef __Subversion2__
 #define __Subversion2__
 
-#include "plugin.h"
-#include "svninfo.h"
-#include "commitmessagescache.h"
-#include "svncommand.h"
-#include "svnsettingsdata.h"
-#include "project.h"
-#include "cl_command_event.h"
-#include "clTabTogglerHelper.h"
-#include "clFileSystemEvent.h"
 #include "SvnShowFileChangesHandler.h"
+#include "clFileSystemEvent.h"
+#include "clTabTogglerHelper.h"
+#include "cl_command_event.h"
+#include "commitmessagescache.h"
+#include "plugin.h"
+#include "project.h"
+#include "svncommand.h"
+#include "svninfo.h"
+#include "svnsettingsdata.h"
 
 class SubversionView;
 class SvnConsole;
@@ -46,8 +46,6 @@ class Subversion2 : public IPlugin
 {
 private:
     SubversionView* m_subversionView;
-    SvnConsole* m_subversionConsole;
-    wxMenuItem* m_explorerSepItem;
     wxMenuItem* m_projectSepItem;
     SvnCommand m_simpleCommand;
     SvnCommand m_diffCommand;
@@ -60,7 +58,7 @@ private:
     wxFileName m_selectedFile; // In the explorer view
     wxBitmap m_svnBitmap;
     clTabTogglerHelper::Ptr_t m_tabToggler;
-    
+
 protected:
     void OnSettings(wxCommandEvent& event);
 
@@ -108,7 +106,7 @@ protected:
     void OnFolderContextMenu(clContextMenuEvent& event);
     void OnFileContextMenu(clContextMenuEvent& event);
     void OnGotoAnythingShowing(clGotoEvent& e);
-    
+
     wxMenu* CreateFileExplorerPopMenu(bool isFile);
     bool IsSubversionViewDetached();
     wxMenu* CreateProjectPopMenu();
@@ -122,7 +120,7 @@ public:
     DoRename(const wxString& workingDirectory, const wxString& oldname, const wxString& newname, wxCommandEvent& event);
     void DoCommit(const wxArrayString& files, const wxString& workingDirectory, wxCommandEvent& event);
     void DoFilesDeleted(const wxArrayString& files, bool isFolder = false);
-    
+
 public:
     Subversion2(IManager* manager);
     ~Subversion2() override;
@@ -167,10 +165,10 @@ public:
                            const wxString& output);
 
     void AddCommandLineOption(wxString& command, Subversion2::eCommandLineOption opt);
-    
+
     void ShowRecentChanges(const wxString& file);
     void ShowRecentChangesDialog(const SvnShowDiffChunk::List_t& changes);
-    
+
 protected:
     void DoInitialize();
     void DoSetSSH();

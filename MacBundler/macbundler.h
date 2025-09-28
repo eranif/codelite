@@ -33,7 +33,6 @@ class wxCommandEvent;
 
 class MacBundler : public IPlugin
 {
-    int m_popup_id;
     void showSettingsDialogFor(ProjectPtr project);
 
 public:

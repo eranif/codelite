@@ -558,7 +558,7 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
 
         {
             // Add aliases
-            for (const auto alias : GetSourceFile()->GetAliases()) {
+            for (const auto& alias : GetSourceFile()->GetAliases()) {
                 if (alias->GetShortName().Contains(GetFilter())) {
                     matches.push_back(alias);
                 }

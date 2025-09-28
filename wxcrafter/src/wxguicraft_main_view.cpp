@@ -333,18 +333,18 @@ GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, 
 
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgrAuiProperties->GetGrid());
     ::wxPGPropertyBooleanUseCheckbox(m_pgMgrSizerFlags->GetGrid());
-    m_textCtrlCppSource->Bind(wxEVT_SET_FOCUS, [this](wxFocusEvent& e) {
+    m_textCtrlCppSource->Bind(wxEVT_SET_FOCUS, [](wxFocusEvent& e) {
         e.Skip();
         clCommandEvent focus_event{wxEVT_STC_GOT_FOCUS};
         EventNotifier::Get()->AddPendingEvent(focus_event);
     });
 
-    m_textCtrlHeaderSource->Bind(wxEVT_SET_FOCUS, [this](wxFocusEvent& e) {
+    m_textCtrlHeaderSource->Bind(wxEVT_SET_FOCUS, [](wxFocusEvent& e) {
         e.Skip();
         clCommandEvent focus_event{wxEVT_STC_GOT_FOCUS};
         EventNotifier::Get()->AddPendingEvent(focus_event);
     });
-    m_textCtrlXrc->Bind(wxEVT_SET_FOCUS, [this](wxFocusEvent& e) {
+    m_textCtrlXrc->Bind(wxEVT_SET_FOCUS, [](wxFocusEvent& e) {
         e.Skip();
         clCommandEvent focus_event{wxEVT_STC_GOT_FOCUS};
         EventNotifier::Get()->AddPendingEvent(focus_event);

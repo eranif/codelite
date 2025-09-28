@@ -34,7 +34,6 @@ class CodeFormatter;
 
 class CodeFormatterDlg : public CodeFormatterBaseDlg
 {
-    bool m_isDirty = false;
     CodeFormatterManager& m_formatter_manager;
     FormatterPage* m_page = nullptr;
 

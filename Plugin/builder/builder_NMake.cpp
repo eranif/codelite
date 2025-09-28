@@ -842,7 +842,6 @@ void BuilderNMake::CreateFileTargets(ProjectPtr proj, const wxString& confToBuil
     for (size_t i = 0; i < abs_files.size(); i++) {
         // is this file interests the compiler?
         if (cmp->GetCmpFileType(abs_files.at(i).GetExt().Lower(), ft)) {
-            wxString absFileName;
             wxFileName fn(abs_files.at(i));
 
             wxString filenameOnly = fn.GetName();
@@ -850,9 +849,6 @@ void BuilderNMake::CreateFileTargets(ProjectPtr proj, const wxString& confToBuil
             wxString fullnameOnly = fn.GetFullName();
             wxString compilationLine = ft.compilation_line;
 
-            // use UNIX style slashes
-            absFileName = abs_files[i].GetFullPath();
-            // absFileName.Replace("\\", "/");
             wxString relPath;
 
             relPath = rel_paths.at(i).GetPath(true, wxPATH_UNIX);

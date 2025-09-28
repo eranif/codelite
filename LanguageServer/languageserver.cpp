@@ -18,10 +18,7 @@
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new LanguageServerPlugin(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new LanguageServerPlugin(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -54,8 +51,8 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &LanguageServerPlugin::OnEditorContextMenu, this);
     wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnSettings, this, XRCID("language-server-settings"));
     wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnRestartLSP, this, XRCID("language-server-restart"));
-    clGetManager()->GetInfoBar()->Bind(wxEVT_BUTTON, &LanguageServerPlugin::OnFixLSPPaths, this,
-                                       XRCID("lsp-fix-paths"));
+    clGetManager()->GetInfoBar()->Bind(
+        wxEVT_BUTTON, &LanguageServerPlugin::OnFixLSPPaths, this, XRCID("lsp-fix-paths"));
 
     EventNotifier::Get()->Bind(wxEVT_LSP_STOP_ALL, &LanguageServerPlugin::OnLSPStopAll, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_START_ALL, &LanguageServerPlugin::OnLSPStartAll, this);
@@ -93,8 +90,8 @@ void LanguageServerPlugin::CheckServers()
     message.RemoveLast(2);
     message << "]";
 
-    clGetManager()->DisplayMessage(message, wxICON_WARNING,
-                                   { { wxID_CANCEL, _("Cancel") }, { XRCID("lsp-fix-paths"), _("Attempt to fix") } });
+    clGetManager()->DisplayMessage(
+        message, wxICON_WARNING, {{wxID_CANCEL, _("Cancel")}, {XRCID("lsp-fix-paths"), _("Attempt to fix")}});
 }
 
 void LanguageServerPlugin::CreateToolBar(clToolBarGeneric* toolbar)
@@ -508,7 +505,7 @@ wxArrayString LanguageServerPlugin::GetBrokenLSPs() const
     for (const auto& [name, server] : servers) {
         auto argv = StringUtils::BuildArgv(server.GetCommand());
         // Check that the first argument (the executable path) exists
-        if (server.IsEnabled() && argv.empty() || !wxFileName::FileExists(argv[0])) {
+        if ((server.IsEnabled() && argv.empty()) || !wxFileName::FileExists(argv[0])) {
             broken_lsps.push_back(name);
         }
     }

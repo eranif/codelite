@@ -30,7 +30,6 @@
 
 class XDebugContextGetCmdHandler : public XDebugCommandHandler
 {
-    int m_requestedStack;
 public:
     XDebugContextGetCmdHandler(XDebugManager* mgr, int transcationId, int requestedStack = 0);
     virtual ~XDebugContextGetCmdHandler();

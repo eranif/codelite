@@ -13,7 +13,6 @@ DesignerContainerPanel::DesignerContainerPanel(wxWindow* parent)
     , m_mainPanel(NULL)
     , m_height(-1)
     , m_width(-1)
-    , m_topLevelType(ID_WXPANEL_TOPLEVEL)
     , m_caption(NULL)
 {
     Bind(wxEVT_SIZE, &DesignerContainerPanel::OnSize, this);
@@ -70,9 +69,9 @@ void DesignerContainerPanel::CalcBestSize(int winType)
     wxcWidget* page = GUICraftMainPanel::m_MainPanel->GetActiveWizardPage();
     wxcWidget* topWin = GUICraftMainPanel::m_MainPanel->GetActiveTopLevelWin();
 
-    if(winType != ID_WXWIZARD || !page) {
+    if (winType != ID_WXWIZARD || !page) {
 
-        if(topWin)
+        if (topWin)
             SetSizeHints(topWin->GetSize());
         else
             SetSizeHints(m_width, m_height);
@@ -98,11 +97,11 @@ void DesignerContainerPanel::OnRightDown(wxMouseEvent& e)
 
 void DesignerContainerPanel::DoConnectCharEvent(wxWindow* win)
 {
-    if(win) {
+    if (win) {
         m_windows.insert(win);
 
         wxWindowList::compatibility_iterator pclNode = win->GetChildren().GetFirst();
-        while(pclNode) {
+        while (pclNode) {
             wxWindow* pclChild = pclNode->GetData();
             this->DoConnectCharEvent(pclChild);
             pclNode = pclNode->GetNext();

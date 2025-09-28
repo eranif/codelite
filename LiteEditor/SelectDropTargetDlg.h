@@ -26,14 +26,14 @@
 #ifndef SELECTDROPTARGETDLG_H
 #define SELECTDROPTARGETDLG_H
 #include "wxcrafter.h"
+
 #include <map>
 
 class SelectDropTargetDlg : public SelectDropTargetBaseDlg
 {
     std::map<wxString, wxWindow*> m_views;
     wxArrayString m_folders;
-    wxWindow* m_selectedView;
-    
+
 public:
     SelectDropTargetDlg(wxWindow* parent, const wxArrayString& folders);
     virtual ~SelectDropTargetDlg();

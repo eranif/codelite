@@ -1275,12 +1275,12 @@ void clMainFrame::CreateGUIControls()
     m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_SASH_COLOUR, DrawingUtils::GetPanelBgColour());
 
 #ifdef __WXMSW__
-    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR,
-                                     clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR,
-                                     clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
-    m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR,
-                                     clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
+    m_mgr.GetArtProvider()->SetColor(
+        wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR, clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    m_mgr.GetArtProvider()->SetColor(
+        wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR, clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
+    m_mgr.GetArtProvider()->SetColor(
+        wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR, clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
 #endif
 
     m_mgr.GetArtProvider()->SetColor(wxAUI_DOCKART_BACKGROUND_COLOUR, DrawingUtils::GetPanelBgColour());
@@ -1374,6 +1374,7 @@ void clMainFrame::CreateGUIControls()
 
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [container](clCommandEvent& e) {
         e.Skip();
+        wxUnusedVar(container);
 #ifndef __WXMAC__
         container->SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
 #endif
@@ -5248,8 +5249,8 @@ void clMainFrame::DoCreateBuildDropDownMenu(wxMenu* menu)
         if (bldcfg && bldcfg->IsCustomBuild()) {
 
             // Update the custom targets
-            CustomTargetsMgr::Get().SetTargets(clCxxWorkspaceST::Get()->GetActiveProjectName(),
-                                               bldcfg->GetCustomTargets());
+            CustomTargetsMgr::Get().SetTargets(
+                clCxxWorkspaceST::Get()->GetActiveProjectName(), bldcfg->GetCustomTargets());
 
             if (!CustomTargetsMgr::Get().GetTargets().empty()) {
                 menu->AppendSeparator();

@@ -47,11 +47,12 @@
 #include <wx/process.h>
 #include <wx/regex.h>
 
-CompileRequest::CompileRequest(const QueueCommand& buildInfo, const wxString& fileName, bool runPremakeOnly,
+CompileRequest::CompileRequest(const QueueCommand& buildInfo,
+                               const wxString& fileName,
+                               bool runPremakeOnly,
                                bool preprocessOnly)
     : ShellCommand(buildInfo)
     , m_fileName(fileName)
-    , m_premakeOnly(runPremakeOnly)
     , m_preprocessOnly(preprocessOnly)
 {
 }
@@ -73,7 +74,7 @@ void CompileRequest::Process(IManager* manager)
     EnvironmentConfig* env(manager ? manager->GetEnv() : EnvironmentConfig::Instance());
 
     ProjectPtr proj = w->FindProjectByName(m_info.GetProject(), errMsg);
-    if(!proj) {
+    if (!proj) {
         AppendLine(_("Cant find project: ") + m_info.GetProject());
         return;
     }
@@ -81,18 +82,21 @@ void CompileRequest::Process(IManager* manager)
     wxString pname(proj->GetName());
     wxArrayString unresolvedVars;
     proj->GetUnresolvedMacros(m_info.GetConfiguration(), unresolvedVars);
-    if(!unresolvedVars.IsEmpty()) {
+    if (!unresolvedVars.IsEmpty()) {
         // We can't continue
         wxString msg;
         msg << _("The following environment variables are used in the project, but are not defined:\n");
-        for(size_t i = 0; i < unresolvedVars.size(); ++i) {
+        for (size_t i = 0; i < unresolvedVars.size(); ++i) {
             msg << unresolvedVars.Item(i) << "\n";
         }
         msg << _("Build anyway?");
-        wxStandardID res = ::PromptForYesNoDialogWithCheckbox(msg, "UnresolvedMacros", _("Yes"), _("No"),
+        wxStandardID res = ::PromptForYesNoDialogWithCheckbox(msg,
+                                                              "UnresolvedMacros",
+                                                              _("Yes"),
+                                                              _("No"),
                                                               _("Remember my answer and don't ask me again"),
                                                               wxYES_NO | wxICON_WARNING | wxYES_DEFAULT);
-        if(res != wxID_YES) {
+        if (res != wxID_YES) {
             ::wxMessageBox(_("Build Cancelled!"), "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
             return;
         }
@@ -103,7 +107,7 @@ void CompileRequest::Process(IManager* manager)
     event.SetProjectName(pname);
     event.SetConfigurationName(m_info.GetConfiguration());
 
-    if(EventNotifier::Get()->ProcessEvent(event)) {
+    if (EventNotifier::Get()->ProcessEvent(event)) {
 
         // the build is being handled by some plugin, no need to build it
         // using the standard way
@@ -117,19 +121,19 @@ void CompileRequest::Process(IManager* manager)
 
     // if we require to run the makefile generation command only, replace the 'cmd' with the
     // generation command line
-    if(bldConf) {
+    if (bldConf) {
         // BuilderPtr builder = bm->GetBuilder("Default");
         BuilderPtr builder = bldConf->GetBuilder();
         wxString args = bldConf->GetBuildSystemArguments();
-        if(m_fileName.IsEmpty() == false) {
+        if (m_fileName.IsEmpty() == false) {
             // we got a complie request of a single file
             cmd = m_preprocessOnly
-                      ? builder->GetPreprocessFileCmd(m_info.GetProject(), m_info.GetConfiguration(), args, m_fileName,
-                                                      errMsg)
+                      ? builder->GetPreprocessFileCmd(
+                            m_info.GetProject(), m_info.GetConfiguration(), args, m_fileName, errMsg)
                       : builder->GetSingleFileCmd(m_info.GetProject(), m_info.GetConfiguration(), args, m_fileName);
-        } else if(m_info.GetProjectOnly()) {
+        } else if (m_info.GetProjectOnly()) {
 
-            switch(m_info.GetKind()) {
+            switch (m_info.GetKind()) {
             case QueueCommand::kRebuild:
                 cmd = builder->GetPORebuildCommand(m_info.GetProject(), m_info.GetConfiguration(), args);
                 break;
@@ -145,7 +149,7 @@ void CompileRequest::Process(IManager* manager)
 
         wxString cmpType = bldConf->GetCompilerType();
         CompilerPtr cmp = bsc->GetCompiler(cmpType);
-        if(cmp) {
+        if (cmp) {
             // Add the 'bin' folder of the compiler to the PATH environment variable
             wxString scxx = cmp->GetTool("CXX");
             scxx.Trim().Trim(false);
@@ -157,7 +161,7 @@ void CompileRequest::Process(IManager* manager)
             pathvar << cxx.GetPath() << clPATH_SEPARATOR;
 
             // If we have an additional path, add it as well
-            if(!cmp->GetPathVariable().IsEmpty()) {
+            if (!cmp->GetPathVariable().IsEmpty()) {
                 pathvar << cmp->GetPathVariable() << clPATH_SEPARATOR;
             }
             pathvar << "$PATH";
@@ -165,9 +169,9 @@ void CompileRequest::Process(IManager* manager)
         }
     }
 
-    if(cmd.IsEmpty()) {
+    if (cmd.IsEmpty()) {
         // if we got an error string, use it
-        if(errMsg.IsEmpty() == false) {
+        if (errMsg.IsEmpty() == false) {
             AppendLine(errMsg);
         } else {
             AppendLine(_("Command line is empty. Build aborted."));
@@ -183,23 +187,23 @@ void CompileRequest::Process(IManager* manager)
 
     // print the build command
     AppendLine(cmd + wxT("\n"));
-    if(m_info.GetProjectOnly() || m_fileName.IsEmpty() == false) {
+    if (m_info.GetProjectOnly() || m_fileName.IsEmpty() == false) {
         // set working directory
         DoSetWorkingDirectory(proj, false, m_fileName.IsEmpty() == false);
     }
 
     // print the prefix message of the build start. This is important since the parser relies
     // on this message
-    if(m_info.GetProjectOnly() || m_fileName.IsEmpty() == false) {
+    if (m_info.GetProjectOnly() || m_fileName.IsEmpty() == false) {
         wxString configName(m_info.GetConfiguration());
 
         // also, send another message to the main frame, indicating which project is being built
         // and what configuration
         wxString text;
         text << BUILD_PROJECT_PREFIX << m_info.GetProject() << wxT(" - ") << configName << wxT(" ]");
-        if(m_fileName.IsEmpty()) {
+        if (m_fileName.IsEmpty()) {
             text << wxT("----------\n");
-        } else if(m_preprocessOnly) {
+        } else if (m_preprocessOnly) {
             text << wxT(" (Preprocess Single File)----------\n");
         } else {
             text << wxT(" (Single File Build)----------\n");
@@ -212,7 +216,7 @@ void CompileRequest::Process(IManager* manager)
     om["TERM"] = "xterm-256color"; // this will allow coloured output from the compiler
 
     EnvSetter envir(env, &om, proj->GetName(), m_info.GetConfiguration());
-    if(!StartProcess(cmd, IProcessCreateDefault | IProcessWrapInShell)) {
+    if (!StartProcess(cmd, IProcessCreateDefault | IProcessWrapInShell)) {
         wxString message;
         message << _("Failed to start build process, command: ") << cmd << _(", process terminated with exit code: 0");
         AppendLine(message);

@@ -24,15 +24,15 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "newunittestdlg.h"
-#include "windowattrmanager.h"
+
 #include "iconfigtool.h"
-#include "unittestpp.h"
 #include "project.h"
+#include "unittestpp.h"
+#include "windowattrmanager.h"
 
 NewUnitTestDlg::NewUnitTestDlg(wxWindow* parent, UnitTestPP* plugin, IConfigTool* config)
     : NewUnitTestBaseDlg(parent)
     , m_plugin(plugin)
-    , m_config(config)
 {
     m_textCtrlTestName->SetFocus();
 
@@ -42,7 +42,7 @@ NewUnitTestDlg::NewUnitTestDlg(wxWindow* parent, UnitTestPP* plugin, IConfigTool
         m_choiceProjects->Append(project->GetName());
     }
 
-    if(m_choiceProjects->IsEmpty() == false) {
+    if (m_choiceProjects->IsEmpty() == false) {
         m_choiceProjects->SetSelection(0);
     }
     SetName("NewUnitTestDlg");

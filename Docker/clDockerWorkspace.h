@@ -16,7 +16,6 @@ class clDockerWorkspace : public LocalWorkspaceCommon
     bool m_clangOldFlag = false;
     clDockerWorkspaceView* m_view = nullptr;
     clDockerDriver::Ptr_t m_driver;
-    Docker* m_plugin = nullptr;
 
 public:
     wxString GetActiveProjectName() const override;

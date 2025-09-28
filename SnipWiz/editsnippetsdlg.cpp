@@ -34,7 +34,6 @@
 EditSnippetsDlg::EditSnippetsDlg(wxWindow* parent, SnipWiz* plugin, IManager* manager)
     : EditSnippetsBaseDlg(parent)
     , m_pPlugin(plugin)
-    , m_manager(manager)
 {
     Initialize();
     m_listBox1->SetFocus();
@@ -60,7 +59,7 @@ void EditSnippetsDlg::DoItemSelected(const wxString& text)
     m_textCtrlSnippet->SetValue(GetStringDb()->GetSnippetString(text));
     MenuItemDataMap_t accelMap;
     clKeyboardManager::Get()->GetAllAccelerators(accelMap);
-    if(text.IsEmpty()) {
+    if (text.IsEmpty()) {
         return;
     }
 
@@ -74,7 +73,7 @@ void EditSnippetsDlg::DoItemSelected(const wxString& text)
 
 void EditSnippetsDlg::OnAddSnippet(wxCommandEvent& event)
 {
-    if(GetStringDb()->IsSnippetKey(m_textCtrlMenuEntry->GetValue())) {
+    if (GetStringDb()->IsSnippetKey(m_textCtrlMenuEntry->GetValue())) {
         wxMessageBox(_("Menu entry is not unique!"));
         return;
     }
@@ -95,14 +94,14 @@ void EditSnippetsDlg::OnChangeSnippet(wxCommandEvent& event)
     int index = m_listBox1->GetSelection();
 
     // check if list key is not equal new menu entry and if it is an used key
-    if(curListKey.Cmp(m_textCtrlMenuEntry->GetValue()) != 0 &&
-       GetStringDb()->IsSnippetKey(m_textCtrlMenuEntry->GetValue())) {
+    if (curListKey.Cmp(m_textCtrlMenuEntry->GetValue()) != 0 &&
+        GetStringDb()->IsSnippetKey(m_textCtrlMenuEntry->GetValue())) {
         ::wxMessageBox(_("Menu entry is not unique!"));
         return;
     }
 
     // if menu entry has changed, delete old entry in list
-    if(curListKey.Cmp(m_textCtrlMenuEntry->GetValue()) != 0) {
+    if (curListKey.Cmp(m_textCtrlMenuEntry->GetValue()) != 0) {
         GetStringDb()->DeleteSnippetKey(curListKey);
     }
 
@@ -124,7 +123,7 @@ void EditSnippetsDlg::OnRemoveSnippet(wxCommandEvent& event)
     GetStringDb()->DeleteSnippetKey(key);
     m_listBox1->Delete(index);
 
-    if(m_listBox1->GetCount()) {
+    if (m_listBox1->GetCount()) {
         SelectItem(0);
     }
     m_modified = true;
@@ -140,7 +139,7 @@ void EditSnippetsDlg::Initialize()
     wxTextAttr attribs = m_textCtrlSnippet->GetDefaultStyle();
     wxArrayInt tabs = attribs.GetTabs();
     int tab = 70;
-    for(int i = 1; i < 20; i++) {
+    for (int i = 1; i < 20; i++) {
         tabs.Add(tab * i);
     }
 
@@ -151,7 +150,7 @@ void EditSnippetsDlg::Initialize()
     GetStringDb()->GetAllSnippetKeys(keys);
     m_listBox1->Append(keys);
 
-    if(m_listBox1->IsEmpty() == false) {
+    if (m_listBox1->IsEmpty() == false) {
         SelectItem(0);
     }
     m_htmlWinAbout->SetPage(wxString::FromUTF8(snipwizhtml_txt));
@@ -166,7 +165,7 @@ void EditSnippetsDlg::OnButtonKeyShortcut(wxCommandEvent& e)
     keys.Sort();
 
     int index = keys.Index(m_textCtrlMenuEntry->GetValue());
-    if(index != wxNOT_FOUND) {
+    if (index != wxNOT_FOUND) {
         int id = 20050 + index;
 
         MenuItemData mid;
@@ -174,9 +173,9 @@ void EditSnippetsDlg::OnButtonKeyShortcut(wxCommandEvent& e)
         mid.parentMenu = _("SnipWiz");
         mid.action = m_textCtrlMenuEntry->GetValue();
 
-        if(clKeyboardManager::Get()->PopupNewKeyboardShortcutDlg(this, mid) == wxID_OK) {
+        if (clKeyboardManager::Get()->PopupNewKeyboardShortcutDlg(this, mid) == wxID_OK) {
 
-            if(clKeyboardManager::Get()->Exists(mid.accel)) {
+            if (clKeyboardManager::Get()->Exists(mid.accel)) {
                 wxMessageBox(_("That accelerator already exists"), _("CodeLite"), wxOK | wxCENTRE, this);
                 return;
             }

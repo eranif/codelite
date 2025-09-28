@@ -23,9 +23,8 @@ EVT_UPDATE_UI(ID_OPEN_WXGUI_PROJECT, wxcTreeView::OnOpenUI)
 END_EVENT_TABLE()
 
 wxcTreeView::wxcTreeView(wxWindow* parent, wxCrafterPlugin* plugin)
-    : wxcTreeViewBaseClass(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                           wxCrafter::GetControlBorder() | wxTAB_TRAVERSAL)
-    , m_plugin(plugin)
+    : wxcTreeViewBaseClass(
+          parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxCrafter::GetControlBorder() | wxTAB_TRAVERSAL)
     , m_loadingProject(false)
 {
     m_treeControls->SetImageList(Allocator::Instance()->GetImageList());
@@ -35,13 +34,13 @@ wxcTreeView::wxcTreeView(wxWindow* parent, wxCrafterPlugin* plugin)
     m_splitterPageEvents->GetSizer()->Add(m_eventsPane, 1, wxEXPAND | wxALL, 2);
 
     int treeviewSashPos = wxcSettings::Get().GetTreeviewSashPos();
-    if(treeviewSashPos != wxNOT_FOUND)
+    if (treeviewSashPos != wxNOT_FOUND)
         m_splitter347->SetSashPosition(treeviewSashPos);
 
-    EventNotifier::Get()->Connect(wxEVT_WXGUI_PROJECT_SAVED, wxCommandEventHandler(wxcTreeView::OnProjectSaved), NULL,
-                                  this);
-    EventNotifier::Get()->Connect(wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(wxcTreeView::OnProjectClosed), NULL,
-                                  this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WXGUI_PROJECT_SAVED, wxCommandEventHandler(wxcTreeView::OnProjectSaved), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(wxcTreeView::OnProjectClosed), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &wxcTreeView::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &wxcTreeView::OnWorkspaceClosed, this);
 }
@@ -51,10 +50,10 @@ wxcTreeView::~wxcTreeView()
     wxcSettings::Get().SetTreeviewSashPos(m_splitter347->GetSashPosition());
     wxcSettings::Get().Save();
 
-    EventNotifier::Get()->Disconnect(wxEVT_WXGUI_PROJECT_SAVED, wxCommandEventHandler(wxcTreeView::OnProjectSaved),
-                                     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(wxcTreeView::OnProjectClosed),
-                                     NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_WXGUI_PROJECT_SAVED, wxCommandEventHandler(wxcTreeView::OnProjectSaved), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(wxcTreeView::OnProjectClosed), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &wxcTreeView::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &wxcTreeView::OnWorkspaceClosed, this);
 }
@@ -71,7 +70,7 @@ void wxcTreeView::OnOpenUI(wxUpdateUIEvent& e) { e.Enable(true); }
 
 void wxcTreeView::LoadProject(const wxFileName& filname)
 {
-    if(m_loadingProject)
+    if (m_loadingProject)
         return;
     m_loadingProject = true;
 
@@ -79,7 +78,7 @@ void wxcTreeView::LoadProject(const wxFileName& filname)
     EventNotifier::Get()->ProcessEvent(showDesignerEvent);
 
     wxCommandEvent evtOpen(wxEVT_WXC_OPEN_PROJECT);
-    if(filname.IsOk()) {
+    if (filname.IsOk()) {
         evtOpen.SetString(filname.GetFullPath());
     }
     EventNotifier::Get()->ProcessEvent(evtOpen);
@@ -98,8 +97,8 @@ void wxcTreeView::AddForm(const NewFormDetails& fd)
     toplevel->SetTitle(fd.formTitle);
     toplevel->SetPropertyString(PROP_INHERITED_CLASS, fd.inheritedClassName);
 
-    wxTreeItemId item = m_treeControls->AppendItem(m_treeControls->GetRootItem(), toplevel->GetName(), imgId, imgId,
-                                                   new GUICraftItemData(toplevel));
+    wxTreeItemId item = m_treeControls->AppendItem(
+        m_treeControls->GetRootItem(), toplevel->GetName(), imgId, imgId, new GUICraftItemData(toplevel));
     m_treeControls->SelectItem(item);
 
     wxCommandEvent evt(wxEVT_REFRESH_DESIGNER);
@@ -114,10 +113,10 @@ void wxcTreeView::SaveProject()
 
 void wxcTreeView::CloseProject(bool saveBeforeClose)
 {
-    if(wxcProjectMetadata::Get().GetProjectFile().IsEmpty())
+    if (wxcProjectMetadata::Get().GetProjectFile().IsEmpty())
         return;
 
-    if(saveBeforeClose) {
+    if (saveBeforeClose) {
         SaveProject();
     }
 
@@ -133,10 +132,10 @@ void wxcTreeView::OnProjectSaved(wxCommandEvent& e)
 
 void wxcTreeView::OnWxcpFileSelected(wxCommandEvent& event)
 {
-    if(!clCxxWorkspaceST::Get()->IsOpen())
+    if (!clCxxWorkspaceST::Get()->IsOpen())
         return;
 
-    if(m_comboBoxFiles->GetSelection() == wxNOT_FOUND)
+    if (m_comboBoxFiles->GetSelection() == wxNOT_FOUND)
         return;
 
     wxFileName wspfile = clCxxWorkspaceST::Get()->GetWorkspaceFileName();
@@ -153,21 +152,21 @@ void wxcTreeView::OnRefreshWxcpFiles(wxCommandEvent& event) { DoRefreshFileList(
 void wxcTreeView::DoRefreshFileList(bool reloadFileList)
 {
     wxBusyCursor bc;
-    if(!clCxxWorkspaceST::Get()->IsOpen())
+    if (!clCxxWorkspaceST::Get()->IsOpen())
         return;
     wxString filter = m_comboBoxFiles->GetValue().Lower();
     wxString cbValue = m_comboBoxFiles->GetValue();
 
     filter.Trim().Trim(false);
 
-    if(m_fileList.IsEmpty() || reloadFileList) {
+    if (m_fileList.IsEmpty() || reloadFileList) {
         wxArrayString allFiles;
         clCxxWorkspaceST::Get()->GetWorkspaceFiles(allFiles);
 
         wxArrayString options;
         wxFileName wspfile = clCxxWorkspaceST::Get()->GetWorkspaceFileName();
-        for(size_t i = 0; i < allFiles.GetCount(); ++i) {
-            if(FileExtManager::GetType(allFiles.Item(i)) == FileExtManager::TypeWxCrafter) {
+        for (size_t i = 0; i < allFiles.GetCount(); ++i) {
+            if (FileExtManager::GetType(allFiles.Item(i)) == FileExtManager::TypeWxCrafter) {
                 wxFileName f(allFiles.Item(i));
                 f.MakeRelativeTo(wspfile.GetPath());
                 options.Add(f.GetFullPath());
@@ -178,9 +177,9 @@ void wxcTreeView::DoRefreshFileList(bool reloadFileList)
 
     // Filter non intersting fields
     wxArrayString filteredValues;
-    for(size_t i = 0; i < m_fileList.size(); ++i) {
+    for (size_t i = 0; i < m_fileList.size(); ++i) {
         const wxString lcValue = m_fileList.Item(i).Lower();
-        if(reloadFileList || filter.IsEmpty() || lcValue.Contains(filter)) {
+        if (reloadFileList || filter.IsEmpty() || lcValue.Contains(filter)) {
             filteredValues.Add(m_fileList.Item(i));
         }
     }
@@ -206,7 +205,7 @@ void wxcTreeView::OnWorkspaceOpenUI(wxUpdateUIEvent& event) { event.Enable(clCxx
 void wxcTreeView::OnItemLabelEditEnd(wxTreeEvent& event) // NB I don't think this method is ever called...
 {
     wxString new_name = event.GetLabel();
-    if(new_name.IsEmpty()) {
+    if (new_name.IsEmpty()) {
         event.Veto();
         return;
     }
@@ -227,7 +226,7 @@ void wxcTreeView::OnItemLabelEditEnd(wxTreeEvent& event) // NB I don't think thi
 void wxcTreeView::OnProjectClosed(wxCommandEvent& event)
 {
     event.Skip();
-    if(!wxcProjectMetadata::Get().IsLoaded()) {
+    if (!wxcProjectMetadata::Get().IsLoaded()) {
         m_comboBoxFiles->SetSelection(wxNOT_FOUND);
     }
 }
@@ -240,7 +239,7 @@ void wxcTreeView::OnSashPositionChanged(wxSplitterEvent& event)
 
 void wxcTreeView::OnChar(wxKeyEvent& event)
 {
-    if(event.GetKeyCode() == WXK_DELETE) {
+    if (event.GetKeyCode() == WXK_DELETE) {
         // Fake the corresponding menu event and throw it at the tree, which is Connect()ed to GUICraftMainPanel
         wxCommandEvent e(wxEVT_COMMAND_MENU_SELECTED, ID_DELETE_NODE);
         wxPostEvent(m_treeControls, e);

@@ -26,14 +26,13 @@
 #ifndef PHPSETTERSGETTERSDIALOG_H
 #define PHPSETTERSGETTERSDIALOG_H
 
-#include "php_ui.h"
 #include "PHPSetterGetterEntry.h"
+#include "php_ui.h"
 
 class IManager;
 class IEditor;
 class PHPSettersGettersDialog : public PHPSettersGettersDialogBase
 {
-    IEditor* m_editor;
     IManager* m_mgr;
     wxString m_scope;
 

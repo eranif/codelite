@@ -72,7 +72,6 @@ class WXDLLIMPEXP_SDK clTabCtrl : public wxPanel
 
     clBitmapList* m_bitmaps = nullptr;
     clButton* m_fileListButton = nullptr;
-    clButton* m_actionButton = nullptr;
 
 protected:
     void DoChangeSelection(size_t index);

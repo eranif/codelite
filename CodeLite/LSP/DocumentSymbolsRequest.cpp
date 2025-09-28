@@ -42,7 +42,7 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
 {
     LSP_DEBUG() << "LSP::DocumentSymbolsRequest::OnResponse() is called!" << endl;
     LSP::ResponseMessage& response = const_cast<LSP::ResponseMessage&>(const_response);
-    auto json = std::move(response.take());
+    auto json = response.take();
     if(!json->toElement().hasNamedObject("result")) {
         LSP_WARNING() << "LSP::DocumentSymbolsRequest::OnResponse(): invalid 'result' object";
         return;

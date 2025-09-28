@@ -73,7 +73,6 @@ struct NewClassInfo {
 /** Implementing NewClassBaseDlg */
 class NewClassDlg : public NewClassBaseDlg
 {
-    long m_selectedItem;
     IManager* m_mgr;
     wxString m_basePath;
     NewClassDlgData m_options;

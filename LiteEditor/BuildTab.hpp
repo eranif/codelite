@@ -50,7 +50,6 @@ private:
     bool m_buildInProgress = false;
     wxString m_buffer;
     wxStopWatch m_buffer_sw;
-    long m_buffer_time = 0;
     CompilerPtr m_activeCompiler;
     bool m_buildInterrupted = false;
     wxString m_currentProjectName;

@@ -39,7 +39,6 @@ class wxAuiManager;
 //
 class WXDLLIMPEXP_SDK DockablePaneMenuManager : public wxEvtHandler
 {
-    wxMenuBar* m_mb;
     std::map<int, wxString> m_id2nameMap;
     wxAuiManager* m_aui;
 

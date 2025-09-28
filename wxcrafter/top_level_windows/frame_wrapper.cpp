@@ -4,10 +4,10 @@
 #include "Properties/category_property.h"
 #include "Properties/choice_property.h"
 #include "StdToWX.h"
+#include "allocator_mgr.h"
 #include "controls/menu_toolbar/menu_bar_wrapper.h"
 #include "controls/menu_toolbar/status_bar_wrapper.h"
 #include "controls/menu_toolbar/toolbar_base_wrapper.h"
-#include "allocator_mgr.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_widget.h"
 #include "wxgui_helpers.h"
@@ -27,14 +27,15 @@ FrameWrapper::FrameWrapper()
     SetPropertyString(_("Common Settings"), "wxFrame");
     DoSetPropertyStringValue(PROP_TITLE, _("My Frame"));
 
-    RegisterEvent(wxT("wxEVT_CLOSE_WINDOW"), wxT("wxCloseEvent"),
+    RegisterEvent(wxT("wxEVT_CLOSE_WINDOW"),
+                  wxT("wxCloseEvent"),
                   _("Process a close event. This event applies to wxFrame and wxDialog classes"));
     RegisterEvent(wxT("wxEVT_ACTIVATE"), wxT("wxActivateEvent"), _("Process a wxEVT_ACTIVATE event"));
     RegisterEvent(wxT("wxEVT_ACTIVATE_APP"), wxT("wxActivateEvent"), _("Process a wxEVT_ACTIVATE_APP event"));
 
     Add<CategoryProperty>(_("Frame Type"));
-    const wxArrayString frameTypes = StdToWX::ToArrayString({ "wxFrame", "wxDocMDIParentFrame", "wxDocMDIChildFrame",
-                                                              "wxDocParentFrame", "wxDocChildFrame", "wxMiniFrame" });
+    const wxArrayString frameTypes = StdToWX::ToArrayString(
+        {"wxFrame", "wxDocMDIParentFrame", "wxDocMDIChildFrame", "wxDocParentFrame", "wxDocChildFrame", "wxMiniFrame"});
     Add<ChoiceProperty>(PROP_FRAME_TYPE, frameTypes, 0, _("Select the wxFrame type you want"));
 
     Add<CategoryProperty>(_("Frame Icons"));
@@ -50,22 +51,17 @@ FrameWrapper::FrameWrapper()
 
 void FrameWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    if(type != XRC_LIVE) {
+    if (type != XRC_LIVE) {
         text << wxT("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>")
              << wxT("<resource xmlns=\"http://www.wxwidgets.org/wxxrc\" >");
     }
 
     wxString centred;
-    if(!PropertyString(PROP_CENTRE_ON_SCREEN).empty()) {
+    if (!PropertyString(PROP_CENTRE_ON_SCREEN).empty()) {
         centred = wxT("<centered>1</centered>"); // In XRC centring is on/off; it doesn't discriminate between
                                                  // wxBOTH/wxVERTICAL/wxHORIZONTAL
     }
-    
-    wxString xrcPrefix = "wxFrame";
-    if(PropertyString(PROP_FRAME_TYPE) ==  "wxMiniFrame") {
-        xrcPrefix = "wxMiniFrame";
-    }
-    
+
     text << XRCPrefix("wxFrame") << wxT("<title>") << wxCrafter::CDATA(PropertyString(PROP_TITLE)) << wxT("</title>")
          << centred
          << XRCStyle(type != wxcWidget::XRC_LIVE) // The parameter is to add the wxSTAY_ON_TOP, but not if we're 'live'
@@ -74,7 +70,9 @@ void FrameWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     ChildrenXRC(text, type);
     text << wxT("</object>");
 
-    if(type != wxcWidget::XRC_LIVE) { text << wxT("</resource>"); }
+    if (type != wxcWidget::XRC_LIVE) {
+        text << wxT("</resource>");
+    }
 }
 
 wxString FrameWrapper::DesignerXRC(bool forPreviewDialog) const
@@ -99,7 +97,7 @@ wxString FrameWrapper::DesignerXRC(bool forPreviewDialog) const
         if (!bMenuBar && child->GetType() == ID_WXMENUBAR) {
             wxString menuBarXRC;
             MenuBarWrapper* mb = dynamic_cast<MenuBarWrapper*>(child);
-            if(mb) {
+            if (mb) {
                 menuBarXRC = mb->DesignerXRC();
                 text.Prepend(menuBarXRC);
                 bMenuBar = true;
@@ -109,7 +107,7 @@ wxString FrameWrapper::DesignerXRC(bool forPreviewDialog) const
 
             wxString toolbarXRC;
             ToolbarWrapper* tb = dynamic_cast<ToolbarWrapper*>(child);
-            if(tb) {
+            if (tb) {
                 toolbarXRC = tb->DesignerXRC();
                 text.Prepend(toolbarXRC);
                 bToolBar = true;
@@ -119,13 +117,13 @@ wxString FrameWrapper::DesignerXRC(bool forPreviewDialog) const
 
             wxString statusBarXRC;
             StatusBarWrapper* sb = dynamic_cast<StatusBarWrapper*>(child);
-            if(sb) {
+            if (sb) {
                 statusBarXRC = sb->DesignerXRC();
                 text.Prepend(statusBarXRC);
                 bStatusBar = true;
             }
 
-        } else if(bToolBar && bMenuBar && bStatusBar) {
+        } else if (bToolBar && bMenuBar && bStatusBar) {
             break;
         }
     }
@@ -152,9 +150,9 @@ void FrameWrapper::GetIncludeFile(wxArrayString& headers) const
     headers.Add(wxT("#include <wx/artprov.h>"));
     headers.Add(wxT("#include <wx/sizer.h>")); // needed for (GetSizer()->...)
 
-    if(PropertyString(PROP_FRAME_TYPE) == "wxMiniFrame") {
+    if (PropertyString(PROP_FRAME_TYPE) == "wxMiniFrame") {
         headers.Add("#include <wx/minifram.h>");
-    } else if(PropertyString(PROP_FRAME_TYPE) != "wxFrame") {
+    } else if (PropertyString(PROP_FRAME_TYPE) != "wxFrame") {
         headers.Add("#include <wx/docview.h>");
         headers.Add("#include <wx/docmdi.h>");
     }
@@ -164,25 +162,25 @@ wxString FrameWrapper::BaseCtorImplPrefix() const
 {
     wxString code;
     wxString frameType = PropertyString(PROP_FRAME_TYPE);
-    if(frameType == "wxDocMDIParentFrame") {
+    if (frameType == "wxDocMDIParentFrame") {
         code << CreateBaseclassName() << wxT("::") << CreateBaseclassName()
              << "(wxDocManager *manager, wxFrame* parent, wxWindowID id, const wxString& title, const wxPoint& pos, "
                 "const wxSize& size, long style)\n";
         code << "    : " << GetRealClassName() << "(manager, parent, id, title, pos, size, style)\n";
 
-    } else if(frameType == "wxDocMDIChildFrame") {
+    } else if (frameType == "wxDocMDIChildFrame") {
         code << CreateBaseclassName() << wxT("::") << CreateBaseclassName()
              << "(wxDocument *doc, wxView *view, wxMDIParentFrame *parent, wxWindowID id, const wxString& title, const "
                 "wxPoint& pos, const wxSize& size, long style)\n";
         code << "    : " << GetRealClassName() << "(doc, view, parent, id, title, pos, size, style)\n";
 
-    } else if(frameType == "wxDocChildFrame") {
+    } else if (frameType == "wxDocChildFrame") {
         code << CreateBaseclassName() << wxT("::") << CreateBaseclassName()
              << "(wxDocument *doc, wxView *view, wxFrame *parent, wxWindowID id, const wxString& title, const wxPoint& "
                 "pos, const wxSize& size, long style)\n";
         code << "    : " << GetRealClassName() << "(doc, view, parent, id, title, pos, size, style)\n";
 
-    } else if(frameType == "wxDocParentFrame") {
+    } else if (frameType == "wxDocParentFrame") {
         code << CreateBaseclassName() << wxT("::") << CreateBaseclassName()
              << "(wxDocManager *manager, wxFrame *parent, wxWindowID id, const wxString& title, const wxPoint& pos, "
                 "const wxSize& size, long style)\n";
@@ -203,28 +201,28 @@ wxString FrameWrapper::BaseCtorDecl() const
     wxString frameType = PropertyString(PROP_FRAME_TYPE);
     wxString title = wxCrafter::UNDERSCORE(PropertyString(PROP_TITLE));
 
-    if(frameType == "wxDocMDIParentFrame") {
+    if (frameType == "wxDocMDIParentFrame") {
         // wxDocMDIParentFrame
         code << wxT("    ") << CreateBaseclassName()
              << wxT("(wxDocManager *manager, wxFrame* parent, wxWindowID id = wxID_ANY, const wxString& title = ")
              << title << wxT(", ") << wxT("const wxPoint& pos = wxDefaultPosition, const wxSize& size = ")
              << SizeAsString() << wxT(", ") << wxT("long style = ") << StyleFlags(wxT("0")) << wxT(");\n");
 
-    } else if(frameType == "wxDocMDIChildFrame") {
+    } else if (frameType == "wxDocMDIChildFrame") {
         code << wxT("    ") << CreateBaseclassName()
              << wxT("(wxDocument *doc, wxView *view, wxMDIParentFrame *parent, "
                     "wxWindowID id = wxID_ANY, const wxString& title = ")
              << title << wxT(", ") << wxT("const wxPoint& pos = wxDefaultPosition, const wxSize& size = ")
              << SizeAsString() << wxT(", ") << wxT("long style = ") << StyleFlags(wxT("0")) << wxT(");\n");
 
-    } else if(frameType == "wxDocChildFrame") {
+    } else if (frameType == "wxDocChildFrame") {
         code << wxT("    ") << CreateBaseclassName()
              << wxT("(wxDocument *doc, wxView *view, wxFrame *parent, "
                     "wxWindowID id = wxID_ANY, const wxString& title = ")
              << title << wxT(", ") << wxT("const wxPoint& pos = wxDefaultPosition, const wxSize& size = ")
              << SizeAsString() << wxT(", ") << wxT("long style = ") << StyleFlags(wxT("0")) << wxT(");\n");
 
-    } else if(frameType == "wxDocParentFrame") {
+    } else if (frameType == "wxDocParentFrame") {
         code << wxT("    ") << CreateBaseclassName()
              << wxT("(wxDocManager *manager, wxFrame *parent, wxWindowID id = wxID_ANY, const wxString& title = ")
              << title << wxT(", ") << wxT("const wxPoint& pos = wxDefaultPosition, const wxSize& size = ")
@@ -246,13 +244,17 @@ void FrameWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("centered"));
-    if(propertynode) { SetPropertyString(PROP_CENTRE_ON_SCREEN, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_CENTRE_ON_SCREEN, propertynode->GetNodeContent());
+    }
 
     // We've already done 'size' in the baseclass, but do it again for TLWindows
     // That's because if no size was specified, wxC inflicts 500,300. This isn't what the user expected
     // So, if there is *not* a specified size, overwrite the wxC default with wxDefaultSize
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("size"));
-    if(!propertynode) { SetPropertyString(PROP_SIZE, "-1,-1"); }
+    if (!propertynode) {
+        SetPropertyString(PROP_SIZE, "-1,-1");
+    }
 }
 
 void FrameWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -261,13 +263,17 @@ void FrameWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("centered"));
-    if(propertynode) { SetPropertyString(PROP_CENTRE_ON_SCREEN, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_CENTRE_ON_SCREEN, propertynode->GetNodeContent());
+    }
 
     // We've already done 'size' in the baseclass, but do it again for TLWindows
     // That's because if no size was specified, wxC inflicts 500,300. This isn't what the user expected
     // So, if there is *not* a specified size, overwrite the wxC default with wxDefaultSize
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("size"));
-    if(!propertynode) { SetPropertyString(PROP_SIZE, "-1,-1"); }
+    if (!propertynode) {
+        SetPropertyString(PROP_SIZE, "-1,-1");
+    }
 }
 
 void FrameWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -276,10 +282,14 @@ void FrameWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "center");
-    if(propertynode) { SetPropertyString(PROP_CENTRE_ON_SCREEN, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_CENTRE_ON_SCREEN, propertynode->GetNodeContent());
+    }
     // See the comment in LoadPropertiesFromXRC()
     propertynode = XmlUtils::FindNodeByName(node, "property", wxT("size"));
-    if(!propertynode) { SetPropertyString(PROP_SIZE, "-1,-1"); }
+    if (!propertynode) {
+        SetPropertyString(PROP_SIZE, "-1,-1");
+    }
 }
 
 bool FrameWrapper::HasIcon() const { return true; }
@@ -290,16 +300,16 @@ wxString FrameWrapper::GetDerivedClassCtorSignature() const
 {
     wxString code;
     wxString frameType = PropertyString(PROP_FRAME_TYPE);
-    if(frameType == "wxDocMDIParentFrame") {
+    if (frameType == "wxDocMDIParentFrame") {
         code << "(wxDocManager *manager, wxFrame* parent)";
 
-    } else if(frameType == "wxDocMDIChildFrame") {
+    } else if (frameType == "wxDocMDIChildFrame") {
         code << "(wxDocument *doc, wxView *view, wxMDIParentFrame *parent)";
 
-    } else if(frameType == "wxDocChildFrame") {
+    } else if (frameType == "wxDocChildFrame") {
         code << "(wxDocument *doc, wxView *view, wxFrame *parent)";
 
-    } else if(frameType == "wxDocParentFrame") {
+    } else if (frameType == "wxDocParentFrame") {
         code << "(wxDocManager *manager, wxFrame *parent)";
 
     } else {
@@ -313,16 +323,16 @@ wxString FrameWrapper::GetParentCtorInitArgumentList() const
 {
     wxString code;
     wxString frameType = PropertyString(PROP_FRAME_TYPE);
-    if(frameType == "wxDocMDIParentFrame") {
+    if (frameType == "wxDocMDIParentFrame") {
         code << "(manager, parent)";
 
-    } else if(frameType == "wxDocMDIChildFrame") {
+    } else if (frameType == "wxDocMDIChildFrame") {
         code << "(doc, view, parent)";
 
-    } else if(frameType == "wxDocChildFrame") {
+    } else if (frameType == "wxDocChildFrame") {
         code << "(doc, view, parent)";
 
-    } else if(frameType == "wxDocParentFrame") {
+    } else if (frameType == "wxDocParentFrame") {
         code << "(manager, parent)";
 
     } else {

@@ -109,7 +109,6 @@ private:
     wxRect m_chevronRect;
     int m_groupSpacing;
     wxColour m_bgColour;
-    bool m_useCustomBgColour = false;
     clBitmapList* m_bitmaps = nullptr;
     bool m_ownedBitmaps = false;
     bool m_hasOverflowButton = true;

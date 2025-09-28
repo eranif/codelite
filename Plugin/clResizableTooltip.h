@@ -34,7 +34,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TOOLTIP_ITEM_EXPANDING, clComman
 
 class WXDLLIMPEXP_SDK clResizableTooltip : public clResizableTooltipBase
 {
-    bool m_dragging;
     wxEvtHandler* m_owner;
     wxPoint m_topLeft;
 

@@ -24,9 +24,9 @@ void LanguageServerEntry::FromJSON(const JSONItem& json)
 
     // we no longer are using exepath + args, instead a single "command" is used
     wxString commandDefault = m_exepath;
-    if(!commandDefault.IsEmpty()) {
+    if (!commandDefault.IsEmpty()) {
         StringUtils::WrapWithQuotes(commandDefault);
-        if(!m_args.empty()) {
+        if (!m_args.empty()) {
             commandDefault << " " << m_args;
         }
     }
@@ -53,7 +53,7 @@ eNetworkType LanguageServerEntry::GetNetType() const
 {
     wxString connectionString = GetConnectionString();
     connectionString.Trim().Trim(false);
-    if(connectionString.CmpNoCase("stdio") == 0) {
+    if (connectionString.CmpNoCase("stdio") == 0) {
         return eNetworkType::kStdio;
     } else {
         return eNetworkType::kTcpIP;
@@ -72,8 +72,8 @@ bool LanguageServerEntry::IsAutoRestart() const
 wxString LanguageServerEntry::GetCommand(bool pretty) const
 {
     auto cmd_arr = StringUtils::BuildCommandArrayFromString(m_command);
-    return StringUtils::BuildCommandStringFromArray(cmd_arr,
-                                                    pretty ? StringUtils::WITH_COMMENT_PREFIX : StringUtils::ONE_LINER);
+    return StringUtils::BuildCommandStringFromArray(
+        cmd_arr, pretty ? StringUtils::WITH_COMMENT_PREFIX : StringUtils::ONE_LINER);
 }
 
 void LanguageServerEntry::SetCommand(const wxString& command)
@@ -86,12 +86,12 @@ namespace
 {
 wxString format_json_str(const wxString& str, bool pretty)
 {
-    if(str.empty()) {
+    if (str.empty()) {
         return wxEmptyString;
     }
 
-    JSON root{ str };
-    if(!root.isOk()) {
+    JSON root{str};
+    if (!root.isOk()) {
         return wxEmptyString;
     }
     return root.toElement().format(pretty);

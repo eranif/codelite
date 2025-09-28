@@ -216,10 +216,8 @@ void clToolBarGeneric::RenderGroup(int& xx, const clToolBarGeneric::ToolVect_t& 
     wxRect clientRect = GetClientRect();
 
     // Calculate the group size
-    int groupWidth = 0;
     for (clToolBarButtonBase* button : G) {
         wxSize buttonSize = button->CalculateSize(gcdc);
-        groupWidth += buttonSize.GetWidth();
     }
 
     // Now draw the buttons
@@ -697,7 +695,6 @@ void clToolBarGeneric::PrepareForDrawings(wxDC& dc, std::vector<ToolVect_t>& G, 
 {
     G.clear();
     int totalWidth = 0;
-    int stretchableButtons = 0;
     ToolVect_t curG;
     ToolVect_t spacers;
     for (size_t i = 0; i < m_buttons.size(); ++i) {
@@ -712,7 +709,6 @@ void clToolBarGeneric::PrepareForDrawings(wxDC& dc, std::vector<ToolVect_t>& G, 
         }
 
         if (button->IsStretchableSpace()) {
-            stretchableButtons++;
             spacers.push_back(button);
 
             // A stretchable space is a one-one-group

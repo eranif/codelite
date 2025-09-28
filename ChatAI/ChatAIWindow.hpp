@@ -7,7 +7,6 @@
 #include "ai/ProgressToken.hpp"
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
-#include "wxTerminalCtrl/wxTerminalOutputCtrl.hpp"
 
 #include <wx/activityindicator.h>
 #include <wx/stattext.h>
@@ -30,14 +29,16 @@ protected:
     void OnHistoryUI(wxUpdateUIEvent& event);
     void OnStop(wxCommandEvent& event);
     void OnStopUI(wxUpdateUIEvent& event);
+    void OnSettingsUI(wxUpdateUIEvent& event);
     void OnInputUI(wxUpdateUIEvent& event) override;
     void OnSend(wxCommandEvent& event);
     void OnSendUI(wxUpdateUIEvent& event);
+    void OnClearOutputViewUI(wxUpdateUIEvent& event);
     void OnUpdateTheme(wxCommandEvent& event);
     void OnModelChanged(wxCommandEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     void OnNewSession(wxCommandEvent& event);
-    void OnRefreshModelList(wxCommandEvent& event);
+    void OnRestartClient(wxCommandEvent& event);
     void OnSettings(wxCommandEvent& event);
     void UpdateTheme();
     void DoSendPrompt();
@@ -63,7 +64,7 @@ protected:
     /// Clears the output view, does not change the model history.
     void DoClearOutputView();
     /// Clear the view (input & output) and reset the client.
-    void DoReset();
+    void DoRestart();
 
     /// Return the relevant configuration file. If a workspace file is opened, we use the workspace specific
     /// configuration file. If no workspace is opened, we use the global settings.

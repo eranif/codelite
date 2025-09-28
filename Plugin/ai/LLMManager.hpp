@@ -27,6 +27,7 @@
 
 namespace llm
 {
+using ollama::AddFlagSet;
 using ollama::ChatOptions;
 using ollama::FunctionBase;
 using ollama::FunctionBuilder;
@@ -35,7 +36,6 @@ using ollama::FunctionTable;
 using ollama::json;
 using ollama::OnResponseCallback;
 using ollama::Reason;
-using ollama::AddFlagSet;
 
 template <typename T>
 inline clStatusOr<T> CheckType(const llm::json& j, const std::string& name)
@@ -169,14 +169,12 @@ public:
         m_activeModel = model;
     }
 
+    /// Clear the chat history.
+    void ClearHistory();
+    
     void Stop();
     void Start();
-
-    inline void Restart()
-    {
-        Stop();
-        Start();
-    }
+    void Restart();
 
     void RunTool(std::function<void()> tool) { tool(); }
     Config& GetConfig() { return m_config; }

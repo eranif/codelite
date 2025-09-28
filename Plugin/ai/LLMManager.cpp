@@ -292,6 +292,12 @@ void Manager::Chat(ResponseCollector* collector,
     PostTask(std::move(task));
 }
 
+void Manager::Restart()
+{
+    Stop();
+    Start();
+}
+
 void Manager::Stop()
 {
     auto bc = CreateBusyCursor();
@@ -367,5 +373,11 @@ bool Manager::ReloadConfig(const wxString& config_content, bool prompt)
         return true;
     }
     return false;
+}
+
+void Manager::ClearHistory()
+{
+    CHECK_PTR_RET(m_client);
+    m_client->ClearHistoryMessages();
 }
 } // namespace llm

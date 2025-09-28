@@ -71,13 +71,13 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
 {
     auto images = clGetManager()->GetStdIcons();
     m_toolbar->SetArtProvider(new clAuiToolBarArt());
-    m_toolbar->AddTool(wxID_CLEAR, _("Clear everything and start a new session"), images->LoadBitmap("clear"));
+    m_toolbar->AddTool(wxID_CLEAR, _("Clear the chat history"), images->LoadBitmap("clear"));
     m_toolbar->AddTool(wxID_SETUP, _("Settings"), images->LoadBitmap("cog"));
     m_toolbar->AddSeparator();
     m_activeModel = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxDefaultSize);
     m_activeModel->SetToolTip(_("Change model. Changing a model will also clear your chat history"));
     m_toolbar->AddControl(m_activeModel);
-    m_toolbar->AddTool(wxID_REFRESH, _("Load models list"), images->LoadBitmap("debugger_restart"));
+    m_toolbar->AddTool(wxID_REFRESH, _("Restart the client"), images->LoadBitmap("debugger_restart"));
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(wxID_EXECUTE, _("Submit"), images->LoadBitmap("run"));
     m_toolbar->AddTool(wxID_STOP, _("Stop"), images->LoadBitmap("execute_stop"));
@@ -113,7 +113,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     m_stcOutput->SetReadOnly(true);
 
     Bind(wxEVT_MENU, &ChatAIWindow::OnNewSession, this, wxID_CLEAR);
-    Bind(wxEVT_MENU, &ChatAIWindow::OnRefreshModelList, this, wxID_REFRESH);
+    Bind(wxEVT_MENU, &ChatAIWindow::OnRestartClient, this, wxID_REFRESH);
     Bind(wxEVT_MENU, &ChatAIWindow::OnSettings, this, wxID_SETUP);
     Bind(wxEVT_MENU, &ChatAIWindow::OnSend, this, wxID_EXECUTE);
     Bind(wxEVT_MENU, &ChatAIWindow::OnStop, this, wxID_STOP);
@@ -122,9 +122,8 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
 
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_EXECUTE);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnStopUI, this, wxID_STOP);
-    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnBusyUI, this, wxID_CLEAR);
-    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnBusyUI, this, wxID_REFRESH);
-    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_SETUP);
+    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnClearOutputViewUI, this, wxID_CLEAR);
+    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSettingsUI, this, wxID_SETUP);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnAutoScrollUI, this, XRCID("auto_scroll"));
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnHistoryUI, this, XRCID("prompt_history"));
     m_activeModel->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnBusyUI, this);
@@ -205,6 +204,11 @@ void ChatAIWindow::DoSendPrompt()
     ShowIndicator(true);
 }
 
+void ChatAIWindow::OnClearOutputViewUI(wxUpdateUIEvent& event)
+{
+    event.Enable(!m_stcOutput->IsEmpty() && !llm::Manager::GetInstance().IsBusy());
+}
+
 void ChatAIWindow::OnSendUI(wxUpdateUIEvent& event)
 {
     wxString prompt = m_stcInput->GetText();
@@ -217,7 +221,7 @@ void ChatAIWindow::OnModelChanged(wxCommandEvent& event)
 {
     llm::Manager::GetInstance().GetConfig().SetSelectedModelName(m_activeModel->GetStringSelection());
     llm::Manager::GetInstance().GetConfig().Save();
-    DoReset();
+    DoRestart();
 }
 
 void ChatAIWindow::OnUpdateTheme(wxCommandEvent& event)
@@ -298,13 +302,15 @@ void ChatAIWindow::OnSettings(wxCommandEvent& event)
     clGetManager()->OpenFile(global_config_path);
 }
 
-void ChatAIWindow::OnRefreshModelList(wxCommandEvent& event)
+void ChatAIWindow::OnRestartClient(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+    m_cancel_token->Cancel();
+    DoRestart();
     PopulateModels();
 }
 
-void ChatAIWindow::DoReset()
+void ChatAIWindow::DoRestart()
 {
     DoClearOutputView();
     llm::Manager::GetInstance().Restart();
@@ -320,13 +326,13 @@ void ChatAIWindow::DoClearOutputView()
         wxString url = event.GetString();
         ::wxLaunchDefaultBrowser(url);
     });
+    llm::Manager::GetInstance().ClearHistory();
 }
 
 void ChatAIWindow::OnNewSession(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    m_cancel_token->Cancel();
-    DoReset();
+    DoClearOutputView();
 }
 
 void ChatAIWindow::OnChatStarted(clLLMEvent& event)
@@ -484,7 +490,7 @@ void ChatAIWindow::OnWorkspaceLoaded(clWorkspaceEvent& event)
 void ChatAIWindow::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
-    DoReset();
+    DoRestart();
     CallAfter(&ChatAIWindow::LoadGlobalConfig);
 }
 
@@ -539,3 +545,4 @@ void ChatAIWindow::OnStop(wxCommandEvent& event)
 }
 
 void ChatAIWindow::OnStopUI(wxUpdateUIEvent& event) { event.Enable(llm::Manager::GetInstance().IsBusy()); }
+void ChatAIWindow::OnSettingsUI(wxUpdateUIEvent& event) { event.Enable(!llm::Manager::GetInstance().IsBusy()); }

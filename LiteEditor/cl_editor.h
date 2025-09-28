@@ -42,6 +42,7 @@
 #include "stringhighlighterjob.h"
 
 #include <cstdint>
+#include <limits>
 #include <map>
 #include <unordered_map>
 #include <vector>
@@ -1163,7 +1164,7 @@ private:
     std::unordered_map<size_t, eLineStatus> m_modifiedLines;
     bool m_trackChanges = false;
     std::unordered_map<int, wxString> m_breakpoints_tooltips;
-    size_t m_default_text_width = wxNOT_FOUND;
+    size_t m_default_text_width = std::numeric_limits<size_t>::max();
     bool m_scrollbar_recalc_is_required = false;
     // we keep an integer that will check whether a CC needs to be triggered
     // in the given location. This is done inside OnSciUpdateUI() method

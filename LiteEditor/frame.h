@@ -104,15 +104,15 @@ class clMainFrame : public wxFrame
     std::map<int, wxString> m_viewAsMap;
     TagsOptionsData m_tagsOptionsData;
     DebuggerPane* m_debuggerPane;
-    ePostBuildEndAction m_postBuildEndAction;
+    ePostBuildEndAction m_postBuildEndAction{ePostBuildEndAction::kNone};
     GeneralInfo m_frameGeneralInfo;
     std::map<int, wxString> m_panes;
-    bool m_highlightWord;
+    bool m_highlightWord{false};
     DockablePaneMenuManager* m_DPmenuMgr;
     wxPanel* m_mainPanel;
     wxString m_codeliteDownloadPageURL;
     wxString m_defaultLayout;
-    bool m_workspaceRetagIsRequired;
+    bool m_workspaceRetagIsRequired{false};
     bool m_loadLastSession;
     wxMenuBar* m_mainMenuBar;
 
@@ -121,20 +121,20 @@ class clMainFrame : public wxFrame
 #endif
 
 #ifdef __WXGTK__
-    bool m_isWaylandSession = false;
+    bool m_isWaylandSession{false};
 #endif
 
     // Maintain a set of core toolbars (i.e. toolbars not owned by any plugin)
     wxStringSet_t m_coreToolbars;
     clStatusBar* m_statusBar;
-    clSingleInstanceThread* m_singleInstanceThread;
+    clSingleInstanceThread* m_singleInstanceThread{nullptr};
 
     // Printing
     wxPrintDialogData m_printDlgData;
     size_t m_debuggerFeatures = clDebugEvent::kAllFeatures;
-    WebUpdateJob* m_webUpdate;
-    wxToolBar* m_mainToolbar;
-    clToolBarGeneric* m_pluginsToolbar;
+    WebUpdateJob* m_webUpdate{nullptr};
+    wxToolBar* m_mainToolbar{nullptr};
+    clToolBarGeneric* m_pluginsToolbar{nullptr};
     DebuggerToolBar* m_debuggerToolbar = nullptr;
     clInfoBar* m_infoBar = nullptr;
 #if !wxUSE_NATIVE_CAPTION

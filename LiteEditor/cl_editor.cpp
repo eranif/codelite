@@ -5955,7 +5955,7 @@ void clEditor::UpdateLineNumberMarginWidth()
 {
     int new_width = log10(GetLineCount()) + 1;
 
-    if (m_default_text_width == wxNOT_FOUND) {
+    if (m_default_text_width == std::numeric_limits<size_t>::max()) {
         UpdateDefaultTextWidth();
     }
 

@@ -1014,7 +1014,7 @@ void GitConsole::FinaliseReleaseNotes(const wxString& prompt, const wxString& mo
             }
         });
 
-    llm::ChatOptions chat_options;
+    llm::ChatOptions chat_options{llm::ChatOptions::kDefault};
     llm::AddFlagSet(chat_options, llm::ChatOptions::kNoTools);
     llm::AddFlagSet(chat_options, llm::ChatOptions::kNoHistory);
     llm::Manager::GetInstance().Chat(collector, prompt, nullptr, chat_options, model);

@@ -735,16 +735,6 @@ bool clMainFrame::m_initCompleted = false;
 
 clMainFrame::clMainFrame(
     wxWindow* pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
-    : m_postBuildEndAction(ePostBuildEndAction::kNone)
-    , m_highlightWord(false)
-    , m_workspaceRetagIsRequired(false)
-    , m_singleInstanceThread(NULL)
-#ifdef __WXGTK__
-    , m_isWaylandSession(false)
-#endif
-    , m_webUpdate(NULL)
-    , m_mainToolbar(NULL)
-    , m_pluginsToolbar(NULL)
 {
     GeneralInfo inf;
     EditorConfigST::Get()->ReadObject("GeneralInfo", &inf);
@@ -6107,6 +6097,11 @@ void clMainFrame::OnSysColoursChanged(clCommandEvent& event)
 
 void clMainFrame::DoSysColoursChanged() { MSWSetWindowDarkTheme(this); }
 
+namespace
+{
+int SortFunc(const wxString& first, const wxString& second) { return first.CmpNoCase(second) < 0; }
+} // namespace
+
 void clMainFrame::OnSetActivePoject(wxCommandEvent& e)
 {
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
@@ -6118,7 +6113,7 @@ void clMainFrame::OnSetActivePoject(wxCommandEvent& e)
     CHECK_COND_RET(!projects.empty());
 
     // sort the entries
-    projects.Sort(+[](const wxString& first, const wxString& second) { return first.CmpNoCase(second) < 0; });
+    projects.Sort(SortFunc);
 
     int initialSelection = projects.Index(cur_active_project);
     clSingleChoiceDialog dlg(this, projects, initialSelection == wxNOT_FOUND ? 0 : initialSelection);

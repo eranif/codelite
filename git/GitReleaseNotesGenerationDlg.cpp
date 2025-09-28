@@ -5,10 +5,18 @@
 GitReleaseNotesGenerationDlg::GitReleaseNotesGenerationDlg(wxWindow* parent)
     : GitReleaseNotesGenerationBaseDlg(parent)
 {
-    m_choiceModels->Append(llm::Manager::GetInstance().GetModels());
-    m_choiceModels->SetStringSelection(llm::Manager::GetInstance().GetActiveModel());
+    auto models = llm::Manager::GetInstance().GetModels();
+    m_choiceModels->Append(models);
+
+    if (!models.empty()) {
+        auto active_model = llm::Manager::GetInstance().GetConfig().GetSelectedModel();
+        int where = m_choiceModels->FindString(active_model);
+        m_choiceModels->SetSelection(where == wxNOT_FOUND ? 0 : where);
+    }
+
     GetSizer()->Fit(this);
     m_textCtrlFirstCommit->CallAfter(&wxTextCtrl::SetFocus);
+    CenterOnParent();
 }
 
 GitReleaseNotesGenerationDlg::~GitReleaseNotesGenerationDlg() {}

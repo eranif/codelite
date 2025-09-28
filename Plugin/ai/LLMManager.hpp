@@ -145,33 +145,12 @@ public:
     /// Load the list of a models in a background thread.
     void LoadModels(wxEvtHandler* owner);
 
-    void SetModels(const wxArrayString& models)
-    {
-        std::scoped_lock lk{m_models_mutex};
-        m_models = models;
-    }
-
-    inline wxArrayString GetModels() const
-    {
-        std::scoped_lock lk{m_models_mutex};
-        return m_models;
-    }
-
-    inline wxString GetActiveModel() const
-    {
-        std::scoped_lock lk{m_models_mutex};
-        return m_activeModel;
-    }
-
-    inline void SetActiveModel(const wxString& model)
-    {
-        std::scoped_lock lk{m_models_mutex};
-        m_activeModel = model;
-    }
+    void SetModels(const wxArrayString& models);
+    wxArrayString GetModels() const;
 
     /// Clear the chat history.
     void ClearHistory();
-    
+
     void Stop();
     void Start();
     void Restart();
@@ -201,7 +180,6 @@ private:
 
     mutable std::mutex m_models_mutex;
     wxArrayString m_models GUARDED_BY(m_models_mutex);
-    wxString m_activeModel GUARDED_BY(m_models_mutex);
 
     std::unique_ptr<std::thread> m_worker_thread;
     std::shared_ptr<llm::Client> m_client;

@@ -307,7 +307,6 @@ void Manager::Stop()
     m_client.reset();
     {
         std::scoped_lock lk{m_models_mutex};
-        m_activeModel.clear();
         m_models.clear();
     }
 }
@@ -380,4 +379,17 @@ void Manager::ClearHistory()
     CHECK_PTR_RET(m_client);
     m_client->ClearHistoryMessages();
 }
+
+void Manager::SetModels(const wxArrayString& models)
+{
+    std::scoped_lock lk{m_models_mutex};
+    m_models = models;
+}
+
+wxArrayString Manager::GetModels() const
+{
+    std::scoped_lock lk{m_models_mutex};
+    return m_models;
+}
+
 } // namespace llm

@@ -1,13 +1,11 @@
 #include "ChatAIWindow.hpp"
 
-#include "ChatAI.hpp"
 #include "ColoursAndFontsManager.h"
 #include "FileManager.hpp"
 #include "MarkdownStyler.hpp"
 #include "ai/LLMManager.hpp"
 #include "aui/clAuiToolBarArt.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
-#include "clModuleLogger.hpp"
 #include "clSTCHelper.hpp"
 #include "clSingleChoiceDialog.h"
 #include "clWorkspaceManager.h"
@@ -422,18 +420,23 @@ void ChatAIWindow::OnModelsLoaded(clLLMEvent& event)
     m_activeModel->Clear();
     m_activeModel->Append(models);
 
-    auto active_model = llm::Manager::GetInstance().GetConfig().GetSelectedModel();
-    if (!models.empty()) {
-        if (!active_model.empty()) {
-            int where = m_activeModel->FindString(active_model);
-            m_activeModel->SetSelection(where == wxNOT_FOUND ? 0 : where);
-
-        } else {
-            m_activeModel->SetSelection(0);
-            active_model = m_activeModel->GetString(0);
-        }
+    if (models.empty()) {
+        return;
     }
-    llm::Manager::GetInstance().SetActiveModel(active_model);
+
+    auto active_model = llm::Manager::GetInstance().GetConfig().GetSelectedModel();
+    if (active_model.empty() || (m_activeModel->FindString(active_model) == wxNOT_FOUND)) {
+        m_activeModel->SetSelection(0);
+        active_model = m_activeModel->GetString(0);
+        llm::Manager::GetInstance().GetConfig().SetSelectedModelName(active_model);
+        llm::Manager::GetInstance().GetConfig().Save();
+        return;
+    }
+
+    // We have an active mode and it exists in the drop down
+    m_activeModel->SetStringSelection(active_model);
+    llm::Manager::GetInstance().GetConfig().SetSelectedModelName(active_model);
+    llm::Manager::GetInstance().GetConfig().Save();
 }
 
 void ChatAIWindow::PopulateModels() { llm::Manager::GetInstance().LoadModels(this); }

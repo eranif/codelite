@@ -231,7 +231,7 @@ GitPlugin::GitPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_FILE_CREATED, &GitPlugin::OnFileCreated, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &GitPlugin::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &GitPlugin::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &GitPlugin::OnFileSaved, this);
     EventNotifier::Get()->Connect(
         wxEVT_PROJ_FILE_ADDED, clCommandEventHandler(GitPlugin::OnFilesAddedToProject), NULL, this);
     EventNotifier::Get()->Connect(
@@ -561,7 +561,7 @@ void GitPlugin::UnPlug()
     m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnFileGitBlame, this, XRCID("git_blame_file"));
 
     /*SYSTEM*/
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(GitPlugin::OnFileSaved), NULL, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &GitPlugin::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &GitPlugin::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_PROJ_FILE_ADDED, &GitPlugin::OnFilesAddedToProject, this);
     EventNotifier::Get()->Disconnect(
@@ -1063,7 +1063,9 @@ void GitPlugin::OnFileModifiedExternally(clFileSystemEvent& e)
 
 void GitPlugin::DoAnyFileModified()
 {
-    CHECK_VIEW_SHOWN();
+    if (m_isRemoteWorkspace || !IsPaneShown()) {
+        return;
+    }
 
     DoLoadBlameInfo(true);
     gitAction ga(gitListModified, wxT(""));

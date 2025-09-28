@@ -260,7 +260,8 @@ The git diff is:
     wxString model;
     if (llm::Manager::GetInstance().GetModels().GetCount() > 1) {
         auto models = llm::Manager::GetInstance().GetModels();
-        int selection = models.Index(llm::Manager::GetInstance().GetActiveModel());
+        auto active_model = llm::Manager::GetInstance().GetConfig().GetSelectedModel();
+        int selection = models.Index(active_model);
         if (selection == wxNOT_FOUND) {
             selection = 0;
         }

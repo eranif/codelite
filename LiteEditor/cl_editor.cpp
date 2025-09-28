@@ -468,7 +468,10 @@ clEditor::clEditor(wxWindow* parent)
 #endif
 
     wxStyledTextCtrl::Create(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxNO_BORDER);
+
+#ifdef __WXMSW__
     MSWSetWindowDarkTheme(this);
+#endif
 
     Bind(wxEVT_IDLE, &clEditor::OnIdle, this);
     Bind(wxEVT_STC_CHARADDED, &clEditor::OnCharAdded, this);

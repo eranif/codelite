@@ -862,9 +862,33 @@ bool PluginManager::IsPaneShown(const wxString& pane_name, const wxString& tab)
         return is_pane_shown;
     }
 
-    auto notebook = clMainFrame::Get()->GetOutputPane()->GetNotebook();
-    return is_pane_shown && (notebook->GetPageIndex(tab) != wxNOT_FOUND) &&
-           (notebook->GetPageIndex(tab) == notebook->GetSelection());
+    if (pane_name == PANE_LEFT_SIDEBAR) {
+        auto notebook = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
+        int sel = notebook->GetSelection();
+        if (sel == wxNOT_FOUND) {
+            return false;
+        }
+        return notebook->GetPageText(sel) == tab;
+    } else if (pane_name == PANE_RIGHT_SIDEBAR) {
+        auto notebook = clMainFrame::Get()->GetSecondarySideBar()->GetNotebook();
+        int sel = notebook->GetSelection();
+        if (sel == wxNOT_FOUND) {
+            return false;
+        }
+        return notebook->GetPageText(sel) == tab;
+    } else if (pane_name == PANE_DEBUGGER) {
+        auto notebook = clMainFrame::Get()->GetDebuggerPane()->GetNotebook();
+        int sel = notebook->GetSelection();
+        if (sel == wxNOT_FOUND) {
+            return false;
+        }
+        return notebook->GetPageText(sel) == tab;
+    } else if (pane_name == PANE_OUTPUT) {
+        auto notebook = clMainFrame::Get()->GetOutputPane()->GetNotebook();
+        return is_pane_shown && (notebook->GetPageIndex(tab) != wxNOT_FOUND) &&
+               (notebook->GetPageIndex(tab) == notebook->GetSelection());
+    }
+    return false;
 }
 
 void PluginManager::ToggleSecondarySidebarPane(const wxString& selectedWindow)

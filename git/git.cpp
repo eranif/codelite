@@ -289,15 +289,15 @@ GitPlugin::GitPlugin(IManager* manager)
     conf.ReadItem(&data);
     m_configFlags = data.GetFlags();
 
-    llm::Manager::GetInstance().RegisterFunction(
+    llm::Manager::GetInstance().GetPluginFunctionTable().Add(
         llm::FunctionBuilder("git_commit_log_history_between_two_commits")
-            .SetDesc("Return git history of commits between range of commits: 'start_commit' and 'end_commit'.")
-            .AddParam("start_commit", "The first commit in the range.", "string")
-            .AddParam("end_commit", "The second commit in the range.", "string")
-            .SetCallback([this](const JSONItem& args) -> llm::FunctionResult {
+            .SetDescription("Return git history of commits between range of commits: 'start_commit' and 'end_commit'.")
+            .AddRequiredParam("start_commit", "The first commit in the range.", "string")
+            .AddRequiredParam("end_commit", "The second commit in the range.", "string")
+            .SetCallback([this](const llm::json& args) -> llm::FunctionResult {
                 // Function implementation: return list of changes between 2 commits.
-                LLM_ASSIGN_ARG_OR_RETURN_ERR(wxString start_commit, args, "start_commit", wxString);
-                LLM_ASSIGN_ARG_OR_RETURN_ERR(wxString end_commit, args, "end_commit", wxString);
+                LLM_ASSIGN_ARG_OR_RETURN_ERR(std::string start_commit, args, "start_commit", std::string);
+                LLM_ASSIGN_ARG_OR_RETURN_ERR(std::string end_commit, args, "end_commit", std::string);
                 LLM_CHECK_OR_RETURN_ERR(!start_commit.empty());
                 LLM_CHECK_OR_RETURN_ERR(!end_commit.empty());
 
@@ -305,9 +305,9 @@ GitPlugin::GitPlugin(IManager* manager)
                 wxBusyCursor bc{};
                 auto result = FetchLogBetweenCommits(start_commit, end_commit);
                 if (!result || result.value().size() == 0) {
-                    return llm::CreateErr(result.error_message());
+                    return llm::Err(result.error_message());
                 }
-                return llm::CreateOk(result.value().Item(0));
+                return llm::Ok(result.value().Item(0));
             })
             .Build());
 }
@@ -1708,7 +1708,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
         }
     } break;
     case gitBlame: {
-        GitBlamePage* page = new GitBlamePage(clGetManager()->GetMainNotebook(), this, ga.arguments);
+        GitBlamePage* page = new GitBlamePage(clGetManager()->GetMainNotebook(), ga.arguments);
         page->ParseBlameOutput(m_commandOutput);
         wxString tooltip = wxString::Format("[Git Blame]\n%s", ga.arguments);
         wxString title = wxString::Format("[Git Blame]: %s", wxFileName(ga.arguments).GetFullName());
@@ -3168,36 +3168,48 @@ void GitPlugin::OnSideBarPageChanged(clCommandEvent& event)
     }
 }
 
-std::optional<uint64_t> GitPlugin::GenerateCommitMessage(const wxString& prompt, const wxString& model_name)
+bool GitPlugin::GenerateCommitMessage(const wxString& prompt, const wxString& model_name)
 {
     if (m_commitDialog == nullptr || !llm::Manager::GetInstance().IsAvailable()) {
-        return std::nullopt;
+        return false;
     }
 
     m_commitDialog->ClearCommitMessage();
-    auto cb = [this](const std::string& message, size_t flags) mutable {
+    auto collector = new llm::ResponseCollector();
+    collector->SetStateChangingCB([this](llm::ChatState state) {
+        if (!wxThread::IsMain()) {
+            clWARNING() << "StateChangingCB called for non main thread!" << endl;
+            return;
+        }
         if (!m_commitDialog) {
             return;
         }
-
-        if (flags & llm::Manager::kThinking) {
+        switch (state) {
+        case llm::ChatState::kThinking:
             m_commitDialog->SetIndicatorMessage(_("Thinking..."));
-            return;
-        } else {
+            break;
+        case llm::ChatState::kWorking:
             m_commitDialog->SetIndicatorMessage(_("Working..."));
+            break;
+        case llm::ChatState::kReady:
+            m_commitDialog->SetIndicatorMessage(_("Ready."));
+            break;
         }
+    });
 
+    collector->SetStreamCallback([this](const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
         m_commitDialog->AppendCommitMessage(wxString::FromUTF8(message));
-        if (flags & (llm::Manager::kCompleted | llm::Manager::kAborted)) {
+        if (is_done) {
             m_commitDialog->SetCommitMessageGenerationCompleted();
         }
-    };
+    });
 
-    return llm::Manager::GetInstance().Chat(prompt,
-                                            std::move(cb),
-                                            llm::Manager::ChatOptions::kNoTools |
-                                                llm::Manager::ChatOptions::kClearHistory,
-                                            model_name);
+    auto cancel_token = std::make_shared<llm::CancellationToken>(10000);
+    llm::ChatOptions chat_options;
+    llm::AddFlagSet(chat_options, llm::ChatOptions::kNoTools);
+    llm::AddFlagSet(chat_options, llm::ChatOptions::kNoHistory);
+    llm::Manager::GetInstance().Chat(collector, prompt, cancel_token, chat_options, model_name);
+    return true;
 }
 
 clStatusOr<wxArrayString> GitPlugin::FetchLogBetweenCommits(const wxString& start_commit,

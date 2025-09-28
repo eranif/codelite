@@ -1,15 +1,64 @@
 #include "LLMManager.hpp"
 
-#include "codelite_events.h"
-#include "event_notifier.h"
 #include "file_logger.h"
+#include "ollama/client.hpp"
 
-#include <atomic> // atomic_uint64_t
+#include <wx/msgdlg.h>
 namespace llm
 {
 namespace
 {
-std::atomic_uint64_t id_generator{0};
+
+/// If Running on the main thread, construct a busy cursor.
+std::unique_ptr<wxBusyCursor> CreateBusyCursor()
+{
+    std::unique_ptr<wxBusyCursor> bc;
+    if (wxThread::IsMain()) {
+        return std::make_unique<wxBusyCursor>();
+    }
+    return nullptr;
+}
+
+struct TaskDropper {
+    llm::ThreadTask& task;
+    TaskDropper(llm::ThreadTask& t) : task{t} {}
+    ~TaskDropper()
+    {
+        if (!task.collector) {
+            return;
+        }
+
+        auto* manager = &llm::Manager::GetInstance();
+        // Pass the collector to the main thread so it will deleted by the main thread.
+        manager->CallAfter(&llm::Manager::DeleteCollector, task.collector);
+        task.collector = nullptr;
+    }
+};
+
+struct SharedState {
+    /// used for detecting loops in the model.
+    std::vector<std::string> last_tokens;
+    size_t total_batch_count{1};
+    size_t current_batch{1};
+};
+
+void NotifyDoneWithError(wxEvtHandler* owner, const std::string& message)
+{
+    clLLMEvent event{wxEVT_LLM_OUTPUT_DONE};
+    event.SetResponseRaw(message);
+    event.SetIsError(true);
+    owner->AddPendingEvent(event);
+}
+} // namespace
+
+// ==---------------------
+// Client
+// ==---------------------
+
+std::unique_ptr<ollama::Client> Client::NewClient()
+{
+    std::unique_ptr<ollama::Client> client = std::make_unique<ollama::Client>(GetUrl(), m_http_headers.get_value());
+    return client;
 }
 
 Manager& Manager::GetInstance()
@@ -18,203 +67,305 @@ Manager& Manager::GetInstance()
     return instance;
 }
 
-Manager::Manager()
+Manager::Manager() { Start(); }
+
+Manager::~Manager() { Stop(); }
+
+void Manager::DeleteCollector(ResponseCollector* collector) { wxDELETE(collector); }
+
+void Manager::WorkerMain()
 {
-    m_timer.SetOwner(this);
-    m_timer.Start(500);
-    Bind(wxEVT_TIMER, &Manager::OnTimer, this, m_timer.GetId());
-    Bind(wxEVT_LLM_RESPONSE, &Manager::OnResponse, this);
-    Bind(wxEVT_LLM_RESPONSE_COMPLETED, &Manager::OnResponse, this);
-    Bind(wxEVT_LLM_RESPONSE_ERROR, &Manager::OnResponseError, this);
-    Bind(wxEVT_LLM_RESPONSE_ABORTED, &Manager::OnResponseAborted, this);
+    // Helper class to pass the collector to the main thread from the ThreadTask class
+    // once it drops out of scope. This way we ensure that the collector will be destroyed
+    // without pending events.
+    clDEBUG() << "LLM Worker thread started" << endl;
+    m_worker_thread_running.store(true);
+    while (!m_client->IsInterrupted()) {
+        m_worker_busy.store(false);
+        ThreadTask task;
+        auto res = m_queue.ReceiveTimeout(50, task);
+        if (res == wxMSGQUEUE_TIMEOUT) {
+            continue;
+        }
+        m_worker_busy.store(true);
+        TaskDropper dropper{task};
+
+        // Process the the task
+        bool saved_thinking_state{false};
+        wxEvtHandler* owner = task.GetEventSink();
+
+        clLLMEvent event_starting{wxEVT_LLM_CHAT_STARTED};
+        owner->AddPendingEvent(event_starting);
+
+        SharedState shared_state;
+        shared_state.total_batch_count = task.prompt_array.size();
+        shared_state.current_batch = 1;
+
+        bool abort_loop{false};
+        auto cancellation_token = task.cancellation_token;
+        for (std::string prompt : task.prompt_array) {
+            if (abort_loop) {
+                break;
+            }
+
+            m_client->Chat(
+                std::move(prompt),
+                [this, cancellation_token, &abort_loop, &shared_state, &saved_thinking_state, owner](
+                    std::string message, ollama::Reason reason, bool thinking) -> bool {
+                    // Check various options that the chat was cancelled.
+                    if (m_client->IsInterrupted() || (cancellation_token && cancellation_token->IsCancelled())) {
+                        NotifyDoneWithError(owner, "\n\n** Request cancelled by caller. **\n\n");
+                        abort_loop = true;
+                        return false;
+                    }
+
+                    if (saved_thinking_state != thinking) {
+                        // we switched state
+                        if (thinking) {
+                            // the new state is "thinking"
+                            clLLMEvent think_started{wxEVT_LLM_THINK_SATRTED};
+                            owner->AddPendingEvent(think_started);
+                        } else {
+                            clLLMEvent think_ended{wxEVT_LLM_THINK_ENDED};
+                            owner->AddPendingEvent(think_ended);
+                        }
+                    }
+
+                    saved_thinking_state = thinking;
+                    switch (reason) {
+                    case ollama::Reason::kFatalError: {
+                        NotifyDoneWithError(owner, message);
+                        abort_loop = true;
+                        return false;
+                    } break;
+                    case ollama::Reason::kDone: {
+                        if (cancellation_token && !cancellation_token->Incr()) {
+                            NotifyDoneWithError(owner, "\n\n** Maximum number of tokens reached. **\n\n");
+                            abort_loop = true;
+                            return false;
+                        }
+                        if (shared_state.current_batch == shared_state.total_batch_count) {
+                            // No more batches to process, fire the DONE event.
+                            clLLMEvent event{wxEVT_LLM_OUTPUT_DONE};
+                            event.SetResponseRaw(message);
+                            owner->AddPendingEvent(event);
+                        } else {
+                            // We have more batches to process, treat this as a
+                            // normal "output" event.
+                            shared_state.current_batch++;
+                            clLLMEvent event{wxEVT_LLM_OUTPUT};
+                            event.SetResponseRaw(message);
+                            owner->AddPendingEvent(event);
+                        }
+                    } break;
+                    case ollama::Reason::kLogNotice:
+                        clDEBUG() << message << endl;
+                        break;
+                    case ollama::Reason::kCancelled: {
+                        NotifyDoneWithError(owner, "\n\n** Request cancelled by caller. **\n\n");
+                        abort_loop = true;
+                        return false;
+                    } break;
+                    case ollama::Reason::kLogDebug:
+                        clDEBUG1() << message << endl;
+                        break;
+                    case ollama::Reason::kPartialResult: {
+                        clLLMEvent event{wxEVT_LLM_OUTPUT};
+                        event.SetResponseRaw(message);
+                        owner->AddPendingEvent(event);
+                        if (cancellation_token && !cancellation_token->Incr()) {
+                            NotifyDoneWithError(owner, "\n\n** Maximum number of tokens reached. **\n\n");
+                            abort_loop = true;
+                            return false;
+                        }
+                    } break;
+                    }
+                    // continue
+                    return true;
+                },
+                task.model,
+                task.options);
+        }
+    }
+    clDEBUG() << "LLM Worker thread started - exiting." << endl;
+    m_worker_thread_running.store(false);
+    m_worker_busy.store(false);
 }
 
-Manager::~Manager()
+void Manager::CleanupAfterWorkerExit()
 {
-    m_timer.Stop();
-    Unbind(wxEVT_TIMER, &Manager::OnTimer, this, m_timer.GetId());
-    Unbind(wxEVT_LLM_RESPONSE, &Manager::OnResponse, this);
-    Unbind(wxEVT_LLM_RESPONSE_COMPLETED, &Manager::OnResponse, this);
-    Unbind(wxEVT_LLM_RESPONSE_ERROR, &Manager::OnResponseError, this);
-    Unbind(wxEVT_LLM_RESPONSE_ABORTED, &Manager::OnResponseAborted, this);
+    // Pull all items from the queue and notify about "Stop"
+    if (!wxThread::IsMain()) {
+        clERROR() << "CleanupAfterWorkerExit can only be called from the main thread" << endl;
+        return;
+    }
+
+    ThreadTask w;
+    while (m_queue.ReceiveTimeout(1, w) == wxMSGQUEUE_NO_ERROR) {
+        TaskDropper dropper{w};
+        clLLMEvent event{wxEVT_LLM_OUTPUT_DONE};
+        event.SetResponseRaw("LLM is going down");
+        w.GetEventSink()->AddPendingEvent(event);
+    }
+
+    m_queue.Clear();
+
+    if (m_worker_thread) {
+        m_worker_thread->join();
+        m_worker_thread.reset();
+    }
 }
 
-namespace
+void Manager::PostTask(ThreadTask task)
 {
-struct SharedState {
-    /// used for detecting loops in the model.
-    std::vector<std::string> last_tokens;
-    size_t total_batch_count{1};
-    size_t current_batch{1};
-};
-} // namespace
+    if (!m_worker_thread_running.load()) {
+        clDEBUG() << "Restarting worker thread." << endl;
+        CleanupAfterWorkerExit();
+        Start();
+    }
+    m_queue.Post(std::move(task));
+}
 
-void Manager::Chat(const wxString& prompt_template,
+void Manager::Chat(wxEvtHandler* owner,
+                   const wxString& prompt_template,
                    const wxArrayString& prompt_context_arr,
-                   ResponseCB response_cb,
-                   size_t options,
+                   std::shared_ptr<CancellationToken> cancel_token,
+                   ChatOptions options,
                    const wxString& model)
 {
-    std::shared_ptr<ResponseCB> shared_cb = std::make_shared<ResponseCB>(response_cb);
-    std::shared_ptr<SharedState> shared_state = std::make_shared<SharedState>();
-    shared_state->total_batch_count = prompt_context_arr.size();
-
+    // Post 1 job with multiple prompts.
+    ThreadTask task{
+        .model = model.ToStdString(wxConvUTF8), .options = options, .owner = owner, .cancellation_token = cancel_token};
     for (const auto& prompt_context : prompt_context_arr) {
         wxString prompt = prompt_template;
         prompt.Replace("{{CONTEXT}}", prompt_context);
-        Chat(
-            prompt,
-            [=](const std::string& message, size_t flags) {
-                if (flags & llm::Manager::kCompleted) {
-                    if (shared_state->total_batch_count == shared_state->current_batch) {
-                        // this was the last token in the batch.
-                        response_cb(message, llm::Manager::kCompleted);
-                    } else {
-                        shared_state->current_batch++;
-                    }
-                } else {
-                    response_cb(message, flags);
-                }
-            },
-            options,
-            model);
+        task.prompt_array.push_back(prompt.ToStdString(wxConvUTF8));
+    }
+    PostTask(std::move(task));
+}
+
+void Manager::Chat(ResponseCollector* collector,
+                   const wxString& prompt_template,
+                   const wxArrayString& prompt_context_arr,
+                   std::shared_ptr<CancellationToken> cancel_token,
+                   ChatOptions options,
+                   const wxString& model)
+{
+    // Post 1 job with multiple prompts.
+    ThreadTask task{.model = model.ToStdString(wxConvUTF8),
+                    .options = options,
+                    .cancellation_token = cancel_token,
+                    .collector = collector};
+    for (const auto& prompt_context : prompt_context_arr) {
+        wxString prompt = prompt_template;
+        prompt.Replace("{{CONTEXT}}", prompt_context);
+        task.prompt_array.push_back(prompt.ToStdString(wxConvUTF8));
+    }
+    PostTask(std::move(task));
+}
+
+void Manager::Chat(wxEvtHandler* owner,
+                   const wxString& prompt,
+                   std::shared_ptr<CancellationToken> cancel_token,
+                   ChatOptions options,
+                   const wxString& model)
+{
+    ThreadTask task{.prompt_array = {prompt.ToStdString(wxConvUTF8)},
+                    .model = model.ToStdString(wxConvUTF8),
+                    .options = options,
+                    .owner = owner,
+                    .cancellation_token = cancel_token};
+    PostTask(std::move(task));
+}
+
+void Manager::Chat(ResponseCollector* collector,
+                   const wxString& prompt,
+                   std::shared_ptr<CancellationToken> cancel_token,
+                   ChatOptions options,
+                   const wxString& model)
+{
+    ThreadTask task{.prompt_array = {prompt.ToStdString(wxConvUTF8)},
+                    .model = model.ToStdString(wxConvUTF8),
+                    .options = options,
+                    .cancellation_token = cancel_token,
+                    .collector = collector};
+    PostTask(std::move(task));
+}
+
+void Manager::Stop()
+{
+    auto bc = CreateBusyCursor();
+
+    m_client->Interrupt();
+    CleanupAfterWorkerExit();
+    m_client.reset();
+    {
+        std::scoped_lock lk{m_models_mutex};
+        m_activeModel.clear();
+        m_models.clear();
     }
 }
 
-std::optional<uint64_t> Manager::Chat(const wxString& prompt, ResponseCB cb, size_t options, const wxString& model)
+void Manager::Start()
 {
-    if (!IsAvailable()) {
-        return std::nullopt;
+    auto bc = CreateBusyCursor();
+
+    std::unordered_map<std::string, std::string> headers = {{"Host", "127.0.0.1"}};
+    m_client = std::make_shared<llm::Client>(std::string{"127.0.0.1:11434"}, headers);
+    const ollama::Config* config = m_client_config.has_value() ? &m_client_config.value() : nullptr;
+    if (config) {
+        m_client->ApplyConfig(config);
     }
 
-    auto id = id_generator.fetch_add(1);
+    // Initialise the function table.
+    PopulateBuiltInFunctions(m_client->GetFunctionTable());
+    m_client->GetFunctionTable().Merge(GetPluginFunctionTable());
+    if (config) {
+        // Add external MCP tools.
+        m_client->GetFunctionTable().ReloadMCPServers(config);
+    }
+    LoadModels(nullptr);
 
-    clLLMEvent event_chat{wxEVT_LLM_REQUEST};
-    event_chat.SetPrompt(prompt);
-    event_chat.SetEventObject(this);
-    bool enable_tools = ((options & ChatOptions::kNoTools) == 0);
-    event_chat.SetEnableTools(enable_tools);
-    event_chat.SetModelName(model);
-    event_chat.SetClearHistory((options & ChatOptions::kClearHistory) != 0);
-    EventNotifier::Get()->AddPendingEvent(event_chat);
-    m_requetstQueue.push_back({id, std::move(cb)});
-    return id;
+    // Start the worker thread
+    m_worker_thread = std::make_unique<std::thread>([this]() { WorkerMain(); });
 }
 
-void Manager::OnTimer(wxTimerEvent& e)
+void Manager::LoadModels(wxEvtHandler* owner)
 {
-    clLLMEvent event_llm_is_available{wxEVT_LLM_IS_AVAILABLE};
-    EventNotifier::Get()->ProcessEvent(event_llm_is_available);
-    m_isAvailable = event_llm_is_available.IsAvailable();
+    auto client = m_client->NewClient();
+    std::thread t([owner, client = std::move(client)]() {
+        auto models = client->List();
+        wxArrayString m;
+        m.reserve(models.size());
+        for (const auto& model : models) { m.Add(wxString::FromUTF8(model)); }
+        llm::Manager::GetInstance().SetModels(m);
+
+        // Notify
+        if (owner) {
+            clLLMEvent models_loaded_event{wxEVT_LLM_MODELS_LOADED};
+            models_loaded_event.SetStrings(m);
+            owner->AddPendingEvent(models_loaded_event);
+        }
+    });
+    t.detach();
 }
 
-void Manager::OnResponse(clLLMEvent& event)
+bool Manager::ReloadConfig(const wxString& config_content, bool prompt)
 {
-    bool completed = event.GetEventType() == wxEVT_LLM_RESPONSE_COMPLETED;
-    bool is_thinking = event.IsThinking();
-    if (m_requetstQueue.empty()) {
-        clWARNING() << "Received LLM response, but no callback is available";
-        RestartClient();
-        return;
+    if (prompt && ::wxMessageBox(_("Reloading the configuration will restart "
+                                   "the LLM client.\nContinue?"),
+                                 "CodeLite",
+                                 wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxCENTER) != wxYES) {
+        return false;
     }
 
-    size_t flags{ResponseFlags::kNone};
-    if (completed) {
-        flags |= ResponseFlags::kCompleted;
+    auto conf = ollama::Config::FromContent(config_content.ToStdString(wxConvUTF8));
+    if (conf.has_value()) {
+        m_client_config = std::move(conf);
+        m_client->ApplyConfig(&m_client_config.value());
+        Restart();
+        return true;
     }
-    if (is_thinking) {
-        flags |= ResponseFlags::kThinking;
-    }
-
-    auto& entry = m_requetstQueue.front();
-    if (entry.second != nullptr) {
-        (entry.second)(event.GetResponseRaw(), flags);
-    }
-
-    if (completed) {
-        m_requetstQueue.erase(m_requetstQueue.begin());
-    }
-}
-
-void Manager::OnResponseAborted(clLLMEvent& event)
-{
-    event.Skip();
-
-    clSYSTEM() << "LLM request cancelled." << endl;
-    if (m_requetstQueue.empty()) {
-        clWARNING() << "Received LLM response ABORT, but no callback is available";
-        return;
-    }
-
-    size_t flags{ResponseFlags::kAborted | ResponseFlags::kCompleted};
-    auto& entry = m_requetstQueue.front();
-    if (entry.second != nullptr) {
-        (entry.second)(event.GetResponseRaw(), flags);
-    }
-    m_requetstQueue.clear();
-}
-
-void Manager::OnResponseError(clLLMEvent& event)
-{
-    if (m_requetstQueue.empty()) {
-        clWARNING() << "Received LLM response error, but no callback is available";
-        RestartClient();
-        return;
-    }
-
-    size_t flags{ResponseFlags::kError | ResponseFlags::kCompleted};
-
-    auto& entry = m_requetstQueue.front();
-    if (entry.second != nullptr) {
-        (entry.second)(event.GetResponseRaw(), flags);
-    }
-    m_requetstQueue.erase(m_requetstQueue.begin());
-}
-
-void Manager::Cancel(uint64_t request_id)
-{
-    auto iter = std::find_if(
-        m_requetstQueue.begin(), m_requetstQueue.end(), [request_id](const auto& p) { return p.first == request_id; });
-    if (iter == m_requetstQueue.end()) {
-        return;
-    }
-
-    // We can't really remove the entry, but we can replace the callback with a null.
-    iter->second = nullptr;
-}
-
-bool Manager::RegisterFunction(Function func)
-{
-    std::string name = func.m_name;
-    return m_functions.insert({name, std::move(func)}).second;
-}
-
-void Manager::UnregisterFunction(const std::string& funcname)
-{
-    if (m_functions.count(funcname) != 0) {
-        // Erase it from the local cache.
-        m_functions.erase(funcname);
-    }
-
-    // In case someone already consumed it from the LLMManager, notify that this function should be unregistered.
-    clLLMEvent unregister_event{wxEVT_LLM_UNREGISTER_FUNC};
-    unregister_event.SetStringRaw(funcname);
-    unregister_event.SetString(funcname);
-    EventNotifier::Get()->ProcessEvent(unregister_event);
-}
-
-void Manager::ConsumeFunctions(std::function<void(Function)> cb)
-{
-    for (auto& [_, f] : m_functions) {
-        cb(std::move(f));
-    }
-    m_functions.clear();
-}
-
-void llm::Manager::RestartClient()
-{
-    m_requetstQueue.clear();
-    clLLMEvent restart_event{wxEVT_LLM_RESTART};
-    EventNotifier::Get()->ProcessEvent(restart_event);
+    return false;
 }
 } // namespace llm

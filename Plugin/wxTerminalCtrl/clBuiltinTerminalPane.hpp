@@ -34,7 +34,6 @@ protected:
 
 private:
     wxTerminalCtrl* GetActiveTerminal();
-    wxTerminalCtrl* m_terminal = nullptr;
     clToolBar* m_toolbar = nullptr;
     Notebook* m_book = nullptr;
     wxChoice* m_terminal_types = nullptr;

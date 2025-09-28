@@ -1,4 +1,5 @@
-# Our project is called 'codelite' this is how it will be called in visual studio, and in our makefiles.
+# Our project is called 'codelite' this is how it will be called in visual
+# studio, and in our makefiles.
 project(libcodelite)
 
 # wxWidgets include (this will do all the magic to configure everything)
@@ -12,14 +13,21 @@ if(UNIX AND NOT APPLE)
 endif(UNIX AND NOT APPLE)
 
 # Flex files
-flex_target(CxxFlex "${CMAKE_SOURCE_DIR}/CodeLite/Cxx/CxxScanner.l" "${CMAKE_CURRENT_BINARY_DIR}/CxxScanner.cpp"
-            COMPILE_FLAGS "--noline --yylineno --batch")
-flex_target(IncludeFinderFlex "${CMAKE_SOURCE_DIR}/CodeLite/Cxx/include_finder.l"
-            "${CMAKE_CURRENT_BINARY_DIR}/include_finder.cpp" COMPILE_FLAGS "-Pinclf_ --noline --yylineno --batch")
-flex_target(PhpFlex "${CMAKE_SOURCE_DIR}/CodeLite/PHP/PhpLexer.l" "${CMAKE_CURRENT_BINARY_DIR}/PhpLexer.cpp"
-            COMPILE_FLAGS "-Pphp --noline --yylineno --batch")
+flex_target(
+  CxxFlex "${CMAKE_SOURCE_DIR}/CodeLite/Cxx/CxxScanner.l"
+  "${CMAKE_CURRENT_BINARY_DIR}/CxxScanner.cpp"
+  COMPILE_FLAGS "--noline --yylineno --batch")
+flex_target(
+  IncludeFinderFlex "${CMAKE_SOURCE_DIR}/CodeLite/Cxx/include_finder.l"
+  "${CMAKE_CURRENT_BINARY_DIR}/include_finder.cpp"
+  COMPILE_FLAGS "-Pinclf_ --noline --yylineno --batch")
+flex_target(
+  PhpFlex "${CMAKE_SOURCE_DIR}/CodeLite/PHP/PhpLexer.l"
+  "${CMAKE_CURRENT_BINARY_DIR}/PhpLexer.cpp"
+  COMPILE_FLAGS "-Pphp --noline --yylineno --batch")
 
-set(FlexSrcs "${FLEX_CxxFlex_OUTPUTS}" "${FLEX_IncludeFinderFlex_OUTPUTS}" "${FLEX_PhpFlex_OUTPUTS}")
+set(FlexSrcs "${FLEX_CxxFlex_OUTPUTS}" "${FLEX_IncludeFinderFlex_OUTPUTS}"
+             "${FLEX_PhpFlex_OUTPUTS}")
 
 file(GLOB_RECURSE SRCS "*.cpp" "*.h" "*.hpp")
 
@@ -28,9 +36,10 @@ add_library(libcodelite SHARED ${SRCS} ${FlexSrcs})
 # Include paths
 target_include_directories(
   libcodelite
-  PUBLIC "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite" "${CL_SRC_ROOT}/CodeLite/ssh"
-         "${CL_SRC_ROOT}/PCH"
-  PRIVATE "${CL_SRC_ROOT}/submodules/asio/asio/include" "${CL_SRC_ROOT}/submodules/websocketpp")
+  PUBLIC "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite"
+         "${CL_SRC_ROOT}/CodeLite/ssh" "${CL_SRC_ROOT}/PCH"
+  PRIVATE "${CL_SRC_ROOT}/submodules/asio/asio/include"
+          "${CL_SRC_ROOT}/submodules/websocketpp")
 
 if(WITH_WEBTOOLS)
   target_compile_definitions(libcodelite PUBLIC HAS_ASIO=1)
@@ -115,7 +124,8 @@ endif()
 
 if(NOT MINGW)
   if(APPLE)
-    install(TARGETS libcodelite DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
+    install(TARGETS libcodelite
+            DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
   else()
     install(TARGETS libcodelite DESTINATION ${PLUGINS_DIR})
   endif()
@@ -126,3 +136,14 @@ else()
     LIBRARY DESTINATION ${CMAKE_INSTALL_PREFIX}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 endif()
+
+target_compile_options(libcodelite PUBLIC -Wall)
+target_compile_options(libcodelite PUBLIC -Wno-overloaded-virtual)
+target_compile_options(libcodelite PUBLIC -Wno-unused-function)
+if(IS_CLANG)
+  target_compile_options(libcodelite PUBLIC -Wno-unneeded-internal-declaration)
+endif()
+target_compile_options(libcodelite PUBLIC -Wno-unused-variable)
+target_compile_options(libcodelite PUBLIC -Wno-unknown-pragmas)
+target_compile_options(libcodelite PUBLIC -Wno-misleading-indentation)
+target_compile_options(libcodelite PUBLIC -Wno-unused-label)

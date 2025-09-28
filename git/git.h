@@ -35,6 +35,7 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
+#include "ai/ResponseCollector.hpp"
 #include "clCodeLiteRemoteProcess.hpp"
 #include "clResult.hpp"
 #include "clTabTogglerHelper.h"
@@ -374,7 +375,7 @@ public:
     void OnCommandOutput(clCommandEvent& event);
     void OnCommandEnded(clCommandEvent& event);
 
-    std::optional<uint64_t> GenerateCommitMessage(const wxString& prompt, const wxString& model_name);
+    bool GenerateCommitMessage(const wxString& prompt, const wxString& model_name);
 
     /// Return the commit log between range of commits. We split the log (line based), to match the `chunk_size`
     /// argument.

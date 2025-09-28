@@ -2,8 +2,9 @@
 
 #include "CustomControls/IndicatorPanel.hpp"
 #include "MarkdownStyler.hpp"
-#include "OllamaClient.hpp"
 #include "UI.hpp"
+#include "ai/Common.hpp"
+#include "ai/ProgressToken.hpp"
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "wxTerminalCtrl/wxTerminalOutputCtrl.hpp"
@@ -13,16 +14,18 @@
 #include <wx/timer.h>
 
 class ChatAI;
+using llm::ChatState;
 class ChatAIWindow : public AssistanceAIChatWindowBase
 {
 public:
-    ChatAIWindow(wxWindow* parent, ChatAI* plugin);
+    ChatAIWindow(wxWindow* parent);
     virtual ~ChatAIWindow();
     wxString GetActiveModel() const { return m_activeModel->GetStringSelection(); }
 
 protected:
     void OnAutoScroll(wxCommandEvent& event);
     void OnAutoScrollUI(wxUpdateUIEvent& event);
+    void OnBusyUI(wxUpdateUIEvent& event);
     void OnHistory(wxCommandEvent& event);
     void OnHistoryUI(wxUpdateUIEvent& event);
     void OnStop(wxCommandEvent& event);
@@ -36,15 +39,8 @@ protected:
     void OnNewSession(wxCommandEvent& event);
     void OnRefreshModelList(wxCommandEvent& event);
     void OnSettings(wxCommandEvent& event);
-    void OnLog(LLMEvent& event);
     void UpdateTheme();
     void DoSendPrompt();
-    void OnChatStarted(LLMEvent& event);
-    void OnChatAIOutput(LLMEvent& event);
-    void OnChatAIOutputDone(LLMEvent& event);
-    void OnModels(LLMEvent& event);
-    void OnThinking(LLMEvent& event);
-    void OnFileSaved(clCommandEvent& event);
     void PopulateModels();
     void SetFocusToActiveEditor();
     void StyleOutput();
@@ -54,26 +50,32 @@ protected:
     void OnWorkspaceClosed(clWorkspaceEvent& event);
     void LoadGlobalConfig();
     void RestoreUI();
+    void OnFileSaved(clCommandEvent& event);
+
+    /// LLM events
+    void OnChatStarted(clLLMEvent& event);
+    void OnChatAIOutput(clLLMEvent& event);
+    void OnChatAIOutputDone(clLLMEvent& event);
+    void OnThinkingStart(clLLMEvent& event);
+    void OnThinkingEnd(clLLMEvent& event);
+    void OnModelsLoaded(clLLMEvent& event);
 
     /// Clears the output view, does not change the model history.
     void DoClearOutputView();
     /// Clear the view (input & output) and reset the client.
     void DoReset();
-    void DoLogMessage(const wxString& message, LLMLogLevel log_level);
 
     /// Return the relevant configuration file. If a workspace file is opened, we use the workspace specific
     /// configuration file. If no workspace is opened, we use the global settings.
     wxString GetConfigurationFilePath() const;
 
     void ShowIndicator(bool show);
-    void NotifyThinking(bool thinking);
-    void OnTimer(wxTimerEvent& event);
 
 private:
-    ChatAI* m_plugin{nullptr};
     wxChoice* m_activeModel{nullptr};
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
-    bool m_thinking{false};
+    ChatState m_state{ChatState::kReady};
     IndicatorPanel* m_statusPanel{nullptr};
     bool m_autoScroll{true};
+    std::shared_ptr<llm::CancellationToken> m_cancel_token{nullptr};
 };

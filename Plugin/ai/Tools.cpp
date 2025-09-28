@@ -3,9 +3,8 @@
 #include "FileManager.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspaceView.hpp"
-#include "OllamaClient.hpp"
+#include "ai/LLMManager.hpp"
 #include "clWorkspaceManager.h"
-#include "event_notifier.h"
 #include "globals.h"
 #include "ollama/function.hpp"
 
@@ -17,32 +16,10 @@
 #define __PRETTY_FUNCTION__ __func__
 #endif
 
-namespace ollama
+namespace llm
 {
-namespace
-{
-FunctionResult Ok(std::optional<wxString> text)
-{
-    FunctionResult result{.isError = false};
-    if (text.has_value()) {
-        result.text = text.value().ToStdString(wxConvUTF8);
-    }
-    return result;
-}
-
-FunctionResult Err(std::optional<wxString> text)
-{
-    FunctionResult result{.isError = true};
-    if (text.has_value()) {
-        result.text = text.value().ToStdString(wxConvUTF8);
-    }
-    return result;
-}
-
-} // namespace
-
 /// Run `callback` in the main thread
-FunctionResult RunOnMain(std::function<FunctionResult()> callback, const wxString& tool_name)
+ollama::FunctionResult RunOnMain(std::function<FunctionResult()> callback, const wxString& tool_name)
 {
     auto promise_ptr = std::make_shared<std::promise<FunctionResult>>();
     auto f = promise_ptr->get_future();
@@ -55,82 +32,46 @@ FunctionResult RunOnMain(std::function<FunctionResult()> callback, const wxStrin
             promise_ptr->set_value(callback());
         };
 
-        // And post it to the main thread for execution
-        LLMEvent event_tool{wxEVT_OLLAMA_RUN_TOOL};
-        event_tool.SetCallback(std::move(wrapped_cb));
-        event_tool.SetString(tool_name);
-        EventNotifier::Get()->AddPendingEvent(event_tool);
+        // Run the callback in the next event loop
+        llm::Manager::GetInstance().CallAfter(&llm::Manager::RunTool, std::move(wrapped_cb));
     }
     return f.get();
 }
 
-/// Holds all plugin functions.
-std::mutex plugin_functions_mutex;
-std::unordered_map<std::string, std::shared_ptr<FunctionBase>> plugin_functions;
-
-void RegisterPluginFunction(llm::Function func)
-{
-    std::unique_lock lk{plugin_functions_mutex};
-    auto builder = FunctionBuilder(func.m_name).SetDescription(func.m_desc);
-    // Add the arguments
-    for (const auto& param : func.m_params) {
-        builder.AddRequiredParam(param.name, param.desc, param.type);
-    }
-
-    // Wrap CodeLite's callback with ollama's callback.
-    auto wrapper_cb = [func = std::move(func)](const ollama::json& args) -> ollama::FunctionResult {
-        wxString s = args.dump();
-        JSON root{s};
-        JSONItem j = root.toElement();
-        auto result = func.m_func(j);
-        ollama::FunctionResult res{.isError = !result.isOk, .text = std::move(result.text)};
-        return res;
-    };
-    auto f = builder.SetCallback(std::move(wrapper_cb)).Build();
-    plugin_functions.insert({f->GetName(), f});
-}
-
-void PopulatePluginFunctions(FunctionTable& table)
-{
-    std::unique_lock lk{plugin_functions_mutex};
-    /// Add all the plugins functions.
-    for (const auto& [_name, f] : plugin_functions) {
-        table.Add(f);
-    }
-}
-
-/// Register CodeLite tools with the model.
+// Register CodeLite tools with the model.
 void PopulateBuiltInFunctions(FunctionTable& table)
 {
     table.Add(FunctionBuilder("Write file content to disk at a given path")
-                  .SetDescription(
-                      "Write the content 'file_content' to the file system at the given path identified by 'filepath'")
+                  .SetDescription("Write the content 'file_content' to the file "
+                                  "system at the given path identified by 'filepath'")
                   .AddRequiredParam("file_content", "The content of the file to be written to the disk.", "string")
                   .AddRequiredParam("filepath", "The path file path.", "string")
                   .SetCallback(WriteFileContent)
                   .Build());
 
-    table.Add(
-        FunctionBuilder("Read file from the file system")
-            .SetDescription(
-                "Reads the entire content of the file 'filepath' from the disk. On success, this function returns the "
-                "entire file's content.")
-            .AddRequiredParam("filepath", "The path of the file to read.", "string")
-            .SetCallback(ReadFileContent)
-            .Build());
+    table.Add(FunctionBuilder("Read file from the file system")
+                  .SetDescription("Reads the entire content of the file 'filepath' from "
+                                  "the disk. On success, this function returns the "
+                                  "entire file's content.")
+                  .AddRequiredParam("filepath", "The path of the file to read.", "string")
+                  .SetCallback(ReadFileContent)
+                  .Build());
 
     table.Add(FunctionBuilder("Open a file in an editor")
-                  .SetDescription("Try to open file 'filepath' and load it into the editor for editing or viewing.")
+                  .SetDescription("Try to open file 'filepath' and load it into the "
+                                  "editor for editing or viewing.")
                   .AddRequiredParam("filepath", "The path of the file to open inside the editor.", "string")
                   .SetCallback(OpenFileInEditor)
                   .Build());
 
     table.Add(FunctionBuilder("Read the compiler build output")
-                  .SetDescription(
-                      "Read and fetches the compiler build log output of the most recent build command executed by "
-                      "the user and return it to the caller. Use this method to read the compiler output. This is "
-                      "useful for helping explaining and resolving build issues. On success read, this function return "
-                      "the complete build log output.")
+                  .SetDescription("Read and fetches the compiler build log output of "
+                                  "the most recent build command executed by "
+                                  "the user and return it to the caller. Use this "
+                                  "method to read the compiler output. This is "
+                                  "useful for helping explaining and resolving build "
+                                  "issues. On success read, this function return "
+                                  "the complete build log output.")
                   .SetCallback(GetCompilerOutput)
                   .Build());
 
@@ -248,4 +189,4 @@ FunctionResult GetCurrentEditorText(const ollama::json& args)
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
-} // namespace ollama
+} // namespace llm

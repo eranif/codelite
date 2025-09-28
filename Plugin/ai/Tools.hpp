@@ -6,8 +6,28 @@
 #include "ollama/function_base.hpp"
 // clang-format on
 
-namespace ollama
+namespace llm
 {
+using ollama::FunctionResult;
+using ollama::FunctionTable;
+
+inline FunctionResult Ok(std::optional<wxString> text)
+{
+    FunctionResult result{.isError = false};
+    if (text.has_value()) {
+        result.text = text.value().ToStdString(wxConvUTF8);
+    }
+    return result;
+}
+
+inline FunctionResult Err(std::optional<wxString> text)
+{
+    FunctionResult result{.isError = true};
+    if (text.has_value()) {
+        result.text = text.value().ToStdString(wxConvUTF8);
+    }
+    return result;
+}
 
 /// Available API that CodeLite exposes to the model.
 
@@ -26,15 +46,8 @@ FunctionResult GetCompilerOutput(const ollama::json& args);
 /// Return the current editor's text content.
 FunctionResult GetCurrentEditorText(const ollama::json& args);
 
-/// Register plugin function into the internal plugin function tables. This does not make the function available
-/// it will become available once `PopulatePluginFunctions(..)` is called.
-void RegisterPluginFunction(llm::Function func);
-
-/// Populate the function table with the built-in functions provided by CodeLite to the model.
+/// Populate the function table with the built-in functions provided by CodeLite
+/// to the model.
 void PopulateBuiltInFunctions(FunctionTable& table);
 
-/// Populate the function table with the plugins functions provided by CodeLite's plugins.
-/// This function is guarded by a mutex.
-void PopulatePluginFunctions(FunctionTable& table);
-
-} // namespace ollama
+} // namespace llm

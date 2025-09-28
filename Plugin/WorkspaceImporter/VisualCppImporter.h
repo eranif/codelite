@@ -35,9 +35,11 @@
 class VisualCppImporter : public GenericImporter
 {
 public:
-    virtual bool OpenWorkspace(const wxString& filename, const wxString& defaultCompiler);
-    virtual bool isSupportedWorkspace();
-    virtual GenericWorkspacePtr PerformImport();
+    VisualCppImporter() = default;
+    ~VisualCppImporter() override = default;
+    bool OpenWorkspace(const wxString& filename, const wxString& defaultCompiler) override;
+    bool isSupportedWorkspace() override;
+    GenericWorkspacePtr PerformImport() override;
 
 private:
     void ConvertToLinuxStyle(wxString& filepath);
@@ -48,9 +50,12 @@ private:
     void GenerateFromProjectVC11(GenericWorkspacePtr genericWorkspace, GenericProjectDataType& genericProjectData);
     wxString ExtractProjectCfgName(const wxString& parentCondition, const wxString& elemCondition);
     wxString ReplaceDefaultEnvVars(const wxString& str);
-    void AddFilesVC7(wxXmlNode* filterChild, GenericProjectPtr genericProject,
-                     std::map<wxString, GenericProjectCfgPtr>& genericProjectCfgMap, wxString preVirtualPath);
-    void AddFilesVC11(wxXmlNode* itemGroupChild, GenericProjectPtr genericProject,
+    void AddFilesVC7(wxXmlNode* filterChild,
+                     GenericProjectPtr genericProject,
+                     std::map<wxString, GenericProjectCfgPtr>& genericProjectCfgMap,
+                     wxString preVirtualPath);
+    void AddFilesVC11(wxXmlNode* itemGroupChild,
+                      GenericProjectPtr genericProject,
                       std::map<wxString, GenericProjectCfgPtr>& genericProjectCfgMap);
     GenericProjectFilePtr FindProjectFileByName(GenericProjectPtr genericProject, wxString filename);
     wxFileName wsInfo;

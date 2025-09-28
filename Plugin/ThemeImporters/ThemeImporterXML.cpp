@@ -11,13 +11,10 @@ LexerConf::Ptr_t ThemeImporterXML::Import(const wxFileName& theme_file)
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, "xml", 5);
     CHECK_PTR_RET_NULL(lexer);
 
-    wxString defaultTextColour;
-    if(IsDarkTheme()) {
-        defaultTextColour = "white";
+    if (IsDarkTheme()) {
         AddProperty(lexer, wxSTC_H_DEFAULT, "Default", "white", m_editor.bg_colour);
 
     } else {
-        defaultTextColour = "black";
         AddProperty(lexer, wxSTC_H_DEFAULT, "Default", "black", m_editor.bg_colour);
     }
 

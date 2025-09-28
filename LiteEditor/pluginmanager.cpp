@@ -112,7 +112,6 @@ void PluginManager::UnLoad()
 PluginManager::~PluginManager() {}
 
 PluginManager::PluginManager()
-    : m_bmpLoader(NULL)
 {
     m_menusToBeHooked.insert(MenuTypeFileExplorer);
     m_menusToBeHooked.insert(MenuTypeFileView_Workspace);
@@ -419,8 +418,8 @@ bool PluginManager::AddFilesToVirtualFolder(const wxString& vdFullPath, wxArrayS
 
 bool PluginManager::AddFilesToVirtualFolderIntelligently(const wxString& vdFullPath, wxArrayString& paths)
 {
-    return clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFolderIntelligently(vdFullPath,
-                                                                                                      paths);
+    return clMainFrame::Get()->GetWorkspaceTab()->GetFileView()->AddFilesToVirtualFolderIntelligently(
+        vdFullPath, paths);
 }
 
 void PluginManager::RedefineProjFiles(ProjectPtr proj, const wxString& path, std::vector<wxString>& files)

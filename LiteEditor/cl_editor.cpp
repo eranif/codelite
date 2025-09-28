@@ -595,10 +595,7 @@ clEditor::~clEditor()
     }
 }
 
-time_t clEditor::GetFileLastModifiedTime() const
-{
-    return FileUtils::GetFileModificationTime(m_fileName);
-}
+time_t clEditor::GetFileLastModifiedTime() const { return FileUtils::GetFileModificationTime(m_fileName); }
 
 void clEditor::SetSyntaxHighlight(const wxString& lexerName)
 {
@@ -1066,10 +1063,10 @@ void clEditor::SetProperties()
 
     bool isDarkTheme = (lexer && lexer->IsDark());
     auto indicator_style = isDarkTheme ? wxSTC_INDIC_BOX : wxSTC_INDIC_ROUNDBOX;
-    SetUserIndicatorStyleAndColour(isDarkTheme ? wxSTC_INDIC_COMPOSITIONTHICK : wxSTC_INDIC_ROUNDBOX,
-                                   isDarkTheme ? "PINK" : "RED");
+    SetUserIndicatorStyleAndColour(
+        isDarkTheme ? wxSTC_INDIC_COMPOSITIONTHICK : wxSTC_INDIC_ROUNDBOX, isDarkTheme ? "PINK" : "RED");
 
-    wxColour highlight_colour{ *wxGREEN };
+    wxColour highlight_colour{*wxGREEN};
     wxString val2 = EditorConfigST::Get()->GetString(wxT("WordHighlightColour"));
     if (!val2.empty()) {
         highlight_colour = wxColour(val2);
@@ -1262,7 +1259,7 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
     case '(':
         if (m_context->IsCommentOrString(GetCurrentPos()) == false) {
             // trigger a code complete for function calltip.
-            wxCommandEvent event{ wxEVT_MENU, XRCID("function_call_tip") };
+            wxCommandEvent event{wxEVT_MENU, XRCID("function_call_tip")};
             EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(event);
         }
         matchChar = ')';
@@ -1547,7 +1544,7 @@ void clEditor::OnMarginClick(wxStyledTextEvent& event)
             // If we have a compiler error here -> it takes precedence
             if ((MarkerGet(nLine) & mmt_compiler) && m_compilerMessagesMap.count(nLine)) {
                 // user clicked on compiler error, fire an event
-                clEditorEvent event_error_clicked{ wxEVT_EDITOR_MARGIN_CLICKED };
+                clEditorEvent event_error_clicked{wxEVT_EDITOR_MARGIN_CLICKED};
                 event_error_clicked.SetUserData(m_compilerMessagesMap.find(nLine)->second.userData.get());
                 event_error_clicked.SetFileName(GetRemotePathOrLocal());
                 event_error_clicked.SetLineNumber(nLine);
@@ -1826,11 +1823,11 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
     // If this file is not writable, prompt the user before we do something stupid
     if (symlinkedFile.FileExists() && !symlinkedFile.IsFileWritable()) {
         // Prompt the user
-        if (::wxMessageBox(wxString() << _("The file\n") << fileName.GetFullPath()
-                                      << _("\nis a read only file, continue?"),
-                           "CodeLite",
-                           wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_WARNING,
-                           EventNotifier::Get()->TopFrame()) != wxYES) {
+        if (::wxMessageBox(
+                wxString() << _("The file\n") << fileName.GetFullPath() << _("\nis a read only file, continue?"),
+                "CodeLite",
+                wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_WARNING,
+                EventNotifier::Get()->TopFrame()) != wxYES) {
             return false;
         }
     }
@@ -2647,8 +2644,8 @@ void clEditor::ToggleTopmostFoldsInSelection()
 
 void clEditor::StoreCollapsedFoldsToArray(clEditorStateLocker::VecInt_t& folds) const
 {
-    clEditorStateLocker::SerializeFolds(const_cast<wxStyledTextCtrl*>(static_cast<const wxStyledTextCtrl*>(this)),
-                                        folds);
+    clEditorStateLocker::SerializeFolds(
+        const_cast<wxStyledTextCtrl*>(static_cast<const wxStyledTextCtrl*>(this)), folds);
 }
 
 void clEditor::LoadCollapsedFoldsFromArray(const clEditorStateLocker::VecInt_t& folds)
@@ -2768,7 +2765,7 @@ size_t clEditor::GetFindMarkers(std::vector<std::pair<int, wxString>>& bookmarks
                 snippet << "...";
             }
         }
-        bookmarksVector.push_back({ nFoundLine + 1, snippet });
+        bookmarksVector.push_back({nFoundLine + 1, snippet});
         ++nFoundLine;
     }
     return bookmarksVector.size();
@@ -3012,15 +3009,15 @@ void clEditor::DoUpdateLineNumbers(bool relative_numbers, bool force)
     for (int line : lines) {
         if (relative_numbers) {
             if (line < current_line) {
-                lines_to_draw.push_back({ line, current_line - line });
+                lines_to_draw.push_back({line, current_line - line});
             } else if (line == current_line) {
                 // nothing to be done here
-                lines_to_draw.push_back({ line, line + 1 });
+                lines_to_draw.push_back({line, line + 1});
             } else {
-                lines_to_draw.push_back({ line, line - current_line });
+                lines_to_draw.push_back({line, line - current_line});
             }
         } else {
-            lines_to_draw.push_back({ line, line + 1 });
+            lines_to_draw.push_back({line, line + 1});
         }
     }
 
@@ -3296,7 +3293,7 @@ void clEditor::OnContextMenu(wxContextMenuEvent& event)
     // +++++--------------------------
     // Popup the menu
     // +++++--------------------------
-    CursorChanger cd{ this };
+    CursorChanger cd{this};
     PopupMenu(menu);
     wxDELETE(menu);
 
@@ -3402,9 +3399,9 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
         // if we are in fullscreen mode, hitting ESC will disable this
         wxFrame* mainframe = EventNotifier::Get()->TopFrame();
         if (mainframe->IsFullScreen()) {
-            mainframe->ShowFullScreen(false,
-                                      wxFULLSCREEN_NOMENUBAR | wxFULLSCREEN_NOTOOLBAR | wxFULLSCREEN_NOBORDER |
-                                          wxFULLSCREEN_NOCAPTION);
+            mainframe->ShowFullScreen(
+                false,
+                wxFULLSCREEN_NOMENUBAR | wxFULLSCREEN_NOTOOLBAR | wxFULLSCREEN_NOBORDER | wxFULLSCREEN_NOCAPTION);
         }
 
         if (GetFunctionTip()->IsActive()) {
@@ -3460,7 +3457,7 @@ void clEditor::OnFocusLost(wxFocusEvent& event)
         ReleaseMouse();
     }
 
-    clCommandEvent focus_lost{ wxEVT_STC_LOST_FOCUS };
+    clCommandEvent focus_lost{wxEVT_STC_LOST_FOCUS};
     EventNotifier::Get()->AddPendingEvent(focus_lost);
 }
 
@@ -3652,16 +3649,16 @@ void clEditor::AddOtherBreakpointType(wxCommandEvent& event)
 
 void clEditor::OnIgnoreBreakpoint()
 {
-    if (ManagerST::Get()->GetBreakpointsMgr()->IgnoreByLineno(FileUtils::RealPath(GetFileName().GetFullPath()),
-                                                              GetCurrentLine() + 1)) {
+    if (ManagerST::Get()->GetBreakpointsMgr()->IgnoreByLineno(
+            FileUtils::RealPath(GetFileName().GetFullPath()), GetCurrentLine() + 1)) {
         clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
     }
 }
 
 void clEditor::OnEditBreakpoint()
 {
-    ManagerST::Get()->GetBreakpointsMgr()->EditBreakpointByLineno(FileUtils::RealPath(GetFileName().GetFullPath()),
-                                                                  GetCurrentLine() + 1);
+    ManagerST::Get()->GetBreakpointsMgr()->EditBreakpointByLineno(
+        FileUtils::RealPath(GetFileName().GetFullPath()), GetCurrentLine() + 1);
     clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 }
 
@@ -3780,7 +3777,7 @@ void clEditor::SetWarningMarker(int lineno, CompilerMessage&& msg)
     }
 
     wxString display_message = msg.message;
-    m_compilerMessagesMap.insert({ lineno, std::move(msg) });
+    m_compilerMessagesMap.insert({lineno, std::move(msg)});
 
     if (m_buildOptions.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_BOOKMARKS) {
         MarkerAdd(lineno, smt_warning);
@@ -3806,7 +3803,7 @@ void clEditor::SetErrorMarker(int lineno, CompilerMessage&& msg)
     }
 
     wxString display_message = msg.message;
-    m_compilerMessagesMap.insert({ lineno, std::move(msg) });
+    m_compilerMessagesMap.insert({lineno, std::move(msg)});
 
     if (m_buildOptions.GetErrorWarningStyle() == BuildTabSettingsData::MARKER_BOOKMARKS) {
         MarkerAdd(lineno, smt_error);
@@ -4464,7 +4461,7 @@ void clEditor::DoAdjustCalltipPos(wxPoint& pt) const
         // bottom of the mouse position
         y = pt.y;
     }
-    pt = { x, y };
+    pt = {x, y};
 }
 
 void clEditor::DoCancelCalltip()
@@ -4655,8 +4652,8 @@ void clEditor::OnChange(wxStyledTextEvent& event)
         if (event.GetModificationType() & wxSTC_PERFORMED_UNDO) {
             m_deltas->Pop();
         } else {
-            m_deltas->Push(event.GetPosition(),
-                           event.GetLength() * (event.GetModificationType() & wxSTC_MOD_DELETETEXT ? -1 : 1));
+            m_deltas->Push(
+                event.GetPosition(), event.GetLength() * (event.GetModificationType() & wxSTC_MOD_DELETETEXT ? -1 : 1));
         }
 
         int numlines(event.GetLinesAdded());
@@ -5011,7 +5008,7 @@ void clEditor::OnFocus(wxFocusEvent& event)
     m_isFocused = true;
     event.Skip();
 
-    clCommandEvent focus_gained{ wxEVT_STC_GOT_FOCUS };
+    clCommandEvent focus_gained{wxEVT_STC_GOT_FOCUS};
     EventNotifier::Get()->AddPendingEvent(focus_gained);
 }
 
@@ -6160,12 +6157,12 @@ void clEditor::SetBreakpointMarker(int line_number, const wxString& tooltip)
 {
     if (HasBreakpointMarker(line_number)) {
         m_breakpoints_tooltips.erase(line_number);
-        m_breakpoints_tooltips.insert({ line_number, tooltip });
+        m_breakpoints_tooltips.insert({line_number, tooltip});
         return;
     }
 
     MarkerAdd(line_number, smt_breakpoint);
-    m_breakpoints_tooltips.insert({ line_number, tooltip });
+    m_breakpoints_tooltips.insert({line_number, tooltip});
 }
 
 void clEditor::OnColoursAndFontsUpdated(clCommandEvent& event)
@@ -6185,7 +6182,7 @@ void clEditor::OnIdle(wxIdleEvent& event)
     event.Skip();
 
     // The interval between idle events can not be under 250ms
-    static clIdleEventThrottler event_throttler{ 100 };
+    static clIdleEventThrottler event_throttler{100};
     if (!event_throttler.CanHandle()) {
         return;
     }
@@ -6273,7 +6270,7 @@ void clEditor::DoBraceMatching()
     }
 
     int ch = SafeGetChar(current_position);
-    static std::vector<int> braces = { '<', '>', '{', '}', '(', ')', '[', ']' };
+    static std::vector<int> braces = {'<', '>', '{', '}', '(', ')', '[', ']'};
     auto found = std::find_if(braces.begin(), braces.end(), [ch](const char c) { return c == ch; });
     if (found == braces.end()) {
         current_position = PositionBefore(current_position);

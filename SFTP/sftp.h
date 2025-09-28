@@ -48,7 +48,6 @@ class SFTP : public IPlugin
     SFTPTreeView* m_browserView = nullptr;
     RemoteFileInfo::Map_t m_remoteFiles;
     clTabTogglerHelper::Ptr_t m_tabToggler;
-    long m_sshAgentPID = wxNOT_FOUND;
 
 public:
     SFTP(IManager* manager);

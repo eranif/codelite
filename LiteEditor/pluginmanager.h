@@ -55,7 +55,7 @@ class PluginManager : public IManager
     std::map<wxString, IPlugin*> m_plugins;
     std::list<clDynamicLibrary*> m_dl;
     PluginInfoArray m_pluginsData;
-    BitmapLoader* m_bmpLoader;
+
     std::set<MenuType> m_menusToBeHooked;
     std::map<wxString, wxString> m_backticks;
     wxAuiManager* m_dockingManager;

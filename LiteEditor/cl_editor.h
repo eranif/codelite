@@ -272,7 +272,6 @@ public:
     void CenterLinePreserveSelectionAfter(int line);
 
 public:
-
     void SetPreProcessorsWords(const wxString& preProcessorsWords) { this->m_preProcessorsWords = preProcessorsWords; }
     const wxString& GetPreProcessorsWords() const { return m_preProcessorsWords; }
     void SetLineVisible(int lineno);
@@ -1114,7 +1113,6 @@ private:
     EditorDeltasHolder* m_deltas; // Holds any text position changes, in case they affect FindinFiles results
     std::vector<wxMenuItem*> m_dynItems;
     std::vector<BPtoMarker> m_BPstoMarkers;
-    int m_lastMatchPos;
     static std::map<wxString, int> ms_bookmarkShapes;
     bool m_popupIsOn;
     bool m_isDragging;
@@ -1139,7 +1137,6 @@ private:
     int m_lastCharEnteredPos;
     bool m_isFocused;
     BOM m_fileBom;
-    bool m_preserveSelection;
     std::vector<std::pair<int, int>> m_savedMarkers;
     bool m_findBookmarksActive;
     std::map<int, CompilerMessage> m_compilerMessagesMap;
@@ -1178,7 +1175,6 @@ private:
     long m_lastIdlePosition = wxNOT_FOUND;
     // track the position between OnSciUpdateUI calls
     long m_lastUpdatePosition = wxNOT_FOUND;
-    uint64_t m_lastIdleEvent = 0;
     BuildTabSettingsData m_buildOptions;
     bool m_hasBraceHighlight = false;
 };

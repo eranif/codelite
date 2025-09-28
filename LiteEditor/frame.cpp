@@ -736,10 +736,8 @@ bool clMainFrame::m_initCompleted = false;
 clMainFrame::clMainFrame(
     wxWindow* pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : m_postBuildEndAction(ePostBuildEndAction::kNone)
-    , m_cppMenu(NULL)
     , m_highlightWord(false)
     , m_workspaceRetagIsRequired(false)
-    , m_bookmarksDropDownMenu(NULL)
     , m_singleInstanceThread(NULL)
 #ifdef __WXGTK__
     , m_isWaylandSession(false)

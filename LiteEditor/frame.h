@@ -107,7 +107,6 @@ class clMainFrame : public wxFrame
     ePostBuildEndAction m_postBuildEndAction;
     GeneralInfo m_frameGeneralInfo;
     std::map<int, wxString> m_panes;
-    wxMenu* m_cppMenu;
     bool m_highlightWord;
     DockablePaneMenuManager* m_DPmenuMgr;
     wxPanel* m_mainPanel;
@@ -116,13 +115,9 @@ class clMainFrame : public wxFrame
     bool m_workspaceRetagIsRequired;
     bool m_loadLastSession;
     wxMenuBar* m_mainMenuBar;
-    wxMenu* m_bookmarksDropDownMenu;
-    bool m_noSavePerspectivePrompt;
 
 #ifndef __WXMSW__
     ZombieReaperPOSIX m_zombieReaper;
-#else
-    HMENU hMenu = nullptr; // Menu bar
 #endif
 
 #ifdef __WXGTK__
@@ -133,7 +128,6 @@ class clMainFrame : public wxFrame
     wxStringSet_t m_coreToolbars;
     clStatusBar* m_statusBar;
     clSingleInstanceThread* m_singleInstanceThread;
-    bool m_toggleToolBar;
 
     // Printing
     wxPrintDialogData m_printDlgData;
@@ -364,7 +358,11 @@ public:
 
 private:
     // make our frame's constructor private
-    clMainFrame(wxWindow* pParent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size,
+    clMainFrame(wxWindow* pParent,
+                wxWindowID id,
+                const wxString& title,
+                const wxPoint& pos,
+                const wxSize& size,
                 long style = wxMINIMIZE_BOX | wxMAXIMIZE_BOX | wxCLOSE_BOX | wxCAPTION | wxSYSTEM_MENU |
                              wxRESIZE_BORDER | wxCLIP_CHILDREN);
     void AddKeyboardAccelerators();

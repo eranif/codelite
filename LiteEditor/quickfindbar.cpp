@@ -227,7 +227,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     };
     set_font_cb();
 
-    EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, [this, set_font_cb](clCommandEvent& e) {
+    EventNotifier::Get()->Bind(wxEVT_CMD_COLOURS_FONTS_UPDATED, [set_font_cb](clCommandEvent& e) {
         e.Skip();
         set_font_cb();
     });

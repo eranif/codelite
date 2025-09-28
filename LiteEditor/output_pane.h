@@ -88,7 +88,6 @@ private:
     ReplaceInFilesPanel* m_replaceResultsTab;
     // NewBuildTab* m_buildWin;
     ShellTab* m_outputWind;
-    TaskPanel* m_taskPanel;
     FindUsageTab* m_showUsageTab;
     BuildTab* m_build_tab = nullptr;
     clBuiltinTerminalPane* m_terminal = nullptr;

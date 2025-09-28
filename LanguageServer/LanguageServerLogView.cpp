@@ -9,7 +9,6 @@
 
 LanguageServerLogView::LanguageServerLogView(wxWindow* parent, LanguageServerCluster* cluster)
     : LanguageServerLogViewBase(parent)
-    , m_cluster(cluster)
 {
     m_dvListCtrl->Bind(wxEVT_CONTEXT_MENU, [this](wxContextMenuEvent& event) {
         wxMenu menu;

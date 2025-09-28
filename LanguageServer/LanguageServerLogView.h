@@ -8,8 +8,6 @@
 class LanguageServerCluster;
 class LanguageServerLogView : public LanguageServerLogViewBase
 {
-    LanguageServerCluster* m_cluster = nullptr;
-
 public:
     LanguageServerLogView(wxWindow* parent, LanguageServerCluster* cluster);
     virtual ~LanguageServerLogView();

@@ -973,9 +973,9 @@ bool MainBook::CloseAllButThis(wxWindow* page)
         }
     }
 
-    if (!files.empty() && !UserSelectFiles(files,
-                                           _("Save Modified Files"),
-                                           _("Some files are modified.\nChoose the files you would like to save."))) {
+    if (!files.empty() &&
+        !UserSelectFiles(
+            files, _("Save Modified Files"), _("Some files are modified.\nChoose the files you would like to save."))) {
         return false;
     }
 
@@ -1560,8 +1560,8 @@ void MainBook::OnSettingsChanged(wxCommandEvent& e)
 
 #if !MAINBOOK_AUIBOOK
     m_book->EnableStyle(kNotebook_CloseButtonOnActiveTab, EditorConfigST::Get()->GetOptions()->IsTabHasXButton());
-    m_book->EnableStyle(kNotebook_MouseScrollSwitchTabs,
-                        EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs());
+    m_book->EnableStyle(
+        kNotebook_MouseScrollSwitchTabs, EditorConfigST::Get()->GetOptions()->IsMouseScrollSwitchTabs());
 #endif
 }
 
@@ -1705,9 +1705,9 @@ wxString MainBook::CreateLabel(const wxFileName& fn, bool modified) const
         label.Prepend(fn.GetDirs().Last() + wxFileName::GetPathSeparator());
     }
 
-#if CL_USE_NATIVEBOOK
+#if CL_USE_NATIVEBOOK || MAINBOOK_AUIBOOK
     if (modified) {
-        label.Prepend(wxT("\u25CF"));
+        label.Prepend(wxT(" 💾 "));
     }
 #else
     wxUnusedVar(modified);

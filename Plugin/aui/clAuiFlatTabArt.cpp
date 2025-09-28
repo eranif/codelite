@@ -146,6 +146,7 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
 
     // Draw the icon, if any.
     int xStart = rect.x + wnd->FromDIP(Data::PADDING_X);
+#if 0
     if (page.bitmap.IsOk()) {
         const wxBitmap bmp = page.bitmap.GetBitmapFor(wnd);
         const wxSize bitmapSize = bmp.GetLogicalSize();
@@ -154,6 +155,7 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
 
         xStart += bitmapSize.x + wnd->FromDIP(Data::MARGIN);
     }
+#endif
 
     // Draw buttons: start by computing their total width (note that we don't
     // use any margin between them currently because the bitmaps we use don't
@@ -171,8 +173,11 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
     int xEnd = rect.x + size.x - wnd->FromDIP(Data::PADDING_X);
     if (buttonsWidth) {
         xEnd -= buttonsWidth;
+        wxRect all_buttons_rect(xEnd, rect.GetY(), buttonsWidth, rect.GetHeight());
+        all_buttons_rect.SetWidth(all_buttons_rect.GetWidth() + Data::PADDING_X + Data::MARGIN);
 
         int buttonX = xEnd;
+        // IMPORTANT: this code assumes only X button.
         for (auto& button : page.buttons) {
             const wxBitmapBundle* const bb = GetButtonBitmapBundle(button);
             if (!bb)
@@ -183,12 +188,13 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
             const wxSize buttonSize = bmp.GetLogicalSize();
 
             button.rect.x = buttonX;
-            button.rect.y = rect.y + (size.y - buttonSize.y - 1) / 2;
             button.rect.width = buttonSize.x;
             button.rect.height = buttonSize.y;
 
-            IndentPressedBitmap(wnd, &button.rect, button.curState);
-            dc.DrawBitmap(bmp, button.rect.GetPosition(), true);
+            auto button_rect = button.rect.CentreIn(all_buttons_rect, wxBOTH);
+            button_rect.y += 2;
+
+            dc.DrawBitmap(bmp, button_rect.GetPosition(), true);
 
             buttonX += buttonSize.x;
         }

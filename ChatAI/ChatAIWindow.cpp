@@ -308,6 +308,7 @@ void ChatAIWindow::OnSettings(wxCommandEvent& event)
 void ChatAIWindow::OnRestartClient(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+    m_activeModel->Clear(); // Clear before we restart.
     m_cancel_token->Cancel();
 
     WriteOptions opts{.force_global = true};

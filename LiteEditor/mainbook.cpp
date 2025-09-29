@@ -1707,7 +1707,7 @@ wxString MainBook::CreateLabel(const wxFileName& fn, bool modified) const
 
 #if CL_USE_NATIVEBOOK || MAINBOOK_AUIBOOK
     if (modified) {
-#ifdef __WXMSW__
+#if defined(__WXMSW__) || defined(__WXMAC__)
         label.Prepend(wxT(" 💾 "));
 #else
         label.Prepend(wxT(" * "));

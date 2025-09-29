@@ -6,7 +6,7 @@
 #include <wx/panel.h>
 #include <wx/stattext.h>
 
-class WXDLLIMPEXP_SDK IndicatorPanel : public wxPanel
+class WXDLLIMPEXP_SDK IndicatorPanel : public wxControl
 {
 public:
     IndicatorPanel(wxWindow* parent, const wxString& initialText = wxEmptyString);

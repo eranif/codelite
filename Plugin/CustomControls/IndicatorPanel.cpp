@@ -9,7 +9,7 @@ IndicatorPanel::IndicatorPanel(wxWindow* parent, const wxString& initialText)
 {
     wxSize panel_size{wxNOT_FOUND, wxSize(parent->GetTextExtent("Tp")).GetHeight()};
     panel_size.IncBy(0, 10); // The borders
-    if (!wxPanel::Create(parent, wxID_ANY, wxDefaultPosition, panel_size)) {
+    if (!wxControl::Create(parent, wxID_ANY, wxDefaultPosition, panel_size)) {
         return;
     }
 
@@ -17,7 +17,7 @@ IndicatorPanel::IndicatorPanel(wxWindow* parent, const wxString& initialText)
     SetSizer(new wxBoxSizer(wxHORIZONTAL));
 
     m_statusMessage = new wxStaticText(this, wxID_ANY, initialText);
-    m_activityIndicator = new wxActivityIndicator(this);
+    m_activityIndicator = new wxActivityIndicator(this, wxID_ANY, wxDefaultPosition, FromDIP(wxSize(16, 16)));
     GetSizer()->Add(m_activityIndicator, wxSizerFlags(0).CenterVertical().Border(wxALL, 5));
     GetSizer()->Add(m_statusMessage, wxSizerFlags(0).CenterVertical().Border(wxALL, 5));
     SetSizeHints(panel_size);

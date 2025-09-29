@@ -22,6 +22,11 @@ const wxString kDefaultSettings =
   "log_level": "info",
   "stream": true,
   "keep_alive": "24h",
+  "server_timeout": {
+      "connect_msecs": 500,
+      "read_msecs": 300000,
+      "write_msecs": 300000
+  },
   "endpoints": {
     "http://127.0.0.1:11434": {
       "active": true,

@@ -46,21 +46,33 @@ Click the “wrench” icon to edit the plugin’s configuration file. A typical
 
 ```json
 {
+  "history_size": 50,
+  "mcp_servers": {},
+  "log_level": "info",
+  "stream": true,
+  "keep_alive": "24h",
+  "server_timeout": {
+      "connect_msecs": 500,
+      "read_msecs": 300000,
+      "write_msecs": 300000
+  },
   "endpoints": {
     "http://127.0.0.1:11434": {
       "active": true,
-      "http_headers": { "Host": "127.0.0.1" },
+      "http_headers": {
+        "Host": "127.0.0.1"
+      },
       "type": "ollama"
     }
   },
-  "history_size": 100,
-  "log_level": "info",
-  "mcp_servers": {},
   "models": {
     "default": {
-      "options": { "num_ctx": 32768, "temperature": 0 },
-      "think_start_tag": "</think>",
-      "think_end_tag": "</think>"
+      "options": {
+        "num_ctx": 16384,
+        "temperature": 0
+      },
+      "think_end_tag": "</think>",
+      "think_start_tag": "</think>"
     }
   }
 }
@@ -68,52 +80,75 @@ Click the “wrench” icon to edit the plugin’s configuration file. A typical
 
 Save the file to apply changes; the plugin will reload automatically.
 
+---
+
+#### Global Settings
+
+- **`history_size`**
+  - Integer (`50`).
+  - Limits how many past interactions (e.g., chat turns) are kept in memory for context.
+
+- **`mcp_servers`**
+  - Empty object (`{}`).
+  - Placeholder for optional “MCP” (Model Context Protocol) server definitions.
+
+- **`log_level`**
+  - String (`"info"`).
+  - Controls verbosity of logs; common levels include `debug`, `info`, `warn`, `error`.
+
+- **`stream`**
+  - Boolean (`true`).
+  - Enables streaming of responses (e.g., partial text output) rather than waiting for the entire result.
+
+- **`keep_alive`**
+  - String (`"24h"`).
+  - Sets the duration the server should keep idle connections alive before closing them.
+
+- **`server_timeout`**
+  - Object containing millisecond timeouts for different phases of a request:
+    - `connect_msecs`: `500` – time allowed to establish a TCP connection.
+    - `read_msecs`: `300000` – time allowed for reading a response.
+    - `write_msecs`: `300000` – time allowed for sending a request.
+
+---
+
 #### Endpoints
-The `endpoints` section lets you configure multiple Ollama servers. A typical entry:
 
-```json
-"http://127.0.0.1:11434": {
-  "active": true,
-  "http_headers": { "Host": "127.0.0.1" },
-  "type": "ollama"
-}
-```
+- **`endpoints`**
+  - Object mapping endpoint URLs to their configuration.
+  - Example entry:
+    - **URL**: `http://127.0.0.1:11434`
+      - `active`: `true` – the endpoint is enabled.
+      - `http_headers`: `{ "Host": "127.0.0.1" }` – custom HTTP headers to send with each request.
+      - `type`: `"ollama"` – indicates the backend or protocol (here, an Ollama model server).
 
-- **active** – `true` or `false`. If none are active, the first one is used.
-- **http_headers** – any headers you want to include in the REST call.
-- **type** – currently unused.
-
-#### MCP Servers (Model Context Protocol)
-MCP extends a model’s capabilities by exposing tools that the model can call. For example, a model can’t normally write files, but with MCP you can provide a “write file” tool. The plugin informs the model of available tools and their arguments.
-
-You can add your own MCP servers (e.g., Python scripts using FastMCP) to the `mcp_servers` section:
-
-```json
-"mcp_servers": {
-  "my_tool": {
-    "command": ["python3", "my_tool.py"],
-    "enabled": true,
-    "env": { "SOME_VAR1": "value1", "SOME_VAR2": "value2" }
-  }
-}
-```
+---
 
 #### Models
-All models are pre‑configured, but you can customize them by adding an entry under `models`. Example:
 
-```json
-"qwen3-coder:30b": {
-  "options": { "num_ctx": 32768, "temperature": 0 }
-}
-```
+- **`models`**
+  - Object defining default or named model configurations.
+  - Example entry:
+    - **Model name**: `default`
+      - `options`:
+        - `num_ctx`: `16384` – maximum number of tokens in the context window.
+        - `temperature`: `0` – deterministic generation (no randomness).
+      - `think_start_tag`: `"</think>"` – marker that signals the start of a “think” block in the model’s output.
+      - `think_end_tag`: `"</think>"` – marker that signals the end of a “think” block.
 
-- **num_ctx** – the context window (number of tokens the model can remember). Check the exact size with `ollama show <MODEL-NAME>`.
-- **temperature** – controls randomness (0–1).
-- **num_gpu** – optional; set to `0` to load the model on CPU instead of GPU.
+---
 
-#### General Settings
-- **history_size** – the number of recent exchanges sent to the model for context.
-- **log_level** – verbosity of the underlying library (default `info`).
+#### How It All Connects
+
+- The server listens on the defined endpoints (here, a local Ollama instance).
+- When a connection establishes, it uses the `server_timeout` values to manage connection timing.
+- The `stream` flag tells the server to send partial responses as they become available.
+- The `history_size` limits how much conversation history is stored for context.
+- The `models.default` block supplies default inference parameters (context size, temperature) and tags that the model may use to structure its output. This can be duplicated with a specific model name.
+- Logging verbosity is set to `info` (other values: `debug`, `trace`, `error` and `warn`)
+- A model is kept in-memory for `24 hours` before being removed from the server memory.
+
+This configuration allows the service to operate with a single local endpoint, deterministic inference, and controlled resource usage.
 
 ### 3. Available Tools
 ---

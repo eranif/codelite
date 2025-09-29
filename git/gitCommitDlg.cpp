@@ -286,7 +286,8 @@ The git diff is:
 
 void GitCommitDlg::OnGenerateUI(wxUpdateUIEvent& event)
 {
-    event.Enable(llm::Manager::GetInstance().IsAvailable() && !m_generationInProgress && !m_rawDiff.empty());
+    event.Enable(llm::Manager::GetInstance().IsAvailable() && !llm::Manager::GetInstance().IsBusy() &&
+                 !m_generationInProgress && !m_rawDiff.empty());
 }
 
 void GitCommitDlg::ClearCommitMessage() { m_stcCommitMessage->ClearAll(); }

@@ -874,7 +874,8 @@ void GitConsole::OnOutputViewTabChanged(clCommandEvent& event)
 
 void GitConsole::OnGenerateReleaseNotesUI(wxUpdateUIEvent& event)
 {
-    event.Enable(m_git->IsGitEnabled() && llm::Manager::GetInstance().IsAvailable());
+    event.Enable(m_git->IsGitEnabled() && llm::Manager::GetInstance().IsAvailable() &&
+                 !llm::Manager::GetInstance().IsBusy());
 }
 
 void GitConsole::OnGenerateReleaseNotes(wxCommandEvent& event)

@@ -110,6 +110,16 @@ void clAuiFlatTabArt::DrawBackground(wxDC& dc, wxWindow* WXUNUSED(wnd), const wx
     dc.DrawRectangle(rect);
 }
 
+void clAuiFlatTabArt::DrawBorder(wxDC& dc, wxWindow* wnd, const wxRect& rect)
+{
+#if defined(__WXMAC__) || defined(__WXMSW__)
+    wxDCBrushChanger brush_changer{dc, *wxTRANSPARENT_BRUSH};
+    wxDCPenChanger pen_changer{dc, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)};
+    dc.DrawRectangle(rect);
+#else
+    wxAuiTabArtBase::DrawBorder(dc, wnd, rect);
+#endif
+}
 int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& page, const wxRect& rect)
 {
     // Clip everything we do here to the provided rectangle.

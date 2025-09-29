@@ -305,10 +305,17 @@ void clAuiDockArt::DrawBackground(wxDC& dc, wxWindow* window, int orientation, c
 
 void clAuiDockArt::DrawBorder(wxDC& dc, wxWindow* window, const wxRect& rect, wxAuiPaneInfo& pane)
 {
+#if defined(__WXMAC__) || defined(__WXMSW__)
+    wxColour bg = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+    wxDCBrushChanger bursh_changer{dc, bg};
+    wxDCPenChanger pen_changer{dc, bg};
+    dc.DrawRectangle(rect);
+#else
     wxUnusedVar(dc);
     wxUnusedVar(window);
     wxUnusedVar(rect);
     wxUnusedVar(pane);
+#endif
 }
 
 void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const wxRect& rect)
@@ -336,9 +343,11 @@ void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const w
 #ifdef __WXMSW__
         auto bg_colour = clSystemSettings::GetDefaultPanelColour();
 #else
-        auto bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(90);
+        auto bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 #endif
-        Draw3DSash(dc, rect, orientation, bg_colour, bg_colour, bg_colour);
+        auto light_col = bg_colour.ChangeLightness(110);
+        auto dark_col = bg_colour.ChangeLightness(90);
+        Draw3DSash(dc, rect, orientation, bg_colour, light_col, dark_col);
     } else {
         auto dark_col = wxColour("LIGHT GREY");
         auto light_col = wxColour("WHITE");

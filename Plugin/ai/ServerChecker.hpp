@@ -1,8 +1,8 @@
 #pragma once
 
 #include "codelite_exports.h"
-#include "file_logger.h"
 
+#include <memory>
 #include <wx/socket.h>
 #include <wx/timer.h>
 #include <wx/url.h>

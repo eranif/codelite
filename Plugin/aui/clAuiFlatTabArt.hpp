@@ -36,6 +36,8 @@ public:
     int GetBestTabCtrlSize(wxWindow* wnd, const wxAuiNotebookPageArray& pages, const wxSize& requiredBmpSize) override;
     void UpdateColoursFromSystem() override;
 
+    void DrawBorder(wxDC& dc, wxWindow* wnd, const wxRect& rect) override;
+
 private:
     // Private pseudo-copy ctor used by Clone().
     explicit clAuiFlatTabArt(clAuiFlatTabArt* other);

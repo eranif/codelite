@@ -140,7 +140,7 @@ public:
               const wxString& model = wxEmptyString);
 
     /// Return true if the LLM is available.
-    inline bool IsAvailable() { return m_client->IsRunning(); }
+    inline bool IsAvailable() { return true; }
 
     /// Load the list of a models in a background thread.
     void LoadModels(wxEvtHandler* owner);

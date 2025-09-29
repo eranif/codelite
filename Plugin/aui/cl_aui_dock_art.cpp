@@ -331,10 +331,14 @@ void clAuiDockArt::DrawSash(wxDC& dc, wxWindow* window, int orientation, const w
         Draw3DSash(dc, rect, orientation, bg_colour, light_col, dark_col);
     }
 #elif defined(__WXMAC__) || defined(__WXMSW__)
-    if (isDark) {
-        auto bg_colour = clSystemSettings::GetDefaultPanelColour();
-        Draw3DSash(dc, rect, orientation, bg_colour, bg_colour, bg_colour);
 
+    if (isDark) {
+#ifdef __WXMSW__
+        auto bg_colour = clSystemSettings::GetDefaultPanelColour();
+#else
+        auto bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_3DFACE).ChangeLightness(90);
+#endif
+        Draw3DSash(dc, rect, orientation, bg_colour, bg_colour, bg_colour);
     } else {
         auto dark_col = wxColour("LIGHT GREY");
         auto light_col = wxColour("WHITE");

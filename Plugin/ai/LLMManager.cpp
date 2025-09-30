@@ -80,7 +80,8 @@ void Manager::WorkerMain()
     // without pending events.
     clDEBUG() << "LLM Worker thread started" << endl;
     m_worker_thread_running.store(true);
-    while (!m_client->IsInterrupted()) {
+    bool cont{true};
+    while (cont && !m_client->IsInterrupted()) {
         m_worker_busy.store(false);
         ThreadTask task;
         auto res = m_queue.ReceiveTimeout(50, task);
@@ -108,85 +109,91 @@ void Manager::WorkerMain()
                 break;
             }
 
-            m_client->Chat(
-                std::move(prompt),
-                [this, cancellation_token, &abort_loop, &shared_state, &saved_thinking_state, owner](
-                    std::string message, ollama::Reason reason, bool thinking) -> bool {
-                    // Check various options that the chat was cancelled.
-                    if (m_client->IsInterrupted() || (cancellation_token && cancellation_token->IsCancelled())) {
-                        NotifyDoneWithError(owner, "\n\n** Request cancelled by caller. **\n\n");
-                        abort_loop = true;
-                        return false;
-                    }
-
-                    if (saved_thinking_state != thinking) {
-                        // we switched state
-                        if (thinking) {
-                            // the new state is "thinking"
-                            clLLMEvent think_started{wxEVT_LLM_THINK_SATRTED};
-                            owner->AddPendingEvent(think_started);
-                        } else {
-                            clLLMEvent think_ended{wxEVT_LLM_THINK_ENDED};
-                            owner->AddPendingEvent(think_ended);
-                        }
-                    }
-
-                    saved_thinking_state = thinking;
-                    switch (reason) {
-                    case ollama::Reason::kFatalError: {
-                        NotifyDoneWithError(owner, message);
-                        abort_loop = true;
-                        return false;
-                    } break;
-                    case ollama::Reason::kDone: {
-                        if (cancellation_token && !cancellation_token->Incr()) {
-                            NotifyDoneWithError(owner, "\n\n** Maximum number of tokens reached. **\n\n");
+            try {
+                m_client->Chat(
+                    std::move(prompt),
+                    [this, cancellation_token, &abort_loop, &shared_state, &saved_thinking_state, owner](
+                        std::string message, ollama::Reason reason, bool thinking) -> bool {
+                        // Check various options that the chat was cancelled.
+                        if (m_client->IsInterrupted() || (cancellation_token && cancellation_token->IsCancelled())) {
+                            NotifyDoneWithError(owner, "\n\n** Request cancelled by the user. **\n\n");
                             abort_loop = true;
                             return false;
                         }
-                        if (shared_state.current_batch == shared_state.total_batch_count) {
-                            // No more batches to process, fire the DONE event.
-                            clLLMEvent event{wxEVT_LLM_OUTPUT_DONE};
-                            event.SetResponseRaw(message);
-                            owner->AddPendingEvent(event);
-                        } else {
-                            // We have more batches to process, treat this as a
-                            // normal "output" event.
-                            shared_state.current_batch++;
+
+                        if (saved_thinking_state != thinking) {
+                            // we switched state
+                            if (thinking) {
+                                // the new state is "thinking"
+                                clLLMEvent think_started{wxEVT_LLM_THINK_SATRTED};
+                                owner->AddPendingEvent(think_started);
+                            } else {
+                                clLLMEvent think_ended{wxEVT_LLM_THINK_ENDED};
+                                owner->AddPendingEvent(think_ended);
+                            }
+                        }
+
+                        saved_thinking_state = thinking;
+                        switch (reason) {
+                        case ollama::Reason::kFatalError: {
+                            NotifyDoneWithError(owner, message);
+                            abort_loop = true;
+                            return false;
+                        } break;
+                        case ollama::Reason::kDone: {
+                            if (cancellation_token && !cancellation_token->Incr()) {
+                                NotifyDoneWithError(owner, "\n\n** Maximum number of tokens reached. **\n\n");
+                                abort_loop = true;
+                                return false;
+                            }
+                            if (shared_state.current_batch == shared_state.total_batch_count) {
+                                // No more batches to process, fire the DONE event.
+                                clLLMEvent event{wxEVT_LLM_OUTPUT_DONE};
+                                event.SetResponseRaw(message);
+                                owner->AddPendingEvent(event);
+                            } else {
+                                // We have more batches to process, treat this as a
+                                // normal "output" event.
+                                shared_state.current_batch++;
+                                clLLMEvent event{wxEVT_LLM_OUTPUT};
+                                event.SetResponseRaw(message);
+                                owner->AddPendingEvent(event);
+                            }
+                        } break;
+                        case ollama::Reason::kLogNotice:
+                            clDEBUG() << message << endl;
+                            break;
+                        case ollama::Reason::kCancelled: {
+                            NotifyDoneWithError(owner, "\n\n** Request cancelled by caller. **\n\n");
+                            abort_loop = true;
+                            return false;
+                        } break;
+                        case ollama::Reason::kLogDebug:
+                            clDEBUG1() << message << endl;
+                            break;
+                        case ollama::Reason::kPartialResult: {
                             clLLMEvent event{wxEVT_LLM_OUTPUT};
                             event.SetResponseRaw(message);
                             owner->AddPendingEvent(event);
+                            if (cancellation_token && !cancellation_token->Incr()) {
+                                NotifyDoneWithError(owner, "\n\n** Maximum number of tokens reached. **\n\n");
+                                abort_loop = true;
+                                return false;
+                            }
+                        } break;
                         }
-                    } break;
-                    case ollama::Reason::kLogNotice:
-                        clDEBUG() << message << endl;
-                        break;
-                    case ollama::Reason::kCancelled: {
-                        NotifyDoneWithError(owner, "\n\n** Request cancelled by caller. **\n\n");
-                        abort_loop = true;
-                        return false;
-                    } break;
-                    case ollama::Reason::kLogDebug:
-                        clDEBUG1() << message << endl;
-                        break;
-                    case ollama::Reason::kPartialResult: {
-                        clLLMEvent event{wxEVT_LLM_OUTPUT};
-                        event.SetResponseRaw(message);
-                        owner->AddPendingEvent(event);
-                        if (cancellation_token && !cancellation_token->Incr()) {
-                            NotifyDoneWithError(owner, "\n\n** Maximum number of tokens reached. **\n\n");
-                            abort_loop = true;
-                            return false;
-                        }
-                    } break;
-                    }
-                    // continue
-                    return true;
-                },
-                task.model,
-                task.options);
-        }
-    }
+                        // continue
+                        return true;
+                    },
+                    task.model,
+                    task.options);
+            } catch (std::exception& e) {
+                clERROR() << "LLM worker that got an exception." << e.what() << endl;
+                cont = false;
+                break;
+            }
+        } // Prompt loop
+    } // Main Loop
     clDEBUG() << "LLM Worker thread started - exiting." << endl;
     m_worker_thread_running.store(false);
     m_worker_busy.store(false);

@@ -309,8 +309,18 @@ void ChatAIWindow::OnRestartClient(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     m_cancel_token->Cancel();
-    DoRestart();
-    PopulateModels();
+
+    WriteOptions opts{.force_global = true};
+    wxString config_content =
+        FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts).value_or(kDefaultSettings);
+
+    // Reload configuration
+    wxBusyCursor bc{};
+    if (llm::Manager::GetInstance().ReloadConfig(config_content, false)) {
+        clGetManager()->SetStatusMessage(_("ChatAI configuration re-loaded successfully"), 3);
+        // Refresh the model list.
+        PopulateModels();
+    }
 }
 
 void ChatAIWindow::DoRestart()

@@ -305,7 +305,7 @@ void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
     wxRect rect = GetClientRect();
     rect.Inflate(1);
 
-    dc.SetFont(DrawingUtils::GetDefaultGuiFont());
+    dc.SetFont(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT));
 
     // Remember which art name used for painting
     SetLastArtNameUsedForPaint(m_art->GetName());

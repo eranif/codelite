@@ -261,7 +261,7 @@ void ReplaceInFilesPanel::OnReplace(wxCommandEvent& e)
         lineNumber = activeEditor->GetCurrentLine();
     }
 
-    if(m_replaceWith->FindString(m_replaceWith->GetValue(), true) == wxString::npos) {
+    if(m_replaceWith->FindString(m_replaceWith->GetValue(), true) == wxNOT_FOUND) {
         m_replaceWith->Append(m_replaceWith->GetValue());
     }
 

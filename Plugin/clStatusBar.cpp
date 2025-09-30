@@ -2,6 +2,7 @@
 
 #include "ColoursAndFontsManager.h"
 #include "CustomControls/IndicatorPanel.hpp"
+#include "aui/clAuiToolBarArt.h"
 #include "bitmap_loader.h"
 #include "clStrings.h"
 #include "clToolBar.h"
@@ -105,6 +106,7 @@ clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     const int lineColWidth =
         GetTextWidth("Ln 123456, Col 123, Lns 123456, Pos 12345678, Len 12345678, Sel 1234567, SelLn 12345");
     wxCustomStatusBarField::Ptr_t lineCol(new wxCustomStatusBarFieldText(this, lineColWidth));
+    lineCol->SetAutoWidth(true);
     STATUSBAR_LINE_COL_IDX = AddField(lineCol);
 
     auto control = new wxCustomStatusBarControlField(this, new IndicatorPanel(this));
@@ -636,6 +638,7 @@ int clStatusBar::GetTextWidth(const wxString& text) const
 wxAuiToolBar* clStatusBar::CreatePaneButtonsToolbar()
 {
     wxAuiToolBar* toolbar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_NODIVIDER);
+    toolbar->SetArtProvider(new clAuiToolBarArt());
 
     BitmapLoader* images = clGetManager()->GetStdIcons();
     toolbar->AddTool(

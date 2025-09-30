@@ -27,7 +27,7 @@ MemCheckOutputView::MemCheckOutputView(wxWindow* parent, MemCheckPlugin* plugin,
     , pageValidator(&m_currentPage)
 {
     int col = GetColumnByName(_("Label"));
-    if(col == wxNOT_FOUND) {
+    if (col == wxNOT_FOUND) {
         return;
     }
     m_dataViewCtrlErrors->SetExpanderColumn(m_dataViewCtrlErrors->GetColumn(col));
@@ -40,31 +40,55 @@ MemCheckOutputView::MemCheckOutputView(wxWindow* parent, MemCheckPlugin* plugin,
     m_searchMenu->Append(XRCID("memcheck_search_nonworkspace"), _("Search 'nonworkspace'"));
     m_searchCtrlFilter->SetMenu(m_searchMenu);
 
-    m_searchMenu->Connect(XRCID("memcheck_search_string"), wxEVT_COMMAND_MENU_SELECTED,
-                          wxCommandEventHandler(MemCheckOutputView::OnFilterErrors), NULL, this);
-    m_searchMenu->Connect(XRCID("memcheck_search_string"), wxEVT_UPDATE_UI,
-                          wxUpdateUIEventHandler(MemCheckOutputView::OnSuppPanelUI), NULL, this);
-    m_searchMenu->Connect(XRCID("memcheck_search_nonworkspace"), wxEVT_COMMAND_MENU_SELECTED,
-                          wxCommandEventHandler(MemCheckOutputView::OnSearchNonworkspace), NULL, this);
-    m_searchMenu->Connect(XRCID("memcheck_search_nonworkspace"), wxEVT_UPDATE_UI,
-                          wxUpdateUIEventHandler(MemCheckOutputView::OnSuppPanelUI), NULL, this);
+    m_searchMenu->Connect(XRCID("memcheck_search_string"),
+                          wxEVT_COMMAND_MENU_SELECTED,
+                          wxCommandEventHandler(MemCheckOutputView::OnFilterErrors),
+                          NULL,
+                          this);
+    m_searchMenu->Connect(XRCID("memcheck_search_string"),
+                          wxEVT_UPDATE_UI,
+                          wxUpdateUIEventHandler(MemCheckOutputView::OnSuppPanelUI),
+                          NULL,
+                          this);
+    m_searchMenu->Connect(XRCID("memcheck_search_nonworkspace"),
+                          wxEVT_COMMAND_MENU_SELECTED,
+                          wxCommandEventHandler(MemCheckOutputView::OnSearchNonworkspace),
+                          NULL,
+                          this);
+    m_searchMenu->Connect(XRCID("memcheck_search_nonworkspace"),
+                          wxEVT_UPDATE_UI,
+                          wxUpdateUIEventHandler(MemCheckOutputView::OnSuppPanelUI),
+                          NULL,
+                          this);
 }
 
 MemCheckOutputView::~MemCheckOutputView()
 {
-    m_searchMenu->Disconnect(XRCID("memcheck_search_string"), wxEVT_COMMAND_MENU_SELECTED,
-                             wxCommandEventHandler(MemCheckOutputView::OnFilterErrors), NULL, this);
-    m_searchMenu->Disconnect(XRCID("memcheck_search_string"), wxEVT_UPDATE_UI,
-                             wxUpdateUIEventHandler(MemCheckOutputView::OnSuppPanelUI), NULL, this);
-    m_searchMenu->Disconnect(XRCID("memcheck_search_nonworkspace"), wxEVT_COMMAND_MENU_SELECTED,
-                             wxCommandEventHandler(MemCheckOutputView::OnSearchNonworkspace), NULL, this);
-    m_searchMenu->Disconnect(XRCID("memcheck_search_nonworkspace"), wxEVT_UPDATE_UI,
-                             wxUpdateUIEventHandler(MemCheckOutputView::OnSuppPanelUI), NULL, this);
+    m_searchMenu->Disconnect(XRCID("memcheck_search_string"),
+                             wxEVT_COMMAND_MENU_SELECTED,
+                             wxCommandEventHandler(MemCheckOutputView::OnFilterErrors),
+                             NULL,
+                             this);
+    m_searchMenu->Disconnect(XRCID("memcheck_search_string"),
+                             wxEVT_UPDATE_UI,
+                             wxUpdateUIEventHandler(MemCheckOutputView::OnSuppPanelUI),
+                             NULL,
+                             this);
+    m_searchMenu->Disconnect(XRCID("memcheck_search_nonworkspace"),
+                             wxEVT_COMMAND_MENU_SELECTED,
+                             wxCommandEventHandler(MemCheckOutputView::OnSearchNonworkspace),
+                             NULL,
+                             this);
+    m_searchMenu->Disconnect(XRCID("memcheck_search_nonworkspace"),
+                             wxEVT_UPDATE_UI,
+                             wxUpdateUIEventHandler(MemCheckOutputView::OnSuppPanelUI),
+                             NULL,
+                             this);
 }
 
 void MemCheckOutputView::LoadErrors()
 {
-    if(m_mgr->IsWorkspaceOpen())
+    if (m_mgr->IsWorkspaceOpen())
         m_workspacePath =
             m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
     else
@@ -88,20 +112,21 @@ void MemCheckOutputView::ResetItemsView()
     ErrorList& errorList = m_plugin->GetProcessor()->GetErrors();
 
     unsigned int flags = 0;
-    if(m_plugin->GetSettings()->GetOmitNonWorkspace())
+    if (m_plugin->GetSettings()->GetOmitNonWorkspace())
         flags |= MC_IT_OMIT_NONWORKSPACE;
-    if(m_plugin->GetSettings()->GetOmitDuplications())
+    if (m_plugin->GetSettings()->GetOmitDuplications())
         flags |= MC_IT_OMIT_DUPLICATIONS;
-    if(m_plugin->GetSettings()->GetOmitSuppressed())
+    if (m_plugin->GetSettings()->GetOmitSuppressed())
         flags |= MC_IT_OMIT_SUPPRESSED;
 
     m_totalErrorsView = 0;
-    for(MemCheckIterTools::ErrorListIterator it = MemCheckIterTools::Factory(errorList, m_workspacePath, flags);
-        it != errorList.end(); ++it) {
+    for (MemCheckIterTools::ErrorListIterator it = MemCheckIterTools::Factory(errorList, m_workspacePath, flags);
+         it != errorList.end();
+         ++it) {
         ++m_totalErrorsView;
     }
 
-    if(m_totalErrorsView)
+    if (m_totalErrorsView)
         m_pageMax = (m_totalErrorsView - 1) / m_plugin->GetSettings()->GetResultPageSize() + 1;
     else
         m_pageMax = 0;
@@ -120,12 +145,13 @@ void MemCheckOutputView::ResetItemsSupp()
     ErrorList& errorList = m_plugin->GetProcessor()->GetErrors();
 
     size_t iterFlags = 0;
-    if(m_plugin->GetSettings()->GetOmitSuppressed())
+    if (m_plugin->GetSettings()->GetOmitSuppressed())
         iterFlags |= MC_IT_OMIT_SUPPRESSED;
 
     m_totalErrorsSupp = 0;
-    for(MemCheckIterTools::ErrorListIterator it = MemCheckIterTools::Factory(errorList, wxEmptyString, iterFlags);
-        it != errorList.end(); ++it)
+    for (MemCheckIterTools::ErrorListIterator it = MemCheckIterTools::Factory(errorList, wxEmptyString, iterFlags);
+         it != errorList.end();
+         ++it)
         ++m_totalErrorsSupp;
 
     m_lastToolTipItem = wxNOT_FOUND;
@@ -135,14 +161,14 @@ void MemCheckOutputView::ShowPageView(size_t page)
 {
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckOutputView::ShowPage()"));
 
-    if(page < 1)
+    if (page < 1)
         m_currentPage = 1;
-    else if(page > m_pageMax)
+    else if (page > m_pageMax)
         m_currentPage = m_pageMax;
     else
         m_currentPage = page;
 
-    if(m_currentPage == 0)
+    if (m_currentPage == 0)
         m_textCtrlPageNumber->Clear();
     else
         pageValidator.TransferToWindow(); // it sets m_textCtrlPageNumber
@@ -152,7 +178,7 @@ void MemCheckOutputView::ShowPageView(size_t page)
     m_onValueChangedLocked = false;
     m_dataViewCtrlErrorsModel->Clear();
 
-    if(m_totalErrorsView == 0)
+    if (m_totalErrorsView == 0)
         return;
 
     ErrorList& errorList = m_plugin->GetProcessor()->GetErrors();
@@ -163,7 +189,7 @@ void MemCheckOutputView::ShowPageView(size_t page)
     m_currentPageIsEmptyView = (iStop - iStart) < 0;
 
     // this should never happen if m_totalErrorsView > 0, but...
-    if(m_currentPageIsEmptyView)
+    if (m_currentPageIsEmptyView)
         return;
 
     wxWindowDisabler disableAll;
@@ -171,24 +197,24 @@ void MemCheckOutputView::ShowPageView(size_t page)
     m_mgr->GetTheApp()->Yield();
 
     unsigned int flags = 0;
-    if(m_plugin->GetSettings()->GetOmitNonWorkspace())
+    if (m_plugin->GetSettings()->GetOmitNonWorkspace())
         flags |= MC_IT_OMIT_NONWORKSPACE;
-    if(m_plugin->GetSettings()->GetOmitDuplications())
+    if (m_plugin->GetSettings()->GetOmitDuplications())
         flags |= MC_IT_OMIT_DUPLICATIONS;
-    if(m_plugin->GetSettings()->GetOmitSuppressed())
+    if (m_plugin->GetSettings()->GetOmitSuppressed())
         flags |= MC_IT_OMIT_SUPPRESSED;
-    size_t i = 0;
+    long i = 0;
     MemCheckIterTools::ErrorListIterator it = MemCheckIterTools::Factory(errorList, m_workspacePath, flags);
-    for(; i < iStart && it != errorList.end(); ++i, ++it)
+    for (; i < iStart && it != errorList.end(); ++i, ++it)
         ; // skipping item before start
     // CL_DEBUG1(PLUGIN_PREFIX("items skipped"));
     m_mgr->GetTheApp()->Yield();
-    for(; i <= iStop; ++i, ++it) {
-        if(it == errorList.end()) {
+    for (; i <= iStop; ++i, ++it) {
+        if (it == errorList.end()) {
             break;
         }
         AddTree(wxDataViewItem(0), *it); // CL_DEBUG1(PLUGIN_PREFIX("adding %lu", i));
-        if(!(i % WAIT_UPDATE_PER_ITEMS))
+        if (!(i % WAIT_UPDATE_PER_ITEMS))
             m_mgr->GetTheApp()->Yield();
     }
 }
@@ -218,16 +244,16 @@ void MemCheckOutputView::AddTree(const wxDataViewItem& parentItem, MemCheckError
     }
 
     unsigned int flags = 0;
-    if(m_plugin->GetSettings()->GetOmitNonWorkspace())
+    if (m_plugin->GetSettings()->GetOmitNonWorkspace())
         flags |= MC_IT_OMIT_NONWORKSPACE;
-    if(m_plugin->GetSettings()->GetOmitDuplications())
+    if (m_plugin->GetSettings()->GetOmitDuplications())
         flags |= MC_IT_OMIT_DUPLICATIONS;
-    if(m_plugin->GetSettings()->GetOmitSuppressed())
+    if (m_plugin->GetSettings()->GetOmitSuppressed())
         flags |= MC_IT_OMIT_SUPPRESSED;
 
     wxBitmap bmpLocation = wxXmlResource::Get()->LoadBitmap(wxT("memcheck_location"));
     MemCheckIterTools::LocationListIterator it = MemCheckIterTools::Factory(error.locations, m_workspacePath, flags);
-    for(; it != error.locations.end(); ++it) {
+    for (; it != error.locations.end(); ++it) {
         MemCheckErrorLocation& location = *it;
         cols.clear();
         cols.push_back(variantBitmap);
@@ -240,7 +266,8 @@ void MemCheckOutputView::AddTree(const wxDataViewItem& parentItem, MemCheckError
         cols.push_back(strLine);
         cols.push_back(wxVariant(location.getObj(m_workspacePath)));
         m_dataViewCtrlErrorsModel->AppendItem(
-            errorItem, cols,
+            errorItem,
+            cols,
             ((location.line > 0 && !location.file.IsEmpty()) ? new MemCheckErrorLocationReferrer(location) : NULL));
     }
 }
@@ -261,8 +288,8 @@ void MemCheckOutputView::OnPageLast(wxCommandEvent& event) { ShowPageView(m_page
 
 unsigned int MemCheckOutputView::GetColumnByName(const wxString& name)
 {
-    for(unsigned int i = 0; i < m_dataViewCtrlErrors->GetColumnCount(); i++)
-        if(m_dataViewCtrlErrors->GetColumn(i)->GetTitle().IsSameAs(name, false))
+    for (unsigned int i = 0; i < m_dataViewCtrlErrors->GetColumnCount(); i++)
+        if (m_dataViewCtrlErrors->GetColumn(i)->GetTitle().IsSameAs(name, false))
             return i;
     return -1;
 }
@@ -271,18 +298,18 @@ void MemCheckOutputView::JumpToLocation(const wxDataViewItem& item)
 {
     MemCheckErrorLocationReferrer* locationRef =
         dynamic_cast<MemCheckErrorLocationReferrer*>(m_dataViewCtrlErrorsModel->GetClientObject(item));
-    if(!locationRef)
+    if (!locationRef)
         return;
 
     int line = locationRef->Get().line - 1;
     wxString fileName = locationRef->Get().getFile();
 
-    if(line < 0 || fileName.IsEmpty())
+    if (line < 0 || fileName.IsEmpty())
         return;
 
-    if(m_mgr->OpenFile(fileName, wxEmptyString, line)) {
+    if (m_mgr->OpenFile(fileName, wxEmptyString, line)) {
         IEditor* editor = m_mgr->GetActiveEditor();
-        if(editor) {
+        if (editor) {
             int posStart = editor->GetCtrl()->PositionFromLine(line);
             int lineLen = editor->GetCtrl()->LineLength(line);
             editor->SelectText(posStart, lineLen - 1);
@@ -295,12 +322,12 @@ wxDataViewItem MemCheckOutputView::GetTopParent(wxDataViewItem item)
     wxVector<wxVariant> cols;
     wxDataViewIconText x;
 
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         return item;
     }
 
     wxDataViewItem parent = m_dataViewCtrlErrorsModel->GetParent(item);
-    while(parent.IsOk()) {
+    while (parent.IsOk()) {
         item = parent;
         parent = m_dataViewCtrlErrorsModel->GetParent(item);
     }
@@ -311,7 +338,7 @@ wxDataViewItem MemCheckOutputView::GetLeaf(const wxDataViewItem& item, bool firs
 {
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckOutputView::GetLeaf()"));
 
-    if(m_dataViewCtrlErrorsModel->IsContainer(item)) {
+    if (m_dataViewCtrlErrorsModel->IsContainer(item)) {
         m_dataViewCtrlErrors->Expand(item);
         wxDataViewItemArray subItems;
         m_dataViewCtrlErrorsModel->GetChildren(item, subItems);
@@ -358,11 +385,11 @@ void MemCheckOutputView::SetCurrentItem(const wxDataViewItem& item)
 
     wxVariant variantBitmap;
     int col = GetColumnByName(_("Current"));
-    if(col == wxNOT_FOUND) {
+    if (col == wxNOT_FOUND) {
         return;
     }
 
-    if(m_currentItem.IsOk()) {
+    if (m_currentItem.IsOk()) {
         variantBitmap << wxXmlResource::Get()->LoadBitmap(wxT("memcheck_transparent"));
         m_dataViewCtrlErrorsModel->ChangeValue(variantBitmap, m_currentItem, col);
     }
@@ -382,8 +409,8 @@ wxDataViewItem MemCheckOutputView::GetAdjacentItem(const wxDataViewItem& item, b
     m_dataViewCtrlErrorsModel->GetChildren(parent, siblings);
     int pos = siblings.Index(item) + (forward ? 1 : -1);
 
-    if(pos < 0 || pos >= (int)siblings.GetCount()) {
-        if(!parent.IsOk()) { // parent == virtual root => we are on top level
+    if (pos < 0 || pos >= (int)siblings.GetCount()) {
+        if (!parent.IsOk()) { // parent == virtual root => we are on top level
             return GetLeaf(siblings.Item(forward ? 0 : siblings.GetCount() - 1), forward);
         } else {
             return GetLeaf(GetAdjacentItem(parent, forward), forward);
@@ -396,7 +423,7 @@ wxDataViewItem MemCheckOutputView::GetAdjacentItem(const wxDataViewItem& item, b
 void MemCheckOutputView::OnSelectionChanged(wxDataViewEvent& event)
 {
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckOutputView::OnSelectionChanged()"));
-    if(m_dataViewCtrlErrors->GetCurrentItem().IsOk()) {
+    if (m_dataViewCtrlErrors->GetCurrentItem().IsOk()) {
         SetCurrentItem(m_dataViewCtrlErrors->GetCurrentItem());
     }
 }
@@ -405,13 +432,13 @@ void MemCheckOutputView::OnJumpToNext(wxCommandEvent& event)
 {
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckOutputView::OnJumpToNext()"));
 
-    if(m_currentPageIsEmptyView)
+    if (m_currentPageIsEmptyView)
         return;
 
     m_notebookOutputView->ChangeSelection(m_notebookOutputView->FindPage(m_panelErrors));
 
     wxDataViewItem item = m_dataViewCtrlErrors->GetCurrentItem();
-    if(item.IsOk()) {
+    if (item.IsOk()) {
         item = GetAdjacentItem(item, true);
     } else {
         wxDataViewItemArray items;
@@ -427,13 +454,13 @@ void MemCheckOutputView::OnJumpToPrev(wxCommandEvent& event)
 {
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckOutputView::OnJumpToPrev()"));
 
-    if(m_currentPageIsEmptyView)
+    if (m_currentPageIsEmptyView)
         return;
 
     m_notebookOutputView->ChangeSelection(m_notebookOutputView->FindPage(m_panelErrors));
 
     wxDataViewItem item = m_dataViewCtrlErrors->GetCurrentItem();
-    if(item.IsOk()) {
+    if (item.IsOk()) {
         item = GetAdjacentItem(item, false);
     } else {
         wxDataViewItemArray items;
@@ -448,15 +475,15 @@ void MemCheckOutputView::OnJumpToPrev(wxCommandEvent& event)
 void MemCheckOutputView::MarkTree(const wxDataViewItem& item, bool checked)
 {
     int col = GetColumnByName(_("Suppress"));
-    if(col == wxNOT_FOUND) {
+    if (col == wxNOT_FOUND) {
         return;
     }
     m_dataViewCtrlErrorsModel->ChangeValue(wxVariant(checked), item, col);
 
-    if(m_dataViewCtrlErrorsModel->IsContainer(item)) {
+    if (m_dataViewCtrlErrorsModel->IsContainer(item)) {
         wxDataViewItemArray subItems;
         m_dataViewCtrlErrorsModel->GetChildren(item, subItems);
-        for(size_t i = 0; i < subItems.GetCount(); ++i)
+        for (size_t i = 0; i < subItems.GetCount(); ++i)
             MarkTree(subItems.Item(i), checked);
     }
 }
@@ -465,7 +492,7 @@ void MemCheckOutputView::OnContextMenu(wxDataViewEvent& event)
 {
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckOutputView::OnContextMenu()"));
 
-    if(m_currentPageIsEmptyView)
+    if (m_currentPageIsEmptyView)
         return;
 
     bool unmarked, marked;
@@ -495,29 +522,45 @@ void MemCheckOutputView::OnContextMenu(wxDataViewEvent& event)
     menuItem = menu.Append(XRCID("memcheck_marked_errors_to_clip"), _("Copy marked errors to clipboard"));
     menuItem->Enable(marked);
 
-    menu.Connect(XRCID("memcheck_jump_to_location"), wxEVT_COMMAND_MENU_SELECTED,
-                 wxCommandEventHandler(MemCheckOutputView::OnJumpToLocation), new wxDataViewEvent(event),
+    menu.Connect(XRCID("memcheck_jump_to_location"),
+                 wxEVT_COMMAND_MENU_SELECTED,
+                 wxCommandEventHandler(MemCheckOutputView::OnJumpToLocation),
+                 new wxDataViewEvent(event),
                  (wxEvtHandler*)this);
-    menu.Connect(XRCID("memcheck_mark_all_errors"), wxEVT_COMMAND_MENU_SELECTED,
-                 wxCommandEventHandler(MemCheckOutputView::OnMarkAllErrors), new wxDataViewEvent(event),
+    menu.Connect(XRCID("memcheck_mark_all_errors"),
+                 wxEVT_COMMAND_MENU_SELECTED,
+                 wxCommandEventHandler(MemCheckOutputView::OnMarkAllErrors),
+                 new wxDataViewEvent(event),
                  (wxEvtHandler*)this);
-    menu.Connect(XRCID("memcheck_unmark_all_errors"), wxEVT_COMMAND_MENU_SELECTED,
-                 wxCommandEventHandler(MemCheckOutputView::OnUnmarkAllErrors), new wxDataViewEvent(event),
+    menu.Connect(XRCID("memcheck_unmark_all_errors"),
+                 wxEVT_COMMAND_MENU_SELECTED,
+                 wxCommandEventHandler(MemCheckOutputView::OnUnmarkAllErrors),
+                 new wxDataViewEvent(event),
                  (wxEvtHandler*)this);
-    menu.Connect(XRCID("memcheck_suppress_error"), wxEVT_COMMAND_MENU_SELECTED,
-                 wxCommandEventHandler(MemCheckOutputView::OnSuppressError), new wxDataViewEvent(event),
+    menu.Connect(XRCID("memcheck_suppress_error"),
+                 wxEVT_COMMAND_MENU_SELECTED,
+                 wxCommandEventHandler(MemCheckOutputView::OnSuppressError),
+                 new wxDataViewEvent(event),
                  (wxEvtHandler*)this);
-    menu.Connect(XRCID("memcheck_suppress_marked_errors"), wxEVT_COMMAND_MENU_SELECTED,
-                 wxCommandEventHandler(MemCheckOutputView::OnSuppressMarkedErrors), new wxDataViewEvent(event),
+    menu.Connect(XRCID("memcheck_suppress_marked_errors"),
+                 wxEVT_COMMAND_MENU_SELECTED,
+                 wxCommandEventHandler(MemCheckOutputView::OnSuppressMarkedErrors),
+                 new wxDataViewEvent(event),
                  (wxEvtHandler*)this);
-    menu.Connect(XRCID("memcheck_row_to_clip"), wxEVT_COMMAND_MENU_SELECTED,
-                 wxCommandEventHandler(MemCheckOutputView::OnRowToClip), new wxDataViewEvent(event),
+    menu.Connect(XRCID("memcheck_row_to_clip"),
+                 wxEVT_COMMAND_MENU_SELECTED,
+                 wxCommandEventHandler(MemCheckOutputView::OnRowToClip),
+                 new wxDataViewEvent(event),
                  (wxEvtHandler*)this);
-    menu.Connect(XRCID("memcheck_error_to_clip"), wxEVT_COMMAND_MENU_SELECTED,
-                 wxCommandEventHandler(MemCheckOutputView::OnErrorToClip), new wxDataViewEvent(event),
+    menu.Connect(XRCID("memcheck_error_to_clip"),
+                 wxEVT_COMMAND_MENU_SELECTED,
+                 wxCommandEventHandler(MemCheckOutputView::OnErrorToClip),
+                 new wxDataViewEvent(event),
                  (wxEvtHandler*)this);
-    menu.Connect(XRCID("memcheck_marked_errors_to_clip"), wxEVT_COMMAND_MENU_SELECTED,
-                 wxCommandEventHandler(MemCheckOutputView::OnMarkedErrorsToClip), new wxDataViewEvent(event),
+    menu.Connect(XRCID("memcheck_marked_errors_to_clip"),
+                 wxEVT_COMMAND_MENU_SELECTED,
+                 wxCommandEventHandler(MemCheckOutputView::OnMarkedErrorsToClip),
+                 new wxDataViewEvent(event),
                  (wxEvtHandler*)this);
 
     m_dataViewCtrlErrors->PopupMenu(&menu);
@@ -526,7 +569,7 @@ void MemCheckOutputView::OnContextMenu(wxDataViewEvent& event)
 void MemCheckOutputView::OnJumpToLocation(wxCommandEvent& event)
 {
     wxDataViewEvent* menuEvent = dynamic_cast<wxDataViewEvent*>(event.GetEventUserData());
-    if(!menuEvent)
+    if (!menuEvent)
         return;
 
     wxDataViewItem item = GetLeaf(menuEvent->GetItem());
@@ -553,7 +596,7 @@ void MemCheckOutputView::GetStatusOfErrors(bool& unmarked, bool& marked)
     wxDataViewItemArray items;
     wxVariant variant;
     int supColumn = GetColumnByName(_("Suppress"));
-    if(supColumn == wxNOT_FOUND) {
+    if (supColumn == wxNOT_FOUND) {
         return;
     }
     m_dataViewCtrlErrorsModel->GetChildren(wxDataViewItem(0), items);
@@ -566,7 +609,7 @@ void MemCheckOutputView::GetStatusOfErrors(bool& unmarked, bool& marked)
 void MemCheckOutputView::OnSuppressError(wxCommandEvent& event)
 {
     wxDataViewEvent* menuEvent = dynamic_cast<wxDataViewEvent*>(event.GetEventUserData());
-    if(!menuEvent)
+    if (!menuEvent)
         return;
 
     wxDataViewItem clickedItem = GetTopParent(menuEvent->GetItem());
@@ -578,18 +621,18 @@ void MemCheckOutputView::OnSuppressMarkedErrors(wxCommandEvent& event) { Suppres
 void MemCheckOutputView::OnRowToClip(wxCommandEvent& event)
 {
     wxDataViewEvent* menuEvent = dynamic_cast<wxDataViewEvent*>(event.GetEventUserData());
-    if(!menuEvent)
+    if (!menuEvent)
         return;
 
-    if(wxTheClipboard->Open()) {
+    if (wxTheClipboard->Open()) {
         MemCheckErrorReferrer* errorRef =
             dynamic_cast<MemCheckErrorReferrer*>(m_dataViewCtrlErrorsModel->GetClientObject(menuEvent->GetItem()));
-        if(errorRef)
+        if (errorRef)
             wxTheClipboard->SetData(new wxTextDataObject(errorRef->Get().label));
 
         MemCheckErrorLocationReferrer* locationRef = dynamic_cast<MemCheckErrorLocationReferrer*>(
             m_dataViewCtrlErrorsModel->GetClientObject(menuEvent->GetItem()));
-        if(locationRef)
+        if (locationRef)
             wxTheClipboard->SetData(new wxTextDataObject(locationRef->Get().toString()));
 
         wxTheClipboard->Close();
@@ -599,15 +642,15 @@ void MemCheckOutputView::OnRowToClip(wxCommandEvent& event)
 void MemCheckOutputView::OnErrorToClip(wxCommandEvent& event)
 {
     wxDataViewEvent* menuEvent = dynamic_cast<wxDataViewEvent*>(event.GetEventUserData());
-    if(!menuEvent)
+    if (!menuEvent)
         return;
 
     MemCheckErrorReferrer* errorRef = dynamic_cast<MemCheckErrorReferrer*>(
         m_dataViewCtrlErrorsModel->GetClientObject(GetTopParent(menuEvent->GetItem())));
-    if(!errorRef)
+    if (!errorRef)
         return;
 
-    if(wxTheClipboard->Open()) {
+    if (wxTheClipboard->Open()) {
         wxTheClipboard->SetData(new wxTextDataObject(errorRef->Get().toString()));
         wxTheClipboard->Close();
     }
@@ -616,7 +659,7 @@ void MemCheckOutputView::OnErrorToClip(wxCommandEvent& event)
 void MemCheckOutputView::OnMarkedErrorsToClip(wxCommandEvent& event)
 {
     wxDataViewEvent* menuEvent = dynamic_cast<wxDataViewEvent*>(event.GetEventUserData());
-    if(!menuEvent)
+    if (!menuEvent)
         return;
 
     wxString text;
@@ -624,7 +667,7 @@ void MemCheckOutputView::OnMarkedErrorsToClip(wxCommandEvent& event)
     wxDataViewItemArray items;
     m_dataViewCtrlErrorsModel->GetChildren(wxDataViewItem(0), items);
     int supColumn = GetColumnByName(_("Suppress"));
-    if(supColumn == wxNOT_FOUND) {
+    if (supColumn == wxNOT_FOUND) {
         return;
     }
     MemCheckErrorReferrer* errorRef;
@@ -638,7 +681,7 @@ void MemCheckOutputView::OnMarkedErrorsToClip(wxCommandEvent& event)
     }
     text.Trim();
 
-    if(wxTheClipboard->Open()) {
+    if (wxTheClipboard->Open()) {
         wxTheClipboard->SetData(new wxTextDataObject(text));
         wxTheClipboard->Close();
     }
@@ -647,9 +690,9 @@ void MemCheckOutputView::OnMarkedErrorsToClip(wxCommandEvent& event)
 void MemCheckOutputView::OnOpenPlain(wxCommandEvent& event)
 {
     IMemCheckProcessor* processor = m_plugin->GetProcessor();
-    if(processor) {
+    if (processor) {
         wxString name = processor->GetOutputLogFileName();
-        if(!name.IsEmpty())
+        if (!name.IsEmpty())
             m_mgr->OpenFile(name);
     }
 }
@@ -660,10 +703,10 @@ void MemCheckOutputView::OutputViewPageChanged(wxNotebookEvent& event)
 {
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckOutputView::OutputViewPageChanged()"));
 
-    if(m_notebookOutputView->GetCurrentPage() == m_panelErrors && itemsInvalidView) {
+    if (m_notebookOutputView->GetCurrentPage() == m_panelErrors && itemsInvalidView) {
         ResetItemsView();
         ShowPageView(m_currentPage);
-    } else if(m_notebookOutputView->GetCurrentPage() == m_panelSupp && itemsInvalidSupp) {
+    } else if (m_notebookOutputView->GetCurrentPage() == m_panelSupp && itemsInvalidSupp) {
         ResetItemsSupp();
         ApplyFilterSupp(FILTER_STRING);
     }
@@ -683,7 +726,8 @@ void MemCheckOutputView::OnSuppFileOpen(wxCommandEvent& event)
 
 void MemCheckOutputView::UpdateStatusSupp()
 {
-    m_staticTextSuppStatus->SetLabel(wxString::Format(_("Total: %lu  Filtered: %lu  Selected: %d"), m_totalErrorsSupp,
+    m_staticTextSuppStatus->SetLabel(wxString::Format(_("Total: %lu  Filtered: %lu  Selected: %d"),
+                                                      m_totalErrorsSupp,
                                                       m_filterResults.size(),
                                                       m_listCtrlErrors->GetSelectedItemCount()));
     m_staticTextSuppStatus->GetParent()->Layout();
@@ -691,20 +735,20 @@ void MemCheckOutputView::UpdateStatusSupp()
 
 void MemCheckOutputView::SuppressErrors(unsigned int mode, wxDataViewItem* dvItem)
 {
-    if(m_mgr->OpenFile(m_choiceSuppFile->GetStringSelection())) {
+    if (m_mgr->OpenFile(m_choiceSuppFile->GetStringSelection())) {
         IEditor* editor = m_mgr->GetActiveEditor();
-        if(editor) {
+        if (editor) {
             editor->GetCtrl()->DocumentEnd();
             editor->GetCtrl()->Home();
             int posStart = editor->GetCtrl()->GetCurrentPos();
             editor->AppendText(wxString::Format("\n# Added %s", wxDateTime::Now().Format("%F %T")));
 
-            switch(mode) {
+            switch (mode) {
             case SUPPRESS_CLICKED: {
                 MemCheckErrorReferrer* errorRef =
                     dynamic_cast<MemCheckErrorReferrer*>(m_dataViewCtrlErrorsModel->GetClientObject(*dvItem));
                 // TODO ? print error message?
-                if(!errorRef)
+                if (!errorRef)
                     break;
                 editor->AppendText(wxString::Format("\n%s", errorRef->Get().getSuppression()));
                 errorRef->Get().suppressed = true;
@@ -715,7 +759,7 @@ void MemCheckOutputView::SuppressErrors(unsigned int mode, wxDataViewItem* dvIte
                 wxDataViewItemArray items;
                 m_dataViewCtrlErrorsModel->GetChildren(wxDataViewItem(0), items);
                 int supColumn = GetColumnByName(_("Suppress"));
-                if(supColumn == wxNOT_FOUND) {
+                if (supColumn == wxNOT_FOUND) {
                     return;
                 }
 
@@ -732,7 +776,7 @@ void MemCheckOutputView::SuppressErrors(unsigned int mode, wxDataViewItem* dvIte
             } break;
 
             case SUPPRESS_ALL:
-                for(size_t item = 0; item < m_filterResults.size(); ++item) {
+                for (size_t item = 0; item < m_filterResults.size(); ++item) {
                     editor->AppendText(wxString::Format("\n%s", m_filterResults[item]->getSuppression()));
                     m_filterResults[item]->suppressed = true;
                 }
@@ -740,9 +784,9 @@ void MemCheckOutputView::SuppressErrors(unsigned int mode, wxDataViewItem* dvIte
 
             case SUPPRESS_SELECTED:
                 long item = -1;
-                for(;;) {
+                for (;;) {
                     item = m_listCtrlErrors->GetNextItem(item, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
-                    if(item == -1)
+                    if (item == -1)
                         break;
                     editor->AppendText(wxString::Format("\n%s", m_filterResults[item]->getSuppression()));
                     m_filterResults[item]->suppressed = true;
@@ -758,8 +802,8 @@ void MemCheckOutputView::SuppressErrors(unsigned int mode, wxDataViewItem* dvIte
             m_mgr->GetTheApp()->GetTopWindow()->GetEventHandler()->ProcessEvent(saveEvent);
 
             // reload pages after suppression
-            if(m_plugin->GetSettings()->GetOmitSuppressed()) {
-                switch(mode) {
+            if (m_plugin->GetSettings()->GetOmitSuppressed()) {
+                switch (mode) {
                 case SUPPRESS_CLICKED:
                 case SUPPRESS_CHECKED:
                     ResetItemsView();
@@ -784,23 +828,24 @@ void MemCheckOutputView::ApplyFilterSupp(unsigned int mode)
     ErrorList& errorList = m_plugin->GetProcessor()->GetErrors();
 
     // change filter type
-    if(mode == FILTER_STRING && m_searchCtrlFilter->GetValue().IsSameAs(wxT(FILTER_NONWORKSPACE_PLACEHOLDER)))
+    if (mode == FILTER_STRING && m_searchCtrlFilter->GetValue().IsSameAs(wxT(FILTER_NONWORKSPACE_PLACEHOLDER)))
         mode = FILTER_WORKSPACE;
-    if(mode == FILTER_STRING && m_searchCtrlFilter->GetValue().IsEmpty())
+    if (mode == FILTER_STRING && m_searchCtrlFilter->GetValue().IsEmpty())
         mode = FILTER_CLEAR;
 
     size_t iterFlags = 0;
-    if(m_plugin->GetSettings()->GetOmitSuppressed())
+    if (m_plugin->GetSettings()->GetOmitSuppressed())
         iterFlags |= MC_IT_OMIT_SUPPRESSED;
 
     m_filterResults.clear();
     m_listCtrlErrors->SetItemCount(0);
 
-    switch(mode) {
+    switch (mode) {
     case FILTER_CLEAR:
         m_searchCtrlFilter->Clear();
-        for(MemCheckIterTools::ErrorListIterator it = MemCheckIterTools::Factory(errorList, wxEmptyString, iterFlags);
-            it != errorList.end(); ++it)
+        for (MemCheckIterTools::ErrorListIterator it = MemCheckIterTools::Factory(errorList, wxEmptyString, iterFlags);
+             it != errorList.end();
+             ++it)
             m_filterResults.push_back(&*it);
         m_totalErrorsSupp = m_filterResults.size();
         m_checkBoxInvert->SetValue(false);
@@ -812,38 +857,40 @@ void MemCheckOutputView::ApplyFilterSupp(unsigned int mode)
     case FILTER_WORKSPACE:
         m_searchCtrlFilter->SetValue(wxT(FILTER_NONWORKSPACE_PLACEHOLDER));
         m_searchCtrlFilter->SelectAll();
-        for(MemCheckIterTools::ErrorListIterator it = MemCheckIterTools::Factory(errorList, wxEmptyString, iterFlags);
-            it != errorList.end(); ++it) {
-            if(m_checkBoxInvert->IsChecked() == (*it).hasPath(m_workspacePath))
+        for (MemCheckIterTools::ErrorListIterator it = MemCheckIterTools::Factory(errorList, wxEmptyString, iterFlags);
+             it != errorList.end();
+             ++it) {
+            if (m_checkBoxInvert->IsChecked() == (*it).hasPath(m_workspacePath))
                 m_filterResults.push_back(&*it);
         }
         break;
 
     case FILTER_STRING:
         size_t flags = 0;
-        if(m_checkBoxCase->IsChecked())
+        if (m_checkBoxCase->IsChecked())
             flags |= wxSD_MATCHCASE;
-        if(m_checkBoxRegexp->IsChecked())
+        if (m_checkBoxRegexp->IsChecked())
             flags |= wxSD_REGULAREXPRESSION;
-        if(m_checkBoxWord->IsChecked())
+        if (m_checkBoxWord->IsChecked())
             flags |= wxSD_MATCHWHOLEWORD;
         int offset = 0;
         int pos = 0, len = 0;
-        if(m_totalErrorsSupp > ITEMS_FOR_WAIT_DIALOG) {
+        if (m_totalErrorsSupp > ITEMS_FOR_WAIT_DIALOG) {
             wxWindowDisabler disableAll;
             wxBusyInfo wait(BUSY_MESSAGE);
             m_mgr->GetTheApp()->Yield();
         }
         size_t i = 0;
-        for(MemCheckIterTools::ErrorListIterator it = MemCheckIterTools::Factory(errorList, wxEmptyString, iterFlags);
-            it != errorList.end(); ++it) {
-            if(m_checkBoxInvert->IsChecked() != StringFindReplacer::Search((*it).toString().wc_str(), offset,
-                                                                           m_searchCtrlFilter->GetValue().wc_str(),
-                                                                           flags, pos, len))
+        for (MemCheckIterTools::ErrorListIterator it = MemCheckIterTools::Factory(errorList, wxEmptyString, iterFlags);
+             it != errorList.end();
+             ++it) {
+            if (m_checkBoxInvert->IsChecked() !=
+                StringFindReplacer::Search(
+                    (*it).toString().wc_str(), offset, m_searchCtrlFilter->GetValue().wc_str(), flags, pos, len))
                 m_filterResults.push_back(&*it);
-            if(m_totalErrorsSupp > ITEMS_FOR_WAIT_DIALOG) {
+            if (m_totalErrorsSupp > ITEMS_FOR_WAIT_DIALOG) {
                 ++i;
-                if(!(i % WAIT_UPDATE_PER_ITEMS))
+                if (!(i % WAIT_UPDATE_PER_ITEMS))
                     m_mgr->GetTheApp()->Yield();
             }
         }
@@ -863,9 +910,7 @@ void MemCheckOutputView::OnClearFilter(wxCommandEvent& event) { ApplyFilterSupp(
 
 void MemCheckOutputView::OnSearchNonworkspace(wxCommandEvent& event) { ApplyFilterSupp(FILTER_WORKSPACE); }
 
-void MemCheckOutputView::OnListCtrlErrorsActivated(wxListEvent& event)
-{ /*SuppressErrors(SUPPRESS_SELECTED);*/
-}
+void MemCheckOutputView::OnListCtrlErrorsActivated(wxListEvent& event) { /*SuppressErrors(SUPPRESS_SELECTED);*/ }
 
 void MemCheckOutputView::OnSuppressAll(wxCommandEvent& event) { SuppressErrors(SUPPRESS_ALL); }
 
@@ -933,10 +978,10 @@ void MemCheckOutputView::OnListCtrlErrorsMouseMotion(wxMouseEvent& event)
     int flags = wxLIST_HITTEST_ONITEM;
     long item = m_listCtrlErrors->HitTest(event.GetPosition(), flags, NULL);
 
-    if(item != m_lastToolTipItem) {
+    if (item != m_lastToolTipItem) {
         m_lastToolTipItem = item;
         m_listCtrlErrors->UnsetToolTip();
-        if(item != wxNOT_FOUND)
+        if (item != wxNOT_FOUND)
             CallAfter(&MemCheckOutputView::ListCtrlErrorsShowTip, item);
     }
 }
@@ -948,13 +993,13 @@ void MemCheckOutputView::OnMemCheckUI(wxUpdateUIEvent& event)
     bool ready = m_plugin->IsReady(event);
     //*
     int id = event.GetId();
-    if(id == XRCID("memcheck_expand_all")) {
+    if (id == XRCID("memcheck_expand_all")) {
         ready &= m_notebookOutputView->GetCurrentPage() == m_panelErrors && !m_currentPageIsEmptyView;
-    } else if(id == XRCID("memcheck_next")) {
+    } else if (id == XRCID("memcheck_next")) {
         ready &= m_notebookOutputView->GetCurrentPage() == m_panelErrors && !m_currentPageIsEmptyView;
-    } else if(id == XRCID("memcheck_prev")) {
+    } else if (id == XRCID("memcheck_prev")) {
         ready &= m_notebookOutputView->GetCurrentPage() == m_panelErrors && !m_currentPageIsEmptyView;
-    } else if(id == XRCID("memcheck_open_plain")) {
+    } else if (id == XRCID("memcheck_open_plain")) {
         ready &= m_plugin->GetProcessor() && !m_plugin->GetProcessor()->GetOutputLogFileName().IsEmpty();
     }
     event.Enable(ready);
@@ -966,15 +1011,15 @@ void MemCheckOutputView::OnErrorsPanelUI(wxUpdateUIEvent& event)
 
     bool ready = m_plugin->IsReady(event);
     int id = event.GetId();
-    if(id == XRCID("memcheck_page_first")) {
+    if (id == XRCID("memcheck_page_first")) {
         ready &= !m_currentPageIsEmptyView && m_currentPage > 1;
-    } else if(id == XRCID("memcheck_page_prev")) {
+    } else if (id == XRCID("memcheck_page_prev")) {
         ready &= !m_currentPageIsEmptyView && m_currentPage > 1;
-    } else if(id == XRCID("memcheck_page_number")) {
+    } else if (id == XRCID("memcheck_page_number")) {
         ready &= m_pageMax > 0;
-    } else if(id == XRCID("memcheck_page_next")) {
+    } else if (id == XRCID("memcheck_page_next")) {
         ready &= !m_currentPageIsEmptyView && m_currentPage < m_pageMax;
-    } else if(id == XRCID("memcheck_page_last")) {
+    } else if (id == XRCID("memcheck_page_last")) {
         ready &= !m_currentPageIsEmptyView && m_currentPage < m_pageMax;
     }
     event.Enable(ready);
@@ -986,19 +1031,19 @@ void MemCheckOutputView::OnSuppPanelUI(wxUpdateUIEvent& event)
 
     bool ready = m_plugin->IsReady(event);
     int id = event.GetId();
-    if(id == XRCID("memcheck_supp_open")) {
+    if (id == XRCID("memcheck_supp_open")) {
         ready &= m_choiceSuppFile->GetSelection() != wxNOT_FOUND;
-    } else if(id == XRCID("memcheck_filter_supp")) {
+    } else if (id == XRCID("memcheck_filter_supp")) {
         ready &= m_totalErrorsSupp > 0;
-    } else if(id == XRCID("memcheck_clear_filter")) {
+    } else if (id == XRCID("memcheck_clear_filter")) {
         ready &= !m_searchCtrlFilter->GetValue().IsEmpty();
-    } else if(id == XRCID("memcheck_search_string")) {
+    } else if (id == XRCID("memcheck_search_string")) {
         ready &= m_totalErrorsSupp > 0;
-    } else if(id == XRCID("memcheck_search_nonworkspace")) {
+    } else if (id == XRCID("memcheck_search_nonworkspace")) {
         ready &= m_totalErrorsSupp > 0;
-    } else if(id == XRCID("memcheck_suppress_all")) {
+    } else if (id == XRCID("memcheck_suppress_all")) {
         ready &= m_choiceSuppFile->GetSelection() != wxNOT_FOUND && m_listCtrlErrors->GetItemCount() > 0;
-    } else if(id == XRCID("memcheck_suppress_selected")) {
+    } else if (id == XRCID("memcheck_suppress_selected")) {
         ready &= m_choiceSuppFile->GetSelection() != wxNOT_FOUND && m_listCtrlErrors->GetItemCount() > 0 &&
                  m_listCtrlErrors->GetSelectedItemCount() > 0;
     }

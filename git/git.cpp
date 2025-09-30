@@ -3183,9 +3183,7 @@ bool GitPlugin::GenerateCommitMessage(const wxString& prompt, const wxString& mo
             clWARNING() << "StateChangingCB called for non main thread!" << endl;
             return;
         }
-        if (!m_commitDialog) {
-            return;
-        }
+        CHECK_PTR_RET(m_commitDialog);
         switch (state) {
         case llm::ChatState::kThinking:
             m_commitDialog->SetIndicatorMessage(_("Thinking..."));
@@ -3200,6 +3198,7 @@ bool GitPlugin::GenerateCommitMessage(const wxString& prompt, const wxString& mo
     });
 
     collector->SetStreamCallback([this](const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
+        CHECK_PTR_RET(m_commitDialog);
         m_commitDialog->AppendCommitMessage(wxString::FromUTF8(message));
         if (is_done) {
             m_commitDialog->SetCommitMessageGenerationCompleted();
@@ -3207,7 +3206,7 @@ bool GitPlugin::GenerateCommitMessage(const wxString& prompt, const wxString& mo
     });
 
     auto cancel_token = std::make_shared<llm::CancellationToken>(10000);
-    llm::ChatOptions chat_options;
+    llm::ChatOptions chat_options{llm::ChatOptions::kDefault};;
     llm::AddFlagSet(chat_options, llm::ChatOptions::kNoTools);
     llm::AddFlagSet(chat_options, llm::ChatOptions::kNoHistory);
     llm::Manager::GetInstance().Chat(collector, prompt, cancel_token, chat_options, model_name);

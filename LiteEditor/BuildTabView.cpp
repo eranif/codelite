@@ -455,7 +455,7 @@ BuildTabView::GetNextLineWithErrorOrWarning(size_t from, bool errors_only) const
     }
 
     size_t line_count = GetLineCount();
-    if (from >= GetLineCount()) {
+    if (from >= static_cast<size_t>(GetLineCount())) {
         return {};
     }
 

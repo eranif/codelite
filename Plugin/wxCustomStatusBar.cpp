@@ -94,54 +94,8 @@ void wxCustomStatusBarFieldText::SetText(const wxString& text)
         // valid rect
         wxCustomStatusBarArt::Ptr_t art = m_parent->GetArt();
         if (art->GetName() == m_parent->GetLastArtNameUsedForPaint()) {
-#if defined(__WXOSX__) || defined(__WXMSW__)
             m_parent->Refresh();
             return;
-#else
-            // Make sure we draw only when the "art" objects are in sync with the field
-            // and with the bar itself
-            if ((m_rect.GetHeight() > 0) && (m_rect.GetWidth() > 0)) {
-                wxBitmap bmp(m_rect.GetSize());
-                wxMemoryDC memoryDC;
-                memoryDC.SelectObject(bmp);
-                wxGCDC dc(memoryDC);
-                m_parent->PrepareDC(dc);
-
-                wxFont font = DrawingUtils::GetDefaultGuiFont();
-                dc.SetFont(font);
-                wxRect rect(m_rect.GetSize()); // Create the same rect size, but on 0,0
-
-                // Draw the field background
-                dc.SetBrush(art->GetBgColour());
-                dc.SetPen(art->GetBgColour());
-                dc.DrawRectangle(rect);
-
-                // Draw top separator line
-                wxPoint topLeft = rect.GetTopLeft();
-                wxPoint topRight = rect.GetTopRight();
-                topRight.x += 1;
-                dc.SetPen(art->GetSeparatorColour());
-                dc.DrawLine(topLeft, topRight);
-
-                // Draw the bottom separator using the pen colour
-                // this will give a "sink" look to the status bar
-                topLeft.y += 1;
-                topRight.y += 1;
-                dc.SetPen(art->GetPenColour());
-                dc.DrawLine(topLeft, topRight);
-
-                // Render will override m_rect, we so keep a copy
-                wxRect origRect = m_rect;
-                Render(dc, rect, art);
-                m_rect = origRect;
-                memoryDC.SelectObject(wxNullBitmap);
-
-                // bmp contains the field content, draw it
-                wxClientDC cdc(m_parent);
-                m_parent->PrepareDC(cdc);
-                cdc.DrawBitmap(bmp, m_rect.GetTopLeft(), true);
-            }
-#endif
         }
     }
 }
@@ -297,7 +251,7 @@ wxCustomStatusBar::~wxCustomStatusBar()
 
 void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
 {
-    wxAutoBufferedPaintDC abdc(this);
+    wxPaintDC abdc(this);
     wxGCDC gcdc;
     wxDC& dc = DrawingUtils::GetGCDC(abdc, gcdc);
 

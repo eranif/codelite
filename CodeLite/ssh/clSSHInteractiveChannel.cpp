@@ -19,13 +19,13 @@
 INITIALISE_SSH_LOG(LOG, "Interactive-Channel");
 
 #define CHECK_ARG(arg, msg)                \
-    if(!(arg)) {                           \
+    if (!(arg)) {                          \
         LOG_WARNING(LOG()) << msg << endl; \
         return nullptr;                    \
     }
 
 #define CHECK_ARG_VOID(arg, msg)           \
-    if(!(arg)) {                           \
+    if (!(arg)) {                          \
         LOG_WARNING(LOG()) << msg << endl; \
         return;                            \
     }
@@ -52,41 +52,41 @@ std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wx
     // 2) poll the `Q` for data to write to the remote process
     std::thread* thr = new std::thread([channel, &Q, handler]() mutable {
         LOG_DEBUG(LOG()) << "helper thread started" << endl;
-        while(true) {
+        while (true) {
             // Poll the channel for output
             auto stdout_res = ssh::channel_read(channel, handler, false, true);
-            if(stdout_res == ssh::read_result::SSH_SUCCESS) {
+            if (stdout_res == ssh::read_result::SSH_SUCCESS) {
                 // got something
                 continue;
             }
 
-            if(!ssh::result_ok(stdout_res)) {
+            if (!ssh::result_ok(stdout_res)) {
                 // error occurred (but not timeout)
                 break;
             }
 
             auto stderrr_res = ssh::channel_read(channel, handler, true, true);
-            if(stderrr_res == ssh::read_result::SSH_SUCCESS) {
+            if (stderrr_res == ssh::read_result::SSH_SUCCESS) {
                 // got something
                 continue;
             }
 
-            if(!ssh::result_ok(stdout_res)) {
+            if (!ssh::result_ok(stdout_res)) {
                 // error occurred (but not timeout)
                 break;
             }
 
             // fall: timeout
             wxAny msg;
-            if(Q.ReceiveTimeout(1, msg) == wxMSGQUEUE_NO_ERROR) {
+            if (Q.ReceiveTimeout(1, msg) == wxMSGQUEUE_NO_ERROR) {
                 LOG_DEBUG(LOG()) << "got request from the queue" << endl;
                 // got a message
-                if(msg.CheckType<CmdShutdown>()) {
+                if (msg.CheckType<CmdShutdown>()) {
                     // shutdown, terminate the channel
                     LOG_DEBUG(LOG()) << "shutting down" << endl;
                     break;
 
-                } else if(msg.CheckType<CmdWrite>()) {
+                } else if (msg.CheckType<CmdWrite>()) {
 
                     // write buffer to remote
                     CmdWrite write_command;
@@ -94,16 +94,17 @@ std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wx
 
                     LOG_DEBUG(LOG()) << "writing:" << write_command.content << endl;
                     int rc = ssh_channel_write(channel, write_command.content.c_str(), write_command.content.size());
-                    if(rc != write_command.content.size()) {
+                    if (rc != static_cast<int>(write_command.content.size())) {
                         LOG_WARNING(LOG()) << "failed to write:" << write_command.content << "to ssh channel" << endl;
                         clCommandEvent event(wxEVT_SSH_CHANNEL_WRITE_ERROR);
                         handler->QueueEvent(event.Clone());
                         break;
                     } else {
-                        LOG_DEBUG(LOG()) << "successfully written:" << write_command.content << "to ssh channel" << endl;
+                        LOG_DEBUG(LOG()) << "successfully written:" << write_command.content << "to ssh channel"
+                                         << endl;
                     }
 
-                } else if(msg.CheckType<CmdSignal>()) {
+                } else if (msg.CheckType<CmdSignal>()) {
                     // send signal
                     // write buffer to remote
                     CmdSignal cmd;
@@ -111,13 +112,14 @@ std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wx
 
                     LOG_DEBUG(LOG()) << "sending signal:" << cmd.signal_prefix << endl;
                     int rc = ssh_channel_request_send_signal(channel, cmd.signal_prefix.c_str());
-                    if(rc != SSH_OK) {
+                    if (rc != SSH_OK) {
                         LOG_WARNING(LOG()) << "failed to send signal:" << cmd.signal_prefix << "to ssh channel" << endl;
                         clCommandEvent event(wxEVT_SSH_CHANNEL_WRITE_ERROR);
                         handler->QueueEvent(event.Clone());
                         break;
                     } else {
-                        LOG_DEBUG(LOG()) << "successfully sent signal:" << cmd.signal_prefix << "to ssh channel" << endl;
+                        LOG_DEBUG(LOG()) << "successfully sent signal:" << cmd.signal_prefix << "to ssh channel"
+                                         << endl;
                     }
 
                 } else {
@@ -131,9 +133,12 @@ std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wx
 }
 }; // namespace
 
-clSSHInteractiveChannel::Ptr_t clSSHInteractiveChannel::Create(wxEvtHandler* parent, clSSH::Ptr_t ssh,
-                                                               const std::vector<wxString>& args, size_t flags,
-                                                               const wxString& workingDir, const clEnvList_t* env)
+clSSHInteractiveChannel::Ptr_t clSSHInteractiveChannel::Create(wxEvtHandler* parent,
+                                                               clSSH::Ptr_t ssh,
+                                                               const std::vector<wxString>& args,
+                                                               size_t flags,
+                                                               const wxString& workingDir,
+                                                               const clEnvList_t* env)
 {
     CHECK_ARG(!args.empty(), "cant start remote interactive process. empty command");
     CHECK_ARG(ssh, "cant start remote interactive process with null clSSH");
@@ -144,7 +149,7 @@ clSSHInteractiveChannel::Ptr_t clSSHInteractiveChannel::Create(wxEvtHandler* par
 
     // Create the remote script before we request a channel
     clEnvList_t envlist;
-    if(env) {
+    if (env) {
         envlist = *env;
     }
 
@@ -152,13 +157,13 @@ clSSHInteractiveChannel::Ptr_t clSSHInteractiveChannel::Create(wxEvtHandler* par
     wxString remote_script = "/tmp/clssh_" + FileUtils::NormaliseFilename(args[0]);
     LOG_DEBUG(LOG()) << "executing remote script:" << remote_script << endl;
     auto res = ssh::write_remote_file_content(ssh, remote_script, content);
-    if(!res.ok()) {
+    if (!res.ok()) {
         LOG_WARNING(LOG()) << "SSH failed to write remote file." << res.message() << endl;
         return nullptr;
     }
 
     auto channel = ssh_channel_new(session);
-    if(!channel) {
+    if (!channel) {
         LOG_WARNING(LOG()) << "Failed to allocate new ssh channel." << ssh_get_error(session) << endl;
         return nullptr;
     }
@@ -166,7 +171,7 @@ clSSHInteractiveChannel::Ptr_t clSSHInteractiveChannel::Create(wxEvtHandler* par
     // open the session
     int rc = SSH_OK;
     rc = ssh_channel_open_session(channel);
-    if(rc != SSH_OK) {
+    if (rc != SSH_OK) {
         LOG_WARNING(LOG()) << "Failed to open the session." << ssh_get_error(session) << endl;
         ssh_channel_free(channel);
         return nullptr;
@@ -174,7 +179,7 @@ clSSHInteractiveChannel::Ptr_t clSSHInteractiveChannel::Create(wxEvtHandler* par
 
     // request a shell
     rc = ssh_channel_request_shell(channel);
-    if(rc != SSH_OK) {
+    if (rc != SSH_OK) {
         LOG_WARNING(LOG()) << "SSH request shell error." << ssh_get_error(session) << endl;
         ssh_channel_free(channel);
         return nullptr;
@@ -193,7 +198,7 @@ clSSHInteractiveChannel::Ptr_t clSSHInteractiveChannel::Create(wxEvtHandler* par
     process->Write(message);
 
     process->Write(remote_script);
-    return IProcess::Ptr_t{ process };
+    return IProcess::Ptr_t{process};
 }
 
 clSSHInteractiveChannel::clSSHInteractiveChannel(wxEvtHandler* parent, clSSH::Ptr_t ssh, SSHChannel_t channel)
@@ -226,7 +231,7 @@ void clSSHInteractiveChannel::Cleanup() { Terminate(); }
 
 void clSSHInteractiveChannel::StopThread()
 {
-    if(m_thread) {
+    if (m_thread) {
         // we just stop the reader thread
         CmdShutdown shutdown;
         m_queue.Post(shutdown);
@@ -246,7 +251,7 @@ void clSSHInteractiveChannel::Terminate()
     // stop the reader thread
     StopThread();
 
-    if(m_channel) {
+    if (m_channel) {
         ssh_channel_close(m_channel);
         ssh_channel_free(m_channel);
     }
@@ -270,7 +275,7 @@ bool clSSHInteractiveChannel::Read(wxString& buff, wxString& buffErr, std::strin
 
 bool clSSHInteractiveChannel::Write(const std::string& buff)
 {
-    if(!m_thread) {
+    if (!m_thread) {
         return false;
     }
     CmdWrite cmd;
@@ -293,7 +298,7 @@ bool clSSHInteractiveChannel::WriteRaw(const wxString& buff)
 
 bool clSSHInteractiveChannel::WriteRaw(const std::string& buff)
 {
-    if(!m_thread) {
+    if (!m_thread) {
         return false;
     }
     CmdWrite cmd;
@@ -315,7 +320,7 @@ void clSSHInteractiveChannel::Signal(wxSignal sig)
     CHECK_ARG_VOID(m_channel, "Signal failed. null ssh session");
 
     const char* prefix = nullptr;
-    switch(sig) {
+    switch (sig) {
     case wxSIGABRT:
         prefix = "ABRT";
         break;
@@ -352,12 +357,12 @@ void clSSHInteractiveChannel::Signal(wxSignal sig)
     default:
         break;
     }
-    if(!prefix) {
+    if (!prefix) {
         LOG_ERROR(LOG()) << "unknown signal" << endl;
         return;
     }
 
-    CmdSignal signal{ prefix };
+    CmdSignal signal{prefix};
     m_queue.Post(signal);
 }
 
@@ -375,9 +380,9 @@ void clSSHInteractiveChannel::OnChannelStdout(clCommandEvent& event)
 {
     LOG_IF_DEBUG { LOG_DEBUG(LOG()) << event.GetStringRaw() << endl; }
 
-    if(!m_waiting) {
+    if (!m_waiting) {
         LOG_DEBUG(LOG()) << "sending wxEVT_ASYNC_PROCESS_OUTPUT event" << endl;
-        clProcessEvent event_stdout{ wxEVT_ASYNC_PROCESS_OUTPUT };
+        clProcessEvent event_stdout{wxEVT_ASYNC_PROCESS_OUTPUT};
         event_stdout.SetProcess(nullptr);
         event_stdout.SetOutputRaw(event.GetStringRaw());
         event_stdout.SetOutput(event.GetStringRaw());
@@ -388,7 +393,7 @@ void clSSHInteractiveChannel::OnChannelStdout(clCommandEvent& event)
         m_waitingBuffer.append(event.GetStringRaw());
 
         std::string::size_type where = m_waitingBuffer.find(marker);
-        if(where != std::string::npos) {
+        if (where != std::string::npos) {
             m_waiting = false;
 
             // found the marker
@@ -397,8 +402,8 @@ void clSSHInteractiveChannel::OnChannelStdout(clCommandEvent& event)
             // remove the marker from the input string
             wxString remainder = m_waitingBuffer.substr(where + marker.length());
             // fire an event with the remainder
-            if(!remainder.empty()) {
-                clProcessEvent event_stdout{ wxEVT_ASYNC_PROCESS_OUTPUT };
+            if (!remainder.empty()) {
+                clProcessEvent event_stdout{wxEVT_ASYNC_PROCESS_OUTPUT};
                 event_stdout.SetProcess(nullptr);
                 event_stdout.SetOutputRaw(StringUtils::ToStdString(remainder));
                 event_stdout.SetOutput(remainder);
@@ -414,9 +419,9 @@ void clSSHInteractiveChannel::OnChannelStdout(clCommandEvent& event)
 
 void clSSHInteractiveChannel::OnChannelStderr(clCommandEvent& event)
 {
-    if(!m_waiting) {
-        clProcessEvent event_stdout{ m_flags & IProcessStderrEvent ? wxEVT_ASYNC_PROCESS_STDERR
-                                                                   : wxEVT_ASYNC_PROCESS_OUTPUT };
+    if (!m_waiting) {
+        clProcessEvent event_stdout{m_flags & IProcessStderrEvent ? wxEVT_ASYNC_PROCESS_STDERR
+                                                                  : wxEVT_ASYNC_PROCESS_OUTPUT};
         event_stdout.SetProcess(nullptr);
         event_stdout.SetOutputRaw(event.GetStringRaw());
         event_stdout.SetOutput(event.GetStringRaw());
@@ -429,8 +434,8 @@ void clSSHInteractiveChannel::OnChannelStderr(clCommandEvent& event)
 
 void clSSHInteractiveChannel::OnChannelClosed(clCommandEvent& event)
 {
-    if(!m_closeEventFired) {
-        clProcessEvent event_terminated{ wxEVT_ASYNC_PROCESS_TERMINATED };
+    if (!m_closeEventFired) {
+        clProcessEvent event_terminated{wxEVT_ASYNC_PROCESS_TERMINATED};
         event_terminated.SetProcess(nullptr);
         AddPendingEvent(event_terminated);
         LOG_DEBUG(LOG()) << "channel closed" << endl;
@@ -441,7 +446,7 @@ void clSSHInteractiveChannel::OnChannelClosed(clCommandEvent& event)
 void clSSHInteractiveChannel::OnChannelError(clCommandEvent& event)
 {
     LOG_DEBUG(LOG()) << "channel error." << ssh_get_error(m_ssh->GetSession()) << endl;
-    clProcessEvent event_terminated{ wxEVT_ASYNC_PROCESS_TERMINATED };
+    clProcessEvent event_terminated{wxEVT_ASYNC_PROCESS_TERMINATED};
     event_terminated.SetProcess(nullptr);
     AddPendingEvent(event_terminated);
 }

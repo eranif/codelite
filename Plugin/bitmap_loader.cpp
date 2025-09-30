@@ -196,11 +196,11 @@ void BitmapLoader::CreateMimeList()
         m_mimeBitmaps.AddBitmap(LoadBitmap("database", 16), FileExtManager::TypeDatabase);
         m_mimeBitmaps.AddBitmap(LoadBitmap("sqlite", 16), FileExtManager::TypeSLite);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-svg", 16), FileExtManager::TypeSvg);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("workspace-folder-yellow-opened", 16),
-                                FileExtManager::TypeWorkspaceFolderExpanded);
+        m_mimeBitmaps.AddBitmap(
+            LoadBitmap("workspace-folder-yellow-opened", 16), FileExtManager::TypeWorkspaceFolderExpanded);
         m_mimeBitmaps.AddBitmap(LoadBitmap("workspace-folder-yellow", 16), FileExtManager::TypeWorkspaceFolder);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("folder-yellow-opened-symlink", 16),
-                                FileExtManager::TypeFolderSymlinkExpanded);
+        m_mimeBitmaps.AddBitmap(
+            LoadBitmap("folder-yellow-opened-symlink", 16), FileExtManager::TypeFolderSymlinkExpanded);
         m_mimeBitmaps.AddBitmap(LoadBitmap("folder-yellow-symlink", 16), FileExtManager::TypeFolderSymlink);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-txt-symlink", 16), FileExtManager::TypeFileSymlink);
         m_mimeBitmaps.AddBitmap(LoadBitmap("rust", 16), FileExtManager::TypeRust);
@@ -281,7 +281,7 @@ int clMimeBitmaps::GetIndex(int type, bool disabled) const
 
     int index = m_fileIndexMap.at(type);
     index += offset;
-    if (index >= m_bitmaps.size()) {
+    if (index >= static_cast<int>(m_bitmaps.size())) {
         index -= offset;
     }
     return index;
@@ -328,8 +328,8 @@ const wxBitmap& clMimeBitmaps::GetBitmap(int type, bool disabled) const
         return emptyBitmap;
     }
     if (disabled) {
-        index += m_disabled_bitmaps.size();
-        if (index >= m_bitmaps.size()) {
+        index += static_cast<int>(m_disabled_bitmaps.size());
+        if (index >= static_cast<int>(m_bitmaps.size())) {
             // caller did not call "Finalise"
             index -= m_disabled_bitmaps.size();
         }

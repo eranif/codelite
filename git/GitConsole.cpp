@@ -232,12 +232,13 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
 
     m_toolbar->AddTool(XRCID("git_pull"), _("Pull"), images->LoadBitmap("pull"), _("Pull remote changes"));
     m_toolbar->SetToolDropDown(XRCID("git_pull"), true);
-
-    m_toolbar->AddTool(
-        XRCID("git_browse_commit_list"), _("Log"), images->LoadBitmap("tasks"), _("Browse commit history"));
-    m_toolbar->AddSeparator();
     m_toolbar->AddTool(XRCID("git_rebase"), _("Rebase"), images->LoadBitmap("merge"), _("Rebase"));
     m_toolbar->SetToolDropDown(XRCID("git_rebase"), true);
+
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(
+        XRCID("git_browse_commit_list"), _("Log"), images->LoadBitmap("tasks"), _("Browse commit history"));
+    m_toolbar->AddTool(XRCID("git_reset_repository"), _("Reset repository"), images->LoadBitmap("clean"));
 
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(XRCID("git_release_notes"), _("Generate release notes"), images->LoadBitmap("wand"));

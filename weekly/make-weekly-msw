@@ -2,8 +2,8 @@
 
 . $(dirname $(readlink -f $0))/make-weekly-common
 
-WXCRAFTER_BUILD_DIR=${CODELITE_HOME}/build-release-weekly-wxcapp
-CODELITE_BUILD_DIR=${CODELITE_HOME}/build-release-weekly
+WXCRAFTER_BUILD_DIR=${CODELITE_HOME}/.build-release-weekly-wxcapp
+CODELITE_BUILD_DIR=${CODELITE_HOME}/.build-release-weekly
 
 echo "-- CodeLite build dir is: ${CODELITE_BUILD_DIR}"
 

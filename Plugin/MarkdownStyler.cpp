@@ -6,8 +6,6 @@
 namespace
 {
 
-/* ------------------------------------------------------------------ */
-/*  Helper – is this character allowed in a URL without percent‑encoding? */
 inline bool IsValidUrlChar(wxChar c)
 {
     // Unreserved: ALPHA / DIGIT / "-" / "." / "_" / "~"
@@ -164,9 +162,8 @@ wxString MarkdownStyler::GetUrlFromPosition(int pos)
 
     wxString prefix, suffix;
     for (int i = pos; i < end_pos; ++i) {
-        char c = m_ctrl->GetCharAt(i);
-        if (IsValidUrlChar(c)) {
-            suffix << c;
+        if (m_ctrl->GetStyleAt(i) == MarkdownStyles::kUrl) {
+            suffix << static_cast<wxChar>(m_ctrl->GetCharAt(i));
         } else {
             break;
         }
@@ -174,8 +171,8 @@ wxString MarkdownStyler::GetUrlFromPosition(int pos)
 
     for (int i = pos - 1; pos >= start_pos; --i) {
         char c = m_ctrl->GetCharAt(i);
-        if (IsValidUrlChar(c)) {
-            prefix.Prepend(c);
+        if (m_ctrl->GetStyleAt(i) == MarkdownStyles::kUrl) {
+            prefix.Prepend(static_cast<wxChar>(m_ctrl->GetCharAt(i)));
         } else {
             break;
         }
@@ -208,8 +205,11 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
             // not a number, run the switch statement.
             switch (ch) {
             case 'h':
-                if (accessor.GetSubstr(7) == "http://" || accessor.GetSubstr(8) == "https://") {
-                    accessor.SetStyle(MarkdownStyles::kUrl, 1);
+                if (accessor.GetSubstr(7) == "http://") {
+                    accessor.SetStyle(MarkdownStyles::kUrl, 7);
+                    m_states.push(MarkdownState::kUrl);
+                } else if (accessor.GetSubstr(8) == "https://") {
+                    accessor.SetStyle(MarkdownStyles::kUrl, 8);
                     m_states.push(MarkdownState::kUrl);
                 } else {
                     accessor.SetStyle(MarkdownStyles::kDefault, 1);

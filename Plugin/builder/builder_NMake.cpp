@@ -1122,8 +1122,7 @@ void BuilderNMake::CreatePostBuildEvents(ProjectPtr proj, BuildConfigPtr bldConf
     }
 
     // generate postbuild commands
-    BuildCommandList cmds;
-    bldConf->GetPostBuildCommands(cmds);
+    BuildCommandList cmds = bldConf->GetPostBuildCommands();
 
     // Loop over the commands and replace any macros
     for (BuildCommand& cmd : cmds) {
@@ -1158,10 +1157,7 @@ void BuilderNMake::CreatePostBuildEvents(ProjectPtr proj, BuildConfigPtr bldConf
 
 bool BuilderNMake::HasPrebuildCommands(BuildConfigPtr bldConf) const
 {
-    BuildCommandList cmds;
-    bldConf->GetPreBuildCommands(cmds);
-
-    for (const auto& cmd : cmds) {
+    for (const auto& cmd : bldConf->GetPreBuildCommands()) {
         if (cmd.GetEnabled()) {
             return true;
         }
@@ -1171,7 +1167,6 @@ bool BuilderNMake::HasPrebuildCommands(BuildConfigPtr bldConf) const
 
 void BuilderNMake::CreatePreBuildEvents(ProjectPtr proj, BuildConfigPtr bldConf, wxString& text)
 {
-    BuildCommandList cmds;
     wxString name = bldConf->GetName();
     name = NormalizeConfigName(name);
 
@@ -1183,7 +1178,7 @@ void BuilderNMake::CreatePreBuildEvents(ProjectPtr proj, BuildConfigPtr bldConf,
         text << bldConf->GetPreBuildCustom() << "\n";
     }
     text << "\n";
-    bldConf->GetPreBuildCommands(cmds);
+    BuildCommandList cmds = bldConf->GetPreBuildCommands();
 
     // Loop over the commands and replace any macros
     for (BuildCommand& cmd : cmds) {
@@ -1687,12 +1682,9 @@ wxString BuilderNMake::GetCdCmd(const wxFileName& path1, const wxFileName& path2
 
 void BuilderNMake::CreateCustomPostBuildEvents(BuildConfigPtr bldConf, wxString& text)
 {
-    BuildCommandList cmds;
-
-    bldConf->GetPostBuildCommands(cmds);
     bool first(true);
-    if (!cmds.empty()) {
-        for (const auto& cmd : cmds) {
+    if (!bldConf->GetPostBuildCommands().empty()) {
+        for (const auto& cmd : bldConf->GetPostBuildCommands()) {
             if (cmd.GetEnabled()) {
                 if (first) {
                     text << "\t@echo Executing Post Build commands ...\n";
@@ -1709,12 +1701,9 @@ void BuilderNMake::CreateCustomPostBuildEvents(BuildConfigPtr bldConf, wxString&
 
 void BuilderNMake::CreateCustomPreBuildEvents(BuildConfigPtr bldConf, wxString& text)
 {
-    BuildCommandList cmds;
-
-    bldConf->GetPreBuildCommands(cmds);
-    bool first(true);
-    if (!cmds.empty()) {
-        for (const auto& cmd : cmds) {
+    if (!bldConf->GetPreBuildCommands().empty()) {
+        bool first(true);
+        for (const auto& cmd : bldConf->GetPreBuildCommands()) {
             if (cmd.GetEnabled()) {
                 if (first) {
                     text << "\t@echo Executing Pre Build commands ...\n";
@@ -1984,10 +1973,7 @@ wxString BuilderNMake::DoGetMarkerFileDir(const wxString& projname, const wxStri
 
 bool BuilderNMake::HasPostbuildCommands(BuildConfigPtr bldConf) const
 {
-    BuildCommandList cmds;
-    bldConf->GetPostBuildCommands(cmds);
-
-    for (const auto& cmd : cmds) {
+    for (const auto& cmd : bldConf->GetPostBuildCommands()) {
         if (cmd.GetEnabled()) {
             return true;
         }

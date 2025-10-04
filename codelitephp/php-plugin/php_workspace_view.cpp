@@ -522,7 +522,7 @@ void PHPWorkspaceView::OnDeleteProject(wxCommandEvent& e)
         if(itemData && itemData->IsProject()) {
             if(wxMessageBox(wxString() << _("Are you sure you want to remove project '") << itemData->GetProjectName()
                                        << "'?",
-                            _("CodeLite"), wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT, wxTheApp->GetTopWindow()) == wxYES) {
+                            wxT("CodeLite"), wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT, wxTheApp->GetTopWindow()) == wxYES) {
                 PHPWorkspace::Get()->DeleteProject(itemData->GetProjectName());
                 m_treeCtrlView->Delete(selection);
 

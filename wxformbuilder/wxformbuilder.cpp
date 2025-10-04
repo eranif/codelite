@@ -230,7 +230,7 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
     wxFileName tmplFile(templateFile);
     if (!tmplFile.FileExists()) {
         wxMessageBox(wxString::Format(_("Can't find wxFormBuilder template file '%s'"), tmplFile.GetFullPath().c_str()),
-                     _("CodeLite"),
+                     wxT("CodeLite"),
                      wxOK | wxCENTER | wxICON_WARNING);
         return;
     }
@@ -245,7 +245,7 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
         wxFileName fbpFile(files_path, data.file + wxT(".fbp"));
         if (!wxCopyFile(tmplFile.GetFullPath(), fbpFile.GetFullPath())) {
             wxMessageBox(wxString::Format(_("Failed to copy template file to '%s'"), fbpFile.GetFullPath().c_str()),
-                         _("CodeLite"),
+                         wxT("CodeLite"),
                          wxOK | wxCENTER | wxICON_WARNING);
             return;
         }
@@ -253,7 +253,7 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
         wxString content;
         if (!ReadFileWithConversion(fbpFile.GetFullPath().c_str(), content)) {
             wxMessageBox(wxString::Format(_("Failed to read file '%s'"), fbpFile.GetFullPath().c_str()),
-                         _("CodeLite"),
+                         wxT("CodeLite"),
                          wxOK | wxCENTER | wxICON_WARNING);
             return;
         }
@@ -265,7 +265,7 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
 
         if (!WriteFileWithBackup(fbpFile.GetFullPath().c_str(), content, false)) {
             wxMessageBox(wxString::Format(_("Failed to write file '%s'"), fbpFile.GetFullPath().c_str()),
-                         _("CodeLite"),
+                         wxT("CodeLite"),
                          wxOK | wxCENTER | wxICON_WARNING);
             return;
         }
@@ -310,7 +310,7 @@ void wxFormBuilder::OpenWithWxFb(wxCommandEvent& e)
             DoLaunchWxFB(item.m_fileName.GetFullPath());
         } else {
             wxMessageBox(_("Please select a 'fbp' (Form Builder Project) file only"),
-                         _("CodeLite"),
+                         wxT("CodeLite"),
                          wxOK | wxCENTER | wxICON_INFORMATION);
             return;
         }
@@ -324,7 +324,7 @@ void wxFormBuilder::DoLaunchWxFB(const wxString& file)
     //		wxMessageBox(_("Failed to launch wxFormBuilder, no path specified\nPlease set wxFormBuilder path from
     // Plugins
     //-> wxFormBuilder -> Settings..."),
-    //		             _("CodeLite"), wxOK|wxCENTER|wxICON_WARNING);
+    //		             wxT("CodeLite"), wxOK|wxCENTER|wxICON_WARNING);
     //		return;
     //	}
     ConfFormBuilder confData;

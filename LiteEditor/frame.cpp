@@ -757,7 +757,7 @@ clMainFrame::clMainFrame(
     // Initialise the bitmaps once.
     clBitmaps::Initialise(this);
 
-    // constuct the UI
+    // construct the UI
     m_frameGeneralInfo = inf;
     Construct();
 }
@@ -1250,7 +1250,7 @@ void clMainFrame::CreateGUIControls()
     // Get the best caption size
 #ifndef __WXMAC__
     int captionSize = GetBestXButtonSize(this);
-    captionSize += 4; // 2 pixles space for bottom and top
+    captionSize += 4; // 2 pixels space for bottom and top
 #else
     auto font = DrawingUtils::GetDefaultGuiFont();
     wxClientDC client_dc{this};
@@ -2074,7 +2074,7 @@ void clMainFrame::OnCloseWorkspace(wxCommandEvent& event)
     e.SetEventObject(this);
     EventNotifier::Get()->ProcessEvent(e);
 
-    // In any case, make sure that we dont have a workspace opened
+    // In any case, make sure that we don't have a workspace opened
     if (ManagerST::Get()->IsWorkspaceOpen()) {
         ManagerST::Get()->CloseWorkspace();
     }
@@ -2580,7 +2580,7 @@ void clMainFrame::OnBuildEnded(clBuildEvent& event)
     case ePostBuildEndAction::kNone:
         break;
     case ePostBuildEndAction::kRunProject: {
-        // If the build process was part of a 'Build and Run' command, check whether an erros
+        // If the build process was part of a 'Build and Run' command, check whether an error
         // occurred during build process, if non, launch the output
         wxStandardID answer = wxID_YES;
         bool build_ended_successfully = ManagerST::Get()->IsBuildEndedSuccessfully();
@@ -2849,7 +2849,7 @@ void clMainFrame::ExecuteNoDebug(bool promptToBuild)
         if (res == wxID_YES) {
             QueueCommand buildCommand(QueueCommand::kBuild);
             ManagerST::Get()->PushQueueCommand(buildCommand);
-            commandExecute.SetCheckBuildSuccess(true); // execute only if build was successfull
+            commandExecute.SetCheckBuildSuccess(true); // execute only if build was successful
         }
     }
 
@@ -2911,7 +2911,7 @@ void clMainFrame::OnTimer(wxTimerEvent& event)
 
     // ReTag workspace database if needed (this can happen due to schema version changes)
     // It is important to place the retag code here since the retag workspace should take place after
-    // the parser search patha have been updated (if needed)
+    // the parser search path have been updated (if needed)
     if (m_workspaceRetagIsRequired) {
         m_workspaceRetagIsRequired = false;
         wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("full_retag_workspace"));
@@ -3553,7 +3553,7 @@ void clMainFrame::CompleteInitialization()
     OnShowTabBar(eventShowTabBar);
     ShowOrHideCaptions();
 
-    TabGroupsManager::Get(); // Ensure that the events are binded
+    TabGroupsManager::Get(); // Ensure that the events are bounded
 
     ManagerST::Get()->GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
     m_initCompleted = true;
@@ -3694,7 +3694,7 @@ void clMainFrame::OnAppActivated(wxActivateEvent& e)
     } else if (m_theFrame) {
 
 #ifndef __WXMAC__
-        /// this code causes crash on Mac, since it destorys an active CCBox
+        /// this code causes crash on Mac, since it destroys an active CCBox
         clEditor* editor = GetMainBook()->GetActiveEditor();
         if (editor) {
             // we are loosing the focus
@@ -4730,7 +4730,7 @@ bool clMainFrame::ReloadExternallyModifiedProjectFiles()
             GetEventHandler()->ProcessEvent(evtReload);
 
         } else {
-            // user cancelled the dialog or chosed not to reload the workspace
+            // user cancelled the dialog or chose not to reload the workspace
             if (GetMainBook()->GetActiveEditor()) {
                 GetMainBook()->GetActiveEditor()->CallAfter(&clEditor::SetActive);
             }

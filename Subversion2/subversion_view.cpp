@@ -870,7 +870,7 @@ void SubversionView::OnFileAdded(clCommandEvent& event)
 
 void SubversionView::OnFileRenamed(clFileSystemEvent& event)
 {
-    // If the Svn Client Version is set to 0.0 it means that we dont have SVN client installed
+    // If the Svn Client Version is set to 0.0 it means that we don't have SVN client installed
     if ((event.GetEventObject() != this) && m_plugin->GetSvnClientVersion() &&
         (m_plugin->GetSettings().GetFlags() & SvnRenameFileInRepo)) {
         wxString oldName = event.GetPath();
@@ -948,7 +948,7 @@ void SubversionView::OnItemActivated(wxDataViewEvent& event)
         // C:\src\codelite\codelitephp\.svn\pristine\ae\ae25b80b53f432c6124c455ef815679df6ed4ea4.svn-base
         // C:\src\codelite\codelitephp\php-plugin\XDebugManager.cpp
         command << " diff \"" << data->GetFilepath() << "\" --diff-cmd=";
-        // We dont have proper echo on windows that can be used here, so
+        // We don't have proper echo on windows that can be used here, so
         // we provide our own batch script wrapper
         wxString echo = wxFileName(clStandardPaths::Get().GetBinaryFullPath("codelite-echo")).GetFullPath();
         command << StringUtils::WrapWithQuotes(echo);

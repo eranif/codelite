@@ -1409,7 +1409,7 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
     }
 
     if (event.GetKey() != 13) {
-        // Dont store last character if it was \r
+        // Don't store last character if it was \r
         m_lastCharEntered = event.GetKey();
 
         // Since we already entered the character...
@@ -1694,7 +1694,7 @@ bool clEditor::SaveFileAs(const wxString& newname, const wxString& savePath)
     // get the path
     wxFileName name(dlg.GetPath());
 
-    // Prepare the "SaveAs" event, but dont send it just yet
+    // Prepare the "SaveAs" event, but don't send it just yet
     clFileSystemEvent saveAsEvent(wxEVT_FILE_SAVEAS);
     saveAsEvent.SetPath(m_fileName.Exists() ? m_fileName.GetFullPath() : wxString(""));
     saveAsEvent.SetNewpath(name.GetFullPath());
@@ -3149,7 +3149,7 @@ void clEditor::Create(const wxString& project, const wxFileName& fileName)
     SetProject(project);
     // let the editor choose the syntax highlight to use according to file extension
     // and set the editor properties to default
-    SetSyntaxHighlight(false); // Dont call 'UpdateColors' it is called in 'OpenFile'
+    SetSyntaxHighlight(false); // Don't call 'UpdateColors' it is called in 'OpenFile'
     // reload the file from disk
     OpenFile();
 }
@@ -3162,7 +3162,7 @@ void clEditor::InsertTextWithIndentation(const wxString& text, int lineno)
 
 wxString clEditor::FormatTextKeepIndent(const wxString& text, int pos, size_t flags)
 {
-    // keep the page idnetation level
+    // keep the page indentation level
     wxString textToInsert(text);
     wxString indentBlock;
 
@@ -4481,7 +4481,7 @@ int clEditor::DoGetOpenBracePos()
 
     // determine the closest open brace from the current caret position
     int depth(0);
-    int char_tested(0); // we add another performance tuning here: dont test more than 256 characters backward
+    int char_tested(0); // we add another performance tuning here: don't test more than 256 characters backward
     bool exit_loop(false);
 
     int pos = PositionBefore(GetCurrentPos());
@@ -4961,7 +4961,7 @@ void clEditor::HighlightWord(StringHighlightOutput* highlightOutput)
         for (size_t i = 0; i < matches.size(); i++) {
             const std::pair<int, int>& p = matches.at(i);
 
-            // Dont highlight the current selection
+            // Don't highlight the current selection
             if (p.first != selStart) {
                 IndicatorFillRange(p.first, p.second);
             }

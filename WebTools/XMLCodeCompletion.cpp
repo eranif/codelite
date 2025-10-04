@@ -41,7 +41,7 @@ void XMLCodeCompletion::SuggestClosingTag(IEditor* editor, bool html)
     XMLBuffer buffer(ctrl->GetTextRange(0, ctrl->GetCurrentPos()), html);
     buffer.Parse();
     if(buffer.InCData() || buffer.InComment()) {
-        // dont offer code completion when inside CDATA or COMMENT blocks
+        // don't offer code completion when inside CDATA or COMMENT blocks
         return;
     }
 
@@ -360,7 +360,7 @@ void XMLCodeCompletion::Reload()
 
 int XMLCodeCompletion::GetWordStartPos(IEditor* editor)
 {
-    // Dont use WordStartPos / WordEndPos, instead, search for the first "<"
+    // Don't use WordStartPos / WordEndPos, instead, search for the first "<"
     // from this line backward and use that as the first insert position
     int minPos = editor->PosFromLine(editor->GetCurrentLine());
     int curpos = editor->GetCurrentPosition() - 1;

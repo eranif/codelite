@@ -23,7 +23,7 @@ JSONItem LSP::MessageWithParams::ToJSON(const wxString& name) const
 
 void LSP::MessageWithParams::FromJSON(const JSONItem& json)
 {
-    // we dont need to un-serialize a request object
+    // we don't need to un-serialize a request object
     wxUnusedVar(json);
 }
 

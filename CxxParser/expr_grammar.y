@@ -399,7 +399,7 @@ void expr_consumeTemplateDecl()
 }
 
 void expr_syncParser(){
-	//dont do anything, a hook to allow us to implement some
+	//don't do anything, a hook to allow us to implement some
 	//nice error recovery if needed
 }
 

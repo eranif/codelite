@@ -269,7 +269,7 @@ void DiffSideBySidePanel::Diff()
 
     if (m_config.IsIgnoreWhitespace() && !m_config.IsSingleViewMode()) {
         // If the user wants to ignore whitespace diffs, go through first to remove them
-        // Note that this doesn't work in singleview mode where each change is shown on
+        // Note that this doesn't work in single-view mode where each change is shown on
         // 2 lines, before & after. Having those unmarked would be very confusing
         for (size_t l = 0, r = 0; (l < resultLeft.size()) && (r < resultRight.size()); ++l, ++r) {
             if (resultLeft.at(l).m_type == clDTL::LINE_REMOVED || resultLeft.at(l).m_type == clDTL::LINE_ADDED) {
@@ -726,8 +726,8 @@ void DiffSideBySidePanel::DoGetPositionsToCopy(
 
     for (int i = from_line; i < to_line; ++i) {
         if ((stc->MarkerGet(i) & PLACE_HOLDER_MARKER_MASK)) {
-            placeHolderMarkerFirstLine = i;      // first line of the placholder marker
-            placeHolderMarkerLastLine = to_line; // last line of the placholder marker
+            placeHolderMarkerFirstLine = i;      // first line of the placeholder marker
+            placeHolderMarkerLastLine = to_line; // last line of the placeholder marker
             break;
         }
     }
@@ -760,7 +760,7 @@ void DiffSideBySidePanel::DoSave(wxStyledTextCtrl* stc, const wxFileName& fn)
     // Emit a file-saved event
     EventNotifier::Get()->PostFileSavedEvent(fn.GetFullPath());
 
-    // Reload any file opened in codelite
+    // Reload any file opened in CodeLite
     EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
 
 #if USE_SFTP

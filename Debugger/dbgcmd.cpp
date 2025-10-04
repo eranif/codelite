@@ -956,7 +956,7 @@ bool DbgCmdListChildren::ProcessOutput(const wxString& line)
 
     e.m_varObjChildren.reserve(children.size());
 
-    // Convert the parser output to codelite data structure
+    // Convert the parser output to CodeLite data structure
     for (size_t i = 0; i < children.size(); ++i) {
         e.m_varObjChildren.push_back(FromParserOutput(*children[i]));
     }
@@ -1240,7 +1240,7 @@ bool DbgCmdHandlerRegisterNames::ProcessOutput(const wxString& line)
 // +++-----------------------------
 bool DbgCmdHandlerRegisterValues::ProcessOutput(const wxString& line)
 {
-    // Process the output and report it back to codelite
+    // Process the output and report it back to CodeLite
     clCommandEvent event(wxEVT_DEBUGGER_LIST_REGISTERS);
     DbgRegistersVec_t registers;
 

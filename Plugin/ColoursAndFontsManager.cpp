@@ -478,7 +478,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
     }
 
     // Try this:
-    // Use the FileExtManager to get the file type by examinig its content
+    // Use the FileExtManager to get the file type by examining its content
     LexerConf::Ptr_t lexerByContent; // Null by default
     FileExtManager::FileType fileType = FileExtManager::TypeOther;
     if (!FileExtManager::AutoDetectByContent(filename, fileType)) {
@@ -1064,7 +1064,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
         auto& sp_word_0 = lexer->GetProperty(wxSTC_P_WORD);
         auto& sp_word_2 = lexer->GetProperty(wxSTC_P_WORD2);
         if (sp_word_2.GetFgColour() == sp_word_0.GetFgColour()) {
-            // old configuration, dont set the variables fg colour to the same colour as the keywords
+            // old configuration, don't set the variables fg colour to the same colour as the keywords
             sp_word_2.SetFgColour(lexer->GetProperty(wxSTC_P_DEFNAME).GetFgColour());
         }
     }
@@ -1224,7 +1224,7 @@ bool ColoursAndFontsManager::ImportLexersFile(const wxFileName& inputFile, bool 
             }
             v.push_back(lexer);
         } else {
-            // We dont have this theme, add it
+            // We don't have this theme, add it
             if (iter == v.end()) {
                 v.push_back(lexer);
             }

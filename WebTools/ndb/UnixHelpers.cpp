@@ -194,7 +194,7 @@ int StartProcess(const wxString& nodejs, const wxString& scriptPath, int& pid)
         execvp(_argv[0], _argv);
 
         // Nothing below this line should be executed by child process. If so,
-        // it means that the execl function wasn't successfull, so lets exit:
+        // it means that the execl function wasn't successful, so lets exit:
         exit(1);
     }
 

@@ -231,7 +231,7 @@ void mdparser::Parser::parse(const wxString& input_str, write_callback_t on_writ
         }
 
         if (tok.first == T_TEXT && (tok.second == ' ' || tok.second == '\t')) {
-            // dont change the lasta seen state for whitespace
+            // don't change the last seen state for whitespace
             continue;
         }
         last_state = tok.first;

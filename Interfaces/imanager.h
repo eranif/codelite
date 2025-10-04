@@ -338,8 +338,8 @@ public:
     virtual wxString GetStartupDirectory() const = 0;
 
     /**
-     * @brief return the installation directory of codelite
-     * @return a full path to codelite installation
+     * @brief return the installation directory of CodeLite
+     * @return a full path to CodeLite installation
      */
     virtual wxString GetInstallDirectory() const = 0;
 
@@ -419,7 +419,7 @@ public:
 
     /**
      * @brief return true if toolbars are allowed for plugins. This is useful for the Mac port of
-     * codelite. On Mac, only single toolbar is allowed in the application (otherwise, the application
+     * CodeLite. On Mac, only single toolbar is allowed in the application (otherwise, the application
      * does not feet into the environment)
      * @return true if plugin can create a toolbar, false otherwise
      */
@@ -502,7 +502,7 @@ public:
     virtual void ProcessCommandQueue() = 0;
 
     /**
-     * @brief place a command on the internal queue of codelite to be processed. Each command is executed on
+     * @brief place a command on the internal queue of CodeLite to be processed. Each command is executed on
      * a separated process. The queue will not start processing, until a call to ProcessCommandQueue() is issued
      * @param cmd command to process
      */

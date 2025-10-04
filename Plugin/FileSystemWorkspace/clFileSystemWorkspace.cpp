@@ -344,7 +344,7 @@ void clFileSystemWorkspace::DoOpen()
     // Update the build configurations button
     GetView()->UpdateConfigs(GetSettings().GetConfigs(), GetConfig() ? GetConfig()->GetName() : wxString());
 
-    // and finally, request codelite to keep this workspace in the recently opened workspace list
+    // and finally, request CodeLite to keep this workspace in the recently opened workspace list
     clGetManager()->AddWorkspaceToRecentlyUsedList(m_filename);
 
     // Cache the source files from the workspace directories
@@ -379,7 +379,7 @@ void clFileSystemWorkspace::DoClose()
     // Clear the UI
     GetView()->Clear();
 
-    // Notify codelite to close the currently opened workspace
+    // Notify CodeLite to close the currently opened workspace
     wxCommandEvent eventClose(wxEVT_MENU, wxID_CLOSE_ALL);
     eventClose.SetEventObject(EventNotifier::Get()->TopFrame());
     EventNotifier::Get()->TopFrame()->GetEventHandler()->ProcessEvent(eventClose);
@@ -738,7 +738,7 @@ void clFileSystemWorkspace::DoBuild(const wxString& target)
     // pass TERM to get colours from the build process
     envList.push_back({"TERM", "xterm-256color"});
 
-    // Start the process with the environemt
+    // Start the process with the environment
     wxString ssh_account;
     wxString wd = GetDir();
 
@@ -809,7 +809,7 @@ void clFileSystemWorkspace::DoCreate(const wxString& name, const wxString& path,
         }
     }
 
-    // If an workspace is opened and it is the same one as this, dont do nothing
+    // If a workspace is opened and it is the same one as this, do nothing
     if (m_isLoaded && (GetFileName() == fn.GetFullPath())) {
         return;
     }

@@ -20,7 +20,7 @@ class WXDLLIMPEXP_SDK clRegistery
 
 public:
     clRegistery(const wxString& key);
-    virtual ~clRegistery();
+    virtual ~clRegistery() = default;
 
     wxString ReadValueString(const wxString& valueName);
     /**

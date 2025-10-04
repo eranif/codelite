@@ -1,9 +1,5 @@
 #include "PropertyDescriptor.h"
 
-PropertyDescriptor::PropertyDescriptor() {}
-
-PropertyDescriptor::~PropertyDescriptor() {}
-
 void PropertyDescriptor::FromJSON(const JSONItem& json)
 {
     m_name = json.namedObject("name").toString();

@@ -48,7 +48,7 @@ public:
 
 public:
     wxCustomStatusBarArt(const wxString& name);
-    virtual ~wxCustomStatusBarArt() {}
+    virtual ~wxCustomStatusBarArt() = default;
 
     virtual void DrawText(wxDC& dc, wxCoord x, wxCoord y, const wxString& text);
     virtual void DrawFieldSeparator(wxDC& dc, const wxRect& fieldRect);
@@ -86,7 +86,7 @@ public:
         : m_parent(parent)
     {
     }
-    virtual ~wxCustomStatusBarField() {}
+    virtual ~wxCustomStatusBarField() = default;
 
     bool IsAutoWidth() const { return m_flags & AUTO_WIDTH; }
     void SetAutoWidth(bool b) { m_flags |= AUTO_WIDTH; }
@@ -147,7 +147,7 @@ public:
     }
 
     // Destructor overrides the base class virtual destructor
-    ~wxCustomStatusBarFieldText() override {}
+    ~wxCustomStatusBarFieldText() override = default;
 
     // Render overrides the base class virtual function
     void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art) override;
@@ -177,7 +177,7 @@ public:
     }
 
     // Destructor overrides the base class virtual destructor
-    ~wxCustomStatusBarSpacerField() override {}
+    ~wxCustomStatusBarSpacerField() override = default;
 
     // Render overrides the base class virtual function
     void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art) override;
@@ -205,7 +205,7 @@ public:
     }
 
     // Destructor overrides the base class virtual destructor
-    ~wxCustomStatusBarBitmapField() override {}
+    ~wxCustomStatusBarBitmapField() override = default;
 
     // Render overrides the base class virtual function
     void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art) override;
@@ -243,7 +243,7 @@ public:
                                     const wxSize& animSize);
 
     // Destructor overrides the base class virtual destructor
-    ~wxCustomStatusBarAnimationField() override;
+    ~wxCustomStatusBarAnimationField() override = default;
 
     // Render overrides a virtual function in wxCustomStatusBarField
     void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art) override;
@@ -286,7 +286,7 @@ public:
      * @brief construct animation field.
      */
     wxCustomStatusBarControlField(wxCustomStatusBar* parent, wxControl* control);
-    ~wxCustomStatusBarControlField() override;
+    ~wxCustomStatusBarControlField() override = default;
 
     void Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art) override;
 

@@ -7,8 +7,6 @@ DebuggerScriptParsed::DebuggerScriptParsed()
 {
 }
 
-DebuggerScriptParsed::~DebuggerScriptParsed() {}
-
 void DebuggerScriptParsed::Process(clWebSocketClient& socket, const JSONItem& json)
 {
     wxString scriptId = json.namedObject("scriptId").toString();

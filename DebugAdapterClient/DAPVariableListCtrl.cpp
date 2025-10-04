@@ -28,8 +28,6 @@ DAPVariableListCtrl::DAPVariableListCtrl(wxWindow* parent, dap::Client* client, 
     Bind(wxEVT_TREE_ITEM_MENU, &DAPVariableListCtrl::OnMenu, this);
 }
 
-DAPVariableListCtrl::~DAPVariableListCtrl() {}
-
 void DAPVariableListCtrl::OnItemExpanding(wxTreeEvent& event)
 {
     event.Skip();

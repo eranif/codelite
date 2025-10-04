@@ -55,8 +55,6 @@ uisettingsdlg::uisettingsdlg(wxWindow* parent, IManager* mgr) //, CallGraph *plu
     WindowAttrManager::Load(this);
 }
 
-uisettingsdlg::~uisettingsdlg() {}
-
 void uisettingsdlg::OnButton_click_select_gprof(wxCommandEvent& event)
 {
     wxUnusedVar(event);

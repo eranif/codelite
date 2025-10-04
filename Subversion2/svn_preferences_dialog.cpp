@@ -56,8 +56,6 @@ SvnPreferencesDialog::SvnPreferencesDialog(wxWindow* parent, Subversion2* plugin
     WindowAttrManager::Load(this);
 }
 
-SvnPreferencesDialog::~SvnPreferencesDialog() {}
-
 void SvnPreferencesDialog::OnBrowseSvnExe(wxCommandEvent& event)
 {
     wxUnusedVar(event);

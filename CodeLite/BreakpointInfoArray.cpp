@@ -1,9 +1,5 @@
 #include "BreakpointInfoArray.hpp"
 
-BreakpointInfoArray::BreakpointInfoArray() {}
-
-BreakpointInfoArray::~BreakpointInfoArray() {}
-
 void BreakpointInfoArray::DeSerialize(Archive& arch)
 {
     size_t bt_count = 0;

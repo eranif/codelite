@@ -45,7 +45,7 @@ public:
                    const wxString& filespec,
                    const wxString& excludeFolders = "",
                    wxProgressDialog* progress = NULL);
-    virtual ~FilesCollector();
+    virtual ~FilesCollector() = default;
 
     /**
      * @brief collect all files and folder starting from a given root

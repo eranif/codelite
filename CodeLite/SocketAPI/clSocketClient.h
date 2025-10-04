@@ -34,8 +34,8 @@ class WXDLLIMPEXP_CL clSocketClient : public clSocketBase
     wxString m_path;
 
 public:
-    clSocketClient();
-    virtual ~clSocketClient();
+    clSocketClient() = default;
+    virtual ~clSocketClient() = default;
 
     /**
      * @brief connect to a remote socket, using unix-domain socket

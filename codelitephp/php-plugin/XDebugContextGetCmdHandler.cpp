@@ -11,8 +11,6 @@ XDebugContextGetCmdHandler::XDebugContextGetCmdHandler(XDebugManager* mgr, int t
 {
 }
 
-XDebugContextGetCmdHandler::~XDebugContextGetCmdHandler() {}
-
 void XDebugContextGetCmdHandler::Process(const wxXmlNode* response)
 {
     XVariable::List_t variables;

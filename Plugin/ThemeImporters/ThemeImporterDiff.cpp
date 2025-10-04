@@ -6,8 +6,6 @@
 
 ThemeImporterDiff::ThemeImporterDiff() { SetFileExtensions("*.diff;*.patch;Diff;*.Diff"); }
 
-ThemeImporterDiff::~ThemeImporterDiff() {}
-
 LexerConf::Ptr_t ThemeImporterDiff::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, "diff", wxSTC_LEX_DIFF);

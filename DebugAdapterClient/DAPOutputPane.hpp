@@ -17,7 +17,7 @@ class DAPOutputPane : public wxPanel
 
 public:
     DAPOutputPane(wxWindow* parent, clModuleLogger& log);
-    virtual ~DAPOutputPane();
+    virtual ~DAPOutputPane() = default;
 
     void AddEvent(dap::ModuleEvent* event);
     void AddEvent(dap::OutputEvent* event);

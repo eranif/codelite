@@ -49,7 +49,7 @@ public:
         : requestType(type)
     {
     }
-    virtual ~PHPParserThreadRequest() {}
+    virtual ~PHPParserThreadRequest() = default;
 };
 
 class PHPParserThread : public WorkerThread
@@ -62,8 +62,8 @@ public:
     static void Release();
 
 private:
-    PHPParserThread();
-    virtual ~PHPParserThread();
+    PHPParserThread() = default;
+    virtual ~PHPParserThread() = default;
     void ParseFiles(PHPParserThreadRequest* request);
     void ParseFile(PHPParserThreadRequest* request);
 

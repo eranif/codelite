@@ -29,7 +29,7 @@ private:
 public:
     int GetReadFd() const { return m_readFd; }
     int GetWriteFd() const { return m_writeFd; }
-    CPipe() {}
+    CPipe() = default;
     void Close()
     {
         CLOSE_FD(m_readFd);

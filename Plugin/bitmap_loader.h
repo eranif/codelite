@@ -44,8 +44,8 @@ class WXDLLIMPEXP_SDK clMimeBitmaps
     std::vector<wxBitmap> m_disabled_bitmaps;
 
 public:
-    clMimeBitmaps();
-    ~clMimeBitmaps();
+    clMimeBitmaps() = default;
+    ~clMimeBitmaps() = default;
 
     /**
      * @brief return the bitmap index that matches a given file type
@@ -183,7 +183,7 @@ protected:
 
 private:
     BitmapLoader(wxWindow* win, bool darkTheme);
-    virtual ~BitmapLoader();
+    virtual ~BitmapLoader() = default;
 
     void AddBitmapInternal(const wxBitmapBundle& bundle, const wxString& base_name);
     void Initialize(bool darkTheme);

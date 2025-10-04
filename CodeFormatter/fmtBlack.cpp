@@ -16,5 +16,3 @@ fmtBlack::fmtBlack()
     SetCommand({ black_exe.value_or("black"), "--line-length", "80", R"#("$(CurrentFileRelPath)")#" });
     SetEnabled(black_exe.has_value());
 }
-
-fmtBlack::~fmtBlack() {}

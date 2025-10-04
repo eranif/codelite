@@ -3,8 +3,6 @@
 #include "codelite_events.h"
 #include "event_notifier.h"
 
-clThemedComboBox::clThemedComboBox() {}
-
 clThemedComboBox::~clThemedComboBox()
 {
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clThemedComboBox::OnThemeChanged, this);

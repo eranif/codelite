@@ -13,9 +13,6 @@ WordCompletionThread::WordCompletionThread(WordCompletionDictionary* dict)
 {
 }
 
-WordCompletionThread::~WordCompletionThread()
-{
-}
 void WordCompletionThread::ProcessRequest(ThreadRequest* request)
 {
     WordCompletionThreadRequest* req = dynamic_cast<WordCompletionThreadRequest*>(request);

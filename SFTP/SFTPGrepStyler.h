@@ -7,8 +7,8 @@ class SFTPGrepStyler : public clFindResultsStyler
 {
 public:
     SFTPGrepStyler(wxStyledTextCtrl* stc);
-    SFTPGrepStyler();
-    virtual ~SFTPGrepStyler();
+    SFTPGrepStyler() = default;
+    virtual ~SFTPGrepStyler() = default;
 
     void StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e, bool hasScope);
     void Reset();

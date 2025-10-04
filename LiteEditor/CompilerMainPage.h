@@ -38,7 +38,7 @@ class CompilerPatternDlg : public CompilerPatternDlgBase
 {
 public:
     CompilerPatternDlg(wxWindow* parent, const wxString& title);
-    virtual ~CompilerPatternDlg();
+    virtual ~CompilerPatternDlg() = default;
 
     void SetPattern(const wxString& pattern, const wxString& lineIdx, const wxString& fileIdx,
                     const wxString& columnIndex);
@@ -154,7 +154,7 @@ protected:
 
 public:
     CompilerMainPage(wxWindow* parent);
-    virtual ~CompilerMainPage();
+    virtual ~CompilerMainPage() = default;
     void LoadCompilers();
     void Save();
 

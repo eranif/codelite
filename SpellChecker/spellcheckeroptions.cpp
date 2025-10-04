@@ -55,11 +55,6 @@ SpellCheckerOptions::SpellCheckerOptions()
 }
 
 // ------------------------------------------------------------
-SpellCheckerOptions::~SpellCheckerOptions()
-{
-}
-
-// ------------------------------------------------------------
 void SpellCheckerOptions::DeSerialize( Archive& arch )
 {
     arch.Read( wxT( "m_dictionary" ), m_dictionary );

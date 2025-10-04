@@ -40,7 +40,7 @@ class WXDLLIMPEXP_SDK clTabCtrlDropTarget : public wxTextDropTarget
 public:
     clTabCtrlDropTarget(clTabCtrl* tabCtrl);
     clTabCtrlDropTarget(clGenericNotebook* notebook);
-    virtual ~clTabCtrlDropTarget();
+    virtual ~clTabCtrlDropTarget() = default;
     virtual bool OnDropText(wxCoord x, wxCoord y, const wxString& data);
 };
 

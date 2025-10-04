@@ -35,10 +35,6 @@
 int wxEVT_CSCOPE_THREAD_DONE = wxNewId();
 int wxEVT_CSCOPE_THREAD_UPDATE_STATUS = wxNewId();
 
-CscopeDbBuilderThread::CscopeDbBuilderThread() {}
-
-CscopeDbBuilderThread::~CscopeDbBuilderThread() {}
-
 void CscopeDbBuilderThread::ProcessRequest(ThreadRequest* request)
 {
     CscopeRequest* req = (CscopeRequest*)request;

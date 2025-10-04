@@ -34,7 +34,7 @@ class WXDLLIMPEXP_SDK ThemeImporterBatch : public ThemeImporterBase
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
     ThemeImporterBatch();
-    ~ThemeImporterBatch();
+    ~ThemeImporterBatch() = default;
 };
 
 #endif // ECLIPSEBATCHTHEMEIMPORTER_H

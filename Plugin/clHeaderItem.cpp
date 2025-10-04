@@ -13,9 +13,6 @@ clHeaderItem::clHeaderItem(wxWindow* parent, const wxString& label, const wxBitm
     , m_parent(parent)
 {
 }
-clHeaderItem::clHeaderItem() {}
-
-clHeaderItem::~clHeaderItem() {}
 
 void clHeaderItem::Render(wxDC& dc, const clColours& colours, int flags)
 {

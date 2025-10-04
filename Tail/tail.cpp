@@ -38,8 +38,6 @@ Tail::Tail(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &Tail::OnInitDone, this);
 }
 
-Tail::~Tail() {}
-
 void Tail::OnInitDone(wxCommandEvent& event)
 {
     event.Skip();

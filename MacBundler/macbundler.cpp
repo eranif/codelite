@@ -209,7 +209,7 @@ public:
         WindowAttrManager::Load(this);
     }
 
-    virtual ~BundleConfigDialog() {}
+    virtual ~BundleConfigDialog() = default;
 
     void onOk(wxCommandEvent& evt)
     {
@@ -319,8 +319,6 @@ MacBundler::MacBundler(IManager* manager)
     m_longName = _("Manage OS X app bundles");
     m_shortName = wxT("MacBundler");
 }
-
-MacBundler::~MacBundler() {}
 
 void MacBundler::onBundleInvoked_active(wxCommandEvent& evt)
 {

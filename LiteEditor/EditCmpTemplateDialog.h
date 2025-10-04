@@ -6,8 +6,8 @@ class EditCmpTemplateDialog : public EditCmpTemplateDialogBase
 {
 public:
     EditCmpTemplateDialog(wxWindow* parent);
-    virtual ~EditCmpTemplateDialog();
-    
+    virtual ~EditCmpTemplateDialog() = default;
+
     void SetPattern(const wxString& pattern);
     wxString GetPattern() const;
 };

@@ -1014,8 +1014,6 @@ void TagsStorageSQLite::GetSubscriptOperator(const wxString& scope, std::vector<
 //-----------------------------TagsStorageSQLiteCache -----------------
 //---------------------------------------------------------------------
 
-TagsStorageSQLiteCache::TagsStorageSQLiteCache() {}
-
 TagsStorageSQLiteCache::~TagsStorageSQLiteCache() { m_cache.clear(); }
 
 bool TagsStorageSQLiteCache::Get(const wxString& sql, std::vector<TagEntryPtr>& tags) { return DoGet(sql, tags); }

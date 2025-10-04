@@ -48,7 +48,7 @@ public:
 
 public:
     NewClassDlgData();
-    virtual ~NewClassDlgData();
+    virtual ~NewClassDlgData() = default;
 
 public:
     virtual void DeSerialize(Archive& arch);

@@ -58,8 +58,6 @@ GCCMetadata::GCCMetadata(const wxString& basename)
 {
 }
 
-GCCMetadata::~GCCMetadata() {}
-
 void GCCMetadata::Load(const wxString& tool, const wxString& rootDir, bool is_cygwin)
 {
     // find an entry in the cache

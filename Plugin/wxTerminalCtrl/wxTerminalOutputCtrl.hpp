@@ -53,7 +53,7 @@ class WXDLLIMPEXP_SDK wxTerminalOutputCtrl : public wxWindow
             , m_end(e)
         {
         }
-        IndicatorRange() {}
+        IndicatorRange() = default;
     };
 
     wxStyledTextCtrl* m_ctrl = nullptr;

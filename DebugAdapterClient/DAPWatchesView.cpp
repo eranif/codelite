@@ -30,8 +30,6 @@ DAPWatchesView::DAPWatchesView(wxWindow* parent, DebugAdapterClient* plugin, clM
     m_toolbar->Bind(wxEVT_UPDATE_UI, &DAPWatchesView::OnDeleteWatchUI, this, XRCID("dap-watch-delete"));
 }
 
-DAPWatchesView::~DAPWatchesView() {}
-
 void DAPWatchesView::Update(int current_frame_id)
 {
     // update the watches

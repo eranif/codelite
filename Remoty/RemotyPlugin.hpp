@@ -39,7 +39,7 @@ class RemotyPlugin : public IPlugin
 
 public:
     RemotyPlugin(IManager* manager);
-    ~RemotyPlugin() override;
+    ~RemotyPlugin() override = default;
 
 protected:
     void OnFolderContextMenu(clContextMenuEvent& event);

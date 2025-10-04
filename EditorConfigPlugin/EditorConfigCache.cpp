@@ -1,10 +1,6 @@
 #include "EditorConfigCache.h"
 #include "fileutils.h"
 
-EditorConfigCache::EditorConfigCache() {}
-
-EditorConfigCache::~EditorConfigCache() {}
-
 bool EditorConfigCache::Get(const wxFileName& filename, clEditorConfigSection& section)
 {
     wxString key = filename.GetFullPath();

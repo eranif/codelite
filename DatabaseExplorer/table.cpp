@@ -57,11 +57,6 @@ Table::Table(IDbAdapter* dbAdapter, const wxString& tableName, const wxString& p
 	initSerializable();
 }
 
-Table::~Table()
-{
-
-}
-
 void Table::SetName(const wxString& name)
 {
 	 this->m_isSaved = false; 

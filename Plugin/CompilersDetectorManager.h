@@ -37,7 +37,7 @@ class WXDLLIMPEXP_SDK CompilersDetectorManager
 
 public:
     CompilersDetectorManager();
-    virtual ~CompilersDetectorManager();
+    virtual ~CompilersDetectorManager() = default;
 
     /**
      * @brief return true if the locator found at least one instance

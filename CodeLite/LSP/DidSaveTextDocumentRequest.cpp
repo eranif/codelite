@@ -7,5 +7,3 @@ LSP::DidSaveTextDocumentRequest::DidSaveTextDocumentRequest(const wxString& file
     m_params->As<DidSaveTextDocumentParams>()->SetTextDocument(TextDocumentIdentifier(filename));
     m_params->As<DidSaveTextDocumentParams>()->SetText(fileContent);
 }
-
-LSP::DidSaveTextDocumentRequest::~DidSaveTextDocumentRequest() {}

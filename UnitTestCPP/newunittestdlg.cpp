@@ -48,5 +48,3 @@ NewUnitTestDlg::NewUnitTestDlg(wxWindow* parent, UnitTestPP* plugin, IConfigTool
     SetName("NewUnitTestDlg");
     WindowAttrManager::Load(this);
 }
-
-NewUnitTestDlg::~NewUnitTestDlg() {}

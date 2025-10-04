@@ -8,10 +8,6 @@ PHPUserWorkspace::PHPUserWorkspace(const wxString& workspacePath)
 {
 }
 
-PHPUserWorkspace::~PHPUserWorkspace()
-{
-}
-
 wxFileName PHPUserWorkspace::GetFileName() const
 {
     wxFileName workspaceFile( m_workspacePath );

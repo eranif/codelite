@@ -33,10 +33,6 @@ PluginWizard::PluginWizard(wxWindow* parent)
 {
 }
 
-PluginWizard::~PluginWizard()
-{
-}
-
 bool PluginWizard::Run(NewPluginData& pd)
 {
     bool res = RunWizard( GetFirstPage() );

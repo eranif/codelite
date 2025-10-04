@@ -27,8 +27,6 @@ FindInFilesLocationsDlg::FindInFilesLocationsDlg(wxWindow* parent, const wxArray
     m_initialLocations.clear();
 }
 
-FindInFilesLocationsDlg::~FindInFilesLocationsDlg() {}
-
 void FindInFilesLocationsDlg::DoAppendItem(const wxString& str)
 {
     int pos = m_checkListBoxLocations->Append(str);

@@ -49,7 +49,7 @@ public:
 
 private:
     MenuManager();
-    virtual ~MenuManager();
+    virtual ~MenuManager() = default;
 };
 
 #endif // MENUMANAGER_H

@@ -38,7 +38,7 @@ public:
 
 public:
     ProjectCustomBuildTragetDlg(wxWindow* parent, const wxString &targetName, const wxString& targetCommand);
-    virtual ~ProjectCustomBuildTragetDlg();
+    virtual ~ProjectCustomBuildTragetDlg() = default;
 
     wxString GetTargetName() const {
         return m_textCtrlTargetName->GetValue();

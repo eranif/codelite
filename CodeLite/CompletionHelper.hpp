@@ -26,8 +26,8 @@ public:
     };
 
 public:
-    CompletionHelper();
-    ~CompletionHelper();
+    CompletionHelper() = default;
+    ~CompletionHelper() = default;
 
     /**
      * @brief normalize function signature by removing from its signature all

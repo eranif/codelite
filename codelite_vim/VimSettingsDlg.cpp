@@ -8,8 +8,3 @@ VimSettingsDlg::VimSettingsDlg(wxWindow* parent)
     settings.Load();
     m_checkBoxEnabled->SetValue(settings.IsEnabled());
 }
-
-VimSettingsDlg::~VimSettingsDlg()
-{
-}
-

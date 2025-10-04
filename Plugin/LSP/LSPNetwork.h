@@ -43,8 +43,8 @@ public:
     const LSPStartupInfo& GetStartupInfo() const { return m_startupInfo; }
 
 public:
-    LSPNetwork();
-    virtual ~LSPNetwork();
+    LSPNetwork() = default;
+    virtual ~LSPNetwork() = default;
 
     //===-----------------------------------
     // Interface

@@ -43,7 +43,7 @@ public:
         : _voc(voc)
     {
     }
-    virtual ~QWTreeData() {}
+    ~QWTreeData() override = default;
 };
 
 #if wxVERSION_NUMBER >= 3104 && defined(__WXGTK3__)

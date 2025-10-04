@@ -39,8 +39,8 @@ class SerializedObject
     wxString m_version;
 
 public:
-    SerializedObject() {}
-    virtual ~SerializedObject() {}
+    SerializedObject() = default;
+    virtual ~SerializedObject() = default;
     virtual void Serialize(Archive& arch) = 0;
     virtual void DeSerialize(Archive& arch) = 0;
 
@@ -71,7 +71,7 @@ public:
     const std::vector<int>& GetCollapsedFolds() const { return m_folds; }
 
     TabInfo();
-    virtual ~TabInfo();
+    virtual ~TabInfo() = default;
 
     void Serialize(Archive& arch);
     void DeSerialize(Archive& arch);

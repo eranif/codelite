@@ -22,7 +22,7 @@ protected:
         Button button2;
         size_t selection = 0;
         wxEvtHandler* sink = nullptr;
-        ButtonState() {}
+        ButtonState() = default;
         ButtonState(const Button& bt1, const Button& bt2, size_t sel, wxEvtHandler* handler)
             : button1(bt1)
             , button2(bt2)
@@ -43,7 +43,7 @@ public:
     clEnhancedToolBar(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                       const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER,
                       const wxString& name = "clEnhancedToolBar");
-    virtual ~clEnhancedToolBar();
+    virtual ~clEnhancedToolBar() = default;
 
     /**
      * @brief add a button that changes its state per click. The initial state is 'button1'

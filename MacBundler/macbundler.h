@@ -37,7 +37,7 @@ class MacBundler : public IPlugin
 
 public:
     MacBundler(IManager* manager);
-    ~MacBundler() override;
+    ~MacBundler() override = default;
 
     void onBundleInvoked_active(wxCommandEvent& evt);
     void onBundleInvoked_selected(wxCommandEvent& evt);

@@ -3,10 +3,6 @@
 #include <algorithm>
 #include "PHPLookupTable.h"
 
-PHPEntityClass::PHPEntityClass() {}
-
-PHPEntityClass::~PHPEntityClass() {}
-
 void PHPEntityClass::PrintStdout(int indent) const
 {
     wxString indentString(' ', indent);

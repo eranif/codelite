@@ -55,7 +55,7 @@ public:
         : m_observer(observer)
     {
     }
-    virtual ~DbgCmdHandler() {}
+    virtual ~DbgCmdHandler() = default;
 
     virtual bool WantsErrors() const { return false; }
 
@@ -77,7 +77,7 @@ public:
     {
     }
 
-    virtual ~DbgCmdHandlerGetLine() {}
+    virtual ~DbgCmdHandlerGetLine() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -92,7 +92,7 @@ public:
     {
     }
 
-    virtual ~DbgCmdHandlerDisasseble() {}
+    virtual ~DbgCmdHandlerDisasseble() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -107,7 +107,7 @@ public:
     {
     }
 
-    virtual ~DbgCmdHandlerDisassebleCurLine() {}
+    virtual ~DbgCmdHandlerDisassebleCurLine() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -126,7 +126,7 @@ public:
     {
     }
 
-    virtual ~DbgCmdHandlerStackDepth() {}
+    virtual ~DbgCmdHandlerStackDepth() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -150,7 +150,7 @@ public:
         , m_gdb(gdb)
     {
     }
-    virtual ~DbgCmdHandlerAsyncCmd() {}
+    virtual ~DbgCmdHandlerAsyncCmd() = default;
 
     void UpdateGotControl(DebuggerReasons reason, const wxString& func);
     virtual bool ProcessOutput(const wxString& line);
@@ -164,7 +164,7 @@ public:
     {
     }
 
-    virtual ~DbgCmdHandlerExecRun() {}
+    virtual ~DbgCmdHandlerExecRun() = default;
     virtual bool ProcessOutput(const wxString& line);
     virtual bool WantsErrors() const { return true; }
 };
@@ -180,7 +180,7 @@ public:
     {
     }
 
-    virtual ~DbgCmdHandlerRemoteDebugging() {}
+    virtual ~DbgCmdHandlerRemoteDebugging() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -204,7 +204,7 @@ public:
     {
     }
 
-    virtual ~DbgCmdHandlerBp() {}
+    virtual ~DbgCmdHandlerBp() = default;
     virtual bool ProcessOutput(const wxString& line);
     virtual bool WantsErrors() const { return true; }
 };
@@ -216,7 +216,7 @@ public:
         : DbgCmdHandler(observer)
     {
     }
-    virtual ~DbgCmdHandlerLocals() {}
+    virtual ~DbgCmdHandlerLocals() = default;
     virtual bool ProcessOutput(const wxString& line);
 };
 
@@ -228,7 +228,7 @@ public:
         : DbgCmdHandler(observer)
     {
     }
-    virtual ~DbgCmdHandlerVarCreator() {}
+    virtual ~DbgCmdHandlerVarCreator() = default;
     virtual bool ProcessOutput(const wxString& line);
 };
 
@@ -243,7 +243,7 @@ public:
     {
     }
 
-    virtual ~DbgCmdHandlerEvalExpr() {}
+    virtual ~DbgCmdHandlerEvalExpr() = default;
     virtual bool ProcessOutput(const wxString& line);
     virtual const wxString& GetExpression() const { return m_expression; }
 };
@@ -256,7 +256,7 @@ public:
         : DbgCmdHandler(observer)
     {
     }
-    virtual ~DbgCmdStackList() {}
+    virtual ~DbgCmdStackList() = default;
     virtual bool ProcessOutput(const wxString& line);
 };
 
@@ -268,7 +268,7 @@ public:
         : DbgCmdHandler(observer)
     {
     }
-    virtual ~DbgCmdSelectFrame() {}
+    virtual ~DbgCmdSelectFrame() = default;
     virtual bool ProcessOutput(const wxString& line);
 };
 
@@ -280,7 +280,7 @@ public:
         : DbgCmdHandler(observer)
     {
     }
-    virtual ~DbgCmdDisplayOutput() {}
+    virtual ~DbgCmdDisplayOutput() = default;
     virtual bool ProcessOutput(const wxString& line);
 };
 
@@ -293,7 +293,7 @@ class DbgCmdResolveTypeHandler : public DbgCmdHandler
 public:
     DbgCmdResolveTypeHandler(const wxString& expression, DbgGdb* debugger, int userReason);
 
-    virtual ~DbgCmdResolveTypeHandler() {}
+    virtual ~DbgCmdResolveTypeHandler() = default;
     virtual bool ProcessOutput(const wxString& line);
     virtual bool WantsErrors() const { return true; }
 };
@@ -309,7 +309,7 @@ public:
     {
     }
 
-    virtual ~DbgCmdCLIHandler() {}
+    virtual ~DbgCmdCLIHandler() = default;
     virtual bool ProcessOutput(const wxString& line);
 
     const wxString& GetOutput() const { return m_output; }
@@ -333,7 +333,7 @@ public:
     {
     }
 
-    virtual ~DbgCmdGetTipHandler() {}
+    virtual ~DbgCmdGetTipHandler() = default;
     virtual bool ProcessOutput(const wxString& line);
 };
 
@@ -348,7 +348,7 @@ public:
         , m_bp(bp)
     {
     }
-    virtual ~DbgCmdSetConditionHandler() {}
+    virtual ~DbgCmdSetConditionHandler() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -365,7 +365,7 @@ public:
         , m_gdb(gdb)
     {
     }
-    virtual ~DbgCmdBreakList() {}
+    virtual ~DbgCmdBreakList() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -379,7 +379,7 @@ public:
         : DbgCmdHandler(observer)
     {
     }
-    virtual ~DbgCmdListThreads() {}
+    virtual ~DbgCmdListThreads() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -395,7 +395,7 @@ public:
         , m_address(address)
     {
     }
-    virtual ~DbgCmdWatchMemory() {}
+    virtual ~DbgCmdWatchMemory() = default;
     virtual bool ProcessOutput(const wxString& line);
 };
 
@@ -418,7 +418,7 @@ public:
      */
     virtual bool WantsErrors() const { return true; }
 
-    virtual ~DbgCmdCreateVarObj() {}
+    virtual ~DbgCmdCreateVarObj() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -437,7 +437,7 @@ public:
     {
     }
 
-    virtual ~DbgCmdListChildren() {}
+    virtual ~DbgCmdListChildren() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -455,7 +455,7 @@ public:
     {
     }
 
-    virtual ~DbgCmdEvalVarObj() {}
+    virtual ~DbgCmdEvalVarObj() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -471,7 +471,7 @@ public:
     {
     }
 
-    virtual ~DbgFindMainBreakpointIdHandler() {}
+    virtual ~DbgFindMainBreakpointIdHandler() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -490,7 +490,7 @@ public:
     {
     }
 
-    virtual ~DbgVarObjUpdate() {}
+    virtual ~DbgVarObjUpdate() = default;
 
     virtual bool ProcessOutput(const wxString& line);
     virtual bool WantsErrors() { return true; }
@@ -505,7 +505,7 @@ public:
         : DbgCmdCLIHandler(observer)
     {
     }
-    virtual ~DbgCmdJumpHandler() {}
+    virtual ~DbgCmdJumpHandler() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -517,7 +517,7 @@ public:
         : DbgCmdHandler(observer)
     {
     }
-    virtual ~DbgCmdStopHandler() {}
+    virtual ~DbgCmdStopHandler() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -532,7 +532,7 @@ public:
         , m_gdb(gdb)
     {
     }
-    virtual ~DbgCmdRecordHandler() {}
+    virtual ~DbgCmdRecordHandler() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -553,7 +553,7 @@ public:
     {
     }
 
-    virtual ~DbgCmdHandlerRegisterNames() {}
+    virtual ~DbgCmdHandlerRegisterNames() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };
@@ -573,7 +573,7 @@ public:
         m_numberToName = numberToName;
     }
 
-    virtual ~DbgCmdHandlerRegisterValues() {}
+    virtual ~DbgCmdHandlerRegisterValues() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };

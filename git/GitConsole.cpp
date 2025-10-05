@@ -58,6 +58,7 @@
 #include <algorithm>
 #include <wx/datetime.h>
 #include <wx/icon.h>
+#include <wx/settings.h>
 #include <wx/tokenzr.h>
 #include <wx/wupdlock.h>
 
@@ -286,6 +287,15 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     EventNotifier::Get()->Bind(wxEVT_SIDEBAR_SELECTION_CHANGED, &GitConsole::OnOutputViewTabChanged, this);
 
     m_log_view = new wxTerminalOutputCtrl(m_panel_log);
+    wxFont font{wxNullFont};
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("terminal");
+    if (lexer) {
+        auto font = lexer->GetFontForStyle(0, this);
+        if (font.IsOk()) {
+            font.SetFractionalPointSize(wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT).GetFractionalPointSize());
+            m_log_view->SetTextFont(font);
+        }
+    }
     m_panel_log->GetSizer()->Add(m_log_view, wxSizerFlags(1).Expand());
 
     // force font/colours update

@@ -115,7 +115,7 @@ void wxTerminalOutputCtrl::SetInputCtrl(wxTerminalInputCtrl* input_ctrl)
 
 void wxTerminalOutputCtrl::Initialise(const wxFont& font, const wxColour& bg_colour, const wxColour& text_colour)
 {
-    m_textFont = font.IsOk() ? font : FontUtils::GetDefaultMonospacedFont();
+    m_textFont = wxNullFont;
     m_textColour = text_colour;
     m_bgColour = bg_colour;
     SetSizer(new wxBoxSizer(wxVERTICAL));
@@ -135,6 +135,14 @@ void wxTerminalOutputCtrl::Initialise(const wxFont& font, const wxColour& bg_col
     if (lexer) {
         lexer->Apply(m_ctrl);
         m_ctrl->IndicatorSetForeground(INDICATOR_HYPERLINK, clColours::Blue(lexer->IsDark()));
+    }
+
+    // If font was provided, use it.
+    if (font.IsOk()) {
+        m_textFont = font;
+        for (int style = 0; style < wxSTC_STYLE_MAX; ++style) {
+            m_ctrl->StyleSetFont(style, m_textFont);
+        }
     }
 
     GetSizer()->Add(m_ctrl, 1, wxEXPAND);
@@ -162,7 +170,7 @@ wxTerminalOutputCtrl::~wxTerminalOutputCtrl()
 
 void wxTerminalOutputCtrl::AppendText(const wxString& buffer)
 {
-    EditorEnabler d{ m_ctrl };
+    EditorEnabler d{m_ctrl};
 
     // Remove unwanted ANSI OSC escape sequences
     m_ctrl->AppendText(StringUtils::StripTerminalOSC(buffer));
@@ -204,7 +212,7 @@ void wxTerminalOutputCtrl::ReloadSettings() { ApplyTheme(); }
 
 void wxTerminalOutputCtrl::StyleAndAppend(wxStringView buffer, [[maybe_unused]] wxString* window_title)
 {
-    EditorEnabler enabler{ m_ctrl };
+    EditorEnabler enabler{m_ctrl};
     m_ctrl->AppendText(StringUtils::StripTerminalOSC(buffer));
     RequestScrollToEnd();
 }
@@ -242,7 +250,7 @@ int wxTerminalOutputCtrl::GetCurrentStyle() { return 0; }
 
 void wxTerminalOutputCtrl::Clear()
 {
-    EditorEnabler d{ m_ctrl };
+    EditorEnabler d{m_ctrl};
     m_ctrl->ClearAll();
 }
 
@@ -273,6 +281,14 @@ void wxTerminalOutputCtrl::ApplyTheme()
     if (lexer) {
         lexer->Apply(m_ctrl);
     }
+
+    // If font was provided, use it.
+    if (m_textFont.IsOk()) {
+        for (int style = 0; style < wxSTC_STYLE_MAX; ++style) {
+            m_ctrl->StyleSetFont(style, m_textFont);
+        }
+    }
+
     m_ctrl->SetEOLMode(wxSTC_EOL_LF);
     m_ctrl->Refresh();
 }
@@ -292,7 +308,7 @@ void wxTerminalOutputCtrl::OnKeyDown(wxKeyEvent& event)
 
 void wxTerminalOutputCtrl::ProcessIdle()
 {
-    static clIdleEventThrottler event_throttler{ 200 };
+    static clIdleEventThrottler event_throttler{200};
     if (!event_throttler.CanHandle()) {
         return;
     }
@@ -320,7 +336,7 @@ void wxTerminalOutputCtrl::ProcessIdle()
         return;
     }
 
-    IndicatorRange range{ start_pos, end_pos };
+    IndicatorRange range{start_pos, end_pos};
     if (m_indicatorHyperlink.ok() && m_indicatorHyperlink == range) {
         // already marked
         return;
@@ -520,12 +536,12 @@ void wxTerminalOutputCtrl::OnMenu(wxContextMenuEvent& event)
 
 void wxTerminalOutputCtrl::OnFocusLost(wxFocusEvent& event)
 {
-    clCommandEvent focus_event{ wxEVT_STC_LOST_FOCUS };
+    clCommandEvent focus_event{wxEVT_STC_LOST_FOCUS};
     EventNotifier::Get()->AddPendingEvent(focus_event);
 }
 
 void wxTerminalOutputCtrl::OnFocus(wxFocusEvent& event)
 {
-    clCommandEvent focus_event{ wxEVT_STC_GOT_FOCUS };
+    clCommandEvent focus_event{wxEVT_STC_GOT_FOCUS};
     EventNotifier::Get()->AddPendingEvent(focus_event);
 }

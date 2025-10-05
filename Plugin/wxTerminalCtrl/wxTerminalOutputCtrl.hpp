@@ -64,7 +64,7 @@ class WXDLLIMPEXP_SDK wxTerminalOutputCtrl : public wxWindow
     wxTextAttr m_defaultAttr;
     std::unordered_map<wxString, int> m_styles;
     int m_nextStyle = 0;
-    wxFont m_textFont;
+    wxFont m_textFont{wxNullFont};
     wxColour m_bgColour;
     wxColour m_textColour;
     bool m_scrollToEndQueued = false;
@@ -136,6 +136,12 @@ public:
         m_textColour = text_colour;
         m_bgColour = bg_colour;
         m_textFont = font;
+    }
+
+    void SetTextFont(const wxFont& font)
+    {
+        m_textFont = font;
+        CallAfter(&wxTerminalOutputCtrl::ApplyTheme);
     }
 };
 

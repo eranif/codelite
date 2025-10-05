@@ -10,8 +10,6 @@ TailFrame::TailFrame(wxWindow* parent, Tail* plugin)
 {
 }
 
-TailFrame::~TailFrame() {}
-
 void TailFrame::OnClose(wxCloseEvent& event)
 {
     // Remove us from the view

@@ -38,8 +38,6 @@ clHeaderBar::clHeaderBar(clControlWithItems* parent, const clColours& colours)
     Bind(wxEVT_ERASE_BACKGROUND, [](wxEraseEvent& event) { wxUnusedVar(event); });
 }
 
-clHeaderBar::~clHeaderBar() {}
-
 size_t clHeaderBar::GetHeight() const
 {
     if(m_columns.empty()) {

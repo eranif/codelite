@@ -17,8 +17,6 @@ WSImporter::WSImporter()
     AddImporter(std::make_shared<CodeBlocksImporter>());
 }
 
-WSImporter::~WSImporter() {}
-
 void WSImporter::AddImporter(std::shared_ptr<GenericImporter> importer) { importers.push_back(importer); }
 
 void WSImporter::Load(const wxString& filename, const wxString& defaultCompiler)

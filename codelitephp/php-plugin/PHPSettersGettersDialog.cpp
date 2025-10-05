@@ -14,7 +14,7 @@ struct PHPSettersGettersDialogClientData {
         : m_member(member)
     {
     }
-    ~PHPSettersGettersDialogClientData() {}
+    ~PHPSettersGettersDialogClientData() = default;
 };
 
 PHPSettersGettersDialog::PHPSettersGettersDialog(wxWindow* parent, IEditor* editor, IManager* mgr)

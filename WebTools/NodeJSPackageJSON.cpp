@@ -2,10 +2,6 @@
 #include "JSON.h"
 #include "NoteJSWorkspace.h"
 
-NodeJSPackageJSON::NodeJSPackageJSON() {}
-
-NodeJSPackageJSON::~NodeJSPackageJSON() {}
-
 bool NodeJSPackageJSON::Load(const wxString& projectPath)
 {
     wxFileName filename(projectPath, "package.json");

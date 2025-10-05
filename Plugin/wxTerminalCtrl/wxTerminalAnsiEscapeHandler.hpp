@@ -28,7 +28,7 @@ private:
 
 public:
     wxTerminalAnsiEscapeHandler();
-    virtual ~wxTerminalAnsiEscapeHandler();
+    virtual ~wxTerminalAnsiEscapeHandler() = default;
 
     /**
      * @brief process buffer, return the number of chars consumed

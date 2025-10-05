@@ -15,8 +15,6 @@ ThemeImporterMarkdown::ThemeImporterMarkdown()
     SetFileExtensions("*.md;README");
 }
 
-ThemeImporterMarkdown::~ThemeImporterMarkdown() {}
-
 LexerConf::Ptr_t ThemeImporterMarkdown::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, "markdown", wxSTC_LEX_MARKDOWN);

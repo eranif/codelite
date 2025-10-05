@@ -59,8 +59,6 @@ clSystemSettings::clSystemSettings()
     startupBackgroundColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 }
 
-clSystemSettings::~clSystemSettings() {}
-
 wxColour clSystemSettings::GetColour(int index)
 {
 #ifdef __WXOSX__

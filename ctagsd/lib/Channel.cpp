@@ -13,8 +13,6 @@ ChannelSocket::ChannelSocket(const wxString& ip, int port)
 {
 }
 
-ChannelSocket::~ChannelSocket() {}
-
 eReadSome ChannelSocket::read_some()
 {
     client->SelectRead();

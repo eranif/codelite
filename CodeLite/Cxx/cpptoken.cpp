@@ -28,8 +28,6 @@
 
 CppToken::CppToken() { reset(); }
 
-CppToken::~CppToken() {}
-
 bool CppToken::operator<(const CppToken& rhs) const
 {
     return this->getName() < rhs.getName();
@@ -57,7 +55,6 @@ CppToken::CppToken(wxSQLite3ResultSet& res)
 //-----------------------------------------------------------------
 // CppTokensMap
 //-----------------------------------------------------------------
-CppTokensMap::CppTokensMap() {}
 
 CppTokensMap::~CppTokensMap() { clear(); }
 

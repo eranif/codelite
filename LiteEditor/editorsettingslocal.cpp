@@ -57,8 +57,6 @@ EditorSettingsLocal::EditorSettingsLocal(OptionsConfigPtr hrOptions, wxXmlNode* 
     GetSizer()->Fit(this);
 }
 
-EditorSettingsLocal::~EditorSettingsLocal() {}
-
 void EditorSettingsLocal::DisplayHigherValues(const OptionsConfigPtr options)
 {
     // There should be 'global' (or workspace if this will be a project setting) values for each setting

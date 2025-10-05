@@ -4,10 +4,6 @@
 #include "CxxScannerTokens.h"
 #include "CxxTokenizer.h"
 
-CxxExpression::CxxExpression() {}
-
-CxxExpression::~CxxExpression() {}
-
 std::vector<CxxExpression> CxxExpression::from_expression(const wxString& expression, CxxRemainder* remainder)
 {
     CxxTokenizer tokenizer;

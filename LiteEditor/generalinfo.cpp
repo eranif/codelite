@@ -38,8 +38,6 @@ GeneralInfo::GeneralInfo()
     m_defaultRect = frame_rect;
 }
 
-GeneralInfo::~GeneralInfo() {}
-
 void GeneralInfo::DeSerialize(Archive& arch)
 {
     arch.Read(wxT("m_frameSize"), m_frameSize);

@@ -41,9 +41,9 @@ public:
     virtual wxString GetDisplayName() const;
     virtual void PrintStdout(int indent) const;
     virtual wxString Type() const;
-    PHPEntityFunctionAlias();
-    virtual ~PHPEntityFunctionAlias();
-    
+    PHPEntityFunctionAlias() = default;
+    virtual ~PHPEntityFunctionAlias() = default;
+
     void FromJSON(const JSONItem &json);
     JSONItem ToJSON() const;
     

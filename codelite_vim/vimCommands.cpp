@@ -14,8 +14,6 @@ VimCommand::VimCommand(IManager* mgr)
 {
 }
 
-VimCommand::~VimCommand() {}
-
 MESSAGES_VIM VimCommand::getError() { return m_message_ID; }
 
 void VimCommand::set_current_word(wxString word) { m_searchWord = word; }

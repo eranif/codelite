@@ -15,8 +15,6 @@ WordCompletionSettingsDlg::WordCompletionSettingsDlg(wxWindow* parent)
     WindowAttrManager::Load(this);
 }
 
-WordCompletionSettingsDlg::~WordCompletionSettingsDlg() {}
-
 void WordCompletionSettingsDlg::OnValueChanged(wxPropertyGridEvent& event)
 {
     event.Skip();

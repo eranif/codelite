@@ -6,8 +6,6 @@ clToolBarMenuButton::clToolBarMenuButton(clToolBarGeneric* parent, wxWindowID wi
 {
 }
 
-clToolBarMenuButton::~clToolBarMenuButton() {}
-
 wxSize clToolBarMenuButton::CalculateSize(wxDC& dc) const
 {
     wxSize sz;

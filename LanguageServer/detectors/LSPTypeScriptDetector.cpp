@@ -9,8 +9,6 @@ LSPTypeScriptDetector::LSPTypeScriptDetector()
 {
 }
 
-LSPTypeScriptDetector::~LSPTypeScriptDetector() {}
-
 bool LSPTypeScriptDetector::DoLocate()
 {
     wxFileName typescript_lsp;

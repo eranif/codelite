@@ -26,7 +26,7 @@ protected:
 
 public:
     clTreeCtrlColourHelper(clThemedTreeCtrl* tree);
-    virtual ~clTreeCtrlColourHelper();
+    virtual ~clTreeCtrlColourHelper() = default;
 
     void SetBgColour(const wxTreeItemId& item, const wxColour& currentBgColour, FolderColour::Map_t& coloursMap) const;
 

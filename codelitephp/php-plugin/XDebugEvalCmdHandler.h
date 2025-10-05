@@ -43,7 +43,7 @@ protected:
     
 public:
     XDebugEvalCmdHandler(const wxString &expression, int evalReason, XDebugManager* mgr, int transcationId);
-    virtual ~XDebugEvalCmdHandler();
+    virtual ~XDebugEvalCmdHandler() = default;
 
     void SetExpression(const wxString& expression) {
         this->m_expression = expression;

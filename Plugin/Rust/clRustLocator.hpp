@@ -9,8 +9,8 @@ class WXDLLIMPEXP_SDK clRustLocator
     wxString m_binDir;
 
 public:
-    clRustLocator();
-    ~clRustLocator();
+    clRustLocator() = default;
+    ~clRustLocator() = default;
 
     /**
      * @brief locate rust installation folder

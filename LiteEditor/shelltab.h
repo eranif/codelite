@@ -64,7 +64,7 @@ protected:
 
 public:
     ShellTab(wxWindow* parent, wxWindowID id, const wxString& name);
-    virtual ~ShellTab();
+    virtual ~ShellTab() = default;
 };
 
 class OutputTab : public ShellTab

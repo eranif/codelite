@@ -11,7 +11,7 @@ class ImportFromXrc
 {
 public:
     ImportFromXrc(wxWindow* parent);
-    ~ImportFromXrc();
+    ~ImportFromXrc() = default;
 
     bool ImportProject(ImportDlg::ImportFileData& data) const;
     bool GetProject() const;

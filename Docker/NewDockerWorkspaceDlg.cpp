@@ -5,8 +5,6 @@ NewDockerWorkspaceDlg::NewDockerWorkspaceDlg(wxWindow* parent)
 {
 }
 
-NewDockerWorkspaceDlg::~NewDockerWorkspaceDlg() {}
-
 void NewDockerWorkspaceDlg::OnOkUI(wxUpdateUIEvent& event)
 {
     event.Enable(!m_textCtrlName->IsEmpty() && wxDirExists(m_dirPicker14->GetPath()));

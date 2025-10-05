@@ -8,10 +8,6 @@
 #include <wx/volume.h>
 #endif
 
-NodeJSLocator::NodeJSLocator() {}
-
-NodeJSLocator::~NodeJSLocator() {}
-
 void NodeJSLocator::Locate(const wxArrayString& hints)
 {
     wxArrayString paths = hints;

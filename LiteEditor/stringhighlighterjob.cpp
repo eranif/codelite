@@ -34,8 +34,6 @@ StringHighlighterJob::StringHighlighterJob(const wxString& str, const wxString& 
 {
 }
 
-StringHighlighterJob::~StringHighlighterJob() {}
-
 void StringHighlighterJob::Set(const wxString& str, const wxString& word, int offset)
 {
     SetStr(str);

@@ -40,8 +40,8 @@ struct WelcomePageItemData : public wxTreeItemData {
     WorkspaceSource type = WorkspaceSource::BUILTIN;
     wxString path;
     wxString account; // for remote workspaces
-    WelcomePageItemData() {}
-    virtual ~WelcomePageItemData() {}
+    WelcomePageItemData() = default;
+    ~WelcomePageItemData() override = default;
 };
 
 class WelcomePage : public WelcomePageBase

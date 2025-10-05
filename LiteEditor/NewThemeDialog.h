@@ -35,7 +35,7 @@ private:
     
 public:
     NewThemeDialog(wxWindow* parent, LexerConf::Ptr_t lexer);
-    virtual ~NewThemeDialog();
+    virtual ~NewThemeDialog() = default;
 
     wxString GetLexerName() const {
         return m_choiceLanguage->GetStringSelection();

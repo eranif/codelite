@@ -32,7 +32,7 @@ class ThemeImporterPHP : public ThemeImporterBase
 {
 public:
     ThemeImporterPHP();
-    virtual ~ThemeImporterPHP();
+    virtual ~ThemeImporterPHP() = default;
 
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);

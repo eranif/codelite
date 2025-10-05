@@ -31,10 +31,6 @@ clDebuggerEditItemDlg::clDebuggerEditItemDlg(wxWindow* parent, const wxString &i
     SetValue( initialValue );
 }
 
-clDebuggerEditItemDlg::~clDebuggerEditItemDlg()
-{
-}
-
 wxString clDebuggerEditItemDlg::GetValue() const
 {
     return m_textCtrl38->GetValue().Trim();

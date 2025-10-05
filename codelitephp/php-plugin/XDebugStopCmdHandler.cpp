@@ -13,8 +13,6 @@ XDebugStopCmdHandler::XDebugStopCmdHandler(XDebugManager* mgr, int transcationId
 {
 }
 
-XDebugStopCmdHandler::~XDebugStopCmdHandler() {}
-
 void XDebugStopCmdHandler::Process(const wxXmlNode* response)
 {
     clDEBUG() << "CodeLite: Stop command completed." << endl;

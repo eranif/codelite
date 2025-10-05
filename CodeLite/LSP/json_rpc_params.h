@@ -21,8 +21,8 @@ public:
     typedef wxSharedPtr<Params> Ptr_t;
 
 public:
-    Params() {}
-    virtual ~Params() {}
+    Params() = default;
+    virtual ~Params() = default;
     template <typename T> T* As() const { return dynamic_cast<T*>(const_cast<Params*>(this)); }
 };
 
@@ -35,8 +35,8 @@ class WXDLLIMPEXP_CL TextDocumentPositionParams : public Params
     Position m_position;
 
 public:
-    TextDocumentPositionParams();
-    virtual ~TextDocumentPositionParams() {}
+    TextDocumentPositionParams() = default;
+    virtual ~TextDocumentPositionParams() = default;
 
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
@@ -60,8 +60,8 @@ class WXDLLIMPEXP_CL RenameParams : public TextDocumentPositionParams
     wxString m_newName;
 
 public:
-    RenameParams();
-    virtual ~RenameParams() {}
+    RenameParams() = default;
+    virtual ~RenameParams() = default;
 
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
@@ -78,7 +78,7 @@ class WXDLLIMPEXP_CL ReferenceParams : public TextDocumentPositionParams
 
 public:
     ReferenceParams(bool includeDeclaration);
-    virtual ~ReferenceParams() {}
+    virtual ~ReferenceParams() = default;
 
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
@@ -94,8 +94,8 @@ class WXDLLIMPEXP_CL SemanticTokensParams : public Params
     TextDocumentIdentifier m_textDocument;
 
 public:
-    SemanticTokensParams();
-    virtual ~SemanticTokensParams() {}
+    SemanticTokensParams() = default;
+    virtual ~SemanticTokensParams() = default;
 
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
@@ -119,8 +119,8 @@ class WXDLLIMPEXP_CL DocumentSymbolParams : public Params
     TextDocumentIdentifier m_textDocument;
 
 public:
-    DocumentSymbolParams();
-    virtual ~DocumentSymbolParams() {}
+    DocumentSymbolParams() = default;
+    virtual ~DocumentSymbolParams() = default;
 
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
@@ -135,8 +135,8 @@ public:
 class WXDLLIMPEXP_CL CompletionParams : public TextDocumentPositionParams
 {
 public:
-    CompletionParams();
-    virtual ~CompletionParams() {}
+    CompletionParams() = default;
+    virtual ~CompletionParams() = default;
 
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
@@ -152,7 +152,7 @@ class WXDLLIMPEXP_CL ExecuteCommandParams : public Params
 
 public:
     ExecuteCommandParams(const wxString& command, const wxString& arguments);
-    virtual ~ExecuteCommandParams() {}
+    virtual ~ExecuteCommandParams() = default;
 
     void FromJSON(const JSONItem& json) override;
     JSONItem ToJSON(const wxString& name) const override;
@@ -168,8 +168,8 @@ class WXDLLIMPEXP_CL CodeActionParams : public Params
     std::vector<LSP::Diagnostic> m_diagnostics;
 
 public:
-    CodeActionParams();
-    virtual ~CodeActionParams() {}
+    CodeActionParams() = default;
+    virtual ~CodeActionParams() = default;
 
     void FromJSON(const JSONItem& json) override;
     JSONItem ToJSON(const wxString& name) const override;
@@ -192,8 +192,8 @@ class WXDLLIMPEXP_CL DidOpenTextDocumentParams : public Params
     TextDocumentItem m_textDocument;
 
 public:
-    DidOpenTextDocumentParams();
-    virtual ~DidOpenTextDocumentParams() {}
+    DidOpenTextDocumentParams() = default;
+    virtual ~DidOpenTextDocumentParams() = default;
 
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
@@ -214,8 +214,8 @@ class WXDLLIMPEXP_CL DidCloseTextDocumentParams : public Params
     TextDocumentIdentifier m_textDocument;
 
 public:
-    DidCloseTextDocumentParams();
-    virtual ~DidCloseTextDocumentParams() {}
+    DidCloseTextDocumentParams() = default;
+    virtual ~DidCloseTextDocumentParams() = default;
 
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
@@ -236,8 +236,8 @@ class WXDLLIMPEXP_CL DidChangeTextDocumentParams : public Params
     std::vector<TextDocumentContentChangeEvent> m_contentChanges;
 
 public:
-    DidChangeTextDocumentParams();
-    virtual ~DidChangeTextDocumentParams() {}
+    DidChangeTextDocumentParams() = default;
+    virtual ~DidChangeTextDocumentParams() = default;
 
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
@@ -264,8 +264,8 @@ class WXDLLIMPEXP_CL DidSaveTextDocumentParams : public Params
     wxString m_text;
 
 public:
-    DidSaveTextDocumentParams();
-    virtual ~DidSaveTextDocumentParams() {}
+    DidSaveTextDocumentParams() = default;
+    virtual ~DidSaveTextDocumentParams() = default;
 
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;

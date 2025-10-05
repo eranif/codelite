@@ -35,8 +35,8 @@
 class WXDLLIMPEXP_SDK CompilerLocatorCLANG : public ICompilerLocator
 {
 public:
-    CompilerLocatorCLANG();
-    ~CompilerLocatorCLANG() override;
+    CompilerLocatorCLANG() = default;
+    ~CompilerLocatorCLANG() override = default;
     bool Locate() override;
     CompilerPtr Locate(const wxString& folder) override;
 

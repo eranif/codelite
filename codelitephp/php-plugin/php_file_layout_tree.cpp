@@ -31,8 +31,6 @@ PHPFileLayoutTree::PHPFileLayoutTree(wxWindow* parent)
     MSWSetNativeTheme(this);
 }
 
-PHPFileLayoutTree::~PHPFileLayoutTree() {}
-
 void PHPFileLayoutTree::Construct()
 {
     // Sanity

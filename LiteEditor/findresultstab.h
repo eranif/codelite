@@ -146,7 +146,7 @@ class EditorDeltasHolder
     // GetChanges()
 
 public:
-    EditorDeltasHolder() {}
+    EditorDeltasHolder() = default;
     ~EditorDeltasHolder() { Clear(); }
 
     void Clear()

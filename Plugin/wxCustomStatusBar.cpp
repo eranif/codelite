@@ -110,7 +110,6 @@ wxCustomStatusBarControlField::wxCustomStatusBarControlField(wxCustomStatusBar* 
 {
 }
 
-wxCustomStatusBarControlField::~wxCustomStatusBarControlField() {}
 void wxCustomStatusBarControlField::Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art)
 {
     CHECK_PTR_RET(m_control);
@@ -142,8 +141,6 @@ wxCustomStatusBarAnimationField::wxCustomStatusBarAnimationField(wxCustomStatusB
     // move over the animation control - it will not be seen by the status bar
     m_animation->Bind(wxEVT_LEFT_DOWN, &wxCustomStatusBarAnimationField::OnAnimationClicked, this);
 }
-
-wxCustomStatusBarAnimationField::~wxCustomStatusBarAnimationField() {}
 
 void wxCustomStatusBarAnimationField::Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art)
 {

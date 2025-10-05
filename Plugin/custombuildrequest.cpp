@@ -57,8 +57,6 @@ CustomBuildRequest::CustomBuildRequest(const QueueCommand& buildInfo, const wxSt
 {
 }
 
-CustomBuildRequest::~CustomBuildRequest() {}
-
 void CustomBuildRequest::Process(IManager* manager)
 {
     wxString cmd;

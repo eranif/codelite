@@ -7,7 +7,7 @@ class WXDLLIMPEXP_CL clConsoleKonsole : public clConsoleGnomeTerminal
 {
 public:
     clConsoleKonsole();
-    virtual ~clConsoleKonsole();
+    virtual ~clConsoleKonsole() = default;
 };
 
 #endif // CLCONSOLEKONSOLE_H

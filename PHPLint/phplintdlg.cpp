@@ -14,8 +14,6 @@ PHPLintDlg::PHPLintDlg(wxWindow* parent)
     WindowAttrManager::Load(this);
 }
 
-PHPLintDlg::~PHPLintDlg() {}
-
 void PHPLintDlg::InitDialog()
 {
     LintOptions settings;

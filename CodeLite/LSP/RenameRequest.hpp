@@ -9,7 +9,7 @@ class WXDLLIMPEXP_CL RenameRequest : public Request
 {
 public:
     RenameRequest(const wxString& new_name, const wxString& filename, size_t line, size_t column);
-    virtual ~RenameRequest();
+    virtual ~RenameRequest() = default;
 
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
     void OnError(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;

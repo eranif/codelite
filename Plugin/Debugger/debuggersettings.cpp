@@ -26,10 +26,6 @@
 
 #include "macromanager.h"
 
-DebuggerCmdData::DebuggerCmdData() {}
-
-DebuggerCmdData::~DebuggerCmdData() {}
-
 void DebuggerCmdData::DeSerialize(Archive& arch)
 {
     arch.Read(wxT("m_name"), m_name);
@@ -55,8 +51,6 @@ DebuggerPreDefinedTypes::DebuggerPreDefinedTypes()
     , m_active(true)
 {
 }
-
-DebuggerPreDefinedTypes::~DebuggerPreDefinedTypes() {}
 
 void DebuggerPreDefinedTypes::DeSerialize(Archive& arch)
 {
@@ -135,10 +129,6 @@ wxString DebuggerPreDefinedTypes::GetPreDefinedTypeForTypename(const wxString& e
 //-----------------------------------------------------------------
 //-----------------------------------------------------------------
 //-----------------------------------------------------------------
-
-DebuggerSettingsPreDefMap::DebuggerSettingsPreDefMap() {}
-
-DebuggerSettingsPreDefMap::~DebuggerSettingsPreDefMap() {}
 
 void DebuggerSettingsPreDefMap::Serialize(Archive& arch)
 {

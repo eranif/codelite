@@ -2,10 +2,6 @@
 
 #include <wx/wxcrt.h>
 
-clStringView::clStringView() {}
-
-clStringView::~clStringView() {}
-
 wxString clStringView::MakeString() const
 {
     if(!m_pdata) {

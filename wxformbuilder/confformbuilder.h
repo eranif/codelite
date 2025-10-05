@@ -36,7 +36,7 @@ class ConfFormBuilder : public SerializedObject
 
 public:
 	ConfFormBuilder();
-	virtual ~ConfFormBuilder();
+	virtual ~ConfFormBuilder() = default;
 
 public:
 	virtual void DeSerialize(Archive &arch);

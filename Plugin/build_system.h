@@ -42,7 +42,7 @@ class WXDLLIMPEXP_SDK BuilderConfig
 
 public:
     BuilderConfig(wxXmlNode* node);
-    virtual ~BuilderConfig();
+    virtual ~BuilderConfig() = default;
     wxXmlNode* ToXml() const;
 
     void SetIsActive(bool isActive) { this->m_isActive = isActive; }

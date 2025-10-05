@@ -2,10 +2,6 @@
 #include <wx/tokenzr.h>
 #include "PHPLookupTable.h"
 
-PHPEntityNamespace::PHPEntityNamespace() {}
-
-PHPEntityNamespace::~PHPEntityNamespace() {}
-
 void PHPEntityNamespace::PrintStdout(int indent) const
 {
     wxString indentString(' ', indent);

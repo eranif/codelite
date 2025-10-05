@@ -22,8 +22,6 @@ LSPDetectorManager::LSPDetectorManager()
     m_detectors.push_back(LSPDetector::Ptr_t(new LSPGoplsDetector()));
 }
 
-LSPDetectorManager::~LSPDetectorManager() {}
-
 size_t LSPDetectorManager::Scan(std::vector<LSPDetector::Ptr_t>& matchers)
 {
     // apply the environment before searching for the binary

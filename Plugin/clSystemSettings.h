@@ -20,7 +20,7 @@ class WXDLLIMPEXP_SDK clSystemSettings : public wxEvtHandler, public wxSystemSet
 public:
     static clSystemSettings& Get();
 
-    virtual ~clSystemSettings();
+    virtual ~clSystemSettings() = default;
     static wxColour GetColour(int index);
     /**
      * @brief return the default panel colour. On Windows, this returns

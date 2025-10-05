@@ -63,7 +63,7 @@ public:
                        wxXmlNode* node); // Used for merging local values into the already-found global ones
     LocalOptionsConfig(LocalOptionsConfigPtr opts,
                        wxXmlNode* node); // Used for storing local values in a previously-empty instance
-    virtual ~LocalOptionsConfig() {}
+    virtual ~LocalOptionsConfig() = default;
 
     bool IsTrackChangesIsValid() const { return m_localTrackChanges.has_value(); }
     bool DisplayFoldMarginIsValid() const { return m_localdisplayFoldMargin.has_value(); }
@@ -159,10 +159,10 @@ protected:
 
 public:
     /// Constructor
-    LocalWorkspace() {}
+    LocalWorkspace() = default;
 
     /// Destructor
-    virtual ~LocalWorkspace() {}
+    virtual ~LocalWorkspace() = default;
 
     /**
      * @brief return list of pinned c++ projects

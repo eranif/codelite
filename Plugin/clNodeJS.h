@@ -25,8 +25,8 @@ protected:
         wxEvtHandler* sink = nullptr;
 
     public:
-        ProcessData() {}
-        virtual ~ProcessData() {}
+        ProcessData() = default;
+        virtual ~ProcessData() = default;
         void SetFilename(const wxFileName& filename) { this->filename = filename; }
         void SetOutput(const wxString& output) { this->output = output; }
         const wxFileName& GetFilename() const { return filename; }
@@ -52,13 +52,13 @@ protected:
     void ProcessLintOutput(const wxFileName& fn, const wxString& output);
 
 private:
-    clNodeJS();
+    clNodeJS() = default;
     void BindEvents();
     void UnBindEvents();
 
 public:
     static clNodeJS& Get();
-    virtual ~clNodeJS();
+    virtual ~clNodeJS() = default;
 
     /**
      * @brief execute NodeJS script. Return the wxProcess executed

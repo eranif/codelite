@@ -39,7 +39,7 @@ protected:
 
 public:
     PHPUserWorkspace(const wxString &workspacePath);
-    virtual ~PHPUserWorkspace();
+    virtual ~PHPUserWorkspace() = default;
 
     PHPUserWorkspace& Load();
     PHPUserWorkspace& Save();

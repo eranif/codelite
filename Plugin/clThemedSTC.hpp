@@ -11,7 +11,7 @@ class WXDLLIMPEXP_SDK clThemedSTC : public wxStyledTextCtrl
     clEditEventsHandler::Ptr_t m_editEventsHandler;
 
 public:
-    clThemedSTC();
+    clThemedSTC() = default;
     clThemedSTC(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxSTCNameStr);
     bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
@@ -19,7 +19,7 @@ public:
     clThemedSTC(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& defaultValue = wxEmptyString,
                 const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0,
                 const wxString& name = wxSTCNameStr);
-    virtual ~clThemedSTC();
+    virtual ~clThemedSTC() = default;
 };
 
 #endif // CLTHEMEDSTC_HPP

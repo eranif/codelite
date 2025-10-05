@@ -5,8 +5,6 @@
 
 ThemeImporterText::ThemeImporterText() { SetFileExtensions("*.txt;*.log"); }
 
-ThemeImporterText::~ThemeImporterText() {}
-
 LexerConf::Ptr_t ThemeImporterText::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, "text", wxSTC_LEX_NULL);

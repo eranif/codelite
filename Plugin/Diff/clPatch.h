@@ -12,7 +12,7 @@ class WXDLLIMPEXP_SDK clPatch
 
 public:
     clPatch();
-    virtual ~clPatch();
+    virtual ~clPatch() = default;
 
     /**
      * @brief apply patch sepcified by 'pathFile' onto filename file

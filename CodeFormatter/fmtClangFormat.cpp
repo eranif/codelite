@@ -16,5 +16,3 @@ fmtClangFormat::fmtClangFormat()
     SetCommand({ clang_format_exe.value_or("clang-format"), R"#("$(CurrentFileRelPath)")#" });
     SetEnabled(clang_format_exe.has_value());
 }
-
-fmtClangFormat::~fmtClangFormat() {}

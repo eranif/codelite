@@ -26,10 +26,6 @@
 
 #include <wx/settings.h>
 
-BuildTabSettingsData::BuildTabSettingsData() {}
-
-BuildTabSettingsData::~BuildTabSettingsData() {}
-
 void BuildTabSettingsData::Serialize(Archive& arch)
 {
     arch.Write("m_skipWarnings", m_skipWarnings);

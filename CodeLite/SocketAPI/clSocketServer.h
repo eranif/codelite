@@ -32,7 +32,7 @@
 class WXDLLIMPEXP_CL clSocketServer : public clSocketBase
 {
 public:
-    clSocketServer();
+    clSocketServer() = default;
     virtual ~clSocketServer();
 
 protected:

@@ -104,8 +104,6 @@ CppCheckPlugin::CppCheckPlugin(IManager* manager)
     clKeyboardManager::Get()->AddAccelerator(_("CppCheck"), { { "run_cppcheck", _("Run cppcheck...") } });
 }
 
-CppCheckPlugin::~CppCheckPlugin() {}
-
 void CppCheckPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void CppCheckPlugin::CreatePluginMenu(wxMenu* pluginsMenu)

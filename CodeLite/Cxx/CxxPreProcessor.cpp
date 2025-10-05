@@ -9,8 +9,6 @@ CxxPreProcessor::CxxPreProcessor()
 {
 }
 
-CxxPreProcessor::~CxxPreProcessor() {}
-
 void CxxPreProcessor::Parse(const wxFileName& filename, size_t options)
 {
     try {

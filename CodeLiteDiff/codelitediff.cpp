@@ -96,8 +96,6 @@ CodeLiteDiff::CodeLiteDiff(IManager* manager)
                                               {"diff_new_folder", _("New Folder Comparison"), "Ctrl-Alt-F"}});
 }
 
-CodeLiteDiff::~CodeLiteDiff() {}
-
 void CodeLiteDiff::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void CodeLiteDiff::CreatePluginMenu(wxMenu* pluginsMenu)

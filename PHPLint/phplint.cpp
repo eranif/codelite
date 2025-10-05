@@ -52,8 +52,6 @@ PHPLint::PHPLint(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_PHP_SETTINGS_CHANGED, &PHPLint::OnPhpSettingsChanged, this);
 }
 
-PHPLint::~PHPLint() {}
-
 void PHPLint::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void PHPLint::CreatePluginMenu(wxMenu* pluginsMenu)

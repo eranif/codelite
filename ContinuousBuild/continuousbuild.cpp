@@ -88,8 +88,6 @@ ContinuousBuild::ContinuousBuild(IManager* manager)
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &ContinuousBuild::OnBuildProcessEnded, this);
 }
 
-ContinuousBuild::~ContinuousBuild() {}
-
 void ContinuousBuild::CreateToolBar(clToolBarGeneric* toolbar)
 {
     // Create the toolbar to be used by the plugin

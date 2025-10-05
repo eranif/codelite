@@ -11,8 +11,6 @@ PHPDocProperty::PHPDocProperty(PHPSourceFile& sourceFile, const wxString& commen
 {
 }
 
-PHPDocProperty::~PHPDocProperty() {}
-
 const PHPDocProperty::Tuple_t& PHPDocProperty::ParseParams()
 {
     m_params.clear();

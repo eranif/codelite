@@ -27,8 +27,6 @@ AddOptionsDialog::AddOptionsDialog(wxWindow* parent, const wxString& value)
     clSetSmallDialogBestSizeAndPosition(this);
 }
 
-AddOptionsDialog::~AddOptionsDialog() {}
-
 wxString AddOptionsDialog::GetValue() const
 {
     wxStringInputStream input(m_stc->GetText());

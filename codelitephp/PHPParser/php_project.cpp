@@ -39,7 +39,7 @@ public:
     {
     }
 
-    virtual ~PHPProjectSyncThread() {}
+    virtual ~PHPProjectSyncThread() = default;
     void* Entry()
     {
         clDEBUG() << "Scanning files for project:" << m_projectData.projectName << "..." << clEndl;

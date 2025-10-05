@@ -57,9 +57,6 @@ PostgreSqlType::PostgreSqlType(const wxString& typeName, long propertyFlags, UNI
 	InitSerialize();
 }
 
-PostgreSqlType::~PostgreSqlType() {
-}
-
 wxString PostgreSqlType::ReturnSql() {
 	wxString sql;
 	sql = wxString::Format(wxT(" %s"), m_typeName.c_str());

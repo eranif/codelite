@@ -51,8 +51,6 @@ MySqlDbAdapter::MySqlDbAdapter(const wxString& serverName, const wxString& userN
     this->m_pDbLayer = NULL;
 }
 
-MySqlDbAdapter::~MySqlDbAdapter() {}
-
 void MySqlDbAdapter::CloseConnection()
 {
     if(this->m_pDbLayer)

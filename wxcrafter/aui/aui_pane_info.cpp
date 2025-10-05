@@ -11,8 +11,6 @@
 
 AuiPaneInfo::AuiPaneInfo() { Reset(); }
 
-AuiPaneInfo::~AuiPaneInfo() {}
-
 wxString AuiPaneInfo::ToCppCode() const
 {
     wxString cppCode = "wxAuiPaneInfo()";

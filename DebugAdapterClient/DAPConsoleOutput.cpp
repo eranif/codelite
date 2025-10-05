@@ -11,8 +11,6 @@ DAPConsoleOutput::DAPConsoleOutput(wxWindow* parent, clModuleLogger& log)
 {
 }
 
-DAPConsoleOutput::~DAPConsoleOutput() {}
-
 void DAPConsoleOutput::AddOutputEvent(dap::OutputEvent* event)
 {
     CHECK_PTR_RET(event);

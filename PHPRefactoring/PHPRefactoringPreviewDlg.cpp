@@ -19,8 +19,6 @@ PHPRefactoringPreviewDlg::PHPRefactoringPreviewDlg(wxWindow* parent, const wxStr
     CentreOnParent();
 }
 
-PHPRefactoringPreviewDlg::~PHPRefactoringPreviewDlg() {}
-
 void PHPRefactoringPreviewDlg::OnApplyChanges(wxCommandEvent& event)
 {
     event.Skip();

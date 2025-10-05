@@ -109,8 +109,6 @@ ZoomNavigator::ZoomNavigator(IManager* manager)
     DoInitialize();
 }
 
-ZoomNavigator::~ZoomNavigator() {}
-
 void ZoomNavigator::UnPlug()
 {
     EventNotifier::Get()->Unbind(wxEVT_ZN_SETTINGS_UPDATED, &ZoomNavigator::OnSettingsChanged, this);

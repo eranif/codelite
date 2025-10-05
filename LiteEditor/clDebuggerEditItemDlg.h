@@ -32,7 +32,7 @@ class clDebuggerEditItemDlg : public clDebuggerEditItemDlgBase
 {
 public:
     clDebuggerEditItemDlg(wxWindow* parent, const wxString &initialValue);
-    virtual ~clDebuggerEditItemDlg();
+    virtual ~clDebuggerEditItemDlg() = default;
     
     wxString GetValue() const;
     void SetValue(const wxString &value) {

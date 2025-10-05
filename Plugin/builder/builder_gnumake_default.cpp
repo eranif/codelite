@@ -63,8 +63,6 @@ BuilderGnuMake::BuilderGnuMake(const wxString& name, const wxString& buildTool, 
     m_isWindows = wxGetOsVersion() & wxOS_WINDOWS ? true : false;
 }
 
-BuilderGnuMake::~BuilderGnuMake() {}
-
 wxString BuilderGnuMake::MakeDir(const wxString& path)
 {
     wxString d;

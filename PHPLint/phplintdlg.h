@@ -10,7 +10,7 @@ class PHPLintDlg : public PHPLintBaseDlg
 
 public:
     PHPLintDlg(wxWindow* parent);
-    virtual ~PHPLintDlg();
+    virtual ~PHPLintDlg() = default;
 
 protected:
     void InitDialog();

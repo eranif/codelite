@@ -44,7 +44,7 @@ protected:
 
 public:
     CodeLiteDiff(IManager* manager);
-    ~CodeLiteDiff() override;
+    ~CodeLiteDiff() override = default;
 
     //--------------------------------------------
     // Abstract methods

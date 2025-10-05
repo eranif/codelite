@@ -36,7 +36,7 @@ struct StringHighlightOutput {
     {
     }
 
-    ~StringHighlightOutput() {}
+    ~StringHighlightOutput() = default;
 };
 
 class StringHighlighterJob
@@ -47,10 +47,10 @@ class StringHighlighterJob
     StringHighlightOutput m_output;
 
 public:
-    StringHighlighterJob() {}
+    StringHighlighterJob() = default;
     StringHighlighterJob(const wxString& str, const wxString& word, int offset);
     void Set(const wxString& str, const wxString& word, int offset);
-    virtual ~StringHighlighterJob();
+    virtual ~StringHighlighterJob() = default;
 
     void SetOffset(int offset) { this->m_offset = offset; }
     void SetStr(const wxString& str) { this->m_str = str; }

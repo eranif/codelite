@@ -67,8 +67,6 @@ AddFunctionsImpDlg::AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector
     ::clSetDialogBestSizeAndPosition(this);
 }
 
-AddFunctionsImpDlg::~AddFunctionsImpDlg() {}
-
 wxString AddFunctionsImpDlg::GetFileName() const { return m_filePicker->GetPath(); }
 
 wxString AddFunctionsImpDlg::GetText() const

@@ -36,7 +36,7 @@ class PostgreSqlType : public IDbType {
 		PostgreSqlType();
 		PostgreSqlType(const PostgreSqlType& obj);
 		PostgreSqlType(const wxString& typeName, long propertyFlags, UNIVERSAL_TYPE universalType);
-		virtual ~PostgreSqlType();
+		virtual ~PostgreSqlType() = default;
 		void InitSerialize();
 
 		virtual bool GetAutoIncrement()						{

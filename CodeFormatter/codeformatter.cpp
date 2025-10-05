@@ -148,8 +148,6 @@ CodeFormatter::CodeFormatter(IManager* manager)
         { { "format_source", _("Format Current Source"), "Ctrl-I" }, { "formatter_options", _("Options...") } });
 }
 
-CodeFormatter::~CodeFormatter() {}
-
 void CodeFormatter::CreateToolBar(clToolBarGeneric* toolbar)
 {
     clBitmapList* images = toolbar->GetBitmapsCreateIfNeeded();

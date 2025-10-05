@@ -8,8 +8,6 @@ LSPRustAnalyzerDetector::LSPRustAnalyzerDetector()
 {
 }
 
-LSPRustAnalyzerDetector::~LSPRustAnalyzerDetector() {}
-
 bool LSPRustAnalyzerDetector::DoLocate()
 {
     const auto analyzer_path = ThePlatform->Which("rust-analyzer");

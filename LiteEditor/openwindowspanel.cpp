@@ -50,13 +50,13 @@ END_EVENT_TABLE()
 struct TabClientData : public wxClientData {
     clTab tab;
     bool isModified;
-    TabClientData() {}
+    TabClientData() = default;
     TabClientData(const clTab& t)
         : tab(t)
         , isModified(false)
     {
     }
-    virtual ~TabClientData() {}
+    ~TabClientData() override = default;
     bool IsFile() const { return tab.isFile; }
 };
 

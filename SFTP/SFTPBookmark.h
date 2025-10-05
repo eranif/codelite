@@ -38,8 +38,8 @@ class SFTPBookmark
     wxString m_folder;
 
 public:
-    SFTPBookmark();
-    ~SFTPBookmark();
+    SFTPBookmark() = default;
+    ~SFTPBookmark() = default;
 
     void SetAccount(const SSHAccountInfo& account) { this->m_account = account; }
     const SSHAccountInfo& GetAccount() const { return m_account; }

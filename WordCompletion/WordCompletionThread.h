@@ -41,7 +41,7 @@ protected:
 public:
 
     WordCompletionThread(WordCompletionDictionary* dict);
-    ~WordCompletionThread();
+    ~WordCompletionThread() = default;
     virtual void ProcessRequest(ThreadRequest* request);
     
     /**

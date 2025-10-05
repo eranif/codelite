@@ -70,8 +70,6 @@ RemotyPlugin::RemotyPlugin(IManager* manager)
     m_workspace = new RemotyWorkspace();
 }
 
-RemotyPlugin::~RemotyPlugin() {}
-
 void RemotyPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void RemotyPlugin::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(pluginsMenu); }

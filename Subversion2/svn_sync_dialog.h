@@ -43,7 +43,7 @@ protected:
 public:
     /** Constructor */
     SvnSyncDialog( wxWindow* parent, Subversion2 *plugin, const wxString& rootDir, bool excludeBin, const wxString& excludeExtensions );
-    virtual ~SvnSyncDialog();
+    virtual ~SvnSyncDialog() = default;
 
     const wxString& GetRootDir() const {
         return m_rootDir;

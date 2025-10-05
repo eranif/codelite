@@ -50,7 +50,7 @@ public:
 
 public:
     ContinuousBuild(IManager* manager);
-    ~ContinuousBuild() override;
+    ~ContinuousBuild() override = default;
 
     //--------------------------------------------
     // Abstract methods

@@ -11,10 +11,6 @@ XDebugPropertyGetHandler::XDebugPropertyGetHandler(XDebugManager* mgr, int trans
 {
 }
 
-XDebugPropertyGetHandler::~XDebugPropertyGetHandler()
-{
-}
-
 void XDebugPropertyGetHandler::Process(const wxXmlNode* response)
 {
     CHECK_PTR_RET(response);

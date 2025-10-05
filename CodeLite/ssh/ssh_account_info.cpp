@@ -33,8 +33,6 @@ SSHAccountInfo::SSHAccountInfo()
 {
 }
 
-SSHAccountInfo::~SSHAccountInfo() {}
-
 SSHAccountInfo& SSHAccountInfo::operator=(const SSHAccountInfo& other)
 {
     if (&other == this) {

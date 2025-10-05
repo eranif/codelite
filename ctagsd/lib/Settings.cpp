@@ -55,8 +55,6 @@ CTagsdSettings::CTagsdSettings()
     m_types = to_vector_of_pairs(TagsOptionsData::GetDefaultTypes());
 }
 
-CTagsdSettings::~CTagsdSettings() {}
-
 void CTagsdSettings::Load(const wxFileName& filepath)
 {
     JSON config_file(filepath);

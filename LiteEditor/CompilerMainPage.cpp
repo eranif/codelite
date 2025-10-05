@@ -90,8 +90,6 @@ CompilerMainPage::CompilerMainPage(wxWindow* parent)
     m_toolbar->Bind(wxEVT_TOOL, &CompilerMainPage::OnScanCompilers, this, wxID_FIND);
 }
 
-CompilerMainPage::~CompilerMainPage() {}
-
 void CompilerMainPage::OnBtnAddErrPattern(wxCommandEvent& event)
 {
     CompilerPatternDlg dlg(wxGetTopLevelParent(this), _("Add compiler error pattern"));
@@ -842,8 +840,6 @@ CompilerPatternDlg::CompilerPatternDlg(wxWindow* parent, const wxString& title)
         CentreOnParent();
     }
 }
-
-CompilerPatternDlg::~CompilerPatternDlg() {}
 
 void CompilerPatternDlg::SetPattern(const wxString& pattern,
                                     const wxString& lineIdx,

@@ -41,11 +41,6 @@ SvnSelectLocalRepoDlg::SvnSelectLocalRepoDlg( wxWindow* parent, Subversion2 *plu
 	WindowAttrManager::Load(this);
 }
 
-SvnSelectLocalRepoDlg::~SvnSelectLocalRepoDlg()
-{
-	
-}
-
 void SvnSelectLocalRepoDlg::OnPathSelected( wxCommandEvent& event )
 {
 	wxArrayInt selections;

@@ -92,8 +92,6 @@ CMakeGenerator::CMakeGenerator()
 {
 }
 
-CMakeGenerator::~CMakeGenerator() {}
-
 bool CMakeGenerator::CheckExists(const wxFileName& filename)
 {
     // Output file exists, overwrite?

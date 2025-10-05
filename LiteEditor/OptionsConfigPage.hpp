@@ -114,7 +114,7 @@ public:
         , m_options(options)
     {
     }
-    virtual ~OptionsConfigPage() {}
+    ~OptionsConfigPage() override = default;
     bool IsRestartRequired() const { return m_isRestartRequired; }
 };
 

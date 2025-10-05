@@ -6,8 +6,6 @@
 #include "sftp_settings.h"
 #include "ssh/ssh_account_info.h"
 
-LSPNetworkSocketClient::LSPNetworkSocketClient() {}
-
 LSPNetworkSocketClient::~LSPNetworkSocketClient() { Close(); }
 
 void LSPNetworkSocketClient::Close()

@@ -14,8 +14,6 @@ LSP::RenameRequest::RenameRequest(const wxString& new_name, const wxString& file
     m_params->As<RenameParams>()->SetNewName(new_name);
 }
 
-LSP::RenameRequest::~RenameRequest() {}
-
 void LSP::RenameRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     LOG_IF_TRACE { LSP_TRACE() << "RenameRequest::OnResponse() is called" << endl; }

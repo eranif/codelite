@@ -14,7 +14,7 @@ protected:
 
 public:
     LSPJdtlsDetector();
-    virtual ~LSPJdtlsDetector();
+    virtual ~LSPJdtlsDetector() = default;
 };
 
 #endif // LSPJdtlsDetector_HPP

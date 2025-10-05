@@ -32,7 +32,3 @@ FileEntry::FileEntry()
 		, m_lastRetaggedTimestamp((int)time(NULL))
 {
 }
-
-FileEntry::~FileEntry()
-{
-}

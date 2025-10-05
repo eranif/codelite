@@ -69,8 +69,6 @@ LexerConf::LexerConf()
 {
 }
 
-LexerConf::~LexerConf() {}
-
 wxFont LexerConf::GetFontForStyle(int styleId, const wxWindow* win) const
 {
     wxUnusedVar(win);

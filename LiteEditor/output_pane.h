@@ -77,7 +77,7 @@ protected:
         {
         }
 
-        Tab() {}
+        Tab() = default;
     };
     std::unordered_map<wxString, Tab> m_tabs;
 

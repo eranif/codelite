@@ -58,8 +58,8 @@ protected:
     bool HasFlag(FormatterFlags flag) const { return __HAS_FLAG(m_flags, flag); }
 
 public:
-    SourceFormatterBase();
-    virtual ~SourceFormatterBase();
+    SourceFormatterBase() = default;
+    virtual ~SourceFormatterBase() = default;
 
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;

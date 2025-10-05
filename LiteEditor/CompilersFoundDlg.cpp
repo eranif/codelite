@@ -45,8 +45,6 @@ CompilersFoundDlg::CompilersFoundDlg(wxWindow* parent, const ICompilerLocator::C
     ::clSetDialogBestSizeAndPosition(this);
 }
 
-CompilersFoundDlg::~CompilersFoundDlg() {}
-
 size_t CompilersFoundDlg::GetSelectedCompilers(ICompilerLocator::CompilerVec_t& compilers)
 {
     for(size_t i = 0; i < m_dataview->GetItemCount(); ++i) {

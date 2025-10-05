@@ -32,5 +32,5 @@ class WXDLLIMPEXP_SDK ThemeImporterTerminal : public ThemeImporterBase
 public:
     LexerConf::Ptr_t Import(const wxFileName& theme_file) override;
     ThemeImporterTerminal();
-    ~ThemeImporterTerminal() override;
+    ~ThemeImporterTerminal() override = default;
 };

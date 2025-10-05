@@ -38,7 +38,7 @@ protected:
 public:
     clAnsiEscapeCodeColourBuilder(wxString* string);
     clAnsiEscapeCodeColourBuilder();
-    ~clAnsiEscapeCodeColourBuilder();
+    ~clAnsiEscapeCodeColourBuilder() = default;
 
     clAnsiEscapeCodeColourBuilder& SetTheme(eColourTheme theme);
     clAnsiEscapeCodeColourBuilder& SetDarkTheme(bool dark_theme);

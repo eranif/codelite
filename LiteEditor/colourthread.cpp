@@ -29,14 +29,6 @@
 #if 0
 ColourThread* ColourThread::ms_instance = 0;
 
-ColourThread::ColourThread()
-{
-}
-
-ColourThread::~ColourThread()
-{
-}
-
 ColourThread* ColourThread::Instance()
 {
 	if(ms_instance == 0){

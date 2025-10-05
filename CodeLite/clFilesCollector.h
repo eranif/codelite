@@ -34,8 +34,8 @@ public:
     };
 
 public:
-    clFilesScanner();
-    virtual ~clFilesScanner();
+    clFilesScanner() = default;
+    virtual ~clFilesScanner() = default;
 
     /**
      * @brief collect all files matching a given pattern from a root folder

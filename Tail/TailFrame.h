@@ -9,7 +9,7 @@ class TailFrame : public TailFrameBase
 
 public:
     TailFrame(wxWindow* parent, Tail* plugin);
-    virtual ~TailFrame();
+    virtual ~TailFrame() = default;
 
 protected:
     virtual void OnClose(wxCloseEvent& event);

@@ -66,8 +66,6 @@ DebuggerTreeListCtrlBase::DebuggerTreeListCtrlBase(wxWindow* parent, wxWindowID 
     m_toolbar->Realize();
 }
 
-DebuggerTreeListCtrlBase::~DebuggerTreeListCtrlBase() {}
-
 IDebugger* DebuggerTreeListCtrlBase::DoGetDebugger()
 {
     if(!ManagerST::Get()->DbgCanInteract())

@@ -32,7 +32,7 @@ class DebugCoreDumpDlg : public DebugCoreDumpDlgBase {
 
 public:
 	DebugCoreDumpDlg(wxWindow* parent);
-	virtual ~DebugCoreDumpDlg(){}
+	virtual ~DebugCoreDumpDlg() = default;
 
 	wxString GetCore() { return m_Core->GetValue(); }
 	wxString GetExe() { return m_ExeFilepath->GetValue(); }

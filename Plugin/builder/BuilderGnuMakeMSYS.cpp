@@ -14,5 +14,3 @@ BuilderGnuMakeMSYS::BuilderGnuMakeMSYS(const wxString& name, const wxString& bui
     m_isWindows = false;
     m_isMSYSEnv = true;
 }
-
-BuilderGnuMakeMSYS::~BuilderGnuMakeMSYS() {}

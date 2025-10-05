@@ -6,5 +6,3 @@ LSP::DidCloseTextDocumentRequest::DidCloseTextDocumentRequest(const wxString& fi
     m_params.reset(new DidCloseTextDocumentParams());
     m_params->As<DidCloseTextDocumentParams>()->SetTextDocument(TextDocumentIdentifier(filename));
 }
-
-LSP::DidCloseTextDocumentRequest::~DidCloseTextDocumentRequest() {}

@@ -92,5 +92,3 @@ DapSettingsPage::DapSettingsPage(wxWindow* win, clDapSettingsStore& store, const
         }
     });
 }
-
-DapSettingsPage::~DapSettingsPage() {}

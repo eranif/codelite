@@ -8,8 +8,6 @@ clToolBarControl::clToolBarControl(clToolBarGeneric* parent, wxWindow* control)
 {
 }
 
-clToolBarControl::~clToolBarControl() {}
-
 wxSize clToolBarControl::CalculateSize(wxDC& dc) const
 {
     wxUnusedVar(dc);

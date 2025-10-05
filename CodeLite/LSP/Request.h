@@ -17,7 +17,7 @@ class WXDLLIMPEXP_CL Request : public LSP::MessageWithParams
 
 public:
     Request();
-    virtual ~Request();
+    virtual ~Request() = default;
 
     void SetId(int id) { this->m_id = id; }
     int GetId() const { return m_id; }

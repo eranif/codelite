@@ -40,8 +40,6 @@ clProgressDlg::clProgressDlg(wxWindow* parent, const wxString& title, const wxSt
     wxYieldIfNeeded();
 }
 
-clProgressDlg::~clProgressDlg() {}
-
 bool clProgressDlg::Update(int value, const wxString& msg)
 {
     m_staticLabel->SetLabel(msg);
@@ -68,8 +66,6 @@ clProgressDlg::clProgressDlg(wxWindow* parent, const wxString& title, const wxSt
     GetSizer()->Fit(this);
     CenterOnScreen();
 }
-
-clProgressDlg::~clProgressDlg() {}
 
 bool clProgressDlg::Update(int value, const wxString& msg) { return wxProgressDialog::Update(value, msg, NULL); }
 

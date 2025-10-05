@@ -13,8 +13,6 @@ XDebugBreakpoint::XDebugBreakpoint()
 {
 }
 
-XDebugBreakpoint::~XDebugBreakpoint() {}
-
 bool XDebugBreakpoint::operator==(const XDebugBreakpoint& other) const
 {
     return this->m_fileName == other.m_fileName && this->m_line == other.m_line;

@@ -14,8 +14,6 @@ PHPRefactoringOptions::PHPRefactoringOptions()
     }
 }
 
-PHPRefactoringOptions::~PHPRefactoringOptions() {}
-
 void PHPRefactoringOptions::FromJSON(const JSONItem& json)
 {
     m_phprefactoringPhar = json.namedObject("phprefactoringPhar").toString(m_phprefactoringPhar);

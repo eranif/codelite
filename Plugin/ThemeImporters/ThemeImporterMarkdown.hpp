@@ -35,7 +35,7 @@ class WXDLLIMPEXP_SDK ThemeImporterMarkdown : public ThemeImporterBase
 {
 public:
     ThemeImporterMarkdown();
-    virtual ~ThemeImporterMarkdown();
+    virtual ~ThemeImporterMarkdown() = default;
 
     /**
      * @brief import an eclipse XML colour theme

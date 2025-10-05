@@ -45,7 +45,7 @@ protected:
 
 public:
     NodeJSWorkspaceUser(const wxString& workspacePath);
-    virtual ~NodeJSWorkspaceUser();
+    virtual ~NodeJSWorkspaceUser() = default;
 
     NodeJSWorkspaceUser& Load();
     NodeJSWorkspaceUser& Save();

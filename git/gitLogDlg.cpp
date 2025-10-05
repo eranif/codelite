@@ -51,6 +51,3 @@ GitLogDlg::GitLogDlg(wxWindow* parent, const wxString title)
     SetName("GitLogDlg");
     WindowAttrManager::Load(this);
 }
-
-GitLogDlg::~GitLogDlg() {}
-

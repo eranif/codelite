@@ -7,7 +7,7 @@ class DockerSettingsDlg : public DockerSettingsBaseDlg
 {
 public:
     DockerSettingsDlg(wxWindow* parent);
-    virtual ~DockerSettingsDlg();
+    virtual ~DockerSettingsDlg() = default;
 
 protected:
     virtual void OnOK(wxCommandEvent& event);

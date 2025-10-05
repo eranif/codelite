@@ -14,7 +14,7 @@ protected:
     void CreateScheme();
 
 public:
-    SmartCompletionUsageDB();
+    SmartCompletionUsageDB() = default;
     virtual ~SmartCompletionUsageDB();
 
     /**

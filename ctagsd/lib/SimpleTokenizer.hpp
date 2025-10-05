@@ -41,7 +41,7 @@ public:
         {
         }
 
-        Token() {}
+        Token() = default;
 
         bool ok() const
         {
@@ -87,7 +87,7 @@ private:
 
 public:
     SimpleTokenizer(const wxString& str);
-    ~SimpleTokenizer();
+    ~SimpleTokenizer() = default;
 
     /**
      * @brief return next token details

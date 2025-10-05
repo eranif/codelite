@@ -36,7 +36,7 @@ class SSHWorkspaceSettings : public clConfigItem
 
 public:
     SSHWorkspaceSettings();
-    virtual ~SSHWorkspaceSettings();
+    virtual ~SSHWorkspaceSettings() = default;
 
 public:
     virtual void FromJSON(const JSONItem& json);

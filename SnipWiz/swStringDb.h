@@ -45,8 +45,8 @@ class swBase : public wxObject
 	DECLARE_DYNAMIC_CLASS( swBase );
 
 public:
-	swBase() { ; }
-	virtual ~swBase() { ; }
+	swBase() = default;
+	virtual ~swBase() = default;
 
 	virtual void Serialize( wxSerialize& ar ) { wxUnusedVar( ar ); }
 };
@@ -59,8 +59,8 @@ class swString : public swBase
 	DECLARE_DYNAMIC_CLASS( swString );
 	friend class swStringSet;
 public:
-	swString() { ; }
-	virtual ~swString() { ;	}
+	swString() = default;
+	virtual ~swString() = default;
 
 	void Serialize( wxSerialize& ar )
 	{
@@ -95,7 +95,7 @@ public:
 	/// delete all keys
 	void DeleteAll();
 
-	swStringSet();
+	swStringSet() = default;
 	virtual ~swStringSet();
 
 	void Serialize( wxSerialize& ar );

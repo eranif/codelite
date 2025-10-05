@@ -4,10 +4,6 @@
 #include <wx/arrstr.h>
 #include <wx/utils.h>
 
-clConsoleBash::clConsoleBash() {}
-
-clConsoleBash::~clConsoleBash() {}
-
 wxFileName clConsoleBash::PrepareExecScript() const
 {
 // Create a script

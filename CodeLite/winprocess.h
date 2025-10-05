@@ -34,7 +34,7 @@ class WinProcess
 {
 public:
     WinProcess();
-    virtual ~WinProcess();
+    virtual ~WinProcess() = default;
 
     // Create process asynchronously and return a process object
     static WinProcess* Execute(const wxString& cmd, wxString& errMsg, const wxString& workingDir = wxEmptyString);

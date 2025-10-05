@@ -30,9 +30,9 @@
 class FileHistory : public wxFileHistory
 {
 public:
-	FileHistory();
-	virtual ~FileHistory();
-	
+	FileHistory() = default;
+	virtual ~FileHistory() = default;
+
 	/**
 	 * \brief 
 	 * \param files

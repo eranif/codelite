@@ -20,8 +20,8 @@ public:
     typedef std::unordered_map<wxString, SFTPSessionInfo> Map_t;
 
 public:
-    SFTPSessionInfo();
-    ~SFTPSessionInfo();
+    SFTPSessionInfo() = default;
+    ~SFTPSessionInfo() = default;
 
     void FromJSON(const JSONItem& json);
     JSONItem ToJSON() const;
@@ -45,7 +45,7 @@ class WXDLLIMPEXP_SDK SFTPSessionInfoList : public clConfigItem
 
 public:
     SFTPSessionInfoList();
-    virtual ~SFTPSessionInfoList();
+    virtual ~SFTPSessionInfoList() = default;
     void FromJSON(const JSONItem& json);
     JSONItem ToJSON() const;
 

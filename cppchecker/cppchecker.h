@@ -58,7 +58,7 @@ protected:
 
 public:
     CppCheckPlugin(IManager* manager);
-    ~CppCheckPlugin() override;
+    ~CppCheckPlugin() override = default;
 
     //--------------------------------------------
     // Abstract methods

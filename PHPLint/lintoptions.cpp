@@ -38,8 +38,6 @@ LintOptions::LintOptions()
     }
 }
 
-LintOptions::~LintOptions() {}
-
 void LintOptions::FromJSON(const JSONItem& json)
 {
     m_lintOnFileLoad = json.namedObject("lintOnFileLoad").toBool(m_lintOnFileLoad);

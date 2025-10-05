@@ -71,7 +71,7 @@ protected:
 
 public:
     ReconcileProjectDlg(wxWindow* parent, const wxString& projname);
-    virtual ~ReconcileProjectDlg();
+    virtual ~ReconcileProjectDlg() = default;
 
     /*!
      * \brief Searches the filesystem and project to find new and stale files, then fills the dialog's fields with them
@@ -99,7 +99,7 @@ class ReconcileProjectFiletypesDlg : public ReconcileProjectFiletypesDlgBaseClas
 {
 public:
     ReconcileProjectFiletypesDlg(wxWindow* parent, const wxString& projname);
-    virtual ~ReconcileProjectFiletypesDlg();
+    virtual ~ReconcileProjectFiletypesDlg() = default;
 
     void SetData();
     void GetData(wxString& toplevelDir, wxString& types, wxString& ignoreFiles, wxArrayString& excludePaths,
@@ -126,7 +126,7 @@ class ReconcileByRegexDlg : public ReconcileByRegexDlgBaseClass
 {
 public:
     ReconcileByRegexDlg(wxWindow* parent, const wxString& projname);
-    virtual ~ReconcileByRegexDlg();
+    virtual ~ReconcileByRegexDlg() = default;
 
     wxString GetRegex() { return m_textCtrlVirtualFolder->GetValue() + '|' + m_textCtrlRegex->GetValue(); }
 

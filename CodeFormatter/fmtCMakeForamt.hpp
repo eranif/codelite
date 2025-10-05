@@ -7,7 +7,7 @@ class fmtCMakeForamt : public GenericFormatter
 {
 public:
     fmtCMakeForamt();
-    virtual ~fmtCMakeForamt();
+    ~fmtCMakeForamt() override = default;
 };
 
 #endif // FMTCMAKEFORAMT_HPP

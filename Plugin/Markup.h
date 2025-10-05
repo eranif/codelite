@@ -68,7 +68,7 @@ public:
     {
     }
     MarkupSearchPattern(const wxString& search, int type, bool isRegex = false, int matchIndex = 0);
-    virtual ~MarkupSearchPattern();
+    virtual ~MarkupSearchPattern() = default;
     bool Match(wxString& inString, int& type, wxString& matchString);
 };
 
@@ -84,7 +84,7 @@ protected:
 
 public:
     MarkupParser(const wxString& tip);
-    virtual ~MarkupParser() {}
+    virtual ~MarkupParser() = default;
     bool Next();
 
     const wxString& GetToken() const { return m_token; }

@@ -42,7 +42,7 @@ class PostgreSqlDbAdapter : public IDbAdapter {
 public:
 	PostgreSqlDbAdapter();
 	PostgreSqlDbAdapter(const wxString& serverName,const int port, const wxString& defaultDb, const wxString& userName, const wxString& password);
-	~PostgreSqlDbAdapter();
+	~PostgreSqlDbAdapter() = default;
 
 	virtual bool GetColumns(Table* pTab);
 	virtual void GetDatabases(DbConnection* dbCon);

@@ -37,8 +37,6 @@ SvnStatusHandler::SvnStatusHandler(Subversion2* plugin, int commandId, wxEvtHand
 {
 }
 
-SvnStatusHandler::~SvnStatusHandler() {}
-
 void SvnStatusHandler::Process(const wxString& output)
 {
     wxArrayString modFiles, conflictedFiles, unversionedFiles, newFiles, deletedFiles, lockedFiles, ignoredFiles;

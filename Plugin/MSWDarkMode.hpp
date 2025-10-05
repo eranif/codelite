@@ -28,7 +28,7 @@ class WXDLLIMPEXP_SDK MSWDarkMode
 
 private:
     MSWDarkMode();
-    ~MSWDarkMode();
+    ~MSWDarkMode() = default;
 
     void Initialise();
 

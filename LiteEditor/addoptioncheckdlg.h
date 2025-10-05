@@ -37,7 +37,7 @@ protected:
 public:
     AddOptionCheckDlg(wxWindow* parent, const wxString& title, const Compiler::CmpCmdLineOptions& cmpOptions,
                       const wxString& value = wxEmptyString);
-    virtual ~AddOptionCheckDlg();
+    virtual ~AddOptionCheckDlg() = default;
 
     wxString GetValue() const;
     void SetValue(const wxString& value);

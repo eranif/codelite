@@ -7,7 +7,7 @@ class WXDLLIMPEXP_CL clConsoleMateTerminal : public clConsoleGnomeTerminal
 {
 public:
     clConsoleMateTerminal();
-    ~clConsoleMateTerminal();
+    ~clConsoleMateTerminal() = default;
 };
 
 #endif // CLCONSOLEMATETERMINAL_H

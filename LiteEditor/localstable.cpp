@@ -66,8 +66,6 @@ LocalsTable::LocalsTable(wxWindow* parent)
         wxEVT_DEBUGGER_FRAME_SELECTED, clCommandEventHandler(LocalsTable::OnStackSelected), NULL, this);
 }
 
-LocalsTable::~LocalsTable() {}
-
 void LocalsTable::UpdateLocals(const LocalVariables& locals) { DoUpdateLocals(locals, DbgTreeItemData::Locals); }
 
 void LocalsTable::UpdateFuncArgs(const LocalVariables& args) { DoUpdateLocals(args, DbgTreeItemData::FuncArgs); }

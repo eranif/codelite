@@ -39,7 +39,7 @@ protected:
 
 public:
     wxTreeTraverser(wxTreeCtrl* tree);
-    virtual ~wxTreeTraverser();
+    virtual ~wxTreeTraverser() = default;
 
     /**
      * @brief traverse the tree starting with given 'item'

@@ -12,5 +12,3 @@ fmtXmlLint::fmtXmlLint()
     SetCommand({ xml_lint_exe.value_or("xmllint"), "--format", R"#("$(CurrentFileRelPath)")#" });
     SetEnabled(xml_lint_exe.has_value());
 }
-
-fmtXmlLint::~fmtXmlLint() {}

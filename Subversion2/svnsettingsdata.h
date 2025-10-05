@@ -73,7 +73,7 @@ public:
     {
     }
 
-    virtual ~SvnSettingsData() {}
+    virtual ~SvnSettingsData() = default;
 
 public:
     virtual void DeSerialize(Archive& arch)

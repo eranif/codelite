@@ -42,7 +42,7 @@ public:
         : m_entry(entry)
     {
     }
-    virtual ~QItemData() {}
+    virtual ~QItemData() = default;
 };
 
 class PHPFileLayoutTree : public wxTreeCtrl
@@ -60,7 +60,7 @@ protected:
 public:
     PHPFileLayoutTree(wxWindow* parent, IEditor* editor, IManager* manager);
     PHPFileLayoutTree(wxWindow* parent);
-    virtual ~PHPFileLayoutTree();
+    virtual ~PHPFileLayoutTree() = default;
 
     void Construct();
     void SetEditor(IEditor* editor) { this->m_editor = editor; }

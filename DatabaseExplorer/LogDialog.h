@@ -33,7 +33,7 @@ class LogDialog : public _LogDialog {
 
 public:
 	LogDialog(wxWindow* parent);
-	virtual ~LogDialog();
+    virtual ~LogDialog() = default;
 
 	virtual void OnCloseClick(wxCommandEvent& event);
 	virtual void OnCloseUI(wxUpdateUIEvent& event);

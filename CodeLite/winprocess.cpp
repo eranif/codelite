@@ -169,8 +169,6 @@ WinProcess::WinProcess()
     piProcInfo.hThread = NULL;
 }
 
-WinProcess::~WinProcess() {}
-
 bool WinProcess::Read(wxString& buff)
 {
     constexpr auto bufferSize = 65536; // 64K should be sufficient buffer

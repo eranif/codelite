@@ -1,13 +1,5 @@
 #include "PHPEntityVisitor.h"
 
-PHPEntityVisitor::PHPEntityVisitor()
-{
-}
-
-PHPEntityVisitor::~PHPEntityVisitor()
-{
-}
-
 void PHPEntityVisitor::Visit(PHPEntityBase::Ptr_t parent)
 {
     OnEntity(parent);

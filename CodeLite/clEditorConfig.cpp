@@ -11,8 +11,6 @@ clEditorConfig::clEditorConfig()
 {
 }
 
-clEditorConfig::~clEditorConfig() {}
-
 bool clEditorConfig::LoadForFile(const wxFileName& filename, wxFileName& editorConfigFile)
 {
     editorConfigFile = wxFileName(filename.GetPath(), ".editorconfig");
@@ -80,7 +78,7 @@ struct clEditorConfigTreeNode {
     }
 
 public:
-    clEditorConfigTreeNode() {}
+    clEditorConfigTreeNode() = default;
     ~clEditorConfigTreeNode()
     {
         for (clEditorConfigTreeNode* child : children) {

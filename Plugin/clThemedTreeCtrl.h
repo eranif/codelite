@@ -15,7 +15,7 @@ protected:
 public:
     clThemedTreeCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                      const wxSize& size = wxDefaultSize, long style = 0);
-    clThemedTreeCtrl();
+    clThemedTreeCtrl() = default;
     virtual ~clThemedTreeCtrl();
     bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                 const wxSize& size = wxDefaultSize, long style = 0);

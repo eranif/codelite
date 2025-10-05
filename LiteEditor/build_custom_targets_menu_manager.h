@@ -40,8 +40,8 @@ protected:
     wxString m_projectName;
 
 public:
-    CustomTargetsMgr();
-    virtual ~CustomTargetsMgr();
+    CustomTargetsMgr() = default;
+    virtual ~CustomTargetsMgr() = default;
     void Clear();
 
     static CustomTargetsMgr& Get();

@@ -36,41 +36,32 @@ class CLTextCommand : public CLCommand
 public:
     CLTextCommand(CLC_types type, const wxString& name="") : CLCommand(type, name)
     {}
-    virtual ~CLTextCommand() {}
+    virtual ~CLTextCommand() = default;
 
     virtual bool GetIsAppendable() const { // We can append to a text command
         return true;
     }
-
-protected:
-
 };
 
 class CLInsertTextCommand : public CLTextCommand
 {
 public:
     CLInsertTextCommand(const wxString& name="insertion:") : CLTextCommand(CLC_insert, name) {}
-    virtual ~CLInsertTextCommand() {}
-
-protected:
-
+    virtual ~CLInsertTextCommand() = default;
 };
 
 class CLDeleteTextCommand : public CLTextCommand
 {
 public:
     CLDeleteTextCommand(const wxString& name="deletion:") : CLTextCommand(CLC_delete, name) {}
-    virtual ~CLDeleteTextCommand() {}
-
-protected:
-
+    virtual ~CLDeleteTextCommand() = default;
 };
 
 class CLCommandProcessor : public CommandProcessorBase
 {
 public:
     CLCommandProcessor();
-    virtual ~CLCommandProcessor() {}
+    virtual ~CLCommandProcessor() = default;
 
     void StartNewTextCommand(CLC_types type, const wxString& text = "");
 

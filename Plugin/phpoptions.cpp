@@ -53,8 +53,6 @@ PhpOptions::PhpOptions()
     }
 }
 
-PhpOptions::~PhpOptions() {}
-
 void PhpOptions::FromJSON(const JSONItem& json)
 {
     m_phpExe = json.namedObject("m_phpExe").toString(m_phpExe);

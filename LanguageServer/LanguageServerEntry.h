@@ -35,7 +35,7 @@ public:
     virtual JSONItem ToJSON() const;
 
     LanguageServerEntry();
-    ~LanguageServerEntry();
+    ~LanguageServerEntry() = default;
 
     void SetCommand(const wxString& command);
     wxString GetCommand(bool pretty = false) const;

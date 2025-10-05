@@ -169,9 +169,9 @@ public:
     bool HasOption(size_t flag) const;
 
 public:
-    OptionsConfig() {}
+    OptionsConfig() = default;
     OptionsConfig(wxXmlNode* node);
-    virtual ~OptionsConfig();
+    virtual ~OptionsConfig() = default;
 
     void SetOutputTabsDirection(const wxDirection& outputTabsDirection)
     {

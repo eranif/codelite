@@ -41,7 +41,7 @@ class MemCheckSettingsDialog: public MemCheckSettingsDialogBase
 public:
     MemCheckSettingsDialog(wxWindow *parent,
                            MemCheckSettings *settings);
-    virtual ~MemCheckSettingsDialog();
+    virtual ~MemCheckSettingsDialog() = default;
 
 protected:
     virtual void OnFilePickerValgrindOutputFileUI(wxUpdateUIEvent& event);

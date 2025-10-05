@@ -15,7 +15,7 @@ class WXDLLIMPEXP_SDK CompileFlagsTxt
 
 public:
     CompileFlagsTxt(const wxFileName& filename);
-    virtual ~CompileFlagsTxt();
+    virtual ~CompileFlagsTxt() = default;
     void SetFilename(const wxFileName& filename) { this->m_filename = filename; }
     void SetIncludes(const wxArrayString& includes) { this->m_includes = includes; }
     void SetMacros(const wxArrayString& macros) { this->m_macros = macros; }

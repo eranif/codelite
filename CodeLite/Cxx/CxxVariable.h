@@ -75,7 +75,7 @@ public:
     {
     }
 
-    virtual ~CxxVariable();
+    virtual ~CxxVariable() = default;
 
     void SetName(const wxString& name) { this->m_name = name; }
     void SetType(const CxxVariable::LexerToken::Vec_t& type) { this->m_type = type; }

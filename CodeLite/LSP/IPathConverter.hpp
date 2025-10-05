@@ -13,8 +13,8 @@ public:
     typedef wxSharedPtr<IPathConverter> Ptr_t;
 
 public:
-    IPathConverter() {}
-    virtual ~IPathConverter() {}
+    IPathConverter() = default;
+    virtual ~IPathConverter() = default;
 
     /**
      * @brief convert path from a given source to the known path by CodeLite (usually the system default path)

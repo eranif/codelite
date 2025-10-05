@@ -7,6 +7,6 @@ class WXDLLIMPEXP_SDK clToolBarToggleButton : public clToolBarButton
 {
 public:
     clToolBarToggleButton(clToolBarGeneric* parent, wxWindowID id, size_t bitmapId, const wxString& label = "");
-    virtual ~clToolBarToggleButton();
+    virtual ~clToolBarToggleButton() = default;
 };
 #endif // CLTOOLBARTOGGLEBUTTON_H

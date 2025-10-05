@@ -31,7 +31,7 @@ class SvnInfoDialog : public SvnInfoDialogBase
 {
 public:
     SvnInfoDialog(wxWindow* parent);
-    virtual ~SvnInfoDialog();
+    virtual ~SvnInfoDialog() = default;
     wxTextCtrl* GetTextCtrlAuthor() {
         return m_textCtrlAuthor;
     }

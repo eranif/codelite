@@ -48,8 +48,6 @@ PHPRefactoring::PHPRefactoring(IManager* manager)
     m_settingsPhp.Load();
 }
 
-PHPRefactoring::~PHPRefactoring() {}
-
 void PHPRefactoring::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void PHPRefactoring::CreatePluginMenu(wxMenu* pluginsMenu)

@@ -28,8 +28,6 @@ PHPExpression::PHPExpression(const wxString& fulltext, const wxString& exprText,
     }
 }
 
-PHPExpression::~PHPExpression() {}
-
 phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
 {
     m_exprStartsWithOpenTag = false;

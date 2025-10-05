@@ -37,7 +37,7 @@ class wxFormBuilder : public IPlugin
 
 public:
     wxFormBuilder(IManager* manager);
-    ~wxFormBuilder() override;
+    ~wxFormBuilder() override = default;
 
 protected:
     void OnSettings(wxCommandEvent& e);

@@ -17,7 +17,7 @@ protected:
     void clear();
 
 public:
-    CodeFormatterManager();
+    CodeFormatterManager() = default;
     virtual ~CodeFormatterManager();
 
     std::shared_ptr<GenericFormatter> GetFormatter(const wxString& filepath) const;

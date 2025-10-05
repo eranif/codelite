@@ -43,7 +43,7 @@ protected:
 
 public:
     CodeCompletionPage(wxWindow* parent, int type);
-    virtual ~CodeCompletionPage();
+    virtual ~CodeCompletionPage() = default;
 
     void Save();
 

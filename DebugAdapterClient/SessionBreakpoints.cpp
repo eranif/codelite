@@ -2,10 +2,6 @@
 
 #include <algorithm>
 
-SessionBreakpoints::SessionBreakpoints() {}
-
-SessionBreakpoints::~SessionBreakpoints() {}
-
 void SessionBreakpoints::clear() { m_breakpoints.clear(); }
 
 int SessionBreakpoints::find_by_id_internal(int id)

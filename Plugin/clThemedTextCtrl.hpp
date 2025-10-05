@@ -24,7 +24,7 @@ class WXDLLIMPEXP_SDK clThemedTextCtrl : public clThemedTextCtrlBase
 public:
     virtual ~clThemedTextCtrl();
 
-    clThemedTextCtrl() {}
+    clThemedTextCtrl() = default;
     clThemedTextCtrl(wxWindow* parent,
                      wxWindowID id,
                      const wxString& value = wxEmptyString,

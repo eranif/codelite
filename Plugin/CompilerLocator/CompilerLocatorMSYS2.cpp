@@ -36,17 +36,12 @@ std::vector<std::unordered_map<wxString, wxString>> TOOLCHAINS = {
 }
 
 CompilerLocatorMSYS2Usr::CompilerLocatorMSYS2Usr() { m_msys2.SetChroot("\\usr"); }
-CompilerLocatorMSYS2Usr::~CompilerLocatorMSYS2Usr() {}
 
 CompilerLocatorMSYS2Mingw64::CompilerLocatorMSYS2Mingw64() { m_msys2.SetChroot("\\mingw64"); }
 
-CompilerLocatorMSYS2Mingw64::~CompilerLocatorMSYS2Mingw64() {}
-
 CompilerLocatorMSYS2Clang64::CompilerLocatorMSYS2Clang64() { m_msys2.SetChroot("\\clang64"); }
-CompilerLocatorMSYS2Clang64::~CompilerLocatorMSYS2Clang64() {}
 
 CompilerLocatorMSYS2Env::CompilerLocatorMSYS2Env() { m_cmdShell = true; }
-CompilerLocatorMSYS2Env::~CompilerLocatorMSYS2Env() {}
 
 bool CompilerLocatorMSYS2Env::Locate()
 {
@@ -71,10 +66,6 @@ bool CompilerLocatorMSYS2Env::Locate()
 
 // --------------------------------------------------
 // --------------------------------------------------
-
-CompilerLocatorMSYS2::CompilerLocatorMSYS2() {}
-
-CompilerLocatorMSYS2::~CompilerLocatorMSYS2() {}
 
 bool CompilerLocatorMSYS2::Locate()
 {

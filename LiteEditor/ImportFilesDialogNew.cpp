@@ -53,7 +53,7 @@ public:
     {
     }
 
-    virtual ~ImportFilesDlgData() {}
+    virtual ~ImportFilesDlgData() = default;
 
     void SetIsChecked(bool isChecked) { this->m_isChecked = isChecked; }
     void SetPath(const wxString& path) { this->m_path = path; }

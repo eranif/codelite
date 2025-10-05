@@ -8,7 +8,7 @@ class WXDLLIMPEXP_CL clConsoleQTerminal : public clConsoleGnomeTerminal
 {
 public:
     clConsoleQTerminal();
-    virtual ~clConsoleQTerminal();
+    virtual ~clConsoleQTerminal() = default;
 };
 
 #endif // CLCONSOLEQTERMINAL_H

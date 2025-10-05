@@ -5,8 +5,6 @@ LSPDetector::LSPDetector(const wxString& name)
 {
 }
 
-LSPDetector::~LSPDetector() {}
-
 void LSPDetector::GetLanguageServerEntry(LanguageServerEntry& entry)
 {
     entry.SetLanguages(GetLanguages());

@@ -53,8 +53,6 @@ AddOptionCheckDlg::AddOptionCheckDlg(wxWindow* parent, const wxString& title,
     clSetSmallDialogBestSizeAndPosition(this);
 }
 
-AddOptionCheckDlg::~AddOptionCheckDlg() {}
-
 void AddOptionCheckDlg::SetValue(const wxString& value)
 {
     m_textCmdLn->SetValue(value);

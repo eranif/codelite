@@ -5,10 +5,6 @@ wxDEFINE_EVENT(wxEVT_LSP_NET_ERROR, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_LSP_NET_CONNECTED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_LSP_NET_LOGMSG, clCommandEvent);
 
-LSPNetwork::LSPNetwork() {}
-
-LSPNetwork::~LSPNetwork() {}
-
 wxString& LSPNetwork::wrap_with_quotes(wxString& str)
 {
     if(!str.empty() && str.Contains(" ") && !str.StartsWith("\"") && !str.EndsWith("\"")) {

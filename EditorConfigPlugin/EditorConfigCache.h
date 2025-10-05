@@ -16,8 +16,8 @@ private:
     std::map<wxString, CachedItem> m_map;
 
 public:
-    EditorConfigCache();
-    virtual ~EditorConfigCache();
+    EditorConfigCache() = default;
+    virtual ~EditorConfigCache() = default;
 
     /**
      * @brief find cached item for given filename

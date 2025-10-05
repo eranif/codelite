@@ -12,8 +12,6 @@ CxxVariable::CxxVariable(eCxxStandard standard)
 {
 }
 
-CxxVariable::~CxxVariable() {}
-
 wxString CxxVariable::GetTypeAsString(const wxStringTable_t& table) const
 {
     return PackType(m_type, m_standard, false, table);

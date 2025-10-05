@@ -16,8 +16,6 @@ ThemeImporterTCL::ThemeImporterTCL()
     m_langName = "tcl";
 }
 
-ThemeImporterTCL::~ThemeImporterTCL() {}
-
 LexerConf::Ptr_t ThemeImporterTCL::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_TCL);

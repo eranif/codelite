@@ -40,7 +40,7 @@ class WXDLLIMPEXP_CL ZombieReaperPOSIX : public wxThread
 public:
     virtual void* Entry();
     ZombieReaperPOSIX();
-    virtual ~ZombieReaperPOSIX();
+    virtual ~ZombieReaperPOSIX() = default;
 
     void Start() {
         Create();

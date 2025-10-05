@@ -48,7 +48,7 @@ struct SvnConsoleCommand {
         , showConsole(false)
     {
     }
-    ~SvnConsoleCommand() {}
+    ~SvnConsoleCommand() = default;
     void clean()
     {
         this->handler = NULL;
@@ -88,7 +88,7 @@ protected:
 
 public:
     SvnConsole(wxStyledTextCtrl* stc, Subversion2* plugin);
-    virtual ~SvnConsole();
+    virtual ~SvnConsole() = default;
 
     void Execute(const wxString& cmd,
                  const wxString& workingDirectory,

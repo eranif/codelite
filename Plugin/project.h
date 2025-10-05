@@ -97,7 +97,7 @@ public:
     {
     }
 
-    virtual ~ProjectItem() {}
+    virtual ~ProjectItem() = default;
 
     ProjectItem(const ProjectItem& item) { *this = item; }
 
@@ -168,7 +168,7 @@ public:
         , m_xmlNode(nullptr)
     {
     }
-    ~clProjectFile() {}
+    ~clProjectFile() = default;
 
     void SetExcludeConfigs(Project* project, const wxStringSet_t& excludeConfigs);
     void SetExcludeConfigs(Project* project, const wxArrayString& excludeConfigs);
@@ -436,7 +436,7 @@ public:
 
     // default constructor
     Project();
-    virtual ~Project();
+    virtual ~Project() = default;
 
     /**
      * @brief return list of macros used in the configuration which could not be resolved

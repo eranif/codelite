@@ -545,7 +545,7 @@ struct ContextCpp_ClientData : public wxClientData {
     TagEntryPtr m_ptr;
 
     ContextCpp_ClientData(TagEntryPtr ptr) { m_ptr = ptr; }
-    virtual ~ContextCpp_ClientData() {}
+    ~ContextCpp_ClientData() override = default;
 };
 
 bool ContextCpp::DoGotoSymbol(TagEntryPtr tag)

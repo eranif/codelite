@@ -14,8 +14,6 @@ StylesSheetListView::StylesSheetListView()
 {
 }
 
-StylesSheetListView::~StylesSheetListView() {}
-
 void StylesSheetListView::Construct(wxPropertyGrid* pg, wxcWidget* wb)
 {
 #ifdef __WXMSW__

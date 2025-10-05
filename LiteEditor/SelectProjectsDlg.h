@@ -31,7 +31,7 @@ class SelectProjectsDlg : public SelectProjectsDlgBase
 {
 public:
     SelectProjectsDlg(wxWindow* parent);
-    virtual ~SelectProjectsDlg();
+    virtual ~SelectProjectsDlg() = default;
     wxArrayString GetProjects() const;
     
 protected:

@@ -34,8 +34,6 @@ CommentConfigData::CommentConfigData()
     m_functionPattern << " * @brief \n";
 }
 
-CommentConfigData::~CommentConfigData() {}
-
 void CommentConfigData::DeSerialize(Archive& arch)
 {
     arch.Read("m_addStarOnCComment", m_addStarOnCComment);

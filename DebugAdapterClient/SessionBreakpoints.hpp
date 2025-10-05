@@ -12,8 +12,8 @@ private:
     size_t find_by_path_internal(const wxString& path, std::vector<dap::Breakpoint>* bps);
 
 public:
-    SessionBreakpoints();
-    ~SessionBreakpoints();
+    SessionBreakpoints() = default;
+    ~SessionBreakpoints() = default;
 
     /**
      * @brief clear all the stored breakpoints

@@ -26,17 +26,6 @@
 
 #include <wx/menu.h>
 
-FileHistory::FileHistory()
-{
-}
-
-/**
- * \brief
- */
-FileHistory::~FileHistory()
-{
-}
-
 void FileHistory::GetFiles(wxArrayString &files)
 {
     for(size_t i=0; i<GetCount(); i++) {

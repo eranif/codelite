@@ -91,9 +91,6 @@ wxString FindInFilesSession::Save() const
 }
 
 // Session entry
-SessionEntry::SessionEntry() {}
-
-SessionEntry::~SessionEntry() {}
 
 void SessionEntry::DeSerialize(Archive& arch)
 {
@@ -154,8 +151,6 @@ SessionManager::SessionManager()
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &SessionManager::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &SessionManager::OnWorkspaceClosed, this);
 }
-
-SessionManager::~SessionManager() {}
 
 bool SessionManager::Load(const wxString& fileName)
 {

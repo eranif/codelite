@@ -22,15 +22,7 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #include "colourrequest.h"
-
-ColourRequest::ColourRequest()
-{
-}
-
-ColourRequest::~ColourRequest()
-{
-}
+#include "colourrequest.h"
 
 void ColourRequest::SetFileToColour(const wxFileName& fileToColour)
 {

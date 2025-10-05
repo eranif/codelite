@@ -67,8 +67,6 @@ CodeCompletionPage::CodeCompletionPage(wxWindow* parent, int type)
     }
 }
 
-CodeCompletionPage::~CodeCompletionPage() {}
-
 wxArrayString CodeCompletionPage::GetIncludePaths() const
 {
     return wxStringTokenize(m_textCtrlSearchPaths->GetValue(), wxT("\n\r"), wxTOKEN_STRTOK);

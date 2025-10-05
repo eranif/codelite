@@ -58,8 +58,6 @@ NewWxProjectDlg::NewWxProjectDlg(wxWindow* parent, IManager* mgr)
     WindowAttrManager::Load(this);
 }
 
-NewWxProjectDlg::~NewWxProjectDlg() {}
-
 void NewWxProjectDlg::OnButtonCancel(wxCommandEvent& e) { EndModal(wxID_CANCEL); }
 
 void NewWxProjectDlg::OnButtonOK(wxCommandEvent& e)

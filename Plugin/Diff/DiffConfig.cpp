@@ -32,8 +32,6 @@ DiffConfig::DiffConfig()
 {
 }
 
-DiffConfig::~DiffConfig() {}
-
 void DiffConfig::FromJSON(const JSONItem& json)
 {
     m_flags = json.namedObject("m_flags").toSize_t(0);

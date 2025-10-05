@@ -48,10 +48,6 @@ SvnBlameEditor::SvnBlameEditor(wxWindow *parent, wxWindowID id,
     Initialize();
 }
 
-SvnBlameEditor::~SvnBlameEditor()
-{
-}
-
 void SvnBlameEditor::Initialize()
 {
     // Initialize some styles

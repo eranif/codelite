@@ -15,8 +15,6 @@ NewLanguageServerDlg::NewLanguageServerDlg(wxWindow* parent)
     CentreOnParent();
 }
 
-NewLanguageServerDlg::~NewLanguageServerDlg() {}
-
 void NewLanguageServerDlg::OnOKUI(wxUpdateUIEvent& event)
 {
     wxString name = m_page->GetTextCtrlName()->GetValue();

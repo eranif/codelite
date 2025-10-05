@@ -9,8 +9,6 @@ clEnhancedToolBar::clEnhancedToolBar(wxWindow* parent, wxWindowID winid, const w
 {
 }
 
-clEnhancedToolBar::~clEnhancedToolBar() {}
-
 void clEnhancedToolBar::Add2StatesTool(wxWindowID id, wxEvtHandler* sink, const Button& button1, const Button& button2,
                                        wxItemKind kind)
 {

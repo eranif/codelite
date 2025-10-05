@@ -14,8 +14,8 @@ class WXDLLIMPEXP_CL clFileName : public wxFileName
 public:
     clFileName(const wxString& fullpath);
     clFileName(const wxString& dir, const wxString& name);
-    clFileName();
-    virtual ~clFileName();
+    clFileName() = default;
+    virtual ~clFileName() = default;
 
     /**
      * @brief attempt to convert cygwin path to Windows native path

@@ -37,8 +37,8 @@ protected:
     void OnRender(wxAuiManagerEvent& event);
 
 public:
-    clDockingManager();
-    virtual ~clDockingManager();
+    clDockingManager() = default;
+    virtual ~clDockingManager() = default;
 };
 
 #endif // CLDOCKINGMANAGER_H

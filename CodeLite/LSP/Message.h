@@ -18,8 +18,8 @@ public:
     static int GetNextID();
 
 public:
-    Message();
-    virtual ~Message();
+    Message() = default;
+    virtual ~Message() = default;
     virtual JSONItem ToJSON(const wxString& name) const;
     virtual void FromJSON(const JSONItem& json);
 

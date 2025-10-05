@@ -34,5 +34,3 @@ DbgCommandDlg::DbgCommandDlg(wxWindow* parent)
     ::clSetSmallDialogBestSizeAndPosition(this);
     CentreOnParent();
 }
-
-DbgCommandDlg::~DbgCommandDlg() {}

@@ -43,7 +43,7 @@ protected:
 
 public:
     WizardsPlugin(IManager* manager);
-    ~WizardsPlugin() override;
+    ~WizardsPlugin() override = default;
 
     //--------------------------------------------
     // Abstract methods

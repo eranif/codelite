@@ -29,8 +29,6 @@ wxcAboutDlg::wxcAboutDlg(wxWindow* parent)
     ::clSetDialogBestSizeAndPosition(this);
 }
 
-wxcAboutDlg::~wxcAboutDlg() {}
-
 void wxcAboutDlg::OnSize(wxSizeEvent& event)
 {
     event.Skip();

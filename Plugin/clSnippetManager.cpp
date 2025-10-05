@@ -2,10 +2,6 @@
 
 #include <algorithm>
 
-clSnippetManager::clSnippetManager() {}
-
-clSnippetManager::~clSnippetManager() {}
-
 clSnippetManager& clSnippetManager::Get()
 {
     static clSnippetManager manager;

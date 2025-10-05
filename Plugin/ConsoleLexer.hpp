@@ -37,7 +37,7 @@ class WXDLLIMPEXP_SDK ConsoleLexer : public wxEvtHandler
 
 public:
     ConsoleLexer(wxStyledTextCtrl* stc);
-    virtual ~ConsoleLexer();
+    virtual ~ConsoleLexer() = default;
 
     /**
      * @brief initialize the control styles and colours
@@ -57,7 +57,7 @@ public:
         : m_lexer(ctrl)
     {
     }
-    virtual ~ConsoleLexerClientData() {}
+    ~ConsoleLexerClientData() override = default;
 
     ConsoleLexer& GetLexer() { return m_lexer; }
 

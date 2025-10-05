@@ -6,6 +6,6 @@ class VimSettingsDlg : public VimSettingsDlgBase
 {
 public:
     VimSettingsDlg(wxWindow* parent);
-    virtual ~VimSettingsDlg();
+    virtual ~VimSettingsDlg() = default;
 };
 #endif // VIMSETTINGSDLG_H

@@ -31,7 +31,8 @@ class SFTPSettingsDialog : public SFTPSettingsDialogBase
 {
 public:
     SFTPSettingsDialog(wxWindow* parent);
-    virtual ~SFTPSettingsDialog();
+    virtual ~SFTPSettingsDialog() = default;
+
 protected:
     virtual void OnOK(wxCommandEvent& event);
 };

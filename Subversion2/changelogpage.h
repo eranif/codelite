@@ -45,7 +45,7 @@ protected:
 
 public:
     ChangeLogPage(wxWindow* parent, Subversion2* plugin);
-    virtual ~ChangeLogPage();
+    virtual ~ChangeLogPage() = default;
 
     void AppendText(const wxString& text);
     void OnURL(wxTextUrlEvent& event);

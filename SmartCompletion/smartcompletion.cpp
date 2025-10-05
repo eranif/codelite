@@ -40,8 +40,6 @@ SmartCompletion::SmartCompletion(IManager* manager)
     m_pGTAWeight = &m_config.GetGTAWeightTable();
 }
 
-SmartCompletion::~SmartCompletion() {}
-
 void SmartCompletion::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void SmartCompletion::CreatePluginMenu(wxMenu* pluginsMenu)

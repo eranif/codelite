@@ -10,7 +10,7 @@ class WXDLLIMPEXP_CL clVersionString
 {
 public:
     clVersionString(const wxString& version_string);
-    ~clVersionString();
+    ~clVersionString() = default;
 
     /// Return `1` if this version is greater than `other`. Return `-1` if `other` is greater than this
     /// Return `0` if they are equal

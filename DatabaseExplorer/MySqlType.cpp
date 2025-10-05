@@ -57,9 +57,6 @@ MySqlType::MySqlType(const wxString& typeName, long propertyFlags, UNIVERSAL_TYP
 	InitSerialize();
 }
 
-MySqlType::~MySqlType() {
-}
-
 wxString MySqlType::ReturnSql() {
 	wxString sql;
 	sql = wxString::Format(wxT(" %s"), m_typeName.c_str());

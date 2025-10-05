@@ -38,7 +38,7 @@ class WXDLLIMPEXP_SDK clDebuggerTerminalPOSIX
 
 public:
     clDebuggerTerminalPOSIX();
-    virtual ~clDebuggerTerminalPOSIX();
+    virtual ~clDebuggerTerminalPOSIX() = default;
 
     /**
      * @brief launch the terminal. Check the IsValid() after this call

@@ -123,7 +123,7 @@ public:
 
 public:
     Subversion2(IManager* manager);
-    ~Subversion2() override;
+    ~Subversion2() override = default;
 
     //--------------------------------------------
     // Abstract methods

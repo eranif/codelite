@@ -47,7 +47,7 @@ public:
     virtual JSONItem ToJSON() const;
 
     SettersGetterData();
-    virtual ~SettersGetterData();
+    virtual ~SettersGetterData() = default;
 
     void SetFlags(size_t flags) { this->m_flags = flags; }
     size_t GetFlags() const { return m_flags; }
@@ -70,7 +70,7 @@ public:
         , m_checked(checked)
     {
     }
-    virtual ~SettersGettersTreeData() {}
+    ~SettersGettersTreeData() override = default;
 };
 
 class SettersGettersDlg : public SettersGettersBaseDlg

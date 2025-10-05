@@ -12,7 +12,7 @@ class clTableLineEditorDlg : public clTableLineEditorBaseDlg
 
 public:
     clTableLineEditorDlg(wxWindow* parent, const wxArrayString& columns, const wxArrayString& data);
-    virtual ~clTableLineEditorDlg();
+    virtual ~clTableLineEditorDlg() = default;
 
 protected:
     virtual void OnColumnSelected(wxCommandEvent& event);

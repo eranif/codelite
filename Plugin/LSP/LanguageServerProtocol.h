@@ -35,8 +35,8 @@ class WXDLLIMPEXP_SDK LSPRequestMessageQueue
     bool m_waitingReponse = false;
 
 public:
-    LSPRequestMessageQueue() {}
-    virtual ~LSPRequestMessageQueue() {}
+    LSPRequestMessageQueue() = default;
+    virtual ~LSPRequestMessageQueue() = default;
 
     LSP::MessageWithParams::Ptr_t TakePendingReplyMessage(int msgid);
     void Push(LSP::MessageWithParams::Ptr_t message);

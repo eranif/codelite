@@ -36,9 +36,9 @@
 class WXDLLIMPEXP_CL PHPEntityVisitor
 {
 public:
-    PHPEntityVisitor();
-    virtual ~PHPEntityVisitor();
-    
+    PHPEntityVisitor() = default;
+    virtual ~PHPEntityVisitor() = default;
+
     void Visit(PHPEntityBase::Ptr_t parent);
     
     /**

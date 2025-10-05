@@ -14,7 +14,7 @@ class WXDLLIMPEXP_CL MSYS2 : public PlatformCommon
 
 public:
     MSYS2();
-    virtual ~MSYS2() {}
+    virtual ~MSYS2() = default;
 
     static MSYS2* Get();
 

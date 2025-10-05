@@ -33,7 +33,7 @@ public:
 
 public:
 	ExpressionResult();
-	virtual ~ExpressionResult();
+	virtual ~ExpressionResult() = default;
 	void Reset();
 	void Print();
 	std::string ToString() const;

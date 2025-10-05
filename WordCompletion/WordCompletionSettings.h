@@ -42,7 +42,7 @@ private:
 
 public:
     WordCompletionSettings();
-    virtual ~WordCompletionSettings();
+    virtual ~WordCompletionSettings() = default;
 
 public:
     virtual void FromJSON(const JSONItem& json);

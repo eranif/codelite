@@ -14,7 +14,7 @@ class WXDLLIMPEXP_CL InitializeRequest : public LSP::Request
 
 public:
     InitializeRequest(bool withTokenTypes, const wxString& rootUri = "");
-    virtual ~InitializeRequest();
+    virtual ~InitializeRequest() = default;
     InitializeRequest& SetProcessId(int processId)
     {
         this->m_processId = processId;

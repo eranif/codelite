@@ -41,7 +41,7 @@ class MySqlDbAdapter : public IDbAdapter {
 public:
 	MySqlDbAdapter();
 	MySqlDbAdapter(const wxString& serverName, const wxString& userName, const wxString& password);
-	~MySqlDbAdapter();
+	~MySqlDbAdapter() = default;
 
 	virtual bool GetColumns(Table* pTab);
 	virtual void GetDatabases(DbConnection* dbCon);

@@ -37,7 +37,7 @@ class FileEntry
 
 public:
 	FileEntry();
-	~FileEntry();
+	~FileEntry() = default;
 
 public:
 	void SetFile(const wxString& file) {

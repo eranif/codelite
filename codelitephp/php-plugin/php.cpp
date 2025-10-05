@@ -182,8 +182,6 @@ PhpPlugin::PhpPlugin(IManager* manager)
 #endif // USE_SFTP
 }
 
-PhpPlugin::~PhpPlugin() {}
-
 void PhpPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void PhpPlugin::CreatePluginMenu(wxMenu* pluginsMenu)

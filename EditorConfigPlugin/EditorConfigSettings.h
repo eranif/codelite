@@ -24,7 +24,7 @@ private:
 
 public:
     EditorConfigSettings();
-    virtual ~EditorConfigSettings();
+    virtual ~EditorConfigSettings() = default;
 
     bool IsEnabled() const { return m_flags & kEnabled; }
     void SetEnabled(bool b) { SetFlag(kEnabled, b); }

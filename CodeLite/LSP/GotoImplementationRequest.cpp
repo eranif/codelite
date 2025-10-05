@@ -10,8 +10,6 @@ LSP::GotoImplementationRequest::GotoImplementationRequest(const wxString& filena
     m_params->As<TextDocumentPositionParams>()->SetPosition(Position(line, column));
 }
 
-LSP::GotoImplementationRequest::~GotoImplementationRequest() {}
-
 void LSP::GotoImplementationRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     JSONItem result = response.Get("result");

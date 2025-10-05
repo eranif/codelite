@@ -87,7 +87,7 @@ public:
         , m_kind(kind)
     {
     }
-    virtual ~GitClientData() {}
+    virtual ~GitClientData() = default;
 
     const wxString& GetPath() const { return m_path; }
     eGitFile GetKind() const { return m_kind; }

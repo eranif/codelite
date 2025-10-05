@@ -8,7 +8,7 @@ class DebuggerResumed : public NodeMessageBase
 
 public:
     DebuggerResumed();
-    virtual ~DebuggerResumed();
+    virtual ~DebuggerResumed() = default;
 
 public:
     void Process(clWebSocketClient& socket, const JSONItem& json);

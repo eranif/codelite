@@ -9,8 +9,6 @@ clTerminalHistory::clTerminalHistory()
 {
 }
 
-clTerminalHistory::~clTerminalHistory() {}
-
 void clTerminalHistory::DoReset() { m_where = -1; }
 
 void clTerminalHistory::Add(const wxString& command)

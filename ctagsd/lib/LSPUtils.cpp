@@ -5,10 +5,6 @@
 
 #include <array>
 
-LSPUtils::LSPUtils() {}
-
-LSPUtils::~LSPUtils() {}
-
 void LSPUtils::encode_semantic_tokens(const std::vector<TokenWrapper>& tokens_vec, std::vector<int>* encoded_arr)
 {
     TokenWrapper dummy;

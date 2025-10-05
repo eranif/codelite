@@ -14,8 +14,8 @@ class CallFrame : public nSerializableObject
     nSerializableObject::Vec_t m_scopeChain;
 
 public:
-    CallFrame();
-    virtual ~CallFrame();
+    CallFrame() = default;
+    virtual ~CallFrame() = default;
     JSONItem ToJSON(const wxString& name) const;
     void FromJSON(const JSONItem& json);
 

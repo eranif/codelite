@@ -262,8 +262,6 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
     }
 }
 
-OptionsConfig::~OptionsConfig() {}
-
 wxXmlNode* OptionsConfig::ToXml() const
 {
     wxXmlNode* n = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Options"));

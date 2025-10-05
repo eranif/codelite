@@ -64,8 +64,6 @@ DebuggerToolBar::DebuggerToolBar(wxWindow* parent)
     GetSizer()->Fit(this);
 }
 
-DebuggerToolBar::~DebuggerToolBar() {}
-
 bool DebuggerToolBar::Show(bool show)
 {
     bool res = wxWindow::Show(show);

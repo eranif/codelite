@@ -104,7 +104,7 @@ public:
     SearchData(const SearchData& rhs) { Copy(rhs); }
     SearchData& operator=(const SearchData& rhs);
 
-    virtual ~SearchData() {}
+    virtual ~SearchData() = default;
     SearchData& Copy(const SearchData& other);
 
 public:
@@ -174,9 +174,9 @@ class WXDLLIMPEXP_CL SearchResult : public wxObject
 
 public:
     // ctor-dtor, copy constructor and assignment operator
-    SearchResult() {}
+    SearchResult() = default;
 
-    virtual ~SearchResult() {}
+    virtual ~SearchResult() = default;
 
     SearchResult(const SearchResult& rhs) { *this = rhs; }
 
@@ -278,7 +278,7 @@ public:
     {
     }
 
-    virtual ~SearchSummary() {}
+    virtual ~SearchSummary() = default;
 
     SearchSummary(const SearchSummary& rhs) { *this = rhs; }
 
@@ -362,7 +362,7 @@ public:
     /**
      * Destructor.
      */
-    virtual ~SearchThread();
+    virtual ~SearchThread() = default;
 
     /**
      * Process request from caller

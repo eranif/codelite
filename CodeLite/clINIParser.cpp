@@ -71,10 +71,6 @@ clINIKeyValue clINISection::operator[](const wxString& key_name) const
     return {};
 }
 
-clINIParser::clINIParser() {}
-
-clINIParser::~clINIParser() {}
-
 bool clINIParser::ParseFile(const wxString& filepath)
 {
     wxString content;

@@ -65,8 +65,6 @@ ThemeImporterSCSS::ThemeImporterSCSS()
     SetFileExtensions("*.scss");
 }
 
-ThemeImporterSCSS::~ThemeImporterSCSS() {}
-
 LexerConf::Ptr_t ThemeImporterSCSS::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, "scss", wxSTC_LEX_CSS);

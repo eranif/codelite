@@ -12,8 +12,6 @@
 
 MSWDarkMode::MSWDarkMode() { Initialise(); }
 
-MSWDarkMode::~MSWDarkMode() {}
-
 void MSWDarkMode::Initialise()
 {
     static bool initialized = false;

@@ -82,7 +82,7 @@ public:
     {
         Hide();
     }
-    virtual ~HiddenFrame() {}
+    ~HiddenFrame() override = default;
 };
 
 const wxEventType wxEVT_PREVIEW_CTRL_SELECTED = wxNewEventType();

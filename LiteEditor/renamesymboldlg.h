@@ -47,7 +47,7 @@ protected:
 public:
     RenameSymbol(wxWindow* parent, const CppToken::Vec_t& candidates, const CppToken::Vec_t& possCandidates,
                  const wxString& oldname = wxEmptyString);
-    virtual ~RenameSymbol();
+    virtual ~RenameSymbol() = default;
     void GetMatches(CppToken::Vec_t& matches);
     wxString GetWord() const { return m_textCtrlNewName->GetValue(); }
 };

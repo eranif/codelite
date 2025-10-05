@@ -7,7 +7,7 @@ class DAPConsoleOutput : public DAPTerminalCtrlView
 {
 public:
     DAPConsoleOutput(wxWindow* parent, clModuleLogger& log);
-    virtual ~DAPConsoleOutput();
+    virtual ~DAPConsoleOutput() = default;
 
     void AddOutputEvent(dap::OutputEvent* event);
 };

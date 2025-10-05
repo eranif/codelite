@@ -66,7 +66,3 @@ wxDirTraverseResult DirTraverser::OnDir(const wxString &dirname)
     }
     return wxDIR_CONTINUE;
 }
-
-DirTraverser::~DirTraverser()
-{
-}

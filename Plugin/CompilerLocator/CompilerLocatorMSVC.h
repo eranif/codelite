@@ -41,7 +41,7 @@ class CompilerLocatorMSVC : public ICompilerLocator
 
 public:
     CompilerLocatorMSVC();
-    virtual ~CompilerLocatorMSVC();
+    virtual ~CompilerLocatorMSVC() = default;
     virtual bool Locate();
     virtual CompilerPtr Locate(const wxString& folder) { return NULL; }
 

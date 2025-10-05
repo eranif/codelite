@@ -31,7 +31,7 @@ class NewCompilerDlg : public NewCompilerDlgBase
 {
 public:
     NewCompilerDlg(wxWindow* parent);
-    virtual ~NewCompilerDlg();
+    virtual ~NewCompilerDlg() = default;
 
     wxString GetCompilerName() const {
         return m_textCtrlCompilerName->GetValue();

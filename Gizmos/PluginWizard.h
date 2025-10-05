@@ -33,7 +33,7 @@ class PluginWizard : public PluginWizardBase
 {
 public:
     PluginWizard(wxWindow* parent);
-    virtual ~PluginWizard();
+    virtual ~PluginWizard() = default;
 
     bool Run(NewPluginData& pd);
 protected:

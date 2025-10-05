@@ -10,8 +10,6 @@ DockerSettingsDlg::DockerSettingsDlg(wxWindow* parent)
     m_filePickerDockerCompose->SetPath(settings.GetDockerCompose().GetFullPath());
 }
 
-DockerSettingsDlg::~DockerSettingsDlg() {}
-
 void DockerSettingsDlg::OnOK(wxCommandEvent& event)
 {
     event.Skip();

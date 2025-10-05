@@ -268,7 +268,7 @@ public:
                       const wxString& codelite_indexer,
                       const std::unordered_map<wxString, TagEntryPtr>& unit_tests_db);
     CxxCodeCompletion(ITagsStoragePtr lookup, const wxString& codelite_indexer);
-    ~CxxCodeCompletion();
+    ~CxxCodeCompletion() = default;
 
     /**
      * @brief return the return value of a tag (of type function)

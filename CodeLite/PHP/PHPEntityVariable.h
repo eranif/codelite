@@ -63,8 +63,8 @@ public:
      * @brief format this variable
      */
     wxString ToFuncArgString() const;
-    PHPEntityVariable();
-    virtual ~PHPEntityVariable();
+    PHPEntityVariable() = default;
+    virtual ~PHPEntityVariable() = default;
 
     void SetExpressionHint(const wxString& expressionHint) { this->m_expressionHint = expressionHint; }
     const wxString& GetExpressionHint() const { return m_expressionHint; }

@@ -78,7 +78,7 @@ public:
 
 private:
     EnvironmentConfig();
-    virtual ~EnvironmentConfig();
+    virtual ~EnvironmentConfig() = default;
 
 public:
     virtual wxString GetRootName();

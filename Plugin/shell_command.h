@@ -68,7 +68,7 @@ public:
     // construct a compiler action
     ShellCommand(const QueueCommand& buildInfo);
 
-    virtual ~ShellCommand() {}
+    virtual ~ShellCommand() = default;
     virtual void Process(IManager* manager) = 0;
 
     void AppendLine(const wxString& line);

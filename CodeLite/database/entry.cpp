@@ -53,8 +53,6 @@ TagEntry::TagEntry()
 {
 }
 
-TagEntry::~TagEntry() {}
-
 TagEntry::TagEntry(const TagEntry& rhs) { *this = rhs; }
 
 TagEntry& TagEntry::operator=(const TagEntry& rhs)

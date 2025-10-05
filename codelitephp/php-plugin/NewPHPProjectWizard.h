@@ -35,7 +35,7 @@ class NewPHPProjectWizard : public NewPHPProjectWizardBase
 
 public:
     NewPHPProjectWizard(wxWindow* parent, bool createProjectFromWorkspaceFolder = false);
-    virtual ~NewPHPProjectWizard();
+    virtual ~NewPHPProjectWizard() = default;
 
     PHPProject::CreateData GetCreateData();
 

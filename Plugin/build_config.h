@@ -69,7 +69,7 @@ public:
         m_command.Trim().Trim(false);
     }
 
-    ~BuildCommand() {}
+    ~BuildCommand() = default;
 
     const wxString& GetCommand() const { return m_command; }
 
@@ -162,7 +162,7 @@ private:
 
 public:
     BuildConfig(wxXmlNode* node);
-    virtual ~BuildConfig();
+    virtual ~BuildConfig() = default;
     wxXmlNode* ToXml() const;
     BuildConfig* Clone() const;
 

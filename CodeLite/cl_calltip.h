@@ -85,7 +85,7 @@ public:
      * Destructor
      * \return
      */
-    virtual ~clCallTip() {}
+    virtual ~clCallTip() = default;
 
     /**
      * Show next tip, if we are at last tip, return the first tip or empty string if no tips exists

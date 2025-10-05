@@ -6,8 +6,8 @@
 class WXDLLIMPEXP_CL clConsoleCMD : public clConsoleBase
 {
 public:
-    clConsoleCMD();
-    virtual ~clConsoleCMD();
+    clConsoleCMD() = default;
+    ~clConsoleCMD() override = default;
 
 public:
     bool Start() override;

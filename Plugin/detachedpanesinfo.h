@@ -38,8 +38,8 @@ protected:
 
 public:
     DetachedPanesInfo(wxArrayString arr);
-    DetachedPanesInfo() {}
-    virtual ~DetachedPanesInfo();
+    DetachedPanesInfo() = default;
+    virtual ~DetachedPanesInfo() = default;
 
 public:
     virtual void DeSerialize(Archive& arch);

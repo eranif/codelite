@@ -45,8 +45,6 @@ Docker::Docker(IManager* manager)
     m_tabToggler.reset(new clTabTogglerHelper(_("Docker"), m_outputView, "", NULL));
 }
 
-Docker::~Docker() {}
-
 void Docker::CreateToolBar(clToolBarGeneric* toolbar)
 {
     // You can add items to the main toolbar here

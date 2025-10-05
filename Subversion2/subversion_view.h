@@ -51,7 +51,7 @@ public:
         : m_selectionType(SvnTreeData::SvnNodeTypeInvalid)
     {
     }
-    virtual ~SvnPageSelectionInfo() {}
+    virtual ~SvnPageSelectionInfo() = default;
 
     void Clear()
     {

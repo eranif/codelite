@@ -71,7 +71,7 @@ protected:
 #endif
 
 public:
-    clButtonBase();
+    clButtonBase() = default;
     clButtonBase(wxWindow* parent, wxWindowID id, const wxString& label = wxEmptyString,
                  const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0,
                  const wxValidator& validator = wxDefaultValidator, const wxString& name = "button");

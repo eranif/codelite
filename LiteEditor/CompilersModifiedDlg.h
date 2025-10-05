@@ -40,8 +40,8 @@ class CompilersModifiedDlg : public CompilersModifiedDlgBase
     
 public:
     CompilersModifiedDlg(wxWindow* parent, const wxStringSet_t& deletedCompilers);
-    virtual ~CompilersModifiedDlg();
-    
+    virtual ~CompilersModifiedDlg() = default;
+
     const wxStringMap_t& GetReplacementTable() const {
         return m_table;
     }

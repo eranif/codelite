@@ -45,11 +45,6 @@ SelectProjectsDlg::SelectProjectsDlg(wxWindow* parent)
     ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
-SelectProjectsDlg::~SelectProjectsDlg()
-{
-    
-}
-
 void SelectProjectsDlg::OnSelectAll(wxCommandEvent& event)
 {
     for(unsigned int i=0; i<m_checkListBoxProjects->GetCount(); ++i) {

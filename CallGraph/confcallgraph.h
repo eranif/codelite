@@ -65,7 +65,7 @@ public:
 	/**
 	 * @brief Default destructor.
 	 */
-	virtual ~ConfCallGraph();
+    virtual ~ConfCallGraph() = default;
 
 public:
 	virtual void DeSerialize(Archive &arch);

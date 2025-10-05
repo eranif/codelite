@@ -9,8 +9,6 @@ ThemeImporterRuby::ThemeImporterRuby()
     m_langName = "ruby";
 }
 
-ThemeImporterRuby::~ThemeImporterRuby() {}
-
 LexerConf::Ptr_t ThemeImporterRuby::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_RUBY);

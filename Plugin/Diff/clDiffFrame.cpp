@@ -78,8 +78,6 @@ clDiffFrame::clDiffFrame(wxWindow* parent, const wxFileName& left, const wxFileN
     ::clSetTLWindowBestSizeAndPosition(this);
 }
 
-clDiffFrame::~clDiffFrame() {}
-
 void clDiffFrame::CreateMenuBar()
 {
     SetMenuBar(wxXmlResource::Get()->LoadMenuBar("diff_menu_bar"));

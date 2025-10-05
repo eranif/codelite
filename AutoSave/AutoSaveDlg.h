@@ -31,7 +31,8 @@ class AutoSaveDlg : public AutoSaveDlgBase
 {
 public:
     AutoSaveDlg(wxWindow* parent);
-    virtual ~AutoSaveDlg();
+    virtual ~AutoSaveDlg() = default;
+
 protected:
     virtual void OnOK(wxCommandEvent& event);
     virtual void OnEnabledUI(wxUpdateUIEvent& event);

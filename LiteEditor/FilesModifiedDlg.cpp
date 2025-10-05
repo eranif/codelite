@@ -32,8 +32,6 @@ FilesModifiedDlg::FilesModifiedDlg(wxWindow* parent)
     CentreOnParent();
 }
 
-FilesModifiedDlg::~FilesModifiedDlg() {}
-
 void FilesModifiedDlg::OnChoose(wxCommandEvent& event)
 {
     event.StopPropagation();

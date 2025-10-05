@@ -366,8 +366,6 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
     }
 }
 
-Compiler::~Compiler() {}
-
 wxXmlNode* Compiler::ToXml() const
 {
     wxXmlNode* node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Compiler"));

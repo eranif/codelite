@@ -1,14 +1,10 @@
 #include "ResponseError.h"
 
-LSP::ResponseError::ResponseError() {}
-
 LSP::ResponseError::ResponseError(const wxString& message)
 {
     JSON json(message);
     FromJSON(json.toElement());
 }
-
-LSP::ResponseError::~ResponseError() {}
 
 void LSP::ResponseError::FromJSON(const JSONItem& json)
 {

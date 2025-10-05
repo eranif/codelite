@@ -13,10 +13,6 @@
 
 thread_local wxStringMap_t REMOTE_FILES_CACHE;
 
-WorkspaceHelper::WorkspaceHelper() {}
-
-WorkspaceHelper::~WorkspaceHelper() {}
-
 bool WorkspaceHelper::ReadPrivateFile(IWorkspace* workspace, const wxString& filename, wxString* content) const
 {
     if(workspace) {

@@ -9,10 +9,6 @@
 PHPParserThread* PHPParserThread::ms_instance = 0;
 bool PHPParserThread::ms_goingDown = false;
 
-PHPParserThread::PHPParserThread() {}
-
-PHPParserThread::~PHPParserThread() {}
-
 PHPParserThread* PHPParserThread::Instance()
 {
     if (ms_instance == 0) {

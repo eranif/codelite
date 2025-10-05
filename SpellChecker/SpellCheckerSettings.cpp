@@ -122,8 +122,6 @@ void SpellCheckerSettings::FillLanguageList()
 // ------------------------------------------------------------
 void SpellCheckerSettings::OnClearIgnoreList(wxCommandEvent& event) { m_pHunspell->ClearIgnoreList(); }
 
-SpellCheckerSettings::~SpellCheckerSettings() {}
-
 void SpellCheckerSettings::SetDictionaryPath(const wxString& dictionaryPath)
 {
     this->m_dictionaryPath = dictionaryPath;

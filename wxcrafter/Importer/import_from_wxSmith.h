@@ -17,7 +17,7 @@ class ImportFromwxSmith
 
 public:
     ImportFromwxSmith(wxWindow* parent);
-    ~ImportFromwxSmith();
+    ~ImportFromwxSmith() = default;
 
     bool ImportProject(ImportDlg::ImportFileData& data, const wxString& sourceFile = "") const;
     bool GetProject() const;

@@ -53,7 +53,7 @@ public:
 
 public:
     PluginInfo();
-    ~PluginInfo();
+    ~PluginInfo() = default;
 
 public:
     // Setters
@@ -88,7 +88,7 @@ class WXDLLIMPEXP_SDK PluginInfoArray : public clConfigItem
 
 public:
     PluginInfoArray();
-    virtual ~PluginInfoArray();
+    virtual ~PluginInfoArray() = default;
 
 public:
     void SetPlugins(const PluginInfo::PluginMap_t& plugins) { this->m_plugins = plugins; }

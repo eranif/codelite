@@ -36,7 +36,7 @@ class MySqlType : public IDbType {
 		MySqlType();
 		MySqlType(const MySqlType& obj);
 		MySqlType(const wxString& typeName, long propertyFlags, UNIVERSAL_TYPE universalType);
-		virtual ~MySqlType();
+		virtual ~MySqlType() = default;
 		void InitSerialize();
 
 		virtual bool GetAutoIncrement()						{

@@ -33,8 +33,6 @@ StackWalker::StackWalker(wxTextOutputStream* output)
 {
 }
 
-StackWalker::~StackWalker() {}
-
 void StackWalker::OnStackFrame(const wxStackFrame& frame)
 {
     *m_output << frame.GetModule() << wxT(" ") << frame.GetName() << wxT(" ") << frame.GetFileName() << wxT(" ")

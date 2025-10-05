@@ -30,10 +30,6 @@ ImportFilesSettings::ImportFilesSettings()
 {
 }
 
-ImportFilesSettings::~ImportFilesSettings()
-{
-}
-
 void ImportFilesSettings::DeSerialize(Archive& arch)
 {
     arch.Read(wxT("m_fileMask"), m_fileMask);

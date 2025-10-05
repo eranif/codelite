@@ -42,7 +42,7 @@ public:
 
 public:
     Variable();
-    virtual ~Variable();
+    virtual ~Variable() = default;
 
     //copy ctor
     Variable(const Variable& src);

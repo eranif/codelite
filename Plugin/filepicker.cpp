@@ -49,8 +49,6 @@ FilePicker::FilePicker(wxWindow* parent, wxWindowID id, const wxString& defaultF
     ConnectEvents();
 }
 
-FilePicker::~FilePicker() {}
-
 void FilePicker::CreateControls()
 {
     wxBoxSizer* mainSizer = new wxBoxSizer(wxHORIZONTAL);

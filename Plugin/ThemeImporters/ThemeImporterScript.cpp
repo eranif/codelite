@@ -8,8 +8,6 @@ ThemeImporterScript::ThemeImporterScript()
     m_langName = "script";
 }
 
-ThemeImporterScript::~ThemeImporterScript() {}
-
 LexerConf::Ptr_t ThemeImporterScript::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_BASH);

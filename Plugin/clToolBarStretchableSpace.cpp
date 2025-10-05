@@ -8,8 +8,6 @@ clToolBarStretchableSpace::clToolBarStretchableSpace(clToolBarGeneric* parent)
 {
 }
 
-clToolBarStretchableSpace::~clToolBarStretchableSpace() {}
-
 wxSize clToolBarStretchableSpace::CalculateSize(wxDC& dc) const
 {
     wxUnusedVar(dc);

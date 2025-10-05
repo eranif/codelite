@@ -12,8 +12,6 @@ clConsoleKitty::clConsoleKitty()
 #endif
 }
 
-clConsoleKitty::~clConsoleKitty() {}
-
 bool clConsoleKitty::Start() { return StartProcess(PrepareCommand()); }
 
 bool clConsoleKitty::StartForDebugger() { return false; }

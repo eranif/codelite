@@ -83,8 +83,6 @@ SymbolViewPlugin::SymbolViewPlugin(IManager* manager)
     m_mgr->AddWorkspaceTab(_("Outline"));
 }
 
-SymbolViewPlugin::~SymbolViewPlugin() {}
-
 void SymbolViewPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
 void SymbolViewPlugin::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(pluginsMenu); }

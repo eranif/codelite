@@ -47,7 +47,7 @@ public:
         : _entry(entry)
     {
     }
-    ~CscopeTabClientData() {}
+    ~CscopeTabClientData() = default;
 
     // Setters
     void SetEntry(const CscopeEntryData& _entry) { this->_entry = _entry; }

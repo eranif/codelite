@@ -41,8 +41,8 @@ public:
     typedef std::vector<NodeJSBreakpoint> Vec_t;
 
 public:
-    NodeJSBreakpoint();
-    virtual ~NodeJSBreakpoint();
+    NodeJSBreakpoint() = default;
+    virtual ~NodeJSBreakpoint() = default;
 
     JSONItem ToJSON(const wxString& name) const;
     void FromJSON(const JSONItem& json);

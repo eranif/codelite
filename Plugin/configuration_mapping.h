@@ -51,7 +51,7 @@ public:
     {
     }
 
-    virtual ~ConfigMappingEntry() {}
+    virtual ~ConfigMappingEntry() = default;
 };
 
 class WXDLLIMPEXP_SDK WorkspaceConfiguration
@@ -69,7 +69,7 @@ public:
     WorkspaceConfiguration();
     WorkspaceConfiguration(wxXmlNode* node);
     WorkspaceConfiguration(const wxString& name);
-    virtual ~WorkspaceConfiguration();
+    virtual ~WorkspaceConfiguration() = default;
     wxXmlNode* ToXml() const;
 
     const wxString& GetName() const { return m_name; }
@@ -96,7 +96,7 @@ protected:
 
 public:
     BuildMatrix(wxXmlNode* node, const wxString& selectedConfiguration);
-    virtual ~BuildMatrix();
+    virtual ~BuildMatrix() = default;
     wxXmlNode* ToXml() const;
     const std::list<WorkspaceConfigurationPtr>& GetConfigurations() const { return m_configurationList; }
     void RemoveConfiguration(const wxString& configName);

@@ -41,8 +41,8 @@ private:
     
 public:
     TerminalEmulatorUI(wxWindow* parent);
-    virtual ~TerminalEmulatorUI();
-    
+    virtual ~TerminalEmulatorUI() = default;
+
     void Clear();
     void SetTerminal(TerminalEmulator* terminal) ;
     TerminalEmulator* GetTerminal() { return m_terminal; }

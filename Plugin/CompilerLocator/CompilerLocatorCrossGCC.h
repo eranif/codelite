@@ -42,8 +42,8 @@ protected:
     bool IsCrossGCC(const wxString& name) const;
 
 public:
-    CompilerLocatorCrossGCC();
-    virtual ~CompilerLocatorCrossGCC();
+    CompilerLocatorCrossGCC() = default;
+    virtual ~CompilerLocatorCrossGCC() = default;
 
 public:
     virtual bool Locate();

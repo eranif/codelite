@@ -18,8 +18,8 @@ public:
     typedef wxSharedPtr<Result> Ptr_t;
 
 public:
-    Result() {}
-    virtual ~Result() {}
+    Result() = default;
+    virtual ~Result() = default;
     template <typename T> T* As() const { return dynamic_cast<T*>(const_cast<Result*>(this)); }
     virtual JSONItem ToJSON(const wxString& name) const { return JSONItem(nullptr); }
 };
@@ -33,7 +33,7 @@ class WXDLLIMPEXP_CL ResultString : public Result
 
 public:
     ResultString(const wxString& text) {}
-    virtual ~ResultString() {}
+    virtual ~ResultString() = default;
     void FromJSON(const JSONItem& json);
     ResultString& SetText(const wxString& text)
     {
@@ -52,7 +52,7 @@ class WXDLLIMPEXP_CL ResultNumber : public Result
 
 public:
     ResultNumber(const wxString& text) {}
-    virtual ~ResultNumber() {}
+    virtual ~ResultNumber() = default;
     void FromJSON(const JSONItem& json);
     ResultNumber& SetNumber(int number)
     {
@@ -71,7 +71,7 @@ class WXDLLIMPEXP_CL ResultBoolean : public Result
 
 public:
     ResultBoolean(const wxString& text) {}
-    virtual ~ResultBoolean() {}
+    virtual ~ResultBoolean() = default;
     void FromJSON(const JSONItem& json);
 
     ResultBoolean& SetValue(bool value)

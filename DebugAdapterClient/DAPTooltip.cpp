@@ -33,8 +33,6 @@ DAPTooltip::DAPTooltip(dap::Client* client,
     GetSizer()->Fit(this);
 }
 
-DAPTooltip::~DAPTooltip() {}
-
 void DAPTooltip::UpdateChildren(int varId, dap::VariablesResponse* response)
 {
     m_list->UpdateChildren(varId, response);

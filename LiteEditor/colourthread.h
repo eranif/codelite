@@ -36,8 +36,8 @@ public:
 	static void Release();
 
 private:
-	ColourThread();
-	~ColourThread();
+	ColourThread() = default;
+	~ColourThread() = default;
 
 public:
 	virtual void ProcessRequest(ThreadRequest *request);

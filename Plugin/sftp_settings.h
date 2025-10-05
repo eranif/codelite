@@ -40,7 +40,7 @@ private:
 
 public:
     SFTPSettings();
-    virtual ~SFTPSettings();
+    virtual ~SFTPSettings() = default;
 
     void SetAccounts(const SSHAccountInfo::Vect_t& accounts) { this->m_accounts = accounts; }
     const SSHAccountInfo::Vect_t& GetAccounts() const { return m_accounts; }

@@ -85,8 +85,6 @@ ChatAI::ChatAI(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &ChatAI::OnInitDone, this);
 }
 
-ChatAI::~ChatAI() {}
-
 void ChatAI::UnPlug()
 {
     wxTheApp->Unbind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("chatai_show_window"));

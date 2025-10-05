@@ -36,7 +36,7 @@ class SelectDropTargetDlg : public SelectDropTargetBaseDlg
 
 public:
     SelectDropTargetDlg(wxWindow* parent, const wxArrayString& folders);
-    virtual ~SelectDropTargetDlg();
+    virtual ~SelectDropTargetDlg() = default;
 
 protected:
     virtual void OnSelectionActivated(wxDataViewEvent& event);

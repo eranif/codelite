@@ -8,8 +8,8 @@ class CargoToml
     wxString m_name;
 
 public:
-    CargoToml();
-    virtual ~CargoToml();
+    CargoToml() = default;
+    virtual ~CargoToml() = default;
     CargoToml& Load(const wxFileName& fn);
 
     void SetName(const wxString& name) { this->m_name = name; }

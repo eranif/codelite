@@ -32,7 +32,7 @@ class ContextDiff : public ContextBase
 public:
     ContextDiff();
     ContextDiff(clEditor* container);
-    virtual ~ContextDiff();
+    virtual ~ContextDiff() = default;
 
     virtual void ApplySettings();
     virtual ContextBase* NewInstance(clEditor* container);

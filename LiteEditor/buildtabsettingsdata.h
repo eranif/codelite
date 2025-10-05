@@ -43,11 +43,11 @@ private:
     bool m_skipWarnings = false;
 
 public:
-    BuildTabSettingsData(const BuildTabSettingsData& rhs);
-    BuildTabSettingsData& operator=(const BuildTabSettingsData& rhs);
+    BuildTabSettingsData(const BuildTabSettingsData& rhs) = default;
+    BuildTabSettingsData& operator=(const BuildTabSettingsData& rhs) = default;
 
-    BuildTabSettingsData();
-    ~BuildTabSettingsData();
+    BuildTabSettingsData() = default;
+    ~BuildTabSettingsData() = default;
 
     void Serialize(Archive& arch);
     void DeSerialize(Archive& arch);

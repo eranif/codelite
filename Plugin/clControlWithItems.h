@@ -36,8 +36,8 @@ class WXDLLIMPEXP_SDK clSearchText
 public:
     static bool Matches(const wxString& findWhat, size_t col, const wxString& text,
                         size_t searchFlags = wxTR_SEARCH_DEFAULT, clMatchResult* matches = nullptr);
-    clSearchText();
-    virtual ~clSearchText();
+    clSearchText() = default;
+    virtual ~clSearchText() = default;
     void SetEnabled(bool enabled) { this->m_enabled = enabled; }
     bool IsEnabled() const { return m_enabled; }
 };
@@ -46,8 +46,8 @@ public:
 class WXDLLIMPEXP_SDK clControlWithItemsRowRenderer
 {
 public:
-    clControlWithItemsRowRenderer() {}
-    virtual ~clControlWithItemsRowRenderer() {}
+    clControlWithItemsRowRenderer() = default;
+    virtual ~clControlWithItemsRowRenderer() = default;
 
     /**
      * @brief override this method to provide a custom row drawing.
@@ -115,7 +115,7 @@ public:
     clControlWithItems(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
                        const wxSize& size = wxDefaultSize, long style = 0);
     virtual ~clControlWithItems();
-    clControlWithItems();
+    clControlWithItems() = default;
 
     virtual void SetDefaultFont(const wxFont& font);
     virtual wxFont GetDefaultFont() const;

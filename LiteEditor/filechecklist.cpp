@@ -38,8 +38,6 @@ FileCheckList::FileCheckList(wxWindow* parent,
     WindowAttrManager::Load(this);
 }
 
-FileCheckList::~FileCheckList() {}
-
 void FileCheckList::OnCheckAll(wxCommandEvent& event)
 {
     wxUnusedVar(event);

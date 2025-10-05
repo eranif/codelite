@@ -25,20 +25,16 @@
 
 #include "localworkspace.h"
 
+#include "StringUtils.h"
 #include "codelite_events.h"
-#include "editor_config.h"
 #include "event_notifier.h"
 #include "globals.h"
-#include "macros.h"
 #include "optionsconfig.h"
-#include "project.h"
 #include "workspace.h"
 #include "xmlutils.h"
 
-#include <algorithm>
 #include <wx/fontmap.h>
 #include <wx/log.h>
-#include <wx/utils.h>
 
 //-----------------------------------------------------------------------------
 

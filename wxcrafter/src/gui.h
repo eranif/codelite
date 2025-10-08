@@ -61,9 +61,9 @@ class MainFrameBase : public wxFrame
 public:
     enum {
         ID_CUSTOM_CONTROL_DELETE = 1001,
-        ID_CUSTOM_CONTROL_NEW = 1002,
-        ID_CUSTOM_CONTROL_EDIT = 1003,
-        ID_BATCH_GENERATE_CODE = 1004,
+        ID_CUSTOM_CONTROL_EDIT = 1002,
+        ID_BATCH_GENERATE_CODE = 1003,
+        ID_CUSTOM_CONTROL_NEW = 1004,
         ID_GENERATE_CODE = 1005,
     };
 

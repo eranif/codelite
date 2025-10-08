@@ -46,7 +46,7 @@ MainFrameBase::MainFrameBase(
                                      wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE);
     m_mainToolbar->SetToolBitmapSize(wxSize(16, 16));
 
-    mainSizer->Add(m_mainToolbar, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    mainSizer->Add(m_mainToolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_MainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(800, 600)), wxTAB_TRAVERSAL);
 

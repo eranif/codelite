@@ -32,6 +32,10 @@ sudo apt-get install libpython2-dev
 ```
 
 ```bash
+mkdir -p mkdocs
+cd $_
+python3 -m venv env
+source env/bin/activate
 pip3 install mkdocs
 pip3 install pymdown-extensions
 pip3 install mkdocs-material

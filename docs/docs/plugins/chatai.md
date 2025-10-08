@@ -174,3 +174,33 @@ Explain the build errors I got from the compiler and suggest ways to fix them.
 ```
 
 The model will invoke the tool `Read_the_compiler_build_output` to fetch the build output and then provide an explanation.
+
+### 4. Using `claude`
+
+CodeLite's AI support also enables the use of Anthropic's Claude LLM.
+
+#### Prerequisites
+
+- You need an account or can register at [Anthropic's website](https://www.anthropic.com/).
+- Generate an API key.
+- Ensure you have sufficient credits.
+
+#### Configuration
+
+- Open the ChatAI configuration file using (++ctrl+shift+h++) or (++cmd+shift+h++), and click on the wrench (🔧) button.
+- In the `endpoints` section, add the followings:
+
+```json
+    "https://api.anthropic.com": {
+      "active": true,
+      "http_headers": {
+        "x-api-key": "<YOUR-API-KEY>"
+      },
+      "type": "claude"
+    }
+```
+
+- Confirm that this block is the only one marked as `active`.
+- Save the configuration.
+
+You should now be able to use `claude`.

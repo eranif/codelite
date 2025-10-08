@@ -34,22 +34,21 @@
 #if STANDALONE_BUILD
 
 static const wxCmdLineEntryDesc cmdLineDesc[] = {
-    { wxCMD_LINE_SWITCH, "v", "version", "Print current version", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_SWITCH, "h", "help", "Print usage", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_SWITCH,
-      "s",
-      "server",
-      "Start in server mode (hidden)",
-      wxCMD_LINE_VAL_STRING,
-      wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_PARAM,
-      NULL,
-      NULL,
-      "Input file",
-      wxCMD_LINE_VAL_STRING,
-      wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL },
-    { wxCMD_LINE_NONE }
-};
+    {wxCMD_LINE_SWITCH, "v", "version", "Print current version", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_SWITCH, "h", "help", "Print usage", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_SWITCH,
+     "s",
+     "server",
+     "Start in server mode (hidden)",
+     wxCMD_LINE_VAL_STRING,
+     wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_PARAM,
+     NULL,
+     NULL,
+     "Input file",
+     wxCMD_LINE_VAL_STRING,
+     wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_NONE}};
 
 IMPLEMENT_APP(wxcApp)
 
@@ -184,8 +183,12 @@ EVT_FIND_NEXT(wxID_ANY, MainFrame::OnFindNext)
 END_EVENT_TABLE()
 
 MainFrame::MainFrame(wxWindow* parent, bool hidden)
-    : MainFrameBase(
-          parent, wxID_ANY, "wxCrafter", wxDefaultPosition, wxDefaultSize, wxDEFAULT_FRAME_STYLE | wxTAB_TRAVERSAL)
+    : MainFrameBase(parent,
+                    wxID_ANY,
+                    "wxCrafter",
+                    wxDefaultPosition,
+                    wxDefaultSize,
+                    wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT | wxTAB_TRAVERSAL)
     , m_wxcView(NULL)
     , m_treeView(NULL)
     , m_findReplaceDialog(NULL)
@@ -799,7 +802,7 @@ void MainFrame::OnOpenFindDialog(wxCommandEvent& event)
     }
 #else
     // Ask CodeLite to open the find dialog
-    wxCommandEvent event_find{ wxEVT_MENU, XRCID("id_find") };
+    wxCommandEvent event_find{wxEVT_MENU, XRCID("id_find")};
     event_find.SetEventObject(EventNotifier::Get()->TopFrame());
     EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(event_find);
 #endif
@@ -848,11 +851,11 @@ void MainFrame::OnFindFirst(wxFindDialogEvent& event)
                 // Could not find from the start as well, restore the caret position
                 stc->SetCurrentPos(curpos);
                 stc->EnsureCaretVisible();
-                ::wxMessageBox(wxString()
-                                   << "Could not find string: " << m_findReplaceDialog->GetData()->GetFindString(),
-                               "wxCrafter",
-                               wxOK | wxICON_WARNING | wxOK_DEFAULT | wxCENTER,
-                               this);
+                ::wxMessageBox(
+                    wxString() << "Could not find string: " << m_findReplaceDialog->GetData()->GetFindString(),
+                    "wxCrafter",
+                    wxOK | wxICON_WARNING | wxOK_DEFAULT | wxCENTER,
+                    this);
                 m_findReplaceDialog->Raise();
             }
         }

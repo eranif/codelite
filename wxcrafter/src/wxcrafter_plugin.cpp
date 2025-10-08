@@ -1226,8 +1226,7 @@ void wxCrafterPlugin::DoInitDone(wxObject* obj)
     ColoursAndFontsManager::Get().Load();
 #endif
 
-    m_mainFrame = new MainFrame(nullptr, m_serverMode);
-
+    m_mainFrame = new MainFrame(EventNotifier::Get()->TopFrame(), m_serverMode);
     m_treeView = new wxcTreeView(m_mainFrame->GetTreeParent(), this);
     m_mainFrame->Add(m_treeView);
 

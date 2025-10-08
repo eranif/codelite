@@ -2097,7 +2097,7 @@ void Manager::OnDebuggerStopped(clDebugEvent& event)
 {
     // Debugger stopped. Cleanup UI layout & store session values
     event.Skip();
-    clDEBUG() << "Debugger stopped!" << clEndl;
+    clDEBUG() << "Debugger stopped, restoring layout" << clEndl;
     // Restore the Normal layout
     GetPerspectiveManager().LoadPerspective(NORMAL_LAYOUT);
     if (m_watchDlg) {

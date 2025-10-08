@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _CODELITE_WXCRAFTER_GUI_BASE_CLASSES_H
-#define _CODELITE_WXCRAFTER_GUI_BASE_CLASSES_H
+#ifndef _WXCRAFTER_SRC_GUI_BASE_CLASSES_H
+#define _WXCRAFTER_SRC_GUI_BASE_CLASSES_H
 
 // clang-format off
 #include <wx/settings.h>
@@ -15,18 +15,16 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/toolbar.h>
-#include "clToolBar.h"
-#include <wx/panel.h>
-#include <wx/splitter.h>
-#include <wx/statusbr.h>
-#include <wx/menu.h>
-#include <wx/notebook.h>
-#include "output_nbook.h"
-#include <wx/imaglist.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
 #include <map>
+#include <wx/menu.h>
+#include <wx/panel.h>
+#include <wx/splitter.h>
+#include <wx/statusbr.h>
+#include <wx/notebook.h>
+#include "output_nbook.h"
+#include <wx/imaglist.h>
 #include <wx/scrolwin.h>
 #include "designer_panel.h"
 #include <wx/stc/stc.h>
@@ -63,14 +61,14 @@ class MainFrameBase : public wxFrame
 public:
     enum {
         ID_CUSTOM_CONTROL_DELETE = 1001,
-        ID_CUSTOM_CONTROL_EDIT = 1002,
-        ID_BATCH_GENERATE_CODE = 1003,
-        ID_CUSTOM_CONTROL_NEW = 1004,
+        ID_CUSTOM_CONTROL_NEW = 1002,
+        ID_CUSTOM_CONTROL_EDIT = 1003,
+        ID_BATCH_GENERATE_CODE = 1004,
         ID_GENERATE_CODE = 1005,
     };
 
 protected:
-    clToolBar* m_mainToolbar;
+    wxAuiToolBar* m_mainToolbar;
     wxPanel* m_MainPanel;
     wxSplitterWindow* m_splitterMain;
     wxPanel* m_splitterPageTreeView;
@@ -153,15 +151,18 @@ protected:
     virtual void OnAbout(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    clToolBar* GetMainToolbar() { return m_mainToolbar; }
+    wxAuiToolBar* GetMainToolbar() { return m_mainToolbar; }
     wxPanel* GetSplitterPageTreeView() { return m_splitterPageTreeView; }
     wxPanel* GetSplitterPageDesigner() { return m_splitterPageDesigner; }
     wxSplitterWindow* GetSplitterMain() { return m_splitterMain; }
     wxPanel* GetMainPanel() { return m_MainPanel; }
     wxStatusBar* GetStatusBar() { return m_statusBar; }
     wxMenuBar* GetMenuBar() { return m_menuBar; }
-    MainFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("wxCrafter"),
-                  const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    MainFrameBase(wxWindow* parent,
+                  wxWindowID id = wxID_ANY,
+                  const wxString& title = _("wxCrafter"),
+                  const wxPoint& pos = wxDefaultPosition,
+                  const wxSize& size = wxSize(-1, -1),
                   long style = wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT | wxTAB_TRAVERSAL);
     virtual ~MainFrameBase();
 };
@@ -231,8 +232,11 @@ public:
     wxPanel* GetPanel10() { return m_panel10; }
     wxSplitterWindow* GetMainSplitter() { return m_mainSplitter; }
     wxPanel* GetPanelRightSidebar() { return m_panelRightSidebar; }
-    GUICraftMainPanelBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                          const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+    GUICraftMainPanelBase(wxWindow* parent,
+                          wxWindowID id = wxID_ANY,
+                          const wxPoint& pos = wxDefaultPosition,
+                          const wxSize& size = wxSize(-1, -1),
+                          long style = wxTAB_TRAVERSAL);
     virtual ~GUICraftMainPanelBase();
 };
 
@@ -244,8 +248,11 @@ protected:
 protected:
 public:
     wxScrolledWindow* GetMainPanel() { return m_mainPanel; }
-    PropertiesSheetBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                        const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+    PropertiesSheetBase(wxWindow* parent,
+                        wxWindowID id = wxID_ANY,
+                        const wxPoint& pos = wxDefaultPosition,
+                        const wxSize& size = wxSize(-1, -1),
+                        long style = wxTAB_TRAVERSAL);
     virtual ~PropertiesSheetBase();
 };
 
@@ -262,8 +269,11 @@ protected:
 public:
     wxStaticText* GetStaticTextMessage() { return m_staticTextMessage; }
     wxStyledTextCtrl* GetStc() { return m_stc; }
-    EnterStringsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Enter Text"),
-                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    EnterStringsDlgBase(wxWindow* parent,
+                        wxWindowID id = wxID_ANY,
+                        const wxString& title = _("Enter Text"),
+                        const wxPoint& pos = wxDefaultPosition,
+                        const wxSize& size = wxSize(-1, -1),
                         long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~EnterStringsDlgBase();
 };
@@ -280,8 +290,11 @@ public:
     wxPanel* GetPanel11() { return m_panel11; }
     wxButton* GetButton6() { return m_button6; }
     wxButton* GetButton7() { return m_button7; }
-    ColorPaletteDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Color"),
-                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    ColorPaletteDlgBase(wxWindow* parent,
+                        wxWindowID id = wxID_ANY,
+                        const wxString& title = _("Select Color"),
+                        const wxPoint& pos = wxDefaultPosition,
+                        const wxSize& size = wxSize(-1, -1),
                         long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~ColorPaletteDlgBase();
 };
@@ -307,8 +320,11 @@ public:
     wxPanel* GetPanelColorPreview() { return m_panelColorPreview; }
     wxButton* GetButton8() { return m_button8; }
     wxButton* GetButton11() { return m_button11; }
-    ColourPickerDlgbase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Select Colour..."),
-                        const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    ColourPickerDlgbase(wxWindow* parent,
+                        wxWindowID id = wxID_ANY,
+                        const wxString& title = _("Select Colour..."),
+                        const wxPoint& pos = wxDefaultPosition,
+                        const wxSize& size = wxSize(-1, -1),
                         long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~ColourPickerDlgbase();
 };
@@ -337,8 +353,11 @@ public:
     wxCheckBox* GetCheckBoxKeepAllUsersetNames() { return m_checkBoxKeepAllUsersetNames; }
     wxCheckBox* GetCheckBoxKeepAllPossibleNames() { return m_checkBoxKeepAllPossibleNames; }
     wxCheckBox* GetCheckBoxCopyEventhandlerToo() { return m_checkBoxCopyEventhandlerToo; }
-    wxcSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("wxCrafter Settings"),
-                       const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    wxcSettingsDlgBase(wxWindow* parent,
+                       wxWindowID id = wxID_ANY,
+                       const wxString& title = _("wxCrafter Settings"),
+                       const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxSize(-1, -1),
                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~wxcSettingsDlgBase();
 };
@@ -352,8 +371,11 @@ protected:
     virtual void OnLeftDown(wxMouseEvent& event) { event.Skip(); }
 
 public:
-    CaptionBarBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                   const wxSize& size = wxSize(150, 24), long style = wxTAB_TRAVERSAL);
+    CaptionBarBase(wxWindow* parent,
+                   wxWindowID id = wxID_ANY,
+                   const wxPoint& pos = wxDefaultPosition,
+                   const wxSize& size = wxSize(150, 24),
+                   long style = wxTAB_TRAVERSAL);
     virtual ~CaptionBarBase();
 };
 
@@ -372,7 +394,7 @@ public:
     wxcImages();
     const wxBitmap& Bitmap(const wxString& name) const
     {
-        if(!m_bitmaps.count(name + m_resolution))
+        if (!m_bitmaps.count(name + m_resolution))
             return wxNullBitmap;
         return m_bitmaps.find(name + m_resolution)->second;
     }

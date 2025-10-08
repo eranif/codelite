@@ -33,7 +33,7 @@ protected:
     void OnEditCustomControl(wxCommandEvent& event) override;
     void OnNewCustomControl(wxCommandEvent& event) override;
     virtual void OnOpen(wxCommandEvent& event);
-    virtual void OnOpenMenu(wxCommandEvent& event);
+    virtual void OnOpenMenu(wxAuiToolBarEvent& event);
     virtual void OnNewProject(wxCommandEvent& event);
     virtual void OnOpenUI(wxUpdateUIEvent& event);
     virtual void OnCloseUI(wxUpdateUIEvent& event);
@@ -78,7 +78,7 @@ protected:
     bool DoFindText(wxStyledTextCtrl* stc, const wxFindReplaceData& frd, bool findNext);
     void EnsureVisibile();
     void DoOpenWxcpProject();
-    void DoCreateRecentMenu(wxMenu& menu, wxArrayString& history);
+    void DoCreateRecentMenu(wxMenu& menu, wxArrayString& history, std::shared_ptr<wxString> result);
 
 public:
     MainFrame(wxWindow* parent, bool hidden);

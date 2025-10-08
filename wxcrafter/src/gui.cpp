@@ -12,6 +12,7 @@ extern void wxC2AC4InitBitmapResources();
 namespace
 {
 // return the wxBORDER_SIMPLE that matches the current application theme
+[[maybe_unused]]
 wxBorder get_border_simple_theme_aware_bit()
 {
 #if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
@@ -19,15 +20,15 @@ wxBorder get_border_simple_theme_aware_bit()
 #else
     return wxBORDER_DEFAULT;
 #endif
-} // DoGetBorderSimpleBit
+} // get_border_simple_theme_aware_bit
 bool bBitmapLoaded = false;
 } // namespace
 
-MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                             const wxSize& size, long style)
+MainFrameBase::MainFrameBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxFrame(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC2AC4InitBitmapResources();
@@ -38,10 +39,14 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(mainSizer);
 
-    m_mainToolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTB_FLAT);
+    m_mainToolbar = new wxAuiToolBar(this,
+                                     wxID_ANY,
+                                     wxDefaultPosition,
+                                     wxDLG_UNIT(this, wxSize(-1, -1)),
+                                     wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE);
     m_mainToolbar->SetToolBitmapSize(wxSize(16, 16));
 
-    mainSizer->Add(m_mainToolbar, 0, wxALL | wxEXPAND, WXC_FROM_DIP(0));
+    mainSizer->Add(m_mainToolbar, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_MainPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(800, 600)), wxTAB_TRAVERSAL);
 
@@ -50,22 +55,24 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     wxBoxSizer* boxSizer285 = new wxBoxSizer(wxHORIZONTAL);
     m_MainPanel->SetSizer(boxSizer285);
 
-    m_splitterMain =
-        new wxSplitterWindow(m_MainPanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_MainPanel, wxSize(-1, -1)),
-                             wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxTRANSPARENT_WINDOW);
+    m_splitterMain = new wxSplitterWindow(m_MainPanel,
+                                          wxID_ANY,
+                                          wxDefaultPosition,
+                                          wxDLG_UNIT(m_MainPanel, wxSize(-1, -1)),
+                                          wxSP_LIVE_UPDATE | wxSP_3DSASH);
     m_splitterMain->SetSashGravity(0);
     m_splitterMain->SetMinimumPaneSize(10);
 
     boxSizer285->Add(m_splitterMain, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_splitterPageTreeView = new wxPanel(m_splitterMain, wxID_ANY, wxDefaultPosition,
-                                         wxDLG_UNIT(m_splitterMain, wxSize(150, -1)), wxTAB_TRAVERSAL);
+    m_splitterPageTreeView = new wxPanel(
+        m_splitterMain, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterMain, wxSize(150, -1)), wxTAB_TRAVERSAL);
 
     wxBoxSizer* boxSizer297 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageTreeView->SetSizer(boxSizer297);
 
-    m_splitterPageDesigner = new wxPanel(m_splitterMain, wxID_ANY, wxDefaultPosition,
-                                         wxDLG_UNIT(m_splitterMain, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitterPageDesigner = new wxPanel(
+        m_splitterMain, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterMain, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_splitterMain->SplitVertically(m_splitterPageTreeView, m_splitterPageDesigner, 150);
 
     wxBoxSizer* boxSizer299 = new wxBoxSizer(wxVERTICAL);
@@ -93,8 +100,8 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         new wxMenuItem(m_menuFile, ID_GENERATE_CODE, _("Generate Code\tCtrl-G"), wxT(""), wxITEM_NORMAL);
     m_menuFile->Append(m_menuItemGenerate);
 
-    m_menuItemBatchGenerate = new wxMenuItem(m_menuFile, ID_BATCH_GENERATE_CODE,
-                                             _("Batch Generate Code...\tCtrl-Shift-G"), wxT(""), wxITEM_NORMAL);
+    m_menuItemBatchGenerate = new wxMenuItem(
+        m_menuFile, ID_BATCH_GENERATE_CODE, _("Batch Generate Code...\tCtrl-Shift-G"), wxT(""), wxITEM_NORMAL);
     m_menuFile->Append(m_menuItemBatchGenerate);
 
     m_menuFile->AppendSeparator();
@@ -134,8 +141,8 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_menuItemRedo = new wxMenuItem(m_menuEdit, wxID_REDO, _("Redo\tCtrl-Y"), wxT(""), wxITEM_NORMAL);
     m_menuEdit->Append(m_menuItemRedo);
 
-    m_menuItemLabelCurrentState = new wxMenuItem(m_menuEdit, XRCID("label_current_state"),
-                                                 _("Set label for current state"), wxT(""), wxITEM_NORMAL);
+    m_menuItemLabelCurrentState = new wxMenuItem(
+        m_menuEdit, XRCID("label_current_state"), _("Set label for current state"), wxT(""), wxITEM_NORMAL);
     m_menuEdit->Append(m_menuItemLabelCurrentState);
 
     m_menuEdit->AppendSeparator();
@@ -164,12 +171,12 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     m_menuImport = new wxMenu();
     m_menuBar->Append(m_menuImport, _("&Import"));
 
-    m_menuItemFB = new wxMenuItem(m_menuImport, XRCID("import_wxFB_project"), _("Import wx&FormBuilder Project"),
-                                  wxT(""), wxITEM_NORMAL);
+    m_menuItemFB = new wxMenuItem(
+        m_menuImport, XRCID("import_wxFB_project"), _("Import wx&FormBuilder Project"), wxT(""), wxITEM_NORMAL);
     m_menuImport->Append(m_menuItemFB);
 
-    m_menuItemSmith = new wxMenuItem(m_menuImport, XRCID("import_wxSmith_project"), _("Import wx&Smith File"), wxT(""),
-                                     wxITEM_NORMAL);
+    m_menuItemSmith = new wxMenuItem(
+        m_menuImport, XRCID("import_wxSmith_project"), _("Import wx&Smith File"), wxT(""), wxITEM_NORMAL);
     m_menuImport->Append(m_menuItemSmith);
 
     m_menuItemXRC =
@@ -183,12 +190,12 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
         new wxMenuItem(m_menuCustomControl, ID_CUSTOM_CONTROL_NEW, _("New Custom Control..."), wxT(""), wxITEM_NORMAL);
     m_menuCustomControl->Append(m_menuItemNewCustomControl);
 
-    m_menuItemEditCustomControl = new wxMenuItem(m_menuCustomControl, ID_CUSTOM_CONTROL_EDIT,
-                                                 _("Edit Custom Control..."), wxT(""), wxITEM_NORMAL);
+    m_menuItemEditCustomControl = new wxMenuItem(
+        m_menuCustomControl, ID_CUSTOM_CONTROL_EDIT, _("Edit Custom Control..."), wxT(""), wxITEM_NORMAL);
     m_menuCustomControl->Append(m_menuItemEditCustomControl);
 
-    m_menuItemDeleteCustonControl = new wxMenuItem(m_menuCustomControl, ID_CUSTOM_CONTROL_DELETE,
-                                                   _("Delete Custom Control"), wxT(""), wxITEM_NORMAL);
+    m_menuItemDeleteCustonControl = new wxMenuItem(
+        m_menuCustomControl, ID_CUSTOM_CONTROL_DELETE, _("Delete Custom Control"), wxT(""), wxITEM_NORMAL);
     m_menuCustomControl->Append(m_menuItemDeleteCustonControl);
 
     m_menuHelp = new wxMenu();
@@ -199,15 +206,15 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
 
     SetName(wxT("MainFrameBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxHORIZONTAL);
     } else {
         CentreOnScreen(wxHORIZONTAL);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -219,8 +226,8 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     this->Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnSaveUI, this, m_menuItemSave->GetId());
     this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnGenerateCode, this, m_menuItemGenerate->GetId());
     this->Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnGenerateCodeUI, this, m_menuItemGenerate->GetId());
-    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnBatchGenerateCode, this,
-               m_menuItemBatchGenerate->GetId());
+    this->Bind(
+        wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnBatchGenerateCode, this, m_menuItemBatchGenerate->GetId());
     this->Bind(wxEVT_UPDATE_UI, &MainFrameBase::OnBatchGenerateCodeUI, this, m_menuItemBatchGenerate->GetId());
     this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnHide, this, m_menuItemHide->GetId());
     this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnPreview, this, m_menuItemPreview->GetId());
@@ -245,11 +252,13 @@ MainFrameBase::MainFrameBase(wxWindow* parent, wxWindowID id, const wxString& ti
     this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnImportFB, this, m_menuItemFB->GetId());
     this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnImportSmith, this, m_menuItemSmith->GetId());
     this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnImportXRC, this, m_menuItemXRC->GetId());
-    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnNewCustomControl, this,
-               m_menuItemNewCustomControl->GetId());
-    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnEditCustomControl, this,
-               m_menuItemEditCustomControl->GetId());
-    this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnDeleteCustomControl, this,
+    this->Bind(
+        wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnNewCustomControl, this, m_menuItemNewCustomControl->GetId());
+    this->Bind(
+        wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnEditCustomControl, this, m_menuItemEditCustomControl->GetId());
+    this->Bind(wxEVT_COMMAND_MENU_SELECTED,
+               &MainFrameBase::OnDeleteCustomControl,
+               this,
                m_menuItemDeleteCustonControl->GetId());
     this->Bind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnAbout, this, m_menuItemAbout->GetId());
 }
@@ -262,8 +271,8 @@ MainFrameBase::~MainFrameBase()
     this->Unbind(wxEVT_UPDATE_UI, &MainFrameBase::OnSaveUI, this, m_menuItemSave->GetId());
     this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnGenerateCode, this, m_menuItemGenerate->GetId());
     this->Unbind(wxEVT_UPDATE_UI, &MainFrameBase::OnGenerateCodeUI, this, m_menuItemGenerate->GetId());
-    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnBatchGenerateCode, this,
-                 m_menuItemBatchGenerate->GetId());
+    this->Unbind(
+        wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnBatchGenerateCode, this, m_menuItemBatchGenerate->GetId());
     this->Unbind(wxEVT_UPDATE_UI, &MainFrameBase::OnBatchGenerateCodeUI, this, m_menuItemBatchGenerate->GetId());
     this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnHide, this, m_menuItemHide->GetId());
     this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnPreview, this, m_menuItemPreview->GetId());
@@ -288,20 +297,22 @@ MainFrameBase::~MainFrameBase()
     this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnImportFB, this, m_menuItemFB->GetId());
     this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnImportSmith, this, m_menuItemSmith->GetId());
     this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnImportXRC, this, m_menuItemXRC->GetId());
-    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnNewCustomControl, this,
-                 m_menuItemNewCustomControl->GetId());
-    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnEditCustomControl, this,
-                 m_menuItemEditCustomControl->GetId());
-    this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnDeleteCustomControl, this,
+    this->Unbind(
+        wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnNewCustomControl, this, m_menuItemNewCustomControl->GetId());
+    this->Unbind(
+        wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnEditCustomControl, this, m_menuItemEditCustomControl->GetId());
+    this->Unbind(wxEVT_COMMAND_MENU_SELECTED,
+                 &MainFrameBase::OnDeleteCustomControl,
+                 this,
                  m_menuItemDeleteCustonControl->GetId());
     this->Unbind(wxEVT_COMMAND_MENU_SELECTED, &MainFrameBase::OnAbout, this, m_menuItemAbout->GetId());
 }
 
-GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                             long style)
+GUICraftMainPanelBase::GUICraftMainPanelBase(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC2AC4InitBitmapResources();
@@ -319,22 +330,24 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
     wxBoxSizer* bSizer13 = new wxBoxSizer(wxVERTICAL);
     m_panelRightSidebar->SetSizer(bSizer13);
 
-    m_mainSplitter = new wxSplitterWindow(m_panelRightSidebar, wxID_ANY, wxDefaultPosition,
+    m_mainSplitter = new wxSplitterWindow(m_panelRightSidebar,
+                                          wxID_ANY,
+                                          wxDefaultPosition,
                                           wxDLG_UNIT(m_panelRightSidebar, wxSize(-1, -1)),
-                                          wxSP_LIVE_UPDATE | wxSP_NO_XP_THEME | wxTRANSPARENT_WINDOW);
+                                          wxSP_LIVE_UPDATE | wxSP_3DSASH);
     m_mainSplitter->SetSashGravity(1);
     m_mainSplitter->SetMinimumPaneSize(10);
 
     bSizer13->Add(m_mainSplitter, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panelDesigner = new wxPanel(m_mainSplitter, wxID_ANY, wxDefaultPosition,
-                                  wxDLG_UNIT(m_mainSplitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_panelDesigner = new wxPanel(
+        m_mainSplitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainSplitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
     wxBoxSizer* bSizer30 = new wxBoxSizer(wxVERTICAL);
     m_panelDesigner->SetSizer(bSizer30);
 
-    m_mainBook = new OutputNBook(m_panelDesigner, wxID_ANY, wxDefaultPosition,
-                                 wxDLG_UNIT(m_panelDesigner, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_mainBook = new OutputNBook(
+        m_panelDesigner, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelDesigner, wxSize(-1, -1)), wxBK_DEFAULT);
     m_mainBook->SetName(wxT("m_mainBook"));
 
     bSizer30->Add(m_mainBook, 1, wxEXPAND, WXC_FROM_DIP(2));
@@ -346,23 +359,28 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
     wxBoxSizer* boxSizer10 = new wxBoxSizer(wxVERTICAL);
     m_designerNBPage->SetSizer(boxSizer10);
 
-    m_panelToolBox = new wxPanel(m_designerNBPage, wxID_ANY, wxDefaultPosition,
-                                 wxDLG_UNIT(m_designerNBPage, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_panelToolBox = new wxPanel(
+        m_designerNBPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_designerNBPage, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
     boxSizer10->Add(m_panelToolBox, 0, wxEXPAND, WXC_FROM_DIP(2));
 
     wxBoxSizer* bSizer301 = new wxBoxSizer(wxVERTICAL);
     m_panelToolBox->SetSizer(bSizer301);
 
-    m_toolbar =
-        new wxAuiToolBar(m_designerNBPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_designerNBPage, wxSize(-1, -1)),
-                         wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE);
+    m_toolbar = new wxAuiToolBar(m_designerNBPage,
+                                 wxID_ANY,
+                                 wxDefaultPosition,
+                                 wxDLG_UNIT(m_designerNBPage, wxSize(-1, -1)),
+                                 wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE);
     m_toolbar->SetToolBitmapSize(wxSize(16, 16));
 
     boxSizer10->Add(m_toolbar, 0, wxLEFT | wxRIGHT | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_dp = new DesignerPanel(m_designerNBPage, wxID_ANY, wxDefaultPosition,
-                             wxDLG_UNIT(m_designerNBPage, wxSize(-1, -1)), wxTAB_TRAVERSAL | wxHSCROLL | wxVSCROLL);
+    m_dp = new DesignerPanel(m_designerNBPage,
+                             wxID_ANY,
+                             wxDefaultPosition,
+                             wxDLG_UNIT(m_designerNBPage, wxSize(-1, -1)),
+                             wxTAB_TRAVERSAL | wxHSCROLL | wxVSCROLL);
     m_dp->SetScrollRate(5, 5);
 
     boxSizer10->Add(m_dp, 1, wxLEFT | wxRIGHT | wxEXPAND, WXC_FROM_DIP(2));
@@ -380,16 +398,18 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
 
     boxSizer29->Add(m_notebookCpp, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_cppPage = new wxPanel(m_notebookCpp, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebookCpp, wxSize(-1, -1)),
-                            wxTAB_TRAVERSAL);
+    m_cppPage = new wxPanel(
+        m_notebookCpp, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebookCpp, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebookCpp->AddPage(m_cppPage, _("Source"), true);
 
     wxBoxSizer* boxSizer19 = new wxBoxSizer(wxVERTICAL);
     m_cppPage->SetSizer(boxSizer19);
 
-    m_textCtrlCppSource =
-        new wxStyledTextCtrl(m_cppPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_cppPage, wxSize(-1, -1)),
-                             wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
+    m_textCtrlCppSource = new wxStyledTextCtrl(m_cppPage,
+                                               wxID_ANY,
+                                               wxDefaultPosition,
+                                               wxDLG_UNIT(m_cppPage, wxSize(-1, -1)),
+                                               get_border_simple_theme_aware_bit());
 #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
     // wxFONTFAMILY_TELETYPE
@@ -428,19 +448,20 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
     m_textCtrlCppSource->SetLexer(wxSTC_LEX_CPP);
     // Set default font / styles
     m_textCtrlCppSource->StyleClearAll();
-    for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
+    for (int i = 0; i < wxSTC_STYLE_MAX; ++i) {
         m_textCtrlCppSource->StyleSetFont(i, m_textCtrlCppSourceFont);
     }
     m_textCtrlCppSource->SetWrapMode(0);
     m_textCtrlCppSource->SetIndentationGuides(3);
     m_textCtrlCppSource->SetEOLMode(2);
     m_textCtrlCppSource->SetKeyWords(
-        0, wxT("and and_eq asm auto bitand bitor bool break case catch char class compl const const_cast continue "
-               "default delete do double dynamic_cast else enum explicit export extern false float for friend goto if "
-               "inline int long mutable namespace new not not_eq operator or or_eq private protected public register "
-               "reinterpret_cast return short signed sizeof static static_cast struct switch template this throw true "
-               "try typedef typeid typename union unsigned using virtual void volatile wchar_t while xor xor_eq "
-               "alignas alignof char16_t char32_t constexpr decltype noexcept nullptr static_assert thread_local"));
+        0,
+        wxT("and and_eq asm auto bitand bitor bool break case catch char class compl const const_cast continue default "
+            "delete do double dynamic_cast else enum explicit export extern false float for friend goto if inline int "
+            "long mutable namespace new not not_eq operator or or_eq private protected public register "
+            "reinterpret_cast return short signed sizeof static static_cast struct switch template this throw true try "
+            "typedef typeid typename union unsigned using virtual void volatile wchar_t while xor xor_eq alignas "
+            "alignof char16_t char32_t constexpr decltype noexcept nullptr static_assert thread_local"));
     m_textCtrlCppSource->SetKeyWords(1, wxT(""));
     m_textCtrlCppSource->SetKeyWords(2, wxT(""));
     m_textCtrlCppSource->SetKeyWords(3, wxT(""));
@@ -448,16 +469,18 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
 
     boxSizer19->Add(m_textCtrlCppSource, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_headerPage = new wxPanel(m_notebookCpp, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebookCpp, wxSize(-1, -1)),
-                               wxTAB_TRAVERSAL);
+    m_headerPage = new wxPanel(
+        m_notebookCpp, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_notebookCpp, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_notebookCpp->AddPage(m_headerPage, _("Header"), false);
 
     wxBoxSizer* boxSizer21 = new wxBoxSizer(wxVERTICAL);
     m_headerPage->SetSizer(boxSizer21);
 
-    m_textCtrlHeaderSource =
-        new wxStyledTextCtrl(m_headerPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_headerPage, wxSize(-1, -1)),
-                             wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
+    m_textCtrlHeaderSource = new wxStyledTextCtrl(m_headerPage,
+                                                  wxID_ANY,
+                                                  wxDefaultPosition,
+                                                  wxDLG_UNIT(m_headerPage, wxSize(-1, -1)),
+                                                  get_border_simple_theme_aware_bit());
 #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
     // wxFONTFAMILY_TELETYPE
@@ -496,19 +519,20 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
     m_textCtrlHeaderSource->SetLexer(wxSTC_LEX_CPP);
     // Set default font / styles
     m_textCtrlHeaderSource->StyleClearAll();
-    for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
+    for (int i = 0; i < wxSTC_STYLE_MAX; ++i) {
         m_textCtrlHeaderSource->StyleSetFont(i, m_textCtrlHeaderSourceFont);
     }
     m_textCtrlHeaderSource->SetWrapMode(0);
     m_textCtrlHeaderSource->SetIndentationGuides(0);
     m_textCtrlHeaderSource->SetEOLMode(2);
     m_textCtrlHeaderSource->SetKeyWords(
-        0, wxT("and and_eq asm auto bitand bitor bool break case catch char class compl const const_cast continue "
-               "default delete do double dynamic_cast else enum explicit export extern false float for friend goto if "
-               "inline int long mutable namespace new not not_eq operator or or_eq private protected public register "
-               "reinterpret_cast return short signed sizeof static static_cast struct switch template this throw true "
-               "try typedef typeid typename union unsigned using virtual void volatile wchar_t while xor xor_eq "
-               "alignas alignof char16_t char32_t constexpr decltype noexcept nullptr static_assert thread_local"));
+        0,
+        wxT("and and_eq asm auto bitand bitor bool break case catch char class compl const const_cast continue default "
+            "delete do double dynamic_cast else enum explicit export extern false float for friend goto if inline int "
+            "long mutable namespace new not not_eq operator or or_eq private protected public register "
+            "reinterpret_cast return short signed sizeof static static_cast struct switch template this throw true try "
+            "typedef typeid typename union unsigned using virtual void volatile wchar_t while xor xor_eq alignas "
+            "alignof char16_t char32_t constexpr decltype noexcept nullptr static_assert thread_local"));
     m_textCtrlHeaderSource->SetKeyWords(1, wxT(""));
     m_textCtrlHeaderSource->SetKeyWords(2, wxT(""));
     m_textCtrlHeaderSource->SetKeyWords(3, wxT(""));
@@ -523,9 +547,11 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
     wxBoxSizer* boxSizer15 = new wxBoxSizer(wxVERTICAL);
     m_xrcNBPage->SetSizer(boxSizer15);
 
-    m_textCtrlXrc =
-        new wxStyledTextCtrl(m_xrcNBPage, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_xrcNBPage, wxSize(-1, -1)),
-                             wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
+    m_textCtrlXrc = new wxStyledTextCtrl(m_xrcNBPage,
+                                         wxID_ANY,
+                                         wxDefaultPosition,
+                                         wxDLG_UNIT(m_xrcNBPage, wxSize(-1, -1)),
+                                         get_border_simple_theme_aware_bit());
 #ifdef __WXMSW__
     // To get the newer version of the font on MSW, we use font wxSYS_DEFAULT_GUI_FONT with family set to
     // wxFONTFAMILY_TELETYPE
@@ -564,7 +590,7 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
     m_textCtrlXrc->SetLexer(wxSTC_LEX_XML);
     // Set default font / styles
     m_textCtrlXrc->StyleClearAll();
-    for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
+    for (int i = 0; i < wxSTC_STYLE_MAX; ++i) {
         m_textCtrlXrc->StyleSetFont(i, m_textCtrlXrcFont);
     }
     m_textCtrlXrc->SetWrapMode(0);
@@ -577,8 +603,8 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
 
     boxSizer15->Add(m_textCtrlXrc, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panel10 = new wxPanel(m_mainSplitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainSplitter, wxSize(100, -1)),
-                            wxTAB_TRAVERSAL);
+    m_panel10 = new wxPanel(
+        m_mainSplitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainSplitter, wxSize(100, -1)), wxTAB_TRAVERSAL);
     m_mainSplitter->SplitVertically(m_panelDesigner, m_panel10, -1);
 
     wxBoxSizer* bSizer12 = new wxBoxSizer(wxVERTICAL);
@@ -615,9 +641,11 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
     wxUnusedVar(m_pgMgrStylesArr);
     wxArrayInt m_pgMgrStylesIntArr;
     wxUnusedVar(m_pgMgrStylesIntArr);
-    m_pgMgrStyles =
-        new wxPropertyGridManager(m_panelStyles, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panelStyles, wxSize(-1, -1)),
-                                  wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED);
+    m_pgMgrStyles = new wxPropertyGridManager(m_panelStyles,
+                                              wxID_ANY,
+                                              wxDefaultPosition,
+                                              wxDLG_UNIT(m_panelStyles, wxSize(-1, -1)),
+                                              wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED);
 
     bSizer11->Add(m_pgMgrStyles, 1, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -632,7 +660,9 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
     wxUnusedVar(m_pgMgrSizerFlagsArr);
     wxArrayInt m_pgMgrSizerFlagsIntArr;
     wxUnusedVar(m_pgMgrSizerFlagsIntArr);
-    m_pgMgrSizerFlags = new wxPropertyGridManager(m_panelSizerFlags, wxID_ANY, wxDefaultPosition,
+    m_pgMgrSizerFlags = new wxPropertyGridManager(m_panelSizerFlags,
+                                                  wxID_ANY,
+                                                  wxDefaultPosition,
                                                   wxDLG_UNIT(m_panelSizerFlags, wxSize(-1, -1)),
                                                   wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED);
 
@@ -649,7 +679,9 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
     wxUnusedVar(m_pgMgrAuiPropertiesArr);
     wxArrayInt m_pgMgrAuiPropertiesIntArr;
     wxUnusedVar(m_pgMgrAuiPropertiesIntArr);
-    m_pgMgrAuiProperties = new wxPropertyGridManager(m_panelAuiPaneInfo, wxID_ANY, wxDefaultPosition,
+    m_pgMgrAuiProperties = new wxPropertyGridManager(m_panelAuiPaneInfo,
+                                                     wxID_ANY,
+                                                     wxDefaultPosition,
                                                      wxDLG_UNIT(m_panelAuiPaneInfo, wxSize(-1, -1)),
                                                      wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED);
 
@@ -657,7 +689,7 @@ GUICraftMainPanelBase::GUICraftMainPanelBase(wxWindow* parent, wxWindowID id, co
 
     SetName(wxT("GUICraftMainPanelBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
     // Connect events
@@ -679,11 +711,11 @@ GUICraftMainPanelBase::~GUICraftMainPanelBase()
     m_pgMgrAuiProperties->Unbind(wxEVT_PG_CHANGED, &GUICraftMainPanelBase::OnAuiPaneInfoChanged, this);
 }
 
-PropertiesSheetBase::PropertiesSheetBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                         long style)
+PropertiesSheetBase::PropertiesSheetBase(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC2AC4InitBitmapResources();
@@ -693,8 +725,8 @@ PropertiesSheetBase::PropertiesSheetBase(wxWindow* parent, wxWindowID id, const 
     wxBoxSizer* bSizer10 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer10);
 
-    m_mainPanel = new wxScrolledWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                       wxTAB_TRAVERSAL | wxHSCROLL | wxVSCROLL);
+    m_mainPanel = new wxScrolledWindow(
+        this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL | wxHSCROLL | wxVSCROLL);
     m_mainPanel->SetScrollRate(5, 5);
 
     bSizer10->Add(m_mainPanel, 1, wxEXPAND, WXC_FROM_DIP(5));
@@ -707,18 +739,18 @@ PropertiesSheetBase::PropertiesSheetBase(wxWindow* parent, wxWindowID id, const 
 
     SetName(wxT("PropertiesSheetBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
 }
 
 PropertiesSheetBase::~PropertiesSheetBase() {}
 
-EnterStringsDlgBase::EnterStringsDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                         const wxSize& size, long style)
+EnterStringsDlgBase::EnterStringsDlgBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC2AC4InitBitmapResources();
@@ -737,8 +769,8 @@ EnterStringsDlgBase::EnterStringsDlgBase(wxWindow* parent, wxWindowID id, const 
 
     bSizer16->Add(m_staticTextMessage, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                 wxTRANSPARENT_WINDOW | get_border_simple_theme_aware_bit());
+    m_stc = new wxStyledTextCtrl(
+        this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), get_border_simple_theme_aware_bit());
     // Configure the fold margin
     m_stc->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stc->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -791,15 +823,15 @@ EnterStringsDlgBase::EnterStringsDlgBase(wxWindow* parent, wxWindowID id, const 
 
     SetName(wxT("EnterStringsDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -808,11 +840,11 @@ EnterStringsDlgBase::EnterStringsDlgBase(wxWindow* parent, wxWindowID id, const 
 
 EnterStringsDlgBase::~EnterStringsDlgBase() {}
 
-ColorPaletteDlgBase::ColorPaletteDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                         const wxSize& size, long style)
+ColorPaletteDlgBase::ColorPaletteDlgBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC2AC4InitBitmapResources();
@@ -844,15 +876,15 @@ ColorPaletteDlgBase::ColorPaletteDlgBase(wxWindow* parent, wxWindowID id, const 
 
     SetName(wxT("ColorPaletteDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -861,11 +893,11 @@ ColorPaletteDlgBase::ColorPaletteDlgBase(wxWindow* parent, wxWindowID id, const 
 
 ColorPaletteDlgBase::~ColorPaletteDlgBase() {}
 
-ColourPickerDlgbase::ColourPickerDlgbase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                         const wxSize& size, long style)
+ColourPickerDlgbase::ColourPickerDlgbase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC2AC4InitBitmapResources();
@@ -919,8 +951,8 @@ ColourPickerDlgbase::ColourPickerDlgbase(wxWindow* parent, wxWindowID id, const 
 
     bSizer25->Add(m_choiceStandardColors, 1, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_button5 = new wxButton(this, wxID_ANY, _("Custom Colour..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                             wxBU_EXACTFIT);
+    m_button5 = new wxButton(
+        this, wxID_ANY, _("Custom Colour..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBU_EXACTFIT);
     m_button5->SetToolTip(_("Select custom color..."));
 
     bSizer25->Add(m_button5, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
@@ -945,15 +977,15 @@ ColourPickerDlgbase::ColourPickerDlgbase(wxWindow* parent, wxWindowID id, const 
 
     SetName(wxT("ColourPickerDlgbase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -973,11 +1005,11 @@ ColourPickerDlgbase::~ColourPickerDlgbase()
     m_panelColorPreview->Unbind(wxEVT_PAINT, &ColourPickerDlgbase::OnPaintPreviewColor, this);
 }
 
-wxcSettingsDlgBase::wxcSettingsDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                       const wxSize& size, long style)
+wxcSettingsDlgBase::wxcSettingsDlgBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC2AC4InitBitmapResources();
@@ -996,8 +1028,12 @@ wxcSettingsDlgBase::wxcSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
 
     boxSizer145->Add(staticBoxSizer150, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_checkBoxUseTRay = new wxCheckBox(this, wxID_ANY, _("Close button minimizes wxCrafter to the tray"),
-                                       wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxUseTRay = new wxCheckBox(this,
+                                       wxID_ANY,
+                                       _("Close button minimizes wxCrafter to the tray"),
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(this, wxSize(-1, -1)),
+                                       0);
     m_checkBoxUseTRay->SetValue(false);
     m_checkBoxUseTRay->SetToolTip(_("Close button minimizes wxCrafter to the tray"));
 
@@ -1008,8 +1044,8 @@ wxcSettingsDlgBase::wxcSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
 
     boxSizer145->Add(staticBoxSizer152, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_checkBoxFormatInheritedFiles = new wxCheckBox(this, wxID_ANY, _("Format inherited files"), wxDefaultPosition,
-                                                    wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxFormatInheritedFiles = new wxCheckBox(
+        this, wxID_ANY, _("Format inherited files"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxFormatInheritedFiles->SetValue(false);
     m_checkBoxFormatInheritedFiles->SetToolTip(
         _("When e.g. a new eventhandler is added, wxCrafter helpfully adds an empty handler to the derived class as "
@@ -1023,16 +1059,22 @@ wxcSettingsDlgBase::wxcSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
 
     boxSizer145->Add(staticBoxSizer15212, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText215 = new wxStaticText(this, wxID_ANY,
+    m_staticText215 = new wxStaticText(this,
+                                       wxID_ANY,
                                        _("What should happen when duplicating or pasting a top-level window,\nor "
                                          "pasting some contents from one top-level window to another?"),
-                                       wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(this, wxSize(-1, -1)),
+                                       0);
 
     staticBoxSizer15212->Add(m_staticText215, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_checkBoxKeepAllUsersetNames =
-        new wxCheckBox(this, wxID_ANY, _("Leave unchanged any user-set names of child controls"), wxDefaultPosition,
-                       wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxKeepAllUsersetNames = new wxCheckBox(this,
+                                                   wxID_ANY,
+                                                   _("Leave unchanged any user-set names of child controls"),
+                                                   wxDefaultPosition,
+                                                   wxDLG_UNIT(this, wxSize(-1, -1)),
+                                                   0);
     m_checkBoxKeepAllUsersetNames->SetValue(false);
     m_checkBoxKeepAllUsersetNames->SetToolTip(
         _("You can't have two top-level windows with the same name, but you can have FooBase::m_textEntry and "
@@ -1042,9 +1084,12 @@ wxcSettingsDlgBase::wxcSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
 
     staticBoxSizer15212->Add(m_checkBoxKeepAllUsersetNames, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_checkBoxKeepAllPossibleNames =
-        new wxCheckBox(this, wxID_ANY, _("Leave unchanged the names of all child controls"), wxDefaultPosition,
-                       wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxKeepAllPossibleNames = new wxCheckBox(this,
+                                                    wxID_ANY,
+                                                    _("Leave unchanged the names of all child controls"),
+                                                    wxDefaultPosition,
+                                                    wxDLG_UNIT(this, wxSize(-1, -1)),
+                                                    0);
     m_checkBoxKeepAllPossibleNames->SetValue(false);
     m_checkBoxKeepAllPossibleNames->SetToolTip(
         _("You can't have two top-level windows with the same name, but you can have FooBase::m_text123 and "
@@ -1053,8 +1098,8 @@ wxcSettingsDlgBase::wxcSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
 
     staticBoxSizer15212->Add(m_checkBoxKeepAllPossibleNames, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_checkBoxCopyEventhandlerToo = new wxCheckBox(this, wxID_ANY, _("Copy any event-handlers too"), wxDefaultPosition,
-                                                   wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_checkBoxCopyEventhandlerToo = new wxCheckBox(
+        this, wxID_ANY, _("Copy any event-handlers too"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_checkBoxCopyEventhandlerToo->SetValue(false);
     m_checkBoxCopyEventhandlerToo->SetToolTip(
         _("If the class that you're duplicating has e.g. a wxTextCtrl with a  wxEVT_COMMAND_TEXT_ENTER event-handler "
@@ -1076,15 +1121,15 @@ wxcSettingsDlgBase::wxcSettingsDlgBase(wxWindow* parent, wxWindowID id, const wx
 
     SetName(wxT("wxcSettingsDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    if(GetParent()) {
+    if (GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-    if(!wxPersistenceManager::Get().Find(this)) {
+    if (!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
@@ -1103,7 +1148,7 @@ wxcSettingsDlgBase::~wxcSettingsDlgBase()
 CaptionBarBase::CaptionBarBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC2AC4InitBitmapResources();
@@ -1112,7 +1157,7 @@ CaptionBarBase::CaptionBarBase(wxWindow* parent, wxWindowID id, const wxPoint& p
 
     SetName(wxT("CaptionBarBase"));
     SetSize(wxDLG_UNIT(this, wxSize(150, 24)));
-    if(GetSizer()) {
+    if (GetSizer()) {
         GetSizer()->Fit(this);
     }
     // Connect events
@@ -1133,7 +1178,7 @@ wxcImages::wxcImages()
     , m_imagesWidth(16)
     , m_imagesHeight(16)
 {
-    if(!bBitmapLoaded) {
+    if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC2AC4InitBitmapResources();
@@ -1144,8 +1189,8 @@ wxcImages::wxcImages()
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("button_close"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
+        if (bmp.IsOk()) {
+            if ((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
                 icn.CopyFromBitmap(bmp);
                 this->Add(icn);
             }
@@ -1157,8 +1202,8 @@ wxcImages::wxcImages()
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("button_minimize"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
+        if (bmp.IsOk()) {
+            if ((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
                 icn.CopyFromBitmap(bmp);
                 this->Add(icn);
             }
@@ -1170,8 +1215,8 @@ wxcImages::wxcImages()
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("button_maximize"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
+        if (bmp.IsOk()) {
+            if ((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
                 icn.CopyFromBitmap(bmp);
                 this->Add(icn);
             }
@@ -1183,8 +1228,8 @@ wxcImages::wxcImages()
         wxBitmap bmp;
         wxIcon icn;
         bmp = wxXmlResource::Get()->LoadBitmap(wxT("wxc_icon"));
-        if(bmp.IsOk()) {
-            if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
+        if (bmp.IsOk()) {
+            if ((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())) {
                 icn.CopyFromBitmap(bmp);
                 this->Add(icn);
             }

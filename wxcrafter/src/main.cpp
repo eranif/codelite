@@ -182,39 +182,42 @@ EVT_FIND(wxID_ANY, MainFrame::OnFindFirst)
 EVT_FIND_NEXT(wxID_ANY, MainFrame::OnFindNext)
 END_EVENT_TABLE()
 
+#ifdef __WXMAC__
+constexpr int BMP_SIZE = 32;
+#else
+constexpr int BMP_SIZE = 32;
+#endif
+
 MainFrame::MainFrame(wxWindow* parent, bool hidden)
     : MainFrameBase(parent,
                     wxID_ANY,
                     "wxCrafter",
                     wxDefaultPosition,
                     wxDefaultSize,
-                    wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT | wxTAB_TRAVERSAL
-#ifdef __WXMAC__
-                        | wxFRAME_TOOL_WINDOW
-#endif
-                    )
-    , m_wxcView(NULL)
-    , m_treeView(NULL)
-    , m_findReplaceDialog(NULL)
+                    wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT | wxTAB_TRAVERSAL)
+    , m_wxcView(nullptr)
+    , m_treeView(nullptr)
+    , m_findReplaceDialog(nullptr)
 {
-    m_mainToolbar->SetMiniToolBar(false);
-    auto images = m_mainToolbar->GetBitmapsCreateIfNeeded();
+    auto images = clGetManager()->GetStdIcons();
+    m_mainToolbar->SetToolBitmapSize(wxSize(BMP_SIZE, BMP_SIZE));
 
 #if !STANDALONE_BUILD
-    m_mainToolbar->AddTool(wxID_BACKWARD, _("Back to CodeLite"), images->Add("back"));
+    m_mainToolbar->AddTool(wxID_BACKWARD, _("Back to CodeLite"), images->GetBundle("back"));
 #endif
 
-    m_mainToolbar->AddTool(wxID_NEW, _("New Project"), images->Add("file_new"));
-    m_mainToolbar->AddTool(wxID_OPEN, _("Open Project"), images->Add("file_open"), "", wxITEM_DROPDOWN);
-    m_mainToolbar->AddTool(wxID_CLOSE, _("Close"), images->Add("file_close"));
-    m_mainToolbar->AddTool(wxID_SAVE, _("Save"), images->Add("file_save"));
+    m_mainToolbar->AddTool(wxID_NEW, _("New Project"), images->GetBundle("file_new"));
+    m_mainToolbar->AddTool(wxID_OPEN, _("Open Project"), images->GetBundle("file_open"));
+    m_mainToolbar->SetToolDropDown(wxID_OPEN, true);
+    m_mainToolbar->AddTool(wxID_CLOSE, _("Close"), images->GetBundle("file_close"));
+    m_mainToolbar->AddTool(wxID_SAVE, _("Save"), images->GetBundle("file_save"));
     m_mainToolbar->AddSeparator();
-    m_mainToolbar->AddTool(wxID_UNDO, _("Undo"), images->Add("undo"));
-    m_mainToolbar->AddTool(wxID_REDO, _("Redo"), images->Add("redo"));
+    m_mainToolbar->AddTool(wxID_UNDO, _("Undo"), images->GetBundle("undo"));
+    m_mainToolbar->AddTool(wxID_REDO, _("Redo"), images->GetBundle("redo"));
     m_mainToolbar->AddSeparator();
-    m_mainToolbar->AddTool(wxID_FIND, _("Find"), images->Add("find"));
+    m_mainToolbar->AddTool(wxID_FIND, _("Find"), images->GetBundle("find"));
     m_mainToolbar->AddSeparator();
-    m_mainToolbar->AddTool(XRCID("generate-code"), _("Generate Code"), images->Add("execute"));
+    m_mainToolbar->AddTool(XRCID("generate-code"), _("Generate Code"), images->GetBundle("execute"));
     m_mainToolbar->Realize();
 
 #if !STANDALONE_BUILD
@@ -223,8 +226,7 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
 #endif
 
     m_mainToolbar->Bind(wxEVT_TOOL, &MainFrame::OnNewProject, this, wxID_NEW);
-    m_mainToolbar->Bind(wxEVT_TOOL, &MainFrame::OnOpen, this, wxID_OPEN);
-    m_mainToolbar->Bind(wxEVT_TOOL_DROPDOWN, &MainFrame::OnOpenMenu, this, wxID_OPEN);
+    m_mainToolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &MainFrame::OnOpenMenu, this, wxID_OPEN);
     m_mainToolbar->Bind(wxEVT_UPDATE_UI, &MainFrame::OnOpenUI, this, wxID_OPEN);
 
     m_mainToolbar->Bind(wxEVT_TOOL, &MainFrame::OnClose, this, wxID_CLOSE);
@@ -737,28 +739,40 @@ void MainFrame::OnNewProject(wxCommandEvent& event)
 
 void MainFrame::OnOpen(wxCommandEvent& event) { DoOpenWxcpProject(); }
 
-void MainFrame::OnOpenMenu(wxCommandEvent& event)
+void MainFrame::OnOpenMenu(wxAuiToolBarEvent& event)
 {
-    wxMenu menu;
-    wxArrayString history;
-    DoCreateRecentMenu(menu, history);
+    if (event.IsDropDownClicked()) {
+        wxMenu menu;
+        wxArrayString history;
+        auto result = std::make_shared<wxString>();
+        DoCreateRecentMenu(menu, history, result);
 
-    int selection = m_mainToolbar->GetMenuSelectionFromUser(event.GetId(), &menu);
-    if (selection == wxID_NONE) {
-        /// user cancelled
-        return;
+        wxRect rect = m_mainToolbar->GetToolRect(event.GetToolId());
+        wxPoint pt = m_mainToolbar->ClientToScreen(rect.GetBottomLeft());
+        pt = ScreenToClient(pt);
+
+        // line up our menu with the button
+        m_mainToolbar->SetToolSticky(event.GetToolId(), true);
+
+        PopupMenu(&menu, pt);
+
+        // make sure the button is "un-stuck"
+        m_mainToolbar->SetToolSticky(event.GetToolId(), false);
+
+        if (result->empty()) {
+            return;
+        }
+
+        wxFileName fn{*result};
+        wxCommandEvent evtClose(wxEVT_WXC_CLOSE_PROJECT);
+        EventNotifier::Get()->ProcessEvent(evtClose);
+
+        wxCommandEvent evtOpen(wxEVT_WXC_OPEN_PROJECT);
+        evtOpen.SetString(fn.GetFullPath());
+        EventNotifier::Get()->ProcessEvent(evtOpen);
+    } else {
+        DoOpenWxcpProject();
     }
-
-    size_t idx = selection - ID_RECENT_DOC_FIRST;
-    wxString file_name = history.Item(idx);
-    wxFileName fn(file_name);
-
-    wxCommandEvent evtClose(wxEVT_WXC_CLOSE_PROJECT);
-    EventNotifier::Get()->ProcessEvent(evtClose);
-
-    wxCommandEvent evtOpen(wxEVT_WXC_OPEN_PROJECT);
-    evtOpen.SetString(fn.GetFullPath());
-    EventNotifier::Get()->ProcessEvent(evtOpen);
 }
 
 void MainFrame::OnDeleteCustomControl(wxCommandEvent& event)
@@ -971,10 +985,10 @@ void MainFrame::DoOpenWxcpProject()
 
 void MainFrame::OnFileOpen(wxCommandEvent& event) { DoOpenWxcpProject(); }
 
-void MainFrame::DoCreateRecentMenu(wxMenu& menu, wxArrayString& history)
+void MainFrame::DoCreateRecentMenu(wxMenu& menu, wxArrayString& history, std::shared_ptr<wxString> result)
 {
     history = wxcSettings::Get().GetHistory();
-    if (history.IsEmpty()) {
+    if (history.empty()) {
         return;
     }
 
@@ -992,8 +1006,14 @@ void MainFrame::DoCreateRecentMenu(wxMenu& menu, wxArrayString& history)
     wxcSettings::Get().SetHistory(history);
     wxcSettings::Get().Save();
 
-    for (size_t i = 0; i < history.GetCount(); ++i) {
-        menu.Append(ID_RECENT_DOC_FIRST + i, history.Item(i));
+    wxString prefix = "wxc-recent-menu-item-";
+    for (size_t i = 0; i < history.size(); ++i) {
+        wxString label = history.Item(i);
+        wxString menu_xrc_id;
+        menu_xrc_id << prefix << i;
+        menu.Append(wxXmlResource::GetXRCID(menu_xrc_id), label);
+        menu.Bind(
+            wxEVT_MENU, [=](wxCommandEvent& event) { *result.get() = label; }, wxXmlResource::GetXRCID(menu_xrc_id));
     }
 }
 

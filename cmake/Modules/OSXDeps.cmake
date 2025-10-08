@@ -1,26 +1,17 @@
 # build the Core part of CodeLite (regardless of the final target)
 if(APPLE)
   function(build_and_install_submodule SRC_DIR BUILD_DIR CMAKE_ARGS)
+    set(temp_script "${CMAKE_BINARY_DIR}/build_submodule_script.sh")
+    set(script_content
+        "#!/bin/bash
+${CMAKE_COMMAND} ${SRC_DIR} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/local_builds ${CMAKE_ARGS}
+")
+    file(WRITE ${temp_script} "${script_content}")
     execute_process(COMMAND mkdir -p ${BUILD_DIR} COMMAND_ERROR_IS_FATAL ANY)
+    execute_process(COMMAND sh -f ${temp_script}
+                    WORKING_DIRECTORY ${BUILD_DIR} COMMAND_ERROR_IS_FATAL ANY)
     execute_process(
-      COMMAND
-        ${CMAKE_COMMAND} ${SRC_DIR} -DCMAKE_BUILD_TYPE=Release
-        -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/local_builds "${CMAKE_ARGS}"
-      WORKING_DIRECTORY ${BUILD_DIR} COMMAND_ERROR_IS_FATAL ANY)
-    execute_process(
-      COMMAND ${CMAKE_COMMAND} --build . --parallel --target install
-      WORKING_DIRECTORY "${BUILD_DIR}" COMMAND_ERROR_IS_FATAL ANY)
-  endfunction()
-
-  function(build_and_install_openssl SRC_DIR BUILD_DIR CMAKE_ARGS)
-    execute_process(COMMAND mkdir -p ${BUILD_DIR} COMMAND_ERROR_IS_FATAL ANY)
-    execute_process(
-      COMMAND
-        ${CMAKE_COMMAND} ${SRC_DIR} -DCMAKE_BUILD_TYPE=Release
-        -DCMAKE_INSTALL_PREFIX=${CMAKE_BINARY_DIR}/local_builds "${CMAKE_ARGS}"
-      WORKING_DIRECTORY ${BUILD_DIR} COMMAND_ERROR_IS_FATAL ANY)
-    execute_process(
-      COMMAND ${CMAKE_COMMAND} --build . --parallel --target install
+      COMMAND make -j10 install
       WORKING_DIRECTORY "${BUILD_DIR}" COMMAND_ERROR_IS_FATAL ANY)
   endfunction()
 
@@ -46,8 +37,11 @@ if(APPLE)
 
     # Configure, build & install OpenSSL
     message(STATUS "Building OpenSSL...")
-    build_and_install_submodule("${SUBMODULES_DIR}/openssl-cmake"
-                                "${CMAKE_BINARY_DIR}/openssl-cmake-build" "")
+    build_and_install_submodule(
+      "${SUBMODULES_DIR}/openssl-cmake"
+      "${CMAKE_BINARY_DIR}/openssl-cmake-build"
+      "-DBUILD_OPENSSL=ON -DOPENSSL_BUILD_VERSION=3.3.4 -DOPENSSL_USE_STATIC_LIBS=ON"
+    )
 
     # Configure, build and & install libssh
     message(STATUS "Building libssh...")

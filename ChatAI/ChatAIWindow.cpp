@@ -18,7 +18,7 @@
 namespace
 {
 const wxString CHAT_AI_LABEL = _("Chat AI");
-const wxString LONG_MODEL_NAME = "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX";
+const wxString LONG_MODEL_NAME = "claude-sonnet-4-5-1234567890";
 
 std::optional<wxString> GetGlobalSettings()
 {
@@ -42,7 +42,9 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     m_toolbar->AddTool(wxID_CLEAR, _("Clear the chat history"), images->LoadBitmap("clear"));
     m_toolbar->AddTool(wxID_SETUP, _("Settings"), images->LoadBitmap("cog"));
     m_toolbar->AddSeparator();
-    m_activeModel = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxDefaultSize);
+    
+    wxSize control_size{GetTextExtent(LONG_MODEL_NAME).GetWidth(), wxNOT_FOUND};
+    m_activeModel = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, control_size);
     m_activeModel->SetToolTip(_("Change model. Changing a model will also clear your chat history"));
     m_toolbar->AddControl(m_activeModel);
     m_toolbar->AddTool(wxID_REFRESH, _("Restart the client"), images->LoadBitmap("debugger_restart"));

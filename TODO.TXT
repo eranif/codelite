@@ -15,10 +15,5 @@ others:
 - SFTP plugin: use clTerminalViewCtrl for the log view
 - Spell Checker: enable it for the commit dialog
 
-ChatI:
-----
-
-GitConsole: add a button to stop the running generation.
-Refreshing the model list -> update llm::Manager with the new list
 
 

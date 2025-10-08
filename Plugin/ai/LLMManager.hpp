@@ -31,9 +31,10 @@ static const wxString kDefaultSettings = R"#(
 {
   "history_size": 50,
   "mcp_servers": {},
-  "log_level": "info",
+  "log_level": "warn",
   "stream": true,
   "keep_alive": "24h",
+  "max_tokens": 1024,
   "server_timeout": {
       "connect_msecs": 500,
       "read_msecs": 300000,

@@ -303,6 +303,27 @@ assistant::Config Manager::MakeConfig()
     std::call_once(config_create_once_flag, [this]() {
         // Should never fail.
         m_default_config = assistant::Config::FromContent(kDefaultSettings.ToStdString(wxConvUTF8)).value();
+
+        // Redirect the library logs to our logging machinery.
+        assistant::SetLogSink([](assistant::LogLevel level, std::string msg) {
+            switch (level) {
+            case assistant::LogLevel::kError:
+                clERROR() << "LLM:" << wxString::FromUTF8(msg) << endl;
+                break;
+            case assistant::LogLevel::kWarning:
+                clWARNING() << "LLM:" << wxString::FromUTF8(msg) << endl;
+                break;
+            case assistant::LogLevel::kInfo:
+                clDEBUG() << "LLM:" << wxString::FromUTF8(msg) << endl;
+                break;
+            case assistant::LogLevel::kDebug:
+                clDEBUG() << "LLM:" << wxString::FromUTF8(msg) << endl;
+                break;
+            case assistant::LogLevel::kTrace:
+                clDEBUG1() << "LLM:" << wxString::FromUTF8(msg) << endl;
+                break;
+            }
+        });
     });
 
     WriteOptions opts{.force_global = true};

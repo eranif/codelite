@@ -4,9 +4,9 @@
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspaceView.hpp"
 #include "ai/LLMManager.hpp"
+#include "assistant/function.hpp"
 #include "clWorkspaceManager.h"
 #include "globals.h"
-#include "ollama/function.hpp"
 
 #include <future>
 #include <wx/msgdlg.h>
@@ -18,8 +18,9 @@
 
 namespace llm
 {
+
 /// Run `callback` in the main thread
-ollama::FunctionResult RunOnMain(std::function<FunctionResult()> callback, const wxString& tool_name)
+assistant::FunctionResult RunOnMain(std::function<FunctionResult()> callback, const wxString& tool_name)
 {
     auto promise_ptr = std::make_shared<std::promise<FunctionResult>>();
     auto f = promise_ptr->get_future();
@@ -83,14 +84,14 @@ void PopulateBuiltInFunctions(FunctionTable& table)
 
 /// Implementation details
 
-FunctionResult WriteFileContent(const ollama::json& args)
+FunctionResult WriteFileContent(const assistant::json& args)
 {
     if (args.size() != 2) {
         return Err("Invalid number of arguments");
     }
 
-    ASSIGN_FUNC_ARG_OR_RETURN(wxString filepath, ::ollama::GetFunctionArg<std::string>(args, "filepath"));
-    ASSIGN_FUNC_ARG_OR_RETURN(wxString file_content, ::ollama::GetFunctionArg<std::string>(args, "file_content"));
+    ASSIGN_FUNC_ARG_OR_RETURN(wxString filepath, ::assistant::GetFunctionArg<std::string>(args, "filepath"));
+    ASSIGN_FUNC_ARG_OR_RETURN(wxString file_content, ::assistant::GetFunctionArg<std::string>(args, "file_content"));
 
     auto cb = [=]() -> FunctionResult {
         wxString msg;
@@ -122,13 +123,13 @@ FunctionResult WriteFileContent(const ollama::json& args)
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
-FunctionResult ReadFileContent(const ollama::json& args)
+FunctionResult ReadFileContent(const assistant::json& args)
 {
     if (args.size() != 1) {
         return Err("Invalid number of arguments");
     }
 
-    ASSIGN_FUNC_ARG_OR_RETURN(wxString filepath, ::ollama::GetFunctionArg<std::string>(args, "filepath"));
+    ASSIGN_FUNC_ARG_OR_RETURN(wxString filepath, ::assistant::GetFunctionArg<std::string>(args, "filepath"));
 
     auto cb = [=]() -> FunctionResult {
         auto content = FileManager::ReadContent(filepath);
@@ -142,13 +143,13 @@ FunctionResult ReadFileContent(const ollama::json& args)
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
-FunctionResult OpenFileInEditor(const ollama::json& args)
+FunctionResult OpenFileInEditor(const assistant::json& args)
 {
     if (args.size() != 1) {
         return Err("Invalid number of arguments");
     }
 
-    ASSIGN_FUNC_ARG_OR_RETURN(wxString filepath, ::ollama::GetFunctionArg<std::string>(args, "filepath"));
+    ASSIGN_FUNC_ARG_OR_RETURN(wxString filepath, ::assistant::GetFunctionArg<std::string>(args, "filepath"));
 
     auto cb = [=]() -> FunctionResult {
         wxString msg;
@@ -171,13 +172,13 @@ FunctionResult OpenFileInEditor(const ollama::json& args)
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
-FunctionResult GetCompilerOutput(const ollama::json& args)
+FunctionResult GetCompilerOutput(const assistant::json& args)
 {
     auto cb = [=]() -> FunctionResult { return Ok(clGetManager()->GetBuildOutput()); };
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
-FunctionResult GetCurrentEditorText(const ollama::json& args)
+FunctionResult GetCurrentEditorText(const assistant::json& args)
 {
     auto cb = [=]() -> FunctionResult {
         auto active_editor = clGetManager()->GetActiveEditor();

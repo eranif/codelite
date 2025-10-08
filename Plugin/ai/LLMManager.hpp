@@ -7,10 +7,10 @@
 #include "ai/ProgressToken.hpp"
 #include "ai/ResponseCollector.hpp"
 #include "ai/Tools.hpp"
+#include "assistant/client_base.hpp"
+#include "assistant/function.hpp"
+#include "assistant/ollama_client.hpp"
 #include "clResult.hpp"
-#include "ollama/client.hpp"
-#include "ollama/client_base.hpp"
-#include "ollama/function.hpp"
 
 #include <algorithm>
 #include <atomic>
@@ -25,17 +25,53 @@
 #include <wx/string.h>
 #include <wx/timer.h>
 
+constexpr const char* kAssistantConfigFile = "assistant.json";
+
+static const wxString kDefaultSettings = R"#(
+{
+  "history_size": 50,
+  "mcp_servers": {},
+  "log_level": "info",
+  "stream": true,
+  "keep_alive": "24h",
+  "server_timeout": {
+      "connect_msecs": 500,
+      "read_msecs": 300000,
+      "write_msecs": 300000
+  },
+  "endpoints": {
+    "http://127.0.0.1:11434": {
+      "active": true,
+      "http_headers": {
+        "Host": "127.0.0.1"
+      },
+      "type": "ollama"
+    }
+  },
+  "models": {
+    "default": {
+      "options": {
+        "num_ctx": 16384,
+        "temperature": 0
+      },
+      "think_end_tag": "</think>",
+      "think_start_tag": "</think>"
+    }
+  }
+}
+)#";
+
 namespace llm
 {
-using ollama::AddFlagSet;
-using ollama::ChatOptions;
-using ollama::FunctionBase;
-using ollama::FunctionBuilder;
-using ollama::FunctionResult;
-using ollama::FunctionTable;
-using ollama::json;
-using ollama::OnResponseCallback;
-using ollama::Reason;
+using assistant::AddFlagSet;
+using assistant::ChatOptions;
+using assistant::FunctionBase;
+using assistant::FunctionBuilder;
+using assistant::FunctionResult;
+using assistant::FunctionTable;
+using assistant::json;
+using assistant::OnResponseCallback;
+using assistant::Reason;
 
 template <typename T>
 inline clStatusOr<T> CheckType(const llm::json& j, const std::string& name)
@@ -80,25 +116,13 @@ inline clStatusOr<T> CheckType(const llm::json& j, const std::string& name)
 struct WXDLLIMPEXP_SDK ThreadTask {
     std::vector<std::string> prompt_array;
     std::string model;
-    ChatOptions options{ollama::ChatOptions::kDefault};
+    ChatOptions options{assistant::ChatOptions::kDefault};
     wxEvtHandler* owner{nullptr};
     std::shared_ptr<CancellationToken> cancellation_token;
     /// An optional collector object, if provided it wil be deleted by this class
     ResponseCollector* collector{nullptr};
 
     inline wxEvtHandler* GetEventSink() { return collector ? collector : owner; }
-};
-
-class WXDLLIMPEXP_SDK Client : public ollama::Client
-{
-public:
-    Client(const std::string& url, const std::unordered_map<std::string, std::string>& headers)
-        : ollama::Client(url, headers)
-    {
-    }
-    ~Client() override = default;
-
-    std::unique_ptr<ollama::Client> NewClient();
 };
 
 class WXDLLIMPEXP_SDK Manager : public wxEvtHandler
@@ -181,15 +205,16 @@ private:
     void WorkerMain();
     void PushThreadWork(ThreadTask work) { m_queue.Post(std::move(work)); }
     void CleanupAfterWorkerExit();
-
+    assistant::Config MakeConfig();
     mutable std::mutex m_models_mutex;
     wxArrayString m_models GUARDED_BY(m_models_mutex);
 
     std::unique_ptr<std::thread> m_worker_thread;
-    std::shared_ptr<llm::Client> m_client;
+    std::shared_ptr<assistant::ClientBase> m_client;
 
     Config m_config;
-    std::optional<ollama::Config> m_client_config;
+    assistant::Config m_default_config;
+    assistant::Config m_client_config;
     wxMessageQueue<ThreadTask> m_queue;
     std::atomic_bool m_worker_thread_running{false};
     std::atomic_bool m_worker_busy{false};

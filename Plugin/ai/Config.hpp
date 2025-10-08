@@ -1,8 +1,8 @@
 #pragma once
 
+#include "assistant/attributes.hpp"
 #include "cl_config.h"
 #include "codelite_exports.h"
-#include "ollama/attributes.hpp"
 
 #include <mutex>
 #include <wx/arrstr.h>

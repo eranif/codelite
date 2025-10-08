@@ -1,9 +1,13 @@
 #include "LLMManager.hpp"
 
+#include "FileManager.hpp"
+#include "assistant/assistant.hpp"
+#include "assistant/claude_client.hpp"
+#include "assistant/ollama_client.hpp"
 #include "file_logger.h"
-#include "ollama/client.hpp"
 
 #include <wx/msgdlg.h>
+
 namespace llm
 {
 namespace
@@ -54,12 +58,6 @@ void NotifyDoneWithError(wxEvtHandler* owner, const std::string& message)
 // ==---------------------
 // Client
 // ==---------------------
-
-std::unique_ptr<ollama::Client> Client::NewClient()
-{
-    std::unique_ptr<ollama::Client> client = std::make_unique<ollama::Client>(GetUrl(), m_http_headers.get_value());
-    return client;
-}
 
 Manager& Manager::GetInstance()
 {
@@ -113,7 +111,7 @@ void Manager::WorkerMain()
                 m_client->Chat(
                     std::move(prompt),
                     [this, cancellation_token, &abort_loop, &shared_state, &saved_thinking_state, owner](
-                        std::string message, ollama::Reason reason, bool thinking) -> bool {
+                        std::string message, assistant::Reason reason, bool thinking) -> bool {
                         // Check various options that the chat was cancelled.
                         if (m_client->IsInterrupted() || (cancellation_token && cancellation_token->IsCancelled())) {
                             NotifyDoneWithError(owner, "\n\n** Request cancelled by the user. **\n\n");
@@ -135,12 +133,12 @@ void Manager::WorkerMain()
 
                         saved_thinking_state = thinking;
                         switch (reason) {
-                        case ollama::Reason::kFatalError: {
+                        case assistant::Reason::kFatalError: {
                             NotifyDoneWithError(owner, message);
                             abort_loop = true;
                             return false;
                         } break;
-                        case ollama::Reason::kDone: {
+                        case assistant::Reason::kDone: {
                             if (cancellation_token && !cancellation_token->Incr()) {
                                 NotifyDoneWithError(owner, "\n\n** Maximum number of tokens reached. **\n\n");
                                 abort_loop = true;
@@ -160,18 +158,18 @@ void Manager::WorkerMain()
                                 owner->AddPendingEvent(event);
                             }
                         } break;
-                        case ollama::Reason::kLogNotice:
+                        case assistant::Reason::kLogNotice:
                             clDEBUG() << message << endl;
                             break;
-                        case ollama::Reason::kCancelled: {
+                        case assistant::Reason::kCancelled: {
                             NotifyDoneWithError(owner, "\n\n** Request cancelled by caller. **\n\n");
                             abort_loop = true;
                             return false;
                         } break;
-                        case ollama::Reason::kLogDebug:
+                        case assistant::Reason::kLogDebug:
                             clDEBUG1() << message << endl;
                             break;
-                        case ollama::Reason::kPartialResult: {
+                        case assistant::Reason::kPartialResult: {
                             clLLMEvent event{wxEVT_LLM_OUTPUT};
                             event.SetResponseRaw(message);
                             owner->AddPendingEvent(event);
@@ -299,6 +297,22 @@ void Manager::Chat(ResponseCollector* collector,
     PostTask(std::move(task));
 }
 
+std::once_flag config_create_once_flag;
+assistant::Config Manager::MakeConfig()
+{
+    std::call_once(config_create_once_flag, [this]() {
+        // Should never fail.
+        m_default_config = assistant::Config::FromContent(kDefaultSettings.ToStdString(wxConvUTF8)).value();
+    });
+
+    WriteOptions opts{.force_global = true};
+    wxString config_content =
+        FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts).value_or(kDefaultSettings);
+    assistant::Config config =
+        assistant::Config::FromContent(config_content.ToStdString(wxConvUTF8)).value_or(m_default_config);
+    return config;
+}
+
 void Manager::Restart()
 {
     Stop();
@@ -322,20 +336,17 @@ void Manager::Start()
 {
     auto bc = CreateBusyCursor();
 
-    std::unordered_map<std::string, std::string> headers = {{"Host", "127.0.0.1"}};
-    m_client = std::make_shared<llm::Client>(std::string{"127.0.0.1:11434"}, headers);
-    const ollama::Config* config = m_client_config.has_value() ? &m_client_config.value() : nullptr;
-    if (config) {
-        m_client->ApplyConfig(config);
-    }
+    m_client_config = MakeConfig();
+
+    // MakeClient that accepts a Config object can not fail.
+    m_client = assistant::MakeClient(m_client_config).value();
 
     // Initialise the function table.
     PopulateBuiltInFunctions(m_client->GetFunctionTable());
     m_client->GetFunctionTable().Merge(GetPluginFunctionTable());
-    if (config) {
-        // Add external MCP tools.
-        m_client->GetFunctionTable().ReloadMCPServers(config);
-    }
+
+    // Add external MCP tools.
+    m_client->GetFunctionTable().ReloadMCPServers(&m_client_config);
     LoadModels(nullptr);
 
     // Start the worker thread
@@ -344,8 +355,16 @@ void Manager::Start()
 
 void Manager::LoadModels(wxEvtHandler* owner)
 {
-    auto client = m_client->NewClient();
-    std::thread t([owner, client = std::move(client)]() {
+    WriteOptions opts{.force_global = true};
+    wxString config_content =
+        FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts).value_or(kDefaultSettings);
+    auto client = assistant::MakeClient(config_content.ToStdString(wxConvUTF8));
+    if (!client.has_value()) {
+        clERROR() << "Could not construct a client for fetching model list." << endl;
+        return;
+    }
+
+    std::thread t([owner, client = std::move(client.value())]() {
         auto models = client->List();
         wxArrayString m;
         m.reserve(models.size());
@@ -371,10 +390,10 @@ bool Manager::ReloadConfig(const wxString& config_content, bool prompt)
         return false;
     }
 
-    auto conf = ollama::Config::FromContent(config_content.ToStdString(wxConvUTF8));
+    auto conf = assistant::Config::FromContent(config_content.ToStdString(wxConvUTF8));
     if (conf.has_value()) {
-        m_client_config = std::move(conf);
-        m_client->ApplyConfig(&m_client_config.value());
+        m_client_config = std::move(conf.value());
+        m_client->ApplyConfig(&m_client_config);
         Restart();
         return true;
     }

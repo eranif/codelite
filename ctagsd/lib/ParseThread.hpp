@@ -22,8 +22,6 @@ class ParseThread
     std::condition_variable m_cv;
     std::atomic_bool m_shutdown;
     std::vector<ParseThreadTaskFunc> m_queue;
-    wxString m_settings_folder;
-    wxString m_indexer_path;
 
 public:
     ParseThread() = default;

@@ -15,41 +15,6 @@
 
 #include <wx/msgdlg.h>
 
-const wxString kDefaultSettings =
-    R"#({
-  "history_size": 50,
-  "mcp_servers": {},
-  "log_level": "info",
-  "stream": true,
-  "keep_alive": "24h",
-  "server_timeout": {
-      "connect_msecs": 500,
-      "read_msecs": 300000,
-      "write_msecs": 300000
-  },
-  "endpoints": {
-    "http://127.0.0.1:11434": {
-      "active": true,
-      "http_headers": {
-        "Host": "127.0.0.1"
-      },
-      "type": "ollama"
-    }
-  },
-  "models": {
-    "default": {
-      "options": {
-        "num_ctx": 16384,
-        "temperature": 0
-      },
-      "think_end_tag": "</think>",
-      "think_start_tag": "</think>"
-    }
-  }
-})#";
-
-constexpr const char* kAssistantConfigFile = "assistant.json";
-
 namespace
 {
 const wxString CHAT_AI_LABEL = _("Chat AI");

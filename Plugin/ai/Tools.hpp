@@ -2,14 +2,13 @@
 
 // clang-format off
 #include <wx/app.h>
-#include "ai/LLMManager.hpp"
-#include "ollama/function_base.hpp"
+#include "assistant/function_base.hpp"
 // clang-format on
 
 namespace llm
 {
-using ollama::FunctionResult;
-using ollama::FunctionTable;
+using assistant::FunctionResult;
+using assistant::FunctionTable;
 
 inline FunctionResult Ok(std::optional<wxString> text)
 {
@@ -32,19 +31,19 @@ inline FunctionResult Err(std::optional<wxString> text)
 /// Available API that CodeLite exposes to the model.
 
 /// Write file to the disk.
-FunctionResult WriteFileContent(const ollama::json& args);
+FunctionResult WriteFileContent(const assistant::json& args);
 
 /// Read filepath and return its content.
-FunctionResult ReadFileContent(const ollama::json& args);
+FunctionResult ReadFileContent(const assistant::json& args);
 
 /// Open list of files to open.
-FunctionResult OpenFileInEditor(const ollama::json& args);
+FunctionResult OpenFileInEditor(const assistant::json& args);
 
 /// Return the current compiler output.
-FunctionResult GetCompilerOutput(const ollama::json& args);
+FunctionResult GetCompilerOutput(const assistant::json& args);
 
 /// Return the current editor's text content.
-FunctionResult GetCurrentEditorText(const ollama::json& args);
+FunctionResult GetCurrentEditorText(const assistant::json& args);
 
 /// Populate the function table with the built-in functions provided by CodeLite
 /// to the model.

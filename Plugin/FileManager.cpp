@@ -110,12 +110,11 @@ std::optional<wxString> FileManager::ReadContent(const wxString& filepath, const
     wxString fullpath = GetFullPath(filepath, options);
 #if USE_SFTP
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    if (workspace && workspace->IsRemote()) {
+    if (workspace && workspace->IsRemote() && !options.force_global) {
         wxMemoryBuffer membuf;
         if (!clSFTPManager::Get().AwaitReadFile(fullpath, workspace->GetSshAccount(), &membuf)) {
             return std::nullopt;
         }
-
         wxString content{(const char*)membuf.GetData(), options.GetConv(), membuf.GetDataLen()};
         return content;
     }

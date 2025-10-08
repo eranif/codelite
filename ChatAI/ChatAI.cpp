@@ -30,7 +30,6 @@
 #include "event_notifier.h"
 #include "globals.h"
 #include "macromanager.h"
-#include "ollama/helpers.hpp"
 
 #include <wx/app.h> //wxInitialize/wxUnInitialize
 #include <wx/ffile.h>

@@ -41,7 +41,7 @@ ollama::FunctionResult RunOnMain(std::function<FunctionResult()> callback, const
 // Register CodeLite tools with the model.
 void PopulateBuiltInFunctions(FunctionTable& table)
 {
-    table.Add(FunctionBuilder("Write file content to disk at a given path")
+    table.Add(FunctionBuilder("Write_file_content_to_disk_at_a_given_path")
                   .SetDescription("Write the content 'file_content' to the file "
                                   "system at the given path identified by 'filepath'")
                   .AddRequiredParam("file_content", "The content of the file to be written to the disk.", "string")
@@ -49,7 +49,7 @@ void PopulateBuiltInFunctions(FunctionTable& table)
                   .SetCallback(WriteFileContent)
                   .Build());
 
-    table.Add(FunctionBuilder("Read file from the file system")
+    table.Add(FunctionBuilder("Read_file_from_the_file_system")
                   .SetDescription("Reads the entire content of the file 'filepath' from "
                                   "the disk. On success, this function returns the "
                                   "entire file's content.")
@@ -57,14 +57,14 @@ void PopulateBuiltInFunctions(FunctionTable& table)
                   .SetCallback(ReadFileContent)
                   .Build());
 
-    table.Add(FunctionBuilder("Open a file in an editor")
+    table.Add(FunctionBuilder("Open_a_file_in_an_editor")
                   .SetDescription("Try to open file 'filepath' and load it into the "
                                   "editor for editing or viewing.")
                   .AddRequiredParam("filepath", "The path of the file to open inside the editor.", "string")
                   .SetCallback(OpenFileInEditor)
                   .Build());
 
-    table.Add(FunctionBuilder("Read the compiler build output")
+    table.Add(FunctionBuilder("Read_the_compiler_build_output")
                   .SetDescription("Read and fetches the compiler build log output of "
                                   "the most recent build command executed by "
                                   "the user and return it to the caller. Use this "
@@ -75,7 +75,7 @@ void PopulateBuiltInFunctions(FunctionTable& table)
                   .SetCallback(GetCompilerOutput)
                   .Build());
 
-    table.Add(FunctionBuilder("Get the text of the active tab inside the editor")
+    table.Add(FunctionBuilder("Get_the_text_of_the_active_tab_inside_the_editor")
                   .SetDescription("Return the text of the active tab inside the editor.")
                   .SetCallback(GetCurrentEditorText)
                   .Build());

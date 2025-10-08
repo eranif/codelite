@@ -54,14 +54,18 @@ inline clStatusOr<T> CheckType(const llm::json& j, const std::string& name)
     }
 }
 
-#define LLM_ASSIGN_ARG_OR_RETURN_ERR(expr, args, ArgName, ArgType)                                          \
-    expr;                                                                                                   \
-    if (auto status = ::llm::CheckType<ArgType>(args, ArgName); !status.ok()) {                             \
-        ::llm::FunctionResult res{.isError = true, .text = status.error_message().ToStdString(wxConvUTF8)}; \
-        return res;                                                                                         \
-    } else {                                                                                                \
-        expr = status.value();                                                                              \
-    }
+#define LLM_CONCAT_IMPL(a, b) a##b
+#define LLM_CONCAT(a, b) LLM_CONCAT_IMPL(a, b)
+#define LLM_UNIQUE_VAR(name) LLM_CONCAT(name, __LINE__)
+
+#define LLM_ASSIGN_ARG_OR_RETURN_ERR(Decl, Args, ArgName, ArgType)                                      \
+    auto LLM_UNIQUE_VAR(__result) = ::llm::CheckType<ArgType>(Args, ArgName);                           \
+    if (!LLM_UNIQUE_VAR(__result).ok()) {                                                               \
+        ::llm::FunctionResult res{                                                                      \
+            .isError = true, .text = LLM_UNIQUE_VAR(__result).error_message().ToStdString(wxConvUTF8)}; \
+        return res;                                                                                     \
+    }                                                                                                   \
+    Decl = LLM_UNIQUE_VAR(__result).value();
 
 #define LLM_STRINGIFY(x) #x
 #define LLM_TOSTRING(x) LLM_STRINGIFY(x)

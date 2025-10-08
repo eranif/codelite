@@ -214,7 +214,6 @@ void ChatAIWindow::UpdateTheme()
 
     } else {
         bg_colour = lexer->GetProperty(0).GetBgColour();
-        bg_colour = bg_colour.ChangeLightness(95);
     }
 
     for (int style = 0; style < wxSTC_STYLE_MAX; ++style) {

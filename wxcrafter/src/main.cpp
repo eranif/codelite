@@ -292,7 +292,9 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
     Hide();
     SetCanFocus(true);
     SetName("MainFrame");
-    WindowAttrManager::Load(this);
+    if (GetParent()) {
+        CenterOnParent();
+    }
 #else
     SetName("MainFrame");
     WindowAttrManager::Load(this);
@@ -631,12 +633,17 @@ void MainFrame::DisplayDesigner()
 {
     if (!IsShown()) {
         Show();
+        // Center on the parent.
+        if (GetParent()) {
+            CenterOnParent();
+        }
     }
     if (IsIconized()) {
         Restore();
     }
-    Raise();
-    SetFocus();
+
+    CallAfter(&MainFrame::Raise);
+    CallAfter(&MainFrame::SetFocus);
 }
 
 void MainFrame::MinimizeDesigner()
@@ -647,7 +654,7 @@ void MainFrame::MinimizeDesigner()
 
         wxFrame* mainFrame = EventNotifier::Get()->TopFrame();
         if (mainFrame) {
-            mainFrame->Raise();
+            mainFrame->CallAfter(&wxFrame::Raise);
         }
     }
 }
@@ -660,7 +667,7 @@ void MainFrame::HideDesigner()
 
         wxFrame* mainFrame = EventNotifier::Get()->TopFrame();
         if (mainFrame) {
-            mainFrame->Raise();
+            mainFrame->CallAfter(&wxFrame::Raise);
         }
     }
 }

@@ -188,7 +188,11 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
                     "wxCrafter",
                     wxDefaultPosition,
                     wxDefaultSize,
-                    wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT | wxTAB_TRAVERSAL)
+                    wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT | wxTAB_TRAVERSAL
+#ifdef __WXMAC__
+                        | wxFRAME_TOOL_WINDOW
+#endif
+                    )
     , m_wxcView(NULL)
     , m_treeView(NULL)
     , m_findReplaceDialog(NULL)

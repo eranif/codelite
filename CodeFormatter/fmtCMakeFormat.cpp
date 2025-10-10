@@ -1,8 +1,8 @@
-#include "fmtCMakeForamt.hpp"
+#include "fmtCMakeFormat.hpp"
 
 #include "Platform/Platform.hpp"
 
-fmtCMakeForamt::fmtCMakeForamt()
+fmtCMakeFormat::fmtCMakeFormat()
 {
     SetName("cmake-format");
     SetFileTypes({ FileExtManager::TypeCMake });

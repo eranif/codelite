@@ -33,7 +33,7 @@ bool ImportFromXrc::ImportProject(ImportDlg::ImportFileData& data) const
 
     wxXmlDocument doc(filepath);
     if(!doc.IsOk()) {
-        wxMessageBox(_("Failed to load the file to import"), _("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
+        wxMessageBox(_("Failed to load the file to import"), wxT("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
         return false;
     }
 
@@ -52,7 +52,7 @@ bool ImportFromXrc::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels) 
     while(toplevelnode) {
         wxString tag = toplevelnode->GetName();
         if(tag != wxT("object")) {
-            wxMessageBox(_("This doesn't seem to be a valid XRC file. Aborting."), _("CodeLite"), wxICON_ERROR | wxOK,
+            wxMessageBox(_("This doesn't seem to be a valid XRC file. Aborting."), wxT("CodeLite"), wxICON_ERROR | wxOK,
                          m_Parent);
             return false;
         }

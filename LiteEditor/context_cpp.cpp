@@ -957,7 +957,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)
     // get the file name and line where to insert the setters getters
     SettersGettersDlg dlg(EventNotifier::Get()->TopFrame());
     if (!dlg.Init(member_tags, function_tags, editor.GetFileName(), lineno)) {
-        ::wxMessageBox(_("Seems like you have all the getters/setters you need..."), _("codelite"));
+        ::wxMessageBox(_("Seems like you have all the getters/setters you need..."), wxT("CodeLite"));
         return;
     }
 
@@ -1387,7 +1387,7 @@ void ContextCpp::DoAddFunctionImplementation(int line_number)
     wxString scopeName = TagsManagerST::Get()->GetScopeName(context);
     if (scopeName.IsEmpty() || scopeName == "<global>") {
         wxMessageBox(_("'Add Functions Implementation' can only work inside valid scope, got (") + scopeName + ")",
-                     _("CodeLite"), wxICON_INFORMATION | wxOK);
+                     wxT("CodeLite"), wxICON_INFORMATION | wxOK);
         return;
     }
 

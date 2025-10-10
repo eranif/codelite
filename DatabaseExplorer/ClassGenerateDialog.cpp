@@ -129,12 +129,12 @@ void ClassGenerateDialog::OnCancelClick(wxCommandEvent& event) { Destroy(); }
 void ClassGenerateDialog::OnGenerateClick(wxCommandEvent& event)
 {
     if (m_txVirtualDir->GetValue().IsEmpty()) {
-        wxMessageBox(_("Virtual name cannot be empty"), _("CodeLite"), wxICON_WARNING | wxOK);
+        wxMessageBox(_("Virtual name cannot be empty"), wxT("CodeLite"), wxICON_WARNING | wxOK);
         m_txVirtualDir->SetFocus();
         return;
     }
     if (m_dirPicker->GetPath().IsEmpty()) {
-        wxMessageBox(_("Folder name cannot be empty"), _("CodeLite"), wxICON_WARNING | wxOK);
+        wxMessageBox(_("Folder name cannot be empty"), wxT("CodeLite"), wxICON_WARNING | wxOK);
         m_dirPicker->SetFocus();
     }
 

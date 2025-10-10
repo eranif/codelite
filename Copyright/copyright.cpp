@@ -135,7 +135,7 @@ void Copyright::OnInsertCopyrights(wxCommandEvent& e)
     if (!wxFileName::FileExists(data.GetTemplateFilename())) {
         wxMessageBox(
             wxString::Format(_("Template file name '%s', does not exist!"), data.GetTemplateFilename().GetData()),
-            _("CodeLite"),
+            wxT("CodeLite"),
             wxICON_WARNING | wxOK);
         return;
     }
@@ -144,14 +144,14 @@ void Copyright::OnInsertCopyrights(wxCommandEvent& e)
     wxString content;
     if (!ReadFileWithConversion(data.GetTemplateFilename(), content)) {
         wxMessageBox(wxString::Format(_("Failed to read template file '%s'"), data.GetTemplateFilename().c_str()),
-                     _("CodeLite"),
+                     wxT("CodeLite"),
                      wxICON_WARNING | wxOK);
         return;
     }
 
     IEditor* editor = m_mgr->GetActiveEditor();
     if (!editor) {
-        wxMessageBox(wxString::Format(_("There is no active editor\n")), _("CodeLite"), wxICON_WARNING | wxOK);
+        wxMessageBox(wxString::Format(_("There is no active editor\n")), wxT("CodeLite"), wxICON_WARNING | wxOK);
         return;
     }
 
@@ -163,7 +163,7 @@ void Copyright::OnInsertCopyrights(wxCommandEvent& e)
 
     if (!l.is_empty()) {
         if (wxMessageBox(_("Template file contains text which is not comment, continue anyway?"),
-                         _("CodeLite"),
+                         wxT("CodeLite"),
                          wxICON_QUESTION | wxYES_NO) == wxNO) {
             return;
         }
@@ -197,7 +197,7 @@ void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
 {
     // pop up the projects selection dialog
     if (m_mgr->IsWorkspaceOpen() == false) {
-        wxMessageBox(_("Batch insert requires a workspace to be opened"), _("CodeLite"), wxICON_WARNING | wxOK);
+        wxMessageBox(_("Batch insert requires a workspace to be opened"), wxT("CodeLite"), wxICON_WARNING | wxOK);
         return;
     }
 
@@ -254,7 +254,7 @@ void Copyright::OnProjectInsertCopyrights(wxCommandEvent& e)
 {
     // pop up the projects selection dialog
     if (m_mgr->IsWorkspaceOpen() == false) {
-        wxMessageBox(_("Batch insert requires a workspace to be opened"), _("CodeLite"), wxICON_WARNING | wxOK);
+        wxMessageBox(_("Batch insert requires a workspace to be opened"), wxT("CodeLite"), wxICON_WARNING | wxOK);
         return;
     }
 
@@ -312,7 +312,7 @@ void Copyright::MassUpdate(const std::vector<wxFileName>& filtered_files, const 
     // last confirmation from the user
     if (wxMessageBox(
             wxString::Format(_("You are about to modify %u files. Continue?"), (unsigned int)filtered_files.size()),
-            _("CodeLite"),
+            wxT("CodeLite"),
             wxYES_NO | wxICON_QUESTION) == wxNO) {
         return;
     }
@@ -369,7 +369,7 @@ bool Copyright::Validate(wxString& content)
     if (!wxFileName::FileExists(data.GetTemplateFilename())) {
         wxMessageBox(
             wxString::Format(_("Template file name '%s', does not exist!"), data.GetTemplateFilename().GetData()),
-            _("CodeLite"),
+            wxT("CodeLite"),
             wxICON_WARNING | wxOK);
         return false;
     }
@@ -377,7 +377,7 @@ bool Copyright::Validate(wxString& content)
     // read the copyrights file
     if (!ReadFileWithConversion(data.GetTemplateFilename(), content)) {
         wxMessageBox(wxString::Format(_("Failed to read template file '%s'"), data.GetTemplateFilename().c_str()),
-                     _("CodeLite"),
+                     wxT("CodeLite"),
                      wxICON_WARNING | wxOK);
         return false;
     }
@@ -390,7 +390,7 @@ bool Copyright::Validate(wxString& content)
 
     if (!l.is_empty()) {
         if (wxMessageBox(_("Template file contains text which is not comment, continue anyways?"),
-                         _("CodeLite"),
+                         wxT("CodeLite"),
                          wxICON_QUESTION | wxYES_NO) == wxNO) {
             return false;
         }

@@ -230,6 +230,13 @@ public:
     /// Remove a book page (do not destroy it), return the removed page
     wxWindow* BookRemovePage(PaneId pane_id, wxWindow* page) override;
 
+    //// Remove a book page (do not destroy it), return the removed page. This function will search
+    /// all the books until it finds the page.
+    wxWindow* BookRemovePage(wxWindow* page) override;
+
+    /// Delete a book page. This function will search all the books until it finds the page.
+    bool BookDeletePage(wxWindow* page) override;
+
     /// Delete a book page, return true on success, false otherwise
     bool BookDeletePage(PaneId pane_id, wxWindow* page) override;
 
@@ -238,6 +245,9 @@ public:
 
     /// Get the book control
     wxWindow* BookGet(PaneId pane_id) override;
+
+    /// Find the pane_id that holds "page".
+    std::optional<PaneId> FindPaneId(wxWindow* page) override;
 
     /// Return the main panel
     wxPanel* GetMainPanel() override;

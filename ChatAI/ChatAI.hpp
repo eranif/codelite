@@ -25,9 +25,10 @@
 #pragma once
 
 #include "ChatAIWindow.hpp"
+#include "ChatAIWindowFrame.hpp"
 #include "plugin.h"
 
-#include <memory>
+#include <optional>
 
 /// Return the log handle of this library
 clModuleLogger& GetLogHandle();
@@ -51,9 +52,14 @@ public:
     void HookPopupMenu(wxMenu* menu, MenuType type) override;
     void UnPlug() override;
 
+    void DetachView(bool show_frame);
+    void DockView();
+
 private:
     void OnShowChatWindow(wxCommandEvent& event);
     void OnInitDone(wxCommandEvent& event);
 
     ChatAIWindow* m_chatWindow{nullptr};
+    ChatAIWindowFrame* m_chatWindowFrame{nullptr};
+    std::optional<PaneId> m_dockedPaneId{std::nullopt};
 };

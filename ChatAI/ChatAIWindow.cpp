@@ -1,5 +1,7 @@
 #include "ChatAIWindow.hpp"
 
+#include "ChatAI.hpp"
+#include "ChatAIWindowFrame.hpp"
 #include "ColoursAndFontsManager.h"
 #include "FileManager.hpp"
 #include "MarkdownStyler.hpp"
@@ -34,15 +36,16 @@ std::optional<wxString> GetGlobalSettings()
 
 } // namespace
 
-ChatAIWindow::ChatAIWindow(wxWindow* parent)
+ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     : AssistanceAIChatWindowBase(parent)
+    , m_plugin(plugin)
 {
     auto images = clGetManager()->GetStdIcons();
     m_toolbar->SetArtProvider(new clAuiToolBarArt());
     m_toolbar->AddTool(wxID_CLEAR, _("Clear the chat history"), images->LoadBitmap("clear"));
     m_toolbar->AddTool(wxID_SETUP, _("Settings"), images->LoadBitmap("cog"));
     m_toolbar->AddSeparator();
-    
+
     wxSize control_size{GetTextExtent(LONG_MODEL_NAME).GetWidth(), wxNOT_FOUND};
     m_activeModel = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, control_size);
     m_activeModel->SetToolTip(_("Change model. Changing a model will also clear your chat history"));
@@ -58,6 +61,15 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
                        images->LoadBitmap("link_editor"),
                        wxEmptyString,
                        wxITEM_CHECK);
+    m_toolbar->AddSeparator();
+    if (IsDetached()) {
+        m_toolbar->AddTool(XRCID("detach_view"), _("Dock the chat window"), images->LoadBitmap("merge-window"));
+
+    } else {
+        m_toolbar->AddTool(
+            XRCID("detach_view"), _("Move the chat into a separate window"), images->LoadBitmap("separate-window"));
+    }
+
     clAuiToolBarArt::Finalise(m_toolbar);
     m_toolbar->Realize();
 
@@ -89,7 +101,9 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     Bind(wxEVT_MENU, &ChatAIWindow::OnStop, this, wxID_STOP);
     Bind(wxEVT_MENU, &ChatAIWindow::OnAutoScroll, this, XRCID("auto_scroll"));
     Bind(wxEVT_MENU, &ChatAIWindow::OnHistory, this, XRCID("prompt_history"));
+    Bind(wxEVT_MENU, &ChatAIWindow::OnDetachView, this, XRCID("detach_view"));
 
+    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnDetachViewUI, this, XRCID("detach_view"));
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_EXECUTE);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnStopUI, this, wxID_STOP);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnClearOutputViewUI, this, wxID_CLEAR);
@@ -228,7 +242,12 @@ void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
     wxWindow* win = dynamic_cast<wxWindow*>(event.GetEventObject());
     switch (event.GetKeyCode()) {
     case WXK_ESCAPE: {
-        clGetManager()->ShowManagementWindow(CHAT_AI_LABEL, false);
+        if (dynamic_cast<ChatAIWindowFrame*>(GetParent())) {
+            // floating state
+            GetParent()->Show(false);
+        } else {
+            clGetManager()->ShowManagementWindow(CHAT_AI_LABEL, false);
+        }
         auto editor = clGetManager()->GetActiveEditor();
         CHECK_PTR_RET(editor);
 
@@ -503,6 +522,16 @@ void ChatAIWindow::OnBusyUI(wxUpdateUIEvent& event)
     event.Enable(llm::Manager::GetInstance().IsAvailable() && !llm::Manager::GetInstance().IsBusy());
 }
 
+void ChatAIWindow::OnDetachView(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    if (IsDetached()) {
+        m_plugin->CallAfter(&ChatAI::DockView);
+    } else {
+        m_plugin->CallAfter(&ChatAI::DetachView, true);
+    }
+}
+
 void ChatAIWindow::OnHistory(wxCommandEvent& event)
 {
     const auto& config = llm::Manager::GetInstance().GetConfig();
@@ -531,3 +560,11 @@ void ChatAIWindow::OnStop(wxCommandEvent& event)
 
 void ChatAIWindow::OnStopUI(wxUpdateUIEvent& event) { event.Enable(llm::Manager::GetInstance().IsBusy()); }
 void ChatAIWindow::OnSettingsUI(wxUpdateUIEvent& event) { event.Enable(!llm::Manager::GetInstance().IsBusy()); }
+
+void ChatAIWindow::OnDetachViewUI(wxUpdateUIEvent& event) { event.Enable(true); }
+
+bool ChatAIWindow::IsDetached() const
+{
+    auto parent = dynamic_cast<const ChatAIWindowFrame*>(GetParent());
+    return parent != nullptr;
+}

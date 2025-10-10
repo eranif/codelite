@@ -20,6 +20,7 @@ IndicatorPanel::IndicatorPanel(wxWindow* parent, const wxString& initialText)
     m_activityIndicator = new wxActivityIndicator(this, wxID_ANY, wxDefaultPosition, FromDIP(wxSize(16, 16)));
     GetSizer()->Add(m_activityIndicator, wxSizerFlags(0).CenterVertical().Border(wxALL, 5));
     GetSizer()->Add(m_statusMessage, wxSizerFlags(0).CenterVertical().Border(wxALL, 5));
+    m_activityIndicator->Hide();
     SetSizeHints(panel_size);
     GetSizer()->Fit(this);
 }

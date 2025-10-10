@@ -58,6 +58,7 @@
 #include "workspacetab.h"
 
 #include <memory>
+#include <optional>
 #include <wx/dir.h>
 #include <wx/filename.h>
 #include <wx/log.h>
@@ -996,12 +997,14 @@ void PluginManager::BookAddPage(PaneId pane_id, wxWindow* page, const wxString& 
         break;
     case PaneId::SIDE_BAR:
         clMainFrame::Get()->GetWorkspacePane()->GetNotebook()->AddPage(page, label, bmpname, false);
+        clMainFrame::Get()->GetWorkspacePane()->GetNotebook()->Realize();
         break;
     case PaneId::DEBUG_BAR:
         clMainFrame::Get()->GetDebuggerPane()->GetNotebook()->AddPage(page, label, false);
         break;
     case PaneId::SECONDARY_SIDE_BAR:
         clMainFrame::Get()->GetSecondarySideBar()->GetNotebook()->AddPage(page, label, bmpname, false);
+        clMainFrame::Get()->GetSecondarySideBar()->GetNotebook()->Realize();
         break;
     }
 }
@@ -1052,6 +1055,42 @@ int find_page_index(BookT* book, const wxString& label)
     }
     return wxNOT_FOUND;
 }
+
+std::optional<std::pair<wxString, PaneId>> find_page_label_and_pane_id(wxWindow* page)
+{
+    // Find the paneId first.
+    const std::vector<PaneId> panes = {
+        PaneId::BOTTOM_BAR, PaneId::SIDE_BAR, PaneId::SECONDARY_SIDE_BAR, PaneId::DEBUG_BAR};
+
+    wxString label{wxEmptyString};
+    PaneId matched_pane_id{PaneId::BOTTOM_BAR};
+    for (auto pane_id : panes) {
+        switch (pane_id) {
+        case PaneId::BOTTOM_BAR:
+            find_page_label(clMainFrame::Get()->GetOutputPane()->GetNotebook(), page, &label);
+            break;
+        case PaneId::SIDE_BAR:
+            find_page_label(clMainFrame::Get()->GetWorkspacePane()->GetNotebook(), page, &label);
+            break;
+        case PaneId::SECONDARY_SIDE_BAR:
+            find_page_label(clMainFrame::Get()->GetSecondarySideBar()->GetNotebook(), page, &label);
+            break;
+        case PaneId::DEBUG_BAR:
+            find_page_label(clMainFrame::Get()->GetDebuggerPane()->GetNotebook(), page, &label);
+            break;
+        }
+
+        if (!label.empty()) {
+            matched_pane_id = pane_id;
+            break;
+        }
+    }
+
+    if (label.empty()) {
+        return std::nullopt;
+    }
+    return std::make_pair(label, matched_pane_id);
+}
 } // namespace
 
 wxWindow* PluginManager::BookGetPage(PaneId pane_id, const wxString& label)
@@ -1089,6 +1128,7 @@ wxWindow* PluginManager::BookRemovePage(PaneId pane_id, const wxString& label)
         CHECK_COND_RET_NULL(index != wxNOT_FOUND);
         auto page = book->GetPage(index);
         book->RemovePage(index);
+        book->Realize();
         page->Hide();
         return page;
     } break;
@@ -1103,6 +1143,30 @@ wxWindow* PluginManager::BookRemovePage(PaneId pane_id, const wxString& label)
     } break;
     }
     return nullptr;
+}
+
+bool PluginManager::BookDeletePage(wxWindow* page)
+{
+    auto res = find_page_label_and_pane_id(page);
+    if (!res.has_value()) {
+        return false;
+    }
+
+    wxString label = res.value().first;
+    auto pane_id = res.value().second;
+    return BookDeletePage(pane_id, label);
+}
+
+wxWindow* PluginManager::BookRemovePage(wxWindow* page)
+{
+    auto res = find_page_label_and_pane_id(page);
+    if (!res.has_value()) {
+        return nullptr;
+    }
+
+    wxString label = res.value().first;
+    auto pane_id = res.value().second;
+    return BookRemovePage(pane_id, label);
 }
 
 wxWindow* PluginManager::BookRemovePage(PaneId pane_id, wxWindow* page)
@@ -1127,6 +1191,15 @@ wxWindow* PluginManager::BookRemovePage(PaneId pane_id, wxWindow* page)
         return nullptr;
     }
     return BookRemovePage(pane_id, label);
+}
+
+std::optional<PaneId> PluginManager::FindPaneId(wxWindow* page)
+{
+    auto res = find_page_label_and_pane_id(page);
+    if (!res.has_value()) {
+        return std::nullopt;
+    }
+    return res.value().second;
 }
 
 wxWindow* PluginManager::BookGet(PaneId pane_id)
@@ -1187,6 +1260,7 @@ bool PluginManager::BookDeletePage(PaneId pane_id, const wxString& label)
         CHECK_COND_RET_FALSE(index != wxNOT_FOUND);
         auto page = book->GetPage(index);
         book->DeletePage(index);
+        book->Realize();
         return true;
     } break;
     case PaneId::DEBUG_BAR: {

@@ -17,14 +17,17 @@ using llm::ChatState;
 class ChatAIWindow : public AssistanceAIChatWindowBase
 {
 public:
-    ChatAIWindow(wxWindow* parent);
+    ChatAIWindow(wxWindow* parent, ChatAI* plugin);
     virtual ~ChatAIWindow();
     wxString GetActiveModel() const { return m_activeModel->GetStringSelection(); }
+    bool IsDetached() const;
 
 protected:
     void OnAutoScroll(wxCommandEvent& event);
     void OnAutoScrollUI(wxUpdateUIEvent& event);
     void OnBusyUI(wxUpdateUIEvent& event);
+    void OnDetachView(wxCommandEvent& event);
+    void OnDetachViewUI(wxUpdateUIEvent& event);
     void OnHistory(wxCommandEvent& event);
     void OnHistoryUI(wxUpdateUIEvent& event);
     void OnStop(wxCommandEvent& event);
@@ -79,4 +82,5 @@ private:
     IndicatorPanel* m_statusPanel{nullptr};
     bool m_autoScroll{true};
     std::shared_ptr<llm::CancellationToken> m_cancel_token{nullptr};
+    ChatAI* m_plugin{nullptr};
 };

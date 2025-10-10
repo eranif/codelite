@@ -48,6 +48,7 @@ clModuleLogger& GetLogHandle() { return CHATAI_LOG_HANDLER(); }
 namespace
 {
 const wxString CHAT_AI_LABEL = _("Chat AI");
+constexpr const char* kConfigIsViewDetached = "chat_ai.detached_view";
 } // namespace
 
 // Allocate the code formatter on the heap, it will be freed by
@@ -79,7 +80,9 @@ ChatAI::ChatAI(IManager* manager)
     wxTheApp->Bind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("chatai_show_window"));
 
     llm::Manager::GetInstance().GetConfig().Load();
-    m_chatWindow = new ChatAIWindow(m_mgr->BookGet(PaneId::SIDE_BAR));
+
+    m_chatWindowFrame = new ChatAIWindowFrame(EventNotifier::Get()->TopFrame(), this);
+    m_chatWindow = new ChatAIWindow(m_mgr->BookGet(PaneId::SIDE_BAR), this);
     m_mgr->BookAddPage(PaneId::SIDE_BAR, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &ChatAI::OnInitDone, this);
 }
@@ -89,11 +92,17 @@ void ChatAI::UnPlug()
     wxTheApp->Unbind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("chatai_show_window"));
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &ChatAI::OnInitDone, this);
 
-    // before this plugin is un-plugged we must remove the tab we added
-    if (!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_chatWindow)) {
-        m_chatWindow->Destroy();
-    }
+    auto res = m_mgr->FindPaneId(m_chatWindow);
+    clConfig::Get().Write(kConfigIsViewDetached, !res.has_value());
+
+    // before this plugin is un-plugged we must remove the tab we added, first make sure the tab is docked again.
+    DockView();
+    m_mgr->BookDeletePage(m_chatWindow);
     m_chatWindow = nullptr;
+
+    m_chatWindowFrame->Destroy();
+    m_chatWindow = nullptr;
+
     llm::Manager::GetInstance().Restart();
 }
 
@@ -110,8 +119,51 @@ void ChatAI::HookPopupMenu(wxMenu* menu, MenuType type)
 void ChatAI::OnShowChatWindow(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    clGetManager()->ShowManagementWindow(CHAT_AI_LABEL, true);
-    m_chatWindow->GetStcInput()->CallAfter(&wxStyledTextCtrl::SetFocus);
+    if (m_dockedPaneId.has_value()) {
+        m_chatWindowFrame->Show();
+    } else {
+        clGetManager()->ShowManagementWindow(CHAT_AI_LABEL, true);
+        m_chatWindow->GetStcInput()->CallAfter(&wxStyledTextCtrl::SetFocus);
+    }
 }
 
-void ChatAI::OnInitDone(wxCommandEvent& event) { event.Skip(); }
+void ChatAI::OnInitDone(wxCommandEvent& event)
+{
+    event.Skip();
+    bool detached = clConfig::Get().Read(kConfigIsViewDetached, false);
+    if (detached) {
+        DetachView(false);
+    }
+}
+
+void ChatAI::DetachView(bool show_frame)
+{
+    auto res = m_mgr->FindPaneId(m_chatWindow);
+    if (res.has_value()) {
+        // First, remember the pane from which we are removing our view.
+        m_dockedPaneId = res;
+        m_mgr->BookRemovePage(m_chatWindow);
+    }
+
+    if (show_frame && !m_chatWindowFrame->IsShown()) {
+        m_chatWindowFrame->Show();
+    }
+}
+
+void ChatAI::DockView()
+{
+    if (m_chatWindowFrame->IsShown()) {
+        m_chatWindowFrame->Hide();
+    }
+
+    auto res = m_mgr->FindPaneId(m_chatWindow);
+    if (res.has_value()) {
+        // the view is already docked
+        return;
+    }
+
+    PaneId pane_id = m_dockedPaneId.value_or(PaneId::SIDE_BAR);
+    m_mgr->BookAddPage(pane_id, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
+    m_mgr->BookSelectPage(pane_id, m_chatWindow);
+    m_dockedPaneId.reset();
+}

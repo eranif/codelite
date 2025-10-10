@@ -21,6 +21,8 @@
 #include <wx/aui/auibar.h>
 #include <map>
 #include <wx/menu.h>
+#include <wx/frame.h>
+#include <wx/iconbndl.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -62,9 +64,25 @@ public:
     AssistanceAIChatWindowBase(wxWindow* parent,
                                wxWindowID id = wxID_ANY,
                                const wxPoint& pos = wxDefaultPosition,
-                               const wxSize& size = wxSize(-1, -1),
+                               const wxSize& size = wxSize(800, 600),
                                long style = wxTAB_TRAVERSAL);
     virtual ~AssistanceAIChatWindowBase();
+};
+
+class ChatAIWindowFrameBase : public wxFrame
+{
+protected:
+protected:
+    virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
+
+public:
+    ChatAIWindowFrameBase(wxWindow* parent,
+                          wxWindowID id = wxID_ANY,
+                          const wxString& title = _("ChatAI"),
+                          const wxPoint& pos = wxDefaultPosition,
+                          const wxSize& size = wxSize(800, 600),
+                          long style = wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT);
+    virtual ~ChatAIWindowFrameBase();
 };
 
 #endif

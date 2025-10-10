@@ -52,7 +52,7 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
     m_splitterPageTop->SetSizer(boxSizer35);
 
     m_stcOutput = new clThemedSTC(
-        m_splitterPageTop, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageTop, wxSize(-1, -1)), 0);
+        m_splitterPageTop, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageTop, wxSize(700, 500)), 0);
     // Configure the fold margin
     m_stcOutput->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_stcOutput->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -150,7 +150,8 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
     boxSizer43->Add(m_stcInput, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("AssistanceAIChatWindowBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    SetMinClientSize(wxSize(800, 600));
+    SetSize(wxDLG_UNIT(this, wxSize(800, 600)));
     if (GetSizer()) {
         GetSizer()->Fit(this);
     }
@@ -161,4 +162,43 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
 AssistanceAIChatWindowBase::~AssistanceAIChatWindowBase()
 {
     m_stcInput->Unbind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnInputUI, this);
+}
+
+ChatAIWindowFrameBase::ChatAIWindowFrameBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxFrame(parent, id, title, pos, size, style)
+{
+    if (!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCF667InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(mainSizer);
+
+    SetName(wxT("ChatAIWindowFrameBase"));
+    SetMinClientSize(wxSize(800, 600));
+    SetSize(wxDLG_UNIT(this, wxSize(800, 600)));
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if (GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+    if (!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+    // Connect events
+    this->Bind(wxEVT_CLOSE_WINDOW, &ChatAIWindowFrameBase::OnClose, this);
+}
+
+ChatAIWindowFrameBase::~ChatAIWindowFrameBase()
+{
+    this->Unbind(wxEVT_CLOSE_WINDOW, &ChatAIWindowFrameBase::OnClose, this);
 }

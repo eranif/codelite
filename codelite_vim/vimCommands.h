@@ -327,14 +327,12 @@ private:
     int m_visualBlockEndCol{0};
 
     /*~~~~~~~~ COMMAND ~~~~~~~~~*/
-    int m_repeat{0};        /*!< number of repetition for the command */
+    int m_repeat{0};              /*!< number of repetition for the command */
     wxChar m_baseCommand{'\0'};   /*!< base command (first char of the cmd)*/
     wxChar m_actionCommand{'\0'}; /*!< eventual command modifier.In 'c3w', "w" */
     wxChar m_externalCommand{'\0'};
     int m_actions{0}; /*!< repetition of the modifier.In 'c3x', "3" */
 
-    int m_cumulativeUndo{0}; /*!< cumulative actions performed in the editor*/
-                          /*in order to currectly do the undo!*/
     /*~~~~~~~~ HELPER ~~~~~~~~~*/
     bool m_repeatCommand{false};
     int m_modifierKey{0}; /*!< to take into account for some commands*/

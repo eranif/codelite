@@ -227,7 +227,7 @@ public:
      * \param rhs Right hand side
      * \return true if identical, false otherwise
      */
-    bool operator==(const TagEntry& rhs);
+    bool operator==(const TagEntry& rhs) const;
 
     /**
      *	Destructor

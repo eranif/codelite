@@ -94,6 +94,9 @@ public:
     IEditor() = default;
     virtual ~IEditor() = default;
 
+    IEditor(const IEditor&) = delete;
+    IEditor& operator=(const IEditor&) = delete;
+
     /**
      * @brief toggle line comment
      * @param commentSymbol the comment symbol to insert (e.g. "//")

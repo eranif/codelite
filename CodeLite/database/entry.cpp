@@ -82,7 +82,7 @@ TagEntry& TagEntry::operator=(const TagEntry& rhs)
     return *this;
 }
 
-bool TagEntry::operator==(const TagEntry& rhs)
+bool TagEntry::operator==(const TagEntry& rhs) const
 {
     // Note: tree item id is not used in this function!
     bool res = m_scope == rhs.m_scope && m_file == rhs.m_file && m_kind == rhs.m_kind && m_parent == rhs.m_parent &&

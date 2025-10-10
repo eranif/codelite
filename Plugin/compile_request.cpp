@@ -80,8 +80,7 @@ void CompileRequest::Process(IManager* manager)
     }
 
     wxString pname(proj->GetName());
-    wxArrayString unresolvedVars;
-    proj->GetUnresolvedMacros(m_info.GetConfiguration(), unresolvedVars);
+    const wxArrayString unresolvedVars = proj->GetUnresolvedMacros(m_info.GetConfiguration());
     if (!unresolvedVars.IsEmpty()) {
         // We can't continue
         wxString msg;

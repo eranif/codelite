@@ -1662,7 +1662,7 @@ void FileViewTree::DoImportFolder(ProjectPtr proj,
     // -virtual directory (full path, starting from project level)
     // -display name
     // -full path of the file
-    proj->BeginTranscation();
+    proj->BeginTransaction();
     {
         // Create a progress dialog
         clProgressDlg* prgDlg = new clProgressDlg(NULL, _("Importing files ..."), "", (int)files.GetCount());
@@ -1705,7 +1705,7 @@ void FileViewTree::DoImportFolder(ProjectPtr proj,
     }
 
     // save the project file to disk
-    proj->CommitTranscation();
+    proj->CommitTransaction();
 
     // Reload the view
     CallAfter(&FileViewTree::BuildTree);
@@ -1735,7 +1735,7 @@ void FileViewTree::RedefineProjFiles(ProjectPtr proj, const wxString& path, std:
     // -virtual directory (full path, starting from project level)
     // -display name
     // -full path of the file
-    proj->BeginTranscation();
+    proj->BeginTransaction();
     {
         // Create a progress dialog
         clProgressDlg* prgDlg = new clProgressDlg(NULL, _("Importing files ..."), "", (int)files.size());
@@ -1768,7 +1768,7 @@ void FileViewTree::RedefineProjFiles(ProjectPtr proj, const wxString& path, std:
     }
 
     // save the project file to disk
-    proj->CommitTranscation();
+    proj->CommitTransaction();
 
     // reload the project
     wxString curr_proj_name(proj->GetName());

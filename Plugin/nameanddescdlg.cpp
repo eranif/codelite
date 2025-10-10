@@ -24,7 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "nameanddescdlg.h"
 
-#include "globals.h"
 #include "imanager.h"
 
 #include <list>
@@ -33,15 +32,12 @@
 NameAndDescDlg::NameAndDescDlg(wxWindow* parent, IManager* manager, const wxString& name)
     : NameAndDescBaseDlg(parent)
 {
-    std::list<ProjectPtr> projectList;
-    GetProjectTemplateList(projectList);
-
     m_choiceType->Clear();
     std::set<wxString> categories;
 
     // Add the 'All' category
     categories.insert(wxT("All"));
-    for (const auto& project : projectList) {
+    for (const auto& project : GetProjectTemplateList()) {
         wxString internalType = project->GetProjectInternalType();
         if (internalType.IsEmpty())
             internalType = wxT("Others");

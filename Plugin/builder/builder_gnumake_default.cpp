@@ -1046,8 +1046,7 @@ void BuilderGnuMake::CreatePostBuildEvents(ProjectPtr proj, BuildConfigPtr bldCo
     }
 
     // generate postbuild commands
-    BuildCommandList cmds;
-    bldConf->GetPostBuildCommands(cmds);
+    BuildCommandList cmds = bldConf->GetPostBuildCommands();
 
     // Loop over the commands and replace any macros
     //    for(BuildCommand& cmd : cmds) {
@@ -1083,10 +1082,7 @@ void BuilderGnuMake::CreatePostBuildEvents(ProjectPtr proj, BuildConfigPtr bldCo
 
 bool BuilderGnuMake::HasPrebuildCommands(BuildConfigPtr bldConf) const
 {
-    BuildCommandList cmds;
-    bldConf->GetPreBuildCommands(cmds);
-
-    for (const auto& cmd : cmds) {
+    for (const auto& cmd : bldConf->GetPreBuildCommands()) {
         if (cmd.GetEnabled()) {
             return true;
         }
@@ -1096,7 +1092,6 @@ bool BuilderGnuMake::HasPrebuildCommands(BuildConfigPtr bldConf) const
 
 void BuilderGnuMake::CreatePreBuildEvents(ProjectPtr proj, BuildConfigPtr bldConf, wxString& text)
 {
-    BuildCommandList cmds;
     wxString name = bldConf->GetName();
     name = NormalizeConfigName(name);
 
@@ -1108,7 +1103,7 @@ void BuilderGnuMake::CreatePreBuildEvents(ProjectPtr proj, BuildConfigPtr bldCon
         text << bldConf->GetPreBuildCustom() << "\n";
     }
     text << "\n";
-    bldConf->GetPreBuildCommands(cmds);
+    BuildCommandList cmds = bldConf->GetPreBuildCommands();
 
     // Loop over the commands and replace any macros
     for (BuildCommand& cmd : cmds) {
@@ -1567,12 +1562,9 @@ wxString BuilderGnuMake::GetCdCmd(const wxFileName& path1, const wxFileName& pat
 
 void BuilderGnuMake::CreateCustomPostBuildEvents(BuildConfigPtr bldConf, wxString& text)
 {
-    BuildCommandList cmds;
-
-    bldConf->GetPostBuildCommands(cmds);
     bool first(true);
-    if (!cmds.empty()) {
-        for (const auto& cmd : cmds) {
+    if (!bldConf->GetPostBuildCommands().empty()) {
+        for (const auto& cmd : bldConf->GetPostBuildCommands()) {
             if (cmd.GetEnabled()) {
                 if (first) {
                     text << "\t@echo Executing Post Build commands ...\n";
@@ -1589,12 +1581,9 @@ void BuilderGnuMake::CreateCustomPostBuildEvents(BuildConfigPtr bldConf, wxStrin
 
 void BuilderGnuMake::CreateCustomPreBuildEvents(BuildConfigPtr bldConf, wxString& text)
 {
-    BuildCommandList cmds;
-
-    bldConf->GetPreBuildCommands(cmds);
     bool first(true);
-    if (!cmds.empty()) {
-        for (const auto& cmd : cmds) {
+    if (!bldConf->GetPreBuildCommands().empty()) {
+        for (const auto& cmd : bldConf->GetPreBuildCommands()) {
             if (cmd.GetEnabled()) {
                 if (first) {
                     text << "\t@echo Executing Pre Build commands ...\n";
@@ -1865,10 +1854,7 @@ wxString BuilderGnuMake::GetRelinkMarkerForProject(const wxString& projectName) 
 
 bool BuilderGnuMake::HasPostbuildCommands(BuildConfigPtr bldConf) const
 {
-    BuildCommandList cmds;
-    bldConf->GetPostBuildCommands(cmds);
-
-    for (const auto& cmd : cmds) {
+    for (const auto& cmd : bldConf->GetPostBuildCommands()) {
         if (cmd.GetEnabled()) {
             return true;
         }

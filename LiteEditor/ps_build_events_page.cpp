@@ -47,11 +47,11 @@ void PSBuildEventsPage::Load(BuildConfigPtr buildConf)
     BuildCommandList buildCmds;
     wxString text;
     if(m_isPreEvents) {
-        buildConf->GetPreBuildCommands(buildCmds);
+        buildCmds = buildConf->GetPreBuildCommands();
         text = _("Set the commands to run in the pre build stage");
 
     } else {
-        buildConf->GetPostBuildCommands(buildCmds);
+        buildCmds = buildConf->GetPostBuildCommands();
         text = _("Set the commands to run in the post build stage");
     }
     text << _("\nCommands starting with the hash sign ('#'), will not be executed");

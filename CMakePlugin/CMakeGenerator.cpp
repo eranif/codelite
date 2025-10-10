@@ -603,17 +603,8 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
     }
 
     // Add pre|post build commands
-    {
-        BuildCommandList commands;
-        buildConf->GetPreBuildCommands(commands);
-        AddBuildCommands("PRE_BUILD", commands, project, content);
-    }
-
-    {
-        BuildCommandList commands;
-        buildConf->GetPostBuildCommands(commands);
-        AddBuildCommands("POST_BUILD", commands, project, content);
-    }
+    AddBuildCommands("PRE_BUILD", buildConf->GetPreBuildCommands(), project, content);
+    AddBuildCommands("POST_BUILD", buildConf->GetPostBuildCommands(), project, content);
 
     // Add the last hook here
     AddUserCodeSection(content, CMAKELISTS_USER_CODE_3_PREFIX, m_userBlock3);

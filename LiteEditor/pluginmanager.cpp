@@ -964,9 +964,9 @@ void PluginManager::DisplayMessage(const wxString& message,
     return clMainFrame::Get()->GetMessageBar()->DisplayMessage(message, flags, buttons);
 }
 
-void PluginManager::GetBreakpoints(std::vector<clDebuggerBreakpoint>& bpList)
+std::vector<clDebuggerBreakpoint> PluginManager::GetBreakpoints()
 {
-    bpList = ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints();
+    return ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoints();
 }
 
 void PluginManager::ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonId)

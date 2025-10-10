@@ -226,19 +226,16 @@ void CustomBuildRequest::Process(IManager* manager)
 bool CustomBuildRequest::DoUpdateCommand(IManager* manager, wxString& cmd, ProjectPtr proj, BuildConfigPtr bldConf,
                                          bool isClean)
 {
-    BuildCommandList preBuildCmds, postBuildCmds;
     wxArrayString pre, post;
-    bldConf->GetPreBuildCommands(preBuildCmds);
-    bldConf->GetPostBuildCommands(postBuildCmds);
 
     // collect all enabled commands
-    for (const BuildCommand& command : preBuildCmds) {
+    for (const BuildCommand& command : bldConf->GetPreBuildCommands()) {
         if (command.GetEnabled()) {
             pre.Add(command.GetCommand());
         }
     }
 
-    for (const BuildCommand& command : postBuildCmds) {
+    for (const BuildCommand& command : bldConf->GetPostBuildCommands()) {
         if (command.GetEnabled()) {
             post.Add(command.GetCommand());
         }

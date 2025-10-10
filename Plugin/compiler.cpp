@@ -24,22 +24,16 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "compiler.h"
 
-#include "AsyncProcess/asyncprocess.h"
-#include "Cxx/CxxPreProcessor.h"
 #include "GCCMetadata.hpp"
 #include "ICompilerLocator.h"
+#include "StringUtils.h"
 #include "build_settings_config.h"
 #include "build_system.h"
 #include "file_logger.h"
-#include "fileutils.h"
-#include "globals.h"
-#include "macros.h"
-#include "procutils.h"
+#include "project.h"
 #include "xmlutils.h"
 
-#include <wx/log.h>
 #include <wx/regex.h>
-#include <wx/tokenzr.h>
 
 Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
     : m_objectNameIdenticalToFileName(false)

@@ -24,17 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "optionsconfig.h"
 
-#include "cl_defs.h"
+#include "StringUtils.h"
 #include "editor_config.h"
 #include "macros.h"
 #include "xmlutils.h"
 
 #include <wx/fontmap.h>
-#include <wx/intl.h>
-
-#ifdef __WXMSW__
-#include <wx/msw/uxtheme.h>
-#endif
 
 const wxString defaultBookmarkLabels = wxString(';', CL_N0_OF_BOOKMARK_TYPES - 1) + "Find";
 

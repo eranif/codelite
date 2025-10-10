@@ -228,3 +228,5 @@ public:
         return arr;
     }
 };
+inline wxString BoolToString(bool b) { return b ? wxT("yes") : wxT("no"); }
+

@@ -33,30 +33,27 @@
 #include "dirsaver.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
-#include "macros.h"
 #include "newunittestdlg.h"
-#include "pipedprocess.h"
-#include "procutils.h"
 #include "project.h"
 #include "testclassdlg.h"
 #include "unittestcppoutputparser.h"
-#include "unittestdata.h"
 #include "unittestspage.h"
 #include "workspace.h"
 
 #include <wx/app.h>
 #include <wx/ffile.h>
 #include <wx/menu.h>
-#include <wx/menuitem.h>
 #include <wx/msgdlg.h>
 #include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
 
-#ifdef __WXMSW__
-#include "envvarlist.h"
-
-#include <wx/msw/registry.h>
-#endif
+namespace
+{
+bool IsSourceFile(const wxString& ext)
+{
+    return ext == wxT("cpp") || ext == wxT("cxx") || ext == wxT("c") || ext == wxT("c++") || ext == wxT("cc");
+}
+}
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)

@@ -65,7 +65,7 @@ bool clConsoleGnomeTerminal::Start() { return StartProcess(PrepareCommand()); }
 
 bool clConsoleGnomeTerminal::StartForDebugger()
 {
-    // generate a random value to differntiate this instance of codelite
+    // generate a random value to differentiate this instance of CodeLite
     // from other instances
 
     time_t curtime = time(NULL);

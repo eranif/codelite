@@ -36,7 +36,7 @@ void clLocaleManager::load()
                     cached_locales_CanonicalName.Add(info->CanonicalName);
 
                     if(lang == system_lang) {
-                        // Use this as the selection if preffered_locale isn't found
+                        // Use this as the selection if preferred_locale isn't found
                         system_default_locale = n;
                     }
                     ++n;

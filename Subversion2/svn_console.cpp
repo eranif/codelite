@@ -54,7 +54,7 @@ SvnConsole::SvnConsole(wxStyledTextCtrl* stc, Subversion2* plugin)
 {
     m_sci->SetLexer(wxSTC_LEX_NULL);
     m_sci->StyleClearAll();
-    m_sci->SetUndoCollection(false); // dont allow undo/redo
+    m_sci->SetUndoCollection(false); // don't allow undo/redo
     DoInitializeFontsAndColours();
 
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &SvnConsole::OnReadProcessOutput, this);
@@ -122,7 +122,7 @@ void SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, 
 
 void SvnConsole::AppendText(const wxString& text)
 {
-    // Make sure that the carete is at the end
+    // Make sure that the caret is at the end
     m_sci->SetSelectionEnd(m_sci->GetLength());
     m_sci->SetSelectionStart(m_sci->GetLength());
     m_sci->SetCurrentPos(m_sci->GetLength());
@@ -164,7 +164,7 @@ void SvnConsole::EnsureVisible() { m_plugin->EnsureVisible(); }
 
 void SvnConsole::DoProcessNextCommand()
 {
-    // If another process is running, we try again when the process is termianted
+    // If another process is running, we try again when the process is terminated
     if(m_process) {
         return;
     }

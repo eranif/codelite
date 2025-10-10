@@ -153,7 +153,7 @@ public:
     IManager* GetManager() { return m_mgr; }
 
 protected:
-    // Other codelite events
+    // Other CodeLite events
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnWorkspaceClosed(clWorkspaceEvent& event);
     void OnSettings(wxCommandEvent& event);

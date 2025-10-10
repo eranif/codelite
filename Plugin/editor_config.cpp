@@ -113,7 +113,7 @@ bool EditorConfig::Load()
         return false;
     }
 
-    // Check the codelite-version for this file
+    // Check the CodeLite's version for this file
     wxString version;
     bool found = m_doc->GetRoot()->GetAttribute(wxT("Version"), &version);
     if(userSettingsLoaded) {

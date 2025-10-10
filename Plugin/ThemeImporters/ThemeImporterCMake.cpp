@@ -27,7 +27,7 @@ LexerConf::Ptr_t ThemeImporterCMake::Import(const wxFileName& theme_file)
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, "cmake", wxSTC_LEX_CMAKE);
     CHECK_PTR_RET_NULL(lexer);
 
-    // Covnert to codelite's XML properties
+    // Convert to CodeLite's XML properties
     AddProperty(lexer, wxSTC_CMAKE_DEFAULT, "Default", m_editor);
     AddProperty(lexer, wxSTC_CMAKE_COMMENT, "Comment", m_singleLineComment);
     AddProperty(lexer, wxSTC_CMAKE_STRINGDQ, "String DQ", m_string);

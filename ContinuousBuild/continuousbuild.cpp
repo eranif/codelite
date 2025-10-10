@@ -121,7 +121,7 @@ void ContinuousBuild::OnFileSaved(clCommandEvent& e)
 {
     e.Skip();
     clDEBUG1() << "ContinuousBuild::OnFileSaved";
-    // Dont build while the main build is in progress
+    // Don't build while the main build is in progress
     if(m_buildInProgress) {
         clDEBUG() << "Build already in progress, skipping";
         return;

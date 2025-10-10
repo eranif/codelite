@@ -126,7 +126,7 @@ void AddOptionCheckDlg::UpdateCmdLine()
                 // options.push_back(value.AfterLast(wxT('[')).BeforeLast(wxT(']')));
                 options.insert(options.begin(), value);
             } else
-                // uncheck the option if already defined manualy
+                // uncheck the option if already defined manually
                 m_checkListOptions->Check(idx, false);
         }
     }

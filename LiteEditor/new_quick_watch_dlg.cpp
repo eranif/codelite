@@ -154,7 +154,7 @@ void DisplayVariableDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChil
     for(size_t i = 0; i < children.size(); i++) {
         const VariableObjChild& ch = children[i];
 
-        // Dont use ch.isAFake here since it will also returns true of inheritance
+        // Don't use ch.isAFake here since it will also returns true of inheritance
         if(ch.varName != "public" && ch.varName != "private" && ch.varName != "protected") {
             // Real node
             wxTreeItemId child = m_treeCtrl->AppendItem(item, ch.varName, -1, -1, new QWTreeData(ch));
@@ -250,7 +250,7 @@ void DisplayVariableDlg::OnItemMenu(wxTreeEvent& event)
         m_treeCtrl->SelectItem(item);
     }
 
-    // Dont show popup menu for fake nodes
+    // Don't show popup menu for fake nodes
     if(IsFakeItem(item))
         return;
 
@@ -299,7 +299,7 @@ wxString DisplayVariableDlg::DoGetItemPath(const wxTreeItemId& treeItem)
         if(m_treeCtrl->GetRootItem() == item)
             break;
 
-        // Surround this expression with parenthesiss
+        // Surround this expression with parenthesis
         item = m_treeCtrl->GetItemParent(item);
     }
 

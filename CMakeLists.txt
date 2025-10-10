@@ -29,7 +29,7 @@ cmake_minimum_required(VERSION 3.16)
 # -DCMAKE_BUILD_TYPE=Release|Debug|DebugFull -DCOPY_WX_LIBS=1|0
 # -DPREVENT_WX_ASSERTS=1|0 -DAUTOGEN_REVISION=1|0 -DWITH_PCH=1|0
 # -DWITH_NATIVEBOOK=1|0 -DWITH_WXPATH=/path/to/different_wx-config/directory/
-# -DMAKE_DEB=1|0 -DENABLE_SFTP=1|0 // When set to 1 codelite is built with
+# -DMAKE_DEB=1|0 -DENABLE_SFTP=1|0 // When set to 1 Codelite is built with
 # SFTP/Remoty support. -DWITH_WX_CONFIG=/path/to/wx-config
 #
 # Windows / MSYS options:

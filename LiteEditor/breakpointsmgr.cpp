@@ -273,7 +273,7 @@ void BreakptMgr::DoRefreshFileBreakpoints(clEditor* editor)
     editor->DelAllBreakpointMarkers();
 
     // the multimap now holds a table of
-    // line numbers and breakpointsInfo, collect all line numbers's breakpoint info into vector
+    // line numbers and breakpointsInfo, collect all line numbers' breakpoint info into vector
     // and place markers
     for (std::multimap<int, clDebuggerBreakpoint>::iterator i = bps.begin(); i != bps.end(); i++) {
         std::pair<std::multimap<int, clDebuggerBreakpoint>::iterator,
@@ -331,7 +331,7 @@ void BreakptMgr::DoProvideBestBP_Type(clEditor* editor, const std::vector<clDebu
     }
 
     if (best > 0) {
-        // ATTN: this wierd allocation is due to bug in optimization of g++
+        // ATTN: this weird allocation is due to bug in optimization of g++
         // which seems to crash (removing optimization fixes this problem,
         // but we prefer to stick with optimization level 2)
         std::vector<clDebuggerBreakpoint>* v = new std::vector<clDebuggerBreakpoint>(li);

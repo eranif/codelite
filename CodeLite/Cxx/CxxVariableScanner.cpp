@@ -228,7 +228,7 @@ bool CxxVariableScanner::ReadName(wxString& varname,
             // Now that we got the name, check if have more variables to expect
             if (!GetNextToken(token)) {
                 // We reached EOF, but we do got the variable name
-                // se we return false ("don't continue") but we dont clear the name
+                // se we return false ("don't continue") but we don't clear the name
                 return false;
             }
 

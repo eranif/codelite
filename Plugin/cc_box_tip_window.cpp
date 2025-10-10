@@ -294,7 +294,7 @@ void CCBoxTipWindow::PositionRelativeTo(wxWindow* win, wxPoint caretPos, int sta
                 pt = windowPos;
                 pt.y += ccBoxSize.y + 1;
                 if (ccBoxIsAboveCaretLine) {
-                    pt.y += lineHeight; // dont hide the caret line
+                    pt.y += lineHeight; // don't hide the caret line
                 }
             }
         }

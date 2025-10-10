@@ -67,7 +67,7 @@ bool QMakeProFileGenerator::Generate()
     QmakePluginData pd(rawData);
     if(!pd.GetDataForBuildConf(m_configuration, bcpd)) { return false; }
 
-    // Get codelite's build configuration
+    // Get CodeLite's build configuration
     ProjectSettingsPtr settings = p->GetSettings();
     BuildConfigPtr bldConf = settings->GetBuildConfiguration(m_configuration);
     if(!bldConf) { return false; }

@@ -45,7 +45,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_QUERY_LOCALS, clCommand
 // sent when a variable object creation is completed
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_VAROBJECT_CREATED, clCommandEvent);
 
-// sent by codelite when a pane is needed to refresh its content
+// sent by CodeLite when a pane is needed to refresh its content
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_DEBUGGER_UPDATE_VIEWS, clCommandEvent);
 
 // sent by the debugger when a "ListChildren" command is completed

@@ -389,7 +389,7 @@ wxString MacroManager::DoExpand(
             }
         }
 
-        // exapand common macros
+        // expand common macros
         wxDateTime now = wxDateTime::Now();
         expandedString.Replace("$(User)", wxGetUserId());
         expandedString.Replace("$(Date)", now.FormatDate());
@@ -563,7 +563,7 @@ static wxString DoExpandAllVariables(const wxString& expression,
             output.Replace("$(CurrentFileFullName)", fn.GetFullName());
         }
 
-        // exapnd common macros
+        // expand common macros
         wxDateTime now = wxDateTime::Now();
         output.Replace("$(User)", wxGetUserId());
         output.Replace("$(Date)", now.FormatDate());
@@ -604,7 +604,7 @@ wxString ExpandAllVariables(const wxString& expression,
             }
 
             if (!found) {
-                // dont replace anything
+                // don't replace anything
                 clLogMessage("Syntax error in expression: " + expression + ": expecting '`'");
                 return expression;
             } else {
@@ -621,7 +621,7 @@ wxString ExpandAllVariables(const wxString& expression,
                     backtick << output.Item(xx).Trim().Trim(false) << " ";
                 }
 
-                // and finally concatente the result of the backtick command back to the expression
+                // and finally concatenate the result of the backtick command back to the expression
                 tmpExp << backtick;
             }
         } else {

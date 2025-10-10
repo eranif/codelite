@@ -119,7 +119,7 @@ void UnitTestPP::CreateToolBar(clToolBarGeneric* toolbar)
 void UnitTestPP::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     // Create the popup menu for the file explorer
-    // The only menu that we are interseted is the file explorer menu
+    // The only menu that we are interested is the file explorer menu
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(NULL);
 
@@ -174,7 +174,7 @@ void UnitTestPP::UnPlug()
 wxMenu* UnitTestPP::CreateEditorPopMenu()
 {
     // Create the popup menu for the file explorer
-    // The only menu that we are interseted is the file explorer menu
+    // The only menu that we are interested is the file explorer menu
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(NULL);
 
@@ -452,7 +452,7 @@ wxFileName UnitTestPP::FindBestSourceFile(ProjectPtr proj, const wxFileName& fil
         }
         // no source file were found in the project
         // create a path name of the file which will be located
-        // under the selected project path (we dont create it here)
+        // under the selected project path (we don't create it here)
         wxFileName fn(proj->GetFileName());
         fn.SetFullName("unit_tests.cpp");
         return fn;

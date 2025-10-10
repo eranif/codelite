@@ -523,7 +523,7 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
         }
     }
 
-    // Open the newly created classes in codelite
+    // Open the newly created classes in CodeLite
     for(const auto& file : paths) {
         m_mgr->OpenFile(file);
     }
@@ -533,7 +533,7 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
     eventFilesCreated.GetPaths().swap(paths);
     EventNotifier::Get()->QueueEvent(eventFilesCreated.Clone());
 
-    // Notify codelite to parse the files
+    // Notify CodeLite to parse the files
     TagsManagerST::Get()->ParseWorkspaceIncremental();
 }
 

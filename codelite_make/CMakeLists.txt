@@ -7,7 +7,7 @@ include(${wxWidgets_USE_FILE})
 # prepare list of files
 file(GLOB SRCS "*.cpp")
 
-add_definitions(-DwxDEBUG_LEVEL=0)
+add_compile_definitions(wxDEBUG_LEVEL=0)
 
 # Define the output
 add_executable(codelite-make ${SRCS})

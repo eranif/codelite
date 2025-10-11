@@ -3,7 +3,7 @@ project("codelitephp")
 set(PLUGIN_NAME "codelitephp")
 
 if(NOT MINGW)
-    add_definitions(-DPLUGINS_DIR=\"${PLUGINS_DIR}\")
+    add_compile_definitions(PLUGINS_DIR=\"${PLUGINS_DIR}\")
 endif()
 
 # Our project is called 'plugin' this is how it will be called in visual studio, and in our makefiles.

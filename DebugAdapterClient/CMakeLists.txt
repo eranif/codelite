@@ -1,5 +1,4 @@
 # lldb requires C++11
-add_definitions(-std=c++17)
 set(PLUGIN_NAME "DebugAdapterClient")
 project(DebugAdapterClient)
 

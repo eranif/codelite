@@ -14,11 +14,11 @@ endif()
 
 if(MINGW)
     # disables the part of urlmon.h that defines IsLoggingEnabled
-    add_definitions(-D_HITLOGGING_DEFINED=0)
+    add_compile_definitions(_HITLOGGING_DEFINED=0)
 endif(MINGW)
 
 if(USE_CLANG)
-    add_definitions(-DHAS_LIBCLANG)
+    add_compile_definitions(HAS_LIBCLANG)
     include_directories(${CLANG_INCLUDE})
 endif(USE_CLANG)
 

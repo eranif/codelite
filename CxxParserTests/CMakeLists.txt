@@ -21,7 +21,7 @@ endif()
 
 # Remove the "lib" prefix from the plugin name
 target_link_libraries(CxxLocalVariables ${LINKER_OPTIONS} libcodelite plugin wxsqlite3)
-add_definitions(-DCXX_TEST_DIR=\"${CL_SRC_ROOT}/CxxParserTests/Test/\")
+add_compile_definitions(CXX_TEST_DIR=\"${CL_SRC_ROOT}/CxxParserTests/Test/\")
 cl_install_executable(CxxLocalVariables)
 
 add_test(NAME "CxxParserTests" COMMAND CxxLocalVariables)

@@ -16,7 +16,7 @@ if(WITH_MYSQL)
     else(${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND")
         message("-- LIBMYSQLCLIENT is set to ${LIBMYSQLCLIENT}")
     endif(${LIBMYSQLCLIENT} STREQUAL "LIBMYSQLCLIENT-NOTFOUND")
-    add_definitions(-DDBL_USE_MYSQL=1)
+    add_compile_definitions(DBL_USE_MYSQL=1)
 
     if(MINGW)
         install(FILES "${MSYS2_BASE}/clang64/bin/libmariadb.dll" DESTINATION "${CMAKE_INSTALL_PREFIX}")
@@ -74,7 +74,7 @@ endif()
 # Include paths
 include_directories("${CL_SRC_ROOT}/sdk/databaselayer/include")
 
-add_definitions(-DDBL_USE_SQLITE)
+add_compile_definitions(DBL_USE_SQLITE)
 
 file(GLOB SRCS "*.cpp")
 

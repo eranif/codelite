@@ -1,10 +1,10 @@
 if(WXC_APP)
     message("-- Building wxCrafter as a standalone executable ")
-    add_definitions(-DSTANDALONE_BUILD=1)
-    add_definitions(-DINSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
+    add_compile_definitions(STANDALONE_BUILD=1)
+    add_compile_definitions(INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
 else()
     message("-- Building wxCrafter as codelite plugin ")
-    add_definitions(-DWXCAPP=0)
+    add_compile_definitions(WXCAPP=0)
 endif(WXC_APP)
 
 # set the plugin name here

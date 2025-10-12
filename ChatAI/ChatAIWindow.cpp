@@ -406,8 +406,10 @@ void ChatAIWindow::OnFileSaved(clCommandEvent& event)
 
     // Reload configuration
     wxBusyCursor bc{};
-    if (llm::Manager::GetInstance().ReloadConfig(clGetManager()->GetActiveEditor()->GetEditorText())) {
+    if (llm::Manager::GetInstance().ReloadConfig(clGetManager()->GetActiveEditor()->GetEditorText(), false)) {
         clGetManager()->SetStatusMessage(_("ChatAI configuration re-loaded successfully"), 3);
+        // Clear the output view
+        DoClearOutputView();
         // Refresh the model list.
         PopulateModels();
     }

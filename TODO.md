@@ -17,3 +17,13 @@ others:
 
 
 
+AI-powered IDE:
+--------
+
+
+- Git plugin: change the "generate release notes" button to drop down menu with the following entries:
+  - Generate release notes
+  - Code review my changes
+
+- Editor
+  - Generate document for the current function

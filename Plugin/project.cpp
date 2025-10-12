@@ -401,6 +401,11 @@ void Project::SetSettings(ProjectSettingsPtr settings)
 void Project::SetGlobalSettings(BuildConfigCommonPtr globalSettings)
 {
     wxXmlNode* settings = XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "Settings");
+    if (!settings) {
+        clERROR() << "settings == nullptr" << endl;
+        return;
+    }
+
     wxXmlNode* oldSettings = XmlUtils::FindFirstByTagName(settings, "GlobalSettings");
     if (oldSettings) {
         oldSettings->GetParent()->RemoveChild(oldSettings);

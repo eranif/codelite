@@ -92,7 +92,7 @@ Distro/release 	| Lines to append
 ----------------|---------------------------
 debian bookworm	| `deb https://repos.codelite.org/debian/ bookworm devel`
 debian trixie	| `deb https://repos.codelite.org/debian/ trixie devel`
-ubuntu noble oracular and plucky   |	`deb https://repos.codelite.org/ubuntu/ noble universe`
+ubuntu noble oracular plucky and questing   |	`deb https://repos.codelite.org/ubuntu/ noble universe`
 
 - You then need to update your repositories. In synaptic, click the `Reload` button. If you're doing things by hand, do:
 

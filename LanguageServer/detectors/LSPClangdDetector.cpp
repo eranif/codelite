@@ -14,7 +14,7 @@ LSPClangdDetector::LSPClangdDetector()
 
 bool LSPClangdDetector::DoLocate()
 {
-    const auto path = ThePlatform->WhichWithVersion("clangd", { 16, 17, 18, 19, 20, 21, 22, 23, 24, 25 });
+    const auto path = ThePlatform->WhichWithVersion("clangd", {16, 17, 18, 19, 20, 21, 22, 23, 24, 25});
     if (!path) {
         return false;
     }
@@ -37,7 +37,7 @@ void LSPClangdDetector::ConfigureFile(const wxFileName& clangdExe)
 
     size_t limit_results = tagsOptionsData.GetCcNumberOfDisplayItems();
     command << " --limit-results=" << limit_results
-            << " --header-insertion-decorators=0 --compile-commands-dir=$(WorkspacePath) --background-index";
+            << " --header-insertion-decorators=0 --compile-commands-dir=\"$(WorkspacePath)\" --background-index";
 
     SetCommand(command);
     // Add support for the languages

@@ -589,7 +589,7 @@ void TagsManager::GetSubscriptOperator(const wxString& scope, std::vector<TagEnt
         wxString tmpScope(derivationList.at(i).first);
         tmpScope = DoReplaceMacros(tmpScope);
 
-        GetDatabase()->GetSubscriptOperator(scope, tags);
+        GetDatabase()->GetSubscriptOperator(tmpScope, tags);
         if(!tags.empty()) {
 
             // No need to further check

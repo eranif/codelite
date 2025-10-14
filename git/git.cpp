@@ -2739,7 +2739,7 @@ bool GitPlugin::DoExecuteCommandSync(const wxString& command, wxString* commandO
         }
 
         clDEBUG() << "<-" << output.value() << endl;
-        *commandOutput = output.value();
+        *commandOutput = wxString::FromUTF8(output.value());
 #endif
     }
 

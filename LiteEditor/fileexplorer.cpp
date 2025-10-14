@@ -79,8 +79,8 @@ void FileExplorer::CreateGUIControls()
 void FileExplorer::OnFolderDropped(clCommandEvent& event)
 {
     const wxArrayString& folders = event.GetStrings();
-    for (size_t i = 0; i < folders.size(); ++i) {
-        m_view->AddFolder(folders.Item(i));
+    for (const auto& folder : folders) {
+        m_view->AddFolder(folder);
     }
     clGetManager()->BookSelectPage(PaneId::SIDE_BAR, _("Explorer"));
 }

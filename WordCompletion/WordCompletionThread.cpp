@@ -35,9 +35,9 @@ void WordCompletionThread::ParseBuffer(const wxString& buffer, wxStringSet_t& su
 #if 0
     wxArrayString filteredWords;
     wxArrayString words = ::wxStringTokenize(buffer, "\r\n \t->./\\'\"[]()<>*&^%#!@+=:,;{}|/", wxTOKEN_STRTOK);
-    for(size_t i=0; i<words.size(); ++i) {
-        if(!wxIsdigit(words.Item(i).at(0))) {
-            filteredWords.Add(words.Item(i));
+    for (const auto& word : words) {
+        if (!wxIsdigit(word.at(0))) {
+            filteredWords.Add(word);
         }
     }
     suggest.insert(filteredWords.begin(), filteredWords.end());

@@ -29,8 +29,8 @@ std::size_t Tester::RunTests()
     const size_t totalTests = m_tests.size();
     size_t success    = 0;
     size_t errors     = 0;
-    for(size_t i=0; i<m_tests.size(); i++) {
-        m_tests[i]->test() ? success++ : errors++;
+    for (auto& test : m_tests) {
+        test->test() ? success++ : errors++;
     }
 
 

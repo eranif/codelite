@@ -665,8 +665,7 @@ bool ContextCpp::FindSwappedFile(const wxFileName& rhs, wxStringSet_t& others)
         std::vector<wxFileName> files;
         ManagerST::Get()->GetWorkspaceFiles(files, true);
 
-        for (size_t i = 0; i < files.size(); ++i) {
-            const wxFileName& workspaceFile = files.at(i);
+        for (const wxFileName& workspaceFile : files) {
             if ((workspaceFile.GetName() == rhs.GetName()) && exts.count(workspaceFile.GetExt().Lower())) {
                 others.insert(workspaceFile.GetFullPath());
             }

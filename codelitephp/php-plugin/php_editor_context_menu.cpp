@@ -162,10 +162,10 @@ void PHPEditorContextMenu::DoGotoDefinition()
 bool PHPEditorContextMenu::IsTokenInBlackList(wxStyledTextCtrl* sci, const wxString& token, int token_pos,
                                               const wxArrayString& tokensBlackList)
 {
-    for(int i = 0; i < (int)tokensBlackList.size(); i++) {
-        sci->SetTargetStart(token_pos - (int)tokensBlackList[i].length());
-        sci->SetTargetEnd(token_pos + (int)tokensBlackList[i].length());
-        if(sci->SearchInTarget(tokensBlackList[i]) != wxSTC_INVALID_POSITION)
+    for (const auto& tokenBlackList : tokensBlackList) {
+        sci->SetTargetStart(token_pos - (int)tokenBlackList.length());
+        sci->SetTargetEnd(token_pos + (int)tokenBlackList.length());
+        if (sci->SearchInTarget(tokenBlackList) != wxSTC_INVALID_POSITION)
             return true;
     }
     return false;
@@ -284,8 +284,8 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
 
             // Prepare the comment block
             wxArrayString lines = ::wxStringTokenize(comment, "\n", wxTOKEN_STRTOK);
-            for(size_t i = 0; i < lines.size(); ++i) {
-                lines.Item(i).Prepend(whitespace);
+            for (auto& line : lines) {
+                line.Prepend(whitespace);
             }
 
             // Glue the lines back together
@@ -341,10 +341,9 @@ void PHPEditorContextMenu::OnGenerateSettersGetters(wxCommandEvent& e)
         wxString textToAdd;
         PHPSettersGettersDialog dlg(EventNotifier::Get()->TopFrame(), editor, m_manager);
         if(dlg.ShowModal() == wxID_OK) {
-            PHPSetterGetterEntry::Vec_t members = dlg.GetMembers();
-            for(size_t i = 0; i < members.size(); ++i) {
-                textToAdd << members.at(i).GetSetter(dlg.GetScope(), dlg.GetFlags()) << "\n";
-                textToAdd << members.at(i).GetGetter(dlg.GetFlags()) << "\n";
+            for (const auto& member : dlg.GetMembers()) {
+                textToAdd << member.GetSetter(dlg.GetScope(), dlg.GetFlags()) << "\n";
+                textToAdd << member.GetGetter(dlg.GetFlags()) << "\n";
             }
 
             if(!textToAdd.IsEmpty()) {

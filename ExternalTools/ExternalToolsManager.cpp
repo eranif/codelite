@@ -15,8 +15,7 @@ void ExternalToolsManager::OnKill(wxCommandEvent& event)
 {
     wxDataViewItemArray arr;
     m_dvListCtrlTasks->GetSelections(arr);
-    for(size_t i = 0; i < arr.size(); ++i) {
-        wxDataViewItem item = arr.Item(i);
+    for (wxDataViewItem item : arr) {
         ExternalToolItemData* cd = (ExternalToolItemData*)m_dvListCtrlTasks->GetItemData(item);
         ToolsTaskManager::Instance()->Stop(cd->m_pid);
     }

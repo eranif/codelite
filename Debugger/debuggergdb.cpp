@@ -226,10 +226,8 @@ DbgCmdHandler* DbgGdb::PopHandler(const wxString& id)
 
 void DbgGdb::EmptyQueue()
 {
-    HandlersMap_t::iterator iter = m_handlers.begin();
-    while (iter != m_handlers.end()) {
-        delete iter->second;
-        iter++;
+    for (auto& [_, p] : m_handlers) {
+        delete p;
     }
     m_handlers.clear();
 }

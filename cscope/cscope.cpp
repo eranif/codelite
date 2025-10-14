@@ -350,8 +350,7 @@ wxString Cscope::DoCreateListFile(bool force)
 
         // write the content of the files into the tempfile
         wxString content;
-        for(size_t i = 0; i < files.size(); i++) {
-            wxFileName fn(files.at(i));
+        for (wxFileName fn : files) {
             content << fn.GetFullPath(wxPATH_UNIX) << "\n";
         }
         FileUtils::WriteFileContent(list_file, content, wxConvUTF8);

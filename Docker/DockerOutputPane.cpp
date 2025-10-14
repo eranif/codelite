@@ -137,8 +137,7 @@ void DockerOutputPane::SetContainers(const clDockerContainer::Vect_t& containers
 {
     m_containers = containers;
     m_dvListCtrlContainers->DeleteAllItems();
-    for (size_t i = 0; i < m_containers.size(); ++i) {
-        clDockerContainer& container = m_containers[i];
+    for (clDockerContainer& container : m_containers) {
         wxVector<wxVariant> cols;
         cols.push_back(container.GetId());
         cols.push_back(container.GetImage());
@@ -155,8 +154,7 @@ void DockerOutputPane::SetImages(const clDockerImage::Vect_t& images)
 {
     m_images = images;
     m_dvListCtrlImages->DeleteAllItems();
-    for (size_t i = 0; i < m_images.size(); ++i) {
-        clDockerImage& image = m_images[i];
+    for (clDockerImage& image : m_images) {
         wxVector<wxVariant> cols;
         cols.push_back(image.GetId());
         cols.push_back(image.GetRepository());
@@ -227,8 +225,8 @@ void DockerOutputPane::OnContainerContextMenu(wxDataViewEvent& event)
     menu.Bind(
         wxEVT_MENU,
         [&](wxCommandEvent& event) {
-            for (size_t i = 0; i < containers.size(); ++i) {
-                m_driver->StartContainer(containers[i].GetName());
+            for (const auto& container : containers) {
+                m_driver->StartContainer(container.GetName());
             }
         },
         wxID_EXECUTE);
@@ -236,8 +234,8 @@ void DockerOutputPane::OnContainerContextMenu(wxDataViewEvent& event)
     menu.Bind(
         wxEVT_MENU,
         [&](wxCommandEvent& event) {
-            for (size_t i = 0; i < containers.size(); ++i) {
-                m_driver->StopContainer(containers[i].GetName());
+            for (const auto& container : containers) {
+                m_driver->StopContainer(container.GetName());
             }
         },
         wxID_STOP);
@@ -245,8 +243,8 @@ void DockerOutputPane::OnContainerContextMenu(wxDataViewEvent& event)
     menu.Bind(
         wxEVT_MENU,
         [&](wxCommandEvent& event) {
-            for (size_t i = 0; i < containers.size(); ++i) {
-                m_driver->ExecContainerCommand(containers[i].GetName(), "pause");
+            for (const auto& container : containers) {
+                m_driver->ExecContainerCommand(container.GetName(), "pause");
             }
             m_driver->ListContainers();
         },
@@ -257,8 +255,8 @@ void DockerOutputPane::OnContainerContextMenu(wxDataViewEvent& event)
         wxEVT_MENU,
         [&](wxCommandEvent& event) {
             wxArrayString names;
-            for (size_t i = 0; i < containers.size(); ++i) {
-                names.Add(containers[i].GetName());
+            for (const auto& container : containers) {
+                names.Add(container.GetName());
             }
             m_driver->AttachTerminal(names);
             m_driver->ListContainers();
@@ -270,8 +268,8 @@ void DockerOutputPane::OnContainerContextMenu(wxDataViewEvent& event)
         wxEVT_MENU,
         [&](wxCommandEvent& event) {
             wxArrayString ids;
-            for (size_t i = 0; i < containers.size(); ++i) {
-                ids.Add(containers[i].GetId());
+            for (const auto& container : containers) {
+                ids.Add(container.GetId());
             }
             m_driver->RemoveContainers(ids);
             m_driver->ListContainers();

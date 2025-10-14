@@ -129,8 +129,7 @@ std::vector<ToolInfo> ExternalToolDlg::GetTools()
 void ExternalToolDlg::SetTools(const std::vector<ToolInfo>& tools)
 {
     DoClear();
-    for(size_t i = 0; i < tools.size(); i++) {
-        const ToolInfo& ti = tools[i];
+    for (const ToolInfo& ti : tools) {
         ExternalToolData* data = new ExternalToolData(ti);
         wxDataViewItem item = m_dvListCtrlTools->AppendItem(ti.GetId(), wxNOT_FOUND, wxNOT_FOUND, (wxUIntPtr)data);
         m_dvListCtrlTools->SetItemText(item, ti.GetName(), 1);

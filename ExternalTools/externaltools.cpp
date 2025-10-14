@@ -157,8 +157,7 @@ void ExternalToolsPlugin::OnRecreateTB()
 
 void ExternalToolsPlugin::OnLaunchExternalTool(wxCommandEvent& e)
 {
-    for(size_t i = 0; i < m_externalTools.GetTools().size(); i++) {
-        const ToolInfo& ti = m_externalTools.GetTools()[i];
+    for (const ToolInfo& ti : m_externalTools.GetTools()) {
         if(wxXmlResource::GetXRCID(ti.GetId().c_str()) == e.GetId()) {
             ToolsTaskManager::Instance()->StartTool(ti);
         }
@@ -183,9 +182,7 @@ void ExternalToolsPlugin::DoRecreateToolbar()
     }
 
     // Add the tools
-    for(size_t i = 0; i < tools.size(); i++) {
-        const ToolInfo& ti = tools[i];
-
+    for (const ToolInfo& ti : tools) {
         wxFileName icon24(ti.GetIcon24());
         wxFileName icon16(ti.GetIcon16());
 
@@ -237,8 +234,7 @@ void ExternalToolsPlugin::DoCreatePluginMenu()
         std::vector<ToolInfo> tools = m_externalTools.GetTools();
         std::sort(tools.begin(), tools.end(), DecSort());
 
-        for(size_t i = 0; i < tools.size(); i++) {
-            ToolInfo ti = tools.at(i);
+        for (ToolInfo ti : tools) {
             item = new wxMenuItem(menu, wxXmlResource::GetXRCID(ti.GetId().c_str()), ti.GetName(), wxEmptyString,
                                   wxITEM_NORMAL);
             menu->Append(item);

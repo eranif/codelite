@@ -103,8 +103,8 @@ void DebuggerDisassemblyTab::OnOutput(clCommandEvent& e)
 
     wxStringSet_t addressSet;
     const auto memBps = ManagerST::Get()->GetBreakpointsMgr()->GetAllMemoryBreakpoints();
-    for(size_t i = 0; i < memBps.size(); ++i) {
-        addressSet.insert(memBps.at(i).memory_address);
+    for (const auto& bp : memBps) {
+        addressSet.insert(bp.memory_address);
     }
     // Parse the output
     DebuggerEventData* ded = dynamic_cast<DebuggerEventData*>(e.GetClientObject());

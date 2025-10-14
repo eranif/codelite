@@ -50,9 +50,9 @@ PHPDocComment::PHPDocComment(PHPSourceFile& sourceFile, const wxString& comment)
         if(types.size() > 1) {
             // Multiple return types, guess the best match
             wxString bestMatch;
-            for(size_t i = 0; i < types.size(); ++i) {
-                if(bestMatch.IsEmpty() && (nativeTypes.count(types.Item(i)) == 0)) {
-                    bestMatch = types.Item(i);
+            for (const auto& type : types) {
+                if (bestMatch.IsEmpty() && (nativeTypes.count(type) == 0)) {
+                    bestMatch = type;
                     break;
                 }
             }

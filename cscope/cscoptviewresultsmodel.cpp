@@ -35,8 +35,8 @@ CScoptViewResultsModel::CScoptViewResultsModel()
 
 CScoptViewResultsModel::~CScoptViewResultsModel()
 {
-    for(size_t i=0; i<m_data.size(); ++i) {
-        wxDELETE(m_data.at(i));
+    for (auto* p : m_data) {
+        wxDELETE(p);
     }
     m_data.clear();
 }
@@ -45,8 +45,8 @@ unsigned int CScoptViewResultsModel::GetChildren(const wxDataViewItem& item, wxD
 {
     if(item.GetID() == NULL) {
         // Root
-        for(size_t i=0; i<m_data.size(); ++i) {
-            children.Add( wxDataViewItem( m_data.at(i) ) );
+        for (auto* item : m_data) {
+            children.Add(wxDataViewItem(item));
         }
         return children.size();
     }

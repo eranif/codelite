@@ -35,8 +35,8 @@ DataViewFilesModel::DataViewFilesModel()
 
 DataViewFilesModel::~DataViewFilesModel()
 {
-    for(size_t i=0; i<m_data.size(); ++i) {
-        wxDELETE(m_data.at(i));
+    for (auto* p : m_data) {
+        wxDELETE(p);
     }
     m_data.clear();
 }
@@ -45,8 +45,8 @@ unsigned int DataViewFilesModel::GetChildren(const wxDataViewItem& item, wxDataV
 {
     if(item.GetID() == NULL) {
         // Root
-        for(size_t i=0; i<m_data.size(); ++i) {
-            children.Add( wxDataViewItem( m_data.at(i) ) );
+        for (auto* item : m_data) {
+            children.Add(wxDataViewItem(item));
         }
         return children.size();
     }
@@ -54,8 +54,8 @@ unsigned int DataViewFilesModel::GetChildren(const wxDataViewItem& item, wxDataV
     children.Clear();
     DataViewFilesModel_Item* node = reinterpret_cast<DataViewFilesModel_Item*>(item.m_pItem);
     if ( node ) {
-        for(size_t i=0; i<node->GetChildren().size(); ++i) {
-            children.Add( wxDataViewItem( node->GetChildren().at(i) ) );
+        for (const auto& child : node->GetChildren()) {
+            children.Add(wxDataViewItem(child));
         }
     }
     return children.GetCount();
@@ -169,8 +169,8 @@ wxDataViewItem DataViewFilesModel::AppendItem(const wxDataViewItem &parent, cons
 wxDataViewItemArray DataViewFilesModel::AppendItems(const wxDataViewItem &parent, const wxVector<wxVector<wxVariant> >& data)
 {
     wxDataViewItemArray items;
-    for(size_t i=0; i<data.size(); ++i) {
-        items.push_back( DoAppendItem(parent, data.at(i), false, NULL) );
+    for (const auto& item : data) {
+        items.push_back(DoAppendItem(parent, item, false, NULL));
     }
     ItemsAdded(parent, items);
     return items;

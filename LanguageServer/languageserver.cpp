@@ -453,9 +453,9 @@ void LanguageServerPlugin::OnFixLSPPaths(wxCommandEvent& event)
             }
 
             // Check to see if
-            for (size_t i = 0; i < matches.size(); ++i) {
+            for (auto& match : matches) {
                 LanguageServerEntry entry;
-                matches[i]->GetLanguageServerEntry(entry);
+                match->GetLanguageServerEntry(entry);
                 if (entry.GetName() == broken_lsp) {
                     lsp = entry;
                     fixed.Add(broken_lsp);

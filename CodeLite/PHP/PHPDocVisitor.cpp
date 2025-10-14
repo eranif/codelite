@@ -8,8 +8,8 @@
 PHPDocVisitor::PHPDocVisitor(PHPSourceFile& sourceFile, const std::vector<phpLexerToken>& comments)
     : m_sourceFile(sourceFile)
 {
-    for(size_t i = 0; i < comments.size(); ++i) {
-        m_comments.insert(std::make_pair(comments.at(i).endLineNumber, comments.at(i)));
+    for (const auto& comment : comments) {
+        m_comments.insert(std::make_pair(comment.endLineNumber, comment));
     }
 }
 

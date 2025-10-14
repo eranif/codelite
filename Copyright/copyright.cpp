@@ -223,8 +223,8 @@ void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
         std::vector<wxFileName> files;
         std::vector<wxFileName> filtered_files;
         // loop over the project and collect list of files to work with
-        for (size_t i = 0; i < projects.size(); i++) {
-            ProjectPtr p = m_mgr->GetWorkspace()->GetProject(projects.Item(i));
+        for (const auto& projectName : projects) {
+            ProjectPtr p = m_mgr->GetWorkspace()->GetProject(projectName);
             if (p) {
                 p->GetFilesAsVectorOfFileName(files);
             }
@@ -237,10 +237,10 @@ void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
         wxArrayString exts = ::wxStringTokenize(mask, ";");
 
         // filter out non-matching files (according to masking)
-        for (size_t i = 0; i < files.size(); i++) {
-            if (exts.Index(files.at(i).GetExt(), false) != wxNOT_FOUND) {
+        for (const auto& filename : files) {
+            if (exts.Index(filename.GetExt(), false) != wxNOT_FOUND) {
                 // valid file
-                filtered_files.push_back(files.at(i));
+                filtered_files.push_back(filename);
             }
         }
 
@@ -294,10 +294,10 @@ void Copyright::OnProjectInsertCopyrights(wxCommandEvent& e)
     wxArrayString exts = wxStringTokenize(mask, ";");
 
     // filter out non-matching files (according to masking)
-    for (size_t i = 0; i < files.size(); i++) {
-        if (exts.Index(files.at(i).GetExt(), false) != wxNOT_FOUND) {
+    for (const auto& filename : files) {
+        if (exts.Index(filename.GetExt(), false) != wxNOT_FOUND) {
             // valid file
-            filtered_files.push_back(files.at(i));
+            filtered_files.push_back(filename);
         }
     }
 

@@ -1692,8 +1692,7 @@ void PHPWorkspaceView::OnDragEnd(wxTreeEvent& event)
 
         if(!targetFolder.IsEmpty()) {
             // Move the files from their current folder to the new folder
-            for(size_t i = 0; i < m_draggedFiles.size(); ++i) {
-                const wxString& srcfile = m_draggedFiles.Item(i);
+            for (const wxString& srcfile : m_draggedFiles) {
                 wxFileName newFile = srcfile;
                 newFile.SetPath(targetFolder);
                 if(newFile.FileExists()) {

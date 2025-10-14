@@ -474,8 +474,8 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
     if(!info.isInline) {
         wxString nsPrefix;
         if(!info.namespacesList.IsEmpty()) {
-            for(size_t i = 0; i < info.namespacesList.size(); ++i) {
-                nsPrefix << info.namespacesList.Item(i) << "::";
+            for (const auto& s : info.namespacesList) {
+                nsPrefix << s << "::";
             }
         }
 

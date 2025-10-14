@@ -161,9 +161,9 @@ void DebuggerCallstackView::OnCopyBacktrace(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString trace;
-    for(size_t i = 0; i < m_stack.size(); ++i) {
-        trace << m_stack.at(i).level << wxT("  ") << m_stack.at(i).address << wxT("  ") << m_stack.at(i).function
-              << wxT("  ") << m_stack.at(i).file << wxT("  ") << m_stack.at(i).line << wxT("\n");
+    for (const auto& entry : m_stack) {
+        trace << entry.level << wxT("  ") << entry.address << wxT("  ") << entry.function << wxT("  ") << entry.file
+              << wxT("  ") << entry.line << wxT("\n");
     }
     trace.RemoveLast();
     ::CopyToClipboard(trace);

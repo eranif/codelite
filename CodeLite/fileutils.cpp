@@ -608,8 +608,8 @@ bool DoFindExe(const wxString& name, wxFileName& exepath, const wxArrayString& h
             exts.Add(fullname.GetExt());
         }
 
-        for (size_t j = 0; j < exts.size(); ++j) {
-            wxString ext = exts.Item(j).AfterFirst('.'); // remove the . from the extension
+        for (auto ext : exts) {
+            ext = ext.AfterFirst('.'); // remove the . from the extension
             wxFileName fnFileWithExt(curpath, name);
             fnFileWithExt.SetExt(ext);
             if (fnFileWithExt.FileExists()) {

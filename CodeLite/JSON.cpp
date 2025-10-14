@@ -505,8 +505,8 @@ JSONItem& JSONItem::addProperty(const wxString& name, long value)
 JSONItem& JSONItem::addProperty(const wxString& name, const wxArrayString& arr)
 {
     JSONItem arrEle = JSONItem::createArray(name);
-    for (size_t i = 0; i < arr.size(); i++) {
-        arrEle.arrayAppend(arr.Item(i));
+    for (const auto& s : arr) {
+        arrEle.arrayAppend(s);
     }
     append(arrEle);
     return *this;
@@ -839,8 +839,8 @@ JSONItem& JSONItem::addProperty(const wxString& name, const std::vector<int>& ar
 
     // create array
     JSONItem arr = AddArray(name);
-    for (size_t i = 0; i < arr_int.size(); ++i) {
-        cJSON_AddItemToArray(arr.m_json, cJSON_CreateNumber(arr_int[i]));
+    for (size_t n : arr_int) {
+        cJSON_AddItemToArray(arr.m_json, cJSON_CreateNumber(n));
     }
     return *this;
 }

@@ -294,8 +294,7 @@ void DebuggerSettingsDlg::OnOk(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     // go over the debuggers and set the debugger path
-    for(size_t i = 0; i < (size_t)m_pages.size(); ++i) {
-        wxWindow* win = m_pages[i];
+    for (wxWindow* win : m_pages) {
         if(!win)
             continue;
 

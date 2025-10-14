@@ -308,8 +308,7 @@ wxString StringUtils::DecodeURI(const wxString& uri)
     wxString decodedString;
     wxString escapeSeq;
     int state = 0;
-    for (size_t i = 0; i < uri.size(); ++i) {
-        wxChar ch = uri[i];
+    for (wxChar ch : uri) {
         switch (state) {
         case 0: // Normal
             switch (ch) {

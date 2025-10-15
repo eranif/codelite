@@ -1,7 +1,7 @@
 #include "CodeFormatterManager.hpp"
 
 #include "fmtBlack.hpp"
-#include "fmtCMakeForamt.hpp"
+#include "fmtCMakeFormat.hpp"
 #include "fmtClangFormat.hpp"
 #include "fmtJQ.hpp"
 #include "fmtPHPCBF.hpp"
@@ -39,7 +39,7 @@ void CodeFormatterManager::initialize_defaults()
     push_back(new fmtRustfmt);
     push_back(new fmtBlack);
     push_back(new fmtYQ);
-    push_back(new fmtCMakeForamt);
+    push_back(new fmtCMakeFormat);
     push_back(new fmtShfmtFormat);
 }
 

@@ -39,6 +39,7 @@ clAboutDialog::clAboutDialog(wxWindow* parent, const wxString& version)
     credits << _("Jacek Kucharski") << "\n";
     credits << _("Marrianne Gagnon") << "\n";
     credits << _("Scott Dolim") << "\n";
+    credits << wxT("Joris Dauphin") << "\n";
     m_stcCredits->SetText(credits);
     m_stcCredits->SetReadOnly(true);
     ::clSetSmallDialogBestSizeAndPosition(this);

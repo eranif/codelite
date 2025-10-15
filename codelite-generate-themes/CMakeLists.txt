@@ -9,7 +9,7 @@ file(GLOB SRCS "codelite-generate-themes/*.cpp")
 
 include_directories("${CL_SRC_ROOT}/Plugin/ThemeImporters")
 
-add_definitions(-DwxDEBUG_LEVEL=0)
+add_compile_definitions(wxDEBUG_LEVEL=0)
 
 set(CGT_RES_FILE "")
 if(MINGW)

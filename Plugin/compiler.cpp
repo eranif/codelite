@@ -41,7 +41,6 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
 {
     // ensure all relevant entries exist in switches map (makes sure they show up in build settings dlg)
     SetSwitch("Include", "");
-    SetSwitch("Debug", "");
     SetSwitch("Preprocessor", "");
     SetSwitch("Library", "");
     SetSwitch("LibraryPath", "");
@@ -210,7 +209,6 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
         m_compilerFamily = COMPILER_FAMILY_GCC;
         m_isDefault = false;
         SetSwitch("Include", "-I");
-        SetSwitch("Debug", "-g ");
         SetSwitch("Preprocessor", "-D");
         SetSwitch("Library", "-l");
         SetSwitch("LibraryPath", "-L");

@@ -1199,7 +1199,6 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     text << "ObjectSuffix           :=" << cmp->GetObjectSuffix() << "\n";
     text << "DependSuffix           :=" << cmp->GetDependSuffix() << "\n";
     text << "PreprocessSuffix       :=" << cmp->GetPreprocessSuffix() << "\n";
-    text << "DebugSwitch            :=" << cmp->GetSwitch("Debug") << "\n";
     text << "IncludeSwitch          :=" << cmp->GetSwitch("Include") << "\n";
     text << "LibrarySwitch          :=" << cmp->GetSwitch("Library") << "\n";
     text << "OutputSwitch           :=" << cmp->GetSwitch("Output") << "\n";

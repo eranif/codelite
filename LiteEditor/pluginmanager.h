@@ -200,7 +200,7 @@ public:
     /**
      * @brief return list of all breakpoints
      */
-    void GetBreakpoints(std::vector<clDebuggerBreakpoint>& bpList) override;
+    std::vector<clDebuggerBreakpoint> GetBreakpoints() override;
 
     /**
      * @brief display message to the user using the info bar

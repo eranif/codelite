@@ -626,7 +626,6 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
 
     // Start the debugger
     DebugSessionInfo sesstion_info;
-    clDebuggerBreakpoint::Vec_t bpList;
 
     const wxString& user_debugger = conf->GetDebuggerPath();
 
@@ -635,8 +634,7 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
 
     sesstion_info.exeName = exe;
     sesstion_info.cwd = wd;
-    clGetManager()->GetBreakpoints(bpList);
-    sesstion_info.bpList = bpList;
+    sesstion_info.bpList = clGetManager()->GetBreakpoints();
     sesstion_info.isSSHDebugging = true;
     sesstion_info.sshAccountName = m_account.GetAccountName();
 

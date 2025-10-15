@@ -1891,6 +1891,7 @@ void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
     info.AddDeveloper(_("Jacek Kucharski"));
     info.AddDeveloper(_("Marrianne Gagnon"));
     info.AddDeveloper(_("Scott Dolim"));
+    info.AddDeveloper(wxT("Joris Dauphin"));
 
     // Misc
     info.SetWebSite("https://codelite.org", _("CodeLite Home"));

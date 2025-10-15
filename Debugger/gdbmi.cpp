@@ -347,7 +347,7 @@ void gdbmi::Parser::parse_properties(Tokenizer* tokenizer, Node::ptr_t parent)
                 state = STATE_VALUE;
                 break;
             default:
-                // we expect "=", if dont get one, clear the parser state
+                // we expect "=", if don't get one, clear the parser state
                 RESET_PROP();
                 state = STATE_NAME;
                 break;

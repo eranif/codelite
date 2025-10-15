@@ -106,7 +106,7 @@ bool NodeJSWorkspace::Create(const wxFileName& filename)
     m_folders.Add(m_filename.GetPath());
     Save();
 
-    // We dont load the workspace
+    // We don't load the workspace
     DoClear();
     return true;
 }
@@ -142,7 +142,7 @@ void NodeJSWorkspace::Close()
 
     m_debugger.reset(NULL);
 
-    // notify codelite to close the currently opened workspace
+    // notify CodeLite to close the currently opened workspace
     wxCommandEvent eventClose(wxEVT_MENU, wxID_CLOSE_ALL);
     eventClose.SetEventObject(EventNotifier::Get()->TopFrame());
     EventNotifier::Get()->TopFrame()->GetEventHandler()->ProcessEvent(eventClose);
@@ -219,7 +219,7 @@ bool NodeJSWorkspace::DoOpen(const wxFileName& filename)
         GetView()->AddFolder(folder);
     }
 
-    // Notify codelite that NodeJS workspace is opened
+    // Notify CodeLite that NodeJS workspace is opened
     clGetManager()->GetWorkspaceView()->SelectPage(GetWorkspaceType());
     clWorkspaceManager::Get().SetWorkspace(this);
 
@@ -236,7 +236,7 @@ bool NodeJSWorkspace::DoOpen(const wxFileName& filename)
     event.SetFileName(filename.GetFullPath());
     EventNotifier::Get()->AddPendingEvent(event);
 
-    // and finally, request codelite to keep this workspace in the recently opened workspace list
+    // and finally, request CodeLite to keep this workspace in the recently opened workspace list
     clGetManager()->AddWorkspaceToRecentlyUsedList(m_filename);
 
     // Load the workspace session (if any)
@@ -408,7 +408,7 @@ void NodeJSWorkspace::OnDebugStart(clDebugEvent& event)
             // let our debugger handle it
             event.Skip();
         } else {
-            // We don't have a proper debugger, however, we dont want CodeLite to start the wrong debugger
+            // We don't have a proper debugger, however, we don't want CodeLite to start the wrong debugger
             ::wxMessageBox(_("Could not instantiate a debugger for your NodeJS version!"), "CodeLite", wxICON_WARNING);
             event.Skip(false);
         }

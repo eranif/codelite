@@ -397,7 +397,7 @@ wxString wxcWidget::PropertyFile(const wxString& propname) const
     if (m_properties.Contains(propname)) {
         wxString value = m_properties.Item(propname)->GetValue();
 
-        // FIXME:: Expand codelite's macros here
+        // FIXME:: Expand CodeLite's macros here
         value.Replace("\\", "/");
         value = wxCrafter::XMLEncode(value);
         return value;
@@ -716,7 +716,7 @@ void wxcWidget::UnSerialize(const JSONElement& json)
         details.FromJSON(jsonEvent);
 
         // Since wx295, the WebView event names were modified from *_WEB_VIEW_* to *_WEBVIEW_*
-        // perfrom the name changes here
+        // perform the name changes here
         if (details.GetEventName().Contains("_WEB_VIEW_")) {
             wxString new_name = details.GetEventName();
             new_name.Replace("_WEB_VIEW_", "_WEBVIEW_");
@@ -1263,7 +1263,7 @@ void wxcWidget::ReplaceWidget(wxcWidget* oldWidget, wxcWidget* newWidget)
     }
 
     // at this point oldWidget->m_children should be empty
-    // Now whats left to be done is:
+    // Now what's left to be done is:
     // - disconnect oldWidget from its parent
     // - connect newWidget to the parent in the same position where oldWidget was
     if (oldWidget->GetParent()) {
@@ -1487,7 +1487,7 @@ wxString wxcWidget::DoGenerateConnectCode() const
         bool isInfoBarButton = (GetType() == ID_WXINFOBARBUTTON);
         if (isMenuItem) {
             // This item is a menu item
-            // dont generate code for separator item
+            // don't generate code for separator item
             if (this->PropertyString(PROP_WINDOW_ID) != "wxID_SEPARATOR" &&
                 wxCrafter::GetToolType(PropertyString(PROP_KIND)) != wxCrafter::TOOL_TYPE_SEPARATOR) {
                 wxString menu_id = GetName() + "->GetId()";

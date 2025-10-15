@@ -115,7 +115,7 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project,
     wxString size = PropertyString(PROP_SIZE);
     wxString filename = PropertyFile(PROP_FILE);
 
-    if (promptUser && (GetType() != ID_WXIMAGELIST)) { // By design we dont provide a subclass for wxImageList
+    if (promptUser && (GetType() != ID_WXIMAGELIST)) { // By design we don't provide a subclass for wxImageList
         if (filename.IsEmpty() && !wxcSettings::Get().HasFlag(wxcSettings::DONT_PROMPT_ABOUT_MISSING_SUBCLASS)) {
             wxString message;
             message << _("You did not set the 'Inherited C++ Class Properties -> File name' property for the top level "
@@ -392,7 +392,7 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project,
         wxCrafter::WriteFile(derivedClassFileCPP, dCpp, false);
     }
 
-    // Tell CodeLite to reload externall modified files
+    // Tell CodeLite to reload externally modified files
     EventNotifier::Get()->PostReloadExternallyModifiedEvent(true);
 }
 

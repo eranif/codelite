@@ -211,7 +211,7 @@ wxString MakeWxSizeStr(const wxString& size);
 wxShowEffect ShowEffectFromString(const wxString& effect);
 
 /**
- * @brief notify codelite about file save
+ * @brief notify CodeLite about file save
  * @param fn the file that was saved/generated
  */
 void NotifyFileSaved(const wxFileName& fn);

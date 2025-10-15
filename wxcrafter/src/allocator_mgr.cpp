@@ -1052,7 +1052,7 @@ bool Allocator::CanPaste(wxcWidget* source, wxcWidget* target) const
     CHECK_POINTER_RET_FALSE(target);
     int insertType = Allocator::Instance()->GetInsertionType(source->GetType(), target->GetType(), false);
 
-    // we dont allow moving around top level items
+    // we don't allow moving around top level items
     if(source->IsTopWindow() && target->IsTopWindow())
         // allow copying top level windows
         return true;

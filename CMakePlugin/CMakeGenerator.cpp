@@ -157,7 +157,7 @@ bool CMakeGenerator::Generate(ProjectPtr p)
     // Output file name
     const wxFileName filename(p->GetFileName().GetPath(), CMakePlugin::CMAKELISTS_FILE);
 
-    // Check for file existance and read any user code from the current CMakeLists.txt file
+    // Check for file existence and read any user code from the current CMakeLists.txt file
     if(!CheckExists(filename))
         return false;
 
@@ -590,7 +590,7 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
         }
     }
 
-    // set the dependecies for the top level project
+    // set the dependencies for the top level project
     if(topProject) {
         wxArrayString projects = project->GetDependencies(buildConf->GetName());
         if(!projects.IsEmpty()) {

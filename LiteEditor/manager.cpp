@@ -1133,7 +1133,7 @@ bool Manager::RenameFile(const wxString& origName, const wxString& newName, cons
     // Open the newly created file
     clMainFrame::Get()->GetMainBook()->OpenFile(newName, projName);
 
-    // Step 5: Change all include files refering to the old
+    // Step 5: Change all include files referring to the old
     // file
     if (!IsWorkspaceOpen()) {
         // if there is no workspace opened, we are done
@@ -1146,7 +1146,7 @@ bool Manager::RenameFile(const wxString& origName, const wxString& newName, cons
 
     for (size_t i = 0; i < workspaceFiles.GetCount(); i++) {
 
-        // Dont attempt to scan binary files
+        // Don't attempt to scan binary files
         // Skip binary files
         if (TagsManagerST::Get()->IsBinaryFile(workspaceFiles.Item(i), TagsManagerST::Get()->GetCtagsOptions())) {
             continue;
@@ -2054,7 +2054,7 @@ void Manager::DbgStart(long attachPid)
     // Hmm. The above comment is probably no longer true; but it'll do no harm to Initialise() anyway
     clMainFrame::Get()->GetDebuggerPane()->GetBreakpointView()->Initialize();
 
-    // Initialize the 'Locals' table. We do this for performane reason so we
+    // Initialize the 'Locals' table. We do this for performance reason so we
     // wont need to read from the XML each time perform 'next' step
     clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->Initialize();
 
@@ -2303,7 +2303,7 @@ void Manager::UpdateGotControl(const DebuggerEventData& e)
         wxString signame = wxT("SIGSEGV");
 
         // show the dialog only if the signal is not sigtrap
-        // since sigtap might be triggered by user inserting a breakpoint
+        // since sigtrap might be triggered by user inserting a breakpoint
         // into an already running debug session
         bool showDialog(true);
         if (reason == DBG_RECV_SIGNAL_EXC_BAD_ACCESS) {
@@ -2939,7 +2939,7 @@ void Manager::DebuggerUpdate(const DebuggerEventData& event)
                     event.m_variableObject.typeName.Contains(wxT("wchar_t *")) ||
                     event.m_variableObject.typeName.Contains(wxT("QChar *")) ||
                     event.m_variableObject.typeName.Contains(wxT("wxChar *"))) {
-                    // dont de-reference
+                    // don't de-reference
                 } else {
                     expression.Prepend(wxT("(*"));
                     expression.Append(wxT(")"));
@@ -3133,7 +3133,7 @@ void Manager::UpdateParserPaths(bool notify) { wxUnusedVar(notify); }
 
 void Manager::DoSaveAllFilesBeforeBuild()
 {
-    // Save all files before compiling, but dont saved new documents
+    // Save all files before compiling, but don't saved new documents
     SendCmdEvent(wxEVT_FILE_SAVE_BY_BUILD_START);
     if (!clMainFrame::Get()->GetMainBook()->SaveAll(false, false)) {
         SendCmdEvent(wxEVT_FILE_SAVE_BY_BUILD_END);
@@ -3179,7 +3179,7 @@ void Manager::UpdatePreprocessorFile(clEditor* editor) { wxUnusedVar(editor); }
 
 bool Manager::DbgCanInteract()
 {
-    /// First, we also propogate this question to the plugins
+    /// First, we also propagate this question to the plugins
     clDebugEvent de(wxEVT_DBG_CAN_INTERACT);
     if (EventNotifier::Get()->ProcessEvent(de)) {
         // a plugin answered this question, we assume that a debug session is running by

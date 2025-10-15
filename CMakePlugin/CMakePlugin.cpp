@@ -127,7 +127,7 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
 /* ************************************************************************ */
 
 /**
- * @brief Returns required Codelite interface version.
+ * @brief Returns required CodeLite interface version.
  *
  * @return Interface version.
  */

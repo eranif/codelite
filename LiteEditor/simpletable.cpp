@@ -427,7 +427,7 @@ void WatchesTable::OnItemExpanding(wxTreeEvent& event)
 
     IDebugger* dbgr = DoGetDebugger();
     if(!dbgr) {
-        // dont allow the expansion of this item
+        // don't allow the expansion of this item
         event.Veto();
         return;
     }

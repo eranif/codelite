@@ -39,7 +39,7 @@ void CompileCommandsGenerator::OnProcessOutput(clProcessEvent& event) { m_captur
 
 void CompileCommandsGenerator::OnProcessTerminated(clProcessEvent& event)
 {
-    // dont call event.Skip() so we will delete the m_process ourself
+    // don't call event.Skip() so we will delete the m_process ourself
     wxDELETE(m_process);
     clGetManager()->SetStatusMessage(_("Ready"));
 

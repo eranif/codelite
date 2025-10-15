@@ -349,7 +349,7 @@ void PHPLookupTable::UpdateSourceFile(PHPSourceFile& source, bool autoCommit)
 
         // Store defines
         // --------------
-        // 'defines' are handled separately as they dont really comply to the standard PHP rules
+        // 'defines' are handled separately as they don't really comply to the standard PHP rules
         // define() will define constants exactly as specified.
         // The following code will define the constant "MESSAGE" in the global namespace (i.e. "\MESSAGE").
         // <?php

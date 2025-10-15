@@ -133,7 +133,7 @@ static void HelperThreadCalculateChecksum(int callId, const wxArrayString& items
                 results.Add(isSame ? "same" : "different");
             }
         } else {
-            results.Add("n/a"); // Dont know
+            results.Add("n/a"); // Don't know
         }
     }
     if(!checksumThreadStop.load()) {

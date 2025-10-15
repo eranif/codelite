@@ -168,7 +168,7 @@ public:
 
     void AddHeader(const wxString& label, const wxBitmap& bmp = wxNullBitmap, int width = wxCOL_WIDTH_AUTOSIZE);
 
-    // For internal use, dont use these two methods
+    // For internal use, don't use these two methods
     const clTreeCtrlModel& GetModel() const { return m_model; }
     clTreeCtrlModel& GetModel() { return m_model; }
 
@@ -354,7 +354,7 @@ public:
     wxTreeItemId GetPrevItem(const wxTreeItemId& item) const;
 
     /**
-     * @brief for compatibility, we dont really need to call this method manually
+     * @brief for compatibility, we don't really need to call this method manually
      */
     void SortChildren(const wxTreeItemId& item) { wxUnusedVar(item); }
 

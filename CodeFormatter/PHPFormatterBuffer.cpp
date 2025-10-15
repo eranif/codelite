@@ -210,7 +210,7 @@ PHPFormatterBuffer& PHPFormatterBuffer::ProcessToken(const phpLexerToken& token)
             m_buffer << token.Text();
 
         } else if(token.type == '!') {
-            // dont add extra space after the NOT operator
+            // don't add extra space after the NOT operator
             m_buffer << token.Text();
 
         } else if(token.type == kPHP_T_NS_SEPARATOR) {

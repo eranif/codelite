@@ -680,7 +680,7 @@ void GitPlugin::OnFileAddSelected(wxCommandEvent& e)
         workingDir = GetRepositoryPath();
     }
 
-    // Pepare the command:
+    // Prepare the command:
     // git add --no-pager
     wxString cmd = "add";
     for (size_t i = 0; i < files.size(); ++i) {
@@ -715,7 +715,7 @@ void GitPlugin::OnFileDiffSelected(wxCommandEvent& e)
     m_mgr->ShowManagementWindow(GIT_TAB_NAME, true);
 
     for (const wxString& filename : files) {
-        // Pepare the command:
+        // Prepare the command:
         // git add --no-pager
         wxString cmd = "show HEAD:";
 
@@ -752,7 +752,7 @@ void GitPlugin::OnFileResetSelected(wxCommandEvent& e)
         workingDir = GetRepositoryPath();
     }
 
-    // Pepare the command:
+    // Prepare the command:
     // git add --no-pager
     wxString cmd = "checkout";
     for (size_t i = 0; i < files.size(); ++i) {
@@ -1634,7 +1634,7 @@ void GitPlugin::OnProcessTerminated(clProcessEvent& event)
 
     gitAction ga = m_gitActionQueue.front();
     if (ga.action != gitDiffFile) {
-        // Dont manipulate the output if its a diff...
+        // Don't manipulate the output if it is a diff...
         m_commandOutput.Replace(wxT("\r"), wxT(""));
     }
 
@@ -2814,7 +2814,7 @@ void GitPlugin::OnActiveProjectChanged(clProjectSettingsEvent& event)
 
 void GitPlugin::WorkspaceClosed()
 {
-    // Clearn any saved data from the current workspace
+    // Clear any saved data from the current workspace
     // git commands etc
     DoCleanup();
     m_workspace_file.Clear();

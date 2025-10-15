@@ -136,7 +136,7 @@ void wxFormBuilder::OnSettings(wxCommandEvent& e)
 wxMenu* wxFormBuilder::CreatePopupMenu()
 {
     // Create the popup menu for the file explorer
-    // The only menu that we are interseted is the file explorer menu
+    // The only menu that we are interested is the file explorer menu
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(NULL);
 

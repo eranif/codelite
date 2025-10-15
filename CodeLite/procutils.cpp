@@ -115,7 +115,7 @@ std::set<unsigned long> ProcUtils::GetProcTree(long pid)
                                             (DWORD)pid);
             if (hProcess != NULL) {
                 CloseHandle(hProcess);
-                // dont kill the process, just keep its ID
+                // don't kill the process, just keep its ID
                 parentsMap.insert(pe.th32ProcessID);
             }
         }
@@ -472,7 +472,7 @@ void ProcUtils::SafeExecuteCommand(const wxString& command, wxArrayString& outpu
     while (proc->IsAlive()) {
         tmpbuf.Clear();
         if (proc->Read(tmpbuf)) {
-            // as long as we read something, dont sleep...
+            // as long as we read something, don't sleep...
             buff << tmpbuf;
         } else {
             wxThread::Sleep(1);

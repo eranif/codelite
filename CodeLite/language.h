@@ -124,7 +124,7 @@ public:
     /**
      * Collect local variables from given scope text (in (a function signature))
      * @param in scope to search for
-     * @return since we dont have full information about each token,
+     * @return since we don't have full information about each token,
      * all local variables returned are of type 'variable' with public access
      */
     std::vector<TagEntryPtr> GetLocalVariables(const wxString& in);

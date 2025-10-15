@@ -286,7 +286,7 @@ void clTreeCtrlModel::NodeDeleted(clRowEntry* node)
         if(iter != m_selectedItems.end()) {
             m_selectedItems.erase(iter);
             if(m_selectedItems.empty()) {
-                // Dont leave the tree without a selected item
+                // Don't leave the tree without a selected item
                 if(node->GetNext()) {
                     SelectItem(wxTreeItemId(node->GetNext()));
                 }
@@ -464,7 +464,7 @@ clRowEntry* clTreeCtrlModel::GetNextSibling(clRowEntry* item) const
     if(children.empty()) {
         return nullptr;
     }
-    // if we couldnt find 'item' in the children list or if it's the last child
+    // if we couldn't find 'item' in the children list or if it's the last child
     // return nullptr
     auto it = std::find(children.begin(), std::prev(children.end()), item);
     ++it;
@@ -480,7 +480,7 @@ clRowEntry* clTreeCtrlModel::GetPrevSibling(clRowEntry* item) const
     if(children.empty()) {
         return nullptr;
     }
-    // if we couldnt find item in the children list or if it's the first child
+    // if we couldn't find item in the children list or if it's the first child
     // we return nullptr
     auto rit = std::find(children.rbegin(), std::prev(children.rend()), item);
     ++rit;

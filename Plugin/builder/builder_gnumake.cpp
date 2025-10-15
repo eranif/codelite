@@ -695,7 +695,7 @@ void BuilderGNUMakeClassic::CreateObjectList(ProjectPtr proj, const wxString& co
     // We break the list of files into a seriese of objects variables
     // each variable contains up to 100 files.
     // This is needed because on MSW, the ECHO command can not handle over 8K bytes
-    // and codelite uses the ECHO command to create a file with all the objects
+    // and CodeLite uses the ECHO command to create a file with all the objects
     // so we can pass it to the liker
     for (size_t i = 0; i < files.size(); ++i) {
 

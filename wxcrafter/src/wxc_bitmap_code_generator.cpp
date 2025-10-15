@@ -58,7 +58,7 @@ bool wxcCodeGeneratorHelper::CreateXRC()
              << wxT("</object>\n");
         // Support for hi-res images
         // The logic:
-        // If we find files with the following perfixes: @2x, @1.5x, @1.25x
+        // If we find files with the following prefixes: @2x, @1.5x, @1.25x
         // add them to the resource files as well
         for (const auto& ext : exts) {
             wxFileName hiResImage = fn;

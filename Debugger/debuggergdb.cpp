@@ -171,7 +171,7 @@ DbgGdb::DbgGdb()
     if (Kernel32Dll) {
         DebugBreakProcessFunc = (DBG_BREAK_PROC_FUNC_PTR)GetProcAddress(Kernel32Dll, "DebugBreakProcess");
     } else {
-        // we dont have DebugBreakProcess, try to work with Control handlers
+        // we don't have DebugBreakProcess, try to work with Control handlers
         if (SetConsoleCtrlHandler((PHANDLER_ROUTINE)CtrlHandler, TRUE) == FALSE) {
             clLogMessage(wxString::Format("failed to install ConsoleCtrlHandler: %d", GetLastError()));
         }
@@ -418,7 +418,7 @@ void DbgGdb::DoCleanup()
     clDebugEvent eventEnding(wxEVT_DEBUG_ENDING);
     EventNotifier::Get()->AddPendingEvent(eventEnding);
 
-    // Notify about debugger termianted
+    // Notify about debugger terminated
     clDebugEvent eventStopped(wxEVT_DEBUG_ENDED);
     eventStopped.SetDebuggerName(GetName());
     EventNotifier::Get()->AddPendingEvent(eventStopped);
@@ -948,7 +948,7 @@ void DbgGdb::DoProcessAsyncCommand(wxString& line, wxString& id)
 
     } else if (line.StartsWith("^running")) {
         // asynchronous command was executed
-        // send event that we dont have the control anymore
+        // send event that we don't have the control anymore
         m_observer->UpdateLostControl();
 
     } else if (line.StartsWith("*stopped")) {
@@ -1117,7 +1117,7 @@ bool DbgGdb::DoLocateGdbExecutable(const wxString& debuggerPath,
                                    const DebugSessionInfo& sessionInfo)
 {
     if (m_gdbProcess) {
-        // dont allow second instance of the debugger
+        // don't allow second instance of the debugger
         return false;
     }
     wxString cmd;

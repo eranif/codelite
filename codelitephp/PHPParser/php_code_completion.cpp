@@ -615,7 +615,7 @@ void PHPCodeCompletion::OnInsertDoxyBlock(clCodeCompletionEvent& e)
     const auto& matches = source.GetAllMatchesInOrder();
     for (const auto& match : matches) {
         if (match->GetLine() == lineNumber && match->Is(kEntityTypeFunction)) {
-            e.Skip(false); // notify codelite to stop processing this event
+            e.Skip(false); // notify CodeLite to stop processing this event
 
             CommentConfigData data;
             EditorConfigST::Get()->ReadObject("CommentConfigData", &data);

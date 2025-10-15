@@ -197,9 +197,9 @@ void clFileSystemWorkspaceView::OnBuildActiveProjectDropdown(wxCommandEvent& eve
 {
     clDEBUG() << "OnBuildActiveProjectDropdown called";
 
-    // dont display default menu
+    // don't display default menu
     wxUnusedVar(event);
-    // we dont allow showing the dropdown during build process
+    // we don't allow showing the dropdown during build process
     if (m_buildInProgress) {
         return;
     }

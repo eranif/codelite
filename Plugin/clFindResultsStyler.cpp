@@ -83,7 +83,7 @@ void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
     sci->MarkerDefine(7, wxSTC_MARK_ARROW);
 
 #if wxVERSION_NUMBER < 3100
-    // On GTK we dont have the wxSTC_INDIC_TEXTFORE symbol yet (old wx version)
+    // On GTK we don't have the wxSTC_INDIC_TEXTFORE symbol yet (old wx version)
     sci->MarkerDefine(7, wxSTC_MARK_ARROW);
     sci->MarkerSetBackground(7, lexer->IsDark() ? "CYAN" : "ORANGE");
     sci->MarkerSetForeground(7, lexer->IsDark() ? "CYAN" : "ORANGE");

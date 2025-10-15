@@ -146,7 +146,7 @@ public:
     CMakeConfiguration* GetConfiguration() const { return m_configuration.get(); }
 
     /**
-     * @brief Returns seleted project.
+     * @brief Returns selected project.
      *
      * @return Pointer to project.
      */
@@ -169,7 +169,7 @@ public:
      *
      * @param parent Parent window.
      *
-     * @return Codelite tool bar or NULL.
+     * @return CodeLite tool bar or NULL.
      */
     void CreateToolBar(clToolBarGeneric* toolbar) override;
 

@@ -47,7 +47,7 @@ SvnCommand::~SvnCommand() { ClearAll(); }
 bool SvnCommand::Execute(const wxString& command, const wxString& workingDirectory, SvnCommandHandler* handler,
                          Subversion2* plugin)
 {
-    // Dont run 2 commands at the same time
+    // Don't run 2 commands at the same time
     if(m_process) {
         wxDELETE(handler);
         return false;

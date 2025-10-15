@@ -232,7 +232,7 @@ wxArrayString clConsoleBase::SplitArguments(const wxString& args)
                 break;
             case '"':
             case '\'':
-                // we dont want to keep the string markers
+                // we don't want to keep the string markers
                 state = STATE_STRING;
                 break;
             default:
@@ -247,7 +247,7 @@ wxArrayString clConsoleBase::SplitArguments(const wxString& args)
                 if(prevChar == '\\') {
                     curtoken << ch;
                 } else {
-                    // we dont want to keep the string markers
+                    // we don't want to keep the string markers
                     state = STATE_NORMAL;
                 }
                 break;

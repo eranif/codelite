@@ -239,7 +239,7 @@ public:
     void AddAccelerator(const wxString& parentMenu, const std::vector<AddAccelData>& table);
 
     /**
-     * @brief replace all acceleratos with 'accels'
+     * @brief replace all accelerators with 'accels'
      */
     void SetAccelerators(const MenuItemDataMap_t& accels);
 

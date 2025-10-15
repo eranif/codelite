@@ -181,7 +181,7 @@ void OutputTabWindow::CreateGUIControls()
     m_sci->SetTechnology(useDirect2D ? wxSTC_TECHNOLOGY_DIRECTWRITE : wxSTC_TECHNOLOGY_DEFAULT);
 #endif
 
-    // We dont really want to collect undo in the output tabs...
+    // We don't really want to collect undo in the output tabs...
     m_sci->SetUndoCollection(false);
     m_sci->EmptyUndoBuffer();
 

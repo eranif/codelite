@@ -239,7 +239,7 @@ bool XDebugManager::ProcessDebuggerMessage(const wxString& buffer)
 
     if(root->GetName() == "init") {
 
-        // Parse the content and notify codelite to open the main file
+        // Parse the content and notify CodeLite to open the main file
         xInitStruct initData = ParseInitXML(root);
 
         // Negotiate features with the IDE
@@ -442,7 +442,7 @@ void XDebugManager::OnGotFocusFromXDebug(XDebugEvent& e)
 {
     e.Skip();
 
-    // Make sure codelite is "Raised"
+    // Make sure CodeLite is "Raised"
     wxFrame* frame = EventNotifier::Get()->TopFrame();
     if(frame->IsIconized() || !frame->IsShown()) {
         frame->Raise();
@@ -749,7 +749,7 @@ void XDebugManager::OnShowTooltip(XDebugEvent& e)
             tip << _("Error evaluating expression ");
         } else {
             wxString evaluated = e.GetEvaluted();
-            // Reomve extra escapes
+            // Remove extra escapes
             evaluated.Replace("\\n", "\n");
             evaluated.Replace("\\t", "\t");
             evaluated.Replace("\\r", "\r");

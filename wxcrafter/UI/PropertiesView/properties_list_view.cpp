@@ -330,7 +330,7 @@ void PropertiesListView::OnCellChanged(wxPropertyGridEvent& e)
                 pb->SetValue(pgp->GetValueAsString());
             }
 
-            // we dont always want to notify about changes
+            // we don't always want to notify about changes
             if(DO_NOT_NOTIFY_SET.count(pb->GetLabel()) == 0) {
                 // Notify about modifications
                 wxCommandEvent evt(wxEVT_PROPERTIES_MODIFIED);

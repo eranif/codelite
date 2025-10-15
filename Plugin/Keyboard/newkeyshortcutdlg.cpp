@@ -200,7 +200,7 @@ clKeyboardShortcut NewKeyShortcutDlg::GetAccel() const
 
 void NewKeyShortcutDlg::OnClear(wxCommandEvent& event)
 {
-    // Clear the modifiers checkboxs
+    // Clear the modifiers checkboxes
     m_checkBoxAlt->SetValue(false);
     m_checkBoxCtrl->SetValue(false);
     m_checkBoxShift->SetValue(false);

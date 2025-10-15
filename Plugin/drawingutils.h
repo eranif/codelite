@@ -134,7 +134,7 @@ public:
     /// -------------------------------------------------------------
 
     /**
-     * @brief draw a standard codelite background colour
+     * @brief draw a standard CodeLite background colour
      * @param rect
      * @param dc
      */

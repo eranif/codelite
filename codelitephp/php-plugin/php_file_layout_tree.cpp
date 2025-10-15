@@ -176,7 +176,7 @@ void PHPFileLayoutTree::BuildTree(wxTreeItemId parentTreeItem, PHPEntityBase::Pt
 {
     int imgID = GetImageId(entity);
     wxTreeItemId parent = AppendItem(parentTreeItem, entity->GetDisplayName(), imgID, imgID, new QItemData(entity));
-    // dont add the children of the function (i.e. function arguments)
+    // don't add the children of the function (i.e. function arguments)
     if (entity->Is(kEntityTypeFunction)) return;
 
     for (const auto& child : entity->GetChildren()) {

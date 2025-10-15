@@ -198,7 +198,7 @@ void LocalsTable::OnItemExpanding(wxTreeEvent& event)
 
     IDebugger* dbgr = DoGetDebugger();
     if (!dbgr || !event.GetItem()) {
-        // dont allow the expansion of this item
+        // don't allow the expansion of this item
         event.Veto();
         return;
     }
@@ -313,7 +313,7 @@ void LocalsTable::DoUpdateLocals(const LocalVariables& localsUnSorted, size_t ki
             }
 
             // replace the local with a variable object
-            // but make sure we dont enter a duplicate item
+            // but make sure we don't enter a duplicate item
             if (itemsNotRemoved.Index(newVarName) == wxNOT_FOUND) {
                 // this type has a pre-defined type, use it instead
 

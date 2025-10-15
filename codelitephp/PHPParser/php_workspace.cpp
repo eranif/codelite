@@ -150,7 +150,7 @@ bool PHPWorkspace::Open(const wxString& filename, wxEvtHandler* view, bool creat
     EventNotifier::Get()->AddPendingEvent(phpEvent);
 
     // Notify that the a new workspace is loaded
-    // This time send the standard codelite event
+    // This time send the standard CodeLite event
     // this is important so other plugins such as Svn, Git
     // want to adjust their paths according to the new workspace
     {
@@ -172,7 +172,7 @@ bool PHPWorkspace::Open(const wxString& filename, wxEvtHandler* view, bool creat
     // set this workspace as the active one
     clWorkspaceManager::Get().SetWorkspace(this);
 
-    // and finally, request codelite to keep this workspace in the recently opened workspace list
+    // and finally, request CodeLite to keep this workspace in the recently opened workspace list
     clGetManager()->AddWorkspaceToRecentlyUsedList(GetFilename());
 
     CallAfter(&PHPWorkspace::RestoreWorkspaceSession);
@@ -443,7 +443,7 @@ void PHPWorkspace::ParseWorkspace(bool full)
 {
     // Request for parsing
     if(full) {
-        // a full parsing is needed, stop the paser thread
+        // a full parsing is needed, stop the parser thread
         // close the database, delete it and recreate it
         // then, restart the parser thread
         PHPParserThread::Clear();

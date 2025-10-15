@@ -90,7 +90,7 @@ protected:
 
 public:
     /**
-     * Default cosntructor.
+     * Default constructor.
      */
     SymbolTree();
 
@@ -164,14 +164,14 @@ public:
     void UpdateSymbols(const std::vector<std::pair<wxString, TagEntry>>& items);
 
     /**
-     * return the file name assocaited with this symbol tree
+     * return the file name associated with this symbol tree
      */
     const wxFileName& GetFilename() const { return m_fileName; }
 
     /**
      * \brief select item by its name and select it. If multiple matches
      * fits 'name' the first one is selected
-     * \param name disply name of the item to be selected (can be partial name)
+     * \param name display name of the item to be selected (can be partial name)
      */
     void SelectItemByName(const wxString& name);
 

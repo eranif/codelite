@@ -328,7 +328,7 @@ void SearchThread::DoSearchFile(const wxString& fileName, const SearchData* data
             }
         }
 
-        // Dont search for empty strings
+        // Don't search for empty strings
         if (findString.empty()) {
             return;
         }
@@ -469,7 +469,7 @@ void SearchThread::DoSearchLine(const wxString& line,
             result.SetColumnInChars(col);
             result.SetColumn(iCorrectedCol);
             result.SetLineNumber(lineNum);
-            // Dont use match pattern larger than 500 chars
+            // Don't use match pattern larger than 500 chars
             result.SetPattern(line.length() > 500 ? line.Mid(0, 500) : line);
             result.SetFileName(fileName);
             result.SetLenInChars((int)findWhat.Length());

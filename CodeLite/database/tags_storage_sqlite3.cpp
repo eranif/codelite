@@ -94,7 +94,7 @@ void TagsStorageSQLite::CreateSchema()
 {
     wxString sql;
 
-    // improve performace by using pragma command:
+    // improve performance by using pragma command:
     // (this needs to be done before the creation of the
     // tables and indices)
     try {
@@ -132,7 +132,7 @@ void TagsStorageSQLite::CreateSchema()
                   "string);");
         m_db->ExecuteUpdate(sql);
 
-        // create unuque index on Files' file column
+        // create unique index on Files' file column
         sql = wxT("CREATE UNIQUE INDEX IF NOT EXISTS FILES_NAME on FILES(file)");
         m_db->ExecuteUpdate(sql);
 
@@ -261,7 +261,7 @@ void TagsStorageSQLite::Store(const std::vector<TagEntryPtr>& tags, bool auto_co
     // store the tags
     try {
         for(auto tag : tags) {
-            // we dont store local variables
+            // we don't store local variables
             if(tag->IsLocalVariable())
                 continue;
             DoInsertTagEntry(*tag);
@@ -511,9 +511,9 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
 
         // add results from external database to the workspace database
         while(ex_rs.NextRow()) {
-            // Construct a TagEntry from the rescord set
+            // Construct a TagEntry from the record set
             TagEntryPtr tag(FromSQLite3ResultSet(ex_rs));
-            // conver the path to be real path
+            // convert the path to be real path
             tags.push_back(tag);
         }
         ex_rs.Finalize();
@@ -550,10 +550,10 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
             // check if this kind is acceptable
             if(set_kinds.count(ex_rs.GetString(4))) {
 
-                // Construct a TagEntry from the rescord set
+                // Construct a TagEntry from the record set
                 TagEntryPtr tag(FromSQLite3ResultSet(ex_rs));
 
-                // conver the path to be real path
+                // convert the path to be real path
                 tags.push_back(tag);
             }
         }
@@ -770,7 +770,7 @@ int TagsStorageSQLite::UpdateFileEntry(const wxString& filename, int timestamp)
 
 int TagsStorageSQLite::DoInsertTagEntry(const TagEntry& tag)
 {
-    // If this node is a dummy, (IsOk() == false) we dont insert it to database
+    // If this node is a dummy, (IsOk() == false) we don't insert it to database
     if(!tag.IsOk())
         return TagOk;
 
@@ -916,7 +916,7 @@ void TagsStorageSQLite::GetTagsByScopeAndName(const wxArrayString& scope, const 
     wxArrayString scopes = scope;
 
     // Check the given scopes and remove the '<global>' scope from it
-    // we use the more specialized method for the <global> scope by quering the
+    // we use the more specialized method for the <global> scope by querying the
     // GLOBAL_TAGS table
     int where = scopes.Index(wxT("<global>"));
     if(where != wxNOT_FOUND) {
@@ -1314,7 +1314,7 @@ size_t TagsStorageSQLite::GetFileScopedTags(const wxString& filepath, const wxSt
     if(filepath.empty())
         return 0;
 
-    // get anoymous tags first
+    // get anonymous tags first
     wxString sql;
     std::vector<TagEntryPtr> tags_1;
     std::vector<TagEntryPtr> tags_2;

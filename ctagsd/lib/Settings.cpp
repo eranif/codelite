@@ -88,7 +88,7 @@ void CTagsdSettings::Load(const wxFileName& filepath)
     LOG_IF_TRACE { clDEBUG1() << "limit_results.........:" << m_limit_results << endl; }
     LOG_IF_TRACE { clDEBUG1() << "Settings dir is set to:" << m_settings_dir << endl; }
 
-    // conver the tokens to wxArrayString
+    // convert the tokens to wxArrayString
     wxArrayString wxarr;
     wxarr.reserve(m_tokens.size());
     for (const auto& p : m_tokens) {

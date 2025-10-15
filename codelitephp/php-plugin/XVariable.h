@@ -64,7 +64,7 @@ struct XVariable : public wxClientData {
     /**
      * @brief does this variable has children?
      * Note that this may return positive number while HasChildren return false
-     * When this happens it means that codelite should query XDebug for the children
+     * When this happens it means that CodeLite should query XDebug for the children
      */
     bool GetNumChildren() const {
         return numchildren;

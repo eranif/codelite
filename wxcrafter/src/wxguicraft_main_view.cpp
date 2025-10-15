@@ -680,7 +680,7 @@ void GUICraftMainPanel::NotifyPreviewChanged(int eventType)
         EventNotifier::Get()->AddPendingEvent(evt);
     }
 
-    // Also, notify the deisgner to mark the new selection
+    // Also, notify the designer to mark the new selection
     wxCommandEvent eventTreeItemSeleted(wxEVT_TREE_ITEM_SELECTED);
     eventTreeItemSeleted.SetString(data->m_wxcWidget->GetName());
     EventNotifier::Get()->AddPendingEvent(eventTreeItemSeleted);
@@ -1068,7 +1068,7 @@ void GUICraftMainPanel::OnSaveProject(wxCommandEvent& e)
 
     JSONRoot root(cJSON_Object);
 
-    // If we dont have bitmap function assigned to this project, create new one
+    // If we don't have bitmap function assigned to this project, create new one
     if (wxcProjectMetadata::Get().GetBitmapFunction().IsEmpty()) {
         wxcProjectMetadata::Get().GenerateBitmapFunctionName();
     }
@@ -1896,7 +1896,7 @@ void GUICraftMainPanel::OnPaste(wxCommandEvent& e)
     }
 
     if (!IsTreeViewSelected()) {
-        e.Skip(); // The treeview isn't selected, so don't make an unintented paste into it
+        e.Skip(); // The treeview isn't selected, so don't make an unintended paste into it
         return;
     }
 
@@ -2567,7 +2567,7 @@ State::Ptr_t GUICraftMainPanel::CurrentState()
 {
     JSONRoot root(cJSON_Object);
 
-    // If we dont have bitmap function assigned to this project, create new one
+    // If we don't have bitmap function assigned to this project, create new one
     if (wxcProjectMetadata::Get().GetBitmapFunction().IsEmpty()) {
         wxcProjectMetadata::Get().GenerateBitmapFunctionName();
     }
@@ -2737,7 +2737,7 @@ void GUICraftMainPanel::DoInsertControl(wxcWidget* control, wxcWidget* parent, i
 
     } else if (insertType == Allocator::INSERT_CHILD || insertType == Allocator::INSERT_MAIN_SIZER) {
 
-        // We need to place a main sizer, check that we dont have one already...
+        // We need to place a main sizer, check that we don't have one already...
         if (parent->HasMainSizer() && insertType == Allocator::INSERT_MAIN_SIZER) {
             wxDELETE(control);
             wxMessageBox(_("Can't insert this item here\nThere is already a main sizer"));

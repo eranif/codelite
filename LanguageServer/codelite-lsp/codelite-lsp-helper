@@ -170,7 +170,7 @@ function connectToCodeLite()
         tryProcessMessage(socket);
     });
     socket.on('close', (code) => {
-        // if CodeLite termianted, exit
+        // if CodeLite terminated, exit
         console.log(`close event ${code}`);
         process.exit(0);
     });

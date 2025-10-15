@@ -28,13 +28,10 @@
 #include "StringUtils.h"
 #include "build_settings_config.h"
 #include "buildmanager.h"
-#include "editor_config.h"
 #include "environmentconfig.h"
-#include "file_logger.h"
-#include "globals.h"
 #include "macromanager.h"
-#include "macros.h"
 #include "project.h"
+#include "workspace.h"
 #include "xmlutils.h"
 
 #include <wx/tokenzr.h>

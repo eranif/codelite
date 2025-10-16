@@ -1,15 +1,19 @@
 #include "languageserver.h"
 
+#include "ColoursAndFontsManager.h"
 #include "LSPDetectorManager.hpp"
 #include "LanguageServerConfig.h"
 #include "LanguageServerSettingsDlg.h"
 #include "StringUtils.h"
+#include "ai/LLMManager.hpp"
+#include "clEditorBar.h"
 #include "clInfoBar.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
 #include "ieditor.h"
 #include "macros.h"
+#include "wx/msgdlg.h"
 
 #include <thread>
 #include <wx/app.h>
@@ -218,10 +222,20 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     }
 
     wxMenu* menu = event.GetMenu();
+    if (llm::Manager::GetInstance().IsAvailable()) {
+        wxMenu* ai_menu = new wxMenu;
+        ai_menu->Append(XRCID("lsp_document_function"), _("Generate docstring for the current method"));
+        menu->PrependSeparator();
+        auto item = menu->Prepend(wxID_ANY, _("AI Powered Generation"), ai_menu);
+        item->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("wand"));
+        ai_menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnGenerateDocString, this, XRCID("lsp_document_function"));
+    }
+
     if (add_find_references) {
         menu->PrependSeparator();
         menu->Prepend(XRCID("lsp_find_references"), _("Find references"));
     }
+
     menu->PrependSeparator();
     if (add_rename_symbol) {
         menu->Prepend(XRCID("lsp_rename_symbol"), _("Rename symbol"));
@@ -231,6 +245,74 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnMenuFindSymbol, this, XRCID("lsp_find_symbol"));
     menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnMenuFindReferences, this, XRCID("lsp_find_references"));
     menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnMenuRenameSymbol, this, XRCID("lsp_rename_symbol"));
+}
+
+void LanguageServerPlugin::OnDocStringGenerationDone(std::shared_ptr<std::string> output)
+{
+    wxString msg = wxString::FromUTF8(*output);
+    wxUnusedVar(msg);
+}
+
+void LanguageServerPlugin::OnGenerateDocString(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    auto func_text = clGetManager()->GetNavigationBar()->GetCurrentFunctionText();
+    if (!func_text.has_value()) {
+        return;
+    }
+
+    wxString language = "TEXT";
+    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetFileName().GetFullName());
+    if (lexer) {
+        language = lexer->GetName().Upper();
+    }
+
+    std::optional<wxString> model = llm::Manager::GetInstance().ChooseModel(true);
+    if (!model.has_value()) {
+        return;
+    }
+
+    wxString prompt;
+    prompt << "Generate a docstring for the following " << language
+           << " function. The output should only include the "
+              "docstring, nothing else.\n\n"
+           << func_text.value();
+    assistant::ChatOptions chat_options{assistant::ChatOptions::kNoTools};
+    assistant::AddFlagSet(chat_options, assistant::ChatOptions::kNoHistory);
+
+    auto collector = new llm::ResponseCollector();
+    collector->SetStateChangingCB([](llm::ChatState state) {
+        if (!wxThread::IsMain()) {
+            clWARNING() << "StateChangingCB called for non main thread!" << endl;
+            return;
+        }
+        switch (state) {
+        case llm::ChatState::kThinking:
+            clGetManager()->SetStatusMessage(_("Thinking..."));
+            break;
+        case llm::ChatState::kWorking:
+            clGetManager()->SetStatusMessage(_("Working..."));
+            break;
+        case llm::ChatState::kReady:
+            clGetManager()->SetStatusMessage(_("Ready."));
+            break;
+        }
+    });
+
+    std::shared_ptr<std::string> complete_response = std::make_shared<std::string>();
+    collector->SetStreamCallback(
+        [this, complete_response](const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
+            complete_response->append(message);
+            if (is_done) {
+                CallAfter(&LanguageServerPlugin::OnDocStringGenerationDone, complete_response);
+            }
+        });
+
+    llm::Manager::GetInstance().Chat(collector, prompt, nullptr, chat_options, model.value());
 }
 
 void LanguageServerPlugin::OnMenuRenameSymbol(wxCommandEvent& event)

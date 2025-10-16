@@ -197,6 +197,8 @@ public:
     /// Return the function table that should be used by plugins.
     FunctionTable& GetPluginFunctionTable() { return m_plugin_functions; }
 
+    std::optional<wxString> ChooseModel(bool use_default);
+
 private:
     Manager();
     ~Manager();

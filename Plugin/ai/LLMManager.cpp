@@ -6,6 +6,7 @@
 #include "assistant/ollama_client.hpp"
 #include "file_logger.h"
 
+#include <wx/choicdlg.h>
 #include <wx/msgdlg.h>
 
 namespace llm
@@ -438,5 +439,25 @@ wxArrayString Manager::GetModels() const
     std::scoped_lock lk{m_models_mutex};
     return m_models;
 }
+std::optional<wxString> Manager::ChooseModel([[maybe_unused]] bool use_default)
+{
+    wxString model;
+    if (llm::Manager::GetInstance().GetModels().GetCount() > 1) {
+        auto models = llm::Manager::GetInstance().GetModels();
+        auto active_model = llm::Manager::GetInstance().GetConfig().GetSelectedModel();
+        int selection = models.Index(active_model);
+        if (selection == wxNOT_FOUND) {
+            selection = 0;
+        }
 
+        model = ::wxGetSingleChoice(_("Available models:"), _("Choose model"), models, selection);
+        if (model.empty()) {
+            // user cancelled
+            return std::nullopt;
+        }
+    } else {
+        model = llm::Manager::GetInstance().GetModels().Item(0);
+    }
+    return model;
+}
 } // namespace llm

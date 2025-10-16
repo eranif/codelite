@@ -21,6 +21,8 @@ protected:
     void OnEditorContextMenu(clContextMenuEvent& event);
     void OnMenuFindSymbol(wxCommandEvent& event);
     void OnMenuRenameSymbol(wxCommandEvent& event);
+    void OnGenerateDocString(wxCommandEvent& event);
+    void OnDocStringGenerationDone(std::shared_ptr<std::string> output);
     void OnMenuFindReferences(wxCommandEvent& event);
     void ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& lsps);
 

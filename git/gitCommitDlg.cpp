@@ -257,27 +257,13 @@ The git diff is:
         return;
     }
 
-    wxString model;
-    if (llm::Manager::GetInstance().GetModels().GetCount() > 1) {
-        auto models = llm::Manager::GetInstance().GetModels();
-        auto active_model = llm::Manager::GetInstance().GetConfig().GetSelectedModel();
-        int selection = models.Index(active_model);
-        if (selection == wxNOT_FOUND) {
-            selection = 0;
-        }
-
-        model = ::wxGetSingleChoice(_("Available models:"), _("Choose model"), models, selection);
-        if (model.empty()) {
-            // user cancelled
-            return;
-        }
-    } else {
-        model = llm::Manager::GetInstance().GetModels().Item(0);
+    std::optional<wxString> model = llm::Manager::GetInstance().ChooseModel(true);
+    if (!model.has_value()) {
+        return;
     }
-
     prompt.Replace("{{CONTEXT}}", m_rawDiff);
     m_indicatorPanel->Start(_("Generating commit message..."));
-    m_generationInProgress = m_plugin->GenerateCommitMessage(prompt, model);
+    m_generationInProgress = m_plugin->GenerateCommitMessage(prompt, model.value());
     if (!m_generationInProgress) {
         ::wxMessageBox(_("Failed to generate commit message"), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
         return;

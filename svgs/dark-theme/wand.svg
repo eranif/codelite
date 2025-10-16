@@ -2,43 +2,64 @@
 <!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
 
 <svg
-   fill="#000000"
-   version="1.1"
-   id="Capa_1"
    width="800px"
    height="800px"
-   viewBox="0 0 48.956 48.955"
-   xml:space="preserve"
-   sodipodi:docname="wand.svg"
+   viewBox="0 -52 1128 1128"
+   class="icon"
+   version="1.1"
+   id="svg6"
+   sodipodi:docname="magic-svgrepo-com.svg"
    inkscape:version="1.4 (86a8ad7, 2024-10-11)"
    xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
    xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
    xmlns="http://www.w3.org/2000/svg"
-   xmlns:svg="http://www.w3.org/2000/svg"><defs
-   id="defs1" /><sodipodi:namedview
-   id="namedview1"
-   pagecolor="#ffffff"
-   bordercolor="#000000"
-   borderopacity="0.25"
-   inkscape:showpageshadow="2"
-   inkscape:pageopacity="0.0"
-   inkscape:pagecheckerboard="0"
-   inkscape:deskcolor="#d1d1d1"
-   inkscape:zoom="2.2175"
-   inkscape:cx="399.77452"
-   inkscape:cy="400"
-   inkscape:window-width="3840"
-   inkscape:window-height="2036"
-   inkscape:window-x="-12"
-   inkscape:window-y="-12"
-   inkscape:window-maximized="1"
-   inkscape:current-layer="Capa_1" />
-<g
-   id="g1"
-   style="fill:#ff9955">
-	<path
-   d="M24.698,19.041l4.338,4.336l-1.065,1.066l-4.338-4.336L24.698,19.041z M32.826,14.269c-0.927-0.928-2.427-0.928-3.354,0   l-3.604,3.603l4.338,4.337l3.604-3.604c0.928-0.928,0.928-2.429,0-3.354L32.826,14.269z M0.696,43.043   c-0.928,0.926-0.928,2.43,0,3.354l0.98,0.98c0.927,0.928,2.429,0.928,3.354,0l21.655-21.655l-4.337-4.339L0.696,43.043z    M42.708,13.878l-0.803,2.113l-2.112,0.802l2.112,0.804l0.803,2.112l0.803-2.112l2.112-0.804l-2.112-0.802L42.708,13.878z    M35.958,4.718l-1.455-3.835l-1.453,3.835l-3.836,1.455l3.836,1.455l1.453,3.836l1.455-3.836l3.835-1.455L35.958,4.718z    M46.689,6.856l-0.857-2.267l-0.857,2.267l-2.266,0.857l2.266,0.86l0.857,2.265l0.857-2.265l2.267-0.86L46.689,6.856z"
-   id="path1"
-   style="fill:#ff9955" />
-</g>
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs6" />
+  <sodipodi:namedview
+     id="namedview6"
+     pagecolor="#ffffff"
+     bordercolor="#000000"
+     borderopacity="0.25"
+     inkscape:showpageshadow="2"
+     inkscape:pageopacity="0.0"
+     inkscape:pagecheckerboard="0"
+     inkscape:deskcolor="#d1d1d1"
+     inkscape:zoom="2.2175"
+     inkscape:cx="399.77452"
+     inkscape:cy="411.72492"
+     inkscape:window-width="3840"
+     inkscape:window-height="2036"
+     inkscape:window-x="-12"
+     inkscape:window-y="-12"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg6" />
+  <g
+     id="g6"
+     transform="matrix(1.0917017,0,0,1.0917017,10.714965,-60.32104)">
+    <path
+       d="M 473.184,356.632 C 450.136,328.296 408.568,324 380.368,346.96 352.12,370.008 347.8,411.488 370.752,439.8 L 844.08,986.952 c 22.928,28.248 64.376,32.488 92.776,9.552 28.224,-22.992 32.512,-64.528 9.528,-92.752 z"
+       fill="#0092d2"
+       id="path1" />
+    <path
+       d="m 151.4,65.976 -1.056,-0.472 54.912,223.104 -152.576,171.712 229.128,16.664 116.12,198.2 56.8,-139.376 389.6,450.344 c 22.224,27.4 61.792,31.984 90.072,11.32 z"
+       fill="#0085bf"
+       id="path2" />
+    <path
+       d="M 150.104,66.304 360.56,158.4 555.752,37.224 533.232,265.824 708.8,414.016 484.384,463.256 397.72,675.984 281.568,477.784 52.448,461.112 205.048,289.4 Z"
+       fill="#f5b146"
+       id="path3" />
+    <path
+       d="m 276.192,225.08 95.368,41.712 88.424,-54.888 -10.2,103.576 79.568,67.144 -101.704,22.312 -39.28,96.368 -52.616,-89.816 -103.808,-7.52 69.144,-77.816 z"
+       fill="#e5226b"
+       id="path4" />
+    <path
+       d="m 484.384,463.256 0.528,-0.112 -332.84,-395.992 -1.208,-0.528 54.856,222.92 -152.48,171.624 228.328,16.616 0.064,0.08 0.648,0.064 115.68,197.464 z"
+       fill="#ef962f"
+       id="path5" />
+    <path
+       d="m 434.56,403.408 -144.96,-172.48 -13.408,-5.848 24.896,101.072 -69.144,77.816 103.808,7.52 52.616,89.816 39.28,-96.368 z"
+       fill="#c9005b"
+       id="path6" />
+  </g>
 </svg>

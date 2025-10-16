@@ -77,14 +77,14 @@ void BuildTab::OnBuildStarted(clBuildEvent& e)
         clDEBUG() << "Compiler not selected in the workspace build settings or not available" << endl;
 
         // toolchain not selected in build configuration or unavailable
-        m_viewStc->Add(_("\n"));
+        m_viewStc->Add(wxT("\n"));
         m_viewStc->Add(
             WrapLineInColour(_("> WARNING: No toolchain selected. Build log highlighting will not be available!\n"),
                              AnsiColours::Yellow()));
         m_viewStc->Add(
             WrapLineInColour(_("           Check toolchain properly selected in the workspace build settings.\n"),
                              AnsiColours::Yellow()));
-        m_viewStc->Add(_("\n"));
+        m_viewStc->Add(wxT("\n"));
         m_viewStc->ScrollToEnd();
     }
 

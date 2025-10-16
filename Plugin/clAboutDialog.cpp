@@ -32,13 +32,13 @@ clAboutDialog::clAboutDialog(wxWindow* parent, const wxString& version)
 
     credits << "\n==============================\n\n";
     credits << _("Eran Ifrah (author & project admin)") << "\n";
-    credits << _("David G. Hart") << "\n\n";
+    credits << wxT("David G. Hart") << "\n\n";
     credits << "==============================\n\n\n";
     credits << _("Contributors:\n");
-    credits << _("Frank Lichtner") << "\n";
-    credits << _("Jacek Kucharski") << "\n";
-    credits << _("Marrianne Gagnon") << "\n";
-    credits << _("Scott Dolim") << "\n";
+    credits << wxT("Frank Lichtner") << "\n";
+    credits << wxT("Jacek Kucharski") << "\n";
+    credits << wxT("Marrianne Gagnon") << "\n";
+    credits << wxT("Scott Dolim") << "\n";
     credits << wxT("Joris Dauphin") << "\n";
     m_stcCredits->SetText(credits);
     m_stcCredits->SetReadOnly(true);

@@ -176,7 +176,7 @@ bool BuilderNMake::Export(const wxString& project,
                 msg << _("CodeLite can not find project '") << depsArr.Item(i) << _("' which is required\n");
                 msg << _("for building project '") << project
                     << _("'.\nWould you like to remove it from the dependency list?");
-                if (wxMessageBox(msg, _("CodeLite"), wxYES_NO | wxICON_QUESTION) == wxYES) {
+                if (wxMessageBox(msg, wxT("CodeLite"), wxYES_NO | wxICON_QUESTION) == wxYES) {
                     // remove the project from the dependency list, and continue
                     removeList.Add(depsArr.Item(i));
                 }

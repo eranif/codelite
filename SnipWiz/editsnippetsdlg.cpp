@@ -176,7 +176,7 @@ void EditSnippetsDlg::OnButtonKeyShortcut(wxCommandEvent& e)
         if (clKeyboardManager::Get()->PopupNewKeyboardShortcutDlg(this, mid) == wxID_OK) {
 
             if (clKeyboardManager::Get()->Exists(mid.accel)) {
-                wxMessageBox(_("That accelerator already exists"), _("CodeLite"), wxOK | wxCENTRE, this);
+                wxMessageBox(_("That accelerator already exists"), wxT("CodeLite"), wxOK | wxCENTRE, this);
                 return;
             }
 

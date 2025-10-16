@@ -978,7 +978,7 @@ bool FileViewTree::DoRemoveVirtualFolder(const wxTreeItemId& item)
     wxString name = GetItemText(item);
     wxString message("'" + name + "'");
     message << _(" and all its contents will be removed from the project.");
-    if (wxMessageBox(message, _("CodeLite"), wxYES_NO | wxICON_WARNING) != wxYES) {
+    if (wxMessageBox(message, wxT("CodeLite"), wxYES_NO | wxICON_WARNING) != wxYES) {
         return false;
     }
 
@@ -1832,7 +1832,7 @@ void FileViewTree::OnRenameItem(wxCommandEvent& e)
 
                         if (tmp.FileExists()) {
                             wxMessageBox(
-                                _("A File with that name already exists!"), _("CodeLite"), wxICON_WARNING | wxOK);
+                                _("A File with that name already exists!"), wxT("CodeLite"), wxICON_WARNING | wxOK);
                             return;
                         }
 

@@ -7,8 +7,8 @@ Collect translatable texts:
 - run
 ```
 cd ..
-wxrc -g -o tmp_resources.cpp `find . -type f -name "*.xrc" -not -wholename "./Runtime/rc/menu.macos.xrc" -not -wholename "./Runtime/templates/*.*" -not -wholename "./submodules/ctags/Units/*"`
-xgettext --package-name=CodeLite --copyright-holder="Eran Ifrah" --from-code=UTF-8 --c++ -o translations/codelite.pot --add-location --sort-by-file -k -k_ -kwxTRANSLATE -kwxPLURAL:1,2 tmp_resources.cpp `find . -type f "(" -name "*.cpp" -or -name "*.h" ")" -not -wholename "./submodules/llama.cpp/*" -not -wholename "./submodules/wxdap/dbgcli/*" -not -wholename "./submodules/wxsf-code/samples/*" -not -wholename "./submodules/wxsqlite3/samples/*"`
+wxrc -g -o tmp_resources.cpp `find . -type f -name "*.xrc" -not -wholename "./Runtime/rc/menu.macos.xrc" -not -wholename "./Runtime/templates/*" -not -wholename "./submodules/ctags/Units/*"`
+xgettext --package-name=CodeLite --copyright-holder="Eran Ifrah" --from-code=UTF-8 --c++ -o translations/codelite.pot --add-location --sort-by-file -k -k_ -kwxTRANSLATE -kwxPLURAL:1,2 tmp_resources.cpp `find . -type f "(" -name "*.cpp" -or -name "*.h" ")" -not -wholename "./Runtime/templates/*" -not -wholename "./submodules/llama.cpp/*" -not -wholename "./submodules/wxdap/dbgcli/*" -not -wholename "./submodules/wxsf-code/samples/*" -not -wholename "./submodules/wxsqlite3/samples/*"`
 sed --in-place -e "s/FIRST AUTHOR <EMAIL@ADDRESS>, YEAR/Eran Ifrah <eran.ifrah@gmail.com>, 2007-2025/" -e "s/Copyright (C) YEAR Eran Ifrah/Copyright (C) Eran Ifrah 2007-2025/" -e "s/SOME DESCRIPTIVE TITLE./CodeLite pot file/" translations/codelite.pot
 rm tmp_resources.cpp
 ```

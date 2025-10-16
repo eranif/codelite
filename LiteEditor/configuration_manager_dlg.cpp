@@ -168,7 +168,7 @@ void ConfigurationManagerDlg::OnWorkspaceConfigSelected(wxCommandEvent& event)
                    wxString::Format(
                        _("Settings for workspace configuration '%s' have changed, would you like to save them?"),
                        m_currentWorkspaceConfiguration.GetData()),
-                   _("CodeLite"), wxYES | wxCANCEL | wxYES_DEFAULT | wxICON_QUESTION) != wxYES) {
+                   wxT("CodeLite"), wxYES | wxCANCEL | wxYES_DEFAULT | wxICON_QUESTION) != wxYES) {
                 return;
             }
             SaveCurrentSettings();

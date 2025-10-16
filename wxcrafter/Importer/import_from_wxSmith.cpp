@@ -32,7 +32,7 @@ bool ImportFromwxSmith::ImportProject(ImportDlg::ImportFileData& data, const wxS
 
     wxXmlDocument doc(filepath);
     if(!doc.IsOk()) {
-        wxMessageBox(_("Failed to load the file to import"), _("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
+        wxMessageBox(_("Failed to load the file to import"), wxT("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
         return false;
     }
 
@@ -54,7 +54,7 @@ bool ImportFromwxSmith::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& topleve
     while(toplevelnode) {
         wxString tag = toplevelnode->GetName();
         if(tag != wxT("object")) {
-            wxMessageBox(_("This doesn't seem to be a valid wxSmith file. Aborting."), _("CodeLite"),
+            wxMessageBox(_("This doesn't seem to be a valid wxSmith file. Aborting."), wxT("CodeLite"),
                          wxICON_ERROR | wxOK, m_Parent);
             return false;
         }

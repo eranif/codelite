@@ -192,9 +192,9 @@ void CallGraph::OnAbout(wxCommandEvent& event)
 
     wxAboutDialogInfo info;
     info.SetName(_("Call Graph"));
-    info.SetVersion(_("v1.1.1"));
+    info.SetVersion(wxT("v1.1.1"));
     info.SetDescription(desc);
-    info.SetCopyright(_("2012 - 2015 (C) Tomas Bata University, Zlin, Czech Republic"));
+    info.SetCopyright(wxT("2012 - 2015 (C) Tomas Bata University, Zlin, Czech Republic"));
     info.SetWebSite(_("http://www.fai.utb.cz"));
     info.AddDeveloper(wxT("Václav Špruček"));
     info.AddDeveloper(wxT("Michal Bližňák"));

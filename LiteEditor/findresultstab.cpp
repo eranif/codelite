@@ -119,7 +119,7 @@ void FindResultsTab::OnFindInFiles(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     if(m_searchInProgress) {
-        ::wxMessageBox(_("Another search is currently running, try again later"), _("CodeLite"),
+        ::wxMessageBox(_("Another search is currently running, try again later"), wxT("CodeLite"),
                        wxICON_WARNING | wxOK | wxOK_DEFAULT);
         return;
     }

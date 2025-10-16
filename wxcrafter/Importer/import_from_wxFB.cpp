@@ -35,7 +35,7 @@ bool ImportFromwxFB::ImportProject(ImportDlg::ImportFileData& data, const wxStri
 
     wxXmlDocument doc(filepath);
     if(!doc.IsOk()) {
-        wxMessageBox(_("Failed to load the file to import"), _("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
+        wxMessageBox(_("Failed to load the file to import"), wxT("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
         return false;
     }
 
@@ -53,12 +53,12 @@ bool ImportFromwxFB::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels)
     wxString abortmsg(_("This doesn't seem to be a valid wxFormBuilder project file. Aborting."));
     wxXmlNode* wxFBProj = XmlUtils::FindFirstByTagName(doc.GetRoot(), wxT("object"));
     if(!wxFBProj) {
-        wxMessageBox(abortmsg, _("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
+        wxMessageBox(abortmsg, wxT("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
         return false;
     }
 
     if(XmlUtils::ReadString(wxFBProj, wxT("class")) != "Project") {
-        wxMessageBox(abortmsg, _("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
+        wxMessageBox(abortmsg, wxT("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
         return false;
     }
 
@@ -76,14 +76,14 @@ bool ImportFromwxFB::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels)
     // The first interesting thing is a child node of Project e.g. <object class="Dialog" expanded="1">
     wxXmlNode* toplevelnode = XmlUtils::FindFirstByTagName(wxFBProj, wxT("object"));
     if(!toplevelnode) {
-        wxMessageBox(abortmsg, _("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
+        wxMessageBox(abortmsg, wxT("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
         return false;
     }
 
     while(toplevelnode) {
         wxString tag = toplevelnode->GetName();
         if(tag != wxT("object")) {
-            wxMessageBox(abortmsg, _("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
+            wxMessageBox(abortmsg, wxT("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
             return false;
         }
 

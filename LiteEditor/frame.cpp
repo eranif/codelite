@@ -868,7 +868,7 @@ clMainFrame::~clMainFrame()
 void clMainFrame::Construct()
 {
     // set the revision number in the frame title
-    wxString title(_("CodeLite "));
+    wxString title(wxT("CodeLite "));
     title << CODELITE_VERSION_STRING;
 
     // initialize the environment variable configuration manager
@@ -1886,11 +1886,11 @@ void clMainFrame::OnAbout(wxCommandEvent& WXUNUSED(event))
 
     // Add the developers list
     info.AddDeveloper(_("Eran Ifrah (Project admin)"));
-    info.AddDeveloper(_("David G. Hart"));
-    info.AddDeveloper(_("Frank Lichtner"));
-    info.AddDeveloper(_("Jacek Kucharski"));
-    info.AddDeveloper(_("Marrianne Gagnon"));
-    info.AddDeveloper(_("Scott Dolim"));
+    info.AddDeveloper(wxT("David G. Hart"));
+    info.AddDeveloper(wxT("Frank Lichtner"));
+    info.AddDeveloper(wxT("Jacek Kucharski"));
+    info.AddDeveloper(wxT("Marrianne Gagnon"));
+    info.AddDeveloper(wxT("Scott Dolim"));
     info.AddDeveloper(wxT("Joris Dauphin"));
 
     // Misc
@@ -2245,7 +2245,7 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
         wxString sessionName = dlg.GetTabgroupName();
         if (sessionName.IsEmpty()) {
             if (wxMessageBox(
-                    _("Please enter a name for the tab group"), _("CodeLite"), wxICON_ERROR | wxOK | wxCANCEL, this) !=
+                    _("Please enter a name for the tab group"), wxT("CodeLite"), wxICON_ERROR | wxOK | wxCANCEL, this) !=
                 wxOK) {
                 return;
             } else {
@@ -4375,7 +4375,7 @@ void clMainFrame::OnStartQuickDebug(clDebugEvent& e)
                 clDebuggerTerminalPOSIX::MakeExeTitle(
                     exepath, (bStartedInDebugMode ? GetTheApp()->GetDebuggerArgs() : e.GetArguments())),
                 tty)) {
-            wxMessageBox(_("Could not start TTY console for debugger!"), _("codelite"), wxOK | wxCENTER | wxICON_ERROR);
+            wxMessageBox(_("Could not start TTY console for debugger!"), wxT("CodeLite"), wxOK | wxCENTER | wxICON_ERROR);
         }
 #endif
 
@@ -4460,7 +4460,7 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
 #ifndef __WXMSW__
             if (!ManagerST::Get()->StartTTY(clDebuggerTerminalPOSIX::MakeCoreTitle(dlg->GetCore()), tty)) {
                 wxMessageBox(
-                    _("Could not start TTY console for debugger!"), _("codelite"), wxOK | wxCENTER | wxICON_ERROR);
+                    _("Could not start TTY console for debugger!"), wxT("CodeLite"), wxOK | wxCENTER | wxICON_ERROR);
             }
 #endif
             dbgr->SetIsRemoteDebugging(false);

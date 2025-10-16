@@ -194,7 +194,7 @@ void UnitTestPP::OnNewClassTest(wxCommandEvent& e)
         if(wxMessageBox(
                wxString::Format(
                    _("There are currently no UnitTest project in your workspace\nWould you like to create one now?")),
-               _("CodeLite"), wxYES_NO | wxCANCEL) == wxYES) {
+               wxT("CodeLite"), wxYES_NO | wxCANCEL) == wxYES) {
             // add new UnitTest project
             wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("new_project"));
             m_mgr->GetTheApp()->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
@@ -262,7 +262,7 @@ void UnitTestPP::OnNewSimpleTest(wxCommandEvent& e)
         if(wxMessageBox(
                wxString::Format(
                    _("There are currently no UnitTest project in your workspace\nWould you like to create one now?")),
-               _("CodeLite"), wxYES_NO | wxCANCEL) == wxYES) {
+               wxT("CodeLite"), wxYES_NO | wxCANCEL) == wxYES) {
             // add new UnitTest project
             wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, XRCID("new_project"));
             m_mgr->GetTheApp()->GetTopWindow()->GetEventHandler()->AddPendingEvent(event);
@@ -316,7 +316,7 @@ void UnitTestPP::DoCreateSimpleTest(const wxString& name, const wxString& projec
     ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projectName, errMsg);
     if(!proj) {
         // no such project!
-        wxMessageBox(_("Could not find the target project"), _("CodeLite"), wxOK | wxICON_ERROR);
+        wxMessageBox(_("Could not find the target project"), wxT("CodeLite"), wxOK | wxICON_ERROR);
         return;
     }
 
@@ -384,7 +384,7 @@ IEditor* UnitTestPP::DoAddTestFile(const wxString& filename, const wxString& pro
         // the file does not exist!
         wxFFile file(filename, "wb");
         if(!file.IsOpened()) {
-            wxMessageBox(wxString::Format(_("Could not create target file '%s'"), filename.c_str()), _("CodeLite"),
+            wxMessageBox(wxString::Format(_("Could not create target file '%s'"), filename.c_str()), wxT("CodeLite"),
                          wxICON_WARNING | wxOK);
             return NULL;
         }

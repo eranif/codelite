@@ -353,3 +353,22 @@ void clEditorBar::UpdateScope()
         m_buttonScope->SetText(wxEmptyString);
     }
 }
+
+std::optional<wxString> clEditorBar::GetCurrentFunctionText() const
+{
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    if (!editor) {
+        return std::nullopt;
+    }
+
+    const auto& scope = FindByLine(editor->GetCurrentLine());
+    if (!scope.is_ok()) {
+        return std::nullopt;
+    }
+
+    auto range = scope.GetScopeRange(editor->GetCtrl());
+    if (!range.has_value()) {
+        return std::nullopt;
+    }
+    return editor->GetCtrl()->GetTextRange(range.value().first, range.value().second);
+}

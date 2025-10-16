@@ -1175,12 +1175,12 @@ void LanguageServerCluster::UpdateNavigationBar()
     auto editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    wxString fullpath = editor->IsRemoteFile() ? editor->GetRemotePath() : editor->GetFileName().GetFullPath();
+    wxString fullpath = editor->GetRemotePathOrLocal();
     if (m_symbols_to_file_cache.count(fullpath) == 0) {
         return;
     }
 
-    auto symbols = m_symbols_to_file_cache.find(fullpath)->second;
+    const auto& symbols = m_symbols_to_file_cache.find(fullpath)->second;
 
     // prepare list of scopes and send them to the navigation bar
     clEditorBar::ScopeEntry::vec_t scopes;
@@ -1189,11 +1189,13 @@ void LanguageServerCluster::UpdateNavigationBar()
     for (const LSP::SymbolInformation& symbol : symbols) {
         // only collect methods
         if (symbol.GetKind() != LSP::kSK_Function && symbol.GetKind() != LSP::kSK_Method &&
-            symbol.GetKind() != LSP::kSK_Constructor)
+            symbol.GetKind() != LSP::kSK_Constructor) {
             continue;
+        }
         clEditorBar::ScopeEntry scope_entry;
         const LSP::Location& location = symbol.GetLocation();
         scope_entry.line_number = location.GetRange().GetStart().GetLine();
+        scope_entry.range = location.GetRange();
 
         wxString display_string;
         if (!symbol.GetContainerName().empty()) {

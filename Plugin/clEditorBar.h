@@ -1,13 +1,15 @@
 #ifndef CLEDITORBAR_H
 #define CLEDITORBAR_H
 
+#include "LSP/basic_types.h"
 #include "cl_command_event.h"
-#include "drawingutils.h"
 #include "wxcrafter_plugin.h"
 
+#include <optional>
 #include <vector>
 #include <wx/colour.h>
 #include <wx/font.h>
+#include <wx/stc/stc.h>
 
 class WXDLLIMPEXP_SDK clEditorBar : public clEditorBarBase
 {
@@ -16,8 +18,22 @@ public:
         wxString display_string;
         int line_number = wxNOT_FOUND;
         typedef std::vector<ScopeEntry> vec_t;
+        LSP::Range range;
         bool operator<(const ScopeEntry& right) const { return line_number < right.line_number; }
         bool is_ok() const { return !display_string.empty() && line_number != wxNOT_FOUND; }
+
+        inline std::optional<std::pair<int, int>> GetScopeRange(wxStyledTextCtrl* ctrl) const
+        {
+            if (ctrl == nullptr || !range.IsOk()) {
+                return std::nullopt;
+            }
+            int start_pos = ctrl->PositionFromLine(range.GetStart().GetLine());
+            start_pos += range.GetStart().GetCharacter();
+
+            int end_pos = ctrl->PositionFromLine(range.GetEnd().GetLine());
+            end_pos += range.GetEnd().GetCharacter();
+            return std::make_pair(start_pos, end_pos);
+        }
     };
 
 private:
@@ -57,6 +73,18 @@ public:
     void SetLabel(const wxString& text);
     void ClearLabel() { SetLabel(wxEmptyString); }
     wxString GetLabel() const;
+    /**
+     * @brief Retrieves the text of the current function in the active editor.
+     *
+     * This function attempts to find the function scope that contains the current line
+     * in the active editor and returns the text of that function. If no active editor
+     * is found, or if the current line does not belong to a valid function scope,
+     * an empty optional is returned.
+     *
+     * @return std::optional<wxString> The text of the current function if found,
+     *         otherwise std::nullopt.
+     */
+    std::optional<wxString> GetCurrentFunctionText() const;
 
 protected:
     virtual void OnButtonActions(wxCommandEvent& event);

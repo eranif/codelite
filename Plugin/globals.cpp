@@ -34,7 +34,6 @@
 #include "clTreeCtrl.h"
 #include "cl_standard_paths.h"
 #include "debugger.h"
-#include "dirtraverser.h"
 #include "drawingutils.h"
 #include "editor_config.h"
 #include "event_notifier.h"
@@ -46,7 +45,6 @@
 #include "md5/wxmd5.h"
 #include "precompiled_header.h"
 #include "procutils.h"
-#include "project.h"
 #include "workspace.h"
 
 #include <vector>
@@ -55,7 +53,6 @@
 #include <wx/dataobj.h>
 #include <wx/dataview.h>
 #include <wx/dcscreen.h>
-#include <wx/dir.h>
 #include <wx/display.h>
 #include <wx/filename.h>
 #include <wx/icon.h>
@@ -103,10 +100,6 @@ void MSWSetWindowDarkTheme(wxWindow* win)
 #include <dirent.h>
 #include <unistd.h>
 #endif
-
-struct ProjListComparator {
-    bool operator()(const ProjectPtr p1, const ProjectPtr p2) const { return p1->GetName() > p2->GetName(); }
-};
 
 static bool IsBOMFile(const char* file_name)
 {
@@ -424,63 +417,6 @@ wxString clGetUserName()
     }
 
     return (squashedname.IsEmpty() ? wxString("someone") : squashedname);
-}
-
-static void
-DoReadProjectTemplatesFromFolder(const wxString& folder, std::list<ProjectPtr>& list, bool loadDefaults = true)
-{
-    // read all files under this directory
-    if (wxFileName::DirExists(folder)) {
-        DirTraverser dt("*.project");
-
-        wxDir dir(folder);
-        dir.Traverse(dt);
-
-        const auto& files = dt.GetFiles();
-        if (files.GetCount() > 0) {
-            for (size_t i = 0; i < files.GetCount(); i++) {
-                ProjectPtr proj(new Project());
-                if (!proj->Load(files.Item(i))) {
-                    // corrupted xml file?
-                    clWARNING() << "Failed to load template project:" << files.Item(i) << "(corrupted XML?)" << endl;
-                    continue;
-                }
-                list.push_back(proj);
-                clDEBUG() << "Found template project:" << files[i] << "." << proj->GetName() << endl;
-                // load template icon
-                wxFileName fn(files.Item(i));
-                fn.SetFullName("icon.png");
-                if (fn.Exists()) {
-                    wxBitmap bmp = wxBitmap(fn.GetFullPath(), wxBITMAP_TYPE_ANY);
-                    if (bmp.IsOk() && bmp.GetWidth() == 16 && bmp.GetHeight() == 16) {
-                        proj->SetIconPath(fn.GetFullPath());
-                    }
-                }
-            }
-        }
-    }
-
-    if (loadDefaults && list.empty()) {
-        // if we ended up here, it means the installation got screwed up since
-        // there should be at least 8 project templates !
-        // create 3 default empty projects
-        ProjectPtr exeProj(new Project());
-        ProjectPtr libProj(new Project());
-        ProjectPtr dllProj(new Project());
-        libProj->Create("Static Library", wxEmptyString, folder, PROJECT_TYPE_STATIC_LIBRARY);
-        dllProj->Create("Dynamic Library", wxEmptyString, folder, PROJECT_TYPE_DYNAMIC_LIBRARY);
-        exeProj->Create("Executable", wxEmptyString, folder, PROJECT_TYPE_EXECUTABLE);
-        list.push_back(libProj);
-        list.push_back(dllProj);
-        list.push_back(exeProj);
-    }
-}
-
-void GetProjectTemplateList(std::list<ProjectPtr>& list)
-{
-    DoReadProjectTemplatesFromFolder(clStandardPaths::Get().GetProjectTemplatesDir(), list);
-    DoReadProjectTemplatesFromFolder(clStandardPaths::Get().GetUserProjectTemplatesDir(), list, false);
-    list.sort(ProjListComparator());
 }
 
 void MSWSetNativeTheme(wxWindow* win, const wxString& theme)

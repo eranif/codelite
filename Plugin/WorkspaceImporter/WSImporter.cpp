@@ -265,7 +265,7 @@ bool WSImporter::Import(wxString& errMsg)
 
                     proj->SetSettings(le_settings);
 
-                    proj->BeginTranscation();
+                    proj->BeginTransaction();
 
                     // Delete default virtual directory
                     proj->DeleteVirtualDir("include");
@@ -288,7 +288,7 @@ bool WSImporter::Import(wxString& errMsg)
                         proj->AddFile(fileNameInfo.GetFullPath(), vpath);
                     }
 
-                    proj->CommitTranscation();
+                    proj->CommitTransaction();
 
                     for(GenericProjectCfgPtr cfg : project->cfgs) {
                         for(GenericProjectFilePtr excludeFile : cfg->excludeFiles) {

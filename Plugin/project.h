@@ -27,23 +27,19 @@
 
 #include "JSON.h"
 #include "codelite_exports.h"
-#include "localworkspace.h"
 #include "macros.h"
-#include "optionsconfig.h"
 #include "project_settings.h"
-#include "serialized_object.h"
 #include "tree.h"
-#include "xmlutils.h"
 
 #include <list>
 #include <memory>
-#include <queue>
 #include <set>
+#include <unordered_map>
 #include <vector>
 #include <wx/filename.h>
 #include <wx/sharedptr.h>
 #include <wx/string.h>
-#include <wx/treectrl.h>
+#include <wx/treebase.h>
 #include <wx/xml/xml.h>
 
 #define PROJECT_TYPE_STATIC_LIBRARY "Static Library"
@@ -75,7 +71,7 @@ public:
     wxString m_key;
     wxString m_displayName;
     wxString m_file;
-    int m_kind;
+    int m_kind = TypeProject;
 
 public:
     //---------------------------------------------------------------
@@ -89,30 +85,12 @@ public:
     {
     }
 
-    ProjectItem()
-        : m_key(wxEmptyString)
-        , m_displayName(wxEmptyString)
-        , m_file(wxEmptyString)
-        , m_kind(TypeProject)
-    {
-    }
+    ProjectItem() = default;
 
     virtual ~ProjectItem() = default;
 
-    ProjectItem(const ProjectItem& item) { *this = item; }
-
-    ProjectItem& operator=(const ProjectItem& item)
-    {
-        if(this == &item) {
-            return *this;
-        }
-
-        m_key = item.m_key;
-        m_displayName = item.m_displayName;
-        m_file = item.m_file;
-        m_kind = item.m_kind;
-        return *this;
-    }
+    ProjectItem(const ProjectItem&) = default;
+    ProjectItem& operator=(const ProjectItem&) = default;
 
     //-----------------------------------------
     // Setters / Getters
@@ -158,16 +136,12 @@ class WXDLLIMPEXP_SDK clProjectFile
     wxString m_filename;
     wxString m_virtualFolder;
     wxString m_filenameRelpath;
-    size_t m_flags;
+    size_t m_flags = 0;
     wxStringSet_t m_excludeConfigs;
-    wxXmlNode* m_xmlNode;
+    wxXmlNode* m_xmlNode = nullptr;
 
 public:
-    clProjectFile()
-        : m_flags(0)
-        , m_xmlNode(nullptr)
-    {
-    }
+    clProjectFile() = default;
     ~clProjectFile() = default;
 
     void SetExcludeConfigs(Project* project, const wxStringSet_t& excludeConfigs);
@@ -197,8 +171,8 @@ public:
      */
     void Delete(Project* project, bool deleteXml = false);
 
-    typedef wxSharedPtr<clProjectFile> Ptr_t;
-    typedef std::vector<clProjectFile::Ptr_t> Vec_t;
+    using Ptr_t = wxSharedPtr<clProjectFile>;
+    using Vec_t = std::vector<clProjectFile::Ptr_t>;
 };
 
 class WXDLLIMPEXP_SDK clProjectFolder
@@ -207,11 +181,11 @@ private:
     wxString m_fullpath;
     wxString m_name;
     wxStringSet_t m_files;
-    wxXmlNode* m_xmlNode;
+    wxXmlNode* m_xmlNode = nullptr;
 
 public:
-    typedef wxSharedPtr<clProjectFolder> Ptr_t;
-    typedef std::vector<clProjectFolder> Vect_t;
+    using Ptr_t = wxSharedPtr<clProjectFolder>;
+    using Vect_t = std::vector<clProjectFolder>;
 
 public:
     clProjectFolder(const wxString& fullpath, wxXmlNode* node)
@@ -301,10 +275,9 @@ public:
  */
 class WXDLLIMPEXP_SDK Project
 {
-
 public:
-    typedef std::unordered_map<wxString, clProjectFile::Ptr_t> FilesMap_t;
-    typedef std::unordered_map<wxString, clProjectFolder::Ptr_t> FoldersMap_t;
+    using FilesMap_t = std::unordered_map<wxString, clProjectFile::Ptr_t>;
+    using FoldersMap_t = std::unordered_map<wxString, clProjectFolder::Ptr_t>;
 
     friend class clCxxWorkspace;
     friend class clProjectFolder;
@@ -314,11 +287,11 @@ private:
     wxXmlDocument m_doc;
     wxFileName m_fileName;
     wxString m_projectPath;
-    bool m_tranActive;
-    bool m_isModified;
-    time_t m_modifyTime;
-    clCxxWorkspace* m_workspace;
-    ProjectSettingsPtr m_settings;
+    bool m_tranActive = false;
+    bool m_isModified = false;
+    time_t m_modifyTime{};
+    clCxxWorkspace* m_workspace = nullptr;
+    ProjectSettingsPtr m_settings = std::make_shared<ProjectSettings>(nullptr);
     wxString m_iconPath; /// Not serializable
     wxArrayString m_cachedIncludePaths;
     wxString m_workspaceFolder; // The folder in which this project is contained. Separated by "/"
@@ -336,8 +309,7 @@ private:
     void DoUpdateProjectSettings();
     void DoBuildCacheFromXml();
     clProjectFile::Ptr_t FileFromXml(wxXmlNode* node, const wxString& vd);
-    wxArrayString DoGetCompilerOptions(bool cxxOptions, bool clearCache = false, bool noDefines = true,
-                                       bool noIncludePaths = true);
+    wxArrayString DoGetCompilerOptions(bool cxxOptions, bool noDefines, bool noIncludePaths);
 
     clProjectFolder::Ptr_t GetRootFolder();
 
@@ -400,7 +372,7 @@ public:
     /**
      * @brief return set of compilers used by this project for the active build configuration
      */
-    void GetCompilers(wxStringSet_t& compilers);
+    void GetCompilers(wxStringSet_t& compilers) const;
 
     /**
      * @brief replace compilers by name. compilers contains a map of the "old" compiler
@@ -435,14 +407,14 @@ public:
     //--------------------------------------------------
 
     // default constructor
-    Project();
+    Project() = default;
     virtual ~Project() = default;
 
     /**
      * @brief return list of macros used in the configuration which could not be resolved
      * by CodeLite
      */
-    void GetUnresolvedMacros(const wxString& configName, wxArrayString& vars) const;
+    wxArrayString GetUnresolvedMacros(const wxString& configName) const;
 
     /**
      * \return project name
@@ -478,7 +450,7 @@ public:
     bool AddFile(const wxString& fileName, const wxString& virtualDir = wxEmptyString);
 
     /**
-     * Add file to the project - don't check for file duplication, this
+     * Add file to the project - don't check for file duplication
      * \param fileName file full name and path
      * \param virtualDir owner virtual directory, if the virtual directory does not exist, a new one will be created
      *        and the file will be placed under it
@@ -519,9 +491,9 @@ public:
     /**
      * Return list of files by a virtual directory
      * \param vdFullPath virtual directory
-     * \param files [output] list of files under this vdFullPath. The files format are in absolute path!
+     * \return list of files under this vdFullPath. The files format are in absolute path!
      */
-    void GetFilesByVirtualDir(const wxString& vdFullPath, wxArrayString& files, bool recurse = false);
+    wxArrayString GetFilesByVirtualDir(const wxString& vdFullPath, bool recurse = false);
 
     /**
      * Save project settings
@@ -538,7 +510,7 @@ public:
     /**
      * @brief return the files as vector
      */
-    void GetFilesAsVector(clProjectFile::Vec_t& files) const;
+    clProjectFile::Vec_t GetFilesAsVector() const;
 
     /**
      * @brief return the files as vector of wxFileName
@@ -574,15 +546,20 @@ public:
      * Get the project's file toplevel directory, extensions, ignorefiles, exclude paths and regexes for use when
      * reconciling with filesystem reality
      */
-    void GetReconciliationData(wxString& toplevelDir, wxString& extensions, wxArrayString& ignoreFiles,
-                               wxArrayString& excludePaths, wxArrayString& regexes);
+    void GetReconciliationData(wxString& toplevelDir,
+                               wxString& extensions,
+                               wxArrayString& ignoreFiles,
+                               wxArrayString& excludePaths,
+                               wxArrayString& regexes);
 
     /**
      * Set the project's file toplevel directory, extensions, ignorefiles, exclude paths and regexes for use when
      * reconciling with filesystem reality
      */
-    void SetReconciliationData(const wxString& toplevelDir, const wxString& extensions,
-                               const wxArrayString& ignoreFiles, const wxArrayString& excludePaths,
+    void SetReconciliationData(const wxString& toplevelDir,
+                               const wxString& extensions,
+                               const wxArrayString& ignoreFiles,
+                               const wxArrayString& excludePaths,
                                wxArrayString& regexes);
     //-----------------------------------
     // visual operations
@@ -617,7 +594,7 @@ public:
     /**
      * \brief return true of the project was modified (in terms of files removed/added)
      */
-    bool IsModified();
+    bool IsModified() const;
 
     /**
      * \brief
@@ -625,8 +602,8 @@ public:
     void SetModified(bool mod);
 
     // Transaction support to reduce overhead of disk writing
-    void BeginTranscation() { m_tranActive = true; }
-    void CommitTranscation() { Save(); }
+    void BeginTransaction() { m_tranActive = true; }
+    void CommitTransaction() { Save(); }
     bool InTransaction() const { return m_tranActive; }
 
     wxString GetVDByFileName(const wxString& file);
@@ -665,9 +642,8 @@ public:
 
     /**
      * @brief get all plugins data as map of plugin=value pair
-     * @param pluginsDataMap [output]
      */
-    void GetAllPluginsData(std::map<wxString, wxString>& pluginsDataMap);
+    std::map<wxString, wxString> GetAllPluginsData() const;
 
     /**
      * @brief set all plugins data as map of plugin=value pair
@@ -704,17 +680,17 @@ public:
      * The PreProcessors returned are from the build configuration
      * that matches the current workspace configuration
      */
-    wxArrayString GetPreProcessors(bool clearCache = false);
+    wxArrayString GetPreProcessors();
 
     /**
      * @brief return the compiler. Optionally omit the defines/include paths
      */
-    wxArrayString GetCXXCompilerOptions(bool clearCache = false, bool noDefines = true, bool noIncludePaths = true);
+    wxArrayString GetCXXCompilerOptions(bool noDefines = true, bool noIncludePaths = true);
 
     /**
      * @brief return the C compiler. Optionally omit the defines/include paths
      */
-    wxArrayString GetCCompilerOptions(bool clearCache = false, bool noDefines = true, bool noIncludePaths = true);
+    wxArrayString GetCCompilerOptions(bool noDefines = true, bool noIncludePaths = true);
 
     /**
      * @brief return the compilation line for a C++ file in the project. This function returns the same
@@ -722,8 +698,10 @@ public:
      * file
      * name which can later be replaced by the caller with the actual file name
      */
-    wxString GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalPaths, BuildConfigPtr buildConf,
-                                      const wxString& filenamePlaceholder = "$FileName", size_t flags = kCxxFile);
+    wxString GetCompileLineForCXXFile(const wxStringMap_t& compilersGlobalPaths,
+                                      BuildConfigPtr buildConf,
+                                      const wxString& filenamePlaceholder = "$FileName",
+                                      size_t flags = kCxxFile);
 
     void ClearAllVirtDirs();
 
@@ -753,7 +731,8 @@ public:
     /**
      * @brief add this project files into the 'compile_commands' json object
      */
-    void CreateCompileCommandsJSON(JSONItem& compile_commands, const wxStringMap_t& compilersGlobalPaths,
+    void CreateCompileCommandsJSON(JSONItem& compile_commands,
+                                   const wxStringMap_t& compilersGlobalPaths,
                                    bool createCompileFlagsTxt);
 
     /**
@@ -840,7 +819,7 @@ class WXDLLIMPEXP_SDK FilewViewTreeItemData : public wxTreeItemData
     ProjectItem m_item;
 
 public:
-    FilewViewTreeItemData(const ProjectItem& item)
+    explicit FilewViewTreeItemData(const ProjectItem& item)
         : m_item(item)
     {
     }
@@ -850,5 +829,10 @@ public:
 
     void SetFile(const wxString& file) { m_item.SetFile(file); }
 };
+
+/**
+ * @return list of projects available based on the installed templates
+ */
+WXDLLIMPEXP_SDK std::list<ProjectPtr> GetProjectTemplateList();
 
 #endif // PROJECT_H

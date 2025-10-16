@@ -39,6 +39,7 @@
 #include "project.h"
 #include "queuecommand.h"
 
+#include <optional>
 #include <vector>
 #include <wx/aui/auibook.h>
 #include <wx/aui/framemanager.h>

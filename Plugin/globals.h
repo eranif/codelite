@@ -187,13 +187,6 @@ WXDLLIMPEXP_SDK void WrapInShell(wxString& cmd);
 WXDLLIMPEXP_SDK wxString clGetUserName();
 
 /**
- * @brief return list of projects available based on the installed templates
- * @param list list of projects
- * @param imageMap when provided, returns the image index (set in the lstImages) mapped to the project type
- */
-WXDLLIMPEXP_SDK void GetProjectTemplateList(std::list<ProjectPtr>& list);
-
-/**
  * @brief set the native Windows theme for the application
  * @param win [input]
  */

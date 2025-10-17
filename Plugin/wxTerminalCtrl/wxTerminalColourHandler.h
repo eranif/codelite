@@ -15,7 +15,6 @@ class wxTerminalColourHandler : public wxEvtHandler
     wxTerminalOutputCtrl* m_ctrl = nullptr;
     wxSTCStyleProvider* m_style_provider = nullptr;
     wxTextAttr m_defaultAttr;
-    wxString m_title;
     clAnsiEscapeCodeHandler m_ansiEscapeHandler;
 
 protected:

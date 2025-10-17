@@ -615,6 +615,9 @@ protected:
     void OnManagePlugins(wxCommandEvent& e);
     void OnCppContextMenu(wxCommandEvent& e);
 
+    void OnAiPromptEditor(wxCommandEvent& e);
+    void OnAiPromptEditorUI(wxUpdateUIEvent& e);
+
     void OnConfigureAccelerators(wxCommandEvent& e);
     void OnStartPageEvent(wxCommandEvent& e);
     void OnNewVersionAvailable(wxCommandEvent& e);

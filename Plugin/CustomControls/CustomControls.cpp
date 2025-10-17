@@ -24,36 +24,6 @@ wxBorder get_border_simple_theme_aware_bit()
 bool bBitmapLoaded = false;
 } // namespace
 
-TextPreviewDialogBase::TextPreviewDialogBase(
-    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
-    : wxDialog(parent, id, title, pos, size, style)
-{
-    if (!bBitmapLoaded) {
-        // We need to initialise the default bitmap handler
-        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
-        wxC26B3InitBitmapResources();
-        bBitmapLoaded = true;
-    }
-
-    SetName(wxT("TextPreviewDialogBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
-    if (GetSizer()) {
-        GetSizer()->Fit(this);
-    }
-    if (GetParent()) {
-        CentreOnParent(wxBOTH);
-    } else {
-        CentreOnScreen(wxBOTH);
-    }
-    if (!wxPersistenceManager::Get().Find(this)) {
-        wxPersistenceManager::Get().RegisterAndRestore(this);
-    } else {
-        wxPersistenceManager::Get().Restore(this);
-    }
-}
-
-TextPreviewDialogBase::~TextPreviewDialogBase() {}
-
 TextGenerationPreviewFrameBase::TextGenerationPreviewFrameBase(
     wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxFrame(parent, id, title, pos, size, style)
@@ -75,8 +45,23 @@ TextGenerationPreviewFrameBase::TextGenerationPreviewFrameBase(
     wxBoxSizer* boxSizer9 = new wxBoxSizer(wxVERTICAL);
     m_main_panel->SetSizer(boxSizer9);
 
-    m_editor =
-        new wxStyledTextCtrl(m_main_panel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_main_panel, wxSize(500, 300)), 0);
+    m_auiBook19 = new wxAuiNotebook(m_main_panel,
+                                    wxID_ANY,
+                                    wxDefaultPosition,
+                                    wxDLG_UNIT(m_main_panel, wxSize(250, 250)),
+                                    wxAUI_NB_TOP | wxAUI_NB_TAB_FIXED_WIDTH);
+    m_auiBook19->SetName(wxT("m_auiBook19"));
+
+    boxSizer9->Add(m_auiBook19, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel20 =
+        new wxPanel(m_auiBook19, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_auiBook19, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_auiBook19->AddPage(m_panel20, _("Output"), true);
+
+    wxBoxSizer* boxSizer21 = new wxBoxSizer(wxVERTICAL);
+    m_panel20->SetSizer(boxSizer21);
+
+    m_editor = new wxStyledTextCtrl(m_panel20, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel20, wxSize(500, 300)), 0);
     // Configure the fold margin
     m_editor->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_editor->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -112,21 +97,81 @@ TextGenerationPreviewFrameBase::TextGenerationPreviewFrameBase(
     m_editor->SetKeyWords(3, wxT(""));
     m_editor->SetKeyWords(4, wxT(""));
 
-    boxSizer9->Add(m_editor, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
+    boxSizer21->Add(m_editor, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
+
+    m_panel22 =
+        new wxPanel(m_auiBook19, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_auiBook19, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_auiBook19->AddPage(m_panel22, _("Prompt"), false);
+
+    wxBoxSizer* boxSizer23 = new wxBoxSizer(wxVERTICAL);
+    m_panel22->SetSizer(boxSizer23);
+
+    m_prompt = new wxStyledTextCtrl(m_panel22, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel22, wxSize(-1, -1)), 0);
+    // Configure the fold margin
+    m_prompt->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_prompt->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_prompt->SetMarginSensitive(4, true);
+    m_prompt->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_prompt->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_prompt->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_prompt->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_prompt->SetMarginWidth(2, 0);
+    m_prompt->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_prompt->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_prompt->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_prompt->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_prompt->SetMarginMask(3, 0);
+    m_prompt->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_prompt->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_prompt->StyleClearAll();
+    m_prompt->SetWrapMode(1);
+    m_prompt->SetIndentationGuides(0);
+    m_prompt->SetKeyWords(0, wxT(""));
+    m_prompt->SetKeyWords(1, wxT(""));
+    m_prompt->SetKeyWords(2, wxT(""));
+    m_prompt->SetKeyWords(3, wxT(""));
+    m_prompt->SetKeyWords(4, wxT(""));
+
+    boxSizer23->Add(m_prompt, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* boxSizer5 = new wxBoxSizer(wxHORIZONTAL);
 
     boxSizer1->Add(boxSizer5, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
 
     m_button_copy = new wxButton(this, wxID_COPY, _("Copy"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button_copy->SetToolTip(_("Copy the generated output to the clipboard"));
 
     boxSizer5->Add(m_button_copy, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_button_save = new wxButton(this, wxID_SAVE, _("Save"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button_save->SetToolTip(_("Save prompt changes"));
+
+    boxSizer5->Add(m_button_save, 0, wxALL, WXC_FROM_DIP(5));
 
     m_button_cancel =
         new wxButton(this, wxID_CANCEL, _("Close"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button_cancel->SetDefault();
+    m_button_cancel->SetToolTip(_("Click to close the view or hit ESCAPE."));
 
     boxSizer5->Add(m_button_cancel, 0, wxALL, WXC_FROM_DIP(5));
+
+#if wxVERSION_NUMBER >= 2900
+    if (!wxPersistenceManager::Get().Find(m_auiBook19)) {
+        wxPersistenceManager::Get().RegisterAndRestore(m_auiBook19);
+    } else {
+        wxPersistenceManager::Get().Restore(m_auiBook19);
+    }
+#endif
 
     SetName(wxT("TextGenerationPreviewFrameBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
@@ -146,6 +191,8 @@ TextGenerationPreviewFrameBase::TextGenerationPreviewFrameBase(
     // Connect events
     m_button_copy->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnCopy, this);
     m_button_copy->Bind(wxEVT_UPDATE_UI, &TextGenerationPreviewFrameBase::OnCopyUI, this);
+    m_button_save->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnSavePrompt, this);
+    m_button_save->Bind(wxEVT_UPDATE_UI, &TextGenerationPreviewFrameBase::OnSavePromptUI, this);
     m_button_cancel->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnClose, this);
 }
 
@@ -153,5 +200,84 @@ TextGenerationPreviewFrameBase::~TextGenerationPreviewFrameBase()
 {
     m_button_copy->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnCopy, this);
     m_button_copy->Unbind(wxEVT_UPDATE_UI, &TextGenerationPreviewFrameBase::OnCopyUI, this);
+    m_button_save->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnSavePrompt, this);
+    m_button_save->Unbind(wxEVT_UPDATE_UI, &TextGenerationPreviewFrameBase::OnSavePromptUI, this);
     m_button_cancel->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnClose, this);
+}
+
+PromptEditorBaseDlg::PromptEditorBaseDlg(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if (!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC26B3InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer27 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer27);
+
+    wxBoxSizer* boxSizer31 = new wxBoxSizer(wxVERTICAL);
+
+    boxSizer27->Add(boxSizer31, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_panel32 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)), wxTAB_TRAVERSAL);
+
+    boxSizer31->Add(m_panel32, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxBoxSizer* boxSizer33 = new wxBoxSizer(wxVERTICAL);
+    m_panel32->SetSizer(boxSizer33);
+
+    m_listbook =
+        new wxChoicebook(m_panel32, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel32, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_listbook->SetName(wxT("m_listbook"));
+
+    boxSizer33->Add(m_listbook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer28 = new wxStdDialogButtonSizer();
+
+    boxSizer27->Add(m_stdBtnSizer28, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+
+    m_button29 = new wxButton(this, wxID_SAVE, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button29->SetDefault();
+    m_stdBtnSizer28->AddButton(m_button29);
+
+    m_button30 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer28->AddButton(m_button30);
+    m_stdBtnSizer28->Realize();
+
+#if wxVERSION_NUMBER >= 2900
+    if (!wxPersistenceManager::Get().Find(m_listbook)) {
+        wxPersistenceManager::Get().RegisterAndRestore(m_listbook);
+    } else {
+        wxPersistenceManager::Get().Restore(m_listbook);
+    }
+#endif
+
+    SetName(wxT("PromptEditorBaseDlg"));
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if (GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+    if (!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+    // Connect events
+    m_button29->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &PromptEditorBaseDlg::OnSave, this);
+    m_button29->Bind(wxEVT_UPDATE_UI, &PromptEditorBaseDlg::OnSaveUI, this);
+}
+
+PromptEditorBaseDlg::~PromptEditorBaseDlg()
+{
+    m_button29->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &PromptEditorBaseDlg::OnSave, this);
+    m_button29->Unbind(wxEVT_UPDATE_UI, &PromptEditorBaseDlg::OnSaveUI, this);
 }

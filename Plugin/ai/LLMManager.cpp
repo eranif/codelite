@@ -233,8 +233,7 @@ void Manager::PostTask(ThreadTask task)
 }
 
 void Manager::Chat(wxEvtHandler* owner,
-                   const wxString& prompt_template,
-                   const wxArrayString& prompt_context_arr,
+                   const wxArrayString& prompts,
                    std::shared_ptr<CancellationToken> cancel_token,
                    ChatOptions options,
                    const wxString& model)
@@ -242,17 +241,12 @@ void Manager::Chat(wxEvtHandler* owner,
     // Post 1 job with multiple prompts.
     ThreadTask task{
         .model = model.ToStdString(wxConvUTF8), .options = options, .owner = owner, .cancellation_token = cancel_token};
-    for (const auto& prompt_context : prompt_context_arr) {
-        wxString prompt = prompt_template;
-        prompt.Replace("{{CONTEXT}}", prompt_context);
-        task.prompt_array.push_back(prompt.ToStdString(wxConvUTF8));
-    }
+    for (const auto& prompt : prompts) { task.prompt_array.push_back(prompt.ToStdString(wxConvUTF8)); }
     PostTask(std::move(task));
 }
 
 void Manager::Chat(ResponseCollector* collector,
-                   const wxString& prompt_template,
-                   const wxArrayString& prompt_context_arr,
+                   const wxArrayString& prompts,
                    std::shared_ptr<CancellationToken> cancel_token,
                    ChatOptions options,
                    const wxString& model)
@@ -262,11 +256,7 @@ void Manager::Chat(ResponseCollector* collector,
                     .options = options,
                     .cancellation_token = cancel_token,
                     .collector = collector};
-    for (const auto& prompt_context : prompt_context_arr) {
-        wxString prompt = prompt_template;
-        prompt.Replace("{{CONTEXT}}", prompt_context);
-        task.prompt_array.push_back(prompt.ToStdString(wxConvUTF8));
-    }
+    for (const auto& prompt : prompts) { task.prompt_array.push_back(prompt.ToStdString(wxConvUTF8)); }
     PostTask(std::move(task));
 }
 
@@ -439,9 +429,14 @@ wxArrayString Manager::GetModels() const
     std::scoped_lock lk{m_models_mutex};
     return m_models;
 }
+
 std::optional<wxString> Manager::ChooseModel([[maybe_unused]] bool use_default)
 {
     wxString model;
+    if (llm::Manager::GetInstance().GetModels().empty()) {
+        return std::nullopt;
+    }
+
     if (llm::Manager::GetInstance().GetModels().GetCount() > 1) {
         auto models = llm::Manager::GetInstance().GetModels();
         auto active_model = llm::Manager::GetInstance().GetConfig().GetSelectedModel();

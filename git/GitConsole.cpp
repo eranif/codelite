@@ -922,17 +922,8 @@ void GitConsole::OnGenerateReleaseNotes(wxCommandEvent& event)
         return;
     }
 
-    wxString prompt_template = R"(Generate release notes from the following list of git commits history.
-Make sure to include a "bug fixes"' section. Include a "major improvements" section. Include a section that states
-the contributors and the number of commits each contributor committed. Sort the contributors by number of commits.
-Use bullets.
-
-The list of git commits are:
-
-```text
-{{CONTEXT}}
-```
-)";
+    wxString prompt_template =
+        llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kReleaseNotesGenerate);
 
     // Construct a token for cancellation purposes.
     std::shared_ptr<llm::CancellationToken> cancellation_token = std::make_shared<llm::CancellationToken>(max_tokens);
@@ -988,23 +979,24 @@ The list of git commits are:
                 m_statusBar->Stop("Ready");
             }
         });
-    llm::ChatOptions chat_options;
-    llm::AddFlagSet(chat_options, llm::ChatOptions::kNoTools);
+
+    llm::ChatOptions chat_options{llm::ChatOptions::kNoTools};
     llm::AddFlagSet(chat_options, llm::ChatOptions::kNoHistory);
-    llm::Manager::GetInstance().Chat(collector,
-                                     prompt_template, // the prompt template.
-                                     history,         // the prompt context.
-                                     cancellation_token,
-                                     chat_options,
-                                     model);
+
+    //  Prepare the prompts
+    wxArrayString prompts;
+    for (const auto& h : history) {
+        wxString p = prompt_template;
+        p.Replace("{{context}}", h);
+        prompts.Add(p);
+    }
+    llm::Manager::GetInstance().Chat(collector, prompts, cancellation_token, chat_options, model);
 }
 
-void GitConsole::FinaliseReleaseNotes(const wxString& prompt, const wxString& model)
+void GitConsole::FinaliseReleaseNotes(const wxString& complete_reponse, const wxString& model)
 {
-    wxString full_prompt;
-    full_prompt << "Rephrase the following release notes text. Remove duplicate entries and merge the sections.\nHere "
-                   "are the release notes:\n"
-                << prompt;
+    wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kReleaseNotesMerge);
+    prompt.Replace("{{context}}", complete_reponse);
 
     m_statusBar->SetMessage(_("Finalising notes..."));
     auto collector = new llm::ResponseCollector();

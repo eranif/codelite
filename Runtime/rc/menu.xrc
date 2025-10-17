@@ -699,6 +699,15 @@
       </object>
       <object class="wxMenuItem" name="wxID_SEPARATOR"/>
     </object>
+    <!-- AI menu -->
+    <object class="wxMenu" name="ai_menu">
+      <label>AI</label>
+      <style>wxMENU_TEAROFF</style>
+      <object class="wxMenuItem" name="ai_prompt_editor">
+        <label>Prompt &amp;Editor</label>
+      </object>
+    </object>
+    <!-- Settings menu -->
     <object class="wxMenu" name="settings_menu">
       <label>Settin&amp;gs</label>
       <style>wxMENU_TEAROFF</style>

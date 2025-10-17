@@ -28,6 +28,7 @@
 #include "BreakpointsView.hpp"
 #include "ColoursAndFontsManager.h"
 #include "CompilersFoundDlg.h"
+#include "CustomControls/PromptEditorDlg.hpp"
 #include "Debugger/DebuggerToolBar.h"
 #include "Debugger/debuggermanager.h"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
@@ -39,6 +40,7 @@
 #include "WelcomePage.h"
 #include "acceltabledlg.h"
 #include "advanced_settings.h"
+#include "ai/LLMManager.hpp"
 #include "app.h"
 #include "autoversion.h"
 #include "batchbuilddlg.h"
@@ -581,6 +583,12 @@ EVT_UPDATE_UI(XRCID("debug_core_dump"), clMainFrame::OnQuickDebugUI)
 // Plugins menu
 //-------------------------------------------------------
 EVT_MENU(XRCID("manage_plugins"), clMainFrame::OnManagePlugins)
+
+//-------------------------------------------------------
+// AI menu
+//-------------------------------------------------------
+EVT_MENU(XRCID("ai_prompt_editor"), clMainFrame::OnAiPromptEditor)
+EVT_UPDATE_UI(XRCID("ai_prompt_editor"), clMainFrame::OnAiPromptEditorUI)
 
 //-------------------------------------------------------
 // Settings menu
@@ -2244,9 +2252,10 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
 
         wxString sessionName = dlg.GetTabgroupName();
         if (sessionName.IsEmpty()) {
-            if (wxMessageBox(
-                    _("Please enter a name for the tab group"), wxT("CodeLite"), wxICON_ERROR | wxOK | wxCANCEL, this) !=
-                wxOK) {
+            if (wxMessageBox(_("Please enter a name for the tab group"),
+                             wxT("CodeLite"),
+                             wxICON_ERROR | wxOK | wxCANCEL,
+                             this) != wxOK) {
                 return;
             } else {
                 continue;
@@ -4375,7 +4384,8 @@ void clMainFrame::OnStartQuickDebug(clDebugEvent& e)
                 clDebuggerTerminalPOSIX::MakeExeTitle(
                     exepath, (bStartedInDebugMode ? GetTheApp()->GetDebuggerArgs() : e.GetArguments())),
                 tty)) {
-            wxMessageBox(_("Could not start TTY console for debugger!"), wxT("CodeLite"), wxOK | wxCENTER | wxICON_ERROR);
+            wxMessageBox(
+                _("Could not start TTY console for debugger!"), wxT("CodeLite"), wxOK | wxCENTER | wxICON_ERROR);
         }
 #endif
 
@@ -6190,3 +6200,12 @@ void clMainFrame::OnMainToolBarPlaceTopUI(wxUpdateUIEvent& event) { event.Check(
 void clMainFrame::OnMainToolBarPlaceBottomUI(wxUpdateUIEvent& event) { event.Check(m_mainToolbarStyle & wxTB_BOTTOM); }
 void clMainFrame::OnMainToolBarPlaceLeftUI(wxUpdateUIEvent& event) { event.Check(m_mainToolbarStyle & wxTB_LEFT); }
 void clMainFrame::OnMainToolBarPlaceRightUI(wxUpdateUIEvent& event) { event.Check(m_mainToolbarStyle & wxTB_RIGHT); }
+
+void clMainFrame::OnAiPromptEditor(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    PromptEditorDlg dlg(this);
+    dlg.ShowModal();
+}
+
+void clMainFrame::OnAiPromptEditorUI(wxUpdateUIEvent& e) { e.Enable(llm::Manager::GetInstance().IsAvailable()); }

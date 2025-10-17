@@ -146,23 +146,18 @@ public:
               ChatOptions options,
               const wxString& model = wxEmptyString);
 
-    /// Similar to chat, but instead of accepting a single prompt it accepts a
-    /// prompt template and context array. For every context entry in the
-    /// "prompt_context_arr", a new prompt is constructed and fed to the LLM
-    /// model. If response_cb is provided, every generated token is also passed
-    /// to that callback. Supported macros in the "prompt_template" are:
-    /// {{CONTEXT}}
+    /// Similar to chat, but instead of accepting a single prompt it accepts multiple
+    /// prompts.
     void Chat(wxEvtHandler* owner,
-              const wxString& prompt_template,
-              const wxArrayString& prompt_context_arr,
+              const wxArrayString& prompts,
               std::shared_ptr<CancellationToken> cancel_token,
               ChatOptions options,
               const wxString& model = wxEmptyString);
 
-    /// As before, but events are connected to a "ReponseCollector" object
+    /// Similar to chat, but instead of accepting a single prompt it accepts multiple
+    /// prompts.
     void Chat(ResponseCollector* collector,
-              const wxString& prompt_template,
-              const wxArrayString& prompt_context_arr,
+              const wxArrayString& prompts,
               std::shared_ptr<CancellationToken> cancel_token,
               ChatOptions options,
               const wxString& model = wxEmptyString);

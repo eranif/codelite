@@ -2,6 +2,7 @@
 
 #include "CustomControls.hpp"
 #include "IndicatorPanel.hpp"
+#include "MarkdownStyler.hpp"
 #include "codelite_exports.h"
 
 enum class PreviewKind {
@@ -23,10 +24,13 @@ public:
     void InitialiseFor(PreviewKind kind);
 
 protected:
+    void OnSavePrompt(wxCommandEvent& event) override;
+    void OnSavePromptUI(wxUpdateUIEvent& event) override;
     void OnClose(wxCommandEvent& event) override;
     void OnCopy(wxCommandEvent& event) override;
     void OnCopyUI(wxUpdateUIEvent& event) override;
 
     PreviewKind m_kind{PreviewKind::kDefault};
     IndicatorPanel* m_indicator_panel{nullptr};
+    std::unique_ptr<MarkdownStyler> m_markdownStyler;
 };

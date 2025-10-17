@@ -161,7 +161,7 @@ public:
     wxSize toSize() const;
     wxPoint toPoint() const;
 
-    wxStringMap_t toStringMap() const;
+    wxStringMap_t toStringMap(const wxStringMap_t& default_map = {}) const;
 
     // Writers
     ////////////////////////////////////////////////

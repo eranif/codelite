@@ -11,14 +11,17 @@
 #include <wx/settings.h>
 #include <wx/xrc/xmlres.h>
 #include <wx/xrc/xh_bmp.h>
-#include <wx/dialog.h>
+#include <wx/frame.h>
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
-#include <wx/frame.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
+#include <wx/aui/auibook.h>
+#include <wx/imaglist.h>
 #include <wx/stc/stc.h>
 #include <wx/button.h>
+#include <wx/dialog.h>
+#include <wx/choicebk.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -37,45 +40,68 @@
 
 // clang-format on
 
-class TextPreviewDialogBase : public wxDialog
-{
-protected:
-protected:
-public:
-    TextPreviewDialogBase(wxWindow* parent,
-                          wxWindowID id = wxID_ANY,
-                          const wxString& title = _("Text Preview"),
-                          const wxPoint& pos = wxDefaultPosition,
-                          const wxSize& size = wxSize(500, 300),
-                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
-    virtual ~TextPreviewDialogBase();
-};
-
 class TextGenerationPreviewFrameBase : public wxFrame
 {
 protected:
     wxPanel* m_main_panel;
+    wxAuiNotebook* m_auiBook19;
+    wxPanel* m_panel20;
     wxStyledTextCtrl* m_editor;
+    wxPanel* m_panel22;
+    wxStyledTextCtrl* m_prompt;
     wxButton* m_button_copy;
+    wxButton* m_button_save;
     wxButton* m_button_cancel;
 
 protected:
     virtual void OnCopy(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCopyUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnSavePrompt(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSavePromptUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnClose(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxStyledTextCtrl* GetEditor() { return m_editor; }
+    wxPanel* GetPanel20() { return m_panel20; }
+    wxStyledTextCtrl* GetPrompt() { return m_prompt; }
+    wxPanel* GetPanel22() { return m_panel22; }
+    wxAuiNotebook* GetAuiBook19() { return m_auiBook19; }
     wxPanel* GetMain_panel() { return m_main_panel; }
     wxButton* GetButton_copy() { return m_button_copy; }
+    wxButton* GetButton_save() { return m_button_save; }
     wxButton* GetButton_cancel() { return m_button_cancel; }
     TextGenerationPreviewFrameBase(wxWindow* parent,
                                    wxWindowID id = wxID_ANY,
                                    const wxString& title = _("Text Generation"),
                                    const wxPoint& pos = wxDefaultPosition,
                                    const wxSize& size = wxSize(500, 300),
-                                   long style = wxFRAME_FLOAT_ON_PARENT | wxRESIZE_BORDER);
+                                   long style = wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT);
     virtual ~TextGenerationPreviewFrameBase();
+};
+
+class PromptEditorBaseDlg : public wxDialog
+{
+protected:
+    wxPanel* m_panel32;
+    wxChoicebook* m_listbook;
+    wxStdDialogButtonSizer* m_stdBtnSizer28;
+    wxButton* m_button29;
+    wxButton* m_button30;
+
+protected:
+    virtual void OnSave(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnSaveUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    wxChoicebook* GetListbook() { return m_listbook; }
+    wxPanel* GetPanel32() { return m_panel32; }
+    PromptEditorBaseDlg(wxWindow* parent,
+                        wxWindowID id = wxID_ANY,
+                        const wxString& title = _("Prompt Editor"),
+                        const wxPoint& pos = wxDefaultPosition,
+                        const wxSize& size = wxSize(500, 300),
+                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    virtual ~PromptEditorBaseDlg();
 };
 
 #endif

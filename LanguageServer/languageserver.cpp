@@ -289,91 +289,9 @@ void LanguageServerPlugin::OnGenerateDocString(wxCommandEvent& event)
         return;
     }
 
-    wxString prompt = R"#(
-Generate a docstring for the following {{LANG}} function. The output should only include the docstring, nothing else.
-The output should not include the input function.
-
-Use comment style that is appropriate for the language:
-
-If the input function is a C++, PHP or a Java function, use JavaDoc style comments.
-If the input function is a Rust function, use Rust comment style (each line starts with `/// `).
-If the input function is bash, use bash style comment ('# ').
-If the input function is python, use python comment style.
-
-The input function to write comment for is:
-
-```{{LANG}}
-{{FUNCTION}}
-```
-
-Example 1:
-===
-
-If the function is:
-
-```c++
-void Add(int a, int b) {
-    return a + b;
-}
-```
-
-The output should be something like this:
-
-/**
- * @brief this function returns the sum of 2 numbers.
- *
- * @param a the first number
- * @param b the second number
- */
-
-Example 2:
-===
-
-If the function is:
-
-```rust
-pub fn add(a: u32, b: u32) -> u32{
-    a + b
-}
-```
-
-The output should be something like this:
-
-/// This function returns the sum of 2 numbers.
-///
-/// `a` the first number
-/// `b` b the second number
-
-Example 3:
-===
-
-If the function is:
-
-```python
-def add(a, b):
-    return a + b
-```
-
-The output should be something like this:
-
-"""
-This function returns the sum of 2 numbers.
-
-Args:
-    a (int): the first number
-    b (int): the second number
-
-Returns:
-    int: the sum of a + b.
-
-Example:
-    >>> add(1, 2)
-    3
-"""
-)#";
-
-    prompt.Replace("{{LANG}}", language);
-    prompt.Replace("{{FUNCTION}}", func_text.value());
+    wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kCommentGeneration);
+    prompt.Replace("{{lang}}", language);
+    prompt.Replace("{{function}}", func_text.value());
 
     assistant::ChatOptions chat_options{assistant::ChatOptions::kNoTools};
     assistant::AddFlagSet(chat_options, assistant::ChatOptions::kNoHistory);

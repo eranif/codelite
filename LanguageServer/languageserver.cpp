@@ -1,6 +1,7 @@
 #include "languageserver.h"
 
 #include "ColoursAndFontsManager.h"
+#include "CustomControls/TextPreviewDialog.hpp"
 #include "LSPDetectorManager.hpp"
 #include "LanguageServerConfig.h"
 #include "LanguageServerSettingsDlg.h"
@@ -13,12 +14,12 @@
 #include "globals.h"
 #include "ieditor.h"
 #include "macros.h"
-#include "wx/msgdlg.h"
 
 #include <thread>
 #include <wx/app.h>
 #include <wx/datetime.h>
 #include <wx/defs.h>
+#include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point
@@ -226,7 +227,7 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
         wxMenu* ai_menu = new wxMenu;
         ai_menu->Append(XRCID("lsp_document_function"), _("Generate docstring for the current method"));
         menu->PrependSeparator();
-        auto item = menu->Prepend(wxID_ANY, _("AI Powered Generation"), ai_menu);
+        auto item = menu->Prepend(wxID_ANY, _("AI-Powered Generation"), ai_menu);
         item->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("wand"));
         ai_menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnGenerateDocString, this, XRCID("lsp_document_function"));
     }
@@ -250,7 +251,9 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
 void LanguageServerPlugin::OnDocStringGenerationDone(std::shared_ptr<std::string> output)
 {
     wxString msg = wxString::FromUTF8(*output);
-    wxUnusedVar(msg);
+    TextPreviewDialog dialog{EventNotifier::Get()->TopFrame()};
+    dialog.SetPreviewText(msg);
+    dialog.ShowModal();
 }
 
 void LanguageServerPlugin::OnGenerateDocString(wxCommandEvent& event)
@@ -265,10 +268,10 @@ void LanguageServerPlugin::OnGenerateDocString(wxCommandEvent& event)
         return;
     }
 
-    wxString language = "TEXT";
+    wxString language = "text";
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetFileName().GetFullName());
     if (lexer) {
-        language = lexer->GetName().Upper();
+        language = lexer->GetName().Lower();
     }
 
     std::optional<wxString> model = llm::Manager::GetInstance().ChooseModel(true);
@@ -276,11 +279,40 @@ void LanguageServerPlugin::OnGenerateDocString(wxCommandEvent& event)
         return;
     }
 
-    wxString prompt;
-    prompt << "Generate a docstring for the following " << language
-           << " function. The output should only include the "
-              "docstring, nothing else.\n\n"
-           << func_text.value();
+    wxString prompt = R"#(
+Generate a docstring for the following {{LANG}} function. The output should only include the docstring, nothing else.
+
+The function to write comment for is:
+
+```{{LANG}}
+{{FUNCTION}}
+```
+
+Example:
+===
+
+If the function is:
+
+```{{LANG}}
+void Add(int a, int b) {
+    return a + b;
+}
+```
+
+The output should be something like this:
+
+/**
+ * @brief this function returns the sum of 2 numbers.
+ *
+ * @param a the first number
+ * @param b the second number
+ */
+
+)#";
+
+    prompt.Replace("{{LANG}}", language);
+    prompt.Replace("{{FUNCTION}}", func_text.value());
+
     assistant::ChatOptions chat_options{assistant::ChatOptions::kNoTools};
     assistant::AddFlagSet(chat_options, assistant::ChatOptions::kNoHistory);
 

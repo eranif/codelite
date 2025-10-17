@@ -1,7 +1,8 @@
 #include "languageserver.h"
 
 #include "ColoursAndFontsManager.h"
-#include "CustomControls/TextPreviewDialog.hpp"
+#include "CustomControls/TextGenerationPreviewFrame.hpp"
+#include "Keyboard/clKeyboardManager.h"
 #include "LSPDetectorManager.hpp"
 #include "LanguageServerConfig.h"
 #include "LanguageServerSettingsDlg.h"
@@ -52,6 +53,9 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_logView, _("Language Server"));
     m_tabToggler.reset(new clTabTogglerHelper(_("Language Server"), m_logView, "", NULL));
 
+    m_commentGenerationView = new TextGenerationPreviewFrame(PreviewKind::kCommentGeneration);
+    m_commentGenerationView->Hide();
+
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &LanguageServerPlugin::OnInitDone, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &LanguageServerPlugin::OnEditorContextMenu, this);
     wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnSettings, this, XRCID("language-server-settings"));
@@ -71,6 +75,12 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_LSP_ENABLE_SERVER, &LanguageServerPlugin::OnLSPEnableServer, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_DISABLE_SERVER, &LanguageServerPlugin::OnLSPDisableServer, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerPlugin::OnWorkspaceClosed, this);
+
+    clKeyboardManager::Get()->AddAccelerator(
+        _("Language Server"),
+        {{"lsp_document_function", _("Generate an AI-powered comment for the current function"), "Ctrl-Shift-M"}});
+
+    wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnGenerateDocString, this, XRCID("lsp_document_function"));
 
     /// initialise the LSP library
     LSP::Initialise();
@@ -248,12 +258,12 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnMenuRenameSymbol, this, XRCID("lsp_rename_symbol"));
 }
 
-void LanguageServerPlugin::OnDocStringGenerationDone(std::shared_ptr<std::string> output)
+void LanguageServerPlugin::OnDocStringGenerationDone()
 {
-    wxString msg = wxString::FromUTF8(*output);
-    TextPreviewDialog dialog{EventNotifier::Get()->TopFrame()};
-    dialog.SetPreviewText(msg);
-    dialog.ShowModal();
+    if (m_commentGenerationView->IsShown()) {
+        return;
+    }
+    m_commentGenerationView->Show();
 }
 
 void LanguageServerPlugin::OnGenerateDocString(wxCommandEvent& event)
@@ -281,19 +291,27 @@ void LanguageServerPlugin::OnGenerateDocString(wxCommandEvent& event)
 
     wxString prompt = R"#(
 Generate a docstring for the following {{LANG}} function. The output should only include the docstring, nothing else.
+The output should not include the input function.
 
-The function to write comment for is:
+Use comment style that is appropriate for the language:
+
+If the input function is a C++, PHP or a Java function, use JavaDoc style comments.
+If the input function is a Rust function, use Rust comment style (each line starts with `/// `).
+If the input function is bash, use bash style comment ('# ').
+If the input function is python, use python comment style.
+
+The input function to write comment for is:
 
 ```{{LANG}}
 {{FUNCTION}}
 ```
 
-Example:
+Example 1:
 ===
 
 If the function is:
 
-```{{LANG}}
+```c++
 void Add(int a, int b) {
     return a + b;
 }
@@ -308,6 +326,50 @@ The output should be something like this:
  * @param b the second number
  */
 
+Example 2:
+===
+
+If the function is:
+
+```rust
+pub fn add(a: u32, b: u32) -> u32{
+    a + b
+}
+```
+
+The output should be something like this:
+
+/// This function returns the sum of 2 numbers.
+///
+/// `a` the first number
+/// `b` b the second number
+
+Example 3:
+===
+
+If the function is:
+
+```python
+def add(a, b):
+    return a + b
+```
+
+The output should be something like this:
+
+"""
+This function returns the sum of 2 numbers.
+
+Args:
+    a (int): the first number
+    b (int): the second number
+
+Returns:
+    int: the sum of a + b.
+
+Example:
+    >>> add(1, 2)
+    3
+"""
 )#";
 
     prompt.Replace("{{LANG}}", language);
@@ -316,33 +378,35 @@ The output should be something like this:
     assistant::ChatOptions chat_options{assistant::ChatOptions::kNoTools};
     assistant::AddFlagSet(chat_options, assistant::ChatOptions::kNoHistory);
 
+    m_commentGenerationView->InitialiseFor(PreviewKind::kCommentGeneration);
+    m_commentGenerationView->Show();
+    m_commentGenerationView->StartProgress(_("Working..."));
+
     auto collector = new llm::ResponseCollector();
-    collector->SetStateChangingCB([](llm::ChatState state) {
+    collector->SetStateChangingCB([this](llm::ChatState state) {
         if (!wxThread::IsMain()) {
             clWARNING() << "StateChangingCB called for non main thread!" << endl;
             return;
         }
         switch (state) {
         case llm::ChatState::kThinking:
-            clGetManager()->SetStatusMessage(_("Thinking..."));
+            m_commentGenerationView->UpdateProgress(_("Thinking..."));
             break;
         case llm::ChatState::kWorking:
-            clGetManager()->SetStatusMessage(_("Working..."));
+            m_commentGenerationView->UpdateProgress(_("Working..."));
             break;
         case llm::ChatState::kReady:
-            clGetManager()->SetStatusMessage(_("Ready."));
+            m_commentGenerationView->StopProgress(_("Ready"));
             break;
         }
     });
 
-    std::shared_ptr<std::string> complete_response = std::make_shared<std::string>();
-    collector->SetStreamCallback(
-        [this, complete_response](const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
-            complete_response->append(message);
-            if (is_done) {
-                CallAfter(&LanguageServerPlugin::OnDocStringGenerationDone, complete_response);
-            }
-        });
+    collector->SetStreamCallback([this](const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
+        m_commentGenerationView->AppendText(wxString::FromUTF8(message));
+        if (is_done) {
+            CallAfter(&LanguageServerPlugin::OnDocStringGenerationDone);
+        }
+    });
 
     llm::Manager::GetInstance().Chat(collector, prompt, nullptr, chat_options, model.value());
 }

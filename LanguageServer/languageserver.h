@@ -1,6 +1,7 @@
 #ifndef __LanguageServerPlugin__
 #define __LanguageServerPlugin__
 
+#include "CustomControls/TextGenerationPreviewFrame.hpp"
 #include "LanguageServerCluster.h"
 #include "LanguageServerLogView.h"
 #include "clTabTogglerHelper.h"
@@ -10,41 +11,6 @@
 
 class LanguageServerPlugin : public IPlugin
 {
-    std::unique_ptr<LanguageServerCluster> m_servers;
-    clTabTogglerHelper::Ptr_t m_tabToggler;
-    LanguageServerLogView* m_logView = nullptr;
-
-protected:
-    void OnSettings(wxCommandEvent& e);
-    void OnRestartLSP(wxCommandEvent& e);
-    void OnInitDone(wxCommandEvent& event);
-    void OnEditorContextMenu(clContextMenuEvent& event);
-    void OnMenuFindSymbol(wxCommandEvent& event);
-    void OnMenuRenameSymbol(wxCommandEvent& event);
-    void OnGenerateDocString(wxCommandEvent& event);
-    void OnDocStringGenerationDone(std::shared_ptr<std::string> output);
-    void OnMenuFindReferences(wxCommandEvent& event);
-    void ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& lsps);
-
-    void OnLSPStopAll(clLanguageServerEvent& event);
-    void OnLSPStartAll(clLanguageServerEvent& event);
-    void OnLSPRestartAll(clLanguageServerEvent& event);
-    void OnLSPStopOne(clLanguageServerEvent& event);
-    void OnLSPStartOne(clLanguageServerEvent& event);
-    void OnLSPRestartOne(clLanguageServerEvent& event);
-    void OnLSPConfigure(clLanguageServerEvent& event);
-    void OnLSPDelete(clLanguageServerEvent& event);
-    void OnLSPShowSettingsDlg(clLanguageServerEvent& event);
-    void OnLSPEnableServer(clLanguageServerEvent& event);
-    void OnLSPDisableServer(clLanguageServerEvent& event);
-    wxString GetEditorFilePath(IEditor* editor) const;
-    void OnWorkspaceClosed(clWorkspaceEvent& event);
-    void OnFixLSPPaths(wxCommandEvent& event);
-    // Called by the plugin after load to check that all the configured
-    // LSPs are valid
-    void CheckServers();
-    wxArrayString GetBrokenLSPs() const;
-
 public:
     LanguageServerPlugin(IManager* manager);
     ~LanguageServerPlugin() override = default;
@@ -67,6 +33,42 @@ public:
      * @brief log message to the output tab
      */
     void LogMessage(const wxString& server_name, const wxString& message, int log_leve);
+
+protected:
+    void OnSettings(wxCommandEvent& e);
+    void OnRestartLSP(wxCommandEvent& e);
+    void OnInitDone(wxCommandEvent& event);
+    void OnEditorContextMenu(clContextMenuEvent& event);
+    void OnMenuFindSymbol(wxCommandEvent& event);
+    void OnMenuRenameSymbol(wxCommandEvent& event);
+    void OnGenerateDocString(wxCommandEvent& event);
+    void OnDocStringGenerationDone();
+    void OnMenuFindReferences(wxCommandEvent& event);
+    void ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& lsps);
+
+    void OnLSPStopAll(clLanguageServerEvent& event);
+    void OnLSPStartAll(clLanguageServerEvent& event);
+    void OnLSPRestartAll(clLanguageServerEvent& event);
+    void OnLSPStopOne(clLanguageServerEvent& event);
+    void OnLSPStartOne(clLanguageServerEvent& event);
+    void OnLSPRestartOne(clLanguageServerEvent& event);
+    void OnLSPConfigure(clLanguageServerEvent& event);
+    void OnLSPDelete(clLanguageServerEvent& event);
+    void OnLSPShowSettingsDlg(clLanguageServerEvent& event);
+    void OnLSPEnableServer(clLanguageServerEvent& event);
+    void OnLSPDisableServer(clLanguageServerEvent& event);
+    wxString GetEditorFilePath(IEditor* editor) const;
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
+    void OnFixLSPPaths(wxCommandEvent& event);
+    // Called by the plugin after load to check that all the configured
+    // LSPs are valid
+    void CheckServers();
+    wxArrayString GetBrokenLSPs() const;
+
+    std::unique_ptr<LanguageServerCluster> m_servers;
+    clTabTogglerHelper::Ptr_t m_tabToggler;
+    LanguageServerLogView* m_logView{nullptr};
+    TextGenerationPreviewFrame* m_commentGenerationView{nullptr};
 };
 
 #endif // LanguageServerPlugin

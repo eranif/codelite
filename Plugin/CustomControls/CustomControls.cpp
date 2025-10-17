@@ -35,17 +35,48 @@ TextPreviewDialogBase::TextPreviewDialogBase(
         bBitmapLoaded = true;
     }
 
+    SetName(wxT("TextPreviewDialogBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if (GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+    if (!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+}
+
+TextPreviewDialogBase::~TextPreviewDialogBase() {}
+
+TextGenerationPreviewFrameBase::TextGenerationPreviewFrameBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxFrame(parent, id, title, pos, size, style)
+{
+    if (!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC26B3InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
     wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer1);
 
-    m_panel8 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_main_panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
-    boxSizer1->Add(m_panel8, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer1->Add(m_main_panel, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* boxSizer9 = new wxBoxSizer(wxVERTICAL);
-    m_panel8->SetSizer(boxSizer9);
+    m_main_panel->SetSizer(boxSizer9);
 
-    m_editor = new wxStyledTextCtrl(m_panel8, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel8, wxSize(500, 300)), 0);
+    m_editor =
+        new wxStyledTextCtrl(m_main_panel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_main_panel, wxSize(500, 300)), 0);
     // Configure the fold margin
     m_editor->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_editor->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -97,7 +128,7 @@ TextPreviewDialogBase::TextPreviewDialogBase(
 
     boxSizer5->Add(m_button_cancel, 0, wxALL, WXC_FROM_DIP(5));
 
-    SetName(wxT("TextPreviewDialogBase"));
+    SetName(wxT("TextGenerationPreviewFrameBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
     if (GetSizer()) {
         GetSizer()->Fit(this);
@@ -113,12 +144,14 @@ TextPreviewDialogBase::TextPreviewDialogBase(
         wxPersistenceManager::Get().Restore(this);
     }
     // Connect events
-    m_button_copy->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TextPreviewDialogBase::OnCopy, this);
-    m_button_copy->Bind(wxEVT_UPDATE_UI, &TextPreviewDialogBase::OnCopyUI, this);
+    m_button_copy->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnCopy, this);
+    m_button_copy->Bind(wxEVT_UPDATE_UI, &TextGenerationPreviewFrameBase::OnCopyUI, this);
+    m_button_cancel->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnClose, this);
 }
 
-TextPreviewDialogBase::~TextPreviewDialogBase()
+TextGenerationPreviewFrameBase::~TextGenerationPreviewFrameBase()
 {
-    m_button_copy->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &TextPreviewDialogBase::OnCopy, this);
-    m_button_copy->Unbind(wxEVT_UPDATE_UI, &TextPreviewDialogBase::OnCopyUI, this);
+    m_button_copy->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnCopy, this);
+    m_button_copy->Unbind(wxEVT_UPDATE_UI, &TextGenerationPreviewFrameBase::OnCopyUI, this);
+    m_button_cancel->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnClose, this);
 }

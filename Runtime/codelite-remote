@@ -29,16 +29,38 @@ configuration = {}
 
 
 def print_message_terminator():
+    """
+    Prints a message terminator string used for code remote communication.
+
+    This function outputs the specific string ">>codelite-remote-msg-end<<"
+    which serves as a marker for end of message in code remote operations.
+    """
     print(">>codelite-remote-msg-end<<")
 
 
 def _load_config_file(filepath):
     """
-    attempt to load a configuration file
+    Loads a configuration file from the specified filepath and parses it as JSON.
 
-    Returns
-    -------
-        true on success
+    This function attempts to read and parse a JSON configuration file. If the
+    file exists and contains valid JSON, it updates the global 'configuration'
+    variable with the parsed content. If the file doesn't exist or contains
+    invalid JSON, appropriate error messages are logged and False is returned.
+
+    Args:
+        filepath (str): The path to the configuration file to be loaded
+
+    Returns:
+        bool: True if the configuration file was successfully loaded and parsed,
+              False otherwise
+
+    Example:
+        >>> _load_config_file("/path/to/config.json")
+        True
+
+    Note:
+        This function modifies the global 'configuration' variable on successful
+        load. It uses logging to report success or failure of the operation.
     """
     if not os.path.exists(filepath):
         return False
@@ -60,7 +82,26 @@ def _load_config_file(filepath):
 
 def _create_empty_config_file_if_not_exists(directory):
     """
-    create empty configuration file with a given path
+    Create an empty configuration file if it doesn't already exist.
+
+    This function checks if a configuration file named 'codelite-remote.json' exists
+    in the specified directory. If the file doesn't exist, it creates the file with
+    an empty JSON object. The function also ensures that the directory exists by
+    creating it if necessary, handling the case where the directory already exists.
+
+    Args:
+        directory (str): The directory path where the configuration file should be created
+
+    Returns:
+        None
+
+    Example:
+        >>> _create_empty_config_file_if_not_exists("/home/user/.config")
+        # Creates /home/user/.config/codelite-remote.json with empty JSON object
+
+    Note:
+        This function uses logging to report its actions and handles OSError exceptions
+        when creating directories.
     """
     config_file = "{}/codelite-remote.json".format(directory)
     if os.path.exists(config_file):
@@ -81,8 +122,16 @@ def _create_empty_config_file_if_not_exists(directory):
 
 
 def load_configuration():
-    # We first try to load the configuration file for the current workspace
-    # by default this will be the `WORKSPACE_PATH/.codelite`
+    """
+    Save configuration to a file.
+
+    This function creates the directory path if it doesn't exist and writes
+    an empty JSON object to the configuration file. It handles the case where
+    the directory already exists by catching OSError exceptions.
+
+    The configuration file is saved in the current working directory with
+    the name 'codelite-remote.json'.
+    """
     curdir = os.path.dirname(__file__)
     local_config_file = "{}/codelite-remote.json".format(curdir)
 
@@ -100,6 +149,20 @@ def load_configuration():
 
 
 def write_file(cmd):
+    """
+    Load the global CodeLite remote configuration file.
+
+    This function attempts to load the global configuration file located at
+    '~/.codelite/codelite-remote.json'. If the file does not exist, it creates
+    an empty configuration file in the ~/.codelite directory before loading.
+
+    Returns:
+        The loaded configuration data from the JSON file
+
+    Note:
+        This function modifies the filesystem by creating an empty config file
+        if one doesn't already exist.
+    """
     try:
         fp = open(cmd["path"], "w")
         fp.write(cmd["content"])
@@ -110,6 +173,25 @@ def write_file(cmd):
 
 
 def run_command(command, working_directory=None, env=None):
+    """
+    Execute a command and return its output.
+
+    This function runs a shell command in the specified working directory with the given environment.
+    It captures the command's output and returns it along with a success status.
+
+    Args:
+        command (str): The command to execute
+        working_directory (str, optional): The directory to run the command in
+        env (dict, optional): Environment variables to use for the command
+
+    Returns:
+        tuple: A tuple containing (success_flag, output_bytes) where success_flag is a boolean
+               indicating if the command succeeded, and output_bytes contains the command output
+
+    Note:
+        This function uses subprocess.check_output which will raise an exception if the command fails.
+        The function handles exceptions internally and prints error messages to stdout.
+    """
     try:
         completed_proc = subprocess.run(
             args=command,
@@ -124,6 +206,22 @@ def run_command(command, working_directory=None, env=None):
 
 
 def run_command_and_return_output(command, working_directory=None, env=None):
+    """
+    Execute a command and return its output as a string.
+
+    This function runs a shell command with optional working directory and environment variables.
+    It captures the standard output and returns it as a decoded UTF-8 string.
+
+    Args:
+        command (str): The command to execute
+        working_directory (str, optional): The directory to run the command in
+        env (dict, optional): Environment variables to use for the command
+
+    Returns:
+        tuple: A tuple containing (success_flag, output_or_error_message)
+               - success_flag (bool): True if command succeeded, False otherwise
+               - output_or_error_message (str): Command output on success, error message on failure
+    """
     try:
         return True, subprocess.check_output(
             args=command,
@@ -138,6 +236,18 @@ def run_command_and_return_output(command, working_directory=None, env=None):
 
 
 def expand_vars(s):
+    """
+    Expand user home directory and environment variables in a string.
+
+    This function first expands the user home directory (~) using os.path.expanduser(),
+    then expands any environment variables using os.path.expandvars().
+
+    Args:
+        s (str): The input string to expand
+
+    Returns:
+        str: The expanded string with user home directory and environment variables replaced
+    """
     expanded = os.path.expanduser(s)
     expanded = os.path.expandvars(expanded)
     return expanded
@@ -146,6 +256,9 @@ def expand_vars(s):
 def on_exec(cmd):
     """
     Execute command and print its output
+
+    Args:
+        cmd (dict): Command configuration containing 'env', 'wd', and 'cmd' keys
     """
     # preare the environment
     env_dict = dict(os.environ.copy())
@@ -167,6 +280,33 @@ def on_exec(cmd):
 
 
 def get_list_files_commands(cmd):
+    """
+    Generate a shell command to find files with specified extensions and exclude certain patterns.
+
+    This function constructs a 'find' command that searches for files in a given directory
+    with specific extensions, while optionally excluding files with certain extensions
+    or matching specific patterns.
+
+    Args:
+        cmd (dict): A dictionary containing the following keys:
+            - root_dir (str): The directory to search in
+            - file_extensions (list): List of file extensions to include
+            - exclude_extensions (list, optional): List of file extensions to exclude
+            - exclude_patterns (list, optional): List of patterns to exclude from results
+
+    Returns:
+        str: The constructed shell command string
+
+    Example:
+        >>> cmd = {
+        ...     "root_dir": "/home/user",
+        ...     "file_extensions": [".txt", ".py"],
+        ...     "exclude_extensions": [".tmp"],
+        ...     "exclude_patterns": ["backup"]
+        ... }
+        >>> get_list_files_commands(cmd)
+        'find /home/user -type f -name ".txt" -o -name ".py" ! -name ".tmp"|grep -v "backup"'
+    """
     logging.info(f"Processing request: {cmd}")
     where = cmd["root_dir"]
     extensions = cmd["file_extensions"]
@@ -206,6 +346,22 @@ def get_list_files_commands(cmd):
 
 
 def get_files(cmd):
+    """
+    Retrieve files using the provided command.
+
+    This function executes a command to find files and returns them as a set.
+    If the command execution fails, None is returned.
+
+    Args:
+        cmd: The command to execute for finding files
+
+    Returns:
+        A set of files if successful, None if the command execution fails
+
+    Example:
+        >>> get_files("find . -name '*.py'")
+        {'file1.py', 'file2.py'}
+    """
     files = set()
     find_cmd = get_list_files_commands(cmd)
     success, find_output = run_command_and_return_output(find_cmd)
@@ -246,6 +402,13 @@ def on_find_files(cmd):
 
 
 def get_grep_command(cmd):
+    """
+    Find list of files with a given extension and from a given root directory
+
+    Example command:
+
+    {"command":"find","file_extensions":["*.cpp","*.hpp","*.h"],"root_dir":"/home/eran/devl/codelite","find_what":"wxStringSet_t","icase": true,"whole_word": false}
+    """
     command = "grep --line-number --with-filename "
     if cmd["whole_word"] == True:
         command += "-w "
@@ -292,6 +455,18 @@ def on_replace_in_files(cmd):
     Example command:
 
     {"command":"replace","file_extensions":["*.cpp","*.hpp","*.h"],"root_dir":"$HOME/devl/codelite","find_what":"wxStringSet_t","icase": true,"whole_word": false, "replace_with": "std::unordered_set<wxString>"}
+
+    Args:
+        cmd (dict): Command dictionary containing:
+            - find_what (str): The string to find
+            - replace_with (str): The replacement string
+            - icase (bool): Whether to ignore case
+            - whole_word (bool): Whether to match whole words only
+            - file_extensions (list): List of file extensions to search in
+            - root_dir (str): Root directory to search files in
+
+    Returns:
+        None: This function modifies files in place and does not return anything
     """
     files = get_files(cmd)
     if files:
@@ -374,6 +549,21 @@ def locate_in_path(name, path, versions_arr, ext):
 
 
 def on_list_lsps(lsps_array):
+    """
+    Handle listing language servers from the global configuration.
+
+    This function accesses the global configuration to retrieve and display
+    the list of configured language servers. If no language server configuration
+    is found, it prints an empty JSON array.
+
+    The function prints the servers array in JSON format and terminates with
+    a message terminator.
+
+    Example:
+        >>> on_list_lsps([])
+        [{"name": "pylsp", "command": ["pylsp"]}]
+        ...
+    """
     # use the global configuration file
     global configuration
     if (
@@ -390,8 +580,15 @@ def on_list_lsps(lsps_array):
 
 def on_find_path(cmd):
     """
-    find a directory or a file with a given name
-    if the path does not exist, check the parent folder until we hit root /
+    Find a directory or a file with a given name.
+
+    If the path does not exist, check the parent folder until we hit root /.
+
+    Args:
+        cmd (dict): A dictionary containing the path to search for
+
+    Returns:
+        None: Prints the found path to stdout or nothing if not found
     """
     path = cmd["path"]
     path = os.path.expanduser(path)
@@ -446,7 +643,24 @@ def locate(cmd):
 
 def main_loop():
     """
-    accept input from the user and process the command
+    Main loop for codelite-remote helper that processes user commands.
+
+    This function sets up logging, loads configuration, and enters an interactive
+    loop where it accepts input from the user, parses JSON commands, and executes
+    corresponding handler functions. It supports various commands like file finding,
+    execution, and text replacement operations.
+
+    The function handles the following commands:
+    - ls: find files
+    - find: find in files
+    - exec: execute command
+    - write_file: write to file
+    - locate: locate files
+    - find_path: find path
+    - list_lsps: list language servers
+    - replace: replace text in files
+
+    The loop continues until 'exit', 'bye', 'quit', or 'q' is entered.
     """
     parser = argparse.ArgumentParser(description="codelite-remote helper")
     parser.add_argument(
@@ -519,6 +733,12 @@ def main_loop():
 
 
 def main():
+    """
+    Main function that initiates the main loop execution.
+
+    This function serves as the entry point of the program, calling the
+    main_loop() function to start the primary application logic.
+    """
     main_loop()
 
 

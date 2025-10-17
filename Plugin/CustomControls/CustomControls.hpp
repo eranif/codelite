@@ -14,6 +14,7 @@
 #include <wx/dialog.h>
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
+#include <wx/frame.h>
 #include <wx/sizer.h>
 #include <wx/panel.h>
 #include <wx/stc/stc.h>
@@ -39,20 +40,8 @@
 class TextPreviewDialogBase : public wxDialog
 {
 protected:
-    wxPanel* m_panel8;
-    wxStyledTextCtrl* m_editor;
-    wxButton* m_button_copy;
-    wxButton* m_button_cancel;
-
 protected:
-    virtual void OnCopy(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnCopyUI(wxUpdateUIEvent& event) { event.Skip(); }
-
 public:
-    wxStyledTextCtrl* GetEditor() { return m_editor; }
-    wxPanel* GetPanel8() { return m_panel8; }
-    wxButton* GetButton_copy() { return m_button_copy; }
-    wxButton* GetButton_cancel() { return m_button_cancel; }
     TextPreviewDialogBase(wxWindow* parent,
                           wxWindowID id = wxID_ANY,
                           const wxString& title = _("Text Preview"),
@@ -60,6 +49,33 @@ public:
                           const wxSize& size = wxSize(500, 300),
                           long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~TextPreviewDialogBase();
+};
+
+class TextGenerationPreviewFrameBase : public wxFrame
+{
+protected:
+    wxPanel* m_main_panel;
+    wxStyledTextCtrl* m_editor;
+    wxButton* m_button_copy;
+    wxButton* m_button_cancel;
+
+protected:
+    virtual void OnCopy(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCopyUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnClose(wxCommandEvent& event) { event.Skip(); }
+
+public:
+    wxStyledTextCtrl* GetEditor() { return m_editor; }
+    wxPanel* GetMain_panel() { return m_main_panel; }
+    wxButton* GetButton_copy() { return m_button_copy; }
+    wxButton* GetButton_cancel() { return m_button_cancel; }
+    TextGenerationPreviewFrameBase(wxWindow* parent,
+                                   wxWindowID id = wxID_ANY,
+                                   const wxString& title = _("Text Generation"),
+                                   const wxPoint& pos = wxDefaultPosition,
+                                   const wxSize& size = wxSize(500, 300),
+                                   long style = wxFRAME_FLOAT_ON_PARENT | wxRESIZE_BORDER);
+    virtual ~TextGenerationPreviewFrameBase();
 };
 
 #endif

@@ -227,6 +227,13 @@ if(NOT APPLE)
         install(
             CODE "execute_process(COMMAND rm -f \$ENV{DESTDIR}/${CMAKE_INSTALL_PREFIX}/share/icons/hicolor/icon-theme.cache)"
         )
+    elseif(MINGW AND WITH_POSIX_LAYOUT)
+        install(
+            FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png
+            DESTINATION ${CMAKE_INSTALL_PREFIX}/share/codelite/images
+            RENAME splashscreen.png)
+
+        install(FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png DESTINATION ${CMAKE_INSTALL_PREFIX}/share/codelite/images)
     elseif(MINGW)
         install(
             FILES ${CL_SRC_ROOT}/art/splashscreen@2x.png

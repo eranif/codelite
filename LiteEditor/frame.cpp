@@ -590,8 +590,10 @@ EVT_MENU(XRCID("manage_plugins"), clMainFrame::OnManagePlugins)
 //-------------------------------------------------------
 EVT_MENU(XRCID("ai_prompt_editor"), clMainFrame::OnAiPromptEditor)
 EVT_MENU(XRCID("ai_settings"), clMainFrame::OnAiSettings)
+EVT_MENU(XRCID("ai_show_chat_window"), clMainFrame::OnAiShowChatBox)
 EVT_UPDATE_UI(XRCID("ai_prompt_editor"), clMainFrame::OnAiAvailableUI)
 EVT_UPDATE_UI(XRCID("ai_settings"), clMainFrame::OnAiAvailableUI)
+EVT_UPDATE_UI(XRCID("ai_show_chat_window"), clMainFrame::OnAiAvailableUI)
 
 //-------------------------------------------------------
 // Settings menu
@@ -6212,6 +6214,12 @@ void clMainFrame::OnAiPromptEditor(wxCommandEvent& e)
     wxUnusedVar(e);
     PromptEditorDlg dlg(this);
     dlg.ShowModal();
+}
+
+void clMainFrame::OnAiShowChatBox(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    m_chatAI->ShowChatWindow();
 }
 
 void clMainFrame::OnAiSettings(wxCommandEvent& e)

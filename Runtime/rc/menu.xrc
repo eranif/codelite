@@ -703,8 +703,8 @@
     <object class="wxMenu" name="ai_menu">
       <label>AI</label>
       <style>wxMENU_TEAROFF</style>
-      <object class="wxMenuItem" name="chatai_show_window">
-        <label>Open &amp;Chat Window</label>
+      <object class="wxMenuItem" name="ai_show_chat_window">
+        <label>Open &amp;Chat Window\tCtrl-Shift-H</label>
       </object>
       <object class="wxMenuItem" name="ai_prompt_editor">
         <label>Prompt &amp;Editor</label>

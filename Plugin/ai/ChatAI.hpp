@@ -38,9 +38,9 @@ public:
 
     void DetachView(bool show_frame);
     void DockView();
+    void ShowChatWindow();
 
 private:
-    void OnShowChatWindow(wxCommandEvent& event);
     void OnInitDone(wxCommandEvent& event);
 
     ChatAIWindow* m_chatWindow{nullptr};

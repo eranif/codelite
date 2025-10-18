@@ -57,7 +57,7 @@ To download CodeLite for Debian based systems (Debian / Mint / Ubuntu etc):
 
 - Add the CodeLite public key to avoid warnings or worse from apt/aptitude. Unfortunately this has recently become much more complicated: see [this post and thread][20] for a summary. It is currently also different for the two distros.
 
-For debian 12 (bookworm) and 13 (trixie) do:
+For debian 12 (bookworm) and 13 (trixie) and Mint 22.2 (Zara), and earlier, do:
 ```bash
 wget -qO- http://repos.codelite.org/CodeLite.asc | sudo tee /etc/apt/trusted.gpg.d/CodeLite.asc
 ```

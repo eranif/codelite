@@ -123,10 +123,16 @@ public:
      */
     static bool NextWord(const wxString& str, size_t& offset, wxString& word, bool makeLower = false);
 
-    /// Join elements of a container into a string using `glue` as the elements separator
-    /// `Container` any container that can be "range looped"
+    /**
+     * @brief Joins elements of a container into a single string with a glue separator.
+     *
+     * @tparam Container The type of the container containing elements to join
+     * @param c The container of elements to join
+     * @param glue The string to use as separator between elements (default is newline)
+     * @return wxString The joined string with all elements separated by the glue
+     */
     template <typename Container>
-    static wxString clJoin(const Container& c, const wxString& glue = "\n")
+    static wxString Join(const Container& c, const wxString& glue = "\n")
     {
         wxString output;
         for (const auto& ele : c) {
@@ -229,4 +235,3 @@ public:
     }
 };
 inline wxString BoolToString(bool b) { return b ? wxT("yes") : wxT("no"); }
-

@@ -31,6 +31,7 @@
 #include "CustomControls/PromptEditorDlg.hpp"
 #include "Debugger/DebuggerToolBar.h"
 #include "Debugger/debuggermanager.h"
+#include "FileManager.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "Notebook.h"
 #include "NotebookNavigationDlg.h"
@@ -588,7 +589,9 @@ EVT_MENU(XRCID("manage_plugins"), clMainFrame::OnManagePlugins)
 // AI menu
 //-------------------------------------------------------
 EVT_MENU(XRCID("ai_prompt_editor"), clMainFrame::OnAiPromptEditor)
-EVT_UPDATE_UI(XRCID("ai_prompt_editor"), clMainFrame::OnAiPromptEditorUI)
+EVT_MENU(XRCID("ai_settings"), clMainFrame::OnAiSettings)
+EVT_UPDATE_UI(XRCID("ai_prompt_editor"), clMainFrame::OnAiAvailableUI)
+EVT_UPDATE_UI(XRCID("ai_settings"), clMainFrame::OnAiAvailableUI)
 
 //-------------------------------------------------------
 // Settings menu
@@ -6208,4 +6211,21 @@ void clMainFrame::OnAiPromptEditor(wxCommandEvent& e)
     dlg.ShowModal();
 }
 
-void clMainFrame::OnAiPromptEditorUI(wxUpdateUIEvent& e) { e.Enable(llm::Manager::GetInstance().IsAvailable()); }
+void clMainFrame::OnAiSettings(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    WriteOptions opts{.force_global = true};
+    wxString global_config_path = FileManager::GetSettingFileFullPath(kAssistantConfigFile, opts);
+    if (!wxFileName::Exists(global_config_path)) {
+        // create it
+        if (!FileUtils::WriteFileContent(global_config_path, kDefaultSettings)) {
+            ::wxMessageBox(wxString() << _("Failed to create configuration file:\n") << global_config_path,
+                           "CodeLite",
+                           wxICON_WARNING | wxOK | wxCENTER);
+            return;
+        }
+    }
+    clGetManager()->OpenFile(global_config_path);
+}
+
+void clMainFrame::OnAiAvailableUI(wxUpdateUIEvent& e) { e.Enable(llm::Manager::GetInstance().IsAvailable()); }

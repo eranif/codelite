@@ -205,7 +205,7 @@ void AddFileExtension(LexerConf::Ptr_t lexer, const wxString& extension)
         return;
     }
 
-    wxString as_str = StringUtils::clJoin(S, ";");
+    wxString as_str = StringUtils::Join(S, ";");
     lexer->SetFileSpec(as_str);
 }
 

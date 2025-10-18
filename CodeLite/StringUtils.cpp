@@ -63,7 +63,7 @@ clEnvList_t split_env_string(const wxString& env_str)
         if (key.empty()) {
             continue;
         }
-        result.push_back({ key, value });
+        result.push_back({key, value});
     }
     return result;
 }
@@ -111,7 +111,7 @@ wxString StringUtils::wxIntToString(int val)
 unsigned int StringUtils::UTF8Length(const wchar_t* uptr, unsigned int tlen)
 {
     constexpr unsigned int SURROGATE_LEAD_FIRST = 0xD800;
-    //constexpr unsigned int SURROGATE_TRAIL_FIRST = 0xDC00;
+    // constexpr unsigned int SURROGATE_TRAIL_FIRST = 0xDC00;
     constexpr unsigned int SURROGATE_TRAIL_LAST = 0xDFFF;
     unsigned int len = 0;
     for (unsigned int i = 0; i < tlen && uptr[i];) {
@@ -197,7 +197,7 @@ wxChar SafeGetChar(wxStringView buf, size_t pos)
 //  Operating System Command (OSC)
 wxString StringUtils::StripTerminalOSC(const wxString& buffer)
 {
-    wxStringView sv{ buffer.wc_str(), buffer.length() };
+    wxStringView sv{buffer.wc_str(), buffer.length()};
     return StripTerminalOSC(sv);
 }
 
@@ -262,14 +262,25 @@ void StringUtils::DisableMarkdownStyling(wxString& buffer)
     buffer.Replace("`", "\\`");
 }
 
-
 wxString StringUtils::DecodeURI(const wxString& uri)
 {
-    static const wxStringMap_t sEncodeMap = { { "%20", " " }, { "%21", "!" }, { "%23", "#" }, { "%24", "$" },
-                                              { "%26", "&" }, { "%27", "'" }, { "%28", "(" }, { "%29", ")" },
-                                              { "%2A", "*" }, { "%2B", "+" }, { "%2C", "," }, { "%3B", ";" },
-                                              { "%3D", "=" }, { "%3F", "?" }, { "%40", "@" }, { "%5B", "[" },
-                                              { "%5D", "]" } };
+    static const wxStringMap_t sEncodeMap = {{"%20", " "},
+                                             {"%21", "!"},
+                                             {"%23", "#"},
+                                             {"%24", "$"},
+                                             {"%26", "&"},
+                                             {"%27", "'"},
+                                             {"%28", "("},
+                                             {"%29", ")"},
+                                             {"%2A", "*"},
+                                             {"%2B", "+"},
+                                             {"%2C", ","},
+                                             {"%3B", ";"},
+                                             {"%3D", "="},
+                                             {"%3F", "?"},
+                                             {"%40", "@"},
+                                             {"%5B", "["},
+                                             {"%5D", "]"}};
     wxString decodedString;
     wxString escapeSeq;
     int state = 0;
@@ -308,12 +319,23 @@ wxString StringUtils::DecodeURI(const wxString& uri)
 
 wxString StringUtils::EncodeURI(const wxString& uri)
 {
-    static const std::unordered_map<int, wxString> sEncodeMap = {
-        { (int)'!', "%21" }, { (int)'#', "%23" }, { (int)'$', "%24" }, { (int)'&', "%26" }, { (int)'\'', "%27" },
-        { (int)'(', "%28" }, { (int)')', "%29" }, { (int)'*', "%2A" }, { (int)'+', "%2B" }, { (int)',', "%2C" },
-        { (int)';', "%3B" }, { (int)'=', "%3D" }, { (int)'?', "%3F" }, { (int)'@', "%40" }, { (int)'[', "%5B" },
-        { (int)']', "%5D" }, { (int)' ', "%20" }
-    };
+    static const std::unordered_map<int, wxString> sEncodeMap = {{(int)'!', "%21"},
+                                                                 {(int)'#', "%23"},
+                                                                 {(int)'$', "%24"},
+                                                                 {(int)'&', "%26"},
+                                                                 {(int)'\'', "%27"},
+                                                                 {(int)'(', "%28"},
+                                                                 {(int)')', "%29"},
+                                                                 {(int)'*', "%2A"},
+                                                                 {(int)'+', "%2B"},
+                                                                 {(int)',', "%2C"},
+                                                                 {(int)';', "%3B"},
+                                                                 {(int)'=', "%3D"},
+                                                                 {(int)'?', "%3F"},
+                                                                 {(int)'@', "%40"},
+                                                                 {(int)'[', "%5B"},
+                                                                 {(int)']', "%5D"},
+                                                                 {(int)' ', "%20"}};
 
     wxString encoded;
     for (size_t i = 0; i < uri.length(); ++i) {
@@ -373,7 +395,7 @@ wxString StringUtils::clJoinLinesWithEOL(const wxArrayString& lines, int eol)
         glue = "\n";
         break;
     }
-    return StringUtils::clJoin(lines, glue);
+    return StringUtils::Join(lines, glue);
 }
 
 wxString StringUtils::wxImplode(const wxArrayString& arr, const wxString& glue)
@@ -478,7 +500,7 @@ char** StringUtils::BuildArgv(const wxString& str, int& argc)
 {
     std::vector<wxString> A;
     int dollar_paren_depth = 0;
-    std::vector<int> states = { ARGV_STATE_NORMAL };
+    std::vector<int> states = {ARGV_STATE_NORMAL};
     wxString curstr;
     for (wxChar ch : str) {
         switch (get_current_state(states)) {
@@ -698,7 +720,7 @@ clEnvList_t StringUtils::ResolveEnvList(const clEnvList_t& env_list)
     for (auto [env_var_name, env_var_value] : env_list) {
         env_var_value = expand_env_variable(env_var_value, current_env);
         current_env.erase(env_var_name);
-        current_env.insert({ env_var_name, env_var_value });
+        current_env.insert({env_var_name, env_var_value});
     }
 
     clEnvList_t result;
@@ -706,7 +728,7 @@ clEnvList_t StringUtils::ResolveEnvList(const clEnvList_t& env_list)
 
     // convert the hash map into list and return it
     for (const auto& [env_var_name, env_var_value] : current_env) {
-        result.push_back({ env_var_name, env_var_value });
+        result.push_back({env_var_name, env_var_value});
     }
     return result;
 }

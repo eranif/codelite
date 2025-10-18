@@ -2,6 +2,7 @@
 
 #include "GotoAnythingDlg.h"
 #include "Keyboard/clKeyboardManager.h"
+#include "StringUtils.h"
 #include "bitmap_loader.h"
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
@@ -12,6 +13,7 @@
 #include "imanager.h"
 
 #include <algorithm>
+#include <numeric>
 #include <queue>
 #include <wx/menu.h>
 #include <wx/stc/stc.h>
@@ -40,9 +42,9 @@ void clGotoAnythingManager::OnActionSelected(clGotoEvent& e)
     e.Skip();
     // Trigger the action
     const clGotoEntry& entry = e.GetEntry();
-    if(entry.GetResourceID() != wxID_ANY) {
+    if (entry.GetResourceID() != wxID_ANY) {
         wxCommandEvent evtAction(wxEVT_MENU, entry.GetResourceID());
-        if(entry.IsCheckable()) {
+        if (entry.IsCheckable()) {
             evtAction.SetInt(entry.IsChecked() ? 0 : 1); // Set the opposite value
         }
         EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evtAction);
@@ -62,7 +64,7 @@ void clGotoAnythingManager::ShowDialog()
     EventNotifier::Get()->ProcessEvent(evtSort);
 
 #ifdef __WXMSW__
-    if(clGetManager()->GetActiveEditor()) {
+    if (clGetManager()->GetActiveEditor()) {
         clGetManager()->GetActiveEditor()->SetActive();
     }
 #endif
@@ -79,8 +81,9 @@ std::vector<clGotoEntry> clGotoAnythingManager::GetActions()
     for (const auto& p : m_actions) {
         actions.push_back(p.second);
     }
-    std::sort(actions.begin(), actions.end(),
-              [&](const clGotoEntry& a, const clGotoEntry& b) { return a.GetDesc() < b.GetDesc(); });
+    std::sort(actions.begin(), actions.end(), [&](const clGotoEntry& a, const clGotoEntry& b) {
+        return a.GetDesc() < b.GetDesc();
+    });
     return actions;
 }
 
@@ -91,46 +94,52 @@ void clGotoAnythingManager::Initialise()
 
     wxFrame* mainFrame = EventNotifier::Get()->TopFrame();
     auto mb = clGetManager()->GetMenuBar();
-    if(!mb) {
+    if (!mb) {
         return;
     }
 
     // Get list of menu entries
-    std::queue<std::pair<wxString, wxMenu*>> q;
-    for(size_t i = 0; i < mb->GetMenuCount(); ++i) {
-        q.push(std::make_pair("", mb->GetMenu(i)));
+    std::queue<std::pair<wxArrayString, wxMenu*>> q;
+    for (size_t i = 0; i < mb->GetMenuCount(); ++i) {
+        wxArrayString labels = {mb->GetMenuLabelText(i)};
+        q.push(std::make_pair(labels, mb->GetMenu(i)));
     }
 
     static wxBitmap defaultBitmap = clGetManager()->GetStdIcons()->LoadBitmap("placeholder");
-    while(!q.empty()) {
+    while (!q.empty()) {
         wxMenu* menu = q.front().second;
-        wxString prefix = q.front().first;
+        const wxArrayString prefix = q.front().first;
         q.pop();
 
         // Call this to ensure that any checkable items are marked as "checked" if needed
         menu->UpdateUI(mainFrame->GetEventHandler());
 
         for (const wxMenuItem* menuItem : menu->GetMenuItems()) {
-            if(menuItem->GetSubMenu()) {
+            wxArrayString parts = prefix;
+            if (menuItem->GetSubMenu()) {
                 wxString labelText = menuItem->GetItemLabelText();
-                if((labelText == "Recent Files") || (labelText == "Recent Workspaces")) {
+                if ((labelText == "Recent Files") || (labelText == "Recent Workspaces")) {
                     continue;
                 }
-                q.push(std::make_pair(menuItem->GetItemLabelText() + " > ", menuItem->GetSubMenu()));
-            } else if((menuItem->GetId() != wxNOT_FOUND) && (menuItem->GetId() != wxID_SEPARATOR)) {
+                parts.push_back(menuItem->GetItemLabelText());
+                q.push(std::make_pair(parts, menuItem->GetSubMenu()));
+            } else if ((menuItem->GetId() != wxNOT_FOUND) && (menuItem->GetId() != wxID_SEPARATOR)) {
                 clGotoEntry entry;
-                wxString desc = menuItem->GetItemLabelText();
-                entry.SetDesc(prefix + desc);
-                if(menuItem->IsCheck()) {
+                parts.push_back(menuItem->GetItemLabelText());
+
+                wxString desc = StringUtils::Join(parts, wxString(" > "));
+                entry.SetDesc(desc);
+
+                if (menuItem->IsCheck()) {
                     entry.SetFlags(clGotoEntry::kItemCheck);
                     entry.SetChecked(menuItem->IsChecked());
                 }
-                if(menuItem->GetAccel()) {
+                if (menuItem->GetAccel()) {
                     entry.SetKeyboardShortcut(menuItem->GetAccel()->ToString());
                 }
                 entry.SetResourceID(menuItem->GetId());
                 entry.SetBitmap(menuItem->GetBitmap().IsOk() ? menuItem->GetBitmap() : defaultBitmap);
-                if(!entry.GetDesc().IsEmpty()) {
+                if (!entry.GetDesc().IsEmpty()) {
                     // Don't add empty entries
                     m_actions[entry.GetDesc()] = entry;
                 }
@@ -142,7 +151,7 @@ void clGotoAnythingManager::Initialise()
 void clGotoAnythingManager::DoAddCurrentTabActions(clGotoEntry::Vec_t& V)
 {
     IEditor* editor = clGetManager()->GetActiveEditor();
-    if(editor) {
+    if (editor) {
         {
             clGotoEntry entry(_("Current Tab > Close Tabs To The Right"), "", XRCID("close_tabs_to_the_right"));
             V.push_back(entry);
@@ -179,16 +188,17 @@ void clGotoAnythingManager::DoAddCurrentTabActions(clGotoEntry::Vec_t& V)
             V.push_back(entry);
         }
         {
-            clGotoEntry entry(_("Current Tab > Copy fullpath (name, extension and directory)"), "",
-                              XRCID("copy_file_name"));
+            clGotoEntry entry(
+                _("Current Tab > Copy fullpath (name, extension and directory)"), "", XRCID("copy_file_name"));
             V.push_back(entry);
         }
         {
             clGotoEntry entry(_("Current Tab > Copy Path only (directory part only)"), "", XRCID("copy_file_path"));
             V.push_back(entry);
         }
-        if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
-            clGotoEntry entry(_("Current Tab > Copy full path relative to workspace"), "",
+        if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
+            clGotoEntry entry(_("Current Tab > Copy full path relative to workspace"),
+                              "",
                               XRCID("copy_file_relative_path_to_workspace"));
             V.push_back(entry);
         }

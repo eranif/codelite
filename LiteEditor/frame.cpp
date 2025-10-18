@@ -42,6 +42,7 @@
 #include "acceltabledlg.h"
 #include "advanced_settings.h"
 #include "ai/LLMManager.hpp"
+#include "ai/NewLLMEndpointWizard.hpp"
 #include "app.h"
 #include "autoversion.h"
 #include "batchbuilddlg.h"
@@ -591,6 +592,7 @@ EVT_MENU(XRCID("manage_plugins"), clMainFrame::OnManagePlugins)
 EVT_MENU(XRCID("ai_prompt_editor"), clMainFrame::OnAiPromptEditor)
 EVT_MENU(XRCID("ai_settings"), clMainFrame::OnAiSettings)
 EVT_MENU(XRCID("ai_show_chat_window"), clMainFrame::OnAiShowChatBox)
+EVT_MENU(XRCID("ai_configure_endpoint"), clMainFrame::OnAiConfigureEndpoint)
 EVT_UPDATE_UI(XRCID("ai_prompt_editor"), clMainFrame::OnAiAvailableUI)
 EVT_UPDATE_UI(XRCID("ai_settings"), clMainFrame::OnAiAvailableUI)
 EVT_UPDATE_UI(XRCID("ai_show_chat_window"), clMainFrame::OnAiAvailableUI)
@@ -6220,6 +6222,18 @@ void clMainFrame::OnAiShowChatBox(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     m_chatAI->ShowChatWindow();
+}
+
+void clMainFrame::OnAiConfigureEndpoint(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    NewLLMEndpointWizard wizard{this};
+    if (!wizard.RunWizard(wizard.GetFirstPage())) {
+        return;
+    }
+
+    auto endpoint_data = wizard.GetData();
+    llm::Manager::GetInstance().AddNewEndpoint(endpoint_data);
 }
 
 void clMainFrame::OnAiSettings(wxCommandEvent& e)

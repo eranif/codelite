@@ -709,9 +709,12 @@
       <object class="wxMenuItem" name="ai_prompt_editor">
         <label>Prompt &amp;Editor</label>
       </object>
+      <object class="wxMenuItem" name="ai_configure_endpoint">
+        <label>Configure &amp;Endpoint...</label>
+      </object>
       <object class="wxMenuItem" name="wxID_SEPARATOR"/>
       <object class="wxMenuItem" name="ai_settings">
-        <label>&amp;Settings...</label>
+        <label>Open &amp;Settings File...</label>
       </object>
     </object>
     <!-- Settings menu -->

@@ -1,6 +1,7 @@
 #include "LLMManager.hpp"
 
 #include "FileManager.hpp"
+#include "JSON.h"
 #include "assistant/assistant.hpp"
 #include "assistant/claude_client.hpp"
 #include "assistant/ollama_client.hpp"
@@ -455,4 +456,50 @@ std::optional<wxString> Manager::ChooseModel([[maybe_unused]] bool use_default)
     }
     return model;
 }
+
+void Manager::AddNewEndpoint(const llm::EndpointData& d)
+{
+    try {
+        // "http://127.0.0.1:11434": {
+        //    "active": false,
+        //    "http_headers": {
+        //      "Host": "127.0.0.1"
+        //    },
+        //    "type": "ollama"
+        // }
+        WriteOptions opts{.force_global = true};
+        wxString config_content =
+            FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts).value_or(kDefaultSettings);
+
+        auto j = llm::json::parse(config_content.ToStdString(wxConvUTF8));
+        if (!j.contains("endpoints")) {
+            j["endpoints"] = {};
+        }
+
+        auto endpoints = j["endpoints"];
+        if (!endpoints.contains(d.url)) {
+            endpoints.erase(d.url);
+        }
+
+        llm::json new_endpoint;
+        new_endpoint["active"] = false;
+
+        if (d.provider == "claude") {
+            llm::json http_headers;
+            http_headers["x-api-key"] = d.api_key.value_or("");
+            new_endpoint["http_headers"] = http_headers;
+        }
+
+        new_endpoint["type"] = d.provider;
+        new_endpoint["model"] = d.model;
+        new_endpoint["context_size"] = d.context_size.value_or(4 * 1024);
+
+        j["endpoints"][d.url] = new_endpoint;
+        clDEBUG() << j.dump(2) << endl;
+
+    } catch (const std::exception& e) {
+        clERROR() << "Failed to add new endpoint:" << e.what() << endl;
+    }
+}
+
 } // namespace llm

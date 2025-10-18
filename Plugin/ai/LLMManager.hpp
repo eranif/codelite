@@ -113,6 +113,14 @@ inline clStatusOr<T> CheckType(const llm::json& j, const std::string& name)
         return res;                                                         \
     }
 
+struct WXDLLIMPEXP_SDK EndpointData {
+    std::string provider;
+    std::string url;
+    std::string model;
+    std::optional<size_t> context_size;
+    std::optional<std::string> api_key;
+};
+
 struct WXDLLIMPEXP_SDK ThreadTask {
     std::vector<std::string> prompt_array;
     std::string model;
@@ -193,6 +201,8 @@ public:
     FunctionTable& GetPluginFunctionTable() { return m_plugin_functions; }
 
     std::optional<wxString> ChooseModel(bool use_default);
+
+    void AddNewEndpoint(const llm::EndpointData& d);
 
 private:
     Manager();

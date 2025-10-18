@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _CODELITE_CHATAI_UI_BASE_CLASSES_HPP
-#define _CODELITE_CHATAI_UI_BASE_CLASSES_HPP
+#ifndef _PLUGIN_AI_UI_BASE_CLASSES_HPP
+#define _PLUGIN_AI_UI_BASE_CLASSES_HPP
 
 // clang-format off
 #include <wx/settings.h>
@@ -23,6 +23,14 @@
 #include <wx/menu.h>
 #include <wx/frame.h>
 #include <wx/iconbndl.h>
+#include <wx/wizard.h>
+#include <vector>
+#include <wx/bannerwindow.h>
+#include <wx/stattext.h>
+#include <wx/choice.h>
+#include <wx/arrstr.h>
+#include <wx/textctrl.h>
+#include <wx/spinctrl.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -83,6 +91,62 @@ public:
                           const wxSize& size = wxSize(800, 600),
                           long style = wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT);
     virtual ~ChatAIWindowFrameBase();
+};
+
+class NewLLMEndpointWizardBase : public wxWizard
+{
+protected:
+    std::vector<wxWizardPageSimple*> m_pages;
+
+    wxWizardPageSimple* m_wizardPageSettings;
+    wxBannerWindow* m_banner108;
+    wxStaticText* m_staticText69;
+    wxChoice* m_choiceProviders;
+    wxStaticText* m_staticText72;
+    wxTextCtrl* m_textCtrlBaseURL;
+    wxStaticText* m_staticText76;
+    wxTextCtrl* m_textCtrlModel;
+    wxStaticText* m_staticText78;
+    wxSpinCtrl* m_spinCtrlContextSizeKB;
+    wxWizardPageSimple* m_wizardPageAPI;
+    wxBannerWindow* m_banner112;
+    wxStaticText* m_staticText114;
+    wxTextCtrl* m_textCtrlAPIKey;
+
+protected:
+    virtual void OnPageChanging(wxWizardEvent& event) { event.Skip(); }
+    virtual void OnFinished(wxWizardEvent& event) { event.Skip(); }
+    virtual void OnProviderChanged(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnContextSizeUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    wxBannerWindow* GetBanner108() { return m_banner108; }
+    wxStaticText* GetStaticText69() { return m_staticText69; }
+    wxChoice* GetChoiceProviders() { return m_choiceProviders; }
+    wxStaticText* GetStaticText72() { return m_staticText72; }
+    wxTextCtrl* GetTextCtrlBaseURL() { return m_textCtrlBaseURL; }
+    wxStaticText* GetStaticText76() { return m_staticText76; }
+    wxTextCtrl* GetTextCtrlModel() { return m_textCtrlModel; }
+    wxStaticText* GetStaticText78() { return m_staticText78; }
+    wxSpinCtrl* GetSpinCtrlContextSizeKB() { return m_spinCtrlContextSizeKB; }
+    wxWizardPageSimple* GetWizardPageSettings() { return m_wizardPageSettings; }
+    wxBannerWindow* GetBanner112() { return m_banner112; }
+    wxStaticText* GetStaticText114() { return m_staticText114; }
+    wxTextCtrl* GetTextCtrlAPIKey() { return m_textCtrlAPIKey; }
+    wxWizardPageSimple* GetWizardPageAPI() { return m_wizardPageAPI; }
+    NewLLMEndpointWizardBase(wxWindow* parent,
+                             wxWindowID id = wxID_ANY,
+                             const wxString& title = _("New LLM Endpoint"),
+                             const wxBitmap& bmp = wxNullBitmap,
+                             const wxPoint& pos = wxDefaultPosition,
+                             long style = wxDEFAULT_DIALOG_STYLE);
+    wxWizardPageSimple* GetFirstPage() const
+    {
+        if (!m_pages.empty())
+            return m_pages.at(0);
+        return NULL;
+    }
+    virtual ~NewLLMEndpointWizardBase();
 };
 
 #endif

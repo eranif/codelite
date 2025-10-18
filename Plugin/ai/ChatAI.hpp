@@ -28,8 +28,6 @@
 #include "ChatAIWindowFrame.hpp"
 #include "imanager.h"
 
-#include <optional>
-
 class WXDLLIMPEXP_SDK ChatAI : public wxEvtHandler
 {
 public:

@@ -1246,16 +1246,16 @@ if(MINGW)
 
   foreach(DLL ${SYSTEM_DLLS})
     install(FILES "${MSYS2_BASE}/clang64/bin/${DLL}"
-            DESTINATION "${CMAKE_INSTALL_PREFIX}")
+            DESTINATION "${CL_INSTALL_BIN}")
   endforeach()
 
   foreach(DLL ${MSYS2_CORE_FILES})
     install(FILES "${MSYS2_BASE}/usr/bin/${DLL}"
-            DESTINATION "${CMAKE_INSTALL_PREFIX}")
+            DESTINATION "${CL_INSTALL_BIN}")
   endforeach()
 
   foreach(DLL ${WXWIDGETS_DLLS})
-    install(FILES "${DLL}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+    install(FILES "${DLL}" DESTINATION "${CL_INSTALL_BIN}")
   endforeach()
 
   foreach(RESOURCE ${CODELITE_RESOURCES})
@@ -1264,11 +1264,11 @@ if(MINGW)
 
   # copy extra deps dlls
   foreach(DLL ${LIBHUNSPELL_DEPS})
-    install(FILES "${DLL}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+    install(FILES "${DLL}" DESTINATION "${CL_INSTALL_BIN}")
   endforeach()
 
   foreach(DLL ${LIBSSH_DEPS})
-    install(FILES "${DLL}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+    install(FILES "${DLL}" DESTINATION "${CL_INSTALL_BIN}")
   endforeach()
 
   foreach(DLL ${OPENSSL_DEPS})

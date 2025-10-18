@@ -1,19 +1,36 @@
 #include "PromptEditorDlg.hpp"
 
 #include "ColoursAndFontsManager.h"
+#include "MarkdownStyler.hpp"
 #include "ai/LLMManager.hpp"
 #include "file_logger.h"
 #include "globals.h"
+
+struct PromptData : public wxClientData {
+    llm::PromptKind prompt_kind;
+
+    PromptData(llm::PromptKind kind)
+        : prompt_kind{kind}
+    {
+    }
+    ~PromptData() override = default;
+};
 
 PromptEditorDlg::PromptEditorDlg(wxWindow* parent)
     : PromptEditorBaseDlg(parent)
 {
     size_t prompts_count = static_cast<size_t>(llm::PromptKind::kMax);
     for (size_t i = 0; i < prompts_count; ++i) {
-        llm::PromptKind prompt_kind = static_cast<llm::PromptKind>(i);
-        wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(prompt_kind);
-        wxString label = llm::GetPromptString(prompt_kind);
-        m_listbook->AddPage(CreatePage(prompt, prompt_kind), label, i == 0);
+        auto ctrl = new wxStyledTextCtrl(m_listbook);
+        auto d = new PromptData{static_cast<llm::PromptKind>(i)};
+        ctrl->SetClientObject(d);
+        wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(d->prompt_kind);
+        wxString label = llm::GetPromptString(d->prompt_kind);
+        ctrl->SetText(prompt);
+        ctrl->SetSavePoint();
+        MarkdownStyler styler(ctrl);
+        styler.StyleText(true);
+        m_listbook->AddPage(ctrl, label, i == 0);
     }
 
     SendSizeEvent();
@@ -21,19 +38,6 @@ PromptEditorDlg::PromptEditorDlg(wxWindow* parent)
 }
 
 PromptEditorDlg::~PromptEditorDlg() {}
-
-wxStyledTextCtrl* PromptEditorDlg::CreatePage(const wxString& content, llm::PromptKind prompt_kind)
-{
-    wxStyledTextCtrl* ctrl = new wxStyledTextCtrl(m_listbook);
-    ctrl->SetText(content);
-    ctrl->SetSavePoint();
-    ctrl->SetClientData(reinterpret_cast<void*>(static_cast<wxUIntPtr>(prompt_kind)));
-    auto lexer = ColoursAndFontsManager::Get().GetLexer("markdown");
-    if (lexer) {
-        lexer->Apply(ctrl);
-    }
-    return ctrl;
-}
 
 void PromptEditorDlg::OnSave(wxCommandEvent& event)
 {
@@ -45,10 +49,13 @@ void PromptEditorDlg::OnSave(wxCommandEvent& event)
             continue;
         }
         ctrl->SetSavePoint();
-        wxUIntPtr prompt_kind = reinterpret_cast<wxUIntPtr>(ctrl->GetClientData());
-        llm::PromptKind k = static_cast<llm::PromptKind>(prompt_kind);
-        clDEBUG() << "Saving prompt:" << llm::GetPromptString(k) << ":" << ctrl->GetText() << endl;
-        llm::Manager::GetInstance().GetConfig().SetPrompt(k, ctrl->GetText());
+        auto d = dynamic_cast<PromptData*>(ctrl->GetClientObject());
+
+        MarkdownStyler styler(ctrl);
+        styler.StyleText(true);
+
+        clDEBUG() << "Saving prompt:" << llm::GetPromptString(d->prompt_kind) << ":" << ctrl->GetText() << endl;
+        llm::Manager::GetInstance().GetConfig().SetPrompt(d->prompt_kind, ctrl->GetText());
     }
     llm::Manager::GetInstance().GetConfig().Save();
 }
@@ -60,11 +67,11 @@ void PromptEditorDlg::OnSaveUI(wxUpdateUIEvent& event)
         if (!ctrl) {
             continue;
         }
+
         if (ctrl->GetModify()) {
             event.Enable(true);
             return;
         }
     }
-
     event.Enable(false);
 }

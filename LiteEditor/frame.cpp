@@ -3466,6 +3466,9 @@ void clMainFrame::CompleteInitialization()
     PluginManager::Get()->Load();
     m_pluginsToolbar->Realize();
 
+    // Initialise the ChatAI
+    m_chatAI = std::make_unique<ChatAI>();
+
 // Load debuggers (*must* be after the plugins)
 #ifdef USE_POSIX_LAYOUT
     wxString plugdir(clStandardPaths::Get().GetPluginsDirectory());

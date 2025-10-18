@@ -7,6 +7,7 @@
 #include "ai/ProgressToken.hpp"
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
+#include "codelite_exports.h"
 
 #include <wx/activityindicator.h>
 #include <wx/stattext.h>
@@ -14,7 +15,7 @@
 
 class ChatAI;
 using llm::ChatState;
-class ChatAIWindow : public AssistanceAIChatWindowBase
+class WXDLLIMPEXP_SDK ChatAIWindow : public AssistanceAIChatWindowBase
 {
 public:
     ChatAIWindow(wxWindow* parent, ChatAI* plugin);

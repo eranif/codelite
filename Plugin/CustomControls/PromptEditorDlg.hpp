@@ -15,7 +15,4 @@ public:
 protected:
     void OnSave(wxCommandEvent& event) override;
     void OnSaveUI(wxUpdateUIEvent& event) override;
-
-private:
-    wxStyledTextCtrl* CreatePage(const wxString& content, llm::PromptKind prompt_kind);
 };

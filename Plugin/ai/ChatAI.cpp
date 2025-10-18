@@ -41,38 +41,14 @@
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
 
-// our logger object
-INITIALISE_MODULE_LOG(CHATAI_LOG_HANDLER, "ChatAI", "chat_ai.log");
-clModuleLogger& GetLogHandle() { return CHATAI_LOG_HANDLER(); }
-
 namespace
 {
 const wxString CHAT_AI_LABEL = _("Chat AI");
 constexpr const char* kConfigIsViewDetached = "chat_ai.detached_view";
 } // namespace
 
-// Allocate the code formatter on the heap, it will be freed by
-// the application
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new ChatAI(manager); }
-
-CL_PLUGIN_API PluginInfo* GetPluginInfo()
+ChatAI::ChatAI()
 {
-    static PluginInfo info;
-    info.SetAuthor("Eran Ifrah");
-    info.SetName("ChatAI");
-    info.SetDescription(_("A built-in AI assistance"));
-    info.SetVersion("v1.0");
-    return &info;
-}
-
-CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION; }
-
-ChatAI::ChatAI(IManager* manager)
-    : IPlugin(manager)
-{
-    m_longName = _("A built-in AI assistance");
-    m_shortName = _("A built-in AI assistance");
-
     clKeyboardManager::Get()->AddAccelerator(_("Chat AI"),
                                              {
                                                  {"chatai_show_window", _("Show AI Chat Window"), "Ctrl-Shift-H"},
@@ -82,38 +58,9 @@ ChatAI::ChatAI(IManager* manager)
     llm::Manager::GetInstance().GetConfig().Load();
 
     m_chatWindowFrame = new ChatAIWindowFrame(EventNotifier::Get()->TopFrame(), this);
-    m_chatWindow = new ChatAIWindow(m_mgr->BookGet(PaneId::SIDE_BAR), this);
-    m_mgr->BookAddPage(PaneId::SIDE_BAR, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
+    m_chatWindow = new ChatAIWindow(clGetManager()->BookGet(PaneId::SIDE_BAR), this);
+    clGetManager()->BookAddPage(PaneId::SIDE_BAR, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &ChatAI::OnInitDone, this);
-}
-
-void ChatAI::UnPlug()
-{
-    wxTheApp->Unbind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("chatai_show_window"));
-    EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &ChatAI::OnInitDone, this);
-
-    auto res = m_mgr->FindPaneId(m_chatWindow);
-    clConfig::Get().Write(kConfigIsViewDetached, !res.has_value());
-
-    // before this plugin is un-plugged we must remove the tab we added, first make sure the tab is docked again.
-    DockView();
-    m_mgr->BookDeletePage(m_chatWindow);
-    m_chatWindow = nullptr;
-
-    m_chatWindowFrame->Destroy();
-    m_chatWindow = nullptr;
-
-    llm::Manager::GetInstance().Restart();
-}
-
-void ChatAI::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
-
-void ChatAI::CreatePluginMenu(wxMenu* pluginsMenu) { wxUnusedVar(pluginsMenu); }
-
-void ChatAI::HookPopupMenu(wxMenu* menu, MenuType type)
-{
-    wxUnusedVar(type);
-    wxUnusedVar(menu);
 }
 
 void ChatAI::OnShowChatWindow(wxCommandEvent& event)
@@ -138,11 +85,11 @@ void ChatAI::OnInitDone(wxCommandEvent& event)
 
 void ChatAI::DetachView(bool show_frame)
 {
-    auto res = m_mgr->FindPaneId(m_chatWindow);
+    auto res = clGetManager()->FindPaneId(m_chatWindow);
     if (res.has_value()) {
         // First, remember the pane from which we are removing our view.
         m_dockedPaneId = res;
-        m_mgr->BookRemovePage(m_chatWindow);
+        clGetManager()->BookRemovePage(m_dockedPaneId.value(), m_chatWindow);
     }
 
     if (show_frame && !m_chatWindowFrame->IsShown()) {
@@ -156,14 +103,14 @@ void ChatAI::DockView()
         m_chatWindowFrame->Hide();
     }
 
-    auto res = m_mgr->FindPaneId(m_chatWindow);
+    auto res = clGetManager()->FindPaneId(m_chatWindow);
     if (res.has_value()) {
         // the view is already docked
         return;
     }
 
     PaneId pane_id = m_dockedPaneId.value_or(PaneId::SIDE_BAR);
-    m_mgr->BookAddPage(pane_id, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
-    m_mgr->BookSelectPage(pane_id, m_chatWindow);
+    clGetManager()->BookAddPage(pane_id, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
+    clGetManager()->BookSelectPage(pane_id, m_chatWindow);
     m_dockedPaneId.reset();
 }

@@ -29,6 +29,7 @@
 #include "EnvironmentVariablesDlg.h"
 #include "Notebook.h"
 #include "SecondarySideBar.hpp"
+#include "ai/ChatAI.hpp"
 #include "clCaptionBar.hpp"
 #include "clDockingManager.h"
 #include "clInfoBar.h"
@@ -143,6 +144,7 @@ class clMainFrame : public wxFrame
     // the main tool default style
     int m_mainToolbarStyle = wxTB_FLAT | wxTB_NODIVIDER /* toolbar is hidden by default */;
     wxString m_mainFrameTitleTemplate;
+    std::unique_ptr<ChatAI> m_chatAI{nullptr};
 
 public:
     static bool m_initCompleted;

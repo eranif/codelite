@@ -3,9 +3,10 @@
 
 #include "ChatAIWindow.hpp"
 #include "UI.hpp"
+#include "codelite_exports.h"
 
-class ChatAI;
-class ChatAIWindowFrame : public ChatAIWindowFrameBase
+class WXDLLIMPEXP_SDK ChatAI;
+class WXDLLIMPEXP_SDK ChatAIWindowFrame : public ChatAIWindowFrameBase
 {
 public:
     ChatAIWindowFrame(wxWindow* parent, ChatAI* plugin);

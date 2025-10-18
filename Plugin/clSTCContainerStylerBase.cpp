@@ -23,12 +23,12 @@ void clSTCContainerStylerBase::OnThemChanged(wxCommandEvent& event)
     InitInternal();
 }
 
-void clSTCContainerStylerBase::StyleText()
+void clSTCContainerStylerBase::StyleText(bool full_document)
 {
     CHECK_PTR_RET(m_ctrl);
     CHECK_COND_RET(m_on_style_callback != nullptr);
 
-    m_ctrl->StartStyling(m_ctrl->GetEndStyled());
+    m_ctrl->StartStyling(full_document ? 0 : m_ctrl->GetEndStyled());
     clSTCAccessor accessor{m_ctrl};
     m_on_style_callback(accessor);
 }

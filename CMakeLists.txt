@@ -57,7 +57,6 @@ set(CMAKE_CXX_STANDARD 20)
 set(CMAKE_CXX_STANDARD_REQUIRED ON)
 set(CMAKE_CXX_EXTENSIONS OFF)
 
-option(WITH_CHATAI "Enable ChatAI plugin" OFF)
 option(BUILD_TESTING "Build test executables" OFF)
 
 # Set this option to "ON" in order to get CMake standard/expected behavior
@@ -986,7 +985,6 @@ if(APPLE)
   set(CMAKE_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}")
 endif()
 
-message(STATUS "ChatAI Plugin is enabled")
 set(OLLAMALIB_BUILD_EXAMPLE
     OFF
     CACHE BOOL "Do not build OllamLib example program")
@@ -1052,7 +1050,6 @@ else()
       message(STATUS "WebTools is disabled")
     endif()
     add_subdirectory(SmartCompletion)
-    add_subdirectory(ChatAI)
     if(UNIX
        AND NOT APPLE
        AND NOT DISABLE_CXX)
@@ -1274,7 +1271,6 @@ elseif(MINGW AND WXC_APP)
   endif()
 endif()
 
-unset(WITH_CHATAI CACHE)
 unset(DEBUG_BUILD CACHE)
 unset(BUILD_TESTING CACHE)
 

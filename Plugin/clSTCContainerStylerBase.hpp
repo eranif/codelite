@@ -123,7 +123,7 @@ public:
     /// Reset the styler. Clear any inner saved states.
     virtual void Reset() = 0;
 
-    void StyleText();
+    void StyleText(bool full_document = false);
 
 protected:
     void OnThemChanged(wxCommandEvent& event);

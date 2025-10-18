@@ -26,31 +26,15 @@
 
 #include "ChatAIWindow.hpp"
 #include "ChatAIWindowFrame.hpp"
-#include "plugin.h"
+#include "imanager.h"
 
 #include <optional>
 
-/// Return the log handle of this library
-clModuleLogger& GetLogHandle();
-
-// Helper macros to be used outside of this library
-#define CHATAI_LOG (GetLogHandle())
-
-#define CHATAI_DEBUG() LOG_DEBUG(CHATAI_LOG)
-#define CHATAI_TRACE() LOG_TRACE(CHATAI_LOG)
-#define CHATAI_ERROR() LOG_ERROR(CHATAI_LOG)
-#define CHATAI_WARNING() LOG_WARNING(CHATAI_LOG)
-#define CHATAI_SYSTEM() LOG_SYSTEM(CHATAI_LOG)
-
-class ChatAI : public IPlugin
+class WXDLLIMPEXP_SDK ChatAI : public wxEvtHandler
 {
 public:
-    ChatAI(IManager* manager);
+    ChatAI();
     ~ChatAI() override = default;
-    void CreateToolBar(clToolBarGeneric* toolbar) override;
-    void CreatePluginMenu(wxMenu* pluginsMenu) override;
-    void HookPopupMenu(wxMenu* menu, MenuType type) override;
-    void UnPlug() override;
 
     void DetachView(bool show_frame);
     void DockView();

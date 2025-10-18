@@ -4,18 +4,13 @@
 #include "bitmap_loader.h"
 #include "clDiffFrame.h"
 #include "clFilesCollector.h"
-#include "clToolBarButtonBase.h"
 #include "cl_config.h"
-#include "fileextmanager.h"
 #include "globals.h"
 #include "imanager.h"
 #include "macros.h"
 #include "wxStringHash.h"
 
-#include <algorithm>
 #include <atomic>
-#include <wx/dir.h>
-#include <wx/wupdlock.h>
 
 static int nCallCounter = 0;
 static std::atomic_bool checksumThreadStop;
@@ -38,7 +33,7 @@ DiffFoldersFrame::DiffFoldersFrame(wxWindow* parent)
     m_toolbar->AssignBitmaps(images);
     m_toolbar->Realize();
 
-    m_toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnNewCmparison, this, wxID_NEW);
+    m_toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnNewComparison, this, wxID_NEW);
     m_toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnClose, this, wxID_CLOSE);
     m_toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnShowSimilarFiles, this, XRCID("diff-intersection"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffFoldersFrame::OnShowSimilarFilesUI, this, XRCID("diff-intersection"));
@@ -65,7 +60,7 @@ void DiffFoldersFrame::OnClose(wxCommandEvent& event)
     Close();
 }
 
-void DiffFoldersFrame::OnNewCmparison(wxCommandEvent& event)
+void DiffFoldersFrame::OnNewComparison(wxCommandEvent& event)
 {
     wxString left = clConfig::Get().Read("DiffFolders/Left", wxString());
     wxString right = clConfig::Get().Read("DiffFolders/Right", wxString());

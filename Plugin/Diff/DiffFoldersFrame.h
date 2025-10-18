@@ -110,10 +110,10 @@ class WXDLLIMPEXP_SDK DiffFoldersFrame : public DiffFoldersBaseDlg
     DiffViewEntry::Vect_t m_entries;
 
 public:
-    DiffFoldersFrame(wxWindow* parent);
-    virtual ~DiffFoldersFrame();
-    void OnChecksum(int callId, const wxArrayString& checksumArray);
+    explicit DiffFoldersFrame(wxWindow* parent);
+    ~DiffFoldersFrame() override;
 
+    void OnChecksum(int callId, const wxArrayString& checksumArray);
 protected:
     void BuildTrees(const wxString& left, const wxString& right);
     void DoOpenDiff(const wxDataViewItem& item);
@@ -121,14 +121,14 @@ protected:
     bool CanUp() const;
 
 protected:
-    virtual void OnClose(wxCommandEvent& event);
-    virtual void OnNewCmparison(wxCommandEvent& event);
-    virtual void OnItemActivated(wxDataViewEvent& event);
-    virtual void OnItemContextMenu(wxDataViewEvent& event);
+    void OnItemActivated(wxDataViewEvent& event) override;
+    void OnItemContextMenu(wxDataViewEvent& event) override;
 
-    void OnMenuDiff(wxCommandEvent& event);
+    void OnClose(wxCommandEvent& event);
     void OnCopyToRight(wxCommandEvent& event);
     void OnCopyToLeft(wxCommandEvent& event);
+    void OnMenuDiff(wxCommandEvent& event);
+    void OnNewComparison(wxCommandEvent& event);
     void OnShowSimilarFiles(wxCommandEvent& event);
     void OnShowSimilarFilesUI(wxUpdateUIEvent& event);
     void OnRefresh(wxCommandEvent& event);

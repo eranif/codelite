@@ -20730,7 +20730,7 @@ msgstr "Le support d'extension chargeable n'est pas disponible"
 #: wxcrafter/controls/choice_wrapper.cpp:13
 #: wxcrafter/controls/collapsible_pane_wrapper.cpp:20
 #: wxcrafter/controls/colour_picker_wrapper.cpp:18
-#: wxcrafter/controls/combox_wrapper.cpp:13
+#: wxcrafter/controls/combobox_wrapper.cpp:13
 #: wxcrafter/controls/command_link_button_wrapper.cpp:22
 #: wxcrafter/controls/data_view_list_ctrl_wrapper.cpp:59
 #: wxcrafter/controls/data_view_tree_ctrl_wrapper.cpp:60
@@ -21061,13 +21061,13 @@ msgstr ""
 "d'animation"
 
 #: wxcrafter/controls/BitmapComboxWrapper.cpp:14
-#: wxcrafter/controls/combox_wrapper.cpp:14
-msgid "Combobox drop down choices"
-msgstr "Boîte déroulante"
+#: wxcrafter/controls/combobox_wrapper.cpp:14
+msgid "ComboBox drop down choices"
+msgstr "Choix de la boîte déroulante"
 
 #: wxcrafter/controls/BitmapComboxWrapper.cpp:17
 #: wxcrafter/controls/SimpleHtmlListBoxWrapper.cpp:27
-#: wxcrafter/controls/combox_wrapper.cpp:18
+#: wxcrafter/controls/combobox_wrapper.cpp:18
 #: wxcrafter/controls/list_box_wrapper.cpp:31
 msgid ""
 "The zero-based position of any initially selected string, or -1 if none are "
@@ -21077,12 +21077,12 @@ msgstr ""
 "chaîne ne doit être sélectionnée"
 
 #: wxcrafter/controls/BitmapComboxWrapper.cpp:18
-#: wxcrafter/controls/combox_wrapper.cpp:19
-msgid "The combobox initial value"
+#: wxcrafter/controls/combobox_wrapper.cpp:19
+msgid "The comboBox initial value"
 msgstr "Valeur initiale de la boîte déroulante"
 
 #: wxcrafter/controls/BitmapComboxWrapper.cpp:21
-#: wxcrafter/controls/combox_wrapper.cpp:22
+#: wxcrafter/controls/combobox_wrapper.cpp:22
 msgid ""
 "Process a wxEVT_COMMAND_COMBOBOX_SELECTED event, when an item on the list is "
 "selected. Note that calling GetValue returns the new value of selection."
@@ -21092,19 +21092,19 @@ msgstr ""
 "valeur de la sélection."
 
 #: wxcrafter/controls/BitmapComboxWrapper.cpp:24
-#: wxcrafter/controls/combox_wrapper.cpp:25
+#: wxcrafter/controls/combobox_wrapper.cpp:25
 #: wxcrafter/controls/spin_ctrl_wrapper.cpp:20
 msgid ""
-"Process a wxEVT_COMMAND_TEXT_UPDATED event, when the combobox text changes."
+"Process a wxEVT_COMMAND_TEXT_UPDATED event, when the comboBox text changes."
 msgstr ""
 "Traite un événement 'wxEVT_COMMAND_TEXT_UPDATED' lorsque le texte de la "
-"boite déoulante est modifié."
+"boite déroulante est modifié."
 
 #: wxcrafter/controls/BitmapComboxWrapper.cpp:26
-#: wxcrafter/controls/combox_wrapper.cpp:27
+#: wxcrafter/controls/combobox_wrapper.cpp:27
 msgid ""
 "Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the "
-"combobox."
+"comboBox."
 msgstr ""
 "Traite un événement 'wxEVT_COMMAND_TEXT_ENTER', lorsque <RETURN> est pressé "
 "dans la boîte déroulante."
@@ -21397,7 +21397,7 @@ msgstr ""
 "déclenché que si la saisie de l'utilisateur est valide, c'est-à-dire "
 "reconnaissable)."
 
-#: wxcrafter/controls/combox_wrapper.cpp:15
+#: wxcrafter/controls/combobox_wrapper.cpp:15
 #: wxcrafter/controls/text_ctrl_wrapper.cpp:43
 msgid "Sets a hint shown in an empty unfocused text control"
 msgstr "Définit un indice affiché dans un contrôle de texte vide non focalisé"

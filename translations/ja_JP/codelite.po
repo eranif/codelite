@@ -20371,7 +20371,7 @@ msgstr "拡張ライブラリのサポートは利用できません"
 #: wxcrafter/controls/choice_wrapper.cpp:13
 #: wxcrafter/controls/collapsible_pane_wrapper.cpp:20
 #: wxcrafter/controls/colour_picker_wrapper.cpp:18
-#: wxcrafter/controls/combox_wrapper.cpp:13
+#: wxcrafter/controls/combobox_wrapper.cpp:13
 #: wxcrafter/controls/command_link_button_wrapper.cpp:22
 #: wxcrafter/controls/data_view_list_ctrl_wrapper.cpp:59
 #: wxcrafter/controls/data_view_tree_ctrl_wrapper.cpp:60
@@ -20699,13 +20699,13 @@ msgid ""
 msgstr "アニメーションを再生していないときに表示するビットマップを設定します"
 
 #: wxcrafter/controls/BitmapComboxWrapper.cpp:14
-#: wxcrafter/controls/combox_wrapper.cpp:14
-msgid "Combobox drop down choices"
+#: wxcrafter/controls/combobox_wrapper.cpp:14
+msgid "ComboBox drop down choices"
 msgstr "コンボボックスのドロップダウン選択肢"
 
 #: wxcrafter/controls/BitmapComboxWrapper.cpp:17
 #: wxcrafter/controls/SimpleHtmlListBoxWrapper.cpp:27
-#: wxcrafter/controls/combox_wrapper.cpp:18
+#: wxcrafter/controls/combobox_wrapper.cpp:18
 #: wxcrafter/controls/list_box_wrapper.cpp:31
 msgid ""
 "The zero-based position of any initially selected string, or -1 if none are "
@@ -20714,12 +20714,12 @@ msgstr ""
 "予め選択しておく文字列の位置番号 (0 始まり) か、未選択を表す -1 を指定します"
 
 #: wxcrafter/controls/BitmapComboxWrapper.cpp:18
-#: wxcrafter/controls/combox_wrapper.cpp:19
-msgid "The combobox initial value"
+#: wxcrafter/controls/combobox_wrapper.cpp:19
+msgid "The comboBox initial value"
 msgstr "コンボボックスの初期値"
 
 #: wxcrafter/controls/BitmapComboxWrapper.cpp:21
-#: wxcrafter/controls/combox_wrapper.cpp:22
+#: wxcrafter/controls/combobox_wrapper.cpp:22
 msgid ""
 "Process a wxEVT_COMMAND_COMBOBOX_SELECTED event, when an item on the list is "
 "selected. Note that calling GetValue returns the new value of selection."
@@ -20728,19 +20728,19 @@ msgstr ""
 "す。注: GetValue() は新しく選択した値を返します。"
 
 #: wxcrafter/controls/BitmapComboxWrapper.cpp:24
-#: wxcrafter/controls/combox_wrapper.cpp:25
+#: wxcrafter/controls/combobox_wrapper.cpp:25
 #: wxcrafter/controls/spin_ctrl_wrapper.cpp:20
 msgid ""
-"Process a wxEVT_COMMAND_TEXT_UPDATED event, when the combobox text changes."
+"Process a wxEVT_COMMAND_TEXT_UPDATED event, when the comboBox text changes."
 msgstr ""
 "コンボボックスのテキストを変更したときの wxEVT_COMMAND_TEXT_UPDATED イベント"
 "を処理します。"
 
 #: wxcrafter/controls/BitmapComboxWrapper.cpp:26
-#: wxcrafter/controls/combox_wrapper.cpp:27
+#: wxcrafter/controls/combobox_wrapper.cpp:27
 msgid ""
 "Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the "
-"combobox."
+"comboBox."
 msgstr ""
 "コンボボックスで <RETURN> を押したときの wxEVT_COMMAND_TEXT_ENTER イベントを"
 "処理します。"
@@ -21016,7 +21016,7 @@ msgstr ""
 "(wxCLRP_USE_TEXTCTRL を見てください - ただし、正しい色の名前/コードを入力しな"
 "いと、このイベントは発動しません)。"
 
-#: wxcrafter/controls/combox_wrapper.cpp:15
+#: wxcrafter/controls/combobox_wrapper.cpp:15
 #: wxcrafter/controls/text_ctrl_wrapper.cpp:43
 msgid "Sets a hint shown in an empty unfocused text control"
 msgstr "未フォーカス状態の空欄に表示するヒントを設定します"

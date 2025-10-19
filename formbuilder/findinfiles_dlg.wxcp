@@ -493,7 +493,7 @@
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_ENTER",
 																	"m_eventClass":	"wxCommandEvent",
 																	"m_functionNameAndSignature":	"OnFindEnter(wxCommandEvent& event)",
-																	"m_description":	"Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the combobox.",
+																	"m_description":	"Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the comboBox.",
 																	"m_noBody":	false
 																}],
 															"m_children":	[]
@@ -757,7 +757,7 @@
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_ENTER",
 																	"m_eventClass":	"wxCommandEvent",
 																	"m_functionNameAndSignature":	"OnReplaceEnter(wxCommandEvent& event)",
-																	"m_description":	"Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the combobox.",
+																	"m_description":	"Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the comboBox.",
 																	"m_noBody":	false
 																}],
 															"m_children":	[]
@@ -1021,7 +1021,7 @@
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_ENTER",
 																	"m_eventClass":	"wxCommandEvent",
 																	"m_functionNameAndSignature":	"OnFindEnter(wxCommandEvent& event)",
-																	"m_description":	"Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the combobox.",
+																	"m_description":	"Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the comboBox.",
 																	"m_noBody":	false
 																}],
 															"m_children":	[]
@@ -1204,7 +1204,7 @@
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_ENTER",
 																	"m_eventClass":	"wxCommandEvent",
 																	"m_functionNameAndSignature":	"OnFindEnter(wxCommandEvent& event)",
-																	"m_description":	"Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the combobox.",
+																	"m_description":	"Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the comboBox.",
 																	"m_noBody":	false
 																}],
 															"m_children":	[]
@@ -1462,7 +1462,7 @@
 																	"m_eventName":	"wxEVT_COMMAND_TEXT_ENTER",
 																	"m_eventClass":	"wxCommandEvent",
 																	"m_functionNameAndSignature":	"OnFindEnter(wxCommandEvent& event)",
-																	"m_description":	"Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the combobox.",
+																	"m_description":	"Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the comboBox.",
 																	"m_noBody":	false
 																}],
 															"m_children":	[]

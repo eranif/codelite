@@ -22,7 +22,7 @@
 #include "choice_book_wrapper.h"
 #include "choice_wrapper.h"
 #include "colour_picker_wrapper.h"
-#include "combox_wrapper.h"
+#include "combobox_wrapper.h"
 #include "command_link_button_wrapper.h"
 #include "controls/Containers/collapsible_pane_wrapper.h"
 #include "controls/Containers/notebook_page_wrapper.h"
@@ -186,7 +186,7 @@ Allocator::Allocator()
     Register(new PanelWrapperTopLevel(), "wxpanel");
     Register(new PanelWrapper(), "wxpanel");
     Register(new StaticBitmapWrapper(), "wxbitmap");
-    Register(new ComboxWrapper(), "wxcombobox");
+    Register(new ComboBoxWrapper(), "wxcombobox");
     Register(new ChoiceWrapper(), "wxchoice");
     Register(new ListBoxWrapper(), "wxlistbox");
     Register(new ListCtrlWrapper(), "wxlistctrl");

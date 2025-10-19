@@ -12,20 +12,20 @@ BitmapComboxWrapper::BitmapComboxWrapper()
     : wxcWidget(ID_WXBITMAPCOMBOBOX)
 {
     SetPropertyString(_("Common Settings"), "wxBitmapComboBox");
-    Add<BitmapTextArrayProperty>(PROP_CB_CHOICES, "", _("Combobox drop down choices"));
+    Add<BitmapTextArrayProperty>(PROP_CB_CHOICES, "", _("ComboBox drop down choices"));
     Add<StringProperty>(
         PROP_SELECTION,
         "-1",
         _("The zero-based position of any initially selected string, or -1 if none are to be selected"));
-    Add<StringProperty>(PROP_VALUE, "", _("The combobox initial value"));
+    Add<StringProperty>(PROP_VALUE, "", _("The comboBox initial value"));
 
     RegisterEventCommand("wxEVT_COMMAND_COMBOBOX_SELECTED",
                          _("Process a wxEVT_COMMAND_COMBOBOX_SELECTED event, when an item on the list is selected. "
                            "Note that calling GetValue returns the new value of selection."));
     RegisterEventCommand("wxEVT_COMMAND_TEXT_UPDATED",
-                         _("Process a wxEVT_COMMAND_TEXT_UPDATED event, when the combobox text changes."));
+                         _("Process a wxEVT_COMMAND_TEXT_UPDATED event, when the comboBox text changes."));
     RegisterEventCommand("wxEVT_COMMAND_TEXT_ENTER",
-                         _("Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the combobox."));
+                         _("Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the comboBox."));
 
     PREPEND_STYLE(wxCB_READONLY, false);
     PREPEND_STYLE(wxCB_SORT, false);

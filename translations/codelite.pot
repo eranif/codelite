@@ -18536,7 +18536,7 @@ msgstr ""
 #: wxcrafter/controls/choice_wrapper.cpp:13
 #: wxcrafter/controls/collapsible_pane_wrapper.cpp:19
 #: wxcrafter/controls/colour_picker_wrapper.cpp:19
-#: wxcrafter/controls/combox_wrapper.cpp:13
+#: wxcrafter/controls/combobox_wrapper.cpp:13
 #: wxcrafter/controls/command_link_button_wrapper.cpp:21
 #: wxcrafter/controls/data_view_list_ctrl_wrapper.cpp:59
 #: wxcrafter/controls/data_view_tree_ctrl_wrapper.cpp:60
@@ -18854,13 +18854,13 @@ msgid ""
 msgstr ""
 
 #: wxcrafter/controls/BitmapComboxWrapper.cpp:14
-#: wxcrafter/controls/combox_wrapper.cpp:14
-msgid "Combobox drop down choices"
+#: wxcrafter/controls/combobox_wrapper.cpp:14
+msgid "ComboBox drop down choices"
 msgstr ""
 
 #: wxcrafter/controls/BitmapComboxWrapper.cpp:18
 #: wxcrafter/controls/SimpleHtmlListBoxWrapper.cpp:28
-#: wxcrafter/controls/combox_wrapper.cpp:19
+#: wxcrafter/controls/combobox_wrapper.cpp:19
 #: wxcrafter/controls/list_box_wrapper.cpp:32
 msgid ""
 "The zero-based position of any initially selected string, or -1 if none are "
@@ -18868,29 +18868,29 @@ msgid ""
 msgstr ""
 
 #: wxcrafter/controls/BitmapComboxWrapper.cpp:19
-#: wxcrafter/controls/combox_wrapper.cpp:20
-msgid "The combobox initial value"
+#: wxcrafter/controls/combobox_wrapper.cpp:20
+msgid "The comboBox initial value"
 msgstr ""
 
 #: wxcrafter/controls/BitmapComboxWrapper.cpp:22
-#: wxcrafter/controls/combox_wrapper.cpp:23
+#: wxcrafter/controls/combobox_wrapper.cpp:23
 msgid ""
 "Process a wxEVT_COMMAND_COMBOBOX_SELECTED event, when an item on the list is "
 "selected. Note that calling GetValue returns the new value of selection."
 msgstr ""
 
 #: wxcrafter/controls/BitmapComboxWrapper.cpp:25
-#: wxcrafter/controls/combox_wrapper.cpp:26
+#: wxcrafter/controls/combobox_wrapper.cpp:26
 #: wxcrafter/controls/spin_ctrl_wrapper.cpp:20
 msgid ""
-"Process a wxEVT_COMMAND_TEXT_UPDATED event, when the combobox text changes."
+"Process a wxEVT_COMMAND_TEXT_UPDATED event, when the comboBox text changes."
 msgstr ""
 
 #: wxcrafter/controls/BitmapComboxWrapper.cpp:27
-#: wxcrafter/controls/combox_wrapper.cpp:28
+#: wxcrafter/controls/combobox_wrapper.cpp:28
 msgid ""
 "Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the "
-"combobox."
+"comboBox."
 msgstr ""
 
 #: wxcrafter/controls/SimpleHtmlListBoxWrapper.cpp:14
@@ -19125,7 +19125,7 @@ msgid ""
 "the user's input is valid, i.e. recognizable)."
 msgstr ""
 
-#: wxcrafter/controls/combox_wrapper.cpp:15
+#: wxcrafter/controls/combobox_wrapper.cpp:15
 #: wxcrafter/controls/text_ctrl_wrapper.cpp:43
 msgid "Sets a hint shown in an empty unfocused text control"
 msgstr ""

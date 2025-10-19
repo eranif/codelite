@@ -1,14 +1,13 @@
-#ifndef COMBOXWRAPPER_H
-#define COMBOXWRAPPER_H
+#ifndef COMBOBOXWRAPPER_H
+#define COMBOBOXWRAPPER_H
 
 #include "wxc_widget.h" // Base class: WrapperBase
 
-class ComboxWrapper : public wxcWidget
+class ComboBoxWrapper : public wxcWidget
 {
-
 public:
-    ComboxWrapper();
-    ~ComboxWrapper() override = default;
+    ComboBoxWrapper();
+    ~ComboBoxWrapper() override = default;
 
 public:
     wxcWidget* Clone() const override;
@@ -21,4 +20,4 @@ public:
     void ToXRC(wxString& text, XRC_TYPE type) const override;
 };
 
-#endif // COMBOXWRAPPER_H
+#endif // COMBOBOXWRAPPER_H

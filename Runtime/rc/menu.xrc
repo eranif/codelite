@@ -707,7 +707,7 @@
         <label>Open &amp;Chat Window\tCtrl-Shift-H</label>
       </object>
       <object class="wxMenuItem" name="ai_prompt_editor">
-        <label>Prompt &amp;Editor</label>
+        <label>Open Prompt &amp;Editor...</label>
       </object>
       <object class="wxMenuItem" name="ai_configure_endpoint">
         <label>Add New &amp;Endpoint...</label>

@@ -191,6 +191,8 @@ private:
     Manager();
     ~Manager();
 
+    clStatusOr<wxString> CreateOrOpenConfig();
+
     bool WriteConfigFile(llm::json j);
     void HandleConfigFileUpdated();
 

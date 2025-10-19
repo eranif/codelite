@@ -343,11 +343,13 @@ assistant::Config Manager::MakeConfig()
         });
     });
 
-    WriteOptions opts{.force_global = true};
-    wxString config_content =
-        FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts).value_or(kDefaultSettings);
+    auto res = CreateOrOpenConfig();
+    if (!res.ok()) {
+        return m_default_config;
+    }
+
     assistant::Config config =
-        assistant::Config::FromContent(config_content.ToStdString(wxConvUTF8)).value_or(m_default_config);
+        assistant::Config::FromFile(res.value().ToStdString(wxConvUTF8)).value_or(m_default_config);
     return config;
 }
 
@@ -618,51 +620,66 @@ void Manager::HandleConfigFileUpdated()
     AddPendingEvent(event_config_updates);
 }
 
-void Manager::OpenSettingsFileInEditor()
+clStatusOr<wxString> Manager::CreateOrOpenConfig()
 {
     const WriteOptions opts{.force_global = true};
-    const wxString global_config_path = FileManager::GetSettingFileFullPath(kAssistantConfigFile, opts);
-
-    auto CreateNewConfigFile = [](const wxString& global_config_path) -> bool {
-        // Create a backup file first.
-        wxString backup_file = global_config_path;
-        backup_file << ".old";
-
-        if (wxFileName::FileExists(global_config_path)) {
-            wxLogNull noLog;
-            if (::wxRenameFile(global_config_path, backup_file, true)) {
-                clSYSTEM() << "Created backup file for LLM configuration at:" << backup_file << endl;
-            }
-        }
-
-        // Invalid file, write a new one.
-        if (!FileUtils::WriteFileContent(global_config_path, kDefaultSettings)) {
-            ::wxMessageBox(wxString() << _("Failed to create configuration file:\n") << global_config_path,
-                           "CodeLite",
-                           wxICON_WARNING | wxOK | wxCENTER);
-            return false;
-        }
-        return true;
-    };
-
-    auto res = GetConfigAsJSON();
-    if (!res.has_value()) {
-        // Invalid file, write a new one.
-        if (!CreateNewConfigFile(global_config_path)) {
-            return;
-        }
-    } else {
-        // File exists, make sure it has the correct version.
-        llm::json j = std::move(res.value());
-        if (!j.contains(kConfigVersionProperty) || !j[kConfigVersionProperty].is_number_float() ||
-            (j[kConfigVersionProperty].get<float>() != kConfigVersion)) {
-            // Invalid file, write a new one.
-            if (!CreateNewConfigFile(global_config_path)) {
-                return;
-            }
-        }
+    wxString global_config_path = FileManager::GetSettingFileFullPath(kAssistantConfigFile, opts);
+    wxString backup_file_path = global_config_path + ".old";
+    bool valid_file{false};
+    try {
+        auto conf = assistant::Config::FromFile(global_config_path.ToStdString(wxConvUTF8));
+        valid_file = conf.has_value();
+    } catch (const std::exception& e) {
+        valid_file = false;
     }
 
-    clGetManager()->OpenFile(global_config_path);
+    if (!valid_file) {
+        // Backup old file
+        if (wxFileName::FileExists(global_config_path)) {
+            wxLogNull nl;
+            ::wxCopyFile(global_config_path, backup_file_path);
+        }
+
+        // Invalid file: could not parse it or missing - create a default file.
+        if (!FileUtils::WriteFileContent(global_config_path, kDefaultSettings)) {
+            wxString messgage;
+            messgage << _("Failed to create configuration file:\n") << global_config_path;
+            ::wxMessageBox(messgage, "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
+            return StatusIOError(messgage);
+        }
+        return global_config_path;
+    }
+
+    // A valid file was found - check its version.
+    ASSIGN_OPT_OR_RETURN(auto j, GetConfigAsJSON(), StatusOther("Failed to parse file as JSON"));
+
+    if (!j.contains(kConfigVersionProperty) || !j[kConfigVersionProperty].is_number_float() ||
+        (j[kConfigVersionProperty].get<float>() != kConfigVersion)) {
+        // Backup old file
+        if (wxFileName::FileExists(global_config_path)) {
+            wxLogNull nl;
+            ::wxCopyFile(global_config_path, backup_file_path);
+        }
+
+        // An old version - create a default file.
+        if (!FileUtils::WriteFileContent(global_config_path, kDefaultSettings)) {
+            wxString messgage;
+            messgage << _("Failed to create configuration file:\n") << global_config_path;
+            ::wxMessageBox(messgage, "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
+            return StatusIOError(messgage);
+        }
+    }
+    return global_config_path;
+}
+
+void Manager::OpenSettingsFileInEditor()
+{
+    auto res = CreateOrOpenConfig();
+    if (!res.ok()) {
+        clERROR() << res.error_message() << endl;
+        return;
+    }
+
+    clGetManager()->OpenFile(res.value());
 }
 } // namespace llm

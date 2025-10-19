@@ -5,14 +5,7 @@
 GitReleaseNotesGenerationDlg::GitReleaseNotesGenerationDlg(wxWindow* parent)
     : GitReleaseNotesGenerationBaseDlg(parent)
 {
-    auto models = llm::Manager::GetInstance().GetModels();
-    m_choiceModels->Append(models);
-
-    if (!models.empty()) {
-        auto active_model = llm::Manager::GetInstance().GetConfig().GetSelectedModel();
-        int where = m_choiceModels->FindString(active_model);
-        m_choiceModels->SetSelection(where == wxNOT_FOUND ? 0 : where);
-    }
+    UpdateEndpoints();
 
     GetSizer()->Fit(this);
     m_textCtrlFirstCommit->CallAfter(&wxTextCtrl::SetFocus);
@@ -26,7 +19,26 @@ void GitReleaseNotesGenerationDlg::OnButtonokUpdateUi(wxUpdateUIEvent& event)
     event.Enable(!m_textCtrlFirstCommit->GetValue().IsEmpty() && !m_textCtrlSecondCommit->GetValue().IsEmpty());
 }
 
-void GitReleaseNotesGenerationDlg::OnChoicemodelsUpdateUi(wxUpdateUIEvent& event)
+void GitReleaseNotesGenerationDlg::OnChoiceProviders(wxCommandEvent& event)
 {
-    event.Enable(m_choiceModels->GetCount() > 1);
+    wxUnusedVar(event);
+    llm::Manager::GetInstance().SetActiveEndpoint(m_choiceProviders->GetStringSelection());
+    CallAfter(&GitReleaseNotesGenerationDlg::UpdateEndpoints);
+}
+
+void GitReleaseNotesGenerationDlg::OnChoiceProvidersUpdateUI(wxUpdateUIEvent& event) {}
+
+void GitReleaseNotesGenerationDlg::UpdateEndpoints()
+{
+    auto endpoints = llm::Manager::GetInstance().ListEndpoints();
+    m_choiceProviders->Clear();
+    m_choiceProviders->Append(endpoints);
+
+    if (!endpoints.empty()) {
+        auto active_endpoint = llm::Manager::GetInstance().GetActiveEndpoint();
+        if (active_endpoint.has_value()) {
+            int where = m_choiceProviders->FindString(active_endpoint.value());
+            m_choiceProviders->SetSelection(where == wxNOT_FOUND ? 0 : where);
+        }
+    }
 }

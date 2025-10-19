@@ -15694,7 +15694,7 @@
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Label:",
-											"m_value":	"Choose model:"
+											"m_value":	"Choose provider:"
 										}, {
 											"type":	"string",
 											"m_label":	"Wrap:",
@@ -15725,7 +15725,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"m_choiceModels"
+											"m_value":	"m_choiceProviders"
 										}, {
 											"type":	"multi-string",
 											"m_label":	"Tooltip:",
@@ -15778,8 +15778,14 @@
 									"m_events":	[{
 											"m_eventName":	"wxEVT_UPDATE_UI",
 											"m_eventClass":	"wxUpdateUIEvent",
-											"m_functionNameAndSignature":	"OnChoicemodelsUpdateUi(wxUpdateUIEvent& event)",
+											"m_functionNameAndSignature":	"OnChoiceProvidersUpdateUI(wxUpdateUIEvent& event)",
 											"m_description":	"Process a wxEVT_UPDATE_UI event",
+											"m_noBody":	false
+										}, {
+											"m_eventName":	"wxEVT_COMMAND_CHOICE_SELECTED",
+											"m_eventClass":	"wxCommandEvent",
+											"m_functionNameAndSignature":	"OnChoiceProviders(wxCommandEvent& event)",
+											"m_description":	"Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected.",
 											"m_noBody":	false
 										}],
 									"m_children":	[]

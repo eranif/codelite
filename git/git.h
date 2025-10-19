@@ -375,7 +375,7 @@ public:
     void OnCommandOutput(clCommandEvent& event);
     void OnCommandEnded(clCommandEvent& event);
 
-    bool GenerateCommitMessage(const wxString& prompt, const wxString& model_name);
+    bool GenerateCommitMessage(const wxString& prompt);
 
     /// Return the commit log between range of commits. We split the log (line based), to match the `chunk_size`
     /// argument.

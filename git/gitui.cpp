@@ -344,12 +344,12 @@ GitCommitDlgBase::GitCommitDlgBase(
     wxBoxSizer* bSizer11 = new wxBoxSizer(wxVERTICAL);
     m_panel1->SetSizer(bSizer11);
 
-    m_dvListCtrlFiles = new clThemedOrderedListCtrl(m_panel1,
-                                                    wxID_ANY,
-                                                    wxDefaultPosition,
-                                                    wxDLG_UNIT(m_panel1, wxSize(-1, -1)),
-                                                    wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE |
-                                                        get_border_simple_theme_aware_bit());
+    m_dvListCtrlFiles = new clThemedOrderedListCtrl(
+        m_panel1,
+        wxID_ANY,
+        wxDefaultPosition,
+        wxDLG_UNIT(m_panel1, wxSize(-1, -1)),
+        wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE | get_border_simple_theme_aware_bit());
 
     bSizer11->Add(m_dvListCtrlFiles, 1, wxEXPAND, WXC_FROM_DIP(5));
 
@@ -1612,12 +1612,12 @@ GitConsoleBase::GitConsoleBase(wxWindow* parent, wxWindowID id, const wxPoint& p
     wxBoxSizer* boxSizer678 = new wxBoxSizer(wxVERTICAL);
     m_panel674->SetSizer(boxSizer678);
 
-    m_dvListCtrl = new clThemedOrderedListCtrl(m_panel674,
-                                               wxID_ANY,
-                                               wxDefaultPosition,
-                                               wxDLG_UNIT(m_panel674, wxSize(-1, -1)),
-                                               wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE |
-                                                   get_border_simple_theme_aware_bit());
+    m_dvListCtrl = new clThemedOrderedListCtrl(
+        m_panel674,
+        wxID_ANY,
+        wxDefaultPosition,
+        wxDLG_UNIT(m_panel674, wxSize(-1, -1)),
+        wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_MULTIPLE | get_border_simple_theme_aware_bit());
 
     boxSizer678->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(2));
 
@@ -1994,15 +1994,15 @@ GitReleaseNotesGenerationBaseDlg::GitReleaseNotesGenerationBaseDlg(
     flexGridSizer836->Add(m_textCtrlSecondCommit, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText841 =
-        new wxStaticText(this, wxID_ANY, _("Choose model:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+        new wxStaticText(this, wxID_ANY, _("Choose provider:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
     flexGridSizer836->Add(m_staticText841, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    wxArrayString m_choiceModelsArr;
-    m_choiceModels =
-        new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceModelsArr, 0);
+    wxArrayString m_choiceProvidersArr;
+    m_choiceProviders =
+        new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceProvidersArr, 0);
 
-    flexGridSizer836->Add(m_choiceModels, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer836->Add(m_choiceProviders, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_staticText843 = new wxStaticText(
         this, wxID_ANY, _("Limit response tokens:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
@@ -2055,12 +2055,15 @@ GitReleaseNotesGenerationBaseDlg::GitReleaseNotesGenerationBaseDlg(
         wxPersistenceManager::Get().Restore(this);
     }
     // Connect events
-    m_choiceModels->Bind(wxEVT_UPDATE_UI, &GitReleaseNotesGenerationBaseDlg::OnChoicemodelsUpdateUi, this);
+    m_choiceProviders->Bind(wxEVT_UPDATE_UI, &GitReleaseNotesGenerationBaseDlg::OnChoiceProvidersUpdateUI, this);
+    m_choiceProviders->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &GitReleaseNotesGenerationBaseDlg::OnChoiceProviders, this);
     m_buttonOk->Bind(wxEVT_UPDATE_UI, &GitReleaseNotesGenerationBaseDlg::OnButtonokUpdateUi, this);
 }
 
 GitReleaseNotesGenerationBaseDlg::~GitReleaseNotesGenerationBaseDlg()
 {
-    m_choiceModels->Unbind(wxEVT_UPDATE_UI, &GitReleaseNotesGenerationBaseDlg::OnChoicemodelsUpdateUi, this);
+    m_choiceProviders->Unbind(wxEVT_UPDATE_UI, &GitReleaseNotesGenerationBaseDlg::OnChoiceProvidersUpdateUI, this);
+    m_choiceProviders->Unbind(
+        wxEVT_COMMAND_CHOICE_SELECTED, &GitReleaseNotesGenerationBaseDlg::OnChoiceProviders, this);
     m_buttonOk->Unbind(wxEVT_UPDATE_UI, &GitReleaseNotesGenerationBaseDlg::OnButtonokUpdateUi, this);
 }

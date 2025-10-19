@@ -20,7 +20,7 @@ class WXDLLIMPEXP_SDK ChatAIWindow : public AssistanceAIChatWindowBase
 public:
     ChatAIWindow(wxWindow* parent, ChatAI* plugin);
     virtual ~ChatAIWindow();
-    wxString GetActiveModel() const { return m_activeModel->GetStringSelection(); }
+    wxString GetActiveModel() const { return m_choiceEndpoints->GetStringSelection(); }
     bool IsDetached() const;
 
 protected:
@@ -39,14 +39,14 @@ protected:
     void OnSendUI(wxUpdateUIEvent& event);
     void OnClearOutputViewUI(wxUpdateUIEvent& event);
     void OnUpdateTheme(wxCommandEvent& event);
-    void OnModelChanged(wxCommandEvent& event);
+    void OnEndpointChanged(wxCommandEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     void OnNewSession(wxCommandEvent& event);
     void OnRestartClient(wxCommandEvent& event);
     void OnSettings(wxCommandEvent& event);
     void UpdateTheme();
     void DoSendPrompt();
-    void PopulateModels();
+    void PopulateEndpoints();
     void SetFocusToActiveEditor();
     void StyleOutput();
     void AppendOutput(const wxString& text);
@@ -55,29 +55,24 @@ protected:
     void OnWorkspaceClosed(clWorkspaceEvent& event);
     void LoadGlobalConfig();
     void RestoreUI();
-    void OnFileSaved(clCommandEvent& event);
 
     /// LLM events
+    void OnLLMConfigUpdate(clLLMEvent& event);
     void OnChatStarted(clLLMEvent& event);
     void OnChatAIOutput(clLLMEvent& event);
     void OnChatAIOutputDone(clLLMEvent& event);
     void OnThinkingStart(clLLMEvent& event);
     void OnThinkingEnd(clLLMEvent& event);
-    void OnModelsLoaded(clLLMEvent& event);
 
     /// Clears the output view, does not change the model history.
     void DoClearOutputView();
     /// Clear the view (input & output) and reset the client.
     void DoRestart();
 
-    /// Return the relevant configuration file. If a workspace file is opened, we use the workspace specific
-    /// configuration file. If no workspace is opened, we use the global settings.
-    wxString GetConfigurationFilePath() const;
-
     void ShowIndicator(bool show);
 
 private:
-    wxChoice* m_activeModel{nullptr};
+    wxChoice* m_choiceEndpoints{nullptr};
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
     ChatState m_state{ChatState::kReady};
     IndicatorPanel* m_statusPanel{nullptr};

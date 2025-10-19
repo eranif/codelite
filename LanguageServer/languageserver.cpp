@@ -284,11 +284,6 @@ void LanguageServerPlugin::OnGenerateDocString(wxCommandEvent& event)
         language = lexer->GetName().Lower();
     }
 
-    std::optional<wxString> model = llm::Manager::GetInstance().ChooseModel(true);
-    if (!model.has_value()) {
-        return;
-    }
-
     wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kCommentGeneration);
     prompt.Replace("{{lang}}", language);
     prompt.Replace("{{function}}", func_text.value());
@@ -326,7 +321,7 @@ void LanguageServerPlugin::OnGenerateDocString(wxCommandEvent& event)
         }
     });
 
-    llm::Manager::GetInstance().Chat(collector, prompt, nullptr, chat_options, model.value());
+    llm::Manager::GetInstance().Chat(collector, prompt, nullptr, chat_options);
 }
 
 void LanguageServerPlugin::OnMenuRenameSymbol(wxCommandEvent& event)

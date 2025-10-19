@@ -18,7 +18,7 @@ protected:
     void OnFinished(wxWizardEvent& event) override;
     void OnPageChanging(wxWizardEvent& event) override;
     void OnProviderChanged(wxCommandEvent& event) override;
-    void ShwoTipFor(const wxString& message, wxWindow* control);
+    void ShowTipFor(const wxString& message, wxWindow* control);
 
 private:
     std::unique_ptr<wxRichToolTip> m_tooltip{nullptr};

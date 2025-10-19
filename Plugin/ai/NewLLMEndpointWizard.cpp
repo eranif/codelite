@@ -1,5 +1,7 @@
 #include "NewLLMEndpointWizard.hpp"
 
+#include "clSystemSettings.h"
+
 #include <regex>
 #include <wx/richtooltip.h>
 
@@ -19,6 +21,9 @@ bool IsValidURL(const std::string& url)
 
 NewLLMEndpointWizard::NewLLMEndpointWizard(wxWindow* parent) : NewLLMEndpointWizardBase(parent)
 {
+    m_banner108->SetGradient(clSystemSettings::GetDefaultPanelColour(), clSystemSettings::GetDefaultPanelColour());
+    m_banner112->SetGradient(clSystemSettings::GetDefaultPanelColour(), clSystemSettings::GetDefaultPanelColour());
+
     int where = m_choiceProviders->FindString(kProviderOllamaLocal);
     if (where != wxNOT_FOUND) {
         m_choiceProviders->SetSelection(where);
@@ -43,24 +48,28 @@ void NewLLMEndpointWizard::OnProviderChanged(wxCommandEvent& event)
 void NewLLMEndpointWizard::OnPageChanging(wxWizardEvent& event)
 {
     event.Skip();
-    if (event.GetDirection() && event.GetPage() == m_wizardPageSettings) {
+    if (!event.GetDirection()) {
+        return;
+    }
+
+    if (event.GetPage() == m_wizardPageSettings) {
         // Check that all settings were populated.
 
         bool is_ok = IsValidURL(m_textCtrlBaseURL->GetValue().ToStdString(wxConvUTF8));
         if (!is_ok) {
-            ShwoTipFor(_("Invalid URL"), m_textCtrlBaseURL);
+            ShowTipFor(_("Invalid URL"), m_textCtrlBaseURL);
             event.Veto();
             event.Skip(false);
             return;
         }
 
         if (m_textCtrlModel->IsEmpty()) {
-            ShwoTipFor(_("Please choose a model"), m_textCtrlModel);
+            ShowTipFor(_("Please choose a model"), m_textCtrlModel);
             event.Veto();
             event.Skip(false);
             return;
         }
-    } else if (event.GetDirection() && event.GetPage() == m_wizardPageAPI) {
+    } else if (event.GetPage() == m_wizardPageAPI) {
         // API key is not needed for Ollama Local
         wxString provider = m_choiceProviders->GetStringSelection();
         if (provider == kProviderOllamaLocal) {
@@ -70,7 +79,7 @@ void NewLLMEndpointWizard::OnPageChanging(wxWizardEvent& event)
         if (m_textCtrlAPIKey->IsEmpty()) {
             wxString message;
             message << _("API Key is required for provider: ") << provider;
-            ShwoTipFor(message, m_choiceProviders);
+            ShowTipFor(message, m_choiceProviders);
             event.Veto();
             event.Skip(false);
             return;
@@ -80,7 +89,7 @@ void NewLLMEndpointWizard::OnPageChanging(wxWizardEvent& event)
 
 void NewLLMEndpointWizard::OnFinished(wxWizardEvent& event) {}
 
-void NewLLMEndpointWizard::ShwoTipFor(const wxString& message, wxWindow* control)
+void NewLLMEndpointWizard::ShowTipFor(const wxString& message, wxWindow* control)
 {
     m_tooltip = std::make_unique<wxRichToolTip>(_("Failed Validation"), message);
     m_tooltip->SetTimeout(3000);
@@ -100,7 +109,7 @@ llm::EndpointData NewLLMEndpointWizard::GetData() const
     if (provider == kProviderOllamaLocal || provider == kProviderOllamaCloud) {
         provider = "ollama";
     } else {
-        provider = "claude";
+        provider = "anthropic";
     }
 
     llm::EndpointData data{.provider = provider.ToStdString(wxConvUTF8),

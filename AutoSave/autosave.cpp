@@ -4,7 +4,6 @@
 #include "AutoSaveSettings.h"
 #include "event_notifier.h"
 
-#include <algorithm>
 #include <wx/menu.h>
 #include <wx/xrc/xmlres.h>
 

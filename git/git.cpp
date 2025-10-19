@@ -3167,7 +3167,7 @@ void GitPlugin::OnSideBarPageChanged(clCommandEvent& event)
     }
 }
 
-bool GitPlugin::GenerateCommitMessage(const wxString& prompt, const wxString& model_name)
+bool GitPlugin::GenerateCommitMessage(const wxString& prompt)
 {
     if (m_commitDialog == nullptr || !llm::Manager::GetInstance().IsAvailable()) {
         return false;
@@ -3206,7 +3206,7 @@ bool GitPlugin::GenerateCommitMessage(const wxString& prompt, const wxString& mo
     llm::ChatOptions chat_options{llm::ChatOptions::kDefault};
     llm::AddFlagSet(chat_options, llm::ChatOptions::kNoTools);
     llm::AddFlagSet(chat_options, llm::ChatOptions::kNoHistory);
-    llm::Manager::GetInstance().Chat(collector, prompt, cancel_token, chat_options, model_name);
+    llm::Manager::GetInstance().Chat(collector, prompt, cancel_token, chat_options);
     return true;
 }
 

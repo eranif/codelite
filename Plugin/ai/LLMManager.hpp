@@ -27,38 +27,18 @@
 
 constexpr const char* kAssistantConfigFile = "assistant.json";
 
-static const wxString kDefaultSettings = R"#(
-{
+static const wxString kDefaultSettings = R"#({
+  "endpoints": {},
   "history_size": 50,
-  "mcp_servers": {},
-  "log_level": "warn",
-  "stream": true,
   "keep_alive": "24h",
-  "max_tokens": 1024,
+  "log_level": "warn",
+  "mcp_servers": {},
   "server_timeout": {
-      "connect_msecs": 500,
-      "read_msecs": 300000,
-      "write_msecs": 300000
+    "connect_msecs": 500,
+    "read_msecs": 300000,
+    "write_msecs": 300000
   },
-  "endpoints": {
-    "http://127.0.0.1:11434": {
-      "active": true,
-      "http_headers": {
-        "Host": "127.0.0.1"
-      },
-      "type": "ollama"
-    }
-  },
-  "models": {
-    "default": {
-      "options": {
-        "num_ctx": 16384,
-        "temperature": 0
-      },
-      "think_end_tag": "</think>",
-      "think_start_tag": "</think>"
-    }
-  }
+  "stream": true
 }
 )#";
 
@@ -123,7 +103,6 @@ struct WXDLLIMPEXP_SDK EndpointData {
 
 struct WXDLLIMPEXP_SDK ThreadTask {
     std::vector<std::string> prompt_array;
-    std::string model;
     ChatOptions options{assistant::ChatOptions::kDefault};
     wxEvtHandler* owner{nullptr};
     std::shared_ptr<CancellationToken> cancellation_token;
@@ -144,31 +123,27 @@ public:
     void Chat(wxEvtHandler* owner,
               const wxString& prompt,
               std::shared_ptr<CancellationToken> cancel_token,
-              ChatOptions options,
-              const wxString& model = wxEmptyString);
+              ChatOptions options);
 
     /// As before, but events are connected to a "ReponseCollector" object
     void Chat(ResponseCollector* collector,
               const wxString& prompt,
               std::shared_ptr<CancellationToken> cancel_token,
-              ChatOptions options,
-              const wxString& model = wxEmptyString);
+              ChatOptions options);
 
     /// Similar to chat, but instead of accepting a single prompt it accepts multiple
     /// prompts.
     void Chat(wxEvtHandler* owner,
               const wxArrayString& prompts,
               std::shared_ptr<CancellationToken> cancel_token,
-              ChatOptions options,
-              const wxString& model = wxEmptyString);
+              ChatOptions options);
 
     /// Similar to chat, but instead of accepting a single prompt it accepts multiple
     /// prompts.
     void Chat(ResponseCollector* collector,
               const wxArrayString& prompts,
               std::shared_ptr<CancellationToken> cancel_token,
-              ChatOptions options,
-              const wxString& model = wxEmptyString);
+              ChatOptions options);
 
     /// Return true if the LLM is available.
     inline bool IsAvailable() { return true; }
@@ -190,7 +165,7 @@ public:
     Config& GetConfig() { return m_config; }
     const Config& GetConfig() const { return m_config; }
 
-    bool ReloadConfig(const wxString& config_content, bool prompt = true);
+    bool ReloadConfig(std::optional<wxString> config_content, bool prompt = true);
 
     inline bool IsBusy() const { return m_worker_busy.load(); }
 
@@ -200,19 +175,29 @@ public:
     /// Return the function table that should be used by plugins.
     FunctionTable& GetPluginFunctionTable() { return m_plugin_functions; }
 
-    std::optional<wxString> ChooseModel(bool use_default);
+    /// Return list of endpoints available.
+    wxArrayString ListEndpoints();
 
+    /// Return the active endpoint.
+    std::optional<wxString> GetActiveEndpoint();
+    bool SetActiveEndpoint(const wxString& endpoint);
     void AddNewEndpoint(const llm::EndpointData& d);
 
 private:
     Manager();
     ~Manager();
 
+    bool WriteConfigFile(llm::json j);
+    void HandleConfigFileUpdated();
+
     void PostTask(ThreadTask task);
     void WorkerMain();
     void PushThreadWork(ThreadTask work) { m_queue.Post(std::move(work)); }
     void CleanupAfterWorkerExit();
     assistant::Config MakeConfig();
+    void OnFileSaved(clCommandEvent& event);
+    std::optional<llm::json> GetConfigAsJSON();
+
     mutable std::mutex m_models_mutex;
     wxArrayString m_models GUARDED_BY(m_models_mutex);
 

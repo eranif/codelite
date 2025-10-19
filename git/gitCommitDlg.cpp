@@ -243,17 +243,18 @@ void GitCommitDlg::OnGenerate(wxCommandEvent& event)
         return;
     }
 
-    std::optional<wxString> model = llm::Manager::GetInstance().ChooseModel(true);
-    if (!model.has_value()) {
-        ::wxMessageBox(_("Choose a model and try again."), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
-        return;
-    }
+    // TODO: we might want to let the user to choose endpoint instead of a model.
+    //    std::optional<wxString> model = llm::Manager::GetInstance().ChooseModel(true);
+    //    if (!model.has_value()) {
+    //        ::wxMessageBox(_("Choose a model and try again."), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
+    //        return;
+    //    }
 
     wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kGitCommitMessage);
     prompt.Replace("{{context}}", m_rawDiff);
 
     m_indicatorPanel->Start(_("Generating commit message..."));
-    m_generationInProgress = m_plugin->GenerateCommitMessage(prompt, model.value());
+    m_generationInProgress = m_plugin->GenerateCommitMessage(prompt);
     if (!m_generationInProgress) {
         ::wxMessageBox(_("Failed to generate commit message"), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
         return;

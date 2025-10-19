@@ -899,7 +899,7 @@ void GitConsole::OnGenerateReleaseNotes(wxCommandEvent& event)
 
     wxString first_commit = dlg.GetTextCtrlFirstCommit()->GetValue();
     wxString second_commit = dlg.GetTextCtrlSecondCommit()->GetValue();
-    wxString model = dlg.GetChoiceModels()->GetStringSelection();
+
     int max_tokens = dlg.GetSpinCtrlLimitTokens()->GetValue();
     bool oneline_commit_format = dlg.GetCheckBoxOneLine()->GetValue();
 
@@ -974,7 +974,7 @@ void GitConsole::OnGenerateReleaseNotes(wxCommandEvent& event)
 
             if (is_done) {
                 if (multiple_prompts) {
-                    CallAfter(&GitConsole::FinaliseReleaseNotes, wxString::FromUTF8(*complete_response), model);
+                    CallAfter(&GitConsole::FinaliseReleaseNotes, wxString::FromUTF8(*complete_response));
                 }
                 m_statusBar->Stop("Ready");
             }
@@ -990,10 +990,10 @@ void GitConsole::OnGenerateReleaseNotes(wxCommandEvent& event)
         p.Replace("{{context}}", h);
         prompts.Add(p);
     }
-    llm::Manager::GetInstance().Chat(collector, prompts, cancellation_token, chat_options, model);
+    llm::Manager::GetInstance().Chat(collector, prompts, cancellation_token, chat_options);
 }
 
-void GitConsole::FinaliseReleaseNotes(const wxString& complete_reponse, const wxString& model)
+void GitConsole::FinaliseReleaseNotes(const wxString& complete_reponse)
 {
     wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kReleaseNotesMerge);
     prompt.Replace("{{context}}", complete_reponse);
@@ -1021,5 +1021,5 @@ void GitConsole::FinaliseReleaseNotes(const wxString& complete_reponse, const wx
     llm::ChatOptions chat_options{llm::ChatOptions::kDefault};
     llm::AddFlagSet(chat_options, llm::ChatOptions::kNoTools);
     llm::AddFlagSet(chat_options, llm::ChatOptions::kNoHistory);
-    llm::Manager::GetInstance().Chat(collector, prompt, nullptr, chat_options, model);
+    llm::Manager::GetInstance().Chat(collector, prompt, nullptr, chat_options);
 }

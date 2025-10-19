@@ -9,6 +9,9 @@ public:
     ~GitReleaseNotesGenerationDlg() override;
 
 protected:
-    void OnChoicemodelsUpdateUi(wxUpdateUIEvent& event) override;
+    void OnChoiceProviders(wxCommandEvent& event) override;
+    void OnChoiceProvidersUpdateUI(wxUpdateUIEvent& event) override;
     void OnButtonokUpdateUi(wxUpdateUIEvent& event) override;
+
+    void UpdateEndpoints();
 };

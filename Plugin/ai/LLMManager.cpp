@@ -1,10 +1,15 @@
 #include "LLMManager.hpp"
 
 #include "FileManager.hpp"
+#include "JSON.h"
 #include "assistant/assistant.hpp"
 #include "assistant/claude_client.hpp"
 #include "assistant/ollama_client.hpp"
+#include "cl_command_event.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
 #include "file_logger.h"
+#include "globals.h"
 
 #include <wx/choicdlg.h>
 #include <wx/msgdlg.h>
@@ -13,6 +18,14 @@ namespace llm
 {
 namespace
 {
+
+wxString TruncateText(const wxString& text, size_t size = 100)
+{
+    if (text.size() >= size) {
+        return text.Mid(0, size - 3) << "...";
+    }
+    return text;
+}
 
 /// If Running on the main thread, construct a busy cursor.
 std::unique_ptr<wxBusyCursor> CreateBusyCursor()
@@ -49,6 +62,7 @@ struct SharedState {
 
 void NotifyDoneWithError(wxEvtHandler* owner, const std::string& message)
 {
+    CHECK_PTR_RET(owner);
     clLLMEvent event{wxEVT_LLM_OUTPUT_DONE};
     event.SetResponseRaw(message);
     event.SetIsError(true);
@@ -66,27 +80,43 @@ Manager& Manager::GetInstance()
     return instance;
 }
 
-Manager::Manager() { Start(); }
+Manager::Manager()
+{
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &Manager::OnFileSaved, this);
+    Start();
+}
 
-Manager::~Manager() { Stop(); }
+Manager::~Manager()
+{
+    Stop();
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &Manager::OnFileSaved, this);
+}
 
 void Manager::DeleteCollector(ResponseCollector* collector) { wxDELETE(collector); }
 
 void Manager::WorkerMain()
 {
+    CHECK_PTR_RET(m_client);
+
+    // Create our own copy to make sure that when reloading configuration, this instance
+    // is un-affected.
+    auto client = m_client;
+
     // Helper class to pass the collector to the main thread from the ThreadTask class
     // once it drops out of scope. This way we ensure that the collector will be destroyed
     // without pending events.
     clDEBUG() << "LLM Worker thread started" << endl;
     m_worker_thread_running.store(true);
     bool cont{true};
-    while (cont && !m_client->IsInterrupted()) {
+    while (cont && !client->IsInterrupted()) {
         m_worker_busy.store(false);
         ThreadTask task;
         auto res = m_queue.ReceiveTimeout(50, task);
         if (res == wxMSGQUEUE_TIMEOUT) {
             continue;
         }
+
+        clDEBUG() << "Handling chat request:" << TruncateText(task.prompt_array[0]) << endl;
         m_worker_busy.store(true);
         TaskDropper dropper{task};
 
@@ -109,12 +139,14 @@ void Manager::WorkerMain()
             }
 
             try {
-                m_client->Chat(
+                clDEBUG() << "Client (URL:" << client->GetUrl() << ", Model:" << client->GetModel()
+                          << ") is processing the request" << endl;
+                client->Chat(
                     std::move(prompt),
-                    [this, cancellation_token, &abort_loop, &shared_state, &saved_thinking_state, owner](
+                    [client, cancellation_token, &abort_loop, &shared_state, &saved_thinking_state, owner](
                         std::string message, assistant::Reason reason, bool thinking) -> bool {
                         // Check various options that the chat was cancelled.
-                        if (m_client->IsInterrupted() || (cancellation_token && cancellation_token->IsCancelled())) {
+                        if (client->IsInterrupted() || (cancellation_token && cancellation_token->IsCancelled())) {
                             NotifyDoneWithError(owner, "\n\n** Request cancelled by the user. **\n\n");
                             abort_loop = true;
                             return false;
@@ -168,7 +200,7 @@ void Manager::WorkerMain()
                             return false;
                         } break;
                         case assistant::Reason::kLogDebug:
-                            clDEBUG1() << message << endl;
+                            clDEBUG() << message << endl;
                             break;
                         case assistant::Reason::kPartialResult: {
                             clLLMEvent event{wxEVT_LLM_OUTPUT};
@@ -184,10 +216,12 @@ void Manager::WorkerMain()
                         // continue
                         return true;
                     },
-                    task.model,
                     task.options);
             } catch (std::exception& e) {
                 clERROR() << "LLM worker that got an exception." << e.what() << endl;
+                wxString errmsg;
+                errmsg << "\n\n** Request ended with an error. " << e.what() << " **\n\n";
+                NotifyDoneWithError(owner, errmsg.ToStdString(wxConvUTF8));
                 cont = false;
                 break;
             }
@@ -235,12 +269,10 @@ void Manager::PostTask(ThreadTask task)
 void Manager::Chat(wxEvtHandler* owner,
                    const wxArrayString& prompts,
                    std::shared_ptr<CancellationToken> cancel_token,
-                   ChatOptions options,
-                   const wxString& model)
+                   ChatOptions options)
 {
     // Post 1 job with multiple prompts.
-    ThreadTask task{
-        .model = model.ToStdString(wxConvUTF8), .options = options, .owner = owner, .cancellation_token = cancel_token};
+    ThreadTask task{.options = options, .owner = owner, .cancellation_token = cancel_token};
     for (const auto& prompt : prompts) { task.prompt_array.push_back(prompt.ToStdString(wxConvUTF8)); }
     PostTask(std::move(task));
 }
@@ -248,14 +280,10 @@ void Manager::Chat(wxEvtHandler* owner,
 void Manager::Chat(ResponseCollector* collector,
                    const wxArrayString& prompts,
                    std::shared_ptr<CancellationToken> cancel_token,
-                   ChatOptions options,
-                   const wxString& model)
+                   ChatOptions options)
 {
     // Post 1 job with multiple prompts.
-    ThreadTask task{.model = model.ToStdString(wxConvUTF8),
-                    .options = options,
-                    .cancellation_token = cancel_token,
-                    .collector = collector};
+    ThreadTask task{.options = options, .cancellation_token = cancel_token, .collector = collector};
     for (const auto& prompt : prompts) { task.prompt_array.push_back(prompt.ToStdString(wxConvUTF8)); }
     PostTask(std::move(task));
 }
@@ -263,11 +291,9 @@ void Manager::Chat(ResponseCollector* collector,
 void Manager::Chat(wxEvtHandler* owner,
                    const wxString& prompt,
                    std::shared_ptr<CancellationToken> cancel_token,
-                   ChatOptions options,
-                   const wxString& model)
+                   ChatOptions options)
 {
     ThreadTask task{.prompt_array = {prompt.ToStdString(wxConvUTF8)},
-                    .model = model.ToStdString(wxConvUTF8),
                     .options = options,
                     .owner = owner,
                     .cancellation_token = cancel_token};
@@ -277,11 +303,9 @@ void Manager::Chat(wxEvtHandler* owner,
 void Manager::Chat(ResponseCollector* collector,
                    const wxString& prompt,
                    std::shared_ptr<CancellationToken> cancel_token,
-                   ChatOptions options,
-                   const wxString& model)
+                   ChatOptions options)
 {
     ThreadTask task{.prompt_array = {prompt.ToStdString(wxConvUTF8)},
-                    .model = model.ToStdString(wxConvUTF8),
                     .options = options,
                     .cancellation_token = cancel_token,
                     .collector = collector};
@@ -335,13 +359,13 @@ void Manager::Stop()
 {
     auto bc = CreateBusyCursor();
 
-    m_client->Interrupt();
-    CleanupAfterWorkerExit();
-    m_client.reset();
-    {
-        std::scoped_lock lk{m_models_mutex};
-        m_models.clear();
+    if (m_client) {
+        m_client->Interrupt();
+        CleanupAfterWorkerExit();
+        m_client.reset();
     }
+    std::scoped_lock lk{m_models_mutex};
+    m_models.clear();
 }
 
 void Manager::Start()
@@ -351,7 +375,8 @@ void Manager::Start()
     m_client_config = MakeConfig();
 
     // MakeClient that accepts a Config object can not fail.
-    m_client = assistant::MakeClient(m_client_config).value();
+    m_client = assistant::MakeClient(m_client_config).value_or(nullptr);
+    CHECK_PTR_RET(m_client);
 
     // Initialise the function table.
     PopulateBuiltInFunctions(m_client->GetFunctionTable());
@@ -393,7 +418,7 @@ void Manager::LoadModels(wxEvtHandler* owner)
     t.detach();
 }
 
-bool Manager::ReloadConfig(const wxString& config_content, bool prompt)
+bool Manager::ReloadConfig(std::optional<wxString> config_content, bool prompt)
 {
     if (prompt && ::wxMessageBox(_("Reloading the configuration will restart "
                                    "the LLM client.\nContinue?"),
@@ -402,11 +427,29 @@ bool Manager::ReloadConfig(const wxString& config_content, bool prompt)
         return false;
     }
 
-    auto conf = assistant::Config::FromContent(config_content.ToStdString(wxConvUTF8));
+    // First stop the running instance
+    Stop();
+
+    wxString content;
+    if (config_content.has_value()) {
+        content = std::move(config_content.value());
+    } else {
+        const WriteOptions opts{.force_global = true};
+        content = FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts).value_or(kDefaultSettings);
+    }
+
+    auto conf = assistant::Config::FromContent(content.ToStdString(wxConvUTF8));
     if (conf.has_value()) {
         m_client_config = std::move(conf.value());
-        m_client->ApplyConfig(&m_client_config);
-        Restart();
+        // Now we can replace the client instance
+        m_client = assistant::MakeClient(m_client_config).value_or(nullptr);
+        if (!m_client) {
+            clERROR() << "Could not create new LLM client!" << endl;
+            return false;
+        }
+
+        // Start the new client
+        Start();
         return true;
     }
     return false;
@@ -430,29 +473,147 @@ wxArrayString Manager::GetModels() const
     return m_models;
 }
 
-std::optional<wxString> Manager::ChooseModel([[maybe_unused]] bool use_default)
+wxArrayString Manager::ListEndpoints()
 {
-    wxString model;
-    if (llm::Manager::GetInstance().GetModels().empty()) {
+    const auto& endpoints = m_client_config.GetEndpoints();
+    wxArrayString result;
+    result.reserve(endpoints.size());
+    for (auto ep : endpoints) { result.Add(ep->url_); }
+    return result;
+}
+
+bool Manager::SetActiveEndpoint(const wxString& endpoint)
+{
+    ASSIGN_OPT_OR_RETURN(auto j, GetConfigAsJSON(), false);
+    if (!j.contains("endpoints")) {
+        return false;
+    }
+
+    auto endpoints = j["endpoints"];
+    bool endpoint_found{false};
+    auto endpoints_items = endpoints.items();
+    llm::json new_endpoints;
+    for (auto& [name, val] : endpoints_items) {
+        if (!endpoint_found) {
+            endpoint_found = (name == endpoint);
+        }
+        val["active"] = (name == endpoint);
+        new_endpoints[name] = val;
+    }
+
+    if (!endpoint_found) {
+        return false;
+    }
+
+    j["endpoints"] = new_endpoints;
+    if (WriteConfigFile(std::move(j))) {
+        HandleConfigFileUpdated();
+        return true;
+    }
+    return false;
+}
+
+std::optional<wxString> Manager::GetActiveEndpoint()
+{
+    auto active_endpoint = m_client_config.GetEndpoint();
+    if (!active_endpoint) {
         return std::nullopt;
     }
-
-    if (llm::Manager::GetInstance().GetModels().GetCount() > 1) {
-        auto models = llm::Manager::GetInstance().GetModels();
-        auto active_model = llm::Manager::GetInstance().GetConfig().GetSelectedModel();
-        int selection = models.Index(active_model);
-        if (selection == wxNOT_FOUND) {
-            selection = 0;
-        }
-
-        model = ::wxGetSingleChoice(_("Available models:"), _("Choose model"), models, selection);
-        if (model.empty()) {
-            // user cancelled
-            return std::nullopt;
-        }
-    } else {
-        model = llm::Manager::GetInstance().GetModels().Item(0);
-    }
-    return model;
+    return active_endpoint->url_;
 }
+
+std::optional<llm::json> Manager::GetConfigAsJSON()
+{
+    const WriteOptions opts{.force_global = true};
+    wxString config_content =
+        FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts).value_or(kDefaultSettings);
+    try {
+        return llm::json::parse(config_content.ToStdString(wxConvUTF8));
+
+    } catch (const std::exception& e) {
+        clERROR() << "Failed to parse JSON file:" << kAssistantConfigFile << "." << e.what() << endl;
+        return std::nullopt;
+    }
+}
+
+void Manager::AddNewEndpoint(const llm::EndpointData& d)
+{
+    try {
+        ASSIGN_OPT_OR_RETURN(auto j, GetConfigAsJSON(), );
+        if (!j.contains("endpoints")) {
+            j["endpoints"] = {};
+        }
+
+        auto endpoints = j["endpoints"];
+        if (!endpoints.contains(d.url)) {
+            endpoints.erase(d.url);
+        }
+
+        llm::json new_endpoint;
+        new_endpoint["active"] = GetActiveEndpoint().has_value() ? false : true;
+
+        if (d.provider == "anthropic") {
+            llm::json http_headers;
+            http_headers["x-api-key"] = d.api_key.value_or("<INSERT_API_KEY>");
+            new_endpoint["http_headers"] = http_headers;
+        } else if (d.provider == "ollama") {
+            llm::json http_headers;
+            http_headers["Host"] = "127.0.0.1";
+            new_endpoint["http_headers"] = http_headers;
+        }
+
+        new_endpoint["type"] = d.provider;
+        new_endpoint["model"] = d.model;
+        new_endpoint["context_size"] = d.context_size.value_or(4 * 1024);
+
+        j["endpoints"][d.url] = new_endpoint;
+        if (WriteConfigFile(std::move(j))) {
+            HandleConfigFileUpdated();
+        }
+
+    } catch (const std::exception& e) {
+        clERROR() << "Failed to add new endpoint:" << e.what() << endl;
+    }
+}
+
+bool Manager::WriteConfigFile(llm::json j)
+{
+    const WriteOptions opts{.force_global = true};
+    if (!FileManager::WriteSettingsFileContent(kAssistantConfigFile, wxString::FromUTF8(j.dump(2)), opts)) {
+        clERROR() << "Failed to write configuration file:" << kAssistantConfigFile << endl;
+        return false;
+    }
+    return true;
+}
+
+void Manager::OnFileSaved(clCommandEvent& event)
+{
+    event.Skip();
+
+    CHECK_PTR_RET(clGetManager()->GetActiveEditor());
+
+    const WriteOptions opts{.converter = nullptr, .force_global = true};
+    wxString llm_config_file = FileManager::GetSettingFileFullPath(kAssistantConfigFile, opts);
+
+    wxString filepath = clGetManager()->GetActiveEditor()->GetRemotePathOrLocal();
+    if (filepath != llm_config_file) {
+        return;
+    }
+
+    HandleConfigFileUpdated();
+}
+
+void Manager::HandleConfigFileUpdated()
+{
+    // Reload configuration
+    wxBusyCursor bc{};
+    if (!llm::Manager::GetInstance().ReloadConfig(std::nullopt, false)) {
+        return;
+    }
+
+    clLLMEvent event_config_updates{wxEVT_LLM_CONFIG_UPDATED};
+    event_config_updates.SetEventObject(this);
+    AddPendingEvent(event_config_updates);
+}
+
 } // namespace llm

@@ -619,6 +619,9 @@ protected:
 
     void OnAiPromptEditor(wxCommandEvent& e);
     void OnAiSettings(wxCommandEvent& e);
+    void OnAiShowChatBox(wxCommandEvent& e);
+    void OnAiConfigureEndpoint(wxCommandEvent& e);
+    void OnAiChooseEndpoint(wxCommandEvent& e);
     void OnAiAvailableUI(wxUpdateUIEvent& e);
 
     void OnConfigureAccelerators(wxCommandEvent& e);

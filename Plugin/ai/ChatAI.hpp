@@ -28,8 +28,6 @@
 #include "ChatAIWindowFrame.hpp"
 #include "imanager.h"
 
-#include <optional>
-
 class WXDLLIMPEXP_SDK ChatAI : public wxEvtHandler
 {
 public:
@@ -38,9 +36,9 @@ public:
 
     void DetachView(bool show_frame);
     void DockView();
+    void ShowChatWindow();
 
 private:
-    void OnShowChatWindow(wxCommandEvent& event);
     void OnInitDone(wxCommandEvent& event);
 
     ChatAIWindow* m_chatWindow{nullptr};

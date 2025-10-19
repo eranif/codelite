@@ -202,3 +202,205 @@ ChatAIWindowFrameBase::~ChatAIWindowFrameBase()
 {
     this->Unbind(wxEVT_CLOSE_WINDOW, &ChatAIWindowFrameBase::OnClose, this);
 }
+
+NewLLMEndpointWizardBase::NewLLMEndpointWizardBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxBitmap& bmp, const wxPoint& pos, long style)
+{
+    if (!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCF667InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+    Create(parent, id, title, wxNullBitmap, pos, style);
+
+    m_wizardPageSettings = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
+    m_pages.push_back(m_wizardPageSettings);
+
+    wxBoxSizer* boxSizer62 = new wxBoxSizer(wxVERTICAL);
+    m_wizardPageSettings->SetSizer(boxSizer62);
+
+    m_banner108 = new wxBannerWindow(m_wizardPageSettings,
+                                     wxID_ANY,
+                                     wxTOP,
+                                     wxDefaultPosition,
+                                     wxDLG_UNIT(m_wizardPageSettings, wxSize(-1, -1)),
+                                     wxBORDER_THEME);
+    m_banner108->SetBitmap(wxNullBitmap);
+    m_banner108->SetText(_("General Setings"), wxT(""));
+    m_banner108->SetGradient(
+        wxSystemSettings::GetColour(wxSYS_COLOUR_MENU), wxSystemSettings::GetColour(wxSYS_COLOUR_MENU));
+
+    boxSizer62->Add(m_banner108, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxFlexGridSizer* flexGridSizer68 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer68->SetFlexibleDirection(wxBOTH);
+    flexGridSizer68->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer68->AddGrowableCol(1);
+
+    boxSizer62->Add(flexGridSizer68, 1, wxALL | wxEXPAND, WXC_FROM_DIP(10));
+
+    m_staticText69 = new wxStaticText(m_wizardPageSettings,
+                                      wxID_ANY,
+                                      _("API Provider:"),
+                                      wxDefaultPosition,
+                                      wxDLG_UNIT(m_wizardPageSettings, wxSize(-1, -1)),
+                                      0);
+
+    flexGridSizer68->Add(m_staticText69, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceProvidersArr;
+    m_choiceProvidersArr.Add(_("Ollama (Local)"));
+    m_choiceProvidersArr.Add(_("Ollama (Cloud)"));
+    m_choiceProvidersArr.Add(_("Anthropic"));
+    m_choiceProviders = new wxChoice(m_wizardPageSettings,
+                                     wxID_ANY,
+                                     wxDefaultPosition,
+                                     wxDLG_UNIT(m_wizardPageSettings, wxSize(-1, -1)),
+                                     m_choiceProvidersArr,
+                                     0);
+    m_choiceProviders->SetSelection(0);
+
+    flexGridSizer68->Add(m_choiceProviders, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText72 = new wxStaticText(m_wizardPageSettings,
+                                      wxID_ANY,
+                                      _("Base URL:"),
+                                      wxDefaultPosition,
+                                      wxDLG_UNIT(m_wizardPageSettings, wxSize(-1, -1)),
+                                      0);
+
+    flexGridSizer68->Add(m_staticText72, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlBaseURL = new wxTextCtrl(m_wizardPageSettings,
+                                       wxID_ANY,
+                                       wxT(""),
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(m_wizardPageSettings, wxSize(250, -1)),
+                                       0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlBaseURL->SetHint(wxT(""));
+#endif
+
+    flexGridSizer68->Add(m_textCtrlBaseURL, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText76 = new wxStaticText(m_wizardPageSettings,
+                                      wxID_ANY,
+                                      _("Model:"),
+                                      wxDefaultPosition,
+                                      wxDLG_UNIT(m_wizardPageSettings, wxSize(-1, -1)),
+                                      0);
+
+    flexGridSizer68->Add(m_staticText76, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlModel = new wxTextCtrl(m_wizardPageSettings,
+                                     wxID_ANY,
+                                     wxT(""),
+                                     wxDefaultPosition,
+                                     wxDLG_UNIT(m_wizardPageSettings, wxSize(-1, -1)),
+                                     0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlModel->SetHint(wxT(""));
+#endif
+
+    flexGridSizer68->Add(m_textCtrlModel, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText78 = new wxStaticText(m_wizardPageSettings,
+                                      wxID_ANY,
+                                      _("Model Context Window (KB):"),
+                                      wxDefaultPosition,
+                                      wxDLG_UNIT(m_wizardPageSettings, wxSize(-1, -1)),
+                                      0);
+
+    flexGridSizer68->Add(m_staticText78, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_spinCtrlContextSizeKB = new wxSpinCtrl(m_wizardPageSettings,
+                                             wxID_ANY,
+                                             wxT("32"),
+                                             wxDefaultPosition,
+                                             wxDLG_UNIT(m_wizardPageSettings, wxSize(-1, -1)),
+                                             wxSP_ARROW_KEYS);
+    m_spinCtrlContextSizeKB->SetToolTip(_("The model context size, in kilobytes."));
+    m_spinCtrlContextSizeKB->SetRange(4, 1000);
+    m_spinCtrlContextSizeKB->SetValue(32);
+
+    flexGridSizer68->Add(m_spinCtrlContextSizeKB, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_wizardPageAPI = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
+    m_pages.push_back(m_wizardPageAPI);
+    if (m_pages.size() > 1) {
+        for (size_t i = 1; i < m_pages.size(); i++) { wxWizardPageSimple::Chain(m_pages.at(i - 1), m_pages.at(i)); }
+    }
+    GetPageAreaSizer()->Add(m_pages.at(0));
+
+    wxBoxSizer* boxSizer111 = new wxBoxSizer(wxVERTICAL);
+    m_wizardPageAPI->SetSizer(boxSizer111);
+
+    m_banner112 = new wxBannerWindow(m_wizardPageAPI,
+                                     wxID_ANY,
+                                     wxTOP,
+                                     wxDefaultPosition,
+                                     wxDLG_UNIT(m_wizardPageAPI, wxSize(-1, -1)),
+                                     wxBORDER_THEME);
+    m_banner112->SetBitmap(wxNullBitmap);
+    m_banner112->SetText(_("API Token"), wxT(""));
+    m_banner112->SetGradient(
+        wxSystemSettings::GetColour(wxSYS_COLOUR_MENU), wxSystemSettings::GetColour(wxSYS_COLOUR_MENU));
+
+    boxSizer111->Add(m_banner112, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxFlexGridSizer* flexGridSizer113 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer113->SetFlexibleDirection(wxBOTH);
+    flexGridSizer113->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer113->AddGrowableCol(1);
+
+    boxSizer111->Add(flexGridSizer113, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText114 = new wxStaticText(
+        m_wizardPageAPI, wxID_ANY, _("API Key:"), wxDefaultPosition, wxDLG_UNIT(m_wizardPageAPI, wxSize(-1, -1)), 0);
+
+    flexGridSizer113->Add(m_staticText114, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlAPIKey = new wxTextCtrl(m_wizardPageAPI,
+                                      wxID_ANY,
+                                      wxT(""),
+                                      wxDefaultPosition,
+                                      wxDLG_UNIT(m_wizardPageAPI, wxSize(-1, -1)),
+                                      wxTE_PASSWORD);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlAPIKey->SetHint(wxT(""));
+#endif
+
+    flexGridSizer113->Add(m_textCtrlAPIKey, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    SetName(wxT("NewLLMEndpointWizardBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if (GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+    if (!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+    // Connect events
+    this->Bind(wxEVT_WIZARD_PAGE_CHANGING, &NewLLMEndpointWizardBase::OnPageChanging, this);
+    this->Bind(wxEVT_WIZARD_FINISHED, &NewLLMEndpointWizardBase::OnFinished, this);
+    m_choiceProviders->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &NewLLMEndpointWizardBase::OnProviderChanged, this);
+    m_staticText78->Bind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnContextSizeUI, this);
+    m_spinCtrlContextSizeKB->Bind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnContextSizeUI, this);
+}
+
+NewLLMEndpointWizardBase::~NewLLMEndpointWizardBase()
+{
+    this->Unbind(wxEVT_WIZARD_PAGE_CHANGING, &NewLLMEndpointWizardBase::OnPageChanging, this);
+    this->Unbind(wxEVT_WIZARD_FINISHED, &NewLLMEndpointWizardBase::OnFinished, this);
+    m_choiceProviders->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &NewLLMEndpointWizardBase::OnProviderChanged, this);
+    m_staticText78->Unbind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnContextSizeUI, this);
+    m_spinCtrlContextSizeKB->Unbind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnContextSizeUI, this);
+}

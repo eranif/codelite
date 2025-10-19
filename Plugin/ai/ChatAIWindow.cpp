@@ -36,9 +36,7 @@ std::optional<wxString> GetGlobalSettings()
 
 } // namespace
 
-ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
-    : AssistanceAIChatWindowBase(parent)
-    , m_plugin(plugin)
+ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin) : AssistanceAIChatWindowBase(parent), m_plugin(plugin)
 {
     auto images = clGetManager()->GetStdIcons();
     m_toolbar->SetArtProvider(new clAuiToolBarArt());
@@ -47,9 +45,9 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     m_toolbar->AddSeparator();
 
     wxSize control_size{GetTextExtent(LONG_MODEL_NAME).GetWidth(), wxNOT_FOUND};
-    m_activeModel = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, control_size);
-    m_activeModel->SetToolTip(_("Change model. Changing a model will also clear your chat history"));
-    m_toolbar->AddControl(m_activeModel);
+    m_choiceEndpoints = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, control_size);
+    m_choiceEndpoints->SetToolTip(_("Choose the endpoint to use"));
+    m_toolbar->AddControl(m_choiceEndpoints);
     m_toolbar->AddTool(wxID_REFRESH, _("Restart the client"), images->LoadBitmap("debugger_restart"));
     m_toolbar->AddSeparator();
     m_toolbar->AddTool(wxID_EXECUTE, _("Submit"), images->LoadBitmap("run"));
@@ -73,10 +71,9 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     clAuiToolBarArt::Finalise(m_toolbar);
     m_toolbar->Realize();
 
-    m_activeModel->Bind(wxEVT_CHOICE, &ChatAIWindow::OnModelChanged, this);
+    m_choiceEndpoints->Bind(wxEVT_CHOICE, &ChatAIWindow::OnEndpointChanged, this);
 
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
-    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &ChatAIWindow::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &ChatAIWindow::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &ChatAIWindow::OnWorkspaceClosed, this);
 
@@ -86,7 +83,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     Bind(wxEVT_LLM_OUTPUT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
     Bind(wxEVT_LLM_THINK_SATRTED, &ChatAIWindow::OnThinkingStart, this);
     Bind(wxEVT_LLM_THINK_ENDED, &ChatAIWindow::OnThinkingEnd, this);
-    Bind(wxEVT_LLM_MODELS_LOADED, &ChatAIWindow::OnModelsLoaded, this);
+    llm::Manager::GetInstance().Bind(wxEVT_LLM_CONFIG_UPDATED, &ChatAIWindow::OnLLMConfigUpdate, this);
 
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
@@ -110,7 +107,8 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSettingsUI, this, wxID_SETUP);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnAutoScrollUI, this, XRCID("auto_scroll"));
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnHistoryUI, this, XRCID("prompt_history"));
-    m_activeModel->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnBusyUI, this);
+    m_choiceEndpoints->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnBusyUI, this);
+    PopulateEndpoints();
 
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);
 
@@ -124,7 +122,6 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     GetSizer()->Add(m_statusPanel, wxSizerFlags(0).Expand());
 
     CallAfter(&ChatAIWindow::LoadGlobalConfig);
-    CallAfter(&ChatAIWindow::PopulateModels);
     CallAfter(&ChatAIWindow::RestoreUI);
     ShowIndicator(false);
 
@@ -134,7 +131,6 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
 ChatAIWindow::~ChatAIWindow()
 {
     EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
-    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &ChatAIWindow::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &ChatAIWindow::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &ChatAIWindow::OnWorkspaceClosed, this);
 
@@ -144,14 +140,9 @@ ChatAIWindow::~ChatAIWindow()
     Unbind(wxEVT_LLM_OUTPUT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
     Unbind(wxEVT_LLM_THINK_SATRTED, &ChatAIWindow::OnThinkingStart, this);
     Unbind(wxEVT_LLM_THINK_ENDED, &ChatAIWindow::OnThinkingEnd, this);
-    Unbind(wxEVT_LLM_MODELS_LOADED, &ChatAIWindow::OnModelsLoaded, this);
-    clConfig::Get().Write("chat-ai/sash-position", m_mainSplitter->GetSashPosition());
-}
+    llm::Manager::GetInstance().Unbind(wxEVT_LLM_CONFIG_UPDATED, &ChatAIWindow::OnLLMConfigUpdate, this);
 
-wxString ChatAIWindow::GetConfigurationFilePath() const
-{
-    WriteOptions opts{.converter = nullptr, .force_global = true};
-    return FileManager::GetSettingFileFullPath(kAssistantConfigFile, opts);
+    clConfig::Get().Write("chat-ai/sash-position", m_mainSplitter->GetSashPosition());
 }
 
 void ChatAIWindow::OnSend(wxCommandEvent& event)
@@ -164,17 +155,16 @@ void ChatAIWindow::DoSendPrompt()
 {
     wxBusyCursor bc{};
 
-    wxString active_model = m_activeModel->GetStringSelection();
-    if (active_model.empty()) {
-        ::wxMessageBox(_("Please choose a model first."), "CodeLite", wxICON_WARNING | wxOK | wxCENTRE);
+    wxString selected_endpoint = m_choiceEndpoints->GetStringSelection();
+    if (selected_endpoint.empty()) {
+        ::wxMessageBox(_("Please choose an endpoint."), "CodeLite", wxICON_WARNING | wxOK | wxCENTRE);
         return;
     }
 
     wxString prompt = m_stcInput->GetText();
     prompt.Trim().Trim(false);
     m_cancel_token->Reset();
-    llm::Manager::GetInstance().Chat(
-        this, prompt, m_cancel_token, llm::ChatOptions::kDefault, m_activeModel->GetStringSelection());
+    llm::Manager::GetInstance().Chat(this, prompt, m_cancel_token, llm::ChatOptions::kDefault);
 
     // Remember this prompt in the history.
     if (!prompt.empty()) {
@@ -198,14 +188,13 @@ void ChatAIWindow::OnSendUI(wxUpdateUIEvent& event)
     wxString prompt = m_stcInput->GetText();
     prompt.Trim().Trim(false);
     event.Enable(!llm::Manager::GetInstance().IsBusy() && !prompt.empty() &&
-                 !m_activeModel->GetStringSelection().empty());
+                 !m_choiceEndpoints->GetStringSelection().empty());
 }
 
-void ChatAIWindow::OnModelChanged(wxCommandEvent& event)
+void ChatAIWindow::OnEndpointChanged(wxCommandEvent& event)
 {
-    llm::Manager::GetInstance().GetConfig().SetSelectedModelName(m_activeModel->GetStringSelection());
-    llm::Manager::GetInstance().GetConfig().Save();
-    DoRestart();
+    wxUnusedVar(event);
+    llm::Manager::GetInstance().SetActiveEndpoint(m_choiceEndpoints->GetStringSelection());
 }
 
 void ChatAIWindow::OnUpdateTheme(wxCommandEvent& event)
@@ -230,9 +219,7 @@ void ChatAIWindow::UpdateTheme()
         bg_colour = lexer->GetProperty(0).GetBgColour();
     }
 
-    for (int style = 0; style < wxSTC_STYLE_MAX; ++style) {
-        m_stcInput->StyleSetBackground(style, bg_colour);
-    }
+    for (int style = 0; style < wxSTC_STYLE_MAX; ++style) { m_stcInput->StyleSetBackground(style, bg_colour); }
 
     AnsiColours::SetDarkTheme(lexer->IsDark());
 }
@@ -293,19 +280,12 @@ void ChatAIWindow::OnSettings(wxCommandEvent& event)
 void ChatAIWindow::OnRestartClient(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    m_activeModel->Clear(); // Clear before we restart.
     m_cancel_token->Cancel();
-
-    WriteOptions opts{.force_global = true};
-    wxString config_content =
-        FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts).value_or(kDefaultSettings);
 
     // Reload configuration
     wxBusyCursor bc{};
-    if (llm::Manager::GetInstance().ReloadConfig(config_content, false)) {
-        clGetManager()->SetStatusMessage(_("ChatAI configuration re-loaded successfully"), 3);
-        // Refresh the model list.
-        PopulateModels();
+    if (llm::Manager::GetInstance().ReloadConfig(std::nullopt, false)) {
+        clGetManager()->SetStatusMessage(_("LLM client successfully restarted"), 3);
     }
 }
 
@@ -377,6 +357,10 @@ void ChatAIWindow::OnChatAIOutputDone(clLLMEvent& event)
 
     if (m_cancel_token->IsCancelled()) {
         AppendOutput("\n\n** Generation cancelled by the user**\n");
+    } else if (event.IsError()) {
+        wxString message;
+        message << "\n\n** Error occurred: " << wxString::FromUTF8(event.GetResponseRaw()) << " **\n";
+        AppendOutput(message);
     }
 
     m_cancel_token->Reset();
@@ -393,56 +377,26 @@ void ChatAIWindow::ShowIndicator(bool show)
     }
 }
 
-void ChatAIWindow::OnFileSaved(clCommandEvent& event)
+void ChatAIWindow::OnLLMConfigUpdate(clLLMEvent& event)
 {
     // Always call Skip()
     event.Skip();
-    CHECK_PTR_RET(clGetManager()->GetActiveEditor());
-
-    wxString filepath = clGetManager()->GetActiveEditor()->GetRemotePathOrLocal();
-    if (filepath != GetConfigurationFilePath()) {
-        return;
-    }
-
-    // Reload configuration
-    wxBusyCursor bc{};
-    if (llm::Manager::GetInstance().ReloadConfig(clGetManager()->GetActiveEditor()->GetEditorText(), false)) {
-        clGetManager()->SetStatusMessage(_("ChatAI configuration re-loaded successfully"), 3);
-        // Clear the output view
-        DoClearOutputView();
-        // Refresh the model list.
-        PopulateModels();
-    }
+    // Clear the output view
+    DoClearOutputView();
+    PopulateEndpoints();
 }
 
 void ChatAIWindow::OnInputUI(wxUpdateUIEvent& event) { event.Enable(true); }
 
-void ChatAIWindow::OnModelsLoaded(clLLMEvent& event)
+void ChatAIWindow::PopulateEndpoints()
 {
-    wxArrayString models = event.GetStrings();
-    m_activeModel->Clear();
-    m_activeModel->Append(models);
-
-    if (models.empty()) {
-        return;
+    m_choiceEndpoints->Clear();
+    m_choiceEndpoints->Append(llm::Manager::GetInstance().ListEndpoints());
+    auto active_endpoint = llm::Manager::GetInstance().GetActiveEndpoint();
+    if (active_endpoint.has_value()) {
+        m_choiceEndpoints->SetStringSelection(active_endpoint.value());
     }
-
-    auto active_model = llm::Manager::GetInstance().GetConfig().GetSelectedModel();
-    if (active_model.empty() || (m_activeModel->FindString(active_model) == wxNOT_FOUND)) {
-        m_activeModel->SetSelection(0);
-        active_model = m_activeModel->GetString(0);
-        llm::Manager::GetInstance().GetConfig().SetSelectedModelName(active_model);
-        llm::Manager::GetInstance().GetConfig().Save();
-        return;
-    }
-
-    // We have an active mode and it exists in the drop down
-    m_activeModel->SetStringSelection(active_model);
-    llm::Manager::GetInstance().GetConfig().SetSelectedModelName(active_model);
-    llm::Manager::GetInstance().GetConfig().Save();
 }
-
-void ChatAIWindow::PopulateModels() { llm::Manager::GetInstance().LoadModels(this); }
 
 void ChatAIWindow::SetFocusToActiveEditor()
 {

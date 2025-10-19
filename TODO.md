@@ -25,10 +25,4 @@ AI-powered IDE:
   - Generate release notes
   - Code review my changes
 
-- AI menu (menu bar):
-  - Add a "settings" option.
-
-- Prompt Editor: replace the default "Markdown" lexer with the more capable `MarkdownStyler` class.
-
-- Create multiple animated GIFs demonstrating the new capabilities.
-- Review the AI documentation.
+- Add auto-detection code to allow easy setup

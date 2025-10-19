@@ -590,7 +590,7 @@ protected:
     wxStaticText* m_staticText839;
     wxTextCtrl* m_textCtrlSecondCommit;
     wxStaticText* m_staticText841;
-    wxChoice* m_choiceModels;
+    wxChoice* m_choiceProviders;
     wxStaticText* m_staticText843;
     wxSpinCtrl* m_spinCtrlLimitTokens;
     wxCheckBox* m_checkBoxOneLine;
@@ -599,7 +599,8 @@ protected:
     wxButton* m_buttonCancel;
 
 protected:
-    virtual void OnChoicemodelsUpdateUi(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnChoiceProvidersUpdateUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnChoiceProviders(wxCommandEvent& event) { event.Skip(); }
     virtual void OnButtonokUpdateUi(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
@@ -608,7 +609,7 @@ public:
     wxStaticText* GetStaticText839() { return m_staticText839; }
     wxTextCtrl* GetTextCtrlSecondCommit() { return m_textCtrlSecondCommit; }
     wxStaticText* GetStaticText841() { return m_staticText841; }
-    wxChoice* GetChoiceModels() { return m_choiceModels; }
+    wxChoice* GetChoiceProviders() { return m_choiceProviders; }
     wxStaticText* GetStaticText843() { return m_staticText843; }
     wxSpinCtrl* GetSpinCtrlLimitTokens() { return m_spinCtrlLimitTokens; }
     wxCheckBox* GetCheckBoxOneLine() { return m_checkBoxOneLine; }

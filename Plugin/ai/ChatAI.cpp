@@ -49,23 +49,15 @@ constexpr const char* kConfigIsViewDetached = "chat_ai.detached_view";
 
 ChatAI::ChatAI()
 {
-    clKeyboardManager::Get()->AddAccelerator(_("Chat AI"),
-                                             {
-                                                 {"chatai_show_window", _("Show AI Chat Window"), "Ctrl-Shift-H"},
-                                             });
-    wxTheApp->Bind(wxEVT_MENU, &ChatAI::OnShowChatWindow, this, XRCID("chatai_show_window"));
-
     llm::Manager::GetInstance().GetConfig().Load();
-
     m_chatWindowFrame = new ChatAIWindowFrame(EventNotifier::Get()->TopFrame(), this);
     m_chatWindow = new ChatAIWindow(clGetManager()->BookGet(PaneId::SIDE_BAR), this);
     clGetManager()->BookAddPage(PaneId::SIDE_BAR, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &ChatAI::OnInitDone, this);
 }
 
-void ChatAI::OnShowChatWindow(wxCommandEvent& event)
+void ChatAI::ShowChatWindow()
 {
-    wxUnusedVar(event);
     if (m_dockedPaneId.has_value()) {
         m_chatWindowFrame->Show();
     } else {

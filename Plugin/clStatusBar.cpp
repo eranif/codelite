@@ -286,7 +286,7 @@ void clStatusBar::StopAnimation()
     field->SetTooltip("");
 }
 
-void clStatusBar::OnFieldClicked(clCommandEvent& event) { DoFieldClicked(event.GetInt()); }
+void clStatusBar::OnFieldClicked(clCommandEvent& event) { DoFieldClicked(static_cast<size_t>(event.GetInt())); }
 
 void clStatusBar::SetWhitespaceInfo()
 {
@@ -388,7 +388,7 @@ void clStatusBar::DoUpdateView()
     SetWhitespaceInfo();
 }
 
-void clStatusBar::DoFieldClicked(int fieldIndex)
+void clStatusBar::DoFieldClicked(size_t fieldIndex)
 {
     if (fieldIndex == STATUSBAR_SCM_IDX) {
         if (m_sourceControlTabName.IsEmpty())

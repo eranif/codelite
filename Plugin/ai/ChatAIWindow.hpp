@@ -33,7 +33,6 @@ protected:
     void OnHistoryUI(wxUpdateUIEvent& event);
     void OnStop(wxCommandEvent& event);
     void OnStopUI(wxUpdateUIEvent& event);
-    void OnSettingsUI(wxUpdateUIEvent& event);
     void OnInputUI(wxUpdateUIEvent& event) override;
     void OnSend(wxCommandEvent& event);
     void OnSendUI(wxUpdateUIEvent& event);
@@ -43,7 +42,6 @@ protected:
     void OnKeyDown(wxKeyEvent& event);
     void OnNewSession(wxCommandEvent& event);
     void OnRestartClient(wxCommandEvent& event);
-    void OnSettings(wxCommandEvent& event);
     void UpdateTheme();
     void DoSendPrompt();
     void PopulateEndpoints();

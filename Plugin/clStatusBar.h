@@ -63,7 +63,7 @@ protected:
     void SetBuildBitmap(const wxBitmap& bmp, const wxString& tooltip);
 
     void DoUpdateView();
-    void DoFieldClicked(int fieldIndex);
+    void DoFieldClicked(size_t fieldIndex);
     int GetTextWidth(const wxString& text) const;
 
     wxAuiToolBar* CreatePaneButtonsToolbar();

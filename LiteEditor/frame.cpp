@@ -6287,18 +6287,7 @@ void clMainFrame::OnAiConfigureEndpoint(wxCommandEvent& e)
 void clMainFrame::OnAiSettings(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    WriteOptions opts{.force_global = true};
-    wxString global_config_path = FileManager::GetSettingFileFullPath(kAssistantConfigFile, opts);
-    if (!wxFileName::Exists(global_config_path)) {
-        // create it
-        if (!FileUtils::WriteFileContent(global_config_path, kDefaultSettings)) {
-            ::wxMessageBox(wxString() << _("Failed to create configuration file:\n") << global_config_path,
-                           "CodeLite",
-                           wxICON_WARNING | wxOK | wxCENTER);
-            return;
-        }
-    }
-    clGetManager()->OpenFile(global_config_path);
+    llm::Manager::GetInstance().OpenSettingsFileInEditor();
 }
 
 void clMainFrame::OnAiAvailableUI(wxUpdateUIEvent& e) { e.Enable(llm::Manager::GetInstance().IsAvailable()); }

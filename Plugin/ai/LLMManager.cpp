@@ -18,6 +18,8 @@ namespace llm
 {
 namespace
 {
+constexpr float kConfigVersion = 1.0;
+constexpr const char* kConfigVersionProperty = "_version";
 
 wxString TruncateText(const wxString& text, size_t size = 100)
 {
@@ -616,4 +618,51 @@ void Manager::HandleConfigFileUpdated()
     AddPendingEvent(event_config_updates);
 }
 
+void Manager::OpenSettingsFileInEditor()
+{
+    const WriteOptions opts{.force_global = true};
+    const wxString global_config_path = FileManager::GetSettingFileFullPath(kAssistantConfigFile, opts);
+
+    auto CreateNewConfigFile = [](const wxString& global_config_path) -> bool {
+        // Create a backup file first.
+        wxString backup_file = global_config_path;
+        backup_file << ".old";
+
+        if (wxFileName::FileExists(global_config_path)) {
+            wxLogNull noLog;
+            if (::wxRenameFile(global_config_path, backup_file, true)) {
+                clSYSTEM() << "Created backup file for LLM configuration at:" << backup_file << endl;
+            }
+        }
+
+        // Invalid file, write a new one.
+        if (!FileUtils::WriteFileContent(global_config_path, kDefaultSettings)) {
+            ::wxMessageBox(wxString() << _("Failed to create configuration file:\n") << global_config_path,
+                           "CodeLite",
+                           wxICON_WARNING | wxOK | wxCENTER);
+            return false;
+        }
+        return true;
+    };
+
+    auto res = GetConfigAsJSON();
+    if (!res.has_value()) {
+        // Invalid file, write a new one.
+        if (!CreateNewConfigFile(global_config_path)) {
+            return;
+        }
+    } else {
+        // File exists, make sure it has the correct version.
+        llm::json j = std::move(res.value());
+        if (!j.contains(kConfigVersionProperty) || !j[kConfigVersionProperty].is_number_float() ||
+            (j[kConfigVersionProperty].get<float>() != kConfigVersion)) {
+            // Invalid file, write a new one.
+            if (!CreateNewConfigFile(global_config_path)) {
+                return;
+            }
+        }
+    }
+
+    clGetManager()->OpenFile(global_config_path);
+}
 } // namespace llm

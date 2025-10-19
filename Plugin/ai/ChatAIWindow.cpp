@@ -21,19 +21,6 @@ namespace
 {
 const wxString CHAT_AI_LABEL = _("Chat AI");
 const wxString LONG_MODEL_NAME = "claude-sonnet-4-5-1234567890";
-
-std::optional<wxString> GetGlobalSettings()
-{
-    wxFileName global_config{clStandardPaths::Get().GetUserDataDir(), kAssistantConfigFile};
-    global_config.AppendDir("config");
-
-    wxString global_content;
-    if (!FileUtils::ReadFileContent(global_config, global_content)) {
-        return std::nullopt;
-    }
-    return global_content;
-}
-
 } // namespace
 
 ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin) : AssistanceAIChatWindowBase(parent), m_plugin(plugin)
@@ -41,7 +28,6 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin) : AssistanceAIChatW
     auto images = clGetManager()->GetStdIcons();
     m_toolbar->SetArtProvider(new clAuiToolBarArt());
     m_toolbar->AddTool(wxID_CLEAR, _("Clear the chat history"), images->LoadBitmap("clear"));
-    m_toolbar->AddTool(wxID_SETUP, _("Settings"), images->LoadBitmap("cog"));
     m_toolbar->AddSeparator();
 
     wxSize control_size{GetTextExtent(LONG_MODEL_NAME).GetWidth(), wxNOT_FOUND};
@@ -93,7 +79,6 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin) : AssistanceAIChatW
 
     Bind(wxEVT_MENU, &ChatAIWindow::OnNewSession, this, wxID_CLEAR);
     Bind(wxEVT_MENU, &ChatAIWindow::OnRestartClient, this, wxID_REFRESH);
-    Bind(wxEVT_MENU, &ChatAIWindow::OnSettings, this, wxID_SETUP);
     Bind(wxEVT_MENU, &ChatAIWindow::OnSend, this, wxID_EXECUTE);
     Bind(wxEVT_MENU, &ChatAIWindow::OnStop, this, wxID_STOP);
     Bind(wxEVT_MENU, &ChatAIWindow::OnAutoScroll, this, XRCID("auto_scroll"));
@@ -104,7 +89,6 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin) : AssistanceAIChatW
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSendUI, this, wxID_EXECUTE);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnStopUI, this, wxID_STOP);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnClearOutputViewUI, this, wxID_CLEAR);
-    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSettingsUI, this, wxID_SETUP);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnAutoScrollUI, this, XRCID("auto_scroll"));
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnHistoryUI, this, XRCID("prompt_history"));
     m_choiceEndpoints->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnBusyUI, this);
@@ -121,7 +105,6 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin) : AssistanceAIChatW
     m_statusPanel = new IndicatorPanel(this);
     GetSizer()->Add(m_statusPanel, wxSizerFlags(0).Expand());
 
-    CallAfter(&ChatAIWindow::LoadGlobalConfig);
     CallAfter(&ChatAIWindow::RestoreUI);
     ShowIndicator(false);
 
@@ -258,23 +241,6 @@ void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
         event.Skip();
         break;
     }
-}
-
-void ChatAIWindow::OnSettings(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    WriteOptions opts{.force_global = true};
-    wxString global_config_path = FileManager::GetSettingFileFullPath(kAssistantConfigFile, opts);
-    if (!wxFileName::Exists(global_config_path)) {
-        // create it
-        if (!FileUtils::WriteFileContent(global_config_path, kDefaultSettings)) {
-            ::wxMessageBox(wxString() << _("Failed to create configuration file:\n") << global_config_path,
-                           "CodeLite",
-                           wxICON_WARNING | wxOK | wxCENTER);
-            return;
-        }
-    }
-    clGetManager()->OpenFile(global_config_path);
 }
 
 void ChatAIWindow::OnRestartClient(wxCommandEvent& event)
@@ -439,19 +405,12 @@ void ChatAIWindow::StyleOutput()
     }
 }
 
-void ChatAIWindow::OnWorkspaceLoaded(clWorkspaceEvent& event)
-{
-    event.Skip();
-    WriteOptions opts{.converter = nullptr, .force_global = true};
-    auto content = FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts).value_or(kDefaultSettings);
-    llm::Manager::GetInstance().ReloadConfig(content, false);
-}
+void ChatAIWindow::OnWorkspaceLoaded(clWorkspaceEvent& event) { event.Skip(); }
 
 void ChatAIWindow::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
     DoRestart();
-    CallAfter(&ChatAIWindow::LoadGlobalConfig);
 }
 
 void ChatAIWindow::RestoreUI()
@@ -466,7 +425,7 @@ void ChatAIWindow::RestoreUI()
 void ChatAIWindow::LoadGlobalConfig()
 {
     wxBusyCursor bc{};
-    llm::Manager::GetInstance().ReloadConfig(GetGlobalSettings().value_or(kDefaultSettings), false);
+    llm::Manager::GetInstance().ReloadConfig(std::nullopt, false);
 }
 
 void ChatAIWindow::OnAutoScroll(wxCommandEvent& event) { m_autoScroll = event.IsChecked(); }
@@ -515,7 +474,6 @@ void ChatAIWindow::OnStop(wxCommandEvent& event)
 }
 
 void ChatAIWindow::OnStopUI(wxUpdateUIEvent& event) { event.Enable(llm::Manager::GetInstance().IsBusy()); }
-void ChatAIWindow::OnSettingsUI(wxUpdateUIEvent& event) { event.Enable(!llm::Manager::GetInstance().IsBusy()); }
 
 void ChatAIWindow::OnDetachViewUI(wxUpdateUIEvent& event) { event.Enable(true); }
 

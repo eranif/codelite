@@ -28,6 +28,7 @@
 constexpr const char* kAssistantConfigFile = "assistant.json";
 
 static const wxString kDefaultSettings = R"#({
+  "_version": 1.0,
   "endpoints": {},
   "history_size": 50,
   "keep_alive": "24h",
@@ -182,6 +183,9 @@ public:
     std::optional<wxString> GetActiveEndpoint();
     bool SetActiveEndpoint(const wxString& endpoint);
     void AddNewEndpoint(const llm::EndpointData& d);
+
+    /// Open the settings file inside an editor.
+    void OpenSettingsFileInEditor();
 
 private:
     Manager();

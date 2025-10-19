@@ -182,7 +182,8 @@ bool clConfig::Write(const wxString& name, std::function<JSONItem()> serialiser_
     }
 }
 
-void clConfig::Read(const wxString& name, std::function<void(const JSONItem& item)> deserialiser_func,
+void clConfig::Read(const wxString& name,
+                    std::function<void(const JSONItem& item)> deserialiser_func,
                     const wxFileName& configFile)
 {
     if (configFile.IsOk() && configFile.FileExists()) {
@@ -221,6 +222,12 @@ wxArrayString clConfig::MergeArrays(const wxArrayString& arr1, const wxArrayStri
     std::set<wxString> visited;
 
     for (const wxString& element : arr1) {
+        if (visited.count(element))
+            continue;
+        visited.insert(element);
+    }
+
+    for (const wxString& element : arr2) {
         if (visited.count(element))
             continue;
         visited.insert(element);

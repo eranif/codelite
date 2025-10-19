@@ -590,6 +590,15 @@ bool Manager::WriteConfigFile(llm::json j)
     return true;
 }
 
+/**
+ * @brief Handles the file saved event and triggers configuration reload if the assistant config file was saved.
+ *
+ * This function is called when a file is saved in the editor. It checks if the saved file is the
+ * LLM assistant configuration file, and if so, triggers a configuration update by calling
+ * HandleConfigFileUpdated(). If the saved file is not the config file, the function returns early.
+ *
+ * @param event the command event containing information about the file save operation
+ */
 void Manager::OnFileSaved(clCommandEvent& event)
 {
     event.Skip();
@@ -607,6 +616,13 @@ void Manager::OnFileSaved(clCommandEvent& event)
     HandleConfigFileUpdated();
 }
 
+/**
+ * @brief Handles configuration file update events by reloading the configuration and notifying listeners.
+ *
+ * This method is called when the configuration file has been updated. It displays a busy cursor,
+ * reloads the configuration from the LLM Manager, and if successful, creates and dispatches
+ * a wxEVT_LLM_CONFIG_UPDATED event to notify other components of the configuration change.
+ */
 void Manager::HandleConfigFileUpdated()
 {
     // Reload configuration
@@ -620,6 +636,17 @@ void Manager::HandleConfigFileUpdated()
     AddPendingEvent(event_config_updates);
 }
 
+/**
+ * @brief Creates or opens the assistant configuration file, ensuring it is valid and up-to-date.
+ *
+ * This function attempts to locate and validate the global assistant configuration file.
+ * If the file doesn't exist, is invalid, or has an outdated version, it creates a backup
+ * (if an old file exists) and generates a new configuration file with default settings.
+ * The function performs version checking and ensures the configuration matches the expected format.
+ *
+ * @return clStatusOr<wxString> On success, returns the full path to the configuration file.
+ *                              On failure, returns a status error with an appropriate message.
+ */
 clStatusOr<wxString> Manager::CreateOrOpenConfig()
 {
     const WriteOptions opts{.force_global = true};

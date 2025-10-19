@@ -5,7 +5,30 @@
 #include "event_notifier.h"
 #include "globals.h"
 
+#include <regex>
 #include <wx/richtooltip.h>
+
+namespace
+{
+/**
+ * @brief Strips markdown code-block markers from a string.
+ *
+ * This function removes opening markdown code-block markers (```<LANG>) and
+ * closing markers (```) from the input string, leaving only the code content.
+ *
+ * @param input The string containing markdown code blocks
+ * @return std::string The string with code-block markers removed
+ */
+std::string StripMarkdownCodeBlocks(const std::string& input)
+{
+    // Pattern explanation:
+    // ^```[a-zA-Z]*\n?  - matches opening marker: ``` followed by optional language identifier and optional newline
+    // ```$              - matches closing marker: ``` at end of line
+    std::regex pattern("^```[a-zA-Z]*\\n?|```$", std::regex::multiline);
+    return std::regex_replace(input, pattern, "");
+}
+
+} // namespace
 
 TextGenerationPreviewFrame::TextGenerationPreviewFrame(PreviewKind kind, wxWindow* parent)
     : TextGenerationPreviewFrameBase(parent == nullptr ? EventNotifier::Get()->TopFrame() : parent)
@@ -41,11 +64,24 @@ TextGenerationPreviewFrame::TextGenerationPreviewFrame(PreviewKind kind, wxWindo
 
 TextGenerationPreviewFrame::~TextGenerationPreviewFrame() {}
 
+/**
+ * @brief Handles the copy event by copying the editor's text content to the clipboard.
+ *
+ * This method retrieves the trimmed text from the editor, strips any markdown code blocks,
+ * copies the processed text to the system clipboard, and displays a tooltip notification
+ * to inform the user that the text has been copied successfully.
+ *
+ * @param event The command event triggered by the copy action
+ */
 void TextGenerationPreviewFrame::OnCopy(wxCommandEvent& event)
 {
     event.Skip();
 
-    ::CopyToClipboard(m_editor->GetText());
+    wxString text = m_editor->GetText().Trim().Trim(false);
+
+    auto stripped_text = StripMarkdownCodeBlocks(text.ToStdString(wxConvUTF8));
+    ::CopyToClipboard(wxString::FromUTF8(stripped_text));
+
     wxRichToolTip tooltip(_("Text Copied!"), _("The preview text has been copied to the clipboard"));
     tooltip.SetTimeout(1000);
     tooltip.ShowFor(m_button_copy);

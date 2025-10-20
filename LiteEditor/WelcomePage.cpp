@@ -27,19 +27,15 @@
 
 #include "bitmap_loader.h"
 #include "clSystemSettings.h"
-#include "cl_defs.h"
+#include "drawingutils.h"
 #include "event_notifier.h"
 #include "fileextmanager.h"
 #include "frame.h"
-#include "globals.h"
 #include "imanager.h"
 #include "macros.h"
 #include "manager.h"
-#include "plugin.h"
-#include "pluginmanager.h"
 
 #include <wx/arrstr.h>
-#include <wx/clntdata.h>
 
 wxDEFINE_EVENT(wxEVT_WELCOMEPAGE_CLOSE_BUTTON_CLICKED, clCommandEvent);
 
@@ -57,7 +53,7 @@ std::unordered_map<wxString, wxColour> colours;
 wxColour GetColourForAccount(const wxString& accountName)
 {
     if (colours.count(accountName) == 0) {
-        colours.insert({accountName, ::GetRandomColour()});
+        colours.insert({accountName, DrawingUtils::GetRandomColour()});
     }
     return colours.find(accountName)->second;
 }
@@ -262,7 +258,7 @@ void WelcomePage::UpdateRecentWorkspaces()
             name = name.BeforeLast('.');
 
             if (colours.count(cd->account) == 0) {
-                colours.insert({cd->account, ::GetRandomColour()});
+                colours.insert({cd->account, DrawingUtils::GetRandomColour()});
             }
 
             auto workspaceItem = m_dvTreeCtrlWorkspaces->AppendItem(parent_item, name, image_index, image_index, cd);

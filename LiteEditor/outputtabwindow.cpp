@@ -119,8 +119,8 @@ void OutputTabWindow::InitStyle(wxStyledTextCtrl* sci, int lexer, bool folding)
 #else
     int facttor = 5;
 #endif
-    sci->IndicatorSetForeground(1, MakeColourLighter(wxT("GOLD"), facttor));
-    sci->IndicatorSetForeground(2, MakeColourLighter(wxT("RED"), 4));
+    sci->IndicatorSetForeground(1, DrawingUtils::LightColour(wxT("GOLD"), facttor));
+    sci->IndicatorSetForeground(2, DrawingUtils::LightColour(wxT("RED"), 4));
     sci->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
     sci->IndicatorSetStyle(2, wxSTC_INDIC_ROUNDBOX);
     sci->IndicatorSetUnder(1, true);

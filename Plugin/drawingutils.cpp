@@ -30,24 +30,16 @@
 #include "clTabRenderer.h"
 #include "editor_config.h"
 
-#include <wx/app.h>
 #include <wx/dc.h>
 #include <wx/dcclient.h>
 #include <wx/dcmemory.h>
 #include <wx/graphics.h>
-#include <wx/image.h>
-#include <wx/panel.h>
 #include <wx/renderer.h>
 #include <wx/settings.h>
-#include <wx/stc/stc.h>
-
-#ifdef __WXMSW__
-#include <wx/msw/registry.h>
-#endif
 
 #ifdef __WXGTK20__
-// We need this ugly hack to workaround a gtk2-wxGTK name-clash^M
-// See http://trac.wxwidgets.org/ticket/10883^M
+// We need this ugly hack to workaround a gtk2-wxGTK name-clash
+// See http://trac.wxwidgets.org/ticket/10883
 #define GSocket GlibGSocket
 #include <gtk/gtk.h>
 #undef GSocket
@@ -314,6 +306,22 @@ wxColour DrawingUtils::DarkColour(const wxColour& color, float percent)
 
     HSL_2_RGB(h, s, l, &r, &g, &b);
     return wxColour((unsigned char)r, (unsigned char)g, (unsigned char)b);
+}
+
+wxColour DrawingUtils::GetRandomColour()
+{
+    const int r = std::rand() % 256;
+    const int g = std::rand() % 256;
+    const int b = std::rand() % 256;
+
+    wxColour c(r, g, b);
+    if (clSystemSettings::GetAppearance().IsDark() && IsDark(c)) {
+        return c.ChangeLightness(130);
+    } else if (!clSystemSettings::GetAppearance().IsDark() && !IsDark(c)) {
+        return c.ChangeLightness(70);
+    } else {
+        return c;
+    }
 }
 
 wxColour DrawingUtils::GetPanelBgColour() { return clSystemSettings::GetDefaultPanelColour(); }

@@ -27,22 +27,13 @@
 
 #include "Notebook.h"
 #include "codelite_exports.h"
-#include "fileextmanager.h"
 #include "imanager.h"
-#include "macros.h"
 #include "window_locker.h"
 #include "workspace.h"
 
-#include <unordered_map>
-#include <vector>
 #include <wx/arrstr.h>
 #include <wx/bitmap.h>
-#include <wx/brush.h>
-#include <wx/colour.h>
 #include <wx/ctrlsub.h>
-#include <wx/dc.h>
-#include <wx/dcgraph.h>
-#include <wx/infobar.h>
 #include <wx/propgrid/propgrid.h>
 #include <wx/string.h>
 #include <wx/variant.h>
@@ -166,14 +157,6 @@ WXDLLIMPEXP_SDK bool WriteFileWithBackup(const wxString& file_name, const wxStri
  * \return true on success false otherwise
  */
 WXDLLIMPEXP_SDK bool CopyToClipboard(const wxString& text);
-
-/**
- * \brief make colour lighter
- * \param color
- * \param level
- * \return modified colour
- */
-WXDLLIMPEXP_SDK wxColour MakeColourLighter(wxColour color, float level);
 
 /**
  * @brief wrap a given command in the shell command (e.g. cmd /c "command")
@@ -473,9 +456,6 @@ WXDLLIMPEXP_SDK Notebook* FindNotebookParentOf(wxWindow* child);
 
 /// Return true if `child` is a child (does not have to be a direct child) of `parent`
 WXDLLIMPEXP_SDK bool IsChildOf(wxWindow* child, wxWindow* parent);
-
-/// Return a random colour suited for the current theme
-WXDLLIMPEXP_SDK wxColour GetRandomColour();
 
 /// Return the selected text in a wxSTC. This function ensures that only
 /// visible text is returned (for example, if the selected text contains

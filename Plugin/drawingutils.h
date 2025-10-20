@@ -26,7 +26,6 @@
 
 #include "clColours.h"
 #include "codelite_exports.h"
-#include "ieditor.h"
 
 #include <wx/colour.h>
 #include <wx/dc.h>
@@ -49,6 +48,8 @@ class WXDLLIMPEXP_SDK DrawingUtils
 public:
     static wxColour LightColour(const wxColour& color, float percent);
     static wxColour DarkColour(const wxColour& color, float percent);
+    /// Return a random colour suited for the current theme
+    static wxColour GetRandomColour();
     static wxColour GetPanelBgColour();
     static wxColour GetPanelTextColour();
     static wxColour GetButtonBgColour();

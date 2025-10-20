@@ -32,14 +32,11 @@
 #include "clDataViewListCtrl.h"
 #include "clGetTextFromUserDialog.h"
 #include "clTreeCtrl.h"
-#include "cl_standard_paths.h"
 #include "debugger.h"
-#include "drawingutils.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
-#include "ieditor.h"
 #include "imanager.h"
 #include "macros.h"
 #include "md5/wxmd5.h"
@@ -51,11 +48,9 @@
 #include <wx/app.h>
 #include <wx/clipbrd.h>
 #include <wx/dataobj.h>
-#include <wx/dataview.h>
 #include <wx/dcscreen.h>
 #include <wx/display.h>
 #include <wx/filename.h>
-#include <wx/icon.h>
 #include <wx/listctrl.h>
 #include <wx/log.h>
 #include <wx/regex.h>
@@ -324,8 +319,6 @@ bool CopyToClipboard(const wxString& text)
 #endif
     return ret;
 }
-
-wxColour MakeColourLighter(wxColour color, float level) { return DrawingUtils::LightColour(color, level); }
 
 namespace
 {
@@ -1091,22 +1084,6 @@ bool IsChildOf(wxWindow* child, wxWindow* parent)
         curparent = curparent->GetParent();
     }
     return false;
-}
-
-wxColour GetRandomColour()
-{
-    int r = std::rand() % 256;
-    int g = std::rand() % 256;
-    int b = std::rand() % 256;
-
-    wxColour c(r, g, b);
-    if (clSystemSettings::GetAppearance().IsDark() && DrawingUtils::IsDark(c)) {
-        return c.ChangeLightness(130);
-    } else if (!clSystemSettings::GetAppearance().IsDark() && !DrawingUtils::IsDark(c)) {
-        return c.ChangeLightness(70);
-    } else {
-        return c;
-    }
 }
 
 wxString clGetVisibleSelection(wxStyledTextCtrl* ctrl)

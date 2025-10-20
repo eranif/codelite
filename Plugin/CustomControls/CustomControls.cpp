@@ -189,6 +189,7 @@ TextGenerationPreviewFrameBase::TextGenerationPreviewFrameBase(
         wxPersistenceManager::Get().Restore(this);
     }
     // Connect events
+    this->Bind(wxEVT_CLOSE_WINDOW, &TextGenerationPreviewFrameBase::OnCloseWindow, this);
     m_button_copy->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnCopy, this);
     m_button_copy->Bind(wxEVT_UPDATE_UI, &TextGenerationPreviewFrameBase::OnCopyUI, this);
     m_button_save->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnSavePrompt, this);
@@ -198,6 +199,7 @@ TextGenerationPreviewFrameBase::TextGenerationPreviewFrameBase(
 
 TextGenerationPreviewFrameBase::~TextGenerationPreviewFrameBase()
 {
+    this->Unbind(wxEVT_CLOSE_WINDOW, &TextGenerationPreviewFrameBase::OnCloseWindow, this);
     m_button_copy->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnCopy, this);
     m_button_copy->Unbind(wxEVT_UPDATE_UI, &TextGenerationPreviewFrameBase::OnCopyUI, this);
     m_button_save->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnSavePrompt, this);

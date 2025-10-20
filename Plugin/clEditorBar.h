@@ -74,17 +74,17 @@ public:
     void ClearLabel() { SetLabel(wxEmptyString); }
     wxString GetLabel() const;
     /**
-     * @brief Retrieves the text of the current function in the active editor.
+     * @brief Get the text of the current scope at the editor's cursor position.
      *
-     * This function attempts to find the function scope that contains the current line
-     * in the active editor and returns the text of that function. If no active editor
-     * is found, or if the current line does not belong to a valid function scope,
-     * an empty optional is returned.
+     * This function retrieves the text associated with the scope (such as a class,
+     * struct, enum, or function) that contains the currently active line in the
+     * editor. It returns an optional wxString containing the scope text if found,
+     * otherwise returns std::nullopt.
      *
-     * @return std::optional<wxString> The text of the current function if found,
-     *         otherwise std::nullopt.
+     * @return std::optional<wxString> The text of the current scope, or std::nullopt
+     *         if no active editor is found or if the scope cannot be determined.
      */
-    std::optional<wxString> GetCurrentFunctionText() const;
+    std::optional<wxString> GetCurrentScopeText() const;
 
 protected:
     virtual void OnButtonActions(wxCommandEvent& event);

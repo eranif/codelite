@@ -54,6 +54,7 @@ protected:
     wxButton* m_button_cancel;
 
 protected:
+    virtual void OnCloseWindow(wxCloseEvent& event) { event.Skip(); }
     virtual void OnCopy(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCopyUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnSavePrompt(wxCommandEvent& event) { event.Skip(); }

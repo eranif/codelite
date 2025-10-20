@@ -2,6 +2,7 @@
 
 #include "ColoursAndFontsManager.h"
 #include "ai/LLMManager.hpp"
+#include "clSTCHelper.hpp"
 #include "event_notifier.h"
 #include "globals.h"
 
@@ -62,7 +63,10 @@ TextGenerationPreviewFrame::TextGenerationPreviewFrame(PreviewKind kind, wxWindo
     m_editor->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 
-TextGenerationPreviewFrame::~TextGenerationPreviewFrame() {}
+TextGenerationPreviewFrame::~TextGenerationPreviewFrame()
+{
+    clDEBUG() << "~TextGenerationPreviewFrame() destructor has been called" << endl;
+}
 
 /**
  * @brief Handles the copy event by copying the editor's text content to the clipboard.
@@ -109,8 +113,9 @@ void TextGenerationPreviewFrame::AppendText(const wxString& text)
     // Update the commit message
     m_editor->SetInsertionPointEnd();
     m_editor->AppendText(text);
-    m_editor->ClearSelections();
     m_editor->EnsureCaretVisible();
+    m_editor->ClearSelections();
+    clSTCHelper::SetCaretAt(m_editor, m_editor->GetLastPosition());
 }
 
 void TextGenerationPreviewFrame::Reset()
@@ -145,7 +150,7 @@ void TextGenerationPreviewFrame::InitialiseFor(PreviewKind kind)
 
 void TextGenerationPreviewFrame::OnClose(wxCommandEvent& event)
 {
-    event.Skip();
+    wxUnusedVar(event);
     Hide();
 }
 
@@ -158,3 +163,9 @@ void TextGenerationPreviewFrame::OnSavePrompt(wxCommandEvent& event)
 }
 
 void TextGenerationPreviewFrame::OnSavePromptUI(wxUpdateUIEvent& event) { event.Enable(m_prompt->GetModify()); }
+
+void TextGenerationPreviewFrame::OnCloseWindow(wxCloseEvent& event)
+{
+    wxUnusedVar(event);
+    Hide();
+}

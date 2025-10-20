@@ -1187,28 +1187,52 @@ void LanguageServerCluster::UpdateNavigationBar()
     scopes.reserve(symbols.size());
 
     for (const LSP::SymbolInformation& symbol : symbols) {
-        // only collect methods
-        if (symbol.GetKind() != LSP::kSK_Function && symbol.GetKind() != LSP::kSK_Method &&
-            symbol.GetKind() != LSP::kSK_Constructor) {
-            continue;
+        switch (symbol.GetKind()) {
+        case LSP::kSK_Function:
+        case LSP::kSK_Method:
+        case LSP::kSK_Constructor: {
+            clEditorBar::ScopeEntry scope_entry;
+            const LSP::Location& location = symbol.GetLocation();
+            scope_entry.line_number = location.GetRange().GetStart().GetLine();
+            scope_entry.range = location.GetRange();
+
+            wxString display_string;
+            if (!symbol.GetContainerName().empty()) {
+                display_string << symbol.GetContainerName() << ".";
+            }
+
+            wxString short_name = symbol.GetName();
+            short_name = short_name.BeforeFirst('(');
+            short_name += "()";
+            display_string << short_name;
+
+            scope_entry.display_string.swap(display_string);
+            scopes.push_back(scope_entry);
+
+        } break;
+        case LSP::kSK_Class:
+        case LSP::kSK_Struct:
+        case LSP::kSK_Enum:
+        case LSP::kSK_Interface: {
+            clEditorBar::ScopeEntry scope_entry;
+            const LSP::Location& location = symbol.GetLocation();
+            scope_entry.line_number = location.GetRange().GetStart().GetLine();
+            scope_entry.range = location.GetRange();
+
+            wxString display_string;
+            if (!symbol.GetContainerName().empty()) {
+                display_string << symbol.GetContainerName() << ".";
+            }
+
+            display_string << symbol.GetName();
+            scope_entry.display_string.swap(display_string);
+            scopes.push_back(scope_entry);
+
+        } break;
+            break;
+        default:
+            break;
         }
-        clEditorBar::ScopeEntry scope_entry;
-        const LSP::Location& location = symbol.GetLocation();
-        scope_entry.line_number = location.GetRange().GetStart().GetLine();
-        scope_entry.range = location.GetRange();
-
-        wxString display_string;
-        if (!symbol.GetContainerName().empty()) {
-            display_string << symbol.GetContainerName() << ".";
-        }
-
-        wxString short_name = symbol.GetName();
-        short_name = short_name.BeforeFirst('(');
-        short_name += "()";
-        display_string << short_name;
-
-        scope_entry.display_string.swap(display_string);
-        scopes.push_back(scope_entry);
     }
     clGetManager()->GetNavigationBar()->SetScopes(fullpath, scopes);
 }

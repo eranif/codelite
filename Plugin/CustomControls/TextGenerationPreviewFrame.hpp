@@ -24,6 +24,7 @@ public:
     void InitialiseFor(PreviewKind kind);
 
 protected:
+    void OnCloseWindow(wxCloseEvent& event) override;
     void OnSavePrompt(wxCommandEvent& event) override;
     void OnSavePromptUI(wxUpdateUIEvent& event) override;
     void OnClose(wxCommandEvent& event) override;

@@ -78,9 +78,9 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
 
     clKeyboardManager::Get()->AddAccelerator(
         _("Language Server"),
-        {{"lsp_document_function", _("Generate an AI-powered comment for the current function"), "Ctrl-Shift-M"}});
+        {{"lsp_document_scope", _("Generate an AI-powered comment for the current function"), "Ctrl-Shift-M"}});
 
-    wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnGenerateDocString, this, XRCID("lsp_document_function"));
+    wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnGenerateDocString, this, XRCID("lsp_document_scope"));
 
     /// initialise the LSP library
     LSP::Initialise();
@@ -235,11 +235,11 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     wxMenu* menu = event.GetMenu();
     if (llm::Manager::GetInstance().IsAvailable()) {
         wxMenu* ai_menu = new wxMenu;
-        ai_menu->Append(XRCID("lsp_document_function"), _("Generate docstring for the current method"));
+        ai_menu->Append(XRCID("lsp_document_scope"), _("Generate docstring for the current scope"));
         menu->PrependSeparator();
-        auto item = menu->Prepend(wxID_ANY, _("AI-Powered Generation"), ai_menu);
+        auto item = menu->Prepend(wxID_ANY, _("AI-Powered Code Generation"), ai_menu);
         item->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("wand"));
-        ai_menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnGenerateDocString, this, XRCID("lsp_document_function"));
+        ai_menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnGenerateDocString, this, XRCID("lsp_document_scope"));
     }
 
     if (add_find_references) {
@@ -273,7 +273,7 @@ void LanguageServerPlugin::OnGenerateDocString(wxCommandEvent& event)
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    auto func_text = clGetManager()->GetNavigationBar()->GetCurrentFunctionText();
+    auto func_text = clGetManager()->GetNavigationBar()->GetCurrentScopeText();
     if (!func_text.has_value()) {
         return;
     }

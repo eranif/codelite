@@ -40,7 +40,7 @@
 clEditorBar::clEditorBar(wxWindow* parent)
     : clEditorBarBase(parent)
 {
-    m_functionBmp = clGetManager()->GetStdIcons()->LoadBitmap("function_public", 16);
+    m_functionBmp = clGetManager()->GetStdIcons()->LoadBitmap("outline-button", 16);
     CreateBookmarksBitmap();
 
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &clEditorBar::OnEditorChanged, this);
@@ -354,7 +354,7 @@ void clEditorBar::UpdateScope()
     }
 }
 
-std::optional<wxString> clEditorBar::GetCurrentFunctionText() const
+std::optional<wxString> clEditorBar::GetCurrentScopeText() const
 {
     IEditor* editor = clGetManager()->GetActiveEditor();
     if (!editor) {
@@ -366,9 +366,10 @@ std::optional<wxString> clEditorBar::GetCurrentFunctionText() const
         return std::nullopt;
     }
 
-    auto range = scope.GetScopeRange(editor->GetCtrl());
-    if (!range.has_value()) {
+    // Valid scopes are often are a class, struct, enum or function definition.
+    auto function_or_class_body = scope.GetScopeRange(editor->GetCtrl());
+    if (!function_or_class_body.has_value()) {
         return std::nullopt;
     }
-    return editor->GetCtrl()->GetTextRange(range.value().first, range.value().second);
+    return editor->GetCtrl()->GetTextRange(function_or_class_body.value().first, function_or_class_body.value().second);
 }

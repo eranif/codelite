@@ -472,7 +472,7 @@ protected:
     virtual void OnBrowseFile(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUseRelativePaths(wxCommandEvent& event) { event.Skip(); }
     virtual void OnUserArtProvider(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnUserArtPorviderUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnUserArtProviderUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     wxCheckBox* GetCheckBoxSelectFile() { return m_checkBoxSelectFile; }

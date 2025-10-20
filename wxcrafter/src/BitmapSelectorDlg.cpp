@@ -129,7 +129,7 @@ void BitmapSelectorDlg::OnBrowseFile(wxCommandEvent& event)
 
 void BitmapSelectorDlg::OnSelectBitmapUI(wxUpdateUIEvent& event) { event.Enable(m_checkBoxSelectFile->IsChecked()); }
 
-void BitmapSelectorDlg::OnUserArtPorviderUI(wxUpdateUIEvent& event)
+void BitmapSelectorDlg::OnUserArtProviderUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_checkBoxArtProvider->IsChecked());
 }

@@ -21,7 +21,7 @@ public:
     JSONElement Serialize() const override;
     void SetValue(const wxString& value) override;
     void UnSerialize(const JSONElement& json) override;
-    PropertyeType GetType() override { return PT_MUTLI_STRING_PICKER; }
+    PropertyeType GetType() override { return PT_MULTI_STRING_PICKER; }
 };
 
 #endif // MULTISTRINGSPROPERTY_H

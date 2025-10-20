@@ -499,9 +499,9 @@ void GUICraftMainPanel::OnItemSelected(wxTreeEvent& event)
 
     if (!data) {
         // Clear all properties
-        DoUpdatPropertiesFlags(NULL);
-        m_propertiesPage->Construct(NULL);
-        m_auiPaneInfo.Construct(m_pgMgrAuiProperties->GetGrid(), NULL);
+        DoUpdatePropertiesFlags(nullptr);
+        m_propertiesPage->Construct(nullptr);
+        m_auiPaneInfo.Construct(m_pgMgrAuiProperties->GetGrid(), nullptr);
 
         m_propertiesPage->ConstructProjectSettings();
     }
@@ -515,9 +515,9 @@ void GUICraftMainPanel::OnItemSelected(wxTreeEvent& event)
     }
     DoUpdatePropertiesView();
 
-    wxCommandEvent eventTreeItemSeleted(wxEVT_TREE_ITEM_SELECTED);
-    eventTreeItemSeleted.SetString(data->m_wxcWidget->GetName());
-    EventNotifier::Get()->AddPendingEvent(eventTreeItemSeleted);
+    wxCommandEvent eventTreeItemSelected(wxEVT_TREE_ITEM_SELECTED);
+    eventTreeItemSelected.SetString(data->m_wxcWidget->GetName());
+    EventNotifier::Get()->AddPendingEvent(eventTreeItemSelected);
 }
 
 void GUICraftMainPanel::DoUpdatePropertiesView()
@@ -525,15 +525,15 @@ void GUICraftMainPanel::DoUpdatePropertiesView()
     GUICraftItemData* data = GetSelItemData();
     if (!data) {
         // Clear all properties
-        DoUpdatPropertiesFlags(NULL);
-        m_propertiesPage->Construct(NULL);
-        m_auiPaneInfo.Construct(m_pgMgrAuiProperties->GetGrid(), NULL);
+        DoUpdatePropertiesFlags(nullptr);
+        m_propertiesPage->Construct(nullptr);
+        m_auiPaneInfo.Construct(m_pgMgrAuiProperties->GetGrid(), nullptr);
         m_propertiesPage->ConstructProjectSettings();
     }
 
     CHECK_POINTER(data);
     CHECK_POINTER(data->m_wxcWidget);
-    DoUpdatPropertiesFlags(data->m_wxcWidget);
+    DoUpdatePropertiesFlags(data->m_wxcWidget);
     m_propertiesPage->Construct(data->m_wxcWidget);
 }
 
@@ -616,7 +616,7 @@ void GUICraftMainPanel::OnItemRightClick(wxTreeEvent& event)
     m_treeControls->SelectItem(event.GetItem());
 }
 
-void GUICraftMainPanel::DoUpdatPropertiesFlags(wxcWidget* data)
+void GUICraftMainPanel::DoUpdatePropertiesFlags(wxcWidget* data)
 {
     DoUpdateSizerFlags(data);
     DoUpdateStyleFlags(data);
@@ -681,9 +681,9 @@ void GUICraftMainPanel::NotifyPreviewChanged(int eventType)
     }
 
     // Also, notify the designer to mark the new selection
-    wxCommandEvent eventTreeItemSeleted(wxEVT_TREE_ITEM_SELECTED);
-    eventTreeItemSeleted.SetString(data->m_wxcWidget->GetName());
-    EventNotifier::Get()->AddPendingEvent(eventTreeItemSeleted);
+    wxCommandEvent eventTreeItemSelected(wxEVT_TREE_ITEM_SELECTED);
+    eventTreeItemSelected.SetString(data->m_wxcWidget->GetName());
+    EventNotifier::Get()->AddPendingEvent(eventTreeItemSelected);
 }
 
 void GUICraftMainPanel::OnPropertyChanged(wxCommandEvent& e)
@@ -929,7 +929,7 @@ void GUICraftMainPanel::OnSizerTool(wxCommandEvent& e)
     }
 
     wxcEditManager::Get().PushState("sizer flags change");
-    DoUpdatPropertiesFlags(itemData->m_wxcWidget);
+    DoUpdatePropertiesFlags(itemData->m_wxcWidget);
     NotifyPreviewChanged();
 }
 
@@ -964,7 +964,7 @@ void GUICraftMainPanel::OnSizerToolUI(wxUpdateUIEvent& e)
         e.Check(current);
         if (current != previous) {
             itemData->m_wxcWidget->EnableSizerFlag("wxALL", current);
-            DoUpdatPropertiesFlags(itemData->m_wxcWidget);
+            DoUpdatePropertiesFlags(itemData->m_wxcWidget);
             NotifyPreviewChanged();
         }
         return;
@@ -2429,26 +2429,26 @@ void GUICraftMainPanel::OnBarItemSelected(wxCommandEvent& e)
     wxcWidget* tlid = DoGetItemData(topLevel);
     CHECK_POINTER(tlid);
 
-    wxString parentname = e.GetString().BeforeFirst(wxT(':'));
+    wxString parentName = e.GetString().BeforeFirst(wxT(':'));
 
-    const wxcWidget* parnt = NULL;
-    if (parentname == "TOOL_BAR_ID") {
+    const wxcWidget* parent = nullptr;
+    if (parentName == "TOOL_BAR_ID") {
         // direct toolbar child of the main frame
-        parnt = tlid->FindFirstDirectChildOfType(ID_WXTOOLBAR);
+        parent = tlid->FindFirstDirectChildOfType(ID_WXTOOLBAR);
 
-    } else if (parentname == "MENU_BAR_ID") {
+    } else if (parentName == "MENU_BAR_ID") {
         // direct toolbar child of the main frame
-        parnt = tlid->FindFirstDirectChildOfType(ID_WXMENUBAR);
+        parent = tlid->FindFirstDirectChildOfType(ID_WXMENUBAR);
 
     } else {
-        parnt = tlid->FindChildByName(parentname);
+        parent = tlid->FindChildByName(parentName);
     }
-    CHECK_POINTER(parnt);
+    CHECK_POINTER(parent);
 
-    wxString toolname = e.GetString().AfterFirst(wxT(':'));
-    const wxcWidget::List_t& tools = parnt->GetChildren();
+    wxString toolName = e.GetString().AfterFirst(wxT(':'));
+    const wxcWidget::List_t& tools = parent->GetChildren();
     for (auto child : tools) {
-        if (child->PropertyString(PROP_LABEL) == toolname) {
+        if (child->PropertyString(PROP_LABEL) == toolName) {
 
             // Select this item
             wxCommandEvent evt(wxEVT_PREVIEW_CTRL_SELECTED);
@@ -2615,9 +2615,9 @@ void GUICraftMainPanel::DoSelectItemByName(const wxString& name, const wxString&
         m_treeControls->SelectItem(where);
         m_treeControls->EnsureVisible(where);
 
-        wxCommandEvent eventTreeItemSeleted(wxEVT_TREE_ITEM_SELECTED);
-        eventTreeItemSeleted.SetString(name);
-        EventNotifier::Get()->AddPendingEvent(eventTreeItemSeleted);
+        wxCommandEvent eventTreeItemSelected(wxEVT_TREE_ITEM_SELECTED);
+        eventTreeItemSelected.SetString(name);
+        EventNotifier::Get()->AddPendingEvent(eventTreeItemSelected);
     }
 }
 

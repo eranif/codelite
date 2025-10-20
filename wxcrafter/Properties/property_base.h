@@ -12,7 +12,7 @@ enum PropertyeType {
     PT_COLOR_PICKER,
     PT_FILE_PICKER,
     PT_FONT_PICKER,
-    PT_MUTLI_STRING_PICKER,
+    PT_MULTI_STRING_PICKER,
     PT_STRING,
     PT_VIRTUAL_FOLDER_PICKER,
     PT_COMBOX,
@@ -23,7 +23,7 @@ enum PropertyeType {
     PT_BITMAPTEXT_TABLE,
 };
 
-const extern wxEventType wxEVT_WXC_PROPETY_CHANGED;
+const extern wxEventType wxEVT_WXC_PROPERTY_CHANGED;
 class PropertyBase : public wxEvtHandler
 {
 protected:

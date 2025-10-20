@@ -1,6 +1,6 @@
 #include "property_base.h"
 
-const wxEventType wxEVT_WXC_PROPETY_CHANGED = ::wxNewEventType();
+const wxEventType wxEVT_WXC_PROPERTY_CHANGED = ::wxNewEventType();
 PropertyBase::PropertyBase(const wxString& tooltip)
     : m_tooltip(tooltip)
 {
@@ -12,7 +12,7 @@ void PropertyBase::DoBaseUnSerialize(const JSONElement& json) { m_label = json.n
 
 void PropertyBase::NotifyChanged()
 {
-    wxCommandEvent evt(wxEVT_WXC_PROPETY_CHANGED);
+    wxCommandEvent evt(wxEVT_WXC_PROPERTY_CHANGED);
     evt.SetEventObject(this);
     ProcessEvent(evt);
 }

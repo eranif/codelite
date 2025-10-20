@@ -330,7 +330,7 @@ void wxcWidget::AddProperty(std::unique_ptr<PropertyBase> prop)
     }
 }
 
-wxString wxcWidget::StyleFlags(const wxString& deafultStyle) const
+wxString wxcWidget::StyleFlags(const wxString& defaultStyle) const
 {
     wxString s;
 
@@ -355,7 +355,7 @@ wxString wxcWidget::StyleFlags(const wxString& deafultStyle) const
         }
 
         if (s.IsEmpty()) {
-            s = deafultStyle;
+            s = defaultStyle;
         }
 
         return s;

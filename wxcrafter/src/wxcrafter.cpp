@@ -1572,12 +1572,12 @@ BitmapSelectorDlgBase::BitmapSelectorDlgBase(
     m_checkBoxConvertToRelativePath->Bind(
         wxEVT_COMMAND_CHECKBOX_CLICKED, &BitmapSelectorDlgBase::OnUseRelativePaths, this);
     m_checkBoxArtProvider->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &BitmapSelectorDlgBase::OnUserArtProvider, this);
-    m_staticText315->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
-    m_choiceArtID->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
-    m_staticText319->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
-    m_choiceArtClientID->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
-    m_staticTextHInt->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
-    m_choiceSize->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
+    m_staticText315->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtProviderUI, this);
+    m_choiceArtID->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtProviderUI, this);
+    m_staticText319->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtProviderUI, this);
+    m_choiceArtClientID->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtProviderUI, this);
+    m_staticTextHInt->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtProviderUI, this);
+    m_choiceSize->Bind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtProviderUI, this);
 }
 
 BitmapSelectorDlgBase::~BitmapSelectorDlgBase()
@@ -1590,12 +1590,12 @@ BitmapSelectorDlgBase::~BitmapSelectorDlgBase()
     m_checkBoxConvertToRelativePath->Unbind(
         wxEVT_COMMAND_CHECKBOX_CLICKED, &BitmapSelectorDlgBase::OnUseRelativePaths, this);
     m_checkBoxArtProvider->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &BitmapSelectorDlgBase::OnUserArtProvider, this);
-    m_staticText315->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
-    m_choiceArtID->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
-    m_staticText319->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
-    m_choiceArtClientID->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
-    m_staticTextHInt->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
-    m_choiceSize->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtPorviderUI, this);
+    m_staticText315->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtProviderUI, this);
+    m_choiceArtID->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtProviderUI, this);
+    m_staticText319->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtProviderUI, this);
+    m_choiceArtClientID->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtProviderUI, this);
+    m_staticTextHInt->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtProviderUI, this);
+    m_choiceSize->Unbind(wxEVT_UPDATE_UI, &BitmapSelectorDlgBase::OnUserArtProviderUI, this);
 }
 
 EventsEditorPaneBase::EventsEditorPaneBase(

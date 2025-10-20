@@ -11546,7 +11546,7 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_functionNameAndSignature":	"OnUserArtPorviderUI(wxUpdateUIEvent& event)",
+													"m_functionNameAndSignature":	"OnUserArtProviderUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
 												}],
@@ -11627,7 +11627,7 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_functionNameAndSignature":	"OnUserArtPorviderUI(wxUpdateUIEvent& event)",
+													"m_functionNameAndSignature":	"OnUserArtProviderUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
 												}],
@@ -11708,7 +11708,7 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_functionNameAndSignature":	"OnUserArtPorviderUI(wxUpdateUIEvent& event)",
+													"m_functionNameAndSignature":	"OnUserArtProviderUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
 												}],
@@ -11789,7 +11789,7 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_functionNameAndSignature":	"OnUserArtPorviderUI(wxUpdateUIEvent& event)",
+													"m_functionNameAndSignature":	"OnUserArtProviderUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
 												}],
@@ -11870,7 +11870,7 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_functionNameAndSignature":	"OnUserArtPorviderUI(wxUpdateUIEvent& event)",
+													"m_functionNameAndSignature":	"OnUserArtProviderUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
 												}],
@@ -11951,7 +11951,7 @@
 											"m_events":	[{
 													"m_eventName":	"wxEVT_UPDATE_UI",
 													"m_eventClass":	"wxUpdateUIEvent",
-													"m_functionNameAndSignature":	"OnUserArtPorviderUI(wxUpdateUIEvent& event)",
+													"m_functionNameAndSignature":	"OnUserArtProviderUI(wxUpdateUIEvent& event)",
 													"m_description":	"Process a wxEVT_UPDATE_UI event",
 													"m_noBody":	false
 												}],

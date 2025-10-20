@@ -726,7 +726,7 @@ public:
     void RemoveFromParent();
     wxString SizerFlags(const wxString& defaultFlags) const;
     size_t SizerFlagsAsInteger() const;
-    wxString StyleFlags(const wxString& deafultStyle = "") const;
+    wxString StyleFlags(const wxString& defaultStyle = "") const;
     size_t StyleFlagsAsInteger() const;
     virtual wxMenu* GetEventsMenu() { return m_eventsMenu; }
 

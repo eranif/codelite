@@ -128,7 +128,7 @@ void PropertiesListView::Construct(wxcWidget* wb)
             pgProp =
                 AddChoiceProp(property->GetLabelForUI(), ops, ops.Index(property->GetValue()), property->GetTooltip());
 
-        } else if(property->GetType() == PT_MUTLI_STRING_PICKER) {
+        } else if (property->GetType() == PT_MULTI_STRING_PICKER) {
             pgProp = AddLongTextProp(property->GetLabelForUI(), property->GetValue(), property->GetTooltip());
 
         } else if(property->GetType() == PT_COLOR_PICKER) {

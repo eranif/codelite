@@ -110,7 +110,7 @@ protected:
     void DoUpdatePropertiesView();
     void DoUpdateSizerFlags(wxcWidget* data);
     void DoUpdateStyleFlags(wxcWidget* data);
-    void DoUpdatPropertiesFlags(wxcWidget* data);
+    void DoUpdatePropertiesFlags(wxcWidget* data);
     void DoUnsetItemData(const wxTreeItemId& item);
     void DoFindName(const wxTreeItemId& parent, const wxString& name, wxTreeItemId& item);
     void DoInsertControl(wxcWidget* control, wxcWidget* parent, int insertType, int imgId);

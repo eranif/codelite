@@ -15,6 +15,6 @@ protected:
     void OnUserArtProvider(wxCommandEvent& event) override;
     void OnBrowseFile(wxCommandEvent& event) override;
     void OnSelectBitmapUI(wxUpdateUIEvent& event) override;
-    void OnUserArtPorviderUI(wxUpdateUIEvent& event) override;
+    void OnUserArtProviderUI(wxUpdateUIEvent& event) override;
 };
 #endif // BITMAPSELECTORDLG_H

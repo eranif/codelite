@@ -84,7 +84,9 @@ void TextGenerationPreviewFrame::OnCopy(wxCommandEvent& event)
     wxString text = m_editor->GetText().Trim().Trim(false);
 
     auto stripped_text = StripMarkdownCodeBlocks(text.ToStdString(wxConvUTF8));
-    ::CopyToClipboard(wxString::FromUTF8(stripped_text));
+    auto text_to_copy = wxString::FromUTF8(stripped_text);
+    text_to_copy.Trim().Trim(false);
+    ::CopyToClipboard(text_to_copy);
 
     wxRichToolTip tooltip(_("Text Copied!"), _("The preview text has been copied to the clipboard"));
     tooltip.SetTimeout(1000);

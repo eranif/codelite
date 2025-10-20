@@ -21,3 +21,6 @@ AI-powered IDE:
 --------
 
 - Add an option to add "max_tokens" in the New Endpoint Wizard"
+- MarkdownStyler: mark gcc style lines "file:line" as hyperlink and clickable.
+- Creaet DocString: send a new request for the symbols before opening the dialog, this should give us a fresh view with
+  all symbols included.

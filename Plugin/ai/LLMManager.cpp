@@ -194,7 +194,7 @@ void Manager::WorkerMain()
                             }
                         } break;
                         case assistant::Reason::kLogNotice:
-                            clDEBUG() << message << endl;
+                            clDEBUG1() << message << endl;
                             break;
                         case assistant::Reason::kCancelled: {
                             NotifyDoneWithError(owner, "\n\n** Request cancelled by caller. **\n\n");
@@ -708,5 +708,23 @@ void Manager::OpenSettingsFileInEditor()
     }
 
     clGetManager()->OpenFile(res.value());
+}
+void Manager::EnableAllFunctions(bool b)
+{
+    if (!m_client) {
+        clWARNING() << "Failed to call EnableAllFunctions(" << b << "). Null client" << endl;
+        return;
+    }
+    clDEBUG() << "Successfully" << (b ? "enabled" : "disabled") << "all functions" << endl;
+    m_client->GetFunctionTable().EnableAll(b);
+}
+
+void Manager::EnableFunctionByName(const wxString& name, bool b)
+{
+    if (!m_client) {
+        clWARNING() << "Failed to call EnableFunctionByName(" << name << ", " << b << "). Null client" << endl;
+        return;
+    }
+    m_client->GetFunctionTable().EnableFunction(name.ToStdString(wxConvUTF8), b);
 }
 } // namespace llm

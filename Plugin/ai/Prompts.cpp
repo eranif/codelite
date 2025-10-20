@@ -134,11 +134,42 @@ Your review should cover the following points:
 4.  **Security vulnerabilities:** Point out any security risks introduced by the changes.
 5.  **Maintainability:** Are the changes easy to understand and maintain over time?
 
-Provide a concise summary at the beginning of your review. For each suggestion, use a clear Markdown format, such as a numbered list with bolded headings. If you provide a code example for an improvement, include the filename where the change should be applied.
+Provide a concise summary at the beginning of your review. For each suggestion, use a GCC style format.
+If you provide a code example for an improvement, include the filename where the change should be applied.
+
+To access the complete file for further context, you may utilize the "Read_file_from_the_file_system" tool.
 
 Here is the git diff to review:
 
 ```diff
 {{context}}
+```
+
+Here are some examples:
+
+## Example:
+
+Example input git diff:
+
+```diff
+diff --git a/Plugin/CustomControls/TextGenerationPreviewFrame.cpp b/Plugin/CustomControls/TextGenerationPreviewFrame.cpp
+index fa39e40fd..12e491747 100644
+--- a/Plugin/CustomControls/TextGenerationPreviewFrame.cpp
++++ b/Plugin/CustomControls/TextGenerationPreviewFrame.cpp
+@@ -84,7 +84,9 @@ void TextGenerationPreviewFrame::OnCopy(wxCommandEvent& event)
+     wxString text = m_editor->GetText().Trim().Trim(false);
+
+     auto stripped_text = StripMarkdownCodeBlocks(text.ToStdString(wxConvUTF8));
++    char *a = new char[120];
++    strcpy(a, stripped_text.c_str());
++    return a;
+
+```
+
+Example output:
+
+```
+Plugin/CustomControls/TextGenerationPreviewFrame.cpp:87: warning: potential memory leak?
+Plugin/CustomControls/TextGenerationPreviewFrame.cpp:88: warning: make sure no buffer overflow.
 ```)";
 } // namespace llm

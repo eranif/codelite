@@ -82,8 +82,53 @@ protected:
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLog(wxCommandEvent& event);
     virtual void OnAIAvailableUI(wxUpdateUIEvent& event);
+    /**
+     * @brief Generates release notes by fetching git log between two commits and using an LLM to create formatted
+     * notes.
+     *
+     * This function displays a dialog to get two commit identifiers from the user, fetches the git log
+     * between those commits, and then uses a language model (LLM) to generate release notes based on the
+     * commit history. The generated release notes are streamed to a newly created file and styled as Markdown.
+     *
+     * The function handles the following workflow:
+     * - Shows a dialog to collect commit IDs, token limits, and formatting options
+     * - Fetches git log history between the specified commits in chunks
+     * - Constructs prompts from a template using the git history
+     * - Sends prompts to the LLM manager for processing
+     * - Streams the LLM response to a file in real-time
+     * - Applies Markdown styling to the final output
+     * - Handles multiple prompts by aggregating responses when needed
+     *
+     * @note The function uses asynchronous callbacks to handle streaming responses from the LLM.
+     * @note The status bar is updated throughout the process to show progress.
+     * @note If the git log fetch fails or returns no commits, the function exits early with an error message.
+     */
     void GenerateReleaseNotes();
+    /**
+     * @brief Performs an AI-powered code review of the current git repository changes.
+     *
+     * This function executes a git diff command to retrieve all changes in the repository,
+     * then sends the diff output to an LLM (Language Learning Model) for code review analysis.
+     * The AI-generated review is streamed to a newly created or opened file in the editor.
+     * The process includes status updates in the status bar and handles cancellation tokens
+     * to prevent excessive token usage. The final output is styled as markdown.
+     *
+     * @note This function displays a warning message box if the git diff command fails.
+     * @note The function uses callbacks to handle state changes and streaming responses from the LLM.
+     * @note The generated review file is styled as markdown upon completion.
+     */
     void DoCodeReview();
+    /**
+     * @brief Finalizes the release notes by merging and formatting the complete response using an LLM.
+     *
+     * This function takes the aggregated response from previous release note generation steps,
+     * sends it to the LLM with a merge prompt, and streams the final formatted release notes
+     * into a newly created or opened editor file. The file is styled as Markdown once the
+     * streaming is complete.
+     *
+     * @param complete_reponse The complete aggregated response containing all the release note information to be
+     * finalized
+     */
     void FinaliseReleaseNotes(const wxString& complete_reponse);
     virtual void OnStopGitProcess(wxCommandEvent& event);
     virtual void OnOpenUnversionedFiles(wxCommandEvent& event);

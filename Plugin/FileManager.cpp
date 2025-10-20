@@ -33,8 +33,8 @@ wxString FileManager::GetFullPath(const wxString& name, const WriteOptions& opti
         // Local workspace
         wxFileName fn{name};
         if (fn.IsRelative()) {
-            fn = wxFileName{workspace->GetDir(), name};
-            return fn.GetFullPath();
+            wxString full_path = workspace->GetDir() + "/" + name;
+            return wxFileName{full_path}.GetFullPath();
         }
         return fn.GetFullPath();
     }

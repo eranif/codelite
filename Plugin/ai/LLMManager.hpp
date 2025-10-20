@@ -352,6 +352,29 @@ public:
      */
     void OpenSettingsFileInEditor();
 
+    /**
+     * @brief Enables or disables all functions in the client's function table.
+     *
+     * This method enables or disables all functions by calling EnableAll on the
+     * client's function table. If no client is available, the method returns without
+     * performing any action.
+     *
+     * @param b true to enable all functions, false to disable all functions
+     */
+    void EnableAllFunctions(bool b);
+
+    /**
+     * @brief Enables or disables a function by name in the client's function table.
+     *
+     * This method retrieves the function table from the client and enables or disables
+     * the specified function. If no client is available, the method returns early without
+     * performing any action.
+     *
+     * @param name The name of the function to enable or disable
+     * @param b True to enable the function, false to disable it
+     */
+    void EnableFunctionByName(const wxString& name, bool b);
+
 private:
     Manager();
     ~Manager();
@@ -383,4 +406,32 @@ private:
     std::atomic_bool m_worker_busy{false};
     FunctionTable m_plugin_functions;
 };
+
+/**
+ * @brief RAII helper that temporarily disables all LLM functions.
+ *
+ * Constructing an instance of {@code FunctionsDisabler} disables all
+ * functions via {@code llm::Manager::GetInstance().EnableAllFunctions(false)}.
+ * When the instance goes out of scope, the destructor re‑enables all functions
+ * by calling {@code llm::Manager::GetInstance().EnableAllFunctions(true)}.
+ *
+ * This class is intended for use when a section of code requires the
+ * LLM manager to operate with all functions disabled, ensuring that
+ * the original state is restored automatically when the object is destroyed.
+ *
+ * @note The implementation relies on the singleton {@code llm::Manager}
+ *       and assumes thread‑safety of the EnableAllFunctions method.
+ *
+ * @code
+ * {
+ *     FunctionsDisabler disabler; // disables all functions
+ *     // critical section
+ * } // functions re-enabled automatically
+ * @endcode
+ */
+struct WXDLLIMPEXP_SDK FunctionsDisabler {
+    FunctionsDisabler() { llm::Manager::GetInstance().EnableAllFunctions(false); }
+    ~FunctionsDisabler() { llm::Manager::GetInstance().EnableAllFunctions(true); }
+};
+
 } // namespace llm

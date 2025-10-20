@@ -152,6 +152,7 @@ IEditor* CreateOrOpenFile(const wxString& path, bool first_time)
         if (editor->GetRemotePathOrLocal() != path) {
             return nullptr;
         }
+        editor->GetCtrl()->SetWrapMode(wxSTC_WRAP_WORD);
         return editor;
     }
 }
@@ -937,24 +938,6 @@ void GitConsole::DoCodeReview()
     auto collector = new llm::ResponseCollector();
     m_statusBar->Start(_("Generating Code Review..."));
 
-    collector->SetStateChangingCB([this](llm::ChatState state) {
-        if (!wxThread::IsMain()) {
-            clWARNING() << "StateChangingCB called for non main thread!" << endl;
-            return;
-        }
-        switch (state) {
-        case llm::ChatState::kThinking:
-            m_statusBar->SetMessage(_("Thinking..."));
-            break;
-        case llm::ChatState::kWorking:
-            m_statusBar->SetMessage(_("Working..."));
-            break;
-        case llm::ChatState::kReady:
-            m_statusBar->Stop(_("Ready."));
-            break;
-        }
-    });
-
     std::shared_ptr<bool> first_token = std::make_shared<bool>(true);
 
     wxString review_file = GenerateRandomFile();
@@ -983,8 +966,29 @@ void GitConsole::DoCodeReview()
             }
         });
 
-    llm::ChatOptions chat_options{llm::ChatOptions::kNoTools};
-    llm::AddFlagSet(chat_options, llm::ChatOptions::kNoHistory);
+    auto function_disabler = std::make_shared<llm::FunctionsDisabler>();
+    auto state_change_cb = [this, function_disabler](llm::ChatState state) {
+        if (!wxThread::IsMain()) {
+            clWARNING() << "StateChangingCB called for non main thread!" << endl;
+            return;
+        }
+        switch (state) {
+        case llm::ChatState::kThinking:
+            m_statusBar->SetMessage(_("Thinking..."));
+            break;
+        case llm::ChatState::kWorking:
+            m_statusBar->SetMessage(_("Working..."));
+            break;
+        case llm::ChatState::kReady:
+            // Re-enable all functions again.
+            m_statusBar->Stop(_("Ready."));
+            break;
+        }
+    };
+    collector->SetStateChangingCB(std::move(state_change_cb));
+
+    llm::ChatOptions chat_options{llm::ChatOptions::kNoHistory};
+    llm::Manager::GetInstance().EnableFunctionByName("Read_file_from_the_file_system", true);
     llm::Manager::GetInstance().Chat(collector, prompt, cancellation_token, chat_options);
 }
 

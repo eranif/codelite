@@ -132,12 +132,16 @@ FunctionResult ReadFileContent(const assistant::json& args)
     ASSIGN_FUNC_ARG_OR_RETURN(wxString filepath, ::assistant::GetFunctionArg<std::string>(args, "filepath"));
 
     auto cb = [=]() -> FunctionResult {
-        auto content = FileManager::ReadContent(filepath);
+        wxString fullpath = FileManager::GetFullPath(filepath);
+        clDEBUG() << "ReadFileContent is called for:" << fullpath << endl;
+        auto content = FileManager::ReadContent(fullpath);
         if (!content.has_value()) {
             wxString msg;
             msg << "Error occurred while reading the file: '" << filepath << "' from disk.";
+            clWARNING() << msg << endl;
             return Err(msg);
         }
+        clDEBUG() << "ReadFileContent completed successfully." << endl;
         return Ok(content.value());
     };
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);

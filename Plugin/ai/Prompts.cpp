@@ -124,4 +124,21 @@ Here are the release notes:
 ```
 )";
 
+const wxString PROMPT_GIT_CODE_REVIEW =
+    R"(You are an expert developer performing a code review. Your task is to analyze the provided git diff and offer constructive feedback.
+
+Your review should cover the following points:
+1.  **Code quality and best practices:** Are standard patterns followed? Is the code readable? Is it adhering to the DRY (Don't Repeat Yourself) principle?
+2.  **Potential bugs and logical errors:** Identify any obvious issues or edge cases that might cause problems.
+3.  **Performance implications:** Flag any changes that might negatively impact performance.
+4.  **Security vulnerabilities:** Point out any security risks introduced by the changes.
+5.  **Maintainability:** Are the changes easy to understand and maintain over time?
+
+Provide a concise summary at the beginning of your review. For each suggestion, use a clear Markdown format, such as a numbered list with bolded headings. If you provide a code example for an improvement, include the filename where the change should be applied.
+
+Here is the git diff to review:
+
+```diff
+{{context}}
+```)";
 } // namespace llm

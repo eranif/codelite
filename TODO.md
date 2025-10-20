@@ -20,9 +20,4 @@ others:
 AI-powered IDE:
 --------
 
-
-- Git plugin: change the "generate release notes" button to drop down menu with the following entries:
-  - Generate release notes
-  - Code review my changes
-
-- Add auto-detection code to allow easy setup
+- Add an option to add "max_tokens" in the New Endpoint Wizard"

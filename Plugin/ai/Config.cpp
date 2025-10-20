@@ -15,6 +15,7 @@ const wxStringMap_t kDefaultPromptTable = {
     {GetPromptString(PromptKind::kCommentGeneration), PROMPT_DOCSTRING_GEN},
     {GetPromptString(PromptKind::kReleaseNotesGenerate), PROMPT_GIT_RELEASE_NOTES},
     {GetPromptString(PromptKind::kReleaseNotesMerge), PROMPT_GIT_RELEASE_NOTES_MERGE},
+    {GetPromptString(PromptKind::kGitChangesCodeReview), PROMPT_GIT_CODE_REVIEW},
     {GetPromptString(PromptKind::kGitCommitMessage), PROMPT_GIT_COMMIT_MSG}};
 
 Config::Config() : clConfigItem("llm-config") {}

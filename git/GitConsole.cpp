@@ -29,12 +29,14 @@
 #include "ColoursAndFontsManager.h"
 #include "GitReleaseNotesGenerationDlg.h"
 #include "GitResetDlg.h"
+#include "MarkdownStyler.hpp"
 #include "StdToWX.h"
 #include "StringUtils.h"
 #include "ai/LLMManager.hpp"
 #include "ai/ProgressToken.hpp"
 #include "ai/ResponseCollector.hpp"
 #include "aui/clAuiToolBarArt.h"
+#include "aui/cl_aui_tool_stickness.h"
 #include "bitmap_loader.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clSTCHelper.hpp"
@@ -42,7 +44,6 @@
 #include "clStrings.h"
 #include "clTempFile.hpp"
 #include "clToolBar.h"
-#include "cl_aui_tool_stickness.h"
 #include "cl_config.h"
 #include "drawingutils.h"
 #include "editor_config.h"
@@ -123,7 +124,7 @@ struct GitFileEntry {
     }
 };
 
-IEditor* GetReleaseNotesFile(const wxString& path, bool first_time)
+IEditor* CreateOrOpenFile(const wxString& path, bool first_time)
 {
     // Open a temporary file for the release notes and load it into CodeLite.
     wxFileName fn{path};
@@ -136,10 +137,13 @@ IEditor* GetReleaseNotesFile(const wxString& path, bool first_time)
                 return nullptr;
             }
         }
+
+        // OpenFile(..) will return the already opened file and it does not create a new one.
         auto editor = clGetManager()->OpenFile(fn.GetFullPath());
         CHECK_PTR_RET_NULL(editor);
 
         editor->GetCtrl()->SetReadOnly(true);
+        editor->GetCtrl()->SetWrapMode(wxSTC_WRAP_WORD);
         return editor;
     } else {
         auto editor = clGetManager()->GetActiveEditor();
@@ -152,13 +156,13 @@ IEditor* GetReleaseNotesFile(const wxString& path, bool first_time)
     }
 }
 
-wxString GenerateRandomReleaseNotesFile()
+wxString GenerateRandomFile()
 {
-    clTempFile tmpfile{"md"};
+    clTempFile tmpfile{"txt"};
     return tmpfile.GetFullPath();
 }
 
-bool AppendReleaseNotesToken(IEditor* editor, const std::string& token, bool is_done)
+bool AppendTokenToFile(IEditor* editor, const std::string& token, bool is_done)
 {
     editor->GetCtrl()->SetInsertionPointEnd();
     editor->GetCtrl()->SetReadOnly(false);
@@ -168,6 +172,7 @@ bool AppendReleaseNotesToken(IEditor* editor, const std::string& token, bool is_
     }
     editor->GetCtrl()->ClearSelections();
     editor->GetCtrl()->EnsureCaretVisible();
+    clSTCHelper::SetCaretAt(editor->GetCtrl(), editor->GetCtrl()->GetLastPosition());
     return true;
 }
 } // namespace
@@ -242,15 +247,8 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_toolbar->AddTool(XRCID("git_reset_repository"), _("Reset repository"), images->LoadBitmap("clean"));
 
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("git_release_notes"), _("Generate release notes"), images->LoadBitmap("wand"));
-
-#ifdef __WXMSW__
-    m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("git_msysgit"),
-                       _("Open MSYS Git"),
-                       images->LoadBitmap("console"),
-                       _("Open MSYS Git at the current file location"));
-#endif
+    m_toolbar->AddTool(XRCID("git_ai_powered_features"), _("AI-Powered features"), images->LoadBitmap("wand"));
+    m_toolbar->SetToolDropDown(XRCID("git_ai_powered_features"), true);
 
     // Bind the events
     m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnClearGitLog, this, XRCID("git_clear_log"));
@@ -258,17 +256,18 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnResetFile, this, XRCID("git_console_reset_file"));
     m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnAddUnversionedFiles, this, XRCID("git_console_add_file"));
     m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnStopGitProcess, this, XRCID("git_stop_process"));
-    m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnGenerateReleaseNotes, this, XRCID("git_release_notes"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnAddUnversionedFilesUI, this, XRCID("git_console_add_file"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnResetFileUI, this, XRCID("git_console_reset_file"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnStopGitProcessUI, this, XRCID("git_stop_process"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnGenerateReleaseNotesUI, this, XRCID("git_release_notes"));
+    m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnAIAvailableUI, this, XRCID("git_ai_powered_features"));
 
     clAuiToolBarArt::Finalise(m_toolbar);
 
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &GitConsole::OnGitPullDropdown, this, XRCID("git_pull"));
     m_toolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &GitConsole::OnGitRebaseDropdown, this, XRCID("git_rebase"));
+    m_toolbar->Bind(
+        wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &GitConsole::OnGitAIDropDown, this, XRCID("git_ai_powered_features"));
     m_statusBar = new IndicatorPanel(this, _("Ready"));
     GetSizer()->Add(m_statusBar, wxSizerFlags(0).Expand());
     GetSizer()->Fit(this);
@@ -627,6 +626,38 @@ struct GitCommandData : public wxObject {
     int id;            // Holds the id of the command e.g. XRCID("git_pull")
 };
 
+void GitConsole::OnGitAIDropDown(wxAuiToolBarEvent& event)
+{
+    if (event.IsDropDownClicked()) {
+        wxMenu menu;
+        menu.Append(XRCID("git_ai_generate_release_notes"), _("Generate Release Notes..."));
+        menu.Append(XRCID("git_ai_code_review"), _("Do Code Review..."));
+
+        menu.Bind(
+            wxEVT_MENU,
+            [this](wxCommandEvent& e) {
+                wxUnusedVar(e);
+                CallAfter(&GitConsole::GenerateReleaseNotes);
+            },
+            XRCID("git_ai_generate_release_notes"));
+        menu.Bind(
+            wxEVT_MENU,
+            [this](wxCommandEvent& e) {
+                wxUnusedVar(e);
+                CallAfter(&GitConsole::DoCodeReview);
+            },
+            XRCID("git_ai_code_review"));
+
+        clAuiToolStickness stickness{m_toolbar, event.GetId()};
+        // line up our menu with the button
+        wxRect rect = m_toolbar->GetToolRect(event.GetId());
+        wxPoint pt = m_toolbar->ClientToScreen(rect.GetBottomLeft());
+        pt = ScreenToClient(pt);
+
+        PopupMenu(&menu, pt);
+    }
+}
+
 void GitConsole::DoOnDropdown(const wxString& commandName, int id, const wxAuiToolBarEvent& event)
 {
     if (event.IsDropDownClicked()) {
@@ -883,13 +914,81 @@ void GitConsole::OnOutputViewTabChanged(clCommandEvent& event)
     }
 }
 
-void GitConsole::OnGenerateReleaseNotesUI(wxUpdateUIEvent& event)
+void GitConsole::OnAIAvailableUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_git->IsGitEnabled() && llm::Manager::GetInstance().IsAvailable() &&
                  !llm::Manager::GetInstance().IsBusy());
 }
 
-void GitConsole::OnGenerateReleaseNotes(wxCommandEvent& event)
+void GitConsole::DoCodeReview()
+{
+    wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kGitChangesCodeReview);
+
+    wxString output;
+    if (!m_git->DoExecuteCommandSync("diff --ignore-all-space", &output, m_git->GetRepositoryPath())) {
+        wxMessageBox(_("Failed to fetch git diff!"), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
+        return;
+    }
+
+    prompt.Replace("{{context}}", output);
+
+    // Construct a token for cancellation purposes.
+    std::shared_ptr<llm::CancellationToken> cancellation_token = std::make_shared<llm::CancellationToken>(10000);
+    auto collector = new llm::ResponseCollector();
+    m_statusBar->Start(_("Generating Code Review..."));
+
+    collector->SetStateChangingCB([this](llm::ChatState state) {
+        if (!wxThread::IsMain()) {
+            clWARNING() << "StateChangingCB called for non main thread!" << endl;
+            return;
+        }
+        switch (state) {
+        case llm::ChatState::kThinking:
+            m_statusBar->SetMessage(_("Thinking..."));
+            break;
+        case llm::ChatState::kWorking:
+            m_statusBar->SetMessage(_("Working..."));
+            break;
+        case llm::ChatState::kReady:
+            m_statusBar->Stop(_("Ready."));
+            break;
+        }
+    });
+
+    std::shared_ptr<bool> first_token = std::make_shared<bool>(true);
+
+    wxString review_file = GenerateRandomFile();
+    collector->SetStreamCallback(
+        [=, this](const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
+            if (cancellation_token->IsMaxTokenReached()) {
+                m_statusBar->Stop(message);
+                return;
+            }
+
+            if (!message.empty()) {
+                auto editor = CreateOrOpenFile(review_file, *first_token);
+                *first_token = false;
+                CHECK_COND_RET(editor);
+                AppendTokenToFile(editor, message, is_done);
+            }
+
+            if (is_done) {
+                m_statusBar->Stop("Ready");
+                auto editor = CreateOrOpenFile(review_file, *first_token);
+                if (editor) {
+                    editor->GetCtrl()->SetSavePoint();
+                    MarkdownStyler styler(editor->GetCtrl());
+                    styler.StyleText(true);
+                }
+            }
+        });
+
+    llm::ChatOptions chat_options{llm::ChatOptions::kNoTools};
+    llm::AddFlagSet(chat_options, llm::ChatOptions::kNoHistory);
+    llm::Manager::GetInstance().Chat(collector, prompt, cancellation_token, chat_options);
+}
+
+void GitConsole::GenerateReleaseNotes()
 {
     // We need 2 commits to fetch the diff.
     GitReleaseNotesGenerationDlg dlg{EventNotifier::Get()->TopFrame()};
@@ -953,7 +1052,7 @@ void GitConsole::OnGenerateReleaseNotes(wxCommandEvent& event)
     std::shared_ptr<std::string> complete_response = std::make_shared<std::string>();
     std::shared_ptr<bool> first_token = std::make_shared<bool>(true);
 
-    wxString release_notes_file = GenerateRandomReleaseNotesFile();
+    wxString release_notes_file = GenerateRandomFile();
     collector->SetStreamCallback(
         [=, this](const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
             if (cancellation_token->IsMaxTokenReached()) {
@@ -963,10 +1062,10 @@ void GitConsole::OnGenerateReleaseNotes(wxCommandEvent& event)
 
             if (!message.empty()) {
                 if (!multiple_prompts) {
-                    auto editor = GetReleaseNotesFile(release_notes_file, *first_token);
+                    auto editor = CreateOrOpenFile(release_notes_file, *first_token);
                     *first_token = false;
                     CHECK_COND_RET(editor);
-                    AppendReleaseNotesToken(editor, message, is_done);
+                    AppendTokenToFile(editor, message, is_done);
                 } else {
                     complete_response->append(message);
                 }
@@ -977,6 +1076,13 @@ void GitConsole::OnGenerateReleaseNotes(wxCommandEvent& event)
                     CallAfter(&GitConsole::FinaliseReleaseNotes, wxString::FromUTF8(*complete_response));
                 }
                 m_statusBar->Stop("Ready");
+
+                auto editor = CreateOrOpenFile(release_notes_file, *first_token);
+                if (editor) {
+                    editor->GetCtrl()->SetSavePoint();
+                    MarkdownStyler styler(editor->GetCtrl());
+                    styler.StyleText(true);
+                }
             }
         });
 
@@ -1002,19 +1108,23 @@ void GitConsole::FinaliseReleaseNotes(const wxString& complete_reponse)
     auto collector = new llm::ResponseCollector();
 
     // Open a temporary file for the release notes and load it into CodeLite.
-    auto editor = GetReleaseNotesFile(GenerateRandomReleaseNotesFile(), true);
+    auto editor = CreateOrOpenFile(GenerateRandomFile(), true);
     CHECK_COND_RET(editor);
     wxString release_notes_file = editor->GetRemotePathOrLocal();
 
     collector->SetStreamCallback(
         [=, this](const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
-            auto editor = GetReleaseNotesFile(release_notes_file, false);
+            auto editor = CreateOrOpenFile(release_notes_file, false);
             CHECK_PTR_RET(editor);
-            if (!AppendReleaseNotesToken(editor, message, is_done)) {
+            if (!AppendTokenToFile(editor, message, is_done)) {
                 return;
             }
+
             if (is_done) {
                 m_statusBar->Stop("Ready");
+                editor->GetCtrl()->SetSavePoint();
+                MarkdownStyler styler(editor->GetCtrl());
+                styler.StyleText(true);
             }
         });
 

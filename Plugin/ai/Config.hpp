@@ -15,6 +15,7 @@ enum class PromptKind {
     kGitCommitMessage,
     kReleaseNotesGenerate,
     kReleaseNotesMerge,
+    kGitChangesCodeReview,
     kMax, // Must be last
 };
 
@@ -29,6 +30,8 @@ inline wxString GetPromptString(PromptKind kind)
         return "Comment Generation Prompt";
     case llm::PromptKind::kGitCommitMessage:
         return "Git Commit Message Prompt";
+    case llm::PromptKind::kGitChangesCodeReview:
+        return "Code Review Prompt";
     case llm::PromptKind::kMax:
         return "";
     }

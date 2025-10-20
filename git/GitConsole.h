@@ -81,8 +81,9 @@ protected:
     virtual void OnStopGitProcessUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLogUI(wxUpdateUIEvent& event);
     virtual void OnClearGitLog(wxCommandEvent& event);
-    virtual void OnGenerateReleaseNotesUI(wxUpdateUIEvent& event);
-    virtual void OnGenerateReleaseNotes(wxCommandEvent& event);
+    virtual void OnAIAvailableUI(wxUpdateUIEvent& event);
+    void GenerateReleaseNotes();
+    void DoCodeReview();
     void FinaliseReleaseNotes(const wxString& complete_reponse);
     virtual void OnStopGitProcess(wxCommandEvent& event);
     virtual void OnOpenUnversionedFiles(wxCommandEvent& event);
@@ -98,6 +99,7 @@ protected:
 
     void OnGitPullDropdown(wxAuiToolBarEvent& event) { DoOnDropdown("git_pull", event.GetToolId(), event); }
     void OnGitRebaseDropdown(wxAuiToolBarEvent& event) { DoOnDropdown("git_rebase", event.GetToolId(), event); }
+    void OnGitAIDropDown(wxAuiToolBarEvent& event);
 
     void DoOnDropdown(const wxString& commandName, int id, const wxAuiToolBarEvent& event);
     void OnDropDownMenuEvent(wxCommandEvent& e);

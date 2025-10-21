@@ -73,7 +73,7 @@ CompilerPtr CompilerLocatorEosCDT::CreateCompiler(const wxString& path) const
 
     // get the compiler version
     compiler->SetName("eosio");
-    compiler->SetGenerateDependeciesFile(true);
+    compiler->SetGenerateDependenciesFile(true);
     compiler->SetInstallationPath(path);
 
     // Add the tools

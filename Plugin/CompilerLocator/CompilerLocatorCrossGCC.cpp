@@ -87,7 +87,7 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
 
         // get the compiler version
         compiler->SetName(filename.GetName());
-        compiler->SetGenerateDependeciesFile(true);
+        compiler->SetGenerateDependenciesFile(true);
         m_compilers.push_back(compiler);
 
         // we path the bin folder

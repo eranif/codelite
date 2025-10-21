@@ -1,7 +1,8 @@
 #include "ConsoleLexer.hpp"
 
-#include "ExtraLexers.h"
 #include "file_logger.h"
+
+#include <ExtraLexers.h>
 
 namespace
 {

@@ -73,7 +73,7 @@ void CompilerLocatorCygwin::AddTools(const wxString& binFolder, const wxString& 
     // Create an empty compiler
     CompilerPtr compiler(new Compiler(NULL));
     compiler->SetCompilerFamily(COMPILER_FAMILY_CYGWIN);
-    compiler->SetGenerateDependeciesFile(true);
+    compiler->SetGenerateDependenciesFile(true);
     compiler->SetName(name);
     compiler->SetInstallationPath(masterPath.GetPath());
     m_compilers.push_back(compiler);
@@ -127,7 +127,7 @@ void CompilerLocatorCygwin::AddTool(CompilerPtr compiler, const wxString& toolna
     wxString tool = toolpath;
     StringUtils::WrapWithQuotes(tool);
 
-    // Cygwin does not like backslahes... replace the tools to use /
+    // Cygwin does not like backslash... replace the tools to use /
     tool.Replace("\\", "/");
     if(!extraArgs.IsEmpty()) {
         tool << " " << extraArgs;

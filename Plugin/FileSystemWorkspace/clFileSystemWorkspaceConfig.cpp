@@ -322,7 +322,7 @@ void clFileSystemWorkspaceSettings::FromJSON(const JSONItem& shared, const JSONI
     }
 
     // Loop over the local configs and keep them in a map
-    // this is because the number of configuration entires in
+    // this is because the number of configuration entries in
     // the local workspace does not match to the shared one
     // this can happen when loading the workspace on different
     // machines (when the shared version is kept in SCM)
@@ -419,18 +419,18 @@ bool clFileSystemWorkspaceSettings::Load(const wxFileName& filename, const wxFil
     return true;
 }
 
-bool clFileSystemWorkspaceSettings::AddConfig(const wxString& name, const wxString& copyfrom)
+bool clFileSystemWorkspaceSettings::AddConfig(const wxString& name, const wxString& copyFrom)
 {
     if (m_configsMap.count(name)) {
         // already exists
-        clWARNING() << "Can't add new configurtion:" << name << ". Already exists" << endl;
+        clWARNING() << "Can't add new configuration: " << name << ". Already exists" << endl;
         return false;
     }
 
     clFileSystemWorkspaceConfig::Ptr_t conf;
-    if (!copyfrom.IsEmpty() && GetConfig(copyfrom)) {
+    if (!copyFrom.IsEmpty() && GetConfig(copyFrom)) {
         // clone the config
-        conf = GetConfig(copyfrom)->Clone();
+        conf = GetConfig(copyFrom)->Clone();
     } else {
         // create an empty one
         conf.reset(new clFileSystemWorkspaceConfig());

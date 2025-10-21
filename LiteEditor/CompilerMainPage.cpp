@@ -694,7 +694,7 @@ void CompilerMainPage::SaveTemplates()
 
 void CompilerMainPage::InitializeAdvancePage()
 {
-    // Clear old conetnt
+    // Clear old content
     m_textObjectExtension->ChangeValue("");
     m_textDependExtension->ChangeValue("");
     m_textPreprocessExtension->ChangeValue("");
@@ -709,7 +709,7 @@ void CompilerMainPage::InitializeAdvancePage()
     m_textDependExtension->ChangeValue(m_compiler->GetDependSuffix());
     m_textPreprocessExtension->ChangeValue(m_compiler->GetPreprocessSuffix());
     m_checkBoxGenerateDependenciesFiles->Enable(m_compiler->IsGnuCompatibleCompiler());
-    m_checkBoxGenerateDependenciesFiles->SetValue(m_compiler->GetGenerateDependeciesFile());
+    m_checkBoxGenerateDependenciesFiles->SetValue(m_compiler->GetGenerateDependenciesFile());
     m_textCtrlGlobalIncludePath->ChangeValue(m_compiler->GetGlobalIncludePath());
     m_textCtrlGlobalLibPath->ChangeValue(m_compiler->GetGlobalLibPath());
     m_checkBoxObjectNameSameAsFileName->SetValue(m_compiler->GetObjectNameIdenticalToFileName());
@@ -718,7 +718,7 @@ void CompilerMainPage::InitializeAdvancePage()
 void CompilerMainPage::SaveAdvancedPage()
 {
     CHECK_PTR_RET(m_compiler);
-    m_compiler->SetGenerateDependeciesFile(m_checkBoxGenerateDependenciesFiles->IsChecked());
+    m_compiler->SetGenerateDependenciesFile(m_checkBoxGenerateDependenciesFiles->IsChecked());
     m_compiler->SetGlobalIncludePath(m_textCtrlGlobalIncludePath->GetValue());
     m_compiler->SetGlobalLibPath(m_textCtrlGlobalLibPath->GetValue());
     m_compiler->SetObjectSuffix(m_textObjectExtension->GetValue());
@@ -915,7 +915,7 @@ void CompilerMainPage::OnRenameCompiler(wxCommandEvent& event)
     // Delete the old compiler
     BuildSettingsConfigST::Get()->DeleteCompiler(compiler->GetName());
 
-    // Create new one with differet name
+    // Create new one with different name
     compiler->SetName(newName);
     BuildSettingsConfigST::Get()->SetCompiler(compiler);
 

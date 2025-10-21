@@ -194,7 +194,7 @@ CompilerPtr CompilerLocatorCLANG::AddCompiler(const wxFileName& clang)
 {
     CompilerPtr compiler(new Compiler(NULL));
     compiler->SetCompilerFamily(COMPILER_FAMILY_CLANG);
-    compiler->SetGenerateDependeciesFile(true);
+    compiler->SetGenerateDependenciesFile(true);
     compiler->SetName(clang.GetFullPath());
     m_compilers.push_back(compiler);
     AddTools(compiler, clang);

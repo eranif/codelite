@@ -1,8 +1,9 @@
 #include "ThemeImporterTerminal.hpp"
 
-#include "ExtraLexers.h"
 #include "clColours.h"
 #include "drawingutils.h"
+
+#include <ExtraLexers.h>
 
 #if wxCHECK_VERSION(3, 3, 0)
 #define HAS_ILEXER 1

@@ -106,8 +106,8 @@ void clFileSystemWorkspaceView::OnContextMenu(clContextMenuEvent& event)
 
         wxMenu* cc_menu = new wxMenu;
         if (!m_selectedFolders.empty()) {
-            cc_menu->Append(XRCID("fs_add_cc_inculde"), _("Add path to code completion"), wxEmptyString, wxITEM_NORMAL);
-            cc_menu->Bind(wxEVT_MENU, &clFileSystemWorkspaceView::OnAddIncludePath, this, XRCID("fs_add_cc_inculde"));
+            cc_menu->Append(XRCID("fs_add_cc_include"), _("Add path to code completion"), wxEmptyString, wxITEM_NORMAL);
+            cc_menu->Bind(wxEVT_MENU, &clFileSystemWorkspaceView::OnAddIncludePath, this, XRCID("fs_add_cc_include"));
         }
         cc_menu->Append(XRCID("fs_create_compile_flags"), _("Generate compile_flags.txt file..."), wxEmptyString,
                         wxITEM_NORMAL);

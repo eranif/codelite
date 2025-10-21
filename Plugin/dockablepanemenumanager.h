@@ -53,7 +53,7 @@ public:
     void RemoveMenu(const wxString& name);
 
     wxString NameById(int id);
-    wxArrayString GetDeatchedPanesList();
+    wxArrayString GetDetachedPanesList();
     bool IsPaneDetached(const wxString& name);
 
     static void HackShowPane(wxAuiPaneInfo& pane_info, wxAuiManager* pAui);

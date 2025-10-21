@@ -62,7 +62,7 @@ CompilerPtr CompilerLocatorGCC::Locate(const wxString& folder)
 
         // get the compiler version
         compiler->SetName(name.IsEmpty() ? "GCC" : name);
-        compiler->SetGenerateDependeciesFile(true);
+        compiler->SetGenerateDependenciesFile(true);
         m_compilers.push_back(compiler);
 
         // we pass the bin folder
@@ -112,7 +112,7 @@ bool CompilerLocatorGCC::Locate()
         const wxFileName& gcc = vt.first;
         CompilerPtr compiler(new Compiler(NULL));
         compiler->SetName(gcc.GetFullPath());
-        compiler->SetGenerateDependeciesFile(true);
+        compiler->SetGenerateDependenciesFile(true);
         compiler->SetCompilerFamily(COMPILER_FAMILY_GCC);
         m_compilers.push_back(compiler);
         AddTools(compiler, gcc);
@@ -161,7 +161,7 @@ void CompilerLocatorGCC::AddTools(CompilerPtr compiler, const wxFileName& gcc)
 
     // ====-----------------------------------------------------------------
     // With XCode installation, only
-    // g++, gcc, and make are installed under the Xcode installation folder
+    // g++, gcc, and make are installed under the XCode installation folder
     // the rest (mainly ar and as) are taken from /usr/bin
     // ====-----------------------------------------------------------------
 

@@ -112,7 +112,7 @@ void DockablePaneMenuManager::OnDockpaneMenuItemUI(wxUpdateUIEvent& e)
     }
 }
 
-wxArrayString DockablePaneMenuManager::GetDeatchedPanesList()
+wxArrayString DockablePaneMenuManager::GetDetachedPanesList()
 {
     wxArrayString arr;
     for (const auto& [_, name] : m_id2nameMap) {

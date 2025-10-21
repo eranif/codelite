@@ -25,7 +25,6 @@
 #include "lexer_configuration.h"
 
 #include "ConsoleLexer.hpp"
-#include "ExtraLexers.h"
 #include "FontUtils.hpp"
 #include "clSystemSettings.h"
 #include "cl_config.h"
@@ -35,6 +34,7 @@
 #include "globals.h"
 #include "macros.h"
 
+#include <ExtraLexers.h>
 #include <algorithm>
 #include <wx/settings.h>
 #include <wx/stc/stc.h>

@@ -222,11 +222,11 @@ public:
 
     void SetLinkerOptions(const CmpCmdLineOptions& cmpOptions) { m_linkerOptions = cmpOptions; }
 
-    void SetGenerateDependeciesFile(bool generateDependeciesFile)
+    void SetGenerateDependenciesFile(bool generateDependenciesFile)
     {
-        this->m_generateDependenciesFile = generateDependeciesFile;
+        this->m_generateDependenciesFile = generateDependenciesFile;
     }
-    bool GetGenerateDependeciesFile() const { return IsGnuCompatibleCompiler() && m_generateDependenciesFile; }
+    bool GetGenerateDependenciesFile() const { return IsGnuCompatibleCompiler() && m_generateDependenciesFile; }
     void SetReadObjectFilesFromList(bool readObjectFilesFromList)
     {
         this->m_readObjectFilesFromList = readObjectFilesFromList;

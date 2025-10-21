@@ -710,7 +710,7 @@ namespace
 {
 /// keep the initial startup background colour
 /// we use this to detect any theme changes done to the system
-/// the checks are done in the OnAppAcitvated event
+/// the checks are done in the OnAppActivated event
 wxColour startupBackgroundColour;
 
 wxWindow* GetWindowFromEvent(MainBook* book, wxEvent& event)
@@ -3611,11 +3611,11 @@ void clMainFrame::CompleteInitialization()
                                    "Find this Csymbol",
                                    "Find functions calling this function",
                                    "Find functions called by this function",
-                                   "Configureexternal tools...",
+                                   "Configure external tools...",
                                    "Show Running Tools...",
                                    "Create new qmake based project",
                                    "Check spelling...",
-                                   "Checkcontinuous",
+                                   "Check continuous",
                                    "Run Unit tests..."};
         hiddenItems.Clear();
         hiddenItems.reserve(v.size());
@@ -4033,7 +4033,7 @@ void clMainFrame::OnNewDetachedPane(wxCommandEvent& e)
         m_DPmenuMgr->AddMenu(text);
 
         // keep list of all detached panes
-        wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();
+        wxArrayString panes = m_DPmenuMgr->GetDetachedPanesList();
         DetachedPanesInfo dpi(panes);
         EditorConfigST::Get()->WriteObject("DetachedPanesList", &dpi);
     }
@@ -4049,7 +4049,7 @@ void clMainFrame::OnDestroyDetachedPane(wxCommandEvent& e)
         m_DPmenuMgr->RemoveMenu(pane->GetName());
 
         // keep list of all detached panes
-        wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();
+        wxArrayString panes = m_DPmenuMgr->GetDetachedPanesList();
         DetachedPanesInfo dpi(panes);
         EditorConfigST::Get()->WriteObject("DetachedPanesList", &dpi);
 
@@ -4818,7 +4818,7 @@ bool clMainFrame::SaveLayoutAndSession()
     GetOutputPane()->SaveTabOrder();
 
     // keep list of all detached panes
-    wxArrayString panes = m_DPmenuMgr->GetDeatchedPanesList();
+    wxArrayString panes = m_DPmenuMgr->GetDetachedPanesList();
     DetachedPanesInfo dpi(panes);
     EditorConfigST::Get()->WriteObject("DetachedPanesList", &dpi);
 

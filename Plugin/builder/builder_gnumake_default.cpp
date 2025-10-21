@@ -779,7 +779,7 @@ void BuilderGnuMake::CreateFileTargets(ProjectPtr proj, const wxString& confToBu
     wxString cmpType = bldConf->GetCompilerType();
     // get the compiler settings
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetCompiler(cmpType);
-    bool generateDependenciesFiles = cmp->GetGenerateDependeciesFile() && !cmp->GetDependSuffix().IsEmpty();
+    bool generateDependenciesFiles = cmp->GetGenerateDependenciesFile() && !cmp->GetDependSuffix().IsEmpty();
     bool supportPreprocessOnlyFiles =
         !cmp->GetSwitch("PreprocessOnly").IsEmpty() && !cmp->GetPreprocessSuffix().IsEmpty();
 

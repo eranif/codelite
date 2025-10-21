@@ -31,7 +31,7 @@ namespace
 {
 /// keep the initial startup background colour
 /// we use this to detect any theme changes done to the system
-/// the checks are done in the OnAppAcitvated event
+/// the checks are done in the OnAppActivated event
 wxColour startupBackgroundColour;
 
 #ifdef __WXGTK__

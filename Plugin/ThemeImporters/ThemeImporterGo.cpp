@@ -42,7 +42,7 @@ LexerConf::Ptr_t ThemeImporterGo::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_C_OPERATOR, "Operator", m_oper);
     AddProperty(lexer, wxSTC_C_IDENTIFIER, "Identifier", m_editor);
     AddProperty(lexer, wxSTC_C_STRINGEOL, "Open String", m_string);
-    AddProperty(lexer, wxSTC_C_COMMENTLINEDOC, "Doc snigle line comment", m_javadoc);
+    AddProperty(lexer, wxSTC_C_COMMENTLINEDOC, "Doc single line comment", m_javadoc);
     AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORD, "Doc keyword", m_javadocKeyword);
     AddProperty(lexer, wxSTC_C_COMMENTDOCKEYWORDERROR, "Doc keyword error", m_javadocKeyword);
     AddProperty(lexer, wxSTC_C_WORD2, "Function", m_function);

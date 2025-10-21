@@ -267,7 +267,7 @@ void TagsStorageSQLite::Store(const std::vector<TagEntryPtr>& tags, bool auto_co
             DoInsertTagEntry(*tag);
         }
     } catch (const wxSQLite3Exception& e) {
-        clWARNING() << "TagsStorageSQLite::Store(): failed to insert entires into the db." << e.GetMessage() << endl;
+        clWARNING() << "TagsStorageSQLite::Store(): failed to insert entries into the db. " << e.GetMessage() << endl;
         SAFE_ROLLBACK_IF_NEEDED(auto_commit);
     }
 

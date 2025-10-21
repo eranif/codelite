@@ -159,11 +159,6 @@ WXDLLIMPEXP_SDK bool WriteFileWithBackup(const wxString& file_name, const wxStri
 WXDLLIMPEXP_SDK bool CopyToClipboard(const wxString& text);
 
 /**
- * @brief wrap a given command in the shell command (e.g. cmd /c "command")
- */
-WXDLLIMPEXP_SDK void WrapInShell(wxString& cmd);
-
-/**
  * @brief return the current user name without any special characters
  * @return
  */

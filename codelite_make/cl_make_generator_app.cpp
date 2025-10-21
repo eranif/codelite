@@ -1,16 +1,15 @@
 #include "cl_make_generator_app.h"
 
 #include "build_settings_config.h"
-#include "builder/builder_gnumake.h"
 #include "builder/builder_gnumake_default.h"
 #include "configuration_mapping.h"
-#include "globals.h"
 #include "macromanager.h"
+#include "procutils.h"
 #include "workspace.h"
 
 #include <algorithm>
-#include <wx/crt.h>
 #include <wx/filename.h>
+#include <wx/wxcrtvararg.h>
 
 IMPLEMENT_APP_CONSOLE(clMakeGeneratorApp)
 
@@ -275,7 +274,7 @@ void clMakeGeneratorApp::Out(const wxString& msg) { wxPrintf("%s\n", msg); }
 void clMakeGeneratorApp::DoExecCommand(const wxString& command)
 {
     wxString cmd = command;
-    WrapInShell(cmd);
+    ProcUtils::WrapInShell(cmd);
     wxPrintf(cmd + "\n");
     m_exitCode = ::wxExecute(cmd, wxEXEC_SYNC | wxEXEC_NOHIDE | wxEXEC_SHOW_CONSOLE);
     Bye();

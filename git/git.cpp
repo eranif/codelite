@@ -39,17 +39,10 @@
 #include "StringUtils.h"
 #include "ai/LLMManager.hpp"
 #include "bitmap_loader.h"
-#include "clGenericNotebook.hpp"
-#include "clSideBarCtrl.hpp"
-#include "clStrings.h"
-
-#if MAINBOOK_AUIBOOK
-#include "clAuiBook.hpp"
-#endif
-#include "ai/LLMManager.hpp"
 #include "clEditorBar.h"
 #include "clRemoteHost.hpp"
 #include "clSFTPManager.hpp"
+#include "clSideBarCtrl.hpp"
 #include "clStatusBar.h"
 #include "clStrings.h"
 #include "clWorkspaceManager.h"
@@ -65,21 +58,21 @@
 #include "gitentry.h"
 #include "globals.h"
 #include "overlaytool.h"
+#include "procutils.h"
 #include "project.h"
 #include "workspace.h"
 
 #include <stack>
 #include <unordered_set>
-#include <wx/artprov.h>
 #include <wx/ffile.h>
-#include <wx/file.h>
 #include <wx/msgdlg.h>
-#include <wx/sstream.h>
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
-#include <wx/wx.h>
 #include <wx/xrc/xmlres.h>
 
+#if MAINBOOK_AUIBOOK
+#include "clAuiBook.hpp"
+#endif
 #ifdef __WXGTK__
 #include <sys/wait.h>
 #endif
@@ -2492,7 +2485,7 @@ void GitPlugin::OnOpenMSYSGit(wxCommandEvent& e)
             ::wxSetWorkingDirectory(editor->GetFileName().GetPath());
         }
 #ifndef __WXMSW__
-        ::WrapInShell(bashcommand);
+        ProcUtils::WrapInShell(bashcommand);
 #endif
         ::wxExecute(bashcommand);
     } else {
@@ -2779,7 +2772,7 @@ void GitPlugin::OnFolderGitBash(wxCommandEvent& event)
     if (locator.MSWGetGitShellCommand(bashcommand)) {
         DirSaver ds;
         ::wxSetWorkingDirectory(m_selectedFolder);
-        ::WrapInShell(bashcommand);
+        ProcUtils::WrapInShell(bashcommand);
         ::wxExecute(bashcommand);
     } else {
         ::wxMessageBox(_("Don't know how to start MSYSGit..."), "Git", wxICON_WARNING | wxOK | wxCENTER);

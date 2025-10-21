@@ -3,7 +3,6 @@
 #include "StringUtils.h"
 #include "cl_standard_paths.h"
 #include "dirsaver.h"
-#include "globals.h"
 #include "procutils.h"
 
 clPatch::clPatch()
@@ -44,7 +43,7 @@ void clPatch::Patch(const wxFileName& patchFile, const wxString& workingDirector
     wxString patch = patchFile.GetFullPath();
 
     command << " " << StringUtils::WrapWithQuotes(patch);
-    ::WrapInShell(command);
+    ProcUtils::WrapInShell(command);
 
     ProcUtils::SafeExecuteCommand(command);
 }

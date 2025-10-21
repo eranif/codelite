@@ -86,6 +86,9 @@ public:
     ProcUtils() = default;
     ~ProcUtils() = default;
 
+    /**
+     * @brief wrap a given command in the shell command (e.g. cmd /c "command")
+     */
     static wxString& WrapInShell(wxString& cmd);
 
     static std::set<unsigned long> GetProcTree(long pid);

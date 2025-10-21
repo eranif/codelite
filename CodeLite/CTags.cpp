@@ -1,9 +1,8 @@
 #include "CTags.hpp"
 
 #include "AsyncProcess/asyncprocess.h"
-#include "clTempFile.hpp"
 #include "cl_standard_paths.h"
-#include "ctags_manager.h"
+#include "clTempFile.hpp"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "procutils.h"
@@ -11,33 +10,6 @@
 #include <set>
 #include <wx/stopwatch.h>
 #include <wx/tokenzr.h>
-
-namespace
-{
-void WrapInShell(wxString& cmd)
-{
-    wxString command;
-#ifdef __WXMSW__
-    wxString shell = wxGetenv("COMSPEC");
-    if(shell.IsEmpty()) {
-        shell = "CMD.EXE";
-    }
-    command << shell << " /C ";
-    if(cmd.StartsWith("\"") && !cmd.EndsWith("\"")) {
-        command << "\"" << cmd << "\"";
-    } else {
-        command << cmd;
-    }
-    cmd = command;
-#else
-    command << "/bin/sh -c '";
-    // escape any single quotes
-    cmd.Replace("'", "\\'");
-    command << cmd << "'";
-    cmd = command;
-#endif
-}
-} // namespace
 
 thread_local bool is_initialised = false;
 thread_local bool is_macrodef_supported = false;
@@ -134,7 +106,7 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
     wxString command_to_run;
     command_to_run << WrapSpaces(codelite_indexer) << " --options=" << WrapSpaces(ctags_options_file.GetFullPath())
                    << kinds_string << " -L " << WrapSpaces(file_list.GetFullPath()) << " -f - ";
-    WrapInShell(command_to_run);
+    ProcUtils::WrapInShell(command_to_run);
     clDEBUG() << "Running command:" << command_to_run << endl;
 
     *output = ProcUtils::SafeExecuteCommand(command_to_run);

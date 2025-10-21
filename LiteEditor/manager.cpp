@@ -78,6 +78,7 @@
 #include "menumanager.h"
 #include "new_quick_watch_dlg.h"
 #include "pluginmanager.h"
+#include "procutils.h"
 #include "reconcileproject.h"
 #include "renamefiledlg.h"
 #include "search_thread.h"
@@ -3045,7 +3046,7 @@ void Manager::DoRestartCodeLite([[maybe_unused]] bool force)
     wxString bundlePathStr = bundlePath.GetPath();
     StringUtils::WrapWithQuotes(bundlePathStr);
     restartCodeLiteCommand << "sleep 2 && open " << bundlePathStr;
-    ::WrapInShell(restartCodeLiteCommand);
+    ProcUtils::WrapInShell(restartCodeLiteCommand);
 #endif
 
     // Fire an exit event (the restart takes place just before CodeLite exits)

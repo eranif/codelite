@@ -367,30 +367,6 @@ bool clIsCygwinEnvironment()
 #endif
 }
 
-void WrapInShell(wxString& cmd)
-{
-    wxString command;
-#ifdef __WXMSW__
-    wxString shell = wxGetenv("COMSPEC");
-    if (shell.IsEmpty()) {
-        shell = "CMD.EXE";
-    }
-    command << shell << " /C ";
-    if (cmd.StartsWith("\"") && !cmd.EndsWith("\"")) {
-        command << "\"" << cmd << "\"";
-    } else {
-        command << cmd;
-    }
-    cmd = command;
-#else
-    command << "/bin/sh -c '";
-    // escape any single quotes
-    cmd.Replace("'", "\\'");
-    command << cmd << "'";
-    cmd = command;
-#endif
-}
-
 wxString clGetUserName()
 {
     wxString squashedname, name = wxGetUserId();

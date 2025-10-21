@@ -25,14 +25,11 @@
 #include "configurationtoolbase.h"
 
 #include "cl_standard_paths.h"
-#include "editor_config.h"
-#include "globals.h"
 #include "serialized_object.h"
 #include "xmlutils.h"
 
 #include <wx/ffile.h>
 #include <wx/filename.h>
-#include <wx/stdpaths.h>
 
 ConfigurationToolBase::ConfigurationToolBase()
     : m_fileName(wxEmptyString)
@@ -67,7 +64,7 @@ bool ConfigurationToolBase::WriteObject(const wxString& name, SerializedObject* 
 
     if(!XmlUtils::StaticWriteObject(m_doc.GetRoot(), name, obj))
         return false;
-    return ::SaveXmlToFile(&m_doc, m_fileName);
+    return XmlUtils::SaveXmlToFile(&m_doc, m_fileName);
 }
 
 bool ConfigurationToolBase::ReadObject(const wxString& name, SerializedObject* obj)

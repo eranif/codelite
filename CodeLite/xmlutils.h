@@ -164,6 +164,16 @@ public:
      * @return
      */
     static bool StaticWriteObject(wxXmlNode* root, const wxString& name, SerializedObject* obj);
+
+    /**
+     * @brief save an xml document to file
+     */
+    static bool SaveXmlToFile(const wxXmlDocument* doc, const wxString& filename);
+
+    /**
+     * @brief an efficient way to load XML from file
+     */
+    static bool LoadXmlFile(wxXmlDocument* doc, const wxString& filepath);
 };
 
 #endif // XMLUTILS_H

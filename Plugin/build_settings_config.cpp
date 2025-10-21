@@ -31,8 +31,9 @@
 #include "conffilelocator.h"
 #include "event_notifier.h"
 #include "file_logger.h"
-#include "globals.h"
 #include "xmlutils.h"
+
+#include <wx/tokenzr.h>
 
 BuildSettingsConfig::BuildSettingsConfig()
 {
@@ -45,7 +46,7 @@ bool BuildSettingsConfig::Load(const wxString& version, const wxString& xmlFileP
     m_version = version;
     if(xmlFilePath.IsEmpty()) {
         wxString initialSettings = ConfFileLocator::Instance()->Locate(wxT("config/build_settings.xml"));
-        loaded = LoadXmlFile(m_doc.get(), initialSettings);
+        loaded = XmlUtils::LoadXmlFile(m_doc.get(), initialSettings);
         if(m_doc->GetRoot() == nullptr) {
             clERROR() << "Failed to load XML file:" << initialSettings << endl;
             return false;
@@ -53,7 +54,8 @@ bool BuildSettingsConfig::Load(const wxString& version, const wxString& xmlFileP
 
         wxString xmlVersion = m_doc->GetRoot()->GetAttribute(wxT("Version"), wxEmptyString);
         if(xmlVersion != version) {
-            loaded = LoadXmlFile(m_doc.get(), ConfFileLocator::Instance()->GetDefaultCopy(wxT("config/build_settings.xml")));
+            loaded = XmlUtils::LoadXmlFile(
+                m_doc.get(), ConfFileLocator::Instance()->GetDefaultCopy(wxT("config/build_settings.xml")));
         }
         m_fileName = ConfFileLocator::Instance()->GetLocalCopy(wxT("config/build_settings.xml"));
 
@@ -62,7 +64,7 @@ bool BuildSettingsConfig::Load(const wxString& version, const wxString& xmlFileP
         }
     } else {
         wxFileName xmlPath(xmlFilePath);
-        loaded = LoadXmlFile(m_doc.get(), xmlPath.GetFullPath());
+        loaded = XmlUtils::LoadXmlFile(m_doc.get(), xmlPath.GetFullPath());
         if(loaded) {
             DoUpdateCompilers();
             m_fileName = xmlPath;
@@ -315,7 +317,7 @@ bool BuildSettingsConfig::SaveXmlFile()
         return true;
     }
 
-    return ::SaveXmlToFile(m_doc.get(), m_fileName.GetFullPath());
+    return XmlUtils::SaveXmlToFile(m_doc.get(), m_fileName.GetFullPath());
 }
 
 static BuildSettingsConfig* gs_buildSettingsInstance = NULL;

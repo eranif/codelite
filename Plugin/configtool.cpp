@@ -25,13 +25,8 @@
 #include "configtool.h"
 
 #include "conffilelocator.h"
-#include "editor_config.h"
-#include "globals.h"
 #include "serialized_object.h"
 #include "xmlutils.h"
-
-#include <wx/ffile.h>
-#include <wx/filename.h>
 
 ConfigTool::ConfigTool()
     : m_fileName(wxEmptyString)
@@ -41,14 +36,14 @@ ConfigTool::ConfigTool()
 bool ConfigTool::Load(const wxString& basename, const wxString& version)
 {
     wxString initialSettings = ConfFileLocator::Instance()->Locate(basename);
-    bool loaded = ::LoadXmlFile(&m_doc, initialSettings);
+    bool loaded = XmlUtils::LoadXmlFile(&m_doc, initialSettings);
     wxString xmlVersion;
     if(loaded) {
         xmlVersion = m_doc.GetRoot()->GetAttribute(wxT("Version"), wxEmptyString);
     }
 
     if(xmlVersion != version) {
-        loaded = ::LoadXmlFile(&m_doc, ConfFileLocator::Instance()->GetDefaultCopy(basename));
+        loaded = XmlUtils::LoadXmlFile(&m_doc, ConfFileLocator::Instance()->GetDefaultCopy(basename));
     }
     m_fileName = ConfFileLocator::Instance()->GetLocalCopy(basename);
     return loaded;
@@ -62,7 +57,7 @@ bool ConfigTool::WriteObject(const wxString& name, SerializedObject* obj)
 
     if(!XmlUtils::StaticWriteObject(m_doc.GetRoot(), name, obj))
         return false;
-    return ::SaveXmlToFile(&m_doc, m_fileName);
+    return XmlUtils::SaveXmlToFile(&m_doc, m_fileName);
 }
 
 bool ConfigTool::ReadObject(const wxString& name, SerializedObject* obj)

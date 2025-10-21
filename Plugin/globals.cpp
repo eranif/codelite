@@ -56,7 +56,6 @@
 #include <wx/regex.h>
 #include <wx/richmsgdlg.h>
 #include <wx/settings.h>
-#include <wx/sstream.h>
 #include <wx/window.h>
 
 #ifdef __WXMSW__
@@ -665,29 +664,6 @@ wxStandardID PromptForYesNoDialogWithCheckbox(const wxString& message,
 {
     return PromptForYesNoCancelDialogWithCheckbox(
         message, dlgId, yesLabel, noLabel, "", checkboxLabel, style, checkboxInitialValue);
-}
-
-bool LoadXmlFile(wxXmlDocument* doc, const wxString& filepath)
-{
-    wxString content;
-    if (!FileUtils::ReadFileContent(filepath, content)) {
-        return false;
-    }
-
-    wxStringInputStream sis(content);
-    return doc->Load(sis);
-}
-
-bool SaveXmlToFile(wxXmlDocument* doc, const wxString& filename)
-{
-    CHECK_PTR_RET_FALSE(doc);
-
-    wxString content;
-    wxStringOutputStream sos(&content);
-    if (doc->Save(sos)) {
-        return FileUtils::WriteFileContent(filename, content);
-    }
-    return false;
 }
 
 void wxPGPropertyBooleanUseCheckbox(wxPropertyGrid* grid)

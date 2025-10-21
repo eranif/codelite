@@ -24,6 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "xmlutils.h"
 
+#include "fileutils.h"
+
+#include <wx/sstream.h>
+
 wxXmlNode* XmlUtils::FindNodeByName(const wxXmlNode* parent, const wxString& tagName, const wxString& name)
 {
     if(!parent) {
@@ -317,4 +321,30 @@ bool XmlUtils::StaticWriteObject(wxXmlNode* root, const wxString& name, Serializ
     // serialize the object into the archive
     obj->Serialize(arch);
     return true;
+}
+
+
+bool XmlUtils::LoadXmlFile(wxXmlDocument* doc, const wxString& filepath)
+{
+    CHECK_PTR_RET_FALSE(doc);
+
+    wxString content;
+    if (!FileUtils::ReadFileContent(filepath, content)) {
+        return false;
+    }
+
+    wxStringInputStream sis(content);
+    return doc->Load(sis);
+}
+
+bool XmlUtils::SaveXmlToFile(const wxXmlDocument* doc, const wxString& filename)
+{
+    CHECK_PTR_RET_FALSE(doc);
+
+    wxString content;
+    wxStringOutputStream sos(&content);
+    if (doc->Save(sos)) {
+        return FileUtils::WriteFileContent(filename, content);
+    }
+    return false;
 }

@@ -307,7 +307,7 @@ bool LocalWorkspace::SaveXmlFile()
 {
     wxCommandEvent evt(wxEVT_EDITOR_CONFIG_CHANGED);
     EventNotifier::Get()->AddPendingEvent(evt);
-    return ::SaveXmlToFile(&m_doc, m_fileName.GetFullPath());
+    return XmlUtils::SaveXmlToFile(&m_doc, m_fileName.GetFullPath());
 }
 
 bool LocalWorkspace::SanityCheck()

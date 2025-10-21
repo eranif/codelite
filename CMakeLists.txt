@@ -333,7 +333,11 @@ endif()
 # Define the PLUGINS_DIR variable
 if(MINGW)
   # MinGW
-  set(MINGW_INSTALL_PLUGINS_DIR "${CMAKE_INSTALL_PREFIX}/plugins")
+  if(WITH_POSIX_LAYOUT)
+      set(MINGW_INSTALL_PLUGINS_DIR "${CMAKE_INSTALL_PREFIX}/lib/codelite")
+  else()
+      set(MINGW_INSTALL_PLUGINS_DIR "${CMAKE_INSTALL_PREFIX}/plugins")
+  endif()
   set(MINGW_INSTALL_BIN "${CMAKE_INSTALL_PREFIX}")
 endif()
 

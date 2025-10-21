@@ -595,7 +595,6 @@ EVT_MENU(XRCID("ai_show_chat_window"), clMainFrame::OnAiShowChatBox)
 EVT_MENU(XRCID("ai_configure_endpoint"), clMainFrame::OnAiConfigureEndpoint)
 EVT_MENU(XRCID("ai_change_active_endpoint"), clMainFrame::OnAiChooseEndpoint)
 EVT_UPDATE_UI(XRCID("ai_prompt_editor"), clMainFrame::OnAiAvailableUI)
-EVT_UPDATE_UI(XRCID("ai_settings"), clMainFrame::OnAiAvailableUI)
 EVT_UPDATE_UI(XRCID("ai_show_chat_window"), clMainFrame::OnAiAvailableUI)
 EVT_UPDATE_UI(XRCID("ai_change_active_endpoint"), clMainFrame::OnAiAvailableUI)
 

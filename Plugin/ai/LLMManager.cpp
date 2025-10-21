@@ -94,6 +94,12 @@ Manager::~Manager()
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &Manager::OnFileSaved, this);
 }
 
+bool Manager::IsAvailable()
+{
+    // return true if we have an active endpoint.
+    return GetActiveEndpoint().has_value();
+}
+
 void Manager::DeleteCollector(ResponseCollector* collector) { wxDELETE(collector); }
 
 void Manager::WorkerMain()
@@ -517,7 +523,7 @@ bool Manager::SetActiveEndpoint(const wxString& endpoint)
     return false;
 }
 
-std::optional<wxString> Manager::GetActiveEndpoint()
+std::optional<wxString> Manager::GetActiveEndpoint() const
 {
     auto active_endpoint = m_client_config.GetEndpoint();
     if (!active_endpoint) {

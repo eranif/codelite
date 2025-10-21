@@ -206,7 +206,7 @@ public:
      *
      * @return {@code true} if an LLM can be used; {@code false} otherwise
      */
-    inline bool IsAvailable() { return true; }
+    bool IsAvailable();
 
     /**
      * @brief Loads the list of available LLM models in a background thread and
@@ -328,7 +328,7 @@ public:
      *
      * @return optional endpoint identifier; {@code std::nullopt} if none is active
      */
-    std::optional<wxString> GetActiveEndpoint();
+    std::optional<wxString> GetActiveEndpoint() const;
 
     /**
      * @brief Sets the active LLM endpoint to the specified value.

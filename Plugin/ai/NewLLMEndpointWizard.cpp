@@ -1,7 +1,5 @@
 #include "NewLLMEndpointWizard.hpp"
 
-#include "clSystemSettings.h"
-
 #include <regex>
 #include <wx/richtooltip.h>
 
@@ -21,9 +19,6 @@ bool IsValidURL(const std::string& url)
 
 NewLLMEndpointWizard::NewLLMEndpointWizard(wxWindow* parent) : NewLLMEndpointWizardBase(parent)
 {
-    m_banner108->SetGradient(clSystemSettings::GetDefaultPanelColour(), clSystemSettings::GetDefaultPanelColour());
-    m_banner112->SetGradient(clSystemSettings::GetDefaultPanelColour(), clSystemSettings::GetDefaultPanelColour());
-
     int where = m_choiceProviders->FindString(kProviderOllamaLocal);
     if (where != wxNOT_FOUND) {
         m_choiceProviders->SetSelection(where);
@@ -106,16 +101,40 @@ void NewLLMEndpointWizard::OnContextSizeUI(wxUpdateUIEvent& event)
 llm::EndpointData NewLLMEndpointWizard::GetData() const
 {
     wxString provider = m_choiceProviders->GetStringSelection();
-    if (provider == kProviderOllamaLocal || provider == kProviderOllamaCloud) {
-        provider = "ollama";
+    llm::EndpointData data;
+    if (provider == kProviderOllamaLocal) {
+        // Local ollama
+        data = llm::EndpointData{.client_type = llm::kClientTypeOllama,
+                                 .url = m_textCtrlBaseURL->GetValue().ToStdString(wxConvUTF8),
+                                 .model = m_textCtrlModel->GetValue().ToStdString(wxConvUTF8),
+                                 .context_size = m_spinCtrlContextSizeKB->GetValue() * 1024};
+    } else if (provider == kProviderOllamaCloud) {
+        // Cloud ollama
+        data = llm::EndpointData{.client_type = llm::kClientTypeOllama,
+                                 .url = m_textCtrlBaseURL->GetValue().ToStdString(wxConvUTF8),
+                                 .model = m_textCtrlModel->GetValue().ToStdString(wxConvUTF8),
+                                 .context_size = m_spinCtrlContextSizeKB->GetValue() * 1024,
+                                 .api_key = m_textCtrlAPIKey->GetValue().ToStdString(wxConvUTF8)};
     } else {
-        provider = "anthropic";
+        // Anthropic
+        data = llm::EndpointData{.client_type = llm::kClientTypeAnthropic,
+                                 .url = m_textCtrlBaseURL->GetValue().ToStdString(wxConvUTF8),
+                                 .model = m_textCtrlModel->GetValue().ToStdString(wxConvUTF8),
+                                 .api_key = m_textCtrlAPIKey->GetValue().ToStdString(wxConvUTF8),
+                                 .max_tokens = m_spinCtrlMaxTokens->GetValue()};
     }
 
-    llm::EndpointData data{.provider = provider.ToStdString(wxConvUTF8),
-                           .url = m_textCtrlBaseURL->GetValue().ToStdString(wxConvUTF8),
-                           .model = m_textCtrlModel->GetValue().ToStdString(wxConvUTF8),
-                           .context_size = m_spinCtrlContextSizeKB->GetValue() * 1024,
-                           .api_key = m_textCtrlAPIKey->GetValue().ToStdString(wxConvUTF8)};
     return data;
+}
+
+void NewLLMEndpointWizard::OnApiKeyUI(wxUpdateUIEvent& event)
+{
+    wxString provider = m_choiceProviders->GetStringSelection();
+    event.Enable(provider == kProviderAnthropic || provider == kProviderOllamaCloud);
+}
+
+void NewLLMEndpointWizard::OnMaxTokensUI(wxUpdateUIEvent& event)
+{
+    wxString provider = m_choiceProviders->GetStringSelection();
+    event.Enable(provider == kProviderAnthropic);
 }

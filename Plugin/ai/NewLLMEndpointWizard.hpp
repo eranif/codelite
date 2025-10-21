@@ -14,6 +14,8 @@ public:
     llm::EndpointData GetData() const;
 
 protected:
+    void OnApiKeyUI(wxUpdateUIEvent& event) override;
+    void OnMaxTokensUI(wxUpdateUIEvent& event) override;
     void OnContextSizeUI(wxUpdateUIEvent& event) override;
     void OnFinished(wxWizardEvent& event) override;
     void OnPageChanging(wxWizardEvent& event) override;

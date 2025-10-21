@@ -325,7 +325,7 @@ void ChatAIWindow::OnChatAIOutputDone(clLLMEvent& event)
         AppendOutput("\n\n** Generation cancelled by the user**\n");
     } else if (event.IsError()) {
         wxString message;
-        message << "\n\n** Error occurred: " << wxString::FromUTF8(event.GetResponseRaw()) << " **\n";
+        message << "\n\n**An error occurred:**\n" << wxString::FromUTF8(event.GetResponseRaw());
         AppendOutput(message);
     }
 

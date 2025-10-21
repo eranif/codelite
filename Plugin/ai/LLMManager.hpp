@@ -95,11 +95,12 @@ inline clStatusOr<T> CheckType(const llm::json& j, const std::string& name)
     }
 
 struct WXDLLIMPEXP_SDK EndpointData {
-    std::string provider;
+    std::string client_type;
     std::string url;
     std::string model;
     std::optional<size_t> context_size;
     std::optional<std::string> api_key;
+    std::optional<size_t> max_tokens;
 };
 
 struct WXDLLIMPEXP_SDK ThreadTask {
@@ -112,6 +113,10 @@ struct WXDLLIMPEXP_SDK ThreadTask {
 
     inline wxEvtHandler* GetEventSink() { return collector ? collector : owner; }
 };
+
+// Type of providers.
+constexpr const char* kClientTypeAnthropic = "anthropic";
+constexpr const char* kClientTypeOllama = "ollama";
 
 /**
  * @brief Singleton manager class for handling LLM (Large Language Model) operations.

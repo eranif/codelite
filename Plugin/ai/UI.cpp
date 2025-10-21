@@ -220,19 +220,6 @@ NewLLMEndpointWizardBase::NewLLMEndpointWizardBase(
     wxBoxSizer* boxSizer62 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageSettings->SetSizer(boxSizer62);
 
-    m_banner108 = new wxBannerWindow(m_wizardPageSettings,
-                                     wxID_ANY,
-                                     wxTOP,
-                                     wxDefaultPosition,
-                                     wxDLG_UNIT(m_wizardPageSettings, wxSize(-1, -1)),
-                                     wxBORDER_THEME);
-    m_banner108->SetBitmap(wxNullBitmap);
-    m_banner108->SetText(_("General Setings"), wxT(""));
-    m_banner108->SetGradient(
-        wxSystemSettings::GetColour(wxSYS_COLOUR_MENU), wxSystemSettings::GetColour(wxSYS_COLOUR_MENU));
-
-    boxSizer62->Add(m_banner108, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
     wxFlexGridSizer* flexGridSizer68 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer68->SetFlexibleDirection(wxBOTH);
     flexGridSizer68->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
@@ -278,6 +265,7 @@ NewLLMEndpointWizardBase::NewLLMEndpointWizardBase(
                                        wxDefaultPosition,
                                        wxDLG_UNIT(m_wizardPageSettings, wxSize(250, -1)),
                                        0);
+    m_textCtrlBaseURL->SetFocus();
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlBaseURL->SetHint(wxT(""));
 #endif
@@ -312,17 +300,17 @@ NewLLMEndpointWizardBase::NewLLMEndpointWizardBase(
                                       wxDLG_UNIT(m_wizardPageSettings, wxSize(-1, -1)),
                                       0);
 
-    flexGridSizer68->Add(m_staticText78, 0, wxALL, WXC_FROM_DIP(5));
+    flexGridSizer68->Add(m_staticText78, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_spinCtrlContextSizeKB = new wxSpinCtrl(m_wizardPageSettings,
                                              wxID_ANY,
-                                             wxT("32"),
+                                             wxT("4"),
                                              wxDefaultPosition,
                                              wxDLG_UNIT(m_wizardPageSettings, wxSize(-1, -1)),
                                              wxSP_ARROW_KEYS);
     m_spinCtrlContextSizeKB->SetToolTip(_("The model context size, in kilobytes."));
     m_spinCtrlContextSizeKB->SetRange(4, 1000);
-    m_spinCtrlContextSizeKB->SetValue(32);
+    m_spinCtrlContextSizeKB->SetValue(4);
 
     flexGridSizer68->Add(m_spinCtrlContextSizeKB, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
@@ -335,19 +323,6 @@ NewLLMEndpointWizardBase::NewLLMEndpointWizardBase(
 
     wxBoxSizer* boxSizer111 = new wxBoxSizer(wxVERTICAL);
     m_wizardPageAPI->SetSizer(boxSizer111);
-
-    m_banner112 = new wxBannerWindow(m_wizardPageAPI,
-                                     wxID_ANY,
-                                     wxTOP,
-                                     wxDefaultPosition,
-                                     wxDLG_UNIT(m_wizardPageAPI, wxSize(-1, -1)),
-                                     wxBORDER_THEME);
-    m_banner112->SetBitmap(wxNullBitmap);
-    m_banner112->SetText(_("API Token"), wxT(""));
-    m_banner112->SetGradient(
-        wxSystemSettings::GetColour(wxSYS_COLOUR_MENU), wxSystemSettings::GetColour(wxSYS_COLOUR_MENU));
-
-    boxSizer111->Add(m_banner112, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxFlexGridSizer* flexGridSizer113 = new wxFlexGridSizer(0, 2, 0, 0);
     flexGridSizer113->SetFlexibleDirection(wxBOTH);
@@ -373,6 +348,25 @@ NewLLMEndpointWizardBase::NewLLMEndpointWizardBase(
 
     flexGridSizer113->Add(m_textCtrlAPIKey, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+    m_staticText117 = new wxStaticText(
+        m_wizardPageAPI, wxID_ANY, _("Max Tokens:"), wxDefaultPosition, wxDLG_UNIT(m_wizardPageAPI, wxSize(-1, -1)), 0);
+
+    flexGridSizer113->Add(m_staticText117, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_spinCtrlMaxTokens = new wxSpinCtrl(m_wizardPageAPI,
+                                         wxID_ANY,
+                                         wxT("10240"),
+                                         wxDefaultPosition,
+                                         wxDLG_UNIT(m_wizardPageAPI, wxSize(-1, -1)),
+                                         wxSP_ARROW_KEYS);
+    m_spinCtrlMaxTokens->SetToolTip(
+        _("Is a required parameter that controls the maximum number of tokens Claude will generate in its "
+          "response.\nIt serves as an upper limit on the length of Claude's output"));
+    m_spinCtrlMaxTokens->SetRange(0, 1000000);
+    m_spinCtrlMaxTokens->SetValue(10240);
+
+    flexGridSizer113->Add(m_spinCtrlMaxTokens, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     SetName(wxT("NewLLMEndpointWizardBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
     if (GetSizer()) {
@@ -392,8 +386,9 @@ NewLLMEndpointWizardBase::NewLLMEndpointWizardBase(
     this->Bind(wxEVT_WIZARD_PAGE_CHANGING, &NewLLMEndpointWizardBase::OnPageChanging, this);
     this->Bind(wxEVT_WIZARD_FINISHED, &NewLLMEndpointWizardBase::OnFinished, this);
     m_choiceProviders->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &NewLLMEndpointWizardBase::OnProviderChanged, this);
-    m_staticText78->Bind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnContextSizeUI, this);
     m_spinCtrlContextSizeKB->Bind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnContextSizeUI, this);
+    m_textCtrlAPIKey->Bind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnApiKeyUI, this);
+    m_spinCtrlMaxTokens->Bind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnMaxTokensUI, this);
 }
 
 NewLLMEndpointWizardBase::~NewLLMEndpointWizardBase()
@@ -401,6 +396,7 @@ NewLLMEndpointWizardBase::~NewLLMEndpointWizardBase()
     this->Unbind(wxEVT_WIZARD_PAGE_CHANGING, &NewLLMEndpointWizardBase::OnPageChanging, this);
     this->Unbind(wxEVT_WIZARD_FINISHED, &NewLLMEndpointWizardBase::OnFinished, this);
     m_choiceProviders->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &NewLLMEndpointWizardBase::OnProviderChanged, this);
-    m_staticText78->Unbind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnContextSizeUI, this);
     m_spinCtrlContextSizeKB->Unbind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnContextSizeUI, this);
+    m_textCtrlAPIKey->Unbind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnApiKeyUI, this);
+    m_spinCtrlMaxTokens->Unbind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnMaxTokensUI, this);
 }

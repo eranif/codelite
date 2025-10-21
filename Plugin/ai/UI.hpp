@@ -25,7 +25,6 @@
 #include <wx/iconbndl.h>
 #include <wx/wizard.h>
 #include <vector>
-#include <wx/bannerwindow.h>
 #include <wx/stattext.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
@@ -99,7 +98,6 @@ protected:
     std::vector<wxWizardPageSimple*> m_pages;
 
     wxWizardPageSimple* m_wizardPageSettings;
-    wxBannerWindow* m_banner108;
     wxStaticText* m_staticText69;
     wxChoice* m_choiceProviders;
     wxStaticText* m_staticText72;
@@ -109,18 +107,20 @@ protected:
     wxStaticText* m_staticText78;
     wxSpinCtrl* m_spinCtrlContextSizeKB;
     wxWizardPageSimple* m_wizardPageAPI;
-    wxBannerWindow* m_banner112;
     wxStaticText* m_staticText114;
     wxTextCtrl* m_textCtrlAPIKey;
+    wxStaticText* m_staticText117;
+    wxSpinCtrl* m_spinCtrlMaxTokens;
 
 protected:
     virtual void OnPageChanging(wxWizardEvent& event) { event.Skip(); }
     virtual void OnFinished(wxWizardEvent& event) { event.Skip(); }
     virtual void OnProviderChanged(wxCommandEvent& event) { event.Skip(); }
     virtual void OnContextSizeUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnApiKeyUI(wxUpdateUIEvent& event) { event.Skip(); }
+    virtual void OnMaxTokensUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxBannerWindow* GetBanner108() { return m_banner108; }
     wxStaticText* GetStaticText69() { return m_staticText69; }
     wxChoice* GetChoiceProviders() { return m_choiceProviders; }
     wxStaticText* GetStaticText72() { return m_staticText72; }
@@ -130,9 +130,10 @@ public:
     wxStaticText* GetStaticText78() { return m_staticText78; }
     wxSpinCtrl* GetSpinCtrlContextSizeKB() { return m_spinCtrlContextSizeKB; }
     wxWizardPageSimple* GetWizardPageSettings() { return m_wizardPageSettings; }
-    wxBannerWindow* GetBanner112() { return m_banner112; }
     wxStaticText* GetStaticText114() { return m_staticText114; }
     wxTextCtrl* GetTextCtrlAPIKey() { return m_textCtrlAPIKey; }
+    wxStaticText* GetStaticText117() { return m_staticText117; }
+    wxSpinCtrl* GetSpinCtrlMaxTokens() { return m_spinCtrlMaxTokens; }
     wxWizardPageSimple* GetWizardPageAPI() { return m_wizardPageAPI; }
     NewLLMEndpointWizardBase(wxWindow* parent,
                              wxWindowID id = wxID_ANY,

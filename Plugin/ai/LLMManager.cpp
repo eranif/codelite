@@ -562,19 +562,33 @@ void Manager::AddNewEndpoint(const llm::EndpointData& d)
         llm::json new_endpoint;
         new_endpoint["active"] = GetActiveEndpoint().has_value() ? false : true;
 
-        if (d.provider == "anthropic") {
+        if (d.client_type == kClientTypeAnthropic) {
             llm::json http_headers;
             http_headers["x-api-key"] = d.api_key.value_or("<INSERT_API_KEY>");
             new_endpoint["http_headers"] = http_headers;
-        } else if (d.provider == "ollama") {
+
+        } else if (d.client_type == kClientTypeOllama && d.api_key.has_value()) {
+            // Ollama cloud
+            llm::json http_headers;
+            http_headers["Authorization"] = "Bearer " + d.api_key.value();
+            new_endpoint["http_headers"] = http_headers;
+
+        } else if (d.client_type == kClientTypeOllama) {
+            // Ollama local
             llm::json http_headers;
             http_headers["Host"] = "127.0.0.1";
             new_endpoint["http_headers"] = http_headers;
         }
 
-        new_endpoint["type"] = d.provider;
+        new_endpoint["type"] = d.client_type;
         new_endpoint["model"] = d.model;
-        new_endpoint["context_size"] = d.context_size.value_or(4 * 1024);
+        if (d.context_size.has_value()) {
+            new_endpoint["context_size"] = d.context_size.value();
+        }
+
+        if (d.max_tokens.has_value()) {
+            new_endpoint["max_tokens"] = d.max_tokens.value();
+        }
 
         j["endpoints"][d.url] = new_endpoint;
         if (WriteConfigFile(std::move(j))) {

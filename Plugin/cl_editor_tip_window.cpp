@@ -153,7 +153,7 @@ void clEditorTipWindow::OnPaint(wxPaintEvent& e)
     }
     for (size_t i = 0; i < m_args.size(); ++i) {
         wxString line = m_args.Item(i);
-        if ((int)i == highlight_index) {
+        if (i == highlight_index) {
             // wxFont f = m_font;
             // f.SetWeight(wxFONTWEIGHT_BOLD);
             dc.SetBrush(highlightBgColour);

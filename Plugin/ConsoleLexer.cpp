@@ -16,7 +16,7 @@ public:
     const char operator[](size_t index) const override { return SafeGetCharAt(index); }
     char SafeGetCharAt(size_t index, char chDefault = ' ') const override
     {
-        if (index >= m_ctrl->GetLength()) {
+        if (index >= static_cast<std::size_t>(m_ctrl->GetLength())) {
             return chDefault;
         }
         return m_ctrl->GetCharAt(index);

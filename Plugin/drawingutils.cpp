@@ -533,9 +533,6 @@ void DrawingUtils::DrawButton(wxDC& dc,
     wxRect allocated_text_rect = rect;
     wxRect allocated_bmp_rect;
 
-    // Draw the background
-    wxRect clientRect = rect;
-
     wxColour button_bg_colour = update_button_bg_colour(GetButtonBgColour(), state);
     wxDCBrushChanger brush_changer(dc, button_bg_colour);
     wxDCPenChanger pen_changer(dc, button_bg_colour.ChangeLightness(60));
@@ -559,6 +556,8 @@ void DrawingUtils::DrawButton(wxDC& dc,
     }
     wxRendererNative::Get().DrawPushButton(win, dc, rect, flags);
 #else
+    // Draw the background
+    wxRect clientRect = rect;
     dc.DrawRectangle(clientRect);
 #endif
 

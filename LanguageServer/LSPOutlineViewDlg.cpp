@@ -194,7 +194,7 @@ void LSPOutlineViewDlg::DoFindNext()
 {
     m_dvTreeCtrll->ClearAllHighlights();
 
-    int sel_row = m_dvTreeCtrll->GetSelectedRow();
+    std::size_t sel_row = m_dvTreeCtrll->GetSelectedRow();
     if ((sel_row + 1) >= m_dvTreeCtrll->GetItemCount()) {
         return;
     }

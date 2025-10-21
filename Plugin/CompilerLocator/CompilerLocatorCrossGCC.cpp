@@ -68,16 +68,16 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
         matches.Add(entry.fullpath);
     }
 
-    for(int i = 0; i < count; ++i) {
+    for (auto& match : matches) {
 #ifndef __WXMSW__
         // Check if this is a script
         char sha[2];
-        wxFile(matches[i]).Read(sha, 2);
+        wxFile(match).Read(sha, 2);
         if(strncmp(sha, "#!", 2) == 0) {
             continue;
         }
 #endif
-        wxFileName filename(matches.Item(i));
+        wxFileName filename(match);
         if(!IsCrossGCC(filename.GetName())) {
             continue;
         }

@@ -213,12 +213,6 @@ void clToolBarGeneric::RenderGroup(int& xx, const clToolBarGeneric::ToolVect_t& 
     wxUnusedVar(isLastGroup);
     wxRect clientRect = GetClientRect();
 
-    // Calculate the group size
-    for (clToolBarButtonBase* button : G) {
-        wxSize buttonSize = button->CalculateSize(gcdc);
-    }
-
-    // Now draw the buttons
     for (clToolBarButtonBase* button : G) {
         wxSize buttonSize = button->CalculateSize(gcdc);
         if ((xx + buttonSize.GetWidth()) > clientRect.GetRight()) {

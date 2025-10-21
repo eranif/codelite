@@ -114,7 +114,7 @@ void DockerOutputPane::OnKillAllContainers(wxCommandEvent& event)
 {
     // Get the list of ids to kill
     wxArrayString ids;
-    for (int i = 0; i < m_dvListCtrlContainers->GetItemCount(); ++i) {
+    for (std::size_t i = 0; i < m_dvListCtrlContainers->GetItemCount(); ++i) {
         clDockerContainer* cd = reinterpret_cast<clDockerContainer*>(
             m_dvListCtrlContainers->GetItemData(m_dvListCtrlContainers->RowToItem(i)));
         ids.Add(cd->GetId());
@@ -208,9 +208,8 @@ size_t DockerOutputPane::GetSelectedContainers(clDockerContainer::Vect_t& contai
     containers.clear();
     wxDataViewItemArray items;
     m_dvListCtrlContainers->GetSelections(items);
-    for (int i = 0; i < items.GetCount(); ++i) {
-        clDockerContainer* cd =
-            reinterpret_cast<clDockerContainer*>(m_dvListCtrlContainers->GetItemData(items.Item(i)));
+    for (auto& item : items) {
+        clDockerContainer* cd = reinterpret_cast<clDockerContainer*>(m_dvListCtrlContainers->GetItemData(item));
         containers.push_back(*cd);
     }
     return containers.size();

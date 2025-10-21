@@ -483,9 +483,9 @@ void OpenResourceDialog::GetLineAndColumnFromFilter(const wxString& filter,
     wxString tmpstr = filter;
     tmpstr.Replace("\\", "/");
 
-    const size_t sep_last = tmpstr.Find('/', true);
-    const size_t col_first = tmpstr.find(':', (sep_last == wxNOT_FOUND ? 0 : sep_last));
-    if (col_first == wxNOT_FOUND) {
+    const int sep_last = tmpstr.Find('/', true);
+    const std::size_t col_first = tmpstr.find(':', (sep_last == wxNOT_FOUND ? 0 : sep_last));
+    if (col_first == wxString::npos) {
         return;
     }
 

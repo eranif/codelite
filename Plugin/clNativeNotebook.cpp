@@ -374,7 +374,7 @@ bool clNativeNotebook::RemovePage(size_t page, bool notify)
 
     m_userData.erase(win);
     m_history->Pop(win);
-    bool deletingSelection = (page == GetSelection());
+    bool deletingSelection = (static_cast<int>(page) == GetSelection());
     wxWindow* nextSelection = DoUpdateHistoryPreRemove(win);
     wxNotebook::RemovePage(page);
 
@@ -413,7 +413,7 @@ bool clNativeNotebook::DeletePage(size_t page, bool notify)
         }
     }
 
-    bool deletingSelection = (page == GetSelection());
+    bool deletingSelection = (static_cast<int>(page) == GetSelection());
     wxWindow* nextSelection = DoUpdateHistoryPreRemove(win);
 
     m_history->Pop(win);

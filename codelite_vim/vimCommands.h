@@ -300,8 +300,8 @@ private:
     wxString add_following_spaces();
     bool search_word(SEARCH_DIRECTION direction, int flag = 0);
     bool search_word(SEARCH_DIRECTION direction, int flag, long pos);
-    long goToMatchingParentesis(long start_pos);
-    bool findMatchingParentesis(wxChar lch, wxChar rch, long minPos, long maxPos, long& leftPos, long& rightPos);
+    long goToMatchingParenthesis(long start_pos);
+    bool findMatchingParenthesis(wxChar lch, wxChar rch, long minPos, long maxPos, long& leftPos, long& rightPos);
     long findCharInLine(wxChar key, long setup = 1, bool posPrev = false, bool reFind = false);
     long findNextCharPos(int line, int col);
     long findPrevCharPos(int line, int col);

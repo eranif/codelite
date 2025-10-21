@@ -739,7 +739,7 @@ bool VimCommand::Command_call()
     } break;
 
     case COMMANDVI::perc: {
-        long pos_matching = goToMatchingParentesis(m_ctrl->GetCurrentPos());
+        long pos_matching = goToMatchingParenthesis(m_ctrl->GetCurrentPos());
         if (pos_matching != -1)
             m_ctrl->GotoPos(pos_matching);
         else
@@ -1069,7 +1069,7 @@ bool VimCommand::Command_call()
         int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
         long leftPos = -1;
         long rightPos = -1;
-        if (findMatchingParentesis('"', '"', minPos, maxPos, leftPos, rightPos)) {
+        if (findMatchingParenthesis('"', '"', minPos, maxPos, leftPos, rightPos)) {
             m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
             if (m_commandID != COMMANDVI::yi_quot) {
                 m_ctrl->SetCurrentPos(leftPos + 1);
@@ -1088,7 +1088,7 @@ bool VimCommand::Command_call()
         int maxPos = m_ctrl->PositionFromLine(m_ctrl->GetCurrentLine() + 1);
         long leftPos = -1;
         long rightPos = -1;
-        if (findMatchingParentesis('\'', '\'', minPos, maxPos, leftPos, rightPos)) {
+        if (findMatchingParenthesis('\'', '\'', minPos, maxPos, leftPos, rightPos)) {
             m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
             if (m_commandID != COMMANDVI::yi_apos) {
                 m_ctrl->SetCurrentPos(leftPos + 1);
@@ -1107,7 +1107,7 @@ bool VimCommand::Command_call()
         int maxPos = m_ctrl->GetLastPosition();
         long leftPos = -1;
         long rightPos = -1;
-        if (findMatchingParentesis('(', ')', minPos, maxPos, leftPos, rightPos)) {
+        if (findMatchingParenthesis('(', ')', minPos, maxPos, leftPos, rightPos)) {
             m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
             if (m_commandID != COMMANDVI::yi_pare) {
                 m_ctrl->SetCurrentPos(leftPos + 1);
@@ -1126,7 +1126,7 @@ bool VimCommand::Command_call()
         int maxPos = m_ctrl->GetLastPosition();
         long leftPos = -1;
         long rightPos = -1;
-        if (findMatchingParentesis('<', '>', minPos, maxPos, leftPos, rightPos)) {
+        if (findMatchingParenthesis('<', '>', minPos, maxPos, leftPos, rightPos)) {
             m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
             if (m_commandID != COMMANDVI::yi_lt) {
                 m_ctrl->SetCurrentPos(leftPos + 1);
@@ -1145,7 +1145,7 @@ bool VimCommand::Command_call()
         int maxPos = m_ctrl->GetLastPosition();
         long leftPos = -1;
         long rightPos = -1;
-        if (findMatchingParentesis('[', ']', minPos, maxPos, leftPos, rightPos)) {
+        if (findMatchingParenthesis('[', ']', minPos, maxPos, leftPos, rightPos)) {
             m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
             if (m_commandID != COMMANDVI::yi_square) {
                 m_ctrl->SetCurrentPos(leftPos + 1);
@@ -1164,7 +1164,7 @@ bool VimCommand::Command_call()
         int maxPos = m_ctrl->GetLastPosition();
         long leftPos = -1;
         long rightPos = -1;
-        if (findMatchingParentesis('{', '}', minPos, maxPos, leftPos, rightPos)) {
+        if (findMatchingParenthesis('{', '}', minPos, maxPos, leftPos, rightPos)) {
             m_listCopiedStr.push_back(m_ctrl->GetTextRange(leftPos + 1, rightPos));
             if (m_commandID != COMMANDVI::yi_curly) {
                 m_ctrl->SetCurrentPos(leftPos + 1);
@@ -2984,11 +2984,11 @@ bool VimCommand::DeleteLastCommandChar()
 }
 
 /**
- * @return the position of the matching parentesis
+ * @return the position of the matching parenthesis
  */
-long VimCommand::goToMatchingParentesis(long start_pos)
+long VimCommand::goToMatchingParenthesis(long start_pos)
 {
-    const wxChar parentesis[] = {
+    const wxChar parentheses[] = {
         '(',
         ')',
         '[',
@@ -3005,12 +3005,12 @@ long VimCommand::goToMatchingParentesis(long start_pos)
     long max_n_char = m_ctrl->GetTextLength();
     wxChar currChar = m_ctrl->GetCharAt(pos);
 
-    int index_parentesis;
+    std::size_t index_parenthesis;
     int increment = 0;
     bool found = false;
 
-    for (index_parentesis = 0; index_parentesis < sizeof(parentesis) / sizeof(parentesis[0]); ++index_parentesis) {
-        if (currChar == parentesis[index_parentesis]) {
+    for (index_parenthesis = 0; index_parenthesis < std::size(parentheses); ++index_parenthesis) {
+        if (currChar == parentheses[index_parenthesis]) {
             found = true;
             break;
         }
@@ -3019,14 +3019,14 @@ long VimCommand::goToMatchingParentesis(long start_pos)
     if (!found)
         return -1;
 
-    increment = (index_parentesis % 2 == 0) ? +1 : -1;
+    increment = (index_parenthesis % 2 == 0) ? +1 : -1;
     int indenting_level = 1;
     while (indenting_level > 0 && pos >= 0 && pos < max_n_char) {
         pos += increment;
         currChar = m_ctrl->GetCharAt(pos);
-        if (currChar == parentesis[index_parentesis]) {
+        if (currChar == parentheses[index_parenthesis]) {
             ++indenting_level;
-        } else if (currChar == parentesis[index_parentesis + increment]) {
+        } else if (currChar == parentheses[index_parenthesis + increment]) {
             --indenting_level;
         }
     }
@@ -3034,7 +3034,7 @@ long VimCommand::goToMatchingParentesis(long start_pos)
     return (indenting_level == 0) ? pos : -1;
 }
 
-bool VimCommand::findMatchingParentesis(wxChar lch, wxChar rch, long minPos, long maxPos, long& leftPos, long& rightPos)
+bool VimCommand::findMatchingParenthesis(wxChar lch, wxChar rch, long minPos, long maxPos, long& leftPos, long& rightPos)
 {
     long curPos = m_ctrl->GetCurrentPos();
     int level = 1;

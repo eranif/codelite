@@ -717,7 +717,7 @@ clRowEntry* GetBestFirstLine(clTreeCtrlModel& m_model, int window_size, clRowEnt
     // if we use `first_line` as our first line, we will have an empty area in the control
     // and we don't want that. So find a better "first_line"
     clRowEntry* prev = m_model.GetRowBefore(first_line, true);
-    while (prev && (items.size() < window_size)) {
+    while (prev && (static_cast<int>(items.size()) < window_size)) {
         items.insert(items.begin(), prev);
         first_line = prev;
         prev = m_model.GetRowBefore(prev, true);

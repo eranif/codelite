@@ -44,7 +44,9 @@ typedef SOCKET socket_t;
 typedef int socklen_t;
 #else
 typedef int socket_t;
-#define INVALID_SOCKET -1
+#ifndef INVALID_SOCKET
+#define INVALID_SOCKET (-1)
+#endif
 #endif
 
 class WXDLLIMPEXP_CL clSocketException

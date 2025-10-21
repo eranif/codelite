@@ -55,7 +55,6 @@ wxColour wxCustomStatusBarArt::GetSeparatorColour() const { return GetBgColour()
 void wxCustomStatusBarSpacerField::Render(wxDC& dc, const wxRect& rect, wxCustomStatusBarArt::Ptr_t art)
 {
     m_rect = rect;
-    wxSize textSize = dc.GetTextExtent(m_text);
 
     // draw border line
     art->DrawFieldSeparator(dc, rect);

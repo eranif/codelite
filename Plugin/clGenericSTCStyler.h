@@ -3,11 +3,10 @@
 
 #include "codelite_exports.h"
 
-#include <algorithm>
+#include <memory>
 #include <tuple>
 #include <vector>
 #include <wx/event.h>
-#include <wx/sharedptr.h>
 #include <wx/stc/stc.h>
 
 class WXDLLIMPEXP_SDK clGenericSTCStyler : public wxEvtHandler
@@ -32,7 +31,7 @@ public:
     clGenericSTCStyler(wxStyledTextCtrl* stc);
     virtual ~clGenericSTCStyler();
 
-    typedef wxSharedPtr<clGenericSTCStyler> Ptr_t;
+    using Ptr_t = std::shared_ptr<clGenericSTCStyler>;
     /**
      * @brief register keywords for a known style
      */

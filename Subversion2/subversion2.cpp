@@ -318,7 +318,7 @@ void Subversion2::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_FOLDER_DELETED, &Subversion2::OnFolderDeleted, this);
     EventNotifier::Get()->Unbind(wxEVT_GOTO_ANYTHING_SHOWING, &Subversion2::OnGotoAnythingShowing, this);
 
-    m_tabToggler.reset(NULL);
+    m_tabToggler.reset();
     GetManager()->GetTheApp()->Disconnect(XRCID("subversion2_settings"), wxEVT_COMMAND_MENU_SELECTED,
                                           wxCommandEventHandler(Subversion2::OnSettings), NULL, this);
     GetManager()->GetTheApp()->Disconnect(XRCID("svn_explorer_commit"), wxEVT_COMMAND_MENU_SELECTED,

@@ -1,11 +1,11 @@
 #ifndef JSONRPC_RESULTS_H
 #define JSONRPC_RESULTS_H
 
-#include "codelite_exports.h"
 #include "JSON.h"
 #include "LSP/JSONObject.h"
-#include <wx/sharedptr.h>
-#include "basic_types.h"
+#include "codelite_exports.h"
+
+#include <memory>
 
 namespace LSP
 {
@@ -15,7 +15,7 @@ namespace LSP
 class WXDLLIMPEXP_CL Result : public Serializable
 {
 public:
-    typedef wxSharedPtr<Result> Ptr_t;
+    using Ptr_t = std::shared_ptr<Result>;
 
 public:
     Result() = default;

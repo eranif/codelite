@@ -4,6 +4,7 @@
 #include "unredobase.h"
 
 #include <list>
+#include <memory>
 #include <wx/string.h>
 
 wxDECLARE_EVENT(wxEVT_MULTIPLE_UNREDO, wxCommandEvent);
@@ -14,8 +15,8 @@ struct State {
     wxString parentTLW;
     wxString label;
 
-    typedef wxSharedPtr<State> Ptr_t;
-    typedef std::list<State::Ptr_t> List_t;
+    using Ptr_t = std::shared_ptr<State>;
+    using List_t = std::list<State::Ptr_t>;
 
 public:
     State() = default;

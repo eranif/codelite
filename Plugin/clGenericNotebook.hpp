@@ -17,7 +17,6 @@
 #include <wx/notebook.h>
 #include <wx/panel.h>
 #include <wx/settings.h>
-#include <wx/sharedptr.h>
 
 class clGenericNotebook;
 class wxMenu;

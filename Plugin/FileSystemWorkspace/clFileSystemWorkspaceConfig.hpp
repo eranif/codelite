@@ -9,8 +9,8 @@
 #include "wxStringHash.h"
 
 #include <map>
+#include <memory>
 #include <wx/arrstr.h>
-#include <wx/sharedptr.h>
 
 class WXDLLIMPEXP_SDK clFileSystemWorkspaceConfig
 {
@@ -49,7 +49,7 @@ protected:
     wxArrayString m_lastExecutables;
 
 public:
-    typedef wxSharedPtr<clFileSystemWorkspaceConfig> Ptr_t;
+    using Ptr_t = std::shared_ptr<clFileSystemWorkspaceConfig>;
     /**
      * @brief return 2 json nodes. The first should be stored in the shared configuration file and the other in the
      * local configuration file

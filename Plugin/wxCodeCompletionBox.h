@@ -37,7 +37,6 @@
 #include <wx/bitmap.h>
 #include <wx/event.h>
 #include <wx/font.h>
-#include <wx/sharedptr.h>
 #include <wx/stc/stc.h>
 #include <wx/timer.h>
 

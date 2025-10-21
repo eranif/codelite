@@ -29,8 +29,8 @@
 #include "codelite_exports.h"
 #include "project.h"
 
+#include <memory>
 #include <wx/filename.h>
-#include <wx/sharedptr.h>
 #include <wx/string.h>
 #include <wx/wxsqlite3.h>
 
@@ -40,7 +40,7 @@ class WXDLLIMPEXP_SDK CompilationDatabase
     wxFileName m_filename;
 
 public:
-    typedef wxSharedPtr<CompilationDatabase> Ptr_t;
+    using Ptr_t = std::shared_ptr<CompilationDatabase>;
 
 protected:
     void DropTables();

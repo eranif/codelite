@@ -17,13 +17,12 @@
 #include "wxStringHash.h"
 
 #include <functional>
-#include <map>
+#include <memory>
 #include <queue>
 #include <string>
 #include <unordered_map>
 #include <wx/arrstr.h>
 #include <wx/filename.h>
-#include <wx/sharedptr.h>
 
 typedef std::function<void()> LSPOnConnectedCallback_t;
 

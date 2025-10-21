@@ -203,7 +203,7 @@ void Cscope::CreatePluginMenu(wxMenu* pluginsMenu)
 
 void Cscope::UnPlug()
 {
-    m_tabHelper.reset(NULL);
+    m_tabHelper.reset();
     m_topWindow->Disconnect(XRCID("cscope_functions_called_by_this_function"), wxEVT_UPDATE_UI,
                             wxUpdateUIEventHandler(Cscope::OnCscopeUI), NULL, (wxEvtHandler*)this);
     m_topWindow->Disconnect(XRCID("cscope_files_including_this_filename"), wxEVT_UPDATE_UI,

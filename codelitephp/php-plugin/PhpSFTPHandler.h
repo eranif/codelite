@@ -6,15 +6,15 @@
 #include "clFileSystemEvent.h"
 #include "codelite_events.h"
 #include "ssh_workspace_settings.h"
+
+#include <memory>
 #include <wx/event.h>
 #include <wx/filename.h>
-#include <wx/sharedptr.h>
-#include "ssh_workspace_settings.h"
 
 class PhpSFTPHandler : public wxEvtHandler
 {
 public:
-    typedef wxSharedPtr<PhpSFTPHandler> Ptr_t;
+    using Ptr_t = std::shared_ptr<PhpSFTPHandler>;
 
 protected:
     void DoSyncFileWithRemote(const wxFileName& localFile);

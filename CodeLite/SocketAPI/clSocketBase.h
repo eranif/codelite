@@ -26,16 +26,16 @@
 #ifndef CLSOCKETBASE_H
 #define CLSOCKETBASE_H
 
+#include "codelite_exports.h"
+
+#include <memory>
 #include <string>
 #include <wx/msgqueue.h>
-#include <wx/sharedptr.h>
 #include <wx/string.h>
+
 #if defined(__WXOSX__) || defined(BSD)
 #include <sys/errno.h>
 #endif
-#include "codelite_exports.h"
-
-#include <wx/defs.h>
 #ifdef __WINDOWS__ // __WINDOWS__ defined by wx/defs.h
 // includes windows.h and if wxUSE_WINSOCK2 is true includes winsock2.h
 #include <wx/msw/wrapwin.h>
@@ -73,8 +73,8 @@ protected:
     bool m_closeOnExit = true;
 
 public:
-    typedef wxSharedPtr<clSocketBase> Ptr_t;
-    typedef wxMessageQueue<clSocketBase::Ptr_t> Queue_t;
+    using Ptr_t = std::shared_ptr<clSocketBase>;
+    using Queue_t = wxMessageQueue<clSocketBase::Ptr_t>;
 
     enum {
         kSuccess = 1,

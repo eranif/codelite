@@ -26,12 +26,14 @@
 #ifndef PHPEXPRESSION_H
 #define PHPEXPRESSION_H
 
-#include "codelite_exports.h"
-#include <wx/string.h>
-#include "PhpLexerAPI.h"
-#include <list>
-#include "PHPSourceFile.h"
 #include "PHPLookupTable.h"
+#include "PHPSourceFile.h"
+#include "PhpLexerAPI.h"
+#include "codelite_exports.h"
+
+#include <list>
+#include <memory>
+#include <wx/string.h>
 
 class WXDLLIMPEXP_CL PHPExpression
 {
@@ -54,8 +56,8 @@ public:
         {
         }
     };
-    typedef std::list<PHPExpression::Part> List_t;
-    typedef wxSharedPtr<PHPExpression> Ptr_t;
+    using List_t = std::list<PHPExpression::Part>;
+    using Ptr_t = std::shared_ptr<PHPExpression>;
 
 protected:
     eType m_type;

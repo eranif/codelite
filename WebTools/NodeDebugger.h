@@ -9,6 +9,7 @@
 #include "cl_command_event.h"
 
 #include <functional>
+#include <memory>
 #include <unordered_map>
 #include <vector>
 #include <wx/event.h>
@@ -26,7 +27,7 @@ public:
     static wxString NODE_CLI_DEBUGGER_NAME;
 
 public:
-    typedef wxSharedPtr<NodeDebugger> Ptr_t;
+    using Ptr_t = std::shared_ptr<NodeDebugger>;
 
 public:
     NodeDebugger();

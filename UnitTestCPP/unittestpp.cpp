@@ -151,7 +151,7 @@ void UnitTestPP::CreatePluginMenu(wxMenu* pluginsMenu)
 
 void UnitTestPP::UnPlug()
 {
-    m_tabHelper.reset(NULL);
+    m_tabHelper.reset();
 
     // Connect the events to us
     wxTheApp->Disconnect(XRCID("run_unit_tests"), wxEVT_COMMAND_MENU_SELECTED,

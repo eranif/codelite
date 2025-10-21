@@ -319,7 +319,7 @@ void clFileSystemWorkspace::DoOpen()
     // Load the backticks cache file, this needs to be done early as we can
     // since it is used
     if (m_backtickCache) {
-        m_backtickCache.reset(nullptr);
+        m_backtickCache.reset();
     }
 
     // load the new cache
@@ -396,7 +396,7 @@ void clFileSystemWorkspace::DoClose()
 
     if (m_backtickCache) {
         m_backtickCache->Save();
-        m_backtickCache.reset(nullptr);
+        m_backtickCache.reset();
     }
 
     wxDELETE(m_buildProcess);

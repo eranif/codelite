@@ -338,7 +338,7 @@ clTabRenderer::Ptr_t clTabRenderer::CreateRenderer(const wxWindow* win, size_t t
         RegisterRenderer(new clTabRendererMinimal(win));
     }
     clTabRenderer::Ptr_t renderer;
-    renderer = Create(win, "MINIMAL");
+    renderer.reset(Create(win, "MINIMAL"));
     return renderer;
 }
 

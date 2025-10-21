@@ -37,7 +37,6 @@
 #include <unordered_map>
 #include <vector>
 #include <wx/filename.h>
-#include <wx/sharedptr.h>
 #include <wx/string.h>
 #include <wx/treebase.h>
 #include <wx/xml/xml.h>
@@ -171,7 +170,7 @@ public:
      */
     void Delete(Project* project, bool deleteXml = false);
 
-    using Ptr_t = wxSharedPtr<clProjectFile>;
+    using Ptr_t = std::shared_ptr<clProjectFile>;
     using Vec_t = std::vector<clProjectFile::Ptr_t>;
 };
 
@@ -184,7 +183,7 @@ private:
     wxXmlNode* m_xmlNode = nullptr;
 
 public:
-    using Ptr_t = wxSharedPtr<clProjectFolder>;
+    using Ptr_t = std::shared_ptr<clProjectFolder>;
     using Vect_t = std::vector<clProjectFolder>;
 
 public:

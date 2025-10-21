@@ -3,18 +3,18 @@
 
 #include "codelite_exports.h"
 
+#include <memory>
 #include <wx/string.h>
 
 #ifdef __WXMSW__
 #include <wx/msw/registry.h>
-#include <wx/sharedptr.h>
 #endif
 
 class WXDLLIMPEXP_SDK clRegistery
 {
 #ifdef __WXMSW__
     wxString m_key;
-    wxSharedPtr<wxRegKey> m_regKey;
+    std::shared_ptr<wxRegKey> m_regKey;
     long m_index = 0;
 #endif
 

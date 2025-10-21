@@ -31,9 +31,10 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "worker_thread.h"
+
+#include <memory>
 #include <wx/event.h>
 #include <wx/msgqueue.h>
-#include <wx/sharedptr.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ASYNC_SOCKET_CONNECTED, clCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_ASYNC_SOCKET_CONNECTION_LOST, clCommandEvent);
@@ -115,7 +116,7 @@ class WXDLLIMPEXP_CL clAsyncSocket : public wxEvtHandler
     wxString m_connectionString;
 
 public:
-    typedef wxSharedPtr<clAsyncSocket> Ptr_t;
+    using Ptr_t = std::shared_ptr<clAsyncSocket>;
 
 public:
     clAsyncSocket(const wxString& connectionString,

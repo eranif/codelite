@@ -31,7 +31,6 @@
 #include "codelite_exports.h"
 
 #include <vector>
-#include <wx/sharedptr.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SYMBOL_SELECTED, clCommandEvent);
 

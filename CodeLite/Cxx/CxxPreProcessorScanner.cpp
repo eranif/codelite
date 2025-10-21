@@ -5,8 +5,6 @@
 #include "CxxScannerTokens.h"
 #include "file_logger.h"
 
-#include <wx/sharedptr.h>
-
 CxxPreProcessorScanner::CxxPreProcessorScanner(const wxFileName& filename, size_t options,
                                                std::unordered_set<wxString>& visitedFiles)
     : m_scanner(NULL)

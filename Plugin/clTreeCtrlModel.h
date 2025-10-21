@@ -7,7 +7,6 @@
 #include <functional>
 #include <vector>
 #include <wx/colour.h>
-#include <wx/sharedptr.h>
 #include <wx/string.h>
 #include <wx/treebase.h>
 

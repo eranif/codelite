@@ -33,7 +33,6 @@
 #include "plugin.h"
 
 #include <wx/filename.h>
-#include <wx/sharedptr.h>
 
 class EvalPane;
 class LocalsView;

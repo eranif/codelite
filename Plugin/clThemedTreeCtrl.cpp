@@ -37,7 +37,7 @@ bool clThemedTreeCtrl::Create(wxWindow* parent, wxWindowID id, const wxPoint& po
 
 clThemedTreeCtrl::~clThemedTreeCtrl()
 {
-    m_keyboard.reset(nullptr);
+    m_keyboard.reset();
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedTreeCtrl::OnThemeChanged, this);
 }
 

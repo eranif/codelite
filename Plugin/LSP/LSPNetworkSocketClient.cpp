@@ -14,7 +14,7 @@ void LSPNetworkSocketClient::Close()
         m_lspServer->Detach();
     }
     wxDELETE(m_lspServer);
-    m_socket.reset(nullptr);
+    m_socket.reset();
     m_pid = wxNOT_FOUND;
 }
 

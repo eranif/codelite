@@ -2,15 +2,16 @@
 #define NODEJSONSERIALISABLE_H
 
 #include "JSON.h"
+
+#include <memory>
 #include <vector>
-#include <wx/sharedptr.h>
 #include <wx/string.h>
 
 class nSerializableObject
 {
 public:
-    typedef wxSharedPtr<nSerializableObject> Ptr_t;
-    typedef std::vector<nSerializableObject::Ptr_t> Vec_t;
+    using Ptr_t = std::shared_ptr<nSerializableObject>;
+    using Vec_t = std::vector<nSerializableObject::Ptr_t>;
 
 public:
     nSerializableObject();

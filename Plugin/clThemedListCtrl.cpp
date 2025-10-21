@@ -30,7 +30,7 @@ clThemedListCtrlBase::clThemedListCtrlBase(wxWindow* parent, wxWindowID id, cons
 
 clThemedListCtrlBase::~clThemedListCtrlBase()
 {
-    m_keyboard.reset(nullptr);
+    m_keyboard.reset();
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedListCtrlBase::OnThemeChanged, this);
 }
 

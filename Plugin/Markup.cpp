@@ -114,8 +114,8 @@ MarkupSearchPattern::MarkupSearchPattern(const wxString& search, int type, bool 
     , m_type(type)
     , m_matchIndex(matchIndex)
 {
-    if(isRegex) {
-        m_regex = new wxRegEx(search);
+    if (isRegex) {
+        m_regex = std::make_unique<wxRegEx>(search);
 
     } else {
         m_pattern = search;

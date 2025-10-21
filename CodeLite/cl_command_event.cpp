@@ -36,7 +36,7 @@ wxEvent* clCommandEvent::Clone() const
     return new_event;
 }
 
-void clCommandEvent::SetClientObject(wxClientData* clientObject) { m_ptr = clientObject; }
+void clCommandEvent::SetClientObject(wxClientData* clientObject) { m_ptr.reset(clientObject); }
 
 wxClientData* clCommandEvent::GetClientObject() const { return m_ptr.get(); }
 

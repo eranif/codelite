@@ -22,12 +22,12 @@
 #include "drawingutils.h"
 #include "wxStringHash.h"
 
+#include <memory>
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/bitmap.h>
 #include <wx/colour.h>
 #include <wx/dc.h>
-#include <wx/sharedptr.h>
 #include <wx/window.h>
 
 #define CHEVRON_SIZE 20
@@ -160,8 +160,8 @@ public:
     const wxString& GetBestLabel(size_t style) const;
 
 public:
-    typedef wxSharedPtr<clTabInfo> Ptr_t;
-    typedef std::vector<clTabInfo::Ptr_t> Vec_t;
+    using Ptr_t = std::shared_ptr<clTabInfo>;
+    using Vec_t = std::vector<clTabInfo::Ptr_t>;
 
     clTabInfo(clTabCtrl* tabCtrl);
     clTabInfo(clTabCtrl* tabCtrl, size_t style, wxWindow* page, const wxString& text, int bitmapId = wxNOT_FOUND);
@@ -203,7 +203,7 @@ public:
 class WXDLLIMPEXP_SDK clTabRenderer
 {
 public:
-    typedef wxSharedPtr<clTabRenderer> Ptr_t;
+    using Ptr_t = std::shared_ptr<clTabRenderer>;
 
     // Geometry
     int bottomAreaHeight = 0;

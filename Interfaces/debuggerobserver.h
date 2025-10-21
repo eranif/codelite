@@ -28,7 +28,6 @@
 #include "debugger.h"
 #include "tree_node.h"
 
-#include <wx/sharedptr.h>
 #include <wx/treectrl.h>
 
 struct NodeData {

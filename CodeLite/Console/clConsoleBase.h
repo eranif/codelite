@@ -5,9 +5,9 @@
 #include "codelite_exports.h"
 #include "macros.h"
 
+#include <memory>
 #include <wx/arrstr.h>
 #include <wx/process.h>
-#include <wx/sharedptr.h>
 #include <wx/string.h>
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_TERMINAL_EXIT, clProcessEvent);
@@ -28,7 +28,7 @@ public:
 class WXDLLIMPEXP_CL clConsoleBase
 {
 public:
-    typedef wxSharedPtr<clConsoleBase> Ptr_t;
+    using Ptr_t = std::shared_ptr<clConsoleBase>;
 
 protected:
     wxStringMap_t m_environment;

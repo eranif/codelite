@@ -174,7 +174,7 @@ void MemCheckPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void MemCheckPlugin::UnPlug()
 {
-    m_tabHelper.reset(NULL);
+    m_tabHelper.reset();
     m_terminal.Unbind(wxEVT_TERMINAL_COMMAND_EXIT, &MemCheckPlugin::OnProcessTerminated, this);
     m_terminal.Unbind(wxEVT_TERMINAL_COMMAND_OUTPUT, &MemCheckPlugin::OnProcessOutput, this);
 

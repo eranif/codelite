@@ -6,8 +6,6 @@
 #include "LSP/basic_types.h"
 #include "macros.h"
 
-#include <wx/sharedptr.h>
-
 namespace LSP
 {
 

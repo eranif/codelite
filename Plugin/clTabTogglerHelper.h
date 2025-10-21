@@ -31,9 +31,8 @@
 #include "codelite_exports.h"
 #include "imanager.h"
 
-#include <wx/bitmap.h>
+#include <memory>
 #include <wx/event.h>
-#include <wx/sharedptr.h>
 #include <wx/string.h>
 #include <wx/window.h>
 
@@ -56,7 +55,7 @@ public:
     static bool IsTabInNotebook(PaneId pane_id, const wxString& tabname);
 
 public:
-    typedef wxSharedPtr<clTabTogglerHelper> Ptr_t;
+    using Ptr_t = std::shared_ptr<clTabTogglerHelper>;
 
 public:
     clTabTogglerHelper(const wxString& outputTabName, wxWindow* outputTab, const wxString& workspaceTabName,

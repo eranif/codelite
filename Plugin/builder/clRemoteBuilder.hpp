@@ -7,7 +7,6 @@
 
 #include <memory>
 #include <wx/event.h>
-#include <wx/sharedptr.h>
 #include <wx/string.h>
 
 class WXDLLIMPEXP_SDK clRemoteBuilder : public wxEvtHandler
@@ -16,7 +15,7 @@ class WXDLLIMPEXP_SDK clRemoteBuilder : public wxEvtHandler
     std::unique_ptr<IProcess> m_remoteProcess;
 
 public:
-    typedef wxSharedPtr<clRemoteBuilder> Ptr_t;
+    using Ptr_t = std::shared_ptr<clRemoteBuilder>;
 
 protected:
     void OnProcessOutput(clProcessEvent& event);

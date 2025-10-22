@@ -90,12 +90,12 @@ FunctionResult WriteFileContent(const assistant::json& args)
         return Err("Invalid number of arguments");
     }
 
-    ASSIGN_FUNC_ARG_OR_RETURN(wxString filepath, ::assistant::GetFunctionArg<std::string>(args, "filepath"));
-    ASSIGN_FUNC_ARG_OR_RETURN(wxString file_content, ::assistant::GetFunctionArg<std::string>(args, "file_content"));
+    ASSIGN_FUNC_ARG_OR_RETURN(std::string filepath, ::assistant::GetFunctionArg<std::string>(args, "filepath"));
+    ASSIGN_FUNC_ARG_OR_RETURN(std::string file_content, ::assistant::GetFunctionArg<std::string>(args, "file_content"));
 
     auto cb = [=]() -> FunctionResult {
         wxString msg;
-        wxString fullpath = FileManager::GetFullPath(filepath);
+        wxString fullpath = FileManager::GetFullPath(wxString::FromUTF8(filepath));
         if (FileManager::FileExists(fullpath)) {
             msg << _("The file: ") << fullpath << _(" already exists.\nWould you like to overwrite it?");
             if (::wxMessageBox(msg, "CodeLite", wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) != wxYES) {
@@ -105,7 +105,7 @@ FunctionResult WriteFileContent(const assistant::json& args)
             }
         }
 
-        if (!FileManager::WriteContent(filepath, file_content, true)) {
+        if (!FileManager::WriteContent(filepath, wxString::FromUTF8(file_content), true)) {
             msg << "Error while writing file: '" << filepath << "' to disk.";
             return Err(msg);
         }
@@ -129,12 +129,12 @@ FunctionResult ReadFileContent(const assistant::json& args)
         return Err("Invalid number of arguments");
     }
 
-    ASSIGN_FUNC_ARG_OR_RETURN(wxString filepath, ::assistant::GetFunctionArg<std::string>(args, "filepath"));
+    ASSIGN_FUNC_ARG_OR_RETURN(std::string filepath, ::assistant::GetFunctionArg<std::string>(args, "filepath"));
 
     auto cb = [=]() -> FunctionResult {
-        wxString fullpath = FileManager::GetFullPath(filepath);
+        wxString fullpath = FileManager::GetFullPath(wxString::FromUTF8(filepath));
         clDEBUG() << "ReadFileContent is called for:" << fullpath << endl;
-        auto content = FileManager::ReadContent(fullpath);
+        std::optional<wxString> content = FileManager::ReadContent(fullpath);
         if (!content.has_value()) {
             wxString msg;
             msg << "Error occurred while reading the file: '" << filepath << "' from disk.";
@@ -153,24 +153,25 @@ FunctionResult OpenFileInEditor(const assistant::json& args)
         return Err("Invalid number of arguments");
     }
 
-    ASSIGN_FUNC_ARG_OR_RETURN(wxString filepath, ::assistant::GetFunctionArg<std::string>(args, "filepath"));
+    ASSIGN_FUNC_ARG_OR_RETURN(std::string filepath, ::assistant::GetFunctionArg<std::string>(args, "filepath"));
 
     auto cb = [=]() -> FunctionResult {
+        wxString file = wxString::FromUTF8(filepath);
         wxString msg;
         IEditor* editor{nullptr};
         if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
-            clDEBUG() << "Open file (workspace):" << filepath << endl;
-            editor = clWorkspaceManager::Get().GetWorkspace()->OpenFileInEditor(filepath, false);
+            clDEBUG() << "Open file (workspace):" << file << endl;
+            editor = clWorkspaceManager::Get().GetWorkspace()->OpenFileInEditor(file, false);
         } else {
-            clDEBUG() << "Open file:" << filepath << endl;
-            editor = clGetManager()->OpenFile(filepath);
+            clDEBUG() << "Open file:" << file << endl;
+            editor = clGetManager()->OpenFile(file);
         }
 
         if (!editor) {
-            msg << "Error occurred while loading file '" << filepath << "' into an editor.";
+            msg << "Error occurred while loading file '" << file << "' into an editor.";
             return Err(msg);
         }
-        msg << "File '" << filepath << "' has been successfully loaded into an editor.";
+        msg << "File '" << file << "' has been successfully loaded into an editor.";
         return Ok(msg);
     };
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);

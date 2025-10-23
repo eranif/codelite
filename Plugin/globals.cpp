@@ -24,7 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "globals.h"
 
-#include "Console/clConsoleBase.h"
 #include "Debugger/debuggermanager.h"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "SelectFileTypesDialog.hpp"
@@ -578,26 +577,6 @@ wxVariant MakeIconText(const wxString& text, const wxBitmap& bmp)
     wxVariant v;
     v << ict;
     return v;
-}
-
-void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& realPts, long& pid)
-{
-    pid = wxNOT_FOUND;
-    tty.Clear();
-    realPts.Clear();
-
-#if defined(__WXMSW__)
-    // Windows
-    wxUnusedVar(title);
-#else
-    // Non Windows machines
-    clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
-    if (console->StartForDebugger()) {
-        tty = console->GetTty();
-        realPts = console->GetRealPts();
-        pid = console->GetPid();
-    }
-#endif // !__WXMSW__
 }
 
 wxStandardID PromptForYesNoCancelDialogWithCheckbox(const wxString& message,

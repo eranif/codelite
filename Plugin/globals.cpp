@@ -787,15 +787,6 @@ wxSize clGetDisplaySize()
     return displaySize;
 }
 
-void clFitColumnWidth(wxDataViewCtrl* ctrl)
-{
-#ifndef __WXOSX__
-    for (size_t i = 0; i < ctrl->GetColumnCount(); ++i) {
-        ctrl->GetColumn(i)->SetWidth(wxCOL_WIDTH_AUTOSIZE);
-    }
-#endif
-}
-
 wxVariant MakeBitmapIndexText(const wxString& text, int imgIndex)
 {
     clDataViewTextBitmap tb(text, imgIndex);

@@ -381,11 +381,6 @@ WXDLLIMPEXP_SDK void clSetEditorFontEncoding(const wxString& encoding);
 WXDLLIMPEXP_SDK int clFindMenuItemPosition(wxMenu* menu, int menuItemId);
 
 /**
- * @brief fit the dataview columns width to match their content
- */
-WXDLLIMPEXP_SDK void clFitColumnWidth(wxDataViewCtrl* ctrl);
-
-/**
  * @brief return the screen size, taking dual or more screens into account
  */
 WXDLLIMPEXP_SDK wxSize clGetDisplaySize();

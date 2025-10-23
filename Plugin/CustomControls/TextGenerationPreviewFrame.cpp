@@ -40,7 +40,6 @@ TextGenerationPreviewFrame::TextGenerationPreviewFrame(PreviewKind kind, wxWindo
         SetIcons(app_icons);
     }
 
-    m_markdownStyler = std::make_unique<MarkdownStyler>(m_prompt);
     m_indicator_panel = new IndicatorPanel(m_main_panel, _("Ready"));
     m_main_panel->GetSizer()->Add(m_indicator_panel, wxSizerFlags(0).Expand().Border(wxALL, 0));
     m_editor->Bind(wxEVT_KEY_DOWN, [this](wxKeyEvent& e) {
@@ -51,13 +50,6 @@ TextGenerationPreviewFrame::TextGenerationPreviewFrame(PreviewKind kind, wxWindo
         }
     });
 
-    m_prompt->Bind(wxEVT_KEY_DOWN, [this](wxKeyEvent& e) {
-        if (e.GetKeyCode() == WXK_ESCAPE) {
-            Hide();
-        } else {
-            e.Skip();
-        }
-    });
     SendSizeEvent();
     CenterOnParent();
     m_editor->CallAfter(&wxStyledTextCtrl::SetFocus);
@@ -134,11 +126,6 @@ void TextGenerationPreviewFrame::InitialiseFor(PreviewKind kind)
     case PreviewKind::kDefault:
         break;
     case PreviewKind::kCommentGeneration: {
-        wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kCommentGeneration);
-        m_prompt->SetText(prompt);
-        m_prompt->SetSavePoint();
-        m_markdownStyler->StyleText();
-
         auto editor = clGetManager()->GetActiveEditor();
         if (editor) {
             auto lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetRemotePathOrLocal());
@@ -155,16 +142,6 @@ void TextGenerationPreviewFrame::OnClose(wxCommandEvent& event)
     wxUnusedVar(event);
     Hide();
 }
-
-void TextGenerationPreviewFrame::OnSavePrompt(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    llm::Manager::GetInstance().GetConfig().SetPrompt(llm::PromptKind::kCommentGeneration, m_prompt->GetText());
-    llm::Manager::GetInstance().GetConfig().Save();
-    m_prompt->SetSavePoint();
-}
-
-void TextGenerationPreviewFrame::OnSavePromptUI(wxUpdateUIEvent& event) { event.Enable(m_prompt->GetModify()); }
 
 void TextGenerationPreviewFrame::OnCloseWindow(wxCloseEvent& event)
 {

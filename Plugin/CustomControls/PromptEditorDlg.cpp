@@ -21,17 +21,23 @@ PromptEditorDlg::PromptEditorDlg(wxWindow* parent)
 {
     size_t prompts_count = static_cast<size_t>(llm::PromptKind::kMax);
     for (size_t i = 0; i < prompts_count; ++i) {
-        auto ctrl = new wxStyledTextCtrl(m_listbook);
+        auto ctrl = new wxStyledTextCtrl(m_simpleBook);
         auto d = new PromptData{static_cast<llm::PromptKind>(i)};
         ctrl->SetClientObject(d);
         wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(d->prompt_kind);
         wxString label = llm::GetPromptString(d->prompt_kind);
         ctrl->SetText(prompt);
+        ctrl->SetWrapMode(wxSTC_WRAP_WORD);
         ctrl->SetSavePoint();
         MarkdownStyler styler(ctrl);
         styler.StyleText(true);
-        m_listbook->AddPage(ctrl, label, i == 0);
+        m_simpleBook->AddPage(ctrl, label, i == 0);
+        wxVector<wxVariant> cols;
+        cols.push_back(label);
+        m_dvListCtrlPrompts->AppendItem(cols, static_cast<wxUIntPtr>(i));
     }
+
+    CallAfter(&PromptEditorDlg::SelectRow, 0);
 
     SendSizeEvent();
     ::clSetDialogBestSizeAndPosition(this);
@@ -43,8 +49,8 @@ void PromptEditorDlg::OnSave(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     clDEBUG() << "Saving prompts" << endl;
-    for (size_t i = 0; i < m_listbook->GetPageCount(); ++i) {
-        wxStyledTextCtrl* ctrl = dynamic_cast<wxStyledTextCtrl*>(m_listbook->GetPage(i));
+    for (size_t i = 0; i < m_simpleBook->GetPageCount(); ++i) {
+        wxStyledTextCtrl* ctrl = dynamic_cast<wxStyledTextCtrl*>(m_simpleBook->GetPage(i));
         if (!ctrl) {
             continue;
         }
@@ -62,8 +68,8 @@ void PromptEditorDlg::OnSave(wxCommandEvent& event)
 
 void PromptEditorDlg::OnSaveUI(wxUpdateUIEvent& event)
 {
-    for (size_t i = 0; i < m_listbook->GetPageCount(); ++i) {
-        wxStyledTextCtrl* ctrl = dynamic_cast<wxStyledTextCtrl*>(m_listbook->GetPage(i));
+    for (size_t i = 0; i < m_simpleBook->GetPageCount(); ++i) {
+        wxStyledTextCtrl* ctrl = dynamic_cast<wxStyledTextCtrl*>(m_simpleBook->GetPage(i));
         if (!ctrl) {
             continue;
         }
@@ -74,4 +80,22 @@ void PromptEditorDlg::OnSaveUI(wxUpdateUIEvent& event)
         }
     }
     event.Enable(false);
+}
+
+void PromptEditorDlg::OnPromptChanged(wxDataViewEvent& event)
+{
+    auto item = m_dvListCtrlPrompts->GetSelection();
+    CHECK_ITEM_RET(item);
+    auto row = static_cast<size_t>(m_dvListCtrlPrompts->GetItemData(item));
+    SelectRow(row);
+}
+
+void PromptEditorDlg::SelectRow(size_t row)
+{
+    if (m_simpleBook->GetPageCount() == 0 || row >= m_simpleBook->GetPageCount()) {
+        return;
+    }
+
+    m_simpleBook->SetSelection(row);
+    m_dvListCtrlPrompts->SelectRow(row);
 }

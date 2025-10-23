@@ -25,13 +25,10 @@ public:
 
 protected:
     void OnCloseWindow(wxCloseEvent& event) override;
-    void OnSavePrompt(wxCommandEvent& event) override;
-    void OnSavePromptUI(wxUpdateUIEvent& event) override;
     void OnClose(wxCommandEvent& event) override;
     void OnCopy(wxCommandEvent& event) override;
     void OnCopyUI(wxUpdateUIEvent& event) override;
 
     PreviewKind m_kind{PreviewKind::kDefault};
     IndicatorPanel* m_indicator_panel{nullptr};
-    std::unique_ptr<MarkdownStyler> m_markdownStyler;
 };

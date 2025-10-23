@@ -2701,6 +2701,23 @@ void GitPlugin::OnFolderCommit(wxCommandEvent& event)
     }
 }
 
+/**
+ * @brief Executes a Git command synchronously and captures its output.
+ *
+ * This function executes a Git command either locally or remotely via SSH,
+ * depending on whether the current workspace is a remote workspace. It
+ * handles both local execution using the system's Git executable and remote
+ * execution through an SSH channel.
+ *
+ * @param command The Git command to execute (e.g., "status", "log").
+ * @param commandOutput Pointer to a wxString where the command output will be stored.
+ * @param workingDir The working directory for the Git command. If empty, uses the repository directory.
+ * @return true if the command executed successfully and did not encounter fatal errors; false otherwise.
+ *
+ * @note The function clears the commandOutput before execution and checks for
+ *       fatal errors in the output. If such errors are found, the output is cleared
+ *       and the function returns false.
+ */
 bool GitPlugin::DoExecuteCommandSync(const wxString& command, wxString* commandOutput, const wxString& workingDir)
 {
     commandOutput->Clear();

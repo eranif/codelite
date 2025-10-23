@@ -45,23 +45,8 @@ TextGenerationPreviewFrameBase::TextGenerationPreviewFrameBase(
     wxBoxSizer* boxSizer9 = new wxBoxSizer(wxVERTICAL);
     m_main_panel->SetSizer(boxSizer9);
 
-    m_auiBook19 = new wxAuiNotebook(m_main_panel,
-                                    wxID_ANY,
-                                    wxDefaultPosition,
-                                    wxDLG_UNIT(m_main_panel, wxSize(250, 250)),
-                                    wxAUI_NB_TOP | wxAUI_NB_TAB_FIXED_WIDTH);
-    m_auiBook19->SetName(wxT("m_auiBook19"));
-
-    boxSizer9->Add(m_auiBook19, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_panel20 =
-        new wxPanel(m_auiBook19, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_auiBook19, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_auiBook19->AddPage(m_panel20, _("Output"), true);
-
-    wxBoxSizer* boxSizer21 = new wxBoxSizer(wxVERTICAL);
-    m_panel20->SetSizer(boxSizer21);
-
-    m_editor = new wxStyledTextCtrl(m_panel20, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel20, wxSize(500, 300)), 0);
+    m_editor = new wxStyledTextCtrl(
+        m_main_panel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_main_panel, wxSize(500, 300)), wxBORDER_THEME);
     // Configure the fold margin
     m_editor->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
     m_editor->SetMarginMask(4, wxSTC_MASK_FOLDERS);
@@ -97,52 +82,7 @@ TextGenerationPreviewFrameBase::TextGenerationPreviewFrameBase(
     m_editor->SetKeyWords(3, wxT(""));
     m_editor->SetKeyWords(4, wxT(""));
 
-    boxSizer21->Add(m_editor, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
-
-    m_panel22 =
-        new wxPanel(m_auiBook19, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_auiBook19, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_auiBook19->AddPage(m_panel22, _("Prompt"), false);
-
-    wxBoxSizer* boxSizer23 = new wxBoxSizer(wxVERTICAL);
-    m_panel22->SetSizer(boxSizer23);
-
-    m_prompt = new wxStyledTextCtrl(m_panel22, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel22, wxSize(-1, -1)), 0);
-    // Configure the fold margin
-    m_prompt->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
-    m_prompt->SetMarginMask(4, wxSTC_MASK_FOLDERS);
-    m_prompt->SetMarginSensitive(4, true);
-    m_prompt->SetMarginWidth(4, 0);
-
-    // Configure the tracker margin
-    m_prompt->SetMarginWidth(1, 0);
-
-    // Configure the symbol margin
-    m_prompt->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
-    m_prompt->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
-    m_prompt->SetMarginWidth(2, 0);
-    m_prompt->SetMarginSensitive(2, true);
-
-    // Configure the line numbers margin
-    m_prompt->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_prompt->SetMarginWidth(0, 0);
-
-    // Configure the line symbol margin
-    m_prompt->SetMarginType(3, wxSTC_MARGIN_FORE);
-    m_prompt->SetMarginMask(3, 0);
-    m_prompt->SetMarginWidth(3, 0);
-    // Select the lexer
-    m_prompt->SetLexer(wxSTC_LEX_NULL);
-    // Set default font / styles
-    m_prompt->StyleClearAll();
-    m_prompt->SetWrapMode(1);
-    m_prompt->SetIndentationGuides(0);
-    m_prompt->SetKeyWords(0, wxT(""));
-    m_prompt->SetKeyWords(1, wxT(""));
-    m_prompt->SetKeyWords(2, wxT(""));
-    m_prompt->SetKeyWords(3, wxT(""));
-    m_prompt->SetKeyWords(4, wxT(""));
-
-    boxSizer23->Add(m_prompt, 1, wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer9->Add(m_editor, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
 
     wxBoxSizer* boxSizer5 = new wxBoxSizer(wxHORIZONTAL);
 
@@ -153,25 +93,12 @@ TextGenerationPreviewFrameBase::TextGenerationPreviewFrameBase(
 
     boxSizer5->Add(m_button_copy, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_button_save = new wxButton(this, wxID_SAVE, _("Save"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_button_save->SetToolTip(_("Save prompt changes"));
-
-    boxSizer5->Add(m_button_save, 0, wxALL, WXC_FROM_DIP(5));
-
     m_button_cancel =
         new wxButton(this, wxID_CANCEL, _("Close"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button_cancel->SetDefault();
     m_button_cancel->SetToolTip(_("Click to close the view or hit ESCAPE."));
 
     boxSizer5->Add(m_button_cancel, 0, wxALL, WXC_FROM_DIP(5));
-
-#if wxVERSION_NUMBER >= 2900
-    if (!wxPersistenceManager::Get().Find(m_auiBook19)) {
-        wxPersistenceManager::Get().RegisterAndRestore(m_auiBook19);
-    } else {
-        wxPersistenceManager::Get().Restore(m_auiBook19);
-    }
-#endif
 
     SetName(wxT("TextGenerationPreviewFrameBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
@@ -192,8 +119,6 @@ TextGenerationPreviewFrameBase::TextGenerationPreviewFrameBase(
     this->Bind(wxEVT_CLOSE_WINDOW, &TextGenerationPreviewFrameBase::OnCloseWindow, this);
     m_button_copy->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnCopy, this);
     m_button_copy->Bind(wxEVT_UPDATE_UI, &TextGenerationPreviewFrameBase::OnCopyUI, this);
-    m_button_save->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnSavePrompt, this);
-    m_button_save->Bind(wxEVT_UPDATE_UI, &TextGenerationPreviewFrameBase::OnSavePromptUI, this);
     m_button_cancel->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnClose, this);
 }
 
@@ -202,8 +127,6 @@ TextGenerationPreviewFrameBase::~TextGenerationPreviewFrameBase()
     this->Unbind(wxEVT_CLOSE_WINDOW, &TextGenerationPreviewFrameBase::OnCloseWindow, this);
     m_button_copy->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnCopy, this);
     m_button_copy->Unbind(wxEVT_UPDATE_UI, &TextGenerationPreviewFrameBase::OnCopyUI, this);
-    m_button_save->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnSavePrompt, this);
-    m_button_save->Unbind(wxEVT_UPDATE_UI, &TextGenerationPreviewFrameBase::OnSavePromptUI, this);
     m_button_cancel->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnClose, this);
 }
 
@@ -225,18 +148,42 @@ PromptEditorBaseDlg::PromptEditorBaseDlg(
 
     boxSizer27->Add(boxSizer31, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_panel32 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)), wxTAB_TRAVERSAL);
+    m_splitter = new wxSplitterWindow(
+        this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)), wxSP_LIVE_UPDATE | wxSP_3D);
+    m_splitter->SetSashGravity(0);
+    m_splitter->SetMinimumPaneSize(50);
 
-    boxSizer31->Add(m_panel32, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer31->Add(m_splitter, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    wxBoxSizer* boxSizer33 = new wxBoxSizer(wxVERTICAL);
-    m_panel32->SetSizer(boxSizer33);
+    m_splitterPageLabels =
+        new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
-    m_listbook =
-        new wxChoicebook(m_panel32, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel32, wxSize(-1, -1)), wxBK_DEFAULT);
-    m_listbook->SetName(wxT("m_listbook"));
+    wxBoxSizer* boxSizer43 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPageLabels->SetSizer(boxSizer43);
 
-    boxSizer33->Add(m_listbook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    m_dvListCtrlPrompts = new wxDataViewListCtrl(m_splitterPageLabels,
+                                                 wxID_ANY,
+                                                 wxDefaultPosition,
+                                                 wxDLG_UNIT(m_splitterPageLabels, wxSize(-1, -1)),
+                                                 wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
+    m_dvListCtrlPrompts->SetFocus();
+
+    boxSizer43->Add(m_dvListCtrlPrompts, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlPrompts->AppendTextColumn(_("Labels"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, 0);
+    m_splitterPageEditors =
+        new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_splitter->SplitVertically(m_splitterPageLabels, m_splitterPageEditors, 200);
+
+    wxBoxSizer* boxSizer44 = new wxBoxSizer(wxVERTICAL);
+    m_splitterPageEditors->SetSizer(boxSizer44);
+
+    m_simpleBook = new wxSimplebook(
+        m_splitterPageEditors, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageEditors, wxSize(-1, -1)), 0);
+    m_simpleBook->SetName(wxT("m_simpleBook"));
+    m_simpleBook->SetEffect(wxSHOW_EFFECT_NONE);
+
+    boxSizer44->Add(m_simpleBook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     m_stdBtnSizer28 = new wxStdDialogButtonSizer();
 
@@ -251,10 +198,10 @@ PromptEditorBaseDlg::PromptEditorBaseDlg(
     m_stdBtnSizer28->Realize();
 
 #if wxVERSION_NUMBER >= 2900
-    if (!wxPersistenceManager::Get().Find(m_listbook)) {
-        wxPersistenceManager::Get().RegisterAndRestore(m_listbook);
+    if (!wxPersistenceManager::Get().Find(m_simpleBook)) {
+        wxPersistenceManager::Get().RegisterAndRestore(m_simpleBook);
     } else {
-        wxPersistenceManager::Get().Restore(m_listbook);
+        wxPersistenceManager::Get().Restore(m_simpleBook);
     }
 #endif
 
@@ -274,12 +221,14 @@ PromptEditorBaseDlg::PromptEditorBaseDlg(
         wxPersistenceManager::Get().Restore(this);
     }
     // Connect events
+    m_dvListCtrlPrompts->Bind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &PromptEditorBaseDlg::OnPromptChanged, this);
     m_button29->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &PromptEditorBaseDlg::OnSave, this);
     m_button29->Bind(wxEVT_UPDATE_UI, &PromptEditorBaseDlg::OnSaveUI, this);
 }
 
 PromptEditorBaseDlg::~PromptEditorBaseDlg()
 {
+    m_dvListCtrlPrompts->Unbind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &PromptEditorBaseDlg::OnPromptChanged, this);
     m_button29->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &PromptEditorBaseDlg::OnSave, this);
     m_button29->Unbind(wxEVT_UPDATE_UI, &PromptEditorBaseDlg::OnSaveUI, this);
 }

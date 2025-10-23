@@ -13,6 +13,9 @@ public:
     ~PromptEditorDlg() override;
 
 protected:
+    void OnPromptChanged(wxDataViewEvent& event) override;
     void OnSave(wxCommandEvent& event) override;
     void OnSaveUI(wxUpdateUIEvent& event) override;
+    
+    void SelectRow(size_t row);
 };

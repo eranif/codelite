@@ -865,7 +865,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Sash Position:",
-											"m_value":	"200"
+											"m_value":	"250"
 										}],
 									"m_events":	[],
 									"m_children":	[{

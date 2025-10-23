@@ -173,7 +173,7 @@ PromptEditorBaseDlg::PromptEditorBaseDlg(
     m_dvListCtrlPrompts->AppendTextColumn(_("Labels"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, 0);
     m_splitterPageEditors =
         new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-    m_splitter->SplitVertically(m_splitterPageLabels, m_splitterPageEditors, 200);
+    m_splitter->SplitVertically(m_splitterPageLabels, m_splitterPageEditors, 250);
 
     wxBoxSizer* boxSizer44 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageEditors->SetSizer(boxSizer44);

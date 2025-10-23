@@ -38,8 +38,8 @@ PromptEditorDlg::PromptEditorDlg(wxWindow* parent)
     }
 
     CallAfter(&PromptEditorDlg::SelectRow, 0);
-
     SendSizeEvent();
+    m_splitter->SetSashPosition(FromDIP(250));
     ::clSetDialogBestSizeAndPosition(this);
 }
 

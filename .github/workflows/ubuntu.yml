@@ -21,6 +21,12 @@ jobs:
       fail-fast: false
       matrix:
         wx-version: ['v3.2.8.1']
+        codelite-variant: ['All', 'Without SFTP support']
+        include:
+          - codelite-variant: 'All'
+            codelite-options: -DWITH_MYSQL=1 -DWITH_POSTGRES=1 
+          - codelite-variant: 'Without SFTP support'
+            codelite-options: -DENABLE_SFTP=0
 
     steps:
     # wxWidgets
@@ -55,6 +61,7 @@ jobs:
         submodules: recursive
 
     - name: Update codelite.pot
+      if: matrix.codelite-variant == 'All'
       run: |
         wxrc -g -o /tmp/resources.cpp `find . -type f -name "*.xrc" -not -wholename "./Runtime/rc/menu.macos.xrc" -not -wholename "./Runtime/templates/*" -not -wholename "./submodules/ctags/Units/*"`
         xgettext --package-name=CodeLite --copyright-holder="Eran Ifrah" --from-code=UTF-8 --c++ -o translations/codelite.pot --add-location --sort-by-file -k -k_ -kwxTRANSLATE -kwxPLURAL:1,2 /tmp/resources.cpp `find . -type f "(" -name "*.cpp" -or -name "*.h" ")" -not -wholename "./Runtime/templates/*" -not -wholename "./submodules/llama.cpp/*.*" -not -wholename "./submodules/wxdap/dbgcli/*.*" -not -wholename "./submodules/wxsf-code/samples/*.*" -not -wholename "./submodules/wxsqlite3/samples/*.*"`
@@ -63,6 +70,7 @@ jobs:
 
     # Upload codelite.pot
     - name: artifact-pot
+      if: matrix.codelite-variant == 'All'
       uses: actions/upload-artifact@v4
       with:
         name: codelite-pot-wx-${{matrix.wx-version}}
@@ -73,17 +81,10 @@ jobs:
       run: |
         mkdir build-release
         cd build-release
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DWITH_MYSQL=1 -DWITH_POSTGRES=1 -DWITH_CHATAI=1 -DCOPY_WX_LIBS=1 -DBUILD_TESTING=1 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+        cmake .. -DCMAKE_BUILD_TYPE=Release ${{matrix.codelite-options}} -DCOPY_WX_LIBS=1 -DBUILD_TESTING=1
         make -j$(nproc)
         sudo make install
         ctest --output-on-failure
 
     - name: codelite --version
       run: xvfb-run -a codelite --version || exit 0 # codelite --version returns -1
-
-    - name: Build CodeLite without SFTP support
-      run: |
-        mkdir build-release-no-sftp
-        cd build-release-no-sftp
-        cmake .. -DCMAKE_BUILD_TYPE=Release -DENABLE_SFTP=0
-        make -j$(nproc)

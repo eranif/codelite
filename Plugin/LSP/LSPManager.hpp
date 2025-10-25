@@ -12,9 +12,9 @@
 
 #include <unordered_set>
 #include <vector>
-#include <wx/busycursor.h>
 #include <wx/event.h>
 #include <wx/sharedptr.h>
+#include <wx/utils.h>
 
 class LSPOutlineViewDlg;
 
@@ -75,6 +75,23 @@ public:
      * @param editor Pointer to the editor for which the outline view should be displayed.
      */
     void ShowOutlineView(IEditor* editor);
+
+    /**
+     * @brief Requests document symbols from the LSP server for the given editor.
+     *
+     * This method validates the editor pointer, obtains the associated LSP server,
+     * ensures that the server supports the Document Symbols capability, and then
+     * sends a DocumentSymbols request for the outline view. A status message is
+     * shown while the request is in progress.
+     *
+     * @param editor Pointer to the editor for which symbols are requested. Must not be `nullptr`.
+     * @param cb Callback function that will be invoked with an `LSPEvent` containing the result of the request.
+     *
+     * @return `true` if the request was successfully dispatched, `false` if any of the
+     *         pre‑conditions failed (e.g., `editor` is `nullptr`, no server is
+     *         available, or the server does not support document symbols).
+     */
+    bool RequestSymbolsForEditor(IEditor* editor, std::function<void(const LSPEvent&)> cb);
 
 protected:
     void OnSignatureHelp(LSPEvent& event);

@@ -220,11 +220,22 @@ void LSPManager::ShowOutlineView(IEditor* editor)
         return;
     }
 
-    clGetManager()->SetStatusMessage(_("Requesting document symbols from LSP server..."), 3);
-    server->DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW, [this](const LSPEvent& event) {
+    auto cb = [this](const LSPEvent& event) {
         clGetManager()->SetStatusMessage(_("Showing outline view dialog"), 1);
         ShowQuickOutlineDialog(event);
-    });
+    };
+    RequestSymbolsForEditor(editor, std::move(cb));
+}
+
+bool LSPManager::RequestSymbolsForEditor(IEditor* editor, std::function<void(const LSPEvent&)> cb)
+{
+    CHECK_PTR_RET_FALSE(editor);
+    auto server = GetServerForEditor(editor);
+    CHECK_PTR_RET_FALSE(server);
+    CHECK_COND_RET_FALSE(server->IsDocumentSymbolsSupported());
+    clGetManager()->SetStatusMessage(_("Requesting document symbols from LSP server..."), 3);
+    server->DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW, std::move(cb));
+    return true;
 }
 
 void LSPManager::Reload(const std::unordered_set<wxString>& languages)
@@ -1197,60 +1208,7 @@ void LSPManager::UpdateNavigationBar()
     }
 
     const auto& symbols = m_symbols_to_file_cache.find(fullpath)->second;
-
-    // prepare list of scopes and send them to the navigation bar
-    clEditorBar::ScopeEntry::vec_t scopes;
-    scopes.reserve(symbols.size());
-
-    for (const LSP::SymbolInformation& symbol : symbols) {
-        switch (symbol.GetKind()) {
-        case LSP::kSK_Function:
-        case LSP::kSK_Method:
-        case LSP::kSK_Constructor: {
-            clEditorBar::ScopeEntry scope_entry;
-            const LSP::Location& location = symbol.GetLocation();
-            scope_entry.line_number = location.GetRange().GetStart().GetLine();
-            scope_entry.range = location.GetRange();
-
-            wxString display_string;
-            if (!symbol.GetContainerName().empty()) {
-                display_string << symbol.GetContainerName() << ".";
-            }
-
-            wxString short_name = symbol.GetName();
-            short_name = short_name.BeforeFirst('(');
-            short_name += "()";
-            display_string << short_name;
-
-            scope_entry.display_string.swap(display_string);
-            scopes.push_back(scope_entry);
-
-        } break;
-        case LSP::kSK_Class:
-        case LSP::kSK_Struct:
-        case LSP::kSK_Enum:
-        case LSP::kSK_Interface: {
-            clEditorBar::ScopeEntry scope_entry;
-            const LSP::Location& location = symbol.GetLocation();
-            scope_entry.line_number = location.GetRange().GetStart().GetLine();
-            scope_entry.range = location.GetRange();
-
-            wxString display_string;
-            if (!symbol.GetContainerName().empty()) {
-                display_string << symbol.GetContainerName() << ".";
-            }
-
-            display_string << symbol.GetName();
-            scope_entry.display_string.swap(display_string);
-            scopes.push_back(scope_entry);
-
-        } break;
-            break;
-        default:
-            break;
-        }
-    }
-    clGetManager()->GetNavigationBar()->SetScopes(fullpath, scopes);
+    clGetManager()->GetNavigationBar()->UpdateScopesForCurrentEditor(symbols);
 }
 
 void LSPManager::OnWorkspaceScanCompleted(clWorkspaceEvent& event)

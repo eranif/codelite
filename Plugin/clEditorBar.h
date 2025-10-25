@@ -68,6 +68,7 @@ public:
     clEditorBar(wxWindow* parent);
     virtual ~clEditorBar();
     void SetScopes(const wxString& filename, const clEditorBar::ScopeEntry::vec_t& entries);
+    void UpdateScopesForCurrentEditor(const std::vector<LSP::SymbolInformation>& symbols);
     bool ShouldShow() const { return m_shouldShow; }
     void DoShow(bool s);
     void SetLabel(const wxString& text);

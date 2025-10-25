@@ -254,55 +254,64 @@ void LanguageServerPlugin::OnGenerateDocString(wxCommandEvent& event)
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    auto func_text = clGetManager()->GetNavigationBar()->GetCurrentScopeText();
-    if (!func_text.has_value()) {
-        return;
-    }
-
-    wxString language = "text";
-    LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetFileName().GetFullName());
-    if (lexer) {
-        language = lexer->GetName().Lower();
-    }
-
-    wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kCommentGeneration);
-    prompt.Replace("{{lang}}", language);
-    prompt.Replace("{{function}}", func_text.value());
-
-    assistant::ChatOptions chat_options{assistant::ChatOptions::kNoTools};
-    assistant::AddFlagSet(chat_options, assistant::ChatOptions::kNoHistory);
-
-    m_commentGenerationView->InitialiseFor(PreviewKind::kCommentGeneration);
-    m_commentGenerationView->Show();
-    m_commentGenerationView->StartProgress(_("Working..."));
-
-    auto collector = new llm::ResponseCollector();
-    collector->SetStateChangingCB([this](llm::ChatState state) {
-        if (!wxThread::IsMain()) {
-            clWARNING() << "StateChangingCB called for non main thread!" << endl;
+    // Refresh the symbols for the current file and then ask the LLM to generate a comment.
+    LSPManager::GetInstance().RequestSymbolsForEditor(editor, [this](const LSPEvent& lsp_event) {
+        clGetManager()->GetNavigationBar()->UpdateScopesForCurrentEditor(lsp_event.GetSymbolsInformation());
+        auto func_text = clGetManager()->GetNavigationBar()->GetCurrentScopeText();
+        if (!func_text.has_value()) {
             return;
         }
-        switch (state) {
-        case llm::ChatState::kThinking:
-            m_commentGenerationView->UpdateProgress(_("Thinking..."));
-            break;
-        case llm::ChatState::kWorking:
-            m_commentGenerationView->UpdateProgress(_("Working..."));
-            break;
-        case llm::ChatState::kReady:
-            m_commentGenerationView->StopProgress(_("Ready"));
-            break;
-        }
-    });
 
-    collector->SetStreamCallback([this](const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
-        m_commentGenerationView->AppendText(wxString::FromUTF8(message));
-        if (is_done) {
-            CallAfter(&LanguageServerPlugin::OnDocStringGenerationDone);
-        }
-    });
+        IEditor* editor = clGetManager()->GetActiveEditor();
+        CHECK_PTR_RET(editor);
 
-    llm::Manager::GetInstance().Chat(collector, prompt, nullptr, chat_options);
+        clGetManager()->SetStatusMessage(_("Generating DocString..."), 3);
+        wxString language = "text";
+        LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetFileName().GetFullName());
+        if (lexer) {
+            language = lexer->GetName().Lower();
+        }
+
+        wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kCommentGeneration);
+        prompt.Replace("{{lang}}", language);
+        prompt.Replace("{{function}}", func_text.value());
+
+        assistant::ChatOptions chat_options{assistant::ChatOptions::kNoTools};
+        assistant::AddFlagSet(chat_options, assistant::ChatOptions::kNoHistory);
+
+        m_commentGenerationView->InitialiseFor(PreviewKind::kCommentGeneration);
+        m_commentGenerationView->Show();
+        m_commentGenerationView->StartProgress(_("Working..."));
+
+        auto collector = new llm::ResponseCollector();
+        collector->SetStateChangingCB([this](llm::ChatState state) {
+            if (!wxThread::IsMain()) {
+                clWARNING() << "StateChangingCB called for non main thread!" << endl;
+                return;
+            }
+            switch (state) {
+            case llm::ChatState::kThinking:
+                m_commentGenerationView->UpdateProgress(_("Thinking..."));
+                break;
+            case llm::ChatState::kWorking:
+                m_commentGenerationView->UpdateProgress(_("Working..."));
+                break;
+            case llm::ChatState::kReady:
+                m_commentGenerationView->StopProgress(_("Ready"));
+                break;
+            }
+        });
+
+        collector->SetStreamCallback(
+            [this](const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
+                m_commentGenerationView->AppendText(wxString::FromUTF8(message));
+                if (is_done) {
+                    CallAfter(&LanguageServerPlugin::OnDocStringGenerationDone);
+                }
+            });
+
+        llm::Manager::GetInstance().Chat(collector, prompt, nullptr, chat_options);
+    });
 }
 
 void LanguageServerPlugin::OnMenuRenameSymbol(wxCommandEvent& event)

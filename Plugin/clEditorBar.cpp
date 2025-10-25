@@ -69,6 +69,68 @@ void clEditorBar::OnEditorChanged(wxCommandEvent& e)
     CallAfter(&clEditorBar::DoRefreshColoursAndFonts);
 }
 
+void clEditorBar::UpdateScopesForCurrentEditor(const std::vector<LSP::SymbolInformation>& symbols)
+{
+    auto editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    wxString fullpath = editor->GetRemotePathOrLocal();
+
+    // prepare list of scopes and send them to the navigation bar
+    ScopeEntry::vec_t scopes;
+    scopes.reserve(symbols.size());
+
+    for (const LSP::SymbolInformation& symbol : symbols) {
+        switch (symbol.GetKind()) {
+        case LSP::kSK_Function:
+        case LSP::kSK_Method:
+        case LSP::kSK_Constructor: {
+            ScopeEntry scope_entry;
+            const LSP::Location& location = symbol.GetLocation();
+            scope_entry.line_number = location.GetRange().GetStart().GetLine();
+            scope_entry.range = location.GetRange();
+
+            wxString display_string;
+            if (!symbol.GetContainerName().empty()) {
+                display_string << symbol.GetContainerName() << ".";
+            }
+
+            wxString short_name = symbol.GetName();
+            short_name = short_name.BeforeFirst('(');
+            short_name += "()";
+            display_string << short_name;
+
+            scope_entry.display_string.swap(display_string);
+            scopes.push_back(scope_entry);
+
+        } break;
+        case LSP::kSK_Class:
+        case LSP::kSK_Struct:
+        case LSP::kSK_Enum:
+        case LSP::kSK_Interface: {
+            ScopeEntry scope_entry;
+            const LSP::Location& location = symbol.GetLocation();
+            scope_entry.line_number = location.GetRange().GetStart().GetLine();
+            scope_entry.range = location.GetRange();
+
+            wxString display_string;
+            if (!symbol.GetContainerName().empty()) {
+                display_string << symbol.GetContainerName() << ".";
+            }
+
+            display_string << symbol.GetName();
+            scope_entry.display_string.swap(display_string);
+            scopes.push_back(scope_entry);
+
+        } break;
+            break;
+        default:
+            break;
+        }
+    }
+    SetScopes(fullpath, scopes);
+}
+
 void clEditorBar::SetScopes(const wxString& filename, const clEditorBar::ScopeEntry::vec_t& entries)
 {
     m_scopes = entries;

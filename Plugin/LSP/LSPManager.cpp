@@ -341,6 +341,13 @@ void Manager::SemanticTokens(IEditor* editor)
     server->SendSemanticTokensRequest(editor);
 }
 
+void Manager::WorkspaceSymbols(const wxString& filter)
+{
+    auto server = GetServerForFileType(LanguageServerProtocol::workspace_file_type);
+    CHECK_PTR_RET(server);
+    server->SendWorkspaceSymbolsRequest(filter);
+}
+
 bool Manager::RequestSymbolsForEditor(IEditor* editor, std::function<void(const LSPEvent&)> cb)
 {
     CHECK_PTR_RET_FALSE(editor);
@@ -930,7 +937,7 @@ void Manager::StopAll(const std::unordered_set<wxString>& languages)
         for (const std::unordered_map<wxString, LanguageServerProtocol::Ptr_t>::value_type& vt : m_servers) {
             // stop all current processes
             LanguageServerProtocol::Ptr_t server = vt.second;
-            server.reset(nullptr);
+            server.reset();
         }
         m_servers.clear();
     } else {
@@ -1141,12 +1148,21 @@ IEditor* Manager::FindEditor(const wxString& path) const
 LanguageServerProtocol::Ptr_t Manager::GetServerForLanguage(const wxString& lang)
 {
     for (const auto& vt : m_servers) {
-        const auto& thisServer = vt.second;
-        if (thisServer->IsRunning() && thisServer->IsLanguageSupported(lang)) {
-            return thisServer;
+        const auto& s = vt.second;
+        if (s->IsRunning() && s->IsLanguageSupported(lang)) {
+            return s;
         }
     }
-    return LanguageServerProtocol::Ptr_t{nullptr};
+    return nullptr;
+}
+
+LanguageServerProtocol::Ptr_t Manager::GetServerForFileType(FileExtManager::FileType file_type)
+{
+    auto lang = LanguageServerProtocol::GetLanguageId(file_type);
+    if (lang.empty()) {
+        return nullptr;
+    }
+    return GetServerForLanguage(lang);
 }
 
 void Manager::OnLogMessage(LSPEvent& event)

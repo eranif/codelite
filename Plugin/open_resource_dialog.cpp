@@ -26,6 +26,7 @@
 
 #include "ColoursAndFontsManager.h"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
+#include "LSP/LSPManager.hpp"
 #include "bitmap_loader.h"
 #include "clWorkspaceManager.h"
 #include "codelite_events.h"
@@ -111,7 +112,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
         } else if (clFileSystemWorkspace::Get().IsOpen()) {
             const std::vector<wxFileName>& files = clFileSystemWorkspace::Get().GetFiles();
             for (const wxFileName& fn : files) {
-                m_files.insert({ fn.GetFullName(), fn.GetFullPath() });
+                m_files.insert({fn.GetFullName(), fn.GetFullPath()});
             }
         }
     } else if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
@@ -127,7 +128,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
                 // keep the file as-is do not "format" it by calling
                 // fn.GetFullPath() since we might be on Windows and we display
                 // Linux path style files
-                m_files.insert({ fn.GetFullName(), file });
+                m_files.insert({fn.GetFullName(), file});
             }
         }
     }
@@ -135,7 +136,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
     wxString lastStringTyped = clConfig::Get().Read("OpenResourceDialog/SearchString", wxString());
     // Set the initial selection
     // We use here 'SetValue' so an event will get fired and update the control
-    bool filter_results{ false };
+    bool filter_results{false};
     if (!initialSelection.IsEmpty()) {
         m_textCtrlResourceName->ChangeValue(initialSelection);
         CallAfter(&OpenResourceDialog::OnSelectAllText);
@@ -148,7 +149,7 @@ OpenResourceDialog::OpenResourceDialog(wxWindow* parent, IManager* manager, cons
 
     if (filter_results) {
         // Trigger list filtering
-        wxTimerEvent dummy_event{ *m_timer };
+        wxTimerEvent dummy_event{*m_timer};
         OnTimer(dummy_event);
     }
 
@@ -235,9 +236,7 @@ void OpenResourceDialog::DoPopulateList()
     }
 
     if (m_checkBoxShowSymbols->IsChecked() && (nLineNumber == -1)) {
-        clCodeCompletionEvent workspace_symbols_event{ wxEVT_CC_WORKSPACE_SYMBOLS };
-        workspace_symbols_event.SetString(name);
-        EventNotifier::Get()->ProcessEvent(workspace_symbols_event);
+        LSP::Manager::GetInstance().WorkspaceSymbols(name);
     }
 }
 

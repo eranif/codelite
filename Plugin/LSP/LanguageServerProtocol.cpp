@@ -58,7 +58,6 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerProtocol::OnWorkspaceClosed, this);
 
     // Code completion events.
-    EventNotifier::Get()->Bind(wxEVT_CC_WORKSPACE_SYMBOLS, &LanguageServerProtocol::OnWorkspaceSymbols, this);
     EventNotifier::Get()->Bind(wxEVT_CC_FIND_HEADER_FILE, &LanguageServerProtocol::OnFindHeaderFile, this);
 
     // Use sockets here
@@ -93,7 +92,6 @@ LanguageServerProtocol::~LanguageServerProtocol()
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerProtocol::OnEditorChanged, this);
 
-    EventNotifier::Get()->Unbind(wxEVT_CC_WORKSPACE_SYMBOLS, &LanguageServerProtocol::OnWorkspaceSymbols, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_FIND_HEADER_FILE, &LanguageServerProtocol::OnFindHeaderFile, this);
 
     DoClear();
@@ -906,16 +904,6 @@ void LanguageServerProtocol::OnFindHeaderFile(clCodeCompletionEvent& event)
     }
     event.Skip(false);
     FindDeclaration(editor, true);
-}
-
-void LanguageServerProtocol::OnWorkspaceSymbols(clCodeCompletionEvent& event)
-{
-    event.Skip();
-    if (!CanHandle(workspace_file_type)) {
-        return;
-    }
-    event.Skip(false);
-    SendWorkspaceSymbolsRequest(event.GetString());
 }
 
 void LanguageServerProtocol::FindReferences(IEditor* editor)

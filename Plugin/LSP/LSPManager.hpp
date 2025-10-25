@@ -55,6 +55,7 @@ public:
     LanguageServerProtocol::Ptr_t GetServerForEditor(IEditor* editor);
     LanguageServerProtocol::Ptr_t GetServerByName(const wxString& name);
     LanguageServerProtocol::Ptr_t GetServerForLanguage(const wxString& lang);
+    LanguageServerProtocol::Ptr_t GetServerForFileType(FileExtManager::FileType file_type);
     void ClearRestartCounters();
     static Manager& GetInstance();
     void Initialise();
@@ -167,7 +168,15 @@ public:
      * syntax‑highlighting information** to an editor (the LSP client).
      */
     void SemanticTokens(IEditor* editor);
-
+    /**
+     * @brief Sends a workspace symbols request to the appropriate language server.
+     *
+     * Retrieves the language server handling workspace files, verifies its existence,
+     * and forwards a workspace symbols request using the provided filter string.
+     *
+     * @param filter The filter string used to constrain the workspace symbols search.
+     */
+    void WorkspaceSymbols(const wxString& filter);
     /**
      * @brief Requests document symbols from the LSP server for the given editor.
      *

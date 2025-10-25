@@ -87,7 +87,7 @@ class WXDLLIMPEXP_SDK LanguageServerProtocol : public wxEvtHandler
     bool m_incrementalChangeSupported = false;
 
 public:
-    typedef wxSharedPtr<LanguageServerProtocol> Ptr_t;
+    using Ptr_t = std::shared_ptr<LanguageServerProtocol>;
     static FileExtManager::FileType workspace_file_type;
 
 protected:
@@ -103,7 +103,6 @@ protected:
     void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnEditorChanged(wxCommandEvent& event);
 
-    void OnWorkspaceSymbols(clCodeCompletionEvent& event);
     void OnFindHeaderFile(clCodeCompletionEvent& event);
 
     wxString GetEditorFilePath(IEditor* editor) const;
@@ -115,13 +114,11 @@ protected:
     wxString GetLogPrefix() const;
     void ProcessQueue();
     static wxString GetLanguageId(IEditor* editor);
-    static wxString GetLanguageId(FileExtManager::FileType file_type);
     void HandleResponseError(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
     void HandleResponse(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr);
     void HandleWorkspaceEdit(const JSONItem& changes);
     IEditor* GetEditor(const clCodeCompletionEvent& event) const;
 
-protected:
     /**
      * @brief notify about file open
      */
@@ -131,10 +128,6 @@ protected:
      * @brief report a file-close notification
      */
     void SendCloseRequest(const wxString& filename);
-    /**
-     * @brief query the LSP for a list of workspace symbols that matches a query string
-     */
-    void SendWorkspaceSymbolsRequest(const wxString& query_string);
 
     /**
      * @brief report a file-changed notification
@@ -161,6 +154,8 @@ protected:
 public:
     LanguageServerProtocol(const wxString& name, eNetworkType netType, wxEvtHandler* owner);
     virtual ~LanguageServerProtocol();
+
+    static wxString GetLanguageId(FileExtManager::FileType file_type);
 
     /**
      * @brief set a callback to be executed once the LSP is up and running
@@ -307,6 +302,10 @@ public:
      * @brief ask the server for semantic tokens
      */
     void SendSemanticTokensRequest(IEditor* editor);
+    /**
+     * @brief query the LSP for a list of workspace symbols that matches a query string
+     */
+    void SendWorkspaceSymbolsRequest(const wxString& query_string);
 
     // helpers
     bool IsCapabilitySupported(const wxString& name) const;

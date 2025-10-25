@@ -254,6 +254,20 @@ void LSPManager::CodeComplete(IEditor* editor, LSP::CompletionItem::eTriggerKind
     server->CodeComplete(editor, kind == LSP::CompletionItem::kTriggerUser);
 }
 
+void LSPManager::FindDeclaration(IEditor* editor)
+{
+    CHECK_PTR_RET(editor);
+    auto server = GetServerForEditor(editor);
+    if (server == nullptr || !server->IsDeclarationSupported()) {
+        clCodeCompletionEvent event_declaration(wxEVT_CC_FIND_SYMBOL_DECLARATION);
+        event_declaration.SetFileName(editor->GetRemotePathOrLocal());
+        EventNotifier::Get()->ProcessEvent(event_declaration);
+        return;
+    }
+
+    server->FindDeclaration(editor, false);
+}
+
 void LSPManager::FindSymbol(IEditor* editor)
 {
     CHECK_PTR_RET(editor);

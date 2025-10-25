@@ -93,6 +93,18 @@ public:
     void FindSymbol(IEditor* editor);
 
     /**
+     * @brief Finds the declaration of a symbol in the given editor.
+     *
+     * This function attempts to find the declaration of a symbol at the current
+     * cursor position in the specified editor. If no language server is available
+     * for the editor, it fires a code completion event to handle the request
+     * through alternative means.
+     *
+     * @param editor The editor instance to search for declarations in
+     */
+    void FindDeclaration(IEditor* editor);
+
+    /**
      * @brief Initiates code completion for the specified editor.
      *
      * Attempts to obtain an LSP server for the given editor and request code

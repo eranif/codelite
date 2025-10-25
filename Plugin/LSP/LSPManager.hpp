@@ -77,6 +77,22 @@ public:
     void ShowOutlineView(IEditor* editor);
 
     /**
+     * @brief Attempts to locate the definition of the symbol under the caret in the given editor.
+     *
+     * The function first validates the @a editor pointer, then retrieves the appropriate LSP
+     * server for the editor. If no server is available or the server does not support the
+     * Document Symbols capability, the lookup is delegated to the traditional code‑completion
+     * mechanism by posting a @c wxEVT_CC_FIND_SYMBOL event containing the word at the caret,
+     * its position, and the file name.
+     *
+     * If a suitable server is found, the request is forwarded to the server via
+     * @c server->FindDefinition(editor).
+     *
+     * @param editor Pointer to the editor instance where the symbol lookup should be performed.
+     */
+    void FindSymbol(IEditor* editor);
+
+    /**
      * @brief Requests document symbols from the LSP server for the given editor.
      *
      * This method validates the editor pointer, obtains the associated LSP server,

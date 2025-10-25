@@ -227,6 +227,24 @@ void LSPManager::ShowOutlineView(IEditor* editor)
     RequestSymbolsForEditor(editor, std::move(cb));
 }
 
+void LSPManager::FindSymbol(IEditor* editor)
+{
+    CHECK_PTR_RET(editor);
+
+    auto server = GetServerForEditor(editor);
+    if (server == nullptr || !server->IsDocumentSymbolsSupported()) {
+        // Let others handle this
+        clCodeCompletionEvent findEvent{wxEVT_CC_FIND_SYMBOL};
+        findEvent.SetWord(editor->GetWordAtCaret());
+        findEvent.SetPosition(editor->GetCurrentPosition());
+        findEvent.SetFileName(editor->GetRemotePathOrLocal());
+        EventNotifier::Get()->AddPendingEvent(findEvent);
+        return;
+    }
+
+    server->FindDefinition(editor);
+}
+
 bool LSPManager::RequestSymbolsForEditor(IEditor* editor, std::function<void(const LSPEvent&)> cb)
 {
     CHECK_PTR_RET_FALSE(editor);

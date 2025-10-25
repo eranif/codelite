@@ -104,14 +104,11 @@ protected:
     void OnEditorChanged(wxCommandEvent& event);
     void OnCodeComplete(clCodeCompletionEvent& event);
     void OnFindSymbolDecl(clCodeCompletionEvent& event);
-    void OnFindSymbolImpl(clCodeCompletionEvent& event);
-    void OnFindSymbol(clCodeCompletionEvent& event);
     void OnFunctionCallTip(clCodeCompletionEvent& event);
     void OnTypeInfoToolTip(clCodeCompletionEvent& event);
     void OnSemanticHighlights(clCodeCompletionEvent& event);
     void OnWorkspaceSymbols(clCodeCompletionEvent& event);
     void OnFindHeaderFile(clCodeCompletionEvent& event);
-    void OnQuickJump(clCodeCompletionEvent& event);
 
     wxString GetEditorFilePath(IEditor* editor) const;
     bool
@@ -258,10 +255,7 @@ public:
      * @brief find the definition of the item at the caret position
      */
     void FindDefinition(IEditor* editor);
-    /**
-     * @brief find the implementation of a symbol at the caret position
-     */
-    void FindImplementation(IEditor* editor);
+
     /**
      * @brief find the definition of the item at the caret position
      * @param for_add_missing_header the context of the `FindDeclaration` is `Add include header` request

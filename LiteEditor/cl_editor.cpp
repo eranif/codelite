@@ -29,6 +29,7 @@
 #include "ColoursAndFontsManager.h"
 #include "CompletionHelper.hpp"
 #include "Debugger/debuggersettings.h"
+#include "LSP/LSPManager.hpp"
 #include "StringUtils.h"
 #include "attribute_style.h"
 #include "bitmap_loader.h"
@@ -1987,13 +1988,7 @@ void clEditor::CodeComplete()
 void clEditor::GotoDefinition()
 {
     // Let the plugins process this first
-    wxString word = GetWordAtCaret();
-    clCodeCompletionEvent event(wxEVT_CC_FIND_SYMBOL, GetId());
-    event.SetWord(word);
-    event.SetPosition(GetCurrentPosition());
-    event.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
-    event.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
-    EventNotifier::Get()->ProcessEvent(event);
+    LSPManager::GetInstance().FindSymbol(this);
 }
 
 void clEditor::OnDwellStart(wxStyledTextEvent& event)
@@ -4309,9 +4304,7 @@ void clEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
         // bool altLink = (isMiddle && event.m_controlDown) || (!isMiddle && event.m_altDown);
 
         // Let the plugins handle it first
-        clCodeCompletionEvent jump_event(wxEVT_CC_JUMP_HYPER_LINK);
-        jump_event.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
-        EventNotifier::Get()->ProcessEvent(jump_event);
+        LSPManager::GetInstance().FindSymbol(this);
     }
 
     // clear the hyper link indicators

@@ -346,13 +346,10 @@ void LanguageServerPlugin::OnMenuFindReferences(wxCommandEvent& event)
 
 void LanguageServerPlugin::OnMenuFindSymbol(wxCommandEvent& event)
 {
+    wxUnusedVar(event);
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
-
-    clCodeCompletionEvent findEvent(wxEVT_CC_FIND_SYMBOL);
-    findEvent.SetPosition(editor->GetCurrentPosition());
-    findEvent.SetFileName(editor->GetFileName().GetFullPath());
-    EventNotifier::Get()->AddPendingEvent(findEvent);
+    LSPManager::GetInstance().FindSymbol(editor);
 }
 
 void LanguageServerPlugin::ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& lsps)

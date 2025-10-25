@@ -57,9 +57,7 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerProtocol::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerProtocol::OnWorkspaceClosed, this);
 
-    EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL, &LanguageServerProtocol::OnFindSymbol, this);
     EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
-    EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &LanguageServerProtocol::OnFindSymbolImpl, this);
     EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
     EventNotifier::Get()->Bind(
         wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &LanguageServerProtocol::OnFunctionCallTip, this);
@@ -67,7 +65,6 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     EventNotifier::Get()->Bind(wxEVT_CC_SEMANTICS_HIGHLIGHT, &LanguageServerProtocol::OnSemanticHighlights, this);
     EventNotifier::Get()->Bind(wxEVT_CC_WORKSPACE_SYMBOLS, &LanguageServerProtocol::OnWorkspaceSymbols, this);
     EventNotifier::Get()->Bind(wxEVT_CC_FIND_HEADER_FILE, &LanguageServerProtocol::OnFindHeaderFile, this);
-    EventNotifier::Get()->Bind(wxEVT_CC_JUMP_HYPER_LINK, &LanguageServerProtocol::OnQuickJump, this);
 
     // Use sockets here
     switch (netType) {
@@ -100,9 +97,7 @@ LanguageServerProtocol::~LanguageServerProtocol()
     EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerProtocol::OnEditorChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_CC_FIND_SYMBOL, &LanguageServerProtocol::OnFindSymbol, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
-    EventNotifier::Get()->Unbind(wxEVT_CC_FIND_SYMBOL_DEFINITION, &LanguageServerProtocol::OnFindSymbolImpl, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
     EventNotifier::Get()->Unbind(
         wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &LanguageServerProtocol::OnFunctionCallTip, this);
@@ -110,7 +105,6 @@ LanguageServerProtocol::~LanguageServerProtocol()
     EventNotifier::Get()->Unbind(wxEVT_CC_SEMANTICS_HIGHLIGHT, &LanguageServerProtocol::OnSemanticHighlights, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_WORKSPACE_SYMBOLS, &LanguageServerProtocol::OnWorkspaceSymbols, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_FIND_HEADER_FILE, &LanguageServerProtocol::OnFindHeaderFile, this);
-    EventNotifier::Get()->Unbind(wxEVT_CC_JUMP_HYPER_LINK, &LanguageServerProtocol::OnQuickJump, this);
 
     DoClear();
 }
@@ -343,32 +337,6 @@ void LanguageServerProtocol::OnFindSymbolDecl(clCodeCompletionEvent& event)
         // this event is ours to handle
         event.Skip(false);
         FindDeclaration(editor, false);
-    }
-}
-
-void LanguageServerProtocol::OnFindSymbolImpl(clCodeCompletionEvent& event)
-{
-    event.Skip();
-    IEditor* editor = GetEditor(event);
-    CHECK_PTR_RET(editor);
-
-    if (CanHandle(editor)) {
-        // this event is ours to handle
-        event.Skip(false);
-        FindImplementation(editor);
-    }
-}
-
-void LanguageServerProtocol::OnFindSymbol(clCodeCompletionEvent& event)
-{
-    event.Skip();
-    IEditor* editor = GetEditor(event);
-    CHECK_PTR_RET(editor);
-
-    if (CanHandle(editor)) {
-        // this event is ours to handle
-        event.Skip(false);
-        FindDefinition(editor);
     }
 }
 
@@ -842,8 +810,6 @@ void LanguageServerProtocol::OnEditorChanged(wxCommandEvent& event)
     }
 }
 
-void LanguageServerProtocol::FindImplementation(IEditor* editor) { FindDefinition(editor); }
-
 void LanguageServerProtocol::DocumentSymbols(IEditor* editor,
                                              size_t context_flags,
                                              std::function<void(const LSPEvent&)> cb)
@@ -1191,8 +1157,6 @@ IEditor* LanguageServerProtocol::GetEditor(const clCodeCompletionEvent& event) c
     }
     return nullptr;
 }
-
-void LanguageServerProtocol::OnQuickJump(clCodeCompletionEvent& event) { OnFindSymbol(event); }
 
 bool LanguageServerProtocol::IsLanguageSupported(const wxString& lang) const { return m_languages.count(lang) != 0; }
 

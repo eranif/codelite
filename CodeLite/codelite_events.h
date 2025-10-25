@@ -949,12 +949,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SOURCE_CONTROL_PULLED, clSourceCo
 // LSP management events
 //------------------------------------------------------------------------------------------
 
-// stop all LSPs
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_STOP_ALL, clLanguageServerEvent);
-// start all LSPs
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_START_ALL, clLanguageServerEvent);
-// restart all LSPs
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_RESTART_ALL, clLanguageServerEvent);
 // stop a single LSP identified by event.GetLspName()
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_STOP, clLanguageServerEvent);
 // start a single LSP identified by event.GetLspName()
@@ -965,10 +959,6 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_RESTART, clLanguageServerEven
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DELETE, clLanguageServerEvent);
 // configure new LSP
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_CONFIGURE, clLanguageServerEvent);
-// Enable server
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_ENABLE_SERVER, clLanguageServerEvent);
-// Disable server
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DISABLE_SERVER, clLanguageServerEvent);
 // open LSPs configuration dialog. If event.GetLspName() is not empty, it will also select its page
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_OPEN_SETTINGS_DLG, clLanguageServerEvent);
 

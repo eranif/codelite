@@ -2,8 +2,9 @@
 #define LSPTYPESCRIPTDETECTOR_HPP
 
 #include "LSPDetector.hpp" // Base class: LSPDetector
+#include "codelite_exports.h"
 
-class LSPTypeScriptDetector : public LSPDetector
+class WXDLLIMPEXP_SDK LSPTypeScriptDetector : public LSPDetector
 {
 public:
     LSPTypeScriptDetector();

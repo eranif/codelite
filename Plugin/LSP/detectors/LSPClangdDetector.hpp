@@ -2,10 +2,11 @@
 #define LSPCLANGDDETECTOR_HPP
 
 #include "LSPDetector.hpp"
+#include "codelite_exports.h"
 
 #include <wx/filename.h>
 
-class LSPClangdDetector : public LSPDetector
+class WXDLLIMPEXP_SDK LSPClangdDetector : public LSPDetector
 {
 protected:
     virtual bool DoLocate();

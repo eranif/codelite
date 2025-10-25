@@ -1,5 +1,4 @@
-#ifndef LANGUAGESERVERCLUSTER_H
-#define LANGUAGESERVERCLUSTER_H
+#pragma once
 
 #include "CodeLiteRemoteHelper.hpp"
 #include "LSP/LSPEvent.h"
@@ -8,34 +7,21 @@
 #include "LanguageServerEntry.h"
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
+#include "codelite_exports.h"
 #include "database/entry.h"
-#include "wxStringHash.h"
 
 #include <unordered_set>
 #include <vector>
+#include <wx/busycursor.h>
 #include <wx/event.h>
 #include <wx/sharedptr.h>
 
 class LSPOutlineViewDlg;
-class LanguageServerPlugin;
-class LSPManager : public wxEvtHandler
+
+class WXDLLIMPEXP_SDK LSPManager : public wxEvtHandler
 {
-    struct CrashInfo {
-        size_t times = 0;
-        time_t last_crash = 0;
-    };
-
-    std::unordered_map<wxString, LanguageServerProtocol::Ptr_t> m_servers;
-    std::unordered_map<wxString, CrashInfo> m_restartCounters;
-    std::unordered_map<wxString, std::vector<LSP::SymbolInformation>> m_symbols_to_file_cache;
-    LanguageServerPlugin* m_plugin = nullptr;
-    LSPOutlineViewDlg* m_quick_outline_dlg = nullptr;
-    std::unique_ptr<CodeLiteRemoteHelper> m_remoteHelper;
-
 public:
-    typedef wxSharedPtr<LSPManager> Ptr_t;
-
-public:
+    using Ptr_t = wxSharedPtr<LSPManager>;
     void StartServer(const LanguageServerEntry& entry);
     void StartServer(const wxString& entry);
     void RestartServer(const wxString& name);
@@ -45,6 +31,14 @@ public:
 
     void StopAll(const std::unordered_set<wxString>& languages = {});
     void StartAll(const std::unordered_set<wxString>& languages = {});
+
+    inline void RestartAll(const std::unordered_set<wxString>& languages = {})
+    {
+        wxBusyCursor bc{};
+        StopAll(languages);
+        StartAll(languages);
+    }
+
     void ClearAllDiagnostics();
     void SetWorkspaceType(FileExtManager::FileType type);
 
@@ -52,6 +46,16 @@ public:
      * @brief convert LSP::SignatureHelp class to TagEntryPtrVector_t
      */
     void LSPSignatureHelpToTagEntries(TagEntryPtrVector_t& tags, const LSP::SignatureHelp& sighelp);
+    /**
+     * @brief restart language servers associated with a given languages
+     */
+    void Reload(const std::unordered_set<wxString>& languages = {});
+    LanguageServerProtocol::Ptr_t GetServerForEditor(IEditor* editor);
+    LanguageServerProtocol::Ptr_t GetServerByName(const wxString& name);
+    LanguageServerProtocol::Ptr_t GetServerForLanguage(const wxString& lang);
+    void ClearRestartCounters();
+    static LSPManager& GetInstance();
+    void Initialise();
 
 protected:
     void OnSignatureHelp(LSPEvent& event);
@@ -82,6 +86,7 @@ protected:
     void OnMarginClicked(clEditorEvent& event);
     void OnCodeActionAvailable(LSPEvent& event);
     void OnApplyEdits(LSPEvent& event);
+    void OnGoinDown(clCommandEvent& event);
 
     wxString GetEditorFilePath(IEditor* editor) const;
     /**
@@ -93,17 +98,17 @@ protected:
     void DiscoverWorkspaceType();
     void UpdateNavigationBar();
 
-public:
-    LSPManager(LanguageServerPlugin* plugin);
+    LSPManager();
     virtual ~LSPManager();
-    /**
-     * @brief restart language servers associated with a given languages
-     */
-    void Reload(const std::unordered_set<wxString>& languages = {});
-    LanguageServerProtocol::Ptr_t GetServerForEditor(IEditor* editor);
-    LanguageServerProtocol::Ptr_t GetServerByName(const wxString& name);
-    LanguageServerProtocol::Ptr_t GetServerForLanguage(const wxString& lang);
-    void ClearRestartCounters();
-};
 
-#endif // LANGUAGESERVERCLUSTER_H
+    struct CrashInfo {
+        size_t times{0};
+        time_t last_crash{0};
+    };
+
+    std::unordered_map<wxString, LanguageServerProtocol::Ptr_t> m_servers;
+    std::unordered_map<wxString, CrashInfo> m_restartCounters;
+    std::unordered_map<wxString, std::vector<LSP::SymbolInformation>> m_symbols_to_file_cache;
+    LSPOutlineViewDlg* m_quick_outline_dlg{nullptr};
+    std::unique_ptr<CodeLiteRemoteHelper> m_remoteHelper;
+};

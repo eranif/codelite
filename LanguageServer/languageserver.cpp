@@ -3,9 +3,9 @@
 #include "ColoursAndFontsManager.h"
 #include "CustomControls/TextGenerationPreviewFrame.hpp"
 #include "Keyboard/clKeyboardManager.h"
-#include "LSPDetectorManager.hpp"
-#include "LanguageServerConfig.h"
-#include "LanguageServerSettingsDlg.h"
+#include "LSP/LSPDetectorManager.hpp"
+#include "LSP/LanguageServerConfig.h"
+#include "LSP/LanguageServerSettingsDlg.h"
 #include "StringUtils.h"
 #include "ai/LLMManager.hpp"
 #include "clEditorBar.h"
@@ -46,10 +46,9 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
 
     // Load the configuration
     LanguageServerConfig::Get().Load();
-    m_servers = std::make_unique<LSPManager>(this);
 
     // add log view
-    m_logView = new LanguageServerLogView(m_mgr->BookGet(PaneId::BOTTOM_BAR), m_servers.get());
+    m_logView = new LanguageServerLogView(m_mgr->BookGet(PaneId::BOTTOM_BAR));
     m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_logView, _("Language Server"));
     m_tabToggler.reset(new clTabTogglerHelper(_("Language Server"), m_logView, "", NULL));
 
@@ -63,17 +62,12 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     clGetManager()->GetInfoBar()->Bind(
         wxEVT_BUTTON, &LanguageServerPlugin::OnFixLSPPaths, this, XRCID("lsp-fix-paths"));
 
-    EventNotifier::Get()->Bind(wxEVT_LSP_STOP_ALL, &LanguageServerPlugin::OnLSPStopAll, this);
-    EventNotifier::Get()->Bind(wxEVT_LSP_START_ALL, &LanguageServerPlugin::OnLSPStartAll, this);
-    EventNotifier::Get()->Bind(wxEVT_LSP_RESTART_ALL, &LanguageServerPlugin::OnLSPRestartAll, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_STOP, &LanguageServerPlugin::OnLSPStopOne, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_START, &LanguageServerPlugin::OnLSPStartOne, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_RESTART, &LanguageServerPlugin::OnLSPRestartOne, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_CONFIGURE, &LanguageServerPlugin::OnLSPConfigure, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_DELETE, &LanguageServerPlugin::OnLSPDelete, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_OPEN_SETTINGS_DLG, &LanguageServerPlugin::OnLSPShowSettingsDlg, this);
-    EventNotifier::Get()->Bind(wxEVT_LSP_ENABLE_SERVER, &LanguageServerPlugin::OnLSPEnableServer, this);
-    EventNotifier::Get()->Bind(wxEVT_LSP_DISABLE_SERVER, &LanguageServerPlugin::OnLSPDisableServer, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerPlugin::OnWorkspaceClosed, this);
 
     clKeyboardManager::Get()->AddAccelerator(
@@ -130,17 +124,12 @@ void LanguageServerPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &LanguageServerPlugin::OnInitDone, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &LanguageServerPlugin::OnEditorContextMenu, this);
 
-    EventNotifier::Get()->Unbind(wxEVT_LSP_STOP_ALL, &LanguageServerPlugin::OnLSPStopAll, this);
-    EventNotifier::Get()->Unbind(wxEVT_LSP_START_ALL, &LanguageServerPlugin::OnLSPStartAll, this);
-    EventNotifier::Get()->Unbind(wxEVT_LSP_RESTART_ALL, &LanguageServerPlugin::OnLSPRestartAll, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_STOP, &LanguageServerPlugin::OnLSPStopOne, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_START, &LanguageServerPlugin::OnLSPStartOne, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_RESTART, &LanguageServerPlugin::OnLSPRestartOne, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_CONFIGURE, &LanguageServerPlugin::OnLSPConfigure, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_DELETE, &LanguageServerPlugin::OnLSPDelete, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_OPEN_SETTINGS_DLG, &LanguageServerPlugin::OnLSPShowSettingsDlg, this);
-    EventNotifier::Get()->Unbind(wxEVT_LSP_ENABLE_SERVER, &LanguageServerPlugin::OnLSPEnableServer, this);
-    EventNotifier::Get()->Unbind(wxEVT_LSP_DISABLE_SERVER, &LanguageServerPlugin::OnLSPDisableServer, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &LanguageServerPlugin::OnWorkspaceClosed, this);
 
     LanguageServerConfig::Get().Save();
@@ -150,7 +139,6 @@ void LanguageServerPlugin::UnPlug()
         m_logView->Destroy();
     }
     m_logView = nullptr;
-    m_servers.reset();
 }
 
 void LanguageServerPlugin::OnSettings(wxCommandEvent& e)
@@ -159,21 +147,15 @@ void LanguageServerPlugin::OnSettings(wxCommandEvent& e)
     if (dlg.ShowModal() == wxID_OK) {
         // restart all language servers
         dlg.Save();
-        if (m_servers) {
-            // Lets assume that we fixed something in the settings
-            // and clear all the restart counters
-            m_servers->ClearRestartCounters();
-            m_servers->Reload();
-        }
+        LSPManager::GetInstance().ClearRestartCounters();
+        LSPManager::GetInstance().Reload();
     }
 }
 
 void LanguageServerPlugin::OnRestartLSP(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if (m_servers) {
-        m_servers->Reload();
-    }
+    LSPManager::GetInstance().Reload();
 }
 
 void LanguageServerPlugin::OnInitDone(wxCommandEvent& event)
@@ -215,12 +197,11 @@ void LanguageServerPlugin::OnInitDone(wxCommandEvent& event)
 void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
-    CHECK_COND_RET(m_servers);
 
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    LanguageServerProtocol::Ptr_t lsp = m_servers->GetServerForEditor(editor);
+    LanguageServerProtocol::Ptr_t lsp = LSPManager::GetInstance().GetServerForEditor(editor);
     CHECK_PTR_RET(lsp);
 
     bool add_find_symbol = !lsp->CanHandle(FileExtManager::TypePhp);
@@ -333,7 +314,7 @@ void LanguageServerPlugin::OnMenuRenameSymbol(wxCommandEvent& event)
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    LanguageServerProtocol::Ptr_t lsp = m_servers->GetServerForEditor(editor);
+    LanguageServerProtocol::Ptr_t lsp = LSPManager::GetInstance().GetServerForEditor(editor);
     CHECK_PTR_RET(lsp);
 
     lsp->RenameSymbol(editor);
@@ -348,7 +329,7 @@ void LanguageServerPlugin::OnMenuFindReferences(wxCommandEvent& event)
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    LanguageServerProtocol::Ptr_t lsp = m_servers->GetServerForEditor(editor);
+    LanguageServerProtocol::Ptr_t lsp = LSPManager::GetInstance().GetServerForEditor(editor);
     CHECK_PTR_RET(lsp);
 
     lsp->FindReferences(editor);
@@ -402,55 +383,28 @@ void LanguageServerPlugin::ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& 
         }
         config.SetEnabled(true);
         config.Save();
-        if (m_servers) {
-            m_servers->Reload();
-        }
+        LSPManager::GetInstance().Reload();
     }
-}
-
-void LanguageServerPlugin::OnLSPStopAll(clLanguageServerEvent& event)
-{
-    CHECK_PTR_RET(m_servers);
-    m_servers->StopAll();
-}
-
-void LanguageServerPlugin::OnLSPStartAll(clLanguageServerEvent& event)
-{
-    CHECK_PTR_RET(m_servers);
-    wxBusyCursor bc;
-    m_servers->StartAll();
-}
-
-void LanguageServerPlugin::OnLSPRestartAll(clLanguageServerEvent& event)
-{
-    wxBusyCursor bc;
-    LSP_DEBUG() << "LSP: restarting all LSPs" << endl;
-    CHECK_PTR_RET(m_servers);
-    m_servers->StopAll();
-    m_servers->StartAll();
-    LSP_DEBUG() << "LSP: restarting all LSPs...done" << endl;
 }
 
 void LanguageServerPlugin::OnLSPStopOne(clLanguageServerEvent& event)
 {
-    CHECK_PTR_RET(m_servers);
-    LanguageServerProtocol::Ptr_t lsp = m_servers->GetServerByName(event.GetLspName());
+    LanguageServerProtocol::Ptr_t lsp = LSPManager::GetInstance().GetServerByName(event.GetLspName());
     CHECK_PTR_RET(lsp);
     lsp->Stop();
 }
 
 void LanguageServerPlugin::OnLSPStartOne(clLanguageServerEvent& event)
 {
-    CHECK_PTR_RET(m_servers);
-    auto lsp = m_servers->GetServerByName(event.GetLspName());
+    auto lsp = LSPManager::GetInstance().GetServerByName(event.GetLspName());
     CHECK_PTR_RET(lsp);
     lsp->Start();
 }
 
 void LanguageServerPlugin::OnLSPRestartOne(clLanguageServerEvent& event)
 {
-    CHECK_PTR_RET(m_servers);
-    m_servers->RestartServer(event.GetLspName());
+
+    LSPManager::GetInstance().RestartServer(event.GetLspName());
 }
 
 void LanguageServerPlugin::OnLSPConfigure(clLanguageServerEvent& event)
@@ -478,9 +432,9 @@ void LanguageServerPlugin::OnLSPConfigure(clLanguageServerEvent& event)
 
 void LanguageServerPlugin::OnLSPDelete(clLanguageServerEvent& event)
 {
-    CHECK_PTR_RET(m_servers);
+
     LSP_DEBUG() << "Deleting server:" << event.GetLspName() << endl;
-    m_servers->DeleteServer(event.GetLspName());
+    LSPManager::GetInstance().DeleteServer(event.GetLspName());
     LSP_DEBUG() << "Success" << endl;
 }
 
@@ -491,24 +445,6 @@ void LanguageServerPlugin::OnLSPShowSettingsDlg(clLanguageServerEvent& event)
 }
 
 wxString LanguageServerPlugin::GetEditorFilePath(IEditor* editor) const { return editor->GetRemotePathOrLocal(); }
-
-void LanguageServerPlugin::OnLSPEnableServer(clLanguageServerEvent& event)
-{
-    auto& lsp_config = LanguageServerConfig::Get().GetServer(event.GetLspName());
-    if (lsp_config.IsNull()) {
-        return;
-    }
-    lsp_config.SetEnabled(true);
-}
-
-void LanguageServerPlugin::OnLSPDisableServer(clLanguageServerEvent& event)
-{
-    auto& lsp_config = LanguageServerConfig::Get().GetServer(event.GetLspName());
-    if (lsp_config.IsNull()) {
-        return;
-    }
-    lsp_config.SetEnabled(false);
-}
 
 void LanguageServerPlugin::LogMessage(const wxString& server_name, const wxString& message, int log_leve)
 {
@@ -584,7 +520,7 @@ void LanguageServerPlugin::OnFixLSPPaths(wxCommandEvent& event)
 
         if (!fixed.empty()) {
             LanguageServerConfig::Get().Save();
-            m_servers->Reload();
+            LSPManager::GetInstance().Reload();
         }
     }
 }

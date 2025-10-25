@@ -1,8 +1,9 @@
 #ifndef LANGUAGESERVERSETTINGSDLG_H
 #define LANGUAGESERVERSETTINGSDLG_H
 #include "UI.h"
+#include "codelite_exports.h"
 
-class LanguageServerSettingsDlg : public LanguageServerSettingsDlgBase
+class WXDLLIMPEXP_SDK LanguageServerSettingsDlg : public LanguageServerSettingsDlgBase
 {
     bool m_scanOnStartup = false;
 

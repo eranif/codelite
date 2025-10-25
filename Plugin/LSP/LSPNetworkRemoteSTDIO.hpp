@@ -5,8 +5,9 @@
 
 #include "LSP/LSPNetwork.h"
 #include "ssh/clSSHInteractiveChannel.hpp"
+#include "codelite_exports.h"
 
-class LSPNetworkRemoteSTDIO : public LSPNetwork
+class WXDLLIMPEXP_SDK LSPNetworkRemoteSTDIO : public LSPNetwork
 {
     clSSHInteractiveChannel::Ptr_t m_process;
     bool m_eventsBound = false;

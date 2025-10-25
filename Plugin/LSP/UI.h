@@ -4,8 +4,8 @@
 // Do not modify this file by hand!
 //////////////////////////////////////////////////////////////////////
 
-#ifndef _CODELITE_LANGUAGESERVER_UI_BASE_CLASSES_H
-#define _CODELITE_LANGUAGESERVER_UI_BASE_CLASSES_H
+#ifndef _PLUGIN_LSP_UI_BASE_CLASSES_H
+#define _PLUGIN_LSP_UI_BASE_CLASSES_H
 
 // clang-format off
 #include <wx/settings.h>
@@ -47,9 +47,10 @@
 #define WXC_FROM_DIP(x) x
 #endif
 
+#include "codelite_exports.h"
 // clang-format on
 
-class LanguageServerSettingsDlgBase : public wxDialog
+class WXDLLIMPEXP_SDK LanguageServerSettingsDlgBase : public wxDialog
 {
 protected:
     wxCheckBox* m_checkBoxEnable;
@@ -77,14 +78,16 @@ public:
     wxButton* GetButtonScan() { return m_buttonScan; }
     wxButton* GetButtonNew() { return m_buttonNew; }
     wxButton* GetButtonDelete() { return m_buttonDelete; }
-    LanguageServerSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+    LanguageServerSettingsDlgBase(wxWindow* parent,
+                                  wxWindowID id = wxID_ANY,
                                   const wxString& title = _("Language Server Settings"),
-                                  const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                                  const wxPoint& pos = wxDefaultPosition,
+                                  const wxSize& size = wxSize(-1, -1),
                                   long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~LanguageServerSettingsDlgBase();
 };
 
-class LanguageServerPageBase : public wxPanel
+class WXDLLIMPEXP_SDK LanguageServerPageBase : public wxPanel
 {
 protected:
     wxCheckBox* m_checkBoxEnabled;
@@ -130,12 +133,15 @@ public:
     wxStaticText* GetStaticText117() { return m_staticText117; }
     wxComboBox* GetComboBoxConnection() { return m_comboBoxConnection; }
     wxCheckBox* GetCheckBoxDiagnostics() { return m_checkBoxDiagnostics; }
-    LanguageServerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                           const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL);
+    LanguageServerPageBase(wxWindow* parent,
+                           wxWindowID id = wxID_ANY,
+                           const wxPoint& pos = wxDefaultPosition,
+                           const wxSize& size = wxSize(-1, -1),
+                           long style = wxTAB_TRAVERSAL);
     virtual ~LanguageServerPageBase();
 };
 
-class NewLanguageServerDlgBase : public wxDialog
+class WXDLLIMPEXP_SDK NewLanguageServerDlgBase : public wxDialog
 {
 protected:
     wxStdDialogButtonSizer* m_stdBtnSizer37;
@@ -146,14 +152,16 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    NewLanguageServerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
-                             const wxString& title = _("New Language Server"), const wxPoint& pos = wxDefaultPosition,
+    NewLanguageServerDlgBase(wxWindow* parent,
+                             wxWindowID id = wxID_ANY,
+                             const wxString& title = _("New Language Server"),
+                             const wxPoint& pos = wxDefaultPosition,
                              const wxSize& size = wxSize(-1, -1),
                              long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~NewLanguageServerDlgBase();
 };
 
-class LSPOutlineViewDlgBase : public wxDialog
+class WXDLLIMPEXP_SDK LSPOutlineViewDlgBase : public wxDialog
 {
 protected:
     wxPanel* m_panel155;
@@ -171,13 +179,16 @@ public:
     clThemedTextCtrl* GetTextCtrlFilter() { return m_textCtrlFilter; }
     clTerminalViewCtrl* GetDvTreeCtrll() { return m_dvTreeCtrll; }
     wxPanel* GetPanel155() { return m_panel155; }
-    LSPOutlineViewDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Outline View"),
-                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500, 300),
+    LSPOutlineViewDlgBase(wxWindow* parent,
+                          wxWindowID id = wxID_ANY,
+                          const wxString& title = _("Outline View"),
+                          const wxPoint& pos = wxDefaultPosition,
+                          const wxSize& size = wxSize(500, 300),
                           long style = wxDEFAULT_DIALOG_STYLE | wxSTAY_ON_TOP | wxRESIZE_BORDER);
     virtual ~LSPOutlineViewDlgBase();
 };
 
-class LanguageServerLogViewBase : public wxPanel
+class WXDLLIMPEXP_SDK LanguageServerLogViewBase : public wxPanel
 {
 protected:
     Notebook* m_notebook207;
@@ -189,8 +200,11 @@ public:
     clTerminalViewCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxPanel* GetPanel208() { return m_panel208; }
     Notebook* GetNotebook207() { return m_notebook207; }
-    LanguageServerLogViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                              const wxSize& size = wxSize(500, 300), long style = wxTAB_TRAVERSAL);
+    LanguageServerLogViewBase(wxWindow* parent,
+                              wxWindowID id = wxID_ANY,
+                              const wxPoint& pos = wxDefaultPosition,
+                              const wxSize& size = wxSize(500, 300),
+                              long style = wxTAB_TRAVERSAL);
     virtual ~LanguageServerLogViewBase();
 };
 

@@ -2,8 +2,9 @@
 #define LSPRUSTANALYZERDETECTOR_HPP
 
 #include "LSPDetector.hpp"
+#include "codelite_exports.h"
 
-class LSPRustAnalyzerDetector : public LSPDetector
+class WXDLLIMPEXP_SDK LSPRustAnalyzerDetector : public LSPDetector
 {
 protected:
     bool DoLocate();

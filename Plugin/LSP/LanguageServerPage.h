@@ -3,8 +3,9 @@
 
 #include "LanguageServerEntry.h"
 #include "UI.h"
+#include "codelite_exports.h"
 
-class LanguageServerPage : public LanguageServerPageBase
+class WXDLLIMPEXP_SDK LanguageServerPage : public LanguageServerPageBase
 {
 public:
     LanguageServerPage(wxWindow* parent, const LanguageServerEntry& data);

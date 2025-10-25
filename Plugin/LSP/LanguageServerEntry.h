@@ -1,16 +1,13 @@
 #ifndef LANGUAGESERVERENTRY_H
 #define LANGUAGESERVERENTRY_H
 
-#include "AsyncProcess/asyncprocess.h"
 #include "LSP/LSPNetwork.h"
-#include "cl_config.h"
-#include "wxStringHash.h"
+#include "codelite_exports.h"
 
 #include <map>
-#include <vector>
 #include <wx/string.h>
 
-class LanguageServerEntry
+class WXDLLIMPEXP_SDK LanguageServerEntry
 {
     bool m_enabled = true;
     wxString m_name;

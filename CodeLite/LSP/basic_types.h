@@ -96,7 +96,7 @@ public:
     bool operator!=(const Position& rhs) const { return !(*this == rhs); }
     bool operator<(const Position& rhs) const
     {
-        if(this->m_line == rhs.m_line) {
+        if (this->m_line == rhs.m_line) {
             return this->m_character < rhs.m_character;
         } else {
             return this->m_line < rhs.m_line;
@@ -672,5 +672,5 @@ WXDLLIMPEXP_CL clModuleLogger& GetLogHandle();
 /// Parse the text edit from a response "result" field
 WXDLLIMPEXP_CL std::unordered_map<wxString, std::vector<LSP::TextEdit>> ParseWorkspaceEdit(const JSONItem& result);
 
-};     // namespace LSP
+}; // namespace LSP
 #endif // JSONRPC_BASICTYPES_H

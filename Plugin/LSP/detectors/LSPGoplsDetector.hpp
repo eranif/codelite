@@ -1,10 +1,11 @@
 #pragma once
 
 #include "LSPDetector.hpp"
+#include "codelite_exports.h"
 
 #include <wx/filename.h>
 
-class LSPGoplsDetector : public LSPDetector
+class WXDLLIMPEXP_SDK LSPGoplsDetector : public LSPDetector
 {
 protected:
     virtual bool DoLocate();

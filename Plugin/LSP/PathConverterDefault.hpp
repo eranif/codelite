@@ -2,8 +2,9 @@
 #define PATHCONVERTERDEFAULT_HPP
 
 #include "LSP/IPathConverter.hpp"
+#include "codelite_exports.h"
 
-class PathConverterDefault : public IPathConverter
+class WXDLLIMPEXP_SDK PathConverterDefault : public IPathConverter
 {
 public:
     virtual LSP::FilePath ConvertFrom(const wxString& path) const;

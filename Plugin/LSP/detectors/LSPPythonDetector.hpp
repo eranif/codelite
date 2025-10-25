@@ -2,8 +2,9 @@
 #define LSPPYTHONDETECTOR_HPP
 
 #include "LSPDetector.hpp" // Base class: LSPDetector
+#include "codelite_exports.h"
 
-class LSPPythonDetector : public LSPDetector
+class WXDLLIMPEXP_SDK LSPPythonDetector : public LSPDetector
 {
 public:
     LSPPythonDetector();

@@ -1,13 +1,11 @@
 #include "LanguageServerLogView.h"
 
-#include "JSON.h"
-#include "LanguageServerCluster.h"
+#include "codelite_events.h"
 #include "event_notifier.h"
-#include "globals.h"
-#include "imanager.h"
-#include "macros.h"
 
-LanguageServerLogView::LanguageServerLogView(wxWindow* parent, LSPManager* cluster)
+#include <wx/menu.h>
+
+LanguageServerLogView::LanguageServerLogView(wxWindow* parent)
     : LanguageServerLogViewBase(parent)
 {
     m_dvListCtrl->Bind(wxEVT_CONTEXT_MENU, [this](wxContextMenuEvent& event) {

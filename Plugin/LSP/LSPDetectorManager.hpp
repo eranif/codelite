@@ -1,11 +1,12 @@
 #ifndef LSPDETECTORMANAGER_HPP
 #define LSPDETECTORMANAGER_HPP
 
+#include "codelite_exports.h"
 #include "detectors/LSPDetector.hpp"
 
 #include <vector>
 
-class LSPDetectorManager
+class WXDLLIMPEXP_SDK LSPDetectorManager
 {
     std::vector<LSPDetector::Ptr_t> m_detectors;
 

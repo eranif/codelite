@@ -3,12 +3,13 @@
 
 #include "LSP/basic_types.h"
 #include "UI.h"
+#include "codelite_exports.h"
 
 #include <vector>
 
 using namespace LSP;
 
-class LSPOutlineViewDlg : public LSPOutlineViewDlgBase
+class WXDLLIMPEXP_SDK LSPOutlineViewDlg : public LSPOutlineViewDlgBase
 {
     std::vector<SymbolInformation> m_symbols;
 

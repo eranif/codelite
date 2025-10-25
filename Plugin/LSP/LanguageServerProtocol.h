@@ -115,8 +115,8 @@ protected:
     void OnQuickJump(clCodeCompletionEvent& event);
 
     wxString GetEditorFilePath(IEditor* editor) const;
-    bool CheckCapability(const LSP::ResponseMessage& res, const wxString& capabilityName,
-                         const wxString& lspRequestName);
+    bool
+    CheckCapability(const LSP::ResponseMessage& res, const wxString& capabilityName, const wxString& lspRequestName);
 
 protected:
     void DoClear();
@@ -225,8 +225,11 @@ public:
      * @param rootFolder the LSP root folder (to be passed during the 'initialize' request)
      * @param languages supported languages by this LSP
      */
-    bool Start(const LSPStartupInfo& startupInfo, const clEnvList_t& env, const wxString& initOptions,
-               const wxString& rootFolder, const wxArrayString& languages);
+    bool Start(const LSPStartupInfo& startupInfo,
+               const clEnvList_t& env,
+               const wxString& initOptions,
+               const wxString& rootFolder,
+               const wxArrayString& languages);
 
     /**
      * @brief same as above, but reuse the current parameters
@@ -242,6 +245,15 @@ public:
      * @brief stop the language server
      */
     void Stop();
+
+    /**
+     * @brief Restarts the component by stopping it and then starting it again.
+     */
+    inline void Restart()
+    {
+        Stop();
+        Start();
+    }
 
     /**
      * @brief find the definition of the item at the caret position

@@ -2,11 +2,12 @@
 #define LSPJdtlsDetector_HPP
 
 #include "LSPDetector.hpp"
+#include "codelite_exports.h"
 
 #include <wx/filename.h>
 
 /// Java jdtls
-class LSPJdtlsDetector : public LSPDetector
+class WXDLLIMPEXP_SDK LSPJdtlsDetector : public LSPDetector
 {
 protected:
     virtual bool DoLocate();

@@ -2,8 +2,11 @@
 #define LSPCMAKEDETECTOR_HPP
 
 #include "LSPDetector.hpp"
+#include "codelite_exports.h"
 
-class LSPCMakeDetector : public LSPDetector
+#include <wx/filename.h>
+
+class WXDLLIMPEXP_SDK LSPCMakeDetector : public LSPDetector
 {
     void ConfigureFile(const wxFileName& cmakelsp);
 

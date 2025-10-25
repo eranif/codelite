@@ -1,9 +1,9 @@
-#ifndef DIAGNOSTICS_DATA_HPP
-#define DIAGNOSTICS_DATA_HPP
+#pragma once
 
 #include "LSP/basic_types.h"
+#include "codelite_exports.h"
 
-struct DiagnosticsData : public wxClientData {
+struct WXDLLIMPEXP_SDK DiagnosticsData : public wxClientData {
     LSP::Diagnostic diagnostic;
     virtual ~DiagnosticsData() = default;
     DiagnosticsData(const DiagnosticsData&) = default;
@@ -12,4 +12,3 @@ struct DiagnosticsData : public wxClientData {
     DiagnosticsData& operator=(const DiagnosticsData&) = default;
     DiagnosticsData& operator=(DiagnosticsData&&) = delete;
 };
-#endif // DIAGNOSTICS_DATA_HPP

@@ -2,11 +2,11 @@
 	"metadata":	{
 		"m_generatedFilesDir":	".",
 		"m_objCounter":	213,
-		"m_includeFiles":	[],
+		"m_includeFiles":	["codelite_exports.h"],
 		"m_bitmapFunction":	"wxCrafterCbL3wsInitBitmapResources",
 		"m_bitmapsFile":	"UI_languageserver_bitmaps.cpp",
 		"m_GenerateCodeTypes":	1,
-		"m_outputFileName":	"",
+		"m_outputFileName":	"UI",
 		"m_firstWindowId":	10000,
 		"m_useEnum":	true,
 		"m_useUnderscoreMacro":	true,
@@ -101,7 +101,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
-					"m_value":	""
+					"m_value":	"WXDLLIMPEXP_SDK"
 				}, {
 					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File (16x16)  :",
@@ -988,7 +988,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
-					"m_value":	""
+					"m_value":	"WXDLLIMPEXP_SDK"
 				}],
 			"m_events":	[],
 			"m_children":	[{
@@ -2907,7 +2907,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
-					"m_value":	""
+					"m_value":	"WXDLLIMPEXP_SDK"
 				}, {
 					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File (16x16)  :",
@@ -3180,7 +3180,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
-					"m_value":	""
+					"m_value":	"WXDLLIMPEXP_SDK"
 				}, {
 					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File (16x16)  :",
@@ -3607,7 +3607,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",
-					"m_value":	""
+					"m_value":	"WXDLLIMPEXP_SDK"
 				}],
 			"m_events":	[],
 			"m_children":	[{

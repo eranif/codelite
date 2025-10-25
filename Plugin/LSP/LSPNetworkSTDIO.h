@@ -5,6 +5,7 @@
 #include "LSPNetwork.h"
 #include "SocketAPI/clSocketClientAsync.h"
 #include "cl_command_event.h"
+#include "codelite_exports.h"
 
 #include <wx/ffile.h>
 
@@ -12,7 +13,7 @@
 /// LSPNetwork based on STDIO
 ///===------------------------------
 class ChildProcess;
-class LSPNetworkSTDIO : public LSPNetwork
+class WXDLLIMPEXP_SDK LSPNetworkSTDIO : public LSPNetwork
 {
 protected:
     ChildProcess* m_server = nullptr;

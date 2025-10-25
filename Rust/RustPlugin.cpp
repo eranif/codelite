@@ -31,6 +31,7 @@
 #include "FileSystemWorkspace/NewFileSystemWorkspaceDialog.h"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspaceConfig.hpp"
+#include "LSP/LSPManager.hpp"
 #include "Platform/Platform.hpp"
 #include "Rust/clRustLocator.hpp"
 #include "RustWorkspace.hpp"
@@ -49,10 +50,7 @@
 #include <wx/msgdlg.h>
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new RustPlugin(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new RustPlugin(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -135,10 +133,10 @@ void RustPlugin::OnRustWorkspaceFileCreated(clFileSystemEvent& event)
         if (debug) {
             clDEBUG() << "Setting project preferences..." << endl;
             debug->SetBuildTargets(
-                { { "build", cargo_exe + " build --color always" },
-                  { "clean", cargo_exe + " clean --color always" },
-                  { "tests", cargo_exe + " test --color always" },
-                  { "clippy", cargo_exe + " clippy --color always --all-features --all-targets -- -D warnings" } });
+                {{"build", cargo_exe + " build --color always"},
+                 {"clean", cargo_exe + " clean --color always"},
+                 {"tests", cargo_exe + " test --color always"},
+                 {"clippy", cargo_exe + " clippy --color always --all-features --all-targets -- -D warnings"}});
             wxFileName target_exe(workspaceFile.GetPath() + "/target/debug/" + name);
 #ifdef __WXMSW__
             target_exe.SetExt("exe");
@@ -227,8 +225,8 @@ void RustPlugin::OnNewWorkspace(clCommandEvent& e)
 
         wxString command;
         command << *cargo_exe << " new " << dlg.GetWorkspaceName();
-        IProcess::Ptr_t process(::CreateSyncProcess(command, IProcessCreateDefault | IProcessCreateWithHiddenConsole,
-                                                    dlg.GetWorkspacePath()));
+        IProcess::Ptr_t process(::CreateSyncProcess(
+            command, IProcessCreateDefault | IProcessCreateWithHiddenConsole, dlg.GetWorkspacePath()));
         if (!process) {
             clWARNING() << "failed to execute:" << command << endl;
             return;
@@ -352,11 +350,17 @@ void RustPlugin::OnBuildEnded(clBuildEvent& event)
         old_digest = m_cargoTomlDigest[cargo_toml];
     }
 
-    if (new_digest != old_digest) {
-        // restart is required
-        clLanguageServerEvent restart_event(wxEVT_LSP_RESTART_ALL);
-        EventNotifier::Get()->ProcessEvent(restart_event);
+    if (new_digest == old_digest) {
+        return;
     }
+
+    // Restart the LSP.
+    auto server = LSPManager::GetInstance().GetServerForLanguage("rust");
+    if (server) {
+        server->Restart();
+    }
+
+    // And update the Cargo's digest.
     m_cargoTomlDigest[cargo_toml] = new_digest;
 }
 
@@ -368,7 +372,7 @@ void RustPlugin::OnWorkspaceLoaded(clWorkspaceEvent& event)
     }
 
     wxFileName workspaceFile = clFileSystemWorkspace::Get().GetFileName();
-    wxFileName cargo_toml{ workspaceFile.GetPath(), "Cargo.toml" };
+    wxFileName cargo_toml{workspaceFile.GetPath(), "Cargo.toml"};
 
     if (cargo_toml.FileExists()) {
         m_cargoTomlFile = cargo_toml;

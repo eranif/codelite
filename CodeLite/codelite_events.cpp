@@ -209,17 +209,14 @@ wxDEFINE_EVENT(wxEVT_SOURCE_CONTROL_PUSHED, clSourceControlEvent);
 wxDEFINE_EVENT(wxEVT_SOURCE_CONTROL_COMMIT_LOCALLY, clSourceControlEvent);
 wxDEFINE_EVENT(wxEVT_SOURCE_CONTROL_RESET_FILES, clSourceControlEvent);
 wxDEFINE_EVENT(wxEVT_SOURCE_CONTROL_PULLED, clSourceControlEvent);
-wxDEFINE_EVENT(wxEVT_LSP_STOP_ALL, clLanguageServerEvent);
-wxDEFINE_EVENT(wxEVT_LSP_START_ALL, clLanguageServerEvent);
-wxDEFINE_EVENT(wxEVT_LSP_RESTART_ALL, clLanguageServerEvent);
+
 wxDEFINE_EVENT(wxEVT_LSP_STOP, clLanguageServerEvent);
 wxDEFINE_EVENT(wxEVT_LSP_START, clLanguageServerEvent);
 wxDEFINE_EVENT(wxEVT_LSP_RESTART, clLanguageServerEvent);
 wxDEFINE_EVENT(wxEVT_LSP_DELETE, clLanguageServerEvent);
 wxDEFINE_EVENT(wxEVT_LSP_CONFIGURE, clLanguageServerEvent);
 wxDEFINE_EVENT(wxEVT_LSP_OPEN_SETTINGS_DLG, clLanguageServerEvent);
-wxDEFINE_EVENT(wxEVT_LSP_ENABLE_SERVER, clLanguageServerEvent);
-wxDEFINE_EVENT(wxEVT_LSP_DISABLE_SERVER, clLanguageServerEvent);
+
 wxDEFINE_EVENT(wxEVT_DOWNLOAD_FILE, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_OPEN_FILE, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_RECENT_WORKSPACE, clRecentWorkspaceEvent);
@@ -228,4 +225,3 @@ wxDEFINE_EVENT(wxEVT_EDITOR_MARGIN_CLICKED, clEditorEvent);
 wxDEFINE_EVENT(wxEVT_OUTPUT_VIEW_TAB_CHANGED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_STC_GOT_FOCUS, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_STC_LOST_FOCUS, clCommandEvent);
-

@@ -2,10 +2,11 @@
 #define LSPCTAGSDDETECTOR_HPP
 
 #include "LSPDetector.hpp"
+#include "codelite_exports.h"
 
 #include <wx/filename.h>
 
-class LSPCTagsdDetector : public LSPDetector
+class WXDLLIMPEXP_SDK LSPCTagsdDetector : public LSPDetector
 {
 private:
     void ConfigureFile(const wxFileName& clangdExe);

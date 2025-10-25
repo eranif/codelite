@@ -2,13 +2,13 @@
 #define LSPDETECTOR_HPP
 
 #include "AsyncProcess/asyncprocess.h"
-#include "LanguageServerEntry.h"
+#include "LSP/LanguageServerEntry.h"
 
 #include <wx/arrstr.h>
 #include <wx/sharedptr.h>
 #include <wx/string.h>
 
-class LSPDetector
+class WXDLLIMPEXP_SDK LSPDetector
 {
 protected:
     wxString m_name;

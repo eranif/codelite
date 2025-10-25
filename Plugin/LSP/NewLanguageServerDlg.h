@@ -6,8 +6,8 @@
 
 #include <wx/arrstr.h>
 
-class LanguageServerPage;
-class NewLanguageServerDlg : public NewLanguageServerDlgBase
+class WXDLLIMPEXP_SDK LanguageServerPage;
+class WXDLLIMPEXP_SDK NewLanguageServerDlg : public NewLanguageServerDlgBase
 {
     LanguageServerPage* m_page = nullptr;
 

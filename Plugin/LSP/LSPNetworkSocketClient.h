@@ -4,10 +4,11 @@
 #include "AsyncProcess/asyncprocess.h"
 #include "LSPNetwork.h" // Base class: LSPNetwork
 #include "SocketAPI/clSocketClientAsync.h"
+#include "codelite_exports.h"
 
 #include <wx/process.h>
 
-class LSPNetworkSocketClient : public LSPNetwork
+class WXDLLIMPEXP_SDK LSPNetworkSocketClient : public LSPNetwork
 {
 protected:
     clAsyncSocket::Ptr_t m_socket;

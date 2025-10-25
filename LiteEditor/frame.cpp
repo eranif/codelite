@@ -33,6 +33,7 @@
 #include "Debugger/debuggermanager.h"
 #include "FileManager.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
+#include "LSP/LSPManager.hpp"
 #include "Notebook.h"
 #include "NotebookNavigationDlg.h"
 #include "SideBar.hpp"
@@ -3451,6 +3452,9 @@ void clMainFrame::CompleteInitialization()
 
     // cache the locales
     clLocaleManager::get().load();
+
+    // Initialise the LSP manager
+    LSPManager::GetInstance().Initialise();
 
     // Register the file system workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new clFileSystemWorkspace(true));

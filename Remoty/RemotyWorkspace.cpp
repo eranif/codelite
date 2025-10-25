@@ -273,10 +273,6 @@ void RemotyWorkspace::DoClose(bool notify)
     m_codeliteRemoteBuilder.Stop();
     m_codeliteRemoteFinder.Stop();
 
-    //    // and restart all the lsp_metadata_arr
-    //    clLanguageServerEvent stop_event(wxEVT_LSP_STOP_ALL);
-    //    EventNotifier::Get()->ProcessEvent(stop_event);
-
     if (notify) {
         // notify CodeLite to close all opened files
         wxCommandEvent eventClose(wxEVT_MENU, wxID_CLOSE_ALL);

@@ -1,14 +1,12 @@
-#include "LanguageServerCluster.h"
+#include "LSP/LSPManager.hpp"
 
-#include "DiagnosticsData.hpp"
+#include "LSP/DiagnosticsData.hpp"
 #include "LSP/LSPEvent.h"
 #include "LSPOutlineViewDlg.h"
 #include "LanguageServerConfig.h"
 #include "StringUtils.h"
-#include "clAuiBook.hpp"
 #include "clEditorBar.h"
 #include "clEditorStateLocker.h"
-#include "clGenericNotebook.hpp"
 #include "clSelectSymbolDialog.h"
 #include "clWorkspaceManager.h"
 #include "cl_calltip.h"
@@ -21,9 +19,9 @@
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
-#include "languageserver.h"
 #include "macromanager.h"
 #include "macros.h"
+#include "wx/app.h"
 #include "wxCodeCompletionBoxManager.h"
 
 #if USE_SFTP
@@ -124,17 +122,16 @@ clEnvList_t json_get_server_config_env(JSON* root, const wxString& server_name)
 
 } // namespace
 
-LSPManager::LSPManager(LanguageServerPlugin* plugin)
-    : m_plugin(plugin)
+LSPManager::LSPManager()
 {
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &LSPManager::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LSPManager::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LSPManager::OnWorkspaceOpen, this);
     EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LSPManager::OnEditorClosed, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &LSPManager::OnActiveEditorChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_GOING_DOWN, &LSPManager::OnGoinDown, this);
 
-    EventNotifier::Get()->Bind(
-        wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &LSPManager::OnCompileCommandsGenerated, this);
+    EventNotifier::Get()->Bind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &LSPManager::OnCompileCommandsGenerated, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &LSPManager::OnBuildEnded, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_OPEN_RESOURCE, &LSPManager::OnOpenResource, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_FILES_SCANNED, &LSPManager::OnWorkspaceScanCompleted, this);
@@ -169,9 +166,9 @@ LSPManager::~LSPManager()
     EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LSPManager::OnEditorClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &LSPManager::OnActiveEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_FILES_SCANNED, &LSPManager::OnWorkspaceScanCompleted, this);
-    EventNotifier::Get()->Unbind(
-        wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &LSPManager::OnCompileCommandsGenerated, this);
+    EventNotifier::Get()->Unbind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &LSPManager::OnCompileCommandsGenerated, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &LSPManager::OnBuildEnded, this);
+    EventNotifier::Get()->Unbind(wxEVT_GOING_DOWN, &LSPManager::OnGoinDown, this);
 
     EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_RESOURCE, &LSPManager::OnOpenResource, this);
     EventNotifier::Get()->Unbind(wxEVT_LSP_SET_DIAGNOSTICS, &LSPManager::OnSetDiagnostics, this);
@@ -201,6 +198,14 @@ LSPManager::~LSPManager()
     }
 }
 
+LSPManager& LSPManager::GetInstance()
+{
+    static LSPManager manager;
+    return manager;
+}
+
+void LSPManager::Initialise() {}
+
 void LSPManager::Reload(const std::unordered_set<wxString>& languages)
 {
     wxBusyCursor bc;
@@ -210,7 +215,6 @@ void LSPManager::Reload(const std::unordered_set<wxString>& languages)
     if (!LanguageServerConfig::Get().IsEnabled()) {
         return;
     }
-
     StartAll(languages);
 }
 
@@ -979,10 +983,7 @@ wxString LSPManager::GetEditorFilePath(IEditor* editor) const
     }
 }
 
-IEditor* LSPManager::FindEditor(const LSPEvent& event) const
-{
-    return FindEditor(event.GetLocation().GetPath());
-}
+IEditor* LSPManager::FindEditor(const LSPEvent& event) const { return FindEditor(event.GetLocation().GetPath()); }
 
 IEditor* LSPManager::FindEditor(const wxString& path) const
 {
@@ -1011,7 +1012,7 @@ LanguageServerProtocol::Ptr_t LSPManager::GetServerForLanguage(const wxString& l
 void LSPManager::OnLogMessage(LSPEvent& event)
 {
     event.Skip();
-    m_plugin->LogMessage(event.GetServerName(), event.GetMessage(), event.GetLogMessageSeverity());
+    // m_plugin->LogMessage(event.GetServerName(), event.GetMessage(), event.GetLogMessageSeverity());
 }
 
 void LSPManager::OnDocumentSymbolsForHighlight(LSPEvent& event)
@@ -1395,4 +1396,15 @@ void LSPManager::OnFileSaved(clCommandEvent& event)
             RestartServer("rust");
         }
     }
+}
+
+void LSPManager::OnGoinDown(clCommandEvent& event)
+{
+    event.Skip();
+    StopAll();
+    if (m_quick_outline_dlg) {
+        m_quick_outline_dlg->Destroy();
+        m_quick_outline_dlg = nullptr;
+    }
+    m_remoteHelper.reset();
 }

@@ -3,8 +3,9 @@
 
 #include "LanguageServerEntry.h"
 #include "cl_config.h"
+#include "codelite_exports.h"
 
-class LanguageServerConfig : public clConfigItem
+class WXDLLIMPEXP_SDK LanguageServerConfig : public clConfigItem
 {
 public:
     enum eLSPFlags {
@@ -21,7 +22,7 @@ private:
     bool HasFlag(eLSPFlags flag) const { return m_flags & flag; }
     void EnableFlag(eLSPFlags flag, bool b)
     {
-        if(b) {
+        if (b) {
             m_flags |= flag;
         } else {
             m_flags &= ~flag;

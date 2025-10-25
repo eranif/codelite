@@ -2,11 +2,11 @@
 #define __LanguageServerPlugin__
 
 #include "CustomControls/TextGenerationPreviewFrame.hpp"
-#include "LanguageServerCluster.h"
-#include "LanguageServerLogView.h"
+#include "LSP/LSPManager.hpp"
+#include "LSP/LanguageServerLogView.h"
+#include "LSP/detectors/LSPDetector.hpp"
 #include "clTabTogglerHelper.h"
 #include "cl_command_event.h"
-#include "detectors/LSPDetector.hpp"
 #include "plugin.h"
 
 class LanguageServerPlugin : public IPlugin
@@ -46,17 +46,12 @@ protected:
     void OnMenuFindReferences(wxCommandEvent& event);
     void ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& lsps);
 
-    void OnLSPStopAll(clLanguageServerEvent& event);
-    void OnLSPStartAll(clLanguageServerEvent& event);
-    void OnLSPRestartAll(clLanguageServerEvent& event);
     void OnLSPStopOne(clLanguageServerEvent& event);
     void OnLSPStartOne(clLanguageServerEvent& event);
     void OnLSPRestartOne(clLanguageServerEvent& event);
     void OnLSPConfigure(clLanguageServerEvent& event);
     void OnLSPDelete(clLanguageServerEvent& event);
     void OnLSPShowSettingsDlg(clLanguageServerEvent& event);
-    void OnLSPEnableServer(clLanguageServerEvent& event);
-    void OnLSPDisableServer(clLanguageServerEvent& event);
     wxString GetEditorFilePath(IEditor* editor) const;
     void OnWorkspaceClosed(clWorkspaceEvent& event);
     void OnFixLSPPaths(wxCommandEvent& event);
@@ -65,7 +60,6 @@ protected:
     void CheckServers();
     wxArrayString GetBrokenLSPs() const;
 
-    std::unique_ptr<LSPManager> m_servers;
     clTabTogglerHelper::Ptr_t m_tabToggler;
     LanguageServerLogView* m_logView{nullptr};
     TextGenerationPreviewFrame* m_commentGenerationView{nullptr};

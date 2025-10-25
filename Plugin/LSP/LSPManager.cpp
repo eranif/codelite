@@ -325,6 +325,22 @@ void Manager::HoverTip(IEditor* editor)
     server->HoverTip(editor);
 }
 
+void Manager::SemanticTokens(IEditor* editor)
+{
+    CHECK_PTR_RET(editor);
+
+    auto server = GetServerForEditor(editor);
+    if (server == nullptr) {
+        clCodeCompletionEvent event_semantic_tokens{wxEVT_CC_SEMANTICS_HIGHLIGHT};
+        event_semantic_tokens.SetFileName(editor->GetRemotePathOrLocal());
+        EventNotifier::Get()->AddPendingEvent(event_semantic_tokens);
+        return;
+    }
+
+    server->OpenEditor(editor);
+    server->SendSemanticTokensRequest(editor);
+}
+
 bool Manager::RequestSymbolsForEditor(IEditor* editor, std::function<void(const LSPEvent&)> cb)
 {
     CHECK_PTR_RET_FALSE(editor);

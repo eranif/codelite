@@ -155,6 +155,20 @@ public:
     void HoverTip(IEditor* editor);
 
     /**
+     * @brief Requests semantic token information for the given editor.
+     *
+     * This function retrieves the language server associated with the provided editor.
+     * If no server is available, it dispatches a semantic highlighting event as a fallback.
+     * Otherwise, it opens the editor on the server and sends a request to obtain semantic tokens.
+     *
+     * @param editor Pointer to the editor instance for which semantic tokens are requested.
+     *
+     * @note *Semantic tokens* are a standardized way for a language server to convey **fine‑grained, language‑aware
+     * syntax‑highlighting information** to an editor (the LSP client).
+     */
+    void SemanticTokens(IEditor* editor);
+
+    /**
      * @brief Requests document symbols from the LSP server for the given editor.
      *
      * This method validates the editor pointer, obtains the associated LSP server,

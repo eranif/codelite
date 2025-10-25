@@ -103,7 +103,6 @@ protected:
     void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnEditorChanged(wxCommandEvent& event);
 
-    void OnSemanticHighlights(clCodeCompletionEvent& event);
     void OnWorkspaceSymbols(clCodeCompletionEvent& event);
     void OnFindHeaderFile(clCodeCompletionEvent& event);
 
@@ -111,7 +110,6 @@ protected:
     bool
     CheckCapability(const LSP::ResponseMessage& res, const wxString& capabilityName, const wxString& lspRequestName);
 
-protected:
     void DoClear();
     bool ShouldHandleFile(IEditor* editor) const;
     wxString GetLogPrefix() const;
@@ -133,12 +131,6 @@ protected:
      * @brief report a file-close notification
      */
     void SendCloseRequest(const wxString& filename);
-
-    /**
-     * @brief ask the server for semantic tokens
-     */
-    void SendSemanticTokensRequest(IEditor* editor);
-
     /**
      * @brief query the LSP for a list of workspace symbols that matches a query string
      */
@@ -310,6 +302,11 @@ public:
      * @brief request a code action from the server
      */
     void SendCodeActionRequest(IEditor* editor, const std::vector<LSP::Diagnostic>& diags);
+
+    /**
+     * @brief ask the server for semantic tokens
+     */
+    void SendSemanticTokensRequest(IEditor* editor);
 
     // helpers
     bool IsCapabilitySupported(const wxString& name) const;

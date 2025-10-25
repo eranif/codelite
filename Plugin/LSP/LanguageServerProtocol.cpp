@@ -58,7 +58,6 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerProtocol::OnWorkspaceClosed, this);
 
     // Code completion events.
-    EventNotifier::Get()->Bind(wxEVT_CC_SEMANTICS_HIGHLIGHT, &LanguageServerProtocol::OnSemanticHighlights, this);
     EventNotifier::Get()->Bind(wxEVT_CC_WORKSPACE_SYMBOLS, &LanguageServerProtocol::OnWorkspaceSymbols, this);
     EventNotifier::Get()->Bind(wxEVT_CC_FIND_HEADER_FILE, &LanguageServerProtocol::OnFindHeaderFile, this);
 
@@ -94,7 +93,6 @@ LanguageServerProtocol::~LanguageServerProtocol()
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerProtocol::OnEditorChanged, this);
 
-    EventNotifier::Get()->Unbind(wxEVT_CC_SEMANTICS_HIGHLIGHT, &LanguageServerProtocol::OnSemanticHighlights, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_WORKSPACE_SYMBOLS, &LanguageServerProtocol::OnWorkspaceSymbols, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_FIND_HEADER_FILE, &LanguageServerProtocol::OnFindHeaderFile, this);
 
@@ -967,22 +965,6 @@ void LanguageServerProtocol::RenameSymbol(IEditor* editor)
                                editor->GetCurrentLine(),
                                editor->GetColumnInChars(editor->GetCurrentPosition())));
     QueueMessage(req);
-}
-
-void LanguageServerProtocol::OnSemanticHighlights(clCodeCompletionEvent& event)
-{
-    event.Skip();
-    IEditor* editor = event.GetFileName().empty() ? clGetManager()->GetActiveEditor()
-                                                  : clGetManager()->FindEditor(event.GetFileName());
-    CHECK_PTR_RET(editor);
-
-    if (!ShouldHandleFile(editor)) {
-        return;
-    }
-
-    event.Skip(false); // don't let other services to handle this event
-    OpenEditor(editor);
-    SendSemanticTokensRequest(editor);
 }
 
 bool LanguageServerProtocol::CheckCapability(const LSP::ResponseMessage& res,

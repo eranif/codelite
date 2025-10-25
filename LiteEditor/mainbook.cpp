@@ -25,6 +25,7 @@
 #include "mainbook.h"
 
 #include "FilesModifiedDlg.h"
+#include "LSP/LSPManager.hpp"
 #include "NotebookNavigationDlg.h"
 #include "WelcomePage.h"
 #include "clIdleEventThrottler.hpp"
@@ -1547,9 +1548,7 @@ void MainBook::DoUpdateEditorsThemes()
 
     if (GetActiveEditor()) {
         // request for new semantics tokens for the active editor
-        clCodeCompletionEvent event_semantic_tokens{wxEVT_CC_SEMANTICS_HIGHLIGHT};
-        event_semantic_tokens.SetFileName(GetActiveEditor()->GetRemotePathOrLocal());
-        EventNotifier::Get()->AddPendingEvent(event_semantic_tokens);
+        LSP::Manager::GetInstance().SemanticTokens(GetActiveEditor());
     }
 }
 

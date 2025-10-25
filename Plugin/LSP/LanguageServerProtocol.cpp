@@ -551,10 +551,7 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
         SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
         SendSemanticTokensRequest(editor);
         // cache symbols
-        DocumentSymbols(
-            editor,
-            LSP::DocumentSymbolsRequest::CONTEXT_QUICK_OUTLINE | LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW,
-            nullptr);
+        DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW, nullptr);
     }
 }
 

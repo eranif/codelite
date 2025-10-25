@@ -15,9 +15,7 @@ public:
     enum eDocumentSymbolsContext {
         CONTEXT_NONE = 0,
         CONTEXT_SEMANTIC_HIGHLIGHT = 1 << 0,
-        CONTEXT_QUICK_OUTLINE = 1 << 1,
         CONTEXT_OUTLINE_VIEW = 1 << 2,
-        CONTEXT_LLM = 1 << 3,
     };
 
     explicit DocumentSymbolsRequest(const wxString& filename, size_t context);

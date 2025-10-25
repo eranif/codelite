@@ -91,7 +91,6 @@ protected:
     void OnCompileCommandsGenerated(clCommandEvent& event);
     void OnSetDiagnostics(LSPEvent& event);
     void OnClearDiagnostics(LSPEvent& event);
-    void OnQuickOutlineView(LSPEvent& event);
     void OnShowQuickOutlineDlg(LSPEvent& event);
     void OnOulineViewSymbols(LSPEvent& event);
     void OnSemanticTokens(LSPEvent& event);

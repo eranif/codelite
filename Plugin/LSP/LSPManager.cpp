@@ -149,7 +149,6 @@ LSPManager::LSPManager()
     Bind(wxEVT_LSP_SIGNATURE_HELP, &LSPManager::OnSignatureHelp, this);
     Bind(wxEVT_LSP_HOVER, &LSPManager::OnHover, this);
     Bind(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, &LSPManager::OnShowQuickOutlineDlg, this);
-    Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE, &LSPManager::OnQuickOutlineView, this);
     Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, &LSPManager::OnOulineViewSymbols, this);
     Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &LSPManager::OnDocumentSymbolsForHighlight, this);
     Bind(wxEVT_LSP_SEMANTICS, &LSPManager::OnSemanticTokens, this);
@@ -185,7 +184,6 @@ LSPManager::~LSPManager()
     Unbind(wxEVT_LSP_METHOD_NOT_FOUND, &LSPManager::OnMethodNotFound, this);
     Unbind(wxEVT_LSP_SIGNATURE_HELP, &LSPManager::OnSignatureHelp, this);
     Unbind(wxEVT_LSP_HOVER, &LSPManager::OnHover, this);
-    Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE, &LSPManager::OnQuickOutlineView, this);
     Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, &LSPManager::OnOulineViewSymbols, this);
     Unbind(wxEVT_LSP_SEMANTICS, &LSPManager::OnSemanticTokens, this);
     Unbind(wxEVT_LSP_LOGMESSAGE, &LSPManager::OnLogMessage, this);
@@ -222,10 +220,9 @@ void LSPManager::ShowOutlineView(IEditor* editor)
         return;
     }
 
-    server->DocumentSymbols(
-        editor,
-        LSP::DocumentSymbolsRequest::CONTEXT_QUICK_OUTLINE | LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW,
-        [this](const LSPEvent& event) { ShowQuickOutlineDialog(event); });
+    server->DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW, [this](const LSPEvent& event) {
+        ShowQuickOutlineDialog(event);
+    });
 }
 
 void LSPManager::Reload(const std::unordered_set<wxString>& languages)
@@ -909,13 +906,6 @@ void LSPManager::ShowQuickOutlineDialog(const LSPEvent& event)
 }
 
 void LSPManager::OnShowQuickOutlineDlg(LSPEvent& event) { ShowQuickOutlineDialog(event); }
-
-void LSPManager::OnQuickOutlineView(LSPEvent& event)
-{
-    if (m_quick_outline_dlg && m_quick_outline_dlg->IsShown()) {
-        m_quick_outline_dlg->SetSymbols(event.GetSymbolsInformation());
-    }
-}
 
 void LSPManager::OnSetDiagnostics(LSPEvent& event)
 {

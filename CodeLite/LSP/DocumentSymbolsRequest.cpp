@@ -79,30 +79,15 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
             if (context & CONTEXT_SEMANTIC_HIGHLIGHT) {
                 QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT);
             }
-            if (context & CONTEXT_QUICK_OUTLINE) {
-                QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE);
-            }
+
             if (context & CONTEXT_OUTLINE_VIEW) {
                 QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
             }
-            if (context & CONTEXT_LLM) {
-                QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_LLM);
-            }
 
-            // always fire the wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE for the EventNotifier
+            // always fire the wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW for the EventNotifier
             // so it might be used by other plugins as well, e.g. "Outline"
-            QueueEvent(EventNotifier::Get(), symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE);
+            QueueEvent(EventNotifier::Get(), symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
             InvokeResponseCallback(CreateLSPEvent(symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE));
-
-        } else {
-            std::vector<DocumentSymbol> symbols;
-            symbols.reserve(size);
-            for (int i = 0; i < size; ++i) {
-                DocumentSymbol ds;
-                ds.FromJSON(result[i]);
-                symbols.push_back(ds);
-            }
-            wxUnusedVar(symbols);
         }
     }
 }

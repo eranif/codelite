@@ -1,155 +1,40 @@
 # ChatAI: Your Local AI Assistant
 ---
 
-With the release of **CodeLite 18.3.0**, a brand-new plugin has been introduced that embeds a chat interface powered by a local or remote language model of your choice.
-We currently support local models through an **Ollama** server or Anthropic's **Claude**.
+With the release of **CodeLite 18.2.0**, CodeLite introduces embeds a chat interface powered by a local or remote language model of your choice. We currently support local models through an **Ollama** server or Anthropic's **Claude**. More to be introduced.
 
 ## Getting Started
 ---
 
-### 1. Install the Ollama Server & Pull a Model
+### 1. Add LLM endpoint
 ---
 
-1. Visit the [Ollama download page](https://ollama.com/download) and follow the instructions for your operating system.
-2. Once installed, you can interact with Ollama from the command line using the `ollama` command.
-3. Pull a model that fits your hardware. Recommended options:
+- From the main menu, go to `AI` -> `Add New Endpoint`
+ ![](/assets/menu-new-endpoint.png)
 
-    - `qwen3-coder:30b` – requires ~26 GB of RAM.
-    - `gpt-oss:20b` – excellent performance, needs ~16 GB of RAM.
+- Fill the wizard fields and click `Finish`
+![](/assets/add-new-endpoint-1.png)
+![](/assets/add-new-endpoint-2.png)
 
-   If your machine cannot handle these, try smaller models.
+- To test the newly added endpoint, click ++ctrl+shift+h++ and try the chat box.
 
-   **Example commands**
+### 2. The Chat Box
 
-   ```bash
-   # Download a model
-   ollama pull qwen3-coder:30b
+- CodeLite offers a built-in chat box by clicking ++ctrl+shift+h++.
+- The chat can be used for asking questions and also for instructing the AI to perform actions (like reading / writing files)
 
-   # List downloaded models
-   ollama ls
+![](/assets/chat-box.png)
 
-   # Show memory usage
-   ollama ps
-   ```
+Tool-bar buttons, in-order of appearance:
 
-### 2. Configure the Plugin
----
-
-Once the server is running, open the **AI** settings (a JSON file) from the menu bar:
-`AI -> Settings...`
-
-A typical configuration file looks like this:
-
-```json
-{
-  "history_size": 50,
-  "mcp_servers": {},
-  "log_level": "info",
-  "stream": true,
-  "keep_alive": "24h",
-  "server_timeout": {
-      "connect_msecs": 500,
-      "read_msecs": 300000,
-      "write_msecs": 300000
-  },
-  "endpoints": {
-    "http://127.0.0.1:11434": {
-      "active": true,
-      "http_headers": {
-        "Host": "127.0.0.1"
-      },
-      "type": "ollama"
-    }
-  },
-  "models": {
-    "default": {
-      "options": {
-        "num_ctx": 16384,
-        "temperature": 0
-      },
-      "think_end_tag": "",
-      "think_start_tag": ""
-    }
-  }
-}
-```
-
-Save the file to apply any changes; the changes are applied immediately.
-
----
-
-Below is a breakdown of the JSON configuration:
-
-#### Global Settings
-
-- **`history_size`**
-    - Integer (`50`).
-    - Limits how many past interactions (e.g., chat turns) are kept in memory for context.
-
-- **`mcp_servers`**
-    - Empty object (`{}`).
-    - Placeholder for optional “MCP” (Model Context Protocol) server definitions.
-
-- **`log_level`**
-    - String (`"info"`).
-    - Controls verbosity of logs; common levels include `debug`, `info`, `warn`, `error`.
-
-- **`stream`**
-    - Boolean (`true`).
-    - Enables streaming of responses (e.g., partial text output) rather than waiting for the entire result.
-
-- **`keep_alive`**
-    - String (`"24h"`).
-    - Sets the duration the server should keep idle connections alive before closing them.
-
-- **`server_timeout`**
-    - Object containing millisecond timeouts for different phases of a request:
-    - `connect_msecs`: `500` – time allowed to establish a TCP connection.
-    - `read_msecs`: `300000` – time allowed for reading a response.
-    - `write_msecs`: `300000` – time allowed for sending a request.
-
----
-
-#### Endpoints
-
-- **`endpoints`**
-    - Object mapping endpoint URLs to their configuration.
-    - Example entry:
-    - **URL**: `http://127.0.0.1:11434`
-    - `active`: `true` – the endpoint is enabled.
-    - `http_headers`: `{ "Host": "127.0.0.1" }` – custom HTTP headers to send with each request.
-    - `type`: `"ollama"` – indicates the backend or protocol (here, an Ollama model server).
-
----
-
-#### Models
-
-- **`models`**
-  - Object defining default or named model configurations.
-  - Example entry:
-    - **Model name**: `default`
-      - `options`:
-        - `num_ctx`: `16384` – maximum number of tokens in the context window.
-        - `temperature`: `0` – deterministic generation (no randomness).
-      - `think_start_tag`: `""` – marker that signals the start of a “think” block in the model’s output.
-      - `think_end_tag`: `""` – marker that signals the end of a “think” block.
-
----
-
-#### How It All Connects
-
-- The server listens on the defined endpoints (here, a local Ollama instance).
-- When a connection is established, it uses the `server_timeout` values to manage connection timing.
-- The `stream` flag tells the server to send partial responses as they become available.
-- The `history_size` limits how much conversation history is stored for context.
-- The `models.default` block supplies default inference parameters (context size, temperature) and tags that the model may use to structure its output. This can be duplicated with a specific model name.
-- Logging verbosity is set to `info` (other values: `debug`, `trace`, `error`, and `warn`).
-- A model is kept in-memory for `24 hours` before being removed from the server memory.
-
-This configuration allows the service to operate with a single local endpoint, deterministic inference, and controlled resource usage.
-
-### 3. Integration with CodeLite via "Tools"
----
+1. "clear" - clears the chat history, this not only clears the chat box text, but also erases the history.
+2. endpoint selection dropdown box - allows you to choose between the different endpoints.
+3. "restart" - restarts the client, all history is lost.
+4. "play" - submit the text to the LLM. (You can also use ++shift+enter++)
+5. "stop" - cancel a long running operation.
+6. "replay" - show a dialog with recent messages sent to the LLM.
+7. "link" - when checked, the LLM output is aut-scrolled (i.e. last line is always visible).
+8. "detach" / "attach" - detach (when docked) the chat window into a floating window. When floated, the button becomes "attach".
 
 CodeLite exposes the following tools to the models (NOTE: the model must have the "tools" capability in order to use them):
 
@@ -180,11 +65,11 @@ With these tools, the model can assist you in various ways related to file manag
 4. **Version Control**:
     - Retrieve git commit history between two commits to understand changes made in the repository.
 
-These tools allow me to support tasks like editing code, reviewing build logs, examining file contents, and tracking changes in a version-controlled environment.
+These tools allow the model to support tasks like editing code, reviewing build logs, examining file contents, and tracking changes in a version-controlled environment.
 
 **Example use case:**
 
-You compiled a C++ program and got a compiler error that you don’t understand. Typing this in the prompt:
+You compiled a C++ program and got a compiler error that you don't understand. Typing this in the prompt:
 
 ```text
 Explain the build errors I got from the compiler and suggest ways to fix them.
@@ -192,39 +77,19 @@ Explain the build errors I got from the compiler and suggest ways to fix them.
 
 The model will invoke the tool `Read_the_compiler_build_output` to fetch the build output and then provide an explanation.
 
-### 4. Using Claude
----
 
-CodeLite's AI support also enables the use of Anthropic's Claude LLM.
+### 3. The Prompt Editor
 
-#### Prerequisites
+CodeLite offers several AI-Powered operations that can be done with a single click:
 
-- You need an account or can register at [Anthropic's website](https://www.anthropic.com/).
-- Generate an API key.
-- Ensure you have sufficient credits.
+- Git commit message - With a single click, the AI will generate a detailed git commit message involving your recent changes.
+- Git Release Notes - Let the AI generate a release notes based on git commit range.
+- Code Review - Improve your commits by letting the AI offers a comperhensive code review.
+- Function / Classes auto documentation - use the AI to document your code, place your anywhere in the code and hit ++ctrl+shift+m++
 
-#### Configuration
+The prompt for these operations can be edited from the main menu: `AI` -> `Open Prompt Editor`.
 
-- Open the AI configuration file (from the menu bar: `AI` → `Settings...`) or by clicking (++ctrl+shift+h++) / (++cmd+shift+h++), and click on the wrench (🔧) button.
-
-- In the `endpoints` section, add the following:
-
-```json
-    "https://api.anthropic.com": {
-      "active": true,
-      "http_headers": {
-        "x-api-key": "<YOUR-API-KEY>"
-      },
-      "type": "claude"
-    }
-```
-
-- Confirm that this block is the only one marked as `active`.
-- Save the configuration.
-
-You should now be able to use `claude`.
-
-### 5. Integration inside the IDE
+### 4. Integration inside the IDE
 ---
 
 Beyond the chat interface and action triggering capabilities within the IDE through tools, CodeLite also incorporates AI-powered features:
@@ -265,4 +130,118 @@ This streamlined process allows developers to quickly generate comprehensive doc
   <img src="/plugins/images/auto-doc.gif"/>
 </div>
 
+**assistant**:
+# ChatAI – Your Local AI Assistant
+**CodeLite 18.2.0**
 
+---
+
+## Overview
+
+CodeLite 18.2.0 ships with **ChatAI**, a built‑in chat interface that talks to any language‑model you configure – locally (via an **Ollama** server) or remotely (e.g. Anthropic **Claude**).  Adding new endpoints is now a guided wizard, and all interactions are performed through a clean, toolbar‑driven UI.
+
+---
+
+## 1. Add an LLM Endpoint
+
+1. Open **AI → Add New Endpoint** from the main menu.
+
+   ![Menu – Add New Endpoint](/assets/menu-new-endpoint.png)
+
+2. Follow the wizard: choose a name, select the provider (Ollama, Claude, …), enter the URL and any required authentication, then click **Finish**.
+
+   ![Wizard – Step 1](/assets/add-new-endpoint-1.png)
+   ![Wizard – Step 2](/assets/add-new-endpoint-2.png)
+
+3. Test the endpoint: press **Ctrl + Shift + H** to open the chat box and send a short prompt (e.g. “Hello”).
+
+---
+
+## 2. The Chat Box
+
+Open the chat box at any time with **Ctrl + Shift + H**.
+The window can be used for casual questions, code‑related queries, or to instruct the model to read/write files.
+
+![](./assets/chat-box.png)
+
+### Toolbar (left → right)
+
+| Icon | Action | Shortcut |
+|------|--------|----------|
+| **Clear** | Erases the chat history **and** the internal message log. | – |
+| **Endpoint ▼** | Switches between the endpoints you added. | – |
+| **Restart** | Restarts the LLM client (clears all history). | – |
+| **Play** | Sends the current input to the model. <br>*Alternative:* **Shift + Enter** | – |
+| **Stop** | Cancels a long‑running request. | – |
+| **Replay** | Opens a dialog that lists recent user messages – you can resend any of them. | – |
+| **Link** | When enabled, the output pane auto‑scrolls so the last line is always visible. | – |
+| **Detach / Attach** | Pops the chat window out of the dock (floating) or puts it back. | – |
+
+---
+
+## 3. Built‑in Model Tools
+
+If the selected model advertises the **tools** capability, ChatAI can invoke the following helpers.  The model decides when (and how) to call them.
+
+| Tool | What it does |
+|------|--------------|
+| **Get_the_text_of_the_active_tab_inside_the_editor** | Returns the full source text of the currently focused editor tab. |
+| **Open_a_file_in_an_editor** | Opens a given file path in CodeLite for viewing or editing. |
+| **Read_file_from_the_file_system** | Reads a file from disk and returns its contents. |
+| **Read_the_compiler_build_output** | Retrieves the log of the most recent build performed inside CodeLite. |
+| **Write_file_content_to_disk_at_a_given_path** | Writes supplied text to a file at the specified location. |
+| **git_commit_log_history_between_two_commits** | Returns the git log between two commit IDs (or refs). |
+
+These tools enable the model to help with **file management**, **code editing**, **build‑log analysis**, and **version‑control queries** without you having to copy‑paste anything.
+
+### Quick example
+
+You get a confusing compile error.  Type:
+
+```
+Explain the build errors and suggest fixes.
+```
+
+The model will automatically call **Read_the_compiler_build_output**, fetch the log, and then reply with a human‑readable explanation and concrete fixes.
+
+---
+
+## 4. Prompt Editor
+
+Several AI‑powered actions are available with a single click.  The prompts that drive those actions can be edited from **AI → Open Prompt Editor**.
+
+| Action | Shortcut / UI | What it does |
+|--------|----------------|--------------|
+| **Generate Git Commit Message** | Click the toolbar button or use the context‑menu entry. | Summarises the staged changes into a concise, conventional commit message. |
+| **Generate Git Release Notes** | Press the “Release Notes” button in the Git view. | Produces release notes for a selected commit range. |
+| **Code Review** | Right‑click a file → **AI‑powered code generation → Review**. | Returns a comprehensive review with suggestions and identified issues. |
+| **Generate Docstring** | **Ctrl + Shift + M** (or right‑click → **Generate docstring for the current method**). | Inserts a language‑appropriate docstring for the function/class under the cursor. |
+
+The Prompt Editor lets you tweak the system prompt for each of these operations, add custom placeholders, or create entirely new AI actions.
+
+---
+
+## 5. AI‑Powered IDE Features
+
+### Git Commit Message
+![](./plugins/images/git.gif)
+One click generates a full commit message from the current diff.
+
+### Git Release Notes
+![](./plugins/images/release-notes.gif)
+Select a commit range → **Generate Release Notes** → AI produces a polished changelog.
+
+### Automatic Function Documentation
+![](./plugins/images/auto-doc.gif)
+Place the cursor inside a function, press **Ctrl + Shift + M**, and the model writes a complete docstring.
+
+---
+
+## 6. Getting Help
+
+- Open the chat box (**Ctrl + Shift + H**) and ask any question.
+- For endpoint‑specific issues, use **AI → Settings** to view or edit the stored URLs and tokens.
+
+---
+
+**Enjoy a smarter, faster coding experience with ChatAI in CodeLite 18.2.0!**

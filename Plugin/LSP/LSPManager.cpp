@@ -220,7 +220,9 @@ void LSPManager::ShowOutlineView(IEditor* editor)
         return;
     }
 
+    clGetManager()->SetStatusMessage(_("Requesting document symbols from LSP server..."), 3);
     server->DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW, [this](const LSPEvent& event) {
+        clGetManager()->SetStatusMessage(_("Showing outline view dialog"), 1);
         ShowQuickOutlineDialog(event);
     });
 }

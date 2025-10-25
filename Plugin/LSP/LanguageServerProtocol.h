@@ -103,7 +103,6 @@ protected:
     void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnEditorChanged(wxCommandEvent& event);
 
-    void OnTypeInfoToolTip(clCodeCompletionEvent& event);
     void OnSemanticHighlights(clCodeCompletionEvent& event);
     void OnWorkspaceSymbols(clCodeCompletionEvent& event);
     void OnFindHeaderFile(clCodeCompletionEvent& event);

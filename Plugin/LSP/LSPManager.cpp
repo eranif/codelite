@@ -306,6 +306,25 @@ void Manager::FunctionCalltip(IEditor* editor)
     server->FunctionHelp(editor);
 }
 
+void Manager::HoverTip(IEditor* editor)
+{
+    CHECK_PTR_RET(editor);
+
+    if (clSTCHelper::IsPositionInComment(editor->GetCtrl())) {
+        return;
+    }
+    auto server = GetServerForEditor(editor);
+    if (server == nullptr) {
+        clCodeCompletionEvent evtTypeinfo{wxEVT_CC_TYPEINFO_TIP};
+        evtTypeinfo.SetPosition(editor->GetCurrentPosition());
+        evtTypeinfo.SetInsideCommentOrString(false);
+        evtTypeinfo.SetFileName(editor->GetRemotePathOrLocal());
+        EventNotifier::Get()->AddPendingEvent(evtTypeinfo);
+        return;
+    }
+    server->HoverTip(editor);
+}
+
 bool Manager::RequestSymbolsForEditor(IEditor* editor, std::function<void(const LSPEvent&)> cb)
 {
     CHECK_PTR_RET_FALSE(editor);

@@ -135,6 +135,26 @@ public:
     void FunctionCalltip(IEditor* editor);
 
     /**
+     * @brief Shows a hover tooltip (type information tip) for the given editor.
+     *
+     * This function checks the validity of the provided @c IEditor pointer and ensures
+     * that the current cursor position is not inside a comment. It then attempts to
+     * obtain a code‑completion server associated with the editor. If a server is
+     * available, the request is delegated to the server's @c HoverTip method.
+     * Otherwise, a @c clCodeCompletionEvent of type @c wxEVT_CC_TYPEINFO_TIP is
+     * created and queued, providing basic type‑info tooltip data.
+     *
+     * @param editor Pointer to the @c IEditor instance for which the hover tip
+     *               should be displayed. Must not be @c nullptr.
+     *
+     * @note The function performs early returns if the editor pointer is invalid
+     *       or if the cursor is currently inside a comment block.
+     *
+     * @return void
+     */
+    void HoverTip(IEditor* editor);
+
+    /**
      * @brief Requests document symbols from the LSP server for the given editor.
      *
      * This method validates the editor pointer, obtains the associated LSP server,

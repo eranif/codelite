@@ -2026,18 +2026,7 @@ void clEditor::OnDwellStart(wxStyledTextEvent& event)
         m_context->OnDbgDwellStart(event);
 
     } else if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_TYPE_INFO) {
-
-        // Allow the plugins to override the default built-in behavior of displaying
-        // the type info tooltip
-        clCodeCompletionEvent evtTypeinfo(wxEVT_CC_TYPEINFO_TIP, GetId());
-        evtTypeinfo.SetPosition(event.GetPosition());
-        evtTypeinfo.SetInsideCommentOrString(m_context->IsCommentOrString(event.GetPosition()));
-        evtTypeinfo.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
-        if (EventNotifier::Get()->ProcessEvent(evtTypeinfo)) {
-            if (!evtTypeinfo.GetTooltip().IsEmpty()) {
-                DoShowCalltip(wxNOT_FOUND, "", evtTypeinfo.GetTooltip());
-            }
-        }
+        LSP::Manager::GetInstance().HoverTip(this);
     }
 }
 

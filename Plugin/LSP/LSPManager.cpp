@@ -348,6 +348,20 @@ void Manager::WorkspaceSymbols(const wxString& filter)
     server->SendWorkspaceSymbolsRequest(filter);
 }
 
+void Manager::FindHeaderFile(IEditor* editor)
+{
+    CHECK_PTR_RET(editor);
+    auto server = GetServerForEditor(editor);
+    if (server == nullptr) {
+        clCodeCompletionEvent find_header_event{wxEVT_CC_FIND_HEADER_FILE};
+        find_header_event.SetWord(editor->GetWordAtCaret());
+        find_header_event.SetFileName(editor->GetRemotePathOrLocal());
+        EventNotifier::Get()->ProcessEvent(find_header_event);
+        return;
+    }
+    server->FindDeclaration(editor, true);
+}
+
 bool Manager::RequestSymbolsForEditor(IEditor* editor, std::function<void(const LSPEvent&)> cb)
 {
     CHECK_PTR_RET_FALSE(editor);

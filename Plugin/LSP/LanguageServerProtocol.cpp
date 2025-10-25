@@ -57,9 +57,6 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerProtocol::OnWorkspaceLoaded, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerProtocol::OnWorkspaceClosed, this);
 
-    // Code completion events.
-    EventNotifier::Get()->Bind(wxEVT_CC_FIND_HEADER_FILE, &LanguageServerProtocol::OnFindHeaderFile, this);
-
     // Use sockets here
     switch (netType) {
     case eNetworkType::kStdio:
@@ -91,8 +88,6 @@ LanguageServerProtocol::~LanguageServerProtocol()
     EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LanguageServerProtocol::OnFileClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerProtocol::OnEditorChanged, this);
-
-    EventNotifier::Get()->Unbind(wxEVT_CC_FIND_HEADER_FILE, &LanguageServerProtocol::OnFindHeaderFile, this);
 
     DoClear();
 }
@@ -890,20 +885,6 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
             EventNotifier::Get()->AddPendingEvent(eventClearDiags);
         }
     }
-}
-
-void LanguageServerProtocol::OnFindHeaderFile(clCodeCompletionEvent& event)
-{
-    LSP_DEBUG() << GetLogPrefix() << "OnFindHeaderFile() is called" << endl;
-    event.Skip();
-    IEditor* editor = ::clGetManager()->FindEditor(event.GetFileName());
-    CHECK_PTR_RET(editor);
-
-    if (!ShouldHandleFile(editor)) {
-        return;
-    }
-    event.Skip(false);
-    FindDeclaration(editor, true);
 }
 
 void LanguageServerProtocol::FindReferences(IEditor* editor)

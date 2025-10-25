@@ -103,8 +103,6 @@ protected:
     void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnEditorChanged(wxCommandEvent& event);
 
-    void OnFindHeaderFile(clCodeCompletionEvent& event);
-
     wxString GetEditorFilePath(IEditor* editor) const;
     bool
     CheckCapability(const LSP::ResponseMessage& res, const wxString& capabilityName, const wxString& lspRequestName);

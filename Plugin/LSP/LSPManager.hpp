@@ -168,6 +168,7 @@ public:
      * syntax‑highlighting information** to an editor (the LSP client).
      */
     void SemanticTokens(IEditor* editor);
+
     /**
      * @brief Sends a workspace symbols request to the appropriate language server.
      *
@@ -177,6 +178,22 @@ public:
      * @param filter The filter string used to constrain the workspace symbols search.
      */
     void WorkspaceSymbols(const wxString& filter);
+
+    /**
+     * @brief Initiates a lookup for the header file of the symbol under the caret in the given editor.
+     *
+     * The function first validates that {@code editor} is not {@code nullptr}. It then attempts to
+     * retrieve a language server associated with the editor via {@code GetServerForEditor}. If a
+     * server is available, the request is delegated to {@code server->FindDeclaration(editor, true)}.
+     * Otherwise, a {@code clCodeCompletionEvent} of type {@code wxEVT_CC_FIND_HEADER_FILE} is
+     * constructed, populated with the word at the caret and the editor's file path, and dispatched
+     * through {@code EventNotifier::Get()->ProcessEvent}. This allows other components to handle
+     * the header search.
+     *
+     * @param editor Pointer to the {@link IEditor} instance used to obtain the current word and file
+     *               path. Must be a valid (non‑null) pointer.
+     */
+    void FindHeaderFile(IEditor* editor);
     /**
      * @brief Requests document symbols from the LSP server for the given editor.
      *

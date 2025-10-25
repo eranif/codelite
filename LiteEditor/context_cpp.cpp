@@ -481,12 +481,7 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent& e)
     }
 
     clDEBUG() << "Sending wxEVT_CC_FIND_HEADER_FILE for word:" << word << endl;
-    // using the current location, fire an event requesting the LSP
-    // to locate the header file for the given symbol at the caret position
-    clCodeCompletionEvent find_header_event(wxEVT_CC_FIND_HEADER_FILE);
-    find_header_event.SetWord(word);
-    find_header_event.SetFileName(GetCtrl().GetFileName().GetFullPath());
-    EventNotifier::Get()->ProcessEvent(find_header_event);
+    LSP::Manager::GetInstance().FindHeaderFile(&GetCtrl());
 }
 
 bool ContextCpp::IsIncludeStatement(const wxString& line, wxString* fileName, wxString* fileNameUpToCaret)

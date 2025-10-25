@@ -233,10 +233,6 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
         menu->Prepend(XRCID("lsp_rename_symbol"), _("Rename symbol"));
     }
     menu->Prepend(XRCID("lsp_find_symbol"), _("Find symbol"));
-
-    menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnMenuFindSymbol, this, XRCID("lsp_find_symbol"));
-    menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnMenuFindReferences, this, XRCID("lsp_find_references"));
-    menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnMenuRenameSymbol, this, XRCID("lsp_rename_symbol"));
 }
 
 void LanguageServerPlugin::OnDocStringGenerationDone()
@@ -312,44 +308,6 @@ void LanguageServerPlugin::OnGenerateDocString(wxCommandEvent& event)
 
         llm::Manager::GetInstance().Chat(collector, prompt, nullptr, chat_options);
     });
-}
-
-void LanguageServerPlugin::OnMenuRenameSymbol(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-
-    LSP_DEBUG() << "OnMenuRenameSymbol is called" << endl;
-
-    IEditor* editor = clGetManager()->GetActiveEditor();
-    CHECK_PTR_RET(editor);
-
-    LanguageServerProtocol::Ptr_t lsp = LSP::Manager::GetInstance().GetServerForEditor(editor);
-    CHECK_PTR_RET(lsp);
-
-    lsp->RenameSymbol(editor);
-}
-
-void LanguageServerPlugin::OnMenuFindReferences(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-
-    LSP_DEBUG() << "OnMenuFindReferences is called" << endl;
-
-    IEditor* editor = clGetManager()->GetActiveEditor();
-    CHECK_PTR_RET(editor);
-
-    LanguageServerProtocol::Ptr_t lsp = LSP::Manager::GetInstance().GetServerForEditor(editor);
-    CHECK_PTR_RET(lsp);
-
-    lsp->FindReferences(editor);
-}
-
-void LanguageServerPlugin::OnMenuFindSymbol(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    IEditor* editor = clGetManager()->GetActiveEditor();
-    CHECK_PTR_RET(editor);
-    LSP::Manager::GetInstance().FindSymbol(editor);
 }
 
 void LanguageServerPlugin::ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& lsps)

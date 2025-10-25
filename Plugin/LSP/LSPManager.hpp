@@ -241,6 +241,10 @@ protected:
     void OnApplyEdits(LSPEvent& event);
     void OnGoinDown(clCommandEvent& event);
 
+    void OnFindSymbol(wxCommandEvent& event);
+    void OnRenameSymbol(wxCommandEvent& event);
+    void OnFindReferences(wxCommandEvent& event);
+
     void ShowQuickOutlineDialog(const LSPEvent& event);
 
     wxString GetEditorFilePath(IEditor* editor) const;

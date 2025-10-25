@@ -39,11 +39,9 @@ protected:
     void OnRestartLSP(wxCommandEvent& e);
     void OnInitDone(wxCommandEvent& event);
     void OnEditorContextMenu(clContextMenuEvent& event);
-    void OnMenuFindSymbol(wxCommandEvent& event);
-    void OnMenuRenameSymbol(wxCommandEvent& event);
+
     void OnGenerateDocString(wxCommandEvent& event);
     void OnDocStringGenerationDone();
-    void OnMenuFindReferences(wxCommandEvent& event);
     void ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& lsps);
 
     void OnLSPStopOne(clLanguageServerEvent& event);

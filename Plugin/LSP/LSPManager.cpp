@@ -157,6 +157,12 @@ Manager::Manager()
     Bind(wxEVT_LSP_SEMANTICS, &Manager::OnSemanticTokens, this);
     Bind(wxEVT_LSP_LOGMESSAGE, &Manager::OnLogMessage, this);
     Bind(wxEVT_LSP_EDIT_FILES, &Manager::OnApplyEdits, this);
+
+    // Global accelerators
+    wxTheApp->Bind(wxEVT_MENU, &Manager::OnFindSymbol, this, XRCID("lsp_find_symbol"));
+    wxTheApp->Bind(wxEVT_MENU, &Manager::OnFindReferences, this, XRCID("lsp_find_references"));
+    wxTheApp->Bind(wxEVT_MENU, &Manager::OnRenameSymbol, this, XRCID("lsp_rename_symbol"));
+
     m_remoteHelper.reset(new CodeLiteRemoteHelper);
 }
 
@@ -1524,5 +1530,37 @@ void Manager::OnGoinDown(clCommandEvent& event)
         m_quick_outline_dlg = nullptr;
     }
     m_remoteHelper.reset();
+}
+
+void Manager::OnFindSymbol(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    FindSymbol(editor);
+}
+
+void Manager::OnRenameSymbol(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    auto server = LSP::Manager::GetInstance().GetServerForEditor(editor);
+    CHECK_PTR_RET(server);
+
+    server->RenameSymbol(editor);
+}
+
+void Manager::OnFindReferences(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+
+    auto server = GetServerForEditor(editor);
+    CHECK_PTR_RET(server);
+
+    server->FindReferences(editor);
 }
 } // namespace LSP

@@ -1139,6 +1139,10 @@ void clMainFrame::AddKeyboardAccelerators()
                          {"find_resource", _("Find Resource..."), "Ctrl-Shift-R"},
                          {"find_symbol", _("Quick Outline..."), "Ctrl-Shift-O"},
                          {"goto_definition", _("Find Symbol"), "Alt-G"}});
+    mgr->AddAccelerator(_("Language Server"),
+                        {{"lsp_find_symbol", _("Find Symbol")},
+                         {"lsp_rename_symbol", _("Rename Symbol")},
+                         {"lsp_find_references", _("Find References")}});
     mgr->AddAccelerator(_("Search | Bookmarks"),
                         {{"toggle_bookmark", _("Toggle Bookmark"), "Ctrl-B"},
                          {"next_bookmark", _("Next Bookmark"), "F2"},

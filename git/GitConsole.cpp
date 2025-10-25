@@ -26,6 +26,7 @@
 #include "GitConsole.h"
 
 #include "AsyncProcess/clCommandProcessor.h"
+#include "CallThrottler.hpp"
 #include "ColoursAndFontsManager.h"
 #include "GitReleaseNotesGenerationDlg.h"
 #include "GitResetDlg.h"
@@ -124,37 +125,25 @@ struct GitFileEntry {
     }
 };
 
-IEditor* CreateOrOpenFile(const wxString& path, bool first_time)
+IEditor* CreateAndOpenTempFile(const wxString& path)
 {
     // Open a temporary file for the release notes and load it into CodeLite.
     wxFileName fn{path};
 
-    if (first_time) {
-        if (!fn.FileExists()) {
-            // Create
-            fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-            if (!FileUtils::WriteFileContent(fn, wxEmptyString)) {
-                return nullptr;
-            }
-        }
-
-        // OpenFile(..) will return the already opened file and it does not create a new one.
-        auto editor = clGetManager()->OpenFile(fn.GetFullPath());
-        CHECK_PTR_RET_NULL(editor);
-
-        editor->GetCtrl()->SetReadOnly(true);
-        editor->GetCtrl()->SetWrapMode(wxSTC_WRAP_WORD);
-        return editor;
-    } else {
-        auto editor = clGetManager()->GetActiveEditor();
-        CHECK_PTR_RET_NULL(editor);
-
-        if (editor->GetRemotePathOrLocal() != path) {
+    if (!fn.FileExists()) {
+        // Create
+        fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+        if (!FileUtils::WriteFileContent(fn, wxEmptyString)) {
             return nullptr;
         }
-        editor->GetCtrl()->SetWrapMode(wxSTC_WRAP_WORD);
-        return editor;
     }
+
+    // OpenFile(..) will return the already opened file and it does not create a new one.
+    auto editor = clGetManager()->OpenFile(fn.GetFullPath());
+    CHECK_PTR_RET_NULL(editor);
+
+    editor->GetCtrl()->SetWrapMode(wxSTC_WRAP_WORD);
+    return editor;
 }
 
 wxString GenerateRandomFile()
@@ -163,19 +152,6 @@ wxString GenerateRandomFile()
     return tmpfile.GetFullPath();
 }
 
-bool AppendTokenToFile(IEditor* editor, const std::string& token, bool is_done)
-{
-    editor->GetCtrl()->SetInsertionPointEnd();
-    editor->GetCtrl()->SetReadOnly(false);
-    editor->AppendText(wxString::FromUTF8(token));
-    if (!is_done) {
-        editor->GetCtrl()->SetReadOnly(true);
-    }
-    editor->GetCtrl()->ClearSelections();
-    editor->GetCtrl()->EnsureCaretVisible();
-    clSTCHelper::SetCaretAt(editor->GetCtrl(), editor->GetCtrl()->GetLastPosition());
-    return true;
-}
 } // namespace
 
 // ---------------------------------------------------------------------
@@ -938,9 +914,9 @@ void GitConsole::DoCodeReview()
     auto collector = new llm::ResponseCollector();
     m_statusBar->Start(_("Generating Code Review..."));
 
-    std::shared_ptr<bool> first_token = std::make_shared<bool>(true);
-
     wxString review_file = GenerateRandomFile();
+    auto complete_message = AllocateBuffer();
+    std::shared_ptr<CallThrottler> throttler = std::make_shared<CallThrottler>();
     collector->SetStreamCallback(
         [=, this](const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
             if (cancellation_token->IsMaxTokenReached()) {
@@ -948,20 +924,20 @@ void GitConsole::DoCodeReview()
                 return;
             }
 
-            if (!message.empty()) {
-                auto editor = CreateOrOpenFile(review_file, *first_token);
-                *first_token = false;
-                CHECK_COND_RET(editor);
-                AppendTokenToFile(editor, message, is_done);
-            }
+            complete_message->append(message);
+            throttler->ExecuteIfAllowed(
+                [this, cancellation_token]() { UpdateStatusBarTokens(cancellation_token->GetTokenCount()); });
 
             if (is_done) {
                 m_statusBar->Stop("Ready");
-                auto editor = CreateOrOpenFile(review_file, *first_token);
+                auto editor = CreateAndOpenTempFile(review_file);
                 if (editor) {
+                    editor->SetEditorText(wxString::FromUTF8(*complete_message));
                     editor->GetCtrl()->SetSavePoint();
                     MarkdownStyler styler(editor->GetCtrl());
                     styler.StyleText(true);
+                    editor->GetCtrl()->SetWrapMode(wxSTC_WRAP_WORD);
+                    editor->GetCtrl()->SetReadOnly(true);
                 }
             }
         });
@@ -988,7 +964,6 @@ void GitConsole::DoCodeReview()
     collector->SetStateChangingCB(std::move(state_change_cb));
 
     llm::ChatOptions chat_options{llm::ChatOptions::kNoHistory};
-    llm::Manager::GetInstance().EnableFunctionByName("Read_file_from_the_file_system", true);
     llm::Manager::GetInstance().Chat(collector, prompt, cancellation_token, chat_options);
 }
 
@@ -1053,39 +1028,32 @@ void GitConsole::GenerateReleaseNotes()
         }
     });
 
-    std::shared_ptr<std::string> complete_response = std::make_shared<std::string>();
-    std::shared_ptr<bool> first_token = std::make_shared<bool>(true);
-
+    auto complete_response = AllocateBuffer();
     wxString release_notes_file = GenerateRandomFile();
+    std::shared_ptr<CallThrottler> throttler = std::make_shared<CallThrottler>();
     collector->SetStreamCallback(
         [=, this](const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
             if (cancellation_token->IsMaxTokenReached()) {
                 m_statusBar->Stop(message);
                 return;
             }
-
-            if (!message.empty()) {
-                if (!multiple_prompts) {
-                    auto editor = CreateOrOpenFile(release_notes_file, *first_token);
-                    *first_token = false;
-                    CHECK_COND_RET(editor);
-                    AppendTokenToFile(editor, message, is_done);
-                } else {
-                    complete_response->append(message);
-                }
-            }
-
+            complete_response->append(message);
+            throttler->ExecuteIfAllowed(
+                [this, cancellation_token]() { UpdateStatusBarTokens(cancellation_token->GetTokenCount()); });
             if (is_done) {
                 if (multiple_prompts) {
                     CallAfter(&GitConsole::FinaliseReleaseNotes, wxString::FromUTF8(*complete_response));
-                }
-                m_statusBar->Stop("Ready");
-
-                auto editor = CreateOrOpenFile(release_notes_file, *first_token);
-                if (editor) {
-                    editor->GetCtrl()->SetSavePoint();
-                    MarkdownStyler styler(editor->GetCtrl());
-                    styler.StyleText(true);
+                } else {
+                    m_statusBar->Stop("Ready");
+                    auto editor = CreateAndOpenTempFile(release_notes_file);
+                    if (editor) {
+                        editor->SetEditorText(wxString::FromUTF8(*complete_response));
+                        editor->GetCtrl()->SetSavePoint();
+                        MarkdownStyler styler(editor->GetCtrl());
+                        styler.StyleText(true);
+                        editor->GetCtrl()->SetWrapMode(wxSTC_WRAP_WORD);
+                        editor->GetCtrl()->SetReadOnly(true);
+                    }
                 }
             }
         });
@@ -1111,20 +1079,19 @@ void GitConsole::FinaliseReleaseNotes(const wxString& complete_reponse)
     m_statusBar->SetMessage(_("Finalising notes..."));
     auto collector = new llm::ResponseCollector();
 
-    // Open a temporary file for the release notes and load it into CodeLite.
-    auto editor = CreateOrOpenFile(GenerateRandomFile(), true);
-    CHECK_COND_RET(editor);
-    wxString release_notes_file = editor->GetRemotePathOrLocal();
+    auto merged_result = AllocateBuffer();
+    auto token_count = std::make_shared<size_t>(0);
+    auto throttler = std::make_shared<CallThrottler>();
 
     collector->SetStreamCallback(
         [=, this](const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
-            auto editor = CreateOrOpenFile(release_notes_file, false);
-            CHECK_PTR_RET(editor);
-            if (!AppendTokenToFile(editor, message, is_done)) {
-                return;
-            }
-
+            merged_result->append(message);
+            (*token_count)++;
+            throttler->ExecuteIfAllowed([this, token_count]() { UpdateStatusBarTokens(*token_count); });
             if (is_done) {
+                auto editor = CreateAndOpenTempFile(GenerateRandomFile());
+                CHECK_PTR_RET(editor);
+                editor->SetEditorText(wxString::FromUTF8(*merged_result));
                 m_statusBar->Stop("Ready");
                 editor->GetCtrl()->SetSavePoint();
                 MarkdownStyler styler(editor->GetCtrl());
@@ -1136,4 +1103,18 @@ void GitConsole::FinaliseReleaseNotes(const wxString& complete_reponse)
     llm::AddFlagSet(chat_options, llm::ChatOptions::kNoTools);
     llm::AddFlagSet(chat_options, llm::ChatOptions::kNoHistory);
     llm::Manager::GetInstance().Chat(collector, prompt, nullptr, chat_options);
+}
+
+std::shared_ptr<std::string> GitConsole::AllocateBuffer()
+{
+    auto buffer = std::make_shared<std::string>();
+    buffer->reserve(32 * 1024); // assumes ~32KB worst‑case
+    return buffer;
+}
+
+void GitConsole::UpdateStatusBarTokens(size_t tokenCount)
+{
+    CallAfter([this, tokenCount]() {
+        m_statusBar->SetMessage(wxString() << _("Generating ") << tokenCount << _(" Tokens"));
+    });
 }

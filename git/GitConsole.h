@@ -130,6 +130,10 @@ protected:
      * finalized
      */
     void FinaliseReleaseNotes(const wxString& complete_reponse);
+
+    void UpdateStatusBarTokens(size_t tokenCount);
+    std::shared_ptr<std::string> AllocateBuffer();
+
     virtual void OnStopGitProcess(wxCommandEvent& event);
     virtual void OnOpenUnversionedFiles(wxCommandEvent& event);
     virtual void OnAddUnversionedFiles(wxCommandEvent& event);

@@ -137,8 +137,6 @@ Your review should cover the following points:
 Provide a concise summary at the beginning of your review. For each suggestion, use a GCC style format.
 If you provide a code example for an improvement, include the filename where the change should be applied.
 
-To access the complete file for further context, you may utilize the "Read_file_from_the_file_system" tool.
-
 Here is the git diff to review:
 
 ```diff

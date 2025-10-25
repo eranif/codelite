@@ -80,13 +80,17 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
                 QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT);
             }
 
+            bool outline_view_event_fired{false};
             if (context & CONTEXT_OUTLINE_VIEW) {
                 QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
+                outline_view_event_fired = true;
             }
 
-            // always fire the wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW for the EventNotifier
-            // so it might be used by other plugins as well, e.g. "Outline"
-            QueueEvent(EventNotifier::Get(), symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
+            if (!outline_view_event_fired) {
+                // always fire the wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW for the EventNotifier
+                // so it might be used by other plugins as well, e.g. "Outline"
+                QueueEvent(EventNotifier::Get(), symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
+            }
             InvokeResponseCallback(CreateLSPEvent(symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE));
         }
     }

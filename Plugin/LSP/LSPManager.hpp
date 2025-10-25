@@ -119,6 +119,20 @@ public:
     void CodeComplete(IEditor* editor, LSP::CompletionItem::eTriggerKind kind);
 
     /**
+     * @brief Displays a function call tip (parameter hint) for the specified editor.
+     *
+     * The method obtains the appropriate language server for the editor. If a server
+     * is available and the caret is not within a comment, the request is forwarded to
+     * the server via `server->FunctionHelp(editor)`. Otherwise, it falls back to the
+     * legacy code‑completion system by emitting a `clCodeCompletionEvent` containing
+     * the word at the caret, the current cursor position, and the file name.
+     *
+     * @param editor Pointer to the `IEditor` instance for which the call tip is requested.
+     *               Must be non‑null; the function returns immediately if the pointer is invalid.
+     */
+    void FunctionCalltip(IEditor* editor);
+
+    /**
      * @brief Requests document symbols from the LSP server for the given editor.
      *
      * This method validates the editor pointer, obtains the associated LSP server,

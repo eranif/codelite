@@ -21,5 +21,4 @@ AI-powered IDE:
 --------
 
 - MarkdownStyler: mark gcc style lines "file:line" as hyperlink and clickable.
-- Create DocString: send a new request for the symbols before opening the dialog, this should give us a fresh view with
-  all symbols included.
+

@@ -273,7 +273,7 @@ void LSPManager::FindSymbol(IEditor* editor)
     CHECK_PTR_RET(editor);
 
     auto server = GetServerForEditor(editor);
-    if (server == nullptr || !server->IsDocumentSymbolsSupported()) {
+    if (server == nullptr) {
         // Let others handle this
         clCodeCompletionEvent findEvent{wxEVT_CC_FIND_SYMBOL};
         findEvent.SetWord(editor->GetWordAtCaret());
@@ -284,6 +284,23 @@ void LSPManager::FindSymbol(IEditor* editor)
     }
 
     server->FindDefinition(editor);
+}
+
+void LSPManager::FunctionCalltip(IEditor* editor)
+{
+    CHECK_PTR_RET(editor);
+
+    auto server = GetServerForEditor(editor);
+    if (server == nullptr || clSTCHelper::IsPositionInComment(editor->GetCtrl())) {
+        // Let others handle this
+        clCodeCompletionEvent findEvent{wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP};
+        findEvent.SetWord(editor->GetWordAtCaret());
+        findEvent.SetPosition(editor->GetCurrentPosition());
+        findEvent.SetFileName(editor->GetRemotePathOrLocal());
+        EventNotifier::Get()->AddPendingEvent(findEvent);
+        return;
+    }
+    server->FunctionHelp(editor);
 }
 
 bool LSPManager::RequestSymbolsForEditor(IEditor* editor, std::function<void(const LSPEvent&)> cb)

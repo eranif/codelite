@@ -4177,13 +4177,7 @@ int clEditor::GetEOLByOS()
 void clEditor::ShowFunctionTipFromCurrentPos()
 {
     if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_FUNC_CALLTIP) {
-        int pos = DoGetOpenBracePos();
-        // see if any of the plugins want to handle it
-        clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, GetId());
-        evt.SetPosition(pos);
-        evt.SetInsideCommentOrString(m_context->IsCommentOrString(pos));
-        evt.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
-        EventNotifier::Get()->ProcessEvent(evt);
+        LSPManager::GetInstance().FunctionCalltip(this);
     }
 }
 

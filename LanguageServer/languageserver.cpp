@@ -265,7 +265,7 @@ void LanguageServerPlugin::OnGenerateDocString(wxCommandEvent& event)
         IEditor* editor = clGetManager()->GetActiveEditor();
         CHECK_PTR_RET(editor);
 
-        clGetManager()->SetStatusMessage(_("Generating DocString..."), 3);
+        clGetManager()->SetStatusMessage(_("Generating DocString..."), 1);
         wxString language = "text";
         LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetFileName().GetFullName());
         if (lexer) {

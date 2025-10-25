@@ -18,10 +18,12 @@
 
 class LSPOutlineViewDlg;
 
-class WXDLLIMPEXP_SDK LSPManager : public wxEvtHandler
+namespace LSP
+{
+class WXDLLIMPEXP_SDK Manager : public wxEvtHandler
 {
 public:
-    using Ptr_t = wxSharedPtr<LSPManager>;
+    using Ptr_t = wxSharedPtr<Manager>;
     void StartServer(const LanguageServerEntry& entry);
     void StartServer(const wxString& entry);
     void RestartServer(const wxString& name);
@@ -54,7 +56,7 @@ public:
     LanguageServerProtocol::Ptr_t GetServerByName(const wxString& name);
     LanguageServerProtocol::Ptr_t GetServerForLanguage(const wxString& lang);
     void ClearRestartCounters();
-    static LSPManager& GetInstance();
+    static Manager& GetInstance();
     void Initialise();
 
     //----------------------------
@@ -191,8 +193,8 @@ protected:
     void DiscoverWorkspaceType();
     void UpdateNavigationBar();
 
-    LSPManager();
-    virtual ~LSPManager();
+    Manager();
+    virtual ~Manager();
 
     struct CrashInfo {
         size_t times{0};
@@ -205,3 +207,4 @@ protected:
     LSPOutlineViewDlg* m_quick_outline_dlg{nullptr};
     std::unique_ptr<CodeLiteRemoteHelper> m_remoteHelper;
 };
+} // namespace LSP

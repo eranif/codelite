@@ -1000,7 +1000,7 @@ void ContextCpp::OnFindImpl(wxCommandEvent& event)
 void ContextCpp::OnFindDecl(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    LSPManager::GetInstance().FindDeclaration(&GetCtrl());
+    LSP::Manager::GetInstance().FindDeclaration(&GetCtrl());
 }
 
 void ContextCpp::OnUpdateUI(wxUpdateUIEvent& event)

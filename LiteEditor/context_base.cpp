@@ -188,7 +188,7 @@ int ContextBase::DoGetCalltipParamterIndex()
 void ContextBase::OnUserTypedXChars(int pos)
 {
     wxUnusedVar(pos);
-    LSPManager::GetInstance().CodeComplete(&GetCtrl(), LSP::CompletionItem::kTriggerKindInvoked);
+    LSP::Manager::GetInstance().CodeComplete(&GetCtrl(), LSP::CompletionItem::kTriggerKindInvoked);
 }
 
 void ContextBase::AutoAddComment()

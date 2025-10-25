@@ -3000,7 +3000,7 @@ void clMainFrame::OnQuickOutline(wxCommandEvent& event)
     clEditor* activeEditor = GetMainBook()->GetActiveEditor();
     CHECK_PTR_RET(activeEditor);
 
-    LSPManager::GetInstance().ShowOutlineView(activeEditor);
+    LSP::Manager::GetInstance().ShowOutlineView(activeEditor);
     activeEditor->SetActive();
 }
 
@@ -3449,7 +3449,7 @@ void clMainFrame::CompleteInitialization()
     clLocaleManager::get().load();
 
     // Initialise the LSP manager
-    LSPManager::GetInstance().Initialise();
+    LSP::Manager::GetInstance().Initialise();
 
     // Register the file system workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new clFileSystemWorkspace(true));

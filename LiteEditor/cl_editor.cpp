@@ -1919,7 +1919,7 @@ void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool 
 
     if (triggerKind == LSP::CompletionItem::kTriggerUser) {
         // user hit Ctrl-SPACE
-        LSPManager::GetInstance().CodeComplete(this, triggerKind);
+        LSP::Manager::GetInstance().CodeComplete(this, triggerKind);
         return;
     } else {
         if (GetContext()->IsAtBlockComment()) {
@@ -1944,7 +1944,7 @@ void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool 
     // Let the plugins a chance to override the default behaviour
     // 24x7 CC (as-we-type)
     if (!GetContext()->IsAtBlockComment() && !GetContext()->IsAtLineComment()) {
-        LSPManager::GetInstance().CodeComplete(this, triggerKind);
+        LSP::Manager::GetInstance().CodeComplete(this, triggerKind);
     }
 }
 
@@ -1959,13 +1959,13 @@ void clEditor::CodeComplete()
     if (AutoCompActive())
         return; // Don't clobber the boxes..
 
-    LSPManager::GetInstance().CodeComplete(this, LSP::CompletionItem::kTriggerKindInvoked);
+    LSP::Manager::GetInstance().CodeComplete(this, LSP::CompletionItem::kTriggerKindInvoked);
 }
 
 void clEditor::GotoDefinition()
 {
     // Let the plugins process this first
-    LSPManager::GetInstance().FindSymbol(this);
+    LSP::Manager::GetInstance().FindSymbol(this);
 }
 
 void clEditor::OnDwellStart(wxStyledTextEvent& event)
@@ -3282,7 +3282,7 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
     bool backspace_triggers_cc = TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_BACKSPACE_TRIGGER;
     if (backspace_triggers_cc && !is_pos_before_whitespace && (event.GetKeyCode() == WXK_BACK) && !m_calltip) {
         // try to code complete
-        LSPManager::GetInstance().CodeComplete(this, LSP::CompletionItem::kTriggerUser);
+        LSP::Manager::GetInstance().CodeComplete(this, LSP::CompletionItem::kTriggerUser);
     }
 
     m_prevSelectionInfo.Clear();
@@ -4177,7 +4177,7 @@ int clEditor::GetEOLByOS()
 void clEditor::ShowFunctionTipFromCurrentPos()
 {
     if (TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_DISP_FUNC_CALLTIP) {
-        LSPManager::GetInstance().FunctionCalltip(this);
+        LSP::Manager::GetInstance().FunctionCalltip(this);
     }
 }
 
@@ -4270,7 +4270,7 @@ void clEditor::DoQuickJump(wxMouseEvent& event, bool isMiddle)
         // bool altLink = (isMiddle && event.m_controlDown) || (!isMiddle && event.m_altDown);
 
         // Let the plugins handle it first
-        LSPManager::GetInstance().FindSymbol(this);
+        LSP::Manager::GetInstance().FindSymbol(this);
     }
 
     // clear the hyper link indicators

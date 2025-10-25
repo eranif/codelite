@@ -355,7 +355,7 @@ void RustPlugin::OnBuildEnded(clBuildEvent& event)
     }
 
     // Restart the LSP.
-    auto server = LSPManager::GetInstance().GetServerForLanguage("rust");
+    auto server = LSP::Manager::GetInstance().GetServerForLanguage("rust");
     if (server) {
         server->Restart();
     }

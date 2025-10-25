@@ -35,6 +35,9 @@
 #include <wx/stc/stc.h>
 #include <wx/wupdlock.h>
 
+namespace LSP
+{
+
 namespace
 {
 struct SymbolClientData : public wxClientData {
@@ -122,73 +125,73 @@ clEnvList_t json_get_server_config_env(JSON* root, const wxString& server_name)
 
 } // namespace
 
-LSPManager::LSPManager()
+Manager::Manager()
 {
-    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &LSPManager::OnFileSaved, this);
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LSPManager::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LSPManager::OnWorkspaceOpen, this);
-    EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LSPManager::OnEditorClosed, this);
-    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &LSPManager::OnActiveEditorChanged, this);
-    EventNotifier::Get()->Bind(wxEVT_GOING_DOWN, &LSPManager::OnGoinDown, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &Manager::OnFileSaved, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &Manager::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &Manager::OnWorkspaceOpen, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &Manager::OnEditorClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &Manager::OnActiveEditorChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_GOING_DOWN, &Manager::OnGoinDown, this);
 
-    EventNotifier::Get()->Bind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &LSPManager::OnCompileCommandsGenerated, this);
-    EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &LSPManager::OnBuildEnded, this);
-    EventNotifier::Get()->Bind(wxEVT_CMD_OPEN_RESOURCE, &LSPManager::OnOpenResource, this);
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_FILES_SCANNED, &LSPManager::OnWorkspaceScanCompleted, this);
-    EventNotifier::Get()->Bind(wxEVT_LSP_SET_DIAGNOSTICS, &LSPManager::OnSetDiagnostics, this);
-    EventNotifier::Get()->Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LSPManager::OnClearDiagnostics, this);
-    EventNotifier::Get()->Bind(wxEVT_EDITOR_MARGIN_CLICKED, &LSPManager::OnMarginClicked, this);
-    EventNotifier::Get()->Bind(wxEVT_LSP_CODE_ACTIONS, &LSPManager::OnCodeActionAvailable, this);
+    EventNotifier::Get()->Bind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &Manager::OnCompileCommandsGenerated, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &Manager::OnBuildEnded, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_OPEN_RESOURCE, &Manager::OnOpenResource, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_FILES_SCANNED, &Manager::OnWorkspaceScanCompleted, this);
+    EventNotifier::Get()->Bind(wxEVT_LSP_SET_DIAGNOSTICS, &Manager::OnSetDiagnostics, this);
+    EventNotifier::Get()->Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &Manager::OnClearDiagnostics, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_MARGIN_CLICKED, &Manager::OnMarginClicked, this);
+    EventNotifier::Get()->Bind(wxEVT_LSP_CODE_ACTIONS, &Manager::OnCodeActionAvailable, this);
 
-    Bind(wxEVT_LSP_DEFINITION, &LSPManager::OnSymbolFound, this);
-    Bind(wxEVT_LSP_COMPLETION_READY, &LSPManager::OnCompletionReady, this);
-    Bind(wxEVT_LSP_REPARSE_NEEDED, &LSPManager::OnReparseNeeded, this);
-    Bind(wxEVT_LSP_RESTART_NEEDED, &LSPManager::OnRestartNeeded, this);
-    Bind(wxEVT_LSP_INITIALIZED, &LSPManager::OnLSPInitialized, this);
-    Bind(wxEVT_LSP_METHOD_NOT_FOUND, &LSPManager::OnMethodNotFound, this);
-    Bind(wxEVT_LSP_SIGNATURE_HELP, &LSPManager::OnSignatureHelp, this);
-    Bind(wxEVT_LSP_HOVER, &LSPManager::OnHover, this);
-    Bind(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, &LSPManager::OnShowQuickOutlineDlg, this);
-    Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, &LSPManager::OnOulineViewSymbols, this);
-    Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &LSPManager::OnDocumentSymbolsForHighlight, this);
-    Bind(wxEVT_LSP_SEMANTICS, &LSPManager::OnSemanticTokens, this);
-    Bind(wxEVT_LSP_LOGMESSAGE, &LSPManager::OnLogMessage, this);
-    Bind(wxEVT_LSP_EDIT_FILES, &LSPManager::OnApplyEdits, this);
+    Bind(wxEVT_LSP_DEFINITION, &Manager::OnSymbolFound, this);
+    Bind(wxEVT_LSP_COMPLETION_READY, &Manager::OnCompletionReady, this);
+    Bind(wxEVT_LSP_REPARSE_NEEDED, &Manager::OnReparseNeeded, this);
+    Bind(wxEVT_LSP_RESTART_NEEDED, &Manager::OnRestartNeeded, this);
+    Bind(wxEVT_LSP_INITIALIZED, &Manager::OnLSPInitialized, this);
+    Bind(wxEVT_LSP_METHOD_NOT_FOUND, &Manager::OnMethodNotFound, this);
+    Bind(wxEVT_LSP_SIGNATURE_HELP, &Manager::OnSignatureHelp, this);
+    Bind(wxEVT_LSP_HOVER, &Manager::OnHover, this);
+    Bind(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, &Manager::OnShowQuickOutlineDlg, this);
+    Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, &Manager::OnOulineViewSymbols, this);
+    Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &Manager::OnDocumentSymbolsForHighlight, this);
+    Bind(wxEVT_LSP_SEMANTICS, &Manager::OnSemanticTokens, this);
+    Bind(wxEVT_LSP_LOGMESSAGE, &Manager::OnLogMessage, this);
+    Bind(wxEVT_LSP_EDIT_FILES, &Manager::OnApplyEdits, this);
     m_remoteHelper.reset(new CodeLiteRemoteHelper);
 }
 
-LSPManager::~LSPManager()
+Manager::~Manager()
 {
-    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &LSPManager::OnFileSaved, this);
-    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &LSPManager::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &LSPManager::OnWorkspaceOpen, this);
-    EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LSPManager::OnEditorClosed, this);
-    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &LSPManager::OnActiveEditorChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_FILES_SCANNED, &LSPManager::OnWorkspaceScanCompleted, this);
-    EventNotifier::Get()->Unbind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &LSPManager::OnCompileCommandsGenerated, this);
-    EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &LSPManager::OnBuildEnded, this);
-    EventNotifier::Get()->Unbind(wxEVT_GOING_DOWN, &LSPManager::OnGoinDown, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &Manager::OnFileSaved, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &Manager::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &Manager::OnWorkspaceOpen, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &Manager::OnEditorClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &Manager::OnActiveEditorChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_FILES_SCANNED, &Manager::OnWorkspaceScanCompleted, this);
+    EventNotifier::Get()->Unbind(wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &Manager::OnCompileCommandsGenerated, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &Manager::OnBuildEnded, this);
+    EventNotifier::Get()->Unbind(wxEVT_GOING_DOWN, &Manager::OnGoinDown, this);
 
-    EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_RESOURCE, &LSPManager::OnOpenResource, this);
-    EventNotifier::Get()->Unbind(wxEVT_LSP_SET_DIAGNOSTICS, &LSPManager::OnSetDiagnostics, this);
-    EventNotifier::Get()->Unbind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LSPManager::OnClearDiagnostics, this);
-    EventNotifier::Get()->Unbind(wxEVT_EDITOR_MARGIN_CLICKED, &LSPManager::OnMarginClicked, this);
-    EventNotifier::Get()->Unbind(wxEVT_LSP_CODE_ACTIONS, &LSPManager::OnCodeActionAvailable, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_RESOURCE, &Manager::OnOpenResource, this);
+    EventNotifier::Get()->Unbind(wxEVT_LSP_SET_DIAGNOSTICS, &Manager::OnSetDiagnostics, this);
+    EventNotifier::Get()->Unbind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &Manager::OnClearDiagnostics, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_MARGIN_CLICKED, &Manager::OnMarginClicked, this);
+    EventNotifier::Get()->Unbind(wxEVT_LSP_CODE_ACTIONS, &Manager::OnCodeActionAvailable, this);
 
-    Unbind(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, &LSPManager::OnShowQuickOutlineDlg, this);
-    Unbind(wxEVT_LSP_DEFINITION, &LSPManager::OnSymbolFound, this);
-    Unbind(wxEVT_LSP_COMPLETION_READY, &LSPManager::OnCompletionReady, this);
-    Unbind(wxEVT_LSP_REPARSE_NEEDED, &LSPManager::OnReparseNeeded, this);
-    Unbind(wxEVT_LSP_RESTART_NEEDED, &LSPManager::OnRestartNeeded, this);
-    Unbind(wxEVT_LSP_INITIALIZED, &LSPManager::OnLSPInitialized, this);
-    Unbind(wxEVT_LSP_METHOD_NOT_FOUND, &LSPManager::OnMethodNotFound, this);
-    Unbind(wxEVT_LSP_SIGNATURE_HELP, &LSPManager::OnSignatureHelp, this);
-    Unbind(wxEVT_LSP_HOVER, &LSPManager::OnHover, this);
-    Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, &LSPManager::OnOulineViewSymbols, this);
-    Unbind(wxEVT_LSP_SEMANTICS, &LSPManager::OnSemanticTokens, this);
-    Unbind(wxEVT_LSP_LOGMESSAGE, &LSPManager::OnLogMessage, this);
-    Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &LSPManager::OnDocumentSymbolsForHighlight, this);
-    Unbind(wxEVT_LSP_EDIT_FILES, &LSPManager::OnApplyEdits, this);
+    Unbind(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, &Manager::OnShowQuickOutlineDlg, this);
+    Unbind(wxEVT_LSP_DEFINITION, &Manager::OnSymbolFound, this);
+    Unbind(wxEVT_LSP_COMPLETION_READY, &Manager::OnCompletionReady, this);
+    Unbind(wxEVT_LSP_REPARSE_NEEDED, &Manager::OnReparseNeeded, this);
+    Unbind(wxEVT_LSP_RESTART_NEEDED, &Manager::OnRestartNeeded, this);
+    Unbind(wxEVT_LSP_INITIALIZED, &Manager::OnLSPInitialized, this);
+    Unbind(wxEVT_LSP_METHOD_NOT_FOUND, &Manager::OnMethodNotFound, this);
+    Unbind(wxEVT_LSP_SIGNATURE_HELP, &Manager::OnSignatureHelp, this);
+    Unbind(wxEVT_LSP_HOVER, &Manager::OnHover, this);
+    Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, &Manager::OnOulineViewSymbols, this);
+    Unbind(wxEVT_LSP_SEMANTICS, &Manager::OnSemanticTokens, this);
+    Unbind(wxEVT_LSP_LOGMESSAGE, &Manager::OnLogMessage, this);
+    Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &Manager::OnDocumentSymbolsForHighlight, this);
+    Unbind(wxEVT_LSP_EDIT_FILES, &Manager::OnApplyEdits, this);
 
     if (m_quick_outline_dlg) {
         m_quick_outline_dlg->Destroy();
@@ -196,19 +199,19 @@ LSPManager::~LSPManager()
     }
 }
 
-LSPManager& LSPManager::GetInstance()
+Manager& Manager::GetInstance()
 {
-    static LSPManager manager;
+    static Manager manager;
     return manager;
 }
 
-void LSPManager::Initialise() {}
+void Manager::Initialise() {}
 
 //
 // Completion API.
 //
 
-void LSPManager::ShowOutlineView(IEditor* editor)
+void Manager::ShowOutlineView(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
     auto server = GetServerForEditor(editor);
@@ -227,7 +230,7 @@ void LSPManager::ShowOutlineView(IEditor* editor)
     RequestSymbolsForEditor(editor, std::move(cb));
 }
 
-void LSPManager::CodeComplete(IEditor* editor, LSP::CompletionItem::eTriggerKind kind)
+void Manager::CodeComplete(IEditor* editor, LSP::CompletionItem::eTriggerKind kind)
 {
     CHECK_PTR_RET(editor);
     auto server = GetServerForEditor(editor);
@@ -254,7 +257,7 @@ void LSPManager::CodeComplete(IEditor* editor, LSP::CompletionItem::eTriggerKind
     server->CodeComplete(editor, kind == LSP::CompletionItem::kTriggerUser);
 }
 
-void LSPManager::FindDeclaration(IEditor* editor)
+void Manager::FindDeclaration(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
     auto server = GetServerForEditor(editor);
@@ -268,7 +271,7 @@ void LSPManager::FindDeclaration(IEditor* editor)
     server->FindDeclaration(editor, false);
 }
 
-void LSPManager::FindSymbol(IEditor* editor)
+void Manager::FindSymbol(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
 
@@ -286,7 +289,7 @@ void LSPManager::FindSymbol(IEditor* editor)
     server->FindDefinition(editor);
 }
 
-void LSPManager::FunctionCalltip(IEditor* editor)
+void Manager::FunctionCalltip(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
 
@@ -303,7 +306,7 @@ void LSPManager::FunctionCalltip(IEditor* editor)
     server->FunctionHelp(editor);
 }
 
-bool LSPManager::RequestSymbolsForEditor(IEditor* editor, std::function<void(const LSPEvent&)> cb)
+bool Manager::RequestSymbolsForEditor(IEditor* editor, std::function<void(const LSPEvent&)> cb)
 {
     CHECK_PTR_RET_FALSE(editor);
     auto server = GetServerForEditor(editor);
@@ -314,7 +317,7 @@ bool LSPManager::RequestSymbolsForEditor(IEditor* editor, std::function<void(con
     return true;
 }
 
-void LSPManager::Reload(const std::unordered_set<wxString>& languages)
+void Manager::Reload(const std::unordered_set<wxString>& languages)
 {
     wxBusyCursor bc;
     StopAll(languages);
@@ -326,7 +329,7 @@ void LSPManager::Reload(const std::unordered_set<wxString>& languages)
     StartAll(languages);
 }
 
-LanguageServerProtocol::Ptr_t LSPManager::GetServerForEditor(IEditor* editor)
+LanguageServerProtocol::Ptr_t Manager::GetServerForEditor(IEditor* editor)
 {
     for (const auto& [_, server] : m_servers) {
         if (server->CanHandle(editor)) {
@@ -336,7 +339,7 @@ LanguageServerProtocol::Ptr_t LSPManager::GetServerForEditor(IEditor* editor)
     return LanguageServerProtocol::Ptr_t{nullptr};
 }
 
-void LSPManager::OnSymbolFound(LSPEvent& event)
+void Manager::OnSymbolFound(LSPEvent& event)
 {
     // if we have more than one location - prompt the user
     if (event.GetLocations().empty()) {
@@ -404,7 +407,7 @@ void LSPManager::OnSymbolFound(LSPEvent& event)
     clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), std::move(cb));
 }
 
-void LSPManager::OnLSPInitialized(LSPEvent& event)
+void Manager::OnLSPInitialized(LSPEvent& event)
 {
     // Now that the workspace is loaded, parse the active file
     IEditor* editor = clGetManager()->GetActiveEditor();
@@ -416,7 +419,7 @@ void LSPManager::OnLSPInitialized(LSPEvent& event)
     }
 }
 
-void LSPManager::OnSignatureHelp(LSPEvent& event)
+void Manager::OnSignatureHelp(LSPEvent& event)
 {
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
@@ -433,7 +436,7 @@ void LSPManager::OnSignatureHelp(LSPEvent& event)
     editor->ShowCalltip(std::make_shared<clCallTip>(tags));
 }
 
-void LSPManager::OnHover(LSPEvent& event)
+void Manager::OnHover(LSPEvent& event)
 {
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
@@ -470,9 +473,9 @@ void LSPManager::OnHover(LSPEvent& event)
     }
 }
 
-void LSPManager::OnMethodNotFound(LSPEvent& event) { wxUnusedVar(event); }
+void Manager::OnMethodNotFound(LSPEvent& event) { wxUnusedVar(event); }
 
-void LSPManager::OnCompletionReady(LSPEvent& event)
+void Manager::OnCompletionReady(LSPEvent& event)
 {
     const LSP::CompletionItem::Vec_t& items = event.GetCompletions();
     auto trigger_kind = event.GetTriggerKind();
@@ -486,7 +489,7 @@ void LSPManager::OnCompletionReady(LSPEvent& event)
         trigger_kind == LSP::CompletionItem::kTriggerUser ? wxCodeCompletionBox::kTriggerUser : 0);
 }
 
-void LSPManager::OnReparseNeeded(LSPEvent& event)
+void Manager::OnReparseNeeded(LSPEvent& event)
 {
     LanguageServerProtocol::Ptr_t server = GetServerByName(event.GetServerName());
     if (!server) {
@@ -500,7 +503,7 @@ void LSPManager::OnReparseNeeded(LSPEvent& event)
     server->OpenEditor(editor);
 }
 
-void LSPManager::OnSemanticTokens(LSPEvent& event)
+void Manager::OnSemanticTokens(LSPEvent& event)
 {
     LanguageServerProtocol::Ptr_t server = GetServerByName(event.GetServerName());
     CHECK_PTR_RET(server);
@@ -591,7 +594,7 @@ void LSPManager::OnSemanticTokens(LSPEvent& event)
     LSP_TRACE() << "Success" << endl;
 }
 
-void LSPManager::OnRestartNeeded(LSPEvent& event)
+void Manager::OnRestartNeeded(LSPEvent& event)
 {
     // Don't keep restarting a crashing LSP
     // We consider a "crashing LSP" as:
@@ -621,7 +624,7 @@ void LSPManager::OnRestartNeeded(LSPEvent& event)
     RestartServer(event.GetServerName());
 }
 
-LanguageServerProtocol::Ptr_t LSPManager::GetServerByName(const wxString& name)
+LanguageServerProtocol::Ptr_t Manager::GetServerByName(const wxString& name)
 {
     if (m_servers.count(name) == 0) {
         return LanguageServerProtocol::Ptr_t(nullptr);
@@ -629,7 +632,7 @@ LanguageServerProtocol::Ptr_t LSPManager::GetServerByName(const wxString& name)
     return m_servers[name];
 }
 
-void LSPManager::RestartServer(const wxString& name)
+void Manager::RestartServer(const wxString& name)
 {
     {
         // Incase a server terminated, remove it from the list of servers
@@ -656,7 +659,7 @@ void LSPManager::RestartServer(const wxString& name)
     StartServer(entry);
 }
 
-void LSPManager::StartServer(const LanguageServerEntry& entry)
+void Manager::StartServer(const LanguageServerEntry& entry)
 {
     if (!entry.IsEnabled()) {
         LOG_IF_TRACE { LSP_TRACE() << "LSP" << entry.GetName() << "is not enabled" << endl; }
@@ -852,7 +855,7 @@ void LSPManager::StartServer(const LanguageServerEntry& entry)
     }
 }
 
-void LSPManager::OnWorkspaceClosed(clWorkspaceEvent& event)
+void Manager::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
 
@@ -865,7 +868,7 @@ void LSPManager::OnWorkspaceClosed(clWorkspaceEvent& event)
     m_symbols_to_file_cache.clear();
 }
 
-void LSPManager::OnWorkspaceOpen(clWorkspaceEvent& event)
+void Manager::OnWorkspaceOpen(clWorkspaceEvent& event)
 {
     event.Skip();
 
@@ -878,13 +881,13 @@ void LSPManager::OnWorkspaceOpen(clWorkspaceEvent& event)
     DiscoverWorkspaceType();
 }
 
-void LSPManager::SetWorkspaceType(FileExtManager::FileType type)
+void Manager::SetWorkspaceType(FileExtManager::FileType type)
 {
     LanguageServerProtocol::workspace_file_type = type;
     LSP_DEBUG() << "*** LSP: workspace type is set:" << LanguageServerProtocol::workspace_file_type << "***" << endl;
 }
 
-void LSPManager::StopAll(const std::unordered_set<wxString>& languages)
+void Manager::StopAll(const std::unordered_set<wxString>& languages)
 {
     LSP_DEBUG() << "LSP: Stopping all servers" << endl;
     if (languages.empty()) {
@@ -911,7 +914,7 @@ void LSPManager::StopAll(const std::unordered_set<wxString>& languages)
     ClearAllDiagnostics();
 }
 
-void LSPManager::StartAll(const std::unordered_set<wxString>& languages)
+void Manager::StartAll(const std::unordered_set<wxString>& languages)
 {
     // create a new list
     ClearAllDiagnostics();
@@ -937,7 +940,7 @@ void LSPManager::StartAll(const std::unordered_set<wxString>& languages)
     LSP_DEBUG() << "LSP: Success" << endl;
 }
 
-void LSPManager::LSPSignatureHelpToTagEntries(TagEntryPtrVector_t& tags, const LSP::SignatureHelp& sighelp)
+void Manager::LSPSignatureHelpToTagEntries(TagEntryPtrVector_t& tags, const LSP::SignatureHelp& sighelp)
 {
     if (sighelp.GetSignatures().empty()) {
         return;
@@ -961,7 +964,7 @@ void LSPManager::LSPSignatureHelpToTagEntries(TagEntryPtrVector_t& tags, const L
     }
 }
 
-void LSPManager::OnCompileCommandsGenerated(clCommandEvent& event)
+void Manager::OnCompileCommandsGenerated(clCommandEvent& event)
 {
     event.Skip();
     clGetManager()->SetStatusMessage(_("Restarting Language Servers..."));
@@ -969,7 +972,7 @@ void LSPManager::OnCompileCommandsGenerated(clCommandEvent& event)
     clGetManager()->SetStatusMessage(_("Ready"));
 }
 
-void LSPManager::OnOulineViewSymbols(LSPEvent& event)
+void Manager::OnOulineViewSymbols(LSPEvent& event)
 {
     event.Skip();
     // we use it for outline + editor bar
@@ -981,7 +984,7 @@ void LSPManager::OnOulineViewSymbols(LSPEvent& event)
     UpdateNavigationBar();
 }
 
-void LSPManager::ShowQuickOutlineDialog(const LSPEvent& event)
+void Manager::ShowQuickOutlineDialog(const LSPEvent& event)
 {
     if (m_quick_outline_dlg == nullptr) {
         m_quick_outline_dlg = new LSPOutlineViewDlg(EventNotifier::Get()->TopFrame());
@@ -994,9 +997,9 @@ void LSPManager::ShowQuickOutlineDialog(const LSPEvent& event)
     }
 }
 
-void LSPManager::OnShowQuickOutlineDlg(LSPEvent& event) { ShowQuickOutlineDialog(event); }
+void Manager::OnShowQuickOutlineDlg(LSPEvent& event) { ShowQuickOutlineDialog(event); }
 
-void LSPManager::OnSetDiagnostics(LSPEvent& event)
+void Manager::OnSetDiagnostics(LSPEvent& event)
 {
     event.Skip();
     IEditor* editor = FindEditor(event);
@@ -1024,7 +1027,7 @@ void LSPManager::OnSetDiagnostics(LSPEvent& event)
     }
 }
 
-void LSPManager::OnClearDiagnostics(LSPEvent& event)
+void Manager::OnClearDiagnostics(LSPEvent& event)
 {
     event.Skip();
     IEditor* editor = FindEditor(event);
@@ -1033,7 +1036,7 @@ void LSPManager::OnClearDiagnostics(LSPEvent& event)
     }
 }
 
-void LSPManager::ClearAllDiagnostics()
+void Manager::ClearAllDiagnostics()
 {
     IEditor::List_t editors;
     clGetManager()->GetAllEditors(editors);
@@ -1042,11 +1045,11 @@ void LSPManager::ClearAllDiagnostics()
     }
 }
 
-void LSPManager::ClearRestartCounters() { m_restartCounters.clear(); }
+void Manager::ClearRestartCounters() { m_restartCounters.clear(); }
 
-void LSPManager::OnBuildEnded(clBuildEvent& event) { event.Skip(); }
+void Manager::OnBuildEnded(clBuildEvent& event) { event.Skip(); }
 
-void LSPManager::StopServer(const wxString& name)
+void Manager::StopServer(const wxString& name)
 {
     LanguageServerProtocol::Ptr_t server = GetServerByName(name);
     if (!server) {
@@ -1059,7 +1062,7 @@ void LSPManager::StopServer(const wxString& name)
     m_servers.erase(name);
 }
 
-void LSPManager::DeleteServer(const wxString& name)
+void Manager::DeleteServer(const wxString& name)
 {
     StopServer(name); // stop any server that goes by that name
     // Delete it's configuration entry
@@ -1067,7 +1070,7 @@ void LSPManager::DeleteServer(const wxString& name)
     LanguageServerConfig::Get().Save();
 }
 
-void LSPManager::StartServer(const wxString& name)
+void Manager::StartServer(const wxString& name)
 {
     auto entry = LanguageServerConfig::Get().GetServer(name);
     if (entry.IsNull()) {
@@ -1076,7 +1079,7 @@ void LSPManager::StartServer(const wxString& name)
     StartServer(entry);
 }
 
-wxString LSPManager::GetEditorFilePath(IEditor* editor) const
+wxString Manager::GetEditorFilePath(IEditor* editor) const
 {
     if (editor->IsRemoteFile()) {
         return editor->GetRemotePath();
@@ -1085,9 +1088,9 @@ wxString LSPManager::GetEditorFilePath(IEditor* editor) const
     }
 }
 
-IEditor* LSPManager::FindEditor(const LSPEvent& event) const { return FindEditor(event.GetLocation().GetPath()); }
+IEditor* Manager::FindEditor(const LSPEvent& event) const { return FindEditor(event.GetLocation().GetPath()); }
 
-IEditor* LSPManager::FindEditor(const wxString& path) const
+IEditor* Manager::FindEditor(const wxString& path) const
 {
     IEditor::List_t all_editors;
     clGetManager()->GetAllEditors(all_editors);
@@ -1100,7 +1103,7 @@ IEditor* LSPManager::FindEditor(const wxString& path) const
     return nullptr;
 }
 
-LanguageServerProtocol::Ptr_t LSPManager::GetServerForLanguage(const wxString& lang)
+LanguageServerProtocol::Ptr_t Manager::GetServerForLanguage(const wxString& lang)
 {
     for (const auto& vt : m_servers) {
         const auto& thisServer = vt.second;
@@ -1111,13 +1114,13 @@ LanguageServerProtocol::Ptr_t LSPManager::GetServerForLanguage(const wxString& l
     return LanguageServerProtocol::Ptr_t{nullptr};
 }
 
-void LSPManager::OnLogMessage(LSPEvent& event)
+void Manager::OnLogMessage(LSPEvent& event)
 {
     event.Skip();
     // m_plugin->LogMessage(event.GetServerName(), event.GetMessage(), event.GetLogMessageSeverity());
 }
 
-void LSPManager::OnDocumentSymbolsForHighlight(LSPEvent& event)
+void Manager::OnDocumentSymbolsForHighlight(LSPEvent& event)
 {
     LSP_DEBUG() << "LanguageServerCluster::OnDocumentSymbolsForHighlight called for file:" << event.GetFileName()
                 << endl;
@@ -1166,13 +1169,13 @@ void LSPManager::OnDocumentSymbolsForHighlight(LSPEvent& event)
     editor->SetSemanticTokens(classes, variables, methods, others);
 }
 
-void LSPManager::OnOpenResource(wxCommandEvent& event)
+void Manager::OnOpenResource(wxCommandEvent& event)
 {
     event.Skip();
     DiscoverWorkspaceType();
 }
 
-void LSPManager::DiscoverWorkspaceType()
+void Manager::DiscoverWorkspaceType()
 {
     if (LanguageServerProtocol::workspace_file_type != FileExtManager::TypeOther) {
         return;
@@ -1253,27 +1256,27 @@ void LSPManager::DiscoverWorkspaceType()
                     }
                 }
             }
-            owner->CallAfter(&LSPManager::SetWorkspaceType, cur_type);
+            owner->CallAfter(&Manager::SetWorkspaceType, cur_type);
         },
         files,
         this);
     thr.detach();
 }
 
-void LSPManager::OnEditorClosed(clCommandEvent& event)
+void Manager::OnEditorClosed(clCommandEvent& event)
 {
     event.Skip();
     // clear the cache for the closed file
     m_symbols_to_file_cache.erase(event.GetFileName());
 }
 
-void LSPManager::OnActiveEditorChanged(wxCommandEvent& event)
+void Manager::OnActiveEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
     UpdateNavigationBar();
 }
 
-void LSPManager::UpdateNavigationBar()
+void Manager::UpdateNavigationBar()
 {
     auto editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
@@ -1287,7 +1290,7 @@ void LSPManager::UpdateNavigationBar()
     clGetManager()->GetNavigationBar()->UpdateScopesForCurrentEditor(symbols);
 }
 
-void LSPManager::OnWorkspaceScanCompleted(clWorkspaceEvent& event)
+void Manager::OnWorkspaceScanCompleted(clWorkspaceEvent& event)
 {
     event.Skip();
     LSP_DEBUG() << "==> LanguageServerCluster: workspace file scanned completed." << endl;
@@ -1300,7 +1303,7 @@ void LSPManager::OnWorkspaceScanCompleted(clWorkspaceEvent& event)
     Reload();
 }
 
-void LSPManager::OnMarginClicked(clEditorEvent& event)
+void Manager::OnMarginClicked(clEditorEvent& event)
 {
     auto cd = dynamic_cast<DiagnosticsData*>(event.GetUserData());
     if (cd == nullptr) {
@@ -1319,7 +1322,7 @@ void LSPManager::OnMarginClicked(clEditorEvent& event)
     server->SendCodeActionRequest(editor, {cd->diagnostic});
 }
 
-void LSPManager::OnCodeActionAvailable(LSPEvent& event)
+void Manager::OnCodeActionAvailable(LSPEvent& event)
 {
     event.Skip();
     // prompt the user
@@ -1372,7 +1375,7 @@ void LSPManager::OnCodeActionAvailable(LSPEvent& event)
     server->SendWorkspaceExecuteCommand(event.GetFileName(), *command_to_apply);
 }
 
-void LSPManager::OnApplyEdits(LSPEvent& event)
+void Manager::OnApplyEdits(LSPEvent& event)
 {
     wxBusyCursor bc;
     const auto& changes = event.GetChanges();
@@ -1432,7 +1435,7 @@ void LSPManager::OnApplyEdits(LSPEvent& event)
     }
 }
 
-void LSPManager::OnFileSaved(clCommandEvent& event)
+void Manager::OnFileSaved(clCommandEvent& event)
 {
     // always skipped
     event.Skip();
@@ -1447,7 +1450,7 @@ void LSPManager::OnFileSaved(clCommandEvent& event)
     }
 }
 
-void LSPManager::OnGoinDown(clCommandEvent& event)
+void Manager::OnGoinDown(clCommandEvent& event)
 {
     event.Skip();
     StopAll();
@@ -1457,3 +1460,4 @@ void LSPManager::OnGoinDown(clCommandEvent& event)
     }
     m_remoteHelper.reset();
 }
+} // namespace LSP

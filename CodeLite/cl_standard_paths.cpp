@@ -148,7 +148,7 @@ wxString clStandardPaths::GetPluginsDirectory() const
     wxString pluginsDir = PLUGINS_DIR;
 #else
 #ifdef USE_POSIX_LAYOUT
-    wxFileName path(GetInstallDir() + wxT(PLUGINS_DIR), "");
+    wxFileName path(wxT(PLUGINS_DIR), "");
 #else
     wxFileName path(GetDataDir(), "");
     path.AppendDir("plugins");

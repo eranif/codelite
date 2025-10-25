@@ -277,13 +277,20 @@ void LanguageServerProtocol::FindDefinition(IEditor* editor)
     CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
 
-    // If the editor is modified, we need to tell the LSP to reparse the source file
+    // If the editor is modified, we need to tell the LSP to re-parse the source file
     wxString filename = GetEditorFilePath(editor);
     wxString fileContent = editor->GetEditorText();
     SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
 
+    // If we have a selection, use the start position.
+    int pos{wxNOT_FOUND};
+    if (!editor->GetSelection().IsEmpty()) {
+        pos = editor->GetSelectionStart();
+    } else {
+        pos = editor->GetCurrentPosition();
+    }
     LSP::GotoDefinitionRequest::Ptr_t req = LSP::MessageWithParams::MakeRequest(new LSP::GotoDefinitionRequest(
-        GetEditorFilePath(editor), editor->GetCurrentLine(), editor->GetColumnInChars(editor->GetCurrentPosition())));
+        GetEditorFilePath(editor), editor->GetCurrentLine(), editor->GetColumnInChars(pos)));
     QueueMessage(req);
 }
 

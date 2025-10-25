@@ -21,6 +21,21 @@ public:
 
     /// Update the scrollbar width to match the visible view
     static void UpdateScrollbarWidth(wxStyledTextCtrl* ctrl, size_t char_width = wxString::npos);
+
+    /**
+     * @brief Determines if a given position in the text control is within a comment.
+     *
+     * This function checks whether the specified position (or current cursor position if not specified)
+     * in a wxStyledTextCtrl is within a comment based on the active lexer. It supports multiple
+     * programming languages including C/C++, Python, HTML/XML, SQL, Perl, Bash, Lua, Ruby, Pascal,
+     * Fortran, Batch, Makefile, Properties, CSS, PHP, VB/VBScript, TCL, YAML, JSON, Rust, Assembly,
+     * LISP, D, Erlang, R, and Markdown.
+     *
+     * @param ctrl Pointer to the wxStyledTextCtrl to check. If NULL, returns false.
+     * @param pos The position in the text to check. If -1 (default), uses the current cursor position.
+     * @return true if the position is within a comment according to the active lexer, false otherwise.
+     */
+    static bool IsPositionInComment(wxStyledTextCtrl* ctrl, int pos = wxSTC_INVALID_POSITION);
 };
 
 #endif // CLSTCHELPER_HPP

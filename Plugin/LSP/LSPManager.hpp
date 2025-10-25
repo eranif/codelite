@@ -93,6 +93,20 @@ public:
     void FindSymbol(IEditor* editor);
 
     /**
+     * @brief Initiates code completion for the specified editor.
+     *
+     * Attempts to obtain an LSP server for the given editor and request code
+     * completion. If no server is available or the cursor is inside a comment,
+     * a fallback simple word‑completion event is triggered. The method also
+     * ensures the editor's control currently has focus before delegating to the
+     * server.
+     *
+     * @param editor Pointer to the editor where completion is requested. Must not be nullptr.
+     * @param kind   The trigger kind indicating how the completion was invoked (e.g., user‑initiated).
+     */
+    void CodeComplete(IEditor* editor, LSP::CompletionItem::eTriggerKind kind);
+
+    /**
      * @brief Requests document symbols from the LSP server for the given editor.
      *
      * This method validates the editor pointer, obtains the associated LSP server,

@@ -102,7 +102,7 @@ protected:
     void OnWorkspaceLoaded(clWorkspaceEvent& e);
     void OnWorkspaceClosed(clWorkspaceEvent& e);
     void OnEditorChanged(wxCommandEvent& event);
-    void OnCodeComplete(clCodeCompletionEvent& event);
+
     void OnFindSymbolDecl(clCodeCompletionEvent& event);
     void OnFunctionCallTip(clCodeCompletionEvent& event);
     void OnTypeInfoToolTip(clCodeCompletionEvent& event);

@@ -58,7 +58,6 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerProtocol::OnWorkspaceClosed, this);
 
     EventNotifier::Get()->Bind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
-    EventNotifier::Get()->Bind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
     EventNotifier::Get()->Bind(
         wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &LanguageServerProtocol::OnFunctionCallTip, this);
     EventNotifier::Get()->Bind(wxEVT_CC_TYPEINFO_TIP, &LanguageServerProtocol::OnTypeInfoToolTip, this);
@@ -98,7 +97,6 @@ LanguageServerProtocol::~LanguageServerProtocol()
     EventNotifier::Get()->Unbind(wxEVT_FILE_LOADED, &LanguageServerProtocol::OnFileLoaded, this);
     EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerProtocol::OnEditorChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_FIND_SYMBOL_DECLARATION, &LanguageServerProtocol::OnFindSymbolDecl, this);
-    EventNotifier::Get()->Unbind(wxEVT_CC_CODE_COMPLETE, &LanguageServerProtocol::OnCodeComplete, this);
     EventNotifier::Get()->Unbind(
         wxEVT_CC_CODE_COMPLETE_FUNCTION_CALLTIP, &LanguageServerProtocol::OnFunctionCallTip, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_TYPEINFO_TIP, &LanguageServerProtocol::OnTypeInfoToolTip, this);
@@ -304,26 +302,6 @@ void LanguageServerProtocol::OnTypeInfoToolTip(clCodeCompletionEvent& event)
     if (CanHandle(editor)) {
         event.Skip(false);
         HoverTip(editor);
-    }
-}
-
-void LanguageServerProtocol::OnCodeComplete(clCodeCompletionEvent& event)
-{
-    event.Skip();
-    IEditor* editor = GetEditor(event);
-    CHECK_PTR_RET(editor);
-
-    if (editor->GetCtrl() != wxWindow::FindFocus()) {
-        return;
-    }
-
-    if (event.GetTriggerKind() != LSP::CompletionItem::kTriggerUser && event.IsInsideCommentOrString()) {
-        return;
-    }
-
-    if (CanHandle(editor)) {
-        event.Skip(false);
-        CodeComplete(editor, event.GetTriggerKind() == LSP::CompletionItem::kTriggerUser);
     }
 }
 

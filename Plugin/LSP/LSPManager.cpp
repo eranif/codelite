@@ -7,6 +7,7 @@
 #include "StringUtils.h"
 #include "clEditorBar.h"
 #include "clEditorStateLocker.h"
+#include "clSTCHelper.hpp"
 #include "clSelectSymbolDialog.h"
 #include "clWorkspaceManager.h"
 #include "cl_calltip.h"
@@ -23,7 +24,6 @@
 #include "macros.h"
 #include "wx/app.h"
 #include "wxCodeCompletionBoxManager.h"
-
 #if USE_SFTP
 #include "clSFTPManager.hpp"
 #endif
@@ -225,6 +225,33 @@ void LSPManager::ShowOutlineView(IEditor* editor)
         ShowQuickOutlineDialog(event);
     };
     RequestSymbolsForEditor(editor, std::move(cb));
+}
+
+void LSPManager::CodeComplete(IEditor* editor, LSP::CompletionItem::eTriggerKind kind)
+{
+    CHECK_PTR_RET(editor);
+    auto server = GetServerForEditor(editor);
+    auto ctrl = editor->GetCtrl();
+    int curpos = ctrl->GetCurrentPos();
+    auto file_path = editor->GetRemotePathOrLocal();
+
+    if (server == nullptr || clSTCHelper::IsPositionInComment(ctrl, curpos)) {
+        clCodeCompletionEvent evt{wxEVT_CC_CODE_COMPLETE};
+        evt.SetPosition(curpos);
+        evt.SetTriggerKind(kind);
+        evt.SetFileName(file_path);
+        if (!EventNotifier::Get()->ProcessEvent(evt)) {
+            // Try simple word completion.
+            wxCommandEvent wordCompleteEvent{wxEVT_MENU, XRCID("simple_word_completion")};
+            EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(wordCompleteEvent);
+        }
+        return;
+    }
+
+    if (editor->GetCtrl() != wxWindow::FindFocus()) {
+        return;
+    }
+    server->CodeComplete(editor, kind == LSP::CompletionItem::kTriggerUser);
 }
 
 void LSPManager::FindSymbol(IEditor* editor)

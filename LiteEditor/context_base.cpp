@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "context_base.h"
 
+#include "LSP/LSPManager.hpp"
 #include "cl_command_event.h"
 #include "cl_editor.h"
 #include "cl_editor_tip_window.h"
@@ -186,27 +187,8 @@ int ContextBase::DoGetCalltipParamterIndex()
 
 void ContextBase::OnUserTypedXChars(int pos)
 {
-    // user typed more than X chars
-    // trigger code complete event (as if the user typed ctrl-space)
-    // if no one handles this event, fire a word completion event
-    if (IsCommentOrString(pos)) {
-        return;
-    }
-
-    // Try to call code completion
-    clCodeCompletionEvent ccEvt(wxEVT_CC_CODE_COMPLETE);
-    ccEvt.SetInsideCommentOrString(IsCommentOrString(pos));
-    ccEvt.SetTriggerKind(LSP::CompletionItem::kTriggerKindInvoked);
-    ccEvt.SetFileName(GetCtrl().GetFileName().GetFullPath());
-    ccEvt.SetWord(GetCtrl().GetWordAtPosition(pos));
-
-    if (!EventNotifier::Get()->ProcessEvent(ccEvt)) {
-        // This is ugly, since CodeLite should not be calling
-        // the plugins... we take comfort in the fact that it
-        // merely fires an event and not calling it directly
-        wxCommandEvent wordCompleteEvent(wxEVT_MENU, XRCID("simple_word_completion"));
-        EventNotifier::Get()->TopFrame()->GetEventHandler()->ProcessEvent(wordCompleteEvent);
-    }
+    wxUnusedVar(pos);
+    LSPManager::GetInstance().CodeComplete(&GetCtrl(), LSP::CompletionItem::kTriggerKindInvoked);
 }
 
 void ContextBase::AutoAddComment()

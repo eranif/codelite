@@ -1910,13 +1910,6 @@ void clEditor::UpdateBreakpoints()
 
 wxString clEditor::GetWordAtCaret(bool wordCharsOnly) { return GetWordAtPosition(GetCurrentPos(), wordCharsOnly); }
 
-//---------------------------------------------------------------------------
-// Most of the functionality for this functionality
-// is done in the Language & TagsManager objects, however,
-// as you can see below, much work still needs to be done in the application
-// layer (outside of the library) to provide the input arguments for
-// the CodeParser library
-//---------------------------------------------------------------------------
 void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool onlyRefresh)
 {
     if (AutoCompActive())
@@ -1926,12 +1919,7 @@ void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool 
 
     if (triggerKind == LSP::CompletionItem::kTriggerUser) {
         // user hit Ctrl-SPACE
-        clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
-        evt.SetPosition(GetCurrentPosition());
-        evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
-        evt.SetTriggerKind(triggerKind);
-        evt.SetFileName(fullpath);
-        EventNotifier::Get()->AddPendingEvent(evt);
+        LSPManager::GetInstance().CodeComplete(this, triggerKind);
         return;
     } else {
         if (GetContext()->IsAtBlockComment()) {
@@ -1946,7 +1934,6 @@ void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool 
                     evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
                     evt.SetTriggerKind(triggerKind);
                     evt.SetFileName(fullpath);
-                    // notice the difference that we fire it using EventNotifier!
                     EventNotifier::Get()->AddPendingEvent(evt);
                     return;
                 }
@@ -1954,15 +1941,10 @@ void clEditor::CompleteWord(LSP::CompletionItem::eTriggerKind triggerKind, bool 
         }
     }
 
-    // Let the plugins a chance to override the default behavior
+    // Let the plugins a chance to override the default behaviour
     // 24x7 CC (as-we-type)
     if (!GetContext()->IsAtBlockComment() && !GetContext()->IsAtLineComment()) {
-        clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
-        evt.SetPosition(GetCurrentPosition());
-        evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
-        evt.SetTriggerKind(triggerKind);
-        evt.SetFileName(fullpath);
-        EventNotifier::Get()->AddPendingEvent(evt);
+        LSPManager::GetInstance().CodeComplete(this, triggerKind);
     }
 }
 
@@ -1977,12 +1959,7 @@ void clEditor::CodeComplete()
     if (AutoCompActive())
         return; // Don't clobber the boxes..
 
-    clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
-    evt.SetPosition(GetCurrentPosition());
-    evt.SetTriggerKind(LSP::CompletionItem::kTriggerKindInvoked);
-    evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
-    evt.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
-    EventNotifier::Get()->AddPendingEvent(evt);
+    LSPManager::GetInstance().CodeComplete(this, LSP::CompletionItem::kTriggerKindInvoked);
 }
 
 void clEditor::GotoDefinition()
@@ -3305,12 +3282,7 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
     bool backspace_triggers_cc = TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_BACKSPACE_TRIGGER;
     if (backspace_triggers_cc && !is_pos_before_whitespace && (event.GetKeyCode() == WXK_BACK) && !m_calltip) {
         // try to code complete
-        clCodeCompletionEvent evt(wxEVT_CC_CODE_COMPLETE);
-        evt.SetPosition(GetCurrentPosition());
-        evt.SetInsideCommentOrString(m_context->IsCommentOrString(PositionBefore(GetCurrentPos())));
-        evt.SetTriggerKind(LSP::CompletionItem::kTriggerUser);
-        evt.SetFileName(GetFileName().GetFullPath());
-        EventNotifier::Get()->AddPendingEvent(evt);
+        LSPManager::GetInstance().CodeComplete(this, LSP::CompletionItem::kTriggerUser);
     }
 
     m_prevSelectionInfo.Clear();

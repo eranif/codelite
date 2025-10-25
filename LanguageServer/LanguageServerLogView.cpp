@@ -7,7 +7,7 @@
 #include "imanager.h"
 #include "macros.h"
 
-LanguageServerLogView::LanguageServerLogView(wxWindow* parent, LanguageServerCluster* cluster)
+LanguageServerLogView::LanguageServerLogView(wxWindow* parent, LSPManager* cluster)
     : LanguageServerLogViewBase(parent)
 {
     m_dvListCtrl->Bind(wxEVT_CONTEXT_MENU, [this](wxContextMenuEvent& event) {

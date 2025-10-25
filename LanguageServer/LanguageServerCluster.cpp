@@ -124,76 +124,76 @@ clEnvList_t json_get_server_config_env(JSON* root, const wxString& server_name)
 
 } // namespace
 
-LanguageServerCluster::LanguageServerCluster(LanguageServerPlugin* plugin)
+LSPManager::LSPManager(LanguageServerPlugin* plugin)
     : m_plugin(plugin)
 {
-    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &LanguageServerCluster::OnFileSaved, this);
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerCluster::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LanguageServerCluster::OnWorkspaceOpen, this);
-    EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LanguageServerCluster::OnEditorClosed, this);
-    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerCluster::OnActiveEditorChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &LSPManager::OnFileSaved, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LSPManager::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &LSPManager::OnWorkspaceOpen, this);
+    EventNotifier::Get()->Bind(wxEVT_FILE_CLOSED, &LSPManager::OnEditorClosed, this);
+    EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &LSPManager::OnActiveEditorChanged, this);
 
     EventNotifier::Get()->Bind(
-        wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &LanguageServerCluster::OnCompileCommandsGenerated, this);
-    EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &LanguageServerCluster::OnBuildEnded, this);
-    EventNotifier::Get()->Bind(wxEVT_CMD_OPEN_RESOURCE, &LanguageServerCluster::OnOpenResource, this);
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_FILES_SCANNED, &LanguageServerCluster::OnWorkspaceScanCompleted, this);
-    EventNotifier::Get()->Bind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
-    EventNotifier::Get()->Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
-    EventNotifier::Get()->Bind(wxEVT_EDITOR_MARGIN_CLICKED, &LanguageServerCluster::OnMarginClicked, this);
-    EventNotifier::Get()->Bind(wxEVT_LSP_CODE_ACTIONS, &LanguageServerCluster::OnCodeActionAvailable, this);
+        wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &LSPManager::OnCompileCommandsGenerated, this);
+    EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &LSPManager::OnBuildEnded, this);
+    EventNotifier::Get()->Bind(wxEVT_CMD_OPEN_RESOURCE, &LSPManager::OnOpenResource, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_FILES_SCANNED, &LSPManager::OnWorkspaceScanCompleted, this);
+    EventNotifier::Get()->Bind(wxEVT_LSP_SET_DIAGNOSTICS, &LSPManager::OnSetDiagnostics, this);
+    EventNotifier::Get()->Bind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LSPManager::OnClearDiagnostics, this);
+    EventNotifier::Get()->Bind(wxEVT_EDITOR_MARGIN_CLICKED, &LSPManager::OnMarginClicked, this);
+    EventNotifier::Get()->Bind(wxEVT_LSP_CODE_ACTIONS, &LSPManager::OnCodeActionAvailable, this);
 
-    Bind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
-    Bind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
-    Bind(wxEVT_LSP_REPARSE_NEEDED, &LanguageServerCluster::OnReparseNeeded, this);
-    Bind(wxEVT_LSP_RESTART_NEEDED, &LanguageServerCluster::OnRestartNeeded, this);
-    Bind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
-    Bind(wxEVT_LSP_METHOD_NOT_FOUND, &LanguageServerCluster::OnMethodNotFound, this);
-    Bind(wxEVT_LSP_SIGNATURE_HELP, &LanguageServerCluster::OnSignatureHelp, this);
-    Bind(wxEVT_LSP_HOVER, &LanguageServerCluster::OnHover, this);
-    Bind(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, &LanguageServerCluster::OnShowQuickOutlineDlg, this);
-    Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE, &LanguageServerCluster::OnQuickOutlineView, this);
-    Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, &LanguageServerCluster::OnOulineViewSymbols, this);
-    Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &LanguageServerCluster::OnDocumentSymbolsForHighlight, this);
-    Bind(wxEVT_LSP_SEMANTICS, &LanguageServerCluster::OnSemanticTokens, this);
-    Bind(wxEVT_LSP_LOGMESSAGE, &LanguageServerCluster::OnLogMessage, this);
-    Bind(wxEVT_LSP_EDIT_FILES, &LanguageServerCluster::OnApplyEdits, this);
+    Bind(wxEVT_LSP_DEFINITION, &LSPManager::OnSymbolFound, this);
+    Bind(wxEVT_LSP_COMPLETION_READY, &LSPManager::OnCompletionReady, this);
+    Bind(wxEVT_LSP_REPARSE_NEEDED, &LSPManager::OnReparseNeeded, this);
+    Bind(wxEVT_LSP_RESTART_NEEDED, &LSPManager::OnRestartNeeded, this);
+    Bind(wxEVT_LSP_INITIALIZED, &LSPManager::OnLSPInitialized, this);
+    Bind(wxEVT_LSP_METHOD_NOT_FOUND, &LSPManager::OnMethodNotFound, this);
+    Bind(wxEVT_LSP_SIGNATURE_HELP, &LSPManager::OnSignatureHelp, this);
+    Bind(wxEVT_LSP_HOVER, &LSPManager::OnHover, this);
+    Bind(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, &LSPManager::OnShowQuickOutlineDlg, this);
+    Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE, &LSPManager::OnQuickOutlineView, this);
+    Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, &LSPManager::OnOulineViewSymbols, this);
+    Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &LSPManager::OnDocumentSymbolsForHighlight, this);
+    Bind(wxEVT_LSP_SEMANTICS, &LSPManager::OnSemanticTokens, this);
+    Bind(wxEVT_LSP_LOGMESSAGE, &LSPManager::OnLogMessage, this);
+    Bind(wxEVT_LSP_EDIT_FILES, &LSPManager::OnApplyEdits, this);
     m_remoteHelper.reset(new CodeLiteRemoteHelper);
 }
 
-LanguageServerCluster::~LanguageServerCluster()
+LSPManager::~LSPManager()
 {
-    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &LanguageServerCluster::OnFileSaved, this);
-    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &LanguageServerCluster::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &LanguageServerCluster::OnWorkspaceOpen, this);
-    EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LanguageServerCluster::OnEditorClosed, this);
-    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &LanguageServerCluster::OnActiveEditorChanged, this);
-    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_FILES_SCANNED, &LanguageServerCluster::OnWorkspaceScanCompleted, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &LSPManager::OnFileSaved, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &LSPManager::OnWorkspaceClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &LSPManager::OnWorkspaceOpen, this);
+    EventNotifier::Get()->Unbind(wxEVT_FILE_CLOSED, &LSPManager::OnEditorClosed, this);
+    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_EDITOR_CHANGED, &LSPManager::OnActiveEditorChanged, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_FILES_SCANNED, &LSPManager::OnWorkspaceScanCompleted, this);
     EventNotifier::Get()->Unbind(
-        wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &LanguageServerCluster::OnCompileCommandsGenerated, this);
-    EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &LanguageServerCluster::OnBuildEnded, this);
+        wxEVT_COMPILE_COMMANDS_JSON_GENERATED, &LSPManager::OnCompileCommandsGenerated, this);
+    EventNotifier::Get()->Unbind(wxEVT_BUILD_ENDED, &LSPManager::OnBuildEnded, this);
 
-    EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_RESOURCE, &LanguageServerCluster::OnOpenResource, this);
-    EventNotifier::Get()->Unbind(wxEVT_LSP_SET_DIAGNOSTICS, &LanguageServerCluster::OnSetDiagnostics, this);
-    EventNotifier::Get()->Unbind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LanguageServerCluster::OnClearDiagnostics, this);
-    EventNotifier::Get()->Unbind(wxEVT_EDITOR_MARGIN_CLICKED, &LanguageServerCluster::OnMarginClicked, this);
-    EventNotifier::Get()->Unbind(wxEVT_LSP_CODE_ACTIONS, &LanguageServerCluster::OnCodeActionAvailable, this);
+    EventNotifier::Get()->Unbind(wxEVT_CMD_OPEN_RESOURCE, &LSPManager::OnOpenResource, this);
+    EventNotifier::Get()->Unbind(wxEVT_LSP_SET_DIAGNOSTICS, &LSPManager::OnSetDiagnostics, this);
+    EventNotifier::Get()->Unbind(wxEVT_LSP_CLEAR_DIAGNOSTICS, &LSPManager::OnClearDiagnostics, this);
+    EventNotifier::Get()->Unbind(wxEVT_EDITOR_MARGIN_CLICKED, &LSPManager::OnMarginClicked, this);
+    EventNotifier::Get()->Unbind(wxEVT_LSP_CODE_ACTIONS, &LSPManager::OnCodeActionAvailable, this);
 
-    Unbind(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, &LanguageServerCluster::OnShowQuickOutlineDlg, this);
-    Unbind(wxEVT_LSP_DEFINITION, &LanguageServerCluster::OnSymbolFound, this);
-    Unbind(wxEVT_LSP_COMPLETION_READY, &LanguageServerCluster::OnCompletionReady, this);
-    Unbind(wxEVT_LSP_REPARSE_NEEDED, &LanguageServerCluster::OnReparseNeeded, this);
-    Unbind(wxEVT_LSP_RESTART_NEEDED, &LanguageServerCluster::OnRestartNeeded, this);
-    Unbind(wxEVT_LSP_INITIALIZED, &LanguageServerCluster::OnLSPInitialized, this);
-    Unbind(wxEVT_LSP_METHOD_NOT_FOUND, &LanguageServerCluster::OnMethodNotFound, this);
-    Unbind(wxEVT_LSP_SIGNATURE_HELP, &LanguageServerCluster::OnSignatureHelp, this);
-    Unbind(wxEVT_LSP_HOVER, &LanguageServerCluster::OnHover, this);
-    Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE, &LanguageServerCluster::OnQuickOutlineView, this);
-    Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, &LanguageServerCluster::OnOulineViewSymbols, this);
-    Unbind(wxEVT_LSP_SEMANTICS, &LanguageServerCluster::OnSemanticTokens, this);
-    Unbind(wxEVT_LSP_LOGMESSAGE, &LanguageServerCluster::OnLogMessage, this);
-    Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &LanguageServerCluster::OnDocumentSymbolsForHighlight, this);
-    Unbind(wxEVT_LSP_EDIT_FILES, &LanguageServerCluster::OnApplyEdits, this);
+    Unbind(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG, &LSPManager::OnShowQuickOutlineDlg, this);
+    Unbind(wxEVT_LSP_DEFINITION, &LSPManager::OnSymbolFound, this);
+    Unbind(wxEVT_LSP_COMPLETION_READY, &LSPManager::OnCompletionReady, this);
+    Unbind(wxEVT_LSP_REPARSE_NEEDED, &LSPManager::OnReparseNeeded, this);
+    Unbind(wxEVT_LSP_RESTART_NEEDED, &LSPManager::OnRestartNeeded, this);
+    Unbind(wxEVT_LSP_INITIALIZED, &LSPManager::OnLSPInitialized, this);
+    Unbind(wxEVT_LSP_METHOD_NOT_FOUND, &LSPManager::OnMethodNotFound, this);
+    Unbind(wxEVT_LSP_SIGNATURE_HELP, &LSPManager::OnSignatureHelp, this);
+    Unbind(wxEVT_LSP_HOVER, &LSPManager::OnHover, this);
+    Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE, &LSPManager::OnQuickOutlineView, this);
+    Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, &LSPManager::OnOulineViewSymbols, this);
+    Unbind(wxEVT_LSP_SEMANTICS, &LSPManager::OnSemanticTokens, this);
+    Unbind(wxEVT_LSP_LOGMESSAGE, &LSPManager::OnLogMessage, this);
+    Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &LSPManager::OnDocumentSymbolsForHighlight, this);
+    Unbind(wxEVT_LSP_EDIT_FILES, &LSPManager::OnApplyEdits, this);
 
     if (m_quick_outline_dlg) {
         m_quick_outline_dlg->Destroy();
@@ -201,7 +201,7 @@ LanguageServerCluster::~LanguageServerCluster()
     }
 }
 
-void LanguageServerCluster::Reload(const std::unordered_set<wxString>& languages)
+void LSPManager::Reload(const std::unordered_set<wxString>& languages)
 {
     wxBusyCursor bc;
     StopAll(languages);
@@ -214,7 +214,7 @@ void LanguageServerCluster::Reload(const std::unordered_set<wxString>& languages
     StartAll(languages);
 }
 
-LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForEditor(IEditor* editor)
+LanguageServerProtocol::Ptr_t LSPManager::GetServerForEditor(IEditor* editor)
 {
     for (const auto& [_, server] : m_servers) {
         if (server->CanHandle(editor)) {
@@ -224,7 +224,7 @@ LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForEditor(IEditor*
     return LanguageServerProtocol::Ptr_t{nullptr};
 }
 
-void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
+void LSPManager::OnSymbolFound(LSPEvent& event)
 {
     // if we have more than one location - prompt the user
     if (event.GetLocations().empty()) {
@@ -292,7 +292,7 @@ void LanguageServerCluster::OnSymbolFound(LSPEvent& event)
     clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), std::move(cb));
 }
 
-void LanguageServerCluster::OnLSPInitialized(LSPEvent& event)
+void LSPManager::OnLSPInitialized(LSPEvent& event)
 {
     // Now that the workspace is loaded, parse the active file
     IEditor* editor = clGetManager()->GetActiveEditor();
@@ -304,7 +304,7 @@ void LanguageServerCluster::OnLSPInitialized(LSPEvent& event)
     }
 }
 
-void LanguageServerCluster::OnSignatureHelp(LSPEvent& event)
+void LSPManager::OnSignatureHelp(LSPEvent& event)
 {
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
@@ -321,7 +321,7 @@ void LanguageServerCluster::OnSignatureHelp(LSPEvent& event)
     editor->ShowCalltip(std::make_shared<clCallTip>(tags));
 }
 
-void LanguageServerCluster::OnHover(LSPEvent& event)
+void LSPManager::OnHover(LSPEvent& event)
 {
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
@@ -358,9 +358,9 @@ void LanguageServerCluster::OnHover(LSPEvent& event)
     }
 }
 
-void LanguageServerCluster::OnMethodNotFound(LSPEvent& event) { wxUnusedVar(event); }
+void LSPManager::OnMethodNotFound(LSPEvent& event) { wxUnusedVar(event); }
 
-void LanguageServerCluster::OnCompletionReady(LSPEvent& event)
+void LSPManager::OnCompletionReady(LSPEvent& event)
 {
     const LSP::CompletionItem::Vec_t& items = event.GetCompletions();
     auto trigger_kind = event.GetTriggerKind();
@@ -374,7 +374,7 @@ void LanguageServerCluster::OnCompletionReady(LSPEvent& event)
         trigger_kind == LSP::CompletionItem::kTriggerUser ? wxCodeCompletionBox::kTriggerUser : 0);
 }
 
-void LanguageServerCluster::OnReparseNeeded(LSPEvent& event)
+void LSPManager::OnReparseNeeded(LSPEvent& event)
 {
     LanguageServerProtocol::Ptr_t server = GetServerByName(event.GetServerName());
     if (!server) {
@@ -388,7 +388,7 @@ void LanguageServerCluster::OnReparseNeeded(LSPEvent& event)
     server->OpenEditor(editor);
 }
 
-void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
+void LSPManager::OnSemanticTokens(LSPEvent& event)
 {
     LanguageServerProtocol::Ptr_t server = GetServerByName(event.GetServerName());
     CHECK_PTR_RET(server);
@@ -479,7 +479,7 @@ void LanguageServerCluster::OnSemanticTokens(LSPEvent& event)
     LSP_TRACE() << "Success" << endl;
 }
 
-void LanguageServerCluster::OnRestartNeeded(LSPEvent& event)
+void LSPManager::OnRestartNeeded(LSPEvent& event)
 {
     // Don't keep restarting a crashing LSP
     // We consider a "crashing LSP" as:
@@ -509,7 +509,7 @@ void LanguageServerCluster::OnRestartNeeded(LSPEvent& event)
     RestartServer(event.GetServerName());
 }
 
-LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerByName(const wxString& name)
+LanguageServerProtocol::Ptr_t LSPManager::GetServerByName(const wxString& name)
 {
     if (m_servers.count(name) == 0) {
         return LanguageServerProtocol::Ptr_t(nullptr);
@@ -517,7 +517,7 @@ LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerByName(const wxStr
     return m_servers[name];
 }
 
-void LanguageServerCluster::RestartServer(const wxString& name)
+void LSPManager::RestartServer(const wxString& name)
 {
     {
         // Incase a server terminated, remove it from the list of servers
@@ -544,7 +544,7 @@ void LanguageServerCluster::RestartServer(const wxString& name)
     StartServer(entry);
 }
 
-void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
+void LSPManager::StartServer(const LanguageServerEntry& entry)
 {
     if (!entry.IsEnabled()) {
         LOG_IF_TRACE { LSP_TRACE() << "LSP" << entry.GetName() << "is not enabled" << endl; }
@@ -740,7 +740,7 @@ void LanguageServerCluster::StartServer(const LanguageServerEntry& entry)
     }
 }
 
-void LanguageServerCluster::OnWorkspaceClosed(clWorkspaceEvent& event)
+void LSPManager::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
     event.Skip();
 
@@ -753,7 +753,7 @@ void LanguageServerCluster::OnWorkspaceClosed(clWorkspaceEvent& event)
     m_symbols_to_file_cache.clear();
 }
 
-void LanguageServerCluster::OnWorkspaceOpen(clWorkspaceEvent& event)
+void LSPManager::OnWorkspaceOpen(clWorkspaceEvent& event)
 {
     event.Skip();
 
@@ -766,13 +766,13 @@ void LanguageServerCluster::OnWorkspaceOpen(clWorkspaceEvent& event)
     DiscoverWorkspaceType();
 }
 
-void LanguageServerCluster::SetWorkspaceType(FileExtManager::FileType type)
+void LSPManager::SetWorkspaceType(FileExtManager::FileType type)
 {
     LanguageServerProtocol::workspace_file_type = type;
     LSP_DEBUG() << "*** LSP: workspace type is set:" << LanguageServerProtocol::workspace_file_type << "***" << endl;
 }
 
-void LanguageServerCluster::StopAll(const std::unordered_set<wxString>& languages)
+void LSPManager::StopAll(const std::unordered_set<wxString>& languages)
 {
     LSP_DEBUG() << "LSP: Stopping all servers" << endl;
     if (languages.empty()) {
@@ -799,7 +799,7 @@ void LanguageServerCluster::StopAll(const std::unordered_set<wxString>& language
     ClearAllDiagnostics();
 }
 
-void LanguageServerCluster::StartAll(const std::unordered_set<wxString>& languages)
+void LSPManager::StartAll(const std::unordered_set<wxString>& languages)
 {
     // create a new list
     ClearAllDiagnostics();
@@ -825,7 +825,7 @@ void LanguageServerCluster::StartAll(const std::unordered_set<wxString>& languag
     LSP_DEBUG() << "LSP: Success" << endl;
 }
 
-void LanguageServerCluster::LSPSignatureHelpToTagEntries(TagEntryPtrVector_t& tags, const LSP::SignatureHelp& sighelp)
+void LSPManager::LSPSignatureHelpToTagEntries(TagEntryPtrVector_t& tags, const LSP::SignatureHelp& sighelp)
 {
     if (sighelp.GetSignatures().empty()) {
         return;
@@ -849,7 +849,7 @@ void LanguageServerCluster::LSPSignatureHelpToTagEntries(TagEntryPtrVector_t& ta
     }
 }
 
-void LanguageServerCluster::OnCompileCommandsGenerated(clCommandEvent& event)
+void LSPManager::OnCompileCommandsGenerated(clCommandEvent& event)
 {
     event.Skip();
     clGetManager()->SetStatusMessage(_("Restarting Language Servers..."));
@@ -857,7 +857,7 @@ void LanguageServerCluster::OnCompileCommandsGenerated(clCommandEvent& event)
     clGetManager()->SetStatusMessage(_("Ready"));
 }
 
-void LanguageServerCluster::OnOulineViewSymbols(LSPEvent& event)
+void LSPManager::OnOulineViewSymbols(LSPEvent& event)
 {
     event.Skip();
     // we use it for outline + editor bar
@@ -869,7 +869,7 @@ void LanguageServerCluster::OnOulineViewSymbols(LSPEvent& event)
     UpdateNavigationBar();
 }
 
-void LanguageServerCluster::OnShowQuickOutlineDlg(LSPEvent& event)
+void LSPManager::OnShowQuickOutlineDlg(LSPEvent& event)
 {
     wxUnusedVar(event);
     if (m_quick_outline_dlg == nullptr) {
@@ -883,14 +883,14 @@ void LanguageServerCluster::OnShowQuickOutlineDlg(LSPEvent& event)
     m_quick_outline_dlg->SetSymbols({});
 }
 
-void LanguageServerCluster::OnQuickOutlineView(LSPEvent& event)
+void LSPManager::OnQuickOutlineView(LSPEvent& event)
 {
     if (m_quick_outline_dlg && m_quick_outline_dlg->IsShown()) {
         m_quick_outline_dlg->SetSymbols(event.GetSymbolsInformation());
     }
 }
 
-void LanguageServerCluster::OnSetDiagnostics(LSPEvent& event)
+void LSPManager::OnSetDiagnostics(LSPEvent& event)
 {
     event.Skip();
     IEditor* editor = FindEditor(event);
@@ -918,7 +918,7 @@ void LanguageServerCluster::OnSetDiagnostics(LSPEvent& event)
     }
 }
 
-void LanguageServerCluster::OnClearDiagnostics(LSPEvent& event)
+void LSPManager::OnClearDiagnostics(LSPEvent& event)
 {
     event.Skip();
     IEditor* editor = FindEditor(event);
@@ -927,7 +927,7 @@ void LanguageServerCluster::OnClearDiagnostics(LSPEvent& event)
     }
 }
 
-void LanguageServerCluster::ClearAllDiagnostics()
+void LSPManager::ClearAllDiagnostics()
 {
     IEditor::List_t editors;
     clGetManager()->GetAllEditors(editors);
@@ -936,11 +936,11 @@ void LanguageServerCluster::ClearAllDiagnostics()
     }
 }
 
-void LanguageServerCluster::ClearRestartCounters() { m_restartCounters.clear(); }
+void LSPManager::ClearRestartCounters() { m_restartCounters.clear(); }
 
-void LanguageServerCluster::OnBuildEnded(clBuildEvent& event) { event.Skip(); }
+void LSPManager::OnBuildEnded(clBuildEvent& event) { event.Skip(); }
 
-void LanguageServerCluster::StopServer(const wxString& name)
+void LSPManager::StopServer(const wxString& name)
 {
     LanguageServerProtocol::Ptr_t server = GetServerByName(name);
     if (!server) {
@@ -953,7 +953,7 @@ void LanguageServerCluster::StopServer(const wxString& name)
     m_servers.erase(name);
 }
 
-void LanguageServerCluster::DeleteServer(const wxString& name)
+void LSPManager::DeleteServer(const wxString& name)
 {
     StopServer(name); // stop any server that goes by that name
     // Delete it's configuration entry
@@ -961,7 +961,7 @@ void LanguageServerCluster::DeleteServer(const wxString& name)
     LanguageServerConfig::Get().Save();
 }
 
-void LanguageServerCluster::StartServer(const wxString& name)
+void LSPManager::StartServer(const wxString& name)
 {
     auto entry = LanguageServerConfig::Get().GetServer(name);
     if (entry.IsNull()) {
@@ -970,7 +970,7 @@ void LanguageServerCluster::StartServer(const wxString& name)
     StartServer(entry);
 }
 
-wxString LanguageServerCluster::GetEditorFilePath(IEditor* editor) const
+wxString LSPManager::GetEditorFilePath(IEditor* editor) const
 {
     if (editor->IsRemoteFile()) {
         return editor->GetRemotePath();
@@ -979,12 +979,12 @@ wxString LanguageServerCluster::GetEditorFilePath(IEditor* editor) const
     }
 }
 
-IEditor* LanguageServerCluster::FindEditor(const LSPEvent& event) const
+IEditor* LSPManager::FindEditor(const LSPEvent& event) const
 {
     return FindEditor(event.GetLocation().GetPath());
 }
 
-IEditor* LanguageServerCluster::FindEditor(const wxString& path) const
+IEditor* LSPManager::FindEditor(const wxString& path) const
 {
     IEditor::List_t all_editors;
     clGetManager()->GetAllEditors(all_editors);
@@ -997,7 +997,7 @@ IEditor* LanguageServerCluster::FindEditor(const wxString& path) const
     return nullptr;
 }
 
-LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForLanguage(const wxString& lang)
+LanguageServerProtocol::Ptr_t LSPManager::GetServerForLanguage(const wxString& lang)
 {
     for (const auto& vt : m_servers) {
         const auto& thisServer = vt.second;
@@ -1008,13 +1008,13 @@ LanguageServerProtocol::Ptr_t LanguageServerCluster::GetServerForLanguage(const 
     return LanguageServerProtocol::Ptr_t{nullptr};
 }
 
-void LanguageServerCluster::OnLogMessage(LSPEvent& event)
+void LSPManager::OnLogMessage(LSPEvent& event)
 {
     event.Skip();
     m_plugin->LogMessage(event.GetServerName(), event.GetMessage(), event.GetLogMessageSeverity());
 }
 
-void LanguageServerCluster::OnDocumentSymbolsForHighlight(LSPEvent& event)
+void LSPManager::OnDocumentSymbolsForHighlight(LSPEvent& event)
 {
     LSP_DEBUG() << "LanguageServerCluster::OnDocumentSymbolsForHighlight called for file:" << event.GetFileName()
                 << endl;
@@ -1063,13 +1063,13 @@ void LanguageServerCluster::OnDocumentSymbolsForHighlight(LSPEvent& event)
     editor->SetSemanticTokens(classes, variables, methods, others);
 }
 
-void LanguageServerCluster::OnOpenResource(wxCommandEvent& event)
+void LSPManager::OnOpenResource(wxCommandEvent& event)
 {
     event.Skip();
     DiscoverWorkspaceType();
 }
 
-void LanguageServerCluster::DiscoverWorkspaceType()
+void LSPManager::DiscoverWorkspaceType()
 {
     if (LanguageServerProtocol::workspace_file_type != FileExtManager::TypeOther) {
         return;
@@ -1150,27 +1150,27 @@ void LanguageServerCluster::DiscoverWorkspaceType()
                     }
                 }
             }
-            owner->CallAfter(&LanguageServerCluster::SetWorkspaceType, cur_type);
+            owner->CallAfter(&LSPManager::SetWorkspaceType, cur_type);
         },
         files,
         this);
     thr.detach();
 }
 
-void LanguageServerCluster::OnEditorClosed(clCommandEvent& event)
+void LSPManager::OnEditorClosed(clCommandEvent& event)
 {
     event.Skip();
     // clear the cache for the closed file
     m_symbols_to_file_cache.erase(event.GetFileName());
 }
 
-void LanguageServerCluster::OnActiveEditorChanged(wxCommandEvent& event)
+void LSPManager::OnActiveEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
     UpdateNavigationBar();
 }
 
-void LanguageServerCluster::UpdateNavigationBar()
+void LSPManager::UpdateNavigationBar()
 {
     auto editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
@@ -1237,7 +1237,7 @@ void LanguageServerCluster::UpdateNavigationBar()
     clGetManager()->GetNavigationBar()->SetScopes(fullpath, scopes);
 }
 
-void LanguageServerCluster::OnWorkspaceScanCompleted(clWorkspaceEvent& event)
+void LSPManager::OnWorkspaceScanCompleted(clWorkspaceEvent& event)
 {
     event.Skip();
     LSP_DEBUG() << "==> LanguageServerCluster: workspace file scanned completed." << endl;
@@ -1250,7 +1250,7 @@ void LanguageServerCluster::OnWorkspaceScanCompleted(clWorkspaceEvent& event)
     Reload();
 }
 
-void LanguageServerCluster::OnMarginClicked(clEditorEvent& event)
+void LSPManager::OnMarginClicked(clEditorEvent& event)
 {
     auto cd = dynamic_cast<DiagnosticsData*>(event.GetUserData());
     if (cd == nullptr) {
@@ -1269,7 +1269,7 @@ void LanguageServerCluster::OnMarginClicked(clEditorEvent& event)
     server->SendCodeActionRequest(editor, {cd->diagnostic});
 }
 
-void LanguageServerCluster::OnCodeActionAvailable(LSPEvent& event)
+void LSPManager::OnCodeActionAvailable(LSPEvent& event)
 {
     event.Skip();
     // prompt the user
@@ -1322,7 +1322,7 @@ void LanguageServerCluster::OnCodeActionAvailable(LSPEvent& event)
     server->SendWorkspaceExecuteCommand(event.GetFileName(), *command_to_apply);
 }
 
-void LanguageServerCluster::OnApplyEdits(LSPEvent& event)
+void LSPManager::OnApplyEdits(LSPEvent& event)
 {
     wxBusyCursor bc;
     const auto& changes = event.GetChanges();
@@ -1382,7 +1382,7 @@ void LanguageServerCluster::OnApplyEdits(LSPEvent& event)
     }
 }
 
-void LanguageServerCluster::OnFileSaved(clCommandEvent& event)
+void LSPManager::OnFileSaved(clCommandEvent& event)
 {
     // always skipped
     event.Skip();

@@ -5,11 +5,11 @@
 #include "UI.h"
 #include "clWorkspaceEvent.hpp"
 
-class LanguageServerCluster;
+class LSPManager;
 class LanguageServerLogView : public LanguageServerLogViewBase
 {
 public:
-    LanguageServerLogView(wxWindow* parent, LanguageServerCluster* cluster);
+    LanguageServerLogView(wxWindow* parent, LSPManager* cluster);
     virtual ~LanguageServerLogView();
 
 protected:

@@ -65,7 +65,7 @@ protected:
     void CheckServers();
     wxArrayString GetBrokenLSPs() const;
 
-    std::unique_ptr<LanguageServerCluster> m_servers;
+    std::unique_ptr<LSPManager> m_servers;
     clTabTogglerHelper::Ptr_t m_tabToggler;
     LanguageServerLogView* m_logView{nullptr};
     TextGenerationPreviewFrame* m_commentGenerationView{nullptr};

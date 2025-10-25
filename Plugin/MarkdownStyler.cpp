@@ -296,7 +296,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
         case MarkdownState::kCodeBlock:
             switch (ch) {
             case '`':
-                if (accessor.GetSubstr(3) == "```") {
+                if (accessor.IsAtStartOfLine() && accessor.GetSubstr(3) == "```") {
                     accessor.SetStyle(MarkdownStyles::kBacktick, 3);
                     m_states.pop();
                 } else {

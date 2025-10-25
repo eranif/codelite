@@ -18,7 +18,7 @@
 
 class LSPOutlineViewDlg;
 class LanguageServerPlugin;
-class LanguageServerCluster : public wxEvtHandler
+class LSPManager : public wxEvtHandler
 {
     struct CrashInfo {
         size_t times = 0;
@@ -33,7 +33,7 @@ class LanguageServerCluster : public wxEvtHandler
     std::unique_ptr<CodeLiteRemoteHelper> m_remoteHelper;
 
 public:
-    typedef wxSharedPtr<LanguageServerCluster> Ptr_t;
+    typedef wxSharedPtr<LSPManager> Ptr_t;
 
 public:
     void StartServer(const LanguageServerEntry& entry);
@@ -94,8 +94,8 @@ protected:
     void UpdateNavigationBar();
 
 public:
-    LanguageServerCluster(LanguageServerPlugin* plugin);
-    virtual ~LanguageServerCluster();
+    LSPManager(LanguageServerPlugin* plugin);
+    virtual ~LSPManager();
     /**
      * @brief restart language servers associated with a given languages
      */

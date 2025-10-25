@@ -20,6 +20,19 @@ namespace llm
 {
 
 /// Run `callback` in the main thread
+
+/**
+ * @brief Executes the provided callback on the main (GUI) thread and returns its result.
+ *
+ * If the current thread is already the main thread, the callback is invoked directly.
+ * Otherwise, the callback is scheduled to run in the next event loop iteration via
+ * `llm::Manager::CallAfter`, and this function blocks until the callback completes.
+ *
+ * @param callback A `std::function<FunctionResult()>` representing the work to be performed on the main thread.
+ * @param tool_name A `wxString` identifying the tool; used for debugging and logging purposes.
+ *
+ * @return The `FunctionResult` produced by the callback.
+ */
 assistant::FunctionResult RunOnMain(std::function<FunctionResult()> callback, const wxString& tool_name)
 {
     auto promise_ptr = std::make_shared<std::promise<FunctionResult>>();
@@ -84,6 +97,27 @@ void PopulateBuiltInFunctions(FunctionTable& table)
 
 /// Implementation details
 
+/**
+ * @brief Writes the specified content to a file on disk.
+ *
+ * Expects a JSON object with exactly two entries:
+ * - <code>"filepath"</code>: the target file path.
+ * - <code>"file_content"</code>: the text to be written to the file.
+ *
+ * The function checks for the correct number of arguments, extracts the
+ * parameters, and then executes the write operation on the main UI thread.
+ *
+ * If the file already exists, the user is prompted to confirm overwriting.
+ * Upon successful write, the workspace view is refreshed and a success
+ * message is returned. Errors during argument extraction, file writing,
+ * or user cancellation result in an error message.
+ *
+ * @param args JSON object containing the required arguments.
+ *
+ * @return <code>FunctionResult</code> – an <code>Ok</code> result with a
+ *         success message, or an <code>Err</code> result with an error
+ *         description.
+ */
 FunctionResult WriteFileContent(const assistant::json& args)
 {
     if (args.size() != 2) {
@@ -123,6 +157,17 @@ FunctionResult WriteFileContent(const assistant::json& args)
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
+/**
+ * @brief Reads the content of a file specified by the "filepath" argument.
+ *
+ * @param args JSON object that must contain exactly one entry:
+ *             - "filepath" (std::string): the path to the file to be read.
+ *
+ * @return FunctionResult containing the file's content as a {@code wxString} on success,
+ *         or an error message encapsulated in {@code Err} on failure.
+ *
+ * @note The file reading operation is dispatched to the main thread using {@code RunOnMain}.
+ */
 FunctionResult ReadFileContent(const assistant::json& args)
 {
     if (args.size() != 1) {
@@ -147,6 +192,19 @@ FunctionResult ReadFileContent(const assistant::json& args)
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
+/**
+ * @brief Opens a file in the editor.
+ *
+ * Expects a JSON object containing exactly one entry: the key `"filepath"` with a string value specifying the file path
+ * to open. The function loads the file either via the current workspace editor (if a workspace is opened) or via the
+ * global editor manager. The operation is executed on the main thread and returns a result indicating success or
+ * failure.
+ *
+ * @param args JSON object with a single `"filepath"` entry.
+ *
+ * @return FunctionResult containing an error message if the file could not be loaded, or a success message confirming
+ * the file was opened in an editor.
+ */
 FunctionResult OpenFileInEditor(const assistant::json& args)
 {
     if (args.size() != 1) {
@@ -177,13 +235,36 @@ FunctionResult OpenFileInEditor(const assistant::json& args)
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
+/**
+ * @brief Retrieves the compiler/build output.
+ *
+ * This function schedules a task on the main thread to fetch the build output from the
+ * compiler manager, wraps it in a successful {@code FunctionResult}, and returns it.
+ *
+ * @param args JSON arguments (currently unused).
+ *
+ * @return A {@code FunctionResult} containing the compiler output on success,
+ *         or an error result if the operation fails.
+ */
 FunctionResult GetCompilerOutput(const assistant::json& args)
 {
     auto cb = [=]() -> FunctionResult { return Ok(clGetManager()->GetBuildOutput()); };
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
-FunctionResult GetCurrentEditorText(const assistant::json& args)
+/**
+ * @brief Retrieves the text of the currently active editor.
+ *
+ * This function schedules a callback to run on the main thread, obtains the
+ * active editor via the editor manager, and returns its full text. If there
+ * is no active editor, an error result is returned.
+ *
+ * @param args JSON arguments (currently unused).
+ *
+ * @return A {@link FunctionResult} containing the editor text on success,
+ *         or an error message if no editor is open.
+ */
+FunctionResult GetCurrentEditorText([[maybe_unused]] const assistant::json& args)
 {
     auto cb = [=]() -> FunctionResult {
         auto active_editor = clGetManager()->GetActiveEditor();

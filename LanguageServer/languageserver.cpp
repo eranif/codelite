@@ -46,7 +46,7 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
 
     // Load the configuration
     LanguageServerConfig::Get().Load();
-    m_servers = std::make_unique<LanguageServerCluster>(this);
+    m_servers = std::make_unique<LSPManager>(this);
 
     // add log view
     m_logView = new LanguageServerLogView(m_mgr->BookGet(PaneId::BOTTOM_BAR), m_servers.get());

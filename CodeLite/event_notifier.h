@@ -27,9 +27,11 @@
 #define EVENTNOTIFIER_H
 
 #include <wx/event.h>
+
 #if wxUSE_GUI
 #include <wx/frame.h>
 #endif
+
 #include "codelite_exports.h"
 
 class WXDLLIMPEXP_CL EventNotifier : public wxEvtHandler

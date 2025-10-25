@@ -1,7 +1,11 @@
-#include "JSON.h"
 #include "LSP/Request.h"
 
-LSP::Request::Request() { m_id = Message::GetNextID(); }
+#include "JSON.h"
+
+LSP::Request::Request()
+    : m_id(Message::GetNextID())
+{
+}
 
 JSONItem LSP::Request::ToJSON(const wxString& name) const
 {

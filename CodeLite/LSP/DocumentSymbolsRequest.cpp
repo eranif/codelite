@@ -92,6 +92,8 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
             // always fire the wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE for the EventNotifier
             // so it might be used by other plugins as well, e.g. "Outline"
             QueueEvent(EventNotifier::Get(), symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE);
+            InvokeResponseCallback(CreateLSPEvent(symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE));
+
         } else {
             std::vector<DocumentSymbol> symbols;
             symbols.reserve(size);
@@ -105,14 +107,22 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
     }
 }
 
-void LSP::DocumentSymbolsRequest::QueueEvent(wxEvtHandler* owner,
-                                             const std::vector<LSP::SymbolInformation>& symbols,
-                                             const wxString& filename,
-                                             const wxEventType& event_type)
+LSPEvent LSP::DocumentSymbolsRequest::CreateLSPEvent(const std::vector<LSP::SymbolInformation>& symbols,
+                                                     const wxString& filename,
+                                                     const wxEventType& event_type)
 {
     LSPEvent event{event_type};
     event.GetSymbolsInformation().reserve(symbols.size());
     event.GetSymbolsInformation().insert(event.GetSymbolsInformation().end(), symbols.begin(), symbols.end());
     event.SetFileName(filename);
+    return event;
+}
+
+void LSP::DocumentSymbolsRequest::QueueEvent(wxEvtHandler* owner,
+                                             const std::vector<LSP::SymbolInformation>& symbols,
+                                             const wxString& filename,
+                                             const wxEventType& event_type)
+{
+    LSPEvent event = CreateLSPEvent(symbols, filename, event_type);
     owner->QueueEvent(event.Clone());
 }

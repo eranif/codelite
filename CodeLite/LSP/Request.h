@@ -1,20 +1,19 @@
-#ifndef LSP_REQUEST_H
-#define LSP_REQUEST_H
+#pragma once
 
 #include "IPathConverter.hpp"
+#include "LSP/LSPEvent.h"
 #include "LSP/MessageWithParams.h"
 
+#include <functional>
 #include <wx/filename.h>
 #include <wx/string.h>
+#include <wx/thread.h>
 
 namespace LSP
 {
 
 class WXDLLIMPEXP_CL Request : public LSP::MessageWithParams
 {
-    int m_id = wxNOT_FOUND;
-    wxString m_server_name;
-
 public:
     Request();
     virtual ~Request() = default;
@@ -65,7 +64,19 @@ public:
 
     void SetServerName(const wxString& server_name) { this->m_server_name = server_name; }
     const wxString& GetServerName() const { return m_server_name; }
-};
-}; // namespace LSP
 
-#endif // REQUEST_H
+    inline void SetResponseCallback(std::function<void(const LSPEvent&)> cb) { m_on_response_callback = std::move(cb); }
+    inline void InvokeResponseCallback(const LSPEvent& event)
+    {
+        if (!wxThread::IsMain() || !m_on_response_callback) {
+            return;
+        }
+        m_on_response_callback(event);
+    }
+
+protected:
+    int m_id = wxNOT_FOUND;
+    wxString m_server_name;
+    std::function<void(const LSPEvent&)> m_on_response_callback{nullptr};
+};
+} // namespace LSP

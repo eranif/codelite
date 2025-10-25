@@ -68,7 +68,6 @@ LanguageServerProtocol::LanguageServerProtocol(const wxString& name, eNetworkTyp
     EventNotifier::Get()->Bind(wxEVT_CC_WORKSPACE_SYMBOLS, &LanguageServerProtocol::OnWorkspaceSymbols, this);
     EventNotifier::Get()->Bind(wxEVT_CC_FIND_HEADER_FILE, &LanguageServerProtocol::OnFindHeaderFile, this);
     EventNotifier::Get()->Bind(wxEVT_CC_JUMP_HYPER_LINK, &LanguageServerProtocol::OnQuickJump, this);
-    EventNotifier::Get()->Bind(wxEVT_CC_SHOW_QUICK_OUTLINE, &LanguageServerProtocol::OnQuickOutline, this);
 
     // Use sockets here
     switch (netType) {
@@ -113,7 +112,6 @@ LanguageServerProtocol::~LanguageServerProtocol()
     EventNotifier::Get()->Unbind(wxEVT_CC_FIND_HEADER_FILE, &LanguageServerProtocol::OnFindHeaderFile, this);
     EventNotifier::Get()->Unbind(wxEVT_CC_JUMP_HYPER_LINK, &LanguageServerProtocol::OnQuickJump, this);
 
-    EventNotifier::Get()->Unbind(wxEVT_CC_SHOW_QUICK_OUTLINE, &LanguageServerProtocol::OnQuickOutline, this);
     DoClear();
 }
 
@@ -173,17 +171,17 @@ wxString LanguageServerProtocol::GetLanguageId(IEditor* editor)
 
 std::set<wxString> LanguageServerProtocol::GetSupportedLanguages()
 {
-    return { "bat",        "bibtex",     "clojure",     "coffeescript",  "c",
-             "cpp",        "csharp",     "css",         "diff",          "dart",
-             "dockerfile", "fsharp",     "git-commit",  "git-rebase",    "go",
-             "groovy",     "handlebars", "html",        "ini",           "java",
-             "javascript", "json",       "latex",       "less",          "lua",
-             "makefile",   "markdown",   "objective-c", "objective-cpp", "perl and perl6",
-             "php",        "powershell", "jade",        "python",        "r",
-             "razor",      "ruby",       "rust",        "scss",          "sass",
-             "scala",      "shaderlab",  "shellscript", "sql",           "swift",
-             "typescript", "tex",        "vb",          "xml",           "xsl",
-             "cmake",      "yaml" };
+    return {"bat",        "bibtex",     "clojure",     "coffeescript",  "c",
+            "cpp",        "csharp",     "css",         "diff",          "dart",
+            "dockerfile", "fsharp",     "git-commit",  "git-rebase",    "go",
+            "groovy",     "handlebars", "html",        "ini",           "java",
+            "javascript", "json",       "latex",       "less",          "lua",
+            "makefile",   "markdown",   "objective-c", "objective-cpp", "perl and perl6",
+            "php",        "powershell", "jade",        "python",        "r",
+            "razor",      "ruby",       "rust",        "scss",          "sass",
+            "scala",      "shaderlab",  "shellscript", "sql",           "swift",
+            "typescript", "tex",        "vb",          "xml",           "xsl",
+            "cmake",      "yaml"};
 }
 
 void LanguageServerProtocol::QueueMessage(LSP::MessageWithParams::Ptr_t request)
@@ -478,9 +476,9 @@ LSP::Range GetFileRange(wxStyledTextCtrl* ctrl)
 {
     int last_line = ctrl->LineFromPosition(ctrl->GetLastPosition());
     int last_line_len = ctrl->LineLength(last_line);
-    LSP::Position start_pos{ 0, 0 };
-    LSP::Position end_pos{ last_line, last_line_len };
-    return LSP::Range{ start_pos, end_pos };
+    LSP::Position start_pos{0, 0};
+    LSP::Position end_pos{last_line, last_line_len};
+    return LSP::Range{start_pos, end_pos};
 }
 } // namespace
 
@@ -553,9 +551,10 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
         SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
         SendSemanticTokensRequest(editor);
         // cache symbols
-        DocumentSymbols(editor,
-                        LSP::DocumentSymbolsRequest::CONTEXT_QUICK_OUTLINE |
-                            LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW);
+        DocumentSymbols(
+            editor,
+            LSP::DocumentSymbolsRequest::CONTEXT_QUICK_OUTLINE | LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW,
+            nullptr);
     }
 }
 
@@ -848,27 +847,9 @@ void LanguageServerProtocol::OnEditorChanged(wxCommandEvent& event)
 
 void LanguageServerProtocol::FindImplementation(IEditor* editor) { FindDefinition(editor); }
 
-void LanguageServerProtocol::OnQuickOutline(clCodeCompletionEvent& event)
-{
-    event.Skip();
-
-    LOG_IF_TRACE { LSP_TRACE() << "LanguageServerProtocol::OnQuickOutline called" << endl; }
-    IEditor* editor = GetEditor(event);
-    CHECK_PTR_RET(editor);
-
-    if (CanHandle(editor) && IsDocumentSymbolsSupported()) {
-        // this event is ours to handle
-        event.Skip(false);
-        DocumentSymbols(editor,
-                        LSP::DocumentSymbolsRequest::CONTEXT_QUICK_OUTLINE |
-                            LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW);
-        // don't wait for the response, but fire an event to load the dialog
-        LSPEvent show_quick_outline_dlg_event(wxEVT_LSP_SHOW_QUICK_OUTLINE_DLG);
-        m_cluster->AddPendingEvent(show_quick_outline_dlg_event);
-    }
-}
-
-void LanguageServerProtocol::DocumentSymbols(IEditor* editor, size_t context_flags)
+void LanguageServerProtocol::DocumentSymbols(IEditor* editor,
+                                             size_t context_flags,
+                                             std::function<void(const LSPEvent&)> cb)
 {
     CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
@@ -876,6 +857,7 @@ void LanguageServerProtocol::DocumentSymbols(IEditor* editor, size_t context_fla
     const wxString& filename = GetEditorFilePath(editor);
     LSP::MessageWithParams::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::DocumentSymbolsRequest(filename, context_flags));
+    req->As<LSP::Request>()->SetResponseCallback(std::move(cb));
     QueueMessage(req);
 }
 
@@ -917,7 +899,7 @@ void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
 
     } else if (IsDocumentSymbolsSupported()) {
         // Use DocumentSymbol instead
-        DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_SEMANTIC_HIGHLIGHT);
+        DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_SEMANTIC_HIGHLIGHT, nullptr);
     }
 }
 
@@ -993,8 +975,8 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
         wxString fn = FileUtils::FilePathFromURI(response.GetDiagnosticsUri());
 
         // Don't show this message on macOS as it appears in the middle of the screen...
-        clGetManager()->SetStatusMessage(wxString() << GetLogPrefix() << " parsing of file: " << fn << " is completed",
-                                         1);
+        clGetManager()->SetStatusMessage(
+            wxString() << GetLogPrefix() << " parsing of file: " << fn << " is completed", 1);
 
         std::vector<LSP::Diagnostic> diags = response.GetDiagnostics();
         if (!diags.empty() && IsDisplayDiagnostics()) {
@@ -1054,7 +1036,7 @@ void LanguageServerProtocol::FindReferences(IEditor* editor)
     QueueMessage(req);
 
     // Notify that operation started
-    LSPEvent event_start{ wxEVT_LSP_REFERENCES_INPROGRESS };
+    LSPEvent event_start{wxEVT_LSP_REFERENCES_INPROGRESS};
     EventNotifier::Get()->AddPendingEvent(event_start);
 }
 
@@ -1147,7 +1129,7 @@ void LSPRequestMessageQueue::Push(LSP::MessageWithParams::Ptr_t message)
     // Messages of type 'Request' require responses from the server
     LSP::Request* req = message->As<LSP::Request>();
     if (req) {
-        m_pendingReplyMessages.insert({ req->GetId(), message });
+        m_pendingReplyMessages.insert({req->GetId(), message});
     }
 }
 
@@ -1244,7 +1226,7 @@ void LanguageServerProtocol::HandleWorkspaceEdit(const JSONItem& changes)
 {
     auto edits = LSP::ParseWorkspaceEdit(changes);
 
-    LSPEvent edit_event{ wxEVT_LSP_EDIT_FILES };
+    LSPEvent edit_event{wxEVT_LSP_EDIT_FILES};
     edit_event.SetChanges(edits);
     edit_event.SetAnswer(false); // Do not prompt the user
     m_cluster->AddPendingEvent(edit_event);
@@ -1252,7 +1234,7 @@ void LanguageServerProtocol::HandleWorkspaceEdit(const JSONItem& changes)
 
 void LanguageServerProtocol::OnNetLogMessage(clCommandEvent& event)
 {
-    LSPEvent log_event{ wxEVT_LSP_LOGMESSAGE };
+    LSPEvent log_event{wxEVT_LSP_LOGMESSAGE};
     log_event.SetServerName(GetName());
     log_event.SetMessage(event.GetString());
     log_event.SetLogMessageSeverity(event.GetInt());

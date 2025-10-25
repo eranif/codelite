@@ -57,6 +57,25 @@ public:
     static LSPManager& GetInstance();
     void Initialise();
 
+    //----------------------------
+    // Completion API.
+    //----------------------------
+
+    /**
+     * @brief Shows an outline view for the specified editor using the LSP server.
+     *
+     * Retrieves the LSP server associated with @c editor. If the server exists and
+     * supports document symbols, it requests the symbols for both quick‑outline and
+     * outline‑view contexts and displays the result via @c ShowQuickOutlineDialog.
+     *
+     * If no server is available or document symbols are unsupported, a
+     * @c wxEVT_CC_SHOW_QUICK_OUTLINE event is queued so that other components can
+     * handle the request.
+     *
+     * @param editor Pointer to the editor for which the outline view should be displayed.
+     */
+    void ShowOutlineView(IEditor* editor);
+
 protected:
     void OnSignatureHelp(LSPEvent& event);
     void OnHover(LSPEvent& event);
@@ -87,6 +106,8 @@ protected:
     void OnCodeActionAvailable(LSPEvent& event);
     void OnApplyEdits(LSPEvent& event);
     void OnGoinDown(clCommandEvent& event);
+
+    void ShowQuickOutlineDialog(const LSPEvent& event);
 
     wxString GetEditorFilePath(IEditor* editor) const;
     /**

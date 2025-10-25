@@ -206,6 +206,28 @@ LSPManager& LSPManager::GetInstance()
 
 void LSPManager::Initialise() {}
 
+//
+// Completion API.
+//
+
+void LSPManager::ShowOutlineView(IEditor* editor)
+{
+    CHECK_PTR_RET(editor);
+    auto server = GetServerForEditor(editor);
+    if (server == nullptr || !server->IsDocumentSymbolsSupported()) {
+        // Let others handle this
+        clCodeCompletionEvent evt{wxEVT_CC_SHOW_QUICK_OUTLINE};
+        evt.SetFileName(editor->GetRemotePathOrLocal());
+        EventNotifier::Get()->AddPendingEvent(evt);
+        return;
+    }
+
+    server->DocumentSymbols(
+        editor,
+        LSP::DocumentSymbolsRequest::CONTEXT_QUICK_OUTLINE | LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW,
+        [this](const LSPEvent& event) { ShowQuickOutlineDialog(event); });
+}
+
 void LSPManager::Reload(const std::unordered_set<wxString>& languages)
 {
     wxBusyCursor bc;
@@ -873,19 +895,20 @@ void LSPManager::OnOulineViewSymbols(LSPEvent& event)
     UpdateNavigationBar();
 }
 
-void LSPManager::OnShowQuickOutlineDlg(LSPEvent& event)
+void LSPManager::ShowQuickOutlineDialog(const LSPEvent& event)
 {
-    wxUnusedVar(event);
     if (m_quick_outline_dlg == nullptr) {
         m_quick_outline_dlg = new LSPOutlineViewDlg(EventNotifier::Get()->TopFrame());
     }
+    m_quick_outline_dlg->SetSymbols(event.GetSymbolsInformation());
     if (!m_quick_outline_dlg->IsShown()) {
         m_quick_outline_dlg->Show();
         // reposition the window
         ::clSetDialogBestSizeAndPosition(m_quick_outline_dlg);
     }
-    m_quick_outline_dlg->SetSymbols({});
 }
+
+void LSPManager::OnShowQuickOutlineDlg(LSPEvent& event) { ShowQuickOutlineDialog(event); }
 
 void LSPManager::OnQuickOutlineView(LSPEvent& event)
 {

@@ -33,14 +33,14 @@ static EventNotifier* eventNotifier = NULL;
 
 EventNotifier* EventNotifier::Get()
 {
-    if(eventNotifier == NULL)
+    if (eventNotifier == NULL)
         eventNotifier = new EventNotifier();
     return eventNotifier;
 }
 
 void EventNotifier::Release()
 {
-    if(eventNotifier)
+    if (eventNotifier)
         delete eventNotifier;
     eventNotifier = NULL;
 }
@@ -73,7 +73,7 @@ wxFrame* EventNotifier::TopFrame() { return static_cast<wxFrame*>(wxTheApp->GetT
 
 void EventNotifier::PostFileSavedEvent(const wxString& filename)
 {
-    clCommandEvent event{ wxEVT_FILE_SAVED };
+    clCommandEvent event{wxEVT_FILE_SAVED};
     event.SetString(filename);
     event.SetFileName(filename);
     AddPendingEvent(event);

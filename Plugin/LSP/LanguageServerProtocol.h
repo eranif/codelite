@@ -108,7 +108,6 @@ protected:
     void OnFindSymbol(clCodeCompletionEvent& event);
     void OnFunctionCallTip(clCodeCompletionEvent& event);
     void OnTypeInfoToolTip(clCodeCompletionEvent& event);
-    void OnQuickOutline(clCodeCompletionEvent& event);
     void OnSemanticHighlights(clCodeCompletionEvent& event);
     void OnWorkspaceSymbols(clCodeCompletionEvent& event);
     void OnFindHeaderFile(clCodeCompletionEvent& event);
@@ -309,7 +308,7 @@ public:
      * @param editor the current editor
      * @param context_flags request context. See LSP::DocumentSymbolsRequest::eDocumentSymbolsContext (bit or'd)
      */
-    void DocumentSymbols(IEditor* editor, size_t context_flags);
+    void DocumentSymbols(IEditor* editor, size_t context_flags, std::function<void(const LSPEvent&)> cb);
 
     /**
      * @brief execute remote command `workspace/executeCommand`

@@ -20,17 +20,19 @@ public:
         CONTEXT_LLM = 1 << 3,
     };
 
-private:
-    size_t m_context = CONTEXT_NONE;
-
-private:
-    void QueueEvent(wxEvtHandler* owner, const std::vector<LSP::SymbolInformation>& symbols, const wxString& filename,
-                    const wxEventType& event_type);
-
-public:
     explicit DocumentSymbolsRequest(const wxString& filename, size_t context);
     virtual ~DocumentSymbolsRequest() = default;
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
+
+private:
+    size_t m_context = CONTEXT_NONE;
+    void QueueEvent(wxEvtHandler* owner,
+                    const std::vector<LSP::SymbolInformation>& symbols,
+                    const wxString& filename,
+                    const wxEventType& event_type);
+    LSPEvent CreateLSPEvent(const std::vector<LSP::SymbolInformation>& symbols,
+                            const wxString& filename,
+                            const wxEventType& event_type);
 };
-};     // namespace LSP
+}; // namespace LSP
 #endif // DOCUMDENET_SYMBOLS_REQUEST_HPP

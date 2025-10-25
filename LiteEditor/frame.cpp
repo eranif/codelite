@@ -3000,12 +3000,7 @@ void clMainFrame::OnQuickOutline(wxCommandEvent& event)
     clEditor* activeEditor = GetMainBook()->GetActiveEditor();
     CHECK_PTR_RET(activeEditor);
 
-    // let the plugins process this first
-    clCodeCompletionEvent evt(wxEVT_CC_SHOW_QUICK_OUTLINE, GetId());
-    evt.SetFileName(activeEditor->GetFileName().GetFullPath());
-
-    // fire the event so plugins will be able to process it
-    EventNotifier::Get()->AddPendingEvent(evt);
+    LSPManager::GetInstance().ShowOutlineView(activeEditor);
     activeEditor->SetActive();
 }
 

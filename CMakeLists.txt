@@ -334,9 +334,9 @@ endif()
 if(MINGW)
   # MinGW
   if(WITH_POSIX_LAYOUT)
-      set(MINGW_INSTALL_PLUGINS_DIR "${CMAKE_INSTALL_PREFIX}/lib/codelite")
+    set(MINGW_INSTALL_PLUGINS_DIR "${CMAKE_INSTALL_PREFIX}/lib/codelite")
   else()
-      set(MINGW_INSTALL_PLUGINS_DIR "${CMAKE_INSTALL_PREFIX}/plugins")
+    set(MINGW_INSTALL_PLUGINS_DIR "${CMAKE_INSTALL_PREFIX}/plugins")
   endif()
   set(MINGW_INSTALL_BIN "${CMAKE_INSTALL_PREFIX}")
 endif()
@@ -1153,6 +1153,7 @@ if(MINGW)
   msys_list_deps(${MSYS2_BASE}/clang64/bin/libhunspell-1.7-0.dll
                  LIBHUNSPELL_DEPS)
   msys_list_deps(${MSYS2_BASE}/clang64/bin/libssh.dll LIBSSH_DEPS)
+  msys_list_deps(${MSYS2_BASE}/clang64/bin/openssl.exe OPENSSL_DEPS)
 
   list(
     APPEND
@@ -1215,6 +1216,10 @@ if(MINGW)
   endforeach()
 
   foreach(DLL ${LIBSSH_DEPS})
+    install(FILES "${DLL}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+  endforeach()
+
+  foreach(DLL ${OPENSSL_DEPS})
     install(FILES "${DLL}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
   endforeach()
 

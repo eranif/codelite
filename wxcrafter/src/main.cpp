@@ -183,9 +183,9 @@ EVT_FIND_NEXT(wxID_ANY, MainFrame::OnFindNext)
 END_EVENT_TABLE()
 
 #ifdef __WXMAC__
-constexpr int BMP_SIZE = 32;
+const wxSize BMP_SIZE{32, 32};
 #else
-constexpr int BMP_SIZE = 32;
+const wxSize BMP_SIZE{16, 16};
 #endif
 
 MainFrame::MainFrame(wxWindow* parent, bool hidden)
@@ -199,13 +199,29 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
     , m_treeView(nullptr)
     , m_findReplaceDialog(nullptr)
 {
+#if STANDALONE_BUILD
+    // Use wxWidgets images.
+    m_mainToolbar->SetToolBitmapSize(BMP_SIZE);
+    m_mainToolbar->AddTool(wxID_NEW, _("New Project"), wxArtProvider::GetBitmap(wxART_NEW, wxART_TOOLBAR, BMP_SIZE));
+    m_mainToolbar->AddTool(
+        wxID_OPEN, _("Open Project"), wxArtProvider::GetBitmap(wxART_FILE_OPEN, wxART_TOOLBAR, BMP_SIZE));
+    m_mainToolbar->SetToolDropDown(wxID_OPEN, true);
+    m_mainToolbar->AddTool(wxID_CLOSE, _("Close"), wxArtProvider::GetBitmap(wxART_CLOSE, wxART_TOOLBAR, BMP_SIZE));
+    m_mainToolbar->AddTool(wxID_SAVE, _("Save"), wxArtProvider::GetBitmap(wxART_FILE_SAVE, wxART_TOOLBAR, BMP_SIZE));
+    m_mainToolbar->AddSeparator();
+    m_mainToolbar->AddTool(wxID_UNDO, _("Undo"), wxArtProvider::GetBitmap(wxART_UNDO, wxART_TOOLBAR, BMP_SIZE));
+    m_mainToolbar->AddTool(wxID_REDO, _("Redo"), wxArtProvider::GetBitmap(wxART_REDO, wxART_TOOLBAR, BMP_SIZE));
+    m_mainToolbar->AddSeparator();
+    m_mainToolbar->AddTool(wxID_FIND, _("Find"), wxArtProvider::GetBitmap(wxART_FIND, wxART_TOOLBAR, BMP_SIZE));
+    m_mainToolbar->AddSeparator();
+    m_mainToolbar->AddTool(
+        XRCID("generate-code"), _("Generate Code"), wxArtProvider::GetBitmap(wxART_GO_DOWN, wxART_TOOLBAR, BMP_SIZE));
+
+#else
+    // Use CodeLite's images.
     auto images = clGetManager()->GetStdIcons();
-    m_mainToolbar->SetToolBitmapSize(wxSize(BMP_SIZE, BMP_SIZE));
-
-#if !STANDALONE_BUILD
+    m_mainToolbar->SetToolBitmapSize(BMP_SIZE);
     m_mainToolbar->AddTool(wxID_BACKWARD, _("Back to CodeLite"), images->GetBundle("back"));
-#endif
-
     m_mainToolbar->AddTool(wxID_NEW, _("New Project"), images->GetBundle("file_new"));
     m_mainToolbar->AddTool(wxID_OPEN, _("Open Project"), images->GetBundle("file_open"));
     m_mainToolbar->SetToolDropDown(wxID_OPEN, true);
@@ -218,12 +234,11 @@ MainFrame::MainFrame(wxWindow* parent, bool hidden)
     m_mainToolbar->AddTool(wxID_FIND, _("Find"), images->GetBundle("find"));
     m_mainToolbar->AddSeparator();
     m_mainToolbar->AddTool(XRCID("generate-code"), _("Generate Code"), images->GetBundle("execute"));
-    m_mainToolbar->Realize();
 
-#if !STANDALONE_BUILD
     m_mainToolbar->Bind(wxEVT_TOOL, &MainFrame::OnSwitchToCodelite, this, wxID_BACKWARD);
     m_mainToolbar->Bind(wxEVT_UPDATE_UI, &MainFrame::OnSwitchToCodeliteUI, this, wxID_BACKWARD);
 #endif
+    m_mainToolbar->Realize();
 
     m_mainToolbar->Bind(wxEVT_TOOL, &MainFrame::OnNewProject, this, wxID_NEW);
     m_mainToolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &MainFrame::OnOpenMenu, this, wxID_OPEN);

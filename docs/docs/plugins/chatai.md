@@ -20,16 +20,16 @@ CodeLite 18.2.0 ships with **ChatAI**, a built‑in chat interface that talks 
    ![Wizard – Step 1](/assets/add-new-endpoint-1.png)
    ![Wizard – Step 2](/assets/add-new-endpoint-2.png)
 
-3. Test the endpoint: press **Ctrl + Shift + H** to open the chat box and send a short prompt (e.g. “Hello”).
+3. Test the endpoint: press ++ctrl+shift+h++ to open the chat box and send a short prompt (e.g. “Hello”).
 
 ---
 
 ## 2. The Chat Box
 
-Open the chat box at any time with **Ctrl + Shift + H**.
+Open the chat box at any time with ++ctrl+shift+h++.
 The window can be used for casual questions, code‑related queries, or to instruct the model to read/write files.
 
-![](./assets/chat-box.png)
+![](/assets/chat-box.png)
 
 ### Toolbar (left → right)
 
@@ -38,7 +38,7 @@ The window can be used for casual questions, code‑related queries, or to instr
 | **Clear** | Erases the chat history **and** the internal message log. | – |
 | **Endpoint ▼** | Switches between the endpoints you added. | – |
 | **Restart** | Restarts the LLM client (clears all history). | – |
-| **Play** | Sends the current input to the model. <br>*Alternative:* **Shift + Enter** | – |
+| **Play** | Sends the current input to the model | ++shift+enter++ |
 | **Stop** | Cancels a long‑running request. | – |
 | **Replay** | Opens a dialog that lists recent user messages – you can resend any of them. | – |
 | **Link** | When enabled, the output pane auto‑scrolls so the last line is always visible. | – |
@@ -52,12 +52,12 @@ If the selected model advertises the **tools** capability, ChatAI can invoke the
 
 | Tool | What it does |
 |------|--------------|
-| **Get_the_text_of_the_active_tab_inside_the_editor** | Returns the full source text of the currently focused editor tab. |
-| **Open_a_file_in_an_editor** | Opens a given file path in CodeLite for viewing or editing. |
-| **Read_file_from_the_file_system** | Reads a file from disk and returns its contents. |
-| **Read_the_compiler_build_output** | Retrieves the log of the most recent build performed inside CodeLite. |
-| **Write_file_content_to_disk_at_a_given_path** | Writes supplied text to a file at the specified location. |
-| **git_commit_log_history_between_two_commits** | Returns the git log between two commit IDs (or refs). |
+| `Get_the_text_of_the_active_tab_inside_the_editor` | Returns the full source text of the currently focused editor tab. |
+| `Open_a_file_in_an_editor` | Opens a given file path in CodeLite for viewing or editing. |
+| `Read_file_from_the_file_system` | Reads a file from disk and returns its contents. |
+| `Read_the_compiler_build_output` | Retrieves the log of the most recent build performed inside CodeLite. |
+| `Write_file_content_to_disk_at_a_given_path` | Writes supplied text to a file at the specified location. |
+| `git_commit_log_history_between_two_commits` | Returns the git log between two commit IDs (or refs). |
 
 These tools enable the model to help with **file management**, **code editing**, **build‑log analysis**, and **version‑control queries** without you having to copy‑paste anything.
 
@@ -69,7 +69,7 @@ You get a confusing compile error.  Type:
 Explain the build errors and suggest fixes.
 ```
 
-The model will automatically call **Read_the_compiler_build_output**, fetch the log, and then reply with a human‑readable explanation and concrete fixes.
+The model will automatically call `Read_the_compiler_build_output`, fetch the log, and then reply with a human‑readable explanation and concrete fixes.
 
 ---
 
@@ -82,7 +82,7 @@ Several AI‑powered actions are available with a single click.  The prompts tha
 | **Generate Git Commit Message** | Click the toolbar button or use the context‑menu entry. | Summarises the staged changes into a concise, conventional commit message. |
 | **Generate Git Release Notes** | Press the “Release Notes” button in the Git view. | Produces release notes for a selected commit range. |
 | **Code Review** | Right‑click a file → **AI‑powered code generation → Review**. | Returns a comprehensive review with suggestions and identified issues. |
-| **Generate Docstring** | **Ctrl + Shift + M** (or right‑click → **Generate docstring for the current method**). | Inserts a language‑appropriate docstring for the function/class under the cursor. |
+| **Generate Docstring** | ++ctrl+shift+m++ (or right‑click → **Generate docstring for the current method**). | Inserts a language‑appropriate docstring for the function/class under the cursor. |
 
 The Prompt Editor lets you tweak the system prompt for each of these operations, add custom placeholders, or create entirely new AI actions.
 
@@ -91,22 +91,22 @@ The Prompt Editor lets you tweak the system prompt for each of these operations,
 ## 5. AI‑Powered IDE Features
 
 ### Git Commit Message
-![](./plugins/images/git.gif)
+![](/plugins/images/git.gif)
 One click generates a full commit message from the current diff.
 
 ### Git Release Notes
-![](./plugins/images/release-notes.gif)
+![](/plugins/images/release-notes.gif)
 Select a commit range → **Generate Release Notes** → AI produces a polished changelog.
 
 ### Automatic Function Documentation
-![](./plugins/images/auto-doc.gif)
-Place the cursor inside a function, press **Ctrl + Shift + M**, and the model writes a complete docstring.
+![](/plugins/images/auto-doc.gif)
+Place the cursor inside a function, press ++ctrl+shift+m++, and the model writes a complete docstring.
 
 ---
 
 ## 6. Getting Help
 
-- Open the chat box (**Ctrl + Shift + H**) and ask any question.
+- Open the chat box (++ctrl+shift+h++) and ask any question.
 - For endpoint‑specific issues, use **AI → Settings** to view or edit the stored URLs and tokens.
 
 ---

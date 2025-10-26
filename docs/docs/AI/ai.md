@@ -1,5 +1,6 @@
 # ChatAI – Your Local AI Assistant
-**CodeLite 18.2.0**
+
+**Since CodeLite 18.2.0**
 
 ---
 

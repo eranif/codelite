@@ -32,6 +32,7 @@ nav:
       - PHP (via plugin): workspaces/php.md
       - Node.js (via plugin): workspaces/nodejs.md
   - Code Completion: code_completion/cxx.md
+  - AI: AI/ai.md
   - Plugins:
       - Language Server Protocol: plugins/lsp.md
       - Debug Adapter Client: plugins/dap.md
@@ -47,7 +48,6 @@ nav:
       - Remoty: plugins/remoty.md
       - Rust: plugins/rust.md
       - Source Code Formatter: plugins/codeformatter.md
-      - Chat AI: plugins/chatai.md
   - Debugging:
       - gdb: debuggers/gdb.md
       - Debug Adapter Client (dap): plugins/dap.md

@@ -26,27 +26,38 @@
 #include "clDebuggerTerminal.h"
 
 #include "file_logger.h"
-#include "globals.h"
-#include "procutils.h"
+
+#include <tuple>
 
 #ifndef __WXMSW__
+#include "Console/clConsoleBase.h"
+#include "procutils.h"
+
 #include <sys/wait.h>
 #endif
 
-clDebuggerTerminalPOSIX::clDebuggerTerminalPOSIX()
-    : m_pid(wxNOT_FOUND)
+namespace
 {
+std::pair<wxString /*realPts*/, long /*pid*/> LaunchTerminalForDebugger([[maybe_unused]] const wxString& title)
+{
+#if !defined(__WXMSW__)
+    // Non Windows machines
+    clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
+    if (console->StartForDebugger()) {
+        return {console->GetRealPts(), console->GetPid()};
+    }
+#endif // !__WXMSW__
+    return {"", wxNOT_FOUND};
 }
+} // namespace
 
 void clDebuggerTerminalPOSIX::Launch(const wxString& title)
 {
     m_title = title;
-    wxString symblink;
-    ::LaunchTerminalForDebugger(m_title, symblink, m_tty, m_pid);
-    wxUnusedVar(symblink);
+    std::tie(m_tty, m_pid) = ::LaunchTerminalForDebugger(m_title);
 
-    if(IsValid()) {
-        clDEBUG() << "clDebuggerTerminalPOSIX successfully started. Process" << m_pid << "tty:" << m_tty << endl;
+    if (IsValid()) {
+        clDEBUG() << "clDebuggerTerminalPOSIX successfully started. Process " << m_pid << " tty: " << m_tty << endl;
     }
 }
 
@@ -62,7 +73,7 @@ bool clDebuggerTerminalPOSIX::IsValid() const
 void clDebuggerTerminalPOSIX::Clear()
 {
 #ifndef __WXMSW__
-    if(m_pid != wxNOT_FOUND) {
+    if (m_pid != wxNOT_FOUND) {
         // konsole and and its descendent qterminal hang on exit
         // That's because we made them call /bin/sleep, which becomes the process stored in m_pid
         // Killing 'sleep' makes other terminals self-close, but not these two
@@ -72,10 +83,10 @@ void clDebuggerTerminalPOSIX::Clear()
         wxString command(wxString::Format("ps -o ppid= -p %i", (int)m_pid));
         wxString result = ProcUtils::SafeExecuteCommand(command);
         long parentID;
-        if(result.Trim().ToLong(&parentID)) {
+        if (result.Trim().ToLong(&parentID)) {
             wxString command(wxString::Format("ps -o command= -p %i", (int)parentID));
             wxString name = ProcUtils::SafeExecuteCommand(command);
-            if(name.Contains("--separate") || name.Contains("qterminal")) {
+            if (name.Contains("--separate") || name.Contains("qterminal")) {
                 killParent = true; // as it _is_ konsole, which will have been launched with --separate as an option, or
                                    // qterminal
             }
@@ -84,7 +95,7 @@ void clDebuggerTerminalPOSIX::Clear()
         // terminate the process
         ::wxKill(m_pid, wxSIGTERM);
 
-        if(killParent) {
+        if (killParent) {
             ::wxKill(parentID, wxSIGTERM);
         }
     }

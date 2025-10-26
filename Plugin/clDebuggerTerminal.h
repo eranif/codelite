@@ -28,16 +28,17 @@
 
 #include "codelite_exports.h"
 
+#include <wx/defs.h>
 #include <wx/string.h>
 
 class WXDLLIMPEXP_SDK clDebuggerTerminalPOSIX
 {
     wxString m_title;
     wxString m_tty;
-    long m_pid;
+    long m_pid = wxNOT_FOUND;
 
 public:
-    clDebuggerTerminalPOSIX();
+    clDebuggerTerminalPOSIX() = default;
     virtual ~clDebuggerTerminalPOSIX() = default;
 
     /**
@@ -47,12 +48,11 @@ public:
 
     /**
      * @brief is this a valid terminal?
-     * @return
      */
     bool IsValid() const;
 
     /**
-     * @brief return the associated pty for this terminal
+     * @brief return the associated tty for this terminal
      */
     const wxString& GetTty() const { return m_tty; }
 
@@ -69,7 +69,7 @@ public:
     static wxString MakeCoreTitle(const wxString& coreFile);
 
     //! Make a console title for debugging a running process.
-    static wxString MakePidTitle(const int pid);
+    static wxString MakePidTitle(int pid);
 };
 
 #endif // CLDEBUGGERTERMINAL_H

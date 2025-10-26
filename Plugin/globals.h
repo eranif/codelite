@@ -243,11 +243,6 @@ WXDLLIMPEXP_SDK wxVariant MakeBitmapIndexText(const wxString& text, int imgIndex
 WXDLLIMPEXP_SDK wxVariant MakeCheckboxVariant(const wxString& label, bool checked, int imgIndex);
 
 /**
- * @brief launch terminal for debugging purposes and return its TTY. This function does nothing under Windows
- */
-WXDLLIMPEXP_SDK void LaunchTerminalForDebugger(const wxString& title, wxString& tty, wxString& realPts, long& pid);
-
-/**
  * @brief prompt the user with a wxRichMessageDialog with a checkbox "Don't show this message again"
  * @param message the message to show to the user
  * @param checkboxLabel the message to display next to the checkbox
@@ -384,11 +379,6 @@ WXDLLIMPEXP_SDK void clSetEditorFontEncoding(const wxString& encoding);
  * @return return the position or wxNOT_FOUND
  */
 WXDLLIMPEXP_SDK int clFindMenuItemPosition(wxMenu* menu, int menuItemId);
-
-/**
- * @brief fit the dataview columns width to match their content
- */
-WXDLLIMPEXP_SDK void clFitColumnWidth(wxDataViewCtrl* ctrl);
 
 /**
  * @brief return the screen size, taking dual or more screens into account

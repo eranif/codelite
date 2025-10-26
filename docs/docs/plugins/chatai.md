@@ -11,16 +11,16 @@ CodeLite 18.2.0 ships with **ChatAI**, a built‑in chat interface that talks 
 
 ## 1. Add an LLM Endpoint
 
-1. Open **AI → Add New Endpoint** from the main menu.
+- Open **AI → Add New Endpoint** from the main menu.
 
    ![Menu – Add New Endpoint](/assets/menu-new-endpoint.png)
 
-2. Follow the wizard: choose a name, select the provider (Ollama, Claude, …), enter the URL and any required authentication, then click **Finish**.
+- Follow the wizard: choose a name, select the provider (Ollama, Claude, …), enter the URL and any required authentication, then click **Finish**.
 
    ![Wizard – Step 1](/assets/add-new-endpoint-1.png)
    ![Wizard – Step 2](/assets/add-new-endpoint-2.png)
 
-3. Test the endpoint: press ++ctrl+shift+h++ to open the chat box and send a short prompt (e.g. “Hello”).
+- Test the endpoint: press ++ctrl+shift+h++ to open the chat box and send a short prompt (e.g. “Hello”).
 
 ---
 

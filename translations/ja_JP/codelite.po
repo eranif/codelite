@@ -8757,7 +8757,7 @@ msgstr "ダークモードを強制"
 
 #: LiteEditor/syntaxhighlightbasedlg.cpp:86
 msgid "Force light"
-msgstr "強制的に右へ"
+msgstr "ライトモードを強制"
 
 #: LiteEditor/syntaxhighlightbasedlg.cpp:102
 msgid "Global overrides:"

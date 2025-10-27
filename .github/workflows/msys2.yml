@@ -89,21 +89,21 @@ jobs:
         cd build-release
         MSYS2_BASE=/d/a/_temp/msys64 PATH="$HOME/root/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DWXWIN="$HOME/root" -Wno-dev -DBUILD_TESTING=0 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) install
-        #PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) setup
+        PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) setup
     #    ctest --output-on-failure # Missing dll near test executables
 
     # Upload and test installer
-    #- name: artifact
-    #  uses: actions/upload-artifact@v4
-    #  with:
-    #    name: codelite-installer-wx-${{matrix.wx-version}}
-    #    path: |
-    #      build-release/installer/**.*
-    #
-    #- name: Run installer
-    #  shell: powershell
-    #  run: Start-Process -wait -FilePath .\build-release\installer\codelite-amd64-*.exe -ArgumentList "/SILENT /SP- /SUPPRESSMSGBOXES /NOICONS /NORESTART"
-    #
-    #- name: Show content of installation
-    #  shell: bash
-    #  run: ls -lR "/C/Program Files/Codelite"
+    - name: artifact
+      uses: actions/upload-artifact@v4
+      with:
+        name: codelite-installer-wx-${{matrix.wx-version}}
+        path: |
+          build-release/installer/**.*
+    
+    - name: Run installer
+      shell: powershell
+      run: Start-Process -wait -FilePath .\build-release\installer\codelite-amd64-*.exe -ArgumentList "/SILENT /SP- /SUPPRESSMSGBOXES /NOICONS /NORESTART"
+    
+    - name: Show content of installation
+      shell: bash
+      run: ls -lR "/C/Program Files/Codelite"

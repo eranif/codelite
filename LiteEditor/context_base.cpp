@@ -37,6 +37,7 @@
 #include "frame.h"
 #include "macros.h"
 #include "plugin.h"
+#include "resources/clXmlResource.hpp"
 
 #include <vector>
 #include <wx/regex.h>
@@ -110,7 +111,7 @@ bool ContextBase::GetHyperlinkRange(int& start, int& end)
     return false;
 }
 
-wxMenu* ContextBase::GetMenu() { return wxXmlResource::Get()->LoadMenu(wxT("editor_right_click_default")); }
+wxMenu* ContextBase::GetMenu() { return clXmlResource::Get().LoadMenu(wxT("editor_right_click_default")); }
 
 void ContextBase::PrependMenuItem(wxMenu* menu, const wxString& text, wxObjectEventFunction func, int eventId)
 {

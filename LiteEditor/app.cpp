@@ -53,6 +53,7 @@
 #include "globals.h"
 #include "manager.h"
 #include "pluginmanager.h"
+#include "resources/clXmlResource.hpp"
 #include "singleinstancethreadjob.h"
 #include "stack_walker.h"
 
@@ -405,7 +406,7 @@ bool CodeLiteApp::OnInit()
     // Init resources and add the PNG handler
     wxSystemOptions::SetOption(_T("msw.remap"), 0);
     wxSystemOptions::SetOption("msw.notebook.themed-background", 1);
-    wxXmlResource::Get()->InitAllHandlers();
+    clXmlResource::Init();
 
     ::wxInitAllImageHandlers();
 #if wxCHECK_VERSION(3, 3, 0)

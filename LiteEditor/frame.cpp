@@ -103,6 +103,7 @@
 #include "project.h"
 #include "quickdebugdlg.h"
 #include "quickfindbar.h"
+#include "resources/clXmlResource.hpp"
 #include "search_thread.h"
 #include "sessionmanager.h"
 #include "singleinstancethreadjob.h"
@@ -1466,8 +1467,8 @@ void clMainFrame::CreateGUIControls()
          XRCID("BookmarkTypes[end]"));
 
 #if !MAINBOOK_AUIBOOK
-    GetDebuggerPane()->GetNotebook()->SetMenu(wxXmlResource::Get()->LoadMenu("debugger_view_rmenu"));
-    GetOutputPane()->GetNotebook()->SetMenu(wxXmlResource::Get()->LoadMenu("outputview_view_rmenu"));
+    GetDebuggerPane()->GetNotebook()->SetMenu(clXmlResource::Get().LoadMenu("debugger_view_rmenu"));
+    GetOutputPane()->GetNotebook()->SetMenu(clXmlResource::Get().LoadMenu("outputview_view_rmenu"));
 #endif
 
     DoSysColoursChanged();

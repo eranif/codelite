@@ -34,6 +34,7 @@
 #include "imanager.h"
 #include "macros.h"
 #include "pluginmanager.h"
+#include "resources/clXmlResource.hpp"
 
 #include <algorithm>
 #include <wx/clntdata.h>
@@ -361,9 +362,9 @@ void OpenWindowsPanel::OnMenu(wxDataViewEvent& event)
     wxMenu* menu;
     if (items.GetCount() == 1) {
         // single item
-        menu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
+        menu = clXmlResource::Get().LoadMenu(wxT("editor_tab_right_click"));
     } else {
-        menu = wxXmlResource::Get()->LoadMenu(wxT("tabs_multi_sels_menu"));
+        menu = clXmlResource::Get().LoadMenu(wxT("tabs_multi_sels_menu"));
     }
     m_dvListCtrl->PopupMenu(menu);
     wxDELETE(menu);

@@ -14,7 +14,12 @@ wxCrafter::ResourceLoader::ResourceLoader(const wxString& skin)
 {
     if(m_bitmaps.empty()) {
         wxString zipFile;
+#ifdef USE_POSIX_LAYOUT
+        zipFile << wxStandardPaths::Get().GetDataDir() << wxT(INSTALL_DIR) << wxFileName::GetPathSeparator() << skin
+                << wxT(".zip");
+#else
         zipFile << wxStandardPaths::Get().GetDataDir() << wxFileName::GetPathSeparator() << skin << wxT(".zip");
+#endif
         clZipReader zip(zipFile);
 
         std::unordered_map<wxString, clZipReader::Entry> entries;

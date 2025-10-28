@@ -77,8 +77,22 @@ public:
      * @return clStatus StatusOk() if execution succeeds, or StatusOther() with
      *         error message if loading or execution fails
      */
-    clStatus Run(const wxString& script);
-    clStatus RunFile(const wxString& path);
+    clStatus LoadScriptString(const wxString& script);
+
+    /**
+     * @brief Executes a Lua script file.
+     *
+     * Reads the content of the file specified by @a path. If the file cannot be read,
+     * returns a @c StatusNotFound error. Otherwise, the content is passed to @c LoadScriptString
+     * for execution, and the resulting status is returned.
+     *
+     * @param path The full path to the Lua script file to be executed.
+     *
+     * @return A @c clStatus indicating the result of the operation:
+     *         - @c StatusNotFound if the file could not be read.
+     *         - The status returned by @c LoadScriptString for the executed script.
+     */
+    clStatus LoadScriptFile(const wxString& path);
 
     /**
      * @brief Updates a menu by appending menu items from the internal menu_items collection.

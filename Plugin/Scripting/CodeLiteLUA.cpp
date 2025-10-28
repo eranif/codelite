@@ -71,7 +71,7 @@ void CodeLiteLUA::InitialiseInternal()
     }
 
     clDEBUG() << "Running file:" << codelite_lua << endl;
-    auto status = RunFile(codelite_lua);
+    auto status = LoadScriptFile(codelite_lua);
     if (!status.ok()) {
         wxString errmsg;
         errmsg << _("Failed to run LUA file: ") << codelite_lua << "\n" << status.message();
@@ -127,7 +127,7 @@ void CodeLiteLUA::add_menu_item(const std::string& menu_name, const std::string&
     self.m_menu_items[menu_name].push_back(std::move(menu_item));
 }
 
-clStatus CodeLiteLUA::Run(const wxString& script)
+clStatus CodeLiteLUA::LoadScriptString(const wxString& script)
 {
     if (m_state == nullptr) {
         return StatusInavalidArgument("Could not run LUA script. Engine is not initialised.");
@@ -146,13 +146,13 @@ clStatus CodeLiteLUA::Run(const wxString& script)
     return StatusOk();
 }
 
-clStatus CodeLiteLUA::RunFile(const wxString& path)
+clStatus CodeLiteLUA::LoadScriptFile(const wxString& path)
 {
     wxString content;
     if (!FileUtils::ReadFileContent(path, content)) {
         return StatusNotFound(path);
     }
-    return Run(content);
+    return LoadScriptString(content);
 }
 
 void CodeLiteLUA::UpdateMenu(const wxString& menu_name, wxMenu* menu)

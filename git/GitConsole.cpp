@@ -907,6 +907,11 @@ void GitConsole::DoCodeReview()
         return;
     }
 
+    if (output.empty()) {
+        wxMessageBox(_("Nothing to review"), "CodeLite");
+        return;
+    }
+
     prompt.Replace("{{context}}", output);
 
     // Construct a token for cancellation purposes.

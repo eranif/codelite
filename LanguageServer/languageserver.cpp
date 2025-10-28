@@ -15,6 +15,7 @@
 #include "globals.h"
 #include "ieditor.h"
 #include "macros.h"
+#include "resources/clXmlResource.hpp"
 
 #include <thread>
 #include <wx/app.h>
@@ -215,8 +216,9 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
 
     wxMenu* menu = event.GetMenu();
     if (llm::Manager::GetInstance().IsAvailable()) {
-        wxMenu* ai_menu = new wxMenu;
-        ai_menu->Append(XRCID("lsp_document_scope"), _("Generate docstring for the current scope"));
+        // Load the LLM generation sub-menu
+        wxMenu* ai_menu = clXmlResource::Get().LoadMenu("editor_context_menu_llm_generation");
+
         menu->PrependSeparator();
         auto item = menu->Prepend(wxID_ANY, _("AI-Powered Code Generation"), ai_menu);
         item->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("wand"));

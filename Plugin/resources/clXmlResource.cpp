@@ -1,5 +1,7 @@
 #include "resources/clXmlResource.hpp"
 
+#include "Scripting/CodeLiteLUA.hpp"
+
 #include <wx/xrc/xmlres.h>
 
 clXmlResource& clXmlResource::Get()
@@ -19,6 +21,7 @@ wxMenu* clXmlResource::LoadMenu(const wxString& name)
 {
     auto menu = wxXmlResource::Get()->LoadMenu(name);
     // note: pointer must be freed by the caller.
+    CodeLiteLUA::Get().UpdateMenu(name, menu);
     return menu;
 }
 

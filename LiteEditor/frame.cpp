@@ -36,6 +36,7 @@
 #include "LSP/LSPManager.hpp"
 #include "Notebook.h"
 #include "NotebookNavigationDlg.h"
+#include "Scripting/CodeLiteLUA.hpp"
 #include "SideBar.hpp"
 #include "StdToWX.h"
 #include "SwitchToWorkspaceDlg.h"
@@ -610,6 +611,7 @@ EVT_MENU(XRCID("add_envvar"), clMainFrame::OnAddEnvironmentVariable)
 EVT_MENU(XRCID("advance_settings"), clMainFrame::OnAdvanceSettings)
 EVT_MENU(XRCID("debuger_settings"), clMainFrame::OnDebuggerSettings)
 EVT_MENU(XRCID("tags_options"), clMainFrame::OnCtagsOptions)
+EVT_MENU(XRCID("edit_lua_script"), clMainFrame::OnEditLuaScript)
 
 //-------------------------------------------------------
 // Help menu
@@ -2410,6 +2412,17 @@ void clMainFrame::OnReconcileProject(wxCommandEvent& event)
     ManagerST::Get()->ReconcileProject();
 }
 
+void clMainFrame::OnEditLuaScript(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    auto options = WriteOptions{.force_global = true};
+    wxString codelite_lua = FileManager::GetSettingFileFullPath("codelite.lua", options);
+    if (!wxFileName{codelite_lua}.FileExists()) {
+        FileManager::WriteSettingsFileContent("codelite.lua", "-- Add your code here\n", options);
+    }
+    clGetManager()->OpenFile(codelite_lua);
+}
+
 void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
 {
     wxUnusedVar(event);
@@ -3455,6 +3468,9 @@ void clMainFrame::CompleteInitialization()
 
     // Initialise the LSP manager
     LSP::Manager::GetInstance().Initialise();
+
+    // Initialise the scripting engine.
+    CodeLiteLUA::Initialise();
 
     // Register the file system workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new clFileSystemWorkspace(true));

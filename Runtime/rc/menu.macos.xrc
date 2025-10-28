@@ -747,10 +747,13 @@
       <object class="wxMenuItem" name="tags_options">
         <label>&amp;Code Completion...</label>
       </object>
+      <object class="wxMenuItem" name="edit_lua_script">
+        <label>Edit CodeLite's Lua Script...</label>
+      </object>
     </object>
     <!---
-            Help menu
-         -->
+        Help menu
+    -->
     <object class="wxMenu" name="help_menu">
       <label>He&amp;lp</label>
       <style>wxMENU_TEAROFF</style>
@@ -1176,6 +1179,11 @@
     </object>
     <object class="wxMenuItem" name="fe_open_file_explorer">
       <label>Open File Explorer here</label>
+    </object>
+  </object>
+  <object class="wxMenu" name="editor_context_menu_llm_generation">
+    <object class="wxMenuItem" name="lsp_document_scope">
+      <label>Generate docstring for the current scope</label>
     </object>
   </object>
 </resource>

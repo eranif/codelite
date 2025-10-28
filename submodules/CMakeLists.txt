@@ -42,3 +42,6 @@ endif()
 target_link_libraries(wxshapeframework PRIVATE ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES})
 
 codelite_install_library_target(wxshapeframework)
+
+add_subdirectory(lua)
+add_subdirectory(LuaBridge)

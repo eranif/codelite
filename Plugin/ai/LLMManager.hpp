@@ -206,6 +206,8 @@ public:
               std::shared_ptr<CancellationToken> cancel_token,
               ChatOptions options);
 
+    void ShowChatWindow(const wxString& prompt = wxEmptyString);
+
     /**
      * @brief Indicates whether an LLM is currently available for chat operations.
      *

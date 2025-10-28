@@ -55,6 +55,7 @@
 #include "progress_dialog.h"
 #include "project.h"
 #include "project_settings_dlg.h"
+#include "resources/clXmlResource.hpp"
 #include "workspacesettingsdlg.h"
 #include "workspacetab.h"
 
@@ -375,7 +376,7 @@ void FileViewTree::ShowFileContextMenu()
         return;
     }
 
-    wxMenu* menu = wxXmlResource::Get()->LoadMenu("file_tree_file");
+    wxMenu* menu = clXmlResource::Get().LoadMenu("file_tree_file");
     if (!ManagerST::Get()->IsBuildInProgress()) {
         // Let the plugins alter it
         clContextMenuEvent event(wxEVT_CONTEXT_MENU_FILE);
@@ -401,7 +402,7 @@ void FileViewTree::ShowFileContextMenu()
 
 void FileViewTree::ShowVirtualFolderContextMenu(FilewViewTreeItemData* itemData)
 {
-    wxMenu* menu = wxXmlResource::Get()->LoadMenu("file_tree_folder");
+    wxMenu* menu = clXmlResource::Get().LoadMenu("file_tree_folder");
     int where = clFindMenuItemPosition(menu, XRCID("clear_virtual_folder_colour"));
     if (where != wxNOT_FOUND) {
         // Insert the "Set Custom Background Colour" menu entry. We do it like this
@@ -437,7 +438,7 @@ void FileViewTree::ShowProjectContextMenu(const wxString& projectName)
 void FileViewTree::ShowWorkspaceContextMenu()
 {
     // Load the basic menu
-    wxMenu* menu = wxXmlResource::Get()->LoadMenu("workspace_popup_menu");
+    wxMenu* menu = clXmlResource::Get().LoadMenu("workspace_popup_menu");
     if (!ManagerST::Get()->IsBuildInProgress()) {
         // Let the plugins alter it
         clContextMenuEvent event(wxEVT_CONTEXT_MENU_WORKSPACE);
@@ -480,7 +481,7 @@ void FileViewTree::OnPopupMenu(wxTreeEvent& event)
             }
         }
     } else {
-        PopupMenu(wxXmlResource::Get()->LoadMenu("file_view_empty"));
+        PopupMenu(clXmlResource::Get().LoadMenu("file_view_empty"));
     }
 }
 

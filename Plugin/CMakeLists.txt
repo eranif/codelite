@@ -95,7 +95,9 @@ target_link_libraries(
   -L"${CL_LIBPATH}"
   lexers_extra
   libcodelite
-  assistantlib)
+  assistantlib
+  lualib
+  LuaBridge)
 
 if(USE_PCH)
   codelite_add_pch(plugin)

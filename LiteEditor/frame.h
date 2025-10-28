@@ -496,6 +496,7 @@ protected:
     void OnAddEnvironmentVariable(wxCommandEvent& event);
     void OnAdvanceSettings(wxCommandEvent& event);
     void OnCtagsOptions(wxCommandEvent& event);
+    void OnEditLuaScript(wxCommandEvent& event);
     void OnBuildProject(wxCommandEvent& event);
     void OnBuildProjectOnly(wxCommandEvent& event);
     void OnShowBuildMenu(wxCommandEvent& e);

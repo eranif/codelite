@@ -56,6 +56,7 @@
 #include "new_quick_watch_dlg.h"
 #include "pluginmanager.h"
 #include "precompiled_header.h"
+#include "resources/clXmlResource.hpp"
 #include "setters_getters_dlg.h"
 #include "workspacetab.h"
 
@@ -2034,13 +2035,13 @@ wxMenu* ContextCpp::GetMenu()
     wxMenu* menu = NULL;
     if (!IsJavaScript()) {
         // load the context menu from the resource manager
-        menu = wxXmlResource::Get()->LoadMenu("editor_right_click");
+        menu = clXmlResource::Get().LoadMenu("editor_right_click");
         wxMenuItem* item = menu->FindItem(XRCID("grep_current_workspace"));
         if (item) {
             item->SetBitmap(wxXmlResource::Get()->LoadBitmap("m_bmpFindInFiles"));
         }
     } else {
-        menu = wxXmlResource::Get()->LoadMenu("editor_right_click_default");
+        menu = clXmlResource::Get().LoadMenu("editor_right_click_default");
     }
     return menu;
 }

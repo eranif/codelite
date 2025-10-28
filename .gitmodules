@@ -46,3 +46,9 @@
 [submodule "submodules/openssl-cmake"]
 	path = submodules/openssl-cmake
 	url = https://github.com/eranif/openssl-cmake.git
+[submodule "submodules/lua"]
+	path = submodules/lua
+	url = https://github.com/eranif/lua.git
+[submodule "submodules/LuaBridge"]
+	path = submodules/LuaBridge
+	url = https://github.com/eranif/LuaBridge.git

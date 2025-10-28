@@ -45,6 +45,7 @@
 #include "macros.h"
 #include "manager.h"
 #include "quickfindbar.h"
+#include "resources/clXmlResource.hpp"
 
 #include <algorithm>
 #include <unordered_map>
@@ -1580,7 +1581,7 @@ void MainBook::DoShowTabLabelContextMenu(size_t tabIdx)
         return;
     }
 
-    wxMenu* contextMenu = wxXmlResource::Get()->LoadMenu(wxT("editor_tab_right_click"));
+    wxMenu* contextMenu = clXmlResource::Get().LoadMenu(wxT("editor_tab_right_click"));
 
     // Notify the plugins about the tab label context menu
     clContextMenuEvent event(wxEVT_CONTEXT_MENU_TAB_LABEL);

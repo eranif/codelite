@@ -13,6 +13,7 @@
 
 #include <wx/choicdlg.h>
 #include <wx/msgdlg.h>
+#include <wx/xrc/xmlres.h>
 
 namespace llm
 {
@@ -746,5 +747,12 @@ void Manager::EnableFunctionByName(const wxString& name, bool b)
         return;
     }
     m_client->GetFunctionTable().EnableFunction(name.ToStdString(wxConvUTF8), b);
+}
+
+void Manager::ShowChatWindow(const wxString& prompt)
+{
+    wxCommandEvent event_show{wxEVT_MENU, XRCID("ai_configure_endpoint")};
+    event_show.SetString(prompt);
+    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(event_show);
 }
 } // namespace llm

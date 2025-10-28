@@ -36,6 +36,7 @@
 #include "LSP/LSPManager.hpp"
 #include "Notebook.h"
 #include "NotebookNavigationDlg.h"
+#include "Scripting/CodeLiteLUA.hpp"
 #include "SideBar.hpp"
 #include "StdToWX.h"
 #include "SwitchToWorkspaceDlg.h"
@@ -103,6 +104,7 @@
 #include "project.h"
 #include "quickdebugdlg.h"
 #include "quickfindbar.h"
+#include "resources/clXmlResource.hpp"
 #include "search_thread.h"
 #include "sessionmanager.h"
 #include "singleinstancethreadjob.h"
@@ -609,6 +611,7 @@ EVT_MENU(XRCID("add_envvar"), clMainFrame::OnAddEnvironmentVariable)
 EVT_MENU(XRCID("advance_settings"), clMainFrame::OnAdvanceSettings)
 EVT_MENU(XRCID("debuger_settings"), clMainFrame::OnDebuggerSettings)
 EVT_MENU(XRCID("tags_options"), clMainFrame::OnCtagsOptions)
+EVT_MENU(XRCID("edit_lua_script"), clMainFrame::OnEditLuaScript)
 
 //-------------------------------------------------------
 // Help menu
@@ -1466,8 +1469,8 @@ void clMainFrame::CreateGUIControls()
          XRCID("BookmarkTypes[end]"));
 
 #if !MAINBOOK_AUIBOOK
-    GetDebuggerPane()->GetNotebook()->SetMenu(wxXmlResource::Get()->LoadMenu("debugger_view_rmenu"));
-    GetOutputPane()->GetNotebook()->SetMenu(wxXmlResource::Get()->LoadMenu("outputview_view_rmenu"));
+    GetDebuggerPane()->GetNotebook()->SetMenu(clXmlResource::Get().LoadMenu("debugger_view_rmenu"));
+    GetOutputPane()->GetNotebook()->SetMenu(clXmlResource::Get().LoadMenu("outputview_view_rmenu"));
 #endif
 
     DoSysColoursChanged();
@@ -2407,6 +2410,17 @@ void clMainFrame::OnReconcileProject(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     ManagerST::Get()->ReconcileProject();
+}
+
+void clMainFrame::OnEditLuaScript(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    auto options = WriteOptions{.force_global = true};
+    wxString codelite_lua = FileManager::GetSettingFileFullPath("codelite.lua", options);
+    if (!wxFileName{codelite_lua}.FileExists()) {
+        FileManager::WriteSettingsFileContent("codelite.lua", "-- Add your code here\n", options);
+    }
+    clGetManager()->OpenFile(codelite_lua);
 }
 
 void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
@@ -3454,6 +3468,9 @@ void clMainFrame::CompleteInitialization()
 
     // Initialise the LSP manager
     LSP::Manager::GetInstance().Initialise();
+
+    // Initialise the scripting engine.
+    CodeLiteLUA::Initialise();
 
     // Register the file system workspace type
     clWorkspaceManager::Get().RegisterWorkspace(new clFileSystemWorkspace(true));
@@ -6237,7 +6254,7 @@ void clMainFrame::OnAiShowChatBox(wxCommandEvent& e)
         }
         return;
     }
-    m_chatAI->ShowChatWindow();
+    m_chatAI->ShowChatWindow(e.GetString());
 }
 
 void clMainFrame::OnAiChooseEndpoint(wxCommandEvent& e)

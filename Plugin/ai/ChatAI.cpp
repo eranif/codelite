@@ -56,13 +56,20 @@ ChatAI::ChatAI()
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &ChatAI::OnInitDone, this);
 }
 
-void ChatAI::ShowChatWindow()
+void ChatAI::ShowChatWindow(const wxString& prompt)
 {
+    ChatAIWindow* chat_view{nullptr};
     if (m_dockedPaneId.has_value()) {
         m_chatWindowFrame->Show();
+        chat_view = m_chatWindowFrame->GetChatWindow();
     } else {
         clGetManager()->ShowManagementWindow(CHAT_AI_LABEL, true);
         m_chatWindow->GetStcInput()->CallAfter(&wxStyledTextCtrl::SetFocus);
+        chat_view = m_chatWindow;
+    }
+
+    if (!prompt.empty()) {
+        chat_view->Chat(prompt);
     }
 }
 

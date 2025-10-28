@@ -138,6 +138,39 @@ protected:
      */
     static void add_menu_item(const std::string& menu_name, const std::string& label, luabridge::LuaRef action);
 
+    /**
+     * @brief Retrieves the current selection text from the active editor.
+     *
+     * This function obtains the active editor via the global manager. If there is
+     * no active editor, it returns an empty string. Otherwise, it returns the
+     * selected text converted to a UTF‑8 encoded `std::string`.
+     *
+     * @return A `std::string` containing the selected text, or an empty string if
+     *         no editor is active.
+     */
+    static std::string editor_selection();
+
+    /**
+     * @brief Initiates a chat session using the given prompt.
+     *
+     * This method creates a menu event that triggers the chat window
+     * within the application and attaches the provided prompt string
+     * to the event.
+     *
+     * @param prompt The initial text to be displayed in the chat input.
+     */
+    static void chat(const std::string& prompt);
+    /**
+     * @brief Retrieves the programming language associated with the currently active editor.
+     *
+     * Obtains the active editor from the manager, determines the file type from the editor's
+     * path, maps it to a language, and returns the language name encoded as a UTF‑8
+     * `std::string`. If there is no active editor, an empty string is returned.
+     *
+     * @return The language name as a UTF‑8 `std::string`, or an empty string if no editor is active.
+     */
+    static std::string editor_language();
+
 private:
     CodeLiteLUA();
     ~CodeLiteLUA();

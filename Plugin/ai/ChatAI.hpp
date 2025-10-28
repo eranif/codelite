@@ -36,7 +36,19 @@ public:
 
     void DetachView(bool show_frame);
     void DockView();
-    void ShowChatWindow();
+    /**
+     * @brief Displays the Chat AI window and optionally sends an initial prompt.
+     *
+     * This method makes sure the chat UI is visible. If a docked pane ID is present,
+     * the associated frame is shown; otherwise the management window for the chat AI
+     * is opened. The input control receives focus after the window becomes visible.
+     * If @p prompt is not empty, the prompt is forwarded to the chat view via
+     * {@code Chat()}.
+     *
+     * @param prompt The initial prompt to send to the chat view. An empty string
+     *               results in no automatic chat message.
+     */
+    void ShowChatWindow(const wxString& prompt = wxEmptyString);
 
 private:
     void OnInitDone(wxCommandEvent& event);

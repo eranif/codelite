@@ -1,6 +1,8 @@
 #include "Scripting/CodeLiteLUA.hpp"
 
+#include "ai/LLMManager.hpp"
 #include "codelite_events.h"
+#include "fileextmanager.h"
 #include "globals.h"
 
 extern "C" {
@@ -45,6 +47,9 @@ void CodeLiteLUA::Initialise()
             .beginNamespace("codelite")
             .addFunction("message_box", &CodeLiteLUA::message_box)
             .addFunction("add_menu_item", &CodeLiteLUA::add_menu_item)
+            .addFunction("editor_selection", &CodeLiteLUA::editor_selection)
+            .addFunction("chat", &CodeLiteLUA::chat)
+            .addFunction("editor_language", &CodeLiteLUA::editor_language)
             .endNamespace();
 
     } catch (const std::exception& e) {
@@ -123,6 +128,34 @@ void CodeLiteLUA::add_menu_item(const std::string& menu_name, const std::string&
 
     // If "menu_name" is missing a default entry is added.
     self.m_menu_items[menu_name].push_back(std::move(menu_item));
+}
+
+std::string CodeLiteLUA::editor_selection()
+{
+    auto editor = clGetManager()->GetActiveEditor();
+    if (editor == nullptr) {
+        return {};
+    }
+
+    return editor->GetSelection().ToStdString(wxConvUTF8);
+}
+
+std::string CodeLiteLUA::editor_language()
+{
+    auto editor = clGetManager()->GetActiveEditor();
+    if (editor == nullptr) {
+        return {};
+    }
+    auto lang = FileExtManager::GetLanguageFromType(FileExtManager::GetType(editor->GetRemotePathOrLocal()));
+    return lang.ToStdString(wxConvUTF8);
+}
+
+void CodeLiteLUA::chat(const std::string& prompt)
+{
+    // send an event requesting to initiate a chat
+    wxCommandEvent event_chat{wxEVT_MENU, XRCID("ai_show_chat_window")};
+    event_chat.SetString(wxString::FromUTF8(prompt));
+    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(event_chat);
 }
 
 clStatus CodeLiteLUA::LoadScriptString(const wxString& script)

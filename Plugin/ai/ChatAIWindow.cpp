@@ -482,3 +482,12 @@ bool ChatAIWindow::IsDetached() const
     auto parent = dynamic_cast<const ChatAIWindowFrame*>(GetParent());
     return parent != nullptr;
 }
+
+void ChatAIWindow::Chat(const wxString& prompt)
+{
+    if (prompt.empty()) {
+        return;
+    }
+    m_stcInput->SetText(prompt);
+    DoSendPrompt();
+}

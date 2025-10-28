@@ -22,6 +22,16 @@ public:
     virtual ~ChatAIWindow();
     wxString GetActiveModel() const { return m_choiceEndpoints->GetStringSelection(); }
     bool IsDetached() const;
+    /**
+     * @brief Sends a chat prompt to the AI window.
+     *
+     * This method sets the provided prompt as the input text and initiates sending
+     * it to the chat system. If the prompt is empty, the function returns without
+     * performing any action.
+     *
+     * @param prompt The prompt text to be sent. Must be a non‑empty {@link wxString}.
+     */
+    void Chat(const wxString& prompt);
 
 protected:
     void OnAutoScroll(wxCommandEvent& event);

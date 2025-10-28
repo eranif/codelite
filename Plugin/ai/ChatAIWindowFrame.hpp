@@ -13,6 +13,7 @@ public:
     ~ChatAIWindowFrame() override;
 
     bool Show(bool show = true) override;
+    ChatAIWindow* GetChatWindow() { return m_view; }
 
 protected:
     void OnClose(wxCloseEvent& event) override;

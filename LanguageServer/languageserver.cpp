@@ -203,7 +203,20 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     CHECK_PTR_RET(editor);
 
     LanguageServerProtocol::Ptr_t lsp = LSP::Manager::GetInstance().GetServerForEditor(editor);
-    CHECK_PTR_RET(lsp);
+    if (!lsp) {
+        wxMenu* menu = event.GetMenu();
+        if (llm::Manager::GetInstance().IsAvailable()) {
+            // Load the LLM generation sub-menu. LoadMenu will also load any LUA based menu entries.
+            wxMenu* ai_menu = clXmlResource::Get().LoadMenu("editor_context_menu_llm_generation");
+            auto item = menu->Prepend(wxID_ANY, _("AI-Powered Options"), ai_menu);
+            item->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("wand"));
+
+            // Disable the docstring menu entry (no LSP to work with)
+            ai_menu->Enable(XRCID("lsp_document_scope"), false);
+            menu->PrependSeparator();
+        }
+        return;
+    }
 
     bool add_find_symbol = !lsp->CanHandle(FileExtManager::TypePhp);
     bool add_find_references = lsp->IsReferencesSupported();
@@ -220,7 +233,7 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
         wxMenu* ai_menu = clXmlResource::Get().LoadMenu("editor_context_menu_llm_generation");
 
         menu->PrependSeparator();
-        auto item = menu->Prepend(wxID_ANY, _("AI-Powered Code Generation"), ai_menu);
+        auto item = menu->Prepend(wxID_ANY, _("AI-Powered Options"), ai_menu);
         item->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("wand"));
         ai_menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnGenerateDocString, this, XRCID("lsp_document_scope"));
     }

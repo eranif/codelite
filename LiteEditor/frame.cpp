@@ -6254,7 +6254,7 @@ void clMainFrame::OnAiShowChatBox(wxCommandEvent& e)
         }
         return;
     }
-    m_chatAI->ShowChatWindow();
+    m_chatAI->ShowChatWindow(e.GetString());
 }
 
 void clMainFrame::OnAiChooseEndpoint(wxCommandEvent& e)

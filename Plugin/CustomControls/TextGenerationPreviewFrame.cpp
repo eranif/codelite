@@ -12,21 +12,31 @@
 namespace
 {
 /**
- * @brief Strips markdown code-block markers from a string.
+ * @brief Removes Markdown code‑fence markers (the opening ``````` and the closing ```````),
+ *        including an optional language identifier that may contain letters, digits,
+ *        plus, minus, underscore or any other word‑character.
  *
- * This function removes opening markdown code-block markers (```<LANG>) and
- * closing markers (```) from the input string, leaving only the code content.
+ * Example:
+ *   Input:  "```c++\nint x = 0;\n```"
+ *   Output: "int x = 0;\n"
  *
- * @param input The string containing markdown code blocks
- * @return std::string The string with code-block markers removed
+ * @param input The string that potentially contains fenced code blocks.
+ * @return A copy of `input` with all fence markers stripped.
  */
 std::string StripMarkdownCodeBlocks(const std::string& input)
 {
-    // Pattern explanation:
-    // ^```[a-zA-Z]*\n?  - matches opening marker: ``` followed by optional language identifier and optional newline
-    // ```$              - matches closing marker: ``` at end of line
-    std::regex pattern("^```[a-zA-Z]*\\n?|```$", std::regex::multiline);
-    return std::regex_replace(input, pattern, "");
+    //   ^```                – opening fence at the start of a line
+    //   [\w\+\-]*           – optional language tag (letters, digits, _, +, -)
+    //   \s*                 – optional whitespace (including the newline that usually follows)
+    //   |                   – OR
+    //   ```\s*$             – closing fence at the end of a line (allow trailing spaces)
+    //
+    // std::regex::multiline makes ^ and $ work per‑line instead of only at the very
+    // beginning/end of the whole string.
+    const std::regex fencePattern(R"(^```[\w\+\-]*\s*|```[\s]*$)", std::regex::multiline);
+
+    // Replace every match with an empty string → fence markers disappear.
+    return std::regex_replace(input, fencePattern, "");
 }
 
 } // namespace

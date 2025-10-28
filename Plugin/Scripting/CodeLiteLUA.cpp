@@ -18,7 +18,7 @@ extern "C" {
 
 namespace
 {
-enum MessageType {
+enum class MessageType {
     kInfo,
     kWarn,
     kError,
@@ -121,9 +121,7 @@ void CodeLiteLUA::add_menu_item(const std::string& menu_name, const std::string&
         return;
     }
 
-    if (!self.m_menu_items.contains(menu_name)) {
-        self.m_menu_items.insert({menu_name, std::vector<LuaMenuItem>{}});
-    }
+    // If "menu_name" is missing a default entry is added.
     self.m_menu_items[menu_name].push_back(std::move(menu_item));
 }
 

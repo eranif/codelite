@@ -113,7 +113,7 @@ void CodeLiteLUA::add_menu_item(const std::string& menu_name, const std::string&
 
     clDEBUG() << "Adding item:" << label << "for menu:" << menu_name << endl;
     LuaMenuItem menu_item{.label = label, .action = std::move(action)};
-    if (!menu_item.action.isFunction()) {
+    if (!menu_item.IsOk()) {
         clWARNING() << "Failed to add menu item:" << label << "to menu:" << menu_name << ". Action is not a function"
                     << endl;
         return;
@@ -155,14 +155,7 @@ void CodeLiteLUA::UpdateMenu(const wxString& menu_name, wxMenu* menu)
         wxString label = wxString::FromUTF8(item.label);
         auto menu_id = wxXmlResource::GetXRCID(label);
         menu->Append(menu_id, label);
-        menu->Bind(
-            wxEVT_MENU,
-            [&item](wxCommandEvent&) {
-                if (item.action.isFunction()) {
-                    item.action();
-                }
-            },
-            menu_id);
+        menu->Bind(wxEVT_MENU, [&item](wxCommandEvent&) { item.RunAction(); }, menu_id);
     }
 }
 

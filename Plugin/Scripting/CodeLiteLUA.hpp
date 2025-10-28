@@ -14,11 +14,46 @@ extern "C" {
 #include <vector>
 #include <wx/event.h>
 #include <wx/menu.h>
+#include <wx/msgdlg.h>
 #include <wx/string.h>
 
 struct WXDLLIMPEXP_SDK LuaMenuItem {
     std::string label;
-    luabridge::LuaRef action;
+    luabridge::LuaRef action{nullptr};
+    /**
+     * @brief Executes the stored action if it is a valid function.
+     *
+     * The method checks whether `action.isFunction()` returns true before invoking
+     * `action()`. If the action throws a `std::exception`, the exception is caught,
+     * a warning is logged, and an error message box is displayed containing the
+     * action's label and the exception message.
+     *
+     * @throws std::exception If the invoked action throws (the exception is handled
+     *         internally by logging and showing a message box).
+     */
+    inline void RunAction()
+    {
+        try {
+            if (!action.isFunction()) {
+                return;
+            }
+            action();
+        } catch (const std::exception& e) {
+            wxString errmsg;
+            errmsg << "Failed to execute LUA menu action: " << label << ". " << e.what();
+            clWARNING() << errmsg << endl;
+            ::wxMessageBox(errmsg, "CodeLite", wxOK | wxCENTER | wxICON_ERROR);
+        }
+    }
+    /**
+     * @brief Checks if the object is in a valid state.
+     *
+     * Validates that the label is not empty and that the action is not null
+     * and is a valid function.
+     *
+     * @return true if the label is non-empty and action is a valid function, false otherwise
+     */
+    inline bool IsOk() const { return !label.empty() && action != nullptr && action.isFunction(); }
 };
 
 class WXDLLIMPEXP_SDK CodeLiteLUA : public wxEvtHandler

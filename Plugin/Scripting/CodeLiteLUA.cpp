@@ -10,6 +10,7 @@ extern "C" {
 #include "FileManager.hpp"
 #include "event_notifier.h"
 #include "file_logger.h"
+#include "fileutils.h"
 
 #include <wx/msgdlg.h>
 #include <wx/string.h>
@@ -39,6 +40,7 @@ void CodeLiteLUA::Initialise()
     luaL_openlibs(self.m_state);
 
     try {
+        clDEBUG() << "Registering codelite with LUA" << endl;
         luabridge::getGlobalNamespace(self.m_state)
             .beginNamespace("codelite")
             .addFunction("message_box", &CodeLiteLUA::message_box)
@@ -56,20 +58,20 @@ void CodeLiteLUA::Initialise()
 
 void CodeLiteLUA::InitialiseInternal()
 {
+    clDEBUG() << "InitialiseInternal is called" << endl;
     Reset();
 
     // Load and compile CodeLite's main lua script.
     auto options = WriteOptions{.force_global = true};
+
     wxString codelite_lua = FileManager::GetSettingFileFullPath("codelite.lua", options);
-    clDEBUG() << "Reading file:" << codelite_lua << endl;
-    auto content = FileManager::ReadSettingsFileContent(codelite_lua, options);
-    if (!content.has_value()) {
-        clDEBUG() << "File:" << codelite_lua << "does not exist" << endl;
+    if (!wxFileName::FileExists(codelite_lua)) {
+        clDEBUG() << "File: '" << codelite_lua << "' does not exist" << endl;
         return;
     }
 
-    clDEBUG() << "File:" << codelite_lua << "content:\n" << content.value() << endl;
-    auto status = Run(content.value());
+    clDEBUG() << "Running file:" << codelite_lua << endl;
+    auto status = RunFile(codelite_lua);
     if (!status.ok()) {
         wxString errmsg;
         errmsg << _("Failed to run LUA file: ") << codelite_lua << "\n" << status.message();
@@ -132,6 +134,7 @@ clStatus CodeLiteLUA::Run(const wxString& script)
     }
 
     std::string script_content = script.ToStdString(wxConvUTF8);
+    clDEBUG() << "Loading LUA script:\n" << script << endl;
     if (luaL_loadstring(m_state, script.c_str()) != LUA_OK) {
         return StatusOther(wxString::FromUTF8(lua_tostring(m_state, -1)));
     }
@@ -141,6 +144,15 @@ clStatus CodeLiteLUA::Run(const wxString& script)
     }
 
     return StatusOk();
+}
+
+clStatus CodeLiteLUA::RunFile(const wxString& path)
+{
+    wxString content;
+    if (!FileUtils::ReadFileContent(path, content)) {
+        return StatusNotFound(path);
+    }
+    return Run(content);
 }
 
 void CodeLiteLUA::UpdateMenu(const wxString& menu_name, wxMenu* menu)

@@ -19,7 +19,7 @@ extern "C" {
 
 struct WXDLLIMPEXP_SDK LuaMenuItem {
     std::string label;
-    luabridge::LuaRef action{nullptr};
+    luabridge::LuaRef action;
     /**
      * @brief Executes the stored action if it is a valid function.
      *
@@ -53,7 +53,7 @@ struct WXDLLIMPEXP_SDK LuaMenuItem {
      *
      * @return true if the label is non-empty and action is a valid function, false otherwise
      */
-    inline bool IsOk() const { return !label.empty() && action != nullptr && action.isFunction(); }
+    inline bool IsOk() const { return !label.empty() && action.isFunction(); }
 };
 
 class WXDLLIMPEXP_SDK CodeLiteLUA : public wxEvtHandler
@@ -78,6 +78,7 @@ public:
      *         error message if loading or execution fails
      */
     clStatus Run(const wxString& script);
+    clStatus RunFile(const wxString& path);
 
     /**
      * @brief Updates a menu by appending menu items from the internal menu_items collection.

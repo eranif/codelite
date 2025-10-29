@@ -1,14 +1,13 @@
 #ifndef JSONRPC_PARAMS_H
 #define JSONRPC_PARAMS_H
 
-#include "IPathConverter.hpp"
 #include "JSON.h"
 #include "LSP/JSONObject.h"
 #include "basic_types.h"
 #include "codelite_exports.h"
 
+#include <memory>
 #include <vector>
-#include <wx/sharedptr.h>
 
 namespace LSP
 {
@@ -18,7 +17,7 @@ namespace LSP
 class WXDLLIMPEXP_CL Params : public Serializable
 {
 public:
-    typedef wxSharedPtr<Params> Ptr_t;
+    using Ptr_t = std::shared_ptr<Params>;
 
 public:
     Params() = default;

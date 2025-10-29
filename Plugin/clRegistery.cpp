@@ -5,28 +5,28 @@
 #ifdef __WXMSW__
 #include <wx/msw/registry.h>
 
-static wxSharedPtr<wxRegKey> TryCreateRegKey(wxRegKey::StdKey stdKey, wxRegKey::WOW64ViewMode mode, const wxString& key)
+static std::shared_ptr<wxRegKey> TryCreateRegKey(wxRegKey::StdKey stdKey, wxRegKey::WOW64ViewMode mode, const wxString& key)
 {
-    wxSharedPtr<wxRegKey> regKey(new wxRegKey(stdKey, key, mode));
+    auto regKey = std::make_shared<wxRegKey>(stdKey, key, mode);
     if(!regKey->Exists()) {
-        return wxSharedPtr<wxRegKey>(nullptr);
+        return nullptr;
     }
     return regKey;
 }
 
-static wxSharedPtr<wxRegKey> CreateRegKey(const wxString& key)
+static std::shared_ptr<wxRegKey> CreateRegKey(const wxString& key)
 {
     std::vector<wxRegKey::StdKey> K = { wxRegKey::HKCU, wxRegKey::HKLM, wxRegKey::HKLM };
     std::vector<wxRegKey::WOW64ViewMode> M = { wxRegKey::WOW64ViewMode_64, wxRegKey::WOW64ViewMode_32 };
     for(auto stdkey : K) {
         for(auto viewMode : M) {
-            wxSharedPtr<wxRegKey> regKey = TryCreateRegKey(stdkey, viewMode, key);
+            auto regKey = TryCreateRegKey(stdkey, viewMode, key);
             if(regKey) {
                 return regKey;
             }
         }
     }
-    return wxSharedPtr<wxRegKey>(nullptr);
+    return nullptr;
 }
 #endif
 

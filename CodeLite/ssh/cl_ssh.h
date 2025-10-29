@@ -43,7 +43,6 @@
 #include <memory>
 #include <wx/arrstr.h>
 #include <wx/event.h>
-#include <wx/sharedptr.h>
 #include <wx/string.h>
 #include <wx/timer.h>
 

@@ -10,10 +10,10 @@
 #include "codelite_exports.h"
 #include "database/entry.h"
 
+#include <memory>
 #include <unordered_set>
 #include <vector>
 #include <wx/event.h>
-#include <wx/sharedptr.h>
 #include <wx/utils.h>
 
 class LSPOutlineViewDlg;
@@ -23,7 +23,7 @@ namespace LSP
 class WXDLLIMPEXP_SDK Manager : public wxEvtHandler
 {
 public:
-    using Ptr_t = wxSharedPtr<Manager>;
+    using Ptr_t = std::shared_ptr<Manager>;
     void StartServer(const LanguageServerEntry& entry);
     void StartServer(const wxString& entry);
     void RestartServer(const wxString& name);

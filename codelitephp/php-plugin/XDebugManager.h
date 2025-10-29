@@ -33,9 +33,9 @@
 #include "php_project.h"
 #include "xdebugbreakpointsmgr.h"
 
+#include <memory>
 #include <wx/event.h>
 #include <wx/msgqueue.h>
-#include <wx/sharedptr.h>
 #include <wx/socket.h>
 
 class XDebugComThread;
@@ -63,7 +63,7 @@ class XDebugManager : public wxEvtHandler
     bool m_connected;
 
 public:
-    typedef wxSharedPtr<XDebugManager> Ptr_t;
+    using Ptr_t = std::shared_ptr<XDebugManager>;
 
 public:
     int GetPort() const;

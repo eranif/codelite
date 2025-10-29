@@ -35,7 +35,6 @@
 #include <memory>
 #include <vector>
 #include <wx/event.h>
-#include <wx/sharedptr.h>
 #include <wx/string.h>
 #include <wx/utils.h>
 

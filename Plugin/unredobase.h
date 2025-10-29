@@ -29,20 +29,20 @@
 #include "clToolBar.h"
 #include "codelite_exports.h"
 
+#include <memory>
 #include <vector>
 #include <wx/aui/auibar.h>
 #include <wx/bitmap.h>
 #include <wx/event.h>
 #include <wx/gdicmn.h>
-#include <wx/sharedptr.h>
 
 enum CLC_types { CLC_insert, CLC_delete, CLC_unknown };
 
 class WXDLLIMPEXP_SDK CLCommand
 {
 public:
-    typedef wxSharedPtr<CLCommand> Ptr_t;
-    typedef std::vector<CLCommand::Ptr_t> Vec_t;
+    using Ptr_t = std::shared_ptr<CLCommand>;
+    using Vec_t = std::vector<CLCommand::Ptr_t>;
 
     CLCommand(CLC_types type = CLC_unknown, const wxString& name = "")
         : m_commandType(type)
@@ -151,7 +151,7 @@ public:
     void Clear()
     {
         m_commands.clear();
-        m_initialCommand = NULL;
+        m_initialCommand.reset();
     }
 
 protected:

@@ -6,7 +6,6 @@
 
 #include <stack>
 #include <wx/event.h>
-#include <wx/sharedptr.h>
 #include <wx/stc/stc.h>
 
 enum MarkdownStyles {

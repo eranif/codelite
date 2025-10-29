@@ -29,6 +29,8 @@
 #include "PHPEntityBase.h"
 #include "PhpLexerAPI.h"
 #include "codelite_exports.h"
+
+#include <memory>
 #include <vector>
 #include <wx/filename.h>
 
@@ -53,7 +55,7 @@ class WXDLLIMPEXP_CL PHPSourceFile
     PHPEntityBase::List_t m_allMatchesInorder;
 
 public:
-    typedef wxSharedPtr<PHPSourceFile> Ptr_t;
+    using Ptr_t = std::shared_ptr<PHPSourceFile>;
 
 protected:
     /**

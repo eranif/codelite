@@ -5,8 +5,8 @@
 #include "LSP/ResponseMessage.h"
 #include "LSP/basic_types.h"
 #include "json_rpc_params.h"
-#include <wx/event.h>
-#include <wx/sharedptr.h>
+
+#include <memory>
 
 namespace LSP
 {
@@ -14,7 +14,7 @@ namespace LSP
 class WXDLLIMPEXP_CL MessageWithParams : public LSP::Message
 {
 public:
-    typedef wxSharedPtr<LSP::MessageWithParams> Ptr_t;
+    using Ptr_t = std::shared_ptr<LSP::MessageWithParams>;
 
 protected:
     wxString m_method;

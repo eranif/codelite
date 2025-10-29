@@ -6,7 +6,6 @@
 
 #include <functional>
 #include <wx/event.h>
-#include <wx/sharedptr.h>
 #include <wx/stc/stc.h>
 
 #define CHECK_COND_RET_VAL(cond, what) \

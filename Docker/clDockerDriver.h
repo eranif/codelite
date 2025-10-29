@@ -3,10 +3,11 @@
 
 #include "clDockerWorkspaceSettings.h"
 #include "cl_command_event.h"
+
+#include <memory>
+#include <unordered_set>
 #include <wx/event.h>
 #include <wx/filename.h>
-#include <wx/sharedptr.h>
-#include <unordered_set>
 
 class Docker;
 class IProcess;
@@ -45,7 +46,7 @@ protected:
     void DoListImages();
 
 public:
-    typedef wxSharedPtr<clDockerDriver> Ptr_t;
+    using Ptr_t = std::shared_ptr<clDockerDriver>;
     clDockerDriver(Docker* plugin);
     virtual ~clDockerDriver();
     void Build(const wxFileName& filepath, const clDockerWorkspaceSettings& settings);

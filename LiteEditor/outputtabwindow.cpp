@@ -80,7 +80,7 @@ OutputTabWindow::OutputTabWindow(wxWindow* parent, wxWindowID id, const wxString
 
 OutputTabWindow::~OutputTabWindow()
 {
-    m_styler.reset(nullptr);
+    m_styler.reset();
     EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(OutputTabWindow::OnThemeChanged),
                                      NULL, this);
     wxTheApp->Disconnect(wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(OutputTabWindow::OnEdit), NULL,

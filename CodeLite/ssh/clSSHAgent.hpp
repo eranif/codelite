@@ -5,7 +5,6 @@
 
 #include <memory>
 #include <wx/arrstr.h>
-#include <wx/sharedptr.h>
 
 class IProcess;
 class WXDLLIMPEXP_CL clSSHAgent

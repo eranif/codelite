@@ -1,14 +1,15 @@
 #ifndef NODEDBGEVENTBASE_H
 #define NODEDBGEVENTBASE_H
 
-#include "SocketAPI/clWebSocketClient.h"
 #include "JSON.h"
-#include <wx/sharedptr.h>
+#include "SocketAPI/clWebSocketClient.h"
+
+#include <memory>
 
 class NodeMessageBase
 {
 public:
-    typedef wxSharedPtr<NodeMessageBase> Ptr_t;
+    using Ptr_t = std::shared_ptr<NodeMessageBase>;
 
 protected:
     wxString m_eventName;

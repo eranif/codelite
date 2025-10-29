@@ -7,6 +7,7 @@
 #include "codelite_exports.h"
 #include "macros.h"
 
+#include <memory>
 #include <wx/arrstr.h>
 #include <wx/event.h>
 #include <wx/string.h>
@@ -33,7 +34,7 @@ protected:
     void NotifyError(const wxString& reason);
 
 public:
-    typedef wxSharedPtr<LSPNetwork> Ptr_t;
+    using Ptr_t = std::shared_ptr<LSPNetwork>;
 
     LSPNetwork& SetStartupInfo(const LSPStartupInfo& startupInfo)
     {

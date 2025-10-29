@@ -176,7 +176,7 @@ void clSocketAsyncThread::MessageLoop(clSocketBase::Ptr_t socket)
             if(m_queue.ReceiveTimeout(100, req) == wxMSGQUEUE_NO_ERROR) {
                 // got something
                 if(req.m_command == kDisconnect) {
-                    socket.reset(NULL);
+                    socket.reset();
                     return;
 
                 } else if(req.m_command == kSend) {
@@ -227,7 +227,7 @@ void clSocketAsyncThread::BufferLoop(clSocketBase::Ptr_t socket)
             if(m_queue.ReceiveTimeout(1, req) == wxMSGQUEUE_NO_ERROR) {
                 // got something
                 if(req.m_command == kDisconnect) {
-                    socket.reset(NULL);
+                    socket.reset();
                     return;
 
                 } else if(req.m_command == kSend) {

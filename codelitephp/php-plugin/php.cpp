@@ -200,7 +200,7 @@ void PhpPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 void PhpPlugin::UnPlug()
 {
 #if USE_SFTP
-    m_sftpHandler.reset(nullptr);
+    m_sftpHandler.reset();
 #endif // USE_SFTP
     XDebugManager::Free();
     EventNotifier::Get()->Disconnect(wxEVT_DBG_UI_DELETE_ALL_BREAKPOINTS,

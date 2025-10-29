@@ -26,14 +26,13 @@
 #ifndef PHP_PROJECT_H
 #define PHP_PROJECT_H
 
-#include <map>
-#include <vector>
-#include <set>
-#include "php_project_settings_data.h"
-#include <wx/sharedptr.h>
-#include <wx/progdlg.h>
 #include "cl_command_event.h"
+#include "php_project_settings_data.h"
+
+#include <map>
+#include <memory>
 #include <wx/event.h>
+#include <wx/progdlg.h>
 
 class PHPProject : public wxEvtHandler
 {
@@ -46,8 +45,8 @@ class PHPProject : public wxEvtHandler
     wxString m_excludeFolders;
 
 public:
-    typedef wxSharedPtr<PHPProject> Ptr_t;
-    typedef std::map<wxString, PHPProject::Ptr_t> Map_t;
+    using Ptr_t = std::shared_ptr<PHPProject>;
+    using Map_t = std::map<wxString, PHPProject::Ptr_t>;
 
     /**
      * @class CreateData

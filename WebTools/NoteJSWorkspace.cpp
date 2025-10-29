@@ -64,7 +64,7 @@ NodeJSWorkspace::~NodeJSWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &NodeJSWorkspace::OnStopExecute, this);
         EventNotifier::Get()->Unbind(wxEVT_CMD_IS_PROGRAM_RUNNING, &NodeJSWorkspace::OnIsExecuteInProgress, this);
         EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &NodeJSWorkspace::OnDebugStart, this);
-        m_debugger.reset(NULL);
+        m_debugger.reset();
         m_terminal.Unbind(wxEVT_TERMINAL_COMMAND_EXIT, &NodeJSWorkspace::OnProcessTerminated, this);
         m_terminal.Unbind(wxEVT_TERMINAL_COMMAND_OUTPUT, &NodeJSWorkspace::OnProcessOutput, this);
 
@@ -140,7 +140,7 @@ void NodeJSWorkspace::Close()
     clWorkspaceEvent event(wxEVT_WORKSPACE_CLOSED);
     EventNotifier::Get()->ProcessEvent(event);
 
-    m_debugger.reset(NULL);
+    m_debugger.reset();
 
     // notify CodeLite to close the currently opened workspace
     wxCommandEvent eventClose(wxEVT_MENU, wxID_CLOSE_ALL);

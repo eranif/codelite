@@ -32,7 +32,6 @@
 #include <memory>
 #include <wx/filename.h>
 #include <wx/font.h>
-#include <wx/sharedptr.h>
 #include <wx/stc/stc.h>
 #include <wx/string.h>
 #include <wx/xml/xml.h>

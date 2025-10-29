@@ -30,11 +30,11 @@
 #include "codelite_exports.h"
 #include "database/entry.h" // TagEntryPtr
 
+#include <memory>
 #include <vector>
 #include <wx/bitmap.h>
 #include <wx/clntdata.h>
 #include <wx/gdicmn.h>
-#include <wx/sharedptr.h>
 #include <wx/string.h>
 
 class wxStyledTextCtrl;
@@ -77,8 +77,8 @@ protected:
     bool HasFlag(eFlags f) const { return this->m_flags & f; }
 
 public:
-    typedef wxSharedPtr<wxCodeCompletionBoxEntry> Ptr_t;
-    typedef std::vector<wxCodeCompletionBoxEntry::Ptr_t> Vec_t;
+    using Ptr_t = std::shared_ptr<wxCodeCompletionBoxEntry>;
+    using Vec_t = std::vector<wxCodeCompletionBoxEntry::Ptr_t>;
 
 public:
     wxCodeCompletionBoxEntry(const wxString& text, int imgId = wxNOT_FOUND, wxClientData* userData = NULL)

@@ -29,15 +29,13 @@
 #include "clTreeCtrl.h"
 #include "codelite_exports.h"
 
-#include <list>
-#include <vector>
+#include <memory>
 #include <wx/event.h>
-#include <wx/sharedptr.h>
 
 class WXDLLIMPEXP_SDK clTreeKeyboardInput : public wxEvtHandler
 {
 public:
-    typedef wxSharedPtr<clTreeKeyboardInput> Ptr_t;
+    using Ptr_t = std::shared_ptr<clTreeKeyboardInput>;
 
 protected:
     clTreeCtrl* m_tree = nullptr;

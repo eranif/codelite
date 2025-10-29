@@ -35,10 +35,10 @@
 #include "ssh/ssh_account_info.h"
 #include "wxCodeCompletionBoxEntry.hpp"
 
+#include <memory>
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/event.h>
-#include <wx/sharedptr.h>
 
 // Set of flags that can be passed within the 'S{G}etInt' function of clCommandEvent
 enum {
@@ -135,7 +135,7 @@ private:
 class WXDLLIMPEXP_CL clCommandEvent : public wxCommandEvent
 {
 protected:
-    wxSharedPtr<wxClientData> m_ptr;
+    std::shared_ptr<wxClientData> m_ptr;
     wxArrayString m_strings;
     wxString m_fileName;
     wxString m_oldName;
@@ -195,7 +195,7 @@ public:
         this->m_oldName = oldName;
         return *this;
     }
-    clCommandEvent& SetPtr(const wxSharedPtr<wxClientData>& ptr)
+    clCommandEvent& SetPtr(const std::shared_ptr<wxClientData>& ptr)
     {
         this->m_ptr = ptr;
         return *this;
@@ -209,7 +209,7 @@ public:
     bool IsAnswer() const { return m_answer; }
     const wxString& GetFileName() const { return m_fileName; }
     const wxString& GetOldName() const { return m_oldName; }
-    const wxSharedPtr<wxClientData>& GetPtr() const { return m_ptr; }
+    const std::shared_ptr<wxClientData>& GetPtr() const { return m_ptr; }
     const wxArrayString& GetStrings() const { return m_strings; }
     wxArrayString& GetStrings() { return m_strings; }
     const std::string& GetStringRaw() const { return m_stringRaw; }

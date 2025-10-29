@@ -104,7 +104,7 @@ void ContinuousBuild::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void ContinuousBuild::UnPlug()
 {
-    m_tabHelper.reset(NULL);
+    m_tabHelper.reset();
     if(!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_view)) {
         m_view->Destroy();
     }

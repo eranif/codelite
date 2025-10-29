@@ -29,8 +29,8 @@
 #include "codelite_exports.h"
 #include "compiler.h"
 
+#include <memory>
 #include <vector>
-#include <wx/sharedptr.h>
 
 #define COMPILER_FAMILY_CLANG "LLVM/Clang"
 #define COMPILER_FAMILY_GCC "GCC"
@@ -50,9 +50,9 @@
 class WXDLLIMPEXP_SDK ICompilerLocator
 {
 public:
-    typedef wxSharedPtr<ICompilerLocator> Ptr_t;
-    typedef std::vector<ICompilerLocator::Ptr_t> Vect_t;
-    typedef std::vector<CompilerPtr> CompilerVec_t;
+    using Ptr_t = std::shared_ptr<ICompilerLocator>;
+    using Vect_t = std::vector<ICompilerLocator::Ptr_t>;
+    using CompilerVec_t = std::vector<CompilerPtr>;
 
 protected:
     ICompilerLocator::CompilerVec_t m_compilers;

@@ -31,9 +31,10 @@
 #include "codelite_exports.h"
 #include "wxPNGAnimation.h"
 
+#include <memory>
+#include <vector>
 #include <wx/bitmap.h>
 #include <wx/colour.h>
-#include <wx/sharedptr.h>
 #include <wx/statusbr.h>
 #include <wx/timer.h>
 
@@ -44,7 +45,7 @@ protected:
     wxString m_name;
 
 public:
-    typedef wxSharedPtr<wxCustomStatusBarArt> Ptr_t;
+    using Ptr_t = std::shared_ptr<wxCustomStatusBarArt>;
 
 public:
     wxCustomStatusBarArt(const wxString& name);
@@ -79,8 +80,8 @@ protected:
     size_t m_autoWidth = 0;
 
 public:
-    typedef wxSharedPtr<wxCustomStatusBarField> Ptr_t;
-    typedef std::vector<wxCustomStatusBarField::Ptr_t> Vect_t;
+    using Ptr_t = std::shared_ptr<wxCustomStatusBarField>;
+    using Vect_t = std::vector<wxCustomStatusBarField::Ptr_t>;
 
     wxCustomStatusBarField(wxCustomStatusBar* parent)
         : m_parent(parent)

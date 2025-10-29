@@ -4,7 +4,8 @@
 #include "JSON.h"
 #include "wxStringHash.h"
 
-#include <wx/sharedptr.h>
+#include <memory>
+#include <unordered_map>
 #include <wx/string.h>
 
 enum class eDockerFileType {
@@ -24,8 +25,8 @@ protected:
     wxString GetDockerExe() const;
 
 public:
-    typedef wxSharedPtr<clDockerBuildableFile> Ptr_t;
-    typedef std::unordered_map<wxString, clDockerBuildableFile::Ptr_t> Map_t;
+    using Ptr_t = std::shared_ptr<clDockerBuildableFile>;
+    using Map_t = std::unordered_map<wxString, clDockerBuildableFile::Ptr_t>;
 
     clDockerBuildableFile(const wxString& path, eDockerFileType type);
     clDockerBuildableFile() = default;

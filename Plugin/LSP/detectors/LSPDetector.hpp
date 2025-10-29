@@ -4,8 +4,8 @@
 #include "AsyncProcess/asyncprocess.h"
 #include "LSP/LanguageServerEntry.h"
 
+#include <memory>
 #include <wx/arrstr.h>
-#include <wx/sharedptr.h>
 #include <wx/string.h>
 
 class WXDLLIMPEXP_SDK LSPDetector
@@ -21,7 +21,7 @@ protected:
     wxString m_initialiseOptions;
 
 public:
-    typedef wxSharedPtr<LSPDetector> Ptr_t;
+    using Ptr_t = std::shared_ptr<LSPDetector>;
 
 protected:
     virtual bool DoLocate() = 0;

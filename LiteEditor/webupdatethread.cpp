@@ -193,21 +193,21 @@ void WebUpdateJob::OnConnected(clCommandEvent& e)
 void WebUpdateJob::OnConnectionLost(clCommandEvent& e)
 {
     clDEBUG() << "WebUpdateJob: Connection lost:" << e.GetString() << clEndl;
-    m_socket.reset(nullptr);
+    m_socket.reset();
     NotifyError("Connection lost:" + e.GetString());
 }
 
 void WebUpdateJob::OnConnectionError(clCommandEvent& e)
 {
     clDEBUG() << "WebUpdateJob: Connection error:" << e.GetString() << clEndl;
-    m_socket.reset(nullptr);
+    m_socket.reset();
     NotifyError("Connection error:" + e.GetString());
 }
 
 void WebUpdateJob::OnSocketError(clCommandEvent& e)
 {
     clDEBUG() << "WebUpdateJob: socket error:" << e.GetString() << clEndl;
-    m_socket.reset(nullptr);
+    m_socket.reset();
     NotifyError("Socket error:" + e.GetString());
 }
 
@@ -223,7 +223,7 @@ void WebUpdateJob::OnSocketInput(clCommandEvent& e)
     }
 }
 
-void WebUpdateJob::Clear() { m_socket.reset(nullptr); }
+void WebUpdateJob::Clear() { m_socket.reset(); }
 
 void WebUpdateJob::NotifyError(const wxString& errmsg)
 {

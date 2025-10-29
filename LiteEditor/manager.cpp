@@ -1767,7 +1767,6 @@ void Manager::DbgStart(long attachPid)
     }
 
 #if defined(__WXGTK__)
-    wxString where;
     wxString terminal;
     wxArrayString tokens;
     wxArrayString configuredTerminal;
@@ -1784,7 +1783,7 @@ void Manager::DbgStart(long attachPid)
             }
         }
     }
-    if (!ExeLocator::Locate(terminal, where)) {
+    if (!ExeLocator::Locate(terminal)) {
         wxMessageBox(_("Failed to locate the configured default terminal application required by "
                        "CodeLite, please "
                        "install it or check your configuration!"),

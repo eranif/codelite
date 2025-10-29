@@ -27,6 +27,7 @@
 
 #include "codelite_exports.h"
 
+#include <optional>
 #include <wx/string.h>
 
 class WXDLLIMPEXP_SDK ExeLocator
@@ -35,7 +36,7 @@ public:
     ExeLocator() = default;
     ~ExeLocator() = default;
 
-    static bool Locate(const wxString& name, wxString& where);
+    static std::optional<wxString> Locate(const wxString& name);
 };
 
 #endif // ITEMLOCATOR_H

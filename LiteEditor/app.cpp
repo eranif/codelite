@@ -374,7 +374,6 @@ void on_sigpipe(int sig)
 static void WaitForDebugger(int signo)
 {
     wxString msg;
-    wxString where;
 
     msg << wxT("codelite crashed: you may attach to it using gdb\n") << wxT("or let it crash silently..\n")
         << wxT("Attach debugger?\n");
@@ -385,16 +384,15 @@ static void WaitForDebugger(int signo)
         // Launch a shell command with the following command:
         // gdb -p <PID>
 
-        char command[256];
-        memset(command, 0, sizeof(command));
+        char command[256]{};
 
-        if (ExeLocator::Locate(wxT("gnome-terminal"), where)) {
+        if (ExeLocator::Locate(wxT("gnome-terminal"))) {
             sprintf(command, "gnome-terminal -t 'gdb' -e 'gdb -p %d'", getpid());
-        } else if (ExeLocator::Locate(wxT("konsole"), where)) {
+        } else if (ExeLocator::Locate(wxT("konsole"))) {
             sprintf(command, "konsole -T 'gdb' -e 'gdb -p %d'", getpid());
-        } else if (ExeLocator::Locate(wxT("terminal"), where)) {
+        } else if (ExeLocator::Locate(wxT("terminal"))) {
             sprintf(command, "terminal -T 'gdb' -e 'gdb -p %d'", getpid());
-        } else if (ExeLocator::Locate(wxT("lxterminal"), where)) {
+        } else if (ExeLocator::Locate(wxT("lxterminal"))) {
             sprintf(command, "lxterminal -T 'gdb' -e 'gdb -p %d'", getpid());
         } else {
             sprintf(command, "xterm -T 'gdb' -e 'gdb -p %d'", getpid());

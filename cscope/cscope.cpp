@@ -32,22 +32,15 @@
 #include "cscopestatusmessage.h"
 #include "cscopetab.h"
 #include "csscopeconfdata.h"
-#include "dirsaver.h"
 #include "event_notifier.h"
 #include "exelocator.h"
-#include "file_logger.h"
 #include "fileutils.h"
-#include "procutils.h"
 #include "workspace.h"
 
 #include <wx/app.h>
 #include <wx/aui/framemanager.h>
-#include <wx/ffile.h>
-#include <wx/imaglist.h>
-#include <wx/log.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
-#include <wx/stdpaths.h>
 #include <wx/textdlg.h>
 #include <wx/xrc/xmlres.h>
 
@@ -481,8 +474,7 @@ wxString Cscope::DoCreateListFile(bool force)
 void Cscope::DoCscopeCommand(const wxString& command, const wxString& findWhat, const wxString& endMsg)
 {
     // We haven't yet found a valid cscope exe, so look for one
-    wxString where;
-    if (!ExeLocator::Locate(GetCscopeExeName(), where)) {
+    if (!ExeLocator::Locate(GetCscopeExeName())) {
         wxString msg;
         msg << _("I can't find 'cscope' anywhere. Please check if it's installed.") << '\n'
             << _("Or tell me where it can be found, from the menu: 'Plugins | CScope | Settings'");

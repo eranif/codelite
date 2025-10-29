@@ -33,6 +33,9 @@ nav:
       - Node.js (via plugin): workspaces/nodejs.md
   - Code Completion: code_completion/cxx.md
   - AI: AI/ai.md
+  - LUA: 
+      - Overview: LUA/overview.md
+      - Documentation: LUA/lua.md
   - Plugins:
       - Language Server Protocol: plugins/lsp.md
       - Debug Adapter Client: plugins/dap.md

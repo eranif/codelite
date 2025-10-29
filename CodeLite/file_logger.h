@@ -45,7 +45,7 @@ typedef FileLogger& (*FileLoggerFunction)(FileLogger&);
 class WXDLLIMPEXP_CL FileLogger final
 {
 public:
-    enum { System = -1, Error = 0, Warning = 1, Dbg = 2, Developer = 3 };
+    enum LogLevel { System = -1, Error = 0, Warning = 1, Dbg = 2, Developer = 3 };
 
 public:
     // construct a file logger entry with a given verbosity
@@ -168,7 +168,7 @@ public:
         if (!FileLogger::CanLog(GetLogEntryVerbosity())) {
             return *this;
         }
-        std::vector<wxString> v{ arr.begin(), arr.end() };
+        std::vector<wxString> v{arr.begin(), arr.end()};
         *this << v;
         return *this;
     }
@@ -313,7 +313,7 @@ namespace
 {
 inline wxString GetLocation(const char* filename, int line)
 {
-    wxFileName fn{ filename };
+    wxFileName fn{filename};
     return wxString() << "[" << fn.GetFullName() << ":" << line << "]";
 }
 } // namespace

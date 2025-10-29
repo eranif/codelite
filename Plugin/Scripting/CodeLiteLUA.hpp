@@ -171,9 +171,104 @@ protected:
      */
     static std::string editor_language();
 
+    /**
+     * @brief Returns the text content of the currently active editor.
+     *
+     * This method retrieves the active editor from the manager and returns its
+     * contents as a UTF‑8 encoded {@code std::string}. If no editor is active,
+     * an empty string is returned.
+     *
+     * @return The full text of the active editor as a UTF‑8 string,
+     *         or an empty string if there is no active editor.
+     */
+    static std::string editor_text();
+
+    /**
+     * @brief Retrieves the file path of the currently active editor.
+     *
+     * This method obtains the active editor from the manager. If an editor is
+     * present, it returns the editor's remote or local file path converted to a
+     * UTF‑8 encoded std::string. If no editor is active, an empty string is
+     * returned.
+     *
+     * @return std::string The file path in UTF‑8 encoding, or an empty string if
+     *         no active editor is available.
+     */
+    static std::string editor_filepath();
+    /**
+     * @brief Logs an error message using the FileLogger.
+     *
+     * This inline function forwards the supplied message to the
+     * FileLogger at the {@link FileLogger::LogLevel::Error} level.
+     * It is intended for reporting error conditions within the
+     * application and should be called whenever an error needs to
+     * be recorded.
+     *
+     * @param msg The error message to be logged.
+     */
+    static inline void log_error(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Error); }
+    /**
+     * @brief Logs a system message.
+     *
+     * This function logs the provided message at the System log level using
+     * the FileLogger. It is intended for messages that are relevant to system
+     * operations and diagnostics.
+     *
+     * @param msg The message to be logged.
+     */
+    static inline void log_system(const std::string& msg) { log_message(msg, FileLogger::LogLevel::System); }
+    /**
+     * @brief Logs a warning message.
+     *
+     * This inline function forwards the provided message to the
+     * underlying logging system with a warning severity level.
+     *
+     * @param msg The message to be logged.
+     */
+    static inline void log_warn(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Warning); }
+    /**
+     * @brief Logs a debug-level message.
+     *
+     * This static inline helper forwards the supplied message to the underlying
+     * `log_message` function, specifying the debug severity (`FileLogger::LogLevel::Dbg`).
+     * It is intended for quick debugging output and has no side effects on program flow.
+     *
+     * @param msg The message to be logged. The string should contain information
+     *            relevant for debugging purposes.
+     *
+     * @note The function returns no value and is inexpensive to call.
+     */
+    static inline void log_debug(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Dbg); }
+    /**
+     * Logs a trace message at the Developer log level.
+     *
+     * This helper forwards the given message to {@code log_message} with the
+     * {@code FileLogger::LogLevel::Developer} level.
+     *
+     * @param msg The message to log.
+     */
+    static inline void log_trace(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Developer); }
+
 private:
     CodeLiteLUA();
     ~CodeLiteLUA();
+    /**
+     * Logs a message at the specified log level using the CodeLite logger.
+     *
+     * <p>The message is converted from UTF-8 to a wxString and output to the
+     * appropriate log stream based on the {@link FileLogger::LogLevel} value:
+     * <ul>
+     *   <li>{@link FileLogger::LogLevel::Developer} - logs with {@code clDEBUG1()}.</li>
+     *   <li>{@link FileLogger::LogLevel::Dbg}        - logs with {@code clDEBUG()}.</li>
+     *   <li>{@link FileLogger::LogLevel::Warning}   - logs with {@code clWARNING()}.</li>
+     *   <li>{@link FileLogger::LogLevel::System}    - logs with {@code clSYSTEM()}.</li>
+     *   <li>{@link FileLogger::LogLevel::Error}     - logs with {@code clERROR()}.</li>
+     * </ul>
+     *
+     * @param msg   The message to log. It is expected to be a UTF-8 encoded string.
+     * @param level The severity level of the log message.
+     */
+    static void log_message(const std::string& msg, FileLogger::LogLevel level);
 
     /**
      * @brief Initializes the CodeLite LUA environment by resetting the state and loading the main codelite.lua script.

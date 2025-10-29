@@ -40,7 +40,7 @@ void CodeLiteLUA::Initialise()
     auto& self = Get();
     self.m_state = luaL_newstate();
     luaL_openlibs(self.m_state);
-
+    
     try {
         clDEBUG() << "Registering codelite with LUA" << endl;
         luabridge::getGlobalNamespace(self.m_state)
@@ -50,6 +50,13 @@ void CodeLiteLUA::Initialise()
             .addFunction("editor_selection", &CodeLiteLUA::editor_selection)
             .addFunction("chat", &CodeLiteLUA::chat)
             .addFunction("editor_language", &CodeLiteLUA::editor_language)
+            .addFunction("editor_text", &CodeLiteLUA::editor_text)
+            .addFunction("editor_filepath", &CodeLiteLUA::editor_filepath)
+            .addFunction("log_warn", &CodeLiteLUA::log_warn)
+            .addFunction("log_error", &CodeLiteLUA::log_error)
+            .addFunction("log_system", &CodeLiteLUA::log_system)
+            .addFunction("log_debug", &CodeLiteLUA::log_debug)
+            .addFunction("log_trace", &CodeLiteLUA::log_trace)
             .endNamespace();
 
     } catch (const std::exception& e) {
@@ -148,6 +155,45 @@ std::string CodeLiteLUA::editor_language()
     }
     auto lang = FileExtManager::GetLanguageFromType(FileExtManager::GetType(editor->GetRemotePathOrLocal()));
     return lang.ToStdString(wxConvUTF8);
+}
+
+std::string CodeLiteLUA::editor_text()
+{
+    auto editor = clGetManager()->GetActiveEditor();
+    if (editor == nullptr) {
+        return {};
+    }
+    return editor->GetEditorText().ToStdString(wxConvUTF8);
+}
+
+std::string CodeLiteLUA::editor_filepath()
+{
+    auto editor = clGetManager()->GetActiveEditor();
+    if (editor == nullptr) {
+        return {};
+    }
+    return editor->GetRemotePathOrLocal().ToStdString(wxConvUTF8);
+}
+
+void CodeLiteLUA::log_message(const std::string& msg, FileLogger::LogLevel level)
+{
+    switch (level) {
+    case FileLogger::LogLevel::Developer:
+        clDEBUG1() << wxString::FromUTF8(msg) << endl;
+        break;
+    case FileLogger::LogLevel::Dbg:
+        clDEBUG() << wxString::FromUTF8(msg) << endl;
+        break;
+    case FileLogger::LogLevel::Warning:
+        clWARNING() << wxString::FromUTF8(msg) << endl;
+        break;
+    case FileLogger::LogLevel::System:
+        clSYSTEM() << wxString::FromUTF8(msg) << endl;
+        break;
+    case FileLogger::LogLevel::Error:
+        clERROR() << wxString::FromUTF8(msg) << endl;
+        break;
+    }
 }
 
 void CodeLiteLUA::chat(const std::string& prompt)

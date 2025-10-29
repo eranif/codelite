@@ -5,7 +5,7 @@
 #include "JSON.h"
 #include "StringUtils.h"
 #include "ThemeImporters/ThemeImporterManager.hpp"
-#include "cl_command_event.h"
+#include "attribute_style.h"
 #include "cl_config.h"
 #include "cl_standard_paths.h"
 #include "codelite_events.h"
@@ -13,18 +13,15 @@
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
-#include "globals.h"
+#include "lexer_configuration.h"
 #include "macros.h"
 
 #include <algorithm>
-#include <wx/busyinfo.h>
-#include <wx/dir.h>
 #include <wx/filename.h>
+#include <wx/log.h>
 #include <wx/msgdlg.h>
 #include <wx/settings.h>
-#include <wx/sstream.h>
 #include <wx/tokenzr.h>
-#include <wx/xml/xml.h>
 #include <wx/xrc/xmlres.h>
 
 // Upgrade macros

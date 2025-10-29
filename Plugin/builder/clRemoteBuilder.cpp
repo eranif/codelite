@@ -42,15 +42,15 @@ void clRemoteBuilder::Build(const wxString& sshAccount, const wxString& command,
         return;
     }
 
-    wxFileName ssh;
-    if (!FileUtils::FindExe("ssh", ssh)) {
+    auto ssh = FileUtils::FindExe("ssh");
+    if (!ssh) {
         wxMessageBox(_("Could not locate ssh executable"), "CodeLite", wxICON_WARNING | wxOK);
         return;
     }
 
     // Prepare the command
     wxString cmd;
-    cmd << ssh.GetFullPath() << " " << account.GetUsername() << "@" << account.GetHost() << " -p " << account.GetPort()
+    cmd << ssh->GetFullPath() << " " << account.GetUsername() << "@" << account.GetHost() << " -p " << account.GetPort()
         << " 'cd " << workingDirectory << " && " << command << "'";
     clGetManager()->ClearOutputTab(kOutputTab_Build);
     clGetManager()->AppendOutputTabText(

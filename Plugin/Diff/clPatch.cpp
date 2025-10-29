@@ -13,7 +13,7 @@ clPatch::clPatch()
 #ifdef __WXMSW__
     hints.Add(clStandardPaths::Get().GetExecutablePath());
 #endif
-    ::FileUtils::FindExe("patch", m_patch, hints);
+    m_patch = ::FileUtils::FindExe("patch", hints).value_or(wxFileName{});
 }
 
 void clPatch::Patch(const wxFileName& patchFile, const wxString& workingDirectory, const wxString& args)

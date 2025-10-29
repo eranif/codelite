@@ -21,12 +21,8 @@ clDockerSettings::clDockerSettings()
         }
     }
 #endif
-    if (!::FileUtils::FindExe("docker", m_docker, hints)) {
-        m_docker = "docker";
-    }
-    if (!::FileUtils::FindExe("docker-compose", m_dockerCompose, hints)) {
-        m_dockerCompose = "docker-compose";
-    }
+    m_docker = ::FileUtils::FindExe("docker", hints).value_or(wxFileName{"docker"});
+    m_dockerCompose = ::FileUtils::FindExe("docker-compose", hints).value_or(wxFileName{"docker-compose"});
 }
 
 void clDockerSettings::FromJSON(const JSONItem& json)

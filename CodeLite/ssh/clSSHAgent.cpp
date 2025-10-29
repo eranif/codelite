@@ -28,12 +28,12 @@ clSSHAgent::~clSSHAgent() { Stop(); }
 
 void clSSHAgent::Start()
 {
-    wxFileName sshAgent;
-    if (!FileUtils::FindExe("ssh-agent", sshAgent)) {
+    auto sshAgent = FileUtils::FindExe("ssh-agent");
+    if (!sshAgent) {
         clDEBUG() << "Could not find ssh-agent executable";
         return;
     }
-    clDEBUG() << "Found ssh-agent:" << sshAgent;
+    clDEBUG() << "Found ssh-agent:" << *sshAgent;
 
     // Check if an instance of ssh-agent is already running
 #ifdef __WXMSW__
@@ -41,11 +41,11 @@ void clSSHAgent::Start()
     if (P.empty()) {
         clDEBUG() << "Could not find a running instance of ssh-agent, starting one...";
         m_process = ::CreateAsyncProcess(
-            nullptr, sshAgent.GetFullPath(), IProcessCreateWithHiddenConsole | IProcessCreateDefault);
+            nullptr, sshAgent->GetFullPath(), IProcessCreateWithHiddenConsole | IProcessCreateDefault);
         if (m_process) {
-            clDEBUG() << "Started" << sshAgent << "with process ID:" << m_process->GetPid() << clEndl;
+            clDEBUG() << "Started" << *sshAgent << "with process ID:" << m_process->GetPid() << clEndl;
         } else {
-            clWARNING() << "Failed to start" << sshAgent << "ssh-agent daemon" << clEndl;
+            clWARNING() << "Failed to start" << *sshAgent << "ssh-agent daemon" << clEndl;
         }
     } else {
         clDEBUG() << "Found ssh-agent running at pid:" << P.begin()->pid;
@@ -58,7 +58,7 @@ void clSSHAgent::Start()
     wxString socketPath = fnSocketPath.GetFullPath();
     AddQuotesIfNeeded(socketPath);
 
-    wxString command = sshAgent.GetFullPath();
+    wxString command = sshAgent->GetFullPath();
     AddQuotesIfNeeded(command);
     command << " -D -a " << socketPath;
 
@@ -82,8 +82,8 @@ void clSSHAgent::Start()
 #endif
 
     // Execute ssh-add
-    sshAgent.SetFullName("ssh-add");
-    wxString ssh_add_command = StringUtils::WrapWithDoubleQuotes(sshAgent.GetFullPath());
+    sshAgent->SetFullName("ssh-add");
+    wxString ssh_add_command = StringUtils::WrapWithDoubleQuotes(sshAgent->GetFullPath());
 
     // Pass the key files to load
     for (const auto& keyfile : m_files) {

@@ -1347,6 +1347,8 @@ clStyledTextCtrlMiniMap* MainBook::SelectMinimapForEditor(wxStyledTextCtrl* ctrl
     if (ctrl == nullptr || !m_showMiniMap) {
         // Hide the minimap view
         ShowMiniMap(false);
+        // For performance reason, if we don't show the mini-map, delete all the mini-maps.
+        m_miniMapsBook->DeleteAllPages();
         return nullptr;
     }
 
@@ -1894,7 +1896,7 @@ wxString MainBook::CreateLabel(const wxFileName& fn, bool modified) const
 #if CL_USE_NATIVEBOOK || MAINBOOK_AUIBOOK
     if (modified) {
 #if defined(__WXMSW__) || defined(__WXMAC__)
-        label.Prepend(wxT(" 💾 "));
+        label.Prepend(wxT("\u25CF"));
 #else
         label.Prepend(wxT(" * "));
 #endif

@@ -380,7 +380,7 @@ private:
 #if wxHAS_MINIMAP
     wxPanel* m_mainView{nullptr};
     wxSimplebook* m_miniMapsBook{nullptr};
-    bool m_showMiniMap{true};
+    bool m_showMiniMap{false};
 #endif
 };
 

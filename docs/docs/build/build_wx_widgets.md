@@ -4,10 +4,10 @@
 
 ## Windows
 
-CodeLite relies on **MSYS2** to provide the compiler and associated tooling.
+CodeLite uses **MSYS2** to provide the compiler and related tools.
 
-- Open an MSYS2 shell and make sure all prerequisites are installed, as detailed in the linked guide.  
-- Clone the wxWidgets repository and initialise sub‑modules:
+1. Open an MSYS2 shell and install all prerequisites as described in the linked guide.
+2. Clone the wxWidgets repository and initialize its sub‑modules:
 
 ```bash
 git clone https://github.com/wxWidgets/wxWidgets
@@ -15,26 +15,26 @@ cd wxWidgets
 git submodule update --init
 ```
 
-**Release build**
+### Release build
 
 ```bash
 mkdir .build-release
-cd $_
-cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release                 \
-         -DwxBUILD_DEBUG_LEVEL=0                                        \
-         -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=SOME -DwxUSE_STL=1    \
+cd .build-release
+cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release \
+         -DwxBUILD_DEBUG_LEVEL=0 \
+         -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=ALL -DwxUSE_STL=1 \
          -DCMAKE_INSTALL_PREFIX=$HOME/root
 mingw32-make -j$(nproc) install
 ```
 
-**Debug build**
+### Debug build
 
 ```bash
 mkdir .build-debug
 cd .build-debug
 cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug -DwxBUILD_DEBUG_LEVEL=1 \
-    -DwxBUILD_SAMPLES=SOME  -DwxBUILD_MONOLITHIC=1  -DwxUSE_STL=1             \
-    -DCMAKE_INSTALL_PREFIX=$HOME/root  
+         -DwxBUILD_SAMPLES=ALL -DwxBUILD_MONOLITHIC=1 -DwxUSE_STL=1 \
+         -DCMAKE_INSTALL_PREFIX=$HOME/root
 mingw32-make -j$(nproc) install
 ```
 
@@ -42,30 +42,32 @@ mingw32-make -j$(nproc) install
 
 ## Linux
 
-To compile wxWidgets on a Linux machine you’ll need the following packages:
+To build wxWidgets on Linux you need the following packages:
 
-- GTK development libraries (`libgtk2.0-dev` for GTK 2, `libgtk-3-dev` for GTK 3)  
-- `pkg-config` (usually bundled with the GTK dev package)  
-- Build essentials (`g++`, `make`, etc.)  
-- `git`  
+- GTK development libraries
+  - `libgtk2.0-dev` for GTK 2
+  - `libgtk-3-dev` for GTK 3
+- `pkg-config` (usually included with the GTK development package)
+- Build essentials (`g++`, `make`, etc.)
+- `git`
 - `cmake`
 
 Install the prerequisites on **Ubuntu** with:
 
 ```bash
-sudo apt-get install libgtk-3-dev       \
-                     pkg-config         \
-                     build-essential    \
-                     git                \
-                     cmake              \
-                     libsqlite3-dev     \
-                     libssh-dev         \
-                     libedit-dev        \
-                     libhunspell-dev    \
+sudo apt-get install libgtk-3-dev \
+                     pkg-config \
+                     build-essential \
+                     git \
+                     cmake \
+                     libsqlite3-dev \
+                     libssh-dev \
+                     libedit-dev \
+                     libhunspell-dev \
                      xterm
 ```
 
-Build sequence:
+### Build sequence
 
 ```bash
 mkdir -p $HOME/devl
@@ -76,7 +78,7 @@ cd wxWidgets
 git submodule update --init
 
 mkdir -p .build-release
-cd $_
+cd .build-release
 
 ../configure --disable-debug_flag --with-gtk=3 --enable-stl
 make -j$(nproc) && sudo make install
@@ -88,22 +90,22 @@ make -j$(nproc) && sudo make install
 
 ### Prerequisites
 
-1. Install **Homebrew** – <https://brew.sh/>  
-2. `brew install cmake git`  
-3. Download the latest Xcode from the App Store  
-4. Open Xcode → **Preferences** → **Downloads** → install the Command Line Tools (this places `clang`/`clang++` in `/usr/bin`)  
+1. Install **Homebrew** – <https://brew.sh/>
+2. Run `brew install cmake git`
+3. Download the latest Xcode from the App Store
+4. In Xcode, open **Preferences → Downloads** and install the Command Line Tools (adds `clang`/`clang++` to `/usr/bin`)
 
 ### Building with CMake
 
 ```bash
 mkdir -p $HOME/devl
-cd $_
+cd $HOME/devl
 git clone https://github.com/wxWidgets/wxWidgets.git
 cd wxWidgets
 git submodule update --init
 
 mkdir .build-release
-cd $_
+cd .build-release
 cmake .. -DCMAKE_BUILD_TYPE=Release \
          -DwxBUILD_DEBUG_LEVEL=0 \
          -DwxBUILD_MONOLITHIC=1 \
@@ -112,7 +114,7 @@ make -j$(sysctl -n hw.physicalcpu)
 sudo make install
 ```
 
-[1]: https://brew.sh/  
-[2]: https://wxwidgets.org/downloads/  
-[3]: https://www.wxwidgets.org/downloads  
+[1]: https://brew.sh/
+[2]: https://wxwidgets.org/downloads/
+[3]: https://www.wxwidgets.org/downloads
 [4]: /build/mingw_builds/#prepare-a-working-environment

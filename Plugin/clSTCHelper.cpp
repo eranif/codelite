@@ -236,3 +236,15 @@ bool clSTCHelper::IsPositionInComment(wxStyledTextCtrl* ctrl, int pos)
         return false;
     }
 }
+
+void clSTCHelper::CopySettingsFrom(wxStyledTextCtrl* src, wxStyledTextCtrl* target)
+{
+    if (src == nullptr || target == nullptr) {
+        return;
+    }
+
+    for (int style = 0; style < wxSTC_STYLE_MAX; ++style) {
+        target->StyleSetForeground(style, src->StyleGetForeground(style));
+        target->StyleSetBackground(style, src->StyleGetBackground(style));
+    }
+}

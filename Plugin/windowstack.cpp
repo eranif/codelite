@@ -47,13 +47,32 @@ WindowStack::~WindowStack()
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &WindowStack::OnColoursChanged, this);
 }
 
+void WindowStack::ForEach(std::function<void(wxWindow*)> cb)
+{
+    for (wxWindow* w : m_windows) {
+        cb(w);
+    }
+}
+
+bool WindowStack::SelectIf(std::function<bool(wxWindow*)> cb)
+{
+    if (cb == nullptr) {
+        return false;
+    }
+
+    for (wxWindow* w : m_windows) {
+        if (cb(w)) {
+            Select(w);
+            return true;
+        }
+    }
+    return false;
+}
+
 void WindowStack::Select(wxWindow* win)
 {
-    //#ifndef __WXOSX__
-    //    wxWindowUpdateLocker locker(this);
-    //#endif
     int index = FindPage(win);
-    if(index == wxNOT_FOUND) {
+    if (index == wxNOT_FOUND) {
         return;
     }
     ChangeSelection(index);
@@ -72,11 +91,11 @@ void WindowStack::Clear()
 bool WindowStack::Remove(wxWindow* win)
 {
     int index = FindPage(win);
-    if(index == wxNOT_FOUND) {
+    if (index == wxNOT_FOUND) {
         return false;
     }
     m_windows.erase(m_windows.begin() + index);
-    if(win == m_activeWin) {
+    if (win == m_activeWin) {
         m_activeWin = nullptr;
     }
     return true;
@@ -84,12 +103,12 @@ bool WindowStack::Remove(wxWindow* win)
 
 bool WindowStack::Add(wxWindow* win, bool select)
 {
-    if(!win || Contains(win)) {
+    if (!win || Contains(win)) {
         return false;
     }
     win->Reparent(this);
     m_windows.push_back(win);
-    if(select) {
+    if (select) {
         DoSelect(win);
     } else {
         win->Hide();
@@ -101,8 +120,8 @@ bool WindowStack::Contains(wxWindow* win) { return FindPage(win) != wxNOT_FOUND;
 
 int WindowStack::FindPage(wxWindow* page) const
 {
-    for(size_t i = 0; i < m_windows.size(); ++i) {
-        if(m_windows[i] == page) {
+    for (size_t i = 0; i < m_windows.size(); ++i) {
+        if (m_windows[i] == page) {
             return i;
         }
     }
@@ -113,7 +132,7 @@ wxWindow* WindowStack::GetSelected() const { return m_activeWin; }
 
 int WindowStack::ChangeSelection(size_t index)
 {
-    if(index >= m_windows.size()) {
+    if (index >= m_windows.size()) {
         return wxNOT_FOUND;
     }
     return DoSelect(m_windows[index]);
@@ -121,10 +140,11 @@ int WindowStack::ChangeSelection(size_t index)
 
 int WindowStack::DoSelect(wxWindow* win)
 {
-    if(!win) {
+    if (!win) {
         return wxNOT_FOUND;
     }
-    // Firsr, show the window
+
+    // First, show the window
     win->SetSize(wxRect(0, 0, GetSize().x, GetSize().y));
     win->Show();
     int oldSel = FindPage(win);
@@ -137,7 +157,7 @@ int WindowStack::DoSelect(wxWindow* win)
 void WindowStack::OnSize(wxSizeEvent& e)
 {
     e.Skip();
-    if(!m_activeWin) {
+    if (!m_activeWin) {
         return;
     }
     m_activeWin->SetSize(wxRect(0, 0, GetSize().x, GetSize().y));
@@ -145,14 +165,14 @@ void WindowStack::OnSize(wxSizeEvent& e)
 
 void WindowStack::DoHideNoActiveWindows()
 {
-    for(auto w : m_windows) {
-        if(w != m_activeWin) {
+    for (auto w : m_windows) {
+        if (w != m_activeWin) {
             w->Hide();
         }
     }
 
 #ifdef __WXOSX__
-    if(m_activeWin) {
+    if (m_activeWin) {
         m_activeWin->Refresh();
     }
 #endif
@@ -179,7 +199,7 @@ WindowStack::~WindowStack()
 
 bool WindowStack::Add(wxWindow* win, bool select)
 {
-    if(!win || Contains(win)) {
+    if (!win || Contains(win)) {
         return false;
     }
     win->Reparent(this);
@@ -189,8 +209,8 @@ bool WindowStack::Add(wxWindow* win, bool select)
 void WindowStack::Select(wxWindow* win)
 {
     wxWindowUpdateLocker locker(this);
-    for(size_t i = 0; i < GetPageCount(); ++i) {
-        if(GetPage(i) == win) {
+    for (size_t i = 0; i < GetPageCount(); ++i) {
+        if (GetPage(i) == win) {
             ChangeSelection(i);
         }
     }
@@ -198,8 +218,8 @@ void WindowStack::Select(wxWindow* win)
 
 int WindowStack::FindPage(wxWindow* win) const
 {
-    for(size_t i = 0; i < GetPageCount(); ++i) {
-        if(GetPage(i) == win) {
+    for (size_t i = 0; i < GetPageCount(); ++i) {
+        if (GetPage(i) == win) {
             return i;
         }
     }
@@ -211,7 +231,7 @@ void WindowStack::Clear() { DeleteAllPages(); }
 bool WindowStack::Remove(wxWindow* win)
 {
     int index = FindPage(win);
-    if(index == wxNOT_FOUND) {
+    if (index == wxNOT_FOUND) {
         return false;
     }
     return RemovePage(index);
@@ -220,7 +240,7 @@ bool WindowStack::Remove(wxWindow* win)
 bool WindowStack::Contains(wxWindow* win) { return FindPage(win) != wxNOT_FOUND; }
 wxWindow* WindowStack::GetSelected() const
 {
-    if(GetSelection() == wxNOT_FOUND) {
+    if (GetSelection() == wxNOT_FOUND) {
         return nullptr;
     }
     return GetPage(GetSelection());

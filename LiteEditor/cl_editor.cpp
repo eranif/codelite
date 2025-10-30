@@ -959,11 +959,6 @@ void clEditor::SetProperties()
         MarkerSetAlpha(smt_breakpoint, 30);
     }
 
-    wxBitmap breakpointBmp = clGetManager()->GetStdIcons()->LoadBitmap("breakpoint");
-    wxBitmap breakpointCondBmp = clGetManager()->GetStdIcons()->LoadBitmap("breakpoint_cond");
-    wxBitmap breakpointCmdList = clGetManager()->GetStdIcons()->LoadBitmap("breakpoint_cmdlist");
-    wxBitmap breakpointIgnored = clGetManager()->GetStdIcons()->LoadBitmap("breakpoint_ignored");
-
     wxColour breakpointColour = wxColour("#FF5733");
     wxColour disabledColour = breakpointColour.ChangeLightness(165);
     wxColour defaultBgColour = StyleGetBackground(0); // Default style background colour

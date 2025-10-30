@@ -1,23 +1,22 @@
-# MinGW specific
+# MinGW Specific
 ---
 
-This page contains tips for building various components using `MinGW` for Windows
+This page provides tips for building various components with **MinGW** on Windows.
 
-## Install missing libraries
+## Install Missing Libraries
 ---
 
-CodeLite requires some additional libraries before it can be built.
-This section will help you install these missing libraries:
+CodeLite needs a few extra libraries before it can be built. Follow these steps to install them:
 
-- Make sure you have a [proper MSYS2 environment][1]
-- Open `MSYS2` terminal, and type:
+1. Ensure you have a [proper MSYS2 environment][1] installed.
+2. Open an **MSYS2** terminal and run:
 
-```batch
-pacman -S mingw-w64-clang-x86_64-zlib     \
-          mingw-w64-clang-x86_64-libssh   \
+```bash
+pacman -S mingw-w64-clang-x86_64-zlib \
+          mingw-w64-clang-x86_64-libssh \
           mingw-w64-clang-x86_64-hunspell \
-          mingw-w64-clang-x86_64-openssl  \
-          mingw-w64-clang-x86_64-sqlite3  \
+          mingw-w64-clang-x86_64-openssl \
+          mingw-w64-clang-x86_64-sqlite3 \
           mingw-w64-clang-x86_64-llvm-openmp \
           flex bison
 ```

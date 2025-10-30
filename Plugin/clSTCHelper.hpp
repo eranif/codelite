@@ -36,6 +36,20 @@ public:
      * @return true if the position is within a comment according to the active lexer, false otherwise.
      */
     static bool IsPositionInComment(wxStyledTextCtrl* ctrl, int pos = wxSTC_INVALID_POSITION);
+
+    /**
+     * @brief Copies all style settings (foreground and background colors) from a source
+     *        {@link wxStyledTextCtrl} to a target {@link wxStyledTextCtrl}.
+     *
+     * The function iterates over all style indices up to {@code wxSTC_STYLE_MAX} and
+     * applies the source control's style colors to the target control.
+     *
+     * @param src Pointer to the source {@code wxStyledTextCtrl}. If {@code nullptr},
+     *            the function returns without performing any action.
+     * @param target Pointer to the target {@code wxStyledTextCtrl}. If {@code nullptr},
+     *               the function returns without performing any action.
+     */
+    static void CopySettingsFrom(wxStyledTextCtrl* src, wxStyledTextCtrl* target);
 };
 
 #endif // CLSTCHELPER_HPP

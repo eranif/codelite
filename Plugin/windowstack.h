@@ -28,6 +28,7 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 
+#include <functional>
 #include <set>
 #include <vector>
 #include <wx/panel.h>
@@ -56,6 +57,8 @@ public:
 
     bool Add(wxWindow* win, bool select);
     void Select(wxWindow* win);
+    bool SelectIf(std::function<bool(wxWindow*)> cb);
+    void ForEach(std::function<void(wxWindow*)> cb);
     void Clear();
 
     bool Remove(wxWindow* win);

@@ -25,6 +25,7 @@
 #ifndef MAINBOOK_H
 #define MAINBOOK_H
 
+#include "CustomControls/clStyledTextCtrlMiniMap.hpp"
 #include "Notebook.h"
 #include "clAuiBook.hpp"
 #include "clEditorBar.h"
@@ -39,12 +40,8 @@
 #include <wx/aui/auibook.h>
 #include <wx/panel.h>
 
-#if wxCHECK_VERSION(3, 3, 0)
-#define wxHAS_MINIMAP 1
+#if wxHAS_MINIMAP
 #include <wx/simplebook.h>
-#include <wx/stc/minimap.h>
-#else
-#define wxHAS_MINIMAP 0
 #endif
 
 class FilesModifiedDlg;
@@ -256,6 +253,19 @@ private:
     void ConnectEvents();
     void DoUpdateNotebookTheme();
     void DoOpenImageViewer(const wxFileName& filename);
+    /**
+     * @brief Updates editors' themes, syntax highlighting, and minimap settings.
+     *
+     * This function performs the following actions:
+     *   - Retrieves all open editors and reapplies syntax highlighting according
+     *     to each editor's associated context name.
+     *   - If there is an active editor, requests new semantic tokens for it via
+     *     the LSP manager.
+     *   - When compiled with minimap support, copies the main editor's settings
+     *     to each minimap instance to keep them in sync.
+     *
+     * No parameters are taken and no value is returned.
+     */
     void DoUpdateEditorsThemes();
 
     void OnMouseDClick(wxBookCtrlEvent& e);
@@ -323,34 +333,34 @@ private:
      * @param ctrl the editor control to associate with a minimap; may be {@code nullptr}
      *             to hide the minimap view.
      */
-    void SelectMinimapForEditor(wxStyledTextCtrl* ctrl);
+    clStyledTextCtrlMiniMap* SelectMinimapForEditor(wxStyledTextCtrl* ctrl);
 
     /**
-     * @brief Creates a wxStyledTextCtrlMiniMap for the given editor.
+     * @brief Creates a clStyledTextCtrlMiniMap for the given editor.
      *
-     * This function constructs a new wxStyledTextCtrlMiniMap, associates it
+     * This function constructs a new clStyledTextCtrlMiniMap, associates it
      * with the provided wxStyledTextCtrl, stores the editor as client data,
      * and copies the editor's styles to the minimap.
      *
      * @param ctrl Pointer to the wxStyledTextCtrl editor for which the minimap is created.
-     * @return Pointer to the newly created wxStyledTextCtrlMiniMap.
-     * @see wxStyledTextCtrlMiniMap
+     * @return Pointer to the newly created clStyledTextCtrlMiniMap.
+     * @see clStyledTextCtrlMiniMap
      * @see CopyStyles
      */
-    wxStyledTextCtrlMiniMap* CreateMinimapForEditor(wxStyledTextCtrl* ctrl);
+    clStyledTextCtrlMiniMap* CreateMinimapForEditor(wxStyledTextCtrl* ctrl);
 
     /**
-     * @brief Copies style attributes from a source {@code wxStyledTextCtrl} to a target {@code
-     * wxStyledTextCtrlMiniMap}.
+     * @brief Toggles the visibility of the mini map within the main book.
      *
-     * This function iterates over all style indices (0 to {@code wxSTC_STYLE_MAX-1}) and copies the foreground and
-     * background colours from the source control to the target control. If either {@code src} or {@code target} is
-     * {@code nullptr}, the function returns immediately without performing any copying.
+     * If `show` is `true`, the mini map is displayed when it is not already visible.
+     * If `show` is `false`, the mini map is hidden when it is currently visible.
+     * In either case, a size event is sent to update the layout after the visibility change.
      *
-     * @param src    Pointer to the source {@code wxStyledTextCtrl} from which style information is retrieved.
-     * @param target Pointer to the target {@code wxStyledTextCtrlMiniMap} to which style information is applied.
+     * @param show `true` to show the mini map, `false` to hide it.
      */
-    void CopyStyles(wxStyledTextCtrl* src, wxStyledTextCtrlMiniMap* target);
+    void ShowMiniMap(bool show);
+
+    void MiniMapChanegSelection(wxWindow* win);
 
 #endif
 
@@ -368,7 +378,7 @@ private:
     bool m_initDone{false};
 
 #if wxHAS_MINIMAP
-    wxSplitterWindow* m_mainSplitter{nullptr};
+    wxPanel* m_mainView{nullptr};
     wxSimplebook* m_miniMapsBook{nullptr};
     bool m_showMiniMap{true};
 #endif

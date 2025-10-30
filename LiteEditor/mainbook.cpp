@@ -28,8 +28,10 @@
 #include "LSP/LSPManager.hpp"
 #include "NotebookNavigationDlg.h"
 #include "WelcomePage.h"
+#include "bookmark_manager.h"
 #include "clIdleEventThrottler.hpp"
 #include "clImageViewer.h"
+#include "clSTCHelper.hpp"
 #include "clWorkspaceManager.h"
 #include "cl_defs.h"
 #include "ctags_manager.h"
@@ -54,6 +56,51 @@
 #include <wx/regex.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
+
+#if wxHAS_MINIMAP
+class MyMiniMap : public clStyledTextCtrlMiniMap
+{
+public:
+    MyMiniMap(wxWindow* parent, wxStyledTextCtrl* edit)
+        : clStyledTextCtrlMiniMap(parent, edit, wxID_ANY, wxDefaultPosition, wxSize(1, 1))
+    {
+        clSTCHelper::CopySettingsFrom(edit, this);
+
+        // Set some bookmark colours.
+        int marker = wxSTC_MARK_BOOKMARK;
+        for (size_t bmt = smt_FIRST_BMK_TYPE; bmt <= smt_LAST_BMK_TYPE; ++bmt) {
+            MarkerDefine(bmt, marker);
+            MarkerSetBackground(bmt, *wxGREEN);
+            MarkerSetForeground(bmt, *wxGREEN);
+        }
+
+        // all bookmarks
+        for (size_t bmt = smt_FIRST_BMK_TYPE; bmt <= smt_line_marker; ++bmt) {
+            MarkerSetAlpha(bmt, 30);
+        }
+
+        // Breakpoints
+        for (size_t bmt = smt_FIRST_BP_TYPE; bmt <= smt_LAST_BP_TYPE; ++bmt) {
+            MarkerSetBackground(smt_breakpoint, "RED");
+            MarkerSetAlpha(smt_breakpoint, 30);
+        }
+
+        MarkerDefine(smt_warning, wxSTC_MARK_SHORTARROW);
+        MarkerSetForeground(smt_error, wxColor(128, 128, 0));
+        MarkerSetBackground(smt_warning, wxColor(255, 215, 0));
+        MarkerSetAlpha(smt_warning, 80);
+
+        MarkerDefine(smt_error, wxSTC_MARK_SHORTARROW);
+        MarkerSetForeground(smt_error, wxColor(128, 0, 0));
+        MarkerSetBackground(smt_error, wxColor(255, 0, 0));
+        MarkerSetAlpha(smt_error, 80);
+
+        SetClientData(edit);
+    }
+
+    ~MyMiniMap() override = default;
+};
+#endif
 
 namespace
 {
@@ -91,9 +138,9 @@ MainBook::MainBook(wxWindow* parent)
     wxPanel::Create(
         parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, get_border_simple_theme_aware_bit() | wxTAB_TRAVERSAL);
     Hide();
-
+#if wxHAS_MINIMAP
     m_showMiniMap = clConfig::Get().Read("mainbook.show_minimap", m_showMiniMap);
-    
+#endif
     CreateGuiControls();
     ConnectEvents();
 }
@@ -109,18 +156,16 @@ void MainBook::CreateGuiControls()
     }
 
 #if wxHAS_MINIMAP
-    m_mainSplitter = new wxSplitterWindow(
-        this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_VERTICAL | wxSP_3DSASH | wxNO_BORDER | wxSP_LIVE_UPDATE);
-    GetSizer()->Add(m_mainSplitter, wxSizerFlags(1).Expand());
-    // load the notebook style from the configuration settings
-    m_book = new MainNotebook(m_mainSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
-    m_miniMapsBook = new wxSimplebook(m_mainSplitter);
-    m_mainSplitter->SplitVertically(m_book, m_miniMapsBook);
-    m_mainSplitter->SetMinimumPaneSize(FromDIP(10));
-    Bind(wxEVT_SIZE, [&](wxSizeEvent& event) {
-        m_mainSplitter->SetSashPosition(-FromDIP(200));
-        event.Skip();
-    });
+    m_mainView = new wxPanel(this, wxID_ANY);
+    GetSizer()->Add(m_mainView, wxSizerFlags(1).Expand().Border(wxALL, 0));
+
+    m_mainView->SetSizer(new wxBoxSizer(wxHORIZONTAL));
+    m_book = new MainNotebook(m_mainView, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+    m_miniMapsBook = new wxSimplebook(m_mainView);
+    m_miniMapsBook->SetSize(FromDIP(wxSize(200, -1)));
+    m_miniMapsBook->SetSizeHints(FromDIP(wxSize(200, -1)));
+    m_mainView->GetSizer()->Add(m_book, wxSizerFlags(1).Expand().Border(wxALL, 0));
+    m_mainView->GetSizer()->Add(m_miniMapsBook, wxSizerFlags(0).Expand().Border(wxALL, 0));
 #else
     // load the notebook style from the configuration settings
     m_book = new MainNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
@@ -1276,59 +1321,67 @@ void MainBook::OnPageChanged(wxBookCtrlEvent& e)
 }
 
 #if wxHAS_MINIMAP
-void MainBook::CopyStyles(wxStyledTextCtrl* src, wxStyledTextCtrlMiniMap* target)
+clStyledTextCtrlMiniMap* MainBook::CreateMinimapForEditor(wxStyledTextCtrl* ctrl)
 {
-    if (src == nullptr || target == nullptr) {
-        return;
-    }
-
-    for (int style = 0; style < wxSTC_STYLE_MAX; ++style) {
-        target->StyleSetForeground(style, src->StyleGetForeground(style));
-        target->StyleSetBackground(style, src->StyleGetBackground(style));
-    }
-}
-
-wxStyledTextCtrlMiniMap* MainBook::CreateMinimapForEditor(wxStyledTextCtrl* ctrl)
-{
-    auto minimap = new wxStyledTextCtrlMiniMap(m_miniMapsBook, ctrl);
-    minimap->SetClientData(ctrl);
-    CopyStyles(ctrl, minimap);
+    auto minimap = new MyMiniMap(m_miniMapsBook, ctrl);
     return minimap;
 }
 
-void MainBook::SelectMinimapForEditor(wxStyledTextCtrl* ctrl)
+void MainBook::ShowMiniMap(bool show)
+{
+    if (show) {
+        if (!m_miniMapsBook->IsShown()) {
+            m_miniMapsBook->Show();
+            SendSizeEvent();
+        }
+    } else {
+        if (m_miniMapsBook->IsShown()) {
+            m_miniMapsBook->Hide();
+            SendSizeEvent();
+        }
+    }
+}
+
+clStyledTextCtrlMiniMap* MainBook::SelectMinimapForEditor(wxStyledTextCtrl* ctrl)
 {
     if (ctrl == nullptr || !m_showMiniMap) {
         // Hide the minimap view
-        if (m_mainSplitter->IsSplit()) {
-            m_mainSplitter->Unsplit(m_miniMapsBook);
-        }
-        return;
+        ShowMiniMap(false);
+        return nullptr;
     }
 
     // Locate the mini-map associated with this editor and select it.
-    for (size_t i = 0; i < m_miniMapsBook->GetPageCount(); ++i) {
-        auto minimap = m_miniMapsBook->GetPage(i);
+    for (size_t index = 0; index < m_miniMapsBook->GetPageCount(); ++index) {
+        auto page = m_miniMapsBook->GetPage(index);
+
+        auto minimap = dynamic_cast<clStyledTextCtrlMiniMap*>(page);
         if (minimap == nullptr) {
             continue;
         }
-
-        if (static_cast<wxWindow*>(minimap->GetClientData()) == ctrl) {
-            // found it
-            m_miniMapsBook->ChangeSelection(i);
-            return;
+        if (reinterpret_cast<wxWindow*>(minimap->GetClientData()) == ctrl) {
+            ShowMiniMap(true);
+            m_miniMapsBook->SetSelection(index);
+            return minimap;
         }
     }
 
     // If we reached here, we could not locate a mini-map for the editor, add one.
-
     auto minimap = CreateMinimapForEditor(ctrl);
-    m_miniMapsBook->AddPage(minimap, wxEmptyString, true);
+    static size_t counter{0};
+    wxString title = "Minimap_" + std::to_string(++counter);
+    m_miniMapsBook->AddPage(minimap, title, false);
+    CallAfter(&MainBook::MiniMapChanegSelection, minimap);
 
     // And finally, ensure that the mini-map view is visible.
-    if (!m_mainSplitter->IsSplit()) {
-        m_mainSplitter->SplitVertically(m_book, m_miniMapsBook);
-        m_mainSplitter->SetSashPosition(-FromDIP(200));
+    ShowMiniMap(true);
+    return minimap;
+}
+
+void MainBook::MiniMapChanegSelection(wxWindow* win)
+{
+    int where = m_miniMapsBook->FindPage(win);
+    if (where != wxNOT_FOUND) {
+        m_miniMapsBook->ChangeSelection(where);
     }
 }
 
@@ -1651,15 +1704,16 @@ void MainBook::DoUpdateEditorsThemes()
     }
 
 #if wxHAS_MINIMAP
-    for (size_t page_index = 0; page_index < m_miniMapsBook->GetPageCount(); ++page_index) {
-        wxStyledTextCtrlMiniMap* mm = dynamic_cast<wxStyledTextCtrlMiniMap*>(m_miniMapsBook->GetPage(page_index));
+    for (size_t i = 0; i < m_miniMapsBook->GetPageCount(); ++i) {
+        auto page = m_miniMapsBook->GetPage(i);
+        clStyledTextCtrlMiniMap* mm = dynamic_cast<clStyledTextCtrlMiniMap*>(page);
         if (mm == nullptr || mm->GetClientData() == nullptr) {
-            continue;
+            return;
         }
 
         // Copy the settings from the main editor to the minimap.
         auto editor = reinterpret_cast<wxStyledTextCtrl*>(mm->GetClientData());
-        CopyStyles(editor, mm);
+        clSTCHelper::CopySettingsFrom(editor, mm);
     }
 #endif
 }
@@ -1722,7 +1776,7 @@ void MainBook::ShowWelcomePage(bool show)
 {
     if (show) {
 #if wxHAS_MINIMAP
-        GetSizer()->Show(m_mainSplitter, false);
+        GetSizer()->Show(m_mainView, false);
 #else
         GetSizer()->Show(m_book, false);
 #endif
@@ -1731,7 +1785,7 @@ void MainBook::ShowWelcomePage(bool show)
 
     } else {
 #if wxHAS_MINIMAP
-        GetSizer()->Show(m_mainSplitter, true);
+        GetSizer()->Show(m_mainView, true);
 #else
         GetSizer()->Show(m_book, true);
 #endif
@@ -1784,7 +1838,10 @@ void MainBook::OnEditorChanged(wxCommandEvent& event)
     IEditor* editor = GetActiveEditor();
 
 #if wxHAS_MINIMAP
-    SelectMinimapForEditor(editor == nullptr ? nullptr : editor->GetCtrl());
+    auto minimap = SelectMinimapForEditor(editor == nullptr ? nullptr : editor->GetCtrl());
+    if (minimap && editor) {
+        clSTCHelper::CopySettingsFrom(editor->GetCtrl(), minimap);
+    }
 #endif
 
     if (editor) {

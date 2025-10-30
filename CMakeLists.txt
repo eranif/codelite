@@ -279,6 +279,15 @@ if(UNIX AND NOT MINGW)
           "I'm afraid your wxWidgets version is too old.\nBuilding CodeLite requires at least wxWidgets-3.1.6"
       )
     endif()
+
+    if("${WX_VERSION}" VERSION_GREATER "3.3.0")
+      set(wxWITH_ZOOM_NAVIGATOR OFF)
+      message(STATUS "✅ MiniMap is available, excluding ZoomNavigator plugin")
+    else()
+      set(wxWITH_ZOOM_NAVIGATOR ON)
+      message(STATUS "✅ Building with ZoomNavigator plugin")
+    endif()
+
     if(MINGW)
       execute_process(
         COMMAND sh ${WX_TOOL} --debug=no --rescomp
@@ -401,6 +410,19 @@ if(NOT RETAIN_CACHED_VALUES)
 endif()
 
 include(OSXInstall)
+if(APPLE)
+  execute_process(
+    COMMAND wx-config --version
+    OUTPUT_VARIABLE WX_VERSION
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+  if("${WX_VERSION}" VERSION_GREATER "3.3.0")
+    set(wxWITH_ZOOM_NAVIGATOR OFF)
+    message(STATUS "✅ MiniMap is available, excluding ZoomNavigator plugin")
+  else()
+    set(wxWITH_ZOOM_NAVIGATOR ON)
+    message(STATUS "✅ Building with ZoomNavigator plugin")
+  endif()
+endif()
 
 if(WITH_SFTP)
   if(UNIX OR MINGW)
@@ -487,6 +509,29 @@ if(MINGW)
     OUTPUT_VARIABLE wxWidgets_USE_FILE
     OUTPUT_STRIP_TRAILING_WHITESPACE)
   message(STATUS "wxWidgets_USE_FILE is set to: ${wxWidgets_USE_FILE}")
+
+  find_file(
+    WX_VERSION_H_FILE
+    NAMES wx/version.h REQUIRED
+    HINTS ${WXWIN}
+    PATH_SUFFIXES include)
+
+  # Call the function – it will create the variables WX_MAJOR and WX_MINOR.
+  extract_wx_version(
+    "${WX_VERSION_H_FILE}" WX_MAJOR # <-- holds the major version
+    WX_MINOR # <-- holds the minor version
+  )
+
+  math(EXPR wxVERSION "${WX_MAJOR} * 1000 + ${WX_MINOR} * 100")
+  message(STATUS "wxVERSION: ${WX_MAJOR}.${WX_MINOR} (${wxVERSION})")
+  if(wxVERSION GREATER_EQUAL 3300)
+    set(wxWITH_ZOOM_NAVIGATOR OFF)
+    message(STATUS "✅ MiniMap is available, excluding ZoomNavigator plugin")
+  else()
+    set(wxWITH_ZOOM_NAVIGATOR ON)
+    message(STATUS "✅ Building with ZoomNavigator plugin")
+  endif()
+
 else()
   find_package(
     wxWidgets
@@ -1032,7 +1077,12 @@ else()
     add_subdirectory(ExternalTools)
     add_subdirectory(SnipWiz)
     add_subdirectory(Subversion2)
-    add_subdirectory(ZoomNavigator)
+    if(wxWITH_ZOOM_NAVIGATOR)
+      message(STATUS "Including ZoomNavigator")
+      add_subdirectory(ZoomNavigator)
+    else()
+      message(STATUS "Excluding ZoomNavigator")
+    endif()
     add_subdirectory(SpellChecker)
     add_subdirectory(Tail)
     add_subdirectory(EditorConfigPlugin)

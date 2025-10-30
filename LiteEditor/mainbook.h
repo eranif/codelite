@@ -224,6 +224,31 @@ public:
 
     MainNotebook* GetNotebook() { return m_book; }
 
+#if wxHAS_MINIMAP
+    /**
+     * Sets whether the minimap should be shown for the current editor page.
+     *
+     * <p>When {@code b} is {@code true}, the minimap is enabled and the current
+     * editor page is passed to {@code SelectMinimapForEditor} to refresh the view.
+     * If {@code b} is {@code false}, the minimap is disabled and no editor page
+     * is selected.</p>
+     *
+     * @param b {@code true} to enable the minimap, {@code false} to disable it.
+     */
+    void SetShowMiniMap(bool b);
+
+    /**
+     * @brief Returns the visibility status of the mini‑map.
+     *
+     * This inline function checks the value of the member variable
+     * {@code m_showMiniMap} and returns {@code true} if the mini‑map is currently
+     * displayed, or {@code false} otherwise.
+     *
+     * @return {@code true} when the mini‑map is shown, {@code false} when it is hidden.
+     */
+    inline bool IsShowMiniMap() const { return m_showMiniMap; }
+#endif
+
 private:
     FilesModifiedDlg* GetFilesModifiedDlg();
     void DoShowTabLabelContextMenu(size_t tabIdx);
@@ -345,6 +370,7 @@ private:
 #if wxHAS_MINIMAP
     wxSplitterWindow* m_mainSplitter{nullptr};
     wxSimplebook* m_miniMapsBook{nullptr};
+    bool m_showMiniMap{true};
 #endif
 };
 

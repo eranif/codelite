@@ -251,6 +251,8 @@
         <label>Display &amp;Function Calltip</label>
       </object>
     </object>
+
+    <!-- View Menu -->
     <object class="wxMenu" name="view_menu">
       <label>&amp;View</label>
       <style>wxMENU_TEAROFF</style>
@@ -333,9 +335,9 @@
         <label>&amp;Debugger Pane</label>
         <checkable>1</checkable>
       </object>
-      <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-      <object class="wxMenuItem" name="show_terminal_pane">
-        <label>&amp;Show Builtin Terminal</label>
+      <object class="wxMenuItem" name="show_minimap">
+        <label>&amp;Show MiniMap View</label>
+        <checkable>1</checkable>
       </object>
       <object class="wxMenuItem" name="wxID_SEPARATOR"/>
       <object class="wxMenuItem" name="toggle_panes">

@@ -90,6 +90,7 @@
 #include "imanager.h"
 #include "localstable.h"
 #include "macros.h"
+#include "mainbook.h"
 #include "manager.h"
 #include "navigationmanager.h"
 #include "newworkspacedlg.h"
@@ -351,6 +352,8 @@ EVT_MENU(wxID_ZOOM_OUT, clMainFrame::DispatchCommandEvent)
 EVT_UPDATE_UI(wxID_ZOOM_OUT, clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(wxID_ZOOM_IN, clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(wxID_ZOOM_OUT, clMainFrame::OnFileExistUpdateUI)
+EVT_MENU(XRCID("show_minimap"), clMainFrame::OnShowMiniMap)
+EVT_UPDATE_UI(XRCID("show_minimap"), clMainFrame::OnShowMiniMapUI)
 
 EVT_UPDATE_UI(XRCID("word_wrap"), clMainFrame::DispatchUpdateUIEvent)
 EVT_UPDATE_UI(XRCID("toggle_fold"), clMainFrame::OnFileExistUpdateUI)
@@ -6307,3 +6310,22 @@ void clMainFrame::OnAiSettings(wxCommandEvent& e)
 }
 
 void clMainFrame::OnAiAvailableUI(wxUpdateUIEvent& e) { e.Enable(llm::Manager::GetInstance().IsAvailable()); }
+
+void clMainFrame::OnShowMiniMap(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+#if wxHAS_MINIMAP
+    GetMainBook()->SetShowMiniMap(event.IsChecked());
+#endif
+}
+
+void clMainFrame::OnShowMiniMapUI(wxUpdateUIEvent& event)
+{
+#if wxHAS_MINIMAP
+    event.Enable(true);
+    event.Check(GetMainBook()->IsShowMiniMap());
+#else
+    event.Enable(false);
+    event.Check(false);
+#endif
+}

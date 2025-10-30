@@ -92,6 +92,8 @@ MainBook::MainBook(wxWindow* parent)
         parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, get_border_simple_theme_aware_bit() | wxTAB_TRAVERSAL);
     Hide();
 
+    m_showMiniMap = clConfig::Get().Read("mainbook.show_minimap", m_showMiniMap);
+    
     CreateGuiControls();
     ConnectEvents();
 }
@@ -1296,7 +1298,7 @@ wxStyledTextCtrlMiniMap* MainBook::CreateMinimapForEditor(wxStyledTextCtrl* ctrl
 
 void MainBook::SelectMinimapForEditor(wxStyledTextCtrl* ctrl)
 {
-    if (ctrl == nullptr) {
+    if (ctrl == nullptr || !m_showMiniMap) {
         // Hide the minimap view
         if (m_mainSplitter->IsSplit()) {
             m_mainSplitter->Unsplit(m_miniMapsBook);
@@ -1329,6 +1331,15 @@ void MainBook::SelectMinimapForEditor(wxStyledTextCtrl* ctrl)
         m_mainSplitter->SetSashPosition(-FromDIP(200));
     }
 }
+
+void MainBook::SetShowMiniMap(bool b)
+{
+    m_showMiniMap = b;
+    clConfig::Get().Write("mainbook.show_minimap", m_showMiniMap);
+    auto ctrl = !m_showMiniMap ? nullptr : dynamic_cast<wxStyledTextCtrl*>(m_book->GetCurrentPage());
+    SelectMinimapForEditor(ctrl);
+}
+
 #endif
 
 void MainBook::DoUpdateNotebookTheme() {}

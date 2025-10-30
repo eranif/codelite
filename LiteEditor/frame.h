@@ -474,6 +474,8 @@ protected:
     void OnToggleMinimalViewUI(wxUpdateUIEvent& event);
     void OnShowStatusBar(wxCommandEvent& event);
     void OnShowStatusBarUI(wxUpdateUIEvent& event);
+    void OnShowMiniMap(wxCommandEvent& event);
+    void OnShowMiniMapUI(wxUpdateUIEvent& event);
     void OnShowToolbar(wxCommandEvent& event);
     void OnShowToolbarUI(wxUpdateUIEvent& event);
     void OnShowMenuBar(wxCommandEvent& event);

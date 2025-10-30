@@ -27,7 +27,6 @@
 
 #include "BreakpointsView.hpp"
 #include "ColoursAndFontsManager.h"
-#include "CompilersFoundDlg.h"
 #include "CustomControls/PromptEditorDlg.hpp"
 #include "Debugger/DebuggerToolBar.h"
 #include "Debugger/debuggermanager.h"
@@ -60,7 +59,6 @@
 #include "clLocaleManager.hpp"
 #include "clSTCHelper.hpp"
 #include "clSingleChoiceDialog.h"
-#include "clThemedTreeCtrl.h"
 #include "clToolBarButtonBase.h"
 #include "clWorkspaceManager.h"
 #include "cl_aui_dock_art.h"
@@ -116,7 +114,6 @@
 #include "workspacetab.h"
 #include "wxCodeCompletionBoxManager.h"
 #include "wxCustomControls.hpp"
-#include "wxCustomStatusBar.h"
 
 #include <wx/bookctrl.h>
 #include <wx/busyinfo.h>

@@ -39,6 +39,14 @@
 #include <wx/aui/auibook.h>
 #include <wx/panel.h>
 
+#if wxCHECK_VERSION(3, 3, 0)
+#define wxHAS_MINIMAP 1
+#include <wx/simplebook.h>
+#include <wx/stc/minimap.h>
+#else
+#define wxHAS_MINIMAP 0
+#endif
+
 class FilesModifiedDlg;
 
 class IEditor;
@@ -278,6 +286,49 @@ private:
     int FindEditorIndexByFullPath(const wxString& fullpath);
     void DoRestoreSession(const SessionEntry& entry);
 
+#if wxHAS_MINIMAP
+    /**
+     * Selects and displays the minimap corresponding to the given editor control.
+     *
+     * If {@code ctrl} is {@code nullptr}, the minimap view is hidden. Otherwise, the method
+     * searches for a minimap whose client data matches {@code ctrl}. If found, that
+     * minimap is made the current selection. If not found, a new minimap is created,
+     * added to the book, and the split pane is adjusted to make the minimap visible.
+     *
+     * @param ctrl the editor control to associate with a minimap; may be {@code nullptr}
+     *             to hide the minimap view.
+     */
+    void SelectMinimapForEditor(wxStyledTextCtrl* ctrl);
+
+    /**
+     * @brief Creates a wxStyledTextCtrlMiniMap for the given editor.
+     *
+     * This function constructs a new wxStyledTextCtrlMiniMap, associates it
+     * with the provided wxStyledTextCtrl, stores the editor as client data,
+     * and copies the editor's styles to the minimap.
+     *
+     * @param ctrl Pointer to the wxStyledTextCtrl editor for which the minimap is created.
+     * @return Pointer to the newly created wxStyledTextCtrlMiniMap.
+     * @see wxStyledTextCtrlMiniMap
+     * @see CopyStyles
+     */
+    wxStyledTextCtrlMiniMap* CreateMinimapForEditor(wxStyledTextCtrl* ctrl);
+
+    /**
+     * @brief Copies style attributes from a source {@code wxStyledTextCtrl} to a target {@code
+     * wxStyledTextCtrlMiniMap}.
+     *
+     * This function iterates over all style indices (0 to {@code wxSTC_STYLE_MAX-1}) and copies the foreground and
+     * background colours from the source control to the target control. If either {@code src} or {@code target} is
+     * {@code nullptr}, the function returns immediately without performing any copying.
+     *
+     * @param src    Pointer to the source {@code wxStyledTextCtrl} from which style information is retrieved.
+     * @param target Pointer to the target {@code wxStyledTextCtrlMiniMap} to which style information is applied.
+     */
+    void CopyStyles(wxStyledTextCtrl* src, wxStyledTextCtrlMiniMap* target);
+
+#endif
+
     FileHistory m_recentFiles;
     clEditorBar* m_navBar{nullptr};
     MainNotebook* m_book{nullptr};
@@ -290,6 +341,11 @@ private:
     QuickFindBar* m_findBar{nullptr};
     std::unordered_map<wxString, CallbackVec_t> m_callbacksTable;
     bool m_initDone{false};
+
+#if wxHAS_MINIMAP
+    wxSplitterWindow* m_mainSplitter{nullptr};
+    wxSimplebook* m_miniMapsBook{nullptr};
+#endif
 };
 
 #endif // MAINBOOK_H

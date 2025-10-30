@@ -100,20 +100,34 @@ void MainBook::CreateGuiControls()
 {
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
     SetSizer(sz);
-
     long style = kNotebook_NewButton | kNotebook_AllowDnD | kNotebook_CloseButtonOnActiveTab |
                  kNotebook_ShowFileListButton | kNotebook_EnableNavigationEvent | kNotebook_MouseMiddleClickClosesTab;
     if (!EditorConfigST::Get()->GetOptions()->IsTabHasXButton()) {
         style &= ~kNotebook_CloseButtonOnActiveTab;
     }
 
+#if wxHAS_MINIMAP
+    m_mainSplitter = new wxSplitterWindow(
+        this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxSP_VERTICAL | wxSP_3DSASH | wxNO_BORDER | wxSP_LIVE_UPDATE);
+    GetSizer()->Add(m_mainSplitter, wxSizerFlags(1).Expand());
+    // load the notebook style from the configuration settings
+    m_book = new MainNotebook(m_mainSplitter, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+    m_miniMapsBook = new wxSimplebook(m_mainSplitter);
+    m_mainSplitter->SplitVertically(m_book, m_miniMapsBook);
+    m_mainSplitter->SetMinimumPaneSize(FromDIP(10));
+    Bind(wxEVT_SIZE, [&](wxSizeEvent& event) {
+        m_mainSplitter->SetSashPosition(-FromDIP(200));
+        event.Skip();
+    });
+#else
     // load the notebook style from the configuration settings
     m_book = new MainNotebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+    sz->Add(m_book, 1, wxEXPAND);
+#endif
+
 #if MAINBOOK_AUIBOOK
     m_book->SetCanHaveCloseButton(true);
 #endif
-
-    sz->Add(m_book, 1, wxEXPAND);
     sz->Layout();
 }
 
@@ -233,6 +247,10 @@ void MainBook::OnPageClosed(wxBookCtrlEvent& e)
         clMainFrame::Get()->SetFrameTitle(nullptr);
     }
     DoUpdateNotebookTheme();
+
+#if wxHAS_MINIMAP
+    SelectMinimapForEditor(dynamic_cast<clEditor*>(m_book->GetCurrentPage()));
+#endif
 }
 
 void MainBook::OnProjectFileAdded(clCommandEvent& e)
@@ -1242,7 +1260,76 @@ void MainBook::OnPageChanged(wxBookCtrlEvent& e)
         editors.at(i)->DoCancelCalltip();
     }
     DoUpdateNotebookTheme();
+#if wxHAS_MINIMAP
+    wxWindow* curpage = m_book->GetCurrentPage();
+    auto editor = curpage == nullptr ? nullptr : dynamic_cast<clEditor*>(curpage);
+    if (editor) {
+        // an editor
+        auto ctrl = editor->GetCtrl();
+        SelectMinimapForEditor(ctrl);
+    } else {
+        SelectMinimapForEditor(nullptr);
+    }
+#endif
 }
+
+#if wxHAS_MINIMAP
+void MainBook::CopyStyles(wxStyledTextCtrl* src, wxStyledTextCtrlMiniMap* target)
+{
+    if (src == nullptr || target == nullptr) {
+        return;
+    }
+
+    for (int style = 0; style < wxSTC_STYLE_MAX; ++style) {
+        target->StyleSetForeground(style, src->StyleGetForeground(style));
+        target->StyleSetBackground(style, src->StyleGetBackground(style));
+    }
+}
+
+wxStyledTextCtrlMiniMap* MainBook::CreateMinimapForEditor(wxStyledTextCtrl* ctrl)
+{
+    auto minimap = new wxStyledTextCtrlMiniMap(m_miniMapsBook, ctrl);
+    minimap->SetClientData(ctrl);
+    CopyStyles(ctrl, minimap);
+    return minimap;
+}
+
+void MainBook::SelectMinimapForEditor(wxStyledTextCtrl* ctrl)
+{
+    if (ctrl == nullptr) {
+        // Hide the minimap view
+        if (m_mainSplitter->IsSplit()) {
+            m_mainSplitter->Unsplit(m_miniMapsBook);
+        }
+        return;
+    }
+
+    // Locate the mini-map associated with this editor and select it.
+    for (size_t i = 0; i < m_miniMapsBook->GetPageCount(); ++i) {
+        auto minimap = m_miniMapsBook->GetPage(i);
+        if (minimap == nullptr) {
+            continue;
+        }
+
+        if (static_cast<wxWindow*>(minimap->GetClientData()) == ctrl) {
+            // found it
+            m_miniMapsBook->ChangeSelection(i);
+            return;
+        }
+    }
+
+    // If we reached here, we could not locate a mini-map for the editor, add one.
+
+    auto minimap = CreateMinimapForEditor(ctrl);
+    m_miniMapsBook->AddPage(minimap, wxEmptyString, true);
+
+    // And finally, ensure that the mini-map view is visible.
+    if (!m_mainSplitter->IsSplit()) {
+        m_mainSplitter->SplitVertically(m_book, m_miniMapsBook);
+        m_mainSplitter->SetSashPosition(-FromDIP(200));
+    }
+}
+#endif
 
 void MainBook::DoUpdateNotebookTheme() {}
 wxWindow* MainBook::GetCurrentPage() { return m_book->GetCurrentPage(); }
@@ -1551,6 +1638,19 @@ void MainBook::DoUpdateEditorsThemes()
         // request for new semantics tokens for the active editor
         LSP::Manager::GetInstance().SemanticTokens(GetActiveEditor());
     }
+
+#if wxHAS_MINIMAP
+    for (size_t page_index = 0; page_index < m_miniMapsBook->GetPageCount(); ++page_index) {
+        wxStyledTextCtrlMiniMap* mm = dynamic_cast<wxStyledTextCtrlMiniMap*>(m_miniMapsBook->GetPage(page_index));
+        if (mm == nullptr || mm->GetClientData() == nullptr) {
+            continue;
+        }
+
+        // Copy the settings from the main editor to the minimap.
+        auto editor = reinterpret_cast<wxStyledTextCtrl*>(mm->GetClientData());
+        CopyStyles(editor, mm);
+    }
+#endif
 }
 
 void MainBook::OnSettingsChanged(wxCommandEvent& e)
@@ -1610,12 +1710,20 @@ void MainBook::DoShowWindow(wxWindow* win, bool show)
 void MainBook::ShowWelcomePage(bool show)
 {
     if (show) {
+#if wxHAS_MINIMAP
+        GetSizer()->Show(m_mainSplitter, false);
+#else
         GetSizer()->Show(m_book, false);
+#endif
         GetSizer()->Show(m_welcomePage, true);
         m_welcomePage->SelectSomething();
 
     } else {
+#if wxHAS_MINIMAP
+        GetSizer()->Show(m_mainSplitter, true);
+#else
         GetSizer()->Show(m_book, true);
+#endif
         GetSizer()->Show(m_welcomePage, false);
     }
     GetSizer()->Layout();
@@ -1663,6 +1771,11 @@ void MainBook::OnEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
     IEditor* editor = GetActiveEditor();
+
+#if wxHAS_MINIMAP
+    SelectMinimapForEditor(editor == nullptr ? nullptr : editor->GetCtrl());
+#endif
+
     if (editor) {
         m_findBar->SetEditor(editor->GetCtrl());
         return;
@@ -1674,6 +1787,11 @@ void MainBook::OnAllEditorClosed(wxCommandEvent& event)
 {
     event.Skip();
     m_findBar->SetEditor(NULL);
+
+#if wxHAS_MINIMAP
+    m_miniMapsBook->DeleteAllPages();
+    SelectMinimapForEditor(nullptr);
+#endif
 }
 
 void MainBook::SetFindBar(QuickFindBar* findBar)

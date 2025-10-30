@@ -1192,7 +1192,7 @@ void clMainFrame::AddKeyboardAccelerators()
                          {"display_eol", _("Display EOL")},
                          {"next_tab", _("Next tab"), "Ctrl-Alt-RIGHT"},
                          {"prev_tab", _("Previous tab"), "Ctrl-Alt-LEFT"},
-                         {"full_screen", _("Full Screen..."), "Alt-M"},
+                         {"full_screen", _("Full Screen...")},
                          {"output_pane", _("Output Pane"), "Ctrl-`"},
                          {"show_terminal_pane", _("Show Builtin Terminal"), "F6"},
                          {"workspace_pane", _("Workspace Pane"), "Ctrl-Alt-W"},
@@ -1204,6 +1204,7 @@ void clMainFrame::AddKeyboardAccelerators()
                          {"show_menu_bar", _("Show Menu Bar"), "Alt-`"},
 #endif
                          {"hide_status_bar", _("Show Status Bar")},
+                         {"show_minimap", _("Show MiniMap View"), "Alt-M"},
                          {"hide_tool_bar", _("Show Tool Bar"), "F1"}});
     mgr->AddAccelerator(_("View | Show Whitespace"),
                         {{"whitepsace_invisible", _("Invisible"), "Alt-F1"},

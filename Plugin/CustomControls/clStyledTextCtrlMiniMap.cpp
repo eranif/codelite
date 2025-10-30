@@ -21,6 +21,7 @@
 #if wxCHECK_VERSION(3, 3, 0)
 
 #include <functional>
+#include <wx/dcbuffer.h>
 #include <wx/dcgraph.h>
 #include <wx/log.h>
 #include <wx/math.h>
@@ -451,7 +452,7 @@ void clStyledTextCtrlMiniMap::OnMapPaint(wxPaintEvent& event)
 
     // While dragging the visible zone is shown in an overlay.
     if (!IsDragging()) {
-        wxPaintDC dc(this);
+        wxAutoBufferedPaintDC dc(this);
 
         // We need to use wxGraphicsContext to draw the translucent
         // rectangle.

@@ -1911,7 +1911,7 @@ wxString MainBook::CreateLabel(const wxFileName& fn, bool modified) const
 #if CL_USE_NATIVEBOOK || MAINBOOK_AUIBOOK
     if (modified) {
 #if defined(__WXMSW__) || defined(__WXMAC__)
-        label.Prepend(wxT("\u25CF"));
+        label.Prepend(wxT(" \U0001F4BE "));
 #else
         label.Prepend(wxT(" * "));
 #endif

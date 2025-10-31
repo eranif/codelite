@@ -11,14 +11,20 @@ others:
 - editor: add an api to add end of line annotations
 - git: explore the option of using the new api of end of line annotations to replace the nav bar commit info ^^
 - dap: support stdio connection based
+- dap: support attach to process
 - SFTP plugin: re-use the remote find in files dialog
 - SFTP plugin: use clTerminalViewCtrl for the log view
 - Spell Checker: enable it for the commit dialog
+- git reset: selection does not always consider all selected items.
+- build tab: add AI option to the context menu.
 
+LSP:
+----
 
+Wrong path handling for example: "/c%3A/..."
 
 AI-powered IDE:
 --------
 
 - MarkdownStyler: mark gcc style lines "file:line" as hyperlink and clickable.
-
+- Extend the LUA API to support more options

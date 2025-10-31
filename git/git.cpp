@@ -252,8 +252,7 @@ GitPlugin::GitPlugin(IManager* manager)
     // Connect the file context menu event handlers
     m_eventHandler->Connect(
         XRCID("git_add_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileAddSelected), NULL, this);
-    m_eventHandler->Connect(
-        XRCID("git_reset_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileResetSelected), NULL, this);
+    m_eventHandler->Bind(wxEVT_MENU, &GitPlugin::OnFileResetSelected, this, XRCID("git_reset_file"));
     m_eventHandler->Connect(
         XRCID("git_diff_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileDiffSelected), NULL, this);
     m_eventHandler->Connect(XRCID("git_commit_list_file"),
@@ -565,8 +564,7 @@ void GitPlugin::UnPlug()
     /*Context Menu*/
     m_eventHandler->Disconnect(
         XRCID("git_add_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileAddSelected), NULL, this);
-    m_eventHandler->Disconnect(
-        XRCID("git_reset_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileResetSelected), NULL, this);
+    m_eventHandler->Unbind(wxEVT_MENU, &GitPlugin::OnFileResetSelected, this, XRCID("git_reset_file"));
     m_eventHandler->Disconnect(
         XRCID("git_diff_file"), wxEVT_MENU, wxCommandEventHandler(GitPlugin::OnFileDiffSelected), NULL, this);
     m_eventHandler->Disconnect(XRCID("git_commit_list_file"),

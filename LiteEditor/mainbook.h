@@ -336,9 +336,29 @@ private:
     clStyledTextCtrlMiniMap* SelectMinimapForEditor(wxStyledTextCtrl* ctrl);
 
     /**
-     * @brief Selects and displays a minimap for the current page.
+     * @brief Selects and displays the minimap for the currently active page in the notebook.
      *
-     * The function does not return any value.
+     * This method retrieves the current page from the notebook control, attempts to cast it to a
+     * clEditor instance, and updates the minimap view accordingly. If the current page is not an
+     * editor or no page is active, the minimap is cleared by passing nullptr to SelectMinimapForEditor.
+     *
+     * @param None
+     *
+     * @return void This function does not return a value.
+     *
+     * @note This function assumes that m_book is a valid pointer to a notebook control. If the
+     *       current page is an editor, its associated control is passed to SelectMinimapForEditor;
+     *       otherwise, nullptr is passed to clear the minimap.
+     *
+     * @code
+     * // Example: Update minimap when switching to a new page
+     * MainBook* mainBook = GetMainBook();
+     * mainBook->SelectMinimapForCurrentPage();
+     * // The minimap will now display the current editor's overview, or be cleared if no editor is active
+     * @endcode
+     *
+     * @see SelectMinimapForEditor(wxStyledTextCtrl*)
+     * @see clEditor
      */
     void SelectMinimapForCurrentPage();
 
@@ -416,21 +436,30 @@ private:
     int FindMiniMapIndexForEditor(wxStyledTextCtrl* ctrl);
 
     /**
-     * Checks if the mini-map for the currently active editor page in the book is synchronized.
-     * If the mini-map is not shown, it immediately returns true. Otherwise, it verifies if the current editor's
-     * mini-map index matches its selected index in the mini-maps book.
+     * @brief Checks whether the mini-map view is synchronized with the currently active editor.
      *
-     * @param none
+     * This function verifies that the mini-map book control is displaying the correct mini-map
+     * corresponding to the currently selected editor page. If the mini-map is hidden, it is
+     * considered in sync. If no editor is active, the mini-map should be hidden to be in sync.
      *
-     * @return true if the mini-map synchronization check passes; false otherwise.
+     * @return true if the mini-map is synchronized with the current editor (or if the mini-map
+     *         is hidden), false otherwise.
      *
-     * @throws none
+     * @note This method belongs to the MainBook class, which manages the main editor notebook
+     *       and its associated mini-map view.
      *
-     * Example:
-     * // Assuming MainBook::m_miniMapsBook and m_book are initialized and valid pointers.
-     * bool isSync = MainBook::IsMiniMapInSync();
+     * @see FindMiniMapIndexForEditor
+     * @see m_miniMapsBook
+     * @see m_book
      *
-     * See also: MiniMap, EditorPage
+     * Example usage:
+     * @code
+     * MainBook* mainBook = GetMainBook();
+     * if (!mainBook->IsMiniMapInSync()) {
+     *     // Synchronize the mini-map with the current editor
+     *     mainBook->SyncMiniMap();
+     * }
+     * @endcode
      */
     bool IsMiniMapInSync();
 

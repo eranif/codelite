@@ -267,11 +267,13 @@ void MainBook::OnPageClosing(wxBookCtrlEvent& e)
     if (editor) {
         if (AskUserToSave(editor)) {
             SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
+#if wxHAS_MINIMAP
             // Remove the mini-map associated with this editor.
             int where = FindMiniMapIndexForEditor(editor->GetCtrl());
             if (where != wxNOT_FOUND) {
                 m_miniMapsBook->DeletePage(where);
             }
+#endif
         } else {
             e.Veto();
         }

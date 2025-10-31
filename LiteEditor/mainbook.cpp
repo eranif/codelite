@@ -1325,15 +1325,7 @@ void MainBook::OnPageChanged(wxBookCtrlEvent& e)
     }
     DoUpdateNotebookTheme();
 #if wxHAS_MINIMAP
-    wxWindow* curpage = m_book->GetCurrentPage();
-    auto editor = curpage == nullptr ? nullptr : dynamic_cast<clEditor*>(curpage);
-    if (editor) {
-        // an editor
-        auto ctrl = editor->GetCtrl();
-        SelectMinimapForEditor(ctrl);
-    } else {
-        SelectMinimapForEditor(nullptr);
-    }
+    SelectMinimapForCurrentPage();
 #endif
 }
 
@@ -1356,6 +1348,19 @@ void MainBook::ShowMiniMap(bool show)
             m_miniMapsBook->Hide();
             SendSizeEvent();
         }
+    }
+}
+
+void MainBook::SelectMinimapForCurrentPage()
+{
+    wxWindow* curpage = m_book->GetCurrentPage();
+    auto editor = curpage == nullptr ? nullptr : dynamic_cast<clEditor*>(curpage);
+    if (editor) {
+        // an editor
+        auto ctrl = editor->GetCtrl();
+        SelectMinimapForEditor(ctrl);
+    } else {
+        SelectMinimapForEditor(nullptr);
     }
 }
 
@@ -1384,14 +1389,14 @@ clStyledTextCtrlMiniMap* MainBook::SelectMinimapForEditor(wxStyledTextCtrl* ctrl
     static size_t counter{0};
     wxString title = "Minimap_" + std::to_string(++counter);
     m_miniMapsBook->AddPage(minimap, title, false);
-    CallAfter(&MainBook::MiniMapChanegSelection, minimap);
+    CallAfter(&MainBook::MiniMapChangeSelection, minimap);
 
     // And finally, ensure that the mini-map view is visible.
     ShowMiniMap(true);
     return minimap;
 }
 
-void MainBook::MiniMapChanegSelection(wxWindow* win)
+void MainBook::MiniMapChangeSelection(wxWindow* win)
 {
     int where = m_miniMapsBook->FindPage(win);
     if (where != wxNOT_FOUND) {
@@ -1423,6 +1428,26 @@ void MainBook::SetShowMiniMap(bool b)
     clConfig::Get().Write("mainbook.show_minimap", m_showMiniMap);
     auto ctrl = !m_showMiniMap ? nullptr : dynamic_cast<wxStyledTextCtrl*>(m_book->GetCurrentPage());
     SelectMinimapForEditor(ctrl);
+}
+
+bool MainBook::IsMiniMapInSync()
+{
+    if (!m_miniMapsBook->IsShown()) {
+        return true;
+    }
+
+    auto ctrl = dynamic_cast<clEditor*>(m_book->GetCurrentPage());
+    if (ctrl == nullptr) {
+        // No editor? the mini-map should be hidden.
+        return m_miniMapsBook->IsShown() == false;
+    }
+
+    auto stc = ctrl->GetCtrl();
+    int where = FindMiniMapIndexForEditor(stc);
+    if (where == wxNOT_FOUND) {
+        return false;
+    }
+    return where == m_miniMapsBook->GetSelection();
 }
 
 #endif
@@ -2043,6 +2068,11 @@ void MainBook::OnIdle(wxIdleEvent& event)
     static clIdleEventThrottler event_throttler{200};
     if (!event_throttler.CanHandle()) {
         return;
+    }
+
+    // Make sure that the mini-map & the main edit are in-sync
+    if (!IsMiniMapInSync()) {
+        SelectMinimapForCurrentPage();
     }
 
     // avoid processing if not really needed

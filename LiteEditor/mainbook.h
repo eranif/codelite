@@ -336,6 +336,13 @@ private:
     clStyledTextCtrlMiniMap* SelectMinimapForEditor(wxStyledTextCtrl* ctrl);
 
     /**
+     * @brief Selects and displays a minimap for the current page.
+     *
+     * The function does not return any value.
+     */
+    void SelectMinimapForCurrentPage();
+
+    /**
      * @brief Creates a clStyledTextCtrlMiniMap for the given editor.
      *
      * This function constructs a new clStyledTextCtrlMiniMap, associates it
@@ -377,7 +384,7 @@ private:
      * @see wxNotebook::ChangeSelection()
      * @see wxNotebook::FindPage()
      */
-    void MiniMapChanegSelection(wxWindow* win);
+    void MiniMapChangeSelection(wxWindow* win);
 
     /**
      * @brief Finds the index of the mini-map associated with a given editor control.
@@ -407,6 +414,26 @@ private:
      * @endcode
      */
     int FindMiniMapIndexForEditor(wxStyledTextCtrl* ctrl);
+
+    /**
+     * Checks if the mini-map for the currently active editor page in the book is synchronized.
+     * If the mini-map is not shown, it immediately returns true. Otherwise, it verifies if the current editor's
+     * mini-map index matches its selected index in the mini-maps book.
+     *
+     * @param none
+     *
+     * @return true if the mini-map synchronization check passes; false otherwise.
+     *
+     * @throws none
+     *
+     * Example:
+     * // Assuming MainBook::m_miniMapsBook and m_book are initialized and valid pointers.
+     * bool isSync = MainBook::IsMiniMapInSync();
+     *
+     * See also: MiniMap, EditorPage
+     */
+    bool IsMiniMapInSync();
+
 #endif
 
     FileHistory m_recentFiles;

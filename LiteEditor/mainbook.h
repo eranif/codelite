@@ -360,8 +360,53 @@ private:
      */
     void ShowMiniMap(bool show);
 
+    /**
+     * @brief Changes the mini-map book selection to the page corresponding to the given window.
+     *
+     * This method searches for the specified window in the mini-maps book and changes the selection
+     * to that page without generating selection change events. If the window is not found, no action is taken.
+     *
+     * @param win The window whose corresponding mini-map page should be selected. Must be a valid wxWindow pointer
+     *            that exists as a page in the mini-maps book.
+     *
+     * @return void This method does not return a value.
+     *
+     * @note This method uses ChangeSelection() rather than SetSelection(), meaning no page change events
+     *       (such as wxEVT_NOTEBOOK_PAGE_CHANGED) will be fired.
+     *
+     * @see wxNotebook::ChangeSelection()
+     * @see wxNotebook::FindPage()
+     */
     void MiniMapChanegSelection(wxWindow* win);
 
+    /**
+     * @brief Finds the index of the mini-map associated with a given editor control.
+     *
+     * This method iterates through all pages in the mini-maps notebook to locate the
+     * mini-map widget whose client data matches the provided editor control pointer.
+     *
+     * @param ctrl Pointer to the wxStyledTextCtrl editor control for which to find the
+     *             corresponding mini-map index.
+     *
+     * @return The zero-based index of the mini-map page if found, or wxNOT_FOUND if no
+     *         matching mini-map exists.
+     *
+     * @note Pages that are not mini-map controls (i.e., cannot be cast to
+     *       clStyledTextCtrlMiniMap*) are silently skipped during iteration.
+     *
+     * @see clStyledTextCtrlMiniMap
+     * @see MainBook::m_miniMapsBook
+     *
+     * @par Example:
+     * @code
+     * wxStyledTextCtrl* editor = GetActiveEditor();
+     * int miniMapIndex = FindMiniMapIndexForEditor(editor);
+     * if (miniMapIndex != wxNOT_FOUND) {
+     *     m_miniMapsBook->SetSelection(miniMapIndex);
+     * }
+     * @endcode
+     */
+    int FindMiniMapIndexForEditor(wxStyledTextCtrl* ctrl);
 #endif
 
     FileHistory m_recentFiles;

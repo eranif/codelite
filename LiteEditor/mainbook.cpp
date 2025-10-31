@@ -98,11 +98,13 @@ public:
         SetClientData(edit);
 
         Bind(wxEVT_SET_FOCUS, [edit](wxFocusEvent& e) {
-            wxUnusedVar(e);
-            edit->CallAfter(&wxStyledTextCtrl::SetFocus);
+            if (e.GetWindow() == edit) {
+                edit->CallAfter(&wxStyledTextCtrl::SetFocus);
+            } else {
+                e.Skip();
+            }
         });
     }
-
     ~MyMiniMap() override = default;
 };
 #endif
@@ -265,6 +267,11 @@ void MainBook::OnPageClosing(wxBookCtrlEvent& e)
     if (editor) {
         if (AskUserToSave(editor)) {
             SendCmdEvent(wxEVT_EDITOR_CLOSING, (IEditor*)editor);
+            // Remove the mini-map associated with this editor.
+            int where = FindMiniMapIndexForEditor(editor->GetCtrl());
+            if (where != wxNOT_FOUND) {
+                m_miniMapsBook->DeletePage(where);
+            }
         } else {
             e.Veto();
         }
@@ -1365,19 +1372,11 @@ clStyledTextCtrlMiniMap* MainBook::SelectMinimapForEditor(wxStyledTextCtrl* ctrl
         return nullptr;
     }
 
-    // Locate the mini-map associated with this editor and select it.
-    for (size_t index = 0; index < m_miniMapsBook->GetPageCount(); ++index) {
-        auto page = m_miniMapsBook->GetPage(index);
-
-        auto minimap = dynamic_cast<clStyledTextCtrlMiniMap*>(page);
-        if (minimap == nullptr) {
-            continue;
-        }
-        if (reinterpret_cast<wxWindow*>(minimap->GetClientData()) == ctrl) {
-            ShowMiniMap(true);
-            m_miniMapsBook->SetSelection(index);
-            return minimap;
-        }
+    auto where = FindMiniMapIndexForEditor(ctrl);
+    if (where != wxNOT_FOUND) {
+        ShowMiniMap(true);
+        m_miniMapsBook->SetSelection(where);
+        return dynamic_cast<clStyledTextCtrlMiniMap*>(m_miniMapsBook->GetPage(where));
     }
 
     // If we reached here, we could not locate a mini-map for the editor, add one.
@@ -1398,6 +1397,24 @@ void MainBook::MiniMapChanegSelection(wxWindow* win)
     if (where != wxNOT_FOUND) {
         m_miniMapsBook->ChangeSelection(where);
     }
+}
+
+int MainBook::FindMiniMapIndexForEditor(wxStyledTextCtrl* ctrl)
+{
+    // Locate the mini-map associated with this editor and select it.
+    for (size_t index = 0; index < m_miniMapsBook->GetPageCount(); ++index) {
+        auto page = m_miniMapsBook->GetPage(index);
+
+        auto minimap = dynamic_cast<clStyledTextCtrlMiniMap*>(page);
+        if (minimap == nullptr) {
+            continue;
+        }
+
+        if (reinterpret_cast<wxWindow*>(minimap->GetClientData()) == ctrl) {
+            return static_cast<int>(index);
+        }
+    }
+    return wxNOT_FOUND;
 }
 
 void MainBook::SetShowMiniMap(bool b)
@@ -1971,6 +1988,10 @@ clEditor* MainBook::OpenFileAsync(const wxString& file_name, std::function<void(
         if (editor) {
             push_callback(std::move(callback), real_path);
         }
+    }
+
+    if (editor) {
+        editor->GetCtrl()->CallAfter(&clEditor::SetFocus);
     }
     return editor;
 }

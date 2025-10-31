@@ -208,6 +208,7 @@ void BitmapLoader::CreateMimeList()
         m_mimeBitmaps.AddBitmap(LoadBitmap("json", 16), FileExtManager::TypeJSON);
         m_mimeBitmaps.AddBitmap(LoadBitmap("phar", 16), FileExtManager::TypePhar);
         m_mimeBitmaps.AddBitmap(LoadBitmap("dart", 16), FileExtManager::TypeDart);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("lua", 16), FileExtManager::TypeLua);
 
         // Non mime bitmaps
         m_mimeBitmaps.AddBitmap(LoadBitmap("file_save", 16), kSave);

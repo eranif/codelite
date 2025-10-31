@@ -23,3 +23,5 @@ AI-powered IDE:
 
 - MarkdownStyler: mark gcc style lines "file:line" as hyperlink and clickable.
 - Extend the LUA API to support more options
+
+Prepare release notes per version (e.g. 18.2.0, 18.3.0 etc)

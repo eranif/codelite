@@ -47,19 +47,11 @@ public:
     {
     }
 
-    virtual ~clConfigItem()
-    {
-    }
+    virtual ~clConfigItem() {}
 
-    const wxString& GetName() const
-    {
-        return m_name;
-    }
+    const wxString& GetName() const { return m_name; }
 
-    void SetName(const wxString& name)
-    {
-        this->m_name = name;
-    }
+    void SetName(const wxString& name) { this->m_name = name; }
     virtual void FromJSON(const JSONItem& json) = 0;
     virtual JSONItem ToJSON() const = 0;
 };
@@ -134,32 +126,14 @@ public:
     wxArrayString MergeArrays(const wxArrayString& arr1, const wxArrayString& arr2) const;
     wxStringMap_t MergeStringMaps(const wxStringMap_t& map1, const wxStringMap_t& map2) const;
     // Workspace history
-    void AddRecentWorkspace(const wxString& filename)
-    {
-        DoAddRecentItem("RecentWorkspaces", filename);
-    }
-    wxArrayString GetRecentWorkspaces() const
-    {
-        return DoGetRecentItems("RecentWorkspaces");
-    }
-    void ClearRecentWorkspaces()
-    {
-        DoClearRecentItems("RecentWorkspaces");
-    }
+    void AddRecentWorkspace(const wxString& filename) { DoAddRecentItem("RecentWorkspaces", filename); }
+    wxArrayString GetRecentWorkspaces() const { return DoGetRecentItems("RecentWorkspaces"); }
+    void ClearRecentWorkspaces() { DoClearRecentItems("RecentWorkspaces"); }
 
     // File history
-    void AddRecentFile(const wxString& filename)
-    {
-        DoAddRecentItem("RecentFiles", filename);
-    }
-    wxArrayString GetRecentFiles() const
-    {
-        return DoGetRecentItems("RecentFiles");
-    }
-    void ClearRecentFiles()
-    {
-        DoClearRecentItems("RecentFiles");
-    }
+    void AddRecentFile(const wxString& filename) { DoAddRecentItem("RecentFiles", filename); }
+    wxArrayString GetRecentFiles() const { return DoGetRecentItems("RecentFiles"); }
+    void ClearRecentFiles() { DoClearRecentItems("RecentFiles"); }
 
     // Workspace tab order
     //------------------------------
@@ -221,7 +195,8 @@ public:
     //      my_struct.last_name = item["last_name"].toString();
     //  });
     // Note: if configFile is valid, `name` is ignored (see comment for Write() method above)
-    void Read(const wxString& name, std::function<void(const JSONItem& item)> deserialiser_func,
+    void Read(const wxString& name,
+              std::function<void(const JSONItem& item)> deserialiser_func,
               const wxFileName& configFile = {});
 
     // Quick Find Bar history

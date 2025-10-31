@@ -9,6 +9,7 @@ GitReleaseNotesGenerationDlg::GitReleaseNotesGenerationDlg(wxWindow* parent)
 
     GetSizer()->Fit(this);
     m_textCtrlFirstCommit->CallAfter(&wxTextCtrl::SetFocus);
+    m_checkBoxOneLine->SetValue(true);
     CenterOnParent();
 }
 

@@ -25,3 +25,5 @@ AI-powered IDE:
 - Extend the LUA API to support more options
 
 Prepare release notes per version (e.g. 18.2.0, 18.3.0 etc)
+
+When MiniMap view is visible, "auto-completion" 24/7 does not work.

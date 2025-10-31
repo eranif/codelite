@@ -413,10 +413,10 @@ wxString JSONItem::format(bool formatted) const
         return wxT("");
     }
 
-    char* p = formatted ? cJSON_Print(m_json) : cJSON_PrintUnformatted(m_json);
-    wxString s(p, wxConvUTF8);
+    auto p = formatted ? cJSON_Print(m_json) : cJSON_PrintUnformatted(m_json);
+    auto utf8_str = wxString::FromUTF8(p);
     free(p);
-    return s;
+    return utf8_str;
 }
 
 int JSONItem::toInt(int defaultVal) const
@@ -478,8 +478,8 @@ JSONItem& JSONItem::addProperty(const wxString& name, bool value)
 
 JSONItem& JSONItem::addProperty(const wxString& name, const wxString& value)
 {
-    const wxCharBuffer cb = value.mb_str(wxConvUTF8);
-    append(JSONItem(name, cb.data(), cb.length()));
+    const std::string cstr = value.ToStdString(wxConvUTF8);
+    append(JSONItem(name, cstr.data(), cstr.length()));
     return *this;
 }
 

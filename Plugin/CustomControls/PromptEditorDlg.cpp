@@ -1,10 +1,11 @@
 #include "PromptEditorDlg.hpp"
 
-#include "ColoursAndFontsManager.h"
 #include "MarkdownStyler.hpp"
 #include "ai/LLMManager.hpp"
 #include "file_logger.h"
 #include "globals.h"
+
+#include <wx/msgdlg.h>
 
 struct PromptData : public wxClientData {
     llm::PromptKind prompt_kind;
@@ -19,6 +20,18 @@ struct PromptData : public wxClientData {
 PromptEditorDlg::PromptEditorDlg(wxWindow* parent)
     : PromptEditorBaseDlg(parent)
 {
+    LoadPrompts();
+    SendSizeEvent();
+    m_splitter->SetSashPosition(FromDIP(250));
+    ::clSetDialogBestSizeAndPosition(this);
+}
+
+PromptEditorDlg::~PromptEditorDlg() {}
+
+void PromptEditorDlg::LoadPrompts()
+{
+    m_dvListCtrlPrompts->DeleteAllItems();
+    m_simpleBook->DeleteAllPages();
     size_t prompts_count = static_cast<size_t>(llm::PromptKind::kMax);
     for (size_t i = 0; i < prompts_count; ++i) {
         auto ctrl = new wxStyledTextCtrl(m_simpleBook);
@@ -38,12 +51,7 @@ PromptEditorDlg::PromptEditorDlg(wxWindow* parent)
     }
 
     CallAfter(&PromptEditorDlg::SelectRow, 0);
-    SendSizeEvent();
-    m_splitter->SetSashPosition(FromDIP(250));
-    ::clSetDialogBestSizeAndPosition(this);
 }
-
-PromptEditorDlg::~PromptEditorDlg() {}
 
 void PromptEditorDlg::OnSave(wxCommandEvent& event)
 {
@@ -98,4 +106,19 @@ void PromptEditorDlg::SelectRow(size_t row)
 
     m_simpleBook->SetSelection(row);
     m_dvListCtrlPrompts->SelectRow(row);
+}
+
+void PromptEditorDlg::OnDefaults(wxCommandEvent& event)
+{
+    if (::wxMessageBox(
+            _("This operation discard any changes you have done and restore it to their default values. Continue?"),
+            "CodeLite",
+            wxOK | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxCANCEL_DEFAULT | wxICON_WARNING) != wxYES) {
+        return;
+    }
+
+    wxUnusedVar(event);
+    llm::Manager::GetInstance().GetConfig().ResetPrompts();
+    llm::Manager::GetInstance().GetConfig().Save();
+    LoadPrompts();
 }

@@ -76,12 +76,13 @@ protected:
     wxDataViewListCtrl* m_dvListCtrlPrompts;
     wxPanel* m_splitterPageEditors;
     wxSimplebook* m_simpleBook;
-    wxStdDialogButtonSizer* m_stdBtnSizer28;
-    wxButton* m_button29;
-    wxButton* m_button30;
+    wxButton* m_button51;
+    wxButton* m_button49;
+    wxButton* m_button50;
 
 protected:
     virtual void OnPromptChanged(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnDefaults(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSave(wxCommandEvent& event) { event.Skip(); }
     virtual void OnSaveUI(wxUpdateUIEvent& event) { event.Skip(); }
 
@@ -91,11 +92,14 @@ public:
     wxSimplebook* GetSimpleBook() { return m_simpleBook; }
     wxPanel* GetSplitterPageEditors() { return m_splitterPageEditors; }
     wxSplitterWindow* GetSplitter() { return m_splitter; }
+    wxButton* GetButton51() { return m_button51; }
+    wxButton* GetButton49() { return m_button49; }
+    wxButton* GetButton50() { return m_button50; }
     PromptEditorBaseDlg(wxWindow* parent,
                         wxWindowID id = wxID_ANY,
                         const wxString& title = _("Prompt Editor"),
                         const wxPoint& pos = wxDefaultPosition,
-                        const wxSize& size = wxSize(500, 300),
+                        const wxSize& size = wxSize(800, 600),
                         long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~PromptEditorBaseDlg();
 };

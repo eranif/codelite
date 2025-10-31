@@ -165,12 +165,13 @@ PromptEditorBaseDlg::PromptEditorBaseDlg(
                                                  wxID_ANY,
                                                  wxDefaultPosition,
                                                  wxDLG_UNIT(m_splitterPageLabels, wxSize(-1, -1)),
-                                                 wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
+                                                 wxDV_SINGLE);
     m_dvListCtrlPrompts->SetFocus();
 
     boxSizer43->Add(m_dvListCtrlPrompts, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrlPrompts->AppendTextColumn(_("Labels"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, 0);
+    m_dvListCtrlPrompts->AppendTextColumn(
+        _("Available Prompts"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, 0);
     m_splitterPageEditors =
         new wxPanel(m_splitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_splitter->SplitVertically(m_splitterPageLabels, m_splitterPageEditors, 250);
@@ -185,17 +186,23 @@ PromptEditorBaseDlg::PromptEditorBaseDlg(
 
     boxSizer44->Add(m_simpleBook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_stdBtnSizer28 = new wxStdDialogButtonSizer();
+    wxBoxSizer* boxSizer48 = new wxBoxSizer(wxHORIZONTAL);
 
-    boxSizer27->Add(m_stdBtnSizer28, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+    boxSizer27->Add(boxSizer48, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
 
-    m_button29 = new wxButton(this, wxID_SAVE, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_button29->SetDefault();
-    m_stdBtnSizer28->AddButton(m_button29);
+    m_button51 = new wxButton(this, wxID_REVERT, _("Defaults"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button51->SetToolTip(_("Restore prompts to defaults"));
 
-    m_button30 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_stdBtnSizer28->AddButton(m_button30);
-    m_stdBtnSizer28->Realize();
+    boxSizer48->Add(m_button51, 0, wxALL | wxALIGN_LEFT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_button49 = new wxButton(this, wxID_SAVE, _("&Save"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button49->SetDefault();
+
+    boxSizer48->Add(m_button49, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_button50 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    boxSizer48->Add(m_button50, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
 #if wxVERSION_NUMBER >= 2900
     if (!wxPersistenceManager::Get().Find(m_simpleBook)) {
@@ -206,7 +213,7 @@ PromptEditorBaseDlg::PromptEditorBaseDlg(
 #endif
 
     SetName(wxT("PromptEditorBaseDlg"));
-    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    SetSize(wxDLG_UNIT(this, wxSize(800, 600)));
     if (GetSizer()) {
         GetSizer()->Fit(this);
     }
@@ -222,13 +229,15 @@ PromptEditorBaseDlg::PromptEditorBaseDlg(
     }
     // Connect events
     m_dvListCtrlPrompts->Bind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &PromptEditorBaseDlg::OnPromptChanged, this);
-    m_button29->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &PromptEditorBaseDlg::OnSave, this);
-    m_button29->Bind(wxEVT_UPDATE_UI, &PromptEditorBaseDlg::OnSaveUI, this);
+    m_button51->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &PromptEditorBaseDlg::OnDefaults, this);
+    m_button49->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &PromptEditorBaseDlg::OnSave, this);
+    m_button49->Bind(wxEVT_UPDATE_UI, &PromptEditorBaseDlg::OnSaveUI, this);
 }
 
 PromptEditorBaseDlg::~PromptEditorBaseDlg()
 {
     m_dvListCtrlPrompts->Unbind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &PromptEditorBaseDlg::OnPromptChanged, this);
-    m_button29->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &PromptEditorBaseDlg::OnSave, this);
-    m_button29->Unbind(wxEVT_UPDATE_UI, &PromptEditorBaseDlg::OnSaveUI, this);
+    m_button51->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &PromptEditorBaseDlg::OnDefaults, this);
+    m_button49->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &PromptEditorBaseDlg::OnSave, this);
+    m_button49->Unbind(wxEVT_UPDATE_UI, &PromptEditorBaseDlg::OnSaveUI, this);
 }

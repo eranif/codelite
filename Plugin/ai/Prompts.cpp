@@ -3,86 +3,36 @@
 namespace llm
 {
 const std::string PROMPT_DOCSTRING_GEN = R"#(
-Generate a docstring for the following {{lang}} function. The output should only include the docstring, nothing else.
-The output should not include the input function.
+You are an expert software developer. Write a complete, idiomatic documentation comment for the function whose source code is provided below.
 
-Use comment style that is appropriate for the language:
+The comment must be suitable for being placed **directly above** the function definition and should follow the most common documentation style for the language in which the function is written (e.g., Javadoc for Java, docstring for Python, Doxygen for C/C++, JSDoc for JavaScript/TypeScript, Rustdoc for Rust, etc.).
 
-If the input function is a C++, PHP or a Java function, use JavaDoc style comments.
-If the input function is a Rust function, use Rust comment style (each line starts with `/// `).
-If the input function is bash, use bash style comment ('# ').
-If the input function is python, use python comment style.
+The documentation comment must contain **all** of the following sections (in this order, if the language supports them):
 
-The input function to write comment for is:
+1. **Brief summary** – one‑sentence description of what the function does.
+2. **Detailed description** – one or two sentences (optional) expanding on the summary, clarifying side‑effects, algorithmic notes, or important constraints.
+3. **Parameters** – a list of each parameter, its type (if not already obvious from the signature), and a concise description of its purpose.
+4. **Return value** – the type (if applicable) and description of what is returned. If the function returns nothing, explicitly state that.
+5. **Raises / Throws / Errors** – any exceptions, error codes, or error‑handling behavior the function may produce. If none, you may omit this section.
+6. **Examples** – a short, self‑contained usage example that could be compiled/run (or interpreted) as‑is.
+7. **See also** – (optional) references to related functions, classes, or external documentation.
+
+Follow the exact syntax for the target language’s doc‑comment style (e.g., `/** … */` for Java, `""" … """` for Python, `/// …` for Rust, `/** … */` for TypeScript/JSDoc, `/*** … */` for Doxygen, etc.).
+
+Do **not** include any extra explanatory text outside the comment block.
+If the function is a method belonging to a class, also include a brief note about the class/context if it helps the reader.
+
+---
+
+**Function source:**
 
 ```{{lang}}
 {{function}}
 ```
 
-Example 1:
-===
+---
 
-If the function is:
-
-```c++
-void Add(int a, int b) {
-    return a + b;
-}
-```
-
-The output should be something like this:
-
-/**
- * @brief this function returns the sum of 2 numbers.
- *
- * @param a the first number
- * @param b the second number
- */
-
-Example 2:
-===
-
-If the function is:
-
-```rust
-pub fn add(a: u32, b: u32) -> u32{
-    a + b
-}
-```
-
-The output should be something like this:
-
-/// This function returns the sum of 2 numbers.
-///
-/// `a` the first number
-/// `b` b the second number
-
-Example 3:
-===
-
-If the function is:
-
-```python
-def add(a, b):
-    return a + b
-```
-
-The output should be something like this:
-
-"""
-This function returns the sum of 2 numbers.
-
-Args:
-    a (int): the first number
-    b (int): the second number
-
-Returns:
-    int: the sum of a + b.
-
-Example:
-    >>> add(1, 2)
-    3
-"""
+Generate only the documentation comment (no surrounding code).
 )#";
 
 const std::string PROMPT_GIT_COMMIT_MSG =

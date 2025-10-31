@@ -96,6 +96,11 @@ public:
         MarkerSetAlpha(smt_error, 80);
 
         SetClientData(edit);
+
+        Bind(wxEVT_SET_FOCUS, [edit](wxFocusEvent& e) {
+            wxUnusedVar(e);
+            edit->SetSTCFocus(true);
+        });
     }
 
     ~MyMiniMap() override = default;
@@ -806,6 +811,11 @@ clEditor* MainBook::OpenFile(const wxString& file_name,
     if (extra & OF_AddJump) {
         BrowseRecord jumpto = editor->CreateBrowseRecord();
         NavMgr::Get()->StoreCurrentLocation(jumpfrom, jumpto);
+    }
+
+    if (editor) {
+        // Grab the focus to the newly opened editor.
+        editor->CallAfter(&clEditor::SetActive);
     }
     return editor;
 }

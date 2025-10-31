@@ -99,7 +99,7 @@ public:
 
         Bind(wxEVT_SET_FOCUS, [edit](wxFocusEvent& e) {
             wxUnusedVar(e);
-            edit->SetSTCFocus(true);
+            edit->CallAfter(&wxStyledTextCtrl::SetFocus);
         });
     }
 

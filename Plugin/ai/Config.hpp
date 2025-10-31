@@ -67,6 +67,41 @@ public:
         for (const auto& h : m_history) { history.Add(wxString::FromUTF8(h)); }
         return history;
     }
+    /**
+     * @brief Sets the history to the provided array of strings.
+     *
+     * This method replaces the current history with a new set of strings from the
+     * provided wxArrayString. The operation is thread-safe and uses a scoped lock
+     * to prevent race conditions. All strings are converted from wxString to
+     * std::string using UTF-8 encoding.
+     *
+     * @param history A wxArrayString containing the new history entries to be stored.
+     *                Each wxString element will be converted to std::string using UTF-8 encoding.
+     *
+     * @return void This function does not return a value.
+     *
+     * @note This method is thread-safe due to internal mutex locking.
+     * @note The existing history is completely cleared before the new history is set.
+     *
+     * @par Example:
+     * @code
+     * wxArrayString newHistory;
+     * newHistory.Add(wxT("First entry"));
+     * newHistory.Add(wxT("Second entry"));
+     * newHistory.Add(wxT("Third entry"));
+     * myObject.SetHistory(newHistory);
+     * @endcode
+     *
+     * @see GetHistory()
+     * @see ClearHistory()
+     */
+    void SetHistory(const wxArrayString& history)
+    {
+        std::scoped_lock lk{m_mutex};
+        m_history.clear();
+        m_history.reserve(history.size());
+        for (const auto& h : history) { m_history.push_back(h.ToStdString(wxConvUTF8)); }
+    }
 
     /**
      * @brief Adds the given prompt to the configuration history.

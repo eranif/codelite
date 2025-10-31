@@ -2,8 +2,8 @@
 
 #include "ChatAI.hpp"
 #include "ChatAIWindowFrame.hpp"
+#include "ChatHistoryDialog.hpp"
 #include "ColoursAndFontsManager.h"
-#include "FileManager.hpp"
 #include "MarkdownStyler.hpp"
 #include "ai/LLMManager.hpp"
 #include "aui/clAuiToolBarArt.h"
@@ -449,15 +449,13 @@ void ChatAIWindow::OnDetachView(wxCommandEvent& event)
 
 void ChatAIWindow::OnHistory(wxCommandEvent& event)
 {
-    const auto& config = llm::Manager::GetInstance().GetConfig();
-    clSingleChoiceDialog dlg(EventNotifier::Get()->TopFrame(), config.GetHistory());
-    dlg.SetLabel(_("Chat history"));
+    ChatHistoryDialog dlg(EventNotifier::Get()->TopFrame());
     if (dlg.ShowModal() != wxID_OK) {
         return;
     }
 
     // Update the prompt field.
-    m_stcInput->SetText(dlg.GetSelection());
+    m_stcInput->SetText(dlg.GetSelectedPrompt());
     m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 

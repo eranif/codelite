@@ -90,7 +90,7 @@ bool write_file_content_raw(const wxFileName& fn, const std::string& content)
 }
 
 #ifndef __WXMSW__
-const char ELF_STR[] = { 0x7f, 'E', 'L', 'F' };
+const char ELF_STR[] = {0x7f, 'E', 'L', 'F'};
 #endif
 } // namespace
 
@@ -447,8 +447,8 @@ wxString FileUtils::NormaliseName(const wxString& name)
     static int invalidChars[256];
     if (!initialised) {
         memset(invalidChars, 0, sizeof(invalidChars));
-        std::vector<int> V = { '@', '-', '^', '%', '&', '$', '#', '@', '!', '(', ')',
-                               '{', '}', '[', ']', '+', '=', ';', ',', '.', ' ' };
+        std::vector<int> V = {
+            '@', '-', '^', '%', '&', '$', '#', '@', '!', '(', ')', '{', '}', '[', ']', '+', '=', ';', ',', '.', ' '};
         for (auto ch : V) {
             invalidChars[ch] = 1;
         }
@@ -566,7 +566,7 @@ clEnvList_t FileUtils::CreateEnvironment(const wxString& envstr)
         }
         wxString name = line.BeforeFirst('=');
         wxString value = line.AfterFirst('=');
-        L.push_back({ name, value });
+        L.push_back({name, value});
     }
     return L;
 }
@@ -704,7 +704,9 @@ wxString FileUtils::FilePathFromURI(const wxString& uri)
 #ifdef __WXMSW__
         // check if the file path starts with /C: (Windows drive)
         wxRegEx re_windows_drive("/[a-z]{1}:", wxRE_DEFAULT | wxRE_ICASE);
-        if (re_windows_drive.IsValid() && re_windows_drive.Matches(rest)) {
+        wxRegEx re_windows_drive_encoded("/[a-z]%3A", wxRE_DEFAULT | wxRE_ICASE);
+        if ((re_windows_drive.IsValid() && re_windows_drive.Matches(rest)) ||
+            (re_windows_drive_encoded.IsValid() && re_windows_drive_encoded.Matches(rest))) {
             rest.Remove(0, 1); // remove the leading slash
             // since we know that his is a Windows style path
             // make sure we are using backslashes
@@ -752,8 +754,7 @@ uint_fast32_t const crctab[256] = {
     0xc1683bce, 0xcc2b1d17, 0xc8ea00a0, 0xd6ad50a5, 0xd26c4d12, 0xdf2f6bcb, 0xdbee767c, 0xe3a1cbc1, 0xe760d676,
     0xea23f0af, 0xeee2ed18, 0xf0a5bd1d, 0xf464a0aa, 0xf9278673, 0xfde69bc4, 0x89b8fd09, 0x8d79e0be, 0x803ac667,
     0x84fbdbd0, 0x9abc8bd5, 0x9e7d9662, 0x933eb0bb, 0x97ffad0c, 0xafb010b1, 0xab710d06, 0xa6322bdf, 0xa2f33668,
-    0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4
-};
+    0xbcb4666d, 0xb8757bda, 0xb5365d03, 0xb1f740b4};
 
 bool cksum(const std::string& file, size_t* checksum)
 {

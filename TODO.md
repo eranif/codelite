@@ -18,11 +18,6 @@ others:
 - git reset: selection does not always consider all selected items.
 - build tab: add AI option to the context menu.
 
-LSP:
-----
-
-Wrong path handling for example: "/c%3A/..."
-
 AI-powered IDE:
 --------
 

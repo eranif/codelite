@@ -276,6 +276,7 @@ wxString StringUtils::DecodeURI(const wxString& uri)
                                              {"%2B", "+"},
                                              {"%2C", ","},
                                              {"%3B", ";"},
+                                             {"%3A", ":"},
                                              {"%3D", "="},
                                              {"%3F", "?"},
                                              {"%40", "@"},

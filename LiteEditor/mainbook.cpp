@@ -1357,8 +1357,11 @@ clStyledTextCtrlMiniMap* MainBook::SelectMinimapForEditor(wxStyledTextCtrl* ctrl
     if (ctrl == nullptr || !m_showMiniMap) {
         // Hide the minimap view
         ShowMiniMap(false);
+
         // For performance reason, if we don't show the mini-map, delete all the mini-maps.
-        m_miniMapsBook->DeleteAllPages();
+        if (m_miniMapsBook->GetPageCount()) {
+            m_miniMapsBook->DeleteAllPages();
+        }
         return nullptr;
     }
 
@@ -1869,7 +1872,9 @@ void MainBook::OnAllEditorClosed(wxCommandEvent& event)
     m_findBar->SetEditor(NULL);
 
 #if wxHAS_MINIMAP
-    m_miniMapsBook->DeleteAllPages();
+    if (m_miniMapsBook->GetPageCount()) {
+        m_miniMapsBook->DeleteAllPages();
+    }
     SelectMinimapForEditor(nullptr);
 #endif
 }

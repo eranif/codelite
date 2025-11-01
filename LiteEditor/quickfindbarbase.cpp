@@ -12,6 +12,7 @@ extern void wxCrafteryhjh4ZInitBitmapResources();
 namespace
 {
 // return the wxBORDER_SIMPLE that matches the current application theme
+[[maybe_unused]]
 wxBorder get_border_simple_theme_aware_bit()
 {
 #if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
@@ -241,12 +242,8 @@ clFindReplaceDialogBase::clFindReplaceDialogBase(
 
     boxSizer159->Add(flexGridSizer107, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_textCtrlFind = new wxTextCtrl(m_mainPanel,
-                                    wxID_ANY,
-                                    wxT(""),
-                                    wxDefaultPosition,
-                                    wxDLG_UNIT(m_mainPanel, wxSize(400, -1)),
-                                    wxTE_PROCESS_ENTER);
+    m_textCtrlFind = new wxTextCtrl(
+        m_mainPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_mainPanel, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
     m_textCtrlFind->SetToolTip(_("Use the Up / Down arrows to show the search history list"));
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlFind->SetHint(_("Find what..."));

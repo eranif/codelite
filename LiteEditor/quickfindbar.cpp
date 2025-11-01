@@ -249,13 +249,10 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
 
     if (clConfig::Get().Read("FindBar/Width", dlg_width) && clConfig::Get().Read("FindBar/Height", dlg_height)) {
         SetSize(dlg_width, dlg_height);
-        SetSizeHints(dlg_width, dlg_height);
     } else {
         // first time, place it at the top
         Move(wxNOT_FOUND, parent->GetPosition().y);
     }
-    SetMinClientSize(min_size);
-    GetSizer()->Fit(this);
     Layout();
 }
 

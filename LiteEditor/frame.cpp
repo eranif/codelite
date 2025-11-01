@@ -32,6 +32,7 @@
 #include "Debugger/debuggermanager.h"
 #include "FileManager.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
+#include "FindAndReplaceDialog.h"
 #include "LSP/LSPManager.hpp"
 #include "Notebook.h"
 #include "NotebookNavigationDlg.h"
@@ -102,7 +103,6 @@
 #include "precompiled_header.h"
 #include "project.h"
 #include "quickdebugdlg.h"
-#include "quickfindbar.h"
 #include "resources/clXmlResource.hpp"
 #include "search_thread.h"
 #include "sessionmanager.h"
@@ -1408,7 +1408,7 @@ void clMainFrame::CreateGUIControls()
     m_infoBar = new clInfoBar(container);
     container->GetSizer()->Add(m_mainBook, 1, wxEXPAND);
     container->GetSizer()->Add(m_infoBar, 0, wxEXPAND);
-    QuickFindBar* findbar = new QuickFindBar(this);
+    FindAndReplaceDialog* findbar = new FindAndReplaceDialog(this);
     m_mainBook->SetFindBar(findbar);
     m_mainBook->SetEditorBar(navbar);
 

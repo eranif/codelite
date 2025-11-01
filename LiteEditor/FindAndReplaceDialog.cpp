@@ -23,7 +23,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "quickfindbar.h"
+#include "FindAndReplaceDialog.h"
 
 #include "ColoursAndFontsManager.h"
 #include "Keyboard/clKeyboardManager.h"
@@ -108,7 +108,7 @@ void CenterLine(wxStyledTextCtrl* ctrl, int start_pos, int end_pos)
 }
 } // namespace
 
-QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
+FindAndReplaceDialog::FindAndReplaceDialog(wxWindow* parent, wxWindowID id)
     : FindAndReplaceDialogFrameBase(parent, id)
     , m_sci(NULL)
     , m_lastTextPtr(NULL)
@@ -197,12 +197,12 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     m_toolbar->Bind(
         wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Check(m_inSelection); }, XRCID("replace-in-selection"));
 
-    wxTheApp->Bind(wxEVT_MENU, &QuickFindBar::OnFindNextCaret, this, XRCID("find_next_at_caret"));
-    wxTheApp->Bind(wxEVT_MENU, &QuickFindBar::OnFindPreviousCaret, this, XRCID("find_previous_at_caret"));
-    wxTheApp->Bind(wxEVT_MENU, &QuickFindBar::OnFindNext, this, XRCID("find_next"));
+    wxTheApp->Bind(wxEVT_MENU, &FindAndReplaceDialog::OnFindNextCaret, this, XRCID("find_next_at_caret"));
+    wxTheApp->Bind(wxEVT_MENU, &FindAndReplaceDialog::OnFindPreviousCaret, this, XRCID("find_previous_at_caret"));
+    wxTheApp->Bind(wxEVT_MENU, &FindAndReplaceDialog::OnFindNext, this, XRCID("find_next"));
 
-    EventNotifier::Get()->Bind(wxEVT_FINDBAR_RELEASE_EDITOR, &QuickFindBar::OnReleaseEditor, this);
-    Connect(QUICKFIND_COMMAND_EVENT, wxCommandEventHandler(QuickFindBar::OnQuickFindCommandEvent), NULL, this);
+    EventNotifier::Get()->Bind(wxEVT_FINDBAR_RELEASE_EDITOR, &FindAndReplaceDialog::OnReleaseEditor, this);
+    Connect(QUICKFIND_COMMAND_EVENT, wxCommandEventHandler(FindAndReplaceDialog::OnQuickFindCommandEvent), NULL, this);
 
     // Initialize the list with the history
     m_findHistory.Set(clConfig::Get().GetQuickFindSearchItems());
@@ -232,10 +232,10 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     });
 #endif
 
-    EventNotifier::Get()->Bind(wxEVT_STC_GOT_FOCUS, &QuickFindBar::OnFocusGained, this);
-    EventNotifier::Get()->Bind(wxEVT_STC_LOST_FOCUS, &QuickFindBar::OnFocusLost, this);
+    EventNotifier::Get()->Bind(wxEVT_STC_GOT_FOCUS, &FindAndReplaceDialog::OnFocusGained, this);
+    EventNotifier::Get()->Bind(wxEVT_STC_LOST_FOCUS, &FindAndReplaceDialog::OnFocusLost, this);
 
-    m_textCtrlReplace->Bind(wxEVT_UPDATE_UI, &QuickFindBar::OnReplaceTextUI, this);
+    m_textCtrlReplace->Bind(wxEVT_UPDATE_UI, &FindAndReplaceDialog::OnReplaceTextUI, this);
     // Make sure that the 'Replace' field is selected when we hit TAB while in the 'Find' field
     m_textCtrlReplace->MoveAfterInTabOrder(m_textCtrlFind);
 
@@ -255,7 +255,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     Layout();
 }
 
-QuickFindBar::~QuickFindBar()
+FindAndReplaceDialog::~FindAndReplaceDialog()
 {
     // Remember the buttons clicked
     clConfig::Get().Write("FindBar/SearchFlags", (int)DoGetSearchFlags());
@@ -266,16 +266,16 @@ QuickFindBar::~QuickFindBar()
     clConfig::Get().SetQuickFindSearchItems(m_findHistory.m_commands);
     clConfig::Get().SetQuickFindReplaceItems(m_replaceHistory.m_commands);
 
-    wxTheApp->Unbind(wxEVT_MENU, &QuickFindBar::OnFindNextCaret, this, XRCID("find_next_at_caret"));
-    wxTheApp->Unbind(wxEVT_MENU, &QuickFindBar::OnFindPreviousCaret, this, XRCID("find_previous_at_caret"));
-    wxTheApp->Unbind(wxEVT_MENU, &QuickFindBar::OnFindNext, this, XRCID("id_find"));
+    wxTheApp->Unbind(wxEVT_MENU, &FindAndReplaceDialog::OnFindNextCaret, this, XRCID("find_next_at_caret"));
+    wxTheApp->Unbind(wxEVT_MENU, &FindAndReplaceDialog::OnFindPreviousCaret, this, XRCID("find_previous_at_caret"));
+    wxTheApp->Unbind(wxEVT_MENU, &FindAndReplaceDialog::OnFindNext, this, XRCID("id_find"));
 
-    EventNotifier::Get()->Unbind(wxEVT_FINDBAR_RELEASE_EDITOR, &QuickFindBar::OnReleaseEditor, this);
-    EventNotifier::Get()->Unbind(wxEVT_STC_GOT_FOCUS, &QuickFindBar::OnFocusGained, this);
-    EventNotifier::Get()->Unbind(wxEVT_STC_LOST_FOCUS, &QuickFindBar::OnFocusLost, this);
+    EventNotifier::Get()->Unbind(wxEVT_FINDBAR_RELEASE_EDITOR, &FindAndReplaceDialog::OnReleaseEditor, this);
+    EventNotifier::Get()->Unbind(wxEVT_STC_GOT_FOCUS, &FindAndReplaceDialog::OnFocusGained, this);
+    EventNotifier::Get()->Unbind(wxEVT_STC_LOST_FOCUS, &FindAndReplaceDialog::OnFocusLost, this);
 }
 
-bool QuickFindBar::Show(bool show)
+bool FindAndReplaceDialog::Show(bool show)
 {
     if (!m_sci && show) {
         return false;
@@ -283,14 +283,14 @@ bool QuickFindBar::Show(bool show)
     return DoShow(show, wxEmptyString);
 }
 
-void QuickFindBar::OnHide(wxCommandEvent& e)
+void FindAndReplaceDialog::OnHide(wxCommandEvent& e)
 {
     e.Skip();
     // Clear all
     Show(false);
 }
 
-void QuickFindBar::OnText(wxCommandEvent& e)
+void FindAndReplaceDialog::OnText(wxCommandEvent& e)
 {
     e.Skip();
     if (!m_inSelection && !m_disableTextUpdateEvent) {
@@ -299,7 +299,7 @@ void QuickFindBar::OnText(wxCommandEvent& e)
     }
 }
 
-void QuickFindBar::OnKeyDown(wxKeyEvent& e)
+void FindAndReplaceDialog::OnKeyDown(wxKeyEvent& e)
 {
     if (HandleKeyboardShortcuts(e)) {
         return;
@@ -322,7 +322,7 @@ void QuickFindBar::OnKeyDown(wxKeyEvent& e)
     }
 }
 
-void QuickFindBar::OnReplaceKeyDown(wxKeyEvent& e)
+void FindAndReplaceDialog::OnReplaceKeyDown(wxKeyEvent& e)
 {
     if (HandleKeyboardShortcuts(e)) {
         return;
@@ -346,13 +346,13 @@ void QuickFindBar::OnReplaceKeyDown(wxKeyEvent& e)
     }
 }
 
-void QuickFindBar::OnUpdateUI(wxUpdateUIEvent& e)
+void FindAndReplaceDialog::OnUpdateUI(wxUpdateUIEvent& e)
 {
     e.Enable(ManagerST::Get()->IsShutdownInProgress() == false && m_sci && m_sci->GetLength() > 0 &&
              !m_textCtrlFind->GetValue().IsEmpty());
 }
 
-void QuickFindBar::OnEnter(wxCommandEvent& e)
+void FindAndReplaceDialog::OnEnter(wxCommandEvent& e)
 {
     e.Skip(false);
 
@@ -366,10 +366,10 @@ void QuickFindBar::OnEnter(wxCommandEvent& e)
 
     // Without this call, the caret is placed at the start of the searched
     // text, this at least places the caret at the end
-    CallAfter(&QuickFindBar::DoSetCaretAtEndOfText);
+    CallAfter(&FindAndReplaceDialog::DoSetCaretAtEndOfText);
 }
 
-void QuickFindBar::OnReplace(wxCommandEvent& event)
+void FindAndReplaceDialog::OnReplace(wxCommandEvent& event)
 {
     CHECK_PTR_RET(m_sci);
 
@@ -404,7 +404,7 @@ void QuickFindBar::OnReplace(wxCommandEvent& event)
     DoFindWithMessage(FIND_DEFAULT | FIND_GOTOLINE, {start_pos, static_cast<int>(m_sci->GetLastPosition())});
 }
 
-int QuickFindBar::DoReplace(const TargetRange& range)
+int FindAndReplaceDialog::DoReplace(const TargetRange& range)
 {
     // we replace the selection
     TargetRange target_range;
@@ -428,14 +428,14 @@ int QuickFindBar::DoReplace(const TargetRange& range)
     }
 }
 
-void QuickFindBar::OnReplaceEnter(wxCommandEvent& e)
+void FindAndReplaceDialog::OnReplaceEnter(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     wxCommandEvent evt(wxEVT_COMMAND_TOOL_CLICKED, ID_TOOL_REPLACE);
     GetEventHandler()->AddPendingEvent(evt);
 }
 
-void QuickFindBar::SetEditor(wxStyledTextCtrl* sci)
+void FindAndReplaceDialog::SetEditor(wxStyledTextCtrl* sci)
 {
     m_sci = sci;
     if (!m_sci) {
@@ -444,7 +444,7 @@ void QuickFindBar::SetEditor(wxStyledTextCtrl* sci)
     }
 }
 
-bool QuickFindBar::Show(const wxString& findWhat, bool showReplace)
+bool FindAndReplaceDialog::Show(const wxString& findWhat, bool showReplace)
 {
     // Same as Show() but set the 'findWhat' field with findWhat
     // and show/hide the 'Replace' section depending on the bool
@@ -453,7 +453,7 @@ bool QuickFindBar::Show(const wxString& findWhat, bool showReplace)
     return DoShow(true, findWhat, showReplace);
 }
 
-bool QuickFindBar::DoShow(bool s, const wxString& findWhat, bool showReplace)
+bool FindAndReplaceDialog::DoShow(bool s, const wxString& findWhat, bool showReplace)
 {
     wxWindowUpdateLocker locker{this};
     int dummy = wxNOT_FOUND;
@@ -520,7 +520,7 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat, bool showReplace)
     return res;
 }
 
-void QuickFindBar::OnFindNextCaret(wxCommandEvent& e)
+void FindAndReplaceDialog::OnFindNextCaret(wxCommandEvent& e)
 {
     CHECK_FOCUS_WIN(e);
 
@@ -543,14 +543,14 @@ void QuickFindBar::OnFindNextCaret(wxCommandEvent& e)
     DoFind(FIND_DEFAULT | FIND_GOTOLINE);
 }
 
-void QuickFindBar::OnFindNext(wxCommandEvent& e)
+void FindAndReplaceDialog::OnFindNext(wxCommandEvent& e)
 {
     clSYSTEM() << "Find next" << endl;
     CHECK_FOCUS_WIN(e);
     DoFindWithWrap(FIND_DEFAULT | FIND_GOTOLINE);
 }
 
-void QuickFindBar::OnFindPreviousCaret(wxCommandEvent& e)
+void FindAndReplaceDialog::OnFindPreviousCaret(wxCommandEvent& e)
 {
     CHECK_FOCUS_WIN(e);
 
@@ -573,7 +573,7 @@ void QuickFindBar::OnFindPreviousCaret(wxCommandEvent& e)
     DoFind(FIND_PREV | FIND_GOTOLINE);
 }
 
-void QuickFindBar::DoSelectAll()
+void FindAndReplaceDialog::DoSelectAll()
 {
     m_message->SetLabel(wxEmptyString);
     if (!m_sci) {
@@ -605,7 +605,7 @@ void QuickFindBar::DoSelectAll()
     m_sci->SetMainSelection(0);
 }
 
-TargetRange::Vec_t QuickFindBar::DoFindAll(const TargetRange& target)
+TargetRange::Vec_t FindAndReplaceDialog::DoFindAll(const TargetRange& target)
 {
     if (!m_sci) {
         return {};
@@ -633,7 +633,7 @@ TargetRange::Vec_t QuickFindBar::DoFindAll(const TargetRange& target)
     return matches;
 }
 
-void QuickFindBar::DoHighlightMatches(bool checked)
+void FindAndReplaceDialog::DoHighlightMatches(bool checked)
 {
     clEditor* editor = dynamic_cast<clEditor*>(m_sci);
     if (!editor) {
@@ -680,7 +680,7 @@ void QuickFindBar::DoHighlightMatches(bool checked)
     clMainFrame::Get()->SelectBestEnvSet(); // Updates the statusbar display
 }
 
-void QuickFindBar::OnReceivingFocus(wxFocusEvent& event)
+void FindAndReplaceDialog::OnReceivingFocus(wxFocusEvent& event)
 {
     event.Skip();
     if ((event.GetEventObject() == m_textCtrlFind) || (event.GetEventObject() == m_textCtrlReplace)) {
@@ -688,7 +688,7 @@ void QuickFindBar::OnReceivingFocus(wxFocusEvent& event)
     }
 }
 
-void QuickFindBar::OnQuickFindCommandEvent(wxCommandEvent& event)
+void FindAndReplaceDialog::OnQuickFindCommandEvent(wxCommandEvent& event)
 {
     if (event.GetInt() > 0) {
         // We need to delay further, or focus might be set too soon
@@ -706,7 +706,7 @@ void QuickFindBar::OnQuickFindCommandEvent(wxCommandEvent& event)
     }
 }
 
-void QuickFindBar::OnReleaseEditor(clFindEvent& e)
+void FindAndReplaceDialog::OnReleaseEditor(clFindEvent& e)
 {
     wxStyledTextCtrl* win = e.GetCtrl();
     if (win && win == m_sci) {
@@ -715,7 +715,7 @@ void QuickFindBar::OnReleaseEditor(clFindEvent& e)
     }
 }
 
-wxStyledTextCtrl* QuickFindBar::DoCheckPlugins()
+wxStyledTextCtrl* FindAndReplaceDialog::DoCheckPlugins()
 {
     // Let the plugins a chance to provide their own window
     clFindEvent evt(wxEVT_FINDBAR_ABOUT_TO_SHOW);
@@ -723,7 +723,7 @@ wxStyledTextCtrl* QuickFindBar::DoCheckPlugins()
     return evt.GetCtrl();
 }
 
-bool QuickFindBar::ShowForPlugins()
+bool FindAndReplaceDialog::ShowForPlugins()
 {
     m_sci = DoCheckPlugins();
     if (!m_sci) {
@@ -733,7 +733,7 @@ bool QuickFindBar::ShowForPlugins()
     }
 }
 
-wxString QuickFindBar::DoGetSelectedText()
+wxString FindAndReplaceDialog::DoGetSelectedText()
 {
     if (!m_sci) {
         return wxEmptyString;
@@ -754,18 +754,18 @@ wxString QuickFindBar::DoGetSelectedText()
     }
 }
 
-size_t QuickFindBar::DoGetSearchFlags() const { return m_searchFlags; }
-void QuickFindBar::OnFindAll(wxCommandEvent& e) { DoSelectAll(); }
+size_t FindAndReplaceDialog::DoGetSearchFlags() const { return m_searchFlags; }
+void FindAndReplaceDialog::OnFindAll(wxCommandEvent& e) { DoSelectAll(); }
 
-void QuickFindBar::DoSetCaretAtEndOfText() { m_textCtrlFind->SetInsertionPointEnd(); }
+void FindAndReplaceDialog::DoSetCaretAtEndOfText() { m_textCtrlFind->SetInsertionPointEnd(); }
 
-void QuickFindBar::OnReplaceAll(wxCommandEvent& e)
+void FindAndReplaceDialog::OnReplaceAll(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     DoReplaceAll(m_inSelection);
 }
 
-void QuickFindBar::DoReplaceAll(bool selectionOnly)
+void FindAndReplaceDialog::DoReplaceAll(bool selectionOnly)
 {
     CHECK_PTR_RET(m_sci);
 
@@ -844,7 +844,7 @@ void QuickFindBar::DoReplaceAll(bool selectionOnly)
     m_sci->SetFocus();
 }
 
-TargetRange QuickFindBar::DoFind(size_t find_flags, const TargetRange& target)
+TargetRange FindAndReplaceDialog::DoFind(size_t find_flags, const TargetRange& target)
 {
     if (!m_sci) {
         return {};
@@ -945,31 +945,31 @@ TargetRange QuickFindBar::DoFind(size_t find_flags, const TargetRange& target)
     }
 }
 
-void QuickFindBar::OnFind(wxCommandEvent& event)
+void FindAndReplaceDialog::OnFind(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     DoFindWithWrap(FIND_DEFAULT | FIND_GOTOLINE);
 }
 
-void QuickFindBar::OnFindPrev(wxCommandEvent& event)
+void FindAndReplaceDialog::OnFindPrev(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     DoFindWithWrap(FIND_PREV | FIND_GOTOLINE);
 }
 
-void QuickFindBar::OnFindAllUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlFind->GetValue().IsEmpty()); }
-void QuickFindBar::OnFindPrevUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlFind->GetValue().IsEmpty()); }
-void QuickFindBar::OnFindUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlFind->GetValue().IsEmpty()); }
-void QuickFindBar::OnReplaceAllUI(wxUpdateUIEvent& event)
+void FindAndReplaceDialog::OnFindAllUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlFind->GetValue().IsEmpty()); }
+void FindAndReplaceDialog::OnFindPrevUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlFind->GetValue().IsEmpty()); }
+void FindAndReplaceDialog::OnFindUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlFind->GetValue().IsEmpty()); }
+void FindAndReplaceDialog::OnReplaceAllUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_sci && m_sci->IsEditable() && !m_textCtrlFind->GetValue().IsEmpty());
 }
-void QuickFindBar::OnReplaceUI(wxUpdateUIEvent& event)
+void FindAndReplaceDialog::OnReplaceUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_sci && m_sci->IsEditable() && !m_textCtrlFind->GetValue().IsEmpty() && !m_inSelection);
 }
 
-void QuickFindBar::OnButtonKeyDown(wxKeyEvent& event)
+void FindAndReplaceDialog::OnButtonKeyDown(wxKeyEvent& event)
 {
     if (HandleKeyboardShortcuts(event)) {
         return;
@@ -988,7 +988,7 @@ void QuickFindBar::OnButtonKeyDown(wxKeyEvent& event)
     }
 }
 
-void QuickFindBar::OnPaint(wxPaintEvent& e)
+void FindAndReplaceDialog::OnPaint(wxPaintEvent& e)
 {
     wxAutoBufferedPaintDC dc(this);
     dc.SetBrush(clSystemSettings::GetDefaultPanelColour());
@@ -996,7 +996,7 @@ void QuickFindBar::OnPaint(wxPaintEvent& e)
     dc.DrawRectangle(GetClientRect());
 }
 
-void QuickFindBar::ShowToolBarOnly()
+void FindAndReplaceDialog::ShowToolBarOnly()
 {
     wxFrame::Show();
     wxSizer* sz = m_textCtrlFind->GetContainingSizer();
@@ -1006,11 +1006,11 @@ void QuickFindBar::ShowToolBarOnly()
     GetParent()->GetSizer()->Layout();
 }
 
-void QuickFindBar::FindPrevious() { DoFindWithWrap(FIND_PREV | FIND_GOTOLINE); }
+void FindAndReplaceDialog::FindPrevious() { DoFindWithWrap(FIND_PREV | FIND_GOTOLINE); }
 
-void QuickFindBar::FindNext() { DoFindWithWrap(FIND_DEFAULT | FIND_GOTOLINE); }
+void FindAndReplaceDialog::FindNext() { DoFindWithWrap(FIND_DEFAULT | FIND_GOTOLINE); }
 
-size_t QuickFindBar::DoReplaceInBuffer(const TargetRange& range)
+size_t FindAndReplaceDialog::DoReplaceInBuffer(const TargetRange& range)
 {
     if (!range.IsOk()) {
         return 0;
@@ -1032,7 +1032,7 @@ size_t QuickFindBar::DoReplaceInBuffer(const TargetRange& range)
     return matches.size();
 }
 
-bool QuickFindBar::IsReplacementRegex() const
+bool FindAndReplaceDialog::IsReplacementRegex() const
 {
     wxString replace_with = m_textCtrlReplace->GetValue();
     for (size_t i = 0; i < 10; ++i) {
@@ -1045,7 +1045,7 @@ bool QuickFindBar::IsReplacementRegex() const
     return false;
 }
 
-TargetRange QuickFindBar::DoFindWithMessage(size_t find_flags, const TargetRange& target)
+TargetRange FindAndReplaceDialog::DoFindWithMessage(size_t find_flags, const TargetRange& target)
 {
     if (!m_sci) {
         return {};
@@ -1063,7 +1063,7 @@ TargetRange QuickFindBar::DoFindWithMessage(size_t find_flags, const TargetRange
     return res;
 }
 
-TargetRange QuickFindBar::DoFindWithWrap(size_t find_flags, const TargetRange& target)
+TargetRange FindAndReplaceDialog::DoFindWithWrap(size_t find_flags, const TargetRange& target)
 {
     auto res = DoFindWithMessage(find_flags, target);
     if (!res.IsOk()) {
@@ -1074,7 +1074,7 @@ TargetRange QuickFindBar::DoFindWithWrap(size_t find_flags, const TargetRange& t
     return res;
 }
 
-TargetRange QuickFindBar::GetBestTargetRange() const
+TargetRange FindAndReplaceDialog::GetBestTargetRange() const
 {
     if (!m_sci) {
         return {};
@@ -1087,10 +1087,10 @@ TargetRange QuickFindBar::GetBestTargetRange() const
     }
 }
 
-void QuickFindBar::OnReplaceTextEnter(wxCommandEvent& event) {}
-void QuickFindBar::OnReplaceTextUpdated(wxCommandEvent& event) {}
+void FindAndReplaceDialog::OnReplaceTextEnter(wxCommandEvent& event) {}
+void FindAndReplaceDialog::OnReplaceTextUpdated(wxCommandEvent& event) {}
 
-void QuickFindBar::OnFocusGained(clCommandEvent& e)
+void FindAndReplaceDialog::OnFocusGained(clCommandEvent& e)
 {
     // an wxSTC got the focus
     e.Skip();
@@ -1102,17 +1102,20 @@ void QuickFindBar::OnFocusGained(clCommandEvent& e)
     SetEditor(stc);
 }
 
-void QuickFindBar::OnFocusLost(clCommandEvent& e)
+void FindAndReplaceDialog::OnFocusLost(clCommandEvent& e)
 {
     // an wxSTC lost the focus, currently we do nothing
     e.Skip();
 }
 
-void QuickFindBar::OnTimer(wxTimerEvent& event) { event.Skip(); }
+void FindAndReplaceDialog::OnTimer(wxTimerEvent& event) { event.Skip(); }
 
-void QuickFindBar::OnReplaceTextUI(wxUpdateUIEvent& event) { event.Enable(!m_textCtrlFind->GetValue().IsEmpty()); }
+void FindAndReplaceDialog::OnReplaceTextUI(wxUpdateUIEvent& event)
+{
+    event.Enable(!m_textCtrlFind->GetValue().IsEmpty());
+}
 
-bool QuickFindBar::HandleKeyboardShortcuts(wxKeyEvent& event)
+bool FindAndReplaceDialog::HandleKeyboardShortcuts(wxKeyEvent& event)
 {
 #ifdef __WXMSW__
     if (event.GetKeyCode() == WXK_BACK && event.GetModifiers() == wxMOD_CONTROL) {
@@ -1142,7 +1145,7 @@ bool QuickFindBar::HandleKeyboardShortcuts(wxKeyEvent& event)
     return false;
 }
 
-void QuickFindBar::ShowMenuForFindCtrl()
+void FindAndReplaceDialog::ShowMenuForFindCtrl()
 {
     if (m_findHistory.m_commands.empty()) {
         return;
@@ -1164,7 +1167,7 @@ void QuickFindBar::ShowMenuForFindCtrl()
     TextCtrlShowMenu(m_textCtrlFind, menu);
 }
 
-void QuickFindBar::ShowMenuForReplaceCtrl()
+void FindAndReplaceDialog::ShowMenuForReplaceCtrl()
 {
     if (m_replaceHistory.m_commands.empty()) {
         return;
@@ -1187,7 +1190,7 @@ void QuickFindBar::ShowMenuForReplaceCtrl()
     TextCtrlShowMenu(m_textCtrlReplace, menu);
 }
 
-void QuickFindBar::OnCloseWindow(wxCloseEvent& event)
+void FindAndReplaceDialog::OnCloseWindow(wxCloseEvent& event)
 {
     wxUnusedVar(event);
     Hide();

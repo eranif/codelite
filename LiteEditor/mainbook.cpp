@@ -25,6 +25,7 @@
 #include "mainbook.h"
 
 #include "FilesModifiedDlg.h"
+#include "FindAndReplaceDialog.h"
 #include "LSP/LSPManager.hpp"
 #include "NotebookNavigationDlg.h"
 #include "WelcomePage.h"
@@ -46,7 +47,6 @@
 #include "imanager.h"
 #include "macros.h"
 #include "manager.h"
-#include "quickfindbar.h"
 #include "resources/clXmlResource.hpp"
 
 #include <algorithm>
@@ -1923,7 +1923,7 @@ void MainBook::OnAllEditorClosed(wxCommandEvent& event)
 #endif
 }
 
-void MainBook::SetFindBar(QuickFindBar* findBar)
+void MainBook::SetFindBar(FindAndReplaceDialog* findBar)
 {
     if (m_findBar)
         return;

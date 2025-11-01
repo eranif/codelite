@@ -64,7 +64,7 @@ struct TargetRange {
     typedef std::vector<TargetRange> Vec_t;
 };
 
-class QuickFindBar : public FindAndReplaceDialogFrameBase
+class FindAndReplaceDialog : public FindAndReplaceDialogFrameBase
 {
 public:
     enum eRegexType {
@@ -204,8 +204,8 @@ protected:
     void ShowMenuForReplaceCtrl();
 
 public:
-    QuickFindBar(wxWindow* parent, wxWindowID id = wxID_ANY);
-    virtual ~QuickFindBar();
+    FindAndReplaceDialog(wxWindow* parent, wxWindowID id = wxID_ANY);
+    virtual ~FindAndReplaceDialog();
 
     bool ShowForPlugins();
     bool Show(bool s = true) override;

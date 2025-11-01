@@ -878,11 +878,11 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Inherited Class",
-					"m_value":	"QuickFindBar"
+					"m_value":	"FindAndReplaceDialog"
 				}, {
 					"type":	"string",
 					"m_label":	"File:",
-					"m_value":	"quickfindbar"
+					"m_value":	"FindAndReplaceDialog"
 				}, {
 					"type":	"string",
 					"m_label":	"Class Decorator",

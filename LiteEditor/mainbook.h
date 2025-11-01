@@ -26,13 +26,13 @@
 #define MAINBOOK_H
 
 #include "CustomControls/clStyledTextCtrlMiniMap.hpp"
+#include "FindAndReplaceDialog.h"
 #include "Notebook.h"
 #include "clAuiBook.hpp"
 #include "clEditorBar.h"
 #include "cl_command_event.h"
 #include "cl_editor.h"
 #include "filehistory.h"
-#include "quickfindbar.h"
 #include "sessionmanager.h"
 
 #include <functional>
@@ -60,8 +60,8 @@ public:
 
     WelcomePage* GetWelcomePage(bool createIfMissing = true);
 
-    void SetFindBar(QuickFindBar* findBar);
-    QuickFindBar* GetFindBar() const { return m_findBar; }
+    void SetFindBar(FindAndReplaceDialog* findBar);
+    FindAndReplaceDialog* GetFindBar() const { return m_findBar; }
 
     /**
      * @brief create the welcome page
@@ -474,7 +474,7 @@ private:
     FilesModifiedDlg* m_filesModifiedDlg{nullptr};
     std::unordered_map<wxString, TagEntryPtr> m_currentNavBarTags;
     WelcomePage* m_welcomePage{nullptr};
-    QuickFindBar* m_findBar{nullptr};
+    FindAndReplaceDialog* m_findBar{nullptr};
     std::unordered_map<wxString, CallbackVec_t> m_callbacksTable;
     bool m_initDone{false};
 

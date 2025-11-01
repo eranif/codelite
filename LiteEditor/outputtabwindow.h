@@ -33,7 +33,7 @@
 
 class wxBoxSizer;
 
-class QuickFindBar;
+class FindAndReplaceDialog;
 class OutputTabWindow : public wxPanel
 {
 protected:

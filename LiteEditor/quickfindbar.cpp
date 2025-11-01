@@ -30,7 +30,6 @@
 #include "bitmap_loader.h"
 #include "bookmark_manager.h"
 #include "clSystemSettings.h"
-#include "clThemedTextCtrl.hpp"
 #include "cl_command_event.h"
 #include "cl_config.h"
 #include "cl_editor.h"
@@ -110,7 +109,7 @@ void CenterLine(wxStyledTextCtrl* ctrl, int start_pos, int end_pos)
 } // namespace
 
 QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
-    : clFindReplaceDialogBase(parent, id)
+    : FindAndReplaceDialogFrameBase(parent, id)
     , m_sci(NULL)
     , m_lastTextPtr(NULL)
     , m_eventsConnected(false)
@@ -121,7 +120,7 @@ QuickFindBar::QuickFindBar(wxWindow* parent, wxWindowID id)
     , m_inSelection(false)
 {
     Hide();
-
+    SetIcons(wxArtProvider::GetIconBundle(wxART_FIND, wxART_FRAME_ICON));
     m_toolbar->SetMiniToolBar(true);
 
     auto bitmaps = clGetManager()->GetStdIcons();
@@ -463,7 +462,7 @@ bool QuickFindBar::DoShow(bool s, const wxString& findWhat, bool showReplace)
         Move(wxNOT_FOUND, GetParent()->GetPosition().y);
     }
 
-    bool res = wxDialog::Show(s);
+    bool res = wxFrame::Show(s);
     if (s && m_sci) {
         // Delete the indicators
         m_sci->SetIndicatorCurrent(1);
@@ -999,7 +998,7 @@ void QuickFindBar::OnPaint(wxPaintEvent& e)
 
 void QuickFindBar::ShowToolBarOnly()
 {
-    wxDialog::Show();
+    wxFrame::Show();
     wxSizer* sz = m_textCtrlFind->GetContainingSizer();
     if (sz && sz != GetSizer()) {
         GetSizer()->Hide(sz);
@@ -1087,6 +1086,7 @@ TargetRange QuickFindBar::GetBestTargetRange() const
         return {0, static_cast<int>(m_sci->GetLastPosition())};
     }
 }
+
 void QuickFindBar::OnReplaceTextEnter(wxCommandEvent& event) {}
 void QuickFindBar::OnReplaceTextUpdated(wxCommandEvent& event) {}
 
@@ -1185,4 +1185,10 @@ void QuickFindBar::ShowMenuForReplaceCtrl()
     }
 
     TextCtrlShowMenu(m_textCtrlReplace, menu);
+}
+
+void QuickFindBar::OnCloseWindow(wxCloseEvent& event)
+{
+    wxUnusedVar(event);
+    Hide();
 }

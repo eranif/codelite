@@ -20,7 +20,7 @@
 #include <wx/bitmap.h>
 #include <map>
 #include <wx/icon.h>
-#include <wx/dialog.h>
+#include <wx/frame.h>
 #include <wx/iconbndl.h>
 #include <wx/toolbar.h>
 #include "clToolBar.h"
@@ -94,7 +94,7 @@ public:
     virtual ~QuickFindBarImages();
 };
 
-class clFindReplaceDialogBase : public wxDialog
+class FindAndReplaceDialogFrameBase : public wxFrame
 {
 public:
     enum {
@@ -113,6 +113,7 @@ protected:
     wxButton* m_buttonReplaceAll;
 
 protected:
+    virtual void OnCloseWindow(wxCloseEvent& event) { event.Skip(); }
     virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnText(wxCommandEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
@@ -141,13 +142,14 @@ public:
     wxButton* GetButtonReplace() { return m_buttonReplace; }
     wxButton* GetButtonReplaceAll() { return m_buttonReplaceAll; }
     wxPanel* GetMainPanel() { return m_mainPanel; }
-    clFindReplaceDialogBase(wxWindow* parent,
-                            wxWindowID id = wxID_ANY,
-                            const wxString& title = _("Find / Replace"),
-                            const wxPoint& pos = wxDefaultPosition,
-                            const wxSize& size = wxSize(-1, -1),
-                            long style = wxDEFAULT_DIALOG_STYLE | wxSTAY_ON_TOP | wxRESIZE_BORDER);
-    virtual ~clFindReplaceDialogBase();
+    FindAndReplaceDialogFrameBase(wxWindow* parent,
+                                  wxWindowID id = wxID_ANY,
+                                  const wxString& title = _("Find & Replace"),
+                                  const wxPoint& pos = wxDefaultPosition,
+                                  const wxSize& size = wxSize(-1, -1),
+                                  long style = wxFRAME_NO_TASKBAR | wxFRAME_FLOAT_ON_PARENT | wxCAPTION |
+                                               wxRESIZE_BORDER | wxCLOSE_BOX);
+    virtual ~FindAndReplaceDialogFrameBase();
 };
 
 #endif

@@ -209,9 +209,9 @@ QuickFindBarImages::QuickFindBarImages()
 
 QuickFindBarImages::~QuickFindBarImages() {}
 
-clFindReplaceDialogBase::clFindReplaceDialogBase(
+FindAndReplaceDialogFrameBase::FindAndReplaceDialogFrameBase(
     wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
-    : wxDialog(parent, id, title, pos, size, style)
+    : wxFrame(parent, id, title, pos, size, style)
 {
     if (!bBitmapLoaded) {
         // We need to initialise the default bitmap handler
@@ -286,7 +286,7 @@ clFindReplaceDialogBase::clFindReplaceDialogBase(
 
     flexGridSizer107->Add(m_buttonReplaceAll, 0, wxALL | wxEXPAND, WXC_FROM_DIP(2));
 
-    SetName(wxT("clFindReplaceDialogBase"));
+    SetName(wxT("FindAndReplaceDialogFrameBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if (GetSizer()) {
         GetSizer()->Fit(this);
@@ -302,50 +302,52 @@ clFindReplaceDialogBase::clFindReplaceDialogBase(
         wxPersistenceManager::Get().Restore(this);
     }
     // Connect events
-    m_textCtrlFind->Bind(wxEVT_COMMAND_TEXT_ENTER, &clFindReplaceDialogBase::OnEnter, this);
-    m_textCtrlFind->Bind(wxEVT_COMMAND_TEXT_UPDATED, &clFindReplaceDialogBase::OnText, this);
-    m_textCtrlFind->Bind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnKeyDown, this);
-    m_buttonFind->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnFind, this);
-    m_buttonFind->Bind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnFindUI, this);
-    m_buttonFind->Bind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
-    m_buttonFindPrev->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnFindPrev, this);
-    m_buttonFindPrev->Bind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnFindPrevUI, this);
-    m_buttonFindPrev->Bind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
-    m_buttonFindAll->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnFindAll, this);
-    m_buttonFindAll->Bind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnFindAllUI, this);
-    m_buttonFindAll->Bind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
-    m_textCtrlReplace->Bind(wxEVT_COMMAND_TEXT_UPDATED, &clFindReplaceDialogBase::OnReplaceTextUpdated, this);
-    m_textCtrlReplace->Bind(wxEVT_COMMAND_TEXT_ENTER, &clFindReplaceDialogBase::OnReplaceTextEnter, this);
-    m_textCtrlReplace->Bind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnReplaceKeyDown, this);
-    m_buttonReplace->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnReplace, this);
-    m_buttonReplace->Bind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceUI, this);
-    m_buttonReplace->Bind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
-    m_buttonReplaceAll->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnReplaceAll, this);
-    m_buttonReplaceAll->Bind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceAllUI, this);
-    m_buttonReplaceAll->Bind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
+    this->Bind(wxEVT_CLOSE_WINDOW, &FindAndReplaceDialogFrameBase::OnCloseWindow, this);
+    m_textCtrlFind->Bind(wxEVT_COMMAND_TEXT_ENTER, &FindAndReplaceDialogFrameBase::OnEnter, this);
+    m_textCtrlFind->Bind(wxEVT_COMMAND_TEXT_UPDATED, &FindAndReplaceDialogFrameBase::OnText, this);
+    m_textCtrlFind->Bind(wxEVT_KEY_DOWN, &FindAndReplaceDialogFrameBase::OnKeyDown, this);
+    m_buttonFind->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FindAndReplaceDialogFrameBase::OnFind, this);
+    m_buttonFind->Bind(wxEVT_UPDATE_UI, &FindAndReplaceDialogFrameBase::OnFindUI, this);
+    m_buttonFind->Bind(wxEVT_KEY_DOWN, &FindAndReplaceDialogFrameBase::OnButtonKeyDown, this);
+    m_buttonFindPrev->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FindAndReplaceDialogFrameBase::OnFindPrev, this);
+    m_buttonFindPrev->Bind(wxEVT_UPDATE_UI, &FindAndReplaceDialogFrameBase::OnFindPrevUI, this);
+    m_buttonFindPrev->Bind(wxEVT_KEY_DOWN, &FindAndReplaceDialogFrameBase::OnButtonKeyDown, this);
+    m_buttonFindAll->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FindAndReplaceDialogFrameBase::OnFindAll, this);
+    m_buttonFindAll->Bind(wxEVT_UPDATE_UI, &FindAndReplaceDialogFrameBase::OnFindAllUI, this);
+    m_buttonFindAll->Bind(wxEVT_KEY_DOWN, &FindAndReplaceDialogFrameBase::OnButtonKeyDown, this);
+    m_textCtrlReplace->Bind(wxEVT_COMMAND_TEXT_UPDATED, &FindAndReplaceDialogFrameBase::OnReplaceTextUpdated, this);
+    m_textCtrlReplace->Bind(wxEVT_COMMAND_TEXT_ENTER, &FindAndReplaceDialogFrameBase::OnReplaceTextEnter, this);
+    m_textCtrlReplace->Bind(wxEVT_KEY_DOWN, &FindAndReplaceDialogFrameBase::OnReplaceKeyDown, this);
+    m_buttonReplace->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FindAndReplaceDialogFrameBase::OnReplace, this);
+    m_buttonReplace->Bind(wxEVT_UPDATE_UI, &FindAndReplaceDialogFrameBase::OnReplaceUI, this);
+    m_buttonReplace->Bind(wxEVT_KEY_DOWN, &FindAndReplaceDialogFrameBase::OnButtonKeyDown, this);
+    m_buttonReplaceAll->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &FindAndReplaceDialogFrameBase::OnReplaceAll, this);
+    m_buttonReplaceAll->Bind(wxEVT_UPDATE_UI, &FindAndReplaceDialogFrameBase::OnReplaceAllUI, this);
+    m_buttonReplaceAll->Bind(wxEVT_KEY_DOWN, &FindAndReplaceDialogFrameBase::OnButtonKeyDown, this);
 }
 
-clFindReplaceDialogBase::~clFindReplaceDialogBase()
+FindAndReplaceDialogFrameBase::~FindAndReplaceDialogFrameBase()
 {
-    m_textCtrlFind->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clFindReplaceDialogBase::OnEnter, this);
-    m_textCtrlFind->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &clFindReplaceDialogBase::OnText, this);
-    m_textCtrlFind->Unbind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnKeyDown, this);
-    m_buttonFind->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnFind, this);
-    m_buttonFind->Unbind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnFindUI, this);
-    m_buttonFind->Unbind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
-    m_buttonFindPrev->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnFindPrev, this);
-    m_buttonFindPrev->Unbind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnFindPrevUI, this);
-    m_buttonFindPrev->Unbind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
-    m_buttonFindAll->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnFindAll, this);
-    m_buttonFindAll->Unbind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnFindAllUI, this);
-    m_buttonFindAll->Unbind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
-    m_textCtrlReplace->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &clFindReplaceDialogBase::OnReplaceTextUpdated, this);
-    m_textCtrlReplace->Unbind(wxEVT_COMMAND_TEXT_ENTER, &clFindReplaceDialogBase::OnReplaceTextEnter, this);
-    m_textCtrlReplace->Unbind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnReplaceKeyDown, this);
-    m_buttonReplace->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnReplace, this);
-    m_buttonReplace->Unbind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceUI, this);
-    m_buttonReplace->Unbind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
-    m_buttonReplaceAll->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &clFindReplaceDialogBase::OnReplaceAll, this);
-    m_buttonReplaceAll->Unbind(wxEVT_UPDATE_UI, &clFindReplaceDialogBase::OnReplaceAllUI, this);
-    m_buttonReplaceAll->Unbind(wxEVT_KEY_DOWN, &clFindReplaceDialogBase::OnButtonKeyDown, this);
+    this->Unbind(wxEVT_CLOSE_WINDOW, &FindAndReplaceDialogFrameBase::OnCloseWindow, this);
+    m_textCtrlFind->Unbind(wxEVT_COMMAND_TEXT_ENTER, &FindAndReplaceDialogFrameBase::OnEnter, this);
+    m_textCtrlFind->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &FindAndReplaceDialogFrameBase::OnText, this);
+    m_textCtrlFind->Unbind(wxEVT_KEY_DOWN, &FindAndReplaceDialogFrameBase::OnKeyDown, this);
+    m_buttonFind->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FindAndReplaceDialogFrameBase::OnFind, this);
+    m_buttonFind->Unbind(wxEVT_UPDATE_UI, &FindAndReplaceDialogFrameBase::OnFindUI, this);
+    m_buttonFind->Unbind(wxEVT_KEY_DOWN, &FindAndReplaceDialogFrameBase::OnButtonKeyDown, this);
+    m_buttonFindPrev->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FindAndReplaceDialogFrameBase::OnFindPrev, this);
+    m_buttonFindPrev->Unbind(wxEVT_UPDATE_UI, &FindAndReplaceDialogFrameBase::OnFindPrevUI, this);
+    m_buttonFindPrev->Unbind(wxEVT_KEY_DOWN, &FindAndReplaceDialogFrameBase::OnButtonKeyDown, this);
+    m_buttonFindAll->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FindAndReplaceDialogFrameBase::OnFindAll, this);
+    m_buttonFindAll->Unbind(wxEVT_UPDATE_UI, &FindAndReplaceDialogFrameBase::OnFindAllUI, this);
+    m_buttonFindAll->Unbind(wxEVT_KEY_DOWN, &FindAndReplaceDialogFrameBase::OnButtonKeyDown, this);
+    m_textCtrlReplace->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &FindAndReplaceDialogFrameBase::OnReplaceTextUpdated, this);
+    m_textCtrlReplace->Unbind(wxEVT_COMMAND_TEXT_ENTER, &FindAndReplaceDialogFrameBase::OnReplaceTextEnter, this);
+    m_textCtrlReplace->Unbind(wxEVT_KEY_DOWN, &FindAndReplaceDialogFrameBase::OnReplaceKeyDown, this);
+    m_buttonReplace->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FindAndReplaceDialogFrameBase::OnReplace, this);
+    m_buttonReplace->Unbind(wxEVT_UPDATE_UI, &FindAndReplaceDialogFrameBase::OnReplaceUI, this);
+    m_buttonReplace->Unbind(wxEVT_KEY_DOWN, &FindAndReplaceDialogFrameBase::OnButtonKeyDown, this);
+    m_buttonReplaceAll->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &FindAndReplaceDialogFrameBase::OnReplaceAll, this);
+    m_buttonReplaceAll->Unbind(wxEVT_UPDATE_UI, &FindAndReplaceDialogFrameBase::OnReplaceAllUI, this);
+    m_buttonReplaceAll->Unbind(wxEVT_KEY_DOWN, &FindAndReplaceDialogFrameBase::OnButtonKeyDown, this);
 }

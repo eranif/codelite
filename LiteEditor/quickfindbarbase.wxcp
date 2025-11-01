@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	179,
+		"m_objCounter":	192,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCrafteryhjh4ZInitBitmapResources",
 		"m_bitmapsFile":	"quickfindbarbase_liteeditor_bitmaps.cpp",
@@ -799,12 +799,12 @@
 					"m_children":	[]
 				}]
 		}, {
-			"m_type":	4421,
+			"m_type":	4402,
 			"proportion":	0,
 			"border":	5,
 			"gbSpan":	"1,1",
 			"gbPosition":	"0,0",
-			"m_styles":	["wxDEFAULT_DIALOG_STYLE", "wxSTAY_ON_TOP", "wxRESIZE_BORDER"],
+			"m_styles":	["wxFRAME_NO_TASKBAR", "wxFRAME_FLOAT_ON_PARENT", "wxCAPTION", "wxRESIZE_BORDER", "wxCLOSE_BOX"],
 			"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"],
 			"m_properties":	[{
 					"type":	"string",
@@ -817,7 +817,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Name:",
-					"m_value":	"clFindReplaceDialogBase"
+					"m_value":	"FindAndReplaceDialogFrameBase"
 				}, {
 					"type":	"multi-string",
 					"m_label":	"Tooltip:",
@@ -865,7 +865,7 @@
 				}, {
 					"type":	"string",
 					"m_label":	"Title:",
-					"m_value":	"Find / Replace"
+					"m_value":	"Find & Replace"
 				}, {
 					"type":	"virtualFolderPicker",
 					"m_label":	"Virtual Folder:",
@@ -888,6 +888,11 @@
 					"m_label":	"Class Decorator",
 					"m_value":	""
 				}, {
+					"type":	"choice",
+					"m_label":	"wxFrame Type",
+					"m_selection":	0,
+					"m_options":	["wxFrame", "wxDocMDIParentFrame", "wxDocMDIChildFrame", "wxDocParentFrame", "wxDocChildFrame", "wxMiniFrame"]
+				}, {
 					"type":	"bitmapPicker",
 					"m_label":	"Bitmap File (16x16)  :",
 					"m_path":	""
@@ -908,7 +913,13 @@
 					"m_label":	"Bitmap File (256x256):",
 					"m_path":	""
 				}],
-			"m_events":	[],
+			"m_events":	[{
+					"m_eventName":	"wxEVT_CLOSE_WINDOW",
+					"m_eventClass":	"wxCloseEvent",
+					"m_functionNameAndSignature":	"OnCloseWindow(wxCloseEvent& event)",
+					"m_description":	"Process a close event. This event applies to wxFrame and wxDialog classes",
+					"m_noBody":	false
+				}],
 			"m_children":	[{
 					"m_type":	4401,
 					"proportion":	1,

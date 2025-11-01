@@ -24,8 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "clTerminalHistory.h"
-#include "clThemedTextCtrl.hpp"
 #include "quickfindbarbase.h"
 #include "wxTerminalCtrl/wxTerminalHistory.hpp"
 
@@ -66,7 +64,7 @@ struct TargetRange {
     typedef std::vector<TargetRange> Vec_t;
 };
 
-class QuickFindBar : public clFindReplaceDialogBase
+class QuickFindBar : public FindAndReplaceDialogFrameBase
 {
 public:
     enum eRegexType {
@@ -76,9 +74,11 @@ public:
     };
 
 protected:
-    virtual void OnReplaceTextUI(wxUpdateUIEvent& event);
-    virtual void OnReplaceTextEnter(wxCommandEvent& event);
-    virtual void OnReplaceTextUpdated(wxCommandEvent& event);
+    void OnCloseWindow(wxCloseEvent& event) override;
+    void OnReplaceTextUI(wxUpdateUIEvent& event);
+    void OnReplaceTextEnter(wxCommandEvent& event) override;
+    void OnReplaceTextUpdated(wxCommandEvent& event) override;
+
     enum eFindFlags {
         FIND_DEFAULT = 0,
         FIND_PREV = (1 << 0),
@@ -101,14 +101,14 @@ protected:
     wxTerminalHistory m_replaceHistory;
 
 protected:
-    virtual void OnButtonKeyDown(wxKeyEvent& event);
-    virtual void OnReplaceAllUI(wxUpdateUIEvent& event);
-    virtual void OnReplaceUI(wxUpdateUIEvent& event);
-    virtual void OnFind(wxCommandEvent& event);
-    virtual void OnFindAllUI(wxUpdateUIEvent& event);
-    virtual void OnFindPrev(wxCommandEvent& event);
-    virtual void OnFindPrevUI(wxUpdateUIEvent& event);
-    virtual void OnFindUI(wxUpdateUIEvent& event);
+    void OnButtonKeyDown(wxKeyEvent& event) override;
+    void OnReplaceAllUI(wxUpdateUIEvent& event) override;
+    void OnReplaceUI(wxUpdateUIEvent& event) override;
+    void OnFind(wxCommandEvent& event) override;
+    void OnFindAllUI(wxUpdateUIEvent& event) override;
+    void OnFindPrev(wxCommandEvent& event) override;
+    void OnFindPrevUI(wxUpdateUIEvent& event) override;
+    void OnFindUI(wxUpdateUIEvent& event) override;
 
     /**
      * @brief find text in the editor the select it
@@ -155,7 +155,7 @@ private:
     void DoReplaceAll(bool selectionOnly);
 
 protected:
-    virtual void OnReplaceKeyDown(wxKeyEvent& event);
+    void OnReplaceKeyDown(wxKeyEvent& event) override;
 
     // replace the current target
     // returns the length of the replacement text
@@ -177,12 +177,12 @@ protected:
 
     // Control events
     void OnHide(wxCommandEvent& e);
-    void OnFindAll(wxCommandEvent& e);
-    void OnText(wxCommandEvent& e);
-    void OnKeyDown(wxKeyEvent& e);
-    void OnReplaceAll(wxCommandEvent& e);
-    void OnEnter(wxCommandEvent& e);
-    void OnReplace(wxCommandEvent& e);
+    void OnFindAll(wxCommandEvent& e) override;
+    void OnText(wxCommandEvent& e) override;
+    void OnKeyDown(wxKeyEvent& e) override;
+    void OnReplaceAll(wxCommandEvent& e) override;
+    void OnEnter(wxCommandEvent& e) override;
+    void OnReplace(wxCommandEvent& e) override;
     void OnUpdateUI(wxUpdateUIEvent& e);
     void OnReplaceEnter(wxCommandEvent& e);
     void OnQuickFindCommandEvent(wxCommandEvent& event);
@@ -208,7 +208,7 @@ public:
     virtual ~QuickFindBar();
 
     bool ShowForPlugins();
-    bool Show(bool s = true);
+    bool Show(bool s = true) override;
     bool Show(const wxString& findWhat, bool showReplace);
     wxStyledTextCtrl* GetEditor() { return m_sci; }
     void SetEditor(wxStyledTextCtrl* sci);

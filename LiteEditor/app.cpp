@@ -509,7 +509,15 @@ bool CodeLiteApp::OnInit()
         }
         homeDir = bd.GetPath();
     } else {
+#ifdef USE_POSIX_LAYOUT
+        wxFileName execfpath(clStandardPaths::Get().GetExecutablePath());
+        if (execfpath.GetDirs().Last().IsSameAs("bin")) {
+            execfpath.RemoveLastDir();
+        }
+        homeDir = execfpath.GetPath() + wxT("/share/codelite");
+#else
         homeDir = wxFileName(wxStandardPaths::Get().GetExecutablePath()).GetPath();
+#endif
     }
     clStandardPaths::Get().SetDataDir(homeDir);
 #endif

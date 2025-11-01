@@ -25,7 +25,10 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "FindAndReplaceDialog.h"
 
+#ifdef __WXMSW__
 #include "ColoursAndFontsManager.h"
+#endif
+
 #include "Keyboard/clKeyboardManager.h"
 #include "bitmap_loader.h"
 #include "bookmark_manager.h"

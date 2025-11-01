@@ -1,5 +1,6 @@
 #include "Scripting/CodeLiteLUA.hpp"
 
+#include "DefaultLuaScript.cpp"
 #include "ai/LLMManager.hpp"
 #include "codelite_events.h"
 #include "fileextmanager.h"
@@ -35,6 +36,21 @@ CodeLiteLUA& CodeLiteLUA::Get()
 
 void CodeLiteLUA::Reset() { m_menu_items.clear(); }
 
+void CodeLiteLUA::Shutdown()
+{
+    auto& self = Get();
+
+    // free the state
+    self.m_menu_items.clear();
+    if (self.m_state) {
+        lua_close(self.m_state);
+        self.m_state = nullptr;
+    }
+
+    self.m_textGenerationFrame->Destroy();
+    self.m_textGenerationFrame = nullptr;
+}
+
 void CodeLiteLUA::Initialise()
 {
     auto& self = Get();
@@ -49,6 +65,7 @@ void CodeLiteLUA::Initialise()
             .addFunction("add_menu_item", &CodeLiteLUA::add_menu_item)
             .addFunction("editor_selection", &CodeLiteLUA::editor_selection)
             .addFunction("chat", &CodeLiteLUA::chat)
+            .addFunction("generate", &CodeLiteLUA::generate)
             .addFunction("editor_language", &CodeLiteLUA::editor_language)
             .addFunction("editor_text", &CodeLiteLUA::editor_text)
             .addFunction("editor_filepath", &CodeLiteLUA::editor_filepath)
@@ -79,8 +96,13 @@ void CodeLiteLUA::InitialiseInternal()
 
     wxString codelite_lua = FileManager::GetSettingFileFullPath("codelite.lua", options);
     if (!wxFileName::FileExists(codelite_lua)) {
-        clDEBUG() << "File: '" << codelite_lua << "' does not exist" << endl;
-        return;
+        // First time opening it, create it with default content.
+        clSYSTEM() << "File: '" << codelite_lua << "' does not exist" << endl;
+        clSYSTEM() << "Creating a default file" << endl;
+        if (!FileManager::WriteSettingsFileContent("codelite.lua", wxString::FromUTF8(kDefaultCodeLiteLUA), options)) {
+            clERROR() << "Failed to write file:" << codelite_lua << endl;
+            return;
+        }
     }
 
     clDEBUG() << "Running file:" << codelite_lua << endl;
@@ -91,20 +113,15 @@ void CodeLiteLUA::InitialiseInternal()
         ::wxMessageBox(errmsg, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
+
     clDEBUG() << "Successfully executed script file:" << codelite_lua << endl;
+    m_textGenerationFrame = std::make_shared<TextGenerationPreviewFrame>(PreviewKind::kDefault);
+    m_textGenerationFrame->Hide();
 }
 
 CodeLiteLUA::CodeLiteLUA() {}
 
-CodeLiteLUA::~CodeLiteLUA()
-{
-    // free the state
-    m_menu_items.clear();
-    if (m_state) {
-        lua_close(m_state);
-        m_state = nullptr;
-    }
-}
+CodeLiteLUA::~CodeLiteLUA() {}
 
 void CodeLiteLUA::message_box(const std::string& message, int type)
 {
@@ -155,6 +172,8 @@ std::string CodeLiteLUA::editor_language()
         return {};
     }
     auto lang = FileExtManager::GetLanguageFromType(FileExtManager::GetType(editor->GetRemotePathOrLocal()));
+    lang = lang.Lower();
+    lang.Replace(" ", "");
     return lang.ToStdString(wxConvUTF8);
 }
 
@@ -218,6 +237,20 @@ CodeLiteLUA::str_replace_all(const std::string& str, const std::string& find_wha
 
     result.append(str, last_pos, std::string::npos);
     return result;
+}
+
+void CodeLiteLUA::generate(const std::string& prompt)
+{
+    if (Get().m_generationInProgress) {
+        ::wxMessageBox(
+            _("Another generation is in progress, try again later"), "CodeLite", wxOK | wxICON_WARNING | wxCENTER);
+        return;
+    }
+
+    Get().m_generationInProgress = true;
+    Get().m_textGenerationFrame->InitialiseFor(PreviewKind::kDefault);
+    llm::Manager::GetInstance().ShowTextGenerationDialog(
+        prompt, Get().m_textGenerationFrame, std::nullopt, []() { CodeLiteLUA::Get().m_generationInProgress = false; });
 }
 
 void CodeLiteLUA::chat(const std::string& prompt)

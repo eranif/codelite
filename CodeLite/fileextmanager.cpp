@@ -207,34 +207,37 @@ void FileExtManager::Init()
         m_map["md"] = TypeMarkdown;
         m_map["dart"] = TypeDart;
 
-        m_language_bundle.insert({ "C/C++", { TypeSourceCpp, TypeSourceC, TypeHeader } });
-        m_language_bundle.insert({ "Windows resource files", { TypeResource } });
-        m_language_bundle.insert({ "Yacc", { TypeYacc } });
-        m_language_bundle.insert({ "Lex", { TypeLex } });
-        m_language_bundle.insert({ "Xml", { TypeProject, TypeWorkspace, TypeXml, TypeXRC, TypeSvg, TypeFormbuilder } });
-        m_language_bundle.insert({ "Yaml", { TypeYAML } });
-        m_language_bundle.insert({ "Json",
-                                   { TypeJSON,
-                                     TypeWorkspaceFileSystem,
-                                     TypeWxCrafter,
-                                     TypeWorkspaceDocker,
-                                     TypeWorkspaceNodeJS,
-                                     TypeWorkspacePHP } });
-        m_language_bundle.insert({ "Rust", { TypeRust } });
-        m_language_bundle.insert({ "Ruby", { TypeRuby } });
-        m_language_bundle.insert({ "Shell script", { TypeShellScript } });
-        m_language_bundle.insert({ "Java", { TypeJava } });
-        m_language_bundle.insert({ "Javascript", { TypeJS } });
-        m_language_bundle.insert({ "TypeScript", { TypeTypeScript } });
-        m_language_bundle.insert({ "Python", { TypePython } });
-        m_language_bundle.insert({ "PHP", { TypePhp } });
-        m_language_bundle.insert({ "CMake", { TypeCMake } });
-        m_language_bundle.insert({ "Go", { TypeGo } });
+        m_language_bundle.insert({"cpp", {TypeSourceCpp, TypeSourceC, TypeHeader}});
+        m_language_bundle.insert({"Windows resource files", {TypeResource}});
+        m_language_bundle.insert({"Yacc", {TypeYacc}});
+        m_language_bundle.insert({"Lex", {TypeLex}});
+        m_language_bundle.insert({"Xml", {TypeProject, TypeWorkspace, TypeXml, TypeXRC, TypeSvg, TypeFormbuilder}});
+        m_language_bundle.insert({"Yaml", {TypeYAML}});
+        m_language_bundle.insert({"Json",
+                                  {TypeJSON,
+                                   TypeWorkspaceFileSystem,
+                                   TypeWxCrafter,
+                                   TypeWorkspaceDocker,
+                                   TypeWorkspaceNodeJS,
+                                   TypeWorkspacePHP}});
+        m_language_bundle.insert({"Rust", {TypeRust}});
+        m_language_bundle.insert({"Ruby", {TypeRuby}});
+        m_language_bundle.insert({"sh", {TypeShellScript}});
+        m_language_bundle.insert({"Java", {TypeJava}});
+        m_language_bundle.insert({"Javascript", {TypeJS}});
+        m_language_bundle.insert({"TypeScript", {TypeTypeScript}});
+        m_language_bundle.insert({"Python", {TypePython}});
+        m_language_bundle.insert({"PHP", {TypePhp}});
+        m_language_bundle.insert({"CMake", {TypeCMake}});
+        m_language_bundle.insert({"lua", {TypeLua}});
+        m_language_bundle.insert({"Go", {TypeGo}});
+        m_language_bundle.insert({"Markdown", {TypeMarkdown}});
+        m_language_bundle.insert({"Dart", {TypeDart}});
 
         // build the reverse search table: file type -> language
         for (auto vt : m_language_bundle) {
             for (auto t : vt.second) {
-                m_file_type_to_lang.insert({ (int)t, vt.first });
+                m_file_type_to_lang.insert({(int)t, vt.first});
             }
         }
 

@@ -53,7 +53,7 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_logView, _("Language Server"));
     m_tabToggler.reset(new clTabTogglerHelper(_("Language Server"), m_logView, "", NULL));
 
-    m_commentGenerationView = new TextGenerationPreviewFrame(PreviewKind::kCommentGeneration);
+    m_commentGenerationView = std::make_shared<TextGenerationPreviewFrame>(PreviewKind::kCommentGeneration);
     m_commentGenerationView->Hide();
 
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &LanguageServerPlugin::OnInitDone, this);
@@ -287,41 +287,8 @@ void LanguageServerPlugin::OnGenerateDocString(wxCommandEvent& event)
         prompt.Replace("{{lang}}", language);
         prompt.Replace("{{function}}", func_text.value());
 
-        assistant::ChatOptions chat_options{assistant::ChatOptions::kNoTools};
-        assistant::AddFlagSet(chat_options, assistant::ChatOptions::kNoHistory);
-
         m_commentGenerationView->InitialiseFor(PreviewKind::kCommentGeneration);
-        m_commentGenerationView->Show();
-        m_commentGenerationView->StartProgress(_("Working..."));
-
-        auto collector = new llm::ResponseCollector();
-        collector->SetStateChangingCB([this](llm::ChatState state) {
-            if (!wxThread::IsMain()) {
-                clWARNING() << "StateChangingCB called for non main thread!" << endl;
-                return;
-            }
-            switch (state) {
-            case llm::ChatState::kThinking:
-                m_commentGenerationView->UpdateProgress(_("Thinking..."));
-                break;
-            case llm::ChatState::kWorking:
-                m_commentGenerationView->UpdateProgress(_("Working..."));
-                break;
-            case llm::ChatState::kReady:
-                m_commentGenerationView->StopProgress(_("Ready"));
-                break;
-            }
-        });
-
-        collector->SetStreamCallback(
-            [this](const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
-                m_commentGenerationView->AppendText(wxString::FromUTF8(message));
-                if (is_done) {
-                    CallAfter(&LanguageServerPlugin::OnDocStringGenerationDone);
-                }
-            });
-
-        llm::Manager::GetInstance().Chat(collector, prompt, nullptr, chat_options);
+        llm::Manager::GetInstance().ShowTextGenerationDialog(prompt, m_commentGenerationView, std::nullopt);
     });
 }
 

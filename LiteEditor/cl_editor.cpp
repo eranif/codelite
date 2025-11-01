@@ -832,7 +832,8 @@ void clEditor::SetProperties()
                         DrawingUtils::IsDark(bgColour) ? bgColour.ChangeLightness(120) : bgColour.ChangeLightness(60));
 
     // Set margins' width
-    SetMarginWidth(SYMBOLS_MARGIN_ID, options->GetDisplayBookmarkMargin() ? FromDIP(MARGIN_WIDTH) : 0); // Symbol margin
+    SetMarginWidth(SYMBOLS_MARGIN_ID,
+                   options->GetDisplayBookmarkMargin() ? FromDIP(MARGIN_WIDTH) : 0); // Symbol margin
 
     // allow everything except for the folding symbols
     SetMarginMask(SYMBOLS_MARGIN_ID, ~(wxSTC_MASK_FOLDERS));
@@ -1079,7 +1080,6 @@ void clEditor::SetProperties()
     }
 
     IndicatorSetForeground(1, options->GetBookmarkBgColour(smt_find_bookmark - smt_FIRST_BMK_TYPE));
-    IndicatorSetHoverForeground(INDICATOR_WORD_HIGHLIGHT, true);
     IndicatorSetForeground(INDICATOR_WORD_HIGHLIGHT, highlight_colour);
     IndicatorSetStyle(INDICATOR_WORD_HIGHLIGHT, indicator_style);
     IndicatorSetAlpha(INDICATOR_WORD_HIGHLIGHT, ALPHA);
@@ -1212,8 +1212,9 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
         } else if (!wxIsalnum(nextChar) && !wxIsalnum(prevChar)) {
             // add complete quotes; but don't if the next char is alnum,
             // which is annoying if you're trying to retrofit quotes around a string!
-            // Also not if the previous char is alnum: it's more likely (especially in non-code editors)
-            // that someone is trying to type _don't_ than it's a burning desire to write _don''_
+            // Also not if the previous char is alnum: it's more likely (especially in non-code
+            // editors) that someone is trying to type _don't_ than it's a burning desire to write
+            // _don''_
             if (event.GetKey() == wxT('"') && !m_context->IsCommentOrString(pos)) {
                 InsertText(pos, wxT("\""));
                 SetIndicatorCurrent(INDICATOR_MATCH);
@@ -1288,11 +1289,13 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
     case '\n': {
         long matchedPos(wxNOT_FOUND);
         // incase ENTER was hit immediately after we inserted '{' into the code...
-        if (m_lastCharEntered == wxT('{') &&                         // Last char entered was {
-            m_autoAddMatchedCurlyBrace &&                            // auto-add-match-brace option is enabled
-            !m_disableSmartIndent &&                                 // the disable smart indent option is NOT enabled
-            MatchBraceBack(wxT('}'), GetCurrentPos(), matchedPos) && // Insert it only if it match an open brace
-            !m_context->IsDefaultContext() &&                        // the editor's context is NOT the default one
+        if (m_lastCharEntered == wxT('{') && // Last char entered was {
+            m_autoAddMatchedCurlyBrace &&    // auto-add-match-brace option is enabled
+            !m_disableSmartIndent &&         // the disable smart indent option is NOT enabled
+            MatchBraceBack(wxT('}'),
+                           GetCurrentPos(),
+                           matchedPos) &&         // Insert it only if it match an open brace
+            !m_context->IsDefaultContext() &&     // the editor's context is NOT the default one
             matchedPos == m_lastCharEnteredPos) { // and that open brace must be the one that we have inserted
 
             matchChar = '}';
@@ -1377,22 +1380,22 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
             case '\r':
                 InsertText(pos, matchChar);
                 SetIndicatorCurrent(INDICATOR_MATCH);
-                // use grey colour rather than black, otherwise this indicator is invisible when using the
-                // black theme
+                // use grey colour rather than black, otherwise this indicator is invisible when
+                // using the black theme
                 IndicatorFillRange(pos, 1);
                 break;
             }
         } else if (matchChar != '}' && addClosingBrace) {
             InsertText(pos, matchChar);
             SetIndicatorCurrent(INDICATOR_MATCH);
-            // use grey colour rather than black, otherwise this indicator is invisible when using the
-            // black theme
+            // use grey colour rather than black, otherwise this indicator is invisible when using
+            // the black theme
             IndicatorFillRange(pos, 1);
         }
     }
 
-    // Show the completion box if needed. canShowCompletionBox is set to false only if it was just dismissed
-    // at the top of this function
+    // Show the completion box if needed. canShowCompletionBox is set to false only if it was just
+    // dismissed at the top of this function
     if (!IsCompletionBoxShown() && canShowCompletionBox) {
         // display the keywords completion box only if user typed more than 2
         // chars && the caret is placed at the end of that word
@@ -1516,7 +1519,8 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
             message << (!message.empty() ? ", " : "") << "SelLn " << selectionLn;
         }
 
-        // Always update the status bar with event, calling it directly causes performance degradation
+        // Always update the status bar with event, calling it directly causes performance
+        // degradation
         m_mgr->GetStatusBar()->SetLinePosColumn(message);
 #ifdef __WXGTK__
         // the status bar does not refresh on Linux automatically
@@ -1617,14 +1621,15 @@ void clEditor::OnMarginClick(wxStyledTextEvent& event)
                 }
             }
 
-            // Try to make as much as possible of the originally-displayed code stay in the same screen position
-            // That's no problem if the fold-head is visible: that line and above automatically stay in place
-            // However if it's off screen and the user clicks in a margin to fold, no part of the function will stay on
-            // screen
-            // The following code scrolls the correct amount to keep the position of the lines *below* the function
+            // Try to make as much as possible of the originally-displayed code stay in the same
+            // screen position That's no problem if the fold-head is visible: that line and above
+            // automatically stay in place However if it's off screen and the user clicks in a
+            // margin to fold, no part of the function will stay on screen The following code
+            // scrolls the correct amount to keep the position of the lines *below* the function
             // unchanged
             // This also brings the newly-folded function into view.
-            // NB It fails if the cursor was originally inside the new fold; but at least then the fold head gets shown
+            // NB It fails if the cursor was originally inside the new fold; but at least then the
+            // fold head gets shown
             int foldparent = GetFoldParent(nLine);
             int firstvisibleline = GetFirstVisibleLine();
             if (!(GetFoldLevel(nLine) & wxSTC_FOLDLEVELHEADERFLAG) // If the click was below the fold head
@@ -1666,7 +1671,8 @@ bool clEditor::SaveFile()
     // if we managed to save the file, remove the 'read only' attribute
     clMainFrame::Get()->GetMainBook()->MarkEditorReadOnly(this);
 
-    // Take a snapshot of the current deltas. We'll need this as a 'base' for any future FindInFiles call
+    // Take a snapshot of the current deltas. We'll need this as a 'base' for any future FindInFiles
+    // call
     m_deltas->OnFileSaved();
     return true;
 }
@@ -1758,8 +1764,8 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
     // try to manually convert the text to make sure that the conversion does not fail
     wxString theText = GetText();
 
-    // If the intermediate file exists, it means that we got problems deleting it (usually permissions)
-    // Notify the user and continue
+    // If the intermediate file exists, it means that we got problems deleting it (usually
+    // permissions) Notify the user and continue
     if (intermediateFile.Exists()) {
         // We failed to delete the intermediate file
         ::wxMessageBox(
@@ -1795,7 +1801,8 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
     if ((buf.length() == 0) && !theText.IsEmpty()) {
         // something went wrong in the conversion process
         wxString errmsg;
-        errmsg << _("File text conversion failed!\nCheck your file font encoding from\nSettings | Preferences | "
+        errmsg << _("File text conversion failed!\nCheck your file font encoding from\nSettings | "
+                    "Preferences | "
                     "Misc | Locale");
         wxMessageBox(errmsg, "CodeLite", wxOK | wxICON_ERROR | wxCENTER, wxTheApp->GetTopWindow());
         return false;
@@ -1884,7 +1891,8 @@ void clEditor::UpdateBreakpoints()
     // if this is a remote file, use that path in the debugger view
     ManagerST::Get()->GetBreakpointsMgr()->DeleteAllBreakpointsByFileName(file_path);
 
-    // iterate over the array and update the breakpoint manager with updated line numbers for each breakpoint
+    // iterate over the array and update the breakpoint manager with updated line numbers for each
+    // breakpoint
     for (auto& d : m_breakpointsInfo) {
         int handle = d.first;
         int line = MarkerLineFromHandle(handle);
@@ -1985,8 +1993,8 @@ void clEditor::OnDwellStart(wxStyledTextEvent& event)
 
     if (IsContextMenuOn() || IsDragging() || !GetSTCFocus()) {
         // Don't cover the context menu or a potential drop-point with a calltip!
-        // And, especially, try to avoid scintilla's party-piece: placing a permanent calltip on top of some
-        // innocent app!
+        // And, especially, try to avoid scintilla's party-piece: placing a permanent calltip on top
+        // of some innocent app!
 
     } else if (event.GetX() > 0 // It seems that we can get spurious events with x == 0
                && event.GetX() < margin) {
@@ -2340,8 +2348,8 @@ void clEditor::FindAndSelectV(const wxString& _pattern,
                               int pos /*=0*/,
                               NavMgr* WXUNUSED(unused)) // Similar but returns void, so can be async
 {
-    // Use CallAfter() here. With wxGTK-3.1 (perhaps due to its scintilla update) if the file wasn't already loaded,
-    // EnsureVisible() is called too early and fails
+    // Use CallAfter() here. With wxGTK-3.1 (perhaps due to its scintilla update) if the file wasn't
+    // already loaded, EnsureVisible() is called too early and fails
     wxArrayString strings; // CallAfter can only cope with 2 parameters, so combine the wxStrings
     ClearSelections();
     strings.Add(_pattern);
@@ -2397,7 +2405,8 @@ void clEditor::DoRecursivelyExpandFolds(bool expand, int startline, int endline)
                 HideLines(line + 1, BottomOfFold);
             }
 
-            line = BottomOfFold; // Now skip over the fold we've just dealt with, ready for any later siblings
+            line = BottomOfFold; // Now skip over the fold we've just dealt with, ready for any
+                                 // later siblings
         }
     }
 }
@@ -2420,10 +2429,11 @@ void clEditor::ToggleAllFoldsInSelection()
         wxSwap(startline, endline);
     }
 
-    // First see if there are any folded lines in the selection. If there are, we'll be in 'unfold' mode
+    // First see if there are any folded lines in the selection. If there are, we'll be in 'unfold'
+    // mode
     bool expanding(false);
-    for (int line = startline; line < endline;
-         ++line) { // not <=. If only the last line of the sel is folded it's unlikely that the user meant it
+    for (int line = startline; line < endline; ++line) { // not <=. If only the last line of the sel is folded it's
+                                                         // unlikely that the user meant it
         if (!GetLineVisible(line)) {
             expanding = true;
             break;
@@ -2435,8 +2445,8 @@ void clEditor::ToggleAllFoldsInSelection()
             continue;
         }
         int BottomOfFold = GetLastChild(line, -1);
-        if (BottomOfFold > (endline + 1)) { // GetLastChild() seems to be 1-based, not zero-based. Without the +1, a
-                                            // } at endline will be considered outside the selection
+        if (BottomOfFold > (endline + 1)) { // GetLastChild() seems to be 1-based, not zero-based. Without the +1,
+                                            // a } at endline will be considered outside the selection
             continue;                       // This fold continues past the end of the selection
         }
         DoRecursivelyExpandFolds(expanding, line, BottomOfFold);
@@ -2444,10 +2454,10 @@ void clEditor::ToggleAllFoldsInSelection()
     }
 
     if (!expanding) {
-        // The caret will (surely) be inside the selection, and unless it was on the first line or an unfolded one,
-        // it'll now be hidden
-        // If so place it at the top, which will be visible. Unfortunately SetCaretAt() destroys the selection,
-        // and I can't find a way to preserve/reinstate it while still setting the caret
+        // The caret will (surely) be inside the selection, and unless it was on the first line or
+        // an unfolded one, it'll now be hidden If so place it at the top, which will be visible.
+        // Unfortunately SetCaretAt() destroys the selection, and I can't find a way to
+        // preserve/reinstate it while still setting the caret
         int caretline = LineFromPos(GetCurrentPos());
         if (!GetLineVisible(caretline)) {
             SetCaretAt(selStart);
@@ -2502,9 +2512,9 @@ void clEditor::FoldAll()
         }
     }
 
-    // Now go through the whole document, toggling folds that match the original one's level if we're collapsing
-    // or all collapsed folds if we're expanding (so that internal folds get expanded too).
-    // The (level & wxSTC_FOLDLEVELHEADERFLAG) means "If this level is a Fold start"
+    // Now go through the whole document, toggling folds that match the original one's level if
+    // we're collapsing or all collapsed folds if we're expanding (so that internal folds get
+    // expanded too). The (level & wxSTC_FOLDLEVELHEADERFLAG) means "If this level is a Fold start"
     // (level & wxSTC_FOLDLEVELNUMBERMASK) returns a value for the 'indent' of the fold.
     // This starts at wxSTC_FOLDLEVELBASE==1024. A sub fold-point == 1025, a subsub 1026...
     for (int line = 0; line < maxLine; line++) {
@@ -2535,8 +2545,8 @@ void clEditor::FoldAll()
     }
 }
 
-// Toggle all the highest-level folds in the selection i.e. if the selection contains folds of level 3, 4 and 5,
-// toggle all the level 3 ones
+// Toggle all the highest-level folds in the selection i.e. if the selection contains folds of level
+// 3, 4 and 5, toggle all the level 3 ones
 void clEditor::ToggleTopmostFoldsInSelection()
 {
     int selStart = GetSelectionStart();
@@ -2555,12 +2565,12 @@ void clEditor::ToggleTopmostFoldsInSelection()
         wxSwap(startline, endline);
     }
 
-    // Go thru the selection to find the topmost contained fold level. Also ask the first one of this level if it's
-    // folded
+    // Go thru the selection to find the topmost contained fold level. Also ask the first one of
+    // this level if it's folded
     int toplevel(wxSTC_FOLDLEVELNUMBERMASK);
     bool expanded(true);
-    for (int line = startline; line < endline;
-         ++line) { // not <=. If only the last line of the sel is folded it's unlikely that the user meant it
+    for (int line = startline; line < endline; ++line) { // not <=. If only the last line of the sel is folded it's
+                                                         // unlikely that the user meant it
         if (!GetLineVisible(line)) {
             break;
         }
@@ -2820,8 +2830,8 @@ void clEditor::OnChangeActiveBookmarkType(wxCommandEvent& event)
 void clEditor::GetBookmarkTooltip(int lineno, wxString& tip, wxString& title)
 {
     title << "### " << _("Bookmarks");
-    // If we've arrived here we know there's a bookmark on the line; however we don't know which type(s)
-    // If multiple, list each, with the visible one first
+    // If we've arrived here we know there's a bookmark on the line; however we don't know which
+    // type(s) If multiple, list each, with the visible one first
     int linebits = MarkerGet(lineno);
     if (linebits & GetActiveBookmarkMask()) {
         tip << GetBookmarkLabel((sci_marker_types)GetActiveBookmarkType());
@@ -3284,8 +3294,8 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
         m_prevSelectionInfo.Sort();
     }
 
-    bool escapeUsed = false; // If the quickfind bar is open we'll use an ESC to close it; but only if we've not
-                             // already used it for something else
+    bool escapeUsed = false; // If the quickfind bar is open we'll use an ESC to close it; but only
+                             // if we've not already used it for something else
 
     // Hide tooltip dialog if its ON
     IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
@@ -3363,7 +3373,8 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
             escapeUsed = true;
         }
 
-        // If we've not already used ESC, there's a reasonable chance that the user wants to close the QuickFind bar
+        // If we've not already used ESC, there's a reasonable chance that the user wants to close
+        // the QuickFind bar
         if (!escapeUsed) {
             clMainFrame::Get()->GetMainBook()->ShowQuickBar(
                 false); // There's no easy way to tell if it's actually showing, so just do a Close
@@ -3550,9 +3561,8 @@ void clEditor::DoBreakptContextMenu(wxPoint pt)
         menu.Append(XRCID("delete_breakpoint"), wxString(_("Remove Breakpoint")));
         menu.Append(XRCID("ignore_breakpoint"), wxString(_("Ignore Breakpoint")));
         // On MSWin it often crashes the debugger to try to load-then-disable a bp
-        // so don't show the menu item unless the debugger is running *** Hmm, that was written about 4 years ago.
-        // Let's
-        // try it again...
+        // so don't show the menu item unless the debugger is running *** Hmm, that was written
+        // about 4 years ago. Let's try it again...
         menu.Append(XRCID("toggle_breakpoint_enabled_status"),
                     bp.is_enabled ? wxString(_("Disable Breakpoint")) : wxString(_("Enable Breakpoint")));
         menu.Append(XRCID("edit_breakpoint"), wxString(_("Edit Breakpoint")));
@@ -3678,7 +3688,8 @@ void clEditor::DelBreakpoint(int lineno /*= -1*/)
 
 void clEditor::ToggleBreakpoint(int lineno)
 {
-    // Coming from OnMarginClick() means that lineno comes from the mouse position, not necessarily the current line
+    // Coming from OnMarginClick() means that lineno comes from the mouse position, not necessarily
+    // the current line
     if (lineno == -1) {
         lineno = GetCurrentLine() + 1;
     }
@@ -3712,7 +3723,8 @@ void clEditor::ToggleBreakpoint(int lineno)
 
     const clDebuggerBreakpoint& bp = ManagerST::Get()->GetBreakpointsMgr()->GetBreakpoint(file_path, lineno);
     if (bp.IsNull()) {
-        // This will (always?) be from a margin mouse-click, so assume it's a standard breakpt that's wanted
+        // This will (always?) be from a margin mouse-click, so assume it's a standard breakpt
+        // that's wanted
         AddBreakpoint(lineno);
     } else {
         DelBreakpoint(lineno);
@@ -3940,8 +3952,8 @@ void clEditor::OnDragStart(wxStyledTextEvent& e)
 void clEditor::OnDragEnd(wxStyledTextEvent& e)
 {
     // For future reference, this will only be called when D'n'D ends successfully with a drop.
-    // Unfortunately scintilla doesn't seem to provide any notification when ESC is pressed, or the drop-zone is
-    // invalid
+    // Unfortunately scintilla doesn't seem to provide any notification when ESC is pressed, or the
+    // drop-zone is invalid
     m_isDragging = false; // Turn on calltips again
 
     e.Skip();
@@ -4563,9 +4575,10 @@ void clEditor::OnChange(wxStyledTextEvent& event)
     }
 
     if (isCoalesceStart && GetCommandsProcessor().HasOpenCommand()) {
-        // The user has changed mode e.g. from inserting to deleting, so the current command must be closed
-        GetCommandsProcessor().CommandProcessorBase::ProcessOpenCommand(); // Use the base-class method, as this time we
-                                                                           // don't need to tell scintilla too
+        // The user has changed mode e.g. from inserting to deleting, so the current command must be
+        // closed
+        GetCommandsProcessor().CommandProcessorBase::ProcessOpenCommand(); // Use the base-class method, as this time
+                                                                           // we don't need to tell scintilla too
     }
 
     if (isInsert || isDelete) {
@@ -4575,9 +4588,8 @@ void clEditor::OnChange(wxStyledTextEvent& event)
             if (!currentOpen) {
                 GetCommandsProcessor().StartNewTextCommand(isInsert ? CLC_insert : CLC_delete);
             }
-            // We need to cope with a selection being deleted by typing; this results in 0x2012 followed immediately
-            // by
-            // 0x11 i.e. with no intervening wxSTC_STARTACTION
+            // We need to cope with a selection being deleted by typing; this results in 0x2012
+            // followed immediately by 0x11 i.e. with no intervening wxSTC_STARTACTION
             else if (isInsert && currentOpen->GetCommandType() != CLC_insert) {
                 GetCommandsProcessor().ProcessOpenCommand();
                 GetCommandsProcessor().StartNewTextCommand(CLC_insert);
@@ -4606,8 +4618,8 @@ void clEditor::OnChange(wxStyledTextEvent& event)
 
         if (numlines) {
             if (GetReloadingFile() == false) {
-                // a line was added to or removed from the document, so synchronize the breakpoints on this editor
-                // and the breakpoint manager
+                // a line was added to or removed from the document, so synchronize the breakpoints
+                // on this editor and the breakpoint manager
                 UpdateBreakpoints();
             } else {
                 // The file has been reloaded, so the cached line-changes are no longer relevant
@@ -4892,7 +4904,8 @@ void clEditor::SetLexerName(const wxString& lexerName) { SetSyntaxHighlight(lexe
 
 void clEditor::HighlightWord(StringHighlightOutput* highlightOutput)
 {
-    // the search highlighter thread has completed the calculations, fetch the results and mark them in the editor
+    // the search highlighter thread has completed the calculations, fetch the results and mark them
+    // in the editor
     const std::vector<std::pair<int, int>>& matches = highlightOutput->matches;
     SetIndicatorCurrent(INDICATOR_WORD_HIGHLIGHT);
 
@@ -5666,7 +5679,8 @@ void clEditor::Print()
 
     if (!printer.Print(this, &printout, true /*prompt*/)) {
         if (wxPrinter::GetLastError() == wxPRINTER_ERROR) {
-            wxLogError(wxT("There was a problem printing. Perhaps your current printer is not set correctly?"));
+            wxLogError(wxT("There was a problem printing. Perhaps your current printer is not set "
+                           "correctly?"));
         } else {
             clLogMessage(wxT("You canceled printing"));
         }

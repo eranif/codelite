@@ -1,5 +1,6 @@
 #pragma once
 
+#include "CustomControls/TextGenerationPreviewFrame.hpp"
 #include "JSON.h"
 #include "ai/Common.hpp"
 #include "ai/Config.hpp"
@@ -14,6 +15,7 @@
 
 #include <algorithm>
 #include <atomic>
+#include <functional>
 #include <mutex>
 #include <optional>
 #include <string>
@@ -381,6 +383,50 @@ public:
      * @param b True to enable the function, false to disable it
      */
     void EnableFunctionByName(const wxString& name, bool b);
+
+    /**
+     * @brief Shows a text generation dialog and streams AI-generated text to a preview frame.
+     *
+     * This method initiates an asynchronous chat session with the AI assistant, displays a progress
+     * indicator in the preview frame, and streams the generated text as it arrives. The preview frame
+     * is automatically shown and updated with progress states (thinking, working, ready) throughout
+     * the generation process.
+     *
+     * @param prompt The input prompt string to send to the AI assistant for text generation.
+     * @param preview_frame A shared pointer to the TextGenerationPreviewFrame that will display
+     *                      the progress and generated text output.
+     * @param chat_options Optional ChatOptions to customize the chat behavior. If not provided,
+     *                     defaults to kNoTools and kNoHistory flags.
+     * @param completion_callback A function to be called when text generation completes and the
+     *                            preview frame is no longer shown. May be null/empty.
+     *
+     * @return void This function does not return a value.
+     *
+     * @note The function creates a ResponseCollector that must be managed by the Chat method.
+     *       State change callbacks are expected to run on the main UI thread.
+     *
+     * @warning If StateChangingCB is invoked from a non-main thread, a warning is logged and
+     *          the callback returns early without updating the UI.
+     *
+     * @code
+     * auto preview = std::make_shared<TextGenerationPreviewFrame>(parent);
+     * manager->ShowTextGenerationDialog(
+     *     "Generate a hello world function",
+     *     preview,
+     *     assistant::ChatOptions::kNoHistory,
+     *     []() { wxLogMessage("Generation complete"); }
+     * );
+     * @endcode
+     *
+     * @see TextGenerationPreviewFrame
+     * @see assistant::ChatOptions
+     * @see llm::ResponseCollector
+     * @see Manager::Chat
+     */
+    void ShowTextGenerationDialog(const wxString& prompt,
+                                  std::shared_ptr<TextGenerationPreviewFrame> preview_frame,
+                                  std::optional<assistant::ChatOptions> chat_options,
+                                  std::function<void()> completion_callback = nullptr);
 
 private:
     Manager();

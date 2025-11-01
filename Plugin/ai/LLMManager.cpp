@@ -152,11 +152,17 @@ void Manager::WorkerMain()
                           << ") is processing the request" << endl;
                 client->Chat(
                     std::move(prompt),
-                    [client, cancellation_token, &abort_loop, &shared_state, &saved_thinking_state, owner](
-                        std::string message, assistant::Reason reason, bool thinking) -> bool {
+                    [client,
+                     cancellation_token,
+                     &abort_loop,
+                     &shared_state,
+                     &saved_thinking_state,
+                     owner](std::string message, assistant::Reason reason, bool thinking) -> bool {
                         // Check various options that the chat was cancelled.
-                        if (client->IsInterrupted() || (cancellation_token && cancellation_token->IsCancelled())) {
-                            NotifyDoneWithError(owner, "\n\n** Request cancelled by the user. **\n\n");
+                        if (client->IsInterrupted() ||
+                            (cancellation_token && cancellation_token->IsCancelled())) {
+                            NotifyDoneWithError(
+                                owner, "\n\n** Request cancelled by the user. **\n\n");
                             abort_loop = true;
                             return false;
                         }
@@ -182,7 +188,8 @@ void Manager::WorkerMain()
                         } break;
                         case assistant::Reason::kDone: {
                             if (cancellation_token && !cancellation_token->Incr()) {
-                                NotifyDoneWithError(owner, "\n\n** Maximum number of tokens reached. **\n\n");
+                                NotifyDoneWithError(
+                                    owner, "\n\n** Maximum number of tokens reached. **\n\n");
                                 abort_loop = true;
                                 return false;
                             }
@@ -204,7 +211,8 @@ void Manager::WorkerMain()
                             clDEBUG1() << message << endl;
                             break;
                         case assistant::Reason::kCancelled: {
-                            NotifyDoneWithError(owner, "\n\n** Request cancelled by caller. **\n\n");
+                            NotifyDoneWithError(
+                                owner, "\n\n** Request cancelled by caller. **\n\n");
                             abort_loop = true;
                             return false;
                         } break;
@@ -216,7 +224,8 @@ void Manager::WorkerMain()
                             event.SetResponseRaw(message);
                             owner->AddPendingEvent(event);
                             if (cancellation_token && !cancellation_token->Incr()) {
-                                NotifyDoneWithError(owner, "\n\n** Maximum number of tokens reached. **\n\n");
+                                NotifyDoneWithError(
+                                    owner, "\n\n** Maximum number of tokens reached. **\n\n");
                                 abort_loop = true;
                                 return false;
                             }
@@ -282,7 +291,9 @@ void Manager::Chat(wxEvtHandler* owner,
 {
     // Post 1 job with multiple prompts.
     ThreadTask task{.options = options, .owner = owner, .cancellation_token = cancel_token};
-    for (const auto& prompt : prompts) { task.prompt_array.push_back(prompt.ToStdString(wxConvUTF8)); }
+    for (const auto& prompt : prompts) {
+        task.prompt_array.push_back(prompt.ToStdString(wxConvUTF8));
+    }
     PostTask(std::move(task));
 }
 
@@ -293,7 +304,9 @@ void Manager::Chat(ResponseCollector* collector,
 {
     // Post 1 job with multiple prompts.
     ThreadTask task{.options = options, .cancellation_token = cancel_token, .collector = collector};
-    for (const auto& prompt : prompts) { task.prompt_array.push_back(prompt.ToStdString(wxConvUTF8)); }
+    for (const auto& prompt : prompts) {
+        task.prompt_array.push_back(prompt.ToStdString(wxConvUTF8));
+    }
     PostTask(std::move(task));
 }
 
@@ -326,7 +339,8 @@ assistant::Config Manager::MakeConfig()
 {
     std::call_once(config_create_once_flag, [this]() {
         // Should never fail.
-        m_default_config = assistant::Config::FromContent(kDefaultSettings.ToStdString(wxConvUTF8)).value();
+        m_default_config =
+            assistant::Config::FromContent(kDefaultSettings.ToStdString(wxConvUTF8)).value();
 
         // Redirect the library logs to our logging machinery.
         assistant::SetLogSink([](assistant::LogLevel level, std::string msg) {
@@ -434,7 +448,8 @@ bool Manager::ReloadConfig(std::optional<wxString> config_content, bool prompt)
     if (prompt && ::wxMessageBox(_("Reloading the configuration will restart "
                                    "the LLM client.\nContinue?"),
                                  "CodeLite",
-                                 wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxCENTER) != wxYES) {
+                                 wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT |
+                                     wxCENTER) != wxYES) {
         return false;
     }
 
@@ -446,7 +461,8 @@ bool Manager::ReloadConfig(std::optional<wxString> config_content, bool prompt)
         content = std::move(config_content.value());
     } else {
         const WriteOptions opts{.force_global = true};
-        content = FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts).value_or(kDefaultSettings);
+        content = FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts)
+                      .value_or(kDefaultSettings);
     }
 
     auto conf = assistant::Config::FromContent(content.ToStdString(wxConvUTF8));
@@ -542,7 +558,8 @@ std::optional<llm::json> Manager::GetConfigAsJSON()
         return llm::json::parse(config_content.ToStdString(wxConvUTF8));
 
     } catch (const std::exception& e) {
-        clERROR() << "Failed to parse JSON file:" << kAssistantConfigFile << "." << e.what() << endl;
+        clERROR() << "Failed to parse JSON file:" << kAssistantConfigFile << "." << e.what()
+                  << endl;
         return std::nullopt;
     }
 }
@@ -604,7 +621,8 @@ void Manager::AddNewEndpoint(const llm::EndpointData& d)
 bool Manager::WriteConfigFile(llm::json j)
 {
     const WriteOptions opts{.force_global = true};
-    if (!FileManager::WriteSettingsFileContent(kAssistantConfigFile, wxString::FromUTF8(j.dump(2)), opts)) {
+    if (!FileManager::WriteSettingsFileContent(
+            kAssistantConfigFile, wxString::FromUTF8(j.dump(2)), opts)) {
         clERROR() << "Failed to write configuration file:" << kAssistantConfigFile << endl;
         return false;
     }
@@ -612,7 +630,8 @@ bool Manager::WriteConfigFile(llm::json j)
 }
 
 /**
- * @brief Handles the file saved event and triggers configuration reload if the assistant config file was saved.
+ * @brief Handles the file saved event and triggers configuration reload if the assistant config
+ * file was saved.
  *
  * This function is called when a file is saved in the editor. It checks if the saved file is the
  * LLM assistant configuration file, and if so, triggers a configuration update by calling
@@ -638,7 +657,8 @@ void Manager::OnFileSaved(clCommandEvent& event)
 }
 
 /**
- * @brief Handles configuration file update events by reloading the configuration and notifying listeners.
+ * @brief Handles configuration file update events by reloading the configuration and notifying
+ * listeners.
  *
  * This method is called when the configuration file has been updated. It displays a busy cursor,
  * reloads the configuration from the LLM Manager, and if successful, creates and dispatches
@@ -730,6 +750,7 @@ void Manager::OpenSettingsFileInEditor()
 
     clGetManager()->OpenFile(res.value());
 }
+
 void Manager::EnableAllFunctions(bool b)
 {
     if (!m_client) {
@@ -743,7 +764,8 @@ void Manager::EnableAllFunctions(bool b)
 void Manager::EnableFunctionByName(const wxString& name, bool b)
 {
     if (!m_client) {
-        clWARNING() << "Failed to call EnableFunctionByName(" << name << ", " << b << "). Null client" << endl;
+        clWARNING() << "Failed to call EnableFunctionByName(" << name << ", " << b
+                    << "). Null client" << endl;
         return;
     }
     m_client->GetFunctionTable().EnableFunction(name.ToStdString(wxConvUTF8), b);
@@ -754,5 +776,55 @@ void Manager::ShowChatWindow(const wxString& prompt)
     wxCommandEvent event_show{wxEVT_MENU, XRCID("ai_configure_endpoint")};
     event_show.SetString(prompt);
     EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(event_show);
+}
+
+void Manager::ShowTextGenerationDialog(const wxString& prompt,
+                                       std::shared_ptr<TextGenerationPreviewFrame> preview_frame,
+                                       std::optional<assistant::ChatOptions> chat_options,
+                                       std::function<void()> completion_callback)
+{
+    assistant::ChatOptions opts{assistant::ChatOptions::kNoTools};
+    assistant::AddFlagSet(opts, assistant::ChatOptions::kNoHistory);
+
+    if (chat_options.has_value()) {
+        opts = std::move(chat_options.value());
+    }
+
+    preview_frame->Show();
+    preview_frame->StartProgress(_("Working..."));
+
+    auto collector = new llm::ResponseCollector();
+    collector->SetStateChangingCB([preview_frame](llm::ChatState state) {
+        if (!wxThread::IsMain()) {
+            clWARNING() << "StateChangingCB called for non main thread!" << endl;
+            return;
+        }
+        switch (state) {
+        case llm::ChatState::kThinking:
+            preview_frame->UpdateProgress(_("Thinking..."));
+            break;
+        case llm::ChatState::kWorking:
+            preview_frame->UpdateProgress(_("Working..."));
+            break;
+        case llm::ChatState::kReady:
+            preview_frame->StopProgress(_("Ready"));
+            break;
+        }
+    });
+
+    collector->SetStreamCallback(
+        [preview_frame, completion_callback = std::move(completion_callback)](
+            const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
+            preview_frame->AppendText(wxString::FromUTF8(message));
+            if (is_done && !preview_frame->IsShown()) {
+                preview_frame->Show();
+            }
+
+            if (is_done && completion_callback) {
+                completion_callback();
+            }
+        });
+
+    Chat(collector, prompt, nullptr, opts);
 }
 } // namespace llm

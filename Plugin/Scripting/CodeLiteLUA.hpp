@@ -1,4 +1,5 @@
 #pragma once
+#include "CustomControls/TextGenerationPreviewFrame.hpp"
 #include "clResult.hpp"
 #include "cl_command_event.h"
 extern "C" {
@@ -59,6 +60,26 @@ struct WXDLLIMPEXP_SDK LuaMenuItem {
 class WXDLLIMPEXP_SDK CodeLiteLUA : public wxEvtHandler
 {
 public:
+    /**
+     * @brief Returns the singleton instance of CodeLiteLUA.
+     *
+     * This function implements the Meyers' Singleton pattern, ensuring thread-safe
+     * lazy initialization of the CodeLiteLUA instance. The instance is created on
+     * first access and persists for the lifetime of the application.
+     *
+     * @return Reference to the singleton CodeLiteLUA instance.
+     *
+     * @note This function is thread-safe in C++11 and later due to guaranteed
+     *       static local variable initialization semantics.
+     *
+     * @par Example
+     * @code
+     * CodeLiteLUA& lua = CodeLiteLUA::Get();
+     * lua.SomeMethod();
+     * @endcode
+     *
+     * @see CodeLiteLUA
+     */
     static CodeLiteLUA& Get();
 
     // Non-copyable
@@ -97,9 +118,9 @@ public:
     /**
      * @brief Updates a menu by appending menu items from the internal menu_items collection.
      *
-     * This function looks up menu items associated with the given menu name and appends them to the provided
-     * wxMenu object. Each menu item is bound to an event handler that executes the associated Lua action
-     * function when triggered.
+     * This function looks up menu items associated with the given menu name and appends them to the
+     * provided wxMenu object. Each menu item is bound to an event handler that executes the
+     * associated Lua action function when triggered.
      *
      * @param menu_name The name/identifier of the menu to update
      * @param menu Pointer to the wxMenu object to be populated with menu items
@@ -107,9 +128,33 @@ public:
     void UpdateMenu(const wxString& menu_name, wxMenu* menu);
 
     /**
-     * @brief Initializes the CodeLiteLUA singleton instance by calling its internal initialization method.
+     * @brief Initializes the CodeLiteLUA singleton instance by calling its internal initialization
+     * method.
      */
     static void Initialise();
+    /**
+     * @brief Shuts down the CodeLiteLUA subsystem and releases all associated resources.
+     *
+     * This method cleans up the Lua state, clears menu items, and destroys the text generation
+     * frame. After calling this method, the CodeLiteLUA instance is reset to an uninitialized
+     * state. This is typically called during plugin shutdown or application termination.
+     *
+     * @param None
+     *
+     * @return void - This function does not return a value.
+     *
+     * @note This method operates on the singleton instance obtained via Get().
+     * @note After shutdown, m_state is set to nullptr and m_textGenerationFrame is destroyed.
+     *
+     * @see Get()
+     *
+     * @par Example:
+     * @code
+     * // Shutdown the CodeLiteLUA subsystem
+     * CodeLiteLUA::Shutdown();
+     * @endcode
+     */
+    static void Shutdown();
 
 protected:
     /**
@@ -119,8 +164,8 @@ protected:
      * The appearance and icon of the dialog depend on the message type provided.
      *
      * @param message The message text to display in the dialog (UTF-8 encoded string)
-     * @param type The type of message dialog to display (MessageType::kWarn, MessageType::kError, or
-     * MessageType::kInfo)
+     * @param type The type of message dialog to display (MessageType::kWarn, MessageType::kError,
+     * or MessageType::kInfo)
      */
     static void message_box(const std::string& message, int type);
 
@@ -136,7 +181,8 @@ protected:
      * @param label the display label for the menu item
      * @param action a Lua function reference that will be called when the menu item is activated
      */
-    static void add_menu_item(const std::string& menu_name, const std::string& label, luabridge::LuaRef action);
+    static void
+    add_menu_item(const std::string& menu_name, const std::string& label, luabridge::LuaRef action);
 
     /**
      * @brief Retrieves the current selection text from the active editor.
@@ -160,6 +206,33 @@ protected:
      * @param prompt The initial text to be displayed in the chat input.
      */
     static void chat(const std::string& prompt);
+
+    /**
+     * @brief Initiates an LLM text generation process with the given prompt.
+     *
+     * This method checks if a generation is already in progress and displays a warning if so.
+     * Otherwise, it sets the generation flag, initializes the text generation frame for default
+     * preview, and invokes the LLM Manager to show the generation dialog. Upon completion, the
+     * generation flag is reset.
+     *
+     * @param prompt The text prompt to send to the LLM for generation.
+     *
+     * @return void This function does not return a value.
+     *
+     * @note This function displays a modal message box if another generation is already in
+     * progress.
+     * @note The function uses a singleton pattern (Get()) to access the CodeLiteLUA instance.
+     *
+     * @par Example:
+     * @code
+     * CodeLiteLUA::generate("Write a function to sort an array");
+     * @endcode
+     *
+     * @see llm::Manager::ShowTextGenerationDialog()
+     * @see CodeLiteLUA::Get()
+     */
+    static void generate(const std::string& prompt);
+
     /**
      * @brief Retrieves the programming language associated with the currently active editor.
      *
@@ -167,7 +240,8 @@ protected:
      * path, maps it to a language, and returns the language name encoded as a UTF‑8
      * `std::string`. If there is no active editor, an empty string is returned.
      *
-     * @return The language name as a UTF‑8 `std::string`, or an empty string if no editor is active.
+     * @return The language name as a UTF‑8 `std::string`, or an empty string if no editor is
+     * active.
      */
     static std::string editor_language();
 
@@ -206,7 +280,10 @@ protected:
      *
      * @param msg The error message to be logged.
      */
-    static inline void log_error(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Error); }
+    static inline void log_error(const std::string& msg)
+    {
+        log_message(msg, FileLogger::LogLevel::Error);
+    }
     /**
      * @brief Logs a system message.
      *
@@ -216,7 +293,10 @@ protected:
      *
      * @param msg The message to be logged.
      */
-    static inline void log_system(const std::string& msg) { log_message(msg, FileLogger::LogLevel::System); }
+    static inline void log_system(const std::string& msg)
+    {
+        log_message(msg, FileLogger::LogLevel::System);
+    }
     /**
      * @brief Logs a warning message.
      *
@@ -225,7 +305,10 @@ protected:
      *
      * @param msg The message to be logged.
      */
-    static inline void log_warn(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Warning); }
+    static inline void log_warn(const std::string& msg)
+    {
+        log_message(msg, FileLogger::LogLevel::Warning);
+    }
     /**
      * @brief Logs a debug-level message.
      *
@@ -238,7 +321,10 @@ protected:
      *
      * @note The function returns no value and is inexpensive to call.
      */
-    static inline void log_debug(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Dbg); }
+    static inline void log_debug(const std::string& msg)
+    {
+        log_message(msg, FileLogger::LogLevel::Dbg);
+    }
     /**
      * Logs a trace message at the Developer log level.
      *
@@ -247,7 +333,10 @@ protected:
      *
      * @param msg The message to log.
      */
-    static inline void log_trace(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Developer); }
+    static inline void log_trace(const std::string& msg)
+    {
+        log_message(msg, FileLogger::LogLevel::Developer);
+    }
 
     /**
      * @brief Replaces all occurrences of a substring within a string with another substring.
@@ -260,7 +349,8 @@ protected:
      * @param find_what The substring to search for and replace.
      * @param replace_with The substring to replace each occurrence of `find_what` with.
      *
-     * @return std::string A new string with all occurrences of `find_what` replaced by `replace_with`.
+     * @return std::string A new string with all occurrences of `find_what` replaced by
+     * `replace_with`.
      *
      * @note If `find_what` is an empty string, the function returns a copy of the original string
      *       to avoid infinite loops.
@@ -281,8 +371,9 @@ protected:
      * @see std::string::find
      * @see std::string::replace
      */
-    static std::string
-    str_replace_all(const std::string& str, const std::string& find_what, const std::string& replace_with);
+    static std::string str_replace_all(const std::string& str,
+                                       const std::string& find_what,
+                                       const std::string& replace_with);
 
 private:
     CodeLiteLUA();
@@ -306,7 +397,8 @@ private:
     static void log_message(const std::string& msg, FileLogger::LogLevel level);
 
     /**
-     * @brief Initializes the CodeLite LUA environment by resetting the state and loading the main codelite.lua script.
+     * @brief Initializes the CodeLite LUA environment by resetting the state and loading the main
+     * codelite.lua script.
      *
      * This method resets the LUA environment, locates and reads the codelite.lua settings file,
      * and attempts to execute it. If the file cannot be read or execution fails, an error
@@ -319,8 +411,8 @@ private:
      */
     void Reset();
     /**
-     * @brief Handles the file saved event and reinitializes the plugin if the codelite.lua configuration file was
-     * saved.
+     * @brief Handles the file saved event and reinitializes the plugin if the codelite.lua
+     * configuration file was saved.
      *
      * This function checks if the saved file is the codelite.lua settings file. If it is,
      * the plugin is reinitialized to apply the new configuration. The event is always skipped
@@ -329,6 +421,9 @@ private:
      * @param event The command event triggered when a file is saved
      */
     void OnFileSaved(clCommandEvent& event);
+
     lua_State* m_state{nullptr};
     std::unordered_map<std::string, std::vector<LuaMenuItem>> m_menu_items;
+    std::shared_ptr<TextGenerationPreviewFrame> m_textGenerationFrame{nullptr};
+    bool m_generationInProgress{false};
 };

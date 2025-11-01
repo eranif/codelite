@@ -60,7 +60,7 @@ protected:
 
     clTabTogglerHelper::Ptr_t m_tabToggler;
     LanguageServerLogView* m_logView{nullptr};
-    TextGenerationPreviewFrame* m_commentGenerationView{nullptr};
+    std::shared_ptr<TextGenerationPreviewFrame> m_commentGenerationView{nullptr};
 };
 
 #endif // LanguageServerPlugin

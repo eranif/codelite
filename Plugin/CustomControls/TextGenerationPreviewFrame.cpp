@@ -134,7 +134,6 @@ void TextGenerationPreviewFrame::InitialiseFor(PreviewKind kind)
     m_kind = kind;
     switch (m_kind) {
     case PreviewKind::kDefault:
-        break;
     case PreviewKind::kCommentGeneration: {
         auto editor = clGetManager()->GetActiveEditor();
         if (editor) {

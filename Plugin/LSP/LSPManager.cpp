@@ -723,6 +723,8 @@ void Manager::RestartServer(const wxString& name)
 
 void Manager::StartServer(const LanguageServerEntry& entry)
 {
+    CHECK_COND_RET(!m_shutdown_in_progress);
+
     if (!entry.IsEnabled()) {
         LOG_IF_TRACE { LSP_TRACE() << "LSP" << entry.GetName() << "is not enabled" << endl; }
         return;
@@ -919,6 +921,7 @@ void Manager::StartServer(const LanguageServerEntry& entry)
 
 void Manager::OnWorkspaceClosed(clWorkspaceEvent& event)
 {
+    CHECK_COND_RET(!m_shutdown_in_progress);
     event.Skip();
 
     // let the helper process this event *before* us
@@ -932,6 +935,7 @@ void Manager::OnWorkspaceClosed(clWorkspaceEvent& event)
 
 void Manager::OnWorkspaceOpen(clWorkspaceEvent& event)
 {
+    CHECK_COND_RET(!m_shutdown_in_progress);
     event.Skip();
 
     // let the helper process this event *before* us
@@ -1523,6 +1527,7 @@ void Manager::OnFileSaved(clCommandEvent& event)
 
 void Manager::OnGoinDown(clCommandEvent& event)
 {
+    m_shutdown_in_progress = true;
     event.Skip();
     StopAll();
     if (m_quick_outline_dlg) {

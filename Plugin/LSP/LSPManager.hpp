@@ -270,5 +270,6 @@ protected:
     std::unordered_map<wxString, std::vector<LSP::SymbolInformation>> m_symbols_to_file_cache;
     LSPOutlineViewDlg* m_quick_outline_dlg{nullptr};
     std::unique_ptr<CodeLiteRemoteHelper> m_remoteHelper;
+    bool m_shutdown_in_progress{false};
 };
 } // namespace LSP

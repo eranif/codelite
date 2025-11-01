@@ -2072,10 +2072,12 @@ void MainBook::OnIdle(wxIdleEvent& event)
         return;
     }
 
+#if wxHAS_MINIMAP
     // Make sure that the mini-map & the main edit are in-sync
     if (!IsMiniMapInSync()) {
         SelectMinimapForCurrentPage();
     }
+#endif
 
     // avoid processing if not really needed
     if (!m_initDone || (m_book->GetPageCount() == 0) || m_callbacksTable.empty()) {

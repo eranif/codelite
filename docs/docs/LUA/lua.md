@@ -1,139 +1,431 @@
-# CodeLiteLUA Helper Functions
+# CodeLite Lua Scripting API Documentation
 
 ## Overview
-The following document describes the public helper functions exposed by the `codelite` name. 
-These functions provide a Lua scripting interface for interacting with the CodeLite editor, menus, logging system, and the AI chat window. 
-The intended audience is developers who want to extend or script CodeLite using Lua.
+
+This document provides comprehensive API documentation for CodeLite's Lua scripting interface. It serves as a complete reference guide for developers who want to extend CodeLite's functionality through Lua-based extensions and automation scripts.
+
+## API Categories
+
+The CodeLite Lua API is organized into five main categories:
+
+- **UI Functions** – Display message boxes and add custom menu items
+- **Editor Functions** – Access editor content, selections, language types, and file paths
+- **LLM Functions** – Integrate with language learning models for chat and code generation
+- **Logging Functions** – Output diagnostic information with multiple severity levels
+- **String Utilities** – Perform text manipulation operations
+
+## Function Reference
+
+### UI Functions
+
+Functions for creating user interface elements and displaying information to users.
+
+*Each function entry includes its signature, description, parameters with data types, return values, and practical code examples.*
+
+### Editor Functions
+
+Functions for programmatically accessing and manipulating editor content and properties.
+
+*Access current file content, manage text selections, identify programming languages, and retrieve file paths.*
+
+### LLM Functions
+
+Functions for integrating with language learning models to enhance development workflows.
+
+*Implement AI-assisted features such as chat interfaces and automated code generation.*
+
+### Logging Functions
+
+Functions for outputting diagnostic and debugging information at various severity levels.
+
+**Supported severity levels:**
+- Trace
+- Debug
+- Info
+- Warning
+- Error
+
+### String Utilities
+
+Functions for performing common text manipulation and transformation operations.
+
+*Process and format strings for use within CodeLite extensions.*
 
 ---
 
-## Function: `message_box`
-**Signature**
+## UI Functions
+
+### message_box
+
+**Signature**:
+
 ```lua
-function codelite.message_box(message, type)
+codelite.message_box(message, type)
 ```
 
-**Purpose**
-- Display a modal message box in the CodeLite UI.
+**Description**:
 
-**Parameters**
-- `message`: The text to display.
-- `type`: Integer that maps to `MessageType` enum.
-  - `MessageType::kInfo`  → Information icon (default).
-  - `MessageType::kWarn`  → Warning icon.
-  - `MessageType::kError` → Error icon.
+Displays a message dialog box with the specified message and type.
 
-**Behavior**
-- Converts `message` from UTF‑8 to `wxString`.
-- Shows the dialog with `wxOK`, centered, and the appropriate icon.
-- Uses `wxMessageBox` from the wxWidgets library.
+**Parameters**:
+- `message` (string): The text to display in the dialog
+- `type` (integer): The type of message dialog to display (e.g., `MessageType.kWarn`, `MessageType.kError`, or `MessageType.kInfo`)
+
+**Example**:
+
+```lua
+-- Display a warning message
+codelite.message_box("Configuration file not found", MessageType.kWarn)
+```
 
 ---
 
-## Function: `add_menu_item`
-**Signature**
+### add_menu_item
+
+**Signature**:
+
 ```lua
-function codelite.add_menu_item(menu_name, label, action)
+codelite.add_menu_item(menu_name, label, action)
 ```
 
-**Purpose**
-- Dynamically add a Lua‑defined menu item to an existing or new CodeLite menu.
+**Description**:
 
-**Parameters**
-- `menu_name`: Name of the target menu (e.g., "Tools").
-- `label`: Menu item caption.
-- `action`: Lua function that will be executed when the item is selected.
+Adds a menu item with an associated Lua action to a specified menu. If the menu does not exist, it will be created. The callback function will be executed when the menu item is triggered.
 
-**Behavior**
-- Retrieves the singleton instance via `Get()`.
-- Logs the addition attempt.
-- Wraps `label` and `action` into a `LuaMenuItem`.
-- Validates the item (`IsOk()`), logging a warning if the action is not a function.
-- Stores the item in `self.m_menu_items[menu_name]`.
+**Parameters**:
+- `menu_name` (string): The name of the menu to which the item will be added
+- `label` (string): The display label for the menu item
+- `action` (function): A Lua function that will be called when the menu item is activated
+
+**Example**:
+
+```lua
+-- Add a custom menu item
+codelite.add_menu_item("Tools", "My Custom Action", function()
+    codelite.message_box("Custom action triggered!", MessageType.kInfo)
+end)
+```
 
 ---
 
-## Function: `editor_selection`
-**Signature**
+## Editor Functions
+
+### editor_selection
+
+**Signature**:
+
 ```lua
-function codelite.editor_selection()
+codelite.editor_selection()
 ```
 
-**Purpose**
-- Return the currently selected text in the active editor.
+**Description**:
 
-**Behavior**
-- Retrieves the active editor via `clGetManager()->GetActiveEditor()`.
-- If no editor is active, returns an empty string.
-- Converts the selection to a UTF‑8 `std::string`.
+Retrieves the current selection text from the active editor.
+
+**Returns**:
+
+A `string` containing the selected text, or an empty string if no editor is active or no text is selected.
+
+**Example**:
+
+```lua
+-- Get the current selection
+local selected = codelite.editor_selection()
+if selected ~= "" then
+    codelite.log_system("Selected text: " .. selected)
+end
+```
 
 ---
 
-## Function: `editor_language`
-**Signature**
+### editor_language
+
+**Signature**:
+
 ```lua
-function codelite.editor_language()
+codelite.editor_language()
 ```
 
-**Purpose**
-- Identify the programming language of the active editor’s file.
+**Description**:
 
-**Behavior**
-- Uses `FileExtManager` to map the file extension to a language enum.
-- Returns the language name as a UTF‑8 string, or empty if no editor.
+Retrieves the programming language associated with the currently active editor. The language is determined from the file type of the editor's path.
+
+**Returns**:
+
+A `string` containing the language name, or an empty string if no editor is active.
+
+**Example**:
+
+```lua
+-- Check the current editor's language
+local lang = codelite.editor_language()
+if lang == "cpp" then
+    codelite.log_system("Editing C++ file")
+end
+```
 
 ---
 
-## Function: `editor_text`
-**Signature**
+### editor_text
+
+**Signature**:
+
 ```lua
-function codelite.editor_text()
+codelite.editor_text()
 ```
 
-**Purpose**
-- Fetch the entire contents of the active editor.
+**Description**:
 
-**Behavior**
-- Returns the editor text as UTF‑8; empty string if no active editor.
+Returns the full text content of the currently active editor.
+
+**Returns**:
+
+A `string` containing the entire text of the active editor, or an empty string if no editor is active.
+
+**Example**:
+
+```lua
+-- Get all text from the current editor
+local content = codelite.editor_text()
+if content ~= "" then
+    codelite.log_debug("Editor has " .. #content .. " characters")
+end
+```
 
 ---
 
-## Function: `editor_filepath`
-**Signature**
+### editor_filepath
+
+**Signature**:
+
 ```lua
-function codelite.editor_filepath()
+codelite.editor_filepath()
 ```
 
-**Purpose**
-- Get the file path (local or remote) of the active editor.
+**Description**:
 
-**Behavior**
-- Returns the path as a UTF‑8 string, or empty if no active editor.
+Retrieves the file path of the currently active editor.
+
+**Returns**:
+
+A `string` containing the file path, or an empty string if no editor is active.
+
+**Example**:
+
+```lua
+-- Get the current file path
+local filepath = codelite.editor_filepath()
+if filepath ~= "" then
+    codelite.log_system("Editing: " .. filepath)
+end
+```
+
+---
+
+## LLM Functions
+
+### chat
+
+**Signature**:
+
+```lua
+codelite.chat(prompt)
+```
+
+**Description**:
+
+Initiates a chat session using the given prompt. This opens the chat window within the application with the provided text as the initial input.
+
+**Parameters**:
+- `prompt` (string): The initial text to be displayed in the chat input
+
+**Example**:
+
+```lua
+-- Open chat with a predefined prompt
+codelite.chat("Explain how to use this API")
+```
+
+---
+
+### generate
+
+**Signature**:
+
+```lua
+codelite.generate(prompt)
+```
+
+**Description**:
+
+Initiates an LLM text generation process with the given prompt. Displays a warning if a generation is already in progress. The function shows a generation dialog and processes the prompt using the LLM Manager.
+
+**Parameters**:
+- `prompt` (string): The text prompt to send to the LLM for generation
+
+**Example**:
+
+```lua
+-- Generate code using LLM
+codelite.generate("Write a function to sort an array")
+```
 
 ---
 
 ## Logging Functions
 
-| Function | LogLevel | Purpose |
-|---|---|---|
-| `log_error` | `Error` | Log error messages. |
-| `log_system` | `System` | Log system‑level messages. |
-| `log_warn` | `Warning` | Log warning messages. |
-| `log_debug` | `Dbg` | Log debug messages. |
-| `log_trace` | `Developer` | Log developer‑level trace messages. |
+### log_error
+
+**Signature**:
+
+```lua
+codelite.log_error(msg)
+```
+
+**Description**:
+
+Logs an error message. This should be called whenever an error needs to be recorded.
+
+**Parameters**:
+- `msg` (string): The error message to be logged
+
+**Example**:
+
+```lua
+-- Log an error
+codelite.log_error("Failed to open configuration file")
+```
 
 ---
 
-## Function: `chat`
-**Signature**
+### log_system
+
+**Signature**:
+
 ```lua
-function codelite.chat(prompt)
+codelite.log_system(msg)
 ```
 
-**Purpose**
-- Trigger the CodeLite AI chat window with a given prompt.
+**Description**:
 
-**Behavior**
-- Constructs a `wxCommandEvent` targeting the `ai_show_chat_window` ID.
-- Sets the event string to the UTF‑8 prompt.
-- Posts the event to the top frame’s event handler.
+Logs a system message. Intended for messages that are relevant to system operations and diagnostics.
+
+**Parameters**:
+- `msg` (string): The message to be logged
+
+**Example**:
+
+```lua
+-- Log a system message
+codelite.log_system("Plugin initialized successfully")
+```
+
+---
+
+### log_warn
+
+**Signature**:
+
+```lua
+codelite.log_warn(msg)
+```
+
+**Description**:
+
+Logs a warning message.
+
+**Parameters**:
+- `msg` (string): The warning message to be logged
+
+**Example**:
+
+```lua
+-- Log a warning
+codelite.log_warn("Configuration value not found, using default")
+```
+
+---
+
+### log_debug
+
+**Signature**:
+
+```lua
+codelite.log_debug(msg)
+```
+
+**Description**:
+
+Logs a debug-level message. Intended for debugging output during development.
+
+**Parameters**:
+- `msg` (string): The debug message to be logged
+
+**Example**:
+
+```lua
+-- Log debug information
+codelite.log_debug("Variable value: " .. tostring(my_var))
+```
+
+---
+
+### log_trace
+
+**Signature**:
+
+```lua
+codelite.log_trace(msg)
+```
+
+**Description**:
+
+Logs a trace message at the developer log level. Used for detailed execution tracing.
+
+**Parameters**:
+- `msg` (string): The trace message to be logged
+
+**Example**:
+
+```lua
+-- Log detailed trace information
+codelite.log_trace("Entering function process_data()")
+```
+
+---
+
+## String Utilities
+
+### str_replace_all
+
+**Signature**:
+
+```lua
+codelite.str_replace_all(str, find_what, replace_with)
+```
+
+**Description**:
+
+Replaces all occurrences of a substring within a string with another substring. If `find_what` is empty, the original string is returned unchanged.
+
+**Parameters**:
+- `str` (string): The input string to search within
+- `find_what` (string): The substring to search for and replace
+- `replace_with` (string): The substring to replace each occurrence of `find_what` with
+
+**Returns**:
+
+A `string` with all occurrences of `find_what` replaced by `replace_with`.
+
+**Example**:
+
+```lua
+-- Replace all occurrences
+local input = "Hello world, world!"
+local result = codelite.str_replace_all(input, "world", "universe")
+-- result is "Hello universe, universe!"
+
+-- No match case
+local no_match = codelite.str_replace_all(input, "xyz", "abc")
+-- no_match is "Hello world, world!" (unchanged)
+```

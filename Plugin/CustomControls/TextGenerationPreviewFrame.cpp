@@ -2,41 +2,46 @@
 
 #include "ColoursAndFontsManager.h"
 #include "ai/LLMManager.hpp"
+#include "clResult.hpp"
 #include "clSTCHelper.hpp"
 #include "event_notifier.h"
 #include "globals.h"
 
 #include <regex>
+#include <wx/regex.h>
 #include <wx/richtooltip.h>
 
 namespace
 {
-/**
- * @brief Removes Markdown code‑fence markers (the opening ``````` and the closing ```````),
- *        including an optional language identifier that may contain letters, digits,
- *        plus, minus, underscore or any other word‑character.
- *
- * Example:
- *   Input:  "```c++\nint x = 0;\n```"
- *   Output: "int x = 0;\n"
- *
- * @param input The string that potentially contains fenced code blocks.
- * @return A copy of `input` with all fence markers stripped.
- */
-std::string StripMarkdownCodeBlocks(const std::string& input)
-{
-    //   ^```                – opening fence at the start of a line
-    //   [\w\+\-]*           – optional language tag (letters, digits, _, +, -)
-    //   \s*                 – optional whitespace (including the newline that usually follows)
-    //   |                   – OR
-    //   ```\s*$             – closing fence at the end of a line (allow trailing spaces)
-    //
-    // std::regex::multiline makes ^ and $ work per‑line instead of only at the very
-    // beginning/end of the whole string.
-    const std::regex fencePattern(R"(^```[\w\+\-]*\s*|```[\s]*$)", std::regex::multiline);
 
-    // Replace every match with an empty string → fence markers disappear.
-    return std::regex_replace(input, fencePattern, "");
+/**
+ * Checks if a string starts with code block fences (``` with optional language)
+ * and removes the opening fence and any text on that line.
+ *
+ * @param str The input string to process
+ * @return A new string with the opening code fence removed, or the original string if no fence found
+ */
+clStatusOr<wxString> RemoveCodeFencePrefix(const wxString& str)
+{
+    // Pattern: start of string, three or more backticks, optional language specifier, end of line
+    wxRegEx fencePattern(wxT("^```[^\n]*\n"));
+
+    // Check if the pattern is valid
+    if (!fencePattern.IsValid()) {
+        return StatusInavalidArgument("Invalid regular expression");
+    }
+
+    // Check if the string starts with a code fence
+    if (fencePattern.Matches(str)) {
+        // Create a copy to modify
+        wxString result = str;
+        // Remove the opening fence line (replace first match only)
+        fencePattern.ReplaceFirst(&result, wxEmptyString);
+        return result;
+    }
+
+    // Return error status if no fence found
+    return StatusNotFound();
 }
 
 } // namespace
@@ -85,11 +90,16 @@ void TextGenerationPreviewFrame::OnCopy(wxCommandEvent& event)
 
     wxString text = m_editor->GetText().Trim().Trim(false);
 
-    auto stripped_text = StripMarkdownCodeBlocks(text.ToStdString(wxConvUTF8));
-    auto text_to_copy = wxString::FromUTF8(stripped_text);
-    text_to_copy.Trim().Trim(false);
-    ::CopyToClipboard(text_to_copy);
+    auto status = RemoveCodeFencePrefix(text);
+    if (status.ok()) {
+        // Found it, remove the trailing if it exists.
+        text = status.value();
+        if (text.EndsWith("```")) {
+            text.RemoveLast(3);
+        }
+    }
 
+    ::CopyToClipboard(text);
     wxRichToolTip tooltip(_("Text Copied!"), _("The preview text has been copied to the clipboard"));
     tooltip.SetTimeout(1000);
     tooltip.ShowFor(m_button_copy);

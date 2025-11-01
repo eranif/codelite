@@ -1,8 +1,8 @@
 #include <string>
 
 static const std::string kDefaultCodeLiteLUA = R"#(
---- Rephrase the selected text in the editor using an AI generation service
---- Retrieves the current editor selection, formats it into a prompt, and generates a rephrased version
+--- Polishes and reformats the current markdown document using AI generation
+--- @return nil
 function on_polish_document()
     local text = codelite.editor_text()
 
@@ -11,9 +11,9 @@ function on_polish_document()
         return
     end
 
-    -- Define the prompt template with corrected spelling
-    local prompt_template = [[
-    # Task: Rewrite This Markdown Professionally
+    -- Define the AI prompt template for document polishing
+    local PROMPT_TEMPLATE = [[
+# Task: Rewrite This Markdown Professionally
 
 Please rewrite the following markdown document to make it professional and polished:
 
@@ -30,15 +30,52 @@ Please rewrite the following markdown document to make it professional and polis
 
 **Original Document:**
 
-```markdown
 {{context}}
-```
 ]]
 
-    -- Replace placeholder with actual content
-    local formatted_prompt = codelite.str_replace_all(prompt_template, "{{context}}", text)
+    -- Substitute the placeholder with actual document content
+    local formatted_prompt = codelite.str_replace_all(PROMPT_TEMPLATE, "{{context}}", text)
 
-    -- Generate the rephrased text
+    -- Request AI generation with the formatted prompt
+    codelite.generate(formatted_prompt)
+end
+
+--- Polishes and professionally rewrites selected markdown content
+--- Uses AI generation to improve formatting, structure, and clarity
+function on_polish_markdown_selection()
+    local selected_text = codelite.editor_selection()
+
+    -- Early return if no text is selected
+    if not selected_text or selected_text == "" then
+        return
+    end
+
+    -- Prompt template for professional markdown rewriting
+    local prompt_template = [[
+# Task: Rewrite This Markdown Professionally
+
+Please rewrite the following markdown document to make it professional and polished:
+
+**Requirements:**
+- Fix all formatting and markdown syntax issues
+- Improve structure with clear headings and organization
+- Enhance clarity and readability
+- Use professional tone and correct grammar
+- Add appropriate formatting (bold, italics, code blocks, lists, tables)
+- Maintain all technical accuracy and key information
+- Ensure consistent style throughout
+
+**Output only the refactored markdown document. Do not include explanations, language detection notes, or any other text.**
+
+**Original Document:**
+
+{{context}}
+]]
+
+    -- Substitute placeholder with selected content
+    local formatted_prompt = codelite.str_replace_all(prompt_template, "{{context}}", selected_text)
+
+    -- Generate and apply the polished markdown
     codelite.generate(formatted_prompt)
 end
 
@@ -95,7 +132,8 @@ end
 local function registerLLMMenuItems()
     --- menu_id can be found in the file menu.xrc
     local menuItems = {
-        { menu_id = "editor_context_menu_llm_generation", label = "Polish Markdown Document", handler = on_polish_document },
+        { menu_id = "editor_context_menu_llm_generation", label = "Polish Markdown (Entire Doc)", handler = on_polish_document },
+        { menu_id = "editor_context_menu_llm_generation", label = "Polish Markdown (Selected Text)", handler = on_polish_markdown_selection },
         { menu_id = "editor_context_menu_llm_generation", label = "Refactor Selected Code", handler = on_refactor_text },
     }
 

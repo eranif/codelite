@@ -249,6 +249,41 @@ protected:
      */
     static inline void log_trace(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Developer); }
 
+    /**
+     * @brief Replaces all occurrences of a substring within a string with another substring.
+     *
+     * This function searches for all instances of `find_what` in `str` and replaces them with
+     * `replace_with`. The function pre-allocates memory to minimize reallocations during the
+     * replacement process. If `find_what` is empty, the original string is returned unchanged.
+     *
+     * @param str The input string to search within.
+     * @param find_what The substring to search for and replace.
+     * @param replace_with The substring to replace each occurrence of `find_what` with.
+     *
+     * @return std::string A new string with all occurrences of `find_what` replaced by `replace_with`.
+     *
+     * @note If `find_what` is an empty string, the function returns a copy of the original string
+     *       to avoid infinite loops.
+     *
+     * @code
+     * CodeLiteLUA lua_handler;
+     * std::string input = "Hello world, world!";
+     * std::string result = lua_handler.str_replace_all(input, "world", "universe");
+     * // result is "Hello universe, universe!"
+     *
+     * std::string no_match = lua_handler.str_replace_all(input, "xyz", "abc");
+     * // no_match is "Hello world, world!" (unchanged)
+     *
+     * std::string empty_find = lua_handler.str_replace_all(input, "", "test");
+     * // empty_find is "Hello world, world!" (unchanged)
+     * @endcode
+     *
+     * @see std::string::find
+     * @see std::string::replace
+     */
+    static std::string
+    str_replace_all(const std::string& str, const std::string& find_what, const std::string& replace_with);
+
 private:
     CodeLiteLUA();
     ~CodeLiteLUA();

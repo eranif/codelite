@@ -40,7 +40,7 @@ void CodeLiteLUA::Initialise()
     auto& self = Get();
     self.m_state = luaL_newstate();
     luaL_openlibs(self.m_state);
-    
+
     try {
         clDEBUG() << "Registering codelite with LUA" << endl;
         luabridge::getGlobalNamespace(self.m_state)
@@ -57,6 +57,7 @@ void CodeLiteLUA::Initialise()
             .addFunction("log_system", &CodeLiteLUA::log_system)
             .addFunction("log_debug", &CodeLiteLUA::log_debug)
             .addFunction("log_trace", &CodeLiteLUA::log_trace)
+            .addFunction("str_replace_all", &CodeLiteLUA::str_replace_all)
             .endNamespace();
 
     } catch (const std::exception& e) {
@@ -194,6 +195,29 @@ void CodeLiteLUA::log_message(const std::string& msg, FileLogger::LogLevel level
         clERROR() << wxString::FromUTF8(msg) << endl;
         break;
     }
+}
+
+std::string
+CodeLiteLUA::str_replace_all(const std::string& str, const std::string& find_what, const std::string& replace_with)
+{
+    if (find_what.empty()) {
+        return str;
+    }
+
+    std::string result;
+    result.reserve(str.size()); // Pre-allocate to reduce reallocations
+
+    size_t pos = 0;
+    size_t last_pos = 0;
+
+    while ((pos = str.find(find_what, last_pos)) != std::string::npos) {
+        result.append(str, last_pos, pos - last_pos);
+        result.append(replace_with);
+        last_pos = pos + find_what.length();
+    }
+
+    result.append(str, last_pos, std::string::npos);
+    return result;
 }
 
 void CodeLiteLUA::chat(const std::string& prompt)

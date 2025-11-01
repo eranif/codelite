@@ -115,8 +115,11 @@ void CodeLiteLUA::InitialiseInternal()
     }
 
     clDEBUG() << "Successfully executed script file:" << codelite_lua << endl;
-    m_textGenerationFrame = std::make_shared<TextGenerationPreviewFrame>(PreviewKind::kDefault);
-    m_textGenerationFrame->Hide();
+
+    if (m_textGenerationFrame == nullptr) {
+        m_textGenerationFrame = std::make_shared<TextGenerationPreviewFrame>(PreviewKind::kDefault);
+        m_textGenerationFrame->Hide();
+    }
 }
 
 CodeLiteLUA::CodeLiteLUA() {}

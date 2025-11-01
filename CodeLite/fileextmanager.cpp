@@ -207,7 +207,7 @@ void FileExtManager::Init()
         m_map["md"] = TypeMarkdown;
         m_map["dart"] = TypeDart;
 
-        m_language_bundle.insert({"cpp", {TypeSourceCpp, TypeSourceC, TypeHeader}});
+        m_language_bundle.insert({"C/C++", {TypeSourceCpp, TypeSourceC, TypeHeader}});
         m_language_bundle.insert({"Windows resource files", {TypeResource}});
         m_language_bundle.insert({"Yacc", {TypeYacc}});
         m_language_bundle.insert({"Lex", {TypeLex}});

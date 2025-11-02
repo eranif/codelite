@@ -87,6 +87,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
     lex->ApplyFont(m_replaceString);
     lex->ApplyFont(m_fileTypes);
     lex->ApplyFont(m_comboBoxEncoding);
+    lex->ApplyFont(m_comboBoxWhere);
 
     // "Find"
     UpdateComboBox(m_findString, m_data.find_what_array, m_data.find_what);

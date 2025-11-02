@@ -519,7 +519,7 @@ void clStyledTextCtrlMiniMap::OnEditUpdate(wxStyledTextEvent& event)
 
 void clStyledTextCtrlMiniMap::OnMapUpdate(wxStyledTextEvent& event)
 {
-    if (!m_edit || !IsDragging())
+    if (!m_edit)
         return;
 
     // The order is important here: the only changes in content that we get
@@ -530,6 +530,13 @@ void clStyledTextCtrlMiniMap::OnMapUpdate(wxStyledTextEvent& event)
         return;
 
     if (event.GetUpdated() & wxSTC_UPDATE_V_SCROLL) {
+        auto mapRect = GetRect();
+        auto mousePos = ScreenToClient(::wxGetMousePosition());
+        if (!mapRect.Contains(mousePos)) {
+            // We accept scrolling only if the mouse in inside the mini-map control.
+            return;
+        }
+
         auto const mapFirst = GetFirstVisibleLine();
         if (mapFirst == m_lastSetMapFirst) {
             m_lastSetMapFirst = -1;

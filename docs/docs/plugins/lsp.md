@@ -58,7 +58,7 @@ On ARM-based macOS systems, `clangd` is located at: `/opt/homebrew/opt/llvm/bin/
 
 CodeLite pre-configures `ctagsd`, but it is disabled by default. To enable it:
 
-Navigate to **Plugins → Settings → ctagsd**
+Navigate to **Plugins → Language Server → Settings**
 
 ### pylsp (Python)
 

@@ -63,8 +63,9 @@ class MyMiniMap : public clStyledTextCtrlMiniMap
 public:
     MyMiniMap(wxWindow* parent, wxStyledTextCtrl* edit)
         : clStyledTextCtrlMiniMap(parent, edit, wxID_ANY, wxDefaultPosition, wxSize(1, 1))
+        , m_edit(edit)
     {
-        clSTCHelper::CopySettingsFrom(edit, this);
+        clSTCHelper::CopySettingsFrom(m_edit, this);
 
         // Set some bookmark colours.
         int marker = wxSTC_MARK_BOOKMARK;
@@ -95,17 +96,27 @@ public:
         MarkerSetBackground(smt_error, wxColor(255, 0, 0));
         MarkerSetAlpha(smt_error, 80);
 
-        SetClientData(edit);
-
-        Bind(wxEVT_SET_FOCUS, [edit](wxFocusEvent& e) {
-            if (e.GetWindow() == edit) {
-                edit->CallAfter(&wxStyledTextCtrl::SetFocus);
-            } else {
-                e.Skip();
-            }
-        });
+        SetClientData(m_edit);
+        Bind(wxEVT_SET_FOCUS, &MyMiniMap::OnSetFocus, this);
     }
-    ~MyMiniMap() override = default;
+
+    ~MyMiniMap() override
+    {
+        Unbind(wxEVT_SET_FOCUS, &MyMiniMap::OnSetFocus, this);
+        m_edit = nullptr;
+    }
+
+private:
+    void OnSetFocus(wxFocusEvent& event)
+    {
+        if (event.GetWindow() == m_edit) {
+            m_edit->CallAfter(&wxStyledTextCtrl::SetFocus);
+        } else {
+            event.Skip();
+        }
+    }
+
+    wxStyledTextCtrl* m_edit{nullptr};
 };
 #endif
 
@@ -1408,6 +1419,10 @@ void MainBook::MiniMapChangeSelection(wxWindow* win)
 
 int MainBook::FindMiniMapIndexForEditor(wxStyledTextCtrl* ctrl)
 {
+    if (m_miniMapsBook->GetPageCount() == 0) {
+        return wxNOT_FOUND;
+    }
+
     // Locate the mini-map associated with this editor and select it.
     for (size_t index = 0; index < m_miniMapsBook->GetPageCount(); ++index) {
         auto page = m_miniMapsBook->GetPage(index);

@@ -146,6 +146,16 @@ void BitmapLoader::Initialize(bool darkTheme)
     CreateMimeList();
 }
 
+wxImageList* BitmapLoader::GetStandardMimeImageList()
+{
+    wxImageList* images = new wxImageList();
+    auto bitmaps = GetStandardMimeBitmapListPtr();
+    for (const auto& bmp : *bitmaps) {
+        images->Add(bmp);
+    }
+    return images;
+}
+
 void BitmapLoader::CreateMimeList()
 {
     if (m_mimeBitmaps.IsEmpty()) {

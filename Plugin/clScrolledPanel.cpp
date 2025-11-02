@@ -281,7 +281,7 @@ int clScrolledPanel::GetPageSize() const { return m_pageSize; }
 void clScrolledPanel::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
-    static clIdleEventThrottler event_throttler{ 200 };
+    static clIdleEventThrottler event_throttler{200};
     if (!event_throttler.CanHandle()) {
         return;
     }
@@ -379,9 +379,6 @@ void clScrolledPanel::DoCancelDrag()
 wxFont clScrolledPanel::GetDefaultFont()
 {
     wxFont f = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-#if defined(__WXMAC__)
-    f.SetFractionalPointSize(1.2 * f.GetFractionalPointSize());
-#endif
     return f;
 }
 

@@ -76,7 +76,11 @@ void init_from_colour(clColours* colours, const wxColour& baseColour)
 
 void clColours::InitDefaults()
 {
+#ifdef __WXMAC__
+    InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX));
+#else
     InitFromColour(clSystemSettings::GetDefaultPanelColour());
+#endif
     itemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXTEXT);
     selItemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXHIGHLIGHTTEXT);
 }

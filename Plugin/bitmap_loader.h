@@ -176,6 +176,27 @@ public:
     int GetImageIndex(int type, bool disabled = false) { return GetMimeImageId(type, disabled); }
     const wxBitmap& LoadBitmap(const wxString& name, int requestedSize = 16);
     bool GetIconBundle(const wxString& name, wxIconBundle* bundle);
+    /**
+     * @brief Returns a wxImageList containing the standard MIME bitmaps.
+     *
+     * @details This member function creates a new wxImageList, adds all
+     * bitmaps from @c GetStandardMimeBitmapListPtr() to it, and returns
+     * the list. The caller takes ownership of the returned pointer and
+     * is responsible for deleting it when it is no longer needed.
+     *
+     * @return A newly allocated wxImageList with the standard MIME bitmaps
+     * (may be @c nullptr if allocation fails).
+     *
+     * @see GetStandardMimeBitmapListPtr()
+     *
+     * @code
+     * // Example usage
+     * wxImageList* mimeList = BitmapLoader::GetStandardMimeImageList();
+     * // ... use mimeList ...
+     * delete mimeList;   // caller must free the list
+     * @endcode
+     */
+    wxImageList* GetStandardMimeImageList();
 
 protected:
     wxIcon GetIcon(const wxBitmap& bmp) const;

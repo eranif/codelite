@@ -519,7 +519,7 @@ void clStyledTextCtrlMiniMap::OnEditUpdate(wxStyledTextEvent& event)
 
 void clStyledTextCtrlMiniMap::OnMapUpdate(wxStyledTextEvent& event)
 {
-    if (!m_edit)
+    if (!m_edit || !IsDragging())
         return;
 
     // The order is important here: the only changes in content that we get

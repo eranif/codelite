@@ -1,12 +1,8 @@
 #include "clThemedTreeCtrl.h"
 
-#include "ColoursAndFontsManager.h"
-#include "clColours.h"
 #include "clSystemSettings.h"
 #include "clThemedCtrl.hpp"
-#include "cl_config.h"
 #include "codelite_events.h"
-#include "drawingutils.h"
 #include "event_notifier.h"
 #include "globals.h"
 

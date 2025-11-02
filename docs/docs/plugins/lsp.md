@@ -22,6 +22,8 @@ The following sections provide installation instructions for the most commonly u
 2. Enable the **Generate compile_commands.json file** option
 3. Build your project
 
+> **Note:** `clangd` relies on the `compile_commands.json` file to obtain build instructions for each source file. When adding new files to your project, you must ensure that `compile_commands.json` is updated to include these files. Additionally, `clangd` [requires a manual restart][17] after `compile_commands.json` is modified, as it does not automatically detect configuration changes.
+
 #### Installation by Platform
 
 **Windows**
@@ -180,6 +182,16 @@ Multiple language servers can be configured for the same programming language (e
 
 ---
 
+## Restarting Language Servers
+
+To restart the any language server:
+
+1. Press ++ctrl+shift+p++ to open the command palette
+2. Type `restart language` and select the appropriate command
+3. Hit ++enter++
+
+---
+
 ## CMake Integration
 
 ### Using clangd and ctagsd with CMake
@@ -247,3 +259,4 @@ For traditional Makefile-based projects, use the `cc-wrapper` utility included w
 [14]: #automatic-detection
 [15]: /getting_started/windows/#common
 [16]: /misc/cc_wrapper
+[17]: #restarting-language-servers

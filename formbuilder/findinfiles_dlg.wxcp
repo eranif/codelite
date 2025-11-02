@@ -414,7 +414,7 @@
 															"border":	5,
 															"gbSpan":	",",
 															"gbPosition":	",",
-															"m_styles":	[],
+															"m_styles":	["wxTE_PROCESS_ENTER"],
 															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
@@ -463,11 +463,11 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
-																	"m_value":	"clThemedComboBox"
+																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
-																	"m_value":	"clThemedComboBox.hpp"
+																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Style:",
@@ -678,7 +678,7 @@
 															"border":	5,
 															"gbSpan":	"1,1",
 															"gbPosition":	"0,0",
-															"m_styles":	[],
+															"m_styles":	["wxTE_PROCESS_ENTER"],
 															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
@@ -727,11 +727,11 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
-																	"m_value":	"clThemedComboBox"
+																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
-																	"m_value":	"clThemedComboBox.hpp"
+																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Style:",
@@ -942,7 +942,7 @@
 															"border":	5,
 															"gbSpan":	",",
 															"gbPosition":	",",
-															"m_styles":	[],
+															"m_styles":	["wxTE_PROCESS_ENTER"],
 															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND", "wxALIGN_CENTER_VERTICAL"],
 															"m_properties":	[{
 																	"type":	"winid",
@@ -991,11 +991,11 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
-																	"m_value":	"clThemedComboBox"
+																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
-																	"m_value":	"clThemedComboBox.hpp"
+																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Style:",
@@ -1125,7 +1125,7 @@
 															"border":	5,
 															"gbSpan":	"1,1",
 															"gbPosition":	"0,0",
-															"m_styles":	[],
+															"m_styles":	["wxTE_PROCESS_ENTER"],
 															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 															"m_properties":	[{
 																	"type":	"winid",
@@ -1174,11 +1174,11 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
-																	"m_value":	"clThemedComboBox"
+																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
-																	"m_value":	"clThemedComboBox.hpp"
+																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Style:",
@@ -1383,7 +1383,7 @@
 															"border":	5,
 															"gbSpan":	"1,1",
 															"gbPosition":	"0,0",
-															"m_styles":	["wxCB_READONLY"],
+															"m_styles":	["wxTE_PROCESS_ENTER", "wxCB_READONLY"],
 															"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 															"m_properties":	[{
 																	"type":	"winid",
@@ -1432,11 +1432,11 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
-																	"m_value":	"clThemedComboBox"
+																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
-																	"m_value":	"clThemedComboBox.hpp"
+																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Style:",

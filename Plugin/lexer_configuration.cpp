@@ -565,8 +565,10 @@ void LexerConf::ApplyWordSet(wxStyledTextCtrl* ctrl, eWordSetIndex index, const 
 void LexerConf::ApplyFont(wxWindow* cb)
 {
     auto font = GetFontForStyle(0, cb);
+#ifndef __WXMSW__
     auto curfont = cb->GetFont();
     font.SetPointSize(curfont.GetPointSize());
+#endif
     cb->SetFont(font);
 }
 

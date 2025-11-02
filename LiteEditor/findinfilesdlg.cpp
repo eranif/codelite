@@ -58,12 +58,21 @@ const wxString RE_BUG = "(/[/\\*]+ *BUG)";
 const wxString RE_ATTN = "(/[/\\*]+ *ATTN)";
 const wxString RE_FIXME = "(/[/\\*]+ *FIXME)";
 
-void UpdateComboBox(clComboBox* cb, const wxArrayString& arr, const wxString& str)
+void UpdateComboBox(wxComboBox* cb, const wxArrayString& arr, const wxString& str)
 {
     auto updated_arr = StringUtils::AppendAndMakeUnique(arr, str);
     cb->Clear();
     cb->Append(updated_arr);
     cb->SetStringSelection(str);
+#ifdef __WXMSW__
+    cb->Bind(wxEVT_KEY_DOWN, [cb](wxKeyEvent& e) {
+        if (e.ControlDown() && e.GetKeyCode() == WXK_BACK) {
+            cb->ChangeValue(wxEmptyString);
+        } else {
+            e.Skip();
+        }
+    });
+#endif
 }
 } // namespace
 
@@ -415,7 +424,7 @@ void FindInFilesDialog::OnAddPath(wxCommandEvent& event)
         current_content << "-*PATTERN*";
         int selection_end = current_content.length();
         m_comboBoxWhere->SetValue(current_content);
-        m_comboBoxWhere->CallAfter(&clComboBox::SetFocus);
+        m_comboBoxWhere->CallAfter(&wxComboBox::SetFocus);
 
     } else if (selection == (firstItem + 6)) {
         wxString folder = ::wxDirSelector();
@@ -552,7 +561,7 @@ wxArrayString FindInFilesDialog::GetPathsAsArray() const
 
 namespace
 {
-wxArrayString GetComboBoxStrings(clComboBox* cb)
+wxArrayString GetComboBoxStrings(wxComboBox* cb)
 {
     wxArrayString arr = cb->GetStrings();
     wxString value = cb->GetValue();

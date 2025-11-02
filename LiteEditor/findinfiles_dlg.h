@@ -19,7 +19,6 @@
 #include <wx/stattext.h>
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
-#include "clThemedComboBox.hpp"
 #include <wx/button.h>
 #include <wx/gbsizer.h>
 #include <wx/statbox.h>
@@ -48,18 +47,18 @@ class FindInFilesDialogBase : public wxDialog
 protected:
     wxPanel* m_panelMainPanel;
     wxStaticText* m_staticText1;
-    clThemedComboBox* m_findString;
+    wxComboBox* m_findString;
     wxButton* m_find;
     wxStaticText* m_staticText102;
-    clThemedComboBox* m_replaceString;
+    wxComboBox* m_replaceString;
     wxButton* m_replaceAll;
     wxStaticText* m_staticText3;
-    clThemedComboBox* m_fileTypes;
+    wxComboBox* m_fileTypes;
     wxStaticText* m_staticText2;
-    clThemedComboBox* m_comboBoxWhere;
+    wxComboBox* m_comboBoxWhere;
     wxButton* m_btnAddPath;
     wxStaticText* m_staticText5;
-    clThemedComboBox* m_comboBoxEncoding;
+    wxComboBox* m_comboBoxEncoding;
     wxButton* m_cancel;
     wxCheckBox* m_matchCase;
     wxCheckBox* m_matchWholeWord;
@@ -90,18 +89,18 @@ protected:
 
 public:
     wxStaticText* GetStaticText1() { return m_staticText1; }
-    clThemedComboBox* GetFindString() { return m_findString; }
+    wxComboBox* GetFindString() { return m_findString; }
     wxButton* GetFind() { return m_find; }
     wxStaticText* GetStaticText102() { return m_staticText102; }
-    clThemedComboBox* GetReplaceString() { return m_replaceString; }
+    wxComboBox* GetReplaceString() { return m_replaceString; }
     wxButton* GetReplaceAll() { return m_replaceAll; }
     wxStaticText* GetStaticText3() { return m_staticText3; }
-    clThemedComboBox* GetFileTypes() { return m_fileTypes; }
+    wxComboBox* GetFileTypes() { return m_fileTypes; }
     wxStaticText* GetStaticText2() { return m_staticText2; }
-    clThemedComboBox* GetComboBoxWhere() { return m_comboBoxWhere; }
+    wxComboBox* GetComboBoxWhere() { return m_comboBoxWhere; }
     wxButton* GetBtnAddPath() { return m_btnAddPath; }
     wxStaticText* GetStaticText5() { return m_staticText5; }
-    clThemedComboBox* GetComboBoxEncoding() { return m_comboBoxEncoding; }
+    wxComboBox* GetComboBoxEncoding() { return m_comboBoxEncoding; }
     wxButton* GetCancel() { return m_cancel; }
     wxCheckBox* GetMatchCase() { return m_matchCase; }
     wxCheckBox* GetMatchWholeWord() { return m_matchWholeWord; }
@@ -115,8 +114,11 @@ public:
     wxCheckBox* GetCheckBoxBUG() { return m_checkBoxBUG; }
     wxCheckBox* GetCheckBoxFIXME() { return m_checkBoxFIXME; }
     wxPanel* GetPanelMainPanel() { return m_panelMainPanel; }
-    FindInFilesDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Find In Files"),
-                          const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+    FindInFilesDialogBase(wxWindow* parent,
+                          wxWindowID id = wxID_ANY,
+                          const wxString& title = _("Find In Files"),
+                          const wxPoint& pos = wxDefaultPosition,
+                          const wxSize& size = wxSize(-1, -1),
                           long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~FindInFilesDialogBase();
 };
@@ -140,9 +142,11 @@ public:
     wxCheckListBox* GetCheckListBoxLocations() { return m_checkListBoxLocations; }
     wxButton* GetButtonAdd() { return m_buttonAdd; }
     wxButton* GetButtonDelete() { return m_buttonDelete; }
-    FindInFilesLocationsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY,
+    FindInFilesLocationsDlgBase(wxWindow* parent,
+                                wxWindowID id = wxID_ANY,
                                 const wxString& title = _("Edit Search Locations"),
-                                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1, -1),
+                                const wxPoint& pos = wxDefaultPosition,
+                                const wxSize& size = wxSize(-1, -1),
                                 long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~FindInFilesLocationsDlgBase();
 };

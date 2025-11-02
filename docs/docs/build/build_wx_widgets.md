@@ -95,6 +95,29 @@ make -j$(nproc) && sudo make install
 3. Download the latest Xcode from the App Store
 4. In Xcode, open **Preferences → Downloads** and install the Command Line Tools (adds `clang`/`clang++` to `/usr/bin`)
 
+### Building with `configure`
+
+```bash
+mkdir -p $HOME/devl
+cd $HOME/devl
+git clone https://github.com/wxWidgets/wxWidgets.git
+cd wxWidgets
+git submodule update --init
+
+mkdir .build-release
+cd .build-release
+../configure --enable-shared        \
+             --enable-monolithic    \
+             --with-osx_cocoa       \
+             --disable-debug        \
+             --disable-mediactrl    \
+             --enable-stl           \
+             --with-libtiff=no      \
+             --enable-utf8
+make -j$(sysctl -n hw.physicalcpu)
+sudo make install
+```
+
 ### Building with CMake
 
 ```bash

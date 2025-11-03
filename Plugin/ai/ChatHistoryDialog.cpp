@@ -111,10 +111,14 @@ void ChatHistoryDialog::SetSelectionAndEndModal(const wxDataViewItem& item)
         return;
     }
 
-    wxVariant value;
-    m_dvListCtrlPrompts->GetValue(value, m_dvListCtrlPrompts->ItemToRow(item), 0);
+    auto cd = reinterpret_cast<wxString*>(m_dvListCtrlPrompts->GetItemData(item));
+    if (!cd) {
+        clERROR() << "History entry does not have client data associated with it." << endl;
+        EndModal(wxID_CANCEL);
+        return;
+    }
 
-    SetSelectedPrompt(value.GetString());
+    SetSelectedPrompt(*cd);
     EndModal(wxID_OK);
 }
 

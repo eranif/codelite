@@ -1218,6 +1218,7 @@ if(MINGW)
     libssh.dll
     libsqlite3-0.dll
     libhunspell-1.7-0.dll
+    libuchardet.dll
     libunwind.dll)
 
   list(

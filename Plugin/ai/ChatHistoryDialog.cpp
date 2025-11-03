@@ -19,10 +19,12 @@ namespace
  */
 wxString CreateLabel(const wxString& text, size_t size = 100)
 {
-    if (text.size() >= size) {
-        return text.Mid(0, size - 3) << "...";
+    wxString label = text.BeforeFirst('\n');
+    label.Trim().Trim(false);
+    if (label.size() >= size) {
+        return label.Mid(0, size - 3) << "...";
     }
-    return text;
+    return label;
 }
 } // namespace
 
@@ -32,10 +34,14 @@ ChatHistoryDialog::ChatHistoryDialog(wxWindow* parent)
     auto prompts = llm::Manager::GetInstance().GetConfig().GetHistory();
     for (auto& prompt : prompts) {
         prompt.Trim().Trim(false);
+        if (prompt.empty()) {
+            continue;
+        }
         wxVector<wxVariant> cols;
         // Ensure that each line in the table contains a single line (not multi-line)
         // as multi-line entries may not render correctly on some platforms.
-        cols.push_back(CreateLabel(prompt));
+        auto label = CreateLabel(prompt);
+        cols.push_back(label);
         auto p = std::make_shared<wxString>(prompt);
         m_dvListCtrlPrompts->AppendItem(cols, reinterpret_cast<wxUIntPtr>(p.get()));
         m_prompts.push_back(p);

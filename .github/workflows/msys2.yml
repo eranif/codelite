@@ -40,6 +40,7 @@ jobs:
           mingw-w64-clang-x86_64-llvm-openmp
           mingw-w64-clang-x86_64-libmariadbclient
           mingw-w64-clang-x86_64-postgresql
+          mingw-w64-clang-x86_64-uchardet
           bison
           flex
 

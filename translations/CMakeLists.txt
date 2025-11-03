@@ -2,11 +2,7 @@ find_package(Gettext)
 
 if (GETTEXT_FOUND)
 
-    if (NOT MINGW OR WITH_POSIX_LAYOUT)
-        set(INSTALL_LANG_DIR ${CMAKE_INSTALL_PREFIX}/share/locale)
-    else()
-        set(INSTALL_LANG_DIR ${CMAKE_INSTALL_PREFIX}/locale)
-    endif()
+    set(INSTALL_LANG_DIR ${CMAKE_INSTALL_PREFIX}/share/locale)
 
 # 2 issues with GETTEXT_PROCESS_PO_FILES:
 # - gitlab.kitware.com/cmake/cmake/-/issues/14904: Gettext module does not allow installing .po files with the same name from different directories

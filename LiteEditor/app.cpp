@@ -509,15 +509,11 @@ bool CodeLiteApp::OnInit()
         }
         homeDir = bd.GetPath();
     } else {
-#ifdef USE_POSIX_LAYOUT
         wxFileName execfpath(clStandardPaths::Get().GetExecutablePath());
         if (execfpath.GetDirs().Last().IsSameAs("bin")) {
             execfpath.RemoveLastDir();
         }
         homeDir = execfpath.GetPath() + wxT("/share/codelite");
-#else
-        homeDir = wxFileName(wxStandardPaths::Get().GetExecutablePath()).GetPath();
-#endif
     }
     clStandardPaths::Get().SetDataDir(homeDir);
 #endif
@@ -600,11 +596,7 @@ bool CodeLiteApp::OnInit()
 
 #else //__WXMSW__
     if (homeDir.IsEmpty()) { // did we got a basedir from user?
-#ifdef USE_POSIX_LAYOUT
         homeDir = clStandardPaths::Get().GetDataDir();
-#else
-        homeDir = ::wxGetCwd();
-#endif
     }
     wxFileName fnHomeDir(homeDir, "");
 
@@ -739,11 +731,7 @@ bool CodeLiteApp::OnInit()
         wxLocale::AddCatalogLookupPathPrefix(wxT("/usr/local/share/locale"));
 
 #elif defined(__WXMSW__)
-#ifdef USE_POSIX_LAYOUT
         wxLocale::AddCatalogLookupPathPrefix(clStandardPaths::Get().GetInstallDir() + wxT("\\share\\locale"));
-#else
-        wxLocale::AddCatalogLookupPathPrefix(ManagerST::Get()->GetInstallDir() + wxT("\\locale"));
-#endif
 #endif
 
         // This has to be done before the catalogues are added, as otherwise the wrong one (or none) will be found

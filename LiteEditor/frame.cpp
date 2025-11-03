@@ -3496,7 +3496,7 @@ void clMainFrame::CompleteInitialization()
     m_chatAI = std::make_unique<ChatAI>();
 
 // Load debuggers (*must* be after the plugins)
-#ifdef USE_POSIX_LAYOUT
+#ifdef __WXMSW__
     wxString plugdir(clStandardPaths::Get().GetPluginsDirectory());
     DebuggerMgr::Get().Initialize(this, EnvironmentConfig::Instance(), plugdir);
 #else

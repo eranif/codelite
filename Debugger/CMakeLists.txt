@@ -31,7 +31,7 @@ endif()
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} libcodelite plugin libgdbparser)
 
-if(MINGW AND WITH_POSIX_LAYOUT)
+if(MINGW)
     install(
         TARGETS DebuggerGDB
         RUNTIME DESTINATION ${PLUGINS_DIR}/debuggers

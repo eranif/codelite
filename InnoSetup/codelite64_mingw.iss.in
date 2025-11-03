@@ -22,12 +22,12 @@ Compression=lzma/ultra
 SolidCompression=true
 InternalCompressLevel=ultra
 PrivilegesRequired=none
-UninstallDisplayIcon={app}\codelite.exe,0
+UninstallDisplayIcon={app}\bin\codelite.exe,0
 
 ;;==================================
 ;; 64 bit setup
 ;;==================================
-#define INSTALL_DIR "@CL_INSTALL_BIN@"
+#define INSTALL_DIR "@CMAKE_INSTALL_PREFIX@"
 
 [Languages]
 Name: "eng"; MessagesFile: "compiler:Default.isl"
@@ -39,25 +39,24 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 [Files]
 ; the INSTALL_DIR is created by `make install`
 Source: "{#INSTALL_DIR}\*"; Excludes: "*.a"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs;
-Source: "{#INSTALL_DIR}\bin\*.exe"; Excludes: "*.a"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs;
 
 [Icons]
-Name: "{group}\CodeLite "; Filename: "{app}\codelite.exe"; WorkingDir: "{app}"
+Name: "{group}\CodeLite "; Filename: "{app}\bin\codelite.exe"; WorkingDir: "{app}"
 Name: "{group}\{cm:UninstallProgram, CodeLite}"; Filename: "{uninstallexe}"
-Name: "{userdesktop}\CodeLite "; Filename: "{app}\codelite.exe"; WorkingDir: "{app}" ;Tasks: desktopicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\CodeLite"; WorkingDir: "{app}"; Filename: "{app}\codelite.exe"; Tasks: quicklaunchicon
+Name: "{userdesktop}\CodeLite "; Filename: "{app}\bin\codelite.exe"; WorkingDir: "{app}" ;Tasks: desktopicon
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\CodeLite"; WorkingDir: "{app}"; Filename: "{app}\bin\codelite.exe"; Tasks: quicklaunchicon
 
 [INI]
 
 [Registry]
 Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "InstallPath"; ValueData: "{app}"; Flags: noerror
-Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "PluginsDir";  ValueData: "{app}\plugins"; Flags: noerror
+Root: HKLM; Subkey: "Software\codelite\settings"; ValueType: string; ValueName: "PluginsDir";  ValueData: "{app}\lib\codelite"; Flags: noerror
 
 [UninstallDelete]
 Type: filesandordirs; Name: "{app}"
 
 [Run]
-Filename: "{app}\codelite.exe"; Description: "Launch CodeLite"; Flags: postinstall nowait skipifsilent
+Filename: "{app}\bin\codelite.exe"; Description: "Launch CodeLite"; Flags: postinstall nowait skipifsilent
 
 [Code]
 function IsSilentInstall(): Boolean;

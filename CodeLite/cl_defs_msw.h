@@ -9,13 +9,11 @@
 #define MAINBOOK_AUIBOOK 1
 #define USE_NATIVETOOLBAR 0
 
-#ifdef USE_POSIX_LAYOUT
 #ifndef PLUGINS_DIR
 #define PLUGINS_DIR "\\lib\\codelite"
 #endif
 #ifndef INSTALL_DIR
 #define INSTALL_DIR "\\share\\codelite"
-#endif
 #endif
 
 // General macros

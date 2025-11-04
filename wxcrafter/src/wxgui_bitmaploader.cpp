@@ -14,7 +14,7 @@ wxCrafter::ResourceLoader::ResourceLoader(const wxString& skin)
 {
     if(m_bitmaps.empty()) {
         wxString zipFile;
-#ifdef USE_POSIX_LAYOUT
+#ifdef __WXMSW__
         zipFile << wxStandardPaths::Get().GetDataDir() << wxT(INSTALL_DIR) << wxFileName::GetPathSeparator() << skin
                 << wxT(".zip");
 #else

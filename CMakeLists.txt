@@ -35,8 +35,7 @@ cmake_minimum_required(VERSION 3.16)
 # Windows / MSYS options:
 #
 # -DWXWIN=<fullpath>                          //
-# https://docs.codelite.org/build/build_wx_widgets/#windows -DWITH_POSIX_LAYOUT
-# // When building under Windows, install CodeLite using POSIX layout
+# https://docs.codelite.org/build/build_wx_widgets/#windows
 #
 # ##############################################################################
 
@@ -342,15 +341,9 @@ endif()
 # Define the PLUGINS_DIR variable
 if(MINGW)
   # MinGW
-  if(WITH_POSIX_LAYOUT)
-    set(MINGW_INSTALL_PLUGINS_DIR "${CMAKE_INSTALL_PREFIX}/lib/codelite")
-    set(MINGW_INSTALL_BIN "${CMAKE_INSTALL_PREFIX}/bin")
-    set(MINGW_INSTALL_RESOURCES_DIR "${CMAKE_INSTALL_PREFIX}/share/codelite")
-  else()
-    set(MINGW_INSTALL_PLUGINS_DIR "${CMAKE_INSTALL_PREFIX}/plugins")
-    set(MINGW_INSTALL_BIN "${CMAKE_INSTALL_PREFIX}")
-    set(MINGW_INSTALL_RESOURCES_DIR "${MINGW_INSTALL_BIN}")
-  endif()
+  set(MINGW_INSTALL_PLUGINS_DIR "${CMAKE_INSTALL_PREFIX}/lib/codelite")
+  set(MINGW_INSTALL_BIN "${CMAKE_INSTALL_PREFIX}/bin")
+  set(MINGW_INSTALL_RESOURCES_DIR "${CMAKE_INSTALL_PREFIX}/share/codelite")
 endif()
 
 if(APPLE)
@@ -629,10 +622,7 @@ if(NOT MINGW)
   add_compile_definitions(INSTALL_DIR=\"${CL_PREFIX}/share/codelite\")
   add_compile_definitions(PLUGINS_DIR=\"${PLUGINS_DIR}\")
 else()
-  if(WITH_POSIX_LAYOUT)
-    add_compile_definitions(NDEBUG)
-    add_compile_definitions(USE_POSIX_LAYOUT)
-  endif()
+  add_compile_definitions(NDEBUG)
 endif()
 
 message("-- PLUGINS_DIR is set to ${PLUGINS_DIR}")
@@ -1218,6 +1208,7 @@ if(MINGW)
     libssh.dll
     libsqlite3-0.dll
     libhunspell-1.7-0.dll
+    libuchardet.dll
     libunwind.dll)
 
   list(
@@ -1275,7 +1266,7 @@ if(MINGW)
   endforeach()
 
   foreach(DLL ${OPENSSL_DEPS})
-    install(FILES "${DLL}" DESTINATION "${CMAKE_INSTALL_PREFIX}")
+    install(FILES "${DLL}" DESTINATION "${CL_INSTALL_BIN}")
   endforeach()
 
 endif()

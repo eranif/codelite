@@ -8,6 +8,7 @@ others:
 ----
 
 - git: support showing file revision history
+- git: check before any operation if we have `.git/index.lock`
 - editor: add an api to add end of line annotations
 - git: explore the option of using the new api of end of line annotations to replace the nav bar commit info ^^
 - dap: support stdio connection based

@@ -633,11 +633,15 @@ void FindInFilesDialog::SetFileMask(const wxString& mask)
 
 void FindInFilesDialog::OnFindEnter(wxCommandEvent& event)
 {
-    event.Skip();
+    wxUnusedVar(event);
     OnFind(event);
 }
 
-void FindInFilesDialog::OnReplaceEnter(wxCommandEvent& event) { OnReplace(event); }
+void FindInFilesDialog::OnReplaceEnter(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    OnReplace(event);
+}
 
 void FindInFilesDialog::DoSelectAll() { m_findString->SelectAll(); }
 

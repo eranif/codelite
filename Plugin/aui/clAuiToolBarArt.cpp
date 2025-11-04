@@ -80,15 +80,16 @@ void clAuiToolBarArt::DrawGripper(wxDC& dc, wxWindow* wnd, const wxRect& rect)
     wxAuiDefaultToolBarArt::DrawGripper(dc, wnd, rect);
 }
 
-void clAuiToolBarArt::Finalise(wxAuiToolBar* toobar)
+void clAuiToolBarArt::Finalise(wxAuiToolBar* toolbar)
 {
-    for (size_t i = 0; i < toobar->GetToolCount(); ++i) {
-        auto tool = toobar->FindToolByIndex(i);
+    CHECK_PTR_RET(toolbar);
+    for (size_t i = 0; i < toolbar->GetToolCount(); ++i) {
+        auto tool = toolbar->FindToolByIndex(i);
         if (tool->GetId() == wxID_SEPARATOR) {
             continue;
         }
 
-        auto normal_bmp = tool->GetBitmap();
+        auto normal_bmp = tool->GetBitmapFor(toolbar);
         wxBitmap disable_bmp = normal_bmp;
         if (DrawingUtils::IsThemeDark()) {
             disable_bmp = disable_bmp.ConvertToDisabled(0);

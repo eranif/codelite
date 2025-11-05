@@ -24,6 +24,7 @@ public:
     void InitialiseFor(PreviewKind kind);
 
 protected:
+    void OnKeyDown(wxKeyEvent& event) override;
     void OnCloseWindow(wxCloseEvent& event) override;
     void OnClose(wxCommandEvent& event) override;
     void OnCopy(wxCommandEvent& event) override;

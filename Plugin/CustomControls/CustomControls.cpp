@@ -40,7 +40,7 @@ TextGenerationPreviewFrameBase::TextGenerationPreviewFrameBase(
 
     m_main_panel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
 
-    boxSizer1->Add(m_main_panel, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer1->Add(m_main_panel, 1, wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* boxSizer9 = new wxBoxSizer(wxVERTICAL);
     m_main_panel->SetSizer(boxSizer9);
@@ -82,19 +82,20 @@ TextGenerationPreviewFrameBase::TextGenerationPreviewFrameBase(
     m_editor->SetKeyWords(3, wxT(""));
     m_editor->SetKeyWords(4, wxT(""));
 
-    boxSizer9->Add(m_editor, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
+    boxSizer9->Add(m_editor, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* boxSizer5 = new wxBoxSizer(wxHORIZONTAL);
 
-    boxSizer1->Add(boxSizer5, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+    boxSizer9->Add(boxSizer5, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
 
-    m_button_copy = new wxButton(this, wxID_COPY, _("Copy"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button_copy = new wxButton(
+        m_main_panel, wxID_COPY, _("Copy"), wxDefaultPosition, wxDLG_UNIT(m_main_panel, wxSize(-1, -1)), 0);
     m_button_copy->SetToolTip(_("Copy the generated output to the clipboard"));
 
     boxSizer5->Add(m_button_copy, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_button_cancel =
-        new wxButton(this, wxID_CANCEL, _("Close"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button_cancel = new wxButton(
+        m_main_panel, wxID_CANCEL, _("Close"), wxDefaultPosition, wxDLG_UNIT(m_main_panel, wxSize(-1, -1)), 0);
     m_button_cancel->SetDefault();
     m_button_cancel->SetToolTip(_("Click to close the view or hit ESCAPE."));
 
@@ -117,6 +118,7 @@ TextGenerationPreviewFrameBase::TextGenerationPreviewFrameBase(
     }
     // Connect events
     this->Bind(wxEVT_CLOSE_WINDOW, &TextGenerationPreviewFrameBase::OnCloseWindow, this);
+    m_editor->Bind(wxEVT_KEY_DOWN, &TextGenerationPreviewFrameBase::OnKeyDown, this);
     m_button_copy->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnCopy, this);
     m_button_copy->Bind(wxEVT_UPDATE_UI, &TextGenerationPreviewFrameBase::OnCopyUI, this);
     m_button_cancel->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnClose, this);
@@ -125,6 +127,7 @@ TextGenerationPreviewFrameBase::TextGenerationPreviewFrameBase(
 TextGenerationPreviewFrameBase::~TextGenerationPreviewFrameBase()
 {
     this->Unbind(wxEVT_CLOSE_WINDOW, &TextGenerationPreviewFrameBase::OnCloseWindow, this);
+    m_editor->Unbind(wxEVT_KEY_DOWN, &TextGenerationPreviewFrameBase::OnKeyDown, this);
     m_button_copy->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnCopy, this);
     m_button_copy->Unbind(wxEVT_UPDATE_UI, &TextGenerationPreviewFrameBase::OnCopyUI, this);
     m_button_cancel->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &TextGenerationPreviewFrameBase::OnClose, this);

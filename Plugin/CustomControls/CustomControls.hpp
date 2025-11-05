@@ -50,15 +50,16 @@ protected:
 
 protected:
     virtual void OnCloseWindow(wxCloseEvent& event) { event.Skip(); }
+    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
     virtual void OnCopy(wxCommandEvent& event) { event.Skip(); }
     virtual void OnCopyUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnClose(wxCommandEvent& event) { event.Skip(); }
 
 public:
     wxStyledTextCtrl* GetEditor() { return m_editor; }
-    wxPanel* GetMain_panel() { return m_main_panel; }
     wxButton* GetButton_copy() { return m_button_copy; }
     wxButton* GetButton_cancel() { return m_button_cancel; }
+    wxPanel* GetMain_panel() { return m_main_panel; }
     TextGenerationPreviewFrameBase(wxWindow* parent,
                                    wxWindowID id = wxID_ANY,
                                    const wxString& title = _("Text Generation"),

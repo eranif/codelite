@@ -167,3 +167,14 @@ void TextGenerationPreviewFrame::OnCloseWindow(wxCloseEvent& event)
     wxUnusedVar(event);
     Hide();
 }
+
+void TextGenerationPreviewFrame::OnKeyDown(wxKeyEvent& event)
+{
+    // If no selection and user clicked Ctrl-C, copy the entire text
+    if (event.GetKeyCode() == 'C' && event.ControlDown() && !m_editor->HasSelection()) {
+        wxCommandEvent dummy;
+        OnCopy(dummy);
+    } else {
+        event.Skip();
+    }
+}

@@ -70,7 +70,7 @@ if(UNIX AND NOT APPLE)
     # that..
     set(CMAKE_INSTALL_PREFIX
         "/usr"
-        CACHE ON "Install prefix" FORCE)
+        CACHE PATH "Install prefix" FORCE)
   endif()
 endif()
 

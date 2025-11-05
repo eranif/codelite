@@ -22,35 +22,42 @@ const wxString CHAT_AI_LABEL = _("Chat AI");
 const wxString LONG_MODEL_NAME = "claude-sonnet-4-5-1234567890";
 } // namespace
 
-ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin) : AssistanceAIChatWindowBase(parent), m_plugin(plugin)
+ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
+    : AssistanceAIChatWindowBase(parent)
+    , m_plugin(plugin)
 {
     auto images = clGetManager()->GetStdIcons();
     m_toolbar->SetArtProvider(new clAuiToolBarArt());
-    m_toolbar->AddTool(wxID_CLEAR, _("Clear the chat history"), images->LoadBitmap("clear"));
+    clAuiToolBarArt::AddTool(m_toolbar, wxID_CLEAR, _("Clear the chat history"), images->LoadBitmap("clear"));
     m_toolbar->AddSeparator();
 
     wxSize control_size{GetTextExtent(LONG_MODEL_NAME).GetWidth(), wxNOT_FOUND};
     m_choiceEndpoints = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, control_size);
     m_choiceEndpoints->SetToolTip(_("Choose the endpoint to use"));
     m_toolbar->AddControl(m_choiceEndpoints);
-    m_toolbar->AddTool(wxID_REFRESH, _("Restart the client"), images->LoadBitmap("debugger_restart"));
+    clAuiToolBarArt::AddTool(m_toolbar, wxID_REFRESH, _("Restart the client"), images->LoadBitmap("debugger_restart"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(wxID_EXECUTE, _("Submit"), images->LoadBitmap("run"));
-    m_toolbar->AddTool(wxID_STOP, _("Stop"), images->LoadBitmap("execute_stop"));
+    clAuiToolBarArt::AddTool(m_toolbar, wxID_EXECUTE, _("Submit"), images->LoadBitmap("run"));
+    clAuiToolBarArt::AddTool(m_toolbar, wxID_STOP, _("Stop"), images->LoadBitmap("execute_stop"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("prompt_history"), _("Show prompt history"), images->LoadBitmap("history"));
-    m_toolbar->AddTool(XRCID("auto_scroll"),
-                       _("Enable auto scrolling"),
-                       images->LoadBitmap("link_editor"),
-                       wxEmptyString,
-                       wxITEM_CHECK);
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("prompt_history"), _("Show prompt history"), images->LoadBitmap("history"));
+    clAuiToolBarArt::AddTool(m_toolbar,
+                             XRCID("auto_scroll"),
+                             _("Enable auto scrolling"),
+                             images->LoadBitmap("link_editor"),
+                             wxEmptyString,
+                             wxITEM_CHECK);
     m_toolbar->AddSeparator();
     if (IsDetached()) {
-        m_toolbar->AddTool(XRCID("detach_view"), _("Dock the chat window"), images->LoadBitmap("merge-window"));
+        clAuiToolBarArt::AddTool(
+            m_toolbar, XRCID("detach_view"), _("Dock the chat window"), images->LoadBitmap("merge-window"));
 
     } else {
-        m_toolbar->AddTool(
-            XRCID("detach_view"), _("Move the chat into a separate window"), images->LoadBitmap("separate-window"));
+        clAuiToolBarArt::AddTool(m_toolbar,
+                                 XRCID("detach_view"),
+                                 _("Move the chat into a separate window"),
+                                 images->LoadBitmap("separate-window"));
     }
 
     clAuiToolBarArt::Finalise(m_toolbar);
@@ -201,7 +208,9 @@ void ChatAIWindow::UpdateTheme()
         bg_colour = lexer->GetProperty(0).GetBgColour();
     }
 
-    for (int style = 0; style < wxSTC_STYLE_MAX; ++style) { m_stcInput->StyleSetBackground(style, bg_colour); }
+    for (int style = 0; style < wxSTC_STYLE_MAX; ++style) {
+        m_stcInput->StyleSetBackground(style, bg_colour);
+    }
 
     AnsiColours::SetDarkTheme(lexer->IsDark());
 }

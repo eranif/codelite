@@ -50,6 +50,12 @@ public:
     virtual void DrawGripper(wxDC& dc, wxWindow* wnd, const wxRect& rect);
     void OnThemeChanged(wxCommandEvent& event);
     static void Finalise(wxAuiToolBar* toobar);
+    static void AddTool(wxAuiToolBar* toolbar,
+                        int toolId,
+                        const wxString& label,
+                        const wxBitmap& bitmap,
+                        const wxString& shortHelpString = wxEmptyString,
+                        wxItemKind item_kind = wxITEM_NORMAL);
 };
 
 #endif // CL_AUI_TOOLBAR_ART_H

@@ -80,26 +80,18 @@ void clAuiToolBarArt::DrawGripper(wxDC& dc, wxWindow* wnd, const wxRect& rect)
     wxAuiDefaultToolBarArt::DrawGripper(dc, wnd, rect);
 }
 
-void clAuiToolBarArt::Finalise(wxAuiToolBar* toolbar)
+void clAuiToolBarArt::AddTool(wxAuiToolBar* toolbar,
+                              int toolId,
+                              const wxString& label,
+                              const wxBitmap& bitmap,
+                              const wxString& shortHelpString,
+                              wxItemKind item_kind)
 {
-    CHECK_PTR_RET(toolbar);
-    for (size_t i = 0; i < toolbar->GetToolCount(); ++i) {
-        auto tool = toolbar->FindToolByIndex(i);
-        if (tool->GetId() == wxID_SEPARATOR) {
-            continue;
-        }
-
-        auto normal_bmp = tool->GetBitmapFor(toolbar);
-        wxBitmap disable_bmp = normal_bmp;
-        if (DrawingUtils::IsThemeDark()) {
-            disable_bmp = disable_bmp.ConvertToDisabled(0);
-        } else {
-            disable_bmp = disable_bmp.ConvertToDisabled(255);
-        }
-        tool->SetDisabledBitmap(disable_bmp);
-
-        if (tool->GetShortHelp().empty()) {
-            tool->SetShortHelp(tool->GetLabel());
-        }
-    }
+    size_t brightness = DrawingUtils::IsThemeDark() ? 0 : 255;
+    auto disabled_bmp = bitmap.ConvertToDisabled(brightness);
+    wxBitmap::Rescale(disabled_bmp, wxSize(16, 16));
+    wxString help_string = shortHelpString.empty() ? label : shortHelpString;
+    toolbar->AddTool(toolId, label, bitmap, disabled_bmp, item_kind, help_string, help_string, nullptr);
 }
+
+void clAuiToolBarArt::Finalise(wxAuiToolBar* toolbar) { wxUnusedVar(toolbar); }

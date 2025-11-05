@@ -199,32 +199,42 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     // Toolbar
     auto images = clGetManager()->GetStdIcons();
     m_toolbar->SetArtProvider(new clAuiToolBarArt());
-    m_toolbar->AddTool(XRCID("git_refresh"), _("Refresh"), images->LoadBitmap("file_reload"), _("Refresh"));
-    m_toolbar->AddTool(XRCID("git_clear_log"), _("Clear Git Log"), images->LoadBitmap("clear"), _("Clear Git Log"));
-    m_toolbar->AddTool(XRCID("git_stop_process"),
-                       _("Terminate Git Process"),
-                       images->LoadBitmap("execute_stop"),
-                       _("Terminate Git Process"));
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("git_refresh"), _("Refresh"), images->LoadBitmap("file_reload"), _("Refresh"));
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("git_clear_log"), _("Clear Git Log"), images->LoadBitmap("clear"), _("Clear Git Log"));
+    clAuiToolBarArt::AddTool(m_toolbar,
+                             XRCID("git_stop_process"),
+                             _("Terminate Git Process"),
+                             images->LoadBitmap("execute_stop"),
+                             _("Terminate Git Process"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("git_console_add_file"), _("Add File"), images->LoadBitmap("plus"), _("Add File"));
-    m_toolbar->AddTool(XRCID("git_console_reset_file"), _("Reset File"), images->LoadBitmap("undo"), _("Reset File"));
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("git_console_add_file"), _("Add File"), images->LoadBitmap("plus"), _("Add File"));
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("git_console_reset_file"), _("Reset File"), images->LoadBitmap("undo"), _("Reset File"));
 
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("git_commit"), _("Commit"), images->LoadBitmap("git-commit"), _("Commit local changes"));
-    m_toolbar->AddTool(XRCID("git_push"), _("Push"), images->LoadBitmap("up"), _("Push local changes"));
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("git_commit"), _("Commit"), images->LoadBitmap("git-commit"), _("Commit local changes"));
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("git_push"), _("Push"), images->LoadBitmap("up"), _("Push local changes"));
 
-    m_toolbar->AddTool(XRCID("git_pull"), _("Pull"), images->LoadBitmap("pull"), _("Pull remote changes"));
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("git_pull"), _("Pull"), images->LoadBitmap("pull"), _("Pull remote changes"));
     m_toolbar->SetToolDropDown(XRCID("git_pull"), true);
-    m_toolbar->AddTool(XRCID("git_rebase"), _("Rebase"), images->LoadBitmap("merge"), _("Rebase"));
+    clAuiToolBarArt::AddTool(m_toolbar, XRCID("git_rebase"), _("Rebase"), images->LoadBitmap("merge"), _("Rebase"));
     m_toolbar->SetToolDropDown(XRCID("git_rebase"), true);
 
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(
-        XRCID("git_browse_commit_list"), _("Log"), images->LoadBitmap("tasks"), _("Browse commit history"));
-    m_toolbar->AddTool(XRCID("git_reset_repository"), _("Reset repository"), images->LoadBitmap("clean"));
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("git_browse_commit_list"), _("Log"), images->LoadBitmap("tasks"), _("Browse commit history"));
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("git_reset_repository"), _("Reset repository"), images->LoadBitmap("clean"));
 
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("git_ai_powered_features"), _("AI-Powered features"), images->LoadBitmap("wand"));
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("git_ai_powered_features"), _("AI-Powered features"), images->LoadBitmap("wand"));
     m_toolbar->SetToolDropDown(XRCID("git_ai_powered_features"), true);
 
     // Bind the events

@@ -42,8 +42,8 @@ TextGenerationPreviewFrameBase::TextGenerationPreviewFrameBase(
 
     boxSizer1->Add(m_main_panel, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    wxBoxSizer* boxSizer9 = new wxBoxSizer(wxVERTICAL);
-    m_main_panel->SetSizer(boxSizer9);
+    m_editorSizer = new wxBoxSizer(wxVERTICAL);
+    m_main_panel->SetSizer(m_editorSizer);
 
     m_editor = new wxStyledTextCtrl(
         m_main_panel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_main_panel, wxSize(500, 300)), wxBORDER_THEME);
@@ -82,11 +82,11 @@ TextGenerationPreviewFrameBase::TextGenerationPreviewFrameBase(
     m_editor->SetKeyWords(3, wxT(""));
     m_editor->SetKeyWords(4, wxT(""));
 
-    boxSizer9->Add(m_editor, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    m_editorSizer->Add(m_editor, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     wxBoxSizer* boxSizer5 = new wxBoxSizer(wxHORIZONTAL);
 
-    boxSizer9->Add(boxSizer5, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+    m_editorSizer->Add(boxSizer5, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
 
     m_button_copy = new wxButton(
         m_main_panel, wxID_COPY, _("Copy"), wxDefaultPosition, wxDLG_UNIT(m_main_panel, wxSize(-1, -1)), 0);

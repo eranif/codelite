@@ -44,6 +44,7 @@ class TextGenerationPreviewFrameBase : public wxFrame
 {
 protected:
     wxPanel* m_main_panel;
+    wxBoxSizer* m_editorSizer;
     wxStyledTextCtrl* m_editor;
     wxButton* m_button_copy;
     wxButton* m_button_cancel;

@@ -56,7 +56,7 @@ TextGenerationPreviewFrame::TextGenerationPreviewFrame(PreviewKind kind, wxWindo
     }
 
     m_indicator_panel = new IndicatorPanel(m_main_panel, _("Ready"));
-    m_main_panel->GetSizer()->Add(m_indicator_panel, wxSizerFlags(0).Expand().Border(wxALL, 0));
+    m_editorSizer->Add(m_indicator_panel, wxSizerFlags(0).Expand().Border(wxALL, 0));
     m_editor->Bind(wxEVT_KEY_DOWN, [this](wxKeyEvent& e) {
         if (e.GetKeyCode() == WXK_ESCAPE) {
             Hide();

@@ -247,7 +247,7 @@
 										}, {
 											"type":	"string",
 											"m_label":	"Name:",
-											"m_value":	"boxSizer9"
+											"m_value":	"m_editorSizer"
 										}, {
 											"type":	"string",
 											"m_label":	"Style:",
@@ -255,7 +255,7 @@
 										}, {
 											"type":	"bool",
 											"m_label":	"Keep as a class member",
-											"m_value":	false
+											"m_value":	true
 										}, {
 											"type":	"choice",
 											"m_label":	"Orientation:",

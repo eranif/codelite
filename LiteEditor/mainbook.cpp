@@ -98,6 +98,10 @@ public:
 
         SetClientData(m_edit);
         Bind(wxEVT_SET_FOCUS, &MyMiniMap::OnSetFocus, this);
+        Bind(wxEVT_MOUSEWHEEL, [this](wxMouseEvent& e) {
+            e.Skip(false);
+            m_edit->GetEventHandler()->ProcessEvent(e);
+        });
     }
 
     ~MyMiniMap() override

@@ -1216,11 +1216,6 @@ if(MINGW)
     libhunspell-1.7-0.dll
     libunwind.dll)
 
-  if("${MSYSTEM_ENV_VAR}" STREQUAL "UCRT64")
-    message(STATUS "Running on UCRT64, including libuchardet.dll DLL")
-    list(APPEND SYSTEM_DLLS libuchardet.dll)
-  endif()
-
   list(
     APPEND
     MSYS2_CORE_FILES

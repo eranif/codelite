@@ -1029,9 +1029,12 @@ if(APPLE)
   set(CMAKE_INSTALL_BINDIR "${CMAKE_INSTALL_PREFIX}")
 endif()
 
-set(OLLAMALIB_BUILD_EXAMPLE
+set(ASSISTANTLIB_BUILD_EXAMPLE
     OFF
     CACHE BOOL "Do not build OllamLib example program")
+set(ASSISTANTLIB_WITH_OPENSSL
+    ON
+    CACHE BOOL "Assistant lib is buil with TLS support")
 add_subdirectory("${CL_SRC_ROOT}/submodules/assistant")
 
 if(WXC_APP)

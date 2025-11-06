@@ -45,6 +45,9 @@ FunctionResult GetCompilerOutput(const assistant::json& args);
 /// Return the current editor's text content.
 FunctionResult GetCurrentEditorText(const assistant::json& args);
 
+/// Lists all subdirectories within a specified directory path (non-recursive)
+FunctionResult ListDirectories(const assistant::json& args);
+
 /// Populate the function table with the built-in functions provided by CodeLite
 /// to the model.
 void PopulateBuiltInFunctions(FunctionTable& table);

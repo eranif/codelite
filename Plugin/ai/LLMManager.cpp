@@ -42,7 +42,10 @@ std::unique_ptr<wxBusyCursor> CreateBusyCursor()
 
 struct TaskDropper {
     llm::ThreadTask& task;
-    TaskDropper(llm::ThreadTask& t) : task{t} {}
+    TaskDropper(llm::ThreadTask& t)
+        : task{t}
+    {
+    }
     ~TaskDropper()
     {
         if (!task.collector) {
@@ -152,17 +155,11 @@ void Manager::WorkerMain()
                           << ") is processing the request" << endl;
                 client->Chat(
                     std::move(prompt),
-                    [client,
-                     cancellation_token,
-                     &abort_loop,
-                     &shared_state,
-                     &saved_thinking_state,
-                     owner](std::string message, assistant::Reason reason, bool thinking) -> bool {
+                    [client, cancellation_token, &abort_loop, &shared_state, &saved_thinking_state, owner](
+                        std::string message, assistant::Reason reason, bool thinking) -> bool {
                         // Check various options that the chat was cancelled.
-                        if (client->IsInterrupted() ||
-                            (cancellation_token && cancellation_token->IsCancelled())) {
-                            NotifyDoneWithError(
-                                owner, "\n\n** Request cancelled by the user. **\n\n");
+                        if (client->IsInterrupted() || (cancellation_token && cancellation_token->IsCancelled())) {
+                            NotifyDoneWithError(owner, "\n\n** Request cancelled by the user. **\n\n");
                             abort_loop = true;
                             return false;
                         }
@@ -188,8 +185,7 @@ void Manager::WorkerMain()
                         } break;
                         case assistant::Reason::kDone: {
                             if (cancellation_token && !cancellation_token->Incr()) {
-                                NotifyDoneWithError(
-                                    owner, "\n\n** Maximum number of tokens reached. **\n\n");
+                                NotifyDoneWithError(owner, "\n\n** Maximum number of tokens reached. **\n\n");
                                 abort_loop = true;
                                 return false;
                             }
@@ -211,8 +207,7 @@ void Manager::WorkerMain()
                             clDEBUG1() << message << endl;
                             break;
                         case assistant::Reason::kCancelled: {
-                            NotifyDoneWithError(
-                                owner, "\n\n** Request cancelled by caller. **\n\n");
+                            NotifyDoneWithError(owner, "\n\n** Request cancelled by caller. **\n\n");
                             abort_loop = true;
                             return false;
                         } break;
@@ -224,8 +219,7 @@ void Manager::WorkerMain()
                             event.SetResponseRaw(message);
                             owner->AddPendingEvent(event);
                             if (cancellation_token && !cancellation_token->Incr()) {
-                                NotifyDoneWithError(
-                                    owner, "\n\n** Maximum number of tokens reached. **\n\n");
+                                NotifyDoneWithError(owner, "\n\n** Maximum number of tokens reached. **\n\n");
                                 abort_loop = true;
                                 return false;
                             }
@@ -339,8 +333,7 @@ assistant::Config Manager::MakeConfig()
 {
     std::call_once(config_create_once_flag, [this]() {
         // Should never fail.
-        m_default_config =
-            assistant::Config::FromContent(kDefaultSettings.ToStdString(wxConvUTF8)).value();
+        m_default_config = assistant::Config::FromContent(kDefaultSettings.ToStdString(wxConvUTF8)).value();
 
         // Redirect the library logs to our logging machinery.
         assistant::SetLogSink([](assistant::LogLevel level, std::string msg) {
@@ -417,7 +410,7 @@ void Manager::Start()
 
 void Manager::LoadModels(wxEvtHandler* owner)
 {
-    WriteOptions opts{.force_global = true};
+    WriteOptions opts{.ignore_workspace = true};
     wxString config_content =
         FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts).value_or(kDefaultSettings);
     auto client = assistant::MakeClient(config_content.ToStdString(wxConvUTF8));
@@ -430,7 +423,9 @@ void Manager::LoadModels(wxEvtHandler* owner)
         auto models = client->List();
         wxArrayString m;
         m.reserve(models.size());
-        for (const auto& model : models) { m.Add(wxString::FromUTF8(model)); }
+        for (const auto& model : models) {
+            m.Add(wxString::FromUTF8(model));
+        }
         llm::Manager::GetInstance().SetModels(m);
 
         // Notify
@@ -448,8 +443,7 @@ bool Manager::ReloadConfig(std::optional<wxString> config_content, bool prompt)
     if (prompt && ::wxMessageBox(_("Reloading the configuration will restart "
                                    "the LLM client.\nContinue?"),
                                  "CodeLite",
-                                 wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT |
-                                     wxCENTER) != wxYES) {
+                                 wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxCENTER) != wxYES) {
         return false;
     }
 
@@ -460,9 +454,8 @@ bool Manager::ReloadConfig(std::optional<wxString> config_content, bool prompt)
     if (config_content.has_value()) {
         content = std::move(config_content.value());
     } else {
-        const WriteOptions opts{.force_global = true};
-        content = FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts)
-                      .value_or(kDefaultSettings);
+        const WriteOptions opts{.ignore_workspace = true};
+        content = FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts).value_or(kDefaultSettings);
     }
 
     auto conf = assistant::Config::FromContent(content.ToStdString(wxConvUTF8));
@@ -505,7 +498,9 @@ wxArrayString Manager::ListEndpoints()
     const auto& endpoints = m_client_config.GetEndpoints();
     wxArrayString result;
     result.reserve(endpoints.size());
-    for (auto ep : endpoints) { result.Add(ep->url_); }
+    for (auto ep : endpoints) {
+        result.Add(ep->url_);
+    }
     return result;
 }
 
@@ -551,15 +546,14 @@ std::optional<wxString> Manager::GetActiveEndpoint() const
 
 std::optional<llm::json> Manager::GetConfigAsJSON()
 {
-    const WriteOptions opts{.force_global = true};
+    const WriteOptions opts{.ignore_workspace = true};
     wxString config_content =
         FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts).value_or(kDefaultSettings);
     try {
         return llm::json::parse(config_content.ToStdString(wxConvUTF8));
 
     } catch (const std::exception& e) {
-        clERROR() << "Failed to parse JSON file:" << kAssistantConfigFile << "." << e.what()
-                  << endl;
+        clERROR() << "Failed to parse JSON file:" << kAssistantConfigFile << "." << e.what() << endl;
         return std::nullopt;
     }
 }
@@ -620,9 +614,8 @@ void Manager::AddNewEndpoint(const llm::EndpointData& d)
 
 bool Manager::WriteConfigFile(llm::json j)
 {
-    const WriteOptions opts{.force_global = true};
-    if (!FileManager::WriteSettingsFileContent(
-            kAssistantConfigFile, wxString::FromUTF8(j.dump(2)), opts)) {
+    const WriteOptions opts{.ignore_workspace = true};
+    if (!FileManager::WriteSettingsFileContent(kAssistantConfigFile, wxString::FromUTF8(j.dump(2)), opts)) {
         clERROR() << "Failed to write configuration file:" << kAssistantConfigFile << endl;
         return false;
     }
@@ -645,7 +638,7 @@ void Manager::OnFileSaved(clCommandEvent& event)
 
     CHECK_PTR_RET(clGetManager()->GetActiveEditor());
 
-    const WriteOptions opts{.converter = nullptr, .force_global = true};
+    const WriteOptions opts{.converter = nullptr, .ignore_workspace = true};
     wxString llm_config_file = FileManager::GetSettingFileFullPath(kAssistantConfigFile, opts);
 
     wxString filepath = clGetManager()->GetActiveEditor()->GetRemotePathOrLocal();
@@ -690,7 +683,7 @@ void Manager::HandleConfigFileUpdated()
  */
 clStatusOr<wxString> Manager::CreateOrOpenConfig()
 {
-    const WriteOptions opts{.force_global = true};
+    const WriteOptions opts{.ignore_workspace = true};
     wxString global_config_path = FileManager::GetSettingFileFullPath(kAssistantConfigFile, opts);
     wxString backup_file_path = global_config_path + ".old";
     bool valid_file{false};
@@ -764,8 +757,7 @@ void Manager::EnableAllFunctions(bool b)
 void Manager::EnableFunctionByName(const wxString& name, bool b)
 {
     if (!m_client) {
-        clWARNING() << "Failed to call EnableFunctionByName(" << name << ", " << b
-                    << "). Null client" << endl;
+        clWARNING() << "Failed to call EnableFunctionByName(" << name << ", " << b << "). Null client" << endl;
         return;
     }
     m_client->GetFunctionTable().EnableFunction(name.ToStdString(wxConvUTF8), b);
@@ -812,18 +804,17 @@ void Manager::ShowTextGenerationDialog(const wxString& prompt,
         }
     });
 
-    collector->SetStreamCallback(
-        [preview_frame, completion_callback = std::move(completion_callback)](
-            const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
-            preview_frame->AppendText(wxString::FromUTF8(message));
-            if (is_done && !preview_frame->IsShown()) {
-                preview_frame->Show();
-            }
+    collector->SetStreamCallback([preview_frame, completion_callback = std::move(completion_callback)](
+                                     const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
+        preview_frame->AppendText(wxString::FromUTF8(message));
+        if (is_done && !preview_frame->IsShown()) {
+            preview_frame->Show();
+        }
 
-            if (is_done && completion_callback) {
-                completion_callback();
-            }
-        });
+        if (is_done && completion_callback) {
+            completion_callback();
+        }
+    });
 
     Chat(collector, prompt, nullptr, opts);
 }

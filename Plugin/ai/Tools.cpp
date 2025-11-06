@@ -5,10 +5,12 @@
 #include "FileSystemWorkspace/clFileSystemWorkspaceView.hpp"
 #include "ai/LLMManager.hpp"
 #include "assistant/function.hpp"
+#include "clFilesCollector.h"
 #include "clWorkspaceManager.h"
 #include "globals.h"
 
 #include <future>
+#include <wx/dir.h>
 #include <wx/msgdlg.h>
 #include <wx/string.h>
 
@@ -92,6 +94,14 @@ void PopulateBuiltInFunctions(FunctionTable& table)
     table.Add(FunctionBuilder("Get_the_text_of_the_active_tab_inside_the_editor")
                   .SetDescription("Return the text of the active tab inside the editor.")
                   .SetCallback(GetCurrentEditorText)
+                  .Build());
+    table.Add(FunctionBuilder("Lists_all_subdirectories")
+                  .SetDescription("Lists all subdirectories within a specified directory path (non-recursive). This "
+                                  "function scans the given directory and returns a JSON array containing the full "
+                                  "paths  * of all immediate subdirectories. The scan is non-recursive and filters "
+                                  "results to include  * only directories, excluding files. Empty path is allowed.")
+                  .SetCallback(ListDirectories)
+                  .AddRequiredParam("path", "The directory path to scan", "string")
                   .Build());
 }
 
@@ -246,7 +256,7 @@ FunctionResult OpenFileInEditor(const assistant::json& args)
  * @return A {@code FunctionResult} containing the compiler output on success,
  *         or an error result if the operation fails.
  */
-FunctionResult GetCompilerOutput(const assistant::json& args)
+FunctionResult GetCompilerOutput([[maybe_unused]] const assistant::json& args)
 {
     auto cb = [=]() -> FunctionResult { return Ok(clGetManager()->GetBuildOutput()); };
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
@@ -272,6 +282,71 @@ FunctionResult GetCurrentEditorText([[maybe_unused]] const assistant::json& args
             return Err("There is no editor opened");
         }
         return Ok(active_editor->GetEditorText());
+    };
+    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
+}
+
+/**
+ * @brief Lists all subdirectories within a specified directory path (non-recursive).
+ *
+ * This function scans the given directory and returns a JSON array containing the full paths
+ * of all immediate subdirectories. The scan is non-recursive and filters results to include
+ * only directories, excluding files. The operation is executed on the main thread.
+ *
+ * @param args A JSON object containing the function arguments. Must contain exactly one argument:
+ *             - "path" (string): The directory path to scan for subdirectories. The path will be
+ *               normalized to a full directory path via FileManager::GetDirectoryFullPath().
+ *
+ * @return FunctionResult containing either:
+ *         - On success: A JSON-serialized string array of full directory paths (as UTF-8 strings).
+ *         - On error: An error result with a descriptive message.
+ *
+ * @throws Returns an error FunctionResult (via Err()) if:
+ *         - The args parameter does not contain exactly one argument.
+ *         - The "path" argument is missing or cannot be parsed as a string.
+ *
+ * @note The [[maybe_unused]] attribute indicates that args may not be used in certain build configurations.
+ * @note This function delegates its core logic to RunOnMain() to ensure thread-safe execution on the main thread.
+ * @note Debugging output is logged via clDEBUG() showing the resolved directory path being scanned.
+ *
+ * @code
+ * assistant::json args;
+ * args["path"] = "/home/user/projects";
+ * FunctionResult result = ListDirectories(args);
+ * if (result.IsOk()) {
+ *     std::string json_output = result.GetValue();
+ *     // json_output contains: ["/home/user/projects/dir1", "/home/user/projects/dir2", ...]
+ * }
+ * @endcode
+ *
+ * @see RunOnMain
+ * @see FileManager::GetDirectoryFullPath
+ * @see clFilesScanner::ScanNoRecurse
+ */
+FunctionResult ListDirectories([[maybe_unused]] const assistant::json& args)
+{
+    auto cb = [=]() -> FunctionResult {
+        if (args.size() != 1) {
+            return Err("Invalid number of arguments");
+        }
+
+        ASSIGN_FUNC_ARG_OR_RETURN(std::string path, ::assistant::GetFunctionArg<std::string>(args, "path"));
+        wxString wxpath = FileManager::GetDirectoryFullPath(wxString::FromUTF8(path));
+
+        clDEBUG() << "Listing directories for path:" << wxpath << endl;
+        clFilesScanner collector;
+        clFilesScanner::EntryData::Vec_t results;
+        collector.ScanNoRecurse(wxpath, results);
+
+        std::vector<std::string> cstr_files;
+        cstr_files.reserve(results.size());
+        for (const auto& res : results) {
+            if (res.flags & clFilesScanner::kIsFolder) {
+                cstr_files.push_back(res.fullpath.ToStdString(wxConvUTF8));
+            }
+        }
+        json j = cstr_files;
+        return Ok(j.dump());
     };
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }

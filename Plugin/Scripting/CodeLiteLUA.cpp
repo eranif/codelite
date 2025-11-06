@@ -92,7 +92,7 @@ void CodeLiteLUA::InitialiseInternal()
     Reset();
 
     // Load and compile CodeLite's main lua script.
-    auto options = WriteOptions{.force_global = true};
+    auto options = WriteOptions{.ignore_workspace = true};
 
     wxString codelite_lua = FileManager::GetSettingFileFullPath("codelite.lua", options);
     if (!wxFileName::FileExists(codelite_lua)) {
@@ -314,7 +314,7 @@ void CodeLiteLUA::OnFileSaved(clCommandEvent& event)
 
     CHECK_PTR_RET(clGetManager()->GetActiveEditor());
 
-    const WriteOptions opts{.converter = nullptr, .force_global = true};
+    const WriteOptions opts{.converter = nullptr, .ignore_workspace = true};
     wxString codelite_lua = FileManager::GetSettingFileFullPath("codelite.lua", opts);
 
     wxString filepath = clGetManager()->GetActiveEditor()->GetRemotePathOrLocal();

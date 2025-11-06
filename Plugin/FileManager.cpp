@@ -9,7 +9,7 @@
 wxString FileManager::GetFullPath(const wxString& name, const WriteOptions& options)
 {
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    if (workspace == nullptr || options.force_global) {
+    if (workspace == nullptr || options.ignore_workspace) {
         // No workspace is opened, assume local.
         // Local workspace
         wxFileName fn{name};
@@ -40,10 +40,48 @@ wxString FileManager::GetFullPath(const wxString& name, const WriteOptions& opti
     }
 }
 
+wxString FileManager::GetDirectoryFullPath(const wxString& path, const WriteOptions& options)
+{
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if (path.empty()) {
+        return (workspace == nullptr || options.ignore_workspace) ? ::wxGetCwd() : workspace->GetDir();
+    }
+
+    if (workspace == nullptr) {
+        // No workspace is opened, assume local.
+        // Local workspace
+        wxFileName fn{path, wxEmptyString};
+        if (fn.IsRelative()) {
+            fn.MakeAbsolute();
+        }
+        return fn.GetPath();
+    }
+
+    // We have a workspace opened.
+    if (workspace->IsRemote()) {
+        // Remote workspace
+        bool is_relative = !path.StartsWith("/");
+        if (is_relative) {
+            wxString fullpath;
+            fullpath << workspace->GetDir() << "/" << path;
+            return fullpath;
+        }
+        return path;
+    } else {
+        // Local workspace
+        wxFileName fn{path, wxEmptyString};
+        if (fn.IsRelative()) {
+            wxString full_path = workspace->GetDir() + "/" + path;
+            return wxFileName{full_path, wxEmptyString}.GetPath();
+        }
+        return fn.GetPath();
+    }
+}
+
 wxString FileManager::GetSettingFileFullPath(const wxString& name, const WriteOptions& options)
 {
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    if (workspace == nullptr || options.force_global) {
+    if (workspace == nullptr || options.ignore_workspace) {
         if (wxFileName{name}.IsAbsolute()) {
             return name;
         }
@@ -110,7 +148,7 @@ std::optional<wxString> FileManager::ReadContent(const wxString& filepath, const
     wxString fullpath = GetFullPath(filepath, options);
 #if USE_SFTP
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    if (workspace && workspace->IsRemote() && !options.force_global) {
+    if (workspace && workspace->IsRemote() && !options.ignore_workspace) {
         wxMemoryBuffer membuf;
         if (!clSFTPManager::Get().AwaitReadFile(fullpath, workspace->GetSshAccount(), &membuf)) {
             return std::nullopt;

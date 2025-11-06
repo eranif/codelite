@@ -10,8 +10,11 @@
 #include <wx/filename.h>
 #include <wx/tokenzr.h>
 
-size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxFileName>& filesOutput, const wxString& filespec,
-                            const wxString& excludeFilespec, const wxString& excludeFoldersSpec)
+size_t clFilesScanner::Scan(const wxString& rootFolder,
+                            std::vector<wxFileName>& filesOutput,
+                            const wxString& filespec,
+                            const wxString& excludeFilespec,
+                            const wxString& excludeFoldersSpec)
 
 {
     filesOutput.clear();
@@ -22,8 +25,11 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxFileName>&
     return Scan(rootFolder, filespec, excludeFilespec, excludeFoldersSpec, std::move(cb));
 }
 
-size_t clFilesScanner::Scan(const wxString& rootFolder, wxArrayString& filesOutput, const wxString& filespec,
-                            const wxString& excludeFilespec, const wxString& excludeFoldersSpec)
+size_t clFilesScanner::Scan(const wxString& rootFolder,
+                            wxArrayString& filesOutput,
+                            const wxString& filespec,
+                            const wxString& excludeFilespec,
+                            const wxString& excludeFoldersSpec)
 
 {
     filesOutput.clear();
@@ -41,7 +47,7 @@ bool IsRelPathContainedInSpec(const wxString& rootPath, const wxString& fullPath
     wxFileName fp(fullPath);
     fp.MakeRelativeTo(rootPath);
 
-    std::unordered_set<wxString> fpSet{ fp.GetDirs().begin(), fp.GetDirs().end() };
+    std::unordered_set<wxString> fpSet{fp.GetDirs().begin(), fp.GetDirs().end()};
     fpSet.insert(fp.GetFullName()); // Add the last (filename) part into the path array
 
     const wxString pathSeparators = wxFileName::GetPathSeparators();
@@ -64,8 +70,11 @@ bool IsRelPathContainedInSpec(const wxString& rootPath, const wxString& fullPath
 }
 } // namespace
 
-size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& filesOutput, const wxString& filespec,
-                            const wxString& excludeFilespec, const wxStringSet_t& excludeFolders)
+size_t clFilesScanner::Scan(const wxString& rootFolder,
+                            std::vector<wxString>& filesOutput,
+                            const wxString& filespec,
+                            const wxString& excludeFilespec,
+                            const wxStringSet_t& excludeFolders)
 {
     filesOutput.clear();
     if (!wxFileName::DirExists(rootFolder)) {
@@ -135,8 +144,11 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, std::vector<wxString>& f
     return filesOutput.size();
 }
 
-size_t clFilesScanner::Scan(const wxString& rootFolder, const wxString& filespec, const wxString& excludeFilespec,
-                            const wxString& excludeFoldersSpec, std::function<bool(const wxString&)>&& collect_cb)
+size_t clFilesScanner::Scan(const wxString& rootFolder,
+                            const wxString& filespec,
+                            const wxString& excludeFilespec,
+                            const wxString& excludeFoldersSpec,
+                            std::function<bool(const wxString&)>&& collect_cb)
 {
     if (!wxFileName::DirExists(rootFolder)) {
         clDEBUG() << "clFilesScanner: No such directory:" << rootFolder << clEndl;
@@ -196,7 +208,8 @@ size_t clFilesScanner::Scan(const wxString& rootFolder, const wxString& filespec
     return nCount;
 }
 
-size_t clFilesScanner::ScanNoRecurse(const wxString& rootFolder, clFilesScanner::EntryData::Vec_t& results,
+size_t clFilesScanner::ScanNoRecurse(const wxString& rootFolder,
+                                     clFilesScanner::EntryData::Vec_t& results,
                                      const wxString& matchSpec)
 {
     results.clear();
@@ -216,6 +229,9 @@ size_t clFilesScanner::ScanNoRecurse(const wxString& rootFolder, clFilesScanner:
     bool cont = dir.GetFirst(&filename);
     while (cont) {
         if (FileUtils::WildMatch(specArr, filename)) {
+            if (filename == "." || filename == "..") {
+                continue;
+            }
             wxString fullpath;
             fullpath << dirWithSep << filename;
             EntryData ed;
@@ -244,8 +260,10 @@ size_t clFilesScanner::ScanNoRecurse(const wxString& rootFolder, clFilesScanner:
 #define DIR_SEPARATOR "/"
 #endif
 
-void clFilesScanner::ScanWithCallbacks(const wxString& rootFolder, std::function<bool(const wxString&)>&& on_folder_cb,
-                                       std::function<void(const wxArrayString&)>&& on_file_cb, size_t search_flags)
+void clFilesScanner::ScanWithCallbacks(const wxString& rootFolder,
+                                       std::function<bool(const wxString&)>&& on_folder_cb,
+                                       std::function<void(const wxArrayString&)>&& on_file_cb,
+                                       size_t search_flags)
 {
     if (!wxFileName::DirExists(rootFolder)) {
         clDEBUG() << "clFilesScanner: No such directory:" << rootFolder << clEndl;

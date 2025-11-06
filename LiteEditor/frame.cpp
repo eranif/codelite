@@ -2416,7 +2416,7 @@ void clMainFrame::OnReconcileProject(wxCommandEvent& event)
 void clMainFrame::OnEditLuaScript(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    auto options = WriteOptions{.force_global = true};
+    auto options = WriteOptions{.ignore_workspace = true};
     wxString codelite_lua = FileManager::GetSettingFileFullPath("codelite.lua", options);
     if (!wxFileName{codelite_lua}.FileExists()) {
         FileManager::WriteSettingsFileContent("codelite.lua", "-- Add your code here\n", options);

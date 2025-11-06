@@ -192,7 +192,7 @@ void OutputPane::SaveTabOrder()
 #if wxCHECK_VERSION(3, 3, 0)
     clAuiSerializer serializer;
     m_book->SaveLayout("notebook", serializer);
-    WriteOptions opts{.force_global = true};
+    WriteOptions opts{.ignore_workspace = true};
     if (!FileManager::WriteSettingsFileContent(kOutputPaneLayoutXml, serializer.GetXML(), opts)) {
         clWARNING() << "Failed to save output pane layout file:"
                     << FileManager::GetSettingFileFullPath(kOutputPaneLayoutXml, opts);
@@ -268,7 +268,7 @@ void OutputPane::ApplySavedTabOrder([[maybe_unused]] bool update_ui) const
 #else
 #if wxCHECK_VERSION(3, 3, 0)
     try {
-        WriteOptions opts{.force_global = true};
+        WriteOptions opts{.ignore_workspace = true};
         auto xml_content = FileManager::ReadSettingsFileContent(kOutputPaneLayoutXml, opts);
         if (xml_content.has_value()) {
             clAuiDeserializer deserializer{xml_content.value()};

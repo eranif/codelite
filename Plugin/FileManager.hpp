@@ -7,7 +7,7 @@
 
 struct WXDLLIMPEXP_SDK WriteOptions {
     wxMBConv* converter{nullptr};
-    bool force_global{false};
+    bool ignore_workspace{false};
 
     inline const wxMBConv& GetConv() const
     {
@@ -28,6 +28,47 @@ public:
     /// workspace folder, otherwise, we use the current directory as the base folder for converting it into fullpath.
     /// If `path` is absolute, we do not modify it.
     static wxString GetFullPath(const wxString& path, const WriteOptions& options = {});
+    /**
+     * @brief Resolves a directory path to its full absolute path based on workspace context.
+     *
+     * This function handles both local and remote workspaces, converting relative paths to absolute
+     * paths using the workspace directory as the base when appropriate. If no workspace is open or
+     * the workspace should be ignored, the current working directory is used as the base for relative paths.
+     *
+     * @param path The directory path to resolve. Can be relative or absolute. If empty, returns the
+     *             workspace directory or current working directory.
+     * @param options A WriteOptions structure containing flags such as ignore_workspace, which forces
+     *                the function to use the current working directory instead of the workspace directory.
+     *
+     * @return wxString The full absolute path of the directory. For empty input, returns either the
+     *                  workspace directory (if available and not ignored) or the current working directory.
+     *                  For relative paths, returns the path made absolute relative to the workspace
+     *                  or current working directory. For absolute paths, returns the normalized path.
+     *
+     * @note This method is part of the FileManager class and depends on clWorkspaceManager to retrieve
+     *       workspace information.
+     *
+     * @example
+     * @code
+     * FileManager fm;
+     * WriteOptions opts;
+     * opts.ignore_workspace = false;
+     *
+     * // Get workspace directory (or CWD if no workspace)
+     * wxString dir = fm.GetDirectoryFullPath("", opts);
+     *
+     * // Resolve relative path
+     * wxString fullPath = fm.GetDirectoryFullPath("src/include", opts);
+     *
+     * // Absolute path returned as-is (normalized)
+     * wxString absPath = fm.GetDirectoryFullPath("/home/user/projects", opts);
+     * @endcode
+     *
+     * @see clWorkspaceManager::Get()
+     * @see WriteOptions
+     * @see wxFileName
+     */
+    static wxString GetDirectoryFullPath(const wxString& path, const WriteOptions& options = {});
 
     /// Return the path to a settings file with a given name. e.g. "codelite-remote.json". If a workspace is loaded,
     /// the path returned is in the workspace private folder .codelite, otherwise, we return the global settings path:

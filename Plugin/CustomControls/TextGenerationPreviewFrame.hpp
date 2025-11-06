@@ -2,7 +2,6 @@
 
 #include "CustomControls.hpp"
 #include "IndicatorPanel.hpp"
-#include "MarkdownStyler.hpp"
 #include "codelite_exports.h"
 
 enum class PreviewKind {

@@ -17,7 +17,7 @@ public:
     struct ScopeEntry {
         wxString display_string;
         int line_number = wxNOT_FOUND;
-        typedef std::vector<ScopeEntry> vec_t;
+        using vec_t = std::vector<ScopeEntry>;
         LSP::Range range;
         bool operator<(const ScopeEntry& right) const { return line_number < right.line_number; }
         bool is_ok() const { return !display_string.empty() && line_number != wxNOT_FOUND; }

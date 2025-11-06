@@ -23,7 +23,7 @@ public:
     int GetPosition() const { return m_position; }
 };
 
-typedef void (wxEvtHandler::*clScrollEventFunction)(clScrollEvent&);
+using clScrollEventFunction = void (wxEvtHandler::*)(clScrollEvent&);
 #define clScrollEventHandler(func) wxEVENT_HANDLER_CAST(clScrollEventFunction, func)
 
 class WXDLLIMPEXP_SDK clCustomScrollBar : public wxPanel

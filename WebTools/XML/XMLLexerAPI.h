@@ -58,7 +58,7 @@ struct XMLLexerToken {
         type = 0;
         text.Clear();
     }
-    typedef std::vector<XMLLexerToken> Vec_t;
+    using Vec_t = std::vector<XMLLexerToken>;
 };
 
 /**
@@ -89,7 +89,7 @@ public:
     void SetCurrentPF(FILE* currentPF) { this->m_currentPF = currentPF; }
 };
 
-typedef void* XMLScanner_t;
+using XMLScanner_t = void*;
 
 /**
  * @brief create a new Lexer for a file content

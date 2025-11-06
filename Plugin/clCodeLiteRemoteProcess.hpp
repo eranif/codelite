@@ -17,8 +17,8 @@
 class WXDLLIMPEXP_SDK clCodeLiteRemoteProcess : public wxEvtHandler
 {
 protected:
-    typedef void (clCodeLiteRemoteProcess::*CallbackFunc)(const wxString&, bool);
-    typedef std::function<void(const wxString&)> UserCallback;
+    using CallbackFunc = void (clCodeLiteRemoteProcess::*)(const wxString&, bool);
+    using UserCallback = std::function<void(const wxString&)>;
     struct CallbackOptions {
         CallbackFunc func = nullptr;
         IProcess* handler = nullptr;

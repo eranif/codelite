@@ -48,7 +48,7 @@ public:
             , m_comment(comment)
         {
         }
-        typedef std::vector<HtmlCompletion> Vec_t;
+        using Vec_t = std::vector<HtmlCompletion>;
     };
     wxStringMap_t m_completePattern;
 

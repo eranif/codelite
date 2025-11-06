@@ -46,7 +46,7 @@ class WXDLLIMPEXP_SDK clPropertiesPage : public wxPanel
     bool m_isModified = false;
 
 public:
-    typedef std::function<void(const wxString&, const wxAny&)> Callback_t;
+    using Callback_t = std::function<void(const wxString&, const wxAny&)>;
 
 protected:
     void OnActionButton(wxDataViewEvent& e);

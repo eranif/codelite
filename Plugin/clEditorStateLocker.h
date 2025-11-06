@@ -36,7 +36,7 @@
 class WXDLLIMPEXP_SDK clEditorStateLocker
 {
 public:
-    typedef std::vector<int> VecInt_t;
+    using VecInt_t = std::vector<int>;
 
 private:
     // The editor

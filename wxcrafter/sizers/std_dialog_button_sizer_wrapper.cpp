@@ -37,8 +37,8 @@ void StdDialogButtonSizerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
 
     // There aren't any extras needed for the sdbsizer itself but, unlike XRC, wxFB stores the button info here
     // They aren't treated as real buttons as does wxC; they're just nodes containing 0 or 1
-    typedef std::pair<wxString, wxString> Pair_t;
-    typedef std::vector<Pair_t> Vector_t;
+    using Pair_t = std::pair<wxString, wxString>;
+    using Vector_t = std::vector<Pair_t>;
     static Vector_t s_buttons;
     if(s_buttons.empty()) {
         s_buttons.push_back(Pair_t("OK", "wxID_OK"));

@@ -16,7 +16,7 @@ class clJoinableThread;
 class WXDLLIMPEXP_CL clSSHChannel : public IProcess
 {
 public:
-    typedef std::shared_ptr<clSSHChannel> Ptr_t;
+    using Ptr_t = std::shared_ptr<clSSHChannel>;
 
 public:
     struct Message {

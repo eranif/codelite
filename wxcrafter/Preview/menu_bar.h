@@ -17,7 +17,7 @@ extern const wxEventType wxEVT_PREVIEW_BAR_SELECTED;
 
 class MenuBar : public wxPanel
 {
-    typedef std::vector<MenuInfo> Vector_t;
+    using Vector_t = std::vector<MenuInfo>;
 
 protected:
     wxMenuBar* m_mb;

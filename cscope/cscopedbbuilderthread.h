@@ -39,8 +39,8 @@
 extern int wxEVT_CSCOPE_THREAD_DONE;
 extern int wxEVT_CSCOPE_THREAD_UPDATE_STATUS;
 
-typedef std::vector<CscopeEntryData> CScopeEntryDataVec_t;
-typedef std::map<wxString, CScopeEntryDataVec_t*> CScopeResultTable_t;
+using CScopeEntryDataVec_t = std::vector<CscopeEntryData>;
+using CScopeResultTable_t = std::map<wxString, CScopeEntryDataVec_t*>;
 
 /**
  * \class CscopeRequest
@@ -95,5 +95,5 @@ public:
     ~CscopeDbBuilderThread() = default;
 };
 
-typedef Singleton<CscopeDbBuilderThread> CScopeThreadST;
+using CScopeThreadST = Singleton<CscopeDbBuilderThread>;
 #endif // __cscopedbbuilderthread__

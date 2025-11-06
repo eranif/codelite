@@ -47,7 +47,7 @@ protected:
     size_t m_flags = kFile;
 
 public:
-    typedef std::vector<clRemoteDirCtrlItemData*> Vec_t;
+    using Vec_t = std::vector<clRemoteDirCtrlItemData*>;
 
 public:
     clRemoteDirCtrlItemData(const wxString& path)

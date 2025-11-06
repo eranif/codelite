@@ -26,7 +26,7 @@ public:
         wxFileName filename;
         time_t lastModified;
         size_t file_size;
-        typedef std::map<wxString, File> Map_t;
+        using Map_t = std::map<wxString, File>;
     };
 
     wxEvtHandler* m_owner;

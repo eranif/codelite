@@ -10,7 +10,7 @@
 class WXDLLIMPEXP_CL PHPDocParam
 {
 public:
-    typedef std::vector<std::pair<wxString, wxString> > Vec_t;
+    using Vec_t = std::vector<std::pair<wxString, wxString>>;
 
 protected:
     PHPSourceFile& m_sourceFile;

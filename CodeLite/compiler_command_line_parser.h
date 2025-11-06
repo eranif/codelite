@@ -35,7 +35,7 @@
 class WXDLLIMPEXP_CL CompilerCommandLineParser
 {
 public:
-    typedef std::set<wxString> Set_t;
+    using Set_t = std::set<wxString>;
 
 protected:
     wxArrayString m_includes;

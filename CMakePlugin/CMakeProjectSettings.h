@@ -115,7 +115,7 @@ public:
 /**
  * @brief CMake project settings map indexed by config name.
  */
-typedef std::map<wxString, CMakeProjectSettings> CMakeProjectSettingsMap;
+using CMakeProjectSettingsMap = std::map<wxString, CMakeProjectSettings>;
 
 /* ************************************************************************ */
 

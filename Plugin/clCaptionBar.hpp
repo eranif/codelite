@@ -101,8 +101,8 @@ public:
 class WXDLLIMPEXP_SDK clCaptionBar : public wxWindow
 {
     friend class clCaptionButton;
-    typedef void (clCaptionButton::*MouseCallback)(wxCaptionHitTest);
-    typedef std::unordered_map<int, std::pair<clCaptionButton*, MouseCallback>> CallbackMap_t;
+    using MouseCallback = void (clCaptionButton::*)(wxCaptionHitTest);
+    using CallbackMap_t = std::unordered_map<int, std::pair<clCaptionButton*, MouseCallback>>;
 
 protected:
     clColours m_colours;

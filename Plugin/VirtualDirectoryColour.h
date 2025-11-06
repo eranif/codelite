@@ -14,8 +14,8 @@ class WXDLLIMPEXP_SDK FolderColour
     wxColour m_colour;
 
 public:
-    typedef std::list<FolderColour> List_t;
-    typedef std::map<wxString, FolderColour> Map_t;
+    using List_t = std::list<FolderColour>;
+    using Map_t = std::map<wxString, FolderColour>;
 
 public:
     FolderColour() = default;

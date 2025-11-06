@@ -47,7 +47,7 @@ class wxListCtrl;
 class IEditor;
 class IManager;
 
-typedef void (wxObject::*clEventFunc_t)(wxClientData* arg);
+using clEventFunc_t = void (wxObject::*)(wxClientData*);
 
 class WXDLLIMPEXP_SDK BOM
 {

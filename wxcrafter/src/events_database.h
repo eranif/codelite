@@ -79,8 +79,8 @@ public:
 class EventsDatabase
 {
 public:
-    typedef wxOrderedMap<wxString, ConnectDetails> MapEvents_t;
-    typedef std::unordered_map<int, wxString> MapMenuIdToName_t;
+    using MapEvents_t = wxOrderedMap<wxString, ConnectDetails>;
+    using MapMenuIdToName_t = std::unordered_map<int, wxString>;
 
 protected:
     MapEvents_t m_events;

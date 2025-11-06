@@ -39,7 +39,7 @@ public:
     void SetXrcPreviewClass(const wxString& xrcPreviewClass) { this->m_xrcPreviewClass = xrcPreviewClass; }
     const wxString& GetXrcPreviewClass() const { return m_xrcPreviewClass; }
 };
-typedef std::map<wxString, CustomControlTemplate> CustomControlTemplateMap_t;
+using CustomControlTemplateMap_t = std::map<wxString, CustomControlTemplate>;
 
 // ----------------------------------------------------------------------
 // wxcSettings

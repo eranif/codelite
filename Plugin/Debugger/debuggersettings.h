@@ -55,7 +55,7 @@ public:
     const wxString& GetDbgCommand() const { return m_dbgCommand; }
 };
 
-typedef std::vector<DebuggerCmdData> DebuggerCmdDataVec;
+using DebuggerCmdDataVec = std::vector<DebuggerCmdData>;
 
 class WXDLLIMPEXP_SDK DebuggerPreDefinedTypes : public SerializedObject
 {

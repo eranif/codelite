@@ -24,7 +24,7 @@ struct TemplateManager {
     void clear();
     void add_placeholders(const wxStringMap_t& table, const std::vector<wxString>& visible_scopes);
     wxString resolve(const wxString& name, const std::vector<wxString>& visible_scopes) const;
-    typedef std::shared_ptr<TemplateManager> ptr_t;
+    using ptr_t = std::shared_ptr<TemplateManager>;
 };
 
 // internal to this TU
@@ -261,7 +261,7 @@ private:
     TagEntryPtr on_extern_var(CxxExpression& curexp, TagEntryPtr var, const std::vector<wxString>& visible_scopes);
 
 public:
-    typedef std::shared_ptr<CxxCodeCompletion> ptr_t;
+    using ptr_t = std::shared_ptr<CxxCodeCompletion>;
 
 public:
     CxxCodeCompletion(ITagsStoragePtr lookup,

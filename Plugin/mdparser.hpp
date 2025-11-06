@@ -163,7 +163,7 @@ public:
     bool is_horizontal_rule() const { return horizontal_rule; }
 };
 
-typedef std::function<void(const wxString&, const Style&, bool)> write_callback_t;
+using write_callback_t = std::function<void(const wxString&, const Style&, bool)>;
 class Parser
 {
     write_callback_t write_cb = nullptr;

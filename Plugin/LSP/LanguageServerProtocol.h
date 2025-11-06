@@ -24,7 +24,7 @@
 #include <wx/arrstr.h>
 #include <wx/filename.h>
 
-typedef std::function<void()> LSPOnConnectedCallback_t;
+using LSPOnConnectedCallback_t = std::function<void()>;
 
 class IEditor;
 class WXDLLIMPEXP_SDK LSPRequestMessageQueue

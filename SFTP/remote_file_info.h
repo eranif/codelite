@@ -42,7 +42,7 @@ class RemoteFileInfo : public wxClientData
     int m_lineNumber = 0;
 
 public:
-    typedef std::unordered_map<wxString, RemoteFileInfo> Map_t;
+    using Map_t = std::unordered_map<wxString, RemoteFileInfo>;
 
 public:
     RemoteFileInfo();

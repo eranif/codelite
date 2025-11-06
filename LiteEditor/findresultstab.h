@@ -40,7 +40,7 @@
 #include <wx/stc/stc.h>
 
 // Map between the line numbers and a search results
-typedef std::map<int, SearchResult> MatchInfo_t;
+using MatchInfo_t = std::map<int, SearchResult>;
 
 class FindResultsTab : public OutputTabWindow
 {
@@ -57,7 +57,7 @@ protected:
         wxString text;
         MatchInfo_t matchInfo;
         std::vector<int> indicators;
-        typedef wxOrderedMap<wxString, History> Map_t;
+        using Map_t = wxOrderedMap<wxString, History>;
     };
 
     History::Map_t m_history;

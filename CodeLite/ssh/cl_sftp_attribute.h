@@ -36,7 +36,7 @@
 
 // We do it this way to avoid exposing the include to <libssh/sftp.h> to files including this header
 struct sftp_attributes_struct;
-typedef struct sftp_attributes_struct* SFTPAttribute_t;
+using SFTPAttribute_t = sftp_attributes_struct*;
 
 class WXDLLIMPEXP_CL SFTPAttribute : public wxClientData
 {

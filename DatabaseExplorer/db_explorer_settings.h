@@ -107,7 +107,7 @@ public:
     }
 };
 
-typedef std::vector<DbConnectionInfo> DbConnectionInfoVec;
+using DbConnectionInfoVec = std::vector<DbConnectionInfo>;
 
 class DbExplorerSettings : public clConfigItem
 {

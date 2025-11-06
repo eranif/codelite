@@ -47,7 +47,7 @@ struct ExtractedString {
     wxString filename;
     int lineNo;
 };
-typedef wxVector<ExtractedString> ExtractedStrings;
+using ExtractedStrings = wxVector<ExtractedString>;
 
 class XRCWndClassData
 {

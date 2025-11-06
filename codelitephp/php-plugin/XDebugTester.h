@@ -32,8 +32,8 @@
 class XDebugTester
 {
 public:
-    typedef std::pair<wxString, wxString> StringPair_t;
-    typedef std::map<wxString, XDebugTester::StringPair_t> ResultMap_t;
+    using StringPair_t = std::pair<wxString, wxString>;
+    using ResultMap_t = std::map<wxString, XDebugTester::StringPair_t>;
 
 protected:
     XDebugTester::ResultMap_t m_results;

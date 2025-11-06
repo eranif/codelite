@@ -47,7 +47,7 @@ class wxCodeCompletionBoxManager;
 class WXDLLIMPEXP_SDK wxCodeCompletionBox : public wxCodeCompletionBoxBase
 {
 public:
-    typedef std::vector<wxBitmap> BmpVec_t;
+    using BmpVec_t = std::vector<wxBitmap>;
     friend class wxCodeCompletionBoxManager;
 
 public:

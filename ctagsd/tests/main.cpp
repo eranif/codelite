@@ -1359,7 +1359,7 @@ TEST_FUNC(test_cxx_code_completion_template)
     }
     {
         // template inheritance in typedef
-        // typedef Singleton<Manager> ManagerST;
+        // using ManagerST = Singleton<Manager>;
         completer->reset();
         TagEntryPtr resolved = completer->code_complete("ManagerST::Get()->", {});
         CHECK_NOT_NULL(resolved);

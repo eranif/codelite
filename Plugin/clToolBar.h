@@ -98,7 +98,7 @@ public:
 class WXDLLIMPEXP_SDK clToolBarGeneric : public wxControl
 {
 public:
-    typedef std::vector<clToolBarButtonBase*> ToolVect_t;
+    using ToolVect_t = std::vector<clToolBarButtonBase*>;
 
 private:
     ToolVect_t m_buttons;
@@ -320,9 +320,9 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TOOLBAR_CUSTOMISE, wxCommandEven
 
 #if !wxUSE_NATIVE_TOOLBAR
 // use the generic version, always
-typedef clToolBarGeneric clToolBar;
-typedef clToolBarGeneric clToolBarNative;
+using clToolBar = clToolBarGeneric;
+using clToolBarNative = clToolBarGeneric;
 #else
-typedef clToolBarGeneric clToolBar;
+using clToolBar = clToolBarGeneric;
 #endif
 #endif // CLTOOLBAR_H

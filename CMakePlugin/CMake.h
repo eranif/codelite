@@ -122,7 +122,7 @@ public:
     // Public Types
 public:
     /// Lines map.
-    typedef std::map<wxString, wxString> HelpMap;
+    using HelpMap = std::map<wxString, wxString>;
 
     // Public Ctors
 public:

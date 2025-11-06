@@ -68,13 +68,13 @@ enum sci_annotation_styles { eAnnotationStyleError = 128, eAnnotationStyleWarnin
  * @class BPtoMarker
  * Holds which marker and mask are associated with each breakpoint type
  */
-typedef struct _BPtoMarker {
+struct BPtoMarker {
     enum BreakpointType bp_type; // An enum of possible break/watchpoint types. In debugger.h
     sci_marker_types marker;
     marker_mask_type mask;
     sci_marker_types marker_disabled;
     marker_mask_type mask_disabled;
-} BPtoMarker;
+};
 
 enum TrimFlags {
     TRIM_ENABLED = (1 << 0),
@@ -245,7 +245,7 @@ public:
     static bool m_ccShowItemsComments;
     static bool m_ccInitialized;
 
-    typedef std::vector<clEditor*> Vec_t;
+    using Vec_t = std::vector<clEditor*>;
 
     IManager* GetManager() { return m_mgr; }
 

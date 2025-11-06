@@ -21,7 +21,7 @@ public:
     virtual bool write_reply(const JSON& response) = 0;
     virtual std::unique_ptr<JSON> read_message() = 0;
     virtual void open() = 0;
-    typedef std::shared_ptr<Channel> ptr_t;
+    using ptr_t = std::shared_ptr<Channel>;
 };
 
 // socket based channel

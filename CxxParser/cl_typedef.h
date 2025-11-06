@@ -38,5 +38,5 @@ public:
 	}
 };
 
-typedef std::list<clTypedef> clTypedefList;
+using clTypedefList = std::list<clTypedef>;
 #endif // TYPEDEF_H

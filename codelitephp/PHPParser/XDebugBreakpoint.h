@@ -37,7 +37,7 @@ class XDebugBreakpoint
     int m_breakpointId;
 
 public:
-    typedef std::list<XDebugBreakpoint> List_t;
+    using List_t = std::list<XDebugBreakpoint>;
 
     // Predicate class to be used with std::find_if
     struct Equal {

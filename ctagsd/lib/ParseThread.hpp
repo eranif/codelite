@@ -13,7 +13,7 @@ enum class eParseThreadCallbackRC {
     RC_EXIT,
 };
 
-typedef std::function<eParseThreadCallbackRC()> ParseThreadTaskFunc;
+using ParseThreadTaskFunc = std::function<eParseThreadCallbackRC()>;
 
 class ParseThread
 {

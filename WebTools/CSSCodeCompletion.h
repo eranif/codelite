@@ -42,7 +42,7 @@ public:
     struct Entry {
         wxString property;
         wxArrayString values;
-        typedef std::vector<Entry> Vec_t;
+        using Vec_t = std::vector<Entry>;
     };
 
 protected:

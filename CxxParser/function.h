@@ -45,5 +45,5 @@ public:
     void Print() const;
 };
 
-typedef std::list<clFunction> FunctionList;
+using FunctionList = std::list<clFunction>;
 #endif // FUNCTION_H

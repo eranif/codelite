@@ -9,7 +9,7 @@
 
 /// A small logger designed to be used by small subsystem of CodeLite
 class clModuleLogger;
-typedef clModuleLogger& (*clModuleLoggerFunction)(clModuleLogger&);
+using clModuleLoggerFunction = clModuleLogger& (*)(clModuleLogger&);
 
 class WXDLLIMPEXP_CL clModuleLogger
 {

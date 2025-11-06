@@ -67,7 +67,7 @@ public:
         wxString name;
         wxString help;
     };
-    typedef std::map<wxString, CmpCmdLineOption> CmpCmdLineOptions;
+    using CmpCmdLineOptions = std::map<wxString, CmpCmdLineOption>;
 
     struct CmpInfoPattern {
         wxString pattern;
@@ -92,7 +92,7 @@ public:
     };
 
     enum eRegexType { kRegexVC = 0, kRegexGNU };
-    typedef std::list<CmpInfoPattern> CmpListInfoPattern;
+    using CmpListInfoPattern = std::list<CmpInfoPattern>;
 
 private:
     void AddPattern(int type, const wxString& pattern, int fileNameIndex, int lineNumberIndex,
@@ -129,7 +129,7 @@ private:
                           PatternMatch* match_result) const;
 
 public:
-    typedef std::map<wxString, wxString>::const_iterator ConstIterator;
+    using ConstIterator = std::map<wxString, wxString>::const_iterator;
 
     Compiler(wxXmlNode* node, Compiler::eRegexType regexType = Compiler::kRegexGNU);
     virtual ~Compiler() = default;

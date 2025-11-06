@@ -18,7 +18,7 @@
 #include <wx/string.h>
 #include <wx/xrc/xmlres.h>
 
-typedef unsigned long long FLAGS_t;
+using FLAGS_t = unsigned long long;
 
 static const wxString DEFAULT_AUI_DROPDOWN_FUNCTION = "ShowAuiToolMenu";
 static const wxString DEFAULT_AUI_DROPDOWN_FUNCTION_AND_SIG =
@@ -131,12 +131,12 @@ public:
     };
 
 public:
-    typedef std::list<wxcWidget*> List_t;
-    typedef wxOrderedMap<wxString, WxStyleInfo> MapStyles_t;
-    typedef wxOrderedMap<wxString, std::unique_ptr<PropertyBase>> MapProperties_t;
-    typedef wxOrderedMap<wxString, ConnectDetails> MapEvents_t;
-    typedef std::map<wxString, ConnectDetails> Map_t;
-    typedef std::map<int, int> SizerFlagsValueSet_t;
+    using List_t = std::list<wxcWidget*>;
+    using MapStyles_t = wxOrderedMap<wxString, WxStyleInfo>;
+    using MapProperties_t = wxOrderedMap<wxString, std::unique_ptr<PropertyBase>>;
+    using MapEvents_t = wxOrderedMap<wxString, ConnectDetails>;
+    using Map_t = std::map<wxString, ConnectDetails>;
+    using SizerFlagsValueSet_t = std::map<int, int>;
 
     static SizerFlagsValueSet_t s_sizerFlagsValue;
 

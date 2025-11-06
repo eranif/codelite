@@ -96,7 +96,7 @@ struct GitCmd {
         : processFlags(IProcessCreateDefault)
     {
     }
-    typedef std::vector<GitCmd> Vec_t;
+    using Vec_t = std::vector<GitCmd>;
 };
 
 class GitPlugin : public IPlugin
@@ -105,7 +105,7 @@ class GitPlugin : public IPlugin
     friend class GitCommitListDlg;
     friend class GitCommitDlg;
 
-    typedef std::map<int, int> IntMap_t;
+    using IntMap_t = std::map<int, int>;
     enum {
         gitNone = 0,
         gitUpdateRemotes,

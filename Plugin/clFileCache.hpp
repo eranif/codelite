@@ -14,8 +14,8 @@ class WXDLLIMPEXP_SDK clFileCache
     std::unordered_set<wxString> m_filesSet;
 
 public:
-    typedef std::vector<wxFileName>::const_iterator const_iterator;
-    typedef std::vector<wxFileName>::iterator iterator;
+    using const_iterator = std::vector<wxFileName>::const_iterator;
+    using iterator = std::vector<wxFileName>::iterator;
 
 public:
     clFileCache() = default;

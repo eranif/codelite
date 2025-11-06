@@ -90,7 +90,7 @@ struct ResourceItem {
     }
 };
 
-typedef std::vector<ResourceItem> ResourceVector_t;
+using ResourceVector_t = std::vector<ResourceItem>;
 
 class IManager;
 class OpenResourceDlg : public OpenResourceDlgBase

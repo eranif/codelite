@@ -32,7 +32,7 @@
 
 class wxXmlNode;
 struct XVariable : public wxClientData {
-    typedef std::list<XVariable> List_t;
+    using List_t = std::list<XVariable>;
 
     wxString name;
     wxString fullname;

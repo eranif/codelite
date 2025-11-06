@@ -11,7 +11,7 @@ class wxcWidget;
 class PropertiesListView : public wxPanel
 {
 public:
-    typedef std::vector<PropertyBase*> PropVec_t;
+    using PropVec_t = std::vector<PropertyBase*>;
     enum DisplayType { Type_Control, Type_Project_Metadata };
 
 protected:

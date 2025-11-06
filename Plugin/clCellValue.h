@@ -27,7 +27,7 @@ public:
         kTypeOnlyButton = 5,
         kTypeControl = 6,
     };
-    typedef std::vector<clCellValue> Vect_t;
+    using Vect_t = std::vector<clCellValue>;
 
 protected:
     bool m_boolValue = false;

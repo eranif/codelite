@@ -12,7 +12,7 @@ extern const wxEventType wxEVT_BITMAP_CODE_GENERATION_DONE;
 class TopLevelWinWrapper;
 class wxcCodeGeneratorHelper : public wxEvtHandler
 {
-    typedef std::map<wxString, wxString> MapString_t;
+    using MapString_t = std::map<wxString, wxString>;
 
 protected:
     MapString_t m_bitmapMap;

@@ -361,7 +361,7 @@ public:
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
 
-    typedef std::vector<ParameterInformation> Vec_t;
+    using Vec_t = std::vector<ParameterInformation>;
 };
 
 class WXDLLIMPEXP_CL SignatureInformation : public LSP::Serializable
@@ -371,7 +371,7 @@ class WXDLLIMPEXP_CL SignatureInformation : public LSP::Serializable
     ParameterInformation::Vec_t m_parameters;
 
 public:
-    typedef std::vector<LSP::SignatureInformation> Vec_t;
+    using Vec_t = std::vector<LSP::SignatureInformation>;
 
 public:
     SignatureInformation() = default;

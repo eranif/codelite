@@ -54,7 +54,7 @@ struct GitLabelCommand {
     wxString command; // The command string, without the initial 'git' or the extras like --no-pager
 };
 
-typedef std::vector<GitLabelCommand> vGitLabelCommands_t;
+using vGitLabelCommands_t = std::vector<GitLabelCommand>;
 class GitCommandsEntries // Holds a command-list for a particular git command e.g. 'git pull' might be that, or 'git
                          // pull --rebase'
 {
@@ -101,7 +101,7 @@ public:
     void SetLastUsedCommandIndex(int index) { m_lastUsed = index; }
 };
 
-typedef std::unordered_map<wxString, GitCommandsEntries> GitCommandsEntriesMap_t;
+using GitCommandsEntriesMap_t = std::unordered_map<wxString, GitCommandsEntries>;
 
 class GitWorkspace
 {
@@ -126,7 +126,7 @@ protected:
     wxStringMap_t m_userEnteredRepoPath;
 };
 
-typedef std::unordered_map<wxString, GitWorkspace> GitWorkspaceMap_t;
+using GitWorkspaceMap_t = std::unordered_map<wxString, GitWorkspace>;
 
 extern const wxEventType wxEVT_GIT_CONFIG_CHANGED;
 class GitEntry : public clConfigItem

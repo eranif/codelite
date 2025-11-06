@@ -92,7 +92,7 @@ public:
      * @brief is the current token a PHP Doc comment?
      */
     bool IsDocComment() const { return type == kPHP_T_C_COMMENT; }
-    typedef std::vector<phpLexerToken> Vet_t;
+    using Vet_t = std::vector<phpLexerToken>;
 };
 
 /**
@@ -177,7 +177,7 @@ public:
     }
 };
 
-typedef void* PHPScanner_t;
+using PHPScanner_t = void*;
 
 /**
  * @brief create a new Lexer for a given file name

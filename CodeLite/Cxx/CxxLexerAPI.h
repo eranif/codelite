@@ -151,8 +151,8 @@ public:
     ~CxxLexerToken() { deleteText(); }
     bool IsEOF() const { return type == 0; }
 
-    typedef std::vector<CxxLexerToken> Vect_t;
-    typedef std::list<CxxLexerToken> List_t;
+    using Vect_t = std::vector<CxxLexerToken>;
+    using List_t = std::list<CxxLexerToken>;
 };
 
 struct WXDLLIMPEXP_CL CxxPreProcessorToken {
@@ -163,7 +163,7 @@ struct WXDLLIMPEXP_CL CxxPreProcessorToken {
         : deleteOnExit(false)
     {
     }
-    typedef std::unordered_map<wxString, CxxPreProcessorToken> Map_t;
+    using Map_t = std::unordered_map<wxString, CxxPreProcessorToken>;
 };
 /**
  * @class CppLexerUserData
@@ -242,7 +242,7 @@ public:
     }
 };
 
-typedef void* Scanner_t;
+using Scanner_t = void*;
 /**
  * @brief create a new Lexer for a buffer
  */

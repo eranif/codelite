@@ -53,7 +53,7 @@ class WXDLLIMPEXP_SDK BuildManager : public wxEvtHandler
     std::unordered_map<wxString, BuilderPtr> m_builders;
 
 public:
-    typedef std::map<wxString, BuilderPtr>::const_iterator ConstIterator;
+    using ConstIterator = std::map<wxString, BuilderPtr>::const_iterator;
 
 private:
     BuildManager();

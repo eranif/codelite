@@ -69,7 +69,7 @@ public:
     wxString GetDebuggerName() const override;
 
 public:
-    typedef std::unordered_map<wxString, ProjectPtr> ProjectMap_t;
+    using ProjectMap_t = std::unordered_map<wxString, ProjectPtr>;
 
 protected:
     wxXmlDocument m_doc;

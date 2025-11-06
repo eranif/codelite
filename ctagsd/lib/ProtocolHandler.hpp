@@ -19,7 +19,7 @@ struct CachedComment {
     long line;
     long column;
     // line to comment map
-    typedef std::unordered_map<long, wxString> Map_t;
+    using Map_t = std::unordered_map<long, wxString>;
 };
 
 struct ParsedFileInfo {
@@ -30,7 +30,7 @@ struct ParsedFileInfo {
 class ProtocolHandler
 {
 public:
-    typedef void (ProtocolHandler::*CallbackFunc)(std::unique_ptr<JSON>&& msg, Channel::ptr_t channel);
+    using CallbackFunc = void (ProtocolHandler::*)(std::unique_ptr<JSON>&& msg, Channel::ptr_t channel);
 
 private:
     CTagsdSettings m_settings;

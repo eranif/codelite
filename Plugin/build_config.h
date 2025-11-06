@@ -82,7 +82,7 @@ public:
     bool IsOk() const { return !m_command.empty(); }
 };
 
-typedef std::list<BuildCommand> BuildCommandList;
+using BuildCommandList = std::list<BuildCommand>;
 
 class WXDLLIMPEXP_SDK BuildConfig : public ConfObject
 {
@@ -90,7 +90,7 @@ public:
     static const wxString OVERWRITE_GLOBAL_SETTINGS;
     static const wxString APPEND_TO_GLOBAL_SETTINGS;
     static const wxString PREPEND_GLOBAL_SETTINGS;
-    typedef std::map<wxString, wxString> StringMap_t;
+    using StringMap_t = std::map<wxString, wxString>;
 
     enum ePCHPolicy {
         kPCHPolicyReplace = 0,

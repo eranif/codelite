@@ -46,7 +46,7 @@ class DbgCmdHandler;
 class DbgCmdCLIHandler;
 class IProcess;
 
-typedef std::map<wxString, DbgCmdHandler*> HandlersMap_t;
+using HandlersMap_t = std::map<wxString, DbgCmdHandler*>;
 
 extern const wxEventType wxEVT_GDB_STOP_DEBUGGER;
 

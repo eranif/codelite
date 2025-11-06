@@ -9,7 +9,7 @@
 
 extern int isatty(int);
 
-typedef void* WordScanner_t;
+using WordScanner_t = void*;
 struct WordLexerToken
 {
     char* text;

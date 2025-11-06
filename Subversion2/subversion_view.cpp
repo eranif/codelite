@@ -826,7 +826,7 @@ void SubversionView::OnFileAdded(clCommandEvent& event)
 {
     event.Skip();
 
-    typedef std::map<wxString, bool> StringBoolMap_t;
+    using StringBoolMap_t = std::map<wxString, bool>;
     StringBoolMap_t path_in_svn;
 
     // svn is setup ?

@@ -42,10 +42,10 @@
 #define EXECUTABLE_EXT wxT("")
 #endif
 
-typedef std::map<wxString, wxString> GenericProjectDataType;
-typedef std::vector<GenericProjectDataType> GenericProjectDataListType;
-typedef std::map<wxString, wxString> GenericEnvVarsType;
-typedef std::pair<wxString, wxString> GenericEnvVarsValueType;
+using GenericProjectDataType = std::map<wxString, wxString>;
+using GenericProjectDataListType = std::vector<GenericProjectDataType>;
+using GenericEnvVarsType = std::map<wxString, wxString>;
+using GenericEnvVarsValueType = std::pair<wxString, wxString>;
 
 enum class GenericCfgType { DYNAMIC_LIBRARY, STATIC_LIBRARY, EXECUTABLE };
 
@@ -54,7 +54,7 @@ struct GenericProjectFile {
     wxString vpath;
 };
 
-typedef std::shared_ptr<GenericProjectFile> GenericProjectFilePtr;
+using GenericProjectFilePtr = std::shared_ptr<GenericProjectFile>;
 
 struct GenericProjectCfg {
     wxString name;
@@ -81,7 +81,7 @@ struct GenericProjectCfg {
     wxString customRebuildCmd;
 };
 
-typedef std::shared_ptr<GenericProjectCfg> GenericProjectCfgPtr;
+using GenericProjectCfgPtr = std::shared_ptr<GenericProjectCfg>;
 
 struct GenericProject {
     wxString name;
@@ -92,7 +92,7 @@ struct GenericProject {
     std::vector<GenericProjectFilePtr> files;
 };
 
-typedef std::shared_ptr<GenericProject> GenericProjectPtr;
+using GenericProjectPtr = std::shared_ptr<GenericProject>;
 
 struct GenericWorkspace {
     wxString name;
@@ -100,7 +100,7 @@ struct GenericWorkspace {
     std::vector<GenericProjectPtr> projects;
 };
 
-typedef std::shared_ptr<GenericWorkspace> GenericWorkspacePtr;
+using GenericWorkspacePtr = std::shared_ptr<GenericWorkspace>;
 
 class GenericImporter
 {

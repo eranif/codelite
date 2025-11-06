@@ -24,8 +24,8 @@ extern char* cl_scope_text;
 class WXDLLIMPEXP_CL CppLexer
 {
 public:
-    typedef std::map<std::string, std::string> StringMap_t;
-    
+    using StringMap_t = std::map<std::string, std::string>;
+
 public:
     CppLexer(const std::string& str) {
         StringMap_t dummy;

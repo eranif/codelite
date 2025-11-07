@@ -103,31 +103,19 @@ void PopulateBuiltInFunctions(FunctionTable& table)
                   .SetCallback(ListDirectories)
                   .AddRequiredParam("path", "The directory path to scan", "string")
                   .Build());
+    table.Add(
+        FunctionBuilder("Lists_all_files_in_a_directory")
+            .SetDescription(
+                "Lists all files in a specified directory matching a given pattern. This function scans a directory "
+                "non-recursively for files matching the provided pattern and returns their full paths as a JSON array")
+            .SetCallback(ListFiles)
+            .AddRequiredParam("dir", "The directory path to scan. Can be relative or absolute.", "string")
+            .AddRequiredParam("pattern", "File pattern to match (e.g., \"*.cpp\", \"*.txt\")", "string")
+            .Build());
 }
 
 /// Implementation details
 
-/**
- * @brief Writes the specified content to a file on disk.
- *
- * Expects a JSON object with exactly two entries:
- * - <code>"filepath"</code>: the target file path.
- * - <code>"file_content"</code>: the text to be written to the file.
- *
- * The function checks for the correct number of arguments, extracts the
- * parameters, and then executes the write operation on the main UI thread.
- *
- * If the file already exists, the user is prompted to confirm overwriting.
- * Upon successful write, the workspace view is refreshed and a success
- * message is returned. Errors during argument extraction, file writing,
- * or user cancellation result in an error message.
- *
- * @param args JSON object containing the required arguments.
- *
- * @return <code>FunctionResult</code> – an <code>Ok</code> result with a
- *         success message, or an <code>Err</code> result with an error
- *         description.
- */
 FunctionResult WriteFileContent(const assistant::json& args)
 {
     if (args.size() != 2) {
@@ -167,17 +155,6 @@ FunctionResult WriteFileContent(const assistant::json& args)
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
-/**
- * @brief Reads the content of a file specified by the "filepath" argument.
- *
- * @param args JSON object that must contain exactly one entry:
- *             - "filepath" (std::string): the path to the file to be read.
- *
- * @return FunctionResult containing the file's content as a {@code wxString} on success,
- *         or an error message encapsulated in {@code Err} on failure.
- *
- * @note The file reading operation is dispatched to the main thread using {@code RunOnMain}.
- */
 FunctionResult ReadFileContent(const assistant::json& args)
 {
     if (args.size() != 1) {
@@ -202,19 +179,6 @@ FunctionResult ReadFileContent(const assistant::json& args)
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
-/**
- * @brief Opens a file in the editor.
- *
- * Expects a JSON object containing exactly one entry: the key `"filepath"` with a string value specifying the file path
- * to open. The function loads the file either via the current workspace editor (if a workspace is opened) or via the
- * global editor manager. The operation is executed on the main thread and returns a result indicating success or
- * failure.
- *
- * @param args JSON object with a single `"filepath"` entry.
- *
- * @return FunctionResult containing an error message if the file could not be loaded, or a success message confirming
- * the file was opened in an editor.
- */
 FunctionResult OpenFileInEditor(const assistant::json& args)
 {
     if (args.size() != 1) {
@@ -245,35 +209,12 @@ FunctionResult OpenFileInEditor(const assistant::json& args)
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
-/**
- * @brief Retrieves the compiler/build output.
- *
- * This function schedules a task on the main thread to fetch the build output from the
- * compiler manager, wraps it in a successful {@code FunctionResult}, and returns it.
- *
- * @param args JSON arguments (currently unused).
- *
- * @return A {@code FunctionResult} containing the compiler output on success,
- *         or an error result if the operation fails.
- */
 FunctionResult GetCompilerOutput([[maybe_unused]] const assistant::json& args)
 {
     auto cb = [=]() -> FunctionResult { return Ok(clGetManager()->GetBuildOutput()); };
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
-/**
- * @brief Retrieves the text of the currently active editor.
- *
- * This function schedules a callback to run on the main thread, obtains the
- * active editor via the editor manager, and returns its full text. If there
- * is no active editor, an error result is returned.
- *
- * @param args JSON arguments (currently unused).
- *
- * @return A {@link FunctionResult} containing the editor text on success,
- *         or an error message if no editor is open.
- */
 FunctionResult GetCurrentEditorText([[maybe_unused]] const assistant::json& args)
 {
     auto cb = [=]() -> FunctionResult {
@@ -286,43 +227,6 @@ FunctionResult GetCurrentEditorText([[maybe_unused]] const assistant::json& args
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
-/**
- * @brief Lists all subdirectories within a specified directory path (non-recursive).
- *
- * This function scans the given directory and returns a JSON array containing the full paths
- * of all immediate subdirectories. The scan is non-recursive and filters results to include
- * only directories, excluding files. The operation is executed on the main thread.
- *
- * @param args A JSON object containing the function arguments. Must contain exactly one argument:
- *             - "path" (string): The directory path to scan for subdirectories. The path will be
- *               normalized to a full directory path via FileManager::GetDirectoryFullPath().
- *
- * @return FunctionResult containing either:
- *         - On success: A JSON-serialized string array of full directory paths (as UTF-8 strings).
- *         - On error: An error result with a descriptive message.
- *
- * @throws Returns an error FunctionResult (via Err()) if:
- *         - The args parameter does not contain exactly one argument.
- *         - The "path" argument is missing or cannot be parsed as a string.
- *
- * @note The [[maybe_unused]] attribute indicates that args may not be used in certain build configurations.
- * @note This function delegates its core logic to RunOnMain() to ensure thread-safe execution on the main thread.
- * @note Debugging output is logged via clDEBUG() showing the resolved directory path being scanned.
- *
- * @code
- * assistant::json args;
- * args["path"] = "/home/user/projects";
- * FunctionResult result = ListDirectories(args);
- * if (result.IsOk()) {
- *     std::string json_output = result.GetValue();
- *     // json_output contains: ["/home/user/projects/dir1", "/home/user/projects/dir2", ...]
- * }
- * @endcode
- *
- * @see RunOnMain
- * @see FileManager::GetDirectoryFullPath
- * @see clFilesScanner::ScanNoRecurse
- */
 FunctionResult ListDirectories([[maybe_unused]] const assistant::json& args)
 {
     auto cb = [=]() -> FunctionResult {
@@ -345,6 +249,36 @@ FunctionResult ListDirectories([[maybe_unused]] const assistant::json& args)
                 cstr_files.push_back(res.fullpath.ToStdString(wxConvUTF8));
             }
         }
+        json j = cstr_files;
+        return Ok(j.dump());
+    };
+    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
+}
+
+FunctionResult ListFiles([[maybe_unused]] const assistant::json& args)
+{
+    auto cb = [=]() -> FunctionResult {
+        if (args.size() != 2) {
+            return Err("Invalid number of arguments");
+        }
+
+        ASSIGN_FUNC_ARG_OR_RETURN(std::string dir, ::assistant::GetFunctionArg<std::string>(args, "dir"));
+        ASSIGN_FUNC_ARG_OR_RETURN(std::string pattern, ::assistant::GetFunctionArg<std::string>(args, "pattern"));
+        wxString path = FileManager::GetDirectoryFullPath(wxString::FromUTF8(dir));
+
+        clDEBUG() << "Listing files for path:" << path << endl;
+        clFilesScanner collector;
+        clFilesScanner::EntryData::Vec_t results;
+        collector.ScanNoRecurse(path, results, pattern);
+
+        std::vector<std::string> cstr_files;
+        cstr_files.reserve(results.size());
+        for (const auto& res : results) {
+            if (res.flags & clFilesScanner::kIsFile) {
+                cstr_files.push_back(res.fullpath.ToStdString(wxConvUTF8));
+            }
+        }
+
         json j = cstr_files;
         return Ok(j.dump());
     };

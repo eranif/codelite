@@ -1192,9 +1192,6 @@ if(NOT WXC_APP)
 endif()
 
 if(MINGW)
-  set(MSYSTEM_ENV_VAR "$ENV{MSYSTEM}")
-  message(STATUS "MSYSTEM_ENV_VAR => ${MSYSTEM_ENV_VAR}")
-
   # determine MSYS2 path
   write_file(${CMAKE_BINARY_DIR}/msys2-environment "export WXWIN=${WXWIN}")
   write_file(${CMAKE_BINARY_DIR}/msys2-environment

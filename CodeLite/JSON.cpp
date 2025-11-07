@@ -68,7 +68,9 @@ JSON::JSON(const wxFileName& filename)
     if (!FileUtils::ReadFileContent(filename, content)) {
         return;
     }
-    m_json = cJSON_Parse(content.mb_str(wxConvUTF8).data());
+
+    const std::string cstr = content.ToStdString(wxConvUTF8);
+    m_json = cJSON_Parse(cstr.c_str());
 }
 
 JSON::~JSON()

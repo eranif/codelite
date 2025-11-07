@@ -129,7 +129,8 @@ void Config::ResetPrompts()
 
 wxString Config::GetFullPath()
 {
-    return FileManager::GetSettingFileFullPath("assistant-global-settings.json", WriteOptions{.ignore_workspace = true});
+    return FileManager::GetSettingFileFullPath(
+        "assistant-global-settings.json", WriteOptions{.ignore_workspace = true});
 }
 
 } // namespace llm

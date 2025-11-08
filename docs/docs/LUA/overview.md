@@ -93,7 +93,7 @@ codelite.add_menu_item(
 5. Invoke the LLM generation process
 6. Register the action with the `editor_context_menu_llm_generation` menu
 
-> **Note:** A complete reference to CodeLite's LUA API can be found at [/LUA/lua](/LUA/lua)
+> **Note:** [A complete reference to CodeLite's LUA API can be found here](/LUA/lua)
 
 ### Integration
 

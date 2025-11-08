@@ -175,6 +175,19 @@ protected:
     static void message_box(const std::string& message, int type);
 
     /**
+     * @brief Prompts the user for text input via a dialog box and returns the entered text.
+     *
+     * Displays a modal dialog with the specified title and waits for user input. If the user
+     * cancels or enters no text, an empty string is returned. The returned text is UTF-8 encoded.
+     *
+     * @param title The title/prompt message to display in the input dialog.
+     *
+     * @return A std::string containing the user's input in UTF-8 encoding, or an empty string
+     *         if the user canceled or entered no text.
+     */
+    static std::string user_text(const std::string& title);
+
+    /**
      * @brief Adds a visual separator to the specified menu.
      *
      * This function creates a separator menu item and appends it to the menu identified by `menu_name`.

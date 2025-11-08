@@ -80,6 +80,39 @@ codelite.message_box("Configuration file not found", MessageType.kWarn)
 
 ---
 
+### user_text
+
+**Signature**:
+
+```lua
+codelite.user_text(title)
+```
+
+**Description**:
+
+Prompts the user for text input via a dialog box and returns the entered text.
+
+**Parameters**:
+- `title` (string): The title/prompt message to display in the input dialog
+
+**Returns**:
+
+A `string` containing the user's input, or an empty string if the user canceled or entered no text.
+
+**Example**:
+
+```lua
+-- Prompt user for a project name
+local project_name = codelite.user_text("Enter project name:")
+if project_name ~= "" then
+    codelite.log_system("Creating project: " .. project_name)
+else
+    codelite.log_system("Project creation cancelled")
+end
+```
+
+---
+
 ### add_menu_item
 
 **Signature**:

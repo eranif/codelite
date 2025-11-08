@@ -18,6 +18,7 @@ extern "C" {
 #include <wx/frame.h>
 #include <wx/msgdlg.h>
 #include <wx/string.h>
+#include <wx/textdlg.h>
 #include <wx/xrc/xmlres.h>
 
 namespace
@@ -63,6 +64,7 @@ void CodeLiteLUA::Initialise()
         luabridge::getGlobalNamespace(self.m_state)
             .beginNamespace("codelite")
             .addFunction("message_box", &CodeLiteLUA::message_box)
+            .addFunction("user_text", &CodeLiteLUA::user_text)
             .addFunction("add_menu_item", &CodeLiteLUA::add_menu_item)
             .addFunction("add_menu_separator", &CodeLiteLUA::add_menu_separator)
             .addFunction("editor_selection", &CodeLiteLUA::editor_selection)
@@ -142,6 +144,15 @@ void CodeLiteLUA::message_box(const std::string& message, int type)
         ::wxMessageBox(wxString::FromUTF8(message), "CodeLite Lua", wxOK | wxCENTER | wxICON_INFORMATION);
         break;
     }
+}
+
+std::string CodeLiteLUA::user_text(const std::string& title)
+{
+    wxString text = wxGetTextFromUser(title, "CodeLite");
+    if (text.empty()) {
+        return {};
+    }
+    return text.ToStdString(wxConvUTF8);
 }
 
 void CodeLiteLUA::add_menu_item(const std::string& menu_name, const std::string& label, luabridge::LuaRef action)

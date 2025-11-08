@@ -40,7 +40,7 @@
 
 // manipulator function
 class FileLogger;
-typedef FileLogger& (*FileLoggerFunction)(FileLogger&);
+using FileLoggerFunction = FileLogger& (*)(FileLogger&);
 
 class WXDLLIMPEXP_CL FileLogger final
 {

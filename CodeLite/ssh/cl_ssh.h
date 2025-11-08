@@ -49,8 +49,8 @@
 // We do it this way to avoid exposing the include to ssh/libssh.h to files including this header
 struct ssh_session_struct;
 struct ssh_channel_struct;
-typedef struct ssh_session_struct* SSHSession_t;
-typedef struct ssh_channel_struct* SSHChannel_t;
+using SSHSession_t = ssh_session_struct*;
+using SSHChannel_t = ssh_channel_struct*;
 
 // Sent when a remote command over ssh has an output
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_SSH_COMMAND_OUTPUT, clCommandEvent);
@@ -75,7 +75,7 @@ protected:
     wxArrayString m_keyFiles;
 
 public:
-    typedef std::shared_ptr<clSSH> Ptr_t;
+    using Ptr_t = std::shared_ptr<clSSH>;
 
 protected:
     void OnCheckRemoteOutut(wxTimerEvent& event);
@@ -169,6 +169,6 @@ public:
     const wxString& GetHost() const { return m_host; }
     const wxString& GetUsername() const { return m_username; }
 };
-typedef std::function<void(clSSH::Ptr_t)> clSSHDeleterFunc;
+using clSSHDeleterFunc = std::function<void(clSSH::Ptr_t)>;
 #endif // USE_SFTP
 #endif // CLSSH_H

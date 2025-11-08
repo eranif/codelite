@@ -11,7 +11,7 @@
 #include <wx/treebase.h>
 
 class clTreeCtrl;
-typedef std::function<bool(clRowEntry*, clRowEntry*)> clSortFunc_t;
+using clSortFunc_t = std::function<bool(clRowEntry*, clRowEntry*)>;
 class WXDLLIMPEXP_SDK clTreeCtrlModel
 {
     clTreeCtrl* m_tree = nullptr;

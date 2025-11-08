@@ -80,7 +80,7 @@ struct DapProcess {
 
     bool IsRedirect() const { return m_process && m_process->IsRedirect(); }
     wxMessageQueue<std::string>& Queue() { return m_readQueue; }
-    typedef std::shared_ptr<DapProcess> Ptr_t;
+    using Ptr_t = std::shared_ptr<DapProcess>;
 
 private:
     IProcess::Ptr_t m_process = nullptr;

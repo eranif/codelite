@@ -25,7 +25,7 @@
 class IEditor;
 class SFTPClientData;
 
-typedef std::tuple<std::string, std::string, int> ReadOutput_t;
+using ReadOutput_t = std::tuple<std::string, std::string, int>;
 class WXDLLIMPEXP_SDK clSFTPManager : public wxEvtHandler
 {
 protected:

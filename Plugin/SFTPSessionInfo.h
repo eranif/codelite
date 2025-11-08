@@ -17,7 +17,7 @@ class WXDLLIMPEXP_SDK SFTPSessionInfo
     wxString m_account;
 
 public:
-    typedef std::unordered_map<wxString, SFTPSessionInfo> Map_t;
+    using Map_t = std::unordered_map<wxString, SFTPSessionInfo>;
 
 public:
     SFTPSessionInfo() = default;

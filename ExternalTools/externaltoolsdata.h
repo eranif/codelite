@@ -51,8 +51,8 @@ public:
     enum {
         kCallOnFileSave = (1 << 0),
     };
-    typedef std::unordered_map<wxString, ToolInfo> Map_t;
-    
+    using Map_t = std::unordered_map<wxString, ToolInfo>;
+
 protected:
     void EnableFlag(int flag, bool b)
     {

@@ -53,7 +53,7 @@ public:
     }
 };
 #else
-typedef wxAuiToolBar SideBarToolBar;
+using SideBarToolBar = wxAuiToolBar;
 #endif
 
 struct WXDLLIMPEXP_SDK clSideBarToolData : public wxClientData {

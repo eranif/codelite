@@ -97,8 +97,8 @@ public:
 
 struct Node {
 public:
-    typedef std::shared_ptr<Node> ptr_t;
-    typedef std::vector<ptr_t> vec_t;
+    using ptr_t = std::shared_ptr<Node>;
+    using vec_t = std::vector<ptr_t>;
 
 private:
     ptr_t do_add_child(const wxString& name)

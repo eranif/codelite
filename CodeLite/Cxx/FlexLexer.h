@@ -73,12 +73,12 @@
 #include <iostream>
 
 //extern "C++" {
-    
+
 namespace flex
 {
 
 struct yy_buffer_state;
-typedef int yy_state_type;
+using yy_state_type = int;
 
 class WXDLLIMPEXP_CL FlexLexer {
 public:

@@ -50,7 +50,7 @@
 #include <wx/msgqueue.h>
 #include <wx/string.h>
 
-typedef VOID* HPCON;
+using HPCON = VOID*;
 
 #ifndef PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE
 #define PROC_THREAD_ATTRIBUTE_PSEUDOCONSOLE 0x00020016
@@ -60,15 +60,15 @@ typedef VOID* HPCON;
 constexpr auto CreatePseudoConsoleFunc = &CreatePseudoConsole;
 constexpr auto ClosePseudoConsoleFunc = &ClosePseudoConsole;
 #else
-typedef HRESULT(WINAPI* CreatePseudoConsole_T)(COORD size, HANDLE hInput, HANDLE hOutput, DWORD dwFlags, HPCON* phPC);
-typedef VOID(WINAPI* ClosePseudoConsole_T)(HPCON hPC);
+using CreatePseudoConsole_T = HRESULT(WINAPI*)(COORD size, HANDLE hInput, HANDLE hOutput, DWORD dwFlags, HPCON* phPC);
+using ClosePseudoConsole_T = VOID(WINAPI*)(HPCON hPC);
 
 thread_local bool loadOnce = true;
 thread_local CreatePseudoConsole_T CreatePseudoConsoleFunc = nullptr;
 thread_local ClosePseudoConsole_T ClosePseudoConsoleFunc = nullptr;
 #endif
 
-typedef HANDLE HPCON;
+using HPCON = HANDLE;
 
 /**
  * @class ConsoleAttacher

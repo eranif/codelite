@@ -154,7 +154,7 @@ GDB pretty printing is a gdb feature that allows gdb to display complex objects 
 For example, when gdb pretty printing is disabled, viewing an STL map is pretty much useless. Consider the following code:
 
 ```c++
-typedef std::map<std::string, int> StringToIntMap_t;
+using StringToIntMap_t = std::map<std::string, int>;
 ...
 StringToIntMap_t mymap;
 mymap.insert({"String One", 1});

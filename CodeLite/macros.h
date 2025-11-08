@@ -184,9 +184,9 @@
 #endif
 
 // ----------------------------- useful typedefs -------------------------------
-typedef std::unordered_map<wxString, bool> wxStringBoolMap_t;
-typedef std::unordered_map<wxString, wxString> wxStringTable_t;
-typedef std::unordered_set<wxString> wxStringSet_t;
-typedef wxStringTable_t wxStringMap_t; // aliases
+using wxStringBoolMap_t = std::unordered_map<wxString, bool>;
+using wxStringTable_t = std::unordered_map<wxString, wxString>;
+using wxStringSet_t = std::unordered_set<wxString>;
+using wxStringMap_t = wxStringTable_t; // aliases
 
 #endif // MACROS_H

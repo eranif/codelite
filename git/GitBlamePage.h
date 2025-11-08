@@ -19,7 +19,7 @@ struct LineInfo {
     wxString commit_hash;      // commit hash
     wxString prev_commit_hash; // previous commit hash
     wxString display_line;
-    typedef std::vector<LineInfo> vec_t;
+    using vec_t = std::vector<LineInfo>;
 
     /// https://git-scm.com/docs/git-blame#_the_porcelain_format
     /// Parse and consume a complete porcelain format record

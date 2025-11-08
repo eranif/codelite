@@ -8,7 +8,7 @@
 #include <wx/arrstr.h>
 
 class NodeDebugger;
-typedef std::function<void(const JSONItem&)> ResultFunc_t;
+using ResultFunc_t = std::function<void(const JSONItem&)>;
 class CommandHandler
 {
 public:

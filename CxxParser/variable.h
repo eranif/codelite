@@ -57,5 +57,5 @@ public:
     void Print() const;
 };
 
-typedef std::list<Variable> VariableList;
+using VariableList = std::list<Variable>;
 #endif //VARIABLE_H

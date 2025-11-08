@@ -67,7 +67,7 @@ void GetWhitespaceInfo(wxStyledTextCtrl* ctrl, wxString& whitespace, wxString& e
     }
 }
 } // namespace
-typedef wxCustomStatusBarArt clStatusBarArtNormal;
+using clStatusBarArtNormal = wxCustomStatusBarArt;
 
 clStatusBar::clStatusBar(wxWindow* parent, IManager* mgr)
     : wxCustomStatusBar(parent)

@@ -49,7 +49,7 @@ struct ProcessEntry {
     long pid;
 };
 
-typedef std::vector<ProcessEntry> PidVec_t;
+using PidVec_t = std::vector<ProcessEntry>;
 
 /// Event class used by ProcUtils::ShellExecAsync method
 class WXDLLIMPEXP_CL clShellProcessEvent : public clCommandEvent

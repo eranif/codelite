@@ -23,9 +23,9 @@ wxDEFINE_EVENT(wxEVT_WEBSOCKET_DISCONNECTED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_WEBSOCKET_ONMESSAGE, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_WEBSOCKET_ERROR, clCommandEvent);
 
-typedef websocketpp::client<websocketpp::config::asio_client> Client_t;
+using Client_t = websocketpp::client<websocketpp::config::asio_client>;
 // pull out the type of messages sent by our config
-typedef websocketpp::config::asio_client::message_type::ptr message_ptr;
+using message_ptr = websocketpp::config::asio_client::message_type::ptr;
 
 class clWebSocketHelperThread : public clJoinableThread
 {

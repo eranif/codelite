@@ -14,9 +14,9 @@
 #include <wx/treebase.h>
 
 #if wxUSE_NATIVE_SCROLLBAR
-typedef clScrollBar ScrollBar_t;
+using ScrollBar_t = clScrollBar;
 #else
-typedef clCustomScrollBar ScrollBar_t;
+using ScrollBar_t = clCustomScrollBar;
 #endif
 
 class WXDLLIMPEXP_SDK clScrolledPanel : public wxWindow

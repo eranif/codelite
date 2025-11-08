@@ -32,7 +32,7 @@ CompileCommandsGenerator::~CompileCommandsGenerator()
     wxDELETE(m_process);
 }
 
-typedef wxString CheckSum_t;
+using CheckSum_t = wxString;
 static CheckSum_t ComputeFileCheckSum(const wxFileName& fn) { return wxMD5::GetDigest(fn); }
 
 void CompileCommandsGenerator::OnProcessOutput(clProcessEvent& event) { m_capturedOutput << event.GetOutput(); }

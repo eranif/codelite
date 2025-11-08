@@ -53,7 +53,7 @@ static const wxCmdLineEntryDesc cmdLineDesc[] = {
 IMPLEMENT_APP(wxcApp)
 
 #ifdef __WXMSW__
-typedef BOOL(WINAPI* SetProcessDPIAwareFunc)();
+using SetProcessDPIAwareFunc = BOOL(WINAPI*)();
 #endif
 
 wxcApp::wxcApp()

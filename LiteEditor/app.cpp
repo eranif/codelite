@@ -369,7 +369,7 @@ bool CodeLiteApp::OnInit()
 
 #ifdef __WXMSW__
     // HiDPI support
-    typedef BOOL(WINAPI * SetProcessDPIAwareFunc)();
+    using SetProcessDPIAwareFunc = BOOL(WINAPI*)();
     HINSTANCE user32Dll = LoadLibrary(L"User32.dll");
     if (user32Dll) {
         SetProcessDPIAwareFunc pFunc = (SetProcessDPIAwareFunc)GetProcAddress(user32Dll, "SetProcessDPIAware");

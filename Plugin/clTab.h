@@ -10,7 +10,7 @@
 
 // A struct representing a tab in the notebook control
 struct WXDLLIMPEXP_SDK clTab {
-    typedef std::vector<clTab> Vec_t;
+    using Vec_t = std::vector<clTab>;
     wxString text;
     wxWindow* window = nullptr;
     int bitmap = wxNOT_FOUND;

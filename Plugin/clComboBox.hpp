@@ -38,6 +38,6 @@ public:
 #else
 // generic version
 #include "clComboBoxGeneric.hpp"
-typedef clComboBoxGeneric clComboBox;
+using clComboBox = clComboBoxGeneric;
 #endif
 #endif // CLCOMBOBOX_HPP

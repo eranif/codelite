@@ -146,14 +146,14 @@ struct WXDLLIMPEXP_SDK MenuItemData {
     };
 };
 
-typedef std::unordered_map<wxString, MenuItemData> MenuItemDataMap_t;
-typedef std::unordered_map<int, MenuItemData> MenuItemDataIntMap_t;
+using MenuItemDataMap_t = std::unordered_map<wxString, MenuItemData>;
+using MenuItemDataIntMap_t = std::unordered_map<int, MenuItemData>;
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_KEYBOARD_ACCEL_INIT_DONE, clCommandEvent);
 class WXDLLIMPEXP_SDK clKeyboardManager : public wxEvtHandler
 {
 private:
-    typedef std::list<wxFrame*> FrameList_t;
+    using FrameList_t = std::list<wxFrame*>;
     bool m_initialized = false;
     MenuItemDataMap_t m_accelTable;        // a set of accelerators configured by user
     MenuItemDataMap_t m_defaultAccelTable; // a set of default accelerators

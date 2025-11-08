@@ -46,9 +46,9 @@
 class MemCheckErrorLocation;
 class MemCheckError;
 
-typedef std::list<MemCheckErrorLocation> LocationList;
-typedef std::list<MemCheckError> ErrorList;
-typedef MemCheckError* MemCheckErrorPtr;
+using LocationList = std::list<MemCheckErrorLocation>;
+using ErrorList = std::list<MemCheckError>;
+using MemCheckErrorPtr = MemCheckError*;
 
 
 /**

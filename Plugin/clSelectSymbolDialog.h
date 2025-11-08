@@ -46,7 +46,7 @@ struct WXDLLIMPEXP_SDK clSelectSymbolDialogEntry {
     {
     }
 
-    typedef std::vector<clSelectSymbolDialogEntry> List_t;
+    using List_t = std::vector<clSelectSymbolDialogEntry>;
 };
 
 class WXDLLIMPEXP_SDK clSelectSymbolDialog : public clSelectSymbolDialogBase

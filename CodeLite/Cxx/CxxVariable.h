@@ -41,7 +41,7 @@ public:
             this->comment = token.GetWXComment();
             this->text = token.GetWXString();
         }
-        typedef std::vector<CxxVariable::LexerToken> Vec_t;
+        using Vec_t = std::vector<CxxVariable::LexerToken>;
     };
 
     enum eFlags {

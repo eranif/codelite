@@ -38,7 +38,7 @@ class NodeJSBreakpoint : public nSerializableObject
     wxString m_nodeBpID; // If applied, this will contain V8 breakpoint ID
 
 public:
-    typedef std::vector<NodeJSBreakpoint> Vec_t;
+    using Vec_t = std::vector<NodeJSBreakpoint>;
 
 public:
     NodeJSBreakpoint() = default;

@@ -49,7 +49,7 @@ protected:
     size_t m_flags;
 
 public:
-    typedef std::map<wxString, PluginInfo> PluginMap_t;
+    using PluginMap_t = std::map<wxString, PluginInfo>;
 
 public:
     PluginInfo();

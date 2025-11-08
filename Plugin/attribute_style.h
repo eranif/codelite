@@ -53,7 +53,7 @@ public:
         kLargeSizeFont = (1 << 5),
         kMediumSizeFont = (1 << 6),
     };
-    typedef std::vector<StyleProperty> Vec_t;
+    using Vec_t = std::vector<StyleProperty>;
 
     StyleProperty(int id,
                   const wxString& name,

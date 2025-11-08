@@ -62,7 +62,7 @@ protected:
     wxString m_toplevelDir;
     bool m_projectModified;
 
-    typedef std::multimap<wxString, wxString> StringMultimap_t;
+    using StringMultimap_t = std::multimap<wxString, wxString>;
 
 protected:
     void DoFindFiles();
@@ -140,7 +140,7 @@ protected:
 
 class VirtualDirectoryTree
 {
-    typedef std::deque<VirtualDirectoryTree*> dBranches;
+    using dBranches = std::deque<VirtualDirectoryTree*>;
 
 public:
     VirtualDirectoryTree()

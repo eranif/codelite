@@ -4,7 +4,7 @@
 #include "wxcrafter.h"
 #include <vector>
 
-typedef std::vector<std::pair<wxString, wxString> > BmpTextVec_t;
+using BmpTextVec_t = std::vector<std::pair<wxString, wxString>>;
 
 class BmpTextSelectorDlg : public BmpTextSelectorDlgBase
 {

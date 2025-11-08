@@ -57,7 +57,7 @@ public:
 class WXDLLIMPEXP_SDK WorkspaceConfiguration
 {
 public:
-    typedef std::list<ConfigMappingEntry> ConfigMappingList;
+    using ConfigMappingList = std::list<ConfigMappingEntry>;
 
 private:
     wxString m_name;

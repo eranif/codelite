@@ -259,7 +259,7 @@ public:
     }
 };
 
-typedef std::vector<SearchResult> SearchResultList;
+using SearchResultList = std::vector<SearchResult>;
 
 class WXDLLIMPEXP_CL SearchSummary : public wxObject
 {

@@ -18,7 +18,7 @@ protected:
     void Stop();
 
 public:
-    typedef std::shared_ptr<clSSHAgent> Ptr_t;
+    using Ptr_t = std::shared_ptr<clSSHAgent>;
 
 public:
     clSSHAgent(const wxArrayString& files = {});

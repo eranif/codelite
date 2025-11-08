@@ -40,10 +40,10 @@
 // includes windows.h and if wxUSE_WINSOCK2 is true includes winsock2.h
 #include <wx/msw/wrapwin.h>
 
-typedef SOCKET socket_t;
-typedef int socklen_t;
+using socket_t = SOCKET;
+using socklen_t = int;
 #else
-typedef int socket_t;
+using socket_t = int;
 #ifndef INVALID_SOCKET
 #define INVALID_SOCKET (-1)
 #endif

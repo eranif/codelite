@@ -15,7 +15,7 @@ class clRemoteTerminal : public wxEvtHandler
     SSHAccountInfo m_account;
 
 public:
-    typedef std::unique_ptr<clRemoteTerminal> ptr_t;
+    using ptr_t = std::unique_ptr<clRemoteTerminal>;
 
 public:
     clRemoteTerminal(const SSHAccountInfo& account);

@@ -42,7 +42,7 @@ enum eSettersGettersFlags {
 class PHPSetterGetterEntry
 {
 public:
-    typedef std::vector<PHPSetterGetterEntry> Vec_t;
+    using Vec_t = std::vector<PHPSetterGetterEntry>;
 
 protected:
     PHPEntityBase::Ptr_t m_entry;

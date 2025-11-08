@@ -99,7 +99,7 @@ enum marker_mask_type {
 class WXDLLIMPEXP_SDK BookmarkManager : public wxEvtHandler
 {
 public:
-    typedef std::unordered_map<int, wxString> Map_t;
+    using Map_t = std::unordered_map<int, wxString>;
 
 private:
     int m_activeBookmarkType;

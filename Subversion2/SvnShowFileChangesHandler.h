@@ -28,7 +28,7 @@ struct SvnShowDiffChunk {
         description.Trim().Trim(false);
     }
 
-    typedef std::list<SvnShowDiffChunk> List_t;
+    using List_t = std::list<SvnShowDiffChunk>;
 };
 
 class SvnShowFileChangesHandler : public SvnCommandHandler

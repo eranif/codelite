@@ -42,7 +42,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_COMMAND_PROCESSOR_ENDED, clComman
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_COMMAND_PROCESSOR_OUTPUT, clCommandEvent);
 
 class clCommandProcessor;
-typedef bool (wxEvtHandler::*clCommandProcessorFunc)(const clCommandProcessor* processor);
+using clCommandProcessorFunc = bool (wxEvtHandler::*)(const clCommandProcessor*);
 class WXDLLIMPEXP_CL clCommandProcessor : public wxEvtHandler
 {
     clCommandProcessor* m_next = nullptr;

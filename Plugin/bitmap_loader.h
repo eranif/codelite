@@ -108,8 +108,8 @@ class WXDLLIMPEXP_SDK BitmapLoader : public wxEvtHandler
 {
 public:
     friend class clBitmaps;
-    typedef std::unordered_map<FileExtManager::FileType, wxBitmap> BitmapMap_t;
-    typedef std::vector<wxBitmap> Vec_t;
+    using BitmapMap_t = std::unordered_map<FileExtManager::FileType, wxBitmap>;
+    using Vec_t = std::vector<wxBitmap>;
 
     enum eBitmapId {
         kClass = 1000,

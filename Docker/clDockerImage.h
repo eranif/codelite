@@ -28,7 +28,7 @@ public:
     const wxString& GetSize() const { return m_size; }
     const wxString& GetTag() const { return m_tag; }
     bool Parse(const wxString& line);
-    typedef std::vector<clDockerImage> Vect_t;
+    using Vect_t = std::vector<clDockerImage>;
 };
 
 #endif // CLDOCKERIMAGE_H

@@ -37,8 +37,8 @@
 /**
  * Each pair consists of the tabgroup name, and an array of the names of the constituent tabs
  */
-typedef std::pair<wxString, wxArrayString> spTabGrp;
-typedef std::vector<spTabGrp> vTabGrps;
+using spTabGrp = std::pair<wxString, wxArrayString>;
+using vTabGrps = std::vector<spTabGrp>;
 
 class TabgroupManager : public wxEvtHandler
 {
@@ -85,6 +85,6 @@ protected:
     vTabGrps m_globalTabgroups;
 };
 
-typedef Singleton<TabgroupManager> TabGroupsManager;
+using TabGroupsManager = Singleton<TabgroupManager>;
 
 #endif // TABGROUP_MANAGER_H

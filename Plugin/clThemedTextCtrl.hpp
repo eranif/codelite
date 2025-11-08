@@ -14,9 +14,9 @@
 #endif
 
 #if USE_TEXT_CTRL
-typedef wxTextCtrl clThemedTextCtrlBase;
+using clThemedTextCtrlBase = wxTextCtrl;
 #else
-typedef wxStyledTextCtrl clThemedTextCtrlBase;
+using clThemedTextCtrlBase = wxStyledTextCtrl;
 #endif
 
 class WXDLLIMPEXP_SDK clThemedTextCtrl : public clThemedTextCtrlBase

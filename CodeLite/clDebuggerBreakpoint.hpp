@@ -36,7 +36,7 @@ enum BreakpointOrigin { BO_Editor, BO_Other };
 class WXDLLIMPEXP_CL clDebuggerBreakpoint : public SerializedObject
 {
 public:
-    typedef std::vector<clDebuggerBreakpoint> Vec_t;
+    using Vec_t = std::vector<clDebuggerBreakpoint>;
 
 public:
     // Where the bp is: file/lineno, function name (e.g. main()) or the memory location
@@ -106,5 +106,5 @@ protected:
     virtual void Serialize(Archive& arch);
     virtual void DeSerialize(Archive& arch);
 };
-typedef std::vector<clDebuggerBreakpoint> clDebuggerBreakpointVec_t;
+using clDebuggerBreakpointVec_t = std::vector<clDebuggerBreakpoint>;
 #endif // CLDEBUGGERBREAKPOINT_HPP

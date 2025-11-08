@@ -39,7 +39,7 @@
 
 // We do it this way to avoid exposing the include to <libssh/sftp.h> to files including this header
 struct sftp_session_struct;
-typedef struct sftp_session_struct* SFTPSession_t;
+using SFTPSession_t = struct sftp_session_struct*;
 
 class WXDLLIMPEXP_CL clSFTP
 {
@@ -50,7 +50,7 @@ class WXDLLIMPEXP_CL clSFTP
     wxString m_account;
 
 public:
-    typedef std::shared_ptr<clSFTP> Ptr_t;
+    using Ptr_t = std::shared_ptr<clSFTP>;
     enum {
         SFTP_BROWSE_FILES = 0x00000001,
         SFTP_BROWSE_FOLDERS = 0x00000002,

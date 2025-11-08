@@ -66,7 +66,7 @@ bool clEditorConfig::LoadForFile(const wxFileName& filename, wxFileName& editorC
 
 struct clEditorConfigTreeNode {
     wxString data;
-    typedef std::vector<clEditorConfigTreeNode*> Vec_t;
+    using Vec_t = std::vector<clEditorConfigTreeNode*>;
     clEditorConfigTreeNode::Vec_t children;
 
     clEditorConfigTreeNode* AddChild(const wxString& data)

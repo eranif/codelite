@@ -36,6 +36,6 @@ struct FileInfo {
     wxString   folder;
     size_t     flags;
 };
-typedef std::vector<FileInfo> FileArray_t;
+using FileArray_t = std::vector<FileInfo>;
 
 #endif // PHPWROKSPACE_STORAGE_INTERFACE_H

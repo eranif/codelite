@@ -23,7 +23,7 @@ class WXDLLIMPEXP_SDK LanguageServerEntry
 
 public:
     // use 'map' to keep the items sorted by name
-    typedef std::map<wxString, LanguageServerEntry> Map_t;
+    using Map_t = std::map<wxString, LanguageServerEntry>;
 
     bool IsNull() const;
 

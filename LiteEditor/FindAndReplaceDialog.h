@@ -61,7 +61,7 @@ struct TargetRange {
     bool Equals(const TargetRange& other) const { return start_pos == other.start_pos && end_pos == other.end_pos; }
     bool PosInside(int pos) const { return start_pos >= pos && pos < end_pos; }
     bool IsOk() const { return start_pos != wxNOT_FOUND && end_pos != wxNOT_FOUND; }
-    typedef std::vector<TargetRange> Vec_t;
+    using Vec_t = std::vector<TargetRange>;
 };
 
 class FindAndReplaceDialog : public FindAndReplaceDialogFrameBase

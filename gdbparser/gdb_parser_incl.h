@@ -6,8 +6,8 @@
 #include <string>
 
 extern std::string gdb_result_string;
-typedef std::map<std::string, std::string> GdbStringMap_t;
-typedef std::vector<GdbStringMap_t>        GdbChildren_t;
+using GdbStringMap_t = std::map<std::string, std::string>;
+using GdbChildren_t = std::vector<GdbStringMap_t>;
 
 struct GdbChildrenInfo {
     GdbChildren_t children;

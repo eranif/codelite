@@ -675,6 +675,6 @@ protected:
     void DoSaveAllFilesBeforeBuild();
 };
 
-typedef Singleton<Manager> ManagerST;
+using ManagerST = Singleton<Manager>;
 
 #endif // MANAGER_H

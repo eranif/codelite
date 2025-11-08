@@ -212,11 +212,11 @@ void OutputPane::SaveTabOrder()
 #endif
 }
 
-typedef struct _tagTabInfo {
+struct tagTabInfo {
     wxString text;
     wxWindow* win = nullptr;
     int bmp = wxNOT_FOUND;
-} tagTabInfo;
+};
 
 void OutputPane::ApplySavedTabOrder([[maybe_unused]] bool update_ui) const
 {

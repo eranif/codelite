@@ -84,7 +84,7 @@ protected:
     ProcessReaderThread* m_thr = nullptr;
 
 public:
-    typedef std::shared_ptr<IProcess> Ptr_t;
+    using Ptr_t = std::shared_ptr<IProcess>;
 
 public:
     IProcess(wxEvtHandler* parent)

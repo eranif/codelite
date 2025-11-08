@@ -55,8 +55,8 @@ public:
     }
     const clFilesScanner::EntryData& GetLeft() const { return m_left; }
     const clFilesScanner::EntryData& GetRight() const { return m_right; }
-    typedef std::vector<DiffViewEntry> Vect_t;
-    typedef std::unordered_map<wxString, DiffViewEntry> Hash_t;
+    using Vect_t = std::vector<DiffViewEntry>;
+    using Hash_t = std::unordered_map<wxString, DiffViewEntry>;
 };
 
 struct WXDLLIMPEXP_SDK DiffView {

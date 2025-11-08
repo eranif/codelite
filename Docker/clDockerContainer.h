@@ -45,8 +45,8 @@ public:
     int GetState() const { return m_state; }
     
     bool Parse(const wxString& line);
-    typedef std::vector<clDockerContainer> Vect_t;
-    typedef std::unordered_map<wxString, clDockerContainer> Map_t;
+    using Vect_t = std::vector<clDockerContainer>;
+    using Map_t = std::unordered_map<wxString, clDockerContainer>;
 };
 
 #endif // CLDOCKERCONTAINER_H

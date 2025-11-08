@@ -10,7 +10,7 @@
 class WXDLLIMPEXP_CL PHPDocProperty
 {
 public:
-    typedef std::vector<std::tuple<wxString, wxString, wxString> > Tuple_t;
+    using Tuple_t = std::vector<std::tuple<wxString, wxString, wxString>>;
 
 protected:
     PHPSourceFile& m_sourceFile;

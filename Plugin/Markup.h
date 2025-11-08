@@ -58,7 +58,7 @@ protected:
     int m_matchIndex;
 
 public:
-    typedef std::list<MarkupSearchPattern> List_t;
+    using List_t = std::list<MarkupSearchPattern>;
 
 public:
     MarkupSearchPattern()

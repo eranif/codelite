@@ -15,7 +15,7 @@ public:
     struct EntryData {
         size_t flags = 0;
         wxString fullpath;
-        typedef std::vector<EntryData> Vec_t;
+        using Vec_t = std::vector<EntryData>;
     };
 
     enum eFileAttributes {

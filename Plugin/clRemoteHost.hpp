@@ -21,7 +21,7 @@ enum class clRemoteCommandStatus {
     DONE_WITH_ERROR,
 };
 
-typedef std::function<void(const std::string&, clRemoteCommandStatus)> execute_callback;
+using execute_callback = std::function<void(const std::string&, clRemoteCommandStatus)>;
 
 class WXDLLIMPEXP_SDK clRemoteHost : public wxEvtHandler
 {

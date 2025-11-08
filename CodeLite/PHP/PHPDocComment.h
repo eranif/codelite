@@ -42,7 +42,7 @@ public:
         wxString name;
         wxString type;
         wxString desc;
-        typedef std::unordered_map<wxString, PHPDocComment::Property> Map_t;
+        using Map_t = std::unordered_map<wxString, PHPDocComment::Property>;
     };
 
 protected:

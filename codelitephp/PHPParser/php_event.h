@@ -77,7 +77,7 @@ public:
     }
 };
 
-typedef void (wxEvtHandler::*PHPEventFunction)(PHPEvent&);
+using PHPEventFunction = void (wxEvtHandler::*)(PHPEvent&);
 #define PHPEventHandler(func) \
     wxEVENT_HANDLER_CAST(PHPEventFunction, func)
 

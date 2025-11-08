@@ -71,7 +71,7 @@ public:
 class WXDLLIMPEXP_SDK clControlWithItems : public clScrolledPanel
 {
 public:
-    typedef std::vector<wxBitmap> BitmapVec_t;
+    using BitmapVec_t = std::vector<wxBitmap>;
 
 protected:
     clHeaderBar* m_viewHeader = nullptr;

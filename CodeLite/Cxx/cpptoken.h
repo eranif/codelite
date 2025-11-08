@@ -37,7 +37,7 @@
 #include <algorithm>
 #include "wxStringHash.h"
 
-typedef std::vector<wxFileName> wxFileList_t;
+using wxFileList_t = std::vector<wxFileName>;
 class WXDLLIMPEXP_CL CppToken
 {
     int m_id;
@@ -47,7 +47,7 @@ class WXDLLIMPEXP_CL CppToken
     size_t lineNumber;
 
 public:
-    typedef std::vector<CppToken> Vec_t;
+    using Vec_t = std::vector<CppToken>;
 
     class wxFileNameToString
     {

@@ -45,7 +45,7 @@ class ColumnInfo
     wxString m_name;
 
 public:
-    typedef std::vector<ColumnInfo> Vector_t;
+    using Vector_t = std::vector<ColumnInfo>;
 
 public:
     ColumnInfo()

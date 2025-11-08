@@ -8,7 +8,7 @@
 
 INITIALISE_MODULE_LOG(LOG, "AnsiEscapeHandler", "ansi_escape_parser.log");
 
-typedef std::unordered_map<int, wxColour> ColoursMap_t;
+using ColoursMap_t = std::unordered_map<int, wxColour>;
 namespace
 {
 

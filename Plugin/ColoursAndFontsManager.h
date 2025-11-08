@@ -48,8 +48,8 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_UPGRADE_LEXERS_PROGRESS, clComma
 
 class WXDLLIMPEXP_SDK ColoursAndFontsManager : public wxEvtHandler
 {
-    typedef std::vector<LexerConf::Ptr_t> Vec_t;
-    typedef std::unordered_map<wxString, ColoursAndFontsManager::Vec_t> Map_t;
+    using Vec_t = std::vector<LexerConf::Ptr_t>;
+    using Map_t = std::unordered_map<wxString, ColoursAndFontsManager::Vec_t>;
 
 protected:
     bool m_initialized = false;

@@ -1027,9 +1027,10 @@ wxFileName clCxxWorkspace::GetTagsFileName() const
     return fn_tags;
 }
 
-cJSON* clCxxWorkspace::CreateCompileCommandsJSON(bool createCompileFlagsTxt, wxArrayString* generated_paths) const
+namespace
 {
-    // Build the global compiler paths, we will need this later on...
+wxStringMap_t BuildGlobalCompilerPath()
+{
     wxStringMap_t compilersGlobalPaths;
     std::unordered_map<wxString, wxArrayString> pathsMap = BuildSettingsConfigST::Get()->GetCompilersGlobalPaths();
     for (const auto& vt : pathsMap) {
@@ -1043,9 +1044,14 @@ cJSON* clCxxWorkspace::CreateCompileCommandsJSON(bool createCompileFlagsTxt, wxA
             }
             paths << path << ";";
         }
-        compilersGlobalPaths.insert({ compiler_name, paths });
+        compilersGlobalPaths.insert({compiler_name, paths});
     }
+    return compilersGlobalPaths;
+}
+}
 
+cJSON* clCxxWorkspace::CreateCompileCommandsJSON() const
+{
     // Check if the active project is using custom build
     ProjectPtr activeProject = GetActiveProject();
     if (activeProject) {
@@ -1055,27 +1061,45 @@ cJSON* clCxxWorkspace::CreateCompileCommandsJSON(bool createCompileFlagsTxt, wxA
         }
     }
 
+    // Build the global compiler paths, we will need this later on...
+    const wxStringMap_t compilersGlobalPaths = BuildGlobalCompilerPath();
+
     JSONItem compile_commands = JSONItem::createArray();
     for (const auto& [_, project] : m_projects) {
         BuildConfigPtr buildConf = project->GetBuildConfiguration();
         if (buildConf && buildConf->IsProjectEnabled() && !buildConf->IsCustomBuild() &&
            buildConf->IsCompilerRequired()) {
-            project->CreateCompileCommandsJSON(compile_commands, compilersGlobalPaths, createCompileFlagsTxt);
-            if (createCompileFlagsTxt && generated_paths) {
-                // compile_flags.txt files are created under the same path as the project
-                wxFileName project_fn = project->GetFileName();
-                project_fn.SetFullName("compile_flags.txt");
-                generated_paths->Add(project_fn.GetFullPath());
-            }
+            project->AppendToCompileCommandsJSON(compilersGlobalPaths, compile_commands);
+        }
+    }
+    return compile_commands.release();
+}
+
+wxArrayString clCxxWorkspace::CreateCompileFlagsTexts() const
+{
+    // Check if the active project is using custom build
+    if (ProjectPtr activeProject = GetActiveProject()) {
+        BuildConfigPtr buildConf = activeProject->GetBuildConfiguration();
+        if (buildConf && buildConf->IsCustomBuild()) {
+            return {};
         }
     }
 
-    if (!createCompileFlagsTxt && generated_paths) {
-        wxFileName path = GetFileName();
-        path.SetFullName("compile_commands.json");
-        generated_paths->Add(path.GetFullPath());
+    const wxStringMap_t compilersGlobalPaths = BuildGlobalCompilerPath();
+    wxArrayString generated_paths;
+    for (const auto& [_, project] : m_projects) {
+        BuildConfigPtr buildConf = project->GetBuildConfiguration();
+        if (buildConf && buildConf->IsProjectEnabled() && !buildConf->IsCustomBuild() &&
+            buildConf->IsCompilerRequired()) {
+            project->CreateCompileFlags(compilersGlobalPaths);
+
+            // compile_flags.txt files are created under the same path as the project
+            wxFileName project_fn = project->GetFileName();
+            project_fn.SetFullName("compile_flags.txt");
+            generated_paths.Add(project_fn.GetFullPath());
+        }
     }
-    return createCompileFlagsTxt ? nullptr : compile_commands.release();
+    return generated_paths;
 }
 
 ProjectPtr clCxxWorkspace::GetActiveProject() const { return GetProject(GetActiveProjectName()); }

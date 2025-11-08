@@ -174,10 +174,15 @@ public:
     wxArrayString GetWorkspaceFolders() const;
 
     /**
-     * @brief create 'compile_commands' json object for the workspace projects (only the enabled ones)
-     * or compile_flags.txt file
+     * @brief create 'compile_commands' json object for the workspace (enabled) projects
      */
-    cJSON* CreateCompileCommandsJSON(bool createCompileFlagsTxt, wxArrayString* generated_paths) const;
+    cJSON* CreateCompileCommandsJSON() const;
+
+    /**
+     * @brief create the compile_flags.txt files for each workspace (enabled) projects
+     * @return list of generated paths
+     */
+    wxArrayString CreateCompileFlagsTexts() const;
 
     wxString GetFileName() const override { return GetWorkspaceFileName().GetFullPath(); }
     wxString GetDir() const override { return GetWorkspaceFileName().GetPath(); }

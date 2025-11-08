@@ -68,6 +68,7 @@ codelite.message_box(message, type)
 Displays a message dialog box with the specified message and type.
 
 **Parameters**:
+
 - `message` (string): The text to display in the dialog
 - `type` (integer): The type of message dialog to display (e.g., `MessageType.kWarn`, `MessageType.kError`, or `MessageType.kInfo`)
 
@@ -93,6 +94,7 @@ codelite.user_text(title)
 Prompts the user for text input via a dialog box and returns the entered text.
 
 **Parameters**:
+
 - `title` (string): The title/prompt message to display in the input dialog
 
 **Returns**:
@@ -324,6 +326,7 @@ codelite.chat(prompt)
 Initiates a chat session using the given prompt. This opens the chat window within the application with the provided text as the initial input.
 
 **Parameters**:
+
 - `prompt` (string): The initial text to be displayed in the chat input
 
 **Example**:
@@ -348,6 +351,7 @@ codelite.generate(prompt)
 Initiates an LLM text generation process with the given prompt. Displays a warning if a generation is already in progress. The function shows a generation dialog and processes the prompt using the LLM Manager.
 
 **Parameters**:
+
 - `prompt` (string): The text prompt to send to the LLM for generation
 
 **Example**:
@@ -374,6 +378,7 @@ codelite.log_error(msg)
 Logs an error message. This should be called whenever an error needs to be recorded.
 
 **Parameters**:
+
 - `msg` (string): The error message to be logged
 
 **Example**:
@@ -398,6 +403,7 @@ codelite.log_system(msg)
 Logs a system message. Intended for messages that are relevant to system operations and diagnostics.
 
 **Parameters**:
+
 - `msg` (string): The message to be logged
 
 **Example**:
@@ -422,6 +428,7 @@ codelite.log_warn(msg)
 Logs a warning message.
 
 **Parameters**:
+
 - `msg` (string): The warning message to be logged
 
 **Example**:
@@ -446,6 +453,7 @@ codelite.log_debug(msg)
 Logs a debug-level message. Intended for debugging output during development.
 
 **Parameters**:
+
 - `msg` (string): The debug message to be logged
 
 **Example**:
@@ -470,6 +478,7 @@ codelite.log_trace(msg)
 Logs a trace message at the developer log level. Used for detailed execution tracing.
 
 **Parameters**:
+
 - `msg` (string): The trace message to be logged
 
 **Example**:
@@ -496,6 +505,7 @@ codelite.str_replace_all(str, find_what, replace_with)
 Replaces all occurrences of a substring within a string with another substring. If `find_what` is empty, the original string is returned unchanged.
 
 **Parameters**:
+
 - `str` (string): The input string to search within
 - `find_what` (string): The substring to search for and replace
 - `replace_with` (string): The substring to replace each occurrence of `find_what` with

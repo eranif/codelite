@@ -1355,7 +1355,7 @@ wxString Project::DoExpandBacktick(const wxString& backtick)
     return cmpOption;
 }
 
-void Project::AppendToCompileCommandsJSON(const wxStringMap_t& compilersGlobalPaths, JSONItem& compile_commands)
+void Project::AppendToCompileCommandsJSON(const wxStringMap_t& compilersGlobalPaths, nlohmann::json& compile_commands)
 {
     // generating compile_commands.json file
     BuildConfigPtr buildConf = GetBuildConfiguration();
@@ -1383,11 +1383,11 @@ void Project::AppendToCompileCommandsJSON(const wxStringMap_t& compilersGlobalPa
             }
             compilePattern.Replace("$FileName", file_name);
 
-            JSONItem json = JSONItem::createObject();
-            json.addProperty("file", fullpath);
-            json.addProperty("directory", workingDirectory);
-            json.addProperty("command", compilePattern);
-            compile_commands.append(json);
+            nlohmann::json json;
+            json["file"] = StringUtils::ToStdString(fullpath);
+            json["directory"] = StringUtils::ToStdString(workingDirectory);
+            json["command"] = StringUtils::ToStdString(compilePattern);
+            compile_commands.push_back(json);
         }
     }
 }

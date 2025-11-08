@@ -25,12 +25,12 @@
 #ifndef PROJECT_H
 #define PROJECT_H
 
-#include "JSON.h"
 #include "codelite_exports.h"
 #include "macros.h"
 #include "project_settings.h"
 #include "tree.h"
 
+#include <assistant/common/json.hpp> // <nhlomann/json.hpp>
 #include <list>
 #include <memory>
 #include <set>
@@ -730,7 +730,7 @@ public:
     /**
      * @brief add this project files into the 'compile_commands' json object
      */
-    void AppendToCompileCommandsJSON(const wxStringMap_t& compilersGlobalPaths, JSONItem& compile_commands);
+    void AppendToCompileCommandsJSON(const wxStringMap_t& compilersGlobalPaths, nlohmann::json& compile_commands);
 
     /**
      * @brief create compile_flags.txt file for this project

@@ -1050,7 +1050,7 @@ wxStringMap_t BuildGlobalCompilerPath()
 }
 }
 
-cJSON* clCxxWorkspace::CreateCompileCommandsJSON() const
+nlohmann::json clCxxWorkspace::CreateCompileCommandsJSON() const
 {
     // Check if the active project is using custom build
     ProjectPtr activeProject = GetActiveProject();
@@ -1064,7 +1064,7 @@ cJSON* clCxxWorkspace::CreateCompileCommandsJSON() const
     // Build the global compiler paths, we will need this later on...
     const wxStringMap_t compilersGlobalPaths = BuildGlobalCompilerPath();
 
-    JSONItem compile_commands = JSONItem::createArray();
+    nlohmann::json compile_commands;
     for (const auto& [_, project] : m_projects) {
         BuildConfigPtr buildConf = project->GetBuildConfiguration();
         if (buildConf && buildConf->IsProjectEnabled() && !buildConf->IsCustomBuild() &&
@@ -1072,7 +1072,7 @@ cJSON* clCxxWorkspace::CreateCompileCommandsJSON() const
             project->AppendToCompileCommandsJSON(compilersGlobalPaths, compile_commands);
         }
     }
-    return compile_commands.release();
+    return compile_commands;
 }
 
 wxArrayString clCxxWorkspace::CreateCompileFlagsTexts() const

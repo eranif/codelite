@@ -3,6 +3,7 @@
 #include "build_settings_config.h"
 #include "builder/builder_gnumake_default.h"
 #include "configuration_mapping.h"
+#include "fileutils.h"
 #include "macromanager.h"
 #include "procutils.h"
 #include "workspace.h"
@@ -287,10 +288,10 @@ void clMakeGeneratorApp::DoGenerateCompileCommands()
         fn.SetFullName("compile_commands.json");
 
         Info(wxString() << "-- Generating: " << fn.GetFullPath());
-        JSON json(clCxxWorkspaceST::Get()->CreateCompileCommandsJSON());
-        if (json.isOk()) {
+        auto json = clCxxWorkspaceST::Get()->CreateCompileCommandsJSON();
+        if (json.is_array()) {
             // Save the file
-            json.save(fn);
+            FileUtils::WriteFileContentRaw(fn, json.dump(2));
         }
     } else {
         Info(wxString() << "-- Generating: compile_flags.txt files...");

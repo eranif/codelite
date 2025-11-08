@@ -15,6 +15,7 @@ extern "C" {
 #include "file_logger.h"
 #include "fileutils.h"
 
+#include <wx/frame.h>
 #include <wx/msgdlg.h>
 #include <wx/string.h>
 #include <wx/xrc/xmlres.h>
@@ -146,16 +147,17 @@ void CodeLiteLUA::add_menu_item(const std::string& menu_name, const std::string&
 {
     auto& self = Get();
 
-    clDEBUG() << "Adding item:" << label << "for menu:" << menu_name << endl;
+    auto menu_name_lc = StringUtils::Lowercase(menu_name);
+    clDEBUG() << "Adding item:" << label << "for menu:" << menu_name_lc << endl;
     LuaMenuItem menu_item{.label = label, .action = std::move(action), .is_separator = false};
     if (!menu_item.IsOk()) {
-        clWARNING() << "Failed to add menu item:" << label << "to menu:" << menu_name << ". Action is not a function"
+        clWARNING() << "Failed to add menu item:" << label << "to menu:" << menu_name_lc << ". Action is not a function"
                     << endl;
         return;
     }
 
-    // If "menu_name" is missing a default entry is added.
-    self.m_menu_items[menu_name].push_back(std::move(menu_item));
+    // If "menu_name_lc" is missing a default entry is added.
+    self.m_menu_items[menu_name_lc].push_back(std::move(menu_item));
 }
 
 void CodeLiteLUA::add_menu_separator(const std::string& menu_name)
@@ -303,20 +305,60 @@ clStatus CodeLiteLUA::LoadScriptFile(const wxString& path)
     return LoadScriptString(content);
 }
 
+void CodeLiteLUA::CleanupDynamicMenuItems()
+{
+    auto frame = EventNotifier::Get()->TopFrame();
+    auto menu_bar = frame->GetMenuBar();
+    CHECK_PTR_RET(menu_bar);
+
+    for (size_t i = 0; i < menu_bar->GetMenuCount(); ++i) {
+        auto menu = menu_bar->GetMenu(i);
+        wxString title = menu->GetTitle();
+        title = wxStripMenuCodes(title).Lower();
+        std::string name = title.ToStdString(wxConvUTF8);
+
+        if (!m_items_added_to_menu_bar_menus.contains(name)) {
+            continue;
+        }
+
+        const auto& ids_to_remove = m_items_added_to_menu_bar_menus[name];
+        for (int id : ids_to_remove) {
+            menu->Delete(id);
+        }
+        m_items_added_to_menu_bar_menus.erase(name);
+    }
+}
+
 void CodeLiteLUA::UpdateMenu(const wxString& menu_name, wxMenu* menu)
 {
-    std::string name = menu_name.ToStdString(wxConvUTF8);
-    if (!m_menu_items.contains(name)) {
-        return;
+    CHECK_PTR_RET(menu);
+    CleanupDynamicMenuItems();
+
+    std::string name = menu_name.Lower().ToStdString(wxConvUTF8);
+    bool is_menu_bar_menu{false};
+    if (name.empty()) {
+        wxString title = menu->GetTitle();
+        title = wxStripMenuCodes(title).Lower();
+        name = title.ToStdString(wxConvUTF8);
+        is_menu_bar_menu = true;
     }
+
+    CHECK_COND_RET(!name.empty());
+    CHECK_COND_RET(m_menu_items.contains(name));
 
     auto& menu_items = m_menu_items[name];
     for (const auto& item : menu_items) {
         if (item.is_separator) {
-            menu->AppendSeparator();
+            auto item = menu->AppendSeparator();
+            if (is_menu_bar_menu) {
+                m_items_added_to_menu_bar_menus[name].push_back(item->GetId());
+            }
         } else {
             wxString label = wxString::FromUTF8(item.label);
             auto menu_id = wxXmlResource::GetXRCID(label);
+            if (is_menu_bar_menu) {
+                m_items_added_to_menu_bar_menus[name].push_back(menu_id);
+            }
             menu->Append(menu_id, label);
             menu->Bind(wxEVT_MENU, [&item](wxCommandEvent&) { item.RunAction(); }, menu_id);
         }

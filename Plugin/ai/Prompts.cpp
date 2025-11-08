@@ -14,8 +14,7 @@ The documentation comment must contain **all** of the following sections (in thi
 3. **Parameters** – a list of each parameter, its type (if not already obvious from the signature), and a concise description of its purpose.
 4. **Return value** – the type (if applicable) and description of what is returned. If the function returns nothing, explicitly state that.
 5. **Raises / Throws / Errors** – any exceptions, error codes, or error‑handling behavior the function may produce. If none, you may omit this section.
-6. **Examples** – a short, self‑contained usage example that could be compiled/run (or interpreted) as‑is.
-7. **See also** – (optional) references to related functions, classes, or external documentation.
+6. **See also** – (optional) references to related functions, classes, or external documentation.
 
 Follow the exact syntax for the target language’s doc‑comment style (e.g., `/** … */` for Java, `""" … """` for Python, `/// …` for Rust, `/** … */` for TypeScript/JSDoc, `/*** … */` for Doxygen, etc.).
 

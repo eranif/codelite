@@ -419,9 +419,29 @@ private:
      * @param event The command event triggered when a file is saved
      */
     void OnFileSaved(clCommandEvent& event);
+    /**
+     * @brief Removes all dynamically-added menu items from the application's menu bar.
+     *
+     * This method iterates through all menus in the top-level frame's menu bar and removes
+     * any menu items that were previously added dynamically by this CodeLiteLUA instance.
+     * The internal tracking map is cleared after cleanup.
+     *
+     * @param None
+     *
+     * @return void This function does not return a value.
+     *
+     * @note This method accesses the top-level frame through EventNotifier::Get()->TopFrame().
+     *       If the menu bar pointer is null, the function returns early without performing cleanup.
+     *
+     * @see EventNotifier::Get()
+     * @see wxMenuBar::GetMenu()
+     * @see wxMenu::Delete()
+     */
+    void CleanupDynamicMenuItems();
 
     lua_State* m_state{nullptr};
     std::unordered_map<std::string, std::vector<LuaMenuItem>> m_menu_items;
+    std::unordered_map<std::string, std::vector<int>> m_items_added_to_menu_bar_menus;
     std::shared_ptr<TextGenerationPreviewFrame> m_textGenerationFrame{nullptr};
     bool m_generationInProgress{false};
 };

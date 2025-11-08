@@ -2,6 +2,7 @@
 
 #include "Scripting/CodeLiteLUA.hpp"
 
+#include <wx/app.h>
 #include <wx/xrc/xmlres.h>
 
 clXmlResource& clXmlResource::Get()
@@ -10,19 +11,27 @@ clXmlResource& clXmlResource::Get()
     return handler;
 }
 
+clXmlResource::clXmlResource() { wxTheApp->Bind(wxEVT_MENU_OPEN, &clXmlResource::OnMenuShown, this); }
+
+clXmlResource::~clXmlResource() {}
+
 wxMenuBar* clXmlResource::LoadMenuBar(const wxString& name)
 {
     auto menubar = wxXmlResource::Get()->LoadMenuBar(name);
-    // note: pointer must be freed by the caller.
     return menubar;
 }
 
 wxMenu* clXmlResource::LoadMenu(const wxString& name)
 {
     auto menu = wxXmlResource::Get()->LoadMenu(name);
-    // note: pointer must be freed by the caller.
     CodeLiteLUA::Get().UpdateMenu(name, menu);
     return menu;
 }
 
 void clXmlResource::Init() { wxXmlResource::Get()->InitAllHandlers(); }
+
+void clXmlResource::OnMenuShown(wxMenuEvent& event)
+{
+    event.Skip();
+    CodeLiteLUA::Get().UpdateMenu(wxEmptyString, event.GetMenu());
+}

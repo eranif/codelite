@@ -27,6 +27,7 @@
 #include "AsyncProcess/asyncprocess.h"
 #include "codelite_exports.h"
 
+#include <algorithm>
 #include <sstream>
 #include <string>
 #include <wx/arrstr.h>
@@ -232,6 +233,26 @@ public:
             }
         }
         return arr;
+    }
+    /**
+     * Converts a string to lowercase.
+     * @param str The input string to convert
+     * @return A new string with all characters converted to lowercase
+     */
+    static inline std::string Lowercase(const std::string& str)
+    {
+        std::string result = str;
+        std::transform(result.begin(), result.end(), result.begin(), [](unsigned char c) { return std::tolower(c); });
+        return result;
+    }
+
+    /**
+     * Converts a string to lowercase in-place.
+     * @param str The string to convert (modified in-place)
+     */
+    static inline void LowercaseInPlace(std::string& str)
+    {
+        std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return std::tolower(c); });
     }
 };
 inline wxString BoolToString(bool b) { return b ? wxT("yes") : wxT("no"); }

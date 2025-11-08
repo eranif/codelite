@@ -106,6 +106,31 @@ codelite.add_menu_item("Tools", "My Custom Action", function()
 end)
 ```
 
+**Supported Menus**
+
+The following menu names can be used as the first argument to specify context menu locations:
+
+#### Available Menu Contexts
+
+| Menu Name | Description |
+|-----------|-------------|
+| `editor_context_menu_llm_generation` | Context menu displayed when right-clicking within an editor and selecting **AI-powered options** |
+| `editor_tab_right_click` | Context menu displayed when right-clicking on an open editor tab label |
+| `file_tree_file` | Context menu displayed when right-clicking on a file in the tree view |
+| `file_tree_folder` | Context menu displayed when right-clicking on a folder in the tree view |
+| `editor_right_click` | Context menu displayed when right-clicking within a **C++** file editor |
+| `editor_right_click_default` | Context menu displayed when right-clicking within any non-C++ file editor |
+
+#### Top-Level Menu Items
+
+In addition to the context menus listed above, you can reference any top-level menu item from the application menu bar, such as:
+
+- `File`
+- `Edit`
+- Other standard menu bar items
+
+---
+
 ### add_menu_separator
 
 **Signature**:

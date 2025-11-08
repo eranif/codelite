@@ -4,7 +4,7 @@
 
 #include <wx/menu.h>
 
-class WXDLLIMPEXP_SDK clXmlResource
+class WXDLLIMPEXP_SDK clXmlResource : public wxEvtHandler
 {
 public:
     /**
@@ -50,6 +50,8 @@ public:
     wxMenu* LoadMenu(const wxString& name);
 
 private:
-    clXmlResource() = default;
-    ~clXmlResource() = default;
+    clXmlResource();
+    ~clXmlResource() override;
+
+    void OnMenuShown(wxMenuEvent& event);
 };

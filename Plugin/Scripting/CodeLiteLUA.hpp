@@ -20,8 +20,7 @@ extern "C" {
 
 struct WXDLLIMPEXP_SDK LuaMenuItem {
     std::string label;
-    luabridge::LuaRef action{nullptr};
-    bool is_separator{false};
+    std::optional<luabridge::LuaRef> action;
 
     /**
      * @brief Executes the stored action if it is a valid function.
@@ -36,11 +35,14 @@ struct WXDLLIMPEXP_SDK LuaMenuItem {
      */
     inline void RunAction() const
     {
+        if (!action.has_value()) {
+            return;
+        }
         try {
-            if (!action.isFunction()) {
+            if (!action.value().isFunction()) {
                 return;
             }
-            action();
+            action.value()();
         } catch (const std::exception& e) {
             wxString errmsg;
             errmsg << "Failed to execute LUA menu action: " << label << ". " << e.what();
@@ -56,7 +58,8 @@ struct WXDLLIMPEXP_SDK LuaMenuItem {
      *
      * @return true if the label is non-empty and action is a valid function, false otherwise
      */
-    inline bool IsOk() const { return !label.empty() && action.isFunction(); }
+    inline bool IsOk() const { return !label.empty() && action.has_value() && action.value().isFunction(); }
+    inline bool IsSeparator() const { return !action.has_value(); }
 };
 
 class WXDLLIMPEXP_SDK CodeLiteLUA : public wxEvtHandler

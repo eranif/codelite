@@ -64,6 +64,7 @@ void CodeLiteLUA::Initialise()
             .beginNamespace("codelite")
             .addFunction("message_box", &CodeLiteLUA::message_box)
             .addFunction("add_menu_item", &CodeLiteLUA::add_menu_item)
+            .addFunction("add_menu_separator", &CodeLiteLUA::add_menu_separator)
             .addFunction("editor_selection", &CodeLiteLUA::editor_selection)
             .addFunction("chat", &CodeLiteLUA::chat)
             .addFunction("generate", &CodeLiteLUA::generate)
@@ -149,7 +150,7 @@ void CodeLiteLUA::add_menu_item(const std::string& menu_name, const std::string&
 
     auto menu_name_lc = StringUtils::Lowercase(menu_name);
     clDEBUG() << "Adding item:" << label << "for menu:" << menu_name_lc << endl;
-    LuaMenuItem menu_item{.label = label, .action = std::move(action), .is_separator = false};
+    LuaMenuItem menu_item{.label = label, .action = std::move(action)};
     if (!menu_item.IsOk()) {
         clWARNING() << "Failed to add menu item:" << label << "to menu:" << menu_name_lc << ". Action is not a function"
                     << endl;
@@ -165,7 +166,7 @@ void CodeLiteLUA::add_menu_separator(const std::string& menu_name)
     auto& self = Get();
 
     clDEBUG() << "Adding separator for menu:" << menu_name << endl;
-    LuaMenuItem menu_item{.is_separator = true};
+    LuaMenuItem menu_item;
 
     // If "menu_name" is missing a default entry is added.
     self.m_menu_items[menu_name].push_back(std::move(menu_item));
@@ -348,18 +349,23 @@ void CodeLiteLUA::UpdateMenu(const wxString& menu_name, wxMenu* menu)
 
     auto& menu_items = m_menu_items[name];
     for (const auto& item : menu_items) {
-        if (item.is_separator) {
-            auto item = menu->AppendSeparator();
+        if (item.IsSeparator()) {
             if (is_menu_bar_menu) {
-                m_items_added_to_menu_bar_menus[name].push_back(item->GetId());
+                // Note: Dynamically-added separators cannot be removed from menus individually,
+                // as they share the same identifier. Menu bar menus are allocated once during
+                // initialization, which would result in duplicate separators being added each
+                // time the menu is displayed. To prevent this issue, separator addition to
+                // menu bar items is explicitly disabled.
+                continue;
             }
+            menu->AppendSeparator();
         } else {
             wxString label = wxString::FromUTF8(item.label);
             auto menu_id = wxXmlResource::GetXRCID(label);
+            menu->Append(menu_id, label);
             if (is_menu_bar_menu) {
                 m_items_added_to_menu_bar_menus[name].push_back(menu_id);
             }
-            menu->Append(menu_id, label);
             menu->Bind(wxEVT_MENU, [&item](wxCommandEvent&) { item.RunAction(); }, menu_id);
         }
     }

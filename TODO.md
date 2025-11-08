@@ -26,9 +26,10 @@ AI-powered IDE:
 - MarkdownStyler: mark gcc style lines "file:line" as hyperlink and clickable.
 - Extend the LUA API to support more options:
     - codelite.get_prompt(name)
-    - codelite.menu_add_separator()
     - codelite.is_workspace_opened()
+    - codelite.file_explorer_selected_item() - return the selected item in the file explorer view
 
+    
 - Extend the "Prompt Editor" to support adding/deleting prompts (the default ones can not be deleted)
 - In the prompt editor, add support for placeholders:
 

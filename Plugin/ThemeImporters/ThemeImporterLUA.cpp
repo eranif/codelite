@@ -31,7 +31,7 @@ LexerConf::Ptr_t ThemeImporterLua::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_LUA_LITERALSTRING, "Literal string", m_string);
     AddProperty(lexer, wxSTC_LUA_PREPROCESSOR, "Preprocessor", m_string);
     AddProperty(lexer, wxSTC_LUA_OPERATOR, "Operator", m_oper);
-    AddProperty(lexer, wxSTC_LUA_IDENTIFIER, "Identifier", m_editor.fg_colour, m_editor.bg_colour);
+    AddProperty(lexer, wxSTC_LUA_IDENTIFIER, "Identifier", m_variable);
     AddProperty(lexer, wxSTC_LUA_STRINGEOL, "String EOL", m_string);
     AddProperty(lexer, wxSTC_LUA_LABEL, "Label", m_klass);
     FinalizeImport(lexer);

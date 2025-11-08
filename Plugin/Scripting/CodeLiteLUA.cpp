@@ -147,12 +147,23 @@ void CodeLiteLUA::add_menu_item(const std::string& menu_name, const std::string&
     auto& self = Get();
 
     clDEBUG() << "Adding item:" << label << "for menu:" << menu_name << endl;
-    LuaMenuItem menu_item{.label = label, .action = std::move(action)};
+    LuaMenuItem menu_item{.label = label, .action = std::move(action), .is_separator = false};
     if (!menu_item.IsOk()) {
         clWARNING() << "Failed to add menu item:" << label << "to menu:" << menu_name << ". Action is not a function"
                     << endl;
         return;
     }
+
+    // If "menu_name" is missing a default entry is added.
+    self.m_menu_items[menu_name].push_back(std::move(menu_item));
+}
+
+void CodeLiteLUA::add_menu_separator(const std::string& menu_name)
+{
+    auto& self = Get();
+
+    clDEBUG() << "Adding separator for menu:" << menu_name << endl;
+    LuaMenuItem menu_item{.is_separator = true};
 
     // If "menu_name" is missing a default entry is added.
     self.m_menu_items[menu_name].push_back(std::move(menu_item));
@@ -300,11 +311,15 @@ void CodeLiteLUA::UpdateMenu(const wxString& menu_name, wxMenu* menu)
     }
 
     auto& menu_items = m_menu_items[name];
-    for (auto& item : menu_items) {
-        wxString label = wxString::FromUTF8(item.label);
-        auto menu_id = wxXmlResource::GetXRCID(label);
-        menu->Append(menu_id, label);
-        menu->Bind(wxEVT_MENU, [&item](wxCommandEvent&) { item.RunAction(); }, menu_id);
+    for (const auto& item : menu_items) {
+        if (item.is_separator) {
+            menu->AppendSeparator();
+        } else {
+            wxString label = wxString::FromUTF8(item.label);
+            auto menu_id = wxXmlResource::GetXRCID(label);
+            menu->Append(menu_id, label);
+            menu->Bind(wxEVT_MENU, [&item](wxCommandEvent&) { item.RunAction(); }, menu_id);
+        }
     }
 }
 

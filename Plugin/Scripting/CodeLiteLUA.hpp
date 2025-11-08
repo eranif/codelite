@@ -20,7 +20,9 @@ extern "C" {
 
 struct WXDLLIMPEXP_SDK LuaMenuItem {
     std::string label;
-    luabridge::LuaRef action;
+    luabridge::LuaRef action{nullptr};
+    bool is_separator{false};
+
     /**
      * @brief Executes the stored action if it is a valid function.
      *
@@ -32,7 +34,7 @@ struct WXDLLIMPEXP_SDK LuaMenuItem {
      * @throws std::exception If the invoked action throws (the exception is handled
      *         internally by logging and showing a message box).
      */
-    inline void RunAction()
+    inline void RunAction() const
     {
         try {
             if (!action.isFunction()) {
@@ -170,6 +172,19 @@ protected:
     static void message_box(const std::string& message, int type);
 
     /**
+     * @brief Adds a visual separator to the specified menu.
+     *
+     * This function creates a separator menu item and appends it to the menu identified by `menu_name`.
+     * If the menu does not exist, it will be created automatically with the separator as its first item.
+     *
+     * @param menu_name The name of the menu to which the separator should be added. If the menu does not
+     *                  exist in the internal menu items map, a new entry will be created.
+     *
+     * @return void This function does not return a value.
+     */
+    static void add_menu_separator(const std::string& menu_name);
+
+    /**
      * @brief Adds a menu item with an associated Lua action to a specified menu.
      *
      * This function registers a new menu item under the given menu name. If the menu
@@ -181,8 +196,7 @@ protected:
      * @param label the display label for the menu item
      * @param action a Lua function reference that will be called when the menu item is activated
      */
-    static void
-    add_menu_item(const std::string& menu_name, const std::string& label, luabridge::LuaRef action);
+    static void add_menu_item(const std::string& menu_name, const std::string& label, luabridge::LuaRef action);
 
     /**
      * @brief Retrieves the current selection text from the active editor.
@@ -280,10 +294,7 @@ protected:
      *
      * @param msg The error message to be logged.
      */
-    static inline void log_error(const std::string& msg)
-    {
-        log_message(msg, FileLogger::LogLevel::Error);
-    }
+    static inline void log_error(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Error); }
     /**
      * @brief Logs a system message.
      *
@@ -293,10 +304,7 @@ protected:
      *
      * @param msg The message to be logged.
      */
-    static inline void log_system(const std::string& msg)
-    {
-        log_message(msg, FileLogger::LogLevel::System);
-    }
+    static inline void log_system(const std::string& msg) { log_message(msg, FileLogger::LogLevel::System); }
     /**
      * @brief Logs a warning message.
      *
@@ -305,10 +313,7 @@ protected:
      *
      * @param msg The message to be logged.
      */
-    static inline void log_warn(const std::string& msg)
-    {
-        log_message(msg, FileLogger::LogLevel::Warning);
-    }
+    static inline void log_warn(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Warning); }
     /**
      * @brief Logs a debug-level message.
      *
@@ -321,10 +326,7 @@ protected:
      *
      * @note The function returns no value and is inexpensive to call.
      */
-    static inline void log_debug(const std::string& msg)
-    {
-        log_message(msg, FileLogger::LogLevel::Dbg);
-    }
+    static inline void log_debug(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Dbg); }
     /**
      * Logs a trace message at the Developer log level.
      *
@@ -333,10 +335,7 @@ protected:
      *
      * @param msg The message to log.
      */
-    static inline void log_trace(const std::string& msg)
-    {
-        log_message(msg, FileLogger::LogLevel::Developer);
-    }
+    static inline void log_trace(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Developer); }
 
     /**
      * @brief Replaces all occurrences of a substring within a string with another substring.
@@ -371,9 +370,8 @@ protected:
      * @see std::string::find
      * @see std::string::replace
      */
-    static std::string str_replace_all(const std::string& str,
-                                       const std::string& find_what,
-                                       const std::string& replace_with);
+    static std::string
+    str_replace_all(const std::string& str, const std::string& find_what, const std::string& replace_with);
 
 private:
     CodeLiteLUA();

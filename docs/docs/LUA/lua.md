@@ -106,6 +106,31 @@ codelite.add_menu_item("Tools", "My Custom Action", function()
 end)
 ```
 
+### add_menu_separator
+
+**Signature**:
+
+```lua
+codelite.add_menu_separator(menu_name)
+```
+
+**Description**:
+
+Adds a visual separator to the specified menu. If the menu does not exist, it will be created automatically with the separator as its first item.
+
+**Parameters**:
+- `menu_name` (string): The name of the menu to which the separator should be added
+
+**Example**:
+
+```lua
+-- Add a separator to the Tools menu
+codelite.add_menu_separator("Tools")
+
+-- Create a new menu with a separator
+codelite.add_menu_separator("My Custom Menu")
+```
+
 ---
 
 ## Editor Functions

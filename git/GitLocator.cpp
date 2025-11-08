@@ -3,6 +3,7 @@
 #include "StringUtils.h"
 
 #include <wx/tokenzr.h>
+#include <wx/utils.h>
 
 #ifdef __WXMSW__
 #include <wx/msw/registry.h>

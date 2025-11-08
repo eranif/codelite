@@ -84,6 +84,28 @@ std::string StringUtils::ToStdString(const wxString& str)
     return res;
 }
 
+std::vector<std::string> StringUtils::ToStdStrings(const wxArrayString& strs)
+{
+    std::vector<std::string> res;
+    res.reserve(strs.size());
+
+    for (const auto& s : strs) {
+        res.push_back(ToStdString(s));
+    }
+    return res;
+}
+
+std::vector<std::string> StringUtils::ToStdStrings(const std::vector<wxString>& strs)
+{
+    std::vector<std::string> res;
+    res.reserve(strs.size());
+
+    for (const auto& s : strs) {
+        res.push_back(ToStdString(s));
+    }
+    return res;
+}
+
 int StringUtils::wxStringToInt(const wxString& str, int defval, int minval, int maxval)
 {
     long v;

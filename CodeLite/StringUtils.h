@@ -24,14 +24,15 @@
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "AsyncProcess/asyncprocess.h"
+#include "clEnvironment.hpp"
 #include "codelite_exports.h"
 
 #include <algorithm>
-#include <sstream>
 #include <string>
+#include <string_view>
+#include <unordered_set>
+#include <vector>
 #include <wx/arrstr.h>
-#include <wx/combobox.h>
 #include <wx/string.h>
 
 using wxStringView = std::basic_string_view<wxChar>;
@@ -63,6 +64,15 @@ public:
      */
     static std::string ToStdString(const wxString& str);
 
+    /**
+     * @brief convert wxArrayString into std::vector<std::string>
+     */
+    static std::vector<std::string> ToStdStrings(const wxArrayString& strs);
+
+    /**
+     * @brief convert std::vector<wxString> into std::vector<std::string>
+     */
+    static std::vector<std::string> ToStdStrings(const std::vector<wxString>& strs);
     /**
      * @brief convert string to integer using range validation and default value
      */

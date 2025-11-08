@@ -2,21 +2,20 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
-#include "JSON.h"
 #include "Platform/Platform.hpp"
 #include "StringUtils.h"
-#include "clSFTPManager.hpp"
 #include "cl_command_event.h"
 #include "environmentconfig.h"
-#include "file_logger.h"
-#include "fileutils.h"
-#include "globals.h"
 
-#include <cJSON.h>
+#include <assistant/common/json.hpp> // <nlohmann/json.hpp>
 #include <functional>
-#include <unordered_map>
+#include <vector>
 #include <wx/event.h>
 #include <wx/tokenzr.h>
+
+#if USE_SFTP
+#include "clSFTPManager.hpp"
+#endif
 
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_RESTARTED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_CODELITE_REMOTE_LIST_FILES, clCommandEvent);
@@ -341,10 +340,8 @@ void clCodeLiteRemoteProcess::ListLSPs()
     }
 
     // build the command and send it
-    JSON root(cJSON_Object);
-    auto item = root.toElement();
-    item.addProperty("command", "list_lsps");
-    m_process->Write(item.format(false) + "\n");
+    const nlohmann::json json = {{"command", "list_lsps"}};
+    m_process->Write(json.dump() + "\n");
 
     // push a callback
     m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnListLSPsOutput, nullptr, nullptr });
@@ -360,15 +357,16 @@ void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir,
     }
 
     // build the command and send it
-    JSON root(cJSON_Object);
-    auto item = root.toElement();
-    item.addProperty("command", "ls");
-    item.addProperty("root_dir", root_dir);
-    item.addProperty("file_extensions", ::wxStringTokenize(extensions, ",; |", wxTOKEN_STRTOK));
-    item.addProperty("exclude_extensions", ::wxStringTokenize(exclude_extensions, ",; |", wxTOKEN_STRTOK));
-    item.addProperty("exclude_patterns", ::wxStringTokenize(exclude_patterns, ",; |", wxTOKEN_STRTOK));
-    LOG_IF_TRACE { clDEBUG1() << "ListFiles: sending command:" << item.format(false) << endl; }
-    m_process->Write(item.format(false) + "\n");
+    const nlohmann::json json = {
+        {"command", "ls"},
+        {"root_dir", StringUtils::ToStdString(root_dir)},
+        {"file_extensions", StringUtils::ToStdStrings(::wxStringTokenize(extensions, ",; |", wxTOKEN_STRTOK))},
+        {"exclude_extensions", StringUtils::ToStdStrings(::wxStringTokenize(exclude_extensions, ",; |", wxTOKEN_STRTOK))},
+        {"exclude_patterns", StringUtils::ToStdStrings(::wxStringTokenize(exclude_patterns, ",; |", wxTOKEN_STRTOK))}
+    };
+    const auto command = json.dump();
+    LOG_IF_TRACE { clDEBUG1() << "ListFiles: sending command:" << command << endl; }
+    m_process->Write(command + "\n");
 
     // push a callback
     m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnListFilesOutput, nullptr, nullptr });
@@ -386,17 +384,15 @@ void clCodeLiteRemoteProcess::Search(const wxString& root_dir,
     }
 
     // build the command and send it
-    JSON root(cJSON_Object);
-    auto item = root.toElement();
-    item.addProperty("command", "find");
-    item.addProperty("root_dir", root_dir);
-    item.addProperty("find_what", find_what);
-    item.addProperty("file_extensions", ::wxStringTokenize(extensions, ",; |", wxTOKEN_STRTOK));
-    item.addProperty("exclude_patterns", ::wxStringTokenize(exclude_patterns, ",; |", wxTOKEN_STRTOK));
-    item.addProperty("icase", icase);
-    item.addProperty("whole_word", whole_word);
-
-    wxString command = item.format(false);
+    const nlohmann::json json = {{"command", "find"},
+                      {"root_dir", StringUtils::ToStdString(root_dir)},
+                      {"find_what", StringUtils::ToStdString(find_what)},
+                      {"file_extensions", StringUtils::ToStdStrings(::wxStringTokenize(extensions, ",; |", wxTOKEN_STRTOK))},
+                      {"exclude_patterns", StringUtils::ToStdStrings(::wxStringTokenize(exclude_patterns, ",; |", wxTOKEN_STRTOK))},
+                      {"icase", icase},
+                      {"whole_word", whole_word}
+    };
+    const auto command = json.dump();
     m_process->Write(command + "\n");
     LOG_IF_TRACE { clDEBUG1() << command << endl; }
 
@@ -414,24 +410,13 @@ void clCodeLiteRemoteProcess::Locate(const wxString& path,
     }
 
     // build the command and send it
-    JSON root(cJSON_Object);
-    auto item = root.toElement();
-    item.addProperty("command", "locate");
-    item.addProperty("path", path);
-    item.addProperty("name", name);
-    item.addProperty("ext", ext);
+    const nlohmann::json json = {{"command", "locate"},
+                                 {"path", StringUtils::ToStdString(path)},
+                                 {"name", StringUtils::ToStdString(name)},
+                                 {"ext", StringUtils::ToStdString(ext)},
+                                 {"versions", StringUtils::ToStdStrings(versions)}};
 
-    // convert std::vector to wxArrayString
-    wxArrayString v;
-    v.reserve(versions.size());
-
-    for (const auto& s : versions) {
-        v.Add(s);
-    }
-
-    item.addProperty("versions", v);
-
-    wxString command = item.format(false);
+    const auto command = json.dump();
     m_process->Write(command + "\n");
     LOG_IF_TRACE { clDEBUG1() << command << endl; }
 
@@ -446,12 +431,8 @@ void clCodeLiteRemoteProcess::FindPath(const wxString& path)
     }
 
     // build the command and send it
-    JSON root(cJSON_Object);
-    auto item = root.toElement();
-    item.addProperty("command", "find_path");
-    item.addProperty("path", path);
-
-    wxString command = item.format(false);
+    const nlohmann::json json = {{"command", "find_path"}, {"path", StringUtils::ToStdString(path)}};
+    const auto command = json.dump();
     m_process->Write(command + "\n");
     LOG_IF_TRACE { clDEBUG1() << command << endl; }
 
@@ -473,20 +454,15 @@ bool clCodeLiteRemoteProcess::DoExec(
     }
 
     // build the command and send it
-    JSON root(cJSON_Object);
-    auto item = root.toElement();
-    item.addProperty("command", "exec");
-    item.addProperty("wd", working_directory);
-    item.addProperty("cmd", cmd);
+    nlohmann::json json = {{"command", "exec"}, {"wd", StringUtils::ToStdString(working_directory)}, {"cmd", cmd}};
 
-    auto envarr = item.AddArray("env");
-    for (const auto& p : env) {
-        auto entry = envarr.AddObject(wxEmptyString);
-        entry.addProperty("name", p.first);
-        entry.addProperty("value", p.second);
+    auto& envarr = json["env"];
+    envarr = nlohmann::json::array();
+    for (const auto& [name, value] : env) {
+        envarr.push_back({{"name", StringUtils::ToStdString(name)}, {"value", StringUtils::ToStdString(value)}});
     }
 
-    wxString command = item.format(false);
+    wxString command = json.dump();
     m_process->Write(command + "\n");
 
     // push a callback
@@ -794,18 +770,16 @@ void clCodeLiteRemoteProcess::Replace(const wxString& root_dir,
     }
 
     // build the command and send it
-    JSON root(cJSON_Object);
-    auto item = root.toElement();
-    item.addProperty("command", "replace");
-    item.addProperty("root_dir", root_dir);
-    item.addProperty("find_what", find_what);
-    item.addProperty("replace_with", replace_with);
-    item.addProperty("file_extensions", ::wxStringTokenize(extensions, ",; |", wxTOKEN_STRTOK));
-    item.addProperty("exclude_patterns", ::wxStringTokenize(exclude_patterns, ",; |", wxTOKEN_STRTOK));
-    item.addProperty("icase", icase);
-    item.addProperty("whole_word", whole_word);
-
-    wxString command = item.format(false);
+    const nlohmann::json json = {
+        {"command", "replace"},
+        {"root_dir", StringUtils::ToStdString(root_dir)},
+        {"find_what", StringUtils::ToStdString(find_what)},
+        {"replace_with", StringUtils::ToStdString(replace_with)},
+        {"file_extensions", StringUtils::ToStdStrings(::wxStringTokenize(extensions, ",; |", wxTOKEN_STRTOK))},
+        {"exclude_patterns", StringUtils::ToStdStrings(::wxStringTokenize(exclude_patterns, ",; |", wxTOKEN_STRTOK))},
+        {"icase", icase},
+        {"whole_word", whole_word}};
+    const auto command = json.dump();
     m_process->Write(command + "\n");
     LOG_IF_TRACE { clDEBUG1() << command << endl; }
 

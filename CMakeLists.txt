@@ -1192,9 +1192,6 @@ if(NOT WXC_APP)
 endif()
 
 if(MINGW)
-  set(MSYSTEM_ENV_VAR "$ENV{MSYSTEM}")
-  message(STATUS "MSYSTEM_ENV_VAR => ${MSYSTEM_ENV_VAR}")
-
   # determine MSYS2 path
   write_file(${CMAKE_BINARY_DIR}/msys2-environment "export WXWIN=${WXWIN}")
   write_file(${CMAKE_BINARY_DIR}/msys2-environment
@@ -1215,11 +1212,6 @@ if(MINGW)
     libsqlite3-0.dll
     libhunspell-1.7-0.dll
     libunwind.dll)
-
-  if("${MSYSTEM_ENV_VAR}" STREQUAL "UCRT64")
-    message(STATUS "Running on UCRT64, including libuchardet.dll DLL")
-    list(APPEND SYSTEM_DLLS libuchardet.dll)
-  endif()
 
   list(
     APPEND

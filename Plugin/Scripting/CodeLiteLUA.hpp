@@ -11,6 +11,7 @@ extern "C" {
 #include "LuaBridge/LuaBridge.h"
 #include "codelite_exports.h"
 
+#include <optional>
 #include <string>
 #include <vector>
 #include <wx/event.h>

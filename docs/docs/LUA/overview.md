@@ -82,7 +82,7 @@ codelite.add_menu_item(
 | `codelite.str_replace_all()` | Utility method to replace placeholders (`{{lang}}` and `{{context}}`) with actual values |
 | `codelite.editor_language()` | Returns the programming language of the current editor context |
 | `codelite.generate()` | Initiates LLM code generation with the formatted prompt |
-| `codelite.add_menu_item()` | Associates the custom action with an existing menu item |
+| [`codelite.add_menu_item()`](/LUA/lua/#add_menu_item) | Associates the custom action with an existing menu |
 
 **Key Steps:**
 

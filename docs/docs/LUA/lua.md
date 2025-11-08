@@ -123,9 +123,11 @@ codelite.add_menu_item(menu_name, label, action)
 
 **Description**:
 
-Adds a menu item with an associated Lua action to a specified menu. If the menu does not exist, it will be created. The callback function will be executed when the menu item is triggered.
+Adds a menu item with an associated Lua action to a specified menu (see below for a list of available menus).
+The callback function will be executed when the menu item is triggered.
 
 **Parameters**:
+
 - `menu_name` (string): The name of the menu to which the item will be added
 - `label` (string): The display label for the menu item
 - `action` (function): A Lua function that will be called when the menu item is activated
@@ -160,6 +162,7 @@ In addition to the context menus listed above, you can reference any top-level m
 
 - `File`
 - `Edit`
+- `Search`
 - Other standard menu bar items
 
 ---
@@ -177,6 +180,7 @@ codelite.add_menu_separator(menu_name)
 Adds a visual separator to the specified menu. If the menu does not exist, it will be created automatically with the separator as its first item.
 
 **Parameters**:
+
 - `menu_name` (string): The name of the menu to which the separator should be added
 
 **Example**:

@@ -262,7 +262,17 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 if (accessor.GetSubstr(3) == "```") {
                     // code block
                     accessor.SetStyle(MarkdownStyles::kBacktick, 3);
-                    m_states.push(MarkdownState::kCodeBlock);
+                    m_states.push(MarkdownState::kCodeBlock3);
+                    m_states.push(MarkdownState::kCodeBlockTag);
+                } else if (accessor.GetSubstr(4) == "````") {
+                    // code block
+                    accessor.SetStyle(MarkdownStyles::kBacktick, 4);
+                    m_states.push(MarkdownState::kCodeBlock4);
+                    m_states.push(MarkdownState::kCodeBlockTag);
+                } else if (accessor.GetSubstr(5) == "`````") {
+                    // code block
+                    accessor.SetStyle(MarkdownStyles::kBacktick, 5);
+                    m_states.push(MarkdownState::kCodeBlock5);
                     m_states.push(MarkdownState::kCodeBlockTag);
                 } else {
                     accessor.SetStyle(MarkdownStyles::kBacktick, 1);
@@ -293,11 +303,41 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 break;
             }
             break;
-        case MarkdownState::kCodeBlock:
+        case MarkdownState::kCodeBlock3:
             switch (ch) {
             case '`':
                 if (accessor.IsAtStartOfLine() && accessor.GetSubstr(3) == "```") {
                     accessor.SetStyle(MarkdownStyles::kBacktick, 3);
+                    m_states.pop();
+                } else {
+                    accessor.SetStyle(MarkdownStyles::kCodeBlockText, 1);
+                }
+                break;
+            default:
+                accessor.SetStyle(MarkdownStyles::kCodeBlockText, 1);
+                break;
+            }
+            break;
+        case MarkdownState::kCodeBlock4:
+            switch (ch) {
+            case '`':
+                if (accessor.IsAtStartOfLine() && accessor.GetSubstr(4) == "````") {
+                    accessor.SetStyle(MarkdownStyles::kBacktick, 4);
+                    m_states.pop();
+                } else {
+                    accessor.SetStyle(MarkdownStyles::kCodeBlockText, 1);
+                }
+                break;
+            default:
+                accessor.SetStyle(MarkdownStyles::kCodeBlockText, 1);
+                break;
+            }
+            break;
+        case MarkdownState::kCodeBlock5:
+            switch (ch) {
+            case '`':
+                if (accessor.IsAtStartOfLine() && accessor.GetSubstr(5) == "`````") {
+                    accessor.SetStyle(MarkdownStyles::kBacktick, 5);
                     m_states.pop();
                 } else {
                     accessor.SetStyle(MarkdownStyles::kCodeBlockText, 1);

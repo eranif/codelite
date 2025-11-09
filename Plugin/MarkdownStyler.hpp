@@ -38,7 +38,9 @@ enum MarkdownStyles {
 
 enum class MarkdownState {
     kDefault,
-    kCodeBlock,
+    kCodeBlock3,
+    kCodeBlock4,
+    kCodeBlock5,
     kCodeBlockTag,
     kCodeWord,
     kStrong2Text,

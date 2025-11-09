@@ -40,4 +40,6 @@ AI-powered IDE:
     - `{{workspace_path}}` - full path of the workspace
     - `{{workspace_config}}` - release / debug etc
 
+- Add "codelite-api.lua" file to the installation folder to provide completion for LUA LSPs.
+
 Prepare release notes per version (e.g. 18.2.0, 18.3.0 etc)

@@ -1,3 +1,5 @@
+#pragma once
+
 #define wxUSE_NATIVE_CHOICE 0
 #define wxUSE_NATIVE_BUTTON 1
 #define wxUSE_NATIVE_SCROLLBAR 1

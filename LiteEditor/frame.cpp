@@ -2083,7 +2083,7 @@ void clMainFrame::OnFileReload(wxCommandEvent& event)
         // Ask user if he really wants to lose all changes
         wxString msg;
         msg << _("File '") << editor->GetFileName().GetFullName() << _("' is modified\nContinue with reload?");
-        if (::wxMessageBox(msg, _("Reload File"), wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) != wxYES) {
+        if (::clMessageBox(msg, _("Reload File"), wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) != wxYES) {
             return;
         }
     }
@@ -2269,7 +2269,7 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
 
         wxString sessionName = dlg.GetTabgroupName();
         if (sessionName.IsEmpty()) {
-            if (wxMessageBox(_("Please enter a name for the tab group"),
+            if (clMessageBox(_("Please enter a name for the tab group"),
                              wxT("CodeLite"),
                              wxICON_ERROR | wxOK | wxCANCEL,
                              this) != wxOK) {
@@ -2287,7 +2287,7 @@ void clMainFrame::OnFileSaveTabGroup(wxCommandEvent& WXUNUSED(event))
         }
         wxString filepath(path + sessionName + ".tabgroup");
         if (wxFileName::FileExists(filepath)) {
-            if (wxMessageBox(_("There is already a file with this name. Do you want to overwrite it?"),
+            if (clMessageBox(_("There is already a file with this name. Do you want to overwrite it?"),
                              _("Are you sure?"),
                              wxICON_EXCLAMATION | wxOK | wxCANCEL,
                              this) != wxOK) {
@@ -4004,7 +4004,7 @@ void clMainFrame::OnNewVersionAvailable(wxCommandEvent& e)
               << (e.GetEventType() == wxEVT_CMD_VERSION_UPTODATE ? "up-to-date" : "new version found") << clEndl;
     if ((e.GetEventType() == wxEVT_CMD_VERSION_UPTODATE) && m_webUpdate->IsUserRequest()) {
         // All is up to date
-        wxMessageBox(_("You already have the latest version of CodeLite"), "CodeLite", wxOK | wxCENTRE, this);
+        clMessageBox(_("You already have the latest version of CodeLite"), "CodeLite", wxOK | wxCENTRE, this);
     } else {
         WebUpdateJobData* data = reinterpret_cast<WebUpdateJobData*>(e.GetClientData());
         if (data) {
@@ -4416,7 +4416,7 @@ void clMainFrame::OnStartQuickDebug(clDebugEvent& e)
                 clDebuggerTerminalPOSIX::MakeExeTitle(
                     exepath, (bStartedInDebugMode ? GetTheApp()->GetDebuggerArgs() : e.GetArguments())),
                 tty)) {
-            wxMessageBox(
+            clMessageBox(
                 _("Could not start TTY console for debugger!"), wxT("CodeLite"), wxOK | wxCENTER | wxICON_ERROR);
         }
 #endif
@@ -4501,7 +4501,7 @@ void clMainFrame::OnDebugCoreDump(wxCommandEvent& e)
             wxString tty;
 #ifndef __WXMSW__
             if (!ManagerST::Get()->StartTTY(clDebuggerTerminalPOSIX::MakeCoreTitle(dlg->GetCore()), tty)) {
-                wxMessageBox(
+                clMessageBox(
                     _("Could not start TTY console for debugger!"), wxT("CodeLite"), wxOK | wxCENTER | wxICON_ERROR);
             }
 #endif
@@ -5024,10 +5024,10 @@ void clMainFrame::OnGotoCodeLiteDownloadPage(wxCommandEvent& e)
 void clMainFrame::DoSuggestRestart()
 {
 #ifdef __WXMSW__
-    ::wxMessageBox(
+    ::clMessageBox(
         _("A restart is required for changes to take effect"), "CodeLite", wxICON_INFORMATION | wxOK | wxCENTER);
 #else
-    if (::wxMessageBox(_("A restart is required for changes to take effect\nContinue with restart?"),
+    if (::clMessageBox(_("A restart is required for changes to take effect\nContinue with restart?"),
                        "CodeLite",
                        wxYES_NO | wxYES_DEFAULT | wxICON_QUESTION,
                        this) != wxYES) {
@@ -6245,7 +6245,7 @@ void clMainFrame::OnAiShowChatBox(wxCommandEvent& e)
     wxUnusedVar(e);
     if (llm::Manager::GetInstance().ListEndpoints().IsEmpty()) {
         // We have no endpoints configured, prompt the user.
-        auto answer = wxMessageBox(_("No LLM providers are currently configured. Would you like to set one up now?"),
+        auto answer = clMessageBox(_("No LLM providers are currently configured. Would you like to set one up now?"),
                                    "CodeLite",
                                    wxYES_NO | wxCANCEL | wxYES_DEFAULT | wxICON_QUESTION,
                                    this);
@@ -6264,7 +6264,7 @@ void clMainFrame::OnAiChooseEndpoint(wxCommandEvent& e)
     auto endpoints = llm::Manager::GetInstance().ListEndpoints();
     if (endpoints.empty()) {
         // We have no endpoints configured, prompt the user.
-        auto answer = wxMessageBox(_("No LLM providers are currently configured. Would you like to set one up now?"),
+        auto answer = clMessageBox(_("No LLM providers are currently configured. Would you like to set one up now?"),
                                    "CodeLite",
                                    wxYES_NO | wxCANCEL | wxYES_DEFAULT | wxICON_QUESTION,
                                    this);

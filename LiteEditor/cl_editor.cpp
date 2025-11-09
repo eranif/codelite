@@ -33,7 +33,6 @@
 #include "LSP/LSPManager.hpp"
 #include "StringUtils.h"
 #include "attribute_style.h"
-#include "bitmap_loader.h"
 #include "bookmark_manager.h"
 #include "buildtabsettingsdata.h"
 #include "cc_box_tip_window.h"
@@ -329,7 +328,7 @@ bool MSWRemoveROFileAttribute(const wxFileName& fileName)
     DWORD dwAttrs = GetFileAttributes(fileName.GetFullPath().c_str());
     if (dwAttrs != INVALID_FILE_ATTRIBUTES) {
         if (dwAttrs & FILE_ATTRIBUTE_READONLY) {
-            if (wxMessageBox(wxString::Format(wxT("'%s' \n%s\n%s"),
+            if (clMessageBox(wxString::Format(wxT("'%s' \n%s\n%s"),
                                               fileName.GetFullPath(),
                                               _("has the read-only attribute set"),
                                               _("Would you like CodeLite to try and remove it?")),
@@ -337,7 +336,7 @@ bool MSWRemoveROFileAttribute(const wxFileName& fileName)
                              wxYES_NO | wxICON_QUESTION | wxCENTER) == wxYES) {
                 // try to clear the read-only flag from the file
                 if (SetFileAttributes(fileName.GetFullPath().c_str(), dwAttrs & ~(FILE_ATTRIBUTE_READONLY)) == FALSE) {
-                    wxMessageBox(wxString::Format(wxT("%s '%s' %s"),
+                    clMessageBox(wxString::Format(wxT("%s '%s' %s"),
                                                   _("Failed to open file"),
                                                   fileName.GetFullPath().c_str(),
                                                   _("for write")),
@@ -1702,7 +1701,7 @@ bool clEditor::SaveFileAs(const wxString& newname, const wxString& savePath)
     saveAsEvent.SetNewpath(name.GetFullPath());
 
     if (!SaveToFile(name)) {
-        wxMessageBox(_("Failed to save file"), _("Error"), wxOK | wxICON_ERROR);
+        clMessageBox(_("Failed to save file"), _("Error"), wxOK | wxICON_ERROR);
         return false;
     }
     m_fileName = name;
@@ -1768,7 +1767,7 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
     // permissions) Notify the user and continue
     if (intermediateFile.Exists()) {
         // We failed to delete the intermediate file
-        ::wxMessageBox(
+        ::clMessageBox(
             wxString::Format(_("Unable to create intermediate file\n'%s'\nfor writing. File already exists!"),
                              intermediateFile.GetFullPath()),
             "CodeLite",
@@ -1780,7 +1779,7 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
     wxFFile file(intermediateFile.GetFullPath().GetData(), "wb");
     if (!file.IsOpened()) {
         // Nothing to be done
-        wxMessageBox(wxString::Format(_("Failed to open file\n'%s'\nfor write"), fileName.GetFullPath()),
+        clMessageBox(wxString::Format(_("Failed to open file\n'%s'\nfor write"), fileName.GetFullPath()),
                      "CodeLite",
                      wxOK | wxCENTER | wxICON_ERROR);
         return false;
@@ -1789,7 +1788,7 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
     // Convert the text
     const wxWX2MBbuf buf = theText.mb_str(useBuiltIn ? (const wxMBConv&)wxConvUTF8 : (const wxMBConv&)fontEncConv);
     if (!buf.data()) {
-        wxMessageBox(wxString::Format(wxT("%s\n%s '%s'"),
+        clMessageBox(wxString::Format(wxT("%s\n%s '%s'"),
                                       _("Save file failed!"),
                                       _("Could not convert the file to the requested encoding"),
                                       wxFontMapper::GetEncodingName(GetOptions()->GetFileFontEncoding())),
@@ -1804,7 +1803,7 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
         errmsg << _("File text conversion failed!\nCheck your file font encoding from\nSettings | "
                     "Preferences | "
                     "Misc | Locale");
-        wxMessageBox(errmsg, "CodeLite", wxOK | wxICON_ERROR | wxCENTER, wxTheApp->GetTopWindow());
+        clMessageBox(errmsg, "CodeLite", wxOK | wxICON_ERROR | wxCENTER, wxTheApp->GetTopWindow());
         return false;
     }
 
@@ -1829,7 +1828,7 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
     // If this file is not writable, prompt the user before we do something stupid
     if (symlinkedFile.FileExists() && !symlinkedFile.IsFileWritable()) {
         // Prompt the user
-        if (::wxMessageBox(
+        if (::clMessageBox(
                 wxString() << _("The file\n") << fileName.GetFullPath() << _("\nis a read only file, continue?"),
                 "CodeLite",
                 wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_WARNING,
@@ -1844,7 +1843,7 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
         // Check if the file has the ReadOnly attribute and attempt to remove it
         if (MSWRemoveROFileAttribute(symlinkedFile)) {
             if (!::wxRenameFile(intermediateFile.GetFullPath(), symlinkedFile.GetFullPath(), true)) {
-                wxMessageBox(
+                clMessageBox(
                     wxString::Format(_("Failed to override read-only file")), "CodeLite", wxOK | wxICON_WARNING);
                 return false;
             }
@@ -1853,7 +1852,7 @@ bool clEditor::SaveToFile(const wxFileName& fileName)
 #else
     if (!::wxRenameFile(intermediateFile.GetFullPath(), symlinkedFile.GetFullPath(), true)) {
         // Try clearing the clang cache and try again
-        wxMessageBox(wxString::Format(_("Failed to override read-only file")), "CodeLite", wxOK | wxICON_WARNING);
+        clMessageBox(wxString::Format(_("Failed to override read-only file")), "CodeLite", wxOK | wxICON_WARNING);
         return false;
     }
 #endif
@@ -3639,7 +3638,7 @@ void clEditor::AddBreakpoint(int lineno /*= -1*/,
     ManagerST::Get()->GetBreakpointsMgr()->SetExpectingControl(true);
     if (!ManagerST::Get()->GetBreakpointsMgr()->AddBreakpointByLineno(
             file_path, lineno, conditions, is_temp, is_disabled)) {
-        wxMessageBox(_("Failed to insert breakpoint"));
+        clMessageBox(_("Failed to insert breakpoint"));
 
     } else {
 
@@ -3683,7 +3682,7 @@ void clEditor::DelBreakpoint(int lineno /*= -1*/)
         message = _("Breakpoint deletion failed");
     }
 
-    wxMessageBox(message, _("Breakpoint not deleted"), wxICON_ERROR | wxOK);
+    clMessageBox(message, _("Breakpoint not deleted"), wxICON_ERROR | wxOK);
 }
 
 void clEditor::ToggleBreakpoint(int lineno)
@@ -5757,7 +5756,7 @@ void clEditor::ReloadFromDisk(bool keepUndoHistory)
             if (!clSFTPManager::Get().AwaitReadFile(GetRemotePath(), GetRemoteData()->GetAccountName(), &content)) {
                 wxString message;
                 message << _("Failed to reload remote file: ") << GetRemotePath();
-                wxMessageBox(message, "CodeLite", wxICON_WARNING | wxCENTRE | wxOK);
+                clMessageBox(message, "CodeLite", wxICON_WARNING | wxCENTRE | wxOK);
                 return;
             }
             text = wxString((const unsigned char*)content.GetData(), wxConvUTF8, content.GetDataLen());

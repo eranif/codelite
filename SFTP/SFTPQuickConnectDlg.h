@@ -1,6 +1,10 @@
 #ifndef SFTPQUICKCONNECTDLG_H
 #define SFTPQUICKCONNECTDLG_H
 
+// clang-format off
+#include <wx/wx.h>
+// clang-format on
+
 #include "UI.h"
 #include "ssh/ssh_account_info.h"
 

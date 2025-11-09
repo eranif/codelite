@@ -150,7 +150,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     // need to force this to false, see these bugs:
     // https://github.com/eranif/codelite/issues/3010
     // https://github.com/eranif/codelite/issues/2992
-    ctrl->SetBufferedDraw(false);
+    ctrl->SetBufferedDraw(true);
 #endif
 
     if (IsSubstyleSupported()) {

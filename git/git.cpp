@@ -864,11 +864,22 @@ void GitPlugin::OnCreateBranch(wxCommandEvent& e)
     ProcessGitActionQueue();
 }
 
-void GitPlugin::OnCommit(wxCommandEvent& e)
+void GitPlugin::OnCommit(wxCommandEvent& event)
 {
-    wxUnusedVar(e);
-    gitAction ga(gitDiffRepoCommit, wxT(""));
-    m_gitActionQueue.push_back(ga);
+    wxUnusedVar(event);
+
+    // Check for existing git index lock file which indicates another git process is running
+    auto indexLockFile = CheckForIndexLock();
+    if (indexLockFile.has_value()) {
+        wxString message = wxString::Format(
+            _("Found lock file: '%s'\nIs another git process running (or crashed)?"), indexLockFile->c_str());
+        clMessageBox(message, _("Commit Error"), wxICON_WARNING | wxOK | wxCENTER);
+        return;
+    }
+
+    // Queue the commit action and process it
+    gitAction commitAction(gitDiffRepoCommit, wxEmptyString);
+    m_gitActionQueue.push_back(commitAction);
     m_mgr->ShowManagementWindow(GIT_TAB_NAME, true);
     ProcessGitActionQueue();
 }
@@ -3272,4 +3283,23 @@ clStatusOr<wxArrayString> GitPlugin::FetchLogBetweenCommits(const wxString& star
         clDEBUG() << chunk << endl;
     }
     return result;
+}
+
+std::optional<wxString> GitPlugin::CheckForIndexLock() const
+{
+    if (IsRemoteWorkspace()) {
+#if USE_SFTP
+        wxString index_lock_file = m_repositoryDirectory + "/.git/index.lock";
+        if (clSFTPManager::Get().IsFileExists(index_lock_file, m_remoteWorkspaceAccount)) {
+            return index_lock_file;
+        }
+#endif
+    } else {
+        wxFileName index_lock_file{m_repositoryDirectory, "index.lock"};
+        index_lock_file.AppendDir(".git");
+        if (index_lock_file.FileExists()) {
+            return index_lock_file.GetFullPath();
+        }
+    }
+    return std::nullopt;
 }

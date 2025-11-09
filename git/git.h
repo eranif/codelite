@@ -298,6 +298,8 @@ private:
     void OnFindPath(clCommandEvent& event);
     void OpenURLInBrowser(const wxString& url);
 
+    std::optional<wxString> CheckForIndexLock() const;
+
 public:
     GitPlugin(IManager* manager);
     ~GitPlugin() override = default;

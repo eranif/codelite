@@ -2,7 +2,7 @@
 #
 # CL_PLUGIN( "MyPlugin" )
 
-cmake_minimum_required(VERSION 3.5)
+cmake_minimum_required(VERSION 3.10)
 message("-- Including plugin.cmake module")
 
 function(CL_PLUGIN PLUGIN_NAME)

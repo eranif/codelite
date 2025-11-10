@@ -39,11 +39,6 @@ cmake_minimum_required(VERSION 3.16)
 #
 # ##############################################################################
 
-if(NOT CMAKE_VERSION VERSION_LESS 3.1) # THIS MUST STAY AT THE TOP OF THE FILE
-  cmake_policy(VERSION 3.1) # Doing this prevents multiple, very verbose
-                            # warnings about policy CMP0053 not being set
-endif()
-
 set(CMAKE_MODULE_PATH ${CMAKE_MODULE_PATH} "${CMAKE_SOURCE_DIR}/cmake/Modules/")
 include(OSXDeps)
 

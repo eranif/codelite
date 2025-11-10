@@ -975,6 +975,11 @@ void PluginManager::ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonId)
     clMainFrame::Get()->ShowBuildMenu(toolbar, buttonId);
 }
 
+void PluginManager::ShowBuildMenu(wxAuiToolBar* toolbar, wxWindowID buttonId)
+{
+    clMainFrame::Get()->ShowBuildMenu(toolbar, buttonId);
+}
+
 wxMenuBar* PluginManager::GetMenuBar() { return clMainFrame::Get()->GetMainMenuBar(); }
 
 void PluginManager::OpenFileAndAsyncExecute(const wxString& fileName, std::function<void(IEditor*)>&& func)

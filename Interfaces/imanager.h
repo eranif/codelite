@@ -743,6 +743,11 @@ public:
      */
     virtual void ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonId) = 0;
 
+    /**
+     * @brief build and display the build menu for a toolbar button
+     */
+    virtual void ShowBuildMenu(wxAuiToolBar* toolbar, wxWindowID buttonId) = 0;
+
     ///--------------------
     /// Book management
     ///--------------------

@@ -26,6 +26,7 @@
 
 #include "OpenFolderDlg.h"
 #include "SideBar.hpp"
+#include "clAuiToolBarArt.h"
 #include "clFileOrFolderDropTarget.h"
 #include "clToolBarButton.h"
 #include "clTreeCtrlPanel.h"
@@ -63,8 +64,9 @@ void FileExplorer::CreateGUIControls()
     wxBoxSizer* mainSizer = new wxBoxSizer(wxVERTICAL);
     SetSizer(mainSizer);
     m_view = new clTreeCtrlPanel(this);
-    auto images = m_view->GetToolBar()->GetBitmapsCreateIfNeeded();
-    m_view->GetToolBar()->AddTool(wxID_OPEN, _("Open folder"), images->Add("folder-yellow-opened"));
+    auto images = clGetManager()->GetStdIcons();
+    clAuiToolBarArt::AddTool(
+        m_view->GetToolBar(), wxID_OPEN, _("Open folder"), images->LoadBitmap("folder-yellow-opened"));
     m_view->GetToolBar()->Realize();
     m_view->GetToolBar()->Bind(wxEVT_TOOL, &FileExplorer::OnOpenFolder, this, wxID_OPEN);
     // For the file explorer we use the standard configuration tool
@@ -77,7 +79,7 @@ void FileExplorer::CreateGUIControls()
 void FileExplorer::OnFolderDropped(clCommandEvent& event)
 {
     const wxArrayString& folders = event.GetStrings();
-    for(size_t i = 0; i < folders.size(); ++i) {
+    for (size_t i = 0; i < folders.size(); ++i) {
         m_view->AddFolder(folders.Item(i));
     }
     clGetManager()->BookSelectPage(PaneId::SIDE_BAR, _("Explorer"));
@@ -88,7 +90,7 @@ void FileExplorer::OpenFolder(const wxString& path) { m_view->AddFolder(path); }
 void FileExplorer::OnOpenFolder(wxCommandEvent& event)
 {
     wxString path = ::wxDirSelector(_("Select folder to open"));
-    if(path.IsEmpty()) {
+    if (path.IsEmpty()) {
         return;
     }
     OpenFolder(path);

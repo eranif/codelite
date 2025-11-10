@@ -57,7 +57,7 @@ public:
     /**
      * @brief getter for the toolbar
      */
-    clToolBar* GetToolBar() { return m_toolbar; }
+    wxAuiToolBar* GetToolBar() { return m_toolbar; }
 
     /**
      * @brief set the tree options
@@ -200,7 +200,7 @@ protected:
     wxString m_newfileTemplate;
     size_t m_newfileTemplateHighlightLen = 0;
     int m_options = (kShowHiddenFiles | kShowHiddenFolders | kLinkToEditor);
-    clToolBar* m_toolbar = nullptr;
+    wxAuiToolBar* m_toolbar = nullptr;
     wxString m_excludeFilePatterns;
 };
 

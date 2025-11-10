@@ -19,6 +19,7 @@ ${CMAKE_COMMAND} ${SRC_DIR} -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=${
        AND EXISTS "${CMAKE_BINARY_DIR}/local_builds/lib/libhunspell-1.7.a"
        AND EXISTS "${CMAKE_BINARY_DIR}/local_builds/lib/libssl.a"
        AND EXISTS "${CMAKE_BINARY_DIR}/local_builds/lib/libz.a"
+       AND EXISTS "${CMAKE_BINARY_DIR}/local_builds/lib/libyaml-cpp.a"
        AND EXISTS "${CMAKE_BINARY_DIR}/local_builds/lib/libcrypto.a")
         message(STATUS "LibSSH is already built, skipping")
         set(LIBSSH_INCLUDE_DIR "${CMAKE_BINARY_DIR}/local_builds/include")

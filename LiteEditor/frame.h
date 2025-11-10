@@ -35,10 +35,12 @@
 #include "clInfoBar.h"
 #include "clStatusBar.h"
 #include "clToolBar.h"
+#include "cl_aui_tool_stickness.h"
 #include "cl_command_event.h"
 #include "cl_editor.h"
 #include "cl_process.h"
 #include "debuggerpane.h"
+#include "event_notifier.h"
 #include "generalinfo.h"
 #include "macros.h"
 #include "mainbook.h"
@@ -415,7 +417,38 @@ public:
     void ViewPane(const wxString& paneName, bool checked);
     void ShowOrHideCaptions();
     clToolBarGeneric* GetPluginsToolBar() const { return m_pluginsToolbar; }
-    void ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonID);
+
+    template <typename ToolBar>
+    void ShowBuildMenu(ToolBar* toolbar, wxWindowID buttonID)
+    {
+        CHECK_PTR_RET(toolbar);
+        wxMenu menu;
+
+        // let the plugins build a different menu
+        clContextMenuEvent evt{wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING};
+        evt.SetEventObject(toolbar);
+        evt.SetMenu(&menu);
+        if (!EventNotifier::Get()->ProcessEvent(evt)) {
+            DoCreateBuildDropDownMenu(&menu);
+        }
+
+        // show the menu
+        if constexpr (std::is_same_v<ToolBar, clToolBar>) {
+            toolbar->ShowMenuForButton(buttonID, &menu);
+        } else if constexpr (std::is_same_v<ToolBar, wxAuiToolBar>) {
+            auto tb = static_cast<wxAuiToolBar*>(toolbar);
+            clAuiToolStickness stickness{tb, buttonID};
+            // line up our menu with the button
+            wxRect rect = tb->GetToolRect(buttonID);
+            wxPoint pt = tb->ClientToScreen(rect.GetBottomLeft());
+            pt = ScreenToClient(pt);
+
+            PopupMenu(&menu, pt);
+        } else {
+            // assume wxToolBar
+            PopupMenu(&menu);
+        }
+    }
 
 protected:
     //----------------------------------------------------

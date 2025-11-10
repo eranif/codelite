@@ -6094,23 +6094,6 @@ void clMainFrame::OnReportIssue(wxCommandEvent& event)
     ::wxLaunchDefaultBrowser("https://github.com/eranif/codelite/issues");
 }
 
-void clMainFrame::ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonID)
-{
-    CHECK_PTR_RET(toolbar);
-    wxMenu menu;
-
-    // let the plugins build a different menu
-    clContextMenuEvent evt(wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING);
-    evt.SetEventObject(toolbar);
-    evt.SetMenu(&menu);
-    if (!EventNotifier::Get()->ProcessEvent(evt)) {
-        DoCreateBuildDropDownMenu(&menu);
-    }
-
-    // show the menu
-    toolbar->ShowMenuForButton(buttonID, &menu);
-}
-
 void clMainFrame::DoShowMenuBar(bool show) { wxUnusedVar(show); }
 
 void clMainFrame::OnSysColoursChanged(clCommandEvent& event)

@@ -1,6 +1,7 @@
 #include "clFileSystemWorkspaceView.hpp"
 
 #include "StringUtils.h"
+#include "clAuiToolBarArt.h"
 #include "clFileSystemWorkspace.hpp"
 #include "clFileSystemWorkspaceDlg.h"
 #include "clToolBar.h"
@@ -21,20 +22,36 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
     SetNewFileTemplate("Untitled.cpp", wxStrlen("Untitled"));
     SetViewName(viewName);
 
-    clBitmapList* images = GetToolBar()->GetBitmaps();
-    GetToolBar()->AddTool(wxID_PREFERENCES, _("Settings"), images->Add("cog"), "", wxITEM_NORMAL);
-    GetToolBar()->AddTool(XRCID("fsw_refresh_view"), _("Refresh View"), images->Add("file_reload"), "", wxITEM_NORMAL);
+    auto images = clGetManager()->GetStdIcons();
+    clAuiToolBarArt::AddTool(
+        GetToolBar(), wxID_PREFERENCES, _("Settings"), images->LoadBitmap("cog"), "", wxITEM_NORMAL);
+    clAuiToolBarArt::AddTool(GetToolBar(),
+                             XRCID("fsw_refresh_view"),
+                             _("Refresh View"),
+                             images->LoadBitmap("file_reload"),
+                             "",
+                             wxITEM_NORMAL);
 
     GetToolBar()->Bind(wxEVT_TOOL, &clFileSystemWorkspaceView::OnSettings, this, wxID_PREFERENCES);
     GetToolBar()->AddSeparator();
 
-    GetToolBar()->AddTool(XRCID("build_active_project"), _("Build active project"), images->Add("build"), wxEmptyString,
-                          wxITEM_DROPDOWN);
-    GetToolBar()->Bind(wxEVT_TOOL_DROPDOWN, &clFileSystemWorkspaceView::OnBuildActiveProjectDropdown, this,
-                       XRCID("build_active_project"));
+    clAuiToolBarArt::AddTool(GetToolBar(),
+                             XRCID("show_build_menu"),
+                             _("Build active project"),
+                             images->LoadBitmap("build"),
+                             wxEmptyString,
+                             wxITEM_DROPDOWN);
+    GetToolBar()->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN,
+                       &clFileSystemWorkspaceView::OnBuildActiveProjectDropdown,
+                       this,
+                       XRCID("show_build_menu"));
 
-    GetToolBar()->AddTool(XRCID("stop_active_project_build"), _("Stop current build"), images->Add("stop"),
-                          wxEmptyString, wxITEM_NORMAL);
+    clAuiToolBarArt::AddTool(GetToolBar(),
+                             XRCID("stop_active_project_build"),
+                             _("Stop current build"),
+                             images->LoadBitmap("stop"),
+                             wxEmptyString,
+                             wxITEM_NORMAL);
 
     // these events are connected using the App object (to support keyboard shortcuts)
     wxTheApp->Bind(wxEVT_TOOL, &clFileSystemWorkspaceView::OnRefreshView, this, XRCID("fsw_refresh_view"));
@@ -55,8 +72,8 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
     EventNotifier::Get()->Bind(wxEVT_BUILD_ENDED, &clFileSystemWorkspaceView::OnBuildEnded, this);
     EventNotifier::Get()->Bind(wxEVT_PROGRAM_STARTED, &clFileSystemWorkspaceView::OnProgramStarted, this);
     EventNotifier::Get()->Bind(wxEVT_PROGRAM_TERMINATED, &clFileSystemWorkspaceView::OnProgramStopped, this);
-    EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_DISMISSED, &clFileSystemWorkspaceView::OnFindInFilesDismissed,
-                               this);
+    EventNotifier::Get()->Bind(
+        wxEVT_FINDINFILES_DLG_DISMISSED, &clFileSystemWorkspaceView::OnFindInFilesDismissed, this);
     EventNotifier::Get()->Bind(wxEVT_FINDINFILES_DLG_SHOWING, &clFileSystemWorkspaceView::OnFindInFilesShowing, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clFileSystemWorkspaceView::OnThemeChanged, this);
 }
@@ -69,10 +86,12 @@ clFileSystemWorkspaceView::~clFileSystemWorkspaceView()
     EventNotifier::Get()->Unbind(wxEVT_PROGRAM_STARTED, &clFileSystemWorkspaceView::OnProgramStarted, this);
     EventNotifier::Get()->Unbind(wxEVT_PROGRAM_TERMINATED, &clFileSystemWorkspaceView::OnProgramStopped, this);
     m_choiceConfigs->Unbind(wxEVT_CHOICE, &clFileSystemWorkspaceView::OnChoiceConfigSelected, this);
-    GetToolBar()->Unbind(wxEVT_TOOL_DROPDOWN, &clFileSystemWorkspaceView::OnBuildActiveProjectDropdown, this,
-                         XRCID("build_active_project"));
-    EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_DISMISSED, &clFileSystemWorkspaceView::OnFindInFilesDismissed,
-                                 this);
+    GetToolBar()->Unbind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN,
+                         &clFileSystemWorkspaceView::OnBuildActiveProjectDropdown,
+                         this,
+                         XRCID("show_build_menu"));
+    EventNotifier::Get()->Unbind(
+        wxEVT_FINDINFILES_DLG_DISMISSED, &clFileSystemWorkspaceView::OnFindInFilesDismissed, this);
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_DLG_SHOWING, &clFileSystemWorkspaceView::OnFindInFilesShowing, this);
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clFileSystemWorkspaceView::OnThemeChanged, this);
 }
@@ -109,10 +128,10 @@ void clFileSystemWorkspaceView::OnContextMenu(clContextMenuEvent& event)
             cc_menu->Append(XRCID("fs_add_cc_include"), _("Add path to code completion"), wxEmptyString, wxITEM_NORMAL);
             cc_menu->Bind(wxEVT_MENU, &clFileSystemWorkspaceView::OnAddIncludePath, this, XRCID("fs_add_cc_include"));
         }
-        cc_menu->Append(XRCID("fs_create_compile_flags"), _("Generate compile_flags.txt file..."), wxEmptyString,
-                        wxITEM_NORMAL);
-        cc_menu->Bind(wxEVT_MENU, &clFileSystemWorkspaceView::OnCreateCompileFlagsFile, this,
-                      XRCID("fs_create_compile_flags"));
+        cc_menu->Append(
+            XRCID("fs_create_compile_flags"), _("Generate compile_flags.txt file..."), wxEmptyString, wxITEM_NORMAL);
+        cc_menu->Bind(
+            wxEVT_MENU, &clFileSystemWorkspaceView::OnCreateCompileFlagsFile, this, XRCID("fs_create_compile_flags"));
         menu->AppendSubMenu(cc_menu, _("Code Completion"), wxEmptyString);
         menu->AppendSeparator();
         menu->Append(XRCID("fs_exclude_path"), _("Exclude this folder"), wxEmptyString, wxITEM_NORMAL);
@@ -193,17 +212,22 @@ void clFileSystemWorkspaceView::OnProgramStopped(clExecuteEvent& event)
     m_runInProgress = false;
 }
 
-void clFileSystemWorkspaceView::OnBuildActiveProjectDropdown(wxCommandEvent& event)
+void clFileSystemWorkspaceView::OnBuildActiveProjectDropdown(wxAuiToolBarEvent& event)
 {
     clDEBUG() << "OnBuildActiveProjectDropdown called";
 
-    // don't display default menu
-    wxUnusedVar(event);
-    // we don't allow showing the dropdown during build process
-    if (m_buildInProgress) {
-        return;
+    if (event.IsDropDownClicked()) {
+        // don't display default menu
+        wxUnusedVar(event);
+        // we don't allow showing the dropdown during build process
+        if (m_buildInProgress) {
+            return;
+        }
+        clGetManager()->ShowBuildMenu(m_toolbar, XRCID("show_build_menu"));
+    } else {
+        wxCommandEvent build_event{wxEVT_MENU, XRCID("build_active_project")};
+        EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(build_event);
     }
-    clGetManager()->ShowBuildMenu(m_toolbar, XRCID("build_active_project"));
 }
 
 void clFileSystemWorkspaceView::OnFindInFilesDismissed(clFindInFilesEvent& event)

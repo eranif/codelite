@@ -38,7 +38,7 @@ protected:
     void OnBuildEnded(clBuildEvent& event);
     void OnProgramStarted(clExecuteEvent& event);
     void OnProgramStopped(clExecuteEvent& event);
-    void OnBuildActiveProjectDropdown(wxCommandEvent& event);
+    void OnBuildActiveProjectDropdown(wxAuiToolBarEvent& event);
     void OnFindInFilesDismissed(clFindInFilesEvent& event);
     void OnFindInFilesShowing(clFindInFilesEvent& event);
     void OnExcludePath(wxCommandEvent& event);

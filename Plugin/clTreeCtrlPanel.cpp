@@ -1,5 +1,6 @@
 #include "clTreeCtrlPanel.h"
 
+#include "clAuiToolBarArt.h"
 #include "clFileOrFolderDropTarget.h"
 #include "clFileSystemEvent.h"
 #include "clToolBar.h"
@@ -23,7 +24,6 @@
 #include <wx/richmsgdlg.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
-
 namespace
 {
 bool should_colour_item_in_gray(clTreeCtrlData* entry)
@@ -51,11 +51,14 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     , m_newfileTemplate("Untitled.txt")
     , m_newfileTemplateHighlightLen(wxStrlen("Untitled"))
 {
-    m_toolbar = new clToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTB_NODIVIDER | wxTB_FLAT);
+    m_toolbar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_DEFAULT_STYLE);
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
-    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
-    m_toolbar->AddTool(XRCID("link_editor"), _("Link Editor"), images->Add("link_editor"), "", wxITEM_CHECK);
-    m_toolbar->AddTool(XRCID("collapse_folders"), _("Fold Tree"), images->Add("fold"), "", wxITEM_NORMAL);
+
+    auto images = clGetManager()->GetStdIcons();
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("link_editor"), _("Link Editor"), images->LoadBitmap("link_editor"), "", wxITEM_CHECK);
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("collapse_folders"), _("Fold Tree"), images->LoadBitmap("fold"), "", wxITEM_NORMAL);
 
     Bind(
         wxEVT_TOOL,
@@ -214,8 +217,8 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenFile, this, XRCID("tree_ctrl_open_file"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnRenameFile, this, XRCID("tree_ctrl_rename_file"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnDeleteSelections, this, XRCID("tree_ctrl_delete_file"));
-        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenWithDefaultApplication, this,
-                  XRCID("tree_ctrl_open_with_default_app"));
+        menu.Bind(
+            wxEVT_MENU, &clTreeCtrlPanel::OnOpenWithDefaultApplication, this, XRCID("tree_ctrl_open_with_default_app"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenContainingFolder, this, XRCID("tree_ctrl_open_containig_folder"));
         menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenShellFolder, this, XRCID("tree_ctrl_open_shell_folder"));
 
@@ -539,7 +542,9 @@ void clTreeCtrlPanel::OnNewFolder(wxCommandEvent& event)
     EventNotifier::Get()->AddPendingEvent(fsEvent);
 }
 
-void clTreeCtrlPanel::GetSelections(wxArrayString& folders, wxArrayTreeItemIds& folderItems, wxArrayString& files,
+void clTreeCtrlPanel::GetSelections(wxArrayString& folders,
+                                    wxArrayTreeItemIds& folderItems,
+                                    wxArrayString& files,
                                     wxArrayTreeItemIds& fileItems)
 {
     folders.clear();
@@ -652,7 +657,9 @@ void clTreeCtrlPanel::OnDeleteSelections(wxCommandEvent& event)
     wxString message;
     message << _("Are you sure you want to delete the selected items?");
 
-    wxRichMessageDialog dialog(EventNotifier::Get()->TopFrame(), message, _("Confirm"),
+    wxRichMessageDialog dialog(EventNotifier::Get()->TopFrame(),
+                               message,
+                               _("Confirm"),
                                wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxCENTER | wxICON_WARNING);
 
     wxWindowUpdateLocker locker(GetTreeCtrl());
@@ -748,9 +755,9 @@ void clTreeCtrlPanel::ExpandToFileVoid(const wxFileName& filename) { ExpandToFil
 bool clTreeCtrlPanel::ExpandToFile(const wxFileName& file_to_search)
 {
 #ifdef __WXMSW__
-    wxFileName filename{ file_to_search.GetFullPath().Lower() };
+    wxFileName filename{file_to_search.GetFullPath().Lower()};
 #else
-    wxFileName filename{ file_to_search };
+    wxFileName filename{file_to_search};
 #endif
 
     wxArrayString topFolders;

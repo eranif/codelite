@@ -91,7 +91,14 @@ void clAuiToolBarArt::AddTool(wxAuiToolBar* toolbar,
     auto disabled_bmp = bitmap.ConvertToDisabled(brightness);
     wxBitmap::Rescale(disabled_bmp, wxSize(16, 16));
     wxString help_string = shortHelpString.empty() ? label : shortHelpString;
-    toolbar->AddTool(toolId, label, bitmap, disabled_bmp, item_kind, help_string, help_string, nullptr);
+    auto real_kind = item_kind;
+    if (item_kind == wxITEM_DROPDOWN) {
+        real_kind = wxITEM_NORMAL;
+    }
+    toolbar->AddTool(toolId, label, bitmap, disabled_bmp, real_kind, help_string, help_string, nullptr);
+    if (item_kind == wxITEM_DROPDOWN) {
+        toolbar->SetToolDropDown(toolId, true);
+    }
 }
 
 void clAuiToolBarArt::Finalise(wxAuiToolBar* toolbar) { wxUnusedVar(toolbar); }

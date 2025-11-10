@@ -1,0 +1,9 @@
+{
+    "workspace.library": [
+        "Runtime/config/"
+    ],
+    "diagnostics.globals": [
+        "codelite",
+        "MessageType"
+    ]
+}

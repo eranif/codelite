@@ -8,7 +8,6 @@ others:
 ----
 
 - git: support showing file revision history
-- git: check before any operation if we have `.git/index.lock`
 - editor: add an api to add end of line annotations
 - git: explore the option of using the new api of end of line annotations to replace the nav bar commit info ^^
 - dap: support stdio connection based
@@ -16,7 +15,6 @@ others:
 - SFTP plugin: re-use the remote find in files dialog
 - SFTP plugin: use clTerminalViewCtrl for the log view
 - Spell Checker: enable it for the commit dialog
-- git reset: selection does not always consider all selected items.
 - build tab: add AI option to the context menu.
 - use json instead of cJSON everywhere
 

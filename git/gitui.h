@@ -467,9 +467,9 @@ class GitConsoleBase : public wxPanel
 protected:
     wxNotebook* m_notebookChanges;
     wxPanel* m_panel674;
-    clThemedOrderedListCtrl* m_dvListCtrl;
+    wxDataViewListCtrl* m_dvListCtrl;
     wxPanel* m_panelUnversioned;
-    clThemedOrderedListCtrl* m_dvListCtrlUnversioned;
+    wxDataViewListCtrl* m_dvListCtrlUnversioned;
     wxPanel* m_panel_log;
     wxAuiToolBar* m_toolbar;
 
@@ -481,9 +481,9 @@ protected:
     virtual void OnUnversionedFileContextMenu(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    clThemedOrderedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
+    wxDataViewListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxPanel* GetPanel674() { return m_panel674; }
-    clThemedOrderedListCtrl* GetDvListCtrlUnversioned() { return m_dvListCtrlUnversioned; }
+    wxDataViewListCtrl* GetDvListCtrlUnversioned() { return m_dvListCtrlUnversioned; }
     wxPanel* GetPanelUnversioned() { return m_panelUnversioned; }
     wxPanel* GetPanel_log() { return m_panel_log; }
     wxNotebook* GetNotebookChanges() { return m_notebookChanges; }

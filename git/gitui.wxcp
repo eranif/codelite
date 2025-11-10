@@ -12418,7 +12418,7 @@
 															"border":	2,
 															"gbSpan":	"1,1",
 															"gbPosition":	"0,0",
-															"m_styles":	["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_MULTIPLE", "wxBORDER_SIMPLE"],
+															"m_styles":	["wxDV_NO_HEADER", "wxDV_ROW_LINES", "wxDV_MULTIPLE"],
 															"m_sizerFlags":	["wxEXPAND"],
 															"m_properties":	[{
 																	"type":	"winid",
@@ -12467,11 +12467,11 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
-																	"m_value":	"clThemedOrderedListCtrl"
+																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
-																	"m_value":	"clThemedListCtrl.h"
+																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Style:",
@@ -12511,7 +12511,7 @@
 																		}, {
 																			"type":	"string",
 																			"m_label":	"Width:",
-																			"m_value":	"-2"
+																			"m_value":	"24"
 																		}, {
 																			"type":	"choice",
 																			"m_label":	"Column Type",
@@ -12751,11 +12751,11 @@
 																}, {
 																	"type":	"string",
 																	"m_label":	"Class Name:",
-																	"m_value":	"clThemedOrderedListCtrl"
+																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Include File:",
-																	"m_value":	"clThemedListCtrl.h"
+																	"m_value":	""
 																}, {
 																	"type":	"string",
 																	"m_label":	"Style:",
@@ -12793,7 +12793,7 @@
 																		}, {
 																			"type":	"choice",
 																			"m_label":	"Column Type",
-																			"m_selection":	2,
+																			"m_selection":	3,
 																			"m_options":	["bitmap", "check", "text", "icontext", "progress", "choice"]
 																		}, {
 																			"type":	"multi-string",

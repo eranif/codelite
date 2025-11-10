@@ -106,6 +106,11 @@ wxVariant MakeFileBitmapLabel(const wxString& filename)
     return v;
 }
 
+wxVariant MakeStdFileBitmapLabel(const wxString& filename)
+{
+    return ::MakeIconText(filename, clGetManager()->GetStdIcons()->GetBitmapForFile(filename, false));
+}
+
 struct ToolBarItem {
     wxString label;
     int id;
@@ -152,6 +157,15 @@ wxString GenerateRandomFile()
     return tmpfile.GetFullPath();
 }
 
+void DeleteAllItems(wxDataViewListCtrl* list)
+{
+    for (size_t i = 0; i < list->GetItemCount(); ++i) {
+        auto item_data = list->GetItemData(list->RowToItem(i));
+        GitClientData* cd = reinterpret_cast<GitClientData*>(item_data);
+        wxDELETE(cd);
+    }
+    list->DeleteAllItems();
+}
 } // namespace
 
 // ---------------------------------------------------------------------
@@ -162,10 +176,6 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
 {
     // set the font to fit the C++ lexer default font
     m_bitmapLoader = clGetManager()->GetStdIcons();
-    m_dvListCtrl->SetSortedColumn(1);
-    m_dvListCtrl->SetRendererType(eRendererType::RENDERER_DIRECT2D);
-    m_dvListCtrlUnversioned->SetSortedColumn(1);
-    m_dvListCtrlUnversioned->SetRendererType(eRendererType::RENDERER_DIRECT2D);
 
     // Error messages will be coloured with red
     m_errorPatterns = {{"fatal:"},
@@ -259,12 +269,8 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     GetSizer()->Add(m_statusBar, wxSizerFlags(0).Expand());
     GetSizer()->Fit(this);
 
-    m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
-    m_dvListCtrlUnversioned->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
     EventNotifier::Get()->Bind(wxEVT_BITMAPS_UPDATED, [this](clCommandEvent& event) {
         event.Skip();
-        m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
-        m_dvListCtrlUnversioned->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
         m_dvListCtrl->Refresh();
         m_dvListCtrlUnversioned->Refresh();
     });
@@ -427,16 +433,21 @@ void GitConsole::UpdateTreeView(const wxString& output)
         if (kind == eGitFile::kUntrackedFile) {
             // untracked
             cols.clear();
-            cols.push_back(MakeFileBitmapLabel(d.path));
+            cols.push_back(MakeStdFileBitmapLabel(d.path));
             m_dvListCtrlUnversioned->AppendItem(cols, (wxUIntPtr) new GitClientData(d.path, kind));
         } else {
             // modified
             cols.clear();
             cols.push_back(wxString() << chX);
-            cols.push_back(MakeFileBitmapLabel(d.path));
+            cols.push_back(MakeStdFileBitmapLabel(d.path));
             m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new GitClientData(d.path, kind));
         }
     }
+    m_dvListCtrlUnversioned->SetAlternateRowColour(
+        wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX).ChangeLightness(95));
+    m_dvListCtrlUnversioned->Refresh();
+    m_dvListCtrl->SetAlternateRowColour(wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX).ChangeLightness(95));
+    m_dvListCtrl->Refresh();
 }
 
 void GitConsole::OnContextMenu(wxDataViewEvent& event)
@@ -741,19 +752,8 @@ void GitConsole::OnStclogStcChange(wxStyledTextEvent& event) { event.Skip(); }
 
 void GitConsole::Clear()
 {
-    m_dvListCtrl->DeleteAllItems([](wxUIntPtr d) {
-        GitClientData* cd = reinterpret_cast<GitClientData*>(d);
-        if (cd) {
-            wxDELETE(cd);
-        }
-    });
-
-    m_dvListCtrlUnversioned->DeleteAllItems([](wxUIntPtr d) {
-        GitClientData* cd = reinterpret_cast<GitClientData*>(d);
-        if (cd) {
-            wxDELETE(cd);
-        }
-    });
+    DeleteAllItems(m_dvListCtrl);
+    DeleteAllItems(m_dvListCtrlUnversioned);
 }
 
 void GitConsole::OnUpdateUI(wxUpdateUIEvent& event) { event.Enable(m_git->IsGitEnabled()); }

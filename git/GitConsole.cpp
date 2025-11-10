@@ -443,10 +443,14 @@ void GitConsole::UpdateTreeView(const wxString& output)
             m_dvListCtrl->AppendItem(cols, (wxUIntPtr) new GitClientData(d.path, kind));
         }
     }
-    m_dvListCtrlUnversioned->SetAlternateRowColour(
-        wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX).ChangeLightness(95));
+
+#ifdef __WXMSW__
+    wxColour alternate_colour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX).ChangeLightness(95);
+    m_dvListCtrlUnversioned->SetAlternateRowColour(alternate_colour);
+    m_dvListCtrl->SetAlternateRowColour(alternate_colour);
+#endif
+
     m_dvListCtrlUnversioned->Refresh();
-    m_dvListCtrl->SetAlternateRowColour(wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX).ChangeLightness(95));
     m_dvListCtrl->Refresh();
 }
 

@@ -33,7 +33,11 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
                              wxITEM_NORMAL);
 
     GetToolBar()->Bind(wxEVT_TOOL, &clFileSystemWorkspaceView::OnSettings, this, wxID_PREFERENCES);
+    m_choiceConfigs = new wxChoice(GetToolBar(), wxID_ANY, wxDefaultPosition, wxSize(250, wxNOT_FOUND));
+    m_choiceConfigs->SetToolTip(_("Choose build configuration"));
+    m_choiceConfigs->Bind(wxEVT_CHOICE, &clFileSystemWorkspaceView::OnChoiceConfigSelected, this);
     GetToolBar()->AddSeparator();
+    GetToolBar()->AddControl(m_choiceConfigs);
 
     clAuiToolBarArt::AddTool(GetToolBar(),
                              XRCID("show_build_menu"),
@@ -52,20 +56,11 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
                              images->LoadBitmap("stop"),
                              wxEmptyString,
                              wxITEM_NORMAL);
+    GetToolBar()->Realize();
 
     // these events are connected using the App object (to support keyboard shortcuts)
     wxTheApp->Bind(wxEVT_TOOL, &clFileSystemWorkspaceView::OnRefreshView, this, XRCID("fsw_refresh_view"));
     wxTheApp->Bind(wxEVT_UPDATE_UI, &clFileSystemWorkspaceView::OnRefreshViewUI, this, XRCID("fsw_refresh_view"));
-
-    GetToolBar()->Realize();
-
-    m_choiceConfigs = new wxChoice(this, wxID_ANY);
-    m_choiceConfigs->Bind(wxEVT_CHOICE, &clFileSystemWorkspaceView::OnChoiceConfigSelected, this);
-    GetSizer()->Insert(0, m_choiceConfigs, 0, wxEXPAND | wxALL, 5);
-
-    // Hide hidden folders and files
-    // m_options &= ~kShowHiddenFiles;
-    // m_options &= ~kShowHiddenFolders;
 
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &clFileSystemWorkspaceView::OnContextMenu, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_STARTED, &clFileSystemWorkspaceView::OnBuildStarted, this);

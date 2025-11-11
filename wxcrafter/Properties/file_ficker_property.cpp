@@ -1,5 +1,6 @@
 #include "file_ficker_property.h"
 
+#include "json_utils.h"
 #include "wxc_project_metadata.h"
 
 #include <wx/filename.h>
@@ -22,21 +23,23 @@ FilePickerProperty::FilePickerProperty()
 
 wxString FilePickerProperty::GetValue() const { return m_path; }
 
-JSONElement FilePickerProperty::Serialize() const
+nlohmann::json FilePickerProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
-    json.addProperty(wxT("type"), wxT("filePicker"));
+    nlohmann::json json = {{"type", "filePicker"}};
     DoBaseSerialize(json);
-    json.addProperty(wxT("m_path"), m_path);
+    json["m_path"] = m_path;
     return json;
 }
 
 void FilePickerProperty::SetValue(const wxString& value) { m_path = value; }
 
-void FilePickerProperty::UnSerialize(const JSONElement& json)
+void FilePickerProperty::UnSerialize(const nlohmann::json& json)
 {
+    if (!json.is_object()) {
+        return;
+    }
     DoBaseUnSerialize(json);
-    m_path = json.namedObject(wxT("m_path")).toString();
+    m_path = JsonUtils::ToString(json["m_path"]);
 }
 
 void FilePickerProperty::FixPaths(const wxString& cwd)

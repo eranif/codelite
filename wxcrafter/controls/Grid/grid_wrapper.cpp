@@ -8,6 +8,7 @@
 #include "allocator_mgr.h"
 #include "grid_column_wrapper.h"
 #include "grid_row_wrapper.h"
+#include "json_utils.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 
@@ -209,14 +210,17 @@ void GridWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     }
 }
 
-void GridWrapper::UnSerialize(const JSONElement& json)
+void GridWrapper::UnSerialize(const nlohmann::json& json)
 {
-    m_sizerItem.SetBorder(json.namedObject(wxT("border")).toInt(5));
-    m_sizerItem.SetProportion(json.namedObject(wxT("proportion")).toInt(0));
-    m_gbSpan = json.namedObject(wxT("gbSpan")).toString();
-    m_gbPos = json.namedObject(wxT("gbPosition")).toString();
+    if (!json.is_object()) {
+        return;
+    }
+    m_sizerItem.SetBorder(json.value("border", 5));
+    m_sizerItem.SetProportion(json.value("proportion", 0));
+    m_gbSpan = JsonUtils::ToString(json["gbSpan"]);
+    m_gbPos = JsonUtils::ToString(json["gbPosition"]);
 
-    m_auiPaneInfo.FromJSON(json.namedObject("wxAuiPaneInfo"));
+    m_auiPaneInfo.FromJSON(json["wxAuiPaneInfo"]);
 
     // Unserialize the styles
     DoClearFlags(m_styles);
@@ -224,71 +228,58 @@ void GridWrapper::UnSerialize(const JSONElement& json)
 
     m_connectedEvents.Clear();
 
-    JSONElement styles = json.namedObject(wxT("m_styles"));
-    int nCount = styles.arraySize();
-    for(int i = 0; i < nCount; i++) {
-        wxString styleName = styles.arrayItem(i).toString();
-        EnableStyle(styleName, true);
+    for (const auto& styleName : json.value("m_styles", nlohmann::json::array())) {
+        EnableStyle(JsonUtils::ToString(styleName), true);
     }
-
-    JSONElement sizerFlags = json.namedObject(wxT("m_sizerFlags"));
-    nCount = sizerFlags.arraySize();
-    for(int i = 0; i < nCount; i++) {
-        wxString styleName = sizerFlags.arrayItem(i).toString();
-        EnableSizerFlag(styleName, true);
+    for (const auto& styleName : json.value("m_sizerFlags", nlohmann::json::array())) {
+        EnableSizerFlag(JsonUtils::ToString(styleName), true);
     }
 
     // Unserialize the properties
-    JSONElement properties = json.namedObject(wxT("m_properties"));
-    nCount = properties.arraySize();
+    for (const auto& jsonProp : json.value("m_properties", nlohmann::json::array())) {
+        if (!jsonProp.is_object()) {
+            continue;
+        }
+        wxString propLabel = JsonUtils::ToString(jsonProp["m_label"]);
 
-    for(int i = 0; i < nCount; i++) {
-        JSONElement jsonProp = properties.arrayItem(i);
-        wxString propLabel = jsonProp.namedObject(wxT("m_label")).toString();
-
-        if(propLabel == PROP_COLS_LIST) {
-            wxString cols_string = jsonProp.namedObject(wxT("m_value")).toString();
+        if (propLabel == PROP_COLS_LIST) {
+            wxString cols_string = JsonUtils::ToString(jsonProp["m_value"]);
             wxArrayString colsArr = wxCrafter::Split(cols_string, ";");
 
-            for(size_t i = 0; i < colsArr.GetCount(); ++i) {
+            for (size_t i = 0; i < colsArr.GetCount(); ++i) {
                 // The old way of creating rows - create new children and add them here
                 wxcWidget* col = Allocator::Instance()->Create(ID_WXGRIDCOL);
                 col->SetName(colsArr.Item(i));
                 AddChild(col);
             }
 
-        } else if(propLabel == PROP_ROWS_LIST) {
-            wxString rows_string = jsonProp.namedObject(wxT("m_value")).toString();
+        } else if (propLabel == PROP_ROWS_LIST) {
+            wxString rows_string = JsonUtils::ToString(jsonProp["m_value"]);
             wxArrayString rowsArr = wxCrafter::Split(rows_string, ";");
 
-            for(size_t i = 0; i < rowsArr.GetCount(); ++i) {
+            for (size_t i = 0; i < rowsArr.GetCount(); ++i) {
                 // The old way of creating rows - create new children and add them here
                 wxcWidget* row = Allocator::Instance()->Create(ID_WXGRIDROW);
                 row->SetName(rowsArr.Item(i));
                 AddChild(row);
             }
 
-        } else if(m_properties.Contains(propLabel)) {
+        } else if (m_properties.Contains(propLabel)) {
             m_properties.Item(propLabel)->UnSerialize(jsonProp);
         }
     }
 
     // Unserialize the events
-    JSONElement events = json.namedObject(wxT("m_events"));
-    nCount = events.arraySize();
-    for(int i = 0; i < nCount; i++) {
-        JSONElement jsonEvent = events.arrayItem(i);
+    for (const auto& jsonEvent : json.value("m_events", nlohmann::json::array())) {
         ConnectDetails details;
         details.FromJSON(jsonEvent);
         m_connectedEvents.PushBack(details.GetEventName(), details);
     }
 
-    JSONElement children = json.namedObject(wxT("m_children"));
-    int nChildren = children.arraySize();
-    for(int i = 0; i < nChildren; i++) {
-        JSONElement child = children.arrayItem(i);
-        wxcWidget* wrapper = Allocator::Instance()->CreateWrapperFromJSON(child);
-        if(wrapper) { AddChild(wrapper); }
+    for (const auto& child : json.value("m_children", nlohmann::json::array())) {
+        if (auto wrapper = Allocator::Instance()->CreateWrapperFromJSON(child)) {
+            AddChild(wrapper);
+        }
     }
 }
 

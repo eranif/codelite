@@ -1,5 +1,7 @@
 #include "multi_strings_property.h"
 
+#include "json_utils.h"
+
 MultiStringsProperty::MultiStringsProperty(const wxString& label, const wxString& tooltip, const wxString& delim,
                                            const wxString& msg)
     : PropertyBase(tooltip)
@@ -11,19 +13,21 @@ MultiStringsProperty::MultiStringsProperty(const wxString& label, const wxString
 
 wxString MultiStringsProperty::GetValue() const { return m_value; }
 
-JSONElement MultiStringsProperty::Serialize() const
+nlohmann::json MultiStringsProperty::Serialize() const
 {
-    JSONElement element = JSONElement::createObject();
-    element.addProperty(wxT("type"), wxT("multi-string"));
+    nlohmann::json element = {{"type", "multi-string"}};
     DoBaseSerialize(element);
-    element.addProperty(wxT("m_value"), m_value);
+    element["m_value"] = m_value;
     return element;
 }
 
 void MultiStringsProperty::SetValue(const wxString& value) { m_value = value; }
 
-void MultiStringsProperty::UnSerialize(const JSONElement& json)
+void MultiStringsProperty::UnSerialize(const nlohmann::json& json)
 {
+    if (!json.is_object()) {
+        return;
+    }
     DoBaseUnSerialize(json);
-    m_value = json.namedObject(wxT("m_value")).toString();
+    m_value = JsonUtils::ToString(json["m_value"]);
 }

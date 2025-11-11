@@ -1,6 +1,8 @@
 #include "wxc_project_metadata.h"
 
-#include <wx/ffile.h>
+#include "fileutils.h"
+#include "json_utils.h"
+
 #include <wx/filename.h>
 
 const wxEventType wxEVT_CMD_WXCRAFTER_PROJECT_MODIFIED = wxNewEventType();
@@ -18,21 +20,24 @@ wxcProjectMetadata::wxcProjectMetadata()
     SetGenerateXRC(false);
 }
 
-void wxcProjectMetadata::FromJSON(const JSONElement& json)
+void wxcProjectMetadata::FromJSON(const nlohmann::json& json)
 {
-    m_objCounter = json.namedObject("m_objCounter").toInt();
-    m_generatedFilesDir = json.namedObject("m_generatedFilesDir").toString();
-    m_includeFiles = json.namedObject("m_includeFiles").toArrayString();
-    m_bitmapFunction = json.namedObject("m_bitmapFunction").toString();
-    m_bitmapsFile = json.namedObject("m_bitmapsFile").toString();
-    m_GenerateCodeTypes = json.namedObject("m_GenerateCodeTypes").toInt(wxcGenerateCPPCode);
-    m_outputFileName = json.namedObject("m_outputFileName").toString();
-    m_firstWindowId = json.namedObject("m_firstWindowId").toInt(m_firstWindowId);
-    m_useEnum = json.namedObject("m_useEnum").toBool(true);
-    m_useUnderscoreMacro = json.namedObject("m_useUnderscoreMacro").toBool(true);
-    m_addHandlers = json.namedObject("m_addHandlers").toBool(m_addHandlers);
+    if (!json.is_object()) {
+        return;
+    }
+    m_objCounter = json.value("m_objCounter", 0);
+    m_generatedFilesDir = JsonUtils::ToString(json["m_generatedFilesDir"]);
+    m_includeFiles = JsonUtils::ToArrayString(json["m_includeFiles"]);
+    m_bitmapFunction = JsonUtils::ToString(json["m_bitmapFunction"]);
+    m_bitmapsFile = JsonUtils::ToString(json["m_bitmapsFile"]);
+    m_GenerateCodeTypes = json.value("m_GenerateCodeTypes", static_cast<int>(wxcGenerateCPPCode));
+    m_outputFileName = JsonUtils::ToString(json["m_outputFileName"]);
+    m_firstWindowId = json.value("m_firstWindowId", m_firstWindowId);
+    m_useEnum = json.value("m_useEnum", true);
+    m_useUnderscoreMacro = json.value("m_useUnderscoreMacro", true);
+    m_addHandlers = json.value("m_addHandlers", m_addHandlers);
 
-    wxcSettings::Get().MergeCustomControl(json.namedObject("m_templateClasses"));
+    wxcSettings::Get().MergeCustomControl(json["m_templateClasses"]);
     if(m_bitmapFunction.IsEmpty()) {
         DoGenerateBitmapFunctionName();
     }
@@ -47,29 +52,26 @@ void wxcProjectMetadata::FromJSON(const JSONElement& json)
     m_useHpp = !wxFileName::FileExists(header_file);
 }
 
-JSONElement wxcProjectMetadata::ToJSON()
+nlohmann::json wxcProjectMetadata::ToJSON()
 {
-    JSONElement metadata = JSONElement::createObject("metadata");
     UpdatePaths();
-
-    metadata.addProperty("m_generatedFilesDir", m_generatedFilesDir);
-    metadata.addProperty("m_objCounter", (int)m_objCounter);
-    metadata.addProperty("m_includeFiles", m_includeFiles);
-    metadata.addProperty("m_bitmapFunction", m_bitmapFunction);
-    metadata.addProperty("m_bitmapsFile", m_bitmapsFile);
-    metadata.addProperty("m_GenerateCodeTypes", m_GenerateCodeTypes);
-    metadata.addProperty("m_outputFileName", m_outputFileName);
-    metadata.addProperty("m_firstWindowId", m_firstWindowId);
-    metadata.addProperty("m_useEnum", m_useEnum);
-    metadata.addProperty("m_useUnderscoreMacro", m_useUnderscoreMacro);
-    metadata.addProperty("m_addHandlers", m_addHandlers);
-    return metadata;
+    return {{"m_generatedFilesDir", m_generatedFilesDir},
+            {"m_objCounter", (int)m_objCounter},
+            {"m_includeFiles", m_includeFiles},
+            {"m_bitmapFunction", m_bitmapFunction},
+            {"m_bitmapsFile", m_bitmapsFile},
+            {"m_GenerateCodeTypes", m_GenerateCodeTypes},
+            {"m_outputFileName", m_outputFileName},
+            {"m_firstWindowId", m_firstWindowId},
+            {"m_useEnum", m_useEnum},
+            {"m_useUnderscoreMacro", m_useUnderscoreMacro},
+            {"m_addHandlers", m_addHandlers}
+    };
 }
 
-void wxcProjectMetadata::AppendCustomControlsJSON(const wxArrayString& controls, JSONElement& element) const
+void wxcProjectMetadata::AppendCustomControlsJSON(const wxArrayString& controls, nlohmann::json& element) const
 {
-    JSONElement customControls = wxcSettings::Get().GetCustomControlsAsJSON(controls);
-    element.append(customControls);
+    element.push_back(wxcSettings::Get().GetCustomControlsAsJSON(controls));
 }
 
 wxString wxcProjectMetadata::GetCppFileName() const
@@ -198,26 +200,19 @@ void wxcProjectMetadata::Serialize(const wxcWidget::List_t& topLevelsList, const
     wxcProjectMetadata p;
     p.GenerateBitmapFunctionName();
 
-    JSONRoot root(cJSON_Object);
-    root.toElement().append(p.ToJSON());
+    nlohmann::json root;
+    root["metadata"] = p.ToJSON();
 
     // The windows
-    JSONElement windows = JSONElement::createArray("windows");
-    root.toElement().append(windows);
-
-    wxFFile fp(filename.GetFullPath(), "w+b");
-    if(fp.IsOpened()) {
-
-        for (auto widget : topLevelsList) {
-            JSONElement obj = JSONElement::createObject();
-            widget->FixPaths(filename.GetPath()); // Fix abs paths to fit the new project file
-            widget->Serialize(obj);
-            windows.arrayAppend(obj);
-        }
-
-        fp.Write(root.toElement().format(), wxConvUTF8);
-        fp.Close();
+    auto& windows = root["windows"];
+    windows = nlohmann::json::array();
+    for (auto widget : topLevelsList) {
+        widget->FixPaths(filename.GetPath()); // Fix abs paths to fit the new project file
+        nlohmann::json json;
+        widget->Serialize(json);
+        windows.push_back(json);
     }
+    FileUtils::WriteFileContent(filename, root.dump());
 }
 
 wxString wxcProjectMetadata::GetOutputFileName() const

@@ -1,5 +1,7 @@
 #include "string_property.h"
 
+#include "json_utils.h"
+
 StringProperty::StringProperty()
     : MultiStringsProperty("", "", "\n", "")
 {
@@ -9,17 +11,19 @@ wxString StringProperty::GetValue() const { return m_value; }
 
 void StringProperty::SetValue(const wxString& value) { m_value = value; }
 
-JSONElement StringProperty::Serialize() const
+nlohmann::json StringProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
-    json.addProperty(wxT("type"), wxT("string"));
+    nlohmann::json json = {{"type", "string"}};
     DoBaseSerialize(json);
-    json.addProperty(wxT("m_value"), m_value);
+    json["m_value"] = m_value;
     return json;
 }
 
-void StringProperty::UnSerialize(const JSONElement& json)
+void StringProperty::UnSerialize(const nlohmann::json& json)
 {
+    if (!json.is_object()) {
+        return;
+    }
     DoBaseUnSerialize(json);
-    m_value = json.namedObject(wxT("m_value")).toString();
+    m_value = JsonUtils::ToString(json["m_value"]);
 }

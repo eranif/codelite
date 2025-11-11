@@ -1,8 +1,9 @@
 #ifndef WXGUI_DEFS_H
 #define WXGUI_DEFS_H
 
-#include "json_node.h"
+#include "json_utils.h"
 
+#include <assistant/common/json.hpp> // <nlohmann/json.hpp>
 #include <wx/string.h>
 
 class wxcWidget;
@@ -284,20 +285,23 @@ struct WxStyleInfo {
     int style_bit;
     bool is_set;
 
-    JSONElement ToJSON() const
+    nlohmann::json ToJSON() const
     {
-        JSONElement json = JSONElement::createObject();
-        json.addProperty(wxT("style_name"), style_name);
-        json.addProperty(wxT("style_bit"), style_bit);
-        json.addProperty(wxT("is_set"), is_set);
-        return json;
+        return {
+            {"style_name", style_name},
+            {"style_bit", style_bit},
+            {"is_set", is_set},
+        };
     }
 
-    void FromJSON(const JSONElement& json)
+    void FromJSON(const nlohmann::json& json)
     {
-        style_name = json.namedObject(wxT("style_name")).toString();
-        style_bit = json.namedObject(wxT("style_bit")).toInt();
-        is_set = json.namedObject(wxT("is_set")).toBool();
+        if (!json.is_object()) {
+            return;
+        }
+        style_name = JsonUtils::ToString(json["style_name"]);
+        style_bit = json.value("style_bit", style_bit);
+        is_set = json.value("is_set", is_set);
     }
 };
 /////////////////////////////////////////////////////////////////////////////////////////

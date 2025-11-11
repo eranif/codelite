@@ -1,5 +1,7 @@
 #include "font_property.h"
 
+#include "json_utils.h"
+
 const wxEventType wxEVT_FONT_UPDATE = wxNewEventType();
 
 FontProperty::FontProperty(const wxString& label, const wxString& font, const wxString& tooltip)
@@ -11,19 +13,21 @@ FontProperty::FontProperty(const wxString& label, const wxString& font, const wx
 
 wxString FontProperty::GetValue() const { return m_value; }
 
-JSONElement FontProperty::Serialize() const
+nlohmann::json FontProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
-    json.addProperty(wxT("type"), wxT("font"));
+    nlohmann::json json = {{"type", "font"}};
     DoBaseSerialize(json);
-    json.addProperty(wxT("m_value"), m_value);
+    json["m_value"] = m_value;
     return json;
 }
 
-void FontProperty::UnSerialize(const JSONElement& json)
+void FontProperty::UnSerialize(const nlohmann::json& json)
 {
+    if (!json.is_object()) {
+        return;
+    }
     DoBaseUnSerialize(json);
-    m_value = json.namedObject(wxT("m_value")).toString();
+    m_value = JsonUtils::ToString(json["m_value"]);
 }
 
 void FontProperty::SetValue(const wxString& value) { m_value = value; }

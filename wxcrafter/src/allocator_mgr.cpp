@@ -427,14 +427,14 @@ int Allocator::GetImageId(int controlId) const
     return iter->second;
 }
 
-wxcWidget* Allocator::CreateWrapperFromJSON(const JSONElement& json)
+wxcWidget* Allocator::CreateWrapperFromJSON(const nlohmann::json& json)
 {
-    wxcWidget* wrapper = NULL;
-
-    int type = json.namedObject(wxT("m_type")).toInt();
-    wrapper = Create(type);
-    if(!wrapper)
-        return NULL;
+    if (!json.is_object()) {
+        return nullptr;
+    }
+    auto* wrapper = Create(json["m_type"]);
+    if (!wrapper)
+        return nullptr;
 
     wrapper->UnSerialize(json);
     return wrapper;

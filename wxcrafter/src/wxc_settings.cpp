@@ -1,5 +1,8 @@
 #include "wxc_settings.h"
 
+#include "StringUtils.h"
+#include "fileutils.h"
+#include "json_utils.h"
 #include "wxgui_helpers.h"
 
 #include <wx/filename.h>
@@ -20,23 +23,27 @@ wxcSettings& wxcSettings::Get()
 void wxcSettings::Load()
 {
     wxFileName fn(wxCrafter::GetConfigFile());
-    JSONRoot root(fn);
-    if(root.isOk()) {
-        m_flags = root.toElement().namedObject("m_annoyDialogs").toInt(m_flags);
-        m_flags &= ~USE_TABBED_MODE;
-        m_sashPosition = root.toElement().namedObject("m_sashPosition").toInt(150);
-        m_secondarySashPos = root.toElement().namedObject("m_secondarySashPos").toInt(-1);
-        m_treeviewSashPos = root.toElement().namedObject("m_treeviewSashPos").toInt(-1);
-        m_history = root.toElement().namedObject("recentFiles").toArrayString();
+    wxString content;
+    FileUtils::ReadFileContent(fn, content);
 
-        JSONElement arr = root.toElement().namedObject("m_templateClasses");
-        m_templateClasses.clear();
-        for(int i = 0; i < arr.arraySize(); ++i) {
-            CustomControlTemplate templateControl;
-            templateControl.FromJSON(arr.arrayItem(i));
-            templateControl.SetControlId(::wxNewEventType());
-            m_templateClasses.insert(std::make_pair(templateControl.GetClassName(), templateControl));
-        }
+    const nlohmann::json root = nlohmann::json::parse(StringUtils::ToStdString(content), nullptr, false);
+    if (root.is_discarded() || !root.is_object()) {
+        return;
+    }
+
+    m_flags = root.value("m_annoyDialogs", m_flags);
+    m_flags &= ~USE_TABBED_MODE;
+    m_sashPosition = root.value("m_sashPosition", 150);
+    m_secondarySashPos = root.value("m_secondarySashPos", -1);
+    m_treeviewSashPos = root.value("m_treeviewSashPos", -1);
+    m_history = JsonUtils::ToArrayString(root["recentFiles"]);
+
+    m_templateClasses.clear();
+    for (const auto& item : root.value("m_templateClasses", nlohmann::json::array())) {
+        CustomControlTemplate templateControl;
+        templateControl.FromJSON(item);
+        templateControl.SetControlId(::wxNewEventType());
+        m_templateClasses.insert(std::make_pair(templateControl.GetClassName(), templateControl));
     }
 }
 
@@ -44,21 +51,20 @@ void wxcSettings::Save()
 {
     wxFileName fn(wxCrafter::GetConfigFile());
 
-    JSONRoot root(cJSON_Object);
     m_flags &= ~USE_TABBED_MODE;
-    root.toElement().addProperty("m_annoyDialogs", (int)m_flags);
-    root.toElement().addProperty("m_sashPosition", m_sashPosition);
-    root.toElement().addProperty("m_secondarySashPos", m_secondarySashPos);
-    root.toElement().addProperty("m_treeviewSashPos", m_treeviewSashPos);
-    root.toElement().addProperty("recentFiles", m_history);
+    nlohmann::json root = {{"m_annoyDialogs", (int)m_flags},
+                           {"m_sashPosition", m_sashPosition},
+                           {"m_secondarySashPos", m_secondarySashPos},
+                           {"m_treeviewSashPos", m_treeviewSashPos},
+                           {"recentFiles", StringUtils::ToStdStrings(m_history)}
+    };
 
-    JSONElement arr = JSONElement::createArray("m_templateClasses");
-    root.toElement().append(arr);
+    auto& arr = root["m_templateClasses"];
 
-    for (const auto& p : m_templateClasses) {
-        arr.append(p.second.ToJSON());
+    for (const auto& [_, customControlTemplate] : m_templateClasses) {
+        arr.push_back(customControlTemplate.ToJSON());
     }
-    root.save(fn);
+    FileUtils::WriteFileContentRaw(fn, root.dump());
 }
 
 void wxcSettings::RegisterCustomControl(CustomControlTemplate& cct)
@@ -100,11 +106,14 @@ void wxcSettings::DeleteCustomControl(const wxString& name)
     m_templateClasses.erase(iter);
 }
 
-void wxcSettings::MergeCustomControl(const JSONElement& arr)
+void wxcSettings::MergeCustomControl(const nlohmann::json& arr)
 {
-    for(int i = 0; i < arr.arraySize(); ++i) {
+    if (!arr.is_array()) {
+        return;
+    }
+    for (auto& item : arr) {
         CustomControlTemplate templateControl;
-        templateControl.FromJSON(arr.arrayItem(i));
+        templateControl.FromJSON(item);
         templateControl.SetControlId(::wxNewEventType());
 
         if(m_templateClasses.count(templateControl.GetClassName())) {
@@ -118,12 +127,12 @@ void wxcSettings::MergeCustomControl(const JSONElement& arr)
     Save();
 }
 
-JSONElement wxcSettings::GetCustomControlsAsJSON(const wxArrayString& controls) const
+nlohmann::json wxcSettings::GetCustomControlsAsJSON(const wxArrayString& controls) const
 {
-    JSONElement arr = JSONElement::createArray("m_templateClasses");
-    for (const auto& p : m_templateClasses) {
-        if (controls.Index(p.first) != wxNOT_FOUND) {
-            arr.append(p.second.ToJSON());
+    nlohmann::json arr;
+    for (const auto& [name, customControlTemplate] : m_templateClasses) {
+        if (controls.Index(name) != wxNOT_FOUND) {
+            arr.push_back(customControlTemplate.ToJSON());
         }
     }
     return arr;
@@ -138,22 +147,24 @@ CustomControlTemplate::CustomControlTemplate()
 {
 }
 
-void CustomControlTemplate::FromJSON(const JSONElement& json)
+void CustomControlTemplate::FromJSON(const nlohmann::json& json)
 {
-    m_includeFile = json.namedObject("m_includeFile").toString();
-    m_allocationLine = json.namedObject("m_allocationLine").toString();
-    m_className = json.namedObject("m_className").toString();
-    m_xrcPreviewClass = json.namedObject("m_xrcPreviewClass").toString();
-    m_events = json.namedObject("m_events").toStringMap();
+    if (!json.is_object()) {
+        return;
+    }
+    m_includeFile = JsonUtils::ToString(json["m_includeFile"]);
+    m_allocationLine = JsonUtils::ToString(json["m_allocationLine"]);
+    m_className = JsonUtils::ToString(json["m_className"]);
+    m_xrcPreviewClass = JsonUtils::ToString(json["m_xrcPreviewClass"]);
+    m_events = JsonUtils::ToStringMap(json["m_events"]);
 }
 
-JSONElement CustomControlTemplate::ToJSON() const
+nlohmann::json CustomControlTemplate::ToJSON() const
 {
-    JSONElement obj = JSONElement::createObject();
-    obj.addProperty("m_includeFile", m_includeFile);
-    obj.addProperty("m_allocationLine", m_allocationLine);
-    obj.addProperty("m_className", m_className);
-    obj.addProperty("m_xrcPreviewClass", m_xrcPreviewClass);
-    obj.addProperty("m_events", m_events);
-    return obj;
+    return {{"m_includeFile", m_includeFile},
+            {"m_allocationLine", m_allocationLine},
+            {"m_className", m_className},
+            {"m_xrcPreviewClass", m_xrcPreviewClass},
+            {"m_events", JsonUtils::ToJson(m_events)}
+    };
 }

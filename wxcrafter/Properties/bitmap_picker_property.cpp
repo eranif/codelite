@@ -1,6 +1,6 @@
 #include "bitmap_picker_property.h"
 
-#include "json_node.h"
+#include "json_utils.h"
 
 BitmapPickerProperty::BitmapPickerProperty(const wxString& label, const wxString& path, const wxString& tooltip)
     : PropertyBase(tooltip)
@@ -17,19 +17,21 @@ PropertyeType BitmapPickerProperty::GetType() { return PT_BITMAP; }
 
 wxString BitmapPickerProperty::GetValue() const { return m_path; }
 
-JSONElement BitmapPickerProperty::Serialize() const
+nlohmann::json BitmapPickerProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
-    json.addProperty(wxT("type"), wxT("bitmapPicker"));
+    nlohmann::json json = {{"type", "bitmapPicker"}};
     DoBaseSerialize(json);
-    json.addProperty(wxT("m_path"), m_path);
+    json["m_path"] = m_path;
     return json;
 }
 
 void BitmapPickerProperty::SetValue(const wxString& value) { m_path = value; }
 
-void BitmapPickerProperty::UnSerialize(const JSONElement& json)
+void BitmapPickerProperty::UnSerialize(const nlohmann::json& json)
 {
+    if (!json.is_object()) {
+        return;
+    }
     DoBaseUnSerialize(json);
-    m_path = json.namedObject(wxT("m_path")).toString();
+    m_path = JsonUtils::ToString(json["m_path"]);
 }

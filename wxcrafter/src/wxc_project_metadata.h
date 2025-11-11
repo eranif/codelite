@@ -1,9 +1,9 @@
 #ifndef WXCPROJECTMETADATA_H
 #define WXCPROJECTMETADATA_H
 
-#include "json_node.h"
 #include "wxc_widget.h"
 
+#include <assistant/common/json.hpp> // <nlohmann/json.hpp>
 #include <wx/event.h>
 #include <wx/filename.h>
 #include <wx/string.h>
@@ -109,9 +109,9 @@ public:
 
     void GenerateBitmapFunctionName() { DoGenerateBitmapFunctionName(); }
 
-    void AppendCustomControlsJSON(const wxArrayString& controls, JSONElement& element) const;
-    JSONElement ToJSON();
-    void FromJSON(const JSONElement& json);
+    void AppendCustomControlsJSON(const wxArrayString& controls, nlohmann::json& element) const;
+    nlohmann::json ToJSON();
+    void FromJSON(const nlohmann::json& json);
 
     void SetGenerateCPPCode(bool GenerateCPPCode)
     {

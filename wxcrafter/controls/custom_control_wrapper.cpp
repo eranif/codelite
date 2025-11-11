@@ -3,6 +3,7 @@
 #include "Properties/category_property.h"
 #include "allocator_mgr.h"
 #include "file_logger.h"
+#include "json_utils.h"
 #include "macromanager.h"
 #include "wxc_settings.h"
 #include "xmlutils.h"
@@ -94,17 +95,20 @@ void CustomControlWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     text << XRCSize() << XRCCommonAttributes() << XRCSuffix();
 }
 
-void CustomControlWrapper::Serialize(JSONElement& json) const
+void CustomControlWrapper::Serialize(nlohmann::json& json) const
 {
     wxcWidget::Serialize(json);
-    json.addProperty(wxT("m_templInfoName"), m_templInfoName);
+    json["m_templInfoName"] = m_templInfoName;
     ms_customControlsUsed.insert(
         std::make_pair(m_templInfoName, wxcSettings::Get().FindByControlName(m_templInfoName)));
 }
 
-void CustomControlWrapper::UnSerialize(const JSONElement& json)
+void CustomControlWrapper::UnSerialize(const nlohmann::json& json)
 {
-    m_templInfoName = json.namedObject(wxT("m_templInfoName")).toString();
+    if (!json.is_object()) {
+        return;
+    }
+    m_templInfoName = JsonUtils::ToString(json["m_templInfoName"]);
     DoUpdateEvents();
     wxcWidget::UnSerialize(json);
     m_properties.Item("Custom Control")->SetValue(m_templInfoName);

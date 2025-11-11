@@ -1,7 +1,8 @@
 #include "BmpTextSelectorDlg.h"
 
 #include "SingleBitmapAndTextDlg.h"
-#include "json_node.h"
+#include "StringUtils.h"
+#include "json_utils.h"
 #include "windowattrmanager.h"
 
 BmpTextSelectorDlg::BmpTextSelectorDlg(wxWindow* parent, const wxString& initialValue)
@@ -56,13 +57,17 @@ void BmpTextSelectorDlg::OnNew(wxCommandEvent& event)
 
 BmpTextVec_t BmpTextSelectorDlg::FromString(const wxString& text)
 {
+    const nlohmann::json root = nlohmann::json::parse(StringUtils::ToStdString(text), nullptr, false);
+    if (root.is_discarded() || !root.is_array()) {
+        return {};
+    }
     BmpTextVec_t vec;
-    JSONRoot root(text);
-    int size = root.toElement().arraySize();
-    for(int i = 0; i < size; ++i) {
-        JSONElement item = root.toElement().arrayItem(i);
-        wxString bitmap = item.namedObject("bmp").toString();
-        wxString label = item.namedObject("label").toString();
+    for (const auto& item : root) {
+        if (!item.is_object()) {
+            continue;
+        }
+        wxString bitmap = JsonUtils::ToString(item["bmp"]);
+        wxString label = JsonUtils::ToString(item["label"]);
         vec.push_back(std::make_pair(bitmap, label));
     }
     return vec;
@@ -70,16 +75,11 @@ BmpTextVec_t BmpTextSelectorDlg::FromString(const wxString& text)
 
 wxString BmpTextSelectorDlg::ToString(const BmpTextVec_t& vec)
 {
-    JSONRoot root(cJSON_Array);
+    nlohmann::json root = nlohmann::json::array();
     for (const auto& [bmp, label] : vec) {
-        JSONElement element = JSONElement::createObject();
-        element.addProperty("bmp", bmp);
-        element.addProperty("label", label);
-        root.toElement().arrayAppend(element);
+        root.push_back({{"bmp", bmp}, {"label", label}});
     }
-    wxString asString(root.toElement().format());
-    asString.Replace("\n", "");
-    return asString;
+    return wxString::FromUTF8(root.dump());
 }
 
 wxString BmpTextSelectorDlg::GetValue()

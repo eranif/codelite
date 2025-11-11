@@ -15,9 +15,9 @@ public:
 
 public:
     wxString GetValue() const override;
-    JSONElement Serialize() const override;
+    nlohmann::json Serialize() const override;
     void SetValue(const wxString& value) override;
-    void UnSerialize(const JSONElement& json) override;
+    void UnSerialize(const nlohmann::json& json) override;
     PropertyeType GetType() override { return PT_COLOR_PICKER; }
 };
 

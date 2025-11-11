@@ -25,12 +25,11 @@ wxString IntProperty::GetValue() const
     return v;
 }
 
-JSONElement IntProperty::Serialize() const
+nlohmann::json IntProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
-    json.addProperty(wxT("type"), wxT("integer"));
+    nlohmann::json json = {{"type", "integer"}};
     DoBaseSerialize(json);
-    json.addProperty(wxT("m_value"), m_value);
+    json["m_value"] = m_value;
     return json;
 }
 
@@ -44,8 +43,11 @@ void IntProperty::SetValue(const wxString& value)
     }
 }
 
-void IntProperty::UnSerialize(const JSONElement& json)
+void IntProperty::UnSerialize(const nlohmann::json& json)
 {
+    if (!json.is_object()) {
+        return;
+    }
     DoBaseUnSerialize(json);
-    m_value = json.namedObject(wxT("m_value")).toInt();
+    m_value = json.value("m_value", m_value);
 }

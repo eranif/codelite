@@ -1,7 +1,7 @@
 #include "aui_pane_info.h"
 
 #include "StdToWX.h"
-#include "json_node.h"
+#include "json_utils.h"
 #include "wxgui_helpers.h"
 
 #include <wx/propgrid/propgrid.h>
@@ -95,51 +95,51 @@ void AuiPaneInfo::Construct(wxPropertyGrid* pg) const
     pg->SetPropertyAttribute(prop, wxPG_BOOL_USE_CHECKBOX, true);
 }
 
-void AuiPaneInfo::FromJSON(const JSONElement& json)
+void AuiPaneInfo::FromJSON(const nlohmann::json& json)
 {
     Reset();
-    if(json.isOk() == false) { return; }
+    if (!json.is_object()) { return; }
 
-    m_name = json.namedObject("m_name").toString();
-    m_caption = json.namedObject("m_caption").toString();
-    m_dockDirection = json.namedObject("m_dockDirection").toString();
-    if(m_dockDirection.IsEmpty()) m_dockDirection = "wxAUI_DOCK_LEFT";
+    m_name = JsonUtils::ToString(json["m_name"]);
+    m_caption = JsonUtils::ToString(json["m_caption"]);
+    m_dockDirection = JsonUtils::ToString(json["m_dockDirection"]);
+    if (m_dockDirection.IsEmpty()) m_dockDirection = "wxAUI_DOCK_LEFT";
 
-    m_layer = json.namedObject("m_layer").toInt();
-    m_row = json.namedObject("m_row").toInt();
-    m_position = json.namedObject("m_position").toInt();
-    m_bestSize = json.namedObject("m_bestSize").toSize();
-    m_minSize = json.namedObject("m_minSize").toSize();
-    m_maxSize = json.namedObject("m_maxSize").toSize();
-    m_resizable = json.namedObject("m_resizable").toBool();
-    m_captionVisible = json.namedObject("m_captionVisible").toBool();
-    m_closeButton = json.namedObject("m_closeButton").toBool();
-    m_minButton = json.namedObject("m_minButton").toBool();
-    m_maxButton = json.namedObject("m_maxButton").toBool();
-    m_pinButton = json.namedObject("m_pinButton").toBool();
-    m_toolbarPane = json.namedObject("m_toolbarPane").toBool();
+    m_layer = json.value("m_layer", m_layer);
+    m_row = json.value("m_row", m_row);
+    m_position = json.value("m_position", m_position);
+    m_bestSize = JsonUtils::ToSize(json["m_bestSize"]);
+    m_minSize = JsonUtils::ToSize(json["m_minSize"]);
+    m_maxSize = JsonUtils::ToSize(json["m_maxSize"]);
+    m_resizable = json.value("m_resizable", m_resizable);
+    m_captionVisible = json.value("m_captionVisible", m_captionVisible);
+    m_closeButton = json.value("m_closeButton", m_closeButton);
+    m_minButton = json.value("m_minButton", m_minButton);
+    m_maxButton = json.value("m_maxButton", m_maxButton);
+    m_pinButton = json.value("m_pinButton", m_pinButton);
+    m_toolbarPane = json.value("m_toolbarPane", m_toolbarPane);
 }
 
-JSONElement AuiPaneInfo::ToJSON() const
+nlohmann::json AuiPaneInfo::ToJSON() const
 {
-    JSONElement element = JSONElement::createObject("wxAuiPaneInfo");
-    element.addProperty(wxT("m_name"), m_name);
-    element.addProperty(wxT("m_caption"), m_caption);
-    element.addProperty(wxT("m_dockDirection"), m_dockDirection);
-    element.addProperty(wxT("m_layer"), m_layer);
-    element.addProperty(wxT("m_row"), m_row);
-    element.addProperty(wxT("m_position"), m_position);
-    element.addProperty(wxT("m_bestSize"), m_bestSize);
-    element.addProperty(wxT("m_minSize"), m_minSize);
-    element.addProperty(wxT("m_maxSize"), m_maxSize);
-    element.addProperty(wxT("m_resizable"), m_resizable);
-    element.addProperty(wxT("m_captionVisible"), m_captionVisible);
-    element.addProperty(wxT("m_closeButton"), m_closeButton);
-    element.addProperty(wxT("m_minButton"), m_minButton);
-    element.addProperty(wxT("m_maxButton"), m_maxButton);
-    element.addProperty(wxT("m_pinButton"), m_pinButton);
-    element.addProperty(wxT("m_toolbarPane"), m_toolbarPane);
-    return element;
+    return {
+        {"m_name", m_name},
+        {"m_caption", m_caption},
+        {"m_dockDirection", m_dockDirection},
+        {"m_layer", m_layer},
+        {"m_row", m_row},
+        {"m_position", m_position},
+        {"m_bestSize", JsonUtils::ToJsonValue(m_bestSize)},
+        {"m_minSize", JsonUtils::ToJsonValue(m_minSize)},
+        {"m_maxSize", JsonUtils::ToJsonValue(m_maxSize)},
+        {"m_resizable", m_resizable},
+        {"m_captionVisible", m_captionVisible},
+        {"m_closeButton", m_closeButton},
+        {"m_minButton", m_minButton},
+        {"m_maxButton", m_maxButton},
+        {"m_pinButton", m_pinButton},
+        {"m_toolbarPane", m_toolbarPane},
+    };
 }
 void AuiPaneInfo::Reset()
 {

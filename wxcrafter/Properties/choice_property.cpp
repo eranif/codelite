@@ -1,6 +1,7 @@
 #include "choice_property.h"
 
-#include <wx/choice.h>
+#include "StringUtils.h"
+#include "json_utils.h"
 
 ChoiceProperty::ChoiceProperty()
     : PropertyBase(wxT(""))
@@ -46,21 +47,23 @@ void ChoiceProperty::Add(const wxString& value)
     if(where == wxNOT_FOUND) m_options.Add(value);
 }
 
-JSONElement ChoiceProperty::Serialize() const
+nlohmann::json ChoiceProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
-    json.addProperty(wxT("type"), wxT("choice"));
+    nlohmann::json json = {{"type", "choice"}};
     DoBaseSerialize(json);
-    json.addProperty(wxT("m_selection"), m_selection);
-    json.addProperty(wxT("m_options"), m_options);
+    json["m_selection"] = m_selection;
+    json["m_options"] = StringUtils::ToStdStrings(m_options);
     return json;
 }
 
-void ChoiceProperty::UnSerialize(const JSONElement& json)
+void ChoiceProperty::UnSerialize(const nlohmann::json& json)
 {
+    if (!json.is_object()) {
+        return;
+    }
     DoBaseUnSerialize(json);
-    m_selection = json.namedObject(wxT("m_selection")).toInt();
-    m_options = json.namedObject(wxT("m_options")).toArrayString();
+    m_selection = json.value("m_selection", m_selection);
+    m_options = JsonUtils::ToArrayString(json["m_options"]);
 
     //    // This hack is needed to support migration from the old values
     //    if ( GetLabel() == PROP_SPLIT_MODE ) {

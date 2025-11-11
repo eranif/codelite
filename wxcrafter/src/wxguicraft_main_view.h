@@ -10,6 +10,7 @@
 #include "wxc_edit_manager.h"
 #include "wxc_widget.h"
 
+#include <assistant/common/json.hpp> // <nlohmann/json.hpp>
 #include <wx/aui/auibar.h>
 #include <wx/treectrl.h>
 
@@ -171,7 +172,7 @@ public:
      * @brief save the tree to the file system
      * @param filename
      */
-    JSONElement ToJSON(const wxTreeItemId& fromItem = wxTreeItemId());
+    nlohmann::json ToJSON(const wxTreeItemId& fromItem = wxTreeItemId());
     void LoadProject(const wxFileName& fn, const wxString& fileContent, bool lightLoad = false);
 
     void OnMenu(wxTreeEvent& event);

@@ -1,9 +1,10 @@
 #ifndef EVENTSDATABASE_H
 #define EVENTSDATABASE_H
 
+#include "json_utils.h"
 #include "wx_ordered_map.h"
-#include "wxcLib/json_node.h"
 
+#include <assistant/common/json.hpp> // <nlohmann/json.hpp>
 #include <unordered_map>
 #include <wx/menu.h>
 #include <wx/string.h>
@@ -35,24 +36,27 @@ public:
     void SetIfBlock(const wxString& ifBlock) { this->m_ifBlock = ifBlock; }
     const wxString& GetIfBlock() const { return m_ifBlock; }
 
-    JSONElement ToJSON() const
+    nlohmann::json ToJSON() const
     {
-        JSONElement element = JSONElement::createObject();
-        element.addProperty(wxT("m_eventName"), m_eventName);
-        element.addProperty(wxT("m_eventClass"), m_eventClass);
-        element.addProperty(wxT("m_functionNameAndSignature"), m_functionNameAndSignature);
-        element.addProperty(wxT("m_description"), m_description);
-        element.addProperty(wxT("m_noBody"), m_noBody);
-        return element;
+        return {
+            {"m_eventName", m_eventName},
+            {"m_eventClass", m_eventClass},
+            {"m_functionNameAndSignature", m_functionNameAndSignature},
+            {"m_description", m_description},
+            {"m_noBody", m_noBody},
+        };
     }
 
-    void FromJSON(const JSONElement& json)
+    void FromJSON(const nlohmann::json& json)
     {
-        m_eventName = json.namedObject(wxT("m_eventName")).toString();
-        m_eventClass = json.namedObject(wxT("m_eventClass")).toString();
-        m_functionNameAndSignature = json.namedObject(wxT("m_functionNameAndSignature")).toString();
-        m_description = json.namedObject(wxT("m_description")).toString();
-        m_noBody = json.namedObject(wxT("m_noBody")).toBool();
+        if (!json.is_object()) {
+            return;
+        }
+        m_eventName = JsonUtils::ToString(json["m_eventName"]);
+        m_eventClass = JsonUtils::ToString(json["m_eventClass"]);
+        m_functionNameAndSignature = JsonUtils::ToString(json["m_functionNameAndSignature"]);
+        m_description = JsonUtils::ToString(json["m_description"]);
+        m_noBody = json.value("m_noBody", m_noBody);
     }
 
     void SetDescription(const wxString& description) { this->m_description = description; }

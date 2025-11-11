@@ -1,6 +1,7 @@
 #include "winid_property.h"
 
 #include "StdToWX.h"
+#include "json_utils.h"
 #include "wxgui_defs.h"
 
 #include <algorithm>
@@ -127,21 +128,22 @@ WinIdProperty::WinIdProperty()
     }
 }
 
-JSONElement WinIdProperty::Serialize() const
+nlohmann::json WinIdProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
-    json.addProperty(wxT("type"), wxT("winid"));
+    nlohmann::json json = {{"type", "winid"}};
     DoBaseSerialize(json);
-    json.addProperty(wxT("m_winid"), m_winid);
+    json["m_winid"] = m_winid;
     return json;
 }
 
-void WinIdProperty::UnSerialize(const JSONElement& json)
+void WinIdProperty::UnSerialize(const nlohmann::json& json)
 {
+    if (!json.is_object()) {
+        return;
+    }
     DoBaseUnSerialize(json);
-    // Backward compatibility
-    if(json.hasNamedObject(wxT("m_winid")))
-        m_winid = json.namedObject(wxT("m_winid")).toString();
+    if (json.contains("m_winid"))
+        m_winid = JsonUtils::ToString(json["m_winid"]);
     else
-        m_winid = json.namedObject(wxT("m_value")).toString();
+        m_winid = JsonUtils::ToString(json["m_value"]); // Backward compatibility
 }

@@ -31,6 +31,7 @@
 #include "browse_record.h"
 #include "buildtabsettingsdata.h"
 #include "clEditorStateLocker.h"
+#include "clIdleEventThrottler.hpp"
 #include "cl_calltip.h"
 #include "cl_unredo.h"
 #include "context_base.h"
@@ -1178,4 +1179,5 @@ private:
     long m_lastUpdatePosition = wxNOT_FOUND;
     BuildTabSettingsData m_buildOptions;
     bool m_hasBraceHighlight = false;
+    clIdleEventThrottler m_event_throttler{250};
 };

@@ -1,9 +1,13 @@
 #include <string>
 
-static const std::string kDefaultCodeLiteLUA = R"#(
+static const std::string kDefaultCodeLiteLUA =
+    R"#(---@class codelite
+---@type codelite
+codelite = codelite or {}
+
 --- Polishes and reformats the current markdown document using AI generation
 --- @return nil
-function on_polish_document()
+function OnPolishDoc()
     local text = codelite.editor_text()
 
     -- Early return if no text is selected
@@ -42,11 +46,12 @@ end
 
 --- Polishes and professionally rewrites selected markdown content
 --- Uses AI generation to improve formatting, structure, and clarity
-function on_polish_markdown_selection()
+function OnPolishMarkdownSelection()
     local selected_text = codelite.editor_selection()
 
     -- Early return if no text is selected
     if not selected_text or selected_text == "" then
+        codelite.message_box("Empty Selection", 1)
         return
     end
 
@@ -82,11 +87,12 @@ end
 --- Refactor the currently selected text in the editor using AI
 --- Sends the selected code to an AI model with refactoring instructions
 --- @return nil
-function on_refactor_text()
+function OnRefactorText()
     local selected_text = codelite.editor_selection()
 
     -- Early return if no text is selected
     if not selected_text or selected_text == "" then
+        codelite.message_box("Empty Selection", 1)
         return
     end
 
@@ -119,7 +125,7 @@ Code:
         selected_text
     )
 
-    local formatted_prompt = codelite.str_replace_all(
+    formatted_prompt = codelite.str_replace_all(
         formatted_prompt,
         "{{lang}}",
         codelite.editor_language()
@@ -129,18 +135,24 @@ Code:
 end
 
 --- Registers LLM generation commands in the editor context menu.
-local function registerLLMMenuItems()
+function RegisterLLMMenuItems()
     --- menu_id can be found in the file menu.xrc
     local menuItems = {
-        { menu_id = "editor_context_menu_llm_generation", label = "Polish Markdown (Entire Doc)", handler = on_polish_document },
-        { menu_id = "editor_context_menu_llm_generation", label = "Polish Markdown (Selected Text)", handler = on_polish_markdown_selection },
-        { menu_id = "editor_context_menu_llm_generation", label = "Refactor Selected Code", handler = on_refactor_text },
+        { menu_id = "editor_context_menu_llm_generation", handler = nil },
+        { menu_id = "editor_context_menu_llm_generation", label = "Polish Markdown (Entire Doc)", handler = OnPolishDoc },
+        { menu_id = "editor_context_menu_llm_generation", label = "Polish Markdown (Selected Text)", handler = OnPolishMarkdownSelection },
+        { menu_id = "editor_context_menu_llm_generation", handler = nil },
+        { menu_id = "editor_context_menu_llm_generation", label = "Refactor Selected Code", handler = OnRefactorText },
     }
 
     for _, item in ipairs(menuItems) do
-        codelite.add_menu_item(item.menu_id, item.label, item.handler)
+        if item.handler == nil then
+            codelite.add_menu_separator(item.menu_id)
+        else
+            codelite.add_menu_item(item.menu_id, item.label, item.handler)
+        end
     end
 end
 
-registerLLMMenuItems()
+RegisterLLMMenuItems()
 )#";

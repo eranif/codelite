@@ -25,6 +25,7 @@
 
 #include "cl_editor.h"
 
+#include "BlockTimer.hpp"
 #include "BreakpointsView.hpp"
 #include "ColoursAndFontsManager.h"
 #include "CompletionHelper.hpp"
@@ -1443,6 +1444,9 @@ void clEditor::DoEnsureCaretIsVisible(int pos, bool preserveSelection)
 void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
 {
     event.Skip();
+
+    // Time this block
+    BlockTimer timer{"clEditor::OnSciUpdateUI", FileLogger::Developer};
 
     m_scrollbar_recalc_is_required = true;
 
@@ -3271,11 +3275,14 @@ void clEditor::OnContextMenu(wxContextMenuEvent& event)
 
 void clEditor::OnKeyDown(wxKeyEvent& event)
 {
-    bool is_pos_before_whitespace = wxIsspace(SafeGetChar(PositionBefore(GetCurrentPos())));
-    bool backspace_triggers_cc = TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_BACKSPACE_TRIGGER;
-    if (backspace_triggers_cc && !is_pos_before_whitespace && (event.GetKeyCode() == WXK_BACK) && !m_calltip) {
-        // try to code complete
-        LSP::Manager::GetInstance().CodeComplete(this, LSP::CompletionItem::kTriggerUser);
+    BlockTimer timer{"clEditor::OnKeyDown", FileLogger::Developer};
+    if (event.GetKeyCode() == WXK_BACK) {
+        bool is_pos_before_whitespace = wxIsspace(SafeGetChar(PositionBefore(GetCurrentPos())));
+        bool backspace_triggers_cc = TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_BACKSPACE_TRIGGER;
+        if (backspace_triggers_cc && !is_pos_before_whitespace && !m_calltip) {
+            // try to code complete
+            LSP::Manager::GetInstance().CodeComplete(this, LSP::CompletionItem::kTriggerUser);
+        }
     }
 
     m_prevSelectionInfo.Clear();
@@ -3352,7 +3359,6 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
         }
     }
 
-    // let the context process it as well
     if (event.GetKeyCode() == WXK_ESCAPE) {
 
         // Destroy any floating tooltips out there
@@ -6140,9 +6146,7 @@ void clEditor::OnIdle(wxIdleEvent& event)
 
     event.Skip();
 
-    // The interval between idle events can not be under 250ms
-    static clIdleEventThrottler event_throttler{100};
-    if (!event_throttler.CanHandle()) {
+    if (!m_event_throttler.CanHandle()) {
         return;
     }
 

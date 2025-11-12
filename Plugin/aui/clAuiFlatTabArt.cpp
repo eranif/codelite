@@ -139,7 +139,7 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
         auto stc = dynamic_cast<wxStyledTextCtrl*>(page.window);
         bg = stc->StyleGetBackground(0);
         if (DrawingUtils::IsDark(bg)) {
-            activeTabTextColour = *wxWHITE;
+            activeTabTextColour = wxColour("WHITE").ChangeLightness(90);
         } else {
             activeTabTextColour = wxColour("BLACK").ChangeLightness(110);
         }

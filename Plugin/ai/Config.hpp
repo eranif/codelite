@@ -21,7 +21,7 @@ enum class PromptKind {
     kMax, // Must be last
 };
 
-inline std::string GetPromptString(PromptKind kind)
+inline std::string PromptKindToString(PromptKind kind)
 {
     switch (kind) {
     case llm::PromptKind::kReleaseNotesMerge:

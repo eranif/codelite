@@ -21,11 +21,11 @@ T ReadValue(const nlohmann::json& j, const std::string& name, const T& d = {})
 }
 
 const std::map<std::string, std::string> kDefaultPromptTable = {
-    {GetPromptString(PromptKind::kCommentGeneration), PROMPT_DOCSTRING_GEN},
-    {GetPromptString(PromptKind::kReleaseNotesGenerate), PROMPT_GIT_RELEASE_NOTES},
-    {GetPromptString(PromptKind::kReleaseNotesMerge), PROMPT_GIT_RELEASE_NOTES_MERGE},
-    {GetPromptString(PromptKind::kGitChangesCodeReview), PROMPT_GIT_CODE_REVIEW},
-    {GetPromptString(PromptKind::kGitCommitMessage), PROMPT_GIT_COMMIT_MSG}};
+    {PromptKindToString(PromptKind::kCommentGeneration), PROMPT_DOCSTRING_GEN},
+    {PromptKindToString(PromptKind::kReleaseNotesGenerate), PROMPT_GIT_RELEASE_NOTES},
+    {PromptKindToString(PromptKind::kReleaseNotesMerge), PROMPT_GIT_RELEASE_NOTES_MERGE},
+    {PromptKindToString(PromptKind::kGitChangesCodeReview), PROMPT_GIT_CODE_REVIEW},
+    {PromptKindToString(PromptKind::kGitCommitMessage), PROMPT_GIT_COMMIT_MSG}};
 
 Config::Config() {}
 
@@ -99,16 +99,24 @@ wxString Config::GetPrompt(PromptKind kind) const
     }
 
     std::scoped_lock lk{m_mutex};
-    auto key = GetPromptString(kind);
-    if (m_prompts.count(key)) {
-        return wxString::FromUTF8(m_prompts.find(key)->second);
+    auto key = PromptKindToString(kind);
+    auto prompt_iter = m_prompts.find(key);
+    if (prompt_iter != m_prompts.end() && !prompt_iter->second.empty()) {
+        return wxString::FromUTF8(prompt_iter->second);
     }
+
+    // Return the default prompt
+    prompt_iter = kDefaultPromptTable.find(key);
+    if (prompt_iter != m_prompts.end()) {
+        return prompt_iter->second;
+    }
+    clWARNING() << "No prompt found for key: '" << key << "'" << endl;
     return wxEmptyString;
 }
 
 void Config::SetPrompt(PromptKind kind, const wxString& prompt)
 {
-    auto label = GetPromptString(kind);
+    auto label = PromptKindToString(kind);
     std::scoped_lock lk{m_mutex};
     switch (kind) {
     case PromptKind::kMax:

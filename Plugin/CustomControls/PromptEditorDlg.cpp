@@ -38,7 +38,7 @@ void PromptEditorDlg::LoadPrompts()
         auto d = new PromptData{static_cast<llm::PromptKind>(i)};
         ctrl->SetClientObject(d);
         wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(d->prompt_kind);
-        wxString label = llm::GetPromptString(d->prompt_kind);
+        wxString label = llm::PromptKindToString(d->prompt_kind);
         ctrl->SetText(prompt);
         ctrl->SetWrapMode(wxSTC_WRAP_WORD);
         ctrl->SetSavePoint();
@@ -68,7 +68,7 @@ void PromptEditorDlg::OnSave(wxCommandEvent& event)
         MarkdownStyler styler(ctrl);
         styler.StyleText(true);
 
-        clDEBUG() << "Saving prompt:" << llm::GetPromptString(d->prompt_kind) << ":" << ctrl->GetText() << endl;
+        clDEBUG() << "Saving prompt:" << llm::PromptKindToString(d->prompt_kind) << ":" << ctrl->GetText() << endl;
         llm::Manager::GetInstance().GetConfig().SetPrompt(d->prompt_kind, ctrl->GetText());
     }
     llm::Manager::GetInstance().GetConfig().Save();

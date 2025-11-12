@@ -172,7 +172,7 @@ PromptEditorBaseDlg::PromptEditorBaseDlg(
                                                  wxID_ANY,
                                                  wxDefaultPosition,
                                                  wxDLG_UNIT(m_splitterPageLabels, wxSize(-1, -1)),
-                                                 wxDV_SINGLE);
+                                                 wxDV_NO_HEADER | wxDV_SINGLE);
     m_dvListCtrlPrompts->SetFocus();
 
     boxSizer43->Add(m_dvListCtrlPrompts, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));

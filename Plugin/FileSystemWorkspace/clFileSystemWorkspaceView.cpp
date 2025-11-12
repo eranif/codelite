@@ -33,7 +33,8 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
                              wxITEM_NORMAL);
 
     GetToolBar()->Bind(wxEVT_TOOL, &clFileSystemWorkspaceView::OnSettings, this, wxID_PREFERENCES);
-    m_choiceConfigs = new wxChoice(GetToolBar(), wxID_ANY, wxDefaultPosition, wxSize(250, wxNOT_FOUND));
+    int width = GetTextExtent(wxT("ReleaseWithDebugInfo")).GetWidth();
+    m_choiceConfigs = new wxChoice(GetToolBar(), wxID_ANY, wxDefaultPosition, wxSize(width, wxNOT_FOUND));
     m_choiceConfigs->SetToolTip(_("Choose build configuration"));
     m_choiceConfigs->Bind(wxEVT_CHOICE, &clFileSystemWorkspaceView::OnChoiceConfigSelected, this);
     GetToolBar()->AddSeparator();

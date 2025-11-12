@@ -132,7 +132,19 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
     page.rect = wxRect(rect.GetPosition(), size);
 
     // Draw the tab background and highlight it if it's active.
-    const wxColour bg = page.active ? m_data->m_bgActive : m_data->m_bgNormal;
+    wxColour bg = page.active ? m_data->m_bgActive : m_data->m_bgNormal;
+    wxColour activeTabTextColour = wxNullColour;
+    if (page.active && page.window && dynamic_cast<wxStyledTextCtrl*>(page.window)) {
+        // Use the background colour of the control itself.
+        auto stc = dynamic_cast<wxStyledTextCtrl*>(page.window);
+        bg = stc->StyleGetBackground(0);
+        if (DrawingUtils::IsDark(bg)) {
+            activeTabTextColour = *wxWHITE;
+        } else {
+            activeTabTextColour = wxColour("BLACK").ChangeLightness(110);
+        }
+    }
+
     dc.SetBrush(bg);
     dc.SetPen(*wxTRANSPARENT_PEN);
     dc.DrawRectangle(page.rect);
@@ -215,12 +227,14 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
     // Finally draw tab text.
     dc.SetFont(page.active ? m_selectedFont : m_normalFont);
     dc.SetTextForeground(page.active ? m_data->m_fgActive : m_data->m_fgNormal);
+    if (activeTabTextColour.IsOk()) {
+        dc.SetTextForeground(activeTabTextColour);
+    }
 
     const wxString& text = wxControl::Ellipsize(page.caption, dc, wxELLIPSIZE_END, xEnd - xStart);
 
     const int textHeight = dc.GetTextExtent(text).y;
     dc.DrawText(text, xStart, rect.y + (size.y - textHeight - 1) / 2);
-
     return xExtent;
 }
 

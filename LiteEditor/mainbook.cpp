@@ -29,6 +29,7 @@
 #include "LSP/LSPManager.hpp"
 #include "NotebookNavigationDlg.h"
 #include "WelcomePage.h"
+#include "aui/clAuiFlatTabArt.hpp"
 #include "bookmark_manager.h"
 #include "clIdleEventThrottler.hpp"
 #include "clImageViewer.h"
@@ -195,6 +196,7 @@ void MainBook::CreateGuiControls()
 #endif
 
 #if MAINBOOK_AUIBOOK
+    m_book->SetArtProvider(new clAuiFlatTabArt());
     m_book->SetCanHaveCloseButton(true);
 #endif
     sz->Layout();

@@ -114,6 +114,12 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
         }
     }
 
+    AddHeader(_("Launch"));
+    AddProperty(_("Clear output before launch"), clConfig::Get().Read(kConfigClearOutputOnLaunch, false),
+                UPDATE_CLCONFIG_BOOL_CB(kConfigClearOutputOnLaunch));
+    AddProperty(_("Switch to output on launch"), clConfig::Get().Read(kConfigShowOutputOnLaunch, true),
+                UPDATE_CLCONFIG_BOOL_CB(kConfigShowOutputOnLaunch));
+
     AddHeader(_("Locale"));
     AddProperty(_("File text encoding"), astrEncodings, selected_encoding, UPDATE_TEXT_CB(SetFileFontEncoding));
     AddProperty(_("Enable localization"), m_options->GetUseLocale(), UPDATE_BOOL_CB(SetUseLocale));

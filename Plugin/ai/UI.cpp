@@ -317,7 +317,9 @@ NewLLMEndpointWizardBase::NewLLMEndpointWizardBase(
     m_wizardPageAPI = new wxWizardPageSimple(this, NULL, NULL, wxNullBitmap);
     m_pages.push_back(m_wizardPageAPI);
     if (m_pages.size() > 1) {
-        for (size_t i = 1; i < m_pages.size(); i++) { wxWizardPageSimple::Chain(m_pages.at(i - 1), m_pages.at(i)); }
+        for (size_t i = 1; i < m_pages.size(); i++) {
+            wxWizardPageSimple::Chain(m_pages.at(i - 1), m_pages.at(i));
+        }
     }
     GetPageAreaSizer()->Add(m_pages.at(0));
 
@@ -368,7 +370,7 @@ NewLLMEndpointWizardBase::NewLLMEndpointWizardBase(
     flexGridSizer113->Add(m_spinCtrlMaxTokens, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("NewLLMEndpointWizardBase"));
-    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if (GetSizer()) {
         GetSizer()->Fit(this);
     }
@@ -415,8 +417,8 @@ ChatHistoryDialogBase::ChatHistoryDialogBase(
     wxBoxSizer* boxSizer120 = new wxBoxSizer(wxHORIZONTAL);
     this->SetSizer(boxSizer120);
 
-    m_dvListCtrlPrompts =
-        new wxDataViewListCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)), wxDV_SINGLE);
+    m_dvListCtrlPrompts = new wxDataViewListCtrl(
+        this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)), wxDV_NO_HEADER | wxDV_SINGLE);
 
     boxSizer120->Add(m_dvListCtrlPrompts, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 

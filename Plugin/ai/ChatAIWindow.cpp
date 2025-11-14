@@ -35,11 +35,17 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     m_choiceEndpoints = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, control_size);
     m_choiceEndpoints->SetToolTip(_("Choose the endpoint to use"));
     m_toolbar->AddControl(m_choiceEndpoints);
-    clAuiToolBarArt::AddTool(m_toolbar, wxID_REFRESH, _("Restart the client"), images->LoadBitmap("debugger_restart"));
+
+    m_checkboxEnableTools = new wxCheckBox(m_toolbar, wxID_ANY, _("Enable Tools"));
+    bool enable_tools = clConfig::Get().Read("chat-ai/enable-tools", true);
+    m_checkboxEnableTools->SetValue(enable_tools);
+    m_checkboxEnableTools->SetToolTip(_("Enable Local MCP Tools for the LLM"));
+    m_toolbar->AddControl(m_checkboxEnableTools);
     m_toolbar->AddSeparator();
     clAuiToolBarArt::AddTool(m_toolbar, wxID_EXECUTE, _("Submit"), images->LoadBitmap("run"));
     clAuiToolBarArt::AddTool(m_toolbar, wxID_STOP, _("Stop"), images->LoadBitmap("execute_stop"));
     m_toolbar->AddSeparator();
+    clAuiToolBarArt::AddTool(m_toolbar, wxID_REFRESH, _("Restart the client"), images->LoadBitmap("debugger_restart"));
     clAuiToolBarArt::AddTool(
         m_toolbar, XRCID("prompt_history"), _("Show prompt history"), images->LoadBitmap("history"));
     clAuiToolBarArt::AddTool(m_toolbar,
@@ -48,6 +54,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
                              images->LoadBitmap("link_editor"),
                              wxEmptyString,
                              wxITEM_CHECK);
+
     m_toolbar->AddSeparator();
     if (IsDetached()) {
         clAuiToolBarArt::AddTool(
@@ -132,6 +139,7 @@ ChatAIWindow::~ChatAIWindow()
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_CONFIG_UPDATED, &ChatAIWindow::OnLLMConfigUpdate, this);
 
     clConfig::Get().Write("chat-ai/sash-position", m_mainSplitter->GetSashPosition());
+    clConfig::Get().Write("chat-ai/enable-tools", m_checkboxEnableTools->IsChecked());
 }
 
 void ChatAIWindow::OnSend(wxCommandEvent& event)
@@ -153,7 +161,13 @@ void ChatAIWindow::DoSendPrompt()
     wxString prompt = m_stcInput->GetText();
     prompt.Trim().Trim(false);
     m_cancel_token->Reset();
-    llm::Manager::GetInstance().Chat(this, prompt, m_cancel_token, llm::ChatOptions::kDefault);
+
+    llm::ChatOptions chat_options{llm::ChatOptions::kDefault};
+    if (!m_checkboxEnableTools->IsChecked()) {
+        // No tools.
+        llm::AddFlagSet(chat_options, llm::ChatOptions::kNoTools);
+    }
+    llm::Manager::GetInstance().Chat(this, prompt, m_cancel_token, chat_options);
 
     // Remember this prompt in the history.
     if (!prompt.empty()) {

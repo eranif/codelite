@@ -10,6 +10,7 @@
 #include "codelite_exports.h"
 
 #include <wx/activityindicator.h>
+#include <wx/checkbox.h>
 #include <wx/stattext.h>
 #include <wx/timer.h>
 
@@ -81,6 +82,7 @@ protected:
 
 private:
     wxChoice* m_choiceEndpoints{nullptr};
+    wxCheckBox* m_checkboxEnableTools{nullptr};
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
     ChatState m_state{ChatState::kReady};
     IndicatorPanel* m_statusPanel{nullptr};

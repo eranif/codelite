@@ -39,5 +39,14 @@ AI-powered IDE:
     - `{{workspace_config}}` - release / debug etc
 
 - Add "codelite-api.lua" file to the installation folder to provide completion for LUA LSPs.
+- Add "Wizard" for adding new MCP server.
+- Support images (assistant library).
+- Chat bar: add option to disable the tools (check box).
+- Limit LUA with 
+
+```c++
+luaopen_base(L);    // Basic library (essential for many operations)
+luaopen_string(L);  // String manipulation library
+```
 
 Prepare release notes per version (e.g. 18.2.0, 18.3.0 etc)

@@ -38,9 +38,10 @@ The window can be used for casual questions, code‑related queries, or to instr
 |------|--------|----------|
 | **Clear** | Erases the chat history **and** the internal message log. | – |
 | **Endpoint ▼** | Switches between the endpoints you added. | – |
-| **Restart** | Restarts the LLM client (clears all history). | – |
+| **Enable Tools** | Enable / Disable the [Built‑in Model Tools](/AI/ai/#3-builtin-model-tools).| – |
 | **Play** | Sends the current input to the model | ++shift+enter++ |
 | **Stop** | Cancels a long‑running request. | – |
+| **Restart** | Restarts the LLM client (clears all history). | – |
 | **Replay** | Opens a dialog that lists recent user messages – you can resend any of them. | – |
 | **Link** | When enabled, the output pane auto‑scrolls so the last line is always visible. | – |
 | **Detach / Attach** | Pops the chat window out of the dock (floating) or puts it back. | – |

@@ -57,7 +57,16 @@ void CodeLiteLUA::Initialise()
 {
     auto& self = Get();
     self.m_state = luaL_newstate();
-    luaL_openlibs(self.m_state);
+
+    // Load basic functionality, but do not load the "package" library to reduce security risks.
+    luaopen_base(self.m_state);
+    luaopen_debug(self.m_state);
+    luaopen_io(self.m_state);
+    luaopen_math(self.m_state);
+    luaopen_os(self.m_state);
+    luaopen_string(self.m_state);
+    luaopen_table(self.m_state);
+    luaopen_utf8(self.m_state);
 
     try {
         clDEBUG() << "Registering codelite with LUA" << endl;

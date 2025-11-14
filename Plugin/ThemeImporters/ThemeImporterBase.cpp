@@ -42,7 +42,7 @@ bool alacritty_read_colour(const YAML::Node& node, const std::string& prop_name,
         wxString str = node[prop_name].as<std::string>();
         str.Replace("0x", "#");
 
-        wxColour c{ str };
+        wxColour c{str};
         if (c.IsOk()) {
             *value = str;
             return true;
@@ -213,7 +213,17 @@ void ThemeImporterBase::AddCommonProperties(LexerConf::Ptr_t lexer)
     AddProperty(lexer, "-3", "Caret Colour", m_caret);
     AddProperty(lexer, "-4", "Whitespace", whitespaceColour, m_editor.bg_colour);
     AddProperty(lexer, "38", "Calltip", m_editor);
-    AddProperty(lexer, "33", "Line Numbers", m_lineNumber.fg_colour, m_editor.bg_colour);
+
+    // Define the line numbers.
+    int lightness{60}; // Assumes light theme
+    if (IsDarkTheme()) {
+        lightness = 120;
+    }
+    AddProperty(lexer,
+                "33",
+                "Line Numbers",
+                wxColour(m_editor.bg_colour).ChangeLightness(lightness).GetAsString(),
+                m_editor.bg_colour);
 }
 
 void ThemeImporterBase::DoSetKeywords(wxString& wordset, const wxString& words)
@@ -245,7 +255,7 @@ LexerConf::Ptr_t ThemeImporterBase::ImportEclipseXML(const wxFileName& theme_fil
         property.color = child->GetAttribute("color");
         property.isBold = child->GetAttribute("bold", "false") == "true";
         property.isItalic = child->GetAttribute("italic", "false") == "true";
-        m_xmlProperties.insert({ child->GetName(), property });
+        m_xmlProperties.insert({child->GetName(), property});
         child = child->GetNext();
     }
 
@@ -585,7 +595,7 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
             if (fg_colour.empty()) {
                 fg_colour = m_editor.fg_colour;
             }
-            lookup.insert({ scope.Lower(), VSCodeScope(m_editor, fg_colour) });
+            lookup.insert({scope.Lower(), VSCodeScope(m_editor, fg_colour)});
         }
     }
 
@@ -608,41 +618,41 @@ LexerConf::Ptr_t ThemeImporterBase::ImportVSCodeJSON(const wxFileName& theme_fil
     GetEditorVSCodeColour(colours_map, "editor.lineHighlightBackground", "editor.foreground", m_lineNumberActive);
 
     // token colours
-    GetVSCodeColour(lookup, { "comment", "comments" }, m_singleLineComment);
-    GetVSCodeColour(lookup, { "comments", "comment" }, m_multiLineComment);
-    GetVSCodeColour(lookup, { "constant.numeric" }, m_number);
-    GetVSCodeColour(lookup, { "string" }, m_string);
-    GetVSCodeColour(lookup, { "punctuation" }, m_oper);
+    GetVSCodeColour(lookup, {"comment", "comments"}, m_singleLineComment);
+    GetVSCodeColour(lookup, {"comments", "comment"}, m_multiLineComment);
+    GetVSCodeColour(lookup, {"constant.numeric"}, m_number);
+    GetVSCodeColour(lookup, {"string"}, m_string);
+    GetVSCodeColour(lookup, {"punctuation"}, m_oper);
     GetVSCodeColour(
         lookup,
-        { "keyword.operator.expression.delete", "keyword.operator.expression.void", "keyword", "keyword.control" },
+        {"keyword.operator.expression.delete", "keyword.operator.expression.void", "keyword", "keyword.control"},
         m_keyword);
 
     // search for class names
     GetVSCodeColour(lookup,
-                    { "storage.type",
-                      "storage",
-                      "storage.type.class",
-                      "entity.name.type.class",
-                      "entity.name.type.class.cpp",
-                      "entity.name.type.class.php",
-                      "meta.block.class.cpp",
-                      "entity.name.type.namespace",
-                      "entity.name.type",
-                      "entity.name.class",
-                      "entity.name.type",
-                      "class",
-                      "entity.name",
-                      "entity.name.scope-resolution" },
+                    {"storage.type",
+                     "storage",
+                     "storage.type.class",
+                     "entity.name.type.class",
+                     "entity.name.type.class.cpp",
+                     "entity.name.type.class.php",
+                     "meta.block.class.cpp",
+                     "entity.name.type.namespace",
+                     "entity.name.type",
+                     "entity.name.class",
+                     "entity.name.type",
+                     "class",
+                     "entity.name",
+                     "entity.name.scope-resolution"},
                     m_klass);
     GetVSCodeColour(lookup,
-                    { "entity.name.function",
-                      "meta.function-call",
-                      "entity.name.function.call.cpp",
-                      "entity.name.function.call.php" },
+                    {"entity.name.function",
+                     "meta.function-call",
+                     "entity.name.function.call.cpp",
+                     "entity.name.function.call.php"},
                     m_function);
 
-    GetVSCodeColour(lookup, { "variable", "variable.member", "meta.parameter", "variable.parameter" }, m_variable);
+    GetVSCodeColour(lookup, {"variable", "variable.member", "meta.parameter", "variable.parameter"}, m_variable);
 
     m_field = m_variable;
     m_enum = m_klass;

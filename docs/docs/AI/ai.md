@@ -54,12 +54,13 @@ If the selected model advertises the **tools** capability, ChatAI can invoke the
 
 | Tool | What it does |
 |------|--------------|
-| `Get_the_text_of_the_active_tab_inside_the_editor` | Returns the full source text of the currently focused editor tab. |
-| `Open_a_file_in_an_editor` | Opens a given file path in CodeLite for viewing or editing. |
-| `Read_file_from_the_file_system` | Reads a file from disk and returns its contents. |
-| `Read_the_compiler_build_output` | Retrieves the log of the most recent build performed inside CodeLite. |
-| `Write_file_content_to_disk_at_a_given_path` | Writes supplied text to a file at the specified location. |
-| `git_commit_log_history_between_two_commits` | Returns the git log between two commit IDs (or refs). |
+| `Get_the_text_of_the_active_tab_inside_the_editor` | Returns the text of the active tab inside the editor. |
+| `Lists_all_files_in_a_directory` | Lists all files in a specified directory matching a given pattern. |
+| `Lists_all_subdirectories` | Lists all subdirectories within a specified directory path (non-recursive). |
+| `Open_a_file_in_an_editor` | Opens a file and loads it into the editor for editing or viewing. |
+| `Read_file_from_the_file_system` | Reads the entire content of a file from the disk. |
+| `Read_the_compiler_build_output` | Fetches the compiler build log output of the most recent build command. |
+| `Write_file_content_to_disk_at_a_given_path` | Writes content to a file at a specified path on the disk. |
 
 These tools enable the model to help with **file management**, **code editing**, **build‑log analysis**, and **version‑control queries** without you having to copy‑paste anything.
 

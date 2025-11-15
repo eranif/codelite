@@ -659,7 +659,7 @@ msgstr "プロセスにコマンドを送信"
 msgid "Terminal"
 msgstr "端末"
 
-#: CodeLite/AsyncProcess/UnixProcess.cpp:27 codelite-stdio/UnixProcess.cpp:20
+#: CodeLite/AsyncProcess/UnixProcess.cpp:27
 msgid "Failed to start child process"
 msgstr "子プロセスの開始に失敗しました"
 

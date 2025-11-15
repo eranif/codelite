@@ -768,7 +768,7 @@ msgstr ""
 msgid "Terminal"
 msgstr ""
 
-#: CodeLite/AsyncProcess/UnixProcess.cpp:27 codelite-stdio/UnixProcess.cpp:20
+#: CodeLite/AsyncProcess/UnixProcess.cpp:27
 msgid "Failed to start child process"
 msgstr ""
 

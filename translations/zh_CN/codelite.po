@@ -997,7 +997,7 @@ msgstr "发送命令到进程"
 msgid "Terminal"
 msgstr "终端"
 
-#: CodeLite/UnixProcess.cpp:26 codelite-stdio/UnixProcess.cpp:17
+#: CodeLite/UnixProcess.cpp:26
 msgid "Failed to start child process"
 msgstr "启用子进程失败"
 

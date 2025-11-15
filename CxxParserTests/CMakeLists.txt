@@ -19,9 +19,15 @@ if(USE_PCH)
     target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)
 endif()
 
+if(UNIX AND NOT APPLE)
+    set_target_properties(CxxLocalVariables PROPERTIES
+        SKIP_BUILD_RPATH FALSE
+        BUILD_WITH_INSTALL_RPATH FALSE)
+endif(UNIX AND NOT APPLE)
+
 # Remove the "lib" prefix from the plugin name
-target_link_libraries(CxxLocalVariables ${LINKER_OPTIONS} libcodelite plugin wxsqlite3)
+target_link_libraries(CxxLocalVariables ${LINKER_OPTIONS} libcodelite plugin wxsqlite3 doctest)
 add_compile_definitions(CXX_TEST_DIR=\"${CL_SRC_ROOT}/CxxParserTests/Test/\")
 cl_install_executable(CxxLocalVariables)
 
-add_test(NAME "CxxParserTests" COMMAND CxxLocalVariables)
+doctest_discover_tests(CxxLocalVariables)

@@ -101,19 +101,21 @@ void wxTerminalCtrl::StartShell()
     ::wxGetEnv("PATH", &path);
 
     clEnvList_t env;
-    env.push_back({ "PATH", path });
+    env.push_back({"PATH", path});
 
 #ifdef __WXMSW__
     // override PATH with our own
-    env.push_back({ "WD", wxFileName(shell_exec).GetPath() });
+    env.push_back({"WD", wxFileName(shell_exec).GetPath()});
 #endif
 
     // required to get colours
-    env.push_back({ "TERM", "xterm-256color" });
+    env.push_back({"TERM", "xterm-256color"});
     // always enable cargo's colouring
-    env.push_back({ "CARGO_TERM_COLOR", "always" });
+    env.push_back({"CARGO_TERM_COLOR", "always"});
     // gcc colours
-    env.push_back({ "GCC_COLORS", wxEmptyString });
+    env.push_back({"GCC_COLORS", wxEmptyString});
+    // User name
+    env.push_back({"USER", ::wxGetUserId()});
 
     LOG_DEBUG(TERM_LOG()) << "Starting shell process:" << shell_exec << endl;
     if (m_shellCommand == "bash") {
@@ -146,11 +148,13 @@ void wxTerminalCtrl::Run(const wxString& command)
     LOG_DEBUG(TERM_LOG()) << "-->" << command << endl;
     m_shell->WriteRaw(command + "\n");
 
-    wxStringView sv{ command.wc_str(), command.length() };
+#ifndef __WXMSW__
+    wxStringView sv{command.wc_str(), command.length()};
     AppendText(sv);
 
     wxStringView eol(wxT("\n"), 1);
     AppendText(eol);
+#endif
 }
 
 void wxTerminalCtrl::AppendText(wxStringView text)
@@ -330,11 +334,11 @@ wxStringView wxTerminalCtrl::GetNextLine()
     int where = m_processOutput.Find('\n');
     if (where == wxNOT_FOUND) {
         // return the entire string
-        return wxStringView{ m_processOutput.wc_str(), m_processOutput.length() };
+        return wxStringView{m_processOutput.wc_str(), m_processOutput.length()};
     }
 
-    return wxStringView{ m_processOutput.wc_str(),
-                         (size_t)where + 1 }; // return the string view, including the terminator
+    return wxStringView{
+        m_processOutput.wc_str(), (size_t)where + 1}; // return the string view, including the terminator
 }
 
 void wxTerminalCtrl::ProcessOutputBuffer()
@@ -343,7 +347,7 @@ void wxTerminalCtrl::ProcessOutputBuffer()
         return;
     }
 
-    wxStringView sv{ m_processOutput.data(), m_processOutput.length() };
+    wxStringView sv{m_processOutput.data(), m_processOutput.length()};
     LOG_IF_DEBUG { LOG_DEBUG(TERM_LOG()) << "<--" << wxString(sv.data(), sv.length()) << endl; }
 
     AppendText(sv);

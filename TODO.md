@@ -31,17 +31,18 @@ AI-powered IDE:
 - Extend the "Prompt Editor" to support adding/deleting prompts (the default ones can not be deleted)
 - In the prompt editor, add support for placeholders:
 
-    - `{{full_fullpath}}`
-    - `{{file_ext}}`
-    - `{{file_dir}}`
-    - `{{file_content}}` - file content of a file at a given path
+    - `{{current_selection}}`
+    - `{{current_file_fullpath}}`
+    - `{{current_file_ext}}`
+    - `{{current_file_dir}}`
+    - `{{current_file_lang}}`
+    - `{{current_file_content}}` - file content of a file at a given path
     - `{{workspace_path}}` - full path of the workspace
-    - `{{workspace_config}}` - release / debug etc
 
-- Add "codelite-api.lua" file to the installation folder to provide completion for LUA LSPs.
+- Add `codelite-api.lua` file to the installation folder to provide completion for LUA LSPs.
 - Add "Wizard" for adding new MCP server.
 - Support images (assistant library).
 - Chat bar: add option to disable the tools (check box).
-
+- Git commit message: generate diff only for the selected items.
 
 Prepare release notes per version (e.g. 18.2.0, 18.3.0 etc)

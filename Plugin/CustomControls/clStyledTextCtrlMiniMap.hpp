@@ -10,7 +10,7 @@
 #pragma once
 
 #include <wx/version.h>
-#if wxCHECK_VERSION(3, 3, 0)
+#if wxCHECK_VERSION(3, 3, 2)
 #define wxHAS_MINIMAP 1
 #include "codelite_exports.h"
 

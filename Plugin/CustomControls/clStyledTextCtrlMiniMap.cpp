@@ -18,7 +18,7 @@
 // for compilers that support precompilation, includes "wx.h".
 #include "CustomControls/clStyledTextCtrlMiniMap.hpp"
 
-#if wxCHECK_VERSION(3, 3, 0)
+#if wxCHECK_VERSION(3, 3, 2)
 
 #include <functional>
 #include <wx/dcbuffer.h>

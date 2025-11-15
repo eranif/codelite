@@ -1688,11 +1688,16 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
 
     m_programProcess = ::CreateAsyncProcess(this, execLine, createProcessFlags, wd, &env_list);
     if (m_programProcess) {
+        if (clConfig::Get().Read(kConfigClearOutputOnLaunch, false)) {
+            clGetManager()->ClearOutputTab(kOutputTab_Output);
+        }
         clGetManager()->AppendOutputTabText(
-            kOutputTab_Output, wxString() << _("Working directory is set to: ") << wd << "\n");
+            kOutputTab_Output, wxString() << _("Working directory is set to: ") << wd << "\n", false);
         clGetManager()->AppendOutputTabText(
-            kOutputTab_Output, wxString() << _("Executing: ") << execLine << "\n");
-
+            kOutputTab_Output, wxString() << _("Executing: ") << execLine << "\n", false);
+        if (clConfig::Get().Read(kConfigShowOutputOnLaunch, false)) {
+            clGetManager()->ShowOutputPane("Output");
+        }
         // Notify about program execution
         clExecuteEvent startEvent(wxEVT_PROGRAM_STARTED);
         EventNotifier::Get()->AddPendingEvent(startEvent);

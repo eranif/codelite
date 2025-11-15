@@ -89,6 +89,8 @@ public:
 #define kConfigTabsPaneSortAlphabetically "TabsPaneSortAlphabetically"
 #define kConfigFileExplorerBookmarks "FileExplorerBookmarks"
 #define kRealPathResolveSymlinks "RealPathResolveSymlinks"
+#define kConfigClearOutputOnLaunch "ClearOutputOnLaunch"
+#define kConfigShowOutputOnLaunch "ShowOutputOnLaunch"
 
 class WXDLLIMPEXP_CL clConfig
 {

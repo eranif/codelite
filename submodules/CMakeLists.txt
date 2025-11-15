@@ -16,6 +16,22 @@ add_library(cJSON STATIC ${CMAKE_CURRENT_SOURCE_DIR}/cJSON/cJSON.c ${CMAKE_CURRE
 target_include_directories(cJSON PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cJSON)
 
 # ######################################################################################################################
+# doctest
+# a library header for test framework
+# ######################################################################################################################
+include(CTest)
+if(BUILD_TESTING)
+  add_library(doctest INTERFACE)
+  target_include_directories(
+    doctest SYSTEM
+    INTERFACE "${CMAKE_CURRENT_SOURCE_DIR}/doctest/doctest")
+  set(CMAKE_MODULE_PATH
+      ${CMAKE_MODULE_PATH}
+      "${CMAKE_CURRENT_SOURCE_DIR}/doctest/scripts/cmake")
+  include(doctest)
+endif()
+
+# ######################################################################################################################
 # For wxWidgets dependencies
 # ######################################################################################################################
 include("${wxWidgets_USE_FILE}")

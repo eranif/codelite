@@ -29,16 +29,7 @@ AI-powered IDE:
 
     
 - Extend the "Prompt Editor" to support adding/deleting prompts (the default ones can not be deleted)
-- In the prompt editor, add support for placeholders:
-
-    - `{{current_selection}}`
-    - `{{current_file_fullpath}}`
-    - `{{current_file_ext}}`
-    - `{{current_file_dir}}`
-    - `{{current_file_lang}}`
-    - `{{current_file_content}}` - file content of a file at a given path
-    - `{{workspace_path}}` - full path of the workspace
-
+- Document the prompt placeholders in `ai.md`
 - Add `codelite-api.lua` file to the installation folder to provide completion for LUA LSPs.
 - Add "Wizard" for adding new MCP server.
 - Support images (assistant library).

@@ -2,13 +2,17 @@
 
 #include "FileManager.hpp"
 #include "JSON.h"
+#include "SFTPClientData.hpp"
 #include "assistant/assistant.hpp"
 #include "assistant/claude_client.hpp"
 #include "assistant/ollama_client.hpp"
+#include "clWorkspaceManager.h"
 #include "cl_command_event.h"
+#include "cl_standard_paths.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"
+#include "fileextmanager.h"
 #include "globals.h"
 
 #include <wx/choicdlg.h>
@@ -275,7 +279,105 @@ void Manager::PostTask(ThreadTask task)
         CleanupAfterWorkerExit();
         Start();
     }
+
+    ReplacePlaceHolders(task);
     m_queue.Post(std::move(task));
+}
+
+void Manager::ReplacePlaceHolders(ThreadTask& task)
+{
+    const std::vector<std::function<void(wxString&)>> kManipulators = {
+        [](wxString& prompt) {
+            auto editor = clGetManager()->GetActiveEditor();
+            if (!editor) {
+                prompt.Replace("{{current_selection}}", wxEmptyString);
+                return;
+            }
+            prompt.Replace("{{current_selection}}", editor->GetSelection());
+        },
+        [](wxString& prompt) {
+            auto editor = clGetManager()->GetActiveEditor();
+            if (!editor) {
+                prompt.Replace("{{current_file_fullpath}}", wxEmptyString);
+                return;
+            }
+            prompt.Replace("{{current_file_fullpath}}", editor->GetRemotePathOrLocal());
+        },
+        [](wxString& prompt) {
+            auto editor = clGetManager()->GetActiveEditor();
+            if (!editor) {
+                prompt.Replace("{{current_file_ext}}", wxEmptyString);
+                return;
+            }
+            prompt.Replace("{{current_file_ext}}", editor->GetFileName().GetExt());
+        },
+        [](wxString& prompt) {
+            auto editor = clGetManager()->GetActiveEditor();
+            if (!editor) {
+                prompt.Replace("{{current_file_dir}}", ::wxGetCwd());
+                return;
+            }
+
+            wxString dir;
+            if (editor->IsRemoteFile()) {
+                dir = editor->GetRemotePathOrLocal().BeforeLast('/');
+            } else {
+                dir = editor->GetFileName().GetPath();
+            }
+            prompt.Replace("{{current_file_dir}}", dir);
+        },
+        [](wxString& prompt) {
+            auto editor = clGetManager()->GetActiveEditor();
+            if (!editor) {
+                prompt.Replace("{{current_file_name}}", wxEmptyString);
+                return;
+            }
+
+            wxString fullname;
+            if (editor->IsRemoteFile()) {
+                fullname = editor->GetRemotePathOrLocal().AfterLast('/');
+            } else {
+                fullname = editor->GetFileName().GetFullName();
+            }
+            prompt.Replace("{{current_file_name}}", fullname);
+        },
+        [](wxString& prompt) {
+            auto editor = clGetManager()->GetActiveEditor();
+            if (!editor) {
+                prompt.Replace("{{current_file_lang}}", wxEmptyString);
+                return;
+            }
+
+            auto lang = FileExtManager::GetLanguageFromType(FileExtManager::GetType(editor->GetRemotePathOrLocal()));
+            lang = lang.Lower();
+            lang.Replace(" ", "");
+            prompt.Replace("{{current_file_lang}}", lang);
+        },
+        [](wxString& prompt) {
+            auto editor = clGetManager()->GetActiveEditor();
+            if (!editor) {
+                prompt.Replace("{{current_file_content}}", wxEmptyString);
+                return;
+            }
+            prompt.Replace("{{current_file_content}}", editor->GetEditorText());
+        },
+        [](wxString& prompt) {
+            if (!clWorkspaceManager::Get().IsWorkspaceOpened()) {
+                prompt.Replace("{{workspace_path}}", ::wxGetCwd());
+                return;
+            }
+            prompt.Replace("{{workspace_path}}", clWorkspaceManager::Get().GetWorkspace()->GetDir());
+        },
+        [](wxString& prompt) { prompt.Replace("{{temp_dir}}", clStandardPaths::Get().GetTempDir()); }};
+
+    // Apply the manipulators on the prompt
+    for (auto& p : task.prompt_array) {
+        wxString prompt = wxString::FromUTF8(p);
+        for (auto& manipulator : kManipulators) {
+            manipulator(prompt);
+            p = prompt.ToStdString(wxConvUTF8);
+        }
+    }
 }
 
 void Manager::Chat(wxEvtHandler* owner,

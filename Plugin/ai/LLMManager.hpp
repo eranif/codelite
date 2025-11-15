@@ -433,6 +433,36 @@ private:
     ~Manager();
 
     clStatusOr<wxString> CreateOrOpenConfig();
+    /**
+     * @brief Replaces placeholder tokens in a ThreadTask's prompt array with their corresponding runtime values.
+     *
+     * This method processes each prompt in the task's prompt_array and substitutes templated placeholders
+     * (e.g., {{current_selection}}, {{current_file_fullpath}}) with actual values obtained from the active
+     * editor and workspace context. If context is unavailable (e.g., no active editor), placeholders are
+     * replaced with empty strings or fallback values.
+     *
+     * @param task A reference to a ThreadTask object whose prompt_array field will be modified in place.
+     *             Each prompt string in the array will have all supported placeholders replaced with their
+     *             corresponding values.
+     *
+     * @return void This function does not return a value.
+     *
+     * @note Supported placeholders include:
+     *       - {{current_selection}}: Selected text in the active editor
+     *       - {{current_file_fullpath}}: Full path of the current file (local or remote)
+     *       - {{current_file_ext}}: File extension of the current file
+     *       - {{current_file_dir}}: Directory containing the current file
+     *       - {{current_file_name}}: Base name of the current file
+     *       - {{current_file_lang}}: Programming language of the current file
+     *       - {{current_file_content}}: Full text content of the current file
+     *       - {{workspace_path}}: Root path of the current workspace
+     *       - {{temp_dir}}: System temporary directory path
+     *
+     * @see ThreadTask
+     * @see clGetManager()
+     * @see clWorkspaceManager
+     */
+    void ReplacePlaceHolders(ThreadTask& task);
 
     bool WriteConfigFile(llm::json j);
     void HandleConfigFileUpdated();

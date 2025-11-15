@@ -3,6 +3,7 @@
 #include "build_settings_config.h"
 #include "builder/builder_gnumake_default.h"
 #include "configuration_mapping.h"
+#include "fileutils.h"
 #include "macromanager.h"
 #include "procutils.h"
 #include "workspace.h"
@@ -282,23 +283,23 @@ void clMakeGeneratorApp::DoExecCommand(const wxString& command)
 
 void clMakeGeneratorApp::DoGenerateCompileCommands()
 {
-    wxFileName fn(clCxxWorkspaceST::Get()->GetFileName());
-    fn.SetFullName("compile_commands.json");
+    if (m_generateCompileCommands) {
+        wxFileName fn(clCxxWorkspaceST::Get()->GetFileName());
+        fn.SetFullName("compile_commands.json");
 
-    if(m_generateCompileCommands) {
         Info(wxString() << "-- Generating: " << fn.GetFullPath());
+        auto json = clCxxWorkspaceST::Get()->CreateCompileCommandsJSON();
+        if (json.is_array()) {
+            // Save the file
+            FileUtils::WriteFileContentRaw(fn, json.dump(2));
+        }
     } else {
         Info(wxString() << "-- Generating: compile_flags.txt files...");
-    }
 
-    wxArrayString generated_paths;
-    JSON json(clCxxWorkspaceST::Get()->CreateCompileCommandsJSON(!m_generateCompileCommands, &generated_paths));
-    if(json.isOk()) {
-        // Save the file
-        json.save(fn);
-    }
-    for(const wxString& path : generated_paths) {
-        wxFprintf(stdout, "%s\n", path);
+        const wxArrayString generated_paths = clCxxWorkspaceST::Get()->CreateCompileFlagsTexts();
+        for (const wxString& path : generated_paths) {
+            wxFprintf(stdout, "%s\n", path);
+        }
     }
 }
 

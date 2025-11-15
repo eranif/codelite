@@ -26,7 +26,6 @@
 #define WORKSPACE_H
 
 #include "IWorkspace.h"
-#include "JSON.h"
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
@@ -37,6 +36,7 @@
 #include "singleton.h"
 #include "wxStringHash.h"
 
+#include <assistant/common/json.hpp> // <nlohmann/json.hpp>
 #include <map>
 #include <wx/event.h>
 #include <wx/filename.h>
@@ -174,10 +174,15 @@ public:
     wxArrayString GetWorkspaceFolders() const;
 
     /**
-     * @brief create 'compile_commands' json object for the workspace projects (only the enabled ones)
-     * or compile_flags.txt file
+     * @brief create 'compile_commands' json object for the workspace (enabled) projects
      */
-    cJSON* CreateCompileCommandsJSON(bool createCompileFlagsTxt, wxArrayString* generated_paths) const;
+    nlohmann::json CreateCompileCommandsJSON() const;
+
+    /**
+     * @brief create the compile_flags.txt files for each workspace (enabled) projects
+     * @return list of generated paths
+     */
+    wxArrayString CreateCompileFlagsTexts() const;
 
     wxString GetFileName() const override { return GetWorkspaceFileName().GetFullPath(); }
     wxString GetDir() const override { return GetWorkspaceFileName().GetPath(); }

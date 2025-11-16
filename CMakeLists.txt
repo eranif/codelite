@@ -1091,11 +1091,6 @@ else()
     add_subdirectory(codelitephp)
     add_subdirectory(WordCompletion)
     add_subdirectory(HelpPlugin)
-    if(WITH_WEBTOOLS)
-      add_subdirectory(WebTools)
-    else()
-      message(STATUS "WebTools is disabled")
-    endif()
     add_subdirectory(SmartCompletion)
     if(UNIX
        AND NOT APPLE

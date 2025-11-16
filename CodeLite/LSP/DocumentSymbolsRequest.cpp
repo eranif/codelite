@@ -47,52 +47,53 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
     }
 
     auto result = json->toElement().namedObject("result");
-    if (result.isArray()) {
-        int size = result.arraySize();
-        if (size == 0) {
-            return;
+    if (!result.isArray() || result.arraySize() == 0) {
+        // Nothing to display
+        return;
+    }
+
+    int size = result.arraySize();
+    wxString filename = m_params->As<DocumentSymbolParams>()->GetTextDocument().GetPath();
+    auto context = m_context;
+    if (result[0].hasNamedObject("location")) {
+        auto result = json->toElement().namedObject("result");
+        std::vector<LSP::SymbolInformation> symbols;
+        symbols.reserve(size);
+        for (int i = 0; i < size; ++i) {
+            SymbolInformation si;
+            si.FromJSON(result[i]);
+            symbols.push_back(si);
         }
 
-        wxString filename = m_params->As<DocumentSymbolParams>()->GetTextDocument().GetPath();
-        auto context = m_context;
-        if (result[0].hasNamedObject("location")) {
-            auto result = json->toElement().namedObject("result");
-            std::vector<LSP::SymbolInformation> symbols;
-            symbols.reserve(size);
-            for (int i = 0; i < size; ++i) {
-                SymbolInformation si;
-                si.FromJSON(result[i]);
-                symbols.push_back(si);
-            }
+        // sort the items by line position
+        std::sort(symbols.begin(),
+                  symbols.end(),
+                  [=](const LSP::SymbolInformation& a, const LSP::SymbolInformation& b) -> int {
+                      return a.GetLocation().GetRange().GetStart().GetLine() <
+                             b.GetLocation().GetRange().GetStart().GetLine();
+                  });
 
-            // sort the items by line position
-            std::sort(symbols.begin(),
-                      symbols.end(),
-                      [=](const LSP::SymbolInformation& a, const LSP::SymbolInformation& b) -> int {
-                          return a.GetLocation().GetRange().GetStart().GetLine() <
-                                 b.GetLocation().GetRange().GetStart().GetLine();
-                      });
+        LOG_IF_TRACE { LSP_TRACE() << symbols << endl; }
 
-            LOG_IF_TRACE { LSP_TRACE() << symbols << endl; }
-
-            // fire event per context
-            if (context & CONTEXT_SEMANTIC_HIGHLIGHT) {
-                QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT);
-            }
-
-            bool outline_view_event_fired{false};
-            if (context & CONTEXT_OUTLINE_VIEW) {
-                QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
-                outline_view_event_fired = true;
-            }
-
-            if (!outline_view_event_fired) {
-                // always fire the wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW for the EventNotifier
-                // so it might be used by other plugins as well, e.g. "Outline"
-                QueueEvent(EventNotifier::Get(), symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
-            }
-            InvokeResponseCallback(CreateLSPEvent(symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE));
+        // fire event per context
+        if (context & CONTEXT_SEMANTIC_HIGHLIGHT) {
+            QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT);
         }
+
+        bool outline_event_fired_for_event_notifier{false};
+        if (context & CONTEXT_OUTLINE_VIEW) {
+            QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
+            // if "owner" is "EventNotifier::Get()" do not send the same event twice.
+            outline_event_fired_for_event_notifier = (owner == EventNotifier::Get());
+        }
+
+        if (!outline_event_fired_for_event_notifier) {
+            // always fire the wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW for the EventNotifier
+            // so it might be used by other plugins as well, e.g. "Outline"
+            QueueEvent(EventNotifier::Get(), symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
+        }
+
+        InvokeResponseCallback(CreateLSPEvent(symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE));
     }
 }
 

@@ -635,7 +635,7 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
                 }
 
                 wxRect tribtn = buttonRect;
-                const int PEN_WIDTH = 3;
+                const int PEN_WIDTH = 2;
 
                 if (IsExpanded()) {
                     if (!IsSelected()) {

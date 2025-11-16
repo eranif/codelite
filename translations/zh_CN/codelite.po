@@ -1263,15 +1263,15 @@ msgstr "开始新的文件夹比较"
 msgid "Compare with..."
 msgstr "对比..."
 
-#: ContinuousBuild/continousbuildbasepane.cpp:32
+#: ContinuousBuild/continuousbuildbasepane.cpp:32
 msgid "Enable continuous build"
 msgstr "启用可持续构建"
 
-#: ContinuousBuild/continousbuildbasepane.cpp:41
+#: ContinuousBuild/continuousbuildbasepane.cpp:41
 msgid "&Clear All"
 msgstr "清理全部(&C)"
 
-#: ContinuousBuild/continousbuildbasepane.cpp:65
+#: ContinuousBuild/continuousbuildbasepane.cpp:65
 msgid "Failed Files:"
 msgstr "已失败的文件："
 

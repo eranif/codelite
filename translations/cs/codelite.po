@@ -859,19 +859,19 @@ msgstr "Výraz parsování"
 msgid " in file: "
 msgstr "v souboru:"
 
-#: ContinuousBuild/continousbuildbasepane.cpp:20
-msgid "Enable continous build"
+#: ContinuousBuild/continuousbuildbasepane.cpp:20
+msgid "Enable continuous build"
 msgstr "Povolit průběžné sestavování"
 
-#: ContinuousBuild/continousbuildbasepane.cpp:26
+#: ContinuousBuild/continuousbuildbasepane.cpp:26
 msgid "&Clear All"
 msgstr "&Vyčisti vše"
 
-#: ContinuousBuild/continousbuildbasepane.cpp:41
+#: ContinuousBuild/continuousbuildbasepane.cpp:41
 msgid "Queued Files:"
 msgstr "Soubory ve frontě:"
 
-#: ContinuousBuild/continousbuildbasepane.cpp:55
+#: ContinuousBuild/continuousbuildbasepane.cpp:55
 msgid "Failed Files:"
 msgstr "Chybné soubory:"
 

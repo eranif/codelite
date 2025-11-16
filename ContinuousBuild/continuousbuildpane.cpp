@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2014 Eran Ifrah
-// file name            : continousbuildpane.cpp
+// file name            : continuousbuildpane.cpp
 //
 // -------------------------------------------------------------------------
 // A
@@ -23,19 +23,19 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "continousbuildconf.h"
-#include "continousbuildpane.h"
+#include "continuousbuildpane.h"
+
 #include "continuousbuild.h"
+#include "continuousbuildconf.h"
 #include "drawingutils.h"
 #include "imanager.h"
-#include <wx/msgdlg.h>
 
-ContinousBuildPane::ContinousBuildPane(wxWindow* parent, IManager* manager, ContinuousBuild* plugin)
-    : ContinousBuildBasePane(parent)
+ContinuousBuildPane::ContinuousBuildPane(wxWindow* parent, IManager* manager, ContinuousBuild* plugin)
+    : ContinuousBuildBasePane(parent)
     , m_mgr(manager)
     , m_plugin(plugin)
 {
-    ContinousBuildConf conf;
+    ContinuousBuildConf conf;
     m_mgr->GetConfigTool()->ReadObject(wxT("ContinousBuildConf"), &conf);
     m_checkBox1->SetValue(conf.GetEnabled());
 
@@ -43,19 +43,19 @@ ContinousBuildPane::ContinousBuildPane(wxWindow* parent, IManager* manager, Cont
     m_listBoxQueue->SetBackgroundColour(DrawingUtils::GetOutputPaneBgColour());
 }
 
-void ContinousBuildPane::OnStopAll(wxCommandEvent& event)
+void ContinuousBuildPane::OnStopAll(wxCommandEvent& event)
 {
     m_listBoxQueue->Clear();
     m_listBoxFailedFiles->Clear();
     m_plugin->StopAll();
 }
 
-void ContinousBuildPane::OnStopUI(wxUpdateUIEvent& event)
+void ContinuousBuildPane::OnStopUI(wxUpdateUIEvent& event)
 {
     event.Enable(!m_listBoxQueue->IsEmpty() /* || !m_listBoxFailedFiles->IsEmpty()*/);
 }
 
-void ContinousBuildPane::RemoveFile(const wxString& file)
+void ContinuousBuildPane::RemoveFile(const wxString& file)
 {
     int where = m_listBoxQueue->FindString(file);
     if(where != wxNOT_FOUND) {
@@ -63,34 +63,34 @@ void ContinousBuildPane::RemoveFile(const wxString& file)
     }
 }
 
-void ContinousBuildPane::AddFile(const wxString& file)
+void ContinuousBuildPane::AddFile(const wxString& file)
 {
     if(m_listBoxQueue->FindString(file) == wxNOT_FOUND) {
         m_listBoxQueue->Append(file);
     }
 }
 
-void ContinousBuildPane::ClearAll()
+void ContinuousBuildPane::ClearAll()
 {
     m_listBoxQueue->Clear();
     m_listBoxFailedFiles->Clear();
 }
 
-void ContinousBuildPane::AddFailedFile(const wxString& file)
+void ContinuousBuildPane::AddFailedFile(const wxString& file)
 {
     if(m_listBoxFailedFiles->FindString(file) == wxNOT_FOUND) {
         m_listBoxFailedFiles->Append(file);
     }
 }
 
-void ContinousBuildPane::OnEnableContBuildUI(wxUpdateUIEvent& event)
+void ContinuousBuildPane::OnEnableContBuildUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_checkBox1->IsChecked());
 }
 
-void ContinousBuildPane::OnEnableCB(wxCommandEvent& event)
+void ContinuousBuildPane::OnEnableCB(wxCommandEvent& event)
 {
-    ContinousBuildConf conf;
+    ContinuousBuildConf conf;
     conf.SetEnabled(event.IsChecked());
     m_mgr->GetConfigTool()->WriteObject(wxT("ContinousBuildConf"), &conf);
 }

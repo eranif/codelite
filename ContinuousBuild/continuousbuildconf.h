@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2014 Eran Ifrah
-// file name            : continousbuildconf.h
+// file name            : continuousbuildconf.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -23,19 +23,19 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __continousbuildconf__
-#define __continousbuildconf__
+#ifndef __continuousbuildconf__
+#define __continuousbuildconf__
 
 #include "serialized_object.h"
 
-class ContinousBuildConf : public SerializedObject
+class ContinuousBuildConf : public SerializedObject
 {
 	bool m_enabled;
 	size_t m_parallelProcesses;
 
 public:
-	ContinousBuildConf();
-	virtual ~ContinousBuildConf() = default;
+	ContinuousBuildConf();
+	virtual ~ContinuousBuildConf() = default;
 
 public:
 	virtual void DeSerialize(Archive &arch);
@@ -45,4 +45,4 @@ public:
 	bool GetEnabled() const { return m_enabled; }
 	size_t GetParallelProcesses() const { return m_parallelProcesses; }
 };
-#endif // __continousbuildconf__
+#endif // __continuousbuildconf__

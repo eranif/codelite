@@ -1274,15 +1274,15 @@ msgstr "Запустить новое сравнение папок"
 msgid "Compare with..."
 msgstr "Сравнить с..."
 
-#: ContinuousBuild/continousbuildbasepane.cpp:32
+#: ContinuousBuild/continuousbuildbasepane.cpp:32
 msgid "Enable continuous build"
 msgstr "Включить непрерывную сборку"
 
-#: ContinuousBuild/continousbuildbasepane.cpp:41
+#: ContinuousBuild/continuousbuildbasepane.cpp:41
 msgid "&Clear All"
 msgstr "&Очистить всё"
 
-#: ContinuousBuild/continousbuildbasepane.cpp:65
+#: ContinuousBuild/continuousbuildbasepane.cpp:65
 msgid "Failed Files:"
 msgstr "Файлы с ошибками:"
 

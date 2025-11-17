@@ -1119,7 +1119,7 @@ else()
     add_subdirectory(le_exec)
 
     # makedirs
-    add_subdirectory(TestDir)
+    add_subdirectory(codelite_makedir)
 
   endif()
 

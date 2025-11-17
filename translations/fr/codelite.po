@@ -762,7 +762,7 @@ msgstr "Envoi d'une commande au processus"
 msgid "Terminal"
 msgstr "Terminal"
 
-#: CodeLite/AsyncProcess/UnixProcess.cpp:27 codelite-stdio/UnixProcess.cpp:20
+#: CodeLite/AsyncProcess/UnixProcess.cpp:27
 msgid "Failed to start child process"
 msgstr "Échec du démarrage du processus enfant"
 

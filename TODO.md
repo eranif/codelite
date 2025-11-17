@@ -35,5 +35,7 @@ AI-powered IDE:
 - Support images (assistant library).
 - Chat bar: add option to disable the tools (check box).
 - Git commit message: generate diff only for the selected items.
+- Chat Box: provide code completion when user types: "{{" to display possible place-holders.
+
 
 Prepare release notes per version (e.g. 18.2.0, 18.3.0 etc)

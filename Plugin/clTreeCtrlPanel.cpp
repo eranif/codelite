@@ -51,7 +51,7 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
     , m_newfileTemplate("Untitled.txt")
     , m_newfileTemplateHighlightLen(wxStrlen("Untitled"))
 {
-    int style = wxAUI_TB_PLAIN_BACKGROUND;
+    int style = wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_OVERFLOW;
     m_toolbar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
 

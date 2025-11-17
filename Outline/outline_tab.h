@@ -16,6 +16,7 @@ private:
     void OnOutlineSymbols(LSPEvent& event);
     void OnActiveEditorChanged(wxCommandEvent& event);
     void OnAllEditorsClosed(wxCommandEvent& event);
+    void OnSideBarPageChanged(clCommandEvent& event);
     void RenderSymbols(const std::vector<LSP::SymbolInformation>& symbols, const wxString& filename);
     void ClearView();
 

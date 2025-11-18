@@ -747,7 +747,7 @@
       <object class="wxMenuItem" name="advance_settings">
         <label>&amp;Build Settings...</label>
       </object>
-      <object class="wxMenuItem" name="debuger_settings">
+      <object class="wxMenuItem" name="debugger_settings">
         <label>&amp;GDB Settings...</label>
       </object>
       <object class="wxMenuItem" name="tags_options">

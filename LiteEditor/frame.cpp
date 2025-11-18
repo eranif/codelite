@@ -609,7 +609,7 @@ EVT_MENU(XRCID("syntax_highlight"), clMainFrame::OnSyntaxHighlight)
 EVT_MENU(XRCID("configure_accelerators"), clMainFrame::OnConfigureAccelerators)
 EVT_MENU(XRCID("add_envvar"), clMainFrame::OnAddEnvironmentVariable)
 EVT_MENU(XRCID("advance_settings"), clMainFrame::OnAdvanceSettings)
-EVT_MENU(XRCID("debuger_settings"), clMainFrame::OnDebuggerSettings)
+EVT_MENU(XRCID("debugger_settings"), clMainFrame::OnDebuggerSettings)
 EVT_MENU(XRCID("tags_options"), clMainFrame::OnCtagsOptions)
 EVT_MENU(XRCID("edit_lua_script"), clMainFrame::OnEditLuaScript)
 
@@ -1176,7 +1176,7 @@ void clMainFrame::AddKeyboardAccelerators()
                          {"configure_accelerators", _("Keyboard shortcuts...")},
                          {"add_envvar", _("Environment Variables..."), "Ctrl-Shift-V"},
                          {"advance_settings", _("Build Settings...")},
-                         {"debuger_settings", _("GDB Settings...")},
+                         {"debugger_settings", _("GDB Settings...")},
                          {"tags_options", _("Code Completion...")}});
     mgr->AddAccelerator(_("Tab"),
                         {{"wxEVT_BOOK_NAV_PREV", _("Show Recent Tabs Dialog"), "RawCtrl-TAB"},

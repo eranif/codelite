@@ -428,6 +428,8 @@ public:
                                   std::optional<assistant::ChatOptions> chat_options,
                                   std::function<void()> completion_callback = nullptr);
 
+    const std::vector<wxString>& GetAvailablePlaceHolders() const;
+
 private:
     Manager();
     ~Manager();

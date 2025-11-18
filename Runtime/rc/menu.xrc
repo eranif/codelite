@@ -290,7 +290,7 @@
       </object>
       <object class="wxMenu" name="display_whitespaces">
         <label>Show Whitespace</label>
-        <object class="wxMenuItem" name="whitepsace_invisible">
+        <object class="wxMenuItem" name="whitespace_invisible">
           <label>Invisible</label>
           <radio>1</radio>
         </object>

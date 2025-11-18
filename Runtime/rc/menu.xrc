@@ -298,7 +298,7 @@
           <label>Show Always</label>
           <radio>1</radio>
         </object>
-        <object class="wxMenuItem" name="whitespace_visiable_after_indent">
+        <object class="wxMenuItem" name="whitespace_visible_after_indent">
           <label>Visible After First Indent</label>
           <radio>1</radio>
         </object>

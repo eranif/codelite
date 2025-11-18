@@ -2109,9 +2109,9 @@ void clMainFrame::OnCloseWorkspace(wxCommandEvent& event)
 void clMainFrame::OnSwitchWorkspace(wxCommandEvent& event)
 {
     // Notify plugins
-    clCommandEvent switchingToWorkspce(wxEVT_SWITCHING_TO_WORKSPACE);
+    clCommandEvent switchingToWorkspace(wxEVT_SWITCHING_TO_WORKSPACE);
     if (event.GetString().IsEmpty()) {
-        if (EventNotifier::Get()->ProcessEvent(switchingToWorkspce)) {
+        if (EventNotifier::Get()->ProcessEvent(switchingToWorkspace)) {
             // plugin called event.Skip(false)
             return;
         }
@@ -2119,8 +2119,8 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent& event)
 
     // To restore the default behavior, a plugin could set the file name in the event so we can skip the
     // SwitchToWorkspaceDlg process
-    if (!switchingToWorkspce.GetFileName().empty()) {
-        event.SetString(switchingToWorkspce.GetFileName());
+    if (!switchingToWorkspace.GetFileName().empty()) {
+        event.SetString(switchingToWorkspace.GetFileName());
     }
 
     wxBusyCursor bc;

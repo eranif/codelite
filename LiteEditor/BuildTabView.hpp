@@ -39,7 +39,7 @@ public:
 
     /// Initialise the view, preparing it for the next build process. This method should be called when a new build
     /// is starting
-    void Initialise(CompilerPtr compiler, bool only_erros, const wxString& project);
+    void Initialise(CompilerPtr compiler, bool only_errors, const wxString& project);
 
     size_t GetErrorCount() const { return m_errorCount; }
     size_t GetWarnCount() const { return m_warnCount; }

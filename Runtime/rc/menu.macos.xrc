@@ -294,7 +294,7 @@
           <label>Invisible</label>
           <radio>1</radio>
         </object>
-        <object class="wxMenuItem" name="whitepsace_always">
+        <object class="wxMenuItem" name="whitespace_always">
           <label>Show Always</label>
           <radio>1</radio>
         </object>

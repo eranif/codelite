@@ -324,7 +324,7 @@ EVT_MENU(XRCID("fold_all_in_selection"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("fold_topmost_in_selection"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("display_eol"), clMainFrame::OnViewDisplayEOL)
 EVT_MENU(XRCID("whitepsace_invisible"), clMainFrame::OnShowWhitespace)
-EVT_MENU(XRCID("whitepsace_always"), clMainFrame::OnShowWhitespace)
+EVT_MENU(XRCID("whitespace_always"), clMainFrame::OnShowWhitespace)
 EVT_MENU(XRCID("whitespace_visible_after_indent"), clMainFrame::OnShowWhitespace)
 EVT_MENU(XRCID("whitespace_indent_only"), clMainFrame::OnShowWhitespace)
 EVT_MENU(XRCID("next_tab"), clMainFrame::OnNextTab)
@@ -364,7 +364,7 @@ EVT_UPDATE_UI(XRCID("display_eol"), clMainFrame::OnViewDisplayEOL_UI)
 EVT_UPDATE_UI(XRCID("next_tab"), clMainFrame::OnNextPrevTab_UI)
 EVT_UPDATE_UI(XRCID("prev_tab"), clMainFrame::OnNextPrevTab_UI)
 EVT_UPDATE_UI(XRCID("whitepsace_invisible"), clMainFrame::OnShowWhitespaceUI)
-EVT_UPDATE_UI(XRCID("whitepsace_always"), clMainFrame::OnShowWhitespaceUI)
+EVT_UPDATE_UI(XRCID("whitespace_always"), clMainFrame::OnShowWhitespaceUI)
 EVT_UPDATE_UI(XRCID("whitespace_visible_after_indent"), clMainFrame::OnShowWhitespaceUI)
 EVT_UPDATE_UI(XRCID("whitespace_indent_only"), clMainFrame::OnShowWhitespaceUI)
 EVT_UPDATE_UI(XRCID("show_nav_toolbar"), clMainFrame::OnShowNavBarUI)
@@ -1208,7 +1208,7 @@ void clMainFrame::AddKeyboardAccelerators()
                          {"hide_tool_bar", _("Show Tool Bar"), "F1"}});
     mgr->AddAccelerator(_("View | Show Whitespace"),
                         {{"whitepsace_invisible", _("Invisible"), "Alt-F1"},
-                         {"whitepsace_always", _("Show Always"), "Alt-F2"},
+                         {"whitespace_always", _("Show Always"), "Alt-F2"},
                          {"whitespace_visible_after_indent", _("Visible After First Indent"), "Alt-F3"},
                          {"whitespace_indent_only", _("Indentation Only")}});
     mgr->AddAccelerator(_("View | Zoom"),
@@ -4565,7 +4565,7 @@ void clMainFrame::OnShowWhitespaceUI(wxUpdateUIEvent& e)
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     if (e.GetId() == XRCID("whitepsace_invisible")) {
         e.Check(options->GetShowWhitespaces() == 0);
-    } else if (e.GetId() == XRCID("whitepsace_always")) {
+    } else if (e.GetId() == XRCID("whitespace_always")) {
         e.Check(options->GetShowWhitespaces() == 1);
     } else if (e.GetId() == XRCID("whitespace_visible_after_indent")) {
         e.Check(options->GetShowWhitespaces() == 2);
@@ -4579,7 +4579,7 @@ void clMainFrame::OnShowWhitespace(wxCommandEvent& e)
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     if (e.GetId() == XRCID("whitepsace_invisible")) {
         options->SetShowWhitespaces(0);
-    } else if (e.GetId() == XRCID("whitepsace_always")) {
+    } else if (e.GetId() == XRCID("whitespace_always")) {
         options->SetShowWhitespaces(1);
     } else if (e.GetId() == XRCID("whitespace_visible_after_indent")) {
         options->SetShowWhitespaces(2);

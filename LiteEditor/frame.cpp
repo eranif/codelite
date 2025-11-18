@@ -4004,7 +4004,10 @@ void clMainFrame::OnNewVersionAvailable(wxCommandEvent& e)
               << (e.GetEventType() == wxEVT_CMD_VERSION_UPTODATE ? "up-to-date" : "new version found") << clEndl;
     if ((e.GetEventType() == wxEVT_CMD_VERSION_UPTODATE) && m_webUpdate->IsUserRequest()) {
         // All is up to date
-        clMessageBox(_("You already have the latest version of CodeLite"), "CodeLite", wxOK | wxCENTRE, this);
+        clMessageBox(_("The latest version of CodeLite is already installed on your system."),
+                     "CodeLite",
+                     wxOK | wxCENTRE | wxICON_INFORMATION,
+                     this);
     } else {
         WebUpdateJobData* data = reinterpret_cast<WebUpdateJobData*>(e.GetClientData());
         if (data) {

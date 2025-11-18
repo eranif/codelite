@@ -249,9 +249,9 @@ wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag, bool& alreadyExist, 
         }
 
         if(startWithUpper) {
-            wxString captializedPrefix = prefix.Mid(0, 1);
-            captializedPrefix.MakeUpper().Append(prefix.Mid(1));
-            prefix.swap(captializedPrefix);
+            wxString capitalizedPrefix = prefix.Mid(0, 1);
+            capitalizedPrefix.MakeUpper().Append(prefix.Mid(1));
+            prefix.swap(capitalizedPrefix);
         }
 
         wxString name = _U(var.m_name.c_str());

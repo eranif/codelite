@@ -125,7 +125,7 @@ protected:
     void UpdatePreview();
     void GenerateGetters(wxString& code);
     void GenerateSetters(wxString& code);
-    bool DoCheckExistance(const wxString& scope, const wxString& name, const wxString& method_signature);
+    bool DoCheckExistence(const wxString& scope, const wxString& name, const wxString& method_signature);
 
 public:
     /** Constructor */

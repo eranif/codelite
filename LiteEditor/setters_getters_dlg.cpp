@@ -191,7 +191,7 @@ wxString SettersGettersDlg::GenerateSetter(TagEntryPtr tag, bool& alreadyExist, 
         func << "}";
 
         if(m_checkForDuplicateEntries) {
-            alreadyExist = DoCheckExistance(tag->GetScope(), method_name, method_signature);
+            alreadyExist = DoCheckExistence(tag->GetScope(), method_name, method_signature);
         }
 
         return func;
@@ -276,7 +276,7 @@ wxString SettersGettersDlg::GenerateGetter(TagEntryPtr tag, bool& alreadyExist, 
         func << method_signature;
 
         if(m_checkForDuplicateEntries) {
-            alreadyExist = DoCheckExistance(tag->GetScope(), method_name, method_signature);
+            alreadyExist = DoCheckExistence(tag->GetScope(), method_name, method_signature);
         }
 
         displayName << func;
@@ -333,7 +333,7 @@ void SettersGettersDlg::OnUpdatePreview(wxCommandEvent& e)
     UpdatePreview();
 }
 
-bool SettersGettersDlg::DoCheckExistance(const wxString& scope, const wxString& name, const wxString& method_signature)
+bool SettersGettersDlg::DoCheckExistence(const wxString& scope, const wxString& name, const wxString& method_signature)
 {
     wxString sig_two = TagsManagerST::Get()->NormalizeFunctionSig(method_signature);
 

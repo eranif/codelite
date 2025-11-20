@@ -48,6 +48,10 @@ enum eSymbolKind {
     kSK_Event = 24,
     kSK_Operator = 25,
     kSK_TypeParameter = 26,
+    
+    // "Container" is not defined in LSP protocol but used internally
+    // to group DocumentSymbols by container name
+    kSK_Container = 100
 };
 
 class WXDLLIMPEXP_CL URI
@@ -557,8 +561,16 @@ class WXDLLIMPEXP_CL DocumentSymbol : public Serializable
     /**
      * The name of this symbol. Will be displayed in the user interface and therefore must not be
      * an empty string or a string only consisting of white spaces.
+     * The name does not contain any containers (parts before the last ::).
      */
     wxString name;
+    
+    /**
+     * The container of this symbol (part of the name before the last occuring ::)
+     * Can be an empty string. Can contain multiple containers separated by ::.
+     * Not part of the LSP spec.
+     */
+    wxString container;
 
     /**
      * More detail for this symbol, e.g the signature of a function.
@@ -569,6 +581,13 @@ class WXDLLIMPEXP_CL DocumentSymbol : public Serializable
      * The kind of this symbol.
      */
     eSymbolKind kind;
+    
+    /**
+	 * Tags for this document symbol.
+	 * @since 3.16.0
+     * In 3.17 contains only "Deprecated", more useful tags (private, public...) to be expected in 3.18 
+	 */
+    std::vector<int> tags;
 
     /**
      * The range enclosing this symbol not including leading/trailing whitespace but everything else
@@ -591,6 +610,7 @@ class WXDLLIMPEXP_CL DocumentSymbol : public Serializable
 public:
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
+    wxString ToString(int recursionLevel = 0) const;
 
     DocumentSymbol() = default;
     virtual ~DocumentSymbol() = default;
@@ -599,12 +619,16 @@ public:
     void SetDetail(const wxString& detail) { this->detail = detail; }
     void SetKind(const eSymbolKind& kind) { this->kind = kind; }
     void SetName(const wxString& name) { this->name = name; }
+    void SetContainer(const wxString& container) { this->container = container; }
+    void SetTags(const std::vector<int>& tags) { this->tags = tags; }
     void SetRange(const Range& range) { this->range = range; }
     void SetSelectionRange(const Range& selectionRange) { this->selectionRange = selectionRange; }
     const std::vector<DocumentSymbol>& GetChildren() const { return children; }
     const wxString& GetDetail() const { return detail; }
     const eSymbolKind& GetKind() const { return kind; }
     const wxString& GetName() const { return name; }
+    const wxString& GetContainer() const { return container; }
+    const std::vector<int>& GetTags() const { return tags; }
     const Range& GetRange() const { return range; }
     const Range& GetSelectionRange() const { return selectionRange; }
 };
@@ -670,6 +694,9 @@ WXDLLIMPEXP_CL clModuleLogger& GetLogHandle();
 
 /// Parse the text edit from a response "result" field
 WXDLLIMPEXP_CL std::unordered_map<wxString, std::vector<LSP::TextEdit>> ParseWorkspaceEdit(const JSONItem& result);
+
+/// Return the string representation of an eSymbolKind value
+WXDLLIMPEXP_CL wxString SymbolKindToString(eSymbolKind kind);
 
 }; // namespace LSP
 #endif // JSONRPC_BASICTYPES_H

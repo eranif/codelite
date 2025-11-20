@@ -43,6 +43,9 @@ JSONItem LSP::InitializeRequest::ToJSON(const wxString& name) const
     auto hoverFormat = textDocumentCapabilities.AddObject("hover").AddArray("contentFormat");
     hoverFormat.arrayAppend("markdown");
     hoverFormat.arrayAppend("plaintext");
+    
+    auto documentSymbols = textDocumentCapabilities.AddObject("documentSymbol");
+    documentSymbols.addProperty("hierarchicalDocumentSymbolSupport", true);
 
     if (m_withTokenTypes) {
         auto sematicTokens = textDocumentCapabilities.AddObject("semanticTokens");

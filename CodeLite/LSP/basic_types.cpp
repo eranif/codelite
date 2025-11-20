@@ -34,6 +34,39 @@ wxString FileNameToURI(const wxString& filename)
     return uri;
 }
 
+wxString SymbolKindToString(eSymbolKind kind) {
+    switch(kind) {
+        case kSK_File: return "File";
+        case kSK_Module: return "Module";
+        case kSK_Namespace: return "Namespace";
+        case kSK_Package: return "Package";
+        case kSK_Class: return "Class";
+        case kSK_Method: return "Method";
+        case kSK_Property: return "Property";
+        case kSK_Field: return "Field";
+        case kSK_Constructor: return "Constructor";
+        case kSK_Enum: return "Enum";
+        case kSK_Interface: return "Interface";
+        case kSK_Function: return "Function";
+        case kSK_Variable: return "Variable";
+        case kSK_Constant: return "Constant";
+        case kSK_String: return "String";
+        case kSK_Number: return "Number";
+        case kSK_Boolean: return "Boolean";
+        case kSK_Array: return "Array";
+        case kSK_Object: return "Object";
+        case kSK_Key: return "Key";
+        case kSK_Null: return "Null";
+        case kSK_EnumMember: return "EnumMember";
+        case kSK_Struct: return "Struct";
+        case kSK_Event: return "Event";
+        case kSK_Operator: return "Operator";
+        case kSK_TypeParameter: return "TypeParameter";
+        case kSK_Container: return "Container";
+        default: return "Unknown";
+    }
+}
+
 void Initialise() {}
 
 //===----------------------------------------------------------------------------------
@@ -310,15 +343,27 @@ TextDocumentContentChangeEvent& TextDocumentContentChangeEvent::SetText(const wx
 //===----------------------------------------------------------------------------------
 void DocumentSymbol::FromJSON(const JSONItem& json)
 {
-    name = json["name"].toString();
+    container = json["name"].toString().BeforeLast(':', &name);
+    if (name.empty()) container.swap(name);
+    while (container.EndsWith(":", &container));
+    
     detail = json["detail"].toString();
     kind = (eSymbolKind)json["kind"].toInt(0);
     range.FromJSON(json["range"]);
     selectionRange.FromJSON(json["selectionRange"]);
 
+    auto jsonTags = json["tags"];
+    int size = jsonTags.arraySize();
+    tags.clear();
+    tags.reserve(size);
+    for(int i = 0; i < size; ++i) {
+        auto tag = jsonTags[i].toInt();
+        tags.push_back(tag);
+    }
+    
     // read the children
     auto jsonChildren = json["children"];
-    int size = jsonChildren.arraySize();
+    size = jsonChildren.arraySize();
     children.clear();
     children.reserve(size);
     for(int i = 0; i < size; ++i) {
@@ -335,8 +380,35 @@ JSONItem DocumentSymbol::ToJSON(const wxString& name) const
     return JSONItem(nullptr);
 }
 
+wxString DocumentSymbol::ToString(int recursionLevel) const {
+    wxString tagStr;
+    if (GetTags().size() > 0) {
+        tagStr = " [";
+        for (auto tag: GetTags()) {
+            tagStr += wxString::Format("%d", tag) + ", ";
+        };
+        tagStr.RemoveLast(2);
+        tagStr += "]";
+    }
+    wxString containerStr = GetContainer();
+    if(!containerStr.empty()) containerStr += "::";
+    
+    wxString output = wxString::Format("%s%s%s (%s%s): %s\n", 
+        wxString(wxUniChar(' '), 4*recursionLevel),
+        containerStr,
+        GetName(),
+        SymbolKindToString(GetKind()),
+        tagStr,
+        GetDetail()
+    );
+    for (const auto& child : GetChildren()) {
+        output += child.ToString(recursionLevel + 1);
+    }
+    return output;
+}
+
 //===----------------------------------------------------------------------------------
-// DocumentSymbol
+// SymbolInformation
 //===----------------------------------------------------------------------------------
 void SymbolInformation::FromJSON(const JSONItem& json)
 {

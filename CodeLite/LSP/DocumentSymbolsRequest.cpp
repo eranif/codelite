@@ -47,7 +47,7 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
     }
 
     auto result = json->toElement().namedObject("result");
-    if (!result.isArray() || result.arraySize() == 0) {
+        if (!result.isArray() || result.arraySize() == 0) {            
         // Nothing to display
         return;
     }
@@ -55,8 +55,22 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
     int size = result.arraySize();
     wxString filename = m_params->As<DocumentSymbolParams>()->GetTextDocument().GetPath();
     auto context = m_context;
-    if (result[0].hasNamedObject("location")) {
-        auto result = json->toElement().namedObject("result");
+    // ToDo: is selectionRange really the best distinction between DocumentSymbol and SymbolInformation?
+    if (result[0].hasNamedObject("selectionRange")) { 
+        std::vector<LSP::DocumentSymbol> symbols;
+        symbols.reserve(size);
+        wxString debug_str;
+        for (int i = 0; i < size; ++i) {
+            DocumentSymbol ds;
+            ds.FromJSON(result[i]);
+            symbols.push_back(ds);
+            debug_str += ds.ToString();
+        }
+        
+        LSP_DEBUG() << "Received DocumentSymbol: " << endl << debug_str << endl;
+        return;
+    }
+    else if (result[0].hasNamedObject("location")) {
         std::vector<LSP::SymbolInformation> symbols;
         symbols.reserve(size);
         for (int i = 0; i < size; ++i) {

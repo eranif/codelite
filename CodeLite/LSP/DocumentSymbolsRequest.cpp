@@ -68,7 +68,26 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
         }
         
         LSP_DEBUG() << "Received DocumentSymbol: " << endl << debug_str << endl;
-        return;
+        
+        // fire event per context
+        if (context & CONTEXT_SEMANTIC_HIGHLIGHT) {
+            QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT);
+        }
+
+        bool outline_event_fired_for_event_notifier{false};
+        if (context & CONTEXT_OUTLINE_VIEW) {
+            QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
+            // if "owner" is "EventNotifier::Get()" do not send the same event twice.
+            outline_event_fired_for_event_notifier = (owner == EventNotifier::Get());
+        }
+
+        if (!outline_event_fired_for_event_notifier) {
+            // always fire the wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW for the EventNotifier
+            // so it might be used by other plugins as well, e.g. "Outline"
+            QueueEvent(EventNotifier::Get(), symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
+        }
+
+        InvokeResponseCallback(CreateLSPEvent(symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE));
     }
     else if (result[0].hasNamedObject("location")) {
         std::vector<LSP::SymbolInformation> symbols;
@@ -111,6 +130,27 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
     }
 }
 
+LSPEvent LSP::DocumentSymbolsRequest::CreateLSPEvent(const std::vector<LSP::DocumentSymbol>& symbols,
+                                                     const wxString& filename,
+                                                     const wxEventType& event_type)
+{
+    LSPEvent event{event_type};
+    event.GetDocumentSymbols().reserve(symbols.size());
+    event.GetDocumentSymbols().insert(event.GetDocumentSymbols().end(), symbols.begin(), symbols.end());
+    event.SetFileName(filename);
+    return event;
+}
+
+void LSP::DocumentSymbolsRequest::QueueEvent(wxEvtHandler* owner,
+                                             const std::vector<LSP::DocumentSymbol>& symbols,
+                                             const wxString& filename,
+                                             const wxEventType& event_type)
+{
+    LSPEvent event = CreateLSPEvent(symbols, filename, event_type);
+    owner->QueueEvent(event.Clone());
+}
+
+[[deprecated("SymbolInformation is replaced by DocumentSymbol")]]
 LSPEvent LSP::DocumentSymbolsRequest::CreateLSPEvent(const std::vector<LSP::SymbolInformation>& symbols,
                                                      const wxString& filename,
                                                      const wxEventType& event_type)
@@ -122,6 +162,8 @@ LSPEvent LSP::DocumentSymbolsRequest::CreateLSPEvent(const std::vector<LSP::Symb
     return event;
 }
 
+
+[[deprecated("SymbolInformation is replaced by DocumentSymbol")]]
 void LSP::DocumentSymbolsRequest::QueueEvent(wxEvtHandler* owner,
                                              const std::vector<LSP::SymbolInformation>& symbols,
                                              const wxString& filename,

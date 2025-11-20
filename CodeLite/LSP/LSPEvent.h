@@ -26,7 +26,9 @@ protected:
     LSP::SignatureHelp m_signatureHelp;
     LSP::Hover m_hover;
     std::vector<LSP::Diagnostic> m_diagnostics;
+    [[deprecated("SymbolInformation is replaced by DocumentSymbol")]]
     std::vector<LSP::SymbolInformation> m_symbolsInformation;
+    std::vector<LSP::DocumentSymbol> m_documentSymbols;
     std::vector<LSP::SemanticTokenRange> m_semanticTokens;
     std::vector<LSP::Location> m_locations;                             // used by wxEVT_LSP_REFERENCES
     std::vector<LSP::Command> m_commands;                               // used by wxEVT_LSP_CODE_ACTIONS
@@ -94,12 +96,21 @@ public:
         return *this;
     }
     const std::vector<LSP::Diagnostic>& GetDiagnostics() const { return m_diagnostics; }
+    [[deprecated("SymbolInformation is replaced by DocumentSymbol")]]
     void SetSymbolsInformation(const std::vector<LSP::SymbolInformation>& symbolsInformation)
     {
         this->m_symbolsInformation = symbolsInformation;
     }
+    [[deprecated("SymbolInformation is replaced by DocumentSymbol")]]
     const std::vector<LSP::SymbolInformation>& GetSymbolsInformation() const { return m_symbolsInformation; }
+    [[deprecated("SymbolInformation is replaced by DocumentSymbol")]]
     std::vector<LSP::SymbolInformation>& GetSymbolsInformation() { return m_symbolsInformation; }
+    void SetDocumentSymbols(const std::vector<LSP::DocumentSymbol>& documentSymbols)
+    {
+        this->m_documentSymbols = documentSymbols;
+    }
+    const std::vector<LSP::DocumentSymbol>& GetDocumentSymbols() const { return m_documentSymbols; }
+    std::vector<LSP::DocumentSymbol>& GetDocumentSymbols() { return m_documentSymbols; }
     void SetLocations(const std::vector<LSP::Location>& locations) { this->m_locations = locations; }
     const std::vector<LSP::Location>& GetLocations() const { return m_locations; }
     std::vector<LSP::Location>& GetLocations() { return m_locations; }

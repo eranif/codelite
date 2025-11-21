@@ -477,6 +477,18 @@ bool RemotyWorkspace::CreateNew(wxString path, const wxString& name, const wxStr
         return false;
     }
 
+    // Create .codelite/codelite-remote.json file with default settings.
+    wxString codelite_remote_json;
+    codelite_remote_json << dir << "/.codelite/codelite-remote.json";
+
+    if (clSFTPManager::Get().NewFolder(dir + "/.codelite", acc)) {
+        if (!clSFTPManager::Get().AwaitWriteFile(DEFAULT_CODELITE_REMOTE_JSON, codelite_remote_json, account)) {
+            clWARNING() << "Failed to write file:" << codelite_remote_json << endl;
+        }
+    } else {
+        clWARNING() << "Failed to create directory:" << dir << "/.codelite" << endl;
+    }
+
     // add this file to the list of recently opened workspaces
     RemotyConfig config;
     RemoteWorkspaceInfo wi{account, path};

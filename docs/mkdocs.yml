@@ -6,36 +6,26 @@ edit_uri: edit/master/docs/docs
 nav:
   - Downloads:
       - Latest: downloads/download.md
-      - Old Linux Repositories:
-          - CodeLite 17.0: downloads/oldDownloads/Repositories17.md
-          - CodeLite 16.0: downloads/oldDownloads/Repositories16.md
-          - CodeLite 15.0: downloads/oldDownloads/Repositories15.md
-          - CodeLite 14.0: downloads/oldDownloads/Repositories14.md
-          - CodeLite 13.0: downloads/oldDownloads/Repositories13.md
-          - CodeLite 12.0: downloads/oldDownloads/Repositories12.md
+  - Building from Source:
+      - wxWidgets: build/build_wx_widgets.md
+      - CodeLite: build/build_from_sources.md
+      - MinGW: build/mingw_builds.md
   - Getting started:
       - Prepare your environment:
           - Windows: getting_started/windows.md
           - Linux: getting_started/linux.md
           - macOS: getting_started/macos.md
       - Hello World: hello_world.md
-  - Settings:
-      - Look and feel: settings/colours_and_fonts.md
-      - Keyboard shortcuts: settings/keyboard_shortcuts.md
-      - Build Settings: settings/build_settings.md
-      - Environment Variables: settings/environment_variables.md
-      - Macros: /settings/macros
+  - AI: AI/ai.md
+  - LUA:
+      - Overview: LUA/overview.md
+      - Documentation: LUA/lua.md
   - Workspace:
       - C/C++: workspaces/default.md
       - File System Workspace: workspaces/file_system.md
       - Remote File System Workspace: /plugins/remoty
       - PHP (via plugin): workspaces/php.md
       - Node.js (via plugin): workspaces/nodejs.md
-  - Code Completion: code_completion/cxx.md
-  - AI: AI/ai.md
-  - LUA: 
-      - Overview: LUA/overview.md
-      - Documentation: LUA/lua.md
   - Plugins:
       - Language Server Protocol: plugins/lsp.md
       - Debug Adapter Client: plugins/dap.md
@@ -57,10 +47,6 @@ nav:
       - XDebug (PHP): debuggers/xdebug.md
       - Node.js: debuggers/nodejs.md
       - Quick Debug: debuggers/quick_debug.md
-  - Build:
-      - wxWidgets: build/build_wx_widgets.md
-      - CodeLite: build/build_from_sources.md
-      - MinGW: build/mingw_builds.md
   - wxWidgets:
       - wxWidgets 3.1.5: wxWidgets/repo315.md
       - wxWidgets 3.1.6: wxWidgets/repo316.md
@@ -69,6 +55,11 @@ nav:
       - wxWidgets 3.2.1: wxWidgets/repo321.md
       - wxWidgets 3.2: wxWidgets/repo32.md
   - Misc:
+      - Look and feel: settings/colours_and_fonts.md
+      - Keyboard shortcuts: settings/keyboard_shortcuts.md
+      - Build Settings: settings/build_settings.md
+      - Environment Variables: settings/environment_variables.md
+      - Macros: /settings/macros
       - Local Preferences: misc/local_preferences.md
       - Sync Project with File System: misc/reconcile_project.md
       - Bookmarks: misc/bookmarks.md
@@ -82,20 +73,39 @@ nav:
       - CodeLite v17.x - 18.0.0: release_notes/v18_0_0.md
       - CodeLite v16.x - 17.0.0: release_notes/v17_0_0.md
       - CodeLite v15.x - 16.0.0: release_notes/v16_0_0.md
+  - Old Linux Repositories:
+      - CodeLite 17.0: downloads/oldDownloads/Repositories17.md
+      - CodeLite 16.0: downloads/oldDownloads/Repositories16.md
+      - CodeLite 15.0: downloads/oldDownloads/Repositories15.md
+      - CodeLite 14.0: downloads/oldDownloads/Repositories14.md
+      - CodeLite 13.0: downloads/oldDownloads/Repositories13.md
+      - CodeLite 12.0: downloads/oldDownloads/Repositories12.md
 theme:
-  name: material
+  name: 'material'
   features:
     - navigation.tabs
     - navigation.sections
     - navigation.top
     - content.code.copy
+
   palette:
-    scheme: default
-    primary: indigo
+    # Palette toggle for light mode
+    - scheme: default
+      primary: white
+      toggle:
+        icon: material/toggle-switch-off-outline
+        name: Switch to dark mode
+    # Palette toggle for dark mode
+    - scheme: slate
+      primary: black
+      toggle:
+        icon: material/toggle-switch
+        name: Switch to light mode
   highlightjs: true
   font:
     text: Roboto
     code: Roboto Mono
+
 markdown_extensions:
   - pymdownx.keys
   - admonition

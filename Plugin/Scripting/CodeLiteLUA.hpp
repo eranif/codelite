@@ -390,6 +390,31 @@ protected:
     static std::string
     str_replace_all(const std::string& str, const std::string& find_what, const std::string& replace_with);
 
+    static bool is_workspace_opened();
+    /**
+     * @brief Retrieves the selected files in the file system workspace view.
+     *
+     * This function returns a list of file paths that are currently selected in the
+     * CodeLite file system workspace. If no workspace is open, an empty vector is returned.
+     *
+     * @return std::vector<std::string> A vector of strings containing the absolute paths of the selected files.
+     *                                 Returns an empty vector if no workspace is open.
+     *
+     */
+    static std::vector<std::string> file_system_workspace_selected_files();
+    /**
+     * @brief Retrieves the selected folders in the CodeLite file system workspace view.
+     *
+     * This function returns a list of folder paths that are currently selected in the workspace view.
+     * If the workspace is not open, an empty vector is returned. File selections are ignored.
+     *
+     * @return std::vector<std::string> A vector of strings containing the paths of selected folders.
+     *         Returns an empty vector if the workspace is not open.
+     *
+     * @note This function is part of the CodeLiteLUA class and interacts with the CodeLite file system workspace.
+     */
+    static std::vector<std::string> file_system_workspace_selected_folders();
+
 private:
     CodeLiteLUA();
     ~CodeLiteLUA();

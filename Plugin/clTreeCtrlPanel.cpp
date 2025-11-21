@@ -15,6 +15,7 @@
 #include "ieditor.h"
 #include "imanager.h"
 #include "macros.h"
+#include "resources/clXmlResource.hpp"
 
 #include <wx/app.h>
 #include <wx/dir.h>
@@ -24,6 +25,7 @@
 #include <wx/richmsgdlg.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
+
 namespace
 {
 bool should_colour_item_in_gray(clTreeCtrlData* entry)
@@ -115,30 +117,21 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
     clTreeCtrlData* cd = GetItemData(item);
     if (cd && cd->IsFolder()) {
         // Prepare a folder context menu
-        wxMenu menu;
-        menu.Append(wxID_REFRESH, _("Refresh"));
-        menu.AppendSeparator();
-
-        menu.Append(XRCID("tree_ctrl_new_folder"), _("New Folder"));
-        menu.Append(XRCID("tree_ctrl_new_file"), _("New File"));
-        if (!IsTopLevelFolder(item)) {
-            menu.AppendSeparator();
-            menu.Append(XRCID("tree_ctrl_delete_folder"), _("Delete"));
+        std::unique_ptr<wxMenu> menu{clXmlResource::Get().LoadMenu("file_explorer_folder_menu")};
+        // Handle conditional menu items based on IsTopLevelFolder()
+        if (IsTopLevelFolder(item)) {
+            // Disable items for top-level folders
+            menu->Enable(XRCID("tree_ctrl_delete_folder"), false);
+            menu->Enable(XRCID("separator_delete"), false);
+            menu->Enable(XRCID("tree_ctrl_rename_folder"), false);
+            menu->Enable(XRCID("separator_rename"), false);
+        } else {
+            // Disable items for non top-level folders
+            menu->Enable(XRCID("tree_ctrl_close_folder"), false);
+            menu->Enable(XRCID("separator_close"), false);
         }
 
-        if (!IsTopLevelFolder(item)) {
-            menu.AppendSeparator();
-            menu.Append(XRCID("tree_ctrl_rename_folder"), _("Rename..."));
-        }
-
-        menu.AppendSeparator();
-        menu.Append(XRCID("tree_ctrl_find_in_files_folder"), _("Find in Files"));
-        menu.AppendSeparator();
-        menu.Append(XRCID("tree_ctrl_open_containig_folder"), _("Open Containing Folder"));
-        menu.Append(XRCID("tree_ctrl_open_shell_folder"), _("Open Shell"));
-        menu.AppendSeparator();
-        menu.Append(XRCID("copy-path"), _("Copy path"));
-        menu.Bind(
+        menu->Bind(
             wxEVT_MENU,
             [cd](wxCommandEvent& event) {
                 event.Skip();
@@ -148,11 +141,6 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
             },
             XRCID("copy-path"));
 
-        if (IsTopLevelFolder(item)) {
-            menu.AppendSeparator();
-            menu.Append(XRCID("tree_ctrl_close_folder"), _("Close"));
-        }
-
         // Now that we added the basic menu, let the plugin
         // adjust it
         wxArrayString files, folders;
@@ -160,40 +148,29 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
 
         clContextMenuEvent dirMenuEvent(wxEVT_CONTEXT_MENU_FOLDER);
         dirMenuEvent.SetEventObject(this);
-        dirMenuEvent.SetMenu(&menu);
+        dirMenuEvent.SetMenu(menu.get());
         dirMenuEvent.SetPath(cd->GetPath());
         EventNotifier::Get()->ProcessEvent(dirMenuEvent);
 
         // Connect events
-        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnCloseFolder, this, XRCID("tree_ctrl_close_folder"));
-        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnNewFolder, this, XRCID("tree_ctrl_new_folder"));
-        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnNewFile, this, XRCID("tree_ctrl_new_file"));
-        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnDeleteSelections, this, XRCID("tree_ctrl_delete_folder"));
-        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnRenameFolder, this, XRCID("tree_ctrl_rename_folder"));
-        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnFindInFilesFolder, this, XRCID("tree_ctrl_find_in_files_folder"));
-        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenContainingFolder, this, XRCID("tree_ctrl_open_containig_folder"));
-        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenShellFolder, this, XRCID("tree_ctrl_open_shell_folder"));
-        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnRefresh, this, wxID_REFRESH);
-        PopupMenu(&menu);
+        menu->Bind(wxEVT_MENU, &clTreeCtrlPanel::OnCloseFolder, this, XRCID("tree_ctrl_close_folder"));
+        menu->Bind(wxEVT_MENU, &clTreeCtrlPanel::OnNewFolder, this, XRCID("tree_ctrl_new_folder"));
+        menu->Bind(wxEVT_MENU, &clTreeCtrlPanel::OnNewFile, this, XRCID("tree_ctrl_new_file"));
+        menu->Bind(wxEVT_MENU, &clTreeCtrlPanel::OnDeleteSelections, this, XRCID("tree_ctrl_delete_folder"));
+        menu->Bind(wxEVT_MENU, &clTreeCtrlPanel::OnRenameFolder, this, XRCID("tree_ctrl_rename_folder"));
+        menu->Bind(wxEVT_MENU, &clTreeCtrlPanel::OnFindInFilesFolder, this, XRCID("tree_ctrl_find_in_files_folder"));
+        menu->Bind(
+            wxEVT_MENU, &clTreeCtrlPanel::OnOpenContainingFolder, this, XRCID("tree_ctrl_open_containig_folder"));
+        menu->Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenShellFolder, this, XRCID("tree_ctrl_open_shell_folder"));
+        menu->Bind(wxEVT_MENU, &clTreeCtrlPanel::OnRefresh, this, wxID_REFRESH);
+        PopupMenu(menu.get());
 
     } else if (cd && cd->IsFile()) {
         // File context menu
         // Prepare a folder context menu
-        wxMenu menu;
+        std::unique_ptr<wxMenu> menu{clXmlResource::Get().LoadMenu("file_explorer_file_menu")};
 
-        menu.Append(XRCID("tree_ctrl_open_file"), _("Open"));
-        menu.Append(XRCID("tree_ctrl_rename_file"), _("Rename"));
-        menu.AppendSeparator();
-        menu.Append(XRCID("tree_ctrl_open_with_default_app"), _("Open with default application"));
-        menu.AppendSeparator();
-        menu.Append(XRCID("tree_ctrl_delete_file"), _("Delete"));
-
-        menu.AppendSeparator();
-        menu.Append(XRCID("tree_ctrl_open_containig_folder"), _("Open Containing Folder"));
-        menu.Append(XRCID("tree_ctrl_open_shell_folder"), _("Open Shell"));
-        menu.AppendSeparator();
-        menu.Append(XRCID("copy-path"), _("Copy path"));
-        menu.Bind(
+        menu->Bind(
             wxEVT_MENU,
             [cd](wxCommandEvent& event) {
                 event.Skip();
@@ -210,20 +187,21 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
 
         clContextMenuEvent fileMenuEvent(wxEVT_CONTEXT_MENU_FILE);
         fileMenuEvent.SetEventObject(this);
-        fileMenuEvent.SetMenu(&menu);
+        fileMenuEvent.SetMenu(menu.get());
         fileMenuEvent.SetStrings(files);
         EventNotifier::Get()->ProcessEvent(fileMenuEvent);
 
         // Connect events
-        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenFile, this, XRCID("tree_ctrl_open_file"));
-        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnRenameFile, this, XRCID("tree_ctrl_rename_file"));
-        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnDeleteSelections, this, XRCID("tree_ctrl_delete_file"));
-        menu.Bind(
+        menu->Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenFile, this, XRCID("tree_ctrl_open_file"));
+        menu->Bind(wxEVT_MENU, &clTreeCtrlPanel::OnRenameFile, this, XRCID("tree_ctrl_rename_file"));
+        menu->Bind(wxEVT_MENU, &clTreeCtrlPanel::OnDeleteSelections, this, XRCID("tree_ctrl_delete_file"));
+        menu->Bind(
             wxEVT_MENU, &clTreeCtrlPanel::OnOpenWithDefaultApplication, this, XRCID("tree_ctrl_open_with_default_app"));
-        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenContainingFolder, this, XRCID("tree_ctrl_open_containig_folder"));
-        menu.Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenShellFolder, this, XRCID("tree_ctrl_open_shell_folder"));
+        menu->Bind(
+            wxEVT_MENU, &clTreeCtrlPanel::OnOpenContainingFolder, this, XRCID("tree_ctrl_open_containig_folder"));
+        menu->Bind(wxEVT_MENU, &clTreeCtrlPanel::OnOpenShellFolder, this, XRCID("tree_ctrl_open_shell_folder"));
+        PopupMenu(menu.get());
 
-        PopupMenu(&menu);
     } else {
         // context menu elsewhere
         wxMenu menu;

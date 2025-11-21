@@ -1,6 +1,8 @@
 #include "Scripting/CodeLiteLUA.hpp"
 
 #include "DefaultLuaScript.cpp"
+#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
+#include "FileSystemWorkspace/clFileSystemWorkspaceView.hpp"
 #include "ai/LLMManager.hpp"
 #include "codelite_events.h"
 #include "fileextmanager.h"
@@ -28,6 +30,7 @@ enum class MessageType {
     kWarn,
     kError,
 };
+
 }
 
 CodeLiteLUA& CodeLiteLUA::Get()
@@ -72,6 +75,7 @@ void CodeLiteLUA::Initialise()
         clDEBUG() << "Registering codelite with LUA" << endl;
         luabridge::getGlobalNamespace(self.m_state)
             .beginNamespace("codelite")
+            // Functions
             .addFunction("message_box", &CodeLiteLUA::message_box)
             .addFunction("user_text", &CodeLiteLUA::user_text)
             .addFunction("add_menu_item", &CodeLiteLUA::add_menu_item)
@@ -88,6 +92,8 @@ void CodeLiteLUA::Initialise()
             .addFunction("log_debug", &CodeLiteLUA::log_debug)
             .addFunction("log_trace", &CodeLiteLUA::log_trace)
             .addFunction("str_replace_all", &CodeLiteLUA::str_replace_all)
+            .addFunction("file_system_workspace_selected_folders", &CodeLiteLUA::file_system_workspace_selected_folders)
+            .addFunction("file_system_workspace_selected_files", &CodeLiteLUA::file_system_workspace_selected_files)
             .endNamespace();
 
     } catch (const std::exception& e) {
@@ -296,6 +302,30 @@ void CodeLiteLUA::chat(const std::string& prompt)
     wxCommandEvent event_chat{wxEVT_MENU, XRCID("ai_show_chat_window")};
     event_chat.SetString(wxString::FromUTF8(prompt));
     EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(event_chat);
+}
+
+bool CodeLiteLUA::is_workspace_opened() { return clWorkspaceManager::Get().IsWorkspaceOpened(); }
+
+std::vector<std::string> CodeLiteLUA::file_system_workspace_selected_files()
+{
+    if (!clFileSystemWorkspace::Get().IsOpen()) {
+        return {};
+    }
+    wxArrayString files, folders;
+    clFileSystemWorkspace::Get().GetView()->GetSelections(folders, files);
+    wxUnusedVar(folders);
+    return StringUtils::ToStdStrings(files);
+}
+
+std::vector<std::string> CodeLiteLUA::file_system_workspace_selected_folders()
+{
+    if (!clFileSystemWorkspace::Get().IsOpen()) {
+        return {};
+    }
+    wxArrayString files, folders;
+    clFileSystemWorkspace::Get().GetView()->GetSelections(folders, files);
+    wxUnusedVar(files);
+    return StringUtils::ToStdStrings(folders);
 }
 
 clStatus CodeLiteLUA::LoadScriptString(const wxString& script)

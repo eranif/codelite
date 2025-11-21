@@ -251,7 +251,6 @@
         <label>Display &amp;Function Calltip</label>
       </object>
     </object>
-
     <!-- View Menu -->
     <object class="wxMenu" name="view_menu">
       <label>&amp;View</label>
@@ -799,64 +798,11 @@
       <label>Save</label>
     </object>
   </object>
-  <object class="wxMenu" name="editor_tab_right_click">
-    <object class="wxMenuItem" name="close_file">
-      <label>Close</label>
-    </object>
-    <object class="wxMenuItem" name="wxID_CLOSE_ALL">
-      <label>Close All</label>
-    </object>
-    <object class="wxMenuItem" name="close_other_tabs">
-      <label>Close Other Tabs</label>
-    </object>
-    <object class="wxMenuItem" name="close_tabs_to_the_right">
-      <label>Close Tabs To The Right</label>
-    </object>
+  <object class="wxMenu" name="editor_tab_right_click"><object class="wxMenuItem" name="close_file"><label>Close</label></object><object class="wxMenuItem" name="wxID_CLOSE_ALL"><label>Close All</label></object><object class="wxMenuItem" name="close_other_tabs"><label>Close Other Tabs</label></object><object class="wxMenuItem" name="close_tabs_to_the_right"><label>Close Tabs To The Right</label></object><object class="wxMenuItem" name="wxID_SEPARATOR"/><object class="wxMenuItem" name="duplicate_tab"><label>Duplicate Tab...</label></object><object class="wxMenuItem" name="wxID_SEPARATOR"/><object class="wxMenuItem" name="mark_readonly"><label>Make Read Only</label><checkable>1</checkable></object><object class="wxMenuItem" name="wxID_SEPARATOR"/><object class="wxMenuItem" name="refresh_file"><label>Reload</label></object><object class="wxMenuItem" name="save_file"><label>Save</label></object><object class="wxMenuItem" name="wxID_SEPARATOR"/><object class="wxMenu" name="wxID_ANY"><label>Copy File Name</label><object class="wxMenuItem" name="copy_file_name_only"><label>Copy File Name to Clipboard</label></object><object class="wxMenuItem" name="copy_file_name"><label>Copy Full Path to Clipboard</label></object><object class="wxMenuItem" name="copy_file_path"><label>Copy Path to Clipboard</label></object><object class="wxMenuItem" name="wxID_SEPARATOR"/><object class="wxMenuItem" name="copy_file_relative_path_to_workspace"><label>Copy Path Relative to Workspace</label></object></object><object class="wxMenuItem" name="wxID_SEPARATOR"/><object class="wxMenuItem" name="ID_DETACH_EDITOR"><label>Detach Editor</label></object>
+    --&gt;
     <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-    <object class="wxMenuItem" name="duplicate_tab">
-      <label>Duplicate Tab...</label>
-    </object>
-    <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-    <object class="wxMenuItem" name="mark_readonly">
-      <label>Make Read Only</label>
-      <checkable>1</checkable>
-    </object>
-    <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-    <object class="wxMenuItem" name="refresh_file">
-      <label>Reload</label>
-    </object>
-    <object class="wxMenuItem" name="save_file">
-      <label>Save</label>
-    </object>
-    <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-    <object class="wxMenu" name="wxID_ANY">
-      <label>Copy File Name</label>
-      <object class="wxMenuItem" name="copy_file_name_only">
-        <label>Copy File Name to Clipboard</label>
-      </object>
-      <object class="wxMenuItem" name="copy_file_name">
-        <label>Copy Full Path to Clipboard</label>
-      </object>
-      <object class="wxMenuItem" name="copy_file_path">
-        <label>Copy Path to Clipboard</label>
-      </object>
-      <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-      <object class="wxMenuItem" name="copy_file_relative_path_to_workspace">
-        <label>Copy Path Relative to Workspace</label>
-      </object>
-    </object>
-    <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-    <object class="wxMenuItem" name="ID_DETACH_EDITOR">
-      <label>Detach Editor</label>
-    </object>
-    -->
-    <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-    <object class="wxMenuItem" name="open_shell_from_filepath">
-      <label>Open Shell</label>
-    </object>
-    <object class="wxMenuItem" name="open_file_explorer">
-      <label>Open Containing Folder</label>
-    </object>
+    <object class="wxMenuItem" name="open_shell_from_filepath"><label>Open Shell</label></object>
+    <object class="wxMenuItem" name="open_file_explorer"><label>Open Containing Folder</label></object>
   </object>
   <object class="wxMenu" name="editor_right_click">
     <object class="wxMenuItem" name="swap_files">
@@ -969,7 +915,7 @@
     </object>
   </object>
   <!-- Folder Menu -->
-  <object class="wxMenu" name="file_tree_folder">
+  <object class="wxMenu" name="cpp_tree_view_folder_menu">
     <label>Project</label>
     <style>wxMENU_TEAROFF</style>
     <object class="wxMenuItem" name="new_item">
@@ -1058,7 +1004,7 @@
       <label>Detach</label>
     </object>
   </object>
-  <object class="wxMenu" name="file_tree_file">
+  <object class="wxMenu" name="cpp_tree_view_file_menu">
     <object class="wxMenuItem" name="open_in_editor">
       <label>Open in CodeLite</label>
     </object>
@@ -1139,57 +1085,74 @@
       </object>
     </object>
   </object>
-  <object class="wxMenu" name="file_explorer_menu">
-    <object class="wxMenuItem" name="refresh_node">
-      <label>Refresh</label>
+  <!-- Context menu displayed when right-clicking on a **file** in the File System Workspace view tree -->
+  <object class="wxMenu" name="file_explorer_file_menu">
+    <object class="wxMenuItem" name="tree_ctrl_open_file">
+      <label>Open</label>
     </object>
-    <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-    <object class="wxMenuItem" name="delete_node">
+    <object class="wxMenuItem" name="tree_ctrl_rename_file">
+      <label>Rename</label>
+    </object>
+    <object class="separator"/>
+    <object class="wxMenuItem" name="tree_ctrl_open_with_default_app">
+      <label>Open with default application</label>
+    </object>
+    <object class="separator"/>
+    <object class="wxMenuItem" name="tree_ctrl_delete_file">
       <label>Delete</label>
     </object>
-    <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-    <object class="wxMenuItem" name="search_node">
-      <label>Search...</label>
+    <object class="separator"/>
+    <object class="wxMenuItem" name="tree_ctrl_open_containig_folder">
+      <label>Open Containing Folder</label>
     </object>
-    <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-    <object class="wxMenu" name="tags_paths">
-      <label>Tags</label>
-      <object class="wxMenu" name="global_paths">
-        <label>Global Parser Paths</label>
-        <object class="wxMenuItem" name="tags_add_global_include">
-          <label>Add to include paths</label>
-        </object>
-        <object class="wxMenuItem" name="tags_add_global_exclude">
-          <label>Add to exclude paths</label>
-        </object>
-      </object>
-      <object class="wxMenu" name="workspcae_paths">
-        <label>Workspace Parser Paths</label>
-        <object class="wxMenuItem" name="tags_add_workspace_include">
-          <label>Add to include paths</label>
-        </object>
-        <object class="wxMenuItem" name="tags_add_workspace_exclude">
-          <label>Add to exclude paths</label>
-        </object>
-      </object>
+    <object class="wxMenuItem" name="tree_ctrl_open_shell_folder">
+      <label>Open Shell</label>
     </object>
-    <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-    <object class="wxMenuItem" name="open_file">
-      <label>&amp;Open</label>
+    <object class="separator"/>
+    <object class="wxMenuItem" name="copy-path">
+      <label>Copy path</label>
     </object>
-    <object class="wxMenuItem" name="open_file_in_text_editor">
-      <label>Open in &amp;editor</label>
+  </object>
+  <!-- Context menu displayed when right-clicking on a **file** in the File System Workspace view tree -->
+  <object class="wxMenu" name="file_explorer_folder_menu">
+    <object class="wxMenuItem" name="wxID_REFRESH">
+      <label>Refresh</label>
     </object>
-    <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-    <object class="wxMenuItem" name="open_with_default_application">
-      <label>Open With &amp;Default Application</label>
+    <object class="separator"/>
+    <object class="wxMenuItem" name="tree_ctrl_new_folder">
+      <label>New Folder</label>
     </object>
-    <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-    <object class="wxMenuItem" name="open_shell">
-      <label>Open Shell here</label>
+    <object class="wxMenuItem" name="tree_ctrl_new_file">
+      <label>New File</label>
     </object>
-    <object class="wxMenuItem" name="fe_open_file_explorer">
-      <label>Open File Explorer here</label>
+    <!-- These items need to be shown/hidden dynamically based on IsTopLevelFolder() -->
+    <object class="separator" name="separator_delete"/>
+    <object class="wxMenuItem" name="tree_ctrl_delete_folder">
+      <label>Delete</label>
+    </object>
+    <object class="separator" name="separator_rename"/>
+    <object class="wxMenuItem" name="tree_ctrl_rename_folder">
+      <label>Rename...</label>
+    </object>
+    <object class="separator"/>
+    <object class="wxMenuItem" name="tree_ctrl_find_in_files_folder">
+      <label>Find in Files</label>
+    </object>
+    <object class="separator"/>
+    <object class="wxMenuItem" name="tree_ctrl_open_containig_folder">
+      <label>Open Containing Folder</label>
+    </object>
+    <object class="wxMenuItem" name="tree_ctrl_open_shell_folder">
+      <label>Open Shell</label>
+    </object>
+    <object class="separator"/>
+    <object class="wxMenuItem" name="copy-path">
+      <label>Copy path</label>
+    </object>
+    <!-- This item needs to be shown/hidden dynamically based on IsTopLevelFolder() -->
+    <object class="separator" name="separator_close"/>
+    <object class="wxMenuItem" name="tree_ctrl_close_folder">
+      <label>Close</label>
     </object>
   </object>
   <object class="wxMenu" name="editor_context_menu_llm_generation">

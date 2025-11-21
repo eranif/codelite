@@ -6,73 +6,39 @@ This document provides comprehensive API documentation for CodeLite's Lua script
 
 ## API Categories
 
-The CodeLite Lua API is organized into five main categories:
+The CodeLite Lua API is organized into six main categories:
 
-- **UI Functions** – Display message boxes and add custom menu items
-- **Editor Functions** – Access editor content, selections, language types, and file paths
-- **LLM Functions** – Integrate with language learning models for chat and code generation
-- **Logging Functions** – Output diagnostic information with multiple severity levels
-- **String Utilities** – Perform text manipulation operations
-
-## Function Reference
-
-### UI Functions
-
-Functions for creating user interface elements and displaying information to users.
-
-*Each function entry includes its signature, description, parameters with data types, return values, and practical code examples.*
-
-### Editor Functions
-
-Functions for programmatically accessing and manipulating editor content and properties.
-
-*Access current file content, manage text selections, identify programming languages, and retrieve file paths.*
-
-### LLM Functions
-
-Functions for integrating with language learning models to enhance development workflows.
-
-*Implement AI-assisted features such as chat interfaces and automated code generation.*
-
-### Logging Functions
-
-Functions for outputting diagnostic and debugging information at various severity levels.
-
-**Supported severity levels:**
-- Trace
-- Debug
-- Info
-- Warning
-- Error
-
-### String Utilities
-
-Functions for performing common text manipulation and transformation operations.
-
-*Process and format strings for use within CodeLite extensions.*
+- **UI Functions** — Display message boxes and add custom menu items
+- **Editor Functions** — Access editor content, selections, language types, and file paths
+- **LLM Functions** — Integrate with language learning models for chat and code generation
+- **Logging Functions** — Output diagnostic information with multiple severity levels
+- **String Utilities** — Perform text manipulation operations
+- **Workspace Functions** — Access workspace state and selected files/folders
 
 ---
 
 ## UI Functions
 
+Functions for creating user interface elements and displaying information to users.
+
 ### message_box
 
-**Signature**:
+**Signature:**
 
 ```lua
 codelite.message_box(message, type)
 ```
 
-**Description**:
+**Description:**
 
 Displays a message dialog box with the specified message and type.
 
-**Parameters**:
+**Parameters:**
 
 - `message` (string): The text to display in the dialog
 - `type` (integer): The type of message dialog to display (e.g., `MessageType.kWarn`, `MessageType.kError`, or `MessageType.kInfo`)
 
-**Example**:
+**Example:**
 
 ```lua
 -- Display a warning message
@@ -83,25 +49,25 @@ codelite.message_box("Configuration file not found", MessageType.kWarn)
 
 ### user_text
 
-**Signature**:
+**Signature:**
 
 ```lua
 codelite.user_text(title)
 ```
 
-**Description**:
+**Description:**
 
 Prompts the user for text input via a dialog box and returns the entered text.
 
-**Parameters**:
+**Parameters:**
 
 - `title` (string): The title/prompt message to display in the input dialog
 
-**Returns**:
+**Returns:**
 
-A `string` containing the user's input, or an empty string if the user canceled or entered no text.
+- `string` — The user's input, or an empty string if the user canceled or entered no text
 
-**Example**:
+**Example:**
 
 ```lua
 -- Prompt user for a project name
@@ -117,24 +83,23 @@ end
 
 ### add_menu_item
 
-**Signature**:
+**Signature:**
 
 ```lua
 codelite.add_menu_item(menu_name, label, action)
 ```
 
-**Description**:
+**Description:**
 
-Adds a menu item with an associated Lua action to a specified menu (see below for a list of available menus).
-The callback function will be executed when the menu item is triggered.
+Adds a menu item with an associated Lua action to a specified menu. The callback function will be executed when the menu item is triggered.
 
-**Parameters**:
+**Parameters:**
 
 - `menu_name` (string): The name of the menu to which the item will be added
 - `label` (string): The display label for the menu item
 - `action` (function): A Lua function that will be called when the menu item is activated
 
-**Example**:
+**Example:**
 
 ```lua
 -- Add a custom menu item
@@ -143,49 +108,48 @@ codelite.add_menu_item("Tools", "My Custom Action", function()
 end)
 ```
 
-**Supported Menus**
+#### Supported Menu Contexts
 
-The following menu names can be used as the first argument to specify context menu locations:
-
-#### Available Menu Contexts
+The following menu names can be used to specify context menu locations:
 
 | Menu Name | Description |
 |-----------|-------------|
-| `editor_context_menu_llm_generation` | Context menu displayed when right-clicking within an editor and selecting **AI-powered options** |
+| `editor_context_menu_llm_generation` | Context menu displayed when right-clicking within an editor and selecting AI-powered options |
 | `editor_tab_right_click` | Context menu displayed when right-clicking on an open editor tab label |
-| `file_tree_file` | Context menu displayed when right-clicking on a file in the tree view |
-| `file_tree_folder` | Context menu displayed when right-clicking on a folder in the tree view |
-| `editor_right_click` | Context menu displayed when right-clicking within a **C++** file editor |
-| `editor_right_click_default` | Context menu displayed when right-clicking within any non-C++ file editor |
+| `editor_right_click` | Context menu displayed when right-clicking within a C++ file editor |
+| `editor_right_click_default` | Default context menu displayed when right-clicking within any non-C++ file editor |
+| `file_explorer_file_menu` | Context menu displayed when right-clicking on a file in the File System Workspace view tree |
+| `file_explorer_folder_menu` | Context menu displayed when right-clicking on a folder in the File System Workspace view tree |
 
 #### Top-Level Menu Items
 
-In addition to the context menus listed above, you can reference any top-level menu item from the application menu bar, such as:
+You can also reference any top-level menu item from the application menu bar, such as:
 
 - `File`
 - `Edit`
 - `Search`
+- `Tools`
 - Other standard menu bar items
 
 ---
 
 ### add_menu_separator
 
-**Signature**:
+**Signature:**
 
 ```lua
 codelite.add_menu_separator(menu_name)
 ```
 
-**Description**:
+**Description:**
 
 Adds a visual separator to the specified menu. If the menu does not exist, it will be created automatically with the separator as its first item.
 
-**Parameters**:
+**Parameters:**
 
 - `menu_name` (string): The name of the menu to which the separator should be added
 
-**Example**:
+**Example:**
 
 ```lua
 -- Add a separator to the Tools menu
@@ -199,23 +163,25 @@ codelite.add_menu_separator("My Custom Menu")
 
 ## Editor Functions
 
+Functions for programmatically accessing and manipulating editor content and properties.
+
 ### editor_selection
 
-**Signature**:
+**Signature:**
 
 ```lua
 codelite.editor_selection()
 ```
 
-**Description**:
+**Description:**
 
 Retrieves the current selection text from the active editor.
 
-**Returns**:
+**Returns:**
 
-A `string` containing the selected text, or an empty string if no editor is active or no text is selected.
+- `string` — The selected text, or an empty string if no editor is active or no text is selected
 
-**Example**:
+**Example:**
 
 ```lua
 -- Get the current selection
@@ -229,21 +195,21 @@ end
 
 ### editor_language
 
-**Signature**:
+**Signature:**
 
 ```lua
 codelite.editor_language()
 ```
 
-**Description**:
+**Description:**
 
 Retrieves the programming language associated with the currently active editor. The language is determined from the file type of the editor's path.
 
-**Returns**:
+**Returns:**
 
-A `string` containing the language name, or an empty string if no editor is active.
+- `string` — The language name, or an empty string if no editor is active
 
-**Example**:
+**Example:**
 
 ```lua
 -- Check the current editor's language
@@ -257,21 +223,21 @@ end
 
 ### editor_text
 
-**Signature**:
+**Signature:**
 
 ```lua
 codelite.editor_text()
 ```
 
-**Description**:
+**Description:**
 
 Returns the full text content of the currently active editor.
 
-**Returns**:
+**Returns:**
 
-A `string` containing the entire text of the active editor, or an empty string if no editor is active.
+- `string` — The entire text of the active editor, or an empty string if no editor is active
 
-**Example**:
+**Example:**
 
 ```lua
 -- Get all text from the current editor
@@ -285,21 +251,21 @@ end
 
 ### editor_filepath
 
-**Signature**:
+**Signature:**
 
 ```lua
 codelite.editor_filepath()
 ```
 
-**Description**:
+**Description:**
 
 Retrieves the file path of the currently active editor.
 
-**Returns**:
+**Returns:**
 
-A `string` containing the file path, or an empty string if no editor is active.
+- `string` — The file path, or an empty string if no editor is active
 
-**Example**:
+**Example:**
 
 ```lua
 -- Get the current file path
@@ -313,23 +279,25 @@ end
 
 ## LLM Functions
 
+Functions for integrating with language learning models to enhance development workflows.
+
 ### chat
 
-**Signature**:
+**Signature:**
 
 ```lua
 codelite.chat(prompt)
 ```
 
-**Description**:
+**Description:**
 
 Initiates a chat session using the given prompt. This opens the chat window within the application with the provided text as the initial input.
 
-**Parameters**:
+**Parameters:**
 
 - `prompt` (string): The initial text to be displayed in the chat input
 
-**Example**:
+**Example:**
 
 ```lua
 -- Open chat with a predefined prompt
@@ -340,21 +308,21 @@ codelite.chat("Explain how to use this API")
 
 ### generate
 
-**Signature**:
+**Signature:**
 
 ```lua
 codelite.generate(prompt)
 ```
 
-**Description**:
+**Description:**
 
 Initiates an LLM text generation process with the given prompt. Displays a warning if a generation is already in progress. The function shows a generation dialog and processes the prompt using the LLM Manager.
 
-**Parameters**:
+**Parameters:**
 
 - `prompt` (string): The text prompt to send to the LLM for generation
 
-**Example**:
+**Example:**
 
 ```lua
 -- Generate code using LLM
@@ -365,23 +333,33 @@ codelite.generate("Write a function to sort an array")
 
 ## Logging Functions
 
+Functions for outputting diagnostic and debugging information at various severity levels.
+
+**Supported severity levels:**
+
+- Trace
+- Debug
+- Info/System
+- Warning
+- Error
+
 ### log_error
 
-**Signature**:
+**Signature:**
 
 ```lua
 codelite.log_error(msg)
 ```
 
-**Description**:
+**Description:**
 
 Logs an error message. This should be called whenever an error needs to be recorded.
 
-**Parameters**:
+**Parameters:**
 
 - `msg` (string): The error message to be logged
 
-**Example**:
+**Example:**
 
 ```lua
 -- Log an error
@@ -392,21 +370,21 @@ codelite.log_error("Failed to open configuration file")
 
 ### log_system
 
-**Signature**:
+**Signature:**
 
 ```lua
 codelite.log_system(msg)
 ```
 
-**Description**:
+**Description:**
 
 Logs a system message. Intended for messages that are relevant to system operations and diagnostics.
 
-**Parameters**:
+**Parameters:**
 
 - `msg` (string): The message to be logged
 
-**Example**:
+**Example:**
 
 ```lua
 -- Log a system message
@@ -417,21 +395,21 @@ codelite.log_system("Plugin initialized successfully")
 
 ### log_warn
 
-**Signature**:
+**Signature:**
 
 ```lua
 codelite.log_warn(msg)
 ```
 
-**Description**:
+**Description:**
 
 Logs a warning message.
 
-**Parameters**:
+**Parameters:**
 
 - `msg` (string): The warning message to be logged
 
-**Example**:
+**Example:**
 
 ```lua
 -- Log a warning
@@ -442,21 +420,21 @@ codelite.log_warn("Configuration value not found, using default")
 
 ### log_debug
 
-**Signature**:
+**Signature:**
 
 ```lua
 codelite.log_debug(msg)
 ```
 
-**Description**:
+**Description:**
 
 Logs a debug-level message. Intended for debugging output during development.
 
-**Parameters**:
+**Parameters:**
 
 - `msg` (string): The debug message to be logged
 
-**Example**:
+**Example:**
 
 ```lua
 -- Log debug information
@@ -467,21 +445,21 @@ codelite.log_debug("Variable value: " .. tostring(my_var))
 
 ### log_trace
 
-**Signature**:
+**Signature:**
 
 ```lua
 codelite.log_trace(msg)
 ```
 
-**Description**:
+**Description:**
 
 Logs a trace message at the developer log level. Used for detailed execution tracing.
 
-**Parameters**:
+**Parameters:**
 
 - `msg` (string): The trace message to be logged
 
-**Example**:
+**Example:**
 
 ```lua
 -- Log detailed trace information
@@ -492,29 +470,31 @@ codelite.log_trace("Entering function process_data()")
 
 ## String Utilities
 
+Functions for performing common text manipulation and transformation operations.
+
 ### str_replace_all
 
-**Signature**:
+**Signature:**
 
 ```lua
 codelite.str_replace_all(str, find_what, replace_with)
 ```
 
-**Description**:
+**Description:**
 
 Replaces all occurrences of a substring within a string with another substring. If `find_what` is empty, the original string is returned unchanged.
 
-**Parameters**:
+**Parameters:**
 
 - `str` (string): The input string to search within
 - `find_what` (string): The substring to search for and replace
 - `replace_with` (string): The substring to replace each occurrence of `find_what` with
 
-**Returns**:
+**Returns:**
 
-A `string` with all occurrences of `find_what` replaced by `replace_with`.
+- `string` — The modified string with all occurrences of `find_what` replaced by `replace_with`
 
-**Example**:
+**Example:**
 
 ```lua
 -- Replace all occurrences
@@ -525,4 +505,103 @@ local result = codelite.str_replace_all(input, "world", "universe")
 -- No match case
 local no_match = codelite.str_replace_all(input, "xyz", "abc")
 -- no_match is "Hello world, world!" (unchanged)
+```
+
+---
+
+## Workspace Functions
+
+Functions for accessing workspace state and selected files/folders.
+
+### is_workspace_opened
+
+**Signature:**
+
+```lua
+codelite.is_workspace_opened()
+```
+
+**Description:**
+
+Checks whether a workspace is currently opened in CodeLite.
+
+**Returns:**
+
+- `boolean` — `true` if a workspace is open, `false` otherwise
+
+**Example:**
+
+```lua
+-- Check if a workspace is open before performing workspace operations
+if codelite.is_workspace_opened() then
+    codelite.log_system("Workspace is open")
+else
+    codelite.log_system("No workspace open")
+end
+```
+
+---
+
+### file_system_workspace_selected_files
+
+**Signature:**
+
+```lua
+codelite.file_system_workspace_selected_files()
+```
+
+**Description:**
+
+Retrieves the selected files in the file system workspace view.
+
+**Returns:**
+
+- `table` — An array of strings containing the absolute paths of the selected files. Returns an empty table if no workspace is open
+
+**Example:**
+
+```lua
+-- Get selected files in the workspace view
+local selected_files = codelite.file_system_workspace_selected_files()
+
+if #selected_files > 0 then
+    for _, filepath in ipairs(selected_files) do
+        codelite.log_system("Selected file: " .. filepath)
+    end
+else
+    codelite.log_system("No files selected")
+end
+```
+
+---
+
+### file_system_workspace_selected_folders
+
+**Signature:**
+
+```lua
+codelite.file_system_workspace_selected_folders()
+```
+
+**Description:**
+
+Retrieves the selected folders in the CodeLite file system workspace view. File selections are ignored.
+
+**Returns:**
+
+- `table` — An array of strings containing the paths of selected folders. Returns an empty table if the workspace is not open
+
+**Example:**
+
+```lua
+-- Get selected folders in the workspace view
+local selected_folders = codelite.file_system_workspace_selected_folders()
+
+if #selected_folders > 0 then
+    for _, folderpath in ipairs(selected_folders) do
+        codelite.log_system("Selected folder: " .. folderpath)
+    end
+else
+    codelite.log_system("No folders selected")
+end
 ```

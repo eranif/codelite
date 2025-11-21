@@ -194,7 +194,7 @@ FunctionResult ListFiles([[maybe_unused]] const assistant::json& args);
  *
  * @param args A JSON object containing the function arguments with the following fields:
  *             - "path" (string, required): The directory path where the workspace should be created
- *             - "name" (string, required): The name of the workspace to create
+ *             - "name" (string, optional): The name of the workspace to create
  *             - "host" (string, optional): The SSH host for creating a remote workspace
  *
  * @return FunctionResult A result object containing either:

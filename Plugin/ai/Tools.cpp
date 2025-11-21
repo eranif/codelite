@@ -346,7 +346,8 @@ FunctionResult CreateWorkspace([[maybe_unused]] const assistant::json& args)
             if (EventNotifier::Get()->ProcessEvent(create_event)) {
                 return Ok(wxEmptyString);
             }
-            return Err("Remote workspace is not enabled. Make sure to load the Remoty workspace.");
+            return Err("Remote workspace functionality is currently disabled. Please ensure the Remoty plugin is "
+                       "properly loaded.");
 #else
             return Err("Remote workspace is not supported by this build of CodeLite");
 #endif

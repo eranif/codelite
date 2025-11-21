@@ -429,7 +429,7 @@ clFileSystemWorkspace& clFileSystemWorkspace::Get()
     return wsp;
 }
 
-void clFileSystemWorkspace::New(const wxString& folder, const wxString& name) { DoCreate(name, folder, true); }
+void clFileSystemWorkspace::New(const wxString& folder, const wxString& name) { DoCreate(folder, name, true); }
 
 void clFileSystemWorkspace::OnScanCompleted(clFileSystemEvent& event)
 {
@@ -703,7 +703,7 @@ void clFileSystemWorkspace::OnCustomTargetMenu(clContextMenuEvent& event)
 void clFileSystemWorkspace::DoBuild(const wxString& target)
 {
     if (!GetConfig()) {
-        ::wxMessageBox(_("You should have at least one workspace configuration.\n0 found\nOpen the project "
+        ::clMessageBox(_("You should have at least one workspace configuration.\n0 found\nOpen the project "
                          "settings and add one"),
                        "CodeLite",
                        wxICON_WARNING | wxCENTER);
@@ -712,7 +712,7 @@ void clFileSystemWorkspace::DoBuild(const wxString& target)
 
     wxString cmd = GetTargetCommand(target);
     if (cmd.IsEmpty()) {
-        ::wxMessageBox(_("Don't know how to run '") + target + "'", "CodeLite", wxICON_WARNING | wxCENTER);
+        ::clMessageBox(_("Don't know how to run '") + target + "'", "CodeLite", wxICON_WARNING | wxCENTER);
         return;
     }
 
@@ -783,18 +783,22 @@ void clFileSystemWorkspace::OnNewWorkspace(clCommandEvent& event)
         // Prompt the user for folder and name
         NewFileSystemWorkspaceDialog dlg(EventNotifier::Get()->TopFrame());
         if (dlg.ShowModal() == wxID_OK) {
-            DoCreate(dlg.GetWorkspaceName(), dlg.GetWorkspacePath(), false);
+            DoCreate(dlg.GetWorkspacePath(), dlg.GetWorkspaceName(), false);
         }
     }
 }
 
-void clFileSystemWorkspace::DoCreate(const wxString& name, const wxString& path, bool loadIfExists)
+void clFileSystemWorkspace::DoCreate(const wxString& path, const wxString& name, bool loadIfExists)
 {
     wxFileName fn(path, wxEmptyString);
     if (fn.GetDirCount() == 0) {
-        ::wxMessageBox(_("Unable to create a workspace on the root folder"), "CodeLite", wxICON_ERROR | wxCENTER);
+        ::clMessageBox(_("Unable to create a workspace on the root folder"), "CodeLite", wxICON_ERROR | wxCENTER);
         return;
     }
+
+    wxString default_name = fn.GetDirs().back();
+    fn = wxFileName(path, name.empty() ? default_name : name, wxPATH_NATIVE);
+    fn.SetExt("workspace");
 
     if (loadIfExists) {
         // Check to see if any workspace already exists in this folder
@@ -818,17 +822,6 @@ void clFileSystemWorkspace::DoCreate(const wxString& name, const wxString& path,
     DoClose();
     DoClear();
 
-    if (!name.IsEmpty()) {
-        fn.SetName(name);
-    } else if (fn.GetFullName().IsEmpty()) {
-        wxString name = ::clGetTextFromUser(_("Workspace Name"), _("Name"), fn.GetDirs().Last());
-        if (name.IsEmpty()) {
-            return;
-        }
-        fn.SetName(name);
-    }
-
-    fn.SetExt("workspace");
     SetName(fn.GetName());
 
     // Creates an empty workspace file
@@ -1130,7 +1123,7 @@ void clFileSystemWorkspace::CreateCompileFlagsFile()
 
         wxString msg;
         msg << _("Successfully generated file:\n") << fnCompileFlags.GetFullPath();
-        ::wxMessageBox(msg, "CodeLite");
+        ::clMessageBox(msg, "CodeLite");
     }
 }
 
@@ -1214,7 +1207,7 @@ void clFileSystemWorkspace::CheckForCMakeLists()
 
     // Prompt the user for configuring the workspace
     auto answer =
-        ::wxMessageBox(_("A CMakeLists.txt file was found in the workspace folder, would you like to use it?"),
+        ::clMessageBox(_("A CMakeLists.txt file was found in the workspace folder, would you like to use it?"),
                        "CodeLite",
                        wxYES_NO | wxYES_DEFAULT | wxCENTER);
     if (answer != wxYES) {

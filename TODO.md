@@ -26,6 +26,5 @@ AI-powered IDE:
 - Add `codelite-api.lua` file to the installation folder to provide completion for LUA LSPs.
 - Add "Wizard" for adding new MCP server.
 - Support for SSE MCP server.
-- Add new tool: Create workspace.
 
 Prepare release notes per version (e.g. 18.2.0, 18.3.0 etc)

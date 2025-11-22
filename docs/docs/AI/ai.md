@@ -52,15 +52,54 @@ Open the chat box at any time with ++ctrl+shift+h++. The window can be used for 
 
 If the selected model advertises the **tools** capability, ChatAI can invoke the following helpers. The model decides when (and how) to call them.
 
-| Tool | Description |
-|------|-------------|
-| `Get_the_text_of_the_active_tab_inside_the_editor` | Returns the text of the active tab inside the editor. |
-| `Lists_all_files_in_a_directory` | Lists all files in a specified directory matching a given pattern. |
-| `Lists_all_subdirectories` | Lists all subdirectories within a specified directory path (non-recursive). |
-| `Open_a_file_in_an_editor` | Opens a file and loads it into the editor for editing or viewing. |
-| `Read_file_from_the_file_system` | Reads the entire content of a file from the disk. |
-| `Read_the_compiler_build_output` | Fetches the compiler build log output of the most recent build command. |
-| `Write_file_content_to_disk_at_a_given_path` | Writes content to a file at a specified path on the disk. |
+- **`Create_new_workspace`**
+    - **Description:** Creates a new workspace at a given path with a specified name. If a host is specified, it creates a remote workspace using SSH/SFTP; otherwise, it creates a local filesystem workspace.
+    - **Required parameters:**
+        - `path` (string) - The directory path where the workspace should be created
+    - **Optional parameters:**
+        - `name` (string) - The name of the workspace to create
+        - `host` (string) - The SSH host for creating a remote workspace
+
+- **`Get_the_text_of_the_active_tab_inside_the_editor`**
+    - **Description:** Returns the text content of the currently active tab inside the editor.
+    - **No parameters required**
+
+- **`Lists_all_files_in_a_directory`**
+    - **Description:** Lists all files in a specified directory matching a given pattern. This function scans a directory non-recursively for files matching the provided pattern and returns their full paths as a JSON array.
+    - **Required parameters:**
+        - `dir` (string) - The directory path to scan (can be relative or absolute)
+        - `pattern` (string) - File pattern to match (e.g., "*.cpp", "*.txt")
+    - **No optional parameters**
+
+- **`Lists_all_subdirectories`**
+    - **Description:** Lists all subdirectories within a specified directory path (non-recursive). This function scans the given directory and returns a JSON array containing the full paths of all immediate subdirectories. The scan is non-recursive and filters results to include only directories, excluding files. Empty path is allowed.
+    - **Required parameters:**
+        - `path` (string) - The directory path to scan
+    - **No optional parameters**
+
+- **Open_a_file_in_an_editor**
+    - **Description:** Opens a file at the specified filepath and loads it into the editor for editing or viewing.
+    - **Required parameters:**
+        - `filepath` (string) - The path of the file to open inside the editor
+    - **No optional parameters**
+
+- **`Read_file_from_the_file_system`**
+    - **Description:** Reads the entire content of the file from disk. On success, this function returns the entire file's content.
+    - **Required parameters:**
+        - `filepath` (string) - The path of the file to read
+    - **No optional parameters**
+
+- **`Write_file_content_to_disk_at_a_given_path`**
+    - **Description:** Writes the provided content to the file system at the given filepath.
+    - **Required parameters:**
+        - `filepath` (string) - The path file path
+        - `file_content` (string) - The content of the file to be written to the disk
+    - **No optional parameters**
+
+- **`Read_the_compiler_build_output`**
+    - **Description:** Reads and fetches the compiler build log output of the most recent build command executed by the user. This is useful for helping explain and resolve build issues. On success, returns the complete build log output.
+    - **No parameters required**
+
 
 These tools enable the model to help with **file management**, **code editing**, **build-log analysis**, and **version-control queries** without you having to copy-paste anything.
 

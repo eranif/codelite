@@ -328,13 +328,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
         gmon_cfn.Assign(gmonfn, wxPATH_NATIVE);
     }
 
-    wxString bin, arg1, arg2;
-
-    bin = GetGprofPath();
-    arg1 = bin_fpath;
-    arg2 = gmonfn;
-
-    wxString cmdgprof = wxString::Format("%s %s %s", bin, arg1, arg2);
+    const wxString cmdgprof = wxString::Format(R"("%s" "%s" "%s")", GetGprofPath(), bin_fpath, gmonfn);
 
     wxProcess* proc = new wxProcess(wxPROCESS_REDIRECT);
 
@@ -403,9 +397,7 @@ void CallGraph::OnShowCallGraph(wxCommandEvent& event)
     // delete any existing PNG
     if(wxFileExists(output_png_fn)) clRemoveFile(output_png_fn);
 
-    wxString cmddot_ln;
-
-    cmddot_ln << GetDotPath() << " -Tpng -o" << output_png_fn << " " << dot_fn;
+    const wxString cmddot_ln = wxString::Format(R"("%s" -Tpng -o"%s" "%s")", GetDotPath(), output_png_fn, dot_fn);
 
     wxExecute(cmddot_ln, wxEXEC_SYNC | wxEXEC_HIDE_CONSOLE);
 

@@ -143,7 +143,7 @@ protected:
 
     // Compiler options
     void InitializeCompilerOptions();
-    void SaveComilerOptions();
+    void SaveCompilerOptions();
 
     // Compiler options
     void InitializeLinkerOptions();

@@ -580,7 +580,7 @@ void CompilerMainPage::Save()
     SaveSwitches();
     SaveTemplates();
     SaveAdvancedPage();
-    SaveComilerOptions();
+    SaveCompilerOptions();
     SaveLinkerOptions();
 
     // save the compiler to the file system
@@ -744,7 +744,7 @@ void CompilerMainPage::InitializeCompilerOptions()
     m_listCompilerOptions->SetColumnWidth(1, wxLIST_AUTOSIZE);
 }
 
-void CompilerMainPage::SaveComilerOptions()
+void CompilerMainPage::SaveCompilerOptions()
 {
     CHECK_PTR_RET(m_compiler);
     Compiler::CmpCmdLineOptions cmpOptions;

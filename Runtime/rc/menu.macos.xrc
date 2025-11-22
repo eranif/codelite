@@ -289,15 +289,15 @@
       </object>
       <object class="wxMenu" name="display_whitespaces">
         <label>Show Whitespace</label>
-        <object class="wxMenuItem" name="whitepsace_invisible">
+        <object class="wxMenuItem" name="whitespace_invisible">
           <label>Invisible</label>
           <radio>1</radio>
         </object>
-        <object class="wxMenuItem" name="whitepsace_always">
+        <object class="wxMenuItem" name="whitespace_always">
           <label>Show Always</label>
           <radio>1</radio>
         </object>
-        <object class="wxMenuItem" name="whitespace_visiable_after_indent">
+        <object class="wxMenuItem" name="whitespace_visible_after_indent">
           <label>Visible After First Indent</label>
           <radio>1</radio>
         </object>
@@ -746,7 +746,7 @@
       <object class="wxMenuItem" name="advance_settings">
         <label>&amp;Build Settings...</label>
       </object>
-      <object class="wxMenuItem" name="debuger_settings">
+      <object class="wxMenuItem" name="debugger_settings">
         <label>&amp;GDB Settings...</label>
       </object>
       <object class="wxMenuItem" name="tags_options">

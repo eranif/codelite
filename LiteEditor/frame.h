@@ -210,7 +210,7 @@ public:
     void UpdateParserSearchPathsFromDefaultCompiler();
 
     DockablePaneMenuManager* GetDockablePaneMenuManager() { return m_DPmenuMgr; }
-    //--------------------- debuger---------------------------------
+    //--------------------- debugger --------------------------------
     //---------------------------------------------------------------
 
     /**

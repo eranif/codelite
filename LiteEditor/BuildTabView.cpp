@@ -591,11 +591,11 @@ void BuildTabView::OnContextMenu(wxContextMenuEvent& e)
     PopupMenu(&menu);
 }
 
-void BuildTabView::Initialise(CompilerPtr compiler, bool only_erros, const wxString& project)
+void BuildTabView::Initialise(CompilerPtr compiler, bool only_errors, const wxString& project)
 {
     Clear();
     m_activeCompiler = compiler; // maybe null
-    m_onlyErrors = only_erros;
+    m_onlyErrors = only_errors;
     m_isRemoteBuild = false;
     m_buildingProject = project;
 

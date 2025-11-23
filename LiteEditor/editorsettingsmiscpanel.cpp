@@ -169,12 +169,12 @@ int EditorSettingsMiscPanel::FindAvailableLocales(wxArrayString* locales)
 {
     const wxArrayString& cached_locales = clLocaleManager::get().GetCachedLocales();
     int system_default_locale = clLocaleManager::get().GetSystemDefaultLocale();
-    wxString preffered_locale = m_options->GetPreferredLocale();
+    wxString preferred_locale = m_options->GetPreferredLocale();
 
     int select = wxNOT_FOUND;
     // find the selection
-    for(size_t i = 0; i < cached_locales.size(); ++i) {
-        if(cached_locales[i] == preffered_locale) {
+    for (size_t i = 0; i < cached_locales.size(); ++i) {
+        if (cached_locales[i] == preferred_locale) {
             select = static_cast<int>(i);
             break;
         }

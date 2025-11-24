@@ -21,7 +21,7 @@
 
 int WXDLLIMPEXP_SDK clMessageBox(const wxString& message,
                                  const wxString& caption = "CodeLite",
-                                 long style = wxOK | wxCENTRE,
+                                 long style = wxOK | wxCENTRE | wxICON_INFORMATION,
                                  wxWindow* parent = nullptr,
                                  int x = wxDefaultCoord,
                                  int y = wxDefaultCoord);

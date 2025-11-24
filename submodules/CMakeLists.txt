@@ -30,10 +30,10 @@ add_library(wxshapeframework SHARED ${WXSF_SRCS})
 target_include_directories(wxshapeframework PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/wxsf-code/src")
 target_include_directories(wxshapeframework PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/wxsf-code/include")
 
-if(WIN32)
-  target_compile_definitions(wxshapeframework PRIVATE WXMAKINGDLL_WXXS WXMAKINGDLL_WXSF)
-  target_compile_definitions(wxshapeframework INTERFACE WXUSINGDLL)
-endif(WIN32)
+# Setup WXDLLIMPEXP_SF/WXDLLIMPEXP_XS for using WEXPORT.
+target_compile_definitions(wxshapeframework PRIVATE WXMAKINGDLL_WXXS WXMAKINGDLL_WXSF)
+# Force support for shared libraries
+target_compile_definitions(wxshapeframework INTERFACE WXUSINGDLL)
 
 if(UNIX OR APPLE)
   set_target_properties(wxshapeframework PROPERTIES POSITION_INDEPENDENT_CODE ON)

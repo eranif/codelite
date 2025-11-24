@@ -80,6 +80,26 @@ void NotifyDoneWithError(wxEvtHandler* owner, const std::string& message)
 }
 } // namespace
 
+constexpr const char* kPlaceHolderEditorSelection = "{{current_selection}}";
+constexpr const char* kPlaceHolderCurrentFileFullPath = "{{current_file_fullpath}}";
+constexpr const char* kPlaceHolderCurrentFileExt = "{{current_file_ext}}";
+constexpr const char* kPlaceHolderCurrentFileDir = "{{current_file_dir}}";
+constexpr const char* kPlaceHolderCurrentFileName = "{{current_file_name}}";
+constexpr const char* kPlaceHolderCurrentFileLang = "{{current_file_lang}}";
+constexpr const char* kPlaceHolderCurrentFileContent = "{{current_file_content}}";
+constexpr const char* kPlaceHolderWorkspacePath = "{{workspace_path}}";
+constexpr const char* kPlaceHolderTempDir = "{{temp_dir}}";
+
+static std::vector<wxString> kPlaceHolders = {kPlaceHolderEditorSelection,
+                                              kPlaceHolderCurrentFileFullPath,
+                                              kPlaceHolderCurrentFileExt,
+                                              kPlaceHolderCurrentFileDir,
+                                              kPlaceHolderCurrentFileName,
+                                              kPlaceHolderCurrentFileLang,
+                                              kPlaceHolderCurrentFileContent,
+                                              kPlaceHolderWorkspacePath,
+                                              kPlaceHolderTempDir};
+
 // ==---------------------
 // Client
 // ==---------------------
@@ -290,31 +310,31 @@ void Manager::ReplacePlaceHolders(ThreadTask& task)
         [](wxString& prompt) {
             auto editor = clGetManager()->GetActiveEditor();
             if (!editor) {
-                prompt.Replace("{{current_selection}}", wxEmptyString);
+                prompt.Replace(kPlaceHolderEditorSelection, wxEmptyString);
                 return;
             }
-            prompt.Replace("{{current_selection}}", editor->GetSelection());
+            prompt.Replace(kPlaceHolderEditorSelection, editor->GetSelection());
         },
         [](wxString& prompt) {
             auto editor = clGetManager()->GetActiveEditor();
             if (!editor) {
-                prompt.Replace("{{current_file_fullpath}}", wxEmptyString);
+                prompt.Replace(kPlaceHolderCurrentFileFullPath, wxEmptyString);
                 return;
             }
-            prompt.Replace("{{current_file_fullpath}}", editor->GetRemotePathOrLocal());
+            prompt.Replace(kPlaceHolderCurrentFileFullPath, editor->GetRemotePathOrLocal());
         },
         [](wxString& prompt) {
             auto editor = clGetManager()->GetActiveEditor();
             if (!editor) {
-                prompt.Replace("{{current_file_ext}}", wxEmptyString);
+                prompt.Replace(kPlaceHolderCurrentFileExt, wxEmptyString);
                 return;
             }
-            prompt.Replace("{{current_file_ext}}", editor->GetFileName().GetExt());
+            prompt.Replace(kPlaceHolderCurrentFileExt, editor->GetFileName().GetExt());
         },
         [](wxString& prompt) {
             auto editor = clGetManager()->GetActiveEditor();
             if (!editor) {
-                prompt.Replace("{{current_file_dir}}", ::wxGetCwd());
+                prompt.Replace(kPlaceHolderCurrentFileDir, ::wxGetCwd());
                 return;
             }
 
@@ -324,12 +344,12 @@ void Manager::ReplacePlaceHolders(ThreadTask& task)
             } else {
                 dir = editor->GetFileName().GetPath();
             }
-            prompt.Replace("{{current_file_dir}}", dir);
+            prompt.Replace(kPlaceHolderCurrentFileDir, dir);
         },
         [](wxString& prompt) {
             auto editor = clGetManager()->GetActiveEditor();
             if (!editor) {
-                prompt.Replace("{{current_file_name}}", wxEmptyString);
+                prompt.Replace(kPlaceHolderCurrentFileName, wxEmptyString);
                 return;
             }
 
@@ -339,36 +359,36 @@ void Manager::ReplacePlaceHolders(ThreadTask& task)
             } else {
                 fullname = editor->GetFileName().GetFullName();
             }
-            prompt.Replace("{{current_file_name}}", fullname);
+            prompt.Replace(kPlaceHolderCurrentFileName, fullname);
         },
         [](wxString& prompt) {
             auto editor = clGetManager()->GetActiveEditor();
             if (!editor) {
-                prompt.Replace("{{current_file_lang}}", wxEmptyString);
+                prompt.Replace(kPlaceHolderCurrentFileLang, wxEmptyString);
                 return;
             }
 
             auto lang = FileExtManager::GetLanguageFromType(FileExtManager::GetType(editor->GetRemotePathOrLocal()));
             lang = lang.Lower();
             lang.Replace(" ", "");
-            prompt.Replace("{{current_file_lang}}", lang);
+            prompt.Replace(kPlaceHolderCurrentFileLang, lang);
         },
         [](wxString& prompt) {
             auto editor = clGetManager()->GetActiveEditor();
             if (!editor) {
-                prompt.Replace("{{current_file_content}}", wxEmptyString);
+                prompt.Replace(kPlaceHolderCurrentFileContent, wxEmptyString);
                 return;
             }
-            prompt.Replace("{{current_file_content}}", editor->GetEditorText());
+            prompt.Replace(kPlaceHolderCurrentFileContent, editor->GetEditorText());
         },
         [](wxString& prompt) {
             if (!clWorkspaceManager::Get().IsWorkspaceOpened()) {
-                prompt.Replace("{{workspace_path}}", ::wxGetCwd());
+                prompt.Replace(kPlaceHolderWorkspacePath, ::wxGetCwd());
                 return;
             }
-            prompt.Replace("{{workspace_path}}", clWorkspaceManager::Get().GetWorkspace()->GetDir());
+            prompt.Replace(kPlaceHolderWorkspacePath, clWorkspaceManager::Get().GetWorkspace()->GetDir());
         },
-        [](wxString& prompt) { prompt.Replace("{{temp_dir}}", clStandardPaths::Get().GetTempDir()); }};
+        [](wxString& prompt) { prompt.Replace(kPlaceHolderTempDir, clStandardPaths::Get().GetTempDir()); }};
 
     // Apply the manipulators on the prompt
     for (auto& p : task.prompt_array) {
@@ -920,4 +940,7 @@ void Manager::ShowTextGenerationDialog(const wxString& prompt,
 
     Chat(collector, prompt, nullptr, opts);
 }
+
+const std::vector<wxString>& Manager::GetAvailablePlaceHolders() const { return kPlaceHolders; }
+
 } // namespace llm

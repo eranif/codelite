@@ -33,12 +33,12 @@
 #include "clTabTogglerHelper.h"
 
 class wxEvtHandler;
-class ContinousBuildPane;
+class ContinuousBuildPane;
 class ShellCommand;
 
 class ContinuousBuild : public IPlugin
 {
-    ContinousBuildPane* m_view;
+    ContinuousBuildPane* m_view;
     wxEvtHandler* m_topWin;
     BuildProcess m_buildProcess;
     wxArrayString m_files;

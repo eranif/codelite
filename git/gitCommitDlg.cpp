@@ -33,6 +33,7 @@
 #include "gitentry.h"
 #include "globals.h"
 #include "lexer_configuration.h"
+#include "wxCustomControls.hpp"
 
 #include <wx/tokenzr.h>
 
@@ -158,6 +159,7 @@ void GitCommitDlg::AppendDiff(const wxString& diff)
 wxArrayString GitCommitDlg::GetSelectedFiles()
 {
     wxArrayString ret;
+    ret.reserve(m_dvListCtrlFiles->GetItemCount());
     for (size_t i = 0; i < m_dvListCtrlFiles->GetItemCount(); ++i) {
         wxDataViewItem item = m_dvListCtrlFiles->RowToItem(i);
         if (m_dvListCtrlFiles->IsItemChecked(item, 0)) {
@@ -187,7 +189,7 @@ void GitCommitDlg::OnChangeFile(wxDataViewEvent& e)
 void GitCommitDlg::OnCommitOK(wxCommandEvent& event)
 {
     if (m_stcCommitMessage->GetText().IsEmpty() && !IsAmending()) {
-        ::wxMessageBox(_("Git requires a commit message"), "codelite", wxICON_WARNING | wxOK | wxCENTER);
+        ::clMessageBox(_("Git requires a commit message"), "codelite", wxICON_WARNING | wxOK | wxCENTER);
         return;
     }
     m_dismissedWithOk = true;
@@ -238,25 +240,38 @@ void GitCommitDlg::OnGenerate(wxCommandEvent& event)
 {
 
     if (llm::Manager::GetInstance().GetModels().IsEmpty()) {
-        ::wxMessageBox(
+        ::clMessageBox(
             _("No models are available. Choose a model and try again."), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
         return;
     }
 
-    // TODO: we might want to let the user to choose endpoint instead of a model.
-    //    std::optional<wxString> model = llm::Manager::GetInstance().ChooseModel(true);
-    //    if (!model.has_value()) {
-    //        ::wxMessageBox(_("Choose a model and try again."), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
-    //        return;
-    //    }
+    // Create a raw diff from the selected items only.
+    GitDiffOutputParser diff_parser;
+    wxStringMap_t diff_map;
+
+    auto selected_files = GetSelectedFiles();
+    diff_parser.GetDiffMap(m_rawDiff, diff_map);
+
+    wxString raw_diff;
+    std::unordered_set<wxString> files_set{selected_files.begin(), selected_files.end()};
+    if (files_set.empty()) {
+        ::clMessageBox(_("Nothing to commit"));
+        return;
+    }
+    for (const auto& [file, diff] : diff_map) {
+        if (!files_set.contains(file)) {
+            continue;
+        }
+        raw_diff << diff << "\n";
+    }
 
     wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kGitCommitMessage);
-    prompt.Replace("{{context}}", m_rawDiff);
+    prompt.Replace("{{context}}", raw_diff);
 
     m_indicatorPanel->Start(_("Generating commit message..."));
     m_generationInProgress = m_plugin->GenerateCommitMessage(prompt);
     if (!m_generationInProgress) {
-        ::wxMessageBox(_("Failed to generate commit message"), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
+        ::clMessageBox(_("Failed to generate commit message"), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
         return;
     }
 }

@@ -38,16 +38,7 @@ target_include_directories(
   libcodelite
   PUBLIC "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite"
          "${CL_SRC_ROOT}/CodeLite/ssh" "${CL_SRC_ROOT}/PCH"
-  PRIVATE "${CL_SRC_ROOT}/submodules/asio/asio/include"
-          "${CL_SRC_ROOT}/submodules/websocketpp")
-
-if(WITH_WEBTOOLS)
-  target_compile_definitions(libcodelite PUBLIC HAS_ASIO=1)
-  message(STATUS "HAS_ASIO set to 1")
-else()
-  target_compile_definitions(libcodelite PUBLIC HAS_ASIO=0)
-  message(STATUS "HAS_ASIO set to 0")
-endif()
+  PRIVATE "${CL_SRC_ROOT}/submodules/asio/asio/include")
 
 # Macros
 if(WIN32)

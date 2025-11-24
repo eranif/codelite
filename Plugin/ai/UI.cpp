@@ -102,7 +102,7 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
                                  wxID_ANY,
                                  wxDefaultPosition,
                                  wxDLG_UNIT(m_splitterPageBottom, wxSize(-1, -1)),
-                                 wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE);
+                                 wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE | wxAUI_TB_OVERFLOW);
     m_toolbar->SetToolBitmapSize(wxSize(16, 16));
 
     boxSizer43->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));

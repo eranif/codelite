@@ -11,6 +11,7 @@
 #include "clRemoteFinderHelper.hpp"
 #include "clRemoteTerminal.hpp"
 #include "clSFTPEvent.h"
+#include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "ieditor.h"
 #include "ssh/ssh_account_info.h"
@@ -65,75 +66,6 @@ public:
     RemotyWorkspace(bool dummy);
     virtual ~RemotyWorkspace();
 
-protected:
-    void BindEvents();
-    void UnbindEvents();
-    void Initialise();
-    void OnOpenWorkspace(clCommandEvent& event);
-    void OnReloadWorkspace(clCommandEvent& event);
-    void OnCloseWorkspace(clCommandEvent& event);
-    void DoClose(bool notify);
-    /**
-     * @brief restart the remote process. If it is already running and `restart` is set to false
-     * do nothing. Otherwise, stop and start it again
-     */
-    void RestartCodeLiteRemote(clCodeLiteRemoteProcess* proc, const wxString& context, bool restart = false);
-    void OnOpenResourceFile(clCommandEvent& event);
-    void OnShutdown(clCommandEvent& event);
-    void OnInitDone(wxCommandEvent& event);
-    void OnLSPOpenFile(LSPEvent& event);
-    void OnDownloadFile(clCommandEvent& event);
-    void OnStopFindInFiles(clFindInFilesEvent& event);
-
-    void OnSftpSaveError(clCommandEvent& event);
-    void OnSftpSaveSuccess(clCommandEvent& event);
-    void OnFrameTitle(clCommandEvent& event);
-
-    /// codelite-remote exec handlers
-    void DoProcessBuildOutput(const wxString& output, bool is_completed);
-
-    /// open a workspace file
-    void DoOpen(const wxString& path, const wxString& account);
-    void OnCodeLiteRemoteTerminated(clCommandEvent& event);
-
-    IProcess* DoRunSSHProcess(const wxString& scriptContent, bool sync = false);
-    wxString GetTargetCommand(const wxString& target) const;
-    void DoPrintBuildMessage(const wxString& message);
-    void GetExecutable(wxString& exe, wxString& args, wxString& wd);
-
-    void OnBuildStarting(clBuildEvent& event);
-    void OnIsBuildInProgress(clBuildEvent& event);
-    void OnStopBuild(clBuildEvent& event);
-    void OnBuildHotspotClicked(clBuildEvent& event);
-    void OnCustomTargetMenu(clContextMenuEvent& event);
-    void OnNewWorkspace(clCommandEvent& event);
-    void OnDebugStarting(clDebugEvent& event);
-    void OnDebugEnded(clDebugEvent& event);
-    void OnRun(clExecuteEvent& event);
-    void OnStop(clExecuteEvent& event);
-    void OnIsProgramRunning(clExecuteEvent& event);
-    void OnExecProcessTerminated(clProcessEvent& event);
-    void OnFindSwapped(clFileSystemEvent& event);
-    void OnCodeLiteRemoteBuildOutput(clProcessEvent& event);
-    void OnCodeLiteRemoteBuildOutputDone(clProcessEvent& event);
-
-    // codelite-remote
-    void OnCodeLiteRemoteFindProgress(clFindInFilesEvent& event);
-    void OnCodeLiteRemoteFindDone(clFindInFilesEvent& event);
-
-    void OnCodeLiteRemoteReplaceProgress(clFindInFilesEvent& event);
-    void OnCodeLiteRemoteReplaceDone(clFindInFilesEvent& event);
-
-    void OnCodeLiteRemoteListFilesProgress(clCommandEvent& event);
-    void OnCodeLiteRemoteListFilesDone(clCommandEvent& event);
-
-    wxString CreateEnvScriptContent() const;
-    wxString UploadScript(const wxString& content, const wxString& script_path = wxEmptyString) const;
-
-    void RestoreSession();
-    void SetFocusToActiveEditor();
-
-public:
     // IWorkspace
     wxString GetActiveProjectName() const override { return wxEmptyString; }
     wxString GetFileName() const override;
@@ -149,6 +81,8 @@ public:
     wxString GetDebuggerName() const override;
     bool IsRemote() const override { return true; }
     wxString GetSshAccount() const override;
+
+    bool CreateNew(wxString path, const wxString& name, const wxString& account);
 
     /**
      * @brief return the remote workspace directory (on the remote machine)
@@ -220,6 +154,75 @@ public:
                         bool icase);
 
     int GetIndentWidth() override;
+
+protected:
+    void BindEvents();
+    void UnbindEvents();
+    void Initialise();
+    void OnOpenWorkspace(clCommandEvent& event);
+    void OnReloadWorkspace(clCommandEvent& event);
+    void OnCloseWorkspace(clCommandEvent& event);
+    void DoClose(bool notify);
+    /**
+     * @brief restart the remote process. If it is already running and `restart` is set to false
+     * do nothing. Otherwise, stop and start it again
+     */
+    void RestartCodeLiteRemote(clCodeLiteRemoteProcess* proc, const wxString& context, bool restart = false);
+    void OnOpenResourceFile(clCommandEvent& event);
+    void OnShutdown(clCommandEvent& event);
+    void OnInitDone(wxCommandEvent& event);
+    void OnLSPOpenFile(LSPEvent& event);
+    void OnDownloadFile(clCommandEvent& event);
+    void OnStopFindInFiles(clFindInFilesEvent& event);
+
+    void OnSftpSaveError(clCommandEvent& event);
+    void OnSftpSaveSuccess(clCommandEvent& event);
+    void OnFrameTitle(clCommandEvent& event);
+    void OnCreateNew(clWorkspaceEvent& event);
+
+    /// codelite-remote exec handlers
+    void DoProcessBuildOutput(const wxString& output, bool is_completed);
+
+    /// open a workspace file
+    void DoOpen(const wxString& path, const wxString& account);
+    void OnCodeLiteRemoteTerminated(clCommandEvent& event);
+
+    IProcess* DoRunSSHProcess(const wxString& scriptContent, bool sync = false);
+    wxString GetTargetCommand(const wxString& target) const;
+    void DoPrintBuildMessage(const wxString& message);
+    void GetExecutable(wxString& exe, wxString& args, wxString& wd);
+
+    void OnBuildStarting(clBuildEvent& event);
+    void OnIsBuildInProgress(clBuildEvent& event);
+    void OnStopBuild(clBuildEvent& event);
+    void OnBuildHotspotClicked(clBuildEvent& event);
+    void OnCustomTargetMenu(clContextMenuEvent& event);
+    void OnNewWorkspace(clCommandEvent& event);
+    void OnDebugStarting(clDebugEvent& event);
+    void OnDebugEnded(clDebugEvent& event);
+    void OnRun(clExecuteEvent& event);
+    void OnStop(clExecuteEvent& event);
+    void OnIsProgramRunning(clExecuteEvent& event);
+    void OnExecProcessTerminated(clProcessEvent& event);
+    void OnFindSwapped(clFileSystemEvent& event);
+    void OnCodeLiteRemoteBuildOutput(clProcessEvent& event);
+    void OnCodeLiteRemoteBuildOutputDone(clProcessEvent& event);
+
+    // codelite-remote
+    void OnCodeLiteRemoteFindProgress(clFindInFilesEvent& event);
+    void OnCodeLiteRemoteFindDone(clFindInFilesEvent& event);
+
+    void OnCodeLiteRemoteReplaceProgress(clFindInFilesEvent& event);
+    void OnCodeLiteRemoteReplaceDone(clFindInFilesEvent& event);
+
+    void OnCodeLiteRemoteListFilesProgress(clCommandEvent& event);
+    void OnCodeLiteRemoteListFilesDone(clCommandEvent& event);
+
+    wxString CreateEnvScriptContent() const;
+    wxString UploadScript(const wxString& content, const wxString& script_path = wxEmptyString) const;
+
+    void RestoreSession();
+    void SetFocusToActiveEditor();
 };
 
 #endif // RemoteWorkspace_HPP

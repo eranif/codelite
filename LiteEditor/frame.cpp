@@ -323,9 +323,9 @@ EVT_MENU(XRCID("fold_all"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("fold_all_in_selection"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("fold_topmost_in_selection"), clMainFrame::DispatchCommandEvent)
 EVT_MENU(XRCID("display_eol"), clMainFrame::OnViewDisplayEOL)
-EVT_MENU(XRCID("whitepsace_invisible"), clMainFrame::OnShowWhitespace)
-EVT_MENU(XRCID("whitepsace_always"), clMainFrame::OnShowWhitespace)
-EVT_MENU(XRCID("whitespace_visiable_after_indent"), clMainFrame::OnShowWhitespace)
+EVT_MENU(XRCID("whitespace_invisible"), clMainFrame::OnShowWhitespace)
+EVT_MENU(XRCID("whitespace_always"), clMainFrame::OnShowWhitespace)
+EVT_MENU(XRCID("whitespace_visible_after_indent"), clMainFrame::OnShowWhitespace)
 EVT_MENU(XRCID("whitespace_indent_only"), clMainFrame::OnShowWhitespace)
 EVT_MENU(XRCID("next_tab"), clMainFrame::OnNextTab)
 EVT_MENU(XRCID("prev_tab"), clMainFrame::OnPrevTab)
@@ -363,9 +363,9 @@ EVT_UPDATE_UI(XRCID("fold_topmost_in_selection"), clMainFrame::DispatchUpdateUIE
 EVT_UPDATE_UI(XRCID("display_eol"), clMainFrame::OnViewDisplayEOL_UI)
 EVT_UPDATE_UI(XRCID("next_tab"), clMainFrame::OnNextPrevTab_UI)
 EVT_UPDATE_UI(XRCID("prev_tab"), clMainFrame::OnNextPrevTab_UI)
-EVT_UPDATE_UI(XRCID("whitepsace_invisible"), clMainFrame::OnShowWhitespaceUI)
-EVT_UPDATE_UI(XRCID("whitepsace_always"), clMainFrame::OnShowWhitespaceUI)
-EVT_UPDATE_UI(XRCID("whitespace_visiable_after_indent"), clMainFrame::OnShowWhitespaceUI)
+EVT_UPDATE_UI(XRCID("whitespace_invisible"), clMainFrame::OnShowWhitespaceUI)
+EVT_UPDATE_UI(XRCID("whitespace_always"), clMainFrame::OnShowWhitespaceUI)
+EVT_UPDATE_UI(XRCID("whitespace_visible_after_indent"), clMainFrame::OnShowWhitespaceUI)
 EVT_UPDATE_UI(XRCID("whitespace_indent_only"), clMainFrame::OnShowWhitespaceUI)
 EVT_UPDATE_UI(XRCID("show_nav_toolbar"), clMainFrame::OnShowNavBarUI)
 EVT_UPDATE_UI(viewAsSubMenuID, clMainFrame::OnFileExistUpdateUI)
@@ -609,7 +609,7 @@ EVT_MENU(XRCID("syntax_highlight"), clMainFrame::OnSyntaxHighlight)
 EVT_MENU(XRCID("configure_accelerators"), clMainFrame::OnConfigureAccelerators)
 EVT_MENU(XRCID("add_envvar"), clMainFrame::OnAddEnvironmentVariable)
 EVT_MENU(XRCID("advance_settings"), clMainFrame::OnAdvanceSettings)
-EVT_MENU(XRCID("debuger_settings"), clMainFrame::OnDebuggerSettings)
+EVT_MENU(XRCID("debugger_settings"), clMainFrame::OnDebuggerSettings)
 EVT_MENU(XRCID("tags_options"), clMainFrame::OnCtagsOptions)
 EVT_MENU(XRCID("edit_lua_script"), clMainFrame::OnEditLuaScript)
 
@@ -1176,7 +1176,7 @@ void clMainFrame::AddKeyboardAccelerators()
                          {"configure_accelerators", _("Keyboard shortcuts...")},
                          {"add_envvar", _("Environment Variables..."), "Ctrl-Shift-V"},
                          {"advance_settings", _("Build Settings...")},
-                         {"debuger_settings", _("GDB Settings...")},
+                         {"debugger_settings", _("GDB Settings...")},
                          {"tags_options", _("Code Completion...")}});
     mgr->AddAccelerator(_("Tab"),
                         {{"wxEVT_BOOK_NAV_PREV", _("Show Recent Tabs Dialog"), "RawCtrl-TAB"},
@@ -1207,9 +1207,9 @@ void clMainFrame::AddKeyboardAccelerators()
                          {"show_minimap", _("Show MiniMap View"), "Alt-M"},
                          {"hide_tool_bar", _("Show Tool Bar"), "F1"}});
     mgr->AddAccelerator(_("View | Show Whitespace"),
-                        {{"whitepsace_invisible", _("Invisible"), "Alt-F1"},
-                         {"whitepsace_always", _("Show Always"), "Alt-F2"},
-                         {"whitespace_visiable_after_indent", _("Visible After First Indent"), "Alt-F3"},
+                        {{"whitespace_invisible", _("Invisible"), "Alt-F1"},
+                         {"whitespace_always", _("Show Always"), "Alt-F2"},
+                         {"whitespace_visible_after_indent", _("Visible After First Indent"), "Alt-F3"},
                          {"whitespace_indent_only", _("Indentation Only")}});
     mgr->AddAccelerator(_("View | Zoom"),
                         {{"wxID_ZOOM_IN", _("Zoom In")},
@@ -2109,9 +2109,9 @@ void clMainFrame::OnCloseWorkspace(wxCommandEvent& event)
 void clMainFrame::OnSwitchWorkspace(wxCommandEvent& event)
 {
     // Notify plugins
-    clCommandEvent switchingToWorkspce(wxEVT_SWITCHING_TO_WORKSPACE);
+    clCommandEvent switchingToWorkspace(wxEVT_SWITCHING_TO_WORKSPACE);
     if (event.GetString().IsEmpty()) {
-        if (EventNotifier::Get()->ProcessEvent(switchingToWorkspce)) {
+        if (EventNotifier::Get()->ProcessEvent(switchingToWorkspace)) {
             // plugin called event.Skip(false)
             return;
         }
@@ -2119,8 +2119,8 @@ void clMainFrame::OnSwitchWorkspace(wxCommandEvent& event)
 
     // To restore the default behavior, a plugin could set the file name in the event so we can skip the
     // SwitchToWorkspaceDlg process
-    if (!switchingToWorkspce.GetFileName().empty()) {
-        event.SetString(switchingToWorkspce.GetFileName());
+    if (!switchingToWorkspace.GetFileName().empty()) {
+        event.SetString(switchingToWorkspace.GetFileName());
     }
 
     wxBusyCursor bc;
@@ -4004,7 +4004,10 @@ void clMainFrame::OnNewVersionAvailable(wxCommandEvent& e)
               << (e.GetEventType() == wxEVT_CMD_VERSION_UPTODATE ? "up-to-date" : "new version found") << clEndl;
     if ((e.GetEventType() == wxEVT_CMD_VERSION_UPTODATE) && m_webUpdate->IsUserRequest()) {
         // All is up to date
-        clMessageBox(_("You already have the latest version of CodeLite"), "CodeLite", wxOK | wxCENTRE, this);
+        clMessageBox(_("The latest version of CodeLite is already installed on your system."),
+                     "CodeLite",
+                     wxOK | wxCENTRE | wxICON_INFORMATION,
+                     this);
     } else {
         WebUpdateJobData* data = reinterpret_cast<WebUpdateJobData*>(e.GetClientData());
         if (data) {
@@ -4563,11 +4566,11 @@ void clMainFrame::OnShowWhitespaceUI(wxUpdateUIEvent& e)
 {
     CHECK_SHUTDOWN();
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-    if (e.GetId() == XRCID("whitepsace_invisible")) {
+    if (e.GetId() == XRCID("whitespace_invisible")) {
         e.Check(options->GetShowWhitespaces() == 0);
-    } else if (e.GetId() == XRCID("whitepsace_always")) {
+    } else if (e.GetId() == XRCID("whitespace_always")) {
         e.Check(options->GetShowWhitespaces() == 1);
-    } else if (e.GetId() == XRCID("whitespace_visiable_after_indent")) {
+    } else if (e.GetId() == XRCID("whitespace_visible_after_indent")) {
         e.Check(options->GetShowWhitespaces() == 2);
     } else if (e.GetId() == XRCID("whitespace_indent_only")) {
         e.Check(options->GetShowWhitespaces() == 3);
@@ -4577,11 +4580,11 @@ void clMainFrame::OnShowWhitespaceUI(wxUpdateUIEvent& e)
 void clMainFrame::OnShowWhitespace(wxCommandEvent& e)
 {
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
-    if (e.GetId() == XRCID("whitepsace_invisible")) {
+    if (e.GetId() == XRCID("whitespace_invisible")) {
         options->SetShowWhitespaces(0);
-    } else if (e.GetId() == XRCID("whitepsace_always")) {
+    } else if (e.GetId() == XRCID("whitespace_always")) {
         options->SetShowWhitespaces(1);
-    } else if (e.GetId() == XRCID("whitespace_visiable_after_indent")) {
+    } else if (e.GetId() == XRCID("whitespace_visible_after_indent")) {
         options->SetShowWhitespaces(2);
     } else if (e.GetId() == XRCID("whitespace_indent_only")) {
         options->SetShowWhitespaces(3);

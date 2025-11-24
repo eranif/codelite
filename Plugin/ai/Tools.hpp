@@ -184,6 +184,37 @@ FunctionResult ListDirectories(const assistant::json& args);
  */
 FunctionResult ListFiles([[maybe_unused]] const assistant::json& args);
 
+/**
+ * @brief Creates a new workspace (either local or remote) with the specified name and path.
+ *
+ * This function attempts to create a new workspace at the given path with the provided name.
+ * If a host is specified, it creates a remote workspace using SSH/SFTP; otherwise, it creates
+ * a local filesystem workspace. The function ensures no workspace is currently open before
+ * proceeding and validates SSH account information for remote workspaces.
+ *
+ * @param args A JSON object containing the function arguments with the following fields:
+ *             - "path" (string, required): The directory path where the workspace should be created
+ *             - "name" (string, optional): The name of the workspace to create
+ *             - "host" (string, optional): The SSH host for creating a remote workspace
+ *
+ * @return FunctionResult A result object containing either:
+ *         - Ok(wxEmptyString) on successful workspace creation
+ *         - Err(message) with an error description if creation fails
+ *
+ * @throws May return errors for the following conditions:
+ *         - A workspace is already open
+ *         - Required arguments ("path" or "name") are missing or invalid
+ *         - Multiple or no SSH accounts match the specified host
+ *         - Remote workspace is requested but SFTP support is not compiled
+ *         - A workspace file already exists at the specified path
+ *
+ * @see clWorkspaceManager
+ * @see SSHAccountInfo
+ * @see clFileSystemWorkspace
+ * @see RunOnMain
+ */
+FunctionResult CreateWorkspace([[maybe_unused]] const assistant::json& args);
+
 /// Populate the function table with the built-in functions provided by CodeLite
 /// to the model.
 void PopulateBuiltInFunctions(FunctionTable& table);

@@ -14,6 +14,7 @@
 #include "event_notifier.h"
 #include "globals.h"
 
+#include <algorithm>
 #include <wx/msgdlg.h>
 
 namespace
@@ -35,6 +36,11 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     m_choiceEndpoints = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, control_size);
     m_choiceEndpoints->SetToolTip(_("Choose the endpoint to use"));
     m_toolbar->AddControl(m_choiceEndpoints);
+
+    m_choicePlaceHolders = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, control_size);
+    m_choicePlaceHolders->SetToolTip(
+        _("Insert a placeholder into the prompt. Alternatively, type '{' to invoke auto-completion."));
+    m_toolbar->AddControl(m_choicePlaceHolders);
 
     m_checkboxEnableTools = new wxCheckBox(m_toolbar, wxID_ANY, _("Enable Tools"));
     bool enable_tools = clConfig::Get().Read("chat-ai/enable-tools", true);
@@ -71,6 +77,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     m_toolbar->Realize();
 
     m_choiceEndpoints->Bind(wxEVT_CHOICE, &ChatAIWindow::OnEndpointChanged, this);
+    m_choicePlaceHolders->Bind(wxEVT_CHOICE, &ChatAIWindow::OnInsertPlaceHolder, this);
 
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &ChatAIWindow::OnWorkspaceLoaded, this);
@@ -105,9 +112,11 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnAutoScrollUI, this, XRCID("auto_scroll"));
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnHistoryUI, this, XRCID("prompt_history"));
     m_choiceEndpoints->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnBusyUI, this);
-    PopulateEndpoints();
+    m_choicePlaceHolders->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnBusyUI, this);
+    UpdateChoices();
 
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);
+    m_stcInput->Bind(wxEVT_STC_CHARADDED, &ChatAIWindow::OnCharAdded, this);
 
     m_markdownStyler = std::make_unique<MarkdownStyler>(m_stcOutput);
     m_markdownStyler->Bind(wxEVT_MARKDOWN_LINK_CLICKED, [](clCommandEvent& event) {
@@ -194,6 +203,15 @@ void ChatAIWindow::OnSendUI(wxUpdateUIEvent& event)
                  !m_choiceEndpoints->GetStringSelection().empty());
 }
 
+void ChatAIWindow::OnInsertPlaceHolder(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxString placeholder = m_choicePlaceHolders->GetStringSelection();
+    m_stcInput->InsertText(m_stcInput->GetCurrentPos(), placeholder);
+    clSTCHelper::SetCaretAt(m_stcInput, m_stcInput->GetCurrentPos() + placeholder.length());
+    m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
+}
+
 void ChatAIWindow::OnEndpointChanged(wxCommandEvent& event)
 {
     wxUnusedVar(event);
@@ -234,18 +252,21 @@ void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
     wxWindow* win = dynamic_cast<wxWindow*>(event.GetEventObject());
     switch (event.GetKeyCode()) {
     case WXK_ESCAPE: {
-        if (dynamic_cast<ChatAIWindowFrame*>(GetParent())) {
-            // floating state
-            GetParent()->Show(false);
+        if (m_stcInput->AutoCompActive()) {
+            m_stcInput->AutoCompCancel();
         } else {
-            clGetManager()->ShowManagementWindow(CHAT_AI_LABEL, false);
+            if (dynamic_cast<ChatAIWindowFrame*>(GetParent())) {
+                // floating state
+                GetParent()->Show(false);
+            } else {
+                clGetManager()->ShowManagementWindow(CHAT_AI_LABEL, false);
+            }
+            auto editor = clGetManager()->GetActiveEditor();
+            CHECK_PTR_RET(editor);
+
+            // Set the focus to the active editor
+            CallAfter(&ChatAIWindow::SetFocusToActiveEditor);
         }
-        auto editor = clGetManager()->GetActiveEditor();
-        CHECK_PTR_RET(editor);
-
-        // Set the focus to the active editor
-        CallAfter(&ChatAIWindow::SetFocusToActiveEditor);
-
     } break;
     case WXK_CONTROL_R: {
         event.Skip();
@@ -371,12 +392,12 @@ void ChatAIWindow::OnLLMConfigUpdate(clLLMEvent& event)
     event.Skip();
     // Clear the output view
     DoClearOutputView();
-    PopulateEndpoints();
+    UpdateChoices();
 }
 
 void ChatAIWindow::OnInputUI(wxUpdateUIEvent& event) { event.Enable(true); }
 
-void ChatAIWindow::PopulateEndpoints()
+void ChatAIWindow::UpdateChoices()
 {
     m_choiceEndpoints->Clear();
     m_choiceEndpoints->Append(llm::Manager::GetInstance().ListEndpoints());
@@ -384,6 +405,10 @@ void ChatAIWindow::PopulateEndpoints()
     if (active_endpoint.has_value()) {
         m_choiceEndpoints->SetStringSelection(active_endpoint.value());
     }
+
+    m_choicePlaceHolders->Clear();
+    m_choicePlaceHolders->Append(llm::Manager::GetInstance().GetAvailablePlaceHolders());
+    m_choicePlaceHolders->SetSelection(0);
 }
 
 void ChatAIWindow::SetFocusToActiveEditor()
@@ -510,4 +535,16 @@ void ChatAIWindow::Chat(const wxString& prompt)
     }
     m_stcInput->SetText(prompt);
     DoSendPrompt();
+}
+
+void ChatAIWindow::OnCharAdded(wxStyledTextEvent& event)
+{
+    event.Skip();
+    auto strings = llm::Manager::GetInstance().GetAvailablePlaceHolders();
+    std::sort(strings.begin(), strings.end());
+    static const wxString candidates = StringUtils::Join(strings, " ");
+    if (event.GetKey() == '{') {
+        // user typed "{{"
+        m_stcInput->AutoCompShow(1, candidates);
+    }
 }

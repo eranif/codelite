@@ -29,6 +29,6 @@ target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} -L"${CL_LIBPATH}" libcode
 # Make sure that the plugin will not start build before 'plugin.so' is ready
 add_dependencies(${PLUGIN_NAME} plugin)
 
-if(UNIX AND NOT APPLE)
+if(NOT APPLE)
     install(TARGETS ${PLUGIN_NAME} DESTINATION ${PLUGINS_DIR})
 endif()

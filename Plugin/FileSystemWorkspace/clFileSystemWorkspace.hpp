@@ -38,7 +38,7 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspace : public LocalWorkspaceCommon
     int m_execPID = wxNOT_FOUND;
     clBacktickCache::ptr_t m_backtickCache;
     clShellHelper m_shell_helper;
-    std::optional<int> m_indentWidth{ std::nullopt };
+    std::optional<int> m_indentWidth{std::nullopt};
 
 protected:
     void CacheFiles(bool force = false);
@@ -83,7 +83,7 @@ protected:
     void DoOpen();
     void DoClose();
     void DoClear();
-    void DoCreate(const wxString& name, const wxString& path, bool loadIfExists);
+    void DoCreate(const wxString& path, const wxString& name, bool loadIfExists);
     void RestoreSession();
     void DoBuild(const wxString& target);
     clFileSystemWorkspaceConfig::Ptr_t GetConfig() const;

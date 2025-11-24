@@ -26,25 +26,16 @@
 #include "continuousbuild.h"
 
 #include "AsyncProcess/processreaderthread.h"
-#include "build_settings_config.h"
 #include "builder/builder.h"
-#include "buildmanager.h"
 #include "cl_command_event.h"
-#include "compile_request.h"
-#include "continousbuildconf.h"
-#include "continousbuildpane.h"
-#include "custombuildrequest.h"
+#include "continuousbuildconf.h"
+#include "continuousbuildpane.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
-#include "globals.h"
+#include "shell_command.h"
 #include "workspace.h"
-
-#include <wx/app.h>
-#include <wx/imaglist.h>
-#include <wx/log.h>
-#include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
@@ -72,7 +63,7 @@ ContinuousBuild::ContinuousBuild(IManager* manager)
 {
     m_longName = _("Continuous build plugin which compiles files on save and report errors");
     m_shortName = wxT("ContinuousBuild");
-    m_view = new ContinousBuildPane(m_mgr->BookGet(PaneId::BOTTOM_BAR), m_mgr, this);
+    m_view = new ContinuousBuildPane(m_mgr->BookGet(PaneId::BOTTOM_BAR), m_mgr, this);
 
     // add our page to the output pane notebook
     m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_view, CONT_BUILD);
@@ -127,7 +118,7 @@ void ContinuousBuild::OnFileSaved(clCommandEvent& e)
         return;
     }
 
-    ContinousBuildConf conf;
+    ContinuousBuildConf conf;
     m_mgr->GetConfigTool()->ReadObject(wxT("ContinousBuildConf"), &conf);
 
     if(conf.GetEnabled()) {

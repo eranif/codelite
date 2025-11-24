@@ -35,6 +35,7 @@ public:
     void Chat(const wxString& prompt);
 
 protected:
+    void OnCharAdded(wxStyledTextEvent& event);
     void OnAutoScroll(wxCommandEvent& event);
     void OnAutoScrollUI(wxUpdateUIEvent& event);
     void OnBusyUI(wxUpdateUIEvent& event);
@@ -50,12 +51,13 @@ protected:
     void OnClearOutputViewUI(wxUpdateUIEvent& event);
     void OnUpdateTheme(wxCommandEvent& event);
     void OnEndpointChanged(wxCommandEvent& event);
+    void OnInsertPlaceHolder(wxCommandEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     void OnNewSession(wxCommandEvent& event);
     void OnRestartClient(wxCommandEvent& event);
     void UpdateTheme();
     void DoSendPrompt();
-    void PopulateEndpoints();
+    void UpdateChoices();
     void SetFocusToActiveEditor();
     void StyleOutput();
     void AppendOutput(const wxString& text);
@@ -82,6 +84,7 @@ protected:
 
 private:
     wxChoice* m_choiceEndpoints{nullptr};
+    wxChoice* m_choicePlaceHolders{nullptr};
     wxCheckBox* m_checkboxEnableTools{nullptr};
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
     ChatState m_state{ChatState::kReady};

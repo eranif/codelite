@@ -376,7 +376,7 @@ void FileViewTree::ShowFileContextMenu()
         return;
     }
 
-    wxMenu* menu = clXmlResource::Get().LoadMenu("file_tree_file");
+    wxMenu* menu = clXmlResource::Get().LoadMenu("cpp_tree_view_file_menu");
     if (!ManagerST::Get()->IsBuildInProgress()) {
         // Let the plugins alter it
         clContextMenuEvent event(wxEVT_CONTEXT_MENU_FILE);
@@ -402,7 +402,7 @@ void FileViewTree::ShowFileContextMenu()
 
 void FileViewTree::ShowVirtualFolderContextMenu(FilewViewTreeItemData* itemData)
 {
-    wxMenu* menu = clXmlResource::Get().LoadMenu("file_tree_folder");
+    wxMenu* menu = clXmlResource::Get().LoadMenu("cpp_tree_view_folder_menu");
     int where = clFindMenuItemPosition(menu, XRCID("clear_virtual_folder_colour"));
     if (where != wxNOT_FOUND) {
         // Insert the "Set Custom Background Colour" menu entry. We do it like this

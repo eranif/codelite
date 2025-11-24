@@ -22,18 +22,9 @@ AI-powered IDE:
 --------
 
 - MarkdownStyler: mark gcc style lines "file:line" as hyperlink and clickable.
-- Extend the LUA API to support more options:
-    - codelite.get_prompt(name)
-    - codelite.is_workspace_opened()
-    - codelite.file_explorer_selected_item() - return the selected item in the file explorer view
-
-    
 - Extend the "Prompt Editor" to support adding/deleting prompts (the default ones can not be deleted)
-- Document the prompt placeholders in `ai.md`
 - Add `codelite-api.lua` file to the installation folder to provide completion for LUA LSPs.
 - Add "Wizard" for adding new MCP server.
-- Support images (assistant library).
-- Chat bar: add option to disable the tools (check box).
-- Git commit message: generate diff only for the selected items.
+- Support for SSE MCP server.
 
 Prepare release notes per version (e.g. 18.2.0, 18.3.0 etc)

@@ -1004,7 +1004,7 @@ msgstr "Отправить команду процессу"
 msgid "Terminal"
 msgstr "Терминал"
 
-#: CodeLite/UnixProcess.cpp:26 codelite-stdio/UnixProcess.cpp:17
+#: CodeLite/UnixProcess.cpp:26
 msgid "Failed to start child process"
 msgstr "Не удалось запустить дочерний процесс"
 
@@ -1274,15 +1274,15 @@ msgstr "Запустить новое сравнение папок"
 msgid "Compare with..."
 msgstr "Сравнить с..."
 
-#: ContinuousBuild/continousbuildbasepane.cpp:32
+#: ContinuousBuild/continuousbuildbasepane.cpp:32
 msgid "Enable continuous build"
 msgstr "Включить непрерывную сборку"
 
-#: ContinuousBuild/continousbuildbasepane.cpp:41
+#: ContinuousBuild/continuousbuildbasepane.cpp:41
 msgid "&Clear All"
 msgstr "&Очистить всё"
 
-#: ContinuousBuild/continousbuildbasepane.cpp:65
+#: ContinuousBuild/continuousbuildbasepane.cpp:65
 msgid "Failed Files:"
 msgstr "Файлы с ошибками:"
 

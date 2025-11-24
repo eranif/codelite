@@ -6,7 +6,10 @@
 #include "ai/LLMManager.hpp"
 #include "assistant/function.hpp"
 #include "clFilesCollector.h"
+#include "clWorkspaceEvent.hpp"
 #include "clWorkspaceManager.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
 #include "globals.h"
 
 #include <future>
@@ -111,6 +114,16 @@ void PopulateBuiltInFunctions(FunctionTable& table)
             .SetCallback(ListFiles)
             .AddRequiredParam("dir", "The directory path to scan. Can be relative or absolute.", "string")
             .AddRequiredParam("pattern", "File pattern to match (e.g., \"*.cpp\", \"*.txt\")", "string")
+            .Build());
+    table.Add(
+        FunctionBuilder("Create_new_workspace")
+            .SetDescription(" This function attempts to create a new workspace at the given path with the "
+                            "provided name. If a host is specified, it creates a remote workspace using SSH/SFTP; "
+                            "otherwise, it creates a local filesystem workspace")
+            .SetCallback(CreateWorkspace)
+            .AddRequiredParam("path", " The directory path where the workspace should be created", "string")
+            .AddOptionalParam("name", "The name of the workspace to create", "string")
+            .AddOptionalParam("host", "The SSH host for creating a remote workspace", "string")
             .Build());
 }
 
@@ -281,6 +294,75 @@ FunctionResult ListFiles([[maybe_unused]] const assistant::json& args)
 
         json j = cstr_files;
         return Ok(j.dump());
+    };
+    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
+}
+
+FunctionResult CreateWorkspace([[maybe_unused]] const assistant::json& args)
+{
+    auto cb = [=]() -> FunctionResult {
+        clDEBUG() << args.dump(2) << endl;
+        if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
+            return Err("Please close the current workspace before creating a new one");
+        }
+
+        ASSIGN_FUNC_ARG_OR_RETURN(std::string dir, ::assistant::GetFunctionArg<std::string>(args, "path"));
+        auto host = ::assistant::GetFunctionArg<std::string>(args, "host"); // Optional param
+        auto name = ::assistant::GetFunctionArg<std::string>(args, "name").value_or("");
+
+        wxString path = wxString::FromUTF8(dir);
+
+        wxString workspace_name = wxString::FromUTF8(name);
+        workspace_name = workspace_name.empty() ? wxFileName(path).GetName() : workspace_name;
+
+        std::optional<SSHAccountInfo> account;
+        if (host.has_value()) {
+            wxString h = wxString::FromUTF8(host.value());
+            auto accounts = SSHAccountInfo::Load([h](const SSHAccountInfo& account) -> bool {
+                if (account.GetHost() == h) {
+                    return true;
+                }
+                return false;
+            });
+
+            if (accounts.size() > 1) {
+                return Err("Found multiple accounts that matches the input host");
+            } else if (accounts.empty()) {
+                return Err("Could not find an account that matches the input host");
+            }
+
+            account = accounts[0];
+        }
+
+        if (account.has_value()) {
+#if USE_SFTP
+            clDEBUG() << "Creating remote workspace:" << workspace_name << ". Host:" << account.value().GetAccountName()
+                      << "Path:" << path << endl;
+            clWorkspaceEvent create_event{wxEVT_WORKSPACE_CREATE_NEW};
+            create_event.SetWorkspaceName(workspace_name);
+            create_event.SetWorkspacePath(path);
+            create_event.SetSshAccount(account.value().GetAccountName());
+            create_event.SetIsRemote(true);
+            if (EventNotifier::Get()->ProcessEvent(create_event)) {
+                return Ok(wxEmptyString);
+            }
+            return Err("Remote workspace functionality is currently disabled. Please ensure the Remoty plugin is "
+                       "properly loaded.");
+#else
+            return Err("Remote workspace is not supported by this build of CodeLite");
+#endif
+        } else {
+            // local workspace
+            wxFileName workspace_file{path, workspace_name};
+            workspace_file.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+            workspace_file.SetExt("workspace");
+            if (workspace_file.FileExists()) {
+                return Err("A workspace already exists in the given path");
+            }
+
+            clFileSystemWorkspace::Get().New(path, workspace_name);
+            return Ok(wxEmptyString);
+        }
     };
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }

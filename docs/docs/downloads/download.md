@@ -1,5 +1,3 @@
-To build with clang++, set the CL project setting to make -j8  CXX="/usr/bin/clang++"  CC=" /usr/bin/clang" EXTRA_CPPFLAGS="-DGIT_BUILD_VERSION=$(git rev-parse --short HEAD)"
-
 # Downloads
 
 ## Windows

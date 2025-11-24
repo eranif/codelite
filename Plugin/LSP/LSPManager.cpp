@@ -1055,7 +1055,15 @@ void Manager::ShowQuickOutlineDialog(const LSPEvent& event)
     if (m_quick_outline_dlg == nullptr) {
         m_quick_outline_dlg = new LSPOutlineViewDlg(EventNotifier::Get()->TopFrame());
     }
-    m_quick_outline_dlg->SetSymbols(event.GetSymbolsInformation());
+    if (!event.GetDocumentSymbols().empty()) {        
+        m_quick_outline_dlg->SetSymbols(event.GetDocumentSymbols());
+    }
+    else if (!event.GetSymbolsInformation().empty()) {
+        m_quick_outline_dlg->SetSymbols(event.GetSymbolsInformation());        
+    }
+    else {
+        m_quick_outline_dlg->SetEmptySymbols();
+    }
     if (!m_quick_outline_dlg->IsShown()) {
         m_quick_outline_dlg->Show();
         // reposition the window

@@ -28,8 +28,12 @@
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
 #include "clThemedTextCtrl.hpp"
+#include "clThemedButton.h"
 #include <wx/dataview.h>
 #include "clTerminalViewCtrl.hpp"
+#include <wx/treectrl.h>
+#include "clTreeCtrl.h"
+#include <wx/activityindicator.h>
 #include "Notebook.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -78,14 +82,10 @@ public:
     wxButton* GetButtonScan() { return m_buttonScan; }
     wxButton* GetButtonNew() { return m_buttonNew; }
     wxButton* GetButtonDelete() { return m_buttonDelete; }
-    LanguageServerSettingsDlgBase(wxWindow* parent,
-                                  wxWindowID id = wxID_ANY,
-                                  const wxString& title = _("Language Server Settings"),
-                                  const wxPoint& pos = wxDefaultPosition,
-                                  const wxSize& size = wxSize(-1, -1),
-                                  long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    LanguageServerSettingsDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Language Server Settings"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~LanguageServerSettingsDlgBase();
 };
+
 
 class WXDLLIMPEXP_SDK LanguageServerPageBase : public wxPanel
 {
@@ -133,13 +133,10 @@ public:
     wxStaticText* GetStaticText117() { return m_staticText117; }
     wxComboBox* GetComboBoxConnection() { return m_comboBoxConnection; }
     wxCheckBox* GetCheckBoxDiagnostics() { return m_checkBoxDiagnostics; }
-    LanguageServerPageBase(wxWindow* parent,
-                           wxWindowID id = wxID_ANY,
-                           const wxPoint& pos = wxDefaultPosition,
-                           const wxSize& size = wxSize(-1, -1),
-                           long style = wxTAB_TRAVERSAL);
+    LanguageServerPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL);
     virtual ~LanguageServerPageBase();
 };
+
 
 class WXDLLIMPEXP_SDK NewLanguageServerDlgBase : public wxDialog
 {
@@ -152,41 +149,49 @@ protected:
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    NewLanguageServerDlgBase(wxWindow* parent,
-                             wxWindowID id = wxID_ANY,
-                             const wxString& title = _("New Language Server"),
-                             const wxPoint& pos = wxDefaultPosition,
-                             const wxSize& size = wxSize(-1, -1),
-                             long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    NewLanguageServerDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Language Server"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~NewLanguageServerDlgBase();
 };
+
 
 class WXDLLIMPEXP_SDK LSPOutlineViewDlgBase : public wxDialog
 {
 protected:
     wxPanel* m_panel155;
+    wxPanel* m_headerPanel;
     clThemedTextCtrl* m_textCtrlFilter;
-    clTerminalViewCtrl* m_dvTreeCtrll;
+    clThemedButton* m_buttonSort;
+    clThemedButton* m_buttonOptions;
+    clTerminalViewCtrl* m_terminalViewCtrl;
+    clTreeCtrl* m_treeCtrl;
+    wxPanel* m_msgPanel;
+    wxActivityIndicator* m_activityCtrl;
+    wxStaticText* m_staticText;
 
 protected:
     virtual void OnTextUpdated(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
+    virtual void OnSortButton(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOptionsButton(wxCommandEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnListKeyDown(wxKeyEvent& event) { event.Skip(); }
 
 public:
     clThemedTextCtrl* GetTextCtrlFilter() { return m_textCtrlFilter; }
-    clTerminalViewCtrl* GetDvTreeCtrll() { return m_dvTreeCtrll; }
+    clThemedButton* GetButtonSort() { return m_buttonSort; }
+    clThemedButton* GetButtonOptions() { return m_buttonOptions; }
+    wxPanel* GetHeaderPanel() { return m_headerPanel; }
+    clTerminalViewCtrl* GetTerminalViewCtrl() { return m_terminalViewCtrl; }
+    clTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
+    wxActivityIndicator* GetActivityCtrl() { return m_activityCtrl; }
+    wxStaticText* GetStaticText() { return m_staticText; }
+    wxPanel* GetMsgPanel() { return m_msgPanel; }
     wxPanel* GetPanel155() { return m_panel155; }
-    LSPOutlineViewDlgBase(wxWindow* parent,
-                          wxWindowID id = wxID_ANY,
-                          const wxString& title = _("Outline View"),
-                          const wxPoint& pos = wxDefaultPosition,
-                          const wxSize& size = wxSize(500, 300),
-                          long style = wxDEFAULT_DIALOG_STYLE | wxSTAY_ON_TOP | wxRESIZE_BORDER);
+    LSPOutlineViewDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Outline View"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxDEFAULT_DIALOG_STYLE|wxSTAY_ON_TOP|wxRESIZE_BORDER);
     virtual ~LSPOutlineViewDlgBase();
 };
+
 
 class WXDLLIMPEXP_SDK LanguageServerLogViewBase : public wxPanel
 {
@@ -196,15 +201,12 @@ protected:
     clTerminalViewCtrl* m_dvListCtrl;
 
 protected:
+
 public:
     clTerminalViewCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxPanel* GetPanel208() { return m_panel208; }
     Notebook* GetNotebook207() { return m_notebook207; }
-    LanguageServerLogViewBase(wxWindow* parent,
-                              wxWindowID id = wxID_ANY,
-                              const wxPoint& pos = wxDefaultPosition,
-                              const wxSize& size = wxSize(500, 300),
-                              long style = wxTAB_TRAVERSAL);
+    LanguageServerLogViewBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
     virtual ~LanguageServerLogViewBase();
 };
 

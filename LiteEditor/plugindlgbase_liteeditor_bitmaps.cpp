@@ -44,6 +44,6 @@ void wxCEF4InitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/plugindlgbase_liteeditor_bitmaps.cpp$C__src_codelite_LiteEditor_plugindlgbase_liteeditor_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/plugindlgbase_liteeditor_bitmaps.cpp$C__src_codelite_LiteEditor_plugindlgbase_liteeditor_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/plugindlgbase_liteeditor_bitmaps.cpp$_home_shakes_Workspace_C++_codelite_LiteEditor_plugindlgbase_liteeditor_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/plugindlgbase_liteeditor_bitmaps.cpp$_home_shakes_Workspace_C++_codelite_LiteEditor_plugindlgbase_liteeditor_bitmaps.xrc"));
 }

@@ -39,6 +39,10 @@ PluginMgrDlg::PluginMgrDlg(wxWindow* parent)
 
 void PluginMgrDlg::Initialize()
 {
+    // display the plugins search folder    
+    wxString pluginsDir = clStandardPaths::Get().GetPluginsDirectory();
+    m_staticTextPluginDir->SetLabel("Plugins folder: " + pluginsDir);
+    
     clConfig conf("plugins.conf");
     PluginInfoArray plugins;
     conf.ReadItem(&plugins);

@@ -15,6 +15,7 @@
 #include <wx/iconbndl.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
+#include <wx/stattext.h>
 #include <wx/splitter.h>
 #include "clThemedSplitterWindow.h"
 #include <wx/panel.h>
@@ -43,6 +44,7 @@
 class PluginMgrDlgBase : public wxDialog
 {
 protected:
+    wxStaticText* m_staticTextPluginDir;
     clThemedSplitterWindow* m_splitter36;
     wxPanel* m_splitterPage40;
     clThemedListCtrl* m_dvListCtrl;
@@ -63,6 +65,7 @@ protected:
     virtual void OnButtonOK(wxCommandEvent& event) { event.Skip(); }
 
 public:
+    wxStaticText* GetStaticTextPluginDir() { return m_staticTextPluginDir; }
     clThemedListCtrl* GetDvListCtrl() { return m_dvListCtrl; }
     wxPanel* GetSplitterPage40() { return m_splitterPage40; }
     wxRichTextCtrl* GetRichTextCtrl() { return m_richTextCtrl; }
@@ -70,9 +73,7 @@ public:
     clThemedSplitterWindow* GetSplitter36() { return m_splitter36; }
     wxButton* GetButton20() { return m_button20; }
     wxButton* GetButton22() { return m_button22; }
-    PluginMgrDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Manage Plugins"),
-                     const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(600, 400),
-                     long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    PluginMgrDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Manage Plugins"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(600,400), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
     virtual ~PluginMgrDlgBase();
 };
 

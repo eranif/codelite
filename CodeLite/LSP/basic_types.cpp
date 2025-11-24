@@ -361,17 +361,40 @@ void DocumentSymbol::FromJSON(const JSONItem& json)
         tags.push_back(tag);
     }
     
+    std::vector<LSP::DocumentSymbol> containers;
+        
     // read the children
     auto jsonChildren = json["children"];
     size = jsonChildren.arraySize();
     children.clear();
-    children.reserve(size);
+    // cannot reserve a size for children:
+    // some of the original children will be grouped in containers    
     for(int i = 0; i < size; ++i) {
         auto child = jsonChildren[i];
         DocumentSymbol ds;
         ds.FromJSON(child);
-        children.push_back(ds);
+        // sort into containers
+        if (!ds.GetContainer().empty()) {
+            auto iContainer = std::find_if(containers.begin(), containers.end(), 
+                [&ds](const DocumentSymbol& s) { return s.GetName() == ds.GetContainer(); });
+            if (iContainer == containers.end()) {
+                // create new container
+                DocumentSymbol container;
+                container.SetName(ds.GetContainer());
+                container.SetKind(eSymbolKind::kSK_Container);
+                container.GetChildren().push_back(ds);
+                containers.push_back(container);
+            }
+            else {
+                iContainer->GetChildren().push_back(ds);
+            }
+        }
+        else {
+            // symbol name doesn't contain a container (::), so add it directly to the root
+            children.push_back(ds);
+        }
     }
+    children.insert(children.end(), containers.begin(), containers.end());
 }
 
 JSONItem DocumentSymbol::ToJSON(const wxString& name) const
@@ -405,6 +428,35 @@ wxString DocumentSymbol::ToString(int recursionLevel) const {
         output += child.ToString(recursionLevel + 1);
     }
     return output;
+}
+
+wxString DocumentSymbol::CreateNameString(const wxString& iconAscii, bool showContainer, bool showDetails, bool showKind) const 
+{
+    wxString _name = wxString::Format("%s%s%s",
+        iconAscii.empty() ? "" : iconAscii + " ", 
+        showContainer && !container.empty() ? container + "::" : "",
+        name);
+    
+    if (showDetails && !detail.empty()) {
+        // split detail in arguments and return type
+        wxString args;
+        wxString returnType = detail.BeforeFirst('(', &args);
+        if (args.empty()) {
+            _name += " : " + returnType;            
+        }
+        else {
+            _name += "(" + args;
+            if (!returnType.empty()) {
+                _name += " : " + returnType;
+            }
+        }
+    }
+    
+    if (showKind) {
+        _name += " [" + SymbolKindToString(kind) + "]";
+    }
+    
+    return _name;
 }
 
 //===----------------------------------------------------------------------------------

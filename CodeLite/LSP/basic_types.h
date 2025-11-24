@@ -611,6 +611,7 @@ public:
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON(const wxString& name) const;
     wxString ToString(int recursionLevel = 0) const;
+    wxString CreateNameString(const wxString& iconAscii, bool showContainer, bool showDetails, bool showKind) const;
 
     DocumentSymbol() = default;
     virtual ~DocumentSymbol() = default;
@@ -624,6 +625,7 @@ public:
     void SetRange(const Range& range) { this->range = range; }
     void SetSelectionRange(const Range& selectionRange) { this->selectionRange = selectionRange; }
     const std::vector<DocumentSymbol>& GetChildren() const { return children; }
+    std::vector<DocumentSymbol>& GetChildren() { return children; }
     const wxString& GetDetail() const { return detail; }
     const eSymbolKind& GetKind() const { return kind; }
     const wxString& GetName() const { return name; }

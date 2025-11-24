@@ -56,17 +56,47 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
     wxString filename = m_params->As<DocumentSymbolParams>()->GetTextDocument().GetPath();
     auto context = m_context;
     // ToDo: is selectionRange really the best distinction between DocumentSymbol and SymbolInformation?
+    // Maybe rather detail or !container
     if (result[0].hasNamedObject("selectionRange")) { 
         std::vector<LSP::DocumentSymbol> symbols;
         symbols.reserve(size);
         wxString debug_str;
+        std::vector<DocumentSymbol> containers;
+        
+        // parse json
         for (int i = 0; i < size; ++i) {
             DocumentSymbol ds;
             ds.FromJSON(result[i]);
-            symbols.push_back(ds);
+            
+            // sort into containers
+            if (!ds.GetContainer().empty()) {
+                auto iContainer = std::find_if(containers.begin(), containers.end(), 
+                    [&ds](const DocumentSymbol& s) { return s.GetName() == ds.GetContainer(); });
+                if (iContainer == containers.end()) {
+                    // create new container
+                    DocumentSymbol container;
+                    container.SetName(ds.GetContainer());
+                    container.SetKind(eSymbolKind::kSK_Container);
+                    container.GetChildren().push_back(ds);
+                    containers.push_back(container);
+                }
+                else {
+                    iContainer->GetChildren().push_back(ds); 
+                    // ToDo: remove debug output or make conditional (performance)
+                    debug_str += ds.ToString();
+                }
+            }
+            else {
+                // symbol name doesn't contain a container (::), so add it directly to the root
+                symbols.push_back(ds);
+            }
+        }
+        symbols.insert(symbols.end(), containers.begin(), containers.end());
+        
+        // ToDo: remove debug output or make conditional (performance)
+        for(const auto& ds : symbols) {
             debug_str += ds.ToString();
         }
-        
         LSP_DEBUG() << "Received DocumentSymbol: " << endl << debug_str << endl;
         
         // fire event per context

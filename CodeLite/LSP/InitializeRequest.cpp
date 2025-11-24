@@ -44,6 +44,7 @@ JSONItem LSP::InitializeRequest::ToJSON(const wxString& name) const
     hoverFormat.arrayAppend("markdown");
     hoverFormat.arrayAppend("plaintext");
     
+    // Enable hierachical / tree/style outline
     auto documentSymbols = textDocumentCapabilities.AddObject("documentSymbol");
     documentSymbols.addProperty("hierarchicalDocumentSymbolSupport", true);
 

@@ -6,42 +6,101 @@
 
 #include "wxcrafter.h"
 
+
 // Declare the bitmap loading function
 extern void wxC682BInitBitmapResources();
 
-static bool bBitmapLoaded = false;
 
-OutlineTabBaseClass::OutlineTabBaseClass(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                         long style)
+namespace {
+// return the wxBORDER_SIMPLE that matches the current application theme
+[[maybe_unused]]
+wxBorder get_border_simple_theme_aware_bit() {
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // get_border_simple_theme_aware_bit
+bool bBitmapLoaded = false;
+} // namespace
+
+OutlineTabBaseClass::OutlineTabBaseClass(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, id, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if ( !bBitmapLoaded ) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxC682BInitBitmapResources();
         bBitmapLoaded = true;
     }
-
+    
     wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer1);
-
-    m_dvListCtrl = new clTerminalViewCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)),
-                                          wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
-
-    boxSizer1->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(5));
-
+    
+    m_headerPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    
+    boxSizer1->Add(m_headerPanel, 0, wxALL|wxEXPAND, WXC_FROM_DIP(0));
+    
+    wxBoxSizer* boxSizer38 = new wxBoxSizer(wxHORIZONTAL);
+    m_headerPanel->SetSizer(boxSizer38);
+    
+    boxSizer38->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(0));
+    
+    m_sortButton = new wxButton(m_headerPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_headerPanel, wxSize(-1,-1)), wxBU_EXACTFIT);
+    #if wxVERSION_NUMBER >= 2904
+    m_sortButton->SetBitmap(wxArtProvider::GetBitmap(wxART_HELP_SETTINGS, wxART_BUTTON, wxSize(24, 24)), wxLEFT);
+    m_sortButton->SetBitmapMargins(2,2);
+    #endif
+    
+    boxSizer38->Add(m_sortButton, 0, wxALL, WXC_FROM_DIP(2));
+    
+    m_optionsButton = new wxButton(m_headerPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_headerPanel, wxSize(-1,-1)), wxBU_EXACTFIT);
+    #if wxVERSION_NUMBER >= 2904
+    m_optionsButton->SetBitmap(wxArtProvider::GetBitmap(wxART_LIST_VIEW, wxART_BUTTON, wxSize(24, 24)), wxLEFT);
+    m_optionsButton->SetBitmapMargins(2,2);
+    #endif
+    
+    boxSizer38->Add(m_optionsButton, 0, wxALL, WXC_FROM_DIP(2));
+    
+    m_messagePanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    
+    boxSizer1->Add(m_messagePanel, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    wxBoxSizer* boxSizer34 = new wxBoxSizer(wxVERTICAL);
+    m_messagePanel->SetSizer(boxSizer34);
+    
+    m_activityCtrl = new wxActivityIndicator(m_messagePanel, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_messagePanel, wxSize(-1,-1)), 0);
+    
+    boxSizer34->Add(m_activityCtrl, 0, wxALL|wxALIGN_CENTER, WXC_FROM_DIP(5));
+    
+    m_staticTextMessage = new wxStaticText(m_messagePanel, wxID_ANY, _("Static Text Label"), wxDefaultPosition, wxDLG_UNIT(m_messagePanel, wxSize(-1,-1)), wxALIGN_CENTRE);
+    
+    boxSizer34->Add(m_staticTextMessage, 1, wxALL|wxALIGN_CENTER, WXC_FROM_DIP(5));
+    
+    m_terminalViewCtrl = new clTerminalViewCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_SINGLE);
+    
+    boxSizer1->Add(m_terminalViewCtrl, 1, wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_treeCtrl = new clTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTR_DEFAULT_STYLE);
+    
+    boxSizer1->Add(m_treeCtrl, 1, wxEXPAND, WXC_FROM_DIP(5));
+    
     SetName(wxT("OutlineTabBaseClass"));
-    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
-    if(GetSizer()) {
-        GetSizer()->Fit(this);
+    SetSize(wxDLG_UNIT(this, wxSize(-1,-1)));
+    if (GetSizer()) {
+         GetSizer()->Fit(this);
     }
     // Connect events
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                          wxDataViewEventHandler(OutlineTabBaseClass::OnItemSelected), NULL, this);
+    m_sortButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &OutlineTabBaseClass::OnSortButton, this);
+    m_optionsButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &OutlineTabBaseClass::OnOptionsButton, this);
+    m_terminalViewCtrl->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &OutlineTabBaseClass::OnItemSelected, this);
+    
 }
 
 OutlineTabBaseClass::~OutlineTabBaseClass()
 {
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED,
-                             wxDataViewEventHandler(OutlineTabBaseClass::OnItemSelected), NULL, this);
+    m_sortButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &OutlineTabBaseClass::OnSortButton, this);
+    m_optionsButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &OutlineTabBaseClass::OnOptionsButton, this);
+    m_terminalViewCtrl->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &OutlineTabBaseClass::OnItemSelected, this);
+    
 }

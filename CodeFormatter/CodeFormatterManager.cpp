@@ -1,5 +1,6 @@
 #include "CodeFormatterManager.hpp"
 
+#include "fileutils.h"
 #include "fmtBlack.hpp"
 #include "fmtCMakeFormat.hpp"
 #include "fmtClangFormat.hpp"
@@ -10,6 +11,7 @@
 #include "fmtShfmtFormat.hpp"
 #include "fmtXmlLint.hpp"
 #include "fmtYQ.hpp"
+#include "json_utils.h"
 
 #include <wx/filename.h>
 
@@ -71,18 +73,22 @@ void CodeFormatterManager::Load()
         return;
     }
 
-    JSON root{ config_file };
-    if (!root.isOk() || !root.toElement().isArray()) {
+    wxString content;
+    if (!FileUtils::ReadFileContent(config_file, content))
+    {
+        initialize_defaults();
+        return;
+    }
+    const auto json = nlohmann::json::parse(StringUtils::ToStdString(content), nullptr, false);
+    if (json.is_discarded() || !json.is_array()) {
         initialize_defaults();
         return;
     }
 
     clear();
-    auto arr = root.toElement();
-    int count = arr.arraySize();
-    for (int i = 0; i < count; ++i) {
+    for (const auto& elem : json) {
         GenericFormatter* fmtr = new GenericFormatter();
-        fmtr->FromJSON(arr[i]);
+        fmtr->FromJSON(elem);
         push_back(fmtr);
     }
 }
@@ -91,12 +97,11 @@ void CodeFormatterManager::Save()
 {
     wxFileName config_file{ clStandardPaths::Get().GetUserDataDir(), "code-formatters.json" };
     config_file.AppendDir("config");
-    JSON root{ cJSON_Array };
-    auto arr = root.toElement();
+    nlohmann::json json = nlohmann::json::array();
     for (auto fmtr : m_formatters) {
-        arr.arrayAppend(fmtr->ToJSON());
+        json.push_back(fmtr->ToJSON());
     }
-    root.save(config_file);
+    FileUtils::WriteFileContentRaw(config_file, json.dump(2));
 }
 
 std::shared_ptr<GenericFormatter> CodeFormatterManager::GetFormatterByName(const wxString& name) const

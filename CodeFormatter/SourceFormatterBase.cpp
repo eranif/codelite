@@ -1,31 +1,33 @@
 #include "SourceFormatterBase.hpp"
 
+#include "json_utils.h"
 #include "macros.h"
 #include "wxStringHash.h"
 
 wxDEFINE_EVENT(wxEVT_FORMAT_COMPELTED, clSourceFormatEvent);
 wxDEFINE_EVENT(wxEVT_FORMAT_INPLACE_COMPELTED, clSourceFormatEvent);
 
-void SourceFormatterBase::FromJSON(const JSONItem& json)
+void SourceFormatterBase::FromJSON(const nlohmann::json& json)
 {
-    m_languages = json["languages"].toArrayString();
-    m_flags = json["flags"].toSize_t((size_t)FormatterFlags::ENABLED);
-    m_configFile = json["config_file"].toString();
-    m_name = json["name"].toString();
-    m_description = json["description"].toString();
-    m_shortDescription = json["short_description"].toString();
+    if (!json.is_object()) {
+        return;
+    }
+    m_languages = JsonUtils::ToArrayString(json["languages"]);
+    m_flags = json.value("flags", (size_t)FormatterFlags::ENABLED);
+    m_configFile = JsonUtils::ToString(json["config_file"]);
+    m_name = JsonUtils::ToString(json["name"]);
+    m_description = JsonUtils::ToString(json["description"]);
+    m_shortDescription = JsonUtils::ToString(json["short_description"]);
 }
 
-JSONItem SourceFormatterBase::ToJSON() const
+nlohmann::json SourceFormatterBase::ToJSON() const
 {
-    JSONItem ele = JSONItem::createObject(GetName());
-    ele.addProperty("languages", m_languages);
-    ele.addProperty("flags", m_flags);
-    ele.addProperty("config_file", m_configFile);
-    ele.addProperty("name", m_name);
-    ele.addProperty("description", m_description);
-    ele.addProperty("short_description", m_shortDescription);
-    return ele;
+    return {{"languages", m_languages},
+            {"flags", m_flags},
+            {"config_file", m_configFile},
+            {"name", m_name},
+            {"description", m_description},
+            {"short_description", m_shortDescription}};
 }
 
 bool SourceFormatterBase::CanHandle(FileExtManager::FileType file_type) const

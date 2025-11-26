@@ -59,8 +59,8 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
     // Maybe rather detail or !container
     if (result[0].hasNamedObject("selectionRange")) { 
         std::vector<LSP::DocumentSymbol> symbols;
-        symbols.reserve(size);
-        wxString debug_str;
+        // cannot reserve space for symbols - some might get moved into containers
+//        symbols.reserve(size);
         std::vector<DocumentSymbol> containers;
         
         // parse json
@@ -77,13 +77,14 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
                     DocumentSymbol container;
                     container.SetName(ds.GetContainer());
                     container.SetKind(eSymbolKind::kSK_Container);
+                    container.SetRange(ds.GetRange());
                     container.GetChildren().push_back(ds);
                     containers.push_back(container);
                 }
                 else {
-                    iContainer->GetChildren().push_back(ds); 
-                    // ToDo: remove debug output or make conditional (performance)
-                    debug_str += ds.ToString();
+                    // insert into existing container and adjust it's range
+                    iContainer->GetChildren().push_back(ds);                     
+                    iContainer->GrowContainerRange(ds);              
                 }
             }
             else {
@@ -92,12 +93,6 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
             }
         }
         symbols.insert(symbols.end(), containers.begin(), containers.end());
-        
-        // ToDo: remove debug output or make conditional (performance)
-        for(const auto& ds : symbols) {
-            debug_str += ds.ToString();
-        }
-        LSP_DEBUG() << "Received DocumentSymbol: " << endl << debug_str << endl;
         
         // fire event per context
         if (context & CONTEXT_SEMANTIC_HIGHLIGHT) {

@@ -612,7 +612,11 @@ public:
     virtual JSONItem ToJSON(const wxString& name) const;
     wxString ToString(int recursionLevel = 0) const;
     wxString CreateNameString(const wxString& iconAscii, bool showContainer, bool showDetails, bool showKind) const;
-
+    /**
+     * @brief If this Symbol is a container, adjust it's range to include at least the child's range
+     * @param child
+     */
+    void GrowContainerRange(const DocumentSymbol& child);
     DocumentSymbol() = default;
     virtual ~DocumentSymbol() = default;
 

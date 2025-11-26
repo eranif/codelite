@@ -27,8 +27,6 @@
 #include "clThemedSTC.hpp"
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
-#include "clThemedTextCtrl.hpp"
-#include "clThemedButton.h"
 #include <wx/dataview.h>
 #include "clTerminalViewCtrl.hpp"
 #include <wx/treectrl.h>
@@ -158,10 +156,6 @@ class WXDLLIMPEXP_SDK LSPOutlineViewDlgBase : public wxDialog
 {
 protected:
     wxPanel* m_panel155;
-    wxPanel* m_headerPanel;
-    clThemedTextCtrl* m_textCtrlFilter;
-    clThemedButton* m_buttonSort;
-    clThemedButton* m_buttonOptions;
     clTerminalViewCtrl* m_terminalViewCtrl;
     clTreeCtrl* m_treeCtrl;
     wxPanel* m_msgPanel;
@@ -169,19 +163,10 @@ protected:
     wxStaticText* m_staticText;
 
 protected:
-    virtual void OnTextUpdated(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnSortButton(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnOptionsButton(wxCommandEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnListKeyDown(wxKeyEvent& event) { event.Skip(); }
 
 public:
-    clThemedTextCtrl* GetTextCtrlFilter() { return m_textCtrlFilter; }
-    clThemedButton* GetButtonSort() { return m_buttonSort; }
-    clThemedButton* GetButtonOptions() { return m_buttonOptions; }
-    wxPanel* GetHeaderPanel() { return m_headerPanel; }
     clTerminalViewCtrl* GetTerminalViewCtrl() { return m_terminalViewCtrl; }
     clTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
     wxActivityIndicator* GetActivityCtrl() { return m_activityCtrl; }

@@ -417,36 +417,6 @@ LSPOutlineViewDlgBase::LSPOutlineViewDlgBase(wxWindow* parent, wxWindowID id, co
     wxBoxSizer* boxSizer157 = new wxBoxSizer(wxVERTICAL);
     m_panel155->SetSizer(boxSizer157);
     
-    m_headerPanel = new wxPanel(m_panel155, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel155, wxSize(-1,-1)), wxTAB_TRAVERSAL);
-    
-    boxSizer157->Add(m_headerPanel, 0, wxEXPAND, WXC_FROM_DIP(0));
-    
-    wxBoxSizer* boxSizer220 = new wxBoxSizer(wxHORIZONTAL);
-    m_headerPanel->SetSizer(boxSizer220);
-    
-    m_textCtrlFilter = new clThemedTextCtrl(m_headerPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_headerPanel, wxSize(-1,-1)), wxTE_PROCESS_ENTER);
-    #if wxVERSION_NUMBER >= 3000
-    m_textCtrlFilter->SetHint(wxT(""));
-    #endif
-    
-    boxSizer220->Add(m_textCtrlFilter, 1, wxLEFT|wxTOP|wxBOTTOM|wxEXPAND, WXC_FROM_DIP(2));
-    
-    m_buttonSort = new clThemedButton(m_headerPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_headerPanel, wxSize(-1,-1)), wxBU_EXACTFIT);
-    #if wxVERSION_NUMBER >= 2904
-    m_buttonSort->SetBitmap(wxArtProvider::GetBitmap(wxART_HELP_SETTINGS, wxART_BUTTON, wxSize(24, 24)), wxLEFT);
-    m_buttonSort->SetBitmapMargins(0,0);
-    #endif
-    
-    boxSizer220->Add(m_buttonSort, 0, wxLEFT|wxRIGHT, WXC_FROM_DIP(5));
-    
-    m_buttonOptions = new clThemedButton(m_headerPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_headerPanel, wxSize(-1,-1)), wxBU_EXACTFIT);
-    #if wxVERSION_NUMBER >= 2904
-    m_buttonOptions->SetBitmap(wxArtProvider::GetBitmap(wxART_LIST_VIEW, wxART_BUTTON, wxSize(24, 24)), wxLEFT);
-    m_buttonOptions->SetBitmapMargins(0,0);
-    #endif
-    
-    boxSizer220->Add(m_buttonOptions, 0, wxRIGHT, WXC_FROM_DIP(5));
-    
     m_terminalViewCtrl = new clTerminalViewCtrl(m_panel155, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel155, wxSize(-1,-1)), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_SINGLE);
     
     boxSizer157->Add(m_terminalViewCtrl, 1, wxEXPAND, WXC_FROM_DIP(2));
@@ -486,11 +456,6 @@ LSPOutlineViewDlgBase::LSPOutlineViewDlgBase(wxWindow* parent, wxWindowID id, co
         wxPersistenceManager::Get().Restore(this);
     }
     // Connect events
-    m_textCtrlFilter->Bind(wxEVT_COMMAND_TEXT_UPDATED, &LSPOutlineViewDlgBase::OnTextUpdated, this);
-    m_textCtrlFilter->Bind(wxEVT_COMMAND_TEXT_ENTER, &LSPOutlineViewDlgBase::OnEnter, this);
-    m_textCtrlFilter->Bind(wxEVT_KEY_DOWN, &LSPOutlineViewDlgBase::OnKeyDown, this);
-    m_buttonSort->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LSPOutlineViewDlgBase::OnSortButton, this);
-    m_buttonOptions->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &LSPOutlineViewDlgBase::OnOptionsButton, this);
     m_terminalViewCtrl->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &LSPOutlineViewDlgBase::OnItemActivated, this);
     m_terminalViewCtrl->Bind(wxEVT_KEY_DOWN, &LSPOutlineViewDlgBase::OnListKeyDown, this);
     m_treeCtrl->Bind(wxEVT_KEY_DOWN, &LSPOutlineViewDlgBase::OnListKeyDown, this);
@@ -499,11 +464,6 @@ LSPOutlineViewDlgBase::LSPOutlineViewDlgBase(wxWindow* parent, wxWindowID id, co
 
 LSPOutlineViewDlgBase::~LSPOutlineViewDlgBase()
 {
-    m_textCtrlFilter->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &LSPOutlineViewDlgBase::OnTextUpdated, this);
-    m_textCtrlFilter->Unbind(wxEVT_COMMAND_TEXT_ENTER, &LSPOutlineViewDlgBase::OnEnter, this);
-    m_textCtrlFilter->Unbind(wxEVT_KEY_DOWN, &LSPOutlineViewDlgBase::OnKeyDown, this);
-    m_buttonSort->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &LSPOutlineViewDlgBase::OnSortButton, this);
-    m_buttonOptions->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &LSPOutlineViewDlgBase::OnOptionsButton, this);
     m_terminalViewCtrl->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &LSPOutlineViewDlgBase::OnItemActivated, this);
     m_terminalViewCtrl->Unbind(wxEVT_KEY_DOWN, &LSPOutlineViewDlgBase::OnListKeyDown, this);
     m_treeCtrl->Unbind(wxEVT_KEY_DOWN, &LSPOutlineViewDlgBase::OnListKeyDown, this);

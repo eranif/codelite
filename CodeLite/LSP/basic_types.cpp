@@ -369,10 +369,15 @@ void DocumentSymbol::FromJSON(const JSONItem& json)
     children.clear();
     // cannot reserve a size for children:
     // some of the original children will be grouped in containers    
-    for(int i = 0; i < size; ++i) {
+    for (int i = 0; i < size; ++i) {
         auto child = jsonChildren[i];
         DocumentSymbol ds;
         ds.FromJSON(child);
+        
+        // convert children of enums to enum members
+        if (kind == eSymbolKind::kSK_Enum && ds.kind == eSymbolKind::kSK_Enum) {
+            ds.SetKind(eSymbolKind::kSK_EnumMember);
+        }
         // sort into containers
         if (!ds.GetContainer().empty()) {
             auto iContainer = std::find_if(containers.begin(), containers.end(), 
@@ -383,10 +388,13 @@ void DocumentSymbol::FromJSON(const JSONItem& json)
                 container.SetName(ds.GetContainer());
                 container.SetKind(eSymbolKind::kSK_Container);
                 container.GetChildren().push_back(ds);
+                container.SetRange(ds.GetRange());
                 containers.push_back(container);
             }
             else {
+                // insert into existing container and adjust it's range
                 iContainer->GetChildren().push_back(ds);
+                iContainer->GrowContainerRange(ds);                
             }
         }
         else {
@@ -457,6 +465,48 @@ wxString DocumentSymbol::CreateNameString(const wxString& iconAscii, bool showCo
     }
     
     return _name;
+}
+
+void DocumentSymbol::GrowContainerRange(const DocumentSymbol& child) 
+{
+    if (kind != eSymbolKind::kSK_Container)
+        return;
+        
+    // adjust the range start of the container
+    const auto& dsRange = child.GetRange();
+    if (dsRange.GetStart().GetLine() < range.GetStart().GetLine()) {
+        if (dsRange.GetStart().GetCharacter() < dsRange.GetStart().GetCharacter()) {
+            range.SetStart(dsRange.GetStart());
+        }
+        else {
+            auto pos = range.GetStart();
+            pos.SetLine(dsRange.GetStart().GetLine());
+            range.SetStart(pos);
+        }
+    }
+    else if (dsRange.GetStart().GetLine() == range.GetStart().GetLine() 
+        && dsRange.GetStart().GetCharacter() < range.GetStart().GetCharacter()) 
+    {
+        range.SetStart(dsRange.GetStart());
+    }
+    
+    // adjust the range end of the container
+    if (dsRange.GetEnd().GetLine() > range.GetEnd().GetLine()) {
+        if (dsRange.GetEnd().GetCharacter() > dsRange.GetEnd().GetCharacter()) {
+            range.SetEnd(dsRange.GetEnd());
+        }
+        else {
+            auto pos = range.GetEnd();
+            pos.SetLine(dsRange.GetEnd().GetLine());
+            range.SetEnd(pos);
+        }
+    }
+    else if (dsRange.GetEnd().GetLine() == range.GetEnd().GetLine() 
+        && dsRange.GetEnd().GetCharacter() > range.GetEnd().GetCharacter()) 
+    {
+        range.SetEnd(dsRange.GetEnd());
+    }   
+        
 }
 
 //===----------------------------------------------------------------------------------

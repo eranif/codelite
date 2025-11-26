@@ -11,13 +11,100 @@
 #include <stack>
 #include <wx/dataview.h>
 
+namespace {
+    class wxIntClientData : public wxClientData {
+        int m_value = 0;
+    public: 
+        wxIntClientData(int value) : wxClientData(), m_value(value) {}
+        ~wxIntClientData() = default;
+        
+        int GetValue() const { return m_value; }
+        void SetValue(int value) { m_value = value; }
+    };
+}
+
 LSPOutlineViewDlg::LSPOutlineViewDlg(wxWindow* parent)
     : LSPOutlineViewDlgBase(parent)
 {
-    clSetDialogBestSizeAndPosition(this);
-    Bind(wxEVT_MENU, &LSPOutlineViewDlg::OnMenu, this);
-    m_treeCtrl->Bind(wxEVT_TREE_ITEM_ACTIVATED, &LSPOutlineViewDlg::OnTreeItemActivated, this);
+    CreateToolbar();
+    m_treeCtrl->SetSortFunction(nullptr);
+    m_treeCtrl->Bind(wxEVT_TREE_ITEM_ACTIVATED, &LSPOutlineViewDlg::OnTreeItemActivated, this);    
+    
     DoInitialiseEmpty();
+    clSetDialogBestSizeAndPosition(this);       
+}
+
+void LSPOutlineViewDlg::CreateToolbar()
+{
+    int style = wxAUI_TB_PLAIN_BACKGROUND;
+    m_toolbar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+    GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
+    
+    auto images = clGetManager()->GetStdIcons();
+    m_textCtrlFilter = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize, wxTE_PROCESS_ENTER);
+    m_textCtrlFilter->Bind(wxEVT_TEXT_ENTER, &LSPOutlineViewDlg::OnEnter, this);
+    m_textCtrlFilter->Bind(wxEVT_TEXT, &LSPOutlineViewDlg::OnTextUpdated, this);
+    m_textCtrlFilter->Bind(wxEVT_KEY_DOWN, &LSPOutlineViewDlg::OnKeyDown, this);
+    auto* iFilter = m_toolbar->AddControl(m_textCtrlFilter, _("Search"));
+    iFilter->SetProportion(1);     
+    m_toolbar->AddSeparator();
+    
+    wxSize size = GetTextExtent("Type/Name (case sensitive)");
+    m_sortOptions = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(size.GetWidth(), -1));
+    m_sortOptions->Append(_("Type/Name"), new wxIntClientData(LSPSymbolSorter::SORT_KIND_NAME));
+    m_sortOptions->Append(_("Name"), new wxIntClientData(LSPSymbolSorter::SORT_NAME));
+    m_sortOptions->Append(_("Line"), new wxIntClientData(LSPSymbolSorter::SORT_LINE));
+    m_sortOptions->Append(_("Type/Name (case sensitive)"), new wxIntClientData(LSPSymbolSorter::SORT_KIND_NAME_CASE_SENSITIVE));
+    m_sortOptions->Append(_("Name (case sensitive)"), new wxIntClientData(LSPSymbolSorter::SORT_NAME_CASE_SENSITIVE));   
+    // find default selection
+    for (size_t i = 0; i < m_sortOptions->GetCount(); i++) {
+        auto* data = static_cast<wxIntClientData*>(m_sortOptions->GetClientObject(i));
+        if (data && data->GetValue() == (int)m_sortType) {            
+            m_sortOptions->SetSelection(i);
+            break;
+        }
+    }
+    m_toolbar->AddLabel(wxID_ANY, _("Sort:"));
+    m_toolbar->AddControl(m_sortOptions, _("Sort"));
+    m_toolbar->AddSeparator();
+    
+    clAuiToolBarArt::AddTool(m_toolbar, ID_TOOL_DETAILS, _("Show Details"), images->LoadBitmap("mime-xml"), "", wxITEM_CHECK);
+    m_toolbar->ToggleTool(ID_TOOL_DETAILS, m_showDetails);
+    
+    clAuiToolBarArt::AddTool(m_toolbar, ID_TOOL_KIND, _("Show Kind"), images->LoadBitmap("archive"), "", wxITEM_CHECK);
+    m_toolbar->ToggleTool(ID_TOOL_KIND, m_showSymbolKind);
+
+    m_toolbar->Realize();
+    
+    m_toolbar->Bind(wxEVT_TOOL, [&](wxCommandEvent& event) {
+        if (m_mode != Mode::DOCUMENT_SYMBOL)
+            return;
+        switch (event.GetId()) {
+            case ID_TOOL_DETAILS: {
+                m_showDetails = event.IsChecked();
+                DoInitialiseDocumentSymbol();
+                break;
+            }
+            case ID_TOOL_KIND: {
+                m_showSymbolKind = event.IsChecked();
+                DoInitialiseDocumentSymbol();
+                break;
+            }
+            default: {}
+        }
+    });
+    
+    m_sortOptions->Bind(wxEVT_CHOICE, [&](wxCommandEvent& event) {
+        if (m_mode != Mode::DOCUMENT_SYMBOL)
+            return;
+            
+        auto* data = static_cast<wxIntClientData*>(event.GetClientObject());
+        if (!data)
+            return;
+        LSPSymbolSorter::SortType sort = (LSPSymbolSorter::SortType)data->GetValue();
+        SortSymbols(sort);
+        DoInitialiseDocumentSymbol();
+    });
 }
 
 void LSPOutlineViewDlg::DoInitialiseEmpty()
@@ -28,6 +115,7 @@ void LSPOutlineViewDlg::DoInitialiseEmpty()
     m_staticText->SetLabel(_("Language Server is still not ready...\n(hit ESCAPE key to dismiss)"));
     m_activityCtrl->Start();
     Layout();
+   
     return;
 }
 
@@ -58,8 +146,7 @@ void LSPOutlineViewDlg::DoInitialiseDocumentSymbol()
     
     auto lexer = ColoursAndFontsManager::Get().GetLexer("python");
     m_treeCtrl->DeleteAllItems();
-    m_treeCtrl->SetSortFunction(nullptr);
-    m_textCtrlFilter->ClearAll();
+    m_textCtrlFilter->Clear();
 
     m_treeCtrl->Begin();
     clColours colours;
@@ -91,7 +178,7 @@ void LSPOutlineViewDlg::DoInitialiseSymbolInformation()
     auto lexer = ColoursAndFontsManager::Get().GetLexer("python");
     m_terminalViewCtrl->DeleteAllItems();
     m_terminalViewCtrl->SetSortFunction(nullptr);
-    m_textCtrlFilter->ClearAll();
+    m_textCtrlFilter->Clear();
 
     m_terminalViewCtrl->Begin();
     m_terminalViewCtrl->SetScrollToBottom(false);
@@ -268,7 +355,7 @@ void LSPOutlineViewDlg::OnKeyDown(wxKeyEvent& event)
 
 void LSPOutlineViewDlg::DoFindNext()
 {
-    if(m_mode == Mode::DOCUMENT_SYMBOL) {
+    if (m_mode == Mode::DOCUMENT_SYMBOL) {
         m_treeCtrl->ClearAllHighlights();
 
         wxTreeItemId sel_item = m_treeCtrl->GetSelection();
@@ -308,7 +395,7 @@ void LSPOutlineViewDlg::DoFindNext()
 
 void LSPOutlineViewDlg::DoFindPrev()
 {
-    if(m_mode == Mode::DOCUMENT_SYMBOL) {
+    if (m_mode == Mode::DOCUMENT_SYMBOL) {
         m_treeCtrl->ClearAllHighlights();
 
         wxTreeItemId sel_item = m_treeCtrl->GetSelection();
@@ -359,8 +446,8 @@ void LSPOutlineViewDlg::SetSymbols(const std::vector<SymbolInformation>& symbols
 {
     m_mode = Mode::SYMBOL_INFORMATION;
     m_symbolsInformation = symbols;
-    m_buttonOptions->Hide();
-    m_buttonSort->Hide();
+    m_toolbar->EnableTool(ID_TOOL_DETAILS, false);
+    m_toolbar->EnableTool(ID_TOOL_KIND, false);
     DoInitialiseSymbolInformation();
 }
 
@@ -368,8 +455,9 @@ void LSPOutlineViewDlg::SetSymbols(const std::vector<DocumentSymbol>& symbols)
 {
     m_mode = Mode::DOCUMENT_SYMBOL;
     m_documentSymbols = symbols;    
-    m_buttonOptions->Show();
-    m_buttonSort->Show();
+    m_toolbar->EnableTool(ID_TOOL_DETAILS, true);
+    m_toolbar->EnableTool(ID_TOOL_KIND, true);
+    SortSymbols(m_sortType);
     DoInitialiseDocumentSymbol();
 }
 
@@ -377,6 +465,8 @@ void LSPOutlineViewDlg::SetEmptySymbols()
 {
     m_documentSymbols.clear();
     m_symbolsInformation.clear();
+    m_toolbar->EnableTool(ID_TOOL_DETAILS, false);
+    m_toolbar->EnableTool(ID_TOOL_KIND, false);
     DoInitialiseEmpty();
 }
 
@@ -410,63 +500,23 @@ void LSPOutlineViewDlg::DoActivate(const wxTreeItemId& item) {
     CHECK_PTR_RET(data);        
 
     LSP::DocumentSymbol* symbol = reinterpret_cast<LSP::DocumentSymbol*>(data->GetId().m_pItem);
-    if (!symbol || symbol->GetKind() == LSP::eSymbolKind::kSK_Container) 
-        return;
+    CHECK_PTR_RET(symbol);
     
     // open the editor and go to
     IEditor* active_editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(active_editor);
 
-    int sci_line = symbol->GetSelectionRange().GetStart().GetLine();
+    int sci_line = symbol->GetRange().GetStart().GetLine();
     int position = active_editor->PosFromLine(sci_line);  // start of line
-    position += symbol->GetSelectionRange().GetStart().GetCharacter(); // add the column
+    position += symbol->GetRange().GetStart().GetCharacter(); // add the column
     active_editor->SetCaretAt(position);
     active_editor->CenterLine(sci_line);
     
     Hide();
 }
 
-void LSPOutlineViewDlg::OnOptionsButton(wxCommandEvent& event)
-{
-    wxMenu menu;
-    menu.Append(ID_SHOW_DETAILS, m_showDetails ? _("Hide details") : _("Show details"));
-    menu.Append(ID_SHOW_KIND, m_showSymbolKind ? _("Hide symbol kind") : _("Show symbol kind"));
-    PopupMenu(&menu);
-}
 
-void LSPOutlineViewDlg::OnSortButton(wxCommandEvent& event)
-{
-    wxMenu menu;
-    menu.Append(ID_SORT_ALPHABETICALLY, _("Sort Alphabetically"));
-    menu.Append(ID_SORT_LINE, _("Sort by line number"));
-    PopupMenu(&menu);
-}
-
-void LSPOutlineViewDlg::OnMenu(wxCommandEvent& event) {
-    switch(event.GetId()) {
-        case ID_SHOW_DETAILS: {
-            if (m_mode == Mode::SYMBOL_INFORMATION)
-                return;
-            m_showDetails = !m_showDetails;
-            DoInitialiseDocumentSymbol();
-            break;
-        }
-        case ID_SHOW_KIND: {
-            if (m_mode == Mode::SYMBOL_INFORMATION)
-                return;
-            m_showSymbolKind = !m_showSymbolKind;
-            DoInitialiseDocumentSymbol();
-            break;
-        }
-        case ID_SORT_ALPHABETICALLY: {
-            if (m_mode == Mode::SYMBOL_INFORMATION)
-                return;
-            break;
-        }
-        case ID_SORT_LINE: {
-            if (m_mode == Mode::SYMBOL_INFORMATION)
-                return;
-            break;
-        }
-    }
+void LSPOutlineViewDlg::SortSymbols(LSPSymbolSorter::SortType sort) 
+{    
+    LSPSymbolSorter::Sort(m_documentSymbols, sort);
 }

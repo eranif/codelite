@@ -2,7 +2,6 @@
 
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
-#include "dirtraverser.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
@@ -14,6 +13,7 @@
 #include "php_strings.h"
 #include "plugin.h"
 #include "wxCodeCompletionBox.h"
+#include "wxCustomControls.hpp"
 
 #include <algorithm>
 #include <wx/busyinfo.h>
@@ -45,7 +45,7 @@ PHPWorkspace::~PHPWorkspace()
 
 PHPWorkspace* PHPWorkspace::Get()
 {
-    if(ms_instance == 0) {
+    if (ms_instance == 0) {
         ms_instance = new PHPWorkspace();
     }
     return ms_instance;
@@ -53,7 +53,7 @@ PHPWorkspace* PHPWorkspace::Get()
 
 void PHPWorkspace::Release()
 {
-    if(ms_instance) {
+    if (ms_instance) {
         delete ms_instance;
     }
     ms_instance = 0;
@@ -64,11 +64,11 @@ bool PHPWorkspace::Close(bool saveBeforeClose, bool saveSession)
     clWorkspaceEvent closing_event(wxEVT_WORKSPACE_CLOSING);
     EventNotifier::Get()->ProcessEvent(closing_event);
 
-    if(IsOpen()) {
-        if(m_manager && saveSession) {
+    if (IsOpen()) {
+        if (m_manager && saveSession) {
             m_manager->StoreWorkspaceSession(m_workspaceFile);
         }
-        if(saveBeforeClose) {
+        if (saveBeforeClose) {
             // Save it
             Save();
         }
@@ -95,7 +95,7 @@ bool PHPWorkspace::Close(bool saveBeforeClose, bool saveSession)
 bool PHPWorkspace::Open(const wxString& filename, wxEvtHandler* view, bool createIfMissing)
 {
     // Close the currently opened workspace
-    if(IsOpen()) {
+    if (IsOpen()) {
         Close(true, true);
     }
 
@@ -103,9 +103,9 @@ bool PHPWorkspace::Open(const wxString& filename, wxEvtHandler* view, bool creat
     wxFileName fnNewWspFile = m_workspaceFile;
     fnNewWspFile.SetExt("workspace");
 
-    if(!fnNewWspFile.Exists()) {
+    if (!fnNewWspFile.Exists()) {
         wxLogNull nolog;
-        if(::wxCopyFile(m_workspaceFile.GetFullPath(), fnNewWspFile.GetFullPath())) {
+        if (::wxCopyFile(m_workspaceFile.GetFullPath(), fnNewWspFile.GetFullPath())) {
             m_workspaceFile = fnNewWspFile;
         }
     }
@@ -119,9 +119,9 @@ bool PHPWorkspace::Open(const wxString& filename, wxEvtHandler* view, bool creat
         ::wxMkdir(fn.GetPath());
     }
 
-    if(!m_workspaceFile.FileExists()) {
-        if(createIfMissing) {
-            if(!Create(filename)) {
+    if (!m_workspaceFile.FileExists()) {
+        if (createIfMissing) {
+            if (!Create(filename)) {
                 return false;
             }
         } else {
@@ -191,7 +191,7 @@ void PHPWorkspace::CreateProject(const PHPProject::CreateData& createData)
     projectName << createData.name << ".phprj";
     fnProjectFileName.SetFullName(projectName);
 
-    if(HasProject(projectName))
+    if (HasProject(projectName))
         return;
 
     // Ensure that the path to the file exists
@@ -202,13 +202,13 @@ void PHPWorkspace::CreateProject(const PHPProject::CreateData& createData)
     // Setup the file path + name
     proj->Create(fnProjectFileName, createData.name);
     proj->GetSettings().MergeWithGlobalSettings();
-    if(!createData.phpExe.IsEmpty() && wxFileName::Exists(createData.phpExe)) {
+    if (!createData.phpExe.IsEmpty() && wxFileName::Exists(createData.phpExe)) {
         proj->GetSettings().SetPhpExe(createData.phpExe);
     }
     proj->GetSettings().SetRunAs(createData.projectType);
     proj->GetSettings().SetCcIncludePath(createData.ccPaths);
     m_projects.insert(std::make_pair(proj->GetName(), proj));
-    if(m_projects.size() == 1) {
+    if (m_projects.size() == 1) {
         SetProjectActive(proj->GetName());
     }
     Save();
@@ -225,7 +225,7 @@ void PHPWorkspace::DeleteProject(const wxString& project)
     PHPProject::Ptr_t p = GetProject(project);
     CHECK_PTR_RET(p);
     m_projects.erase(project);
-    if(p->IsActive() && !m_projects.empty()) {
+    if (p->IsActive() && !m_projects.empty()) {
         // we are removing the active project, select a new project to be the active
         PHPProject::Ptr_t newActiveProject = m_projects.begin()->second;
         newActiveProject->SetIsActive(true);
@@ -251,7 +251,7 @@ void PHPWorkspace::SetProjectActive(const wxString& project)
     }
 
     // notify about this change
-    if(activeProject) {
+    if (activeProject) {
         clProjectSettingsEvent evt(wxEVT_ACTIVE_PROJECT_CHANGED);
         evt.SetProjectName(project);
         evt.SetFileName(activeProject->GetFilename().GetFullPath());
@@ -277,11 +277,13 @@ wxString PHPWorkspace::GetActiveProjectName() const
     return "";
 }
 
-bool PHPWorkspace::RunProject(bool debugging, const wxString& urlOrFilePath, const wxString& projectName,
+bool PHPWorkspace::RunProject(bool debugging,
+                              const wxString& urlOrFilePath,
+                              const wxString& projectName,
                               const wxString& xdebugSessionName)
 {
     wxString projectToRun = projectName;
-    if(projectToRun.IsEmpty()) {
+    if (projectToRun.IsEmpty()) {
         projectToRun = GetActiveProjectName();
     }
 
@@ -293,7 +295,7 @@ bool PHPWorkspace::RunProject(bool debugging, const wxString& urlOrFilePath, con
 
 bool PHPWorkspace::HasProject(const wxString& projectname) const
 {
-    if(!IsOpen()) {
+    if (!IsOpen()) {
         return false;
     }
     return m_projects.count(projectname);
@@ -302,30 +304,30 @@ bool PHPWorkspace::HasProject(const wxString& projectname) const
 void PHPWorkspace::FromJSON(const JSONItem& e)
 {
     m_projects.clear();
-    if(e.hasNamedObject("projects")) {
+    if (e.hasNamedObject("projects")) {
         PHPProject::Ptr_t firstProject;
         JSONItem projects = e.namedObject("projects");
         int count = projects.arraySize();
-        for(int i = 0; i < count; ++i) {
+        for (int i = 0; i < count; ++i) {
             PHPProject::Ptr_t p(new PHPProject());
             wxString project_file = projects.arrayItem(i).toString();
             wxFileName fnProject(project_file);
             fnProject.MakeAbsolute(m_workspaceFile.GetPath());
             p->Load(fnProject);
             m_projects.insert(std::make_pair(p->GetName(), p));
-            if(!firstProject) {
+            if (!firstProject) {
                 firstProject = p;
             }
         }
 
         PHPProject::Ptr_t activeProject = GetActiveProject();
-        if(!activeProject && firstProject) {
+        if (!activeProject && firstProject) {
             // No active project found, mark the first project as active
             activeProject = firstProject;
             SetProjectActive(firstProject->GetName());
         }
 
-        if(activeProject) {
+        if (activeProject) {
             // Notify about active project been set
             clProjectSettingsEvent evt(wxEVT_ACTIVE_PROJECT_CHANGED);
             evt.SetProjectName(activeProject->GetName());
@@ -364,7 +366,7 @@ PHPProject::Ptr_t PHPWorkspace::GetActiveProject() const { return GetProject(Get
 
 PHPProject::Ptr_t PHPWorkspace::GetProject(const wxString& project) const
 {
-    if(!HasProject(project)) {
+    if (!HasProject(project)) {
         return PHPProject::Ptr_t(NULL);
     }
     return m_projects.find(project)->second;
@@ -372,7 +374,7 @@ PHPProject::Ptr_t PHPWorkspace::GetProject(const wxString& project) const
 
 void PHPWorkspace::Save()
 {
-    if(!IsOpen()) {
+    if (!IsOpen()) {
         return;
     }
     // serialize the workspace and store it to disk
@@ -393,7 +395,7 @@ bool PHPWorkspace::Create(const wxString& filename)
 
     wxFileName fn(filename);
 
-    if(fn.FileExists()) {
+    if (fn.FileExists()) {
         return true;
     }
 
@@ -417,12 +419,12 @@ void PHPWorkspace::Rename(const wxString& newname)
     wxFileName new_path(GetFilename());
     new_path.SetName(newname);
 
-    if(!::wxRenameFile(m_workspaceFile.GetFullPath(), new_path.GetFullPath())) {
+    if (!::wxRenameFile(m_workspaceFile.GetFullPath(), new_path.GetFullPath())) {
         wxString msg;
         msg << _("Failed to rename workspace file:\n'") << m_workspaceFile.GetFullName() << _("'\nto:\n'")
             << new_path.GetFullName() << "'\n"
             << strerror(errno);
-        ::wxMessageBox(msg, "CodeLite", wxOK | wxCENTER | wxICON_ERROR, EventNotifier::Get()->TopFrame());
+        ::clMessageBox(msg, "CodeLite", wxOK | wxCENTER | wxICON_ERROR, EventNotifier::Get()->TopFrame());
         return;
     }
 
@@ -442,7 +444,7 @@ void PHPWorkspace::Rename(const wxString& newname)
 void PHPWorkspace::ParseWorkspace(bool full)
 {
     // Request for parsing
-    if(full) {
+    if (full) {
         // a full parsing is needed, stop the parser thread
         // close the database, delete it and recreate it
         // then, restart the parser thread
@@ -471,7 +473,7 @@ void PHPWorkspace::ParseWorkspace(bool full)
 
     // Append the current project CC include paths
     PHPProject::Ptr_t pProject = GetActiveProject();
-    if(pProject) {
+    if (pProject) {
         PHPProjectSettingsData& settings = pProject->GetSettings();
         req->frameworksPaths = settings.GetCCIncludePathAsArray();
     }
@@ -482,7 +484,7 @@ TerminalEmulator* PHPWorkspace::GetTerminalEmulator() { return m_executor.GetTer
 
 void PHPWorkspace::RestoreWorkspaceSession()
 {
-    if(m_manager && IsOpen()) {
+    if (m_manager && IsOpen()) {
         m_manager->LoadWorkspaceSession(m_workspaceFile);
     }
 }
@@ -498,15 +500,15 @@ PHPProject::Ptr_t PHPWorkspace::GetProjectForFile(const wxFileName& filename) co
 
 bool PHPWorkspace::AddProject(const wxFileName& projectFile, wxString& errmsg)
 {
-    if(!CanCreateProjectAtPath(projectFile, true)) {
+    if (!CanCreateProjectAtPath(projectFile, true)) {
         return false;
     }
 
     PHPProject::Ptr_t proj(new PHPProject());
     proj->Load(projectFile);
 
-    if(proj->IsOk()) {
-        if(HasProject(proj->GetName())) {
+    if (proj->IsOk()) {
+        if (HasProject(proj->GetName())) {
             errmsg = _("A project with similar name already exists in the workspace");
             return false;
         }
@@ -516,7 +518,7 @@ bool PHPWorkspace::AddProject(const wxFileName& projectFile, wxString& errmsg)
         proj->GetSettings().MergeWithGlobalSettings();
         m_projects.insert(std::make_pair(proj->GetName(), proj));
 
-        if(m_projects.size() == 1) {
+        if (m_projects.size() == 1) {
             // if we have a single project in the workspace, make it the active
             SetProjectActive(proj->GetName());
         } else {
@@ -545,7 +547,7 @@ bool PHPWorkspace::CanCreateProjectAtPath(const wxFileName& projectFileName, boo
                 wxString message;
                 message << _("Unable to create a project at the selected path\n") << _("Path '") << newpath
                         << _("' is already part of project '") << project->GetName() << "'";
-                ::wxMessageBox(message, "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
+                ::clMessageBox(message, "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
             }
             return false;
 
@@ -555,7 +557,7 @@ bool PHPWorkspace::CanCreateProjectAtPath(const wxFileName& projectFileName, boo
                 wxString message;
                 message << _("Unable to create a project at the selected path\n") << _("Project '")
                         << project->GetName() << _("' is located under this path");
-                ::wxMessageBox(message, "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
+                ::clMessageBox(message, "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
             }
             return false;
         }
@@ -581,7 +583,7 @@ wxString PHPWorkspace::GetProjectFromFile(const wxFileName& filename) const
             return path.StartsWith(v.second->GetFilename().GetPath());
         });
 
-    if(iter != m_projects.end()) {
+    if (iter != m_projects.end()) {
         return iter->second->GetName();
     }
     return wxEmptyString;
@@ -607,18 +609,18 @@ void PHPWorkspace::SyncWithFileSystemAsync(wxEvtHandler* owner)
     m_inSyncProjects.clear();
     m_projectSyncOwner = owner;
 
-    if(owner) {
+    if (owner) {
         clCommandEvent event(wxEVT_PHP_WORKSPACE_FILES_SYNC_START);
         owner->AddPendingEvent(event);
     }
 
-    if(!m_projects.empty()) {
+    if (!m_projects.empty()) {
         for (auto& [projectName, project] : m_projects) {
             m_inSyncProjects.insert(projectName);
             project->SyncWithFileSystemAsync(this);
         }
     } else {
-        if(owner) {
+        if (owner) {
             // Fire sync-ended event
             clCommandEvent endEvent(wxEVT_PHP_WORKSPACE_FILES_SYNC_END);
             owner->AddPendingEvent(endEvent);
@@ -629,7 +631,7 @@ void PHPWorkspace::SyncWithFileSystemAsync(wxEvtHandler* owner)
 void PHPWorkspace::OnProjectSyncEnd(clCommandEvent& event)
 {
     const wxString& name = event.GetString();
-    if(m_inSyncProjects.count(name) == 0) {
+    if (m_inSyncProjects.count(name) == 0) {
         clWARNING() << "PHPWorkspace::OnProjectSyncEnd: unable to find project '" << name << "' in the workspace..."
                     << clEndl;
         return;
@@ -645,9 +647,9 @@ void PHPWorkspace::OnProjectSyncEnd(clCommandEvent& event)
     // Update the project files
     pProj->SetFiles(event.GetStrings());
 
-    if(m_inSyncProjects.empty()) {
+    if (m_inSyncProjects.empty()) {
         clDEBUG() << "PHPWorkspace::OnProjectSyncEnd: all projects completed sync" << clEndl;
-        if(m_projectSyncOwner) {
+        if (m_projectSyncOwner) {
             clCommandEvent endEvent(wxEVT_PHP_WORKSPACE_FILES_SYNC_END);
             m_projectSyncOwner->AddPendingEvent(endEvent);
         }
@@ -656,7 +658,7 @@ void PHPWorkspace::OnProjectSyncEnd(clCommandEvent& event)
 wxFileName PHPWorkspace::GetProjectFileName(const wxString& projectName) const
 {
     PHPProject::Ptr_t p = GetProject(projectName);
-    if(!p) {
+    if (!p) {
         return wxFileName();
     }
     return p->GetFilename();

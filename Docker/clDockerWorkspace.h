@@ -13,7 +13,6 @@ class clDockerWorkspace : public LocalWorkspaceCommon
     wxFileName m_filename;
     clDockerWorkspaceSettings m_settings;
     bool m_isOpen = false;
-    bool m_clangOldFlag = false;
     clDockerWorkspaceView* m_view = nullptr;
     clDockerDriver::Ptr_t m_driver;
 

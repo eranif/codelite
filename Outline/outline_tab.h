@@ -4,13 +4,17 @@
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
 #include "LSP/LSPSymbolStyle.h"
+#include "LSP/LSPSymbolSorter.h"
+#include "clAuiToolBarArt.h"
 #include "wxcrafter.h"
 #include <wx/treectrl.h>
+#include <wx/aui/auibar.h>
 
 #include <vector>
 
 class OutlineTab : public OutlineTabBaseClass
 {
+private:
     enum class Mode {
         DOCUMENT_SYMBOL,
         SYMBOL_INFORMATION
@@ -18,8 +22,12 @@ class OutlineTab : public OutlineTabBaseClass
     enum ID {
         ID_SHOW_DETAILS,
         ID_SHOW_KIND,
-        ID_SORT_ALPHABETICALLY,
-        ID_SORT_LINE
+        ID_SORT_KIND_NAME,
+        ID_SORT_KIND_NAME_CASE_SENSIIVE,
+        ID_SORT_LINE,
+        ID_TOOL_SORT,
+        ID_TOOL_DETAILS,
+        ID_TOOL_KIND
     };
     wxString m_currentSymbolsFileName;
     std::vector<LSP::DocumentSymbol> m_documentSymbols;
@@ -28,7 +36,12 @@ class OutlineTab : public OutlineTabBaseClass
     bool m_showDetails = true;
     bool m_showSymbolKind = false;
     
+    LSP::LSPSymbolSorter::SortType m_sortType = LSP::LSPSymbolSorter::SORT_LINE;    
+    wxAuiToolBar* m_toolbar = nullptr;
+    wxChoice* m_sortOptions = nullptr;
+    
 private:
+    void CreateToolbar();
     void OnOutlineSymbols(LSPEvent& event);
     void OnActiveEditorChanged(wxCommandEvent& event);
     void OnAllEditorsClosed(wxCommandEvent& event);
@@ -72,15 +85,17 @@ private:
      */
     void ClearView();
     
+    /**
+     * @brief Sorts the current DocumentSymbol. Does not refresh the tree - use RenderSymbols() after!
+     * @param sort
+     */
+    void SortSymbols(LSP::LSPSymbolSorter::SortType sort);
 
 public:
     OutlineTab(wxWindow* parent);
     virtual ~OutlineTab();
 
 protected:
-    void OnOptionsButton(wxCommandEvent& event) override;
-    void OnSortButton(wxCommandEvent& event) override;
-    void OnMenu(wxCommandEvent& event);
     virtual void OnItemSelected(wxDataViewEvent& event) override;
     virtual void OnTreeItemSelected(wxTreeEvent& event);
 };

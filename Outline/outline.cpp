@@ -62,7 +62,7 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     info.SetAuthor(wxT("Eran Ifrah"));
     info.SetName(wxT("Outline"));
     info.SetDescription(_("Show the Layout of the current file"));
-    info.SetVersion(wxT("v1.1"));
+    info.SetVersion(wxT("v1.2"));
     return &info;
 }
 

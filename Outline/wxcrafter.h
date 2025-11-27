@@ -14,7 +14,6 @@
 #include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
-#include <wx/button.h>
 #include <wx/activityindicator.h>
 #include <wx/stattext.h>
 #include <wx/dataview.h>
@@ -42,9 +41,6 @@
 class OutlineTabBaseClass : public wxPanel
 {
 protected:
-    wxPanel* m_headerPanel;
-    wxButton* m_sortButton;
-    wxButton* m_optionsButton;
     wxPanel* m_messagePanel;
     wxActivityIndicator* m_activityCtrl;
     wxStaticText* m_staticTextMessage;
@@ -52,14 +48,9 @@ protected:
     clTreeCtrl* m_treeCtrl;
 
 protected:
-    virtual void OnSortButton(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnOptionsButton(wxCommandEvent& event) { event.Skip(); }
     virtual void OnItemSelected(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    wxButton* GetSortButton() { return m_sortButton; }
-    wxButton* GetOptionsButton() { return m_optionsButton; }
-    wxPanel* GetHeaderPanel() { return m_headerPanel; }
     wxActivityIndicator* GetActivityCtrl() { return m_activityCtrl; }
     wxStaticText* GetStaticTextMessage() { return m_staticTextMessage; }
     wxPanel* GetMessagePanel() { return m_messagePanel; }

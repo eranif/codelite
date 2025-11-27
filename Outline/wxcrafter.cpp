@@ -37,31 +37,6 @@ OutlineTabBaseClass::OutlineTabBaseClass(wxWindow* parent, wxWindowID id, const 
     wxBoxSizer* boxSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer1);
     
-    m_headerPanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTAB_TRAVERSAL);
-    
-    boxSizer1->Add(m_headerPanel, 0, wxALL|wxEXPAND, WXC_FROM_DIP(0));
-    
-    wxBoxSizer* boxSizer38 = new wxBoxSizer(wxHORIZONTAL);
-    m_headerPanel->SetSizer(boxSizer38);
-    
-    boxSizer38->Add(0, 0, 1, wxEXPAND, WXC_FROM_DIP(0));
-    
-    m_sortButton = new wxButton(m_headerPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_headerPanel, wxSize(-1,-1)), wxBU_EXACTFIT);
-    #if wxVERSION_NUMBER >= 2904
-    m_sortButton->SetBitmap(wxArtProvider::GetBitmap(wxART_HELP_SETTINGS, wxART_BUTTON, wxSize(24, 24)), wxLEFT);
-    m_sortButton->SetBitmapMargins(2,2);
-    #endif
-    
-    boxSizer38->Add(m_sortButton, 0, wxALL, WXC_FROM_DIP(2));
-    
-    m_optionsButton = new wxButton(m_headerPanel, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_headerPanel, wxSize(-1,-1)), wxBU_EXACTFIT);
-    #if wxVERSION_NUMBER >= 2904
-    m_optionsButton->SetBitmap(wxArtProvider::GetBitmap(wxART_LIST_VIEW, wxART_BUTTON, wxSize(24, 24)), wxLEFT);
-    m_optionsButton->SetBitmapMargins(2,2);
-    #endif
-    
-    boxSizer38->Add(m_optionsButton, 0, wxALL, WXC_FROM_DIP(2));
-    
     m_messagePanel = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     
     boxSizer1->Add(m_messagePanel, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
@@ -91,16 +66,12 @@ OutlineTabBaseClass::OutlineTabBaseClass(wxWindow* parent, wxWindowID id, const 
          GetSizer()->Fit(this);
     }
     // Connect events
-    m_sortButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &OutlineTabBaseClass::OnSortButton, this);
-    m_optionsButton->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &OutlineTabBaseClass::OnOptionsButton, this);
     m_terminalViewCtrl->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &OutlineTabBaseClass::OnItemSelected, this);
     
 }
 
 OutlineTabBaseClass::~OutlineTabBaseClass()
 {
-    m_sortButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &OutlineTabBaseClass::OnSortButton, this);
-    m_optionsButton->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &OutlineTabBaseClass::OnOptionsButton, this);
     m_terminalViewCtrl->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &OutlineTabBaseClass::OnItemSelected, this);
     
 }

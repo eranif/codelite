@@ -15,9 +15,10 @@ public:
        SORT_KIND_NAME_CASE_SENSITIVE,
        SORT_LINE
     };
-   
-    static void Sort(std::vector<LSP::DocumentSymbol>& symbols, SortType sort);
-    static void Sort(LSP::DocumentSymbol& symbol, SortType sort);
+    static const std::vector<eSymbolKind> SymbolKindOrder;
+    
+    static void Sort(std::vector<LSP::DocumentSymbol>& symbols, SortType sort, const std::vector<eSymbolKind>& symbolKindOrder = SymbolKindOrder);
+    static void Sort(LSP::DocumentSymbol& symbol, SortType sort, const std::vector<eSymbolKind>& symbolKindOrder = SymbolKindOrder);
 };
 
 } // namespace LSP

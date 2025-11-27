@@ -2,9 +2,7 @@
 
 namespace LSP
 {   
-    void LSPSymbolSorter::Sort(std::vector<LSP::DocumentSymbol>& symbols, SortType sort) {
-        
-        std::vector<eSymbolKind> kindPref = {
+    const std::vector<eSymbolKind> LSPSymbolSorter::SymbolKindOrder = {
             kSK_File,
             kSK_Module,
             kSK_Namespace,
@@ -34,7 +32,8 @@ namespace LSP
             kSK_Null
         };
         
-        std::sort(symbols.begin(), symbols.end(), [sort, &kindPref](const DocumentSymbol& a, const DocumentSymbol& b) 
+    void LSPSymbolSorter::Sort(std::vector<LSP::DocumentSymbol>& symbols, SortType sort, const std::vector<eSymbolKind>& symbolKindOrder) {
+        std::sort(symbols.begin(), symbols.end(), [symbolKindOrder, sort](const DocumentSymbol& a, const DocumentSymbol& b) 
             {
                 switch(sort) {
                     case SORT_NAME: 
@@ -50,11 +49,11 @@ namespace LSP
                                 return a.GetName().Cmp(b.GetName()) < 0;                            
                         }
                         else {
-                            const auto& iKindA = std::find(kindPref.begin(), kindPref.end(), a.GetKind());
-                            if (iKindA == kindPref.end()) 
+                            const auto& iKindA = std::find(SymbolKindOrder.begin(), SymbolKindOrder.end(), a.GetKind());
+                            if (iKindA == SymbolKindOrder.end()) 
                                 return false;
-                            const auto& iKindB = std::find(kindPref.begin(), kindPref.end(), b.GetKind());
-                            if (iKindB == kindPref.end()) 
+                            const auto& iKindB = std::find(SymbolKindOrder.begin(), SymbolKindOrder.end(), b.GetKind());
+                            if (iKindB == SymbolKindOrder.end()) 
                                 return true;
                             return iKindA < iKindB;
                         }
@@ -79,7 +78,7 @@ namespace LSP
         }
     }
     
-    void LSPSymbolSorter::Sort(LSP::DocumentSymbol& symbol, SortType sort) {
-        Sort(symbol.GetChildren(), sort);
+    void LSPSymbolSorter::Sort(LSP::DocumentSymbol& symbol, SortType sort, const std::vector<eSymbolKind>& symbolKindOrder) {
+        Sort(symbol.GetChildren(), sort, symbolKindOrder);
     }
 }

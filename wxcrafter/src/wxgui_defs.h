@@ -283,18 +283,7 @@ struct WxStyleInfo {
     wxString style_name;
     int style_bit;
     bool is_set;
-    wxArrayString style_group;
 
-    bool operator==(const WxStyleInfo& src) const { return style_bit == src.style_bit; }
-
-    bool operator<(const WxStyleInfo& src) const { return style_bit < src.style_bit; }
-
-    /**
-     * @brief check 'styleAsString' and update it depending on the style_group
-     * @param styleAsString comma delimited styles
-     */
-    void UpdateStyleString(wxString& styleAsString) const;
-    bool IsGroupConditionMet(wxcWidget* widget) const;
     JSONElement ToJSON() const
     {
         JSONElement json = JSONElement::createObject();

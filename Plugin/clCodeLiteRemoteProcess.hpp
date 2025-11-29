@@ -126,12 +126,6 @@ public:
                    const wxString& exclude_patterns);
 
     /**
-     * @brief list all configured LSPs on the remote machine
-     * the configuration is read from `codelite-remote.json` config file
-     */
-    void ListLSPs();
-
-    /**
      * @brief find in files on a remote machine
      */
     void Search(const wxString& root_dir,

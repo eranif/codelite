@@ -62,10 +62,10 @@ void SFTPWorkerThread::ProcessRequest(ThreadRequest* request)
 {
     SFTPThreadRequest* req = dynamic_cast<SFTPThreadRequest*>(request);
     // Check if we need to open an ssh connection
-    wxString currentAccout = m_sftp ? m_sftp->GetAccount() : "";
+    wxString currentAccount = m_sftp ? m_sftp->GetAccount() : "";
     wxString requestAccount = req->GetAccount().GetAccountName();
 
-    if (currentAccout.IsEmpty() || currentAccout != requestAccount) {
+    if (currentAccount.IsEmpty() || currentAccount != requestAccount) {
         m_sftp.reset();
         DoConnect(req);
     }

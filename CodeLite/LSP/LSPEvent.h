@@ -26,7 +26,6 @@ protected:
     LSP::SignatureHelp m_signatureHelp;
     LSP::Hover m_hover;
     std::vector<LSP::Diagnostic> m_diagnostics;
-    [[deprecated("SymbolInformation is replaced by DocumentSymbol")]]
     std::vector<LSP::SymbolInformation> m_symbolsInformation;
     std::vector<LSP::DocumentSymbol> m_documentSymbols;
     std::vector<LSP::SemanticTokenRange> m_semanticTokens;
@@ -96,14 +95,11 @@ public:
         return *this;
     }
     const std::vector<LSP::Diagnostic>& GetDiagnostics() const { return m_diagnostics; }
-    [[deprecated("SymbolInformation is replaced by DocumentSymbol")]]
     void SetSymbolsInformation(const std::vector<LSP::SymbolInformation>& symbolsInformation)
     {
         this->m_symbolsInformation = symbolsInformation;
     }
-    [[deprecated("SymbolInformation is replaced by DocumentSymbol")]]
     const std::vector<LSP::SymbolInformation>& GetSymbolsInformation() const { return m_symbolsInformation; }
-    [[deprecated("SymbolInformation is replaced by DocumentSymbol")]]
     std::vector<LSP::SymbolInformation>& GetSymbolsInformation() { return m_symbolsInformation; }
     void SetDocumentSymbols(const std::vector<LSP::DocumentSymbol>& documentSymbols)
     {
@@ -135,6 +131,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLIN
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_SYMBOLS_LLM, LSPEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_SYMBOLS_REQUESTED, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_RESTART_NEEDED, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_REPARSE_NEEDED, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_METHOD_NOT_FOUND, LSPEvent);

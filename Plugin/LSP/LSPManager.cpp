@@ -228,6 +228,9 @@ void Manager::ShowOutlineView(IEditor* editor)
         EventNotifier::Get()->AddPendingEvent(evt);
         return;
     }
+    // show the outline dialog immediately and update it once we receive symbols
+    LSPEvent dummy;
+    ShowQuickOutlineDialog(dummy);
 
     auto cb = [this](const LSPEvent& event) {
         clGetManager()->SetStatusMessage(_("Showing outline view dialog"), 1);
@@ -374,6 +377,8 @@ bool Manager::RequestSymbolsForEditor(IEditor* editor, std::function<void(const 
     auto server = GetServerForEditor(editor);
     CHECK_PTR_RET_FALSE(server);
     CHECK_COND_RET_FALSE(server->IsDocumentSymbolsSupported());
+    LSPEvent event(wxEVT_LSP_DOCUMENT_SYMBOLS_REQUESTED);
+    EventNotifier::Get()->ProcessEvent(event);
     clGetManager()->SetStatusMessage(_("Requesting document symbols from LSP server..."), 1);
     server->DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW, std::move(cb));
     return true;
@@ -1056,13 +1061,13 @@ void Manager::ShowQuickOutlineDialog(const LSPEvent& event)
         m_quick_outline_dlg = new LSPOutlineViewDlg(EventNotifier::Get()->TopFrame());
     }
     if (!event.GetDocumentSymbols().empty()) {        
-        m_quick_outline_dlg->SetSymbols(event.GetDocumentSymbols());
+        m_quick_outline_dlg->GetOutlineView()->SetSymbols(event.GetDocumentSymbols(), event.GetFileName());
     }
     else if (!event.GetSymbolsInformation().empty()) {
-        m_quick_outline_dlg->SetSymbols(event.GetSymbolsInformation());        
+        m_quick_outline_dlg->GetOutlineView()->SetSymbols(event.GetSymbolsInformation(), event.GetFileName());        
     }
     else {
-        m_quick_outline_dlg->SetEmptySymbols();
+        m_quick_outline_dlg->GetOutlineView()->SetEmptySymbols();
     }
     if (!m_quick_outline_dlg->IsShown()) {
         m_quick_outline_dlg->Show();

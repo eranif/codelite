@@ -18351,7 +18351,7 @@ msgid "Enable automatic upload"
 msgstr "Включить автоматическую отправку"
 
 #: codelitephp/php-plugin/php_workspace_view.cpp:1095
-msgid "Select the remote folder corrseponding to the current workspace file"
+msgid "Select the remote folder corresponding to the current workspace file"
 msgstr ""
 "Выберите удалённую папку, соответствующую файлу текущего рабочего пространства"
 

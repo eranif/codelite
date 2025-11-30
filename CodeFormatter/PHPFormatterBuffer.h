@@ -160,7 +160,7 @@ protected:
     void ProcessArray(int openParen, int closingChar);
 
     /**
-     * @brief reverse find ch in the buffer and return a whitepace representing
+     * @brief reverse find ch in the buffer and return a whitespace representing
      * the distance from the line start position and ch index
      * If 'ch' is not found, return the current line indentation string
      */

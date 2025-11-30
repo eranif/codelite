@@ -53,7 +53,7 @@ static bool IS_WINDOWNS = (wxGetOsVersion() & wxOS_WINDOWS);
 
 namespace
 {
-void wxGDB_STRIP_QUOATES(wxString& currentToken)
+void wxGDB_STRIP_QUOTES(wxString& currentToken)
 {
     size_t where = currentToken.find(wxT("\""));
     if (where != std::string::npos && where == 0) {
@@ -1117,22 +1117,22 @@ bool DbgCmdHandlerDisassemble::ProcessOutput(const wxString& line)
         GdbStringMap_t& attrs = info.children.at(i);
         if (attrs.count("address")) {
             entry.m_address = attrs["address"].c_str();
-            wxGDB_STRIP_QUOATES(entry.m_address);
+            wxGDB_STRIP_QUOTES(entry.m_address);
         }
 
         if (attrs.count("inst")) {
             entry.m_inst = attrs["inst"].c_str();
-            wxGDB_STRIP_QUOATES(entry.m_inst);
+            wxGDB_STRIP_QUOTES(entry.m_inst);
         }
 
         if (attrs.count("func-name")) {
             entry.m_function = attrs["func-name"].c_str();
-            wxGDB_STRIP_QUOATES(entry.m_function);
+            wxGDB_STRIP_QUOTES(entry.m_function);
         }
 
         if (attrs.count("offset")) {
             entry.m_offset = attrs["offset"].c_str();
-            wxGDB_STRIP_QUOATES(entry.m_offset);
+            wxGDB_STRIP_QUOTES(entry.m_offset);
         }
         evtData->m_disassembleLines.push_back(entry);
     }
@@ -1155,22 +1155,22 @@ bool DbgCmdHandlerDisassembleCurLine::ProcessOutput(const wxString& line)
         GdbStringMap_t& attrs = info.children.at(0);
         if (attrs.count("address")) {
             entry.m_address = attrs["address"].c_str();
-            wxGDB_STRIP_QUOATES(entry.m_address);
+            wxGDB_STRIP_QUOTES(entry.m_address);
         }
 
         if (attrs.count("inst")) {
             entry.m_inst = attrs["inst"].c_str();
-            wxGDB_STRIP_QUOATES(entry.m_inst);
+            wxGDB_STRIP_QUOTES(entry.m_inst);
         }
 
         if (attrs.count("func-name")) {
             entry.m_function = attrs["func-name"].c_str();
-            wxGDB_STRIP_QUOATES(entry.m_function);
+            wxGDB_STRIP_QUOTES(entry.m_function);
         }
 
         if (attrs.count("offset")) {
             entry.m_offset = attrs["offset"].c_str();
-            wxGDB_STRIP_QUOATES(entry.m_offset);
+            wxGDB_STRIP_QUOTES(entry.m_offset);
         }
         evtData->m_disassembleLines.push_back(entry);
     }
@@ -1216,7 +1216,7 @@ bool DbgCmdHandlerRegisterNames::ProcessOutput(const wxString& line)
                 break;
             }
             reg_name = currentToken;
-            wxGDB_STRIP_QUOATES(reg_name);
+            wxGDB_STRIP_QUOTES(reg_name);
 
             // Don't include empty register names
             if (!reg_name.IsEmpty()) {
@@ -1274,7 +1274,7 @@ bool DbgCmdHandlerRegisterValues::ProcessOutput(const wxString& line)
 
             long regId = 0;
 
-            wxGDB_STRIP_QUOATES(currentToken);
+            wxGDB_STRIP_QUOTES(currentToken);
             currentToken.ToCLong(&regId);
 
             // find this register in the map
@@ -1288,7 +1288,7 @@ bool DbgCmdHandlerRegisterValues::ProcessOutput(const wxString& line)
             GDB_NEXT_TOKEN(); // =
             GDB_NEXT_TOKEN(); // "..."
             reg.reg_value = currentToken;
-            wxGDB_STRIP_QUOATES(reg.reg_value);
+            wxGDB_STRIP_QUOTES(reg.reg_value);
 
             // Add the register
             if (!reg.reg_name.IsEmpty()) {
@@ -1298,7 +1298,7 @@ bool DbgCmdHandlerRegisterValues::ProcessOutput(const wxString& line)
             // Read the next token
             GDB_NEXT_TOKEN(); // }
             GDB_NEXT_TOKEN();
-            wxGDB_STRIP_QUOATES(currentToken);
+            wxGDB_STRIP_QUOTES(currentToken);
             if (currentToken != ",") {
                 // no more registers
                 break;

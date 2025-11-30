@@ -27,6 +27,11 @@ namespace {
 LSPOutlineView::LSPOutlineView(wxWindow* parent, wxWindowID id, long style)
     : wxPanel(parent, id), m_style(style)
 {
+    m_initialiseExpanded = clConfig::Get().Read(kConfigOutlineStartExpanded, true);
+    m_keepNamespacesExpanded = clConfig::Get().Read(kConfigOutlineKeepNamespacesExpanded, true);
+    m_showDetails = clConfig::Get().Read(kConfigOutlineShowSymbolDetails, true);
+    m_showSymbolKind = clConfig::Get().Read(kConfigOutlineShowSymbolKinds, false);
+    m_sortType = (LSPSymbolSorter::SortType) clConfig::Get().Read(kConfigOutlineSortType, (int)LSPSymbolSorter::SortType::SORT_LINE);
     CreateUI();      
     DoInitialiseEmpty();     
 }
@@ -116,12 +121,14 @@ void LSPOutlineView::CreateToolbar()
             return;
         switch (event.GetId()) {
             case ID_TOOL_DETAILS: {
-                m_showDetails = event.IsChecked();
+                m_showDetails = event.IsChecked();                
+                clConfig::Get().Write(kConfigOutlineShowSymbolDetails, m_showDetails);
                 DoInitialiseDocumentSymbol();
                 break;
             }
             case ID_TOOL_KIND: {
                 m_showSymbolKind = event.IsChecked();
+                clConfig::Get().Write(kConfigOutlineShowSymbolKinds, m_showSymbolKind);
                 DoInitialiseDocumentSymbol();
                 break;
             }
@@ -144,7 +151,8 @@ void LSPOutlineView::CreateToolbar()
         auto* data = static_cast<wxIntClientData*>(event.GetClientObject());
         if (!data)
             return;
-        LSPSymbolSorter::SortType sort = (LSPSymbolSorter::SortType)data->GetValue();
+        LSPSymbolSorter::SortType sort = (LSPSymbolSorter::SortType)data->GetValue();        
+        clConfig::Get().Write(kConfigOutlineSortType, (int)sort);
         SortSymbols(sort);
         DoInitialiseDocumentSymbol();
     });
@@ -707,10 +715,12 @@ void LSPOutlineView::OnMenu(wxCommandEvent& event)
             else   
                 CollapseTree();
                 
+            clConfig::Get().Write(kConfigOutlineStartExpanded, m_initialiseExpanded);
             break;
         }
         case ID_MENU_KEEP_NAMESPACE_EXPANDED: {
             m_keepNamespacesExpanded = event.IsChecked();
+            clConfig::Get().Write(kConfigOutlineKeepNamespacesExpanded, m_keepNamespacesExpanded);
             break;
         }
     }

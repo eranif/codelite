@@ -18,6 +18,12 @@ using namespace LSP;
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_LSP_OUTLINE_SYMBOL_ACTIVATED, wxCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_LSP_OUTLINE_VIEW_DISMISS, wxCommandEvent);
 
+#define kConfigOutlineStartExpanded "OutputStartExpanded"
+#define kConfigOutlineKeepNamespacesExpanded "OutlineKeepNamespacesExpanded"
+#define kConfigOutlineSortType "OutlineSortType"
+#define kConfigOutlineShowSymbolDetails "ShowSymbolDetails"
+#define kConfigOutlineShowSymbolKinds "ShowSymbolKinds"
+
 class WXDLLIMPEXP_SDK LSPOutlineView : public wxPanel
 {
 public:

@@ -17396,7 +17396,7 @@ msgid "Searching: "
 msgstr "Поиск: "
 
 #: codelite_vim/vim_manager.cpp:204
-msgid "Unbalanced Parentesis"
+msgid "Unbalanced Parenthesis"
 msgstr "Непарные скобки"
 
 #: codelite_vim/vim_manager.cpp:207

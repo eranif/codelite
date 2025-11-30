@@ -743,7 +743,7 @@ bool VimCommand::Command_call()
         if (pos_matching != -1)
             m_ctrl->GotoPos(pos_matching);
         else
-            m_message_ID = MESSAGES_VIM::UNBALNCED_PARENTESIS_VIM_MSG;
+            m_message_ID = MESSAGES_VIM::UNBALNCED_PARENTHESIS_VIM_MSG;
 
         // FIXME:
         // sim.Char(']', wxMOD_SHIFT);

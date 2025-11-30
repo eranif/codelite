@@ -16384,7 +16384,7 @@ msgid "Searching: "
 msgstr "搜索："
 
 #: codelite_vim/vim_manager.cpp:211
-msgid "Unbalanced Parentesis"
+msgid "Unbalanced Parenthesis"
 msgstr "不平衡括号"
 
 #: codelite_vim/vim_manager.cpp:214

@@ -15955,7 +15955,7 @@ msgid "Searching: "
 msgstr "Recherche : "
 
 #: codelite_vim/vim_manager.cpp:211
-msgid "Unbalanced Parentesis"
+msgid "Unbalanced Parenthesis"
 msgstr "Parenthèse déséquilibrée"
 
 #: codelite_vim/vim_manager.cpp:214

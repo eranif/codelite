@@ -82,32 +82,28 @@ public:
     virtual bool ProcessOutput(const wxString& line);
 };
 
-class DbgCmdHandlerDisasseble : public DbgCmdHandler
+class DbgCmdHandlerDisassemble : public DbgCmdHandler
 {
-
 public:
-    DbgCmdHandlerDisasseble(IDebuggerObserver* observe, DbgGdb* gdbr)
+    DbgCmdHandlerDisassemble(IDebuggerObserver* observe, DbgGdb* gdbr)
         : DbgCmdHandler(observe)
-
     {
     }
 
-    virtual ~DbgCmdHandlerDisasseble() = default;
+    virtual ~DbgCmdHandlerDisassemble() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };
 
-class DbgCmdHandlerDisassebleCurLine : public DbgCmdHandler
+class DbgCmdHandlerDisassembleCurLine : public DbgCmdHandler
 {
-
 public:
-    DbgCmdHandlerDisassebleCurLine(IDebuggerObserver* observe, DbgGdb* gdbr)
+    DbgCmdHandlerDisassembleCurLine(IDebuggerObserver* observe, DbgGdb* gdbr)
         : DbgCmdHandler(observe)
-
     {
     }
 
-    virtual ~DbgCmdHandlerDisassebleCurLine() = default;
+    virtual ~DbgCmdHandlerDisassembleCurLine() = default;
 
     virtual bool ProcessOutput(const wxString& line);
 };

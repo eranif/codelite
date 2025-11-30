@@ -58,9 +58,9 @@ DebuggerDisassemblyTab::DebuggerDisassemblyTab(wxWindow* parent, const wxString&
     m_stc->MarkerDefineBitmap(BREAKPOINT_MARKER, wxBitmap(wxImage(stop_xpm)));
 
     m_stc->SetYCaretPolicy(wxSTC_CARET_SLOP, 30);
-    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_DISASSEBLE_OUTPUT,
+    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_DISASSEMBLE_OUTPUT,
                                   clCommandEventHandler(DebuggerDisassemblyTab::OnOutput), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_DISASSEBLE_CURLINE,
+    EventNotifier::Get()->Connect(wxEVT_DEBUGGER_DISASSEMBLE_CURLINE,
                                   clCommandEventHandler(DebuggerDisassemblyTab::OnCurLine), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_DEBUGGER_QUERY_FILELINE,
                                   clCommandEventHandler(DebuggerDisassemblyTab::OnQueryFileLineDone), NULL, this);
@@ -79,9 +79,9 @@ DebuggerDisassemblyTab::DebuggerDisassemblyTab(wxWindow* parent, const wxString&
 
 DebuggerDisassemblyTab::~DebuggerDisassemblyTab()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_DISASSEBLE_OUTPUT,
+    EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_DISASSEMBLE_OUTPUT,
                                      clCommandEventHandler(DebuggerDisassemblyTab::OnOutput), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_DISASSEBLE_CURLINE,
+    EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_DISASSEMBLE_CURLINE,
                                      clCommandEventHandler(DebuggerDisassemblyTab::OnCurLine), NULL, this);
     EventNotifier::Get()->Disconnect(wxEVT_DEBUGGER_QUERY_FILELINE,
                                      clCommandEventHandler(DebuggerDisassemblyTab::OnQueryFileLineDone), NULL, this);

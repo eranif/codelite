@@ -1103,9 +1103,9 @@ bool DbgCmdStopHandler::ProcessOutput(const wxString& line)
     return true;
 }
 
-bool DbgCmdHandlerDisasseble::ProcessOutput(const wxString& line)
+bool DbgCmdHandlerDisassemble::ProcessOutput(const wxString& line)
 {
-    clCommandEvent event(wxEVT_DEBUGGER_DISASSEBLE_OUTPUT);
+    clCommandEvent event(wxEVT_DEBUGGER_DISASSEMBLE_OUTPUT);
     GdbChildrenInfo info;
     ::gdbParseListChildren(line.mb_str(wxConvUTF8).data(), info);
 
@@ -1142,9 +1142,9 @@ bool DbgCmdHandlerDisasseble::ProcessOutput(const wxString& line)
     return true;
 }
 
-bool DbgCmdHandlerDisassebleCurLine::ProcessOutput(const wxString& line)
+bool DbgCmdHandlerDisassembleCurLine::ProcessOutput(const wxString& line)
 {
-    clCommandEvent event(wxEVT_DEBUGGER_DISASSEBLE_CURLINE);
+    clCommandEvent event(wxEVT_DEBUGGER_DISASSEMBLE_CURLINE);
     GdbChildrenInfo info;
     ::gdbParseListChildren(line.mb_str(wxConvUTF8).data(), info);
 

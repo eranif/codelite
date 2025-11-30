@@ -326,7 +326,7 @@ void SFTP::OnSaveFile(clSFTPEvent& e)
 void SFTP::DoSaveRemoteFile(const RemoteFileInfo& remoteFile)
 {
     SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(remoteFile.GetAccount(), remoteFile.GetRemoteFile(),
-                                                           remoteFile.GetLocalFile(), remoteFile.GetPremissions()));
+                                                           remoteFile.GetLocalFile(), remoteFile.GetPermissions()));
 }
 
 void SFTP::FileDownloadedSuccessfully(const SFTPClientData& cd)
@@ -348,7 +348,7 @@ void SFTP::FileDownloadedSuccessfully(const SFTPClientData& cd)
     // Now that the file was downloaded, update the file permissions
     if (m_remoteFiles.count(cd.GetLocalPath())) {
         RemoteFileInfo& info = m_remoteFiles[cd.GetLocalPath()];
-        info.SetPremissions(cd.GetPermissions());
+        info.SetPermissions(cd.GetPermissions());
     }
 }
 

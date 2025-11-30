@@ -57,7 +57,7 @@ class SFTPThreadRequet : public ThreadRequest
 
 public:
     SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& remoteFile, const wxString& localFile,
-                     size_t persmissions);
+                     size_t permissions);
     SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& oldName, const wxString& newName);
     SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& fileToDelete);
     SFTPThreadRequet(const RemoteFileInfo& remoteFile);

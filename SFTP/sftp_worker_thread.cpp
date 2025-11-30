@@ -225,12 +225,12 @@ void SFTPWorkerThread::DoReportStatusBarMessage(const wxString& message)
 // -----------------------------------------
 
 SFTPThreadRequet::SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& remoteFile,
-                                   const wxString& localFile, size_t persmissions)
+                                   const wxString& localFile, size_t permissions)
     : m_account(accountInfo)
     , m_remoteFile(remoteFile)
     , m_localFile(localFile)
     , m_action(eSFTPActions::kUpload)
-    , m_permissions(persmissions)
+    , m_permissions(permissions)
 {
 }
 

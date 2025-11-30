@@ -503,7 +503,7 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj,
 
     bool isPluginGeneratedMakefile = SendBuildEvent(wxEVT_GET_IS_PLUGIN_MAKEFILE, pname, tmpConfigName);
 
-    // we handle custom builds and non-custom build separatly:
+    // we handle custom builds and non-custom build separately:
     if (isPluginGeneratedMakefile) {
         if (force) {
             // Generate the makefile

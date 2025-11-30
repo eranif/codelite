@@ -34,7 +34,7 @@ class XDebugEvent : public PHPEvent
     XVariable::List_t m_variables;
     bool m_evalSucceeded = false;
     wxString m_errorString;
-    wxString m_evaluted;
+    wxString m_evaluated;
     int m_evalReason = wxNOT_FOUND;
 
 public:
@@ -50,10 +50,9 @@ public:
     bool IsEvalSucceeded() const { return m_evalSucceeded; }
     void SetErrorString(const wxString& errorString) { this->m_errorString = errorString; }
     const wxString& GetErrorString() const { return m_errorString; }
-    void SetEvaluated(const wxString& evaluted) { this->m_evaluted = evaluted; }
-    const wxString& GetEvaluted() const { return m_evaluted; }
+    void SetEvaluated(const wxString& evaluated) { this->m_evaluated = evaluated; }
+    const wxString& GetEvaluated() const { return m_evaluated; }
     void SetEvalReason(int evalReason) { this->m_evalReason = evalReason; }
-    void SetEvaluted(const wxString& evaluted) { this->m_evaluted = evaluted; }
     int GetEvalReason() const { return m_evalReason; }
 };
 

@@ -43,7 +43,7 @@ enum class eSFTPActions {
     kDelete,
 };
 
-class SFTPThreadRequet : public ThreadRequest
+class SFTPThreadRequest : public ThreadRequest
 {
     SSHAccountInfo m_account;
     wxString m_remoteFile;
@@ -56,15 +56,15 @@ class SFTPThreadRequet : public ThreadRequest
     int m_lineNumber = wxNOT_FOUND;
 
 public:
-    SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& remoteFile, const wxString& localFile,
+    SFTPThreadRequest(const SSHAccountInfo& accountInfo, const wxString& remoteFile, const wxString& localFile,
                      size_t permissions);
-    SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& oldName, const wxString& newName);
-    SFTPThreadRequet(const SSHAccountInfo& accountInfo, const wxString& fileToDelete);
-    SFTPThreadRequet(const RemoteFileInfo& remoteFile);
-    SFTPThreadRequet(const SSHAccountInfo& accountInfo);
-    SFTPThreadRequet(const SFTPThreadRequet& other);
-    SFTPThreadRequet& operator=(const SFTPThreadRequet& other);
-    virtual ~SFTPThreadRequet() = default;
+    SFTPThreadRequest(const SSHAccountInfo& accountInfo, const wxString& oldName, const wxString& newName);
+    SFTPThreadRequest(const SSHAccountInfo& accountInfo, const wxString& fileToDelete);
+    SFTPThreadRequest(const RemoteFileInfo& remoteFile);
+    SFTPThreadRequest(const SSHAccountInfo& accountInfo);
+    SFTPThreadRequest(const SFTPThreadRequest& other);
+    SFTPThreadRequest& operator=(const SFTPThreadRequest& other);
+    virtual ~SFTPThreadRequest() = default;
 
     void SetUploadSuccess(bool uploadSuccess) { this->m_uploadSuccess = uploadSuccess; }
     bool IsUploadSuccess() const { return m_uploadSuccess; }
@@ -126,7 +126,7 @@ public:
 private:
     SFTPWorkerThread();
     virtual ~SFTPWorkerThread() = default;
-    void DoConnect(SFTPThreadRequet* req);
+    void DoConnect(SFTPThreadRequest* req);
     void DoReportMessage(const wxString& account, const wxString& message, int status);
     void DoReportStatusBarMessage(const wxString& message);
 

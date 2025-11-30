@@ -90,7 +90,7 @@ private:
 ///-------------------
 
 inline clStatus StatusOk() { return clStatus::MakeStatus(StatusCode::kSucceess); }
-inline clStatus StatusInavalidArgument(const wxString& msg = wxEmptyString)
+inline clStatus StatusInvalidArgument(const wxString& msg = wxEmptyString)
 {
     return clStatus::MakeStatus(StatusCode::kInvalidArgument, msg);
 }

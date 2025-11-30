@@ -331,7 +331,7 @@ std::vector<std::string> CodeLiteLUA::file_system_workspace_selected_folders()
 clStatus CodeLiteLUA::LoadScriptString(const wxString& script)
 {
     if (m_state == nullptr) {
-        return StatusInavalidArgument("Could not run LUA script. Engine is not initialised.");
+        return StatusInvalidArgument("Could not run LUA script. Engine is not initialised.");
     }
 
     std::string script_content = script.ToStdString(wxConvUTF8);

@@ -514,7 +514,7 @@ void LanguageServerProtocol::ProcessQueue()
     if (m_Queue.IsEmpty()) {
         return;
     }
-    if (m_Queue.IsWaitingReponse()) {
+    if (m_Queue.IsWaitingResponse()) {
         LSP_DEBUG() << "LSP is busy, will not send message";
         return;
     }
@@ -526,7 +526,7 @@ void LanguageServerProtocol::ProcessQueue()
 
     // Write the message length as string of 10 bytes
     m_network->Send(req->ToString());
-    m_Queue.SetWaitingReponse(true);
+    m_Queue.SetWaitingResponse(true);
     m_Queue.Pop();
     if (!req->GetStatusMessage().IsEmpty()) {
         clGetManager()->SetStatusMessage(req->GetStatusMessage(), 1);
@@ -614,7 +614,7 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
     m_outputBuffer.append(event.GetStringRaw());
     LSP_DEBUG() << "Received data from LSP server of size:" << m_outputBuffer.size() << "bytes" << endl;
 
-    m_Queue.SetWaitingReponse(false);
+    m_Queue.SetWaitingResponse(false);
     while (!m_outputBuffer.empty()) {
         // attempt to consume a complete JSON payload from the aggregated network buffer
         auto json = LSP::Message::GetJSONPayload(m_outputBuffer);
@@ -996,7 +996,7 @@ void LSPRequestMessageQueue::Pop()
     if (!m_Queue.empty()) {
         m_Queue.pop();
     }
-    SetWaitingReponse(false);
+    SetWaitingResponse(false);
 }
 
 LSP::MessageWithParams::Ptr_t LSPRequestMessageQueue::Get()
@@ -1012,7 +1012,7 @@ void LSPRequestMessageQueue::Clear()
     while (!m_Queue.empty()) {
         m_Queue.pop();
     }
-    SetWaitingReponse(false);
+    SetWaitingResponse(false);
     m_pendingReplyMessages.clear();
 }
 
@@ -1023,7 +1023,7 @@ void LSPRequestMessageQueue::Move(LSPRequestMessageQueue& other)
         other.m_Queue.pop();
     }
 
-    SetWaitingReponse(false);
+    SetWaitingResponse(false);
     m_pendingReplyMessages.clear();
 }
 

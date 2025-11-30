@@ -259,7 +259,7 @@ wxString MacroManager::DoExpand(
     wxString wspRealPath = FileUtils::RealPath(wspPath, true);
 
     size_t retries = 0;
-    wxString dummyname, dummfullname;
+    wxString dummyname;
     while ((retries < 5) && FindVariable(expandedString, dummyname, dummyname)) {
         ++retries;
         DollarEscaper de(expandedString);
@@ -464,7 +464,7 @@ static wxString DoExpandAllVariables(const wxString& expression,
     wxString output(expression);
 
     size_t retries = 0;
-    wxString dummyname, dummfullname;
+    wxString dummyname;
     while ((retries < 5) && MacroManager::Instance()->FindVariable(output, dummyname, dummyname)) {
         ++retries;
         DollarEscaper de(output);

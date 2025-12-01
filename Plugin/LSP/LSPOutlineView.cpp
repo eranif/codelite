@@ -253,7 +253,8 @@ void LSPOutlineView::DoInitialiseSymbolInformation()
     auto lexer = ColoursAndFontsManager::Get().GetLexer("python");
     m_terminalViewCtrl->DeleteAllItems();
     m_terminalViewCtrl->SetSortFunction(nullptr);
-    m_textCtrlFilter->Clear();
+    if (m_textCtrlFilter)
+        m_textCtrlFilter->Clear();
 
     m_terminalViewCtrl->Begin();
     m_terminalViewCtrl->SetScrollToBottom(false);

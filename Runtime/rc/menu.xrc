@@ -744,9 +744,6 @@
       <object class="wxMenuItem" name="tags_options">
         <label>&amp;Code Completion...</label>
       </object>
-      <object class="wxMenuItem" name="tags_options">
-        <label>&amp;Code Completion...</label>
-      </object>
       <object class="wxMenuItem" name="edit_lua_script">
         <label>Edit CodeLite's Lua Script...</label>
       </object>

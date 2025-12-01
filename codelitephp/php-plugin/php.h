@@ -45,7 +45,6 @@ class PhpPlugin : public IPlugin
 {
 protected:
     PHPWorkspaceView* m_workspaceView;
-    bool m_clangOldFlag;
     BrowserPanel* m_browser;
     wxString m_savedPerspective;
 

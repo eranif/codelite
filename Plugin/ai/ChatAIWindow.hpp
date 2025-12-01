@@ -51,7 +51,6 @@ protected:
     void OnClearOutputViewUI(wxUpdateUIEvent& event);
     void OnUpdateTheme(wxCommandEvent& event);
     void OnEndpointChanged(wxCommandEvent& event);
-    void OnInsertPlaceHolder(wxCommandEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     void OnNewSession(wxCommandEvent& event);
     void OnRestartClient(wxCommandEvent& event);
@@ -84,7 +83,6 @@ protected:
 
 private:
     wxChoice* m_choiceEndpoints{nullptr};
-    wxChoice* m_choicePlaceHolders{nullptr};
     wxCheckBox* m_checkboxEnableTools{nullptr};
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
     ChatState m_state{ChatState::kReady};

@@ -155,12 +155,6 @@ void clDockerWorkspace::Open(const wxFileName& path)
         clGetManager()->GetWorkspaceView()->SelectPage(GetWorkspaceType());
         clWorkspaceManager::Get().SetWorkspace(this);
 
-        // Keep the old clang state before we disable it
-        const TagsOptionsData& options = TagsManagerST::Get()->GetCtagsOptions();
-        m_clangOldFlag = (options.GetClangOptions() & CC_CLANG_ENABLED);
-
-        clGetManager()->EnableClangCodeCompletion(false);
-
         // Notify that the a new workspace is loaded
         clWorkspaceEvent open_event(wxEVT_WORKSPACE_LOADED);
         open_event.SetFileName(m_filename.GetFullPath());
@@ -181,9 +175,6 @@ void clDockerWorkspace::Close()
     if (IsOpen()) {
         // Store the session
         clGetManager()->StoreWorkspaceSession(m_filename);
-
-        // disable clang for NodeJS
-        clGetManager()->EnableClangCodeCompletion(m_clangOldFlag);
 
         // Clear the UI
         GetView()->Clear();

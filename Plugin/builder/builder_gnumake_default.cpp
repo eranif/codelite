@@ -503,7 +503,7 @@ void BuilderGnuMake::GenerateMakefile(ProjectPtr proj,
 
     bool isPluginGeneratedMakefile = SendBuildEvent(wxEVT_GET_IS_PLUGIN_MAKEFILE, pname, tmpConfigName);
 
-    // we handle custom builds and non-custom build separatly:
+    // we handle custom builds and non-custom build separately:
     if (isPluginGeneratedMakefile) {
         if (force) {
             // Generate the makefile
@@ -1220,7 +1220,7 @@ void BuilderGnuMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldC
     wxString cBuildOpts = bldConf->GetCCompileOptions();
     cBuildOpts.Replace(";", " ");
 
-    wxString asOptions = bldConf->GetAssmeblerOptions();
+    wxString asOptions = bldConf->GetAssemblerOptions();
     asOptions.Replace(";", " ");
 
     // Let the plugins add their content here

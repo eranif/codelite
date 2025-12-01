@@ -56,7 +56,7 @@ void PSCompilerPage::Load(BuildConfigPtr buildConf)
     SelectChoiceWithGlobalSettings(m_pgPropBehaviorWithGlobalSettings, buildConf->GetBuildCmpWithGlobalSettings());
     m_pgPropIncludePCH->SetValue(buildConf->GetPchInCommandLine());
     m_pgPropPCHCompileLine->SetValue(buildConf->GetPchCompileFlags());
-    m_pgPropAssembler->SetValue(buildConf->GetAssmeblerOptions());
+    m_pgPropAssembler->SetValue(buildConf->GetAssemblerOptions());
     m_pgPropPCHPolicy->SetValue((int)buildConf->GetPCHFlagsPolicy());
 }
 
@@ -70,7 +70,7 @@ void PSCompilerPage::Save(BuildConfigPtr buildConf, ProjectSettingsPtr projSetti
     buildConf->SetCCompileOptions(m_pgPropCOpts->GetValueAsString());
     buildConf->SetPchInCommandLine(m_pgPropIncludePCH->GetValue().GetBool());
     buildConf->SetPchCompileFlags(m_pgPropPCHCompileLine->GetValueAsString());
-    buildConf->SetAssmeblerOptions(m_pgPropAssembler->GetValueAsString());
+    buildConf->SetAssemblerOptions(m_pgPropAssembler->GetValueAsString());
     buildConf->SetBuildCmpWithGlobalSettings(m_pgPropBehaviorWithGlobalSettings->GetValueAsString());
     buildConf->SetPCHFlagsPolicy((BuildConfig::ePCHPolicy)m_pgPropPCHPolicy->GetValue().GetInteger());
 }
@@ -147,7 +147,7 @@ void PSCompilerPage::OnCopyCompilerSettings(wxCommandEvent& event)
     SelectChoiceWithGlobalSettings(m_pgPropBehaviorWithGlobalSettings, buildConf->GetBuildCmpWithGlobalSettings());
     m_pgPropIncludePCH->SetValue(buildConf->GetPchInCommandLine());
     m_pgPropPCHCompileLine->SetValue(buildConf->GetPchCompileFlags());
-    m_pgPropAssembler->SetValue(buildConf->GetAssmeblerOptions());
+    m_pgPropAssembler->SetValue(buildConf->GetAssemblerOptions());
     m_pgPropPCHPolicy->SetValue((int)buildConf->GetPCHFlagsPolicy());
     m_dlg->SetIsDirty(true);
 }

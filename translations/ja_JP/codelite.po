@@ -15283,7 +15283,7 @@ msgid "Searching: "
 msgstr "検索しています: "
 
 #: codelite_vim/vim_manager.cpp:211
-msgid "Unbalanced Parentesis"
+msgid "Unbalanced Parenthesis"
 msgstr "括弧数の不一致"
 
 #: codelite_vim/vim_manager.cpp:214
@@ -16149,7 +16149,7 @@ msgid "Enable automatic upload"
 msgstr "自動アップロードを有効化"
 
 #: codelitephp/php-plugin/php_workspace_view.cpp:1092
-msgid "Select the remote folder corrseponding to the current workspace file"
+msgid "Select the remote folder corresponding to the current workspace file"
 msgstr "現在のワークスペースファイルに対応するリモートフォルダーを選択"
 
 #: codelitephp/php-plugin/php_workspace_view.cpp:1481

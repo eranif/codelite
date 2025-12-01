@@ -174,10 +174,10 @@ PHPFormatterBuffer& PHPFormatterBuffer::ProcessToken(const phpLexerToken& token)
             m_buffer << token.Text() << " ";
             if(m_options.flags & kPFF_BreakAfterStringConcatentation && (m_parenDepth == 1)) {
                 // inside a function call
-                wxString whitepace = GetIndentationToLast('(');
-                if(!whitepace.IsEmpty()) {
+                wxString whitespace = GetIndentationToLast('(');
+                if (!whitespace.IsEmpty()) {
                     m_buffer << m_options.eol;
-                    m_buffer << whitepace;
+                    m_buffer << whitespace;
                 }
             }
         } else if(token.type == '&') {

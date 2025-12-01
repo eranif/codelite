@@ -648,18 +648,18 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
     GetExecutable(exe, args, wd);
 
     // Start the debugger
-    DebugSessionInfo sesstion_info;
+    DebugSessionInfo session_info;
 
     const wxString& user_debugger = conf->GetDebuggerPath();
 
-    sesstion_info.debuggerPath = user_debugger.empty() ? "gdb" : user_debugger;
-    sesstion_info.init_file_content = conf->GetDebuggerCommands();
+    session_info.debuggerPath = user_debugger.empty() ? "gdb" : user_debugger;
+    session_info.init_file_content = conf->GetDebuggerCommands();
 
-    sesstion_info.exeName = exe;
-    sesstion_info.cwd = wd;
-    sesstion_info.bpList = clGetManager()->GetBreakpoints();
-    sesstion_info.isSSHDebugging = true;
-    sesstion_info.sshAccountName = m_account.GetAccountName();
+    session_info.exeName = exe;
+    session_info.cwd = wd;
+    session_info.bpList = clGetManager()->GetBreakpoints();
+    session_info.isSSHDebugging = true;
+    session_info.sshAccountName = m_account.GetAccountName();
 
     // open new terminal on the remote host
     m_remote_terminal.reset(new clRemoteTerminal(m_account));
@@ -696,15 +696,15 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
     // override the gdb executable with the one provided with the GDB environment variable
     if (envmap.count("GDB")) {
         const wxString& gdbpath = envmap["GDB"];
-        sesstion_info.debuggerPath = gdbpath;
+        session_info.debuggerPath = gdbpath;
     }
-    clDEBUG() << "Using gdb:" << sesstion_info.debuggerPath << endl;
+    clDEBUG() << "Using gdb:" << session_info.debuggerPath << endl;
 
-    sesstion_info.ttyName = tty;
-    sesstion_info.enablePrettyPrinting = true;
+    session_info.ttyName = tty;
+    session_info.enablePrettyPrinting = true;
 
-    clDEBUG() << "Starting gdb:" << sesstion_info.debuggerPath << endl;
-    if (!dbgr->Start(sesstion_info, &envlist)) {
+    clDEBUG() << "Starting gdb:" << session_info.debuggerPath << endl;
+    if (!dbgr->Start(session_info, &envlist)) {
         // message box about this and cancel the debugge session
         ::clMessageBox(_("Failed to start debugger!"), "CodeLite", wxICON_ERROR | wxOK | wxOK_DEFAULT);
         clDebugEvent eventStarted(wxEVT_DEBUG_ENDED);
@@ -714,7 +714,7 @@ void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
     // Notify that debug session started
     // this will ensure that the debug layout is loaded
     clDebugEvent eventStarted(wxEVT_DEBUG_STARTED);
-    eventStarted.SetClientData(&sesstion_info);
+    eventStarted.SetClientData(&session_info);
     EventNotifier::Get()->ProcessEvent(eventStarted);
 
     // Now run the debuggee

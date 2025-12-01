@@ -38,7 +38,7 @@ class RemoteFileInfo : public wxClientData
     SSHAccountInfo m_account; // the account for which this file belongs to
     wxString m_localFile;
     wxString m_remoteFile;
-    size_t m_premissions;
+    size_t m_permissions;
     int m_lineNumber = 0;
 
 public:
@@ -53,8 +53,8 @@ public:
     const wxString& GetLocalFile() const { return m_localFile; }
     void SetRemoteFile(const wxString& remoteFile);
     const wxString& GetRemoteFile() const { return m_remoteFile; }
-    void SetPremissions(size_t premissions) { this->m_premissions = premissions; }
-    size_t GetPremissions() const { return m_premissions; }
+    void SetPermissions(size_t permissions) { this->m_permissions = permissions; }
+    size_t GetPermissions() const { return m_permissions; }
 
     void SetLineNumber(int lineNumber) { this->m_lineNumber = lineNumber; }
     int GetLineNumber() const { return m_lineNumber; }

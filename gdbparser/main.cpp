@@ -16,7 +16,7 @@ static void printNode(const std::string& str, int depth = 0)
     printf("%s\n", str.c_str());
 }
 
-static void GDB_STRIP_QUOATES(std::string &currentToken)
+static void GDB_STRIP_QUOTES(std::string &currentToken)
 {
     size_t where = currentToken.find("\"");
     if (where != std::string::npos && where == 0) {
@@ -157,7 +157,7 @@ void MakeTree()
         }
 
         // remove quotes from the name value
-        GDB_STRIP_QUOATES(currentToken);
+        GDB_STRIP_QUOTES(currentToken);
 
         displayLine += currentToken;
 
@@ -178,7 +178,7 @@ void MakeTree()
         }
 
         // remove the quotes from the value
-        GDB_STRIP_QUOATES(currentToken);
+        GDB_STRIP_QUOTES(currentToken);
 
         if (currentToken.at(0) == '{') {
             if (displayLine.empty() == false) {

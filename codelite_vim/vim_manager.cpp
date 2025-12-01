@@ -207,8 +207,8 @@ void VimManager::updateMessageModus()
 void VimManager::updateVimMessage()
 {
     switch (m_currentCommand.getError()) {
-    case MESSAGES_VIM::UNBALNCED_PARENTESIS_VIM_MSG:
-        m_mgr->GetStatusBar()->SetMessage(_("Unbalanced Parentesis"));
+    case MESSAGES_VIM::UNBALNCED_PARENTHESIS_VIM_MSG:
+        m_mgr->GetStatusBar()->SetMessage(_("Unbalanced Parenthesis"));
         break;
     case MESSAGES_VIM::SAVED_VIM_MSG:
         m_mgr->GetStatusBar()->SetMessage(_("Saving"));

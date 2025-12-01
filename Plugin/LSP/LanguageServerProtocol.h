@@ -31,7 +31,7 @@ class WXDLLIMPEXP_SDK LSPRequestMessageQueue
 {
     std::queue<LSP::MessageWithParams::Ptr_t> m_Queue;
     std::unordered_map<int, LSP::MessageWithParams::Ptr_t> m_pendingReplyMessages;
-    bool m_waitingReponse = false;
+    bool m_waitingResponse = false;
 
 public:
     LSPRequestMessageQueue() = default;
@@ -43,8 +43,8 @@ public:
     LSP::MessageWithParams::Ptr_t Get();
     void Clear();
     bool IsEmpty() const { return m_Queue.empty(); }
-    void SetWaitingReponse(bool waitingReponse) { this->m_waitingReponse = waitingReponse; }
-    bool IsWaitingReponse() const { return m_waitingReponse; }
+    void SetWaitingResponse(bool waitingResponse) { this->m_waitingResponse = waitingResponse; }
+    bool IsWaitingResponse() const { return m_waitingResponse; }
 
     /// move the content of `other` into `this` while consuming the `other` queue
     void Move(LSPRequestMessageQueue& other);
@@ -254,7 +254,7 @@ public:
     void FunctionHelp(IEditor* editor);
 
     /**
-     * @brief ask for available hovertip
+     * @brief ask for available hover tip
      */
     void HoverTip(IEditor* editor);
 

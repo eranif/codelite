@@ -1547,7 +1547,7 @@ bool DbgGdb::Disassemble(const wxString& filename, int lineNumber)
     if (/*filename.IsEmpty() || lineNumber == wxNOT_FOUND*/ true) {
         // Use the $pc
         if (!WriteCommand("-data-disassemble -s \"$pc -100\" -e \"$pc + 100\" -- 0",
-                          new DbgCmdHandlerDisasseble(m_observer, this)))
+                          new DbgCmdHandlerDisassemble(m_observer, this)))
             return false;
 
     } else {
@@ -1556,13 +1556,13 @@ bool DbgGdb::Disassemble(const wxString& filename, int lineNumber)
         tmpfile.Replace("\\", "/"); // gdb does not like backslashes...
 
         if (!WriteCommand(wxString() << "-data-disassemble -f \"" << tmpfile << "\" -l " << lineNumber << " -n -1 -- 0",
-                          new DbgCmdHandlerDisasseble(m_observer, this)))
+                          new DbgCmdHandlerDisassemble(m_observer, this)))
             return false;
     }
 
     // get the current instruction
     if (!WriteCommand("-data-disassemble -s \"$pc\" -e \"$pc + 1\" -- 0",
-                      new DbgCmdHandlerDisassebleCurLine(m_observer, this)))
+                      new DbgCmdHandlerDisassembleCurLine(m_observer, this)))
         return false;
 
     return true;

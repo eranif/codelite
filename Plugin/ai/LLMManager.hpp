@@ -69,7 +69,7 @@ inline clStatusOr<T> CheckType(const llm::json& j, const std::string& name)
         auto v = j[name].get<T>();
         return v;
     } catch ([[maybe_unused]] const std::exception& e) {
-        return StatusInavalidArgument("Mandatory param has wrong type");
+        return StatusInvalidArgument("Mandatory param has wrong type");
     }
 }
 

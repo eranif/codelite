@@ -56,7 +56,7 @@ void EvalPane::OnExpressionEvaluate(XDebugEvent& e)
             str << _("*** Error evaluating expression: ") << e.GetString() << "\n" << e.GetErrorString();
         } else {
             str << e.GetString() << " = \n";
-            wxString evaluated = e.GetEvaluted();
+            wxString evaluated = e.GetEvaluated();
             // Remove extra escapes
             evaluated.Replace("\\n", "\n");
             evaluated.Replace("\\t", "\t");
@@ -90,7 +90,7 @@ void EvalPane::OnDBGPCommandEvaluated(XDebugEvent& e)
     e.Skip();
     m_stcOutputXDebug->SetEditable(true);
     m_stcOutputXDebug->ClearAll();
-    m_stcOutputXDebug->SetText(e.GetEvaluted());
+    m_stcOutputXDebug->SetText(e.GetEvaluated());
     m_stcOutputXDebug->SetEditable(true);
     m_stcOutputXDebug->ScrollToEnd();
 }

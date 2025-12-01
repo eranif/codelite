@@ -1252,7 +1252,7 @@ void BuilderGNUMakeClassic::CreateConfigsVariables(ProjectPtr proj, BuildConfigP
     wxString cBuildOpts = bldConf->GetCCompileOptions();
     cBuildOpts.Replace(wxT(";"), wxT(" "));
 
-    wxString asOptions = bldConf->GetAssmeblerOptions();
+    wxString asOptions = bldConf->GetAssemblerOptions();
     asOptions.Replace(";", " ");
 
     // Let the plugins add their content here

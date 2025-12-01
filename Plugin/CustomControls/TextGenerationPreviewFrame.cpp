@@ -28,7 +28,7 @@ clStatusOr<wxString> RemoveCodeFencePrefix(const wxString& str)
 
     // Check if the pattern is valid
     if (!fencePattern.IsValid()) {
-        return StatusInavalidArgument("Invalid regular expression");
+        return StatusInvalidArgument("Invalid regular expression");
     }
 
     // Check if the string starts with a code fence

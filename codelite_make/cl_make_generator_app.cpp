@@ -101,8 +101,8 @@ bool clMakeGeneratorApp::OnInit()
         return false;
     }
     buildMatrix->SetSelectedConfigurationName(m_configuration);
-    wxString projectConfiguraion = iter->m_name;
-    Info(wxString() << "-- Building project configuration: " << projectConfiguraion);
+    wxString projectConfiguration = iter->m_name;
+    Info(wxString() << "-- Building project configuration: " << projectConfiguration);
 
     // Which makefile should we create?
     BuilderGnuMake builder;
@@ -113,9 +113,9 @@ bool clMakeGeneratorApp::OnInit()
     }
 
     // Load the build configuration
-    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(m_project, projectConfiguraion);
+    BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(m_project, projectConfiguration);
     if(!bldConf) {
-        Error(wxString() << "Could not find configuration " << projectConfiguraion << " for project " << m_project);
+        Error(wxString() << "Could not find configuration " << projectConfiguration << " for project " << m_project);
         return false;
     }
 
@@ -127,7 +127,7 @@ bool clMakeGeneratorApp::OnInit()
         Bye();
     } else {
         if(bldConf->IsCustomBuild()) {
-            Notice(wxString() << "Configuration " << projectConfiguraion << " for project " << m_project
+            Notice(wxString() << "Configuration " << projectConfiguration << " for project " << m_project
                               << " is using a custom build - will not generate makefile");
             Notice(wxString() << "Instead, here is the command line to use:");
             wxString command;
@@ -150,7 +150,7 @@ bool clMakeGeneratorApp::OnInit()
         }
 
         wxString args = bldConf->GetBuildSystemArguments();
-        if(!builder.Export(m_project, projectConfiguraion, args, false, true, errmsg)) {
+        if (!builder.Export(m_project, projectConfiguration, args, false, true, errmsg)) {
             Error(wxString() << "Error while exporting makefile. " << errmsg);
             return false;
         }
@@ -158,15 +158,15 @@ bool clMakeGeneratorApp::OnInit()
         wxString commandToRun;
         switch(m_commandType) {
         case kBuild:
-            commandToRun = builder.GetBuildCommand(m_project, projectConfiguraion, args);
+            commandToRun = builder.GetBuildCommand(m_project, projectConfiguration, args);
             break;
         case kClean:
-            commandToRun = builder.GetCleanCommand(m_project, projectConfiguraion, args);
+            commandToRun = builder.GetCleanCommand(m_project, projectConfiguration, args);
             break;
         case kRebuild:
-            commandToRun = builder.GetCleanCommand(m_project, projectConfiguraion, args);
+            commandToRun = builder.GetCleanCommand(m_project, projectConfiguration, args);
             // append the build command
-            commandToRun << " && " << builder.GetBuildCommand(m_project, projectConfiguraion, args);
+            commandToRun << " && " << builder.GetBuildCommand(m_project, projectConfiguration, args);
             break;
         }
 

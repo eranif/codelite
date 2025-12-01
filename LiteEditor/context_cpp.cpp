@@ -1046,8 +1046,6 @@ void ContextCpp::OnDbgDwellEnd(wxStyledTextEvent& event)
 
 void ContextCpp::OnDbgDwellStart(wxStyledTextEvent& event)
 {
-    static wxRegEx reCppIndentifier("[a-zA-Z_][a-zA-Z0-9_]*");
-
     // the tip is already up
     if (ManagerST::Get()->GetDebuggerTip() && ManagerST::Get()->GetDebuggerTip()->IsShown()) {
         return;

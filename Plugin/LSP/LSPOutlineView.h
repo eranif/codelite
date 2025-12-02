@@ -8,7 +8,7 @@
 #include <wx/aui/auibar.h>
 #include <clAuiToolBarArt.h>
 #include "LSP/basic_types.h"
-#include "LSP/LSPSymbolSorter.h"
+#include "LSP/LSPSymbolParser.h"
 #include "clTerminalViewCtrl.hpp"
 #include "clTreeCtrl.h"
 #include "codelite_exports.h"
@@ -18,18 +18,20 @@ using namespace LSP;
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_LSP_OUTLINE_SYMBOL_ACTIVATED, wxCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_LSP_OUTLINE_VIEW_DISMISS, wxCommandEvent);
 
-#define kConfigOutlineStartExpanded "OutputStartExpanded"
+#define kConfigOutlineStartExpanded "OutlineStartExpanded"
 #define kConfigOutlineKeepNamespacesExpanded "OutlineKeepNamespacesExpanded"
 #define kConfigOutlineSortType "OutlineSortType"
-#define kConfigOutlineShowSymbolDetails "ShowSymbolDetails"
-#define kConfigOutlineShowSymbolKinds "ShowSymbolKinds"
+#define kConfigOutlineShowSymbolDetails "OutlineShowSymbolDetails"
+#define kConfigOutlineShowSymbolKinds "OutlineShowSymbolKinds"
+#define kConfigOutlineForceTree "OutlineForceTree"
 
 class WXDLLIMPEXP_SDK LSPOutlineView : public wxPanel
 {
 public:
     enum class Mode {
         DOCUMENT_SYMBOL,
-        SYMBOL_INFORMATION
+        SYMBOL_INFORMATION,
+        SYMBOL_INFORMATION_PARSED,
     };
     enum Style {
         STYLE_DEFAULT       = 0,
@@ -47,7 +49,7 @@ public:
      * @brief Sorts the current DocumentSymbol. Does not refresh the tree - use DoInitialiseDocumentSymbol after!
      * @param sort
      */
-    void SortSymbols(LSPSymbolSorter::SortType sort);
+    void SortSymbols(LSPSymbolParser::SortType sort);
     void CollapseTree();
     void ExpandTree();
     
@@ -68,7 +70,8 @@ protected:
         ID_TOOL_EXPAND_ALL,
         ID_TOOL_MENU,
         ID_MENU_INITIALISE_EXPANDED,
-        ID_MENU_KEEP_NAMESPACE_EXPANDED
+        ID_MENU_KEEP_NAMESPACE_EXPANDED,
+        ID_MENU_FORCE_TREE
     };
     
     Mode m_mode;
@@ -77,7 +80,8 @@ protected:
     bool m_showSymbolKind = false;
     bool m_initialiseExpanded = false;
     bool m_keepNamespacesExpanded = true;
-    LSPSymbolSorter::SortType m_sortType = LSPSymbolSorter::SORT_LINE;    
+    bool m_forceTree = true;
+    LSPSymbolParser::SortType m_sortType = LSPSymbolParser::SORT_LINE;    
     wxAuiToolBar* m_toolbar = nullptr;
     wxChoice* m_sortOptions = nullptr;
     wxTextCtrl* m_textCtrlFilter = nullptr;

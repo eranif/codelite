@@ -81,7 +81,7 @@ CompilersDetectorManager::CompilersDetectorManager()
 
 bool CompilersDetectorManager::Locate()
 {
-    // Apply the enviroment before searching for compilers
+    // Apply the environment before searching for compilers
     // Some of the locators are relying on PATH environment
     // variable (e.g. MinGW)
     wxBusyCursor bc;

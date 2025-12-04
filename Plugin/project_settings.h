@@ -93,7 +93,7 @@ public:
      */
     wxXmlNode* ToXml() const;
 
-    // enumaration
+    // enumeration
     /**
      * Find the first build configuration by name
      * \param configName build configuration name to find

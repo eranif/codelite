@@ -34,7 +34,7 @@
 
 /**
  * \ingroup SDK
- * A cookie class to allow the enumration operation to be reentrants by multiple threads
+ * A cookie class to allow the enumeration operation to be reentrants by multiple threads
  *
  * \version 1.0
  * first version

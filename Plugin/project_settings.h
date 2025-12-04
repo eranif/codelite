@@ -72,7 +72,7 @@ public:
     /**
      * Clone this project settings, the cloned object is allocated on the heap
      * and it is the responsibility of the caller to call delete when there are no
-     * more refreneces to it
+     * more references to it
      * \return
      */
     ProjectSettings* Clone() const;

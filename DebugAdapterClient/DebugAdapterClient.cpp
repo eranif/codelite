@@ -562,7 +562,7 @@ void DebugAdapterClient::RestoreUI()
 
 void DebugAdapterClient::LoadPerspective()
 {
-    // Save the current perspective we start debguging
+    // Save the current perspective we start debugging
     m_mgr->SavePerspective("Default");
 
     // Hide all the panes

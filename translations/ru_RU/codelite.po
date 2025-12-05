@@ -2648,6 +2648,7 @@ msgid "New source breakpoint"
 msgstr "Создать точку останова в исходном файле"
 
 #: DebugAdapterClient/DAPBreakpointsView.cpp:21
+#: DebugAdapterClient/DAPBreakpointsView.cpp:122
 msgid "New function breakpoint"
 msgstr "Создать точку останова в функции"
 
@@ -2655,10 +2656,6 @@ msgstr "Создать точку останова в функции"
 #: DebugAdapterClient/DAPWatchesView.cpp:21 Runtime/rc/menu.xrc:1076
 msgid "Delete All"
 msgstr "Удалить все"
-
-#: DebugAdapterClient/DAPBreakpointsView.cpp:122
-msgid "New function breakpoint"
-msgstr "Создать точку останова в функции"
 
 #: DebugAdapterClient/DAPBreakpointsView.cpp:130
 #: LiteEditor/breakpointdlgbase.cpp:170

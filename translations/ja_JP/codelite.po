@@ -1611,16 +1611,13 @@ msgid "New source breakpoint"
 msgstr "新しいソースブレークポイント"
 
 #: DebugAdapterClient/DAPBreakpointsView.cpp:19
+#: DebugAdapterClient/DAPBreakpointsView.cpp:120
 msgid "New function breakpoint"
 msgstr "新しい関数ブレークポイント"
 
 #: DebugAdapterClient/DAPBreakpointsView.cpp:20 DebugAdapterClient/DAPWatchesView.cpp:22 Runtime/rc/menu.xrc:1108
 msgid "Delete All"
 msgstr "すべて削除"
-
-#: DebugAdapterClient/DAPBreakpointsView.cpp:120
-msgid "New function breakpoint"
-msgstr "新しい関数ブレークポイント"
 
 #: DebugAdapterClient/DAPBreakpointsView.cpp:128 LiteEditor/breakpointdlgbase.cpp:170
 msgid "Function name"

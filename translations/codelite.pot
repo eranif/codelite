@@ -1831,10 +1831,6 @@ msgstr ""
 msgid "Delete All"
 msgstr ""
 
-#: DebugAdapterClient/DAPBreakpointsView.cpp:120
-msgid "New function breakpoint"
-msgstr ""
-
 #: DebugAdapterClient/DAPBreakpointsView.cpp:128
 #: LiteEditor/breakpointdlgbase.cpp:170
 msgid "Function name"

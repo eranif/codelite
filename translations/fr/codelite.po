@@ -1810,6 +1810,7 @@ msgid "New source breakpoint"
 msgstr "Nouveau point d'arrêt source"
 
 #: DebugAdapterClient/DAPBreakpointsView.cpp:19
+#: DebugAdapterClient/DAPBreakpointsView.cpp:120
 msgid "New function breakpoint"
 msgstr "Nouveau point d'arrêt de la fonction"
 
@@ -1817,10 +1818,6 @@ msgstr "Nouveau point d'arrêt de la fonction"
 #: DebugAdapterClient/DAPWatchesView.cpp:22 Runtime/rc/menu.xrc:1108
 msgid "Delete All"
 msgstr "Tout supprimer"
-
-#: DebugAdapterClient/DAPBreakpointsView.cpp:120
-msgid "New function breakpoint"
-msgstr "Nouveau point d'arrêt de la fonction"
 
 #: DebugAdapterClient/DAPBreakpointsView.cpp:128
 #: LiteEditor/breakpointdlgbase.cpp:170

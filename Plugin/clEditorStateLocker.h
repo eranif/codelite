@@ -46,7 +46,7 @@ private:
     // Visible line
     int m_firstVisibleLine;
 
-    // Bookrmarks
+    // Bookmarks
     wxArrayString m_bookmarks;
 
     // Breakpoints

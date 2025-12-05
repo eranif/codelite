@@ -95,12 +95,12 @@ public:
     /**
      * @brief serialize Breakpoints markers into an array
      */
-    static void SerializeBreakpoints(wxStyledTextCtrl* ctrl, wxArrayString& breapoints);
+    static void SerializeBreakpoints(wxStyledTextCtrl* ctrl, wxArrayString& breakpoints);
 
     /**
-     * @brief apply breapoints markers
+     * @brief apply breakpoints markers
      */
-    static void ApplyBreakpoints(wxStyledTextCtrl* ctrl, const wxArrayString& breapoints);
+    static void ApplyBreakpoints(wxStyledTextCtrl* ctrl, const wxArrayString& breakpoints);
 };
 
 class WXDLLIMPEXP_SDK clEditorActiveLocker

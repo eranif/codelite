@@ -2657,7 +2657,7 @@ msgid "Delete All"
 msgstr "Удалить все"
 
 #: DebugAdapterClient/DAPBreakpointsView.cpp:122
-msgid "New function breakppoint"
+msgid "New function breakpoint"
 msgstr "Создать точку останова в функции"
 
 #: DebugAdapterClient/DAPBreakpointsView.cpp:130

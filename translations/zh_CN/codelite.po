@@ -1856,7 +1856,7 @@ msgid "Delete All"
 msgstr "删除全部"
 
 #: DebugAdapterClient/DAPBreakpointsView.cpp:120
-msgid "New function breakppoint"
+msgid "New function breakpoint"
 msgstr "新建函数断点"
 
 #: DebugAdapterClient/DAPBreakpointsView.cpp:128

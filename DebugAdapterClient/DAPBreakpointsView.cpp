@@ -117,7 +117,7 @@ void DAPBreakpointsView::OnBreakpointActivated(wxDataViewEvent& event)
 void DAPBreakpointsView::OnBreakpointsContextMenu(wxDataViewEvent& event)
 {
     wxMenu menu;
-    menu.Append(XRCID("dap-new-function-breakpoint"), _("New function breakppoint"));
+    menu.Append(XRCID("dap-new-function-breakpoint"), _("New function breakpoint"));
     menu.Bind(wxEVT_MENU, &DAPBreakpointsView::OnNewFunctionBreakpoint, this, XRCID("dap-new-function-breakpoint"));
     m_dvListCtrl->PopupMenu(&menu);
 }

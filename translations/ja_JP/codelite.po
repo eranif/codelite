@@ -1619,7 +1619,7 @@ msgid "Delete All"
 msgstr "すべて削除"
 
 #: DebugAdapterClient/DAPBreakpointsView.cpp:120
-msgid "New function breakppoint"
+msgid "New function breakpoint"
 msgstr "新しい関数ブレークポイント"
 
 #: DebugAdapterClient/DAPBreakpointsView.cpp:128 LiteEditor/breakpointdlgbase.cpp:170

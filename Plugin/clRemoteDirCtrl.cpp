@@ -21,7 +21,7 @@ wxDEFINE_EVENT(wxEVT_REMOTEDIR_FILE_CONTEXT_MENU_SHOWING, clContextMenuEvent);
 
 namespace
 {
-// we don't use FileUtis::IsHidden since it checks for local file existance on windows
+// we don't use FileUtis::IsHidden since it checks for local file existence on windows
 bool is_hidden(const wxString& name) { return !name.empty() && name[0] == '.'; }
 } // namespace
 

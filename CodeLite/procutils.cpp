@@ -439,13 +439,13 @@ bool ProcUtils::Locate(const wxString& name, wxString& where)
     ProcUtils::ExecuteCommand(command, output);
 
     if (output.IsEmpty() == false) {
-        wxString interstingLine = output.Item(0);
+        wxString interestingLine = output.Item(0);
 
-        if (interstingLine.Trim().Trim(false).IsEmpty()) {
+        if (interestingLine.Trim().Trim(false).IsEmpty()) {
             return false;
         }
 
-        if (!interstingLine.StartsWith(wxT("which: no "))) {
+        if (!interestingLine.StartsWith(wxT("which: no "))) {
             where = output.Item(0);
             where = where.Trim().Trim(false);
             return true;

@@ -599,7 +599,7 @@ clEnvList_t BuildConfig::GetEnvironment(Project* project) const
     // by default, we only return env modified within CodeLite
     std::unordered_set<wxString> interesting_env_set;
 
-    // get the global enviroment variables (macros expnaded)
+    // get the global environment variables (macros expanded)
     EnvMap envMap = env.GetVariables(env.GetActiveSet(), false, project_name, config_name);
 
     // expand the global environments variables first

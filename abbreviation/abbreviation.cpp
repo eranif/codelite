@@ -206,7 +206,7 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
     }
 
     // search for abbreviation that matches str
-    // prepate list of abbreviations
+    // prepare list of abbreviations
     AbbreviationJSONEntry jsonData;
     if (!m_config.ReadItem(&jsonData)) {
         // merge the data from the old configuration

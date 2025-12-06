@@ -1164,7 +1164,7 @@ void clCxxWorkspace::RenameProject(const wxString& oldname, const wxString& newn
         }
         projectNode = projectNode->GetNext();
     }
-    // Update dependenices for each project
+    // Update dependencies for each project
     for (const auto& [_, project] : m_projects) {
         project->ProjectRenamed(oldname, newname);
     }

@@ -125,13 +125,13 @@ void clEditorStateLocker::SerializeFolds(wxStyledTextCtrl* ctrl, clEditorStateLo
     }
 }
 
-void clEditorStateLocker::ApplyBreakpoints(wxStyledTextCtrl* ctrl, const wxArrayString& breapoints)
+void clEditorStateLocker::ApplyBreakpoints(wxStyledTextCtrl* ctrl, const wxArrayString& breakpoints)
 {
-    for (size_t i = 0; i < breapoints.GetCount(); i++) {
+    for (size_t i = 0; i < breakpoints.GetCount(); i++) {
         // Unless this is an old file, each bookmark will have been stored in the form: "linenumber:type"
-        wxString lineno = breapoints.Item(i).BeforeFirst(':');
+        wxString lineno = breakpoints.Item(i).BeforeFirst(':');
         long bmt = smt_bookmark1;
-        wxString type = breapoints.Item(i).AfterFirst(':');
+        wxString type = breakpoints.Item(i).AfterFirst(':');
         if (!type.empty()) {
             type.ToCLong(&bmt);
         }
@@ -142,7 +142,7 @@ void clEditorStateLocker::ApplyBreakpoints(wxStyledTextCtrl* ctrl, const wxArray
     }
 }
 
-void clEditorStateLocker::SerializeBreakpoints(wxStyledTextCtrl* ctrl, wxArrayString& breapoints)
+void clEditorStateLocker::SerializeBreakpoints(wxStyledTextCtrl* ctrl, wxArrayString& breakpoints)
 {
     for (int line = 0; (line = ctrl->MarkerNext(line, mmt_all_breakpoints)) >= 0; ++line) {
         for (int type = smt_FIRST_BP_TYPE; type <= smt_LAST_BP_TYPE; ++type) {
@@ -150,7 +150,7 @@ void clEditorStateLocker::SerializeBreakpoints(wxStyledTextCtrl* ctrl, wxArraySt
             if (ctrl->MarkerGet(line) & mask) {
                 // We need to serialise both the line and BM type. To keep things simple in sessionmanager, just merge
                 // their strings
-                breapoints.Add(wxString::Format("%d:%d", line, type));
+                breakpoints.Add(wxString::Format("%d:%d", line, type));
             }
         }
     }

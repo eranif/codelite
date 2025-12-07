@@ -21,8 +21,8 @@ bool clConsoleGnomeConsole::FindProcessByCommand(const wxString& name, wxString&
 
     ProcUtils::SafeExecuteCommand(psCommand, arrOutput);
 
-    for(wxString curline : arrOutput) {
-        curline = curline.Trim().Trim(false);
+    for(auto &curline : arrOutput) {
+        curline.Trim().Trim(false);
         wxArrayString tokens = ::wxStringTokenize(curline, " ", wxTOKEN_STRTOK);
         if(tokens.GetCount() < 3) {
             continue;

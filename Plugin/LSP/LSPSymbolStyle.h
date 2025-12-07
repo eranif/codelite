@@ -11,7 +11,22 @@
 
 namespace LSP
 {
-struct WXDLLIMPEXP_SDK LSPSymbolStyle {
+struct WXDLLIMPEXP_SDK LSPSymbolStyle {    
+    enum BITMAP {
+        BITMAP_MODULE,
+        BITMAP_ENUM,
+        BITMAP_ENUMMEMBER,
+        BITMAP_CLASS,
+        BITMAP_STRUCT,
+        BITMAP_FUNCTION,
+        BITMAP_CONSTRUCTOR,
+        BITMAP_VARIABLE,
+        BITMAP_CONTAINER,
+        BITMAP_NAMESPACE,
+        BITMAP_MAX
+    };
+    
+    BITMAP bitmap = BITMAP_VARIABLE;
     wxString icon = "";
     wxColour colour = *wxBLACK;
     bool bold = false;

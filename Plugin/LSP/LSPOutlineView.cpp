@@ -28,12 +28,33 @@ LSPOutlineView::LSPOutlineView(wxWindow* parent, wxWindowID id, long style)
     : wxPanel(parent, id), m_style(style)
 {
     // initialize behaviour from config
-    m_initialiseExpanded = clConfig::Get().Read(kConfigOutlineStartExpanded, true);
+    m_initialiseAllCollapsed = clConfig::Get().Read(kConfigOutlineStartAllCollapsed, false);
+    m_initialiseClassesCollapsed = clConfig::Get().Read(kConfigOutlineStartClassesCollapsed, false);
+    m_initialiseSubclassesCollapsed = clConfig::Get().Read(kConfigOutlineStartSubclassesCollapsed, true);
+    m_initialiseEnumsCollapsed = clConfig::Get().Read(kConfigOutlineStartEnumsCollapsed, true);
+    m_initialiseFunctionsCollapsed = clConfig::Get().Read(kConfigOutlineStartFunctionsCollapsed, true);
+    m_initialiseContainersCollapsed = clConfig::Get().Read(kConfigOutlineStartContainersCollapsed, false);
+    m_initialiseVariablesCollapsed = clConfig::Get().Read(kConfigOutlineStartVariablesCollapsed, true);
     m_keepNamespacesExpanded = clConfig::Get().Read(kConfigOutlineKeepNamespacesExpanded, true);
     m_showDetails = clConfig::Get().Read(kConfigOutlineShowSymbolDetails, true);
     m_showSymbolKind = clConfig::Get().Read(kConfigOutlineShowSymbolKinds, false);
     m_forceTree = clConfig::Get().Read(kConfigOutlineForceTree, true);
     m_sortType = (LSPSymbolParser::SortType) clConfig::Get().Read(kConfigOutlineSortType, (int)LSPSymbolParser::SortType::SORT_LINE);
+    
+    // load bitmaps
+    auto images = clGetManager()->GetStdIcons();
+    m_bitmaps.reserve((int)LSPSymbolStyle::BITMAP_MAX);    
+    // order has to be same as LSPSymbolStyle::BITMAP enum
+    m_bitmaps.push_back(images->LoadBitmap("symbol-module"));
+    m_bitmaps.push_back(images->LoadBitmap("symbol-enum"));
+    m_bitmaps.push_back(images->LoadBitmap("symbol-enummember"));
+    m_bitmaps.push_back(images->LoadBitmap("symbol-class"));
+    m_bitmaps.push_back(images->LoadBitmap("symbol-struct"));
+    m_bitmaps.push_back(images->LoadBitmap("symbol-function"));
+    m_bitmaps.push_back(images->LoadBitmap("symbol-constructor"));
+    m_bitmaps.push_back(images->LoadBitmap("symbol-variable"));
+    m_bitmaps.push_back(images->LoadBitmap("symbol-container"));
+    m_bitmaps.push_back(images->LoadBitmap("symbol-namespace"));
     
     // create controls
     CreateUI();      
@@ -61,6 +82,7 @@ void LSPOutlineView::CreateUI()
     s->Add(m_terminalViewCtrl, 1, wxEXPAND);
     
     m_treeCtrl = new clTreeCtrl(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxTR_DEFAULT_STYLE);    
+    m_treeCtrl->SetBitmaps(&m_bitmaps);
     m_treeCtrl->SetSortFunction(nullptr);
     m_treeCtrl->AddTreeStyle(wxTR_HIDE_ROOT);
     s->Add(m_treeCtrl, 1, wxEXPAND);    
@@ -69,6 +91,9 @@ void LSPOutlineView::CreateUI()
     m_terminalViewCtrl->Bind(wxEVT_KEY_DOWN, &LSPOutlineView::OnListKeyDown, this);
     m_treeCtrl->Bind(wxEVT_KEY_DOWN, &LSPOutlineView::OnListKeyDown, this);
     m_treeCtrl->Bind(wxEVT_TREE_ITEM_ACTIVATED, &LSPOutlineView::OnTreeItemActivated, this);  
+    m_treeCtrl->Bind(wxEVT_TREE_ITEM_EXPANDED, &LSPOutlineView::OnTreeItemExpanded, this);  
+    m_treeCtrl->Bind(wxEVT_TREE_ITEM_COLLAPSED, &LSPOutlineView::OnTreeItemCollapsed, this);  
+    m_treeCtrl->Bind(wxEVT_TREE_SEL_CHANGED, &LSPOutlineView::OnTreeItemSelected, this);  
     Bind(wxEVT_COMMAND_MENU_SELECTED, &LSPOutlineView::OnMenu, this);
 }
     
@@ -111,82 +136,19 @@ void LSPOutlineView::CreateToolbar()
     m_toolbar->AddControl(m_sortOptions, _("Sort"));
     m_toolbar->AddSeparator();
     
-    clAuiToolBarArt::AddTool(m_toolbar, ID_TOOL_COLLAPSE_ALL, _("Collapse All"), images->LoadBitmap("step_out"), "", wxITEM_NORMAL);    
-    clAuiToolBarArt::AddTool(m_toolbar, ID_TOOL_EXPAND_ALL, _("Expand All"), images->LoadBitmap("step_in"), "", wxITEM_NORMAL);    
-    clAuiToolBarArt::AddTool(m_toolbar, ID_TOOL_DETAILS, _("Show Details"), images->LoadBitmap("mime-xml"), "", wxITEM_CHECK);
+    clAuiToolBarArt::AddTool(m_toolbar, ID_TOOL_EXPAND_ALL, _("Expand All"), images->LoadBitmap("expand"), "", wxITEM_NORMAL);    
+    clAuiToolBarArt::AddTool(m_toolbar, ID_TOOL_COLLAPSE_ALL, _("Collapse All"), images->LoadBitmap("collapse"), "", wxITEM_NORMAL);    
+    clAuiToolBarArt::AddTool(m_toolbar, ID_TOOL_DETAILS, _("Show Details"), images->LoadBitmap("detail"), "", wxITEM_CHECK);
     m_toolbar->ToggleTool(ID_TOOL_DETAILS, m_showDetails);    
-    clAuiToolBarArt::AddTool(m_toolbar, ID_TOOL_KIND, _("Show Kind"), images->LoadBitmap("archive"), "", wxITEM_CHECK);
+    clAuiToolBarArt::AddTool(m_toolbar, ID_TOOL_KIND, _("Show Kind"), images->LoadBitmap("type"), "", wxITEM_CHECK);
     m_toolbar->ToggleTool(ID_TOOL_KIND, m_showSymbolKind);
     clAuiToolBarArt::AddTool(m_toolbar, ID_TOOL_MENU, _("Show Settings"), images->LoadBitmap("tools"), "", wxITEM_DROPDOWN);       
 
     m_toolbar->Realize();
     
-    m_toolbar->Bind(wxEVT_TOOL, [&](wxCommandEvent& event) {
-        switch (event.GetId()) {
-            case ID_TOOL_DETAILS: {
-                if (m_mode == Mode::SYMBOL_INFORMATION)
-                    return;
-                m_showDetails = event.IsChecked();                
-                clConfig::Get().Write(kConfigOutlineShowSymbolDetails, m_showDetails);
-                DoInitialiseDocumentSymbol();
-                break;
-            }
-            case ID_TOOL_KIND: {
-                m_showSymbolKind = event.IsChecked();
-                clConfig::Get().Write(kConfigOutlineShowSymbolKinds, m_showSymbolKind);
-                if (m_mode == Mode::DOCUMENT_SYMBOL || m_mode == Mode::SYMBOL_INFORMATION_PARSED)
-                    DoInitialiseDocumentSymbol();
-                else
-                    DoInitialiseSymbolInformation();
-                break;
-            }
-            case ID_TOOL_COLLAPSE_ALL: {
-                if (m_mode == Mode::SYMBOL_INFORMATION)
-                    return;
-                CollapseTree();
-                break;
-            }
-            case ID_TOOL_EXPAND_ALL: {
-                if (m_mode == Mode::SYMBOL_INFORMATION)
-                    return;
-                ExpandTree();
-                break;
-            }
-            default: {}
-        }
-    });
-    
-    m_sortOptions->Bind(wxEVT_CHOICE, [&](wxCommandEvent& event) {        
-        auto* data = static_cast<wxIntClientData*>(event.GetClientObject());
-        if (!data)
-            return;
-        LSPSymbolParser::SortType sort = (LSPSymbolParser::SortType)data->GetValue();        
-        clConfig::Get().Write(kConfigOutlineSortType, (int)sort);
-        SortSymbols(sort);
-        if (m_mode == Mode::DOCUMENT_SYMBOL || m_mode == Mode::SYMBOL_INFORMATION_PARSED)
-            DoInitialiseDocumentSymbol();
-        else
-            DoInitialiseSymbolInformation();
-    });
-    
-    m_toolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, [&](wxAuiToolBarEvent& event) {
-        if (event.GetToolId() == ID_TOOL_MENU) {
-            wxMenu menu;
-            wxMenuItem* item = menu.Append(ID_MENU_INITIALISE_EXPANDED, _("Start with expanded tree"), wxEmptyString, wxITEM_CHECK);
-            item->Check(m_initialiseExpanded);
-            
-            item = menu.Append(ID_MENU_KEEP_NAMESPACE_EXPANDED, _("Keep namespaces expanded"), wxEmptyString, wxITEM_CHECK);
-            item->Check(m_keepNamespacesExpanded);
-            
-            item = menu.Append(ID_MENU_FORCE_TREE, _("Always show Hierarchy (experimental)"), wxEmptyString, wxITEM_CHECK);
-            item->Check(m_forceTree);
-            
-            PopupMenu(&menu, event.GetItemRect().GetBottomLeft());
-        }
-        else {
-            event.Skip();
-        }
-    });
+    m_toolbar->Bind(wxEVT_TOOL, &LSPOutlineView::OnToolBar, this);    
+    m_sortOptions->Bind(wxEVT_CHOICE, &LSPOutlineView::OnSortChanged, this);    
+    m_toolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &LSPOutlineView::OnToolBarDropdown, this);
 }
 
 void LSPOutlineView::DoInitialiseEmpty()
@@ -202,14 +164,15 @@ void LSPOutlineView::DoInitialiseEmpty()
 }
 
 void LSPOutlineView::AddDocumentSymbolRec(wxTreeItemId parent, const LSP::DocumentSymbol& symbol, LexerConf* lexer) {
+    auto images = clGetManager()->GetStdIcons();
     LSPSymbolStyle style(symbol.GetKind(), lexer);
-    wxString name = symbol.CreateNameString(style.icon, false, m_showDetails, m_showSymbolKind);
+    wxString name = symbol.CreateNameString("", false, m_showDetails, m_showSymbolKind);
         
     wxTreeItemData* data = new wxTreeItemData();
     data->SetId( wxTreeItemId((void*)&symbol) );
     
     // add symbol to tree
-    auto node = m_treeCtrl->AppendItem(parent, name, -1, -1, data);
+    auto node = m_treeCtrl->AppendItem(parent, name, style.bitmap, -1, data);
     m_treeCtrl->SetItemBold(node, style.bold);
     m_treeCtrl->SetItemTextColour(node, style.colour);
     
@@ -248,16 +211,55 @@ void LSPOutlineView::DoInitialiseDocumentSymbol()
     }
     
     m_treeCtrl->Commit();
-    if (m_initialiseExpanded)
-        m_treeCtrl->ExpandAll();
-    else
-        CollapseTree();
+    
+    // expand or collapse the tree according to config setting
+    ResetTreeDisplay();
+    
+    m_treeCtrl->Unbind(wxEVT_TREE_ITEM_EXPANDED, &LSPOutlineView::OnTreeItemExpanded, this);  
+    m_treeCtrl->Unbind(wxEVT_TREE_ITEM_COLLAPSED, &LSPOutlineView::OnTreeItemCollapsed, this);  
+    
+    // items in m_treeState are DocumentSymbols wrapped in wxTreeItemId
+    // the tree cannot directly use these, we have to find the corresponding row recursively first
+    // easier to iterate the whole tree and check if each item is in our m_treeState
+    RestoreTreeState(m_treeCtrl->GetRootItem());
+    
+    m_treeCtrl->Bind(wxEVT_TREE_ITEM_EXPANDED, &LSPOutlineView::OnTreeItemExpanded, this);  
+    m_treeCtrl->Bind(wxEVT_TREE_ITEM_COLLAPSED, &LSPOutlineView::OnTreeItemCollapsed, this);  
         
     Layout();
     if (m_textCtrlFilter)
         m_textCtrlFilter->CallAfter(&wxTextCtrl::SetFocus);
 }
 
+void LSPOutlineView::RestoreTreeState(wxTreeItemId parent)
+{
+    wxTreeItemIdValue cookie;
+    wxTreeItemId child = m_treeCtrl->GetFirstChild(parent, cookie);
+    while (child.IsOk()) {
+        // get the DocumentSymbol
+        auto* data = m_treeCtrl->GetItemData(child);
+        
+        if (data->GetId() == m_treeState.selectedNode) {
+            m_treeCtrl->SelectItem(child);
+        }
+        
+        auto it2 = std::find(m_treeState.collapsedNodes.begin(), m_treeState.collapsedNodes.end(), data->GetId());
+        if (it2 != m_treeState.collapsedNodes.end())
+            m_treeCtrl->Collapse(child);
+            
+        auto it = std::find(m_treeState.expandedNodes.begin(), m_treeState.expandedNodes.end(), data->GetId());
+        if (it != m_treeState.expandedNodes.end())
+            m_treeCtrl->Expand(child);        
+            
+        if (m_treeCtrl->GetChildrenCount(child, false) > 0) {
+            // recursively restore the state
+            RestoreTreeState(child);
+        }
+        
+        child = m_treeCtrl->GetNextChild(parent, cookie);
+    }
+}
+    
 void LSPOutlineView::DoInitialiseSymbolInformation()
 {
     m_msgPanel->Hide();
@@ -409,10 +411,57 @@ void LSPOutlineView::OnItemActivated(wxDataViewEvent& event)
     DoActivate(item);
 }
 
+void LSPOutlineView::OnTreeItemSelected(wxTreeEvent& event) {
+    auto item = event.GetItem();
+    CHECK_ITEM_RET(item);
+    auto* data = m_treeCtrl->GetItemData(item);
+    m_treeState.selectedNode = data->GetId();
+    if (m_style & STYLE_ACTIVATE_ON_SELECTION)
+        DoActivate(item);
+}
+
 void LSPOutlineView::OnTreeItemActivated(wxTreeEvent& event) {
     auto item = event.GetItem();
     CHECK_ITEM_RET(item);
-    DoActivate(item);
+    auto* data = m_treeCtrl->GetItemData(item);
+    m_treeState.selectedNode = data->GetId();
+    if (m_treeCtrl->GetChildrenCount(item, false) > 0) {
+        if (m_treeCtrl->IsExpanded(item))
+            m_treeCtrl->Collapse(item);
+        else
+            m_treeCtrl->Expand(item);
+    }
+    else {
+        DoActivate(item);
+    }
+}
+
+void LSPOutlineView::OnTreeItemExpanded(wxTreeEvent& event)
+{
+    wxTreeItemId item = event.GetItem();
+    CHECK_ITEM_RET(item);
+    auto* data = m_treeCtrl->GetItemData(item);
+    auto symbol = data->GetId();
+    auto it = std::find(m_treeState.expandedNodes.begin(), m_treeState.expandedNodes.end(), symbol);
+    if (it == m_treeState.expandedNodes.end())
+        m_treeState.expandedNodes.push_back(symbol);
+        
+    std::erase(m_treeState.collapsedNodes, symbol);
+        
+    event.Skip();
+}
+
+void LSPOutlineView::OnTreeItemCollapsed(wxTreeEvent& event)
+{   
+    wxTreeItemId item = event.GetItem();
+    CHECK_ITEM_RET(item);
+    auto* data = m_treeCtrl->GetItemData(item);
+    auto symbol = data->GetId();
+    auto it = std::find(m_treeState.collapsedNodes.begin(), m_treeState.collapsedNodes.end(), symbol);
+    if (it == m_treeState.collapsedNodes.end())
+        m_treeState.collapsedNodes.push_back(symbol);
+    std::erase(m_treeState.expandedNodes, symbol);
+    event.Skip();
 }
 
 void LSPOutlineView::OnKeyDown(wxKeyEvent& event)
@@ -551,8 +600,8 @@ void LSPOutlineView::SetSymbols(const std::vector<SymbolInformation>& symbols, c
     m_currentSymbolsFileName = filename;
     m_symbolsInformation = symbols;    
     m_toolbar->EnableTool(ID_TOOL_DETAILS, false);
-    m_toolbar->EnableTool(ID_TOOL_KIND, true);
-    
+    m_toolbar->EnableTool(ID_TOOL_KIND, true);    
+    m_treeState = TreeState();
     if (m_forceTree) {
         m_documentSymbols = LSPSymbolParser::Parse(symbols);
         m_mode = Mode::SYMBOL_INFORMATION_PARSED;
@@ -577,8 +626,9 @@ void LSPOutlineView::SetSymbols(const std::vector<DocumentSymbol>& symbols, cons
     }
     
     m_currentSymbolsFileName = filename;
-    m_documentSymbols = symbols;
-        
+    m_documentSymbols = symbols;        
+    m_treeState = TreeState();
+    
     if (symbols.empty()) {
         ShowMessage(_("No Symbols received from language server."), false);
         return;
@@ -636,7 +686,7 @@ void LSPOutlineView::DoActivate(const wxTreeItemId& item) {
     wxTreeItemData* data = m_treeCtrl->GetItemData(item);
     CHECK_PTR_RET(data);        
 
-    LSP::DocumentSymbol* symbol = reinterpret_cast<LSP::DocumentSymbol*>(data->GetId().m_pItem);
+    LSP::DocumentSymbol* symbol = static_cast<LSP::DocumentSymbol*>(data->GetId().m_pItem);
     CHECK_PTR_RET(symbol);
     
     // open the editor and go to
@@ -658,7 +708,78 @@ void LSPOutlineView::DoActivate(const wxTreeItemId& item) {
 
 
 void LSPOutlineView::SortSymbols(LSPSymbolParser::SortType sort) 
-{    
+{
+    using vec_t = std::vector<LSP::DocumentSymbol>;
+    // sorting the symbols vector invalidates our TreeState, which uses pointers to the symbols
+    // so we need to copy the current collapsed/expanded/selected state first and restore it after sorting
+    
+    // map tree items to shallow copies of their referenced symbols
+    auto mapShallow = [](const std::vector<wxTreeItemId>& items) -> vec_t {        
+        vec_t target;
+        target.reserve(items.size());
+        for (const auto& item : items) {
+            DocumentSymbol* s = static_cast<DocumentSymbol*>(item.GetID());
+            auto it = target.insert(target.end(), LSP::DocumentSymbol());
+            it->SetName(s->GetName());
+            it->SetRange(s->GetRange());
+            it->SetKind(s->GetKind());
+        }
+        return target;
+    };
+    
+    // compare if two symbols are the same based on name, kind and range
+    auto isSame = [](const DocumentSymbol& a, const DocumentSymbol& b) -> bool {
+        return  a.GetName() == b.GetName() && 
+                a.GetKind() == b.GetKind() &&
+                a.GetRange().GetStart() == b.GetRange().GetStart() &&
+                a.GetRange().GetEnd() == b.GetRange().GetEnd();
+    };
+    
+    // recursive function to set the expanded state again after the tree was rebuild
+    std::function<void(DocumentSymbol&, const vec_t&, const vec_t&, const DocumentSymbol&)> rebuildState = 
+        [&](DocumentSymbol& symbol, const vec_t& expanded, const vec_t& collapsed, const DocumentSymbol& selected) 
+    {
+        // selected previously selected node again
+        if (isSame(symbol, selected)) {
+            m_treeState.selectedNode = wxTreeItemId(&symbol);
+        }
+                
+        if (symbol.GetChildren().size() > 0) {            
+            // if the node was previously expanded, do it again
+            for (const auto& other : expanded) {
+                if (isSame(symbol, other)) {
+                    m_treeState.expandedNodes.push_back(wxTreeItemId(&symbol));
+                    break;
+                }
+            }
+            // if the node was previously collapsed, do it again
+            for (const auto& other : collapsed) {
+                if (isSame(symbol, other)) {
+                    m_treeState.collapsedNodes.push_back(wxTreeItemId(&symbol));
+                    break;
+                }
+            }
+            // recursion
+            for (auto& child : symbol.GetChildren()) {
+                rebuildState(child, expanded, collapsed, selected);
+            }
+        }
+    };
+    
+    // copy existing state
+    vec_t expanded = mapShallow(m_treeState.expandedNodes);
+    vec_t collapsed = mapShallow(m_treeState.collapsedNodes);
+    DocumentSymbol selected;
+    if (m_treeState.selectedNode.IsOk()) {
+        auto* selectedPtr = static_cast<DocumentSymbol*>(m_treeState.selectedNode.GetID());
+        selected = *selectedPtr;
+    }    
+    
+    // clear old state
+    m_treeState.expandedNodes.clear();
+    m_treeState.collapsedNodes.clear();
+    
+    // perform sort
     switch (m_mode) {
         case Mode::DOCUMENT_SYMBOL: wxFALLTHROUGH;
         case Mode::SYMBOL_INFORMATION_PARSED:
@@ -668,30 +789,40 @@ void LSPOutlineView::SortSymbols(LSPSymbolParser::SortType sort)
             LSPSymbolParser::Sort(m_symbolsInformation, sort);
             break;
     }
+    
+    // restore state
+    for (auto& symbol : m_documentSymbols) {
+        rebuildState(symbol, expanded, collapsed, selected);
+    }
 }
 
 
 void LSPOutlineView::CollapseTree()
-{
+{ 
+    m_treeCtrl->Unbind(wxEVT_TREE_ITEM_COLLAPSED, &LSPOutlineView::OnTreeItemCollapsed, this);  
+    m_treeCtrl->Unbind(wxEVT_TREE_ITEM_EXPANDED, &LSPOutlineView::OnTreeItemExpanded, this);  
     m_treeCtrl->CollapseAll();
-    
     if (m_keepNamespacesExpanded) {
         // expand namespaces in base level
         wxTreeItemIdValue cookie;
         auto item = m_treeCtrl->GetFirstChild(m_treeCtrl->GetRootItem(), cookie);
         while (item.IsOk()) {        
             auto* data = m_treeCtrl->GetItemData(item);
-            auto* symbol = reinterpret_cast<DocumentSymbol*>(data->GetId().m_pItem);
+            auto* symbol = static_cast<DocumentSymbol*>(data->GetId().m_pItem);
             if (symbol->GetKind() == eSymbolKind::kSK_Namespace)
                 m_treeCtrl->Expand(item);
             item = m_treeCtrl->GetNextChild(m_treeCtrl->GetRootItem(), cookie);
         }
-    }
+    }  
+    m_treeCtrl->Bind(wxEVT_TREE_ITEM_EXPANDED, &LSPOutlineView::OnTreeItemExpanded, this);  
+    m_treeCtrl->Bind(wxEVT_TREE_ITEM_COLLAPSED, &LSPOutlineView::OnTreeItemCollapsed, this);   
 }
 
 void LSPOutlineView::ExpandTree()
 {
-    m_treeCtrl->ExpandAll();
+    m_treeCtrl->Unbind(wxEVT_TREE_ITEM_EXPANDED, &LSPOutlineView::OnTreeItemExpanded, this); 
+    m_treeCtrl->ExpandAll();    
+    m_treeCtrl->Bind(wxEVT_TREE_ITEM_EXPANDED, &LSPOutlineView::OnTreeItemExpanded, this);  
 }
 
 void LSPOutlineView::ClearView()
@@ -701,6 +832,7 @@ void LSPOutlineView::ClearView()
     m_treeCtrl->DeleteAllItems();
     m_documentSymbols.clear();
     m_symbolsInformation.clear();
+    m_treeState = TreeState();
 }
 
 void LSPOutlineView::ShowMessage(const wxString& message, bool showLoadingIndicator) {
@@ -741,17 +873,131 @@ bool LSPOutlineView::CheckAndRequest(const wxString& filename) {
 }
 
 
+void LSPOutlineView::ResetTreeDisplay() {
+    wxTreeItemIdValue cookie;
+    wxTreeItemId root = m_treeCtrl->GetRootItem();
+    if (m_initialiseAllCollapsed && !m_treeState.manuallyExpanded) {
+        CollapseTree();
+        return;
+    }
+    
+    std::function<void(const wxTreeItemId&, const DocumentSymbol*)> reset = [&](const wxTreeItemId& item, const DocumentSymbol* parent) {
+        auto* data = m_treeCtrl->GetItemData(item);
+        auto* symbol = static_cast<DocumentSymbol*>(data->GetId().GetID());
+        switch (symbol->GetKind()) {
+            case eSymbolKind::kSK_Enum:
+                if (m_initialiseEnumsCollapsed)
+                    m_treeCtrl->Collapse(item);
+                else
+                    m_treeCtrl->Expand(item);
+                break;
+            case LSP::eSymbolKind::kSK_Class: wxFALLTHROUGH;
+            case LSP::eSymbolKind::kSK_Struct:
+                if (m_initialiseClassesCollapsed)
+                    m_treeCtrl->Collapse(item);
+                else if (m_initialiseSubclassesCollapsed && parent != nullptr) {
+                    eSymbolKind parentKind = parent->GetKind();
+                    if (parentKind == eSymbolKind::kSK_Class 
+                        || parentKind == eSymbolKind::kSK_Struct) 
+                    {                        
+                        m_treeCtrl->Collapse(item);
+                    }
+                    else {
+                        m_treeCtrl->Expand(item);
+                    }
+                }
+                else
+                    m_treeCtrl->Expand(item);
+                break;
+            case eSymbolKind::kSK_Method: wxFALLTHROUGH;
+            case eSymbolKind::kSK_Constructor: wxFALLTHROUGH;
+            case eSymbolKind::kSK_Function:
+                if (m_initialiseFunctionsCollapsed)
+                    m_treeCtrl->Collapse(item);
+                else
+                    m_treeCtrl->Expand(item);
+                break;
+            case eSymbolKind::kSK_Container:
+                if (m_initialiseContainersCollapsed)
+                    m_treeCtrl->Collapse(item);
+                else
+                    m_treeCtrl->Expand(item);
+                break;
+            case eSymbolKind::kSK_Variable: wxFALLTHROUGH;
+            case eSymbolKind::kSK_Field: wxFALLTHROUGH;
+            case eSymbolKind::kSK_String: 
+                if (m_initialiseVariablesCollapsed)
+                    m_treeCtrl->Collapse(item);
+                else
+                    m_treeCtrl->Expand(item);
+                break;
+            default: 
+                m_treeCtrl->Expand(item);
+        }  
+        
+        if (m_treeCtrl->GetChildrenCount(item) > 0) {    
+            wxTreeItemIdValue _cookie;
+            wxTreeItemId child = m_treeCtrl->GetFirstChild(item, _cookie);
+            while (child.IsOk()) {
+                reset(child, symbol);
+                child = m_treeCtrl->GetNextChild(item, _cookie);
+            }
+        }
+    };
+    wxTreeItemId item = m_treeCtrl->GetFirstChild(root, cookie);
+    while (item.IsOk()) {        
+        reset(item, nullptr);
+        item = m_treeCtrl->GetNextChild(root, cookie);
+    }
+}
+    
 void LSPOutlineView::OnMenu(wxCommandEvent& event)
 {
     switch(event.GetId()) {
-        case ID_MENU_INITIALISE_EXPANDED: {
-            m_initialiseExpanded = event.IsChecked();
-            if (m_initialiseExpanded)
-               ExpandTree();
+        case ID_MENU_INITIALISE_ALL_COLLAPSED: {
+            m_initialiseAllCollapsed = event.IsChecked();
+            if (m_initialiseAllCollapsed)
+               CollapseTree();
             else   
-                CollapseTree();
+                ExpandTree();
                 
-            clConfig::Get().Write(kConfigOutlineStartExpanded, m_initialiseExpanded);
+            clConfig::Get().Write(kConfigOutlineStartAllCollapsed, m_initialiseAllCollapsed);
+            break;
+        }
+        case ID_MENU_INITIALISE_ENUMS_COLLAPSED: {
+            m_initialiseEnumsCollapsed = event.IsChecked();
+            ResetTreeDisplay();                
+            clConfig::Get().Write(kConfigOutlineStartEnumsCollapsed, m_initialiseEnumsCollapsed);
+            break;
+        }
+        case ID_MENU_INITIALISE_CLASSES_COLLAPSED: {
+            m_initialiseClassesCollapsed = event.IsChecked();
+            ResetTreeDisplay();                
+            clConfig::Get().Write(kConfigOutlineStartClassesCollapsed, m_initialiseClassesCollapsed);
+            break;
+        }
+        case ID_MENU_INITIALISE_SUBCLASSES_COLLAPSED: {
+            m_initialiseSubclassesCollapsed = event.IsChecked();
+            ResetTreeDisplay();                
+            clConfig::Get().Write(kConfigOutlineStartSubclassesCollapsed, m_initialiseSubclassesCollapsed);
+            break;
+        }
+        case ID_MENU_INITIALISE_FUNCTIONS_COLLAPSED: {
+            m_initialiseFunctionsCollapsed = event.IsChecked();
+            ResetTreeDisplay();                
+            clConfig::Get().Write(kConfigOutlineStartFunctionsCollapsed, m_initialiseFunctionsCollapsed);
+            break;
+        }
+        case ID_MENU_INITIALISE_CONTAINERS_COLLAPSED: {
+            m_initialiseContainersCollapsed = event.IsChecked();
+            ResetTreeDisplay();                
+            clConfig::Get().Write(kConfigOutlineStartContainersCollapsed, m_initialiseContainersCollapsed);
+            break;
+        }
+        case ID_MENU_INITIALISE_VARIABLES_COLLAPSED: {
+            m_initialiseVariablesCollapsed = event.IsChecked();
+            ResetTreeDisplay();                
+            clConfig::Get().Write(kConfigOutlineStartVariablesCollapsed, m_initialiseVariablesCollapsed);
             break;
         }
         case ID_MENU_KEEP_NAMESPACE_EXPANDED: {
@@ -769,4 +1015,99 @@ void LSPOutlineView::OnMenu(wxCommandEvent& event)
             break;
         }
     }
+}
+
+void LSPOutlineView::OnToolBar(wxCommandEvent& event)
+{
+    switch (event.GetId()) {
+        case ID_TOOL_DETAILS: {
+            if (m_mode == Mode::SYMBOL_INFORMATION)
+                return;
+            m_showDetails = event.IsChecked();                
+            clConfig::Get().Write(kConfigOutlineShowSymbolDetails, m_showDetails);
+            DoInitialiseDocumentSymbol();
+            break;
+        }
+        case ID_TOOL_KIND: {
+            m_showSymbolKind = event.IsChecked();
+            clConfig::Get().Write(kConfigOutlineShowSymbolKinds, m_showSymbolKind);
+            if (m_mode == Mode::DOCUMENT_SYMBOL || m_mode == Mode::SYMBOL_INFORMATION_PARSED)
+                DoInitialiseDocumentSymbol();
+            else
+                DoInitialiseSymbolInformation();
+            break;
+        }
+        case ID_TOOL_COLLAPSE_ALL: {
+            if (m_mode == Mode::SYMBOL_INFORMATION)
+                return;
+            CollapseTree();
+            m_treeState.manuallyCollapsed = true;                
+            m_treeState.manuallyExpanded = false;
+            m_treeState.expandedNodes.clear();
+            break;
+        }
+        case ID_TOOL_EXPAND_ALL: {
+            if (m_mode == Mode::SYMBOL_INFORMATION)
+                return;
+            ExpandTree();                
+            m_treeState.manuallyExpanded = true;
+            m_treeState.manuallyCollapsed = false; 
+            m_treeState.collapsedNodes.clear();
+            break;
+        }
+        default: {}
+    }
+}
+void LSPOutlineView::OnToolBarDropdown(wxAuiToolBarEvent& event)
+{
+    // show the settings menu
+    if (event.GetToolId() == ID_TOOL_MENU) {
+        auto images = clGetManager()->GetStdIcons();
+        // submenu for initially expanded/collapsed items
+        wxMenu* submenu = new wxMenu();        
+        wxMenuItem* item = submenu->Append(ID_MENU_INITIALISE_ALL_COLLAPSED, _("Start with collapsed tree"), wxEmptyString, wxITEM_CHECK);
+        item->Check(m_initialiseAllCollapsed);        
+        item = submenu->Append(ID_MENU_INITIALISE_ENUMS_COLLAPSED, _("Start with collapsed enums"), wxEmptyString, wxITEM_CHECK);
+        item->Check(m_initialiseEnumsCollapsed);        
+        item = submenu->Append(ID_MENU_INITIALISE_SUBCLASSES_COLLAPSED, _("Start with collapsed subclasses"), wxEmptyString, wxITEM_CHECK);
+        item->Check(m_initialiseSubclassesCollapsed);        
+        item = submenu->Append(ID_MENU_INITIALISE_FUNCTIONS_COLLAPSED, _("Start with collapsed functions"), wxEmptyString, wxITEM_CHECK);
+        item->Check(m_initialiseFunctionsCollapsed);        
+        item = submenu->Append(ID_MENU_INITIALISE_CLASSES_COLLAPSED, _("Start with collapsed classes"), wxEmptyString, wxITEM_CHECK);
+        item->Check(m_initialiseClassesCollapsed);           
+        item = submenu->Append(ID_MENU_INITIALISE_CONTAINERS_COLLAPSED, _("Start with collapsed containers"), wxEmptyString, wxITEM_CHECK);
+        item->Check(m_initialiseContainersCollapsed);          
+        item = submenu->Append(ID_MENU_INITIALISE_VARIABLES_COLLAPSED, _("Start with collapsed variables"), wxEmptyString, wxITEM_CHECK);
+        item->Check(m_initialiseVariablesCollapsed);        
+        
+        // dropdown menu
+        wxMenu menu;
+        item = new wxMenuItem(&menu, wxID_ANY, _("Initial display"), _("Change the display state of the symbol hierarchy after loading"), wxITEM_NORMAL, submenu);
+        item->SetBitmap(images->LoadBitmap("check-all"));
+        menu.Append(item);
+        
+        item = menu.Append(ID_MENU_KEEP_NAMESPACE_EXPANDED, _("Keep namespaces expanded"), wxEmptyString, wxITEM_CHECK);
+        item->Check(m_keepNamespacesExpanded);
+        
+        item = menu.Append(ID_MENU_FORCE_TREE, _("Always show hierarchy (experimental)"), wxEmptyString, wxITEM_CHECK);
+        item->Check(m_forceTree);
+        
+        PopupMenu(&menu, event.GetItemRect().GetBottomLeft());
+    }
+    else {
+        event.Skip();
+    }
+}
+void LSPOutlineView::OnSortChanged(wxCommandEvent& event)
+{
+    auto* data = static_cast<wxIntClientData*>(event.GetClientObject());
+    if (!data)
+        return;
+    LSPSymbolParser::SortType sort = (LSPSymbolParser::SortType)data->GetValue();        
+    clConfig::Get().Write(kConfigOutlineSortType, (int)sort);
+    SortSymbols(sort);
+    if (m_mode == Mode::DOCUMENT_SYMBOL || m_mode == Mode::SYMBOL_INFORMATION_PARSED)
+        DoInitialiseDocumentSymbol();
+    else
+        DoInitialiseSymbolInformation();
 }

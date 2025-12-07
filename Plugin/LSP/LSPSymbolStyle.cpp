@@ -15,32 +15,61 @@ LSPSymbolStyle::LSPSymbolStyle(eSymbolKind kind, LexerConf* lexer)
         case kSK_File:
         case kSK_Module:
         case kSK_Package:
-        case kSK_Container:
+            bitmap = BITMAP_MODULE;
             icon = ICON_MODULE;
             colour = lexer->GetProperty(wxSTC_P_STRING).GetFgColour();
             break;
-        case kSK_Class:
-        case kSK_Struct:
-        case kSK_Interface:
-        case kSK_Object:
-        case kSK_Enum:
+        case kSK_Container:
+            bitmap = BITMAP_CONTAINER;
+            icon = ICON_MODULE;
+            colour = lexer->GetProperty(wxSTC_P_DECORATOR).GetFgColour();
+            break;
+        case kSK_Struct:      
+            bitmap = BITMAP_STRUCT;
             icon = ICON_CLASS;
+            colour = lexer->GetProperty(wxSTC_P_CLASSNAME).GetFgColour();
+            bold = true;
+            break;
+        case kSK_Class:
+        case kSK_Interface:
+        case kSK_Object:        
+            bitmap = BITMAP_CLASS;
+            icon = ICON_CLASS;
+            colour = lexer->GetProperty(wxSTC_P_CLASSNAME).GetFgColour();
+            bold = true;
+            break;
+        case kSK_Enum:
+            bitmap = BITMAP_ENUM;
+            icon = ICON_ENUMERATOR;
             colour = lexer->GetProperty(wxSTC_P_WORD2).GetFgColour();
             bold = true;
             break;
         case kSK_Method:
-        case kSK_Function:
-        case kSK_Constructor:            
+        case kSK_Function:       
+            bitmap = BITMAP_FUNCTION;       
             icon = ICON_FUNCTION;
             colour = lexer->GetProperty(wxSTC_P_DEFNAME).GetFgColour();
             isFunction = true;
             break;
+        case kSK_Constructor:   
+            bitmap = BITMAP_CONSTRUCTOR;    
+            icon = ICON_FUNCTION;
+            colour = lexer->GetProperty(wxSTC_P_STRING).GetFgColour();
+            isFunction = true;
+            break;
         case kSK_TypeParameter: // define
-        case kSK_EnumMember:        
+        case kSK_EnumMember:     
+            bitmap = BITMAP_ENUMMEMBER;    
             icon = ICON_ENUMERATOR;
             colour = lexer->GetProperty(wxSTC_P_OPERATOR).GetFgColour();
             break;
+        case kSK_Namespace:     
+            bitmap = BITMAP_NAMESPACE;    
+            icon = ICON_MODULE;
+            colour = lexer->GetProperty(wxSTC_P_DECORATOR).GetFgColour();
+            break;
         default:     
+            bitmap = BITMAP_VARIABLE;   
             icon = ICON_VARIABLE;
             colour = lexer->GetProperty(wxSTC_P_IDENTIFIER).GetFgColour();
             break;

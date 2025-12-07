@@ -13,7 +13,6 @@ namespace LSP
             kSK_Interface,
             kSK_Enum,
             kSK_EnumMember,
-            kSK_Container,
             kSK_Constructor,
             kSK_Method,
             kSK_Function,
@@ -29,6 +28,7 @@ namespace LSP
             kSK_Key,
             kSK_Event,
             kSK_TypeParameter,
+            kSK_Container,
             kSK_Null
         };
         
@@ -205,11 +205,7 @@ namespace LSP
     {
         using SymbolList = std::vector<LSP::SymbolInformation>;
         using index_t = SymbolList::size_type;
-        // root node
-//        DocumentSymbol root;
-//		root.SetName("Root");
-//		root.SetKind(eSymbolKind::kSK_Container);
-        
+               
         std::map<index_t, long> parents;
         std::vector<index_t> root_nodes;
         std::vector<DocumentSymbol> result;
@@ -223,10 +219,6 @@ namespace LSP
                 parents[i] = parent;    
             else
                 root_nodes.push_back(i);
-//			SymbolInformation* parent = FindParent(symbol);
-//			if(parent == nullptr) {
-//				parent = &m_tree;
-//			}
         }
                 
         std::function<void(DocumentSymbol&, index_t)> AddChildren = [&](DocumentSymbol& symbol, index_t index) {
@@ -246,14 +238,6 @@ namespace LSP
             DocumentSymbol ds = MakeDocumentSymbol(si);
             AddChildren(ds, rootIndex);
             result.insert(result.end(), ds);
-            // find all nodes belonging to this parent
-//            for (const auto& rel : parents) {
-//                if (rel.second == rootIndex) {
-//                    DocumentSymbol child = MakeDocumentSymbol(symbols[rel.first]);
-//                    // find all nodes belonging to this child
-//                    ds.GetChildren().push_back(child);
-//                }
-//            }            
         }
         return result;
     }

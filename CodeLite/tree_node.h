@@ -37,7 +37,7 @@ class TreeNode
 	TKey  m_key;
 	TData m_data;
 	TreeNode* m_parent;
-	std::map<TreeNode*, TreeNode*> m_childs;
+	std::map<TreeNode*, TreeNode*> m_children;
 	typename std::map<TreeNode*, TreeNode*>::iterator m_pos;
 
 public:
@@ -168,12 +168,12 @@ public:
 	TreeNode* Next();
 
 	/**
-	 * Test if this node has more childs.
+	 * Test if this node has more children.
 	 * This call is usually used before issuing a Next() call.
 	 * \return true if the next call to Next() will return a valid child pointer
 	 */
-	bool HasMore();
-	std::map<TreeNode*, TreeNode*>& GetChilds() { return m_childs; }
+	bool HasMore() const;
+	std::map<TreeNode*, TreeNode*>& GetChildren() { return m_children; }
 };
 
 template <class TKey, class TData>
@@ -185,25 +185,25 @@ TreeNode<TKey, TData>::TreeNode(const TKey& key, const TData& data, TreeNode* pa
 template <class TKey, class TData>
 TreeNode<TKey, TData>::~TreeNode()
 {
-	for (const auto& [_, p] : m_childs)
+	for (const auto& [_, p] : m_children)
 	{
 		delete p;
 	}
-	m_childs.clear();
+	m_children.clear();
 }
 
 template <class TKey, class TData>
 TreeNode<TKey, TData>* TreeNode<TKey, TData>::AddChild(const TKey& key, const TData& data)
 {
 	TreeNode* newNode = new TreeNode(key, data, this);
-	m_childs[newNode] = newNode;
+	m_children[newNode] = newNode;
 	return newNode;
 }
 
 template <class TKey, class TData>
 TreeNode<TKey, TData>* TreeNode<TKey, TData>::AddChild(TreeNode* newNode)
 {
-	m_childs[newNode] = newNode;
+	m_children[newNode] = newNode;
 	return newNode;
 }
 
@@ -219,9 +219,9 @@ TreeNode<TKey, TData>* TreeNode<TKey, TData>::Remove(const TKey& key)
 			return NULL;
 		}
 
-		typename std::map<TreeNode*, TreeNode*>::iterator iter = node->m_parent->m_childs.find(node);
-		if(iter != node->m_parent->m_childs.end())
-			node->m_parent->m_childs.erase(iter);
+		typename std::map<TreeNode*, TreeNode*>::iterator iter = node->m_parent->m_children.find(node);
+		if (iter != node->m_parent->m_children.end())
+			node->m_parent->m_children.erase(iter);
 		return node;
 	}
 	return NULL;
@@ -235,15 +235,15 @@ TreeNode<TKey, TData>* TreeNode<TKey, TData>::Find(const TKey& key)
 
 	typename std::map<TreeNode*, TreeNode*>::iterator iter;
 
-	// Scan first the childs of this node
-	for (auto& [_, child] : m_childs)
+	// Scan first the children of this node
+	for (auto& [_, child] : m_children)
 	{
 		if (child->GetKey() == key)
 			return child;
 	}
 
 	// Scan level below
-	for (auto& [_, child] : m_childs)
+	for (auto& [_, child] : m_children)
 	{
 		TreeNode* node = child->Find(key);
 		if (node) return node;
@@ -261,7 +261,7 @@ void TreeNode<TKey, TData>::Print(std::ostream& stream, int depth) const
 	stream << tab.c_str() << m_key << std::endl;
 	depth++;
 
-	for (const auto& [_, child] : m_childs)
+	for (const auto& [_, child] : m_children)
 		child->Print(stream, depth);
 }
 
@@ -269,7 +269,7 @@ void TreeNode<TKey, TData>::Print(std::ostream& stream, int depth) const
 template <class TKey, class TData>
 void TreeNode<TKey, TData>::First()
 {
-	m_pos = m_childs.begin();
+	m_pos = m_children.begin();
 }
 
 template <class TKey, class TData>
@@ -283,9 +283,9 @@ TreeNode<TKey, TData>* TreeNode<TKey, TData>::Next()
 }
 
 template <class TKey, class TData>
-bool TreeNode<TKey, TData>::HasMore()
+bool TreeNode<TKey, TData>::HasMore() const
 {
-	return (m_pos != m_childs.end());
+	return m_pos != m_children.end();
 }
 
 //----------------------------------------------------------------
@@ -331,7 +331,7 @@ void TreeWalker<TKey, TData>::GetChildren(TreeNode<TKey, TData>* node)
 {
 	if(node == NULL)
 		return;
-	for (auto& [_, child] : node->GetChilds())
+	for (auto& [_, child] : node->GetChildren())
 	{
 		m_children.push_back(child);
 		GetChildren(child);

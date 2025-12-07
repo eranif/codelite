@@ -108,8 +108,8 @@ protected:
 
 protected:
     int m_DBG_USERR;
-    int m_QUERY_NUM_CHILDS;
-    int m_LIST_CHILDS;
+    int m_QUERY_NUM_CHILDREN;
+    int m_LIST_CHILDREN;
 
 public:
     DebuggerTreeListCtrlBase(wxWindow* parent, wxWindowID id = wxID_ANY, bool withButtonsPane = true,

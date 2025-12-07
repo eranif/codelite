@@ -159,8 +159,8 @@ CompilerPtr BuildSettingsConfig::GetNextCompiler(BuildSettingsConfigCookie& cook
             // advance the child to the next child and bail out
             cookie.child = cookie.child->GetNext();
 
-            // incase we don't have more childs to iterate
-            // reset the parent as well so the next call to GetNexeLexer() will fail
+            // incase we don't have more children to iterate
+            // reset the parent as well so the next call to GetNextCompiler() will fail
             if(cookie.child == NULL) {
                 cookie.parent = NULL;
             }

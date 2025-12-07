@@ -3072,13 +3072,13 @@ void Manager::DebuggerUpdate(const DebuggerEventData& event)
     } break;
     case DBG_UR_LISTCHILDREN: {
 
-        if (event.m_userReason == QUERY_NUM_CHILDS || event.m_userReason == LIST_WATCH_CHILDS) {
+        if (event.m_userReason == QUERY_NUM_CHILDREN || event.m_userReason == LIST_WATCH_CHILDREN) {
             // Watch table
             clMainFrame::Get()->GetDebuggerPane()->GetWatchesTable()->OnListChildren(event);
 
-        } else if (event.m_userReason == QUERY_LOCALS_CHILDS ||
-                   event.m_userReason == LIST_LOCALS_CHILDS ||
-                   event.m_userReason == QUERY_LOCALS_CHILDS_FAKE_NODE) {
+        } else if (event.m_userReason == QUERY_LOCAL_CHILDREN ||
+                   event.m_userReason == LIST_LOCAL_CHILDREN ||
+                   event.m_userReason == QUERY_LOCAL_CHILDREN_FAKE_NODE) {
             // Locals table
             clMainFrame::Get()->GetDebuggerPane()->GetLocalsTable()->OnListChildren(event);
 
@@ -3235,7 +3235,7 @@ void Manager::DoShowQuickWatchDialog(const DebuggerEventData& event)
             view->m_variableName << wxT(" [") << event.m_variableObject.typeName << wxT("] ");
         }
 
-        if (event.m_variableObject.numChilds > 0 || event.m_variableObject.has_more) {
+        if (event.m_variableObject.numChild > 0 || event.m_variableObject.has_more) {
             // Complex type
             dbgr->ListChildren(event.m_variableObject.gdbId, event.m_userReason);
 

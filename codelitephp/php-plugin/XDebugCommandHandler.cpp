@@ -1,7 +1,7 @@
 #include "XDebugCommandHandler.h"
 
-XDebugCommandHandler::XDebugCommandHandler(XDebugManager* mgr, int transcationId)
+XDebugCommandHandler::XDebugCommandHandler(XDebugManager* mgr, int transactionId)
     : m_mgr(mgr)
-    , m_transactionId(transcationId)
+    , m_transactionId(transactionId)
 {
 }

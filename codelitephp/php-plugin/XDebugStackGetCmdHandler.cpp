@@ -10,8 +10,8 @@
 #include <wx/socket.h>
 #include <wx/xml/xml.h>
 
-XDebugStackGetCmdHandler::XDebugStackGetCmdHandler(XDebugManager* mgr, int transcationId, int requestedStack)
-    : XDebugCommandHandler(mgr, transcationId)
+XDebugStackGetCmdHandler::XDebugStackGetCmdHandler(XDebugManager* mgr, int transactionId, int requestedStack)
+    : XDebugCommandHandler(mgr, transactionId)
     , m_requestedStack(requestedStack)
 {
 }

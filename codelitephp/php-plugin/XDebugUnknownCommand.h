@@ -31,7 +31,7 @@
 class XDebugUnknownCommand : public XDebugCommandHandler
 {
 public:
-    XDebugUnknownCommand(XDebugManager* mgr, int transcationId);
+    XDebugUnknownCommand(XDebugManager* mgr, int transactionId);
     virtual ~XDebugUnknownCommand() = default;
 
 public:

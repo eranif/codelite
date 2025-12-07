@@ -6,8 +6,8 @@
 #include <wx/sstream.h>
 #include <wx/xml/xml.h>
 
-XDebugUnknownCommand::XDebugUnknownCommand(XDebugManager* mgr, int transcationId)
-    : XDebugCommandHandler(mgr, transcationId)
+XDebugUnknownCommand::XDebugUnknownCommand(XDebugManager* mgr, int transactionId)
+    : XDebugCommandHandler(mgr, transactionId)
 {
 }
 

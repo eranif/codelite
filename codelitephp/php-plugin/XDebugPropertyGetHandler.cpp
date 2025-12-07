@@ -5,8 +5,8 @@
 #include "xdebugevent.h"
 #include "event_notifier.h"
 
-XDebugPropertyGetHandler::XDebugPropertyGetHandler(XDebugManager* mgr, int transcationId, const wxString &property)
-    : XDebugCommandHandler(mgr, transcationId)
+XDebugPropertyGetHandler::XDebugPropertyGetHandler(XDebugManager* mgr, int transactionId, const wxString &property)
+    : XDebugCommandHandler(mgr, transactionId)
     , m_property(property)
 {
 }

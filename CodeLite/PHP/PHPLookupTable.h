@@ -278,7 +278,7 @@ public:
     /**
      * @brief delete all entries belonged to filename.
      * @param filename the file name
-     * @param autoCommit when true, issue a begin/commit transcation commands
+     * @param autoCommit when true, issue a begin/commit transaction commands
      */
     void DeleteFileEntries(const wxFileName& filename, bool autoCommit = true);
 

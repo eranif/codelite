@@ -42,7 +42,7 @@ protected:
     int      m_evalReason;
     
 public:
-    XDebugEvalCmdHandler(const wxString &expression, int evalReason, XDebugManager* mgr, int transcationId);
+    XDebugEvalCmdHandler(const wxString &expression, int evalReason, XDebugManager* mgr, int transactionId);
     virtual ~XDebugEvalCmdHandler() = default;
 
     void SetExpression(const wxString& expression) {

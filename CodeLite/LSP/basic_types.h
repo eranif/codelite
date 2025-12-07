@@ -671,5 +671,5 @@ WXDLLIMPEXP_CL clModuleLogger& GetLogHandle();
 /// Parse the text edit from a response "result" field
 WXDLLIMPEXP_CL std::unordered_map<wxString, std::vector<LSP::TextEdit>> ParseWorkspaceEdit(const JSONItem& result);
 
-}; // namespace LSP
+} // namespace LSP
 #endif // JSONRPC_BASICTYPES_H

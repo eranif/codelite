@@ -81,6 +81,6 @@ public:
     }
     bool GetValue() const { return m_value; }
 };
-}; // namespace LSP
+} // namespace LSP
 
 #endif // JSONRPC_RESULTS_H

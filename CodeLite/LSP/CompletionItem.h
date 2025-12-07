@@ -86,6 +86,6 @@ public:
     const std::vector<std::shared_ptr<TextEdit>>& GetAdditionalText() const { return m_vAdditionalText; }
 };
 
-}; // namespace LSP
+} // namespace LSP
 
 #endif // COMPLETIONITEM_H

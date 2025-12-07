@@ -72,7 +72,7 @@ std::map<wxString, std::vector<FileExtManager::FileType>> m_language_bundle;
 std::unordered_map<int, wxString> m_file_type_to_lang;
 std::vector<Matcher> m_matchers;
 bool init_done = false;
-}; // namespace
+} // namespace
 
 void FileExtManager::Init()
 {

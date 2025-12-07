@@ -16,6 +16,6 @@ public:
     virtual ~DidOpenTextDocumentRequest() = default;
 };
 
-}; // namespace LSP
+} // namespace LSP
 
 #endif // DIDOPENTEXTDOCUMENTREQUEST_H

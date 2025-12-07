@@ -21,5 +21,5 @@ public:
     bool IsPositionDependantRequest() const { return true; }
     bool IsValidAt(const wxString& filename, size_t line, size_t col) const;
 };
-};     // namespace LSP
+} // namespace LSP
 #endif // GOTOIMPLEMENTATIONREQUEST_H

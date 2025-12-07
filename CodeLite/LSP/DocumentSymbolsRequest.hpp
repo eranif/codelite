@@ -32,5 +32,5 @@ private:
                             const wxString& filename,
                             const wxEventType& event_type);
 };
-}; // namespace LSP
+} // namespace LSP
 #endif // DOCUMDENET_SYMBOLS_REQUEST_HPP

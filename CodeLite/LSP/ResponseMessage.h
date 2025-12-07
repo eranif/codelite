@@ -50,6 +50,6 @@ public:
      */
     wxString GetDiagnosticsUri() const;
 };
-}; // namespace LSP
+} // namespace LSP
 
 #endif // RESPONSEMESSAGE_H

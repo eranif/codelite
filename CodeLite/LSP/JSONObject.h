@@ -19,5 +19,5 @@ public:
     virtual void FromJSON(const JSONItem& json) = 0;
 };
 
-};     // namespace LSP
+} // namespace LSP
 #endif // JSONObject_H

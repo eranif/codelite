@@ -33,5 +33,5 @@ public:
     void SetInitOptions(const wxString& initOptions) { this->m_initOptions = initOptions; }
     const wxString& GetInitOptions() const { return m_initOptions; }
 };
-}; // namespace LSP
+} // namespace LSP
 #endif // INITIALIZEREQUEST_H

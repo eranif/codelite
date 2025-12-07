@@ -21,5 +21,5 @@ public:
 private:
     bool m_userTrigger = false;
 };
-};     // namespace LSP
+} // namespace LSP
 #endif // COMPLETIONREQUEST_H

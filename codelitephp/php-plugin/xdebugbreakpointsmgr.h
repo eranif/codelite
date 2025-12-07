@@ -52,7 +52,7 @@ public:
     XDebugBreakpoint::List_t& GetBreakpoints() { return m_breakpoints; }
 
     void OnXDebugSessionEnded(XDebugEvent& e);
-    void OnXDebugSesstionStarting(XDebugEvent& e);
+    void OnXDebugSessionStarting(XDebugEvent& e);
     void OnWorkspaceOpened(PHPEvent& e);
     void OnWorkspaceClosed(PHPEvent& e);
     void OnEditorChanged(wxCommandEvent& e);

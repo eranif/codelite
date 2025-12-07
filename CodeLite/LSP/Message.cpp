@@ -10,9 +10,9 @@ namespace
 {
 #define HEADER_CONTENT_LENGTH "Content-Length"
 
-bool HasCompleteMessage(const std::string& inbuf, unsigned long content_legnth, unsigned long headers_size)
+bool HasCompleteMessage(const std::string& inbuf, unsigned long content_length, unsigned long headers_size)
 {
-    return inbuf.length() >= (content_legnth + headers_size);
+    return inbuf.length() >= (content_length + headers_size);
 }
 
 int ReadHeaders(const std::string& message, std::unordered_map<std::string, std::string>& headers)

@@ -15,7 +15,6 @@ class WXDLLIMPEXP_SDK CodeLiteRemoteHelper : public wxEvtHandler
     bool m_isRemoteLoaded = false;
     wxString m_workspacePath;
     wxString m_remoteAccount;
-    wxString m_ssh_exe;
     std::unordered_map<wxString, JSON*> m_plugins_configs;
 
 protected:

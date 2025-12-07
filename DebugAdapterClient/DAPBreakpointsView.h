@@ -10,9 +10,9 @@
 class DebugAdapterClient;
 
 struct BreakpointClientData {
-    dap::Breakpoint m_breapoint;
+    dap::Breakpoint m_breakpoint;
     BreakpointClientData(const dap::Breakpoint& breakpoint)
-        : m_breapoint(breakpoint)
+        : m_breakpoint(breakpoint)
     {
     }
     ~BreakpointClientData() = default;

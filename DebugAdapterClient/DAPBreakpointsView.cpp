@@ -55,10 +55,10 @@ void DAPBreakpointsView::RefreshView(const SessionBreakpoints& breakpoints)
     std::unordered_map<int, dap::Breakpoint> old_breakpoints;
     for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         auto cd = GetItemData(m_dvListCtrl->RowToItem(i));
-        if (!cd || cd->m_breapoint.id <= 0) {
+        if (!cd || cd->m_breakpoint.id <= 0) {
             continue;
         }
-        old_breakpoints.insert({ cd->m_breapoint.id, cd->m_breapoint });
+        old_breakpoints.insert({ cd->m_breakpoint.id, cd->m_breakpoint });
     }
 
     m_dvListCtrl->Begin();
@@ -111,13 +111,13 @@ void DAPBreakpointsView::OnBreakpointActivated(wxDataViewEvent& event)
     auto cd = GetItemData(item);
     CHECK_PTR_RET(cd);
 
-    m_plugin->LoadFile(cd->m_breapoint.source, cd->m_breapoint.line - 1);
+    m_plugin->LoadFile(cd->m_breakpoint.source, cd->m_breakpoint.line - 1);
 }
 
 void DAPBreakpointsView::OnBreakpointsContextMenu(wxDataViewEvent& event)
 {
     wxMenu menu;
-    menu.Append(XRCID("dap-new-function-breakpoint"), _("New function breakppoint"));
+    menu.Append(XRCID("dap-new-function-breakpoint"), _("New function breakpoint"));
     menu.Bind(wxEVT_MENU, &DAPBreakpointsView::OnNewFunctionBreakpoint, this, XRCID("dap-new-function-breakpoint"));
     m_dvListCtrl->PopupMenu(&menu);
 }
@@ -164,8 +164,8 @@ void DAPBreakpointsView::OnNewSourceBreakpoint(wxCommandEvent& event)
         if (!cd) {
             continue;
         }
-        if (cd->m_breapoint.source.path == source) {
-            source_breakpoints.push_back({ cd->m_breapoint.line, "" });
+        if (cd->m_breakpoint.source.path == source) {
+            source_breakpoints.push_back({ cd->m_breakpoint.line, "" });
         }
     }
     source_breakpoints.push_back({ static_cast<int>(line_numner), "" });
@@ -182,13 +182,13 @@ void DAPBreakpointsView::OnDeleteAllBreakpoints(wxCommandEvent& event)
         if (!cd) {
             continue;
         }
-        LOG_DEBUG(LOG) << "Will delete breakpoint:" << cd->m_breapoint.source.sourceReference << ","
-                       << cd->m_breapoint.source.path << endl;
-        if (cd->m_breapoint.source.path.empty()) {
+        LOG_DEBUG(LOG) << "Will delete breakpoint:" << cd->m_breakpoint.source.sourceReference << ","
+                       << cd->m_breakpoint.source.path << endl;
+        if (cd->m_breakpoint.source.path.empty()) {
             continue;
         }
 
-        paths.insert(cd->m_breapoint.source.path);
+        paths.insert(cd->m_breakpoint.source.path);
     }
 
     for (const wxString& path : paths) {

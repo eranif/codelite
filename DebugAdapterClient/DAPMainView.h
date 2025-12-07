@@ -16,7 +16,7 @@ class DebugAdapterClient;
 // variable items client data
 struct VariableClientData : public wxTreeItemData {
     int reference = wxNOT_FOUND;
-    wxString value; // untrucated value
+    wxString value; // untruncated value
     VariableClientData(int ref, const wxString& v)
         : reference(ref)
         , value(v)

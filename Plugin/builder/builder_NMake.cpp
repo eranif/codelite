@@ -1308,7 +1308,7 @@ void BuilderNMake::CreateConfigsVariables(ProjectPtr proj, BuildConfigPtr bldCon
     wxString cBuildOpts = bldConf->GetCCompileOptions();
     cBuildOpts.Replace(";", " ");
 
-    wxString asOptions = bldConf->GetAssmeblerOptions();
+    wxString asOptions = bldConf->GetAssemblerOptions();
     asOptions.Replace(";", " ");
 
     // Let the plugins add their content here

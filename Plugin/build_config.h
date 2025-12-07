@@ -200,8 +200,8 @@ public:
     void SetPchCompileFlags(const wxString& pchCompileFlags) { this->m_pchCompileFlags = pchCompileFlags; }
     const wxString& GetPchCompileFlags() const { return m_pchCompileFlags; }
 
-    const wxString& GetAssmeblerOptions() const { return m_commonConfig.GetAssemblerOptions(); }
-    void SetAssmeblerOptions(const wxString& options) { m_commonConfig.SetAssemblerOptions(options); }
+    const wxString& GetAssemblerOptions() const { return m_commonConfig.GetAssemblerOptions(); }
+    void SetAssemblerOptions(const wxString& options) { m_commonConfig.SetAssemblerOptions(options); }
 
     void SetPchInCommandLine(bool pchInCommandLine) { this->m_pchInCommandLine = pchInCommandLine; }
     bool GetPchInCommandLine() const { return m_pchInCommandLine; }

@@ -313,7 +313,7 @@ void SFTP::OnSaveFile(clSFTPEvent& e)
 
     SSHAccountInfo account;
     if (settings.GetAccount(accName, account)) {
-        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteFile, localFile, 0));
+        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequest(account, remoteFile, localFile, 0));
 
     } else {
         wxString msg;
@@ -325,8 +325,8 @@ void SFTP::OnSaveFile(clSFTPEvent& e)
 
 void SFTP::DoSaveRemoteFile(const RemoteFileInfo& remoteFile)
 {
-    SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(remoteFile.GetAccount(), remoteFile.GetRemoteFile(),
-                                                           remoteFile.GetLocalFile(), remoteFile.GetPremissions()));
+    SFTPWorkerThread::Instance()->Add(new SFTPThreadRequest(
+        remoteFile.GetAccount(), remoteFile.GetRemoteFile(), remoteFile.GetLocalFile(), remoteFile.GetPermissions()));
 }
 
 void SFTP::FileDownloadedSuccessfully(const SFTPClientData& cd)
@@ -348,7 +348,7 @@ void SFTP::FileDownloadedSuccessfully(const SFTPClientData& cd)
     // Now that the file was downloaded, update the file permissions
     if (m_remoteFiles.count(cd.GetLocalPath())) {
         RemoteFileInfo& info = m_remoteFiles[cd.GetLocalPath()];
-        info.SetPremissions(cd.GetPermissions());
+        info.SetPermissions(cd.GetPermissions());
     }
 }
 
@@ -391,7 +391,7 @@ void SFTP::MSWInitiateConnection()
     if (accounts.empty())
         return;
     const SSHAccountInfo& account = accounts.at(0);
-    SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account));
+    SFTPWorkerThread::Instance()->Add(new SFTPThreadRequest(account));
 #endif
 }
 
@@ -429,7 +429,7 @@ void SFTP::DoFileSaved(const wxString& filename)
 
         SSHAccountInfo account;
         if (settings.GetAccount(m_workspaceSettings.GetAccount(), account)) {
-            SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteFile, filename, 0));
+            SFTPWorkerThread::Instance()->Add(new SFTPThreadRequest(account, remoteFile, filename, 0));
 
         } else {
 
@@ -472,7 +472,7 @@ void SFTP::OnFileRenamed(clFileSystemEvent& e)
     SSHAccountInfo account;
     if (settings.GetAccount(m_workspaceSettings.GetAccount(), account)) {
         clDEBUG() << "SFTP: Renaming remote file:" << remoteFile << "->" << remoteNew;
-        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteFile, remoteNew));
+        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequest(account, remoteFile, remoteNew));
 
     } else {
 
@@ -508,7 +508,7 @@ void SFTP::OnRenameFile(clSFTPEvent& e)
 
     SSHAccountInfo account;
     if (settings.GetAccount(accName, account)) {
-        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteOld, remoteNew));
+        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequest(account, remoteOld, remoteNew));
 
     } else {
         wxString msg;
@@ -528,7 +528,7 @@ void SFTP::OnDeleteFile(clSFTPEvent& e)
 
     SSHAccountInfo account;
     if (settings.GetAccount(accName, account)) {
-        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, path));
+        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequest(account, path));
 
     } else {
         wxString msg;
@@ -549,7 +549,7 @@ void SFTP::DoFileDeleted(const wxString& filepath)
 
     SSHAccountInfo account;
     if (settings.GetAccount(m_workspaceSettings.GetAccount(), account)) {
-        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequet(account, remoteFile));
+        SFTPWorkerThread::Instance()->Add(new SFTPThreadRequest(account, remoteFile));
 
     } else {
 
@@ -589,7 +589,7 @@ void SFTP::OpenFile(const wxString& remotePath, int lineNumber)
         remoteFile.SetRemoteFile(remotePath);
         remoteFile.SetLineNumber(lineNumber);
 
-        SFTPThreadRequet* req = new SFTPThreadRequet(remoteFile);
+        SFTPThreadRequest* req = new SFTPThreadRequest(remoteFile);
         SFTPWorkerThread::Instance()->Add(req);
         AddRemoteFile(remoteFile);
     }

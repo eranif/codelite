@@ -126,10 +126,10 @@ protected:
      * into a newly created or opened editor file. The file is styled as Markdown once the
      * streaming is complete.
      *
-     * @param complete_reponse The complete aggregated response containing all the release note information to be
+     * @param complete_response The complete aggregated response containing all the release note information to be
      * finalized
      */
-    void FinaliseReleaseNotes(const wxString& complete_reponse);
+    void FinaliseReleaseNotes(const wxString& complete_response);
 
     void UpdateStatusBarTokens(size_t tokenCount);
     std::shared_ptr<std::string> AllocateBuffer();

@@ -34,7 +34,7 @@
 
 /**
  * \ingroup SDK
- * A cookie class to allow the enumration operation to be reentrants by multiple threads
+ * A cookie class to allow the enumeration operation to be reentrants by multiple threads
  *
  * \version 1.0
  * first version
@@ -72,7 +72,7 @@ public:
     /**
      * Clone this project settings, the cloned object is allocated on the heap
      * and it is the responsibility of the caller to call delete when there are no
-     * more refreneces to it
+     * more references to it
      * \return
      */
     ProjectSettings* Clone() const;
@@ -93,26 +93,26 @@ public:
      */
     wxXmlNode* ToXml() const;
 
-    // enumaration
+    // enumeration
     /**
      * Find the first build configuration by name
      * \param configName build configuration name to find
      * \param merge merge with global settings or not
-     * \return build configuration smart pointer, will be deleted automatically when no more refrences to it
+     * \return build configuration smart pointer, will be deleted automatically when no more references to it
      */
     BuildConfigPtr GetBuildConfiguration(const wxString& configName, bool merge = false) const;
 
     /**
      * enumerate through all the build build configuration, this function returns the first build configuration found
      * \param cookie an object to allow this call to be reentrant by multiple threads
-     * \return build configuration smart pointer, will be deleted automatically when no more refrences to it
+     * \return build configuration smart pointer, will be deleted automatically when no more references to it
      */
     BuildConfigPtr GetFirstBuildConfiguration(ProjectSettingsCookie& cookie) const;
     /**
      * enumerate through all the build build configuration, this function returns the next build configuration found
      * cookie should be the same as passed to previous calls to GetFirstBuildConfiguration or
      * \param cookie an object to allow this call to be reentrant by multiple threads GetNextBuildConfiguration
-     * \return build configuration smart pointer, will be deleted automatically when no more refrences to it
+     * \return build configuration smart pointer, will be deleted automatically when no more references to it
      */
     BuildConfigPtr GetNextBuildConfiguration(ProjectSettingsCookie& cookie) const;
 
@@ -125,7 +125,7 @@ public:
 
     /**
      * Remove build configuration from the project settings. The build configuration objects stored under
-     * this object are stored using smart pointers, thus if there are no more refrences to the removed build
+     * this object are stored using smart pointers, thus if there are no more references to the removed build
      * configuration it will be deleted automatically
      * \param configName configuration name to remove.
      */

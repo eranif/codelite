@@ -165,7 +165,7 @@ void LocalsView::OnProperytGet(XDebugEvent& e)
 {
     e.Skip();
     // An item was evaluated using property_get
-    std::unordered_map<wxString, wxTreeItemId>::iterator iter = m_waitingExpand.find(e.GetEvaluted());
+    std::unordered_map<wxString, wxTreeItemId>::iterator iter = m_waitingExpand.find(e.GetEvaluated());
     if(iter == m_waitingExpand.end()) {
         return;
     }

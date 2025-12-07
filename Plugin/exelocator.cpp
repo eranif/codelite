@@ -39,7 +39,7 @@ bool ExeLocator::Locate(const wxString& name, wxString& where)
         filename = filename.RemoveLast();
     }
 
-    // Incase the name is a full path, just test for the file existance
+    // Incase the name is a full path, just test for the file existence
     wxFileName fn(filename);
     if(fn.IsAbsolute() && fn.FileExists()) {
         where = name;

@@ -333,20 +333,6 @@ void clCodeLiteRemoteProcess::ProcessOutput()
     }
 }
 
-void clCodeLiteRemoteProcess::ListLSPs()
-{
-    if (!m_process) {
-        return;
-    }
-
-    // build the command and send it
-    const nlohmann::json json = {{"command", "list_lsps"}};
-    m_process->Write(json.dump() + "\n");
-
-    // push a callback
-    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnListLSPsOutput, nullptr, nullptr });
-}
-
 void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir,
                                         const wxString& extensions,
                                         const wxString& exclude_extensions,

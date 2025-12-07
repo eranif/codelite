@@ -259,7 +259,7 @@ wxString MacroManager::DoExpand(
     wxString wspRealPath = FileUtils::RealPath(wspPath, true);
 
     size_t retries = 0;
-    wxString dummyname, dummfullname;
+    wxString dummyname;
     while ((retries < 5) && FindVariable(expandedString, dummyname, dummyname)) {
         ++retries;
         DollarEscaper de(expandedString);
@@ -319,7 +319,7 @@ wxString MacroManager::DoExpand(
                     ldFlags.Replace(";", " ");
                     expandedString.Replace("$(LDFLAGS)", ldFlags);
 
-                    wxString asFlags = bldConf->GetAssmeblerOptions();
+                    wxString asFlags = bldConf->GetAssemblerOptions();
                     asFlags.Replace(";", " ");
                     expandedString.Replace("$(AS)", bldConf->GetCompiler()->GetTool("AS"));
                     expandedString.Replace("$(ASFLAGS)", asFlags);
@@ -464,7 +464,7 @@ static wxString DoExpandAllVariables(const wxString& expression,
     wxString output(expression);
 
     size_t retries = 0;
-    wxString dummyname, dummfullname;
+    wxString dummyname;
     while ((retries < 5) && MacroManager::Instance()->FindVariable(output, dummyname, dummyname)) {
         ++retries;
         DollarEscaper de(output);
@@ -518,7 +518,7 @@ static wxString DoExpandAllVariables(const wxString& expression,
                     ldFlags.Replace(";", " ");
                     output.Replace("$(LDFLAGS)", ldFlags);
 
-                    wxString asFlags = bldConf->GetAssmeblerOptions();
+                    wxString asFlags = bldConf->GetAssemblerOptions();
                     asFlags.Replace(";", " ");
                     output.Replace("$(AS)", bldConf->GetCompiler()->GetTool("AS"));
                     output.Replace("$(ASFLAGS)", asFlags);

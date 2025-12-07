@@ -175,7 +175,7 @@ void wxcTreeView::DoRefreshFileList(bool reloadFileList)
         m_fileList.swap(options);
     }
 
-    // Filter non intersting fields
+    // Filter non interesting fields
     wxArrayString filteredValues;
     for (size_t i = 0; i < m_fileList.size(); ++i) {
         const wxString lcValue = m_fileList.Item(i).Lower();

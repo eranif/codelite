@@ -1090,10 +1090,10 @@ void GitConsole::GenerateReleaseNotes()
     llm::Manager::GetInstance().Chat(collector, prompts, cancellation_token, chat_options);
 }
 
-void GitConsole::FinaliseReleaseNotes(const wxString& complete_reponse)
+void GitConsole::FinaliseReleaseNotes(const wxString& complete_response)
 {
     wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kReleaseNotesMerge);
-    prompt.Replace("{{context}}", complete_reponse);
+    prompt.Replace("{{context}}", complete_response);
 
     m_statusBar->SetMessage(_("Finalising notes..."));
     auto collector = new llm::ResponseCollector();

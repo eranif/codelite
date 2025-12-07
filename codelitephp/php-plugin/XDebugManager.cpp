@@ -748,7 +748,7 @@ void XDebugManager::OnShowTooltip(XDebugEvent& e)
         if(!e.IsEvalSucceeded()) {
             tip << _("Error evaluating expression ");
         } else {
-            wxString evaluated = e.GetEvaluted();
+            wxString evaluated = e.GetEvaluated();
             // Remove extra escapes
             evaluated.Replace("\\n", "\n");
             evaluated.Replace("\\t", "\t");

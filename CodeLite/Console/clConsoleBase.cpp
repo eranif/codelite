@@ -95,7 +95,6 @@ clConsoleBase::Ptr_t clConsoleBase::GetTerminal()
 
 wxArrayString clConsoleBase::GetAvailableTerminals()
 {
-wxArrayString retval;
     return StdToWX::ToArrayString({
 #ifdef __WXMSW__
         "CMD",

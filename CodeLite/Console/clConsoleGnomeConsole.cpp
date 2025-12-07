@@ -21,8 +21,8 @@ bool clConsoleGnomeConsole::FindProcessByCommand(const wxString& name, wxString&
 
     ProcUtils::SafeExecuteCommand(psCommand, arrOutput);
 
-    for(size_t i = 0; i < arrOutput.GetCount(); ++i) {
-        wxString curline = arrOutput.Item(i).Trim().Trim(false);
+    for(wxString curline : arrOutput) {
+        curline = curline.Trim().Trim(false);
         wxArrayString tokens = ::wxStringTokenize(curline, " ", wxTOKEN_STRTOK);
         if(tokens.GetCount() < 3) {
             continue;
@@ -68,7 +68,7 @@ bool clConsoleGnomeConsole::StartForDebugger()
     // generate a random value to differentiate this instance of CodeLite
     // from other instances
 
-    time_t curtime = time(NULL);
+    time_t curtime = time(nullptr);
     int randomSeed = (curtime % 947);
     wxString secondsToSleep;
 

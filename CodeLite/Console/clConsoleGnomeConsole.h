@@ -24,9 +24,9 @@ public:
     virtual ~clConsoleGnomeConsole() = default;
 
 public:
-    virtual bool Start();
-    virtual bool StartForDebugger();
-    virtual wxString PrepareCommand();
+    virtual bool Start() override;
+    virtual bool StartForDebugger() override;
+    virtual wxString PrepareCommand() override;
 };
 
 #endif // CLCONSOLEGNOMECONSOLE_H

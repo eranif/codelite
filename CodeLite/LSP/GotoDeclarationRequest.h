@@ -16,7 +16,7 @@ class WXDLLIMPEXP_CL GotoDeclarationRequest : public LSP::Request
 
 public:
     explicit GotoDeclarationRequest(const wxString& filename, size_t line, size_t column, bool for_add_missing_header);
-    virtual ~GotoDeclarationRequest() = default;
+    ~GotoDeclarationRequest() override = default;
 
     void SetColumn(size_t column) { this->m_column = column; }
     void SetFilename(const wxString& filename) { this->m_filename = filename; }
@@ -24,9 +24,9 @@ public:
     size_t GetColumn() const { return m_column; }
     const wxString& GetFilename() const { return m_filename; }
     size_t GetLine() const { return m_line; }
-    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
-    bool IsPositionDependantRequest() const { return true; }
-    bool IsValidAt(const wxString& filename, size_t line, size_t col) const;
+    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
+    bool IsPositionDependentRequest() const override { return true; }
+    bool IsValidAt(const wxString& filename, size_t line, size_t col) const override;
 };
 };     // namespace LSP
 #endif // GOTO_DECLARATION_REQUEST_H

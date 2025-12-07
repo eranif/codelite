@@ -16,7 +16,7 @@ class WXDLLIMPEXP_CL GotoDefinitionRequest : public LSP::Request
 
 public:
     explicit GotoDefinitionRequest(const wxString& filename, size_t line, size_t column);
-    virtual ~GotoDefinitionRequest() = default;
+    ~GotoDefinitionRequest() override = default;
 
     void SetColumn(size_t column) { this->m_column = column; }
     void SetFilename(const wxString& filename) { this->m_filename = filename; }
@@ -24,9 +24,9 @@ public:
     size_t GetColumn() const { return m_column; }
     const wxString& GetFilename() const { return m_filename; }
     size_t GetLine() const { return m_line; }
-    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
-    bool IsPositionDependantRequest() const { return true; }
-    bool IsValidAt(const wxString& filename, size_t line, size_t col) const;
+    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
+    bool IsPositionDependentRequest() const override { return true; }
+    bool IsValidAt(const wxString& filename, size_t line, size_t col) const override;
 };
 };     // namespace LSP
 #endif // GOTODEFINITIONREQUEST_H

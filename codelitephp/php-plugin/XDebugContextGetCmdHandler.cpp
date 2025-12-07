@@ -6,8 +6,8 @@
 
 #include <wx/xml/xml.h>
 
-XDebugContextGetCmdHandler::XDebugContextGetCmdHandler(XDebugManager* mgr, int transcationId, int requestedStack)
-    : XDebugCommandHandler(mgr, transcationId)
+XDebugContextGetCmdHandler::XDebugContextGetCmdHandler(XDebugManager* mgr, int transactionId, int requestedStack)
+    : XDebugCommandHandler(mgr, transactionId)
 {
 }
 

@@ -34,7 +34,7 @@ class XDebugPropertyGetHandler : public XDebugCommandHandler
     wxString m_property;
     
 public:
-    XDebugPropertyGetHandler(XDebugManager* mgr, int transcationId, const wxString &property);
+    XDebugPropertyGetHandler(XDebugManager* mgr, int transactionId, const wxString &property);
     virtual ~XDebugPropertyGetHandler() = default;
 
 public:

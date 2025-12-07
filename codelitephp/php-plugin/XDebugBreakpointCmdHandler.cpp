@@ -8,9 +8,9 @@
 
 #include <wx/xml/xml.h>
 
-XDebugBreakpointCmdHandler::XDebugBreakpointCmdHandler(XDebugManager* mgr, int transcationId,
+XDebugBreakpointCmdHandler::XDebugBreakpointCmdHandler(XDebugManager* mgr, int transactionId,
                                                        XDebugBreakpoint& breakpoint)
-    : XDebugCommandHandler(mgr, transcationId)
+    : XDebugCommandHandler(mgr, transactionId)
     , m_breakpoint(breakpoint)
 {
 }

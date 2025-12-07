@@ -31,7 +31,7 @@
 class XDebugContextGetCmdHandler : public XDebugCommandHandler
 {
 public:
-    XDebugContextGetCmdHandler(XDebugManager* mgr, int transcationId, int requestedStack = 0);
+    XDebugContextGetCmdHandler(XDebugManager* mgr, int transactionId, int requestedStack = 0);
     virtual ~XDebugContextGetCmdHandler() = default;
 
 public:

@@ -55,12 +55,12 @@ struct xInitStruct {
 class XDebugManager : public wxEvtHandler
 {
     friend class SocketServer;
-    size_t TranscationId;
+    size_t TransactionId = 0;
     XDebugCommandHandler::Map_t m_handlers;
     XDebugBreakpointsMgr m_breakpointsMgr;
-    PhpPlugin* m_plugin;
-    XDebugComThread* m_readerThread;
-    bool m_connected;
+    PhpPlugin* m_plugin = nullptr;
+    XDebugComThread* m_readerThread = nullptr;
+    bool m_connected = false;
 
 public:
     using Ptr_t = std::shared_ptr<XDebugManager>;
@@ -129,7 +129,7 @@ protected:
 
     // Handlers based on the tx id
     void AddHandler(XDebugCommandHandler::Ptr_t handler);
-    XDebugCommandHandler::Ptr_t PopHandler(int transcationId);
+    XDebugCommandHandler::Ptr_t PopHandler(int transactionId);
 
     // Event handlers
     /**

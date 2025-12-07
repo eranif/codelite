@@ -49,7 +49,6 @@ void SimpleStringValue::DeSerialize(Archive& arch) { arch.Read(wxT("m_value"), m
 //-------------------------------------------------------------------------------------------
 
 EditorConfig::EditorConfig()
-    : m_transcation(false)
 {
     m_doc = new wxXmlDocument();
 }
@@ -321,17 +320,17 @@ void EditorConfig::SetString(const wxString& key, const wxString& value)
     m_cacheStringValues[key] = value;
 }
 
-void EditorConfig::Begin() { m_transcation = true; }
+void EditorConfig::Begin() { m_transaction = true; }
 
 void EditorConfig::Save()
 {
-    m_transcation = false;
+    m_transaction = false;
     DoSave();
 }
 
 bool EditorConfig::DoSave() const
 {
-    if(m_transcation) {
+    if (m_transaction) {
         return true;
     }
 

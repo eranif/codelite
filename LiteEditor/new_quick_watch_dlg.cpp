@@ -158,7 +158,7 @@ void DisplayVariableDlg::DoAddChildren(wxTreeItemId& item, const VariableObjChil
         if(ch.varName != "public" && ch.varName != "private" && ch.varName != "protected") {
             // Real node
             wxTreeItemId child = m_treeCtrl->AppendItem(item, ch.varName, -1, -1, new QWTreeData(ch));
-            if(ch.numChilds > 0) {
+            if (ch.numChild > 0) {
                 // add fake node to this item, so it will have the [+] on the side
                 m_treeCtrl->AppendItem(child, wxT("<dummy>"));
             }

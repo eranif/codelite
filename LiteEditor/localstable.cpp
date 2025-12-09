@@ -59,8 +59,8 @@ LocalsTable::LocalsTable(wxWindow* parent)
 
     SetSortingFunction();
     m_DBG_USERR = DBG_USERR_LOCALS;
-    m_QUERY_NUM_CHILDS = QUERY_LOCALS_CHILDS;
-    m_LIST_CHILDS = LIST_LOCALS_CHILDS;
+    m_QUERY_NUM_CHILDREN = QUERY_LOCAL_CHILDREN;
+    m_LIST_CHILDREN = LIST_LOCAL_CHILDREN;
 
     EventNotifier::Get()->Connect(
         wxEVT_DEBUGGER_FRAME_SELECTED, clCommandEventHandler(LocalsTable::OnStackSelected), NULL, this);
@@ -112,7 +112,7 @@ void LocalsTable::OnCreateVariableObj(const DebuggerEventData& event)
                 DoRefreshItem(dbgr, iter->second, false);
 
             dbgr->UpdateVariableObject(data->_gdbId, m_DBG_USERR);
-            dbgr->ListChildren(data->_gdbId, m_LIST_CHILDS);
+            dbgr->ListChildren(data->_gdbId, m_LIST_CHILDREN);
             m_listChildItemId[data->_gdbId] = iter->second;
         }
         m_createVarItemId.erase(iter);
@@ -132,7 +132,7 @@ void LocalsTable::OnListChildren(const DebuggerEventData& event)
     wxTreeItemId item = iter->second;
     m_listChildItemId.erase(iter);
 
-    if (event.m_userReason == m_LIST_CHILDS) {
+    if (event.m_userReason == m_LIST_CHILDREN) {
         m_listTable->Begin();
         if (event.m_varObjChildren.empty() == false) {
             for (size_t i = 0; i < event.m_varObjChildren.size(); i++) {
@@ -140,7 +140,7 @@ void LocalsTable::OnListChildren(const DebuggerEventData& event)
                 if (ch.varName == "public" || ch.varName == "private" || ch.varName == "protected") {
                     // not really a node...
                     // ask for information about this node children
-                    dbgr->ListChildren(ch.gdbId, m_LIST_CHILDS);
+                    dbgr->ListChildren(ch.gdbId, m_LIST_CHILDREN);
                     m_listChildItemId[ch.gdbId] = item;
 
                 } else {
@@ -153,7 +153,7 @@ void LocalsTable::OnListChildren(const DebuggerEventData& event)
                     m_listTable->SetItemText(child, ch.type, 2);
 
                     // Add a dummy node
-                    if (child.IsOk() && ch.numChilds > 0) {
+                    if (child.IsOk() && ch.numChild > 0) {
                         m_listTable->AppendItem(child, wxT("<dummy>"));
                     }
 
@@ -225,7 +225,7 @@ void LocalsTable::OnItemExpanding(wxTreeEvent& event)
         wxString gdbId = DoGetGdbId(event.GetItem());
         if (gdbId.IsEmpty() == false) {
             dbgr->UpdateVariableObject(gdbId, m_DBG_USERR);
-            dbgr->ListChildren(gdbId, m_LIST_CHILDS);
+            dbgr->ListChildren(gdbId, m_LIST_CHILDREN);
             m_listChildItemId[gdbId] = event.GetItem();
 
         } else {

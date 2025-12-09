@@ -185,11 +185,10 @@ void LocalsView::OnProperytGet(XDebugEvent& e)
     // so we are only interested with its children. so we use here vars.begin()->children (vars is always list of size
     // == 1)
     wxASSERT_MSG(vars.size() == 1, "property_get returned list of size != 1");
-    XVariable::List_t childs;
-    childs = vars.begin()->children;
+    const auto& children = vars.begin()->children;
 
-    if(!childs.empty()) {
-        AppendVariablesToTree(item, childs);
+    if (!children.empty()) {
+        AppendVariablesToTree(item, children);
         m_tree->Expand(item);
     }
 }

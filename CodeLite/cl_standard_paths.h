@@ -96,7 +96,7 @@ public:
      * @brief return the full path for an executable. This function
      * usually returns: GetBinFolder() + "/" + toolname + ".exe"
      * @param unixStylePath the path returned is always using forward slash `/`
-     * @note the .exe and "/" are platform dependant
+     * @note the .exe and "/" are platform dependent
      */
     wxString GetBinaryFullPath(const wxString& toolname, bool unixStylePath = false) const;
 

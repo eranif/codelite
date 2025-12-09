@@ -37,6 +37,6 @@ public:
     template <typename T> T* As() const { return dynamic_cast<T*>(const_cast<Message*>(this)); }
 };
 
-}; // namespace LSP
+} // namespace LSP
 
 #endif // MESSAGE_H

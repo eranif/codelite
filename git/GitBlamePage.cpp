@@ -102,7 +102,7 @@ bool LineInfo::FromPorcelainFormat(wxArrayString& lines)
         "% 10s % 10s %s ", commit_hash.Mid(0, 10), author.length() > 10 ? author.Mid(0, 10) : author, author_time);
     return true;
 }
-}; // namespace git::blame
+} // namespace git::blame
 
 /// parse `git blame --line-porcelain <file>` output and return a `LineInfo::vec_t`
 git::blame::LineInfo::vec_t ParseBlameOutputInternal(wxArrayString& blameArr, size_t* max_chars)

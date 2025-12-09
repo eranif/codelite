@@ -13,6 +13,6 @@ public:
     explicit DidSaveTextDocumentRequest(const wxString& filename, const wxString& fileContent);
     virtual ~DidSaveTextDocumentRequest() = default;
 };
-}; // namespace LSP
+} // namespace LSP
 
 #endif // DIDCHANGE_TEXTDOCUMENTREQUEST_H

@@ -28,5 +28,5 @@ public:
     bool IsPositionDependentRequest() const override { return true; }
     bool IsValidAt(const wxString& filename, size_t line, size_t col) const override;
 };
-};     // namespace LSP
+} // namespace LSP
 #endif // GOTO_DECLARATION_REQUEST_H

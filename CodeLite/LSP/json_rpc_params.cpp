@@ -206,4 +206,4 @@ JSONItem RenameParams::ToJSON(const wxString& name) const
     return json;
 }
 
-}; // namespace LSP
+} // namespace LSP

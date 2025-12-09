@@ -52,7 +52,7 @@ namespace
 {
 std::unordered_map<wxString, wxBitmapBundle> DARK_THEME_BMPBUNLES;
 std::unordered_map<wxString, wxBitmapBundle> LIGHT_THEME_BMPBUNLES;
-}; // namespace
+} // namespace
 
 BitmapLoader::BitmapLoader(wxWindow* win, bool darkTheme)
     : m_win(win)

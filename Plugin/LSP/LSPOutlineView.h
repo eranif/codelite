@@ -137,13 +137,13 @@ protected:
     void DoInitialiseEmpty();
     void AddDocumentSymbolRec(wxTreeItemId parent, const LSP::DocumentSymbol& symbol, LexerConf* lexer);
     /** 
-     * @brief Restores expanded/collapsed/selected state after sorting/showing details or kind
+     * @brief Recursively Restores expanded/collapsed/selected state after sorting/showing details or kind
      */
-    void RestoreTreeState(wxTreeItemId parent);
+    void RestoreTreeStateRec(wxTreeItemId parent);
     /**
-     * @brief Sets the expanded/collapsed state according to initisation/config options 
+     * @brief Initializes the expanded/collapsed state according to initisation/config options 
      */
-    void ResetTreeDisplay();
+    void InitExpandedState();
     /**
      * @brief deletes all symbols and empties the tree/terminal view
      */

@@ -118,11 +118,12 @@ void LSPOutlineView::CreateToolbar()
     }
     
     wxSize size = GetTextExtent("Type/Name (case sensitive)");
-    m_sortOptions = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(size.GetWidth(), -1));
-    m_sortOptions->Append(_("Type/Name"), new wxIntClientData(LSPSymbolParser::SORT_KIND_NAME));
+    m_sortOptions = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxSize(size.GetWidth(), -1));
+    m_sortOptions->SetToolTip(_("Sort symbols"));
+    m_sortOptions->Append(_("Kind/Name"), new wxIntClientData(LSPSymbolParser::SORT_KIND_NAME));
     m_sortOptions->Append(_("Name"), new wxIntClientData(LSPSymbolParser::SORT_NAME));
     m_sortOptions->Append(_("Line"), new wxIntClientData(LSPSymbolParser::SORT_LINE));
-    m_sortOptions->Append(_("Type/Name (case sensitive)"), new wxIntClientData(LSPSymbolParser::SORT_KIND_NAME_CASE_SENSITIVE));
+    m_sortOptions->Append(_("Kind/Name (case sensitive)"), new wxIntClientData(LSPSymbolParser::SORT_KIND_NAME_CASE_SENSITIVE));
     m_sortOptions->Append(_("Name (case sensitive)"), new wxIntClientData(LSPSymbolParser::SORT_NAME_CASE_SENSITIVE));   
     // find default selection
     for (size_t i = 0; i < m_sortOptions->GetCount(); i++) {
@@ -132,8 +133,7 @@ void LSPOutlineView::CreateToolbar()
             break;
         }
     }
-    m_toolbar->AddLabel(wxID_ANY, _("Sort:"));
-    m_toolbar->AddControl(m_sortOptions, _("Sort"));
+    m_toolbar->AddControl(m_sortOptions);
     m_toolbar->AddSeparator();
     
     clAuiToolBarArt::AddTool(m_toolbar, ID_TOOL_EXPAND_ALL, _("Expand All"), images->LoadBitmap("expand"), "", wxITEM_NORMAL);    
@@ -213,7 +213,7 @@ void LSPOutlineView::DoInitialiseDocumentSymbol()
     m_treeCtrl->Commit();
     
     // expand or collapse the tree according to config setting
-    ResetTreeDisplay();
+    InitExpandedState();
     
     m_treeCtrl->Unbind(wxEVT_TREE_ITEM_EXPANDED, &LSPOutlineView::OnTreeItemExpanded, this);  
     m_treeCtrl->Unbind(wxEVT_TREE_ITEM_COLLAPSED, &LSPOutlineView::OnTreeItemCollapsed, this);  
@@ -221,7 +221,7 @@ void LSPOutlineView::DoInitialiseDocumentSymbol()
     // items in m_treeState are DocumentSymbols wrapped in wxTreeItemId
     // the tree cannot directly use these, we have to find the corresponding row recursively first
     // easier to iterate the whole tree and check if each item is in our m_treeState
-    RestoreTreeState(m_treeCtrl->GetRootItem());
+    RestoreTreeStateRec(m_treeCtrl->GetRootItem());
     
     m_treeCtrl->Bind(wxEVT_TREE_ITEM_EXPANDED, &LSPOutlineView::OnTreeItemExpanded, this);  
     m_treeCtrl->Bind(wxEVT_TREE_ITEM_COLLAPSED, &LSPOutlineView::OnTreeItemCollapsed, this);  
@@ -231,7 +231,7 @@ void LSPOutlineView::DoInitialiseDocumentSymbol()
         m_textCtrlFilter->CallAfter(&wxTextCtrl::SetFocus);
 }
 
-void LSPOutlineView::RestoreTreeState(wxTreeItemId parent)
+void LSPOutlineView::RestoreTreeStateRec(wxTreeItemId parent)
 {
     wxTreeItemIdValue cookie;
     wxTreeItemId child = m_treeCtrl->GetFirstChild(parent, cookie);
@@ -240,7 +240,8 @@ void LSPOutlineView::RestoreTreeState(wxTreeItemId parent)
         auto* data = m_treeCtrl->GetItemData(child);
         
         if (data->GetId() == m_treeState.selectedNode) {
-            m_treeCtrl->SelectItem(child);
+            m_treeCtrl->SelectItem(child); 
+            m_treeCtrl->EnsureVisible(child);           
         }
         
         auto it2 = std::find(m_treeState.collapsedNodes.begin(), m_treeState.collapsedNodes.end(), data->GetId());
@@ -253,7 +254,7 @@ void LSPOutlineView::RestoreTreeState(wxTreeItemId parent)
             
         if (m_treeCtrl->GetChildrenCount(child, false) > 0) {
             // recursively restore the state
-            RestoreTreeState(child);
+            RestoreTreeStateRec(child);
         }
         
         child = m_treeCtrl->GetNextChild(parent, cookie);
@@ -711,9 +712,9 @@ void LSPOutlineView::SortSymbols(LSPSymbolParser::SortType sort)
 {
     using vec_t = std::vector<LSP::DocumentSymbol>;
     // sorting the symbols vector invalidates our TreeState, which uses pointers to the symbols
-    // so we need to copy the current collapsed/expanded/selected state first and restore it after sorting
+    // thus we need to copy the current collapsed/expanded/selected state first and restore it after sorting
     
-    // map tree items to shallow copies of their referenced symbols
+    // map tree items to incomplete shallow copies of their referenced symbols
     auto mapShallow = [](const std::vector<wxTreeItemId>& items) -> vec_t {        
         vec_t target;
         target.reserve(items.size());
@@ -736,7 +737,7 @@ void LSPOutlineView::SortSymbols(LSPSymbolParser::SortType sort)
     };
     
     // recursive function to set the expanded state again after the tree was rebuild
-    std::function<void(DocumentSymbol&, const vec_t&, const vec_t&, const DocumentSymbol&)> rebuildState = 
+    std::function<void(DocumentSymbol&, const vec_t&, const vec_t&, const DocumentSymbol&)> rebuildStateRec = 
         [&](DocumentSymbol& symbol, const vec_t& expanded, const vec_t& collapsed, const DocumentSymbol& selected) 
     {
         // selected previously selected node again
@@ -761,7 +762,7 @@ void LSPOutlineView::SortSymbols(LSPSymbolParser::SortType sort)
             }
             // recursion
             for (auto& child : symbol.GetChildren()) {
-                rebuildState(child, expanded, collapsed, selected);
+                rebuildStateRec(child, expanded, collapsed, selected);
             }
         }
     };
@@ -792,7 +793,7 @@ void LSPOutlineView::SortSymbols(LSPSymbolParser::SortType sort)
     
     // restore state
     for (auto& symbol : m_documentSymbols) {
-        rebuildState(symbol, expanded, collapsed, selected);
+        rebuildStateRec(symbol, expanded, collapsed, selected);
     }
 }
 
@@ -840,7 +841,8 @@ void LSPOutlineView::ShowMessage(const wxString& message, bool showLoadingIndica
     m_terminalViewCtrl->Hide();
     m_msgText->SetLabel(message);
     m_msgIndicator->Show(showLoadingIndicator);
-    if(showLoadingIndicator) m_msgIndicator->Start();
+    if (showLoadingIndicator) 
+        m_msgIndicator->Start();
     m_msgPanel->Show();
 }
 
@@ -873,15 +875,19 @@ bool LSPOutlineView::CheckAndRequest(const wxString& filename) {
 }
 
 
-void LSPOutlineView::ResetTreeDisplay() {
+void LSPOutlineView::InitExpandedState() {
     wxTreeItemIdValue cookie;
     wxTreeItemId root = m_treeCtrl->GetRootItem();
-    if (m_initialiseAllCollapsed && !m_treeState.manuallyExpanded) {
+    if (m_treeState.manuallyCollapsed || (m_initialiseAllCollapsed && !m_treeState.manuallyExpanded)) {
         CollapseTree();
         return;
     }
+    else if (m_treeState.manuallyExpanded) {
+        ExpandTree();
+        return;
+    }
     
-    std::function<void(const wxTreeItemId&, const DocumentSymbol*)> reset = [&](const wxTreeItemId& item, const DocumentSymbol* parent) {
+    std::function<void(const wxTreeItemId&, const DocumentSymbol*)> initStateRec = [&](const wxTreeItemId& item, const DocumentSymbol* parent) {
         auto* data = m_treeCtrl->GetItemData(item);
         auto* symbol = static_cast<DocumentSymbol*>(data->GetId().GetID());
         switch (symbol->GetKind()) {
@@ -939,14 +945,14 @@ void LSPOutlineView::ResetTreeDisplay() {
             wxTreeItemIdValue _cookie;
             wxTreeItemId child = m_treeCtrl->GetFirstChild(item, _cookie);
             while (child.IsOk()) {
-                reset(child, symbol);
+                initStateRec(child, symbol);
                 child = m_treeCtrl->GetNextChild(item, _cookie);
             }
         }
     };
     wxTreeItemId item = m_treeCtrl->GetFirstChild(root, cookie);
     while (item.IsOk()) {        
-        reset(item, nullptr);
+        initStateRec(item, nullptr);
         item = m_treeCtrl->GetNextChild(root, cookie);
     }
 }
@@ -966,37 +972,37 @@ void LSPOutlineView::OnMenu(wxCommandEvent& event)
         }
         case ID_MENU_INITIALISE_ENUMS_COLLAPSED: {
             m_initialiseEnumsCollapsed = event.IsChecked();
-            ResetTreeDisplay();                
+            InitExpandedState();                
             clConfig::Get().Write(kConfigOutlineStartEnumsCollapsed, m_initialiseEnumsCollapsed);
             break;
         }
         case ID_MENU_INITIALISE_CLASSES_COLLAPSED: {
             m_initialiseClassesCollapsed = event.IsChecked();
-            ResetTreeDisplay();                
+            InitExpandedState();                
             clConfig::Get().Write(kConfigOutlineStartClassesCollapsed, m_initialiseClassesCollapsed);
             break;
         }
         case ID_MENU_INITIALISE_SUBCLASSES_COLLAPSED: {
             m_initialiseSubclassesCollapsed = event.IsChecked();
-            ResetTreeDisplay();                
+            InitExpandedState();                
             clConfig::Get().Write(kConfigOutlineStartSubclassesCollapsed, m_initialiseSubclassesCollapsed);
             break;
         }
         case ID_MENU_INITIALISE_FUNCTIONS_COLLAPSED: {
             m_initialiseFunctionsCollapsed = event.IsChecked();
-            ResetTreeDisplay();                
+            InitExpandedState();                
             clConfig::Get().Write(kConfigOutlineStartFunctionsCollapsed, m_initialiseFunctionsCollapsed);
             break;
         }
         case ID_MENU_INITIALISE_CONTAINERS_COLLAPSED: {
             m_initialiseContainersCollapsed = event.IsChecked();
-            ResetTreeDisplay();                
+            InitExpandedState();                
             clConfig::Get().Write(kConfigOutlineStartContainersCollapsed, m_initialiseContainersCollapsed);
             break;
         }
         case ID_MENU_INITIALISE_VARIABLES_COLLAPSED: {
             m_initialiseVariablesCollapsed = event.IsChecked();
-            ResetTreeDisplay();                
+            InitExpandedState();                
             clConfig::Get().Write(kConfigOutlineStartVariablesCollapsed, m_initialiseVariablesCollapsed);
             break;
         }
@@ -1101,8 +1107,7 @@ void LSPOutlineView::OnToolBarDropdown(wxAuiToolBarEvent& event)
 void LSPOutlineView::OnSortChanged(wxCommandEvent& event)
 {
     auto* data = static_cast<wxIntClientData*>(event.GetClientObject());
-    if (!data)
-        return;
+    CHECK_PTR_RET(data);
     LSPSymbolParser::SortType sort = (LSPSymbolParser::SortType)data->GetValue();        
     clConfig::Get().Write(kConfigOutlineSortType, (int)sort);
     SortSymbols(sort);

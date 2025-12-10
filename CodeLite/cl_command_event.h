@@ -893,7 +893,6 @@ protected:
     size_t m_flags = 0;
     size_t m_priority = 50;
     wxString m_connectionString;
-    clEnvList_t m_enviroment;
     wxString m_initOptions;
     wxArrayString m_languages;
     eAction m_action = kInvalidAction;
@@ -923,8 +922,6 @@ public:
     const eAction& GetAction() const { return m_action; }
     void SetRootUri(const wxString& rootUri) { this->m_rootUri = rootUri; }
     const wxString& GetRootUri() const { return m_rootUri; }
-    void SetEnviroment(const clEnvList_t& enviroment) { this->m_enviroment = enviroment; }
-    const clEnvList_t& GetEnviroment() const { return m_enviroment; }
 };
 
 using clLanguageServerEventFunction = void (wxEvtHandler::*)(clLanguageServerEvent&);

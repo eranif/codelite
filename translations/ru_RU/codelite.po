@@ -17348,10 +17348,6 @@ msgstr "Цвет текста:"
 msgid "Font:"
 msgstr "Шрифт:"
 
-#: codelite_terminal/wxcrafter.h:67
-msgid "codelite-terminal"
-msgstr "codelite-terminal"
-
 #: codelite_vim/VIM.cpp:35
 msgid "Enable vim mode"
 msgstr "Включить режим Vim"

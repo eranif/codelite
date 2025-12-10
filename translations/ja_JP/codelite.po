@@ -24296,9 +24296,6 @@ msgstr "wxFormBuilder で開く..."
 #~ msgid "Text Colour:"
 #~ msgstr "テキストの色:"
 
-#~ msgid "codelite-terminal"
-#~ msgstr "codelite-terminal"
-
 #~ msgid ":w"
 #~ msgstr ":w"
 

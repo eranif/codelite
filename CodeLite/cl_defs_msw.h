@@ -17,5 +17,4 @@
 #endif
 
 // General macros
-#define CL_USE_NEW_BUILD_TAB 1
 #define CL_N0_OF_BOOKMARK_TYPES 5

@@ -616,4 +616,4 @@ std::unordered_map<wxString, std::vector<LSP::TextEdit>> ParseWorkspaceEdit(cons
     }
     return modifications;
 }
-}; // namespace LSP
+} // namespace LSP

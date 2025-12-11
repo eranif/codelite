@@ -15,11 +15,11 @@ class WXDLLIMPEXP_CL GotoImplementationRequest : public Request
 
 public:
     explicit GotoImplementationRequest(const wxString& filename, size_t line, size_t column);
-    virtual ~GotoImplementationRequest() = default;
+    ~GotoImplementationRequest() override = default;
 
-    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
-    bool IsPositionDependantRequest() const { return true; }
-    bool IsValidAt(const wxString& filename, size_t line, size_t col) const;
+    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
+    bool IsPositionDependentRequest() const override { return true; }
+    bool IsValidAt(const wxString& filename, size_t line, size_t col) const override;
 };
-};     // namespace LSP
+} // namespace LSP
 #endif // GOTOIMPLEMENTATIONREQUEST_H

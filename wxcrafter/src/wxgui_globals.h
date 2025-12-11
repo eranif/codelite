@@ -25,6 +25,6 @@ wxString GetColumnText(wxListCtrl* list, long index, long column);
 long AppendListCtrlRow(wxListCtrl* list);
 
 bool ReadFileContent(const wxString& fileName, wxString& content);
-}; // namespace wxCrafter
+} // namespace wxCrafter
 
 #endif // __GLOBALS__H__

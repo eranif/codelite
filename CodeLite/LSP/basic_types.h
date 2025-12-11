@@ -704,5 +704,6 @@ WXDLLIMPEXP_CL std::unordered_map<wxString, std::vector<LSP::TextEdit>> ParseWor
 /// Return the string representation of an eSymbolKind value
 WXDLLIMPEXP_CL wxString SymbolKindToString(eSymbolKind kind);
 
-}; // namespace LSP
+} // namespace LSP
+
 #endif // JSONRPC_BASICTYPES_H

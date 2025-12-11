@@ -14,6 +14,6 @@ public:
     virtual ~DidChangeTextDocumentRequest() = default;
 };
 
-}; // namespace LSP
+} // namespace LSP
 
 #endif // DIDCHANGE_TEXTDOCUMENTREQUEST_H

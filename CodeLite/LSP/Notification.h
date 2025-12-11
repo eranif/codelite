@@ -12,6 +12,6 @@ public:
     Notification();
     virtual ~Notification() = 0; // Make sure that this class cant be used directly
 };
-}; // namespace LSP
+} // namespace LSP
 
 #endif // NOTIFICATION_H

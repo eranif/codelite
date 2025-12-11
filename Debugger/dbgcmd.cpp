@@ -848,9 +848,9 @@ bool DbgCmdCreateVarObj::ProcessOutput(const wxString& line)
         iter = attr.find("numchild");
         if (iter != attr.end()) {
             if (iter->second.empty() == false) {
-                wxString numChilds(iter->second.c_str(), wxConvUTF8);
-                wxRemoveQuotes(numChilds);
-                vo.numChilds = wxAtoi(numChilds);
+                wxString numChild(iter->second.c_str(), wxConvUTF8);
+                wxRemoveQuotes(numChild);
+                vo.numChild = wxAtoi(numChild);
             }
         }
 
@@ -910,15 +910,15 @@ static VariableObjChild FromParserOutput(const gdbmi::Node& child)
     var_child.varName = child["exp"].value;
     var_child.type = child["type"].value;
     var_child.gdbId = child["name"].value;
-    wxString numChilds = child["numchild"].value;
+    wxString numChild = child["numchild"].value;
     wxString dynamic = child["dynamic"].value;
 
-    if (numChilds.IsEmpty() == false) {
-        var_child.numChilds = wxAtoi(numChilds);
+    if (numChild.IsEmpty() == false) {
+        var_child.numChild = wxAtoi(numChild);
     }
 
-    if (var_child.numChilds == 0 && dynamic == "1") {
-        var_child.numChilds = 1;
+    if (var_child.numChild == 0 && dynamic == "1") {
+        var_child.numChild = 1;
     }
 
     // child.varName = ExtractGdbChild(attr, wxT("exp"));

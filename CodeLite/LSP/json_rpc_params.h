@@ -282,5 +282,5 @@ public:
     const wxString& GetText() const { return m_text; }
 };
 
-};     // namespace LSP
+} // namespace LSP
 #endif // JSONRPC_PARAMS_H

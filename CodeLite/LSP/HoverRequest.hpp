@@ -13,5 +13,5 @@ public:
     virtual ~HoverRequest() = default;
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
 };
-};     // namespace LSP
+} // namespace LSP
 #endif // HOVERREQUEST_HPP

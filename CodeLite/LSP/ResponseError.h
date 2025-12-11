@@ -42,6 +42,6 @@ public:
     bool IsOk() const { return m_errorCode != wxNOT_FOUND; }
 };
 
-}; // namespace LSP
+} // namespace LSP
 
 #endif // RESPONSEERROR_H

@@ -34,7 +34,6 @@ class WXDLLIMPEXP_SDK clChoice : public clButtonBase
 {
     std::vector<wxString> m_choices;
     int m_selection = wxNOT_FOUND;
-    bool m_popupShown = false;
 
 protected:
     void OnClick(wxCommandEvent& event);

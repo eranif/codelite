@@ -15,11 +15,11 @@ class WXDLLIMPEXP_CL SignatureHelpRequest : public LSP::Request
 
 public:
     explicit SignatureHelpRequest(const wxString& filename, size_t line, size_t column);
-    virtual ~SignatureHelpRequest() = default;
+    ~SignatureHelpRequest() override = default;
 
-    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
-    bool IsPositionDependantRequest() const { return true; }
-    bool IsValidAt(const wxString& filename, size_t line, size_t col) const;
+    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
+    bool IsPositionDependentRequest() const override { return true; }
+    bool IsValidAt(const wxString& filename, size_t line, size_t col) const override;
 };
-};     // namespace LSP
+} // namespace LSP
 #endif // SIGNATUREHELPREQUEST_H

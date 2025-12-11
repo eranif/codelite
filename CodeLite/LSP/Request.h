@@ -16,7 +16,7 @@ class WXDLLIMPEXP_CL Request : public LSP::MessageWithParams
 {
 public:
     Request();
-    virtual ~Request() = default;
+    ~Request() override = default;
 
     void SetId(int id) { this->m_id = id; }
     int GetId() const { return m_id; }
@@ -25,13 +25,13 @@ public:
     virtual void FromJSON(const JSONItem& json);
 
     /**
-     * @brief is this request position dependant? (i.e. the response should be displayed where the request was
+     * @brief is this request position dependent? (i.e. the response should be displayed where the request was
      * triggered?)
      */
-    virtual bool IsPositionDependantRequest() const { return false; }
+    virtual bool IsPositionDependentRequest() const { return false; }
 
     /**
-     * @brief in case 'IsPositionDependantRequest' is true, return true if the response is valid at
+     * @brief in case 'IsPositionDependentRequest' is true, return true if the response is valid at
      * a given position. Usually, when the user moves while waiting for a response, it makes no sense on
      * displaying the response in the wrong location...
      */

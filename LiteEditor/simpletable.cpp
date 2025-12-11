@@ -48,8 +48,8 @@ WatchesTable::WatchesTable(wxWindow* parent)
     m_listTable->AddTreeStyle(wxTR_SORT_TOP_LEVEL);
 
     m_DBG_USERR = DBG_USERR_WATCHTABLE;
-    m_QUERY_NUM_CHILDS = QUERY_NUM_CHILDS;
-    m_LIST_CHILDS = LIST_WATCH_CHILDS;
+    m_QUERY_NUM_CHILDREN = QUERY_NUM_CHILDREN;
+    m_LIST_CHILDREN = LIST_WATCH_CHILDREN;
     // Should a be placed before b?
     clSortFunc_t func = [&](clRowEntry* a, clRowEntry* b) { return (a->GetLabel().CmpNoCase(b->GetLabel()) < 0); };
 
@@ -381,9 +381,9 @@ void WatchesTable::OnCreateVariableObject(const DebuggerEventData& event)
                     // refresh this item only
                     DoRefreshItem(dbgr, item, true);
 
-                    // Query the debugger to see if this node has a children
+                    // Query the debugger to see if this node has children
                     // In case it does, we add a dummy node so we will get the [+] sign
-                    dbgr->ListChildren(data->_gdbId, m_QUERY_NUM_CHILDS);
+                    dbgr->ListChildren(data->_gdbId, m_QUERY_NUM_CHILDREN);
                 }
                 m_listChildItemId[data->_gdbId] = item;
             }
@@ -408,11 +408,11 @@ void WatchesTable::OnListChildren(const DebuggerEventData& event)
     wxTreeItemId item = iter->second;
     m_listChildItemId.erase(iter);
 
-    if (event.m_userReason == m_QUERY_NUM_CHILDS) {
+    if (event.m_userReason == m_QUERY_NUM_CHILDREN) {
         if (event.m_varObjChildren.empty() == false)
             m_listTable->AppendItem(item, wxT("<dummy>"));
 
-    } else if (event.m_userReason == m_LIST_CHILDS) {
+    } else if (event.m_userReason == m_LIST_CHILDREN) {
         if (event.m_varObjChildren.empty() == false) {
             IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
             if (!dbgr || !ManagerST::Get()->DbgCanInteract())
@@ -424,7 +424,7 @@ void WatchesTable::OnListChildren(const DebuggerEventData& event)
                 if (ch.varName == "public" || ch.varName == "private" || ch.varName == "protected") {
                     // not really a node...
                     // ask for information about this node children
-                    dbgr->ListChildren(ch.gdbId, m_LIST_CHILDS);
+                    dbgr->ListChildren(ch.gdbId, m_LIST_CHILDREN);
                     m_listChildItemId[ch.gdbId] = item;
 
                 } else {
@@ -435,7 +435,7 @@ void WatchesTable::OnListChildren(const DebuggerEventData& event)
                     m_listTable->SetItemText(child, ch.type, 2);
 
                     // Add a dummy node
-                    if (child.IsOk() && ch.numChilds > 0) {
+                    if (child.IsOk() && ch.numChild > 0) {
                         m_listTable->AppendItem(child, wxT("<dummy>"));
                     }
 
@@ -471,7 +471,7 @@ void WatchesTable::OnItemExpanding(wxTreeEvent& event)
         if (data) {
             if (data->_gdbId.IsEmpty() == false) {
                 dbgr->UpdateVariableObject(data->_gdbId, m_DBG_USERR);
-                dbgr->ListChildren(data->_gdbId, m_LIST_CHILDS);
+                dbgr->ListChildren(data->_gdbId, m_LIST_CHILDREN);
                 m_listChildItemId[data->_gdbId] = event.GetItem();
             }
         }

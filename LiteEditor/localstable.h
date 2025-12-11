@@ -33,9 +33,9 @@
 
 #include <wx/arrstr.h>
 
-#define LIST_LOCALS_CHILDS 600
-#define QUERY_LOCALS_CHILDS 601
-#define QUERY_LOCALS_CHILDS_FAKE_NODE 602
+#define LIST_LOCAL_CHILDREN 600
+#define QUERY_LOCAL_CHILDREN 601
+#define QUERY_LOCAL_CHILDREN_FAKE_NODE 602
 
 class LocalsTable : public DebuggerTreeListCtrlBase
 {

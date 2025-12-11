@@ -131,7 +131,7 @@ std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wx
     });
     return thr;
 }
-}; // namespace
+} // namespace
 
 clSSHInteractiveChannel::Ptr_t clSSHInteractiveChannel::Create(wxEvtHandler* parent,
                                                                clSSH::Ptr_t ssh,

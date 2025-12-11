@@ -31,7 +31,7 @@
 class XDebugStopCmdHandler : public XDebugCommandHandler
 {
 public:
-    XDebugStopCmdHandler(XDebugManager* mgr, int transcationId);
+    XDebugStopCmdHandler(XDebugManager* mgr, int transactionId);
     virtual ~XDebugStopCmdHandler() = default;
 
 public:

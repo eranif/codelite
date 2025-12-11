@@ -1052,7 +1052,7 @@ bool try_resovle_user_type_with_scopes(const std::vector<std::pair<wxString, wxS
     }
     return false;
 }
-}; // namespace
+} // namespace
 
 bool CxxCodeCompletion::resolve_user_type(const wxString& type, const std::vector<wxString>& visible_scopes,
                                           wxString* resolved) const
@@ -1130,7 +1130,7 @@ bool try_resolve_placeholder(const wxStringMap_t& table, const wxString& name, w
     }
     return false;
 }
-}; // namespace
+} // namespace
 
 wxString TemplateManager::resolve(const wxString& name, const std::vector<wxString>& visible_scopes) const
 {

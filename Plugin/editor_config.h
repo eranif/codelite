@@ -115,7 +115,7 @@ class WXDLLIMPEXP_SDK EditorConfig : public IConfigTool
     friend class EditorConfigST;
     wxXmlDocument* m_doc;
     wxFileName m_fileName;
-    bool m_transcation;
+    bool m_transaction = false;
     wxString m_svnRevision;
     wxString m_version;
     wxString m_installDir;

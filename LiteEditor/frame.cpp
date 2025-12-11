@@ -779,7 +779,6 @@ clMainFrame::clMainFrame(
 
     // construct the UI
     m_frameGeneralInfo = inf;
-    Construct();
 }
 
 clMainFrame::~clMainFrame()
@@ -1030,6 +1029,7 @@ void clMainFrame::Initialize(bool loadLastSession)
                                  wxDefaultPosition,
                                  wxDefaultSize,
                                  wxDEFAULT_FRAME_STYLE | wxNO_FULL_REPAINT_ON_RESIZE);
+    m_theFrame->Construct();
     m_theFrame->m_loadLastSession = loadLastSession;
 }
 

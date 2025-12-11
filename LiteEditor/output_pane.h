@@ -36,11 +36,6 @@
 class BuildTab;
 class ClangOutputTab;
 class FindResultsTab;
-#if CL_USE_NEW_BUILD_TAB
-class NewBuildTab;
-#else
-class BuildTab;
-#endif
 class ReplaceInFilesPanel;
 class ShellTab;
 class TaskPanel;
@@ -86,7 +81,6 @@ private:
     Notebook* m_book = nullptr;
     FindResultsTab* m_findResultsTab;
     ReplaceInFilesPanel* m_replaceResultsTab;
-    // NewBuildTab* m_buildWin;
     ShellTab* m_outputWind;
     FindUsageTab* m_showUsageTab;
     BuildTab* m_build_tab = nullptr;

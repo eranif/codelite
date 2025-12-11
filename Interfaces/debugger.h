@@ -79,7 +79,7 @@ struct ThreadEntry {
 };
 
 struct VariableObjChild {
-    int numChilds = 0; // If this child has children (i.e. is this child a node or leaf)
+    int numChild = 0;  // If this child has children (i.e. is this child a node or leaf)
     wxString varName;  // the name of the variable object node
     wxString gdbId;    // A unique name given by gdb which holds this node information for further queries
     wxString value;
@@ -94,7 +94,7 @@ struct VariableObject {
     bool isPtrPtr = false; // if this variable object is of type pointer pointer
     wxString gdbId;        // GDB unique identifier for this variable object
     wxString typeName;     // the type of this variable object
-    int numChilds = 0;     // Number of children
+    int numChild = 0;     // Number of children
     bool has_more = false; // has_more?
     VariableObject() = default;
 };

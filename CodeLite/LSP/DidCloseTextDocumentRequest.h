@@ -14,5 +14,5 @@ public:
     explicit DidCloseTextDocumentRequest(const wxString& filename);
     virtual ~DidCloseTextDocumentRequest() = default;
 };
-};     // namespace LSP
+} // namespace LSP
 #endif // DIDCLOSETEXTDOCUMENTREQUEST_H

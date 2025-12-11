@@ -15,6 +15,7 @@ public:
        SORT_KIND_NAME_CASE_SENSITIVE,
        SORT_LINE
     };
+    
     static const std::vector<eSymbolKind> SymbolKindOrder;    
     /**
      * @brief Sort a list of DocumentSymbols recursively 
@@ -40,7 +41,7 @@ public:
      */
     static void Sort(std::vector<LSP::SymbolInformation>& symbols, SortType sort, const std::vector<eSymbolKind>& symbolKindOrder = SymbolKindOrder);
     
-    static std::vector<LSP::DocumentSymbol> Parse(const std::vector<LSP::SymbolInformation>& symbols);
+    static std::vector<LSP::DocumentSymbol> MakeTree(const std::vector<LSP::SymbolInformation>& symbols);
     
     private:
         static inline DocumentSymbol MakeDocumentSymbol(const SymbolInformation& si);

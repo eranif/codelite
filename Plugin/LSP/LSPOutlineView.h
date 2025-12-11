@@ -20,23 +20,23 @@ using namespace LSP;
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_LSP_OUTLINE_SYMBOL_ACTIVATED, wxCommandEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_LSP_OUTLINE_VIEW_DISMISS, wxCommandEvent);
 
-#define kConfigOutlineStartAllCollapsed "OutlineStartAllCollapsed"
-#define kConfigOutlineStartEnumsCollapsed "OutlineStartEnumsCollapsed"
-#define kConfigOutlineStartClassesCollapsed "OutlineStartClassesCollapsed"
-#define kConfigOutlineStartSubclassesCollapsed "OutlineStartSubclassesCollapsed"
-#define kConfigOutlineStartFunctionsCollapsed "OutlineStartFunctionsCollapsed"
-#define kConfigOutlineStartVariablesCollapsed "OutlineStartVariablesCollapsed"
-#define kConfigOutlineStartContainersCollapsed "OutlineStartFunctionsCollapsed"
-#define kConfigOutlineKeepNamespacesExpanded "OutlineKeepNamespacesExpanded"
-#define kConfigOutlineSortType "OutlineSortType"
-#define kConfigOutlineShowSymbolDetails "OutlineShowSymbolDetails"
-#define kConfigOutlineShowSymbolKinds "OutlineShowSymbolKinds"
-#define kConfigOutlineForceTree "OutlineForceTree"
+#define kConfigOutlineStartAllCollapsed         "OutlineStartAllCollapsed"
+#define kConfigOutlineStartEnumsCollapsed       "OutlineStartEnumsCollapsed"
+#define kConfigOutlineStartClassesCollapsed     "OutlineStartClassesCollapsed"
+#define kConfigOutlineStartSubclassesCollapsed  "OutlineStartSubclassesCollapsed"
+#define kConfigOutlineStartFunctionsCollapsed   "OutlineStartFunctionsCollapsed"
+#define kConfigOutlineStartVariablesCollapsed   "OutlineStartVariablesCollapsed"
+#define kConfigOutlineStartContainersCollapsed  "OutlineStartFunctionsCollapsed"
+#define kConfigOutlineKeepNamespacesExpanded    "OutlineKeepNamespacesExpanded"
+#define kConfigOutlineSortType                  "OutlineSortType"
+#define kConfigOutlineShowSymbolDetails         "OutlineShowSymbolDetails"
+#define kConfigOutlineShowSymbolKinds           "OutlineShowSymbolKinds"
+#define kConfigOutlineForceTree                 "OutlineForceTree"
 
 class WXDLLIMPEXP_SDK LSPOutlineView : public wxPanel
 {
 public:
-    enum class Mode {
+    enum class MODE {
         DOCUMENT_SYMBOL,
         SYMBOL_INFORMATION,
         SYMBOL_INFORMATION_PARSED,
@@ -90,7 +90,7 @@ protected:
         ID_MENU_INITIALISE_VARIABLES_COLLAPSED
     };
     struct TreeState {        
-        // Pointer to DocumentSymbol wrapped in wxTreeItemIds
+        // Pointer to DocumentSymbol wrapped in wxTreeItemId
         wxTreeItemId selectedNode;
         bool manuallyCollapsed = false;
         bool manuallyExpanded = false;
@@ -98,10 +98,9 @@ protected:
         std::vector<wxTreeItemId> expandedNodes;
         // Pointers to DocumentSymbols wrapped in wxTreeItemIds
         std::vector<wxTreeItemId> collapsedNodes;
-        bool isBulkChanging = false;
     };
     
-    Mode m_mode;
+    MODE m_mode;
     long m_style = STYLE_DEFAULT;
     bool m_showDetails = true;
     bool m_showSymbolKind = false;

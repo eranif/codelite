@@ -2,35 +2,36 @@
 
 namespace LSP
 {   
+    // eSymbolKind preference when sorting symbols
     const std::vector<eSymbolKind> LSPSymbolParser::SymbolKindOrder = {
-            kSK_File,
-            kSK_Module,
-            kSK_Namespace,
-            kSK_Package,
-            kSK_Class,
-            kSK_Struct,
-            kSK_Object,
-            kSK_Interface,
-            kSK_Enum,
-            kSK_EnumMember,
-            kSK_Constructor,
-            kSK_Method,
-            kSK_Function,
-            kSK_Operator,
-            kSK_Property,
-            kSK_Field,
-            kSK_Variable,
-            kSK_Constant,
-            kSK_String,
-            kSK_Number,
-            kSK_Boolean,
-            kSK_Array,
-            kSK_Key,
-            kSK_Event,
-            kSK_TypeParameter,
-            kSK_Container,
-            kSK_Null
-        };
+        kSK_File,
+        kSK_Module,
+        kSK_Namespace,
+        kSK_Package,
+        kSK_Class,
+        kSK_Struct,
+        kSK_Object,
+        kSK_Interface,
+        kSK_Enum,
+        kSK_EnumMember,
+        kSK_Constructor,
+        kSK_Method,
+        kSK_Function,
+        kSK_Operator,
+        kSK_Property,
+        kSK_Field,
+        kSK_Variable,
+        kSK_Constant,
+        kSK_String,
+        kSK_Number,
+        kSK_Boolean,
+        kSK_Array,
+        kSK_Key,
+        kSK_Event,
+        kSK_TypeParameter,
+        kSK_Container,
+        kSK_Null
+    };
         
     void LSPSymbolParser::Sort(std::vector<LSP::DocumentSymbol>& symbols, SortType sort, const std::vector<eSymbolKind>& symbolKindOrder) 
     {
@@ -201,7 +202,7 @@ namespace LSP
         return parentIndex;
     };
     
-    std::vector<LSP::DocumentSymbol> LSPSymbolParser::Parse(const std::vector<LSP::SymbolInformation>& symbols)
+    std::vector<LSP::DocumentSymbol> LSPSymbolParser::MakeTree(const std::vector<LSP::SymbolInformation>& symbols)
     {
         using SymbolList = std::vector<LSP::SymbolInformation>;
         using index_t = SymbolList::size_type;

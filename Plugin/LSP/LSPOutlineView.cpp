@@ -160,6 +160,7 @@ void LSPOutlineView::CreateToolbar()
 
 void LSPOutlineView::DoInitialiseEmpty()
 {   
+    // don't need to adjust available tools here - everything will be disabled by ShowMessage
     ShowMessage(m_emptyMessage, false);
 }
 
@@ -185,10 +186,19 @@ void LSPOutlineView::AddDocumentSymbolRec(wxTreeItemId parent, const LSP::Docume
 
 void LSPOutlineView::DoInitialiseDocumentSymbol()
 {   
+    // show only tree and toolbar
     m_msgPanel->Hide();
     m_msgIndicator->Stop();
     m_terminalViewCtrl->Hide();
     m_treeCtrl->Show();
+    
+    // enable all tools
+    m_toolbar->EnableTool(ID_TOOL_EXPAND_ALL, true);
+    m_toolbar->EnableTool(ID_TOOL_COLLAPSE_ALL, true);
+    m_toolbar->EnableTool(ID_TOOL_DETAILS, m_mode == MODE::DOCUMENT_SYMBOL);
+    m_toolbar->EnableTool(ID_TOOL_KIND, true);
+    m_toolbar->EnableTool(ID_TOOL_MENU, true);
+    m_sortOptions->Enable();
     
     auto lexer = ColoursAndFontsManager::Get().GetLexer("python");
     m_treeCtrl->DeleteAllItems();
@@ -263,10 +273,20 @@ void LSPOutlineView::RestoreTreeStateRec(wxTreeItemId parent)
     
 void LSPOutlineView::DoInitialiseSymbolInformation()
 {
+    // show only terminalView and Toolbar
     m_msgPanel->Hide();
     m_msgIndicator->Stop();
     m_terminalViewCtrl->Show();
     m_treeCtrl->Hide();
+        
+    // adjust available tools
+    m_toolbar->EnableTool(ID_TOOL_EXPAND_ALL, false);
+    m_toolbar->EnableTool(ID_TOOL_COLLAPSE_ALL, false);
+    m_toolbar->EnableTool(ID_TOOL_DETAILS, false);
+    m_toolbar->EnableTool(ID_TOOL_KIND, true);
+    m_toolbar->EnableTool(ID_TOOL_MENU, true);
+    m_sortOptions->Enable();
+    
     
     auto lexer = ColoursAndFontsManager::Get().GetLexer("python");
     m_terminalViewCtrl->DeleteAllItems();
@@ -365,7 +385,7 @@ void LSPOutlineView::DoInitialiseSymbolInformation()
 void LSPOutlineView::OnEnter(wxCommandEvent& event)
 {
     wxUnusedVar(event);    
-    if (m_mode == Mode::DOCUMENT_SYMBOL || m_mode == Mode::SYMBOL_INFORMATION_PARSED) {     
+    if (m_mode == MODE::DOCUMENT_SYMBOL || m_mode == MODE::SYMBOL_INFORMATION_PARSED) {     
         auto selection = m_treeCtrl->GetSelection();
         CHECK_ITEM_RET(selection);
         DoActivate(selection);        
@@ -382,7 +402,7 @@ void LSPOutlineView::OnTextUpdated(wxCommandEvent& event)
     wxUnusedVar(event);
 
     wxString filter_text = m_textCtrlFilter->GetValue();
-    if (m_mode == Mode::DOCUMENT_SYMBOL || m_mode == Mode::SYMBOL_INFORMATION_PARSED) {
+    if (m_mode == MODE::DOCUMENT_SYMBOL || m_mode == MODE::SYMBOL_INFORMATION_PARSED) {
         m_treeCtrl->ClearAllHighlights();
         wxTreeItemId starting_item = m_treeCtrl->GetSelection().IsOk() ? m_treeCtrl->GetSelection() : wxTreeItemId( nullptr );
         auto match = m_treeCtrl->FindNext(starting_item, filter_text, 0, wxTR_SEARCH_DEFAULT);
@@ -502,7 +522,7 @@ void LSPOutlineView::OnKeyDown(wxKeyEvent& event)
 
 void LSPOutlineView::DoFindNext()
 {
-    if (m_mode == Mode::DOCUMENT_SYMBOL || m_mode == Mode::SYMBOL_INFORMATION_PARSED) {
+    if (m_mode == MODE::DOCUMENT_SYMBOL || m_mode == MODE::SYMBOL_INFORMATION_PARSED) {
         m_treeCtrl->ClearAllHighlights();
 
         wxTreeItemId sel_item = m_treeCtrl->GetSelection();
@@ -542,7 +562,7 @@ void LSPOutlineView::DoFindNext()
 
 void LSPOutlineView::DoFindPrev()
 {
-    if (m_mode == Mode::DOCUMENT_SYMBOL || m_mode == Mode::SYMBOL_INFORMATION_PARSED) {
+    if (m_mode == MODE::DOCUMENT_SYMBOL || m_mode == MODE::SYMBOL_INFORMATION_PARSED) {
         m_treeCtrl->ClearAllHighlights();
 
         wxTreeItemId sel_item = m_treeCtrl->GetSelection();
@@ -594,6 +614,10 @@ void LSPOutlineView::OnListKeyDown(wxKeyEvent& event)
 
 void LSPOutlineView::SetSymbols(const std::vector<SymbolInformation>& symbols, const wxString& filename)
 {    
+    m_toolbar->EnableTool(ID_TOOL_EXPAND_ALL, false);
+    m_toolbar->EnableTool(ID_TOOL_COLLAPSE_ALL, false);
+    m_sortOptions->Disable();
+    
     if (!CheckAndRequest(filename)) {
         ShowMessage(m_loadingMessage, true);
         return;
@@ -604,19 +628,19 @@ void LSPOutlineView::SetSymbols(const std::vector<SymbolInformation>& symbols, c
     m_toolbar->EnableTool(ID_TOOL_KIND, true);    
     m_treeState = TreeState();
     if (m_forceTree) {
-        m_documentSymbols = LSPSymbolParser::Parse(symbols);
-        m_mode = Mode::SYMBOL_INFORMATION_PARSED;
+        m_documentSymbols = LSPSymbolParser::MakeTree(symbols);
+        m_mode = MODE::SYMBOL_INFORMATION_PARSED;
         DoInitialiseDocumentSymbol();
     }
     else {        
-        m_mode = Mode::SYMBOL_INFORMATION;
+        m_mode = MODE::SYMBOL_INFORMATION;
         DoInitialiseSymbolInformation();
     }
     
 }
 
 void LSPOutlineView::SetSymbols(const std::vector<DocumentSymbol>& symbols, const wxString& filename)
-{        
+{    
     // Clear the tree. Not using ClearView() because we don't want to delete our symbols
     // in case a re-render
     m_treeCtrl->DeleteAllItems();
@@ -636,7 +660,7 @@ void LSPOutlineView::SetSymbols(const std::vector<DocumentSymbol>& symbols, cons
     }
     
     m_currentSymbolsFileName = filename;
-    m_mode = Mode::DOCUMENT_SYMBOL;
+    m_mode = MODE::DOCUMENT_SYMBOL;
     m_documentSymbols = symbols;    
     m_toolbar->EnableTool(ID_TOOL_DETAILS, true);
     m_toolbar->EnableTool(ID_TOOL_KIND, true);
@@ -648,8 +672,6 @@ void LSPOutlineView::SetEmptySymbols()
 {
     m_documentSymbols.clear();
     m_symbolsInformation.clear();
-    m_toolbar->EnableTool(ID_TOOL_DETAILS, false);
-    m_toolbar->EnableTool(ID_TOOL_KIND, false);
     DoInitialiseEmpty();
 }
 
@@ -782,11 +804,11 @@ void LSPOutlineView::SortSymbols(LSPSymbolParser::SortType sort)
     
     // perform sort
     switch (m_mode) {
-        case Mode::DOCUMENT_SYMBOL: wxFALLTHROUGH;
-        case Mode::SYMBOL_INFORMATION_PARSED:
+        case MODE::DOCUMENT_SYMBOL: wxFALLTHROUGH;
+        case MODE::SYMBOL_INFORMATION_PARSED:
             LSPSymbolParser::Sort(m_documentSymbols, sort);
             break;
-        case Mode::SYMBOL_INFORMATION:
+        case MODE::SYMBOL_INFORMATION:
             LSPSymbolParser::Sort(m_symbolsInformation, sort);
             break;
     }
@@ -839,11 +861,20 @@ void LSPOutlineView::ClearView()
 void LSPOutlineView::ShowMessage(const wxString& message, bool showLoadingIndicator) {
     m_treeCtrl->Hide();
     m_terminalViewCtrl->Hide();
+    
+    m_toolbar->EnableTool(ID_TOOL_EXPAND_ALL, false);
+    m_toolbar->EnableTool(ID_TOOL_COLLAPSE_ALL, false);
+    m_toolbar->EnableTool(ID_TOOL_DETAILS, false);
+    m_toolbar->EnableTool(ID_TOOL_KIND, false);
+    m_toolbar->EnableTool(ID_TOOL_MENU, false);
+    m_sortOptions->Disable();
+    
     m_msgText->SetLabel(message);
     m_msgIndicator->Show(showLoadingIndicator);
     if (showLoadingIndicator) 
         m_msgIndicator->Start();
     m_msgPanel->Show();
+    Layout();
 }
 
 void LSPOutlineView::HideMessage() {
@@ -1014,7 +1045,7 @@ void LSPOutlineView::OnMenu(wxCommandEvent& event)
         case ID_MENU_FORCE_TREE: {
             m_forceTree = event.IsChecked();
             clConfig::Get().Write(kConfigOutlineForceTree, m_forceTree);
-            if (m_mode == Mode::SYMBOL_INFORMATION || m_mode == Mode::SYMBOL_INFORMATION_PARSED) {
+            if (m_mode == MODE::SYMBOL_INFORMATION || m_mode == MODE::SYMBOL_INFORMATION_PARSED) {
                 // re-parse our symbols with the changed tree setting
                 SetSymbols(m_symbolsInformation, m_currentSymbolsFileName);
             }
@@ -1027,7 +1058,7 @@ void LSPOutlineView::OnToolBar(wxCommandEvent& event)
 {
     switch (event.GetId()) {
         case ID_TOOL_DETAILS: {
-            if (m_mode == Mode::SYMBOL_INFORMATION)
+            if (m_mode == MODE::SYMBOL_INFORMATION)
                 return;
             m_showDetails = event.IsChecked();                
             clConfig::Get().Write(kConfigOutlineShowSymbolDetails, m_showDetails);
@@ -1037,14 +1068,14 @@ void LSPOutlineView::OnToolBar(wxCommandEvent& event)
         case ID_TOOL_KIND: {
             m_showSymbolKind = event.IsChecked();
             clConfig::Get().Write(kConfigOutlineShowSymbolKinds, m_showSymbolKind);
-            if (m_mode == Mode::DOCUMENT_SYMBOL || m_mode == Mode::SYMBOL_INFORMATION_PARSED)
+            if (m_mode == MODE::DOCUMENT_SYMBOL || m_mode == MODE::SYMBOL_INFORMATION_PARSED)
                 DoInitialiseDocumentSymbol();
             else
                 DoInitialiseSymbolInformation();
             break;
         }
         case ID_TOOL_COLLAPSE_ALL: {
-            if (m_mode == Mode::SYMBOL_INFORMATION)
+            if (m_mode == MODE::SYMBOL_INFORMATION)
                 return;
             CollapseTree();
             m_treeState.manuallyCollapsed = true;                
@@ -1053,7 +1084,7 @@ void LSPOutlineView::OnToolBar(wxCommandEvent& event)
             break;
         }
         case ID_TOOL_EXPAND_ALL: {
-            if (m_mode == Mode::SYMBOL_INFORMATION)
+            if (m_mode == MODE::SYMBOL_INFORMATION)
                 return;
             ExpandTree();                
             m_treeState.manuallyExpanded = true;
@@ -1111,7 +1142,7 @@ void LSPOutlineView::OnSortChanged(wxCommandEvent& event)
     LSPSymbolParser::SortType sort = (LSPSymbolParser::SortType)data->GetValue();        
     clConfig::Get().Write(kConfigOutlineSortType, (int)sort);
     SortSymbols(sort);
-    if (m_mode == Mode::DOCUMENT_SYMBOL || m_mode == Mode::SYMBOL_INFORMATION_PARSED)
+    if (m_mode == MODE::DOCUMENT_SYMBOL || m_mode == MODE::SYMBOL_INFORMATION_PARSED)
         DoInitialiseDocumentSymbol();
     else
         DoInitialiseSymbolInformation();

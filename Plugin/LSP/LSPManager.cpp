@@ -1218,35 +1218,79 @@ void Manager::OnDocumentSymbolsForHighlight(LSPEvent& event)
     }
     CHECK_PTR_RET(editor);
 
-    const auto& symbols = event.GetSymbolsInformation();
     wxString classes, variables, methods, others;
-    for (const auto& si : symbols) {
-        switch (si.GetKind()) {
-        case LSP::kSK_Module:
-        case LSP::kSK_Namespace:
-        case LSP::kSK_Package:
-        case LSP::kSK_Class:
-        case LSP::kSK_Enum:
-        case LSP::kSK_Interface:
-        case LSP::kSK_Struct:
-        case LSP::kSK_Object:
-            classes << si.GetName() << " ";
-            break;
-        case LSP::kSK_Method:
-        case LSP::kSK_Function:
-            methods << si.GetName() << " ";
-            break;
-        case LSP::kSK_TypeParameter:
-            others << si.GetName() << " ";
-            break;
-        case LSP::kSK_EnumMember:
-        case LSP::kSK_Property:
-        case LSP::kSK_Field:
-        case LSP::kSK_Variable:
-        case LSP::kSK_Constant:
-            variables << si.GetName() << " ";
-        default:
-            break;
+    
+    // lambda to recursively parse a DocumentSymbol hierarchy
+    std::function<void(const DocumentSymbol&)> parseDocumentSymbolRec = [&](const DocumentSymbol& symbol) {        
+        switch (symbol.GetKind()) {
+            case LSP::kSK_Module:
+            case LSP::kSK_Namespace:
+            case LSP::kSK_Package:
+            case LSP::kSK_Class:
+            case LSP::kSK_Enum:
+            case LSP::kSK_Interface:
+            case LSP::kSK_Struct:
+            case LSP::kSK_Object:
+                classes << symbol.GetName() << " ";
+                break;
+            case LSP::kSK_Method:
+            case LSP::kSK_Function:
+                methods << symbol.GetName() << " ";
+                break;
+            case LSP::kSK_TypeParameter:
+                others << symbol.GetName() << " ";
+                break;
+            case LSP::kSK_EnumMember:
+            case LSP::kSK_Property:
+            case LSP::kSK_Field:
+            case LSP::kSK_Variable:
+            case LSP::kSK_Constant:
+                variables << symbol.GetName() << " ";
+            default:
+                break;
+        }
+        
+        for (const auto& child : symbol.GetChildren()) {
+            parseDocumentSymbolRec(child);
+        }
+    };
+    
+    if (!event.GetDocumentSymbols().empty()) {
+        // event included DocumentSymbols, use those
+        for (const auto& ds : event.GetDocumentSymbols()) {
+            parseDocumentSymbolRec(ds);
+        }
+    }
+    else if (!event.GetSymbolsInformation().empty()) {
+        // event included SymbolInformation instead
+        for (const auto& si : event.GetSymbolsInformation()) {
+            switch (si.GetKind()) {
+            case LSP::kSK_Module:
+            case LSP::kSK_Namespace:
+            case LSP::kSK_Package:
+            case LSP::kSK_Class:
+            case LSP::kSK_Enum:
+            case LSP::kSK_Interface:
+            case LSP::kSK_Struct:
+            case LSP::kSK_Object:
+                classes << si.GetName() << " ";
+                break;
+            case LSP::kSK_Method:
+            case LSP::kSK_Function:
+                methods << si.GetName() << " ";
+                break;
+            case LSP::kSK_TypeParameter:
+                others << si.GetName() << " ";
+                break;
+            case LSP::kSK_EnumMember:
+            case LSP::kSK_Property:
+            case LSP::kSK_Field:
+            case LSP::kSK_Variable:
+            case LSP::kSK_Constant:
+                variables << si.GetName() << " ";
+            default:
+                break;
+            }
         }
     }
     LSP_DEBUG() << "Setting semantic highlight (using DocumentSymbolsRequest):" << endl;

@@ -24,24 +24,14 @@ public:
 
 private:
     size_t m_context = CONTEXT_NONE;                              
-    LSPEvent CreateLSPEvent(const std::vector<LSP::DocumentSymbol>& symbols,
+    LSPEvent CreateLSPEvent(const std::vector<LSP::DocumentSymbol>& documentSymbols,
+                            const std::vector<LSP::SymbolInformation>& symbolsInformation,
                             const wxString& filename,
                             const wxEventType& event_type);   
                
     void QueueEvent(wxEvtHandler* owner,
-                    const std::vector<LSP::DocumentSymbol>& symbols,
-                    const wxString& filename,
-                    const wxEventType& event_type);
-                    
-    
-    [[deprecated("SymbolInformation is replaced by DocumentSymbol")]]
-    LSPEvent CreateLSPEvent(const std::vector<LSP::SymbolInformation>& symbols,
-                            const wxString& filename,
-                            const wxEventType& event_type);
-    
-    [[deprecated("SymbolInformation is replaced by DocumentSymbol")]]
-    void QueueEvent(wxEvtHandler* owner,
-                    const std::vector<LSP::SymbolInformation>& symbols,
+                    const std::vector<LSP::DocumentSymbol>& documentSymbols,
+                    const std::vector<LSP::SymbolInformation>& symbolsInformation,
                     const wxString& filename,
                     const wxEventType& event_type);
 };

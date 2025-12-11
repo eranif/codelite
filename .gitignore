@@ -32,6 +32,3 @@ compile_flags.txt
 wxcrafter/src/wxcversion.cpp
 LiteEditor/autoversion.h
 .DS_Store
-build/
-.gitignore
-CodeLiteIDE-Linux.workspace

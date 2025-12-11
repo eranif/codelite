@@ -175,11 +175,6 @@ public:
     static FileExtManager::FileType GetTypeFromExtension(const wxFileName& filename);
 
     /**
-     * @brief return map of all supported file types
-     * the returned map contains pairs of file extension -> FileType enumerator
-     */
-    static std::map<wxString, FileExtManager::FileType> GetAllSupportedFileTypes();
-    /**
      * @brief return map of file types grouped by languages
      */
     static std::map<wxString, std::vector<FileExtManager::FileType>> GetLanguageBundles();

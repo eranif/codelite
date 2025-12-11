@@ -165,9 +165,6 @@ void clChoice::Render(wxDC& dc)
 {
 #if !wxUSE_NATIVE_CHOICE
 #if !wxUSE_NATIVE_BUTTON
-    if(m_popupShown) {
-        SetPressed();
-    }
     clButtonBase::Render(dc);
 #endif
 #endif

@@ -27,7 +27,6 @@
 
 #include "ColoursAndFontsManager.h"
 #include "DiffConfig.h"
-#include "art_metro.h"
 #include "bookmark_manager.h"
 #include "clDTL.h"
 #include "clPluginsFindBar.h"

@@ -34,7 +34,6 @@ wxString expand_env_variable(const wxString& value, const wxEnvVariableHashMap& 
     wxArrayString parts = wxStringTokenize(value, wxPATH_SEP, wxTOKEN_STRTOK);
     wxString resolved;
     for (const wxString& part : parts) {
-        wxArrayString resovled_array;
         wxString env_name;
         if (is_env_variable(part, &env_name)) {
             // try the environment variables first

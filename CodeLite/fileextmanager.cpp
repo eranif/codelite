@@ -264,11 +264,6 @@ void FileExtManager::Init()
         m_matchers.push_back(Matcher("#include[ \t]+[\\<\"]", TypeSourceCpp));
     }
 }
-std::map<wxString, FileExtManager::FileType> FileExtManager::GetAllSupportedFileTypes()
-{
-    Init();
-    return m_map;
-}
 
 std::map<wxString, std::vector<FileExtManager::FileType>> FileExtManager::GetLanguageBundles()
 {

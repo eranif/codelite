@@ -59,7 +59,14 @@ LSPOutlineView::LSPOutlineView(wxWindow* parent, wxWindowID id, long style)
     // create controls
     CreateUI();      
     // initialize content (empty)
-    DoInitialiseEmpty();     
+    DoInitialiseEmpty();    
+
+    EventNotifier::Get()->Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_REQUESTED, &LSPOutlineView::OnSymbolsRequested, this); 
+}
+
+LSPOutlineView::~LSPOutlineView() 
+{    
+    EventNotifier::Get()->Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_REQUESTED, &LSPOutlineView::OnSymbolsRequested, this); 
 }
 
 void LSPOutlineView::CreateUI()
@@ -153,14 +160,7 @@ void LSPOutlineView::CreateToolbar()
 
 void LSPOutlineView::DoInitialiseEmpty()
 {   
-    m_treeCtrl->Hide();
-    m_terminalViewCtrl->Hide();
-    m_msgPanel->Show();
-    m_msgText->SetLabel(m_loadingMessage);
-    m_msgIndicator->Start();
-    Layout();
-   
-    return;
+    ShowMessage(m_emptyMessage, false);
 }
 
 void LSPOutlineView::AddDocumentSymbolRec(wxTreeItemId parent, const LSP::DocumentSymbol& symbol, LexerConf* lexer) {
@@ -1115,4 +1115,15 @@ void LSPOutlineView::OnSortChanged(wxCommandEvent& event)
         DoInitialiseDocumentSymbol();
     else
         DoInitialiseSymbolInformation();
+}
+
+
+void LSPOutlineView::OnSymbolsRequested(LSPEvent& event) 
+{
+    event.Skip();
+    if (!IsShown()) {
+        return;
+    }
+    ShowMessage(m_loadingMessage, true);
+    Refresh();
 }

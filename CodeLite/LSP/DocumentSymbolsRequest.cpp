@@ -55,12 +55,11 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
     int size = result.arraySize();
     wxString filename = m_params->As<DocumentSymbolParams>()->GetTextDocument().GetPath();
     auto context = m_context;
-    // ToDo: is selectionRange really the best distinction between DocumentSymbol and SymbolInformation?
-    // Maybe rather detail or !container
-    if (result[0].hasNamedObject("selectionRange")) { 
+    // response can either be DocumentSymbol[] or SymbolInformation[]
+    // try to determine which one we got
+    if (result[0].hasNamedObject("detail") || result[0].hasNamedObject("selectionRange")) { 
         std::vector<LSP::DocumentSymbol> symbols;
         // cannot reserve space for symbols - some might get moved into containers
-//        symbols.reserve(size);
         std::vector<DocumentSymbol> containers;
         
         // parse json

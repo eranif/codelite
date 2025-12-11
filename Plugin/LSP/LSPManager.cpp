@@ -377,8 +377,7 @@ bool Manager::RequestSymbolsForEditor(IEditor* editor, std::function<void(const 
     auto server = GetServerForEditor(editor);
     CHECK_PTR_RET_FALSE(server);
     CHECK_COND_RET_FALSE(server->IsDocumentSymbolsSupported());
-    LSPEvent event(wxEVT_LSP_DOCUMENT_SYMBOLS_REQUESTED);
-    EventNotifier::Get()->ProcessEvent(event);
+        
     clGetManager()->SetStatusMessage(_("Requesting document symbols from LSP server..."), 1);
     server->DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW, std::move(cb));
     return true;

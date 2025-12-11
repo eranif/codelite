@@ -26,7 +26,7 @@ namespace {
 OutlineTab::OutlineTab(wxWindow* parent)
     : LSPOutlineView(parent, wxID_ANY, LSPOutlineView::STYLE_NO_SEARCHBAR | LSPOutlineView::STYLE_SMALL_FONT | LSPOutlineView::STYLE_ACTIVATE_ON_SELECTION)
 {
-    EventNotifier::Get()->Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_REQUESTED, &OutlineTab::OnSymbolsRequested, this);
+//    EventNotifier::Get()->Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_REQUESTED, &OutlineTab::OnSymbolsRequested, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, &OutlineTab::OnOutlineSymbols, this);
     EventNotifier::Get()->Bind(wxEVT_ACTIVE_EDITOR_CHANGED, &OutlineTab::OnActiveEditorChanged, this);
     EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &OutlineTab::OnAllEditorsClosed, this);
@@ -68,16 +68,6 @@ void OutlineTab::OnOutlineSymbols(LSPEvent& event)
     else {
         SetEmptySymbols();
     }
-}
-
-
-void OutlineTab::OnSymbolsRequested(LSPEvent& event) 
-{
-    event.Skip();
-    if (!IsShown()) {
-        return;
-    }
-    SetEmptySymbols();
 }
 
 

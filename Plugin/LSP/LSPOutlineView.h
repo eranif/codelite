@@ -7,11 +7,13 @@
 #include <wx/event.h>
 #include <wx/aui/auibar.h>
 #include <clAuiToolBarArt.h>
+#include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
 #include "LSP/LSPSymbolParser.h"
 #include "clTerminalViewCtrl.hpp"
 #include "clTreeCtrl.h"
 #include "codelite_exports.h"
+#include "event_notifier.h"
 
 using namespace LSP;
 
@@ -46,11 +48,12 @@ public:
         STYLE_ACTIVATE_ON_SELECTION = 1 << 2
     };
     LSPOutlineView(wxWindow* parent, wxWindowID id = wxID_ANY, long style = LSPOutlineView::STYLE_DEFAULT);
-    virtual ~LSPOutlineView() = default;
+    virtual ~LSPOutlineView();
 
     void SetSymbols(const std::vector<SymbolInformation>& symbols, const wxString& filename);
     void SetSymbols(const std::vector<DocumentSymbol>& symbols, const wxString& filename);
     void SetEmptySymbols();
+    void SetEmptyMessage(const wxString& message) { m_emptyMessage = message; }
     void SetLoadingMessage(const wxString& message) { m_loadingMessage = message; }
     /**
      * @brief Sorts the current DocumentSymbol. Does not refresh the tree - use DoInitialiseDocumentSymbol after!
@@ -124,6 +127,7 @@ protected:
     wxPanel* m_msgPanel = nullptr;
     wxActivityIndicator* m_msgIndicator = nullptr;
     wxStaticText* m_msgText = nullptr;
+    wxString m_emptyMessage = _("No symbols found.");
     wxString m_loadingMessage = _("Waiting for response from Language Server...");
     
     void CreateUI();
@@ -165,6 +169,7 @@ protected:
      */
     bool CheckAndRequest(const wxString& filename);
     
+    void OnSymbolsRequested(LSPEvent& event);
     void OnTreeItemSelected(wxTreeEvent& event);
     void OnTreeItemActivated(wxTreeEvent& event);
     void OnTreeItemExpanded(wxTreeEvent& event);

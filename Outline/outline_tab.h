@@ -8,7 +8,6 @@ class OutlineTab : public LSPOutlineView
 {
 private:
     void OnOutlineSymbols(LSPEvent& event);
-    void OnSymbolsRequested(LSPEvent& event);
     void OnActiveEditorChanged(wxCommandEvent& event);
     void OnAllEditorsClosed(wxCommandEvent& event);
     void OnSideBarPageChanged(clCommandEvent& event);

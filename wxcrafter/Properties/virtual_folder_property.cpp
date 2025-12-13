@@ -1,5 +1,7 @@
 #include "virtual_folder_property.h"
 
+#include "json_utils.h"
+
 VirtualFolderProperty::VirtualFolderProperty(const wxString& label, const wxString& path, const wxString& tooltip)
     : PropertyBase(tooltip)
 {
@@ -13,19 +15,21 @@ VirtualFolderProperty::VirtualFolderProperty(const wxString& label, const wxStri
 
 wxString VirtualFolderProperty::GetValue() const { return m_path; }
 
-JSONElement VirtualFolderProperty::Serialize() const
+nlohmann::json VirtualFolderProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
-    json.addProperty(wxT("type"), wxT("virtualFolderPicker"));
+    nlohmann::json json = {{"type", "virtualFolderPicker"}};
     DoBaseSerialize(json);
-    json.addProperty(wxT("m_path"), m_path);
+    json["m_path"] = m_path;
     return json;
 }
 
 void VirtualFolderProperty::SetValue(const wxString& value) { m_path = value; }
 
-void VirtualFolderProperty::UnSerialize(const JSONElement& json)
+void VirtualFolderProperty::UnSerialize(const nlohmann::json& json)
 {
+    if (!json.is_object()) {
+        return;
+    }
     DoBaseUnSerialize(json);
-    m_path = json.namedObject(wxT("m_path")).toString();
+    m_path = JsonUtils::ToString(json["m_path"]);
 }

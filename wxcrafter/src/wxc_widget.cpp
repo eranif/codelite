@@ -15,6 +15,7 @@
 #include "controls/Containers/notebook_page_wrapper.h"
 #include "controls/Containers/wx_collapsible_pane_pane_wrapper.h"
 #include "custom_control_wrapper.h"
+#include "json_utils.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_settings.h"
 #include "wxgui_defs.h"
@@ -614,67 +615,62 @@ void wxcWidget::DoEnableStyle(wxcWidget::MapStyles_t& mp, const wxString& style,
     }
 }
 
-void wxcWidget::Serialize(JSONElement& json) const
+void wxcWidget::Serialize(nlohmann::json& json) const
 {
-    json.addProperty("m_type", m_type);
-    json.addProperty("proportion", m_sizerItem.GetProportion());
-    json.addProperty("border", m_sizerItem.GetBorder());
-    json.addProperty("gbSpan", m_gbSpan);
-    json.addProperty("gbPosition", m_gbPos);
+    json["m_type"] = m_type;
+    json["proportion"] = m_sizerItem.GetProportion();
+    json["border"] = m_sizerItem.GetBorder();
+    json["gbSpan"] = m_gbSpan;
+    json["gbPosition"] = m_gbPos;
 
-    JSONElement styles = JSONElement::createArray("m_styles");
+    auto& styles = (json["m_styles"] = nlohmann::json::array());
     for (const auto& [_, styleInfo] : m_styles) {
         if (styleInfo.is_set) {
-            styles.arrayAppend(styleInfo.style_name);
+            styles.push_back(styleInfo.style_name);
         }
     }
-    json.append(styles);
-
     if (IsAuiPane()) {
-        json.append(m_auiPaneInfo.ToJSON());
+        json["wxAuiPaneInfo"] = m_auiPaneInfo.ToJSON();
     }
 
-    JSONElement sizerFlags = JSONElement::createArray("m_sizerFlags");
+    auto& sizerFlags = (json["m_sizerFlags"] = nlohmann::json::array());
     for (const auto& [_, styleInfo] : m_sizerFlags) {
         if (styleInfo.is_set) {
-            sizerFlags.arrayAppend(styleInfo.style_name);
+            sizerFlags.push_back(styleInfo.style_name);
         }
     }
-    json.append(sizerFlags);
 
-    JSONElement properties = JSONElement::createArray("m_properties");
+    auto& properties = (json["m_properties"] = nlohmann::json::array());
     for (const auto& [_, property] : m_properties) {
         if (property) {
-            properties.arrayAppend(property->Serialize());
+            properties.push_back(property->Serialize());
         }
     }
-    json.append(properties);
 
-    JSONElement events = JSONElement::createArray("m_events");
+    auto& events = (json["m_events"] = nlohmann::json::array());
     for (const auto& p : m_connectedEvents) {
-        events.arrayAppend(p.second.ToJSON());
-    }
-    json.append(events);
-
-    JSONElement children = JSONElement::createArray("m_children");
-    List_t::const_iterator child_iter = m_children.begin();
-    for (; child_iter != m_children.end(); child_iter++) {
-        JSONElement child = JSONElement::createObject();
-        (*child_iter)->Serialize(child);
-        children.arrayAppend(child);
+        events.push_back(p.second.ToJSON());
     }
 
-    json.append(children);
+    auto& children = (json["m_children"] = nlohmann::json::array());
+    for (const auto* child : m_children) {
+        auto childJson = nlohmann::json::object();
+        child->Serialize(childJson);
+        children.push_back(childJson);
+    }
 }
 
-void wxcWidget::UnSerialize(const JSONElement& json)
+void wxcWidget::UnSerialize(const nlohmann::json& json)
 {
-    m_sizerItem.SetBorder(json.namedObject("border").toInt(5));
-    m_sizerItem.SetProportion(json.namedObject("proportion").toInt(0));
-    m_gbSpan = json.namedObject("gbSpan").toString();
-    m_gbPos = json.namedObject("gbPosition").toString();
+    if (!json.is_object()) {
+        return;
+    }
+    m_sizerItem.SetBorder(json.value("border", 5));
+    m_sizerItem.SetProportion(json.value("proportion", 0));
+    m_gbSpan = JsonUtils::ToString(json["gbSpan"]);
+    m_gbPos = JsonUtils::ToString(json["gbPosition"]);
 
-    m_auiPaneInfo.FromJSON(json.namedObject("wxAuiPaneInfo"));
+    m_auiPaneInfo.FromJSON(json["wxAuiPaneInfo"]);
 
     // Unserialize the styles
     DoClearFlags(m_styles);
@@ -682,36 +678,27 @@ void wxcWidget::UnSerialize(const JSONElement& json)
 
     m_connectedEvents.Clear();
 
-    JSONElement styles = json.namedObject("m_styles");
-    int nCount = styles.arraySize();
-    for (int i = 0; i < nCount; i++) {
-        wxString styleName = styles.arrayItem(i).toString();
-        EnableStyle(styleName, true);
+    for (auto& styleName : json.value("m_styles", nlohmann::json::array())) {
+        EnableStyle(JsonUtils::ToString(styleName), true);
     }
 
-    JSONElement sizerFlags = json.namedObject("m_sizerFlags");
-    nCount = sizerFlags.arraySize();
-    for (int i = 0; i < nCount; i++) {
-        wxString styleName = sizerFlags.arrayItem(i).toString();
-        EnableSizerFlag(styleName, true);
+    for (const auto& styleName : json.value("m_sizerFlags", nlohmann::json::array())) {
+        EnableSizerFlag(JsonUtils::ToString(styleName), true);
     }
 
     // Unserialize the properties
-    JSONElement properties = json.namedObject("m_properties");
-    nCount = properties.arraySize();
-    for (int i = 0; i < nCount; i++) {
-        JSONElement jsonProp = properties.arrayItem(i);
-        wxString propLabel = jsonProp.namedObject("m_label").toString();
+    for (const auto& jsonProp : json.value("m_properties", nlohmann::json::array())) {
+        if (!jsonProp.is_object()) {
+            continue;
+        }
+        wxString propLabel = JsonUtils::ToString(jsonProp["m_label"]);
         if (m_properties.Contains(propLabel)) {
             m_properties.Item(propLabel)->UnSerialize(jsonProp);
         }
     }
 
     // Unserialize the events
-    JSONElement events = json.namedObject("m_events");
-    nCount = events.arraySize();
-    for (int i = 0; i < nCount; i++) {
-        JSONElement jsonEvent = events.arrayItem(i);
+    for (const auto& jsonEvent : json.value("m_events", nlohmann::json::array())) {
         ConnectDetails details;
         details.FromJSON(jsonEvent);
 
@@ -725,10 +712,7 @@ void wxcWidget::UnSerialize(const JSONElement& json)
         m_connectedEvents.PushBack(details.GetEventName(), details);
     }
 
-    JSONElement children = json.namedObject("m_children");
-    int nChildren = children.arraySize();
-    for (int i = 0; i < nChildren; i++) {
-        JSONElement child = children.arrayItem(i);
+    for (const auto& child : json.value("m_children", nlohmann::json::array())) {
         wxcWidget* wrapper = Allocator::Instance()->CreateWrapperFromJSON(child);
         if (wrapper) {
             AddChild(wrapper);

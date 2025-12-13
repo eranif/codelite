@@ -48,12 +48,12 @@ void MemCheckSettingsDialog::OnOK(wxCommandEvent& event)
 {
     wxString outputFileMsg;
     if(!m_checkBoxOutputInPrivateFolder->IsChecked() && m_filePickerValgrindOutputFile->GetPath().IsEmpty())
-        outputFileMsg = wxT("If you don't want to use output file in private folder, you have to set a file manulay.");
+        outputFileMsg = wxT("If you don't want to use output file in private folder, you have to set a file manually.");
 
     wxString suppFileMsg;
     if(!m_checkBoxSuppFileInPrivateFolder->IsChecked() && m_listBoxSuppFiles->IsEmpty())
         suppFileMsg = wxT("If you don't want to use default supp in private folder, you have to set at least one "
-                          "suppression file manulay.");
+                          "suppression file manually.");
 
     if(!outputFileMsg.IsEmpty() || !suppFileMsg.IsEmpty()) {
         wxMessageBox(wxString::Format("Wrong Valgrind option\n\n\n* %s\n\n* %s", outputFileMsg, suppFileMsg),

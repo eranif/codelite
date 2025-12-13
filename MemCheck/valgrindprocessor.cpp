@@ -151,7 +151,7 @@ MemCheckError ValgrindMemcheckProcessor::ProcessError(wxXmlDocument& doc, wxXmlN
     if(auxiliary)
         result.nestedErrors.push_back(auxiliaryResult);
 
-    // TODO ? add checout ?
+    // TODO ? add checkout ?
     // add check for empty locationArrays
     //  CL_DEBUG1(PLUGIN_PREFIX("\t equal #0 and #1 = %s", (errorArray.Item(0) == errorArray.Item(1)?"true":"false") ));
     //  CL_DEBUG1(PLUGIN_PREFIX("\t equal #1 and #2 = %s", (*(errorArray.Item(2)) ==

@@ -26,7 +26,6 @@
 #ifndef ISTORAGE_H
 #define ISTORAGE_H
 
-#include "comment.h"
 #include "entry.h"
 #include "fileentry.h"
 #include "pptable.h"

@@ -59,7 +59,7 @@ clSSH::clSSH(const wxString& host, const wxString& user, const wxString& pass, c
     , m_keyFiles(keyFiles)
 {
     m_timer = new wxTimer(this);
-    Bind(wxEVT_TIMER, &clSSH::OnCheckRemoteOutut, this, m_timer->GetId());
+    Bind(wxEVT_TIMER, &clSSH::OnCheckRemoteOutput, this, m_timer->GetId());
 }
 
 clSSH::clSSH()
@@ -71,7 +71,7 @@ clSSH::clSSH()
     , m_owner(nullptr)
 {
     m_timer = new wxTimer(this);
-    Bind(wxEVT_TIMER, &clSSH::OnCheckRemoteOutut, this, m_timer->GetId());
+    Bind(wxEVT_TIMER, &clSSH::OnCheckRemoteOutput, this, m_timer->GetId());
 }
 
 clSSH::~clSSH() { Close(); }
@@ -381,7 +381,7 @@ bool clSSH::LoginPublicKey(bool throwExc)
 void clSSH::Close()
 {
     m_timer->Stop();
-    Unbind(wxEVT_TIMER, &clSSH::OnCheckRemoteOutut, this, m_timer->GetId());
+    Unbind(wxEVT_TIMER, &clSSH::OnCheckRemoteOutput, this, m_timer->GetId());
     wxDELETE(m_timer);
 
     DoCloseChannel();
@@ -464,7 +464,7 @@ void clSSH::ExecuteShellCommand(wxEvtHandler* owner, const wxString& command)
     }
 }
 
-void clSSH::OnCheckRemoteOutut(wxTimerEvent& event)
+void clSSH::OnCheckRemoteOutput(wxTimerEvent& event)
 {
     if (!m_channel)
         return;

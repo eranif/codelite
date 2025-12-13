@@ -108,7 +108,7 @@ protected:
      * @param mode SUPPRESS_CLICKED | SUPPRESS_CHECKED | SUPPRESS_ALL | SUPPRESS_SELECTED
      * @param dvItem is set only if mode is SUPPRESS_CLICKED
      *
-     * By suppressing an item(error) is meant add suppression patern for that error into supp file
+     * By suppressing an item(error) is meant add suppression pattern for that error into supp file
      */
     void SuppressErrors(unsigned int mode, wxDataViewItem* dvItem = NULL);
 
@@ -120,22 +120,22 @@ protected:
     wxIntegerValidator<size_t> pageValidator; ///< validator for wxTextCtrl which changes page on page view
     bool m_currentPageIsEmptyView;
     wxDataViewItem m_currentItem;
-    bool m_onValueChangedLocked; ///< if user (un)checks an item, all items in its tree must be (un)checked. This action is trigered by OnValueChanged callback. Problem is that if an item is checked is also invoked that callback. So this lock brakes the infinite loop.
+    bool m_onValueChangedLocked; ///< if user (un)checks an item, all items in its tree must be (un)checked. This action is triggered by OnValueChanged callback. Problem is that if an item is checked is also invoked that callback. So this lock brakes the infinite loop.
     size_t m_totalErrorsView;
     size_t m_currentPage;
     size_t m_pageMax;
 
     wxDataViewItem GetTopParent(wxDataViewItem item); ///< get top level item for an item
-    wxDataViewItem GetLeaf(const wxDataViewItem &item, bool first); ///< get deepes item for an item(error), first == true means firts from top, first==false means last.
-    wxDataViewItem GetAdjacentItem(const wxDataViewItem &item, bool forward); ///< for an item(error or location) get adjecent item. this is used for next/prev functionality. Forward == true means item below, forward == false means item above.
-    void ExpandAll(const wxDataViewItem & item); ///< wxDVC doesn't implenet ExpandAll, so this is it
+    wxDataViewItem GetLeaf(const wxDataViewItem &item, bool first); ///< get deepest item for an item(error), first == true means first from top, first==false means last.
+    wxDataViewItem GetAdjacentItem(const wxDataViewItem &item, bool forward); ///< for an item(error or location) get adjacent item. this is used for next/prev functionality. Forward == true means item below, forward == false means item above.
+    void ExpandAll(const wxDataViewItem & item); ///< wxDVC doesn't implement ExpandAll, so this is it
     void SetCurrentItem(const wxDataViewItem &item); ///< marks current item with little green right arrow
     void MarkTree(const wxDataViewItem &item, bool checked); ///< (un)checks all items that belong to a particular error
     void MarkAllErrors(bool state); // (Un)Marks all errors. Called by On(un)MarkAllErrors()
     void GetStatusOfErrors(bool& unmarked, bool& marked); // Are there any unmarked, any marked errors?
     unsigned int GetColumnByName(const wxString & name); ///< Finds index of an wxDVC column by its caption
-    void JumpToLocation(const wxDataViewItem &item); ///< Opens file specifieed in particular ErrorLocation in editor
-    void ShowPageView(size_t page); ///< Item could be more than is good for wxDVC. So paging is implementetd. This method fills wxDVC with portion of errors.
+    void JumpToLocation(const wxDataViewItem &item); ///< Opens file specified in particular ErrorLocation in editor
+    void ShowPageView(size_t page); ///< Item could be more than is good for wxDVC. So paging is implemented. This method fills wxDVC with portion of errors.
     void AddTree(const wxDataViewItem & parentItem, MemCheckError & error); ///< Adds one error and all its location into wxDVC as tree
     void OnJumpToLocation(wxCommandEvent & event); ///< Callback from wxDVC popupmenu
     void OnMarkAllErrors(wxCommandEvent & event); ///< Callback from wxDVC popupmenu
@@ -157,7 +157,7 @@ protected:
     };
     wxMenu* m_searchMenu; ///< wxSearchCtrl popupmenu
     size_t m_totalErrorsSupp; ///< Total items in wxListCtrl.
-    std::vector<MemCheckError *> m_filterResults; ///< Contetn of wxListCtrl.
+    std::vector<MemCheckError*> m_filterResults; ///< Content of wxListCtrl.
     long m_lastToolTipItem; ///< On hover over wxListCtrl tooltip is shown. It is refreshed only if user hovers another item, not if moves by one pixel.
 
     void ApplyFilterSupp(unsigned int mode); ///< Performs filtering errors. Searches in whole ErrorList structure. Mode is FILTER_CLEAR | FILTER_STRING | FILTER_WORKSPACE.

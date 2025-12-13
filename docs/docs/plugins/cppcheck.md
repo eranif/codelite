@@ -53,7 +53,7 @@ The `Add Suppression` dialog has two fields to fill. The first is just a user-vi
 The second is harder. It must contain the ID string that Cppcheck will recognise as matching that warning; examples are "variableHidingEnum" and "variableScope". 
 Unfortunately there seems to be no easy way to obtain these strings; I found these ones by grepping the Cppcheck source.
 
-![suppress dialog](images/cppcheck_add_supression_dlg.png)
+![suppress dialog](images/cppcheck_add_suppression_dlg.png)
 
 If, when you run Cppcheck, one of the suppressions isn't matched (there weren't any of that warning type, so the suppression wasn't needed) 
 you'll get a worrying-looking message e.g. `information: Unmatched suppression: variableScope`

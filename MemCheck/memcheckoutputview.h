@@ -93,10 +93,10 @@ protected:
     IManager *m_mgr;
     wxString m_workspacePath;
     enum {
-        SUPPRESS_CLICKED  = 1 << 1, ///< on tree view page supress one error
-        SUPPRESS_CHECKED  = 1 << 2, ///< on tree view page supress all checked
-        SUPPRESS_ALL      = 1 << 3, ///< on supp page supress all
-        SUPPRESS_SELECTED = 1 << 4, ///< on supp page supress selected
+        SUPPRESS_CLICKED  = 1 << 1, ///< on tree view page suppress one error
+        SUPPRESS_CHECKED  = 1 << 2, ///< on tree view page suppress all checked
+        SUPPRESS_ALL      = 1 << 3, ///< on supp page suppress all
+        SUPPRESS_SELECTED = 1 << 4, ///< on supp page suppress selected
     };
     bool itemsInvalidView; ///< on supp page have been some items suppressed => view page is invalid
     bool itemsInvalidSupp; ///< on tree view page have been some items suppressed => supp page is invalid

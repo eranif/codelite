@@ -181,7 +181,7 @@ void LocalsView::OnPropertyGet(XDebugEvent& e)
         return;
 
     // Since we got here from property_get, XDebug will reply with the specific property (e.g. $myclass->secondClass)
-    // and all its children. Howeverr, $myclass->secondClass already exist in the tree
+    // and all its children. However, $myclass->secondClass already exist in the tree
     // so we are only interested with its children. so we use here vars.begin()->children (vars is always list of size
     // == 1)
     wxASSERT_MSG(vars.size() == 1, "property_get returned list of size != 1");

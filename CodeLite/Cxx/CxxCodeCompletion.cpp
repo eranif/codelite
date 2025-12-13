@@ -1037,7 +1037,7 @@ bool find_wild_match(const std::vector<std::pair<wxString, wxString>>& table, co
     return false;
 }
 
-bool try_resovle_user_type_with_scopes(const std::vector<std::pair<wxString, wxString>>& table, const wxString& type,
+bool try_resolve_user_type_with_scopes(const std::vector<std::pair<wxString, wxString>>& table, const wxString& type,
                                        const std::vector<wxString>& visible_scopes, wxString* resolved)
 {
     for(const wxString& scope : visible_scopes) {
@@ -1066,7 +1066,7 @@ bool CxxCodeCompletion::resolve_user_type(const wxString& type, const std::vecto
             break;
         }
 
-        if(!try_resovle_user_type_with_scopes(m_types_table, *resolved, visible_scopes, resolved)) {
+        if (!try_resolve_user_type_with_scopes(m_types_table, *resolved, visible_scopes, resolved)) {
             break;
         }
         match_found = true;

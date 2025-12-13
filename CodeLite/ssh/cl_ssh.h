@@ -78,7 +78,7 @@ public:
     using Ptr_t = std::shared_ptr<clSSH>;
 
 protected:
-    void OnCheckRemoteOutut(wxTimerEvent& event);
+    void OnCheckRemoteOutput(wxTimerEvent& event);
     void DoCloseChannel();
     void DoOpenChannel();
     void DoConnectWithRetries(int retries);

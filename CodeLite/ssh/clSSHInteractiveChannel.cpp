@@ -65,8 +65,8 @@ std::thread* start_helper_thread(SSHChannel_t channel, wxEvtHandler* handler, wx
                 break;
             }
 
-            auto stderrr_res = ssh::channel_read(channel, handler, true, true);
-            if (stderrr_res == ssh::read_result::SSH_SUCCESS) {
+            auto stderr_res = ssh::channel_read(channel, handler, true, true);
+            if (stderr_res == ssh::read_result::SSH_SUCCESS) {
                 // got something
                 continue;
             }

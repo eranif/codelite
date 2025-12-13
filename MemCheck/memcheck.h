@@ -111,7 +111,7 @@ protected:
      * @brief User wants test active project.
      * @param event
      */
-    void OnCheckAtiveProject(wxCommandEvent& event);
+    void OnCheckActiveProject(wxCommandEvent& event);
 
     /**
      * @brief stop the currently running process

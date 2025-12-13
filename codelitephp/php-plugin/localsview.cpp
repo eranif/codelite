@@ -26,7 +26,7 @@ LocalsView::LocalsView(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_LOCALS_UPDATED, &LocalsView::OnLocalsUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_ENDED, &LocalsView::OnXDebugSessionEnded, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_STARTED, &LocalsView::OnXDebugSessionStarted, this);
-    EventNotifier::Get()->Bind(wxEVT_XDEBUG_PROPERTY_GET, &LocalsView::OnProperytGet, this);
+    EventNotifier::Get()->Bind(wxEVT_XDEBUG_PROPERTY_GET, &LocalsView::OnPropertyGet, this);
 
     ClearView();
     m_tree->AddHeader(_("Name"));
@@ -44,7 +44,7 @@ LocalsView::~LocalsView()
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_LOCALS_UPDATED, &LocalsView::OnLocalsUpdated, this);
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_ENDED, &LocalsView::OnXDebugSessionEnded, this);
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_STARTED, &LocalsView::OnXDebugSessionStarted, this);
-    EventNotifier::Get()->Unbind(wxEVT_XDEBUG_PROPERTY_GET, &LocalsView::OnProperytGet, this);
+    EventNotifier::Get()->Unbind(wxEVT_XDEBUG_PROPERTY_GET, &LocalsView::OnPropertyGet, this);
 }
 
 void LocalsView::OnLocalCollapsed(wxTreeEvent& event)
@@ -161,7 +161,7 @@ wxString LocalsView::DoGetItemClientData(const wxTreeItemId& item) const
     return wxEmptyString;
 }
 
-void LocalsView::OnProperytGet(XDebugEvent& e)
+void LocalsView::OnPropertyGet(XDebugEvent& e)
 {
     e.Skip();
     // An item was evaluated using property_get

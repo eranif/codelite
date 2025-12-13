@@ -54,25 +54,20 @@ class DisplayVariableDlg;
 class DbgStackInfo
 {
 public:
-    size_t depth;
+    size_t depth{wxString::npos};
     wxString func;
 
 public:
-    DbgStackInfo()
-        : depth(wxString::npos)
-        , func(wxT(""))
-    {
-    }
-
-    ~DbgStackInfo() { Clear(); }
+    DbgStackInfo() = default;
+    ~DbgStackInfo() = default;
+ 
     void Clear()
     {
         func.Clear();
         depth = wxString::npos;
     }
 
-    bool operator==(const DbgStackInfo& rhs) { return func == rhs.func && depth == rhs.depth; }
-    bool operator!=(const DbgStackInfo& rhs) { return func != rhs.func || depth != rhs.depth; }
+    bool operator==(const DbgStackInfo& rhs) const = default;
     bool IsValid() const { return !func.IsEmpty() && depth != wxString::npos; }
 };
 

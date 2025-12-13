@@ -34,26 +34,9 @@ struct tagCallTipInfo {
     std::vector<std::pair<int, int>> paramLen;
 };
 
-clCallTip::clCallTip()
-    : m_curr(0)
-{
-}
-
 clCallTip::clCallTip(const std::vector<TagEntryPtr>& tips)
-    : m_curr(0)
 {
     Initialize(tips);
-}
-
-clCallTip::clCallTip(const clCallTip& rhs) { *this = rhs; }
-
-clCallTip& clCallTip::operator=(const clCallTip& rhs)
-{
-    if (this == &rhs)
-        return *this;
-    m_tips = rhs.m_tips;
-    m_curr = rhs.m_curr;
-    return *this;
 }
 
 wxString clCallTip::First()
@@ -102,7 +85,7 @@ wxString clCallTip::Prev()
     return TipAt(m_curr);
 }
 
-wxString clCallTip::All()
+wxString clCallTip::All() const
 {
     wxString tip;
     for (size_t i = 0; i < m_tips.size(); i++) {

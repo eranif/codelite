@@ -60,11 +60,11 @@ public:
                      size_t permissions);
     SFTPThreadRequest(const SSHAccountInfo& accountInfo, const wxString& oldName, const wxString& newName);
     SFTPThreadRequest(const SSHAccountInfo& accountInfo, const wxString& fileToDelete);
-    SFTPThreadRequest(const RemoteFileInfo& remoteFile);
-    SFTPThreadRequest(const SSHAccountInfo& accountInfo);
-    SFTPThreadRequest(const SFTPThreadRequest& other);
-    SFTPThreadRequest& operator=(const SFTPThreadRequest& other);
-    virtual ~SFTPThreadRequest() = default;
+    explicit SFTPThreadRequest(const RemoteFileInfo& remoteFile);
+    explicit SFTPThreadRequest(const SSHAccountInfo& accountInfo);
+    SFTPThreadRequest(const SFTPThreadRequest&) = default;
+    SFTPThreadRequest& operator=(const SFTPThreadRequest&) = default;
+    ~SFTPThreadRequest() override = default;
 
     void SetUploadSuccess(bool uploadSuccess) { this->m_uploadSuccess = uploadSuccess; }
     bool IsUploadSuccess() const { return m_uploadSuccess; }

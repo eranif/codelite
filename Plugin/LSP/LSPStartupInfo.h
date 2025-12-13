@@ -52,8 +52,8 @@ public:
 
 public:
     LSPStartupInfo() = default;
-    LSPStartupInfo(const LSPStartupInfo& other);
+    LSPStartupInfo(const LSPStartupInfo&) = default;
     virtual ~LSPStartupInfo() = default;
-    LSPStartupInfo& operator=(const LSPStartupInfo& other);
+    LSPStartupInfo& operator=(const LSPStartupInfo&) = default;
 };
 #endif // LSP_STARTUPINFO_H

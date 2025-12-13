@@ -49,7 +49,7 @@ struct clTipInfo {
 class WXDLLIMPEXP_CL clCallTip
 {
     std::vector<clTipInfo> m_tips;
-    int m_curr;
+    int m_curr{0};
     void Initialize(const std::vector<TagEntryPtr>& tags);
 
 public:
@@ -62,24 +62,24 @@ public:
      * Constructor
      * \param tips input tips
      */
-    clCallTip(const std::vector<TagEntryPtr>& tips);
+    explicit clCallTip(const std::vector<TagEntryPtr>& tips);
 
     /**
      * default constructor
      */
-    clCallTip();
+    clCallTip() = default;
 
     /**
      * Copy constructor
      */
-    clCallTip(const clCallTip& rhs);
+    clCallTip(const clCallTip&) = default;
 
     /**
      * Assignment operator
      * \param rhs right hand side
      * \return this
      */
-    clCallTip& operator=(const clCallTip& rhs);
+    clCallTip& operator=(const clCallTip&) = default;
 
     /**
      * Destructor
@@ -125,7 +125,7 @@ public:
     /**
      * \brief return all tips as a single string
      */
-    wxString All();
+    wxString All() const;
 
     int GetCurr() const { return m_curr; }
 

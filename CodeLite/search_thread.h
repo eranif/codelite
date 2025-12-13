@@ -69,11 +69,11 @@ class WXDLLIMPEXP_CL SearchData : public ThreadRequest
     wxArrayString m_rootDirs;
     wxString m_findString;
     wxString m_replaceWith;
-    size_t m_flags;
+    size_t m_flags{0};
     wxString m_validExt;
     wxArrayString m_files;
-    bool m_newTab;
-    wxEvtHandler* m_owner;
+    bool m_newTab{false};
+    wxEvtHandler* m_owner{nullptr};
     wxString m_encoding;
     wxArrayString m_excludePatterns;
     size_t m_file_scanner_flags = clFilesScanner::SF_DONT_FOLLOW_SYMLINKS | clFilesScanner::SF_EXCLUDE_HIDDEN_DIRS;
@@ -92,19 +92,12 @@ private:
 
 public:
     // Ctor-Dtor
-    SearchData()
-        : ThreadRequest()
-        , m_findString(wxEmptyString)
-        , m_flags(0)
-        , m_newTab(false)
-        , m_owner(NULL)
-    {
-    }
+    SearchData() = default;
 
     SearchData(const SearchData& rhs) { Copy(rhs); }
     SearchData& operator=(const SearchData& rhs);
 
-    virtual ~SearchData() = default;
+    ~SearchData() override = default;
     SearchData& Copy(const SearchData& other);
 
 public:
@@ -263,38 +256,19 @@ using SearchResultList = std::vector<SearchResult>;
 
 class WXDLLIMPEXP_CL SearchSummary : public wxObject
 {
-    int m_fileScanned;
-    int m_matchesFound;
-    int m_elapsed;
+    int m_fileScanned{0};
+    int m_matchesFound{0};
+    int m_elapsed{0};
     wxArrayString m_failedFiles;
     wxString m_findWhat;
     wxString m_replaceWith;
 
 public:
-    SearchSummary()
-        : m_fileScanned(0)
-        , m_matchesFound(0)
-        , m_elapsed(0)
-    {
-    }
+    SearchSummary() = default;
+    ~SearchSummary() override = default;
 
-    virtual ~SearchSummary() = default;
-
-    SearchSummary(const SearchSummary& rhs) { *this = rhs; }
-
-    SearchSummary& operator=(const SearchSummary& rhs)
-    {
-        if(this == &rhs)
-            return *this;
-
-        m_fileScanned = rhs.m_fileScanned;
-        m_matchesFound = rhs.m_matchesFound;
-        m_elapsed = rhs.m_elapsed;
-        m_failedFiles = rhs.m_failedFiles;
-        m_findWhat = rhs.m_findWhat;
-        m_replaceWith = rhs.m_replaceWith;
-        return *this;
-    }
+    SearchSummary(const SearchSummary&) = default;
+    SearchSummary& operator=(const SearchSummary&) = default;
 
     JSONItem ToJSON() const;
     void FromJSON(const JSONItem& json);

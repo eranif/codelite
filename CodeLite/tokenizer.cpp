@@ -22,7 +22,7 @@
 //                                                                          
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- // StringTokenizer.cpp: implementation of the StringTokenizer class.
+// StringTokenizer.cpp: implementation of the StringTokenizer class.
 //
 //////////////////////////////////////////////////////////////////////
 #include "precompiled_header.h"
@@ -34,10 +34,8 @@
 
 StringTokenizer::StringTokenizer(const wxString& str,
 								 const wxString& strDelimiter,
-								 const bool &bAllowEmptyTokens /* false */)
+								 bool bAllowEmptyTokens /* false */)
 {
-	Initialize();
-
 	int nEnd = (int)str.find(strDelimiter, 0);
 	int nStart = 0;
 	wxString token;
@@ -65,9 +63,8 @@ StringTokenizer::StringTokenizer(const wxString& str,
 	}
 }
 
-StringTokenizer::StringTokenizer(const wxString& str, const wxArrayString& delimiterArr, const bool &allowEmptyTokens)
+StringTokenizer::StringTokenizer(const wxString& str, const wxArrayString& delimiterArr, bool allowEmptyTokens)
 {
-	Initialize();
 	wxString tmpStr( str );
 
 	// Replace all delimiters to the first one
@@ -80,44 +77,9 @@ StringTokenizer::StringTokenizer(const wxString& str, const wxArrayString& delim
 	*this = StringTokenizer(tmpStr, delimiterArr[0], allowEmptyTokens);
 }
 
-// Default
-StringTokenizer::StringTokenizer()
-{
-	Initialize();
-}
-
-// Copy constructor
-StringTokenizer::StringTokenizer(const StringTokenizer &src)
-{
-	*this = src;
-}
-
-StringTokenizer& StringTokenizer::operator =(const StringTokenizer &src)
-{
-	if( &src == this)
-		return *this;
-	Initialize();
-
-	// Copy the tokens
-	m_tokensArr.clear();
-	for( int i=0; i<(int)src.m_tokensArr.size() ; i++)
-		m_tokensArr.push_back(src.m_tokensArr[i]);
-	return *this;
-}
-
-StringTokenizer::~StringTokenizer()
-{
-	m_tokensArr.clear();
-}
-
-const int StringTokenizer::Count() const
+int StringTokenizer::Count() const
 {
 	return (int)m_tokensArr.size();
-}
-
-void StringTokenizer::Initialize()
-{
-	m_tokensArr.clear();
 }
 
 wxString StringTokenizer::operator[](const int nIndex)

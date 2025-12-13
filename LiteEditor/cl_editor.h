@@ -90,11 +90,7 @@ struct EditorViewState {
     int first_visible_line = wxNOT_FOUND;
     int lines_on_screen = wxNOT_FOUND;
 
-    bool operator==(const EditorViewState& other) const
-    {
-        return current_line == other.current_line && first_visible_line == other.first_visible_line &&
-               lines_on_screen == other.lines_on_screen;
-    }
+    bool operator==(const EditorViewState&) const = default;
 
     void Reset()
     {
@@ -103,13 +99,7 @@ struct EditorViewState {
         lines_on_screen = wxNOT_FOUND;
     }
 
-    EditorViewState& operator=(const EditorViewState& other)
-    {
-        current_line = other.current_line;
-        first_visible_line = other.first_visible_line;
-        lines_on_screen = other.lines_on_screen;
-        return *this;
-    }
+    EditorViewState& operator=(const EditorViewState&) = default;
 
     static EditorViewState From(wxStyledTextCtrl* ctrl)
     {

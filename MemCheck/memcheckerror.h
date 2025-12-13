@@ -154,7 +154,7 @@ public:
     
     
     /**
-     * @brief Returns all attributed and attributes of all locations and all atributes from nested errors concatenated to tab separated string.
+     * @brief Returns all attributed and attributes of all locations and all attributes from nested errors concatenated to tab separated string.
      * @return string
      *
      * TODO: It cloud be buffered to improve speed, but it would cost more memory.

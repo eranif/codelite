@@ -169,7 +169,7 @@ public:
     const wxString toText(unsigned int indent = 1) const;
     
     /**
-     * @brief creates uniq name for suppresion
+     * @brief creates uniq name for suppression
      * @return suppression rule as string
      *
      * FIXME This method must be moved to Valgrind procesor, it is Valgrind specfic.

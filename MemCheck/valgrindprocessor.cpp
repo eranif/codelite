@@ -145,7 +145,7 @@ MemCheckError ValgrindMemcheckProcessor::ProcessError(wxXmlDocument& doc, wxXmlN
     }
 
     if(!result.suppression)
-        result.suppression = wxT("#Suppresion pattern not present in output log.\n#This plugin requires Valgrind to be "
+        result.suppression = wxT("#Suppression pattern not present in output log.\n#This plugin requires Valgrind to be "
                                  "run with '--gen-suppressions=all' option");
 
     if(auxiliary)

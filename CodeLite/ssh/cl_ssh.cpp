@@ -330,7 +330,7 @@ const char* SshAuthReturnCodeToString(int rc)
     case SSH_AUTH_PARTIAL:
         return "SSH_AUTH_PARTIAL";
     case SSH_AUTH_INFO:
-        return "SSH_AUTH_PARTIAL";
+        return "SSH_AUTH_INFO";
     case SSH_AUTH_AGAIN:
         return "SSH_AUTH_AGAIN";
     case SSH_AUTH_ERROR:

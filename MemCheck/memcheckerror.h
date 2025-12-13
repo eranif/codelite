@@ -55,7 +55,7 @@ using MemCheckErrorPtr = MemCheckError*;
  * @class MemCheckErrorReferrer
  * @brief wrapper pointer to MemCheckError
  * 
- * wxDVC needs reference to MemCheckError, the only way to achieve this is to set its wxClientData. But the problem is that whenever wxDVC is cleared it is made by wxCrafters wxDVCModel and this model frees all the client data. With this hack model clears only this wrapper class and leavs MemCheckErrorList intact.
+ * wxDVC needs reference to MemCheckError, the only way to achieve this is to set its wxClientData. But the problem is that whenever wxDVC is cleared it is made by wxCrafters wxDVCModel and this model frees all the client data. With this hack model clears only this wrapper class and leaves MemCheckErrorList intact.
  */
 class MemCheckErrorReferrer: public wxClientData
 {
@@ -73,7 +73,7 @@ public:
  * @class MemCheckErrorLocationReferrer
  * @brief wrapper pointer to MemCheckErrorLocation
  * 
- * wxDVC needs reference to MemCheckErrorLocation, the only way to achieve this is to set its wxClientData. But the problem is that whenever wxDVC is cleared it is made by wxCrafters wxDVCModel and this model frees all the client data. With this hack model clears only this wrapper class and leavs MemCheckErrorList intact.
+ * wxDVC needs reference to MemCheckErrorLocation, the only way to achieve this is to set its wxClientData. But the problem is that whenever wxDVC is cleared it is made by wxCrafters wxDVCModel and this model frees all the client data. With this hack model clears only this wrapper class and leaves MemCheckErrorList intact.
  */
 class MemCheckErrorLocationReferrer: public wxClientData
 {

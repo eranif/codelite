@@ -353,7 +353,7 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
             }
 
             if(reParseNeeded) {
-                // For performance reaons, load the file into memory and then parse it
+                // For performance reasons, load the file into memory and then parse it
                 wxFileName fnSourceFile(files.Item(i));
                 wxString content;
                 if(!FileUtils::ReadFileContent(fnSourceFile, content, wxConvISO8859_1)) {

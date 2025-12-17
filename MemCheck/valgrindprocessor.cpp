@@ -145,13 +145,13 @@ MemCheckError ValgrindMemcheckProcessor::ProcessError(wxXmlDocument& doc, wxXmlN
     }
 
     if(!result.suppression)
-        result.suppression = wxT("#Suppresion pattern not present in output log.\n#This plugin requires Valgrind to be "
+        result.suppression = wxT("#Suppression pattern not present in output log.\n#This plugin requires Valgrind to be "
                                  "run with '--gen-suppressions=all' option");
 
     if(auxiliary)
         result.nestedErrors.push_back(auxiliaryResult);
 
-    // TODO ? add checout ?
+    // TODO ? add checkout ?
     // add check for empty locationArrays
     //  CL_DEBUG1(PLUGIN_PREFIX("\t equal #0 and #1 = %s", (errorArray.Item(0) == errorArray.Item(1)?"true":"false") ));
     //  CL_DEBUG1(PLUGIN_PREFIX("\t equal #1 and #2 = %s", (*(errorArray.Item(2)) ==

@@ -50,8 +50,8 @@ public:
                 break;
             }
 
-            auto stderrr_res = ssh::channel_read(m_channel, m_handler, true, m_wantStderr);
-            if (stderrr_res == ssh::read_result::SSH_SUCCESS) {
+            auto stderr_res = ssh::channel_read(m_channel, m_handler, true, m_wantStderr);
+            if (stderr_res == ssh::read_result::SSH_SUCCESS) {
                 // got something
                 continue;
             }

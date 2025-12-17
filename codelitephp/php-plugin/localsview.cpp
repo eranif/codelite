@@ -26,7 +26,7 @@ LocalsView::LocalsView(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_LOCALS_UPDATED, &LocalsView::OnLocalsUpdated, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_ENDED, &LocalsView::OnXDebugSessionEnded, this);
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_STARTED, &LocalsView::OnXDebugSessionStarted, this);
-    EventNotifier::Get()->Bind(wxEVT_XDEBUG_PROPERTY_GET, &LocalsView::OnProperytGet, this);
+    EventNotifier::Get()->Bind(wxEVT_XDEBUG_PROPERTY_GET, &LocalsView::OnPropertyGet, this);
 
     ClearView();
     m_tree->AddHeader(_("Name"));
@@ -44,7 +44,7 @@ LocalsView::~LocalsView()
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_LOCALS_UPDATED, &LocalsView::OnLocalsUpdated, this);
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_ENDED, &LocalsView::OnXDebugSessionEnded, this);
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_STARTED, &LocalsView::OnXDebugSessionStarted, this);
-    EventNotifier::Get()->Unbind(wxEVT_XDEBUG_PROPERTY_GET, &LocalsView::OnProperytGet, this);
+    EventNotifier::Get()->Unbind(wxEVT_XDEBUG_PROPERTY_GET, &LocalsView::OnPropertyGet, this);
 }
 
 void LocalsView::OnLocalCollapsed(wxTreeEvent& event)
@@ -161,7 +161,7 @@ wxString LocalsView::DoGetItemClientData(const wxTreeItemId& item) const
     return wxEmptyString;
 }
 
-void LocalsView::OnProperytGet(XDebugEvent& e)
+void LocalsView::OnPropertyGet(XDebugEvent& e)
 {
     e.Skip();
     // An item was evaluated using property_get
@@ -181,7 +181,7 @@ void LocalsView::OnProperytGet(XDebugEvent& e)
         return;
 
     // Since we got here from property_get, XDebug will reply with the specific property (e.g. $myclass->secondClass)
-    // and all its children. Howeverr, $myclass->secondClass already exist in the tree
+    // and all its children. However, $myclass->secondClass already exist in the tree
     // so we are only interested with its children. so we use here vars.begin()->children (vars is always list of size
     // == 1)
     wxASSERT_MSG(vars.size() == 1, "property_get returned list of size != 1");

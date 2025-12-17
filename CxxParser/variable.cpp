@@ -73,7 +73,7 @@ void Variable::Print() const
               << "m_arrayBrackets  :" << m_arrayBrackets.c_str() << "\n"
               << "m_isPtr          :" << m_isPtr << "\n"
               << "m_isTemplate     :" << m_isTemplate << "\n"
-              << "m_isEllips       :" << m_isEllipsis << "\n"
+              << "m_isEllipsis     :" << m_isEllipsis << "\n"
               << "m_isBasicType    :" << m_isBasicType << "\n"
               << "m_pattern        :" << m_pattern.c_str() << "\n"
               << "m_completeType   :" << m_completeType.c_str() << "\n"

@@ -62,7 +62,7 @@ MemCheckPlugin::MemCheckPlugin(IManager* manager)
                                 wxUpdateUIEventHandler(MemCheckPlugin::OnStopProcessUI), NULL, (wxEvtHandler*)this);
 
     m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_active_project"), wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(MemCheckPlugin::OnCheckAtiveProject), NULL, (wxEvtHandler*)this);
+                                wxCommandEventHandler(MemCheckPlugin::OnCheckActiveProject), NULL, (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_active_project"), wxEVT_UPDATE_UI,
                                 wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI), NULL, (wxEvtHandler*)this);
 
@@ -179,7 +179,7 @@ void MemCheckPlugin::UnPlug()
     m_terminal.Unbind(wxEVT_TERMINAL_COMMAND_OUTPUT, &MemCheckPlugin::OnProcessOutput, this);
 
     m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_active_project"), wxEVT_COMMAND_MENU_SELECTED,
-                                   wxCommandEventHandler(MemCheckPlugin::OnCheckAtiveProject), NULL,
+                                   wxCommandEventHandler(MemCheckPlugin::OnCheckActiveProject), NULL,
                                    (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_active_project"), wxEVT_UPDATE_UI,
                                    wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI), NULL, (wxEvtHandler*)this);
@@ -254,7 +254,7 @@ void MemCheckPlugin::ApplySettings(bool loadLastErrors)
 
 void MemCheckPlugin::SwitchToMyPage() { m_mgr->BookSelectPage(PaneId::BOTTOM_BAR, m_outputView); }
 
-void MemCheckPlugin::OnCheckAtiveProject(wxCommandEvent& event)
+void MemCheckPlugin::OnCheckActiveProject(wxCommandEvent& event)
 {
     CHECK_CL_SHUTDOWN()
     clCxxWorkspace* workspace = m_mgr->GetWorkspace();

@@ -251,7 +251,7 @@ public:
      * \param lineNumber Tag line number
      * \param pattern Pattern
      * \param kind Tag kind (class, struct, etc)
-     * \param extFields Map of extention fields (key:value)
+     * \param extFields Map of extension fields (key:value)
      * \param project Project name
      */
     void Create(const wxString& fileName, const wxString& name, int lineNumber, const wxString& pattern,
@@ -387,7 +387,7 @@ public:
     wxString GetFullDisplayName() const;
 
     //------------------------------------------
-    // Extention fields
+    // Extension fields
     //------------------------------------------
     const wxString& GetExtField(const wxString& extField) const;
 

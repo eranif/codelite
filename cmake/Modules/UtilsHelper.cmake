@@ -145,9 +145,10 @@ if(MINGW)
     execute_process(
       COMMAND
         sh -c
-        "/usr/bin/cygcheck ${__NAME__} |grep ${MSYSTEM}|grep -v -w Found|grep -v ${__NAME__}"
+        "/${MSYSTEM}/bin/ntldd -R ${__NAME__} | sed -n 's/.*=> \\([^ ]*\\).*/\\1/p' |grep ${MSYSTEM}|grep -v -w Found|grep -v ${__NAME__}"
       OUTPUT_VARIABLE __dep_list
       OUTPUT_STRIP_TRAILING_WHITESPACE)
+    string(APPEND __dep_list "\n${__NAME__}") # ntldd doesn't include the binary itself
     string(REPLACE "\n" ";" ${OUT_LIST} "${__dep_list}")
     string(REPLACE " " "" ${OUT_LIST} "${${OUT_LIST}}")
     string(REPLACE "\\" "/" ${OUT_LIST} "${${OUT_LIST}}")

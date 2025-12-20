@@ -48,6 +48,7 @@ jobs:
           sqlite3:p
           llvm-openmp:p
           libmariadbclient:p
+          ntldd:p
           postgresql:p
 
     # WxWidgets

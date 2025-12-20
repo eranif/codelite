@@ -145,7 +145,7 @@ if(MINGW)
     execute_process(
       COMMAND
         sh -c
-        "/usr/bin/cygcheck ${__NAME__} |grep clang64|grep -v -w Found|grep -v ${__NAME__}"
+        "/usr/bin/cygcheck ${__NAME__} |grep ${MSYSTEM}|grep -v -w Found|grep -v ${__NAME__}"
       OUTPUT_VARIABLE __dep_list
       OUTPUT_STRIP_TRAILING_WHITESPACE)
     string(REPLACE "\n" ";" ${OUT_LIST} "${__dep_list}")
@@ -154,9 +154,9 @@ if(MINGW)
   endmacro()
 
   macro(msys_install_clang64_tool tool_name install_dir)
-    msys_list_deps(${MSYS2_BASE}/clang64/bin/${tool_name} CLANGD_DEPS)
+    msys_list_deps(${MSYS2_BASE}/${MSYSTEM}/bin/${tool_name} CLANGD_DEPS)
     # install the tool itself
-    install(FILES "${MSYS2_BASE}/clang64/bin/${tool_name}"
+    install(FILES "${MSYS2_BASE}/${MSYSTEM}/bin/${tool_name}"
             DESTINATION ${install_dir})
 
     # and all its dlls

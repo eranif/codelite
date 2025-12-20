@@ -64,7 +64,7 @@ jobs:
         mkdir wxWidgets/build-release
         cd wxWidgets/build-release
         cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX="$HOME/root" -DwxBUILD_DEBUG_LEVEL=0 -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=SOME -DwxUSE_STL=1
-        mingw32-make -j$(nproc) && PATH="/clang64/bin:$PATH" mingw32-make install
+        mingw32-make -j$(nproc) && PATH="/${{matrix.arch.msystem}}/bin:$PATH" mingw32-make install
 
     # wx-config-msys2
     - name: Checkout
@@ -93,7 +93,7 @@ jobs:
       run: |
         mkdir build-release
         cd build-release
-        MSYS2_BASE=/d/a/_temp/msys64 PATH="$HOME/root/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DWXWIN="$HOME/root" -Wno-dev -DBUILD_TESTING=0 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
+        MSYS2_BASE=$(cygpath -u "${{runner.temp}}")/msys64 PATH="$HOME/root/bin:$PATH" cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release -DWXWIN="$HOME/root" -Wno-dev -DBUILD_TESTING=0 -DCMAKE_POLICY_VERSION_MINIMUM=3.5
         PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) install
         PATH="$HOME/root/bin:$PATH" mingw32-make -j$(nproc) setup
     #    ctest --output-on-failure # Missing dll near test executables

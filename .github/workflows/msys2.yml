@@ -26,6 +26,7 @@ jobs:
             runs-on: windows-latest
           - msystem: clangarm64
             runs-on: windows-11-arm
+            package-suffix: '-arm64'
 
     steps:
     - uses: msys2/setup-msys2@v2
@@ -102,7 +103,7 @@ jobs:
     - name: artifact
       uses: actions/upload-artifact@v4
       with:
-        name: codelite-installer-wx-${{matrix.wx-version}}
+        name: codelite-installer-wx-${{matrix.wx-version}}${{matrix.arch.package-suffix}}
         path: |
           build-release/installer/**.*
     

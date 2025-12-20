@@ -91,6 +91,8 @@ endif()
 
 message(STATUS "CMAKE_INSTALL_PREFIX is set to ${CMAKE_INSTALL_PREFIX}")
 set(CODELITE_VERSION "18.3.0")
+string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" CODELITE_ARCH)
+message(STATUS "CODELITE_ARCH is set to ${CODELITE_ARCH}")
 
 # for now, we keep wxCrafter version to be the same as CodeLite version this
 # allows for better support

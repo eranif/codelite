@@ -1,9 +1,11 @@
 #ifndef WXCSETTINGS_H
 #define WXCSETTINGS_H
 
-#include "wxcLib/json_node.h"
+#include "macros.h"
 
+#include <assistant/common/json.hpp> // <nlohmann/json.hpp>
 #include <map>
+#include <wx/string.h>
 
 // ----------------------------------------------------------------------
 // CustomControlTemplate
@@ -22,8 +24,8 @@ public:
     CustomControlTemplate();
     ~CustomControlTemplate() = default;
 
-    JSONElement ToJSON() const;
-    void FromJSON(const JSONElement& json);
+    nlohmann::json ToJSON() const;
+    void FromJSON(const nlohmann::json& json);
 
     void SetEvents(const wxStringMap_t& events) { this->m_events = events; }
     const wxStringMap_t& GetEvents() const { return m_events; }
@@ -98,9 +100,9 @@ public:
     /**
      * @brief merge custom controls to the current list
      */
-    void MergeCustomControl(const JSONElement& arr);
+    void MergeCustomControl(const nlohmann::json& arr);
 
-    JSONElement GetCustomControlsAsJSON(const wxArrayString& controls) const;
+    nlohmann::json GetCustomControlsAsJSON(const wxArrayString& controls) const;
     void SetTemplateClasses(const CustomControlTemplateMap_t& templateClasses)
     {
         this->m_templateClasses = templateClasses;

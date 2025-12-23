@@ -1,10 +1,11 @@
 #include "col_header_flags_property.h"
 
 #include "StdToWX.h"
+#include "json_utils.h"
 #include "wxgui_helpers.h"
 
-#include <wx/headercol.h>
 #include <wx/dataview.h>
+#include <wx/headercol.h>
 
 ColHeaderFlagsProperty::ColHeaderFlagsProperty(const wxString& label, int initialValue, const wxString& tip,
                                                eColumnKind kind)
@@ -62,21 +63,21 @@ void ColHeaderFlagsProperty::SetValue(const wxString& value)
     }
 }
 
-JSONElement ColHeaderFlagsProperty::Serialize() const
+nlohmann::json ColHeaderFlagsProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
-    json.addProperty(wxT("type"), wxT("colHeaderFlags"));
+    nlohmann::json json = {{"type", "colHeaderFlags"}};
     DoBaseSerialize(json);
-    json.addProperty("stringValue", GetValue());
+    json["stringValue"] = GetValue();
     return json;
 }
 
-void ColHeaderFlagsProperty::UnSerialize(const JSONElement& json)
+void ColHeaderFlagsProperty::UnSerialize(const nlohmann::json& json)
 {
-    wxString tmpValue;
+    if (!json.is_object()) {
+        return;
+    }
     DoBaseUnSerialize(json);
-    tmpValue = json.namedObject(wxT("stringValue")).toString();
-    SetValue(tmpValue);
+    SetValue(JsonUtils::ToString(json["stringValue"]));
 }
 
 wxArrayString ColHeaderFlagsProperty::GetOptions() const { return m_names; }

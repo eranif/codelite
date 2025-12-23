@@ -1,6 +1,6 @@
 #include "BitmapTextArrayProperty.h"
 
-#include "json_node.h"
+#include "json_utils.h"
 
 BitmapTextArrayProperty::BitmapTextArrayProperty(const wxString& label, const wxString& value, const wxString& tooltip)
     : PropertyBase(tooltip)
@@ -13,19 +13,21 @@ PropertyeType BitmapTextArrayProperty::GetType() { return PT_BITMAPTEXT_TABLE; }
 
 wxString BitmapTextArrayProperty::GetValue() const { return m_value; }
 
-JSONElement BitmapTextArrayProperty::Serialize() const
+nlohmann::json BitmapTextArrayProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
-    json.addProperty(wxT("type"), wxT("BitmapTextArray"));
+    nlohmann::json json = {{"type", "BitmapTextArray"}};
     DoBaseSerialize(json);
-    json.addProperty(wxT("m_value"), m_value);
+    json["m_value"] = m_value;
     return json;
 }
 
 void BitmapTextArrayProperty::SetValue(const wxString& value) { m_value = value; }
 
-void BitmapTextArrayProperty::UnSerialize(const JSONElement& json)
+void BitmapTextArrayProperty::UnSerialize(const nlohmann::json& json)
 {
+    if (!json.is_object()) {
+        return;
+    }
     DoBaseUnSerialize(json);
-    m_value = json.namedObject(wxT("m_value")).toString();
+    m_value = JsonUtils::ToString(json["m_value"]);
 }

@@ -21,8 +21,8 @@ public:
     void SetId(int id) { this->m_id = id; }
     int GetId() const { return m_id; }
 
-    virtual JSONItem ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONItem& json);
+    JSONItem ToJSON(const wxString& name) const override;
+    void FromJSON(const JSONItem& json) override;
 
     /**
      * @brief is this request position dependent? (i.e. the response should be displayed where the request was

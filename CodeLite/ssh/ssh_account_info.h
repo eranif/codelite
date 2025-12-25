@@ -37,8 +37,8 @@ public:
     using Vect_t = std::vector<SSHAccountInfo>;
 
     SSHAccountInfo();
-    virtual ~SSHAccountInfo() = default;
-    SSHAccountInfo& operator=(const SSHAccountInfo& other);
+    ~SSHAccountInfo() override = default;
+    SSHAccountInfo& operator=(const SSHAccountInfo&) = default;
 
     bool IsOk() const { return !m_accountName.empty() && !m_host.empty() && !m_username.empty(); }
     void AddBookmark(const wxString& location);

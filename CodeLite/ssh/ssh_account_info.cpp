@@ -33,22 +33,6 @@ SSHAccountInfo::SSHAccountInfo()
 {
 }
 
-SSHAccountInfo& SSHAccountInfo::operator=(const SSHAccountInfo& other)
-{
-    if (&other == this) {
-        return *this;
-    }
-    m_accountName = other.m_accountName;
-    m_username = other.m_username;
-    m_password = other.m_password;
-    m_port = other.m_port;
-    m_host = other.m_host;
-    m_bookmarks = other.m_bookmarks;
-    m_defaultFolder = other.m_defaultFolder;
-    m_keyFiles = other.m_keyFiles;
-    return *this;
-}
-
 void SSHAccountInfo::FromJSON(const JSONItem& json)
 {
     m_accountName = json.namedObject("m_accountName").toString();

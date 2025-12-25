@@ -77,7 +77,7 @@ public:
 	 * \param delimiter delimiter to use
 	 * \param bAllowEmptyTokens if set to true, empty tokens will be returned as well. Default is no empty tokens
 	 */
-	StringTokenizer(const wxString& str,const wxString& delimiter = _T(" ") , const bool &bAllowEmptyTokens = false);
+	StringTokenizer(const wxString& str, const wxString& delimiter = _T(" "), bool bAllowEmptyTokens = false);
 
 	/**
 	 * Construct a tokenizer with given input string and array of delimiters
@@ -85,22 +85,22 @@ public:
 	 * \param delimiterArr array of delimiters
 	 * \param bAllowEmptyTokens if set to true, empty tokens will be returned as well. Default is no empty tokens
 	 */
-	StringTokenizer(const wxString& str,const wxArrayString& delimiterArr, const bool &bAllowEmptyTokens = false);
+	StringTokenizer(const wxString& str,const wxArrayString& delimiterArr, bool bAllowEmptyTokens = false);
 	/**
 	 * Copy constructor
 	 * \param src source tokenizer
 	 */
-	StringTokenizer(const StringTokenizer& src);
+	StringTokenizer(const StringTokenizer&) = default;
 
 	/**
 	 * Default constructor
 	 */
-	StringTokenizer();		//Default
+	StringTokenizer() = default;
 
 	/**
 	 * Destructor
 	 */
-	virtual ~StringTokenizer();
+	virtual ~StringTokenizer() = default;
 
 	//-----------------------------------------------------
 	// Operations
@@ -110,27 +110,20 @@ public:
 	 * Get the number of tokens
 	 * \return number of tokens
 	 */
-	const int Count() const;
+	int Count() const;
 	/**
 	 * Random access operator, starting from zero
 	 * \param nIndex token index
 	 * \return token at nIndex (copy of it)
 	 */
-	wxString operator[](const int nIndex);
+	wxString operator[](int nIndex);
 
 	/**
 	 * Copy one tokenizer to another
 	 * \param src source tokenizer to copy from
 	 * \return this
 	 */
-	StringTokenizer& operator=(const StringTokenizer& src);
-
-private:
-	// Functions
-	/**
-	 * Initialize the tokenizer
-	 */
-	void Initialize();
+	StringTokenizer& operator=(const StringTokenizer&) = default;
 };
 
 #endif // CODELITE_TOKENIZER_H

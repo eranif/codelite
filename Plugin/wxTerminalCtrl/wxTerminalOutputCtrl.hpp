@@ -34,20 +34,10 @@ class WXDLLIMPEXP_SDK wxTerminalOutputCtrl : public wxWindow
             m_end = e;
         }
 
-        bool operator==(const IndicatorRange& other) const
-        {
-            return this->m_start == other.m_start && this->m_end == other.m_end;
-        }
+        bool operator==(const IndicatorRange&) const = default;
 
-        IndicatorRange& operator=(const IndicatorRange& other)
-        {
-            if (this == &other) {
-                return *this;
-            }
-            this->m_start = other.m_start;
-            this->m_end = other.m_end;
-            return *this;
-        }
+        IndicatorRange& operator=(const IndicatorRange&) = default;
+
         IndicatorRange(int s, int e)
             : m_start(s)
             , m_end(e)

@@ -78,8 +78,8 @@ class WXDLLIMPEXP_CL Position : public Serializable
     int m_character = wxNOT_FOUND;
 
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON(const wxString& name) const override;
 
     Position(int line, int col)
         : m_line(line)
@@ -87,23 +87,10 @@ public:
     {
     }
     Position() = default;
-    virtual ~Position() = default;
-    bool operator==(const Position& rhs) const
-    {
-        return this->m_line == rhs.m_line && this->m_character == rhs.m_character;
-    }
-    bool operator!=(const Position& rhs) const { return !(*this == rhs); }
-    bool operator<(const Position& rhs) const
-    {
-        if (this->m_line == rhs.m_line) {
-            return this->m_character < rhs.m_character;
-        } else {
-            return this->m_line < rhs.m_line;
-        }
-    }
-    bool operator>(const Position& rhs) const { return rhs < *this; }
-    bool operator<=(const Position& rhs) const { return !(*this > rhs); }
-    bool operator>=(const Position& rhs) const { return !(*this < rhs); }
+    ~Position() override = default;
+    bool operator==(const Position& rhs) const = default;
+    auto operator<=> (const Position& rhs) const = default;
+
     Position& SetCharacter(int character)
     {
         this->m_character = character;

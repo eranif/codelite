@@ -284,8 +284,8 @@ public:
 
 private:
     // Make this class not copyable
-    JSON(const JSON& src);
-    JSON& operator=(const JSON& src);
+    JSON(const JSON&) = delete;
+    JSON& operator=(const JSON&) = delete;
 };
 
 #endif // ZJSONNODE_H

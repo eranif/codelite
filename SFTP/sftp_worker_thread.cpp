@@ -268,25 +268,6 @@ SFTPThreadRequest::SFTPThreadRequest(const SSHAccountInfo& accountInfo, const wx
 {
 }
 
-SFTPThreadRequest::SFTPThreadRequest(const SFTPThreadRequest& other)
-{
-    if (this == &other)
-        return;
-    *this = other;
-}
-
-SFTPThreadRequest& SFTPThreadRequest::operator=(const SFTPThreadRequest& other)
-{
-    m_account = other.m_account;
-    m_remoteFile = other.m_remoteFile;
-    m_localFile = other.m_localFile;
-    m_retryCounter = other.m_retryCounter;
-    m_uploadSuccess = other.m_uploadSuccess;
-    m_action = other.m_action;
-    m_permissions = other.m_permissions;
-    return *this;
-}
-
 ThreadRequest* SFTPThreadRequest::Clone() const { return new SFTPThreadRequest(*this); }
 
 // -----------------------------------------

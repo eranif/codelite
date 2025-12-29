@@ -79,6 +79,10 @@ if(MINGW)
     )
   endif()
   set(MSYS2_BASE $ENV{MSYS2_BASE})
+
+  string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" CODELITE_ARCH)
+  message(STATUS "Building ${CODELITE_ARCH} architecture")
+  string(TOLOWER "$ENV{MSYSTEM}" MSYSTEM)  
 elseif(UNIX AND NOT APPLE)
   if(CL_PREFIX)
     # user provided CL_PREFIX -> use it instead of CMAKE_INSTALL_PREFIX
@@ -1188,10 +1192,10 @@ if(MINGW)
              "export MSYS2_HOME=${MSYS2_BASE}" APPEND)
 
   # install DLLs required by MinGW
-  msys_list_deps(${MSYS2_BASE}/clang64/bin/libhunspell-1.7-0.dll
+  msys_list_deps(${MSYS2_BASE}/${MSYSTEM}/bin/libhunspell-1.7-0.dll
                  LIBHUNSPELL_DEPS)
-  msys_list_deps(${MSYS2_BASE}/clang64/bin/libssh.dll LIBSSH_DEPS)
-  msys_list_deps(${MSYS2_BASE}/clang64/bin/openssl.exe OPENSSL_DEPS)
+  msys_list_deps(${MSYS2_BASE}/${MSYSTEM}/bin/libssh.dll LIBSSH_DEPS)
+  msys_list_deps(${MSYS2_BASE}/${MSYSTEM}/bin/openssl.exe OPENSSL_DEPS)
 
   list(
     APPEND
@@ -1231,7 +1235,7 @@ if(MINGW)
        ${CMAKE_SOURCE_DIR}/LICENSE)
 
   foreach(DLL ${SYSTEM_DLLS})
-    install(FILES "${MSYS2_BASE}/clang64/bin/${DLL}"
+    install(FILES "${MSYS2_BASE}/${MSYSTEM}/bin/${DLL}"
             DESTINATION "${CL_INSTALL_BIN}")
   endforeach()
 

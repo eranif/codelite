@@ -20,6 +20,7 @@ pacman -Sy git                                  \
            mingw-w64-clang-x86_64-jq            \
            mingw-w64-clang-x86_64-libxml2       \
            mingw-w64-clang-x86_64-llvm-openmp   \
+           mingw-w64-clang-x86_64-ntldd         \
            unzip
 ```
 

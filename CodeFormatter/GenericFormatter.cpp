@@ -3,16 +3,20 @@
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "StringUtils.h"
 #include "clDirChanger.hpp"
-#include "clRemoteHost.hpp"
-#include "clSFTPManager.hpp"
 #include "clTempFile.hpp"
 #include "environmentconfig.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
+#include "json_utils.h"
 #include "macromanager.h"
 #include "procutils.h"
+
+#if USE_SFTP
+#include "clRemoteHost.hpp"
+#include "clSFTPManager.hpp"
+#endif
 
 #include <wx/msgdlg.h>
 
@@ -204,18 +208,21 @@ bool GenericFormatter::FormatString(const wxString& content, const wxString& ful
     return true;
 }
 
-void GenericFormatter::FromJSON(const JSONItem& json)
+void GenericFormatter::FromJSON(const nlohmann::json& json)
 {
+    if (!json.is_object()) {
+        return;
+    }
     SourceFormatterBase::FromJSON(json);
-    m_command = json["command"].toArrayString();
-    m_workingDirectory = json["working_directory"].toString();
+    m_command = JsonUtils::ToArrayString(json["command"]);
+    m_workingDirectory = JsonUtils::ToString(json["working_directory"]);
 }
 
-JSONItem GenericFormatter::ToJSON() const
+nlohmann::json GenericFormatter::ToJSON() const
 {
     auto json = SourceFormatterBase::ToJSON();
-    json.addProperty("command", m_command);
-    json.addProperty("working_directory", m_workingDirectory);
+    json["command"] = m_command;
+    json["working_directory"] = m_workingDirectory;
     return json;
 }
 

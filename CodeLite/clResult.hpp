@@ -27,9 +27,9 @@ public:
     clStatus() = default;
     ~clStatus() = default;
 
-    inline bool ok() const { return m_code == StatusCode::kSucceess; }
+    bool ok() const { return m_code == StatusCode::kSucceess; }
 
-    inline wxString message() const
+    wxString message() const
     {
         wxString msg;
         switch (m_code) {
@@ -71,14 +71,14 @@ public:
         return msg;
     }
 
-    static inline clStatus MakeStatus(StatusCode code, const wxString& message = {})
+    static clStatus MakeStatus(StatusCode code, const wxString& message = {})
     {
         clStatus st(code);
         st.m_message = message;
         return st;
     }
 
-    inline StatusCode code() const { return m_code; }
+    StatusCode code() const { return m_code; }
 
 private:
     StatusCode m_code{StatusCode::kSucceess};
@@ -138,7 +138,7 @@ public:
 
     bool ok() const { return m_status.ok(); }
     bool operator!() const { return !ok(); }
-    operator bool() const { return ok(); }
+    explicit operator bool() const { return ok(); }
 
     /// return the success result
     Value value() const { return m_value; }
@@ -152,7 +152,7 @@ public:
     }
     clStatusOr(Value&& v) { m_value = std::move(v); }
 
-    inline StatusCode code() const { return m_status.code(); }
+    StatusCode code() const { return m_status.code(); }
 
 private:
     Value m_value;

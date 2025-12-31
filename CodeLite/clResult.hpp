@@ -5,7 +5,7 @@
 #include <wx/string.h>
 
 enum class StatusCode {
-    kSucceess,
+    kSuccess,
     kNotFound,
     kInvalidArgument,
     kOther,
@@ -27,16 +27,16 @@ public:
     clStatus() = default;
     ~clStatus() = default;
 
-    inline bool ok() const { return m_code == StatusCode::kSucceess; }
+    bool ok() const { return m_code == StatusCode::kSuccess; }
 
-    inline wxString message() const
+    wxString message() const
     {
         wxString msg;
         switch (m_code) {
         case StatusCode::kInvalidArgument:
             msg = "Invalid argument";
             break;
-        case StatusCode::kSucceess:
+        case StatusCode::kSuccess:
             msg = "Success";
             break;
         case StatusCode::kNotFound:
@@ -47,8 +47,8 @@ public:
             break;
         case StatusCode::kPermissionDenied:
             msg = "Permission denied";
-        case StatusCode::kIOError:
             break;
+        case StatusCode::kIOError:
             msg = "I/O error";
             break;
         case StatusCode::kNetError:
@@ -71,17 +71,17 @@ public:
         return msg;
     }
 
-    static inline clStatus MakeStatus(StatusCode code, const wxString& message = {})
+    static clStatus MakeStatus(StatusCode code, const wxString& message = {})
     {
         clStatus st(code);
         st.m_message = message;
         return st;
     }
 
-    inline StatusCode code() const { return m_code; }
+    StatusCode code() const { return m_code; }
 
 private:
-    StatusCode m_code{StatusCode::kSucceess};
+    StatusCode m_code{StatusCode::kSuccess};
     wxString m_message;
 };
 
@@ -89,7 +89,7 @@ private:
 /// Helper methods
 ///-------------------
 
-inline clStatus StatusOk() { return clStatus::MakeStatus(StatusCode::kSucceess); }
+inline clStatus StatusOk() { return clStatus::MakeStatus(StatusCode::kSuccess); }
 inline clStatus StatusInvalidArgument(const wxString& msg = wxEmptyString)
 {
     return clStatus::MakeStatus(StatusCode::kInvalidArgument, msg);
@@ -138,7 +138,7 @@ public:
 
     bool ok() const { return m_status.ok(); }
     bool operator!() const { return !ok(); }
-    operator bool() const { return ok(); }
+    explicit operator bool() const { return ok(); }
 
     /// return the success result
     Value value() const { return m_value; }
@@ -152,7 +152,7 @@ public:
     }
     clStatusOr(Value&& v) { m_value = std::move(v); }
 
-    inline StatusCode code() const { return m_status.code(); }
+    StatusCode code() const { return m_status.code(); }
 
 private:
     Value m_value;

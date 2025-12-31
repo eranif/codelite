@@ -47,8 +47,8 @@ public:
             break;
         case StatusCode::kPermissionDenied:
             msg = "Permission denied";
-        case StatusCode::kIOError:
             break;
+        case StatusCode::kIOError:
             msg = "I/O error";
             break;
         case StatusCode::kNetError:

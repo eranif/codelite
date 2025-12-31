@@ -5,7 +5,7 @@
 #include <wx/string.h>
 
 enum class StatusCode {
-    kSucceess,
+    kSuccess,
     kNotFound,
     kInvalidArgument,
     kOther,
@@ -27,7 +27,7 @@ public:
     clStatus() = default;
     ~clStatus() = default;
 
-    bool ok() const { return m_code == StatusCode::kSucceess; }
+    bool ok() const { return m_code == StatusCode::kSuccess; }
 
     wxString message() const
     {
@@ -36,7 +36,7 @@ public:
         case StatusCode::kInvalidArgument:
             msg = "Invalid argument";
             break;
-        case StatusCode::kSucceess:
+        case StatusCode::kSuccess:
             msg = "Success";
             break;
         case StatusCode::kNotFound:
@@ -81,7 +81,7 @@ public:
     StatusCode code() const { return m_code; }
 
 private:
-    StatusCode m_code{StatusCode::kSucceess};
+    StatusCode m_code{StatusCode::kSuccess};
     wxString m_message;
 };
 
@@ -89,7 +89,7 @@ private:
 /// Helper methods
 ///-------------------
 
-inline clStatus StatusOk() { return clStatus::MakeStatus(StatusCode::kSucceess); }
+inline clStatus StatusOk() { return clStatus::MakeStatus(StatusCode::kSuccess); }
 inline clStatus StatusInvalidArgument(const wxString& msg = wxEmptyString)
 {
     return clStatus::MakeStatus(StatusCode::kInvalidArgument, msg);

@@ -27,8 +27,8 @@ public:
     void SetTemplInfoName(const wxString& templInfoName);
     const wxString& GetTemplInfoName() const { return m_templInfoName; }
 
-    void Serialize(JSONElement& json) const override;
-    void UnSerialize(const JSONElement& json) override;
+    void Serialize(nlohmann::json& json) const override;
+    void UnSerialize(const nlohmann::json& json) override;
     wxcWidget* Clone() const override;
     wxString CppCtorCode() const override;
     void GetIncludeFile(wxArrayString& headers) const override;

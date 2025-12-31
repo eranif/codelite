@@ -1,6 +1,6 @@
 #include "color_property.h"
 
-#include "json_node.h"
+#include "json_utils.h"
 
 const wxEventType wxEVT_COLOR_UPDATE = wxNewEventType();
 
@@ -13,19 +13,21 @@ ColorProperty::ColorProperty(const wxString& label, const wxString& colour, cons
 
 wxString ColorProperty::GetValue() const { return m_colourName; }
 
-JSONElement ColorProperty::Serialize() const
+nlohmann::json ColorProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
-    json.addProperty(wxT("type"), wxT("colour"));
+    nlohmann::json json = {{"type", "colour"}};
     DoBaseSerialize(json);
-    json.addProperty(wxT("colour"), m_colourName);
+    json["colour"] = m_colourName;
     return json;
 }
 
 void ColorProperty::SetValue(const wxString& value) { m_colourName = value; }
 
-void ColorProperty::UnSerialize(const JSONElement& json)
+void ColorProperty::UnSerialize(const nlohmann::json& json)
 {
+    if (!json.is_object()) {
+        return;
+    }
     DoBaseUnSerialize(json);
-    SetValue(json.namedObject(wxT("colour")).toString());
+    SetValue(JsonUtils::ToString(json["colour"]));
 }

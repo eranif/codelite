@@ -29,7 +29,6 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "fileextmanager.h"
-#include "wxStringHash.h"
 
 #include <vector>
 #include <wx/bitmap.h>

@@ -5,7 +5,6 @@
 
 #include "cl_config.h"
 #include "codelite_exports.h"
-#include "wxStringHash.h"
 
 #include <vector>
 #include <wx/string.h>

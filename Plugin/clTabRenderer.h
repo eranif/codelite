@@ -17,10 +17,7 @@
 #define WXDLLIMPEXP_SDK
 #endif
 
-#include "clTabRenderer.h"
-#include "cl_defs.h"
 #include "drawingutils.h"
-#include "wxStringHash.h"
 
 #include <memory>
 #include <vector>

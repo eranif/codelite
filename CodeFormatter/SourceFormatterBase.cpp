@@ -1,7 +1,6 @@
 #include "SourceFormatterBase.hpp"
 
 #include "macros.h"
-#include "wxStringHash.h"
 
 wxDEFINE_EVENT(wxEVT_FORMAT_COMPELTED, clSourceFormatEvent);
 wxDEFINE_EVENT(wxEVT_FORMAT_INPLACE_COMPELTED, clSourceFormatEvent);

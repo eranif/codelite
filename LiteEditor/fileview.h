@@ -31,7 +31,6 @@
 #include "imanager.h"
 #include "pluginmanager.h"
 #include "project.h"
-#include "wxStringHash.h"
 
 #include <map>
 #include <wx/treectrl.h>

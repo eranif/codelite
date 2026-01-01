@@ -36,8 +36,6 @@
 #ifndef _IHUNSPELL_
 #define _IHUNSPELL_
 // ------------------------------------------------------------
-#include "wxStringHash.h"
-
 #include <hunspell/hunspell.h>
 #include <unordered_set>
 #include <utility>

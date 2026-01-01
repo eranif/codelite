@@ -1,7 +1,6 @@
 #ifndef CLDOCKERCONTAINER_H
 #define CLDOCKERCONTAINER_H
 
-#include "wxStringHash.h"
 #include <vector>
 #include <wx/clntdata.h>
 #include <wx/string.h>

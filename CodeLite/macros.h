@@ -26,7 +26,6 @@
 #define MACROS_H
 
 #include "cl_standard_paths.h"
-#include "wxStringHash.h"
 
 #include <map>
 #include <set>

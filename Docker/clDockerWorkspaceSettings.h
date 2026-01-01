@@ -3,10 +3,7 @@
 
 #include "clDockerBuildableFile.h"
 #include "cl_config.h"
-#include "wxStringHash.h"
 
-#include <algorithm>
-#include <vector>
 #include <wx/string.h>
 
 class clDockerWorkspaceSettings : public clConfigItem

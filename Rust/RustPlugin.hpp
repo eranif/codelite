@@ -32,7 +32,6 @@
 #include "cl_command_event.h"
 #include "macros.h"
 #include "plugin.h"
-#include "wxStringHash.h"
 
 #include <unordered_map>
 

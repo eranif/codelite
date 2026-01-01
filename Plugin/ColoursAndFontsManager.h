@@ -29,9 +29,7 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "lexer_configuration.h"
-#include "wxStringHash.h"
 
-#include <map>
 #include <vector>
 #include <wx/event.h>
 #include <wx/filename.h>

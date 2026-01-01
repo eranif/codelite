@@ -1,6 +1,9 @@
 #include "PHPEntityNamespace.h"
-#include <wx/tokenzr.h>
+
 #include "PHPLookupTable.h"
+
+#include <wx/tokenzr.h>
+#include <wx/wxcrtvararg.h>
 
 void PHPEntityNamespace::PrintStdout(int indent) const
 {

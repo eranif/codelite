@@ -25,7 +25,7 @@
 #include "ctags_manager.h"
 
 #include "CTags.hpp"
-#include "Cxx/CxxTemplateFunction.h"
+#include "Cxx/CxxLexerAPI.h"
 #include "Cxx/CxxVariableScanner.h"
 #include "Cxx/cpp_comment_creator.h"
 #include "StdToWX.h"
@@ -34,32 +34,13 @@
 #include "database/tags_storage_sqlite3.h"
 #include "event_notifier.h"
 #include "fileextmanager.h"
+#include "language.h"
 #include "precompiled_header.h"
 
 #include <algorithm>
 #include <set>
-#include <sstream>
-#include <wx/app.h>
-#include <wx/busyinfo.h>
-#include <wx/file.h>
 #include <wx/filename.h>
-#include <wx/timer.h>
-#include <wx/tokenzr.h>
-#if wxUSE_GUI
-#include <wx/frame.h>
-#include <wx/msgdlg.h>
-#include <wx/progdlg.h>
-#include <wx/sizer.h>
-#include <wx/xrc/xmlres.h>
-#endif
-#include <wx/log.h>
-#include <wx/stdpaths.h>
 #include <wx/string.h>
-#include <wx/txtstrm.h>
-#include <wx/wfstream.h>
-
-//#define __PERFORMANCE
-#include "performance.h"
 
 //---------------------------------------------------------------------------
 // Misc

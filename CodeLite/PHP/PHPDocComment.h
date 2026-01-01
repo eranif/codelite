@@ -30,9 +30,6 @@
 #include <wx/string.h>
 #include <wx/arrstr.h>
 #include "PHPSourceFile.h"
-#include "macros.h"
-#include "wxStringHash.h"
-#include "PHPDocParam.h"
 
 class WXDLLIMPEXP_CL PHPDocComment
 {

@@ -29,8 +29,6 @@
 #include "entry.h"
 #include "fileentry.h"
 #include "istorage.h"
-#include "tag_tree.h"
-#include "wxStringHash.h"
 
 #include <unordered_map>
 #include <wx/filename.h>

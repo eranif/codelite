@@ -34,6 +34,7 @@
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/string.h>
+#include <wx/wxcrt.h>
 
 using wxStringView = std::basic_string_view<wxChar>;
 

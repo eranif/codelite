@@ -1,8 +1,10 @@
 #include "PHPEntityVariable.h"
-#include "PHPScannerTokens.h"
+
 #include "PHPEntityFunction.h"
-#include "PHPEntityClass.h"
 #include "PHPLookupTable.h"
+#include "PHPScannerTokens.h"
+
+#include <wx/wxcrtvararg.h>
 
 void PHPEntityVariable::PrintStdout(int indent) const
 {

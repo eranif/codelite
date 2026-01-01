@@ -5,6 +5,8 @@
 #include "commentconfigdata.h"
 #include "file_logger.h"
 
+#include <wx/wxcrtvararg.h>
+
 void PHPEntityFunction::PrintStdout(int indent) const
 {
     wxString indentString(' ', indent);

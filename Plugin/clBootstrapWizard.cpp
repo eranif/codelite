@@ -2,17 +2,11 @@
 
 #include "ColoursAndFontsManager.h"
 #include "CompilersDetectorManager.h"
-#include "build_settings_config.h"
 #include "drawingutils.h"
-#include "file_logger.h"
 #include "globals.h"
-#include "macros.h"
 #include "plugindata.h"
-#include "wxStringHash.h"
 
-#include <algorithm>
 #include <vector>
-#include <wx/dcmemory.h>
 #include <wx/msgdlg.h>
 #include <wx/wupdlock.h>
 

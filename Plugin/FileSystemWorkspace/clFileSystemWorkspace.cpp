@@ -29,10 +29,8 @@
 #include "macromanager.h"
 #include "macros.h"
 #include "shell_command.h"
-#include "wxStringHash.h"
 
 #include <thread>
-#include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
 
 #define CHECK_ACTIVE_CONFIG()                 \

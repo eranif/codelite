@@ -1,5 +1,7 @@
 #include "StringUtils.h"
 
+#include "macros.h"
+
 #include <vector>
 #include <wx/stc/stc.h>
 #include <wx/tokenzr.h>

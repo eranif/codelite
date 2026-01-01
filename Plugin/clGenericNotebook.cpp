@@ -8,20 +8,13 @@
 #include "drawingutils.h"
 #include "editor_config.h"
 #include "event_notifier.h"
-#include "file_logger.h"
-#include "globals.h"
-#include "imanager.h"
-#include "lexer_configuration.h"
-#include "wxStringHash.h"
 
 #include <algorithm>
 #include <wx/app.h>
-#include <wx/dcbuffer.h>
 #include <wx/dcgraph.h>
 #include <wx/dnd.h>
 #include <wx/image.h>
 #include <wx/menu.h>
-#include <wx/regex.h>
 #include <wx/sizer.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xh_bmp.h>

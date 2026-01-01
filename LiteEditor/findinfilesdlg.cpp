@@ -25,31 +25,23 @@
 #include "findinfilesdlg.h"
 
 #include "ColoursAndFontsManager.h"
-#include "FindInFilesLocationsDlg.h"
 #include "StringUtils.h"
 #include "clFilesCollector.h"
 #include "clWorkspaceManager.h"
-#include "dirpicker.h"
-#include "event_notifier.h"
-#include "findresultstab.h"
 #include "frame.h"
 #include "globals.h"
 #include "lexer_configuration.h"
 #include "macros.h"
-#include "manager.h"
 #include "project.h"
 #include "replaceinfilespanel.h"
 #include "search_thread.h"
 #include "sessionmanager.h"
 #include "windowattrmanager.h"
 #include "workspace.h"
-#include "wxStringHash.h"
 
-#include <algorithm>
 #include <wx/dirdlg.h>
 #include <wx/fontmap.h>
 #include <wx/tokenzr.h>
-#include <wx/wupdlock.h>
 
 namespace
 {

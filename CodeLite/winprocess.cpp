@@ -124,11 +124,7 @@ WinProcess* WinProcess::Execute(const wxString& cmd, wxString& errMsg, const wxS
     // Set the window to hide
     siStartInfo.wShowWindow = SW_HIDE;
     BOOL ret = CreateProcess(NULL,
-#if wxVERSION_NUMBER < 2900
-                             (WCHAR*)cmd.GetData(),
-#else
                              cmd.wchar_str(), // shell line execution command
-#endif
                              NULL,              // process security attributes
                              NULL,              // primary thread security attributes
                              TRUE,              // handles are inherited

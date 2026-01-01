@@ -1257,7 +1257,7 @@ void clMainFrame::CreateGUIControls()
     m_mainPanel = new wxPanel(this);
     InitializeLogo();
 
-#if defined(__WXOSX__) && wxCHECK_VERSION(3, 1, 0)
+#if defined(__WXOSX__)
     EnableFullScreenView();
 #endif
 

@@ -910,11 +910,7 @@ int clGetSize(int size, const wxWindow* win)
         }
     }
 #endif
-#if wxCHECK_VERSION(3, 1, 0)
     return win->FromDIP(size);
-#else
-    return size;
-#endif
 }
 
 bool clIsWaylandSession()

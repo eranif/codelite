@@ -24,16 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "commentconfigdata.h"
 
-#include <wx/versioninfo.h>
-
-// Rust support was added in wx3.1
-#if wxCHECK_VERSION(3, 1, 0)
-
 #include "ContextRust.hpp"
 #include "cl_editor.h"
 #include "cl_editor_tip_window.h"
 #include "editor_config.h"
-#include "file_logger.h"
 
 #include <unordered_set>
 #include <wx/xrc/xmlres.h>
@@ -256,5 +250,3 @@ void ContextRust::OnCommentLine(wxCommandEvent& event)
     wxUnusedVar(event);
     GetCtrl().ToggleLineComment("//", wxSTC_RUST_COMMENTLINE);
 }
-
-#endif // wxVERSION_NUMBER >= 3100

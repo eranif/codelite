@@ -310,16 +310,10 @@ bool IsWordChar(const wxChar& ch)
 
 void scroll_range(wxStyledTextCtrl* ctrl, int selection_start, int selection_end)
 {
-#if wxCHECK_VERSION(3, 1, 0)
     // ensure the selection is visible
     if (selection_end != selection_start) {
         ctrl->ScrollRange(selection_start, selection_end);
     }
-#else
-    // implement a wx30 version for ScrollRange()
-    wxUnusedVar(selection_start);
-    wxUnusedVar(selection_end);
-#endif
     ctrl->EnsureCaretVisible(); // incase we are inside a folded area
 }
 
@@ -4669,12 +4663,7 @@ void clEditor::DoSelectRange(const LSP::Range& range, bool center_line)
     ClearSelections();
     auto getPos = [this](const LSP::Position& param) -> int {
         int linePos = PositionFromLine(param.GetLine());
-#if wxCHECK_VERSION(3, 1, 0)
         return PositionRelative(linePos, param.GetCharacter());
-#else
-        wxString text = GetLine(param.GetLine()).Truncate(param.GetCharacter());
-        return linePos + StringUtils::UTF8Length(text.wc_str(), text.length());
-#endif
     };
     SetSelectionStart(getPos(range.GetStart()));
     SetSelectionEnd(getPos(range.GetEnd()));

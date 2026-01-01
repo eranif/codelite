@@ -30,13 +30,12 @@ clCustomScrollBar::clCustomScrollBar(wxWindow* parent, wxWindowID id, const wxPo
     Bind(wxEVT_LEFT_DOWN, &clCustomScrollBar::OnMouseLeftDown, this);
     Bind(wxEVT_LEFT_UP, &clCustomScrollBar::OnMouseLeftUp, this);
     Bind(wxEVT_MOTION, &clCustomScrollBar::OnMotion, this);
-#if wxCHECK_VERSION(3, 1, 0)
+
     static bool once = true;
     if(once) {
         once = false;
         SB_WIDTH = FromDIP(SB_WIDTH);
     }
-#endif
 
     if(style == wxSB_HORIZONTAL) {
         SetSize(-1, SB_WIDTH);

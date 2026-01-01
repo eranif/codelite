@@ -82,15 +82,6 @@ void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
     sci->SetHotspotActiveUnderline(false);
     sci->MarkerDefine(7, wxSTC_MARK_ARROW);
 
-#if wxVERSION_NUMBER < 3100
-    // On GTK we don't have the wxSTC_INDIC_TEXTFORE symbol yet (old wx version)
-    sci->MarkerDefine(7, wxSTC_MARK_ARROW);
-    sci->MarkerSetBackground(7, lexer->IsDark() ? "CYAN" : "ORANGE");
-    sci->MarkerSetForeground(7, lexer->IsDark() ? "CYAN" : "ORANGE");
-
-    sci->IndicatorSetForeground(1, lexer->IsDark() ? "CYAN" : "ORANGE");
-    sci->IndicatorSetStyle(1, wxSTC_INDIC_ROUNDBOX);
-#else
     sci->MarkerDefine(7, wxSTC_MARK_BACKGROUND);
     sci->MarkerSetBackground(7, lexer->IsDark() ? *wxWHITE : *wxGREEN);
     sci->MarkerSetForeground(7, lexer->IsDark() ? *wxWHITE : *wxGREEN);
@@ -98,7 +89,6 @@ void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
 
     sci->IndicatorSetForeground(1, lexer->IsDark() ? "#FFD700" : "#FF4500");
     sci->IndicatorSetStyle(1, wxSTC_INDIC_TEXTFORE);
-#endif
     sci->IndicatorSetUnder(1, true);
 
     sci->SetMarginWidth(0, 0);                    // line numbers
@@ -111,9 +101,8 @@ void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
     sci->SetMarginWidth(4, 0);
     sci->SetMarginSensitive(1, true);
     sci->HideSelection(true);
-#if wxCHECK_VERSION(3, 1, 0)
     sci->SetMarginBackground(3, *wxBLACK);
-#endif
+
     // Indentation
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions();
     sci->SetUseTabs(options->GetIndentUsesTabs());

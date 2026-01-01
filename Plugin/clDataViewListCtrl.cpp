@@ -220,12 +220,8 @@ void clDataViewListCtrl::OnConvertEvent(wxTreeEvent& event)
 
 bool clDataViewListCtrl::SendDataViewEvent(const wxEventType& type, wxTreeEvent& treeEvent, const wxString& text)
 {
-#if wxCHECK_VERSION(3, 1, 0)
     wxDataViewEvent e(type, &m_dummy, DV_ITEM(treeEvent.GetItem()));
-#else
-    wxDataViewEvent e(type);
-    e.SetItem(DV_ITEM(treeEvent.GetItem()));
-#endif
+
     e.SetEventObject(this);
     e.SetColumn(treeEvent.GetInt());
     e.SetString(text);
@@ -602,12 +598,8 @@ void clDataViewListCtrl::ShowStringSelectionMenu(const wxDataViewItem& item, con
     PopupMenu(&menu, r.GetBottomLeft());
     if(!selectedString.IsEmpty()) {
         // fire selection made event
-#if wxCHECK_VERSION(3, 1, 0)
         wxDataViewEvent e(wxEVT_DATAVIEW_CHOICE, &m_dummy, item);
-#else
-        wxDataViewEvent e(wxEVT_DATAVIEW_CHOICE);
-        e.SetItem(item);
-#endif
+
         e.SetEventObject(this);
         e.SetColumn(col);
         e.SetString(selectedString);

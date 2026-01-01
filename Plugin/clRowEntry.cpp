@@ -17,9 +17,7 @@
 #include <wx/settings.h>
 #include <wx/window.h>
 
-#if !wxCHECK_VERSION(3, 1, 0)
 #define wxCONTROL_NONE 0
-#endif
 
 #ifdef __WXGTK__
 #define SELECTION_RECT_DEFLATE_X 1

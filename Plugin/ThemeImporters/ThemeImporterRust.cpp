@@ -1,6 +1,3 @@
-// rust support was added in wx3.1
-#include <wx/versioninfo.h>
-#if wxCHECK_VERSION(3, 1, 0)
 #include "ThemeImporterRust.hpp"
 
 ThemeImporterRust::ThemeImporterRust()
@@ -55,4 +52,3 @@ LexerConf::Ptr_t ThemeImporterRust::Import(const wxFileName& theme_file)
     FinalizeImport(lexer);
     return lexer;
 }
-#endif

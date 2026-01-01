@@ -73,9 +73,7 @@ clThemedTextCtrl::clThemedTextCtrl(
     // Bind(wxEVT_STC_CHARADDED, &clThemedTextCtrl::OnAddChar, this);
     Bind(wxEVT_KEY_DOWN, &clThemedTextCtrl::OnKeyDown, this);
     Bind(wxEVT_STC_MODIFIED, &clThemedTextCtrl::OnChange, this);
-#if wxCHECK_VERSION(3, 1, 5)
     Bind(wxEVT_STC_CLIPBOARD_PASTE, &clThemedTextCtrl::OnPaste, this);
-#endif
     m_editEventsHandler = std::make_unique<clEditEventsHandler>(this);
 #endif
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedTextCtrl::OnSysColours, this);
@@ -87,9 +85,7 @@ clThemedTextCtrl::~clThemedTextCtrl()
     // Unbind(wxEVT_STC_CHARADDED, &clThemedTextCtrl::OnAddChar, this);
     Unbind(wxEVT_KEY_DOWN, &clThemedTextCtrl::OnKeyDown, this);
     Unbind(wxEVT_STC_MODIFIED, &clThemedTextCtrl::OnChange, this);
-#if wxCHECK_VERSION(3, 1, 5)
     Unbind(wxEVT_STC_CLIPBOARD_PASTE, &clThemedTextCtrl::OnPaste, this);
-#endif
 #endif
     EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedTextCtrl::OnSysColours, this);
 }

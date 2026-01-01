@@ -534,21 +534,13 @@ wxPoint DesignerPanel::GetOutlineOffset() const
         int x, y, px, py;
         m_hintedWin->GetScreenPosition(&x, &y);
         m_parentWin->GetScreenPosition(&px, &py);
-#if wxVERSION_NUMBER < 2905
-        // If a wxNotebook has top or left tabs, the page outline needs offsetting to avoid them
-        if(m_parentWin->GetWindowStyle() & wxNB_TOP) {
-            pt.y = y - py;
-        } else if(m_parentWin->GetWindowStyle() & wxNB_LEFT) {
-            pt.x = x - px;
-        }
-#else
-        // In 2.9.5 that's no longer true. However the small margin between the notebook and the page needs offsetting
+
+        // The small margin between the notebook and the page needs offsetting
         if(m_parentWin->GetWindowStyle() & wxNB_TOP) {
             pt.x = pt.y = px - x - 3; // The -3 is a kludge
         } else if(m_parentWin->GetWindowStyle() & wxNB_LEFT) {
             pt.x = pt.y = py - y - 3;
         }
-#endif
     }
     return pt;
 }

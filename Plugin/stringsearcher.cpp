@@ -151,7 +151,6 @@ bool StringFindReplacer::DoRESearch(const wxString& input, int startOffset, cons
 bool StringFindReplacer::DoSimpleSearch(const wchar_t* pinput, int startOffset, const wchar_t* pfind_what, size_t flags,
                                         int& pos, int& matchLen)
 {
-#if wxVERSION_NUMBER >= 2900
     std::wstring input(pinput);
     std::wstring find_what(pfind_what);
 
@@ -175,11 +174,6 @@ bool StringFindReplacer::DoSimpleSearch(const wchar_t* pinput, int startOffset, 
         }
         str = input.substr(0, (size_t)from);
     }
-#else
-    wxString input(pinput);
-    wxString find_what(pfind_what);
-    std::wstring str = GetString(pinput, startOffset, flags & wxSD_SEARCH_BACKWARD ? true : false).c_str();
-#endif
 
     size_t init_size = str.length();
 

@@ -103,15 +103,9 @@ void clEditorStateLocker::ApplyFolds(wxStyledTextCtrl* ctrl, const clEditorState
         // If we cared enough, we could have saved a fold-level too, and/or the function name +/- the line's
         // displacement within the function. But for now...
         if (ctrl->GetFoldLevel(line) & wxSTC_FOLDLEVELHEADERFLAG) {
-#if wxVERSION_NUMBER >= 3100
             if (ctrl->GetFoldExpanded(line)) {
                 ctrl->ToggleFoldShowText(line, "...");
             }
-#else
-            if (ctrl->GetFoldExpanded(line)) { // For <wx3.1 check first, and only toggle if needed
-                ctrl->ToggleFold(line);
-            }
-#endif
         }
     }
 }

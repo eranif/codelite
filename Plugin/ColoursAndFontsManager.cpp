@@ -521,11 +521,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
         case FileExtManager::TypeWorkspacePHP:
         case FileExtManager::TypeWxCrafter:
         case FileExtManager::TypeJSON:
-#if wxCHECK_VERSION(3, 1, 0)
             lexerByContent = GetLexer("json");
-#else
-            lexerByContent = GetLexer("javascript");
-#endif
             break;
         default:
             break;

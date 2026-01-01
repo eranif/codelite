@@ -18,18 +18,11 @@ void DoSetCaretAt(wxStyledTextCtrl* ctrl, long pos)
 
 void clSTCHelper::ScrollRange(wxStyledTextCtrl* ctrl, int selection_start, int selection_end)
 {
-#if wxCHECK_VERSION(3, 1, 0)
     // ensure the selection is visible
     if (selection_end != selection_start) {
         ctrl->ScrollRange(selection_start, selection_end);
     }
     ctrl->EnsureCaretVisible(); // incase we are inside a folded area
-#else
-    // implement a wx30 version for ScrollRange()
-    wxUnusedVar(selection_start);
-    wxUnusedVar(selection_end);
-    ctrl->EnsureCaretVisible(); // incase we are inside a folded area
-#endif
 }
 
 void clSTCHelper::CenterLine(wxStyledTextCtrl* ctrl, int line, int col)

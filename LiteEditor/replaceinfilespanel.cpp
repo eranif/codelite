@@ -511,12 +511,9 @@ void ReplaceInFilesPanel::SetStyles(wxStyledTextCtrl* sci)
     const StyleProperty& styleProperty = lexer->GetProperty(0);
     wxColour bgColour = styleProperty.GetBgColour();
 
-#if wxCHECK_VERSION(3, 1, 0)
     sci->SetMarginWidth(3, clGetSize(1, sci)); // separator margin
     sci->SetMarginBackground(3, lexer->IsDark() ? bgColour.ChangeLightness(130) : bgColour.ChangeLightness(50));
-#else
-    sci->SetMarginWidth(3, 0); // separator margin
-#endif
+
     sci->MarkerDefine(7, wxSTC_MARK_ARROW);
     sci->MarkerSetBackground(7, lexer->IsDark() ? "WHITE" : "DARK GREY");
     sci->MarkerSetForeground(7, lexer->IsDark() ? "WHITE" : "DARK GREY");

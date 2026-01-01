@@ -176,18 +176,7 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
  */
 std::unique_ptr<wxDisplay> GetDisplay(const wxWindow* win)
 {
-#if wxCHECK_VERSION(3, 1, 2)
-    wxDisplay* d = new wxDisplay(win);
-#else
-    wxDisplay* d = nullptr;
-    int index = wxDisplay::GetFromWindow(win);
-    if (index == wxNOT_FOUND) {
-        d = new wxDisplay();
-    } else {
-        d = new wxDisplay(index);
-    }
-#endif
-    return std::unique_ptr<wxDisplay>(d);
+    return std::make_unique<wxDisplay>(win);
 }
 } // namespace
 

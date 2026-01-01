@@ -739,18 +739,14 @@ void clToolBarGeneric::PrepareForDrawings(wxDC& dc, std::vector<ToolVect_t>& G, 
 int clToolBarGeneric::GetXSpacer() const
 {
     int spacer = HasFlag(kMiniToolBar) ? 3 : 8;
-#if wxCHECK_VERSION(3, 1, 0)
     spacer = FromDIP(spacer);
-#endif
     return spacer;
 }
 
 int clToolBarGeneric::GetYSpacer() const
 {
     int spacer = HasFlag(kMiniToolBar) ? 6 : 10;
-#if wxCHECK_VERSION(3, 1, 0)
     spacer = FromDIP(spacer);
-#endif
     return spacer;
 }
 

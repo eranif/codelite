@@ -12,15 +12,7 @@
 #include <wx/renderer.h>
 #include <wx/settings.h>
 
-#if wxCHECK_VERSION(3, 1, 0)
 #define TEXT_SPACER FromDIP(5)
-#else
-#define TEXT_SPACER 5
-#endif
-#if !wxCHECK_VERSION(3, 1, 2)
-#define SetFractionalPointSize SetPointSize
-#define wxFONTWEIGHT_SEMIBOLD wxFONTWEIGHT_BOLD
-#endif
 
 #if defined(__WXMSW__) || defined(__WXGTK__)
 #define BUTTON_RADIUS 0.0

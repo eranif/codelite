@@ -24,10 +24,6 @@ constexpr int SPACER = 5;
 wxDEFINE_EVENT(wxEVT_CAPTION_ACTION_BUTTON, wxCommandEvent);
 wxDEFINE_EVENT(wxEVT_CAPTION_MOVE_END, wxCommandEvent);
 
-#if wxVERSION_NUMBER < 3100
-#define FromDIP(x) x
-#endif
-
 clCaptionBar::clCaptionBar(wxWindow* parent, wxTopLevelWindow* topLevelFrame)
     : wxWindow(parent, wxID_ANY)
     , m_topLevelWindow(topLevelFrame)

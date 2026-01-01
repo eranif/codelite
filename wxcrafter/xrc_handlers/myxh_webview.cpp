@@ -28,13 +28,8 @@ wxObject* MyWxWebViewXmlHandler::DoCreateResource()
 #if USE_WEBVIEW
     wxString url = GetText("url", false);
     if(url.IsEmpty()) { url = "http://www.google.com"; }
-#if wxCHECK_VERSION(2, 9, 5)
     wxWebView* webview = wxWebView::New(m_parentAsWindow, GetID(), url, GetPosition(), GetSize(),
                                         wxWebViewBackendDefault, GetStyle(wxT("style")), GetName());
-#else
-    wxWebView* webview = wxWebView::New(m_parentAsWindow, GetID(), url, GetPosition(), GetSize(),
-                                        wxWEB_VIEW_BACKEND_DEFAULT, GetStyle(wxT("style")), GetName());
-#endif
 #else
     wxHtmlWindow* webview =
         new wxHtmlWindow(m_parentAsWindow, GetID(), GetPosition(), GetSize(), GetStyle(wxT("style")), GetName());

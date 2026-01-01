@@ -34,7 +34,6 @@
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
-#include "wxStringHash.h"
 
 #include <set>
 #include <unordered_set>

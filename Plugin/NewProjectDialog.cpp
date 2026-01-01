@@ -7,7 +7,6 @@
 #include "clWorkspaceManager.h"
 #include "cl_config.h"
 #include "macros.h"
-#include "wxStringHash.h"
 
 #include <unordered_set>
 #include <wx/arrstr.h>

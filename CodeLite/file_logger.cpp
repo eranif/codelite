@@ -28,12 +28,8 @@
 #include "cl_standard_paths.h"
 
 #include <chrono>
-#include <wx/crt.h>
+#include <wx/ffile.h>
 #include <wx/filename.h>
-#include <wx/log.h>
-#include <wx/stdpaths.h>
-#include <wx/textfile.h>
-#include <wx/utils.h>
 
 int FileLogger::m_globalLogVerbosity = FileLogger::Error;
 wxString FileLogger::m_logfile;

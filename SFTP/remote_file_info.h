@@ -27,11 +27,9 @@
 #define REMOTEFILEINFO_H
 
 #include "ssh/ssh_account_info.h"
-#include "wxStringHash.h"
 
-#include <map>
+#include <unordered_map>
 #include <wx/clntdata.h>
-#include <wx/filename.h>
 
 class RemoteFileInfo : public wxClientData
 {

@@ -1,16 +1,10 @@
 #include "clConfigurationSelectionCtrl.h"
 
-#include "bitmap_loader.h"
-#include "clThemedChoice.h"
-#include "cl_config.h"
 #include "codelite_events.h"
 #include "configuration_manager_dlg.h"
 #include "event_notifier.h"
 #include "frame.h"
-#include "globals.h"
-#include "imanager.h"
 #include "manager.h"
-#include "wxStringHash.h"
 
 clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxWindowID winid, const wxPoint& pos,
                                                            const wxSize& size, long style)

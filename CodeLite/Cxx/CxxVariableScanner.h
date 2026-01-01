@@ -5,9 +5,6 @@
 #include "CxxVariable.h"
 #include "codelite_exports.h"
 #include "macros.h"
-#include "wxStringHash.h"
-
-#include <stack>
 
 class WXDLLIMPEXP_CL CxxVariableScanner
 {

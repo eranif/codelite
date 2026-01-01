@@ -26,6 +26,7 @@
 #include <vector>
 #include <wx/debug.h>
 #include <wx/event.h>
+#include <wx/ffile.h>
 #include <wx/msgdlg.h>
 #include <wx/stc/stc.h>
 #include <wx/thread.h>

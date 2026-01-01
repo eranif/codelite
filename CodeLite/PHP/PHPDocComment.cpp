@@ -1,9 +1,9 @@
 #include "PHPDocComment.h"
+
 #include "PHPDocParam.h"
 #include "PHPDocProperty.h"
 #include "PHPDocVar.h"
-#include "wxStringHash.h"
-#include <algorithm>
+
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
 

@@ -4,8 +4,6 @@
 #include "CxxScannerTokens.h"
 #include "CxxTokenizer.h"
 
-#include <algorithm>
-
 CxxVariable::CxxVariable(eCxxStandard standard)
     : m_standard(standard)
     , m_isAuto(false)

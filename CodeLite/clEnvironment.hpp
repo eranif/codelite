@@ -2,8 +2,6 @@
 #define CLENVIRONMENT_HPP
 
 #include "codelite_exports.h"
-#include "macros.h"
-#include "wxStringHash.h"
 
 #include <vector>
 #include <wx/any.h>

@@ -32,12 +32,8 @@
 #include "cc_box_tip_window.h"
 #include "cl_command_event.h"
 #include "ieditor.h"
-#include "php_event.h"
-#include "precompiled_header.h"
-#include "wxStringHash.h"
 
 #include <memory>
-#include <vector>
 
 struct PHPLocation {
     wxString what;     // Token name

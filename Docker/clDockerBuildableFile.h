@@ -2,7 +2,6 @@
 #define CLDOCKERBUILDABLEFILE_H
 
 #include "JSON.h"
-#include "wxStringHash.h"
 
 #include <memory>
 #include <unordered_map>

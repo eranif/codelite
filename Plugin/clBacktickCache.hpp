@@ -3,7 +3,6 @@
 
 #include "codelite_exports.h"
 #include "macros.h"
-#include "wxStringHash.h"
 
 #include <memory>
 #include <wx/string.h>

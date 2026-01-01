@@ -3,7 +3,6 @@
 
 #include "JSON.h"
 #include "dap/dap.hpp"
-#include "wxStringHash.h"
 
 #include <map>
 #include <wx/filename.h>

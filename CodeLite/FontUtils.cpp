@@ -1,6 +1,7 @@
 #include "FontUtils.hpp"
 
-#include "wxStringHash.h"
+#include <unordered_map>
+#include <unordered_set>
 
 namespace FontUtils
 {

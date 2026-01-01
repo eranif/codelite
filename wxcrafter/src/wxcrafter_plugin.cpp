@@ -58,6 +58,7 @@
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
 
+#include <wx/ffile.h>
 #include <wx/msgdlg.h>
 #include <wx/stc/stc.h>
 #include <wx/xrc/xmlres.h>

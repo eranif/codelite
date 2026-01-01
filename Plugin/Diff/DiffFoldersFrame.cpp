@@ -8,7 +8,6 @@
 #include "globals.h"
 #include "imanager.h"
 #include "macros.h"
-#include "wxStringHash.h"
 
 #include <atomic>
 

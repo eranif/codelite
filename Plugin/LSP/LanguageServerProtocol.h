@@ -14,7 +14,6 @@
 #include "codelite_exports.h"
 #include "fileextmanager.h"
 #include "macros.h"
-#include "wxStringHash.h"
 
 #include <functional>
 #include <memory>

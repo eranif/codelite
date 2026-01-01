@@ -27,7 +27,6 @@
 #define CLZIP_H
 
 #include "codelite_exports.h"
-#include "wxStringHash.h"
 
 #include <unordered_map>
 #include <wx/buffer.h>

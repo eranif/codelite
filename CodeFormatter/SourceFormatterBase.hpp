@@ -4,8 +4,6 @@
 #include "JSON.h"
 #include "cl_command_event.h"
 #include "fileextmanager.h"
-#include "macros.h"
-#include "wxStringHash.h"
 
 #include <vector>
 #include <wx/event.h>

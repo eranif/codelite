@@ -5,7 +5,7 @@
 #include "cl_command_event.h"
 #include "database/entry.h"
 #include "plugin.h"
-#include "wxStringHash.h"
+
 #include <unordered_map>
 
 class SmartCompletion : public IPlugin

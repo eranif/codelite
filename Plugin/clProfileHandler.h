@@ -7,7 +7,6 @@
 #include "codelite_exports.h"
 #include "imanager.h"
 #include "macros.h"
-#include "wxStringHash.h"
 
 #include <wx/event.h>
 

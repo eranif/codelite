@@ -30,10 +30,7 @@
 #include "LSP/basic_types.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
-#include "database/entry.h"
-#include "fileextmanager.h"
 #include "openresourcedialogbase.h"
-#include "wxStringHash.h"
 
 #include <vector>
 #include <wx/arrstr.h>

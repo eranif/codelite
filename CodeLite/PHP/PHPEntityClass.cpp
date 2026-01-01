@@ -1,7 +1,9 @@
 #include "PHPEntityClass.h"
-#include <wx/tokenzr.h>
-#include <algorithm>
+
 #include "PHPLookupTable.h"
+
+#include <wx/tokenzr.h>
+#include <wx/wxcrtvararg.h>
 
 void PHPEntityClass::PrintStdout(int indent) const
 {

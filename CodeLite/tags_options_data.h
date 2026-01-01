@@ -28,11 +28,9 @@
 #include "cl_config.h"
 #include "codelite_exports.h"
 #include "macros.h"
-#include "wxStringHash.h"
 
 #include <map>
-#include <unordered_map>
-#include <wx/filename.h>
+#include <vector>
 #include <wx/tokenzr.h>
 
 enum CodeCompletionOpts {

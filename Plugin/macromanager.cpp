@@ -35,7 +35,6 @@
 #include "imanager.h"
 #include "project.h"
 #include "workspace.h"
-#include "wxStringHash.h"
 
 #include <wx/regex.h>
 

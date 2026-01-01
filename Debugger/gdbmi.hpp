@@ -1,11 +1,9 @@
 #ifndef GDBMI_HPP
 #define GDBMI_HPP
 
-#include "wxStringHash.h"
 #include <memory>
-#include <sstream>
-#include <string>
 #include <unordered_map>
+#include <utility>
 #include <vector>
 #include <wx/string.h>
 

@@ -2,7 +2,6 @@
 #define CLFILECACHE_HPP
 
 #include "codelite_exports.h"
-#include "wxStringHash.h"
 
 #include <unordered_set>
 #include <vector>

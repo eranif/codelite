@@ -27,11 +27,8 @@
 #define CppLexerAPI_H__
 
 #include "codelite_exports.h"
-#include "wxStringHash.h"
 
 #include <list>
-#include <map>
-#include <string.h>
 #include <vector>
 #include <wx/filename.h>
 #include <wx/string.h>

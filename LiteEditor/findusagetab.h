@@ -28,10 +28,8 @@
 
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
-#include "clTerminalViewCtrl.hpp"
 #include "clThemedTreeCtrl.h"
 #include "clWorkspaceEvent.hpp"
-#include "wxStringHash.h"
 
 #include <wx/colour.h>
 #include <wx/panel.h>

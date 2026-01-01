@@ -34,7 +34,6 @@
 #define __gitentry__
 
 #include "cl_config.h"
-#include "wxStringHash.h"
 
 #include <map>
 #include <vector>

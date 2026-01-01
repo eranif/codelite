@@ -2,10 +2,8 @@
 #define CODELITEREMOTEHELPER_HPP
 
 #include "JSON.h"
-#include "clSFTPEvent.h"
 #include "clWorkspaceEvent.hpp"
 #include "codelite_exports.h"
-#include "wxStringHash.h"
 
 #include <unordered_map>
 #include <wx/event.h>

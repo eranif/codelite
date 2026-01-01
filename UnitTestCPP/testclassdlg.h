@@ -28,7 +28,6 @@
 
 #include "database/entry.h"
 #include "testclassbasedlg.h"
-#include "wxStringHash.h"
 
 #include <unordered_map>
 #include <vector>

@@ -28,7 +28,6 @@
 
 #include "macros.h"
 #include "php_ui.h"
-#include "wxStringHash.h"
 #include "xdebugevent.h"
 
 class clThemedTreeCtrl;

@@ -2,7 +2,7 @@
 #define CLANAGRAM_H
 
 #include "codelite_exports.h"
-#include "wxStringHash.h"
+
 #include <wx/string.h>
 
 enum class eAnagramFlag {

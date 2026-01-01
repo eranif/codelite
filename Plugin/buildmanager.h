@@ -27,8 +27,6 @@
 
 #include "builder/builder.h"
 #include "codelite_exports.h"
-#include "singleton.h"
-#include "wxStringHash.h"
 
 #include <list>
 #include <map>

@@ -25,17 +25,14 @@
 #ifndef __cpptoken__
 #define __cpptoken__
 
-#include <string>
-#include <list>
-#include <map>
 #include "codelite_exports.h"
-#include <wx/string.h>
-#include <wx/wxsqlite3.h>
+
+#include <algorithm>
+#include <unordered_set>
 #include <vector>
 #include <wx/filename.h>
-#include <set>
-#include <algorithm>
-#include "wxStringHash.h"
+#include <wx/string.h>
+#include <wx/wxsqlite3.h>
 
 using wxFileList_t = std::vector<wxFileName>;
 class WXDLLIMPEXP_CL CppToken

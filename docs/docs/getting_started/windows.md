@@ -31,6 +31,8 @@ echo 'export PATH=/clang64/bin:$PATH' >> ~/.$(basename $SHELL)rc
 . ~/.$(basename $SHELL)rc
 ```
 
+- Make sure that `MSYSTEM` environment variable is defined and is set to either `clang64` or `clangarm64`
+
 ## Optional setup
 ---
 

@@ -123,14 +123,12 @@ bool XDebugComThread::DoReadReply(std::string& reply, clSocketBase::Ptr_t client
 
         // Read the actual buffer
         ++dataLengh; // +1 for NULL
-        char* buffer = new char[dataLengh];
-        memset(buffer, 0, dataLengh);
-        size_t actualSize(0);
-        client->Read(buffer, dataLengh, actualSize);
-        std::string content(buffer, dataLengh);
-        reply.swap(content);
-        wxDELETEA(buffer);
+        std::vector<char> buffer(dataLengh, '\0');
 
+        size_t actualSize(0);
+        client->Read(buffer.data(), dataLengh, actualSize);
+        std::string content(buffer.data(), dataLengh);
+        reply.swap(content);
     } catch (const clSocketException& e) {
         wxUnusedVar(e);
         return false;

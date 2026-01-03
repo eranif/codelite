@@ -36,6 +36,7 @@
 #include "workspace.h"
 #include "wxfbitemdlg.h"
 
+#include <memory>
 #include <wx/app.h>
 #include <wx/menu.h>
 #include <wx/mimetype.h>
@@ -387,10 +388,9 @@ void wxFormBuilder::OnOpenFile(clCommandEvent& e)
     return;
 #else
     wxMimeTypesManager* mgr = wxTheMimeTypesManager;
-    wxFileType* type = mgr->GetFileTypeFromExtension(fullpath.GetExt());
+    std::unique_ptr<wxFileType> type{mgr->GetFileTypeFromExtension(fullpath.GetExt())};
     if (type) {
         wxString cmd = type->GetOpenCommand(fullpath.GetFullPath());
-        wxDELETE(type);
         if (cmd.IsEmpty() == false) {
             e.Skip(false);
             wxExecute(cmd);

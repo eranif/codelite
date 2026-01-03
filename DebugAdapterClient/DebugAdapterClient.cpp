@@ -251,7 +251,7 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
 
 void DebugAdapterClient::UnPlug()
 {
-    wxDELETE(m_breakpointsHelper);
+    m_breakpointsHelper.reset();
     wxTheApp->Unbind(wxEVT_IDLE, &DebugAdapterClient::OnIdle, this);
     // DestroyUI();
     DebuggerMgr::Get().UnregisterDebuggers(m_shortName);
@@ -661,7 +661,7 @@ void DebugAdapterClient::DoCleanup()
     m_session.Clear();
     m_terminal_helper.Terminate();
     m_sessionBreakpoints.clear();
-    wxDELETE(m_breakpointsHelper);
+    m_breakpointsHelper.reset();
 
     // clear all breakpoint markers
     IEditor::List_t editors;
@@ -1269,8 +1269,7 @@ void DebugAdapterClient::StartAndConnectToDapServer()
         transport = socket_transport;
     }
 
-    wxDELETE(m_breakpointsHelper);
-    m_breakpointsHelper = new BreakpointsHelper(m_client, m_session, LOG);
+    m_breakpointsHelper = std::make_unique<BreakpointsHelper>(m_client, m_session, LOG);
 
     // Notify about debug start event
     // + load the UI

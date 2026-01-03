@@ -24,12 +24,11 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "dotwriter.h"
-#include <wx/strconv.h>
+
+#include <vector>
 #include <wx/file.h>
-#include <wx/msgdlg.h>
 #include <wx/math.h>
 #include <wx/regex.h>
-#include <math.h>
 
 DotWriter::DotWriter()
 {
@@ -261,8 +260,7 @@ int DotWriter::ReturnIndexForColor(float time, int dwc)
         int indexColor;
     };
 
-    colorRange* colorSelect;
-    colorSelect = new colorRange[dwc];
+    std::vector<colorRange> colorSelect(dwc);
 
     if(dwc == 1) {
         colorSelect[0].downIndex = 0;
@@ -314,7 +312,6 @@ int DotWriter::ReturnIndexForColor(float time, int dwc)
             break;
         }
     }
-    wxDELETEA(colorSelect);
     return index;
 }
 

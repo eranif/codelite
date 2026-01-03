@@ -33,16 +33,13 @@
 #include "RunInTerminalHelper.hpp"
 #include "SessionBreakpoints.hpp"
 #include "clDapSettingsStore.hpp"
-#include "clModuleLogger.hpp"
 #include "cl_command_event.h"
 #include "dap/Client.hpp"
 #include "dap/DAPEvent.hpp"
 #include "plugin.h"
-#include "ssh/ssh_account_info.h"
 
-#include <vector>
+#include <memory>
 #include <wx/msgqueue.h>
-#include <wx/stc/stc.h>
 
 class DAPMainView;
 class DAPTooltip;
@@ -95,7 +92,7 @@ class DebugAdapterClient : public IPlugin
     clDapSettingsStore m_dap_store;
     RunInTerminalHelper m_terminal_helper;
     wxFileName m_breakpointsFile;
-    BreakpointsHelper* m_breakpointsHelper = nullptr;
+    std::unique_ptr<BreakpointsHelper> m_breakpointsHelper;
     SessionBreakpoints m_sessionBreakpoints;
     DapProcess::Ptr_t m_dap_server;
 

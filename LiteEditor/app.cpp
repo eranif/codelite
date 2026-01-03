@@ -296,7 +296,6 @@ CodeLiteApp::CodeLiteApp()
     : m_pMainFrame(NULL)
     , m_singleInstance(NULL)
     , m_pluginLoadPolicy(PP_All)
-    , m_persistencManager(NULL)
     , m_startedInDebuggerMode(false)
 {
 }
@@ -307,7 +306,6 @@ CodeLiteApp::~CodeLiteApp()
     if (m_singleInstance) {
         delete m_singleInstance;
     }
-    wxDELETE(m_persistencManager);
 }
 
 static wxLogNull NO_LOG;
@@ -620,7 +618,7 @@ bool CodeLiteApp::OnInit()
 #endif
 
     // Use our persistence manager (which uses wxFileConfig instead of the registry...)
-    m_persistencManager = new clPersistenceManager();
+    m_persistencManager = std::make_unique<clPersistenceManager>();
     wxPersistenceManager::Set(*m_persistencManager);
 
     // Make sure we have an instance if the keyboard manager allocated before we create the main frame class

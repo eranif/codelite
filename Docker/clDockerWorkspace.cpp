@@ -5,13 +5,12 @@
 #include "clWorkspaceManager.h"
 #include "clWorkspaceView.h"
 #include "codelite_events.h"
-#include "ctags_manager.h"
 #include "docker.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
-#include "tags_options_data.h"
 
+#include <memory>
 #include <wx/msgdlg.h>
 
 #define CHECK_EVENT(e) \
@@ -84,18 +83,18 @@ bool clDockerWorkspace::IsBuildSupported() const { return true; }
 
 bool clDockerWorkspace::IsProjectSupported() const { return false; }
 
-static clDockerWorkspace* g_workspace = nullptr;
+static std::unique_ptr<clDockerWorkspace> g_workspace = nullptr;
 
-clDockerWorkspace* clDockerWorkspace::Get() { return g_workspace; }
+clDockerWorkspace* clDockerWorkspace::Get() { return g_workspace.get(); }
 
 void clDockerWorkspace::Initialise(Docker* plugin)
 {
     if (!g_workspace) {
-        g_workspace = new clDockerWorkspace(true, plugin, plugin->GetDriver());
+        g_workspace = std::make_unique<clDockerWorkspace>(true, plugin, plugin->GetDriver());
     }
 }
 
-void clDockerWorkspace::Shutdown() { wxDELETE(g_workspace); }
+void clDockerWorkspace::Shutdown() { g_workspace.reset(); }
 
 void clDockerWorkspace::OnOpenWorkspace(clCommandEvent& event)
 {

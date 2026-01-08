@@ -191,4 +191,27 @@ public:
     virtual ~ChatHistoryDialogBase();
 };
 
+class NewMCPServerDlgBase : public wxDialog
+{
+protected:
+    wxBoxSizer* m_mainSizer;
+    wxStaticText* m_staticText146;
+    wxChoice* m_choiceServerType;
+    wxStdDialogButtonSizer* m_stdBtnSizer141;
+    wxButton* m_button142;
+    wxButton* m_button143;
+
+protected:
+public:
+    wxStaticText* GetStaticText146() { return m_staticText146; }
+    wxChoice* GetChoiceServerType() { return m_choiceServerType; }
+    NewMCPServerDlgBase(wxWindow* parent,
+                        wxWindowID id = wxID_ANY,
+                        const wxString& title = _("New MCP Server"),
+                        const wxPoint& pos = wxDefaultPosition,
+                        const wxSize& size = wxSize(-1, -1),
+                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    virtual ~NewMCPServerDlgBase();
+};
+
 #endif

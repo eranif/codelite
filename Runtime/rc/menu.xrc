@@ -713,6 +713,9 @@
       <object class="wxMenuItem" name="ai_configure_endpoint">
         <label>Add New &amp;Endpoint...</label>
       </object>
+      <object class="wxMenuItem" name="ai_new_mcp_server">
+        <label>Add New &amp;MCP Server...</label>
+      </object>
       <object class="wxMenuItem" name="ai_change_active_endpoint">
         <label>Choose &amp;Active Endpoint...</label>
       </object>

@@ -494,3 +494,72 @@ ChatHistoryDialogBase::~ChatHistoryDialogBase()
     m_button129->Unbind(wxEVT_UPDATE_UI, &ChatHistoryDialogBase::OnClearUI, this);
     m_button129->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &ChatHistoryDialogBase::OnClear, this);
 }
+
+NewMCPServerDlgBase::NewMCPServerDlgBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if (!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCF667InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer140 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer140);
+
+    m_mainSizer = new wxBoxSizer(wxVERTICAL);
+
+    boxSizer140->Add(m_mainSizer, 1, wxALL | wxEXPAND, WXC_FROM_DIP(10));
+
+    wxFlexGridSizer* flexGridSizer145 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer145->SetFlexibleDirection(wxBOTH);
+    flexGridSizer145->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer145->AddGrowableCol(1);
+
+    m_mainSizer->Add(flexGridSizer145, 0, wxALL | wxEXPAND, WXC_FROM_DIP(10));
+
+    m_staticText146 =
+        new wxStaticText(this, wxID_ANY, _("Server type:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer145->Add(m_staticText146, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    wxArrayString m_choiceServerTypeArr;
+    m_choiceServerTypeArr.Add(_("Standard Input/Output (stdio)"));
+    m_choiceServerTypeArr.Add(_("Server-Sent Events (SSE)"));
+    m_choiceServerType =
+        new wxChoice(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), m_choiceServerTypeArr, 0);
+
+    flexGridSizer145->Add(m_choiceServerType, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer141 = new wxStdDialogButtonSizer();
+
+    boxSizer140->Add(m_stdBtnSizer141, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    m_button142 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button142->SetDefault();
+    m_stdBtnSizer141->AddButton(m_button142);
+
+    m_button143 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer141->AddButton(m_button143);
+    m_stdBtnSizer141->Realize();
+
+    SetName(wxT("NewMCPServerDlgBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if (GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+    if (!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+}
+
+NewMCPServerDlgBase::~NewMCPServerDlgBase() {}

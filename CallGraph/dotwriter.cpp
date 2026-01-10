@@ -125,8 +125,8 @@ void DotWriter::WriteToDotLanguage()
             dlabel += wxString::Format(wxT("%.2f"), line->time);
             dlabel += wxT("% \\n");
             dlabel += wxT("(");
-            // self or children if have function childern line
-            // if(line->self >= line->childern)
+            // self or children if have function children line
+            // if(line->self >= line->children)
             //	dlabel += wxString::Format(wxT("%.2f"), line->self);
             // else
             dlabel += wxString::Format(wxT("%.2f"), line->self + line->children);

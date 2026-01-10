@@ -115,19 +115,19 @@ bool XDebugComThread::DoReadReply(std::string& reply, clSocketBase::Ptr_t client
             length << c;
         }
 
-        long dataLengh(0);
-        if(!length.ToCLong(&dataLengh)) {
+        long dataLength(0);
+        if (!length.ToCLong(&dataLength)) {
             // session terminated!
             return false;
         }
 
         // Read the actual buffer
-        ++dataLengh; // +1 for NULL
-        std::vector<char> buffer(dataLengh, '\0');
+        ++dataLength; // +1 for NUL
+        std::vector<char> buffer(dataLength, '\0');
 
         size_t actualSize(0);
-        client->Read(buffer.data(), dataLengh, actualSize);
-        std::string content(buffer.data(), dataLengh);
+        client->Read(buffer.data(), dataLength, actualSize);
+        std::string content(buffer.data(), dataLength);
         reply.swap(content);
     } catch (const clSocketException& e) {
         wxUnusedVar(e);

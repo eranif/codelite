@@ -1009,7 +1009,7 @@ void MainBook::ReloadExternallyModified(bool prompt)
     time_t workspaceModifiedTimeAfter = clCxxWorkspaceST::Get()->GetFileLastModifiedTime();
     if (workspaceModifiedTimeBefore != workspaceModifiedTimeAfter) {
         // a workspace reload occurred between the "Reload Modified Files" and
-        // the "Reload WOrkspace" dialog, cancel this it's not needed anymore
+        // the "Reload Workspace" dialog, cancel this it's not needed anymore
         return;
     }
 

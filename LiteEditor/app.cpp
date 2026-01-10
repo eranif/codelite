@@ -618,8 +618,8 @@ bool CodeLiteApp::OnInit()
 #endif
 
     // Use our persistence manager (which uses wxFileConfig instead of the registry...)
-    m_persistencManager = std::make_unique<clPersistenceManager>();
-    wxPersistenceManager::Set(*m_persistencManager);
+    m_persistenceManager = std::make_unique<clPersistenceManager>();
+    wxPersistenceManager::Set(*m_persistenceManager);
 
     // Make sure we have an instance if the keyboard manager allocated before we create the main frame class
     // (the keyboard manager needs to connect to the main frame events)

@@ -42,7 +42,7 @@ void LSPNetworkSocketClient::Open(const LSPStartupInfo& info)
     }
 
     // Now that the process is up, connect to the server
-    m_socket.reset(new clAsyncSocket(m_startupInfo.GetConnectioString(), kAsyncSocketBuffer | kAsyncSocketClient));
+    m_socket.reset(new clAsyncSocket(m_startupInfo.GetConnectionString(), kAsyncSocketBuffer | kAsyncSocketClient));
     m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTED, &LSPNetworkSocketClient::OnSocketConnected, this);
     m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECTION_LOST, &LSPNetworkSocketClient::OnSocketConnectionLost, this);
     m_socket->Bind(wxEVT_ASYNC_SOCKET_CONNECT_ERROR, &LSPNetworkSocketClient::OnSocketConnectionError, this);

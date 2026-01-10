@@ -177,7 +177,7 @@ DebugAdapterClient::DebugAdapterClient(IManager* manager)
     // even though set to DBG, the check is done against the global log verbosity
     LOG.SetCurrentLogLevel(FileLogger::Dbg);
 
-    LOG_DEBUG(LOG) << "Debug Adapter Client startd" << endl;
+    LOG_DEBUG(LOG) << "Debug Adapter Client started" << endl;
     m_longName = _("Debug Adapter Client");
     m_shortName = wxT("DebugAdapterClient");
 

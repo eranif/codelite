@@ -58,7 +58,7 @@ protected:
     void OnCloseButtonClicked(wxCommandEvent& event) override;
     void OnNewWorkspace(wxCommandEvent& event);
     void OnOpenWorkspace(wxCommandEvent& event);
-    void OnGitHHub(wxCommandEvent& event);
+    void OnGitHub(wxCommandEvent& event);
     void OnGitter(wxCommandEvent& event);
     void OnWorkspaceActivated(wxTreeEvent& event) override;
     void UpdateRecentWorkspaces();

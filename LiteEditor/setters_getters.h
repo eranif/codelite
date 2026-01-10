@@ -43,7 +43,7 @@ protected:
     wxButton* m_buttonCheckAll;
     wxButton* m_buttonUncheckAll;
     wxCheckBox* m_checkStartWithUppercase;
-    wxCheckBox* m_checkBoxForamtFileWhenDone;
+    wxCheckBox* m_checkBoxFormatFileWhenDone;
     wxCheckBox* m_checkBoxReturnSelf;
     wxStdDialogButtonSizer* m_stdBtnSizer16;
     wxButton* m_button18;
@@ -63,7 +63,7 @@ public:
     wxButton* GetButtonCheckAll() { return m_buttonCheckAll; }
     wxButton* GetButtonUncheckAll() { return m_buttonUncheckAll; }
     wxCheckBox* GetCheckStartWithUppercase() { return m_checkStartWithUppercase; }
-    wxCheckBox* GetCheckBoxForamtFileWhenDone() { return m_checkBoxForamtFileWhenDone; }
+    wxCheckBox* GetCheckBoxFormatFileWhenDone() { return m_checkBoxFormatFileWhenDone; }
     wxCheckBox* GetCheckBoxReturnSelf() { return m_checkBoxReturnSelf; }
     SettersGettersBaseDlg(wxWindow* parent, wxWindowID id = wxID_ANY,
                           const wxString& title = _("Generate Setters/Getters for class"),

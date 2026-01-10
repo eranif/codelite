@@ -742,7 +742,7 @@
           }, {
            "type": "string",
            "m_label": "Name:",
-           "m_value": "m_checkBoxForamtFileWhenDone"
+           "m_value": "m_checkBoxFormatFileWhenDone"
           }, {
            "type": "multi-string",
            "m_label": "Tooltip:",

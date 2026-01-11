@@ -560,6 +560,11 @@ NewMCPServerDlgBase::NewMCPServerDlgBase(
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
+    // Connect events
+    m_choiceServerType->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &NewMCPServerDlgBase::OnServerTypeChanged, this);
 }
 
-NewMCPServerDlgBase::~NewMCPServerDlgBase() {}
+NewMCPServerDlgBase::~NewMCPServerDlgBase()
+{
+    m_choiceServerType->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &NewMCPServerDlgBase::OnServerTypeChanged, this);
+}

@@ -202,6 +202,8 @@ protected:
     wxButton* m_button143;
 
 protected:
+    virtual void OnServerTypeChanged(wxCommandEvent& event) { event.Skip(); }
+
 public:
     wxStaticText* GetStaticText146() { return m_staticText146; }
     wxChoice* GetChoiceServerType() { return m_choiceServerType; }

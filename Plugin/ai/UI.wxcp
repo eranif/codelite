@@ -3468,7 +3468,13 @@
 													"m_label":	"Selection:",
 													"m_value":	""
 												}],
-											"m_events":	[],
+											"m_events":	[{
+													"m_eventName":	"wxEVT_COMMAND_CHOICE_SELECTED",
+													"m_eventClass":	"wxCommandEvent",
+													"m_functionNameAndSignature":	"OnServerTypeChanged(wxCommandEvent& event)",
+													"m_description":	"Process a wxEVT_COMMAND_CHOICE_SELECTED event, when an item on the list is selected.",
+													"m_noBody":	false
+												}],
 											"m_children":	[]
 										}]
 								}]

@@ -31,25 +31,26 @@
 #include "lexer_configuration.h"
 #include "windowattrmanager.h"
 
-EditDlg::EditDlg(wxWindow* parent, const wxString& text)
+EditDlg::EditDlg(wxWindow* parent, const wxString& text, LexerConf::Ptr_t lexer)
     : EditDlgBase(parent)
 {
-    LexerConf::Ptr_t lex = ColoursAndFontsManager::Get().GetLexer("text");
+    LexerConf::Ptr_t lex = lexer == nullptr ? ColoursAndFontsManager::Get().GetLexer("text") : lexer;
     lex->Apply(m_stc10);
     m_stc10->SetText(text);
     m_stc10->SetMultiPaste(true);
     m_stc10->SetMultipleSelection(true);
     m_stc10->SetAdditionalSelectionTyping(true);
+    m_stc10->SetWrapMode(wxSTC_WRAP_WORD);
     SetName("EditDlg");
     ::clSetSmallDialogBestSizeAndPosition(this);
 }
 
 EditDlg::~EditDlg() {}
 
-wxString clGetStringFromUser(const wxString& initialValue, wxWindow* parent)
+wxString clGetStringFromUser(const wxString& initialValue, wxWindow* parent, LexerConf::Ptr_t lexer)
 {
     EditDlg dlg(parent, initialValue);
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         return dlg.GetText();
     }
     return wxEmptyString;

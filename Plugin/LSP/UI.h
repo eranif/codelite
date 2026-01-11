@@ -27,10 +27,9 @@
 #include "clThemedSTC.hpp"
 #include <wx/combobox.h>
 #include <wx/arrstr.h>
-#include "clThemedTextCtrl.hpp"
+#include "Notebook.h"
 #include <wx/dataview.h>
 #include "clTerminalViewCtrl.hpp"
-#include "Notebook.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -164,21 +163,8 @@ public:
 class WXDLLIMPEXP_SDK LSPOutlineViewDlgBase : public wxDialog
 {
 protected:
-    wxPanel* m_panel155;
-    clThemedTextCtrl* m_textCtrlFilter;
-    clTerminalViewCtrl* m_dvTreeCtrll;
-
 protected:
-    virtual void OnTextUpdated(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
-    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
-    virtual void OnListKeyDown(wxKeyEvent& event) { event.Skip(); }
-
 public:
-    clThemedTextCtrl* GetTextCtrlFilter() { return m_textCtrlFilter; }
-    clTerminalViewCtrl* GetDvTreeCtrll() { return m_dvTreeCtrll; }
-    wxPanel* GetPanel155() { return m_panel155; }
     LSPOutlineViewDlgBase(wxWindow* parent,
                           wxWindowID id = wxID_ANY,
                           const wxString& title = _("Outline View"),

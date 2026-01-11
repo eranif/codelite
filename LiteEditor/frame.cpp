@@ -45,6 +45,8 @@
 #include "advanced_settings.h"
 #include "ai/LLMManager.hpp"
 #include "ai/NewLLMEndpointWizard.hpp"
+#include "ai/NewLocalMCPDlg.hpp"
+#include "ai/NewSseMCPDlg.hpp"
 #include "app.h"
 #include "autoversion.h"
 #include "batchbuilddlg.h"
@@ -596,6 +598,8 @@ EVT_MENU(XRCID("ai_prompt_editor"), clMainFrame::OnAiPromptEditor)
 EVT_MENU(XRCID("ai_settings"), clMainFrame::OnAiSettings)
 EVT_MENU(XRCID("ai_show_chat_window"), clMainFrame::OnAiShowChatBox)
 EVT_MENU(XRCID("ai_configure_endpoint"), clMainFrame::OnAiConfigureEndpoint)
+EVT_MENU(XRCID("ai_new_mcp_server"), clMainFrame::OnAiAddNewMCPServer)
+EVT_MENU(XRCID("ai_new_sse_mcp_server"), clMainFrame::OnAiAddNewSseMCPServer)
 EVT_MENU(XRCID("ai_change_active_endpoint"), clMainFrame::OnAiChooseEndpoint)
 EVT_UPDATE_UI(XRCID("ai_prompt_editor"), clMainFrame::OnAiAvailableUI)
 EVT_UPDATE_UI(XRCID("ai_show_chat_window"), clMainFrame::OnAiAvailableUI)
@@ -6287,6 +6291,30 @@ void clMainFrame::OnAiConfigureEndpoint(wxCommandEvent& e)
 
     auto endpoint_data = wizard.GetData();
     llm::Manager::GetInstance().AddNewEndpoint(endpoint_data);
+    llm::Manager::GetInstance().ReloadConfig(std::nullopt, false);
+}
+
+void clMainFrame::OnAiAddNewSseMCPServer(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    NewSseMCPDlg dlg{this};
+    if (dlg.ShowModal() != wxID_OK) {
+        return;
+    }
+
+    llm::Manager::GetInstance().AddNewMcp(dlg.GetData());
+    llm::Manager::GetInstance().ReloadConfig(std::nullopt, false);
+}
+
+void clMainFrame::OnAiAddNewMCPServer(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    NewLocalMCPDlg dlg{this};
+    if (dlg.ShowModal() != wxID_OK) {
+        return;
+    }
+
+    llm::Manager::GetInstance().AddNewMcp(dlg.GetData());
     llm::Manager::GetInstance().ReloadConfig(std::nullopt, false);
 }
 

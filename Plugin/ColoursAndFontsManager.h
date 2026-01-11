@@ -28,8 +28,10 @@
 
 #include "cl_command_event.h"
 #include "codelite_exports.h"
+#include "fileextmanager.h"
 #include "lexer_configuration.h"
 
+#include <optional>
 #include <vector>
 #include <wx/event.h>
 #include <wx/filename.h>
@@ -186,6 +188,24 @@ public:
      * @brief return lexer for a file
      */
     LexerConf::Ptr_t GetLexerForFile(const wxString& filename) const;
+
+    /**
+     * @brief Retrieves the lexer configuration for a given file type.
+     *
+     * This method maps a FileExtManager::FileType enumeration value to the appropriate
+     * lexer configuration by name, facilitating syntax highlighting for different file types.
+     *
+     * @param file_type The type of file for which to retrieve the lexer configuration,
+     *                  as defined by the FileExtManager::FileType enumeration.
+     *
+     * @return std::optional<LexerConf::Ptr_t> Returns an optional containing a pointer
+     *         to the lexer configuration if a matching lexer is found for the file type,
+     *         or std::nullopt if no lexer is associated with the given file type.
+     *
+     * @see GetLexer()
+     * @see FileExtManager::FileType
+     */
+    std::optional<LexerConf::Ptr_t> GetLexerForFileType(FileExtManager::FileType file_type) const;
 
     /**
      * @brief restore the default colours

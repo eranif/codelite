@@ -34,19 +34,72 @@ struct WXDLLIMPEXP_SDK LineData {
     std::function<void(const wxString&, const wxAny&)> callback = nullptr;
 };
 
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_PROPERTIES_PAGE_MODIFIED, clCommandEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_PROPERTIES_PAGE_SAVED, clCommandEvent);
-
 class WXDLLIMPEXP_SDK clPropertiesPage : public wxPanel
 {
-    clThemedListCtrl* m_view = nullptr;
-    std::vector<size_t> m_header_rows;
-    bool m_theme_event_connected = false;
-    std::unordered_map<size_t, LineData> m_lines;
-    bool m_isModified = false;
-
 public:
     using Callback_t = std::function<void(const wxString&, const wxAny&)>;
+    clPropertiesPage(wxWindow* parent, wxWindowID id = wxID_ANY);
+    virtual ~clPropertiesPage();
+
+    void AddProperty(const wxString& label,
+                     const wxArrayString& choices,
+                     size_t sel,
+                     clPropertiesPage::Callback_t update_cb);
+    void AddProperty(const wxString& label,
+                     const std::vector<wxString>& choices,
+                     size_t sel,
+                     clPropertiesPage::Callback_t update_cb);
+    void AddProperty(const wxString& label,
+                     const std::vector<wxString>& choices,
+                     const wxString& selection,
+                     clPropertiesPage::Callback_t update_cb);
+    void AddProperty(const wxString& label,
+                     const wxArrayString& choices,
+                     const wxString& selection,
+                     clPropertiesPage::Callback_t update_cb);
+
+    void AddProperty(const wxString& label, bool checked, clPropertiesPage::Callback_t update_cb);
+    void AddProperty(const wxString& label, const wxString& value, clPropertiesPage::Callback_t update_cb);
+    void AddProperty(const wxString& label, const char* value, clPropertiesPage::Callback_t update_cb)
+    {
+        AddProperty(label, wxString(value), std::move(update_cb));
+    }
+    void AddProperty(const wxString& label, const wxColour& value, clPropertiesPage::Callback_t update_cb);
+    void AddProperty(const wxString& label, long value, clPropertiesPage::Callback_t update_cb);
+    void AddProperty(const wxString& label, int value, clPropertiesPage::Callback_t update_cb)
+    {
+        AddProperty(label, (long)value, std::move(update_cb));
+    }
+
+    void AddPropertyFilePicker(const wxString& label, const wxString& path, clPropertiesPage::Callback_t update_cb);
+    void AddPropertyDirPicker(const wxString& label, const wxString& path, clPropertiesPage::Callback_t update_cb);
+    void AddPropertyLanguagePicker(const wxString& label,
+                                   const wxArrayString& langs,
+                                   clPropertiesPage::Callback_t update_cb);
+    void AddPropertyButton(const wxString& label, const wxString& button_label, clPropertiesPage::Callback_t update_cb);
+    void AddHeader(const wxString& label);
+
+    bool IsModified() const { return m_isModified; }
+    void ClearModified();
+
+    /**
+     * @brief call this method to tell the control what we are done adding items
+     */
+    void Finalize();
+    /**
+     * @brief tell the control that we are about to add multiple items, so avoid un-needed drawings
+     * once done, call `Finalize`
+     */
+    void Begin();
+
+    /**
+     * @brief clear the view and discard all caches
+     */
+    virtual void Clear();
+
+    clThemedListCtrl* GetView() { return m_view; }
+
+    void NotifyChange(size_t line);
 
 protected:
     void OnActionButton(wxDataViewEvent& e);
@@ -72,22 +125,23 @@ protected:
     template <typename T>
     void UpdateLineData(size_t line, LineKind kind, const T& data, clPropertiesPage::Callback_t update_cb)
     {
-        if(m_lines.count(line) == 0) {
-            m_lines.insert({ line, {} });
+        if (m_lines.count(line) == 0) {
+            m_lines.insert({line, {}});
         }
 
         // update the values
         LineData& d = m_lines[line];
         d.value = data;
         d.line_kind = kind;
-        if(update_cb != nullptr) {
+        if (update_cb != nullptr) {
             d.callback = std::move(update_cb);
         }
     }
 
-    template <typename T> void UpdateLastLineData(LineKind kind, const T& data, clPropertiesPage::Callback_t update_cb)
+    template <typename T>
+    void UpdateLastLineData(LineKind kind, const T& data, clPropertiesPage::Callback_t update_cb)
     {
-        if(m_view->IsEmpty()) {
+        if (m_view->IsEmpty()) {
             return;
         }
 
@@ -95,58 +149,51 @@ protected:
         UpdateLineData(line, kind, data, update_cb);
     }
 
-    void NotifyChange(size_t line);
-
-public:
-    clPropertiesPage(wxWindow* parent, wxWindowID id = wxID_ANY);
-    virtual ~clPropertiesPage();
-
-    void AddProperty(const wxString& label, const wxArrayString& choices, size_t sel,
-                     clPropertiesPage::Callback_t update_cb);
-    void AddProperty(const wxString& label, const std::vector<wxString>& choices, size_t sel,
-                     clPropertiesPage::Callback_t update_cb);
-    void AddProperty(const wxString& label, const std::vector<wxString>& choices, const wxString& selection,
-                     clPropertiesPage::Callback_t update_cb);
-    void AddProperty(const wxString& label, const wxArrayString& choices, const wxString& selection,
-                     clPropertiesPage::Callback_t update_cb);
-
-    void AddProperty(const wxString& label, bool checked, clPropertiesPage::Callback_t update_cb);
-    void AddProperty(const wxString& label, const wxString& value, clPropertiesPage::Callback_t update_cb);
-    void AddProperty(const wxString& label, const char* value, clPropertiesPage::Callback_t update_cb)
-    {
-        AddProperty(label, wxString(value), std::move(update_cb));
-    }
-    void AddProperty(const wxString& label, const wxColour& value, clPropertiesPage::Callback_t update_cb);
-    void AddProperty(const wxString& label, long value, clPropertiesPage::Callback_t update_cb);
-    void AddProperty(const wxString& label, int value, clPropertiesPage::Callback_t update_cb)
-    {
-        AddProperty(label, (long)value, std::move(update_cb));
-    }
-
-    void AddPropertyFilePicker(const wxString& label, const wxString& path, clPropertiesPage::Callback_t update_cb);
-    void AddPropertyDirPicker(const wxString& label, const wxString& path, clPropertiesPage::Callback_t update_cb);
-    void AddPropertyLanguagePicker(const wxString& label, const wxArrayString& langs,
-                                   clPropertiesPage::Callback_t update_cb);
-    void AddPropertyButton(const wxString& label, const wxString& button_label, clPropertiesPage::Callback_t update_cb);
-    void AddHeader(const wxString& label);
-
-    bool IsModified() const { return m_isModified; }
-    void ClearModified();
-
-    /**
-     * @brief call this method to tell the control what we are done adding items
-     */
-    void Finalize();
-    /**
-     * @brief tell the control that we are about to add multiple items, so avoid un-needed drawings
-     * once done, call `Finalize`
-     */
-    void Begin();
-
-    /**
-     * @brief clear the view and discard all caches
-     */
-    virtual void Clear();
+private:
+    clThemedListCtrl* m_view{nullptr};
+    std::vector<size_t> m_header_rows;
+    bool m_theme_event_connected{false};
+    std::unordered_map<size_t, LineData> m_lines;
+    bool m_isModified{false};
 };
+
+/// Source control event
+class WXDLLIMPEXP_SDK clPropertiesPageEvent : public clCommandEvent
+{
+public:
+    clPropertiesPageEvent(wxEventType commandType = wxEVT_NULL, int winid = 0)
+        : clCommandEvent(commandType, winid)
+    {
+    }
+    clPropertiesPageEvent(const clPropertiesPageEvent& event) = default;
+    clPropertiesPageEvent& operator=(const clPropertiesPageEvent&) = delete;
+    ~clPropertiesPageEvent() override = default;
+    wxEvent* Clone() const override { return new clPropertiesPageEvent(*this); }
+
+    inline const LineData* GetLineKind() const { return m_lineData; }
+    inline void SetLineData(const LineData* kind) { m_lineData = kind; }
+
+    inline void SetPage(clPropertiesPage* page) { this->m_page = page; }
+    inline clPropertiesPage* GetPage() { return m_page; }
+
+    inline void SetItem(const wxDataViewItem& item) { this->m_item = item; }
+    inline const wxDataViewItem& GetItem() const { return m_item; }
+
+    inline void SetLabel(const wxString& label) { this->m_label = label; }
+    inline const wxString& GetLabel() const { return m_label; }
+
+private:
+    const LineData* m_lineData{nullptr};
+    clPropertiesPage* m_page{nullptr};
+    wxDataViewItem m_item{nullptr};
+    wxString m_label;
+};
+
+using clPropertiesPageEventFunction = void (wxEvtHandler::*)(clPropertiesPageEvent&);
+#define clPropertiesPageEventHandler(func) wxEVENT_HANDLER_CAST(clPropertiesPageEventFunction, func)
+
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_PROPERTIES_PAGE_MODIFIED, clPropertiesPageEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_PROPERTIES_PAGE_SAVED, clPropertiesPageEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_PROPERTIES_PAGE_ACTION_BUTTON, clPropertiesPageEvent);
 
 #endif // CLPROPERTIESPAGE_HPP

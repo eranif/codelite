@@ -494,3 +494,249 @@ ChatHistoryDialogBase::~ChatHistoryDialogBase()
     m_button129->Unbind(wxEVT_UPDATE_UI, &ChatHistoryDialogBase::OnClearUI, this);
     m_button129->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &ChatHistoryDialogBase::OnClear, this);
 }
+
+NewLocalMCPDlgBase::NewLocalMCPDlgBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if (!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCF667InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer151 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer151);
+
+    wxFlexGridSizer* flexGridSizer156 = new wxFlexGridSizer(0, 3, 0, 0);
+    flexGridSizer156->SetFlexibleDirection(wxBOTH);
+    flexGridSizer156->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer156->AddGrowableCol(1);
+
+    boxSizer151->Add(flexGridSizer156, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText157 =
+        new wxStaticText(this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer156->Add(m_staticText157, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(400, -1)), 0);
+    m_textCtrlName->SetFocus();
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlName->SetHint(wxT(""));
+#endif
+
+    flexGridSizer156->Add(m_textCtrlName, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer156->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_staticText160 =
+        new wxStaticText(this, wxID_ANY, _("Command:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer156->Add(m_staticText160, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlCommand =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_READONLY);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlCommand->SetHint(wxT(""));
+#endif
+
+    flexGridSizer156->Add(m_textCtrlCommand, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonCommand =
+        new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBU_EXACTFIT);
+
+    flexGridSizer156->Add(m_buttonCommand, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_staticText163 =
+        new wxStaticText(this, wxID_ANY, _("Env variables:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer156->Add(m_staticText163, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlEnv =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_READONLY);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlEnv->SetHint(wxT(""));
+#endif
+
+    flexGridSizer156->Add(m_textCtrlEnv, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_button165 =
+        new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBU_EXACTFIT);
+
+    flexGridSizer156->Add(m_button165, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer152 = new wxStdDialogButtonSizer();
+
+    boxSizer151->Add(m_stdBtnSizer152, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+
+    m_button153 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button153->SetDefault();
+    m_stdBtnSizer152->AddButton(m_button153);
+
+    m_button154 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer152->AddButton(m_button154);
+    m_stdBtnSizer152->Realize();
+
+    SetName(wxT("NewLocalMCPDlgBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if (GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+    if (!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+    // Connect events
+    m_buttonCommand->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &NewLocalMCPDlgBase::OnCommand, this);
+    m_button165->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &NewLocalMCPDlgBase::OnEnvVariables, this);
+    m_button153->Bind(wxEVT_UPDATE_UI, &NewLocalMCPDlgBase::OnOkUI, this);
+}
+
+NewLocalMCPDlgBase::~NewLocalMCPDlgBase()
+{
+    m_buttonCommand->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &NewLocalMCPDlgBase::OnCommand, this);
+    m_button165->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &NewLocalMCPDlgBase::OnEnvVariables, this);
+    m_button153->Unbind(wxEVT_UPDATE_UI, &NewLocalMCPDlgBase::OnOkUI, this);
+}
+
+NewSseMCPDlgBase::NewSseMCPDlgBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if (!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCF667InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer167 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer167);
+
+    wxFlexGridSizer* flexGridSizer171 = new wxFlexGridSizer(0, 3, 0, 0);
+    flexGridSizer171->SetFlexibleDirection(wxBOTH);
+    flexGridSizer171->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer171->AddGrowableCol(1);
+
+    boxSizer167->Add(flexGridSizer171, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText172 =
+        new wxStaticText(this, wxID_ANY, _("Name:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer171->Add(m_staticText172, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlName = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(400, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlName->SetHint(wxT(""));
+#endif
+
+    flexGridSizer171->Add(m_textCtrlName, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer171->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_staticText175 =
+        new wxStaticText(this, wxID_ANY, _("Base URL:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer171->Add(m_staticText175, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlBaseURL = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlBaseURL->SetHint(wxT(""));
+#endif
+
+    flexGridSizer171->Add(m_textCtrlBaseURL, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer171->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_staticText178 =
+        new wxStaticText(this, wxID_ANY, _("Endpoint:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer171->Add(m_staticText178, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlEndpoint =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlEndpoint->SetHint(wxT(""));
+#endif
+
+    flexGridSizer171->Add(m_textCtrlEndpoint, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer171->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_staticText184 =
+        new wxStaticText(this, wxID_ANY, _("Auth token:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer171->Add(m_staticText184, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlToken = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlToken->SetHint(wxT(""));
+#endif
+
+    flexGridSizer171->Add(m_textCtrlToken, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer171->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_staticText181 =
+        new wxStaticText(this, wxID_ANY, _("Headers:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    flexGridSizer171->Add(m_staticText181, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlHeaders =
+        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_READONLY);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlHeaders->SetHint(wxT(""));
+#endif
+
+    flexGridSizer171->Add(m_textCtrlHeaders, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_button183 =
+        new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBU_EXACTFIT);
+
+    flexGridSizer171->Add(m_button183, 0, wxALL | wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer168 = new wxStdDialogButtonSizer();
+
+    boxSizer167->Add(m_stdBtnSizer168, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+
+    m_button169 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button169->SetDefault();
+    m_stdBtnSizer168->AddButton(m_button169);
+
+    m_button170 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer168->AddButton(m_button170);
+    m_stdBtnSizer168->Realize();
+
+    SetName(wxT("NewSseMCPDlgBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if (GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+    if (!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+    // Connect events
+    m_button183->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &NewSseMCPDlgBase::OnHeaders, this);
+    m_button169->Bind(wxEVT_UPDATE_UI, &NewSseMCPDlgBase::OnOkUI, this);
+}
+
+NewSseMCPDlgBase::~NewSseMCPDlgBase()
+{
+    m_button183->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &NewSseMCPDlgBase::OnHeaders, this);
+    m_button169->Unbind(wxEVT_UPDATE_UI, &NewSseMCPDlgBase::OnOkUI, this);
+}

@@ -657,6 +657,8 @@ protected:
     void OnAiSettings(wxCommandEvent& e);
     void OnAiShowChatBox(wxCommandEvent& e);
     void OnAiConfigureEndpoint(wxCommandEvent& e);
+    void OnAiAddNewMCPServer(wxCommandEvent& e);
+    void OnAiAddNewSseMCPServer(wxCommandEvent& e);
     void OnAiChooseEndpoint(wxCommandEvent& e);
     void OnAiAvailableUI(wxUpdateUIEvent& e);
 

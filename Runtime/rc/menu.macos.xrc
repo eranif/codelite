@@ -722,6 +722,14 @@
       <object class="wxMenuItem" name="ai_configure_endpoint">
         <label>Add New &amp;Endpoint...</label>
       </object>
+      <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+      <object class="wxMenuItem" name="ai_new_mcp_server">
+        <label>Add New Local MCP Server...</label>
+      </object>
+      <object class="wxMenuItem" name="ai_new_sse_mcp_server">
+        <label>Add New SSE MCP Server...</label>
+      </object>
+      <object class="wxMenuItem" name="wxID_SEPARATOR"/>
       <object class="wxMenuItem" name="ai_change_active_endpoint">
         <label>Choose &amp;Active Endpoint...</label>
       </object>

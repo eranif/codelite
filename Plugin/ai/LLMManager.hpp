@@ -105,6 +105,20 @@ struct WXDLLIMPEXP_SDK EndpointData {
     std::optional<size_t> max_tokens;
 };
 
+struct WXDLLIMPEXP_SDK LocalMcp {
+    std::string name;
+    std::vector<std::string> command;
+    std::map<std::string, std::string> env;
+};
+
+struct WXDLLIMPEXP_SDK SSEMcp {
+    std::string name;
+    std::string base_url;
+    std::string endpoint;
+    std::string auth_token;
+    std::map<std::string, std::string> headers;
+};
+
 struct WXDLLIMPEXP_SDK ThreadTask {
     std::vector<std::string> prompt_array;
     ChatOptions options{assistant::ChatOptions::kDefault};
@@ -353,6 +367,29 @@ public:
      * @param d data describing the new endpoint
      */
     void AddNewEndpoint(const llm::EndpointData& d);
+
+    /**
+     * @brief Adds a new local MCP (Model Context Protocol) server configuration to the manager.
+     *
+     * This method reads the current configuration as JSON, ensures an "mcp_servers" section exists,
+     * adds or updates the MCP server entry with the provided details (name, command, environment),
+     * writes the updated configuration to disk, and triggers a configuration reload if successful.
+     * Any errors during the process are caught and logged.
+     *
+     * @param d A LocalMcp object containing the MCP server configuration details including name,
+     *          command to execute, and environment variables.
+     *
+     * @return void This function does not return a value.
+     *
+     * @throws Does not throw exceptions; all std::exception instances are caught internally and
+     *         logged via clERROR().
+     *
+     * @see HandleConfigFileUpdated()
+     * @see WriteConfigFile()
+     * @see GetConfigAsJSON()
+     */
+    void AddNewMcp(const llm::LocalMcp& d);
+    void AddNewMcp(const llm::SSEMcp& d);
 
     /**
      * @brief Opens the current settings file in the default editor configured

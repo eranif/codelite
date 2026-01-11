@@ -199,7 +199,7 @@ void AddFileExtension(LexerConf::Ptr_t lexer, const wxString& extension)
 {
     wxString spec = lexer->GetFileSpec();
     auto extensions = ::wxStringTokenize(spec, ";,", wxTOKEN_STRTOK);
-    std::set<wxString> S{ extensions.begin(), extensions.end() };
+    std::set<wxString> S{extensions.begin(), extensions.end()};
     if (!S.insert(extension).second) {
         // Already exists
         return;
@@ -420,6 +420,40 @@ wxArrayString ColoursAndFontsManager::GetAllLexersNames() const
     return names;
 }
 
+std::optional<LexerConf::Ptr_t> ColoursAndFontsManager::GetLexerForFileType(FileExtManager::FileType file_type) const
+{
+    switch (file_type) {
+    case FileExtManager::TypeShellScript:
+        return GetLexer("script");
+    case FileExtManager::TypeJS:
+    case FileExtManager::TypeTypeScript:
+        return GetLexer("javascript");
+    case FileExtManager::TypePhp:
+        return GetLexer("php");
+    case FileExtManager::TypeSourceCpp:
+        return GetLexer("c++");
+    case FileExtManager::TypeXml:
+        return GetLexer("xml");
+    case FileExtManager::TypePython:
+        return GetLexer("python");
+    case FileExtManager::TypeRuby:
+        return GetLexer("ruby");
+    case FileExtManager::TypeRust:
+        return GetLexer("rust");
+    case FileExtManager::TypeJava:
+        return GetLexer("java");
+    case FileExtManager::TypeWorkspaceDocker:
+    case FileExtManager::TypeWorkspaceFileSystem:
+    case FileExtManager::TypeWorkspaceNodeJS:
+    case FileExtManager::TypeWorkspacePHP:
+    case FileExtManager::TypeWxCrafter:
+    case FileExtManager::TypeJSON:
+        return GetLexer("json");
+    default:
+        return std::nullopt;
+    }
+}
+
 LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filename) const
 {
     if (filename.IsEmpty())
@@ -486,45 +520,9 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexerForFile(const wxString& filenam
     }
 
     if (fileType != FileExtManager::TypeOther) {
-        switch (fileType) {
-        case FileExtManager::TypeShellScript:
-            lexerByContent = GetLexer("script");
-            break;
-        case FileExtManager::TypeJS:
-        case FileExtManager::TypeTypeScript:
-            lexerByContent = GetLexer("javascript");
-            break;
-        case FileExtManager::TypePhp:
-            lexerByContent = GetLexer("php");
-            break;
-        case FileExtManager::TypeSourceCpp:
-            lexerByContent = GetLexer("c++");
-            break;
-        case FileExtManager::TypeXml:
-            lexerByContent = GetLexer("xml");
-            break;
-        case FileExtManager::TypePython:
-            lexerByContent = GetLexer("python");
-            break;
-        case FileExtManager::TypeRuby:
-            lexerByContent = GetLexer("ruby");
-            break;
-        case FileExtManager::TypeRust:
-            lexerByContent = GetLexer("rust");
-            break;
-        case FileExtManager::TypeJava:
-            lexerByContent = GetLexer("java");
-            break;
-        case FileExtManager::TypeWorkspaceDocker:
-        case FileExtManager::TypeWorkspaceFileSystem:
-        case FileExtManager::TypeWorkspaceNodeJS:
-        case FileExtManager::TypeWorkspacePHP:
-        case FileExtManager::TypeWxCrafter:
-        case FileExtManager::TypeJSON:
-            lexerByContent = GetLexer("json");
-            break;
-        default:
-            break;
+        auto l = GetLexerForFileType(fileType);
+        if (l.has_value()) {
+            lexerByContent = l.value();
         }
     }
 
@@ -875,7 +873,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     // Fix C++ lexer
     if (lexer->GetName() == "c++") {
         AddLexerKeywords(
-            lexer, 0, { "override", "final", "constexpr", "co_return", "co_await", "co_yield", "requires", "concept" });
+            lexer, 0, {"override", "final", "constexpr", "co_return", "co_await", "co_yield", "requires", "concept"});
         wxString filespec = lexer->GetFileSpec();
         filespec.Replace("*.javascript", wxEmptyString);
         filespec.Replace("*.js", wxEmptyString);
@@ -893,7 +891,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     }
 
     if (lexer->GetName() == "javascript") {
-        AddLexerKeywords(lexer, 0, { "async", "await" });
+        AddLexerKeywords(lexer, 0, {"async", "await"});
     }
 
     // Hack: fix Java lexer which is using the same
@@ -903,7 +901,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     }
 
     if (lexer->GetName() == "java") {
-        AddLexerKeywords(lexer, 0, { "async", "await", "enum" });
+        AddLexerKeywords(lexer, 0, {"async", "await", "enum"});
     }
 
     // Append *.sqlite to the SQL lexer if missing
@@ -1015,22 +1013,22 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     if (lexer->GetName() == "script") {
         AddLexerKeywords(lexer,
                          0,
-                         { "return",
-                           "exit",
-                           "local",
-                           "function",
-                           "export",
-                           "case",
-                           "esac",
-                           "break",
-                           "continue",
-                           "mkdir",
-                           "rm",
-                           "ls",
-                           "chmod",
-                           "chown",
-                           "pushd",
-                           "popd" });
+                         {"return",
+                          "exit",
+                          "local",
+                          "function",
+                          "export",
+                          "case",
+                          "esac",
+                          "break",
+                          "continue",
+                          "mkdir",
+                          "rm",
+                          "ls",
+                          "chmod",
+                          "chown",
+                          "pushd",
+                          "popd"});
     }
 
     if (lexer->GetName() == "text") {
@@ -1052,7 +1050,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     }
 
     if (lexer->GetName() == "python") {
-        AddLexerKeywords(lexer, 0, { "await", "async", "True", "False", "None", "pass", "self" });
+        AddLexerKeywords(lexer, 0, {"await", "async", "True", "False", "None", "pass", "self"});
         lexer->SetKeyWords("", 1);
         lexer->SetKeyWords("", 2);
         lexer->SetKeyWords("", 3);
@@ -1102,7 +1100,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     UpdateLexerColours(lexer, false);
 
     if (m_lexersMap.count(lexerName) == 0) {
-        m_lexersMap.insert({ lexerName, ColoursAndFontsManager::Vec_t() });
+        m_lexersMap.insert({lexerName, ColoursAndFontsManager::Vec_t()});
     }
 
     ColoursAndFontsManager::Vec_t& vec = m_lexersMap.find(lexerName)->second;

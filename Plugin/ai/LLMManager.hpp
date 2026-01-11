@@ -105,6 +105,18 @@ struct WXDLLIMPEXP_SDK EndpointData {
     std::optional<size_t> max_tokens;
 };
 
+struct WXDLLIMPEXP_SDK LocalMcp {
+    std::vector<std::string> command;
+    std::map<std::string, std::string> env;
+};
+
+struct WXDLLIMPEXP_SDK SSEMcp {
+    std::string base_url;
+    std::string endpoint;
+    std::string auth_token;
+    std::map<std::string, std::string> headers;
+};
+
 struct WXDLLIMPEXP_SDK ThreadTask {
     std::vector<std::string> prompt_array;
     ChatOptions options{assistant::ChatOptions::kDefault};

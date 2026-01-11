@@ -191,29 +191,85 @@ public:
     virtual ~ChatHistoryDialogBase();
 };
 
-class NewMCPServerDlgBase : public wxDialog
+class NewLocalMCPDlgBase : public wxDialog
 {
 protected:
-    wxBoxSizer* m_mainSizer;
-    wxStaticText* m_staticText146;
-    wxChoice* m_choiceServerType;
-    wxStdDialogButtonSizer* m_stdBtnSizer141;
-    wxButton* m_button142;
-    wxButton* m_button143;
+    wxStaticText* m_staticText157;
+    wxTextCtrl* m_textCtrlName;
+    wxStaticText* m_staticText160;
+    wxTextCtrl* m_textCtrlCommand;
+    wxButton* m_buttonCommand;
+    wxStaticText* m_staticText163;
+    wxTextCtrl* m_textCtrlEnv;
+    wxButton* m_button165;
+    wxStdDialogButtonSizer* m_stdBtnSizer152;
+    wxButton* m_button153;
+    wxButton* m_button154;
 
 protected:
-    virtual void OnServerTypeChanged(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnCommand(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnEnvVariables(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOkUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
-    wxStaticText* GetStaticText146() { return m_staticText146; }
-    wxChoice* GetChoiceServerType() { return m_choiceServerType; }
-    NewMCPServerDlgBase(wxWindow* parent,
-                        wxWindowID id = wxID_ANY,
-                        const wxString& title = _("New MCP Server"),
-                        const wxPoint& pos = wxDefaultPosition,
-                        const wxSize& size = wxSize(-1, -1),
-                        long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
-    virtual ~NewMCPServerDlgBase();
+    wxStaticText* GetStaticText157() { return m_staticText157; }
+    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
+    wxStaticText* GetStaticText160() { return m_staticText160; }
+    wxTextCtrl* GetTextCtrlCommand() { return m_textCtrlCommand; }
+    wxButton* GetButtonCommand() { return m_buttonCommand; }
+    wxStaticText* GetStaticText163() { return m_staticText163; }
+    wxTextCtrl* GetTextCtrlEnv() { return m_textCtrlEnv; }
+    wxButton* GetButton165() { return m_button165; }
+    NewLocalMCPDlgBase(wxWindow* parent,
+                       wxWindowID id = wxID_ANY,
+                       const wxString& title = _("New Local MCP"),
+                       const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxSize(-1, -1),
+                       long style = wxDEFAULT_DIALOG_STYLE);
+    virtual ~NewLocalMCPDlgBase();
+};
+
+class NewSseMCPDlgBase : public wxDialog
+{
+protected:
+    wxStaticText* m_staticText172;
+    wxTextCtrl* m_textCtrlName;
+    wxStaticText* m_staticText175;
+    wxTextCtrl* m_textCtrlBaseURL;
+    wxStaticText* m_staticText178;
+    wxTextCtrl* m_textCtrlEndpoint;
+    wxStaticText* m_staticText184;
+    wxTextCtrl* m_textCtrlToken;
+    wxStaticText* m_staticText181;
+    wxTextCtrl* m_textCtrlHeaders;
+    wxButton* m_button183;
+    wxStdDialogButtonSizer* m_stdBtnSizer168;
+    wxButton* m_button169;
+    wxButton* m_button170;
+
+protected:
+    virtual void OnHeaders(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnOkUI(wxUpdateUIEvent& event) { event.Skip(); }
+
+public:
+    wxStaticText* GetStaticText172() { return m_staticText172; }
+    wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
+    wxStaticText* GetStaticText175() { return m_staticText175; }
+    wxTextCtrl* GetTextCtrlBaseURL() { return m_textCtrlBaseURL; }
+    wxStaticText* GetStaticText178() { return m_staticText178; }
+    wxTextCtrl* GetTextCtrlEndpoint() { return m_textCtrlEndpoint; }
+    wxStaticText* GetStaticText184() { return m_staticText184; }
+    wxTextCtrl* GetTextCtrlToken() { return m_textCtrlToken; }
+    wxStaticText* GetStaticText181() { return m_staticText181; }
+    wxTextCtrl* GetTextCtrlHeaders() { return m_textCtrlHeaders; }
+    wxButton* GetButton183() { return m_button183; }
+    NewSseMCPDlgBase(wxWindow* parent,
+                     wxWindowID id = wxID_ANY,
+                     const wxString& title = _("New SSE MCP Server"),
+                     const wxPoint& pos = wxDefaultPosition,
+                     const wxSize& size = wxSize(-1, -1),
+                     long style = wxDEFAULT_DIALOG_STYLE);
+    virtual ~NewSseMCPDlgBase();
 };
 
 #endif

@@ -42,7 +42,7 @@ EditDlg::EditDlg(wxWindow* parent, const wxString& text, LexerConf::Ptr_t lexer)
     m_stc10->SetAdditionalSelectionTyping(true);
     m_stc10->SetWrapMode(wxSTC_WRAP_WORD);
     SetName("EditDlg");
-    ::clSetSmallDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(this);
 }
 
 EditDlg::~EditDlg() {}

@@ -6296,7 +6296,16 @@ void clMainFrame::OnAiAddNewMCPServer(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     NewMCPServerDlg dlg{this};
-    dlg.ShowModal();
+    if (dlg.ShowModal() != wxID_OK) {
+        return;
+    }
+
+    if (dlg.IsStdioServer()) {
+        llm::Manager::GetInstance().AddNewMcp(dlg.GetLocalMcpData());
+    } else {
+        llm::Manager::GetInstance().AddNewMcp(dlg.GetSSEMcpData());
+    }
+    llm::Manager::GetInstance().ReloadConfig(std::nullopt, false);
 }
 
 void clMainFrame::OnAiSettings(wxCommandEvent& e)

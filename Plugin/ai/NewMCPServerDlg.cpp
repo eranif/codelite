@@ -12,6 +12,7 @@ enum ServerType {
     kSSE,
 };
 
+const wxString kName = _("Name");
 const wxString kCommand = _("Command");
 const wxString kBaseURL = _("Base URL");
 const wxString kEndpoint = _("Endpoint");
@@ -91,6 +92,15 @@ void NewMCPServerDlg::UpdateUIForStdio()
 {
     m_view->Clear();
     m_view->AddHeader(_("Common"));
+    m_view->AddProperty(kName, wxString{}, [this](const wxString& label, const wxAny& value) {
+        wxUnusedVar(label);
+        wxString name;
+        if (!value.GetAs(&name)) {
+            return;
+        }
+        m_name = name.ToStdString(wxConvUTF8);
+    });
+
     m_view->AddProperty(kCommand, wxString{}, [this](const wxString& label, const wxAny& value) {
         wxUnusedVar(label);
         wxString command;
@@ -106,6 +116,15 @@ void NewMCPServerDlg::UpdateUIForSSE()
 {
     m_view->Clear();
     m_view->AddHeader(_("Common"));
+    m_view->AddProperty(kName, wxString{}, [this](const wxString& label, const wxAny& value) {
+        wxUnusedVar(label);
+        wxString name;
+        if (!value.GetAs(&name)) {
+            return;
+        }
+        m_name = name.ToStdString(wxConvUTF8);
+    });
+
     m_view->AddProperty(kBaseURL, wxString{}, [this](const wxString& label, const wxAny& value) {
         wxUnusedVar(label);
         wxString base_url;
@@ -163,3 +182,23 @@ void NewMCPServerDlg::OnServerTypeChanged(wxCommandEvent& event)
 
 bool NewMCPServerDlg::IsStdioServer() const { return m_choiceServerType->GetSelection() == ServerType::kStdio; }
 bool NewMCPServerDlg::IsSSEServer() const { return m_choiceServerType->GetSelection() == ServerType::kSSE; }
+
+llm::LocalMcp NewMCPServerDlg::GetLocalMcpData() const
+{
+    llm::LocalMcp mcp;
+    mcp.name = GetServerName();
+    mcp.command = GetCommand();
+    mcp.env = GetEnvVariables();
+    return mcp;
+}
+
+llm::SSEMcp NewMCPServerDlg::GetSSEMcpData() const
+{
+    llm::SSEMcp mcp;
+    mcp.name = GetServerName();
+    mcp.base_url = GetBaseUrl();
+    mcp.endpoint = GetEndpoint();
+    mcp.headers = GetHeaders();
+    mcp.auth_token = GetAuthtoken();
+    return mcp;
+}

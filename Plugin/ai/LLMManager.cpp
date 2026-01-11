@@ -734,6 +734,66 @@ void Manager::AddNewEndpoint(const llm::EndpointData& d)
     }
 }
 
+void Manager::AddNewMcp(const llm::SSEMcp& d)
+{
+    try {
+        ASSIGN_OPT_OR_RETURN(auto j, GetConfigAsJSON(), );
+        if (!j.contains("mcp_servers")) {
+            j["mcp_servers"] = {};
+        }
+
+        auto mcp_servers = j["mcp_servers"];
+        if (!mcp_servers.contains(d.name)) {
+            mcp_servers.erase(d.name);
+        }
+
+        llm::json new_mcp;
+        new_mcp["type"] = "sse";
+        new_mcp["enabled"] = true;
+        new_mcp["baseurl"] = d.base_url;
+        new_mcp["endpoint"] = d.endpoint;
+        new_mcp["headers"] = d.headers;
+        new_mcp["auth_token"] = d.auth_token;
+
+        j["mcp_servers"][d.name] = new_mcp;
+        if (WriteConfigFile(std::move(j))) {
+            HandleConfigFileUpdated();
+        }
+
+    } catch (const std::exception& e) {
+        clERROR() << "Failed to add new SSE mcp server:" << e.what() << endl;
+    }
+}
+
+void Manager::AddNewMcp(const llm::LocalMcp& d)
+{
+    try {
+        ASSIGN_OPT_OR_RETURN(auto j, GetConfigAsJSON(), );
+        if (!j.contains("mcp_servers")) {
+            j["mcp_servers"] = {};
+        }
+
+        auto mcp_servers = j["mcp_servers"];
+        if (!mcp_servers.contains(d.name)) {
+            mcp_servers.erase(d.name);
+        }
+
+        llm::json new_mcp;
+        new_mcp["type"] = "stdio";
+        new_mcp["enabled"] = true;
+        new_mcp["command"] = d.command;
+        new_mcp["env"] = d.env;
+
+        j["mcp_servers"][d.name] = new_mcp;
+        if (WriteConfigFile(std::move(j))) {
+            HandleConfigFileUpdated();
+        }
+
+    } catch (const std::exception& e) {
+        clERROR() << "Failed to add new local mcp server:" << e.what() << endl;
+    }
+}
+
 bool Manager::WriteConfigFile(llm::json j)
 {
     const WriteOptions opts{.ignore_workspace = true};

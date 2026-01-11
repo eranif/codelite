@@ -2,6 +2,7 @@
 #define NEWMCPSERVERDLG_HPP
 
 #include "UI.hpp"
+#include "ai/LLMManager.hpp"
 #include "clPropertiesPage.hpp"
 #include "codelite_exports.h"
 
@@ -13,12 +14,16 @@ public:
 
     const std::map<std::string, std::string>& GetHeaders() const { return m_headers; }
     const std::string& GetBaseUrl() const { return m_baseUrl; }
+    const std::string& GetServerName() const { return m_name; }
     const std::string& GetEndpoint() const { return m_endpoint; }
     const std::string& GetAuthtoken() const { return m_authtoken; }
     const std::vector<std::string>& GetCommand() const { return m_command; }
     const std::map<std::string, std::string>& GetEnvVariables() const { return m_envVariables; }
     bool IsStdioServer() const;
     bool IsSSEServer() const;
+
+    llm::LocalMcp GetLocalMcpData() const;
+    llm::SSEMcp GetSSEMcpData() const;
 
 protected:
     void OnServerTypeChanged(wxCommandEvent& event) override;
@@ -31,6 +36,7 @@ private:
     std::map<std::string, std::string> ProcessKeyValueEntry(clPropertiesPageEvent& event, const wxString& prefix);
 
     clPropertiesPage* m_view{nullptr};
+    std::string m_name;                                // Used by both SSE/STDIO server.
     std::map<std::string, std::string> m_headers;      // Used by SSE server.
     std::string m_baseUrl;                             // Used by SSE server.
     std::string m_endpoint;                            // Used by SSE server.

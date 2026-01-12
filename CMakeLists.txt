@@ -82,7 +82,7 @@ if(MINGW)
 
   string(TOLOWER "${CMAKE_SYSTEM_PROCESSOR}" CODELITE_ARCH)
   message(STATUS "Building ${CODELITE_ARCH} architecture")
-  string(TOLOWER "$ENV{MSYSTEM}" MSYSTEM)  
+  string(TOLOWER "$ENV{MSYSTEM}" MSYSTEM)
 elseif(UNIX AND NOT APPLE)
   if(CL_PREFIX)
     # user provided CL_PREFIX -> use it instead of CMAKE_INSTALL_PREFIX
@@ -669,6 +669,9 @@ if(CMAKE_BUILD_TYPE MATCHES Debug OR CMAKE_BUILD_TYPE MATCHES DebugFull)
   if(APPLE)
     add_custom_target(distclean COMMAND cd ${CL_SRC_ROOT}/PCH && $(MAKE)
                                         type=debug clean)
+    set(DEBUG_BUILD 0)
+    add_compile_definitions(NDEBUG)
+    add_compile_definitions(-DwxDEBUG_LEVEL=0)
   endif(APPLE)
 
   set(CMAKE_LIBRARY_OUTPUT_DIRECTORY "${BUILD_DIRECTORY}/${CL_LIB_DIR}")

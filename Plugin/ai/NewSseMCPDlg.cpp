@@ -67,9 +67,9 @@ llm::SSEMcp NewSseMCPDlg::GetData() const
 void NewSseMCPDlg::OnHeaders(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    m_headers = ProcessKeyValueEntry(
-        m_textCtrlHeaders,
-        _("# Write headers in the format of Header=Value\n# Each header should be placed on its line\n"));
+    m_headers = ProcessKeyValueEntry(m_textCtrlHeaders, _(R"(# Write headers in the format "Header=Value"
+# with each header on a separate line
+)"));
 }
 
 void NewSseMCPDlg::OnOkUI(wxUpdateUIEvent& event)

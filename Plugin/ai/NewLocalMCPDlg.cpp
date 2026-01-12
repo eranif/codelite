@@ -31,9 +31,9 @@ void NewLocalMCPDlg::OnEnvVariables(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     m_envVariables =
-        ProcessKeyValueEntry(m_textCtrlEnv,
-                             _("# Write environment variables in the format of EnvName=Value\n# Each variable "
-                               "should be placed on its line\n"));
+        ProcessKeyValueEntry(m_textCtrlEnv, _(R"(# Environment variables should be defined in the format EnvName=Value
+# with each variable declaration on a separate line
+)"));
 }
 
 std::map<std::string, std::string> NewLocalMCPDlg::ProcessKeyValueEntry(wxTextCtrl* text_ctrl, const wxString& prefix)

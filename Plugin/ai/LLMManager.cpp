@@ -689,7 +689,7 @@ void Manager::AddNewEndpoint(const llm::EndpointData& d)
         }
 
         auto endpoints = j["endpoints"];
-        if (!endpoints.contains(d.url)) {
+        if (endpoints.contains(d.url)) {
             endpoints.erase(d.url);
         }
 
@@ -743,7 +743,7 @@ void Manager::AddNewMcp(const llm::SSEMcp& d)
         }
 
         auto mcp_servers = j["mcp_servers"];
-        if (!mcp_servers.contains(d.name)) {
+        if (mcp_servers.contains(d.name)) {
             mcp_servers.erase(d.name);
         }
 
@@ -774,7 +774,7 @@ void Manager::AddNewMcp(const llm::LocalMcp& d)
         }
 
         auto mcp_servers = j["mcp_servers"];
-        if (!mcp_servers.contains(d.name)) {
+        if (mcp_servers.contains(d.name)) {
             mcp_servers.erase(d.name);
         }
 

@@ -536,18 +536,14 @@ NewLocalMCPDlgBase::NewLocalMCPDlgBase(
 
     flexGridSizer156->Add(m_staticText160, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_textCtrlCommand =
-        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_READONLY);
+    m_textCtrlCommand = new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlCommand->SetHint(wxT(""));
 #endif
 
     flexGridSizer156->Add(m_textCtrlCommand, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_buttonCommand =
-        new wxButton(this, wxID_ANY, _("..."), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBU_EXACTFIT);
-
-    flexGridSizer156->Add(m_buttonCommand, 0, wxEXPAND | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+    flexGridSizer156->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
     m_staticText163 =
         new wxStaticText(this, wxID_ANY, _("Env variables:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
@@ -595,14 +591,12 @@ NewLocalMCPDlgBase::NewLocalMCPDlgBase(
         wxPersistenceManager::Get().Restore(this);
     }
     // Connect events
-    m_buttonCommand->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &NewLocalMCPDlgBase::OnCommand, this);
     m_button165->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &NewLocalMCPDlgBase::OnEnvVariables, this);
     m_button153->Bind(wxEVT_UPDATE_UI, &NewLocalMCPDlgBase::OnOkUI, this);
 }
 
 NewLocalMCPDlgBase::~NewLocalMCPDlgBase()
 {
-    m_buttonCommand->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &NewLocalMCPDlgBase::OnCommand, this);
     m_button165->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &NewLocalMCPDlgBase::OnEnvVariables, this);
     m_button153->Unbind(wxEVT_UPDATE_UI, &NewLocalMCPDlgBase::OnOkUI, this);
 }

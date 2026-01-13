@@ -23,10 +23,6 @@ protected:
 private:
     std::map<std::string, std::string> ProcessKeyValueEntry(wxTextCtrl* text_ctrl, const wxString& prefix);
 
-    std::string m_name;
     std::map<std::string, std::string> m_headers;
-    std::string m_baseUrl;
-    std::string m_endpoint;
-    std::string m_authtoken;
 };
 #endif // NEWSSEMCPDLG_HPP

@@ -34,15 +34,35 @@ wxString TruncateText(const wxString& text, size_t size = 100)
     return text;
 }
 
-/// If Running on the main thread, construct a busy cursor.
-std::unique_ptr<wxBusyCursor> CreateBusyCursor()
-{
+static std::atomic_bool busy_cusrsor{false};
+/**
+ * @brief RAII wrapper for managing a wxBusyCursor instance with thread-safe activation.
+ *
+ * This struct ensures that a busy cursor (hourglass/wait cursor) is displayed only when
+ * running on the main GUI thread and when no other BusyCursor is already active. The
+ * cursor is automatically restored when the BusyCursor object goes out of scope.
+ *
+ * @note This struct relies on a global `busy_cusrsor` flag to prevent nested busy cursors.
+ * @note The busy cursor is only activated if called from the main thread (checked via wxThread::IsMain()).
+ *
+ * @see wxBusyCursor
+ */
+struct BusyCursor {
     std::unique_ptr<wxBusyCursor> bc;
-    if (wxThread::IsMain()) {
-        return std::make_unique<wxBusyCursor>();
+    BusyCursor()
+    {
+        if (wxThread::IsMain() && busy_cusrsor == false) {
+            busy_cusrsor = true;
+            bc = std::make_unique<wxBusyCursor>();
+        }
     }
-    return nullptr;
-}
+    ~BusyCursor()
+    {
+        if (bc) {
+            busy_cusrsor = false;
+        }
+    }
+};
 
 struct TaskDropper {
     llm::ThreadTask& task;
@@ -497,7 +517,7 @@ void Manager::Restart()
 
 void Manager::Stop()
 {
-    auto bc = CreateBusyCursor();
+    auto bc = std::make_unique<BusyCursor>();
 
     if (m_client) {
         m_client->Interrupt();
@@ -510,8 +530,7 @@ void Manager::Stop()
 
 void Manager::Start()
 {
-    auto bc = CreateBusyCursor();
-
+    auto bc = std::make_unique<BusyCursor>();
     m_client_config = MakeConfig();
 
     // MakeClient that accepts a Config object can not fail.

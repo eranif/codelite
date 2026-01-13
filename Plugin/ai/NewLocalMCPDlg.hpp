@@ -18,13 +18,10 @@ public:
 
 protected:
     void OnOkUI(wxUpdateUIEvent& event) override;
-    void OnCommand(wxCommandEvent& event) override;
     void OnEnvVariables(wxCommandEvent& event) override;
     std::map<std::string, std::string> ProcessKeyValueEntry(wxTextCtrl* text_ctrl, const wxString& prefix);
 
 private:
-    std::string m_name;                                // Used by both SSE/STDIO server.
-    std::vector<std::string> m_command;                // Used by STDIO server.
-    std::map<std::string, std::string> m_envVariables; // Used by STDIO server.
+    std::map<std::string, std::string> m_envVariables; // Environment variables
 };
 #endif // NEWLOCALMCPDLG_HPP

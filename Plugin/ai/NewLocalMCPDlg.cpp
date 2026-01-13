@@ -3,7 +3,6 @@
 #include "ColoursAndFontsManager.h"
 #include "EditDlg.h"
 #include "StringUtils.h"
-#include "globals.h"
 
 NewLocalMCPDlg::NewLocalMCPDlg(wxWindow* parent)
     : NewLocalMCPDlgBase(parent)
@@ -13,19 +12,6 @@ NewLocalMCPDlg::NewLocalMCPDlg(wxWindow* parent)
 }
 
 NewLocalMCPDlg::~NewLocalMCPDlg() {}
-
-void NewLocalMCPDlg::OnCommand(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    EditDlg dlg(this, m_textCtrlCommand->GetValue(), nullptr);
-
-    if (dlg.ShowModal() != wxID_OK) {
-        return;
-    }
-
-    m_command = StringUtils::ToStdStrings(StringUtils::BuildArgv(dlg.GetText()));
-    m_textCtrlCommand->ChangeValue(dlg.GetText());
-}
 
 void NewLocalMCPDlg::OnEnvVariables(wxCommandEvent& event)
 {
@@ -81,7 +67,7 @@ llm::LocalMcp NewLocalMCPDlg::GetData() const
 {
     llm::LocalMcp mcp;
     mcp.name = m_textCtrlName->GetValue();
-    mcp.command = m_command;
+    mcp.command = StringUtils::ToStdStrings(StringUtils::BuildArgv(m_textCtrlCommand->GetValue()));
     mcp.env = m_envVariables;
     return mcp;
 }

@@ -198,7 +198,6 @@ protected:
     wxTextCtrl* m_textCtrlName;
     wxStaticText* m_staticText160;
     wxTextCtrl* m_textCtrlCommand;
-    wxButton* m_buttonCommand;
     wxStaticText* m_staticText163;
     wxTextCtrl* m_textCtrlEnv;
     wxButton* m_button165;
@@ -207,7 +206,6 @@ protected:
     wxButton* m_button154;
 
 protected:
-    virtual void OnCommand(wxCommandEvent& event) { event.Skip(); }
     virtual void OnEnvVariables(wxCommandEvent& event) { event.Skip(); }
     virtual void OnOkUI(wxUpdateUIEvent& event) { event.Skip(); }
 
@@ -216,7 +214,6 @@ public:
     wxTextCtrl* GetTextCtrlName() { return m_textCtrlName; }
     wxStaticText* GetStaticText160() { return m_staticText160; }
     wxTextCtrl* GetTextCtrlCommand() { return m_textCtrlCommand; }
-    wxButton* GetButtonCommand() { return m_buttonCommand; }
     wxStaticText* GetStaticText163() { return m_staticText163; }
     wxTextCtrl* GetTextCtrlEnv() { return m_textCtrlEnv; }
     wxButton* GetButton165() { return m_button165; }

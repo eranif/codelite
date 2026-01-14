@@ -361,7 +361,7 @@ endif()
 
 # generate PostInstall.cmake script
 set(POST_INSTALL_SCRIPT "${CMAKE_BINARY_DIR}/post_install.cmake")
-if(MINGW)
+if(MINGW OR CYGWIN)
     message(STATUS "Generating post_install.cmake script")
     # on MinGW, we do not want to include PluginName.dll.a files
     write_file(${POST_INSTALL_SCRIPT} "file(GLOB FILES_TO_REMOVE \"${CL_INSTALL_BIN}/plugins/*.a\")")

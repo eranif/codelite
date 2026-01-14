@@ -9,7 +9,9 @@
 #include <string.h>
 #include <sys/select.h>
 #include <sys/types.h>
+#ifndef __CYGWIN__
 #include <sys/syscall.h>
+#endif
 
 UnixProcess::UnixProcess(wxEvtHandler* owner, const wxArrayString& args)
     : m_owner(owner)

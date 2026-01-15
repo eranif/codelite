@@ -114,7 +114,7 @@ if(USE_PCH)
   codelite_add_pch(libcodelite)
 endif()
 
-if(NOT MINGW)
+if(NOT MINGW AND NOT CYGWIN)
   if(APPLE)
     install(TARGETS libcodelite
             DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)

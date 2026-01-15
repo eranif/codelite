@@ -227,12 +227,12 @@ macro(codelite_install_library_target TARGET)
   if(APPLE)
     install(TARGETS ${TARGET}
             DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS/)
-  elseif(MINGW)
-    # under windows (MinGW) we install libraries under the "bin" folder
-    install(TARGETS ${TARGET} DESTINATION "${CL_INSTALL_BIN}")
   else()
-    # Under linux, we install libraries in the plugins directory
-    install(TARGETS ${TARGET} DESTINATION ${PLUGINS_DIR})
+    install(TARGETS ${TARGET}
+            # under Windows (MinGW/CYGWIN) we install libraries under the "bin" folder
+            RUNTIME DESTINATION "${CL_INSTALL_BIN}"
+            # Under linux, we install libraries in the plugins directory
+            LIBRARY DESTINATION ${PLUGINS_DIR})
   endif()
 endmacro()
 

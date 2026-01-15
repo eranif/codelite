@@ -44,7 +44,10 @@ macro(CL_INSTALL_PLUGIN _target_)
       DESTINATION
         ${CMAKE_BINARY_DIR}/codelite.app/Contents/SharedSupport/plugins)
   else()
-    install(TARGETS ${_target_} DESTINATION ${PLUGINS_DIR})
+    install(TARGETS ${_target_}
+      # Under Windows (MinGW/CYGWIN), avoid to install import libraries
+      RUNTIME DESTINATION ${PLUGINS_DIR}
+      LIBRARY DESTINATION ${PLUGINS_DIR})
   endif()
 endmacro()
 

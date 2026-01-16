@@ -18,7 +18,7 @@ public:
     };
 
 protected:
-    wxString m_connectioString;
+    wxString m_connectionString;
     wxArrayString m_lspServerCommand;
     wxString m_workingDirectory;
     size_t m_flags = 0;
@@ -26,12 +26,12 @@ protected:
     clEnvList_t m_env;
 
 public:
-    LSPStartupInfo& SetConnectioString(const wxString& connectioString)
+    LSPStartupInfo& SetConnectionString(const wxString& connectionString)
     {
-        this->m_connectioString = connectioString;
+        this->m_connectionString = connectionString;
         return *this;
     }
-    const wxString& GetConnectioString() const { return m_connectioString; }
+    const wxString& GetConnectionString() const { return m_connectionString; }
     void SetLspServerCommand(const wxArrayString& lspServerCommand) { this->m_lspServerCommand = lspServerCommand; }
     const wxArrayString& GetLspServerCommand() const { return m_lspServerCommand; }
 

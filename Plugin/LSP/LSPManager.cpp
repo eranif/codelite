@@ -888,7 +888,7 @@ void Manager::StartServer(const LanguageServerEntry& entry)
     }
 
     LSPStartupInfo startup_info;
-    startup_info.SetConnectioString(entry.GetConnectionString());
+    startup_info.SetConnectionString(entry.GetConnectionString());
     startup_info.SetLspServerCommand(lspCommandArray);
     startup_info.SetFlags(flags);
     startup_info.SetWorkingDirectory(working_directory);

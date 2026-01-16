@@ -46,7 +46,7 @@ SettersGettersDlg::SettersGettersDlg(wxWindow* parent)
 {
     clConfig::Get().ReadItem(&m_settings);
     m_checkStartWithUppercase->SetValue(m_settings.GetFlags() & SettersGetterData::FunctionStartWithUpperCase);
-    m_checkBoxForamtFileWhenDone->SetValue(m_settings.GetFlags() & SettersGetterData::FormatFileWhenDone);
+    m_checkBoxFormatFileWhenDone->SetValue(m_settings.GetFlags() & SettersGetterData::FormatFileWhenDone);
     m_checkBoxReturnSelf->SetValue(m_settings.GetFlags() & SettersGetterData::SettersReturnReferenceToSelf);
     SetName("SettersGettersDlg");
     m_dvListCtrl->SetBitmaps(clGetManager()->GetStdIcons()->GetStandardMimeBitmapListPtr());
@@ -479,7 +479,7 @@ SettersGettersDlg::~SettersGettersDlg()
     size_t flags(0);
     if(m_checkStartWithUppercase->IsChecked())
         flags |= SettersGetterData::FunctionStartWithUpperCase;
-    if(m_checkBoxForamtFileWhenDone->IsChecked())
+    if(m_checkBoxFormatFileWhenDone->IsChecked())
         flags |= SettersGetterData::FormatFileWhenDone;
     if(m_checkBoxReturnSelf->IsChecked())
         flags |= SettersGetterData::SettersReturnReferenceToSelf;

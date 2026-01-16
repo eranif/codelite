@@ -43,7 +43,7 @@ protected:
     wxLocale m_locale;
     wxArrayString m_allowedPlugins;
     PluginPolicy m_pluginLoadPolicy;
-    std::unique_ptr<clPersistenceManager> m_persistencManager;
+    std::unique_ptr<clPersistenceManager> m_persistenceManager;
     bool m_startedInDebuggerMode;
 
     // When starting in debugger mode

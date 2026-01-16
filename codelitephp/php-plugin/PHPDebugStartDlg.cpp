@@ -9,7 +9,7 @@ PHPDebugStartDlg::PHPDebugStartDlg(wxWindow* parent, PHPProject::Ptr_t pProject,
 {
     PHPProjectSettingsData& settings = m_project->GetSettings();
 #ifdef __WXOSX__
-    // On OSX, remove the 'show effect' or we will see a noticable delay
+    // On OSX, remove the 'show effect' or we will see a noticeable delay
     // when showing this dialog
     m_simpleBook->SetEffect(wxSHOW_EFFECT_NONE);
 #endif

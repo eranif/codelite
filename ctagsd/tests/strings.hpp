@@ -1054,8 +1054,8 @@ public:
         wxPersistenceManager::Set(*m_persistency);
         wxTerminalOptions& m_options = wxTerminalOptions::Get();
 
-        // m_persistencManager = new clPersistenceManager();
-        // wxPersistenceManager::Set(*m_persistencManager);
+        // m_persistenceManager = new clPersistenceManager();
+        // wxPersistenceManager::Set(*m_persistenceManager);
 #ifdef __WXMSW__
         using SetProcessDPIAwareFunc = BOOL (WINAPI*)();
         HINSTANCE user32Dll = LoadLibrary(L"User32.dll");

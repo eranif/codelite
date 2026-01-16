@@ -107,7 +107,7 @@ WelcomePage::WelcomePage(wxWindow* parent)
     // events
     m_buttonOpenWorkspace->Bind(wxEVT_BUTTON, &WelcomePage::OnOpenWorkspace, this);
     m_buttonNewWorkspace->Bind(wxEVT_BUTTON, &WelcomePage::OnNewWorkspace, this);
-    m_buttonGithub->Bind(wxEVT_BUTTON, &WelcomePage::OnGitHHub, this);
+    m_buttonGithub->Bind(wxEVT_BUTTON, &WelcomePage::OnGitHub, this);
     m_buttonGitter->Bind(wxEVT_BUTTON, &WelcomePage::OnGitter, this);
 
     buttons_sizer->Add(m_buttonOpenWorkspace, wxSizerFlags(0).Expand().Border(wxALL, 5));
@@ -319,7 +319,7 @@ void WelcomePage::OpenPluginWorkspace(WelcomePageItemData* cd)
     EventNotifier::Get()->AddPendingEvent(open_event);
 }
 
-void WelcomePage::OnGitHHub(wxCommandEvent& event)
+void WelcomePage::OnGitHub(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxLaunchDefaultBrowser("https://github.com/eranif/codelite");

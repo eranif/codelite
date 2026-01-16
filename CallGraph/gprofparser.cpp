@@ -194,7 +194,7 @@ void	GprofParser::GprofParserStream(wxInputStream *gprof_output)
 						line->recursive = false;
 
 					}
-				} else { //parents and childern
+				} else { //parents and children
 					if(iscycle && !islom) { //3          a <cycle 1> [5]
 						// warning
 						sscanf((const char*)readlinetext.mb_str(conv),"%d %[^\n]s",&line->called0,nameandid);
@@ -239,7 +239,7 @@ void	GprofParser::GprofParserStream(wxInputStream *gprof_output)
 					}
 					/*else if(!iscycle && !islom)
 					{
-						sscanf((const char*)readlinetext.mb_str(conv),"%f %f %d %[^\n]s",&line->self,&line->childern,&line->called0,nameandid);
+						sscanf((const char*)readlinetext.mb_str(conv),"%f %f %d %[^\n]s",&line->self,&line->children,&line->called0,nameandid);
 						//
 						wxString readlinesubtext(nameandid, conv); // musi byt kodovani ?
 						line->name = readlinesubtext.BeforeFirst('[');

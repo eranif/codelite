@@ -132,7 +132,7 @@ public:
     SettersGettersDlg(wxWindow* parent);
     virtual ~SettersGettersDlg();
     wxString GetGenCode();
-    bool GetFormatText() const { return m_checkBoxForamtFileWhenDone->IsChecked(); }
+    bool GetFormatText() const { return m_checkBoxFormatFileWhenDone->IsChecked(); }
 
     bool Init(const std::vector<TagEntryPtr>& tags, const std::vector<TagEntryPtr>& existing_functions,
               const wxFileName& file, int lineno);

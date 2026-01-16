@@ -70,11 +70,11 @@ SettersGettersBaseDlg::SettersGettersBaseDlg(wxWindow* parent, wxWindowID id, co
 
     gridSizer12->Add(m_checkStartWithUppercase, 0, wxALL, WXC_FROM_DIP(5));
 
-    m_checkBoxForamtFileWhenDone = new wxCheckBox(this, wxID_ANY, _("Format the file when done"), wxDefaultPosition,
+    m_checkBoxFormatFileWhenDone = new wxCheckBox(this, wxID_ANY, _("Format the file when done"), wxDefaultPosition,
                                                   wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_checkBoxForamtFileWhenDone->SetValue(false);
+    m_checkBoxFormatFileWhenDone->SetValue(false);
 
-    gridSizer12->Add(m_checkBoxForamtFileWhenDone, 0, wxALL, WXC_FROM_DIP(5));
+    gridSizer12->Add(m_checkBoxFormatFileWhenDone, 0, wxALL, WXC_FROM_DIP(5));
 
     m_checkBoxReturnSelf = new wxCheckBox(this, wxID_ANY, _("Setter returns a reference to the object"),
                                           wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);

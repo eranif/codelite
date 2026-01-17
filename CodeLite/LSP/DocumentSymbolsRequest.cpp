@@ -6,7 +6,6 @@
 #include "json_rpc_params.h"
 
 #include <algorithm>
-#include <thread>
 
 namespace
 {

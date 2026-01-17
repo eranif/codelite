@@ -29,13 +29,12 @@
 #include "GitDiffOutputParser.h"
 #include "ai/LLMManager.hpp"
 #include "clSingleChoiceDialog.h"
+#include "fileutils.h"
 #include "git.h"
 #include "gitentry.h"
 #include "globals.h"
 #include "lexer_configuration.h"
 #include "wxCustomControls.hpp"
-
-#include <wx/tokenzr.h>
 
 namespace
 {

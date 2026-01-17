@@ -1,13 +1,14 @@
 #include "PHPExpression.h"
-#include "PHPSourceFile.h"
+
 #include "PHPEntityClass.h"
-#include "PHPEntityVariable.h"
 #include "PHPEntityFunction.h"
-#include <stack>
-#include <algorithm>
-#include <set>
-#include "PHPEntityNamespace.h"
 #include "PHPEntityFunctionAlias.h"
+#include "PHPEntityNamespace.h"
+#include "PHPEntityVariable.h"
+#include "PHPSourceFile.h"
+
+#include <set>
+#include <stack>
 
 PHPExpression::PHPExpression(const wxString& fulltext, const wxString& exprText, bool functionCalltipExpr)
     : m_type(kNone)

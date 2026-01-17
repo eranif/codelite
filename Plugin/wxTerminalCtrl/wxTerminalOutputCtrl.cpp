@@ -1,7 +1,6 @@
 #include "wxTerminalOutputCtrl.hpp"
 
 #include "ColoursAndFontsManager.h"
-#include "FontUtils.hpp"
 #include "Platform/Platform.hpp"
 #include "StringUtils.h"
 #include "clIdleEventThrottler.hpp"
@@ -10,6 +9,7 @@
 #include "codelite_events.h"
 #include "dirsaver.h"
 #include "event_notifier.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
 #include "procutils.h"
@@ -17,10 +17,7 @@
 #include "wxTerminalInputCtrl.hpp"
 
 #include <wx/menu.h>
-#include <wx/msgdlg.h>
 #include <wx/sizer.h>
-#include <wx/uiaction.h>
-#include <wx/wupdlock.h>
 
 namespace
 {

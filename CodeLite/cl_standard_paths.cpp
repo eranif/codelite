@@ -25,14 +25,16 @@
 
 #include "cl_standard_paths.h"
 
-#include "fileutils.h"
+#include "cl_defs.h"
 
-#include <wx/datetime.h>
-#include <wx/dir.h>
 #include <wx/filefn.h>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
 #include <wx/utils.h>
+
+#ifdef __WXMAC__
+#include <wx/dir.h>
+#endif
 
 static wxString __get_user_name()
 {

@@ -1,7 +1,9 @@
 #ifndef CLDIRCHANGER_HPP
 #define CLDIRCHANGER_HPP
 
-#include "codelite_events.h"
+#include "codelite_exports.h"
+
+#include <wx/filefn.h>
 #include <wx/string.h>
 
 class WXDLLIMPEXP_CL clDirChanger

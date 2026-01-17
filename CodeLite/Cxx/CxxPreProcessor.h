@@ -27,9 +27,10 @@
 #define CXXPREPROCESSOR_H
 
 #include "CxxLexerAPI.h"
-#include "CxxPreProcessorScanner.h"
 #include "codelite_exports.h"
+
 #include <set>
+#include <unordered_map>
 #include <wx/filename.h>
 
 class WXDLLIMPEXP_CL CxxPreProcessor

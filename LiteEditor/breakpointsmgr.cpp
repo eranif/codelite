@@ -29,6 +29,7 @@
 #include "breakpointpropertiesdlg.h"
 #include "event_notifier.h"
 #include "file_logger.h"
+#include "fileutils.h"
 #include "frame.h"
 #include "manager.h"
 

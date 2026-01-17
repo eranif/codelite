@@ -29,13 +29,9 @@
 #include "Cxx/cpp_scanner.h"
 #include "codelite_exports.h"
 #include "database/entry.h"
-#include "function.h"
-#include "macros.h"
 #include "variable.h"
 
-#include <set>
 #include <vector>
-#include <wx/filename.h>
 
 enum SearchFlags {
     PartialMatch = 0x00000001,

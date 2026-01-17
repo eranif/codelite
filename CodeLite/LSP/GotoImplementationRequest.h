@@ -1,9 +1,7 @@
 #ifndef GOTOIMPLEMENTATIONREQUEST_H
 #define GOTOIMPLEMENTATIONREQUEST_H
 
-#include "IPathConverter.hpp"
 #include "LSP/Request.h"
-#include <wx/filename.h>
 
 namespace LSP
 {

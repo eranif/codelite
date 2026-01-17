@@ -1,7 +1,8 @@
 #include "clFileSystemWatcher.h"
-#include <algorithm>
-#include <set>
+
 #include "fileutils.h"
+
+#include <set>
 
 wxDEFINE_EVENT(wxEVT_FILE_MODIFIED, clFileSystemEvent);
 wxDEFINE_EVENT(wxEVT_FILE_NOT_FOUND, clFileSystemEvent);

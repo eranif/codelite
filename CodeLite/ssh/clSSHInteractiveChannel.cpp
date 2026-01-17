@@ -1,16 +1,17 @@
+#if USE_SFTP
+
 #include "clSSHInteractiveChannel.hpp"
 
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
 #include "StringUtils.h"
 #include "file_logger.h"
+#include "fileutils.h"
 
+#include <libssh/libssh.h>
 #include <thread>
 #include <typeinfo>
 #include <vector>
-
-#if USE_SFTP
-#include <libssh/libssh.h>
 
 #define START_MARKER "START_MARKER"
 

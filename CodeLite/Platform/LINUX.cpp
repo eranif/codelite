@@ -1,19 +1,17 @@
 #include "LINUX.hpp"
 
 #include "PlatformCommon.hpp"
-#include "StringUtils.h"
-#include "clFilesCollector.h"
-#include "clVersionString.hpp"
-#include "file_logger.h"
-#include "procutils.h"
+#include "macros.h"
 
-#include <algorithm>
-#include <cmath>
 #include <wx/arrstr.h>
 #include <wx/filename.h>
 #include <wx/string.h>
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
+
+#ifdef __WXMAC__
+#include "StringUtils.h"
+#endif
 
 namespace
 {

@@ -1,6 +1,7 @@
 #ifndef CLCONSOLEBASE_H
 #define CLCONSOLEBASE_H
 
+#include "clEnvironment.hpp"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "macros.h"

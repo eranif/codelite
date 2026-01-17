@@ -45,7 +45,6 @@
 #include <wx/strconv.h>
 #include <wx/string.h>
 #include <wx/tokenzr.h>
-#include <wx/uri.h>
 #include <wx/utils.h>
 
 #if wxUSE_GUI

@@ -2,7 +2,6 @@
 #define DIDSAVE_TEXTDOCUMENTREQUEST_H
 
 #include "LSP/Notification.h"
-#include <wx/filename.h>
 
 namespace LSP
 {

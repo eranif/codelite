@@ -28,8 +28,6 @@
 #include "codelite_exports.h"
 #include "macros.h"
 
-#include <map>
-#include <set>
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/filename.h>

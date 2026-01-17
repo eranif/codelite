@@ -3,7 +3,6 @@
 #include "fileutils.h"
 
 #include <chrono>
-#include <wx/crt.h>
 #include <wx/datetime.h>
 
 clModuleLogger::~clModuleLogger() { Flush(); }

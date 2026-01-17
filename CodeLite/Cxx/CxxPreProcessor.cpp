@@ -1,8 +1,6 @@
 #include "CxxPreProcessor.h"
 
-#include "file_logger.h"
-
-#include <wx/regex.h>
+#include "CxxPreProcessorScanner.h"
 
 CxxPreProcessor::CxxPreProcessor()
     : m_options(0)

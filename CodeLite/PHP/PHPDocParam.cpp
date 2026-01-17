@@ -1,5 +1,5 @@
 #include "PHPDocParam.h"
-#include <wx/wxcrt.h>
+
 #include <wx/tokenzr.h>
 
 PHPDocParam::PHPDocParam(PHPSourceFile& sourceFile, const wxString& comment)

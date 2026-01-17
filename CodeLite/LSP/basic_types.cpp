@@ -2,10 +2,8 @@
 
 #include "JSON.h"
 #include "clModuleLogger.hpp"
-#include "cl_standard_paths.h"
 #include "file_logger.h"
-
-#include <wx/filesys.h>
+#include "fileutils.h"
 
 // our logger object
 INITIALISE_MODULE_LOG(LSP_LOG_HANDLER, "LSP", "lsp.log");

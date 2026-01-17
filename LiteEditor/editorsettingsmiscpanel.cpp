@@ -27,22 +27,14 @@
 
 #include "clLocaleManager.hpp"
 #include "cl_config.h"
-#include "ctags_manager.h"
 #include "file_logger.h"
+#include "fileutils.h"
 #include "frame.h"
-#include "generalinfo.h"
-#include "globals.h"
 #include "manager.h"
-#include "pluginmanager.h"
 
 #include <wx/fontmap.h>
-#include <wx/intl.h>
 #include <wx/msgdlg.h>
-#include <wx/wxprec.h>
-
-#ifdef __WXMSW__
-#include <wx/msw/uxtheme.h>
-#endif
+#include <wx/translation.h>
 
 EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfigPtr options)
     : OptionsConfigPage(parent, options)

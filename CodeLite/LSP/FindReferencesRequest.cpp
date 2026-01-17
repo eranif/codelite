@@ -3,7 +3,6 @@
 #include "JSON.h"
 #include "LSP/LSPEvent.h"
 #include "event_notifier.h"
-#include "file_logger.h"
 
 LSP::FindReferencesRequest::FindReferencesRequest(const wxString& filename, size_t line, size_t column,
                                                   bool includeDeclaration)

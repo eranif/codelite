@@ -3,7 +3,7 @@
 #include "CompilerLocator/CompilerLocatorEosCDT.h"
 #include "build_settings_config.h"
 #include "compiler.h"
-#include "globals.h"
+#include "fileutils.h"
 
 #include <wx/filename.h>
 

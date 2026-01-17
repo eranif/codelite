@@ -29,10 +29,11 @@
 #ifndef CODELITE_TOKENIZER_H
 #define CODELITE_TOKENIZER_H
 
-#include <wx/string.h>
+#include "codelite_exports.h"
+
 #include <vector>
 #include <wx/arrstr.h>
-#include "codelite_exports.h"
+#include <wx/string.h>
 
 /**
  * StringTokenizer helps you to break a string up into a number of tokens.

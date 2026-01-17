@@ -24,22 +24,11 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "ChatAI.hpp"
 
-#include "Keyboard/clKeyboardManager.h"
 #include "ai/LLMManager.hpp"
 #include "codelite_events.h"
+#include "cl_config.h"
 #include "event_notifier.h"
 #include "globals.h"
-#include "macromanager.h"
-
-#include <wx/app.h> //wxInitialize/wxUnInitialize
-#include <wx/ffile.h>
-#include <wx/filename.h>
-#include <wx/log.h>
-#include <wx/menu.h>
-#include <wx/msgdlg.h>
-#include <wx/progdlg.h>
-#include <wx/wupdlock.h>
-#include <wx/xrc/xmlres.h>
 
 namespace
 {

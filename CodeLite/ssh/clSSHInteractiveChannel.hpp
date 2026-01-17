@@ -1,7 +1,11 @@
 #ifndef CLSSHINTERACTIVECHANNEL_HPP
 #define CLSSHINTERACTIVECHANNEL_HPP
 
+#if USE_SFTP
+
 #include "AsyncProcess/asyncprocess.h" // IProcess
+#include "clSSHChannelCommon.hpp"
+#include "cl_ssh.h"
 #include "codelite_exports.h"
 
 #include <thread>
@@ -9,11 +13,6 @@
 #include <wx/any.h>
 #include <wx/msgqueue.h>
 #include <wx/string.h>
-
-#if USE_SFTP
-
-#include "clSSHChannelCommon.hpp"
-#include "cl_ssh.h"
 
 class WXDLLIMPEXP_CL clSSHInteractiveChannel : public IProcess
 {

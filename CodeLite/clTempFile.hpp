@@ -2,7 +2,6 @@
 #define CLTEMPFILE_HPP
 
 #include "codelite_exports.h"
-#include "fileutils.h"
 
 #include <wx/filename.h>
 #include <wx/string.h>

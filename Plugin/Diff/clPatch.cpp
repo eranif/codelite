@@ -3,6 +3,7 @@
 #include "StringUtils.h"
 #include "cl_standard_paths.h"
 #include "dirsaver.h"
+#include "fileutils.h"
 #include "procutils.h"
 
 clPatch::clPatch()

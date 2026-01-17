@@ -9,7 +9,7 @@
 #include "aui/clAuiToolBarArt.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clSTCHelper.hpp"
-#include "clWorkspaceManager.h"
+#include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "globals.h"

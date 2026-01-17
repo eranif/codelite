@@ -2,10 +2,8 @@
 
 #include "cl_standard_paths.h"
 
-#include <functional>
 #include <wx/arrstr.h>
 #include <wx/filename.h>
-#include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
 #include <wx/utils.h>
 

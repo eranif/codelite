@@ -26,9 +26,8 @@
 #ifndef PHPENTITYFUNCTION_H
 #define PHPENTITYFUNCTION_H
 
-#include "codelite_exports.h"
 #include "PHPEntityBase.h" // Base class: PHPEntityBase
-#include <vector>
+#include "codelite_exports.h"
 
 class WXDLLIMPEXP_CL PHPEntityFunction : public PHPEntityBase
 {

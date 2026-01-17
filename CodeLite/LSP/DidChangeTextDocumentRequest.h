@@ -1,7 +1,6 @@
 #ifndef DIDCHANGE_TEXTDOCUMENTREQUEST_H
 #define DIDCHANGE_TEXTDOCUMENTREQUEST_H
 
-#include <wx/filename.h>
 #include "LSP/Notification.h"
 
 namespace LSP

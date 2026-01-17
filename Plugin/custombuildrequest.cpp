@@ -26,6 +26,7 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "cl_command_event.h"
+#include "codelite_events.h"
 #include "dirsaver.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
@@ -35,9 +36,7 @@
 #include "macros.h"
 #include "workspace.h"
 
-#include <wx/app.h>
 #include <wx/ffile.h>
-#include <wx/log.h>
 
 #ifdef __WXMSW__
 #define ECHO_CMD wxT("@echo ")

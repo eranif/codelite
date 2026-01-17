@@ -1,7 +1,6 @@
 #include "GotoDefinitionRequest.h"
 
 #include "LSP/LSPEvent.h"
-#include "file_logger.h"
 
 LSP::GotoDefinitionRequest::GotoDefinitionRequest(const wxString& filename, size_t line, size_t column)
     : m_filename(filename)

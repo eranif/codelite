@@ -3,6 +3,7 @@
 #include "cl_standard_paths.h"
 #include "ctags_manager.h"
 #include "file_logger.h"
+#include "language.h"
 
 #include <unordered_map>
 #include <wx/cmdline.h>

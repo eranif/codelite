@@ -1,6 +1,6 @@
 #include "ResponseMessage.h"
+
 #include "StringUtils.h"
-#include <wx/tokenzr.h>
 
 LSP::ResponseMessage::ResponseMessage(std::unique_ptr<JSON>&& json)
 {

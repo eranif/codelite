@@ -30,7 +30,6 @@
 #include <cerrno>
 #include <cstdio>
 #include <memory>
-#include <sstream>
 
 #ifndef _WIN32
 #include <fcntl.h>

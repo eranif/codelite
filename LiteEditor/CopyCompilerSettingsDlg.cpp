@@ -1,4 +1,6 @@
 #include "CopyCompilerSettingsDlg.h"
+
+#include "cl_config.h"
 #include "workspace.h"
 
 CopyCompilerSettingsDlg::CopyCompilerSettingsDlg(wxWindow* parent)

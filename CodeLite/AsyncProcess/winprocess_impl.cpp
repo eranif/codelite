@@ -41,12 +41,13 @@
 #include "StringUtils.h"
 #include "clDirChanger.hpp"
 #include "file_logger.h"
-#include "fileutils.h"
 #include "processreaderthread.h"
 #include "procutils.h"
 
 #include <atomic>
+#include <thread>
 #include <wx/filefn.h>
+#include <wx/log.h>
 #include <wx/msgqueue.h>
 #include <wx/string.h>
 

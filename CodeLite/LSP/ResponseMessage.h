@@ -1,10 +1,8 @@
 #ifndef RESPONSEMESSAGE_H
 #define RESPONSEMESSAGE_H
 
-#include "JSON.h"
 #include "LSP/Message.h"
 #include "LSP/basic_types.h"
-#include "macros.h"
 
 namespace LSP
 {

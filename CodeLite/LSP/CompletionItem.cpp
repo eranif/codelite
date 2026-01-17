@@ -1,5 +1,4 @@
 #include "CompletionItem.h"
-#include "JSON.h"
 
 JSONItem LSP::CompletionItem::ToJSON(const wxString& name) const { return JSONItem(NULL); }
 

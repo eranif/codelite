@@ -1,6 +1,7 @@
 #include "LSPUtils.hpp"
 
 #include "SimpleTokenizer.hpp"
+#include "fileutils.h"
 #include "macros.h"
 
 #include <array>

@@ -1,10 +1,13 @@
 #include "PlatformCommon.hpp"
 
-#include "file_logger.h"
-#include "procutils.h"
-
 #include <algorithm>
 #include <wx/arrstr.h>
+#include <wx/utils.h>
+
+#ifndef __WXMSW__
+#include "file_logger.h"
+#include "procutils.h"
+#endif
 
 std::optional<wxString> PlatformCommon::WhichWithVersion(const wxString& command, const std::vector<int>& versions)
 {

@@ -1,9 +1,9 @@
 #include "PHPDocVisitor.h"
-#include "PHPEntityBase.h"
+
 #include "PHPDocComment.h"
+#include "PHPEntityBase.h"
 #include "PHPEntityFunction.h"
 #include "PHPEntityVariable.h"
-#include <algorithm>
 
 PHPDocVisitor::PHPDocVisitor(PHPSourceFile& sourceFile, const std::vector<phpLexerToken>& comments)
     : m_sourceFile(sourceFile)

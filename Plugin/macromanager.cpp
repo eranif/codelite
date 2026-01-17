@@ -34,6 +34,7 @@
 #include "globals.h"
 #include "imanager.h"
 #include "project.h"
+#include "ssh_account_info.h"
 #include "workspace.h"
 
 #include <wx/regex.h>

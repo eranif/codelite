@@ -1,3 +1,4 @@
+#include "PHPSourceFile.h"
 
 #include "PHPDocVisitor.h"
 #include "PHPEntityClass.h"
@@ -7,11 +8,10 @@
 #include "PHPEntityVariable.h"
 #include "PHPLookupTable.h"
 #include "PHPScannerTokens.h"
-#include "PHPSourceFile.h"
 #include "fileutils.h"
+
 #include <unordered_set>
 #include <wx/arrstr.h>
-#include <wx/ffile.h>
 
 #define NEXT_TOKEN_BREAK_IF_NOT(t, action) \
     {                                      \

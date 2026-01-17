@@ -5,7 +5,6 @@
 #include "LSP/basic_types.h"
 
 #include <vector>
-#include <wx/filename.h>
 
 namespace LSP
 {

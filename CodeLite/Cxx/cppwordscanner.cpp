@@ -22,14 +22,14 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include <wx/ffile.h>
-#include <wx/strconv.h>
-#include <wx/tokenzr.h>
-#include <wx/log.h>
 #include "cppwordscanner.h"
-#include "stringaccessor.h"
-#include "dirsaver.h"
+
 #include "ctags_manager.h"
+#include "stringaccessor.h"
+
+#include <wx/ffile.h>
+#include <wx/log.h>
+#include <wx/strconv.h>
 
 CppWordScanner::CppWordScanner(const wxString& fileName)
     : m_filename(fileName)

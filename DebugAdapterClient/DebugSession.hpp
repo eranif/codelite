@@ -1,8 +1,8 @@
 #ifndef DEBUG_SESSION_HPP
 #define DEBUG_SESSION_HPP
 
-#include "AsyncProcess/processreaderthread.h"
 #include "clDapSettingsStore.hpp"
+#include "clEnvironment.hpp"
 #include "dap/dap.hpp"
 #include "ssh/ssh_account_info.h"
 

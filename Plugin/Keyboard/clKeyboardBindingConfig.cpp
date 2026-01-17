@@ -2,6 +2,7 @@
 
 #include "JSON.h"
 #include "cl_standard_paths.h"
+#include "fileutils.h"
 
 #include <wx/filename.h>
 

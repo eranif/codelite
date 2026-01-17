@@ -1,7 +1,5 @@
 #include "InitializeRequest.h"
 
-#include <wx/filesys.h>
-
 LSP::InitializeRequest::InitializeRequest(bool withTokenTypes, const wxString& rootUri)
     : m_withTokenTypes(withTokenTypes)
 {

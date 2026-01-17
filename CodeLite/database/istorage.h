@@ -29,7 +29,6 @@
 #include "entry.h"
 #include "fileentry.h"
 #include "pptable.h"
-#include "tag_tree.h"
 
 #include <memory>
 #include <wx/filename.h>

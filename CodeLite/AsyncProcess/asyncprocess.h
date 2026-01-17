@@ -28,10 +28,8 @@
 
 #include "clEnvironment.hpp"
 #include "codelite_exports.h"
-#include "macros.h"
 
 #include <functional>
-#include <map>
 #include <memory>
 #include <vector>
 #include <wx/event.h>

@@ -1,6 +1,5 @@
 #include "clWildMatch.hpp"
 
-#include <algorithm>
 #include <wx/filefn.h>
 #include <wx/tokenzr.h>
 

@@ -26,7 +26,6 @@
 #ifndef CLSTANDARDPATHS_H
 #define CLSTANDARDPATHS_H
 
-#include "cl_defs.h"
 #include "codelite_exports.h"
 
 #include <wx/string.h>

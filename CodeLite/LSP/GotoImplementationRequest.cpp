@@ -1,4 +1,5 @@
 #include "GotoImplementationRequest.h"
+
 #include "LSP/LSPEvent.h"
 #include "LSP/json_rpc_params.h"
 

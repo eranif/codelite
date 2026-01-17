@@ -29,6 +29,7 @@
 #include "build_settings_config.h"
 #include "buildmanager.h"
 #include "environmentconfig.h"
+#include "fileutils.h"
 #include "macromanager.h"
 #include "project.h"
 #include "workspace.h"

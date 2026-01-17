@@ -4,6 +4,7 @@
 #include "Platform/Platform.hpp"
 #include "environmentconfig.h"
 #include "file_logger.h"
+#include "fileutils.h"
 #include "globals.h"
 
 #include <wx/tokenzr.h>

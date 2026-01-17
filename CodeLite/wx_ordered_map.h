@@ -26,8 +26,6 @@
 #ifndef WX_ORDERED_MAP_H
 #define WX_ORDERED_MAP_H
 
-#include "codelite_exports.h"
-
 #include <list>
 #include <map>
 

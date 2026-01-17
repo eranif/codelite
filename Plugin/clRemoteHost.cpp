@@ -1,13 +1,15 @@
 #include "clRemoteHost.hpp"
 
+#if USE_SFTP
+
 #include "StringUtils.h"
 #include "clModuleLogger.hpp"
 #include "clSSHInteractiveChannel.hpp"
+#include "codelite_events.h"
 #include "event_notifier.h"
 
 #include <wx/utils.h> // wxBusyCursor
 
-#if USE_SFTP
 
 INITIALISE_SSH_LOG(LOG, "Remote-Host");
 

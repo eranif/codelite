@@ -22,6 +22,18 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "procutils.h"
+
+#include "AsyncProcess/asyncprocess.h"
+#include "cl_command_event.h"
+#include "file_logger.h"
+#include "fileutils.h"
+#include "winprocess.h"
+
+#include <memory>
+#include <wx/process.h>
+#include <wx/tokenzr.h>
+
 #ifdef __FreeBSD__
 #include <fcntl.h>
 #include <kvm.h>
@@ -31,21 +43,8 @@
 #include <sys/user.h>
 #endif
 
-#include "AsyncProcess/asyncprocess.h"
-#include "AsyncProcess/processreaderthread.h"
-#include "cl_command_event.h"
-#include "codelite_events.h"
-#include "file_logger.h"
-#include "fileutils.h"
-#include "procutils.h"
-#include "winprocess.h"
-
-#include <memory>
-#include <stdio.h>
-#include <wx/tokenzr.h>
 #ifdef __WXMSW__
-#include <wx/msw/private.h>
-#include <wx/textbuf.h>
+
 #ifndef pclose
 #define pclose _pclose
 #endif

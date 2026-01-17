@@ -27,10 +27,8 @@
 #define CLSOCKETCLIENTASYNC_H
 
 #include "SocketAPI/clSocketBase.h"
-#include "SocketAPI/clSocketClient.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
-#include "worker_thread.h"
 
 #include <memory>
 #include <wx/event.h>

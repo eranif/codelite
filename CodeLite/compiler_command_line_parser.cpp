@@ -28,12 +28,7 @@
 #include "StringUtils.h"
 #include "procutils.h"
 
-#include <ctype.h>
-#include <stdlib.h>
-#include <string.h>
 #include <wx/ffile.h>
-#include <wx/filename.h>
-#include <wx/string.h>
 
 //////////////////////////////////////////////////////
 //////////////////////////////////////////////////////

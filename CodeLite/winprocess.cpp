@@ -26,7 +26,6 @@
 
 #ifdef __WXMSW__
 
-#include <memory>
 #include <wx/filefn.h>
 
 /*static*/

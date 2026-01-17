@@ -10,12 +10,12 @@
 #include "dirsaver.h"
 #include "drawingutils.h"
 #include "event_notifier.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "macros.h"
 #include "workspace.h"
 
 #include <wx/app.h>
-#include <wx/msgdlg.h>
 #include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
 

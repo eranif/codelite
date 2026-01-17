@@ -5,16 +5,12 @@
 #include "PHPEntityFunctionAlias.h"
 #include "PHPEntityNamespace.h"
 #include "PHPEntityVariable.h"
-#include "clFilesCollector.h"
-#include "event_notifier.h"
 #include "file_logger.h"
-#include "fileextmanager.h"
 #include "fileutils.h"
 
 #include <algorithm>
 #include <wx/filename.h>
 #include <wx/log.h>
-#include <wx/stopwatch.h>
 #include <wx/tokenzr.h>
 
 wxDEFINE_EVENT(wxPHP_PARSE_STARTED, clParseEvent);

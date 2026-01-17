@@ -30,7 +30,6 @@
 #include "asyncprocess.h"
 #include "codelite_exports.h"
 
-#include <thread>
 #include <unordered_set>
 #include <wx/msw/wrapwin.h> // includes windows.h
 #include <wx/string.h>

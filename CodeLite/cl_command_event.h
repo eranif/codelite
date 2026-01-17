@@ -25,14 +25,11 @@
 
 #pragma once
 
-#include "AsyncProcess/asyncprocess.h"
 #include "LSP/CompletionItem.h"
 #include "clDebuggerBreakpoint.hpp"
 #include "clEditorConfig.h"
 #include "clGotoEntry.h"
 #include "codelite_exports.h"
-#include "database/entry.h"
-#include "ssh/ssh_account_info.h"
 #include "wxCodeCompletionBoxEntry.hpp"
 
 #include <memory>

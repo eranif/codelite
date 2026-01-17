@@ -3,11 +3,8 @@
 
 #include "codelite_exports.h"
 #include "database/entry.h"
-#include "database/istorage.h"
 
-#include <functional>
 #include <vector>
-#include <wx/filename.h>
 #include <wx/string.h>
 
 class WXDLLIMPEXP_CL CompletionHelper

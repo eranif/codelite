@@ -1,10 +1,10 @@
 #ifndef PROPERTYBASE_H
 #define PROPERTYBASE_H
 
-#include "wxcLib/json_node.h"
-
+#include <assistant/common/json.hpp> // <nlohmann/json.hpp>
 #include <wx/event.h>
 #include <wx/string.h>
+#include <wx/translation.h>
 
 enum PropertyeType {
     PT_BOOL,
@@ -30,8 +30,8 @@ protected:
     wxString m_label;
     wxString m_tooltip;
 
-    void DoBaseSerialize(JSONElement& json) const;
-    void DoBaseUnSerialize(const JSONElement& json);
+    void DoBaseSerialize(nlohmann::json& json) const;
+    void DoBaseUnSerialize(const nlohmann::json& json);
     void NotifyChanged();
 
 public:
@@ -60,8 +60,8 @@ public:
     virtual void SetValue(const wxString& value) = 0;
     virtual wxString GetValue() const = 0;
     virtual long GetValueLong() const { return 0; }
-    virtual JSONElement Serialize() const = 0;
-    virtual void UnSerialize(const JSONElement& json) = 0;
+    virtual nlohmann::json Serialize() const = 0;
+    virtual void UnSerialize(const nlohmann::json& json) = 0;
 };
 
 #endif // PROPERTYBASE_H

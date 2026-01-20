@@ -4,11 +4,11 @@
 #include "Properties/property_base.h"
 #include "aui_pane_info.h"
 #include "events_database.h"
-#include "json_node.h"
 #include "wx_ordered_map.h"
 #include "wxc_settings.h"
 #include "wxgui_defs.h"
 
+#include <assistant/common/json.hpp> // <nlohmann/json.hpp>
 #include <list>
 #include <map>
 #include <memory>
@@ -381,8 +381,8 @@ public:
     void DoEnableStyle(wxcWidget::MapStyles_t& mp, const wxString& style, bool enable);
 
     virtual void FixPaths(const wxString& cwd);
-    virtual void Serialize(JSONElement& json) const;
-    virtual void UnSerialize(const JSONElement& json);
+    virtual void Serialize(nlohmann::json&) const;
+    virtual void UnSerialize(const nlohmann::json& json);
 
     /**
      * @brief Extract properties from this XRC object node.

@@ -52,10 +52,10 @@ protected:
 
 public:
     GenericFormatter();
-    virtual ~GenericFormatter();
+    ~GenericFormatter() override;
 
-    void FromJSON(const JSONItem& json) override;
-    JSONItem ToJSON() const override;
+    void FromJSON(const nlohmann::json& json) override;
+    nlohmann::json ToJSON() const override;
 
     bool FormatFile(const wxFileName& filepath, wxEvtHandler* sink) override;
     bool FormatFile(const wxString& filepath, wxEvtHandler* sink) override;

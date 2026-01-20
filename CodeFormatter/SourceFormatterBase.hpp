@@ -1,10 +1,10 @@
 #ifndef SOURCEFORMATTERBASE_HPP
 #define SOURCEFORMATTERBASE_HPP
 
-#include "JSON.h"
 #include "cl_command_event.h"
 #include "fileextmanager.h"
 
+#include <assistant/common/json.hpp>
 #include <vector>
 #include <wx/event.h>
 #include <wx/filename.h>
@@ -59,8 +59,8 @@ public:
     SourceFormatterBase() = default;
     virtual ~SourceFormatterBase() = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    virtual void FromJSON(const nlohmann::json& json);
+    virtual nlohmann::json ToJSON() const;
 
     /**
      * @brief can this formatter handle `file_type`?

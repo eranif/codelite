@@ -6,6 +6,10 @@
 #include "codelite_exports.h"
 #include "macros.h"
 
+#include <unordered_set>
+#include <vector>
+#include <wx/string.h>
+
 class WXDLLIMPEXP_CL CxxVariableScanner
 {
 protected:

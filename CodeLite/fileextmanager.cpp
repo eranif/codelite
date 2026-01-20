@@ -32,9 +32,7 @@
 #include <memory>
 #include <wx/filename.h>
 #include <wx/regex.h>
-#include <wx/thread.h>
 #include <wx/tokenzr.h>
-#include <wx/xml/xml.h>
 
 struct Matcher {
     std::unique_ptr<wxRegEx> m_regex;

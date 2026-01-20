@@ -6,6 +6,7 @@
 #include "StringUtils.h"
 #include "ThemeImporters/ThemeImporterManager.hpp"
 #include "cl_command_event.h"
+#include "cl_config.h"
 #include "cl_standard_paths.h"
 #include "codelite_events.h"
 #include "event_notifier.h"

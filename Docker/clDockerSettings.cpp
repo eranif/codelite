@@ -2,7 +2,7 @@
 
 #include "StdToWX.h"
 #include "cl_standard_paths.h"
-#include "globals.h"
+#include "fileutils.h"
 
 #ifdef __WXMSW__
 #include <wx/msw/registry.h>

@@ -23,10 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "cl_process.h"
-#include <wx/log.h>
+
 #include <wx/txtstrm.h>
-#include <wx/sstream.h>
-#include "procutils.h"
 
 clProcess::clProcess(int id, const wxString& cmdLine, bool redirect)
     : wxProcess(NULL, id)

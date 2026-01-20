@@ -3,7 +3,6 @@
 
 #include "JSON.h"
 #include "codelite_exports.h"
-#include "IPathConverter.hpp"
 
 namespace LSP
 {

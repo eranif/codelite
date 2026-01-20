@@ -1,12 +1,12 @@
 #ifndef MESSAGE_H
 #define MESSAGE_H
 
-#include "IPathConverter.hpp"
 #include "JSON.h"
 #include "JSONObject.h"
 #include "codelite_exports.h"
-#include <string>
+
 #include <memory>
+#include <string>
 
 namespace LSP
 {

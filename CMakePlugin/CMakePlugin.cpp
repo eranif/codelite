@@ -61,6 +61,7 @@
 #include "build_config.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "macromanager.h"
 #include "project.h"

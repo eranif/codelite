@@ -1,5 +1,4 @@
 #include "DidOpenTextDocumentRequest.h"
-#include "json_rpc_params.h"
 
 LSP::DidOpenTextDocumentRequest::DidOpenTextDocumentRequest(const wxString& filename, const wxString& text,
                                                             const wxString& language)

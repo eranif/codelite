@@ -1,5 +1,7 @@
 #include "clBitset.hpp"
 
+#include <cstring>
+
 #define CHECK_SIZE_RET_FALSE(pos) \
     if(pos >= BITS_SIZE)          \
     return false

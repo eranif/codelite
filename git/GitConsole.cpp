@@ -39,17 +39,14 @@
 #include "aui/clAuiToolBarArt.h"
 #include "aui/cl_aui_tool_stickness.h"
 #include "bitmap_loader.h"
-#include "clAnsiEscapeCodeColourBuilder.hpp"
-#include "clSTCHelper.hpp"
 #include "clSideBarCtrl.hpp"
 #include "clStrings.h"
 #include "clTempFile.hpp"
-#include "clToolBar.h"
 #include "cl_config.h"
-#include "drawingutils.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "fileextmanager.h"
+#include "fileutils.h"
 #include "git.h"
 #include "gitentry.h"
 #include "globals.h"
@@ -58,11 +55,8 @@
 #include "wxTerminalCtrl/wxTerminalOutputCtrl.hpp"
 
 #include <algorithm>
-#include <wx/datetime.h>
-#include <wx/icon.h>
 #include <wx/settings.h>
 #include <wx/tokenzr.h>
-#include <wx/wupdlock.h>
 
 #define GIT_MESSAGE(...) AddText(wxString::Format(__VA_ARGS__));
 #define GIT_MESSAGE1(...)

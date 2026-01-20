@@ -2,7 +2,6 @@
 #define HOVERREQUEST_HPP
 
 #include "LSP/Request.h"
-#include "LSP/ResponseMessage.h"
 
 namespace LSP
 {

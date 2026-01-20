@@ -30,10 +30,8 @@
 #include "NotebookNavigationDlg.h"
 #include "WelcomePage.h"
 #include "aui/clAuiFlatTabArt.hpp"
-#include "bookmark_manager.h"
 #include "clIdleEventThrottler.hpp"
 #include "clImageViewer.h"
-#include "clSTCHelper.hpp"
 #include "clWorkspaceManager.h"
 #include "cl_defs.h"
 #include "ctags_manager.h"
@@ -41,6 +39,7 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "filechecklist.h"
+#include "fileutils.h"
 #include "findreplacedlg.h"
 #include "frame.h"
 #include "globals.h"
@@ -52,13 +51,12 @@
 
 #include <algorithm>
 #include <unordered_map>
-#include <wx/aui/framemanager.h>
-#include <wx/msgdlg.h>
-#include <wx/regex.h>
 #include <wx/wupdlock.h>
-#include <wx/xrc/xmlres.h>
 
 #if wxHAS_MINIMAP
+
+#include "clSTCHelper.hpp"
+
 class MyMiniMap : public clStyledTextCtrlMiniMap
 {
 public:

@@ -5,15 +5,13 @@
 #include "CxxScannerTokens.h"
 #include "CxxVariableScanner.h"
 #include "StdToWX.h"
-#include "ctags_manager.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
 #include "fileutils.h"
-#include "function.h"
-#include "language.h"
 
 #include <algorithm>
 #include <deque>
+#include <wx/tokenzr.h>
 
 namespace
 {

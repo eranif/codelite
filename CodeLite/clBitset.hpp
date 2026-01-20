@@ -3,7 +3,6 @@
 
 #include "codelite_exports.h"
 
-#include <string.h>
 #include <wx/string.h>
 
 #define BITS_SIZE 64

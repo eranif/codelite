@@ -1,6 +1,7 @@
 #include "CompileFlagsTxt.h"
 
 #include "fileutils.h"
+#include "macros.h"
 
 #include <wx/tokenzr.h>
 

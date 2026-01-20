@@ -40,16 +40,14 @@
 #include "ai/LLMManager.hpp"
 #include "bitmap_loader.h"
 #include "clEditorBar.h"
-#include "clRemoteHost.hpp"
-#include "clSFTPManager.hpp"
 #include "clSideBarCtrl.hpp"
 #include "clStatusBar.h"
 #include "clStrings.h"
-#include "clWorkspaceManager.h"
 #include "dirsaver.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"
+#include "fileutils.h"
 #include "gitCloneDlg.h"
 #include "gitCommitDlg.h"
 #include "gitCommitListDlg.h"
@@ -75,6 +73,11 @@
 #endif
 #ifdef __WXGTK__
 #include <sys/wait.h>
+#endif
+#if USE_SFTP
+#include "clRemoteHost.hpp"
+#include "clSFTPManager.hpp"
+#include "clSSHChannel.hpp"
 #endif
 
 namespace

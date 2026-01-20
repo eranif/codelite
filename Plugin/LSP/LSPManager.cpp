@@ -17,18 +17,19 @@
 #include "ctags_manager.h"
 #include "event_notifier.h"
 #include "file_logger.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
 #include "macromanager.h"
 #include "macros.h"
-#include "wx/app.h"
 #include "wxCodeCompletionBoxManager.h"
 #if USE_SFTP
 #include "clSFTPManager.hpp"
 #endif
 
 #include <thread>
+#include <wx/app.h>
 #include <wx/arrstr.h>
 #include <wx/choicdlg.h>
 #include <wx/richmsgdlg.h>

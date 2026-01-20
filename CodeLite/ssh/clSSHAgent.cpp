@@ -7,7 +7,6 @@
 #include "procutils.h"
 
 #include <wx/filename.h>
-#include <wx/utils.h>
 
 #ifndef __WXMSW__
 static wxString& AddQuotesIfNeeded(wxString& str)

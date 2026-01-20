@@ -1,14 +1,15 @@
 #include "clEnvironment.hpp"
 
-#include "StringUtils.h"
 #include "archive.h"
 #include "cl_standard_paths.h"
 #include "fileutils.h"
 #include "xmlutils.h"
 
+#include <unordered_set>
 #include <wx/any.h>
 #include <wx/filename.h>
 #include <wx/regex.h>
+#include <wx/utils.h>
 #include <wx/xml/xml.h>
 
 namespace

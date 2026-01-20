@@ -29,7 +29,6 @@
 #include "codelite_exports.h"
 
 #include <atomic>
-#include <deque>
 #include <wx/event.h>
 #include <wx/thread.h>
 

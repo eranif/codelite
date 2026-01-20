@@ -29,6 +29,7 @@
 #include "codelite_exports.h"
 #include "macros.h"
 
+#include <unordered_map>
 #include <vector>
 #include <wx/colour.h>
 #include <wx/filename.h>

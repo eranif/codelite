@@ -6,16 +6,13 @@
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
-#include "globals.h"
-#include "mainbook.h"
+#include "fileutils.h"
 #include "manager.h"
 #include "shell_command.h"
 
-#include <wx/app.h>
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>
 #include <wx/sizer.h>
-#include <wx/tokenzr.h>
 
 BuildTab::BuildTab(wxWindow* parent)
     : wxPanel(parent, wxID_ANY)

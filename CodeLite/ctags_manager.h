@@ -26,16 +26,18 @@
 #ifndef CODELITE_CTAGS_MANAGER_H
 #define CODELITE_CTAGS_MANAGER_H
 
-#include "cl_command_event.h"
 #include "codelite_exports.h"
 #include "database/istorage.h"
-#include "language.h"
 #include "macros.h"
 #include "tags_options_data.h"
+#include "tag_tree.h"
 
 #include <wx/event.h>
 
 #define USE_TAGS_SQLITE3 1
+
+class Language;
+class TagsManagerST;
 
 struct DoxygenComment {
     wxString name;
@@ -86,8 +88,8 @@ enum FunctionFormatFlag {
  */
 class WXDLLIMPEXP_CL TagsManager : public wxEvtHandler
 {
-    friend class TagsManagerST;
-    friend class Language;
+    friend Language;
+    friend TagsManagerST;
 
 public:
     enum RetagType { Retag_Full, Retag_Quick, Retag_Quick_No_Scan };

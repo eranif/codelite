@@ -26,26 +26,23 @@
 
 #include "StringUtils.h"
 #include "build_settings_config.h"
-#include "buildmanager.h"
 #include "cl_command_event.h"
+#include "codelite_events.h"
 #include "configuration_mapping.h"
 #include "dirsaver.h"
-#include "editor_config.h"
 #include "environmentconfig.h"
 #include "envvarlist.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "macromanager.h"
 #include "macros.h"
 #include "project.h"
 
-#include <algorithm>
-#include <wx/app.h>
 #include <wx/msgdlg.h>
 #include <wx/sstream.h>
-#include <wx/stopwatch.h>
 #include <wx/tokenzr.h>
 
 static bool OS_WINDOWS = wxGetOsVersion() & wxOS_WINDOWS ? true : false;

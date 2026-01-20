@@ -1,5 +1,5 @@
 #include "PHPDocVar.h"
-#include <wx/regex.h>
+
 #include <wx/tokenzr.h>
 
 PHPDocVar::PHPDocVar(PHPSourceFile& sourceFile, const wxString& doc)

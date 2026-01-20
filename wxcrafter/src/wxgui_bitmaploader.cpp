@@ -1,11 +1,15 @@
 #include "wxgui_bitmaploader.h"
 
 #include "Zip/clZipReader.h"
-#include "clFilesCollector.h"
 #include "wxc_project_metadata.h"
 
+#include <unordered_map>
 #include <wx/filename.h>
 #include <wx/stdpaths.h>
+
+#ifdef __WXMSW__
+#include "cl_defs.h"
+#endif
 
 std::map<wxString, wxBitmap> wxCrafter::ResourceLoader::m_bitmaps;
 std::map<wxString, wxString> wxCrafter::ResourceLoader::m_files;

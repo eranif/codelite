@@ -1,8 +1,6 @@
 #include "LSP/MessageWithParams.h"
 
 #include "JSON.h"
-#include "file_logger.h"
-#include "fileutils.h"
 
 #include <sstream>
 #include <wx/string.h>

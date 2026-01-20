@@ -25,7 +25,6 @@
 #include "pluginmanager.h"
 
 #include "BuildTab.hpp"
-#include "Keyboard/clKeyboardManager.h"
 #include "SideBar.hpp"
 #include "StdToWX.h"
 #include "app.h"
@@ -38,22 +37,20 @@
 #include "cl_config.h"
 #include "cl_standard_paths.h"
 #include "ctags_manager.h"
-#include "debugger.h"
 #include "detachedpanesinfo.h"
 #include "editor_config.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileexplorer.h"
+#include "fileutils.h"
 #include "fileview.h"
 #include "findinfilesdlg.h"
 #include "frame.h"
 #include "language.h"
-#include "macromanager.h"
 #include "manager.h"
 #include "optionsconfig.h"
 #include "plugin_version.h"
-#include "procutils.h"
 #include "sessionmanager.h"
 #include "workspacetab.h"
 
@@ -61,9 +58,6 @@
 #include <optional>
 #include <wx/dir.h>
 #include <wx/filename.h>
-#include <wx/log.h>
-#include <wx/tokenzr.h>
-#include <wx/toolbook.h>
 #include <wx/xrc/xmlres.h>
 
 namespace

@@ -3,7 +3,6 @@
 #include "SocketAPI/clSocketClient.h"
 #include "SocketAPI/clSocketServer.h"
 #include "StringUtils.h"
-#include "fileutils.h"
 
 #include <wx/utils.h>
 

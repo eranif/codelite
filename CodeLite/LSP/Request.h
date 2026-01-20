@@ -1,11 +1,9 @@
 #pragma once
 
-#include "IPathConverter.hpp"
 #include "LSP/LSPEvent.h"
 #include "LSP/MessageWithParams.h"
 
 #include <functional>
-#include <wx/filename.h>
 #include <wx/string.h>
 #include <wx/thread.h>
 

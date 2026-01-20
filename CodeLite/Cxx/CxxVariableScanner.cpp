@@ -4,7 +4,6 @@
 #include "file_logger.h"
 
 #include <algorithm>
-#include <unordered_set>
 
 CxxVariableScanner::CxxVariableScanner(const wxString& buffer,
                                        eCxxStandard standard,

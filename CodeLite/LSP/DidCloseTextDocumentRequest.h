@@ -1,9 +1,7 @@
 #ifndef DIDCLOSETEXTDOCUMENTREQUEST_H
 #define DIDCLOSETEXTDOCUMENTREQUEST_H
 
-#include "LSP/MessageWithParams.h"
 #include "LSP/Notification.h"
-#include <wx/filename.h>
 
 namespace LSP
 {

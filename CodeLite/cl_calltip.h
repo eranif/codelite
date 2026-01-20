@@ -27,9 +27,9 @@
 
 #include "codelite_exports.h"
 #include "database/entry.h"
-#include "tokenizer.h"
 
 #include <memory>
+#include <vector>
 
 struct clTipInfo {
     wxString str;

@@ -2,6 +2,7 @@
 #define CXXTOKENIZER_H
 
 #include "CxxLexerAPI.h"
+#include "codelite_exports.h"
 
 class WXDLLIMPEXP_CL CxxTokenizer
 {

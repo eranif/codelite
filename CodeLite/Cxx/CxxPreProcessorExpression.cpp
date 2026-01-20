@@ -1,6 +1,4 @@
 #include "CxxPreProcessorExpression.h"
-#include <wx/window.h>
-#include <wx/utils.h>
 
 CxxPreProcessorExpression::CxxPreProcessorExpression(bool value)
     : m_valueLong(value ? 1 : 0)

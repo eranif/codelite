@@ -4,7 +4,6 @@
 #include "CompletionHelper.hpp"
 #include "Cxx/CxxCodeCompletion.hpp"
 #include "Cxx/CxxScannerTokens.h"
-#include "Cxx/CxxTokenizer.h"
 #include "Cxx/CxxVariableScanner.h"
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
@@ -18,12 +17,10 @@
 #include "database/tags_storage_sqlite3.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
-#include "tags_options_data.h"
+#include "fileutils.h"
 
 #include <deque>
-#include <iostream>
 #include <wx/filesys.h>
-#include <wx/stackwalk.h>
 
 using LSP::CompletionItem;
 using LSP::eSymbolKind;

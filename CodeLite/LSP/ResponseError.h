@@ -1,9 +1,8 @@
 #ifndef RESPONSEERROR_H
 #define RESPONSEERROR_H
 
-#include "codelite_exports.h"
-#include "JSON.h"
 #include "LSP/Message.h"
+#include "codelite_exports.h"
 
 namespace LSP
 {

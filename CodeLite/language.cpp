@@ -24,15 +24,11 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "language.h"
 
-#include "Cxx/CxxScannerTokens.h"
 #include "Cxx/CxxVariableScanner.h"
 #include "Cxx/y.tab.h"
 #include "code_completion_api.h"
 #include "ctags_manager.h"
-#include "file_logger.h"
 #include "precompiled_header.h"
-
-#include <algorithm>
 
 Language::Language()
     : m_expression(wxEmptyString)

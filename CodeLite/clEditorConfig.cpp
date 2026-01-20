@@ -3,7 +3,6 @@
 #include "file_logger.h"
 #include "fileutils.h"
 
-#include <algorithm>
 #include <wx/tokenzr.h>
 
 clEditorConfig::clEditorConfig()

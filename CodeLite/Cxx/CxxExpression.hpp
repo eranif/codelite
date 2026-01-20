@@ -3,7 +3,6 @@
 
 #include "CxxTokenizer.h"
 #include "codelite_exports.h"
-#include "database/entry.h"
 #include "macros.h"
 
 #include <vector>

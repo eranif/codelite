@@ -1,11 +1,7 @@
 #include "LLMManager.hpp"
 
 #include "FileManager.hpp"
-#include "JSON.h"
-#include "SFTPClientData.hpp"
 #include "assistant/assistant.hpp"
-#include "assistant/claude_client.hpp"
-#include "assistant/ollama_client.hpp"
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
 #include "cl_standard_paths.h"
@@ -13,9 +9,9 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
+#include "fileutils.h"
 #include "globals.h"
 
-#include <wx/choicdlg.h>
 #include <wx/msgdlg.h>
 #include <wx/xrc/xmlres.h>
 

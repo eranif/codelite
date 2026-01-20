@@ -29,6 +29,7 @@
 #include "asyncprocess.h"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
+
 #include <list>
 #include <wx/event.h>
 #include <wx/process.h>

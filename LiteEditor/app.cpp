@@ -49,6 +49,7 @@
 #include "file_logger.h"
 #include "fileexplorer.h"
 #include "fileextmanager.h"
+#include "fileutils.h"
 #include "frame.h"
 #include "globals.h"
 #include "manager.h"
@@ -57,15 +58,11 @@
 #include "singleinstancethreadjob.h"
 #include "stack_walker.h"
 
-#include <wx/crt.h>
 #include <wx/dir.h>
-#include <wx/fontmap.h>
-#include <wx/imagjpeg.h>
 #include <wx/msgdlg.h>
 #include <wx/persist.h>
 #include <wx/regex.h>
 #include <wx/socket.h>
-#include <wx/stream.h>
 #include <wx/sysopt.h>
 #include <wx/tooltip.h>
 #include <wx/txtstrm.h>

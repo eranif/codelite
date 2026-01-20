@@ -49,6 +49,10 @@
 #include <wx/dir.h>
 #include <wx/msgdlg.h>
 
+#if defined(__WXMSW__)
+#include "fileutils.h"
+#endif
+
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new RustPlugin(manager); }
 

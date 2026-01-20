@@ -2,9 +2,10 @@
 #define CLEDITOR_CONFIG_H
 
 #include "codelite_exports.h"
-#include <wx/string.h>
-#include <wx/filename.h>
+
 #include <vector>
+#include <wx/filename.h>
+#include <wx/string.h>
 
 class WXDLLIMPEXP_CL clEditorConfigSection
 {

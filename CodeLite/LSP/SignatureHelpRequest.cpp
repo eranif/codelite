@@ -1,5 +1,6 @@
-#include "LSP/LSPEvent.h"
 #include "SignatureHelpRequest.h"
+
+#include "LSP/LSPEvent.h"
 
 LSP::SignatureHelpRequest::SignatureHelpRequest(const wxString& filename, size_t line, size_t column)
     : m_filename(filename)

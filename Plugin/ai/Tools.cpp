@@ -6,16 +6,18 @@
 #include "ai/LLMManager.hpp"
 #include "assistant/function.hpp"
 #include "clFilesCollector.h"
-#include "clWorkspaceEvent.hpp"
 #include "clWorkspaceManager.h"
-#include "codelite_events.h"
-#include "event_notifier.h"
 #include "globals.h"
+#include "ssh/ssh_account_info.h"
 
 #include <future>
-#include <wx/dir.h>
 #include <wx/msgdlg.h>
 #include <wx/string.h>
+
+#if USE_SFTP
+#include "codelite_events.h"
+#include "event_notifier.h"
+#endif
 
 #ifndef __PRETTY_FUNCTION__
 #define __PRETTY_FUNCTION__ __func__

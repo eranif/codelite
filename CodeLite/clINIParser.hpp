@@ -2,6 +2,7 @@
 
 #include "codelite_exports.h"
 
+#include <vector>
 #include <wx/any.h>
 #include <wx/string.h>
 

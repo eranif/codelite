@@ -34,6 +34,7 @@
 #include "database/tags_storage_sqlite3.h"
 #include "event_notifier.h"
 #include "fileextmanager.h"
+#include "fileutils.h"
 #include "language.h"
 #include "precompiled_header.h"
 

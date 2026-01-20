@@ -1,6 +1,7 @@
 #include "clTempFile.hpp"
 
 #include "cl_standard_paths.h"
+#include "fileutils.h"
 
 clTempFile::clTempFile(const wxString& ext)
 {

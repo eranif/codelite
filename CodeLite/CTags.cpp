@@ -1,8 +1,8 @@
 #include "CTags.hpp"
 
 #include "AsyncProcess/asyncprocess.h"
-#include "cl_standard_paths.h"
 #include "clTempFile.hpp"
+#include "cl_standard_paths.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "procutils.h"

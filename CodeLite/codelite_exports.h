@@ -28,7 +28,6 @@
 
 #ifdef __WXMSW__
 
-#include <wx/string.h>
 #ifdef WXDLLIMPEXP_CL
 #undef WXDLLIMPEXP_CL
 #endif

@@ -1,10 +1,11 @@
 #include "FileManager.hpp"
 
+#include "clWorkspaceManager.h"
+#include "fileutils.h"
+
 #if USE_SFTP
 #include "clSFTPManager.hpp"
 #endif
-
-#include "clWorkspaceManager.h"
 
 wxString FileManager::GetFullPath(const wxString& name, const WriteOptions& options)
 {

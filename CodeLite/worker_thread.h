@@ -28,11 +28,9 @@
 #include "codelite_exports.h"
 
 #include <condition_variable>
-#include <deque>
 #include <mutex>
 #include <queue>
 #include <wx/event.h>
-#include <wx/msgqueue.h>
 #include <wx/thread.h>
 
 /**

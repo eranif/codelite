@@ -1,5 +1,5 @@
 #include "clAnagram.h"
-#include <algorithm>
+
 #include <wx/wxcrt.h>
 
 #define IS_WHITESPACE(ch) (ch == ' ' || ch == '\t' || ch == '\n' || ch == '\r')

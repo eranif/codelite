@@ -33,7 +33,6 @@
 #include "codelite_exports.h"
 #include "macros.h"
 
-#include <map>
 #include <memory>
 #include <vector>
 #include <wx/string.h>

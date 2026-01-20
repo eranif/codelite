@@ -3,8 +3,6 @@
 #include "file_logger.h"
 
 #include <algorithm>
-#include <vector>
-#include <wx/arrstr.h>
 #include <wx/tokenzr.h>
 
 clVersionString::clVersionString(const wxString& version_string)

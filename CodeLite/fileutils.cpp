@@ -35,6 +35,7 @@
 #include <cstdint>
 #include <cstring> // strerror
 #include <fstream>
+#include <random>
 #include <string>
 #include <wx/dir.h>
 #include <wx/ffile.h>
@@ -643,24 +644,22 @@ bool FileUtils::FindExe(const wxString& name,
 
 wxFileName FileUtils::CreateTempFileName(const wxString& folder, const wxString& prefix, const wxString& ext)
 {
-    static bool srandInit = false;
-    if (!srandInit) {
-        srand(time(nullptr));
-        srandInit = true;
-    }
-
     static const char alphanum[] = "0123456789"
                                    "abcdefghijklmnopqrstuvwxyz"
                                    "ABCDEFGHIJKLMNOPQRSTUVWXYZ";
-    size_t N = sizeof(alphanum) - 1;
-    wxString full_name = prefix;
-    full_name << "-";
-    for (size_t i = 0; i < 8; ++i) {
-        size_t index = rand() / (RAND_MAX / N + 1);
-        full_name += alphanum[index];
+    static std::random_device rd;
+    static std::mt19937 gen(rd());
+    static std::uniform_int_distribution<> dis(0, sizeof(alphanum) - 2);
+
+    const size_t NAME_LENGTH = 8;
+    wxString fullName = prefix + "-";
+
+    for (size_t i = 0; i < NAME_LENGTH; ++i) {
+        fullName += alphanum[dis(gen)];
     }
-    full_name += "." + ext;
-    return wxFileName(folder, full_name);
+
+    fullName += "." + ext;
+    return wxFileName(folder, fullName);
 }
 
 size_t FileUtils::FindSimilar(const wxFileName& filename,

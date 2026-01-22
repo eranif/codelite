@@ -1,51 +1,57 @@
-[submodule "ctags"]
-	path = submodules/ctags
-	url = https://github.com/eranif/ctags
-[submodule "wxdap"]
-	path = submodules/wxdap
-	url = https://github.com/eranif/wxdap
-[submodule "wx-config-msys2"]
-	path = submodules/wx-config-msys2
-	url = https://github.com/eranif/wx-config-msys2.git
-[submodule "yaml-cpp"]
-	path = submodules/yaml-cpp
-	url = https://github.com/jbeder/yaml-cpp
-[submodule "cc-wrapper"]
-	path = submodules/cc-wrapper
-	url = https://github.com/eranif/cc-wrapper
-[submodule "dtl"]
-	path = submodules/dtl
-	url = https://github.com/cubicdaiya/dtl.git
-[submodule "libssh"]
-	path = submodules/libssh
-	url = https://git.libssh.org/projects/libssh.git
-[submodule "zlib"]
-	path = submodules/zlib
-	url = https://github.com/madler/zlib
-[submodule "hunspell"]
-	path = submodules/hunspell
-	url = https://github.com/hunspell/hunspell.git
 [submodule "submodules/asio"]
 	path = submodules/asio
 	url = https://github.com/chriskohlhoff/asio.git
-[submodule "submodules/cJSON"]
-	path = submodules/cJSON
-	url = https://github.com/DaveGamble/cJSON
-[submodule "submodules/wxsf-code"]
-	path = submodules/wxsf-code
-	url = https://github.com/eranif/wxsf-code.git
-[submodule "submodules/lexilla"]
-	path = submodules/lexilla
-	url = https://github.com/eranif/lexilla.git
 [submodule "submodules/assistant"]
 	path = submodules/assistant
 	url = https://github.com/eranif/assistant.git
-[submodule "submodules/openssl-cmake"]
-	path = submodules/openssl-cmake
-	url = https://github.com/eranif/openssl-cmake.git
+[submodule "cc-wrapper"]
+	path = submodules/cc-wrapper
+	url = https://github.com/eranif/cc-wrapper
+[submodule "submodules/cJSON"]
+	path = submodules/cJSON
+	url = https://github.com/DaveGamble/cJSON
+[submodule "ctags"]
+	path = submodules/ctags
+	url = https://github.com/eranif/ctags
+[submodule "submodules/doctest"]
+	path = submodules/doctest
+	url = https://github.com/doctest/doctest
+[submodule "dtl"]
+	path = submodules/dtl
+	url = https://github.com/cubicdaiya/dtl.git
+[submodule "hunspell"]
+	path = submodules/hunspell
+	url = https://github.com/hunspell/hunspell.git
+[submodule "submodules/lexilla"]
+	path = submodules/lexilla
+	url = https://github.com/eranif/lexilla.git
+[submodule "libssh"]
+	path = submodules/libssh
+	url = https://git.libssh.org/projects/libssh.git
 [submodule "submodules/lua"]
 	path = submodules/lua
 	url = https://github.com/eranif/lua.git
 [submodule "submodules/LuaBridge"]
 	path = submodules/LuaBridge
 	url = https://github.com/eranif/LuaBridge.git
+[submodule "submodules/openssl-cmake"]
+	path = submodules/openssl-cmake
+	url = https://github.com/eranif/openssl-cmake.git
+[submodule "submodules/websocketpp"]
+	path = submodules/websocketpp
+	url = https://github.com/zaphoyd/websocketpp.git
+[submodule "wxdap"]
+	path = submodules/wxdap
+	url = https://github.com/eranif/wxdap
+[submodule "submodules/wxsf-code"]
+	path = submodules/wxsf-code
+	url = https://github.com/eranif/wxsf-code.git
+[submodule "wx-config-msys2"]
+	path = submodules/wx-config-msys2
+	url = https://github.com/eranif/wx-config-msys2.git
+[submodule "yaml-cpp"]
+	path = submodules/yaml-cpp
+	url = https://github.com/jbeder/yaml-cpp
+[submodule "zlib"]
+	path = submodules/zlib
+	url = https://github.com/madler/zlib

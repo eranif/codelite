@@ -6,7 +6,7 @@
 
 ## Overview
 
-CodeLite 18.2.0 ships with **ChatAI**, a built-in chat interface that connects to any language model you configure – locally (via an **Ollama** server) or remotely (e.g., Anthropic **Claude**). Adding new endpoints is now a guided wizard process, and all interactions are performed through a clean, toolbar-driven UI.
+CodeLite 18.2.0 ships with a built-in chat interface that connects to any language model you configure – locally (via an **Ollama** server) or remotely (e.g., Anthropic **Claude**). Adding new endpoints is now a guided wizard process, and all interactions are performed through a clean, toolbar-driven UI.
 
 ---
 
@@ -115,7 +115,25 @@ The model will automatically call `Read_the_compiler_build_output`, fetch the lo
 
 ---
 
-## 4. Placeholders
+## 4. External MCP Servers
+
+In addition to the built-in tools, CodeLite supports external MCP (Model Context Protocol) servers. You can integrate two types of external servers:
+
+- **SSE (Server-Sent Events) over HTTPS** — For remote server connections
+- **Local MCP Server (over STDIO)** — For locally running servers
+
+### Adding External MCP Servers
+
+To add an external MCP server, navigate to the menu bar and select one of the following options:
+
+| Server Type | Menu Path |
+|-------------|-----------|
+| Local MCP Server | `AI` → `Add New Local MCP Server` |
+| SSE MCP Server | `AI` → `Add New SSE MCP Server` |
+
+---
+
+## 5. Placeholders
 
 CodeLite offers a list of placeholders that can be used in prompts. This is useful when you want to create generic, reusable prompts.
 
@@ -129,9 +147,12 @@ CodeLite offers a list of placeholders that can be used in prompts. This is usef
 - `{{current_file_lang}}` – Programming language of the current file
 - `{{current_file_content}}` – Complete content of the current file
 
+!!! Note
+    Typing `{{` in the chat input will display a completion list.
+
 ---
 
-## 5. Prompt Editor
+## 6. Prompt Editor
 
 Several AI-powered actions are available with a single click. The prompts that drive those actions can be edited from **AI → Open Prompt Editor**.
 
@@ -146,7 +167,7 @@ The Prompt Editor lets you tweak the system prompt for each of these operations,
 
 ---
 
-## 6. AI-Powered IDE Features
+## 7. AI-Powered IDE Features
 
 ### Git Commit Message
 

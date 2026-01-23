@@ -24,7 +24,5 @@ AI-powered IDE:
 - MarkdownStyler: mark gcc style lines "file:line" as hyperlink and clickable.
 - Extend the "Prompt Editor" to support adding/deleting prompts (the default ones can not be deleted)
 - Add `codelite-api.lua` file to the installation folder to provide completion for LUA LSPs.
-- Add "Wizard" for adding new MCP server.
-- Support for SSE MCP server.
 
 Prepare release notes per version (e.g. 18.2.0, 18.3.0 etc)

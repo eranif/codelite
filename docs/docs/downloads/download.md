@@ -118,7 +118,11 @@ sudo apt install codelite=17.0*
 
 Historically, the official Debian/Ubuntu repositories only offered the very old CodeLite 6.1. Since Ubuntu 16.04 (xenial), they provide CodeLite 9.1 or newer, and Debian stretch offers 10.0. This created a name clash with our packages, so we added the suffix **unofficial** to our package names (e.g., `codelite_17.0-1unofficial.bullseye_amd64.deb`).
 
-*Note:* Debian 12 bookworm cannot handle the `unofficial` suffix, so we removed it for that release. Debian 13 trixie works with the suffix again.
+!!! Note
+    Debian 12 bookworm cannot handle the `unofficial` suffix, so we removed it for that release. Debian 13 trixie works with the suffix again.
+
+!!! Note
+    On debian 13 trixie, CodeLite 18.2.0 [will not run](https://github.com/eranif/codelite/issues/3762) unless the `libpcre2-32-0` package is installed. The debian build system failed to detected this, so I've added the dependency by hand for the current version, `18.2.0.1`
 
 ### CodeLite RPMs
 ---

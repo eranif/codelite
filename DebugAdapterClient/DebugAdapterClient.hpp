@@ -102,7 +102,6 @@ class DebugAdapterClient : public IPlugin
     DAPTextView* m_textView = nullptr;
     DAPTooltip* m_tooltip = nullptr;
     DAPDebuggerPane* m_debuggerPane = nullptr;
-    bool m_raisOnBpHit = true;
     bool m_isPerspectiveLoaded = false;
 
     friend class LLDBTooltip;

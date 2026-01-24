@@ -651,7 +651,6 @@ void DebugAdapterClient::DoCleanup()
 {
     m_client.Reset();
     ClearDebuggerMarker();
-    m_raisOnBpHit = false;
     StopProcess();
     m_session.Clear();
     m_terminal_helper.Terminate();

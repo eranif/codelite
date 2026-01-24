@@ -55,12 +55,6 @@ public:
     wxArrayString GetAllWorkspaces() const;
 
     /**
-     * @brief return an array containing the files mask for all the workspace
-     * types
-     */
-    wxArrayString GetUnifiedFilesMask() const;
-
-    /**
      * @brief do we have a workspace opened?
      */
     bool IsWorkspaceOpened() const { return m_workspace != NULL; }

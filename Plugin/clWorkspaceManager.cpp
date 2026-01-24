@@ -44,15 +44,6 @@ wxArrayString clWorkspaceManager::GetAllWorkspaces() const
     return all;
 }
 
-wxArrayString clWorkspaceManager::GetUnifiedFilesMask() const
-{
-    wxArrayString all;
-    for (IWorkspace* workspace : m_workspaces) {
-        all.Add(workspace->GetFilesMask());
-    }
-    return all;
-}
-
 /// ---------------------------------------------------------------------------
 /// ---------------------------------------------------------------------------
 

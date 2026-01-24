@@ -64,8 +64,3 @@ IEditor* LocalWorkspaceCommon::OpenFileInEditor(const wxString& filepath, bool c
     }
     return clGetManager()->CreateOrOpenLocalFile(local_file.GetFullPath());
 }
-
-IEditor* LocalWorkspaceCommon::CreateOrOpenSettingFile(const wxString& filename)
-{
-    return OpenFileInEditor(FileManager::GetSettingFileFullPath(filename), true);
-}

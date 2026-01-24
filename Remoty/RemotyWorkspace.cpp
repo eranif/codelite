@@ -1272,11 +1272,6 @@ IEditor* RemotyWorkspace::OpenFileInEditor(const wxString& filepath, bool create
     return editor;
 }
 
-IEditor* RemotyWorkspace::CreateOrOpenSettingFile(const wxString& filename)
-{
-    return OpenFileInEditor(FileManager::GetSettingFileFullPath(filename), true);
-}
-
 void RemotyWorkspace::OnStopFindInFiles(clFindInFilesEvent& event)
 {
     event.Skip();

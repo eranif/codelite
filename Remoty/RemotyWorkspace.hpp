@@ -122,7 +122,6 @@ public:
 
     /// Open a file, create if missing (configurable). Load the file into an editor
     IEditor* OpenFileInEditor(const wxString& filepath, bool createIfMissing = true) override;
-    IEditor* CreateOrOpenSettingFile(const wxString& filename) override;
 
     /**
      * @brief save the settings to the remote machine

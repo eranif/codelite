@@ -163,27 +163,6 @@ public:
                                            clFilesFinderMatchCallback match_cb = nullptr) const;
 
     /**
-     * @brief Search for a pattern in a specific list of files
-     * @param files List of file paths to search
-     * @param options Search options (pattern, case sensitivity, etc.)
-     * @param progress_cb Optional callback for progress reporting (return false to cancel)
-     * @param match_cb Optional callback called for each match found (return false to cancel)
-     * @return Vector of all matches found
-     */
-    std::vector<clFilesFinderMatch> SearchInFiles(const std::vector<wxString>& files,
-                                                  const clFilesFinderOptions& options,
-                                                  clFilesFinderProgressCallback progress_cb = nullptr,
-                                                  clFilesFinderMatchCallback match_cb = nullptr) const;
-
-    /**
-     * @brief Search for a pattern in a specific list of files (wxFileName overload)
-     */
-    std::vector<clFilesFinderMatch> SearchInFiles(const std::vector<wxFileName>& files,
-                                                  const clFilesFinderOptions& options,
-                                                  clFilesFinderProgressCallback progress_cb = nullptr,
-                                                  clFilesFinderMatchCallback match_cb = nullptr) const;
-
-    /**
      * @brief Search for a pattern in a specific list of files (wxArrayString overload)
      */
     std::vector<clFilesFinderMatch> SearchInFiles(const wxArrayString& files,

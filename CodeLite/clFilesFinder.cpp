@@ -55,46 +55,12 @@ std::vector<clFilesFinderMatch> clFilesFinder::Search(const wxFileName& root_fol
     return Search(root_folder.GetPath(), options, progress_cb, match_cb);
 }
 
-std::vector<clFilesFinderMatch> clFilesFinder::SearchInFiles(const std::vector<wxString>& files,
-                                                             const clFilesFinderOptions& options,
-                                                             clFilesFinderProgressCallback progress_cb,
-                                                             clFilesFinderMatchCallback match_cb) const
-{
-    if (options.find_what.IsEmpty() || files.empty()) {
-        return {};
-    }
-
-    return DoSearchInFiles(files, options, progress_cb, match_cb);
-}
-
-std::vector<clFilesFinderMatch> clFilesFinder::SearchInFiles(const std::vector<wxFileName>& files,
-                                                             const clFilesFinderOptions& options,
-                                                             clFilesFinderProgressCallback progress_cb,
-                                                             clFilesFinderMatchCallback match_cb) const
-{
-    // Convert wxFileName vector to wxString vector
-    std::vector<wxString> file_paths;
-    file_paths.reserve(files.size());
-    for (const auto& fn : files) {
-        file_paths.push_back(fn.GetFullPath());
-    }
-
-    return SearchInFiles(file_paths, options, progress_cb, match_cb);
-}
-
 std::vector<clFilesFinderMatch> clFilesFinder::SearchInFiles(const wxArrayString& files,
                                                              const clFilesFinderOptions& options,
                                                              clFilesFinderProgressCallback progress_cb,
                                                              clFilesFinderMatchCallback match_cb) const
 {
-    // Convert wxArrayString to std::vector<wxString>
-    std::vector<wxString> file_paths;
-    file_paths.reserve(files.size());
-    for (const auto& f : files) {
-        file_paths.push_back(f);
-    }
-
-    return SearchInFiles(file_paths, options, progress_cb, match_cb);
+    return DoSearchInFiles(files, options, progress_cb, match_cb);
 }
 
 std::vector<clFilesFinderMatch> clFilesFinder::DoSearchInFiles(const wxArrayString& files,

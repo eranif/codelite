@@ -85,12 +85,10 @@ public:
     void ClearRawString() { this->raw_string.clear(); }
     void ClearComment() { this->comment.clear(); }
     void SetLineNumber(int lineNumber) { this->lineNumber = lineNumber; }
-    void SetOwned(bool owned) { this->m_owned = owned; }
     void SetType(int type) { this->type = type; }
     int GetColumn() const { return column; }
     const std::string& GetComment() const { return comment; }
     int GetLineNumber() const { return lineNumber; }
-    bool IsOwned() const { return m_owned; }
     const char* GetText() const { return text; }
     void SetText(char* p) { text = p; }
     wxString GetWXComment() const { return wxString(comment.c_str(), wxConvISO8859_1); }

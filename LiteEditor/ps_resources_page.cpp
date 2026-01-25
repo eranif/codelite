@@ -27,12 +27,6 @@
 #include "macros.h"
 #include "globals.h"
 
-#ifdef __WXMSW__
-#    define IS_WINDOWS true
-#else
-#    define IS_WINDOWS false
-#endif
-
 PSResourcesPage::PSResourcesPage( wxWindow* parent, ProjectSettingsDlg *dlg )
     : PSResourcesPageBase( parent )
     , m_dlg(dlg)

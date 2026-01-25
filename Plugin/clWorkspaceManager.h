@@ -55,12 +55,6 @@ public:
     wxArrayString GetAllWorkspaces() const;
 
     /**
-     * @brief return an array containing the files mask for all the workspace
-     * types
-     */
-    wxArrayString GetUnifiedFilesMask() const;
-
-    /**
      * @brief do we have a workspace opened?
      */
     bool IsWorkspaceOpened() const { return m_workspace != NULL; }
@@ -81,11 +75,5 @@ public:
 
     /// Open (create if missing) `filepath` and load it into an editor.
     IEditor* OpenFileInEditor(const wxString& filepath, bool createIfMissing = true) override;
-
-    /// Open (create if missing) `filename` and load it into an editor. The file is searched (or created)
-    /// inside the workspace private folder (i.e. `.codelite`)
-    /// `filename`: the file name to open or create. It must not contain the path, only name + extension, e.g.
-    /// `codelite-remote.json`
-    IEditor* CreateOrOpenSettingFile(const wxString& filename) override;
 };
 #endif // CLWORKSPACEMANAGER_H

@@ -44,15 +44,6 @@ wxArrayString clWorkspaceManager::GetAllWorkspaces() const
     return all;
 }
 
-wxArrayString clWorkspaceManager::GetUnifiedFilesMask() const
-{
-    wxArrayString all;
-    for (IWorkspace* workspace : m_workspaces) {
-        all.Add(workspace->GetFilesMask());
-    }
-    return all;
-}
-
 /// ---------------------------------------------------------------------------
 /// ---------------------------------------------------------------------------
 
@@ -63,9 +54,4 @@ IEditor* LocalWorkspaceCommon::OpenFileInEditor(const wxString& filepath, bool c
         return nullptr;
     }
     return clGetManager()->CreateOrOpenLocalFile(local_file.GetFullPath());
-}
-
-IEditor* LocalWorkspaceCommon::CreateOrOpenSettingFile(const wxString& filename)
-{
-    return OpenFileInEditor(FileManager::GetSettingFileFullPath(filename), true);
 }

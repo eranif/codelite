@@ -62,11 +62,6 @@
 namespace
 {
 clModuleLogger LOG;
-#ifdef __WXMSW__
-constexpr bool IS_WINDOWS = true;
-#else
-constexpr bool IS_WINDOWS = false;
-#endif
 
 const wxString DAP_DEBUGGER_PANE = _("Debugger Client");
 const wxString DAP_MESSAGE_BOX_TITLE = "CodeLite - Debug Adapter Client";
@@ -656,7 +651,6 @@ void DebugAdapterClient::DoCleanup()
 {
     m_client.Reset();
     ClearDebuggerMarker();
-    m_raisOnBpHit = false;
     StopProcess();
     m_session.Clear();
     m_terminal_helper.Terminate();

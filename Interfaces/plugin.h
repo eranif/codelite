@@ -48,10 +48,8 @@
 #include <wx/toolbar.h>
 
 #ifdef _WIN32
-#define STDCALL __stdcall
 #define EXPORT __declspec(dllexport)
 #else
-#define STDCALL
 #define EXPORT
 #endif
 

@@ -41,11 +41,6 @@ wxDEFINE_EVENT(wxEVT_WELCOMEPAGE_CLOSE_BUTTON_CLICKED, clCommandEvent);
 
 namespace
 {
-void get_caption_colours(wxColour* bg_colour, wxColour* text_colour)
-{
-    *bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT);
-    *text_colour = clSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT);
-}
 
 std::unordered_map<wxString, wxColour> colours;
 
@@ -122,9 +117,6 @@ WelcomePage::WelcomePage(wxWindow* parent)
     GetSizer()->Layout();
     // set the focus to the tree
     m_dvTreeCtrlWorkspaces->CallAfter(&clTreeCtrl::SetFocus);
-
-    wxColour bg_colour, text_colour;
-    get_caption_colours(&bg_colour, &text_colour);
 }
 
 WelcomePage::~WelcomePage()
@@ -137,8 +129,6 @@ void WelcomePage::OnSize(wxSizeEvent& event) { event.Skip(); }
 void WelcomePage::OnThemeChanged(clCommandEvent& e)
 {
     e.Skip();
-    wxColour bg_colour, text_colour;
-    get_caption_colours(&bg_colour, &text_colour);
 
 #ifndef __WXMAC__
     SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());

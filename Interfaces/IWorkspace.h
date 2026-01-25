@@ -161,12 +161,6 @@ public:
 
     /// Open (or create if missing) `filepath` and load it into an editor.
     virtual IEditor* OpenFileInEditor(const wxString& filepath, bool createIfMissing = true) = 0;
-
-    /// Open (create if missing) `filename` and load it into an editor. The file is searched (or created)
-    /// inside the workspace private folder (i.e. `.codelite`).
-    /// `filename`: the file name to open or create. It must not contain the path, only name + extension, e.g.
-    /// `codelite-remote.json`
-    virtual IEditor* CreateOrOpenSettingFile(const wxString& filename) = 0;
 };
 
 #endif // IWORKSPACE_H

@@ -67,7 +67,7 @@ public:
 
     const wxString& GetVar() const;
     const wxString& GetReturn() const;
-    const bool IsReturnNullable() const;
+    bool IsReturnNullable() const;
     const wxString& GetParam(const wxString& name) const;
     const wxString& GetParam(size_t index) const;
     const PHPDocComment::Property::Map_t& GetProperties() const { return m_properties; }

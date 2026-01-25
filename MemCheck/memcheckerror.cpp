@@ -49,7 +49,7 @@ const wxString MemCheckErrorLocation::getObj(const wxString & workspacePath) con
     }
 }
 
-const bool MemCheckErrorLocation::isOutOfWorkspace(const wxString & workspacePath) const
+bool MemCheckErrorLocation::isOutOfWorkspace(const wxString& workspacePath) const
 {
     return !file.StartsWith(workspacePath);
 }
@@ -110,7 +110,7 @@ const wxString MemCheckError::getSuppression()
     return suppression;
 }
 
-const bool MemCheckError::hasPath(const wxString& path) const
+bool MemCheckError::hasPath(const wxString& path) const
 {
     for (const auto& location : locations)
         if (location.file.StartsWith(path))

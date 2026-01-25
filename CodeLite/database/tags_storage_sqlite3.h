@@ -276,7 +276,7 @@ public:
      * Test whether the database is opened
      * @return true if database is attached to a file
      */
-    const bool IsOpen() const;
+    bool IsOpen() const;
 
     /**
      * Return SQLite3 prepare statement object

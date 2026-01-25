@@ -312,7 +312,7 @@ public:
      * Test whether the database is opened
      * @return true if database is attached to a file
      */
-    virtual const bool IsOpen() const = 0;
+    virtual bool IsOpen() const = 0;
 
     /**
      * @brief return list of tags by scopes and kinds

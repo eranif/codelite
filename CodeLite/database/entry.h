@@ -260,12 +260,12 @@ public:
      * Test if this entry has been initialised.
      * \return true if this tag entry has been initialised
      */
-    const bool IsOk() const { return GetKind() != _T("<unknown>"); }
+    bool IsOk() const { return GetKind() != _T("<unknown>"); }
 
     /**
      * Test of this tag is a container (class, union, struct or namespace
      */
-    const bool IsContainer() const;
+    bool IsContainer() const;
 
     /**
      * @brief return true if this tag represents a constructor

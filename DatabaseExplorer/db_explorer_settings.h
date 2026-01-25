@@ -80,7 +80,7 @@ public:
     const wxString& GetServer() const {
         return m_server;
     }
-    const int  GetPort() const {
+    int  GetPort() const {
         return m_port;
     }
     const wxString& GetUsername() const {

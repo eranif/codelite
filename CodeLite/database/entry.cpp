@@ -226,7 +226,7 @@ wxString TagEntry::GetKind() const
     return kind;
 }
 
-const bool TagEntry::IsContainer() const
+bool TagEntry::IsContainer() const
 {
     return IsClass() || IsStruct() || IsUnion() || IsNamespace() || IsEnumClass();
 }

@@ -131,7 +131,7 @@ public:
      * @brief test if is NOT in workspace
      * @return true if location points to file not in workspace scope
      */
-    const bool isOutOfWorkspace(const wxString & workspacePath) const;
+    bool isOutOfWorkspace(const wxString& workspacePath) const;
 
     wxString func;
     wxString file;
@@ -182,7 +182,7 @@ public:
      * @param path
      * @return True if at least one file is in path, otherwise false.
      */
-    const bool hasPath(const wxString & path) const;
+    bool hasPath(const wxString& path) const;
 
     Type type;
     bool suppressed;

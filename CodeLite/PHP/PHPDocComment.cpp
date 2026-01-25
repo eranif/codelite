@@ -110,7 +110,7 @@ const wxString& PHPDocComment::GetParam(size_t n) const
 
 const wxString& PHPDocComment::GetReturn() const { return m_returnValue; }
 
-const bool PHPDocComment::IsReturnNullable() const { return m_returnNullable; }
+bool PHPDocComment::IsReturnNullable() const { return m_returnNullable; }
 
 const wxString& PHPDocComment::GetVar() const { return m_varType; }
 

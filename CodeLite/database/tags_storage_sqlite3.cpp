@@ -350,7 +350,7 @@ void TagsStorageSQLite::ExecuteUpdate(const wxString& sql)
     }
 }
 
-const bool TagsStorageSQLite::IsOpen() const { return m_db->IsOpen(); }
+bool TagsStorageSQLite::IsOpen() const { return m_db->IsOpen(); }
 
 void TagsStorageSQLite::GetFilesForCC(const wxString& userTyped, wxArrayString& matches)
 {

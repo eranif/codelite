@@ -215,6 +215,33 @@ FunctionResult ListFiles([[maybe_unused]] const assistant::json& args);
  */
 FunctionResult CreateWorkspace([[maybe_unused]] const assistant::json& args);
 
+/**
+ * @brief Searches for text occurrences in files within a specified directory tree.
+ *
+ * Recursively scans the given root directory for files matching the provided pattern,
+ * then searches each file for the specified text. Results are returned as a JSON array
+ * of match objects. This function is thread-safe but issues a warning if called from
+ * the main thread due to potential UI freezing.
+ *
+ * @param args JSON object containing the following required fields:
+ *   - @b root_folder (string): The directory path to begin searching from.
+ *   - @b find_what (string): The text to search for in files.
+ *   - @b file_pattern (string): File wildcard pattern (e.g., "*.cpp") to filter files.
+ *   Optional fields:
+ *   - @b whole_word (bool, default=true): If true, only match whole words.
+ *   - @b case_sensitive (bool, default=true): If true, perform case-sensitive search.
+ *
+ * @return FunctionResult containing either:
+ *   - On success: A UTF-8 encoded JSON string (as wxString) with an array of match objects.
+ *   - On failure: An error message string if arguments are invalid or search fails.
+ *
+ * @throws None directly, but may propagate exceptions from filesystem operations or JSON parsing.
+ *
+ * @see clFilesFinder::Search()
+ * @see assistant::GetFunctionArg()
+ */
+FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args);
+
 /// Populate the function table with the built-in functions provided by CodeLite
 /// to the model.
 void PopulateBuiltInFunctions(FunctionTable& table);

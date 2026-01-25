@@ -6,6 +6,7 @@
 #include "ai/LLMManager.hpp"
 #include "assistant/function.hpp"
 #include "clFilesCollector.h"
+#include "clFilesFinder.h"
 #include "clWorkspaceManager.h"
 #include "globals.h"
 #include "ssh/ssh_account_info.h"
@@ -126,6 +127,28 @@ void PopulateBuiltInFunctions(FunctionTable& table)
             .AddRequiredParam("path", " The directory path where the workspace should be created", "string")
             .AddOptionalParam("name", "The name of the workspace to create", "string")
             .AddOptionalParam("host", "The SSH host for creating a remote workspace", "string")
+            .Build());
+    table.Add(
+        FunctionBuilder("Find_in_files")
+            .SetDescription(R"(Search for a given pattern within files in a directory.
+Description:
+This function searches for a specified text pattern across files within a directory structure.
+Parameters:
+- Search String (string, required): The text pattern to search for.
+- File Pattern (string, required): The file pattern to match, such as "*.txt" or "*.py".
+- Root Folder (string, required): The root directory where the search begins.
+- Whole Word (boolean, optional): When enabled, matches only complete words.
+- Case Sensitive (boolean, optional): When enabled, performs case-sensitive matching.)")
+            .SetCallback(FindInFiles)
+            .AddRequiredParam("root_folder", "The root directory where the search begins", "string")
+            .AddRequiredParam("find_what", "The text pattern to search fore", "string")
+            .AddRequiredParam("file_pattern",
+                              "The file pattern to match, such as \"*.txt\" or \"*.py\". Use semi-colon list to "
+                              "pass multiple patterns.",
+                              "string")
+            .AddOptionalParam("whole_word", "When enabled, matches only complete words. Default is true.", "boolean")
+            .AddOptionalParam(
+                "case_sensitive", "When enabled, performs case-sensitive matching. Default is true.", "boolean")
             .Build());
 }
 
@@ -367,6 +390,37 @@ FunctionResult CreateWorkspace([[maybe_unused]] const assistant::json& args)
         }
     };
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
+}
+
+FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
+{
+    if (wxThread::IsMain()) {
+        clWARNING() << "Running Find-In-Files on the main thread" << endl;
+    }
+
+    if (args.size() < 3) {
+        return Err("Invalid number of arguments");
+    }
+
+    ASSIGN_FUNC_ARG_OR_RETURN(std::string root_dir, ::assistant::GetFunctionArg<std::string>(args, "root_folder"));
+    ASSIGN_FUNC_ARG_OR_RETURN(std::string find_what, ::assistant::GetFunctionArg<std::string>(args, "find_what"));
+    ASSIGN_FUNC_ARG_OR_RETURN(std::string file_pattern, ::assistant::GetFunctionArg<std::string>(args, "file_pattern"));
+    bool whole_word = assistant::GetFunctionArg<bool>(args, "whole_word").value_or(true);
+    bool case_sensitive = assistant::GetFunctionArg<bool>(args, "case_sensitive").value_or(true);
+
+    clFilesFinder finder;
+    auto matches = finder.Search(root_dir,
+                                 clFilesFinderOptions{
+                                     .find_what = find_what,
+                                     .is_case_sensitive = case_sensitive,
+                                     .is_whole_match = whole_word,
+                                     .file_spec = file_pattern,
+                                 });
+    assistant::json j = assistant::json::array();
+    for (const auto& match : matches) {
+        j.push_back(match.ToJson());
+    }
+    return Ok(wxString::FromUTF8(j.dump()));
 }
 
 } // namespace llm

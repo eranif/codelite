@@ -130,9 +130,11 @@ git submodule update --init
 mkdir .build-release
 cd .build-release
 cmake .. -DCMAKE_BUILD_TYPE=Release \
-         -DwxBUILD_DEBUG_LEVEL=0 \
-         -DwxBUILD_MONOLITHIC=1 \
-         -DwxBUILD_SAMPLES=ALL
+         -DwxBUILD_DEBUG_LEVEL=0    \
+         -DwxBUILD_MONOLITHIC=1     \
+         -DwxBUILD_SAMPLES=ALL      \
+         -DwxUSE_SYS_LIBS=OFF       \
+         -DwxUSE_LUNASVG=OFF
 make -j$(sysctl -n hw.physicalcpu)
 sudo make install
 ```

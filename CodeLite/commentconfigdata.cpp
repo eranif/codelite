@@ -31,8 +31,8 @@ CommentConfigData::CommentConfigData()
     m_classPattern << " * @author $(User)\n";
     m_classPattern << " * @date $(Date)\n";
     m_classPattern << " * @file $(CurrentFileName).$(CurrentFileExt)\n";
-    m_classPattern << " * @brief \n";
-    m_functionPattern << " * @brief \n";
+    m_classPattern << " * @brief |\n";
+    m_functionPattern << " * @brief |\n";
 }
 
 void CommentConfigData::DeSerialize(Archive& arch)

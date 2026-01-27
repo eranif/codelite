@@ -22,6 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+
 #include "commentconfigdata.h"
 
 CommentConfigData::CommentConfigData()
@@ -40,9 +41,7 @@ void CommentConfigData::DeSerialize(Archive& arch)
     arch.Read("m_continueCppComment", m_continueCppComment);
     arch.Read("m_autoInsert", m_autoInsert);
     arch.Read("m_useQtStyle", m_useQtStyle);
-    m_classPattern.Replace("|", "\n");
-    arch.Read("m_functionPattern", m_functionPattern);
-    m_functionPattern.Replace("|", "\n");
+    arch.Read("m_classPattern", m_classPattern);
     arch.Read("m_functionPattern", m_functionPattern);
 }
 
@@ -52,8 +51,6 @@ void CommentConfigData::Serialize(Archive& arch)
     arch.Write("m_continueCppComment", m_continueCppComment);
     arch.Write("m_autoInsert", m_autoInsert);
     arch.Write("m_useQtStyle", m_useQtStyle);
-    m_classPattern.Replace("\n", "|");
     arch.Write("m_classPattern", m_classPattern);
-    m_functionPattern.Replace("\n", "|");
     arch.Write("m_functionPattern", m_functionPattern);
 }

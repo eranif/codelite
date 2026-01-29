@@ -14,6 +14,7 @@ extern void wxCE8CInitBitmapResources();
 namespace
 {
 // return the wxBORDER_SIMPLE that matches the current application theme
+[[maybe_unused]]
 wxBorder get_border_simple_theme_aware_bit()
 {
 #if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
@@ -204,21 +205,6 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(
 
     flexGridSizer31->Add(m_textCtrlUsername, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText41 =
-        new wxStaticText(this, wxID_ANY, _("Password:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    flexGridSizer31->Add(m_staticText41, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
-
-    m_textCtrlPassword =
-        new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTE_PASSWORD);
-    m_textCtrlPassword->SetToolTip(_("This field is optional. By leaving this field empty, codelite will attempt to "
-                                     "connect only using public key authentication"));
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlPassword->SetHint(wxT(""));
-#endif
-
-    flexGridSizer31->Add(m_textCtrlPassword, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
     m_staticText110 =
         new wxStaticText(this, wxID_ANY, _("Default folder:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
@@ -226,67 +212,118 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(
 
     m_textCtrlHomeFolder =
         new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_textCtrlHomeFolder->SetToolTip(_("Set the home folder for this account"));
+    m_textCtrlHomeFolder->SetToolTip(_("Optionally, set the home folder for this account"));
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlHomeFolder->SetHint(wxT(""));
 #endif
 
     flexGridSizer31->Add(m_textCtrlHomeFolder, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText217 = new wxStaticText(
-        this, wxID_ANY, _("Additional key files:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_staticLine234 =
+        new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxLI_HORIZONTAL);
 
-    flexGridSizer31->Add(m_staticText217, 0, wxALL | wxALIGN_RIGHT, WXC_FROM_DIP(5));
+    boxSizer23->Add(m_staticLine234, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_additionalFiles = new clThemedSTC(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    // Configure the fold margin
-    m_additionalFiles->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
-    m_additionalFiles->SetMarginMask(4, wxSTC_MASK_FOLDERS);
-    m_additionalFiles->SetMarginSensitive(4, true);
-    m_additionalFiles->SetMarginWidth(4, 0);
+    m_choicebookLogin =
+        new wxChoicebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxBK_DEFAULT);
+    m_choicebookLogin->SetName(wxT("m_choicebookLogin"));
 
-    // Configure the tracker margin
-    m_additionalFiles->SetMarginWidth(1, 0);
+    boxSizer23->Add(m_choicebookLogin, 1, wxALL | wxEXPAND, WXC_FROM_DIP(10));
 
-    // Configure the symbol margin
-    m_additionalFiles->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
-    m_additionalFiles->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
-    m_additionalFiles->SetMarginWidth(2, 0);
-    m_additionalFiles->SetMarginSensitive(2, true);
+    m_panelPublicKey = new wxPanel(
+        m_choicebookLogin, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_choicebookLogin, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_choicebookLogin->AddPage(m_panelPublicKey, _("Login method: public key"), false);
 
-    // Configure the line numbers margin
-    m_additionalFiles->SetMarginType(0, wxSTC_MARGIN_NUMBER);
-    m_additionalFiles->SetMarginWidth(0, 0);
+    wxBoxSizer* boxSizer232 = new wxBoxSizer(wxVERTICAL);
+    m_panelPublicKey->SetSizer(boxSizer232);
 
-    // Configure the line symbol margin
-    m_additionalFiles->SetMarginType(3, wxSTC_MARGIN_FORE);
-    m_additionalFiles->SetMarginMask(3, 0);
-    m_additionalFiles->SetMarginWidth(3, 0);
-    // Select the lexer
-    m_additionalFiles->SetLexer(wxSTC_LEX_NULL);
-    // Set default font / styles
-    m_additionalFiles->StyleClearAll();
-    m_additionalFiles->SetWrapMode(2);
-    m_additionalFiles->SetIndentationGuides(0);
-    m_additionalFiles->SetEOLMode(2);
-    m_additionalFiles->SetKeyWords(0, wxT(""));
-    m_additionalFiles->SetKeyWords(1, wxT(""));
-    m_additionalFiles->SetKeyWords(2, wxT(""));
-    m_additionalFiles->SetKeyWords(3, wxT(""));
-    m_additionalFiles->SetKeyWords(4, wxT(""));
+    wxFlexGridSizer* flexGridSizer226 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer226->SetFlexibleDirection(wxBOTH);
+    flexGridSizer226->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer226->AddGrowableCol(1);
 
-    flexGridSizer31->Add(m_additionalFiles, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer232->Add(flexGridSizer226, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText217 = new wxStaticText(m_panelPublicKey,
+                                       wxID_ANY,
+                                       _("Use different key:"),
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelPublicKey, wxSize(-1, -1)),
+                                       0);
+
+    flexGridSizer226->Add(m_staticText217, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_filePickerSSHKey =
+        new wxFilePickerCtrl(m_panelPublicKey,
+                             wxID_ANY,
+                             wxEmptyString,
+                             _("Select a file"),
+                             wxT("*"),
+                             wxDefaultPosition,
+                             wxDLG_UNIT(m_panelPublicKey, wxSize(-1, -1)),
+                             wxFLP_DEFAULT_STYLE | wxFLP_USE_TEXTCTRL | wxFLP_SMALL | wxFLP_FILE_MUST_EXIST);
+    m_filePickerSSHKey->SetToolTip(_("Optionally, choose an SSH key for login; if none is selected, CodeLite will fall "
+                                     "back to your default public key."));
+
+    flexGridSizer226->Add(m_filePickerSSHKey, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    flexGridSizer226->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
+
+    m_checkBoxPassphrase = new wxCheckBox(m_panelPublicKey,
+                                          wxID_ANY,
+                                          _("Use passphrase"),
+                                          wxDefaultPosition,
+                                          wxDLG_UNIT(m_panelPublicKey, wxSize(-1, -1)),
+                                          0);
+    m_checkBoxPassphrase->SetValue(false);
+    m_checkBoxPassphrase->SetToolTip(_("Check this if this SSH key requires passpharse."));
+
+    flexGridSizer226->Add(m_checkBoxPassphrase, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_panelPassword = new wxPanel(
+        m_choicebookLogin, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_choicebookLogin, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_choicebookLogin->AddPage(m_panelPassword, _("Login method: password"), false);
+
+    wxBoxSizer* boxSizer233 = new wxBoxSizer(wxVERTICAL);
+    m_panelPassword->SetSizer(boxSizer233);
+
+    wxFlexGridSizer* flexGridSizer225 = new wxFlexGridSizer(0, 2, 0, 0);
+    flexGridSizer225->SetFlexibleDirection(wxBOTH);
+    flexGridSizer225->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    flexGridSizer225->AddGrowableCol(1);
+
+    boxSizer233->Add(flexGridSizer225, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticText41 = new wxStaticText(
+        m_panelPassword, wxID_ANY, _("Password:"), wxDefaultPosition, wxDLG_UNIT(m_panelPassword, wxSize(-1, -1)), 0);
+
+    flexGridSizer225->Add(m_staticText41, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_textCtrlPassword = new wxTextCtrl(m_panelPassword,
+                                        wxID_ANY,
+                                        wxT(""),
+                                        wxDefaultPosition,
+                                        wxDLG_UNIT(m_panelPassword, wxSize(-1, -1)),
+                                        wxTE_PASSWORD);
+#if wxVERSION_NUMBER >= 3000
+    m_textCtrlPassword->SetHint(wxT(""));
+#endif
+
+    flexGridSizer225->Add(m_textCtrlPassword, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_staticLine235 =
+        new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxLI_HORIZONTAL);
+
+    boxSizer23->Add(m_staticLine235, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    wxBoxSizer* boxSizer29 = new wxBoxSizer(wxHORIZONTAL);
+
+    boxSizer23->Add(boxSizer29, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
 
     m_button51 =
         new wxButton(this, wxID_ANY, _("Test Connection"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
-    boxSizer23->Add(m_button51, 0, wxALL | wxEXPAND, WXC_FROM_DIP(10));
-
-    boxSizer23->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
-
-    wxBoxSizer* boxSizer29 = new wxBoxSizer(wxHORIZONTAL);
-
-    boxSizer23->Add(boxSizer29, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+    boxSizer29->Add(m_button51, 0, wxALL | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_button27 = new wxButton(this, wxID_OK, _("&OK"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button27->SetDefault();
@@ -296,6 +333,14 @@ AddSSHAcountDlgBase::AddSSHAcountDlgBase(
     m_button25 = new wxButton(this, wxID_CANCEL, _("&Cancel"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
 
     boxSizer29->Add(m_button25, 0, wxALL, WXC_FROM_DIP(5));
+
+#if wxVERSION_NUMBER >= 2900
+    if (!wxPersistenceManager::Get().Find(m_choicebookLogin)) {
+        wxPersistenceManager::Get().RegisterAndRestore(m_choicebookLogin);
+    } else {
+        wxPersistenceManager::Get().Restore(m_choicebookLogin);
+    }
+#endif
 
     SetName(wxT("AddSSHAcountDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));

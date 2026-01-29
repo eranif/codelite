@@ -21,9 +21,12 @@
 #include <wx/infobar.h>
 #include <wx/stattext.h>
 #include <wx/textctrl.h>
-#include <wx/stc/stc.h>
-#include "clThemedSTC.hpp"
+#include <wx/statline.h>
+#include <wx/choicebk.h>
 #include <wx/panel.h>
+#include <wx/imaglist.h>
+#include <wx/filepicker.h>
+#include <wx/checkbox.h>
 #include <wx/toolbar.h>
 #include "clToolBar.h"
 #include <wx/choice.h>
@@ -32,7 +35,6 @@
 #include "clThemedComboBox.hpp"
 #include "clThemedTextCtrl.hpp"
 #include "clThemedChoice.h"
-#include <wx/checkbox.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -99,12 +101,18 @@ protected:
     wxTextCtrl* m_textCtrlPort;
     wxStaticText* m_staticText37;
     wxTextCtrl* m_textCtrlUsername;
-    wxStaticText* m_staticText41;
-    wxTextCtrl* m_textCtrlPassword;
     wxStaticText* m_staticText110;
     wxTextCtrl* m_textCtrlHomeFolder;
+    wxStaticLine* m_staticLine234;
+    wxChoicebook* m_choicebookLogin;
+    wxPanel* m_panelPublicKey;
     wxStaticText* m_staticText217;
-    clThemedSTC* m_additionalFiles;
+    wxFilePickerCtrl* m_filePickerSSHKey;
+    wxCheckBox* m_checkBoxPassphrase;
+    wxPanel* m_panelPassword;
+    wxStaticText* m_staticText41;
+    wxTextCtrl* m_textCtrlPassword;
+    wxStaticLine* m_staticLine235;
     wxButton* m_button51;
     wxButton* m_button27;
     wxButton* m_button25;
@@ -125,12 +133,18 @@ public:
     wxTextCtrl* GetTextCtrlPort() { return m_textCtrlPort; }
     wxStaticText* GetStaticText37() { return m_staticText37; }
     wxTextCtrl* GetTextCtrlUsername() { return m_textCtrlUsername; }
-    wxStaticText* GetStaticText41() { return m_staticText41; }
-    wxTextCtrl* GetTextCtrlPassword() { return m_textCtrlPassword; }
     wxStaticText* GetStaticText110() { return m_staticText110; }
     wxTextCtrl* GetTextCtrlHomeFolder() { return m_textCtrlHomeFolder; }
+    wxStaticLine* GetStaticLine234() { return m_staticLine234; }
     wxStaticText* GetStaticText217() { return m_staticText217; }
-    clThemedSTC* GetAdditionalFiles() { return m_additionalFiles; }
+    wxFilePickerCtrl* GetFilePickerSSHKey() { return m_filePickerSSHKey; }
+    wxCheckBox* GetCheckBoxPassphrase() { return m_checkBoxPassphrase; }
+    wxPanel* GetPanelPublicKey() { return m_panelPublicKey; }
+    wxStaticText* GetStaticText41() { return m_staticText41; }
+    wxTextCtrl* GetTextCtrlPassword() { return m_textCtrlPassword; }
+    wxPanel* GetPanelPassword() { return m_panelPassword; }
+    wxChoicebook* GetChoicebookLogin() { return m_choicebookLogin; }
+    wxStaticLine* GetStaticLine235() { return m_staticLine235; }
     wxButton* GetButton51() { return m_button51; }
     wxButton* GetButton27() { return m_button27; }
     wxButton* GetButton25() { return m_button25; }

@@ -78,8 +78,8 @@ public:
 // ================================================================================
 // ================================================================================
 
-SFTPBrowserDlg::SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wxString& filter, size_t flags,
-                               const wxString& selectedAccount)
+SFTPBrowserDlg::SFTPBrowserDlg(
+    wxWindow* parent, const wxString& title, const wxString& filter, size_t flags, const wxString& selectedAccount)
     : SFTPBrowserBaseDlg(parent)
     , m_sftp(NULL)
     , m_filter(filter)
@@ -426,13 +426,13 @@ void SFTPBrowserDlg::DoBrowse()
 
     SSHAccountInfo account;
     if (!settings.GetAccount(accountName, account)) {
-        ::wxMessageBox(wxString() << _("Could not find account: ") << accountName, "CodeLite", wxICON_ERROR | wxOK,
-                       this);
+        ::wxMessageBox(
+            wxString() << _("Could not find account: ") << accountName, "CodeLite", wxICON_ERROR | wxOK, this);
         return;
     }
 
-    clSSH::Ptr_t ssh(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetKeyFiles(),
-                               account.GetPort()));
+    clSSH::Ptr_t ssh(new clSSH(
+        account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetKeyFile(), account.GetPort()));
     try {
         wxString message;
         EnvSetter env;

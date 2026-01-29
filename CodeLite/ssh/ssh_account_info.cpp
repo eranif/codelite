@@ -27,6 +27,8 @@
 
 #include "xor_string.h"
 
+#include <algorithm>
+
 SSHAccountInfo::SSHAccountInfo()
     : clConfigItem("ssh-account")
     , m_port(22)
@@ -44,7 +46,13 @@ void SSHAccountInfo::FromJSON(const JSONItem& json)
     m_host = json.namedObject("m_host").toString();
     m_bookmarks = json.namedObject("m_bookmarks").toArrayString();
     m_defaultFolder = json.namedObject("m_defaultFolder").toString();
-    m_keyFiles = json.namedObject("m_keyFiles").toArrayString();
+    auto key_files = json.namedObject("m_keyFiles").toArrayString();
+    bool passphrase_required = json.namedObject("passphrase_required").toBool(false);
+    m_keyFile = {};
+    if (!key_files.empty()) {
+        m_keyFile.path = key_files.Item(0);
+    }
+    m_keyFile.passphrase_required = passphrase_required;
 }
 
 JSONItem SSHAccountInfo::ToJSON() const
@@ -56,7 +64,13 @@ JSONItem SSHAccountInfo::ToJSON() const
     element.addProperty("m_host", m_host);
     element.addProperty("m_bookmarks", m_bookmarks);
     element.addProperty("m_defaultFolder", m_defaultFolder);
-    element.addProperty("m_keyFiles", m_keyFiles);
+
+    wxArrayString key_files;
+    if (m_keyFile.path.has_value()) {
+        key_files.push_back(m_keyFile.path.value());
+    }
+    element.addProperty("m_keyFiles", key_files);
+    element.addProperty("passphrase_required", m_keyFile.passphrase_required);
     XORString x(m_password);
     element.addProperty("m_password", x.Encrypt());
     return element;
@@ -118,9 +132,4 @@ wxString SSHAccountInfo::GetSSHClient()
     return root.toElement()["sftp-settings"]["sshClient"].toString();
 }
 
-void SSHAccountInfo::AddKeyFile(const wxString& filepath)
-{
-    if (m_keyFiles.Index(filepath) == wxNOT_FOUND) {
-        m_keyFiles.Add(filepath);
-    }
-}
+void SSHAccountInfo::SetKeyFile(const KeyInfo& key_info) { m_keyFile = key_info; }

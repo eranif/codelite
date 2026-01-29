@@ -25,6 +25,7 @@
 
 #if USE_SFTP
 #include "StringUtils.h"
+#include "event_notifier.h"
 #include "file_logger.h"
 
 #include <wx/string.h>
@@ -39,6 +40,7 @@
 
 #include <chrono>
 #include <libssh/libssh.h>
+#include <optional>
 #include <thread>
 
 wxDEFINE_EVENT(wxEVT_SSH_COMMAND_OUTPUT, clCommandEvent);
@@ -46,7 +48,8 @@ wxDEFINE_EVENT(wxEVT_SSH_COMMAND_COMPLETED, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SSH_COMMAND_ERROR, clCommandEvent);
 wxDEFINE_EVENT(wxEVT_SSH_CONNECTED, clCommandEvent);
 
-clSSH::clSSH(const wxString& host, const wxString& user, const wxString& pass, const wxArrayString& keyFiles, int port)
+clSSH::clSSH(
+    const wxString& host, const wxString& user, const wxString& pass, const SSHAccountInfo::KeyInfo& key, int port)
     : m_host(host)
     , m_username(user)
     , m_password(pass)
@@ -56,7 +59,7 @@ clSSH::clSSH(const wxString& host, const wxString& user, const wxString& pass, c
     , m_channel(nullptr)
     , m_timer(nullptr)
     , m_owner(nullptr)
-    , m_keyFiles(keyFiles)
+    , m_key(key)
 {
     m_timer = new wxTimer(this);
     Bind(wxEVT_TIMER, &clSSH::OnCheckRemoteOutput, this, m_timer->GetId());
@@ -318,6 +321,9 @@ bool clSSH::LoginInteractiveKBD(bool throwExc)
     return false;
 }
 
+#include <functional>
+#include <future>
+
 namespace
 {
 const char* SshAuthReturnCodeToString(int rc)
@@ -338,6 +344,21 @@ const char* SshAuthReturnCodeToString(int rc)
     }
     return "";
 }
+
+wxString RunOnMain(std::function<wxString()> callback)
+{
+    if (wxThread::IsMain()) {
+        return callback();
+    } else {
+        auto promise_ptr = std::make_shared<std::promise<wxString>>();
+        auto f = promise_ptr->get_future();
+        auto wrapper_cb = [callback = std::move(callback), promise_ptr]() { promise_ptr->set_value(callback()); };
+        // Run the callback in the next event loop
+        EventNotifier::Get()->CallAfter(wrapper_cb);
+        return f.get();
+    }
+}
+
 } // namespace
 
 bool clSSH::LoginPublicKey(bool throwExc)
@@ -347,34 +368,45 @@ bool clSSH::LoginPublicKey(bool throwExc)
     }
 
     int rc;
-    if (m_keyFiles.empty()) {
-        rc = ssh_userauth_publickey_auto(m_session, nullptr, nullptr);
+
+    std::optional<std::string> passphrase;
+    if (m_key.passphrase_required && wxThread::IsMain()) {
+        wxString text =
+            RunOnMain([]() -> wxString { return ::wxGetPasswordFromUser(_("Enter passphrase:"), _("CodeLite")); });
+        if (text.empty()) {
+            // User cancelled
+            return false;
+        }
+        passphrase = StringUtils::ToStdString(text);
+    }
+
+    const char* c_passphrase = passphrase.has_value() ? passphrase.value().c_str() : nullptr;
+    if (!m_key.path.has_value()) {
+        rc = ssh_userauth_publickey_auto(m_session, nullptr, c_passphrase);
         if (rc != SSH_AUTH_SUCCESS) {
             THROW_OR_FALSE(wxString() << _("Public Key error: ") << SshAuthReturnCodeToString(rc));
         }
         return true;
     } else {
         // Try the user provided keys
-        for (const auto& keypath : m_keyFiles) {
-            std::string file = StringUtils::ToStdString(keypath);
-            clDEBUG() << "Trying to login with user key:" << keypath << endl;
-            ssh_key sshkey;
-            if (ssh_pki_import_privkey_file(file.c_str(), nullptr, nullptr, nullptr, &sshkey) != SSH_OK) {
-                clERROR() << "Could not import private key:" << keypath << endl;
-                continue;
-            }
-            clDEBUG() << "Successfully created key from file:" << keypath << endl;
-            rc = ssh_userauth_publickey(m_session, nullptr, sshkey);
-            if (rc != SSH_AUTH_SUCCESS) {
-                clERROR() << "Could not login with user provided key:" << keypath << "."
-                          << SshAuthReturnCodeToString(rc) << endl;
-                continue;
-            }
-            clDEBUG() << "Successfully logged in using key:" << keypath << endl;
-            ssh_key_free(sshkey);
-            return true;
+        std::string file = StringUtils::ToStdString(m_key.path.value());
+        clDEBUG() << "Trying to login with user key:" << file << endl;
+        ssh_key sshkey;
+        auto error_code = ssh_pki_import_privkey_file(file.c_str(), c_passphrase, nullptr, nullptr, &sshkey);
+        if (error_code != SSH_OK) {
+            clERROR() << "Could not import private key:" << file << ". Error:" << error_code << endl;
+            return false;
         }
-        return false;
+        clDEBUG() << "Successfully created key from file:" << file << endl;
+        rc = ssh_userauth_publickey(m_session, nullptr, sshkey);
+        if (rc != SSH_AUTH_SUCCESS) {
+            clERROR() << "Could not login with user provided key:" << file << "." << SshAuthReturnCodeToString(rc)
+                      << endl;
+            return false;
+        }
+        clDEBUG() << "Successfully logged in using key:" << file << endl;
+        ssh_key_free(sshkey);
+        return true;
     }
 }
 

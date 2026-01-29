@@ -38,6 +38,7 @@
 #include "cl_command_event.h"
 #include "cl_exception.h"
 #include "codelite_exports.h"
+#include "ssh_account_info.h"
 
 #include <errno.h>
 #include <memory>
@@ -72,7 +73,7 @@ protected:
     wxTimer* m_timer;
     wxEvtHandler* m_owner;
     clSSHAgent::Ptr_t m_sshAgent;
-    wxArrayString m_keyFiles;
+    SSHAccountInfo::KeyInfo m_key;
 
 public:
     using Ptr_t = std::shared_ptr<clSSH>;
@@ -84,7 +85,10 @@ protected:
     void DoConnectWithRetries(int retries);
 
 public:
-    clSSH(const wxString& host, const wxString& user, const wxString& pass, const wxArrayString& keyFiles,
+    clSSH(const wxString& host,
+          const wxString& user,
+          const wxString& pass,
+          const SSHAccountInfo::KeyInfo& key,
           int port = 22);
     clSSH();
     virtual ~clSSH();

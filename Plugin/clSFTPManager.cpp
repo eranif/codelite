@@ -129,7 +129,7 @@ bool clSFTPManager::AddConnection(const SSHAccountInfo& account, bool replace)
 
     try {
         clSSH::Ptr_t ssh(new clSSH(
-            account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetKeyFiles(), account.GetPort()));
+            account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetKeyFile(), account.GetPort()));
         EnvSetter env;
         ssh->Open();
         wxString message;

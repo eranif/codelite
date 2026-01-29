@@ -173,7 +173,7 @@ void SFTPWorkerThread::DoConnect(SFTPThreadRequest* req)
 {
     wxString accountName = req->GetAccount().GetAccountName();
     clSSH::Ptr_t ssh(new clSSH(req->GetAccount().GetHost(), req->GetAccount().GetUsername(),
-                               req->GetAccount().GetPassword(), req->GetAccount().GetKeyFiles(),
+                               req->GetAccount().GetPassword(), req->GetAccount().GetKeyFile(),
                                req->GetAccount().GetPort()));
     try {
         wxString message;

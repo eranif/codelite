@@ -50,7 +50,13 @@ AddSSHAcountDlg::AddSSHAcountDlg(wxWindow* parent, const SSHAccountInfo& account
     m_textCtrlUsername->ChangeValue(account.GetUsername());
     m_textCtrlName->ChangeValue(account.GetAccountName());
     m_textCtrlHomeFolder->ChangeValue(account.GetDefaultFolder());
-    m_additionalFiles->SetText(::wxJoin(account.GetKeyFiles(), '\n'));
+    if (account.GetKeyFile().path.has_value()) {
+        m_filePickerSSHKey->SetPath(account.GetKeyFile().path.value());
+    }
+    m_checkBoxPassphrase->SetValue(account.GetKeyFile().passphrase_required);
+    if (!m_textCtrlPassword->IsEmpty()) {
+        m_choicebookLogin->SetSelection(1);
+    }
     SetName("AddSSHAcountDlg");
     WindowAttrManager::Load(this);
 }
@@ -77,16 +83,17 @@ void AddSSHAcountDlg::GetAccountInfo(SSHAccountInfo& info)
     info.SetUsername(m_textCtrlUsername->GetValue());
     info.SetAccountName(m_textCtrlName->GetValue());
     info.SetDefaultFolder(m_textCtrlHomeFolder->GetValue());
+    info.ClearKeyFile();
 
-    info.ClearKeyFiles();
-    wxArrayString files = ::wxStringTokenize(m_additionalFiles->GetText(), "\n", wxTOKEN_STRTOK);
-    for (auto& file : files) {
-        file.Trim().Trim(false);
-        if (file.StartsWith("#")) {
-            continue;
-        }
-        info.AddKeyFile(file);
+    // Login via SSH key
+    SSHAccountInfo::KeyInfo key_info;
+    key_info.passphrase_required = m_checkBoxPassphrase->IsChecked();
+
+    wxString keyfile_path = m_filePickerSSHKey->GetPath();
+    if (!keyfile_path.empty() && wxFileName::FileExists(keyfile_path)) {
+        key_info.path = keyfile_path;
     }
+    info.SetKeyFile(key_info);
 }
 
 void AddSSHAcountDlg::OnTestConnection(wxCommandEvent& event)
@@ -94,7 +101,7 @@ void AddSSHAcountDlg::OnTestConnection(wxCommandEvent& event)
     SSHAccountInfo account;
     GetAccountInfo(account);
     clSSH::Ptr_t ssh(new clSSH(
-        account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetKeyFiles(), account.GetPort()));
+        account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetKeyFile(), account.GetPort()));
 
     try {
         wxString message;
@@ -118,12 +125,13 @@ void AddSSHAcountDlg::OnTestConnectionUI(wxUpdateUIEvent& event)
 {
     event.Enable(!m_textCtrlHost->IsEmpty() && !m_textCtrlPort->IsEmpty() && !m_textCtrlUsername->IsEmpty());
 }
+
 void AddSSHAcountDlg::OnHomeFolderUpdated(wxCommandEvent& event)
 {
     wxString homeFolder = m_textCtrlHomeFolder->GetValue();
     if (!homeFolder.StartsWith("/")) {
-        m_infobar->ShowMessage(_("Default folder must be set to full path (i.e. it should start with a '/')"),
-                               wxICON_WARNING);
+        m_infobar->ShowMessage(
+            _("Default folder must be set to full path (i.e. it should start with a '/')"), wxICON_WARNING);
     }
 }
 #endif

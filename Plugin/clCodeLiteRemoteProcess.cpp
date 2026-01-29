@@ -182,12 +182,12 @@ void clCodeLiteRemoteProcess::StartIfNotRunning()
         clERROR() << "Could not locate ssh executable in your PATH!" << endl;
         return;
     }
-    std::vector<wxString> command = { *ssh_exe, "-o", "ServerAliveInterval=10", "-o", "StrictHostKeyChecking=no" };
+    std::vector<wxString> command = {*ssh_exe, "-o", "ServerAliveInterval=10", "-o", "StrictHostKeyChecking=no"};
 
     // If this account has custom key files, use it instead
-    if (!m_account.GetKeyFiles().empty()) {
+    if (m_account.GetKeyFile().path.has_value()) {
         command.push_back("-i");
-        command.push_back(m_account.GetKeyFiles()[0]);
+        command.push_back(m_account.GetKeyFile().path.value());
     }
 
     command.push_back(m_account.GetUsername() + "@" + m_account.GetHost());
@@ -347,15 +347,15 @@ void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir,
         {"command", "ls"},
         {"root_dir", StringUtils::ToStdString(root_dir)},
         {"file_extensions", StringUtils::ToStdStrings(::wxStringTokenize(extensions, ",; |", wxTOKEN_STRTOK))},
-        {"exclude_extensions", StringUtils::ToStdStrings(::wxStringTokenize(exclude_extensions, ",; |", wxTOKEN_STRTOK))},
-        {"exclude_patterns", StringUtils::ToStdStrings(::wxStringTokenize(exclude_patterns, ",; |", wxTOKEN_STRTOK))}
-    };
+        {"exclude_extensions",
+         StringUtils::ToStdStrings(::wxStringTokenize(exclude_extensions, ",; |", wxTOKEN_STRTOK))},
+        {"exclude_patterns", StringUtils::ToStdStrings(::wxStringTokenize(exclude_patterns, ",; |", wxTOKEN_STRTOK))}};
     const auto command = json.dump();
     LOG_IF_TRACE { clDEBUG1() << "ListFiles: sending command:" << command << endl; }
     m_process->Write(command + "\n");
 
     // push a callback
-    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnListFilesOutput, nullptr, nullptr });
+    m_completionCallbacks.push_back({&clCodeLiteRemoteProcess::OnListFilesOutput, nullptr, nullptr});
 }
 
 void clCodeLiteRemoteProcess::Search(const wxString& root_dir,
@@ -370,20 +370,20 @@ void clCodeLiteRemoteProcess::Search(const wxString& root_dir,
     }
 
     // build the command and send it
-    const nlohmann::json json = {{"command", "find"},
-                      {"root_dir", StringUtils::ToStdString(root_dir)},
-                      {"find_what", StringUtils::ToStdString(find_what)},
-                      {"file_extensions", StringUtils::ToStdStrings(::wxStringTokenize(extensions, ",; |", wxTOKEN_STRTOK))},
-                      {"exclude_patterns", StringUtils::ToStdStrings(::wxStringTokenize(exclude_patterns, ",; |", wxTOKEN_STRTOK))},
-                      {"icase", icase},
-                      {"whole_word", whole_word}
-    };
+    const nlohmann::json json = {
+        {"command", "find"},
+        {"root_dir", StringUtils::ToStdString(root_dir)},
+        {"find_what", StringUtils::ToStdString(find_what)},
+        {"file_extensions", StringUtils::ToStdStrings(::wxStringTokenize(extensions, ",; |", wxTOKEN_STRTOK))},
+        {"exclude_patterns", StringUtils::ToStdStrings(::wxStringTokenize(exclude_patterns, ",; |", wxTOKEN_STRTOK))},
+        {"icase", icase},
+        {"whole_word", whole_word}};
     const auto command = json.dump();
     m_process->Write(command + "\n");
     LOG_IF_TRACE { clDEBUG1() << command << endl; }
 
     // push a callback
-    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnFindOutput, nullptr, nullptr });
+    m_completionCallbacks.push_back({&clCodeLiteRemoteProcess::OnFindOutput, nullptr, nullptr});
 }
 
 void clCodeLiteRemoteProcess::Locate(const wxString& path,
@@ -407,7 +407,7 @@ void clCodeLiteRemoteProcess::Locate(const wxString& path,
     LOG_IF_TRACE { clDEBUG1() << command << endl; }
 
     // push a callback
-    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnLocateOutput, nullptr, nullptr });
+    m_completionCallbacks.push_back({&clCodeLiteRemoteProcess::OnLocateOutput, nullptr, nullptr});
 }
 
 void clCodeLiteRemoteProcess::FindPath(const wxString& path)
@@ -423,7 +423,7 @@ void clCodeLiteRemoteProcess::FindPath(const wxString& path)
     LOG_IF_TRACE { clDEBUG1() << command << endl; }
 
     // push a callback
-    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnFindPathOutput, nullptr, nullptr });
+    m_completionCallbacks.push_back({&clCodeLiteRemoteProcess::OnFindPathOutput, nullptr, nullptr});
 }
 
 void clCodeLiteRemoteProcess::ResetStates()
@@ -452,7 +452,7 @@ bool clCodeLiteRemoteProcess::DoExec(
     m_process->Write(command + "\n");
 
     // push a callback
-    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnExecOutput, handler, cb });
+    m_completionCallbacks.push_back({&clCodeLiteRemoteProcess::OnExecOutput, handler, cb});
     return true;
 }
 
@@ -770,5 +770,5 @@ void clCodeLiteRemoteProcess::Replace(const wxString& root_dir,
     LOG_IF_TRACE { clDEBUG1() << command << endl; }
 
     // push a callback
-    m_completionCallbacks.push_back({ &clCodeLiteRemoteProcess::OnReplaceOutput, nullptr, nullptr });
+    m_completionCallbacks.push_back({&clCodeLiteRemoteProcess::OnReplaceOutput, nullptr, nullptr});
 }

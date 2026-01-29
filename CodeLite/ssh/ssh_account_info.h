@@ -29,12 +29,18 @@
 #include "codelite_exports.h"
 
 #include <functional>
+#include <optional>
 #include <vector>
 
 class WXDLLIMPEXP_CL SSHAccountInfo : public clConfigItem
 {
 public:
     using Vect_t = std::vector<SSHAccountInfo>;
+
+    struct KeyInfo {
+        std::optional<wxString> path;
+        bool passphrase_required{false};
+    };
 
     SSHAccountInfo();
     ~SSHAccountInfo() override = default;
@@ -56,9 +62,9 @@ public:
     const wxString& GetUsername() const { return m_username; }
     void SetDefaultFolder(const wxString& defaultFolder) { this->m_defaultFolder = defaultFolder; }
     const wxString& GetDefaultFolder() const { return m_defaultFolder; }
-    void AddKeyFile(const wxString& filepath);
-    const wxArrayString& GetKeyFiles() const { return m_keyFiles; }
-    void ClearKeyFiles() { m_keyFiles.clear(); }
+    void SetKeyFile(const KeyInfo& key_info);
+    const KeyInfo& GetKeyFile() const { return m_keyFile; }
+    void ClearKeyFile() { m_keyFile = {}; }
 
     /**
      * @brief read list of accounts from the JSON file
@@ -82,9 +88,9 @@ private:
     wxString m_accountName;
     wxString m_username;
     wxString m_password;
-    int m_port = wxNOT_FOUND;
+    int m_port{wxNOT_FOUND};
     wxString m_host;
     wxArrayString m_bookmarks;
     wxString m_defaultFolder;
-    wxArrayString m_keyFiles;
+    KeyInfo m_keyFile;
 };

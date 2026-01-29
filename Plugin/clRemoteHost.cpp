@@ -10,12 +10,11 @@
 
 #include <wx/utils.h> // wxBusyCursor
 
-
 INITIALISE_SSH_LOG(LOG, "Remote-Host");
 
 namespace
 {
-clRemoteHost* ms_instance{ nullptr };
+clRemoteHost* ms_instance{nullptr};
 }
 
 clRemoteHost::clRemoteHost()
@@ -103,8 +102,8 @@ clSSH::Ptr_t clRemoteHost::CreateSession(const wxString& account_name)
 
     /// open channel
     try {
-        ssh_session.reset(new clSSH(account.GetHost(), account.GetUsername(), account.GetPassword(),
-                                    account.GetKeyFiles(), account.GetPort()));
+        ssh_session.reset(new clSSH(
+            account.GetHost(), account.GetUsername(), account.GetPassword(), account.GetKeyFile(), account.GetPort()));
         wxString message;
 
         ssh_session->Open();
@@ -121,8 +120,10 @@ clSSH::Ptr_t clRemoteHost::CreateSession(const wxString& account_name)
     return ssh_session;
 }
 
-void clRemoteHost::run_command_with_callback(const std::vector<wxString>& command, const wxString& wd,
-                                             const clEnvList_t& env, execute_callback&& cb)
+void clRemoteHost::run_command_with_callback(const std::vector<wxString>& command,
+                                             const wxString& wd,
+                                             const clEnvList_t& env,
+                                             execute_callback&& cb)
 {
     auto proc = m_executor.try_execute(clRemoteExecutor::Cmd::from(command, wd, env));
     if (proc) {
@@ -130,11 +131,13 @@ void clRemoteHost::run_command_with_callback(const std::vector<wxString>& comman
     }
 }
 
-void clRemoteHost::run_command_with_callback(const wxString& command, const wxString& wd, const clEnvList_t& env,
+void clRemoteHost::run_command_with_callback(const wxString& command,
+                                             const wxString& wd,
+                                             const clEnvList_t& env,
                                              execute_callback&& cb)
 {
     auto wxargv = StringUtils::BuildArgv(command);
-    std::vector<wxString> argv{ wxargv.begin(), wxargv.end() };
+    std::vector<wxString> argv{wxargv.begin(), wxargv.end()};
     run_command_with_callback(argv, wd, env, std::move(cb));
 }
 
@@ -171,13 +174,13 @@ void clRemoteHost::OnCommandCompleted(clProcessEvent& event)
 
     // call the callback and consume it from the queue
     LOG_DEBUG(LOG()) << "command completed. exit status:" << event.GetInt() << endl;
-    m_callbacks.front().first("", event.GetInt() == 0 ? clRemoteCommandStatus::DONE
-                                                      : clRemoteCommandStatus::DONE_WITH_ERROR);
+    m_callbacks.front().first(
+        "", event.GetInt() == 0 ? clRemoteCommandStatus::DONE : clRemoteCommandStatus::DONE_WITH_ERROR);
     m_callbacks.erase(m_callbacks.begin());
 }
 
-IProcess::Ptr_t clRemoteHost::run_interactive_process(wxEvtHandler* parent, const wxArrayString& command, size_t flags,
-                                                      const wxString& wd, const clEnvList_t& env)
+IProcess::Ptr_t clRemoteHost::run_interactive_process(
+    wxEvtHandler* parent, const wxArrayString& command, size_t flags, const wxString& wd, const clEnvList_t& env)
 {
     // create new ssh session
     auto ssh_session = CreateSession(m_activeAccount);
@@ -187,7 +190,7 @@ IProcess::Ptr_t clRemoteHost::run_interactive_process(wxEvtHandler* parent, cons
     }
 
     LOG_DEBUG(LOG()) << "Launching remote process:" << command << endl;
-    std::vector<wxString> argv{ command.begin(), command.end() };
+    std::vector<wxString> argv{command.begin(), command.end()};
 
     IProcess::Ptr_t proc(
         clSSHInteractiveChannel::Create(parent, ssh_session, argv, flags, wd, env.empty() ? nullptr : &env));
@@ -197,8 +200,8 @@ IProcess::Ptr_t clRemoteHost::run_interactive_process(wxEvtHandler* parent, cons
     return proc;
 }
 
-IProcess::Ptr_t clRemoteHost::run_interactive_process(wxEvtHandler* parent, const wxString& command, size_t flags,
-                                                      const wxString& wd, const clEnvList_t& env)
+IProcess::Ptr_t clRemoteHost::run_interactive_process(
+    wxEvtHandler* parent, const wxString& command, size_t flags, const wxString& wd, const clEnvList_t& env)
 {
     auto wxargv = StringUtils::BuildArgv(command);
     return run_interactive_process(parent, wxargv, flags, wd, env);

@@ -189,7 +189,7 @@ Place the cursor inside a function, press ++ctrl+shift+m++, and the model writes
 
 ---
 
-## 7. Getting Help
+## 8. Getting Help
 
 - Open the chat box (++ctrl+shift+h++) and ask any question.
 - For endpoint-specific issues, use **AI → Settings** to view or edit the stored URLs and tokens.

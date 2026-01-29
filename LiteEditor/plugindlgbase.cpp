@@ -6,124 +6,128 @@
 
 #include "plugindlgbase.h"
 
+
 // Declare the bitmap loading function
 extern void wxCEF4InitBitmapResources();
 
-static bool bBitmapLoaded = false;
 
-PluginMgrDlgBase::PluginMgrDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos,
-                                   const wxSize& size, long style)
+namespace {
+// return the wxBORDER_SIMPLE that matches the current application theme
+[[maybe_unused]]
+wxBorder get_border_simple_theme_aware_bit() {
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // get_border_simple_theme_aware_bit
+bool bBitmapLoaded = false;
+} // namespace
+
+PluginMgrDlgBase::PluginMgrDlgBase(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
     : wxDialog(parent, id, title, pos, size, style)
 {
-    if(!bBitmapLoaded) {
+    if ( !bBitmapLoaded ) {
         // We need to initialise the default bitmap handler
         wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
         wxCEF4InitBitmapResources();
         bBitmapLoaded = true;
     }
-
+    
     wxBoxSizer* bSizer1 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(bSizer1);
-
+    
+    m_staticTextPluginDir = new wxStaticText(this, wxID_ANY, _("Plugin directory:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    bSizer1->Add(m_staticTextPluginDir, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
     wxBoxSizer* boxSizer16 = new wxBoxSizer(wxHORIZONTAL);
-
+    
     bSizer1->Add(boxSizer16, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_splitter36 =
-        new clThemedSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxSP_3D);
+    
+    m_splitter36 = new clThemedSplitterWindow(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), wxSP_3D);
     m_splitter36->SetSashGravity(0);
     m_splitter36->SetMinimumPaneSize(10);
-
-    boxSizer16->Add(m_splitter36, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_splitterPage40 = new wxPanel(m_splitter36, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter36, wxSize(-1, -1)),
-                                   wxTAB_TRAVERSAL);
-
+    
+    boxSizer16->Add(m_splitter36, 1, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_splitterPage40 = new wxPanel(m_splitter36, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter36, wxSize(-1,-1)), wxTAB_TRAVERSAL);
+    
     wxBoxSizer* boxSizer12 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage40->SetSizer(boxSizer12);
-
-    m_dvListCtrl = new clThemedListCtrl(m_splitterPage40, wxID_ANY, wxDefaultPosition,
-                                        wxDLG_UNIT(m_splitterPage40, wxSize(-1, -1)),
-                                        wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
-
+    
+    m_dvListCtrl = new clThemedListCtrl(m_splitterPage40, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPage40, wxSize(-1,-1)), wxDV_NO_HEADER|wxDV_ROW_LINES|wxDV_SINGLE);
+    
     boxSizer12->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_dvListCtrl->AppendIconTextColumn(_("Plugins"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT,
-                                       wxDATAVIEW_COL_RESIZABLE);
-    m_splitterPage44 = new wxPanel(m_splitter36, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter36, wxSize(-1, -1)),
-                                   wxTAB_TRAVERSAL);
+    
+    m_dvListCtrl->AppendIconTextColumn(_("Plugins"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
+    m_splitterPage44 = new wxPanel(m_splitter36, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitter36, wxSize(-1,-1)), wxTAB_TRAVERSAL);
     m_splitter36->SplitVertically(m_splitterPage40, m_splitterPage44, 250);
-
+    
     wxBoxSizer* boxSizer14 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage44->SetSizer(boxSizer14);
-
-    m_richTextCtrl = new wxRichTextCtrl(m_splitterPage44, wxID_ANY, wxT("wxRichTextCtrl!"), wxDefaultPosition,
-                                        wxDLG_UNIT(m_splitterPage44, wxSize(-1, -1)),
-                                        wxTE_MULTILINE | wxTE_PROCESS_TAB | wxTE_PROCESS_ENTER | wxWANTS_CHARS);
-
+    
+    m_richTextCtrl = new wxRichTextCtrl(m_splitterPage44, wxID_ANY, wxT("wxRichTextCtrl!"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage44, wxSize(-1,-1)), wxTE_MULTILINE|wxTE_PROCESS_TAB|wxTE_PROCESS_ENTER|wxWANTS_CHARS);
+    
     boxSizer14->Add(m_richTextCtrl, 1, wxEXPAND, WXC_FROM_DIP(5));
-
+    
     wxBoxSizer* boxSizer18 = new wxBoxSizer(wxVERTICAL);
-
+    
     boxSizer16->Add(boxSizer18, 0, wxEXPAND, WXC_FROM_DIP(5));
-
-    m_button20 = new wxButton(this, wxID_ANY, _("Check &All"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    boxSizer18->Add(m_button20, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_button22 = new wxButton(this, wxID_ANY, _("Uncheck All"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-
-    boxSizer18->Add(m_button22, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
+    
+    m_button20 = new wxButton(this, wxID_ANY, _("Check &All"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    boxSizer18->Add(m_button20, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
+    m_button22 = new wxButton(this, wxID_ANY, _("Uncheck All"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1,-1)), 0);
+    
+    boxSizer18->Add(m_button22, 0, wxALL|wxEXPAND, WXC_FROM_DIP(5));
+    
     m_stdBtnSizer26 = new wxStdDialogButtonSizer();
-
-    bSizer1->Add(m_stdBtnSizer26, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
-
+    
+    bSizer1->Add(m_stdBtnSizer26, 0, wxALL|wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+    
     m_buttonOK = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_buttonOK->SetDefault();
     m_stdBtnSizer26->AddButton(m_buttonOK);
-
+    
     m_button30 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_stdBtnSizer26->AddButton(m_button30);
     m_stdBtnSizer26->Realize();
-
+    
     SetName(wxT("PluginMgrDlgBase"));
-    SetMinClientSize(wxSize(600, 400));
-    SetSize(wxDLG_UNIT(this, wxSize(600, 400)));
-    if(GetSizer()) { GetSizer()->Fit(this); }
+    SetMinClientSize(wxSize(600,400));
+    SetSize(wxDLG_UNIT(this, wxSize(600,400)));
+    if (GetSizer()) {
+         GetSizer()->Fit(this);
+    }
     if(GetParent()) {
         CentreOnParent(wxBOTH);
     } else {
         CentreOnScreen(wxBOTH);
     }
-#if wxVERSION_NUMBER >= 2900
     if(!wxPersistenceManager::Get().Find(this)) {
         wxPersistenceManager::Get().RegisterAndRestore(this);
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-#endif
     // Connect events
-    m_dvListCtrl->Connect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
-                          wxDataViewEventHandler(PluginMgrDlgBase::OnItemSelected), NULL, this);
-    m_button20->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PluginMgrDlgBase::OnCheckAll), NULL, this);
-    m_button20->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PluginMgrDlgBase::OnCheckAllUI), NULL, this);
-    m_button22->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PluginMgrDlgBase::OnUncheckAll), NULL,
-                        this);
-    m_button22->Connect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PluginMgrDlgBase::OnUncheckAllUI), NULL, this);
-    m_buttonOK->Connect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PluginMgrDlgBase::OnButtonOK), NULL, this);
+    m_dvListCtrl->Bind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &PluginMgrDlgBase::OnItemSelected, this);
+    m_button20->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &PluginMgrDlgBase::OnCheckAll, this);
+    m_button20->Bind(wxEVT_UPDATE_UI, &PluginMgrDlgBase::OnCheckAllUI, this);
+    m_button22->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &PluginMgrDlgBase::OnUncheckAll, this);
+    m_button22->Bind(wxEVT_UPDATE_UI, &PluginMgrDlgBase::OnUncheckAllUI, this);
+    m_buttonOK->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &PluginMgrDlgBase::OnButtonOK, this);
+    
 }
 
 PluginMgrDlgBase::~PluginMgrDlgBase()
 {
-    m_dvListCtrl->Disconnect(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED,
-                             wxDataViewEventHandler(PluginMgrDlgBase::OnItemSelected), NULL, this);
-    m_button20->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PluginMgrDlgBase::OnCheckAll), NULL,
-                           this);
-    m_button20->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PluginMgrDlgBase::OnCheckAllUI), NULL, this);
-    m_button22->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PluginMgrDlgBase::OnUncheckAll), NULL,
-                           this);
-    m_button22->Disconnect(wxEVT_UPDATE_UI, wxUpdateUIEventHandler(PluginMgrDlgBase::OnUncheckAllUI), NULL, this);
-    m_buttonOK->Disconnect(wxEVT_COMMAND_BUTTON_CLICKED, wxCommandEventHandler(PluginMgrDlgBase::OnButtonOK), NULL,
-                           this);
+    m_dvListCtrl->Unbind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &PluginMgrDlgBase::OnItemSelected, this);
+    m_button20->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &PluginMgrDlgBase::OnCheckAll, this);
+    m_button20->Unbind(wxEVT_UPDATE_UI, &PluginMgrDlgBase::OnCheckAllUI, this);
+    m_button22->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &PluginMgrDlgBase::OnUncheckAll, this);
+    m_button22->Unbind(wxEVT_UPDATE_UI, &PluginMgrDlgBase::OnUncheckAllUI, this);
+    m_buttonOK->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &PluginMgrDlgBase::OnButtonOK, this);
+    
 }

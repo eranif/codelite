@@ -25,10 +25,10 @@ std::optional<wxString> MSYS2::FindInstallDir()
     wxString appname;
     long dummy;
     bool cont = uninstall.GetFirstKey(appname, dummy);
-    while(cont) {
+    while (cont) {
         wxString display_name;
         wxRegKey appkey(wxRegKey::HKCU, R"(SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\)" + appname);
-        if(appkey.QueryValue("DisplayName", display_name) && display_name == "MSYS2 64bit") {
+        if (appkey.QueryValue("DisplayName", display_name) && display_name == "MSYS2 64bit") {
             appkey.QueryValue("InstallLocation", reg_install_path);
             break;
         }
@@ -41,7 +41,7 @@ std::optional<wxString> MSYS2::FindInstallDir()
         return m_install_dir;
     } else {
         // try common paths
-        std::vector<wxString> vpaths = { R"(C:\msys64)", R"(C:\msys2)", R"(C:\msys)" };
+        std::vector<wxString> vpaths = {R"(C:\msys64)", R"(C:\msys2)", R"(C:\msys)"};
         for (const wxString& path : vpaths) {
             if (wxFileName::DirExists(path)) {
                 m_install_dir = path;
@@ -65,7 +65,7 @@ std::optional<wxString> MSYS2::FindHomeDir()
 
     m_checked_for_home_dir = true;
 
-    wxFileName cargo_dir{ *msyspath, wxEmptyString };
+    wxFileName cargo_dir{*msyspath, wxEmptyString};
     cargo_dir.AppendDir("home");
     cargo_dir.AppendDir(::wxGetUserId());
 
@@ -80,12 +80,16 @@ std::optional<wxString> MSYS2::Which(const wxString& command)
     wxString path = GetPath(m_flags & SEARCH_PATH_ENV).value_or("");
 
     wxArrayString paths_to_try = ::wxStringTokenize(path, ";", wxTOKEN_STRTOK);
+    static const wxString exts[] = {".exe", ".cmd"};
     // at the point, the order of search is:
     // MSYS2 -> Executable path -> PATH paths
-    for (auto path : paths_to_try) {
-        path << "\\" << command << ".exe";
-        if (wxFileName::FileExists(path)) {
-            return path;
+    for (const auto& path : paths_to_try) {
+        for (const wxString& ext : exts) {
+            wxString exepath = path;
+            exepath << "\\" << command << ext;
+            if (wxFileName::FileExists(exepath)) {
+                return exepath;
+            }
         }
     }
     return std::nullopt;
@@ -144,7 +148,7 @@ std::optional<wxString> MSYS2::GetPath(bool useSystemPath)
     }
 
     // cargo (MSYS2 path)
-    wxFileName cargo_msys_bin{ *msyspath, wxEmptyString };
+    wxFileName cargo_msys_bin{*msyspath, wxEmptyString};
     cargo_msys_bin.AppendDir("home");
     cargo_msys_bin.AppendDir(::wxGetUserId());
     cargo_msys_bin.AppendDir(".cargo");
@@ -155,7 +159,7 @@ std::optional<wxString> MSYS2::GetPath(bool useSystemPath)
 
     // cargo (Windows native path)
     // e.g. /c/users/eran/.cargo/bin
-    wxFileName cargo_bin{ ::wxGetHomeDir(), wxEmptyString };
+    wxFileName cargo_bin{::wxGetHomeDir(), wxEmptyString};
     cargo_bin.AppendDir(".cargo");
     cargo_bin.AppendDir("bin");
 
@@ -165,7 +169,7 @@ std::optional<wxString> MSYS2::GetPath(bool useSystemPath)
 
     // local (Windows native path)
     // e.g. /c/users/eran/.local/bin
-    wxFileName local_bin{ ::wxGetHomeDir(), wxEmptyString };
+    wxFileName local_bin{::wxGetHomeDir(), wxEmptyString};
     local_bin.AppendDir(".local");
     local_bin.AppendDir("bin");
 

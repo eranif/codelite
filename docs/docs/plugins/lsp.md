@@ -62,6 +62,30 @@ CodeLite pre-configures `ctagsd`, but it is disabled by default. To enable it:
 
 Navigate to **Plugins → Language Server → Settings**
 
+### Pyright (Python)
+
+**Prerequisites**
+- Node.js (any maintained LTS version) must be installed on your system.
+- `npm` (bundled with Node.js) must be available in your `PATH`.
+
+**Installation**
+Install Pyright globally via npm:
+
+```bash
+npm install -g pyright
+```
+
+**Verification**
+Confirm the installation:
+
+```bash
+pyright --version
+```
+
+**Additional Resources**
+- [Pyright Documentation](https://github.com/microsoft/pyright)
+- [Pyright on npm](https://www.npmjs.com/package/pyright)
+
 ### pylsp (Python)
 
 `pylsp` is installed via `pip` and requires Python 3 and pip3 to be installed on your system.
@@ -260,3 +284,4 @@ For traditional Makefile-based projects, use the `cc-wrapper` utility included w
 [15]: /getting_started/windows/#common
 [16]: /misc/cc_wrapper
 [17]: #restarting-language-servers
+[18]: https://github.com/microsoft/pyright

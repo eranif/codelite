@@ -370,7 +370,7 @@ bool clSSH::LoginPublicKey(bool throwExc)
     int rc;
 
     std::optional<std::string> passphrase;
-    if (m_key.passphrase_required && wxThread::IsMain()) {
+    if (m_key.passphrase_required) {
         wxString text =
             RunOnMain([]() -> wxString { return ::wxGetPasswordFromUser(_("Enter passphrase:"), _("CodeLite")); });
         if (text.empty()) {

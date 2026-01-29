@@ -5,6 +5,7 @@
 #include "ThemeImporterBatch.hpp"
 #include "ThemeImporterCMake.hpp"
 #include "ThemeImporterCSS.hpp"
+#include "ThemeImporterCSharp.hpp"
 #include "ThemeImporterCXX.hpp"
 #include "ThemeImporterCobra.hpp"
 #include "ThemeImporterCobraAlt.hpp"
@@ -68,6 +69,7 @@ ThemeImporterManager::ThemeImporterManager()
     m_importers.push_back(std::make_unique<ThemeImporterJson>());
     m_importers.push_back(std::make_unique<ThemeImporterGo>());
     m_importers.push_back(std::make_unique<ThemeImporterTerminal>());
+    m_importers.push_back(std::make_unique<ThemeImporterCSharp>());
 }
 
 wxString ThemeImporterManager::Import(const wxString& theme_file)

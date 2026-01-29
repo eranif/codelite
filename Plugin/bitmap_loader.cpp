@@ -183,6 +183,8 @@ void BitmapLoader::CreateMimeList()
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-ts", 16), FileExtManager::TypeTypeScript);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-java", 16), FileExtManager::TypeJava);
         m_mimeBitmaps.AddBitmap(LoadBitmap("mime-go", 16), FileExtManager::TypeGo);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-svg", 16), FileExtManager::TypeSvg);
+        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-csharp", 16), FileExtManager::TypeCSharp);
         m_mimeBitmaps.AddBitmap(LoadBitmap("cxx-workspace", 16), FileExtManager::TypeWorkspace);
         m_mimeBitmaps.AddBitmap(LoadBitmap("php-workspace", 16), FileExtManager::TypeWorkspacePHP);
         m_mimeBitmaps.AddBitmap(LoadBitmap("folder-yellow", 16), FileExtManager::TypeWorkspaceFileSystem);
@@ -203,7 +205,6 @@ void BitmapLoader::CreateMimeList()
         m_mimeBitmaps.AddBitmap(LoadBitmap("yml", 16), FileExtManager::TypeYAML);
         m_mimeBitmaps.AddBitmap(LoadBitmap("database", 16), FileExtManager::TypeDatabase);
         m_mimeBitmaps.AddBitmap(LoadBitmap("sqlite", 16), FileExtManager::TypeSLite);
-        m_mimeBitmaps.AddBitmap(LoadBitmap("mime-svg", 16), FileExtManager::TypeSvg);
         m_mimeBitmaps.AddBitmap(
             LoadBitmap("workspace-folder-yellow-opened", 16), FileExtManager::TypeWorkspaceFolderExpanded);
         m_mimeBitmaps.AddBitmap(LoadBitmap("workspace-folder-yellow", 16), FileExtManager::TypeWorkspaceFolder);

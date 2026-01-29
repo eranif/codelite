@@ -204,6 +204,7 @@ void FileExtManager::Init()
         m_map["rb"] = TypeRuby;
         m_map["md"] = TypeMarkdown;
         m_map["dart"] = TypeDart;
+        m_map["cs"] = TypeCSharp;
 
         m_language_bundle.insert({"C/C++", {TypeSourceCpp, TypeSourceC, TypeHeader}});
         m_language_bundle.insert({"Windows resource files", {TypeResource}});
@@ -231,6 +232,7 @@ void FileExtManager::Init()
         m_language_bundle.insert({"Go", {TypeGo}});
         m_language_bundle.insert({"Markdown", {TypeMarkdown}});
         m_language_bundle.insert({"Dart", {TypeDart}});
+        m_language_bundle.insert({"CSharp", {TypeCSharp}});
 
         // build the reverse search table: file type -> language
         for (auto vt : m_language_bundle) {

@@ -106,6 +106,7 @@ public:
         TypeGo,
         TypeLast,
         TypeTypeScript,
+        TypeCSharp,
     };
 
 public:

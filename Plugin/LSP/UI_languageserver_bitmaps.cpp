@@ -44,6 +44,6 @@ void wxCrafterCbL3wsInitBitmapResources()
         else wxFileSystem::AddHandler(new wxMemoryFSHandlerBase);
     }
 
-    XRC_ADD_FILE(wxT("XRC_resource/UI_languageserver_bitmaps.cpp$C__msys64_home_eran_devl_codelite_Plugin_LSP_UI_languageserver_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
-    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/UI_languageserver_bitmaps.cpp$C__msys64_home_eran_devl_codelite_Plugin_LSP_UI_languageserver_bitmaps.xrc"));
+    XRC_ADD_FILE(wxT("XRC_resource/UI_languageserver_bitmaps.cpp$_home_shakes_Workspace_C++_codelite_Plugin_LSP_UI_languageserver_bitmaps.xrc"), xml_res_file_0, xml_res_size_0, wxT("text/xml"));
+    wxXmlResource::Get()->Load(wxT("memory:XRC_resource/UI_languageserver_bitmaps.cpp$_home_shakes_Workspace_C++_codelite_Plugin_LSP_UI_languageserver_bitmaps.xrc"));
 }

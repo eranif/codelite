@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   fill="#000000"
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   id="Layer_1"
+   data-name="Layer 1"
+   version="1.1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:dc="http://purl.org/dc/elements/1.1/">
+  <defs
+     id="defs1" />
+  <title
+     id="title1">cog</title>
+  <metadata
+     id="metadata1">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:title>cog</dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <g
+     id="g66"
+     style="display:inline">
+    <g
+       id="g18">
+      <rect
+         style="fill:#292c30;fill-opacity:1;stroke:#897c77;stroke-width:3.09243;stroke-linecap:butt;stroke-miterlimit:3.7;stroke-dasharray:none;stroke-opacity:1;paint-order:stroke fill markers"
+         id="rect66"
+         width="28.673286"
+         height="21.618748"
+         x="1.6159897"
+         y="5.5230832"
+         ry="4.6696496" />
+      <path
+         style="font-weight:bold;font-size:37.3333px;-inkscape-font-specification:'sans-serif Bold';letter-spacing:-1.36px;fill:#ffffff;stroke-width:3.53071;stroke-miterlimit:3.7;paint-order:stroke fill markers"
+         d="m 14.85951,18.652826 q -1.825636,-0.718634 -3.108515,-0.943208 -1.233538,-0.269487 -2.3683932,-0.269487 -1.3815613,0 -2.9111481,0.763549 -1.480245,0.763549 -2.7137825,1.886413 V 15.01474 q 2.467075,-2.380475 6.1676886,-2.380475 1.4309022,0 2.8618062,0.269487 1.480245,0.224574 3.799295,1.122867 1.825637,0.718634 3.108515,0.988121 1.282879,0.224574 2.368393,0.224574 1.430904,0 2.911149,-0.763548 1.480245,-0.763549 2.713782,-1.886416 v 5.075354 q -2.467075,2.380475 -6.167687,2.380475 -1.430904,0 -2.911149,-0.269488 -1.430904,-0.269488 -3.749954,-1.122865 z"
+         id="text66"
+         aria-label="~" />
+    </g>
+  </g>
+</svg>

@@ -229,8 +229,8 @@ void BreakptMgr::GetTooltip(const wxString& fileName, int lineno, wxString& tip,
 void BreakptMgr::DeleteAllBreakpointMarkers()
 {
     auto editors = clMainFrame::Get()->GetMainBook()->GetAllEditors();
-    for (size_t i = 0; i < editors.size(); ++i) {
-        editors.at(i)->DelAllBreakpointMarkers();
+    for (auto* editor : editors) {
+        editor->DelAllBreakpointMarkers();
     }
 }
 
@@ -239,8 +239,8 @@ void BreakptMgr::RefreshBreakpointMarkers()
 {
     auto editors = clMainFrame::Get()->GetMainBook()->GetAllEditors();
 
-    for (size_t i = 0; i < editors.size(); i++) {
-        DoRefreshFileBreakpoints(editors.at(i));
+    for (auto* editor : editors) {
+        DoRefreshFileBreakpoints(editor);
     }
 
     // Fire wxEVT_BREAKPOINTS_UPDATED event
@@ -253,8 +253,7 @@ void BreakptMgr::DoRefreshFileBreakpoints(clEditor* editor)
 {
     // Load the file's line-type bps into fi, and make a set of their line-numbers
     std::multimap<int, clDebuggerBreakpoint> bps;
-    for (size_t i = 0; i < m_bps.size(); ++i) {
-        clDebuggerBreakpoint& b = m_bps[i];
+    for (clDebuggerBreakpoint& b : m_bps) {
         wxString remotePath = editor->GetRemotePath();
         if (!remotePath.empty()) {
             // this is a remote file
@@ -345,8 +344,7 @@ void BreakptMgr::DoProvideBestBP_Type(clEditor* editor, const std::vector<clDebu
 void BreakptMgr::DebuggerStopped()
 {
     std::vector<clDebuggerBreakpoint> newList;
-    for (size_t i = 0; i < m_bps.size(); i++) {
-        clDebuggerBreakpoint& bp = m_bps.at(i);
+    for (clDebuggerBreakpoint& bp : m_bps) {
         bp.debugger_id = -1;
 
         // We collect all the breakpoints which their origin
@@ -356,8 +354,7 @@ void BreakptMgr::DebuggerStopped()
         }
     }
 
-    for (size_t i = 0; i < m_pendingBreakpointsList.size(); i++) {
-        clDebuggerBreakpoint& bp = m_pendingBreakpointsList.at(i);
+    for (clDebuggerBreakpoint& bp : m_pendingBreakpointsList) {
         bp.debugger_id = -1;
 
         // We collect all the breakpoints which their origin
@@ -495,8 +492,7 @@ void BreakptMgr::SetAllBreakpointsEnabledState(bool enabled)
         contIsNeeded = PauseDebuggerIfNeeded();
     }
 
-    for (size_t i = 0; i < m_bps.size(); ++i) {
-        clDebuggerBreakpoint& bp = m_bps.at(i);
+    for (clDebuggerBreakpoint& bp : m_bps) {
         if (((bp.debugger_id != -1) || !debuggerIsRunning) // Sanity check for when the debugger's running
             && (bp.is_enabled != enabled)) {               // No point setting it to the current status
             if (debuggerIsRunning) {
@@ -964,8 +960,7 @@ void BreakptMgr::SetBreakpoints(const std::vector<clDebuggerBreakpoint>& bps)
 
 bool BreakptMgr::AreThereEnabledBreakpoints(bool enabled /*= true*/)
 {
-    for (size_t i = 0; i < m_bps.size(); ++i) {
-        clDebuggerBreakpoint& bp = m_bps.at(i);
+    for (clDebuggerBreakpoint& bp : m_bps) {
         if (bp.is_enabled == enabled) {
             // There's at least one bp that can be altered
             return true;
@@ -1091,9 +1086,7 @@ void BreakptMgr::DoRemoveDuplicateBreakpoints()
 {
     std::vector<clDebuggerBreakpoint> bps;
     std::map<wxString, clDebuggerBreakpoint> uniqueNormalBreakpoints;
-    for (size_t i = 0; i < m_bps.size(); ++i) {
-        const clDebuggerBreakpoint& bi = m_bps.at(i);
-
+    for (const clDebuggerBreakpoint& bi : m_bps) {
         if (bi.bp_type != BP_type_break) {
             bps.push_back(bi);
 
@@ -1136,8 +1129,7 @@ int BreakptMgr::DelBreakpointByAddress(const wxString& address)
     const auto allBps = GetBreakpoints(); // Start by finding all on the line
 
     int breakpointsRemoved = 0;
-    for (size_t i = 0; i < allBps.size(); i++) {
-        const clDebuggerBreakpoint& bp = allBps.at(i);
+    for (const clDebuggerBreakpoint& bp : allBps) {
         if (bp.memory_address == address) {
             int bpId = (bp.debugger_id == -1 ? bp.internal_id : bp.debugger_id);
 
@@ -1157,8 +1149,7 @@ clDebuggerBreakpoint::Vec_t BreakptMgr::GetAllMemoryBreakpoints()
     clDebuggerBreakpoint::Vec_t memoryBps;
     const auto allBps = GetBreakpoints(); // Start by finding all on the line
 
-    for (size_t i = 0; i < allBps.size(); i++) {
-        const clDebuggerBreakpoint& bp = allBps.at(i);
+    for (const clDebuggerBreakpoint& bp : allBps) {
         if (!bp.memory_address.IsEmpty()) {
             memoryBps.push_back(bp);
         }

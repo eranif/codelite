@@ -663,9 +663,9 @@ void TagsStorageSQLite::GetTagsByNameAndParent(const wxString& name, const wxStr
     DoFetchTags(sql, tmpResults);
 
     // Filter by parent
-    for(size_t i = 0; i < tmpResults.size(); i++) {
-        if(tmpResults.at(i)->GetParent() == parent) {
-            tags.push_back(tmpResults.at(i));
+    for (auto tmpResult : tmpResults) {
+        if (tmpResult->GetParent() == parent) {
+            tags.push_back(tmpResult);
         }
     }
 }

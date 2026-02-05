@@ -468,8 +468,7 @@ void CodeFormatter::OnWorkspaceLoaded(clWorkspaceEvent& e)
     // update the formatters with the remote command template
     // note: we do not replace macros here since some of them
     // might change per activation (e.g. $(CurrentFileRelPath))
-    for (size_t i = 0; i < all_tools.size(); ++i) {
-        const wxString& tool_name = all_tools[i];
+    for (const wxString& tool_name : all_tools) {
         auto json = json_get_formatter_object(config, tool_name);
         if (!json.isOk() || (m_manager.GetFormatterByName(tool_name) == nullptr)) {
             continue;

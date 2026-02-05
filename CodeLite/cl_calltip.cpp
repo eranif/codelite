@@ -88,8 +88,8 @@ wxString clCallTip::Prev()
 wxString clCallTip::All() const
 {
     wxString tip;
-    for (size_t i = 0; i < m_tips.size(); i++) {
-        tip << m_tips.at(i).str << wxT("\n");
+    for (const auto& tipInfo : m_tips) {
+        tip << tipInfo.str << wxT("\n");
     }
     tip.RemoveLast();
     return tip;
@@ -125,9 +125,8 @@ void clCallTip::SelectSignature(const wxString& signature)
 void clCallTip::FormatTagsToTips(const TagEntryPtrVector_t& tags, std::vector<clTipInfo>& tips)
 {
     std::map<wxString, tagCallTipInfo> mymap;
-    for (size_t i = 0; i < tags.size(); i++) {
+    for (TagEntryPtr t : tags) {
         tagCallTipInfo cti;
-        TagEntryPtr t = tags.at(i);
 
         // Use basic signature
         if (t->GetFlags() & TagEntry::Tag_No_Signature_Format) {

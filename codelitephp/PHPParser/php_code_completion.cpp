@@ -138,9 +138,9 @@ void PHPCodeCompletion::DoShowCompletionBox(const PHPEntityBase::List_t& entries
     }
 
     std::sort(tags.begin(), tags.end(), _SAscendingSort());
-    for (size_t i = 0; i < tags.size(); ++i) {
-        wxCodeCompletionBoxEntry::Ptr_t ccEntry = wxCodeCompletionBox::TagToEntry(tags.at(i));
-        ccEntry->SetComment(tags.at(i)->GetComment());
+    for (const auto& tagEntry : tags) {
+        wxCodeCompletionBoxEntry::Ptr_t ccEntry = wxCodeCompletionBox::TagToEntry(tagEntry);
+        ccEntry->SetComment(tagEntry->GetComment());
         ccEntries.push_back(ccEntry);
     }
     wxCodeCompletionBoxManager::Get().ShowCompletionBox(

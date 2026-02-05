@@ -86,8 +86,8 @@ SearchData& SearchData::Copy(const SearchData& other)
     m_files.clear();
     m_files.reserve(other.m_files.size());
     m_file_scanner_flags = other.m_file_scanner_flags;
-    for (size_t i = 0; i < other.m_files.size(); ++i) {
-        m_files.Add(other.m_files.Item(i).c_str());
+    for (const auto& file : other.m_files) {
+        m_files.Add(file);
     }
     return *this;
 }
@@ -167,8 +167,8 @@ void SearchThread::GetFiles(const SearchData* data, wxArrayString& files)
     clPathExcluder path_excluder{ data->GetExcludePatterns() };
 
     wxStringSet_t visited_dirs;
-    for (size_t i = 0; i < rootDirs.size(); ++i) {
-        clDEBUG() << "    scanning root directory:" << rootDirs.Item(i) << endl;
+    for (const auto& rootDir : rootDirs) {
+        clDEBUG() << "    scanning root directory:" << rootDir << endl;
         // collect only unique files that are matching the pattern
         auto on_files = [&](const wxArrayString& paths) {
             files.reserve(files.size() + paths.size());
@@ -191,8 +191,8 @@ void SearchThread::GetFiles(const SearchData* data, wxArrayString& files)
 
         // make sure it's really a dir (not a fifo, etc.)
         clFilesScanner scanner;
-        scanner.ScanWithCallbacks(rootDirs.Item(i), on_folder, on_files, data->GetFileScannerFlags());
-        clDEBUG() << "    scanning root directory:" << rootDirs.Item(i) << "..done" << endl;
+        scanner.ScanWithCallbacks(rootDir, on_folder, on_files, data->GetFileScannerFlags());
+        clDEBUG() << "    scanning root directory:" << rootDir << "..done" << endl;
     }
 
     wxString duration;

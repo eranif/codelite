@@ -334,12 +334,11 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
     // Loop over the expression and resolve as much as we can here for the first token
     // (mainly, replace $this, self, static, $variable)
 
-    phpLexerToken token;
     wxString newExpr;
     wxString firstToken;
     int firstTokenType = wxNOT_FOUND;
     for(size_t i = 0; i < m_expression.size(); ++i) {
-        token = m_expression.at(i);
+        phpLexerToken token = m_expression.at(i);
         if(i == 0) {
             // Perform basic replacements that we can conduct here without the need of the global
             // lookup table
@@ -426,8 +425,7 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
     m_expression = CreateExpression("<?php " + newExpr);
     Part part;
     wxString currentText;
-    for(size_t i = 0; i < m_expression.size(); ++i) {
-        token = m_expression.at(i);
+    for (const auto& token : m_expression) {
         // Remove any braces and split by object kPHP_T_OBJECT_OPERATOR and kPHP_T_PAAMAYIM_NEKUDOTAYIM
         switch(token.type) {
         case kPHP_T_OPEN_TAG:
@@ -494,8 +492,8 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
 wxString PHPExpression::GetExpressionAsString() const
 {
     wxString expr;
-    for(size_t i = 0; i < m_expression.size(); ++i) {
-        expr << m_expression.at(i).Text();
+    for (const auto& token : m_expression) {
+        expr << token.Text();
     }
     return expr;
 }

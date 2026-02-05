@@ -13,8 +13,8 @@ void LSPUtils::encode_semantic_tokens(const std::vector<TokenWrapper>& tokens_ve
 
     encoded_arr->reserve(tokens_vec.size() * 5);
     const auto* prev_token_ptr = &dummy.token;
-    for(size_t i = 0; i < tokens_vec.size(); ++i) {
-        auto* current_token_ptr = &tokens_vec[i].token;
+    for (const auto& tokenWrapper : tokens_vec) {
+        auto* current_token_ptr = &tokenWrapper.token;
         std::array<int, 5> info;
 
         bool changed_line = prev_token_ptr->line() != current_token_ptr->line();
@@ -37,7 +37,7 @@ void LSPUtils::encode_semantic_tokens(const std::vector<TokenWrapper>& tokens_ve
         info[2] = current_token_ptr->length();
 
         // token type
-        info[3] = tokens_vec[i].type;
+        info[3] = tokenWrapper.type;
 
         // modifiers
         info[4] = changed_line ? 99 : 0;

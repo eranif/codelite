@@ -279,16 +279,16 @@ public:
     {
         // Split the list into 2: files and folders
         wxArrayString files, folders;
-        for (size_t i = 0; i < filenames.size(); ++i) {
-            if (wxFileName::DirExists(filenames.Item(i))) {
-                folders.Add(filenames.Item(i));
+        for (const auto& filename : filenames) {
+            if (wxFileName::DirExists(filename)) {
+                folders.Add(filename);
             } else {
-                files.Add(filenames.Item(i));
+                files.Add(filename);
             }
         }
 
-        for (size_t i = 0; i < files.size(); ++i) {
-            clMainFrame::Get()->GetMainBook()->OpenFile(files.Item(i));
+        for (const auto& file : files) {
+            clMainFrame::Get()->GetMainBook()->OpenFile(file);
         }
     }
 
@@ -301,8 +301,8 @@ bool IsWordChar(const wxChar& ch)
     static wxStringSet_t wordsChar;
     if (wordsChar.empty()) {
         wxString chars = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ_.>";
-        for (size_t i = 0; i < chars.size(); ++i) {
-            wordsChar.insert(chars[i]);
+        for (const auto& c : chars) {
+            wordsChar.insert(c);
         }
     }
     return (wordsChar.count(ch) != 0);
@@ -1894,10 +1894,10 @@ void clEditor::UpdateBreakpoints()
         int handle = d.first;
         int line = MarkerLineFromHandle(handle);
         if (line >= 0) {
-            for (size_t i = 0; i < d.second.size(); i++) {
-                d.second[i].lineno = line + 1;
-                d.second[i].origin = BO_Editor;
-                d.second[i].file = file_path;
+            for (auto& bp : d.second) {
+                bp.lineno = line + 1;
+                bp.origin = BO_Editor;
+                bp.file = file_path;
             }
         }
 
@@ -4827,8 +4827,7 @@ wxMenu* clEditor::DoCreateDebuggerWatchMenu(const wxString& word)
     wxMenuItem* item(NULL);
     wxString menuItemText;
 
-    for (size_t i = 0; i < cmds.size(); i++) {
-        DebuggerCmdData cmd = cmds.at(i);
+    for (DebuggerCmdData cmd : cmds) {
         menuItemText.Clear();
         menuItemText << _("Watch") << wxT(" '") << word << wxT("' ") << _("as") << wxT(" '") << cmd.GetName()
                      << wxT("'");
@@ -4908,9 +4907,7 @@ void clEditor::HighlightWord(StringHighlightOutput* highlightOutput)
     if (!highlightOutput->matches.empty()) {
         m_highlightedWordInfo.SetHasMarkers(true);
         int selStart = GetSelectionStart();
-        for (size_t i = 0; i < matches.size(); i++) {
-            const std::pair<int, int>& p = matches.at(i);
-
+        for (const std::pair<int, int>& p : matches) {
             // Don't highlight the current selection
             if (p.first != selStart) {
                 IndicatorFillRange(p.first, p.second);

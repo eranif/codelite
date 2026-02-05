@@ -270,9 +270,9 @@ wxString GitCommitListDlg::GetFilterString() const
     }
 
     wxArrayString searchStrings = ::wxStringTokenize(filter, " ", wxTOKEN_STRTOK);
-    for (size_t i = 0; i < searchStrings.size(); ++i) {
+    for (const auto& s : searchStrings) {
         // Pass each search string using its own --grep field
-        args << " --grep=" << searchStrings.Item(i);
+        args << " --grep=" << s;
     }
 
     if (!searchStrings.IsEmpty()) {

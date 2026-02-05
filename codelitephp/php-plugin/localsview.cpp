@@ -208,8 +208,8 @@ void LocalsView::OnCopyValue(wxCommandEvent& event)
     m_tree->GetSelections(items);
 
     wxString textToCopy;
-    for(size_t i = 0; i < items.size(); ++i) {
-        wxString v = m_tree->GetItemText(items.Item(i), 3);
+    for (const auto& item : items) {
+        wxString v = m_tree->GetItemText(item, 3);
         textToCopy << v << EditorConfigST::Get()->GetOptions()->GetEOLAsString();
     }
     ::CopyToClipboard(textToCopy);

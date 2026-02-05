@@ -72,15 +72,15 @@ namespace
 wxArrayString wxArrayUniqueMerge(const wxArrayString& arr1, const wxArrayString& arr2)
 {
     wxArrayString outArr;
-    for(size_t i = 0; i < arr1.size(); ++i) {
-        if(outArr.Index(arr1.Item(i)) == wxNOT_FOUND) {
-            outArr.Add(arr1.Item(i));
+    for (const auto& s : arr1) {
+        if (outArr.Index(s) == wxNOT_FOUND) {
+            outArr.Add(s);
         }
     }
 
-    for(size_t i = 0; i < arr2.size(); ++i) {
-        if(outArr.Index(arr2.Item(i)) == wxNOT_FOUND) {
-            outArr.Add(arr2.Item(i));
+    for (const auto& s : arr2) {
+        if (outArr.Index(s) == wxNOT_FOUND) {
+            outArr.Add(s);
         }
     }
     return outArr;
@@ -386,11 +386,11 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
         wxArrayString opts = wxArrayUniqueMerge(cxx_opts, c_opts);
         wxArrayString optsNames = wxArrayUniqueMerge(cxx_optNames, c_optsNames);
 
-        for(size_t i = 0; i < optsNames.size(); ++i) {
-            content << "add_definitions(${" << optsNames.Item(i) << "})\n";
+        for (const auto& s : optsNames) {
+            content << "add_definitions(${" << s << "})\n";
         }
-        for(size_t i = 0; i < opts.size(); ++i) {
-            content << "add_definitions(" << opts.Item(i) << ")\n";
+        for (const auto& s : opts) {
+            content << "add_definitions(" << s << ")\n";
         }
     }
 
@@ -418,13 +418,13 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
         content << "\n# Linker options\n";
         ExpandOptions(linkOptions, content, optsNames, opts);
         bool first = true;
-        for(size_t i = 0; i < optsNames.size(); ++i) {
-            content << "set(LINK_OPTIONS " << (first ? "" : "${LINK_OPTIONS} ") << "${" << optsNames.Item(i) << "})\n";
+        for (const auto& s : optsNames) {
+            content << "set(LINK_OPTIONS " << (first ? "" : "${LINK_OPTIONS} ") << "${" << s << "})\n";
             first = false;
         }
 
-        for(size_t i = 0; i < opts.size(); ++i) {
-            content << "set(LINK_OPTIONS " << (first ? "" : "${LINK_OPTIONS} ") << opts.Item(i) << ")\n";
+        for (const auto& s : opts) {
+            content << "set(LINK_OPTIONS " << (first ? "" : "${LINK_OPTIONS} ") << s << ")\n";
             first = false;
         }
         content << "\n";
@@ -437,13 +437,13 @@ wxString CMakeGenerator::GenerateProject(ProjectPtr project, bool topProject, co
         content << "    # Resource options\n";
         ExpandOptions(rcOptions, content, optsNames, opts, "    ");
         bool first = true;
-        for(size_t i = 0; i < optsNames.size(); ++i) {
-            content << "    set(RC_OPTIONS " << (first ? "" : "${RC_OPTIONS} ") << "${" << optsNames.Item(i) << "})\n";
+        for (const auto& s : optsNames) {
+            content << "    set(RC_OPTIONS " << (first ? "" : "${RC_OPTIONS} ") << "${" << s << "})\n";
             first = false;
         }
 
-        for(size_t i = 0; i < opts.size(); ++i) {
-            content << "    set(RC_OPTIONS " << (first ? "" : "${RC_OPTIONS} ") << opts.Item(i) << ")\n";
+        for (const auto& s : opts) {
+            content << "    set(RC_OPTIONS " << (first ? "" : "${RC_OPTIONS} ") << s << ")\n";
             first = false;
         }
         content << "endif(WIN32)\n";
@@ -648,16 +648,14 @@ bool CMakeGenerator::CanGenerate(ProjectPtr project)
 
     // Add the projects
     wxArrayString projects = project->GetDependencies(buildConf->GetName());
-    for(size_t i = 0; i < projects.size(); ++i) {
-        ProjectPtr p = workspace->GetProject(projects.Item(i));
-        if(p) {
+    for (const auto& projectName : projects) {
+        if (ProjectPtr p = workspace->GetProject(projectName)) {
             cmakelistsArr.push_back(wxFileName(p->GetFileName().GetPath(), CMakePlugin::CMAKELISTS_FILE));
         }
     }
 
     // Read each of the CMakeLists.txt file in the array, and check if we can find our top level comment
-    for(size_t i = 0; i < cmakelistsArr.size(); ++i) {
-        const wxFileName& fn = cmakelistsArr.at(i);
+    for (const wxFileName& fn : cmakelistsArr) {
         wxString content;
         if(fn.Exists() && FileUtils::ReadFileContent(fn, content)) {
             if(!content.StartsWith(CODELITE_CMAKE_PREFIX)) {
@@ -675,8 +673,7 @@ void CMakeGenerator::ExpandOptions(const wxString& options, wxString& content, w
     arrOut.clear();
 
     wxArrayString arrOptions = ::wxStringTokenize(options, ";", wxTOKEN_STRTOK);
-    for(size_t i = 0; i < arrOptions.size(); ++i) {
-        wxString cmpOption(arrOptions.Item(i));
+    for (wxString cmpOption : arrOptions) {
         cmpOption.Trim().Trim(false);
         wxString tmp;
         // Expand backticks / $(shell ...) syntax supported by CodeLite

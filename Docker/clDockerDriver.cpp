@@ -111,8 +111,8 @@ void clDockerDriver::RemoveContainers(const wxArrayString& ids)
         return;
     }
     command << " rm --force ";
-    for(size_t i = 0; i < ids.size(); ++i) {
-        command << " " << ids[i];
+    for (const auto& id : ids) {
+        command << " " << id;
     }
 
     StartProcessAsync(command, "", IProcessCreateDefault | IProcessWrapInShell, kKillContainers);
@@ -149,9 +149,9 @@ void clDockerDriver::ProcessListContainersCommand()
 {
     clDockerContainer::Vect_t L;
     wxArrayString lines = ::wxStringTokenize(m_output, "\n", wxTOKEN_STRTOK);
-    for(size_t i = 0; i < lines.size(); ++i) {
+    for (const auto& line : lines) {
         clDockerContainer container;
-        if(container.Parse(lines.Item(i))) {
+        if (container.Parse(line)) {
             L.push_back(container);
         }
     }
@@ -162,9 +162,9 @@ void clDockerDriver::ProcessListImagesCommand()
 {
     wxArrayString lines = ::wxStringTokenize(m_output, "\n", wxTOKEN_STRTOK);
     clDockerImage::Vect_t L;
-    for(size_t i = 0; i < lines.size(); ++i) {
+    for (const auto& line : lines) {
         clDockerImage image;
-        if(image.Parse(lines.Item(i))) {
+        if (image.Parse(line)) {
             L.push_back(image);
         }
     }
@@ -238,9 +238,9 @@ void clDockerDriver::AttachTerminal(const wxArrayString& names)
     if(command.IsEmpty())
         return;
 
-    for(size_t i = 0; i < names.size(); ++i) {
+    for (const auto& name : names) {
         wxString message;
-        command << " exec -i " << names.Item(i) << " /bin/bash -i";
+        command << " exec -i " << name << " /bin/bash -i";
         FileUtils::OpenTerminal(clDockerWorkspace::Get()->GetDir(), command);
     }
 }

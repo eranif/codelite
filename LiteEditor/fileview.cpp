@@ -272,12 +272,12 @@ void FileViewTree::BuildTree()
         ManagerST::Get()->GetProjectList(list);
 
         wxArrayString folders = clCxxWorkspaceST::Get()->GetWorkspaceFolders();
-        for (size_t i = 0; i < folders.size(); ++i) {
-            AddWorkspaceFolder(folders.Item(i));
+        for (const auto& folder : folders) {
+            AddWorkspaceFolder(folder);
         }
 
-        for (size_t n = 0; n < list.GetCount(); n++) {
-            BuildProjectNode(list.Item(n));
+        for (const auto& projectName : list) {
+            BuildProjectNode(projectName);
         }
 
         // set selection to first item
@@ -1313,8 +1313,7 @@ void FileViewTree::OnItemActivated(wxTreeEvent& event)
     event.Skip();
     wxArrayTreeItemIds items;
     if (GetSelections(items)) {
-        for (size_t i = 0; i < items.size(); ++i) {
-            wxTreeItemId item = items.Item(i);
+        for (wxTreeItemId item : items) {
             DoItemActivated(item, event);
         }
     }

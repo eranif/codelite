@@ -115,8 +115,8 @@ TagTreePtr TagsManager::Load(const wxFileName& fileName, TagEntryPtrVector_t* ta
     TagEntry root;
     root.SetName(wxT("<ROOT>"));
     tree = std::make_shared<TagTree>(wxT("<ROOT>"), root);
-    for(size_t i = 0; i < tagsByFile.size(); i++) {
-        tree->AddEntry(*(tagsByFile.at(i)));
+    for (const auto& tagEntryPtr : tagsByFile) {
+        tree->AddEntry(*tagEntryPtr);
     }
     return tree;
 }
@@ -342,8 +342,8 @@ void TagsManager::GetFiles(const wxString& partialName, std::vector<wxFileName>&
     std::vector<FileEntryPtr> f;
     GetFiles(partialName, f);
 
-    for(size_t i = 0; i < f.size(); i++) {
-        files.push_back(wxFileName(f.at(i)->GetFile()));
+    for (const auto& fileEntryPtr : f) {
+        files.push_back(wxFileName(fileEntryPtr->GetFile()));
     }
 }
 
@@ -499,13 +499,11 @@ void TagsManager::FilterNonNeededFilesForRetaging(wxArrayString& strFiles, ITags
     db->GetFiles(files_entries);
     std::unordered_set<wxString> files_set;
 
-    for(size_t i = 0; i < strFiles.GetCount(); i++) {
-        files_set.insert(strFiles.Item(i));
+    for (const auto& filename : strFiles) {
+        files_set.insert(filename);
     }
 
-    for(size_t i = 0; i < files_entries.size(); i++) {
-        const FileEntryPtr& fe = files_entries.at(i);
-
+    for  (const FileEntryPtr& fe : files_entries) {
         // does the file exist in both lists?
         std::unordered_set<wxString>::iterator iter = files_set.find(fe->GetFile());
         if(iter != files_set.end()) {
@@ -544,8 +542,7 @@ void TagsManager::GetDereferenceOperator(const wxString& scope, std::vector<TagE
     GetDerivationList(_scopeName, NULL, derivationList, visited, 1);
 
     // make enough room for max of 500 elements in the vector
-    for(size_t i = 0; i < derivationList.size(); i++) {
-        wxString tmpScope(derivationList.at(i).first);
+    for (auto [tmpScope, _] : derivationList) {
         tmpScope = DoReplaceMacros(tmpScope);
 
         GetDatabase()->GetDereferenceOperator(tmpScope, tags);
@@ -567,8 +564,7 @@ void TagsManager::GetSubscriptOperator(const wxString& scope, std::vector<TagEnt
     GetDerivationList(_scopeName, NULL, derivationList, visited, 1);
 
     // make enough room for max of 500 elements in the vector
-    for(size_t i = 0; i < derivationList.size(); i++) {
-        wxString tmpScope(derivationList.at(i).first);
+    for (auto [tmpScope, _] : derivationList) {
         tmpScope = DoReplaceMacros(tmpScope);
 
         GetDatabase()->GetSubscriptOperator(tmpScope, tags);
@@ -662,8 +658,7 @@ void TagsManager::GetScopesByScopeName(const wxString& scopeName, wxArrayString&
     std::unordered_set<wxString> visited;
     GetDerivationList(_scopeName, NULL, derivationList, visited, 1);
 
-    for(size_t i = 0; i < derivationList.size(); i++) {
-        wxString tmpScope(derivationList.at(i).first);
+    for (auto [tmpScope, _] : derivationList) {
         tmpScope = DoReplaceMacros(tmpScope);
         scopes.Add(tmpScope);
     }

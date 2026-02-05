@@ -175,12 +175,12 @@ void OpenResourceDlg::OnTimer(wxTimerEvent& event)
 void OpenResourceDlg::DoPopulateListCtrl(const ResourceVector_t& items)
 {
     wxDataViewItem selection;
-    for(size_t i = 0; i < items.size(); ++i) {
+    for (const auto& item : items) {
         wxVector<wxVariant> cols;
-        cols.push_back(::MakeBitmapIndexText(items.at(i).displayName, DoGetImgIdx(&items.at(i))));
-        cols.push_back(items.at(i).TypeAsString());
-        cols.push_back(items.at(i).filename.GetFullPath());
-        m_dvListCtrl->AppendItem(cols, (wxUIntPtr)(new ResourceItem(items.at(i))));
+        cols.push_back(::MakeBitmapIndexText(item.displayName, DoGetImgIdx(&item)));
+        cols.push_back(item.TypeAsString());
+        cols.push_back(item.filename.GetFullPath());
+        m_dvListCtrl->AppendItem(cols, (wxUIntPtr)(new ResourceItem(item)));
         if(!selection.IsOk()) {
             selection = m_dvListCtrl->RowToItem(0);
         }
@@ -220,10 +220,10 @@ ResourceVector_t OpenResourceDlg::DoGetFiles(const wxString& filter)
     wxString lcFilter = filter;
     lcFilter.MakeLower();
 
-    for(size_t i = 0; i < m_allFiles.size(); i++) {
-        wxString filename = m_allFiles.at(i).filename.GetFullPath().Lower();
+    for (const auto& resourceItem : m_allFiles) {
+        wxString filename = resourceItem.filename.GetFullPath().Lower();
         if(FileUtils::FuzzyMatch(filter, filename)) {
-            resources.push_back(m_allFiles.at(i));
+            resources.push_back(resourceItem);
             // Don't return too many matches...
             if(resources.size() == 300)
                 break;

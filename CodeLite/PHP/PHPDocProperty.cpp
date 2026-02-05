@@ -15,8 +15,7 @@ const PHPDocProperty::Tuple_t& PHPDocProperty::ParseParams()
 {
     m_params.clear();
     wxArrayString lines = ::wxStringTokenize(m_comment, "\n\r", wxTOKEN_STRTOK);
-    for(size_t i = 0; i < lines.size(); ++i) {
-        const wxString& line = lines.Item(i);
+    for (const wxString& line : lines) {
         size_t offset = 0;
         wxString word;
         while (StringUtils::NextWord(line, offset, word)) {
@@ -41,8 +40,7 @@ const PHPDocProperty::Tuple_t& PHPDocProperty::ParseMethods()
 {
     m_params.clear();
     wxArrayString lines = ::wxStringTokenize(m_comment, "\n\r", wxTOKEN_STRTOK);
-    for(size_t i = 0; i < lines.size(); ++i) {
-        wxString& line = lines.Item(i);
+    for (wxString& line : lines) {
         if(line.Contains("@method")) {
             int where = line.Find("@method");
             line = line.Mid(where + 7); // skip "@method"

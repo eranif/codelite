@@ -361,15 +361,15 @@ bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManage
 
 bool FileExtManager::GetContentType(const wxString& string_content, FileExtManager::FileType& fileType)
 {
-    for (size_t i = 0; i < m_matchers.size(); ++i) {
-        if (m_matchers[i].Matches(string_content)) {
+    for (const auto& matcher : m_matchers) {
+        if (matcher.Matches(string_content)) {
             LOG_IF_TRACE
             {
-                if (m_matchers[i].m_regex) {
-                    clDEBUG1() << "Matching part is:" << m_matchers[i].m_regex->GetMatch(string_content, 0) << endl;
+                if (matcher.m_regex) {
+                    clDEBUG1() << "Matching part is:" << matcher.m_regex->GetMatch(string_content, 0) << endl;
                 }
             }
-            fileType = m_matchers[i].m_fileType;
+            fileType = matcher.m_fileType;
             return true;
         }
     }

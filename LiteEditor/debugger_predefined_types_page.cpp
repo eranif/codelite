@@ -39,9 +39,7 @@ PreDefinedTypesPage::PreDefinedTypesPage(wxWindow* parent, const DebuggerPreDefi
 
     // Populate the list with the items from the configuration file
     DebuggerCmdDataVec cmds = m_data.GetCmds();
-    for(size_t i = 0; i < cmds.size(); i++) {
-        DebuggerCmdData cmd = cmds.at(i);
-
+    for (DebuggerCmdData cmd : cmds) {
         long item = AppendListCtrlRow(m_listCtrl1);
         SetColumnText(m_listCtrl1, item, 0, cmd.GetName());
         SetColumnText(m_listCtrl1, item, 1, cmd.GetCommand());

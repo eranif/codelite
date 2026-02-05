@@ -211,8 +211,8 @@ JSONItem SignatureInformation::ToJSON(const wxString& name) const
     if(!m_parameters.empty()) {
         JSONItem params = JSONItem::createArray("parameters");
         json.append(params);
-        for(size_t i = 0; i < m_parameters.size(); ++i) {
-            params.append(m_parameters.at(i).ToJSON(""));
+        for (const auto& paramInfo : m_parameters) {
+            params.append(paramInfo.ToJSON(""));
         }
     }
     return json;

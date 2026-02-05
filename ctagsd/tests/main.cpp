@@ -1456,7 +1456,7 @@ int main(int argc, char** argv)
     wxStringSet_t scannedFiles;
     wxArrayString rootDirs;
     rootDirs.Add("/home/ANT.AMAZON.COM/eifrah/workplace/ElastiCacheProxyRust/src/ElastiCacheProxyRust");
-    for (size_t i = 0; i < rootDirs.size(); ++i) {
+    for (const auto& rootDir : rootDirs) {
         // collect only unique files that are matching the pattern
         auto on_file = [&](const wxArrayString& paths) {
             for (const auto& fullpath : paths) {
@@ -1477,7 +1477,7 @@ int main(int argc, char** argv)
 
         // make sure it's really a dir (not a fifo, etc.)
         clFilesScanner scanner;
-        scanner.ScanWithCallbacks(rootDirs.Item(i),
+        scanner.ScanWithCallbacks(rootDir,
                                   on_folder,
                                   on_file,
                                   clFilesScanner::SF_DONT_FOLLOW_SYMLINKS | clFilesScanner::SF_EXCLUDE_HIDDEN_DIRS);

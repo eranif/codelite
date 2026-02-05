@@ -47,9 +47,9 @@ void DbExplorerSettings::SetRecentFiles(const wxArrayString& recentFiles)
 DbConnectionInfoVec DbExplorerSettings::GetMySQLConnections()
 {
     DbConnectionInfoVec conns;
-    for(size_t i=0; i<m_connections.size(); i++) {
-        if(m_connections.at(i).GetConnectionType() == DbConnectionInfo::DbConnTypeMySQL) {
-            conns.push_back(m_connections.at(i));
+    for (const auto& connection : m_connections) {
+        if (connection.GetConnectionType() == DbConnectionInfo::DbConnTypeMySQL) {
+            conns.push_back(connection);
         }
     }
     return conns;
@@ -58,9 +58,9 @@ DbConnectionInfoVec DbExplorerSettings::GetMySQLConnections()
 DbConnectionInfoVec DbExplorerSettings::GetPgSQLConnections()
 {
     DbConnectionInfoVec conns;
-    for(size_t i=0; i<m_connections.size(); i++) {
-        if(m_connections.at(i).GetConnectionType() == DbConnectionInfo::DbConnTypePgSQL) {
-            conns.push_back(m_connections.at(i));
+    for (const auto& connection : m_connections) {
+        if (connection.GetConnectionType() == DbConnectionInfo::DbConnTypePgSQL) {
+            conns.push_back(connection);
         }
     }
     return conns;

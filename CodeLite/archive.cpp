@@ -126,11 +126,11 @@ bool Archive::Write(const wxString& name, std::vector<TabInfo>& _vTabInfoArr)
     node->AddAttribute(wxT("Name"), name);
 
     // add an entry for each wxString in the array
-    for(size_t i = 0; i < _vTabInfoArr.size(); i++) {
+    for (auto& tabInfo : _vTabInfoArr) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("TabInfo"));
         Archive arch;
         arch.SetXmlNode(child);
-        _vTabInfoArr[i].Serialize(arch);
+        tabInfo.Serialize(arch);
         node->AddChild(child);
     }
     return true;
@@ -146,10 +146,10 @@ bool Archive::Write(const wxString& name, std::vector<int>& _vInt)
     node->AddAttribute(wxT("Name"), name);
 
     // add an entry for each int in the vector
-    for(size_t i = 0; i < _vInt.size(); ++i) {
+    for (const auto n : _vInt) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("IntVectorItem"));
         node->AddChild(child);
-        child->AddAttribute(wxT("Value"), wxString::Format(wxT("%i"), _vInt.at(i)));
+        child->AddAttribute(wxT("Value"), wxString::Format(wxT("%i"), n));
     }
     return true;
 }

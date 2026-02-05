@@ -121,16 +121,16 @@ void DbSettingDialog::LoadHistory()
 #ifdef DBL_USE_MYSQL
     DbConnectionInfoVec mySqlConns = DoLoadMySQLHistory();
     m_listBox2->Clear();
-    for(size_t i = 0; i < mySqlConns.size(); i++) {
-        m_listBox2->Append(mySqlConns.at(i).GetConnectionName());
+    for (const auto& mySqlConn : mySqlConns) {
+        m_listBox2->Append(mySqlConn.GetConnectionName());
     }
 #endif
 
 #ifdef DBL_USE_POSTGRES
     DbConnectionInfoVec pgSqlConns = DoLoadPgSQLHistory();
     m_listBoxPg->Clear();
-    for(size_t i = 0; i < pgSqlConns.size(); i++) {
-        m_listBoxPg->Append(pgSqlConns.at(i).GetConnectionName());
+    for (const auto& pgSqlConn : pgSqlConns) {
+        m_listBoxPg->Append(pgSqlConn.GetConnectionName());
     }
 #endif
 }
@@ -342,24 +342,24 @@ void DbSettingDialog::DoSavePgSQLHistory()
 
 void DbSettingDialog::DoFindConnectionByName(const DbConnectionInfoVec& conns, const wxString& name)
 {
-    for(size_t i = 0; i < conns.size(); i++) {
-        if(conns.at(i).GetConnectionName() == name) {
+    for (const auto& conn : conns) {
+        if (conn.GetConnectionName() == name) {
             // we found the selected connection
-            if(conns.at(i).GetConnectionType() == DbConnectionInfo::DbConnTypeMySQL) {
+            if (conn.GetConnectionType() == DbConnectionInfo::DbConnTypeMySQL) {
                 // populate the MySQL fields
-                m_txName->SetValue(conns.at(i).GetConnectionName());
-                m_txServer->SetValue(conns.at(i).GetServer());
-                m_txUserName->SetValue(conns.at(i).GetUsername());
-                m_txPassword->SetValue(conns.at(i).GetPassword());
+                m_txName->SetValue(conn.GetConnectionName());
+                m_txServer->SetValue(conn.GetServer());
+                m_txUserName->SetValue(conn.GetUsername());
+                m_txPassword->SetValue(conn.GetPassword());
 
             } else {
                 // populate the PgSQL fields
-                m_txPgName->SetValue(conns.at(i).GetConnectionName());
-                m_txPgServer->SetValue(conns.at(i).GetServer());
-                m_txPgPort->SetValue(wxString::Format(wxT("%i"), conns.at(i).GetPort()));
-                m_txPgUserName->SetValue(conns.at(i).GetUsername());
-                m_txPgPassword->SetValue(conns.at(i).GetPassword());
-                m_txPgDatabase->SetValue(conns.at(i).GetDefaultDatabase());
+                m_txPgName->SetValue(conn.GetConnectionName());
+                m_txPgServer->SetValue(conn.GetServer());
+                m_txPgPort->SetValue(wxString::Format(wxT("%i"), conn.GetPort()));
+                m_txPgUserName->SetValue(conn.GetUsername());
+                m_txPgPassword->SetValue(conn.GetPassword());
+                m_txPgDatabase->SetValue(conn.GetDefaultDatabase());
             }
             return;
         }

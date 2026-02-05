@@ -448,8 +448,7 @@ PHPEntityBase::Ptr_t PHPSourceFile::CurrentScope()
 size_t PHPSourceFile::LookBackForFunctionFlags()
 {
     size_t flags(0);
-    for(size_t i = 0; i < m_lookBackTokens.size(); ++i) {
-        const phpLexerToken& tok = m_lookBackTokens.at(i);
+    for (const phpLexerToken& tok : m_lookBackTokens) {
         if(tok.type == kPHP_T_ABSTRACT) {
             flags |= kFunc_Abstract;
 
@@ -933,8 +932,8 @@ int PHPSourceFile::ReadUntilFoundOneOf(int delim1, int delim2, phpLexerToken& to
 
 bool PHPSourceFile::LookBackTokensContains(int type) const
 {
-    for(size_t i = 0; i < m_lookBackTokens.size(); ++i) {
-        if(m_lookBackTokens.at(i).type == type)
+    for (const auto& token : m_lookBackTokens) {
+        if (token.type == type)
             return true;
     }
     return false;
@@ -943,8 +942,7 @@ bool PHPSourceFile::LookBackTokensContains(int type) const
 size_t PHPSourceFile::LookBackForVariablesFlags()
 {
     size_t flags(kVar_Public);
-    for(size_t i = 0; i < m_lookBackTokens.size(); ++i) {
-        const phpLexerToken& tok = m_lookBackTokens.at(i);
+    for (const phpLexerToken& tok : m_lookBackTokens) {
         if(tok.type == kPHP_T_STATIC) {
             flags |= kVar_Static;
 

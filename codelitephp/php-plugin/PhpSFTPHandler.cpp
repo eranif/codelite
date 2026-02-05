@@ -51,8 +51,8 @@ void PhpSFTPHandler::OnReplaceInFiles(clFileSystemEvent& e)
     }
 
     const wxArrayString& files = e.GetStrings();
-    for(size_t i = 0; i < files.size(); ++i) {
-        DoSyncFileWithRemote(files.Item(i));
+    for (const auto& filename : files) {
+        DoSyncFileWithRemote(filename);
     }
 }
 
@@ -147,8 +147,8 @@ void PhpSFTPHandler::OnFileDeleted(clFileSystemEvent& e)
         return;
     }
 
-    for(size_t i = 0; i < paths.size(); ++i) {
-        wxString remotePath = GetRemotePath(settings, paths.Item(i));
+    for (const auto& path : paths) {
+        wxString remotePath = GetRemotePath(settings, path);
         if(remotePath.IsEmpty()) {
             return;
         }

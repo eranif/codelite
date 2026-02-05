@@ -296,8 +296,8 @@ public:
         if(!m_failedFiles.IsEmpty()) {
             msg << "\n";
             msg << "====== " << _("Failed to open the following files for scan:") << "\n";
-            for(size_t i = 0; i < m_failedFiles.size(); ++i) {
-                msg << m_failedFiles.Item(i) << "\n";
+            for (const auto& filename : m_failedFiles) {
+                msg << filename << "\n";
             }
         }
         return msg;

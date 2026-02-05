@@ -52,9 +52,9 @@ size_t SessionBreakpoints::find_by_path_internal(const wxString& path, std::vect
     }
 
     bps->reserve(m_breakpoints.size());
-    for(size_t i = 0; i < m_breakpoints.size(); ++i) {
-        if(m_breakpoints[i].source.path == path) {
-            bps->push_back(m_breakpoints[i]);
+    for (const auto& breakpoint : m_breakpoints) {
+        if (breakpoint.source.path == path) {
+            bps->push_back(breakpoint);
         }
     }
     return bps->size();

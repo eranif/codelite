@@ -73,13 +73,11 @@ void AttachDbgProcDlg::RefreshProcessesList(wxString filter)
     const std::vector<ProcessEntry> proclist = ProcUtils::GetProcessList();
 
     filter.MakeLower();
-    for(size_t i = 0; i < proclist.size(); ++i) {
+    for (const ProcessEntry& processEntry : proclist) {
 
         // Use case in-sensitive match for the filter
         wxString processName;
         wxString processID;
-
-        const ProcessEntry& processEntry = proclist.at(i);
 
         processName << processEntry.name;
         processID << processEntry.pid;

@@ -176,8 +176,8 @@ PHPEntityBase::Ptr_t PHPLookupTable::FindMemberOf(wxLongLong parentDbId, const w
         // std::reverse(parents.begin(), parents.end());
 
         // Parents should now contain an ordered list of all the inheritance
-        for(size_t i = 0; i < parents.size(); ++i) {
-            PHPEntityBase::Ptr_t match = DoFindMemberOf(parents.at(i), exactName);
+        for (const auto& parentId : parents) {
+            PHPEntityBase::Ptr_t match = DoFindMemberOf(parentId, exactName);
             if(match) {
                 PHPEntityBase::List_t matches;
                 matches.push_back(match);
@@ -611,8 +611,8 @@ PHPEntityBase::List_t PHPLookupTable::FindChildren(wxLongLong parentId, size_t f
         // Reverse the order of the parents
         std::reverse(parents.begin(), parents.end());
 
-        for(size_t i = 0; i < parents.size(); ++i) {
-            DoFindChildren(matches, parents.at(i), flags, nameHint);
+        for (const auto& parentId : parents) {
+            DoFindChildren(matches, parentId, flags, nameHint);
         }
 
         // Filter out abstract functions

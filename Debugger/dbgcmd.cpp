@@ -486,12 +486,12 @@ bool DbgCmdHandlerLocals::ProcessOutput(const wxString& line)
     if (!variables.empty()) {
         // no children
         locals.reserve(variables.size());
-        for (size_t i = 0; i < variables.size(); ++i) {
+        for (const auto& variable : variables) {
             // each entry in the list is also represented as a list
             // with the index as its name
             LocalVariable var;
-            var.name = (*variables[i])["name"].value;
-            var.value = (*variables[i])["value"].value;
+            var.name = (*variable)["name"].value;
+            var.value = (*variable)["value"].value;
             if (var.value.empty()) {
                 var.value = "{..}";
             }
@@ -765,8 +765,8 @@ bool DbgCmdListThreads::ProcessOutput(const wxString& line)
     parser.Parse(line);
     DebuggerEventData e;
     const GdbMIThreadInfoVec_t& threads = parser.GetThreads();
-    for (size_t i = 0; i < threads.size(); ++i) {
-        e.m_threads.push_back(threads.at(i).ToThreadEntry());
+    for (const auto& thread : threads) {
+        e.m_threads.push_back(thread.ToThreadEntry());
     }
 
     // Notify the observer
@@ -957,8 +957,8 @@ bool DbgCmdListChildren::ProcessOutput(const wxString& line)
     e.m_varObjChildren.reserve(children.size());
 
     // Convert the parser output to CodeLite data structure
-    for (size_t i = 0; i < children.size(); ++i) {
-        e.m_varObjChildren.push_back(FromParserOutput(*children[i]));
+    for (const auto& child : children) {
+        e.m_varObjChildren.push_back(FromParserOutput(*child));
     }
 
     e.m_updateReason = DBG_UR_LISTCHILDREN;
@@ -1050,10 +1050,10 @@ bool DbgVarObjUpdate::ProcessOutput(const wxString& line)
     GdbChildrenInfo info;
     gdbParseListChildren(cbuffer, info);
 
-    for (size_t i = 0; i < info.children.size(); i++) {
-        wxString name = ExtractGdbChild(info.children.at(i), wxT("name"));
-        wxString in_scope = ExtractGdbChild(info.children.at(i), wxT("in_scope"));
-        wxString type_changed = ExtractGdbChild(info.children.at(i), wxT("type_changed"));
+    for (const auto& child : info.children) {
+        wxString name = ExtractGdbChild(child, wxT("name"));
+        wxString in_scope = ExtractGdbChild(child, wxT("in_scope"));
+        wxString type_changed = ExtractGdbChild(child, wxT("type_changed"));
         if (in_scope == wxT("false") || type_changed == wxT("true")) {
             e.m_varObjUpdateInfo.removeIds.Add(name);
 
@@ -1110,11 +1110,9 @@ bool DbgCmdHandlerDisassemble::ProcessOutput(const wxString& line)
     ::gdbParseListChildren(line.mb_str(wxConvUTF8).data(), info);
 
     DebuggerEventData* evtData = new DebuggerEventData();
-    for (size_t i = 0; i < info.children.size(); ++i) {
-
+    for (GdbStringMap_t& attrs : info.children) {
         DisassembleEntry entry;
 
-        GdbStringMap_t& attrs = info.children.at(i);
         if (attrs.count("address")) {
             entry.m_address = attrs["address"].c_str();
             wxGDB_STRIP_QUOTES(entry.m_address);

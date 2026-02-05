@@ -42,10 +42,10 @@ wxString BitmapComboxWrapper::CppCtorCode() const
     wxArrayString labels, bitmaps;
     wxString options = PropertyString(PROP_CB_CHOICES);
     BmpTextVec_t arr = BmpTextSelectorDlg::FromString(options);
-    for(size_t i = 0; i < arr.size(); ++i) {
-        wxcCodeGeneratorHelper::Get().AddBitmap(arr.at(i).first);
-        bitmaps.Add(wxcCodeGeneratorHelper::Get().BitmapCode(arr.at(i).first));
-        labels.Add(arr.at(i).second);
+    for (const auto& [bitmapFile, label] : arr) {
+        wxcCodeGeneratorHelper::Get().AddBitmap(bitmapFile);
+        bitmaps.Add(wxcCodeGeneratorHelper::Get().BitmapCode(bitmapFile));
+        labels.Add(label);
     }
     wxString code;
     code << GetName() << " = new " << GetRealClassName() << "(" << GetWindowParent() << ", " << WindowID()

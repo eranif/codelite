@@ -12,6 +12,7 @@ extern void wxCA637InitBitmapResources();
 namespace
 {
 // return the wxBORDER_SIMPLE that matches the current application theme
+[[maybe_unused]]
 wxBorder get_border_simple_theme_aware_bit()
 {
 #if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
@@ -86,7 +87,7 @@ clAboutDialogBase::clAboutDialogBase(
 
     m_staticTextSubtitle = new wxStaticText(m_panel22,
                                             wxID_ANY,
-                                            _("2007 - 2025, by Eran Ifrah"),
+                                            _("2007 - 2026, by Eran Ifrah"),
                                             wxDefaultPosition,
                                             wxDLG_UNIT(m_panel22, wxSize(-1, -1)),
                                             0);

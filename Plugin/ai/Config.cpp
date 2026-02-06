@@ -48,7 +48,23 @@ void Config::Load()
     try {
         auto json = nlohmann::json::parse(cstr_content);
         m_prompts = ReadValue(json, "prompts", kDefaultPromptTable);
-        m_history = ReadValue(json, "history", std::vector<std::string>{});
+
+        if (json.contains("chat_history") && json["chat_history"].is_array()) {
+            auto chat_history = json["chat_history"];
+            for (const auto& history : chat_history) {
+                Conversation ch;
+                for (const auto& msg : history) {
+                    assistant::Message history_message;
+                    history_message.text = msg["content"].get<std::string>();
+                    history_message.role = msg["role"].get<std::string>();
+                    ch.push_back(history_message);
+                }
+                if (!ch.empty()) {
+                    m_history.push_back(ch);
+                }
+            }
+        }
+
     } catch (const std::exception& e) {
         clERROR() << "Failed to parse JSON file:" << GetFullPath() << "." << e.what() << endl;
         return;
@@ -72,24 +88,45 @@ void Config::Save()
     }
 
     j["prompts"] = m_prompts;
-    j["history"] = m_history;
+
+    nlohmann::json history_array = nlohmann::json::array();
+    for (const auto& hst : m_history) {
+        nlohmann::json chat = nlohmann::json::array();
+        for (const auto& msg : hst) {
+            nlohmann::json o = {{"role", msg.role}, {"content", msg.text}};
+            chat.push_back(o);
+        }
+        if (!hst.empty()) {
+            history_array.push_back(chat);
+        }
+    }
+    j["chat_history"] = history_array;
 
     wxString content = wxString::FromUTF8(j.dump(2));
     FileUtils::WriteFileContent(GetFullPath(), content, wxConvUTF8);
 }
 
-void Config::AddHistory(const wxString& prompt)
+void Config::AddConversation(const Conversation& conversation)
 {
     std::scoped_lock lk{m_mutex};
-    std::string new_prompt = prompt.ToStdString(wxConvUTF8);
-    auto iter = std::find_if(
-        m_history.begin(), m_history.end(), [&new_prompt](const std::string& p) { return p == new_prompt; });
+    auto res = GetConversationLabel(conversation);
+    if (!res.has_value()) {
+        return;
+    }
+
+    auto new_label = res.value();
+    auto iter = std::find_if(m_history.begin(), m_history.end(), [&new_label](const Conversation& h) {
+        auto l = GetConversationLabel(h);
+        return l.has_value() && l.value() == new_label;
+    });
+
+    // Delete the old chat history
     if (iter != m_history.end()) {
         m_history.erase(iter);
     }
 
     // Insert at the top
-    m_history.insert(m_history.begin(), new_prompt);
+    m_history.insert(m_history.begin(), conversation);
 }
 
 wxString Config::GetPrompt(PromptKind kind) const

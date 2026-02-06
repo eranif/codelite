@@ -18,19 +18,16 @@ others:
 - build tab: add AI option to the context menu.
 - use json instead of cJSON everywhere
 
-LSP:
---------
-
-Add support for pyright
-
-`npm install -g pyright`. Note that on Windows, we need to launch launch `pyright-langserver.cmd --stdio`
-
 AI-powered IDE:
 --------
 
 - MarkdownStyler: mark gcc style lines "file:line" as hyperlink and clickable.
-- Extend the "Prompt Editor" to support adding/deleting prompts (the default ones can not be deleted)
 - Add `codelite-api.lua` file to the installation folder to provide completion for LUA LSPs.
 - Make another tool `RemoteFindInFile` for supporting remote find-in-files.
 
 Prepare release notes per version (e.g. 18.2.0, 18.3.0 etc)
+
+BUGS
+----
+
+Application hangs when renaming a symbol & the MiniMap editor is loaded...

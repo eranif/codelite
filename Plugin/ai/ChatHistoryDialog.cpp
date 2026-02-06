@@ -2,49 +2,25 @@
 
 #include "ai/LLMManager.hpp"
 
-namespace
-{
-/**
- * @brief Creates a truncated label string with ellipsis if the input text exceeds a specified size.
- *
- * If the input text is longer than or equal to the specified size, this function
- * truncates it and appends "..." to indicate truncation. Otherwise, the original
- * text is returned unchanged.
- *
- * @param text The input string to be processed into a label.
- * @param size The maximum length of the resulting label (default is 100). Must be
- *             at least 3 to accommodate the ellipsis when truncation occurs.
- *
- * @return wxString The resulting label, either truncated with "..." or the original text.
- */
-wxString CreateLabel(const wxString& text, size_t size = 100)
-{
-    wxString label = text.BeforeFirst('\n');
-    label.Trim().Trim(false);
-    if (label.size() >= size) {
-        return label.Mid(0, size - 3) << "...";
-    }
-    return label;
-}
-} // namespace
-
 ChatHistoryDialog::ChatHistoryDialog(wxWindow* parent)
     : ChatHistoryDialogBase(parent)
 {
-    auto prompts = llm::Manager::GetInstance().GetConfig().GetHistory();
-    for (auto& prompt : prompts) {
-        prompt.Trim().Trim(false);
-        if (prompt.empty()) {
+    auto history = llm::Manager::GetInstance().GetConfig().GetHistory();
+    for (const auto& conversation : history) {
+        if (conversation.empty()) {
             continue;
         }
+        auto res = llm::Config::GetConversationLabel(conversation);
+        if (!res.has_value()) {
+            continue;
+        }
+
+        auto label = wxString::FromUTF8(res.value());
         wxVector<wxVariant> cols;
-        // Ensure that each line in the table contains a single line (not multi-line)
-        // as multi-line entries may not render correctly on some platforms.
-        auto label = CreateLabel(prompt);
         cols.push_back(label);
-        auto p = std::make_shared<wxString>(prompt);
+        auto p = std::make_shared<llm::Conversation>(conversation);
         m_dvListCtrlPrompts->AppendItem(cols, reinterpret_cast<wxUIntPtr>(p.get()));
-        m_prompts.push_back(p);
+        m_coversations.push_back(p); // Keep a copy to keep the `p` pointer valid.
     }
     m_dvListCtrlPrompts->CallAfter(&wxDataViewListCtrl::SetFocus);
 }
@@ -83,7 +59,7 @@ void ChatHistoryDialog::OnDelete(wxCommandEvent& event)
     }
 
     // Update the history.
-    llm::Manager::GetInstance().GetConfig().SetHistory(GetPrompts());
+    llm::Manager::GetInstance().GetConfig().SetHistory(GetHistory());
     llm::Manager::GetInstance().GetConfig().Save();
 }
 
@@ -117,7 +93,7 @@ void ChatHistoryDialog::SetSelectionAndEndModal(const wxDataViewItem& item)
         return;
     }
 
-    auto cd = reinterpret_cast<wxString*>(m_dvListCtrlPrompts->GetItemData(item));
+    auto cd = reinterpret_cast<llm::Conversation*>(m_dvListCtrlPrompts->GetItemData(item));
     if (!cd) {
         clERROR() << "History entry does not have client data associated with it." << endl;
         EndModal(wxID_CANCEL);
@@ -128,13 +104,13 @@ void ChatHistoryDialog::SetSelectionAndEndModal(const wxDataViewItem& item)
     EndModal(wxID_OK);
 }
 
-wxArrayString ChatHistoryDialog::GetPrompts() const
+llm::ChatHistory ChatHistoryDialog::GetHistory() const
 {
-    wxArrayString prompts;
-    prompts.reserve(m_dvListCtrlPrompts->GetItemCount());
+    llm::ChatHistory v;
+    v.reserve(m_dvListCtrlPrompts->GetItemCount());
     for (auto i = 0; i < m_dvListCtrlPrompts->GetItemCount(); ++i) {
-        prompts.push_back(
-            *reinterpret_cast<wxString*>(m_dvListCtrlPrompts->GetItemData(m_dvListCtrlPrompts->RowToItem(i))));
+        v.push_back(
+            *reinterpret_cast<llm::Conversation*>(m_dvListCtrlPrompts->GetItemData(m_dvListCtrlPrompts->RowToItem(i))));
     }
-    return prompts;
+    return v;
 }

@@ -263,6 +263,26 @@ public:
     void ClearHistory();
 
     /**
+     * @brief Retrieves the current message history from the underlying client.
+     *
+     * Returns a copy of the message history maintained by the internal client.
+     * If the client is not initialized (i.e., `m_client` is `nullptr`), returns an empty vector.
+     * The method does not modify the internal state and is safe to call concurrently with other const operations.
+     *
+     * @return std::vector<assistant::Message> A vector containing the message history; empty if the client is
+     * unavailable.
+     */
+    llm::Conversation GetConversation() const;
+
+    /**
+     * Sets the conversation history for the underlying assistant client.
+     *
+     * This method delegates the history update to the internal `m_client` if it is valid.
+     * No additional processing or validation is performed on the history before forwarding.
+     */
+    void LoadConversation(const llm::Conversation& history);
+
+    /**
      * @brief Stops the background worker thread if it is running.  The worker will
      * finish any currently queued work before exiting.
      */

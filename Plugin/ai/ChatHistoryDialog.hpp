@@ -1,9 +1,9 @@
 #pragma once
 
 #include "UI.hpp"
+#include "ai/Config.hpp"
 #include "codelite_exports.h"
 
-#include <memory>
 #include <vector>
 
 class WXDLLIMPEXP_SDK ChatHistoryDialog : public ChatHistoryDialogBase
@@ -12,8 +12,11 @@ public:
     ChatHistoryDialog(wxWindow* parent);
     ~ChatHistoryDialog() override;
 
-    void SetSelectedPrompt(const wxString& selectedPrompt) { this->m_selectedPrompt = selectedPrompt; }
-    const wxString& GetSelectedPrompt() const { return m_selectedPrompt; }
+    inline void SetSelectedPrompt(const llm::Conversation& conversation)
+    {
+        this->m_selectedConversation = conversation;
+    }
+    inline const llm::Conversation& GetSelectedConversation() const { return m_selectedConversation; }
 
 protected:
     void OnInsert(wxCommandEvent& event) override;
@@ -25,9 +28,9 @@ protected:
     void OnDeleteUI(wxUpdateUIEvent& event) override;
 
     void SetSelectionAndEndModal(const wxDataViewItem& item);
-    wxArrayString GetPrompts() const;
+    llm::ChatHistory GetHistory() const;
 
 private:
-    wxString m_selectedPrompt;
-    std::vector<std::shared_ptr<wxString>> m_prompts;
+    llm::Conversation m_selectedConversation;
+    std::vector<std::shared_ptr<llm::Conversation>> m_coversations;
 };

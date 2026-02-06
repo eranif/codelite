@@ -47,8 +47,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     clAuiToolBarArt::AddTool(m_toolbar, wxID_STOP, _("Stop"), images->LoadBitmap("execute_stop"));
     m_toolbar->AddSeparator();
     clAuiToolBarArt::AddTool(m_toolbar, wxID_REFRESH, _("Restart the client"), images->LoadBitmap("debugger_restart"));
-    clAuiToolBarArt::AddTool(
-        m_toolbar, XRCID("prompt_history"), _("Show prompt history"), images->LoadBitmap("history"));
+    clAuiToolBarArt::AddTool(m_toolbar, XRCID("chat_history"), _("Show chat history"), images->LoadBitmap("history"));
     clAuiToolBarArt::AddTool(m_toolbar,
                              XRCID("auto_scroll"),
                              _("Enable auto scrolling"),
@@ -96,7 +95,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     Bind(wxEVT_MENU, &ChatAIWindow::OnSend, this, wxID_EXECUTE);
     Bind(wxEVT_MENU, &ChatAIWindow::OnStop, this, wxID_STOP);
     Bind(wxEVT_MENU, &ChatAIWindow::OnAutoScroll, this, XRCID("auto_scroll"));
-    Bind(wxEVT_MENU, &ChatAIWindow::OnHistory, this, XRCID("prompt_history"));
+    Bind(wxEVT_MENU, &ChatAIWindow::OnHistory, this, XRCID("chat_history"));
     Bind(wxEVT_MENU, &ChatAIWindow::OnDetachView, this, XRCID("detach_view"));
 
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnDetachViewUI, this, XRCID("detach_view"));
@@ -104,7 +103,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnStopUI, this, wxID_STOP);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnClearOutputViewUI, this, wxID_CLEAR);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnAutoScrollUI, this, XRCID("auto_scroll"));
-    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnHistoryUI, this, XRCID("prompt_history"));
+    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnHistoryUI, this, XRCID("chat_history"));
     m_choiceEndpoints->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnBusyUI, this);
     UpdateChoices();
 
@@ -142,6 +141,11 @@ ChatAIWindow::~ChatAIWindow()
 
     clConfig::Get().Write("chat-ai/sash-position", m_mainSplitter->GetSashPosition());
     clConfig::Get().Write("chat-ai/enable-tools", m_checkboxEnableTools->IsChecked());
+
+    // Store the current session
+    auto conversation = llm::Manager::GetInstance().GetConversation();
+    llm::Manager::GetInstance().GetConfig().AddConversation(conversation);
+    llm::Manager::GetInstance().GetConfig().Save();
 }
 
 void ChatAIWindow::OnSend(wxCommandEvent& event)
@@ -170,12 +174,6 @@ void ChatAIWindow::DoSendPrompt()
         llm::AddFlagSet(chat_options, llm::ChatOptions::kNoTools);
     }
     llm::Manager::GetInstance().Chat(this, prompt, m_cancel_token, chat_options);
-
-    // Remember this prompt in the history.
-    if (!prompt.empty()) {
-        llm::Manager::GetInstance().GetConfig().AddHistory(prompt);
-        llm::Manager::GetInstance().GetConfig().Save();
-    }
 
     prompt.Prepend(wxString() << "\n**" << ::wxGetUserId() << "**:\n");
     AppendOutput(prompt + "\n\n");
@@ -304,6 +302,10 @@ void ChatAIWindow::DoClearOutputView()
 void ChatAIWindow::OnNewSession(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+    // Store the current conversation
+    auto conversation = llm::Manager::GetInstance().GetConversation();
+    llm::Manager::GetInstance().GetConfig().AddConversation(conversation);
+    llm::Manager::GetInstance().GetConfig().Save();
     DoClearOutputView();
 }
 
@@ -481,15 +483,26 @@ void ChatAIWindow::OnHistory(wxCommandEvent& event)
         return;
     }
 
-    // Update the prompt field.
-    m_stcInput->SetText(dlg.GetSelectedPrompt());
+    const auto& conversation = dlg.GetSelectedConversation();
+    // Restore the chat text
+    for (const auto& msg : conversation) {
+        if (msg.role == "assistant") {
+            AppendOutput("**assistant**:\n");
+            AppendOutput(wxString() << wxString::FromUTF8(msg.text) << "\n\n");
+        } else if (msg.role == "user") {
+            AppendOutput(wxString() << "**" << ::wxGetUserId() << "**:\n");
+            AppendOutput(wxString() << wxString::FromUTF8(msg.text) << "\n\n");
+        }
+    }
+    StyleOutput();
+    llm::Manager::GetInstance().LoadConversation(conversation);
     m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 
 void ChatAIWindow::OnHistoryUI(wxUpdateUIEvent& event)
 {
     const auto& config = llm::Manager::GetInstance().GetConfig();
-    event.Enable(!config.GetHistory().IsEmpty() && m_state == ChatState::kReady);
+    event.Enable(!config.GetHistory().empty() && m_state == ChatState::kReady);
 }
 
 void ChatAIWindow::OnStop(wxCommandEvent& event)

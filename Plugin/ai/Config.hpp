@@ -1,12 +1,18 @@
 #pragma once
 
+// clang-format off
+#include <wx/app.h>
+// clang-format on
+
 #include "assistant/attributes.hpp"
+#include "assistant/client_base.hpp"
 #include "assistant/common/json.hpp"
 #include "codelite_exports.h"
 
 #include <algorithm>
 #include <map>
 #include <mutex>
+#include <optional>
 #include <vector>
 #include <wx/arrstr.h>
 
@@ -40,80 +46,100 @@ inline std::string PromptKindToString(PromptKind kind)
     return "";
 }
 
+using Conversation = std::vector<assistant::Message>;
+using ChatHistory = std::vector<Conversation>;
+
 class WXDLLIMPEXP_SDK Config
 {
 public:
     Config();
     virtual ~Config();
+
     /**
-     * @brief Retrieves the stored history as a {@code wxArrayString}.
+     * @brief Extracts a label for a conversation based on the first message's text.
      *
-     * This method acquires a scoped lock on the internal mutex to ensure thread
-     * safety, then copies each UTF‑8 string from {@code m_history} into a new
-     * {@code wxArrayString}, converting each entry to a {@code wxString}.
+     * @details This function derives a conversation label by taking the first line of the
+     * first message in the conversation history, trimming any leading and trailing whitespace.
+     * The label can be used for display purposes such as conversation list titles or tabs.
      *
-     * @return A {@code wxArrayString} containing all history entries. If the
-     *         internal history container is empty, an empty {@code wxArrayString}
-     *         is returned.
+     * @param history The conversation history containing messages to extract the label from.
+     *
+     * @return An optional string containing the trimmed first line of the first message's text,
+     *         or std::nullopt if the conversation history is empty.
+     *
+     * @see Conversation
      */
-    wxArrayString GetHistory() const
+    static std::optional<std::string> GetConversationLabel(const Conversation& history)
     {
-        std::scoped_lock lk{m_mutex};
-        if (m_history.empty()) {
-            return {};
+        if (history.empty()) {
+            return std::nullopt;
         }
-        wxArrayString history;
-        history.reserve(m_history.size());
-        for (const auto& h : m_history) { history.Add(wxString::FromUTF8(h)); }
-        return history;
-    }
-    /**
-     * @brief Sets the history to the provided array of strings.
-     *
-     * This method replaces the current history with a new set of strings from the
-     * provided wxArrayString. The operation is thread-safe and uses a scoped lock
-     * to prevent race conditions. All strings are converted from wxString to
-     * std::string using UTF-8 encoding.
-     *
-     * @param history A wxArrayString containing the new history entries to be stored.
-     *                Each wxString element will be converted to std::string using UTF-8 encoding.
-     *
-     * @return void This function does not return a value.
-     *
-     * @note This method is thread-safe due to internal mutex locking.
-     * @note The existing history is completely cleared before the new history is set.
-     *
-     * @par Example:
-     * @code
-     * wxArrayString newHistory;
-     * newHistory.Add(wxT("First entry"));
-     * newHistory.Add(wxT("Second entry"));
-     * newHistory.Add(wxT("Third entry"));
-     * myObject.SetHistory(newHistory);
-     * @endcode
-     *
-     * @see GetHistory()
-     * @see ClearHistory()
-     */
-    void SetHistory(const wxArrayString& history)
-    {
-        std::scoped_lock lk{m_mutex};
-        m_history.clear();
-        m_history.reserve(history.size());
-        for (const auto& h : history) { m_history.push_back(h.ToStdString(wxConvUTF8)); }
+        wxString first_prompt = wxString::FromUTF8(history[0].text);
+        first_prompt.Trim().Trim(false);
+        first_prompt = first_prompt.BeforeFirst('\n').Trim().Trim(false);
+        return first_prompt.ToStdString(wxConvUTF8);
     }
 
     /**
-     * @brief Adds the given prompt to the configuration history.
+     * @brief Retrieves a copy of the current chat history.
      *
-     * This method acquires a lock on the internal mutex, converts the provided
-     * {@code wxString} prompt to a UTF‑8 encoded {@code std::string}, removes any
-     * existing occurrence of the same prompt from the history, and inserts the new
-     * prompt at the beginning of the {@code m_history} container.
+     * This method provides thread-safe access to the chat history by acquiring
+     * a lock on the internal mutex before copying the history data.
      *
-     * @param prompt The prompt string to be added to the history.
+     * @return ChatHistory A copy of the current chat history stored in this object.
+     *
+     * @note This method is thread-safe and can be called concurrently from multiple threads.
+     *
+     * @see ChatHistory
      */
-    void AddHistory(const wxString& prompt);
+    ChatHistory GetHistory() const
+    {
+        std::scoped_lock lk{m_mutex};
+        return m_history;
+    }
+
+    /**
+     * @brief Adds a conversation to the configuration's history, replacing any existing conversation with the same
+     * label.
+     *
+     * @details This method is thread-safe and acquires a lock before modifying the history.
+     * If a conversation with the same label already exists in the history, it is removed before
+     * inserting the new conversation at the beginning of the history list. If the conversation
+     * has no valid label, the operation is silently aborted.
+     *
+     * @param conversation The conversation to add to the history. Must have a valid label
+     *                     obtainable via GetConversationLabel() for the operation to proceed.
+     *
+     * @return void This function does not return a value.
+     *
+     * @note The conversation is always inserted at the front of the history list, effectively
+     *       making it the most recent entry.
+     *
+     * @see GetConversationLabel() For obtaining the label used to identify duplicate conversations.
+     */
+    void AddConversation(const Conversation& conversation);
+
+    /**
+     * @brief Sets the chat history to the specified value.
+     *
+     * Replaces the current chat history with a copy of the provided history.
+     * This operation is thread-safe and acquires an exclusive lock on the internal mutex.
+     *
+     * @param history The chat history to set. The contents are copied into the internal storage.
+     *
+     * @return void This function does not return a value.
+     *
+     * @note This function is thread-safe.
+     *
+     * @see ChatHistory
+     * @see GetHistory
+     */
+    void SetHistory(const ChatHistory& history)
+    {
+        std::scoped_lock lk{m_mutex};
+        m_history = history;
+    }
+
     /**
      * @brief Loads the configuration from the associated file.
      *
@@ -192,6 +218,6 @@ private:
 
     mutable std::mutex m_mutex;
     std::map<std::string, std::string> m_prompts GUARDED_BY(m_mutex);
-    mutable std::vector<std::string> m_history GUARDED_BY(m_mutex);
+    mutable ChatHistory m_history GUARDED_BY(m_mutex);
 };
 } // namespace llm

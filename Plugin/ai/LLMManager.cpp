@@ -618,6 +618,20 @@ void Manager::ClearHistory()
     m_client->ClearHistoryMessages();
 }
 
+llm::Conversation Manager::GetConversation() const
+{
+    if (!m_client) {
+        return {};
+    }
+    return m_client->GetHistory();
+}
+
+void Manager::LoadConversation(const llm::Conversation& history)
+{
+    CHECK_PTR_RET(m_client);
+    m_client->SetHistory(history);
+}
+
 void Manager::SetModels(const wxArrayString& models)
 {
     std::scoped_lock lk{m_models_mutex};

@@ -127,16 +127,16 @@ WinIdProperty::WinIdProperty()
     }
 }
 
-JSONElement WinIdProperty::Serialize() const
+JSONItem WinIdProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty(wxT("type"), wxT("winid"));
     DoBaseSerialize(json);
     json.addProperty(wxT("m_winid"), m_winid);
     return json;
 }
 
-void WinIdProperty::UnSerialize(const JSONElement& json)
+void WinIdProperty::UnSerialize(const JSONItem& json)
 {
     DoBaseUnSerialize(json);
     // Backward compatibility

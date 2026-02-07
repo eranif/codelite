@@ -1,7 +1,7 @@
 #ifndef PROPERTYBASE_H
 #define PROPERTYBASE_H
 
-#include "wxcLib/json_node.h"
+#include "JSON.h"
 
 #include <wx/event.h>
 #include <wx/string.h>
@@ -30,8 +30,8 @@ protected:
     wxString m_label;
     wxString m_tooltip;
 
-    void DoBaseSerialize(JSONElement& json) const;
-    void DoBaseUnSerialize(const JSONElement& json);
+    void DoBaseSerialize(JSONItem& json) const;
+    void DoBaseUnSerialize(const JSONItem& json);
     void NotifyChanged();
 
 public:
@@ -60,8 +60,8 @@ public:
     virtual void SetValue(const wxString& value) = 0;
     virtual wxString GetValue() const = 0;
     virtual long GetValueLong() const { return 0; }
-    virtual JSONElement Serialize() const = 0;
-    virtual void UnSerialize(const JSONElement& json) = 0;
+    virtual JSONItem Serialize() const = 0;
+    virtual void UnSerialize(const JSONItem& json) = 0;
 };
 
 #endif // PROPERTYBASE_H

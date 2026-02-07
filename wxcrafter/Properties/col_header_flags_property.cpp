@@ -62,16 +62,16 @@ void ColHeaderFlagsProperty::SetValue(const wxString& value)
     }
 }
 
-JSONElement ColHeaderFlagsProperty::Serialize() const
+JSONItem ColHeaderFlagsProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty(wxT("type"), wxT("colHeaderFlags"));
     DoBaseSerialize(json);
     json.addProperty("stringValue", GetValue());
     return json;
 }
 
-void ColHeaderFlagsProperty::UnSerialize(const JSONElement& json)
+void ColHeaderFlagsProperty::UnSerialize(const JSONItem& json)
 {
     wxString tmpValue;
     DoBaseUnSerialize(json);

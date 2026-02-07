@@ -1,7 +1,7 @@
 #ifndef WXGUI_DEFS_H
 #define WXGUI_DEFS_H
 
-#include "json_node.h"
+#include "JSON.h"
 
 #include <wx/string.h>
 
@@ -284,16 +284,16 @@ struct WxStyleInfo {
     int style_bit;
     bool is_set;
 
-    JSONElement ToJSON() const
+    JSONItem ToJSON() const
     {
-        JSONElement json = JSONElement::createObject();
+        JSONItem json = JSONItem::createObject();
         json.addProperty(wxT("style_name"), style_name);
         json.addProperty(wxT("style_bit"), style_bit);
         json.addProperty(wxT("is_set"), is_set);
         return json;
     }
 
-    void FromJSON(const JSONElement& json)
+    void FromJSON(const JSONItem& json)
     {
         style_name = json.namedObject(wxT("style_name")).toString();
         style_bit = json.namedObject(wxT("style_bit")).toInt();

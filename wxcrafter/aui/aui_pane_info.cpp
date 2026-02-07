@@ -1,7 +1,7 @@
 #include "aui_pane_info.h"
 
+#include "JSON.h"
 #include "StdToWX.h"
-#include "json_node.h"
 #include "wxgui_helpers.h"
 
 #include <wx/propgrid/propgrid.h>
@@ -95,7 +95,7 @@ void AuiPaneInfo::Construct(wxPropertyGrid* pg) const
     pg->SetPropertyAttribute(prop, wxPG_BOOL_USE_CHECKBOX, true);
 }
 
-void AuiPaneInfo::FromJSON(const JSONElement& json)
+void AuiPaneInfo::FromJSON(const JSONItem& json)
 {
     Reset();
     if(json.isOk() == false) { return; }
@@ -120,9 +120,9 @@ void AuiPaneInfo::FromJSON(const JSONElement& json)
     m_toolbarPane = json.namedObject("m_toolbarPane").toBool();
 }
 
-JSONElement AuiPaneInfo::ToJSON() const
+JSONItem AuiPaneInfo::ToJSON() const
 {
-    JSONElement element = JSONElement::createObject("wxAuiPaneInfo");
+    JSONItem element = JSONItem::createObject("wxAuiPaneInfo");
     element.addProperty(wxT("m_name"), m_name);
     element.addProperty(wxT("m_caption"), m_caption);
     element.addProperty(wxT("m_dockDirection"), m_dockDirection);

@@ -14,9 +14,9 @@ public:
 public:
     PropertyeType GetType() override;
     wxString GetValue() const override;
-    JSONElement Serialize() const override;
+    JSONItem Serialize() const override;
     void SetValue(const wxString& value) override;
-    void UnSerialize(const JSONElement& json) override;
+    void UnSerialize(const JSONItem& json) override;
 };
 
 #endif // CATEGORYPROPERTY_H

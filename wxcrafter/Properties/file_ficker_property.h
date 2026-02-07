@@ -17,9 +17,9 @@ public:
     void FixPaths(const wxString& cwd);
 
     wxString GetValue() const override;
-    JSONElement Serialize() const override;
+    JSONItem Serialize() const override;
     void SetValue(const wxString& value) override;
-    void UnSerialize(const JSONElement& json) override;
+    void UnSerialize(const JSONItem& json) override;
     PropertyeType GetType() override { return PT_FILE_PICKER; }
 };
 

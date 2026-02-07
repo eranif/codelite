@@ -18,7 +18,7 @@ wxcProjectMetadata::wxcProjectMetadata()
     SetGenerateXRC(false);
 }
 
-void wxcProjectMetadata::FromJSON(const JSONElement& json)
+void wxcProjectMetadata::FromJSON(const JSONItem& json)
 {
     m_objCounter = json.namedObject("m_objCounter").toInt();
     m_generatedFilesDir = json.namedObject("m_generatedFilesDir").toString();
@@ -47,9 +47,9 @@ void wxcProjectMetadata::FromJSON(const JSONElement& json)
     m_useHpp = !wxFileName::FileExists(header_file);
 }
 
-JSONElement wxcProjectMetadata::ToJSON()
+JSONItem wxcProjectMetadata::ToJSON()
 {
-    JSONElement metadata = JSONElement::createObject("metadata");
+    JSONItem metadata = JSONItem::createObject("metadata");
     UpdatePaths();
 
     metadata.addProperty("m_generatedFilesDir", m_generatedFilesDir);
@@ -66,9 +66,9 @@ JSONElement wxcProjectMetadata::ToJSON()
     return metadata;
 }
 
-void wxcProjectMetadata::AppendCustomControlsJSON(const wxArrayString& controls, JSONElement& element) const
+void wxcProjectMetadata::AppendCustomControlsJSON(const wxArrayString& controls, JSONItem& element) const
 {
-    JSONElement customControls = wxcSettings::Get().GetCustomControlsAsJSON(controls);
+    JSONItem customControls = wxcSettings::Get().GetCustomControlsAsJSON(controls);
     element.append(customControls);
 }
 
@@ -198,18 +198,18 @@ void wxcProjectMetadata::Serialize(const wxcWidget::List_t& topLevelsList, const
     wxcProjectMetadata p;
     p.GenerateBitmapFunctionName();
 
-    JSONRoot root(cJSON_Object);
+    JSON root(cJSON_Object);
     root.toElement().append(p.ToJSON());
 
     // The windows
-    JSONElement windows = JSONElement::createArray("windows");
+    JSONItem windows = JSONItem::createArray("windows");
     root.toElement().append(windows);
 
     wxFFile fp(filename.GetFullPath(), "w+b");
     if(fp.IsOpened()) {
 
         for (auto widget : topLevelsList) {
-            JSONElement obj = JSONElement::createObject();
+            JSONItem obj = JSONItem::createObject();
             widget->FixPaths(filename.GetPath()); // Fix abs paths to fit the new project file
             widget->Serialize(obj);
             windows.arrayAppend(obj);

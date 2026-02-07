@@ -11,9 +11,9 @@ MultiStringsProperty::MultiStringsProperty(const wxString& label, const wxString
 
 wxString MultiStringsProperty::GetValue() const { return m_value; }
 
-JSONElement MultiStringsProperty::Serialize() const
+JSONItem MultiStringsProperty::Serialize() const
 {
-    JSONElement element = JSONElement::createObject();
+    JSONItem element = JSONItem::createObject();
     element.addProperty(wxT("type"), wxT("multi-string"));
     DoBaseSerialize(element);
     element.addProperty(wxT("m_value"), m_value);
@@ -22,7 +22,7 @@ JSONElement MultiStringsProperty::Serialize() const
 
 void MultiStringsProperty::SetValue(const wxString& value) { m_value = value; }
 
-void MultiStringsProperty::UnSerialize(const JSONElement& json)
+void MultiStringsProperty::UnSerialize(const JSONItem& json)
 {
     DoBaseUnSerialize(json);
     m_value = json.namedObject(wxT("m_value")).toString();

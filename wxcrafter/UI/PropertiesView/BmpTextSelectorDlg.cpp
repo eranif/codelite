@@ -1,7 +1,7 @@
 #include "BmpTextSelectorDlg.h"
 
+#include "JSON.h"
 #include "SingleBitmapAndTextDlg.h"
-#include "json_node.h"
 #include "windowattrmanager.h"
 
 BmpTextSelectorDlg::BmpTextSelectorDlg(wxWindow* parent, const wxString& initialValue)
@@ -57,10 +57,10 @@ void BmpTextSelectorDlg::OnNew(wxCommandEvent& event)
 BmpTextVec_t BmpTextSelectorDlg::FromString(const wxString& text)
 {
     BmpTextVec_t vec;
-    JSONRoot root(text);
+    JSON root(text);
     int size = root.toElement().arraySize();
     for(int i = 0; i < size; ++i) {
-        JSONElement item = root.toElement().arrayItem(i);
+        JSONItem item = root.toElement().arrayItem(i);
         wxString bitmap = item.namedObject("bmp").toString();
         wxString label = item.namedObject("label").toString();
         vec.push_back(std::make_pair(bitmap, label));
@@ -70,9 +70,9 @@ BmpTextVec_t BmpTextSelectorDlg::FromString(const wxString& text)
 
 wxString BmpTextSelectorDlg::ToString(const BmpTextVec_t& vec)
 {
-    JSONRoot root(cJSON_Array);
+    JSON root(cJSON_Array);
     for (const auto& [bmp, label] : vec) {
-        JSONElement element = JSONElement::createObject();
+        JSONItem element = JSONItem::createObject();
         element.addProperty("bmp", bmp);
         element.addProperty("label", label);
         root.toElement().arrayAppend(element);

@@ -32,16 +32,16 @@ void BoolProperty::SetValue(const wxString& value)
     NotifyChanged();
 }
 
-JSONElement BoolProperty::Serialize() const
+JSONItem BoolProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty(wxT("type"), wxT("bool"));
     DoBaseSerialize(json);
     json.addProperty(wxT("m_value"), m_value);
     return json;
 }
 
-void BoolProperty::UnSerialize(const JSONElement& json)
+void BoolProperty::UnSerialize(const JSONItem& json)
 {
     DoBaseUnSerialize(json);
     m_value = json.namedObject(wxT("m_value")).toBool();

@@ -1,7 +1,7 @@
 #ifndef WXCSETTINGS_H
 #define WXCSETTINGS_H
 
-#include "wxcLib/json_node.h"
+#include "JSON.h"
 
 #include <map>
 
@@ -22,8 +22,8 @@ public:
     CustomControlTemplate();
     ~CustomControlTemplate() = default;
 
-    JSONElement ToJSON() const;
-    void FromJSON(const JSONElement& json);
+    JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json);
 
     void SetEvents(const wxStringMap_t& events) { this->m_events = events; }
     const wxStringMap_t& GetEvents() const { return m_events; }
@@ -98,9 +98,9 @@ public:
     /**
      * @brief merge custom controls to the current list
      */
-    void MergeCustomControl(const JSONElement& arr);
+    void MergeCustomControl(const JSONItem& arr);
 
-    JSONElement GetCustomControlsAsJSON(const wxArrayString& controls) const;
+    JSONItem GetCustomControlsAsJSON(const wxArrayString& controls) const;
     void SetTemplateClasses(const CustomControlTemplateMap_t& templateClasses)
     {
         this->m_templateClasses = templateClasses;

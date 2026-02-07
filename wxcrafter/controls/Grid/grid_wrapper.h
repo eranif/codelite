@@ -12,7 +12,7 @@ public:
     ~GridWrapper() override = default;
 
     // Since version 1.2 we want to change the columns/lines management
-    void UnSerialize(const JSONElement& json) override;
+    void UnSerialize(const JSONItem& json) override;
 
 protected:
     void GetRowsCols(GridRowWrapper::Vector_t& rows, GridColumnWrapper::Vector_t& cols) const;

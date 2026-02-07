@@ -94,7 +94,7 @@ void CustomControlWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     text << XRCSize() << XRCCommonAttributes() << XRCSuffix();
 }
 
-void CustomControlWrapper::Serialize(JSONElement& json) const
+void CustomControlWrapper::Serialize(JSONItem& json) const
 {
     wxcWidget::Serialize(json);
     json.addProperty(wxT("m_templInfoName"), m_templInfoName);
@@ -102,7 +102,7 @@ void CustomControlWrapper::Serialize(JSONElement& json) const
         std::make_pair(m_templInfoName, wxcSettings::Get().FindByControlName(m_templInfoName)));
 }
 
-void CustomControlWrapper::UnSerialize(const JSONElement& json)
+void CustomControlWrapper::UnSerialize(const JSONItem& json)
 {
     m_templInfoName = json.namedObject(wxT("m_templInfoName")).toString();
     DoUpdateEvents();

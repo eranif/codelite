@@ -1,8 +1,8 @@
 #include "DefineCustomControlWizard.h"
 
+#include "JSON.h"
 #include "NewCustomEventDlg.h"
 #include "globals.h"
-#include "json_node.h"
 
 #include <wx/msgdlg.h>
 

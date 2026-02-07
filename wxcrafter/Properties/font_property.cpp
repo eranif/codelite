@@ -11,16 +11,16 @@ FontProperty::FontProperty(const wxString& label, const wxString& font, const wx
 
 wxString FontProperty::GetValue() const { return m_value; }
 
-JSONElement FontProperty::Serialize() const
+JSONItem FontProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty(wxT("type"), wxT("font"));
     DoBaseSerialize(json);
     json.addProperty(wxT("m_value"), m_value);
     return json;
 }
 
-void FontProperty::UnSerialize(const JSONElement& json)
+void FontProperty::UnSerialize(const JSONItem& json)
 {
     DoBaseUnSerialize(json);
     m_value = json.namedObject(wxT("m_value")).toString();

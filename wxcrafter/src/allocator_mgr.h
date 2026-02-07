@@ -1,8 +1,8 @@
 #ifndef VISUALIZERMGR_H
 #define VISUALIZERMGR_H
 
+#include "JSON.h"
 #include "events_database.h"
-#include "json_node.h"
 #include "wxc_widget.h"
 #include "wxgui_bitmaploader.h"
 
@@ -290,7 +290,7 @@ public:
     static int StringToId(const wxString& classname); // Translates e.g. "wxTextCtrl" to ID_WXTEXTCTRL
 
     int GetImageId(int controlId) const;
-    wxcWidget* CreateWrapperFromJSON(const JSONElement& json);
+    wxcWidget* CreateWrapperFromJSON(const JSONItem& json);
 
     void PrepareMenu(wxMenu& menu, wxcWidget* item);
 

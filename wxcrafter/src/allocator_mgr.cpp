@@ -427,7 +427,7 @@ int Allocator::GetImageId(int controlId) const
     return iter->second;
 }
 
-wxcWidget* Allocator::CreateWrapperFromJSON(const JSONElement& json)
+wxcWidget* Allocator::CreateWrapperFromJSON(const JSONItem& json)
 {
     wxcWidget* wrapper = NULL;
 

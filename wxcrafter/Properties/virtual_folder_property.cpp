@@ -13,9 +13,9 @@ VirtualFolderProperty::VirtualFolderProperty(const wxString& label, const wxStri
 
 wxString VirtualFolderProperty::GetValue() const { return m_path; }
 
-JSONElement VirtualFolderProperty::Serialize() const
+JSONItem VirtualFolderProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty(wxT("type"), wxT("virtualFolderPicker"));
     DoBaseSerialize(json);
     json.addProperty(wxT("m_path"), m_path);
@@ -24,7 +24,7 @@ JSONElement VirtualFolderProperty::Serialize() const
 
 void VirtualFolderProperty::SetValue(const wxString& value) { m_path = value; }
 
-void VirtualFolderProperty::UnSerialize(const JSONElement& json)
+void VirtualFolderProperty::UnSerialize(const JSONItem& json)
 {
     DoBaseUnSerialize(json);
     m_path = json.namedObject(wxT("m_path")).toString();

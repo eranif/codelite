@@ -536,8 +536,17 @@ void ChatAIWindow::OnCharAdded(wxStyledTextEvent& event)
     auto strings = llm::Manager::GetInstance().GetAvailablePlaceHolders();
     std::sort(strings.begin(), strings.end());
     static const wxString candidates = StringUtils::Join(strings, " ");
-    if (event.GetKey() == '{') {
+    auto current_pos = m_stcInput->GetCurrentPos();
+    auto prev_pos = m_stcInput->PositionBefore(current_pos);
+    auto prev_prev_pos = m_stcInput->PositionBefore(prev_pos);
+
+    if (prev_prev_pos == prev_pos) {
+        return;
+    }
+
+    wxChar prev_char = m_stcInput->GetCharAt(prev_prev_pos);
+    if (event.GetKey() == '{' && prev_char == '{') {
         // user typed "{{"
-        m_stcInput->AutoCompShow(1, candidates);
+        m_stcInput->AutoCompShow(2, candidates);
     }
 }

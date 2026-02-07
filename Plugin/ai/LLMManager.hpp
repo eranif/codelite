@@ -232,29 +232,6 @@ public:
     bool IsAvailable();
 
     /**
-     * @brief Loads the list of available LLM models in a background thread and
-     * notifies the supplied event handler when the operation completes.
-     *
-     * @param owner the event handler that will receive a notification once
-     *              the model list has been loaded
-     */
-    void LoadModels(wxEvtHandler* owner);
-
-    /**
-     * @brief Sets the list of supported LLM models for the current configuration.
-     *
-     * @param models collection of model identifiers to enable
-     */
-    void SetModels(const wxArrayString& models);
-
-    /**
-     * @brief Retrieves the current list of enabled LLM models.
-     *
-     * @return the collection of model identifiers currently in use
-     */
-    wxArrayString GetModels() const;
-
-    /**
      * @brief Clears all stored chat history from the internal state.
      *
      * <p>After this call, subsequent chat requests will start with an empty
@@ -533,9 +510,6 @@ private:
     assistant::Config MakeConfig();
     void OnFileSaved(clCommandEvent& event);
     std::optional<llm::json> GetConfigAsJSON();
-
-    mutable std::mutex m_models_mutex;
-    wxArrayString m_models GUARDED_BY(m_models_mutex);
 
     std::unique_ptr<std::thread> m_worker_thread;
     std::shared_ptr<assistant::ClientBase> m_client;

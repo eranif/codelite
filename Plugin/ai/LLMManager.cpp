@@ -520,8 +520,6 @@ void Manager::Stop()
         CleanupAfterWorkerExit();
         m_client.reset();
     }
-    std::scoped_lock lk{m_models_mutex};
-    m_models.clear();
 }
 
 void Manager::Start()
@@ -539,40 +537,9 @@ void Manager::Start()
 
     // Add external MCP tools.
     m_client->GetFunctionTable().ReloadMCPServers(&m_client_config);
-    LoadModels(nullptr);
 
     // Start the worker thread
     m_worker_thread = std::make_unique<std::thread>([this]() { WorkerMain(); });
-}
-
-void Manager::LoadModels(wxEvtHandler* owner)
-{
-    WriteOptions opts{.ignore_workspace = true};
-    wxString config_content =
-        FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts).value_or(kDefaultSettings);
-    auto client = assistant::MakeClient(config_content.ToStdString(wxConvUTF8));
-    if (!client.has_value()) {
-        clERROR() << "Could not construct a client for fetching model list." << endl;
-        return;
-    }
-
-    std::thread t([owner, client = std::move(client.value())]() {
-        auto models = client->List();
-        wxArrayString m;
-        m.reserve(models.size());
-        for (const auto& model : models) {
-            m.Add(wxString::FromUTF8(model));
-        }
-        llm::Manager::GetInstance().SetModels(m);
-
-        // Notify
-        if (owner) {
-            clLLMEvent models_loaded_event{wxEVT_LLM_MODELS_LOADED};
-            models_loaded_event.SetStrings(m);
-            owner->AddPendingEvent(models_loaded_event);
-        }
-    });
-    t.detach();
 }
 
 bool Manager::ReloadConfig(std::optional<wxString> config_content, bool prompt)
@@ -630,18 +597,6 @@ void Manager::LoadConversation(const llm::Conversation& history)
 {
     CHECK_PTR_RET(m_client);
     m_client->SetHistory(history);
-}
-
-void Manager::SetModels(const wxArrayString& models)
-{
-    std::scoped_lock lk{m_models_mutex};
-    m_models = models;
-}
-
-wxArrayString Manager::GetModels() const
-{
-    std::scoped_lock lk{m_models_mutex};
-    return m_models;
 }
 
 wxArrayString Manager::ListEndpoints()

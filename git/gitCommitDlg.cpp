@@ -237,13 +237,6 @@ void GitCommitDlg::OnAmendClicked(wxCommandEvent& event)
 
 void GitCommitDlg::OnGenerate(wxCommandEvent& event)
 {
-
-    if (llm::Manager::GetInstance().GetModels().IsEmpty()) {
-        ::clMessageBox(
-            _("No models are available. Choose a model and try again."), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
-        return;
-    }
-
     // Create a raw diff from the selected items only.
     GitDiffOutputParser diff_parser;
     wxStringMap_t diff_map;

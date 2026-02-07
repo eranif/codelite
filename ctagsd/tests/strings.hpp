@@ -642,7 +642,7 @@ ProtocolHandler::~ProtocolHandler() {}
 
 void ProtocolHandler::send_log_message(const wxString& message, int level, Channel& channel)
 {
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
     JSONItem notification = root.toElement();
     notification.addProperty("method", "window/logMessage");
     notification.addProperty("jsonrpc", "2.0");
@@ -658,7 +658,7 @@ JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id, int result_ki
     reply.addProperty("id", id);
     reply.addProperty("jsonrpc", "2.0");
 
-    auto result = result_kind == cJSON_Array ? reply.AddArray("result") : reply.AddObject("result");
+    auto result = result_kind == JsonType::Array ? reply.AddArray("result") : reply.AddObject("result");
     return result;
 }
 
@@ -802,9 +802,9 @@ bool ProtocolHandler::ensure_file_content_exists(const wxString& filepath, Chann
             send_log_message(wxString() << _("File: `") << filepath << _("` is not opened on the server"),
                              LSP_LOG_WARNING, channel);
 
-            JSON root(cJSON_Object);
+            JSON root(JsonType::Object);
             auto response = root.toElement();
-            auto result = build_result(response, req_id, cJSON_Object);
+            auto result = build_result(response, req_id, JsonType::Object);
             channel.write_reply(response);
             return false;
         }

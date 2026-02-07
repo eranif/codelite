@@ -91,7 +91,7 @@ void CodeFormatterManager::Save()
 {
     wxFileName config_file{ clStandardPaths::Get().GetUserDataDir(), "code-formatters.json" };
     config_file.AppendDir("config");
-    JSON root{ cJSON_Array };
+    JSON root{JsonType::Array};
     auto arr = root.toElement();
     for (auto fmtr : m_formatters) {
         arr.arrayAppend(fmtr->ToJSON());

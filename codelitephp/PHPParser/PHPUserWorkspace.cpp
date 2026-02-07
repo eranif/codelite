@@ -39,7 +39,7 @@ PHPUserWorkspace& PHPUserWorkspace::Load()
 PHPUserWorkspace& PHPUserWorkspace::Save()
 {
     // Serialize the breakpoints
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
     JSONItem json = root.toElement();
     JSONItem bpArr = JSONItem::createArray("m_breakpoints");
     json.append(bpArr);

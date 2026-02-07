@@ -382,7 +382,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::GetLexer(const wxString& lexerName, con
 void ColoursAndFontsManager::Save(const wxFileName& lexer_json)
 {
     bool for_export = lexer_json.IsOk();
-    JSON root(cJSON_Array);
+    JSON root(JsonType::Array);
     JSONItem element = root.toElement();
     for (const auto& [_, lexers] : m_lexersMap) {
         for (const auto& lexer : lexers) {
@@ -578,7 +578,7 @@ wxFileName ColoursAndFontsManager::GetConfigFile() const
 void ColoursAndFontsManager::SaveGlobalSettings(bool notify)
 {
     // save the global settings
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
     root.toElement().addProperty("m_globalTheme", m_globalTheme);
     wxFileName fnSettings = GetConfigFile();
     root.save(fnSettings.GetFullPath());
@@ -1162,7 +1162,7 @@ bool ColoursAndFontsManager::ExportThemesToFile(const wxFileName& outputFile, co
         M.insert(names.Item(i).Lower());
     }
 
-    JSON root(cJSON_Array);
+    JSON root(JsonType::Array);
     JSONItem arr = root.toElement();
     std::vector<LexerConf::Ptr_t> Lexers;
     for (const auto& lexer : m_allLexers) {

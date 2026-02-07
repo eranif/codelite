@@ -70,7 +70,7 @@ clConfig::clConfig(const wxString& filename)
         if (!m_filename.DirExists()) {
             m_filename.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
         }
-        m_root = std::make_unique<JSON>(cJSON_Object);
+        m_root = std::make_unique<JSON>(JsonType::Object);
     }
 
     // Load the "Recent Items" cache

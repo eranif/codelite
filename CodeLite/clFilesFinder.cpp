@@ -88,9 +88,9 @@ std::vector<clFilesFinderMatch> clFilesFinder::DoSearchInFiles(const wxArrayStri
             break;
         }
 
-        // Search in this file
-        auto file_matches =
-            m_fileFinder.FindInFile(filepath, options.find_what, options.is_case_sensitive, options.is_whole_match);
+        // Search in this file, passing the is_regex flag
+        auto file_matches = m_fileFinder.FindInFile(
+            filepath, options.find_what, options.is_case_sensitive, options.is_whole_match, options.is_regex);
 
         if (file_matches.empty()) {
             if (match_cb && !match_cb(filepath, {})) {

@@ -31,6 +31,7 @@
 
 #include <vector>
 #include <wx/filename.h>
+#include <wx/regex.h>
 #include <wx/string.h>
 
 /**
@@ -64,6 +65,7 @@ struct WXDLLIMPEXP_CL clFileFinderMatch {
  * - Whole word matching with proper Unicode word boundary detection
  * - Multiple file encodings (UTF-8, UTF-16 LE/BE with BOM detection)
  * - Unicode characters in search patterns
+ * - Regular expression matching
  *
  * Example usage:
  * @code
@@ -87,12 +89,14 @@ public:
      * @param find_what The pattern to search for
      * @param is_case_sensitive If true, perform case-sensitive matching
      * @param is_whole_match If true, only match whole words (Unicode-aware word boundaries)
+     * @param is_regex If true, treat find_what as a regular expression pattern
      * @return A vector of matches found in the file
      */
     std::vector<clFileFinderMatch> FindInFile(const wxFileName& filepath,
                                               const wxString& find_what,
                                               bool is_case_sensitive = false,
-                                              bool is_whole_match = false) const;
+                                              bool is_whole_match = false,
+                                              bool is_regex = false) const;
 
     /**
      * @brief Search for a pattern in a file (convenience overload)
@@ -100,12 +104,14 @@ public:
      * @param find_what The pattern to search for
      * @param is_case_sensitive If true, perform case-sensitive matching
      * @param is_whole_match If true, only match whole words (Unicode-aware word boundaries)
+     * @param is_regex If true, treat find_what as a regular expression pattern
      * @return A vector of matches found in the file
      */
     std::vector<clFileFinderMatch> FindInFile(const wxString& filepath,
                                               const wxString& find_what,
                                               bool is_case_sensitive = false,
-                                              bool is_whole_match = false) const;
+                                              bool is_whole_match = false,
+                                              bool is_regex = false) const;
 
     /**
      * @brief Search for a pattern in the given content string
@@ -113,12 +119,14 @@ public:
      * @param find_what The pattern to search for
      * @param is_case_sensitive If true, perform case-sensitive matching
      * @param is_whole_match If true, only match whole words (Unicode-aware word boundaries)
+     * @param is_regex If true, treat find_what as a regular expression pattern
      * @return A vector of matches found in the content
      */
     std::vector<clFileFinderMatch> FindInContent(const wxString& content,
                                                  const wxString& find_what,
                                                  bool is_case_sensitive = false,
-                                                 bool is_whole_match = false) const;
+                                                 bool is_whole_match = false,
+                                                 bool is_regex = false) const;
 
 private:
     /**
@@ -161,6 +169,20 @@ private:
      * @return Position of the match, or wxString::npos if not found
      */
     size_t FindPattern(const wxString& text, const wxString& pattern, size_t start_pos, bool case_sensitive) const;
+
+    /**
+     * @brief Search for regex matches in a line
+     * @param line The line to search in
+     * @param regex The compiled wxRegEx object
+     * @param line_number The 1-based line number
+     * @param is_whole_match If true, only match whole words
+     * @param results Vector to append matches to
+     */
+    void FindRegexMatchesInLine(const wxString& line,
+                                wxRegEx& regex,
+                                size_t line_number,
+                                bool is_whole_match,
+                                std::vector<clFileFinderMatch>& results) const;
 };
 
 #endif // CLFILEFINDER_H

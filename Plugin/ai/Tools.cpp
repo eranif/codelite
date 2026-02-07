@@ -132,13 +132,14 @@ void PopulateBuiltInFunctions(FunctionTable& table)
         FunctionBuilder("Find_in_files")
             .SetDescription(R"(Search for a given pattern within files in a directory.
 Description:
-This function searches for a specified text pattern across files within a directory structure.
+This function searches for a specified text pattern or regular expression across files within a directory structure.
 Parameters:
-- Search String (string, required): The text pattern to search for.
+- Search String (string, required): The text pattern to search for (literal string or regex pattern).
 - File Pattern (string, required): The file pattern to match, such as "*.txt" or "*.py".
 - Root Folder (string, required): The root directory where the search begins.
 - Whole Word (boolean, optional): When enabled, matches only complete words.
-- Case Sensitive (boolean, optional): When enabled, performs case-sensitive matching.)")
+- Case Sensitive (boolean, optional): When enabled, performs case-sensitive matching.
+- Is Regex (boolean, optional): When enabled, treats the search string as a regular expression pattern.)")
             .SetCallback(FindInFiles)
             .AddRequiredParam("root_folder", "The root directory where the search begins", "string")
             .AddRequiredParam("find_what", "The text pattern to search fore", "string")
@@ -149,6 +150,10 @@ Parameters:
             .AddOptionalParam("whole_word", "When enabled, matches only complete words. Default is true.", "boolean")
             .AddOptionalParam(
                 "case_sensitive", "When enabled, performs case-sensitive matching. Default is true.", "boolean")
+            .AddOptionalParam(
+                "is_regex",
+                "When enabled, treats find_what as a regular expression pattern. Default is false.",
+                "boolean")
             .Build());
 }
 
@@ -407,6 +412,7 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
     ASSIGN_FUNC_ARG_OR_RETURN(std::string file_pattern, ::assistant::GetFunctionArg<std::string>(args, "file_pattern"));
     bool whole_word = assistant::GetFunctionArg<bool>(args, "whole_word").value_or(true);
     bool case_sensitive = assistant::GetFunctionArg<bool>(args, "case_sensitive").value_or(true);
+    bool is_regex = assistant::GetFunctionArg<bool>(args, "is_regex").value_or(false);
 
     clFilesFinder finder;
     auto matches = finder.Search(root_dir,
@@ -414,6 +420,7 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
                                      .find_what = find_what,
                                      .is_case_sensitive = case_sensitive,
                                      .is_whole_match = whole_word,
+                                     .is_regex = is_regex,
                                      .file_spec = file_pattern,
                                  });
     assistant::json j = assistant::json::array();

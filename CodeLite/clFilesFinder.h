@@ -64,9 +64,10 @@ struct WXDLLIMPEXP_CL clFilesFinderMatch {
  * @brief Search options for clFilesFinder
  */
 struct WXDLLIMPEXP_CL clFilesFinderOptions {
-    wxString find_what;             ///< The pattern to search for
+    wxString find_what;             ///< The pattern to search for (literal string or regex pattern)
     bool is_case_sensitive{false};  ///< If true, perform case-sensitive matching
     bool is_whole_match{false};     ///< If true, only match whole words
+    bool is_regex{false};           ///< If true, treat find_what as a regular expression pattern
     wxString file_spec{"*"};        ///< File pattern to match (e.g., "*.cpp;*.h")
     wxString exclude_file_spec;     ///< File patterns to exclude
     wxString exclude_folders_spec;  ///< Folder patterns to exclude (e.g., ".git;build;node_modules")
@@ -97,13 +98,15 @@ using clFilesFinderMatchCallback = std::function<bool(const wxString&, const clF
 /**
  * @brief A multi-file searcher that can search across files in a directory tree
  *
- * This class provides functionality to search for string patterns across multiple files.
+ * This class provides functionality to search for string patterns or regular expressions
+ * across multiple files.
  * It supports:
  * - Recursive directory scanning with file pattern filtering
  * - Exclusion of specific files and folders
  * - Progress reporting via callbacks
  * - Match-by-match reporting via callbacks
  * - Cancellation support
+ * - Regular expression searching
  *
  * Example usage:
  * @code
@@ -117,6 +120,14 @@ using clFilesFinderMatchCallback = std::function<bool(const wxString&, const clF
  * options.is_whole_match = true;
  *
  * auto results = finder.Search("/path/to/project", options);
+ *
+ * // Regex search example
+ * clFilesFinderOptions regex_options;
+ * regex_options.find_what = "wx[A-Z][a-zA-Z]+";  // Match wxString, wxWindow, etc.
+ * regex_options.file_spec = "*.cpp;*.h";
+ * regex_options.is_regex = true;
+ *
+ * auto regex_results = finder.Search("/path/to/project", regex_options);
  *
  * // Search with progress callback
  * auto results2 = finder.Search("/path/to/project", options,
@@ -144,7 +155,7 @@ public:
     /**
      * @brief Search for a pattern across all files in a directory tree
      * @param root_folder The root folder to start the search from
-     * @param options Search options (pattern, case sensitivity, file filters, etc.)
+     * @param options Search options (pattern, case sensitivity, file filters, regex mode, etc.)
      * @param progress_cb Optional callback for progress reporting (return false to cancel)
      * @param match_cb Optional callback called for each match found (return false to cancel)
      * @return Vector of all matches found (empty if match_cb is provided and handles results)

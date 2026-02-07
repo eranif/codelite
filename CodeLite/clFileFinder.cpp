@@ -30,7 +30,8 @@
 std::vector<clFileFinderMatch> clFileFinder::FindInFile(const wxFileName& filepath,
                                                         const wxString& find_what,
                                                         bool is_case_sensitive,
-                                                        bool is_whole_match) const
+                                                        bool is_whole_match,
+                                                        bool is_regex) const
 {
     std::vector<clFileFinderMatch> results;
 
@@ -45,21 +46,23 @@ std::vector<clFileFinderMatch> clFileFinder::FindInFile(const wxFileName& filepa
         return results;
     }
 
-    return FindInContent(content, find_what, is_case_sensitive, is_whole_match);
+    return FindInContent(content, find_what, is_case_sensitive, is_whole_match, is_regex);
 }
 
 std::vector<clFileFinderMatch> clFileFinder::FindInFile(const wxString& filepath,
                                                         const wxString& find_what,
                                                         bool is_case_sensitive,
-                                                        bool is_whole_match) const
+                                                        bool is_whole_match,
+                                                        bool is_regex) const
 {
-    return FindInFile(wxFileName(filepath), find_what, is_case_sensitive, is_whole_match);
+    return FindInFile(wxFileName(filepath), find_what, is_case_sensitive, is_whole_match, is_regex);
 }
 
 std::vector<clFileFinderMatch> clFileFinder::FindInContent(const wxString& content,
                                                            const wxString& find_what,
                                                            bool is_case_sensitive,
-                                                           bool is_whole_match) const
+                                                           bool is_whole_match,
+                                                           bool is_regex) const
 {
     std::vector<clFileFinderMatch> results;
 
@@ -70,32 +73,97 @@ std::vector<clFileFinderMatch> clFileFinder::FindInContent(const wxString& conte
     // Split content into lines
     std::vector<wxString> lines = SplitIntoLines(content);
 
-    // Search each line
-    size_t line_number = 0;
-    for (const wxString& line : lines) {
-        ++line_number;
+    if (is_regex) {
+        // Compile the regex pattern
+        int flags = wxRE_ADVANCED;
+        if (!is_case_sensitive) {
+            flags |= wxRE_ICASE;
+        }
 
-        size_t pos = 0;
-        while ((pos = FindPattern(line, find_what, pos, is_case_sensitive)) != wxString::npos) {
-            bool include_match = true;
+        wxRegEx regex;
+        if (!regex.Compile(find_what, flags)) {
+            // Invalid regex pattern, return empty results
+            return results;
+        }
 
-            if (is_whole_match) {
-                // Check word boundaries using Unicode-aware function
-                bool boundary_before = IsWordBoundary(line, pos);
-                bool boundary_after = IsWordBoundary(line, pos + find_what.length());
-                include_match = boundary_before && boundary_after;
+        // Search each line using regex
+        size_t line_number = 0;
+        for (const wxString& line : lines) {
+            ++line_number;
+            FindRegexMatchesInLine(line, regex, line_number, is_whole_match, results);
+        }
+    } else {
+        // Non-regex search (original implementation)
+        size_t line_number = 0;
+        for (const wxString& line : lines) {
+            ++line_number;
+
+            size_t pos = 0;
+            while ((pos = FindPattern(line, find_what, pos, is_case_sensitive)) != wxString::npos) {
+                bool include_match = true;
+
+                if (is_whole_match) {
+                    // Check word boundaries using Unicode-aware function
+                    bool boundary_before = IsWordBoundary(line, pos);
+                    bool boundary_after = IsWordBoundary(line, pos + find_what.length());
+                    include_match = boundary_before && boundary_after;
+                }
+
+                if (include_match) {
+                    results.emplace_back(line_number, pos + 1, line); // 1-based column
+                }
+
+                // Move to next position (move by 1 to allow finding adjacent matches)
+                ++pos;
             }
-
-            if (include_match) {
-                results.emplace_back(line_number, pos + 1, line); // 1-based column
-            }
-
-            // Move to next position (move by 1 to allow finding adjacent matches)
-            ++pos;
         }
     }
 
     return results;
+}
+
+void clFileFinder::FindRegexMatchesInLine(const wxString& line,
+                                          wxRegEx& regex,
+                                          size_t line_number,
+                                          bool is_whole_match,
+                                          std::vector<clFileFinderMatch>& results) const
+{
+    wxString remaining = line;
+    size_t offset = 0;
+
+    while (!remaining.IsEmpty() && regex.Matches(remaining)) {
+        size_t start = 0;
+        size_t len = 0;
+
+        if (!regex.GetMatch(&start, &len, 0)) {
+            break;
+        }
+
+        // Calculate the actual position in the original line
+        size_t actual_pos = offset + start;
+
+        bool include_match = true;
+        if (is_whole_match) {
+            // Check word boundaries using Unicode-aware function
+            bool boundary_before = IsWordBoundary(line, actual_pos);
+            bool boundary_after = IsWordBoundary(line, actual_pos + len);
+            include_match = boundary_before && boundary_after;
+        }
+
+        if (include_match) {
+            results.emplace_back(line_number, actual_pos + 1, line); // 1-based column
+        }
+
+        // Move past the current match to find additional matches
+        // Move by at least 1 character to avoid infinite loop on zero-length matches
+        size_t advance = (len > 0) ? (start + len) : (start + 1);
+        if (advance >= remaining.length()) {
+            break;
+        }
+
+        offset += advance;
+        remaining = remaining.Mid(advance);
+    }
 }
 
 std::vector<wxString> clFileFinder::SplitIntoLines(const wxString& content) const

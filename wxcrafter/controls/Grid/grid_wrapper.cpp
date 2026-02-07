@@ -209,7 +209,7 @@ void GridWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     }
 }
 
-void GridWrapper::UnSerialize(const JSONElement& json)
+void GridWrapper::UnSerialize(const JSONItem& json)
 {
     m_sizerItem.SetBorder(json.namedObject(wxT("border")).toInt(5));
     m_sizerItem.SetProportion(json.namedObject(wxT("proportion")).toInt(0));
@@ -224,14 +224,14 @@ void GridWrapper::UnSerialize(const JSONElement& json)
 
     m_connectedEvents.Clear();
 
-    JSONElement styles = json.namedObject(wxT("m_styles"));
+    JSONItem styles = json.namedObject(wxT("m_styles"));
     int nCount = styles.arraySize();
     for(int i = 0; i < nCount; i++) {
         wxString styleName = styles.arrayItem(i).toString();
         EnableStyle(styleName, true);
     }
 
-    JSONElement sizerFlags = json.namedObject(wxT("m_sizerFlags"));
+    JSONItem sizerFlags = json.namedObject(wxT("m_sizerFlags"));
     nCount = sizerFlags.arraySize();
     for(int i = 0; i < nCount; i++) {
         wxString styleName = sizerFlags.arrayItem(i).toString();
@@ -239,11 +239,11 @@ void GridWrapper::UnSerialize(const JSONElement& json)
     }
 
     // Unserialize the properties
-    JSONElement properties = json.namedObject(wxT("m_properties"));
+    JSONItem properties = json.namedObject(wxT("m_properties"));
     nCount = properties.arraySize();
 
     for(int i = 0; i < nCount; i++) {
-        JSONElement jsonProp = properties.arrayItem(i);
+        JSONItem jsonProp = properties.arrayItem(i);
         wxString propLabel = jsonProp.namedObject(wxT("m_label")).toString();
 
         if(propLabel == PROP_COLS_LIST) {
@@ -274,19 +274,19 @@ void GridWrapper::UnSerialize(const JSONElement& json)
     }
 
     // Unserialize the events
-    JSONElement events = json.namedObject(wxT("m_events"));
+    JSONItem events = json.namedObject(wxT("m_events"));
     nCount = events.arraySize();
     for(int i = 0; i < nCount; i++) {
-        JSONElement jsonEvent = events.arrayItem(i);
+        JSONItem jsonEvent = events.arrayItem(i);
         ConnectDetails details;
         details.FromJSON(jsonEvent);
         m_connectedEvents.PushBack(details.GetEventName(), details);
     }
 
-    JSONElement children = json.namedObject(wxT("m_children"));
+    JSONItem children = json.namedObject(wxT("m_children"));
     int nChildren = children.arraySize();
     for(int i = 0; i < nChildren; i++) {
-        JSONElement child = children.arrayItem(i);
+        JSONItem child = children.arrayItem(i);
         wxcWidget* wrapper = Allocator::Instance()->CreateWrapperFromJSON(child);
         if(wrapper) { AddChild(wrapper); }
     }

@@ -1,8 +1,8 @@
 #ifndef EVENTSDATABASE_H
 #define EVENTSDATABASE_H
 
+#include "JSON.h"
 #include "wx_ordered_map.h"
-#include "wxcLib/json_node.h"
 
 #include <unordered_map>
 #include <wx/menu.h>
@@ -35,9 +35,9 @@ public:
     void SetIfBlock(const wxString& ifBlock) { this->m_ifBlock = ifBlock; }
     const wxString& GetIfBlock() const { return m_ifBlock; }
 
-    JSONElement ToJSON() const
+    JSONItem ToJSON() const
     {
-        JSONElement element = JSONElement::createObject();
+        JSONItem element = JSONItem::createObject();
         element.addProperty(wxT("m_eventName"), m_eventName);
         element.addProperty(wxT("m_eventClass"), m_eventClass);
         element.addProperty(wxT("m_functionNameAndSignature"), m_functionNameAndSignature);
@@ -46,7 +46,7 @@ public:
         return element;
     }
 
-    void FromJSON(const JSONElement& json)
+    void FromJSON(const JSONItem& json)
     {
         m_eventName = json.namedObject(wxT("m_eventName")).toString();
         m_eventClass = json.namedObject(wxT("m_eventClass")).toString();

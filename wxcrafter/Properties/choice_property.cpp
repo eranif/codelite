@@ -46,9 +46,9 @@ void ChoiceProperty::Add(const wxString& value)
     if(where == wxNOT_FOUND) m_options.Add(value);
 }
 
-JSONElement ChoiceProperty::Serialize() const
+JSONItem ChoiceProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty(wxT("type"), wxT("choice"));
     DoBaseSerialize(json);
     json.addProperty(wxT("m_selection"), m_selection);
@@ -56,7 +56,7 @@ JSONElement ChoiceProperty::Serialize() const
     return json;
 }
 
-void ChoiceProperty::UnSerialize(const JSONElement& json)
+void ChoiceProperty::UnSerialize(const JSONItem& json)
 {
     DoBaseUnSerialize(json);
     m_selection = json.namedObject(wxT("m_selection")).toInt();

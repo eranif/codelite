@@ -20,7 +20,7 @@ wxcSettings& wxcSettings::Get()
 void wxcSettings::Load()
 {
     wxFileName fn(wxCrafter::GetConfigFile());
-    JSONRoot root(fn);
+    JSON root(fn);
     if(root.isOk()) {
         m_flags = root.toElement().namedObject("m_annoyDialogs").toInt(m_flags);
         m_flags &= ~USE_TABBED_MODE;
@@ -29,7 +29,7 @@ void wxcSettings::Load()
         m_treeviewSashPos = root.toElement().namedObject("m_treeviewSashPos").toInt(-1);
         m_history = root.toElement().namedObject("recentFiles").toArrayString();
 
-        JSONElement arr = root.toElement().namedObject("m_templateClasses");
+        JSONItem arr = root.toElement().namedObject("m_templateClasses");
         m_templateClasses.clear();
         for(int i = 0; i < arr.arraySize(); ++i) {
             CustomControlTemplate templateControl;
@@ -44,7 +44,7 @@ void wxcSettings::Save()
 {
     wxFileName fn(wxCrafter::GetConfigFile());
 
-    JSONRoot root(cJSON_Object);
+    JSON root(cJSON_Object);
     m_flags &= ~USE_TABBED_MODE;
     root.toElement().addProperty("m_annoyDialogs", (int)m_flags);
     root.toElement().addProperty("m_sashPosition", m_sashPosition);
@@ -52,7 +52,7 @@ void wxcSettings::Save()
     root.toElement().addProperty("m_treeviewSashPos", m_treeviewSashPos);
     root.toElement().addProperty("recentFiles", m_history);
 
-    JSONElement arr = JSONElement::createArray("m_templateClasses");
+    JSONItem arr = JSONItem::createArray("m_templateClasses");
     root.toElement().append(arr);
 
     for (const auto& p : m_templateClasses) {
@@ -100,7 +100,7 @@ void wxcSettings::DeleteCustomControl(const wxString& name)
     m_templateClasses.erase(iter);
 }
 
-void wxcSettings::MergeCustomControl(const JSONElement& arr)
+void wxcSettings::MergeCustomControl(const JSONItem& arr)
 {
     for(int i = 0; i < arr.arraySize(); ++i) {
         CustomControlTemplate templateControl;
@@ -118,9 +118,9 @@ void wxcSettings::MergeCustomControl(const JSONElement& arr)
     Save();
 }
 
-JSONElement wxcSettings::GetCustomControlsAsJSON(const wxArrayString& controls) const
+JSONItem wxcSettings::GetCustomControlsAsJSON(const wxArrayString& controls) const
 {
-    JSONElement arr = JSONElement::createArray("m_templateClasses");
+    JSONItem arr = JSONItem::createArray("m_templateClasses");
     for (const auto& p : m_templateClasses) {
         if (controls.Index(p.first) != wxNOT_FOUND) {
             arr.append(p.second.ToJSON());
@@ -138,7 +138,7 @@ CustomControlTemplate::CustomControlTemplate()
 {
 }
 
-void CustomControlTemplate::FromJSON(const JSONElement& json)
+void CustomControlTemplate::FromJSON(const JSONItem& json)
 {
     m_includeFile = json.namedObject("m_includeFile").toString();
     m_allocationLine = json.namedObject("m_allocationLine").toString();
@@ -147,9 +147,9 @@ void CustomControlTemplate::FromJSON(const JSONElement& json)
     m_events = json.namedObject("m_events").toStringMap();
 }
 
-JSONElement CustomControlTemplate::ToJSON() const
+JSONItem CustomControlTemplate::ToJSON() const
 {
-    JSONElement obj = JSONElement::createObject();
+    JSONItem obj = JSONItem::createObject();
     obj.addProperty("m_includeFile", m_includeFile);
     obj.addProperty("m_allocationLine", m_allocationLine);
     obj.addProperty("m_className", m_className);

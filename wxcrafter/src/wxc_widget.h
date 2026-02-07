@@ -1,10 +1,10 @@
 #ifndef WRAPPERBASE_H
 #define WRAPPERBASE_H
 
+#include "JSON.h"
 #include "Properties/property_base.h"
 #include "aui_pane_info.h"
 #include "events_database.h"
-#include "json_node.h"
 #include "wx_ordered_map.h"
 #include "wxc_settings.h"
 #include "wxgui_defs.h"
@@ -381,8 +381,8 @@ public:
     void DoEnableStyle(wxcWidget::MapStyles_t& mp, const wxString& style, bool enable);
 
     virtual void FixPaths(const wxString& cwd);
-    virtual void Serialize(JSONElement& json) const;
-    virtual void UnSerialize(const JSONElement& json);
+    virtual void Serialize(JSONItem& json) const;
+    virtual void UnSerialize(const JSONItem& json);
 
     /**
      * @brief Extract properties from this XRC object node.

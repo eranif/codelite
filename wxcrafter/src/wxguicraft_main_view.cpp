@@ -1025,9 +1025,9 @@ wxString GUICraftMainPanel::GetStyleFromGuiID(int guiId) const
     }
 }
 
-JSONElement GUICraftMainPanel::ToJSON(const wxTreeItemId& fromItem)
+JSONItem GUICraftMainPanel::ToJSON(const wxTreeItemId& fromItem)
 {
-    JSONElement json = JSONElement::createArray("windows");
+    JSONItem json = JSONItem::createArray("windows");
     wxTreeItemIdValue cookie;
     wxTreeItemId rootItem = fromItem.IsOk() ? fromItem : m_treeControls->GetRootItem();
     wxTreeItemId child = m_treeControls->GetFirstChild(rootItem, cookie);
@@ -1035,7 +1035,7 @@ JSONElement GUICraftMainPanel::ToJSON(const wxTreeItemId& fromItem)
 
         GUICraftItemData* itemData = dynamic_cast<GUICraftItemData*>(m_treeControls->GetItemData(child));
         if (itemData && itemData->m_wxcWidget) {
-            JSONElement obj = JSONElement::createObject();
+            JSONItem obj = JSONItem::createObject();
             itemData->m_wxcWidget->FixPaths(
                 wxcProjectMetadata::Get().GetProjectPath()); // Fix abs paths to fit the new project file
             itemData->m_wxcWidget->Serialize(obj);
@@ -1066,14 +1066,14 @@ void GUICraftMainPanel::OnSaveProject(wxCommandEvent& e)
     }
     wxcProjectMetadata::Get().SetObjCounter(wxcWidget::GetObjCounter());
 
-    JSONRoot root(cJSON_Object);
+    JSON root(cJSON_Object);
 
     // If we don't have bitmap function assigned to this project, create new one
     if (wxcProjectMetadata::Get().GetBitmapFunction().IsEmpty()) {
         wxcProjectMetadata::Get().GenerateBitmapFunctionName();
     }
 
-    JSONElement metadata = wxcProjectMetadata::Get().ToJSON();
+    JSONItem metadata = wxcProjectMetadata::Get().ToJSON();
     wxcProjectMetadata::Get().AppendCustomControlsJSON(customControls, metadata);
     root.toElement().append(metadata);
 
@@ -1182,7 +1182,7 @@ void GUICraftMainPanel::LoadProject(const wxFileName& fn, const wxString& fileCo
 {
     bool deleteAllItems = false;
     wxFileName project_file = fn;
-    JSONRoot json(fileContent);
+    JSON json(fileContent);
     if (!lightLoad) {
         Clear();
 
@@ -1196,7 +1196,7 @@ void GUICraftMainPanel::LoadProject(const wxFileName& fn, const wxString& fileCo
     }
 
     // Read the top-level windows
-    JSONElement windows = json.toElement().namedObject("windows");
+    JSONItem windows = json.toElement().namedObject("windows");
     int nCount = windows.arraySize();
 
 #ifdef __WXMSW__
@@ -2565,7 +2565,7 @@ void GUICraftMainPanel::OnLoadCurrentState(
 
 State::Ptr_t GUICraftMainPanel::CurrentState()
 {
-    JSONRoot root(cJSON_Object);
+    JSON root(cJSON_Object);
 
     // If we don't have bitmap function assigned to this project, create new one
     if (wxcProjectMetadata::Get().GetBitmapFunction().IsEmpty()) {
@@ -2575,7 +2575,7 @@ State::Ptr_t GUICraftMainPanel::CurrentState()
     // Update the counter info; this will otherwise be wrong after e.g. a duplication
     wxcProjectMetadata::Get().SetObjCounter(wxcWidget::GetObjCounter());
 
-    JSONElement metadata = wxcProjectMetadata::Get().ToJSON();
+    JSONItem metadata = wxcProjectMetadata::Get().ToJSON();
     wxcProjectMetadata::Get().AppendCustomControlsJSON(GetCustomControlsUsed(), metadata);
     root.toElement().append(metadata);
     root.toElement().append(ToJSON(wxTreeItemId()));

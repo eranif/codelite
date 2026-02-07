@@ -24,8 +24,8 @@ public:
     void SetValue(const wxString& value) override { m_winid = value; }
 
     // Serialization methods
-    JSONElement Serialize() const override;
-    void UnSerialize(const JSONElement& json) override;
+    JSONItem Serialize() const override;
+    void UnSerialize(const JSONItem& json) override;
 
     PropertyeType GetType() override { return PT_COMBOX; }
 

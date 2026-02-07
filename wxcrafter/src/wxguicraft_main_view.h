@@ -171,7 +171,7 @@ public:
      * @brief save the tree to the file system
      * @param filename
      */
-    JSONElement ToJSON(const wxTreeItemId& fromItem = wxTreeItemId());
+    JSONItem ToJSON(const wxTreeItemId& fromItem = wxTreeItemId());
     void LoadProject(const wxFileName& fn, const wxString& fileContent, bool lightLoad = false);
 
     void OnMenu(wxTreeEvent& event);

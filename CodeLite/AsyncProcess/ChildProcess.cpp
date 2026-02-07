@@ -43,7 +43,8 @@ void ChildProcess::Start(const wxArrayString& args)
     command << args[0];
 
     wrap_with_quotes(command);
-    for (wxString argument : args) {
+    for (size_t i = 1; i < args.size(); ++i) {
+        wxString argument = args[i];
         wrap_with_quotes(argument);
         command << " " << argument;
     }

@@ -342,12 +342,12 @@ void PHPWorkspace::FromJSON(const JSONItem& e)
 
 JSONItem PHPWorkspace::ToJSON(JSONItem& e) const
 {
-    JSONItem metadata = JSONItem::createObject("metadata");
-    e.append(metadata);
+    JSONItem metadata = JSONItem::createObject();
 
     metadata.addProperty("version", PHP_WORKSPACE_VERSION);
     metadata.addProperty("ide", PHP_WORKSPACE_IDE);
     metadata.addProperty("type", wxString("php"));
+    e.addProperty("metadata", metadata);
 
     // Store the list of files
     JSONItem projectsArr = JSONItem::createArray();

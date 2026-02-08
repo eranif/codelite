@@ -1027,7 +1027,7 @@ wxString GUICraftMainPanel::GetStyleFromGuiID(int guiId) const
 
 JSONItem GUICraftMainPanel::ToJSON(const wxTreeItemId& fromItem)
 {
-    JSONItem json = JSONItem::createArray("windows");
+    JSONItem json = JSONItem::createArray();
     wxTreeItemIdValue cookie;
     wxTreeItemId rootItem = fromItem.IsOk() ? fromItem : m_treeControls->GetRootItem();
     wxTreeItemId child = m_treeControls->GetFirstChild(rootItem, cookie);
@@ -1075,11 +1075,11 @@ void GUICraftMainPanel::OnSaveProject(wxCommandEvent& e)
 
     JSONItem metadata = wxcProjectMetadata::Get().ToJSON();
     wxcProjectMetadata::Get().AppendCustomControlsJSON(customControls, metadata);
-    root.toElement().append(metadata);
+    root.toElement().addProperty("metadata", metadata);
 
     wxFFile fp(wxcProjectMetadata::Get().GetProjectFile(), "w+b");
     if (fp.IsOpened()) {
-        root.toElement().append(ToJSON());
+        root.toElement().addProperty("windows", ToJSON());
 
         fp.Write(root.toElement().format(), wxConvUTF8);
         fp.Close();
@@ -2577,8 +2577,8 @@ State::Ptr_t GUICraftMainPanel::CurrentState()
 
     JSONItem metadata = wxcProjectMetadata::Get().ToJSON();
     wxcProjectMetadata::Get().AppendCustomControlsJSON(GetCustomControlsUsed(), metadata);
-    root.toElement().append(metadata);
-    root.toElement().append(ToJSON(wxTreeItemId()));
+    root.toElement().addProperty("metadata", metadata);
+    root.toElement().addProperty("windows", ToJSON(wxTreeItemId()));
 
     State::Ptr_t state(new State);
     state->project_json = root.toElement().format();

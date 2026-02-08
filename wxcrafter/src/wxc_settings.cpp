@@ -120,7 +120,7 @@ void wxcSettings::MergeCustomControl(const JSONItem& arr)
 
 JSONItem wxcSettings::GetCustomControlsAsJSON(const wxArrayString& controls) const
 {
-    JSONItem arr = JSONItem::createArray("m_templateClasses");
+    JSONItem arr = JSONItem::createArray();
     for (const auto& p : m_templateClasses) {
         if (controls.Index(p.first) != wxNOT_FOUND) {
             arr.append(p.second.ToJSON());

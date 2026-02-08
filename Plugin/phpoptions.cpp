@@ -44,11 +44,11 @@ PhpOptions::PhpOptions()
         }
 
         JSON newRoot(newConfigFile);
-        JSONItem e = JSONItem::createObject(GetName());
+        JSONItem e = JSONItem::createObject();
         e.addProperty("m_phpExe", m_phpExe);
         e.addProperty("m_includePaths", m_includePaths);
         e.addProperty("m_errorReporting", m_errorReporting);
-        newRoot.toElement().append(e);
+        newRoot.toElement().addProperty(GetName(), e);
         newRoot.save(newConfigFile);
     }
 }

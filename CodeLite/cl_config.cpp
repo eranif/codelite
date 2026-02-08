@@ -32,16 +32,16 @@
 #include <wx/filefn.h>
 #include <wx/filename.h>
 
-#define ADD_OBJ_IF_NOT_EXISTS(parent, objName)          \
-    if (!parent.hasNamedObject(objName)) {              \
-        JSONItem obj = JSONItem::createObject(objName); \
-        parent.append(obj);                             \
+#define ADD_OBJ_IF_NOT_EXISTS(parent, objName)   \
+    if (!(parent).hasNamedObject((objName))) {   \
+        JSONItem obj = JSONItem::createObject(); \
+        (parent).addProperty((objName), obj);    \
     }
 
-#define ADD_ARR_IF_NOT_EXISTS(parent, arrName)         \
-    if (!parent.hasNamedObject(arrName)) {             \
-        JSONItem arr = JSONItem::createArray(arrName); \
-        parent.append(arr);                            \
+#define ADD_ARR_IF_NOT_EXISTS(parent, arrName)  \
+    if (!(parent).hasNamedObject((arrName))) {  \
+        JSONItem arr = JSONItem::createArray(); \
+        (parent).addProperty((arrName), arr);   \
     }
 
 namespace
@@ -115,10 +115,10 @@ void clConfig::SetOutputTabOrder(const wxArrayString& tabs, int selected)
     DoDeleteProperty("outputTabOrder");
 
     // first time
-    JSONItem e = JSONItem::createObject("outputTabOrder");
+    JSONItem e = JSONItem::createObject();
     e.addProperty("tabs", tabs);
     e.addProperty("selected", selected);
-    m_root->toElement().append(e);
+    m_root->toElement().addProperty("outputTabOrder", e);
     m_root->save(m_filename);
 }
 
@@ -138,10 +138,10 @@ void clConfig::SetWorkspaceTabOrder(const wxArrayString& tabs, int selected)
     DoDeleteProperty("workspaceTabOrder");
 
     // first time
-    JSONItem e = JSONItem::createObject("workspaceTabOrder");
+    JSONItem e = JSONItem::createObject();
     e.addProperty("tabs", tabs);
     e.addProperty("selected", selected);
-    m_root->toElement().append(e);
+    m_root->toElement().addProperty("workspaceTabOrder", e);
 
     m_root->save(m_filename);
 }
@@ -173,8 +173,7 @@ bool clConfig::Write(const wxString& name, std::function<JSONItem()> serialiser_
     } else {
         // add it to the global configuration file
         DoDeleteProperty(name);
-        item.SetPropertyName(name);
-        m_root->toElement().append(item);
+        m_root->toElement().addProperty(name, item);
         return true;
     }
 }
@@ -263,10 +262,7 @@ void clConfig::Save(const wxFileName& fn)
 
 JSONItem clConfig::GetGeneralSetting()
 {
-    if (!m_root->toElement().hasNamedObject("General")) {
-        JSONItem general = JSONItem::createObject("General");
-        m_root->toElement().append(general);
-    }
+    ADD_OBJ_IF_NOT_EXISTS(m_root->toElement(), "General")
     return m_root->toElement().namedObject("General");
 }
 
@@ -342,10 +338,7 @@ int clConfig::GetAnnoyingDlgAnswer(const wxString& name, int defaultValue)
 
 void clConfig::SetAnnoyingDlgAnswer(const wxString& name, int value)
 {
-    if (!m_root->toElement().hasNamedObject("AnnoyingDialogsAnswers")) {
-        JSONItem element = JSONItem::createObject("AnnoyingDialogsAnswers");
-        m_root->toElement().append(element);
-    }
+    ADD_OBJ_IF_NOT_EXISTS(m_root->toElement(), "AnnoyingDialogsAnswers")
 
     JSONItem element = m_root->toElement().namedObject("AnnoyingDialogsAnswers");
     if (element.hasNamedObject(name)) {
@@ -524,14 +517,13 @@ wxFont clConfig::Read(const wxString& name, const wxFont& defaultValue)
 
 void clConfig::Write(const wxString& name, const wxFont& value)
 {
-    JSONItem font = JSONItem::createObject(name);
-    font.addProperty("fontDesc", FontUtils::GetFontInfo(value));
-
     JSONItem general = GetGeneralSetting();
     if (general.hasNamedObject(name)) {
         general.removeProperty(name);
     }
-    general.append(font);
+    JSONItem font = JSONItem::createObject();
+    font.addProperty("fontDesc", FontUtils::GetFontInfo(value));
+    general.addProperty(name, font);
     Save();
 }
 

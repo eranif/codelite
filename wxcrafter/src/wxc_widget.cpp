@@ -622,41 +622,41 @@ void wxcWidget::Serialize(JSONItem& json) const
     json.addProperty("gbSpan", m_gbSpan);
     json.addProperty("gbPosition", m_gbPos);
 
-    JSONItem styles = JSONItem::createArray("m_styles");
+    JSONItem styles = JSONItem::createArray();
     for (const auto& [_, styleInfo] : m_styles) {
         if (styleInfo.is_set) {
             styles.arrayAppend(styleInfo.style_name);
         }
     }
-    json.append(styles);
+    json.addProperty("m_styles", styles);
 
     if (IsAuiPane()) {
         json.append(m_auiPaneInfo.ToJSON());
     }
 
-    JSONItem sizerFlags = JSONItem::createArray("m_sizerFlags");
+    JSONItem sizerFlags = JSONItem::createArray();
     for (const auto& [_, styleInfo] : m_sizerFlags) {
         if (styleInfo.is_set) {
             sizerFlags.arrayAppend(styleInfo.style_name);
         }
     }
-    json.append(sizerFlags);
+    json.addProperty("m_sizerFlags", sizerFlags);
 
-    JSONItem properties = JSONItem::createArray("m_properties");
+    JSONItem properties = JSONItem::createArray();
     for (const auto& [_, property] : m_properties) {
         if (property) {
             properties.arrayAppend(property->Serialize());
         }
     }
-    json.append(properties);
+    json.addProperty("m_properties", properties);
 
-    JSONItem events = JSONItem::createArray("m_events");
+    JSONItem events = JSONItem::createArray();
     for (const auto& p : m_connectedEvents) {
         events.arrayAppend(p.second.ToJSON());
     }
-    json.append(events);
+    json.addProperty("m_events", events);
 
-    JSONItem children = JSONItem::createArray("m_children");
+    JSONItem children = JSONItem::createArray();
     List_t::const_iterator child_iter = m_children.begin();
     for (; child_iter != m_children.end(); child_iter++) {
         JSONItem child = JSONItem::createObject();
@@ -664,7 +664,7 @@ void wxcWidget::Serialize(JSONItem& json) const
         children.arrayAppend(child);
     }
 
-    json.append(children);
+    json.addProperty("m_children", children);
 }
 
 void wxcWidget::UnSerialize(const JSONItem& json)

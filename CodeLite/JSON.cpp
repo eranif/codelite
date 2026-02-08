@@ -36,11 +36,6 @@ JSON::JSON(const wxString& text)
     m_json = cJSON_Parse(text.mb_str(wxConvUTF8).data());
 }
 
-JSON::JSON(cJSON* json)
-    : m_json(json)
-{
-}
-
 JSON::JSON(JSONItem item)
     : m_json(item.release())
 {
@@ -702,12 +697,12 @@ JSONItem JSONItem::AddObject(const wxString& name)
     return json;
 }
 
-JSONItem& JSONItem::addProperty(const wxString& name, cJSON* pjson)
+JSONItem& JSONItem::addProperty(const wxString& name, JSON&& json)
 {
     if (!m_json) {
         return *this;
     }
-    cJSON_AddItemToObject(m_json, name.mb_str(wxConvUTF8).data(), pjson);
+    cJSON_AddItemToObject(m_json, name.mb_str(wxConvUTF8).data(), json.release());
     return *this;
 }
 

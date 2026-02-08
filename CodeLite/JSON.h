@@ -56,10 +56,6 @@ public:
     JSONItem() = default;
     virtual ~JSONItem() = default;
 
-    // Walkers
-    JSONItem firstChild();
-    JSONItem nextChild();
-
     // Setters
     ////////////////////////////////////////////////
     const wxString& GetPropertyName() const { return m_propertyName; }
@@ -240,7 +236,6 @@ private:
 
 private:
     cJSON* m_json = nullptr;
-    cJSON* m_walker = nullptr;
     wxString m_propertyName;
     int m_type = wxNOT_FOUND;
 

@@ -637,31 +637,7 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxColour& colour)
     return addProperty(name, colourValue);
 }
 #endif
-JSONItem JSONItem::firstChild()
-{
-    m_walker = NULL;
-    if (!m_json) {
-        return JSONItem(NULL);
-    }
 
-    if (!m_json->child) {
-        return JSONItem(NULL);
-    }
-
-    m_walker = m_json->child;
-    return JSONItem(m_walker);
-}
-
-JSONItem JSONItem::nextChild()
-{
-    if (!m_walker) {
-        return JSONItem(NULL);
-    }
-
-    JSONItem element(m_walker->next);
-    m_walker = m_walker->next;
-    return element;
-}
 JSONItem& JSONItem::addProperty(const wxString& name, const char* value, const wxMBConv& conv)
 {
     return addProperty(name, wxString(value, conv));

@@ -105,11 +105,11 @@ JSONItem DbExplorerSettings::ToJSON() const
     element.addProperty("m_sqlHistory",  m_sqlHistory);
     
     // add the connections array
-    JSONItem arrConnections = JSONItem::createArray("connections");
-    element.append(arrConnections);
+    JSONItem arrConnections = JSONItem::createArray();
     for (const auto& connection : m_connections) {
         arrConnections.arrayAppend(connection.ToJSON());
     }
+    element.addProperty("connections", arrConnections);
     return element;
 }
 

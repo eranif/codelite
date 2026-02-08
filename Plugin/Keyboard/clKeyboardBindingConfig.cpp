@@ -63,8 +63,7 @@ clKeyboardBindingConfig& clKeyboardBindingConfig::Save()
     // set the version
     mainObj.addProperty("version", BINDING_VERSION);
 
-    JSONItem menuArr = JSONItem::createArray("menus");
-    mainObj.append(menuArr);
+    JSONItem menuArr = JSONItem::createArray();
     for (const auto& [_, menuItem] : m_bindings) {
         JSONItem binding = JSONItem::createObject();
         binding.addProperty("resourceID", menuItem.resourceID);
@@ -73,6 +72,7 @@ clKeyboardBindingConfig& clKeyboardBindingConfig::Save()
         binding.addProperty("accelerator", menuItem.accel.ToString());
         menuArr.arrayAppend(binding);
     }
+    mainObj.addProperty("menus", menuArr);
     wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "keybindings.conf");
     fn.AppendDir("config");
     root.save(fn);

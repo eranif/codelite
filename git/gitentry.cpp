@@ -167,17 +167,17 @@ JSONItem GitEntry::ToJSON() const
     json.addProperty("m_gitBlameDlgVSashPos", m_gitBlameDlgVSashPos);
 
     // Add the git commands array
-    JSONItem arrCommands = JSONItem::createArray("Commands");
-    json.append(arrCommands);
+    JSONItem arrCommands = JSONItem::createArray();
     for (const auto& p : m_commandsMap) {
         p.second.ToJSON(arrCommands);
     }
+    json.addProperty("Commands", arrCommands);
     // and the workspace info
-    JSONItem arrWorkspaces = JSONItem::createArray("Workspaces");
-    json.append(arrWorkspaces);
+    JSONItem arrWorkspaces = JSONItem::createArray();
     for (const auto& p : m_workspacesMap) {
         p.second.ToJSON(arrWorkspaces);
     }
+    json.addProperty("Workspaces", arrWorkspaces);
     json.addProperty("DiffTool", m_difftool);
     return json;
 }
@@ -411,15 +411,14 @@ void GitCommandsEntries::ToJSON(JSONItem& arr) const
     obj.addProperty("m_commandName", m_commandName);
     obj.addProperty("m_lastUsed", m_lastUsed);
 
-    JSONItem commandsArr = JSONItem::createArray("m_commands");
-    obj.append(commandsArr);
-
+    JSONItem commandsArr = JSONItem::createArray();
     for (const auto& command : m_commands) {
         JSONItem e = JSONItem::createObject();
         e.addProperty("label", command.label);
         e.addProperty("command", command.command);
         commandsArr.arrayAppend(e);
     }
+    obj.addProperty("m_commands", commandsArr);
     arr.arrayAppend(obj);
 }
 

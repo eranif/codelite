@@ -49,7 +49,7 @@ void wxcProjectMetadata::FromJSON(const JSONItem& json)
 
 JSONItem wxcProjectMetadata::ToJSON()
 {
-    JSONItem metadata = JSONItem::createObject("metadata");
+    JSONItem metadata = JSONItem::createObject();
     UpdatePaths();
 
     metadata.addProperty("m_generatedFilesDir", m_generatedFilesDir);
@@ -69,7 +69,7 @@ JSONItem wxcProjectMetadata::ToJSON()
 void wxcProjectMetadata::AppendCustomControlsJSON(const wxArrayString& controls, JSONItem& element) const
 {
     JSONItem customControls = wxcSettings::Get().GetCustomControlsAsJSON(controls);
-    element.append(customControls);
+    element.addProperty("m_templateClasses", customControls);
 }
 
 wxString wxcProjectMetadata::GetCppFileName() const
@@ -200,8 +200,8 @@ void wxcProjectMetadata::Serialize(const wxcWidget::List_t& topLevelsList, const
         wxcProjectMetadata p;
         p.GenerateBitmapFunctionName();
 
-      JSON root(JsonType::Object);
-      root.toElement().append(p.ToJSON());
+        JSON root(JsonType::Object);
+        root.toElement().addProperty("metadata", p.ToJSON());
 
         // The windows
         JSONItem windows = JSONItem::createArray();

@@ -631,7 +631,7 @@ void wxcWidget::Serialize(JSONItem& json) const
     json.addProperty("m_styles", styles);
 
     if (IsAuiPane()) {
-        json.append(m_auiPaneInfo.ToJSON());
+        json.addProperty("wxAuiPaneInfo", m_auiPaneInfo.ToJSON());
     }
 
     JSONItem sizerFlags = JSONItem::createArray();

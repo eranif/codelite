@@ -118,7 +118,7 @@ JSONItem TextDocumentContentChangeEvent::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
     if(m_range.IsOk()) {
-        json.append(m_range.ToJSON("range"));
+        json.addProperty("range", m_range.ToJSON("range"));
     }
     json.addProperty("text", m_text);
     return json;
@@ -133,8 +133,8 @@ void Range::FromJSON(const JSONItem& json)
 JSONItem Range::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.append(m_start.ToJSON("start"));
-    json.append(m_end.ToJSON("end"));
+    json.addProperty("start", m_start.ToJSON("start"));
+    json.addProperty("end", m_end.ToJSON("end"));
     return json;
 }
 
@@ -150,7 +150,7 @@ JSONItem Location::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
     json.addProperty("uri", GetPathAsURI());
-    json.append(m_range.ToJSON("range"));
+    json.addProperty("range", m_range.ToJSON("range"));
     json.addProperty("pattern", m_pattern);
     json.addProperty("name", m_name);
     return json;
@@ -166,7 +166,7 @@ JSONItem TextEdit::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
     json.addProperty("newText", m_newText);
-    json.append(m_range.ToJSON("range"));
+    json.addProperty("range", m_range.ToJSON("range"));
     return json;
 }
 
@@ -270,8 +270,8 @@ void Hover::FromJSON(const JSONItem& json)
 JSONItem Hover::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.append(m_contents.ToJSON("contents"));
-    json.append(m_range.ToJSON("range"));
+    json.addProperty("contents", m_contents.ToJSON("contents"));
+    json.addProperty("range", m_range.ToJSON("range"));
     return json;
 }
 
@@ -288,7 +288,7 @@ void Diagnostic::FromJSON(const JSONItem& json)
 JSONItem Diagnostic::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.append(m_range.ToJSON("range"));
+    json.addProperty("range", m_range.ToJSON("range"));
     json.addProperty("message", GetMessage());
     json.addProperty("severity", (int)m_severity);
     return json;
@@ -361,7 +361,7 @@ JSONItem SymbolInformation::ToJSON(const wxString& name) const
     JSONItem json = JSONItem::createObject(name);
     json.addProperty("kind", (int)kind);
     json.addProperty("containerName", containerName);
-    json.append(location.ToJSON("location"));
+    json.addProperty("location", location.ToJSON("location"));
     json.addProperty("name", this->name);
     return json;
 }

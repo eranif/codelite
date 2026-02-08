@@ -86,6 +86,6 @@ JSONItem MemCheckSettings::ToJSON() const
     element.addProperty("m_omitDuplications", m_omitDuplications);
     element.addProperty("m_omitSuppressed", m_omitSuppressed);
 
-    element.append(m_valgrindSettings.ToJSON());
+    element.addProperty(CONFIG_ITEM_NAME_VALGRIND, m_valgrindSettings.ToJSON());
     return element;
 }

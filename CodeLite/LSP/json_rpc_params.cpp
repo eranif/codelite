@@ -15,8 +15,8 @@ void TextDocumentPositionParams::FromJSON(const JSONItem& json)
 JSONItem TextDocumentPositionParams::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.append(m_textDocument.ToJSON("textDocument"));
-    json.append(m_position.ToJSON("position"));
+    json.addProperty("textDocument", m_textDocument.ToJSON("textDocument"));
+    json.addProperty("position", m_position.ToJSON("position"));
     return json;
 }
 
@@ -29,7 +29,7 @@ void SemanticTokensParams::FromJSON(const JSONItem& json) { m_textDocument.FromJ
 JSONItem SemanticTokensParams::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.append(m_textDocument.ToJSON("textDocument"));
+    json.addProperty("textDocument", m_textDocument.ToJSON("textDocument"));
     return json;
 }
 
@@ -42,7 +42,7 @@ void DidOpenTextDocumentParams::FromJSON(const JSONItem& json) { m_textDocument.
 JSONItem DidOpenTextDocumentParams::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.append(m_textDocument.ToJSON("textDocument"));
+    json.addProperty("textDocument", m_textDocument.ToJSON("textDocument"));
     return json;
 }
 
@@ -55,7 +55,7 @@ void DidCloseTextDocumentParams::FromJSON(const JSONItem& json) { m_textDocument
 JSONItem DidCloseTextDocumentParams::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.append(m_textDocument.ToJSON("textDocument"));
+    json.addProperty("textDocument", m_textDocument.ToJSON("textDocument"));
     return json;
 }
 
@@ -81,7 +81,7 @@ void DidChangeTextDocumentParams::FromJSON(const JSONItem& json)
 JSONItem DidChangeTextDocumentParams::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.append(m_textDocument.ToJSON("textDocument"));
+    json.addProperty("textDocument", m_textDocument.ToJSON("textDocument"));
     JSONItem arr = JSONItem::createArray();
     for (const auto& contentChange : m_contentChanges) {
         arr.arrayAppend(contentChange.ToJSON(""));
@@ -103,7 +103,7 @@ void DidSaveTextDocumentParams::FromJSON(const JSONItem& json)
 JSONItem DidSaveTextDocumentParams::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.append(m_textDocument.ToJSON("textDocument"));
+    json.addProperty("textDocument", m_textDocument.ToJSON("textDocument"));
     json.addProperty("text", m_text);
     return json;
 }
@@ -153,8 +153,8 @@ void CodeActionParams::FromJSON(const JSONItem& json) { wxUnusedVar(json); }
 JSONItem CodeActionParams::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.append(m_textDocument.ToJSON("textDocument"));
-    json.append(m_range.ToJSON("range"));
+    json.addProperty("textDocument", m_textDocument.ToJSON("textDocument"));
+    json.addProperty("range", m_range.ToJSON("range"));
 
     // add empty context
     auto context = json.AddObject("context");
@@ -174,7 +174,7 @@ void DocumentSymbolParams::FromJSON(const JSONItem& json) { m_textDocument.FromJ
 JSONItem DocumentSymbolParams::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
-    json.append(m_textDocument.ToJSON("textDocument"));
+    json.addProperty("textDocument", m_textDocument.ToJSON("textDocument"));
     return json;
 }
 

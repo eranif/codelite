@@ -56,11 +56,6 @@ public:
     JSONItem() = default;
     virtual ~JSONItem() = default;
 
-    // Setters
-    ////////////////////////////////////////////////
-    const wxString& GetPropertyName() const { return m_propertyName; }
-    void SetPropertyName(const wxString& name) { m_propertyName = name; }
-
     // Readers
     ////////////////////////////////////////////////
     JSONItem namedObject(const wxString& name) const;
@@ -231,6 +226,8 @@ public:
     }
 
 private:
+    const wxString& GetPropertyName() const { return m_propertyName; }
+    void SetPropertyName(const wxString& name) { m_propertyName = name; }
     int getType() const { return m_type; }
     void setType(int m_type) { this->m_type = m_type; }
 

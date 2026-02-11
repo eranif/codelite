@@ -15,8 +15,8 @@ public:
 public:
     wxString GetValue() const override;
     void SetValue(const wxString& value) override;
-    JSONElement Serialize() const override;
-    void UnSerialize(const JSONElement& json) override;
+    JSONItem Serialize() const override;
+    void UnSerialize(const JSONItem& json) override;
     PropertyeType GetType() override { return PT_BOOL; }
 };
 

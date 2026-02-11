@@ -1,7 +1,8 @@
 #ifndef AUIPANEINFO_H
 #define AUIPANEINFO_H
 
-#include "wxcLib/json_node.h"
+#include "JSON.h"
+
 #include <wx/aui/framemanager.h>
 #include <wx/propgrid/propgrid.h>
 
@@ -36,8 +37,8 @@ public:
     void Construct(wxPropertyGrid* pg) const;
     void OnChanged(wxPropertyGridEvent& e);
 
-    void FromJSON(const JSONElement& json);
-    JSONElement ToJSON() const;
+    void FromJSON(const JSONItem& json);
+    JSONItem ToJSON() const;
 };
 
 #endif // AUIPANEINFO_H

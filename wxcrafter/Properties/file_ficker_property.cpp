@@ -22,9 +22,9 @@ FilePickerProperty::FilePickerProperty()
 
 wxString FilePickerProperty::GetValue() const { return m_path; }
 
-JSONElement FilePickerProperty::Serialize() const
+JSONItem FilePickerProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty(wxT("type"), wxT("filePicker"));
     DoBaseSerialize(json);
     json.addProperty(wxT("m_path"), m_path);
@@ -33,7 +33,7 @@ JSONElement FilePickerProperty::Serialize() const
 
 void FilePickerProperty::SetValue(const wxString& value) { m_path = value; }
 
-void FilePickerProperty::UnSerialize(const JSONElement& json)
+void FilePickerProperty::UnSerialize(const JSONItem& json)
 {
     DoBaseUnSerialize(json);
     m_path = json.namedObject(wxT("m_path")).toString();

@@ -79,8 +79,6 @@ file(
     "xrc_handlers/*.cpp"
     "${CMAKE_BINARY_DIR}/generated/wxcversion.cpp")
 
-set(WXCLIB_SRCS "wxcLib/json_node.cpp")
-
 include_directories(
     "${CMAKE_CURRENT_LIST_DIR}"
     "${CMAKE_CURRENT_LIST_DIR}/aui"
@@ -88,16 +86,7 @@ include_directories(
     "${CMAKE_CURRENT_LIST_DIR}/sizers"
     "${CMAKE_CURRENT_LIST_DIR}/src"
     "${CMAKE_CURRENT_LIST_DIR}/top_level_windows"
-    "${CMAKE_CURRENT_LIST_DIR}/xrc_handlers"
-    "${CMAKE_CURRENT_LIST_DIR}/wxcLib")
-
-add_library(wxcLib STATIC ${WXCLIB_SRCS})
-
-if(UNIX OR APPLE)
-    set_target_properties(wxcLib PROPERTIES POSITION_INDEPENDENT_CODE ON)
-endif()
-
-target_link_libraries(wxcLib PUBLIC cJSON)
+    "${CMAKE_CURRENT_LIST_DIR}/xrc_handlers")
 
 set(RES_FILE "")
 # Define the output
@@ -124,7 +113,6 @@ endif()
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
-target_link_libraries(${PLUGIN_NAME} wxcLib)
 
 if(NOT WXC_APP)
     if(NOT OFFICIAL_CL_BUILD)

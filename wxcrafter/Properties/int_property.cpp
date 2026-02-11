@@ -25,9 +25,9 @@ wxString IntProperty::GetValue() const
     return v;
 }
 
-JSONElement IntProperty::Serialize() const
+JSONItem IntProperty::Serialize() const
 {
-    JSONElement json = JSONElement::createObject();
+    JSONItem json = JSONItem::createObject();
     json.addProperty(wxT("type"), wxT("integer"));
     DoBaseSerialize(json);
     json.addProperty(wxT("m_value"), m_value);
@@ -44,7 +44,7 @@ void IntProperty::SetValue(const wxString& value)
     }
 }
 
-void IntProperty::UnSerialize(const JSONElement& json)
+void IntProperty::UnSerialize(const JSONItem& json)
 {
     DoBaseUnSerialize(json);
     m_value = json.namedObject(wxT("m_value")).toInt();

@@ -37,6 +37,7 @@ static std::string currentFile;
 %}
 
 %option yylineno
+%option never-interactive
 
 %%
 

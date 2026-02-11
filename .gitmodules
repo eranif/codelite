@@ -43,9 +43,6 @@
 [submodule "wxdap"]
 	path = submodules/wxdap
 	url = https://github.com/eranif/wxdap
-[submodule "submodules/wxsf-code"]
-	path = submodules/wxsf-code
-	url = https://github.com/eranif/wxsf-code.git
 [submodule "wx-config-msys2"]
 	path = submodules/wx-config-msys2
 	url = https://github.com/eranif/wx-config-msys2.git

@@ -36,28 +36,5 @@ endif()
 # ######################################################################################################################
 include("${wxWidgets_USE_FILE}")
 
-# ######################################################################################################################
-# wxshapeframework
-# ######################################################################################################################
-file(GLOB WXSF_SRCS "${CMAKE_CURRENT_SOURCE_DIR}/wxsf-code/src/*.cpp"
-     "${CMAKE_CURRENT_SOURCE_DIR}/wxsf-code/src/wxxmlserializer/*.cpp")
-add_library(wxshapeframework SHARED ${WXSF_SRCS})
-
-target_include_directories(wxshapeframework PRIVATE "${CMAKE_CURRENT_SOURCE_DIR}/wxsf-code/src")
-target_include_directories(wxshapeframework PUBLIC "${CMAKE_CURRENT_SOURCE_DIR}/wxsf-code/include")
-
-# Setup WXDLLIMPEXP_SF/WXDLLIMPEXP_XS for using WEXPORT.
-target_compile_definitions(wxshapeframework PRIVATE WXMAKINGDLL_WXXS WXMAKINGDLL_WXSF)
-# Force support for shared libraries
-target_compile_definitions(wxshapeframework INTERFACE WXUSINGDLL)
-
-if(UNIX OR APPLE)
-  set_target_properties(wxshapeframework PROPERTIES POSITION_INDEPENDENT_CODE ON)
-endif()
-
-target_link_libraries(wxshapeframework PRIVATE ${LINKER_OPTIONS} ${wxWidgets_LIBRARIES})
-
-codelite_install_library_target(wxshapeframework)
-
 add_subdirectory(lua)
 add_subdirectory(LuaBridge)

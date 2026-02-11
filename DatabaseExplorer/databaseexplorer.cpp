@@ -34,7 +34,6 @@
 #include "imanager.h"
 
 #include <wx/aboutdlg.h>
-#include <wx/wxsf/AutoLayout.h>
 #include <wx/xrc/xmlres.h>
 
 // #ifdef DBL_USE_MYSQL
@@ -110,27 +109,13 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
     // create tab (possibly detached)
     wxWindow* editorBook = m_mgr->GetEditorPaneNotebook();
 
-    EventNotifier::Get()->Connect(wxEVT_TREE_ITEM_FILE_ACTIVATED,
-                                  clCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_SHOW_WORKSPACE_TAB, &DatabaseExplorer::OnToggleTab, this);
 
     m_dbViewerPanel = new DbViewerPanel(m_mgr->BookGet(PaneId::SIDE_BAR), editorBook, m_mgr);
     m_mgr->BookAddPage(PaneId::SIDE_BAR, m_dbViewerPanel, _("DbExplorer"), "dbexplorer-button");
     m_mgr->AddWorkspaceTab(_("DbExplorer"));
-
-    // configure autolayout algorithms
-    wxSFAutoLayout layout;
-
-    wxSFLayoutHorizontalTree* pHTreeAlg =
-        wxDynamicCast(layout.GetAlgorithm("Horizontal Tree"), wxSFLayoutHorizontalTree);
-    if (pHTreeAlg) {
-        pHTreeAlg->SetHSpace(200);
-    }
-
-    wxSFLayoutVerticalTree* pVTreeAlg = wxDynamicCast(layout.GetAlgorithm("Vertical Tree"), wxSFLayoutVerticalTree);
-    if (pVTreeAlg) {
-        pVTreeAlg->SetVSpace(75);
-    }
 
     m_longName = _("DatabaseExplorer for CodeLite");
     m_shortName = "DatabaseExplorer";
@@ -139,7 +124,7 @@ DatabaseExplorer::DatabaseExplorer(IManager* manager)
     wxTheApp->Bind(wxEVT_MENU, &DatabaseExplorer::OnExecuteSQL, this, XRCID("wxEVT_EXECUTE_SQL"));
 }
 
-DatabaseExplorer::~DatabaseExplorer() { wxSFAutoLayout::CleanUp(); }
+DatabaseExplorer::~DatabaseExplorer() {}
 
 void DatabaseExplorer::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
 
@@ -154,8 +139,8 @@ void DatabaseExplorer::CreatePluginMenu(wxMenu* pluginsMenu)
     item = new wxMenuItem(menu, XRCID("wxEVT_EXECUTE_SQL"), _("Execute SQL"), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
     pluginsMenu->Append(wxID_ANY, _("Database Explorer"), menu);
-    m_mgr->GetTheApp()->Connect(XRCID("dbe_about"), wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(DatabaseExplorer::OnAbout), NULL, this);
+    m_mgr->GetTheApp()->Connect(
+        XRCID("dbe_about"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(DatabaseExplorer::OnAbout), NULL, this);
 }
 
 void DatabaseExplorer::HookPopupMenu(wxMenu* menu, MenuType type)
@@ -172,8 +157,8 @@ void DatabaseExplorer::OnExecuteSQL(wxCommandEvent& event)
 
 void DatabaseExplorer::UnPlug()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_TREE_ITEM_FILE_ACTIVATED,
-                                     clCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(DatabaseExplorer::OnOpenWithDBE), NULL, this);
     EventNotifier::Get()->Unbind(wxEVT_SHOW_WORKSPACE_TAB, &DatabaseExplorer::OnToggleTab, this);
     if (!m_mgr->BookDeletePage(PaneId::SIDE_BAR, m_dbViewerPanel)) {
         // failed to delete, delete it manually

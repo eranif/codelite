@@ -32,11 +32,9 @@
 // database
 #include <wx/dblayer/include/DatabaseLayer.h>
 
-//#ifdef DBL_USE_MYSQL
-//#include <wx/dblayer/include/MysqlDatabaseLayer.h>
-//#endif
-
-#include <wx/wxsf/wxShapeFramework.h>
+// #ifdef DBL_USE_MYSQL
+// #include <wx/dblayer/include/MysqlDatabaseLayer.h>
+// #endif
 
 // wx classes
 #include <wx/aui/aui.h>
@@ -54,7 +52,7 @@
 #include "dumpclass.h"
 #include "table.h"
 #include "view.h"
-//#include "MySqlDbAdapter.h"
+// #include "MySqlDbAdapter.h"
 #include "ClassGenerateDialog.h"
 #include "LogDialog.h"
 #include "dbitem.h"

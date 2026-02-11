@@ -13,6 +13,7 @@
 #include "globals.h"
 
 #include <wx/msgdlg.h>
+#include <wx/richmsgdlg.h>
 #include <wx/xrc/xmlres.h>
 
 namespace llm
@@ -522,13 +523,38 @@ void Manager::Stop()
     }
 }
 
-void Manager::Start()
+static std::unordered_map<std::string, bool> sessions_persisted_answers;
+
+bool Manager::CanRunTool(const std::string& tool_name)
+{
+    wxString message;
+    message << _("The model wants to run the tool: \"") << tool_name << _("\"\nContinue?");
+
+    if (sessions_persisted_answers.contains(tool_name)) {
+        return sessions_persisted_answers[tool_name];
+    }
+
+    wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(),
+                            message,
+                            _("Confirm"),
+                            wxYES_NO | wxCANCEL_DEFAULT | wxCANCEL | wxCENTER | wxICON_QUESTION);
+    dlg.ShowCheckBox(_("Remember my answer for this session"), false);
+    bool can_run_tool = dlg.ShowModal() == wxID_YES;
+    if (dlg.IsCheckBoxChecked()) {
+        // Persist the answer for this tool for this session only.
+        sessions_persisted_answers.erase(tool_name);
+        sessions_persisted_answers.insert({tool_name, can_run_tool});
+    }
+    return can_run_tool;
+}
+
+void Manager::Start(std::shared_ptr<assistant::ClientBase> client)
 {
     auto bc = std::make_unique<BusyCursor>();
     m_client_config = MakeConfig();
 
     // MakeClient that accepts a Config object can not fail.
-    m_client = assistant::MakeClient(m_client_config).value_or(nullptr);
+    m_client = client == nullptr ? assistant::MakeClient(m_client_config).value_or(nullptr) : client;
     CHECK_PTR_RET(m_client);
 
     // Initialise the function table.
@@ -537,6 +563,8 @@ void Manager::Start()
 
     // Add external MCP tools.
     m_client->GetFunctionTable().ReloadMCPServers(&m_client_config);
+
+    m_client->SetTookInvokeCallback(&Manager::CanRunTool);
 
     // Start the worker thread
     m_worker_thread = std::make_unique<std::thread>([this]() { WorkerMain(); });
@@ -566,14 +594,14 @@ bool Manager::ReloadConfig(std::optional<wxString> config_content, bool prompt)
     if (conf.has_value()) {
         m_client_config = std::move(conf.value());
         // Now we can replace the client instance
-        m_client = assistant::MakeClient(m_client_config).value_or(nullptr);
-        if (!m_client) {
+        auto client = assistant::MakeClient(m_client_config).value_or(nullptr);
+        if (!client) {
             clERROR() << "Could not create new LLM client!" << endl;
             return false;
         }
 
         // Start the new client
-        Start();
+        Start(client);
         return true;
     }
     return false;

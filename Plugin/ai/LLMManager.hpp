@@ -269,7 +269,7 @@ public:
      * @brief Starts the background worker thread, creating it if it does not already
      * exist.  The worker will begin processing queued tasks immediately.
      */
-    void Start();
+    void Start(std::shared_ptr<assistant::ClientBase> client = nullptr);
 
     /**
      * @brief Restarts the worker thread by stopping it and then starting it again.
@@ -510,6 +510,7 @@ private:
     assistant::Config MakeConfig();
     void OnFileSaved(clCommandEvent& event);
     std::optional<llm::json> GetConfigAsJSON();
+    static bool CanRunTool(const std::string& tool_name);
 
     std::unique_ptr<std::thread> m_worker_thread;
     std::shared_ptr<assistant::ClientBase> m_client;

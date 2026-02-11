@@ -262,7 +262,7 @@ PromptForYesNoCancelDialogWithCheckbox(const wxString& message,
                                        const wxString& noLabel = _("No"),
                                        const wxString& cancelLabel = _("Cancel"),
                                        const wxString& checkboxLabel = _("Remember my answer and don't ask me again"),
-                                       long style = wxYES_NO | wxCANCEL | wxICON_QUESTION | wxYES_DEFAULT,
+                                       long style = wxYES_NO | wxCANCEL | wxICON_QUESTION | wxCANCEL_DEFAULT,
                                        bool checkboxInitialValue = false);
 
 /**

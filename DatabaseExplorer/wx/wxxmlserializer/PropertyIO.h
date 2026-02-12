@@ -117,28 +117,6 @@ protected:
      */
     void AppendPropertyType(xsProperty* source, wxXmlNode* target);
 };
-
-/*!
- * \brief Macro suitable for declaration of new property I/O handler
- * \param datatype Property's data type
- * \param name Handler class name
- */
-#define XS_DECLARE_IO_HANDLER(datatype, name)                                   \
-    class name : public xsPropertyIO                                            \
-    {                                                                           \
-    public:                                                                     \
-        DECLARE_DYNAMIC_CLASS(name);                                            \
-        name() { ; }                                                            \
-        virtual ~name() { ; }                                                   \
-                                                                                \
-        virtual void Read(xsProperty* property, wxXmlNode* source);             \
-        virtual void Write(xsProperty* property, wxXmlNode* target);            \
-        virtual wxString GetValueStr(xsProperty* property);                     \
-        virtual void SetValueStr(xsProperty* property, const wxString& valstr); \
-        static wxString ToString(const datatype& value);                        \
-        static datatype FromString(const wxString& value);                      \
-    };
-
 /*!
  * \brief Macro suitable for declaration of exported new property I/O handler
  * \param datatype Property's data type

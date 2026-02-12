@@ -64,7 +64,7 @@ JSONItem json_get_formatter_object(JSON* root, const wxString& formatter_name)
 {
     auto json = root->toElement();
     if (!json.hasNamedObject("tools")) {
-        return JSONItem{ nullptr };
+        return JSONItem{nullptr};
     }
     auto servers = json["tools"];
     int count = servers.arraySize();
@@ -75,7 +75,7 @@ JSONItem json_get_formatter_object(JSON* root, const wxString& formatter_name)
         }
         return tool;
     }
-    return JSONItem{ nullptr };
+    return JSONItem{nullptr};
 }
 
 thread_local std::unordered_map<wxString, size_t> ignore_map;
@@ -145,7 +145,7 @@ CodeFormatter::CodeFormatter(IManager* manager)
 
     clKeyboardManager::Get()->AddAccelerator(
         _("Source Code Formatter"),
-        { { "format_source", _("Format Current Source"), "Ctrl-I" }, { "formatter_options", _("Options...") } });
+        {{"format_source", _("Format Current Source"), "Ctrl-I"}, {"formatter_options", _("Options...")}});
 }
 
 void CodeFormatter::CreateToolBar(clToolBarGeneric* toolbar)
@@ -180,7 +180,7 @@ void CodeFormatter::CreatePluginMenu(wxMenu* pluginsMenu)
 
 void CodeFormatter::OnFormatEditor(wxCommandEvent& e)
 {
-    IEditor* editor{ nullptr };
+    IEditor* editor{nullptr};
     const wxString& fileToFormat = e.GetString();
 
     // If we got a file name in the event, use it instead of the active editor
@@ -225,6 +225,7 @@ bool CodeFormatter::DoFormatEditor(IEditor* editor)
     bool is_remote = editor->IsRemoteFile();
     auto f = FindFormatter(editor->GetRemotePathOrLocal(), editor->GetEditorText());
     if (!f) {
+        clDEBUG() << "Could not locate formatter for file:" << editor->GetRemotePathOrLocal() << endl;
         return false;
     }
 
@@ -539,9 +540,9 @@ void CodeFormatter::OnFormatCompleted(clSourceFormatEvent& event)
     auto editor = clGetManager()->FindEditor(filepath);
 
     if (editor) {
-        wxWindowUpdateLocker window_locker{ editor->GetCtrl()->GetParent() };
+        wxWindowUpdateLocker window_locker{editor->GetCtrl()->GetParent()};
         editor->GetCtrl()->BeginUndoAction();
-        clEditorStateLocker locker{ editor->GetCtrl() };
+        clEditorStateLocker locker{editor->GetCtrl()};
         editor->GetCtrl()->SetText(event.GetFormattedString());
         editor->NotifyTextUpdated();
         editor->GetCtrl()->EndUndoAction();
@@ -573,7 +574,7 @@ void CodeFormatter::OnInplaceFormatCompleted(clSourceFormatEvent& event)
 
     // since the file was modified outside of the IDE, we need to notify CodeLite
     // we do this by firing a wxEVT_FILE_MODIFIED_EXTERNALLY event
-    clFileSystemEvent event_modified{ wxEVT_FILE_MODIFIED_EXTERNALLY };
+    clFileSystemEvent event_modified{wxEVT_FILE_MODIFIED_EXTERNALLY};
     event_modified.SetPath(filepath);
     event_modified.SetFileName(filepath);
     event_modified.SetIsRemoteFile(!wxFileName::FileExists(filepath));

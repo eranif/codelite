@@ -15,7 +15,7 @@
     #include <wx/wx.h>
 #endif
 
-#include <wx/wxxmlserializer/PropertyIO.h>
+#include "wx/wxxmlserializer/PropertyIO.h"
 
 #include <wx/xml/xml.h>
 #include <wx/hashmap.h>
@@ -154,12 +154,12 @@ public: \
 	} \
 
 
-class WXDLLIMPEXP_XS xsProperty;
-class WXDLLIMPEXP_XS xsSerializable;
-class WXDLLIMPEXP_XS wxXmlSerializer;
+class xsProperty;
+class xsSerializable;
+class wxXmlSerializer;
 
-WX_DECLARE_LIST_WITH_DECL(xsProperty, PropertyList, class WXDLLIMPEXP_XS);
-WX_DECLARE_LIST_WITH_DECL(xsSerializable, SerializableList, class WXDLLIMPEXP_XS);
+WX_DECLARE_LIST_WITH_DECL(xsProperty, PropertyList, class);
+WX_DECLARE_LIST_WITH_DECL(xsSerializable, SerializableList, class);
 
 WX_DECLARE_HASH_MAP( long, xsSerializable*, wxIntegerHash, wxIntegerEqual, IDMap );
 
@@ -184,7 +184,7 @@ WX_DECLARE_HASH_MAP( long, xsSerializable*, wxIntegerHash, wxIntegerEqual, IDMap
  * function is also used by the wxXmlSerializer::CopyItems() function (used by the
  * wxXmlSerializer copy constructor).
  */
-class WXDLLIMPEXP_XS xsSerializable : public wxObject
+class xsSerializable : public wxObject
 {
 public:
     friend class wxXmlSerializer;
@@ -534,7 +534,7 @@ private:
  * wxXmlSerializer::Clone() virtual function used for cloning of current class instance
  * via its copy constructor (user must define it manually).
  */
-class WXDLLIMPEXP_XS wxXmlSerializer : public wxObject
+class wxXmlSerializer : public wxObject
 {
 public:
     XS_DECLARE_CLONABLE_CLASS(wxXmlSerializer);
@@ -817,7 +817,7 @@ private:
  * 'listserializable', 'serializabledynamic' and 'serializablestatic'. Only properties of these data types are
  * recognized and processed by parent serializable object.
  */
-class WXDLLIMPEXP_XS xsProperty : public wxObject
+class xsProperty : public wxObject
 {
 public:
     DECLARE_DYNAMIC_CLASS(xsProperty);

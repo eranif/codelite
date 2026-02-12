@@ -194,24 +194,26 @@ void CodeFormatter::OnFormatEditor(wxCommandEvent& e)
     CHECK_PTR_RET(editor);
     DoFormatEditor(editor);
 }
+
 std::shared_ptr<GenericFormatter> CodeFormatter::FindFormatter(const wxString& filepath, const wxString& content) const
 {
-    if (wxFileName(filepath).GetExt().IsEmpty()) {
-        // detect by content
-        if (!content.empty()) {
-            // we got content, use it
-            return m_manager.GetFormatterByContent(content);
-        } else if (wxFileName::FileExists(filepath)) {
-            // No content provided, but the file is a local file
-            // read the content and try again
-            wxString buffer;
-            if (FileUtils::ReadBufferFromFile(filepath, buffer, 4000)) {
-                return m_manager.GetFormatterByContent(content);
-            }
-        }
-    } else {
-        // extension
+    wxString file_ext = wxFileName(filepath).GetExt();
+    if (!file_ext.empty()) {
+        clDEBUG() << "Searching formatter for file:" << filepath << ", extension:" << file_ext << endl;
         return m_manager.GetFormatter(filepath);
+    }
+
+    // detect by content
+    if (!content.empty()) {
+        // we got content, use it
+        return m_manager.GetFormatterByContent(content);
+    } else if (wxFileName::FileExists(filepath)) {
+        // No content provided, but the file is a local file
+        // read the content and try again
+        wxString buffer;
+        if (FileUtils::ReadBufferFromFile(filepath, buffer, 4000)) {
+            return m_manager.GetFormatterByContent(content);
+        }
     }
 
     // if we reached here, we could not determine the proper formatter to use

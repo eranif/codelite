@@ -12,6 +12,10 @@ fmtShfmtFormat::fmtShfmtFormat()
     SetInplaceFormatter(false);
     SetWorkingDirectory(wxEmptyString);
 
+    wxArrayString langs;
+    langs.Add(FileExtManager::GetLanguageFromType(FileExtManager::TypeShellScript));
+    SetLanguages(langs);
+
     // local command
     const auto shfmt_exe = ThePlatform->Which("shfmt");
     SetCommand({shfmt_exe.value_or("shfmt"), R"#("$(CurrentFileFullPath)")#"});

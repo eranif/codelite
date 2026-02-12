@@ -17,7 +17,6 @@
 
 #include <wx/hashmap.h>
 #include <wx/list.h>
-#include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
 
 class xsProperty;

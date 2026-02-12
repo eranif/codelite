@@ -19,6 +19,7 @@
 #include <limits>
 #include <wx/arrimpl.cpp>
 #include <wx/listimpl.cpp>
+#include <wx/tokenzr.h>
 
 using namespace wxXS;
 

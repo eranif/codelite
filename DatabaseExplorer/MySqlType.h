@@ -27,8 +27,7 @@
 #define MYSQLTYPE_H
 
 #include "IDbType.h" // Base class: IDbType
-
-#include <wx/wxxmlserializer/XmlSerializer.h>
+#include "wx/wxxmlserializer/XmlSerializer.h"
 
 class MySqlType : public IDbType
 {

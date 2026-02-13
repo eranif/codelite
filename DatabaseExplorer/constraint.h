@@ -26,10 +26,7 @@
 #ifndef CONSTRAINT_H
 #define CONSTRAINT_H
 
-#include <wx/wx.h>
-#include <wx/dblayer/include/DatabaseResultSet.h>
-#include <wx/wxxmlserializer/XmlSerializer.h>
-#include "IDbAdapter.h"
+#include "wx/wxxmlserializer/XmlSerializer.h"
 
 /*! \brief Class representing one table constraint. */
 class Constraint : public xsSerializable {

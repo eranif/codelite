@@ -26,10 +26,9 @@
 #ifndef IDBTYPE_H
 #define IDBTYPE_H
 
-#include <wx/wx.h>
-#include <wx/wxxmlserializer/XmlSerializer.h>
+#include "wx/wxxmlserializer/XmlSerializer.h"
 
-class IDbType :public xsSerializable
+class IDbType : public xsSerializable
 {
 public:
 	IDbType(){}

@@ -15,113 +15,26 @@
     #include <wx/wx.h>
 #endif
 
-#include <wx/wxxmlserializer/PropertyIO.h>
+#include "wx/wxxmlserializer/PropertyIO.h"
 
 #include <wx/xml/xml.h>
 #include <wx/hashmap.h>
 
-#define xsWITH_ROOT true
-#define xsWITHOUT_ROOT false
-
-#define xsRECURSIVE true
 #define xsNORECURSIVE false
 
-/*! \brief Macro creates new serialized STRING property */
-#define XS_SERIALIZE_STRING(x, name) XS_SERIALIZE_PROPERTY(x, wxT("string"), name);
-/*! \brief Macro creates new serialized STRING property with defined default value */
-#define XS_SERIALIZE_STRING_EX(x, name, def) XS_SERIALIZE_PROPERTY_EX(x, wxT("string"), name, def);
-/*! \brief Macro creates new serialized STRING property */
-#define XS_SERIALIZE_CHAR(x, name) XS_SERIALIZE_PROPERTY(x, wxT("char"), name);
-/*! \brief Macro creates new serialized STRING property with defined default value */
-#define XS_SERIALIZE_CHAR_EX(x, name, def) XS_SERIALIZE_PROPERTY_EX(x, wxT("char"), name, def);
 /*! \brief Macro creates new serialized LONG property */
 #define XS_SERIALIZE_LONG(x, name) XS_SERIALIZE_PROPERTY(x, wxT("long"), name);
-/*! \brief Macro creates new serialized LONG property with defined default value */
-#define XS_SERIALIZE_LONG_EX(x, name, def) XS_SERIALIZE_PROPERTY_EX(x, wxT("long"), name, xsLongPropIO::ToString(def));
-/*! \brief Macro creates new serialized DOUBLE property */
-#define XS_SERIALIZE_DOUBLE(x, name) XS_SERIALIZE_PROPERTY(x, wxT("double"), name);
-/*! \brief Macro creates new serialized DOUBLE property with defined default value */
-#define XS_SERIALIZE_DOUBLE_EX(x, name, def) XS_SERIALIZE_PROPERTY_EX(x, wxT("double"), name, xsDoublePropIO::ToString(def));
 /*! \brief Macro creates new serialized INT property */
 #define XS_SERIALIZE_INT(x, name) XS_SERIALIZE_PROPERTY(x, wxT("int"), name);
-/*! \brief Macro creates new serialized INT property with defined default value */
-#define XS_SERIALIZE_INT_EX(x, name, def) XS_SERIALIZE_PROPERTY_EX(x, wxT("int"), name, xsIntPropIO::ToString(def));
-/*! \brief Macro creates new serialized FLOAT property */
-#define XS_SERIALIZE_FLOAT(x, name) XS_SERIALIZE_PROPERTY(x, wxT("float"), name);
-/*! \brief Macro creates new serialized FLOAT property with defined default value */
-#define XS_SERIALIZE_FLOAT_EX(x, name, def) XS_SERIALIZE_PROPERTY_EX(x, wxT("float"), name, xsFloatPropIO::ToString(def));
-
-/*! \brief Macro creates new serialized BOOL property */
-#define XS_SERIALIZE_BOOL(x, name) XS_SERIALIZE_PROPERTY(x, wxT("bool"), name);
-/*! \brief Macro creates new serialized BOOL property with defined default value */
-#define XS_SERIALIZE_BOOL_EX(x, name, def) XS_SERIALIZE_PROPERTY_EX(x, wxT("bool"), name, xsBoolPropIO::ToString(def));
-
-/*! \brief Macro creates new serialized wxPoint property */
-#define XS_SERIALIZE_POINT(x, name) XS_SERIALIZE_PROPERTY(x, wxT("point"), name);
-/*! \brief Macro creates new serialized wxPoint property with defined default value */
-#define XS_SERIALIZE_POINT_EX(x, name, def) XS_SERIALIZE_PROPERTY_EX(x, wxT("point"), name, xsPointPropIO::ToString(def));
-/*! \brief Macro creates new serialized wxRealPoint property */
-#define XS_SERIALIZE_REALPOINT(x, name) XS_SERIALIZE_PROPERTY(x, wxT("realpoint"), name);
-/*! \brief Macro creates new serialized wxRealPoint property with defined default value */
-#define XS_SERIALIZE_REALPOINT_EX(x, name, def) XS_SERIALIZE_PROPERTY_EX(x, wxT("realpoint"), name, xsRealPointPropIO::ToString(def));
-/*! \brief Macro creates new serialized wxSize property */
-#define XS_SERIALIZE_SIZE(x, name) XS_SERIALIZE_PROPERTY(x, wxT("size"), name);
-/*! \brief Macro creates new serialized wxSize property with defined default value */
-#define XS_SERIALIZE_SIZE_EX(x, name, def) XS_SERIALIZE_PROPERTY_EX(x, wxT("size"), name, xsSizePropIO::ToString(def));
-
-/*! \brief Macro creates new serialized wxColour property */
-#define XS_SERIALIZE_COLOUR(x, name) XS_SERIALIZE_PROPERTY(x, wxT("colour"), name);
-/*! \brief Macro creates new serialized wxColour property with defined default value */
-#define XS_SERIALIZE_COLOUR_EX(x, name, def) XS_SERIALIZE_PROPERTY_EX(x, wxT("colour"), name, xsColourPropIO::ToString(def));
-/*! \brief Macro creates new serialized wxPen property */
-#define XS_SERIALIZE_PEN(x, name) XS_SERIALIZE_PROPERTY(x, wxT("pen"), name);
-/*! \brief Macro creates new serialized wxPen property with defined default value */
-#define XS_SERIALIZE_PEN_EX(x, name, def) XS_SERIALIZE_PROPERTY_EX(x, wxT("pen"), name, xsPenPropIO::ToString(def));
-/*! \brief Macro creates new serialized wxBrush property */
-#define XS_SERIALIZE_BRUSH(x, name) XS_SERIALIZE_PROPERTY(x, wxT("brush"), name);
-/*! \brief Macro creates new serialized wxBrush property with defined default value */
-#define XS_SERIALIZE_BRUSH_EX(x, name, def) XS_SERIALIZE_PROPERTY_EX(x, wxT("brush"), name, xsBrushPropIO::ToString(def));
-/*! \brief Macro creates new serialized wxFont property */
-#define XS_SERIALIZE_FONT(x, name) XS_SERIALIZE_PROPERTY(x, wxT("font"), name);
-/*! \brief Macro creates new serialized wxFont property with defined default value */
-#define XS_SERIALIZE_FONT_EX(x, name, def) XS_SERIALIZE_PROPERTY_EX(x, wxT("font"), name, xsFontPropIO::ToString(def));
-
-/*! \brief Macro creates new serialized property (type 'array of strings (wxArrayString)') */
-#define XS_SERIALIZE_ARRAYSTRING(x, name) XS_SERIALIZE_PROPERTY(x, wxT("arraystring"), name);
-/*! \brief Macro creates new serialized property (type 'array of chars (CharArray)') */
-#define XS_SERIALIZE_ARRAYCHAR(x, name) XS_SERIALIZE_PROPERTY(x, wxT("arraychar"), name);
-/*! \brief Macro creates new serialized property (type 'array of ints (IntArray)') */
-#define XS_SERIALIZE_ARRAYINT(x, name) XS_SERIALIZE_PROPERTY(x, wxT("arrayint"), name);
-/*! \brief Macro creates new serialized property (type 'array of longs (LongArray)') */
-#define XS_SERIALIZE_ARRAYLONG(x, name) XS_SERIALIZE_PROPERTY(x, wxT("arraylong"), name);
-/*! \brief Macro creates new serialized property (type 'array of doubles (DoubleArray)') */
-#define XS_SERIALIZE_ARRAYDOUBLE(x, name) XS_SERIALIZE_PROPERTY(x, wxT("arraydouble"), name);
-/*! \brief Macro creates new serialized property (type 'array of wxRealPoint objects') */
-#define XS_SERIALIZE_ARRAYREALPOINT(x, name) XS_SERIALIZE_PROPERTY(x, wxT("arrayrealpoint"), name);
-/*! \brief Macro creates new serialized property (type 'list of wxRealPoint objects') */
-#define XS_SERIALIZE_LISTREALPOINT(x, name) XS_SERIALIZE_PROPERTY(x, wxT("listrealpoint"), name);
-/*! \brief Macro creates new serialized property (type 'list of xsSerializable objects') */
-#define XS_SERIALIZE_LISTSERIALIZABLE(x, name) XS_SERIALIZE_PROPERTY(x, wxT("listserializable"), name);
-
-/*! \brief Macro creates new serialized property (type 'string hash map (StringMap)') */
-#define XS_SERIALIZE_MAPSTRING(x, name) XS_SERIALIZE_PROPERTY(x, wxT("mapstring"), name);
 
 /*! \brief Macro creates new serialized property encapsulating a dynamic serializable object */
 #define XS_SERIALIZE_DYNAMIC_OBJECT(x, name) XS_SERIALIZE_PROPERTY(x, wxT("serializabledynamic"), name);
-/*! \brief Macro creates new serialized property encapsulating a dynamic serializable object */
-#define XS_SERIALIZE_DYNAMIC_OBJECT_NO_CREATE(x, name) XS_SERIALIZE_PROPERTY(x, wxT("serializabledynamicnocreate"), name);
-/*! \brief Macro creates new serialized property encapsulating a static serializable object */
-#define XS_SERIALIZE_STATIC_OBJECT(x, name) XS_SERIALIZE_PROPERTY(x, wxT("serializablestatic"), name);
 
 /*! \brief Macro creates new serialized property of given type */
 #define XS_SERIALIZE_PROPERTY(x, type, name) AddProperty(new xsProperty(&x, type, name));
-/*! \brief Macro creates new serialized property of given type with defined dafult value */
-#define XS_SERIALIZE_PROPERTY_EX(x, type, name, def) AddProperty(new xsProperty(&x, type, name, def));
 
-/*! \brief Macro creates new serialized property and automaticaly determines its type (if supported) */
+/*! \brief Macro creates new serialized property and automatically determines its type (if supported) */
 #define XS_SERIALIZE(x, name) AddProperty(new xsProperty(&x, name));
-/*! \brief Macro creates new serialized property with defined dafult value and automaticaly determines its type (if supported)*/
-#define XS_SERIALIZE_EX(x, name, def) AddProperty(new xsProperty(&x, name, def));
 
 /*! \brief Macro registers new IO handler for specified data type (handler class must exist) */
 #define XS_REGISTER_IO_HANDLER(type, class) wxXmlSerializer::m_mapPropertyIOHandlers[type] = new class();
@@ -143,23 +56,12 @@ public: \
 			return NULL; \
 	} \
 
-/*! \brief Enable RTTI (the same as IMPLEMENT_DYNAMIC_CLASS2) and implement xsSerializable::Clone() function */
-#define XS_IMPLEMENT_CLONABLE_CLASS2(name, base1, base2) \
-	IMPLEMENT_DYNAMIC_CLASS2(name, base1, base2) \
-	wxObject* name::Clone() \
-	{ \
-		if( m_fClone ) return new name(*this); \
-		else \
-			return NULL; \
-	} \
+class xsProperty;
+class xsSerializable;
+class wxXmlSerializer;
 
-
-class WXDLLIMPEXP_XS xsProperty;
-class WXDLLIMPEXP_XS xsSerializable;
-class WXDLLIMPEXP_XS wxXmlSerializer;
-
-WX_DECLARE_LIST_WITH_DECL(xsProperty, PropertyList, class WXDLLIMPEXP_XS);
-WX_DECLARE_LIST_WITH_DECL(xsSerializable, SerializableList, class WXDLLIMPEXP_XS);
+WX_DECLARE_LIST_WITH_DECL(xsProperty, PropertyList, class);
+WX_DECLARE_LIST_WITH_DECL(xsSerializable, SerializableList, class);
 
 WX_DECLARE_HASH_MAP( long, xsSerializable*, wxIntegerHash, wxIntegerEqual, IDMap );
 
@@ -172,19 +74,19 @@ WX_DECLARE_HASH_MAP( long, xsSerializable*, wxIntegerHash, wxIntegerEqual, IDMap
  * in wxXmlSerializer.h header file (it is recommended to mark desired data members in the class constructor).
  *
  * Instances of this class can be arranged into a list/d-ary tree hierarchy so it can behave like
- * powerfull data container. All chained serializable class objects can be handled by class
+ * powerful data container. All chained serializable class objects can be handled by class
  * member functions or by member functions of wxXmlSerializer class object which should be
  * used as their manager (recommended way).
  *
- * Another built-in (optional) functionality is class instaces' cloning. User can use
+ * Another built-in (optional) functionality is class instances' cloning. User can use
  * XS_DECLARE_CLONABLE_CLASS and XS_IMPLEMENT_CLONABLE_CLASS macros instead of classic
  * DECLARE_DYNAMIC_CLASS and IMPLEMENT_DYNAMIC_CLASS macros which lead to definition of
  * xsSerializable::Clone() virtual function used for cloning of current class instance
- * via its copy constructor (user must define it manually). Virtual xsSerializble::Clone()
+ * via its copy constructor (user must define it manually). Virtual xsSerializable::Clone()
  * function is also used by the wxXmlSerializer::CopyItems() function (used by the
  * wxXmlSerializer copy constructor).
  */
-class WXDLLIMPEXP_XS xsSerializable : public wxObject
+class xsSerializable : public wxObject
 {
 public:
     friend class wxXmlSerializer;
@@ -241,21 +143,21 @@ public:
      */
     xsSerializable* GetLastChild(wxClassInfo *type);
     /*!
-     * \brief Get next serializable sibbling object.
-     * \return Pointer to sibbling object if exists, otherwise NULL
+     * \brief Get next serializable sibling object.
+     * \return Pointer to sibling object if exists, otherwise NULL
      */
     xsSerializable* GetSibbling();
     /*!
-     * \brief Get next serializable sibbling object of given type.
+     * \brief Get next serializable sibling object of given type.
 	 * \param type Child object type (can be NULL for any type)
-     * \return Pointer to sibbling object if exists, otherwise NULL
+     * \return Pointer to sibling object if exists, otherwise NULL
      */
     xsSerializable* GetSibbling(wxClassInfo *type);
     /*!
      * \brief Get child item with given ID if exists.
      * \param id ID of searched child item
-     * \param recursive If TRUE then the child shape will be searched recursivelly
-     * \return Pointer to first child with given ID if pressent, otherwise NULL
+     * \param recursive If TRUE then the child shape will be searched recursively
+     * \return Pointer to first child with given ID if present, otherwise NULL
      */
 	xsSerializable* GetChild(long id, bool recursive = xsNORECURSIVE);
 
@@ -462,7 +364,7 @@ protected:
      *     if(node)
      *     {
      *         // call base class's serialization routine
-     *         node = xsSeralizable::Serialize(node);
+     *         node = xsSerializable::Serialize(node);
      *
      *         // serialize custom property
      *         xsPropertyIO::AddPropertyNode(node, wxT("some_property_field_name"), wxT("string_repr_of_its_value"));
@@ -482,13 +384,13 @@ protected:
      * marked by appropriate macros. If some non-standard class member should be deserialized as well,
      * the source code of derived function implementation can be as in following example.
      *
-     * \param node Pointer to a source XML node containig the property nodes
+     * \param node Pointer to a source XML node containing the property nodes
      *
      * Example code:
      * \code
      * void DerivedFrom_xsSerializable::Deserialize(wxXmlNode* node)
      * {
-     *      // call base class's deserialization rountine (if necessary...)
+     *      // call base class's deserialization routine (if necessary...)
      *      xsSerializable::Deserialize(node);
      *
      *      // iterate through all custom property nodes
@@ -528,13 +430,13 @@ private:
  * its children). These child object can be handled via xsSerializable and wxXmlSerializer
  * classes' member functions.
  *
- * Another built-in (optional) functionality is class instaces' cloning. User can use
+ * Another built-in (optional) functionality is class instances' cloning. User can use
  * XS_DECLARE_CLONABLE_CLASS and XS_IMPLEMENT_CLONABLE_CLASS macros instead of classic
  * DECLARE_DYNAMIC_CLASS and IMPLEMENT_DYNAMIC_CLASS macros which lead to definition of
  * wxXmlSerializer::Clone() virtual function used for cloning of current class instance
  * via its copy constructor (user must define it manually).
  */
-class WXDLLIMPEXP_XS wxXmlSerializer : public wxObject
+class wxXmlSerializer : public wxObject
 {
 public:
     XS_DECLARE_CLONABLE_CLASS(wxXmlSerializer);
@@ -580,7 +482,7 @@ public:
 
     // public functions
 	/**
-	 * \brief Get last occured error state/message.
+	 * \brief Get last occurred error state/message.
 	 * \return Error message
 	 */
 	const wxString& GetErrMessage() const { return m_sErr; }
@@ -694,8 +596,8 @@ public:
     virtual bool DeserializeFromXml(wxInputStream& instream);
 
     /*!
-     * \brief Serialize child objects of given parent object (parent object can be optionaly
-     * serialized as well) to given XML node. The function can be overriden if necessary.
+     * \brief Serialize child objects of given parent object (parent object can be optionally
+     * serialized as well) to given XML node. The function can be overridden if necessary.
      * \param parent Pointer to parent serializable object
      * \param node Pointer to output XML node
      * \param withparent TRUE if the parent object should be serialized as well
@@ -703,7 +605,7 @@ public:
     virtual void SerializeObjects(xsSerializable* parent, wxXmlNode* node, bool withparent);
     /*!
      * \brief Deserialize child objects of given parent object from given XML node.
-     * The function can be overriden if necessary.
+     * The function can be overridden if necessary.
      * \param parent Pointer to parent serializable object
      * \param node Pointer to input XML node
      */
@@ -720,9 +622,9 @@ public:
 	 */
 	bool IsIdUsed(long id);
 	/*!
-	 * \brief Get number of occurences of given ID.
+	 * \brief Get number of occurrences of given ID.
 	 * \param id Object ID
-	 * \return Number of ID's occurences
+	 * \return Number of ID's occurrences
 	 */
 	int GetIDCount(long id);
 	/*!
@@ -817,7 +719,7 @@ private:
  * 'listserializable', 'serializabledynamic' and 'serializablestatic'. Only properties of these data types are
  * recognized and processed by parent serializable object.
  */
-class WXDLLIMPEXP_XS xsProperty : public wxObject
+class xsProperty : public wxObject
 {
 public:
     DECLARE_DYNAMIC_CLASS(xsProperty);
@@ -837,7 +739,7 @@ public:
      * \param src Pointer to serialized object
      * \param type String value describing data type of serialized object
      * \param field Property name used in XML files and for property handling
-     * \param def String representation of default poperty value
+     * \param def String representation of default property value
      */
     xsProperty(void* src, const wxString& type, const wxString& field, const wxString& def = wxT(""))
     {

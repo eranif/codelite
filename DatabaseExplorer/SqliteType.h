@@ -26,8 +26,8 @@
 #ifndef SQLITETYPE_H
 #define SQLITETYPE_H
 
-#include <wx/wxxmlserializer/XmlSerializer.h>
 #include "IDbType.h" // Base class: IDbType
+#include "wx/wxxmlserializer/XmlSerializer.h"
 
 class SqliteType : public IDbType {
 

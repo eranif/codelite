@@ -17,37 +17,35 @@
 
 #include <wx/hashmap.h>
 #include <wx/list.h>
-#include <wx/tokenzr.h>
-#include <wx/wxxmlserializer/Defs.h>
 #include <wx/xml/xml.h>
 
-class WXDLLIMPEXP_XS xsProperty;
-class WXDLLIMPEXP_XS xsSerializable;
-class WXDLLIMPEXP_XS SerializableList;
+class xsProperty;
+class xsSerializable;
+class SerializableList;
 
 namespace wxXS
 {
-WX_DECLARE_OBJARRAY_WITH_DECL(wxRealPoint, RealPointArray, class WXDLLIMPEXP_XS);
-WX_DECLARE_LIST_WITH_DECL(wxRealPoint, RealPointList, class WXDLLIMPEXP_XS);
+WX_DECLARE_OBJARRAY_WITH_DECL(wxRealPoint, RealPointArray, class);
+WX_DECLARE_LIST_WITH_DECL(wxRealPoint, RealPointList, class);
 
-WX_DEFINE_USER_EXPORTED_ARRAY_CHAR(char, CharArray, class WXDLLIMPEXP_XS);
-WX_DEFINE_USER_EXPORTED_ARRAY_INT(int, IntArray, class WXDLLIMPEXP_XS);
-WX_DEFINE_USER_EXPORTED_ARRAY_LONG(long, LongArray, class WXDLLIMPEXP_XS);
-WX_DEFINE_USER_EXPORTED_ARRAY_DOUBLE(double, DoubleArray, class WXDLLIMPEXP_XS);
+WX_DEFINE_USER_EXPORTED_ARRAY_CHAR(char, CharArray, class);
+WX_DEFINE_USER_EXPORTED_ARRAY_INT(int, IntArray, class);
+WX_DEFINE_USER_EXPORTED_ARRAY_LONG(long, LongArray, class);
+WX_DEFINE_USER_EXPORTED_ARRAY_DOUBLE(double, DoubleArray, class);
 
-WX_DECLARE_STRING_HASH_MAP_WITH_DECL(wxString, StringMap, class WXDLLIMPEXP_XS);
+WX_DECLARE_STRING_HASH_MAP_WITH_DECL(wxString, StringMap, class);
 } // namespace wxXS
 
 /*!
  * \brief Base class encapsulating a property I/O handler. The class is used by
- * the xsSerializable class and is responsiblefor reading and writing of an XML node
+ * the xsSerializable class and is responsible for reading and writing of an XML node
  * containing property information. Each supported property (data) type should have
  * its own I/O handler class. Moreover, all derived classes must provide public functions
  * 'static wxString classname::ToString(datatype value)' and 'static datatype classname::
  * FromString( const wxString& value )' responsible for conversion between datatype and
  * and its string representation (these functions are used internally by class virtual functions.
  */
-class WXDLLIMPEXP_XS xsPropertyIO : public wxObject
+class xsPropertyIO : public wxObject
 {
 public:
     DECLARE_DYNAMIC_CLASS(xsProperty);
@@ -119,28 +117,6 @@ protected:
      */
     void AppendPropertyType(xsProperty* source, wxXmlNode* target);
 };
-
-/*!
- * \brief Macro suitable for declaration of new property I/O handler
- * \param datatype Property's data type
- * \param name Handler class name
- */
-#define XS_DECLARE_IO_HANDLER(datatype, name)                                   \
-    class name : public xsPropertyIO                                            \
-    {                                                                           \
-    public:                                                                     \
-        DECLARE_DYNAMIC_CLASS(name);                                            \
-        name() { ; }                                                            \
-        virtual ~name() { ; }                                                   \
-                                                                                \
-        virtual void Read(xsProperty* property, wxXmlNode* source);             \
-        virtual void Write(xsProperty* property, wxXmlNode* target);            \
-        virtual wxString GetValueStr(xsProperty* property);                     \
-        virtual void SetValueStr(xsProperty* property, const wxString& valstr); \
-        static wxString ToString(const datatype& value);                        \
-        static datatype FromString(const wxString& value);                      \
-    };
-
 /*!
  * \brief Macro suitable for declaration of exported new property I/O handler
  * \param datatype Property's data type
@@ -196,138 +172,138 @@ protected:
 /*!
  * \brief Property class encapsulating I/O functions used by 'wxString' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(wxString, xsStringPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(wxString, xsStringPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'wxChar' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(wxChar, xsCharPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(wxChar, xsCharPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'long' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(long, xsLongPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(long, xsLongPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'int' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(int, xsIntPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(int, xsIntPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'bool' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(bool, xsBoolPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(bool, xsBoolPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'double' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(double, xsDoublePropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(double, xsDoublePropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'float' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(float, xsFloatPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(float, xsFloatPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'wxPoint' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(wxPoint, xsPointPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(wxPoint, xsPointPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'wxSize' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(wxSize, xsSizePropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(wxSize, xsSizePropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'wxRealPoint' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(wxRealPoint, xsRealPointPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(wxRealPoint, xsRealPointPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'wxColour' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(wxColour, xsColourPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(wxColour, xsColourPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'wxPen' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(wxPen, xsPenPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(wxPen, xsPenPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'wxBrush' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(wxBrush, xsBrushPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(wxBrush, xsBrushPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'wxFont' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(wxFont, xsFontPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(wxFont, xsFontPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'wxArrayString' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(wxArrayString, xsArrayStringPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(wxArrayString, xsArrayStringPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'CharArray' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(wxXS::CharArray, xsArrayCharPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(wxXS::CharArray, xsArrayCharPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'IntArray' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(wxXS::IntArray, xsArrayIntPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(wxXS::IntArray, xsArrayIntPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'LongArray' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(wxXS::LongArray, xsArrayLongPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(wxXS::LongArray, xsArrayLongPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'DoubleArray' properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(wxXS::DoubleArray, xsArrayDoublePropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(wxXS::DoubleArray, xsArrayDoublePropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'RealPointArray' (array of
  * integer values) properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(wxXS::RealPointArray, xsArrayRealPointPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(wxXS::RealPointArray, xsArrayRealPointPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'ListRealPoint' (list of
  * wxRealPoint objects) properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(wxXS::RealPointList, xsListRealPointPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(wxXS::RealPointList, xsListRealPointPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'SerializableList' (list of
  * xsSerializable objects) properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(SerializableList, xsListSerializablePropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(SerializableList, xsListSerializablePropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'serializabledynamic' (xsSerializable
  * dynamic class objects which are created during the deserialization process) properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(xsSerializable, xsDynObjPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(xsSerializable, xsDynObjPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'serializabledynamicnocreate' (already
  * existing xsSerializable dynamic class objects) properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(xsSerializable, xsDynNCObjPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(xsSerializable, xsDynNCObjPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'serializablestatic' (static
  * xsSerializable class objects) properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(xsSerializable, xsStaticObjPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(xsSerializable, xsStaticObjPropIO,);
 
 /*!
  * \brief Property class encapsulating I/O functions used by 'mapstring' (string hash map) properties.
  */
-XS_DECLARE_EXPORTED_IO_HANDLER(wxXS::StringMap, xsMapStringPropIO, WXDLLIMPEXP_XS);
+XS_DECLARE_EXPORTED_IO_HANDLER(wxXS::StringMap, xsMapStringPropIO,);
 
 WX_DECLARE_HASH_MAP(wxString, xsPropertyIO*, wxStringHash, wxStringEqual, PropertyIOMap);
 

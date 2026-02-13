@@ -26,8 +26,8 @@
 #ifndef POSTGRESQLTYPE_H
 #define POSTGRESQLTYPE_H
 
-#include <wx/wxxmlserializer/XmlSerializer.h>
 #include "IDbType.h" // Base class: IDbType
+#include "wx/wxxmlserializer/XmlSerializer.h"
 
 class PostgreSqlType : public IDbType {
 

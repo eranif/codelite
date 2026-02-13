@@ -26,10 +26,9 @@
 #ifndef DBCONNECTION_H
 #define DBCONNECTION_H
 
-#include <wx/wx.h>
-#include <wx/dblayer/include/DatabaseResultSet.h>
-#include <wx/wxxmlserializer/XmlSerializer.h>
 #include "IDbAdapter.h"
+#include "wx/wxxmlserializer/XmlSerializer.h"
+
 /*! \brief Class representing one db connection */
 class DbConnection : public xsSerializable {
 

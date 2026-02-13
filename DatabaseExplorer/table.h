@@ -26,12 +26,11 @@
 #ifndef TABLE_H
 #define TABLE_H
 
-#include <wx/wx.h>
-#include <wx/dblayer/include/DatabaseResultSet.h>
-#include <wx/wxxmlserializer/XmlSerializer.h>
+#include "IDbAdapter.h"
 #include "column.h"
 #include "constraint.h"
-#include "IDbAdapter.h"
+#include "wx/wxxmlserializer/XmlSerializer.h"
+
 // -------------------------------------------------
 // Trida databazove tabulky
 // -------------------------------------------------

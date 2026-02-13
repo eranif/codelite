@@ -25,10 +25,8 @@
 
 #ifndef DATABASE_H
 #define DATABASE_H
-#include <wx/wx.h>
-#include <wx/dblayer/include/DatabaseResultSet.h>
-#include <wx/wxxmlserializer/XmlSerializer.h>
 
+#include "wx/wxxmlserializer/XmlSerializer.h"
 
 // -------------------------------------------------
 // Trida database

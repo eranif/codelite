@@ -65,28 +65,32 @@ int Popen(const wxString& command, wxArrayString& output)
     char line[512];
     memset(line, 0, sizeof(line));
     fp = popen(command.mb_str(wxConvUTF8), "r");
-    if (fp) {
-        while (fgets(line, sizeof(line) - 1, fp)) {
-            output.Add(wxString(line, wxConvUTF8));
-            memset(line, 0, sizeof(line));
-        }
-        int status = pclose(fp);
-        if (status == -1) {
-            clERROR() << "pclose failed." << endl;
-            return 1;
-        }
+    if (fp == nullptr) {
+        return 1;
+    }
 
-        // Check if the process exited normally
-        int exit_code{0};
-        if (WIFEXITED(status)) {
-            exit_code = WEXITSTATUS(status);
-            return exit_code;
-        } else {
-            // Process was killed by a signal
-            return 1;
-        }
+    while (fgets(line, sizeof(line) - 1, fp)) {
+        output.Add(wxString(line, wxConvUTF8));
+        memset(line, 0, sizeof(line));
+    }
+    int status = pclose(fp);
+    if (status == -1) {
+        clERROR() << "pclose failed." << endl;
+        return 1;
+    }
+
+    // Check if the process exited normally
+    int exit_code{0};
+    if (WIFEXITED(status)) {
+        // Process exited. Return the exit code.
+        exit_code = WEXITSTATUS(status);
+        return exit_code;
+    } else {
+        // Process was killed by a signal
+        return 1;
     }
 }
+} // namespace
 #endif
 
 //-------------------------------------------------------------------

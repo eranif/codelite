@@ -461,12 +461,30 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
 
 FunctionResult ToolShellExecute([[maybe_unused]] const assistant::json& args)
 {
-    if (args.size() < 2) {
+    if (args.size() < 1) {
         return Err("Invalid number of arguments");
     }
 
     if (wxThread::IsMain()) {
         clWARNING() << "Running ToolShellExecute on the main thread" << endl;
+    }
+
+    auto cb = [=]() -> FunctionResult {
+        ASSIGN_FUNC_ARG_OR_RETURN(std::string command, ::assistant::GetFunctionArg<std::string>(args, "command"));
+        TextViewerDlg dlg(nullptr,
+                          _("The model wants to run the following shell command, allow it?"),
+                          wxString::FromUTF8(command),
+                          "script");
+        if (dlg.ShowModal() != wxID_OK) {
+            return Err("Permission denied");
+        }
+        return Ok("");
+    };
+
+    // Prompt the user, this must be on the main thread.
+    auto res = RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
+    if (res.isError) {
+        return res;
     }
 
     ASSIGN_FUNC_ARG_OR_RETURN(std::string command, ::assistant::GetFunctionArg<std::string>(args, "command"));

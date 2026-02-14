@@ -1220,7 +1220,8 @@ if(MINGW)
     mkdir.exe
     cp.exe
     ls.exe
-    mv.exe)
+    mv.exe
+    patch.exe)
 
   execute_process(
     COMMAND sh -c

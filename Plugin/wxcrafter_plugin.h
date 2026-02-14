@@ -298,4 +298,26 @@ public:
     virtual ~clTableLineEditorBaseDlg();
 };
 
+class TextViewerBaseDlg : public wxDialog
+{
+protected:
+    wxStaticText* m_staticTextMessage;
+    wxStyledTextCtrl* m_stc;
+    wxStdDialogButtonSizer* m_stdBtnSizer381;
+    wxButton* m_button382;
+    wxButton* m_button383;
+
+protected:
+public:
+    wxStaticText* GetStaticTextMessage() { return m_staticTextMessage; }
+    wxStyledTextCtrl* GetStc() { return m_stc; }
+    TextViewerBaseDlg(wxWindow* parent,
+                      wxWindowID id = wxID_ANY,
+                      const wxString& title = wxT(""),
+                      const wxPoint& pos = wxDefaultPosition,
+                      const wxSize& size = wxSize(-1, -1),
+                      long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
+    virtual ~TextViewerBaseDlg();
+};
+
 #endif

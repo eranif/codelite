@@ -3,6 +3,7 @@
 #include "FileManager.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspaceView.hpp"
+#include "TextViewerDlg.h"
 #include "ai/LLMManager.hpp"
 #include "assistant/function.hpp"
 #include "clFilesCollector.h"
@@ -140,16 +141,30 @@ Parameters:
                               "boolean")
             .Build());
     table.Add(FunctionBuilder("ApplyPatch")
-                  .SetDescription(R"(Apply a unified diff patch to a file.
+                  .SetDescription(R"(Apply a git style diff patch to a file.
 Description:
-This function applies a unified diff patch content to a specified file. It can perform a dry run to validate
-the patch without modifying the file, or apply the changes directly.
+This function applies a git style diff patch content to a specified file.
+
+IMPORTANT: Patches fail when the original lines don't exactly match the current file content.
+To ensure accuracy:
+1. ALWAYS read the target file first using ReadFileContent tool before creating a patch
+2. Verify the exact current content, including whitespace, indentation, and line endings
+3. Include at least 3-5 lines of unchanged context before and after the modifications
+4. Ensure the "---" lines in your patch match the current file state character-for-character
+5. Use sufficient context to make the location unique within the file
+
+Common causes of patch failures:
+- Assuming file content without reading it first
+- Insufficient context lines causing ambiguous matching
+- Whitespace mismatches (spaces vs tabs, trailing spaces)
+- Working from an outdated or assumed version of the file
+
 Parameters:
-- patch_content (string, required): The unified diff patch content to apply.
+- patch_content (string, required): The git style diff patch content to apply. Must be a valid git style diff format with exact matching of original content.
 - file_path (string, required): The path to the file that should be patched.
-- dry_run (boolean, optional): When true, validates the patch without modifying the file. Default is true.)")
+- dry_run (boolean, optional): When true, validates the patch without modifying the file. Default is true. Recommended to test with dry_run=true first.)")
                   .SetCallback(ApplyPatch)
-                  .AddRequiredParam("patch_content", "The unified diff patch content to apply", "string")
+                  .AddRequiredParam("patch_content", "The git style diff patch content to apply", "string")
                   .AddRequiredParam("file_path", "The path to the file that should be patched", "string")
                   .AddOptionalParam("dry_run",
                                     "When true, validates the patch without modifying the file. Default is true.",
@@ -405,9 +420,30 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
 
         bool dry_run = assistant::GetFunctionArg<bool>(args, "dry_run").value_or(true);
 
-        PatchOptions opts{.dryRun = dry_run};
-        auto result = PatchApplier::ApplyPatch(wxString::FromUTF8(patch_content), wxString::FromUTF8(file_path), opts);
-        return FunctionResult{.isError = !result.success, .text = result.errorMessage.ToStdString(wxConvUTF8)};
+        wxString patch = wxString::FromUTF8(patch_content);
+        clDEBUG() << "Applying the patch:\n" << patch << endl;
+
+        TextViewerDlg dlg(nullptr, _("The model wants to apply the following patch, allow it?"), patch, "diff");
+        if (dlg.ShowModal() != wxID_OK) {
+            clDEBUG() << "User declined the request to apply the patch" << endl;
+            return Err("Permission denied");
+        }
+
+        PatchOptions opts{.dryRun = dry_run, .backup = true};
+        if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
+            opts.working_directory = clWorkspaceManager::Get().GetWorkspace()->GetDir();
+        }
+
+        auto result = PatchApplier::ApplyPatch(wxString::FromUTF8(file_path), patch, opts);
+        if (!result.success) {
+            clDEBUG() << "Failed to apply the patch:" << result.errorMessage.ToStdString(wxConvUTF8) << endl;
+            return Err(result.errorMessage.ToStdString(wxConvUTF8));
+        }
+        clDEBUG() << "Patch applied successfully" << endl;
+
+        // Reload the modified file
+        EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
+        return Ok("Patch applied successfully");
     };
 
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);

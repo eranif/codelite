@@ -448,12 +448,12 @@ clTreeCtrlPanelBase::clTreeCtrlPanelBase(
     wxBoxSizer* boxSizer151 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer151);
 
-    m_treeCtrl = new clFileViewerTreeCtrl(this,
-                                          wxID_ANY,
-                                          wxDefaultPosition,
-                                          wxDLG_UNIT(this, wxSize(-1, -1)),
-                                          wxTR_DEFAULT_STYLE | wxTR_MULTIPLE | wxTR_HIDE_ROOT |
-                                              wxTR_FULL_ROW_HIGHLIGHT | wxTR_NO_LINES);
+    m_treeCtrl = new clFileViewerTreeCtrl(
+        this,
+        wxID_ANY,
+        wxDefaultPosition,
+        wxDLG_UNIT(this, wxSize(-1, -1)),
+        wxTR_DEFAULT_STYLE | wxTR_MULTIPLE | wxTR_HIDE_ROOT | wxTR_FULL_ROW_HIGHLIGHT | wxTR_NO_LINES);
 
     boxSizer151->Add(m_treeCtrl, 1, wxALL | wxEXPAND, WXC_FROM_DIP(0));
 
@@ -497,12 +497,12 @@ NotebookNavigationDlgBase::NotebookNavigationDlgBase(
     wxBoxSizer* boxSizer163 = new wxBoxSizer(wxVERTICAL);
     m_panel161->SetSizer(boxSizer163);
 
-    m_dvListCtrl = new clThemedListCtrl(m_panel161,
-                                        wxID_ANY,
-                                        wxDefaultPosition,
-                                        wxDLG_UNIT(m_panel161, wxSize(-1, -1)),
-                                        wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE | wxWANTS_CHARS |
-                                            wxTAB_TRAVERSAL | wxBORDER_STATIC);
+    m_dvListCtrl = new clThemedListCtrl(
+        m_panel161,
+        wxID_ANY,
+        wxDefaultPosition,
+        wxDLG_UNIT(m_panel161, wxSize(-1, -1)),
+        wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE | wxWANTS_CHARS | wxTAB_TRAVERSAL | wxBORDER_STATIC);
     m_dvListCtrl->SetFocus();
 
     boxSizer163->Add(m_dvListCtrl, 1, wxEXPAND, WXC_FROM_DIP(2));
@@ -852,3 +852,92 @@ clTableLineEditorBaseDlg::~clTableLineEditorBaseDlg()
 {
     m_listBoxColumns->Unbind(wxEVT_COMMAND_LISTBOX_SELECTED, &clTableLineEditorBaseDlg::OnColumnSelected, this);
 }
+
+TextViewerBaseDlg::TextViewerBaseDlg(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if (!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxC9D6CInitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer380 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer380);
+
+    m_staticTextMessage =
+        new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    boxSizer380->Add(m_staticTextMessage, 0, wxALL, WXC_FROM_DIP(5));
+
+    m_stc = new wxStyledTextCtrl(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)), 0);
+    // Configure the fold margin
+    m_stc->SetMarginType(4, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask(4, wxSTC_MASK_FOLDERS);
+    m_stc->SetMarginSensitive(4, true);
+    m_stc->SetMarginWidth(4, 0);
+
+    // Configure the tracker margin
+    m_stc->SetMarginWidth(1, 0);
+
+    // Configure the symbol margin
+    m_stc->SetMarginType(2, wxSTC_MARGIN_SYMBOL);
+    m_stc->SetMarginMask(2, ~(wxSTC_MASK_FOLDERS));
+    m_stc->SetMarginWidth(2, 0);
+    m_stc->SetMarginSensitive(2, true);
+
+    // Configure the line numbers margin
+    m_stc->SetMarginType(0, wxSTC_MARGIN_NUMBER);
+    m_stc->SetMarginWidth(0, 0);
+
+    // Configure the line symbol margin
+    m_stc->SetMarginType(3, wxSTC_MARGIN_FORE);
+    m_stc->SetMarginMask(3, 0);
+    m_stc->SetMarginWidth(3, 0);
+    // Select the lexer
+    m_stc->SetLexer(wxSTC_LEX_NULL);
+    // Set default font / styles
+    m_stc->StyleClearAll();
+    m_stc->SetWrapMode(1);
+    m_stc->SetIndentationGuides(0);
+    m_stc->SetEOLMode(2);
+    m_stc->SetKeyWords(0, wxT(""));
+    m_stc->SetKeyWords(1, wxT(""));
+    m_stc->SetKeyWords(2, wxT(""));
+    m_stc->SetKeyWords(3, wxT(""));
+    m_stc->SetKeyWords(4, wxT(""));
+
+    boxSizer380->Add(m_stc, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_stdBtnSizer381 = new wxStdDialogButtonSizer();
+
+    boxSizer380->Add(m_stdBtnSizer381, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(10));
+
+    m_button382 = new wxButton(this, wxID_OK, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_button382->SetDefault();
+    m_stdBtnSizer381->AddButton(m_button382);
+
+    m_button383 = new wxButton(this, wxID_CANCEL, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_stdBtnSizer381->AddButton(m_button383);
+    m_stdBtnSizer381->Realize();
+
+    SetName(wxT("TextViewerBaseDlg"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if (GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+    if (!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+}
+
+TextViewerBaseDlg::~TextViewerBaseDlg() {}

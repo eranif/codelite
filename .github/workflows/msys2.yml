@@ -36,6 +36,7 @@ jobs:
         install: >-
           bison
           flex
+          patch
         pacboy: >-
           cmake:p
           make:p

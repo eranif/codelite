@@ -484,10 +484,10 @@ assistant::Config Manager::MakeConfig()
                 clWARNING() << "LLM:" << wxString::FromUTF8(msg) << endl;
                 break;
             case assistant::LogLevel::kInfo:
-                clDEBUG() << "LLM:" << wxString::FromUTF8(msg) << endl;
+                clDEBUG1() << "LLM:" << wxString::FromUTF8(msg) << endl;
                 break;
             case assistant::LogLevel::kDebug:
-                clDEBUG() << "LLM:" << wxString::FromUTF8(msg) << endl;
+                clDEBUG1() << "LLM:" << wxString::FromUTF8(msg) << endl;
                 break;
             case assistant::LogLevel::kTrace:
                 clDEBUG1() << "LLM:" << wxString::FromUTF8(msg) << endl;

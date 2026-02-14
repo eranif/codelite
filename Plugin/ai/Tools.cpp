@@ -1,5 +1,6 @@
 #include "Tools.hpp"
 
+#include "Diff/clPatchApplier.hpp"
 #include "FileManager.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspaceView.hpp"
@@ -8,7 +9,6 @@
 #include "assistant/function.hpp"
 #include "clFilesCollector.h"
 #include "clFilesFinder.h"
-#include "clPatchApplier.hpp"
 #include "clWorkspaceManager.h"
 #include "globals.h"
 #include "procutils.h"
@@ -444,7 +444,7 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
             opts.working_directory = clWorkspaceManager::Get().GetWorkspace()->GetDir();
         }
 
-        auto result = PatchApplier::ApplyPatchStrict(wxString::FromUTF8(file_path), patch, opts);
+        auto result = PatchApplier::ApplyPatchLoose(wxString::FromUTF8(file_path), patch);
         if (!result.success) {
             clDEBUG() << "Failed to apply the patch:" << result.errorMessage.ToStdString(wxConvUTF8) << endl;
             return Err(result.errorMessage.ToStdString(wxConvUTF8));

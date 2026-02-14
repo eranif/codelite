@@ -10,7 +10,7 @@
 /**
  * Represents a single hunk in a unified diff
  */
-struct WXDLLIMPEXP_CL PatchHunk {
+struct WXDLLIMPEXP_SDK PatchHunk {
     int originalStart;
     int originalCount;
     int newStart;
@@ -21,7 +21,7 @@ struct WXDLLIMPEXP_CL PatchHunk {
 /**
  * Represents a parsed unified patch
  */
-struct WXDLLIMPEXP_CL UnifiedPatch {
+struct WXDLLIMPEXP_SDK UnifiedPatch {
     wxString originalFile;
     wxString newFile;
     std::vector<PatchHunk> hunks;
@@ -30,7 +30,7 @@ struct WXDLLIMPEXP_CL UnifiedPatch {
 /**
  * Result of a patch operation
  */
-struct WXDLLIMPEXP_CL PatchResult {
+struct WXDLLIMPEXP_SDK PatchResult {
     bool success;
     wxString errorMessage;
     int hunksApplied;
@@ -41,13 +41,13 @@ struct WXDLLIMPEXP_CL PatchResult {
 /**
  * Options for patch application
  */
-struct WXDLLIMPEXP_CL PatchOptions {
+struct WXDLLIMPEXP_SDK PatchOptions {
     bool dryRun = false; // Don't actually modify the file
     bool backup = true;  // Create a backup file
     wxString working_directory;
 };
 
-class WXDLLIMPEXP_CL PatchApplier
+class WXDLLIMPEXP_SDK PatchApplier
 {
 public:
     /**
@@ -89,4 +89,28 @@ public:
      *       Lines that do not match any expected pattern are ignored.
      */
     static UnifiedPatch ParseUnifiedPatch(const wxString& patchContent);
+
+    /**
+     * @brief Applies a unified diff patch to a file with loose matching, allowing hunks to be applied at flexible line
+     * positions.
+     *
+     * This method parses the provided patch content and applies each hunk sequentially to the specified file.
+     * The file is opened in the appropriate editor (remote via SFTP or local) and modified in-place.
+     * This function must be called from the main thread only.
+     *
+     * @param filePath The path to the file to be patched (relative or absolute).
+     * @param patchContent The unified diff patch content as a string.
+     *
+     * @return PatchResult A structure containing:
+     *         - success: true if all hunks were applied successfully, false otherwise.
+     *         - errorMessage: A description of the error if success is false, empty otherwise.
+     *
+     * @note This function can only be called from the main thread. Calling from another thread will result in failure.
+     * @note The function performs in-place modification of the file through the editor interface.
+     *
+     * @see ParseUnifiedPatch
+     * @see ApplyHunk
+     * @see PatchResult
+     */
+    static PatchResult ApplyPatchLoose(const wxString& filePath, const wxString& patchContent);
 };

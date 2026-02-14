@@ -183,7 +183,7 @@ Parameters:
                   .AddRequiredParam("filepath", "The path where the new file should be created", "string")
                   .AddOptionalParam("file_content", "The initial content to write to the file", "string")
                   .Build());
-    table.Add(FunctionBuilder("ToolShellExecute")
+    table.Add(FunctionBuilder("ShellExecute")
                   .SetDescription(R"(Execute a shell command and return its output.
 Description:
 This function executes a shell command and captures its output. The command is wrapped in a shell for proper execution.

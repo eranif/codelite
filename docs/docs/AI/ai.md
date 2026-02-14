@@ -52,57 +52,49 @@ Open the chat box at any time with ++ctrl+shift+h++. The window can be used for 
 
 CodeLite exposes the following built-in tools for the model:
 
-- **ApplyPatch**
-  - Applies a git style diff patch to a file
-  - Parameters:
-    - `patch_content` (string, required) - The git style diff patch content to apply
-    - `file_path` (string, required) - The path to the file that should be patched
-    - `dry_run` (boolean, optional, default: true) - When true, validates the patch without modifying the file
+* **ApplyPatch** — Apply a git style diff patch to a file.
+  * `file_path` (string, required): The path to the file that should be patched.
+  * `patch_content` (string, required): The git style diff patch content to apply.
+  * `dry_run` (boolean, optional): When true, validates the patch without modifying the file. Default is true.
 
-- **CreateNewFile**
-  - Creates a new file at the specified path with optional content
-  - Parameters:
-    - `filepath` (string, required) - The path where the new file should be created
-    - `file_content` (string, optional, default: empty) - The initial content to write to the file
+* **CreateNewFile** — Create a new file at the specified path with optional content.
+  * `filepath` (string, required): The path where the new file should be created.
+  * `file_content` (string, optional): The initial content to write to the file.
 
-- **CreateWorkspace**
-  - Creates a new workspace at the given path
-  - Parameters:
-    - `path` (string, required) - The directory path where the workspace should be created
-    - `name` (string, optional) - The name of the workspace to create
-    - `host` (string, optional) - The SSH host for creating a remote workspace
+* **CreateWorkspace** — Create a new workspace at the given path with the provided name. If a host is specified, it creates a remote workspace using SSH/SFTP; otherwise, it creates a local filesystem workspace.
+  * `path` (string, required): The directory path where the workspace should be created.
+  * `name` (string, optional): The name of the workspace to create.
+  * `host` (string, optional): The SSH host for creating a remote workspace.
 
-- **FindInFiles**
-  - Searches for a text pattern within files in a directory
-  - Parameters:
-    - `root_folder` (string, required) - The root directory where the search begins
-    - `find_what` (string, required) - The text pattern to search for
-    - `file_pattern` (string, required) - The file pattern to match (e.g., "*.txt" or "*.py")
-    - `case_sensitive` (boolean, optional, default: true) - When enabled, performs case-sensitive matching
-    - `is_regex` (boolean, optional, default: false) - When enabled, treats the search string as a regex pattern
-    - `whole_word` (boolean, optional, default: true) - When enabled, matches only complete words
+* **FindInFiles** — Search for a given pattern within files in a directory.
+  * `find_what` (string, required): The text pattern to search for (literal string or regex pattern).
+  * `file_pattern` (string, required): The file pattern to match, such as "*.txt" or "*.py". Use semi-colon list to pass multiple patterns.
+  * `root_folder` (string, required): The root directory where the search begins.
+  * `case_sensitive` (boolean, optional): When enabled, performs case-sensitive matching. Default is true.
+  * `is_regex` (boolean, optional): When enabled, treats find_what as a regular expression pattern. Default is false.
+  * `whole_word` (boolean, optional): When enabled, matches only complete words. Default is true.
 
-- **GetActiveEditorFilePath**
-  - Retrieves the file path of the currently active editor
-  - Parameters: None
+* **GetActiveEditorFilePath** — Retrieves the file path of the currently active editor.
+  * *(No arguments)*
 
-- **GetActiveEditorText**
-  - Returns the text of the active tab inside the editor
-  - Parameters: None
+* **GetActiveEditorText** — Return the text of the active tab inside the editor.
+  * *(No arguments)*
 
-- **OpenFileInEditor**
-  - Opens a file and loads it into the editor for editing or viewing
-  - Parameters:
-    - `filepath` (string, required) - The path of the file to open inside the editor
+* **GetLogInRangeCommit** — Return git history of commits between range of commits.
+  * `start_commit` (string, required): The first commit in the range.
+  * `end_commit` (string, required): The second commit in the range.
 
-- **ReadCompilerOutput**
-  - Reads and fetches the compiler build log output of the most recent build command
-  - Parameters: None
+* **OpenFileInEditor** — Try to open file 'filepath' and load it into the editor for editing or viewing.
+  * `filepath` (string, required): The path of the file to open inside the editor.
 
-- **ReadFileContent**
-  - Reads the entire content of a file from the disk
-  - Parameters:
-    - `filepath` (string, required) - The path of the file to read
+* **ReadCompilerOutput** — Reads and fetches the compiler build log output of the most recent build command executed by the user.
+  * *(No arguments)*
+
+* **ReadFileContent** — Reads the entire content of the file 'filepath' from the disk.
+  * `filepath` (string, required): The path of the file to read.
+
+* **ShellExecute** — Execute a shell command and return its output.
+  * `command` (string, required): The shell command to execute.
 
 ### Quick Example
 
@@ -112,7 +104,7 @@ You get a confusing compile error. Type:
 Explain the build errors and suggest fixes.
 ```
 
-The model will automatically call `Read_the_compiler_build_output`, fetch the log, and then reply with a human-readable explanation and concrete fixes.
+The model will automatically call `ReadCompilerOutput`, fetch the log, and then reply with a human-readable explanation and concrete fixes.
 
 ---
 

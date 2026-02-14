@@ -31,27 +31,31 @@ inline FunctionResult Err(std::optional<wxString> text)
 /// Available API that CodeLite exposes to the model.
 
 /**
- * @brief Writes the specified content to a file on disk.
+ * @brief Creates a new file at the specified path with optional content.
  *
- * Expects a JSON object with exactly two entries:
- * - <code>"filepath"</code>: the target file path.
- * - <code>"file_content"</code>: the text to be written to the file.
+ * @details This function creates a new file on disk, optionally populating it with the provided content.
+ * If the file already exists, the operation fails. When executed within a filesystem workspace context,
+ * the workspace view is automatically refreshed after successful file creation. The actual file operation
+ * is performed on the main thread via RunOnMain.
  *
- * The function checks for the correct number of arguments, extracts the
- * parameters, and then executes the write operation on the main UI thread.
+ * @param args A JSON object containing exactly two arguments:
+ *             - "filepath" (string, required): The path where the new file should be created.
+ *             - "file_content" (string, optional): The content to write to the file. Defaults to empty string if not
+ * provided.
  *
- * If the file already exists, the user is prompted to confirm overwriting.
- * Upon successful write, the workspace view is refreshed and a success
- * message is returned. Errors during argument extraction, file writing,
- * or user cancellation result in an error message.
+ * @return FunctionResult Returns Ok with a success message if the file was created successfully,
+ *         or Err with an error message if:
+ *         - The number of arguments is not exactly 2
+ *         - The "filepath" argument is missing or invalid
+ *         - The file already exists at the specified path
+ *         - Writing the content to disk fails
  *
- * @param args JSON object containing the required arguments.
- *
- * @return <code>FunctionResult</code> – an <code>Ok</code> result with a
- *         success message, or an <code>Err</code> result with an error
- *         description.
+ * @see FileManager::GetFullPath
+ * @see FileManager::WriteContent
+ * @see clFileSystemWorkspace
+ * @see RunOnMain
  */
-FunctionResult WriteFileContent(const assistant::json& args);
+FunctionResult CreateNewFile(const assistant::json& args);
 
 /**
  * @brief Reads the content of a file specified by the "filepath" argument.
@@ -107,82 +111,6 @@ FunctionResult GetCompilerOutput(const assistant::json& args);
  *         or an error message if no editor is open.
  */
 FunctionResult GetCurrentEditorText(const assistant::json& args);
-
-/**
- * @brief Lists all subdirectories within a specified directory path (non-recursive).
- *
- * This function scans the given directory and returns a JSON array containing the full paths
- * of all immediate subdirectories. The scan is non-recursive and filters results to include
- * only directories, excluding files. The operation is executed on the main thread.
- *
- * @param args A JSON object containing the function arguments. Must contain exactly one argument:
- *             - "path" (string): The directory path to scan for subdirectories. The path will be
- *               normalized to a full directory path via FileManager::GetDirectoryFullPath().
- *
- * @return FunctionResult containing either:
- *         - On success: A JSON-serialized string array of full directory paths (as UTF-8 strings).
- *         - On error: An error result with a descriptive message.
- *
- * @throws Returns an error FunctionResult (via Err()) if:
- *         - The args parameter does not contain exactly one argument.
- *         - The "path" argument is missing or cannot be parsed as a string.
- *
- * @note The [[maybe_unused]] attribute indicates that args may not be used in certain build configurations.
- * @note This function delegates its core logic to RunOnMain() to ensure thread-safe execution on the main thread.
- * @note Debugging output is logged via clDEBUG() showing the resolved directory path being scanned.
- *
- * @code
- * assistant::json args;
- * args["path"] = "/home/user/projects";
- * FunctionResult result = ListDirectories(args);
- * if (result.IsOk()) {
- *     std::string json_output = result.GetValue();
- *     // json_output contains: ["/home/user/projects/dir1", "/home/user/projects/dir2", ...]
- * }
- * @endcode
- *
- * @see RunOnMain
- * @see FileManager::GetDirectoryFullPath
- * @see clFilesScanner::ScanNoRecurse
- */
-FunctionResult ListDirectories(const assistant::json& args);
-
-/**
- * @brief Lists all files in a specified directory matching a given pattern.
- *
- * This function scans a directory non-recursively for files matching the provided
- * pattern and returns their full paths as a JSON array. The operation is executed
- * on the main thread for thread safety.
- *
- * @param args A JSON object containing the function arguments. Must have exactly 2 elements:
- *             - "dir" (std::string): The directory path to scan. Can be relative or absolute.
- *             - "pattern" (std::string): File pattern to match (e.g., "*.cpp", "*.txt").
- *
- * @return FunctionResult containing either:
- *         - On success: Ok() with a JSON string representing an array of file paths (std::string).
- *         - On error: Err() with an error message describing the failure.
- *
- * @throws Does not throw exceptions directly, but returns error FunctionResult for:
- *         - Invalid number of arguments (not exactly 2)
- *         - Missing or invalid "dir" argument
- *         - Missing or invalid "pattern" argument
- *
- * @example
- * @code
- * assistant::json args;
- * args["dir"] = "/home/user/project";
- * args["pattern"] = "*.cpp";
- * FunctionResult result = ListFiles(args);
- * if (result.IsOk()) {
- *     std::cout << "Files: " << result.GetValue() << std::endl;
- * } else {
- *     std::cerr << "Error: " << result.GetError() << std::endl;
- * }
- * @endcode
- *
- * @see RunOnMain, FileManager::GetDirectoryFullPath, clFilesScanner
- */
-FunctionResult ListFiles([[maybe_unused]] const assistant::json& args);
 
 /**
  * @brief Creates a new workspace (either local or remote) with the specified name and path.
@@ -266,6 +194,27 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args);
  * @see PatchOptions
  */
 FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args);
+
+/**
+ * @brief Retrieves the file path of the currently active editor.
+ *
+ * @details This function executes on the main thread to safely access the active editor
+ * and obtain its file path. If the editor is connected to a remote source, the remote
+ * path is returned; otherwise, the local file path is returned.
+ *
+ * @param args JSON arguments object (currently unused).
+ *
+ * @return FunctionResult containing the editor's remote path or local path as a string
+ *         on success, or an error result if no editor is currently open.
+ *
+ * @throws None directly, but returns an error FunctionResult with the message
+ *         "There is no editor opened" if no active editor exists.
+ *
+ * @see clGetManager()
+ * @see IEditor::GetRemotePathOrLocal()
+ * @see RunOnMain()
+ */
+FunctionResult GetCurrentEditorPath([[maybe_unused]] const assistant::json& args);
 
 /// Populate the function table with the built-in functions provided by CodeLite
 /// to the model.

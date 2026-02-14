@@ -64,15 +64,7 @@ assistant::FunctionResult RunOnMain(std::function<FunctionResult()> callback, co
 // Register CodeLite tools with the model.
 void PopulateBuiltInFunctions(FunctionTable& table)
 {
-    table.Add(FunctionBuilder("Write_file_content_to_disk_at_a_given_path")
-                  .SetDescription("Write the content 'file_content' to the file "
-                                  "system at the given path identified by 'filepath'")
-                  .AddRequiredParam("file_content", "The content of the file to be written to the disk.", "string")
-                  .AddRequiredParam("filepath", "The path file path.", "string")
-                  .SetCallback(WriteFileContent)
-                  .Build());
-
-    table.Add(FunctionBuilder("Read_file_from_the_file_system")
+    table.Add(FunctionBuilder("ReadFileContent")
                   .SetDescription("Reads the entire content of the file 'filepath' from "
                                   "the disk. On success, this function returns the "
                                   "entire file's content.")
@@ -80,14 +72,23 @@ void PopulateBuiltInFunctions(FunctionTable& table)
                   .SetCallback(ReadFileContent)
                   .Build());
 
-    table.Add(FunctionBuilder("Open_a_file_in_an_editor")
+    table.Add(FunctionBuilder("OpenFileInEditor")
                   .SetDescription("Try to open file 'filepath' and load it into the "
                                   "editor for editing or viewing.")
                   .AddRequiredParam("filepath", "The path of the file to open inside the editor.", "string")
                   .SetCallback(OpenFileInEditor)
                   .Build());
 
-    table.Add(FunctionBuilder("Read_the_compiler_build_output")
+    table.Add(FunctionBuilder("GetActiveEditorFilePath")
+                  .SetDescription(R"#(Retrieves the file path of the currently active editor.
+Details:
+This function executes on the main thread to safely access the active editor
+and obtain its file path. If the editor is connected to a remote source, the remote
+path is returned; otherwise, the local file path is returned.)#")
+                  .SetCallback(GetCurrentEditorPath)
+                  .Build());
+
+    table.Add(FunctionBuilder("ReadCompilerOutput")
                   .SetDescription("Read and fetches the compiler build log output of "
                                   "the most recent build command executed by "
                                   "the user and return it to the caller. Use this "
@@ -98,12 +99,12 @@ void PopulateBuiltInFunctions(FunctionTable& table)
                   .SetCallback(GetCompilerOutput)
                   .Build());
 
-    table.Add(FunctionBuilder("Get_the_text_of_the_active_tab_inside_the_editor")
+    table.Add(FunctionBuilder("GetActiveEditorText")
                   .SetDescription("Return the text of the active tab inside the editor.")
                   .SetCallback(GetCurrentEditorText)
                   .Build());
     table.Add(
-        FunctionBuilder("Create_new_workspace")
+        FunctionBuilder("CreateWorkspace")
             .SetDescription(" This function attempts to create a new workspace at the given path with the "
                             "provided name. If a host is specified, it creates a remote workspace using SSH/SFTP; "
                             "otherwise, it creates a local filesystem workspace")
@@ -113,7 +114,7 @@ void PopulateBuiltInFunctions(FunctionTable& table)
             .AddOptionalParam("host", "The SSH host for creating a remote workspace", "string")
             .Build());
     table.Add(
-        FunctionBuilder("Find_in_files")
+        FunctionBuilder("FindInFiles")
             .SetDescription(R"(Search for a given pattern within files in a directory.
 Description:
 This function searches for a specified text pattern or regular expression across files within a directory structure.
@@ -154,32 +155,40 @@ Parameters:
                                     "When true, validates the patch without modifying the file. Default is true.",
                                     "boolean")
                   .Build());
+    table.Add(FunctionBuilder("CreateNewFile")
+                  .SetDescription(R"(Create a new file at the specified path with optional content.
+Description:
+This function creates a new file at the given filepath. If the file already exists, an error is returned.
+Optionally, initial content can be provided to be written to the file.
+Parameters:
+- filepath (string, required): The path where the new file should be created.
+- file_content (string, optional): The initial content to write to the file. Default is empty.)")
+                  .SetCallback(CreateNewFile)
+                  .AddRequiredParam("filepath", "The path where the new file should be created", "string")
+                  .AddOptionalParam("file_content", "The initial content to write to the file", "string")
+                  .Build());
 }
 
 /// Implementation details
 
-FunctionResult WriteFileContent(const assistant::json& args)
+FunctionResult CreateNewFile(const assistant::json& args)
 {
     if (args.size() != 2) {
         return Err("Invalid number of arguments");
     }
 
     ASSIGN_FUNC_ARG_OR_RETURN(std::string filepath, ::assistant::GetFunctionArg<std::string>(args, "filepath"));
-    ASSIGN_FUNC_ARG_OR_RETURN(std::string file_content, ::assistant::GetFunctionArg<std::string>(args, "file_content"));
+    std::string file_content = ::assistant::GetFunctionArg<std::string>(args, "file_content").value_or("");
 
     auto cb = [=]() -> FunctionResult {
         wxString msg;
         wxString fullpath = FileManager::GetFullPath(wxString::FromUTF8(filepath));
         if (FileManager::FileExists(fullpath)) {
-            msg << _("The file: ") << fullpath << _(" already exists.\nWould you like to overwrite it?");
-            if (::wxMessageBox(msg, "CodeLite", wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT) != wxYES) {
-                msg.clear();
-                msg << _("The file: ") << fullpath << _(" already exists");
-                return Err(msg);
-            }
+            msg << _("The file: ") << fullpath << _(" already exists");
+            return Err(msg);
         }
 
-        if (!FileManager::WriteContent(filepath, wxString::FromUTF8(file_content), true)) {
+        if (!file_content.empty() && !FileManager::WriteContent(filepath, wxString::FromUTF8(file_content), false)) {
             msg << "Error while writing file: '" << filepath << "' to disk.";
             return Err(msg);
         }
@@ -262,9 +271,21 @@ FunctionResult GetCurrentEditorText([[maybe_unused]] const assistant::json& args
     auto cb = [=]() -> FunctionResult {
         auto active_editor = clGetManager()->GetActiveEditor();
         if (!active_editor) {
-            return Err("There is no editor opened");
+            return Err("No editor is currently open");
         }
         return Ok(active_editor->GetEditorText());
+    };
+    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
+}
+
+FunctionResult GetCurrentEditorPath([[maybe_unused]] const assistant::json& args)
+{
+    auto cb = [=]() -> FunctionResult {
+        auto active_editor = clGetManager()->GetActiveEditor();
+        if (!active_editor) {
+            return Err("No editor is currently open");
+        }
+        return Ok(active_editor->GetRemotePathOrLocal());
     };
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
@@ -377,15 +398,19 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
         return Err("Invalid number of arguments");
     }
 
-    ASSIGN_FUNC_ARG_OR_RETURN(
-        std::string patch_content, ::assistant::GetFunctionArg<std::string>(args, "patch_content"));
-    ASSIGN_FUNC_ARG_OR_RETURN(std::string file_path, ::assistant::GetFunctionArg<std::string>(args, "file_path"));
+    auto cb = [=]() -> FunctionResult {
+        ASSIGN_FUNC_ARG_OR_RETURN(
+            std::string patch_content, ::assistant::GetFunctionArg<std::string>(args, "patch_content"));
+        ASSIGN_FUNC_ARG_OR_RETURN(std::string file_path, ::assistant::GetFunctionArg<std::string>(args, "file_path"));
 
-    bool dry_run = assistant::GetFunctionArg<bool>(args, "dry_run").value_or(true);
+        bool dry_run = assistant::GetFunctionArg<bool>(args, "dry_run").value_or(true);
 
-    PatchOptions opts{.dryRun = dry_run};
-    auto result = PatchApplier::ApplyPatch(wxString::FromUTF8(patch_content), wxString::FromUTF8(file_path), opts);
-    return FunctionResult{.isError = !result.success, .text = result.errorMessage.ToStdString(wxConvUTF8)};
+        PatchOptions opts{.dryRun = dry_run};
+        auto result = PatchApplier::ApplyPatch(wxString::FromUTF8(patch_content), wxString::FromUTF8(file_path), opts);
+        return FunctionResult{.isError = !result.success, .text = result.errorMessage.ToStdString(wxConvUTF8)};
+    };
+
+    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
 } // namespace llm

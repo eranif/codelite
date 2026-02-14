@@ -51,7 +51,7 @@ AbbreviationsSettingsDlg::AbbreviationsSettingsDlg(wxWindow* parent, IManager* m
 
         m_data.SetAutoInsert(data.GetAutoInsert());
         m_data.SetEntries(data.GetEntries());
-        m_config.WriteItem(&m_data);
+        m_config.WriteItem(m_data);
     }
     DoPopulateItems();
 }
@@ -146,7 +146,7 @@ void AbbreviationsSettingsDlg::OnSave(wxCommandEvent& event)
         DoSaveCurrent();
     }
     m_data.SetAutoInsert(m_checkBoxImmediateInsert->IsChecked());
-    m_config.WriteItem(&m_data);
+    m_config.WriteItem(m_data);
 }
 
 void AbbreviationsSettingsDlg::DoPopulateItems()
@@ -271,7 +271,7 @@ void AbbreviationsSettingsDlg::OnImport(wxCommandEvent& event)
 
     wxStringMap_t merged = m_config.MergeStringMaps(newEntries, curEntries);
     m_data.SetEntries(merged);
-    m_config.WriteItem(&m_data);
+    m_config.WriteItem(m_data);
     m_dirty = false;
 
     // Repopulate the abbreviations

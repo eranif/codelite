@@ -520,5 +520,5 @@ void SQLCommandPanel::SaveSqlHistory(wxArrayString sqls)
     }
 
     s.SetSqlHistory(sqls);
-    conf.WriteItem(&s);
+    conf.WriteItem(s);
 }

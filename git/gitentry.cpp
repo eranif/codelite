@@ -340,7 +340,7 @@ GitEntry& GitEntry::Load()
 void GitEntry::Save()
 {
     clConfig conf("git.conf");
-    conf.WriteItem(this);
+    conf.WriteItem(*this);
 }
 
 wxString GitEntry::GetProjectUserEnteredRepoPath(const wxString& nameHash)

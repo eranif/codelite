@@ -84,7 +84,7 @@ PHPConfigurationData& PHPConfigurationData::Load()
 void PHPConfigurationData::Save()
 {
     clConfig conf("php.conf");
-    conf.WriteItem(this);
+    conf.WriteItem(*this);
 
     m_phpOptions.Save();
 }

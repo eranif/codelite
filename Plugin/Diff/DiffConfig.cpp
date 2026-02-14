@@ -56,4 +56,4 @@ DiffConfig& DiffConfig::Load()
     return *this;
 }
 
-void DiffConfig::Save() { clConfig::Get().WriteItem(this); }
+void DiffConfig::Save() { clConfig::Get().WriteItem(*this); }

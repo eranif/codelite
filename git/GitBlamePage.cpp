@@ -141,7 +141,7 @@ GitBlamePage::~GitBlamePage()
     clConfig conf("git.conf");
     GitEntry data;
     conf.ReadItem(&data);
-    conf.WriteItem(&data);
+    conf.WriteItem(data);
     Unbind(wxEVT_STC_MARGIN_RIGHT_CLICK, &GitBlamePage::OnMarginRightClick, this);
     Unbind(wxEVT_IDLE, &GitBlamePage::OnIdle, this);
 }

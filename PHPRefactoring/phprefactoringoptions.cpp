@@ -38,6 +38,6 @@ PHPRefactoringOptions& PHPRefactoringOptions::Load()
 PHPRefactoringOptions& PHPRefactoringOptions::Save()
 {
     clConfig config("phprefactoring.conf");
-    config.WriteItem(this);
+    config.WriteItem(*this);
     return *this;
 }

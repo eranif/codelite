@@ -21,7 +21,7 @@ LanguageServerConfig& LanguageServerConfig::Load()
 LanguageServerConfig& LanguageServerConfig::Save()
 {
     clConfig conf("LanguageServer.conf");
-    conf.WriteItem(this);
+    conf.WriteItem(*this);
     return *this;
 }
 

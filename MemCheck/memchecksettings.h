@@ -220,7 +220,7 @@ public:
 
     void SavaToConfig() {
         clConfig conf(MEMCHECK_CONFIG_FILE);
-        conf.WriteItem(this);
+        conf.WriteItem(*this);
     }
 
     void LoadFromConfig() {

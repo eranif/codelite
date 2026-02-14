@@ -131,7 +131,7 @@ GitDiffChooseCommitishDlg::~GitDiffChooseCommitishDlg()
     data.SetGitDiffChooseDlgCBoxValues1(comboCommitish1Strings);
     data.SetGitDiffChooseDlgCBoxValues2(comboCommitish2Strings);
 
-    conf.WriteItem(&data);
+    conf.WriteItem(data);
 }
 
 wxString GitDiffChooseCommitishDlg::GetAncestorSetting(wxSpinCtrl* spin) const

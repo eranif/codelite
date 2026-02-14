@@ -109,7 +109,7 @@ GitCommitDlg::~GitCommitDlg()
     data.SetGitCommitDlgHSashPos(m_splitterInner->GetSashPosition());
     data.SetGitCommitDlgVSashPos(m_splitterMain->GetSashPosition());
     data.EnableFlag(GitEntry::CheckSignedOffBy, m_checkBoxSignedOff->IsChecked());
-    conf.WriteItem(&data);
+    conf.WriteItem(data);
 
     // if the dialog was dismissed with "OK", remove the commit file
     if (m_dismissedWithOk) {

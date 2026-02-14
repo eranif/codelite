@@ -279,7 +279,7 @@ void clBootstrapWizard::OnFinish(wxWizardEvent& event)
         PluginInfoArray plugins;
         conf.ReadItem(&plugins);
         plugins.EnablePlugins(GetSelectedPlugins());
-        conf.WriteItem(&plugins);
+        conf.WriteItem(plugins);
     }
 }
 

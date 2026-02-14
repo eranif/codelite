@@ -85,7 +85,7 @@ void PluginMgrDlg::OnButtonOK(wxCommandEvent& event)
 
     std::sort(enabledPlugins.begin(), enabledPlugins.end());
     plugins.EnablePlugins(enabledPlugins);
-    conf.WriteItem(&plugins);
+    conf.WriteItem(plugins);
     EndModal(enabledPlugins == m_initialEnabledPlugins ? wxID_CANCEL : wxID_OK);
 }
 

@@ -31,6 +31,6 @@ WordCompletionSettings& WordCompletionSettings::Load()
 WordCompletionSettings& WordCompletionSettings::Save()
 {
     clConfig config("word-completion.conf");
-    config.WriteItem(this);
+    config.WriteItem(*this);
     return *this;
 }

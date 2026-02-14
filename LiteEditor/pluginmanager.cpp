@@ -276,7 +276,7 @@ void PluginManager::Load()
         }
 
         // save the plugins data
-        conf.WriteItem(&m_pluginsData);
+        conf.WriteItem(m_pluginsData);
     }
 
     // Now that all the plugins are loaded, load from the configuration file

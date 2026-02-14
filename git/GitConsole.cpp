@@ -729,7 +729,7 @@ void GitConsole::OnDropDownMenuEvent(wxCommandEvent& event)
     conf.ReadItem(&data);
     GitCommandsEntries& ce = data.GetGitCommandsEntries(userdata->name);
     ce.SetLastUsedCommandIndex(id);
-    conf.WriteItem(&data);
+    conf.WriteItem(data);
     conf.Save();
 }
 

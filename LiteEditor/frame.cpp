@@ -1437,7 +1437,7 @@ void clMainFrame::CreateGUIControls()
     // with default values and call the "Merge" method
     TagsOptionsData tmp;
     m_tagsOptionsData.Merge(tmp);
-    ccConfig.WriteItem(&m_tagsOptionsData);
+    ccConfig.WriteItem(m_tagsOptionsData);
 
     // update ctags options
     TagsManagerST::Get()->SetCtagsOptions(m_tagsOptionsData);
@@ -2455,7 +2455,7 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
     TagsManagerST::Get()->SetCtagsOptions(m_tagsOptionsData);
 
     clConfig ccConfig("code-completion.conf");
-    ccConfig.WriteItem(&m_tagsOptionsData);
+    ccConfig.WriteItem(m_tagsOptionsData);
 
     // do we need to colourise?
     if ((newColVars != colVars) || (colourTypes != m_tagsOptionsData.GetCcColourFlags())) {
@@ -3007,7 +3007,7 @@ void clMainFrame::UpdateParserSearchPathsFromDefaultCompiler()
     wxArrayString clangSearchPaths = m_tagsOptionsData.GetClangSearchPathsArray();
     mergedPaths = ccConfig.MergeArrays(paths, clangSearchPaths);
     m_tagsOptionsData.SetClangSearchPathsArray(mergedPaths);
-    ccConfig.WriteItem(&m_tagsOptionsData);
+    ccConfig.WriteItem(m_tagsOptionsData);
 }
 
 void clMainFrame::OnFileCloseAll(wxCommandEvent& event)
@@ -5397,7 +5397,7 @@ void clMainFrame::OnShowDebuggerWindow(wxCommandEvent& e)
         item.ShowDebuggerWindow(DebuggerPaneConfig::Disassemble, show);
     }
 
-    conf.WriteItem(&item);
+    conf.WriteItem(item);
     // Reload the perspective
     ManagerST::Get()->GetPerspectiveManager().LoadPerspective();
 }

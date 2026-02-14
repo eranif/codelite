@@ -197,11 +197,11 @@ void clConfig::Read(const wxString& name,
     }
 }
 
-void clConfig::WriteItem(const clConfigItem* item, const wxString& differentName)
+void clConfig::WriteItem(const clConfigItem& item)
 {
-    wxString nameToUse = differentName.IsEmpty() ? item->GetName() : differentName;
-    DoDeleteProperty(nameToUse);
-    m_root->toElement().append(item->ToJSON());
+    const wxString& name = item.GetName();
+    DoDeleteProperty(name);
+    m_root->toElement().addProperty(name, item.ToJSON());
     m_root->save(m_filename);
 }
 

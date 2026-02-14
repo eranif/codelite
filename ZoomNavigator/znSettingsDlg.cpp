@@ -55,9 +55,9 @@ void znSettingsDlg::OnOK(wxCommandEvent& event)
     data.SetHighlightColour(m_colourPickerHighlightColour->GetColour().GetAsString(wxC2S_HTML_SYNTAX));
     data.SetUseScrollbar(m_checkBoxUseVScrollbar->IsChecked());
     data.SetZoomFactor(m_spinCtrlZoomFactor->GetValue());
-    conf.WriteItem(&data);
+    conf.WriteItem(data);
 
-    // notify thet the settings were changed
+    // notify that the settings were changed
     wxCommandEvent evt(wxEVT_ZN_SETTINGS_UPDATED);
     EventNotifier::Get()->AddPendingEvent(evt);
 

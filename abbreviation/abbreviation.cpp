@@ -130,7 +130,7 @@ wxCodeCompletionBoxEntry::Vec_t AbbreviationPlugin::GetAbbreviations(const wxStr
 
         jsonData.SetAutoInsert(data.GetAutoInsert());
         jsonData.SetEntries(data.GetEntries());
-        m_config.WriteItem(&jsonData);
+        m_config.WriteItem(jsonData);
     }
 
     wxCodeCompletionBoxEntry::Vec_t V;
@@ -177,7 +177,7 @@ void AbbreviationPlugin::InitDefaults()
 
         jsonData.SetAutoInsert(data.GetAutoInsert());
         jsonData.SetEntries(data.GetEntries());
-        m_config.WriteItem(&jsonData);
+        m_config.WriteItem(jsonData);
     }
 
     // search for the old item
@@ -191,7 +191,7 @@ void AbbreviationPlugin::InitDefaults()
         entries["for_int"] = "for(int |=0; |<; ++|) {\n}\n";
         entries["for_php"] = "for($|=0; $|<; ++$|) {\n}\n";
         jsonData.SetEntries(entries);
-        m_config.WriteItem(&jsonData);
+        m_config.WriteItem(jsonData);
     }
     clKeyboardManager::Get()->AddAccelerator("abbrev_insert", _("Abbreviations"),
                                              _("Show abbreviations completion box"), "Ctrl-Alt-SPACE");
@@ -215,7 +215,7 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
 
         jsonData.SetAutoInsert(data.GetAutoInsert());
         jsonData.SetEntries(data.GetEntries());
-        m_config.WriteItem(&jsonData);
+        m_config.WriteItem(jsonData);
     }
 
     // search for the old item

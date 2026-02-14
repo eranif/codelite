@@ -485,7 +485,7 @@ SettersGettersDlg::~SettersGettersDlg()
         flags |= SettersGetterData::SettersReturnReferenceToSelf;
 
     m_settings.SetFlags(flags);
-    clConfig::Get().WriteItem(&m_settings);
+    clConfig::Get().WriteItem(m_settings);
 }
 
 wxString SettersGettersDlg::GetGenCode()

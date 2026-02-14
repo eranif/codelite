@@ -61,7 +61,7 @@ WorkspaceSvnSettings& WorkspaceSvnSettings::Load()
 void WorkspaceSvnSettings::Save()
 {
     clConfig conf(GetLocalConfigFile().GetFullPath());
-    conf.WriteItem( this );
+    conf.WriteItem(*this);
 }
 
 wxFileName WorkspaceSvnSettings::GetLocalConfigFile() const

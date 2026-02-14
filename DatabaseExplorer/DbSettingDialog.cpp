@@ -248,7 +248,7 @@ void DbSettingDialog::DoSaveSqliteHistory()
 
     files.Insert(filename, 0);
     settings.SetRecentFiles(files);
-    config.WriteItem(&settings);
+    config.WriteItem(settings);
 }
 
 wxArrayString DbSettingDialog::DoLoadSqliteHistory()
@@ -303,7 +303,7 @@ void DbSettingDialog::DoSaveMySQLHistory()
 
     mysql.insert(mysql.begin(), conn);
     settings.SetMySQLConnections(mysql);
-    config.WriteItem(&settings);
+    config.WriteItem(settings);
 }
 
 void DbSettingDialog::DoSavePgSQLHistory()
@@ -337,7 +337,7 @@ void DbSettingDialog::DoSavePgSQLHistory()
 
     pgconns.insert(pgconns.begin(), conn);
     settings.SetPgSQLConnections(pgconns);
-    config.WriteItem(&settings);
+    config.WriteItem(settings);
 }
 
 void DbSettingDialog::DoFindConnectionByName(const DbConnectionInfoVec& conns, const wxString& name)

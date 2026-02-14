@@ -321,7 +321,7 @@ void ZoomNavigator::OnEnablePlugin(wxCommandEvent& e)
     m_config->Reload();
     m_config->ReadItem(&data);
     data.SetEnabled(e.IsChecked());
-    m_config->WriteItem(&data);
+    m_config->WriteItem(data);
 
     // Notify about the settings changed
     wxCommandEvent evt(wxEVT_ZN_SETTINGS_UPDATED);

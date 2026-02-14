@@ -150,7 +150,7 @@ public:
     // General objects
     // -----------------------------
     bool ReadItem(clConfigItem* item, const wxString& differentName = wxEmptyString);
-    void WriteItem(const clConfigItem* item, const wxString& differentName = wxEmptyString);
+    void WriteItem(const clConfigItem& item);
     // bool
     bool Read(const wxString& name, bool defaultValue);
     void Write(const wxString& name, bool value);

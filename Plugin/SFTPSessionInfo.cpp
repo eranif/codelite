@@ -97,7 +97,7 @@ SFTPSessionInfoList& SFTPSessionInfoList::Load()
 SFTPSessionInfoList& SFTPSessionInfoList::Save()
 {
     clConfig conf("sftp-sessions.conf");
-    conf.WriteItem(this);
+    conf.WriteItem(*this);
     return *this;
 }
 

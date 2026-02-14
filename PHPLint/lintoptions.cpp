@@ -93,6 +93,6 @@ LintOptions& LintOptions::Load()
 LintOptions& LintOptions::Save()
 {
     clConfig config("phplint.conf");
-    config.WriteItem(this);
+    config.WriteItem(*this);
     return *this;
 }

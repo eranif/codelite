@@ -32,5 +32,5 @@ AutoSaveSettings AutoSaveSettings::Load()
 void AutoSaveSettings::Save(const AutoSaveSettings& settings)
 {
     clConfig config("auto-save.conf");
-    config.WriteItem(&settings);
+    config.WriteItem(settings);
 }

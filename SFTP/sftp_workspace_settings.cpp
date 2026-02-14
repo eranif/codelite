@@ -63,7 +63,7 @@ void SFTPWorkspaceSettings::Save(const SFTPWorkspaceSettings& settings, const wx
     fn.SetExt("conf");
     fn.AppendDir(".codelite");
     clConfig config(fn.GetFullPath());
-    config.WriteItem(&settings);
+    config.WriteItem(settings);
 }
 
 void SFTPWorkspaceSettings::Clear()

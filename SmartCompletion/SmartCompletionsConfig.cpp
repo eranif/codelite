@@ -19,7 +19,7 @@ SmartCompletionsConfig& SmartCompletionsConfig::Load()
 SmartCompletionsConfig& SmartCompletionsConfig::Save()
 {
     clConfig conf("SmartCompletions.conf");
-    conf.WriteItem(this);
+    conf.WriteItem(*this);
     return *this;
 }
 

@@ -71,7 +71,7 @@ GitDiffDlg::~GitDiffDlg()
     GitEntry data;
     conf.ReadItem(&data);
     data.SetGitDiffDlgSashPos(m_splitter->GetSashPosition());
-    conf.WriteItem(&data);
+    conf.WriteItem(data);
 }
 
 /*******************************************************************************/

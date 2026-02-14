@@ -25,6 +25,6 @@ VimSettings& VimSettings::Load()
 VimSettings& VimSettings::Save()
 {
     clConfig config("vim.conf");
-    config.WriteItem(this);
+    config.WriteItem(*this);
     return *this;
 }

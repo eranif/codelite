@@ -24,7 +24,7 @@ JSONItem WordCompletionSettings::ToJSON() const
 WordCompletionSettings& WordCompletionSettings::Load()
 {
     clConfig config("word-completion.conf");
-    config.ReadItem(this);
+    config.ReadItem(*this);
     return *this;
 }
 

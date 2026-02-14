@@ -225,7 +225,7 @@ public:
 
     void LoadFromConfig() {
         clConfig conf(MEMCHECK_CONFIG_FILE);
-        conf.ReadItem(this);
+        conf.ReadItem(*this);
     }
 };
 

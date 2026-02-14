@@ -197,7 +197,7 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &GitConsole::OnWorkspaceClosed, this);
     clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
+    conf.ReadItem(data);
     m_isVerbose = (data.GetFlags() & GitEntry::VerboseLog);
 
     // Toolbar
@@ -356,7 +356,7 @@ void GitConsole::OnConfigurationChanged(wxCommandEvent& e)
     e.Skip();
     clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
+    conf.ReadItem(data);
     m_isVerbose = (data.GetFlags() & GitEntry::VerboseLog);
 }
 
@@ -554,7 +554,7 @@ void GitConsole::OnFileActivated(wxDataViewEvent& event)
 
     clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
+    conf.ReadItem(data);
 
     wxString difftool = data.GetDifftool();
     if (difftool.empty()) {
@@ -660,7 +660,7 @@ void GitConsole::DoOnDropdown(const wxString& commandName, int id, const wxAuiTo
         GitEntry data;
         {
             clConfig conf("git.conf");
-            conf.ReadItem(&data);
+            conf.ReadItem(data);
             // Force conf out of scope, else its dtor clobbers the GitConsole::OnDropDownMenuEvent Save()
         }
 
@@ -726,7 +726,7 @@ void GitConsole::OnDropDownMenuEvent(wxCommandEvent& event)
 
     clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
+    conf.ReadItem(data);
     GitCommandsEntries& ce = data.GetGitCommandsEntries(userdata->name);
     ce.SetLastUsedCommandIndex(id);
     conf.WriteItem(data);

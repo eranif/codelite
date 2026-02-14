@@ -1431,7 +1431,7 @@ void clMainFrame::CreateGUIControls()
                   << endl;
     }
     clConfig ccConfig("code-completion.conf");
-    ccConfig.ReadItem(&m_tagsOptionsData);
+    ccConfig.ReadItem(m_tagsOptionsData);
 
     // If the cc options value has changed, construct a new instance
     // with default values and call the "Merge" method
@@ -2976,7 +2976,7 @@ void clMainFrame::UpdateParserSearchPathsFromDefaultCompiler()
 {
     // Check that the user has some paths set in the parser
     clConfig ccConfig("code-completion.conf");
-    ccConfig.ReadItem(&m_tagsOptionsData);
+    ccConfig.ReadItem(m_tagsOptionsData);
 
     // Since the version numbers aren't the same
     // we should merge the new settings with the old ones
@@ -5358,7 +5358,7 @@ void clMainFrame::OnShowDebuggerWindow(wxCommandEvent& e)
     // load the debugger configuration
     clConfig conf("debugger-view.conf");
     DebuggerPaneConfig item;
-    conf.ReadItem(&item);
+    conf.ReadItem(item);
 
     bool show = e.IsChecked();
     if (e.GetId() == XRCID("debugger_win_locals")) {
@@ -5407,7 +5407,7 @@ void clMainFrame::OnShowDebuggerWindowUI(wxUpdateUIEvent& e)
     // load the debugger configuration
     // clConfig conf("debugger-view.conf");
     DebuggerPaneConfig item;
-    // conf.ReadItem( &item );
+    // conf.ReadItem(item);
 
     DebuggerPaneConfig::eDebuggerWindows winid = DebuggerPaneConfig::None;
 

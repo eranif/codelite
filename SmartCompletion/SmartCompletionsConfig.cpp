@@ -9,7 +9,7 @@ SmartCompletionsConfig::SmartCompletionsConfig()
 SmartCompletionsConfig& SmartCompletionsConfig::Load()
 {
     clConfig conf("SmartCompletions.conf");
-    conf.ReadItem(this);
+    conf.ReadItem(*this);
     m_db.Open();
     m_db.LoadCCUsageTable(m_CCweight);
     m_db.LoadGTAUsageTable(m_GTAweight);

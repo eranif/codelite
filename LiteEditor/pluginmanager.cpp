@@ -130,7 +130,7 @@ void PluginManager::Load()
     wxString fileSpec(wxT("*.") + ext);
     clConfig conf("plugins.conf");
 
-    conf.ReadItem(&m_pluginsData);
+    conf.ReadItem(m_pluginsData);
 
     // set the managers
     // this code assures us that the shared objects will see the same instances as the application

@@ -55,7 +55,7 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
     // Load persistent settings
     clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
+    conf.ReadItem(data);
     m_splitterInner->CallAfter(&wxSplitterWindow::SetSashPosition, data.GetGitCommitDlgHSashPos(), true);
     m_splitterMain->CallAfter(&wxSplitterWindow::SetSashPosition, data.GetGitCommitDlgVSashPos(), true);
     m_checkBoxSignedOff->SetValue(data.GetFlags() & GitEntry::CheckSignedOffBy);
@@ -104,7 +104,7 @@ GitCommitDlg::~GitCommitDlg()
     // read the configuration
     clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
+    conf.ReadItem(data);
 
     data.SetGitCommitDlgHSashPos(m_splitterInner->GetSashPosition());
     data.SetGitCommitDlgVSashPos(m_splitterMain->GetSashPosition());

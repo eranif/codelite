@@ -144,7 +144,7 @@ void ZoomNavigator::OnShowHideClick(wxCommandEvent& e) {}
 void ZoomNavigator::DoInitialize()
 {
     znConfigItem data;
-    if (m_config->ReadItem(&data)) {
+    if (m_config->ReadItem(data)) {
         m_enabled = data.IsEnabled();
     }
 
@@ -283,7 +283,7 @@ void ZoomNavigator::OnSettingsChanged(wxCommandEvent& e)
     e.Skip();
     m_config->Reload();
     znConfigItem data;
-    if (m_config->ReadItem(&data)) {
+    if (m_config->ReadItem(data)) {
         m_enabled = data.IsEnabled();
 
         if (!m_enabled) {
@@ -319,7 +319,7 @@ void ZoomNavigator::OnEnablePlugin(wxCommandEvent& e)
 {
     znConfigItem data;
     m_config->Reload();
-    m_config->ReadItem(&data);
+    m_config->ReadItem(data);
     data.SetEnabled(e.IsChecked());
     m_config->WriteItem(data);
 

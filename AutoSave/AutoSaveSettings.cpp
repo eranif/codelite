@@ -25,7 +25,7 @@ AutoSaveSettings AutoSaveSettings::Load()
 {
     AutoSaveSettings settings;
     clConfig config("auto-save.conf");
-    config.ReadItem(&settings);
+    config.ReadItem(settings);
     return settings;
 }
 

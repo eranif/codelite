@@ -250,7 +250,7 @@ void PHPCodeCompletion::OnCodeComplete(clCodeCompletionEvent& e)
             // Update the settings
             TagsOptionsData d;
             clConfig ccConfig("code-completion.conf");
-            ccConfig.ReadItem(&d);
+            ccConfig.ReadItem(d);
             m_lookupTable.SetSizeLimit(d.GetCcNumberOfDisplayItems());
 
             // Check if the code completion was triggered due to user

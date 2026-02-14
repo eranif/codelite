@@ -50,7 +50,7 @@ GitDiffDlg::GitDiffDlg(wxWindow* parent, const wxString& workingDir, GitPlugin* 
 {
     clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
+    conf.ReadItem(data);
 
     SetName("GitDiffDlg");
     WindowAttrManager::Load(this);
@@ -69,7 +69,7 @@ GitDiffDlg::~GitDiffDlg()
 
     clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
+    conf.ReadItem(data);
     data.SetGitDiffDlgSashPos(m_splitter->GetSashPosition());
     conf.WriteItem(data);
 }

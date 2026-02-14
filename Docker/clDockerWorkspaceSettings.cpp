@@ -39,7 +39,7 @@ clDockerWorkspaceSettings& clDockerWorkspaceSettings::Load(const wxFileName& fil
 {
     m_workspaceFile = filename;
     clConfig conf(filename.GetFullPath());
-    conf.ReadItem(this);
+    conf.ReadItem(*this);
     return *this;
 }
 

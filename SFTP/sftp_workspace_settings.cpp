@@ -52,7 +52,7 @@ void SFTPWorkspaceSettings::Load(SFTPWorkspaceSettings& settings, const wxFileNa
         fn.SetExt("conf");
         fn.AppendDir(".codelite");
         clConfig config(fn.GetFullPath());
-        config.ReadItem(&settings);
+        config.ReadItem(settings);
     }
 }
 

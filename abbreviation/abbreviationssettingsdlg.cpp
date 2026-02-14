@@ -44,7 +44,7 @@ AbbreviationsSettingsDlg::AbbreviationsSettingsDlg(wxWindow* parent, IManager* m
 {
     SetName("AbbreviationsSettingsDlg");
     WindowAttrManager::Load(this);
-    if (!m_config.ReadItem(&m_data)) {
+    if (!m_config.ReadItem(m_data)) {
         // merge the data from the old configuration
         AbbreviationEntry data;
         m_mgr->GetConfigTool()->ReadObject(wxT("AbbreviationsData"), &data);
@@ -260,7 +260,7 @@ void AbbreviationsSettingsDlg::OnImport(wxCommandEvent& event)
     // load the imported configuration
     clConfig cfg(path);
     AbbreviationJSONEntry data, curData;
-    if (!cfg.ReadItem(&data)) {
+    if (!cfg.ReadItem(data)) {
         ::wxMessageBox(_("The file does not seem to contain a valid abbreviations entries"),
                        "wxCrafter",
                        wxOK | wxICON_WARNING | wxCENTER);

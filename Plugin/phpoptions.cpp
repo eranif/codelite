@@ -78,7 +78,7 @@ JSONItem PhpOptions::ToJSON() const
 PhpOptions& PhpOptions::Load()
 {
     clConfig config("php-general.conf");
-    config.ReadItem(this);
+    config.ReadItem(*this);
     return *this;
 }
 

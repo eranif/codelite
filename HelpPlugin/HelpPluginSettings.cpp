@@ -19,7 +19,7 @@ HelpPluginSettings::HelpPluginSettings()
 HelpPluginSettings& HelpPluginSettings::Load()
 {
     clConfig conf("help-plugin.conf");
-    conf.ReadItem(this);
+    conf.ReadItem(*this);
     return *this;
 }
 

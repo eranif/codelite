@@ -54,7 +54,7 @@ JSONItem WorkspaceSvnSettings::ToJSON() const
 WorkspaceSvnSettings& WorkspaceSvnSettings::Load()
 {
     clConfig conf(GetLocalConfigFile().GetFullPath());
-    conf.ReadItem( this );
+    conf.ReadItem(*this);
     return *this;
 }
 

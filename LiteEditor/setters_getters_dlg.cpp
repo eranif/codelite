@@ -44,7 +44,7 @@ SettersGettersDlg::SettersGettersDlg(wxWindow* parent)
     : SettersGettersBaseDlg(parent)
     , m_checkForDuplicateEntries(false)
 {
-    clConfig::Get().ReadItem(&m_settings);
+    clConfig::Get().ReadItem(m_settings);
     m_checkStartWithUppercase->SetValue(m_settings.GetFlags() & SettersGetterData::FunctionStartWithUpperCase);
     m_checkBoxFormatFileWhenDone->SetValue(m_settings.GetFlags() & SettersGetterData::FormatFileWhenDone);
     m_checkBoxReturnSelf->SetValue(m_settings.GetFlags() & SettersGetterData::SettersReturnReferenceToSelf);

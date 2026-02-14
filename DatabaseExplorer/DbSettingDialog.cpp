@@ -238,7 +238,7 @@ void DbSettingDialog::DoSaveSqliteHistory()
     // Save the recent opened files
     clConfig config(DBE_CONFIG_FILE);
     DbExplorerSettings settings;
-    config.ReadItem(&settings);
+    config.ReadItem(settings);
 
     wxArrayString files = settings.GetRecentFiles();
 
@@ -255,7 +255,7 @@ wxArrayString DbSettingDialog::DoLoadSqliteHistory()
 {
     clConfig config(DBE_CONFIG_FILE);
     DbExplorerSettings settings;
-    config.ReadItem(&settings);
+    config.ReadItem(settings);
     return settings.GetRecentFiles();
 }
 
@@ -263,7 +263,7 @@ DbConnectionInfoVec DbSettingDialog::DoLoadMySQLHistory()
 {
     clConfig config(DBE_CONFIG_FILE);
     DbExplorerSettings settings;
-    config.ReadItem(&settings);
+    config.ReadItem(settings);
     return settings.GetMySQLConnections();
 }
 
@@ -271,7 +271,7 @@ DbConnectionInfoVec DbSettingDialog::DoLoadPgSQLHistory()
 {
     clConfig config(DBE_CONFIG_FILE);
     DbExplorerSettings settings;
-    config.ReadItem(&settings);
+    config.ReadItem(settings);
     return settings.GetPgSQLConnections();
 }
 
@@ -279,7 +279,7 @@ void DbSettingDialog::DoSaveMySQLHistory()
 {
     clConfig config(DBE_CONFIG_FILE);
     DbExplorerSettings settings;
-    config.ReadItem(&settings);
+    config.ReadItem(settings);
     DbConnectionInfoVec mysql = settings.GetMySQLConnections();
 
     DbConnectionInfo conn;
@@ -310,7 +310,7 @@ void DbSettingDialog::DoSavePgSQLHistory()
 {
     clConfig config(DBE_CONFIG_FILE);
     DbExplorerSettings settings;
-    config.ReadItem(&settings);
+    config.ReadItem(settings);
     DbConnectionInfoVec pgconns = settings.GetPgSQLConnections();
 
     long port = 0;

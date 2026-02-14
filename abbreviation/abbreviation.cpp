@@ -123,7 +123,7 @@ wxCodeCompletionBoxEntry::Vec_t AbbreviationPlugin::GetAbbreviations(const wxStr
     wxString lcFilter = filter.Lower();
 
     AbbreviationJSONEntry jsonData;
-    if (!m_config.ReadItem(&jsonData)) {
+    if (!m_config.ReadItem(jsonData)) {
         // merge the data from the old configuration
         AbbreviationEntry data;
         m_mgr->GetConfigTool()->ReadObject("AbbreviationsData", &data);
@@ -170,7 +170,7 @@ void AbbreviationPlugin::InitDefaults()
 {
     // check to see if there are any abbreviations configured
     AbbreviationJSONEntry jsonData;
-    if (!m_config.ReadItem(&jsonData)) {
+    if (!m_config.ReadItem(jsonData)) {
         // merge the data from the old configuration
         AbbreviationEntry data;
         m_mgr->GetConfigTool()->ReadObject("AbbreviationsData", &data);
@@ -208,7 +208,7 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
     // search for abbreviation that matches str
     // prepare list of abbreviations
     AbbreviationJSONEntry jsonData;
-    if (!m_config.ReadItem(&jsonData)) {
+    if (!m_config.ReadItem(jsonData)) {
         // merge the data from the old configuration
         AbbreviationEntry data;
         m_mgr->GetConfigTool()->ReadObject("AbbreviationsData", &data);

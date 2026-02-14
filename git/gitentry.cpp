@@ -333,7 +333,7 @@ void GitEntry::WriteGitProperties(const wxString& localRepoPath, const GitEntry:
 GitEntry& GitEntry::Load()
 {
     clConfig conf("git.conf");
-    conf.ReadItem(this);
+    conf.ReadItem(*this);
     return *this;
 }
 

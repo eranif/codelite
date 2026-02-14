@@ -52,7 +52,7 @@ JSONItem DiffConfig::ToJSON() const
 
 DiffConfig& DiffConfig::Load()
 {
-    clConfig::Get().ReadItem(this);
+    clConfig::Get().ReadItem(*this);
     return *this;
 }
 

@@ -192,7 +192,7 @@ wxString GetAnyDefaultCommand(const wxString& gitCommand)
 {
     clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
+    conf.ReadItem(data);
     GitCommandsEntries& ce = data.GetGitCommandsEntries(gitCommand);
     return ce.GetDefaultCommand();
 }
@@ -281,7 +281,7 @@ GitPlugin::GitPlugin(IManager* manager)
 
     clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
+    conf.ReadItem(data);
     m_configFlags = data.GetFlags();
 
     auto GetLogInRangeCommit = [this](const assistant::json& args) -> llm::FunctionResult {
@@ -645,7 +645,7 @@ void GitPlugin::OnSettings(wxCommandEvent& e)
         // update the paths
         clConfig conf("git.conf");
         GitEntry data;
-        conf.ReadItem(&data);
+        conf.ReadItem(data);
         m_configFlags = data.GetFlags();
 
         m_pathGITExecutable = data.GetGITExecutablePath();
@@ -1368,7 +1368,7 @@ void GitPlugin::ProcessGitActionQueue()
 
     clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
+    conf.ReadItem(data);
 
 #ifdef __WXMSW__
     if (ga.action == gitClone || ga.action == gitPush || ga.action == gitPull) {
@@ -1417,7 +1417,7 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
 {
     clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
+    conf.ReadItem(data);
 
     if (!(data.GetFlags() & GitEntry::ColourTreeView))
         return;
@@ -1981,7 +1981,7 @@ void GitPlugin::InitDefaults()
 {
     clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
+    conf.ReadItem(data);
 
     if (data.GetTrackedFileColour().IsOk()) {
         m_colourTrackedFile = data.GetTrackedFileColour();
@@ -2057,7 +2057,7 @@ void GitPlugin::ColourFileTree(clTreeCtrl* tree, const wxStringSet_t& files, Ove
 {
     clConfig conf("git.conf");
     GitEntry entry;
-    conf.ReadItem(&entry);
+    conf.ReadItem(entry);
 
     if (!(entry.GetFlags() & GitEntry::ColourTreeView))
         return;
@@ -2829,7 +2829,7 @@ void GitPlugin::OnActiveProjectChanged(clProjectSettingsEvent& event)
             projectNameHash << workspaceName << '-' << projectName;
             clConfig conf("git.conf");
             GitEntry data;
-            conf.ReadItem(&data);
+            conf.ReadItem(data);
             m_userEnteredRepositoryDirectory = data.GetProjectUserEnteredRepoPath(projectNameHash);
         }
     }

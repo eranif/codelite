@@ -36,7 +36,7 @@ znSettingsDlg::znSettingsDlg(wxWindow* parent)
 {
     znConfigItem data;
     clConfig conf("zoom-navigator.conf");
-    if (conf.ReadItem(&data)) {
+    if (conf.ReadItem(data)) {
         m_checkBoxEnableZN->SetValue(data.IsEnabled());
         m_colourPickerHighlightColour->SetColour(wxColour(data.GetHighlightColour()));
         m_checkBoxUseVScrollbar->SetValue(data.IsUseScrollbar());

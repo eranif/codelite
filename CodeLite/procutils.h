@@ -24,8 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 #pragma once
 
-#include "codelite_exports.h"
 #include "cl_command_event.h"
+#include "codelite_exports.h"
 
 #include <set>
 #include <vector>
@@ -89,8 +89,8 @@ public:
     static wxString& WrapInShell(wxString& cmd);
 
     static std::set<unsigned long> GetProcTree(long pid);
-    static void ExecuteCommand(const wxString& command, wxArrayString& output,
-                               long flags = wxEXEC_NODISABLE | wxEXEC_SYNC);
+    static void
+    ExecuteCommand(const wxString& command, wxArrayString& output, long flags = wxEXEC_NODISABLE | wxEXEC_SYNC);
     static void ExecuteInteractiveCommand(const wxString& command);
     static wxString GetProcessNameByPid(long pid);
     static std::vector<ProcessEntry> GetProcessList();
@@ -108,7 +108,7 @@ public:
      * \param command
      * \param output
      */
-    static void SafeExecuteCommand(const wxString& command, wxArrayString& output);
+    static int SafeExecuteCommand(const wxString& command, wxArrayString& output);
 
     /**
      * @brief execute a command and return its output as plain string

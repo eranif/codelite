@@ -211,9 +211,8 @@ bool WinProcess::Write(const wxString& buff)
 
 bool WinProcess::IsAlive()
 {
-    DWORD dwExitCode;
-    if(GetExitCodeProcess(piProcInfo.hProcess, &dwExitCode)) {
-        if(dwExitCode == STILL_ACTIVE)
+    if(GetExitCodeProcess(piProcInfo.hProcess, &exit_code)) {
+        if(exit_code == STILL_ACTIVE)
             return true;
     }
     return false;

@@ -50,58 +50,59 @@ Open the chat box at any time with ++ctrl+shift+h++. The window can be used for 
 
 ## 3. Built-in Model Tools
 
-If the selected model advertises the **tools** capability, ChatAI can invoke the following helpers. The model decides when (and how) to call them.
+CodeLite exposes the following built-in tools for the model:
 
-- **`Create_new_workspace`**
-    - **Description:** Creates a new workspace at a given path with a specified name. If a host is specified, it creates a remote workspace using SSH/SFTP; otherwise, it creates a local filesystem workspace.
-    - **Required parameters:**
-        - `path` (string) - The directory path where the workspace should be created
-    - **Optional parameters:**
-        - `name` (string) - The name of the workspace to create
-        - `host` (string) - The SSH host for creating a remote workspace
+- **ApplyPatch**
+  - Applies a git style diff patch to a file
+  - Parameters:
+    - `patch_content` (string, required) - The git style diff patch content to apply
+    - `file_path` (string, required) - The path to the file that should be patched
+    - `dry_run` (boolean, optional, default: true) - When true, validates the patch without modifying the file
 
-- **`Get_the_text_of_the_active_tab_inside_the_editor`**
-    - **Description:** Returns the text content of the currently active tab inside the editor.
-    - **No parameters required**
+- **CreateNewFile**
+  - Creates a new file at the specified path with optional content
+  - Parameters:
+    - `filepath` (string, required) - The path where the new file should be created
+    - `file_content` (string, optional, default: empty) - The initial content to write to the file
 
-- **`Lists_all_files_in_a_directory`**
-    - **Description:** Lists all files in a specified directory matching a given pattern. This function scans a directory non-recursively for files matching the provided pattern and returns their full paths as a JSON array.
-    - **Required parameters:**
-        - `dir` (string) - The directory path to scan (can be relative or absolute)
-        - `pattern` (string) - File pattern to match (e.g., "*.cpp", "*.txt")
-    - **No optional parameters**
+- **CreateWorkspace**
+  - Creates a new workspace at the given path
+  - Parameters:
+    - `path` (string, required) - The directory path where the workspace should be created
+    - `name` (string, optional) - The name of the workspace to create
+    - `host` (string, optional) - The SSH host for creating a remote workspace
 
-- **`Lists_all_subdirectories`**
-    - **Description:** Lists all subdirectories within a specified directory path (non-recursive). This function scans the given directory and returns a JSON array containing the full paths of all immediate subdirectories. The scan is non-recursive and filters results to include only directories, excluding files. Empty path is allowed.
-    - **Required parameters:**
-        - `path` (string) - The directory path to scan
-    - **No optional parameters**
+- **FindInFiles**
+  - Searches for a text pattern within files in a directory
+  - Parameters:
+    - `root_folder` (string, required) - The root directory where the search begins
+    - `find_what` (string, required) - The text pattern to search for
+    - `file_pattern` (string, required) - The file pattern to match (e.g., "*.txt" or "*.py")
+    - `case_sensitive` (boolean, optional, default: true) - When enabled, performs case-sensitive matching
+    - `is_regex` (boolean, optional, default: false) - When enabled, treats the search string as a regex pattern
+    - `whole_word` (boolean, optional, default: true) - When enabled, matches only complete words
 
-- **Open_a_file_in_an_editor**
-    - **Description:** Opens a file at the specified filepath and loads it into the editor for editing or viewing.
-    - **Required parameters:**
-        - `filepath` (string) - The path of the file to open inside the editor
-    - **No optional parameters**
+- **GetActiveEditorFilePath**
+  - Retrieves the file path of the currently active editor
+  - Parameters: None
 
-- **`Read_file_from_the_file_system`**
-    - **Description:** Reads the entire content of the file from disk. On success, this function returns the entire file's content.
-    - **Required parameters:**
-        - `filepath` (string) - The path of the file to read
-    - **No optional parameters**
+- **GetActiveEditorText**
+  - Returns the text of the active tab inside the editor
+  - Parameters: None
 
-- **`Write_file_content_to_disk_at_a_given_path`**
-    - **Description:** Writes the provided content to the file system at the given filepath.
-    - **Required parameters:**
-        - `filepath` (string) - The path file path
-        - `file_content` (string) - The content of the file to be written to the disk
-    - **No optional parameters**
+- **OpenFileInEditor**
+  - Opens a file and loads it into the editor for editing or viewing
+  - Parameters:
+    - `filepath` (string, required) - The path of the file to open inside the editor
 
-- **`Read_the_compiler_build_output`**
-    - **Description:** Reads and fetches the compiler build log output of the most recent build command executed by the user. This is useful for helping explain and resolve build issues. On success, returns the complete build log output.
-    - **No parameters required**
+- **ReadCompilerOutput**
+  - Reads and fetches the compiler build log output of the most recent build command
+  - Parameters: None
 
-
-These tools enable the model to help with **file management**, **code editing**, **build-log analysis**, and **version-control queries** without you having to copy-paste anything.
+- **ReadFileContent**
+  - Reads the entire content of a file from the disk
+  - Parameters:
+    - `filepath` (string, required) - The path of the file to read
 
 ### Quick Example
 

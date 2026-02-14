@@ -52,6 +52,8 @@ public:
     // still alive
     void Cleanup();
 
+    inline int GetExitCode() const { return static_cast<int>(exit_code); }
+
 private:
     // WINDOWS implementation
     // Creating process related handles
@@ -60,6 +62,7 @@ private:
 
     // Child process id & information
     DWORD dwProcessId;
+    DWORD exit_code{std::numeric_limits<DWORD>::max()};
     PROCESS_INFORMATION piProcInfo;
 };
 

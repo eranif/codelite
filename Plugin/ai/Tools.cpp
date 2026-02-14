@@ -11,6 +11,7 @@
 #include "clPatchApplier.hpp"
 #include "clWorkspaceManager.h"
 #include "globals.h"
+#include "procutils.h"
 #include "ssh/ssh_account_info.h"
 
 #include <future>
@@ -181,6 +182,15 @@ Parameters:
                   .SetCallback(CreateNewFile)
                   .AddRequiredParam("filepath", "The path where the new file should be created", "string")
                   .AddOptionalParam("file_content", "The initial content to write to the file", "string")
+                  .Build());
+    table.Add(FunctionBuilder("ToolShellExecute")
+                  .SetDescription(R"(Execute a shell command and return its output.
+Description:
+This function executes a shell command and captures its output. The command is wrapped in a shell for proper execution.
+Parameters:
+- command (string, required): The shell command to execute.)")
+                  .SetCallback(ToolShellExecute)
+                  .AddRequiredParam("command", "The shell command to execute", "string")
                   .Build());
 }
 
@@ -434,7 +444,7 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
             opts.working_directory = clWorkspaceManager::Get().GetWorkspace()->GetDir();
         }
 
-        auto result = PatchApplier::ApplyPatch(wxString::FromUTF8(file_path), patch, opts);
+        auto result = PatchApplier::ApplyPatchStrict(wxString::FromUTF8(file_path), patch, opts);
         if (!result.success) {
             clDEBUG() << "Failed to apply the patch:" << result.errorMessage.ToStdString(wxConvUTF8) << endl;
             return Err(result.errorMessage.ToStdString(wxConvUTF8));
@@ -447,6 +457,27 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
     };
 
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
+}
+
+FunctionResult ToolShellExecute([[maybe_unused]] const assistant::json& args)
+{
+    if (args.size() < 2) {
+        return Err("Invalid number of arguments");
+    }
+
+    if (wxThread::IsMain()) {
+        clWARNING() << "Running ToolShellExecute on the main thread" << endl;
+    }
+
+    ASSIGN_FUNC_ARG_OR_RETURN(std::string command, ::assistant::GetFunctionArg<std::string>(args, "command"));
+
+    wxString cmd = wxString::FromUTF8(command);
+    ProcUtils::WrapInShell(cmd);
+    wxArrayString output_arr;
+    int exit_code = ProcUtils::SafeExecuteCommand(cmd, output_arr);
+
+    wxString output = StringUtils::Join(output_arr);
+    return FunctionResult{.isError = exit_code != 0, .text = output.ToStdString(wxConvUTF8)};
 }
 
 } // namespace llm

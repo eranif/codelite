@@ -8,6 +8,26 @@
 #include <wx/string.h>
 
 /**
+ * Represents a single hunk in a unified diff
+ */
+struct WXDLLIMPEXP_CL PatchHunk {
+    int originalStart;
+    int originalCount;
+    int newStart;
+    int newCount;
+    wxArrayString lines; // Lines with their prefix (+, -, or space)
+};
+
+/**
+ * Represents a parsed unified patch
+ */
+struct WXDLLIMPEXP_CL UnifiedPatch {
+    wxString originalFile;
+    wxString newFile;
+    std::vector<PatchHunk> hunks;
+};
+
+/**
  * Result of a patch operation
  */
 struct WXDLLIMPEXP_CL PatchResult {
@@ -50,6 +70,23 @@ public:
      * @note This function requires the 'patch' command-line utility to be available in the system PATH.
      * @note Must be called from the main thread; will fail if called from a worker thread.
      */
-    static PatchResult
-    ApplyPatch(const wxString& filePath, const wxString& patchContent, const PatchOptions& options = PatchOptions{});
+    static PatchResult ApplyPatchStrict(const wxString& filePath,
+                                        const wxString& patchContent,
+                                        const PatchOptions& options = PatchOptions{});
+    /**
+     * @brief Parses a unified diff patch string into a structured UnifiedPatch object.
+     *
+     * This function tokenizes the input patch content line by line and extracts file headers
+     * (--- and +++), hunk headers (@@ ... @@), and hunk content lines (additions, deletions,
+     * and context lines). Empty lines within hunks are treated as context lines.
+     *
+     * @param patchContent The unified diff patch content as a wxString.
+     *
+     * @return UnifiedPatch A structured object containing the original and new file paths,
+     *         and a collection of hunks with their respective line ranges and content.
+     *
+     * @note Lines starting with '+', '-', ' ', or '\\' are captured as hunk content.
+     *       Lines that do not match any expected pattern are ignored.
+     */
+    static UnifiedPatch ParseUnifiedPatch(const wxString& patchContent);
 };

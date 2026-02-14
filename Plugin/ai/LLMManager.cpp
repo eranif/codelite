@@ -130,7 +130,11 @@ Manager& Manager::GetInstance()
 Manager::Manager()
 {
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &Manager::OnFileSaved, this);
-    Start();
+    EventNotifier::Get()->Bind(wxEVT_INIT_DONE, [this](wxCommandEvent& e) {
+        e.Skip();
+        // Now that all the plugins are loaded, start the agent.
+        Start();
+    });
 }
 
 Manager::~Manager()
@@ -520,6 +524,10 @@ void Manager::Stop()
         m_client->Interrupt();
         CleanupAfterWorkerExit();
         m_client.reset();
+
+        clLLMEvent stop_event{wxEVT_LLM_STOPPED};
+        stop_event.SetEventObject(this);
+        AddPendingEvent(stop_event);
     }
 }
 
@@ -568,6 +576,10 @@ void Manager::Start(std::shared_ptr<assistant::ClientBase> client)
 
     // Start the worker thread
     m_worker_thread = std::make_unique<std::thread>([this]() { WorkerMain(); });
+
+    clLLMEvent start_event{wxEVT_LLM_STARTED};
+    start_event.SetEventObject(this);
+    AddPendingEvent(start_event);
 }
 
 bool Manager::ReloadConfig(std::optional<wxString> config_content, bool prompt)

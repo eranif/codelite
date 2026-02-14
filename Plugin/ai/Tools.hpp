@@ -5,12 +5,14 @@
 #include "assistant/function_base.hpp"
 // clang-format on
 
+#include "codelite_exports.h"
+
 namespace llm
 {
 using assistant::FunctionResult;
 using assistant::FunctionTable;
 
-inline FunctionResult Ok(std::optional<wxString> text)
+inline WXDLLIMPEXP_SDK FunctionResult Ok(std::optional<wxString> text)
 {
     FunctionResult result{.isError = false};
     if (text.has_value()) {
@@ -19,7 +21,7 @@ inline FunctionResult Ok(std::optional<wxString> text)
     return result;
 }
 
-inline FunctionResult Err(std::optional<wxString> text)
+inline WXDLLIMPEXP_SDK FunctionResult Err(std::optional<wxString> text)
 {
     FunctionResult result{.isError = true};
     if (text.has_value()) {
@@ -27,6 +29,21 @@ inline FunctionResult Err(std::optional<wxString> text)
     }
     return result;
 }
+
+/**
+ * @brief Executes the provided callback on the main (GUI) thread and returns its result.
+ *
+ * If the current thread is already the main thread, the callback is invoked directly.
+ * Otherwise, the callback is scheduled to run in the next event loop iteration via
+ * `llm::Manager::CallAfter`, and this function blocks until the callback completes.
+ *
+ * @param callback A `std::function<FunctionResult()>` representing the work to be performed on the main thread.
+ * @param tool_name A `wxString` identifying the tool; used for debugging and logging purposes.
+ *
+ * @return The `FunctionResult` produced by the callback.
+ */
+assistant::FunctionResult WXDLLIMPEXP_SDK RunOnMain(std::function<FunctionResult()> callback,
+                                                    const wxString& tool_name);
 
 /// Available API that CodeLite exposes to the model.
 
@@ -214,7 +231,12 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args);
  * @see IEditor::GetRemotePathOrLocal()
  * @see RunOnMain()
  */
-FunctionResult GetCurrentEditorPath([[maybe_unused]] const assistant::json& args);
+FunctionResult GetCurrentEditorPath(const assistant::json& args);
+
+/**
+ * @brief Executes a shell command.
+ */
+FunctionResult ToolShellExecute(const assistant::json& args);
 
 /// Populate the function table with the built-in functions provided by CodeLite
 /// to the model.

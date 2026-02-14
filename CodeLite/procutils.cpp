@@ -25,6 +25,7 @@
 #include "procutils.h"
 
 #include "AsyncProcess/asyncprocess.h"
+#include "StringUtils.h"
 #include "cl_command_event.h"
 #include "file_logger.h"
 #include "fileutils.h"
@@ -53,6 +54,39 @@
 #define popen _popen
 #endif
 
+#endif
+
+#ifndef __WXMSW__
+namespace
+{
+int Popen(const wxString& command, wxArrayString& output)
+{
+    FILE* fp{nullptr};
+    char line[512];
+    memset(line, 0, sizeof(line));
+    fp = popen(command.mb_str(wxConvUTF8), "r");
+    if (fp) {
+        while (fgets(line, sizeof(line) - 1, fp)) {
+            output.Add(wxString(line, wxConvUTF8));
+            memset(line, 0, sizeof(line));
+        }
+        int status = pclose(fp);
+        if (status == -1) {
+            clERROR() << "pclose failed." << endl;
+            return 1;
+        }
+
+        // Check if the process exited normally
+        int exit_code{0};
+        if (WIFEXITED(status)) {
+            exit_code = WEXITSTATUS(status);
+            return exit_code;
+        } else {
+            // Process was killed by a signal
+            return 1;
+        }
+    }
+}
 #endif
 
 //-------------------------------------------------------------------
@@ -104,7 +138,7 @@ std::set<unsigned long> ProcUtils::GetProcTree(long pid)
         return {};
     }
 
-    std::set<unsigned long> parentsMap{ static_cast<unsigned long>(pid) };
+    std::set<unsigned long> parentsMap{static_cast<unsigned long>(pid)};
 
     do {
         if (parentsMap.find(pe.th32ParentProcessID) != parentsMap.end()) {
@@ -122,7 +156,7 @@ std::set<unsigned long> ProcUtils::GetProcTree(long pid)
     CloseHandle(hProcessSnap);
     return parentsMap;
 #else
-    return { static_cast<unsigned long>(pid) };
+    return {static_cast<unsigned long>(pid)};
 #endif
 }
 
@@ -180,7 +214,7 @@ PidVec_t ProcUtils::PS(const wxString& name)
         if (FileUtils::FuzzyMatch(name, imageName)) {
             long nPid = -1;
             if (pid.ToCLong(&nPid)) {
-                V.push_back({ imageName, nPid });
+                V.push_back({imageName, nPid});
             }
         }
     }
@@ -262,17 +296,8 @@ void ProcUtils::ExecuteCommand(const wxString& command, wxArrayString& output, l
 #ifdef __WXMSW__
     wxExecute(command, output, flags);
 #else
-    FILE* fp;
-    char line[512];
-    memset(line, 0, sizeof(line));
-    fp = popen(command.mb_str(wxConvUTF8), "r");
-    if (fp) {
-        while (fgets(line, sizeof(line), fp)) {
-            output.Add(wxString(line, wxConvUTF8));
-            memset(line, 0, sizeof(line));
-        }
-        pclose(fp);
-    }
+    wxUnusedVar(flags);
+    Popen(command, output);
 #endif
 }
 
@@ -453,14 +478,14 @@ bool ProcUtils::Locate(const wxString& name, wxString& where)
     return false;
 }
 
-void ProcUtils::SafeExecuteCommand(const wxString& command, wxArrayString& output)
+int ProcUtils::SafeExecuteCommand(const wxString& command, wxArrayString& output)
 {
 #ifdef __WXMSW__
     wxString errMsg;
     LOG_IF_TRACE { clDEBUG1() << "executing process:" << command << endl; }
-    std::unique_ptr<WinProcess> proc{ WinProcess::Execute(command, errMsg) };
+    std::unique_ptr<WinProcess> proc{WinProcess::Execute(command, errMsg)};
     if (!proc) {
-        return;
+        return wxNOT_FOUND;
     }
 
     // wait for the process to terminate
@@ -478,9 +503,10 @@ void ProcUtils::SafeExecuteCommand(const wxString& command, wxArrayString& outpu
         }
     }
     tmpbuf.Clear();
+    int exit_code = proc->GetExitCode();
     LOG_IF_TRACE
     {
-        clDEBUG1() << "process terminated" << endl;
+        clDEBUG1() << "process terminated with exit code:" << exit_code << endl;
         // Read any unread output
         clDEBUG1() << "reading process output remainder..." << endl;
     }
@@ -495,8 +521,9 @@ void ProcUtils::SafeExecuteCommand(const wxString& command, wxArrayString& outpu
 
     // Convert buff into wxArrayString
     output = ::wxStringTokenize(buff, "\n", wxTOKEN_STRTOK);
+    return exit_code;
 #else
-    ProcUtils::ExecuteCommand(command, output);
+    return Popen(command, output);
 #endif
 }
 
@@ -505,15 +532,7 @@ wxString ProcUtils::SafeExecuteCommand(const wxString& command)
     wxString strOut;
     wxArrayString arr;
     SafeExecuteCommand(command, arr);
-
-    for (size_t i = 0; i < arr.GetCount(); ++i) {
-        strOut << arr.Item(i) << "\n";
-    }
-
-    if (!strOut.IsEmpty()) {
-        strOut.RemoveLast();
-    }
-    return strOut;
+    return StringUtils::Join(arr);
 }
 
 wxString ProcUtils::GrepCommandOutput(const std::vector<wxString>& cmd, const wxString& find_what)
@@ -564,7 +583,7 @@ class ProcessHelper : public wxProcess
 private:
     void ReadOutput()
     {
-        FileUtils::Deleter d{ m_output_file };
+        FileUtils::Deleter d{m_output_file};
         FileUtils::ReadFileContent(m_output_file, m_process_output);
     }
 
@@ -583,7 +602,7 @@ public:
             ReadOutput();
         }
 
-        clShellProcessEvent event_terminated{ wxEVT_SHELL_ASYNC_PROCESS_TERMINATED };
+        clShellProcessEvent event_terminated{wxEVT_SHELL_ASYNC_PROCESS_TERMINATED};
         event_terminated.SetPid(pid);
         event_terminated.SetExitCode(status);
         event_terminated.SetOutput(m_process_output);
@@ -616,7 +635,7 @@ int ProcUtils::ShellExecSync(const wxString& command, wxString* output)
     int exit_code = ::wxExecute(theCommand, out, err, wxEXEC_SYNC | wxEXEC_HIDE_CONSOLE);
 
     // read the process output and return it
-    FileUtils::Deleter d{ filename };
+    FileUtils::Deleter d{filename};
     FileUtils::ReadFileContent(filename, *output);
     return exit_code;
 }

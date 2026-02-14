@@ -7,6 +7,7 @@
 #include "assistant/function.hpp"
 #include "clFilesCollector.h"
 #include "clFilesFinder.h"
+#include "clPatchApplier.hpp"
 #include "clWorkspaceManager.h"
 #include "globals.h"
 #include "ssh/ssh_account_info.h"
@@ -101,23 +102,6 @@ void PopulateBuiltInFunctions(FunctionTable& table)
                   .SetDescription("Return the text of the active tab inside the editor.")
                   .SetCallback(GetCurrentEditorText)
                   .Build());
-    table.Add(FunctionBuilder("Lists_all_subdirectories")
-                  .SetDescription("Lists all subdirectories within a specified directory path (non-recursive). This "
-                                  "function scans the given directory and returns a JSON array containing the full "
-                                  "paths  * of all immediate subdirectories. The scan is non-recursive and filters "
-                                  "results to include  * only directories, excluding files. Empty path is allowed.")
-                  .SetCallback(ListDirectories)
-                  .AddRequiredParam("path", "The directory path to scan", "string")
-                  .Build());
-    table.Add(
-        FunctionBuilder("Lists_all_files_in_a_directory")
-            .SetDescription(
-                "Lists all files in a specified directory matching a given pattern. This function scans a directory "
-                "non-recursively for files matching the provided pattern and returns their full paths as a JSON array")
-            .SetCallback(ListFiles)
-            .AddRequiredParam("dir", "The directory path to scan. Can be relative or absolute.", "string")
-            .AddRequiredParam("pattern", "File pattern to match (e.g., \"*.cpp\", \"*.txt\")", "string")
-            .Build());
     table.Add(
         FunctionBuilder("Create_new_workspace")
             .SetDescription(" This function attempts to create a new workspace at the given path with the "
@@ -150,11 +134,26 @@ Parameters:
             .AddOptionalParam("whole_word", "When enabled, matches only complete words. Default is true.", "boolean")
             .AddOptionalParam(
                 "case_sensitive", "When enabled, performs case-sensitive matching. Default is true.", "boolean")
-            .AddOptionalParam(
-                "is_regex",
-                "When enabled, treats find_what as a regular expression pattern. Default is false.",
-                "boolean")
+            .AddOptionalParam("is_regex",
+                              "When enabled, treats find_what as a regular expression pattern. Default is false.",
+                              "boolean")
             .Build());
+    table.Add(FunctionBuilder("ApplyPatch")
+                  .SetDescription(R"(Apply a unified diff patch to a file.
+Description:
+This function applies a unified diff patch content to a specified file. It can perform a dry run to validate
+the patch without modifying the file, or apply the changes directly.
+Parameters:
+- patch_content (string, required): The unified diff patch content to apply.
+- file_path (string, required): The path to the file that should be patched.
+- dry_run (boolean, optional): When true, validates the patch without modifying the file. Default is true.)")
+                  .SetCallback(ApplyPatch)
+                  .AddRequiredParam("patch_content", "The unified diff patch content to apply", "string")
+                  .AddRequiredParam("file_path", "The path to the file that should be patched", "string")
+                  .AddOptionalParam("dry_run",
+                                    "When true, validates the patch without modifying the file. Default is true.",
+                                    "boolean")
+                  .Build());
 }
 
 /// Implementation details
@@ -270,64 +269,6 @@ FunctionResult GetCurrentEditorText([[maybe_unused]] const assistant::json& args
     return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
 }
 
-FunctionResult ListDirectories([[maybe_unused]] const assistant::json& args)
-{
-    auto cb = [=]() -> FunctionResult {
-        if (args.size() != 1) {
-            return Err("Invalid number of arguments");
-        }
-
-        ASSIGN_FUNC_ARG_OR_RETURN(std::string path, ::assistant::GetFunctionArg<std::string>(args, "path"));
-        wxString wxpath = FileManager::GetDirectoryFullPath(wxString::FromUTF8(path));
-
-        clDEBUG() << "Listing directories for path:" << wxpath << endl;
-        clFilesScanner collector;
-        clFilesScanner::EntryData::Vec_t results;
-        collector.ScanNoRecurse(wxpath, results);
-
-        std::vector<std::string> cstr_files;
-        cstr_files.reserve(results.size());
-        for (const auto& res : results) {
-            if (res.flags & clFilesScanner::kIsFolder) {
-                cstr_files.push_back(res.fullpath.ToStdString(wxConvUTF8));
-            }
-        }
-        json j = cstr_files;
-        return Ok(j.dump());
-    };
-    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
-}
-
-FunctionResult ListFiles([[maybe_unused]] const assistant::json& args)
-{
-    auto cb = [=]() -> FunctionResult {
-        if (args.size() != 2) {
-            return Err("Invalid number of arguments");
-        }
-
-        ASSIGN_FUNC_ARG_OR_RETURN(std::string dir, ::assistant::GetFunctionArg<std::string>(args, "dir"));
-        ASSIGN_FUNC_ARG_OR_RETURN(std::string pattern, ::assistant::GetFunctionArg<std::string>(args, "pattern"));
-        wxString path = FileManager::GetDirectoryFullPath(wxString::FromUTF8(dir));
-
-        clDEBUG() << "Listing files for path:" << path << endl;
-        clFilesScanner collector;
-        clFilesScanner::EntryData::Vec_t results;
-        collector.ScanNoRecurse(path, results, pattern);
-
-        std::vector<std::string> cstr_files;
-        cstr_files.reserve(results.size());
-        for (const auto& res : results) {
-            if (res.flags & clFilesScanner::kIsFile) {
-                cstr_files.push_back(res.fullpath.ToStdString(wxConvUTF8));
-            }
-        }
-
-        json j = cstr_files;
-        return Ok(j.dump());
-    };
-    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
-}
-
 FunctionResult CreateWorkspace([[maybe_unused]] const assistant::json& args)
 {
     auto cb = [=]() -> FunctionResult {
@@ -428,6 +369,23 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
         j.push_back(match.ToJson());
     }
     return Ok(wxString::FromUTF8(j.dump()));
+}
+
+FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
+{
+    if (args.size() < 2) {
+        return Err("Invalid number of arguments");
+    }
+
+    ASSIGN_FUNC_ARG_OR_RETURN(
+        std::string patch_content, ::assistant::GetFunctionArg<std::string>(args, "patch_content"));
+    ASSIGN_FUNC_ARG_OR_RETURN(std::string file_path, ::assistant::GetFunctionArg<std::string>(args, "file_path"));
+
+    bool dry_run = assistant::GetFunctionArg<bool>(args, "dry_run").value_or(true);
+
+    PatchOptions opts{.dryRun = dry_run};
+    auto result = PatchApplier::ApplyPatch(wxString::FromUTF8(patch_content), wxString::FromUTF8(file_path), opts);
+    return FunctionResult{.isError = !result.success, .text = result.errorMessage.ToStdString(wxConvUTF8)};
 }
 
 } // namespace llm

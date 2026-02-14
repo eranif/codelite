@@ -242,6 +242,31 @@ FunctionResult CreateWorkspace([[maybe_unused]] const assistant::json& args);
  */
 FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args);
 
+/**
+ * @brief Applies a patch to a specified file.
+ *
+ * @details This function parses the provided patch content and applies it to the target file.
+ * By default, the operation runs in dry-run mode, which validates the patch without modifying
+ * the file. The function extracts required arguments from a JSON object and delegates the
+ * actual patching logic to PatchApplier::ApplyPatch.
+ *
+ * @param args A JSON object containing the following keys:
+ *             - "patch_content" (std::string, required): The unified diff or patch content to apply.
+ *             - "file_path" (std::string, required): The path to the file to be patched.
+ *             - "dry_run" (bool, optional): If true, validates the patch without applying it.
+ *               Defaults to true.
+ *
+ * @return FunctionResult A result object where:
+ *         - isError is false and text contains any output message on success.
+ *         - isError is true and text contains the error message on failure.
+ *
+ * @throws None This function does not throw exceptions; errors are returned via FunctionResult.
+ *
+ * @see PatchApplier::ApplyPatch
+ * @see PatchOptions
+ */
+FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args);
+
 /// Populate the function table with the built-in functions provided by CodeLite
 /// to the model.
 void PopulateBuiltInFunctions(FunctionTable& table);

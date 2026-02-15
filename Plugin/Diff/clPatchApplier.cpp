@@ -5,7 +5,11 @@
 #include "Platform/Platform.hpp"
 #include "StringUtils.h"
 #include "clResult.hpp"
+
+#if USE_SFTP
 #include "clSFTPManager.hpp"
+#endif
+
 #include "clTempFile.hpp"
 #include "cl_standard_paths.h"
 #include "file_logger.h"
@@ -280,12 +284,16 @@ PatchResult PatchApplier::ApplyPatchLoose(const wxString& filePath, const wxStri
 
     auto fullpath = FileManager::GetFullPath(filePath);
     IEditor* editor{nullptr};
+#if USE_SFTP
     if (clWorkspaceManager::Get().IsWorkspaceOpened() && clWorkspaceManager::Get().GetWorkspace()->IsRemote()) {
         editor = clSFTPManager::Get().OpenFile(fullpath, clWorkspaceManager::Get().GetWorkspace()->GetSshAccount());
 
     } else {
         editor = clGetManager()->OpenFile(fullpath);
     }
+#else
+    editor = clGetManager()->OpenFile(fullpath);
+#endif
 
     if (!editor) {
         return PatchResult{.success = false, .errorMessage = "Failed to open source file."};

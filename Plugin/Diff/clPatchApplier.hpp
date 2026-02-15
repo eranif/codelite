@@ -1,6 +1,8 @@
 #pragma once
 
+#include "clResult.hpp"
 #include "codelite_exports.h"
+#include "wx/stc/stc.h"
 
 #include <optional>
 #include <vector>
@@ -45,6 +47,27 @@ struct WXDLLIMPEXP_SDK PatchOptions {
     bool dryRun = false; // Don't actually modify the file
     bool backup = true;  // Create a backup file
     wxString working_directory;
+};
+
+struct WXDLLIMPEXP_SDK ITextArea {
+    virtual int GetLineCount() = 0;
+    virtual wxString GetLine(int line) = 0;
+    virtual int PositionFromLine(int line) = 0;
+    virtual void DeleteRange(int start, int lengthDelete) = 0;
+    virtual void InsertText(int pos, const wxString& text) = 0;
+};
+
+struct WXDLLIMPEXP_SDK StcViewArea : public ITextArea {
+    explicit StcViewArea(wxStyledTextCtrl* ctrl)
+        : m_ctrl(ctrl)
+    {
+    }
+    int GetLineCount() override { return m_ctrl->GetLineCount(); }
+    wxString GetLine(int line) override { return m_ctrl->GetLine(line); }
+    int PositionFromLine(int line) override { return m_ctrl->PositionFromLine(line); }
+    void DeleteRange(int start, int lengthDelete) override { m_ctrl->DeleteRange(start, lengthDelete); }
+    void InsertText(int pos, const wxString& text) override { m_ctrl->InsertText(pos, text); }
+    wxStyledTextCtrl* m_ctrl{nullptr};
 };
 
 class WXDLLIMPEXP_SDK PatchApplier
@@ -113,4 +136,24 @@ public:
      * @see PatchResult
      */
     static PatchResult ApplyPatchLoose(const wxString& filePath, const wxString& patchContent);
+
+    /**
+     * @brief Applies a unified diff hunk to a ITextArea.
+     *
+     * This function applies a hunk of changes to the editor control starting at the specified line.
+     * The hunk lines should be in unified diff format with prefixes:
+     * - ' ' (space) for context lines (unchanged)
+     * - '-' for lines to be removed
+     * - '+' for lines to be added
+     *
+     * The function validates that context and deletion lines match the current content before
+     * applying any changes. If validation fails, no changes are made.
+     *
+     * @param ctrl The ITextArea to apply the hunk to.
+     * @param lines The array of hunk lines including their diff prefixes (' ', '-', '+').
+     * @param start_line The line number (0-based) where the hunk should be applied.
+     *
+     * @return The line number where the next hunk can be applied, or wxNOT_FOUND if the hunk failed to apply.
+     */
+    static clStatusOr<int> ApplyHunk(ITextArea* ctrl, const wxArrayString& lines, int start_line);
 };

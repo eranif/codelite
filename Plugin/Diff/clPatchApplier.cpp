@@ -89,6 +89,19 @@ UnifiedPatch PatchApplier::ParseUnifiedPatch(const wxString& patchContent)
         }
     }
 
+    // Remove trailing empty lines from the last hunk.
+    if (!patch.hunks.empty()) {
+        auto& last_hunk_lines = patch.hunks.back().lines;
+        while (!last_hunk_lines.empty()) {
+            wxString last_line = last_hunk_lines.back();
+            last_line.Trim();
+            if (last_line.empty()) {
+                last_hunk_lines.pop_back();
+            } else {
+                break;
+            }
+        }
+    }
     return patch;
 }
 
@@ -140,27 +153,7 @@ PatchApplier::ApplyPatchStrict(const wxString& filePath, const wxString& patchCo
     }
 }
 
-namespace
-{
-/**
- * @brief Applies a unified diff hunk to a wxStyledTextCtrl.
- *
- * This function applies a hunk of changes to the editor control starting at the specified line.
- * The hunk lines should be in unified diff format with prefixes:
- * - ' ' (space) for context lines (unchanged)
- * - '-' for lines to be removed
- * - '+' for lines to be added
- *
- * The function validates that context and deletion lines match the current content before
- * applying any changes. If validation fails, no changes are made.
- *
- * @param ctrl The wxStyledTextCtrl to apply the hunk to.
- * @param lines The array of hunk lines including their diff prefixes (' ', '-', '+').
- * @param start_line The line number (0-based) where the hunk should be applied.
- *
- * @return The line number where the next hunk can be applied, or wxNOT_FOUND if the hunk failed to apply.
- */
-clStatusOr<int> ApplyHunk(wxStyledTextCtrl* ctrl, const wxArrayString& lines, int start_line)
+clStatusOr<int> PatchApplier::ApplyHunk(ITextArea* ctrl, const wxArrayString& lines, int start_line)
 {
     if (!ctrl || lines.IsEmpty()) {
         return StatusInvalidArgument("Empty hunk");
@@ -268,7 +261,6 @@ clStatusOr<int> ApplyHunk(wxStyledTextCtrl* ctrl, const wxArrayString& lines, in
     // Return the line where the next hunk can be applied
     return currentLine;
 }
-} // namespace
 
 PatchResult PatchApplier::ApplyPatchLoose(const wxString& filePath, const wxString& patchContent)
 {
@@ -303,8 +295,9 @@ PatchResult PatchApplier::ApplyPatchLoose(const wxString& filePath, const wxStri
     // Apply hunks
     int start_line{0};
     stc->BeginUndoAction();
+    StcViewArea ctrl{stc};
     for (const auto& hunk : patch.hunks) {
-        auto res = ApplyHunk(stc, hunk.lines, start_line);
+        auto res = ApplyHunk(&ctrl, hunk.lines, start_line);
         if (!res.ok()) {
             // Revert the changes
             stc->EndUndoAction();

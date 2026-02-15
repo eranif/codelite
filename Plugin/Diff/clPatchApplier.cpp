@@ -262,7 +262,7 @@ clStatusOr<int> PatchApplier::ApplyHunk(ITextArea* ctrl, const wxArrayString& li
     return currentLine;
 }
 
-PatchResult PatchApplier::ApplyPatchLoose(const wxString& filePath, const wxString& patchContent)
+PatchResult PatchApplier::ApplyPatchLoose(const wxString& filePath, const wxString& patchContent, bool save_on_success)
 {
     clDEBUG() << "ApplyPatchLoose is called for file:" << filePath << "and patch:\n" << patchContent << endl;
     if (!wxThread::IsMain()) {
@@ -307,5 +307,14 @@ PatchResult PatchApplier::ApplyPatchLoose(const wxString& filePath, const wxStri
         start_line = res.value();
     }
     stc->EndUndoAction();
+
+    if (save_on_success) {
+        // Save the file after applying a patch.
+        if (!editor->Save()) {
+            // Revert the changes
+            stc->Undo();
+            return PatchResult{.success = false, .errorMessage = "Failed to save patched file"};
+        }
+    }
     return PatchResult{.success = true};
 }

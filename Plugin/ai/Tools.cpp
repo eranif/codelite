@@ -441,15 +441,12 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
             opts.working_directory = clWorkspaceManager::Get().GetWorkspace()->GetDir();
         }
 
-        auto result = PatchApplier::ApplyPatchLoose(wxString::FromUTF8(file_path), patch);
+        auto result = PatchApplier::ApplyPatchLoose(wxString::FromUTF8(file_path), patch, true);
         if (!result.success) {
             clDEBUG() << "Failed to apply the patch:" << result.errorMessage.ToStdString(wxConvUTF8) << endl;
             return Err(result.errorMessage.ToStdString(wxConvUTF8));
         }
         clDEBUG() << "Patch applied successfully" << endl;
-
-        // Reload the modified file
-        EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
         return Ok("Patch applied successfully");
     };
 

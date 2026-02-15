@@ -114,28 +114,28 @@ public:
     static UnifiedPatch ParseUnifiedPatch(const wxString& patchContent);
 
     /**
-     * @brief Applies a unified diff patch to a file with loose matching, allowing hunks to be applied at flexible line
-     * positions.
+     * @brief Applies a unified diff patch to a file with loose matching and optional save.
      *
-     * This method parses the provided patch content and applies each hunk sequentially to the specified file.
-     * The file is opened in the appropriate editor (remote via SFTP or local) and modified in-place.
-     * This function must be called from the main thread only.
+     * This method parses the provided patch content, opens the specified file (either locally
+     * or via SFTP if the workspace is remote), and applies each hunk sequentially. If any hunk
+     * fails to apply or if saving fails (when requested), all changes are reverted via undo.
      *
      * @param filePath The path to the file to be patched (relative or absolute).
-     * @param patchContent The unified diff patch content as a string.
+     * @param patchContent A string containing the unified diff patch content to apply.
+     * @param save_on_success If true, automatically saves the file after successfully applying
+     *                        all hunks; if false, leaves the file modified but unsaved.
      *
-     * @return PatchResult A structure containing:
-     *         - success: true if all hunks were applied successfully, false otherwise.
-     *         - errorMessage: A description of the error if success is false, empty otherwise.
+     * @return PatchResult A structure indicating success or failure. On success, the `success`
+     *         field is true. On failure, `success` is false and `errorMessage` contains a
+     *         description of the error.
      *
-     * @note This function can only be called from the main thread. Calling from another thread will result in failure.
-     * @note The function performs in-place modification of the file through the editor interface.
-     *
-     * @see ParseUnifiedPatch
-     * @see ApplyHunk
-     * @see PatchResult
+     * @note This function must be called from the main thread only. Calling from any other
+     *       thread will result in immediate failure with an appropriate error message.
+     * @note If any hunk fails to apply or if saving fails (when requested), all changes are
+     *       automatically reverted using the editor's undo mechanism.
      */
-    static PatchResult ApplyPatchLoose(const wxString& filePath, const wxString& patchContent);
+    static PatchResult
+    ApplyPatchLoose(const wxString& filePath, const wxString& patchContent, bool save_on_success = true);
 
     /**
      * @brief Applies a unified diff hunk to a ITextArea.

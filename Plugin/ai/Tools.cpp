@@ -159,14 +159,10 @@ Common causes of patch failures:
 
 Parameters:
 - patch_content (string, required): The git style diff patch content to apply. Must be a valid git style diff format with exact matching of original content.
-- file_path (string, required): The path to the file that should be patched.
-- dry_run (boolean, optional): When true, validates the patch without modifying the file. Default is true. Recommended to test with dry_run=true first.)")
+- file_path (string, required): The path to the file that should be patched.)")
                   .SetCallback(ApplyPatch)
                   .AddRequiredParam("patch_content", "The git style diff patch content to apply", "string")
                   .AddRequiredParam("file_path", "The path to the file that should be patched", "string")
-                  .AddOptionalParam("dry_run",
-                                    "When true, validates the patch without modifying the file. Default is true.",
-                                    "boolean")
                   .Build());
     table.Add(FunctionBuilder("CreateNewFile")
                   .SetDescription(R"(Create a new file at the specified path with optional content.

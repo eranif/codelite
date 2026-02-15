@@ -55,7 +55,6 @@ CodeLite exposes the following built-in tools for the model:
 * **ApplyPatch** — Apply a git style diff patch to a file.
   * `file_path` (string, required): The path to the file that should be patched.
   * `patch_content` (string, required): The git style diff patch content to apply.
-  * `dry_run` (boolean, optional): When true, validates the patch without modifying the file. Default is true.
 
 * **CreateNewFile** — Create a new file at the specified path with optional content.
   * `filepath` (string, required): The path where the new file should be created.

@@ -29,6 +29,7 @@
 
 #include <wx/msw/wrapwin.h> // includes windows.h
 #include <wx/string.h>
+#include <limits> // Required for std::numeric_limits
 
 class WinProcess
 {

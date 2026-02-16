@@ -25,8 +25,8 @@
 #include "ChatAI.hpp"
 
 #include "ai/LLMManager.hpp"
-#include "codelite_events.h"
 #include "cl_config.h"
+#include "codelite_events.h"
 #include "event_notifier.h"
 #include "globals.h"
 
@@ -43,6 +43,12 @@ ChatAI::ChatAI()
     m_chatWindow = new ChatAIWindow(clGetManager()->BookGet(PaneId::SIDE_BAR), this);
     clGetManager()->BookAddPage(PaneId::SIDE_BAR, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &ChatAI::OnInitDone, this);
+}
+
+ChatAI::~ChatAI()
+{
+    bool is_docked = m_dockedPaneId.has_value();
+    clConfig::Get().Write(kConfigIsViewDetached, is_docked);
 }
 
 void ChatAI::ShowChatWindow(const wxString& prompt)

@@ -12,6 +12,7 @@
 #include "fileutils.h"
 #include "globals.h"
 
+#include <future>
 #include <wx/msgdlg.h>
 #include <wx/richmsgdlg.h>
 #include <wx/xrc/xmlres.h>
@@ -144,20 +145,21 @@ Manager& Manager::GetInstance()
     return instance;
 }
 
-Manager::Manager()
+Manager::~Manager()
 {
+    Stop();
+    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &Manager::OnFileSaved, this);
+}
+
+void Manager::Initialise()
+{
+    m_chatAI = std::make_unique<ChatAI>();
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &Manager::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, [this](wxCommandEvent& e) {
         e.Skip();
         // Now that all the plugins are loaded, start the agent.
         Start();
     });
-}
-
-Manager::~Manager()
-{
-    Stop();
-    EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &Manager::OnFileSaved, this);
 }
 
 bool Manager::IsAvailable()
@@ -550,27 +552,60 @@ void Manager::Stop()
 
 static std::unordered_map<std::string, bool> sessions_persisted_answers;
 
+/**
+ * @brief Executes the provided callback on the main (GUI) thread and returns its result.
+ *
+ */
+template <typename T>
+T RunOnMain(std::function<T()> callback)
+{
+    auto promise_ptr = std::make_shared<std::promise<T>>();
+    auto f = promise_ptr->get_future();
+    if (wxThread::IsMain()) {
+        if constexpr (std::is_void_v<T>) {
+            callback();
+            promise_ptr->set_value();
+        } else {
+            promise_ptr->set_value(callback());
+        }
+    } else {
+        auto wrapped_cb = [callback = std::move(callback), promise_ptr]() {
+            if constexpr (std::is_void_v<T>) {
+                callback();
+                promise_ptr->set_value();
+            } else {
+                promise_ptr->set_value(callback());
+            }
+        };
+        llm::Manager::GetInstance().CallAfter(wrapped_cb);
+    }
+    return f.get();
+}
+
 bool Manager::CanRunTool(const std::string& tool_name)
 {
-    wxString message;
-    message << _("The model wants to run the tool: \"") << tool_name << _("\"\nContinue?");
+    auto can_run_func = [&tool_name]() -> bool {
+        wxString message;
+        message << _("The model wants to run the tool: \"") << tool_name << _("\"\nContinue?");
 
-    if (sessions_persisted_answers.contains(tool_name)) {
-        return sessions_persisted_answers[tool_name];
-    }
+        if (sessions_persisted_answers.contains(tool_name)) {
+            return sessions_persisted_answers[tool_name];
+        }
 
-    wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(),
-                            message,
-                            _("Confirm"),
-                            wxYES_NO | wxCANCEL_DEFAULT | wxCANCEL | wxCENTER | wxICON_QUESTION);
-    dlg.ShowCheckBox(_("Remember my answer for this session"), false);
-    bool can_run_tool = dlg.ShowModal() == wxID_YES;
-    if (dlg.IsCheckBoxChecked()) {
-        // Persist the answer for this tool for this session only.
-        sessions_persisted_answers.erase(tool_name);
-        sessions_persisted_answers.insert({tool_name, can_run_tool});
-    }
-    return can_run_tool;
+        wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(),
+                                message,
+                                _("Confirm"),
+                                wxYES_NO | wxCANCEL_DEFAULT | wxCANCEL | wxCENTER | wxICON_QUESTION);
+        dlg.ShowCheckBox(_("Remember my answer for this session"), false);
+        bool can_run_tool = dlg.ShowModal() == wxID_YES;
+        if (dlg.IsCheckBoxChecked()) {
+            // Persist the answer for this tool for this session only.
+            sessions_persisted_answers.erase(tool_name);
+            sessions_persisted_answers.insert({tool_name, can_run_tool});
+        }
+        return can_run_tool;
+    };
+    return RunOnMain<bool>(can_run_func);
 }
 
 void Manager::Start(std::shared_ptr<assistant::ClientBase> client)
@@ -994,12 +1029,7 @@ void Manager::EnableFunctionByName(const wxString& name, bool b)
     m_client->GetFunctionTable().EnableFunction(name.ToStdString(wxConvUTF8), b);
 }
 
-void Manager::ShowChatWindow(const wxString& prompt)
-{
-    wxCommandEvent event_show{wxEVT_MENU, XRCID("ai_configure_endpoint")};
-    event_show.SetString(prompt);
-    EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(event_show);
-}
+void Manager::ShowChatWindow(const wxString& prompt) { m_chatAI->ShowChatWindow(prompt); }
 
 void Manager::ShowTextGenerationDialog(const wxString& prompt,
                                        std::shared_ptr<TextGenerationPreviewFrame> preview_frame,

@@ -32,7 +32,7 @@ class WXDLLIMPEXP_SDK ChatAI : public wxEvtHandler
 {
 public:
     ChatAI();
-    ~ChatAI() override = default;
+    ~ChatAI() override;
 
     void DetachView(bool show_frame);
     void DockView();

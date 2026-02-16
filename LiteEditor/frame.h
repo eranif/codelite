@@ -146,7 +146,6 @@ class clMainFrame : public wxFrame
     // the main tool default style
     int m_mainToolbarStyle = wxTB_FLAT | wxTB_NODIVIDER /* toolbar is hidden by default */;
     wxString m_mainFrameTitleTemplate;
-    std::unique_ptr<ChatAI> m_chatAI{nullptr};
 
 public:
     static bool m_initCompleted;

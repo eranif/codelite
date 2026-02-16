@@ -3496,8 +3496,8 @@ void clMainFrame::CompleteInitialization()
     PluginManager::Get()->Load();
     m_pluginsToolbar->Realize();
 
-    // Initialise the ChatAI
-    m_chatAI = std::make_unique<ChatAI>();
+    // Initialise an instance of llm::Manager
+    llm::Manager::GetInstance().Initialise();
 
 // Load debuggers (*must* be after the plugins)
 #ifdef __WXMSW__
@@ -6245,7 +6245,7 @@ void clMainFrame::OnAiShowChatBox(wxCommandEvent& e)
         }
         return;
     }
-    m_chatAI->ShowChatWindow(e.GetString());
+    llm::Manager::GetInstance().ShowChatWindow(e.GetString());
 }
 
 void clMainFrame::OnAiChooseEndpoint(wxCommandEvent& e)

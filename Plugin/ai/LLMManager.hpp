@@ -2,6 +2,7 @@
 
 #include "CustomControls/TextGenerationPreviewFrame.hpp"
 #include "JSON.h"
+#include "ai/ChatAI.hpp"
 #include "ai/Common.hpp"
 #include "ai/Config.hpp"
 #include "ai/LLMEvents.hpp"
@@ -157,6 +158,11 @@ public:
      * @return the global {@code Manager} instance
      */
     static Manager& GetInstance();
+
+    /**
+     * @brief initialise the instance
+     */
+    void Initialise();
 
     /**
      * @brief Sends a single prompt to the currently available LLM and starts processing it.
@@ -464,8 +470,10 @@ public:
 
     const std::vector<wxString>& GetAvailablePlaceHolders() const;
 
+    ChatAI* GetChatWindow() { return m_chatAI.get(); }
+
 private:
-    Manager();
+    Manager() = default;
     ~Manager();
 
     clStatusOr<wxString> CreateOrOpenConfig();
@@ -522,6 +530,7 @@ private:
     std::atomic_bool m_worker_thread_running{false};
     std::atomic_bool m_worker_busy{false};
     FunctionTable m_plugin_functions;
+    std::unique_ptr<ChatAI> m_chatAI{nullptr};
 };
 
 /**

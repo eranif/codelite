@@ -7,7 +7,7 @@ TextViewerDlg::TextViewerDlg(wxWindow* parent,
                              const wxString& content,
                              const wxString& content_lexer,
                              const wxString& title)
-    : TextViewerBaseDlg(parent)
+    : TextViewerBaseDlg(parent == nullptr ? wxTheApp->GetTopWindow() : parent)
 {
     SetLabel(title);
     m_staticTextMessage->SetLabel(message);
@@ -20,5 +20,8 @@ TextViewerDlg::TextViewerDlg(wxWindow* parent,
         lexer->Apply(m_stc, true);
     }
 
+    if (GetParent()) {
+        CenterOnParent();
+    }
     m_stc->CallAfter(&wxStyledTextCtrl::SetFocus);
 }

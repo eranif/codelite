@@ -42,6 +42,31 @@ public:
         int curpos = m_ctrl->GetEndStyled();
         return m_ctrl->GetCharAt(m_ctrl->PositionRelative(curpos, at));
     }
+
+    /// Return teh current position
+    inline int GetPosition() const { return m_ctrl->GetEndStyled(); }
+
+    /// Return the word at the current position
+    inline wxString GetWordAtCurrentPosition() const
+    {
+        int curpos = m_ctrl->GetEndStyled();
+        if (curpos < 0 || curpos > m_ctrl->GetLastPosition()) {
+            return wxEmptyString;
+        }
+
+        // Find the start of the word
+        int start = m_ctrl->WordStartPosition(curpos, true);
+
+        // Find the end of the word
+        int end = m_ctrl->WordEndPosition(curpos, true);
+
+        // Extract and return the word
+        if (start >= end) {
+            return wxEmptyString;
+        }
+        return m_ctrl->GetTextRange(start, end);
+    }
+
     /**
      * @brief Determines whether the current caret position is at the start of a line (ignoring leading whitespace).
      *

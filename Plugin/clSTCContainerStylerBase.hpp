@@ -131,6 +131,12 @@ public:
 
     inline bool CanNext() const { return m_ctrl->GetEndStyled() != m_ctrl->GetLastPosition(); }
 
+    /// Check if we can peek ahead 'count' characters from the current position
+    inline bool CanPeek(size_t count) const
+    {
+        return (m_ctrl->GetEndStyled() + static_cast<int>(count)) <= m_ctrl->GetLastPosition();
+    }
+
 private:
     wxString GetSubStringUntilNewLine(size_t from)
     {

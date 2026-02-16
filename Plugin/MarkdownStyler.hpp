@@ -34,6 +34,11 @@ enum MarkdownStyles {
     kNumberedListItem,
     kNumberedListItemDot,
     kUrl,
+    kCodeBlockKeyword,
+    kCodeBlockString,
+    kCodeBlockNumber,
+    kCodeBlockFunction,
+    kCodeBlockOperator,
 };
 
 enum class MarkdownState {
@@ -41,6 +46,7 @@ enum class MarkdownState {
     kCodeBlock3,
     kCodeBlock4,
     kCodeBlock5,
+    kCodeBlockContent,
     kCodeBlockTag,
     kCodeWord,
     kStrong2Text,
@@ -62,7 +68,25 @@ private:
     void OnStyle(clSTCAccessor& accessor);
     void OnHostspotClicked(wxStyledTextEvent& event);
 
+    /**
+     * @brief Style code block content with syntax highlighting
+     * @param accessor The text accessor
+     * @param language The language tag (e.g., "c++", "python", "javascript")
+     */
+    void StyleCodeBlockContent(clSTCAccessor& accessor, const wxString& language);
+
+    /**
+     * @brief Check if a word is a keyword for the given language
+     */
+    bool IsKeyword(const wxString& word, const wxString& language) const;
+
+    /**
+     * @brief Check if a character is an operator
+     */
+    bool IsOperator(wxChar ch) const;
+
     std::stack<MarkdownState> m_states;
+    wxString m_currentCodeBlockLanguage;
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_MARKDOWN_LINK_CLICKED, clCommandEvent);

@@ -50,6 +50,7 @@ struct WXDLLIMPEXP_SDK PatchOptions {
 };
 
 struct WXDLLIMPEXP_SDK ITextArea {
+    virtual ~ITextArea() = default;
     virtual int GetLineCount() = 0;
     virtual wxString GetLine(int line) = 0;
     virtual int PositionFromLine(int line) = 0;

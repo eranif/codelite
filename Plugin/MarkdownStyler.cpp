@@ -168,8 +168,10 @@ void MarkdownStyler::InitStyles()
     }
 
     auto keyword = rust_lexer->GetProperty(wxSTC_RUST_WORD2);
+    auto macro = rust_lexer->GetProperty(wxSTC_RUST_MACRO);
     auto variable = rust_lexer->GetProperty(wxSTC_RUST_WORD);
     auto string = rust_lexer->GetProperty(wxSTC_RUST_STRING);
+    auto number = rust_lexer->GetProperty(wxSTC_RUST_NUMBER);
     auto block_comment = rust_lexer->GetProperty(wxSTC_RUST_COMMENTBLOCK);
 
     auto header_1 = markdown_lexer->GetProperty(wxSTC_MARKDOWN_HEADER1);
@@ -235,7 +237,7 @@ void MarkdownStyler::InitStyles()
     m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockString, string.GetFgColour());
     m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockString, code_bg);
 
-    m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockNumber, string.GetFgColour());
+    m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockNumber, number.GetFgColour());
     m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockNumber, code_bg);
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockFunction, function.GetFgColour());
@@ -243,6 +245,9 @@ void MarkdownStyler::InitStyles()
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockOperator, variable.GetFgColour());
     m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockOperator, code_bg);
+
+    m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockMacro, macro.GetFgColour());
+    m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockMacro, code_bg);
 
     SetStyleCallback([this](clSTCAccessor& accessor) { this->OnStyle(accessor); });
 }
@@ -401,6 +406,29 @@ void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxStri
                 count++;
             } else {
                 break;
+            }
+        }
+
+        // Check if it's a Rust macro (identifier followed by '!')
+        if (language == "rust" || language == "rs") {
+            bool isMacro = false;
+            int peek = count;
+            while (accessor.CanPeek(peek)) {
+                wxChar next = accessor.GetCharAt(peek);
+                if (next == '!') {
+                    isMacro = true;
+                    // Include the '!' in the macro style
+                    count = peek + 1;
+                    break;
+                } else if (next == ' ' || next == '\t') {
+                    peek++;
+                } else {
+                    break;
+                }
+            }
+            if (isMacro) {
+                accessor.SetStyle(MarkdownStyles::kCodeBlockMacro, count);
+                return;
             }
         }
 

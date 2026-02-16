@@ -39,6 +39,7 @@ enum MarkdownStyles {
     kCodeBlockNumber,
     kCodeBlockFunction,
     kCodeBlockOperator,
+    kCodeBlockMacro,
 };
 
 enum class MarkdownState {

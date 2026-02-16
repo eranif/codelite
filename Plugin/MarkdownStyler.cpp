@@ -167,12 +167,13 @@ void MarkdownStyler::InitStyles()
         m_ctrl->StyleSetBackground(i, default_bg);
     }
 
-    auto keyword = rust_lexer->GetProperty(wxSTC_RUST_WORD2);
+    auto keyword = rust_lexer->GetProperty(wxSTC_RUST_WORD);
     auto macro = rust_lexer->GetProperty(wxSTC_RUST_MACRO);
-    auto variable = rust_lexer->GetProperty(wxSTC_RUST_WORD);
+    auto variable = rust_lexer->GetProperty(wxSTC_RUST_WORD5);
     auto string = rust_lexer->GetProperty(wxSTC_RUST_STRING);
-    auto number = rust_lexer->GetProperty(wxSTC_RUST_NUMBER);
+    auto number = rust_lexer->GetProperty(wxSTC_RUST_LIFETIME);
     auto block_comment = rust_lexer->GetProperty(wxSTC_RUST_COMMENTBLOCK);
+    auto codeblock_function = rust_lexer->GetProperty(wxSTC_RUST_WORD6);
 
     auto header_1 = markdown_lexer->GetProperty(wxSTC_MARKDOWN_HEADER1);
     auto header_2 = markdown_lexer->GetProperty(wxSTC_MARKDOWN_HEADER2);
@@ -213,12 +214,12 @@ void MarkdownStyler::InitStyles()
     // Strong style
     m_ctrl->StyleSetForeground(MarkdownStyles::kStrong2Text, default_fg);
     m_ctrl->StyleSetBold(MarkdownStyles::kStrong2Text, true);
-    m_ctrl->StyleSetForeground(MarkdownStyles::kStrong2Tag, variable.GetFgColour());
+    m_ctrl->StyleSetForeground(MarkdownStyles::kStrong2Tag, keyword.GetFgColour());
 
     // Emphasis style
     m_ctrl->StyleSetForeground(MarkdownStyles::kEmphasis2Text, default_fg);
     m_ctrl->StyleSetItalic(MarkdownStyles::kEmphasis2Text, true);
-    m_ctrl->StyleSetForeground(MarkdownStyles::kEmphasis2Tag, variable.GetFgColour());
+    m_ctrl->StyleSetForeground(MarkdownStyles::kEmphasis2Tag, keyword.GetFgColour());
 
     // List items
     m_ctrl->StyleSetForeground(MarkdownStyles::kNumberedListItem, string.GetFgColour());
@@ -240,7 +241,7 @@ void MarkdownStyler::InitStyles()
     m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockNumber, number.GetFgColour());
     m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockNumber, code_bg);
 
-    m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockFunction, function.GetFgColour());
+    m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockFunction, codeblock_function.GetFgColour());
     m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockFunction, code_bg);
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockOperator, variable.GetFgColour());

@@ -30,21 +30,6 @@ inline WXDLLIMPEXP_SDK FunctionResult Err(std::optional<wxString> text)
     return result;
 }
 
-/**
- * @brief Executes the provided callback on the main (GUI) thread and returns its result.
- *
- * If the current thread is already the main thread, the callback is invoked directly.
- * Otherwise, the callback is scheduled to run in the next event loop iteration via
- * `llm::Manager::CallAfter`, and this function blocks until the callback completes.
- *
- * @param callback A `std::function<FunctionResult()>` representing the work to be performed on the main thread.
- * @param tool_name A `wxString` identifying the tool; used for debugging and logging purposes.
- *
- * @return The `FunctionResult` produced by the callback.
- */
-assistant::FunctionResult WXDLLIMPEXP_SDK RunOnMain(std::function<FunctionResult()> callback,
-                                                    const wxString& tool_name);
-
 /// Available API that CodeLite exposes to the model.
 
 /**

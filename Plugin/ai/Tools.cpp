@@ -26,40 +26,6 @@
 
 namespace llm
 {
-
-/// Run `callback` in the main thread
-
-/**
- * @brief Executes the provided callback on the main (GUI) thread and returns its result.
- *
- * If the current thread is already the main thread, the callback is invoked directly.
- * Otherwise, the callback is scheduled to run in the next event loop iteration via
- * `llm::Manager::CallAfter`, and this function blocks until the callback completes.
- *
- * @param callback A `std::function<FunctionResult()>` representing the work to be performed on the main thread.
- * @param tool_name A `wxString` identifying the tool; used for debugging and logging purposes.
- *
- * @return The `FunctionResult` produced by the callback.
- */
-assistant::FunctionResult RunOnMain(std::function<FunctionResult()> callback, const wxString& tool_name)
-{
-    auto promise_ptr = std::make_shared<std::promise<FunctionResult>>();
-    auto f = promise_ptr->get_future();
-    if (wxThread::IsMain()) {
-        clDEBUG() << "Processing function:" << tool_name << "in the main thread directly" << endl;
-        promise_ptr->set_value(callback());
-    } else {
-        auto wrapped_cb = [callback = std::move(callback), promise_ptr]() {
-            // return the result using the promise.
-            promise_ptr->set_value(callback());
-        };
-
-        // Run the callback in the next event loop
-        llm::Manager::GetInstance().CallAfter(&llm::Manager::RunTool, std::move(wrapped_cb));
-    }
-    return f.get();
-}
-
 // Register CodeLite tools with the model.
 void PopulateBuiltInFunctions(FunctionTable& table)
 {
@@ -221,7 +187,7 @@ FunctionResult CreateNewFile(const assistant::json& args)
         }
         return Ok(msg);
     };
-    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
+    return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
 }
 
 FunctionResult ReadFileContent(const assistant::json& args)
@@ -245,7 +211,7 @@ FunctionResult ReadFileContent(const assistant::json& args)
         clDEBUG() << "ReadFileContent completed successfully." << endl;
         return Ok(content.value());
     };
-    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
+    return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
 }
 
 FunctionResult OpenFileInEditor(const assistant::json& args)
@@ -275,13 +241,13 @@ FunctionResult OpenFileInEditor(const assistant::json& args)
         msg << "File '" << file << "' has been successfully loaded into an editor.";
         return Ok(msg);
     };
-    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
+    return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
 }
 
 FunctionResult GetCompilerOutput([[maybe_unused]] const assistant::json& args)
 {
     auto cb = [=]() -> FunctionResult { return Ok(clGetManager()->GetBuildOutput()); };
-    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
+    return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
 }
 
 FunctionResult GetCurrentEditorText([[maybe_unused]] const assistant::json& args)
@@ -293,7 +259,7 @@ FunctionResult GetCurrentEditorText([[maybe_unused]] const assistant::json& args
         }
         return Ok(active_editor->GetEditorText());
     };
-    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
+    return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
 }
 
 FunctionResult GetCurrentEditorPath([[maybe_unused]] const assistant::json& args)
@@ -305,7 +271,7 @@ FunctionResult GetCurrentEditorPath([[maybe_unused]] const assistant::json& args
         }
         return Ok(active_editor->GetRemotePathOrLocal());
     };
-    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
+    return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
 }
 
 FunctionResult CreateWorkspace([[maybe_unused]] const assistant::json& args)
@@ -374,7 +340,7 @@ FunctionResult CreateWorkspace([[maybe_unused]] const assistant::json& args)
             return Ok(wxEmptyString);
         }
     };
-    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
+    return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
 }
 
 FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
@@ -446,7 +412,7 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
         return Ok("Patch applied successfully");
     };
 
-    return RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
+    return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
 }
 
 FunctionResult ToolShellExecute([[maybe_unused]] const assistant::json& args)
@@ -472,7 +438,7 @@ FunctionResult ToolShellExecute([[maybe_unused]] const assistant::json& args)
     };
 
     // Prompt the user, this must be on the main thread.
-    auto res = RunOnMain(std::move(cb), __PRETTY_FUNCTION__);
+    auto res = EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
     if (res.isError) {
         return res;
     }

@@ -26,7 +26,9 @@
 #ifndef EVENTNOTIFIER_H
 #define EVENTNOTIFIER_H
 
+#include <future>
 #include <wx/event.h>
+#include <wx/thread.h>
 
 #if wxUSE_GUI
 #include <wx/frame.h>
@@ -83,6 +85,36 @@ public:
      * @brief send a wxEVT_WORKSPACE_RELOAD_ENDED event (sync event)
      */
     void NotifyWorkspaceReloadEndEvent(const wxString& workspaceFile);
+
+    /**
+     * @brief Executes the provided callback on the main (GUI) thread and returns its result.
+     *
+     */
+    template <typename T>
+    T RunOnMain(std::function<T()> callback)
+    {
+        auto promise_ptr = std::make_shared<std::promise<T>>();
+        auto f = promise_ptr->get_future();
+        if (wxThread::IsMain()) {
+            if constexpr (std::is_void_v<T>) {
+                callback();
+                promise_ptr->set_value();
+            } else {
+                promise_ptr->set_value(callback());
+            }
+        } else {
+            auto wrapped_cb = [callback = std::move(callback), promise_ptr]() {
+                if constexpr (std::is_void_v<T>) {
+                    callback();
+                    promise_ptr->set_value();
+                } else {
+                    promise_ptr->set_value(callback());
+                }
+            };
+            CallAfter(wrapped_cb);
+        }
+        return f.get();
+    }
 };
 
 #endif // EVENTNOTIFIER_H

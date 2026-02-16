@@ -552,36 +552,6 @@ void Manager::Stop()
 
 static std::unordered_map<std::string, bool> sessions_persisted_answers;
 
-/**
- * @brief Executes the provided callback on the main (GUI) thread and returns its result.
- *
- */
-template <typename T>
-T RunOnMain(std::function<T()> callback)
-{
-    auto promise_ptr = std::make_shared<std::promise<T>>();
-    auto f = promise_ptr->get_future();
-    if (wxThread::IsMain()) {
-        if constexpr (std::is_void_v<T>) {
-            callback();
-            promise_ptr->set_value();
-        } else {
-            promise_ptr->set_value(callback());
-        }
-    } else {
-        auto wrapped_cb = [callback = std::move(callback), promise_ptr]() {
-            if constexpr (std::is_void_v<T>) {
-                callback();
-                promise_ptr->set_value();
-            } else {
-                promise_ptr->set_value(callback());
-            }
-        };
-        llm::Manager::GetInstance().CallAfter(wrapped_cb);
-    }
-    return f.get();
-}
-
 bool Manager::CanRunTool(const std::string& tool_name)
 {
     auto can_run_func = [&tool_name]() -> bool {
@@ -605,7 +575,7 @@ bool Manager::CanRunTool(const std::string& tool_name)
         }
         return can_run_tool;
     };
-    return RunOnMain<bool>(can_run_func);
+    return EventNotifier::Get()->RunOnMain<bool>(can_run_func);
 }
 
 void Manager::Start(std::shared_ptr<assistant::ClientBase> client)

@@ -31,8 +31,6 @@
 
 class WXDLLIMPEXP_CL clSocketClient : public clSocketBase
 {
-    wxString m_path;
-
 public:
     clSocketClient() = default;
     virtual ~clSocketClient() = default;

@@ -173,6 +173,7 @@ void MarkdownStyler::InitStyles()
     auto string = rust_lexer->GetProperty(wxSTC_RUST_STRING);
     auto number = rust_lexer->GetProperty(wxSTC_RUST_LIFETIME);
     auto block_comment = rust_lexer->GetProperty(wxSTC_RUST_COMMENTBLOCK);
+    auto line_comment = rust_lexer->GetProperty(wxSTC_RUST_COMMENTLINE);
     auto codeblock_function = rust_lexer->GetProperty(wxSTC_RUST_WORD6);
 
     auto header_1 = markdown_lexer->GetProperty(wxSTC_MARKDOWN_HEADER1);
@@ -250,6 +251,9 @@ void MarkdownStyler::InitStyles()
     m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockMacro, macro.GetFgColour());
     m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockMacro, code_bg);
 
+    m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockComment, line_comment.GetFgColour());
+    m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockComment, code_bg);
+
     SetStyleCallback([this](clSTCAccessor& accessor) { this->OnStyle(accessor); });
 }
 
@@ -315,6 +319,23 @@ bool MarkdownStyler::IsOperator(wxChar ch) const
 
 void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxString& language)
 {
+    // Normalize language for consistency
+    wxString normalizedLang = NormalizeLanguage(language);
+
+    // Handle C++ style comments (//) for languages that support them
+    // Most C-family and many modern languages use this style
+    bool supportsCppComments = (normalizedLang == "c++" || normalizedLang == "c" || normalizedLang == "java" ||
+                                normalizedLang == "javascript" || normalizedLang == "rust" || normalizedLang == "go" ||
+                                normalizedLang == "php");
+
+    if (supportsCppComments && accessor.GetCurrentChar() == '/' && accessor.GetCharAt(1) == '/') {
+        // Style the entire line as a comment
+        while (accessor.CanNext() && accessor.GetCurrentChar() != '\n') {
+            accessor.SetStyle(MarkdownStyles::kCodeBlockComment, 1);
+        }
+        return;
+    }
+
     wxChar ch = accessor.GetCurrentChar();
 
     // Handle strings (double quotes)
@@ -458,14 +479,6 @@ void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxStri
             accessor.SetStyle(MarkdownStyles::kCodeBlockFunction, count);
         } else {
             accessor.SetStyle(MarkdownStyles::kCodeBlockText, count);
-        }
-        return;
-    }
-
-    // Handle comments (C-style //)
-    if (ch == '/' && accessor.GetCharAt(1) == '/') {
-        while (accessor.CanNext() && accessor.GetCurrentChar() != '\n') {
-            accessor.SetStyle(MarkdownStyles::kCodeBlockText, 1);
         }
         return;
     }

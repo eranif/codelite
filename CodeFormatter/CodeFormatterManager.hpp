@@ -4,7 +4,6 @@
 #include "GenericFormatter.hpp"
 
 #include <memory>
-#include <unordered_map>
 #include <vector>
 
 class CodeFormatterManager
@@ -12,13 +11,13 @@ class CodeFormatterManager
     std::vector<std::shared_ptr<GenericFormatter>> m_formatters;
 
 protected:
-    void push_back(GenericFormatter* formatter);
+    void push_back(std::shared_ptr<GenericFormatter> formatter);
     void initialize_defaults();
     void clear();
 
 public:
     CodeFormatterManager() = default;
-    virtual ~CodeFormatterManager();
+    virtual ~CodeFormatterManager() = default;
 
     std::shared_ptr<GenericFormatter> GetFormatter(const wxString& filepath) const;
     std::shared_ptr<GenericFormatter> GetFormatterByName(const wxString& name) const;
@@ -26,7 +25,7 @@ public:
     size_t GetAllNames(wxArrayString* names) const;
 
     /// Add new custom formatter
-    bool AddCustom(GenericFormatter* formatter);
+    bool AddCustom(std::shared_ptr<GenericFormatter> formatter);
 
     /// Delete formatter by name
     bool DeleteFormatter(const wxString& name);

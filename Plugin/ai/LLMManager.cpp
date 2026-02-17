@@ -278,6 +278,8 @@ void Manager::WorkerMain()
                         case assistant::Reason::kLogDebug:
                             clDEBUG() << message << endl;
                             break;
+                        case assistant::Reason::kRequestCost:
+                            break;
                         case assistant::Reason::kPartialResult: {
                             clLLMEvent event{wxEVT_LLM_OUTPUT};
                             event.SetResponseRaw(message);
@@ -600,6 +602,17 @@ void Manager::Start(std::shared_ptr<assistant::ClientBase> client)
         // TODO: support for CLAUDE.md file here.
         m_client->ClearSystemMessages();
         m_client->AddSystemMessage(std::string{kClaudeSystemMessage});
+    }
+
+    // Check if this is a stock model and associate the pricing for it.
+    auto active_endpoint = m_client_config.GetEndpoint();
+    if (active_endpoint) {
+        auto pricing = assistant::FindPricing(active_endpoint->model_);
+        if (pricing.has_value()) {
+            m_client->SetPricing(pricing.value());
+        } else {
+            // TODO: add support for user's custom pricing.
+        }
     }
 
     m_client->SetTookInvokeCallback(&Manager::CanRunTool);

@@ -15,11 +15,13 @@ public:
     void Start(const wxString& message);
     void Stop(const wxString& message);
     bool IsRunning() const;
-    void SetMessage(const wxString& message);
+    void SetMessage(const wxString& message, size_t column = 0);
+    void Clear(size_t column = 0);
 
 private:
     wxActivityIndicator* m_activityIndicator{nullptr};
     wxStaticText* m_statusMessage{nullptr};
+    wxStaticText* m_secondMessage{nullptr};
 };
 
 struct WXDLLIMPEXP_SDK IndicatorPanelLocker {

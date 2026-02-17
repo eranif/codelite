@@ -80,6 +80,7 @@ protected:
     void DoRestart();
 
     void ShowIndicator(bool show);
+    void UpdateCostBar();
 
 private:
     wxChoice* m_choiceEndpoints{nullptr};

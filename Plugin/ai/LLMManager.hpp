@@ -472,6 +472,20 @@ public:
 
     ChatAI* GetChatWindow() { return m_chatAI.get(); }
 
+    inline double GetLastRequestCost() const
+    {
+        CHECK_COND_RET_VAL(m_client, 0.0);
+        return m_client->GetLastRequestCost();
+    }
+
+    inline double GetTotalCost() const
+    {
+        CHECK_COND_RET_VAL(m_client, 0.0);
+        return m_client->GetTotalCost();
+    }
+
+    inline bool HasPricing() const { return m_client && m_client->GetPricing().has_value(); }
+
 private:
     Manager() = default;
     ~Manager();

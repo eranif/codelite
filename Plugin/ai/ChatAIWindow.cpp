@@ -280,6 +280,7 @@ void ChatAIWindow::OnRestartClient(wxCommandEvent& event)
     wxBusyCursor bc{};
     if (llm::Manager::GetInstance().ReloadConfig(std::nullopt, false)) {
         clGetManager()->SetStatusMessage(_("LLM client successfully restarted"), 3);
+        UpdateCostBar();
     }
 }
 
@@ -287,6 +288,7 @@ void ChatAIWindow::DoRestart()
 {
     DoClearOutputView();
     llm::Manager::GetInstance().Restart();
+    m_statusPanel->SetMessage(wxEmptyString, 1);
 }
 
 void ChatAIWindow::DoClearOutputView()
@@ -346,6 +348,8 @@ void ChatAIWindow::OnChatAIOutput(clLLMEvent& event)
         AppendOutput(content);
         break;
     }
+
+    UpdateCostBar();
 }
 
 void ChatAIWindow::OnChatAIOutputDone(clLLMEvent& event)
@@ -373,6 +377,17 @@ void ChatAIWindow::ShowIndicator(bool show)
     } else {
         m_statusPanel->Stop(_("Ready"));
     }
+}
+
+void ChatAIWindow::UpdateCostBar()
+{
+    auto& llm = llm::Manager::GetInstance();
+    if (!llm.HasPricing()) {
+        return;
+    }
+    wxString str;
+    str << _("Total cost: $") << llm.GetTotalCost() << _(", Last Request cost: $") << llm.GetLastRequestCost();
+    m_statusPanel->SetMessage(str, 1);
 }
 
 void ChatAIWindow::OnLLMConfigUpdate(clLLMEvent& event)

@@ -9,38 +9,41 @@
 #include <wx/stc/stc.h>
 
 enum MarkdownStyles {
-    kDefault,
-    kHeader1,
-    kHeader2,
-    kHeader3,
-    kHeader4,
-    kHeader5,
-    kHeader6,
-    kHeaderText,
-    kCodeBlockTag,
-    kCodeBlockText,
-    kCodeWord,
-    kStrongText,
-    kStrong2Text,
-    kStrongTag,
-    kStrong2Tag,
-    kEmphasisText,
-    kEmphasis2Text,
-    kEmphasisTag,
-    kEmphasis2Tag,
-    kBacktick,
-    kHorizontalLine,
-    kListItem,
-    kNumberedListItem,
-    kNumberedListItemDot,
-    kUrl,
-    kCodeBlockKeyword,
-    kCodeBlockString,
-    kCodeBlockNumber,
-    kCodeBlockFunction,
-    kCodeBlockOperator,
-    kCodeBlockMacro,
-    kCodeBlockComment,
+    kDefault,             // 0
+    kHeader1,             // 1
+    kHeader2,             // 2
+    kHeader3,             // 3
+    kHeader4,             // 4
+    kHeader5,             // 5
+    kHeader6,             // 6
+    kHeaderText,          // 7
+    kCodeBlockTag,        // 8
+    kCodeBlockText,       // 9
+    kCodeWord,            // 10
+    kStrongText,          // 11
+    kStrong2Text,         // 12
+    kStrongTag,           // 13
+    kStrong2Tag,          // 14
+    kEmphasisText,        // 15
+    kEmphasis2Text,       // 16
+    kEmphasisTag,         // 17
+    kEmphasis2Tag,        // 18
+    kBacktick,            // 19
+    kHorizontalLine,      // 20
+    kListItem,            // 21
+    kNumberedListItem,    // 22
+    kNumberedListItemDot, // 23
+    kUrl,                 // 24
+    kCodeBlockKeyword,    // 25
+    kCodeBlockString,     // 26
+    kCodeBlockNumber,     // 27
+    kCodeBlockFunction,   // 28
+    kCodeBlockOperator,   // 29
+    kCodeBlockMacro,      // 30
+    kCodeBlockComment,    // 31
+    // Skip to 40 since 32-39 are used internally
+    kDiffAdd = 40,        // 40
+    kDiffDelete,          // 42
 };
 
 enum class MarkdownState {

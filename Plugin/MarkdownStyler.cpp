@@ -161,15 +161,14 @@ void MarkdownStyler::InitStyles()
     auto rust_lexer = ColoursAndFontsManager::Get().GetLexer("rust");
     CHECK_PTR_RET(rust_lexer);
 
+    auto diff_lexer = ColoursAndFontsManager::Get().GetLexer("diff");
+    CHECK_PTR_RET(diff_lexer);
+
     bool is_dark = markdown_lexer->IsDark();
     auto default_prop = markdown_lexer->GetProperty(wxSTC_MARKDOWN_DEFAULT);
     default_bg = default_prop.GetBgColour();
     default_fg = default_prop.GetFgColour();
     code_bg = default_bg.ChangeLightness(is_dark ? 110 : 90);
-
-    for (int i = 0; i < wxSTC_STYLE_MAX; ++i) {
-        m_ctrl->StyleSetBackground(i, default_bg);
-    }
 
     auto keyword = rust_lexer->GetProperty(wxSTC_RUST_WORD);
     auto macro = rust_lexer->GetProperty(wxSTC_RUST_MACRO);
@@ -179,12 +178,18 @@ void MarkdownStyler::InitStyles()
     auto block_comment = rust_lexer->GetProperty(wxSTC_RUST_COMMENTBLOCK);
     auto line_comment = rust_lexer->GetProperty(wxSTC_RUST_COMMENTLINE);
     auto codeblock_function = rust_lexer->GetProperty(wxSTC_RUST_WORD6);
+    auto diff_del = diff_lexer->GetProperty(wxSTC_DIFF_DELETED);
+    auto diff_add = diff_lexer->GetProperty(wxSTC_DIFF_ADDED);
 
     auto header_1 = markdown_lexer->GetProperty(wxSTC_MARKDOWN_HEADER1);
     auto header_2 = markdown_lexer->GetProperty(wxSTC_MARKDOWN_HEADER2);
     auto other_headers = markdown_lexer->GetProperty(wxSTC_MARKDOWN_HEADER3);
     auto function = markdown_lexer->GetProperty(wxSTC_MARKDOWN_CODE);
     auto link = markdown_lexer->GetProperty(wxSTC_MARKDOWN_LINK);
+
+    for (int i = 0; i < wxSTC_STYLE_MAX; ++i) {
+        m_ctrl->StyleSetBackground(i, default_bg);
+    }
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kDefault, default_fg);
     m_ctrl->StyleSetBackground(MarkdownStyles::kDefault, default_bg);
@@ -239,6 +244,15 @@ void MarkdownStyler::InitStyles()
     // Code block syntax highlighting styles
     m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockKeyword, keyword.GetFgColour());
     m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockKeyword, code_bg);
+
+    // Diff styles
+    m_ctrl->StyleSetForeground(MarkdownStyles::kDiffAdd, diff_add.GetFgColour());
+    m_ctrl->StyleSetBackground(MarkdownStyles::kDiffAdd, code_bg);
+    m_ctrl->StyleSetBold(MarkdownStyles::kDiffAdd, true);
+
+    m_ctrl->StyleSetForeground(MarkdownStyles::kDiffDelete, diff_del.GetFgColour());
+    m_ctrl->StyleSetBackground(MarkdownStyles::kDiffDelete, code_bg);
+    m_ctrl->StyleSetBold(MarkdownStyles::kDiffDelete, true);
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockString, string.GetFgColour());
     m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockString, code_bg);
@@ -344,7 +358,7 @@ void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxStri
                 } else {
                     // Style the entire line as string (additions in green)
                     while (accessor.CanNext() && accessor.GetCurrentChar() != '\n') {
-                        accessor.SetStyle(MarkdownStyles::kCodeBlockString, 1);
+                        accessor.SetStyle(MarkdownStyles::kDiffAdd, 1);
                     }
                     return;
                 }
@@ -361,7 +375,7 @@ void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxStri
                 } else {
                     // Style the entire line as comment (deletions in muted color)
                     while (accessor.CanNext() && accessor.GetCurrentChar() != '\n') {
-                        accessor.SetStyle(MarkdownStyles::kCodeBlockComment, 1);
+                        accessor.SetStyle(MarkdownStyles::kDiffDelete, 1);
                     }
                     return;
                 }

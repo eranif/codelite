@@ -18,7 +18,7 @@ pacman -S mingw-w64-clang-x86_64-zlib     \
           mingw-w64-clang-x86_64-sqlite3  \
           mingw-w64-clang-x86_64-libmariadbclient \
           mingw-w64-clang-x86_64-postgresql \
-          flex bison
+          flex bison patch
 ```
 
 - Download and build `wx-config.exe` from sources:

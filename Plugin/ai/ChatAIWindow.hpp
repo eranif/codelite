@@ -34,6 +34,24 @@ public:
      */
     void Chat(const wxString& prompt);
 
+    /**
+     * @brief Appends text to the chat AI window's output area.
+     *
+     * This method adds the specified text to the window's output display and optionally
+     * applies styling to the newly appended content. The text is first appended via
+     * AppendOutput(), and then styling is conditionally applied based on the force_style parameter.
+     *
+     * @param text The text string to append to the output area.
+     * @param force_style If true, immediately applies styling to the output after appending;
+     *                    if false, styling is deferred (may be applied later in batch).
+     *
+     * @return void This method does not return a value.
+     *
+     * @see AppendOutput()
+     * @see StyleOutput()
+     */
+    void AppendText(const wxString& text, bool force_style = true);
+
 protected:
     void OnCharAdded(wxStyledTextEvent& event);
     void OnAutoScroll(wxCommandEvent& event);

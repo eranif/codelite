@@ -53,16 +53,7 @@ ChatAI::~ChatAI()
 
 void ChatAI::ShowChatWindow(const wxString& prompt)
 {
-    ChatAIWindow* chat_view{nullptr};
-    if (m_dockedPaneId.has_value()) {
-        m_chatWindowFrame->Show();
-        chat_view = m_chatWindowFrame->GetChatWindow();
-    } else {
-        clGetManager()->ShowManagementWindow(CHAT_AI_LABEL, true);
-        m_chatWindow->GetStcInput()->CallAfter(&wxStyledTextCtrl::SetFocus);
-        chat_view = m_chatWindow;
-    }
-
+    ChatAIWindow* chat_view = GetChatWindow();
     if (!prompt.empty()) {
         chat_view->Chat(prompt);
     }
@@ -107,4 +98,24 @@ void ChatAI::DockView()
     clGetManager()->BookAddPage(pane_id, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
     clGetManager()->BookSelectPage(pane_id, m_chatWindow);
     m_dockedPaneId.reset();
+}
+
+ChatAIWindow* ChatAI::GetChatWindow()
+{
+    ChatAIWindow* chat_view{nullptr};
+    if (m_dockedPaneId.has_value()) {
+        m_chatWindowFrame->Show();
+        chat_view = m_chatWindowFrame->GetChatWindow();
+    } else {
+        clGetManager()->ShowManagementWindow(CHAT_AI_LABEL, true);
+        m_chatWindow->GetStcInput()->CallAfter(&wxStyledTextCtrl::SetFocus);
+        chat_view = m_chatWindow;
+    }
+    return chat_view;
+}
+
+void ChatAI::AppendTextAndStyle(const wxString& text)
+{
+    auto chat_window = GetChatWindow();
+    chat_window->AppendText(text, true);
 }

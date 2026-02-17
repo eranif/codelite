@@ -7,7 +7,6 @@
 #include "TextViewerDlg.h"
 #include "ai/LLMManager.hpp"
 #include "assistant/function.hpp"
-#include "clFilesCollector.h"
 #include "clFilesFinder.h"
 #include "clWorkspaceManager.h"
 #include "codelite_events.h"
@@ -16,7 +15,6 @@
 #include "procutils.h"
 #include "ssh/ssh_account_info.h"
 
-#include <future>
 #include <wx/msgdlg.h>
 #include <wx/string.h>
 
@@ -392,20 +390,16 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
             std::string patch_content, ::assistant::GetFunctionArg<std::string>(args, "patch_content"));
         ASSIGN_FUNC_ARG_OR_RETURN(std::string file_path, ::assistant::GetFunctionArg<std::string>(args, "file_path"));
 
-        bool dry_run = assistant::GetFunctionArg<bool>(args, "dry_run").value_or(true);
-
         wxString patch = wxString::FromUTF8(patch_content);
         clDEBUG() << "Applying the patch:\n" << patch << endl;
 
-        TextViewerDlg dlg(nullptr, _("The model wants to apply the following patch, allow it?"), patch, "diff");
-        if (dlg.ShowModal() != wxID_OK) {
+        llm::Manager::GetInstance().GetChatWindow()->AppendTextAndStyle(wxString() << "```patch\n"
+                                                                                   << patch << "\n```\n");
+        if (::wxMessageBox(_("The model wants to apply the following patch, allow it?"),
+                           _("Confirm"),
+                           wxYES_NO | wxCANCEL | wxYES_DEFAULT | wxCENTER) != wxYES) {
             clDEBUG() << "User declined the request to apply the patch" << endl;
             return Err("Permission denied");
-        }
-
-        PatchOptions opts{.dryRun = dry_run, .backup = true};
-        if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
-            opts.working_directory = clWorkspaceManager::Get().GetWorkspace()->GetDir();
         }
 
         auto result = PatchApplier::ApplyPatchLoose(wxString::FromUTF8(file_path), patch, true);

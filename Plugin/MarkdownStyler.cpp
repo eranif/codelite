@@ -63,6 +63,10 @@ const std::unordered_map<wxString, std::unordered_set<wxString>> g_languageKeywo
       "print",      "private",   "protected", "public",   "require",    "require_once", "return",     "static",
       "switch",     "throw",     "trait",     "try",      "unset",      "use",          "var",        "while",
       "xor",        "yield"}},
+    {"diff", {"diff",         "index",         "---",         "+++",       "@@",       "From",  "Date",
+              "Subject",      "Signed-off-by", "Reviewed-by", "Tested-by", "Acked-by", "Cc",    "Reported-by",
+              "Suggested-by", "Fixes",         "Link",        "new",       "deleted",  "file",  "mode",
+              "similarity",   "rename",        "copy",        "from",      "to",       "binary"}},
 };
 
 // Normalize language names (e.g., "cpp" -> "c++")
@@ -321,6 +325,58 @@ void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxStri
 {
     // Normalize language for consistency
     wxString normalizedLang = NormalizeLanguage(language);
+
+    // Handle diff syntax specially
+    if (normalizedLang == "diff" || normalizedLang == "patch") {
+        wxChar ch = accessor.GetCurrentChar();
+
+        // Check if we're at the start of a line for diff-specific line markers
+        if (accessor.IsAtStartOfLine()) {
+            // Lines starting with '+'
+            if (ch == '+') {
+                // Check for '+++' (file marker)
+                if (accessor.GetSubstr(3) == "+++") {
+                    // Style the entire line as keyword
+                    while (accessor.CanNext() && accessor.GetCurrentChar() != '\n') {
+                        accessor.SetStyle(MarkdownStyles::kCodeBlockKeyword, 1);
+                    }
+                    return;
+                } else {
+                    // Style the entire line as string (additions in green)
+                    while (accessor.CanNext() && accessor.GetCurrentChar() != '\n') {
+                        accessor.SetStyle(MarkdownStyles::kCodeBlockString, 1);
+                    }
+                    return;
+                }
+            }
+            // Lines starting with '-'
+            else if (ch == '-') {
+                // Check for '---' (file marker)
+                if (accessor.GetSubstr(3) == "---") {
+                    // Style the entire line as keyword
+                    while (accessor.CanNext() && accessor.GetCurrentChar() != '\n') {
+                        accessor.SetStyle(MarkdownStyles::kCodeBlockKeyword, 1);
+                    }
+                    return;
+                } else {
+                    // Style the entire line as comment (deletions in muted color)
+                    while (accessor.CanNext() && accessor.GetCurrentChar() != '\n') {
+                        accessor.SetStyle(MarkdownStyles::kCodeBlockComment, 1);
+                    }
+                    return;
+                }
+            }
+            // Lines starting with '@@' or starting with 'diff', 'index', etc.
+            else if ((ch == '@' && accessor.GetCharAt(1) == '@') || accessor.GetSubstr(4) == "diff" ||
+                     accessor.GetSubstr(5) == "index") {
+                // Style the entire line as keyword
+                while (accessor.CanNext() && accessor.GetCurrentChar() != '\n') {
+                    accessor.SetStyle(MarkdownStyles::kCodeBlockKeyword, 1);
+                }
+                return;
+            }
+        }
+    }
 
     // Handle C++ style comments (//) for languages that support them
     // Most C-family and many modern languages use this style

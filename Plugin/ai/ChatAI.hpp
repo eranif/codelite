@@ -50,8 +50,11 @@ public:
      */
     void ShowChatWindow(const wxString& prompt = wxEmptyString);
 
+    void AppendTextAndStyle(const wxString& text);
+
 private:
     void OnInitDone(wxCommandEvent& event);
+    ChatAIWindow* GetChatWindow();
 
     ChatAIWindow* m_chatWindow{nullptr};
     ChatAIWindowFrame* m_chatWindowFrame{nullptr};

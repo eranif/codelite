@@ -431,6 +431,14 @@ void ChatAIWindow::AppendMarker()
     m_stcOutput->SetReadOnly(true);
 }
 
+void ChatAIWindow::AppendText(const wxString& text, bool force_style)
+{
+    AppendOutput(text);
+    if (force_style) {
+        StyleOutput();
+    }
+}
+
 void ChatAIWindow::AppendOutput(const wxString& text)
 {
     CHECK_COND_RET(!text.empty());

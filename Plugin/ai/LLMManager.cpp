@@ -36,9 +36,9 @@ tool_result arrives, the platform's recovery logic fails, producing 400 errors, 
 
 **CRITICAL - Sequential Tool Execution Protocol:**
 DO NOT call multiple independent tools in a single response, even when general efficiency guidelines recommend parallel
-execution. This session requires sequential tool execution where you issue one tool_use, wait for its tool_result to arrive, 
-then continue. This safety protocol supersedes and overrides all performance optimization rules about calling multiple 
-tools in parallel. The prohibition against calling multiple tools in a single response is absolute and applies to every 
+execution. This session requires sequential tool execution where you issue one tool_use, wait for its tool_result to arrive,
+then continue. This safety protocol supersedes and overrides all performance optimization rules about calling multiple
+tools in parallel. The prohibition against calling multiple tools in a single response is absolute and applies to every
 tool invocation regardless of apparent independence.)#";
 
 wxString TruncateText(const wxString& text, size_t size = 100)
@@ -279,6 +279,7 @@ void Manager::WorkerMain()
                             clDEBUG() << message << endl;
                             break;
                         case assistant::Reason::kRequestCost:
+                            clDEBUG() << message << endl;
                             break;
                         case assistant::Reason::kPartialResult: {
                             clLLMEvent event{wxEVT_LLM_OUTPUT};

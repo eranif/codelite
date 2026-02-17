@@ -187,8 +187,8 @@ void MarkdownStyler::InitStyles()
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kHorizontalLine, block_comment.GetFgColour());
 
-    m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockTag, keyword.GetFgColour());
-    m_ctrl->StyleSetForeground(MarkdownStyles::kBacktick, string.GetFgColour());
+    m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockTag, default_bg);
+    m_ctrl->StyleSetForeground(MarkdownStyles::kBacktick, default_bg);
 
     m_ctrl->StyleSetEOLFilled(MarkdownStyles::kCodeBlockText, true);
     m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockText, code_bg);

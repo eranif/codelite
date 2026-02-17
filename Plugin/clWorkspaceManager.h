@@ -66,7 +66,7 @@ public:
 };
 
 /// A convenience class with common implementation for local workspace (i.e. non remote)
-class WXDLLIMPEXP_SDK IEditor;
+class IEditor;
 class WXDLLIMPEXP_SDK LocalWorkspaceCommon : public IWorkspace
 {
 public:

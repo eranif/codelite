@@ -18,6 +18,9 @@ public:
     void SetMessage(const wxString& message, size_t column = 0);
     void Clear(size_t column = 0);
 
+protected:
+    void OnSize(wxSizeEvent& event);
+
 private:
     wxActivityIndicator* m_activityIndicator{nullptr};
     wxStaticText* m_statusMessage{nullptr};

@@ -64,15 +64,18 @@ struct WXDLLIMPEXP_CL clFilesFinderMatch {
  * @brief Search options for clFilesFinder
  */
 struct WXDLLIMPEXP_CL clFilesFinderOptions {
-    wxString find_what;             ///< The pattern to search for (literal string or regex pattern)
-    bool is_case_sensitive{false};  ///< If true, perform case-sensitive matching
-    bool is_whole_match{false};     ///< If true, only match whole words
-    bool is_regex{false};           ///< If true, treat find_what as a regular expression pattern
-    wxString file_spec{"*"};        ///< File pattern to match (e.g., "*.cpp;*.h")
-    wxString exclude_file_spec;     ///< File patterns to exclude
-    wxString exclude_folders_spec;  ///< Folder patterns to exclude (e.g., ".git;build;node_modules")
-    bool exclude_hidden_dirs{true}; ///< If true, skip hidden directories
-    bool follow_symlinks{false};    ///< If true, follow symbolic links
+    wxString find_what;            ///< The pattern to search for (literal string or regex pattern)
+    bool is_case_sensitive{false}; ///< If true, perform case-sensitive matching
+    bool is_whole_match{false};    ///< If true, only match whole words
+    bool is_regex{false};          ///< If true, treat find_what as a regular expression pattern
+    wxString file_spec{"*"};       ///< File pattern to match (e.g., "*.cpp;*.h")
+    wxString exclude_file_spec{"*~;*.orig;*.bak;*.tmp;*.temp;*.pyc;*.o;*.obj;*.exe;*.dll;*.so;*.dylib;*.class;*."
+                               "jar;*.war;*.zip;*.tar;*.gz;*.7z;*.rar;*.pdf;*.swp;*.swo;*.cache;*.log;*.DS_Store;"
+                               "Thumbs.db;*.lock;*.pid;*.bak;*.backup"}; ///< File patterns to exclude
+    wxString exclude_folders_spec{".git;build;node_modules;__pycache__;.svn;.idea;.vscode;.cache;dist;out;__pycache__;*"
+                                  ".cache;*.tmp;temp;tmp;.build*;.kiro"}; ///< Folder patterns to exclude
+    bool exclude_hidden_dirs{true};                                       ///< If true, skip hidden directories
+    bool follow_symlinks{false};                                          ///< If true, follow symbolic links
 };
 
 /**

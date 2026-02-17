@@ -356,6 +356,11 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
     ASSIGN_FUNC_ARG_OR_RETURN(std::string root_dir, ::assistant::GetFunctionArg<std::string>(args, "root_folder"));
     ASSIGN_FUNC_ARG_OR_RETURN(std::string find_what, ::assistant::GetFunctionArg<std::string>(args, "find_what"));
     ASSIGN_FUNC_ARG_OR_RETURN(std::string file_pattern, ::assistant::GetFunctionArg<std::string>(args, "file_pattern"));
+
+    if (file_pattern == "*") {
+        return Err("'file_pattern' can not be only '*', it must be more specific. For example '*.cpp;*.h;*.rs'");
+    }
+
     bool whole_word = assistant::GetFunctionArg<bool>(args, "whole_word").value_or(true);
     bool case_sensitive = assistant::GetFunctionArg<bool>(args, "case_sensitive").value_or(true);
     bool is_regex = assistant::GetFunctionArg<bool>(args, "is_regex").value_or(false);

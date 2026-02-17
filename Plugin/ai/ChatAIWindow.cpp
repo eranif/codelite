@@ -111,6 +111,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
 
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);
     m_stcInput->Bind(wxEVT_STC_CHARADDED, &ChatAIWindow::OnCharAdded, this);
+    Bind(wxEVT_SIZE, &ChatAIWindow::OnSize, this);
 
     m_markdownStyler = std::make_unique<MarkdownStyler>(m_stcOutput);
     m_markdownStyler->Bind(wxEVT_MARKDOWN_LINK_CLICKED, [](clCommandEvent& event) {
@@ -139,8 +140,10 @@ ChatAIWindow::~ChatAIWindow()
     Unbind(wxEVT_LLM_OUTPUT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
     Unbind(wxEVT_LLM_THINK_SATRTED, &ChatAIWindow::OnThinkingStart, this);
     Unbind(wxEVT_LLM_THINK_ENDED, &ChatAIWindow::OnThinkingEnd, this);
+
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_CONFIG_UPDATED, &ChatAIWindow::OnLLMConfigUpdate, this);
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_STARTED, &ChatAIWindow::OnLLMConfigUpdate, this);
+    Unbind(wxEVT_SIZE, &ChatAIWindow::OnSize, this);
 
     clConfig::Get().Write("chat-ai/sash-position", m_mainSplitter->GetSashPosition());
     clConfig::Get().Write("chat-ai/enable-tools", m_checkboxEnableTools->IsChecked());
@@ -383,10 +386,12 @@ void ChatAIWindow::UpdateCostBar()
 {
     auto& llm = llm::Manager::GetInstance();
     if (!llm.HasPricing()) {
+        m_statusPanel->SetMessage(wxEmptyString, 1);
         return;
     }
     wxString str;
-    str << _("Total cost: $") << llm.GetTotalCost() << _(", Last Request cost: $") << llm.GetLastRequestCost();
+    str << wxT(" ▶ ") << _("Total cost: $") << llm.GetTotalCost() << _(", Last Request cost: $")
+        << llm.GetLastRequestCost();
     m_statusPanel->SetMessage(str, 1);
 }
 
@@ -397,6 +402,7 @@ void ChatAIWindow::OnLLMConfigUpdate(clLLMEvent& event)
     // Clear the output view
     DoClearOutputView();
     UpdateChoices();
+    UpdateCostBar();
 }
 
 void ChatAIWindow::OnInputUI(wxUpdateUIEvent& event) { event.Enable(true); }
@@ -566,5 +572,13 @@ void ChatAIWindow::OnCharAdded(wxStyledTextEvent& event)
     if (event.GetKey() == '{' && prev_char == '{') {
         // user typed "{{"
         m_stcInput->AutoCompShow(2, candidates);
+    }
+}
+
+void ChatAIWindow::OnSize(wxSizeEvent& event)
+{
+    event.Skip();
+    if (GetSizer()) {
+        Layout();
     }
 }

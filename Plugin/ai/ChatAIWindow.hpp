@@ -38,6 +38,7 @@ protected:
     void OnCharAdded(wxStyledTextEvent& event);
     void OnAutoScroll(wxCommandEvent& event);
     void OnAutoScrollUI(wxUpdateUIEvent& event);
+    void OnSize(wxSizeEvent& event);
     void OnBusyUI(wxUpdateUIEvent& event);
     void OnDetachView(wxCommandEvent& event);
     void OnDetachViewUI(wxUpdateUIEvent& event);

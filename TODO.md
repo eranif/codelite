@@ -24,10 +24,13 @@ AI-powered IDE:
 - MarkdownStyler: mark gcc style lines "file:line" as hyperlink and clickable.
 - Add `codelite-api.lua` file to the installation folder to provide completion for LUA LSPs.
 - Make another tool `RemoteFindInFile` for supporting remote find-in-files.
+- Replace the standard "find-in-files" tool with `grep` command (on all platforms) - this will allow it to run on remote files.
+- Add system message telling the model on which OS it is running.
+- Replace the modal dialogue asking for `Yes` / `No` for tools with `wxInfoBar`
 
 Prepare release notes per version (e.g. 18.2.0, 18.3.0 etc)
 
 BUGS
 ----
 
-Application hangs when renaming a symbol & the MiniMap editor is loaded...
+Application hangs when renaming a symbol & the `MiniMap` editor is loaded...

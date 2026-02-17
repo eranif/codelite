@@ -22,7 +22,7 @@ public:
     std::shared_ptr<GenericFormatter> GetFormatter(const wxString& filepath) const;
     std::shared_ptr<GenericFormatter> GetFormatterByName(const wxString& name) const;
     std::shared_ptr<GenericFormatter> GetFormatterByContent(const wxString& content) const;
-    size_t GetAllNames(wxArrayString* names) const;
+    wxArrayString GetAllNames() const;
 
     /// Add new custom formatter
     bool AddCustom(std::shared_ptr<GenericFormatter> formatter);

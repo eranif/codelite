@@ -26,13 +26,10 @@
 
 #include "JSON.h"
 #include "Keyboard/clKeyboardManager.h"
-#include "SFTPClientData.hpp"
 #include "StringUtils.h"
 #include "clEditorStateLocker.h"
 #include "clFileSystemEvent.h"
 #include "clFilesCollector.h"
-#include "clSFTPManager.hpp"
-#include "clSTCLineKeeper.h"
 #include "codeformatterdlg.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -44,15 +41,16 @@
 #include "workspace.h"
 
 #include <thread>
-#include <wx/app.h> //wxInitialize/wxUnInitialize
-#include <wx/ffile.h>
 #include <wx/filename.h>
-#include <wx/log.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
-#include <wx/progdlg.h>
 #include <wx/wupdlock.h>
 #include <wx/xrc/xmlres.h>
+
+#if USE_SFTP
+#include "SFTPClientData.hpp"
+#include "clSFTPManager.hpp"
+#endif
 
 namespace
 {
@@ -465,13 +463,10 @@ void CodeFormatter::OnWorkspaceLoaded(clWorkspaceEvent& e)
         return;
     }
 
-    wxArrayString all_tools;
-    m_manager.GetAllNames(&all_tools);
-
     // update the formatters with the remote command template
     // note: we do not replace macros here since some of them
     // might change per activation (e.g. $(CurrentFileRelPath))
-    for (const wxString& tool_name : all_tools) {
+    for (const wxString& tool_name : m_manager.GetAllNames()) {
         auto json = json_get_formatter_object(config, tool_name);
         if (!json.isOk() || (m_manager.GetFormatterByName(tool_name) == nullptr)) {
             continue;
@@ -587,9 +582,7 @@ void CodeFormatter::OnInitDone(wxCommandEvent& e)
 {
     e.Skip();
     // if no formatters are set, re-scan
-    wxArrayString all_names;
-    if (m_manager.GetAllNames(&all_names) == 0) {
-        wxUnusedVar(all_names);
+    if (m_manager.GetAllNames().empty()) {
         wxBusyCursor bc;
         m_manager.RestoreDefaults();
         m_manager.Save();

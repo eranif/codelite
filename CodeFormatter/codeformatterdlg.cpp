@@ -47,8 +47,7 @@ CodeFormatterDlg::~CodeFormatterDlg()
 
 void CodeFormatterDlg::InitDialog()
 {
-    wxArrayString all_formatters;
-    m_formatter_manager.GetAllNames(&all_formatters);
+    wxArrayString all_formatters = m_formatter_manager.GetAllNames();
     m_dvListCtrl->DeleteAllItems();
     m_dvListCtrl->Begin();
     for (const auto& name : all_formatters) {

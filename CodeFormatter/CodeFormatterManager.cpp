@@ -47,17 +47,14 @@ void CodeFormatterManager::push_back(std::shared_ptr<GenericFormatter> formatter
     m_formatters.push_back(std::move(formatter));
 }
 
-size_t CodeFormatterManager::GetAllNames(wxArrayString* names) const
+wxArrayString CodeFormatterManager::GetAllNames() const
 {
-    if (!names) {
-        return 0;
+    wxArrayString names;
+    names.reserve(m_formatters.size());
+    for (const auto& f : m_formatters) {
+        names.Add(f->GetName());
     }
-
-    names->reserve(m_formatters.size());
-    for (auto f : m_formatters) {
-        names->Add(f->GetName());
-    }
-    return names->size();
+    return names;
 }
 
 void CodeFormatterManager::Load()

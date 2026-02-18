@@ -2,6 +2,7 @@
 
 #include "FileManager.hpp"
 #include "assistant/assistant.hpp"
+#include "assistant/common/magic_enum.hpp"
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
 #include "cl_standard_paths.h"
@@ -40,6 +41,34 @@ execution. This session requires sequential tool execution where you issue one t
 then continue. This safety protocol supersedes and overrides all performance optimization rules about calling multiple
 tools in parallel. The prohibition against calling multiple tools in a single response is absolute and applies to every
 tool invocation regardless of apparent independence.)#";
+
+/**
+ * @brief RAII guard that restores an atomic boolean to a specified value upon destruction.
+ *
+ * This struct acquires a reference to an `std::atomic_bool` and remembers a target value
+ * at construction time. When the `AtomiBoolLocker` is destroyed (goes out of scope), it
+ * atomically stores the remembered value back into the boolean, ensuring cleanup even if
+ * exceptions occur.
+ *
+ * @param b Reference to the `std::atomic_bool` to be managed.
+ * @param v The value to restore to `b` when this locker is destroyed.
+ *
+ * @note This struct does not return a value; it is intended to be used as a scoped guard.
+ * @note No exceptions are thrown by the constructor or destructor (atomic store is noexcept).
+ *
+ * @see std::atomic_bool
+ * @see RAII (Resource Acquisition Is Initialization)
+ */
+struct AtomiBoolLocker {
+    std::atomic_bool& bool_;
+    bool value_;
+    explicit AtomiBoolLocker(std::atomic_bool& b, bool v)
+        : bool_{b}
+        , value_{v}
+    {
+    }
+    ~AtomiBoolLocker() { bool_.store(value_); }
+};
 
 wxString TruncateText(const wxString& text, size_t size = 100)
 {
@@ -553,32 +582,32 @@ void Manager::Stop()
     }
 }
 
-static std::unordered_map<std::string, bool> sessions_persisted_answers;
+static std::unordered_set<std::string> allowed_tools;
 
 bool Manager::CanRunTool(const std::string& tool_name)
 {
-    auto can_run_func = [&tool_name]() -> bool {
-        wxString message;
-        message << _("The model wants to run the tool: \"") << tool_name << _("\"\nContinue?");
+    if (allowed_tools.contains(tool_name)) {
+        return true;
+    }
 
-        if (sessions_persisted_answers.contains(tool_name)) {
-            return sessions_persisted_answers[tool_name];
-        }
+    wxString message;
+    message << _("The model wants to run the tool: \"") << tool_name << _("\". Continue?");
+    auto result = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message, 30);
+    if (!result.ok()) {
+        return false;
+    }
 
-        wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(),
-                                message,
-                                _("Confirm"),
-                                wxYES_NO | wxCANCEL_DEFAULT | wxCANCEL | wxCENTER | wxICON_QUESTION);
-        dlg.ShowCheckBox(_("Remember my answer for this session"), false);
-        bool can_run_tool = dlg.ShowModal() == wxID_YES;
-        if (dlg.IsCheckBoxChecked()) {
-            // Persist the answer for this tool for this session only.
-            sessions_persisted_answers.erase(tool_name);
-            sessions_persisted_answers.insert({tool_name, can_run_tool});
-        }
-        return can_run_tool;
-    };
-    return EventNotifier::Get()->RunOnMain<bool>(can_run_func);
+    switch (result.value()) {
+    case llm::UserAnswer::kNo:
+        return false;
+    case llm::UserAnswer::kYes:
+        return true;
+    case llm::UserAnswer::kTrust:
+        allowed_tools.insert(tool_name);
+        return true;
+    default:
+        return false;
+    }
 }
 
 void Manager::Start(std::shared_ptr<assistant::ClientBase> client)
@@ -1066,4 +1095,46 @@ void Manager::ShowTextGenerationDialog(const wxString& prompt,
 
 const std::vector<wxString>& Manager::GetAvailablePlaceHolders() const { return kPlaceHolders; }
 
+clStatusOr<UserAnswer> llm::Manager::PromptUserYesNoTrustQuestion(const wxString& text,
+                                                                  int timeout_secs,
+                                                                  const wxString& code_block,
+                                                                  const wxString& code_block_lang)
+{
+    if (::wxIsMainThread()) {
+        return StatusOther("Function must not be called from the main thread");
+    }
+
+    bool expected{false};
+    if (!m_waitingForAnswer.compare_exchange_strong(expected, true)) {
+        return StatusResourceBusy("CodeLite is already pending response from the user");
+    }
+
+    // Ensure m_waitingForAnswer is set to "false" when we leave this function.
+    AtomiBoolLocker locker{m_waitingForAnswer, false};
+
+    // GUI manipulations must be done on the main thread.
+    auto func = [text, code_block, code_block_lang, this]() {
+        if (!code_block.empty()) {
+            wxString prompt;
+            prompt << "```" << code_block_lang << "\n" << code_block << "\n```\n";
+            GetChatWindowContainer()->AppendTextAndStyle(prompt);
+        }
+        GetChatWindowContainer()->GetChatWindow()->ShowYesNoTrustBar(text);
+    };
+    EventNotifier::Get()->RunOnMain<void>(func);
+
+    // Now wait for the answer
+    UserAnswer answer{UserAnswer::kNo};
+    auto result = m_answerChannel.ReceiveTimeout(timeout_secs * 1000, answer);
+    switch (result) {
+    case wxMSGQUEUE_NO_ERROR:
+        return answer;
+    case wxMSGQUEUE_TIMEOUT:
+        return StatusTimeout(_("User did not reply in a timely manner. Try again later."));
+    case wxMSGQUEUE_MISC_ERROR:
+        return StatusOther(_("Failed to read response from user"));
+    }
+}
+
+void llm::Manager::PostAnswer(UserAnswer answer) { m_answerChannel.Post(answer); }
 } // namespace llm

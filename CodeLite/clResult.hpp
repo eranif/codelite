@@ -15,6 +15,8 @@ enum class StatusCode {
     kNeedMoreData,
     kProtocolError,
     kAlreadyExists,
+    kResourceBusy,
+    kTimeout,
 };
 
 class clStatus
@@ -33,6 +35,12 @@ public:
     {
         wxString msg;
         switch (m_code) {
+        case StatusCode::kResourceBusy:
+            msg = "Resource is busy";
+            break;
+        case StatusCode::kTimeout:
+            msg = "Timeout occured";
+            break;
         case StatusCode::kInvalidArgument:
             msg = "Invalid argument";
             break;
@@ -94,6 +102,14 @@ inline clStatus StatusInvalidArgument(const wxString& msg = wxEmptyString)
 {
     return clStatus::MakeStatus(StatusCode::kInvalidArgument, msg);
 }
+inline clStatus StatusTimeout(const wxString& msg = wxEmptyString)
+{
+    return clStatus::MakeStatus(StatusCode::kTimeout, msg);
+}
+inline clStatus StatusResourceBusy(const wxString& msg = wxEmptyString)
+{
+    return clStatus::MakeStatus(StatusCode::kResourceBusy, msg);
+}
 inline clStatus StatusNotFound(const wxString& msg = wxEmptyString)
 {
     return clStatus::MakeStatus(StatusCode::kNotFound, msg);
@@ -148,6 +164,11 @@ public:
     clStatusOr& operator=(const clStatus& status)
     {
         m_status = status;
+        return *this;
+    }
+    clStatusOr& operator=(const Value& v)
+    {
+        m_value = v;
         return *this;
     }
     clStatusOr(Value&& v) { m_value = std::move(v); }

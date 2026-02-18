@@ -135,6 +135,12 @@ struct WXDLLIMPEXP_SDK ThreadTask {
 constexpr const char* kClientTypeAnthropic = "anthropic";
 constexpr const char* kClientTypeOllama = "ollama";
 
+enum class UserAnswer {
+    kYes,
+    kNo,
+    kTrust,
+};
+
 /**
  * @brief Singleton manager class for handling LLM (Large Language Model) operations.
  *
@@ -470,7 +476,7 @@ public:
 
     const std::vector<wxString>& GetAvailablePlaceHolders() const;
 
-    ChatAI* GetChatWindow() { return m_chatAI.get(); }
+    ChatAI* GetChatWindowContainer() { return m_chatAI.get(); }
 
     inline double GetLastRequestCost() const
     {
@@ -485,6 +491,53 @@ public:
     }
 
     inline bool HasPricing() const { return m_client && m_client->GetPricing().has_value(); }
+    /**
+     * @brief Prompts the user with a yes/no/trust question in the chat window and waits for their response.
+     *
+     * This method displays a modal-like question bar in the chat window with optional code block context,
+     * then blocks the calling thread until the user responds or the timeout expires. The function must be
+     * called from a non-main thread, as it uses synchronous waiting. GUI updates are marshaled to the main
+     * thread automatically.
+     *
+     * @param text The question text to display to the user.
+     * @param timeout_secs Maximum time in seconds to wait for a user response before timing out.
+     * @param code_block Optional code snippet to display above the question (empty string if none).
+     * @param code_block_lang Programming language identifier for syntax highlighting of the code block (e.g., "cpp",
+     * "python").
+     *
+     * @return clStatusOr<UserAnswer> containing the user's answer (kYes, kNo, or kTrust) on success,
+     *         or an error status if:
+     *         - Called from the main thread (StatusOther)
+     *         - Another prompt is already pending (StatusResourceBusy)
+     *         - User did not respond within the timeout period (StatusTimeout)
+     *
+     * @throws None. All errors are returned via the clStatusOr wrapper.
+     *
+     * @see llm::Manager::GetChatWindowContainer()
+     * @see UserAnswer
+     */
+    clStatusOr<UserAnswer> PromptUserYesNoTrustQuestion(const wxString& text,
+                                                        int timeout_secs = 10,
+                                                        const wxString& code_block = wxEmptyString,
+                                                        const wxString& code_block_lang = wxEmptyString);
+
+    /**
+     * @brief Posts a user answer to the internal answer channel.
+     *
+     * This method enqueues the provided user answer into the manager's answer channel
+     * for asynchronous processing. The answer will be consumed by other components
+     * listening to this channel.
+     *
+     * @param answer The UserAnswer object to be posted to the answer channel.
+     *
+     * @return void This method does not return a value.
+     *
+     * @note This method is thread-safe if the underlying m_answerChannel.Post() is thread-safe.
+     *
+     * @see llm::Manager::m_answerChannel
+     * @see UserAnswer
+     */
+    void PostAnswer(UserAnswer answer);
 
 private:
     Manager() = default;
@@ -545,6 +598,8 @@ private:
     std::atomic_bool m_worker_busy{false};
     FunctionTable m_plugin_functions;
     std::unique_ptr<ChatAI> m_chatAI{nullptr};
+    wxMessageQueue<UserAnswer> m_answerChannel;
+    std::atomic_bool m_waitingForAnswer{false};
 };
 
 /**

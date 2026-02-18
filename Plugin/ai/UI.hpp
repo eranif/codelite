@@ -17,6 +17,7 @@
 #include <wx/splitter.h>
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
+#include <wx/infobar.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
 #include <map>
@@ -58,15 +59,20 @@ protected:
     wxSplitterWindow* m_mainSplitter;
     wxPanel* m_splitterPageTop;
     clThemedSTC* m_stcOutput;
+    wxInfoBar* m_infobar;
     wxPanel* m_splitterPageBottom;
     wxAuiToolBar* m_toolbar;
     clThemedSTC* m_stcInput;
 
 protected:
+    virtual void OnYes(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnNo(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnTrust(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInputUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     clThemedSTC* GetStcOutput() { return m_stcOutput; }
+    wxInfoBar* GetInfobar() { return m_infobar; }
     wxPanel* GetSplitterPageTop() { return m_splitterPageTop; }
     wxAuiToolBar* GetToolbar() { return m_toolbar; }
     clThemedSTC* GetStcInput() { return m_stcInput; }

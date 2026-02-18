@@ -43,11 +43,7 @@ void PopulateBuiltInFunctions(FunctionTable& table)
                   .Build());
 
     table.Add(FunctionBuilder("GetActiveEditorFilePath")
-                  .SetDescription(R"#(Retrieves the file path of the currently active editor.
-Details:
-This function executes on the main thread to safely access the active editor
-and obtain its file path. If the editor is connected to a remote source, the remote
-path is returned; otherwise, the local file path is returned.)#")
+                  .SetDescription(R"#(Retrieves the file path of the currently active editor)#")
                   .SetCallback(GetCurrentEditorPath)
                   .Build());
 
@@ -78,16 +74,7 @@ path is returned; otherwise, the local file path is returned.)#")
             .Build());
     table.Add(
         FunctionBuilder("FindInFiles")
-            .SetDescription(R"(Search for a given pattern within files in a directory.
-Description:
-This function searches for a specified text pattern or regular expression across files within a directory structure.
-Parameters:
-- Search String (string, required): The text pattern to search for (literal string or regex pattern).
-- File Pattern (string, required): The file pattern to match, such as "*.txt" or "*.py".
-- Root Folder (string, required): The root directory where the search begins.
-- Whole Word (boolean, optional): When enabled, matches only complete words.
-- Case Sensitive (boolean, optional): When enabled, performs case-sensitive matching.
-- Is Regex (boolean, optional): When enabled, treats the search string as a regular expression pattern.)")
+            .SetDescription(R"(Search for a given pattern within files in a directory)")
             .SetCallback(FindInFiles)
             .AddRequiredParam("root_folder", "The root directory where the search begins", "string")
             .AddRequiredParam("find_what", "The text pattern to search fore", "string")
@@ -104,48 +91,25 @@ Parameters:
             .Build());
     table.Add(FunctionBuilder("ApplyPatch")
                   .SetDescription(R"(Apply a git style diff patch to a file.
-Description:
-This function applies a git style diff patch content to a specified file.
-
 IMPORTANT: Patches fail when the original lines don't exactly match the current file content.
 To ensure accuracy:
 1. ALWAYS read the target file first using ReadFileContent tool before creating a patch
 2. Verify the exact current content, including whitespace, indentation, and line endings
 3. Include at least 3-5 lines of unchanged context before and after the modifications
 4. Ensure the "---" lines in your patch match the current file state character-for-character
-5. Use sufficient context to make the location unique within the file
-
-Common causes of patch failures:
-- Assuming file content without reading it first
-- Insufficient context lines causing ambiguous matching
-- Whitespace mismatches (spaces vs tabs, trailing spaces)
-- Working from an outdated or assumed version of the file
-
-Parameters:
-- patch_content (string, required): The git style diff patch content to apply. Must be a valid git style diff format with exact matching of original content.
-- file_path (string, required): The path to the file that should be patched.)")
+5. Use sufficient context to make the location unique within the file)")
                   .SetCallback(ApplyPatch)
                   .AddRequiredParam("patch_content", "The git style diff patch content to apply", "string")
                   .AddRequiredParam("file_path", "The path to the file that should be patched", "string")
                   .Build());
     table.Add(FunctionBuilder("CreateNewFile")
-                  .SetDescription(R"(Create a new file at the specified path with optional content.
-Description:
-This function creates a new file at the given filepath. If the file already exists, an error is returned.
-Optionally, initial content can be provided to be written to the file.
-Parameters:
-- filepath (string, required): The path where the new file should be created.
-- file_content (string, optional): The initial content to write to the file. Default is empty.)")
+                  .SetDescription(R"(Create a new file at the specified path with optional content)")
                   .SetCallback(CreateNewFile)
                   .AddRequiredParam("filepath", "The path where the new file should be created", "string")
                   .AddOptionalParam("file_content", "The initial content to write to the file", "string")
                   .Build());
     table.Add(FunctionBuilder("ShellExecute")
-                  .SetDescription(R"(Execute a shell command and return its output.
-Description:
-This function executes a shell command and captures its output. The command is wrapped in a shell for proper execution.
-Parameters:
-- command (string, required): The shell command to execute.)")
+                  .SetDescription(R"(Execute a shell command and return its output)")
                   .SetCallback(ToolShellExecute)
                   .AddRequiredParam("command", "The shell command to execute", "string")
                   .Build());
@@ -153,8 +117,16 @@ Parameters:
 
 /// Implementation details
 
+#define VERIFY_WORKER_THREAD()                                                                   \
+    if (wxIsMainThread()) {                                                                      \
+        wxString message;                                                                        \
+        message << _("Tool ") << __PRETTY_FUNCTION__ << _(" can not be run on the main thread"); \
+        return Err(message);                                                                     \
+    }
+
 FunctionResult CreateNewFile(const assistant::json& args)
 {
+    VERIFY_WORKER_THREAD();
     if (args.size() != 2) {
         return Err("Invalid number of arguments");
     }
@@ -190,6 +162,7 @@ FunctionResult CreateNewFile(const assistant::json& args)
 
 FunctionResult ReadFileContent(const assistant::json& args)
 {
+    VERIFY_WORKER_THREAD();
     if (args.size() != 1) {
         return Err("Invalid number of arguments");
     }
@@ -214,6 +187,8 @@ FunctionResult ReadFileContent(const assistant::json& args)
 
 FunctionResult OpenFileInEditor(const assistant::json& args)
 {
+    VERIFY_WORKER_THREAD();
+
     if (args.size() != 1) {
         return Err("Invalid number of arguments");
     }
@@ -244,12 +219,14 @@ FunctionResult OpenFileInEditor(const assistant::json& args)
 
 FunctionResult GetCompilerOutput([[maybe_unused]] const assistant::json& args)
 {
+    VERIFY_WORKER_THREAD();
     auto cb = [=]() -> FunctionResult { return Ok(clGetManager()->GetBuildOutput()); };
     return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
 }
 
 FunctionResult GetCurrentEditorText([[maybe_unused]] const assistant::json& args)
 {
+    VERIFY_WORKER_THREAD();
     auto cb = [=]() -> FunctionResult {
         auto active_editor = clGetManager()->GetActiveEditor();
         if (!active_editor) {
@@ -262,6 +239,7 @@ FunctionResult GetCurrentEditorText([[maybe_unused]] const assistant::json& args
 
 FunctionResult GetCurrentEditorPath([[maybe_unused]] const assistant::json& args)
 {
+    VERIFY_WORKER_THREAD();
     auto cb = [=]() -> FunctionResult {
         auto active_editor = clGetManager()->GetActiveEditor();
         if (!active_editor) {
@@ -274,6 +252,7 @@ FunctionResult GetCurrentEditorPath([[maybe_unused]] const assistant::json& args
 
 FunctionResult CreateWorkspace([[maybe_unused]] const assistant::json& args)
 {
+    VERIFY_WORKER_THREAD();
     auto cb = [=]() -> FunctionResult {
         clDEBUG() << args.dump(2) << endl;
         if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
@@ -343,9 +322,7 @@ FunctionResult CreateWorkspace([[maybe_unused]] const assistant::json& args)
 
 FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
 {
-    if (wxThread::IsMain()) {
-        clWARNING() << "Running Find-In-Files on the main thread" << endl;
-    }
+    VERIFY_WORKER_THREAD();
 
     if (args.size() < 3) {
         return Err("Invalid number of arguments");
@@ -381,27 +358,36 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
 
 FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
 {
+    VERIFY_WORKER_THREAD();
     if (args.size() < 2) {
         return Err("Invalid number of arguments");
     }
 
-    auto cb = [=]() -> FunctionResult {
-        ASSIGN_FUNC_ARG_OR_RETURN(
-            std::string patch_content, ::assistant::GetFunctionArg<std::string>(args, "patch_content"));
-        ASSIGN_FUNC_ARG_OR_RETURN(std::string file_path, ::assistant::GetFunctionArg<std::string>(args, "file_path"));
+    ASSIGN_FUNC_ARG_OR_RETURN(
+        std::string patch_content, ::assistant::GetFunctionArg<std::string>(args, "patch_content"));
+    ASSIGN_FUNC_ARG_OR_RETURN(std::string file_path, ::assistant::GetFunctionArg<std::string>(args, "file_path"));
 
-        wxString patch = wxString::FromUTF8(patch_content);
-        clDEBUG() << "Applying the patch:\n" << patch << endl;
+    wxString patch = wxString::FromUTF8(patch_content);
+    clDEBUG() << "Applying the patch:\n" << patch << endl;
 
-        llm::Manager::GetInstance().GetChatWindow()->AppendTextAndStyle(wxString() << "```patch\n"
-                                                                                   << patch << "\n```\n");
-        if (::wxMessageBox(_("The model wants to apply the following patch, allow it?"),
-                           _("Confirm"),
-                           wxYES_NO | wxCANCEL | wxYES_DEFAULT | wxCENTER) != wxYES) {
-            clDEBUG() << "User declined the request to apply the patch" << endl;
-            return Err("Permission denied");
-        }
+    auto response = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(
+        _("The model wants to apply the following patch, allow it?"), 30, patch, "patch");
 
+    if (!response.ok()) {
+        clDEBUG() << "Permission to apply the patch declined." << response.error_message() << endl;
+        return Err("Permission denied");
+    }
+
+    switch (response.value()) {
+    case llm::UserAnswer::kNo:
+        return Err("Permission denied");
+    case llm::UserAnswer::kTrust:
+    case llm::UserAnswer::kYes:
+        break;
+    }
+
+    // ApplyPatchLoose must be called from the main thread only (it manipulates GUI).
+    return EventNotifier::Get()->RunOnMain<FunctionResult>([file_path, patch]() -> FunctionResult {
         auto result = PatchApplier::ApplyPatchLoose(wxString::FromUTF8(file_path), patch, true);
         if (!result.success) {
             clDEBUG() << "Failed to apply the patch:" << result.errorMessage.ToStdString(wxConvUTF8) << endl;
@@ -409,42 +395,33 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
         }
         clDEBUG() << "Patch applied successfully" << endl;
         return Ok("Patch applied successfully");
-    };
-
-    return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
+    });
 }
 
 FunctionResult ToolShellExecute([[maybe_unused]] const assistant::json& args)
 {
+    VERIFY_WORKER_THREAD();
     if (args.size() < 1) {
         return Err("Invalid number of arguments");
     }
 
-    if (wxThread::IsMain()) {
-        clWARNING() << "Running ToolShellExecute on the main thread" << endl;
-    }
-
-    auto cb = [=]() -> FunctionResult {
-        ASSIGN_FUNC_ARG_OR_RETURN(std::string command, ::assistant::GetFunctionArg<std::string>(args, "command"));
-        TextViewerDlg dlg(nullptr,
-                          _("The model wants to run the following shell command, allow it?"),
-                          wxString::FromUTF8(command),
-                          "script");
-        if (dlg.ShowModal() != wxID_OK) {
-            return Err("Permission denied");
-        }
-        return Ok("");
-    };
-
-    // Prompt the user, this must be on the main thread.
-    auto res = EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
-    if (res.isError) {
-        return res;
-    }
-
     ASSIGN_FUNC_ARG_OR_RETURN(std::string command, ::assistant::GetFunctionArg<std::string>(args, "command"));
-
     wxString cmd = wxString::FromUTF8(command);
+    auto result = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(
+        _("The model wants to run the following shell command, allow it?"), 30, cmd, "bash");
+
+    if (!result.ok()) {
+        return Err(result.error_message());
+    }
+
+    switch (result.value()) {
+    case llm::UserAnswer::kNo:
+        return Err("Permission denied");
+    case llm::UserAnswer::kYes:
+    case llm::UserAnswer::kTrust:
+        break;
+    }
+
     ProcUtils::WrapInShell(cmd);
     wxArrayString output_arr;
     int exit_code = ProcUtils::SafeExecuteCommand(cmd, output_arr);

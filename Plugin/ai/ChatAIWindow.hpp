@@ -11,11 +11,13 @@
 
 #include <wx/activityindicator.h>
 #include <wx/checkbox.h>
+#include <wx/msgqueue.h>
 #include <wx/stattext.h>
 #include <wx/timer.h>
 
 class ChatAI;
 using llm::ChatState;
+
 class WXDLLIMPEXP_SDK ChatAIWindow : public AssistanceAIChatWindowBase
 {
 public:
@@ -52,7 +54,18 @@ public:
      */
     void AppendText(const wxString& text, bool force_style = true);
 
+    /**
+     * @brief Displays a yes/no trust confirmation bar with the specified message.
+     *
+     * Shows an information bar (typically at the bottom of the ChatAIWindow)
+     * with a question icon and the provided text, prompting the user for a trust decision.
+     */
+    void ShowYesNoTrustBar(const wxString& text);
+
 protected:
+    void OnTrust(wxCommandEvent& event) override;
+    void OnNo(wxCommandEvent& event) override;
+    void OnYes(wxCommandEvent& event) override;
     void OnCharAdded(wxStyledTextEvent& event);
     void OnAutoScroll(wxCommandEvent& event);
     void OnAutoScrollUI(wxUpdateUIEvent& event);

@@ -31,7 +31,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     m_toolbar->SetArtProvider(new clAuiToolBarArt());
     clAuiToolBarArt::AddTool(m_toolbar, wxID_CLEAR, _("Clear the chat history"), images->LoadBitmap("clear"));
     m_toolbar->AddSeparator();
-
+    m_infobar->Hide();
     wxSize control_size{GetTextExtent(LONG_MODEL_NAME).GetWidth(), wxNOT_FOUND};
     m_choiceEndpoints = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, control_size);
     m_choiceEndpoints->SetToolTip(_("Choose the endpoint to use"));
@@ -439,6 +439,8 @@ void ChatAIWindow::AppendText(const wxString& text, bool force_style)
     }
 }
 
+void ChatAIWindow::ShowYesNoTrustBar(const wxString& text) { m_infobar->ShowMessage(text, wxICON_QUESTION); }
+
 void ChatAIWindow::AppendOutput(const wxString& text)
 {
     CHECK_COND_RET(!text.empty());
@@ -589,4 +591,25 @@ void ChatAIWindow::OnSize(wxSizeEvent& event)
     if (GetSizer()) {
         Layout();
     }
+}
+
+void ChatAIWindow::OnNo(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    llm::Manager::GetInstance().PostAnswer(llm::UserAnswer::kNo);
+    m_infobar->Dismiss();
+}
+
+void ChatAIWindow::OnYes(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    llm::Manager::GetInstance().PostAnswer(llm::UserAnswer::kYes);
+    m_infobar->Dismiss();
+}
+
+void ChatAIWindow::OnTrust(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    llm::Manager::GetInstance().PostAnswer(llm::UserAnswer::kTrust);
+    m_infobar->Dismiss();
 }

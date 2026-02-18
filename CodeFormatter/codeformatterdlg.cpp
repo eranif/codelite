@@ -24,19 +24,9 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "codeformatterdlg.h"
 
-#include "ColoursAndFontsManager.h"
-#include "StringUtils.h"
-#include "clSTCLineKeeper.h"
-#include "codeformatter.h"
-#include "editor_config.h"
-#include "fileextmanager.h"
 #include "globals.h"
-#include "lexer_configuration.h"
-#include "windowattrmanager.h"
 
-#include <wx/menu.h>
 #include <wx/msgdlg.h>
-#include <wx/tokenzr.h>
 
 CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent, CodeFormatterManager& mgr)
     : CodeFormatterBaseDlg(parent)
@@ -57,8 +47,7 @@ CodeFormatterDlg::~CodeFormatterDlg()
 
 void CodeFormatterDlg::InitDialog()
 {
-    wxArrayString all_formatters;
-    m_formatter_manager.GetAllNames(&all_formatters);
+    wxArrayString all_formatters = m_formatter_manager.GetAllNames();
     m_dvListCtrl->DeleteAllItems();
     m_dvListCtrl->Begin();
     for (const auto& name : all_formatters) {
@@ -105,20 +94,20 @@ void CodeFormatterDlg::OnSelectFileTypes(wxCommandEvent& event) { wxUnusedVar(ev
 void CodeFormatterDlg::OnNew(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    GenericFormatter* formatter = new GenericFormatter();
     wxString name = ::clGetTextFromUser(_("New formatter"), _("Enter the new formatter name:"));
     if (name.empty()) {
         return;
     }
+    auto formatter = std::make_shared<GenericFormatter>();
     formatter->SetName(name);
     formatter->SetShortDescription(name);
-    if (!m_formatter_manager.AddCustom(formatter)) {
-        wxDELETE(formatter);
+    if (!m_formatter_manager.AddCustom(std::move(formatter))) {
         ::wxMessageBox(_("Formatter with similar name already exists"), "CodeLite", wxICON_ERROR);
         return;
     }
     InitDialog();
 }
+
 void CodeFormatterDlg::OnDelete(wxCommandEvent& event)
 {
     wxUnusedVar(event);

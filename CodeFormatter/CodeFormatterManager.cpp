@@ -11,9 +11,8 @@
 #include "fmtXmlLint.hpp"
 #include "fmtYQ.hpp"
 
+#include <algorithm>
 #include <wx/filename.h>
-
-CodeFormatterManager::~CodeFormatterManager() { clear(); }
 
 std::shared_ptr<GenericFormatter> CodeFormatterManager::GetFormatter(const wxString& filepath) const
 {
@@ -31,35 +30,31 @@ void CodeFormatterManager::clear() { m_formatters.clear(); }
 void CodeFormatterManager::initialize_defaults()
 {
     clear();
-    push_back(new fmtClangFormat);
-    push_back(new fmtPHPCBF);
-    push_back(new fmtPHPCSFixer);
-    push_back(new fmtJQ);
-    push_back(new fmtXmlLint);
-    push_back(new fmtRustfmt);
-    push_back(new fmtBlack);
-    push_back(new fmtYQ);
-    push_back(new fmtCMakeFormat);
-    push_back(new fmtShfmtFormat);
+    push_back(std::make_shared<fmtClangFormat>());
+    push_back(std::make_shared<fmtPHPCBF>());
+    push_back(std::make_shared<fmtPHPCSFixer>());
+    push_back(std::make_shared<fmtJQ>());
+    push_back(std::make_shared<fmtXmlLint>());
+    push_back(std::make_shared<fmtRustfmt>());
+    push_back(std::make_shared<fmtBlack>());
+    push_back(std::make_shared<fmtYQ>());
+    push_back(std::make_shared<fmtCMakeFormat>());
+    push_back(std::make_shared<fmtShfmtFormat>());
 }
 
-void CodeFormatterManager::push_back(GenericFormatter* formatter)
+void CodeFormatterManager::push_back(std::shared_ptr<GenericFormatter> formatter)
 {
-    std::shared_ptr<GenericFormatter> ptr{ formatter };
-    m_formatters.push_back(ptr);
+    m_formatters.push_back(std::move(formatter));
 }
 
-size_t CodeFormatterManager::GetAllNames(wxArrayString* names) const
+wxArrayString CodeFormatterManager::GetAllNames() const
 {
-    if (!names) {
-        return 0;
+    wxArrayString names;
+    names.reserve(m_formatters.size());
+    for (const auto& f : m_formatters) {
+        names.Add(f->GetName());
     }
-
-    names->reserve(m_formatters.size());
-    for (auto f : m_formatters) {
-        names->Add(f->GetName());
-    }
-    return names->size();
+    return names;
 }
 
 void CodeFormatterManager::Load()
@@ -81,9 +76,9 @@ void CodeFormatterManager::Load()
     auto arr = root.toElement();
     int count = arr.arraySize();
     for (int i = 0; i < count; ++i) {
-        GenericFormatter* fmtr = new GenericFormatter();
-        fmtr->FromJSON(arr[i]);
-        push_back(fmtr);
+        auto formatter = std::make_shared<GenericFormatter>();
+        formatter->FromJSON(arr[i]);
+        push_back(std::move(formatter));
     }
 }
 
@@ -148,24 +143,19 @@ std::shared_ptr<GenericFormatter> CodeFormatterManager::GetFormatterByContent(co
     return nullptr;
 }
 
-bool CodeFormatterManager::AddCustom(GenericFormatter* formatter)
+bool CodeFormatterManager::AddCustom(std::shared_ptr<GenericFormatter> formatter)
 {
-    auto where =
-        std::find_if(m_formatters.begin(), m_formatters.end(), [formatter](std::shared_ptr<GenericFormatter> fmtr) {
-            return fmtr->GetName() == formatter->GetName();
-        });
+    const auto where = std::ranges::find(m_formatters, formatter->GetName(), &GenericFormatter::GetName);
     if (where != m_formatters.end()) {
         return false;
     }
-    push_back(formatter);
+    push_back(std::move(formatter));
     return true;
 }
 
 bool CodeFormatterManager::DeleteFormatter(const wxString& name)
 {
-    auto where = std::find_if(m_formatters.begin(),
-                              m_formatters.end(),
-                              [&name](std::shared_ptr<GenericFormatter> fmtr) { return fmtr->GetName() == name; });
+    const auto where = std::ranges::find(m_formatters, name, &GenericFormatter::GetName);
     if (where == m_formatters.end()) {
         // not found
         return false;

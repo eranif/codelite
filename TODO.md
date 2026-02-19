@@ -26,7 +26,6 @@ AI-powered IDE:
 - Make another tool `RemoteFindInFile` for supporting remote find-in-files.
 - Replace the standard "find-in-files" tool with `grep` command (on all platforms) - this will allow it to run on remote files.
 - Add system message telling the model on which OS it is running.
-- Replace the modal dialogue asking for `Yes` / `No` for tools with `wxInfoBar`
 
 Prepare release notes per version (e.g. 18.2.0, 18.3.0 etc)
 

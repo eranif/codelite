@@ -60,7 +60,7 @@ void clDapSettingsStore::Save(const wxFileName& path)
     if(!path.IsOk()) {
         return;
     }
-    JSON root(cJSON_Array);
+    JSON root(JsonType::Array);
     for(const auto& vt : m_entries) {
         root.toElement().arrayAppend(vt.second.To());
     }

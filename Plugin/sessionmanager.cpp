@@ -72,7 +72,7 @@ bool FindInFilesSession::From(const wxString& content)
 
 wxString FindInFilesSession::Save() const
 {
-    JSON root{ cJSON_Object };
+    JSON root{JsonType::Object};
     auto json = root.toElement();
     json.addProperty("find_what_array", find_what_array);
     json.addProperty("find_what", find_what);

@@ -372,8 +372,8 @@ bool clFileSystemWorkspaceSettings::Save(const wxFileName& filename, const wxFil
         localWorkspace.AppendDir(".codelite");
     }
     localWorkspace.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-    JSON root_local(cJSON_Object);
-    JSON root_shared(cJSON_Object);
+    JSON root_local(JsonType::Object);
+    JSON root_shared(JsonType::Object);
 
     JSONItem itemLocal = root_local.toElement();
     JSONItem itemShared = root_shared.toElement();

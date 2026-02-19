@@ -17,7 +17,7 @@ JSONItem LSP::InitializeRequest::ToJSON(const wxString& name) const
     json.append(params);
     params.addProperty("processId", GetProcessId());
     if (GetRootUri().IsEmpty()) {
-        JSON nullItem(cJSON_NULL);
+        JSON nullItem(JsonType::Null);
         JSONItem nullObj = nullItem.toElement();
         params.append(nullObj);
         (void)nullItem.release(); // don't delete it on destruction, it is now owned by 'params'

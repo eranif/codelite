@@ -258,6 +258,12 @@ public:
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
+enum class JsonType
+{
+    Array,
+    Null,
+    Object,
+};
 
 class WXDLLIMPEXP_CL JSON
 {
@@ -266,11 +272,12 @@ protected:
     wxString _errorString;
 
 public:
-    JSON(int type);
-    JSON(const wxString& text);
-    JSON(const wxFileName& filename);
-    JSON(JSONItem item);
-    JSON(cJSON* json);
+    explicit JSON(JsonType type);
+    explicit JSON(const wxString& text);
+    explicit JSON(const wxFileName& filename);
+    explicit JSON(JSONItem item);
+    explicit JSON(cJSON* json);
+
     virtual ~JSON();
 
     void save(const wxFileName& fn) const;

@@ -1066,7 +1066,7 @@ void GUICraftMainPanel::OnSaveProject(wxCommandEvent& e)
     }
     wxcProjectMetadata::Get().SetObjCounter(wxcWidget::GetObjCounter());
 
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
 
     // If we don't have bitmap function assigned to this project, create new one
     if (wxcProjectMetadata::Get().GetBitmapFunction().IsEmpty()) {
@@ -2565,7 +2565,7 @@ void GUICraftMainPanel::OnLoadCurrentState(
 
 State::Ptr_t GUICraftMainPanel::CurrentState()
 {
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
 
     // If we don't have bitmap function assigned to this project, create new one
     if (wxcProjectMetadata::Get().GetBitmapFunction().IsEmpty()) {

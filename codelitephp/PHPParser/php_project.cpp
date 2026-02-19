@@ -134,7 +134,7 @@ void PHPProject::Load(const wxFileName& filename)
 
 void PHPProject::Save()
 {
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
     JSONItem pro = root.toElement();
     ToJSON(pro);
     root.save(m_filename);

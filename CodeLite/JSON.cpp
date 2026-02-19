@@ -29,9 +29,6 @@
 #include "clFontHelper.h"
 #include "fileutils.h"
 
-#include <stdlib.h>
-#include <wx/dynarray.h>
-#include <wx/ffile.h>
 #include <wx/filename.h>
 
 JSON::JSON(const wxString& text)
@@ -50,12 +47,12 @@ JSON::JSON(JSONItem item)
 {
 }
 
-JSON::JSON(int type)
+JSON::JSON(JsonType type)
     : m_json(NULL)
 {
-    if (type == cJSON_Array)
+    if (type == JsonType::Array)
         m_json = cJSON_CreateArray();
-    else if (type == cJSON_NULL)
+    else if (type == JsonType::Null)
         m_json = cJSON_CreateNull();
     else
         m_json = cJSON_CreateObject();

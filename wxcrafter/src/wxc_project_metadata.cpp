@@ -198,7 +198,7 @@ void wxcProjectMetadata::Serialize(const wxcWidget::List_t& topLevelsList, const
     wxcProjectMetadata p;
     p.GenerateBitmapFunctionName();
 
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
     root.toElement().append(p.ToJSON());
 
     // The windows

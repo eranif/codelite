@@ -14,12 +14,15 @@ The documentation comment must contain **all** of the following sections (in thi
 3. **Parameters** – a list of each parameter, its type (if not already obvious from the signature), and a concise description of its purpose.
 4. **Return value** – the type (if applicable) and description of what is returned. If the function returns nothing, explicitly state that.
 5. **Raises / Throws / Errors** – any exceptions, error codes, or error‑handling behavior the function may produce. If none, you may omit this section.
-6. **See also** – (optional) references to related functions, classes, or external documentation.
 
 Follow the exact syntax for the target language’s doc‑comment style (e.g., `/** … */` for Java, `""" … """` for Python, `/// …` for Rust, `/** … */` for TypeScript/JSDoc, `/*** … */` for Doxygen, etc.).
 
 Do **not** include any extra explanatory text outside the comment block.
 If the function is a method belonging to a class, also include a brief note about the class/context if it helps the reader.
+
+**Use only ASCII characters in the documentation comment.** Avoid using non-ASCII characters such as curly quotes (", ", ', '), 
+em dashes (—), special bullets (•), or any Unicode symbols. Use standard ASCII alternatives: straight quotes (" and '), hyphens (-), 
+asterisks (*), and other basic punctuation marks.
 
 ---
 

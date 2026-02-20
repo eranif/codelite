@@ -71,7 +71,7 @@ public:
      * @brief Determines whether the current caret position is at the start of a line (ignoring leading whitespace).
      *
      * The function obtains the current styled end position, then walks backwards
-     * over any spaces or tabs until it encounters a non‑whitespace character,
+     * over any spaces or tabs until it encounters a non-whitespace character,
      * a newline, or the beginning of the document.  It returns {@code true}
      * if the caret is positioned at the start of a line, and {@code false}
      * otherwise.

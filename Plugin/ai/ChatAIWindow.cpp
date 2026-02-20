@@ -37,6 +37,9 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     m_choiceEndpoints->SetToolTip(_("Choose the endpoint to use"));
     m_toolbar->AddControl(m_choiceEndpoints);
 
+    m_inputEditHelper = std::make_unique<clEditEventsHandler>(m_stcInput);
+    m_outputEditHelper = std::make_unique<clEditEventsHandler>(m_stcOutput);
+
     m_checkboxEnableTools = new wxCheckBox(m_toolbar, wxID_ANY, _("Enable Tools"));
     bool enable_tools = clConfig::Get().Read("chat-ai/enable-tools", true);
     m_checkboxEnableTools->SetValue(enable_tools);
@@ -85,6 +88,8 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
 
     llm::Manager::GetInstance().Bind(wxEVT_LLM_CONFIG_UPDATED, &ChatAIWindow::OnLLMConfigUpdate, this);
     llm::Manager::GetInstance().Bind(wxEVT_LLM_STARTED, &ChatAIWindow::OnLLMConfigUpdate, this);
+    llm::Manager::GetInstance().Bind(wxEVT_LLM_USER_REPLY_ERROR, &ChatAIWindow::OnLLMUserReplyError, this);
+    llm::Manager::GetInstance().Bind(wxEVT_LLM_USER_REPLY_TIMEOUT, &ChatAIWindow::OnLLMUserReplyError, this);
 
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
@@ -124,7 +129,6 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
 
     CallAfter(&ChatAIWindow::RestoreUI);
     ShowIndicator(false);
-
     m_cancel_token = std::make_shared<llm::CancellationToken>();
 }
 
@@ -143,6 +147,9 @@ ChatAIWindow::~ChatAIWindow()
 
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_CONFIG_UPDATED, &ChatAIWindow::OnLLMConfigUpdate, this);
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_STARTED, &ChatAIWindow::OnLLMConfigUpdate, this);
+    llm::Manager::GetInstance().Unbind(wxEVT_LLM_USER_REPLY_ERROR, &ChatAIWindow::OnLLMUserReplyError, this);
+    llm::Manager::GetInstance().Unbind(wxEVT_LLM_USER_REPLY_TIMEOUT, &ChatAIWindow::OnLLMUserReplyError, this);
+
     Unbind(wxEVT_SIZE, &ChatAIWindow::OnSize, this);
 
     clConfig::Get().Write("chat-ai/sash-position", m_mainSplitter->GetSashPosition());
@@ -390,9 +397,15 @@ void ChatAIWindow::UpdateCostBar()
         return;
     }
     wxString str;
-    str << wxT(" ▶ ") << _("Total cost: $") << llm.GetTotalCost() << _(", Last Request cost: $")
+    str << wxT(" > ") << _("Total cost: $") << llm.GetTotalCost() << _(", Last Request cost: $")
         << llm.GetLastRequestCost();
     m_statusPanel->SetMessage(str, 1);
+}
+
+void ChatAIWindow::OnLLMUserReplyError(clLLMEvent& event)
+{
+    event.Skip();
+    m_infobar->Dismiss();
 }
 
 void ChatAIWindow::OnLLMConfigUpdate(clLLMEvent& event)

@@ -68,8 +68,13 @@ cd build-release/install
                      libssh-dev libsqlite3-dev  \
                      libmariadb-dev             \
                      libpq-dev                  \
-                     libpcre2-dev bison flex
+                     libpcre2-dev bison flex    \
+                     fonts-noto
+    sudo fc-cache -fv 
 ```
+
+!!! Note
+    `fonts-noto` is required for proper display of Unicode symbols in the editor.
 
 - Git clone the sources:
 

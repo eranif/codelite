@@ -147,10 +147,6 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
     ctrl->SetBufferedDraw(false);
 #elif defined(__WXGTK__)
     ctrl->SetTechnology(wxSTC_TECHNOLOGY_DIRECTWRITE);
-    // need to force this to false, see these bugs:
-    // https://github.com/eranif/codelite/issues/3010
-    // https://github.com/eranif/codelite/issues/2992
-    ctrl->SetBufferedDraw(true);
 #endif
 
     if (IsSubstyleSupported()) {

@@ -607,7 +607,7 @@ private:
  *
  * Constructing an instance of {@code FunctionsDisabler} disables all
  * functions via {@code llm::Manager::GetInstance().EnableAllFunctions(false)}.
- * When the instance goes out of scope, the destructor re‑enables all functions
+ * When the instance goes out of scope, the destructor re-enables all functions
  * by calling {@code llm::Manager::GetInstance().EnableAllFunctions(true)}.
  *
  * This class is intended for use when a section of code requires the
@@ -615,7 +615,7 @@ private:
  * the original state is restored automatically when the object is destroyed.
  *
  * @note The implementation relies on the singleton {@code llm::Manager}
- *       and assumes thread‑safety of the EnableAllFunctions method.
+ *       and assumes thread-safety of the EnableAllFunctions method.
  *
  * @code
  * {

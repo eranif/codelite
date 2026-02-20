@@ -1106,11 +1106,19 @@ clStatusOr<UserAnswer> llm::Manager::PromptUserYesNoTrustQuestion(const wxString
     auto result = m_answerChannel.ReceiveTimeout(timeout_secs * 1000, answer);
     switch (result) {
     case wxMSGQUEUE_NO_ERROR:
+        // Use clicked something
         return answer;
-    case wxMSGQUEUE_TIMEOUT:
+    case wxMSGQUEUE_TIMEOUT: {
+        clLLMEvent prompt_error{wxEVT_LLM_USER_REPLY_TIMEOUT};
+        AddPendingEvent(prompt_error);
         return StatusTimeout(_("User did not reply in a timely manner. Try again later."));
-    case wxMSGQUEUE_MISC_ERROR:
+    }
+    default:
+    case wxMSGQUEUE_MISC_ERROR: {
+        clLLMEvent prompt_error{wxEVT_LLM_USER_REPLY_ERROR};
+        AddPendingEvent(prompt_error);
         return StatusOther(_("Failed to read response from user"));
+    }
     }
 }
 

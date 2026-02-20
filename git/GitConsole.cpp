@@ -153,7 +153,7 @@ wxString GenerateRandomFile()
 
 void DeleteAllItems(wxDataViewListCtrl* list)
 {
-    for (size_t i = 0; i < list->GetItemCount(); ++i) {
+    for (size_t i = 0; i < static_cast<size_t>(list->GetItemCount()); ++i) {
         auto item_data = list->GetItemData(list->RowToItem(i));
         GitClientData* cd = reinterpret_cast<GitClientData*>(item_data);
         wxDELETE(cd);
@@ -1121,7 +1121,7 @@ void GitConsole::FinaliseReleaseNotes(const wxString& complete_response)
 std::shared_ptr<std::string> GitConsole::AllocateBuffer()
 {
     auto buffer = std::make_shared<std::string>();
-    buffer->reserve(32 * 1024); // assumes ~32KB worst‑case
+    buffer->reserve(32 * 1024); // assumes ~32KB worst case
     return buffer;
 }
 

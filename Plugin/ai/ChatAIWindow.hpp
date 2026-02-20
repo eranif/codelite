@@ -5,6 +5,7 @@
 #include "UI.hpp"
 #include "ai/Common.hpp"
 #include "ai/ProgressToken.hpp"
+#include "clEditorEditEventsHandler.h"
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
@@ -32,7 +33,7 @@ public:
      * it to the chat system. If the prompt is empty, the function returns without
      * performing any action.
      *
-     * @param prompt The prompt text to be sent. Must be a non‑empty {@link wxString}.
+     * @param prompt The prompt text to be sent. Must be a non-empty {@link wxString}.
      */
     void Chat(const wxString& prompt);
 
@@ -100,6 +101,7 @@ protected:
 
     /// LLM events
     void OnLLMConfigUpdate(clLLMEvent& event);
+    void OnLLMUserReplyError(clLLMEvent& event);
     void OnChatStarted(clLLMEvent& event);
     void OnChatAIOutput(clLLMEvent& event);
     void OnChatAIOutputDone(clLLMEvent& event);
@@ -123,4 +125,6 @@ private:
     bool m_autoScroll{true};
     std::shared_ptr<llm::CancellationToken> m_cancel_token{nullptr};
     ChatAI* m_plugin{nullptr};
+    std::unique_ptr<clEditEventsHandler> m_inputEditHelper;
+    std::unique_ptr<clEditEventsHandler> m_outputEditHelper;
 };

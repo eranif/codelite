@@ -554,16 +554,15 @@ void Manager::Restart()
 void Manager::Stop()
 {
     auto bc = std::make_unique<BusyCursor>();
+    CHECK_PTR_RET(m_client);
 
-    if (m_client) {
-        m_client->Interrupt();
-        CleanupAfterWorkerExit();
-        m_client.reset();
+    m_client->Interrupt();
+    CleanupAfterWorkerExit();
+    m_client.reset();
 
-        clLLMEvent stop_event{wxEVT_LLM_STOPPED};
-        stop_event.SetEventObject(this);
-        AddPendingEvent(stop_event);
-    }
+    clLLMEvent stop_event{wxEVT_LLM_STOPPED};
+    stop_event.SetEventObject(this);
+    AddPendingEvent(stop_event);
 }
 
 static std::unordered_set<std::string> allowed_tools;

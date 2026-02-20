@@ -930,30 +930,30 @@ void GitConsole::DoCodeReview()
     wxString review_file = GenerateRandomFile();
     auto complete_message = AllocateBuffer();
     std::shared_ptr<CallThrottler> throttler = std::make_shared<CallThrottler>();
-    collector->SetStreamCallback(
-        [=, this](const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
-            if (cancellation_token->IsMaxTokenReached()) {
-                m_statusBar->Stop(message);
-                return;
-            }
+    collector->SetStreamCallback([=, this](const std::string& message, llm::StreamCallbackReason reason) {
+        if (cancellation_token->IsMaxTokenReached()) {
+            m_statusBar->Stop(message);
+            return;
+        }
 
-            complete_message->append(message);
-            throttler->ExecuteIfAllowed(
-                [this, cancellation_token]() { UpdateStatusBarTokens(cancellation_token->GetTokenCount()); });
+        bool is_done = llm::IsFlagSet(reason, llm::StreamCallbackReason::kDone);
+        complete_message->append(message);
+        throttler->ExecuteIfAllowed(
+            [this, cancellation_token]() { UpdateStatusBarTokens(cancellation_token->GetTokenCount()); });
 
-            if (is_done) {
-                m_statusBar->Stop("Ready");
-                auto editor = CreateAndOpenTempFile(review_file);
-                if (editor) {
-                    editor->SetEditorText(wxString::FromUTF8(*complete_message));
-                    editor->GetCtrl()->SetSavePoint();
-                    MarkdownStyler styler(editor->GetCtrl());
-                    styler.StyleText(true);
-                    editor->GetCtrl()->SetWrapMode(wxSTC_WRAP_WORD);
-                    editor->GetCtrl()->SetReadOnly(true);
-                }
+        if (is_done) {
+            m_statusBar->Stop("Ready");
+            auto editor = CreateAndOpenTempFile(review_file);
+            if (editor) {
+                editor->SetEditorText(wxString::FromUTF8(*complete_message));
+                editor->GetCtrl()->SetSavePoint();
+                MarkdownStyler styler(editor->GetCtrl());
+                styler.StyleText(true);
+                editor->GetCtrl()->SetWrapMode(wxSTC_WRAP_WORD);
+                editor->GetCtrl()->SetReadOnly(true);
             }
-        });
+        }
+    });
 
     auto function_disabler = std::make_shared<llm::FunctionsDisabler>();
     auto state_change_cb = [this, function_disabler](llm::ChatState state) {
@@ -1044,32 +1044,32 @@ void GitConsole::GenerateReleaseNotes()
     auto complete_response = AllocateBuffer();
     wxString release_notes_file = GenerateRandomFile();
     std::shared_ptr<CallThrottler> throttler = std::make_shared<CallThrottler>();
-    collector->SetStreamCallback(
-        [=, this](const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
-            if (cancellation_token->IsMaxTokenReached()) {
-                m_statusBar->Stop(message);
-                return;
-            }
-            complete_response->append(message);
-            throttler->ExecuteIfAllowed(
-                [this, cancellation_token]() { UpdateStatusBarTokens(cancellation_token->GetTokenCount()); });
-            if (is_done) {
-                if (multiple_prompts) {
-                    CallAfter(&GitConsole::FinaliseReleaseNotes, wxString::FromUTF8(*complete_response));
-                } else {
-                    m_statusBar->Stop("Ready");
-                    auto editor = CreateAndOpenTempFile(release_notes_file);
-                    if (editor) {
-                        editor->SetEditorText(wxString::FromUTF8(*complete_response));
-                        editor->GetCtrl()->SetSavePoint();
-                        MarkdownStyler styler(editor->GetCtrl());
-                        styler.StyleText(true);
-                        editor->GetCtrl()->SetWrapMode(wxSTC_WRAP_WORD);
-                        editor->GetCtrl()->SetReadOnly(true);
-                    }
+    collector->SetStreamCallback([=, this](const std::string& message, llm::StreamCallbackReason reason) {
+        if (cancellation_token->IsMaxTokenReached()) {
+            m_statusBar->Stop(message);
+            return;
+        }
+        complete_response->append(message);
+        bool is_done = llm::IsFlagSet(reason, llm::StreamCallbackReason::kDone);
+        throttler->ExecuteIfAllowed(
+            [this, cancellation_token]() { UpdateStatusBarTokens(cancellation_token->GetTokenCount()); });
+        if (is_done) {
+            if (multiple_prompts) {
+                CallAfter(&GitConsole::FinaliseReleaseNotes, wxString::FromUTF8(*complete_response));
+            } else {
+                m_statusBar->Stop("Ready");
+                auto editor = CreateAndOpenTempFile(release_notes_file);
+                if (editor) {
+                    editor->SetEditorText(wxString::FromUTF8(*complete_response));
+                    editor->GetCtrl()->SetSavePoint();
+                    MarkdownStyler styler(editor->GetCtrl());
+                    styler.StyleText(true);
+                    editor->GetCtrl()->SetWrapMode(wxSTC_WRAP_WORD);
+                    editor->GetCtrl()->SetReadOnly(true);
                 }
             }
-        });
+        }
+    });
 
     llm::ChatOptions chat_options{llm::ChatOptions::kNoTools};
     llm::AddFlagSet(chat_options, llm::ChatOptions::kNoHistory);
@@ -1096,21 +1096,21 @@ void GitConsole::FinaliseReleaseNotes(const wxString& complete_response)
     auto token_count = std::make_shared<size_t>(0);
     auto throttler = std::make_shared<CallThrottler>();
 
-    collector->SetStreamCallback(
-        [=, this](const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
-            merged_result->append(message);
-            (*token_count)++;
-            throttler->ExecuteIfAllowed([this, token_count]() { UpdateStatusBarTokens(*token_count); });
-            if (is_done) {
-                auto editor = CreateAndOpenTempFile(GenerateRandomFile());
-                CHECK_PTR_RET(editor);
-                editor->SetEditorText(wxString::FromUTF8(*merged_result));
-                m_statusBar->Stop("Ready");
-                editor->GetCtrl()->SetSavePoint();
-                MarkdownStyler styler(editor->GetCtrl());
-                styler.StyleText(true);
-            }
-        });
+    collector->SetStreamCallback([=, this](const std::string& message, llm::StreamCallbackReason reason) {
+        merged_result->append(message);
+        (*token_count)++;
+        bool is_done = llm::IsFlagSet(reason, llm::StreamCallbackReason::kDone);
+        throttler->ExecuteIfAllowed([this, token_count]() { UpdateStatusBarTokens(*token_count); });
+        if (is_done) {
+            auto editor = CreateAndOpenTempFile(GenerateRandomFile());
+            CHECK_PTR_RET(editor);
+            editor->SetEditorText(wxString::FromUTF8(*merged_result));
+            m_statusBar->Stop("Ready");
+            editor->GetCtrl()->SetSavePoint();
+            MarkdownStyler styler(editor->GetCtrl());
+            styler.StyleText(true);
+        }
+    });
 
     llm::ChatOptions chat_options{llm::ChatOptions::kDefault};
     llm::AddFlagSet(chat_options, llm::ChatOptions::kNoTools);

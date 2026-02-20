@@ -3218,9 +3218,10 @@ bool GitPlugin::GenerateCommitMessage(const wxString& prompt)
         }
     });
 
-    collector->SetStreamCallback([this](const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
+    collector->SetStreamCallback([this](const std::string& message, llm::StreamCallbackReason reason) {
         CHECK_PTR_RET(m_commitDialog);
         m_commitDialog->AppendCommitMessage(wxString::FromUTF8(message));
+        bool is_done = llm::IsFlagSet(reason, llm::StreamCallbackReason::kDone);
         if (is_done) {
             m_commitDialog->SetCommitMessageGenerationCompleted();
         }

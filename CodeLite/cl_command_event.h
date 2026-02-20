@@ -944,9 +944,13 @@ public:
     void SetIsError(bool isError) { this->m_isError = isError; }
     bool IsError() const { return m_isError; }
 
+    void SetRequestCancelled(bool request_cancelled) { this->m_request_cancelled = request_cancelled; }
+    bool IsRequestCancelled() const { return m_request_cancelled; }
+
 protected:
     wxString m_prompt;
     bool m_isError{false};
+    bool m_request_cancelled{false};
 };
 
 using clLLMEventFunction = void (wxEvtHandler::*)(clLLMEvent&);

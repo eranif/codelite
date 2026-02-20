@@ -1,5 +1,7 @@
 #include "ai/ResponseCollector.hpp"
 
+#include "assistant/helpers.hpp"
+
 namespace llm
 {
 ResponseCollector::ResponseCollector()
@@ -26,13 +28,18 @@ void ResponseCollector::OnOutput(clLLMEvent& event)
     if (!m_stream_callback) {
         return;
     }
+
+    StreamCallbackReason reason{StreamCallbackReason::kNone};
     switch (m_state) {
     case ChatState::kWorking:
-        m_stream_callback(event.GetResponseRaw(), false, false);
+        assistant::AddFlagSet(reason, StreamCallbackReason::kToken);
+        m_stream_callback(event.GetResponseRaw(), reason);
         break;
     case ChatState::kThinking:
         if (IsWantThinkingTokens()) {
-            m_stream_callback(event.GetResponseRaw(), false, true);
+            assistant::AddFlagSet(reason, StreamCallbackReason::kToken);
+            assistant::AddFlagSet(reason, StreamCallbackReason::kThinking);
+            m_stream_callback(event.GetResponseRaw(), reason);
         }
         break;
     case ChatState::kReady:
@@ -45,13 +52,22 @@ void ResponseCollector::OnOutputDone(clLLMEvent& event)
     event.Skip();
     m_state = ChatState::kReady;
     m_ended_with_error = event.IsError();
+    m_request_cancelled = event.IsRequestCancelled();
+
+    StreamCallbackReason reason{StreamCallbackReason::kDone};
+    if (m_ended_with_error) {
+        assistant::AddFlagSet(reason, StreamCallbackReason::kError);
+    }
+    if (m_request_cancelled) {
+        assistant::AddFlagSet(reason, StreamCallbackReason::kCancelled);
+    }
 
     if (m_state_callback) {
         m_state_callback(m_state);
     }
 
     if (m_stream_callback) {
-        m_stream_callback(event.GetResponseRaw(), true, false);
+        m_stream_callback(event.GetResponseRaw(), reason);
     }
 }
 

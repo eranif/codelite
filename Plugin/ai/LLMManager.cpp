@@ -126,6 +126,15 @@ void NotifyDoneWithError(wxEvtHandler* owner, const std::string& message)
     event.SetIsError(true);
     owner->AddPendingEvent(event);
 }
+
+void NotifyRequestCancelled(wxEvtHandler* owner, const std::string& message)
+{
+    CHECK_PTR_RET(owner);
+    clLLMEvent event{wxEVT_LLM_OUTPUT_DONE};
+    event.SetResponseRaw(message);
+    event.SetRequestCancelled(true);
+    owner->AddPendingEvent(event);
+}
 } // namespace
 
 constexpr const char* kPlaceHolderEditorSelection = "{{current_selection}}";
@@ -236,7 +245,7 @@ void Manager::WorkerMain()
                         std::string message, assistant::Reason reason, bool thinking) -> bool {
                         // Check various options that the chat was cancelled.
                         if (client->IsInterrupted() || (cancellation_token && cancellation_token->IsCancelled())) {
-                            NotifyDoneWithError(owner, "\n\n** Request cancelled by the user. **\n\n");
+                            NotifyRequestCancelled(owner, "\n\n** Request cancelled by the user. **\n\n");
                             abort_loop = true;
                             return false;
                         }
@@ -284,7 +293,7 @@ void Manager::WorkerMain()
                             clDEBUG1() << message << endl;
                             break;
                         case assistant::Reason::kCancelled: {
-                            NotifyDoneWithError(owner, "\n\n** Request cancelled by caller. **\n\n");
+                            NotifyRequestCancelled(owner, "\n\n** Request cancelled by caller. **\n\n");
                             abort_loop = true;
                             return false;
                         } break;
@@ -1056,7 +1065,16 @@ void Manager::ShowTextGenerationDialog(const wxString& prompt,
     });
 
     collector->SetStreamCallback([preview_frame, completion_callback = std::move(completion_callback)](
-                                     const std::string& message, bool is_done, [[maybe_unused]] bool is_thinking) {
+                                     const std::string& message, llm::StreamCallbackReason reason) {
+        if (llm::IsFlagSet(reason, llm::StreamCallbackReason::kCancelled)) {
+            if (completion_callback) {
+                completion_callback();
+            }
+            return;
+        }
+
+        bool is_done = llm::IsFlagSet(reason, llm::StreamCallbackReason::kDone);
+
         preview_frame->AppendText(wxString::FromUTF8(message));
         if (is_done && !preview_frame->IsShown()) {
             preview_frame->Show();

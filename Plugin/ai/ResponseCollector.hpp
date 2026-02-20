@@ -8,6 +8,16 @@
 
 namespace llm
 {
+
+enum class StreamCallbackReason {
+    kNone = 0,
+    kDone = (1 << 1),
+    kThinking = (2 << 1),
+    kCancelled = (3 << 1),
+    kError = (4 << 1),
+    kToken = (5 << 1),
+};
+
 class WXDLLIMPEXP_SDK ResponseCollector : public wxEvtHandler
 {
 public:
@@ -18,7 +28,7 @@ public:
     void Reset();
 
     /// The stream callbacl: message, is_done, is_thinking
-    inline void SetStreamCallback(std::function<void(const std::string&, bool, bool)> cb)
+    inline void SetStreamCallback(std::function<void(const std::string&, StreamCallbackReason)> cb)
     {
         m_stream_callback = std::move(cb);
     }
@@ -38,8 +48,9 @@ protected:
 private:
     ChatState m_state{ChatState::kReady};
     bool m_ended_with_error{false};
+    bool m_request_cancelled{false};
     std::function<void(ChatState)> m_state_callback{nullptr};
-    std::function<void(const std::string&, bool, bool)> m_stream_callback{nullptr};
+    std::function<void(const std::string&, StreamCallbackReason)> m_stream_callback{nullptr};
     bool m_wantThinkingTokens{false};
 };
 

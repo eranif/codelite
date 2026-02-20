@@ -11,6 +11,7 @@
 #include "ai/Tools.hpp"
 #include "assistant/client_base.hpp"
 #include "assistant/function.hpp"
+#include "assistant/helpers.hpp"
 #include "assistant/ollama_client.hpp"
 #include "clResult.hpp"
 
@@ -54,6 +55,7 @@ using assistant::FunctionBase;
 using assistant::FunctionBuilder;
 using assistant::FunctionResult;
 using assistant::FunctionTable;
+using assistant::IsFlagSet;
 using assistant::json;
 using assistant::OnResponseCallback;
 using assistant::Reason;

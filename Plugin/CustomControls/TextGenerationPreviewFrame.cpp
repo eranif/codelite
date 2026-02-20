@@ -160,9 +160,11 @@ void TextGenerationPreviewFrame::OnClose(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     // If closed while still processing the request, restart the model
-    if (llm::Manager::GetInstance().IsBusy()) {
-        llm::Manager::GetInstance().Restart();
-    }
+    llm::Manager::GetInstance().CallAfter([]() {
+        if (llm::Manager::GetInstance().IsBusy()) {
+            llm::Manager::GetInstance().Restart();
+        }
+    });
     Hide();
 }
 
@@ -170,9 +172,12 @@ void TextGenerationPreviewFrame::OnCloseWindow(wxCloseEvent& event)
 {
     wxUnusedVar(event);
     // If closed while still processing the request, restart the model
-    if (llm::Manager::GetInstance().IsBusy()) {
-        llm::Manager::GetInstance().Restart();
-    }
+    llm::Manager::GetInstance().CallAfter([]() {
+        if (llm::Manager::GetInstance().IsBusy()) {
+            llm::Manager::GetInstance().Restart();
+        }
+    });
+
     Hide();
 }
 

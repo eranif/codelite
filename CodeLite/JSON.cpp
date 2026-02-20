@@ -182,7 +182,7 @@ JSONItem JSONItem::operator[](int index) const
 
 std::unordered_map<std::string_view, JSONItem> JSONItem::GetAsMap() const
 {
-    if (!m_json) {
+    if (!m_json || !isObject()) {
         return {};
     }
 

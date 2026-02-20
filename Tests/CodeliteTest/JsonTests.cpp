@@ -217,9 +217,7 @@ TEST_CASE("array json")
     CHECK(!item.hasNamedObject("a"));
     CHECK(!item.namedObject("a").isOk());
     CHECK(!item["a"].isOk());
-#if 0 // crash
     CHECK(item.GetAsMap().empty());
-#endif
 }
 
 TEST_CASE("object json")

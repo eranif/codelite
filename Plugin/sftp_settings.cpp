@@ -73,7 +73,7 @@ JSONItem SFTPSettings::ToJSON() const
 SFTPSettings& SFTPSettings::Load()
 {
     clConfig config("sftp-settings.conf");
-    config.ReadItem(this);
+    config.ReadItem(*this);
     //    MSWImportPuTTYAccounts();
     return *this;
 }
@@ -81,7 +81,7 @@ SFTPSettings& SFTPSettings::Load()
 SFTPSettings& SFTPSettings::Save()
 {
     clConfig config("sftp-settings.conf");
-    config.WriteItem(this);
+    config.WriteItem(*this);
     return *this;
 }
 

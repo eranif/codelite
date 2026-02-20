@@ -24,13 +24,13 @@ JSONItem WordCompletionSettings::ToJSON() const
 WordCompletionSettings& WordCompletionSettings::Load()
 {
     clConfig config("word-completion.conf");
-    config.ReadItem(this);
+    config.ReadItem(*this);
     return *this;
 }
 
 WordCompletionSettings& WordCompletionSettings::Save()
 {
     clConfig config("word-completion.conf");
-    config.WriteItem(this);
+    config.WriteItem(*this);
     return *this;
 }

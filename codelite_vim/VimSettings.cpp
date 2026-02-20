@@ -18,13 +18,13 @@ JSONItem VimSettings::ToJSON() const
 VimSettings& VimSettings::Load()
 {
     clConfig config("vim.conf");
-    config.ReadItem(this);
+    config.ReadItem(*this);
     return *this;
 }
 
 VimSettings& VimSettings::Save()
 {
     clConfig config("vim.conf");
-    config.WriteItem(this);
+    config.WriteItem(*this);
     return *this;
 }

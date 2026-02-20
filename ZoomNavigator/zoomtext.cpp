@@ -83,7 +83,7 @@ ZoomText::ZoomText(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wx
 
     znConfigItem data;
     clConfig conf("zoom-navigator.conf");
-    conf.ReadItem(&data);
+    conf.ReadItem(data);
 
     SetEditable(false);
     SetUseHorizontalScrollBar(false);
@@ -147,7 +147,7 @@ void ZoomText::UpdateLexer(IEditor* editor)
 
     znConfigItem data;
     clConfig conf("zoom-navigator.conf");
-    conf.ReadItem(&data);
+    conf.ReadItem(data);
 
     m_filename = editor->GetFileName().GetFullPath();
     LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexerForFile(m_filename);
@@ -171,7 +171,7 @@ void ZoomText::OnSettingsChanged(wxCommandEvent& e)
     e.Skip();
     znConfigItem data;
     clConfig conf("zoom-navigator.conf");
-    if (conf.ReadItem(&data)) {
+    if (conf.ReadItem(data)) {
         m_zoomFactor = data.GetZoomFactor();
         m_colour = data.GetHighlightColour();
 

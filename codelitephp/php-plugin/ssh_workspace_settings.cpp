@@ -27,14 +27,14 @@ void SSHWorkspaceSettings::Load()
 {
     wxFileName fn(PHPWorkspace::Get()->GetPrivateFolder(), "php-sftp.conf" );
     clConfig conf(fn.GetFullPath());
-    conf.ReadItem( this );
+    conf.ReadItem(*this);
 }
 
 void SSHWorkspaceSettings::Save()
 {
     wxFileName fn(PHPWorkspace::Get()->GetPrivateFolder(), "php-sftp.conf" );
     clConfig conf(fn.GetFullPath());
-    conf.WriteItem( this );
+    conf.WriteItem(*this);
 }
 
 bool SSHWorkspaceSettings::IsRemoteUploadSet() const

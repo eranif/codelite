@@ -51,7 +51,7 @@ GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin
 
     clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
+    conf.ReadItem(data);
 
     m_selectedRadio1 = data.GetGitDiffChooseDlgRadioSel1();
     m_selectedRadio2 = data.GetGitDiffChooseDlgRadioSel2();
@@ -124,14 +124,14 @@ GitDiffChooseCommitishDlg::~GitDiffChooseCommitishDlg()
     }
     clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
+    conf.ReadItem(data);
 
     data.SetGitDiffChooseDlgRadioSel1(m_selectedRadio1);
     data.SetGitDiffChooseDlgRadioSel2(m_selectedRadio2);
     data.SetGitDiffChooseDlgCBoxValues1(comboCommitish1Strings);
     data.SetGitDiffChooseDlgCBoxValues2(comboCommitish2Strings);
 
-    conf.WriteItem(&data);
+    conf.WriteItem(data);
 }
 
 wxString GitDiffChooseCommitishDlg::GetAncestorSetting(wxSpinCtrl* spin) const

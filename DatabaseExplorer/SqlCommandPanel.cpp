@@ -400,7 +400,7 @@ void SQLCommandPanel::OnHistoryToolClicked(wxAuiToolBarEvent& event)
 
         DbExplorerSettings settings;
         clConfig conf(DBE_CONFIG_FILE);
-        conf.ReadItem(&settings);
+        conf.ReadItem(settings);
         settings.GetRecentFiles();
 
         wxArrayString sqls = settings.GetSqlHistory();
@@ -504,7 +504,7 @@ void SQLCommandPanel::SaveSqlHistory(wxArrayString sqls)
 
     DbExplorerSettings s;
     clConfig conf(DBE_CONFIG_FILE);
-    conf.ReadItem(&s);
+    conf.ReadItem(s);
     const wxArrayString& history = s.GetSqlHistory();
 
     // Append the current history to the new sqls (exclude dups)
@@ -520,5 +520,5 @@ void SQLCommandPanel::SaveSqlHistory(wxArrayString sqls)
     }
 
     s.SetSqlHistory(sqls);
-    conf.WriteItem(&s);
+    conf.WriteItem(s);
 }

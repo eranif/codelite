@@ -277,9 +277,9 @@ void clBootstrapWizard::OnFinish(wxWizardEvent& event)
         // user changed plugins
         clConfig conf("plugins.conf");
         PluginInfoArray plugins;
-        conf.ReadItem(&plugins);
+        conf.ReadItem(plugins);
         plugins.EnablePlugins(GetSelectedPlugins());
-        conf.WriteItem(&plugins);
+        conf.WriteItem(plugins);
     }
 }
 

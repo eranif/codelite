@@ -54,7 +54,7 @@ void clDockerSettings::Load()
     wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "docker.conf");
     fn.AppendDir("config");
     clConfig conf(fn.GetFullPath());
-    conf.ReadItem(this);
+    conf.ReadItem(*this);
 }
 
 void clDockerSettings::Save()
@@ -62,5 +62,5 @@ void clDockerSettings::Save()
     wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "docker.conf");
     fn.AppendDir("config");
     clConfig conf(fn.GetFullPath());
-    conf.WriteItem(this);
+    conf.WriteItem(*this);
 }

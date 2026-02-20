@@ -41,7 +41,7 @@ void PluginMgrDlg::Initialize()
 {
     clConfig conf("plugins.conf");
     PluginInfoArray plugins;
-    conf.ReadItem(&plugins);
+    conf.ReadItem(plugins);
 
     m_initialEnabledPlugins = plugins.GetEnabledPlugins();
     std::sort(m_initialEnabledPlugins.begin(), m_initialEnabledPlugins.end());
@@ -73,7 +73,7 @@ void PluginMgrDlg::OnButtonOK(wxCommandEvent& event)
 {
     clConfig conf("plugins.conf");
     PluginInfoArray plugins;
-    conf.ReadItem(&plugins);
+    conf.ReadItem(plugins);
 
     wxArrayString enabledPlugins;
     for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
@@ -85,7 +85,7 @@ void PluginMgrDlg::OnButtonOK(wxCommandEvent& event)
 
     std::sort(enabledPlugins.begin(), enabledPlugins.end());
     plugins.EnablePlugins(enabledPlugins);
-    conf.WriteItem(&plugins);
+    conf.WriteItem(plugins);
     EndModal(enabledPlugins == m_initialEnabledPlugins ? wxID_CANCEL : wxID_OK);
 }
 
@@ -101,7 +101,7 @@ void PluginMgrDlg::CreateInfoPage(unsigned int index)
 {
     clConfig conf("plugins.conf");
     PluginInfoArray plugins;
-    conf.ReadItem(&plugins);
+    conf.ReadItem(plugins);
 
     m_richTextCtrl->Clear();
     m_richTextCtrl->Freeze();

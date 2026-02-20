@@ -31,13 +31,13 @@ JSONItem PHPRefactoringOptions::ToJSON() const
 PHPRefactoringOptions& PHPRefactoringOptions::Load()
 {
     clConfig config("phprefactoring.conf");
-    config.ReadItem(this);
+    config.ReadItem(*this);
     return *this;
 }
 
 PHPRefactoringOptions& PHPRefactoringOptions::Save()
 {
     clConfig config("phprefactoring.conf");
-    config.WriteItem(this);
+    config.WriteItem(*this);
     return *this;
 }

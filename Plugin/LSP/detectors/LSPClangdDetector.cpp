@@ -33,7 +33,7 @@ void LSPClangdDetector::ConfigureFile(const wxFileName& clangdExe)
 
     clConfig ccConfig("code-completion.conf");
     TagsOptionsData tagsOptionsData;
-    ccConfig.ReadItem(&tagsOptionsData);
+    ccConfig.ReadItem(tagsOptionsData);
 
     size_t limit_results = tagsOptionsData.GetCcNumberOfDisplayItems();
     command << " --limit-results=" << limit_results

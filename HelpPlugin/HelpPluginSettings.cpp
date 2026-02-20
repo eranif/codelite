@@ -19,14 +19,14 @@ HelpPluginSettings::HelpPluginSettings()
 HelpPluginSettings& HelpPluginSettings::Load()
 {
     clConfig conf("help-plugin.conf");
-    conf.ReadItem(this);
+    conf.ReadItem(*this);
     return *this;
 }
 
 HelpPluginSettings& HelpPluginSettings::Save()
 {
     clConfig conf("help-plugin.conf");
-    conf.WriteItem(this);
+    conf.WriteItem(*this);
     return *this;
 }
 void HelpPluginSettings::FromJSON(const JSONItem& json)

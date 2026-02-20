@@ -238,7 +238,7 @@ void DbSettingDialog::DoSaveSqliteHistory()
     // Save the recent opened files
     clConfig config(DBE_CONFIG_FILE);
     DbExplorerSettings settings;
-    config.ReadItem(&settings);
+    config.ReadItem(settings);
 
     wxArrayString files = settings.GetRecentFiles();
 
@@ -248,14 +248,14 @@ void DbSettingDialog::DoSaveSqliteHistory()
 
     files.Insert(filename, 0);
     settings.SetRecentFiles(files);
-    config.WriteItem(&settings);
+    config.WriteItem(settings);
 }
 
 wxArrayString DbSettingDialog::DoLoadSqliteHistory()
 {
     clConfig config(DBE_CONFIG_FILE);
     DbExplorerSettings settings;
-    config.ReadItem(&settings);
+    config.ReadItem(settings);
     return settings.GetRecentFiles();
 }
 
@@ -263,7 +263,7 @@ DbConnectionInfoVec DbSettingDialog::DoLoadMySQLHistory()
 {
     clConfig config(DBE_CONFIG_FILE);
     DbExplorerSettings settings;
-    config.ReadItem(&settings);
+    config.ReadItem(settings);
     return settings.GetMySQLConnections();
 }
 
@@ -271,7 +271,7 @@ DbConnectionInfoVec DbSettingDialog::DoLoadPgSQLHistory()
 {
     clConfig config(DBE_CONFIG_FILE);
     DbExplorerSettings settings;
-    config.ReadItem(&settings);
+    config.ReadItem(settings);
     return settings.GetPgSQLConnections();
 }
 
@@ -279,7 +279,7 @@ void DbSettingDialog::DoSaveMySQLHistory()
 {
     clConfig config(DBE_CONFIG_FILE);
     DbExplorerSettings settings;
-    config.ReadItem(&settings);
+    config.ReadItem(settings);
     DbConnectionInfoVec mysql = settings.GetMySQLConnections();
 
     DbConnectionInfo conn;
@@ -303,14 +303,14 @@ void DbSettingDialog::DoSaveMySQLHistory()
 
     mysql.insert(mysql.begin(), conn);
     settings.SetMySQLConnections(mysql);
-    config.WriteItem(&settings);
+    config.WriteItem(settings);
 }
 
 void DbSettingDialog::DoSavePgSQLHistory()
 {
     clConfig config(DBE_CONFIG_FILE);
     DbExplorerSettings settings;
-    config.ReadItem(&settings);
+    config.ReadItem(settings);
     DbConnectionInfoVec pgconns = settings.GetPgSQLConnections();
 
     long port = 0;
@@ -337,7 +337,7 @@ void DbSettingDialog::DoSavePgSQLHistory()
 
     pgconns.insert(pgconns.begin(), conn);
     settings.SetPgSQLConnections(pgconns);
-    config.WriteItem(&settings);
+    config.WriteItem(settings);
 }
 
 void DbSettingDialog::DoFindConnectionByName(const DbConnectionInfoVec& conns, const wxString& name)

@@ -783,6 +783,7 @@ clMainFrame::clMainFrame(
 
     // construct the UI
     m_frameGeneralInfo = inf;
+    CenterOnScreen();
 }
 
 clMainFrame::~clMainFrame()

@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!-- Uploaded to: SVG Repo, www.svgrepo.com, Generator: SVG Repo Mixer Tools -->
+
+<svg
+   width="32"
+   height="32"
+   viewBox="0 0 32 32"
+   id="meteor-icon-kit__regular-expand-arrows-s"
+   fill="none"
+   version="1.1"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:svg="http://www.w3.org/2000/svg">
+  <defs
+     id="defs1" />
+  <g
+     id="layer1"
+     style="display:inline">
+    <path
+       d="m -14.699141,14.518886 h 5.4104082 v 3.063036 h -5.4104082 v 5.381781 h -3.063036 v -5.381781 h -5.410408 v -3.063036 h 5.410408 V 9.0798514 h 3.063036 z"
+       id="text1"
+       style="font-weight:bold;font-size:28.6265px;font-family:MathJax_Caligraphic;-inkscape-font-specification:'MathJax_Caligraphic Bold';letter-spacing:-1.04282px;fill:#4991cf;fill-opacity:1;stroke:#897c77;stroke-width:0.0329716;stroke-miterlimit:3.7;paint-order:stroke fill markers"
+       transform="scale(-1,1)"
+       aria-label="+" />
+    <path
+       id="rect2"
+       style="fill:#4991cf;fill-opacity:1;stroke:#897c77;stroke-width:0.0363151;stroke-miterlimit:3.7;paint-order:stroke fill markers"
+       d="M 0.01815765,10.021484 4.0845639,5.9140617 9.3658139,11.175781 11.254486,9.2792966 5.9673764,4.0117186 9.9419858,-0.00390635 H 0.01815765 Z" />
+    <path
+       id="path4"
+       style="fill:#4991cf;fill-opacity:1;stroke:#897c77;stroke-width:0.0363151;stroke-miterlimit:3.7;paint-order:stroke fill markers"
+       d="m 32.003906,21.956451 -4.066406,4.107422 -5.28125,-5.261719 -1.888672,1.896484 5.287109,5.267578 -3.974609,4.015626 h 9.923828 z" />
+  </g>
+</svg>

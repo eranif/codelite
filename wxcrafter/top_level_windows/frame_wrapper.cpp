@@ -3,7 +3,6 @@
 #include "Properties/bitmap_picker_property.h"
 #include "Properties/category_property.h"
 #include "Properties/choice_property.h"
-#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "controls/menu_toolbar/menu_bar_wrapper.h"
 #include "controls/menu_toolbar/status_bar_wrapper.h"
@@ -34,8 +33,8 @@ FrameWrapper::FrameWrapper()
     RegisterEvent(wxT("wxEVT_ACTIVATE_APP"), wxT("wxActivateEvent"), _("Process a wxEVT_ACTIVATE_APP event"));
 
     Add<CategoryProperty>(_("Frame Type"));
-    const wxArrayString frameTypes = StdToWX::ToArrayString(
-        {"wxFrame", "wxDocMDIParentFrame", "wxDocMDIChildFrame", "wxDocParentFrame", "wxDocChildFrame", "wxMiniFrame"});
+    const wxArrayString frameTypes = {
+        "wxFrame", "wxDocMDIParentFrame", "wxDocMDIChildFrame", "wxDocParentFrame", "wxDocChildFrame", "wxMiniFrame"};
     Add<ChoiceProperty>(PROP_FRAME_TYPE, frameTypes, 0, _("Select the wxFrame type you want"));
 
     Add<CategoryProperty>(_("Frame Icons"));

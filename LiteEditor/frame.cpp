@@ -38,7 +38,6 @@
 #include "NotebookNavigationDlg.h"
 #include "Scripting/CodeLiteLUA.hpp"
 #include "SideBar.hpp"
-#include "StdToWX.h"
 #include "SwitchToWorkspaceDlg.h"
 #include "WelcomePage.h"
 #include "acceltabledlg.h"
@@ -3614,7 +3613,7 @@ void clMainFrame::CompleteInitialization()
     clGotoAnythingManager::Get().Initialise();
 
     // Update the toolbar view
-    wxArrayString hiddenItems = clConfig::Get().Read("ToolBarHiddenItems", StdToWX::ToArrayString({"No Entries"}));
+    wxArrayString hiddenItems = clConfig::Get().Read("ToolBarHiddenItems", wxArrayString{"No Entries"});
     if (hiddenItems.GetCount() == 1 && hiddenItems.Item(0) == "No Entries") {
         // By default, hide these entries
         std::vector<wxString> v = {"New",

@@ -118,6 +118,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnAutoScrollUI, this, XRCID("auto_scroll"));
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnHistoryUI, this, XRCID("chat_history"));
     m_choiceEndpoints->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnBusyUI, this);
+    m_choiceCachePolicy->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnBusyUI, this);
     UpdateChoices();
 
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);

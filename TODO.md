@@ -24,8 +24,6 @@ AI-powered IDE:
 High:
 -----
 
-- Chat Windows: add the name of the model@endpoint to the window label
-- Remove the docking option for the Chat Window.
 - Add system message telling the model on which OS it is running.
 - Replace the standard "find-in-files" tool with `grep` command (on all platforms) - this will allow it to run on remote files.
 

@@ -3,7 +3,6 @@
 #include "Properties/category_property.h"
 #include "Properties/file_ficker_property.h"
 #include "Properties/string_property.h"
-#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_project_metadata.h"
@@ -32,7 +31,7 @@ wxcWidget* BitmapWrapper::Clone() const { return new BitmapWrapper(); }
 
 wxString BitmapWrapper::CppCtorCode() const
 {
-    const wxArrayString exts = StdToWX::ToArrayString({ "", "@2x", "@1.25x", "@1.5x" });
+    const wxArrayString exts = {"", "@2x", "@1.25x", "@1.5x"};
     wxString bmpPath = PropertyString(PROP_BITMAP_PATH);
     wxFileName fn(bmpPath);
     // Support for hi-res images

@@ -5,7 +5,6 @@
 #include "Properties/choice_property.h"
 #include "Properties/string_property.h"
 #include "Properties/virtual_folder_property.h"
-#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "event_notifier.h"
 #include "wxc_bitmap_code_generator.h"
@@ -58,7 +57,7 @@ TopLevelWinWrapper::TopLevelWinWrapper(int type)
               "remember its size, position and any child wxBookCtrlBase control will remember its selection)"));
     }
 
-    const wxArrayString arr = StdToWX::ToArrayString({"", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"});
+    const wxArrayString arr = {"", "wxBOTH", "wxVERTICAL", "wxHORIZONTAL"};
     Add<StringProperty>(PROP_TITLE, "", _("The title, if any"));
     Add<VirtualFolderProperty>(PROP_VIRTUAL_FOLDER, "", _("CodeLite's virtual folder for the generated files"));
     Add<ChoiceProperty>(PROP_CENTRE_ON_SCREEN,

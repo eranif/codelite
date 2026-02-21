@@ -1,10 +1,10 @@
 #include "DapLocator.hpp"
 
 #include "Platform/Platform.hpp"
-#include "StdToWX.h"
 #include "file_logger.h"
-#include "globals.h"
 #include "procutils.h"
+
+#include <wx/regex.h>
 
 size_t DapLocator::Locate(std::vector<DapEntry>* entries)
 {
@@ -79,7 +79,7 @@ DapEntry create_entry_stdio(const wxString& name, const std::vector<wxString>& c
 void DapLocator::find_lldb_dap(std::vector<DapEntry>* entries)
 {
     // Since LLVM-18, lldb-vscode was renamed to lldb-dap, try to find it as well
-    const wxArrayString names = StdToWX::ToArrayString({ "lldb-dap", "lldb-vscode" });
+    const wxArrayString names = {"lldb-dap", "lldb-vscode"};
 
     const auto lldb_debugger = ThePlatform->AnyWhich(names);
     if (!lldb_debugger) {
@@ -101,7 +101,7 @@ void DapLocator::find_lldb_dap(std::vector<DapEntry>* entries)
 void DapLocator::find_debugpy(std::vector<DapEntry>* entries)
 {
     // locate python3
-    const auto python = ThePlatform->AnyWhich(StdToWX::ToArrayString({"python", "python3"}));
+    const auto python = ThePlatform->AnyWhich({"python", "python3"});
     if (!python) {
         return;
     }

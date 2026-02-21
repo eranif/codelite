@@ -6,7 +6,6 @@
 #include "Properties/bool_property.h"
 #include "Properties/choice_property.h"
 #include "Properties/string_property.h"
-#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_defs.h"
@@ -23,7 +22,7 @@ ButtonWrapper::ButtonWrapper()
     PREPEND_STYLE(wxBU_RIGHT, false);
     PREPEND_STYLE(wxBU_TOP, false);
 
-    const wxArrayString directions = StdToWX::ToArrayString({ "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM" });
+    const wxArrayString directions = {"wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"};
 
     RegisterEvent(wxT("wxEVT_COMMAND_BUTTON_CLICKED"), wxT("wxCommandEvent"),
                   _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."),

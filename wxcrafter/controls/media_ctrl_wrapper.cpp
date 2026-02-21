@@ -1,7 +1,6 @@
 #include "media_ctrl_wrapper.h"
 
 #include "Properties/choice_property.h"
-#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
@@ -9,7 +8,7 @@
 MediaCtrlWrapper::MediaCtrlWrapper()
     : wxcWidget(ID_WXMEDIACTRL)
 {
-    const wxArrayString backendList = StdToWX::ToArrayString({
+    const wxArrayString backendList = {
         "", // Default empty
         "wxMEDIABACKEND_DIRECTSHOW",
         "wxMEDIABACKEND_MCI",
@@ -17,7 +16,7 @@ MediaCtrlWrapper::MediaCtrlWrapper()
         "wxMEDIABACKEND_GSTREAMER",
         "wxMEDIABACKEND_REALPLAYER",
         "wxMEDIABACKEND_WMP10",
-    });
+    };
 
     SetPropertyString(_("Common Settings"), "wxMediaCtrl");
     Add<ChoiceProperty>(

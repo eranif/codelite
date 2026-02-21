@@ -28,7 +28,6 @@ class IProcess;
 
 #include "asyncprocess.h"
 
-#include "StdToWX.h"
 #include "StringUtils.h"
 #include "clTempFile.hpp"
 #include "cl_command_event.h"
@@ -115,9 +114,9 @@ static wxArrayString __WrapInShell(const wxArrayString& args, size_t flags)
         if (shell.IsEmpty()) {
             shell = "CMD.EXE";
         }
-        return StdToWX::ToArrayString({shell, "/C", "\"" + cmd + "\""});
+        return {shell, wxString("/C"), "\"" + cmd + "\""};
     } else {
-        return StdToWX::ToArrayString({"/bin/sh", "-c", "'" + cmd + "'"});
+        return {wxString("/bin/sh"), wxString("-c"), "'" + cmd + "'"};
     }
 }
 

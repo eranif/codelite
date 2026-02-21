@@ -25,7 +25,6 @@
 
 #include "SqliteDbAdapter.h"
 
-#include "StdToWX.h"
 #include "database.h"
 #include "dbconnection.h"
 #include "table.h"
@@ -102,8 +101,7 @@ IDbType* SQLiteDbAdapter::GetDbTypeByName(const wxString& typeName)
 }
 wxArrayString* SQLiteDbAdapter::GetDbTypes()
 {
-    return new wxArrayString(
-        StdToWX::ToArrayString({ wxT("NULL"), wxT("INT"), wxT("INTEGER"), wxT("REAL"), wxT("TEXT"), wxT("BLOB") }));
+    return new wxArrayString{wxT("NULL"), wxT("INT"), wxT("INTEGER"), wxT("REAL"), wxT("TEXT"), wxT("BLOB")};
 }
 
 bool SQLiteDbAdapter::IsConnected() { return CanConnect(); }

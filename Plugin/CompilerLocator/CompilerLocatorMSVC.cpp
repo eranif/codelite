@@ -25,7 +25,6 @@
 
 #include "CompilerLocatorMSVC.h"
 
-#include "StdToWX.h"
 #include "StringUtils.h"
 #include "compiler.h"
 
@@ -34,7 +33,7 @@
 CompilerLocatorMSVC::CompilerLocatorMSVC()
     : // We only deal with x86/x64 Native Tools here for simplicity
       // Other platforms (such as ARM64 Cross Tools) can be added manually by cloning the compiler
-    m_vcPlatforms(StdToWX::ToArrayString({ "x86", "x64" }))
+    m_vcPlatforms({ "x86", "x64" })
 {
 }
 

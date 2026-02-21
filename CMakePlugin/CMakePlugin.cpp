@@ -174,13 +174,13 @@ wxArrayString CMakePlugin::GetSupportedGenerators() const
 {
 #ifdef __WXMSW__
     // Windows supported generators
-    return StdToWX::ToArrayString({"MinGW Makefiles"});
+    return {"MinGW Makefiles"};
 #else
     // Linux / Mac supported generators
-    return StdToWX::ToArrayString({
+    return {
         "Unix Makefiles",
         // "Ninja",
-    });
+    };
 #endif
 }
 

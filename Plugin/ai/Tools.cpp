@@ -349,7 +349,7 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
                                      .is_regex = is_regex,
                                      .file_spec = file_pattern,
                                  });
-    assistant::json j = assistant::json::array();
+    OrderedJSON j = OrderedJSON::array();
     for (const auto& match : matches) {
         j.push_back(match.ToJson());
     }

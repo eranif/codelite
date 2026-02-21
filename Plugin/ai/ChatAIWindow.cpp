@@ -156,9 +156,12 @@ ChatAIWindow::~ChatAIWindow()
     clConfig::Get().Write("chat-ai/enable-tools", m_checkboxEnableTools->IsChecked());
 
     // Store the current session
-    auto conversation = llm::Manager::GetInstance().GetConversation();
-    llm::Manager::GetInstance().GetConfig().AddConversation(conversation);
-    llm::Manager::GetInstance().GetConfig().Save();
+    auto active_endpoint = llm::Manager::GetInstance().GetActiveEndpoint();
+    if (active_endpoint.has_value()) {
+        auto conversation = llm::Manager::GetInstance().GetConversation();
+        llm::Manager::GetInstance().GetConfig().AddConversation(active_endpoint.value(), conversation);
+        llm::Manager::GetInstance().GetConfig().Save();
+    }
 }
 
 void ChatAIWindow::OnSend(wxCommandEvent& event)
@@ -319,8 +322,11 @@ void ChatAIWindow::OnNewSession(wxCommandEvent& event)
     wxUnusedVar(event);
     // Store the current conversation
     auto conversation = llm::Manager::GetInstance().GetConversation();
-    llm::Manager::GetInstance().GetConfig().AddConversation(conversation);
-    llm::Manager::GetInstance().GetConfig().Save();
+    auto active_endpoint = llm::Manager::GetInstance().GetActiveEndpoint();
+    if (active_endpoint.has_value()) {
+        llm::Manager::GetInstance().GetConfig().AddConversation(active_endpoint.value(), conversation);
+        llm::Manager::GetInstance().GetConfig().Save();
+    }
     DoClearOutputView();
 }
 
@@ -532,7 +538,7 @@ void ChatAIWindow::OnHistory(wxCommandEvent& event)
 
     const auto& conversation = dlg.GetSelectedConversation();
     // Restore the chat text
-    for (const auto& msg : conversation) {
+    for (const auto& msg : conversation.messages) {
         if (msg.role == "assistant") {
             AppendOutput("**assistant**:\n");
             AppendOutput(wxString() << wxString::FromUTF8(msg.text) << "\n\n");
@@ -549,7 +555,9 @@ void ChatAIWindow::OnHistory(wxCommandEvent& event)
 void ChatAIWindow::OnHistoryUI(wxUpdateUIEvent& event)
 {
     const auto& config = llm::Manager::GetInstance().GetConfig();
-    event.Enable(!config.GetHistory().empty() && m_state == ChatState::kReady);
+    auto active_endpoint = llm::Manager::GetInstance().GetActiveEndpoint();
+    event.Enable(active_endpoint.has_value() && !config.GetHistory(active_endpoint.value()).empty() &&
+                 m_state == ChatState::kReady);
 }
 
 void ChatAIWindow::OnStop(wxCommandEvent& event)

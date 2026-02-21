@@ -532,11 +532,7 @@ assistant::Config Manager::MakeConfig()
                 clWARNING() << "LLM:" << wxString::FromUTF8(msg) << endl;
                 break;
             case assistant::LogLevel::kInfo:
-                clDEBUG1() << "LLM:" << wxString::FromUTF8(msg) << endl;
-                break;
             case assistant::LogLevel::kDebug:
-                clDEBUG1() << "LLM:" << wxString::FromUTF8(msg) << endl;
-                break;
             case assistant::LogLevel::kTrace:
                 clDEBUG1() << "LLM:" << wxString::FromUTF8(msg) << endl;
                 break;
@@ -692,10 +688,10 @@ llm::Conversation Manager::GetConversation() const
     return m_client->GetHistory();
 }
 
-void Manager::LoadConversation(const llm::Conversation& history)
+void Manager::LoadConversation(const llm::Conversation& conversation)
 {
     CHECK_PTR_RET(m_client);
-    m_client->SetHistory(history);
+    m_client->SetHistory(conversation.messages);
 }
 
 wxArrayString Manager::ListEndpoints()

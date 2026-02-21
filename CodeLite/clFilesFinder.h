@@ -49,9 +49,9 @@ struct WXDLLIMPEXP_CL clFilesFinderMatch {
     {
     }
 
-    inline nlohmann::json ToJson() const
+    inline OrderedJSON ToJson() const
     {
-        nlohmann::json j = nlohmann::json::object();
+        OrderedJSON j = OrderedJSON::object();
         j["filepath"] = m_filepath.ToStdString(wxConvUTF8);
         for (const auto& m : m_matches) {
             j["matches"].push_back(m.ToJson());

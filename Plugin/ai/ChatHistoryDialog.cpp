@@ -1,116 +1,79 @@
 #include "ChatHistoryDialog.hpp"
 
+#include "ChatHistoryPage.hpp"
 #include "ai/LLMManager.hpp"
+#include "assistant/helpers.hpp"
 
 ChatHistoryDialog::ChatHistoryDialog(wxWindow* parent)
     : ChatHistoryDialogBase(parent)
 {
-    auto history = llm::Manager::GetInstance().GetConfig().GetHistory();
-    for (const auto& conversation : history) {
-        if (conversation.empty()) {
-            continue;
-        }
-        auto res = llm::Config::GetConversationLabel(conversation);
-        if (!res.has_value()) {
-            continue;
-        }
-
-        auto label = wxString::FromUTF8(res.value());
-        wxVector<wxVariant> cols;
-        cols.push_back(label);
-        auto p = std::make_shared<llm::Conversation>(conversation);
-        m_dvListCtrlPrompts->AppendItem(cols, reinterpret_cast<wxUIntPtr>(p.get()));
-        m_coversations.push_back(p); // Keep a copy to keep the `p` pointer valid.
+    auto active_endpoint = llm::Manager::GetInstance().GetActiveEndpoint();
+    auto endpoints = llm::Manager::GetInstance().ListEndpoints();
+    for (const auto& endpoint : endpoints) {
+        ChatHistoryPage* page = new ChatHistoryPage(m_choicebook, this, endpoint);
+        bool is_active_endpoint = active_endpoint.has_value() && active_endpoint.value() == endpoint;
+        bool is_first = m_choicebook->GetPageCount() == 0;
+        m_choicebook->AddPage(page, endpoint, is_active_endpoint || is_first);
     }
-    m_dvListCtrlPrompts->CallAfter(&wxDataViewListCtrl::SetFocus);
 }
 
 ChatHistoryDialog::~ChatHistoryDialog() {}
 
+ChatHistoryPage* ChatHistoryDialog::GetActivePage()
+{
+    if (m_choicebook->GetSelection() == wxNOT_FOUND) {
+        return nullptr;
+    }
+    return static_cast<ChatHistoryPage*>(m_choicebook->GetPage(m_choicebook->GetSelection()));
+}
+
 void ChatHistoryDialog::OnClear(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    m_dvListCtrlPrompts->DeleteAllItems();
+    auto page = GetActivePage();
+    CHECK_PTR_RET(page);
 
-    // Update the history.
-    llm::Manager::GetInstance().GetConfig().SetHistory({});
-    llm::Manager::GetInstance().GetConfig().Save();
+    page->Clear();
 }
 
-void ChatHistoryDialog::OnClearUI(wxUpdateUIEvent& event) { event.Enable(m_dvListCtrlPrompts->GetItemCount() > 0); }
+void ChatHistoryDialog::OnClearUI(wxUpdateUIEvent& event)
+{
+    event.Enable(GetActivePage() && GetActivePage()->GetListView() && GetActivePage()->GetListView()->GetItemCount());
+}
+
 void ChatHistoryDialog::OnDelete(wxCommandEvent& event)
 {
-    wxDataViewItemArray items;
-    m_dvListCtrlPrompts->GetSelections(items);
-    if (items.empty()) {
-        return;
-    }
-    std::vector<size_t> lines;
-    lines.reserve(items.size());
-    for (const auto& item : items) {
-        lines.push_back(m_dvListCtrlPrompts->ItemToRow(item));
-    }
+    auto page = GetActivePage();
+    CHECK_PTR_RET(page);
 
-    // Sort in descending order
-    std::sort(lines.begin(), lines.end(), std::greater<size_t>());
-
-    for (auto line : lines) {
-        m_dvListCtrlPrompts->DeleteItem(line);
-    }
-
-    // Update the history.
-    llm::Manager::GetInstance().GetConfig().SetHistory(GetHistory());
-    llm::Manager::GetInstance().GetConfig().Save();
+    page->DeleteSelections();
 }
 
 void ChatHistoryDialog::OnDeleteUI(wxUpdateUIEvent& event)
 {
-    event.Enable(m_dvListCtrlPrompts->GetSelectedItemsCount() > 0);
+    event.Enable(GetActivePage() && GetActivePage()->GetListView() &&
+                 GetActivePage()->GetListView()->GetSelectedItemsCount());
 }
 
 void ChatHistoryDialog::OnInsert(wxCommandEvent& event)
 {
-    wxDataViewItemArray items;
-    m_dvListCtrlPrompts->GetSelections(items);
+    wxUnusedVar(event);
+    DoItemSelected();
+}
 
-    if (items.empty()) {
-        return;
+void ChatHistoryDialog::DoItemSelected()
+{
+    CHECK_PTR_RET(GetActivePage());
+
+    auto s = GetActivePage()->GetSelection();
+    if (s.has_value()) {
+        SetSelectedPrompt(s.value());
+        EndModal(wxID_OK);
     }
-
-    SetSelectionAndEndModal(items[0]);
 }
 
 void ChatHistoryDialog::OnInsertUI(wxUpdateUIEvent& event)
 {
-    event.Enable(m_dvListCtrlPrompts->GetSelectedItemsCount() == 1);
-}
-
-void ChatHistoryDialog::OnItemActivated(wxDataViewEvent& event) { SetSelectionAndEndModal(event.GetItem()); }
-
-void ChatHistoryDialog::SetSelectionAndEndModal(const wxDataViewItem& item)
-{
-    if (!item.IsOk()) {
-        return;
-    }
-
-    auto cd = reinterpret_cast<llm::Conversation*>(m_dvListCtrlPrompts->GetItemData(item));
-    if (!cd) {
-        clERROR() << "History entry does not have client data associated with it." << endl;
-        EndModal(wxID_CANCEL);
-        return;
-    }
-
-    SetSelectedPrompt(*cd);
-    EndModal(wxID_OK);
-}
-
-llm::ChatHistory ChatHistoryDialog::GetHistory() const
-{
-    llm::ChatHistory v;
-    v.reserve(m_dvListCtrlPrompts->GetItemCount());
-    for (auto i = 0; i < m_dvListCtrlPrompts->GetItemCount(); ++i) {
-        v.push_back(
-            *reinterpret_cast<llm::Conversation*>(m_dvListCtrlPrompts->GetItemData(m_dvListCtrlPrompts->RowToItem(i))));
-    }
-    return v;
+    event.Enable(GetActivePage() && GetActivePage()->GetListView() &&
+                 GetActivePage()->GetListView()->GetSelectedItemsCount() == 1);
 }

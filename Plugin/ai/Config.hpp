@@ -46,14 +46,43 @@ inline std::string PromptKindToString(PromptKind kind)
     return "";
 }
 
-using Conversation = std::vector<assistant::Message>;
-using ChatHistory = std::vector<Conversation>;
+using nlohmann::json;
+struct WXDLLIMPEXP_SDK Conversation {
+    std::vector<assistant::Message> messages;
+    Conversation() = default;
+    ~Conversation() = default;
+    Conversation(const std::vector<assistant::Message>& msgs)
+        : messages(msgs)
+    {
+    }
 
-class WXDLLIMPEXP_SDK Config
-{
-public:
-    Config();
-    virtual ~Config();
+    json to_json() const
+    {
+        auto messages_json = json::array();
+        for (const auto& msg : messages) {
+            json m = json::object();
+            m["role"] = msg.role;
+            m["content"] = msg.text;
+            messages_json.push_back(m);
+        }
+        return messages_json;
+    }
+
+    static std::optional<Conversation> from_json(json j)
+    {
+        try {
+            Conversation c;
+            for (const auto& entry : j) {
+                assistant::Message msg;
+                msg.role = entry["role"].get<std::string>();
+                msg.text = entry["content"].get<std::string>();
+                c.messages.push_back(msg);
+            }
+            return c;
+        } catch (...) {
+            return std::nullopt;
+        }
+    }
 
     /**
      * @brief Extracts a label for a conversation based on the first message's text.
@@ -69,75 +98,223 @@ public:
      *
      * @see Conversation
      */
-    static std::optional<std::string> GetConversationLabel(const Conversation& history)
+    std::optional<std::string> GetConversationLabel() const
     {
-        if (history.empty()) {
+        if (messages.empty()) {
             return std::nullopt;
         }
-        wxString first_prompt = wxString::FromUTF8(history[0].text);
+        wxString first_prompt = wxString::FromUTF8(messages[0].text);
         first_prompt.Trim().Trim(false);
         first_prompt = first_prompt.BeforeFirst('\n').Trim().Trim(false);
         return first_prompt.ToStdString(wxConvUTF8);
     }
+};
 
-    /**
-     * @brief Retrieves a copy of the current chat history.
-     *
-     * This method provides thread-safe access to the chat history by acquiring
-     * a lock on the internal mutex before copying the history data.
-     *
-     * @return ChatHistory A copy of the current chat history stored in this object.
-     *
-     * @note This method is thread-safe and can be called concurrently from multiple threads.
-     *
-     * @see ChatHistory
-     */
-    ChatHistory GetHistory() const
+struct ChatHistory {
+    std::vector<Conversation> conversations;
+    json to_json() const
     {
-        std::scoped_lock lk{m_mutex};
-        return m_history;
+
+        // {
+        //      "conv1" : [{role, text}...],
+        //      ...
+        //      "convN" : [{role, text}...]
+        //  }
+
+        nlohmann::json conv_json = nlohmann::json::object();
+        for (const auto& conv : conversations) {
+            auto label = conv.GetConversationLabel();
+            if (!label.has_value()) {
+                continue;
+            }
+            conv_json[label.value()] = conv.to_json();
+        }
+        return conv_json;
+    }
+
+    static std::optional<ChatHistory> from_json(json j)
+    {
+        try {
+            ChatHistory h;
+            if (!j.is_object()) {
+                return std::nullopt;
+            }
+            for (const auto& kv : j.items()) {
+                auto res = Conversation::from_json(kv.value());
+                if (!res.has_value()) {
+                    return std::nullopt;
+                }
+                h.conversations.push_back(res.value());
+            }
+            return h;
+        } catch (...) {
+            return std::nullopt;
+        }
     }
 
     /**
-     * @brief Adds a conversation to the configuration's history, replacing any existing conversation with the same
-     * label.
+     * @brief Finds a conversation by its label.
      *
-     * @details This method is thread-safe and acquires a lock before modifying the history.
-     * If a conversation with the same label already exists in the history, it is removed before
-     * inserting the new conversation at the beginning of the history list. If the conversation
-     * has no valid label, the operation is silently aborted.
+     * Searches through the conversations collection for a conversation with a matching label.
+     * The search performs an exact string comparison against each conversation's label.
      *
-     * @param conversation The conversation to add to the history. Must have a valid label
-     *                     obtainable via GetConversationLabel() for the operation to proceed.
+     * @param label The label string to search for in the conversations collection.
      *
-     * @return void This function does not return a value.
+     * @return std::optional<Conversation> Returns the matching Conversation if found,
+     *         or std::nullopt if no conversation with the specified label exists.
      *
-     * @note The conversation is always inserted at the front of the history list, effectively
-     *       making it the most recent entry.
-     *
-     * @see GetConversationLabel() For obtaining the label used to identify duplicate conversations.
+     * @note This function performs a linear search through all conversations.
      */
-    void AddConversation(const Conversation& conversation);
+    std::optional<Conversation> FindConversation(const wxString& label)
+    {
+        auto iter = std::find_if(conversations.begin(), conversations.end(), [&label](const Conversation& h) {
+            auto l = h.GetConversationLabel();
+            return l.has_value() && l.value() == label;
+        });
+        if (iter == conversations.end()) {
+            return std::nullopt;
+        }
+        return *iter;
+    }
 
     /**
-     * @brief Sets the chat history to the specified value.
+     * @brief Deletes a conversation from the collection by its label.
      *
-     * Replaces the current chat history with a copy of the provided history.
-     * This operation is thread-safe and acquires an exclusive lock on the internal mutex.
+     * Searches through the conversations collection for a conversation with a matching label
+     * and removes it. If no conversation with the specified label exists, the behavior is undefined
+     * (attempting to erase an invalid iterator).
      *
-     * @param history The chat history to set. The contents are copied into the internal storage.
+     * @param label The label of the conversation to delete.
      *
      * @return void This function does not return a value.
      *
-     * @note This function is thread-safe.
+     * @note If no conversation with the given label is found, this function will cause undefined
+     *       behavior by attempting to erase an invalid iterator (conversations.end()).
      *
-     * @see ChatHistory
-     * @see GetHistory
+     * @see Conversation::GetConversationLabel()
      */
-    void SetHistory(const ChatHistory& history)
+    void DeleteConversation(const wxString& label)
+    {
+        auto iter = std::find_if(conversations.begin(), conversations.end(), [&label](const Conversation& h) {
+            auto l = h.GetConversationLabel();
+            return l.has_value() && l.value() == label;
+        });
+        if (iter != conversations.end()) {
+            conversations.erase(iter);
+        }
+    }
+
+    /**
+     * @brief Adds a conversation to the collection, replacing any existing conversation with the same label.
+     *
+     * This method first retrieves the conversation label; if the label is absent, the function returns early
+     * without modifying the collection. If a label exists, any existing conversation with that label is removed
+     * before inserting the new conversation at the beginning of the collection.
+     *
+     * @param conversation The Conversation object to be added. Must have a valid conversation label to be inserted.
+     *
+     * @return void This function does not return a value.
+     *
+     * @note If the conversation does not have a label (i.e., GetConversationLabel() returns std::nullopt),
+     *       the function returns immediately without making any changes to the collection.
+     * @note The new conversation is always inserted at the beginning of the conversations collection.
+     *
+     * @see DeleteConversation
+     * @see Conversation::GetConversationLabel
+     */
+    void AddConversation(const Conversation& conversation)
+    {
+        auto label = conversation.GetConversationLabel();
+        if (!label.has_value()) {
+            return;
+        }
+        DeleteConversation(label.value());
+        conversations.insert(conversations.begin(), conversation);
+    }
+
+    size_t size() const { return conversations.size(); }
+    bool empty() const { return size() == 0; }
+};
+
+class WXDLLIMPEXP_SDK Config
+{
+public:
+    Config();
+    virtual ~Config();
+
+    /**
+     * @brief Retrieves the chat history for a given endpoint.
+     *
+     * This method performs a thread-safe lookup of the chat history associated with
+     * the specified endpoint. If no history exists for the endpoint, an empty
+     * ChatHistory object is returned.
+     *
+     * @param endpoint The endpoint identifier whose chat history is to be retrieved.
+     *
+     * @return A copy of the ChatHistory object associated with the endpoint, or an
+     *         empty ChatHistory if the endpoint has no recorded history.
+     *
+     * @note This method is thread-safe and acquires a lock on the internal mutex
+     *       during execution.
+     */
+    ChatHistory GetHistory(const wxString& endpoint) const
     {
         std::scoped_lock lk{m_mutex};
-        m_history = history;
+        if (!m_history.contains(endpoint)) {
+            return {};
+        }
+
+        return m_history.find(endpoint)->second;
+    }
+
+    /**
+     * @brief Adds a conversation to the history of a specific endpoint.
+     *
+     * This method is thread-safe and acquires a lock before modifying the endpoint's
+     * conversation history. If no history exists for the given endpoint, a new one is
+     * created automatically.
+     *
+     * @param endpoint The endpoint identifier (as a wxString) to which the conversation
+     *                 should be added.
+     * @param conversation The Conversation object to be added to the endpoint's history.
+     *
+     * @return void This function does not return a value.
+     *
+     * @note This method is thread-safe due to the internal use of m_mutex.
+     */
+    void AddConversation(const wxString& endpoint, const Conversation& conversation);
+
+    /**
+     * @brief Sets or replaces the chat history for a specific endpoint.
+     *
+     * This function removes any existing chat history associated with the given endpoint
+     * and inserts the new history. The operation is performed in a thread-safe manner
+     * using an internal mutex lock.
+     *
+     * @param endpoint The unique identifier string for the endpoint whose history is being set.
+     * @param history The ChatHistory object containing the new chat history to associate with the endpoint.
+     *
+     * @return void This function does not return a value.
+     *
+     * @note This function is thread-safe and can be called from multiple threads concurrently.
+     */
+    void SetHistory(const wxString& endpoint, const ChatHistory& history)
+    {
+        std::scoped_lock lk{m_mutex};
+        if (endpoint.empty()) {
+            return;
+        }
+        m_history.erase(endpoint);
+        m_history.insert({endpoint, history});
+    }
+
+    /**
+     * @brief Clears the chat history.
+     */
+    void ClearHistory()
+    {
+        std::scoped_lock lk{m_mutex};
+        m_history.clear();
     }
 
     /**
@@ -190,6 +367,7 @@ public:
      *         entry exists for the generated key.
      */
     wxString GetPrompt(PromptKind kind) const;
+
     /**
      * @brief Sets the prompt string for a specific {@code PromptKind}.
      *
@@ -215,9 +393,10 @@ public:
 
 private:
     wxString GetFullPath();
+    ChatHistory& GetOrAddHistory(const wxString& endpoint) CALLER_MUST_LOCK(m_mutex);
 
     mutable std::mutex m_mutex;
     std::map<std::string, std::string> m_prompts GUARDED_BY(m_mutex);
-    mutable ChatHistory m_history GUARDED_BY(m_mutex);
+    mutable std::map<wxString, ChatHistory> m_history GUARDED_BY(m_mutex);
 };
 } // namespace llm

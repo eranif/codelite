@@ -1,6 +1,7 @@
 #pragma once
 
 #include "UI.hpp"
+#include "ai/ChatHistoryPage.hpp"
 #include "ai/Config.hpp"
 #include "codelite_exports.h"
 
@@ -21,16 +22,16 @@ public:
 protected:
     void OnInsert(wxCommandEvent& event) override;
     void OnInsertUI(wxUpdateUIEvent& event) override;
-    void OnItemActivated(wxDataViewEvent& event) override;
     void OnClear(wxCommandEvent& event) override;
     void OnClearUI(wxUpdateUIEvent& event) override;
     void OnDelete(wxCommandEvent& event) override;
     void OnDeleteUI(wxUpdateUIEvent& event) override;
+    void DoItemSelected();
 
-    void SetSelectionAndEndModal(const wxDataViewItem& item);
-    llm::ChatHistory GetHistory() const;
+    ChatHistoryPage* GetActivePage();
 
 private:
     llm::Conversation m_selectedConversation;
     std::vector<std::shared_ptr<llm::Conversation>> m_coversations;
+    friend class ChatHistoryPage;
 };

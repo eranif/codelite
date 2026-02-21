@@ -1,5 +1,6 @@
 #include "ai/ResponseCollector.hpp"
 
+#include "assistant/common.hpp"
 #include "assistant/helpers.hpp"
 
 namespace llm

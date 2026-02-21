@@ -32,9 +32,10 @@
 #include <wx/textctrl.h>
 #include <wx/spinctrl.h>
 #include <wx/dialog.h>
-#include <wx/dataview.h>
+#include <wx/choicebk.h>
 #include <wx/button.h>
 #include <wx/statline.h>
+#include <wx/dataview.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -163,7 +164,7 @@ public:
 class ChatHistoryDialogBase : public wxDialog
 {
 protected:
-    wxDataViewListCtrl* m_dvListCtrlPrompts;
+    wxChoicebook* m_choicebook;
     wxButton* m_button130;
     wxStaticLine* m_staticLine131;
     wxButton* m_button126;
@@ -172,7 +173,7 @@ protected:
     wxButton* m_button127;
 
 protected:
-    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnEndpointChanged(wxChoicebookEvent& event) { event.Skip(); }
     virtual void OnInsert(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInsertUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -181,7 +182,7 @@ protected:
     virtual void OnClear(wxCommandEvent& event) { event.Skip(); }
 
 public:
-    wxDataViewListCtrl* GetDvListCtrlPrompts() { return m_dvListCtrlPrompts; }
+    wxChoicebook* GetChoicebook() { return m_choicebook; }
     wxButton* GetButton130() { return m_button130; }
     wxStaticLine* GetStaticLine131() { return m_staticLine131; }
     wxButton* GetButton126() { return m_button126; }
@@ -273,6 +274,24 @@ public:
                      const wxSize& size = wxSize(-1, -1),
                      long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~NewSseMCPDlgBase();
+};
+
+class ChatHistoryPageBase : public wxPanel
+{
+protected:
+    wxDataViewListCtrl* m_dvListCtrlPrompts;
+
+protected:
+    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+
+public:
+    wxDataViewListCtrl* GetDvListCtrlPrompts() { return m_dvListCtrlPrompts; }
+    ChatHistoryPageBase(wxWindow* parent,
+                        wxWindowID id = wxID_ANY,
+                        const wxPoint& pos = wxDefaultPosition,
+                        const wxSize& size = wxSize(500, 300),
+                        long style = wxTAB_TRAVERSAL);
+    virtual ~ChatHistoryPageBase();
 };
 
 #endif

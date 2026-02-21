@@ -2,7 +2,6 @@
 
 #include "FileManager.hpp"
 #include "Prompts.cpp"
-#include "cl_config.h"
 #include "file_logger.h"
 #include "fileutils.h"
 
@@ -49,19 +48,14 @@ void Config::Load()
         auto json = nlohmann::json::parse(cstr_content);
         m_prompts = ReadValue(json, "prompts", kDefaultPromptTable);
 
-        if (json.contains("chat_history") && json["chat_history"].is_array()) {
-            auto chat_history = json["chat_history"];
-            for (const auto& history : chat_history) {
-                Conversation ch;
-                for (const auto& msg : history) {
-                    assistant::Message history_message;
-                    history_message.text = msg["content"].get<std::string>();
-                    history_message.role = msg["role"].get<std::string>();
-                    ch.push_back(history_message);
+        if (json.contains("history") && json["history"].is_object()) {
+            for (const auto& kv : json["history"].items()) {
+                wxString endpoint_name = wxString::FromUTF8(kv.key());
+                auto history = ChatHistory::from_json(kv.value());
+                if (!history.has_value()) {
+                    continue;
                 }
-                if (!ch.empty()) {
-                    m_history.push_back(ch);
-                }
+                m_history.insert({endpoint_name, history.value()});
             }
         }
 
@@ -75,9 +69,6 @@ void Config::Save()
 {
     std::scoped_lock lk{m_mutex};
     nlohmann::json j;
-    if (m_history.size() > kMaxHistorySize) {
-        m_history.resize(kMaxHistorySize);
-    }
 
     // Merge new entries from the "kDefaultPromptTable" into the stored ones.
     for (const auto& [k, v] : kDefaultPromptTable) {
@@ -88,45 +79,20 @@ void Config::Save()
     }
 
     j["prompts"] = m_prompts;
+    j["history"] = json::object();
 
-    nlohmann::json history_array = nlohmann::json::array();
-    for (const auto& hst : m_history) {
-        nlohmann::json chat = nlohmann::json::array();
-        for (const auto& msg : hst) {
-            nlohmann::json o = {{"role", msg.role}, {"content", msg.text}};
-            chat.push_back(o);
-        }
-        if (!hst.empty()) {
-            history_array.push_back(chat);
-        }
+    for (const auto& [endpoint, chat_history] : m_history) {
+        j["history"][endpoint] = chat_history.to_json();
     }
-    j["chat_history"] = history_array;
-
     wxString content = wxString::FromUTF8(j.dump(2));
     FileUtils::WriteFileContent(GetFullPath(), content, wxConvUTF8);
 }
 
-void Config::AddConversation(const Conversation& conversation)
+void Config::AddConversation(const wxString& endpoint, const Conversation& conversation)
 {
     std::scoped_lock lk{m_mutex};
-    auto res = GetConversationLabel(conversation);
-    if (!res.has_value()) {
-        return;
-    }
-
-    auto new_label = res.value();
-    auto iter = std::find_if(m_history.begin(), m_history.end(), [&new_label](const Conversation& h) {
-        auto l = GetConversationLabel(h);
-        return l.has_value() && l.value() == new_label;
-    });
-
-    // Delete the old chat history
-    if (iter != m_history.end()) {
-        m_history.erase(iter);
-    }
-
-    // Insert at the top
-    m_history.insert(m_history.begin(), conversation);
+    auto& history = GetOrAddHistory(endpoint);
+    history.AddConversation(conversation);
 }
 
 wxString Config::GetPrompt(PromptKind kind) const
@@ -171,6 +137,8 @@ void Config::ResetPrompts()
     m_prompts.clear();
     m_prompts = kDefaultPromptTable;
 }
+
+ChatHistory& Config::GetOrAddHistory(const wxString& endpoint) { return m_history[endpoint]; }
 
 wxString Config::GetFullPath()
 {

@@ -435,12 +435,16 @@ ChatHistoryDialogBase::ChatHistoryDialogBase(
     wxBoxSizer* boxSizer120 = new wxBoxSizer(wxHORIZONTAL);
     this->SetSizer(boxSizer120);
 
-    m_dvListCtrlPrompts = new wxDataViewListCtrl(
-        this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)), wxDV_NO_HEADER | wxDV_SINGLE);
+    wxBoxSizer* boxSizer194 = new wxBoxSizer(wxVERTICAL);
 
-    boxSizer120->Add(m_dvListCtrlPrompts, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer120->Add(boxSizer194, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_dvListCtrlPrompts->AppendTextColumn(_("Prompts"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, 0);
+    m_choicebook =
+        new wxChoicebook(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)), wxBK_DEFAULT);
+    m_choicebook->SetName(wxT("m_choicebook"));
+
+    boxSizer194->Add(m_choicebook, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     wxBoxSizer* boxSizer124 = new wxBoxSizer(wxVERTICAL);
 
     boxSizer120->Add(boxSizer124, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
@@ -477,6 +481,14 @@ ChatHistoryDialogBase::ChatHistoryDialogBase(
 
     boxSizer124->Add(m_button127, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
+#if wxVERSION_NUMBER >= 2900
+    if (!wxPersistenceManager::Get().Find(m_choicebook)) {
+        wxPersistenceManager::Get().RegisterAndRestore(m_choicebook);
+    } else {
+        wxPersistenceManager::Get().Restore(m_choicebook);
+    }
+#endif
+
     SetName(wxT("ChatHistoryDialogBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
     if (GetSizer()) {
@@ -493,7 +505,7 @@ ChatHistoryDialogBase::ChatHistoryDialogBase(
         wxPersistenceManager::Get().Restore(this);
     }
     // Connect events
-    m_dvListCtrlPrompts->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &ChatHistoryDialogBase::OnItemActivated, this);
+    m_choicebook->Bind(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED, &ChatHistoryDialogBase::OnEndpointChanged, this);
     m_button130->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ChatHistoryDialogBase::OnInsert, this);
     m_button130->Bind(wxEVT_UPDATE_UI, &ChatHistoryDialogBase::OnInsertUI, this);
     m_button126->Bind(wxEVT_UPDATE_UI, &ChatHistoryDialogBase::OnDeleteUI, this);
@@ -504,7 +516,7 @@ ChatHistoryDialogBase::ChatHistoryDialogBase(
 
 ChatHistoryDialogBase::~ChatHistoryDialogBase()
 {
-    m_dvListCtrlPrompts->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &ChatHistoryDialogBase::OnItemActivated, this);
+    m_choicebook->Unbind(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED, &ChatHistoryDialogBase::OnEndpointChanged, this);
     m_button130->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &ChatHistoryDialogBase::OnInsert, this);
     m_button130->Unbind(wxEVT_UPDATE_UI, &ChatHistoryDialogBase::OnInsertUI, this);
     m_button126->Unbind(wxEVT_UPDATE_UI, &ChatHistoryDialogBase::OnDeleteUI, this);
@@ -751,4 +763,39 @@ NewSseMCPDlgBase::~NewSseMCPDlgBase()
 {
     m_button183->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &NewSseMCPDlgBase::OnHeaders, this);
     m_button169->Unbind(wxEVT_UPDATE_UI, &NewSseMCPDlgBase::OnOkUI, this);
+}
+
+ChatHistoryPageBase::ChatHistoryPageBase(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
+    : wxPanel(parent, id, pos, size, style)
+{
+    if (!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCF667InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer197 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer197);
+
+    m_dvListCtrlPrompts = new wxDataViewListCtrl(
+        this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(500, 300)), wxDV_NO_HEADER | wxDV_SINGLE);
+
+    boxSizer197->Add(m_dvListCtrlPrompts, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_dvListCtrlPrompts->AppendTextColumn(_("Prompts"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, 0);
+
+    SetName(wxT("ChatHistoryPageBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    // Connect events
+    m_dvListCtrlPrompts->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &ChatHistoryPageBase::OnItemActivated, this);
+}
+
+ChatHistoryPageBase::~ChatHistoryPageBase()
+{
+    m_dvListCtrlPrompts->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &ChatHistoryPageBase::OnItemActivated, this);
 }

@@ -34,7 +34,7 @@ constexpr const char* kAssistantConfigFile = "assistant.json";
 static const wxString kDefaultSettings = R"#({
   "_version": 1.0,
   "endpoints": {},
-  "history_size": 50,
+  "history_size": 1000,
   "keep_alive": "24h",
   "log_level": "warn",
   "mcp_servers": {},
@@ -56,7 +56,6 @@ using assistant::FunctionBuilder;
 using assistant::FunctionResult;
 using assistant::FunctionTable;
 using assistant::IsFlagSet;
-using assistant::json;
 using assistant::OnResponseCallback;
 using assistant::Reason;
 
@@ -271,7 +270,7 @@ public:
      * This method delegates the history update to the internal `m_client` if it is valid.
      * No additional processing or validation is performed on the history before forwarding.
      */
-    void LoadConversation(const llm::Conversation& history);
+    void LoadConversation(const llm::Conversation& conversation);
 
     /**
      * @brief Stops the background worker thread if it is running.  The worker will

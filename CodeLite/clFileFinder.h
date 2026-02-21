@@ -34,6 +34,8 @@
 #include <wx/regex.h>
 #include <wx/string.h>
 
+using OrderedJSON = nlohmann::ordered_json;
+
 /**
  * @brief Represents a single match found in a file
  */
@@ -50,7 +52,7 @@ struct WXDLLIMPEXP_CL clFileFinderMatch {
     {
     }
 
-    inline nlohmann::json ToJson() const
+    inline OrderedJSON ToJson() const
     {
         return {{"line", line}, {"column", col}, {"text", matched_line.ToStdString(wxConvUTF8)}};
     }

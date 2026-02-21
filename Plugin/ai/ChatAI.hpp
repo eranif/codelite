@@ -36,8 +36,6 @@ public:
     ChatAI();
     ~ChatAI() override;
 
-    void DetachView(bool show_frame);
-    void DockView();
     /**
      * @brief Displays the Chat AI window and optionally sends an initial prompt.
      *
@@ -60,27 +58,11 @@ public:
      */
     void AppendTextAndStyle(const wxString& text);
 
-    /**
-     * @brief Retrieves the active ChatAI window, ensuring it is visible and ready for interaction.
-     *
-     * This method determines whether the chat interface is docked or undocked, then displays
-     * the appropriate window and returns a pointer to the ChatAIWindow instance. If docked,
-     * it shows the docked frame; if undocked, it displays the management window and sets
-     * focus to the input control.
-     *
-     * @return ChatAIWindow* Pointer to the active ChatAIWindow instance (either the docked
-     *         frame's chat window or the standalone chat window). Never returns nullptr under
-     *         normal circumstances.
-     *
-     * @note This method has side effects: it shows/activates the appropriate window and may
-     *       set focus to the input control in the undocked case.
-     */
     ChatAIWindow* GetChatWindow();
 
 private:
     void OnInitDone(wxCommandEvent& event);
 
-    ChatAIWindow* m_chatWindow{nullptr};
     ChatAIWindowFrame* m_chatWindowFrame{nullptr};
     std::optional<PaneId> m_dockedPaneId{std::nullopt};
 };

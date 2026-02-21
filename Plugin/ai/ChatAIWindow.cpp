@@ -21,12 +21,20 @@ namespace
 {
 const wxString CHAT_AI_LABEL = _("Chat AI");
 const wxString LONG_MODEL_NAME = "claude-sonnet-4-5-1234567890";
+
+enum StatusBarIndex {
+    kProgressText,
+    kCost,
+    kUsage,
+    kProgress,
+};
+
 } // namespace
 
-ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
+ChatAIWindow::ChatAIWindow(wxWindow* parent)
     : AssistanceAIChatWindowBase(parent)
-    , m_plugin(plugin)
 {
+    const auto& conf = llm::Manager::GetInstance().GetConfig();
     auto images = clGetManager()->GetStdIcons();
     m_toolbar->SetArtProvider(new clAuiToolBarArt());
     clAuiToolBarArt::AddTool(m_toolbar, wxID_CLEAR, _("Clear the chat history"), images->LoadBitmap("clear"));
@@ -37,14 +45,22 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
     m_choiceEndpoints->SetToolTip(_("Choose the endpoint to use"));
     m_toolbar->AddControl(m_choiceEndpoints);
 
+    control_size = wxSize{GetTextExtent("__" + llm::kCacheStaticContent + "__").GetWidth(), wxNOT_FOUND};
+    m_choiceCachePolicy = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, control_size);
+    m_choiceCachePolicy->SetToolTip(_("Choose the prompt caching policy"));
+    std::vector<wxString> cache_options{llm::kCacheAuto, llm::kCacheStaticContent, llm::kCacheNone};
+    m_choiceCachePolicy->Append(cache_options);
+    m_choiceCachePolicy->SetStringSelection(conf.GetCachePolicyString());
+    m_toolbar->AddControl(m_choiceCachePolicy);
+
     m_inputEditHelper = std::make_unique<clEditEventsHandler>(m_stcInput);
     m_outputEditHelper = std::make_unique<clEditEventsHandler>(m_stcOutput);
 
     m_checkboxEnableTools = new wxCheckBox(m_toolbar, wxID_ANY, _("Enable Tools"));
-    bool enable_tools = clConfig::Get().Read("chat-ai/enable-tools", true);
-    m_checkboxEnableTools->SetValue(enable_tools);
     m_checkboxEnableTools->SetToolTip(_("Enable Local MCP Tools for the LLM"));
+    m_checkboxEnableTools->SetValue(conf.AreToolsEnabled());
     m_toolbar->AddControl(m_checkboxEnableTools);
+
     m_toolbar->AddSeparator();
     clAuiToolBarArt::AddTool(m_toolbar, wxID_EXECUTE, _("Submit"), images->LoadBitmap("run"));
     clAuiToolBarArt::AddTool(m_toolbar, wxID_STOP, _("Stop"), images->LoadBitmap("execute_stop"));
@@ -58,22 +74,12 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
                              wxEmptyString,
                              wxITEM_CHECK);
 
-    m_toolbar->AddSeparator();
-    if (IsDetached()) {
-        clAuiToolBarArt::AddTool(
-            m_toolbar, XRCID("detach_view"), _("Dock the chat window"), images->LoadBitmap("merge-window"));
-
-    } else {
-        clAuiToolBarArt::AddTool(m_toolbar,
-                                 XRCID("detach_view"),
-                                 _("Move the chat into a separate window"),
-                                 images->LoadBitmap("separate-window"));
-    }
-
     clAuiToolBarArt::Finalise(m_toolbar);
     m_toolbar->Realize();
 
     m_choiceEndpoints->Bind(wxEVT_CHOICE, &ChatAIWindow::OnEndpointChanged, this);
+    m_choiceCachePolicy->Bind(wxEVT_CHOICE, &ChatAIWindow::OnCachePolicyChanged, this);
+    m_checkboxEnableTools->Bind(wxEVT_CHECKBOX, &ChatAIWindow::OnToolsEnabled, this);
 
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &ChatAIWindow::OnWorkspaceLoaded, this);
@@ -124,9 +130,17 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent, ChatAI* plugin)
         ::wxLaunchDefaultBrowser(url);
     });
 
-    m_statusPanel = new IndicatorPanel(this);
-    GetSizer()->Add(m_statusPanel, wxSizerFlags(0).Expand());
+    m_statusBar = new wxStatusBar(this, wxID_ANY, (wxSTB_DEFAULT_STYLE & ~wxSTB_SIZEGRIP));
+    m_statusBar->SetFieldsCount(4);
+    GetSizer()->Add(m_statusBar, wxSizerFlags(0).Expand());
 
+    auto indicator_size = FromDIP(wxSize(16, 16));
+    m_activityIndicator = new wxActivityIndicator(m_statusBar, wxID_ANY, wxDefaultPosition, indicator_size);
+    m_statusBar->AddFieldControl(StatusBarIndex::kProgress, m_activityIndicator);
+    int widths[] = {-1, -3, -3, indicator_size.GetWidth()};
+    int styles[] = {wxSB_FLAT, wxSB_FLAT, wxSB_FLAT, wxSB_FLAT};
+    m_statusBar->SetStatusWidths(4, widths);
+    m_statusBar->SetStatusStyles(4, styles);
     CallAfter(&ChatAIWindow::RestoreUI);
     ShowIndicator(false);
     m_cancel_token = std::make_shared<llm::CancellationToken>();
@@ -153,15 +167,16 @@ ChatAIWindow::~ChatAIWindow()
     Unbind(wxEVT_SIZE, &ChatAIWindow::OnSize, this);
 
     clConfig::Get().Write("chat-ai/sash-position", m_mainSplitter->GetSashPosition());
-    clConfig::Get().Write("chat-ai/enable-tools", m_checkboxEnableTools->IsChecked());
 
+    auto& conf = llm::Manager::GetInstance().GetConfig();
     // Store the current session
+    conf.SetToolsEnabled(m_checkboxEnableTools->IsChecked());
     auto active_endpoint = llm::Manager::GetInstance().GetActiveEndpoint();
     if (active_endpoint.has_value()) {
         auto conversation = llm::Manager::GetInstance().GetConversation();
-        llm::Manager::GetInstance().GetConfig().AddConversation(active_endpoint.value(), conversation);
-        llm::Manager::GetInstance().GetConfig().Save();
+        conf.AddConversation(active_endpoint.value(), conversation);
     }
+    conf.Save();
 }
 
 void ChatAIWindow::OnSend(wxCommandEvent& event)
@@ -185,7 +200,7 @@ void ChatAIWindow::DoSendPrompt()
     m_cancel_token->Reset();
 
     llm::ChatOptions chat_options{llm::ChatOptions::kDefault};
-    if (!m_checkboxEnableTools->IsChecked()) {
+    if (!llm::Manager::GetInstance().GetConfig().AreToolsEnabled()) {
         // No tools.
         llm::AddFlagSet(chat_options, llm::ChatOptions::kNoTools);
     }
@@ -208,6 +223,23 @@ void ChatAIWindow::OnSendUI(wxUpdateUIEvent& event)
     prompt.Trim().Trim(false);
     event.Enable(!llm::Manager::GetInstance().IsBusy() && !prompt.empty() &&
                  !m_choiceEndpoints->GetStringSelection().empty());
+}
+
+void ChatAIWindow::OnToolsEnabled(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    auto& conf = llm::Manager::GetInstance().GetConfig();
+    conf.SetToolsEnabled(m_checkboxEnableTools->IsChecked());
+    conf.Save();
+}
+
+void ChatAIWindow::OnCachePolicyChanged(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    auto& conf = llm::Manager::GetInstance().GetConfig();
+    conf.SetCachePolicy(m_choiceCachePolicy->GetStringSelection());
+    conf.Save();
+    llm::Manager::GetInstance().SetCachingPolicy(conf.GetCachePolicy());
 }
 
 void ChatAIWindow::OnEndpointChanged(wxCommandEvent& event)
@@ -293,7 +325,7 @@ void ChatAIWindow::OnRestartClient(wxCommandEvent& event)
     wxBusyCursor bc{};
     if (llm::Manager::GetInstance().ReloadConfig(std::nullopt, false)) {
         clGetManager()->SetStatusMessage(_("LLM client successfully restarted"), 3);
-        UpdateCostBar();
+        UpdateStatusBar();
     }
 }
 
@@ -301,7 +333,7 @@ void ChatAIWindow::DoRestart()
 {
     DoClearOutputView();
     llm::Manager::GetInstance().Restart();
-    m_statusPanel->SetMessage(wxEmptyString, 1);
+    UpdateStatusBar();
 }
 
 void ChatAIWindow::DoClearOutputView()
@@ -342,14 +374,14 @@ void ChatAIWindow::OnThinkingStart(clLLMEvent& event)
 {
     event.Skip();
     m_state = ChatState::kThinking;
-    m_statusPanel->SetMessage(_("Thinking..."));
+    m_statusBar->SetStatusText(_("Thinking..."), StatusBarIndex::kProgressText);
 }
 
 void ChatAIWindow::OnThinkingEnd(clLLMEvent& event)
 {
     event.Skip();
     m_state = ChatState::kWorking;
-    m_statusPanel->SetMessage(_("Working..."));
+    m_statusBar->SetStatusText(_("Working..."), StatusBarIndex::kProgressText);
 }
 
 void ChatAIWindow::OnChatAIOutput(clLLMEvent& event)
@@ -365,7 +397,7 @@ void ChatAIWindow::OnChatAIOutput(clLLMEvent& event)
         break;
     }
 
-    UpdateCostBar();
+    UpdateStatusBar();
 }
 
 void ChatAIWindow::OnChatAIOutputDone(clLLMEvent& event)
@@ -389,23 +421,36 @@ void ChatAIWindow::OnChatAIOutputDone(clLLMEvent& event)
 void ChatAIWindow::ShowIndicator(bool show)
 {
     if (show) {
-        m_statusPanel->Start(_("Working..."));
+        m_activityIndicator->Show();
+        m_activityIndicator->Start();
+        m_statusBar->SetStatusText(_("Working..."), StatusBarIndex::kProgressText);
     } else {
-        m_statusPanel->Stop(_("Ready"));
+        m_activityIndicator->Stop();
+        m_activityIndicator->Hide();
+        m_statusBar->SetStatusText(_("Ready"), StatusBarIndex::kProgressText);
     }
 }
 
-void ChatAIWindow::UpdateCostBar()
+void ChatAIWindow::UpdateStatusBar()
 {
     auto& llm = llm::Manager::GetInstance();
     if (!llm.HasPricing()) {
-        m_statusPanel->SetMessage(wxEmptyString, 1);
+        m_statusBar->SetStatusText(wxEmptyString, StatusBarIndex::kCost);
+        m_statusBar->SetStatusText(wxEmptyString, StatusBarIndex::kUsage);
         return;
     }
     wxString str;
-    str << wxT(" > ") << _("Total cost: $") << llm.GetTotalCost() << _(", Last Request cost: $")
-        << llm.GetLastRequestCost();
-    m_statusPanel->SetMessage(str, 1);
+    str << _("Total cost: $") << llm.GetTotalCost() << _(", Last Request cost: $") << llm.GetLastRequestCost();
+    m_statusBar->SetStatusText(str, StatusBarIndex::kCost);
+    str.Clear();
+    if (llm.GetLastRequestUsage().has_value()) {
+        auto usage = llm.GetLastRequestUsage().value();
+        str << _("Output tokens: ") << usage.output_tokens << _(", Input tokens: ") << usage.input_tokens
+            << _(", Cached tokens read: ") << usage.cache_read_input_tokens;
+        m_statusBar->SetStatusText(str, StatusBarIndex::kUsage);
+    } else {
+        m_statusBar->SetStatusText(wxEmptyString, StatusBarIndex::kUsage);
+    }
 }
 
 void ChatAIWindow::OnLLMUserReplyError(clLLMEvent& event)
@@ -421,7 +466,7 @@ void ChatAIWindow::OnLLMConfigUpdate(clLLMEvent& event)
     // Clear the output view
     DoClearOutputView();
     UpdateChoices();
-    UpdateCostBar();
+    UpdateStatusBar();
 }
 
 void ChatAIWindow::OnInputUI(wxUpdateUIEvent& event) { event.Enable(true); }
@@ -519,15 +564,7 @@ void ChatAIWindow::OnBusyUI(wxUpdateUIEvent& event)
     event.Enable(llm::Manager::GetInstance().IsAvailable() && !llm::Manager::GetInstance().IsBusy());
 }
 
-void ChatAIWindow::OnDetachView(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    if (IsDetached()) {
-        m_plugin->CallAfter(&ChatAI::DockView);
-    } else {
-        m_plugin->CallAfter(&ChatAI::DetachView, true);
-    }
-}
+void ChatAIWindow::OnDetachView(wxCommandEvent& event) { wxUnusedVar(event); }
 
 void ChatAIWindow::OnHistory(wxCommandEvent& event)
 {

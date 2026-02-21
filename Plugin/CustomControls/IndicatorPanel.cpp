@@ -9,11 +9,10 @@ IndicatorPanel::IndicatorPanel(wxWindow* parent, const wxString& initialText)
 {
     wxSize panel_size{wxNOT_FOUND, wxSize(parent->GetTextExtent("Tp")).GetHeight()};
     panel_size.IncBy(0, 10); // The borders
-    if (!wxControl::Create(parent, wxID_ANY, wxDefaultPosition, panel_size)) {
+    if (!wxControl::Create(parent, wxID_ANY, wxDefaultPosition, panel_size, wxBORDER_NONE)) {
         return;
     }
 
-    SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     SetSizer(new wxBoxSizer(wxVERTICAL));
     wxFlexGridSizer* flexGridSizer = new wxFlexGridSizer(1, 3, 0, 0);
     flexGridSizer->SetFlexibleDirection(wxBOTH);

@@ -1,5 +1,6 @@
 #include "ChatAIWindowFrame.hpp"
 
+#include "LLMManager.hpp"
 #include "event_notifier.h"
 #include "globals.h"
 
@@ -11,13 +12,18 @@ ChatAIWindowFrame::ChatAIWindowFrame(wxWindow* parent, ChatAI* plugin)
         SetIcons(app_icons);
     }
 
-    m_view = new ChatAIWindow(this, plugin);
+    llm::Manager::GetInstance().Bind(wxEVT_LLM_STARTED, &ChatAIWindowFrame::OnLLMRestarted, this);
+
+    m_view = new ChatAIWindow(this);
     GetSizer()->Add(m_view, wxSizerFlags(1).Expand());
     GetSizer()->Fit(this);
     Hide();
 }
 
-ChatAIWindowFrame::~ChatAIWindowFrame() {}
+ChatAIWindowFrame::~ChatAIWindowFrame()
+{
+    llm::Manager::GetInstance().Unbind(wxEVT_LLM_STARTED, &ChatAIWindowFrame::OnLLMRestarted, this);
+}
 
 void ChatAIWindowFrame::OnClose(wxCloseEvent& event)
 {
@@ -34,6 +40,8 @@ bool ChatAIWindowFrame::Show(bool show)
             m_showFirstTime = false;
         }
         m_view->GetStcInput()->CallAfter(&wxStyledTextCtrl::SetFocus);
+        UpdateLabel();
+
     } else {
         ChatAIWindowFrameBase::Show(false);
     }
@@ -52,4 +60,25 @@ void ChatAIWindowFrame::AdjustSize()
     Move(wxNOT_FOUND, top_level_frame->GetPosition().y);
 #endif
     PostSizeEvent();
+}
+
+void ChatAIWindowFrame::OnLLMRestarted(clLLMEvent& event)
+{
+    event.Skip();
+    UpdateLabel();
+}
+
+void ChatAIWindowFrame::UpdateLabel()
+{
+    static const wxString RIGHT_ARROW = wxT(" ▶ ");
+    auto& manager = llm::Manager::GetInstance();
+    auto endpoint = manager.GetActiveEndpoint();
+    wxString label;
+    if (endpoint.has_value()) {
+        label << _("Assistant") << RIGHT_ARROW << manager.GetModelName().value_or("<unknown>") << RIGHT_ARROW
+              << endpoint.value();
+    } else {
+        label << _("Assistant");
+    }
+    SetLabel(label);
 }

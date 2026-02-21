@@ -3,6 +3,7 @@
 
 #include "ChatAIWindow.hpp"
 #include "UI.hpp"
+#include "ai/LLMEvents.hpp"
 #include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK ChatAI;
@@ -17,7 +18,10 @@ public:
 
 protected:
     void OnClose(wxCloseEvent& event) override;
+    void OnLLMRestarted(clLLMEvent& event);
+
     void AdjustSize();
+    void UpdateLabel();
 
     ChatAIWindow* m_view{nullptr};
     bool m_showFirstTime{true};

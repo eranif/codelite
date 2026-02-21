@@ -27,6 +27,37 @@ enum class PromptKind {
     kMax, // Must be last
 };
 
+// Cache Policy
+inline static wxString kCacheAuto = "Auto";
+inline static wxString kCacheNone = "None";
+inline static wxString kCacheStaticContent = "Static Content";
+
+using CachePolicy = assistant::CachePolicy;
+
+inline wxString CachePolicyToString(CachePolicy cache_policy)
+{
+    switch (cache_policy) {
+    case assistant::CachePolicy::kNone:
+        return llm::kCacheNone;
+    case assistant::CachePolicy::kStatic:
+        return llm::kCacheStaticContent;
+    case assistant::CachePolicy::kAuto:
+    default:
+        return llm::kCacheAuto;
+    }
+}
+
+inline CachePolicy CachePolicyFromString(const wxString& policy)
+{
+    if (policy == llm::kCacheNone) {
+        return CachePolicy::kNone;
+    } else if (policy == llm::kCacheStaticContent) {
+        return CachePolicy::kStatic;
+    } else {
+        return CachePolicy::kAuto;
+    }
+}
+
 inline std::string PromptKindToString(PromptKind kind)
 {
     switch (kind) {
@@ -391,6 +422,40 @@ public:
      */
     void ResetPrompts();
 
+    /**
+     * @brief Sets the caching policy for this object.
+     *
+     * This method is thread-safe and uses a scoped lock to ensure atomic updates
+     * to the internal caching policy string.
+     */
+    inline void SetCachePolicy(llm::CachePolicy cp)
+    {
+        std::scoped_lock lock{m_mutex};
+        m_cachingPolicy = CachePolicyToString(cp);
+    }
+
+    /**
+     * @brief Gets the current cache policy.
+     */
+    inline llm::CachePolicy GetCachePolicy() const
+    {
+        std::scoped_lock lock{m_mutex};
+        return CachePolicyFromString(m_cachingPolicy);
+    }
+
+    /**
+     * @brief Gets the current cache policy as string.
+     */
+    inline wxString GetCachePolicyString() const { return CachePolicyToString(GetCachePolicy()); }
+
+    /**
+     * @brief Set the current cache policy as string.
+     */
+    inline void SetCachePolicy(const wxString& cp) { SetCachePolicy(CachePolicyFromString(cp)); }
+
+    inline bool AreToolsEnabled() const { return m_enableTools.load(); }
+    inline void SetToolsEnabled(bool b) { m_enableTools.store(b); }
+
 private:
     wxString GetFullPath();
     ChatHistory& GetOrAddHistory(const wxString& endpoint) CALLER_MUST_LOCK(m_mutex);
@@ -398,5 +463,7 @@ private:
     mutable std::mutex m_mutex;
     std::map<std::string, std::string> m_prompts GUARDED_BY(m_mutex);
     mutable std::map<wxString, ChatHistory> m_history GUARDED_BY(m_mutex);
+    std::atomic_bool m_enableTools;
+    wxString m_cachingPolicy GUARDED_BY(m_mutex){llm::kCacheAuto};
 };
 } // namespace llm

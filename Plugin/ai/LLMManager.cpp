@@ -627,6 +627,7 @@ void Manager::Start(std::shared_ptr<assistant::ClientBase> client)
         }
     }
 
+    m_client->SetCachingPolicy(GetConfig().GetCachePolicy());
     m_client->SetTookInvokeCallback(&Manager::CanRunTool);
 
     // Start the worker thread
@@ -1086,10 +1087,10 @@ void Manager::ShowTextGenerationDialog(const wxString& prompt,
 
 const std::vector<wxString>& Manager::GetAvailablePlaceHolders() const { return kPlaceHolders; }
 
-clStatusOr<UserAnswer> llm::Manager::PromptUserYesNoTrustQuestion(const wxString& text,
-                                                                  int timeout_secs,
-                                                                  const wxString& code_block,
-                                                                  const wxString& code_block_lang)
+clStatusOr<UserAnswer> Manager::PromptUserYesNoTrustQuestion(const wxString& text,
+                                                             int timeout_secs,
+                                                             const wxString& code_block,
+                                                             const wxString& code_block_lang)
 {
     if (::wxIsMainThread()) {
         return StatusOther("Function must not be called from the main thread");
@@ -1135,5 +1136,11 @@ clStatusOr<UserAnswer> llm::Manager::PromptUserYesNoTrustQuestion(const wxString
     }
 }
 
-void llm::Manager::PostAnswer(UserAnswer answer) { m_answerChannel.Post(answer); }
+void Manager::PostAnswer(UserAnswer answer) { m_answerChannel.Post(answer); }
+
+void Manager::SetCachingPolicy(assistant::CachePolicy policy)
+{
+    CHECK_PTR_RET(m_client);
+    m_client->SetCachingPolicy(policy);
+}
 } // namespace llm

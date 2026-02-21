@@ -58,6 +58,7 @@ using assistant::FunctionTable;
 using assistant::IsFlagSet;
 using assistant::OnResponseCallback;
 using assistant::Reason;
+using assistant::Usage;
 
 template <typename T>
 inline clStatusOr<T> CheckType(const llm::json& j, const std::string& name)
@@ -491,6 +492,21 @@ public:
         return m_client->GetTotalCost();
     }
 
+    /**
+     * @brief Retrieves the last request usage.
+     */
+    inline std::optional<Usage> GetLastRequestUsage() const
+    {
+        CHECK_COND_RET_VAL(m_client, std::nullopt);
+        return m_client->GetLastRequestUsage();
+    }
+
+    inline std::optional<wxString> GetModelName() const
+    {
+        CHECK_COND_RET_VAL(m_client, std::nullopt);
+        return m_client->GetModel();
+    }
+
     inline bool HasPricing() const { return m_client && m_client->GetPricing().has_value(); }
     /**
      * @brief Prompts the user with a yes/no/trust question in the chat window and waits for their response.
@@ -539,6 +555,19 @@ public:
      * @see UserAnswer
      */
     void PostAnswer(UserAnswer answer);
+
+    /**
+     * @brief Sets the caching policy for the assistant client.
+     *
+     * This method configures the caching behavior by delegating to the underlying
+     * client. The function performs a null-pointer check on the client before setting
+     * the policy and returns early if the client is not initialized.
+     *
+     * @param policy The caching policy to be applied to the assistant client.
+     *
+     * @return void This function does not return a value.
+     */
+    void SetCachingPolicy(assistant::CachePolicy policy);
 
 private:
     Manager() = default;

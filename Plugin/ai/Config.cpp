@@ -47,6 +47,8 @@ void Config::Load()
     try {
         auto json = nlohmann::json::parse(cstr_content);
         m_prompts = ReadValue(json, "prompts", kDefaultPromptTable);
+        m_cachingPolicy = ReadValue<std::string>(json, "caching_policy", llm::kCacheAuto.ToStdString(wxConvUTF8));
+        m_enableTools = ReadValue<bool>(json, "enable_tools", true);
 
         if (json.contains("history") && json["history"].is_object()) {
             for (const auto& kv : json["history"].items()) {
@@ -81,9 +83,14 @@ void Config::Save()
     j["prompts"] = m_prompts;
     j["history"] = json::object();
 
+    auto& history = j["history"];
     for (const auto& [endpoint, chat_history] : m_history) {
-        j["history"][endpoint] = chat_history.to_json();
+        history[endpoint] = chat_history.to_json();
     }
+
+    j["enable_tools"] = m_enableTools.load();
+    j["caching_policy"] = m_cachingPolicy.ToStdString(wxConvUTF8);
+
     wxString content = wxString::FromUTF8(j.dump(2));
     FileUtils::WriteFileContent(GetFullPath(), content, wxConvUTF8);
 }

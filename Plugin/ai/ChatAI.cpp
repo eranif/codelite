@@ -25,31 +25,22 @@
 #include "ChatAI.hpp"
 
 #include "ai/LLMManager.hpp"
-#include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
-#include "globals.h"
 
 namespace
 {
 const wxString CHAT_AI_LABEL = _("Chat AI");
-constexpr const char* kConfigIsViewDetached = "chat_ai.detached_view";
 } // namespace
 
 ChatAI::ChatAI()
 {
     llm::Manager::GetInstance().GetConfig().Load();
     m_chatWindowFrame = new ChatAIWindowFrame(EventNotifier::Get()->TopFrame(), this);
-    m_chatWindow = new ChatAIWindow(clGetManager()->BookGet(PaneId::SIDE_BAR), this);
-    clGetManager()->BookAddPage(PaneId::SIDE_BAR, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &ChatAI::OnInitDone, this);
 }
 
-ChatAI::~ChatAI()
-{
-    bool is_docked = m_dockedPaneId.has_value();
-    clConfig::Get().Write(kConfigIsViewDetached, is_docked);
-}
+ChatAI::~ChatAI() { bool is_docked = m_dockedPaneId.has_value(); }
 
 void ChatAI::ShowChatWindow(const wxString& prompt)
 {
@@ -59,59 +50,14 @@ void ChatAI::ShowChatWindow(const wxString& prompt)
     }
 }
 
-void ChatAI::OnInitDone(wxCommandEvent& event)
-{
-    event.Skip();
-    bool detached = clConfig::Get().Read(kConfigIsViewDetached, false);
-    if (detached) {
-        DetachView(false);
-    }
-}
-
-void ChatAI::DetachView(bool show_frame)
-{
-    auto res = clGetManager()->FindPaneId(m_chatWindow);
-    if (res.has_value()) {
-        // First, remember the pane from which we are removing our view.
-        m_dockedPaneId = res;
-        clGetManager()->BookRemovePage(m_dockedPaneId.value(), m_chatWindow);
-    }
-
-    if (show_frame && !m_chatWindowFrame->IsShown()) {
-        m_chatWindowFrame->Show();
-    }
-}
-
-void ChatAI::DockView()
-{
-    if (m_chatWindowFrame->IsShown()) {
-        m_chatWindowFrame->Hide();
-    }
-
-    auto res = clGetManager()->FindPaneId(m_chatWindow);
-    if (res.has_value()) {
-        // the view is already docked
-        return;
-    }
-
-    PaneId pane_id = m_dockedPaneId.value_or(PaneId::SIDE_BAR);
-    clGetManager()->BookAddPage(pane_id, m_chatWindow, CHAT_AI_LABEL, "chat-bot");
-    clGetManager()->BookSelectPage(pane_id, m_chatWindow);
-    m_dockedPaneId.reset();
-}
+void ChatAI::OnInitDone(wxCommandEvent& event) { event.Skip(); }
 
 ChatAIWindow* ChatAI::GetChatWindow()
 {
-    ChatAIWindow* chat_view{nullptr};
-    if (m_dockedPaneId.has_value()) {
+    if (!m_chatWindowFrame->IsShown()) {
         m_chatWindowFrame->Show();
-        chat_view = m_chatWindowFrame->GetChatWindow();
-    } else {
-        clGetManager()->ShowManagementWindow(CHAT_AI_LABEL, true);
-        m_chatWindow->GetStcInput()->CallAfter(&wxStyledTextCtrl::SetFocus);
-        chat_view = m_chatWindow;
     }
-    return chat_view;
+    return m_chatWindowFrame->GetChatWindow();
 }
 
 void ChatAI::AppendTextAndStyle(const wxString& text)

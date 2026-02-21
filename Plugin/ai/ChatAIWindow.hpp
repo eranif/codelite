@@ -1,6 +1,5 @@
 #pragma once
 
-#include "CustomControls/IndicatorPanel.hpp"
 #include "MarkdownStyler.hpp"
 #include "UI.hpp"
 #include "ai/Common.hpp"
@@ -16,13 +15,12 @@
 #include <wx/stattext.h>
 #include <wx/timer.h>
 
-class ChatAI;
 using llm::ChatState;
 
 class WXDLLIMPEXP_SDK ChatAIWindow : public AssistanceAIChatWindowBase
 {
 public:
-    ChatAIWindow(wxWindow* parent, ChatAI* plugin);
+    ChatAIWindow(wxWindow* parent);
     virtual ~ChatAIWindow();
     wxString GetActiveModel() const { return m_choiceEndpoints->GetStringSelection(); }
     bool IsDetached() const;
@@ -84,6 +82,8 @@ protected:
     void OnClearOutputViewUI(wxUpdateUIEvent& event);
     void OnUpdateTheme(wxCommandEvent& event);
     void OnEndpointChanged(wxCommandEvent& event);
+    void OnCachePolicyChanged(wxCommandEvent& event);
+    void OnToolsEnabled(wxCommandEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     void OnNewSession(wxCommandEvent& event);
     void OnRestartClient(wxCommandEvent& event);
@@ -114,17 +114,18 @@ protected:
     void DoRestart();
 
     void ShowIndicator(bool show);
-    void UpdateCostBar();
+    void UpdateStatusBar();
 
 private:
     wxChoice* m_choiceEndpoints{nullptr};
+    wxChoice* m_choiceCachePolicy{nullptr};
     wxCheckBox* m_checkboxEnableTools{nullptr};
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
     ChatState m_state{ChatState::kReady};
-    IndicatorPanel* m_statusPanel{nullptr};
+    wxActivityIndicator* m_activityIndicator{nullptr};
     bool m_autoScroll{true};
     std::shared_ptr<llm::CancellationToken> m_cancel_token{nullptr};
-    ChatAI* m_plugin{nullptr};
     std::unique_ptr<clEditEventsHandler> m_inputEditHelper;
     std::unique_ptr<clEditEventsHandler> m_outputEditHelper;
+    wxStatusBar* m_statusBar{nullptr};
 };

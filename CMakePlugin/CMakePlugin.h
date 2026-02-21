@@ -249,7 +249,7 @@ protected:
     void OnCreateCMakeListsDll(wxCommandEvent& event);
     void OnCreateCMakeListsLib(wxCommandEvent& event);
     bool IsCMakeListsExists() const;
-    wxString WriteCMakeListsAndOpenIt(const std::vector<wxString>& lines) const;
+    wxString WriteCMakeListsAndOpenIt(const wxString& lines) const;
     clStatusOr<wxString> CreateCMakeListsFile(TargetType type) const;
     void FireCMakeListsFileCreatedEvent(const wxString& cmakelists_txt) const;
 

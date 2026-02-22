@@ -122,7 +122,9 @@ private:
     wxCheckBox* m_checkboxEnableTools{nullptr};
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
     ChatState m_state{ChatState::kReady};
+#if wxCHECK_VERSION(3, 3, 0)
     wxActivityIndicator* m_activityIndicator{nullptr};
+#endif
     bool m_autoScroll{true};
     std::shared_ptr<llm::CancellationToken> m_cancel_token{nullptr};
     std::unique_ptr<clEditEventsHandler> m_inputEditHelper;

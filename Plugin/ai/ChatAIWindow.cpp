@@ -27,6 +27,7 @@ enum StatusBarIndex {
     kCost,
     kUsage,
     kProgress,
+    kLast,
 };
 
 } // namespace
@@ -136,8 +137,12 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     GetSizer()->Add(m_statusBar, wxSizerFlags(0).Expand());
 
     auto indicator_size = FromDIP(wxSize(16, 16));
+
+#if wxCHECK_VERSION(3, 3, 0)
     m_activityIndicator = new wxActivityIndicator(m_statusBar, wxID_ANY, wxDefaultPosition, indicator_size);
     m_statusBar->AddFieldControl(StatusBarIndex::kProgress, m_activityIndicator);
+#endif
+
     int widths[] = {-1, -3, -3, indicator_size.GetWidth()};
     int styles[] = {wxSB_FLAT, wxSB_FLAT, wxSB_FLAT, wxSB_FLAT};
     m_statusBar->SetStatusWidths(4, widths);
@@ -422,12 +427,16 @@ void ChatAIWindow::OnChatAIOutputDone(clLLMEvent& event)
 void ChatAIWindow::ShowIndicator(bool show)
 {
     if (show) {
+#if wxCHECK_VERSION(3, 3, 0)
         m_activityIndicator->Show();
         m_activityIndicator->Start();
+#endif
         m_statusBar->SetStatusText(_("Working..."), StatusBarIndex::kProgressText);
     } else {
+#if wxCHECK_VERSION(3, 3, 0)
         m_activityIndicator->Stop();
         m_activityIndicator->Hide();
+#endif
         m_statusBar->SetStatusText(_("Ready"), StatusBarIndex::kProgressText);
     }
 }

@@ -12,6 +12,9 @@ constexpr size_t kMaxHistorySize = 50;
 template <typename T>
 T ReadValue(const nlohmann::json& j, const std::string& name, const T& d = {})
 {
+    if (!j.contains(name)) {
+        return d;
+    }
     try {
         return j[name].get<T>();
     } catch ([[maybe_unused]] const std::exception& e) {

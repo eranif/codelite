@@ -37,6 +37,7 @@ class IProcess;
 #include "processreaderthread.h"
 #include "ssh_account_info.h"
 
+#include <condition_variable>
 #include <wx/arrstr.h>
 #include <wx/string.h>
 
@@ -114,14 +115,17 @@ static wxArrayString __WrapInShell(const wxArrayString& args, size_t flags)
         if (shell.IsEmpty()) {
             shell = "CMD.EXE";
         }
-        return StdToWX::ToArrayString({ shell, "/C", "\"" + cmd + "\"" });
+        return StdToWX::ToArrayString({shell, "/C", "\"" + cmd + "\""});
     } else {
-        return StdToWX::ToArrayString({ "/bin/sh", "-c", "'" + cmd + "'" });
+        return StdToWX::ToArrayString({"/bin/sh", "-c", "'" + cmd + "'"});
     }
 }
 
-static wxArrayString __AddSshCommand(const wxArrayString& args, const wxString& wd, const wxString& sshAccountName,
-                                     clTempFile& tmpfile, const clEnvList_t* env_list)
+static wxArrayString __AddSshCommand(const wxArrayString& args,
+                                     const wxString& wd,
+                                     const wxString& sshAccountName,
+                                     clTempFile& tmpfile,
+                                     const clEnvList_t* env_list)
 {
 #ifndef __WXMSW__
     wxUnusedVar(tmpfile);
@@ -220,8 +224,19 @@ static void __FixArgs(wxArrayString& args)
     }
 }
 
-IProcess* CreateAsyncProcess(wxEvtHandler* parent, const std::vector<wxString>& args, size_t flags,
-                             const wxString& workingDir, const clEnvList_t* env, const wxString& sshAccountName)
+namespace
+{
+std::mutex g_mutex;
+std::condition_variable g_cv;
+std::unordered_map<pid_t, int> g_exit_codes;
+} // namespace
+
+IProcess* CreateAsyncProcess(wxEvtHandler* parent,
+                             const std::vector<wxString>& args,
+                             size_t flags,
+                             const wxString& workingDir,
+                             const clEnvList_t* env,
+                             const wxString& sshAccountName)
 {
     wxArrayString wxargs;
     wxargs.reserve(args.size());
@@ -231,8 +246,12 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const std::vector<wxString>& 
     return CreateAsyncProcess(parent, wxargs, flags, workingDir, env, sshAccountName);
 }
 
-IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, size_t flags, const wxString& workingDir,
-                             const clEnvList_t* env, const wxString& sshAccountName)
+IProcess* CreateAsyncProcess(wxEvtHandler* parent,
+                             const wxArrayString& args,
+                             size_t flags,
+                             const wxString& workingDir,
+                             const clEnvList_t* env,
+                             const wxString& sshAccountName)
 {
     clEnvironment e(env);
     wxArrayString c = args;
@@ -268,15 +287,22 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args, si
 #endif
 }
 
-IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDir,
-                             const clEnvList_t* env, const wxString& sshAccountName)
+IProcess* CreateAsyncProcess(wxEvtHandler* parent,
+                             const wxString& cmd,
+                             size_t flags,
+                             const wxString& workingDir,
+                             const clEnvList_t* env,
+                             const wxString& sshAccountName)
 {
     auto args = StringUtils::BuildArgv(cmd);
     return CreateAsyncProcess(parent, args, flags, workingDir, env, sshAccountName);
 }
 
-void CreateAsyncProcessCB(const wxString& cmd, std::function<void(const wxString&)> cb, size_t flags,
-                          const wxString& workingDir, const clEnvList_t* env)
+void CreateAsyncProcessCB(const wxString& cmd,
+                          std::function<void(const wxString&)> cb,
+                          size_t flags,
+                          const wxString& workingDir,
+                          const clEnvList_t* env)
 {
     clEnvironment e(env);
     CreateAsyncProcess(new __AsyncCallback(std::move(cb)), cmd, flags, workingDir, env, wxEmptyString);
@@ -284,24 +310,29 @@ void CreateAsyncProcessCB(const wxString& cmd, std::function<void(const wxString
 
 IProcess* CreateSyncProcess(const wxString& cmd, size_t flags, const wxString& workingDir, const clEnvList_t* env)
 {
-    return CreateAsyncProcess(nullptr, StringUtils::BuildArgv(cmd), flags | IProcessCreateSync, workingDir, env,
-                              wxEmptyString);
+    return CreateAsyncProcess(
+        nullptr, StringUtils::BuildArgv(cmd), flags | IProcessCreateSync, workingDir, env, wxEmptyString);
 }
 
 // Static methods:
 bool IProcess::GetProcessExitCode(int pid, int& exitCode)
 {
-    wxUnusedVar(pid);
-    wxUnusedVar(exitCode);
+    std::unique_lock<std::mutex> lock(g_mutex);
+    auto predicate = [&]() { return g_exit_codes.find(pid) != g_exit_codes.end(); };
 
-    exitCode = 0;
-    return true;
+    // Wait with timeout
+    if (g_cv.wait_for(lock, std::chrono::seconds(1), predicate)) {
+        exitCode = g_exit_codes[pid];
+        return true;
+    }
+    return false;
 }
 
 void IProcess::SetProcessExitCode(int pid, int exitCode)
 {
-    wxUnusedVar(pid);
-    wxUnusedVar(exitCode);
+    std::unique_lock<std::mutex> lock(g_mutex);
+    g_exit_codes.erase(pid);
+    g_exit_codes[pid] = exitCode;
 }
 
 void IProcess::WaitForTerminate(wxString& output)

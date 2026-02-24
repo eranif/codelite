@@ -505,6 +505,8 @@ void ChatAIWindow::AppendMarker()
     m_stcOutput->SetReadOnly(true);
 }
 
+wxString ChatAIWindow::GetText() const { return m_stcOutput->GetText(); }
+
 void ChatAIWindow::AppendText(const wxString& text, bool force_style)
 {
     AppendOutput(text);

@@ -2,6 +2,7 @@
 
 #include "CustomControls/TextGenerationPreviewFrame.hpp"
 #include "JSON.h"
+#include "UnicodeSymbols.hpp"
 #include "ai/ChatAI.hpp"
 #include "ai/Common.hpp"
 #include "ai/Config.hpp"
@@ -9,10 +10,8 @@
 #include "ai/ProgressToken.hpp"
 #include "ai/ResponseCollector.hpp"
 #include "ai/Tools.hpp"
-#include "assistant/client_base.hpp"
+#include "assistant/client/client_base.hpp"
 #include "assistant/function.hpp"
-#include "assistant/helpers.hpp"
-#include "assistant/ollama_client.hpp"
 #include "clResult.hpp"
 
 #include <algorithm>
@@ -568,6 +567,29 @@ public:
      * @return void This function does not return a value.
      */
     void SetCachingPolicy(assistant::CachePolicy policy);
+
+    /**
+     * @brief Prints a message with an icon to the chat window.
+     *
+     * This method appends a formatted message with a symbolic icon to the chat window.
+     * The icon is selected based on the provided IconType. The message is appended on a new line
+     * if the current chat text does not end with a newline.
+     *
+     * @param msg The message to be printed in the chat window.
+     * @param icon The type of icon to display alongside the message.
+     *
+     * @return void
+     *
+     * @throws (implicitly) May throw exceptions if any of the required pointers (m_client,
+     *         chat window container, or chat window) are null.
+     *
+     * @example
+     *   Manager manager;
+     *   manager.PrintMessage("Operation completed successfully", IconType::kSuccess);
+     *
+     * @see IconType
+     */
+    void PrintMessage(const wxString& msg, IconType icon);
 
 private:
     Manager() = default;

@@ -5,7 +5,7 @@
 // clang-format on
 
 #include "assistant/attributes.hpp"
-#include "assistant/client_base.hpp"
+#include "assistant/client/client_base.hpp"
 #include "assistant/common/json.hpp"
 #include "codelite_exports.h"
 

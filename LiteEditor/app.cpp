@@ -202,7 +202,6 @@ void ChildTerminatedSignalHandler(int signo)
         if (pid > 0) {
             // waitpid succeeded
             IProcess::SetProcessExitCode(pid, WEXITSTATUS(status));
-
         } else {
             break;
         }

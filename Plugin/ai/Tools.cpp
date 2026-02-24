@@ -8,6 +8,7 @@
 #include "ai/LLMManager.hpp"
 #include "assistant/function.hpp"
 #include "clFilesFinder.h"
+#include "clSFTPManager.hpp"
 #include "clWorkspaceManager.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -28,10 +29,15 @@ namespace llm
 void PopulateBuiltInFunctions(FunctionTable& table)
 {
     table.Add(FunctionBuilder("ReadFileContent")
-                  .SetDescription("Reads the entire content of the file 'filepath' from "
-                                  "the disk. On success, this function returns the "
-                                  "entire file's content.")
+                  .SetDescription("Reads the content of the file 'filepath' from the disk. "
+                                  "By default, returns the entire file's content. "
+                                  "If 'from_line' and 'line_count' are provided, reads only the specified "
+                                  "range of lines (1-based line numbering). "
+                                  "Both optional parameters must be provided together or omitted entirely. "
+                                  "On success, this function returns the requested file content.")
                   .AddRequiredParam("filepath", "The path of the file to read.", "string")
+                  .AddOptionalParam("from_line", "Starting line number (1-based) to read from", "number")
+                  .AddOptionalParam("line_count", "Number of lines to read", "number")
                   .SetCallback(ReadFileContent)
                   .Build());
 
@@ -163,23 +169,72 @@ FunctionResult CreateNewFile(const assistant::json& args)
 FunctionResult ReadFileContent(const assistant::json& args)
 {
     VERIFY_WORKER_THREAD();
-    if (args.size() != 1) {
+    if (args.size() < 1 || args.size() > 3) {
         return Err("Invalid number of arguments");
     }
 
     ASSIGN_FUNC_ARG_OR_RETURN(std::string filepath, ::assistant::GetFunctionArg<std::string>(args, "filepath"));
 
+    // Check for optional parameters
+    auto from_line_opt = ::assistant::GetFunctionArg<int>(args, "from_line");
+    auto line_count_opt = ::assistant::GetFunctionArg<int>(args, "line_count");
+
+    // Validate that both optional params are provided or none of them
+    if (from_line_opt.has_value() != line_count_opt.has_value()) {
+        return Err("Both 'from_line' and 'line_count' must be provided together, or none of them");
+    }
+
     auto cb = [=]() -> FunctionResult {
+        auto& llm = llm::Manager::GetInstance();
         wxString fullpath = FileManager::GetFullPath(wxString::FromUTF8(filepath));
-        clDEBUG() << "ReadFileContent is called for:" << fullpath << endl;
         std::optional<wxString> content = FileManager::ReadContent(fullpath);
         if (!content.has_value()) {
-            wxString msg;
-            msg << "Error occurred while reading the file: '" << filepath << "' from disk.";
-            clWARNING() << msg << endl;
-            return Err(msg);
+            wxString logmsg;
+            logmsg << "Failed to read file: " << filepath << ". ";
+            llm.PrintMessage(logmsg, IconType::kError);
+            return Err(logmsg);
         }
-        clDEBUG() << "ReadFileContent completed successfully." << endl;
+
+        // If partial read is requested
+        if (from_line_opt.has_value() && line_count_opt.has_value()) {
+            int from_line = from_line_opt.value();
+            int line_count = line_count_opt.value();
+
+            // Validate parameters
+            if (from_line < 1) {
+                return Err("'from_line' must be >= 1");
+            }
+            if (line_count < 1) {
+                return Err("'line_count' must be >= 1");
+            }
+
+            // Split content into lines
+            wxArrayString lines = wxStringTokenize(content.value(), "\n", wxTOKEN_RET_EMPTY_ALL);
+
+            // Check if from_line is within bounds
+            if (from_line > (int)lines.size()) {
+                return Err(
+                    wxString::Format("'from_line' (%d) exceeds total file lines (%zu)", from_line, lines.size()));
+            }
+
+            // Extract the requested lines (from_line is 1-based)
+            int start_idx = from_line - 1;
+            int end_idx = wxMin(start_idx + line_count, (int)lines.size());
+            wxString partial_content;
+            for (int i = start_idx; i < end_idx; ++i) {
+                partial_content << lines[i] << "\n";
+            }
+
+            wxString logmsg;
+            logmsg << "Successfully read file: " << filepath << " (lines " << from_line << "-" << (end_idx) << "). "
+                   << partial_content.size() << " bytes.";
+            llm.PrintMessage(logmsg, IconType::kSuccess);
+            return Ok(partial_content);
+        }
+
+        wxString logmsg;
+        logmsg << "Successfully read file: " << filepath << ". " << content.value().size() << " bytes.";
+        llm.PrintMessage(logmsg, IconType::kSuccess);
         return Ok(content.value());
     };
     return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
@@ -422,12 +477,46 @@ FunctionResult ToolShellExecute([[maybe_unused]] const assistant::json& args)
         break;
     }
 
+    std::string command_output;
+    FunctionResult func_result{.isError = false};
+#if USE_SFTP
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    bool is_remote = workspace && workspace->IsRemote();
+    if (is_remote) {
+        auto result = clSFTPManager::Get().AwaitExecute(workspace->GetSshAccount(), cmd, workspace->GetDir());
+        std::string out = std::get<0>(result);
+        std::string err = std::get<1>(result);
+        func_result.isError = false;
+        func_result.text = out;
+        if (!err.empty()) {
+            func_result.text += "\n" + err;
+        }
+
+    } else {
+        // Local command.
+        ProcUtils::WrapInShell(cmd);
+        wxArrayString output_arr;
+        ProcUtils::SafeExecuteCommand(cmd, output_arr);
+
+        wxString output = StringUtils::Join(output_arr);
+        command_output = output.ToStdString(wxConvUTF8);
+        func_result.isError = false;
+        func_result.text = command_output;
+    }
+#else
+    // Local command.
     ProcUtils::WrapInShell(cmd);
     wxArrayString output_arr;
-    int exit_code = ProcUtils::SafeExecuteCommand(cmd, output_arr);
+    ProcUtils::SafeExecuteCommand(cmd, output_arr);
 
     wxString output = StringUtils::Join(output_arr);
-    return FunctionResult{.isError = exit_code != 0, .text = output.ToStdString(wxConvUTF8)};
+    command_output = output.ToStdString(wxConvUTF8);
+    func_result.isError = false;
+    func_result.text = command_output;
+#endif
+    llm::Manager::GetInstance().PrintMessage(
+        _("Successfully executed the command. Output:\n```bash\n") + func_result.text + "\n```\n", IconType::kInfo);
+    return func_result;
 }
 
 } // namespace llm

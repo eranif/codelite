@@ -59,7 +59,7 @@
 #ifndef __WXMSW__
 namespace
 {
-int Popen(const wxString& command, wxArrayString& output)
+int Popen(const wxString& command, wxArrayString& output_arr)
 {
     FILE* fp{nullptr};
     char line[512];
@@ -69,26 +69,15 @@ int Popen(const wxString& command, wxArrayString& output)
         return 1;
     }
 
-    while (fgets(line, sizeof(line) - 1, fp)) {
-        output.Add(wxString(line, wxConvUTF8));
+    std::string result;
+    while (fgets(line, sizeof(line) - 1, fp) != nullptr) {
+        result += line;
         memset(line, 0, sizeof(line));
     }
-    int status = pclose(fp);
-    if (status == -1) {
-        clERROR() << "pclose failed." << endl;
-        return 1;
-    }
 
-    // Check if the process exited normally
-    int exit_code{0};
-    if (WIFEXITED(status)) {
-        // Process exited. Return the exit code.
-        exit_code = WEXITSTATUS(status);
-        return exit_code;
-    } else {
-        // Process was killed by a signal
-        return 1;
-    }
+    wxString output = wxString::FromUTF8(result);
+    output_arr = wxStringTokenize(output, "\n", wxTOKEN_RET_EMPTY_ALL);
+    return 0;
 }
 } // namespace
 #endif

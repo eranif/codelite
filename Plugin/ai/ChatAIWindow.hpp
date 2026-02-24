@@ -53,6 +53,8 @@ public:
      */
     void AppendText(const wxString& text, bool force_style = true);
 
+    wxString GetText() const;
+
     /**
      * @brief Displays a yes/no trust confirmation bar with the specified message.
      *

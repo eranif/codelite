@@ -1143,4 +1143,28 @@ void Manager::SetCachingPolicy(assistant::CachePolicy policy)
     CHECK_PTR_RET(m_client);
     m_client->SetCachingPolicy(policy);
 }
+
+void Manager::PrintMessage(const wxString& msg, IconType icon)
+{
+    CHECK_PTR_RET(m_client);
+    CHECK_PTR_RET(GetChatWindowContainer());
+    CHECK_PTR_RET(GetChatWindowContainer()->GetChatWindow());
+
+    auto cb = [msg, icon, this]() {
+        auto chat_win = GetChatWindowContainer()->GetChatWindow();
+        wxString symbol = IconType_ToString(icon) + " ";
+
+        wxString current_text = chat_win->GetText();
+        wxString message_to_add;
+        if (!current_text.EndsWith("\n")) {
+            message_to_add = "\n";
+        }
+        message_to_add << symbol << msg;
+        if (!msg.EndsWith("\n")) {
+            message_to_add << "\n";
+        }
+        chat_win->AppendText(message_to_add);
+    };
+    EventNotifier::Get()->RunOnMain<void>(std::move(cb));
+}
 } // namespace llm

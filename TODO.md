@@ -26,6 +26,7 @@ High:
 
 - Add system message telling the model on which OS it is running.
 - Replace the standard "find-in-files" tool with `grep` command (on all platforms) - this will allow it to run on remote files.
+- `GetCurrentEditorText` - add support for line (from-count).
 
 Low:
 ----

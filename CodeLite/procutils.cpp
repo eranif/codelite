@@ -75,6 +75,7 @@ int Popen(const wxString& command, wxArrayString& output_arr)
         memset(line, 0, sizeof(line));
     }
 
+    ::pclose(fp); // it might fail, but its OK.
     wxString output = wxString::FromUTF8(result);
     output_arr = wxStringTokenize(output, "\n", wxTOKEN_RET_EMPTY_ALL);
     return 0;

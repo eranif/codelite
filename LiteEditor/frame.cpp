@@ -1961,7 +1961,7 @@ void clMainFrame::OnClose(wxCloseEvent& event)
     event.Skip();
 
     wxString msg;
-    ManagerST::Get()->SetShutdownInProgress(true);
+    ManagerST::Get()->SetShutdownInProgress();
 
     // Notify the plugins that we are going down
     clCommandEvent eventGoingDown(wxEVT_GOING_DOWN);

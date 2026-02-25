@@ -507,11 +507,11 @@ wxFontEncoding BOM::Encoding(const char* buff)
     //----------------------------------
     wxFontEncoding encoding = wxFONTENCODING_SYSTEM; /* -1 */
 
-    static const char UTF32be[] = { 0x00, 0x00, (char)0xfe, (char)0xff };
-    static const char UTF32le[] = { (char)0xff, (char)0xfe, 0x00, 0x00 };
-    static const char UTF16be[] = { (char)0xfe, (char)0xff };
-    static const char UTF16le[] = { (char)0xff, (char)0xfe };
-    static const char UTF8[] = { (char)0xef, (char)0xbb, (char)0xbf };
+    static const char UTF32be[] = {0x00, 0x00, (char)0xfe, (char)0xff};
+    static const char UTF32le[] = {(char)0xff, (char)0xfe, 0x00, 0x00};
+    static const char UTF16be[] = {(char)0xfe, (char)0xff};
+    static const char UTF16le[] = {(char)0xff, (char)0xfe};
+    static const char UTF8[] = {(char)0xef, (char)0xbb, (char)0xbf};
 
     if (memcmp(buff, UTF32be, sizeof(UTF32be)) == 0) {
         encoding = wxFONTENCODING_UTF32BE;
@@ -867,7 +867,7 @@ clRemoteFolderSelector(const wxString& title, const wxString& accountName, wxWin
     if (dlg.ShowModal() != wxID_OK) {
         return {};
     }
-    return { dlg.GetAccount(), dlg.GetPath() };
+    return {dlg.GetAccount(), dlg.GetPath()};
 #else
     return {};
 #endif
@@ -881,7 +881,7 @@ clRemoteFileSelector(const wxString& title, const wxString& accountName, const w
     if (dlg.ShowModal() != wxID_OK) {
         return {};
     }
-    return { dlg.GetAccount(), dlg.GetPath() };
+    return {dlg.GetAccount(), dlg.GetPath()};
 #else
     return {};
 #endif
@@ -1042,3 +1042,8 @@ int GetClangFormatIntProperty(const wxString& clang_format_content, const wxStri
     }
     return wxNOT_FOUND;
 }
+
+static std::atomic_bool shutdown_flag{false};
+void SetShutdownInProgress() { shutdown_flag.store(true); }
+
+bool IsShutdownInProgress() { return shutdown_flag.load(); }

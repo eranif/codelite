@@ -426,7 +426,7 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
     clDEBUG() << "Applying the patch:\n" << patch << endl;
 
     auto response = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(
-        _("The model wants to apply the following patch, allow it?"), 0, patch, "patch");
+        _("The model wants to apply the following patch, allow it?"), patch, "patch");
 
     if (!response.ok()) {
         clDEBUG() << "Permission to apply the patch declined." << response.error_message() << endl;
@@ -463,7 +463,7 @@ FunctionResult ToolShellExecute([[maybe_unused]] const assistant::json& args)
     ASSIGN_FUNC_ARG_OR_RETURN(std::string command, ::assistant::GetFunctionArg<std::string>(args, "command"));
     wxString cmd = wxString::FromUTF8(command);
     auto result = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(
-        _("The model wants to run the following shell command, allow it?"), 0, cmd, "bash");
+        _("The model wants to run the following shell command, allow it?"), cmd, "bash");
 
     if (!result.ok()) {
         return Err(result.error_message());

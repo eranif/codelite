@@ -60,7 +60,7 @@ public:
 public:
     DbgStackInfo() = default;
     ~DbgStackInfo() = default;
- 
+
     void Clear()
     {
         func.Clear();
@@ -123,8 +123,8 @@ public:
     const wxString& GetInstallDir() const { return m_installDir; }
     void SetInstallDir(const wxString& dir) { m_installDir = dir; }
 
-    bool IsShutdownInProgress() const { return m_isShutdown; }
-    void SetShutdownInProgress(bool b) { m_isShutdown = b; }
+    bool IsShutdownInProgress();
+    void SetShutdownInProgress();
 
     void OnRestart(clCommandEvent& event);
     void OnForcedRestart(clCommandEvent& event);
@@ -360,8 +360,8 @@ public:
      * @param fullpathRemoved [output] set the full path of the file removed
      * @param notify if set to true, this function will also fire the wxEVT_PROJ_FILE_REMOVED event
      */
-    bool RemoveFile(const wxString& fileName, const wxString& vdFullPath, wxString& fullpathRemoved,
-                    bool notify = true);
+    bool
+    RemoveFile(const wxString& fileName, const wxString& vdFullPath, wxString& fullpathRemoved, bool notify = true);
 
     /**
      * remove file from the workspace
@@ -439,8 +439,8 @@ public:
      * settings 'Pause when execution ends'
      * @return project execution command or wxEmptyString if the project does not exist
      */
-    wxString GetProjectExecutionCommand(const wxString& projectName, wxString& wd,
-                                        bool considerPauseWhenExecuting = true);
+    wxString
+    GetProjectExecutionCommand(const wxString& projectName, wxString& wd, bool considerPauseWhenExecuting = true);
 
     //--------------------------- Top Level Pane Management -----------------------------
 public:

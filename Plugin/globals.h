@@ -440,4 +440,10 @@ WXDLLIMPEXP_SDK wxString clGetVisibleSelection(wxStyledTextCtrl* ctrl);
 /// Parse `clang_format_content` content and return the property's "name" value.
 WXDLLIMPEXP_SDK int GetClangFormatIntProperty(const wxString& clang_format_content, const wxString& name);
 
+/// Turn the global shutdown flag ON. This can be used by thread to regularly check if CodeLite is going down.
+WXDLLIMPEXP_SDK void SetShutdownInProgress();
+
+/// Return the global shutdown flag.
+WXDLLIMPEXP_SDK bool IsShutdownInProgress();
+
 #endif // GLOBALS_H

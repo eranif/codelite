@@ -589,9 +589,9 @@ bool Manager::CanRunTool(const std::string& tool_name)
         return true;
     }
 
-    // wxString message;
-    // message << _("The model wants to run the tool: \"") << tool_name << _("\". Continue?");
-    auto result = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(tool_name, 0);
+    wxString message;
+    message << _("The model wants to run the tool: \"") << tool_name << _("\". Continue?");
+    auto result = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message);
     if (!result.ok()) {
         return false;
     }
@@ -1099,23 +1099,19 @@ void Manager::ShowTextGenerationDialog(const wxString& prompt,
 
 const std::vector<wxString>& Manager::GetAvailablePlaceHolders() const { return kPlaceHolders; }
 
-clStatusOr<UserAnswer> Manager::PromptUserYesNoTrustQuestion(const wxString& text,
-                                                             int timeout_secs,
-                                                             const wxString& code_block,
-                                                             const wxString& code_block_lang)
+clStatusOr<UserAnswer>
+Manager::PromptUserYesNoTrustQuestion(const wxString& text, const wxString& code_block, const wxString& code_block_lang)
 {
     if (::wxIsMainThread()) {
         return StatusOther("Function must not be called from the main thread");
     }
 
-#if 0
     bool expected{false};
     if (!m_waitingForAnswer.compare_exchange_strong(expected, true)) {
         return StatusResourceBusy("CodeLite is already pending response from the user");
     }
     // Ensure m_waitingForAnswer is set to "false" when we leave this function.
     AtomiBoolLocker locker{m_waitingForAnswer, false};
-#endif
 
     // GUI manipulations must be done on the main thread.
     auto func = [text, code_block, code_block_lang, this]() {
@@ -1125,14 +1121,39 @@ clStatusOr<UserAnswer> Manager::PromptUserYesNoTrustQuestion(const wxString& tex
             GetChatWindow()->AppendText(prompt);
         }
 
+        GetChatWindow()->ShowYesNoTrustBar(text);
+#if 0
         auto parent = ::wxGetTopLevelParent(GetChatWindow());
         ConfirmDialog dlg{parent ? parent : EventNotifier::Get()->TopFrame()};
         dlg.SetSecondLine(text);
         wxCommandEvent dummy;
         dlg.ShowModal();
         return dlg.GetAnswer();
+#endif
     };
-    return EventNotifier::Get()->RunOnMain<llm::UserAnswer>(func);
+    EventNotifier::Get()->RunOnMain<void>(func);
+
+    // Now wait for the answer
+    UserAnswer answer{UserAnswer::kNo};
+
+    // Mimic modal behaviour
+    while (!::IsShutdownInProgress()) {
+        auto result = m_answerChannel.ReceiveTimeout(1000, answer);
+        switch (result) {
+        case wxMSGQUEUE_NO_ERROR:
+            // Use clicked something
+            return answer;
+        case wxMSGQUEUE_TIMEOUT: {
+            break; // keep on waiting
+        }
+        default:
+        case wxMSGQUEUE_MISC_ERROR: {
+            return UserAnswer::kNo;
+        }
+        }
+    }
+    clSYSTEM() << "Detected shutdown in progress" << endl;
+    return UserAnswer::kNo;
 }
 
 void Manager::PostAnswer(UserAnswer answer)

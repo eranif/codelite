@@ -510,12 +510,11 @@ public:
      * @brief Prompts the user with a Yes/No/Trust question and waits for their response.
      *
      * This function must be called from a worker thread (not the main thread). It displays
-     * a prompt in the chat window and waits for the user to respond, with an optional timeout.
+     * a prompt in the chat window and waits for the user to respond.
      * The function uses a message queue to synchronize between the calling thread and the
      * main GUI thread where the prompt is displayed.
      *
      * @param text The question text to display to the user.
-     * @param timeout_secs The timeout in seconds to wait for a response. If 0, waits indefinitely.
      * @param code_block Optional code block to display before the question.
      * @param code_block_lang The language identifier for syntax highlighting of the code block.
      *
@@ -525,11 +524,9 @@ public:
      *
      * @throws StatusOther if called from the main thread.
      * @throws StatusResourceBusy if another prompt is already waiting for user response.
-     * @throws StatusTimeout if the user does not respond within the specified timeout.
      * @throws StatusOther if there is a message queue error reading the user's response.
      */
     clStatusOr<UserAnswer> PromptUserYesNoTrustQuestion(const wxString& text,
-                                                        int timeout_secs = 10,
                                                         const wxString& code_block = wxEmptyString,
                                                         const wxString& code_block_lang = wxEmptyString);
 

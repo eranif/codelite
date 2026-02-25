@@ -222,7 +222,7 @@ void UnixProcess::StartReaderThread()
                     process->m_owner->AddPendingEvent(evt);
                 }
             }
-            clDEBUG() << "UnixProcess reader thread: going down" << endl;
+            clDEBUG1() << "UnixProcess reader thread: going down" << endl;
         },
         this,
         m_childStdout.GetReadFd(),

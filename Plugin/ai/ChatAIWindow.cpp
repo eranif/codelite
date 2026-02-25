@@ -97,7 +97,6 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     llm::Manager::GetInstance().Bind(wxEVT_LLM_CONFIG_UPDATED, &ChatAIWindow::OnLLMConfigUpdate, this);
     llm::Manager::GetInstance().Bind(wxEVT_LLM_STARTED, &ChatAIWindow::OnLLMConfigUpdate, this);
     llm::Manager::GetInstance().Bind(wxEVT_LLM_USER_REPLY_ERROR, &ChatAIWindow::OnLLMUserReplyError, this);
-    llm::Manager::GetInstance().Bind(wxEVT_LLM_USER_REPLY_TIMEOUT, &ChatAIWindow::OnLLMUserReplyError, this);
 
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
@@ -169,7 +168,6 @@ ChatAIWindow::~ChatAIWindow()
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_CONFIG_UPDATED, &ChatAIWindow::OnLLMConfigUpdate, this);
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_STARTED, &ChatAIWindow::OnLLMConfigUpdate, this);
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_USER_REPLY_ERROR, &ChatAIWindow::OnLLMUserReplyError, this);
-    llm::Manager::GetInstance().Unbind(wxEVT_LLM_USER_REPLY_TIMEOUT, &ChatAIWindow::OnLLMUserReplyError, this);
 
     Unbind(wxEVT_SIZE, &ChatAIWindow::OnSize, this);
 
@@ -439,6 +437,7 @@ void ChatAIWindow::ShowIndicator(bool show)
         m_activityIndicator->Hide();
 #endif
         m_statusBar->SetStatusText(_("Ready"), StatusBarIndex::kProgressText);
+        m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
     }
 }
 
@@ -467,7 +466,7 @@ void ChatAIWindow::UpdateStatusBar()
 void ChatAIWindow::OnLLMUserReplyError(clLLMEvent& event)
 {
     event.Skip();
-    // m_infobar->Dismiss();
+    m_infobar->Dismiss();
 }
 
 void ChatAIWindow::OnLLMConfigUpdate(clLLMEvent& event)
@@ -519,6 +518,7 @@ void ChatAIWindow::AppendText(const wxString& text, bool force_style)
 void ChatAIWindow::ShowYesNoTrustBar(const wxString& text)
 {
     clDEBUG() << "Prompting user:" << text << endl;
+#if 0
     ConfirmDialog dlg{this};
     wxCommandEvent dummy;
     dlg.ShowModal();
@@ -534,7 +534,8 @@ void ChatAIWindow::ShowYesNoTrustBar(const wxString& text)
         OnTrust(dummy);
         break;
     }
-    // m_infobar->ShowMessage(text, wxICON_QUESTION);
+#endif
+    m_infobar->ShowMessage(text, wxICON_QUESTION);
 }
 
 void ChatAIWindow::AppendOutput(const wxString& text)
@@ -688,7 +689,7 @@ void ChatAIWindow::OnNo(wxCommandEvent& event)
     wxUnusedVar(event);
     clDEBUG() << "Replying with: No" << endl;
     llm::Manager::GetInstance().PostAnswer(llm::UserAnswer::kNo);
-    //m_infobar->Dismiss();
+    m_infobar->Dismiss();
 }
 
 void ChatAIWindow::OnYes(wxCommandEvent& event)
@@ -696,7 +697,7 @@ void ChatAIWindow::OnYes(wxCommandEvent& event)
     wxUnusedVar(event);
     clDEBUG() << "Replying with: Yes" << endl;
     llm::Manager::GetInstance().PostAnswer(llm::UserAnswer::kYes);
-    //m_infobar->Dismiss();
+    m_infobar->Dismiss();
 }
 
 void ChatAIWindow::OnTrust(wxCommandEvent& event)
@@ -704,5 +705,5 @@ void ChatAIWindow::OnTrust(wxCommandEvent& event)
     wxUnusedVar(event);
     clDEBUG() << "Replying with: Trust" << endl;
     llm::Manager::GetInstance().PostAnswer(llm::UserAnswer::kTrust);
-    //m_infobar->Dismiss();
+    m_infobar->Dismiss();
 }

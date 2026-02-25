@@ -799,3 +799,74 @@ ChatHistoryPageBase::~ChatHistoryPageBase()
 {
     m_dvListCtrlPrompts->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &ChatHistoryPageBase::OnItemActivated, this);
 }
+
+ConfirmDialogBase::ConfirmDialogBase(
+    wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)
+    : wxDialog(parent, id, title, pos, size, style)
+{
+    if (!bBitmapLoaded) {
+        // We need to initialise the default bitmap handler
+        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);
+        wxCF667InitBitmapResources();
+        bBitmapLoaded = true;
+    }
+
+    wxBoxSizer* boxSizer200 = new wxBoxSizer(wxVERTICAL);
+    this->SetSizer(boxSizer200);
+
+    m_staticTextLine1 = new wxStaticText(
+        this, wxID_ANY, _("Confirm Tool Invocation:"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    boxSizer200->Add(m_staticTextLine1, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(15));
+
+    m_staticTextLine2 =
+        new wxStaticText(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    boxSizer200->Add(m_staticTextLine2, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    wxBoxSizer* boxSizer205 = new wxBoxSizer(wxVERTICAL);
+
+    boxSizer200->Add(boxSizer205, 0, wxALL | wxEXPAND, WXC_FROM_DIP(10));
+
+    m_butonYes = new wxButton(this, wxID_YES, _("Allow"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_butonYes->SetDefault();
+    m_butonYes->SetToolTip(_("Allow once."));
+
+    boxSizer205->Add(m_butonYes, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonNo = new wxButton(this, wxID_NO, _("Don't Allow"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+
+    boxSizer205->Add(m_buttonNo, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonTrust = new wxButton(this, wxID_TRUST, _("Trust"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
+    m_buttonTrust->SetToolTip(_("Trust (always allow) this tool for the session"));
+
+    boxSizer205->Add(m_buttonTrust, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    SetName(wxT("ConfirmDialogBase"));
+    SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
+    if (GetSizer()) {
+        GetSizer()->Fit(this);
+    }
+    if (GetParent()) {
+        CentreOnParent(wxBOTH);
+    } else {
+        CentreOnScreen(wxBOTH);
+    }
+    if (!wxPersistenceManager::Get().Find(this)) {
+        wxPersistenceManager::Get().RegisterAndRestore(this);
+    } else {
+        wxPersistenceManager::Get().Restore(this);
+    }
+    // Connect events
+    m_butonYes->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ConfirmDialogBase::OnAllow, this);
+    m_buttonNo->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ConfirmDialogBase::OnDontAllow, this);
+    m_buttonTrust->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ConfirmDialogBase::OnTrust, this);
+}
+
+ConfirmDialogBase::~ConfirmDialogBase()
+{
+    m_butonYes->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &ConfirmDialogBase::OnAllow, this);
+    m_buttonNo->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &ConfirmDialogBase::OnDontAllow, this);
+    m_buttonTrust->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &ConfirmDialogBase::OnTrust, this);
+}

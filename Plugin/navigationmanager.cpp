@@ -59,7 +59,7 @@ bool NavMgr::CanPrev() const { return !m_prevs.empty(); }
 
 void NavMgr::StoreCurrentLocation(const BrowseRecord& origin, const BrowseRecord& target)
 {
-    clDEBUG() << "Nav manager storing location: Origin:" << origin << ", Target:" << target << endl;
+    clDEBUG1() << "Nav manager storing location: Origin:" << origin << ", Target:" << target << endl;
     if (m_prevs.empty() || !m_prevs.top().IsSameAs(origin)) {
         m_prevs.push(origin);
     }

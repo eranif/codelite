@@ -1,6 +1,7 @@
 #include "LLMManager.hpp"
 
 #include "FileManager.hpp"
+#include "ai/ConfirmDialog.hpp"
 #include "assistant/assistant.hpp"
 #include "assistant/common/magic_enum.hpp"
 #include "clWorkspaceManager.h"
@@ -578,9 +579,9 @@ bool Manager::CanRunTool(const std::string& tool_name)
         return true;
     }
 
-    wxString message;
-    message << _("The model wants to run the tool: \"") << tool_name << _("\". Continue?");
-    auto result = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message, 30);
+    // wxString message;
+    // message << _("The model wants to run the tool: \"") << tool_name << _("\". Continue?");
+    auto result = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(tool_name, 0);
     if (!result.ok()) {
         return false;
     }
@@ -1096,47 +1097,38 @@ clStatusOr<UserAnswer> Manager::PromptUserYesNoTrustQuestion(const wxString& tex
         return StatusOther("Function must not be called from the main thread");
     }
 
+#if 0
     bool expected{false};
     if (!m_waitingForAnswer.compare_exchange_strong(expected, true)) {
         return StatusResourceBusy("CodeLite is already pending response from the user");
     }
-
     // Ensure m_waitingForAnswer is set to "false" when we leave this function.
     AtomiBoolLocker locker{m_waitingForAnswer, false};
+#endif
 
     // GUI manipulations must be done on the main thread.
     auto func = [text, code_block, code_block_lang, this]() {
-        if (!code_block.empty()) {
+        if (!code_block.empty() && GetChatWindow()) {
             wxString prompt;
             prompt << "```" << code_block_lang << "\n" << code_block << "\n```\n";
-            GetChatWindowContainer()->AppendTextAndStyle(prompt);
+            GetChatWindow()->AppendText(prompt);
         }
-        GetChatWindowContainer()->GetChatWindow()->ShowYesNoTrustBar(text);
-    };
-    EventNotifier::Get()->RunOnMain<void>(func);
 
-    // Now wait for the answer
-    UserAnswer answer{UserAnswer::kNo};
-    auto result = m_answerChannel.ReceiveTimeout(timeout_secs * 1000, answer);
-    switch (result) {
-    case wxMSGQUEUE_NO_ERROR:
-        // Use clicked something
-        return answer;
-    case wxMSGQUEUE_TIMEOUT: {
-        clLLMEvent prompt_error{wxEVT_LLM_USER_REPLY_TIMEOUT};
-        AddPendingEvent(prompt_error);
-        return StatusTimeout(_("User did not reply in a timely manner. Try again later."));
-    }
-    default:
-    case wxMSGQUEUE_MISC_ERROR: {
-        clLLMEvent prompt_error{wxEVT_LLM_USER_REPLY_ERROR};
-        AddPendingEvent(prompt_error);
-        return StatusOther(_("Failed to read response from user"));
-    }
-    }
+        auto parent = ::wxGetTopLevelParent(GetChatWindow());
+        ConfirmDialog dlg{parent ? parent : EventNotifier::Get()->TopFrame()};
+        dlg.SetSecondLine(text);
+        wxCommandEvent dummy;
+        dlg.ShowModal();
+        return dlg.GetAnswer();
+    };
+    return EventNotifier::Get()->RunOnMain<llm::UserAnswer>(func);
 }
 
-void Manager::PostAnswer(UserAnswer answer) { m_answerChannel.Post(answer); }
+void Manager::PostAnswer(UserAnswer answer)
+{
+    clDEBUG() << "Posting channel answer:" << std::string{magic_enum::enum_name<UserAnswer>(answer)} << endl;
+    m_answerChannel.Post(answer);
+}
 
 void Manager::SetCachingPolicy(assistant::CachePolicy policy)
 {
@@ -1147,11 +1139,10 @@ void Manager::SetCachingPolicy(assistant::CachePolicy policy)
 void Manager::PrintMessage(const wxString& msg, IconType icon)
 {
     CHECK_PTR_RET(m_client);
-    CHECK_PTR_RET(GetChatWindowContainer());
-    CHECK_PTR_RET(GetChatWindowContainer()->GetChatWindow());
+    CHECK_PTR_RET(GetChatWindow());
 
     auto cb = [msg, icon, this]() {
-        auto chat_win = GetChatWindowContainer()->GetChatWindow();
+        auto chat_win = GetChatWindow();
         wxString symbol = IconType_ToString(icon) + " ";
 
         wxString current_text = chat_win->GetText();

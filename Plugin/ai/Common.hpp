@@ -7,4 +7,11 @@ enum class ChatState {
     kThinking,
     kWorking,
 };
-}
+
+enum class UserAnswer {
+    kYes,
+    kNo,
+    kTrust,
+};
+
+} // namespace llm

@@ -125,7 +125,7 @@ void FileLogger::SetGlobalLogVerbosity(const wxString& verbosity)
 void FileLogger::OpenLog(const wxString& fullName, int verbosity)
 {
     m_logfile.Clear();
-    wxFileName logfile{ clStandardPaths::Get().GetUserDataDir(), fullName };
+    wxFileName logfile{clStandardPaths::Get().GetUserDataDir(), fullName};
     logfile.AppendDir("logs");
     logfile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     m_logfile = logfile.GetFullPath();
@@ -196,15 +196,18 @@ wxString FileLogger::Prefix(int verbosity)
 
 wxString FileLogger::GetCurrentThreadName()
 {
+    wxString thread_id;
     if (wxThread::IsMain()) {
-        return "Main";
+        thread_id << "Main:" << wxThread::GetCurrentId();
+        return thread_id;
     }
     wxCriticalSectionLocker locker(m_cs);
     std::unordered_map<wxThreadIdType, wxString>::iterator iter = m_threads.find(wxThread::GetCurrentId());
     if (iter != m_threads.end()) {
-        return iter->second;
+        thread_id << iter->second << ":";
     }
-    return "";
+    thread_id << wxThread::GetCurrentId();
+    return thread_id;
 }
 
 void FileLogger::RegisterThread(wxThreadIdType id, const wxString& name)

@@ -5,6 +5,7 @@
 #include "ChatHistoryDialog.hpp"
 #include "ColoursAndFontsManager.h"
 #include "MarkdownStyler.hpp"
+#include "ai/ConfirmDialog.hpp"
 #include "ai/LLMManager.hpp"
 #include "aui/clAuiToolBarArt.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
@@ -466,7 +467,7 @@ void ChatAIWindow::UpdateStatusBar()
 void ChatAIWindow::OnLLMUserReplyError(clLLMEvent& event)
 {
     event.Skip();
-    m_infobar->Dismiss();
+    // m_infobar->Dismiss();
 }
 
 void ChatAIWindow::OnLLMConfigUpdate(clLLMEvent& event)
@@ -515,7 +516,26 @@ void ChatAIWindow::AppendText(const wxString& text, bool force_style)
     }
 }
 
-void ChatAIWindow::ShowYesNoTrustBar(const wxString& text) { m_infobar->ShowMessage(text, wxICON_QUESTION); }
+void ChatAIWindow::ShowYesNoTrustBar(const wxString& text)
+{
+    clDEBUG() << "Prompting user:" << text << endl;
+    ConfirmDialog dlg{this};
+    wxCommandEvent dummy;
+    dlg.ShowModal();
+
+    switch (dlg.GetAnswer()) {
+    case llm::UserAnswer::kYes:
+        OnYes(dummy);
+        break;
+    case llm::UserAnswer::kNo:
+        OnYes(dummy);
+        break;
+    case llm::UserAnswer::kTrust:
+        OnTrust(dummy);
+        break;
+    }
+    // m_infobar->ShowMessage(text, wxICON_QUESTION);
+}
 
 void ChatAIWindow::AppendOutput(const wxString& text)
 {
@@ -666,20 +686,23 @@ void ChatAIWindow::OnSize(wxSizeEvent& event)
 void ChatAIWindow::OnNo(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+    clDEBUG() << "Replying with: No" << endl;
     llm::Manager::GetInstance().PostAnswer(llm::UserAnswer::kNo);
-    m_infobar->Dismiss();
+    //m_infobar->Dismiss();
 }
 
 void ChatAIWindow::OnYes(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+    clDEBUG() << "Replying with: Yes" << endl;
     llm::Manager::GetInstance().PostAnswer(llm::UserAnswer::kYes);
-    m_infobar->Dismiss();
+    //m_infobar->Dismiss();
 }
 
 void ChatAIWindow::OnTrust(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+    clDEBUG() << "Replying with: Trust" << endl;
     llm::Manager::GetInstance().PostAnswer(llm::UserAnswer::kTrust);
-    m_infobar->Dismiss();
+    //m_infobar->Dismiss();
 }

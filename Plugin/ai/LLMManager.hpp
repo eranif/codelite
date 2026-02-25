@@ -136,12 +136,6 @@ struct WXDLLIMPEXP_SDK ThreadTask {
 constexpr const char* kClientTypeAnthropic = "anthropic";
 constexpr const char* kClientTypeOllama = "ollama";
 
-enum class UserAnswer {
-    kYes,
-    kNo,
-    kTrust,
-};
-
 /**
  * @brief Singleton manager class for handling LLM (Large Language Model) operations.
  *
@@ -477,7 +471,11 @@ public:
 
     const std::vector<wxString>& GetAvailablePlaceHolders() const;
 
-    ChatAI* GetChatWindowContainer() { return m_chatAI.get(); }
+    inline ChatAIWindow* GetChatWindow()
+    {
+        CHECK_PTR_RET_NULL(m_chatAI.get());
+        return m_chatAI->GetChatWindow();
+    }
 
     inline double GetLastRequestCost() const
     {
@@ -507,30 +505,28 @@ public:
     }
 
     inline bool HasPricing() const { return m_client && m_client->GetPricing().has_value(); }
+
     /**
-     * @brief Prompts the user with a yes/no/trust question in the chat window and waits for their response.
+     * @brief Prompts the user with a Yes/No/Trust question and waits for their response.
      *
-     * This method displays a modal-like question bar in the chat window with optional code block context,
-     * then blocks the calling thread until the user responds or the timeout expires. The function must be
-     * called from a non-main thread, as it uses synchronous waiting. GUI updates are marshaled to the main
-     * thread automatically.
+     * This function must be called from a worker thread (not the main thread). It displays
+     * a prompt in the chat window and waits for the user to respond, with an optional timeout.
+     * The function uses a message queue to synchronize between the calling thread and the
+     * main GUI thread where the prompt is displayed.
      *
      * @param text The question text to display to the user.
-     * @param timeout_secs Maximum time in seconds to wait for a user response before timing out.
-     * @param code_block Optional code snippet to display above the question (empty string if none).
-     * @param code_block_lang Programming language identifier for syntax highlighting of the code block (e.g., "cpp",
-     * "python").
+     * @param timeout_secs The timeout in seconds to wait for a response. If 0, waits indefinitely.
+     * @param code_block Optional code block to display before the question.
+     * @param code_block_lang The language identifier for syntax highlighting of the code block.
      *
-     * @return clStatusOr<UserAnswer> containing the user's answer (kYes, kNo, or kTrust) on success,
-     *         or an error status if:
-     *         - Called from the main thread (StatusOther)
-     *         - Another prompt is already pending (StatusResourceBusy)
-     *         - User did not respond within the timeout period (StatusTimeout)
+     * @return A clStatusOr<UserAnswer> containing the user's answer (kYes, kNo, or kTrust) on success,
+     *         or a status error if the function was called from the main thread, another prompt is
+     *         already pending, the user did not respond within the timeout, or a queue error occurred.
      *
-     * @throws None. All errors are returned via the clStatusOr wrapper.
-     *
-     * @see llm::Manager::GetChatWindowContainer()
-     * @see UserAnswer
+     * @throws StatusOther if called from the main thread.
+     * @throws StatusResourceBusy if another prompt is already waiting for user response.
+     * @throws StatusTimeout if the user does not respond within the specified timeout.
+     * @throws StatusOther if there is a message queue error reading the user's response.
      */
     clStatusOr<UserAnswer> PromptUserYesNoTrustQuestion(const wxString& text,
                                                         int timeout_secs = 10,

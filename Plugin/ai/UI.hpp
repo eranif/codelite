@@ -294,4 +294,38 @@ public:
     virtual ~ChatHistoryPageBase();
 };
 
+class ConfirmDialogBase : public wxDialog
+{
+public:
+    enum {
+        wxID_TRUST = 10001,
+    };
+
+protected:
+    wxStaticText* m_staticTextLine1;
+    wxStaticText* m_staticTextLine2;
+    wxButton* m_butonYes;
+    wxButton* m_buttonNo;
+    wxButton* m_buttonTrust;
+
+protected:
+    virtual void OnAllow(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnDontAllow(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnTrust(wxCommandEvent& event) { event.Skip(); }
+
+public:
+    wxStaticText* GetStaticTextLine1() { return m_staticTextLine1; }
+    wxStaticText* GetStaticTextLine2() { return m_staticTextLine2; }
+    wxButton* GetButonYes() { return m_butonYes; }
+    wxButton* GetButtonNo() { return m_buttonNo; }
+    wxButton* GetButtonTrust() { return m_buttonTrust; }
+    ConfirmDialogBase(wxWindow* parent,
+                      wxWindowID id = wxID_ANY,
+                      const wxString& title = _("Model Requests Confirmation"),
+                      const wxPoint& pos = wxDefaultPosition,
+                      const wxSize& size = wxSize(-1, -1),
+                      long style = wxCAPTION);
+    virtual ~ConfirmDialogBase();
+};
+
 #endif

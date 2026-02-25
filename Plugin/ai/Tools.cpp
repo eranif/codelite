@@ -519,8 +519,8 @@ FunctionResult ToolShellExecute([[maybe_unused]] const assistant::json& args)
     // Local command.
     ProcUtils::WrapInShell(cmd);
     wxArrayString output_arr;
-    ProcUtils::SafeExecuteCommand(cmd, output_arr, termination_flag);
-    llm::Manager::GetInstance().DeleteTerminationFlag(termination_flag);
+    ProcUtils::SafeExecuteCommand(cmd, output_arr, termination_flag.GetFlag());
+    llm::Manager::GetInstance().DeleteTerminationFlag(termination_flag.GetFlag());
     if (termination_flag.IsSet()) {
         return FunctionResult{.isError = true, .text = "Command terminated by user"};
     }

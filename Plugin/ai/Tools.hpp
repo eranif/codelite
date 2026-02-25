@@ -223,6 +223,17 @@ FunctionResult GetCurrentEditorPath(const assistant::json& args);
  */
 FunctionResult ToolShellExecute(const assistant::json& args);
 
+/**
+ * @brief Retrieves the name of the operating system where the MCP server is running.
+ *
+ * @details This function returns the operating system name (e.g., "Windows", "Linux", "macOS")
+ * to help the LLM adjust commands and suggestions based on the host platform.
+ *
+ * @param args JSON arguments object (currently unused).
+ *
+ * @return FunctionResult containing the OS name as a string.
+ */
+FunctionResult GetOS(const assistant::json& args);
 /// Populate the function table with the built-in functions provided by CodeLite
 /// to the model.
 void PopulateBuiltInFunctions(FunctionTable& table);

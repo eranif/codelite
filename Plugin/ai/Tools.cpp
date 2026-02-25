@@ -115,10 +115,19 @@ To ensure accuracy:
                   .AddOptionalParam("file_content", "The initial content to write to the file", "string")
                   .Build());
     table.Add(FunctionBuilder("ShellExecute")
-                  .SetDescription(R"(Execute a shell command and return its output)")
+                  .SetDescription(R"(Execute a shell command and return its output.
+IMPORTANT: Before using this tool, you should call the GetOS tool first to determine the host operating system.
+This ensures you can construct OS-appropriate commands (e.g., 'dir' vs 'ls', backslash vs forward slash paths).)")
                   .SetCallback(ToolShellExecute)
                   .AddRequiredParam("command", "The shell command to execute", "string")
                   .Build());
+    table.Add(
+        FunctionBuilder("GetOS")
+            .SetDescription(
+                R"(Return the current active OS. The purpose of this tool is to suggest the LLM on which host the MCP server is running so it can
+adjust the commands it runs)")
+            .SetCallback(GetOS)
+            .Build());
 }
 
 /// Implementation details
@@ -524,6 +533,38 @@ FunctionResult ToolShellExecute([[maybe_unused]] const assistant::json& args)
     llm::Manager::GetInstance().PrintMessage(
         _("Successfully executed the command. Output:\n```bash\n") + func_result.text + "\n```\n", IconType::kInfo);
     return func_result;
+}
+
+FunctionResult GetOS([[maybe_unused]] const assistant::json& args)
+{
+    VERIFY_WORKER_THREAD();
+
+    // Check if a remote workspace is opened - if so, always return "Linux"
+    auto cb = [=]() -> FunctionResult {
+        auto workspace = clWorkspaceManager::Get().GetWorkspace();
+        if (workspace && workspace->IsRemote()) {
+            return Ok(wxString("Linux"));
+        }
+        return FunctionResult{.isError = false}; // Signal to continue with local OS detection
+    };
+
+    auto result = EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
+    if (!result.text.empty()) {
+        return result; // Remote workspace detected, return "Linux"
+    }
+
+    wxString os_name;
+#if defined(__WXMSW__)
+    os_name = "Windows";
+#elif defined(__WXMAC__)
+    os_name = "macOS";
+#elif defined(__WXGTK__)
+    os_name = "Linux";
+#else
+    os_name = "Unknown";
+#endif
+
+    return Ok(os_name);
 }
 
 } // namespace llm

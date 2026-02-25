@@ -59,7 +59,7 @@
 #ifndef __WXMSW__
 namespace
 {
-int Popen(const wxString& command, wxArrayString& output_arr)
+int Popen(const wxString& command, wxArrayString& output_arr, std::shared_ptr<std::atomic_bool> shutdown_flag = nullptr)
 {
     FILE* fp{nullptr};
     char line[512];
@@ -70,15 +70,24 @@ int Popen(const wxString& command, wxArrayString& output_arr)
     }
 
     std::string result;
-    while (fgets(line, sizeof(line) - 1, fp) != nullptr) {
-        result += line;
-        memset(line, 0, sizeof(line));
+    bool clean_shutdown{true};
+    while (true) {
+        if (shutdown_flag && shutdown_flag->load()) {
+            clean_shutdown = false;
+            break;
+        }
+        if (fgets(line, sizeof(line) - 1, fp) != nullptr) {
+            result += line;
+            memset(line, 0, sizeof(line));
+            continue;
+        }
+        break;
     }
 
     ::pclose(fp); // it might fail, but its OK.
     wxString output = wxString::FromUTF8(result);
     output_arr = wxStringTokenize(output, "\n", wxTOKEN_RET_EMPTY_ALL);
-    return 0;
+    return clean_shutdown ? 0 : -1;
 }
 } // namespace
 #endif
@@ -529,7 +538,7 @@ int ProcUtils::SafeExecuteCommand(const wxString& command,
     output = ::wxStringTokenize(buff, "\n", wxTOKEN_STRTOK);
     return exit_code;
 #else
-    return Popen(command, output);
+    return Popen(command, output, shutdown_flag);
 #endif
 }
 

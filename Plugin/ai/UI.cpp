@@ -91,7 +91,7 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
 
     boxSizer35->Add(m_stcOutput, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_infobar = new wxInfoBar(m_splitterPageTop, wxID_ANY);
+    m_infobar = new InfoBar(m_splitterPageTop, wxID_ANY);
     m_infobar->SetSize(wxDLG_UNIT(m_splitterPageTop, wxSize(-1, -1)));
     m_infobar->Hide();
 

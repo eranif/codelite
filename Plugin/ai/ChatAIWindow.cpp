@@ -42,6 +42,8 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     clAuiToolBarArt::AddTool(m_toolbar, wxID_CLEAR, _("Clear the chat history"), images->LoadBitmap("clear"));
     m_toolbar->AddSeparator();
     m_infobar->Hide();
+    m_infobar->SetShowHideEffects(wxSHOW_EFFECT_NONE, wxSHOW_EFFECT_NONE);
+
     wxSize control_size{GetTextExtent(LONG_MODEL_NAME).GetWidth(), wxNOT_FOUND};
     m_choiceEndpoints = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, control_size);
     m_choiceEndpoints->SetToolTip(_("Choose the endpoint to use"));
@@ -518,23 +520,6 @@ void ChatAIWindow::AppendText(const wxString& text, bool force_style)
 void ChatAIWindow::ShowYesNoTrustBar(const wxString& text)
 {
     clDEBUG() << "Prompting user:" << text << endl;
-#if 0
-    ConfirmDialog dlg{this};
-    wxCommandEvent dummy;
-    dlg.ShowModal();
-
-    switch (dlg.GetAnswer()) {
-    case llm::UserAnswer::kYes:
-        OnYes(dummy);
-        break;
-    case llm::UserAnswer::kNo:
-        OnYes(dummy);
-        break;
-    case llm::UserAnswer::kTrust:
-        OnTrust(dummy);
-        break;
-    }
-#endif
     m_infobar->ShowMessage(text, wxICON_QUESTION);
 }
 

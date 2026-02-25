@@ -485,11 +485,11 @@
 														}, {
 															"type":	"string",
 															"m_label":	"Class Name:",
-															"m_value":	""
+															"m_value":	"InfoBar"
 														}, {
 															"type":	"string",
 															"m_label":	"Include File:",
-															"m_value":	""
+															"m_value":	"InfoBar.hpp"
 														}, {
 															"type":	"string",
 															"m_label":	"Style:",

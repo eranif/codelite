@@ -27,6 +27,7 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 
+#include <atomic>
 #include <set>
 #include <vector>
 #include <wx/arrstr.h>
@@ -108,7 +109,9 @@ public:
      * \param command
      * \param output
      */
-    static int SafeExecuteCommand(const wxString& command, wxArrayString& output);
+    static int SafeExecuteCommand(const wxString& command,
+                                  wxArrayString& output,
+                                  std::shared_ptr<std::atomic_bool> shutdown_flag = nullptr);
 
     /**
      * @brief execute a command and return its output as plain string

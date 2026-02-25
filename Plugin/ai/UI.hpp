@@ -17,8 +17,6 @@
 #include <wx/splitter.h>
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
-#include <wx/infobar.h>
-#include "InfoBar.hpp"
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
 #include <map>
@@ -61,42 +59,43 @@ protected:
     wxSplitterWindow* m_mainSplitter;
     wxPanel* m_splitterPageTop;
     clThemedSTC* m_stcOutput;
-    InfoBar* m_infobar;
     wxPanel* m_splitterPageBottom;
     wxAuiToolBar* m_toolbar;
     clThemedSTC* m_stcInput;
 
 protected:
-    virtual void OnYes(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnNo(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnTrust(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInputUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     clThemedSTC* GetStcOutput() { return m_stcOutput; }
-    InfoBar* GetInfobar() { return m_infobar; }
     wxPanel* GetSplitterPageTop() { return m_splitterPageTop; }
     wxAuiToolBar* GetToolbar() { return m_toolbar; }
     clThemedSTC* GetStcInput() { return m_stcInput; }
     wxPanel* GetSplitterPageBottom() { return m_splitterPageBottom; }
     wxSplitterWindow* GetMainSplitter() { return m_mainSplitter; }
-    AssistanceAIChatWindowBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(800,600), long style = wxTAB_TRAVERSAL);
+    AssistanceAIChatWindowBase(wxWindow* parent,
+                               wxWindowID id = wxID_ANY,
+                               const wxPoint& pos = wxDefaultPosition,
+                               const wxSize& size = wxSize(800, 600),
+                               long style = wxTAB_TRAVERSAL);
     virtual ~AssistanceAIChatWindowBase();
 };
-
 
 class ChatAIWindowFrameBase : public wxFrame
 {
 protected:
-
 protected:
     virtual void OnClose(wxCloseEvent& event) { event.Skip(); }
 
 public:
-    ChatAIWindowFrameBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("ChatAI"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(800,600), long style = wxDEFAULT_FRAME_STYLE|wxFRAME_FLOAT_ON_PARENT);
+    ChatAIWindowFrameBase(wxWindow* parent,
+                          wxWindowID id = wxID_ANY,
+                          const wxString& title = _("ChatAI"),
+                          const wxPoint& pos = wxDefaultPosition,
+                          const wxSize& size = wxSize(800, 600),
+                          long style = wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT);
     virtual ~ChatAIWindowFrameBase();
 };
-
 
 class NewLLMEndpointWizardBase : public wxWizard
 {
@@ -141,11 +140,20 @@ public:
     wxStaticText* GetStaticText117() { return m_staticText117; }
     wxSpinCtrl* GetSpinCtrlMaxTokens() { return m_spinCtrlMaxTokens; }
     wxWizardPageSimple* GetWizardPageAPI() { return m_wizardPageAPI; }
-    NewLLMEndpointWizardBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New LLM Endpoint"), const wxBitmap& bmp = wxNullBitmap, const wxPoint& pos = wxDefaultPosition, long style = wxDEFAULT_DIALOG_STYLE);
-    wxWizardPageSimple* GetFirstPage() const { if(!m_pages.empty()) return m_pages.at(0); return NULL; }
+    NewLLMEndpointWizardBase(wxWindow* parent,
+                             wxWindowID id = wxID_ANY,
+                             const wxString& title = _("New LLM Endpoint"),
+                             const wxBitmap& bmp = wxNullBitmap,
+                             const wxPoint& pos = wxDefaultPosition,
+                             long style = wxDEFAULT_DIALOG_STYLE);
+    wxWizardPageSimple* GetFirstPage() const
+    {
+        if (!m_pages.empty())
+            return m_pages.at(0);
+        return NULL;
+    }
     virtual ~NewLLMEndpointWizardBase();
 };
-
 
 class ChatHistoryDialogBase : public wxDialog
 {
@@ -175,10 +183,14 @@ public:
     wxButton* GetButton129() { return m_button129; }
     wxStaticLine* GetStaticLine132() { return m_staticLine132; }
     wxButton* GetButton127() { return m_button127; }
-    ChatHistoryDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Chat History"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE|wxRESIZE_BORDER);
+    ChatHistoryDialogBase(wxWindow* parent,
+                          wxWindowID id = wxID_ANY,
+                          const wxString& title = _("Chat History"),
+                          const wxPoint& pos = wxDefaultPosition,
+                          const wxSize& size = wxSize(-1, -1),
+                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~ChatHistoryDialogBase();
 };
-
 
 class NewLocalMCPDlgBase : public wxDialog
 {
@@ -206,10 +218,14 @@ public:
     wxStaticText* GetStaticText163() { return m_staticText163; }
     wxTextCtrl* GetTextCtrlEnv() { return m_textCtrlEnv; }
     wxButton* GetButton165() { return m_button165; }
-    NewLocalMCPDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New Local MCP"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
+    NewLocalMCPDlgBase(wxWindow* parent,
+                       wxWindowID id = wxID_ANY,
+                       const wxString& title = _("New Local MCP"),
+                       const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxSize(-1, -1),
+                       long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~NewLocalMCPDlgBase();
 };
-
 
 class NewSseMCPDlgBase : public wxDialog
 {
@@ -245,10 +261,14 @@ public:
     wxStaticText* GetStaticText181() { return m_staticText181; }
     wxTextCtrl* GetTextCtrlHeaders() { return m_textCtrlHeaders; }
     wxButton* GetButton183() { return m_button183; }
-    NewSseMCPDlgBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("New SSE MCP Server"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxDEFAULT_DIALOG_STYLE);
+    NewSseMCPDlgBase(wxWindow* parent,
+                     wxWindowID id = wxID_ANY,
+                     const wxString& title = _("New SSE MCP Server"),
+                     const wxPoint& pos = wxDefaultPosition,
+                     const wxSize& size = wxSize(-1, -1),
+                     long style = wxDEFAULT_DIALOG_STYLE);
     virtual ~NewSseMCPDlgBase();
 };
-
 
 class ChatHistoryPageBase : public wxPanel
 {
@@ -260,10 +280,13 @@ protected:
 
 public:
     wxDataViewListCtrl* GetDvListCtrlPrompts() { return m_dvListCtrlPrompts; }
-    ChatHistoryPageBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(500,300), long style = wxTAB_TRAVERSAL);
+    ChatHistoryPageBase(wxWindow* parent,
+                        wxWindowID id = wxID_ANY,
+                        const wxPoint& pos = wxDefaultPosition,
+                        const wxSize& size = wxSize(500, 300),
+                        long style = wxTAB_TRAVERSAL);
     virtual ~ChatHistoryPageBase();
 };
-
 
 class ConfirmDialogBase : public wxDialog
 {
@@ -271,6 +294,7 @@ public:
     enum {
         wxID_TRUST = 10001,
     };
+
 protected:
     wxStaticText* m_staticTextLine1;
     wxStaticText* m_staticTextLine2;
@@ -289,7 +313,12 @@ public:
     wxButton* GetButonYes() { return m_butonYes; }
     wxButton* GetButtonNo() { return m_buttonNo; }
     wxButton* GetButtonTrust() { return m_buttonTrust; }
-    ConfirmDialogBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& title = _("Model Requests Confirmation"), const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxCAPTION);
+    ConfirmDialogBase(wxWindow* parent,
+                      wxWindowID id = wxID_ANY,
+                      const wxString& title = _("Model Requests Confirmation"),
+                      const wxPoint& pos = wxDefaultPosition,
+                      const wxSize& size = wxSize(-1, -1),
+                      long style = wxCAPTION);
     virtual ~ConfirmDialogBase();
 };
 

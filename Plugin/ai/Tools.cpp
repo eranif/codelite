@@ -479,6 +479,7 @@ FunctionResult ToolShellExecute([[maybe_unused]] const assistant::json& args)
 
     std::string command_output;
     FunctionResult func_result{.isError = false};
+    TerminationFlagGuard termination_flag;
 #if USE_SFTP
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     bool is_remote = workspace && workspace->IsRemote();
@@ -496,8 +497,10 @@ FunctionResult ToolShellExecute([[maybe_unused]] const assistant::json& args)
         // Local command.
         ProcUtils::WrapInShell(cmd);
         wxArrayString output_arr;
-        ProcUtils::SafeExecuteCommand(cmd, output_arr);
-
+        ProcUtils::SafeExecuteCommand(cmd, output_arr, termination_flag.GetFlag());
+        if (termination_flag.IsSet()) {
+            return FunctionResult{.isError = true, .text = "Command terminated by user"};
+        }
         wxString output = StringUtils::Join(output_arr);
         command_output = output.ToStdString(wxConvUTF8);
         func_result.isError = false;
@@ -507,7 +510,11 @@ FunctionResult ToolShellExecute([[maybe_unused]] const assistant::json& args)
     // Local command.
     ProcUtils::WrapInShell(cmd);
     wxArrayString output_arr;
-    ProcUtils::SafeExecuteCommand(cmd, output_arr);
+    ProcUtils::SafeExecuteCommand(cmd, output_arr, termination_flag);
+    llm::Manager::GetInstance().DeleteTerminationFlag(termination_flag);
+    if (termination_flag.IsSet()) {
+        return FunctionResult{.isError = true, .text = "Command terminated by user"};
+    }
 
     wxString output = StringUtils::Join(output_arr);
     command_output = output.ToStdString(wxConvUTF8);

@@ -2,6 +2,7 @@
 
 #include "FileManager.hpp"
 #include "ai/ConfirmDialog.hpp"
+#include "ai/InfoBar.hpp"
 #include "assistant/assistant.hpp"
 #include "assistant/common/magic_enum.hpp"
 #include "clWorkspaceManager.h"
@@ -572,6 +573,15 @@ void Manager::Stop()
     auto bc = std::make_unique<BusyCursor>();
     CHECK_PTR_RET(m_client);
 
+    {
+        // Notify all our subscribers that we are going down.
+        std::lock_guard lk{m_termination_flags_mutex};
+        for (auto flag : m_termination_flags) {
+            flag->store(true);
+        }
+        m_termination_flags.clear();
+    }
+
     m_client->Interrupt();
     CleanupAfterWorkerExit();
     m_client.reset();
@@ -593,6 +603,7 @@ bool Manager::CanRunTool(const std::string& tool_name)
     message << _("The model wants to run the tool: \"") << tool_name << _("\". Continue?");
     auto result = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message);
     if (!result.ok()) {
+        ::wxMessageBox(result.error_message(), "CanRunTool");
         return false;
     }
 
@@ -1106,60 +1117,27 @@ Manager::PromptUserYesNoTrustQuestion(const wxString& text, const wxString& code
         return StatusOther("Function must not be called from the main thread");
     }
 
-    bool expected{false};
-    if (!m_waitingForAnswer.compare_exchange_strong(expected, true)) {
-        return StatusResourceBusy("CodeLite is already pending response from the user");
-    }
-    // Ensure m_waitingForAnswer is set to "false" when we leave this function.
-    AtomiBoolLocker locker{m_waitingForAnswer, false};
-
     // GUI manipulations must be done on the main thread.
-    auto func = [text, code_block, code_block_lang, this]() {
+    auto promise_ptr = std::make_shared<std::promise<UserAnswer>>();
+    auto fut = promise_ptr->get_future();
+    auto func = [text, code_block, code_block_lang, promise_ptr, this]() {
         if (!code_block.empty() && GetChatWindow()) {
             wxString prompt;
             prompt << "```" << code_block_lang << "\n" << code_block << "\n```\n";
             GetChatWindow()->AppendText(prompt);
         }
 
-        GetChatWindow()->ShowYesNoTrustBar(text);
-#if 0
         auto parent = ::wxGetTopLevelParent(GetChatWindow());
-        ConfirmDialog dlg{parent ? parent : EventNotifier::Get()->TopFrame()};
-        dlg.SetSecondLine(text);
-        wxCommandEvent dummy;
-        dlg.ShowModal();
-        return dlg.GetAnswer();
-#endif
+        InfoBar* bar = new InfoBar(parent, promise_ptr);
+        parent->GetSizer()->Insert(0, bar, wxSizerFlags(0).Expand());
+        bar->ShowMessage(text, wxICON_QUESTION);
     };
-    EventNotifier::Get()->RunOnMain<void>(func);
 
+    EventNotifier::Get()->RunOnMain<void>(std::move(func));
     // Now wait for the answer
-    UserAnswer answer{UserAnswer::kNo};
-
-    // Mimic modal behaviour
-    while (!::IsShutdownInProgress()) {
-        auto result = m_answerChannel.ReceiveTimeout(1000, answer);
-        switch (result) {
-        case wxMSGQUEUE_NO_ERROR:
-            // Use clicked something
-            return answer;
-        case wxMSGQUEUE_TIMEOUT: {
-            break; // keep on waiting
-        }
-        default:
-        case wxMSGQUEUE_MISC_ERROR: {
-            return UserAnswer::kNo;
-        }
-        }
-    }
-    clSYSTEM() << "Detected shutdown in progress" << endl;
-    return UserAnswer::kNo;
-}
-
-void Manager::PostAnswer(UserAnswer answer)
-{
-    clDEBUG() << "Posting channel answer:" << std::string{magic_enum::enum_name<UserAnswer>(answer)} << endl;
-    m_answerChannel.Post(answer);
+    auto result = fut.get();
+    clSYSTEM() << text << "=>" << std::string{magic_enum::enum_name<llm::UserAnswer>(result)} << endl;
+    return result;
 }
 
 void Manager::SetCachingPolicy(assistant::CachePolicy policy)
@@ -1189,5 +1167,20 @@ void Manager::PrintMessage(const wxString& msg, IconType icon)
         chat_win->AppendText(message_to_add);
     };
     EventNotifier::Get()->RunOnMain<void>(std::move(cb));
+}
+
+std::shared_ptr<std::atomic_bool> Manager::NewTerminationFlag()
+{
+    std::lock_guard lk{m_termination_flags_mutex};
+    std::shared_ptr<std::atomic_bool> flag = std::make_shared<std::atomic_bool>(false);
+    m_termination_flags.push_back(flag);
+    return flag;
+}
+
+void Manager::DeleteTerminationFlag(std::shared_ptr<std::atomic_bool> flag)
+{
+    std::lock_guard lk{m_termination_flags_mutex};
+    std::erase_if(
+        m_termination_flags, [flag](std::shared_ptr<std::atomic_bool> f) -> bool { return flag.get() == f.get(); });
 }
 } // namespace llm

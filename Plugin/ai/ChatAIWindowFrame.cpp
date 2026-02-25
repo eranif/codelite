@@ -1,6 +1,7 @@
 #include "ChatAIWindowFrame.hpp"
 
 #include "LLMManager.hpp"
+#include "ai/InfoBar.hpp"
 #include "event_notifier.h"
 #include "globals.h"
 
@@ -81,4 +82,14 @@ void ChatAIWindowFrame::UpdateLabel()
         label << _("Assistant");
     }
     SetLabel(label);
+}
+
+void ChatAIWindowFrame::DeleteInfoBar(InfoBar* bar)
+{
+    if (GetSizer()->Detach(bar)) {
+        clSYSTEM() << "Successfully deleted info-bar" << endl;
+        bar->Destroy();
+    } else {
+        clERROR() << "Could not find info-bar to delete" << endl;
+    }
 }

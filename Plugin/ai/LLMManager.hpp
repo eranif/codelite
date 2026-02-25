@@ -531,24 +531,6 @@ public:
                                                         const wxString& code_block_lang = wxEmptyString);
 
     /**
-     * @brief Posts a user answer to the internal answer channel.
-     *
-     * This method enqueues the provided user answer into the manager's answer channel
-     * for asynchronous processing. The answer will be consumed by other components
-     * listening to this channel.
-     *
-     * @param answer The UserAnswer object to be posted to the answer channel.
-     *
-     * @return void This method does not return a value.
-     *
-     * @note This method is thread-safe if the underlying m_answerChannel.Post() is thread-safe.
-     *
-     * @see llm::Manager::m_answerChannel
-     * @see UserAnswer
-     */
-    void PostAnswer(UserAnswer answer);
-
-    /**
      * @brief Sets the caching policy for the assistant client.
      *
      * This method configures the caching behavior by delegating to the underlying
@@ -583,6 +565,41 @@ public:
      * @see IconType
      */
     void PrintMessage(const wxString& msg, IconType icon);
+
+    /**
+     * @brief Creates and registers a new termination flag for task cancellation.
+     *
+     * Allocates a new atomic boolean flag initialized to false, registers it in the
+     * manager's internal list of termination flags, and returns a shared pointer to it.
+     * Thread-safe: uses internal mutex to protect the termination flags container.
+     *
+     * @return std::shared_ptr<std::atomic_bool> A shared pointer to a newly created
+     *         atomic boolean flag, initialized to false. The flag can be used to
+     *         signal termination to tasks managed by this Manager instance.
+     *
+     * @throws May throw std::bad_alloc if memory allocation fails, or any exception
+     *         thrown by std::vector::push_back during container expansion.
+     */
+    std::shared_ptr<std::atomic_bool> NewTerminationFlag();
+
+    /**
+     * @brief Removes a termination flag from the manager's collection.
+     *
+     * This method safely removes the specified termination flag from the internal
+     * collection by comparing raw pointer addresses. The operation is thread-safe
+     * and uses a mutex to protect the shared collection.
+     *
+     * @param flag A shared pointer to the atomic boolean termination flag to be
+     *             removed from the manager's collection. The flag is identified
+     *             by comparing the raw pointer address rather than the shared
+     *             pointer itself.
+     *
+     * @return Nothing.
+     *
+     * @note This method locks m_termination_flags_mutex during execution to ensure
+     *       thread-safe modification of the termination flags collection.
+     */
+    void DeleteTerminationFlag(std::shared_ptr<std::atomic_bool> flag);
 
 private:
     Manager() = default;
@@ -643,8 +660,45 @@ private:
     std::atomic_bool m_worker_busy{false};
     FunctionTable m_plugin_functions;
     std::unique_ptr<ChatAI> m_chatAI{nullptr};
-    wxMessageQueue<UserAnswer> m_answerChannel;
-    std::atomic_bool m_waitingForAnswer{false};
+    std::vector<std::shared_ptr<std::atomic_bool>> m_termination_flags;
+    std::mutex m_termination_flags_mutex;
+};
+
+/**
+ * @brief RAII wrapper for automatic termination flag lifecycle management.
+ *
+ * This class provides automatic cleanup of termination flags created via
+ * {@code llm::Manager::NewTerminationFlag()}. When constructed, it creates
+ * and registers a new termination flag. When destroyed (going out of scope),
+ * it automatically removes the flag from the manager's collection.
+ *
+ * This ensures that termination flags are properly cleaned up even in the
+ * presence of exceptions or early returns, preventing memory leaks and
+ * ensuring consistent resource management.
+ *
+ * @note The termination flag can be accessed via the {@code GetFlag()} method
+ *       to check or set the termination state during the object's lifetime.
+ *
+ * @code
+ * {
+ *     TerminationFlagGuard guard; // creates and registers flag
+ *     auto flag = guard.GetFlag();
+ *     // ... use flag for task cancellation ...
+ * } // flag is automatically removed from manager
+ * @endcode
+ *
+ * @see llm::Manager::NewTerminationFlag()
+ * @see llm::Manager::DeleteTerminationFlag()
+ */
+struct WXDLLIMPEXP_SDK TerminationFlagGuard {
+    std::shared_ptr<std::atomic_bool> flag;
+    TerminationFlagGuard()
+        : flag(llm::Manager::GetInstance().NewTerminationFlag())
+    {
+    }
+    ~TerminationFlagGuard() { llm::Manager::GetInstance().DeleteTerminationFlag(flag); }
+    inline bool IsSet() const { return flag->load(); }
+    std::shared_ptr<std::atomic_bool> GetFlag() const { return flag; }
 };
 
 /**

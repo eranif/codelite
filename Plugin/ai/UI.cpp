@@ -91,18 +91,6 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
 
     boxSizer35->Add(m_stcOutput, 1, wxEXPAND, WXC_FROM_DIP(5));
 
-    m_infobar = new InfoBar(m_splitterPageTop, wxID_ANY);
-    m_infobar->SetSize(wxDLG_UNIT(m_splitterPageTop, wxSize(-1, -1)));
-    m_infobar->Hide();
-
-    boxSizer35->Add(m_infobar, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
-    m_infobar->AddButton(wxID_YES, _("Yes"));
-
-    m_infobar->AddButton(wxID_NO, _("No"));
-
-    m_infobar->AddButton(wxID_YESTOALL, _("Trust"));
-
     m_splitterPageBottom = new wxPanel(
         m_mainSplitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainSplitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_mainSplitter->SplitHorizontally(m_splitterPageTop, m_splitterPageBottom, 200);
@@ -168,17 +156,11 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
         GetSizer()->Fit(this);
     }
     // Connect events
-    m_infobar->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnYes, this, wxID_YES);
-    m_infobar->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnNo, this, wxID_NO);
-    m_infobar->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnTrust, this, wxID_YESTOALL);
     m_stcInput->Bind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnInputUI, this);
 }
 
 AssistanceAIChatWindowBase::~AssistanceAIChatWindowBase()
 {
-    m_infobar->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnYes, this, wxID_YES);
-    m_infobar->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnNo, this, wxID_NO);
-    m_infobar->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnTrust, this, wxID_YESTOALL);
     m_stcInput->Unbind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnInputUI, this);
 }
 

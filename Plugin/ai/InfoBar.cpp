@@ -1,24 +1,49 @@
 #include "ai/InfoBar.hpp"
 
+#include "ai/ChatAIWindowFrame.hpp"
 #include "file_logger.h"
 
-void InfoBar::ShowMessage(const wxString& msg, int flags)
+InfoBar::InfoBar(wxWindow* parent, std::shared_ptr<std::promise<llm::UserAnswer>> promise_ptr)
+    : wxInfoBar(parent)
+    , m_promise_ptr{promise_ptr}
 {
-    m_pendingMessages.push_back({msg, flags});
-    if (m_pendingMessages.size() > 1) {
-        return;
-    }
-    wxInfoBar::ShowMessage(msg, flags);
+    SetShowHideEffects(wxSHOW_EFFECT_NONE, wxSHOW_EFFECT_NONE);
+    Hide();
+    AddButton(wxID_YES, _("Yes"));
+    AddButton(wxID_NO, _("No"));
+    AddButton(wxID_YESTOALL, _("Trust"));
+
+    Bind(wxEVT_BUTTON, &InfoBar::OnYes, this, wxID_YES);
+    Bind(wxEVT_BUTTON, &InfoBar::OnNo, this, wxID_NO);
+    Bind(wxEVT_BUTTON, &InfoBar::OnTrust, this, wxID_YESTOALL);
 }
 
 void InfoBar::Dismiss()
 {
-    m_pendingMessages.erase(m_pendingMessages.begin());
-    if (m_pendingMessages.empty()) {
-        wxInfoBar::Dismiss();
-        return;
-    }
-    auto p = m_pendingMessages.front();
-    m_pendingMessages.erase(m_pendingMessages.begin());
-    wxInfoBar::ShowMessage(p.first, p.second);
+    wxInfoBar::Dismiss();
+    ChatAIWindowFrame* parent = dynamic_cast<ChatAIWindowFrame*>(GetParent());
+    CHECK_PTR_RET(parent);
+
+    parent->CallAfter(&ChatAIWindowFrame::DeleteInfoBar, this);
+}
+
+void InfoBar::OnYes(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    Dismiss();
+    m_promise_ptr->set_value(llm::UserAnswer::kYes);
+}
+
+void InfoBar::OnNo(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    Dismiss();
+    m_promise_ptr->set_value(llm::UserAnswer::kNo);
+}
+
+void InfoBar::OnTrust(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    Dismiss();
+    m_promise_ptr->set_value(llm::UserAnswer::kTrust);
 }

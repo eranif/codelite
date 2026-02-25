@@ -41,8 +41,6 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     m_toolbar->SetArtProvider(new clAuiToolBarArt());
     clAuiToolBarArt::AddTool(m_toolbar, wxID_CLEAR, _("Clear the chat history"), images->LoadBitmap("clear"));
     m_toolbar->AddSeparator();
-    m_infobar->Hide();
-    m_infobar->SetShowHideEffects(wxSHOW_EFFECT_NONE, wxSHOW_EFFECT_NONE);
 
     wxSize control_size{GetTextExtent(LONG_MODEL_NAME).GetWidth(), wxNOT_FOUND};
     m_choiceEndpoints = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, control_size);
@@ -98,8 +96,6 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
 
     llm::Manager::GetInstance().Bind(wxEVT_LLM_CONFIG_UPDATED, &ChatAIWindow::OnLLMConfigUpdate, this);
     llm::Manager::GetInstance().Bind(wxEVT_LLM_STARTED, &ChatAIWindow::OnLLMConfigUpdate, this);
-    llm::Manager::GetInstance().Bind(wxEVT_LLM_USER_REPLY_ERROR, &ChatAIWindow::OnLLMUserReplyError, this);
-
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->SetCodePage(wxSTC_CP_UTF8);
@@ -169,7 +165,6 @@ ChatAIWindow::~ChatAIWindow()
 
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_CONFIG_UPDATED, &ChatAIWindow::OnLLMConfigUpdate, this);
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_STARTED, &ChatAIWindow::OnLLMConfigUpdate, this);
-    llm::Manager::GetInstance().Unbind(wxEVT_LLM_USER_REPLY_ERROR, &ChatAIWindow::OnLLMUserReplyError, this);
 
     Unbind(wxEVT_SIZE, &ChatAIWindow::OnSize, this);
 
@@ -465,16 +460,11 @@ void ChatAIWindow::UpdateStatusBar()
     }
 }
 
-void ChatAIWindow::OnLLMUserReplyError(clLLMEvent& event)
-{
-    event.Skip();
-    m_infobar->Dismiss();
-}
-
 void ChatAIWindow::OnLLMConfigUpdate(clLLMEvent& event)
 {
     // Always call Skip()
     event.Skip();
+
     // Clear the output view
     DoClearOutputView();
     UpdateChoices();
@@ -515,12 +505,6 @@ void ChatAIWindow::AppendText(const wxString& text, bool force_style)
     if (force_style) {
         StyleOutput();
     }
-}
-
-void ChatAIWindow::ShowYesNoTrustBar(const wxString& text)
-{
-    clDEBUG() << "Prompting user:" << text << endl;
-    m_infobar->ShowMessage(text, wxICON_QUESTION);
 }
 
 void ChatAIWindow::AppendOutput(const wxString& text)
@@ -667,28 +651,4 @@ void ChatAIWindow::OnSize(wxSizeEvent& event)
     if (GetSizer()) {
         Layout();
     }
-}
-
-void ChatAIWindow::OnNo(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    clDEBUG() << "Replying with: No" << endl;
-    llm::Manager::GetInstance().PostAnswer(llm::UserAnswer::kNo);
-    m_infobar->Dismiss();
-}
-
-void ChatAIWindow::OnYes(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    clDEBUG() << "Replying with: Yes" << endl;
-    llm::Manager::GetInstance().PostAnswer(llm::UserAnswer::kYes);
-    m_infobar->Dismiss();
-}
-
-void ChatAIWindow::OnTrust(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    clDEBUG() << "Replying with: Trust" << endl;
-    llm::Manager::GetInstance().PostAnswer(llm::UserAnswer::kTrust);
-    m_infobar->Dismiss();
 }

@@ -3,10 +3,10 @@
 
 #include "ChatAIWindow.hpp"
 #include "UI.hpp"
-#include "ai/LLMEvents.hpp"
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_SDK ChatAI;
+class InfoBar;
+class ChatAI;
 class WXDLLIMPEXP_SDK ChatAIWindowFrame : public ChatAIWindowFrameBase
 {
 public:
@@ -15,6 +15,8 @@ public:
 
     bool Show(bool show = true) override;
     ChatAIWindow* GetChatWindow() { return m_view; }
+
+    void DeleteInfoBar(InfoBar* bar);
 
 protected:
     void OnClose(wxCloseEvent& event) override;

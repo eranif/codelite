@@ -55,18 +55,7 @@ public:
 
     wxString GetText() const;
 
-    /**
-     * @brief Displays a yes/no trust confirmation bar with the specified message.
-     *
-     * Shows an information bar (typically at the bottom of the ChatAIWindow)
-     * with a question icon and the provided text, prompting the user for a trust decision.
-     */
-    void ShowYesNoTrustBar(const wxString& text);
-
 protected:
-    void OnTrust(wxCommandEvent& event) override;
-    void OnNo(wxCommandEvent& event) override;
-    void OnYes(wxCommandEvent& event) override;
     void OnCharAdded(wxStyledTextEvent& event);
     void OnAutoScroll(wxCommandEvent& event);
     void OnAutoScrollUI(wxUpdateUIEvent& event);
@@ -103,7 +92,6 @@ protected:
 
     /// LLM events
     void OnLLMConfigUpdate(clLLMEvent& event);
-    void OnLLMUserReplyError(clLLMEvent& event);
     void OnChatStarted(clLLMEvent& event);
     void OnChatAIOutput(clLLMEvent& event);
     void OnChatAIOutputDone(clLLMEvent& event);

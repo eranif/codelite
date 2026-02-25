@@ -136,12 +136,12 @@ horizontal_white [ ]|{h_tab}
 <PHP>b?"<<<"{TABS_AND_SPACES}({LABEL}|([']{LABEL}['])|(["]{LABEL}["])){NEWLINE} {
     phpLexerUserData* userData = (phpLexerUserData*)yyg->yyextra_r;
     std::string label = yytext;
-    StdToWX::Remove(label, 0, 3);
+    label.erase(0, 3);
     StdToWX::Trim(label);
-    
-    if(StdToWX::StartsWith(label, "'")) StdToWX::Remove(label, 0, 1);
-    if(StdToWX::EndsWith(label, "'")) StdToWX::RemoveLast(label, 1);
-    
+
+    if (label.starts_with("'")) label.erase(0, 1);
+    if (label.ends_with("'")) label.pop_back();
+
     userData->SetRawStringLabel(label);
     userData->GetString().append(yytext);
     BEGIN(HEREDOC);

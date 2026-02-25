@@ -7,8 +7,8 @@
 class WXDLLIMPEXP_SDK InfoBar : public wxInfoBar
 {
 public:
-    InfoBar(wxWindow* parent, wxWindowID winid = wxID_ANY, long style = 0)
-        : wxInfoBar(parent, winid, style)
+    InfoBar(wxWindow* parent, wxWindowID winid = wxID_ANY)
+        : wxInfoBar(parent, winid)
     {
     }
     ~InfoBar() override = default;

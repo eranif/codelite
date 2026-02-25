@@ -25,7 +25,17 @@ namespace
 {
 constexpr float kConfigVersion = 1.0;
 constexpr const char* kConfigVersionProperty = "_version";
-constexpr std::string_view kClaudeSystemMessage = R"#()#";
+static const std::string kSystemMessageRetryProtocol = R"#(**ERROR HANDLING PROTOCOL**
+
+When encountering errors:
+
+1. **First error:** Analyze, attempt one fix, retry once
+2. **Second error (same type):** Try one alternative approach if available
+3. **Third error or no clear alternative:** **STOP. Report the issue and all attempts made. Ask user for guidance.**
+
+Apply to: permission denied, tool failures, file errors, invalid parameters, command failures.
+
+**Never** loop indefinitely on repeated failures. Three attempts maximum before escalating to user.)#";
 
 /**
  * @brief RAII guard that restores an atomic boolean to a specified value upon destruction.
@@ -630,6 +640,7 @@ void Manager::Start(std::shared_ptr<assistant::ClientBase> client)
 
     m_client->SetCachingPolicy(GetConfig().GetCachePolicy());
     m_client->SetTookInvokeCallback(&Manager::CanRunTool);
+    m_client->AddSystemMessage(kSystemMessageRetryProtocol);
 
     // Start the worker thread
     m_worker_thread = std::make_unique<std::thread>([this]() { WorkerMain(); });

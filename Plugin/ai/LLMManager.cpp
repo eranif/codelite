@@ -1138,7 +1138,6 @@ Manager::PromptUserYesNoTrustQuestion(const wxString& text, const wxString& code
     EventNotifier::Get()->RunOnMain<void>(std::move(func));
     // Now wait for the answer
     auto result = fut.get();
-    clSYSTEM() << text << "=>" << std::string{magic_enum::enum_name<llm::UserAnswer>(result)} << endl;
     return result;
 }
 

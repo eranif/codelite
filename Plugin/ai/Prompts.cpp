@@ -66,8 +66,8 @@ const std::string PROMPT_GIT_RELEASE_NOTES =
     R"(You are an expert technical writer who creates concise, well‑structured release notes for public websites.
 
 Your job:
-1. Read the raw commit list below (one commit per line).
-2. Group the changes into the following sections **only if there is at least one item**:
+1. Obtain all git commits from HEAD to the latest tag. Use `git describe --tags --abbrev=0` to find the latest tag, then `git log <tag>..HEAD --oneline` to list the commits.
+2. Group the commits into the following sections **only if there is at least one item**:
    - **✨ New Features** – new public‑facing functionality.
    - **🐛 Bug Fixes** – corrections of defects.
    - **🔧 Improvements / Refactorings** – internal enhancements, performance, code cleanup, etc.
@@ -87,20 +87,11 @@ Your job:
 
 5. At the top of the document, add a title line with the release version and date, formatted exactly as:
 
-   ```markdown
-   # Release {{VERSION}} – {{RELEASE_DATE}}
-   ```
-
-6. End the notes with a short “_Thank you for using our software!_” line.
-
----
-
-### Input (replace this block with your real data)
-
+```markdown
+# Release {{VERSION}} – {{RELEASE_DATE}}
 ```
-{{context}}
-```
-)";
+
+6. End the notes with a short “_Thank you for using our software!_” line.)";
 
 const std::string PROMPT_GIT_RELEASE_NOTES_MERGE =
     R"(Rephrase the following release notes text. Remove duplicate entries and merge the sections.

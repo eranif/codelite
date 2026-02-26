@@ -531,7 +531,8 @@ assistant::Config Manager::MakeConfig()
 {
     std::call_once(config_create_once_flag, [this]() {
         // Should never fail.
-        m_default_config = assistant::Config::FromContent(kDefaultSettings.ToStdString(wxConvUTF8)).value();
+        m_default_config =
+            assistant::ConfigBuilder::FromContent(kDefaultSettings.ToStdString(wxConvUTF8)).config_.value();
 
         // Redirect the library logs to our logging machinery.
         assistant::SetLogSink([](assistant::LogLevel level, std::string msg) {
@@ -558,7 +559,14 @@ assistant::Config Manager::MakeConfig()
 
     // Apply environment variables before we proceed
     EnvSetter env;
-    return assistant::Config::FromFile(res.value().ToStdString(wxConvUTF8)).value_or(m_default_config);
+    auto result = assistant::ConfigBuilder::FromFile(res.value().ToStdString(wxConvUTF8));
+    if (!result.ok()) {
+        if (::wxIsMainThread()) {
+            ::wxMessageBox(result.errmsg_, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+            return assistant::ConfigBuilder::FromContent(kDefaultSettings.ToStdString(wxConvUTF8)).config_.value();
+        }
+    }
+    return result.config_.value();
 }
 
 void Manager::Restart()
@@ -682,21 +690,25 @@ bool Manager::ReloadConfig(std::optional<wxString> config_content, bool prompt)
     }
 
     EnvSetter env;
-    auto conf = assistant::Config::FromContent(content.ToStdString(wxConvUTF8));
-    if (conf.has_value()) {
-        m_client_config = std::move(conf.value());
-        // Now we can replace the client instance
-        auto client = assistant::MakeClient(m_client_config).value_or(nullptr);
-        if (!client) {
-            clERROR() << "Could not create new LLM client!" << endl;
-            return false;
+    auto result = assistant::ConfigBuilder::FromContent(content.ToStdString(wxConvUTF8));
+    if (!result.ok()) {
+        if (::wxIsMainThread()) {
+            ::wxMessageBox(result.errmsg_, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
         }
-
-        // Start the new client
-        Start(client);
-        return true;
+        return false;
     }
-    return false;
+
+    m_client_config = std::move(result.config_.value());
+    // Now we can replace the client instance
+    auto client = assistant::MakeClient(m_client_config).value_or(nullptr);
+    if (!client) {
+        clERROR() << "Could not create new LLM client!" << endl;
+        return false;
+    }
+
+    // Start the new client
+    Start(client);
+    return true;
 }
 
 void Manager::ClearHistory()
@@ -973,13 +985,9 @@ clStatusOr<wxString> Manager::CreateOrOpenConfig()
     wxString global_config_path = FileManager::GetSettingFileFullPath(kAssistantConfigFile, opts);
     wxString backup_file_path = global_config_path + ".old";
     bool valid_file{false};
-    try {
-        EnvSetter env;
-        auto conf = assistant::Config::FromFile(global_config_path.ToStdString(wxConvUTF8));
-        valid_file = conf.has_value();
-    } catch (const std::exception& e) {
-        valid_file = false;
-    }
+    EnvSetter env;
+    auto result = assistant::ConfigBuilder::FromFile(global_config_path.ToStdString(wxConvUTF8));
+    valid_file = result.ok();
 
     if (!valid_file) {
         // Backup old file

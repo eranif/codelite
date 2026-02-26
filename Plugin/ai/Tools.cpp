@@ -11,6 +11,7 @@
 #include "clSFTPManager.hpp"
 #include "clWorkspaceManager.h"
 #include "codelite_events.h"
+#include "environmentconfig.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "procutils.h"
@@ -506,6 +507,7 @@ FunctionResult ToolShellExecute([[maybe_unused]] const assistant::json& args)
         // Local command.
         ProcUtils::WrapInShell(cmd);
         wxArrayString output_arr;
+        EnvSetter env;
         ProcUtils::SafeExecuteCommand(cmd, output_arr, termination_flag.GetFlag());
         if (termination_flag.IsSet()) {
             return FunctionResult{.isError = true, .text = "Command terminated by user"};
@@ -519,6 +521,7 @@ FunctionResult ToolShellExecute([[maybe_unused]] const assistant::json& args)
     // Local command.
     ProcUtils::WrapInShell(cmd);
     wxArrayString output_arr;
+    EnvSetter env;
     ProcUtils::SafeExecuteCommand(cmd, output_arr, termination_flag.GetFlag());
     llm::Manager::GetInstance().DeleteTerminationFlag(termination_flag.GetFlag());
     if (termination_flag.IsSet()) {
@@ -530,6 +533,7 @@ FunctionResult ToolShellExecute([[maybe_unused]] const assistant::json& args)
     func_result.isError = false;
     func_result.text = command_output;
 #endif
+
     llm::Manager::GetInstance().PrintMessage(
         _("Successfully executed the command. Output:\n```bash\n") + func_result.text + "\n```\n", IconType::kInfo);
     return func_result;
@@ -540,17 +544,14 @@ FunctionResult GetOS([[maybe_unused]] const assistant::json& args)
     VERIFY_WORKER_THREAD();
 
     // Check if a remote workspace is opened - if so, always return "Linux"
-    auto cb = [=]() -> FunctionResult {
+    auto is_remote_workspace_cb = [=]() -> bool {
         auto workspace = clWorkspaceManager::Get().GetWorkspace();
-        if (workspace && workspace->IsRemote()) {
-            return Ok(wxString("Linux"));
-        }
-        return FunctionResult{.isError = false}; // Signal to continue with local OS detection
+        return workspace && workspace->IsRemote();
     };
 
-    auto result = EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
-    if (!result.text.empty()) {
-        return result; // Remote workspace detected, return "Linux"
+    auto is_remote = EventNotifier::Get()->RunOnMain<bool>(std::move(is_remote_workspace_cb));
+    if (is_remote) {
+        return Ok("Linux"); // Remote workspace detected, return "Linux"
     }
 
     wxString os_name;

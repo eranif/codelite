@@ -24,9 +24,11 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "environmentconfig.h"
 
+#include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "archive.h"
 #include "envvarlist.h"
 #include "macromanager.h"
+#include "workspace.h"
 #include "xmlutils.h"
 
 #include <algorithm>
@@ -271,4 +273,25 @@ DollarEscaper::~DollarEscaper()
 {
     // we restore it to non escaped $ !!
     m_str.Replace("@@ESC_DOLLAR@@", "$");
+}
+
+// EnvSetter
+
+EnvSetter::EnvSetter()
+    : m_env(EnvironmentConfig::Instance())
+{
+    wxStringMap_t env_map;
+    wxString project_name, config_name;
+    if (clFileSystemWorkspace::Get().IsOpen() && !clFileSystemWorkspace::Get().IsRemote()) {
+        auto env_list = clFileSystemWorkspace::Get().GetEnvironment();
+        for (const auto& [k, v] : env_list) {
+            env_map.insert({k, v});
+        }
+
+    } else if (clCxxWorkspaceST::Get()->IsOpen() && clCxxWorkspaceST::Get()->GetActiveProject()) {
+        auto project = clCxxWorkspaceST::Get()->GetActiveProject();
+        config_name = project->GetBuildConfiguration() ? project->GetBuildConfiguration()->GetName() : wxString{};
+        project_name = project->GetName();
+    }
+    m_env->ApplyEnv(&env_map, project_name, config_name);
 }

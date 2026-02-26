@@ -55,15 +55,15 @@ void EnvVarList::AddVariable(const wxString& setName, const wxString& name, cons
     wxString currentValueStr = DoGetSetVariablesStr(setName, actualSetName);
     wxArrayString currentValues = wxStringTokenize(currentValueStr, wxT("\r\n"), wxTOKEN_STRTOK);
 
-    if(currentValues.Index(newEntry) == wxNOT_FOUND)
+    if (currentValues.Index(newEntry) == wxNOT_FOUND)
         currentValues.Add(newEntry);
 
     currentValueStr.Clear();
-    for(size_t i = 0; i < currentValues.GetCount(); i++) {
+    for (size_t i = 0; i < currentValues.GetCount(); i++) {
         currentValueStr << currentValues.Item(i) << wxT("\n");
     }
 
-    if(currentValueStr.IsEmpty() == false)
+    if (currentValueStr.IsEmpty() == false)
         currentValueStr.RemoveLast();
 
     m_envVarSets[actualSetName] = currentValueStr;
@@ -76,13 +76,15 @@ void EnvVarList::InsertVariable(const wxString& setName, const wxString& name, c
     DoGetSetVariablesStr(setName, actualSetName);
 
     EnvMap set = GetVariables(actualSetName, false, wxEmptyString, wxEmptyString);
-    if(!set.Contains(name)) {
+    if (!set.Contains(name)) {
         set.Put(name, value);
     }
     m_envVarSets[actualSetName] = set.String();
 }
 
-EnvMap EnvVarList::GetVariables(const wxString& setName, bool includeWorkspaceEnvs, const wxString& projectName,
+EnvMap EnvVarList::GetVariables(const wxString& setName,
+                                bool includeWorkspaceEnvs,
+                                const wxString& projectName,
                                 const wxString& configName)
 {
     EnvMap variables;
@@ -90,15 +92,15 @@ EnvMap EnvVarList::GetVariables(const wxString& setName, bool includeWorkspaceEn
 
     wxString currentValueStr = DoGetSetVariablesStr(setName, actualSetName);
 
-    if(includeWorkspaceEnvs && !clCxxWorkspaceST::Get()->GetName().IsEmpty()) {
+    if (includeWorkspaceEnvs && !clCxxWorkspaceST::Get()->GetName().IsEmpty()) {
         currentValueStr.Trim().Trim(false);
         currentValueStr << wxT("\n");
         currentValueStr << clCxxWorkspaceST::Get()->GetEnvironmentVariables();
 
-        if(projectName.IsEmpty() == false) {
+        if (projectName.IsEmpty() == false) {
             currentValueStr.Trim().Trim(false);
             BuildConfigPtr buildConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, configName);
-            if(buildConf) {
+            if (buildConf) {
                 currentValueStr << wxT("\n");
                 currentValueStr << buildConf->GetEnvvars();
             }
@@ -106,17 +108,17 @@ EnvMap EnvVarList::GetVariables(const wxString& setName, bool includeWorkspaceEn
     }
 
     wxArrayString currentValues = wxStringTokenize(currentValueStr, wxT("\r\n"), wxTOKEN_STRTOK);
-    for(size_t i = 0; i < currentValues.GetCount(); i++) {
+    for (size_t i = 0; i < currentValues.GetCount(); i++) {
         wxString entry = currentValues.Item(i);
 
         // remove any comment from the line
         int where = entry.Find(wxT("#"));
-        if(where != wxNOT_FOUND) {
+        if (where != wxNOT_FOUND) {
             entry = entry.Left(where);
         }
 
         entry.Trim().Trim(false);
-        if(entry.IsEmpty()) {
+        if (entry.IsEmpty()) {
             continue;
         }
 
@@ -136,17 +138,17 @@ wxString EnvVarList::DoGetSetVariablesStr(const wxString& setName, wxString& sel
 
     selectedSetName = setName;
     wxStringMap_t::iterator iter = m_envVarSets.find(setName);
-    if(iter != m_envVarSets.end())
+    if (iter != m_envVarSets.end())
         currentValueStr = iter->second;
     else {
         iter = m_envVarSets.find(m_activeSet);
-        if(iter != m_envVarSets.end()) {
+        if (iter != m_envVarSets.end()) {
             currentValueStr = iter->second;
             selectedSetName = m_activeSet;
         } else {
             selectedSetName = wxT("Default");
             iter = m_envVarSets.find(selectedSetName);
-            if(iter != m_envVarSets.end())
+            if (iter != m_envVarSets.end())
                 currentValueStr = iter->second;
         }
     }
@@ -160,7 +162,7 @@ bool EnvVarList::IsSetExist(const wxString& setName) { return m_envVarSets.find(
 bool EnvMap::Get(const wxString& key, wxString& val)
 {
     int where = m_keys.Index(key);
-    if(where == wxNOT_FOUND)
+    if (where == wxNOT_FOUND)
         return false;
 
     val = m_values.Item(where);
@@ -184,7 +186,7 @@ size_t EnvMap::GetCount() { return m_keys.GetCount(); }
 
 bool EnvMap::Get(size_t index, wxString& key, wxString& val)
 {
-    if(index >= m_keys.GetCount())
+    if (index >= m_keys.GetCount())
         return false;
 
     key = m_keys.Item(index);
@@ -197,11 +199,11 @@ bool EnvMap::Contains(const wxString& key) { return m_keys.Index(key) != wxNOT_F
 wxString EnvMap::String()
 {
     wxString s;
-    for(size_t i = 0; i < m_keys.GetCount(); i++) {
+    for (size_t i = 0; i < m_keys.GetCount(); i++) {
         s << m_keys.Item(i) << wxT("=") << m_values.Item(i) << wxT("\n");
     }
 
-    if(s.IsEmpty() == false)
+    if (s.IsEmpty() == false)
         s.RemoveLast();
 
     return s;

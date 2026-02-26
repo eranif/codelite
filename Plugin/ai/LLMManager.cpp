@@ -9,6 +9,7 @@
 #include "cl_command_event.h"
 #include "cl_standard_paths.h"
 #include "codelite_events.h"
+#include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "fileextmanager.h"
@@ -32,10 +33,8 @@ When encountering errors:
 
 1. **First error:** Analyze, attempt one fix, retry once
 2. **Second error (same type):** Try one alternative approach if available
-3. **Third error or no clear alternative:** **STOP. Report the issue and all attempts made. Ask user for guidance.**
-
+3. **Third error:** **STOP**. Report the issue. Ask user for guidance.**
 Apply to: permission denied, tool failures, file errors, invalid parameters, command failures.
-
 **Never** loop indefinitely on repeated failures. Three attempts maximum before escalating to user.)#";
 
 /**
@@ -557,9 +556,9 @@ assistant::Config Manager::MakeConfig()
         return m_default_config;
     }
 
-    assistant::Config config =
-        assistant::Config::FromFile(res.value().ToStdString(wxConvUTF8)).value_or(m_default_config);
-    return config;
+    // Apply environment variables before we proceed
+    EnvSetter env;
+    return assistant::Config::FromFile(res.value().ToStdString(wxConvUTF8)).value_or(m_default_config);
 }
 
 void Manager::Restart()
@@ -651,6 +650,7 @@ void Manager::Start(std::shared_ptr<assistant::ClientBase> client)
 
     m_client->SetCachingPolicy(GetConfig().GetCachePolicy());
     m_client->SetTookInvokeCallback(&Manager::CanRunTool);
+    m_client->ClearSystemMessages();
     m_client->AddSystemMessage(kSystemMessageRetryProtocol);
 
     // Start the worker thread
@@ -681,6 +681,7 @@ bool Manager::ReloadConfig(std::optional<wxString> config_content, bool prompt)
         content = FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts).value_or(kDefaultSettings);
     }
 
+    EnvSetter env;
     auto conf = assistant::Config::FromContent(content.ToStdString(wxConvUTF8));
     if (conf.has_value()) {
         m_client_config = std::move(conf.value());
@@ -973,6 +974,7 @@ clStatusOr<wxString> Manager::CreateOrOpenConfig()
     wxString backup_file_path = global_config_path + ".old";
     bool valid_file{false};
     try {
+        EnvSetter env;
         auto conf = assistant::Config::FromFile(global_config_path.ToStdString(wxConvUTF8));
         valid_file = conf.has_value();
     } catch (const std::exception& e) {

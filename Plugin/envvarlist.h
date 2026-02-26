@@ -25,6 +25,7 @@
 #ifndef __evnvarlist__
 #define __evnvarlist__
 
+#include "clEnvironment.hpp"
 #include "codelite_exports.h"
 #include "macros.h"
 #include "serialized_object.h"
@@ -33,8 +34,6 @@
 
 class WXDLLIMPEXP_SDK EnvMap
 {
-    wxArrayString m_keys;
-    wxArrayString m_values;
 
 public:
     EnvMap() = default;
@@ -47,6 +46,23 @@ public:
     bool Get(size_t index, wxString& key, wxString& val);
     bool Contains(const wxString& key);
     wxString String();
+
+    inline clEnvList_t ToEnvList() const
+    {
+        clEnvList_t result;
+        if (m_keys.size() != m_values.size()) {
+            return result;
+        }
+        result.reserve(m_keys.size());
+        for (size_t i = 0; i < m_keys.size(); ++i) {
+            result.push_back({m_keys[i].ToStdString(wxConvUTF8), m_values[i].ToStdString(wxConvUTF8)});
+        }
+        return result;
+    }
+
+private:
+    wxArrayString m_keys;
+    wxArrayString m_values;
 };
 
 class WXDLLIMPEXP_SDK EnvVarList : public SerializedObject
@@ -63,7 +79,7 @@ public:
 
     void SetActiveSet(const wxString& activeSet)
     {
-        if(activeSet != _("<Use Active Set>") && activeSet != USE_GLOBAL_SETTINGS)
+        if (activeSet != _("<Use Active Set>") && activeSet != USE_GLOBAL_SETTINGS)
             this->m_activeSet = activeSet;
     }
 
@@ -81,7 +97,9 @@ public:
      */
     void InsertVariable(const wxString& setName, const wxString& name, const wxString& value);
 
-    EnvMap GetVariables(const wxString& setName, bool includeWorkspaceEnvs, const wxString& projectName,
+    EnvMap GetVariables(const wxString& setName,
+                        bool includeWorkspaceEnvs,
+                        const wxString& projectName,
                         const wxString& configName);
     bool IsSetExist(const wxString& setName);
 

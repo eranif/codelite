@@ -11,16 +11,16 @@ using clEnvList_t = std::vector<std::pair<wxString, wxString>>;
 
 class WXDLLIMPEXP_CL clEnvironment
 {
-    const clEnvList_t* m_env = nullptr;
-    std::vector<std::pair<wxString, wxAny>> m_old_env;
-
-private:
-    void ApplyFromList(const clEnvList_t* envlist);
-
 public:
     clEnvironment(const clEnvList_t* envlist);
     clEnvironment();
     virtual ~clEnvironment();
+
+    void ApplyFromList(const clEnvList_t* envlist);
+
+private:
+    const clEnvList_t* m_env = nullptr;
+    std::vector<std::pair<wxString, wxAny>> m_old_env;
 };
 
 #endif // CLENVIRONMENT_HPP

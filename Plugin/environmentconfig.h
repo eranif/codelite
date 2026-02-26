@@ -84,10 +84,11 @@ public:
     virtual wxString GetRootName();
 };
 
-class EnvSetter
+class WXDLLIMPEXP_SDK EnvSetter
 {
 public:
-    explicit EnvSetter(wxStringMap_t* om = NULL)
+    EnvSetter();
+    explicit EnvSetter(wxStringMap_t* om)
         : m_env(EnvironmentConfig::Instance())
     {
         m_env->ApplyEnv(om, wxEmptyString, wxEmptyString);
@@ -101,7 +102,7 @@ public:
         if (envlist) {
             overrideMap.reserve(envlist->size());
             for (const auto& [name, value] : *envlist) {
-                overrideMap.insert({ name, value });
+                overrideMap.insert({name, value});
             }
         }
         m_env->ApplyEnv(&overrideMap, wxEmptyString, wxEmptyString);

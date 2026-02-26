@@ -438,8 +438,8 @@ bool clCxxWorkspace::AddProject(const wxString& path, wxString& errMsg)
         return true;
 
     } else {
-        errMsg = wxString::Format(wxT("A project with a similar name '%s' already exists in the workspace"),
-                                  proj->GetName().c_str());
+        errMsg = wxString::Format(
+            wxT("A project with a similar name '%s' already exists in the workspace"), proj->GetName().c_str());
         return false;
     }
 }
@@ -763,7 +763,7 @@ void clCxxWorkspace::SyncFromLocalWorkspaceSTParserMacros()
 
 void clCxxWorkspace::Save()
 {
-    if(m_doc.IsOk()) {
+    if (m_doc.IsOk()) {
         for (const auto& [_, project] : m_projects) {
             project->Save();
         }
@@ -1048,7 +1048,7 @@ wxStringMap_t BuildGlobalCompilerPath()
     }
     return compilersGlobalPaths;
 }
-}
+} // namespace
 
 nlohmann::json clCxxWorkspace::CreateCompileCommandsJSON() const
 {
@@ -1068,7 +1068,7 @@ nlohmann::json clCxxWorkspace::CreateCompileCommandsJSON() const
     for (const auto& [_, project] : m_projects) {
         BuildConfigPtr buildConf = project->GetBuildConfiguration();
         if (buildConf && buildConf->IsProjectEnabled() && !buildConf->IsCustomBuild() &&
-           buildConf->IsCompilerRequired()) {
+            buildConf->IsCompilerRequired()) {
             project->AppendToCompileCommandsJSON(compilersGlobalPaths, compile_commands);
         }
     }
@@ -1554,7 +1554,7 @@ bool clCxxWorkspace::HasBacktick(const wxString& backtick) const { return m_back
 void clCxxWorkspace::SetBacktickValue(const wxString& backtick, const wxString& value)
 {
     m_backticks.erase(backtick);
-    m_backticks.insert({ backtick, value });
+    m_backticks.insert({backtick, value});
 }
 
 bool clCxxWorkspace::GetBacktickValue(const wxString& backtick, wxString& value) const

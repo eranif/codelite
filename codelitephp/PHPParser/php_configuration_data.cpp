@@ -75,7 +75,7 @@ wxString PHPConfigurationData::GetCCIncludePathsAsString() const
 PHPConfigurationData& PHPConfigurationData::Load()
 {
     clConfig conf("php.conf");
-    conf.ReadItem(this);
+    conf.ReadItem(*this);
 
     m_phpOptions.Load();
     return *this;
@@ -84,7 +84,7 @@ PHPConfigurationData& PHPConfigurationData::Load()
 void PHPConfigurationData::Save()
 {
     clConfig conf("php.conf");
-    conf.WriteItem(this);
+    conf.WriteItem(*this);
 
     m_phpOptions.Save();
 }

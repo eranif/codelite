@@ -90,14 +90,14 @@ JSONItem SFTPSessionInfoList::ToJSON() const
 SFTPSessionInfoList& SFTPSessionInfoList::Load()
 {
     clConfig conf("sftp-sessions.conf");
-    conf.ReadItem(this);
+    conf.ReadItem(*this);
     return *this;
 }
 
 SFTPSessionInfoList& SFTPSessionInfoList::Save()
 {
     clConfig conf("sftp-sessions.conf");
-    conf.WriteItem(this);
+    conf.WriteItem(*this);
     return *this;
 }
 

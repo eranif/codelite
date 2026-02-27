@@ -220,12 +220,12 @@ public:
 
     void SavaToConfig() {
         clConfig conf(MEMCHECK_CONFIG_FILE);
-        conf.WriteItem(this);
+        conf.WriteItem(*this);
     }
 
     void LoadFromConfig() {
         clConfig conf(MEMCHECK_CONFIG_FILE);
-        conf.ReadItem(this);
+        conf.ReadItem(*this);
     }
 };
 

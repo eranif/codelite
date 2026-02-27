@@ -14,14 +14,14 @@ LanguageServerConfig::LanguageServerConfig()
 LanguageServerConfig& LanguageServerConfig::Load()
 {
     clConfig conf("LanguageServer.conf");
-    conf.ReadItem(this);
+    conf.ReadItem(*this);
     return *this;
 }
 
 LanguageServerConfig& LanguageServerConfig::Save()
 {
     clConfig conf("LanguageServer.conf");
-    conf.WriteItem(this);
+    conf.WriteItem(*this);
     return *this;
 }
 

@@ -1614,7 +1614,7 @@ void MainBook::CreateSession(SessionEntry& session, wxArrayInt* excludeArr)
     // Set the "Find In Files" file mask for this workspace
     FindReplaceData frd;
     frd.SetName("FindInFilesData");
-    clConfig::Get().ReadItem(&frd);
+    clConfig::Get().ReadItem(frd);
     session.SetFindInFilesMask(frd.GetSelectedMask());
 }
 

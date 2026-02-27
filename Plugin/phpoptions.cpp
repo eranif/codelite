@@ -78,14 +78,14 @@ JSONItem PhpOptions::ToJSON() const
 PhpOptions& PhpOptions::Load()
 {
     clConfig config("php-general.conf");
-    config.ReadItem(this);
+    config.ReadItem(*this);
     return *this;
 }
 
 PhpOptions& PhpOptions::Save()
 {
     clConfig config("php-general.conf");
-    config.WriteItem(this);
+    config.WriteItem(*this);
 
     // Notify that the PHP settings were modified
     clCommandEvent event(wxEVT_PHP_SETTINGS_CHANGED);

@@ -86,13 +86,13 @@ JSONItem LintOptions::ToJSON() const
 LintOptions& LintOptions::Load()
 {
     clConfig config("phplint.conf");
-    config.ReadItem(this);
+    config.ReadItem(*this);
     return *this;
 }
 
 LintOptions& LintOptions::Save()
 {
     clConfig config("phplint.conf");
-    config.WriteItem(this);
+    config.WriteItem(*this);
     return *this;
 }

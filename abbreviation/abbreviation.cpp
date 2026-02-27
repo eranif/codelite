@@ -123,14 +123,14 @@ wxCodeCompletionBoxEntry::Vec_t AbbreviationPlugin::GetAbbreviations(const wxStr
     wxString lcFilter = filter.Lower();
 
     AbbreviationJSONEntry jsonData;
-    if (!m_config.ReadItem(&jsonData)) {
+    if (!m_config.ReadItem(jsonData)) {
         // merge the data from the old configuration
         AbbreviationEntry data;
         m_mgr->GetConfigTool()->ReadObject("AbbreviationsData", &data);
 
         jsonData.SetAutoInsert(data.GetAutoInsert());
         jsonData.SetEntries(data.GetEntries());
-        m_config.WriteItem(&jsonData);
+        m_config.WriteItem(jsonData);
     }
 
     wxCodeCompletionBoxEntry::Vec_t V;
@@ -170,14 +170,14 @@ void AbbreviationPlugin::InitDefaults()
 {
     // check to see if there are any abbreviations configured
     AbbreviationJSONEntry jsonData;
-    if (!m_config.ReadItem(&jsonData)) {
+    if (!m_config.ReadItem(jsonData)) {
         // merge the data from the old configuration
         AbbreviationEntry data;
         m_mgr->GetConfigTool()->ReadObject("AbbreviationsData", &data);
 
         jsonData.SetAutoInsert(data.GetAutoInsert());
         jsonData.SetEntries(data.GetEntries());
-        m_config.WriteItem(&jsonData);
+        m_config.WriteItem(jsonData);
     }
 
     // search for the old item
@@ -191,7 +191,7 @@ void AbbreviationPlugin::InitDefaults()
         entries["for_int"] = "for(int |=0; |<; ++|) {\n}\n";
         entries["for_php"] = "for($|=0; $|<; ++$|) {\n}\n";
         jsonData.SetEntries(entries);
-        m_config.WriteItem(&jsonData);
+        m_config.WriteItem(jsonData);
     }
     clKeyboardManager::Get()->AddAccelerator("abbrev_insert", _("Abbreviations"),
                                              _("Show abbreviations completion box"), "Ctrl-Alt-SPACE");
@@ -208,14 +208,14 @@ bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
     // search for abbreviation that matches str
     // prepare list of abbreviations
     AbbreviationJSONEntry jsonData;
-    if (!m_config.ReadItem(&jsonData)) {
+    if (!m_config.ReadItem(jsonData)) {
         // merge the data from the old configuration
         AbbreviationEntry data;
         m_mgr->GetConfigTool()->ReadObject("AbbreviationsData", &data);
 
         jsonData.SetAutoInsert(data.GetAutoInsert());
         jsonData.SetEntries(data.GetEntries());
-        m_config.WriteItem(&jsonData);
+        m_config.WriteItem(jsonData);
     }
 
     // search for the old item

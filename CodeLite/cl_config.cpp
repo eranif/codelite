@@ -153,11 +153,11 @@ void clConfig::DoDeleteProperty(const wxString& property)
     }
 }
 
-bool clConfig::ReadItem(clConfigItem* item, const wxString& differentName)
+bool clConfig::ReadItem(clConfigItem& item)
 {
-    wxString nameToUse = differentName.IsEmpty() ? item->GetName() : differentName;
-    if (m_root->toElement().hasNamedObject(nameToUse)) {
-        item->FromJSON(m_root->toElement().namedObject(nameToUse));
+    const wxString& name = item.GetName();
+    if (m_root->toElement().hasNamedObject(name)) {
+        item.FromJSON(m_root->toElement().namedObject(name));
         return true;
     }
     return false;
@@ -197,11 +197,11 @@ void clConfig::Read(const wxString& name,
     }
 }
 
-void clConfig::WriteItem(const clConfigItem* item, const wxString& differentName)
+void clConfig::WriteItem(const clConfigItem& item)
 {
-    wxString nameToUse = differentName.IsEmpty() ? item->GetName() : differentName;
-    DoDeleteProperty(nameToUse);
-    m_root->toElement().append(item->ToJSON());
+    const wxString& name = item.GetName();
+    DoDeleteProperty(name);
+    m_root->toElement().addProperty(name, item.ToJSON());
     m_root->save(m_filename);
 }
 

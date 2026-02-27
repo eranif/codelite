@@ -147,7 +147,7 @@ void PerspectiveManager::DoEnsureDebuggerPanesAreVisible()
     // are visible according to the configuration
     clConfig conf("debugger-view.conf");
     DebuggerPaneConfig item;
-    conf.ReadItem(&item);
+    conf.ReadItem(item);
 
     DoShowPane(item.WindowName(DebuggerPaneConfig::AsciiViewer), (item.GetWindows() & DebuggerPaneConfig::AsciiViewer),
                needUpdate);

@@ -130,7 +130,7 @@ GitBlamePage::GitBlamePage(wxWindow* parent, const wxString& fullpath)
 {
     clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
+    conf.ReadItem(data);
     InitialiseView();
     Bind(wxEVT_STC_MARGIN_RIGHT_CLICK, &GitBlamePage::OnMarginRightClick, this);
     Bind(wxEVT_IDLE, &GitBlamePage::OnIdle, this);
@@ -140,8 +140,8 @@ GitBlamePage::~GitBlamePage()
 {
     clConfig conf("git.conf");
     GitEntry data;
-    conf.ReadItem(&data);
-    conf.WriteItem(&data);
+    conf.ReadItem(data);
+    conf.WriteItem(data);
     Unbind(wxEVT_STC_MARGIN_RIGHT_CLICK, &GitBlamePage::OnMarginRightClick, this);
     Unbind(wxEVT_IDLE, &GitBlamePage::OnIdle, this);
 }

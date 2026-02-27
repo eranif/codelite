@@ -56,6 +56,7 @@ public:
     wxString GetText() const;
 
 protected:
+    bool CurrentEndpointHasHistory() const;
     void OnCharAdded(wxStyledTextEvent& event);
     void OnAutoScroll(wxCommandEvent& event);
     void OnAutoScrollUI(wxUpdateUIEvent& event);
@@ -64,7 +65,6 @@ protected:
     void OnDetachView(wxCommandEvent& event);
     void OnDetachViewUI(wxUpdateUIEvent& event);
     void OnHistory(wxCommandEvent& event);
-    void OnHistoryUI(wxUpdateUIEvent& event);
     void OnStop(wxCommandEvent& event);
     void OnStopUI(wxUpdateUIEvent& event);
     void OnInputUI(wxUpdateUIEvent& event) override;
@@ -73,9 +73,8 @@ protected:
     void OnClearOutputViewUI(wxUpdateUIEvent& event);
     void OnUpdateTheme(wxCommandEvent& event);
     void OnEndpointChanged(wxCommandEvent& event);
-    void OnCachePolicyChanged(wxCommandEvent& event);
-    void OnToolsEnabled(wxCommandEvent& event);
     void OnKeyDown(wxKeyEvent& event);
+    void OnOptions(wxAuiToolBarEvent& event);
     void OnNewSession(wxCommandEvent& event);
     void OnRestartClient(wxCommandEvent& event);
     void UpdateTheme();
@@ -108,8 +107,6 @@ protected:
 
 private:
     wxChoice* m_choiceEndpoints{nullptr};
-    wxChoice* m_choiceCachePolicy{nullptr};
-    wxCheckBox* m_checkboxEnableTools{nullptr};
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
     ChatState m_state{ChatState::kReady};
 #if wxCHECK_VERSION(3, 3, 0)

@@ -541,7 +541,14 @@ public:
      *
      * @return void This function does not return a value.
      */
-    void SetCachingPolicy(assistant::CachePolicy policy);
+    void SetCachingPolicy(llm::CachePolicy policy);
+    llm::CachePolicy GetCachingPolicy() const
+    {
+        if (!m_client) {
+            return llm::CachePolicy::kNone;
+        }
+        return m_client->GetCachingPolicy();
+    }
 
     /**
      * @brief Prints a message with an icon to the chat window.

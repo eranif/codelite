@@ -1149,7 +1149,7 @@ Manager::PromptUserYesNoTrustQuestion(const wxString& text, const wxString& code
     return result;
 }
 
-void Manager::SetCachingPolicy(assistant::CachePolicy policy)
+void Manager::SetCachingPolicy(llm::CachePolicy policy)
 {
     CHECK_PTR_RET(m_client);
     m_client->SetCachingPolicy(policy);

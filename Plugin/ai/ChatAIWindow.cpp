@@ -10,6 +10,7 @@
 #include "aui/clAuiToolBarArt.h"
 #include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clSTCHelper.hpp"
+#include "cl_aui_tool_stickness.h"
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -47,28 +48,17 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     m_choiceEndpoints->SetToolTip(_("Choose the endpoint to use"));
     m_toolbar->AddControl(m_choiceEndpoints);
 
-    control_size = wxSize{GetTextExtent("__" + llm::kCacheStaticContent + "__").GetWidth(), wxNOT_FOUND};
-    m_choiceCachePolicy = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, control_size);
-    m_choiceCachePolicy->SetToolTip(_("Choose the prompt caching policy"));
-    std::vector<wxString> cache_options{llm::kCacheAuto, llm::kCacheStaticContent, llm::kCacheNone};
-    m_choiceCachePolicy->Append(cache_options);
-    m_choiceCachePolicy->SetStringSelection(conf.GetCachePolicyString());
-    m_toolbar->AddControl(m_choiceCachePolicy);
-
     m_inputEditHelper = std::make_unique<clEditEventsHandler>(m_stcInput);
     m_outputEditHelper = std::make_unique<clEditEventsHandler>(m_stcOutput);
 
-    m_checkboxEnableTools = new wxCheckBox(m_toolbar, wxID_ANY, _("Enable Tools"));
-    m_checkboxEnableTools->SetToolTip(_("Enable Local MCP Tools for the LLM"));
-    m_checkboxEnableTools->SetValue(conf.AreToolsEnabled());
-    m_toolbar->AddControl(m_checkboxEnableTools);
-
-    m_toolbar->AddSeparator();
     clAuiToolBarArt::AddTool(m_toolbar, wxID_EXECUTE, _("Submit"), images->LoadBitmap("run"));
     clAuiToolBarArt::AddTool(m_toolbar, wxID_STOP, _("Stop"), images->LoadBitmap("execute_stop"));
     m_toolbar->AddSeparator();
     clAuiToolBarArt::AddTool(m_toolbar, wxID_REFRESH, _("Restart the client"), images->LoadBitmap("debugger_restart"));
-    clAuiToolBarArt::AddTool(m_toolbar, XRCID("chat_history"), _("Show chat history"), images->LoadBitmap("history"));
+    m_toolbar->AddSeparator();
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("wxID_SETTINGS"), _("Options"), images->LoadBitmap("cog"), wxEmptyString, wxITEM_DROPDOWN);
+
     clAuiToolBarArt::AddTool(m_toolbar,
                              XRCID("auto_scroll"),
                              _("Enable auto scrolling"),
@@ -79,9 +69,8 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     clAuiToolBarArt::Finalise(m_toolbar);
     m_toolbar->Realize();
 
+    m_toolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &ChatAIWindow::OnOptions, this, XRCID("wxID_SETTINGS"));
     m_choiceEndpoints->Bind(wxEVT_CHOICE, &ChatAIWindow::OnEndpointChanged, this);
-    m_choiceCachePolicy->Bind(wxEVT_CHOICE, &ChatAIWindow::OnCachePolicyChanged, this);
-    m_checkboxEnableTools->Bind(wxEVT_CHECKBOX, &ChatAIWindow::OnToolsEnabled, this);
 
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &ChatAIWindow::OnWorkspaceLoaded, this);
@@ -107,7 +96,6 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     Bind(wxEVT_MENU, &ChatAIWindow::OnSend, this, wxID_EXECUTE);
     Bind(wxEVT_MENU, &ChatAIWindow::OnStop, this, wxID_STOP);
     Bind(wxEVT_MENU, &ChatAIWindow::OnAutoScroll, this, XRCID("auto_scroll"));
-    Bind(wxEVT_MENU, &ChatAIWindow::OnHistory, this, XRCID("chat_history"));
     Bind(wxEVT_MENU, &ChatAIWindow::OnDetachView, this, XRCID("detach_view"));
 
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnDetachViewUI, this, XRCID("detach_view"));
@@ -115,9 +103,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnStopUI, this, wxID_STOP);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnClearOutputViewUI, this, wxID_CLEAR);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnAutoScrollUI, this, XRCID("auto_scroll"));
-    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnHistoryUI, this, XRCID("chat_history"));
     m_choiceEndpoints->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnBusyUI, this);
-    m_choiceCachePolicy->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnBusyUI, this);
     UpdateChoices();
 
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);
@@ -172,13 +158,88 @@ ChatAIWindow::~ChatAIWindow()
 
     auto& conf = llm::Manager::GetInstance().GetConfig();
     // Store the current session
-    conf.SetToolsEnabled(m_checkboxEnableTools->IsChecked());
     auto active_endpoint = llm::Manager::GetInstance().GetActiveEndpoint();
     if (active_endpoint.has_value()) {
         auto conversation = llm::Manager::GetInstance().GetConversation();
         conf.AddConversation(active_endpoint.value(), conversation);
     }
     conf.Save();
+}
+
+namespace
+{
+void SetCachePolicy(llm::CachePolicy policy)
+{
+    wxMessageBox("Setting cache policy: " + std::to_string((int)policy));
+    auto& llm_manager = llm::Manager::GetInstance();
+    auto& conf = llm_manager.GetConfig();
+    conf.SetCachePolicy(policy);
+    llm_manager.SetCachingPolicy(policy);
+    conf.Save();
+}
+} // namespace
+
+void ChatAIWindow::OnOptions(wxAuiToolBarEvent& event)
+{
+    if (!event.IsDropDownClicked()) {
+        return;
+    }
+
+    auto& llm_manager = llm::Manager::GetInstance();
+
+    wxMenu menu;
+    wxMenu* caching_policy_menu = new wxMenu;
+    auto& conf = llm_manager.GetConfig();
+    menu.Append(XRCID("wxID_TOOLS_ENABLED"), _("Enable MCP Tools"), wxEmptyString, wxITEM_CHECK)
+        ->Check(conf.AreToolsEnabled());
+    menu.Bind(
+        wxEVT_MENU,
+        [&conf](wxCommandEvent& e) {
+            conf.SetToolsEnabled(e.IsChecked());
+            conf.Save();
+        },
+        XRCID("wxID_TOOLS_ENABLED"));
+
+    caching_policy_menu->Append(XRCID("wxID_CACHING_POLICY_NONE"), _("None"), wxEmptyString, wxITEM_CHECK)
+        ->Check(llm_manager.GetCachingPolicy() == llm::CachePolicy::kNone);
+    caching_policy_menu->Append(XRCID("wxID_CACHING_POLICY_AUTO"), _("Auto"), wxEmptyString, wxITEM_CHECK)
+        ->Check(llm_manager.GetCachingPolicy() == llm::CachePolicy::kAuto);
+    caching_policy_menu
+        ->Append(XRCID("wxID_CACHING_POLICY_STATIC_CONTENT"), _("Static Content"), wxEmptyString, wxITEM_CHECK)
+        ->Check(llm_manager.GetCachingPolicy() == llm::CachePolicy::kStatic);
+
+    menu.Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            SetCachePolicy(llm::CachePolicy::kNone);
+        },
+        XRCID("wxID_CACHING_POLICY_NONE"));
+    menu.Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            SetCachePolicy(llm::CachePolicy::kAuto);
+        },
+        XRCID("wxID_CACHING_POLICY_AUTO"));
+    menu.Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            SetCachePolicy(llm::CachePolicy::kStatic);
+        },
+        XRCID("wxID_CACHING_POLICY_STATIC_CONTENT"));
+    menu.Append(wxID_ANY, _("Prompt Caching"), caching_policy_menu);
+    menu.AppendSeparator();
+    menu.Append(XRCID("chat_history"), _("Chat History"))->Enable(CurrentEndpointHasHistory());
+    menu.Bind(wxEVT_MENU, &ChatAIWindow::OnHistory, this, XRCID("chat_history"));
+
+    clAuiToolStickness stickness{m_toolbar, event.GetId()};
+    // line up our menu with the button
+    wxRect rect = m_toolbar->GetToolRect(event.GetId());
+    wxPoint pt = m_toolbar->ClientToScreen(rect.GetBottomLeft());
+    pt = ScreenToClient(pt);
+    PopupMenu(&menu, pt);
 }
 
 void ChatAIWindow::OnSend(wxCommandEvent& event)
@@ -225,23 +286,6 @@ void ChatAIWindow::OnSendUI(wxUpdateUIEvent& event)
     prompt.Trim().Trim(false);
     event.Enable(!llm::Manager::GetInstance().IsBusy() && !prompt.empty() &&
                  !m_choiceEndpoints->GetStringSelection().empty());
-}
-
-void ChatAIWindow::OnToolsEnabled(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    auto& conf = llm::Manager::GetInstance().GetConfig();
-    conf.SetToolsEnabled(m_checkboxEnableTools->IsChecked());
-    conf.Save();
-}
-
-void ChatAIWindow::OnCachePolicyChanged(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    auto& conf = llm::Manager::GetInstance().GetConfig();
-    conf.SetCachePolicy(m_choiceCachePolicy->GetStringSelection());
-    conf.Save();
-    llm::Manager::GetInstance().SetCachingPolicy(conf.GetCachePolicy());
 }
 
 void ChatAIWindow::OnEndpointChanged(wxCommandEvent& event)
@@ -591,12 +635,12 @@ void ChatAIWindow::OnHistory(wxCommandEvent& event)
     m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 
-void ChatAIWindow::OnHistoryUI(wxUpdateUIEvent& event)
+bool ChatAIWindow::CurrentEndpointHasHistory() const
 {
-    const auto& config = llm::Manager::GetInstance().GetConfig();
     auto active_endpoint = llm::Manager::GetInstance().GetActiveEndpoint();
-    event.Enable(active_endpoint.has_value() && !config.GetHistory(active_endpoint.value()).empty() &&
-                 m_state == ChatState::kReady);
+    auto& config = llm::Manager::GetInstance().GetConfig();
+    return active_endpoint.has_value() && !config.GetHistory(active_endpoint.value()).empty() &&
+           m_state == ChatState::kReady;
 }
 
 void ChatAIWindow::OnStop(wxCommandEvent& event)

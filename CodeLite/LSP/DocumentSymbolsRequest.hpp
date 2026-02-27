@@ -22,14 +22,17 @@ public:
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
 
 private:
-    size_t m_context = CONTEXT_NONE;
+    size_t m_context = CONTEXT_NONE;                              
+    LSPEvent CreateLSPEvent(const std::vector<LSP::DocumentSymbol>& documentSymbols,
+                            const std::vector<LSP::SymbolInformation>& symbolsInformation,
+                            const wxString& filename,
+                            const wxEventType& event_type);   
+               
     void QueueEvent(wxEvtHandler* owner,
-                    const std::vector<LSP::SymbolInformation>& symbols,
+                    const std::vector<LSP::DocumentSymbol>& documentSymbols,
+                    const std::vector<LSP::SymbolInformation>& symbolsInformation,
                     const wxString& filename,
                     const wxEventType& event_type);
-    LSPEvent CreateLSPEvent(const std::vector<LSP::SymbolInformation>& symbols,
-                            const wxString& filename,
-                            const wxEventType& event_type);
 };
 } // namespace LSP
 #endif // DOCUMDENET_SYMBOLS_REQUEST_HPP

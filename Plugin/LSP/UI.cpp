@@ -435,29 +435,6 @@ LSPOutlineViewDlgBase::LSPOutlineViewDlgBase(
     wxBoxSizer* boxSizer151 = new wxBoxSizer(wxVERTICAL);
     this->SetSizer(boxSizer151);
 
-    m_panel155 = new wxPanel(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxTAB_TRAVERSAL);
-
-    boxSizer151->Add(m_panel155, 1, wxEXPAND, WXC_FROM_DIP(5));
-
-    wxBoxSizer* boxSizer157 = new wxBoxSizer(wxVERTICAL);
-    m_panel155->SetSizer(boxSizer157);
-
-    m_textCtrlFilter = new clThemedTextCtrl(
-        m_panel155, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel155, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlFilter->SetHint(wxT(""));
-#endif
-
-    boxSizer157->Add(m_textCtrlFilter, 0, wxEXPAND, WXC_FROM_DIP(2));
-
-    m_dvTreeCtrll = new clTerminalViewCtrl(m_panel155,
-                                           wxID_ANY,
-                                           wxDefaultPosition,
-                                           wxDLG_UNIT(m_panel155, wxSize(-1, -1)),
-                                           wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
-
-    boxSizer157->Add(m_dvTreeCtrll, 1, wxEXPAND, WXC_FROM_DIP(2));
-
     SetName(wxT("LSPOutlineViewDlgBase"));
     SetSize(wxDLG_UNIT(this, wxSize(500, 300)));
     if (GetSizer()) {
@@ -473,22 +450,9 @@ LSPOutlineViewDlgBase::LSPOutlineViewDlgBase(
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
-    // Connect events
-    m_textCtrlFilter->Bind(wxEVT_COMMAND_TEXT_UPDATED, &LSPOutlineViewDlgBase::OnTextUpdated, this);
-    m_textCtrlFilter->Bind(wxEVT_COMMAND_TEXT_ENTER, &LSPOutlineViewDlgBase::OnEnter, this);
-    m_textCtrlFilter->Bind(wxEVT_KEY_DOWN, &LSPOutlineViewDlgBase::OnKeyDown, this);
-    m_dvTreeCtrll->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &LSPOutlineViewDlgBase::OnItemActivated, this);
-    m_dvTreeCtrll->Bind(wxEVT_KEY_DOWN, &LSPOutlineViewDlgBase::OnListKeyDown, this);
 }
 
-LSPOutlineViewDlgBase::~LSPOutlineViewDlgBase()
-{
-    m_textCtrlFilter->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &LSPOutlineViewDlgBase::OnTextUpdated, this);
-    m_textCtrlFilter->Unbind(wxEVT_COMMAND_TEXT_ENTER, &LSPOutlineViewDlgBase::OnEnter, this);
-    m_textCtrlFilter->Unbind(wxEVT_KEY_DOWN, &LSPOutlineViewDlgBase::OnKeyDown, this);
-    m_dvTreeCtrll->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &LSPOutlineViewDlgBase::OnItemActivated, this);
-    m_dvTreeCtrll->Unbind(wxEVT_KEY_DOWN, &LSPOutlineViewDlgBase::OnListKeyDown, this);
-}
+LSPOutlineViewDlgBase::~LSPOutlineViewDlgBase() {}
 
 LanguageServerLogViewBase::LanguageServerLogViewBase(
     wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)

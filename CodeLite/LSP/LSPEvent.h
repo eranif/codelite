@@ -27,6 +27,7 @@ protected:
     LSP::Hover m_hover;
     std::vector<LSP::Diagnostic> m_diagnostics;
     std::vector<LSP::SymbolInformation> m_symbolsInformation;
+    std::vector<LSP::DocumentSymbol> m_documentSymbols;
     std::vector<LSP::SemanticTokenRange> m_semanticTokens;
     std::vector<LSP::Location> m_locations;                             // used by wxEVT_LSP_REFERENCES
     std::vector<LSP::Command> m_commands;                               // used by wxEVT_LSP_CODE_ACTIONS
@@ -100,6 +101,12 @@ public:
     }
     const std::vector<LSP::SymbolInformation>& GetSymbolsInformation() const { return m_symbolsInformation; }
     std::vector<LSP::SymbolInformation>& GetSymbolsInformation() { return m_symbolsInformation; }
+    void SetDocumentSymbols(const std::vector<LSP::DocumentSymbol>& documentSymbols)
+    {
+        this->m_documentSymbols = documentSymbols;
+    }
+    const std::vector<LSP::DocumentSymbol>& GetDocumentSymbols() const { return m_documentSymbols; }
+    std::vector<LSP::DocumentSymbol>& GetDocumentSymbols() { return m_documentSymbols; }
     void SetLocations(const std::vector<LSP::Location>& locations) { this->m_locations = locations; }
     const std::vector<LSP::Location>& GetLocations() const { return m_locations; }
     std::vector<LSP::Location>& GetLocations() { return m_locations; }
@@ -124,6 +131,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLIN
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_SYMBOLS_LLM, LSPEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_SYMBOLS_REQUESTED, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_RESTART_NEEDED, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_REPARSE_NEEDED, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_METHOD_NOT_FOUND, LSPEvent);

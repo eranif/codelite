@@ -229,6 +229,9 @@ void Manager::ShowOutlineView(IEditor* editor)
         EventNotifier::Get()->AddPendingEvent(evt);
         return;
     }
+    // show the outline dialog immediately and update it once we receive symbols
+    LSPEvent dummy;
+    ShowQuickOutlineDialog(dummy);
 
     auto cb = [this](const LSPEvent& event) {
         clGetManager()->SetStatusMessage(_("Showing outline view dialog"), 1);
@@ -375,6 +378,7 @@ bool Manager::RequestSymbolsForEditor(IEditor* editor, std::function<void(const 
     auto server = GetServerForEditor(editor);
     CHECK_PTR_RET_FALSE(server);
     CHECK_COND_RET_FALSE(server->IsDocumentSymbolsSupported());
+        
     clGetManager()->SetStatusMessage(_("Requesting document symbols from LSP server..."), 1);
     server->DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW, std::move(cb));
     return true;
@@ -1056,7 +1060,15 @@ void Manager::ShowQuickOutlineDialog(const LSPEvent& event)
     if (m_quick_outline_dlg == nullptr) {
         m_quick_outline_dlg = new LSPOutlineViewDlg(EventNotifier::Get()->TopFrame());
     }
-    m_quick_outline_dlg->SetSymbols(event.GetSymbolsInformation());
+    if (!event.GetDocumentSymbols().empty()) {        
+        m_quick_outline_dlg->GetOutlineView()->SetSymbols(event.GetDocumentSymbols(), event.GetFileName());
+    }
+    else if (!event.GetSymbolsInformation().empty()) {
+        m_quick_outline_dlg->GetOutlineView()->SetSymbols(event.GetSymbolsInformation(), event.GetFileName());        
+    }
+    else {
+        m_quick_outline_dlg->GetOutlineView()->SetEmptySymbols();
+    }
     if (!m_quick_outline_dlg->IsShown()) {
         m_quick_outline_dlg->Show();
         // reposition the window
@@ -1207,35 +1219,79 @@ void Manager::OnDocumentSymbolsForHighlight(LSPEvent& event)
     }
     CHECK_PTR_RET(editor);
 
-    const auto& symbols = event.GetSymbolsInformation();
     wxString classes, variables, methods, others;
-    for (const auto& si : symbols) {
-        switch (si.GetKind()) {
-        case LSP::kSK_Module:
-        case LSP::kSK_Namespace:
-        case LSP::kSK_Package:
-        case LSP::kSK_Class:
-        case LSP::kSK_Enum:
-        case LSP::kSK_Interface:
-        case LSP::kSK_Struct:
-        case LSP::kSK_Object:
-            classes << si.GetName() << " ";
-            break;
-        case LSP::kSK_Method:
-        case LSP::kSK_Function:
-            methods << si.GetName() << " ";
-            break;
-        case LSP::kSK_TypeParameter:
-            others << si.GetName() << " ";
-            break;
-        case LSP::kSK_EnumMember:
-        case LSP::kSK_Property:
-        case LSP::kSK_Field:
-        case LSP::kSK_Variable:
-        case LSP::kSK_Constant:
-            variables << si.GetName() << " ";
-        default:
-            break;
+    
+    // lambda to recursively parse a DocumentSymbol hierarchy
+    std::function<void(const DocumentSymbol&)> parseDocumentSymbolRec = [&](const DocumentSymbol& symbol) {        
+        switch (symbol.GetKind()) {
+            case LSP::kSK_Module:
+            case LSP::kSK_Namespace:
+            case LSP::kSK_Package:
+            case LSP::kSK_Class:
+            case LSP::kSK_Enum:
+            case LSP::kSK_Interface:
+            case LSP::kSK_Struct:
+            case LSP::kSK_Object:
+                classes << symbol.GetName() << " ";
+                break;
+            case LSP::kSK_Method:
+            case LSP::kSK_Function:
+                methods << symbol.GetName() << " ";
+                break;
+            case LSP::kSK_TypeParameter:
+                others << symbol.GetName() << " ";
+                break;
+            case LSP::kSK_EnumMember:
+            case LSP::kSK_Property:
+            case LSP::kSK_Field:
+            case LSP::kSK_Variable:
+            case LSP::kSK_Constant:
+                variables << symbol.GetName() << " ";
+            default:
+                break;
+        }
+        
+        for (const auto& child : symbol.GetChildren()) {
+            parseDocumentSymbolRec(child);
+        }
+    };
+    
+    if (!event.GetDocumentSymbols().empty()) {
+        // event included DocumentSymbols, use those
+        for (const auto& ds : event.GetDocumentSymbols()) {
+            parseDocumentSymbolRec(ds);
+        }
+    }
+    else if (!event.GetSymbolsInformation().empty()) {
+        // event included SymbolInformation instead
+        for (const auto& si : event.GetSymbolsInformation()) {
+            switch (si.GetKind()) {
+            case LSP::kSK_Module:
+            case LSP::kSK_Namespace:
+            case LSP::kSK_Package:
+            case LSP::kSK_Class:
+            case LSP::kSK_Enum:
+            case LSP::kSK_Interface:
+            case LSP::kSK_Struct:
+            case LSP::kSK_Object:
+                classes << si.GetName() << " ";
+                break;
+            case LSP::kSK_Method:
+            case LSP::kSK_Function:
+                methods << si.GetName() << " ";
+                break;
+            case LSP::kSK_TypeParameter:
+                others << si.GetName() << " ";
+                break;
+            case LSP::kSK_EnumMember:
+            case LSP::kSK_Property:
+            case LSP::kSK_Field:
+            case LSP::kSK_Variable:
+            case LSP::kSK_Constant:
+                variables << si.GetName() << " ";
+            default:
+                break;
+            }
         }
     }
     LSP_DEBUG() << "Setting semantic highlight (using DocumentSymbolsRequest):" << endl;

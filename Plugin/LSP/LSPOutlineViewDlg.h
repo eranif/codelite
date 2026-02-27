@@ -1,35 +1,21 @@
 #ifndef LSPOUTLINEVIEWDLG_H
 #define LSPOUTLINEVIEWDLG_H
 
-#include "LSP/basic_types.h"
+#include "LSPOutlineView.h"
+#include "codelite_events.h"
+#include "event_notifier.h"
 #include "UI.h"
-#include "codelite_exports.h"
-
-#include <vector>
 
 using namespace LSP;
 
 class WXDLLIMPEXP_SDK LSPOutlineViewDlg : public LSPOutlineViewDlgBase
 {
-    std::vector<SymbolInformation> m_symbols;
-
 private:
-    void DoSelectionActivate();
-    void DoFindNext();
-    void DoFindPrev();
-    void DoInitialise();
-
+    LSPOutlineView* m_outlineView = nullptr;
+    void OnDismiss(wxCommandEvent& event);
 public:
     LSPOutlineViewDlg(wxWindow* parent);
     virtual ~LSPOutlineViewDlg() = default;
-
-    void SetSymbols(const std::vector<SymbolInformation>& symbols);
-
-protected:
-    virtual void OnListKeyDown(wxKeyEvent& event);
-    virtual void OnKeyDown(wxKeyEvent& event);
-    virtual void OnItemActivated(wxDataViewEvent& event);
-    virtual void OnEnter(wxCommandEvent& event);
-    virtual void OnTextUpdated(wxCommandEvent& event);
+    LSPOutlineView* GetOutlineView() { return m_outlineView; }
 };
 #endif // LSPOUTLINEVIEWDLG_H

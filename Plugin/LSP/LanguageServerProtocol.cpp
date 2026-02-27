@@ -453,6 +453,7 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
         wxString fileContent = editor->GetEditorText();
         SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
         SendSemanticTokensRequest(editor);
+            
         // cache symbols
         DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW, nullptr);
     }
@@ -752,6 +753,10 @@ void LanguageServerProtocol::DocumentSymbols(IEditor* editor,
     CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
 
+    // send an event to notify the outline that symbols are requested
+    LSPEvent event(wxEVT_LSP_DOCUMENT_SYMBOLS_REQUESTED);
+    EventNotifier::Get()->AddPendingEvent(event);
+        
     const wxString& filename = GetEditorFilePath(editor);
     LSP::MessageWithParams::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::DocumentSymbolsRequest(filename, context_flags));

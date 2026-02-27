@@ -14,8 +14,12 @@
 #include <wx/panel.h>
 #include <wx/artprov.h>
 #include <wx/sizer.h>
+#include <wx/activityindicator.h>
+#include <wx/stattext.h>
 #include <wx/dataview.h>
 #include "clTerminalViewCtrl.hpp"
+#include <wx/treectrl.h>
+#include "clTreeCtrl.h"
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
 #include <wx/persist/toplevel.h>
@@ -37,15 +41,22 @@
 class OutlineTabBaseClass : public wxPanel
 {
 protected:
-    clTerminalViewCtrl* m_dvListCtrl;
+    wxPanel* m_messagePanel;
+    wxActivityIndicator* m_activityCtrl;
+    wxStaticText* m_staticTextMessage;
+    clTerminalViewCtrl* m_terminalViewCtrl;
+    clTreeCtrl* m_treeCtrl;
 
 protected:
     virtual void OnItemSelected(wxDataViewEvent& event) { event.Skip(); }
 
 public:
-    clTerminalViewCtrl* GetDvListCtrl() { return m_dvListCtrl; }
-    OutlineTabBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                        const wxSize& size = wxSize(-1, -1), long style = wxTAB_TRAVERSAL | wxBORDER_NONE);
+    wxActivityIndicator* GetActivityCtrl() { return m_activityCtrl; }
+    wxStaticText* GetStaticTextMessage() { return m_staticTextMessage; }
+    wxPanel* GetMessagePanel() { return m_messagePanel; }
+    clTerminalViewCtrl* GetTerminalViewCtrl() { return m_terminalViewCtrl; }
+    clTreeCtrl* GetTreeCtrl() { return m_treeCtrl; }
+    OutlineTabBaseClass(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxSize(-1,-1), long style = wxTAB_TRAVERSAL|wxBORDER_NONE);
     virtual ~OutlineTabBaseClass();
 };
 

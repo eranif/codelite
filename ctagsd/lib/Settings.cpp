@@ -104,7 +104,7 @@ void CTagsdSettings::Load(const wxFileName& filepath)
 
 void CTagsdSettings::Save(const wxFileName& filepath)
 {
-    JSON config_file(cJSON_Object);
+    JSON config_file(JsonType::Object);
     auto config = config_file.toElement();
     config.addProperty("file_mask", m_file_mask);
     config.addProperty("ignore_spec", m_ignore_spec);

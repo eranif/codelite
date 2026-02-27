@@ -259,7 +259,7 @@ TEST_CASE("object json")
 
 TEST_CASE("array append")
 {
-    JSON json(cJSON_Array);
+    JSON json(JsonType::Array);
     auto item = json.toElement();
     item.arrayAppend(4.2);
     item.arrayAppend(51);
@@ -273,7 +273,7 @@ TEST_CASE("array append")
 
 TEST_CASE("object append/remove")
 {
-    JSON json(cJSON_Object);
+    JSON json(JsonType::Object);
     auto item = json.toElement();
     item.addProperty("key1", true);
     item.addProperty("key2", 51);

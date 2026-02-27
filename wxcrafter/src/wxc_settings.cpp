@@ -44,7 +44,7 @@ void wxcSettings::Save()
 {
     wxFileName fn(wxCrafter::GetConfigFile());
 
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
     m_flags &= ~USE_TABBED_MODE;
     root.toElement().addProperty("m_annoyDialogs", (int)m_flags);
     root.toElement().addProperty("m_sashPosition", m_sashPosition);

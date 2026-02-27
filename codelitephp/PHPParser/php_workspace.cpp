@@ -378,7 +378,7 @@ void PHPWorkspace::Save()
         return;
     }
     // serialize the workspace and store it to disk
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
     JSONItem ele = root.toElement();
     ToJSON(ele);
     root.save(m_workspaceFile);
@@ -400,7 +400,7 @@ bool PHPWorkspace::Create(const wxString& filename)
     }
 
     // create it
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
     JSONItem ele = root.toElement();
     ToJSON(ele);
     root.save(fn);

@@ -378,7 +378,7 @@ wxFileName CompilationDatabase::ConvertCodeLiteCompilationDatabaseToCMake(const 
         if(content.IsEmpty())
             return wxFileName();
 
-        JSON root(cJSON_Array);
+        JSON root(JsonType::Array);
         JSONItem arr = root.toElement();
         wxArrayString lines = ::wxStringTokenize(content, "\n\r", wxTOKEN_STRTOK);
         for(size_t i = 0; i < lines.GetCount(); ++i) {

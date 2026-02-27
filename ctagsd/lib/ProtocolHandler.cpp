@@ -147,7 +147,7 @@ ProtocolHandler::~ProtocolHandler() { m_parse_thread.stop(); }
 
 void ProtocolHandler::send_log_message(const wxString& message, int level, Channel::ptr_t channel)
 {
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
     JSONItem notification = root.toElement();
     notification.addProperty("method", "window/logMessage");
     notification.addProperty("jsonrpc", "2.0");
@@ -158,12 +158,12 @@ void ProtocolHandler::send_log_message(const wxString& message, int level, Chann
     channel->write_reply(notification.format(false));
 }
 
-JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id, int result_kind)
+JSONItem ProtocolHandler::build_result(JSONItem& reply, size_t id, JsonType result_kind)
 {
     reply.addProperty("id", id);
     reply.addProperty("jsonrpc", "2.0");
 
-    auto result = result_kind == cJSON_Array ? reply.AddArray("result") : reply.AddObject("result");
+    auto result = result_kind == JsonType::Array ? reply.AddArray("result") : reply.AddObject("result");
     return result;
 }
 
@@ -353,9 +353,9 @@ bool ProtocolHandler::ensure_file_content_exists(const wxString& filepath, Chann
             send_log_message(
                 wxString() << _("File: `") << filepath << _("` is not opened on the server"), LSP_LOG_WARNING, channel);
 
-            JSON root(cJSON_Object);
+            JSON root(JsonType::Object);
             auto response = root.toElement();
-            auto result = build_result(response, req_id, cJSON_Object);
+            auto result = build_result(response, req_id, JsonType::Object);
             channel->write_reply(response);
             return false;
         }
@@ -427,9 +427,9 @@ void ProtocolHandler::on_initialize(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
     auto json = msg->toElement();
     size_t id = json["id"].toSize_t();
 
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
     JSONItem response = root.toElement();
-    auto result = build_result(response, id, cJSON_Object);
+    auto result = build_result(response, id, JsonType::Object);
 
     auto capabilities = result.AddObject("capabilities");
     capabilities.addProperty("completionProvider", true);
@@ -807,9 +807,9 @@ void ProtocolHandler::on_completion(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
         }
         clDEBUG() << "Success" << endl;
         clDEBUG() << "Building reply..." << endl;
-        JSON root(cJSON_Object);
+        JSON root(JsonType::Object);
         JSONItem response = root.toElement();
-        auto result = build_result(response, id, cJSON_Object);
+        auto result = build_result(response, id, JsonType::Object);
 
         result.addProperty("isIncomplete", false);
         auto items = result.AddArray("items");
@@ -1058,9 +1058,9 @@ void ProtocolHandler::on_semantic_tokens(std::unique_ptr<JSON>&& msg, Channel::p
 
     // build the response
     size_t id = json["id"].toSize_t();
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
     JSONItem response = root.toElement();
-    auto result = build_result(response, id, cJSON_Object);
+    auto result = build_result(response, id, JsonType::Object);
 
     std::vector<int> encoding;
     encoding.reserve(5 * tokens_vec.size());
@@ -1085,9 +1085,9 @@ void ProtocolHandler::on_workspace_symbol(std::unique_ptr<JSON>&& msg, Channel::
     TagsManagerST::Get()->GetTagsByPartialNames(parts, tags);
 
     // build the reply
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
     auto response = root.toElement();
-    auto result = build_result(response, id, cJSON_Array);
+    auto result = build_result(response, id, JsonType::Array);
 
     auto symbols = LSPUtils::to_symbol_information_array(tags, false);
     for (const LSP::SymbolInformation& symbol : symbols) {
@@ -1133,9 +1133,9 @@ void ProtocolHandler::on_document_symbol(std::unique_ptr<JSON>&& msg, Channel::p
     tags.swap(tags_no_parameters);
 
     // tags are sorted by line number, just wrap them in JSON and send them over to the client
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
     auto response = root.toElement();
-    auto result = build_result(response, id, cJSON_Array);
+    auto result = build_result(response, id, JsonType::Array);
 
     auto symbols = LSPUtils::to_symbol_information_array(tags, true);
     for (const LSP::SymbolInformation& symbol : symbols) {
@@ -1218,7 +1218,7 @@ void ProtocolHandler::on_document_signature_help(std::unique_ptr<JSON>&& msg, Ch
         }
         sh.SetSignatures(signatures);
     }
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
     JSONItem response = root.toElement();
     auto result = sh.ToJSON("result");
     response.addProperty("id", id);
@@ -1352,9 +1352,9 @@ void ProtocolHandler::on_hover(std::unique_ptr<JSON>&& msg, Channel::ptr_t chann
         }
     }
 
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
     JSONItem response = root.toElement();
-    auto result = build_result(response, id, cJSON_Object);
+    auto result = build_result(response, id, JsonType::Object);
     auto contents = result.AddObject("contents");
     contents.addProperty("kind", "markdown");
     contents.addProperty("value", tooltip);
@@ -1436,7 +1436,7 @@ void ProtocolHandler::do_definition(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
     do_find_definition_tags(std::move(msg), channel, try_definition_first, tags, &file_match);
 
     // build the result
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
     JSONItem response = root.toElement();
     response.addProperty("id", id);
     response.addProperty("jsonrpc", "2.0");

@@ -24,7 +24,7 @@ ImportThemesDialog::ImportThemesDialog(wxWindow* parent)
 ImportThemesDialog::~ImportThemesDialog()
 {
     wxFileName config_file(wxStandardPaths::Get().GetUserDataDir(), "theme-importer.json");
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
     auto json = root.toElement();
     json.addProperty("output_directory", m_dirPickerOut->GetPath());
     json.addProperty("themes_directory", m_dirPickerIn->GetPath());

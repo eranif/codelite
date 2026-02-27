@@ -57,7 +57,7 @@ clKeyboardBindingConfig& clKeyboardBindingConfig::Load()
 
 clKeyboardBindingConfig& clKeyboardBindingConfig::Save()
 {
-    JSON root(cJSON_Object);
+    JSON root(JsonType::Object);
     JSONItem mainObj = root.toElement();
 
     // set the version

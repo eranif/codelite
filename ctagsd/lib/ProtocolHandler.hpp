@@ -48,7 +48,7 @@ private:
     ParseThread m_parse_thread;
 
 private:
-    JSONItem build_result(JSONItem& reply, size_t id, int result_kind);
+    JSONItem build_result(JSONItem& reply, size_t id, JsonType result_kind);
 
     /**
      * @brief parse source file

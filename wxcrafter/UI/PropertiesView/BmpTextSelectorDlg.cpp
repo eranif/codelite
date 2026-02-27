@@ -70,7 +70,7 @@ BmpTextVec_t BmpTextSelectorDlg::FromString(const wxString& text)
 
 wxString BmpTextSelectorDlg::ToString(const BmpTextVec_t& vec)
 {
-    JSON root(cJSON_Array);
+    JSON root(JsonType::Array);
     for (const auto& [bmp, label] : vec) {
         JSONItem element = JSONItem::createObject();
         element.addProperty("bmp", bmp);

@@ -181,10 +181,6 @@ void SetCachePolicy(llm::CachePolicy policy)
 
 void ChatAIWindow::OnOptions(wxAuiToolBarEvent& event)
 {
-    if (!event.IsDropDownClicked()) {
-        return;
-    }
-
     auto& llm_manager = llm::Manager::GetInstance();
 
     wxMenu menu;

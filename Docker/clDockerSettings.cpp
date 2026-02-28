@@ -1,6 +1,5 @@
 #include "clDockerSettings.h"
 
-#include "StdToWX.h"
 #include "cl_standard_paths.h"
 #include "fileutils.h"
 
@@ -12,7 +11,7 @@ clDockerSettings::clDockerSettings()
     : clConfigItem("Docker")
 {
     // The defaults
-    wxArrayString hints = StdToWX::ToArrayString({ "/usr/local/bin", "/usr/bin" });
+    wxArrayString hints = {"/usr/local/bin", "/usr/bin"};
 #ifdef __WXMSW__
     {
         wxRegKey regkey(wxRegKey::HKCU, "Environment");

@@ -31,7 +31,6 @@
 #include "GitReleaseNotesGenerationDlg.h"
 #include "GitResetDlg.h"
 #include "MarkdownStyler.hpp"
-#include "StdToWX.h"
 #include "StringUtils.h"
 #include "ai/LLMManager.hpp"
 #include "ai/ProgressToken.hpp"
@@ -558,8 +557,7 @@ void GitConsole::OnFileActivated(wxDataViewEvent& event)
 
     wxString difftool = data.GetDifftool();
     if (difftool.empty()) {
-        const wxArrayString wx_options =
-            StdToWX::ToArrayString({"built-in", "vimdiff", "vimdiff1", "vimdiff2", "vimdiff3", "winmerge"});
+        const wxArrayString wx_options = {"built-in", "vimdiff", "vimdiff1", "vimdiff2", "vimdiff3", "winmerge"};
         difftool = ::wxGetSingleChoice(_("Choose a tool to use:"), "CodeLite", wx_options, 0);
         if (difftool.empty()) {
             // user hit cancel

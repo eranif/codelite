@@ -3,21 +3,17 @@
 #include "Properties/bitmap_picker_property.h"
 #include "Properties/choice_property.h"
 #include "Properties/string_property.h"
-#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
-
-#include <wx/taskbar.h>
 
 TaskBarIconWrapper::TaskBarIconWrapper()
     : wxcWidget(ID_WXTASKBARICON)
 {
     m_styles.Clear();
     Add<StringProperty>(PROP_TOOLTIP, _("Set the wxTaskBarIcon tooltip"));
-    const wxArrayString types =
-        StdToWX::ToArrayString({ "wxTBI_DEFAULT_TYPE", "wxTBI_DOCK", "wxTBI_CUSTOM_STATUSITEM" });
+    const wxArrayString types = {"wxTBI_DEFAULT_TYPE", "wxTBI_DOCK", "wxTBI_CUSTOM_STATUSITEM"};
 
     SetPropertyString(_("Common Settings"), "wxTaskBarIcon");
     Add<ChoiceProperty>(PROP_TASKBAR_ICONTYPE, types, 0, _("The iconType is only applicable on wxOSX_Cocoa"));

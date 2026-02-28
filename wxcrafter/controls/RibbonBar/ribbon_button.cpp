@@ -3,7 +3,6 @@
 #include "Properties/bitmap_picker_property.h"
 #include "Properties/choice_property.h"
 #include "Properties/string_property.h"
-#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_bitmaploader.h"
@@ -12,8 +11,8 @@
 RibbonButtonBase::RibbonButtonBase(int type)
     : wxcWidget(type)
 {
-    const wxArrayString kind = StdToWX::ToArrayString(
-        { "wxRIBBON_BUTTON_NORMAL", "wxRIBBON_BUTTON_DROPDOWN", "wxRIBBON_BUTTON_HYBRID", "wxRIBBON_BUTTON_TOGGLE" });
+    const wxArrayString kind = {
+        "wxRIBBON_BUTTON_NORMAL", "wxRIBBON_BUTTON_DROPDOWN", "wxRIBBON_BUTTON_HYBRID", "wxRIBBON_BUTTON_TOGGLE"};
 
     m_isButtonBar = !(type == ID_WXRIBBONTOOL || type == ID_WXRIBBONDROPDOWNTOOL || type == ID_WXRIBBONHYBRIDTOOL ||
                       type == ID_WXRIBBONTOGGLETOOL);

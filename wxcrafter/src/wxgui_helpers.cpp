@@ -1,8 +1,5 @@
 #include "wxgui_helpers.h"
 
-#include "StdToWX.h"
-#include "cl_command_event.h"
-#include "file_logger.h"
 #include "macros.h"
 #include "main.h"
 #include "map"
@@ -11,16 +8,12 @@
 #include "wxc_project_metadata.h"
 #include "xmlutils.h"
 
-#include <algorithm>
 #include <wx/app.h>
 #include <wx/arrstr.h>
 #include <wx/ffile.h>
 #include <wx/filename.h>
 #include <wx/headercol.h>
-#include <wx/log.h>
-#include <wx/msgdlg.h>
 #include <wx/propgrid/advprops.h>
-#include <wx/propgrid/propgrid.h>
 #include <wx/regex.h>
 #include <wx/settings.h>
 #include <wx/sstream.h>
@@ -340,33 +333,33 @@ wxString wxCrafter::CamelCase(const wxString& str)
     return fooname;
 }
 
-static const wxArrayString s_colorNames = StdToWX::ToArrayString({ "AppWorkspace",
-                                                                   "ActiveBorder",
-                                                                   "ActiveCaption",
-                                                                   "ButtonFace",
-                                                                   "ButtonHighlight",
-                                                                   "ButtonShadow",
-                                                                   "ButtonText",
-                                                                   "CaptionText",
-                                                                   "ControlDark",
-                                                                   "ControlLight",
-                                                                   "Desktop",
-                                                                   "GrayText",
-                                                                   "Highlight",
-                                                                   "HighlightText",
-                                                                   "InactiveBorder",
-                                                                   "InactiveCaption",
-                                                                   "InactiveCaptionText",
-                                                                   "Menu",
-                                                                   "Scrollbar",
-                                                                   "Tooltip",
-                                                                   "TooltipText",
-                                                                   "Window",
-                                                                   "WindowFrame",
-                                                                   "WindowText",
-                                                                   "Custom" });
+static const wxArrayString s_colorNames = {"AppWorkspace",
+                                           "ActiveBorder",
+                                           "ActiveCaption",
+                                           "ButtonFace",
+                                           "ButtonHighlight",
+                                           "ButtonShadow",
+                                           "ButtonText",
+                                           "CaptionText",
+                                           "ControlDark",
+                                           "ControlLight",
+                                           "Desktop",
+                                           "GrayText",
+                                           "Highlight",
+                                           "HighlightText",
+                                           "InactiveBorder",
+                                           "InactiveCaption",
+                                           "InactiveCaptionText",
+                                           "Menu",
+                                           "Scrollbar",
+                                           "Tooltip",
+                                           "TooltipText",
+                                           "Window",
+                                           "WindowFrame",
+                                           "WindowText",
+                                           "Custom"};
 
-static const wxArrayString s_colorSysNames = StdToWX::ToArrayString({
+static const wxArrayString s_colorSysNames = {
     "wxSYS_COLOUR_APPWORKSPACE",
     "wxSYS_COLOUR_ACTIVEBORDER",
     "wxSYS_COLOUR_ACTIVECAPTION",
@@ -391,7 +384,7 @@ static const wxArrayString s_colorSysNames = StdToWX::ToArrayString({
     "wxSYS_COLOUR_WINDOW",
     "wxSYS_COLOUR_WINDOWFRAME",
     "wxSYS_COLOUR_WINDOWTEXT",
-});
+};
 static wxArrayInt s_colorIdx;
 
 static void init_color_indexes()
@@ -1232,59 +1225,59 @@ bool wxCrafter::IsArtProviderBitmap(const wxString& bmpString, wxString& artId, 
 {
     static wxArrayString arr;
     if (arr.IsEmpty()) {
-        arr = StdToWX::ToArrayString({ wxT("wxART_ERROR"),
-                                       wxT("wxART_QUESTION"),
-                                       wxT("wxART_WARNING"),
-                                       wxT("wxART_INFORMATION"),
-                                       wxT("wxART_ADD_BOOKMARK"),
-                                       wxT("wxART_DEL_BOOKMARK"),
-                                       wxT("wxART_HELP_SIDE_PANEL"),
-                                       wxT("wxART_HELP_SETTINGS"),
-                                       wxT("wxART_HELP_BOOK"),
-                                       wxT("wxART_HELP_FOLDER"),
-                                       wxT("wxART_HELP_PAGE"),
-                                       wxT("wxART_GO_BACK"),
-                                       wxT("wxART_GO_FORWARD"),
-                                       wxT("wxART_GO_UP"),
-                                       wxT("wxART_GO_DOWN"),
-                                       wxT("wxART_GO_TO_PARENT"),
-                                       wxT("wxART_GO_HOME"),
-                                       wxT("wxART_GOTO_FIRST"),
-                                       wxT("wxART_GOTO_LAST"),
-                                       wxT("wxART_PRINT"),
-                                       wxT("wxART_HELP"),
-                                       wxT("wxART_TIP"),
-                                       wxT("wxART_REPORT_VIEW"),
-                                       wxT("wxART_LIST_VIEW"),
-                                       wxT("wxART_NEW_DIR"),
-                                       wxT("wxART_FOLDER"),
-                                       wxT("wxART_FOLDER_OPEN"),
-                                       wxT("wxART_GO_DIR_UP"),
-                                       wxT("wxART_EXECUTABLE_FILE"),
-                                       wxT("wxART_NORMAL_FILE"),
-                                       wxT("wxART_TICK_MARK"),
-                                       wxT("wxART_CROSS_MARK"),
-                                       wxT("wxART_MISSING_IMAGE"),
-                                       wxT("wxART_NEW"),
-                                       wxT("wxART_FILE_OPEN"),
-                                       wxT("wxART_FILE_SAVE"),
-                                       wxT("wxART_FILE_SAVE_AS"),
-                                       wxT("wxART_DELETE"),
-                                       wxT("wxART_COPY"),
-                                       wxT("wxART_CUT"),
-                                       wxT("wxART_PASTE"),
-                                       wxT("wxART_UNDO"),
-                                       wxT("wxART_REDO"),
-                                       wxT("wxART_PLUS"),
-                                       wxT("wxART_MINUS"),
-                                       wxT("wxART_CLOSE"),
-                                       wxT("wxART_QUIT"),
-                                       wxT("wxART_FIND"),
-                                       wxT("wxART_FIND_AND_REPLACE"),
-                                       wxT("wxART_HARDDISK"),
-                                       wxT("wxART_FLOPPY"),
-                                       wxT("wxART_CDROM"),
-                                       wxT("wxART_REMOVABLE") });
+        arr = {wxT("wxART_ERROR"),
+               wxT("wxART_QUESTION"),
+               wxT("wxART_WARNING"),
+               wxT("wxART_INFORMATION"),
+               wxT("wxART_ADD_BOOKMARK"),
+               wxT("wxART_DEL_BOOKMARK"),
+               wxT("wxART_HELP_SIDE_PANEL"),
+               wxT("wxART_HELP_SETTINGS"),
+               wxT("wxART_HELP_BOOK"),
+               wxT("wxART_HELP_FOLDER"),
+               wxT("wxART_HELP_PAGE"),
+               wxT("wxART_GO_BACK"),
+               wxT("wxART_GO_FORWARD"),
+               wxT("wxART_GO_UP"),
+               wxT("wxART_GO_DOWN"),
+               wxT("wxART_GO_TO_PARENT"),
+               wxT("wxART_GO_HOME"),
+               wxT("wxART_GOTO_FIRST"),
+               wxT("wxART_GOTO_LAST"),
+               wxT("wxART_PRINT"),
+               wxT("wxART_HELP"),
+               wxT("wxART_TIP"),
+               wxT("wxART_REPORT_VIEW"),
+               wxT("wxART_LIST_VIEW"),
+               wxT("wxART_NEW_DIR"),
+               wxT("wxART_FOLDER"),
+               wxT("wxART_FOLDER_OPEN"),
+               wxT("wxART_GO_DIR_UP"),
+               wxT("wxART_EXECUTABLE_FILE"),
+               wxT("wxART_NORMAL_FILE"),
+               wxT("wxART_TICK_MARK"),
+               wxT("wxART_CROSS_MARK"),
+               wxT("wxART_MISSING_IMAGE"),
+               wxT("wxART_NEW"),
+               wxT("wxART_FILE_OPEN"),
+               wxT("wxART_FILE_SAVE"),
+               wxT("wxART_FILE_SAVE_AS"),
+               wxT("wxART_DELETE"),
+               wxT("wxART_COPY"),
+               wxT("wxART_CUT"),
+               wxT("wxART_PASTE"),
+               wxT("wxART_UNDO"),
+               wxT("wxART_REDO"),
+               wxT("wxART_PLUS"),
+               wxT("wxART_MINUS"),
+               wxT("wxART_CLOSE"),
+               wxT("wxART_QUIT"),
+               wxT("wxART_FIND"),
+               wxT("wxART_FIND_AND_REPLACE"),
+               wxT("wxART_HARDDISK"),
+               wxT("wxART_FLOPPY"),
+               wxT("wxART_CDROM"),
+               wxT("wxART_REMOVABLE")};
         arr.Sort();
     }
 

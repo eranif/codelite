@@ -38,7 +38,6 @@
 #include "NewProjectDialog.h"
 #include "Scripting/CodeLiteLUA.hpp"
 #include "SideBar.hpp"
-#include "StdToWX.h"
 #include "WorkspaceImporter/WSImporter.h"
 #include "app.h"
 #include "attachdbgprocdlg.h"
@@ -1446,14 +1445,14 @@ bool Manager::ShowOutputPane(const wxString& focusWin, bool show, bool take_focu
 void Manager::ShowDebuggerPane(bool show)
 {
     // make the output pane visible
-    const wxArrayString dbgPanes = StdToWX::ToArrayString({wxT("Debugger"),
-                                                           wxGetTranslation(DebuggerPane::LOCALS),
-                                                           wxGetTranslation(DebuggerPane::FRAMES),
-                                                           wxGetTranslation(DebuggerPane::WATCHES),
-                                                           wxGetTranslation(DebuggerPane::BREAKPOINTS),
-                                                           wxGetTranslation(DebuggerPane::THREADS),
-                                                           wxGetTranslation(DebuggerPane::MEMORY),
-                                                           wxGetTranslation(DebuggerPane::ASCII_VIEWER)});
+    const wxArrayString dbgPanes{wxString(wxT("Debugger")),
+                                 wxGetTranslation(DebuggerPane::LOCALS),
+                                 wxGetTranslation(DebuggerPane::FRAMES),
+                                 wxGetTranslation(DebuggerPane::WATCHES),
+                                 wxGetTranslation(DebuggerPane::BREAKPOINTS),
+                                 wxGetTranslation(DebuggerPane::THREADS),
+                                 wxGetTranslation(DebuggerPane::MEMORY),
+                                 wxGetTranslation(DebuggerPane::ASCII_VIEWER)};
 
     wxAuiManager* aui = &clMainFrame::Get()->GetDockingManager();
     if (show) {

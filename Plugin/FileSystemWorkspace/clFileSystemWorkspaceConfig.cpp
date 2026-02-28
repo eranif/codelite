@@ -2,18 +2,16 @@
 
 #include "Debugger/debuggermanager.h"
 #include "ICompilerLocator.h"
-#include "StdToWX.h"
 #include "build_settings_config.h"
-#include "clFileSystemWorkspace.hpp"
 #include "compiler_command_line_parser.h"
-#include "ctags_manager.h"
 #include "dirsaver.h"
 #include "event_notifier.h"
 #include "file_logger.h"
-#include "fileextmanager.h"
 #include "macromanager.h"
 #include "macros.h"
 #include "procutils.h"
+
+#include <wx/tokenzr.h>
 
 #define DEFAULT_FILE_EXTENSIONS                                                                                        \
     "*.cpp;*.c;*.txt;*.json;*.hpp;*.cc;*.cxx;*.xml;*.h;*.wxcp;*.py;*.php;*.rb;*.html;*.js;*.ts;*.rs;*.iss;*.md;*.bat;" \
@@ -154,7 +152,7 @@ static wxArrayString GetExtraFlags(CompilerPtr compiler)
     if (compiler->HasMetadata()) {
         auto md = compiler->GetMetadata();
         if (!md.GetTarget().IsEmpty()) {
-            return StdToWX::ToArrayString({ "-target", md.GetTarget() });
+            return {wxString("-target"), md.GetTarget()};
         }
     }
     return {};

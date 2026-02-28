@@ -1,6 +1,3 @@
-[submodule "submodules/asio"]
-	path = submodules/asio
-	url = https://github.com/chriskohlhoff/asio.git
 [submodule "submodules/assistant"]
 	path = submodules/assistant
 	url = https://github.com/eranif/assistant.git

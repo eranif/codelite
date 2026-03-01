@@ -10,7 +10,7 @@ JSONItem LSP::MessageWithParams::ToJSON(const wxString& name) const
     JSONItem json = Message::ToJSON(name);
     json.addProperty("method", GetMethod());
     if (m_params) {
-        json.append(m_params->ToJSON("params"));
+        json.addProperty("params", m_params->ToJSON("params"));
     }
     return json;
 }

@@ -62,11 +62,11 @@ JSONItem SFTPSettings::ToJSON() const
 {
     JSONItem element = JSONItem::createObject(GetName());
     element.addProperty("sshClient", m_sshClient);
-    JSONItem arrAccounts = JSONItem::createArray("accounts");
-    element.append(arrAccounts);
+    JSONItem arrAccounts = JSONItem::createArray();
     for(size_t i = 0; i < m_accounts.size(); ++i) {
         arrAccounts.append(m_accounts.at(i).ToJSON());
     }
+    element.addProperty("accounts", arrAccounts);
     return element;
 }
 

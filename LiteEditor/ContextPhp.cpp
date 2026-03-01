@@ -220,8 +220,6 @@ wxMenu* ContextPhp::GetMenu() { return ContextBase::GetMenu(); }
 
 TagEntryPtr ContextPhp::GetTagAtCaret(bool scoped, bool impl) { return NULL; }
 
-void ContextPhp::GotoPreviousDefintion() {}
-
 bool ContextPhp::IsCommentOrString(long pos)
 {
     int style = GetCtrl().GetStyleAt(pos);
@@ -236,7 +234,10 @@ bool ContextPhp::IsCommentOrString(long pos)
 
 bool ContextPhp::IsDefaultContext() const { return false; }
 
-ContextBase* ContextPhp::NewInstance(clEditor* container) { return new ContextPhp(container); }
+std::shared_ptr<ContextBase> ContextPhp::NewInstance(clEditor* container)
+{
+    return std::make_shared<ContextPhp>(container);
+}
 
 void ContextPhp::OnCallTipClick(wxStyledTextEvent& event) {}
 
@@ -247,8 +248,6 @@ void ContextPhp::OnDbgDwellEnd(wxStyledTextEvent& event) {}
 void ContextPhp::OnDbgDwellStart(wxStyledTextEvent& event) {}
 
 void ContextPhp::OnDwellEnd(wxStyledTextEvent& event) {}
-
-void ContextPhp::OnDwellStart(wxStyledTextEvent& event) {}
 
 void ContextPhp::OnEnterHit() {}
 
@@ -299,7 +298,7 @@ void ContextPhp::SemicolonShift()
 
 void ContextPhp::SetActive() {}
 
-bool ContextPhp::IsComment(long pos)
+bool ContextPhp::IsComment(long pos) const
 {
     int style = GetCtrl().GetStyleAt(pos);
     return style == wxSTC_H_COMMENT || style == wxSTC_H_XCCOMMENT || style == wxSTC_H_SGML_COMMENT ||

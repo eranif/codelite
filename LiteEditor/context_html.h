@@ -32,42 +32,40 @@ class ContextHtml : public ContextBase
 {
 public:
     ContextHtml();
-    ContextHtml(clEditor *Editor);
-    virtual ~ContextHtml() = default;
+    explicit ContextHtml(clEditor *Editor);
+    ~ContextHtml() override = default;
 
 public:
-    virtual int GetActiveKeywordSet() const;
-    virtual int  DoGetCalltipParamterIndex();
-    virtual wxMenu* GetMenu();
-    virtual void AddMenuDynamicContent(wxMenu* menu);
-    virtual void ApplySettings();
-    virtual void AutoIndent(const wxChar&);
-    virtual wxString CallTipContent();
-    virtual wxString GetCurrentScopeName();
-    virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl);
-    virtual bool GotoDefinition();
-    virtual void GotoPreviousDefintion();
-    virtual bool IsComment(long pos);
-    virtual bool IsCommentOrString(long pos);
-    virtual bool IsDefaultContext() const;
-    virtual ContextBase* NewInstance(clEditor* container);
-    virtual void OnCallTipClick(wxStyledTextEvent& event);
-    virtual void OnCalltipCancel();
-    virtual void OnDbgDwellEnd(wxStyledTextEvent& event);
-    virtual void OnDbgDwellStart(wxStyledTextEvent& event);
-    virtual void OnDwellEnd(wxStyledTextEvent& event);
-    virtual void OnDwellStart(wxStyledTextEvent& event);
-    virtual void OnEnterHit();
-    virtual void OnFileSaved();
-    virtual void OnKeyDown(wxKeyEvent& event);
-    virtual void OnSciUpdateUI(wxStyledTextEvent& event);
-    virtual void RemoveMenuDynamicContent(wxMenu* menu);
-    virtual void RetagFile();
-    virtual void SemicolonShift();
-    virtual void SetActive();
-    virtual bool IsAtBlockComment() const;
-    virtual bool IsAtLineComment() const;
-    
+    int GetActiveKeywordSet() const override;
+    int DoGetCalltipParamterIndex() override;
+    wxMenu* GetMenu() override;
+    void AddMenuDynamicContent(wxMenu* menu) override;
+    void ApplySettings() override;
+    void AutoIndent(const wxChar&) override;
+    wxString CallTipContent() override;
+    wxString GetCurrentScopeName() override;
+    TagEntryPtr GetTagAtCaret(bool scoped, bool impl) override;
+    bool GotoDefinition() override;
+    bool IsCommentOrString(long pos) override;
+    bool IsDefaultContext() const override;
+    std::shared_ptr<ContextBase> NewInstance(clEditor* container) override;
+    void OnCallTipClick(wxStyledTextEvent& event) override;
+    void OnCalltipCancel() override;
+    void OnDbgDwellEnd(wxStyledTextEvent& event) override;
+    void OnDbgDwellStart(wxStyledTextEvent& event) override;
+    void OnDwellEnd(wxStyledTextEvent& event) override;
+    void OnEnterHit() override;
+    void OnFileSaved() override;
+    void OnKeyDown(wxKeyEvent& event) override;
+    void OnSciUpdateUI(wxStyledTextEvent& event) override;
+    void RemoveMenuDynamicContent(wxMenu* menu) override;
+    void RetagFile() override;
+    void SemicolonShift() override;
+    void SetActive() override;
+    bool IsAtBlockComment() const override;
+    bool IsAtLineComment() const override;
+
+    bool IsComment(long pos) const;
 };
 
 #endif // CONTEXTHTML_H

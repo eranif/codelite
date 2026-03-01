@@ -2,10 +2,8 @@
 
 #include "ColoursAndFontsManager.h"
 #include "cl_editor.h"
-#include "editor_config.h"
 #include "lexer_configuration.h"
 
-#include <wx/msgdlg.h>
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
@@ -55,7 +53,10 @@ void ContextPython::ApplySettings()
     DoApplySettings(lexPtr);
 }
 
-ContextBase* ContextPython::NewInstance(clEditor* container) { return new ContextPython(container); }
+std::shared_ptr<ContextBase> ContextPython::NewInstance(clEditor* container)
+{
+    return std::make_shared<ContextPython>(container);
+}
 
 void ContextPython::OnCommentSelection(wxCommandEvent& event)
 {

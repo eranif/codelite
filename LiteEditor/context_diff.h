@@ -31,11 +31,11 @@ class ContextDiff : public ContextBase
 {
 public:
     ContextDiff();
-    ContextDiff(clEditor* container);
-    virtual ~ContextDiff() = default;
+    explicit ContextDiff(clEditor* container);
+    ~ContextDiff() override = default;
 
-    virtual void ApplySettings();
-    virtual ContextBase* NewInstance(clEditor* container);
+    void ApplySettings() override;
+    std::shared_ptr<ContextBase> NewInstance(clEditor* container) override;
 };
 
 #endif // __contextdiff__

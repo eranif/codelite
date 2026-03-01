@@ -29,15 +29,12 @@
 #include "singleton.h"
 
 #include <unordered_map>
+#include <wx/filename.h>
 #include <wx/string.h>
-#include <wx/window.h>
-
-class ContextManager;
 
 class ContextManager : public Singleton<ContextManager>
 {
-    friend class Singleton<ContextManager>;
-    std::unordered_map<wxString, ContextBasePtr> m_contextPool;
+    friend Singleton<ContextManager>;
 
 public:
     /**
@@ -48,10 +45,12 @@ public:
      */
     ContextBasePtr NewContext(clEditor* parent, const wxString& lexerName);
     ContextBasePtr NewContextByFileName(clEditor* parent, const wxFileName& fileName);
-    void Initialize();
 
 private:
     ContextManager();
-    virtual ~ContextManager() = default;
+    ~ContextManager() override = default;
+
+private:
+    std::unordered_map<wxString, ContextBasePtr> m_contextPool;
 };
 #endif // CONTEXT_MANAGER_H

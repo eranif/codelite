@@ -3,7 +3,6 @@
 
 #include "generic_context.h"
 
-class clEditor;
 class ContextPython : public ContextGeneric
 {
 protected:
@@ -20,10 +19,10 @@ protected:
 
 public:
     ContextPython();
-    ContextPython(clEditor* container);
-    virtual ~ContextPython();
+    explicit ContextPython(clEditor* container);
+    ~ContextPython() override;
     void ApplySettings() override;
-    ContextBase* NewInstance(clEditor* container) override;
+    std::shared_ptr<ContextBase> NewInstance(clEditor* container) override;
     bool IsAtBlockComment() const override;
     bool IsAtLineComment() const override;
 };

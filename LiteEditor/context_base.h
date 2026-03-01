@@ -30,9 +30,7 @@
 #include "macros.h"
 
 #include <memory>
-#include <set>
 #include <vector>
-#include <wx/filename.h>
 #include <wx/stc/stc.h>
 #include <wx/string.h>
 
@@ -77,10 +75,10 @@ protected:
 
 public:
     // ctor-dtor
-    ContextBase(clEditor* container);
-    ContextBase(const wxString& name);
+    explicit ContextBase(clEditor* container);
+    explicit ContextBase(const wxString& name);
 
-    virtual ~ContextBase() = default;
+    ~ContextBase() override = default;
 
     /**
      * @brief user typed '@' inside a block comment. Code complete possible keywords
@@ -110,7 +108,7 @@ public:
     const wxString& GetName() const { return m_name; }
 
     // every Context derived class must implement the following methods
-    virtual ContextBase* NewInstance(clEditor* container) = 0;
+    virtual std::shared_ptr<ContextBase> NewInstance(clEditor* container) = 0;
     virtual void ApplySettings() = 0;
 
     // functions with default implementation:

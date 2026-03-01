@@ -177,8 +177,6 @@ wxMenu* ContextJavaScript::GetMenu() { return ContextBase::GetMenu(); }
 
 TagEntryPtr ContextJavaScript::GetTagAtCaret(bool scoped, bool impl) { return NULL; }
 
-void ContextJavaScript::GotoPreviousDefintion() {}
-
 bool ContextJavaScript::IsCommentOrString(long pos)
 {
     int style = GetCtrl().GetStyleAt(pos);
@@ -187,7 +185,10 @@ bool ContextJavaScript::IsCommentOrString(long pos)
 
 bool ContextJavaScript::IsDefaultContext() const { return false; }
 
-ContextBase* ContextJavaScript::NewInstance(clEditor* container) { return new ContextJavaScript(container); }
+std::shared_ptr<ContextBase> ContextJavaScript::NewInstance(clEditor* container)
+{
+    return std::make_shared<ContextJavaScript>(container);
+}
 
 void ContextJavaScript::OnCallTipClick(wxStyledTextEvent& event) {}
 
@@ -198,8 +199,6 @@ void ContextJavaScript::OnDbgDwellEnd(wxStyledTextEvent& event) {}
 void ContextJavaScript::OnDbgDwellStart(wxStyledTextEvent& event) {}
 
 void ContextJavaScript::OnDwellEnd(wxStyledTextEvent& event) {}
-
-void ContextJavaScript::OnDwellStart(wxStyledTextEvent& event) {}
 
 void ContextJavaScript::OnEnterHit() {}
 
@@ -249,7 +248,7 @@ void ContextJavaScript::SemicolonShift()
 
 void ContextJavaScript::SetActive() {}
 
-bool ContextJavaScript::IsComment(long pos)
+bool ContextJavaScript::IsComment(long pos) const
 {
     int style = GetCtrl().GetStyleAt(pos);
     return style == wxSTC_C_COMMENT || style == wxSTC_C_COMMENTDOC || style == wxSTC_C_COMMENTDOCKEYWORD ||

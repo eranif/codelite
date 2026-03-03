@@ -226,6 +226,23 @@ void ChatAIWindow::OnOptions(wxAuiToolBarEvent& event)
         },
         XRCID("wxID_CACHING_POLICY_STATIC_CONTENT"));
     menu.Append(wxID_ANY, _("Prompt Caching"), caching_policy_menu);
+    auto prompts = llm_manager.GetConfig().GetAllPrompts();
+    if (!prompts.empty()) {
+        wxMenu* prompt_selection = new wxMenu;
+        for (const auto& [label, prompt] : prompts) {
+            auto item_id = wxXmlResource::GetXRCID(label);
+            prompt_selection->Append(item_id, label);
+            prompt_selection->Bind(
+                wxEVT_MENU,
+                [prompt, this](wxCommandEvent& event) {
+                    wxUnusedVar(event);
+                    m_stcInput->SetText(prompt);
+                    m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
+                },
+                item_id);
+        }
+        menu.Append(wxID_ANY, _("Insert Prompt"), prompt_selection);
+    }
     menu.AppendSeparator();
     menu.Append(XRCID("chat_history"), _("Chat History"))->Enable(CurrentEndpointHasHistory());
     menu.Bind(wxEVT_MENU, &ChatAIWindow::OnHistory, this, XRCID("chat_history"));

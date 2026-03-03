@@ -22,7 +22,6 @@ enum class PromptKind {
     kCommentGeneration,
     kGitCommitMessage,
     kReleaseNotesGenerate,
-    kReleaseNotesMerge,
     kGitChangesCodeReview,
     kMax, // Must be last
 };
@@ -61,8 +60,6 @@ inline CachePolicy CachePolicyFromString(const wxString& policy)
 inline std::string PromptKindToString(PromptKind kind)
 {
     switch (kind) {
-    case llm::PromptKind::kReleaseNotesMerge:
-        return "Git Release Notes: Merge";
     case llm::PromptKind::kReleaseNotesGenerate:
         return "Git Release Notes: Generate";
     case llm::PromptKind::kCommentGeneration:
@@ -410,6 +407,56 @@ public:
      * @param prompt The prompt text to associate with the specified {@code kind}.
      */
     void SetPrompt(PromptKind kind, const wxString& prompt);
+
+    /**
+     * Retrieves all configured prompts as a vector of label-prompt pairs.
+     *
+     * This method provides thread-safe access to all prompts stored in the configuration.
+     * Each prompt is converted from UTF-8 encoding to wxString format. The method acquires
+     * a mutex lock to ensure consistent read access and prevents concurrent modifications.
+     *
+     * Parameters:
+     *   (none)
+     *
+     * Returns:
+     *   A vector of pairs where each pair contains a prompt label (first) and its
+     *   corresponding prompt text (second), both as wxString objects. Returns an empty
+     *   vector if no prompts are configured.
+     */
+    std::vector<std::pair<wxString, wxString>> GetAllPrompts() const;
+
+    /**
+     * Adds or replaces a prompt entry in the configuration.
+     *
+     * This method thread-safely adds a new prompt to the internal prompts map,
+     * using the provided label as the key. If an entry with the same label already
+     * exists, it is first removed and then replaced with the new prompt value.
+     * Both the label and prompt are converted from wxString to UTF-8 encoded
+     * standard strings before storage.
+     *
+     * Parameters:
+     *   label - A wxString containing the unique identifier for the prompt entry.
+     *   prompt - A wxString containing the prompt text or content to be stored.
+     *
+     * Returns:
+     *   Nothing (void).
+     */
+    void AddPrompt(const wxString& label, const wxString& prompt);
+    /**
+     * Deletes a prompt configuration entry by its label.
+     *
+     * This function removes the prompt associated with the given label from the
+     * internal prompts collection. Thread-safe operation is ensured via an internal
+     * mutex lock that is held for the duration of the erase operation.
+     *
+     * Parameters:
+     *   label - A wxString containing the label of the prompt to delete. The label
+     *           is converted to a UTF-8 encoded std::string for lookup and removal.
+     *
+     * Returns:
+     *   void - No value is returned.
+     */
+    void DeletePrompt(const wxString& label);
 
     /**
      * @brief Resets the prompt collection to its default state.

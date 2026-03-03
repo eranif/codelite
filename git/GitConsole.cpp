@@ -236,11 +236,6 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     clAuiToolBarArt::AddTool(
         m_toolbar, XRCID("git_reset_repository"), _("Reset repository"), images->LoadBitmap("clean"));
 
-    m_toolbar->AddSeparator();
-    clAuiToolBarArt::AddTool(
-        m_toolbar, XRCID("git_ai_powered_features"), _("AI-Powered features"), images->LoadBitmap("wand"));
-    m_toolbar->SetToolDropDown(XRCID("git_ai_powered_features"), true);
-
     // Bind the events
     m_toolbar->Bind(wxEVT_MENU, &GitConsole::OnClearGitLog, this, XRCID("git_clear_log"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnClearGitLogUI, this, XRCID("git_clear_log"));
@@ -250,15 +245,12 @@ GitConsole::GitConsole(wxWindow* parent, GitPlugin* git)
     m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnAddUnversionedFilesUI, this, XRCID("git_console_add_file"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnResetFileUI, this, XRCID("git_console_reset_file"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnStopGitProcessUI, this, XRCID("git_stop_process"));
-    m_toolbar->Bind(wxEVT_UPDATE_UI, &GitConsole::OnAIAvailableUI, this, XRCID("git_ai_powered_features"));
 
     clAuiToolBarArt::Finalise(m_toolbar);
 
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &GitConsole::OnGitPullDropdown, this, XRCID("git_pull"));
     m_toolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &GitConsole::OnGitRebaseDropdown, this, XRCID("git_rebase"));
-    m_toolbar->Bind(
-        wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &GitConsole::OnGitAIDropDown, this, XRCID("git_ai_powered_features"));
     m_statusBar = new IndicatorPanel(this, _("Ready"));
     GetSizer()->Add(m_statusBar, wxSizerFlags(0).Expand());
     GetSizer()->Fit(this);
@@ -622,38 +614,6 @@ struct GitCommandData : public wxObject {
     int id;            // Holds the id of the command e.g. XRCID("git_pull")
 };
 
-void GitConsole::OnGitAIDropDown(wxAuiToolBarEvent& event)
-{
-    if (event.IsDropDownClicked()) {
-        wxMenu menu;
-        menu.Append(XRCID("git_ai_generate_release_notes"), _("Generate Release Notes..."));
-        menu.Append(XRCID("git_ai_code_review"), _("Do Code Review..."));
-
-        menu.Bind(
-            wxEVT_MENU,
-            [this](wxCommandEvent& e) {
-                wxUnusedVar(e);
-                CallAfter(&GitConsole::GenerateReleaseNotes);
-            },
-            XRCID("git_ai_generate_release_notes"));
-        menu.Bind(
-            wxEVT_MENU,
-            [this](wxCommandEvent& e) {
-                wxUnusedVar(e);
-                CallAfter(&GitConsole::DoCodeReview);
-            },
-            XRCID("git_ai_code_review"));
-
-        clAuiToolStickness stickness{m_toolbar, event.GetId()};
-        // line up our menu with the button
-        wxRect rect = m_toolbar->GetToolRect(event.GetId());
-        wxPoint pt = m_toolbar->ClientToScreen(rect.GetBottomLeft());
-        pt = ScreenToClient(pt);
-
-        PopupMenu(&menu, pt);
-    }
-}
-
 void GitConsole::DoOnDropdown(const wxString& commandName, int id, const wxAuiToolBarEvent& event)
 {
     if (event.IsDropDownClicked()) {
@@ -903,231 +863,4 @@ void GitConsole::OnAIAvailableUI(wxUpdateUIEvent& event)
 {
     event.Enable(m_git->IsGitEnabled() && llm::Manager::GetInstance().IsAvailable() &&
                  !llm::Manager::GetInstance().IsBusy());
-}
-
-void GitConsole::DoCodeReview()
-{
-    wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kGitChangesCodeReview);
-
-    wxString output;
-    if (!m_git->DoExecuteCommandSync("diff --ignore-all-space", &output, m_git->GetRepositoryPath())) {
-        wxMessageBox(_("Failed to fetch git diff!"), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
-        return;
-    }
-
-    if (output.empty()) {
-        wxMessageBox(_("Nothing to review"), "CodeLite");
-        return;
-    }
-
-    prompt.Replace("{{context}}", output);
-
-    // Construct a token for cancellation purposes.
-    std::shared_ptr<llm::CancellationToken> cancellation_token = std::make_shared<llm::CancellationToken>(10000);
-    auto collector = new llm::ResponseCollector();
-    m_statusBar->Start(_("Generating Code Review..."));
-
-    wxString review_file = GenerateRandomFile();
-    auto complete_message = AllocateBuffer();
-    std::shared_ptr<CallThrottler> throttler = std::make_shared<CallThrottler>();
-    collector->SetStreamCallback([=, this](const std::string& message, llm::StreamCallbackReason reason) {
-        if (cancellation_token->IsMaxTokenReached()) {
-            m_statusBar->Stop(message);
-            return;
-        }
-
-        bool is_done = llm::IsFlagSet(reason, llm::StreamCallbackReason::kDone);
-        complete_message->append(message);
-        throttler->ExecuteIfAllowed(
-            [this, cancellation_token]() { UpdateStatusBarTokens(cancellation_token->GetTokenCount()); });
-
-        if (is_done) {
-            m_statusBar->Stop("Ready");
-            auto editor = CreateAndOpenTempFile(review_file);
-            if (editor) {
-                editor->SetEditorText(wxString::FromUTF8(*complete_message));
-                editor->GetCtrl()->SetSavePoint();
-                MarkdownStyler styler(editor->GetCtrl());
-                styler.StyleText(true);
-                editor->GetCtrl()->SetWrapMode(wxSTC_WRAP_WORD);
-                editor->GetCtrl()->SetReadOnly(true);
-            }
-        }
-    });
-
-    auto function_disabler = std::make_shared<llm::FunctionsDisabler>();
-    auto state_change_cb = [this, function_disabler](llm::ChatState state) {
-        if (!wxThread::IsMain()) {
-            clWARNING() << "StateChangingCB called for non main thread!" << endl;
-            return;
-        }
-        switch (state) {
-        case llm::ChatState::kThinking:
-            m_statusBar->SetMessage(_("Thinking..."));
-            break;
-        case llm::ChatState::kWorking:
-            m_statusBar->SetMessage(_("Working..."));
-            break;
-        case llm::ChatState::kReady:
-            // Re-enable all functions again.
-            m_statusBar->Stop(_("Ready."));
-            break;
-        }
-    };
-    collector->SetStateChangingCB(std::move(state_change_cb));
-
-    llm::ChatOptions chat_options{llm::ChatOptions::kNoHistory};
-    llm::Manager::GetInstance().Chat(collector, prompt, cancellation_token, chat_options);
-}
-
-void GitConsole::GenerateReleaseNotes()
-{
-    // We need 2 commits to fetch the diff.
-    GitReleaseNotesGenerationDlg dlg{EventNotifier::Get()->TopFrame()};
-    if (dlg.ShowModal() != wxID_OK) {
-        return;
-    }
-
-    wxString first_commit = dlg.GetTextCtrlFirstCommit()->GetValue();
-    wxString second_commit = dlg.GetTextCtrlSecondCommit()->GetValue();
-
-    int max_tokens = dlg.GetSpinCtrlLimitTokens()->GetValue();
-    bool oneline_commit_format = dlg.GetCheckBoxOneLine()->GetValue();
-
-    constexpr size_t kChunkSize = 8 * 1024;
-    wxArrayString history;
-
-    {
-        IndicatorPanelLocker lk{m_statusBar, _("Fetching git log..."), _("Ready")};
-        auto res = m_git->FetchLogBetweenCommits(first_commit, second_commit, oneline_commit_format, kChunkSize);
-        if (!res.ok()) {
-            wxMessageBox(wxString() << _("Failed to fetch git log.\n") << res.error_message(),
-                         "CodeLite",
-                         wxICON_ERROR | wxOK | wxCENTRE);
-            return;
-        }
-        history = res.value();
-    }
-
-    if (history.empty()) {
-        return;
-    }
-
-    wxString prompt_template =
-        llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kReleaseNotesGenerate);
-
-    // Construct a token for cancellation purposes.
-    std::shared_ptr<llm::CancellationToken> cancellation_token = std::make_shared<llm::CancellationToken>(max_tokens);
-    auto collector = new llm::ResponseCollector();
-
-    m_statusBar->Start(_("Generating release notes..."));
-    bool multiple_prompts = history.size() > 1;
-
-    collector->SetStateChangingCB([this](llm::ChatState state) {
-        if (!wxThread::IsMain()) {
-            clWARNING() << "StateChangingCB called for non main thread!" << endl;
-            return;
-        }
-        switch (state) {
-        case llm::ChatState::kThinking:
-            m_statusBar->SetMessage(_("Thinking..."));
-            break;
-        case llm::ChatState::kWorking:
-            m_statusBar->SetMessage(_("Working..."));
-            break;
-        case llm::ChatState::kReady:
-            m_statusBar->Stop(_("Ready."));
-            break;
-        }
-    });
-
-    auto complete_response = AllocateBuffer();
-    wxString release_notes_file = GenerateRandomFile();
-    std::shared_ptr<CallThrottler> throttler = std::make_shared<CallThrottler>();
-    collector->SetStreamCallback([=, this](const std::string& message, llm::StreamCallbackReason reason) {
-        if (cancellation_token->IsMaxTokenReached()) {
-            m_statusBar->Stop(message);
-            return;
-        }
-        complete_response->append(message);
-        bool is_done = llm::IsFlagSet(reason, llm::StreamCallbackReason::kDone);
-        throttler->ExecuteIfAllowed(
-            [this, cancellation_token]() { UpdateStatusBarTokens(cancellation_token->GetTokenCount()); });
-        if (is_done) {
-            if (multiple_prompts) {
-                CallAfter(&GitConsole::FinaliseReleaseNotes, wxString::FromUTF8(*complete_response));
-            } else {
-                m_statusBar->Stop("Ready");
-                auto editor = CreateAndOpenTempFile(release_notes_file);
-                if (editor) {
-                    editor->SetEditorText(wxString::FromUTF8(*complete_response));
-                    editor->GetCtrl()->SetSavePoint();
-                    MarkdownStyler styler(editor->GetCtrl());
-                    styler.StyleText(true);
-                    editor->GetCtrl()->SetWrapMode(wxSTC_WRAP_WORD);
-                    editor->GetCtrl()->SetReadOnly(true);
-                }
-            }
-        }
-    });
-
-    llm::ChatOptions chat_options{llm::ChatOptions::kNoTools};
-    llm::AddFlagSet(chat_options, llm::ChatOptions::kNoHistory);
-
-    //  Prepare the prompts
-    wxArrayString prompts;
-    for (const auto& h : history) {
-        wxString p = prompt_template;
-        p.Replace("{{context}}", h);
-        prompts.Add(p);
-    }
-    llm::Manager::GetInstance().Chat(collector, prompts, cancellation_token, chat_options);
-}
-
-void GitConsole::FinaliseReleaseNotes(const wxString& complete_response)
-{
-    wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kReleaseNotesMerge);
-    prompt.Replace("{{context}}", complete_response);
-
-    m_statusBar->SetMessage(_("Finalising notes..."));
-    auto collector = new llm::ResponseCollector();
-
-    auto merged_result = AllocateBuffer();
-    auto token_count = std::make_shared<size_t>(0);
-    auto throttler = std::make_shared<CallThrottler>();
-
-    collector->SetStreamCallback([=, this](const std::string& message, llm::StreamCallbackReason reason) {
-        merged_result->append(message);
-        (*token_count)++;
-        bool is_done = llm::IsFlagSet(reason, llm::StreamCallbackReason::kDone);
-        throttler->ExecuteIfAllowed([this, token_count]() { UpdateStatusBarTokens(*token_count); });
-        if (is_done) {
-            auto editor = CreateAndOpenTempFile(GenerateRandomFile());
-            CHECK_PTR_RET(editor);
-            editor->SetEditorText(wxString::FromUTF8(*merged_result));
-            m_statusBar->Stop("Ready");
-            editor->GetCtrl()->SetSavePoint();
-            MarkdownStyler styler(editor->GetCtrl());
-            styler.StyleText(true);
-        }
-    });
-
-    llm::ChatOptions chat_options{llm::ChatOptions::kDefault};
-    llm::AddFlagSet(chat_options, llm::ChatOptions::kNoTools);
-    llm::AddFlagSet(chat_options, llm::ChatOptions::kNoHistory);
-    llm::Manager::GetInstance().Chat(collector, prompt, nullptr, chat_options);
-}
-
-std::shared_ptr<std::string> GitConsole::AllocateBuffer()
-{
-    auto buffer = std::make_shared<std::string>();
-    buffer->reserve(32 * 1024); // assumes ~32KB worst case
-    return buffer;
-}
-
-void GitConsole::UpdateStatusBarTokens(size_t tokenCount)
-{
-    CallAfter([this, tokenCount]() {
-        m_statusBar->SetMessage(wxString() << _("Generating ") << tokenCount << _(" Tokens"));
-    });
 }

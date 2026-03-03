@@ -25,7 +25,6 @@ T ReadValue(const nlohmann::json& j, const std::string& name, const T& d = {})
 const std::map<std::string, std::string> kDefaultPromptTable = {
     {PromptKindToString(PromptKind::kCommentGeneration), PROMPT_DOCSTRING_GEN},
     {PromptKindToString(PromptKind::kReleaseNotesGenerate), PROMPT_GIT_RELEASE_NOTES},
-    {PromptKindToString(PromptKind::kReleaseNotesMerge), PROMPT_GIT_RELEASE_NOTES_MERGE},
     {PromptKindToString(PromptKind::kGitChangesCodeReview), PROMPT_GIT_CODE_REVIEW},
     {PromptKindToString(PromptKind::kGitCommitMessage), PROMPT_GIT_COMMIT_MSG}};
 
@@ -127,17 +126,40 @@ wxString Config::GetPrompt(PromptKind kind) const
     return wxEmptyString;
 }
 
+void Config::DeletePrompt(const wxString& label)
+{
+    std::scoped_lock lk{m_mutex};
+    m_prompts.erase(label.ToStdString(wxConvUTF8));
+}
+
+void Config::AddPrompt(const wxString& label, const wxString& prompt)
+{
+    std::scoped_lock lk{m_mutex};
+    std::string utf8 = label.ToStdString(wxConvUTF8);
+    m_prompts.erase(utf8);
+    m_prompts.insert({utf8, prompt.ToStdString(wxConvUTF8)});
+}
+
+std::vector<std::pair<wxString, wxString>> Config::GetAllPrompts() const
+{
+    std::scoped_lock lk{m_mutex};
+    std::vector<std::pair<wxString, wxString>> result;
+    result.reserve(m_prompts.size());
+    for (const auto& [label, prompt] : m_prompts) {
+        result.push_back({wxString::FromUTF8(label), wxString::FromUTF8(prompt)});
+    }
+    return result;
+}
+
 void Config::SetPrompt(PromptKind kind, const wxString& prompt)
 {
-    auto label = PromptKindToString(kind);
-    std::scoped_lock lk{m_mutex};
     switch (kind) {
     case PromptKind::kMax:
         break;
-    default:
-        m_prompts.erase(label);
-        m_prompts.insert({label, prompt.ToStdString(wxConvUTF8)});
-        break;
+    default: {
+        auto label = PromptKindToString(kind);
+        AddPrompt(wxString::FromUTF8(label), prompt);
+    } break;
     }
 }
 

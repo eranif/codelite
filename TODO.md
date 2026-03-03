@@ -24,8 +24,8 @@ AI-powered IDE:
 High:
 -----
 
-- Add drop down to the chat-box to allow injecting a pre-defined prompts.
-- All git buttons (except for the commit message) - should be opening the chat-box.
+- Prompt Editor: allow creating custom prompts.
+- Add an option to show the prompt editor from the drop down menu from the chat-box.
 - Replace the standard "find-in-files" tool with `grep` command (on all platforms) - this will allow it to run on remote files.
 - `GetCurrentEditorText` - add support for line (from-count).
 

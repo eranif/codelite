@@ -27,24 +27,10 @@ CodeLite 18.2.0 ships with a built-in chat interface that connects to any langua
 
 ## 2. The Chat Box
 
-Open the chat box at any time with ++ctrl+shift+h++. The window can be used for casual questions, code-related queries, or to instruct the model to read/write files.
+Open the chat box at any time with ++ctrl+shift+h++. The window can be used for casual questions, code-related queries,
+or to instruct the model to perform tasks.
 
 ![Chat Box Interface](/assets/chat-box.png)
-
-### Toolbar (left → right)
-
-| Icon | Action | Shortcut |
-|------|--------|----------|
-| **Clear** | Erases the chat history **and** the internal message log. | – |
-| **Endpoint ▼** | Switches between the endpoints you added. | – |
-| **Placeholders ▼** | Insert a [placeholder](#4-placeholders) into the prompt. | – |
-| **Enable Tools** | Enable/disable the [built-in model tools](#3-built-in-model-tools). | – |
-| **Play** | Sends the current input to the model. | ++shift+enter++ |
-| **Stop** | Cancels a long-running request. | – |
-| **Restart** | Restarts the LLM client (clears all history). | – |
-| **Replay** | Opens a dialog that lists recent user messages – you can resend any of them. | – |
-| **Link** | When enabled, the output pane auto-scrolls so the last line is always visible. | – |
-| **Detach/Attach** | Pops the chat window out of the dock (floating) or puts it back. | – |
 
 ---
 
@@ -52,48 +38,57 @@ Open the chat box at any time with ++ctrl+shift+h++. The window can be used for 
 
 CodeLite exposes the following built-in tools for the model:
 
-* **ApplyPatch** — Apply a git style diff patch to a file.
-  * `file_path` (string, required): The path to the file that should be patched.
-  * `patch_content` (string, required): The git style diff patch content to apply.
+### File Operations
+- **ReadFileContent** - Read file contents
+  - `filepath` (required): Path to the file to read
+  - `from_line` (optional): Starting line number (1-based)
+  - `line_count` (optional): Number of lines to read
 
-* **CreateNewFile** — Create a new file at the specified path with optional content.
-  * `filepath` (string, required): The path where the new file should be created.
-  * `file_content` (string, optional): The initial content to write to the file.
+- **CreateNewFile** - Create a new file with optional content
+  - `filepath` (required): Path where the new file should be created
+  - `file_content` (optional): Initial content to write to the file
 
-* **CreateWorkspace** — Create a new workspace at the given path with the provided name. If a host is specified, it creates a remote workspace using SSH/SFTP; otherwise, it creates a local filesystem workspace.
-  * `path` (string, required): The directory path where the workspace should be created.
-  * `name` (string, optional): The name of the workspace to create.
-  * `host` (string, optional): The SSH host for creating a remote workspace.
+- **OpenFileInEditor** - Open a file for editing or viewing
+  - `filepath` (required): Path of the file to open
 
-* **FindInFiles** — Search for a given pattern within files in a directory.
-  * `find_what` (string, required): The text pattern to search for (literal string or regex pattern).
-  * `file_pattern` (string, required): The file pattern to match, such as "*.txt" or "*.py". Use semi-colon list to pass multiple patterns.
-  * `root_folder` (string, required): The root directory where the search begins.
-  * `case_sensitive` (boolean, optional): When enabled, performs case-sensitive matching. Default is true.
-  * `is_regex` (boolean, optional): When enabled, treats find_what as a regular expression pattern. Default is false.
-  * `whole_word` (boolean, optional): When enabled, matches only complete words. Default is true.
+- **ApplyPatch** - Apply a git-style diff patch to a file
+  - `file_path` (required): Path to the file to patch
+  - `patch_content` (required): Git-style diff patch content to apply
 
-* **GetActiveEditorFilePath** — Retrieves the file path of the currently active editor.
-  * *(No arguments)*
+### Search
+- **FindInFiles** - Search for a pattern within files in a directory
+  - `root_folder` (required): Root directory where search begins
+  - `find_what` (required): Text pattern to search for
+  - `file_pattern` (required): File pattern to match (e.g., "*.txt", "*.py")
+  - `case_sensitive` (optional): Enable case-sensitive matching (default: true)
+  - `is_regex` (optional): Treat find_what as regex pattern (default: false)
+  - `whole_word` (optional): Match only complete words (default: true)
 
-* **GetActiveEditorText** — Return the text of the active tab inside the editor.
-  * *(No arguments)*
+### Git Operations
+- **GetLogInRangeCommit** - Return git history between two commits
+  - `start_commit` (required): First commit in the range
+  - `end_commit` (required): Second commit in the range
 
-* **GetLogInRangeCommit** — Return git history of commits between range of commits.
-  * `start_commit` (string, required): The first commit in the range.
-  * `end_commit` (string, required): The second commit in the range.
+### Workspace Management
+- **CreateWorkspace** - Create a new workspace (local or remote)
+  - `path` (required): Directory path where workspace should be created
+  - `name` (optional): Name of the workspace to create
+  - `host` (optional): SSH host for creating a remote workspace
 
-* **OpenFileInEditor** — Try to open file 'filepath' and load it into the editor for editing or viewing.
-  * `filepath` (string, required): The path of the file to open inside the editor.
+### Editor Information
+- **GetActiveEditorFilePath** - Get the file path of the currently active editor (no arguments)
 
-* **ReadCompilerOutput** — Reads and fetches the compiler build log output of the most recent build command executed by the user.
-  * *(No arguments)*
+- **GetActiveEditorText** - Get the text content of the active editor tab (no arguments)
 
-* **ReadFileContent** — Reads the entire content of the file 'filepath' from the disk.
-  * `filepath` (string, required): The path of the file to read.
+### System Information
+- **GetOS** - Get the current active operating system (no arguments)
 
-* **ShellExecute** — Execute a shell command and return its output.
-  * `command` (string, required): The shell command to execute.
+### Build & Compilation
+- **ReadCompilerOutput** - Read the most recent build command's compiler output (no arguments)
+
+### Shell Execution
+- **ShellExecute** - Execute a shell command
+  - `command` (required): The shell command to execute
 
 ### Quick Example
 
@@ -127,7 +122,8 @@ To add an external MCP server, navigate to the menu bar and select one of the fo
 
 ## 5. Placeholders
 
-CodeLite offers a list of placeholders that can be used in prompts. This is useful when you want to create generic, reusable prompts.
+CodeLite provides a comprehensive set of placeholders that can be utilized within prompts. When you type `{{` in the chat box,
+a completion menu will appear displaying all available placeholders.
 
 **Supported placeholders:**
 
@@ -139,23 +135,24 @@ CodeLite offers a list of placeholders that can be used in prompts. This is usef
 - `{{current_file_lang}}` – Programming language of the current file
 - `{{current_file_content}}` – Complete content of the current file
 
-!!! Note
-    Typing `{{` in the chat input will display a completion list.
-
 ---
 
-## 6. Prompt Editor
+## 6. CodeLite Prompt Store
 
-Several AI-powered actions are available with a single click. The prompts that drive those actions can be edited from **AI → Open Prompt Editor**.
+### Overview
 
-| Action | Shortcut/UI | Description |
-|--------|-------------|-------------|
-| **Generate Git Commit Message** | Click the toolbar button or use the context-menu entry. | Summarizes the staged changes into a concise, conventional commit message. |
-| **Generate Git Release Notes** | Press the "Release Notes" button in the Git view. | Produces release notes for a selected commit range. |
-| **Code Review** | Right-click a file → **AI-powered code generation → Review**. | Returns a comprehensive review with suggestions and identified issues. |
-| **Generate Docstring** | ++ctrl+shift+m++ (or right-click → **Generate docstring for the current method**). | Inserts a language-appropriate docstring for the function/class under the cursor. |
+CodeLite provides a **Prompt Store** feature that enables users to write and store prompts for future use. This
+functionality facilitates efficient prompt management and customization within the development environment.
 
-The Prompt Editor lets you tweak the system prompt for each of these operations, add custom placeholders, or create entirely new AI actions.
+### Prompt Editor
+
+The **Prompt Editor** allows you to:
+
+- Tweak the system prompt for each operation
+- Add custom prompts
+- Create entirely new AI actions
+
+These prompts can be used from the Chat-Box "Options" drop down menu.
 
 ---
 
@@ -167,12 +164,6 @@ The Prompt Editor lets you tweak the system prompt for each of these operations,
 
 One click generates a full commit message from the current diff.
 
-### Git Release Notes
-
-![Git Release Notes Generation](/plugins/images/release-notes.gif)
-
-Select a commit range → **Generate Release Notes** → AI produces a polished changelog.
-
 ### Automatic Function Documentation
 
 ![Automatic Function Documentation](/plugins/images/auto-doc.gif)
@@ -183,9 +174,9 @@ Place the cursor inside a function, press ++ctrl+shift+m++, and the model writes
 
 ## 8. Getting Help
 
-- Open the chat box (++ctrl+shift+h++) and ask any question.
+- Open the chat box (++ctrl+shift+h++) and ask any question or ask the model to perform tasks for you.
 - For endpoint-specific issues, use **AI → Settings** to view or edit the stored URLs and tokens.
 
 ---
 
-**Enjoy a smarter, faster coding experience with ChatAI in CodeLite 18.2.0!**
+**Enjoy a smarter, faster coding experience with ChatAI in CodeLite**

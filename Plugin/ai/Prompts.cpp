@@ -68,31 +68,40 @@ const std::string PROMPT_GIT_RELEASE_NOTES =
 Your job:
 
 1. Obtain all git commits from HEAD to the latest tag. Use `git describe --tags --abbrev=0` to find the latest tag, then `git log <tag>..HEAD --oneline` to list the commits.
-2. Group the commits into the following sections **only if there is at least one item**:
-   - **✨ New Features** – new public‑facing functionality.
-   - **🐛 Bug Fixes** – corrections of defects.
-   - **🔧 Improvements / Refactorings** – internal enhancements, performance, code cleanup, etc.
-   - **📝 Documentation** – docs, READMEs, comments, examples, API docs.
-   - **⚠️ Breaking Changes** – anything that might require users to change their code or configuration.
-   - **🚀 Other** – anything that doesn't fit above (e.g., CI/CD updates, test additions, build scripts).
 
-3. For each commit, keep only the essential part of its subject line (ignore the hash, date, author).
+2. **Filter commits to include only significant, user-facing changes.** Skip commits that are:
+   - Minor typo fixes or formatting changes
+   - Internal-only refactorings with no user impact
+   - Trivial dependency updates or version bumps
+   - Routine maintenance tasks (e.g., updating .gitignore, minor CI tweaks)
+   - Work-in-progress or temporary commits
+   - Commits that merely merge branches without substantive changes
+
+3. Group the **major commits only** into the following sections **only if there is at least one item**:
+   - **✨ New Features** – new public‑facing functionality.
+   - **🐛 Bug Fixes** – corrections of defects that affect users.
+   - **🔧 Improvements / Refactorings** – significant internal enhancements, performance improvements, or meaningful code cleanup.
+   - **📝 Documentation** – substantial docs, READMEs, comments, examples, or API documentation updates.
+   - **⚠️ Breaking Changes** – anything that might require users to change their code or configuration.
+   - **🚀 Other** – other noteworthy changes that don't fit above (e.g., significant CI/CD updates, major test additions, important build script changes).
+
+4. For each commit, keep only the essential part of its subject line (ignore the hash, date, author).
    - If the commit message already contains a conventional prefix (e.g., `feat:`, `fix:`, `docs:`), **use that to decide the section**.
    - If no conventional prefix exists, infer the section from the wording, falling back to **Other**.
 
-4. Write the release notes in **GitHub‑flavored Markdown** suitable for direct copy‑paste onto a web page.
+5. Write the release notes in **GitHub‑flavored Markdown** suitable for direct copy‑paste onto a web page.
    - Use level‑2 headings (`##`) for each section.
    - Use bullet points (`-`) for individual items.
    - Append a short link to the commit hash that points to GitHub (or your Git remote) using the format `[hash](https://github.com/ORG/REPO/commit/hash)`.
    - If a commit references a PR number (e.g., `#123`), turn it into a link `[#123](https://github.com/ORG/REPO/pull/123)`.
 
-5. At the top of the document, add a title line with the release version and date, formatted exactly as:
+6. At the top of the document, add a title line with the release version and date, formatted exactly as:
 
 ```markdown
 # Release {{VERSION}} – {{RELEASE_DATE}}
 ```
 
-6. End the notes with a short "_Thank you for using our software!_" line.)";
+7. End the notes with a short "_Thank you for using our software!_" line.)";
 
 const std::string PROMPT_GIT_CODE_REVIEW =
     R"(You are an expert developer performing a code review. Your task is to analyze the provided git diff and offer constructive feedback.

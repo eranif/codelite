@@ -61,13 +61,13 @@ inline std::string PromptKindToString(PromptKind kind)
 {
     switch (kind) {
     case llm::PromptKind::kReleaseNotesGenerate:
-        return "Git Release Notes: Generate";
+        return "Generate Release Notes";
     case llm::PromptKind::kCommentGeneration:
-        return "Comment Generation Prompt";
+        return "Generate Comment";
     case llm::PromptKind::kGitCommitMessage:
-        return "Git Commit Message Prompt";
+        return "Generate Commit Message";
     case llm::PromptKind::kGitChangesCodeReview:
-        return "Code Review Prompt";
+        return "Code Review";
     case llm::PromptKind::kMax:
         return "";
     }

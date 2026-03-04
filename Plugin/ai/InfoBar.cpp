@@ -4,7 +4,11 @@
 #include "file_logger.h"
 
 InfoBar::InfoBar(wxWindow* parent, std::shared_ptr<std::promise<llm::UserAnswer>> promise_ptr)
+#if wxCHECK_VERSION(3, 3, 0)
+    : wxInfoBar(parent, wxID_ANY, wxBORDER_SIMPLE)
+#else
     : wxInfoBar(parent)
+#endif
     , m_promise_ptr{promise_ptr}
 {
     SetShowHideEffects(wxSHOW_EFFECT_NONE, wxSHOW_EFFECT_NONE);

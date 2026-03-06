@@ -24,8 +24,11 @@ AI-powered IDE:
 High:
 -----
 
+- Editor Tab menu: Make sure that the "Copy" variant takes into consideration the remote state of the file.
+- Find Dialog: Move it around to make sure it does not "hide" the text selection.
 - Prompt Editor: allow creating custom prompts.
 - Add an option to show the prompt editor from the drop down menu from the chat-box.
+- Rename "Prompt Editor" -> "Prompt Store"
 - Replace the standard "find-in-files" tool with `grep` command (on all platforms) - this will allow it to run on remote files.
 - `GetCurrentEditorText` - add support for line (from-count).
 

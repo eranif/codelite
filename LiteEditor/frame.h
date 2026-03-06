@@ -552,10 +552,10 @@ protected:
     void OnQuickOutline(wxCommandEvent& event);
     void OnImportMSVS(wxCommandEvent& e);
     void OnDebugAttach(wxCommandEvent& event);
-    void OnCopyFilePath(wxCommandEvent& event);
+    void OnCopyFileFullPath(wxCommandEvent& event);
     void OnCopyFilePathRelativeToWorkspace(wxCommandEvent& event);
-    void OnCopyFilePathOnly(wxCommandEvent& event);
-    void OnCopyFileName(wxCommandEvent& event);
+    void OnCopyFolder(wxCommandEvent& event);
+    void OnCopyFileFullName(wxCommandEvent& event);
     void OnHighlightWord(wxCommandEvent& event);
     void OnHighlightWordUI(wxUpdateUIEvent& event);
     void OnShowNavBar(wxCommandEvent& e);

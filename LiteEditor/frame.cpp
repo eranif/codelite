@@ -654,9 +654,9 @@ EVT_MENU(XRCID("detach_debugger_tab"), clMainFrame::OnDetachDebuggerViewTab)
 EVT_MENU(XRCID("close_other_tabs"), clMainFrame::OnCloseAllButThis)
 EVT_MENU(XRCID("close_tabs_to_the_right"), clMainFrame::OnCloseTabsToTheRight)
 EVT_MENU(XRCID("copy_file_relative_path_to_workspace"), clMainFrame::OnCopyFilePathRelativeToWorkspace)
-EVT_MENU(XRCID("copy_file_name"), clMainFrame::OnCopyFilePath)
-EVT_MENU(XRCID("copy_file_path"), clMainFrame::OnCopyFilePathOnly)
-EVT_MENU(XRCID("copy_file_name_only"), clMainFrame::OnCopyFileName)
+EVT_MENU(XRCID("copy_file_name"), clMainFrame::OnCopyFileFullPath)
+EVT_MENU(XRCID("copy_file_path"), clMainFrame::OnCopyFolder)
+EVT_MENU(XRCID("copy_file_name_only"), clMainFrame::OnCopyFileFullName)
 EVT_MENU(XRCID("open_shell_from_filepath"), clMainFrame::OnOpenShellFromFilePath)
 EVT_MENU(XRCID("open_file_explorer"), clMainFrame::OnOpenFileExplorerFromFilePath)
 EVT_MENU(XRCID("ID_DETACH_EDITOR"), clMainFrame::OnDetachEditor)
@@ -3875,30 +3875,32 @@ void clMainFrame::OnViewDisplayEOL_UI(wxUpdateUIEvent& e)
     e.Check(m_frameGeneralInfo.GetFlags() & CL_SHOW_EOL ? true : false);
 }
 
-void clMainFrame::OnCopyFileName(wxCommandEvent& event)
+void clMainFrame::OnCopyFileFullName(wxCommandEvent& event)
 {
     clEditor* editor = GetEditorFromEvent(GetMainBook(), event);
     CHECK_PTR_RET(editor);
 
-    wxString fileName = editor->GetFileName().GetFullName();
-    ::CopyToClipboard(fileName);
+    wxString file_name;
+    file_name = editor->IsRemoteFile() ? editor->GetRemotePath().AfterLast('/') : editor->GetFileName().GetFullName();
+    ::CopyToClipboard(file_name);
 }
 
-void clMainFrame::OnCopyFilePath(wxCommandEvent& event)
+void clMainFrame::OnCopyFileFullPath(wxCommandEvent& event)
 {
     clEditor* editor = GetEditorFromEvent(GetMainBook(), event);
     CHECK_PTR_RET(editor);
 
-    wxString fileName = editor->GetFileName().GetFullPath();
-    ::CopyToClipboard(fileName);
+    ::CopyToClipboard(editor->GetRemotePathOrLocal());
 }
 
-void clMainFrame::OnCopyFilePathOnly(wxCommandEvent& event)
+void clMainFrame::OnCopyFolder(wxCommandEvent& event)
 {
     clEditor* editor = GetEditorFromEvent(GetMainBook(), event);
     CHECK_PTR_RET(editor);
-    wxString fileName = editor->GetFileName().GetPath(wxPATH_GET_VOLUME);
-    ::CopyToClipboard(fileName);
+
+    wxString file_name;
+    file_name = editor->IsRemoteFile() ? editor->GetRemotePath().BeforeLast('/') : editor->GetFileName().GetPath();
+    ::CopyToClipboard(file_name);
 }
 
 void clMainFrame::OnWorkspaceMenuUI(wxUpdateUIEvent& e)
@@ -5701,13 +5703,23 @@ void clMainFrame::OnCopyFilePathRelativeToWorkspace(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     IEditor* editor = GetIEditorFromEvent(GetMainBook(), event);
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
     CHECK_PTR_RET(editor);
-    CHECK_COND_RET(clWorkspaceManager::Get().IsWorkspaceOpened());
+    CHECK_PTR_RET(workspace);
 
-    wxFileName fn(editor->GetFileName());
-    fn.MakeRelativeTo(clWorkspaceManager::Get().GetWorkspace()->GetDir());
+    wxString path_to_copy;
+    if (workspace->IsRemote()) {
+        wxString workspace_path = workspace->GetDir();
+        wxFileName fn(editor->GetRemotePathOrLocal(), wxPATH_UNIX);
+        fn.MakeRelativeTo(workspace_path);
+        path_to_copy = fn.GetFullPath(wxPATH_UNIX);
+    } else {
+        wxFileName fn(editor->GetFileName());
+        fn.MakeRelativeTo(clWorkspaceManager::Get().GetWorkspace()->GetDir());
+        path_to_copy = fn.GetFullPath(wxPATH_NATIVE);
+    }
 
-    ::CopyToClipboard(fn.GetFullPath());
+    ::CopyToClipboard(path_to_copy);
 }
 
 void clMainFrame::OnCopyFilePathRelativeToWorkspaceUI(wxUpdateUIEvent& event)

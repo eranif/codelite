@@ -52,12 +52,12 @@ void wxcSettings::Save()
     root.toElement().addProperty("m_treeviewSashPos", m_treeviewSashPos);
     root.toElement().addProperty("recentFiles", m_history);
 
-    JSONItem arr = JSONItem::createArray("m_templateClasses");
-    root.toElement().append(arr);
+    JSONItem arr = JSONItem::createArray();
 
     for (const auto& p : m_templateClasses) {
         arr.append(p.second.ToJSON());
     }
+    root.toElement().addProperty("m_templateClasses", arr);
     root.save(fn);
 }
 
@@ -120,7 +120,7 @@ void wxcSettings::MergeCustomControl(const JSONItem& arr)
 
 JSONItem wxcSettings::GetCustomControlsAsJSON(const wxArrayString& controls) const
 {
-    JSONItem arr = JSONItem::createArray("m_templateClasses");
+    JSONItem arr = JSONItem::createArray();
     for (const auto& p : m_templateClasses) {
         if (controls.Index(p.first) != wxNOT_FOUND) {
             arr.append(p.second.ToJSON());

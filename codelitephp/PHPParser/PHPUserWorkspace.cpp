@@ -41,12 +41,12 @@ PHPUserWorkspace& PHPUserWorkspace::Save()
     // Serialize the breakpoints
     JSON root(JsonType::Object);
     JSONItem json = root.toElement();
-    JSONItem bpArr = JSONItem::createArray("m_breakpoints");
-    json.append(bpArr);
+    JSONItem bpArr = JSONItem::createArray();
 
     for (const auto& breakpoint : m_breakpoints) {
         bpArr.arrayAppend(breakpoint.ToJSON());
     }
+    json.addProperty("m_breakpoints", bpArr);
     root.save(GetFileName());
     return *this;
 }

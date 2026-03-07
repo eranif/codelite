@@ -122,7 +122,7 @@ void AuiPaneInfo::FromJSON(const JSONItem& json)
 
 JSONItem AuiPaneInfo::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject("wxAuiPaneInfo");
+    JSONItem element = JSONItem::createObject();
     element.addProperty(wxT("m_name"), m_name);
     element.addProperty(wxT("m_caption"), m_caption);
     element.addProperty(wxT("m_dockDirection"), m_dockDirection);

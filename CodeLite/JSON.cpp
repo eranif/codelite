@@ -376,10 +376,9 @@ void JSONItem::arrayAppend(const JSONItem& element)
     }
 }
 
-JSONItem JSONItem::createArray(const wxString& name)
+JSONItem JSONItem::createArray()
 {
     JSONItem arr(cJSON_CreateArray());
-    arr.SetPropertyName(name);
     arr.setType(cJSON_Array);
     return arr;
 }
@@ -501,11 +500,11 @@ JSONItem& JSONItem::addProperty(const wxString& name, long value)
 
 JSONItem& JSONItem::addProperty(const wxString& name, const wxArrayString& arr)
 {
-    JSONItem arrEle = JSONItem::createArray(name);
+    JSONItem arrEle = JSONItem::createArray();
     for (const auto& s : arr) {
         arrEle.arrayAppend(s);
     }
-    append(arrEle);
+    addProperty(name, arrEle);
     return *this;
 }
 
@@ -621,14 +620,14 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxStringMap_t& strin
     if (!m_json)
         return *this;
 
-    JSONItem arr = JSONItem::createArray(name);
+    JSONItem arr = JSONItem::createArray();
     for (const auto& [key, value] : stringMap) {
         JSONItem obj = JSONItem::createObject();
         obj.addProperty("key", key);
         obj.addProperty("value", value);
         arr.arrayAppend(obj);
     }
-    append(arr);
+    addProperty(name, arr);
     return *this;
 }
 #endif
@@ -753,8 +752,8 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxFileName& filename
 
 JSONItem JSONItem::AddArray(const wxString& name)
 {
-    JSONItem json = createArray(name);
-    append(json);
+    JSONItem json = createArray();
+    addProperty(name, json);
     return json;
 }
 

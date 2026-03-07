@@ -447,19 +447,19 @@ JSONItem LexerConf::ToJSON(bool forExport) const
     json.addProperty("Extensions", GetFileSpec());
     json.addProperty("SubstyleBase", GetSubStyleBase());
 
-    JSONItem word_set = json.createArray("WordSet");
+    JSONItem word_set = json.createArray();
     word_set.arrayAppend(m_wordSets[WS_CLASS].to_json());     // 0
     word_set.arrayAppend(m_wordSets[WS_FUNCTIONS].to_json()); // 1
     word_set.arrayAppend(m_wordSets[WS_VARIABLES].to_json()); // 2
     word_set.arrayAppend(m_wordSets[WS_OTHERS].to_json());    // 3
 
     json.addProperty("WordSet", word_set);
-    JSONItem properties = JSONItem::createArray("Properties");
-    json.append(properties);
+    JSONItem properties = JSONItem::createArray();
 
     for (const auto& sp : GetLexerProperties()) {
         properties.arrayAppend(sp.ToJSON(forExport));
     }
+    json.addProperty("Properties", properties);
     return json;
 }
 

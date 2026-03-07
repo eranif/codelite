@@ -49,7 +49,7 @@ void wxcProjectMetadata::FromJSON(const JSONItem& json)
 
 JSONItem wxcProjectMetadata::ToJSON()
 {
-    JSONItem metadata = JSONItem::createObject("metadata");
+    JSONItem metadata = JSONItem::createObject();
     UpdatePaths();
 
     metadata.addProperty("m_generatedFilesDir", m_generatedFilesDir);
@@ -69,7 +69,7 @@ JSONItem wxcProjectMetadata::ToJSON()
 void wxcProjectMetadata::AppendCustomControlsJSON(const wxArrayString& controls, JSONItem& element) const
 {
     JSONItem customControls = wxcSettings::Get().GetCustomControlsAsJSON(controls);
-    element.append(customControls);
+    element.addProperty("m_templateClasses", customControls);
 }
 
 wxString wxcProjectMetadata::GetCppFileName() const
@@ -195,18 +195,16 @@ wxString wxcProjectMetadata::GetBitmapsFile() const
 }
 void wxcProjectMetadata::Serialize(const wxcWidget::List_t& topLevelsList, const wxFileName& filename)
 {
-    wxcProjectMetadata p;
-    p.GenerateBitmapFunctionName();
-
-    JSON root(JsonType::Object);
-    root.toElement().append(p.ToJSON());
-
-    // The windows
-    JSONItem windows = JSONItem::createArray("windows");
-    root.toElement().append(windows);
-
     wxFFile fp(filename.GetFullPath(), "w+b");
-    if(fp.IsOpened()) {
+    if (fp.IsOpened()) {
+        wxcProjectMetadata p;
+        p.GenerateBitmapFunctionName();
+
+        JSON root(JsonType::Object);
+        root.toElement().addProperty("metadata", p.ToJSON());
+
+        // The windows
+        JSONItem windows = JSONItem::createArray();
 
         for (auto widget : topLevelsList) {
             JSONItem obj = JSONItem::createObject();
@@ -214,6 +212,7 @@ void wxcProjectMetadata::Serialize(const wxcWidget::List_t& topLevelsList, const
             widget->Serialize(obj);
             windows.arrayAppend(obj);
         }
+        root.toElement().addProperty("windows", windows);
 
         fp.Write(root.toElement().format(), wxConvUTF8);
         fp.Close();

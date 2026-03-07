@@ -171,10 +171,10 @@ public:
      */
     static JSONItem createObject(const wxString& name = wxT(""));
     /**
-     * @brief create new named array and append it to this json element
+     * @brief create new array
      * @return the newly created array
      */
-    static JSONItem createArray(const wxString& name = wxT(""));
+    static JSONItem createArray();
 
     /**
      * @brief add array to this json and return a reference to the newly added array

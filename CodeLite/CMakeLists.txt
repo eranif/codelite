@@ -37,8 +37,7 @@ add_library(libcodelite SHARED ${SRCS} ${FlexSrcs})
 target_include_directories(
   libcodelite
   PUBLIC "${CL_SRC_ROOT}/sdk/wxsqlite3/include" "${CL_SRC_ROOT}/CodeLite"
-         "${CL_SRC_ROOT}/CodeLite/ssh" "${CL_SRC_ROOT}/PCH"
-  PRIVATE "${CL_SRC_ROOT}/submodules/asio/asio/include")
+         "${CL_SRC_ROOT}/CodeLite/ssh" "${CL_SRC_ROOT}/PCH")
 
 # Macros
 if(WIN32)

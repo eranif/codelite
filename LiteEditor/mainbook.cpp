@@ -1200,15 +1200,15 @@ void MainBook::ApplyTabLabelChanges()
 {
     // We only want to do this if there *is* a change, and it's hard to be sure
     // by looking.  So store any previous state in:
-    static int previousShowParentPath = -1;
+    static std::optional<int> previousShowParentPath{std::nullopt};
 
-    if (previousShowParentPath < 0 ||
-        EditorConfigST::Get()->GetOptions()->IsTabShowPath() != (bool)previousShowParentPath) {
-        previousShowParentPath = EditorConfigST::Get()->GetOptions()->IsTabShowPath();
+    if (!previousShowParentPath.has_value() ||
+        EditorConfigST::Get()->GetOptions()->GetTabShowPath() != previousShowParentPath.value()) {
+        previousShowParentPath = EditorConfigST::Get()->GetOptions()->GetTabShowPath();
 
         std::vector<clEditor*> editors = GetAllEditors();
         for (size_t i = 0; i < editors.size(); i++) {
-            SetPageTitle(editors[i], editors[i]->GetFileName(), editors[i]->IsEditorModified());
+            SetPageTitle(editors[i], editors[i]->GetRemotePathOrLocal(), editors[i]->IsEditorModified());
         }
     }
 }
@@ -1967,17 +1967,11 @@ void MainBook::SetPageTitle(wxWindow* page, const wxFileName& filename, bool mod
 wxString MainBook::CreateLabel(const wxFileName& fn, bool modified) const
 {
     wxString label = fn.GetFullName();
-    if (fn.GetDirCount() && EditorConfigST::Get()->GetOptions()->IsTabShowPath()) {
-        label.Prepend(fn.GetDirs().Last() + wxFileName::GetPathSeparator());
-    }
+    label = FileUtils::GetFileNameWithDirPart(fn.GetFullPath(), EditorConfigST::Get()->GetOptions()->GetTabShowPath());
 
 #if CL_USE_NATIVEBOOK || MAINBOOK_AUIBOOK
     if (modified) {
-#if defined(__WXMSW__) || defined(__WXMAC__)
         label.Prepend(wxT(" \U0001F4BE "));
-#else
-        label.Prepend(wxT(" * "));
-#endif
     }
 #else
     wxUnusedVar(modified);

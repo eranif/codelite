@@ -196,8 +196,8 @@ public:
     bool IsTabColourDark() const;
     void SetTabHasXButton(bool b) { EnableOption(Opt_TabNoXButton, !b); }
     bool IsTabHasXButton() const { return !HasOption(Opt_TabNoXButton); }
-    void SetTabShowPath(bool b) { EnableOption(Opt_TabNoPath, !b); }
-    bool IsTabShowPath() const { return !HasOption(Opt_TabNoPath); }
+    void SetTabShowPath(int nCount) const;
+    int GetTabShowPath() const;
     bool IsMouseScrollSwitchTabs() const { return HasOption(Opt2_MouseScrollSwitchTabs); }
     void SetMouseScrollSwitchTabs(bool b) { EnableOption(Opt2_MouseScrollSwitchTabs, b); }
     bool IsSortTabsDropdownAlphabetically() const { return HasOption(Opt2_SortTabsDropdownAlphabetically); }

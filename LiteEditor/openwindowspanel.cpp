@@ -30,6 +30,7 @@
 #include "cl_config.h"
 #include "editor_config.h"
 #include "event_notifier.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
 #include "macros.h"
@@ -471,7 +472,7 @@ wxVariant OpenWindowsPanel::PrepareValue(const clTab& tab, bool* isModified)
     int imgId = clGetManager()->GetStdIcons()->GetMimeImageId(ft);
     if (editor && editor->GetModify()) {
         *isModified = true;
-        title.Prepend("*");
+        title.Prepend(wxT(" \U0001F4BE "));
     }
 
     wxVariant value = ::MakeBitmapIndexText(title, imgId);
@@ -519,11 +520,8 @@ wxString OpenWindowsPanel::GetDisplayName(const clTab& tab) const
     wxString title;
     if (tab.isFile) {
         const wxFileName& fn = tab.filename;
-        if (fn.GetDirCount() && EditorConfigST::Get()->GetOptions()->IsTabShowPath()) {
-            title = fn.GetDirs().Last() + wxFileName::GetPathSeparator() + fn.GetFullName();
-        } else {
-            title = tab.filename.GetFullName();
-        }
+        title =
+            FileUtils::GetFileNameWithDirPart(fn.GetFullPath(), EditorConfigST::Get()->GetOptions()->GetTabShowPath());
     } else {
         title = tab.text;
     }

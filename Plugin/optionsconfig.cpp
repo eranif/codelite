@@ -38,7 +38,7 @@ wxString SetDefaultBookmarkColours()
     // (Confusingly, the 'foreground' is actually just the rim of the marker; the background is the central bulk)
     // NB: We want the 'find' colour always to be the most significant, so add any future extra items *before* the last
     // one
-    const wxString arr[] = { "#FF0080", "#0000FF", "#FF0000", "#00FF00", "#FFFF00" };
+    const wxString arr[] = {"#FF0080", "#0000FF", "#FF0000", "#00FF00", "#FFFF00"};
     wxString output;
     for (size_t n = 0; n < CL_N0_OF_BOOKMARK_TYPES; ++n) {
         if (n < sizeof(arr) / sizeof(wxString)) {
@@ -205,8 +205,8 @@ OptionsConfig::OptionsConfig(wxXmlNode* node)
         m_dontAutoFoldResults = XmlUtils::ReadBool(node, wxT("DontAutoFoldResults"), m_dontAutoFoldResults);
         m_dontOverrideSearchStringWithSelection = XmlUtils::ReadBool(
             node, wxT("DontOverrideSearchStringWithSelection"), m_dontOverrideSearchStringWithSelection);
-        m_findNextOrPreviousUseSelection = XmlUtils::ReadBool(
-            node, wxT("FindNextOrPreviousUseSelection"), m_findNextOrPreviousUseSelection);
+        m_findNextOrPreviousUseSelection =
+            XmlUtils::ReadBool(node, wxT("FindNextOrPreviousUseSelection"), m_findNextOrPreviousUseSelection);
         m_showDebugOnRun = XmlUtils::ReadBool(node, wxT("ShowDebugOnRun"), m_showDebugOnRun);
         m_caretUseCamelCase = XmlUtils::ReadBool(node, wxT("m_caretUseCamelCase"), m_caretUseCamelCase);
         m_wordWrap = XmlUtils::ReadBool(node, wxT("m_wordWrap"), m_wordWrap);
@@ -305,10 +305,9 @@ wxXmlNode* OptionsConfig::ToXml() const
     n->AddAttribute(wxT("DisableSmartIndent"), BoolToString(m_disableSmartIndent));
     n->AddAttribute(wxT("DisableSemicolonShift"), BoolToString(m_disableSemicolonShift));
     n->AddAttribute(wxT("DontAutoFoldResults"), BoolToString(m_dontAutoFoldResults));
-    n->AddAttribute(wxT("DontOverrideSearchStringWithSelection"),
-                    BoolToString(m_dontOverrideSearchStringWithSelection));
-    n->AddAttribute(wxT("FindNextOrPreviousUseSelection"),
-                    BoolToString(m_findNextOrPreviousUseSelection));
+    n->AddAttribute(
+        wxT("DontOverrideSearchStringWithSelection"), BoolToString(m_dontOverrideSearchStringWithSelection));
+    n->AddAttribute(wxT("FindNextOrPreviousUseSelection"), BoolToString(m_findNextOrPreviousUseSelection));
     n->AddAttribute(wxT("ShowDebugOnRun"), BoolToString(m_showDebugOnRun));
     n->AddAttribute(wxT("ConsoleCommand"), m_programConsoleCommand);
     n->AddAttribute(wxT("EOLMode"), m_eolMode);
@@ -486,3 +485,16 @@ bool OptionsConfig::IsTabColourDark() const { return HasOption(Opt_TabColourDark
 bool OptionsConfig::IsTabColourMatchesTheme() const { return !HasOption(Opt_TabColourPersistent); }
 void OptionsConfig::EnableOption(size_t flag, bool b) { m_options.set(flag, b); }
 bool OptionsConfig::HasOption(size_t flag) const { return m_options.test(flag); }
+
+void OptionsConfig::SetTabShowPath(int nCount) const { clConfig::Get().Write("DirPartsInTabLabel", nCount); }
+
+int OptionsConfig::GetTabShowPath() const
+{
+    const int kDefaultValue = 2;
+    int value = clConfig::Get().Read("DirPartsInTabLabel", kDefaultValue);
+    if (value < 0) {
+        SetTabShowPath(0);
+        return 0;
+    }
+    return clConfig::Get().Read("DirPartsInTabLabel", kDefaultValue);
+}

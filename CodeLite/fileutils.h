@@ -48,7 +48,7 @@ public:
 
         ~Deleter()
         {
-            if(m_filename.Exists()) {
+            if (m_filename.Exists()) {
                 clRemoveFile(m_filename);
             }
         }
@@ -99,16 +99,16 @@ public:
      * @param password the password
      * @param port ssh port
      */
-    static void OpenSSHTerminal(const wxString& sshClient, const wxString& connectString, const wxString& password,
-                                int port = 22);
+    static void
+    OpenSSHTerminal(const wxString& sshClient, const wxString& connectString, const wxString& password, int port = 22);
 
     /**
      * @brief OSX only: open Terminal and return its TTY
      * @param path working directory
      * @param [output] tty the TTY of the launched terminal
      */
-    static void OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, const wxString& appname, wxString& tty,
-                                                 long& pid);
+    static void
+    OSXOpenDebuggerTerminalAndGetTTY(const wxString& path, const wxString& appname, wxString& tty, long& pid);
 
     /**
      * @brief file masking search
@@ -214,7 +214,7 @@ public:
     /**
      * @brief (on Linux) makes-absolute filepath, and dereferences it and any symlinked dirs in the path
      */
-    static wxString RealPath(const wxString& filepath, bool forced=false);
+    static wxString RealPath(const wxString& filepath, bool forced = false);
     static bool RealPathGetModeResolveSymlinks();
     static void RealPathSetModeResolveSymlinks(bool resolveSymlinks);
 
@@ -244,7 +244,9 @@ public:
      * passing suffix_list = {"-10", "-9"...} will also check for these files (in order)
      * @return true if a filepath was found
      */
-    static bool FindExe(const wxString& name, wxFileName& exepath, const wxArrayString& hint = {},
+    static bool FindExe(const wxString& name,
+                        wxFileName& exepath,
+                        const wxArrayString& hint = {},
                         const wxArrayString& suffix_list = {});
 
     /**
@@ -259,8 +261,8 @@ public:
      * @param extensions
      * @param [out] the files found
      */
-    static size_t FindSimilar(const wxFileName& filename, const std::vector<wxString>& extensions,
-                              std::vector<wxFileName>& vout);
+    static size_t
+    FindSimilar(const wxFileName& filename, const std::vector<wxString>& extensions, std::vector<wxFileName>& vout);
 
     /**
      * @brief convert path to uri
@@ -310,6 +312,8 @@ public:
      * \return true on success, false otherwise
      */
     static bool CopyDir(const wxString& src, const wxString& target);
+
+    static wxString GetFileNameWithDirPart(const wxString& fullpath, size_t count = 1);
 };
 
 #endif // FILEUTILS_H

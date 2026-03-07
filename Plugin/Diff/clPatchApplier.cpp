@@ -192,7 +192,7 @@ clStatusOr<int> PatchApplier::ApplyHunk(ITextArea* ctrl, const wxArrayString& li
 
     // First pass: locate the hunk.
     int hunk_found_line{wxNOT_FOUND};
-    for (size_t current_editor_line_number = start_line; current_editor_line_number < totalLines;
+    for (int current_editor_line_number = start_line; current_editor_line_number < totalLines;
          ++current_editor_line_number) {
         wxString editor_line = ctrl->GetLine(current_editor_line_number);
         editor_line.Trim();
@@ -201,7 +201,7 @@ clStatusOr<int> PatchApplier::ApplyHunk(ITextArea* ctrl, const wxArrayString& li
         }
 
         bool hunk_found{true};
-        for (size_t hunk_line_number = 0; hunk_line_number < lines_to_find.size(); ++hunk_line_number) {
+        for (int hunk_line_number = 0; hunk_line_number < lines_to_find.size(); ++hunk_line_number) {
             wxString hunk_line = lines_to_find[hunk_line_number];
             // These lines must exist and match in the control
             if (current_editor_line_number + hunk_line_number >= totalLines) {

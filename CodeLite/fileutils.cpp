@@ -976,3 +976,39 @@ wxFileName FileUtils::wxReadLink(const wxFileName& filename)
     return filename;
 #endif
 }
+
+wxString FileUtils::GetFileNameWithDirPart(const wxString& fullpath, size_t count)
+{
+    wxString normalize_path = fullpath;
+    normalize_path.Replace("\\", "/");
+
+    // Split the path into parts
+    wxArrayString parts = ::wxStringTokenize(normalize_path, "/", wxTOKEN_STRTOK);
+
+    // If there are no parts, return the original path
+    if (parts.IsEmpty()) {
+        return fullpath;
+    }
+
+    // Get the filename (last part)
+    wxString filename = parts[parts.GetCount() - 1];
+
+    // Calculate the number of directory parts to include
+    size_t dirCount = parts.GetCount() - 1; // total dir parts (excluding filename)
+    size_t partsToInclude = (dirCount > count) ? count : dirCount;
+
+    // If no directory parts to include, just return the filename
+    if (partsToInclude == 0) {
+        return filename;
+    }
+
+    // Build the result: get the last 'partsToInclude' directory parts + filename
+    wxString result;
+    size_t startIdx = parts.GetCount() - 1 - partsToInclude; // index to start from
+    for (size_t i = startIdx; i < parts.GetCount(); ++i) {
+        result += parts[i];
+        if (i < parts.GetCount() - 1)
+            result += "/";
+    }
+    return result;
+}

@@ -26,7 +26,6 @@
 #include "subversion2.h"
 
 #include "Keyboard/clKeyboardManager.h"
-#include "StdToWX.h"
 #include "StringUtils.h"
 #include "SvnCommitDialog.h"
 #include "SvnLogDialog.h"
@@ -472,7 +471,7 @@ void Subversion2::OnFolderAdd(wxCommandEvent& event)
 void Subversion2::OnCommit(wxCommandEvent& event)
 {
     // Coming from file explorer
-    const wxArrayString paths = StdToWX::ToArrayString({ m_selectedFile.IsOk() ? m_selectedFile.GetFullName() : "." });
+    const wxArrayString paths = {m_selectedFile.IsOk() ? m_selectedFile.GetFullName() : "."};
     DoCommit(paths, m_selectedFolder, event);
 }
 

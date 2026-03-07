@@ -7,7 +7,6 @@
 #include "Properties/font_property.h"
 #include "Properties/multi_strings_property.h"
 #include "Properties/string_property.h"
-#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "wxgui_helpers.h"
 
@@ -27,7 +26,7 @@ PropertyGridWrapper::PropertyGridWrapper()
     m_styles.Clear();
     static int labelCount = 0;
 
-    const wxArrayString customEditors = StdToWX::ToArrayString({
+    const wxArrayString customEditors = {
         "",                  // 0
         "TextCtrl",          // 1
         "Choice",            // 2
@@ -37,7 +36,7 @@ PropertyGridWrapper::PropertyGridWrapper()
         "ChoiceAndButton",   // 6
         "SpinCtrl",          // 7
         "DatePickerCtrl",    // 8
-    });
+    };
 
     SetPropertyString(_("Common Settings"), "wxPropertyGrid");
     Add<CategoryProperty>("wxPGProperty");
@@ -47,7 +46,7 @@ PropertyGridWrapper::PropertyGridWrapper()
     Add<ColorProperty>(PROP_BG, "<Default>", _("Property background colour"));
     Add<ChoiceProperty>(PROP_CUSTOM_EDITOR, customEditors, 0, _("Set custom editor control to a property"));
 
-    const wxArrayString kindArr = StdToWX::ToArrayString({
+    const wxArrayString kindArr = {
         "wxPropertyCategory",     // 0
         "wxIntProperty",          // 1
         "wxFloatProperty",        // 2
@@ -64,7 +63,7 @@ PropertyGridWrapper::PropertyGridWrapper()
         "wxImageFileProperty",    // 13
         "wxFontProperty",         // 14
         "wxSystemColourProperty", // 15
-    });
+    };
 
     Add<ChoiceProperty>(PROP_KIND, kindArr, 4, _("The property kind"));
 

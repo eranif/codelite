@@ -5,7 +5,6 @@
 #include "Properties/choice_property.h"
 #include "Properties/multi_strings_property.h"
 #include "Properties/string_property.h"
-#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "wxgui_defs.h"
 #include "xmlutils.h"
@@ -14,8 +13,15 @@ StdButtonWrapper::StdButtonWrapper()
     : wxcWidget(ID_WXSTDBUTTON)
 {
     m_properties.Clear();
-    const wxArrayString ids = StdToWX::ToArrayString({ "wxID_OK", "wxID_YES", "wxID_SAVE", "wxID_APPLY", "wxID_CLOSE",
-                                                       "wxID_NO", "wxID_CANCEL", "wxID_HELP", "wxID_CONTEXT_HELP" });
+    const wxArrayString ids = {"wxID_OK",
+                               "wxID_YES",
+                               "wxID_SAVE",
+                               "wxID_APPLY",
+                               "wxID_CLOSE",
+                               "wxID_NO",
+                               "wxID_CANCEL",
+                               "wxID_HELP",
+                               "wxID_CONTEXT_HELP"};
 
     RegisterEvent(wxT("wxEVT_COMMAND_BUTTON_CLICKED"), wxT("wxCommandEvent"),
                   _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."),

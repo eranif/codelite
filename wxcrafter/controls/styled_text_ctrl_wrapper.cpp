@@ -5,7 +5,6 @@
 #include "Properties/choice_property.h"
 #include "Properties/font_property.h"
 #include "Properties/multi_strings_property.h"
-#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "wxgui_helpers.h"
 
@@ -17,9 +16,9 @@ StyledTextCtrlWrapper::LexersMap_t StyledTextCtrlWrapper::m_lexers;
 
 StyledTextCtrlWrapper::StyledTextCtrlWrapper()
     : wxcWidget(ID_WXSTC)
-    , m_wrapOptions(StdToWX::ToArrayString({ "None", "Word", "Char" }))
-    , m_eolMode(StdToWX::ToArrayString({ "CRLF", "CR", "LF", "Default" }))
-    , m_indentGuides(StdToWX::ToArrayString({ "None", "Real", "Look Forward", "Look Both" }))
+    , m_wrapOptions({"None", "Word", "Char"})
+    , m_eolMode({"CRLF", "CR", "LF", "Default"})
+    , m_indentGuides({"None", "Real", "Look Forward", "Look Both"})
 {
     // Register the known lexers
     if(m_lexers.empty()) {

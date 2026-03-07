@@ -1,6 +1,5 @@
 #include "wxc_bitmap_code_generator.h"
 
-#include "StdToWX.h"
 #include "event_notifier.h"
 #include "top_level_win_wrapper.h"
 #include "wxc_project_metadata.h"
@@ -11,7 +10,6 @@
 #include <wx/frame.h>
 #include <wx/log.h>
 #include <wx/sstream.h>
-#include <wx/stdpaths.h>
 #include <wx/utils.h>
 #include <wx/xml/xml.h>
 
@@ -50,7 +48,7 @@ bool wxcCodeGeneratorHelper::CreateXRC()
     }
 
     // Supported hi-res images extension
-    const wxArrayString exts = StdToWX::ToArrayString({ "@2x", "@1.25x", "@1.5x" });
+    const wxArrayString exts = {"@2x", "@1.25x", "@1.5x"};
 
     for (const auto& p : m_bitmapMap) {
         wxFileName fn(p.second);

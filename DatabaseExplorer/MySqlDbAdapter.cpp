@@ -25,7 +25,6 @@
 
 #include "MySqlDbAdapter.h"
 
-#include "StdToWX.h"
 #include "constraint.h"
 #include "database.h"
 #include "dbconnection.h"
@@ -184,10 +183,25 @@ IDbType* MySqlDbAdapter::GetDbTypeByName(const wxString& typeName)
 
 wxArrayString* MySqlDbAdapter::GetDbTypes()
 {
-    return new wxArrayString(StdToWX::ToArrayString(
-        { wxT("INT"), wxT("SMALLINT"), wxT("BIGINT"), wxT("TINYINT"), wxT("VARCHAR"), wxT("DOUBLE"), wxT("FLOAT"),
-          wxT("DECIMAL"), wxT("BOOL"), wxT("DATETIME"), wxT("CHAR"), wxT("TIMESTAMP"), wxT("ENUM"), wxT("SET"),
-          wxT("LONGBLOB"), wxT("BLOB"), wxT("MEDIUMTEXT"), wxT("TEXT"), wxT("LONGTEXT") }));
+    return new wxArrayString{wxT("INT"),
+                             wxT("SMALLINT"),
+                             wxT("BIGINT"),
+                             wxT("TINYINT"),
+                             wxT("VARCHAR"),
+                             wxT("DOUBLE"),
+                             wxT("FLOAT"),
+                             wxT("DECIMAL"),
+                             wxT("BOOL"),
+                             wxT("DATETIME"),
+                             wxT("CHAR"),
+                             wxT("TIMESTAMP"),
+                             wxT("ENUM"),
+                             wxT("SET"),
+                             wxT("LONGBLOB"),
+                             wxT("BLOB"),
+                             wxT("MEDIUMTEXT"),
+                             wxT("TEXT"),
+                             wxT("LONGTEXT")};
 }
 wxString MySqlDbAdapter::GetDefaultSelect(const wxString& dbName, const wxString& tableName)
 {

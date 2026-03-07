@@ -1,15 +1,11 @@
 #include "DockerOutputPane.h"
 
 #include "ColoursAndFontsManager.h"
-#include "StdToWX.h"
 #include "bitmap_loader.h"
 #include "clDockerContainer.h"
-#include "clDockerEvents.h"
 #include "clDockerSettings.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
-#include "globals.h"
-#include "imanager.h"
 
 DockerOutputPane::DockerOutputPane(wxWindow* parent, clDockerDriver::Ptr_t driver)
     : DockerOutputPaneBase(parent)
@@ -21,9 +17,9 @@ DockerOutputPane::DockerOutputPane(wxWindow* parent, clDockerDriver::Ptr_t drive
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &DockerOutputPane::OnWorkspaceClosed, this);
 
     m_styler.reset(new clGenericSTCStyler(m_stc));
-    m_styler->AddStyle(StdToWX::ToArrayString({ "successfully" }), clGenericSTCStyler::kInfo);
-    m_styler->AddStyle(StdToWX::ToArrayString({ "abort ", "Error response from daemon" }), clGenericSTCStyler::kError);
-    m_styler->AddStyle(StdToWX::ToArrayString({ "SECURITY WARNING" }), clGenericSTCStyler::kWarning);
+    m_styler->AddStyle({"successfully"}, clGenericSTCStyler::kInfo);
+    m_styler->AddStyle({"abort ", "Error response from daemon"}, clGenericSTCStyler::kError);
+    m_styler->AddStyle({"SECURITY WARNING"}, clGenericSTCStyler::kWarning);
 
     // ===-------------------------
     // Output tab

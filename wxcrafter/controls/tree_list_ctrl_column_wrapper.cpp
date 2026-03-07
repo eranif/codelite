@@ -4,7 +4,6 @@
 #include "Properties/choice_property.h"
 #include "Properties/col_header_flags_property.h"
 #include "Properties/string_property.h"
-#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "wxgui_helpers.h"
 
@@ -17,7 +16,7 @@ TreeListCtrlColumnWrapper::TreeListCtrlColumnWrapper()
     m_sizerFlags.Clear();
     m_properties.Clear();
 
-    const wxArrayString alignment = StdToWX::ToArrayString({ "wxALIGN_LEFT", "wxALIGN_RIGHT", "wxALIGN_CENTER" });
+    const wxArrayString alignment = {"wxALIGN_LEFT", "wxALIGN_RIGHT", "wxALIGN_CENTER"};
 
     // FIXME: add alignment + column flags here
     Add<CategoryProperty>(_("wxTreeListCtrl Column"));

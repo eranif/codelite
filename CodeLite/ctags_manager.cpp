@@ -28,7 +28,6 @@
 #include "Cxx/CxxLexerAPI.h"
 #include "Cxx/CxxVariableScanner.h"
 #include "Cxx/cpp_comment_creator.h"
-#include "StdToWX.h"
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "database/tags_storage_sqlite3.h"
@@ -208,7 +207,7 @@ bool TagsManager::GetDerivationListInternal(const wxString& path, TagEntryPtr de
 {
     std::vector<TagEntryPtr> tags;
     TagEntryPtr tag;
-    const wxArrayString kind = StdToWX::ToArrayString({ wxT("class"), wxT("struct") });
+    const wxArrayString kind = { wxT("class"), wxT("struct") };
 
     GetDatabase()->GetTagsByKindAndPath(kind, path, tags);
 
@@ -380,7 +379,7 @@ Language* TagsManager::GetLanguage()
 
 void TagsManager::GetClasses(std::vector<TagEntryPtr>& tags)
 {
-    const wxArrayString kind = StdToWX::ToArrayString({ wxT("class"), wxT("struct"), wxT("union") });
+    const wxArrayString kind = {wxT("class"), wxT("struct"), wxT("union")};
 
     GetDatabase()->GetTagsByKind(kind, wxT("name"), ITagsStorage::OrderAsc, tags);
 }
@@ -456,7 +455,7 @@ void TagsManager::CacheFile(const wxString& fileName)
     m_cachedFile = fileName;
     m_cachedFileFunctionsTags.clear();
 
-    const wxArrayString kinds = StdToWX::ToArrayString({ wxT("function"), wxT("prototype") });
+    const wxArrayString kinds = {wxT("function"), wxT("prototype")};
     // disable the cache
     GetDatabase()->SetUseCache(false);
     GetDatabase()->GetTagsByKindAndFile(kinds, fileName, wxT("line"), ITagsStorage::OrderDesc,
@@ -690,49 +689,49 @@ void TagsManager::GetCXXKeywords(wxStringSet_t& words)
 
 void TagsManager::GetCXXKeywords(wxArrayString& words)
 {
-    words = StdToWX::ToArrayString({ "alignas",      "alignof",
-                                     "and",          "and_eq",
-                                     "asm",          "auto",
-                                     "bitand",       "bitor",
-                                     "bool",         "break",
-                                     "case",         "catch",
-                                     "char",         "char16_t",
-                                     "char32_t",     "class",
-                                     "compl",        "const",
-                                     "constexpr",    "const_cast",
-                                     "continue",     "decltype",
-                                     "default",      "delete",
-                                     "do",           "double",
-                                     "dynamic_cast", "else",
-                                     "enum",         "explicit",
-                                     "export",       "extern",
-                                     "false",        "final",
-                                     "float",        "for",
-                                     "friend",       "goto",
-                                     "if",           "inline",
-                                     "int",          "long",
-                                     "mutable",      "namespace",
-                                     "new",          "noexcept",
-                                     "not",          "not_eq",
-                                     "nullptr",      "operator",
-                                     "or",           "or_eq",
-                                     "override",     "private",
-                                     "protected",    "public",
-                                     "register",     "reinterpret_cast",
-                                     "return",       "short",
-                                     "signed",       "sizeof",
-                                     "static",       "static_assert",
-                                     "static_cast",  "struct",
-                                     "switch",       "template",
-                                     "this",         "thread_local",
-                                     "throw",        "true",
-                                     "try",          "typedef",
-                                     "typeid",       "typename",
-                                     "union",        "unsigned",
-                                     "using",        "virtual",
-                                     "void",         "volatile",
-                                     "wchar_t",      "while",
-                                     "xor",          "xor_eq" });
+    words = {"alignas",      "alignof",
+             "and",          "and_eq",
+             "asm",          "auto",
+             "bitand",       "bitor",
+             "bool",         "break",
+             "case",         "catch",
+             "char",         "char16_t",
+             "char32_t",     "class",
+             "compl",        "const",
+             "constexpr",    "const_cast",
+             "continue",     "decltype",
+             "default",      "delete",
+             "do",           "double",
+             "dynamic_cast", "else",
+             "enum",         "explicit",
+             "export",       "extern",
+             "false",        "final",
+             "float",        "for",
+             "friend",       "goto",
+             "if",           "inline",
+             "int",          "long",
+             "mutable",      "namespace",
+             "new",          "noexcept",
+             "not",          "not_eq",
+             "nullptr",      "operator",
+             "or",           "or_eq",
+             "override",     "private",
+             "protected",    "public",
+             "register",     "reinterpret_cast",
+             "return",       "short",
+             "signed",       "sizeof",
+             "static",       "static_assert",
+             "static_cast",  "struct",
+             "switch",       "template",
+             "this",         "thread_local",
+             "throw",        "true",
+             "try",          "typedef",
+             "typeid",       "typename",
+             "union",        "unsigned",
+             "using",        "virtual",
+             "void",         "volatile",
+             "wchar_t",      "while",
+             "xor",          "xor_eq"};
 }
 
 TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content, const wxString& filename, const wxString& kinds)

@@ -4,7 +4,6 @@
 #include "Properties/choice_property.h"
 #include "Properties/color_property.h"
 #include "Properties/multi_strings_property.h"
-#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_helpers.h"
@@ -14,7 +13,7 @@
 BannerWindowWrapper::BannerWindowWrapper()
     : wxcWidget(ID_WXBANNERWINDOW)
 {
-    const wxArrayString options = StdToWX::ToArrayString({ "wxTOP", "wxBOTTOM", "wxLEFT", "wxRIGHT" });
+    const wxArrayString options = {"wxTOP", "wxBOTTOM", "wxLEFT", "wxRIGHT"};
 
     SetPropertyString(_("Common Settings"), "wxBannerWindow");
     Add<MultiStringsProperty>(

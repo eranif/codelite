@@ -2,7 +2,6 @@
 
 #include "Properties/choice_property.h"
 #include "Properties/string_property.h"
-#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "xmlutils.h"
 
@@ -11,7 +10,7 @@ StaticBoxSizerWrapper::StaticBoxSizerWrapper()
     m_type = ID_WXSTATICBOXSIZER;
     m_styles.Clear(); // Sizer has no styles
 
-    const wxArrayString arr = StdToWX::ToArrayString({ "Vertical", "Horizontal" });
+    const wxArrayString arr = {"Vertical", "Horizontal"};
 
     SetPropertyString(_("Common Settings"), "wxStaticBoxSizer");
     Add<ChoiceProperty>(PROP_ORIENTATION, arr, 0, _("Sizer orientation"));

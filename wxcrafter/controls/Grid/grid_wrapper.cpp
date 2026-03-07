@@ -4,7 +4,6 @@
 #include "Properties/category_property.h"
 #include "Properties/choice_property.h"
 #include "Properties/int_property.h"
-#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "grid_column_wrapper.h"
 #include "grid_row_wrapper.h"
@@ -16,8 +15,8 @@ GridWrapper::GridWrapper()
 {
     EnableStyle(wxT("wxWANTS_CHARS"), true);
 
-    const wxArrayString vOpts = StdToWX::ToArrayString({ "wxALIGN_TOP", "wxALIGN_CENTRE", "wxALIGN_BOTTOM" });
-    const wxArrayString hOpts = StdToWX::ToArrayString({ "wxALIGN_LEFT", "wxALIGN_CENTRE", "wxALIGN_RIGHT" });
+    const wxArrayString vOpts = {"wxALIGN_TOP", "wxALIGN_CENTRE", "wxALIGN_BOTTOM"};
+    const wxArrayString hOpts = {"wxALIGN_LEFT", "wxALIGN_CENTRE", "wxALIGN_RIGHT"};
 
     SetPropertyString(_("Common Settings"), "wxGrid");
     Add<CategoryProperty>(_("wxGrid Header"));

@@ -87,7 +87,6 @@ void ChatAIWindowFrame::UpdateLabel()
 void ChatAIWindowFrame::DeleteInfoBar(InfoBar* bar)
 {
     if (GetSizer()->Detach(bar)) {
-        clSYSTEM() << "Successfully deleted info-bar" << endl;
         bar->Destroy();
     } else {
         clERROR() << "Could not find info-bar to delete" << endl;

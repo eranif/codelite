@@ -548,7 +548,6 @@ void FindAndReplaceDialog::OnFindNextCaret(wxCommandEvent& e)
 
 void FindAndReplaceDialog::OnFindNext(wxCommandEvent& e)
 {
-    clSYSTEM() << "Find next" << endl;
     CHECK_FOCUS_WIN(e);
     DoFindWithWrap(FIND_DEFAULT | FIND_GOTOLINE);
 }
@@ -937,8 +936,54 @@ TargetRange FindAndReplaceDialog::DoFind(size_t find_flags, const TargetRange& t
         // the target contains the matched string
         target_start = m_sci->GetTargetStart();
         target_end = m_sci->GetTargetEnd();
+
         if (find_flags & FIND_GOTOLINE) {
             CenterLine(m_sci, target_start, target_end);
+        }
+
+        // Check if the dialog is placed on top of the selection and move it if necessary
+        wxPoint editor_screen_pos = m_sci->ClientToScreen(wxPoint(0, 0));
+        wxPoint match_start_point = m_sci->PointFromPosition(target_start);
+        wxPoint match_end_point = m_sci->PointFromPosition(target_end);
+
+        // Get the line height for the match
+        int match_line = m_sci->LineFromPosition(target_start);
+        int line_height = m_sci->TextHeight(match_line);
+
+        // Create a rectangle for the matched text in editor coordinates
+        wxRect match_rect(
+            match_start_point.x, match_start_point.y, match_end_point.x - match_start_point.x, line_height);
+
+        // Convert match_rect to screen coordinates
+        match_rect.SetPosition(editor_screen_pos + match_rect.GetPosition());
+
+        // Get the dialog's rectangle
+        wxRect dialog_rect = GetScreenRect();
+
+        // Check if the dialog overlaps with the matched text
+        if (dialog_rect.Intersects(match_rect)) {
+            // Dialog is on top of the match, try to move it
+            wxPoint new_pos = dialog_rect.GetPosition();
+            int display_width, display_height;
+            wxDisplaySize(&display_width, &display_height);
+
+            // Try to move UP first
+            int above_match = match_rect.GetTop() - dialog_rect.GetHeight() - 10;
+            if (above_match >= 0) {
+                // There's enough space above the match
+                new_pos.y = above_match;
+                Move(new_pos);
+            } else {
+                // Not enough space above, try to move DOWN
+                int below_match = match_rect.GetBottom() + 10;
+                if (below_match + dialog_rect.GetHeight() <= display_height) {
+                    // There's enough space below the match
+                    new_pos.y = below_match;
+                    Move(new_pos);
+                }
+                // If no space below either, the dialog stays where it is
+                // (we don't have a good alternative position)
+            }
         }
         return {target_start, target_end};
     } else {

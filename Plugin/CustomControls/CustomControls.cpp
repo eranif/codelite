@@ -168,6 +168,15 @@ PromptEditorBaseDlg::PromptEditorBaseDlg(
     wxBoxSizer* boxSizer43 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageLabels->SetSizer(boxSizer43);
 
+    m_auibar = new wxAuiToolBar(m_splitterPageLabels,
+                                wxID_ANY,
+                                wxDefaultPosition,
+                                wxDLG_UNIT(m_splitterPageLabels, wxSize(-1, -1)),
+                                wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE);
+    m_auibar->SetToolBitmapSize(wxSize(16, 16));
+
+    boxSizer43->Add(m_auibar, 0, wxTOP | wxEXPAND, WXC_FROM_DIP(5));
+
     m_dvListCtrlPrompts = new wxDataViewListCtrl(m_splitterPageLabels,
                                                  wxID_ANY,
                                                  wxDefaultPosition,
@@ -175,7 +184,7 @@ PromptEditorBaseDlg::PromptEditorBaseDlg(
                                                  wxDV_NO_HEADER | wxDV_SINGLE);
     m_dvListCtrlPrompts->SetFocus();
 
-    boxSizer43->Add(m_dvListCtrlPrompts, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    boxSizer43->Add(m_dvListCtrlPrompts, 1, wxLEFT | wxRIGHT | wxBOTTOM | wxEXPAND, WXC_FROM_DIP(5));
 
     m_dvListCtrlPrompts->AppendTextColumn(
         _("Available Prompts"), wxDATAVIEW_CELL_INERT, WXC_FROM_DIP(-2), wxALIGN_LEFT, 0);

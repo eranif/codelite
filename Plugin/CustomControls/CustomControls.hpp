@@ -20,6 +20,10 @@
 #include <wx/button.h>
 #include <wx/dialog.h>
 #include <wx/splitter.h>
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#include <map>
+#include <wx/menu.h>
 #include <wx/dataview.h>
 #include <wx/simplebook.h>
 #if wxVERSION_NUMBER >= 2900
@@ -75,6 +79,7 @@ class PromptEditorBaseDlg : public wxDialog
 protected:
     wxSplitterWindow* m_splitter;
     wxPanel* m_splitterPageLabels;
+    wxAuiToolBar* m_auibar;
     wxDataViewListCtrl* m_dvListCtrlPrompts;
     wxPanel* m_splitterPageEditors;
     wxSimplebook* m_simpleBook;
@@ -89,6 +94,7 @@ protected:
     virtual void OnSaveUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxAuiToolBar* GetAuibar() { return m_auibar; }
     wxDataViewListCtrl* GetDvListCtrlPrompts() { return m_dvListCtrlPrompts; }
     wxPanel* GetSplitterPageLabels() { return m_splitterPageLabels; }
     wxSimplebook* GetSimpleBook() { return m_simpleBook; }

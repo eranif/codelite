@@ -19,4 +19,9 @@ protected:
     void OnSaveUI(wxUpdateUIEvent& event) override;
     void LoadPrompts();
     void SelectRow(size_t row);
+    void SelectLabel(const wxString& label);
+
+    void OnNew(wxCommandEvent& e);
+    void OnDelete(wxCommandEvent& e);
+    void OnDeleteUI(wxUpdateUIEvent& e);
 };

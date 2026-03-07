@@ -24,7 +24,6 @@ AI-powered IDE:
 High:
 -----
 
-- Prompt Editor: allow creating custom prompts.
 - Add an option to show the prompt editor from the drop down menu from the chat-box.
 - Rename "Prompt Editor" -> "Prompt Store"
 - Replace the standard "find-in-files" tool with `grep` command (on all platforms) - this will allow it to run on remote files.

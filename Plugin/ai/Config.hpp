@@ -503,6 +503,13 @@ public:
     inline bool AreToolsEnabled() const { return m_enableTools.load(); }
     inline void SetToolsEnabled(bool b) { m_enableTools.store(b); }
 
+    bool IsBuiltInPrompt(const wxString& prompt) const;
+    bool IsPromptExists(const wxString& prompt) const
+    {
+        std::lock_guard lock{m_mutex};
+        return m_prompts.contains(prompt.ToStdString(wxConvUTF8));
+    }
+
 private:
     wxString GetFullPath();
     ChatHistory& GetOrAddHistory(const wxString& endpoint) CALLER_MUST_LOCK(m_mutex);

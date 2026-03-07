@@ -178,4 +178,10 @@ wxString Config::GetFullPath()
         "assistant-global-settings.json", WriteOptions{.ignore_workspace = true});
 }
 
+bool Config::IsBuiltInPrompt(const wxString& prompt) const
+{
+    std::string label = prompt.ToStdString(wxConvUTF8);
+    return kDefaultPromptTable.contains(label);
+}
+
 } // namespace llm

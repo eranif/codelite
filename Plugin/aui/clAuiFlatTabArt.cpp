@@ -22,7 +22,11 @@ wxColour GetBorderColour()
 {
     if (!kBorderShadow.IsOk()) {
         if (wxSystemSettings::GetAppearance().IsDark()) {
+#ifdef __WXMSW__
+            kBorderShadow = *wxBLACK;
+#else
             kBorderShadow = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+#endif
         } else {
             kBorderShadow = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNSHADOW);
         }

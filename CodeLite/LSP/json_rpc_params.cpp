@@ -139,7 +139,7 @@ JSONItem ExecuteCommandParams::ToJSON(const wxString& name) const
     // and add them
     JSON root{ m_arguments };
     if(root.isOk()) {
-        json.addProperty("arguments", root.release());
+        json.addProperty("arguments", std::move(root));
     }
     return json;
 }

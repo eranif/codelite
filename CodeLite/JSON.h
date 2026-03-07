@@ -25,60 +25,39 @@
 
 #ifndef ZJSONNODE_H
 #define ZJSONNODE_H
-// clang-format off
-#include <wx/vector.h>
+
+#include "codelite_exports.h"
+#include "macros.h"
+
+#include <cJSON.h>
+#include <map>
+#include <string_view>
+#include <type_traits>
+#include <vector>
+#include <wx/filename.h>
+#include <wx/gdicmn.h>
 #include <wx/string.h>
 #include <wx/variant.h>
-#include <wx/filename.h>
-#include <string_view>
-#include <wx/gdicmn.h>
-#include "codelite_exports.h"
-#include <map>
-#include <cJSON.h>
+#include <wx/vector.h>
+
 #if wxUSE_GUI
 #include <wx/arrstr.h>
 #include <wx/colour.h>
 #include <wx/font.h>
 #endif
-#include "macros.h"
-#include <vector>
-#include <type_traits>
-// clang-format on
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
+
+class JSON;
 
 class WXDLLIMPEXP_CL JSONItem
 {
-protected:
-    cJSON* m_json = nullptr;
-    cJSON* m_walker = nullptr;
-    wxString m_propertyName;
-    int m_type = wxNOT_FOUND;
-
-    // Values
-    wxString m_valueString;
-    double m_valueNumer = 0;
-
+    friend JSON;
 public:
-    JSONItem(cJSON* json);
-    JSONItem(const wxString& name, double val);
-    JSONItem(const wxString& name, const std::string& val);
-    JSONItem(const wxString& name, const char* pval, size_t len);
-    JSONItem(const wxString& name, bool val);
+    explicit JSONItem(cJSON* json);
     JSONItem() = default;
     virtual ~JSONItem() = default;
-
-    // Walkers
-    JSONItem firstChild();
-    JSONItem nextChild();
-
-    // Setters
-    ////////////////////////////////////////////////
-    void setType(int m_type) { this->m_type = m_type; }
-    int getType() const { return m_type; }
-    const wxString& GetPropertyName() const { return m_propertyName; }
-    void SetPropertyName(const wxString& name) { m_propertyName = name; }
 
     // Readers
     ////////////////////////////////////////////////
@@ -154,7 +133,6 @@ public:
     }
     size_t toSize_t(size_t defaultVal = 0) const;
     double toDouble(double defaultVal = -1.0) const;
-    wxFileName toFileName() const;
 
     wxColour toColour(const wxColour& defaultColour = wxNullColour) const;
     wxFont toFont(const wxFont& defaultFont = wxNullFont) const;
@@ -198,7 +176,7 @@ public:
     JSONItem& addProperty(const wxString& name, long value);
     JSONItem& addProperty(const wxString& name, size_t value);
     JSONItem& addProperty(const wxString& name, bool value);
-    JSONItem& addProperty(const wxString& name, cJSON* pjson);
+    JSONItem& addProperty(const wxString& name, JSON&& json);
     JSONItem& addProperty(const wxString& name, const wxFileName& filename);
     JSONItem& addProperty(const wxString& name, const std::vector<int>& arr_int);
     template <class T = int>
@@ -223,11 +201,6 @@ public:
      */
     void removeProperty(const wxString& name);
 
-    /**
-     * @brief detach element from json. Return the detached element
-     */
-    JSONItem detachProperty(const wxString& name);
-
     //////////////////////////////////////////////////
     // Array operations
     //////////////////////////////////////////////////
@@ -245,6 +218,13 @@ public:
 
     bool isOk() const { return m_json != NULL; }
 
+private:
+
+    const wxString& GetPropertyName() const { return m_propertyName; }
+    void SetPropertyName(const wxString& name) { m_propertyName = name; }
+    int getType() const { return m_type; }
+    void setType(int m_type) { this->m_type = m_type; }
+
     /**
      * @brief release the internal pointer
      */
@@ -254,6 +234,14 @@ public:
         m_json = nullptr;
         return temp;
     }
+private:
+    cJSON* m_json = nullptr;
+    wxString m_propertyName;
+    int m_type = wxNOT_FOUND;
+
+    // Values
+    wxString m_valueString;
+    double m_valueNumer = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -267,21 +255,18 @@ enum class JsonType
 
 class WXDLLIMPEXP_CL JSON
 {
-protected:
-    cJSON* m_json;
-    wxString _errorString;
-
 public:
     explicit JSON(JsonType type);
     explicit JSON(const wxString& text);
     explicit JSON(const wxFileName& filename);
     explicit JSON(JSONItem item);
-    explicit JSON(cJSON* json);
 
+    // Make this class not copyable
+    JSON(const JSON&) = delete;
+    JSON& operator=(const JSON&) = delete;
     virtual ~JSON();
 
     void save(const wxFileName& fn) const;
-    wxString errorString() const;
     bool isOk() const { return m_json != NULL; }
 
     JSONItem toElement() const;
@@ -289,10 +274,8 @@ public:
     void clear();
     cJSON* release();
 
-private:
-    // Make this class not copyable
-    JSON(const JSON&) = delete;
-    JSON& operator=(const JSON&) = delete;
+protected:
+    cJSON* m_json = nullptr;
 };
 
 #endif // ZJSONNODE_H

@@ -67,6 +67,8 @@ void PopulateBuiltInFunctions(FunctionTable& table)
 
     table.Add(FunctionBuilder("GetActiveEditorText")
                   .SetDescription("Return the text of the active tab inside the editor.")
+                  .AddOptionalParam("from_line", "Optional starting line (1-based)", "number")
+                  .AddOptionalParam("count", "Number of lines to read", "number")
                   .SetCallback(GetCurrentEditorText)
                   .Build());
     table.Add(
@@ -219,7 +221,7 @@ FunctionResult ReadFileContent(const assistant::json& args)
             }
 
             // Split content into lines
-            wxArrayString lines = wxStringTokenize(content.value(), "\n", wxTOKEN_RET_EMPTY_ALL);
+            wxArrayString lines = wxStringTokenize(content.value(), "\n", wxTOKEN_RET_DELIMS);
 
             // Check if from_line is within bounds
             if (from_line > (int)lines.size()) {
@@ -232,7 +234,7 @@ FunctionResult ReadFileContent(const assistant::json& args)
             int end_idx = wxMin(start_idx + line_count, (int)lines.size());
             wxString partial_content;
             for (int i = start_idx; i < end_idx; ++i) {
-                partial_content << lines[i] << "\n";
+                partial_content << lines[i];
             }
 
             wxString logmsg;
@@ -292,12 +294,58 @@ FunctionResult GetCompilerOutput([[maybe_unused]] const assistant::json& args)
 FunctionResult GetCurrentEditorText([[maybe_unused]] const assistant::json& args)
 {
     VERIFY_WORKER_THREAD();
+
+    // Check for optional parameters
+    auto from_line_opt = ::assistant::GetFunctionArg<int>(args, "from_line");
+    auto count_opt = ::assistant::GetFunctionArg<int>(args, "count");
+
+    // Validate that both optional params are provided or none of them
+    if (from_line_opt.has_value() != count_opt.has_value()) {
+        return Err("Both 'from_line' and 'count' must be provided together, or none of them");
+    }
+
     auto cb = [=]() -> FunctionResult {
         auto active_editor = clGetManager()->GetActiveEditor();
         if (!active_editor) {
             return Err("No editor is currently open");
         }
-        return Ok(active_editor->GetEditorText());
+
+        wxString full_text = active_editor->GetEditorText();
+
+        // If partial read is requested
+        if (from_line_opt.has_value() && count_opt.has_value()) {
+            int from_line = from_line_opt.value();
+            int line_count = count_opt.value();
+
+            // Validate parameters
+            if (from_line < 1) {
+                return Err("'from_line' must be >= 1");
+            }
+            if (line_count < 1) {
+                return Err("'count' must be >= 1");
+            }
+
+            // Split content into lines
+            wxArrayString lines = wxStringTokenize(full_text, "\n", wxTOKEN_RET_DELIMS);
+
+            // Check if from_line is within bounds
+            if (from_line > (int)lines.size()) {
+                return Err(
+                    wxString::Format("'from_line' (%d) exceeds total editor lines (%zu)", from_line, lines.size()));
+            }
+
+            // Extract the requested lines (from_line is 1-based)
+            int start_idx = from_line - 1;
+            int end_idx = wxMin(start_idx + line_count, (int)lines.size());
+            wxString partial_content;
+            for (int i = start_idx; i < end_idx; ++i) {
+                partial_content << lines[i];
+            }
+
+            return Ok(partial_content);
+        }
+
+        return Ok(full_text);
     };
     return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
 }

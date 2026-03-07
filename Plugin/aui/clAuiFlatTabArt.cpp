@@ -16,6 +16,19 @@ void IndentPressedBitmap(wxWindow* wnd, wxRect* rect, int button_state)
         rect->Offset(wnd->FromDIP(wxPoint(1, 1)));
     }
 }
+static wxColour kBorderShadow = wxNullColour;
+
+wxColour GetBorderColour()
+{
+    if (!kBorderShadow.IsOk()) {
+        if (wxSystemSettings::GetAppearance().IsDark()) {
+            kBorderShadow = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
+        } else {
+            kBorderShadow = wxSystemSettings::GetColour(wxSYS_COLOUR_BTNSHADOW);
+        }
+    }
+    return kBorderShadow;
+}
 } // namespace
 
 // clAuiFlatTabArt
@@ -108,6 +121,9 @@ void clAuiFlatTabArt::DrawBackground(wxDC& dc, wxWindow* WXUNUSED(wnd), const wx
     dc.SetBrush(m_data->m_bgWindow);
     dc.SetPen(*wxTRANSPARENT_PEN);
     dc.DrawRectangle(rect);
+
+    dc.SetPen(GetBorderColour());
+    dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
 }
 
 void clAuiFlatTabArt::DrawBorder(wxDC& dc, wxWindow* wnd, const wxRect& rect)
@@ -164,6 +180,12 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
         const int y = m_flags & wxAUI_NB_BOTTOM ? page.rect.GetBottom() - THICKNESS : page.rect.GetTop();
 
         dc.DrawRectangle(page.rect.GetLeft() + 1, y, page.rect.GetWidth() - 1, THICKNESS);
+        dc.SetPen(GetBorderColour());
+        dc.DrawLine(page.rect.GetTopLeft(), page.rect.GetBottomLeft());
+        dc.DrawLine(page.rect.GetTopRight(), page.rect.GetBottomRight());
+    } else {
+        dc.SetPen(GetBorderColour());
+        dc.DrawLine(page.rect.GetBottomLeft(), page.rect.GetBottomRight());
     }
 
     // Draw the icon, if any.

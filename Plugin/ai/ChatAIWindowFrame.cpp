@@ -86,6 +86,7 @@ void ChatAIWindowFrame::UpdateLabel()
 
 void ChatAIWindowFrame::DeleteInfoBar(InfoBar* bar)
 {
+    llm::Manager::GetInstance().DecrPendingAnswerCounter();
     if (GetSizer()->Detach(bar)) {
         bar->Destroy();
     } else {

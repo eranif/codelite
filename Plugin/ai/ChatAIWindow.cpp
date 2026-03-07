@@ -378,6 +378,11 @@ void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
 void ChatAIWindow::OnRestartClient(wxCommandEvent& event)
 {
     wxUnusedVar(event);
+
+    if (llm::Manager::GetInstance().IsPendingUserAnswer()) {
+        ::wxMessageBox(_("Cannot restart while the model is awaiting response"));
+        return;
+    }
     m_cancel_token->Cancel();
 
     // Reload configuration
@@ -659,6 +664,12 @@ bool ChatAIWindow::CurrentEndpointHasHistory() const
 void ChatAIWindow::OnStop(wxCommandEvent& event)
 {
     event.Skip();
+
+    if (llm::Manager::GetInstance().IsPendingUserAnswer()) {
+        ::wxMessageBox(_("The client cannot be stopped while the model is awaiting a response"));
+        return;
+    }
+
     llm::Manager::GetInstance().Restart();
 }
 

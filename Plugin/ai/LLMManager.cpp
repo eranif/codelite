@@ -582,7 +582,7 @@ void Manager::Stop()
 
     {
         // Notify all our subscribers that we are going down.
-        std::lock_guard lk{m_termination_flags_mutex};
+        std::lock_guard lk{m_mutex};
         for (auto flag : m_termination_flags) {
             flag->store(true);
         }
@@ -1131,6 +1131,7 @@ Manager::PromptUserYesNoTrustQuestion(const wxString& text, const wxString& code
     auto promise_ptr = std::make_shared<std::promise<UserAnswer>>();
     auto fut = promise_ptr->get_future();
     auto func = [text, code_block, code_block_lang, promise_ptr, this]() {
+        IncrPendingAnswerCounter(); // Keep track of messages
         if (!code_block.empty() && GetChatWindow()) {
             wxString prompt;
             prompt << "```" << code_block_lang << "\n" << code_block << "\n```\n";
@@ -1180,7 +1181,7 @@ void Manager::PrintMessage(const wxString& msg, IconType icon)
 
 std::shared_ptr<std::atomic_bool> Manager::NewTerminationFlag()
 {
-    std::lock_guard lk{m_termination_flags_mutex};
+    std::lock_guard lk{m_mutex};
     std::shared_ptr<std::atomic_bool> flag = std::make_shared<std::atomic_bool>(false);
     m_termination_flags.push_back(flag);
     return flag;
@@ -1188,7 +1189,7 @@ std::shared_ptr<std::atomic_bool> Manager::NewTerminationFlag()
 
 void Manager::DeleteTerminationFlag(std::shared_ptr<std::atomic_bool> flag)
 {
-    std::lock_guard lk{m_termination_flags_mutex};
+    std::lock_guard lk{m_mutex};
     std::erase_if(
         m_termination_flags, [flag](std::shared_ptr<std::atomic_bool> f) -> bool { return flag.get() == f.get(); });
 }

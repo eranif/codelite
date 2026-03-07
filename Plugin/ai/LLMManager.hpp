@@ -608,6 +608,27 @@ public:
      */
     void DeleteTerminationFlag(std::shared_ptr<std::atomic_bool> flag);
 
+    inline void IncrPendingAnswerCounter()
+    {
+        std::lock_guard lock{m_mutex};
+        m_pending_user_answers++;
+    }
+
+    inline void DecrPendingAnswerCounter()
+    {
+        std::lock_guard lock{m_mutex};
+        if (m_pending_user_answers == 0) {
+            return;
+        }
+        m_pending_user_answers--;
+    }
+
+    inline bool IsPendingUserAnswer() const
+    {
+        std::lock_guard lock{m_mutex};
+        return m_pending_user_answers != 0;
+    }
+
 private:
     Manager() = default;
     ~Manager();
@@ -668,7 +689,9 @@ private:
     FunctionTable m_plugin_functions;
     std::unique_ptr<ChatAI> m_chatAI{nullptr};
     std::vector<std::shared_ptr<std::atomic_bool>> m_termination_flags;
-    std::mutex m_termination_flags_mutex;
+    mutable std::mutex m_mutex;
+    /// How many user info bars are alive atm?
+    size_t m_pending_user_answers{0};
 };
 
 /**

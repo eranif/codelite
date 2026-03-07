@@ -201,7 +201,7 @@ clStatusOr<int> PatchApplier::ApplyHunk(ITextArea* ctrl, const wxArrayString& li
         }
 
         bool hunk_found{true};
-        for (int hunk_line_number = 0; hunk_line_number < lines_to_find.size(); ++hunk_line_number) {
+        for (int hunk_line_number = 0; hunk_line_number < static_cast<int>(lines_to_find.size()); ++hunk_line_number) {
             wxString hunk_line = lines_to_find[hunk_line_number];
             // These lines must exist and match in the control
             if (current_editor_line_number + hunk_line_number >= totalLines) {

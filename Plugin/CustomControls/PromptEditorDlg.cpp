@@ -119,8 +119,8 @@ void PromptEditorDlg::SelectLabel(const wxString& label)
         if (item_label != label) {
             continue;
         }
-        int page = static_cast<int>(m_dvListCtrlPrompts->GetItemData(m_dvListCtrlPrompts->RowToItem(i)));
-        if (page >= 0 && page < m_simpleBook->GetPageCount()) {
+        size_t page = static_cast<size_t>(m_dvListCtrlPrompts->GetItemData(m_dvListCtrlPrompts->RowToItem(i)));
+        if (page < m_simpleBook->GetPageCount()) {
             m_simpleBook->SetSelection(page);
             m_dvListCtrlPrompts->SelectRow(i);
         }

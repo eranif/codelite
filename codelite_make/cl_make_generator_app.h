@@ -21,7 +21,7 @@ protected:
     eCommandType m_commandType;
     wxString m_buildSettingsXml;
     bool m_generateCompileCommands;
-	bool m_generateCompilerFlags = false;
+    bool m_generateCompilerFlags = false;
 
 protected:
     bool DoParseCommandLine(wxCmdLineParser& parser);
@@ -32,7 +32,7 @@ protected:
     void Info(const wxString& msg);
     void Out(const wxString& msg);
     void Bye();
-    
+
 public:
     clMakeGeneratorApp();
     virtual ~clMakeGeneratorApp() = default;

@@ -15,31 +15,46 @@
 IMPLEMENT_APP_CONSOLE(clMakeGeneratorApp)
 
 static const wxCmdLineEntryDesc g_cmdDesc[] = {
-    { wxCMD_LINE_SWITCH, "h", "help", "show this help message", wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP },
-    { wxCMD_LINE_OPTION, "w", "workspace", "CodeLite workspace file", wxCMD_LINE_VAL_STRING,
-      wxCMD_LINE_OPTION_MANDATORY },
-    { wxCMD_LINE_OPTION, "c", "config", "Workspace configuration name to use", wxCMD_LINE_VAL_STRING,
-      wxCMD_LINE_OPTION_MANDATORY },
-    { wxCMD_LINE_OPTION, "d", "command",
-      "Which command to run? possible values are: build, clean or rebuild. The default is to build" },
-    { wxCMD_LINE_OPTION, "p", "project",
-      "Project to build, if non given CodeLite will build the active project as defined in the workspace",
-      wxCMD_LINE_VAL_STRING },
-    { wxCMD_LINE_SWITCH, "v", "verbose", "Run in verbose mode and print all log lines to the stdout/stderr" },
-    { wxCMD_LINE_SWITCH, "j", "json",
-      "Generate compile_commands.json for this workspace and exit. If not specified, compile_commands.json is "
-      "generated as part of the build process" },
-    { wxCMD_LINE_SWITCH, "f", "compile-flags", "Generate compile_flags.txt for this workspace and exit" },
-    { wxCMD_LINE_SWITCH, "e", "execute", "Instead of printing the command line, execute it" },
-    { wxCMD_LINE_OPTION, "s", "settings",
-      "The full path of the build_settings.xml file.\n"
-      "By default, codelite-make will load the compiler definitions from\n"
-      "%appdata%\\CodeLite\\config\\build_settings.xml (or the equivalent path on\n"
-      "Unix systems). Passing -s|--settings will override the default search\n"
-      "location",
-      wxCMD_LINE_VAL_STRING },
-    { wxCMD_LINE_NONE }
-};
+    {wxCMD_LINE_SWITCH, "h", "help", "show this help message", wxCMD_LINE_VAL_NONE, wxCMD_LINE_OPTION_HELP},
+    {wxCMD_LINE_OPTION,
+     "w",
+     "workspace",
+     "CodeLite workspace file",
+     wxCMD_LINE_VAL_STRING,
+     wxCMD_LINE_OPTION_MANDATORY},
+    {wxCMD_LINE_OPTION,
+     "c",
+     "config",
+     "Workspace configuration name to use",
+     wxCMD_LINE_VAL_STRING,
+     wxCMD_LINE_OPTION_MANDATORY},
+    {wxCMD_LINE_OPTION,
+     "d",
+     "command",
+     "Which command to run? possible values are: build, clean or rebuild. The default is to build"},
+    {wxCMD_LINE_OPTION,
+     "p",
+     "project",
+     "Project to build, if non given CodeLite will build the active project as defined in the workspace",
+     wxCMD_LINE_VAL_STRING},
+    {wxCMD_LINE_SWITCH, "v", "verbose", "Run in verbose mode and print all log lines to the stdout/stderr"},
+    {wxCMD_LINE_SWITCH,
+     "j",
+     "json",
+     "Generate compile_commands.json for this workspace and exit. If not specified, compile_commands.json is "
+     "generated as part of the build process"},
+    {wxCMD_LINE_SWITCH, "f", "compile-flags", "Generate compile_flags.txt for this workspace and exit"},
+    {wxCMD_LINE_SWITCH, "e", "execute", "Instead of printing the command line, execute it"},
+    {wxCMD_LINE_OPTION,
+     "s",
+     "settings",
+     "The full path of the build_settings.xml file.\n"
+     "By default, codelite-make will load the compiler definitions from\n"
+     "%appdata%\\CodeLite\\config\\build_settings.xml (or the equivalent path on\n"
+     "Unix systems). Passing -s|--settings will override the default search\n"
+     "location",
+     wxCMD_LINE_VAL_STRING},
+    {wxCMD_LINE_NONE}};
 
 clMakeGeneratorApp::clMakeGeneratorApp()
     : m_verbose(false)
@@ -60,42 +75,42 @@ bool clMakeGeneratorApp::OnInit()
     SetAppName("codelite");
     wxLog::EnableLogging(false);
     wxCmdLineParser parser(wxAppConsole::argc, wxAppConsole::argv);
-    if(!DoParseCommandLine(parser))
+    if (!DoParseCommandLine(parser))
         return false;
 
     // Load compilers settings
-    if(!BuildSettingsConfigST::Get()->Load("2.1", m_buildSettingsXml)) {
+    if (!BuildSettingsConfigST::Get()->Load("2.1", m_buildSettingsXml)) {
         Error("Could not load build settings configuration object (Version 2.1 / build_settings.xml)");
         return false;
     }
 
     wxFileName fnWorkspace(m_workspaceFile);
-    if(fnWorkspace.IsRelative()) {
+    if (fnWorkspace.IsRelative()) {
         fnWorkspace.MakeAbsolute(m_workingDirectory);
     }
 
     Info(wxString() << "-- Generating makefile for workspace file " << fnWorkspace.GetFullPath());
     wxString errmsg;
-    if(!clCxxWorkspaceST::Get()->OpenWorkspace(fnWorkspace.GetFullPath(), errmsg)) {
+    if (!clCxxWorkspaceST::Get()->OpenWorkspace(fnWorkspace.GetFullPath(), errmsg)) {
         Error(wxString() << "Error while loading workspace: " << fnWorkspace.GetFullPath() << ". " << errmsg);
         return false;
     }
 
-    if(m_project.IsEmpty()) {
+    if (m_project.IsEmpty()) {
         m_project = clCxxWorkspaceST::Get()->GetActiveProjectName();
     }
 
     // Set the active project to the configuration set the by the user
     BuildMatrixPtr buildMatrix = clCxxWorkspaceST::Get()->GetBuildMatrix();
     WorkspaceConfigurationPtr workspaceConfig = buildMatrix->GetConfigurationByName(m_configuration);
-    if(!workspaceConfig) {
+    if (!workspaceConfig) {
         Error(wxString() << "Could not find workspace configuration: " << m_configuration);
         return false;
     }
     const WorkspaceConfiguration::ConfigMappingList& mapping = workspaceConfig->GetMapping();
     WorkspaceConfiguration::ConfigMappingList::const_iterator iter = std::find_if(
         mapping.begin(), mapping.end(), [&](const ConfigMappingEntry& entry) { return entry.m_project == m_project; });
-    if(iter == mapping.end()) {
+    if (iter == mapping.end()) {
         Error(wxString() << "Unable to locate a project configuration that matches the workspace configuration '"
                          << m_configuration << "'");
         return false;
@@ -107,14 +122,14 @@ bool clMakeGeneratorApp::OnInit()
     // Which makefile should we create?
     BuilderGnuMake builder;
     ProjectPtr project = clCxxWorkspaceST::Get()->FindProjectByName(m_project, errmsg);
-    if(!project) {
+    if (!project) {
         Error(wxString() << "Could not find project " << m_project << ". " << errmsg);
         return false;
     }
 
     // Load the build configuration
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(m_project, projectConfiguration);
-    if(!bldConf) {
+    if (!bldConf) {
         Error(wxString() << "Could not find configuration " << projectConfiguration << " for project " << m_project);
         return false;
     }
@@ -122,26 +137,26 @@ bool clMakeGeneratorApp::OnInit()
     // First, generate the compile_commands.json
     DoGenerateCompileCommands();
 
-    if(this->m_generateCompileCommands || this->m_generateCompilerFlags) {
+    if (this->m_generateCompileCommands || this->m_generateCompilerFlags) {
         // If the --json flag was passed, exit now
         Bye();
     } else {
-        if(bldConf->IsCustomBuild()) {
+        if (bldConf->IsCustomBuild()) {
             Notice(wxString() << "Configuration " << projectConfiguration << " for project " << m_project
                               << " is using a custom build - will not generate makefile");
             Notice(wxString() << "Instead, here is the command line to use:");
             wxString command;
-            wxString workingDirectory = MacroManager::Instance()->Expand(bldConf->GetCustomBuildWorkingDir(), NULL,
-                                                                         m_project, bldConf->GetName());
-            if(wxFileName::DirExists(workingDirectory) == false) {
+            wxString workingDirectory = MacroManager::Instance()->Expand(
+                bldConf->GetCustomBuildWorkingDir(), NULL, m_project, bldConf->GetName());
+            if (wxFileName::DirExists(workingDirectory) == false) {
                 Info(wxString() << "-- Creating build directory: " << workingDirectory);
                 wxFileName::Mkdir(workingDirectory, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
             }
             command << "cd " << workingDirectory << " && "
-                    << MacroManager::Instance()->Expand(bldConf->GetCustomBuildCmd(), NULL, m_project,
-                                                        bldConf->GetName());
+                    << MacroManager::Instance()->Expand(
+                           bldConf->GetCustomBuildCmd(), NULL, m_project, bldConf->GetName());
             Out(command);
-            if(m_executeCommand) {
+            if (m_executeCommand) {
                 CallAfter(&clMakeGeneratorApp::DoExecCommand, command);
             } else {
                 Bye();
@@ -156,7 +171,7 @@ bool clMakeGeneratorApp::OnInit()
         }
 
         wxString commandToRun;
-        switch(m_commandType) {
+        switch (m_commandType) {
         case kBuild:
             commandToRun = builder.GetBuildCommand(m_project, projectConfiguration, args);
             break;
@@ -171,7 +186,7 @@ bool clMakeGeneratorApp::OnInit()
         }
 
         wxString workspace_path = fnWorkspace.GetPath();
-        if(workspace_path.Contains(" ") || workspace_path.Contains("\t")) {
+        if (workspace_path.Contains(" ") || workspace_path.Contains("\t")) {
             workspace_path.Prepend("\"").Append("\"");
         }
 
@@ -179,7 +194,7 @@ bool clMakeGeneratorApp::OnInit()
         wxString command;
         command << "cd " << workspace_path << " && " << commandToRun;
 
-        if(m_executeCommand) {
+        if (m_executeCommand) {
             CallAfter(&clMakeGeneratorApp::DoExecCommand, command);
 
         } else {
@@ -197,20 +212,20 @@ bool clMakeGeneratorApp::DoParseCommandLine(wxCmdLineParser& parser)
     parser.AddUsageText(_("A makefile generator based on codelite's workspace"));
 
     int res = parser.Parse(false);
-    if(res == wxNOT_FOUND)
+    if (res == wxNOT_FOUND)
         return false;
 
-    if(!parser.Found("w", &m_workspaceFile)) {
+    if (!parser.Found("w", &m_workspaceFile)) {
         parser.Usage();
         return false;
     }
 
-    if(!parser.Found("c", &m_configuration)) {
+    if (!parser.Found("c", &m_configuration)) {
         parser.Usage();
         return false;
     }
 
-    if(parser.Found("e")) {
+    if (parser.Found("e")) {
         m_executeCommand = true;
     }
 
@@ -219,12 +234,12 @@ bool clMakeGeneratorApp::DoParseCommandLine(wxCmdLineParser& parser)
     m_generateCompilerFlags = (parser.FoundSwitch("f") == wxCMD_SWITCH_ON);
 
     wxString command;
-    if(parser.Found("d", &command)) {
-        if(command == "build") {
+    if (parser.Found("d", &command)) {
+        if (command == "build") {
             m_commandType = kBuild;
-        } else if(command == "rebuild") {
+        } else if (command == "rebuild") {
             m_commandType = kRebuild;
-        } else if(command == "clean") {
+        } else if (command == "clean") {
             m_commandType = kClean;
         } else {
             parser.Usage();
@@ -254,7 +269,7 @@ void clMakeGeneratorApp::Error(const wxString& msg)
 
 void clMakeGeneratorApp::Notice(const wxString& msg)
 {
-    if(m_verbose) {
+    if (m_verbose) {
         wxString e;
         e << "[NOTICE] " << msg;
         wxFprintf(stderr, "%s\n", e);
@@ -263,7 +278,7 @@ void clMakeGeneratorApp::Notice(const wxString& msg)
 
 void clMakeGeneratorApp::Info(const wxString& msg)
 {
-    if(m_verbose) {
+    if (m_verbose) {
         wxString e;
         e << "[INFO  ] " << msg;
         wxFprintf(stdout, "%s\n", e);

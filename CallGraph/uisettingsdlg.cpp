@@ -23,15 +23,17 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "imanager.h"
-#include "callgraph.h"
 #include "uisettingsdlg.h"
-#include <wx/filedlg.h>
+
+#include "callgraph.h"
+#include "imanager.h"
 #include "windowattrmanager.h"
 
+#include <wx/filedlg.h>
+
 uisettingsdlg::uisettingsdlg(wxWindow* parent, IManager* mgr) //, CallGraph *plugin )
-    : uisettings(parent),
-      m_mgr(mgr)
+    : uisettings(parent)
+    , m_mgr(mgr)
 {
     // ConfCallGraph confData;
     // read last stored value for paths gprof and dot
@@ -46,8 +48,10 @@ uisettingsdlg::uisettingsdlg(wxWindow* parent, IManager* mgr) //, CallGraph *plu
     m_checkBox_Parameters->SetValue(confData.GetStripParams());
     m_checkBox_Namespaces->SetValue(confData.GetHideNamespaces());
     //
-    if(m_checkBox_Names->IsChecked()) m_checkBox_Parameters->Disable();
-    if(m_checkBox_Parameters->IsChecked()) m_checkBox_Names->Disable();
+    if (m_checkBox_Names->IsChecked())
+        m_checkBox_Parameters->Disable();
+    if (m_checkBox_Parameters->IsChecked())
+        m_checkBox_Names->Disable();
     //
 
     GetSizer()->Fit(this);
@@ -65,7 +69,7 @@ void uisettingsdlg::OnButton_click_select_gprof(wxCommandEvent& event)
                                              wxFileSelectorDefaultWildcardStr,
                                              0,
                                              this);
-    if(!new_gprof_path.IsEmpty()) {
+    if (!new_gprof_path.IsEmpty()) {
         m_textCtrl_path_gprof->SetValue(new_gprof_path);
     }
 }
@@ -80,7 +84,7 @@ void uisettingsdlg::OnButton_click_select_dot(wxCommandEvent& event)
                                            wxFileSelectorDefaultWildcardStr,
                                            0,
                                            this);
-    if(!new_dot_path.IsEmpty()) {
+    if (!new_dot_path.IsEmpty()) {
         m_textCtrl_path_dot->SetValue(new_dot_path);
     }
 }
@@ -102,7 +106,7 @@ void uisettingsdlg::OnButton_click_ok(wxCommandEvent& event)
 
     m_mgr->GetConfigTool()->WriteObject(wxT("CallGraph"), &confData);
 
-    if((wxFileExists(m_textCtrl_path_gprof->GetValue())) && (wxFileExists(m_textCtrl_path_dot->GetValue()))) {
+    if ((wxFileExists(m_textCtrl_path_gprof->GetValue())) && (wxFileExists(m_textCtrl_path_dot->GetValue()))) {
         EndModal(wxID_OK);
     } else {
         wxMessageBox(_("Please check the external tools' paths settings."),
@@ -122,7 +126,7 @@ void uisettingsdlg::OnButton_click_cancel(wxCommandEvent& event)
 
 void uisettingsdlg::OnCheckName(wxCommandEvent& event)
 {
-    if(m_checkBox_Names->IsChecked())
+    if (m_checkBox_Names->IsChecked())
         m_checkBox_Parameters->Disable();
     else
         m_checkBox_Parameters->Enable();
@@ -130,7 +134,7 @@ void uisettingsdlg::OnCheckName(wxCommandEvent& event)
 
 void uisettingsdlg::OnCheckParam(wxCommandEvent& event)
 {
-    if(m_checkBox_Parameters->IsChecked())
+    if (m_checkBox_Parameters->IsChecked())
         m_checkBox_Names->Disable();
     else
         m_checkBox_Names->Enable();

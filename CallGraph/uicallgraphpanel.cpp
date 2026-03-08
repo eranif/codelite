@@ -23,18 +23,24 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "uicallgraphpanel.h"
+
 #include "callgraph.h"
 #include "fileutils.h"
-#include "uicallgraphpanel.h"
 #include "workspace.h"
+
 #include <wx/bitmap.h>
 #include <wx/dcbuffer.h>
 #include <wx/filedlg.h>
 #include <wx/filefn.h>
 #include <wx/xrc/xmlres.h>
 
-uicallgraphpanel::uicallgraphpanel(wxWindow* parent, IManager* mgr, const wxString& imagepath,
-                                   const wxString& projectpath, int suggestedThreshold, LineParserList* pLines)
+uicallgraphpanel::uicallgraphpanel(wxWindow* parent,
+                                   IManager* mgr,
+                                   const wxString& imagepath,
+                                   const wxString& projectpath,
+                                   int suggestedThreshold,
+                                   LineParserList* pLines)
     : uicallgraph(parent)
 {
     m_mgr = mgr;
@@ -50,10 +56,12 @@ uicallgraphpanel::uicallgraphpanel(wxWindow* parent, IManager* mgr, const wxStri
     for (const auto lineParser : *pLines)
         m_lines.Append(lineParser->Clone());
 
-    if(m_bmpOrig.LoadFile(m_pathimage, wxBITMAP_TYPE_PNG)) UpdateImage();
+    if (m_bmpOrig.LoadFile(m_pathimage, wxBITMAP_TYPE_PNG))
+        UpdateImage();
 
     m_mgr->GetConfigTool()->ReadObject(wxT("CallGraph"), &confData);
-    if(suggestedThreshold == -1) suggestedThreshold = confData.GetTresholdNode();
+    if (suggestedThreshold == -1)
+        suggestedThreshold = confData.GetTresholdNode();
 
     CreateAndInserDataToTable(suggestedThreshold);
 
@@ -83,10 +91,15 @@ void uicallgraphpanel::OnSaveCallGraph(wxCommandEvent& event)
 {
     // wxString projectName = m_mgr->GetWorkspace()->GetActiveProjectName();
 
-    wxFileDialog saveFileDialog(this, _("Save call graph..."), wxT(""), wxT("CallGraph"),
-                                wxT("png files (*.png)|*.png"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+    wxFileDialog saveFileDialog(this,
+                                _("Save call graph..."),
+                                wxT(""),
+                                wxT("CallGraph"),
+                                wxT("png files (*.png)|*.png"),
+                                wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
 
-    if(saveFileDialog.ShowModal() == wxID_CANCEL) return;
+    if (saveFileDialog.ShowModal() == wxID_CANCEL)
+        return;
 
     m_bmpOrig.SaveFile(saveFileDialog.GetPath(), wxBITMAP_TYPE_PNG);
 }
@@ -103,12 +116,13 @@ int uicallgraphpanel::CreateAndInserDataToTable(int node_thr)
     int nr = 0;
     float max_time = -2;
 
-    while(it) {
+    while (it) {
         LineParser* line = it->GetData();
 
-        if(max_time < line->time) max_time = line->time;
+        if (max_time < line->time)
+            max_time = line->time;
 
-        if(line->pline && wxRound(line->time) >= node_thr) {
+        if (line->pline && wxRound(line->time) >= node_thr) {
             m_grid->AppendRows(1, true);
             // name   time %   self  children    called
             m_grid->SetCellValue(nr, 0, line->name);
@@ -116,9 +130,10 @@ int uicallgraphpanel::CreateAndInserDataToTable(int node_thr)
             m_grid->SetCellValue(nr, 2, wxString::Format(wxT("%.2f"), line->self + line->children));
 
             int callsum;
-            if(line->called0 != -1) {
+            if (line->called0 != -1) {
                 callsum = line->called0;
-                if(line->called1 != -1) callsum += line->called1;
+                if (line->called1 != -1)
+                    callsum += line->called1;
             } else
                 callsum = 1;
 
@@ -133,13 +148,18 @@ int uicallgraphpanel::CreateAndInserDataToTable(int node_thr)
 
 void uicallgraphpanel::OnRefreshClick(wxCommandEvent& event)
 {
-    if(m_grid->GetNumberRows()) m_grid->DeleteRows(0, (m_grid->GetNumberRows() - 1));
+    if (m_grid->GetNumberRows())
+        m_grid->DeleteRows(0, (m_grid->GetNumberRows() - 1));
 
     // write to output png file
     DotWriter dw;
     dw.SetLineParser(&m_lines);
-    dw.SetDotWriterFromDetails(confData.GetColorsNode(), confData.GetColorsEdge(), m_spinNT->GetValue(),
-                               m_spinET->GetValue(), m_checkBoxHP->GetValue(), confData.GetStripParams(),
+    dw.SetDotWriterFromDetails(confData.GetColorsNode(),
+                               confData.GetColorsEdge(),
+                               m_spinNT->GetValue(),
+                               m_spinET->GetValue(),
+                               m_checkBoxHP->GetValue(),
+                               confData.GetStripParams(),
                                m_checkBoxHN->GetValue());
 
     dw.WriteToDotLanguage();
@@ -151,8 +171,10 @@ void uicallgraphpanel::OnRefreshClick(wxCommandEvent& event)
     wxString dot_fn = cfn.GetFullPath();
 
     bool ok = dw.SendToDotAppOutputDirectory(dot_fn);
-    if(ok) { // delete any existing PNG
-        if(wxFileExists(m_pathimage)) { clRemoveFile(m_pathimage); }
+    if (ok) { // delete any existing PNG
+        if (wxFileExists(m_pathimage)) {
+            clRemoveFile(m_pathimage);
+        }
 
         wxString cmddot_ln;
 
@@ -160,11 +182,13 @@ void uicallgraphpanel::OnRefreshClick(wxCommandEvent& event)
 
         wxExecute(cmddot_ln, wxEXEC_SYNC | wxEXEC_HIDE_CONSOLE);
 
-        if(m_bmpOrig.LoadFile(m_pathimage, wxBITMAP_TYPE_PNG)) UpdateImage();
+        if (m_bmpOrig.LoadFile(m_pathimage, wxBITMAP_TYPE_PNG))
+            UpdateImage();
 
     } else
         wxMessageBox(_("CallGraph failed to save file with DOT language, please build the project again."),
-                     wxT("CallGraph"), wxOK | wxICON_INFORMATION);
+                     wxT("CallGraph"),
+                     wxOK | wxICON_INFORMATION);
 
     // update call table
     CreateAndInserDataToTable(m_spinNT->GetValue());
@@ -174,9 +198,9 @@ void uicallgraphpanel::UpdateImage()
 {
     wxBusyCursor busy;
 
-    if(m_bmpOrig.IsOk()) {
+    if (m_bmpOrig.IsOk()) {
         wxImage img = m_bmpOrig.ConvertToImage();
-        if(img.IsOk()) {
+        if (img.IsOk()) {
             img.Rescale(m_bmpOrig.GetWidth() * m_scale, m_bmpOrig.GetHeight() * m_scale, wxIMAGE_QUALITY_HIGH);
             m_bmpScaled = wxBitmap(img);
 
@@ -200,7 +224,7 @@ void uicallgraphpanel::OnLeftDown(wxMouseEvent& event)
 
 void uicallgraphpanel::OnMouseMove(wxMouseEvent& event)
 {
-    if(event.LeftIsDown()) {
+    if (event.LeftIsDown()) {
         int dx, dy;
         m_scrolledWindow->GetScrollPixelsPerUnit(&dx, &dy);
         m_scrolledWindow->Scroll(m_viewPortOrigin.x + (m_startigPoint.x - event.GetPosition().x) / dx,
@@ -211,11 +235,11 @@ void uicallgraphpanel::OnLeftUp(wxMouseEvent& event) { m_scrolledWindow->SetCurs
 
 void uicallgraphpanel::OnMouseWheel(wxMouseEvent& event)
 {
-    if(event.ControlDown()) {
+    if (event.ControlDown()) {
         m_scale += (float)event.GetWheelRotation() / (event.GetWheelDelta() * 10);
-        if(m_scale < 0.1)
+        if (m_scale < 0.1)
             m_scale = 0.1;
-        else if(m_scale > 1)
+        else if (m_scale > 1)
             m_scale = 1;
         UpdateImage();
     }
@@ -228,9 +252,9 @@ void uicallgraphpanel::OnZoom100(wxCommandEvent& event)
 
     m_scale = xscale < yscale ? xscale : yscale;
 
-    if(m_scale < 0.1)
+    if (m_scale < 0.1)
         m_scale = 0.1;
-    else if(m_scale > 1)
+    else if (m_scale > 1)
         m_scale = 1;
     UpdateImage();
 }
@@ -238,14 +262,16 @@ void uicallgraphpanel::OnZoom100(wxCommandEvent& event)
 void uicallgraphpanel::OnZoomIn(wxCommandEvent& event)
 {
     m_scale = m_scale + 0.1;
-    if(m_scale > 1) m_scale = 1;
+    if (m_scale > 1)
+        m_scale = 1;
     UpdateImage();
 }
 
 void uicallgraphpanel::OnZoomOut(wxCommandEvent& event)
 {
     m_scale = m_scale - 0.1;
-    if(m_scale < 0.1) m_scale = 0.1;
+    if (m_scale < 0.1)
+        m_scale = 0.1;
     UpdateImage();
 }
 

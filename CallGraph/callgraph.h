@@ -38,13 +38,14 @@
 
 #include "plugin.h"
 //
-#include <wx/wx.h>
+#include "confcallgraph.h"
+#include "dotwriter.h"
+#include "gprofparser.h"
+#include "static.h"
+
 #include <wx/process.h>
 #include <wx/stream.h>
-#include "confcallgraph.h"
-#include "gprofparser.h"
-#include "dotwriter.h"
-#include "static.h"
+#include <wx/wx.h>
 
 /**
  * @class CallGraph

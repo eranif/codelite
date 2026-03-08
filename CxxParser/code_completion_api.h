@@ -6,6 +6,10 @@
 #include "function.h"
 #include "variable.h"
 
+#include <map>
+#include <string>
+#include <vector>
+
 extern WXDLLIMPEXP_CL std::string get_scope_name(const std::string& in,
                                                  std::vector<std::string>& additionlNS,
                                                  const std::map<std::string, std::string>& ignoreTokens);

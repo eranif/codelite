@@ -1,12 +1,7 @@
 // test the parser
 #include "code_completion_api.h"
 
-#include <errno.h>
-#include <map>
-#include <stdio.h>
-#include <string.h>
-#include <string>
-#include <vector>
+#include <cstring>
 
 void testScopeParser(char* buf);
 void testVarParser(char* buf);

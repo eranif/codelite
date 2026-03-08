@@ -29,42 +29,29 @@
 
 class CopyrightsConfigData : public SerializedObject
 {
-	wxString m_templateFilename;
-	wxString m_fileMasking;
-	bool m_backupFiles;
-	wxString m_ignoreString;
+    wxString m_templateFilename;
+    wxString m_fileMasking;
+    bool m_backupFiles;
+    wxString m_ignoreString;
 
 public:
-	CopyrightsConfigData();
-	virtual ~CopyrightsConfigData() = default;
+    CopyrightsConfigData();
+    virtual ~CopyrightsConfigData() = default;
 
 public:
-	virtual void DeSerialize(Archive &arch);
-	virtual void Serialize(Archive &arch);
+    virtual void DeSerialize(Archive& arch);
+    virtual void Serialize(Archive& arch);
 
+    // Setters
+    void SetFileMasking(const wxString& fileMasking) { this->m_fileMasking = fileMasking; }
+    void SetTemplateFilename(const wxString& templateFilename) { this->m_templateFilename = templateFilename; }
+    void SetBackupFiles(bool backupFiles) { this->m_backupFiles = backupFiles; }
 
-	//Setters
-	void SetFileMasking(const wxString& fileMasking) {
-		this->m_fileMasking = fileMasking;
-	}
-	void SetTemplateFilename(const wxString& templateFilename) {
-		this->m_templateFilename = templateFilename;
-	}
-	void SetBackupFiles(bool backupFiles) { this->m_backupFiles = backupFiles; }
-
-	//Getters
-	const wxString& GetFileMasking() const {
-		return m_fileMasking;
-	}
-	const wxString& GetTemplateFilename() const {
-		return m_templateFilename;
-	}
-	bool GetBackupFiles() const { return m_backupFiles; }
-	void SetIgnoreString(const wxString& ignoreString) {
-		this->m_ignoreString = ignoreString;
-	}
-	const wxString& GetIgnoreString() const {
-		return m_ignoreString;
-	}
+    // Getters
+    const wxString& GetFileMasking() const { return m_fileMasking; }
+    const wxString& GetTemplateFilename() const { return m_templateFilename; }
+    bool GetBackupFiles() const { return m_backupFiles; }
+    void SetIgnoreString(const wxString& ignoreString) { this->m_ignoreString = ignoreString; }
+    const wxString& GetIgnoreString() const { return m_ignoreString; }
 };
 #endif // __copyrightsconfigdata__

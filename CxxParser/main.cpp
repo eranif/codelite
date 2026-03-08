@@ -1,119 +1,119 @@
-//test the parser
-#include <stdio.h>
-#include <errno.h>
-#include <string.h>
-#include <vector>
-#include <string>
-#include <map>
+// test the parser
 #include "code_completion_api.h"
 
-void testScopeParser(char *buf);
-void testVarParser(char *buf);
-void testTypedefParser(char *buf);
-void testExprParser(char *buf);
-void testFuncParser(char *buf);
-void testPureLexer(const char *buf);
-void testIsPrimitive(char *buf);
+#include <errno.h>
+#include <map>
+#include <stdio.h>
+#include <string.h>
+#include <string>
+#include <vector>
 
-char *loadFile(const char *fileName);
+void testScopeParser(char* buf);
+void testVarParser(char* buf);
+void testTypedefParser(char* buf);
+void testExprParser(char* buf);
+void testFuncParser(char* buf);
+void testPureLexer(const char* buf);
+void testIsPrimitive(char* buf);
+
+char* loadFile(const char* fileName);
 
 int main()
 {
-    char *buf = loadFile("../Debug/test.h");
-    //testPureLexer( buf );
-    //print the scope name
-    //testScopeParser(buf);
+    char* buf = loadFile("../Debug/test.h");
+    // testPureLexer( buf );
+    // print the scope name
+    // testScopeParser(buf);
     testVarParser(buf);
-    //testExprParser(buf);
-    //testFuncParser(buf);
-    //testTypedefParser(buf);
-    //testIsPrimitive(buf);
-    //testFuncParser(buf);
+    // testExprParser(buf);
+    // testFuncParser(buf);
+    // testTypedefParser(buf);
+    // testIsPrimitive(buf);
+    // testFuncParser(buf);
     free(buf);
 }
 
-void testPureLexer( const char* buf ) 
+void testPureLexer(const char* buf)
 {
-    CppLexer lexer( buf );
-    while ( lexer.lex() != 0 ) {
+    CppLexer lexer(buf);
+    while (lexer.lex() != 0) {
         printf("%s | %d\n", lexer.text().c_str(), lexer.line_number());
     }
 }
 
-void testIsPrimitive(char *buf)
+void testIsPrimitive(char* buf)
 {
     printf("===== Testing is_primitive_type ======\n");
     printf("%d\n", is_primitive_type(buf) ? 1 : 0);
 }
 
-void testFuncParser(char *buf)
+void testFuncParser(char* buf)
 {
     printf("===== Testing function parser ======\n");
-//	time_t start = GetTickCount();
+    //	time_t start = GetTickCount();
     FunctionList li;
-    //fflush(stdout);
+    // fflush(stdout);
     std::map<std::string, std::string> ignoreTokens;
     get_functions(buf, li, ignoreTokens);
-//	time_t end = GetTickCount();
+    //	time_t end = GetTickCount();
     for (const clFunction& f : li) {
-        //test the var parser on the function argument list:
+        // test the var parser on the function argument list:
         f.Print();
-        //testVarParser((char*)f.m_signature.c_str());
+        // testVarParser((char*)f.m_signature.c_str());
         printf("%s\n", f.m_name.c_str());
     }
 
-//	printf("total time: %d\n", end-start);
+    //	printf("total time: %d\n", end-start);
     printf("matches found: %d\n", (int)li.size());
 }
 
-void testExprParser(char *buf)
+void testExprParser(char* buf)
 {
     printf("===== Testing expression parser ======\n");
     ExpressionResult res = parse_expression(buf);
     res.Print();
 }
 
-void testScopeParser(char *buf)
+void testScopeParser(char* buf)
 {
     printf("===== Testing Scope parser ======\n");
-//	time_t start = GetTickCount();
+    //	time_t start = GetTickCount();
     std::vector<std::string> additionNS;
     std::map<std::string, std::string> ignoreTokens;
 
     ignoreTokens["wxT"] = true;
     std::string scope = get_scope_name(buf, additionNS, ignoreTokens);
-//	time_t end = GetTickCount();
-//	printf("total time: %d\n", end-start);
+    //	time_t end = GetTickCount();
+    //	printf("total time: %d\n", end-start);
     printf("scope name=%s\n", scope.c_str());
-    for (size_t i=0; i<additionNS.size(); i++) {
+    for (size_t i = 0; i < additionNS.size(); i++) {
         printf("NS: %s\n", additionNS.at(i).c_str());
     }
     fflush(stdout);
 }
 
-void testVarParser(char *buf)
+void testVarParser(char* buf)
 {
     printf("===== Testing Variable parser ======\n");
-//	time_t start = GetTickCount();
+    //	time_t start = GetTickCount();
     VariableList li;
-//	fflush(stdout);
+    //	fflush(stdout);
 
     std::map<std::string, std::string> ignoreTokens;
     get_variables(buf, li, ignoreTokens, true);
-//	time_t end = GetTickCount();
+    //	time_t end = GetTickCount();
     for (const Variable& var : li) {
         var.Print();
     }
 
-//	printf("total time: %d\n", end-start);
+    //	printf("total time: %d\n", end-start);
     printf("matches found: %d\n", (int)li.size());
 }
 
-void testTypedefParser(char *buf)
+void testTypedefParser(char* buf)
 {
     printf("===== Testing Typedef parser ======\n");
     clTypedefList li;
-
 
     std::map<std::string, std::string> ignoreTokens;
     get_typedefs(buf, li);
@@ -126,11 +126,11 @@ void testTypedefParser(char *buf)
 //-------------------------------------------------------
 // Help function
 //-------------------------------------------------------
-char *loadFile(const char *fileName)
+char* loadFile(const char* fileName)
 {
-    FILE *fp;
+    FILE* fp;
     long len;
-    char *buf = NULL;
+    char* buf = NULL;
 
     fp = fopen(fileName, "rb");
     if (!fp) {
@@ -138,22 +138,22 @@ char *loadFile(const char *fileName)
         return NULL;
     }
 
-    //read the whole file
-    fseek(fp, 0, SEEK_END); 		//go to end
-    len = ftell(fp); 					//get position at end (length)
-    fseek(fp, 0, SEEK_SET); 		//go to beginning
-    buf = (char *)malloc(len+1); 	//malloc buffer
+    // read the whole file
+    fseek(fp, 0, SEEK_END);       // go to end
+    len = ftell(fp);              // get position at end (length)
+    fseek(fp, 0, SEEK_SET);       // go to beginning
+    buf = (char*)malloc(len + 1); // malloc buffer
 
-    //read into buffer
+    // read into buffer
     long bytes = fread(buf, sizeof(char), len, fp);
-    //printf("read: %ld\n", bytes);
+    // printf("read: %ld\n", bytes);
     if (bytes != len) {
         fclose(fp);
         printf("failed to read from file 'test.h': %s\n", strerror(errno));
         return NULL;
     }
 
-    buf[len] = 0;	// make it null terminated string
+    buf[len] = 0; // make it null terminated string
     fclose(fp);
     return buf;
 }

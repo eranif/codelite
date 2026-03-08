@@ -2,10 +2,7 @@
 
 #include <iostream>
 
-void Variable::Reset()
-{
-    *this = Variable();
-}
+void Variable::Reset() { *this = Variable(); }
 
 void Variable::Print() const
 {

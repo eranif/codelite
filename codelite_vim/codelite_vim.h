@@ -1,8 +1,8 @@
 #ifndef __CodeliteVim__
 #define __CodeliteVim__
 
-#include "plugin.h"
 #include "VimSettings.h"
+#include "plugin.h"
 
 class VimManager;
 
@@ -27,7 +27,7 @@ public:
 
     /**
      * @brief Unplug the plugin. Perform here any cleanup needed
-         * (e.g. unbind events, destroy allocated windows)
+     * (e.g. unbind events, destroy allocated windows)
      */
     void UnPlug() override;
 

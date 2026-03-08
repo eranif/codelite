@@ -1,9 +1,11 @@
+#include "codelite_vim.h"
+
 #include "VimSettings.h"
 #include "VimSettingsDlg.h"
-#include "codelite_vim.h"
 #include "event_notifier.h"
 #include "macros.h"
 #include "vim_manager.h"
+
 #include <iostream>
 #include <wx/app.h>
 #include <wx/dialog.h>
@@ -12,10 +14,7 @@
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new CodeliteVim(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new CodeliteVim(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -61,7 +60,7 @@ void CodeliteVim::UnPlug()
 void CodeliteVim::onVimSetting(wxCommandEvent& event)
 {
     VimSettingsDlg dlg(EventNotifier::Get()->TopFrame());
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         // Store the settings
         m_settings.SetEnabled(dlg.GetCheckBoxEnabled()->IsChecked()).Save();
         m_vimM->SettingsUpdated();

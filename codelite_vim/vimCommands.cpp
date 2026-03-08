@@ -3034,7 +3034,8 @@ long VimCommand::goToMatchingParenthesis(long start_pos)
     return (indenting_level == 0) ? pos : -1;
 }
 
-bool VimCommand::findMatchingParenthesis(wxChar lch, wxChar rch, long minPos, long maxPos, long& leftPos, long& rightPos)
+bool VimCommand::findMatchingParenthesis(
+    wxChar lch, wxChar rch, long minPos, long maxPos, long& leftPos, long& rightPos)
 {
     long curPos = m_ctrl->GetCurrentPos();
     int level = 1;

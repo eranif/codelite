@@ -1,9 +1,9 @@
 #ifndef __EOSWiki__
 #define __EOSWiki__
 
-#include "plugin.h"
 #include "EOSProjectData.h"
 #include "macros.h"
+#include "plugin.h"
 
 class EOSWiki : public IPlugin
 {
@@ -14,7 +14,7 @@ protected:
     void CreateProject(const EOSProjectData& data);
     void CreateSampleFile(ProjectPtr proj, const EOSProjectData& d);
     void CreateCMakeListsFile(ProjectPtr proj, const EOSProjectData& d);
-    
+
     void ExtractResources();
     wxString ReadResource(const wxString& filename) const;
     void ReplacePlaceHolders(wxString& text, const wxStringMap_t& m);

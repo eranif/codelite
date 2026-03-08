@@ -44,7 +44,9 @@ void EOSProjectWizard::OnPathChanged(wxFileDirPickerEvent& event)
 wxString EOSProjectWizard::GetProjectFile() const
 {
     wxFileName projectFile(GetPath(), GetName() + ".project");
-    if(m_checkBoxSeparateDir->IsChecked()) { projectFile.AppendDir(GetName()); }
+    if (m_checkBoxSeparateDir->IsChecked()) {
+        projectFile.AppendDir(GetName());
+    }
     return projectFile.GetFullPath();
 }
 
@@ -57,16 +59,22 @@ void EOSProjectWizard::OnCreateInSeparateDir(wxCommandEvent& event)
 wxString EOSProjectWizard::GetToolchainPath()
 {
     CompilerPtr compiler = BuildSettingsConfigST::Get()->GetCompiler("eosio");
-    if(!compiler) {
+    if (!compiler) {
         // Try to locate the compiler
         CompilerLocatorEosCDT cdt;
-        if(cdt.Locate()) { compiler = cdt.GetCompilers()[0]; }
+        if (cdt.Locate()) {
+            compiler = cdt.GetCompilers()[0];
+        }
     }
 
-    if(!compiler) { return ""; }
+    if (!compiler) {
+        return "";
+    }
     wxFileName cxx = compiler->GetTool("CXX");
     cxx = FileUtils::wxReadLink(cxx);
-    if (cxx.GetDirCount()) { cxx.RemoveLastDir(); } // remove the "bin" folder
+    if (cxx.GetDirCount()) {
+        cxx.RemoveLastDir();
+    } // remove the "bin" folder
     return cxx.GetPath();
 }
 

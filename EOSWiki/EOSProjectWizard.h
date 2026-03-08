@@ -1,7 +1,7 @@
 #ifndef EOSPROJECTWIZARD_H
 #define EOSPROJECTWIZARD_H
-#include "eosUI.h"
 #include "EOSProjectData.h"
+#include "eosUI.h"
 
 class EOSProjectWizard : public EOSProjectWizardBase
 {

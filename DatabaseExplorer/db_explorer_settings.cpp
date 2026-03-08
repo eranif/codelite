@@ -37,8 +37,8 @@ DbExplorerSettings::DbExplorerSettings()
 void DbExplorerSettings::SetRecentFiles(const wxArrayString& recentFiles)
 {
     m_recentFiles.Clear();
-    for(size_t i=0; i<recentFiles.Count(); i++) {
-        if(m_recentFiles.Index(recentFiles.Item(i)) == wxNOT_FOUND) {
+    for (size_t i = 0; i < recentFiles.Count(); i++) {
+        if (m_recentFiles.Index(recentFiles.Item(i)) == wxNOT_FOUND) {
             m_recentFiles.Add(recentFiles.Item(i));
         }
     }
@@ -87,14 +87,14 @@ void DbExplorerSettings::SetPgSQLConnections(const DbConnectionInfoVec& conns)
 void DbExplorerSettings::FromJSON(const JSONItem& json)
 {
     m_recentFiles = json.namedObject("m_recentFiles").toArrayString();
-    m_sqlHistory  = json.namedObject("m_sqlHistory").toArrayString();
-    
+    m_sqlHistory = json.namedObject("m_sqlHistory").toArrayString();
+
     // read the connections
     JSONItem arrConnections = json.namedObject("connections");
-    for(int i=0; i<arrConnections.arraySize(); ++i) {
+    for (int i = 0; i < arrConnections.arraySize(); ++i) {
         DbConnectionInfo ci;
-        ci.FromJSON( arrConnections.arrayItem(i) );
-        m_connections.push_back( ci );
+        ci.FromJSON(arrConnections.arrayItem(i));
+        m_connections.push_back(ci);
     }
 }
 
@@ -102,8 +102,8 @@ JSONItem DbExplorerSettings::ToJSON() const
 {
     JSONItem element = JSONItem::createObject(GetName());
     element.addProperty("m_recentFiles", m_recentFiles);
-    element.addProperty("m_sqlHistory",  m_sqlHistory);
-    
+    element.addProperty("m_sqlHistory", m_sqlHistory);
+
     // add the connections array
     JSONItem arrConnections = JSONItem::createArray("connections");
     element.append(arrConnections);
@@ -126,23 +126,23 @@ DbConnectionInfo::DbConnectionInfo()
 JSONItem DbConnectionInfo::ToJSON() const
 {
     JSONItem element = JSONItem::createObject(GetName());
-    element.addProperty("m_connectionName",  m_connectionName );
-    element.addProperty("m_connectionType",  m_connectionType );
+    element.addProperty("m_connectionName", m_connectionName);
+    element.addProperty("m_connectionType", m_connectionType);
     element.addProperty("m_defaultDatabase", m_defaultDatabase);
-    element.addProperty("m_password"       , m_password       );
-    element.addProperty("m_server"         , m_server         );
-    element.addProperty("m_port"           , m_port           );
-    element.addProperty("m_username"       , m_username       );
+    element.addProperty("m_password", m_password);
+    element.addProperty("m_server", m_server);
+    element.addProperty("m_port", m_port);
+    element.addProperty("m_username", m_username);
     return element;
 }
 
 void DbConnectionInfo::FromJSON(const JSONItem& json)
 {
-    m_connectionName  = json.namedObject("m_connectionName").toString(m_connectionName);
-    m_connectionType  = json.namedObject("m_connectionType").toInt(m_connectionType);
+    m_connectionName = json.namedObject("m_connectionName").toString(m_connectionName);
+    m_connectionType = json.namedObject("m_connectionType").toInt(m_connectionType);
     m_defaultDatabase = json.namedObject("m_defaultDatabase").toString(m_defaultDatabase);
-    m_password        = json.namedObject("m_password").toString(m_password);
-    m_server          = json.namedObject("m_server").toString(m_server);
-    m_port            = json.namedObject("m_port").toInt(m_port);
-    m_username        = json.namedObject("m_username").toString(m_username);
+    m_password = json.namedObject("m_password").toString(m_password);
+    m_server = json.namedObject("m_server").toString(m_server);
+    m_port = json.namedObject("m_port").toInt(m_port);
+    m_username = json.namedObject("m_username").toString(m_username);
 }

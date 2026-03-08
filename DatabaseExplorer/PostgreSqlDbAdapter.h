@@ -30,64 +30,66 @@
 #include <wx/dblayer/include/PostgresDatabaseLayer.h>
 #endif
 
-#include <wx/dblayer/include/DatabaseLayer.h>
-#include <wx/dynarray.h>
 #include "IDbAdapter.h" // Base class: IDbAdapter
 #include "IDbType.h"
 #include "PostgreSqlType.h"
 
+#include <wx/dblayer/include/DatabaseLayer.h>
+#include <wx/dynarray.h>
 
-class PostgreSqlDbAdapter : public IDbAdapter {
+class PostgreSqlDbAdapter : public IDbAdapter
+{
 
 public:
-	PostgreSqlDbAdapter();
-	PostgreSqlDbAdapter(const wxString& serverName,const int port, const wxString& defaultDb, const wxString& userName, const wxString& password);
-	~PostgreSqlDbAdapter() = default;
+    PostgreSqlDbAdapter();
+    PostgreSqlDbAdapter(const wxString& serverName,
+                        const int port,
+                        const wxString& defaultDb,
+                        const wxString& userName,
+                        const wxString& password);
+    ~PostgreSqlDbAdapter() = default;
 
-	virtual bool GetColumns(Table* pTab);
-	virtual void GetDatabases(DbConnection* dbCon);
-	virtual void GetTables(Database* db, bool includeViews);
-	virtual void GetViews(Database* db);
+    virtual bool GetColumns(Table* pTab);
+    virtual void GetDatabases(DbConnection* dbCon);
+    virtual void GetTables(Database* db, bool includeViews);
+    virtual void GetViews(Database* db);
 
-	virtual IDbAdapter* Clone();
-	virtual bool CanConnect();
-	virtual bool IsConnected();
-	virtual void CloseConnection();
-	virtual DatabaseLayerPtr GetDatabaseLayer(const wxString& dbName);
+    virtual IDbAdapter* Clone();
+    virtual bool CanConnect();
+    virtual bool IsConnected();
+    virtual void CloseConnection();
+    virtual DatabaseLayerPtr GetDatabaseLayer(const wxString& dbName);
 
-	virtual wxString GetUseDb(const wxString& dbName);
-	virtual wxString GetDefaultSelect(const wxString& dbName, const wxString& tableName);
-	virtual wxString GetDefaultSelect(const wxString& cols, const wxString& dbName, const wxString& tableName);
-	virtual wxString GetCreateTableSql(Table* tab, bool dropTable);
-	virtual wxString GetCreateViewSql(View* view, bool dropView);
-	virtual wxString GetAlterTableConstraintSql(Table* tab);
-	virtual wxString GetCreateDatabaseSql(const wxString& dbName);
-	virtual wxString GetDropTableSql(Table* pTab);
-	virtual wxString GetDropViewSql(View* pView);
-	virtual wxString GetDropDatabaseSql(Database* pDb);
+    virtual wxString GetUseDb(const wxString& dbName);
+    virtual wxString GetDefaultSelect(const wxString& dbName, const wxString& tableName);
+    virtual wxString GetDefaultSelect(const wxString& cols, const wxString& dbName, const wxString& tableName);
+    virtual wxString GetCreateTableSql(Table* tab, bool dropTable);
+    virtual wxString GetCreateViewSql(View* view, bool dropView);
+    virtual wxString GetAlterTableConstraintSql(Table* tab);
+    virtual wxString GetCreateDatabaseSql(const wxString& dbName);
+    virtual wxString GetDropTableSql(Table* pTab);
+    virtual wxString GetDropViewSql(View* pView);
+    virtual wxString GetDropDatabaseSql(Database* pDb);
 
-	virtual IDbType* GetDbTypeByName(const wxString& typeName);
-	virtual wxArrayString* GetDbTypes();
+    virtual IDbType* GetDbTypeByName(const wxString& typeName);
+    virtual wxArrayString* GetDbTypes();
 
-
-	virtual IDbType* GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE type);
-	virtual void ConvertTable(Table* pTab);
-	virtual IDbType* ConvertType(IDbType* pType);
-
-
+    virtual IDbType* GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE type);
+    virtual void ConvertTable(Table* pTab);
+    virtual IDbType* ConvertType(IDbType* pType);
 
 protected:
-	//void SetDatabase(const wxString& db) { m_defaultDb = db; }
+    // void SetDatabase(const wxString& db) { m_defaultDb = db; }
 
-	IDbType* parseTypeString(const wxString& typeString);
+    IDbType* parseTypeString(const wxString& typeString);
 
-	wxString m_serverName;
-	int m_port;
-	wxString m_userName;
-	wxString m_password;
-	wxString m_defaultDb;
+    wxString m_serverName;
+    int m_port;
+    wxString m_userName;
+    wxString m_password;
+    wxString m_defaultDb;
 
-	DatabaseLayerPtr m_pDbLayer;
+    DatabaseLayerPtr m_pDbLayer;
 };
 
 #endif // POSTGRESQLDBADAPTER_H

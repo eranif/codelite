@@ -26,9 +26,9 @@
 #ifndef __DatabaseExplorer__
 #define __DatabaseExplorer__
 
-#include "plugin.h"
 #include "DbViewerPanel.h"
 #include "cl_command_event.h"
+#include "plugin.h"
 
 class DatabaseExplorer : public IPlugin
 {

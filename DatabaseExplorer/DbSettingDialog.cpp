@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "DbSettingDialog.h"
+
 #include "db_explorer_settings.h"
 #include "editor_config.h"
 #include "globals.h"
@@ -93,7 +94,7 @@ void DbSettingDialog::OnMySqlOkClick(wxCommandEvent& event)
 
 void DbSettingDialog::OnSqliteOkClick(wxCommandEvent& event)
 {
-    if(DoSQLiteItemActivated()) {
+    if (DoSQLiteItemActivated()) {
         event.Skip();
     }
 }
@@ -114,7 +115,7 @@ void DbSettingDialog::LoadHistory()
     wxArrayString files = DoLoadSqliteHistory();
 
     m_listCtrlRecentFiles->DeleteAllItems();
-    for(size_t i = 0; i < files.Count(); i++) {
+    for (size_t i = 0; i < files.Count(); i++) {
         int idx = AppendListCtrlRow(m_listCtrlRecentFiles);
         SetColumnText(m_listCtrlRecentFiles, idx, 0, files.Item(i));
     }
@@ -143,8 +144,11 @@ void DbSettingDialog::OnPgOkClick(wxCommandEvent& event)
         // MysqlDatabaseLayer(m_txServer->GetValue(),wxT(""),m_txUserName->GetValue(),m_txPassword->GetValue());
         long portNumber = 0;
         m_txPgPort->GetValue().ToLong(&portNumber);
-        IDbAdapter* adapt = new PostgreSqlDbAdapter(m_txPgServer->GetValue(), portNumber, m_txPgDatabase->GetValue(),
-                                                    m_txPgUserName->GetValue(), m_txPgPassword->GetValue());
+        IDbAdapter* adapt = new PostgreSqlDbAdapter(m_txPgServer->GetValue(),
+                                                    portNumber,
+                                                    m_txPgDatabase->GetValue(),
+                                                    m_txPgUserName->GetValue(),
+                                                    m_txPgPassword->GetValue());
 
         wxString serverName = m_txPgServer->GetValue();
         m_pParent->AddDbConnection(new DbConnection(adapt, serverName));
@@ -179,14 +183,14 @@ void DbSettingDialog::OnItemActivated(wxListEvent& event)
     long selecteditem = -1;
     selecteditem = m_listCtrlRecentFiles->GetNextItem(selecteditem, wxLIST_NEXT_ALL, wxLIST_STATE_SELECTED);
     m_filePickerSqlite->SetPath(GetColumnText(m_listCtrlRecentFiles, (int)selecteditem, 0));
-    if(DoSQLiteItemActivated()) {
+    if (DoSQLiteItemActivated()) {
         Close();
     }
 }
 
 void DbSettingDialog::OnItemKeyDown(wxListEvent& event)
 {
-    if(event.GetKeyCode() == WXK_DELETE || event.GetKeyCode() == WXK_NUMPAD_DELETE) {
+    if (event.GetKeyCode() == WXK_DELETE || event.GetKeyCode() == WXK_NUMPAD_DELETE) {
         m_listCtrlRecentFiles->DeleteItem(event.GetItem());
         DoSaveSqliteHistory();
 
@@ -207,7 +211,7 @@ void DbSettingDialog::OnDlgOK(wxCommandEvent& event)
 {
     // Dispatch the OK click
     int selection = m_notebook2->GetSelection();
-    switch(selection) {
+    switch (selection) {
     case 0: // Sqlite
         OnSqliteOkClick(event);
         break;
@@ -244,7 +248,8 @@ void DbSettingDialog::DoSaveSqliteHistory()
 
     wxString filename = m_filePickerSqlite->GetPath();
     filename.Trim().Trim(false);
-    if(filename.IsEmpty()) return;
+    if (filename.IsEmpty())
+        return;
 
     files.Insert(filename, 0);
     settings.SetRecentFiles(files);
@@ -290,12 +295,13 @@ void DbSettingDialog::DoSaveMySQLHistory()
     conn.SetServer(m_txServer->GetValue());
     conn.SetUsername(m_txUserName->GetValue());
 
-    if(!conn.IsValid()) return;
+    if (!conn.IsValid())
+        return;
 
     // remove any connection with this name
     DbConnectionInfoVec::iterator iter = mysql.begin();
-    for(; iter != mysql.end(); ++iter) {
-        if(iter->GetConnectionName() == conn.GetConnectionName()) {
+    for (; iter != mysql.end(); ++iter) {
+        if (iter->GetConnectionName() == conn.GetConnectionName()) {
             mysql.erase(iter);
             break;
         }
@@ -324,12 +330,13 @@ void DbSettingDialog::DoSavePgSQLHistory()
     conn.SetPort(port);
     conn.SetUsername(m_txPgUserName->GetValue());
 
-    if(!conn.IsValid()) return;
+    if (!conn.IsValid())
+        return;
 
     // remove any connection with this name
     DbConnectionInfoVec::iterator iter = pgconns.begin();
-    for(; iter != pgconns.end(); iter++) {
-        if(iter->GetConnectionName() == conn.GetConnectionName()) {
+    for (; iter != pgconns.end(); iter++) {
+        if (iter->GetConnectionName() == conn.GetConnectionName()) {
             pgconns.erase(iter);
             break;
         }

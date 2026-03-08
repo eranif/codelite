@@ -26,10 +26,11 @@
 #ifndef DBSETTINGDIALOG_H
 #define DBSETTINGDIALOG_H
 
-#include "GUI.h" // Base class: _DBSettingsDialog
-#include <wx/wx.h>
 #include "DbViewerPanel.h"
+#include "GUI.h" // Base class: _DBSettingsDialog
 #include "db_explorer_settings.h"
+
+#include <wx/wx.h>
 
 #ifdef DBL_USE_MYSQL
 #include "MySqlDbAdapter.h"
@@ -66,7 +67,7 @@ protected:
 
     void DoFindConnectionByName(const DbConnectionInfoVec& conns, const wxString& name);
     bool DoSQLiteItemActivated();
-    
+
     // Event handlers
     virtual void OnCancelClick(wxCommandEvent& event);
     virtual void OnMySqlOkClick(wxCommandEvent& event);

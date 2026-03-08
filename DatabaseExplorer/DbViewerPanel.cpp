@@ -106,23 +106,23 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 {
     try {
         DbItem* item = (DbItem*)m_treeDatabases->GetItemData(event.GetItem());
-        if(item) {
+        if (item) {
             wxString pagename;
-            if(Table* tab = wxDynamicCast(item->GetData(), Table)) {
+            if (Table* tab = wxDynamicCast(item->GetData(), Table)) {
                 pagename = CreatePanelName(tab);
-                SQLCommandPanel* sqlpage = new SQLCommandPanel(m_pNotebook, tab->GetDbAdapter()->Clone(),
-                                                               tab->GetParentName(), tab->GetName());
+                SQLCommandPanel* sqlpage = new SQLCommandPanel(
+                    m_pNotebook, tab->GetDbAdapter()->Clone(), tab->GetParentName(), tab->GetName());
                 CallAfter(&DbViewerPanel::AddEditorPage, sqlpage, pagename);
             }
 
-            if(View* pView = wxDynamicCast(item->GetData(), View)) {
+            if (View* pView = wxDynamicCast(item->GetData(), View)) {
                 pagename = CreatePanelName(pView);
-                SQLCommandPanel* sqlpage = new SQLCommandPanel(m_pNotebook, pView->GetDbAdapter()->Clone(),
-                                                               pView->GetParentName(), pView->GetName());
+                SQLCommandPanel* sqlpage = new SQLCommandPanel(
+                    m_pNotebook, pView->GetDbAdapter()->Clone(), pView->GetParentName(), pView->GetName());
                 CallAfter(&DbViewerPanel::AddEditorPage, sqlpage, pagename);
             }
 
-            if(Database* db = wxDynamicCast(item->GetData(), Database)) {
+            if (Database* db = wxDynamicCast(item->GetData(), Database)) {
                 pagename = CreatePanelName(db);
                 SQLCommandPanel* sqlpage =
                     new SQLCommandPanel(m_pNotebook, db->GetDbAdapter()->Clone(), db->GetName(), wxT(""));
@@ -132,7 +132,8 @@ void DbViewerPanel::OnItemActivate(wxTreeEvent& event)
 
     } catch (const DatabaseLayerException& e) {
         ::wxMessageBox(wxString() << "Error occurred while opening SQL panel: " << e.GetErrorMessage(),
-                       "Database Explorer", wxOK | wxICON_ERROR | wxCENTER);
+                       "Database Explorer",
+                       wxOK | wxICON_ERROR | wxCENTER);
     }
 }
 
@@ -153,20 +154,20 @@ void DbViewerPanel::RefreshDbView()
 {
     // Refresh all connections
     wxTreeItemId root = m_treeDatabases->GetRootItem();
-    if(root.IsOk()) {
+    if (root.IsOk()) {
         wxTreeItemIdValue cookie;
         wxTreeItemId child = m_treeDatabases->GetFirstChild(root, cookie);
-        while(child.IsOk()) {
+        while (child.IsOk()) {
             DbItem* data = (DbItem*)m_treeDatabases->GetItemData(child);
-            if(data) {
+            if (data) {
                 DbConnection* pCon = wxDynamicCast(data->GetData(), DbConnection);
-                if(pCon)
+                if (pCon)
                     pCon->RefreshChildren();
                 Database* pDb = wxDynamicCast(data->GetData(), Database);
-                if(pDb)
+                if (pDb)
                     pDb->RefreshChildren(false);
                 Table* pTab = wxDynamicCast(data->GetData(), Table);
-                if(pTab)
+                if (pTab)
                     pTab->RefreshChildren();
             }
             child = m_treeDatabases->GetNextChild(root, cookie);
@@ -187,42 +188,47 @@ void DbViewerPanel::RefreshDbView()
 
     // ---------------- load connections ----------------------------
     SerializableList::compatibility_iterator connectionNode = m_pConnections->GetFirstChildNode();
-    while(connectionNode) {
+    while (connectionNode) {
         DbConnection* pDbCon = (DbConnection*)wxDynamicCast(connectionNode->GetData(), DbConnection);
-        if(pDbCon) {
-            wxTreeItemId rootID = m_treeDatabases->AppendItem(
-                totalRootID, wxString::Format(_("Databases (%s)"), pDbCon->GetServerName().c_str()), img_database,
-                img_database, new DbItem(pDbCon));
+        if (pDbCon) {
+            wxTreeItemId rootID =
+                m_treeDatabases->AppendItem(totalRootID,
+                                            wxString::Format(_("Databases (%s)"), pDbCon->GetServerName().c_str()),
+                                            img_database,
+                                            img_database,
+                                            new DbItem(pDbCon));
 
             // ----------------------- load databases -------------------------------
             SerializableList::compatibility_iterator dbNode = pDbCon->GetFirstChildNode();
-            while(dbNode) {
+            while (dbNode) {
                 Database* pDatabase = wxDynamicCast(dbNode->GetData(), Database);
-                if(pDatabase) {
-                    wxTreeItemId dbID = m_treeDatabases->AppendItem(rootID, pDatabase->GetName(), img_database,
-                                                                    img_database, new DbItem(pDatabase));
+                if (pDatabase) {
+                    wxTreeItemId dbID = m_treeDatabases->AppendItem(
+                        rootID, pDatabase->GetName(), img_database, img_database, new DbItem(pDatabase));
                     m_treeDatabases->Expand(rootID);
                     wxTreeItemId idFolder =
                         m_treeDatabases->AppendItem(dbID, _("Tables"), img_folder, img_folder, NULL);
 
                     // ----------------------------- load tables ----------------------------------
                     SerializableList::compatibility_iterator tabNode = pDatabase->GetFirstChildNode();
-                    while(tabNode) {
+                    while (tabNode) {
                         Table* pTable = wxDynamicCast(tabNode->GetData(), Table);
-                        if(pTable) {
-                            wxTreeItemId tabID =
-                                m_treeDatabases->AppendItem(idFolder, pTable->GetName(), img_table, img_table,
-                                                            new DbItem(pTable)); // NULL);
+                        if (pTable) {
+                            wxTreeItemId tabID = m_treeDatabases->AppendItem(idFolder,
+                                                                             pTable->GetName(),
+                                                                             img_table,
+                                                                             img_table,
+                                                                             new DbItem(pTable)); // NULL);
 
                             ///////////////////////////////////////////////////////////
                             // Add the columns
                             ///////////////////////////////////////////////////////////
                             SerializableList::compatibility_iterator columnNode = pTable->GetFirstChildNode();
-                            while(columnNode) {
+                            while (columnNode) {
                                 Column* col = wxDynamicCast(columnNode->GetData(), Column);
-                                if(col) {
-                                    m_treeDatabases->AppendItem(tabID, col->FormatName().c_str(), img_column,
-                                                                img_column, new DbItem(col));
+                                if (col) {
+                                    m_treeDatabases->AppendItem(
+                                        tabID, col->FormatName().c_str(), img_column, img_column, new DbItem(col));
                                 }
                                 columnNode = columnNode->GetNext();
                             }
@@ -235,10 +241,13 @@ void DbViewerPanel::RefreshDbView()
 
                     // ----------------------------- load views ----------------------------------
                     tabNode = pDatabase->GetFirstChildNode();
-                    while(tabNode) {
+                    while (tabNode) {
                         View* pView = wxDynamicCast(tabNode->GetData(), View);
-                        if(pView) {
-                            m_treeDatabases->AppendItem(idFolder, pView->GetName(), img_find, img_find,
+                        if (pView) {
+                            m_treeDatabases->AppendItem(idFolder,
+                                                        pView->GetName(),
+                                                        img_find,
+                                                        img_find,
                                                         new DbItem(pView)); // NULL);
                         }
                         tabNode = tabNode->GetNext();
@@ -260,7 +269,7 @@ void DbViewerPanel::OnDnDStart(wxTreeEvent& event) { event.Skip(); }
 void DbViewerPanel::OnItemRightClick(wxTreeEvent& event)
 {
     event.Skip();
-    if(event.GetItem().IsOk()) {
+    if (event.GetItem().IsOk()) {
         m_treeDatabases->SelectItem(event.GetItem());
     }
 }
@@ -276,11 +285,11 @@ void DbViewerPanel::OnToolCloseClick(wxCommandEvent& event)
     wxTreeItemId itemId = m_treeDatabases->GetSelection();
 
     DbItem* data = (DbItem*)m_treeDatabases->GetItemData(itemId);
-    if(data) {
+    if (data) {
         DbConnection* pCon = wxDynamicCast(data->GetData(), DbConnection);
-        if(pCon) {
+        if (pCon) {
             wxMessageDialog dlg(this, _("Close connection?"), _("Close"), wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT);
-            if(dlg.ShowModal() == wxID_YES) {
+            if (dlg.ShowModal() == wxID_YES) {
                 // m_pConnections->GetChildrenList().DeleteContents(true);
                 m_pConnections->GetChildrenList().DeleteObject(pCon);
                 m_treeDatabases->Delete(itemId);
@@ -297,7 +306,7 @@ void DbViewerPanel::OnToolCloseClick(wxCommandEvent& event)
 void DbViewerPanel::OnToolCloseUI(wxUpdateUIEvent& event)
 {
     wxTreeItemId treeId = m_treeDatabases->GetSelection();
-    if(treeId.IsOk()) {
+    if (treeId.IsOk()) {
         DbItem* data = (DbItem*)m_treeDatabases->GetItemData(treeId);
         event.Enable(data && wxDynamicCast(data->GetData(), DbConnection));
     } else {
@@ -307,35 +316,35 @@ void DbViewerPanel::OnToolCloseUI(wxUpdateUIEvent& event)
 
 void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
 {
-    if(!m_selectedID.IsOk())
+    if (!m_selectedID.IsOk())
         return;
 
     try {
-        if(evt.GetId() == XRCID("IDR_DBVIEWER_COPY_COLUMN")) {
+        if (evt.GetId() == XRCID("IDR_DBVIEWER_COPY_COLUMN")) {
             DbItem* data = (DbItem*)m_treeDatabases->GetItemData(m_selectedID);
-            if(data) {
+            if (data) {
                 Column* col = wxDynamicCast(data->GetData(), Column);
-                if(col) {
+                if (col) {
                     wxString colname = col->GetName();
                     ::CopyToClipboard(colname);
                 }
             }
-        } else if(evt.GetId() == XRCID("IDT_DBE_CLOSE_CONNECTION")) {
+        } else if (evt.GetId() == XRCID("IDT_DBE_CLOSE_CONNECTION")) {
             OnToolCloseClick(evt);
             return;
 
-        } else if(evt.GetId() == XRCID("IDT_DBE_REFRESH")) {
+        } else if (evt.GetId() == XRCID("IDT_DBE_REFRESH")) {
             OnRefreshClick(evt);
             return;
 
-        } else if(evt.GetId() == XRCID("IDR_DBVIEWER_ADD_DATABASE")) {
-            if(m_pEditedConnection) {
+        } else if (evt.GetId() == XRCID("IDR_DBVIEWER_ADD_DATABASE")) {
+            if (m_pEditedConnection) {
                 // TODO:LANG:
                 wxString dbName = wxGetTextFromUser(_("Database name"), _("Add database"));
-                if(!dbName.IsEmpty()) {
+                if (!dbName.IsEmpty()) {
                     DatabaseLayerPtr pDbLayer = m_pEditedConnection->GetDbAdapter()->GetDatabaseLayer(wxT(""));
                     wxString sql = m_pEditedConnection->GetDbAdapter()->GetCreateDatabaseSql(dbName);
-                    if(!sql.empty()) {
+                    if (!sql.empty()) {
 
                         pDbLayer->RunQuery(sql);
                         pDbLayer->Close();
@@ -346,23 +355,25 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
                         RefreshDbView();
                     } else {
                         // TODO:LANG:
-                        wxMessageDialog dlg(this, _("Can't create new db in this database engine!"), _("Error"),
-                                            wxOK | wxICON_ERROR);
+                        wxMessageDialog dlg(
+                            this, _("Can't create new db in this database engine!"), _("Error"), wxOK | wxICON_ERROR);
                         dlg.ShowModal();
                     }
                 }
             }
-        } else if(evt.GetId() == XRCID("IDR_DBVIEWER_DROP_DATABASE")) {
+        } else if (evt.GetId() == XRCID("IDR_DBVIEWER_DROP_DATABASE")) {
             DbItem* data = (DbItem*)m_treeDatabases->GetItemData(m_selectedID);
-            if(data) {
+            if (data) {
                 Database* pDb = (Database*)wxDynamicCast(data->GetData(), Database);
-                if(pDb) {
+                if (pDb) {
                     wxString dropSQL = pDb->GetDbAdapter()->GetDropDatabaseSql(pDb);
-                    if(!dropSQL.IsEmpty()) {
+                    if (!dropSQL.IsEmpty()) {
                         // TODO:LANG:
-                        wxMessageDialog dlg(this, wxString::Format(_("Remove database '%s'?"), pDb->GetName().c_str()),
-                                            _("Drop database"), wxYES_NO);
-                        if(dlg.ShowModal() == wxID_YES) {
+                        wxMessageDialog dlg(this,
+                                            wxString::Format(_("Remove database '%s'?"), pDb->GetName().c_str()),
+                                            _("Drop database"),
+                                            wxYES_NO);
+                        if (dlg.ShowModal() == wxID_YES) {
                             DatabaseLayerPtr pDbLayer = pDb->GetDbAdapter()->GetDatabaseLayer(wxT(""));
                             pDbLayer->RunQuery(dropSQL);
                             pDbLayer->Close();
@@ -373,11 +384,11 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
                     }
                 }
             }
-        } else if(evt.GetId() == XRCID("IDR_DBVIEWER_CLASS_DB")) {
+        } else if (evt.GetId() == XRCID("IDR_DBVIEWER_CLASS_DB")) {
             DbItem* data = (DbItem*)m_treeDatabases->GetItemData(m_selectedID);
-            if(data) {
+            if (data) {
                 Database* pDb = (Database*)wxDynamicCast(data->GetData(), Database);
-                if(pDb) {
+                if (pDb) {
                     pDb = (Database*)pDb->Clone();
                     // NOTE: the refresh functions must be here for proper code generation (they translate views into
                     // tables)
@@ -388,24 +399,26 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
                     delete pDb;
                 }
             }
-        } else if(evt.GetId() == XRCID("IDR_DBVIEWER_CLASS_TABLE")) {
+        } else if (evt.GetId() == XRCID("IDR_DBVIEWER_CLASS_TABLE")) {
             DbItem* data = (DbItem*)m_treeDatabases->GetItemData(m_selectedID);
-            if(data) {
+            if (data) {
                 Table* pTab = (Table*)wxDynamicCast(data->GetData(), Table);
-                if(pTab) {
-                    ClassGenerateDialog dlg(m_mgr->GetTheApp()->GetTopWindow(), pTab->GetDbAdapter(),
-                                            (Table*)pTab->Clone(), m_mgr);
+                if (pTab) {
+                    ClassGenerateDialog dlg(
+                        m_mgr->GetTheApp()->GetTopWindow(), pTab->GetDbAdapter(), (Table*)pTab->Clone(), m_mgr);
                     dlg.ShowModal();
                 }
             }
-        } else if(evt.GetId() == XRCID("IDR_DBVIEWER_DROP_TABLE")) {
+        } else if (evt.GetId() == XRCID("IDR_DBVIEWER_DROP_TABLE")) {
             DbItem* data = (DbItem*)m_treeDatabases->GetItemData(m_selectedID);
-            if(data) {
+            if (data) {
                 Table* pTab = (Table*)wxDynamicCast(data->GetData(), Table);
-                if(pTab) {
-                    wxMessageDialog dlg(this, wxString::Format(_("Remove table '%s'?"), pTab->GetName().c_str()),
-                                        _("Drop table"), wxYES_NO);
-                    if(dlg.ShowModal() == wxID_YES) {
+                if (pTab) {
+                    wxMessageDialog dlg(this,
+                                        wxString::Format(_("Remove table '%s'?"), pTab->GetName().c_str()),
+                                        _("Drop table"),
+                                        wxYES_NO);
+                    if (dlg.ShowModal() == wxID_YES) {
                         DatabaseLayerPtr pDbLayer = pTab->GetDbAdapter()->GetDatabaseLayer(pTab->GetParentName());
                         pDbLayer->RunQuery(pTab->GetDbAdapter()->GetDropTableSql(pTab));
                         pDbLayer->Close();
@@ -415,14 +428,16 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
                     }
                 }
             }
-        } else if(evt.GetId() == XRCID("IDR_DBVIEWER_DROP_VIEW")) {
+        } else if (evt.GetId() == XRCID("IDR_DBVIEWER_DROP_VIEW")) {
             DbItem* data = (DbItem*)m_treeDatabases->GetItemData(m_selectedID);
-            if(data) {
+            if (data) {
                 View* pView = (View*)wxDynamicCast(data->GetData(), View);
-                if(pView) {
-                    wxMessageDialog dlg(this, wxString::Format(_("Remove view '%s'?"), pView->GetName().c_str()),
-                                        _("Drop view"), wxYES_NO);
-                    if(dlg.ShowModal() == wxID_YES) {
+                if (pView) {
+                    wxMessageDialog dlg(this,
+                                        wxString::Format(_("Remove view '%s'?"), pView->GetName().c_str()),
+                                        _("Drop view"),
+                                        wxYES_NO);
+                    if (dlg.ShowModal() == wxID_YES) {
                         DatabaseLayerPtr pDbLayer = pView->GetDbAdapter()->GetDatabaseLayer(pView->GetParentName());
                         pDbLayer->RunQuery(pView->GetDbAdapter()->GetDropViewSql(pView));
                         pDbLayer->Close();
@@ -432,45 +447,45 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
                     }
                 }
             }
-        } else if(evt.GetId() == XRCID("IDR_DBVIEWER_SQL_TABLE")) {
+        } else if (evt.GetId() == XRCID("IDR_DBVIEWER_SQL_TABLE")) {
             DbItem* data = (DbItem*)m_treeDatabases->GetItemData(m_selectedID);
-            if(data) {
+            if (data) {
                 Table* pTab = (Table*)wxDynamicCast(data->GetData(), Table);
-                if(pTab) {
+                if (pTab) {
 #ifdef __WXMSW__
                     clWindowUpdateLocker locker(m_mgr->GetEditorPaneNotebook());
 #endif
                     wxString pagename = CreatePanelName(pTab);
-                    if(!DoSelectPage(pagename)) {
-                        SQLCommandPanel* sqlpage = new SQLCommandPanel(m_pNotebook, pTab->GetDbAdapter()->Clone(),
-                                                                       pTab->GetParentName(), pTab->GetName());
+                    if (!DoSelectPage(pagename)) {
+                        SQLCommandPanel* sqlpage = new SQLCommandPanel(
+                            m_pNotebook, pTab->GetDbAdapter()->Clone(), pTab->GetParentName(), pTab->GetName());
                         AddEditorPage(sqlpage, pagename);
                     }
                 }
             }
-        } else if(evt.GetId() == XRCID("IDR_DBVIEWER_SQL_VIEW")) {
+        } else if (evt.GetId() == XRCID("IDR_DBVIEWER_SQL_VIEW")) {
             DbItem* data = (DbItem*)m_treeDatabases->GetItemData(m_selectedID);
-            if(data) {
+            if (data) {
                 View* pView = (View*)wxDynamicCast(data->GetData(), View);
-                if(pView) {
+                if (pView) {
 #ifdef __WXMSW__
                     clWindowUpdateLocker locker(m_mgr->GetEditorPaneNotebook());
 #endif
                     wxString pagename = CreatePanelName(pView);
-                    if(!DoSelectPage(pagename)) {
-                        SQLCommandPanel* sqlpage = new SQLCommandPanel(m_pNotebook, pView->GetDbAdapter()->Clone(),
-                                                                       pView->GetParentName(), pView->GetName());
+                    if (!DoSelectPage(pagename)) {
+                        SQLCommandPanel* sqlpage = new SQLCommandPanel(
+                            m_pNotebook, pView->GetDbAdapter()->Clone(), pView->GetParentName(), pView->GetName());
                         AddEditorPage(sqlpage, pagename);
                     }
                 }
             }
-        } else if(evt.GetId() == XRCID("IDR_DBVIEWER_SQL_DATABASE")) {
+        } else if (evt.GetId() == XRCID("IDR_DBVIEWER_SQL_DATABASE")) {
             DbItem* data = (DbItem*)m_treeDatabases->GetItemData(m_selectedID);
-            if(data) {
+            if (data) {
                 Database* pDb = (Database*)wxDynamicCast(data->GetData(), Database);
-                if(pDb) {
+                if (pDb) {
                     wxString pagename = CreatePanelName(pDb);
-                    if(!DoSelectPage(pagename)) {
+                    if (!DoSelectPage(pagename)) {
                         SQLCommandPanel* sqlpage =
                             new SQLCommandPanel(m_pNotebook, pDb->GetDbAdapter()->Clone(), pDb->GetName(), wxT(""));
 #ifndef __WXMSW__
@@ -480,67 +495,79 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
                     }
                 }
             }
-        } else if(evt.GetId() == XRCID("IDR_DBVIEWER_IMPORT_DATABASE")) {
+        } else if (evt.GetId() == XRCID("IDR_DBVIEWER_IMPORT_DATABASE")) {
             DbItem* data = (DbItem*)m_treeDatabases->GetItemData(m_selectedID);
-            if(data) {
+            if (data) {
                 Database* pDb = (Database*)wxDynamicCast(data->GetData(), Database);
-                if(pDb) {
+                if (pDb) {
                     // TODO:LANG:
-                    wxFileDialog dlg(this, _("Import database from SQL file ..."), wxGetCwd(), wxT(""),
-                                     wxT("SQL Files (*.sql)|*.sql"), wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-                    if(dlg.ShowModal() == wxID_OK) {
+                    wxFileDialog dlg(this,
+                                     _("Import database from SQL file ..."),
+                                     wxGetCwd(),
+                                     wxT(""),
+                                     wxT("SQL Files (*.sql)|*.sql"),
+                                     wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+                    if (dlg.ShowModal() == wxID_OK) {
                         ImportDb(dlg.GetPath(), pDb);
                     }
                 }
             }
             RefreshDbView();
-        } else if(evt.GetId() == XRCID("IDR_DBVIEWER_DUMP_DATABASE")) {
+        } else if (evt.GetId() == XRCID("IDR_DBVIEWER_DUMP_DATABASE")) {
             DbItem* data = (DbItem*)m_treeDatabases->GetItemData(m_selectedID);
-            if(data) {
+            if (data) {
                 Database* pDb = (Database*)wxDynamicCast(data->GetData(), Database);
-                if(pDb) {
+                if (pDb) {
                     // TODO:LANG:
-                    wxFileDialog dlg(this, _("Dump data into file ..."), wxT(""), pDb->GetName() + wxT(".sql"),
-                                     wxT("SQL files (*.sql)|*.sql"), wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
-                    if(dlg.ShowModal() == wxID_OK) {
+                    wxFileDialog dlg(this,
+                                     _("Dump data into file ..."),
+                                     wxT(""),
+                                     pDb->GetName() + wxT(".sql"),
+                                     wxT("SQL files (*.sql)|*.sql"),
+                                     wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
+                    if (dlg.ShowModal() == wxID_OK) {
                         DumpClass* dump = new DumpClass(pDb->GetDbAdapter(), pDb, dlg.GetPath());
                         dump->DumpData();
                         wxMessageBox(_("Data was saved to ") + dlg.GetPath());
                     }
                 }
             }
-        } else if(evt.GetId() == XRCID("IDR_DBVIEWER_EXPORT_DATABASE")) {
+        } else if (evt.GetId() == XRCID("IDR_DBVIEWER_EXPORT_DATABASE")) {
             DbItem* data = (DbItem*)m_treeDatabases->GetItemData(m_selectedID);
-            if(data) {
+            if (data) {
                 Database* pDb = (Database*)wxDynamicCast(data->GetData(), Database);
-                if(pDb) {
-                    wxFileDialog dlg(this, _("Export database..."), wxGetCwd(), wxT(""), wxT("SQL Files (*.sql)|*.sql"),
+                if (pDb) {
+                    wxFileDialog dlg(this,
+                                     _("Export database..."),
+                                     wxGetCwd(),
+                                     wxT(""),
+                                     wxT("SQL Files (*.sql)|*.sql"),
                                      wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
-                    if(dlg.ShowModal() == wxID_OK) {
+                    if (dlg.ShowModal() == wxID_OK) {
                         // CreateStructure
                         wxString retStr = wxT("-- SQL script created by wxDbExplorer\n\n ");
                         SerializableList::compatibility_iterator tabNode = pDb->GetFirstChildNode();
-                        while(tabNode) {
+                        while (tabNode) {
                             Table* tab = wxDynamicCast(tabNode->GetData(), Table);
-                            if(tab) {
+                            if (tab) {
                                 retStr.append(pDb->GetDbAdapter()->GetCreateTableSql(tab, true));
                             }
                             tabNode = tabNode->GetNext();
                         }
 
                         tabNode = pDb->GetFirstChildNode();
-                        while(tabNode) {
+                        while (tabNode) {
                             View* view = wxDynamicCast(tabNode->GetData(), View);
-                            if(view) {
+                            if (view) {
                                 retStr.append(pDb->GetDbAdapter()->GetCreateViewSql(view, true));
                             }
                             tabNode = tabNode->GetNext();
                         }
 
                         tabNode = pDb->GetFirstChildNode();
-                        while(tabNode) {
+                        while (tabNode) {
                             Table* tab = wxDynamicCast(tabNode->GetData(), Table);
-                            if(tab) {
+                            if (tab) {
                                 retStr.append(pDb->GetDbAdapter()->GetAlterTableConstraintSql(tab));
                             }
                             tabNode = tabNode->GetNext();
@@ -550,10 +577,10 @@ void DbViewerPanel::OnPopupClick(wxCommandEvent& evt)
                         dump.DumpData();
 
                         wxTextFile file(dlg.GetPath());
-                        if(!file.Exists())
+                        if (!file.Exists())
                             file.Create();
                         file.Open();
-                        if(file.IsOpened()) {
+                        if (file.IsOpened()) {
                             file.InsertLine(retStr, 0);
                             file.Write(wxTextFileType_None, wxConvUTF8);
                             file.Close();
@@ -594,17 +621,17 @@ bool DbViewerPanel::ImportDb(const wxString& sqlFile, Database* pDb)
         pDbLayer->BeginTransaction();
 
         wxString useSql = pDb->GetDbAdapter()->GetUseDb(pDb->GetName());
-        if(!useSql.IsEmpty())
+        if (!useSql.IsEmpty())
             pDbLayer->RunQuery(wxString::Format(wxT("USE %s"), pDb->GetName().c_str()));
 
-        while(!input.Eof()) {
+        while (!input.Eof()) {
             wxString line = text.ReadLine();
             // dialog.AppendText(line);
             int index = line.Find(wxT("--"));
-            if(index != wxNOT_FOUND)
+            if (index != wxNOT_FOUND)
                 line = line.Mid(0, index);
             command.append(line);
-            if(line.Find(wxT(";")) != wxNOT_FOUND) {
+            if (line.Find(wxT(";")) != wxNOT_FOUND) {
                 dialog.AppendSeparator();
                 dialog.AppendComment(wxT("Run SQL command:"));
                 dialog.AppendText(command);
@@ -616,7 +643,7 @@ bool DbViewerPanel::ImportDb(const wxString& sqlFile, Database* pDb)
         pDbLayer->Commit();
         pDbLayer->Close();
     } catch (const DatabaseLayerException& e) {
-        if(pDbLayer) {
+        if (pDbLayer) {
             pDbLayer->RollBack();
             pDbLayer->Close();
         }
@@ -627,7 +654,7 @@ bool DbViewerPanel::ImportDb(const wxString& sqlFile, Database* pDb)
         wxMessageDialog dlg(this, errorMessage, _("DB Error"), wxOK | wxCENTER | wxICON_ERROR);
         dlg.ShowModal();
     } catch (...) {
-        if(pDbLayer) {
+        if (pDbLayer) {
             pDbLayer->RollBack();
             pDbLayer->Close();
         }
@@ -659,7 +686,7 @@ wxString DbViewerPanel::CreatePanelName(View* v)
 void DbViewerPanel::InitStyledTextCtrl(wxStyledTextCtrl* sci)
 {
     LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexer("SQL");
-    if(lexer) {
+    if (lexer) {
         lexer->Apply(sci, true);
     }
 }
@@ -669,13 +696,13 @@ void DbViewerPanel::OnShowThumbnail(wxCommandEvent& e) { wxUnusedVar(e); }
 bool DbViewerPanel::DoSelectPage(const wxString& page)
 {
     wxWindow* win = m_mgr->FindPage(page);
-    if(win) {
+    if (win) {
         m_mgr->SelectPage(win);
         win->SetFocus();
 
         // replace the query and execute it
         SQLCommandPanel* sqlPage = dynamic_cast<SQLCommandPanel*>(win);
-        if(sqlPage) {
+        if (sqlPage) {
             sqlPage->SetDefaultSelect();
             sqlPage->ExecuteSql();
         }
@@ -701,9 +728,9 @@ void DbViewerPanel::OnContextMenu(wxTreeEvent& event)
     DbItem* item = (DbItem*)m_treeDatabases->GetItemData(m_selectedID);
     wxMenu menu;
     int c = 0;
-    if(item) {
+    if (item) {
         DbConnection* conn = wxDynamicCast(item->GetData(), DbConnection);
-        if(conn) {
+        if (conn) {
             // Connection node
             menu.Append(XRCID("IDT_DBE_CLOSE_CONNECTION"), _("Close Connection"), _("Close Connection"));
             menu.AppendSeparator();
@@ -711,52 +738,56 @@ void DbViewerPanel::OnContextMenu(wxTreeEvent& event)
             c++;
         }
         Database* db = wxDynamicCast(item->GetData(), Database);
-        if(db) {
+        if (db) {
             // menu.Append(XRCID("IDR_DBVIEWER_ADD_TABLE"),_("Add table"),_("Run SQL command for creating Table"));
-            menu.Append(XRCID("IDR_DBVIEWER_SQL_DATABASE"), _("Open SQL panel"),
-                        _("Open SQL command panel for the database"));
+            menu.Append(
+                XRCID("IDR_DBVIEWER_SQL_DATABASE"), _("Open SQL panel"), _("Open SQL command panel for the database"));
             menu.AppendSeparator();
 
-            menu.Append(XRCID("IDR_DBVIEWER_DROP_DATABASE"), _("Drop database"),
-                        _("Run SQL command for deleting Database"));
+            menu.Append(
+                XRCID("IDR_DBVIEWER_DROP_DATABASE"), _("Drop database"), _("Run SQL command for deleting Database"));
 
             menu.AppendSeparator();
-            menu.Append(XRCID("IDR_DBVIEWER_CLASS_DB"), _("Create classes from DB"),
-                        _("Create C++ classes for the database"));
+            menu.Append(
+                XRCID("IDR_DBVIEWER_CLASS_DB"), _("Create classes from DB"), _("Create C++ classes for the database"));
 
             menu.AppendSeparator();
-            menu.Append(XRCID("IDR_DBVIEWER_IMPORT_DATABASE"), _("Import database from file"),
+            menu.Append(XRCID("IDR_DBVIEWER_IMPORT_DATABASE"),
+                        _("Import database from file"),
                         _("Run SQL commands stored in *.sql file"));
-            menu.Append(XRCID("IDR_DBVIEWER_EXPORT_DATABASE"), _("Export database to file"),
+            menu.Append(XRCID("IDR_DBVIEWER_EXPORT_DATABASE"),
+                        _("Export database to file"),
                         _("Export database CREATE SQL statements into *.sql file"));
 
             menu.AppendSeparator();
-            menu.Append(XRCID("IDR_DBVIEWER_DUMP_DATABASE"), _("Dump data to file"),
+            menu.Append(XRCID("IDR_DBVIEWER_DUMP_DATABASE"),
+                        _("Dump data to file"),
                         _("Dump data from database into .sql file"));
             c++;
 
             m_pEditedDatabase = db;
         }
         Table* tab = wxDynamicCast(item->GetData(), Table);
-        if(tab) {
-            menu.Append(XRCID("IDR_DBVIEWER_SQL_TABLE"), _("Open SQL panel"),
-                        _("Open SQL command panel for the table"));
+        if (tab) {
+            menu.Append(
+                XRCID("IDR_DBVIEWER_SQL_TABLE"), _("Open SQL panel"), _("Open SQL command panel for the table"));
             menu.AppendSeparator();
 
             menu.Append(XRCID("IDR_DBVIEWER_DROP_TABLE"), _("Drop table"), _("Run SQL command to delete the table"));
             menu.AppendSeparator();
-            menu.Append(XRCID("IDR_DBVIEWER_CLASS_TABLE"), _("Create classes from Table"),
+            menu.Append(XRCID("IDR_DBVIEWER_CLASS_TABLE"),
+                        _("Create classes from Table"),
                         _("Create C++ classes for the table"));
             c++;
         }
         Column* col = wxDynamicCast(item->GetData(), Column);
-        if(col) {
+        if (col) {
             menu.Append(XRCID("IDR_DBVIEWER_COPY_COLUMN"), _("Copy Column Name"), _("Copy Column Name"));
             c++;
         }
 
         View* vw = wxDynamicCast(item->GetData(), View);
-        if(vw) {
+        if (vw) {
             menu.Append(XRCID("IDR_DBVIEWER_SQL_VIEW"), _("Open SQL panel"), _("Open SQL command panel for the view"));
             menu.AppendSeparator();
 
@@ -765,7 +796,7 @@ void DbViewerPanel::OnContextMenu(wxTreeEvent& event)
         }
     }
 
-    if(c > 0) {
+    if (c > 0) {
         menu.Connect(wxEVT_COMMAND_MENU_SELECTED, (wxObjectEventFunction)&DbViewerPanel::OnPopupClick, NULL, this);
         PopupMenu(&menu);
     }
@@ -773,7 +804,7 @@ void DbViewerPanel::OnContextMenu(wxTreeEvent& event)
 
 void DbViewerPanel::RemoveFrame(DbExplorerFrame* frame)
 {
-    if(m_frames.count(frame)) {
+    if (m_frames.count(frame)) {
         m_frames.erase(frame);
     }
 }
@@ -787,7 +818,7 @@ void DbViewerPanel::OpenSQLiteFile(const wxFileName& fileName, bool openDefaultS
         AddDbConnection(connection);
         SetServer(serverName);
         RefreshDbView();
-        if(openDefaultSQLPanel) {
+        if (openDefaultSQLPanel) {
             // Open an SQL panel view
             SQLCommandPanel* sqlpage = new SQLCommandPanel(m_pNotebook, pAdapt->Clone(), fileName.GetFullPath(), "");
             CallAfter(&DbViewerPanel::AddEditorPage, sqlpage, fileName.GetFullPath());
@@ -797,7 +828,7 @@ void DbViewerPanel::OpenSQLiteFile(const wxFileName& fileName, bool openDefaultS
         wxString errorMessage = wxString::Format(_("Error (%d): %s"), e.GetErrorCode(), e.GetErrorMessage().c_str());
         ::wxMessageBox(errorMessage, "CodeLite", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
     } catch (...) {
-        ::wxMessageBox(_("Unknown error."), "CodeLite", wxICON_ERROR | wxCENTER | wxOK,
-                       EventNotifier::Get()->TopFrame());
+        ::wxMessageBox(
+            _("Unknown error."), "CodeLite", wxICON_ERROR | wxCENTER | wxOK, EventNotifier::Get()->TopFrame());
     }
 }

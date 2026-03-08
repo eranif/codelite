@@ -30,28 +30,29 @@
 #include "wx/wxxmlserializer/XmlSerializer.h"
 
 /*! \brief Class representing one db connection */
-class DbConnection : public xsSerializable {
+class DbConnection : public xsSerializable
+{
 
 public:
-	XS_DECLARE_CLONABLE_CLASS(DbConnection);
-	/*! \brief Default constructors */
-	DbConnection();
-	DbConnection(IDbAdapter* dbAdapter, const wxString& serverName);
-	DbConnection(const DbConnection& obj);
-	/*! \brief Default destructor */
-	virtual ~DbConnection();
-	/*! \brief Return server name */
-	wxString GetServerName() { return m_serverName; }
-	/*! \brief Load databases from connection */
-	void Load();
-	/*! \brief Return IDbAdapter */
-	IDbAdapter* GetDbAdapter() { return m_pDbAdapter; }
-	/*! \brief Refresh all children. (databases) */
-	void RefreshChildren();
-	
+    XS_DECLARE_CLONABLE_CLASS(DbConnection);
+    /*! \brief Default constructors */
+    DbConnection();
+    DbConnection(IDbAdapter* dbAdapter, const wxString& serverName);
+    DbConnection(const DbConnection& obj);
+    /*! \brief Default destructor */
+    virtual ~DbConnection();
+    /*! \brief Return server name */
+    wxString GetServerName() { return m_serverName; }
+    /*! \brief Load databases from connection */
+    void Load();
+    /*! \brief Return IDbAdapter */
+    IDbAdapter* GetDbAdapter() { return m_pDbAdapter; }
+    /*! \brief Refresh all children. (databases) */
+    void RefreshChildren();
+
 protected:
-	IDbAdapter* m_pDbAdapter;
-	wxString m_serverName;
+    IDbAdapter* m_pDbAdapter;
+    wxString m_serverName;
 };
 
 #endif // DBCONNECTION_H

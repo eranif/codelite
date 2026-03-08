@@ -5,31 +5,28 @@
  * @copyright GNU General Public License v2
  */
 
-#include "file_logger.h"
-
 #include "memcheckerror.h"
 
-bool MemCheckErrorLocation::operator==(const MemCheckErrorLocation & other) const
+#include "file_logger.h"
+
+bool MemCheckErrorLocation::operator==(const MemCheckErrorLocation& other) const
 {
     return func == other.func && file == other.file && line == other.line;
 }
 
-bool MemCheckErrorLocation::operator!=(const MemCheckErrorLocation & other) const
-{
-    return !(*this == other);
-}
+bool MemCheckErrorLocation::operator!=(const MemCheckErrorLocation& other) const { return !(*this == other); }
 
 const wxString MemCheckErrorLocation::toString() const
 {
     return wxString::Format(wxT("%s\t%s\t%i\t%s"), func, file, line, obj);
 }
 
-const wxString MemCheckErrorLocation::toText(const wxString & workspacePath) const
+const wxString MemCheckErrorLocation::toText(const wxString& workspacePath) const
 {
     return wxString::Format(wxT("%s   ( %s: %i )"), func, getFile(workspacePath), line);
 }
 
-const wxString MemCheckErrorLocation::getFile(const wxString & workspacePath) const
+const wxString MemCheckErrorLocation::getFile(const wxString& workspacePath) const
 {
     wxString localPath;
     if (workspacePath.IsEmpty() || !file.StartsWith(workspacePath, &localPath)) {
@@ -39,7 +36,7 @@ const wxString MemCheckErrorLocation::getFile(const wxString & workspacePath) co
     }
 }
 
-const wxString MemCheckErrorLocation::getObj(const wxString & workspacePath) const
+const wxString MemCheckErrorLocation::getObj(const wxString& workspacePath) const
 {
     wxString localPath;
     if (workspacePath.IsEmpty() || !obj.StartsWith(workspacePath, &localPath)) {
@@ -54,9 +51,10 @@ bool MemCheckErrorLocation::isOutOfWorkspace(const wxString& workspacePath) cons
     return !file.StartsWith(workspacePath);
 }
 
-
-
-MemCheckError::MemCheckError(): suppressed(false) {}
+MemCheckError::MemCheckError()
+    : suppressed(false)
+{
+}
 
 const wxString MemCheckError::toString() const
 {
@@ -87,7 +85,7 @@ const wxString MemCheckError::getSuppression()
 
         wxStringTokenizer tokenizer(suppression, "\n");
         int kind = 1;
-        while ( tokenizer.HasMoreTokens() ) {
+        while (tokenizer.HasMoreTokens()) {
             wxString line = tokenizer.GetNextToken();
             wxString token = line.AfterFirst(':');
             if (!token.IsEmpty())
@@ -123,7 +121,7 @@ bool MemCheckError::hasPath(const wxString& path) const
 
 /////////////////////////////////////////////////////////////////////////////////////////
 
-bool MemCheckIterTools::IterTool::isEqual(MemCheckError & lhs, MemCheckError & rhs) const
+bool MemCheckIterTools::IterTool::isEqual(MemCheckError& lhs, MemCheckError& rhs) const
 {
     if (!(lhs.type == rhs.type && lhs.label == rhs.label))
         return false;
@@ -135,7 +133,7 @@ bool MemCheckIterTools::IterTool::isEqual(MemCheckError & lhs, MemCheckError & r
     LocationList::iterator rhsItEndL = rhs.locations.end();
 
     while (!(lhsItL == lhsItEndL && rhsItL == rhsItEndL)) { // both on end => ok
-        if ( lhsItL == lhsItEndL || rhsItL == rhsItEndL || *lhsItL != *rhsItL)
+        if (lhsItL == lhsItEndL || rhsItL == rhsItEndL || *lhsItL != *rhsItL)
             return false; // only one on end or not equal => fail
 
         ++lhsItL;
@@ -149,7 +147,7 @@ bool MemCheckIterTools::IterTool::isEqual(MemCheckError & lhs, MemCheckError & r
     ErrorList::iterator rhsItEndE = rhs.nestedErrors.end();
 
     while (!(lhsItE == lhsItEndE && rhsItE == rhsItEndE)) { // both on end => ok
-        if ( lhsItE == lhsItEndE || rhsItE == rhsItEndE || ! isEqual(*lhsItE, *rhsItE))
+        if (lhsItE == lhsItEndE || rhsItE == rhsItEndE || !isEqual(*lhsItE, *rhsItE))
             return false; // only one on end or not equal => fail
 
         ++lhsItE;
@@ -159,9 +157,10 @@ bool MemCheckIterTools::IterTool::isEqual(MemCheckError & lhs, MemCheckError & r
     return true;
 }
 
-
-MemCheckIterTools::LocationListIterator::LocationListIterator(LocationList & l,
-        const IterTool &iterTool) : p(l.begin()), m_end(l.end()), m_iterTool(iterTool)
+MemCheckIterTools::LocationListIterator::LocationListIterator(LocationList& l, const IterTool& iterTool)
+    : p(l.begin())
+    , m_end(l.end())
+    , m_iterTool(iterTool)
 {
     while (p != m_end && m_iterTool.omitNonWorkspace && p->isOutOfWorkspace(m_iterTool.workspacePath))
         ++p;
@@ -182,25 +181,16 @@ LocationList::iterator MemCheckIterTools::LocationListIterator::operator++(int)
     return tmp;
 }
 
-bool MemCheckIterTools::LocationListIterator::operator==(const LocationList::iterator& rhs)
-{
-    return p == rhs;
-}
+bool MemCheckIterTools::LocationListIterator::operator==(const LocationList::iterator& rhs) { return p == rhs; }
 
-bool MemCheckIterTools::LocationListIterator::operator!=(const LocationList::iterator& rhs)
-{
-    return p != rhs;
-}
+bool MemCheckIterTools::LocationListIterator::operator!=(const LocationList::iterator& rhs) { return p != rhs; }
 
-MemCheckErrorLocation & MemCheckIterTools::LocationListIterator::operator*()
-{
-    return *p;
-}
+MemCheckErrorLocation& MemCheckIterTools::LocationListIterator::operator*() { return *p; }
 
-
-
-MemCheckIterTools::ErrorListIterator::ErrorListIterator(ErrorList & l, const IterTool & iterTool)
-    : p(l.begin()), m_end(l.end()), m_iterTool(iterTool)
+MemCheckIterTools::ErrorListIterator::ErrorListIterator(ErrorList& l, const IterTool& iterTool)
+    : p(l.begin())
+    , m_end(l.end())
+    , m_iterTool(iterTool)
 {
     while (p != m_end && m_iterTool.omitSuppressed && p->suppressed)
         ++p;
@@ -211,8 +201,8 @@ ErrorList::iterator& MemCheckIterTools::ErrorListIterator::operator++()
     ErrorList::iterator prev(p);
     ++p;
 
-    while (p != m_end && ( (m_iterTool.omitDuplications && m_iterTool.isEqual(*prev, *p))
-                           || (m_iterTool.omitSuppressed && p->suppressed) ))
+    while (p != m_end && ((m_iterTool.omitDuplications && m_iterTool.isEqual(*prev, *p)) ||
+                          (m_iterTool.omitSuppressed && p->suppressed)))
         ++p;
 
     return p;
@@ -225,48 +215,38 @@ ErrorList::iterator MemCheckIterTools::ErrorListIterator::operator++(int)
     return tmp;
 }
 
-bool MemCheckIterTools::ErrorListIterator::operator==(const ErrorList::iterator& rhs)
-{
-    return p == rhs;
-}
+bool MemCheckIterTools::ErrorListIterator::operator==(const ErrorList::iterator& rhs) { return p == rhs; }
 
-bool MemCheckIterTools::ErrorListIterator::operator!=(const ErrorList::iterator& rhs)
-{
-    return p != rhs;
-}
+bool MemCheckIterTools::ErrorListIterator::operator!=(const ErrorList::iterator& rhs) { return p != rhs; }
 
-MemCheckError & MemCheckIterTools::ErrorListIterator::operator*()
-{
-    return *p;
-}
+MemCheckError& MemCheckIterTools::ErrorListIterator::operator*() { return *p; }
 
-
-MemCheckIterTools::MemCheckIterTools(const wxString & workspacePath, unsigned int flags)
+MemCheckIterTools::MemCheckIterTools(const wxString& workspacePath, unsigned int flags)
 {
     m_iterTool.omitNonWorkspace = flags & MC_IT_OMIT_NONWORKSPACE;
     m_iterTool.omitDuplications = flags & MC_IT_OMIT_DUPLICATIONS;
-    m_iterTool.omitSuppressed   = flags & MC_IT_OMIT_SUPPRESSED;
-    m_iterTool.workspacePath    = workspacePath;
+    m_iterTool.omitSuppressed = flags & MC_IT_OMIT_SUPPRESSED;
+    m_iterTool.workspacePath = workspacePath;
 }
 
-MemCheckIterTools::ErrorListIterator MemCheckIterTools::GetIterator(ErrorList & l)
+MemCheckIterTools::ErrorListIterator MemCheckIterTools::GetIterator(ErrorList& l)
 {
     return ErrorListIterator(l, m_iterTool);
 }
 
-MemCheckIterTools::LocationListIterator MemCheckIterTools::GetIterator(LocationList & l)
+MemCheckIterTools::LocationListIterator MemCheckIterTools::GetIterator(LocationList& l)
 {
     return LocationListIterator(l, m_iterTool);
 }
 
-MemCheckIterTools::ErrorListIterator MemCheckIterTools::Factory(ErrorList & l,
-        const wxString & workspacePath, unsigned int flags)
+MemCheckIterTools::ErrorListIterator
+MemCheckIterTools::Factory(ErrorList& l, const wxString& workspacePath, unsigned int flags)
 {
     return MemCheckIterTools(workspacePath, flags).GetIterator(l);
 }
 
-MemCheckIterTools::LocationListIterator MemCheckIterTools::Factory(LocationList & l,
-        const wxString & workspacePath, unsigned int flags)
+MemCheckIterTools::LocationListIterator
+MemCheckIterTools::Factory(LocationList& l, const wxString& workspacePath, unsigned int flags)
 {
     return MemCheckIterTools(workspacePath, flags).GetIterator(l);
 }

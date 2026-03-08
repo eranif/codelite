@@ -5,15 +5,16 @@
  * @copyright GNU General Public License v2
  */
 
-#include <wx/app.h>
-#include <wx/msgdlg.h>
-#include <wx/menu.h>
+#include "memchecksettingsdialog.h"
 
 #include "file_logger.h"
 #include "memcheckdefs.h"
-#include "memchecksettingsdialog.h"
 #include "memchecksettings.h"
 #include "windowattrmanager.h"
+
+#include <wx/app.h>
+#include <wx/menu.h>
+#include <wx/msgdlg.h>
 
 MemCheckSettingsDialog::MemCheckSettingsDialog(wxWindow* parent, MemCheckSettings* settings)
     : MemCheckSettingsDialogBase(parent)
@@ -47,15 +48,15 @@ MemCheckSettingsDialog::MemCheckSettingsDialog(wxWindow* parent, MemCheckSetting
 void MemCheckSettingsDialog::OnOK(wxCommandEvent& event)
 {
     wxString outputFileMsg;
-    if(!m_checkBoxOutputInPrivateFolder->IsChecked() && m_filePickerValgrindOutputFile->GetPath().IsEmpty())
+    if (!m_checkBoxOutputInPrivateFolder->IsChecked() && m_filePickerValgrindOutputFile->GetPath().IsEmpty())
         outputFileMsg = wxT("If you don't want to use output file in private folder, you have to set a file manually.");
 
     wxString suppFileMsg;
-    if(!m_checkBoxSuppFileInPrivateFolder->IsChecked() && m_listBoxSuppFiles->IsEmpty())
+    if (!m_checkBoxSuppFileInPrivateFolder->IsChecked() && m_listBoxSuppFiles->IsEmpty())
         suppFileMsg = wxT("If you don't want to use default supp in private folder, you have to set at least one "
                           "suppression file manually.");
 
-    if(!outputFileMsg.IsEmpty() || !suppFileMsg.IsEmpty()) {
+    if (!outputFileMsg.IsEmpty() || !suppFileMsg.IsEmpty()) {
         wxMessageBox(wxString::Format("Wrong Valgrind option\n\n\n* %s\n\n* %s", outputFileMsg, suppFileMsg),
                      wxT("Invalid Valgrind settings"),
                      wxICON_ERROR);
@@ -100,7 +101,8 @@ void MemCheckSettingsDialog::OnAddSupp(wxCommandEvent& event)
                                 "",
                                 "suppression files (*.supp)|*.supp|all files (*.*)|*.*",
                                 wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
-    if(openFileDialog.ShowModal() == wxID_CANCEL) return;
+    if (openFileDialog.ShowModal() == wxID_CANCEL)
+        return;
 
     wxArrayString paths;
     openFileDialog.GetPaths(paths);
@@ -111,7 +113,7 @@ void MemCheckSettingsDialog::OnDelSupp(wxCommandEvent& event)
 {
     wxArrayInt selections;
     m_listBoxSuppFiles->GetSelections(selections);
-    for(int i = selections.GetCount() - 1; i >= 0; --i) {
+    for (int i = selections.GetCount() - 1; i >= 0; --i) {
         m_listBoxSuppFiles->Delete(selections.Item(i));
     }
 }
@@ -124,7 +126,7 @@ void MemCheckSettingsDialog::OnSuppListRightDown(wxMouseEvent& event)
     int index = m_listBoxSuppFiles->HitTest(event.GetPosition());
     wxArrayInt selections;
     m_listBoxSuppFiles->GetSelections(selections);
-    if(selections.Index(index) == wxNOT_FOUND) {
+    if (selections.Index(index) == wxNOT_FOUND) {
         m_listBoxSuppFiles->SetSelection(wxNOT_FOUND);
         m_listBoxSuppFiles->SetSelection(index);
     }

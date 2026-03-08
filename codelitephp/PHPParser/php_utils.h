@@ -40,7 +40,7 @@ bool IsPHPFile(IEditor* editor);
  */
 bool IsPHPFileByExt(const wxString& fileName);
 
-bool IsPHPSection(int styleAtPos );
+bool IsPHPSection(int styleAtPos);
 bool IsPHPCommentOrString(int styleAtPos);
 
 #define FILE_SCHEME "file://"
@@ -48,19 +48,18 @@ bool IsPHPCommentOrString(int styleAtPos);
 /**
  * @brief convert file in the URI format: file:///path/to/file to -> /path/to/file
  */
-wxString URIToFileName(const wxString &uriFileName);
+wxString URIToFileName(const wxString& uriFileName);
 
 /**
- * @brief convert filename to URI file format 
+ * @brief convert filename to URI file format
  */
-wxString FileNameToURI(const wxString &filename);
+wxString FileNameToURI(const wxString& filename);
 
 /**
  * @brief encode a string into base64
  */
-wxString Base64Encode(const wxString &str);
+wxString Base64Encode(const wxString& str);
 
-wxString MapRemoteFileToLocalFile(const wxString &remoteFile);
+wxString MapRemoteFileToLocalFile(const wxString& remoteFile);
 
 #endif // PHP_UTILS
-

@@ -27,6 +27,7 @@
 #define XDEBUGBREAKPOINT_H
 
 #include "JSON.h"
+
 #include <list>
 #include <wx/string.h>
 

@@ -27,8 +27,8 @@
 #define PHPVIEWMODEL_H
 
 #include <map>
-#include <wx/treebase.h>
 #include <wx/filename.h>
+#include <wx/treebase.h>
 
 class ItemData : public wxTreeItemData
 {
@@ -60,7 +60,7 @@ public:
     void SetFolderPath(const wxString& folderPath)
     {
         this->folderPath = folderPath;
-        if(this->folderPath.EndsWith("/")) {
+        if (this->folderPath.EndsWith("/")) {
             this->folderPath.RemoveLast();
         }
     }
@@ -81,12 +81,12 @@ public:
 
     wxString GetDisplayName() const
     {
-        switch(kind) {
+        switch (kind) {
         case Kind_File: {
             wxFileName fn(GetFile());
             return fn.GetFullName();
         }
-        case Kind_Folder: 
+        case Kind_Folder:
             return GetFolderName();
         case Kind_Project:
             return GetProjectName();

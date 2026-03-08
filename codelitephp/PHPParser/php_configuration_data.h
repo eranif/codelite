@@ -69,7 +69,7 @@ public:
     int GetWorkspaceType() const { return m_workspaceType; }
     PHPConfigurationData& EnableFlag(size_t flag, bool b)
     {
-        if(b) {
+        if (b) {
             m_flags |= flag;
         } else {
             m_flags &= ~flag;

@@ -1,4 +1,5 @@
 #include "PHPXDebugSetupWizard.h"
+
 #include "php_configuration_data.h"
 
 PHPXDebugSetupWizard::PHPXDebugSetupWizard(wxWindow* parent)
@@ -6,7 +7,7 @@ PHPXDebugSetupWizard::PHPXDebugSetupWizard(wxWindow* parent)
 {
     PHPConfigurationData conf;
     conf.Load();
-    
+
     m_textCtrlIP->ChangeValue(conf.GetXdebugHost());
     m_textCtrlKey->ChangeValue(conf.GetXdebugIdeKey());
     m_textCtrlPort->ChangeValue(wxString() << conf.GetXdebugPort());
@@ -15,7 +16,7 @@ PHPXDebugSetupWizard::PHPXDebugSetupWizard(wxWindow* parent)
 void PHPXDebugSetupWizard::OnPageChanging(wxWizardEvent& event)
 {
     event.Skip();
-    if(event.GetDirection() && event.GetPage() == m_wizardPageIDEKey) {
+    if (event.GetDirection() && event.GetPage() == m_wizardPageIDEKey) {
         // build the text to copy
         wxString content;
         content << "xdebug.remote_enable=1\n";

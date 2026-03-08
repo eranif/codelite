@@ -18,13 +18,15 @@
 #include <wx/tokenzr.h>
 #include <wx/uri.h>
 
-bool PHPExecutor::Exec(const wxString& projectName, const wxString& urlOrFilePath, const wxString& xdebugSessionName,
+bool PHPExecutor::Exec(const wxString& projectName,
+                       const wxString& urlOrFilePath,
+                       const wxString& xdebugSessionName,
                        bool neverPauseOnExit)
 {
     PHPProject::Ptr_t proj = PHPWorkspace::Get()->GetProject(projectName);
     CHECK_PTR_RET_FALSE(proj);
 
-    if(proj->GetSettings().GetRunAs() == PHPProjectSettingsData::kRunAsWebsite) {
+    if (proj->GetSettings().GetRunAs() == PHPProjectSettingsData::kRunAsWebsite) {
         return RunRUL(proj, urlOrFilePath, xdebugSessionName);
 
     } else {
@@ -43,7 +45,7 @@ bool PHPExecutor::RunRUL(PHPProject::Ptr_t pProject, const wxString& urlToRun, c
 
     wxString url;
     wxString queryStrnig = uri.GetQuery();
-    if(queryStrnig.IsEmpty() && !xdebugSessionName.IsEmpty()) {
+    if (queryStrnig.IsEmpty() && !xdebugSessionName.IsEmpty()) {
         // no query string was provided by the user
         url << uri.BuildURI() << "?XDEBUG_SESSION_START=" << xdebugSessionName;
 
@@ -58,24 +60,28 @@ bool PHPExecutor::RunRUL(PHPProject::Ptr_t pProject, const wxString& urlToRun, c
     return true;
 }
 
-bool PHPExecutor::DoRunCLI(const wxString& script, PHPProject::Ptr_t proj, const wxString& xdebugSessionName,
+bool PHPExecutor::DoRunCLI(const wxString& script,
+                           PHPProject::Ptr_t proj,
+                           const wxString& xdebugSessionName,
                            bool neverPauseOnExit)
 {
-    if(IsRunning()) {
-        ::wxMessageBox(_("Another process is already running"), wxT("CodeLite"), wxOK | wxICON_INFORMATION,
+    if (IsRunning()) {
+        ::wxMessageBox(_("Another process is already running"),
+                       wxT("CodeLite"),
+                       wxOK | wxICON_INFORMATION,
                        wxTheApp->GetTopWindow());
         return false;
     }
 
     wxString errmsg;
     auto [php, cmd] = DoGetCLICommand(script, proj, errmsg);
-    if(php.empty() || cmd.empty()) {
+    if (php.empty() || cmd.empty()) {
         ::wxMessageBox(errmsg, wxT("CodeLite"), wxOK | wxICON_INFORMATION, wxTheApp->GetTopWindow());
         return false;
     }
 
     wxString wd;
-    if(proj) {
+    if (proj) {
         const PHPProjectSettingsData& data = proj->GetSettings();
         wd = data.GetWorkingDirectory();
     }
@@ -86,7 +92,7 @@ bool PHPExecutor::DoRunCLI(const wxString& script, PHPProject::Ptr_t proj, const
     // Apply the environment variables
     // export XDEBUG_CONFIG="idekey=session_name remote_host=localhost profiler_enable=1"
     wxStringMap_t om;
-    if(!xdebugSessionName.IsEmpty()) {
+    if (!xdebugSessionName.IsEmpty()) {
 
         PHPConfigurationData phpGlobalSettings;
         phpGlobalSettings.Load();
@@ -101,7 +107,7 @@ bool PHPExecutor::DoRunCLI(const wxString& script, PHPProject::Ptr_t proj, const
     EnvSetter serrter(&om);
 
     // Execute the command
-    if(!xdebugSessionName.IsEmpty()) {
+    if (!xdebugSessionName.IsEmpty()) {
         // debugging
         return m_terminal.ExecuteNoConsole(cmd, wd);
     } else {
@@ -119,7 +125,7 @@ bool PHPExecutor::RunScript(const wxString& script, wxString& php_output)
 {
     wxString errmsg;
     auto [php, cmd] = DoGetCLICommand(script, PHPProject::Ptr_t(NULL), errmsg);
-    if(cmd.IsEmpty()) {
+    if (cmd.IsEmpty()) {
         ::wxMessageBox(errmsg, wxT("CodeLite"), wxOK | wxICON_INFORMATION, wxTheApp->GetTopWindow());
         return false;
     }
@@ -132,8 +138,8 @@ bool PHPExecutor::RunScript(const wxString& script, wxString& php_output)
     return true;
 }
 
-std::pair<wxString, wxString> PHPExecutor::DoGetCLICommand(const wxString& script, PHPProject::Ptr_t proj,
-                                                           wxString& errmsg)
+std::pair<wxString, wxString>
+PHPExecutor::DoGetCLICommand(const wxString& script, PHPProject::Ptr_t proj, wxString& errmsg)
 {
     wxArrayString args;
     wxString php;
@@ -144,7 +150,7 @@ std::pair<wxString, wxString> PHPExecutor::DoGetCLICommand(const wxString& scrip
     PHPConfigurationData globalConf;
     globalConf.Load();
 
-    if(proj) {
+    if (proj) {
         const PHPProjectSettingsData& data = proj->GetSettings();
         args = ::wxStringTokenize(data.GetArgs(), wxT("\n\r"), wxTOKEN_STRTOK);
         includePath = data.GetIncludePathAsArray();
@@ -160,18 +166,18 @@ std::pair<wxString, wxString> PHPExecutor::DoGetCLICommand(const wxString& scrip
     }
 
     ini.Trim().Trim(false);
-    if(ini.Contains(" ")) {
+    if (ini.Contains(" ")) {
         ini.Prepend("\"").Append("\"");
     }
 
-    if(index.empty()) {
+    if (index.empty()) {
         errmsg = _("Please set an index file to execute in the project settings");
         return {};
     }
 
-    if(php.empty()) {
+    if (php.empty()) {
         php = globalConf.GetPhpExe();
-        if(php.empty()) {
+        if (php.empty()) {
             errmsg = _("Could not find any PHP binary to execute. Please set one in from: 'PHP | Settings'");
             return {};
         }
@@ -184,7 +190,7 @@ std::pair<wxString, wxString> PHPExecutor::DoGetCLICommand(const wxString& scrip
     wxString cmd;
     php = StringUtils::WrapWithDoubleQuotes(php);
 
-    if(!ini.empty()) {
+    if (!ini.empty()) {
         cmd << " -c " << ini << " ";
     }
 
@@ -192,9 +198,9 @@ std::pair<wxString, wxString> PHPExecutor::DoGetCLICommand(const wxString& scrip
     cmd << wxT(" -d html_errors=Off ");
 
     // add the include path
-    if(includePath.empty() == false) {
+    if (includePath.empty() == false) {
         cmd << wxT("-d include_path=\"");
-        for(size_t i = 0; i < includePath.GetCount(); i++) {
+        for (size_t i = 0; i < includePath.GetCount(); i++) {
             cmd << includePath.Item(i) << clPlatform::PathSeparator;
         }
         cmd << wxT("\" ");
@@ -203,16 +209,16 @@ std::pair<wxString, wxString> PHPExecutor::DoGetCLICommand(const wxString& scrip
     StringUtils::WrapWithQuotes(index);
     cmd << index;
 
-    if(!args.empty()) {
+    if (!args.empty()) {
         cmd << " ";
     }
 
     // set the program arguments to run (after the index file is set)
-    if(!args.empty()) {
-        for(const wxString& arg : args) {
+    if (!args.empty()) {
+        for (const wxString& arg : args) {
             cmd << StringUtils::WrapWithDoubleQuotes(arg) << " ";
         }
         cmd.RemoveLast();
     }
-    return { php, cmd };
+    return {php, cmd};
 }

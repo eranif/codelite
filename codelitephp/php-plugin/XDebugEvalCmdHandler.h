@@ -27,6 +27,7 @@
 #define XDEBUGEVALCMDHANDLER_H
 
 #include "XDebugCommandHandler.h" // Base class: XDebugCommandHandler
+
 #include <wx/string.h>
 
 class XDebugManager;
@@ -34,23 +35,21 @@ class XDebugEvalCmdHandler : public XDebugCommandHandler
 {
 public:
     enum {
-        kEvalForTooltip  = 1,
+        kEvalForTooltip = 1,
         kEvalForEvalPane = 2,
     };
+
 protected:
     wxString m_expression;
-    int      m_evalReason;
-    
+    int m_evalReason;
+
 public:
-    XDebugEvalCmdHandler(const wxString &expression, int evalReason, XDebugManager* mgr, int transactionId);
+    XDebugEvalCmdHandler(const wxString& expression, int evalReason, XDebugManager* mgr, int transactionId);
     virtual ~XDebugEvalCmdHandler() = default;
 
-    void SetExpression(const wxString& expression) {
-        this->m_expression = expression;
-    }
-    const wxString& GetExpression() const {
-        return m_expression;
-    }
+    void SetExpression(const wxString& expression) { this->m_expression = expression; }
+    const wxString& GetExpression() const { return m_expression; }
+
 public:
     virtual void Process(const wxXmlNode* response);
 };

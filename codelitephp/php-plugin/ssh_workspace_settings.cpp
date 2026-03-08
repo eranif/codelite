@@ -1,4 +1,5 @@
 #include "ssh_workspace_settings.h"
+
 #include "php_workspace.h"
 
 SSHWorkspaceSettings::SSHWorkspaceSettings()
@@ -25,22 +26,19 @@ JSONItem SSHWorkspaceSettings::ToJSON() const
 
 void SSHWorkspaceSettings::Load()
 {
-    wxFileName fn(PHPWorkspace::Get()->GetPrivateFolder(), "php-sftp.conf" );
+    wxFileName fn(PHPWorkspace::Get()->GetPrivateFolder(), "php-sftp.conf");
     clConfig conf(fn.GetFullPath());
     conf.ReadItem(*this);
 }
 
 void SSHWorkspaceSettings::Save()
 {
-    wxFileName fn(PHPWorkspace::Get()->GetPrivateFolder(), "php-sftp.conf" );
+    wxFileName fn(PHPWorkspace::Get()->GetPrivateFolder(), "php-sftp.conf");
     clConfig conf(fn.GetFullPath());
     conf.WriteItem(*this);
 }
 
-bool SSHWorkspaceSettings::IsRemoteUploadSet() const
-{
-    return !m_remoteFolder.IsEmpty() && !m_account.IsEmpty();
-}
+bool SSHWorkspaceSettings::IsRemoteUploadSet() const { return !m_remoteFolder.IsEmpty() && !m_account.IsEmpty(); }
 
 void SSHWorkspaceSettings::Reset()
 {

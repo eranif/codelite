@@ -10,10 +10,10 @@ PHPUserWorkspace::PHPUserWorkspace(const wxString& workspacePath)
 
 wxFileName PHPUserWorkspace::GetFileName() const
 {
-    wxFileName workspaceFile( m_workspacePath );
+    wxFileName workspaceFile(m_workspacePath);
     wxFileName fn(workspaceFile.GetPath(), workspaceFile.GetFullName() + "." + ::clGetUserName());
     fn.AppendDir(".codelite");
-    if ( !fn.FileExists() ) {
+    if (!fn.FileExists()) {
         fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     }
     return fn;
@@ -25,13 +25,13 @@ PHPUserWorkspace& PHPUserWorkspace::Load()
     JSON root(fn);
     JSONItem element = root.toElement();
     m_breakpoints.clear();
-    
+
     JSONItem bpArr = element.namedObject("m_breakpoints");
     int bpcount = bpArr.arraySize();
-    for( int i=0; i<bpcount; ++i ) {
+    for (int i = 0; i < bpcount; ++i) {
         XDebugBreakpoint bp;
-        bp.FromJSON( bpArr.arrayItem(i) );
-        m_breakpoints.push_back( bp );
+        bp.FromJSON(bpArr.arrayItem(i));
+        m_breakpoints.push_back(bp);
     }
     return *this;
 }

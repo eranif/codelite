@@ -32,8 +32,11 @@
 class MyTreeView : public clThemedTreeCtrl
 {
 public:
-    MyTreeView(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-               const wxSize& size = wxDefaultSize, long style = 0);
+    MyTreeView(wxWindow* parent,
+               wxWindowID id = wxID_ANY,
+               const wxPoint& pos = wxDefaultPosition,
+               const wxSize& size = wxDefaultSize,
+               long style = 0);
     virtual ~MyTreeView() = default;
 };
 

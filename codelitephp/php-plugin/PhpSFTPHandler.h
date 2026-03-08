@@ -20,7 +20,7 @@ protected:
     void DoSyncFileWithRemote(const wxFileName& localFile);
     wxString GetRemotePath(const SSHWorkspaceSettings& sshSettings, const wxString& localpath) const;
     bool EnsureAccountExists(SSHWorkspaceSettings& workspaceSettings);
-    
+
 public:
     PhpSFTPHandler();
     virtual ~PhpSFTPHandler();
@@ -31,6 +31,6 @@ public:
     void OnFileDeleted(clFileSystemEvent& e);
 };
 
-#endif //USE_SFTP
+#endif // USE_SFTP
 
 #endif // PHPSFTPHANDLER_H

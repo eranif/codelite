@@ -20,8 +20,8 @@ XDebugBreakpointsMgr::XDebugBreakpointsMgr()
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_SESSION_STARTING, &XDebugBreakpointsMgr::OnXDebugSessionStarting, this);
     EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_LOADED, &XDebugBreakpointsMgr::OnWorkspaceOpened, this);
     EventNotifier::Get()->Bind(wxEVT_PHP_WORKSPACE_CLOSED, &XDebugBreakpointsMgr::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Connect(wxEVT_ACTIVE_EDITOR_CHANGED,
-                                  wxCommandEventHandler(XDebugBreakpointsMgr::OnEditorChanged), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(XDebugBreakpointsMgr::OnEditorChanged), NULL, this);
 }
 
 XDebugBreakpointsMgr::~XDebugBreakpointsMgr()
@@ -30,14 +30,14 @@ XDebugBreakpointsMgr::~XDebugBreakpointsMgr()
     EventNotifier::Get()->Unbind(wxEVT_XDEBUG_SESSION_STARTING, &XDebugBreakpointsMgr::OnXDebugSessionStarting, this);
     EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_LOADED, &XDebugBreakpointsMgr::OnWorkspaceOpened, this);
     EventNotifier::Get()->Unbind(wxEVT_PHP_WORKSPACE_CLOSED, &XDebugBreakpointsMgr::OnWorkspaceClosed, this);
-    EventNotifier::Get()->Disconnect(wxEVT_ACTIVE_EDITOR_CHANGED,
-                                     wxCommandEventHandler(XDebugBreakpointsMgr::OnEditorChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_ACTIVE_EDITOR_CHANGED, wxCommandEventHandler(XDebugBreakpointsMgr::OnEditorChanged), NULL, this);
 }
 
 bool XDebugBreakpointsMgr::HasBreakpoint(const wxString& filename, int line) const
 {
-    if(std::find_if(m_breakpoints.begin(), m_breakpoints.end(), XDebugBreakpoint::Equal(filename, line)) ==
-       m_breakpoints.end()) {
+    if (std::find_if(m_breakpoints.begin(), m_breakpoints.end(), XDebugBreakpoint::Equal(filename, line)) ==
+        m_breakpoints.end()) {
         return false;
     }
     return true;
@@ -45,8 +45,8 @@ bool XDebugBreakpointsMgr::HasBreakpoint(const wxString& filename, int line) con
 
 void XDebugBreakpointsMgr::AddBreakpoint(const wxString& filename, int line)
 {
-    if(std::find_if(m_breakpoints.begin(), m_breakpoints.end(), XDebugBreakpoint::Equal(filename, line)) ==
-       m_breakpoints.end()) {
+    if (std::find_if(m_breakpoints.begin(), m_breakpoints.end(), XDebugBreakpoint::Equal(filename, line)) ==
+        m_breakpoints.end()) {
         // new breakpoint
         m_breakpoints.push_back(XDebugBreakpoint(filename, line));
         Notify();
@@ -58,7 +58,7 @@ void XDebugBreakpointsMgr::DeleteBreakpoint(const wxString& filename, int line)
 {
     XDebugBreakpoint::List_t::iterator iter =
         std::find_if(m_breakpoints.begin(), m_breakpoints.end(), XDebugBreakpoint::Equal(filename, line));
-    if(iter != m_breakpoints.end()) {
+    if (iter != m_breakpoints.end()) {
         m_breakpoints.erase(iter);
         Notify();
         Save();
@@ -70,7 +70,7 @@ void XDebugBreakpointsMgr::OnXDebugSessionEnded(XDebugEvent& e)
     e.Skip();
 
     // clear any xdebug ID associated with the breakpoints
-    for(auto& bp : m_breakpoints) {
+    for (auto& bp : m_breakpoints) {
         bp.SetBreakpointId(wxNOT_FOUND);
     }
 }
@@ -79,7 +79,7 @@ bool XDebugBreakpointsMgr::GetBreakpoint(const wxString& filename, int line, XDe
 {
     XDebugBreakpoint::List_t::const_iterator iter =
         std::find_if(m_breakpoints.begin(), m_breakpoints.end(), XDebugBreakpoint::Equal(filename, line));
-    if(iter != m_breakpoints.end()) {
+    if (iter != m_breakpoints.end()) {
         bp = *iter;
         return true;
     }
@@ -90,7 +90,7 @@ bool XDebugBreakpointsMgr::GetBreakpoint(const wxString& filename, int line, XDe
 {
     XDebugBreakpoint::List_t::iterator iter =
         std::find_if(m_breakpoints.begin(), m_breakpoints.end(), XDebugBreakpoint::Equal(filename, line));
-    if(iter != m_breakpoints.end()) {
+    if (iter != m_breakpoints.end()) {
         bp = *iter;
         return true;
     }
@@ -101,7 +101,7 @@ void XDebugBreakpointsMgr::OnXDebugSessionStarting(XDebugEvent& e)
 {
     e.Skip();
     // clear any xdebug ID associated with the breakpoints
-    for(auto& bp : m_breakpoints) {
+    for (auto& bp : m_breakpoints) {
         bp.SetBreakpointId(wxNOT_FOUND);
     }
 }
@@ -111,7 +111,7 @@ void XDebugBreakpointsMgr::OnWorkspaceClosed(PHPEvent& e)
     e.Skip();
 
     // Save the breakpoints to the file system
-    if(!m_workspacePath.IsEmpty()) {
+    if (!m_workspacePath.IsEmpty()) {
         PHPUserWorkspace userWorkspace(m_workspacePath);
         userWorkspace.Load().SetBreakpoints(m_breakpoints).Save();
         m_workspacePath.Clear();
@@ -133,12 +133,12 @@ void XDebugBreakpointsMgr::OnEditorChanged(wxCommandEvent& e)
 
     // Apply breakpoints for this editor
     IEditor* editor = ::clGetManager()->GetActiveEditor();
-    if(editor) {
+    if (editor) {
         XDebugBreakpoint::List_t bps;
-        if(GetBreakpointsForFile(editor->GetFileName().GetFullPath(), bps)) {
+        if (GetBreakpointsForFile(editor->GetFileName().GetFullPath(), bps)) {
             for (const auto& bp : bps) {
                 int markerMask = editor->GetCtrl()->MarkerGet(bp.GetLine() - 1);
-                if(!(markerMask & mmt_breakpoint)) {
+                if (!(markerMask & mmt_breakpoint)) {
                     // No marker on this line yet
                     // add one
                     editor->GetCtrl()->MarkerAdd(bp.GetLine() - 1, smt_breakpoint);
@@ -174,7 +174,7 @@ void XDebugBreakpointsMgr::DeleteAllBreakpoints()
 
 void XDebugBreakpointsMgr::Save()
 {
-    if(!m_workspacePath.IsEmpty()) {
+    if (!m_workspacePath.IsEmpty()) {
         // Save the breakpoints to the file system
         PHPUserWorkspace userWorkspace(m_workspacePath);
         userWorkspace.Load().SetBreakpoints(m_breakpoints).Save();

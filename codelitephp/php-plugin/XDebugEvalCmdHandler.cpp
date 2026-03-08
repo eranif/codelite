@@ -7,7 +7,10 @@
 
 #include <wx/xml/xml.h>
 
-XDebugEvalCmdHandler::XDebugEvalCmdHandler(const wxString& expression, int evalReason, XDebugManager* mgr, int transactionId)
+XDebugEvalCmdHandler::XDebugEvalCmdHandler(const wxString& expression,
+                                           int evalReason,
+                                           XDebugManager* mgr,
+                                           int transactionId)
     : XDebugCommandHandler(mgr, transactionId)
     , m_expression(expression)
     , m_evalReason(evalReason)
@@ -18,28 +21,28 @@ void XDebugEvalCmdHandler::Process(const wxXmlNode* response)
 {
     // Search for the 'property' element
     wxXmlNode* xmlProp = XmlUtils::FindFirstByTagName(response, "property");
-    if ( xmlProp ) {
-        XVariable var( xmlProp, m_evalReason == kEvalForEvalPane );
+    if (xmlProp) {
+        XVariable var(xmlProp, m_evalReason == kEvalForEvalPane);
 
         // Send an event
         XDebugEvent event(wxEVT_XDEBUG_EVAL_EXPRESSION);
-        event.SetString( GetExpression() );
-        event.SetEvaluated( var.value );
+        event.SetString(GetExpression());
+        event.SetEvaluated(var.value);
         event.SetEvalSucceeded(true);
         event.SetEvalReason(m_evalReason);
-        EventNotifier::Get()->AddPendingEvent( event );
+        EventNotifier::Get()->AddPendingEvent(event);
 
     } else {
         wxXmlNode* errorNode = XmlUtils::FindFirstByTagName(response, "error");
-        if ( errorNode ) {
-            wxXmlNode *message = XmlUtils::FindFirstByTagName(errorNode, "message");
-            if ( message ) {
+        if (errorNode) {
+            wxXmlNode* message = XmlUtils::FindFirstByTagName(errorNode, "message");
+            if (message) {
                 XDebugEvent event(wxEVT_XDEBUG_EVAL_EXPRESSION);
-                event.SetString( GetExpression() );
+                event.SetString(GetExpression());
                 event.SetEvalSucceeded(false);
-                event.SetErrorString( message->GetNodeContent() );
+                event.SetErrorString(message->GetNodeContent());
                 event.SetEvalReason(m_evalReason);
-                EventNotifier::Get()->AddPendingEvent( event );
+                EventNotifier::Get()->AddPendingEvent(event);
             }
         }
     }

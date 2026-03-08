@@ -14,7 +14,7 @@ PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)
     : PHPSettingsBaseDlg(parent)
 {
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("Default");
-    if(lexer) {
+    if (lexer) {
         lexer->Apply(m_stcIncludePaths);
     }
 
@@ -36,10 +36,10 @@ PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)
 void PHPSettingsDlg::OnBrowseForIncludePath(wxCommandEvent& event)
 {
     wxString path = wxDirSelector();
-    if(path.IsEmpty() == false) {
+    if (path.IsEmpty() == false) {
         wxString curpath = m_stcIncludePaths->GetText();
         curpath.Trim().Trim(false);
-        if(curpath.IsEmpty() == false) {
+        if (curpath.IsEmpty() == false) {
             curpath << wxT("\n");
         }
         curpath << path;
@@ -58,14 +58,14 @@ void PHPSettingsDlg::OnOK(wxCommandEvent& event)
     data.SetXdebugHost(m_textCtrlHost->GetValue());
     wxString xdebugPort = m_textCtrlXDebugPort->GetValue();
     long port(0);
-    if(xdebugPort.ToLong((long*)&port)) {
+    if (xdebugPort.ToLong((long*)&port)) {
         data.SetXdebugPort(port);
     }
 
     data.Save();
 
     // Send an event to trigger a retag, but only if we got a PHP workspace opened
-    if(PHPWorkspace::Get()->IsOpen()) {
+    if (PHPWorkspace::Get()->IsOpen()) {
         wxCommandEvent evtRetag(wxEVT_COMMAND_MENU_SELECTED, XRCID("retag_workspace"));
         EventNotifier::Get()->TopFrame()->GetEventHandler()->AddPendingEvent(evtRetag);
     }
@@ -75,12 +75,12 @@ void PHPSettingsDlg::OnOK(wxCommandEvent& event)
 void PHPSettingsDlg::OnAddCCPath(wxCommandEvent& event)
 {
     wxString path = wxDirSelector();
-    if(path.IsEmpty() == false) {
+    if (path.IsEmpty() == false) {
 
         wxString curpath = m_textCtrCClIncludePath->GetValue();
         curpath.Trim().Trim(false);
 
-        if(!curpath.IsEmpty()) {
+        if (!curpath.IsEmpty()) {
             curpath << wxT("\n");
         }
         curpath << path;
@@ -88,7 +88,4 @@ void PHPSettingsDlg::OnAddCCPath(wxCommandEvent& event)
     }
 }
 
-void PHPSettingsDlg::OnUpdateApplyUI(wxCommandEvent& event)
-{
-    event.Skip();
-}
+void PHPSettingsDlg::OnUpdateApplyUI(wxCommandEvent& event) { event.Skip(); }

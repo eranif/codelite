@@ -15,9 +15,9 @@ wxString PHPSetterGetterEntry::GetGetter(size_t flags) const
     wxString nameWithDollar = m_entry->GetShortName();
 
     wxString prefix;
-    if(!(flags & kSG_NoPrefix)) {
+    if (!(flags & kSG_NoPrefix)) {
         prefix = (flags & kSG_StartWithLowercase) ? "get" : "Get";
-        if(m_entry->Cast<PHPEntityVariable>()->IsBoolean()) {
+        if (m_entry->Cast<PHPEntityVariable>()->IsBoolean()) {
             // A boolean member, use "is" as the prefix for the getter
             prefix = (flags & kSG_StartWithLowercase) ? "is" : "Is";
         }
@@ -28,7 +28,7 @@ wxString PHPSetterGetterEntry::GetGetter(size_t flags) const
     FormatName(functionName, flags);
 
     functionName.Prepend(prefix);
-    if(flags & kSG_NameOnly) {
+    if (flags & kSG_NameOnly) {
         return functionName;
     }
 
@@ -56,7 +56,7 @@ wxString PHPSetterGetterEntry::GetSetter(const wxString& scope, size_t flags) co
     prefix = (flags & kSG_StartWithLowercase) ? "set" : "Set";
 
     functionName.Prepend(prefix);
-    if(flags & kSG_NameOnly) {
+    if (flags & kSG_NameOnly) {
         return functionName;
     }
 
@@ -66,7 +66,7 @@ wxString PHPSetterGetterEntry::GetSetter(const wxString& scope, size_t flags) co
          << "     * @param " << m_entry->Cast<PHPEntityVariable>()->GetTypeHint() << " " << m_entry->GetShortName()
          << "\n";
 
-    if(flags & kSG_ReturnThis) {
+    if (flags & kSG_ReturnThis) {
         body << "     *\n";
         body << "     * @return " << scope << "\n";
     }
@@ -74,7 +74,7 @@ wxString PHPSetterGetterEntry::GetSetter(const wxString& scope, size_t flags) co
          << "    public function " << functionName << "(" << nameWithDollar << ")\n"
          << "    {\n"
          << "        $this->" << nameNoDollar << " = " << nameWithDollar << ";\n";
-    if(flags & kSG_ReturnThis) {
+    if (flags & kSG_ReturnThis) {
         body << "\n"
              << "        return $this;\n";
     }
@@ -84,10 +84,10 @@ wxString PHPSetterGetterEntry::GetSetter(const wxString& scope, size_t flags) co
 
 void PHPSetterGetterEntry::FormatName(wxString& name, size_t flags) const
 {
-    if(name.StartsWith(wxT("m_"))) {
+    if (name.StartsWith(wxT("m_"))) {
         name = name.Mid(2);
 
-    } else if(name.StartsWith(wxT("_"))) {
+    } else if (name.StartsWith(wxT("_"))) {
         name = name.Mid(1);
     }
 
@@ -97,18 +97,18 @@ void PHPSetterGetterEntry::FormatName(wxString& name, size_t flags) const
     wxStringTokenizer tkz(name, wxT("_"));
     name.Clear();
     size_t count = 0;
-    while(tkz.HasMoreTokens()) {
+    while (tkz.HasMoreTokens()) {
         wxString token = tkz.NextToken();
         wxString pre = token.Mid(0, 1);
         token.Remove(0, 1);
-        if(usingPrefix) {
+        if (usingPrefix) {
             pre.MakeUpper();
 
         } else {
             // No prefix
-            if(startWithUppercase && count == 0) {
+            if (startWithUppercase && count == 0) {
                 pre.MakeUpper();
-            } else if(count) {
+            } else if (count) {
                 pre.MakeUpper();
             }
         }

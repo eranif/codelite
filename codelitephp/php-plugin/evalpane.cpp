@@ -14,11 +14,15 @@ EvalPane::EvalPane(wxWindow* parent)
     EventNotifier::Get()->Bind(wxEVT_XDEBUG_UNKNOWN_RESPONSE, &EvalPane::OnDBGPCommandEvaluated, this);
     EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &EvalPane::OnSettingsChanged, this);
     LexerConf::Ptr_t lex = EditorConfigST::Get()->GetLexer("text");
-    if(lex) { lex->Apply(m_stcOutput); }
+    if (lex) {
+        lex->Apply(m_stcOutput);
+    }
 
     // Since XDebug replies with XML, use the XML lexer for the output
     LexerConf::Ptr_t xml_lex = EditorConfigST::Get()->GetLexer("xml");
-    if(xml_lex) { xml_lex->Apply(m_stcOutputXDebug, true); }
+    if (xml_lex) {
+        xml_lex->Apply(m_stcOutputXDebug, true);
+    }
     m_stcOutput->SetEditable(false);
 }
 
@@ -31,7 +35,9 @@ EvalPane::~EvalPane()
 
 void EvalPane::OnEnter(wxCommandEvent& event)
 {
-    if(!m_textCtrlExpression->IsEmpty()) { OnSend(event); }
+    if (!m_textCtrlExpression->IsEmpty()) {
+        OnSend(event);
+    }
 }
 
 void EvalPane::OnSend(wxCommandEvent& event)
@@ -46,13 +52,13 @@ void EvalPane::OnSendUI(wxUpdateUIEvent& event)
 
 void EvalPane::OnExpressionEvaluate(XDebugEvent& e)
 {
-    if(e.GetEvalReason() == XDebugEvalCmdHandler::kEvalForEvalPane) {
+    if (e.GetEvalReason() == XDebugEvalCmdHandler::kEvalForEvalPane) {
 
         m_stcOutput->SetEditable(true);
         m_stcOutput->ClearAll();
 
         wxString str;
-        if(!e.IsEvalSucceeded()) {
+        if (!e.IsEvalSucceeded()) {
             str << _("*** Error evaluating expression: ") << e.GetString() << "\n" << e.GetErrorString();
         } else {
             str << e.GetString() << " = \n";

@@ -26,8 +26,8 @@
 #ifndef XDEBUGEVENT_H
 #define XDEBUGEVENT_H
 
-#include "php_event.h"
 #include "XVariable.h"
+#include "php_event.h"
 
 class XDebugEvent : public PHPEvent
 {

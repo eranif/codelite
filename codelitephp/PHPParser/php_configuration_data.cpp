@@ -34,7 +34,9 @@ void PHPConfigurationData::FromJSON(const JSONItem& json)
 
     // xdebug IDE can not be an empty string, or else debugging in command line
     // will not work
-    if(m_xdebugIdeKey.IsEmpty()) { m_xdebugIdeKey = "codeliteide"; }
+    if (m_xdebugIdeKey.IsEmpty()) {
+        m_xdebugIdeKey = "codeliteide";
+    }
     m_ccIncludePath = json.namedObject("m_ccIncludePath").toArrayString();
 }
 
@@ -55,20 +57,24 @@ JSONItem PHPConfigurationData::ToJSON() const
 wxString PHPConfigurationData::GetIncludePathsAsString() const
 {
     wxString str;
-    for(size_t i = 0; i < GetIncludePaths().GetCount(); i++) {
+    for (size_t i = 0; i < GetIncludePaths().GetCount(); i++) {
         str << GetIncludePaths().Item(i) << wxT("\n");
     }
-    if(str.IsEmpty() == false) { str.RemoveLast(); }
+    if (str.IsEmpty() == false) {
+        str.RemoveLast();
+    }
     return str;
 }
 
 wxString PHPConfigurationData::GetCCIncludePathsAsString() const
 {
     wxString str;
-    for(size_t i = 0; i < m_ccIncludePath.GetCount(); i++) {
+    for (size_t i = 0; i < m_ccIncludePath.GetCount(); i++) {
         str << m_ccIncludePath.Item(i) << wxT("\n");
     }
-    if(str.IsEmpty() == false) { str.RemoveLast(); }
+    if (str.IsEmpty() == false) {
+        str.RemoveLast();
+    }
     return str;
 }
 

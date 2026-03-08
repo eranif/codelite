@@ -151,8 +151,8 @@ void PHPProject::FolderDeleted(const wxString& name, bool notify)
 
     updatedArray.Alloc(m_files.size());
     deletedFiles.Alloc(m_files.size());
-    for(size_t i = 0; i < m_files.GetCount(); ++i) {
-        if(!m_files.Item(i).StartsWith(name)) {
+    for (size_t i = 0; i < m_files.GetCount(); ++i) {
+        if (!m_files.Item(i).StartsWith(name)) {
             updatedArray.Add(m_files.Item(i));
         } else {
             deletedFiles.Add(m_files.Item(i));
@@ -166,7 +166,7 @@ void PHPProject::FolderDeleted(const wxString& name, bool notify)
     // Update the list
     m_files.swap(updatedArray);
     m_files.Sort();
-    if(notify) {
+    if (notify) {
         clCommandEvent event(wxEVT_PROJ_FILE_REMOVED);
         event.SetStrings(deletedFiles);
         EventNotifier::Get()->AddPendingEvent(event);
@@ -176,9 +176,11 @@ void PHPProject::FolderDeleted(const wxString& name, bool notify)
 void PHPProject::FileRenamed(const wxString& oldname, const wxString& newname, bool notify)
 {
     int where = m_files.Index(oldname);
-    if(where != wxNOT_FOUND) { m_files.Item(where) = newname; }
+    if (where != wxNOT_FOUND) {
+        m_files.Item(where) = newname;
+    }
 
-    if(notify && (where != wxNOT_FOUND)) {
+    if (notify && (where != wxNOT_FOUND)) {
         {
             wxArrayString arr;
             arr.Add(oldname);
@@ -211,15 +213,18 @@ void PHPProject::SynchWithFileSystem()
 
 void PHPProject::FilesDeleted(const wxArrayString& files, bool notify)
 {
-    if(files.IsEmpty()) return;
+    if (files.IsEmpty())
+        return;
 
     // Normalize the folder name by using wxFileName
-    for(size_t i = 0; i < files.GetCount(); ++i) {
+    for (size_t i = 0; i < files.GetCount(); ++i) {
         int where = m_files.Index(files.Item(i));
-        if(where != wxNOT_FOUND) { m_files.RemoveAt(where); }
+        if (where != wxNOT_FOUND) {
+            m_files.RemoveAt(where);
+        }
     }
 
-    if(notify) {
+    if (notify) {
         clCommandEvent event(wxEVT_PROJ_FILE_REMOVED);
         event.SetStrings(files);
         EventNotifier::Get()->AddPendingEvent(event);
@@ -233,12 +238,12 @@ bool PHPProject::HasFile(const wxFileName& filename) const
 
 void PHPProject::FileAdded(const wxString& filename, bool notify)
 {
-    if(m_files.Index(filename) == wxNOT_FOUND) {
+    if (m_files.Index(filename) == wxNOT_FOUND) {
         m_files.Add(filename);
         m_files.Sort();
     }
 
-    if(notify) {
+    if (notify) {
         clCommandEvent event(wxEVT_PROJ_FILE_ADDED);
         wxArrayString files;
         files.Add(filename);
@@ -250,7 +255,7 @@ void PHPProject::FileAdded(const wxString& filename, bool notify)
 void PHPProject::FolderAdded(const wxString& folderpath)
 {
     wxFileName fakeFile(folderpath, FOLDER_MARKER);
-    if(m_files.Index(fakeFile.GetFullPath()) == wxNOT_FOUND) {
+    if (m_files.Index(fakeFile.GetFullPath()) == wxNOT_FOUND) {
         m_files.Add(fakeFile.GetFullPath());
         m_files.Sort();
     }

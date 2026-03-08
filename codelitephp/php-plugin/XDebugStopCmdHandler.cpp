@@ -17,14 +17,14 @@ void XDebugStopCmdHandler::Process(const wxXmlNode* response)
 {
     clDEBUG() << "CodeLite: Stop command completed." << endl;
     wxString status = response->GetAttribute("status");
-    if(status == "stopping") {
+    if (status == "stopping") {
         clDEBUG() << "CodeLite: xdebug entered status 'stopping'" << endl;
 
         // Notify about control
         XDebugEvent focusEvent(wxEVT_XDEBUG_STOPPED);
         EventNotifier::Get()->AddPendingEvent(focusEvent);
 
-    } else if(status == "stopped") {
+    } else if (status == "stopped") {
         clDEBUG() << "CodeLite: xdebug entered status 'stopped'" << endl;
         m_mgr->SendStopCommand();
 

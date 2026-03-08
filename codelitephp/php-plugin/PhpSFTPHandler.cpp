@@ -30,7 +30,7 @@ PhpSFTPHandler::~PhpSFTPHandler()
 void PhpSFTPHandler::OnFileSaved(clCommandEvent& e)
 {
     e.Skip();
-    if(!PHPWorkspace::Get()->IsOpen()) {
+    if (!PHPWorkspace::Get()->IsOpen()) {
         return;
     }
     DoSyncFileWithRemote(e.GetFileName());
@@ -39,14 +39,14 @@ void PhpSFTPHandler::OnFileSaved(clCommandEvent& e)
 void PhpSFTPHandler::OnReplaceInFiles(clFileSystemEvent& e)
 {
     e.Skip();
-    if(!PHPWorkspace::Get()->IsOpen()) {
+    if (!PHPWorkspace::Get()->IsOpen()) {
         return;
     }
 
     SSHWorkspaceSettings settings;
     settings.Load();
 
-    if(!EnsureAccountExists(settings)) {
+    if (!EnsureAccountExists(settings)) {
         return;
     }
 
@@ -59,20 +59,20 @@ void PhpSFTPHandler::OnReplaceInFiles(clFileSystemEvent& e)
 void PhpSFTPHandler::OnFileRenamed(clFileSystemEvent& e)
 {
     e.Skip();
-    if(!PHPWorkspace::Get()->IsOpen()) {
+    if (!PHPWorkspace::Get()->IsOpen()) {
         return;
     }
 
     SSHWorkspaceSettings settings;
     settings.Load();
 
-    if(!EnsureAccountExists(settings)) {
+    if (!EnsureAccountExists(settings)) {
         return;
     }
 
     wxString oldPath = GetRemotePath(settings, e.GetPath());
     wxString newPath = GetRemotePath(settings, e.GetNewpath());
-    if(oldPath.IsEmpty() || newPath.IsEmpty()) {
+    if (oldPath.IsEmpty() || newPath.IsEmpty()) {
         return;
     }
 
@@ -90,7 +90,7 @@ void PhpSFTPHandler::DoSyncFileWithRemote(const wxFileName& localFile)
 {
     // Check to see if we got a remote-upload setup
     PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetProjectForFile(localFile);
-    if(!pProject) {
+    if (!pProject) {
         // Not a workspace file
         clDEBUG() << localFile << "is not a PHP workspace file, will not sync it with remote" << clEndl;
         return;
@@ -99,13 +99,13 @@ void PhpSFTPHandler::DoSyncFileWithRemote(const wxFileName& localFile)
     SSHWorkspaceSettings workspaceSettings;
     workspaceSettings.Load();
 
-    if(!EnsureAccountExists(workspaceSettings)) {
+    if (!EnsureAccountExists(workspaceSettings)) {
         return;
     }
 
     // Convert the local path to remote path
     wxString remotePath = GetRemotePath(workspaceSettings, localFile.GetFullPath());
-    if(remotePath.IsEmpty()) {
+    if (remotePath.IsEmpty()) {
         return;
     }
 
@@ -119,7 +119,7 @@ void PhpSFTPHandler::DoSyncFileWithRemote(const wxFileName& localFile)
 
 wxString PhpSFTPHandler::GetRemotePath(const SSHWorkspaceSettings& sshSettings, const wxString& localpath) const
 {
-    if(!sshSettings.IsRemoteUploadEnabled()) {
+    if (!sshSettings.IsRemoteUploadEnabled()) {
         return "";
     }
     wxFileName fnLocalFile = localpath;
@@ -131,25 +131,25 @@ wxString PhpSFTPHandler::GetRemotePath(const SSHWorkspaceSettings& sshSettings, 
 void PhpSFTPHandler::OnFileDeleted(clFileSystemEvent& e)
 {
     e.Skip();
-    if(!PHPWorkspace::Get()->IsOpen()) {
+    if (!PHPWorkspace::Get()->IsOpen()) {
         return;
     }
 
     SSHWorkspaceSettings settings;
     settings.Load();
 
-    if(!EnsureAccountExists(settings)) {
+    if (!EnsureAccountExists(settings)) {
         return;
     }
 
     const wxArrayString& paths = e.GetPaths();
-    if(paths.IsEmpty()) {
+    if (paths.IsEmpty()) {
         return;
     }
 
     for (const auto& path : paths) {
         wxString remotePath = GetRemotePath(settings, path);
-        if(remotePath.IsEmpty()) {
+        if (remotePath.IsEmpty()) {
             return;
         }
 
@@ -164,7 +164,7 @@ void PhpSFTPHandler::OnFileDeleted(clFileSystemEvent& e)
 bool PhpSFTPHandler::EnsureAccountExists(SSHWorkspaceSettings& workspaceSettings)
 {
     // Do we need to sync?
-    if(!(workspaceSettings.IsRemoteUploadSet() && workspaceSettings.IsRemoteUploadEnabled())) {
+    if (!(workspaceSettings.IsRemoteUploadSet() && workspaceSettings.IsRemoteUploadEnabled())) {
         return false;
     }
 
@@ -173,7 +173,7 @@ bool PhpSFTPHandler::EnsureAccountExists(SSHWorkspaceSettings& workspaceSettings
 
     // Try to locate hte SSH account for this workspace
     SSHAccountInfo account;
-    if(!sftpSettings.GetAccount(workspaceSettings.GetAccount(), account)) {
+    if (!sftpSettings.GetAccount(workspaceSettings.GetAccount(), account)) {
         // Failed to locate the SSH account, disable sync
         wxString msg;
         msg << _("Failed to locate SSH account: ") << workspaceSettings.GetAccount() << "\n";

@@ -27,29 +27,29 @@
 #define PHPUSERWORKSPACE_H
 
 #include "XDebugBreakpoint.h"
+
 #include <wx/filename.h>
 
 class PHPUserWorkspace
 {
     XDebugBreakpoint::List_t m_breakpoints;
-    wxString                 m_workspacePath;
-    
+    wxString m_workspacePath;
+
 protected:
     wxFileName GetFileName() const;
 
 public:
-    PHPUserWorkspace(const wxString &workspacePath);
+    PHPUserWorkspace(const wxString& workspacePath);
     virtual ~PHPUserWorkspace() = default;
 
     PHPUserWorkspace& Load();
     PHPUserWorkspace& Save();
-    PHPUserWorkspace& SetBreakpoints(const XDebugBreakpoint::List_t& breakpoints) {
+    PHPUserWorkspace& SetBreakpoints(const XDebugBreakpoint::List_t& breakpoints)
+    {
         this->m_breakpoints = breakpoints;
         return *this;
     }
-    const XDebugBreakpoint::List_t& GetBreakpoints() const {
-        return m_breakpoints;
-    }
+    const XDebugBreakpoint::List_t& GetBreakpoints() const { return m_breakpoints; }
 };
 
 #endif // PHPUSERWORKSPACE_H

@@ -19,25 +19,25 @@ XDebugStackGetCmdHandler::XDebugStackGetCmdHandler(XDebugManager* mgr, int trans
 void XDebugStackGetCmdHandler::Process(const wxXmlNode* response)
 {
     wxArrayString stackTrace;
-    wxXmlNode *child = response->GetChildren();
-    while ( child ) {
-        if ( child->GetName() == "stack" ) {
-            wxString level    = child->GetAttribute("level");
-            wxString where    = child->GetAttribute("where");
+    wxXmlNode* child = response->GetChildren();
+    while (child) {
+        if (child->GetName() == "stack") {
+            wxString level = child->GetAttribute("level");
+            wxString where = child->GetAttribute("where");
             wxString filename = child->GetAttribute("filename");
             int line_number = XmlUtils::ReadLong(child, "lineno");
-            
+
             wxString localFile = ::MapRemoteFileToLocalFile(filename);
             // Use pipe to separate the attributes
             wxString stackEntry;
             stackEntry << level << "|" << where << "|" << localFile << "|" << line_number;
-            stackTrace.Add( stackEntry );
+            stackTrace.Add(stackEntry);
         }
         child = child->GetNext();
     }
-    
+
     XDebugEvent eventStack(wxEVT_XDEBUG_STACK_TRACE);
-    eventStack.SetStrings( stackTrace );
+    eventStack.SetStrings(stackTrace);
     eventStack.SetInt(m_requestedStack);
-    EventNotifier::Get()->AddPendingEvent( eventStack );
+    EventNotifier::Get()->AddPendingEvent(eventStack);
 }

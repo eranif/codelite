@@ -22,22 +22,22 @@ void XDebugRunCmdHandler::Process(const wxXmlNode* response)
 {
     // a reply to the "Run" command has arrived
     wxString status = response->GetAttribute("status");
-    if(status == "stopping") {
+    if (status == "stopping") {
         clDEBUG() << "CodeLite >>> xdebug entered status 'stopping'" << endl;
         m_mgr->SendStopCommand();
 
-    } else if(status == "break") {
+    } else if (status == "break") {
         // Break point was hit
         clDEBUG() << "CodeLite >>> Breakpoint was hit" << endl;
         wxXmlNode* msg = XmlUtils::FindFirstByTagName(response, "xdebug:message");
-        if(msg) {
+        if (msg) {
             wxString filename = msg->GetAttribute("filename");
             int line_number = XmlUtils::ReadLong(msg, "lineno");
 
             wxString localFile = ::MapRemoteFileToLocalFile(filename);
             clDEBUG() << "Mapping remote file:" << filename << "->" << localFile << endl;
             wxFileName fnFilename(localFile);
-            if(fnFilename.Exists()) {
+            if (fnFilename.Exists()) {
                 // Notify about control
                 XDebugEvent focusEvent(wxEVT_XDEBUG_IDE_GOT_CONTROL);
                 focusEvent.SetFileName(fnFilename.GetFullPath());

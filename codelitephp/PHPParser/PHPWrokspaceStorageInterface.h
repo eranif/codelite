@@ -26,15 +26,15 @@
 #ifndef PHPWROKSPACE_STORAGE_INTERFACE_H
 #define PHPWROKSPACE_STORAGE_INTERFACE_H
 
+#include <set>
+#include <vector>
 #include <wx/filename.h>
 #include <wx/string.h>
-#include <vector>
-#include <set>
 
 struct FileInfo {
     wxFileName filename;
-    wxString   folder;
-    size_t     flags;
+    wxString folder;
+    size_t flags;
 };
 using FileArray_t = std::vector<FileInfo>;
 

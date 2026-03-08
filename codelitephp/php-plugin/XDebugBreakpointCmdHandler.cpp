@@ -8,7 +8,8 @@
 
 #include <wx/xml/xml.h>
 
-XDebugBreakpointCmdHandler::XDebugBreakpointCmdHandler(XDebugManager* mgr, int transactionId,
+XDebugBreakpointCmdHandler::XDebugBreakpointCmdHandler(XDebugManager* mgr,
+                                                       int transactionId,
                                                        XDebugBreakpoint& breakpoint)
     : XDebugCommandHandler(mgr, transactionId)
     , m_breakpoint(breakpoint)
@@ -19,7 +20,7 @@ void XDebugBreakpointCmdHandler::Process(const wxXmlNode* response)
 {
     // Breakpoint assigned successfully (or not)
     wxString breakpointId = response->GetAttribute("id");
-    if(!breakpointId.IsEmpty()) {
+    if (!breakpointId.IsEmpty()) {
         long bpid(wxNOT_FOUND);
         breakpointId.ToCLong(&bpid);
         m_breakpoint.SetBreakpointId(bpid);

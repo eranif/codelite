@@ -30,12 +30,22 @@ PHPEditorContextMenu::~PHPEditorContextMenu()
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &PHPEditorContextMenu::OnContextMenu, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR_MARGIN, &PHPEditorContextMenu::OnMarginContextMenu, this);
 
-    wxTheApp->Disconnect(wxID_OPEN_PHP_FILE, wxID_FIND_REFERENCES, wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(PHPEditorContextMenu::OnPopupClicked), NULL, this);
-    wxTheApp->Disconnect(wxID_ADD_DOXY_COMMENT, wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(PHPEditorContextMenu::OnInsertDoxyComment), NULL, this);
-    wxTheApp->Disconnect(wxID_GENERATE_GETTERS_SETTERS, wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(PHPEditorContextMenu::OnGenerateSettersGetters), NULL, this);
+    wxTheApp->Disconnect(wxID_OPEN_PHP_FILE,
+                         wxID_FIND_REFERENCES,
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(PHPEditorContextMenu::OnPopupClicked),
+                         NULL,
+                         this);
+    wxTheApp->Disconnect(wxID_ADD_DOXY_COMMENT,
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(PHPEditorContextMenu::OnInsertDoxyComment),
+                         NULL,
+                         this);
+    wxTheApp->Disconnect(wxID_GENERATE_GETTERS_SETTERS,
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(PHPEditorContextMenu::OnGenerateSettersGetters),
+                         NULL,
+                         this);
     wxTheApp->Unbind(wxEVT_MENU, &PHPEditorContextMenu::OnCommentLine, this, XRCID("comment_line"));
     wxTheApp->Unbind(wxEVT_MENU, &PHPEditorContextMenu::OnCommentSelection, this, XRCID("comment_selection"));
 }
@@ -46,19 +56,29 @@ void PHPEditorContextMenu::ConnectEvents()
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR_MARGIN, &PHPEditorContextMenu::OnMarginContextMenu, this);
     // The below Connect catches *all* the menu events there is no need to
     // call it per menu entry
-    wxTheApp->Connect(wxID_OPEN_PHP_FILE, wxID_FIND_REFERENCES, wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(PHPEditorContextMenu::OnPopupClicked), NULL, this);
-    wxTheApp->Connect(wxID_ADD_DOXY_COMMENT, wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(PHPEditorContextMenu::OnInsertDoxyComment), NULL, this);
-    wxTheApp->Connect(wxID_GENERATE_GETTERS_SETTERS, wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(PHPEditorContextMenu::OnGenerateSettersGetters), NULL, this);
+    wxTheApp->Connect(wxID_OPEN_PHP_FILE,
+                      wxID_FIND_REFERENCES,
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(PHPEditorContextMenu::OnPopupClicked),
+                      NULL,
+                      this);
+    wxTheApp->Connect(wxID_ADD_DOXY_COMMENT,
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(PHPEditorContextMenu::OnInsertDoxyComment),
+                      NULL,
+                      this);
+    wxTheApp->Connect(wxID_GENERATE_GETTERS_SETTERS,
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(PHPEditorContextMenu::OnGenerateSettersGetters),
+                      NULL,
+                      this);
     wxTheApp->Bind(wxEVT_MENU, &PHPEditorContextMenu::OnCommentLine, this, XRCID("comment_line"));
     wxTheApp->Bind(wxEVT_MENU, &PHPEditorContextMenu::OnCommentSelection, this, XRCID("comment_selection"));
 }
 
 PHPEditorContextMenu* PHPEditorContextMenu::Instance()
 {
-    if(ms_instance == 0) {
+    if (ms_instance == 0) {
         ms_instance = new PHPEditorContextMenu();
     }
     return ms_instance;
@@ -66,7 +86,7 @@ PHPEditorContextMenu* PHPEditorContextMenu::Instance()
 
 void PHPEditorContextMenu::Release()
 {
-    if(ms_instance) {
+    if (ms_instance) {
         delete ms_instance;
     }
     ms_instance = 0;
@@ -81,7 +101,7 @@ void PHPEditorContextMenu::DoBuildMenu(wxMenu* menu, IEditor* editor)
 
     // if this is not a PHP section than the above menu items are all we can offer
     int styleAtPos = editor->GetStyleAtPos(editor->GetSelectionStart());
-    if(!IsPHPSection(styleAtPos))
+    if (!IsPHPSection(styleAtPos))
         return;
 
     menu->PrependSeparator();
@@ -94,7 +114,7 @@ void PHPEditorContextMenu::DoBuildMenu(wxMenu* menu, IEditor* editor)
     menu->AppendSeparator();
     menu->Append(wxID_ANY, _("Code Generation"), refactoringMenu);
 
-    if(IsIncludeOrRequireStatement(includeWhat)) {
+    if (IsIncludeOrRequireStatement(includeWhat)) {
         menu->PrependSeparator();
         menu->Prepend(wxID_OPEN_PHP_FILE, wxString::Format(_("Open '%s'"), includeWhat.c_str()));
     }
@@ -102,11 +122,11 @@ void PHPEditorContextMenu::DoBuildMenu(wxMenu* menu, IEditor* editor)
 
 bool PHPEditorContextMenu::IsPHPSection(int styleAtPos) const
 {
-    if((styleAtPos == wxSTC_HPHP_DEFAULT) || (styleAtPos == wxSTC_HPHP_HSTRING) ||
-       (styleAtPos == wxSTC_HPHP_SIMPLESTRING) || (styleAtPos == wxSTC_HPHP_WORD) ||
-       (styleAtPos == wxSTC_HPHP_NUMBER) || (styleAtPos == wxSTC_HPHP_VARIABLE) || (styleAtPos == wxSTC_HPHP_COMMENT) ||
-       (styleAtPos == wxSTC_HPHP_COMMENTLINE) || (styleAtPos == wxSTC_HPHP_HSTRING_VARIABLE) ||
-       (styleAtPos == wxSTC_HPHP_OPERATOR))
+    if ((styleAtPos == wxSTC_HPHP_DEFAULT) || (styleAtPos == wxSTC_HPHP_HSTRING) ||
+        (styleAtPos == wxSTC_HPHP_SIMPLESTRING) || (styleAtPos == wxSTC_HPHP_WORD) ||
+        (styleAtPos == wxSTC_HPHP_NUMBER) || (styleAtPos == wxSTC_HPHP_VARIABLE) ||
+        (styleAtPos == wxSTC_HPHP_COMMENT) || (styleAtPos == wxSTC_HPHP_COMMENTLINE) ||
+        (styleAtPos == wxSTC_HPHP_HSTRING_VARIABLE) || (styleAtPos == wxSTC_HPHP_OPERATOR))
         return true;
     return false;
 }
@@ -119,11 +139,11 @@ bool PHPEditorContextMenu::IsIncludeOrRequireStatement(wxString& includeWhat)
     static wxRegEx reInclude(wxT("(include|require_once|require|include_once)[ \t\\(]*(.*?)[\\) \t]*;"), wxRE_ADVANCED);
 
     IEditor* editor = m_manager->GetActiveEditor();
-    if(!editor)
+    if (!editor)
         return false;
 
     wxString line = editor->GetCtrl()->GetLine(editor->GetCurrentLine());
-    if(reInclude.IsValid() && reInclude.Matches(line)) {
+    if (reInclude.IsValid() && reInclude.Matches(line)) {
         includeWhat = reInclude.GetMatch(line, 2);
         return true;
     }
@@ -145,10 +165,10 @@ bool PHPEditorContextMenu::GetIncludeOrRequireFileName(wxString& fn)
 void PHPEditorContextMenu::DoOpenPHPFile()
 {
     wxString fn;
-    if(!GetIncludeOrRequireFileName(fn))
+    if (!GetIncludeOrRequireFileName(fn))
         return; // no editor...
     wxString outFile = PHPCodeCompletion::Instance()->ExpandRequire(m_manager->GetActiveEditor()->GetFileName(), fn);
-    if(!outFile.IsEmpty()) {
+    if (!outFile.IsEmpty()) {
         m_manager->OpenFile(outFile);
     }
 }
@@ -159,7 +179,9 @@ void PHPEditorContextMenu::DoGotoDefinition()
     PHPCodeCompletion::Instance()->GotoDefinition(m_manager->GetActiveEditor());
 }
 
-bool PHPEditorContextMenu::IsTokenInBlackList(wxStyledTextCtrl* sci, const wxString& token, int token_pos,
+bool PHPEditorContextMenu::IsTokenInBlackList(wxStyledTextCtrl* sci,
+                                              const wxString& token,
+                                              int token_pos,
                                               const wxArrayString& tokensBlackList)
 {
     for (const auto& tokenBlackList : tokensBlackList) {
@@ -177,7 +199,7 @@ void PHPEditorContextMenu::OnContextMenu(clContextMenuEvent& e)
     IEditor* editor = m_manager->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    if(editor && IsPHPFile(editor)) {
+    if (editor && IsPHPFile(editor)) {
         DoBuildMenu(e.GetMenu(), editor);
     }
 }
@@ -186,30 +208,30 @@ void PHPEditorContextMenu::OnMarginContextMenu(clContextMenuEvent& e)
 {
     e.Skip();
     IEditor* editor = m_manager->GetActiveEditor();
-    if(editor && IsPHPFile(editor)) {
+    if (editor && IsPHPFile(editor)) {
         wxMenu* menu = e.GetMenu();
         // Remove non-PHP related entries from the menu
-        if(menu->FindItem(XRCID("insert_temp_breakpoint"))) {
+        if (menu->FindItem(XRCID("insert_temp_breakpoint"))) {
             menu->Remove(XRCID("insert_temp_breakpoint"));
         }
 
-        if(menu->FindItem(XRCID("insert_disabled_breakpoint"))) {
+        if (menu->FindItem(XRCID("insert_disabled_breakpoint"))) {
             menu->Remove(XRCID("insert_disabled_breakpoint"));
         }
 
-        if(menu->FindItem(XRCID("insert_cond_breakpoint"))) {
+        if (menu->FindItem(XRCID("insert_cond_breakpoint"))) {
             menu->Remove(XRCID("insert_cond_breakpoint"));
         }
 
-        if(menu->FindItem(XRCID("ignore_breakpoint"))) {
+        if (menu->FindItem(XRCID("ignore_breakpoint"))) {
             menu->Remove(XRCID("ignore_breakpoint"));
         }
 
-        if(menu->FindItem(XRCID("toggle_breakpoint_enabled_status"))) {
+        if (menu->FindItem(XRCID("toggle_breakpoint_enabled_status"))) {
             menu->Remove(XRCID("toggle_breakpoint_enabled_status"));
         }
 
-        if(menu->FindItem(XRCID("edit_breakpoint"))) {
+        if (menu->FindItem(XRCID("edit_breakpoint"))) {
             menu->Remove(XRCID("edit_breakpoint"));
         }
     }
@@ -218,8 +240,8 @@ void PHPEditorContextMenu::OnMarginContextMenu(clContextMenuEvent& e)
 void PHPEditorContextMenu::OnPopupClicked(wxCommandEvent& event)
 {
     IEditor* editor = m_manager->GetActiveEditor();
-    if(editor && IsPHPFile(editor)) {
-        switch(event.GetId()) {
+    if (editor && IsPHPFile(editor)) {
+        switch (event.GetId()) {
         case wxID_OPEN_PHP_FILE:
             DoOpenPHPFile();
             break;
@@ -241,7 +263,7 @@ void PHPEditorContextMenu::OnPopupClicked(wxCommandEvent& event)
 void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
 {
     IEditor* editor = m_manager->GetActiveEditor();
-    if(editor) {
+    if (editor) {
         PHPLookupTable table;
         wxString unsavedBuffer = editor->GetEditorText();
         PHPSourceFile source(unsavedBuffer, &table);
@@ -251,14 +273,14 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
         PHPEntityBase::Ptr_t entry;
         int lineNumber = editor->GetCurrentLine();
         const auto& matches = source.GetAllMatchesInOrder();
-        for(const auto& match : matches) {
-            if(match->GetLine() == lineNumber && match->Is(kEntityTypeFunction)) {
+        for (const auto& match : matches) {
+            if (match->GetLine() == lineNumber && match->Is(kEntityTypeFunction)) {
                 entry = match;
                 break;
             }
         }
 
-        if(entry) {
+        if (entry) {
             wxStyledTextCtrl* ctrl = editor->GetCtrl();
             ctrl->BeginUndoAction();
 
@@ -274,8 +296,8 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
             // Collect all whitespace from the beginning of the line until the first non whitespace
             // character we find
             wxString whitespace;
-            for(int i = lineStartPos; lineStartPos < lineEndPos; ++i) {
-                if(ctrl->GetCharAt(i) == ' ' || ctrl->GetCharAt(i) == '\t') {
+            for (int i = lineStartPos; lineStartPos < lineEndPos; ++i) {
+                if (ctrl->GetCharAt(i) == ' ' || ctrl->GetCharAt(i) == '\t') {
                     whitespace << (wxChar)ctrl->GetCharAt(i);
                 } else {
                     break;
@@ -297,11 +319,11 @@ void PHPEditorContextMenu::OnInsertDoxyComment(wxCommandEvent& e)
 
             // Try to place the caret after the @brief
             wxRegEx reBrief("[@\\]brief[ \t]*");
-            if(reBrief.IsValid() && reBrief.Matches(doxyBlock)) {
+            if (reBrief.IsValid() && reBrief.Matches(doxyBlock)) {
                 wxString match = reBrief.GetMatch(doxyBlock);
                 // Get the index
                 int where = doxyBlock.Find(match);
-                if(where != wxNOT_FOUND) {
+                if (where != wxNOT_FOUND) {
                     where += match.length();
                     int caretPos = lineStartPos + where;
                     editor->SetCaretAt(caretPos);
@@ -318,7 +340,7 @@ void PHPEditorContextMenu::OnGenerateSettersGetters(wxCommandEvent& e)
 {
     // CHeck the current context
     IEditor* editor = m_manager->GetActiveEditor();
-    if(editor) {
+    if (editor) {
 
         // determine the scope name at the current position
         // Parse until the current position
@@ -329,7 +351,7 @@ void PHPEditorContextMenu::OnGenerateSettersGetters(wxCommandEvent& e)
         sourceFile.Parse();
 
         const PHPEntityClass* scopeAtPoint = sourceFile.Class()->Cast<PHPEntityClass>();
-        if(!scopeAtPoint) {
+        if (!scopeAtPoint) {
             // Could not determine the scope at the give location
             return;
         }
@@ -340,17 +362,17 @@ void PHPEditorContextMenu::OnGenerateSettersGetters(wxCommandEvent& e)
         // generate the code to generate
         wxString textToAdd;
         PHPSettersGettersDialog dlg(EventNotifier::Get()->TopFrame(), editor, m_manager);
-        if(dlg.ShowModal() == wxID_OK) {
+        if (dlg.ShowModal() == wxID_OK) {
             for (const auto& member : dlg.GetMembers()) {
                 textToAdd << member.GetSetter(dlg.GetScope(), dlg.GetFlags()) << "\n";
                 textToAdd << member.GetGetter(dlg.GetFlags()) << "\n";
             }
 
-            if(!textToAdd.IsEmpty()) {
+            if (!textToAdd.IsEmpty()) {
                 int line = PHPCodeCompletion::Instance()->GetLocationForSettersGetters(
                     editor->GetTextRange(0, editor->GetLength()), className);
 
-                if(!textToAdd.IsEmpty() && line != wxNOT_FOUND) {
+                if (!textToAdd.IsEmpty() && line != wxNOT_FOUND) {
                     editor->GetCtrl()->InsertText(editor->PosFromLine(line), textToAdd);
                 }
             }
@@ -362,7 +384,7 @@ void PHPEditorContextMenu::OnCommentLine(wxCommandEvent& event)
 {
     event.Skip();
     IEditor* editor = m_manager->GetActiveEditor();
-    if(editor && IsPHPFile(editor)) {
+    if (editor && IsPHPFile(editor)) {
         event.Skip(false);
         editor->ToggleLineComment("//", wxSTC_HPHP_COMMENTLINE);
     }
@@ -372,7 +394,7 @@ void PHPEditorContextMenu::OnCommentSelection(wxCommandEvent& event)
 {
     event.Skip();
     IEditor* editor = m_manager->GetActiveEditor();
-    if(editor && IsPHPFile(editor)) {
+    if (editor && IsPHPFile(editor)) {
         event.Skip(false);
         editor->CommentBlockSelection("/*", "*/");
     }

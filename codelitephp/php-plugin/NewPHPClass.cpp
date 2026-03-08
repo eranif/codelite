@@ -20,15 +20,19 @@ PHPClassDetails NewPHPClass::GetDetails() const
 {
     PHPClassDetails pcd;
     size_t flags = 0;
-    if(m_checkBoxCtor->IsChecked()) flags |= PHPClassDetails::GEN_CTOR;
-    if(m_checkBoxDtor->IsChecked()) flags |= PHPClassDetails::GEN_DTOR;
-    if(m_checkBoxSingleton->IsChecked()) flags |= PHPClassDetails::GEN_SINGLETON;
-    if(m_checkBoxFolderPerNamespace->IsChecked()) flags |= PHPClassDetails::GEN_FOLDER_PER_NAMESPACE;
+    if (m_checkBoxCtor->IsChecked())
+        flags |= PHPClassDetails::GEN_CTOR;
+    if (m_checkBoxDtor->IsChecked())
+        flags |= PHPClassDetails::GEN_DTOR;
+    if (m_checkBoxSingleton->IsChecked())
+        flags |= PHPClassDetails::GEN_SINGLETON;
+    if (m_checkBoxFolderPerNamespace->IsChecked())
+        flags |= PHPClassDetails::GEN_FOLDER_PER_NAMESPACE;
     pcd.SetFlags(flags);
 
     wxString filepath;
     filepath << m_outputPath << wxFILE_SEP_PATH;
-    if(pcd.GetFlags() & PHPClassDetails::GEN_FOLDER_PER_NAMESPACE) {
+    if (pcd.GetFlags() & PHPClassDetails::GEN_FOLDER_PER_NAMESPACE) {
         filepath << m_textCtrlNamespace->GetValue() << wxFILE_SEP_PATH;
     }
     filepath << m_textCtrlClassName->GetValue() << ".php";
@@ -64,7 +68,7 @@ void NewPHPClass::OnEditExtends(wxCommandEvent& event)
                           _("Edit Class Extends"),
                           ::wxJoin(::wxSplit(m_textCtrlExtends->GetValue(), ','), '\n'),
                           wxTE_MULTILINE | wxTextEntryDialogStyle);
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         m_textCtrlExtends->ChangeValue(::wxJoin(::wxSplit(dlg.GetValue(), '\n'), ','));
     }
 }
@@ -77,7 +81,7 @@ void NewPHPClass::OnEditImplements(wxCommandEvent& event)
                           ::wxJoin(::wxSplit(m_textCtrlImplements->GetValue(), ','), '\n'),
                           wxTE_MULTILINE | wxTextEntryDialogStyle);
 
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         m_textCtrlImplements->ChangeValue(::wxJoin(::wxSplit(dlg.GetValue(), '\n'), ','));
     }
 }
@@ -85,7 +89,7 @@ void NewPHPClass::OnEditImplements(wxCommandEvent& event)
 wxString PHPClassDetails::ToString(const wxString& EOL, const wxString& indent) const
 {
     wxString classString;
-    if(!GetNamespace().IsEmpty()) {
+    if (!GetNamespace().IsEmpty()) {
         classString << "namespace " << GetNamespace() << ";" << EOL << EOL;
     }
 
@@ -95,46 +99,46 @@ wxString PHPClassDetails::ToString(const wxString& EOL, const wxString& indent) 
     const wxArrayString& extends = GetExtends();
     const wxArrayString& implements = GetImplements();
 
-    if(!extends.IsEmpty()) {
+    if (!extends.IsEmpty()) {
         classString << "extends ";
-        for(size_t i = 0; i < extends.GetCount(); ++i) {
+        for (size_t i = 0; i < extends.GetCount(); ++i) {
             classString << extends.Item(i) << ", ";
         }
         classString.RemoveLast(2).Append(" ");
     }
 
-    if(!implements.IsEmpty()) {
+    if (!implements.IsEmpty()) {
         classString << "implements ";
-        for(size_t i = 0; i < implements.GetCount(); ++i) {
+        for (size_t i = 0; i < implements.GetCount(); ++i) {
             classString << implements.Item(i) << ", ";
         }
         classString.RemoveLast(2).Append(" ");
     }
 
-    classString  << EOL << "{" << EOL;
+    classString << EOL << "{" << EOL;
 
-    if(IsClass() && (GetFlags() & GEN_SINGLETON)) {
+    if (IsClass() && (GetFlags() & GEN_SINGLETON)) {
         classString << indent << "/** @var self */" << EOL;
         classString << indent << "protected static $instance;" << EOL;
     }
 
-    if(IsClass() && (GetFlags() & (GEN_CTOR | GEN_SINGLETON))) {
-        if(GetFlags() & GEN_SINGLETON) {
+    if (IsClass() && (GetFlags() & (GEN_CTOR | GEN_SINGLETON))) {
+        if (GetFlags() & GEN_SINGLETON) {
             classString << EOL;
         }
-        if(GetFlags() & GEN_SINGLETON) {
+        if (GetFlags() & GEN_SINGLETON) {
             classString << indent << "protected function __construct()" << EOL;
         } else {
             classString << indent << "public function __construct()" << EOL;
         }
         classString << indent << "{" << EOL;
-        if(!(GetFlags() & GEN_SINGLETON)) {
+        if (!(GetFlags() & GEN_SINGLETON)) {
             classString << indent << indent << EOL;
         }
         classString << indent << "}" << EOL;
     }
 
-    if(IsClass() && (GetFlags() & GEN_DTOR)) {
+    if (IsClass() && (GetFlags() & GEN_DTOR)) {
         if (GetFlags() & (GEN_CTOR | GEN_SINGLETON)) {
             classString << EOL;
         }
@@ -144,7 +148,7 @@ wxString PHPClassDetails::ToString(const wxString& EOL, const wxString& indent) 
         classString << indent << "}" << EOL;
     }
 
-    if(IsClass() && (GetFlags() & GEN_SINGLETON)) {
+    if (IsClass() && (GetFlags() & GEN_SINGLETON)) {
         classString << EOL;
         classString << indent << "/**" << EOL;
         classString << indent << " * @return self" << EOL;

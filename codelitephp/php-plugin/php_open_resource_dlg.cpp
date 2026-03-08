@@ -69,12 +69,12 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
 
     wxString lastStringTyped = clConfig::Get().Read("PHP/OpenResourceDialog/SearchString", wxString());
 
-    if(m_mgr->GetActiveEditor() && !m_mgr->GetActiveEditor()->GetSelection().IsEmpty()) {
+    if (m_mgr->GetActiveEditor() && !m_mgr->GetActiveEditor()->GetSelection().IsEmpty()) {
         wxString sel = m_mgr->GetActiveEditor()->GetSelection();
         m_textCtrlFilter->ChangeValue(sel);
         m_textCtrlFilter->SelectAll();
 
-    } else if(!lastStringTyped.IsEmpty()) {
+    } else if (!lastStringTyped.IsEmpty()) {
         m_textCtrlFilter->ChangeValue(lastStringTyped);
         m_textCtrlFilter->SelectAll();
     }
@@ -101,7 +101,7 @@ void OpenResourceDlg::DoInitialize()
 
 OpenResourceDlg::~OpenResourceDlg()
 {
-    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         ResourceItem* data = (ResourceItem*)m_dvListCtrl->GetItemData(m_dvListCtrl->RowToItem(i));
         wxDELETE(data);
     }
@@ -112,7 +112,7 @@ OpenResourceDlg::~OpenResourceDlg()
 void OpenResourceDlg::OnFilterEnter(wxCommandEvent& event)
 {
     wxDataViewItem sel = m_dvListCtrl->GetSelection();
-    if(sel.IsOk()) {
+    if (sel.IsOk()) {
         SetSelectedItem(DoGetItemData(sel));
         EndModal(wxID_OK);
     }
@@ -124,11 +124,11 @@ void OpenResourceDlg::OnTimer(wxTimerEvent& event)
 {
     event.Skip();
     wxString currentFilter = m_textCtrlFilter->GetValue();
-    if(currentFilter != m_lastFilter) {
+    if (currentFilter != m_lastFilter) {
         m_lastFilter = currentFilter;
 
         m_dvListCtrl->DeleteAllItems();
-        if(m_lastFilter.IsEmpty()) {
+        if (m_lastFilter.IsEmpty()) {
             m_timer->Start(50, true);
             return;
         }
@@ -147,13 +147,13 @@ void OpenResourceDlg::OnTimer(wxTimerEvent& event)
         wxString lcFilter = m_lastFilter.Lower();
         ResourceVector_t v1, v2, v3, v4, v5;
         for (const ResourceItem& a : allVec) {
-            if(a.displayName == m_lastFilter) {
+            if (a.displayName == m_lastFilter) {
                 v1.push_back(a); // Exact match
-            } else if(a.displayName.Lower() == lcFilter) {
+            } else if (a.displayName.Lower() == lcFilter) {
                 v2.push_back(a); // case insensitive exact match
-            } else if(a.displayName.StartsWith(m_lastFilter)) {
+            } else if (a.displayName.StartsWith(m_lastFilter)) {
                 v3.push_back(a); // starts with
-            } else if(a.displayName.Lower().StartsWith(lcFilter)) {
+            } else if (a.displayName.Lower().StartsWith(lcFilter)) {
                 v4.push_back(a); // case insensitive starts with
             } else {
                 // other
@@ -181,12 +181,12 @@ void OpenResourceDlg::DoPopulateListCtrl(const ResourceVector_t& items)
         cols.push_back(item.TypeAsString());
         cols.push_back(item.filename.GetFullPath());
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr)(new ResourceItem(item)));
-        if(!selection.IsOk()) {
+        if (!selection.IsOk()) {
             selection = m_dvListCtrl->RowToItem(0);
         }
     }
 
-    if(selection.IsOk()) {
+    if (selection.IsOk()) {
         m_dvListCtrl->Select(selection);
         m_dvListCtrl->EnsureVisible(selection);
     }
@@ -222,10 +222,10 @@ ResourceVector_t OpenResourceDlg::DoGetFiles(const wxString& filter)
 
     for (const auto& resourceItem : m_allFiles) {
         wxString filename = resourceItem.filename.GetFullPath().Lower();
-        if(FileUtils::FuzzyMatch(filter, filename)) {
+        if (FileUtils::FuzzyMatch(filter, filename)) {
             resources.push_back(resourceItem);
             // Don't return too many matches...
-            if(resources.size() == 300)
+            if (resources.size() == 300)
                 break;
         }
     }
@@ -240,17 +240,17 @@ ResourceItem* OpenResourceDlg::DoGetItemData(const wxDataViewItem& item)
 
 void OpenResourceDlg::OnKeyDown(wxKeyEvent& event)
 {
-    if(event.GetKeyCode() == WXK_DOWN) {
+    if (event.GetKeyCode() == WXK_DOWN) {
 
         // Select next item
         DoSelectNext();
 
-    } else if(event.GetKeyCode() == WXK_UP) {
+    } else if (event.GetKeyCode() == WXK_UP) {
 
         // Select next item
         DoSelectPrev();
 
-    } else if(event.GetKeyCode() == WXK_ESCAPE) {
+    } else if (event.GetKeyCode() == WXK_ESCAPE) {
         EndModal(wxID_CANCEL);
 
     } else {
@@ -261,10 +261,10 @@ void OpenResourceDlg::OnKeyDown(wxKeyEvent& event)
 void OpenResourceDlg::DoSelectNext()
 {
     wxDataViewItem selecteditem = m_dvListCtrl->GetSelection();
-    if(selecteditem.IsOk()) {
+    if (selecteditem.IsOk()) {
         long row = m_dvListCtrl->ItemToRow(selecteditem);
         ++row;
-        if(m_dvListCtrl->GetItemCount() > (size_t)row) {
+        if (m_dvListCtrl->GetItemCount() > (size_t)row) {
             m_dvListCtrl->Select(m_dvListCtrl->RowToItem(row));
             m_dvListCtrl->EnsureVisible(m_dvListCtrl->RowToItem(row));
         }
@@ -274,10 +274,10 @@ void OpenResourceDlg::DoSelectNext()
 void OpenResourceDlg::DoSelectPrev()
 {
     wxDataViewItem selecteditem = m_dvListCtrl->GetSelection();
-    if(selecteditem.IsOk()) {
+    if (selecteditem.IsOk()) {
         long row = m_dvListCtrl->ItemToRow(selecteditem);
         --row;
-        if(row >= 0) {
+        if (row >= 0) {
             m_dvListCtrl->Select(m_dvListCtrl->RowToItem(row));
             m_dvListCtrl->EnsureVisible(m_dvListCtrl->RowToItem(row));
         }
@@ -286,7 +286,7 @@ void OpenResourceDlg::DoSelectPrev()
 
 int OpenResourceDlg::DoGetImgIdx(const ResourceItem* item)
 {
-    switch(item->type) {
+    switch (item->type) {
     case ResourceItem::kRI_Namespace:
         return NAMESPACE_IMG_ID;
     case ResourceItem::kRI_Class:
@@ -315,9 +315,9 @@ bool OpenResourceDlg::IsMatchesFilter(const wxString& filter, const wxString& ke
 {
     wxString lcKey = key.Lower();
     wxArrayString filters = ::wxStringTokenize(filter, " ", wxTOKEN_STRTOK);
-    for(size_t i = 0; i < filters.GetCount(); ++i) {
+    for (size_t i = 0; i < filters.GetCount(); ++i) {
         wxString lcFilter = filters.Item(i).Lower();
-        if(lcKey.Contains(lcFilter))
+        if (lcKey.Contains(lcFilter))
             continue;
         else
             return false;

@@ -26,8 +26,8 @@
 #ifndef XDEBUGCOMMANDHANDLER_H
 #define XDEBUGCOMMANDHANDLER_H
 
-#include <memory>
 #include <map>
+#include <memory>
 
 /// Base class for XDebug command handlers
 class XDebugManager;
@@ -40,7 +40,7 @@ public:
     using Map_t = std::map<int, XDebugCommandHandler::Ptr_t>;
 
 protected:
-    XDebugManager *m_mgr;
+    XDebugManager* m_mgr;
     int m_transactionId;
 
 public:
@@ -48,12 +48,8 @@ public:
     virtual ~XDebugCommandHandler() = default;
 
     virtual void Process(const wxXmlNode* response) = 0;
-    void SetTransactionId(int transactionId) {
-        this->m_transactionId = transactionId;
-    }
-    int GetTransactionId() const {
-        return m_transactionId;
-    }
+    void SetTransactionId(int transactionId) { this->m_transactionId = transactionId; }
+    int GetTransactionId() const { return m_transactionId; }
 };
 
 #endif // XDEBUGCOMMANDHANDLER_H

@@ -38,8 +38,8 @@ class PHPExecutor : public wxEvtHandler
 
 protected:
     bool RunRUL(PHPProject::Ptr_t pProject, const wxString& urlToRun, const wxString& xdebugSessionName);
-    bool DoRunCLI(const wxString& script, PHPProject::Ptr_t proj, const wxString& xdebugSessionName,
-                  bool neverPauseOnExit);
+    bool
+    DoRunCLI(const wxString& script, PHPProject::Ptr_t proj, const wxString& xdebugSessionName, bool neverPauseOnExit);
     std::pair<wxString, wxString> DoGetCLICommand(const wxString& script, PHPProject::Ptr_t proj, wxString& errmsg);
 
 public:
@@ -53,7 +53,9 @@ public:
      * @param neverPauseOnExit should we display a console with message 'Hit any key?'
      * @return true on success, false otherwise
      */
-    bool Exec(const wxString& projectName, const wxString& urlOrFilePath, const wxString& xdebugSessionName,
+    bool Exec(const wxString& projectName,
+              const wxString& urlOrFilePath,
+              const wxString& xdebugSessionName,
               bool neverPauseOnExit);
     /**
      * @brief return true if a script is currently being executed using this instance

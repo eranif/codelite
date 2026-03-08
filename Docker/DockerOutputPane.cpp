@@ -21,9 +21,9 @@ DockerOutputPane::DockerOutputPane(wxWindow* parent, clDockerDriver::Ptr_t drive
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &DockerOutputPane::OnWorkspaceClosed, this);
 
     m_styler.reset(new clGenericSTCStyler(m_stc));
-    m_styler->AddStyle(StdToWX::ToArrayString({ "successfully" }), clGenericSTCStyler::kInfo);
-    m_styler->AddStyle(StdToWX::ToArrayString({ "abort ", "Error response from daemon" }), clGenericSTCStyler::kError);
-    m_styler->AddStyle(StdToWX::ToArrayString({ "SECURITY WARNING" }), clGenericSTCStyler::kWarning);
+    m_styler->AddStyle(StdToWX::ToArrayString({"successfully"}), clGenericSTCStyler::kInfo);
+    m_styler->AddStyle(StdToWX::ToArrayString({"abort ", "Error response from daemon"}), clGenericSTCStyler::kError);
+    m_styler->AddStyle(StdToWX::ToArrayString({"SECURITY WARNING"}), clGenericSTCStyler::kWarning);
 
     // ===-------------------------
     // Output tab

@@ -1,6 +1,7 @@
 #ifndef NEWDOCKERWORKSPACEDLG_H
 #define NEWDOCKERWORKSPACEDLG_H
 #include "UI.h"
+
 #include <wx/filename.h>
 
 class NewDockerWorkspaceDlg : public NewDockerWorkspaceDlgBase

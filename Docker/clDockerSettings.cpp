@@ -12,12 +12,12 @@ clDockerSettings::clDockerSettings()
     : clConfigItem("Docker")
 {
     // The defaults
-    wxArrayString hints = StdToWX::ToArrayString({ "/usr/local/bin", "/usr/bin" });
+    wxArrayString hints = StdToWX::ToArrayString({"/usr/local/bin", "/usr/bin"});
 #ifdef __WXMSW__
     {
         wxRegKey regkey(wxRegKey::HKCU, "Environment");
         wxString docker_path;
-        if(regkey.QueryValue("DOCKER_TOOLBOX_INSTALL_PATH", docker_path) && wxDirExists(docker_path)) {
+        if (regkey.QueryValue("DOCKER_TOOLBOX_INSTALL_PATH", docker_path) && wxDirExists(docker_path)) {
             hints.Add(docker_path);
         }
     }
@@ -34,9 +34,13 @@ void clDockerSettings::FromJSON(const JSONItem& json)
 {
     wxString v;
     v = json.namedObject("docker").toString();
-    if(!v.empty()) { m_docker = v; }
+    if (!v.empty()) {
+        m_docker = v;
+    }
     v = json.namedObject("docker-compose").toString();
-    if(!v.empty()) { m_dockerCompose = v; }
+    if (!v.empty()) {
+        m_dockerCompose = v;
+    }
     m_flags = json.namedObject("flags").toSize_t(m_flags);
 }
 

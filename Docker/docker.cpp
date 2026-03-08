@@ -12,10 +12,7 @@
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new Docker(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new Docker(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -60,7 +57,7 @@ void Docker::CreatePluginMenu(wxMenu* pluginsMenu)
         wxEVT_MENU,
         [&](wxCommandEvent& event) {
             DockerSettingsDlg dlg(EventNotifier::Get()->TopFrame());
-            if(dlg.ShowModal() == wxID_OK) {}
+            if (dlg.ShowModal() == wxID_OK) {}
         },
         XRCID("ID_DOCKER_SETTINGS"));
 }
@@ -68,7 +65,7 @@ void Docker::CreatePluginMenu(wxMenu* pluginsMenu)
 void Docker::UnPlug()
 {
     clDockerWorkspace::Shutdown();
-    if(!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_outputView)) {
+    if (!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_outputView)) {
         // failed to delete, delete it manually
         m_outputView->Destroy();
     }

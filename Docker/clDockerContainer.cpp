@@ -1,4 +1,5 @@
 #include "clDockerContainer.h"
+
 #include <wx/tokenzr.h>
 
 #if 0
@@ -12,7 +13,8 @@ bool clDockerContainer::Parse(const wxString& line)
     wxString L = line;
     L.Trim().Trim(false);
     wxArrayString cells = ::wxStringTokenize(L, "|", wxTOKEN_RET_EMPTY_ALL);
-    if(cells.size() != 7) return false;
+    if (cells.size() != 7)
+        return false;
 
     m_id = CHOP_STRING(cells[0]);
     m_image = CHOP_STRING(cells[1]);
@@ -21,11 +23,11 @@ bool clDockerContainer::Parse(const wxString& line)
     m_status = cells[4];
     m_ports = CHOP_STRING(cells[5]);
     m_name = cells[6];
-    if(m_status.Contains("(Paused)")) {
+    if (m_status.Contains("(Paused)")) {
         m_state = kStatePaused;
-    } else if(m_status.Contains("Exited")) {
+    } else if (m_status.Contains("Exited")) {
         m_state = kStateExited;
-    } else if(m_status.StartsWith("Up ")) {
+    } else if (m_status.StartsWith("Up ")) {
         m_state = kStateRunning;
     }
     return true;

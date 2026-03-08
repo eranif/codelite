@@ -1,8 +1,8 @@
 #ifndef CLDOCKERFILE_H
 #define CLDOCKERFILE_H
 
-#include "clDockerBuildableFile.h"
 #include "JSON.h"
+#include "clDockerBuildableFile.h"
 
 class clDockerfile : public clDockerBuildableFile
 {

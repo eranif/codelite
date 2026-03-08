@@ -4,6 +4,7 @@
 #include "clTreeCtrlPanel.h"
 #include "cl_command_event.h"
 #include "cl_config.h"
+
 #include <wx/menu.h>
 
 class clDockerWorkspaceView : public clTreeCtrlPanel

@@ -1,4 +1,5 @@
 #include "clDockerImage.h"
+
 #include <wx/arrstr.h>
 #include <wx/tokenzr.h>
 
@@ -13,7 +14,8 @@ bool clDockerImage::Parse(const wxString& line)
     wxString L = line;
     L.Trim().Trim(false);
     wxArrayString cells = ::wxStringTokenize(L, "|", wxTOKEN_RET_EMPTY_ALL);
-    if(cells.size() != 5) return false;
+    if (cells.size() != 5)
+        return false;
 
     m_id = CHOP_STRING(cells[0]);
     m_repository = CHOP_STRING(cells[1]);

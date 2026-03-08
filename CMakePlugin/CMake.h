@@ -54,11 +54,11 @@
 #include <map>
 
 // wxWidgets
-#include <wx/string.h>
-#include <wx/filename.h>
 #include <wx/arrstr.h>
-#include <wx/vector.h>
+#include <wx/filename.h>
 #include <wx/progdlg.h>
+#include <wx/string.h>
+#include <wx/vector.h>
 #include <wx/wxsqlite3.h>
 
 /* ************************************************************************ */

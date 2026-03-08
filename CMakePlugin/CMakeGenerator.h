@@ -51,10 +51,10 @@
 /* ************************************************************************ */
 
 // CodeLite
-#include "workspace.h"
-#include "project.h"
 #include "build_config.h"
 #include "compiler.h"
+#include "project.h"
+#include "workspace.h"
 
 /* ************************************************************************ */
 /* CLASSES                                                                  */
@@ -73,8 +73,11 @@ class CMakeGenerator
     wxString m_userBlock3;
 
 protected:
-    void ExpandOptions(const wxString& options, wxString& content, wxArrayString& arrVars, wxArrayString& arrOut,
-        const wxString& indent = wxEmptyString);
+    void ExpandOptions(const wxString& options,
+                       wxString& content,
+                       wxArrayString& arrVars,
+                       wxArrayString& arrOut,
+                       const wxString& indent = wxEmptyString);
 
     wxString Prefix(ProjectPtr project);
 
@@ -107,7 +110,7 @@ protected:
     void ReadUntilEndOfUserBlock(wxArrayString& lines, wxString& content);
 
     void AddUserCodeSection(wxString& content, const wxString& sectionPrefix, const wxString& sectionCode = "");
-    
+
     /**
      * @brief add pre|post build commands to the generated CMakeLists.txt file
      * @param buildType can be POST_BUILD, PRE_BUILD or PRE_LINK string

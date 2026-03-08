@@ -9,8 +9,12 @@ CMakeBuilder::CMakeBuilder()
 {
 }
 
-bool CMakeBuilder::Export(const wxString& project, const wxString& confToBuild, const wxString& arguments,
-                          bool isProjectOnly, bool force, wxString& errMsg)
+bool CMakeBuilder::Export(const wxString& project,
+                          const wxString& confToBuild,
+                          const wxString& arguments,
+                          bool isProjectOnly,
+                          bool force,
+                          wxString& errMsg)
 {
     wxUnusedVar(project);
     wxUnusedVar(confToBuild);
@@ -38,8 +42,8 @@ wxString CMakeBuilder::GetBuildCommand(const wxString& project, const wxString& 
     return command;
 }
 
-wxString CMakeBuilder::GetPOCleanCommand(const wxString& project, const wxString& confToBuild,
-                                         const wxString& arguments)
+wxString
+CMakeBuilder::GetPOCleanCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments)
 {
     wxString command;
     command << "cd " << GetProjectBuildFolder(project, true) << " && " << GetBuildToolCommand(project, confToBuild)
@@ -47,16 +51,16 @@ wxString CMakeBuilder::GetPOCleanCommand(const wxString& project, const wxString
     return command;
 }
 
-wxString CMakeBuilder::GetPOBuildCommand(const wxString& project, const wxString& confToBuild,
-                                         const wxString& arguments)
+wxString
+CMakeBuilder::GetPOBuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments)
 {
     wxString command;
     command << "cd " << GetProjectBuildFolder(project, true) << " && " << GetBuildToolCommand(project, confToBuild);
     return command;
 }
 
-wxString CMakeBuilder::GetPORebuildCommand(const wxString& project, const wxString& confToBuild,
-                                           const wxString& arguments)
+wxString
+CMakeBuilder::GetPORebuildCommand(const wxString& project, const wxString& confToBuild, const wxString& arguments)
 {
     wxString command;
     command << "cd " << GetProjectBuildFolder(project, true) << " && " << GetBuildToolCommand(project, confToBuild)
@@ -64,14 +68,19 @@ wxString CMakeBuilder::GetPORebuildCommand(const wxString& project, const wxStri
     return command;
 }
 
-wxString CMakeBuilder::GetSingleFileCmd(const wxString& project, const wxString& confToBuild, const wxString& arguments,
+wxString CMakeBuilder::GetSingleFileCmd(const wxString& project,
+                                        const wxString& confToBuild,
+                                        const wxString& arguments,
                                         const wxString& fileName)
 {
     return wxEmptyString;
 }
 
-wxString CMakeBuilder::GetPreprocessFileCmd(const wxString& project, const wxString& confToBuild,
-                                            const wxString& arguments, const wxString& fileName, wxString& errMsg)
+wxString CMakeBuilder::GetPreprocessFileCmd(const wxString& project,
+                                            const wxString& confToBuild,
+                                            const wxString& arguments,
+                                            const wxString& fileName,
+                                            wxString& errMsg)
 {
     return wxEmptyString;
 }
@@ -83,7 +92,9 @@ wxString CMakeBuilder::GetWorkspaceBuildFolder(bool wrapWithQuotes)
 
     fn.AppendDir(CMAKE_BUILD_FOLDER_PREFIX + workspaceConfig);
     wxString folder = fn.GetPath();
-    if(wrapWithQuotes) { StringUtils::WrapWithQuotes(folder); }
+    if (wrapWithQuotes) {
+        StringUtils::WrapWithQuotes(folder);
+    }
     return folder;
 }
 
@@ -107,14 +118,16 @@ wxString CMakeBuilder::GetProjectBuildFolder(const wxString& project, bool wrapW
 wxString CMakeBuilder::GetBuildToolCommand(const wxString& project, const wxString& confToBuild) const
 {
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(project, confToBuild);
-    if(!bldConf) return wxEmptyString;
+    if (!bldConf)
+        return wxEmptyString;
 
     // The 'make' command is part of the compiler settings
     CompilerPtr compiler = bldConf->GetCompiler();
-    if(!compiler) return wxEmptyString;
+    if (!compiler)
+        return wxEmptyString;
 
     wxString buildTool = compiler->GetTool("MAKE");
-    if(buildTool.Lower().Contains("make")) {
+    if (buildTool.Lower().Contains("make")) {
         return buildTool + " -e ";
 
     } else {

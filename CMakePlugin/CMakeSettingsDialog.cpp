@@ -78,7 +78,6 @@ CMakeSettingsDialog::CMakeSettingsDialog(wxWindow* parent, CMakePlugin* plugin)
 CMakeSettingsDialog::~CMakeSettingsDialog()
 {
     // Save window layout
-    
 }
 
 /* ************************************************************************ */

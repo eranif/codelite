@@ -31,6 +31,7 @@
 class HelpPluginSettingsDlg : public HelpPluginSettingsDlgBase
 {
     bool m_modified = false;
+
 public:
     explicit HelpPluginSettingsDlg(wxWindow* parent);
     ~HelpPluginSettingsDlg() override = default;

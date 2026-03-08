@@ -38,10 +38,7 @@
 #include "workspace.h"
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new ContinuousBuild(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new ContinuousBuild(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -71,10 +68,10 @@ ContinuousBuild::ContinuousBuild(IManager* manager)
 
     m_topWin = m_mgr->GetTheApp();
     EventNotifier::Get()->Connect(wxEVT_FILE_SAVED, clCommandEventHandler(ContinuousBuild::OnFileSaved), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_FILE_SAVE_BY_BUILD_START,
-                                  wxCommandEventHandler(ContinuousBuild::OnIgnoreFileSaved), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_FILE_SAVE_BY_BUILD_END,
-                                  wxCommandEventHandler(ContinuousBuild::OnStopIgnoreFileSaved), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_FILE_SAVE_BY_BUILD_START, wxCommandEventHandler(ContinuousBuild::OnIgnoreFileSaved), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_FILE_SAVE_BY_BUILD_END, wxCommandEventHandler(ContinuousBuild::OnStopIgnoreFileSaved), NULL, this);
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &ContinuousBuild::OnBuildProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &ContinuousBuild::OnBuildProcessEnded, this);
 }
@@ -96,16 +93,16 @@ void ContinuousBuild::HookPopupMenu(wxMenu* menu, MenuType type)
 void ContinuousBuild::UnPlug()
 {
     m_tabHelper.reset();
-    if(!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_view)) {
+    if (!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_view)) {
         m_view->Destroy();
     }
     m_view = nullptr;
 
     EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVED, clCommandEventHandler(ContinuousBuild::OnFileSaved), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVE_BY_BUILD_START,
-                                     wxCommandEventHandler(ContinuousBuild::OnIgnoreFileSaved), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_FILE_SAVE_BY_BUILD_END,
-                                     wxCommandEventHandler(ContinuousBuild::OnStopIgnoreFileSaved), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_FILE_SAVE_BY_BUILD_START, wxCommandEventHandler(ContinuousBuild::OnIgnoreFileSaved), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_FILE_SAVE_BY_BUILD_END, wxCommandEventHandler(ContinuousBuild::OnStopIgnoreFileSaved), NULL, this);
 }
 
 void ContinuousBuild::OnFileSaved(clCommandEvent& e)
@@ -113,7 +110,7 @@ void ContinuousBuild::OnFileSaved(clCommandEvent& e)
     e.Skip();
     clDEBUG1() << "ContinuousBuild::OnFileSaved";
     // Don't build while the main build is in progress
-    if(m_buildInProgress) {
+    if (m_buildInProgress) {
         clDEBUG() << "Build already in progress, skipping";
         return;
     }
@@ -121,7 +118,7 @@ void ContinuousBuild::OnFileSaved(clCommandEvent& e)
     ContinuousBuildConf conf;
     m_mgr->GetConfigTool()->ReadObject(wxT("ContinousBuildConf"), &conf);
 
-    if(conf.GetEnabled()) {
+    if (conf.GetEnabled()) {
         DoBuild(e.GetString());
     } else {
         clDEBUG1() << "ContinuousBuild is disabled";
@@ -132,14 +129,14 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 {
     clDEBUG() << "ContinuousBuild::DoBuild is called";
     // Make sure a workspace is opened
-    if(!m_mgr->IsWorkspaceOpen()) {
+    if (!m_mgr->IsWorkspaceOpen()) {
         clDEBUG() << "ContinuousBuild::DoBuild: No workspace opened!";
         return;
     }
 
     // Filter non source files
     FileExtManager::FileType type = FileExtManager::GetType(fileName);
-    switch(type) {
+    switch (type) {
     case FileExtManager::TypeSourceC:
     case FileExtManager::TypeSourceCpp:
     case FileExtManager::TypeResource:
@@ -152,33 +149,33 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
     }
 
     wxString projectName = m_mgr->GetProjectNameByFile(fileName);
-    if(projectName.IsEmpty()) {
+    if (projectName.IsEmpty()) {
         clDEBUG() << "ContinuousBuild::DoBuild: project name is empty";
         return;
     }
 
     wxString errMsg;
     ProjectPtr project = m_mgr->GetWorkspace()->FindProjectByName(projectName, errMsg);
-    if(!project) {
+    if (!project) {
         clDEBUG() << "Could not find project for file";
         return;
     }
 
     // get the selected configuration to be build
     BuildConfigPtr bldConf = m_mgr->GetWorkspace()->GetProjBuildConf(project->GetName(), wxEmptyString);
-    if(!bldConf) {
+    if (!bldConf) {
         clDEBUG() << "Failed to locate build configuration\n" << endl;
         return;
     }
 
     BuilderPtr builder = bldConf->GetBuilder();
-    if(!builder) {
+    if (!builder) {
         clDEBUG() << "Failed to located builder\n" << endl;
         return;
     }
 
     // Only normal file builds are supported
-    if(bldConf->IsCustomBuild()) {
+    if (bldConf->IsCustomBuild()) {
         clDEBUG() << "Build is custom. Skipping\n" << endl;
         return;
     }
@@ -187,9 +184,9 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
     wxString cmd =
         builder->GetSingleFileCmd(projectName, bldConf->GetName(), bldConf->GetBuildSystemArguments(), fileName);
 
-    if(m_buildProcess.IsBusy()) {
+    if (m_buildProcess.IsBusy()) {
         // add the build to the queue
-        if(m_files.Index(fileName) == wxNOT_FOUND) {
+        if (m_files.Index(fileName) == wxNOT_FOUND) {
             m_files.Add(fileName);
 
             // update the UI
@@ -209,7 +206,7 @@ void ContinuousBuild::DoBuild(const wxString& fileName)
 
     EnvSetter env(NULL, NULL, projectName, bldConf->GetName());
     clDEBUG() << "Continuous build:" << cmd << endl;
-    if(!m_buildProcess.Execute(cmd, fileName, project->GetFileName().GetPath(), this))
+    if (!m_buildProcess.Execute(cmd, fileName, project->GetFileName().GetPath(), this))
         return;
 
     // Set some messages
@@ -230,7 +227,7 @@ void ContinuousBuild::OnBuildProcessEnded(clProcessEvent& e)
     EventNotifier::Get()->AddPendingEvent(event);
 
     int exitCode(-1);
-    if(IProcess::GetProcessExitCode(pid, exitCode) && exitCode != 0) {
+    if (IProcess::GetProcessExitCode(pid, exitCode) && exitCode != 0) {
         m_view->AddFailedFile(m_buildProcess.GetFileName());
     }
 
@@ -238,7 +235,7 @@ void ContinuousBuild::OnBuildProcessEnded(clProcessEvent& e)
     m_buildProcess.Stop();
 
     // if the queue is not empty, start another build
-    if(m_files.IsEmpty() == false) {
+    if (m_files.IsEmpty() == false) {
 
         wxString fileName = m_files.Item(0);
         m_files.RemoveAt(0);

@@ -33,22 +33,14 @@ public:
     FileMappingDlg(wxWindow* parent);
     virtual ~FileMappingDlg() = default;
 
-    wxString GetSourceFolder() const {
-        return m_dirPickerSource->GetPath();
-    }
-    
-    wxString GetTargetFolder() const {
-        return m_textCtrlRemote->GetValue();
-    }
-    
-    void SetSourceFolder( const wxString &path) {
-        m_dirPickerSource->SetPath( path );
-    }
-    
-    void SetTargetFolder( const wxString &path) {
-        m_textCtrlRemote->ChangeValue( path );
-    }
-    
+    wxString GetSourceFolder() const { return m_dirPickerSource->GetPath(); }
+
+    wxString GetTargetFolder() const { return m_textCtrlRemote->GetValue(); }
+
+    void SetSourceFolder(const wxString& path) { m_dirPickerSource->SetPath(path); }
+
+    void SetTargetFolder(const wxString& path) { m_textCtrlRemote->ChangeValue(path); }
+
 protected:
     virtual void OnOkUI(wxUpdateUIEvent& event);
 };

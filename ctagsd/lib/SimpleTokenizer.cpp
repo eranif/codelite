@@ -7,45 +7,45 @@ SimpleTokenizer::SimpleTokenizer(const wxString& str)
 {
 }
 
-#define __PEEK_LOOKAHEAD_N(__N, c)       \
-    if((m_pos + __N) < m_str.length()) { \
-        c = m_str[m_pos + __N];          \
-    } else {                             \
-        c = 0;                           \
+#define __PEEK_LOOKAHEAD_N(__N, c)        \
+    if ((m_pos + __N) < m_str.length()) { \
+        c = m_str[m_pos + __N];           \
+    } else {                              \
+        c = 0;                            \
     }
 
 #define PEEK_LOOKAHEAD_1(c) __PEEK_LOOKAHEAD_N(1, c)
 #define PEEK_LOOKAHEAD_2(c) __PEEK_LOOKAHEAD_N(2, c)
-#define PEEK_LOOKAHEAD_FIRST_NON_WHITESPACE(c)                                                                \
-    {                                                                                                         \
-                                                                                                              \
-        for(size_t __cur = m_pos; __cur < m_str.length(); ++__cur) {                                          \
-            if(m_str[__cur] != ' ' && m_str[__cur] != '\t' && m_str[__cur] != '\n' && m_str[__cur] != '\r') { \
-                c = m_str[__cur];                                                                             \
-                break;                                                                                        \
-            }                                                                                                 \
-        }                                                                                                     \
+#define PEEK_LOOKAHEAD_FIRST_NON_WHITESPACE(c)                                                                 \
+    {                                                                                                          \
+                                                                                                               \
+        for (size_t __cur = m_pos; __cur < m_str.length(); ++__cur) {                                          \
+            if (m_str[__cur] != ' ' && m_str[__cur] != '\t' && m_str[__cur] != '\n' && m_str[__cur] != '\r') { \
+                c = m_str[__cur];                                                                              \
+                break;                                                                                         \
+            }                                                                                                  \
+        }                                                                                                      \
     }
 
-#define PEEK_LOOKAHEAD_FIRST_2_NON_WHITESPACE(c1, c2)                                                         \
-    {                                                                                                         \
-        size_t __count_found = 0;                                                                             \
-        for(size_t __cur = m_pos; __cur < m_str.length(); ++__cur) {                                          \
-            if(m_str[__cur] != ' ' && m_str[__cur] != '\t' && m_str[__cur] != '\n' && m_str[__cur] != '\r') { \
-                if(__count_found == 0) {                                                                      \
-                    c1 = m_str[__cur];                                                                        \
-                    __count_found = 1;                                                                        \
-                } else {                                                                                      \
-                    c2 = m_str[__cur];                                                                        \
-                    break;                                                                                    \
-                }                                                                                             \
-            }                                                                                                 \
-        }                                                                                                     \
+#define PEEK_LOOKAHEAD_FIRST_2_NON_WHITESPACE(c1, c2)                                                          \
+    {                                                                                                          \
+        size_t __count_found = 0;                                                                              \
+        for (size_t __cur = m_pos; __cur < m_str.length(); ++__cur) {                                          \
+            if (m_str[__cur] != ' ' && m_str[__cur] != '\t' && m_str[__cur] != '\n' && m_str[__cur] != '\r') { \
+                if (__count_found == 0) {                                                                      \
+                    c1 = m_str[__cur];                                                                         \
+                    __count_found = 1;                                                                         \
+                } else {                                                                                       \
+                    c2 = m_str[__cur];                                                                         \
+                    break;                                                                                     \
+                }                                                                                              \
+            }                                                                                                  \
+        }                                                                                                      \
     }
 
 #define RETURN_TOKEN_IF_POSSIBLE()                                                   \
-    if(m_token.ok()) {                                                               \
-        if(!m_token.is_valid_identifier(m_str)) {                                    \
+    if (m_token.ok()) {                                                              \
+        if (!m_token.is_valid_identifier(m_str)) {                                   \
             m_token.clear();                                                         \
         } else {                                                                     \
             *token = m_token;                                                        \
@@ -61,7 +61,7 @@ SimpleTokenizer::SimpleTokenizer(const wxString& str)
     }
 
 #define RETURN_COMMENT_TOKEN_IF_POSSIBLE() \
-    if(m_token.ok()) {                     \
+    if (m_token.ok()) {                    \
         *token = m_token;                  \
         m_token.clear();                   \
         ++m_pos;                           \
@@ -76,10 +76,10 @@ SimpleTokenizer::SimpleTokenizer(const wxString& str)
     m_line_start_pos = m_pos
 
 #define CHECK_TOKENIZER_MODE(expected_mode) \
-    if(m_mode == TOKNZR_MODE_NONE) {        \
+    if (m_mode == TOKNZR_MODE_NONE) {       \
         m_mode = expected_mode;             \
     }                                       \
-    if(m_mode != expected_mode) {           \
+    if (m_mode != expected_mode) {          \
         return false;                       \
     }
 
@@ -88,11 +88,11 @@ bool SimpleTokenizer::next(SimpleTokenizer::Token* token)
     CHECK_TOKENIZER_MODE(TOKNZR_MODE_NORMAL);
 
     eSimpleTokenizerState escape_return_state = TOKNZR_STATE_DQUOTE_STRING;
-    for(; m_pos < m_str.length(); ++m_pos) {
+    for (; m_pos < m_str.length(); ++m_pos) {
         wxChar ch = m_str[m_pos];
-        switch(m_state) {
+        switch (m_state) {
         case TOKNZR_STATE_PREPROCESSOR:
-            switch(ch) {
+            switch (ch) {
             case '\n':
                 INCREMENT_LINE();
                 m_state = TOKNZR_STATE_NORMAL;
@@ -103,16 +103,16 @@ bool SimpleTokenizer::next(SimpleTokenizer::Token* token)
             }
             break;
         case TOKNZR_STATE_NORMAL:
-            switch(ch) {
+            switch (ch) {
             case '#':
                 m_state = TOKNZR_STATE_PREPROCESSOR;
                 RETURN_TOKEN_IF_POSSIBLE();
                 break;
             case '/':
-                if(LOOKAHEAD_1('*')) {
+                if (LOOKAHEAD_1('*')) {
                     ++m_pos;
                     m_state = TOKNZR_STATE_MULTILINE_COMMENT;
-                } else if(LOOKAHEAD_1('/')) {
+                } else if (LOOKAHEAD_1('/')) {
                     ++m_pos;
                     m_state = TOKNZR_STATE_LINE_COMMENT;
                 }
@@ -185,7 +185,7 @@ bool SimpleTokenizer::next(SimpleTokenizer::Token* token)
             case '7':
             case '8':
             case '9':
-                if(m_token.ok()) {
+                if (m_token.ok()) {
                     m_token.inc_length();
                 } else {
                     // start a new token
@@ -207,7 +207,7 @@ bool SimpleTokenizer::next(SimpleTokenizer::Token* token)
             }
             break;
         case TOKNZR_STATE_DQUOTE_STRING:
-            switch(ch) {
+            switch (ch) {
             case '"':
                 m_state = TOKNZR_STATE_NORMAL;
                 break;
@@ -218,7 +218,7 @@ bool SimpleTokenizer::next(SimpleTokenizer::Token* token)
             }
             break;
         case TOKNZR_STATE_SINGLE_STRING:
-            switch(ch) {
+            switch (ch) {
             case '\'':
                 m_state = TOKNZR_STATE_NORMAL;
                 break;
@@ -232,9 +232,9 @@ bool SimpleTokenizer::next(SimpleTokenizer::Token* token)
             m_state = escape_return_state;
             break;
         case TOKNZR_STATE_MULTILINE_COMMENT:
-            switch(ch) {
+            switch (ch) {
             case '*':
-                if(LOOKAHEAD_1('/')) {
+                if (LOOKAHEAD_1('/')) {
                     ++m_pos;
                     m_state = TOKNZR_STATE_NORMAL;
                 }
@@ -248,7 +248,7 @@ bool SimpleTokenizer::next(SimpleTokenizer::Token* token)
             }
             break;
         case TOKNZR_STATE_LINE_COMMENT:
-            switch(ch) {
+            switch (ch) {
             case '\n':
                 INCREMENT_LINE();
                 m_state = TOKNZR_STATE_NORMAL;
@@ -269,11 +269,11 @@ bool SimpleTokenizer::next_comment(Token* token)
 {
     CHECK_TOKENIZER_MODE(TOKNZR_MODE_COMMENTS);
     eSimpleTokenizerState escape_return_state = TOKNZR_STATE_DQUOTE_STRING;
-    for(; m_pos < m_str.length(); ++m_pos) {
+    for (; m_pos < m_str.length(); ++m_pos) {
         wxChar ch = m_str[m_pos];
-        switch(m_state) {
+        switch (m_state) {
         case TOKNZR_STATE_PREPROCESSOR:
-            switch(ch) {
+            switch (ch) {
             case '\n':
                 INCREMENT_LINE();
                 m_state = TOKNZR_STATE_NORMAL;
@@ -284,21 +284,21 @@ bool SimpleTokenizer::next_comment(Token* token)
             }
             break;
         case TOKNZR_STATE_NORMAL:
-            switch(ch) {
+            switch (ch) {
             case '#':
                 m_state = TOKNZR_STATE_PREPROCESSOR;
                 break;
             case '/':
-                if(LOOKAHEAD_1('*')) {
+                if (LOOKAHEAD_1('*')) {
                     // check for Javadoc or Qt style
-                    if(LOOKAHEAD_2('*') || LOOKAHEAD_2('!')) {
+                    if (LOOKAHEAD_2('*') || LOOKAHEAD_2('!')) {
                         ++m_pos;
                     }
                     ++m_pos;
                     m_state = TOKNZR_STATE_MULTILINE_COMMENT;
                     m_token = Token(m_pos + 1, m_line, m_pos - m_line_start_pos, 0);
-                } else if(LOOKAHEAD_1('/')) {
-                    if(LOOKAHEAD_2('/') || LOOKAHEAD_2('!')) {
+                } else if (LOOKAHEAD_1('/')) {
+                    if (LOOKAHEAD_2('/') || LOOKAHEAD_2('!')) {
                         ++m_pos;
                     }
                     ++m_pos;
@@ -321,7 +321,7 @@ bool SimpleTokenizer::next_comment(Token* token)
             }
             break;
         case TOKNZR_STATE_DQUOTE_STRING:
-            switch(ch) {
+            switch (ch) {
             case '"':
                 m_state = TOKNZR_STATE_NORMAL;
                 break;
@@ -332,7 +332,7 @@ bool SimpleTokenizer::next_comment(Token* token)
             }
             break;
         case TOKNZR_STATE_SINGLE_STRING:
-            switch(ch) {
+            switch (ch) {
             case '\'':
                 m_state = TOKNZR_STATE_NORMAL;
                 break;
@@ -346,14 +346,14 @@ bool SimpleTokenizer::next_comment(Token* token)
             m_state = escape_return_state;
             break;
         case TOKNZR_STATE_MULTILINE_COMMENT:
-            switch(ch) {
+            switch (ch) {
             case '*':
-                if(LOOKAHEAD_1('*') && LOOKAHEAD_2('/')) {
+                if (LOOKAHEAD_1('*') && LOOKAHEAD_2('/')) {
                     m_pos += 2;
                     m_state = TOKNZR_STATE_NORMAL;
                     m_token.set_line(m_line);
                     RETURN_COMMENT_TOKEN_IF_POSSIBLE();
-                } else if(LOOKAHEAD_1('/')) {
+                } else if (LOOKAHEAD_1('/')) {
                     m_pos += 1;
                     m_state = TOKNZR_STATE_NORMAL;
                     m_token.set_line(m_line);
@@ -371,7 +371,7 @@ bool SimpleTokenizer::next_comment(Token* token)
             }
             break;
         case TOKNZR_STATE_LINE_COMMENT:
-            switch(ch) {
+            switch (ch) {
             case '\n':
                 m_token.set_line(m_line);
                 INCREMENT_LINE();
@@ -398,16 +398,16 @@ void SimpleTokenizer::strip_comment(wxString& comment)
 {
     wxArrayString lines = ::wxStringTokenize(comment, "\n", wxTOKEN_STRTOK);
     comment.clear();
-    for(auto& line : lines) {
+    for (auto& line : lines) {
         line.erase(0, line.find_first_not_of(LEFT_TRIM));
         line.erase(line.find_last_not_of(RIGHT_TRIM) + 1);
-        if(line.empty()) {
+        if (line.empty()) {
             continue;
         }
         comment << line << "\n";
     }
 
-    if(!comment.empty()) {
+    if (!comment.empty()) {
         comment.RemoveLast();
     }
 }

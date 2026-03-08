@@ -63,7 +63,7 @@ protected:
     wxString GetSearchPattern() const;
     wxString GetWorkingDirectory() const;
     bool IsWorkspaceOpen() const;
-    
+
     // Event handlers
     //------------------------------------------
     void OnFindSymbol(wxCommandEvent& e);

@@ -54,9 +54,9 @@ CscopeTab::CscopeTab(wxWindow* parent, IManager* mgr)
     CScopeConfData data;
     m_mgr->GetConfigTool()->ReadObject(wxT("CscopeSettings"), &data);
 
-    const wxString SearchScope[] = { wxTRANSLATE("Entire Workspace"), wxTRANSLATE("Active Project") };
-    m_stringManager.AddStrings(sizeof(SearchScope) / sizeof(wxString), SearchScope, data.GetScanScope(),
-                               m_choiceSearchScope);
+    const wxString SearchScope[] = {wxTRANSLATE("Entire Workspace"), wxTRANSLATE("Active Project")};
+    m_stringManager.AddStrings(
+        sizeof(SearchScope) / sizeof(wxString), SearchScope, data.GetScanScope(), m_choiceSearchScope);
 
     wxFont defFont = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
     m_font = wxFont(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
@@ -71,8 +71,8 @@ CscopeTab::CscopeTab(wxWindow* parent, IManager* mgr)
 
 CscopeTab::~CscopeTab()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CscopeTab::OnThemeChanged), NULL,
-                                     this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CL_THEME_CHANGED, wxCommandEventHandler(CscopeTab::OnThemeChanged), NULL, this);
 }
 
 void CscopeTab::Clear()
@@ -106,7 +106,7 @@ void CscopeTab::BuildTable(CScopeResultTable_t* table)
             wxString display_string;
             display_string << _("Line: ") << entry.GetLine() << wxT(", ") << entry.GetScope() << wxT(", ")
                            << entry.GetPattern();
-            if(insertedItems.count(display_string) == 0) {
+            if (insertedItems.count(display_string) == 0) {
                 insertedItems.insert(display_string);
                 int lineno = m_stc->GetLineCount() - 1; // STC line number *before* we add the result
                 AddMatch(entry.GetLine(), entry.GetPattern());
@@ -119,7 +119,7 @@ void CscopeTab::BuildTable(CScopeResultTable_t* table)
 
 void CscopeTab::FreeTable()
 {
-    if(m_table) {
+    if (m_table) {
         for (auto& [_, vec] : *m_table) {
             // delete the vector
             delete vec;
@@ -131,7 +131,9 @@ void CscopeTab::FreeTable()
 
 void CscopeTab::SetMessage(const wxString& msg, int percent)
 {
-    if(m_mgr->GetStatusBar()) { m_mgr->GetStatusBar()->SetMessage(msg, 3); }
+    if (m_mgr->GetStatusBar()) {
+        m_mgr->GetStatusBar()->SetMessage(msg, 3);
+    }
     m_gauge->SetValue(percent);
 }
 
@@ -204,20 +206,22 @@ void CscopeTab::AddFile(const wxString& filename)
 
 void CscopeTab::OnHotspotClicked(wxStyledTextEvent& e)
 {
-    if(!IsWorkspaceOpen()) { return; }
-    
+    if (!IsWorkspaceOpen()) {
+        return;
+    }
+
     int clickedLine;
     int style = m_styler->HitTest(e, clickedLine);
-    if(style == clFindResultsStyler::LEX_FIF_FILE || style == clFindResultsStyler::LEX_FIF_HEADER) {
+    if (style == clFindResultsStyler::LEX_FIF_FILE || style == clFindResultsStyler::LEX_FIF_HEADER) {
         // Toggle
         m_stc->ToggleFold(clickedLine);
     } else {
         // Open the match
         std::map<int, CscopeEntryData>::const_iterator iter = m_matchesInStc.find(clickedLine);
-        if(iter != m_matchesInStc.end()) {
+        if (iter != m_matchesInStc.end()) {
             wxString wsp_path = GetWorkingDirectory();
             wxFileName fn(iter->second.GetFile());
-            if(!fn.MakeAbsolute(wsp_path)) {
+            if (!fn.MakeAbsolute(wsp_path)) {
                 clLogMessage(wxT("CScope: failed to convert file to absolute path"));
                 return;
             }
@@ -234,14 +238,18 @@ void CscopeTab::OnHotspotClicked(wxStyledTextEvent& e)
 void CscopeTab::CenterEditorLine(int lineno)
 {
     IEditor* editor = m_mgr->GetActiveEditor();
-    if(editor) { editor->CenterLine(lineno); }
+    if (editor) {
+        editor->CenterLine(lineno);
+    }
 }
 
 wxString CscopeTab::GetWorkingDirectory() const
 {
-    if(!IsWorkspaceOpen()) { return wxEmptyString; }
+    if (!IsWorkspaceOpen()) {
+        return wxEmptyString;
+    }
 
-    if(clFileSystemWorkspace::Get().IsOpen()) {
+    if (clFileSystemWorkspace::Get().IsOpen()) {
         wxFileName fn = clFileSystemWorkspace::Get().GetFileName();
         fn.AppendDir(".codelite");
         return fn.GetPath();

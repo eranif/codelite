@@ -36,33 +36,33 @@
 #ifndef _LINEPARSER_H__
 #define _LINEPARSER_H__
 
-#include <wx/string.h>
 #include <wx/list.h>
+#include <wx/string.h>
 /**
  * @class LineParser
  * @brief Class define structure for data structure.
  */
 class LineParser
-{	
+{
 public:
-	int index;
-	float time;
-	float self;
-	float children;
-	int called0;
-	int called1;
-	wxString name;
-	int nameid;
-	bool parents; // input to primary line - not used in call graph
-	bool pline; // primary line
-	bool child; //  output from primary line
-	bool cycle; 
-	bool recursive;
-	int  cycleid;
-	
-	LineParser* Clone() const;
+    int index;
+    float time;
+    float self;
+    float children;
+    int called0;
+    int called1;
+    wxString name;
+    int nameid;
+    bool parents; // input to primary line - not used in call graph
+    bool pline;   // primary line
+    bool child;   //  output from primary line
+    bool cycle;
+    bool recursive;
+    int cycleid;
+
+    LineParser* Clone() const;
 };
 
-WX_DECLARE_LIST( LineParser, LineParserList );
+WX_DECLARE_LIST(LineParser, LineParserList);
 
 #endif

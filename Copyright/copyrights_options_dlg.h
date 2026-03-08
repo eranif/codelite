@@ -1,28 +1,28 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// copyright            : (C) 2008 by Eran Ifrah                            
-// file name            : copyrights_options_dlg.h              
-//                                                                          
+// copyright            : (C) 2008 by Eran Ifrah
+// file name            : copyrights_options_dlg.h
+//
 // -------------------------------------------------------------------------
-// A                                                                        
-//              _____           _      _     _ _                            
-//             /  __ \         | |    | |   (_) |                           
-//             | /  \/ ___   __| | ___| |    _| |_ ___                      
-//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )                     
-//             | \__/\ (_) | (_| |  __/ |___| | ||  __/                     
-//              \____/\___/ \__,_|\___\_____/_|\__\___|                     
-//                                                                          
-//                                                  F i l e                 
-//                                                                          
-//    This program is free software; you can redistribute it and/or modify  
-//    it under the terms of the GNU General Public License as published by  
-//    the Free Software Foundation; either version 2 of the License, or     
-//    (at your option) any later version.                                   
-//                                                                          
+// A
+//              _____           _      _     _ _
+//             /  __ \         | |    | |   (_) |
+//             | /  \/ ___   __| | ___| |    _| |_ ___
+//             | |    / _ \ / _  |/ _ \ |   | | __/ _ )
+//             | \__/\ (_) | (_| |  __/ |___| | ||  __/
+//              \____/\___/ \__,_|\___\_____/_|\__\___|
+//
+//                                                  F i l e
+//
+//    This program is free software; you can redistribute it and/or modify
+//    it under the terms of the GNU General Public License as published by
+//    the Free Software Foundation; either version 2 of the License, or
+//    (at your option) any later version.
+//
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef __copyrights_options_dlg__
+#ifndef __copyrights_options_dlg__
 #define __copyrights_options_dlg__
 
 /**
@@ -37,14 +37,16 @@ class IConfigTool;
 /** Implementing CopyrightsOptionsBaseDlg */
 class CopyrightsOptionsDlg : public CopyrightsOptionsBaseDlg
 {
-	IConfigTool *m_conf;
+    IConfigTool* m_conf;
+
 protected:
-	// Handlers for CopyrightsOptionsBaseDlg events.
-	void OnSelectFile( wxCommandEvent& event );
-	void OnButtonSave( wxCommandEvent &event );
+    // Handlers for CopyrightsOptionsBaseDlg events.
+    void OnSelectFile(wxCommandEvent& event);
+    void OnButtonSave(wxCommandEvent& event);
+
 public:
-	/** Constructor */
-	CopyrightsOptionsDlg( wxWindow* parent, IConfigTool *config );
+    /** Constructor */
+    CopyrightsOptionsDlg(wxWindow* parent, IConfigTool* config);
 };
 
 #endif // __copyrights_options_dlg__

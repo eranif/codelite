@@ -54,8 +54,8 @@
 #include <map>
 
 // wxWidgets
-#include <wx/string.h>
 #include <wx/arrstr.h>
+#include <wx/string.h>
 
 /* ************************************************************************ */
 /* CLASSES                                                                  */
@@ -92,20 +92,23 @@ public:
     /// Configure arguments.
     wxArrayString arguments;
 
-
     /// Name of parent project.
     /// Parent project should have proper CMake configuration.
     wxString parentProject;
-
 
     /**
      * @brief Constructor.
      */
     CMakeProjectSettings()
-        : enabled(false), sourceDirectory("$(ProjectPath)"), buildDirectory("build")
-        , generator(), buildType(), arguments(), parentProject()
-    {}
-
+        : enabled(false)
+        , sourceDirectory("$(ProjectPath)")
+        , buildDirectory("build")
+        , generator()
+        , buildType()
+        , arguments()
+        , parentProject()
+    {
+    }
 };
 
 /* ************************************************************************ */

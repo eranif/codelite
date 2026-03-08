@@ -18,7 +18,7 @@ eReadSome ChannelSocket::read_some()
     client->SelectRead();
     char buffer[1024 * 4];
     size_t bytes_read = 0;
-    switch(client->Read(buffer, sizeof(buffer), bytes_read)) {
+    switch (client->Read(buffer, sizeof(buffer), bytes_read)) {
     case clSocketBase::kSuccess:
         m_buffer.append(buffer, bytes_read);
         return eReadSome::kSuccess;
@@ -55,16 +55,16 @@ bool ChannelSocket::write_reply(const wxString& message)
 
 std::unique_ptr<JSON> ChannelSocket::read_message()
 {
-    while(true) {
+    while (true) {
         auto msg = LSP::Message::GetJSONPayload(m_buffer);
-        if(msg) {
+        if (msg) {
             return msg;
         }
 
         // attempt to read some more data from stdin
         bool cont = true;
-        while(cont) {
-            switch(read_some()) {
+        while (cont) {
+            switch (read_some()) {
             case eReadSome::kError:
                 return nullptr;
             case eReadSome::kSuccess:
@@ -87,7 +87,7 @@ void ChannelSocket::open()
     clSYSTEM() << "Accepting connection on:" << connection_string << endl;
 
     client = server.WaitForNewConnection();
-    if(!client) {
+    if (!client) {
         clERROR() << "failed to accept new connection. Error code:" << server.GetLastError() << endl;
         exit(1);
     }

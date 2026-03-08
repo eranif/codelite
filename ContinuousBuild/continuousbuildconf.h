@@ -30,19 +30,19 @@
 
 class ContinuousBuildConf : public SerializedObject
 {
-	bool m_enabled;
-	size_t m_parallelProcesses;
+    bool m_enabled;
+    size_t m_parallelProcesses;
 
 public:
-	ContinuousBuildConf();
-	virtual ~ContinuousBuildConf() = default;
+    ContinuousBuildConf();
+    virtual ~ContinuousBuildConf() = default;
 
 public:
-	virtual void DeSerialize(Archive &arch);
-	virtual void Serialize(Archive &arch);
-	void SetEnabled(bool enabled) { this->m_enabled = enabled; }
-	void SetParallelProcesses(size_t parallelProcesses) { this->m_parallelProcesses = parallelProcesses; }
-	bool GetEnabled() const { return m_enabled; }
-	size_t GetParallelProcesses() const { return m_parallelProcesses; }
+    virtual void DeSerialize(Archive& arch);
+    virtual void Serialize(Archive& arch);
+    void SetEnabled(bool enabled) { this->m_enabled = enabled; }
+    void SetParallelProcesses(size_t parallelProcesses) { this->m_parallelProcesses = parallelProcesses; }
+    bool GetEnabled() const { return m_enabled; }
+    size_t GetParallelProcesses() const { return m_parallelProcesses; }
 };
 #endif // __continuousbuildconf__

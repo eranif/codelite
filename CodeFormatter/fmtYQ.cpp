@@ -9,12 +9,12 @@ fmtYQ::fmtYQ()
     SetName("yq");
 
     // handle all known JSON files
-    SetFileTypes({ FileExtManager::TypeYAML });
+    SetFileTypes({FileExtManager::TypeYAML});
 
     SetDescription(_("commandline YAML processor"));
     SetShortDescription(_("Yaml formatter"));
 
     const auto yq_exe = ThePlatform->Which("yq");
-    SetCommand({ yq_exe.value_or("yq"), ".", R"#("$(CurrentFileRelPath)")#" });
+    SetCommand({yq_exe.value_or("yq"), ".", R"#("$(CurrentFileRelPath)")#"});
     SetEnabled(yq_exe.has_value());
 }

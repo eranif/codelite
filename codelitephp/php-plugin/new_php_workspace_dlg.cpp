@@ -17,7 +17,7 @@ NewPHPWorkspaceDlg::~NewPHPWorkspaceDlg() {}
 
 wxString NewPHPWorkspaceDlg::GetWorkspacePath() const
 {
-    if(m_textCtrlPath->IsEmpty() || m_textCtrlName->IsEmpty()) {
+    if (m_textCtrlPath->IsEmpty() || m_textCtrlName->IsEmpty()) {
         return "";
     }
 
@@ -32,10 +32,7 @@ void NewPHPWorkspaceDlg::OnNameUpdated(wxCommandEvent& event)
     m_textCtrlPreview->ChangeValue(GetWorkspacePath());
 }
 
-void NewPHPWorkspaceDlg::OnOK(wxCommandEvent& event)
-{
-    EndModal(wxID_OK);
-}
+void NewPHPWorkspaceDlg::OnOK(wxCommandEvent& event) { EndModal(wxID_OK); }
 
 void NewPHPWorkspaceDlg::OnCheckMakeSeparateDir(wxCommandEvent& event)
 {
@@ -50,7 +47,7 @@ void NewPHPWorkspaceDlg::OnOKUI(wxUpdateUIEvent& event)
 void NewPHPWorkspaceDlg::OnBrowse(wxCommandEvent& event)
 {
     wxString path = ::wxDirSelector(_("select a folder"), m_textCtrlPath->GetValue());
-    if(!path.IsEmpty()) {
+    if (!path.IsEmpty()) {
         m_textCtrlPath->SetValue(path); // we want event here
         m_textCtrlPreview->ChangeValue(GetWorkspacePath());
     }
@@ -60,7 +57,7 @@ void NewPHPWorkspaceDlg::OnFolderSelected(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxFileName fn(m_textCtrlPath->GetValue());
-    
+
     // Use the last folder path as the project name
     m_textCtrlName->ChangeValue(fn.GetName());
 }

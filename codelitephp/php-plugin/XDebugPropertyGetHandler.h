@@ -26,15 +26,16 @@
 #ifndef XDEBUGPROPERTYGETHANDLER_H
 #define XDEBUGPROPERTYGETHANDLER_H
 
-#include <wx/string.h>
 #include "XDebugCommandHandler.h" // Base class: XDebugCommandHandler
+
+#include <wx/string.h>
 
 class XDebugPropertyGetHandler : public XDebugCommandHandler
 {
     wxString m_property;
-    
+
 public:
-    XDebugPropertyGetHandler(XDebugManager* mgr, int transactionId, const wxString &property);
+    XDebugPropertyGetHandler(XDebugManager* mgr, int transactionId, const wxString& property);
     virtual ~XDebugPropertyGetHandler() = default;
 
 public:

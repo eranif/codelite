@@ -79,10 +79,10 @@ public:
 private:
     PHPEditorContextMenu();
     virtual ~PHPEditorContextMenu();
-    
-    void OnCommentSelection(wxCommandEvent &event);
-    void OnCommentLine(wxCommandEvent &event);
-    
+
+    void OnCommentSelection(wxCommandEvent& event);
+    void OnCommentLine(wxCommandEvent& event);
+
     void DoBuildMenu(wxMenu* menu, IEditor* editor);
     bool IsIncludeOrRequireStatement(wxString& includeWhat);
     bool GetIncludeOrRequireFileName(wxString& fn);
@@ -94,14 +94,18 @@ private:
 
 #define GET_EDITOR_SCI_BOOL()                       \
     IEditor* editor = m_manager->GetActiveEditor(); \
-    if(!editor) return false;                       \
-    wxStyledTextCtrl* sci = editor->GetCtrl();       \
-    if(!sci) return false;
+    if (!editor)                                    \
+        return false;                               \
+    wxStyledTextCtrl* sci = editor->GetCtrl();      \
+    if (!sci)                                       \
+        return false;
 
 #define GET_EDITOR_SCI_VOID()                       \
     IEditor* editor = m_manager->GetActiveEditor(); \
-    if(!editor) return;                             \
-    wxStyledTextCtrl* sci = editor->GetCtrl();       \
-    if(!sci) return;
+    if (!editor)                                    \
+        return;                                     \
+    wxStyledTextCtrl* sci = editor->GetCtrl();      \
+    if (!sci)                                       \
+        return;
 
 #endif // PHPEDITORCONTEXTMENU_H

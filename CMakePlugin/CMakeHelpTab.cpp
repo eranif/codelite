@@ -111,7 +111,7 @@ void CMakeHelpTab::OnInsert(wxCommandEvent& event)
     IEditor* editor = manager->GetActiveEditor();
 
     // No active editor
-    if(!editor)
+    if (!editor)
         return;
 
     // Insert value
@@ -150,7 +150,7 @@ void CMakeHelpTab::OnSelect(wxCommandEvent& event)
     std::map<wxString, wxString>::const_iterator it = m_data->find(name);
 
     // Data found
-    if(it != m_data->end()) {
+    if (it != m_data->end()) {
         CreateHelpPage(it->second, name);
     }
 }
@@ -162,7 +162,7 @@ void CMakeHelpTab::OnReload(wxCommandEvent& event)
     wxUnusedVar(event);
 
     wxASSERT(m_plugin->GetCMake());
-    if(!m_plugin->GetCMake()->IsOk()) {
+    if (!m_plugin->GetCMake()->IsOk()) {
         wxMessageBox(_("CMake application path is invalid!"), wxMessageBoxCaptionStr, wxOK | wxCENTER | wxICON_ERROR);
         return;
     }
@@ -177,7 +177,7 @@ void CMakeHelpTab::ListAll()
     // Remove old data
     m_listBoxList->Clear();
 
-    if(!m_data)
+    if (!m_data)
         return;
 
     // Foreach data and store names into list
@@ -195,7 +195,7 @@ void CMakeHelpTab::ListFiltered(const wxString& search)
     // Remove old data
     m_listBoxList->Clear();
 
-    if(!m_data)
+    if (!m_data)
         return;
 
     // Foreach data and store names into list
@@ -213,7 +213,7 @@ void CMakeHelpTab::ListFiltered(const wxString& search)
 void CMakeHelpTab::OnThreadStart(wxThreadEvent& event)
 {
     // Show gauge
-    if(!m_gaugeLoad->IsShown()) {
+    if (!m_gaugeLoad->IsShown()) {
         m_gaugeLoad->Show();
         Layout();
     }
@@ -245,7 +245,7 @@ void CMakeHelpTab::OnThreadDone(wxThreadEvent& event)
 void CMakeHelpTab::OnClose(wxCloseEvent& event)
 {
     // Wait for thread
-    if(GetThread() && GetThread()->IsRunning())
+    if (GetThread() && GetThread()->IsRunning())
         GetThread()->Wait();
 
     Destroy();
@@ -268,7 +268,7 @@ void CMakeHelpTab::ShowTopic(int topic)
     const CMake* cmake = m_plugin->GetCMake();
     wxASSERT(cmake);
 
-    switch(topic) {
+    switch (topic) {
     default:
         m_data = NULL;
         break;
@@ -302,7 +302,7 @@ void CMakeHelpTab::ShowTopic(int topic)
 void CMakeHelpTab::PublishData()
 {
     // The background thread must not working now
-    if(GetThread() && GetThread()->IsRunning())
+    if (GetThread() && GetThread()->IsRunning())
         return;
 
     // Set CMake version
@@ -330,20 +330,20 @@ wxThread::ExitCode CMakeHelpTab::Entry()
 void CMakeHelpTab::LoadData(bool force)
 {
     // Thread is busy
-    if(GetThread() && GetThread()->IsRunning()) {
+    if (GetThread() && GetThread()->IsRunning()) {
         return;
     }
 
     // Invalid cmake executable
     wxASSERT(m_plugin->GetCMake());
-    if(!m_plugin->GetCMake()->IsOk()) {
+    if (!m_plugin->GetCMake()->IsOk()) {
         return;
     }
 
     m_force = force;
 
     // Create a new joinable thread
-    if(CreateThread(wxTHREAD_JOINABLE) != wxTHREAD_NO_ERROR) {
+    if (CreateThread(wxTHREAD_JOINABLE) != wxTHREAD_NO_ERROR) {
         clERROR() << "Could not create the worker thread!" << endl;
         return;
     }
@@ -352,7 +352,7 @@ void CMakeHelpTab::LoadData(bool force)
     wxASSERT(GetThread());
 
     // Run the thread
-    if(GetThread()->Run() != wxTHREAD_NO_ERROR) {
+    if (GetThread()->Run() != wxTHREAD_NO_ERROR) {
         clERROR() << "Could not run the worker thread!" << endl;
         return;
     }
@@ -383,7 +383,7 @@ void CMakeHelpTab::Update(int value)
 void CMakeHelpTab::Inc(int value)
 {
     // There is nothing to add
-    if(!value)
+    if (!value)
         return;
 
     Update(m_progress + value);
@@ -395,10 +395,10 @@ void CMakeHelpTab::Done() { AddPendingEvent(wxThreadEvent(EVT_THREAD_DONE)); }
 
 void CMakeHelpTab::Stop()
 {
-    if(GetThread() && GetThread()->IsAlive()) {
+    if (GetThread() && GetThread()->IsAlive()) {
         GetThread()->Delete(NULL, wxTHREAD_WAIT_BLOCK);
 
-    } else if(GetThread()) {
+    } else if (GetThread()) {
         GetThread()->Wait(wxTHREAD_WAIT_BLOCK);
     }
 }
@@ -423,12 +423,12 @@ void CMakeHelpTab::CreateHelpPage(const wxString& content, const wxString& subje
     // use markdown
     fnCMakeHelpFile.SetFullName("CMakeHelp.md");
 
-    if(!FileUtils::WriteFileContent(fnCMakeHelpFile, text))
+    if (!FileUtils::WriteFileContent(fnCMakeHelpFile, text))
         return;
 
-    if(manager->OpenFile(fnCMakeHelpFile.GetFullPath())) {
+    if (manager->OpenFile(fnCMakeHelpFile.GetFullPath())) {
         IEditor* activeEditor = manager->GetActiveEditor();
-        if(activeEditor && activeEditor->GetFileName().GetFullPath() == fnCMakeHelpFile.GetFullPath()) {
+        if (activeEditor && activeEditor->GetFileName().GetFullPath() == fnCMakeHelpFile.GetFullPath()) {
             activeEditor->GetCtrl()->SetEditable(true);
             activeEditor->OpenFile();
             activeEditor->GetCtrl()->SetFirstVisibleLine(0);

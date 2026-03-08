@@ -24,30 +24,32 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "csscopeconfdata.h"
-#include <wx/stdpaths.h>
+
 #include "cl_standard_paths.h"
 
+#include <wx/stdpaths.h>
+
 CScopeConfData::CScopeConfData()
-    : m_cscopeFilepath( wxT( "" ) )
-    , m_scanScope( SCOPE_ENTIRE_WORKSPACE )
-    , m_rebuildDb( false )
-    , m_buildRevertedIndex( false )
+    : m_cscopeFilepath(wxT(""))
+    , m_scanScope(SCOPE_ENTIRE_WORKSPACE)
+    , m_rebuildDb(false)
+    , m_buildRevertedIndex(false)
 {
     m_cscopeFilepath = clStandardPaths::Get().GetBinaryFullPath("cscope");
 }
 
-void CScopeConfData::DeSerialize( Archive& arch )
+void CScopeConfData::DeSerialize(Archive& arch)
 {
-    arch.Read( wxT( "m_cscopeFilepath" ), m_cscopeFilepath );
-    arch.Read( wxT( "m_scanScope" ), m_scanScope );
-    arch.Read( wxT( "m_rebuildDb" ), m_rebuildDb );
-    arch.Read( wxT( "m_buildRevertedIndex" ), m_buildRevertedIndex );
+    arch.Read(wxT("m_cscopeFilepath"), m_cscopeFilepath);
+    arch.Read(wxT("m_scanScope"), m_scanScope);
+    arch.Read(wxT("m_rebuildDb"), m_rebuildDb);
+    arch.Read(wxT("m_buildRevertedIndex"), m_buildRevertedIndex);
 }
 
-void CScopeConfData::Serialize( Archive& arch )
+void CScopeConfData::Serialize(Archive& arch)
 {
-    arch.Write( wxT( "m_cscopeFilepath" ), m_cscopeFilepath );
-    arch.Write( wxT( "m_scanScope" ), m_scanScope );
-    arch.Write( wxT( "m_rebuildDb" ), m_rebuildDb );
-    arch.Write( wxT( "m_buildRevertedIndex" ), m_buildRevertedIndex );
+    arch.Write(wxT("m_cscopeFilepath"), m_cscopeFilepath);
+    arch.Write(wxT("m_scanScope"), m_scanScope);
+    arch.Write(wxT("m_rebuildDb"), m_rebuildDb);
+    arch.Write(wxT("m_buildRevertedIndex"), m_buildRevertedIndex);
 }

@@ -58,14 +58,14 @@ void ContinuousBuildPane::OnStopUI(wxUpdateUIEvent& event)
 void ContinuousBuildPane::RemoveFile(const wxString& file)
 {
     int where = m_listBoxQueue->FindString(file);
-    if(where != wxNOT_FOUND) {
+    if (where != wxNOT_FOUND) {
         m_listBoxQueue->Delete((unsigned int)where);
     }
 }
 
 void ContinuousBuildPane::AddFile(const wxString& file)
 {
-    if(m_listBoxQueue->FindString(file) == wxNOT_FOUND) {
+    if (m_listBoxQueue->FindString(file) == wxNOT_FOUND) {
         m_listBoxQueue->Append(file);
     }
 }
@@ -78,15 +78,12 @@ void ContinuousBuildPane::ClearAll()
 
 void ContinuousBuildPane::AddFailedFile(const wxString& file)
 {
-    if(m_listBoxFailedFiles->FindString(file) == wxNOT_FOUND) {
+    if (m_listBoxFailedFiles->FindString(file) == wxNOT_FOUND) {
         m_listBoxFailedFiles->Append(file);
     }
 }
 
-void ContinuousBuildPane::OnEnableContBuildUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_checkBox1->IsChecked());
-}
+void ContinuousBuildPane::OnEnableContBuildUI(wxUpdateUIEvent& event) { event.Enable(m_checkBox1->IsChecked()); }
 
 void ContinuousBuildPane::OnEnableCB(wxCommandEvent& event)
 {

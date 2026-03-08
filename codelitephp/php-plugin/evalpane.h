@@ -33,15 +33,15 @@ class EvalPane : public EvalPaneBase
 public:
     EvalPane(wxWindow* parent);
     virtual ~EvalPane();
+
 protected:
     virtual void OnSendXDebugCommand(wxCommandEvent& event);
     virtual void OnSendXDebugCommandUI(wxUpdateUIEvent& event);
     virtual void OnEnter(wxCommandEvent& event);
     virtual void OnSend(wxCommandEvent& event);
     virtual void OnSendUI(wxUpdateUIEvent& event);
-    void OnExpressionEvaluate(XDebugEvent &e);
-    void OnDBGPCommandEvaluated(XDebugEvent &e);
+    void OnExpressionEvaluate(XDebugEvent& e);
+    void OnDBGPCommandEvaluated(XDebugEvent& e);
     void OnSettingsChanged(wxCommandEvent& event);
-
 };
 #endif // EVALPANE_H

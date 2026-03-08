@@ -8,10 +8,7 @@
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new AutoSave(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new AutoSave(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -54,7 +51,7 @@ void AutoSave::UnPlug()
 void AutoSave::OnSettings(wxCommandEvent& event)
 {
     AutoSaveDlg dlg(EventNotifier::Get()->TopFrame());
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         // Update the settings
         UpdateTimers();
     }
@@ -64,7 +61,7 @@ void AutoSave::UpdateTimers()
 {
     DeleteTimer();
     AutoSaveSettings conf = AutoSaveSettings::Load();
-    if(!conf.HasFlag(AutoSaveSettings::kEnabled)) {
+    if (!conf.HasFlag(AutoSaveSettings::kEnabled)) {
         return;
     }
 
@@ -79,11 +76,11 @@ void AutoSave::OnTimer(wxTimerEvent& event)
     m_mgr->GetAllEditors(editors);
 
     // Save every modified editor
-    for(auto editor : editors) {
+    for (auto editor : editors) {
         // Save modified files. However, don't attempt to try and save an "Untitled" document :/
         bool local_file_and_exists = !editor->IsRemoteFile() && editor->GetFileName().FileExists();
         bool is_remote = editor->IsRemoteFile();
-        if(editor->IsEditorModified() && (local_file_and_exists || is_remote)) {
+        if (editor->IsEditorModified() && (local_file_and_exists || is_remote)) {
             editor->Save();
         }
     }
@@ -95,7 +92,7 @@ void AutoSave::OnTimer(wxTimerEvent& event)
 
 void AutoSave::DeleteTimer()
 {
-    if(m_timer) {
+    if (m_timer) {
         Unbind(wxEVT_TIMER, &AutoSave::OnTimer, this);
         m_timer->Stop();
     }

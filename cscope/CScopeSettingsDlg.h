@@ -32,7 +32,7 @@ class CScopeSettingsDlg : public CScopeSettingsDlgBase
 public:
     CScopeSettingsDlg(wxWindow* parent);
     virtual ~CScopeSettingsDlg() = default;
-    
+
     wxString GetPath() const { return m_filePickerCScopeExe->GetPath(); }
 };
 #endif // CSCOPESETTINGSDLG_H

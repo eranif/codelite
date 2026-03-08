@@ -23,7 +23,7 @@ class WXDLLIMPEXP_CL clFunction
 {
 public:
     std::string m_name;
-    std::string m_scope; // functions' scope
+    std::string m_scope;            // functions' scope
     std::string m_retrunValusConst; // is the return value a const?
     std::string m_signature;
     Variable m_returnValue;
@@ -33,7 +33,7 @@ public:
     bool m_isConst;
     bool m_isFinal;
     std::string m_throws;
-    
+
 public:
     clFunction();
     virtual ~clFunction() = default;

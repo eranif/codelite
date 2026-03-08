@@ -1,9 +1,11 @@
 #include "NewFileComparison.h"
-#include <wx/filedlg.h>
-#include <algorithm>
-#include "ieditor.h"
+
 #include "globals.h"
+#include "ieditor.h"
 #include "imanager.h"
+
+#include <algorithm>
+#include <wx/filedlg.h>
 
 NewFileComparison::NewFileComparison(wxWindow* parent, const wxFileName& leftFile)
     : NewFileComparisonBase(parent)
@@ -12,7 +14,7 @@ NewFileComparison::NewFileComparison(wxWindow* parent, const wxFileName& leftFil
     clGetManager()->GetAllEditors(editors);
     m_textCtrlLeftFile->ChangeValue(leftFile.GetFullPath());
     for (IEditor* editor : editors) {
-        if(editor->GetFileName() != leftFile) {
+        if (editor->GetFileName() != leftFile) {
             m_listBox16->Append(editor->GetFileName().GetFullPath());
         }
     }
@@ -22,10 +24,10 @@ void NewFileComparison::OnBrowse(wxCommandEvent& event)
 {
     static wxString lastPath;
     wxString initialPath;
-    m_textCtrlFileName->IsEmpty() ? initialPath = lastPath : initialPath =
-                                                                 wxFileName(m_textCtrlFileName->GetValue()).GetPath();
+    m_textCtrlFileName->IsEmpty() ? initialPath = lastPath
+                                  : initialPath = wxFileName(m_textCtrlFileName->GetValue()).GetPath();
     wxString file = wxFileSelector(_("Select file:"), initialPath);
-    if(!file.IsEmpty()) {
+    if (!file.IsEmpty()) {
         wxFileName selectedFile(file);
         lastPath = selectedFile.GetPath();
         m_textCtrlFileName->ChangeValue(selectedFile.GetFullPath());

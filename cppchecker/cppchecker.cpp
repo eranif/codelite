@@ -63,10 +63,7 @@
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new CppCheckPlugin(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new CppCheckPlugin(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -101,7 +98,7 @@ CppCheckPlugin::CppCheckPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_STOP_BUILD, &CppCheckPlugin::OnStopRun, this);
 
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &CppCheckPlugin::OnWorkspaceClosed, this);
-    clKeyboardManager::Get()->AddAccelerator(_("CppCheck"), { { "run_cppcheck", _("Run cppcheck...") } });
+    clKeyboardManager::Get()->AddAccelerator(_("CppCheck"), {{"run_cppcheck", _("Run cppcheck...")}});
 }
 
 void CppCheckPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
@@ -172,7 +169,8 @@ void CppCheckPlugin::DoRun()
     size_t flags = IProcessCreateDefault | IProcessWrapInShell;
     m_cppcheckProcess = ::CreateAsyncProcess(this, command, flags);
     if (!m_cppcheckProcess) {
-        wxMessageBox(_("Failed to launch cppcheck process.\nMake sure its installed and in your PATH"), _("Warning"),
+        wxMessageBox(_("Failed to launch cppcheck process.\nMake sure its installed and in your PATH"),
+                     _("Warning"),
                      wxOK | wxCENTER | wxICON_WARNING);
         return;
     }
@@ -184,7 +182,8 @@ wxString CppCheckPlugin::DoGetCommand()
     // Linux / Mac way: spawn the process and execute the command
     const auto cppcheck = ThePlatform->Which("cppcheck");
     if (!cppcheck) {
-        ::wxMessageBox(_("Could not locate \"cppcheck\". Please install it and try again"), "CodeLite",
+        ::wxMessageBox(_("Could not locate \"cppcheck\". Please install it and try again"),
+                       "CodeLite",
                        wxICON_WARNING | wxOK | wxOK_DEFAULT | wxCENTRE);
         return wxEmptyString;
     }
@@ -229,8 +228,8 @@ wxString CppCheckPlugin::DoGetCommand()
     }
     cmd.Trim();
     if (cmd.empty()) {
-        ::wxMessageBox(_("Cannot run cppcheck. Empty command"), "CodeLite",
-                       wxICON_WARNING | wxOK | wxOK_DEFAULT | wxCENTRE);
+        ::wxMessageBox(
+            _("Cannot run cppcheck. Empty command"), "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT | wxCENTRE);
         return wxEmptyString;
     }
     return cmd;
@@ -245,7 +244,7 @@ void CppCheckPlugin::OnCppCheckReadData(clProcessEvent& e)
 void CppCheckPlugin::OnSettings(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    CppCheckSettingsDialog dlg{ EventNotifier::Get()->TopFrame() };
+    CppCheckSettingsDialog dlg{EventNotifier::Get()->TopFrame()};
     dlg.ShowModal();
 }
 

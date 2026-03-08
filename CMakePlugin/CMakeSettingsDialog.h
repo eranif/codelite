@@ -69,10 +69,8 @@ class CMakePlugin;
 class CMakeSettingsDialog : public CMakeSettingsDialogBase
 {
 
-// Public Ctors & Dtors
+    // Public Ctors & Dtors
 public:
-
-
     /**
      * @brief Create a CMake settings dialog
      *
@@ -81,67 +79,47 @@ public:
      */
     explicit CMakeSettingsDialog(wxWindow* parent, CMakePlugin* plugin);
 
-
     /**
      * @brief Destructor.
      */
     virtual ~CMakeSettingsDialog();
 
-
-// Public Accessors
+    // Public Accessors
 public:
-
-
     /**
      * @brief Returns path to cmake program.
      *
      * @return
      */
-    wxString GetCMakePath() const {
-        return m_filePickerProgram->GetPath();
-    }
-
+    wxString GetCMakePath() const { return m_filePickerProgram->GetPath(); }
 
     /**
      * @brief Returns selected default generator.
      *
      * @return
      */
-    wxString GetDefaultGenerator() const {
-        return m_choiceDefaultGenerator->GetStringSelection();
-    }
+    wxString GetDefaultGenerator() const { return m_choiceDefaultGenerator->GetStringSelection(); }
 
-
-// Public Mutators
+    // Public Mutators
 public:
-
-
     /**
      * @brief Set path to CMake progam.
      *
      * @param path
      */
-    void SetCMakePath(const wxString& path) {
-        m_filePickerProgram->SetPath(path);
-    }
-
+    void SetCMakePath(const wxString& path) { m_filePickerProgram->SetPath(path); }
 
     /**
      * @brief Change default generator.
      *
      * @param generator New default generator.
      */
-    void SetDefaultGenerator(const wxString& generator) {
-        m_choiceDefaultGenerator->SetStringSelection(generator);
-    }
+    void SetDefaultGenerator(const wxString& generator) { m_choiceDefaultGenerator->SetStringSelection(generator); }
 
-
-// Private Data Members
+    // Private Data Members
 private:
-
     /// Pointer to CMakePlugin.
     CMakePlugin* const m_plugin;
-
 };
 
 /* ************************************************************************ */

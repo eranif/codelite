@@ -97,12 +97,12 @@ public:
      * @brief return a list of all project files (fullpath)
      */
     wxArrayString& GetFiles(wxProgressDialog* progress);
-    
+
     /**
      * @brief set the project files
      */
     void SetFiles(const wxArrayString& files);
-    
+
     /**
      * @brief return a list of all project files (fullpath)
      */
@@ -154,7 +154,7 @@ public:
     /**
      * @brief sync the projec with the file system. But do this in a background thread
      * Once this function is done, it fires an event wxEVT_PHP_PROJECT_FILES_SYNCED
-     * @owner owner the class that will receive the start/end events. If no provided (i.e. NULL is passed) 
+     * @owner owner the class that will receive the start/end events. If no provided (i.e. NULL is passed)
      * the current project object will receive them
      */
     void SyncWithFileSystemAsync(wxEvtHandler* owner = NULL);

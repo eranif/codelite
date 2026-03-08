@@ -27,6 +27,7 @@
 #define __AutoSave__
 
 #include "plugin.h"
+
 #include <wx/timer.h>
 
 class AutoSave : public IPlugin
@@ -39,7 +40,7 @@ protected:
 
     void UpdateTimers();
     void DeleteTimer();
-    
+
 public:
     AutoSave(IManager* manager);
     ~AutoSave() override = default;

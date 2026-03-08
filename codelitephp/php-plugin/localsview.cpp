@@ -53,7 +53,7 @@ void LocalsView::OnLocalCollapsed(wxTreeEvent& event)
     CHECK_ITEM_RET(event.GetItem());
     MyStringData* cd = dynamic_cast<MyStringData*>(m_tree->GetItemData(event.GetItem()));
     CHECK_PTR_RET(cd);
-    if(m_localsExpandedItemsFullname.count(cd->GetData())) {
+    if (m_localsExpandedItemsFullname.count(cd->GetData())) {
         m_localsExpandedItemsFullname.erase(cd->GetData());
     }
 }
@@ -90,7 +90,7 @@ void LocalsView::OnLocalsUpdated(XDebugEvent& e)
     AppendVariablesToTree(m_tree->GetRootItem(), vars);
 
     // Expand the items that were expanded before the view refresh
-    for(size_t i = 0; i < m_localsExpandedItems.GetCount(); ++i) {
+    for (size_t i = 0; i < m_localsExpandedItems.GetCount(); ++i) {
         // Ensure it is visible
         m_tree->EnsureVisible(m_localsExpandedItems.Item(i));
         // Ensure its expanded
@@ -108,13 +108,13 @@ void LocalsView::AppendVariablesToTree(const wxTreeItemId& parent, const XVariab
         m_tree->SetItemText(item, var.classname, 2);
         m_tree->SetItemText(item, var.value, 3);
 
-        if(var.GetCreateFakeNode()) {
+        if (var.GetCreateFakeNode()) {
             // create dummy node in the tree view so we can expand it later
             m_tree->AppendItem(item, "<dummy>");
 
-        } else if(var.HasChildren()) {
+        } else if (var.HasChildren()) {
             AppendVariablesToTree(item, var.children);
-            if(m_localsExpandedItemsFullname.count(var.fullname)) {
+            if (m_localsExpandedItemsFullname.count(var.fullname)) {
                 // this item should be expanded
                 m_localsExpandedItems.Add(item);
             }
@@ -141,21 +141,21 @@ void LocalsView::OnLocalExpanding(wxTreeEvent& event)
     wxTreeItemId item = event.GetItem();
     wxTreeItemIdValue cookie;
     wxTreeItemId child = m_tree->GetFirstChild(item, cookie);
-    if(child.IsOk() && (m_tree->GetItemText(child) == "<dummy>")) {
+    if (child.IsOk() && (m_tree->GetItemText(child) == "<dummy>")) {
 
         // a dummy node has been found
         // Delete this node and request from XDebug to expand it
         m_tree->SetItemText(child, wxString("Loading..."));
         wxString propertyName = DoGetItemClientData(event.GetItem());
         XDebugManager::Get().SendGetProperty(propertyName);
-        m_waitingExpand.insert({ propertyName, item });
+        m_waitingExpand.insert({propertyName, item});
     }
 }
 
 wxString LocalsView::DoGetItemClientData(const wxTreeItemId& item) const
 {
     MyStringData* scd = dynamic_cast<MyStringData*>(m_tree->GetItemData(item));
-    if(scd) {
+    if (scd) {
         return scd->GetData();
     }
     return wxEmptyString;
@@ -166,7 +166,7 @@ void LocalsView::OnPropertyGet(XDebugEvent& e)
     e.Skip();
     // An item was evaluated using property_get
     std::unordered_map<wxString, wxTreeItemId>::iterator iter = m_waitingExpand.find(e.GetEvaluated());
-    if(iter == m_waitingExpand.end()) {
+    if (iter == m_waitingExpand.end()) {
         return;
     }
 
@@ -177,7 +177,7 @@ void LocalsView::OnPropertyGet(XDebugEvent& e)
     m_tree->DeleteChildren(item);
 
     XVariable::List_t vars = e.GetVariables();
-    if(vars.empty())
+    if (vars.empty())
         return;
 
     // Since we got here from property_get, XDebug will reply with the specific property (e.g. $myclass->secondClass)

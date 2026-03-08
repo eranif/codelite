@@ -13,26 +13,26 @@
 
 bool IsPHPCommentOrString(int styleAtPos)
 {
-    if((styleAtPos == wxSTC_HPHP_HSTRING) || (styleAtPos == wxSTC_HPHP_SIMPLESTRING) ||
-       (styleAtPos == wxSTC_HPHP_COMMENT) || (styleAtPos == wxSTC_HPHP_COMMENTLINE))
+    if ((styleAtPos == wxSTC_HPHP_HSTRING) || (styleAtPos == wxSTC_HPHP_SIMPLESTRING) ||
+        (styleAtPos == wxSTC_HPHP_COMMENT) || (styleAtPos == wxSTC_HPHP_COMMENTLINE))
         return true;
     return false;
 }
 
 bool IsPHPSection(int styleAtPos)
 {
-    if((styleAtPos == wxSTC_HPHP_DEFAULT) || (styleAtPos == wxSTC_HPHP_HSTRING) ||
-       (styleAtPos == wxSTC_HPHP_SIMPLESTRING) || (styleAtPos == wxSTC_HPHP_WORD) ||
-       (styleAtPos == wxSTC_HPHP_NUMBER) || (styleAtPos == wxSTC_HPHP_VARIABLE) || (styleAtPos == wxSTC_HPHP_COMMENT) ||
-       (styleAtPos == wxSTC_HPHP_COMMENTLINE) || (styleAtPos == wxSTC_HPHP_HSTRING_VARIABLE) ||
-       (styleAtPos == wxSTC_HPHP_OPERATOR))
+    if ((styleAtPos == wxSTC_HPHP_DEFAULT) || (styleAtPos == wxSTC_HPHP_HSTRING) ||
+        (styleAtPos == wxSTC_HPHP_SIMPLESTRING) || (styleAtPos == wxSTC_HPHP_WORD) ||
+        (styleAtPos == wxSTC_HPHP_NUMBER) || (styleAtPos == wxSTC_HPHP_VARIABLE) ||
+        (styleAtPos == wxSTC_HPHP_COMMENT) || (styleAtPos == wxSTC_HPHP_COMMENTLINE) ||
+        (styleAtPos == wxSTC_HPHP_HSTRING_VARIABLE) || (styleAtPos == wxSTC_HPHP_OPERATOR))
         return true;
     return false;
 }
 
 bool IsPHPFile(IEditor* editor)
 {
-    if(!editor) {
+    if (!editor) {
         return false;
     }
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
@@ -76,7 +76,7 @@ wxString URIToFileName(const wxString& uriFileName)
     filename.StartsWith(FILE_SCHEME, &filename);
 
 #ifdef __WXMSW__
-    if(filename.StartsWith("/")) {
+    if (filename.StartsWith("/")) {
         filename.Remove(0, 1);
     }
 #endif
@@ -88,11 +88,11 @@ static wxString URIEncode(const wxString& inputStr) { return StringUtils::Encode
 wxString FileNameToURI(const wxString& filename)
 {
     wxString sourceFullPath = wxFileName(filename).GetFullPath();
-    if(!sourceFullPath.StartsWith(FILE_SCHEME)) {
+    if (!sourceFullPath.StartsWith(FILE_SCHEME)) {
         sourceFullPath.Prepend(FILE_SCHEME);
     }
     sourceFullPath.Replace("\\", "/");
-    while(sourceFullPath.Replace("//", "/")) {}
+    while (sourceFullPath.Replace("//", "/")) {}
     //    wxURI uri(sourceFullPath);
     sourceFullPath = URIEncode(sourceFullPath);
     sourceFullPath.Replace("file:", FILE_SCHEME);
@@ -110,12 +110,12 @@ static void DecodeFileName(wxString& filename) { filename = StringUtils::DecodeU
 wxString MapRemoteFileToLocalFile(const wxString& remoteFile)
 {
     // Check that a workspace is opened
-    if(!PHPWorkspace::Get()->IsOpen())
+    if (!PHPWorkspace::Get()->IsOpen())
         return remoteFile;
 
     // Sanity
     PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetActiveProject();
-    if(!pProject)
+    if (!pProject)
         return remoteFile;
 
     // Map filename file attribute returned by xdebug to local filename
@@ -127,7 +127,7 @@ wxString MapRemoteFileToLocalFile(const wxString& remoteFile)
     // On Windows, the file is returned like (after removing the file://)
     // /C:/Http/htdocs/file.php - remote the leading "/"
     wxRegEx reMSWPrefix("/[a-zA-Z]{1}:/");
-    if(reMSWPrefix.IsValid() && reMSWPrefix.Matches(filename)) {
+    if (reMSWPrefix.IsValid() && reMSWPrefix.Matches(filename)) {
         // Windows file
         filename.Remove(0, 1);
     }
@@ -136,7 +136,7 @@ wxString MapRemoteFileToLocalFile(const wxString& remoteFile)
     DecodeFileName(filename);
 
     // First check if the remote file exists locally
-    if(wxFileName(filename).Exists()) {
+    if (wxFileName(filename).Exists()) {
         return wxFileName(filename).GetFullPath();
     }
 

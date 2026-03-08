@@ -49,26 +49,26 @@ struct ResourceItem {
 
     void SetType(PHPEntityBase::Ptr_t match)
     {
-        if(match->Is(kEntityTypeClass)) {
+        if (match->Is(kEntityTypeClass)) {
             type = kRI_Class;
-        } else if(match->Is(kEntityTypeFunction)) {
+        } else if (match->Is(kEntityTypeFunction)) {
             type = kRI_Function;
-        } else if(match->Is(kEntityTypeVariable)) {
-            if(match->Cast<PHPEntityVariable>()->IsConst()) {
+        } else if (match->Is(kEntityTypeVariable)) {
+            if (match->Cast<PHPEntityVariable>()->IsConst()) {
                 type = kRI_Constant;
-            } else if(match->Cast<PHPEntityVariable>()->IsMember()) {
+            } else if (match->Cast<PHPEntityVariable>()->IsMember()) {
                 type = kRI_Member;
             } else {
                 type = kRI_Variable;
             }
-        } else if(match->Is(kEntityTypeNamespace)) {
+        } else if (match->Is(kEntityTypeNamespace)) {
             type = kRI_Namespace;
         }
     }
 
     wxString TypeAsString() const
     {
-        switch(type) {
+        switch (type) {
         case ResourceItem::kRI_Namespace:
             return "Namespace";
         case ResourceItem::kRI_Class:

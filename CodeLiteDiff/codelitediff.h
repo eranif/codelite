@@ -26,8 +26,9 @@
 #ifndef __CodeLiteDiff__
 #define __CodeLiteDiff__
 
-#include "plugin.h"
 #include "cl_command_event.h"
+#include "plugin.h"
+
 #include <wx/filename.h>
 
 class CodeLiteDiff : public IPlugin

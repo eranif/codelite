@@ -1,4 +1,5 @@
 #include "AutoSaveDlg.h"
+
 #include "AutoSaveSettings.h"
 
 AutoSaveDlg::AutoSaveDlg(wxWindow* parent)

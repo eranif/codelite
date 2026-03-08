@@ -1,8 +1,10 @@
 #include "NewPHPProjectWizard.h"
-#include <wx/filename.h>
-#include "php_workspace.h"
-#include "php_project.h"
+
 #include "php_configuration_data.h"
+#include "php_project.h"
+#include "php_workspace.h"
+
+#include <wx/filename.h>
 #include <wx/tokenzr.h>
 
 NewPHPProjectWizard::NewPHPProjectWizard(wxWindow* parent, bool createProjectFromWorkspaceFolder)
@@ -13,7 +15,7 @@ NewPHPProjectWizard::NewPHPProjectWizard(wxWindow* parent, bool createProjectFro
     PHPConfigurationData conf;
     conf.Load();
     m_filePickerPhpExe->SetPath(conf.GetPhpExe());
-    if(createProjectFromWorkspaceFolder) {
+    if (createProjectFromWorkspaceFolder) {
         m_radioBoxCreateMethod->SetSelection(1);
     }
     m_dirPickerPath->SetPath(PHPWorkspace::Get()->GetFilename().GetPath());
@@ -24,16 +26,16 @@ void NewPHPProjectWizard::OnFinish(wxWizardEvent& event) { event.Skip(); }
 void NewPHPProjectWizard::OnPageChanging(wxWizardEvent& event)
 {
     event.Skip();
-    if(event.GetDirection() && event.GetPage() == m_wizardPageCreateMethod) {
-        if(m_radioBoxCreateMethod->GetSelection() == 0) {
+    if (event.GetDirection() && event.GetPage() == m_wizardPageCreateMethod) {
+        if (m_radioBoxCreateMethod->GetSelection() == 0) {
             // empty project
             m_checkBoxSeparateFolder->Show(true);
         } else {
             m_checkBoxSeparateFolder->Show(false);
         }
-    } else if(event.GetDirection() && event.GetPage() == m_wizardPageProjectDetails) {
+    } else if (event.GetDirection() && event.GetPage() == m_wizardPageProjectDetails) {
         wxFileName projectFilePath(m_textCtrlPreview->GetValue());
-        if(!PHPWorkspace::Get()->CanCreateProjectAtPath(projectFilePath, true)) {
+        if (!PHPWorkspace::Get()->CanCreateProjectAtPath(projectFilePath, true)) {
             event.Skip(false);
             event.Veto();
             return;
@@ -45,7 +47,7 @@ void NewPHPProjectWizard::DoUpdateProjectFolder()
 {
     // Build the file name
     wxFileName fn(m_dirPickerPath->GetPath(), "");
-    if(m_checkBoxSeparateFolder->IsShown() && m_checkBoxSeparateFolder->IsChecked()) {
+    if (m_checkBoxSeparateFolder->IsShown() && m_checkBoxSeparateFolder->IsChecked()) {
         fn.AppendDir(m_textCtrlName->GetValue());
     }
     fn.SetName(m_textCtrlName->GetValue());
@@ -55,9 +57,9 @@ void NewPHPProjectWizard::DoUpdateProjectFolder()
 
 void NewPHPProjectWizard::OnDirSelected(wxFileDirPickerEvent& event)
 {
-    if(!m_nameModified) {
+    if (!m_nameModified) {
         wxFileName path(event.GetPath(), "");
-        if(!path.GetDirs().IsEmpty()) {
+        if (!path.GetDirs().IsEmpty()) {
             m_textCtrlName->ChangeValue(path.GetDirs().Last());
         }
     }
@@ -88,11 +90,12 @@ void NewPHPProjectWizard::OnCheckSeparateFolder(wxCommandEvent& event) { DoUpdat
 void NewPHPProjectWizard::OnBrowseForCCFolder(wxCommandEvent& event)
 {
     wxString path = ::wxDirSelector();
-    if(path.IsEmpty()) return;
+    if (path.IsEmpty())
+        return;
 
     wxString currentContent = m_textCtrlCCPaths->GetValue();
     wxArrayString paths = ::wxStringTokenize(currentContent, "\n", wxTOKEN_STRTOK);
-    if(paths.Index(path) == wxNOT_FOUND) {
+    if (paths.Index(path) == wxNOT_FOUND) {
         paths.Add(path);
     }
     paths.Sort();

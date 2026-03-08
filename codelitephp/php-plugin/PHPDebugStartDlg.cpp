@@ -1,6 +1,7 @@
 #include "PHPDebugStartDlg.h"
-#include "windowattrmanager.h"
+
 #include "imanager.h"
+#include "windowattrmanager.h"
 
 PHPDebugStartDlg::PHPDebugStartDlg(wxWindow* parent, PHPProject::Ptr_t pProject, IManager* manager)
     : PHPDebugStartDlgBase(parent)
@@ -14,7 +15,7 @@ PHPDebugStartDlg::PHPDebugStartDlg(wxWindow* parent, PHPProject::Ptr_t pProject,
     m_simpleBook->SetEffect(wxSHOW_EFFECT_NONE);
 #endif
 
-    if(settings.GetRunAs() == PHPProjectSettingsData::kRunAsWebsite) {
+    if (settings.GetRunAs() == PHPProjectSettingsData::kRunAsWebsite) {
         m_choice->Select(0);
         m_simpleBook->SetSelection(0);
     } else {
@@ -22,14 +23,14 @@ PHPDebugStartDlg::PHPDebugStartDlg(wxWindow* parent, PHPProject::Ptr_t pProject,
         m_simpleBook->SetSelection(1);
     }
     GetComboBoxURL()->Append(settings.GetProjectURL());
-    if(GetComboBoxURL()->GetCount()) {
+    if (GetComboBoxURL()->GetCount()) {
         GetComboBoxURL()->SetSelection(0);
     }
 
     GetCheckBoxDebugActiveEditor()->SetValue(settings.HasFlag(PHPProjectSettingsData::kOpt_RunCurrentEditor));
 
     wxString fileToRun;
-    if(m_manager->GetActiveEditor() && GetCheckBoxDebugActiveEditor()->IsChecked()) {
+    if (m_manager->GetActiveEditor() && GetCheckBoxDebugActiveEditor()->IsChecked()) {
         fileToRun = m_manager->GetActiveEditor()->GetFileName().GetFullPath();
     } else {
         fileToRun = settings.GetIndexFile();
@@ -46,22 +47,21 @@ PHPDebugStartDlg::~PHPDebugStartDlg()
     settings.EnableFlag(PHPProjectSettingsData::kOpt_RunCurrentEditor, GetCheckBoxDebugActiveEditor()->IsChecked());
     settings.SetIndexFile(GetTextCtrlScriptToDebug()->GetValue());
     settings.SetProjectURL(GetComboBoxURL()->GetValue());
-    settings.SetRunAs(m_choice->GetSelection() == 0 ? PHPProjectSettingsData::kRunAsWebsite :
-                                                      PHPProjectSettingsData::kRunAsCLI);
+    settings.SetRunAs(m_choice->GetSelection() == 0 ? PHPProjectSettingsData::kRunAsWebsite
+                                                    : PHPProjectSettingsData::kRunAsCLI);
     m_project->Save();
-    
 }
 
 void PHPDebugStartDlg::OnDebugMethodChanged(wxCommandEvent& event)
 {
     event.Skip();
-    if(event.GetSelection() == 0) {
+    if (event.GetSelection() == 0) {
         // Debug URL
-        CallAfter( &PHPDebugStartDlg::SetBookSelection, 0);
+        CallAfter(&PHPDebugStartDlg::SetBookSelection, 0);
         m_project->GetSettings().SetRunAs(PHPProjectSettingsData::kRunAsWebsite);
     } else {
         // Command line script
-        CallAfter( &PHPDebugStartDlg::SetBookSelection, 1);
+        CallAfter(&PHPDebugStartDlg::SetBookSelection, 1);
         m_project->GetSettings().SetRunAs(PHPProjectSettingsData::kRunAsCLI);
     }
 }
@@ -73,7 +73,7 @@ void PHPDebugStartDlg::OnScriptToDebugUI(wxUpdateUIEvent& event)
 
 void PHPDebugStartDlg::OnUseActiveEditor(wxCommandEvent& event)
 {
-    if(m_manager->GetActiveEditor()) {
+    if (m_manager->GetActiveEditor()) {
         GetTextCtrlScriptToDebug()->ChangeValue(m_manager->GetActiveEditor()->GetFileName().GetFullPath());
     }
 }
@@ -82,7 +82,7 @@ void PHPDebugStartDlg::OnOkUI(wxUpdateUIEvent& event) { event.Enable(!GetPath().
 
 wxString PHPDebugStartDlg::GetPath() const
 {
-    if(m_choice->GetSelection() == 0) {
+    if (m_choice->GetSelection() == 0) {
         // URL
         return m_comboBoxURL->GetValue();
     } else {

@@ -73,13 +73,8 @@ void DotWriter::SetDotWriterFromDialogSettings(IManager* mgr)
     dwstripparams = confData.GetStripParams();
 }
 
-void DotWriter::SetDotWriterFromDetails(int colnode,
-                                        int coledge,
-                                        int thrnode,
-                                        int thredge,
-                                        bool hideparams,
-                                        bool stripparams,
-                                        bool hidenamespaces)
+void DotWriter::SetDotWriterFromDetails(
+    int colnode, int coledge, int thrnode, int thredge, bool hideparams, bool stripparams, bool hidenamespaces)
 {
     dwcn = colnode;
     dwce = coledge;
@@ -97,7 +92,8 @@ void DotWriter::WriteToDotLanguage()
     bool is_node = false;
     wxArrayInt index_pl_nodes;
 
-    if(mlines == NULL) return;
+    if (mlines == NULL)
+        return;
 
     graph = wxT("graph [ranksep=\"0.25\", fontname=") + fontname + wxT(", nodesep=\"0.125\"];");
 
@@ -112,10 +108,10 @@ void DotWriter::WriteToDotLanguage()
 
     LineParserList::compatibility_iterator it = mlines->GetFirst();
 
-    while(it) {
+    while (it) {
         LineParser* line = it->GetData();
 
-        if(line->pline && wxRound(line->time) >= dwtn) {
+        if (line->pline && wxRound(line->time) >= dwtn) {
             is_node = true;
             index_pl_nodes.Add(line->index);
             dlabel = wxString::Format(wxT("%i"), line->index);
@@ -132,7 +128,8 @@ void DotWriter::WriteToDotLanguage()
             dlabel += wxString::Format(wxT("%.2f"), line->self + line->children);
             dlabel += wxT("s)");
             dlabel += wxT("\\n");
-            if(line->called0 != -1) dlabel += wxString::Format(wxT("%i"), line->called0) + wxT("x");
+            if (line->called0 != -1)
+                dlabel += wxString::Format(wxT("%i"), line->called0) + wxT("x");
             // if(line->recursive)
             //	dlabel += wxT(" (") + wxString::Format(wxT("%i"),line->called0 + line->called1) + wxT("x)");
             dlabel += wxT("\",fontcolor=\"");
@@ -153,18 +150,19 @@ void DotWriter::WriteToDotLanguage()
 
     float max_time = -2;
 
-    while(it) {
+    while (it) {
         LineParser* line = it->GetData();
 
-        if(max_time < line->time) max_time = line->time;
+        if (max_time < line->time)
+            max_time = line->time;
 
-        if(line->pline) {
+        if (line->pline) {
             pl_index = line->index; // index for primary node
             pl_time = line->time;   // time for primary node
         }
 
-        if(line->child && IsInArray(line->nameid, index_pl_nodes) && IsInArray(pl_index, index_pl_nodes) &&
-           (wxRound(pl_time) >= dwte)) {
+        if (line->child && IsInArray(line->nameid, index_pl_nodes) && IsInArray(pl_index, index_pl_nodes) &&
+            (wxRound(pl_time) >= dwte)) {
             dedge = wxString::Format(wxT("%i"), pl_index);
             dedge += wxT(" -> ");
             dedge += wxString::Format(wxT("%i"), line->nameid);
@@ -188,7 +186,7 @@ void DotWriter::WriteToDotLanguage()
     }
     m_OutputString += end_graph;
 
-    if(!is_node) { // if the call graph is empty create new graph with label node
+    if (!is_node) { // if the call graph is empty create new graph with label node
         m_OutputString = wxT("digraph e {0 [label=");
         m_OutputString +=
             wxString::Format(_("\"The call-graph is empty; the node threshold ceiling is %d !\""), wxRound(max_time));
@@ -207,39 +205,39 @@ bool DotWriter::SendToDotAppOutputDirectory(const wxString& dot_fn)
 
 wxString DotWriter::OptionsShortNameAndParameters(const wxString& name)
 {
-    if((dwhidenamespaces || dwhideparams) && name.Contains(wxT('(')) && name.Contains(wxT(')'))) {
+    if ((dwhidenamespaces || dwhideparams) && name.Contains(wxT('(')) && name.Contains(wxT(')'))) {
         wxString out = name;
 
-        if(dwhidenamespaces) {
+        if (dwhidenamespaces) {
             wxRegEx re;
             // remove STL
             int start, end;
-            while(GetOuterTemplate(out, &start, &end)) {
+            while (GetOuterTemplate(out, &start, &end)) {
                 out.Replace(out.Mid(start, end - start + 1), wxT("%STL%"));
             }
             out.Replace(wxT("%STL%"), wxT("<...>"));
             // remove namespace
-            if(re.Compile(wxT("::[a-zA-Z_~]+[a-zA-Z_0-9<!=\\-\\+\\*/%]*\\(.*\\)[ ]*(const)?[ ]*$"), wxRE_ADVANCED) &&
-               re.Matches(name)) {
+            if (re.Compile(wxT("::[a-zA-Z_~]+[a-zA-Z_0-9<!=\\-\\+\\*/%]*\\(.*\\)[ ]*(const)?[ ]*$"), wxRE_ADVANCED) &&
+                re.Matches(name)) {
                 out = re.GetMatch(name);
                 out.Replace(wxT("::"), wxEmptyString);
             }
         }
 
-        if(dwhideparams) {
+        if (dwhideparams) {
             out = out.BeforeFirst(wxT('('));
             out += wxT("()"); // for function return just ()
         }
 
         return out;
 
-    } else if(name.Contains(wxT('(')) && name.Contains(wxT(')')) && dwstripparams) {
+    } else if (name.Contains(wxT('(')) && name.Contains(wxT(')')) && dwstripparams) {
         wxString out = name.BeforeFirst(wxT('('));
         wxString sub = name.AfterFirst(wxT('(')).BeforeFirst(wxT(')'));
-        if(sub.IsEmpty()) {
+        if (sub.IsEmpty()) {
             out += wxT("\\n(\\n)");
             return out;
-        } else if(sub.Contains(wxT(","))) {
+        } else if (sub.Contains(wxT(","))) {
             sub.Replace(wxT(","), wxT(",\\n"));
             out += wxT("\\n(\\n") + sub + wxT("\\n)");
             return out;
@@ -262,18 +260,18 @@ int DotWriter::ReturnIndexForColor(float time, int dwc)
 
     std::vector<colorRange> colorSelect(dwc);
 
-    if(dwc == 1) {
+    if (dwc == 1) {
         colorSelect[0].downIndex = 0;
         colorSelect[0].upIndex = 100;
         colorSelect[0].indexColor = 0;
-    } else if(dwc == 2) {
+    } else if (dwc == 2) {
         colorSelect[0].downIndex = 0;
         colorSelect[0].upIndex = 50;
         colorSelect[0].indexColor = 0;
         colorSelect[1].downIndex = 51;
         colorSelect[1].upIndex = 100;
         colorSelect[1].indexColor = 9;
-    } else if(dwc > 2 && dwc < 11) {
+    } else if (dwc > 2 && dwc < 11) {
         int numInterval = dwc - 1;
         float stepInterval = 8.0 / (float)numInterval;
         float lenInterval = 100.0 / (float)dwc;
@@ -282,19 +280,19 @@ int DotWriter::ReturnIndexForColor(float time, int dwc)
         float restAdd = (float)afterModulo / numInterval;
         float addValue = 0.0;
 
-        for(int i = 0; i < dwc; i++) {
+        for (int i = 0; i < dwc; i++) {
             addValue += restAdd;
-            if(i == 0) {
+            if (i == 0) {
                 colorSelect[i].downIndex = 0;
                 colorSelect[i].upIndex = (int)lenInterval;
                 colorSelect[i].indexColor = 0;
-            } else if(i == (dwc - 1)) {
+            } else if (i == (dwc - 1)) {
                 colorSelect[i].downIndex = colorSelect[i - 1].upIndex + 1;
                 colorSelect[i].upIndex = 100;
                 colorSelect[i].indexColor = 9;
-            } else if(i > 0 && i < (dwc - 1)) {
+            } else if (i > 0 && i < (dwc - 1)) {
                 int addValueNext = 0;
-                if(0.8 < addValue && addValue < 1.2) {
+                if (0.8 < addValue && addValue < 1.2) {
                     addValueNext = 1;
                     addValue = 0;
                 }
@@ -306,8 +304,8 @@ int DotWriter::ReturnIndexForColor(float time, int dwc)
         }
     }
 
-    for(int i = 0; i < dwc; i++) {
-        if((int)colorSelect[i].downIndex <= (int)time && (int)time <= (int)colorSelect[i].upIndex) {
+    for (int i = 0; i < dwc; i++) {
+        if ((int)colorSelect[i].downIndex <= (int)time && (int)time <= (int)colorSelect[i].upIndex) {
             index = (int)colorSelect[i].indexColor;
             break;
         }
@@ -317,22 +315,31 @@ int DotWriter::ReturnIndexForColor(float time, int dwc)
 
 wxString DotWriter::DefineColorForNodeEdge(int index)
 {
-    wxString colors[10] = { wxT("#006837"), wxT("#1a9850"), wxT("#66bd63"), wxT("#a6d96a"), wxT("#d9ef8b"),
-                            wxT("#fee08b"), wxT("#fdae61"), wxT("#f46d43"), wxT("#d73027"), wxT("#a50026") };
+    wxString colors[10] = {wxT("#006837"),
+                           wxT("#1a9850"),
+                           wxT("#66bd63"),
+                           wxT("#a6d96a"),
+                           wxT("#d9ef8b"),
+                           wxT("#fee08b"),
+                           wxT("#fdae61"),
+                           wxT("#f46d43"),
+                           wxT("#d73027"),
+                           wxT("#a50026")};
     return colors[index];
 }
 
 bool DotWriter::IsInArray(int index, const wxArrayInt& arr)
 {
-    for(unsigned int i = 0; i < arr.GetCount(); i++) {
-        if(arr.Item(i) == index) return true;
+    for (unsigned int i = 0; i < arr.GetCount(); i++) {
+        if (arr.Item(i) == index)
+            return true;
     }
     return false;
 }
 
 wxString DotWriter::DefineColorForLabel(int index)
 {
-    if((index < 3) || (index > 6)) {
+    if ((index < 3) || (index > 6)) {
         return cwhite;
     } else {
         return cblack;
@@ -346,11 +353,13 @@ bool DotWriter::GetOuterTemplate(const wxString& txt, int* start, int* end)
 
     for (auto c : txt) {
         if (c == wxT('<')) {
-            if(cnt == 0) *start = pos;
+            if (cnt == 0)
+                *start = pos;
             cnt++;
         } else if (c == wxT('>')) {
             cnt--;
-            if(cnt == 0) *end = pos;
+            if (cnt == 0)
+                *end = pos;
             return true;
         }
         pos++;

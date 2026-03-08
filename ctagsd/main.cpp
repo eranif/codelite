@@ -14,20 +14,20 @@
 namespace
 {
 std::unordered_map<wxString, ProtocolHandler::CallbackFunc> function_table = {
-    { "initialize", &ProtocolHandler::on_initialize },
-    { "initialized", &ProtocolHandler::on_initialized },
-    { "textDocument/didOpen", &ProtocolHandler::on_did_open },
-    { "textDocument/didChange", &ProtocolHandler::on_did_change },
-    { "textDocument/completion", &ProtocolHandler::on_completion },
-    { "textDocument/didClose", &ProtocolHandler::on_did_close },
-    { "textDocument/didSave", &ProtocolHandler::on_did_save },
-    { "textDocument/semanticTokens/full", &ProtocolHandler::on_semantic_tokens },
-    { "textDocument/signatureHelp", &ProtocolHandler::on_document_signature_help },
-    { "textDocument/definition", &ProtocolHandler::on_definition },
-    { "textDocument/declaration", &ProtocolHandler::on_declaration },
-    { "textDocument/hover", &ProtocolHandler::on_hover },
-    { "textDocument/documentSymbol", &ProtocolHandler::on_document_symbol },
-    { "workspace/symbol", &ProtocolHandler::on_workspace_symbol },
+    {"initialize", &ProtocolHandler::on_initialize},
+    {"initialized", &ProtocolHandler::on_initialized},
+    {"textDocument/didOpen", &ProtocolHandler::on_did_open},
+    {"textDocument/didChange", &ProtocolHandler::on_did_change},
+    {"textDocument/completion", &ProtocolHandler::on_completion},
+    {"textDocument/didClose", &ProtocolHandler::on_did_close},
+    {"textDocument/didSave", &ProtocolHandler::on_did_save},
+    {"textDocument/semanticTokens/full", &ProtocolHandler::on_semantic_tokens},
+    {"textDocument/signatureHelp", &ProtocolHandler::on_document_signature_help},
+    {"textDocument/definition", &ProtocolHandler::on_definition},
+    {"textDocument/declaration", &ProtocolHandler::on_declaration},
+    {"textDocument/hover", &ProtocolHandler::on_hover},
+    {"textDocument/documentSymbol", &ProtocolHandler::on_document_symbol},
+    {"workspace/symbol", &ProtocolHandler::on_workspace_symbol},
 };
 }
 
@@ -48,7 +48,7 @@ int main(int argc, char** argv)
     parser.AddLongOption("log-level", "Log level, one of: ERR, WARN, DBG, TRACE");
     parser.Parse();
 
-    if(parser.Found("v")) {
+    if (parser.Found("v")) {
         wxPrintf("ctagsd v-%s\n", CTAGSD_VERSION);
         exit(0);
     }
@@ -76,14 +76,14 @@ int main(int argc, char** argv)
         clSYSTEM() << "Started main loop" << endl;
 
         wxString message;
-        while(true) {
+        while (true) {
             auto msg = channel->read_message();
-            if(!msg) {
+            if (!msg) {
                 break;
             }
             auto json = msg->toElement();
             wxString method = json["method"].toString();
-            if(function_table.count(method) == 0) {
+            if (function_table.count(method) == 0) {
                 LOG_IF_TRACE { clDEBUG1() << "Received unsupported method:" << method << endl; }
                 protocol_handler.on_unsupported_message(std::move(msg), channel);
             } else {

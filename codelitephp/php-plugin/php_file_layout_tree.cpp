@@ -15,16 +15,22 @@
 #endif
 
 PHPFileLayoutTree::PHPFileLayoutTree(wxWindow* parent, IEditor* editor, IManager* manager)
-    : wxTreeCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-          wxTR_DEFAULT_STYLE | wxTR_HIDE_ROOT | wxTR_NO_LINES | wxTR_SINGLE)
+    : wxTreeCtrl(parent,
+                 wxID_ANY,
+                 wxDefaultPosition,
+                 wxDefaultSize,
+                 wxTR_DEFAULT_STYLE | wxTR_HIDE_ROOT | wxTR_NO_LINES | wxTR_SINGLE)
     , m_editor(editor)
     , m_manager(manager)
 {
 }
 
 PHPFileLayoutTree::PHPFileLayoutTree(wxWindow* parent)
-    : wxTreeCtrl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-          wxTR_DEFAULT_STYLE | wxTR_HIDE_ROOT | wxTR_NO_LINES | wxTR_SINGLE)
+    : wxTreeCtrl(parent,
+                 wxID_ANY,
+                 wxDefaultPosition,
+                 wxDefaultSize,
+                 wxTR_DEFAULT_STYLE | wxTR_HIDE_ROOT | wxTR_NO_LINES | wxTR_SINGLE)
     , m_editor(NULL)
     , m_manager(NULL)
 {
@@ -34,7 +40,8 @@ PHPFileLayoutTree::PHPFileLayoutTree(wxWindow* parent)
 void PHPFileLayoutTree::Construct()
 {
     // Sanity
-    if(!m_editor || !m_manager) return;
+    if (!m_editor || !m_manager)
+        return;
 
     wxString text = m_editor->GetTextRange(0, m_editor->GetLength());
     PHPSourceFile source(text, NULL);
@@ -61,10 +68,10 @@ void PHPFileLayoutTree::Construct()
     // Build the tree view
     BuildTree(root, source.Namespace());
 
-    if(HasChildren(GetRootItem())) {
+    if (HasChildren(GetRootItem())) {
         wxTreeItemIdValue cookie;
         wxTreeItemId child = GetFirstChild(GetRootItem(), cookie);
-        if(child.IsOk()) {
+        if (child.IsOk()) {
             SelectItem(child);
             ScrollTo(child);
         }
@@ -74,44 +81,45 @@ void PHPFileLayoutTree::Construct()
 
 int PHPFileLayoutTree::GetImageId(PHPEntityBase::Ptr_t entry)
 {
-    if(entry->Is(kEntityTypeFunction)) {
+    if (entry->Is(kEntityTypeFunction)) {
         PHPEntityFunction* func = entry->Cast<PHPEntityFunction>();
 
-        if(func->HasFlag(kFunc_Private))
+        if (func->HasFlag(kFunc_Private))
             return 1;
-        else if(func->HasFlag(kFunc_Protected))
+        else if (func->HasFlag(kFunc_Protected))
             return 2;
         else
             // public
             return 3;
 
-    } else if(entry->Is(kEntityTypeVariable)) {
+    } else if (entry->Is(kEntityTypeVariable)) {
         PHPEntityVariable* var = entry->Cast<PHPEntityVariable>();
-        if(!var->IsMember() && !var->IsConst()) {
+        if (!var->IsMember() && !var->IsConst()) {
             // A global variable
             return 6;
 
-        } else if(var->IsMember()) {
-            if(var->HasFlag(kVar_Const)) return 9; // constant
+        } else if (var->IsMember()) {
+            if (var->HasFlag(kVar_Const))
+                return 9; // constant
             // Member
-            if(var->HasFlag(kVar_Private))
+            if (var->HasFlag(kVar_Private))
                 return 4;
-            else if(var->HasFlag(kVar_Protected))
+            else if (var->HasFlag(kVar_Protected))
                 return 5;
             else
                 return 6;
 
-        } else if(var->IsConst()) {
+        } else if (var->IsConst()) {
             // Constant
             return 9;
         } else {
             return 6;
         }
 
-    } else if(entry->Is(kEntityTypeNamespace)) {
+    } else if (entry->Is(kEntityTypeNamespace)) {
         // Namespace
         return 7;
-    } else if(entry->Is(kEntityTypeClass)) {
+    } else if (entry->Is(kEntityTypeClass)) {
         return 8;
     }
     return -1; // Unknown
@@ -119,20 +127,21 @@ int PHPFileLayoutTree::GetImageId(PHPEntityBase::Ptr_t entry)
 
 wxTreeItemId PHPFileLayoutTree::RecurseSearch(const wxTreeItemId& item, const wxString& word)
 {
-    if(!item.IsOk()) return wxTreeItemId();
+    if (!item.IsOk())
+        return wxTreeItemId();
 
-    if(item != GetRootItem()) {
-        if(FileUtils::FuzzyMatch(word, GetItemText(item))) {
+    if (item != GetRootItem()) {
+        if (FileUtils::FuzzyMatch(word, GetItemText(item))) {
             return item;
         }
     }
 
-    if(ItemHasChildren(item)) {
+    if (ItemHasChildren(item)) {
         wxTreeItemIdValue cookie;
         wxTreeItemId child = GetFirstChild(item, cookie);
-        while(child.IsOk()) {
+        while (child.IsOk()) {
             wxTreeItemId selection = RecurseSearch(child, word);
-            if(selection.IsOk()) {
+            if (selection.IsOk()) {
                 return selection;
             }
             child = GetNextChild(item, cookie);
@@ -147,24 +156,25 @@ wxTreeItemId PHPFileLayoutTree::TryGetPrevItem(wxTreeItemId item)
 
     // find out the starting point
     wxTreeItemId prevItem = GetPrevSibling(item);
-    if(!prevItem.IsOk()) {
+    if (!prevItem.IsOk()) {
         prevItem = GetItemParent(item);
-        if(prevItem == GetRootItem()) {
+        if (prevItem == GetRootItem()) {
             return wxTreeItemId();
         }
     }
 
     // from there we must be able to navigate until this item
-    while(prevItem.IsOk()) {
+    while (prevItem.IsOk()) {
 
         ScrollTo(prevItem);
 
-        if(!IsVisible(prevItem)) {
+        if (!IsVisible(prevItem)) {
             return wxTreeItemId();
         }
 
         const wxTreeItemId nextItem = GetNextVisible(prevItem);
-        if(!nextItem.IsOk() || nextItem == item) return prevItem;
+        if (!nextItem.IsOk() || nextItem == item)
+            return prevItem;
 
         prevItem = nextItem;
     }
@@ -177,7 +187,8 @@ void PHPFileLayoutTree::BuildTree(wxTreeItemId parentTreeItem, PHPEntityBase::Pt
     int imgID = GetImageId(entity);
     wxTreeItemId parent = AppendItem(parentTreeItem, entity->GetDisplayName(), imgID, imgID, new QItemData(entity));
     // don't add the children of the function (i.e. function arguments)
-    if (entity->Is(kEntityTypeFunction)) return;
+    if (entity->Is(kEntityTypeFunction))
+        return;
 
     for (const auto& child : entity->GetChildren()) {
         BuildTree(parent, child);

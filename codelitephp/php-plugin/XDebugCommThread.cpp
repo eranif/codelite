@@ -13,7 +13,7 @@ XDebugComThread::~XDebugComThread() { Stop(); }
 
 void XDebugComThread::Stop()
 {
-    if(IsAlive()) {
+    if (IsAlive()) {
         Delete(NULL, wxTHREAD_WAIT_BLOCK);
 
     } else {
@@ -40,7 +40,7 @@ void* XDebugComThread::Entry()
 
         // Wait for new connection (up to m_waitForConnTimeout seconds, which defaults to 5 seconds )
         do {
-            if((m_waitForConnTimeout > 0) && (retry > m_waitForConnTimeout)) {
+            if ((m_waitForConnTimeout > 0) && (retry > m_waitForConnTimeout)) {
                 // Don't wait any longer for XDebug
                 m_xdebugMgr->CallAfter(&XDebugManager::XDebugNotConnecting);
                 return NULL;
@@ -49,7 +49,7 @@ void* XDebugComThread::Entry()
             ++retry;
             clDEBUG() << "CodeLite >>> Waiting for connection.." << clEndl;
 
-        } while(!TestDestroy() && !client);
+        } while (!TestDestroy() && !client);
 
         clDEBUG() << "CodeLite >>> Successfully accepted connection from XDebug!" << endl;
         m_xdebugMgr->CallAfter(&XDebugManager::SetConnected, true);
@@ -60,7 +60,7 @@ void* XDebugComThread::Entry()
         //----------------------------------------------------------------
 
         std::string initXML;
-        if(DoReadReply(initXML, client)) {
+        if (DoReadReply(initXML, client)) {
             m_xdebugMgr->CallAfter(&XDebugManager::OnSocketInput, initXML);
 
         } else {
@@ -70,14 +70,14 @@ void* XDebugComThread::Entry()
         }
 
         // The main loop: request-reply mode
-        while(!TestDestroy()) {
+        while (!TestDestroy()) {
             wxString command;
-            if(m_queue.ReceiveTimeout(20, command) == wxMSGQUEUE_NO_ERROR) {
+            if (m_queue.ReceiveTimeout(20, command) == wxMSGQUEUE_NO_ERROR) {
                 DoSendCommand(command, client);
 
                 // Wait for the reply
                 std::string reply;
-                if(!DoReadReply(reply, client)) {
+                if (!DoReadReply(reply, client)) {
                     // AN error occurred - close session
                     break;
                 }
@@ -98,18 +98,18 @@ void* XDebugComThread::Entry()
 
 bool XDebugComThread::DoReadReply(std::string& reply, clSocketBase::Ptr_t client)
 {
-    if(!client) {
+    if (!client) {
         return false;
     }
 
     try {
         // Read the data length
         wxString length;
-        while(true) {
+        while (true) {
             char c = 0;
             size_t count = 0;
             client->Read(&c, 1, count);
-            if(c == 0) {
+            if (c == 0) {
                 break;
             }
             length << c;
@@ -139,7 +139,7 @@ bool XDebugComThread::DoReadReply(std::string& reply, clSocketBase::Ptr_t client
 void XDebugComThread::DoSendCommand(const wxString& command, clSocketBase::Ptr_t client)
 {
     // got message, process it
-    if(!client) {
+    if (!client) {
         return;
     }
     clDEBUG() << "CodeLite >>> " << command << endl;

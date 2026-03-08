@@ -26,11 +26,11 @@
 #ifndef __ContinuousBuild__
 #define __ContinuousBuild__
 
-#include "plugin.h"
 #include "buildprocess.h"
-#include "compiler.h"
-#include "cl_command_event.h"
 #include "clTabTogglerHelper.h"
+#include "cl_command_event.h"
+#include "compiler.h"
+#include "plugin.h"
 
 class wxEvtHandler;
 class ContinuousBuildPane;
@@ -44,7 +44,7 @@ class ContinuousBuild : public IPlugin
     wxArrayString m_files;
     bool m_buildInProgress;
     clTabTogglerHelper::Ptr_t m_tabHelper;
-    
+
 public:
     void DoBuild(const wxString& fileName);
 

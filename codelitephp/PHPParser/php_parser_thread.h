@@ -28,7 +28,6 @@
 
 #include <worker_thread.h>
 
-
 class PHPParserThreadRequest : public ThreadRequest
 {
 public:
@@ -37,13 +36,13 @@ public:
         kParseWorkspaceFilesQuick,
         kParseSingleFile,
     };
-    
+
     ePHPParserThreadRequestType requestType;
     wxArrayString files;
     wxString workspaceFile;
     wxString file;
     wxArrayString frameworksPaths;
-    
+
 public:
     PHPParserThreadRequest(ePHPParserThreadRequestType type)
         : requestType(type)
@@ -56,7 +55,7 @@ class PHPParserThread : public WorkerThread
 {
     static PHPParserThread* ms_instance;
     static bool ms_goingDown;
-    
+
 public:
     static PHPParserThread* Instance();
     static void Release();

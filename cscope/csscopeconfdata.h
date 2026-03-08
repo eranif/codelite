@@ -27,49 +27,34 @@
 #define __csscopeconfdata__
 
 #include "serialized_object.h"
+
 #include <wx/string.h>
 
 #define SCOPE_ENTIRE_WORKSPACE wxT("Entire Workspace")
-#define SCOPE_ACTIVE_PROJECT   wxT("Active Project")
+#define SCOPE_ACTIVE_PROJECT wxT("Active Project")
 
 class CScopeConfData : public SerializedObject
 {
-	wxString m_cscopeFilepath;
-	wxString m_scanScope;
-	bool     m_rebuildDb;
-	bool     m_buildRevertedIndex;
+    wxString m_cscopeFilepath;
+    wxString m_scanScope;
+    bool m_rebuildDb;
+    bool m_buildRevertedIndex;
 
 public:
-	CScopeConfData();
+    CScopeConfData();
     virtual ~CScopeConfData() = default;
 
 public:
-	virtual void DeSerialize(Archive &arch);
-	virtual void Serialize(Archive &arch);
+    virtual void DeSerialize(Archive& arch);
+    virtual void Serialize(Archive& arch);
 
-	void SetCscopeExe(const wxString& filepath) {
-		this->m_cscopeFilepath = filepath;
-	}
-	const wxString& GetCscopeExe() const {
-		return m_cscopeFilepath;
-	}
-	void SetScanScope(const wxString& scanScope) {
-		this->m_scanScope = scanScope;
-	}
-	const wxString& GetScanScope() const {
-		return m_scanScope;
-	}
-	void SetRebuildDbOption(const bool rebuild) {
-		this->m_rebuildDb = rebuild;
-	}
-	bool GetRebuildOption() const {
-		return m_rebuildDb;
-	}
-	void SetBuildRevertedIndexOption(const bool revertedIndex) {
-		this->m_buildRevertedIndex = revertedIndex;
-	}
-	bool GetBuildRevertedIndexOption() const {
-		return m_buildRevertedIndex;
-	}
+    void SetCscopeExe(const wxString& filepath) { this->m_cscopeFilepath = filepath; }
+    const wxString& GetCscopeExe() const { return m_cscopeFilepath; }
+    void SetScanScope(const wxString& scanScope) { this->m_scanScope = scanScope; }
+    const wxString& GetScanScope() const { return m_scanScope; }
+    void SetRebuildDbOption(const bool rebuild) { this->m_rebuildDb = rebuild; }
+    bool GetRebuildOption() const { return m_rebuildDb; }
+    void SetBuildRevertedIndexOption(const bool revertedIndex) { this->m_buildRevertedIndex = revertedIndex; }
+    bool GetBuildRevertedIndexOption() const { return m_buildRevertedIndex; }
 };
 #endif // __csscopeconfdata__

@@ -10,6 +10,7 @@
 #include "imanager.h"
 #include "macros.h"
 #include "vimCommands.h"
+
 #include <wx/kbdstate.h>
 #include <wx/stc/stc.h>
 /*Experimental*/

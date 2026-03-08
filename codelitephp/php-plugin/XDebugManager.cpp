@@ -32,7 +32,7 @@
 #include "xdebugevent.h"
 
 #define CHECK_XDEBUG_SESSION_ACTIVE(event) \
-    if(!IsConnected()) {                   \
+    if (!IsConnected()) {                  \
         event.Skip();                      \
         return;                            \
     }
@@ -88,7 +88,7 @@ XDebugManager::~XDebugManager()
 
 void XDebugManager::OnDebugStartOrContinue(clDebugEvent& e)
 {
-    if(!PHPWorkspace::Get()->IsOpen()) {
+    if (!PHPWorkspace::Get()->IsOpen()) {
         // Call skip so CodeLite will continue to handle this event
         // by passing it to other debuggers
         e.Skip();
@@ -98,7 +98,7 @@ void XDebugManager::OnDebugStartOrContinue(clDebugEvent& e)
     // This event is ours to handler, don't call e.Skip()
 
     // a PHP debug session requested to start
-    if(!m_readerThread) {
+    if (!m_readerThread) {
         // No reader thread is up, start on
         // starting the debugger
         e.SetFeatures(0); // No special features by the PHP debugger
@@ -115,10 +115,10 @@ void XDebugManager::DoStartDebugger(bool ideInitiate)
     CHECK_COND_RET(PHPWorkspace::Get()->GetActiveProject());
 
     // Test which file we want to debug
-    PHPDebugStartDlg debugDlg(EventNotifier::Get()->TopFrame(), PHPWorkspace::Get()->GetActiveProject(),
-                              m_plugin->GetManager());
-    if(ideInitiate) {
-        if(debugDlg.ShowModal() != wxID_OK) {
+    PHPDebugStartDlg debugDlg(
+        EventNotifier::Get()->TopFrame(), PHPWorkspace::Get()->GetActiveProject(), m_plugin->GetManager());
+    if (ideInitiate) {
+        if (debugDlg.ShowModal() != wxID_OK) {
             return;
         }
     }
@@ -132,29 +132,29 @@ void XDebugManager::DoStartDebugger(bool ideInitiate)
 
     PHPConfigurationData conf;
     conf.Load();
-    if(!conf.HasFlag(PHPConfigurationData::kDontPromptForMissingFileMapping) &&
-       GetFileMapping(PHPWorkspace::Get()->GetActiveProject()).empty()) {
+    if (!conf.HasFlag(PHPConfigurationData::kDontPromptForMissingFileMapping) &&
+        GetFileMapping(PHPWorkspace::Get()->GetActiveProject()).empty()) {
         // Issue a warning
         wxString message;
         message << _("This project has no file mapping defined. This may result in breakpoints not applied\n")
                 << _("To fix this, set file mapping from Project Settings -> Debug");
 
-        wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(), message, "CodeLite",
-                                wxICON_WARNING | wxOK | wxOK_DEFAULT | wxCANCEL);
+        wxRichMessageDialog dlg(
+            EventNotifier::Get()->TopFrame(), message, "CodeLite", wxICON_WARNING | wxOK | wxOK_DEFAULT | wxCANCEL);
         dlg.ShowCheckBox(_("Remember my answer and don't show this message again"));
         dlg.SetOKCancelLabels(_("OK, Continue to Debug"), _("Stop the debugger"));
         int dlgResult = dlg.ShowModal();
         conf.EnableFlag(PHPConfigurationData::kDontPromptForMissingFileMapping, dlg.IsCheckBoxChecked()).Save();
-        if(dlgResult == wxID_CANCEL) {
+        if (dlgResult == wxID_CANCEL) {
             // Stop the debugger
             DoStopDebugger();
             return;
         }
     }
 
-    if(ideInitiate) {
+    if (ideInitiate) {
         // Now we can run the project
-        if(!PHPWorkspace::Get()->RunProject(true, debugDlg.GetPath(), "", conf.GetXdebugIdeKey())) {
+        if (!PHPWorkspace::Get()->RunProject(true, debugDlg.GetPath(), "", conf.GetXdebugIdeKey())) {
             DoStopDebugger();
             return;
         }
@@ -173,7 +173,7 @@ void XDebugManager::OnSocketInput(const std::string& reply) { ProcessDebuggerMes
 
 void XDebugManager::OnDebugIsRunning(clDebugEvent& e)
 {
-    if(PHPWorkspace::Get()->IsOpen()) {
+    if (PHPWorkspace::Get()->IsOpen()) {
         e.SetAnswer((m_readerThread != nullptr));
     } else {
         // Not ours to handle
@@ -183,7 +183,7 @@ void XDebugManager::OnDebugIsRunning(clDebugEvent& e)
 
 void XDebugManager::OnStopDebugger(clDebugEvent& e)
 {
-    if(m_readerThread) {
+    if (m_readerThread) {
         // abort
         wxDELETE(m_readerThread);
 
@@ -218,14 +218,14 @@ void XDebugManager::DoStopDebugger()
 
 bool XDebugManager::ProcessDebuggerMessage(const wxString& buffer)
 {
-    if(buffer.IsEmpty())
+    if (buffer.IsEmpty())
         return false;
 
     clDEBUG() << "XDebug <<< " << buffer << endl;
 
     wxXmlDocument doc;
     wxStringInputStream sis(buffer);
-    if(!doc.Load(sis)) {
+    if (!doc.Load(sis)) {
         // failed to parse XML
         clDEBUG() << "CodeLite >>> invalid XML!" << endl;
         return false;
@@ -233,7 +233,7 @@ bool XDebugManager::ProcessDebuggerMessage(const wxString& buffer)
 
     wxXmlNode* root = doc.GetRoot();
 
-    if(root->GetName() == "init") {
+    if (root->GetName() == "init") {
 
         // Parse the content and notify CodeLite to open the main file
         xInitStruct initData = ParseInitXML(root);
@@ -247,7 +247,7 @@ bool XDebugManager::ProcessDebuggerMessage(const wxString& buffer)
         // Issue a "Continue" command
         DoContinue();
 
-    } else if(root->GetName() == "response") {
+    } else if (root->GetName() == "response") {
         // Handle response
         DoHandleResponse(root);
     }
@@ -257,13 +257,13 @@ bool XDebugManager::ProcessDebuggerMessage(const wxString& buffer)
 void XDebugManager::DoApplyBreakpoints()
 {
     clDEBUG() << "CodeLite >>> Applying breakpoints" << endl;
-    if(!m_readerThread) {
+    if (!m_readerThread) {
         clDEBUG() << "CodeLite (PHP): No XDebug reader thread?" << endl;
         return;
     }
 
     PHPProject::Ptr_t pProject = PHPWorkspace::Get()->GetActiveProject();
-    if(!pProject) {
+    if (!pProject) {
         clDEBUG() << "CodeLite (PHP): No active project!" << endl;
         return;
     }
@@ -272,14 +272,14 @@ void XDebugManager::DoApplyBreakpoints()
     // bool bRunAsWebserver = (pProject->GetSettings().GetRunAs() == PHPProjectSettingsData::kRunAsWebsite);
 
     XDebugBreakpoint::List_t& breakpoints = m_breakpointsMgr.GetBreakpoints();
-    if(breakpoints.empty()) {
+    if (breakpoints.empty()) {
         clDEBUG() << "CodeLite (PHP): No breakpoints to apply" << endl;
         return;
     }
 
-    for(auto& bp : breakpoints) {
+    for (auto& bp : breakpoints) {
         // apply only breakpoints without xdebug-id attached to them
-        if(bp.IsApplied()) {
+        if (bp.IsApplied()) {
             clDEBUG() << "CodeLite (PHP): Breakpoint already applied" << endl;
             continue;
         }
@@ -287,8 +287,8 @@ void XDebugManager::DoApplyBreakpoints()
         wxStringMap_t sftpMapping;
         SSHWorkspaceSettings sftpSettings;
         sftpSettings.Load();
-        if(!sftpSettings.GetRemoteFolder().IsEmpty() && sftpSettings.IsRemoteUploadEnabled()) {
-            sftpMapping.insert({ PHPWorkspace::Get()->GetFilename().GetPath(), sftpSettings.GetRemoteFolder() });
+        if (!sftpSettings.GetRemoteFolder().IsEmpty() && sftpSettings.IsRemoteUploadEnabled()) {
+            sftpMapping.insert({PHPWorkspace::Get()->GetFilename().GetPath(), sftpSettings.GetRemoteFolder()});
         }
 
         wxString command;
@@ -315,7 +315,7 @@ void XDebugManager::DoHandleResponse(wxXmlNode* xml)
     long nTxId(0);
     txId.ToCLong(&nTxId);
     XDebugCommandHandler::Ptr_t handler = PopHandler(nTxId);
-    if(handler) {
+    if (handler) {
         handler->Process(xml);
 
     } else {
@@ -325,7 +325,7 @@ void XDebugManager::DoHandleResponse(wxXmlNode* xml)
         doc.SetRoot(xml);
 
         wxStringOutputStream sos;
-        if(doc.Save(sos)) {
+        if (doc.Save(sos)) {
             clDEBUG() << sos.GetString() << endl;
         }
         doc.DetachRoot();
@@ -348,7 +348,7 @@ xInitStruct XDebugManager::ParseInitXML(wxXmlNode* init)
 
 void XDebugManager::AddHandler(XDebugCommandHandler::Ptr_t handler)
 {
-    if(m_handlers.count(handler->GetTransactionId())) {
+    if (m_handlers.count(handler->GetTransactionId())) {
         m_handlers.erase(handler->GetTransactionId());
     }
     m_handlers.insert(std::make_pair(handler->GetTransactionId(), handler));
@@ -386,21 +386,21 @@ void XDebugManager::SendStopCommand()
 
 void XDebugManager::OnToggleBreakpoint(clDebugEvent& e)
 {
-    if(!PHPWorkspace::Get()->IsOpen()) {
+    if (!PHPWorkspace::Get()->IsOpen()) {
         e.Skip();
         return;
     }
 
     // User toggled a breakpoint
     IEditor* editor = m_plugin->GetManager()->GetActiveEditor();
-    if(editor && editor->GetFileName().GetFullPath() == e.GetFileName()) {
+    if (editor && editor->GetFileName().GetFullPath() == e.GetFileName()) {
         // Correct editor
         // add marker
-        if(m_breakpointsMgr.HasBreakpoint(e.GetFileName(), e.GetInt())) {
+        if (m_breakpointsMgr.HasBreakpoint(e.GetFileName(), e.GetInt())) {
 
             XDebugBreakpoint bp;
             m_breakpointsMgr.GetBreakpoint(e.GetFileName(), e.GetInt(), bp);
-            if(bp.IsApplied() && m_readerThread) {
+            if (bp.IsApplied() && m_readerThread) {
                 // Remove it from XDebug as well
                 DoDeleteBreakpoint(bp.GetBreakpointId());
             }
@@ -440,7 +440,7 @@ void XDebugManager::OnGotFocusFromXDebug(XDebugEvent& e)
 
     // Make sure CodeLite is "Raised"
     wxFrame* frame = EventNotifier::Get()->TopFrame();
-    if(frame->IsIconized() || !frame->IsShown()) {
+    if (frame->IsIconized() || !frame->IsShown()) {
         frame->Raise();
     }
 
@@ -449,14 +449,14 @@ void XDebugManager::OnGotFocusFromXDebug(XDebugEvent& e)
 
     // Mark the debugger line / file
     IEditor* editor = m_plugin->GetManager()->FindEditor(e.GetFileName());
-    if(!editor && wxFileName::Exists(e.GetFileName())) {
+    if (!editor && wxFileName::Exists(e.GetFileName())) {
         // Try to open the editor
-        if(m_plugin->GetManager()->OpenFile(e.GetFileName(), "", e.GetLineNumber())) {
+        if (m_plugin->GetManager()->OpenFile(e.GetFileName(), "", e.GetLineNumber())) {
             editor = m_plugin->GetManager()->GetActiveEditor();
         }
     }
 
-    if(editor) {
+    if (editor) {
         m_plugin->GetManager()->SelectPage(editor->GetCtrl());
         CallAfter(&XDebugManager::SetDebuggerMarker, editor->GetCtrl(), e.GetLineNumber());
     }
@@ -512,7 +512,7 @@ void XDebugManager::OnXDebugStopped(XDebugEvent& e)
 
 void XDebugManager::DoRefreshDebuggerViews(int requestedStack)
 {
-    if(!m_readerThread) {
+    if (!m_readerThread) {
         return;
     }
 
@@ -543,7 +543,7 @@ void XDebugManager::DoRefreshDebuggerViews(int requestedStack)
 static XDebugManager* s_xdebugManager = NULL;
 XDebugManager& XDebugManager::Get()
 {
-    if(!s_xdebugManager) {
+    if (!s_xdebugManager) {
         s_xdebugManager = new XDebugManager();
     }
     return *s_xdebugManager;
@@ -582,7 +582,7 @@ void XDebugManager::OnStackTraceItemActivated(PHPEvent& e)
     int line = e.GetLineNumber();
     int depth = e.GetInt();
 
-    if(!m_plugin->GetManager()->OpenFile(filename, "", line - 1)) {
+    if (!m_plugin->GetManager()->OpenFile(filename, "", line - 1)) {
         ::wxMessageBox(_("Could not open file: ") + filename, "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
     }
     DoRefreshDebuggerViews(depth);
@@ -598,7 +598,7 @@ wxStringMap_t XDebugManager::GetFileMapping(PHPProject::Ptr_t pProject) const
     // Add the SFTP mappings
     SSHWorkspaceSettings sftpSettings;
     sftpSettings.Load();
-    if(!sftpSettings.GetRemoteFolder().IsEmpty() && sftpSettings.IsRemoteUploadEnabled()) {
+    if (!sftpSettings.GetRemoteFolder().IsEmpty() && sftpSettings.IsRemoteUploadEnabled()) {
         mappings.insert(std::make_pair(PHPWorkspace::Get()->GetFilename().GetPath(), sftpSettings.GetRemoteFolder()));
     }
     return mappings;
@@ -626,12 +626,12 @@ void XDebugManager::OnDeleteBreakpoint(PHPEvent& e)
     int line = e.GetLineNumber();
     int bpid = e.GetInt();
 
-    if(bpid != wxNOT_FOUND) {
+    if (bpid != wxNOT_FOUND) {
         // breakpoint was applied
         DoDeleteBreakpoint(bpid);
     }
     IEditor* editor = m_plugin->GetManager()->FindEditor(filename);
-    if(editor) {
+    if (editor) {
         editor->GetCtrl()->MarkerDelete(line - 1, smt_breakpoint);
     }
     m_breakpointsMgr.DeleteBreakpoint(filename, line);
@@ -642,7 +642,7 @@ bool XDebugManager::IsDebugSessionRunning() const { return PHPWorkspace::Get()->
 void XDebugManager::OnBreakpointItemActivated(PHPEvent& e)
 {
     e.Skip();
-    if(!m_plugin->GetManager()->OpenFile(e.GetFileName(), "", e.GetLineNumber() - 1)) {
+    if (!m_plugin->GetManager()->OpenFile(e.GetFileName(), "", e.GetLineNumber() - 1)) {
         ::wxMessageBox(_("Could not open file: ") + e.GetFileName(), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
     }
 }
@@ -703,7 +703,7 @@ void XDebugManager::OnTooltip(clDebugEvent& e)
     CHECK_XDEBUG_SESSION_ACTIVE(e);
 
     wxString expression = e.GetString();
-    if(expression.IsEmpty())
+    if (expression.IsEmpty())
         return;
 
     expression.Prepend("print_r(").Append(", true)");
@@ -726,10 +726,12 @@ void XDebugManager::OnCommThreadTerminated()
 
 void XDebugManager::XDebugNotConnecting()
 {
-    wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(), _("XDebug did not connect in a timely manner"),
-                            "CodeLite", wxICON_WARNING | wxOK | wxCANCEL_DEFAULT | wxCANCEL);
+    wxRichMessageDialog dlg(EventNotifier::Get()->TopFrame(),
+                            _("XDebug did not connect in a timely manner"),
+                            "CodeLite",
+                            wxICON_WARNING | wxOK | wxCANCEL_DEFAULT | wxCANCEL);
     dlg.SetOKCancelLabels(_("Run XDebug Test"), _("OK"));
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         m_plugin->CallAfter(&PhpPlugin::RunXDebugDiagnostics);
     }
     DoStopDebugger();
@@ -737,11 +739,11 @@ void XDebugManager::XDebugNotConnecting()
 
 void XDebugManager::OnShowTooltip(XDebugEvent& e)
 {
-    if(e.GetEvalReason() == XDebugEvalCmdHandler::kEvalForTooltip) {
+    if (e.GetEvalReason() == XDebugEvalCmdHandler::kEvalForTooltip) {
         wxString tip, title;
         title << e.GetString();
 
-        if(!e.IsEvalSucceeded()) {
+        if (!e.IsEvalSucceeded()) {
             tip << _("Error evaluating expression ");
         } else {
             wxString evaluated = e.GetEvaluated();
@@ -799,7 +801,7 @@ void XDebugManager::CenterEditor(wxStyledTextCtrl* ctrl, int lineNo)
 
 void XDebugManager::StartListener()
 {
-    if(m_readerThread) {
+    if (m_readerThread) {
         // Stop the current session
         DoStopDebugger();
     }

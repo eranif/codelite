@@ -18,7 +18,4 @@ PHPEvent::PHPEvent(wxEventType commandType, int winid)
 {
 }
 
-wxEvent* PHPEvent::Clone() const
-{
-    return new PHPEvent(*this);
-}
+wxEvent* PHPEvent::Clone() const { return new PHPEvent(*this); }

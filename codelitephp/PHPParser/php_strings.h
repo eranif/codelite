@@ -26,19 +26,19 @@
 #ifndef PHP_STRINGS_H
 #define PHP_STRINGS_H
 
-#include <wx/string.h>
-#include <wx/frame.h>
 #include <wx/app.h>
+#include <wx/frame.h>
+#include <wx/string.h>
 
 #define FRAME static_cast<wxFrame*>(static_cast<wxApp*>(wxApp::GetInstance())->GetTopWindow())
 
-namespace PHPStrings {
+namespace PHPStrings
+{
 
-const wxString PHP_WORKSPACE_EXT        = wxT("workspace");
+const wxString PHP_WORKSPACE_EXT = wxT("workspace");
 const wxString PHP_WORKSPACE_VIEW_TITLE = wxT("PHP");
 const wxString PHP_WORKSPACE_VIEW_LABEL = _("PHP");
 
-};
+}; // namespace PHPStrings
 
 #endif // PHP_STRINGS_H
-

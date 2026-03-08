@@ -26,17 +26,17 @@
 #ifndef XDEBUGBREAKPOINTCMDHANDLER_H
 #define XDEBUGBREAKPOINTCMDHANDLER_H
 
-#include "XDebugCommandHandler.h"
 #include "XDebugBreakpoint.h"
+#include "XDebugCommandHandler.h"
 
 class wxXmlNode;
 class wxSocketBase;
 class XDebugBreakpointCmdHandler : public XDebugCommandHandler
 {
-    XDebugBreakpoint &m_breakpoint;
-    
+    XDebugBreakpoint& m_breakpoint;
+
 public:
-    XDebugBreakpointCmdHandler(XDebugManager* mgr, int transactionId, XDebugBreakpoint &breakpoint);
+    XDebugBreakpointCmdHandler(XDebugManager* mgr, int transactionId, XDebugBreakpoint& breakpoint);
     virtual ~XDebugBreakpointCmdHandler() = default;
 
     virtual void Process(const wxXmlNode* response);

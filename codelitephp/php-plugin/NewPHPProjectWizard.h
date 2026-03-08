@@ -25,9 +25,9 @@
 
 #ifndef NEWPHPPROJECTWIZARD_H
 #define NEWPHPPROJECTWIZARD_H
-#include "php_ui.h"
 #include "php_project.h"
 #include "php_project_settings_data.h"
+#include "php_ui.h"
 
 class NewPHPProjectWizard : public NewPHPProjectWizardBase
 {
@@ -41,7 +41,7 @@ public:
 
     int GetProjectType() const
     {
-        if(m_choiceProjectType->GetStringSelection() == "Run project as command line") {
+        if (m_choiceProjectType->GetStringSelection() == "Run project as command line") {
             return PHPProjectSettingsData::kRunAsCLI;
         } else {
             return PHPProjectSettingsData::kRunAsWebsite;

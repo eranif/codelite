@@ -526,10 +526,7 @@ public:
      * @param key
      * @param data
      */
-    void SetClientData(const wxString& key, std::unique_ptr<wxClientData> data)
-    {
-        m_data[key] = std::move(data);
-    }
+    void SetClientData(const wxString& key, std::unique_ptr<wxClientData> data) { m_data[key] = std::move(data); }
 
     /**
      * @brief force a syntax highlight of 'langname' to the editor

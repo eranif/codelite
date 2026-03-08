@@ -1,6 +1,7 @@
 #ifndef NEWFILECOMPARISON_H
 #define NEWFILECOMPARISON_H
 #include "CodeLiteDiff_UI.h"
+
 #include <wx/filename.h>
 
 class NewFileComparison : public NewFileComparisonBase

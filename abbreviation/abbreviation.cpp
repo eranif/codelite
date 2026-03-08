@@ -25,7 +25,6 @@
 
 #include "abbreviation.h"
 
-
 #include "Keyboard/clKeyboardManager.h"
 #include "abbreviationentry.h"
 #include "abbreviationssettingsdlg.h"
@@ -84,8 +83,11 @@ void AbbreviationPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(nullptr);
 
-    item = new wxMenuItem(menu, XRCID("abbrev_insert"), _("Show abbreviations completion box"),
-                          _("Show abbreviations completion box"), wxITEM_NORMAL);
+    item = new wxMenuItem(menu,
+                          XRCID("abbrev_insert"),
+                          _("Show abbreviations completion box"),
+                          _("Show abbreviations completion box"),
+                          wxITEM_NORMAL);
     menu->Append(item);
     menu->AppendSeparator();
     item = new wxMenuItem(menu, XRCID("abbrev_settings"), _("Settings..."), _("Settings..."), wxITEM_NORMAL);
@@ -193,8 +195,8 @@ void AbbreviationPlugin::InitDefaults()
         jsonData.SetEntries(entries);
         m_config.WriteItem(jsonData);
     }
-    clKeyboardManager::Get()->AddAccelerator("abbrev_insert", _("Abbreviations"),
-                                             _("Show abbreviations completion box"), "Ctrl-Alt-SPACE");
+    clKeyboardManager::Get()->AddAccelerator(
+        "abbrev_insert", _("Abbreviations"), _("Show abbreviations completion box"), "Ctrl-Alt-SPACE");
 }
 
 bool AbbreviationPlugin::InsertExpansion(const wxString& abbreviation)
@@ -317,7 +319,7 @@ void AbbreviationPlugin::OnShowAbbreviations(wxCommandEvent& e)
     wxStyledTextCtrl* ctrl = editor->GetCtrl();
     const auto V = GetAbbreviations(editor->GetWordAtPosition(editor->GetCurrentPosition()));
     if (!V.empty()) {
-        wxCodeCompletionBoxManager::Get().ShowCompletionBox(ctrl, V, wxCodeCompletionBox::kRefreshOnKeyType,
-                                                            wxNOT_FOUND);
+        wxCodeCompletionBoxManager::Get().ShowCompletionBox(
+            ctrl, V, wxCodeCompletionBox::kRefreshOnKeyType, wxNOT_FOUND);
     }
 }

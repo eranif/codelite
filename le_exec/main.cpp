@@ -11,8 +11,8 @@
 bool hasSpaces(const char* str)
 {
     char last = 0;
-    while(str && *str) {
-        if((*str == ' ' || *str == '\t') && last != '\\')
+    while (str && *str) {
+        if ((*str == ' ' || *str == '\t') && last != '\\')
             return true;
         last = *str++;
     }
@@ -21,14 +21,14 @@ bool hasSpaces(const char* str)
 
 int main(int argc, char** argv)
 {
-    if(argc < 2) {
+    if (argc < 2) {
         std::cout << "Usage: codelite-exec <program_name> [arguments...]" << std::endl;
         return 1;
     }
 
     // count size of arguments
     int fullsize = 0;
-    for(int i = 1; i < argc; ++i) {
+    for (int i = 1; i < argc; ++i) {
         fullsize += strlen(argv[i]);
     }
     // add some slack for spaces between args plus quotes around executable
@@ -39,19 +39,19 @@ int main(int argc, char** argv)
 
     // 1st arg (executable) enclosed in quotes to support filenames with spaces
     bool sp = hasSpaces(argv[1]);
-    if(sp)
+    if (sp)
         strcat(cmdline, "\"");
     strcat(cmdline, argv[1]);
-    if(sp)
+    if (sp)
         strcat(cmdline, "\"");
     strcat(cmdline, " ");
 
-    for(int i = 2; i < argc; ++i) {
+    for (int i = 2; i < argc; ++i) {
         sp = hasSpaces(argv[i]);
-        if(sp)
+        if (sp)
             strcat(cmdline, "\"");
         strcat(cmdline, argv[i]);
-        if(sp)
+        if (sp)
             strcat(cmdline, "\"");
         strcat(cmdline, " ");
     }

@@ -131,7 +131,7 @@ void CTagsdSettings::build_search_path(const wxFileName& filepath)
     wxFileName compile_flags_txt(path, "compile_flags.txt");
     wxFileName compile_commands_json(path, "compile_commands.json");
 
-    std::set<wxString> S{ m_search_path.begin(), m_search_path.end() };
+    std::set<wxString> S{m_search_path.begin(), m_search_path.end()};
     if (compile_flags_txt.FileExists()) {
         // we are using the compile_flags.txt file method
         CompileFlagsTxt cft(compile_flags_txt);
@@ -159,7 +159,7 @@ void CTagsdSettings::build_search_path(const wxFileName& filepath)
 
     // Common compiler paths - should be placed at top of the include path!
     if (const auto command = ThePlatform->Which(basename)) {
-        GCCMetadata md{ basename };
+        GCCMetadata md{basename};
 
         md.Load(*command, wxEmptyString, false);
         m_search_path.insert(m_search_path.end(), md.GetSearchPaths().begin(), md.GetSearchPaths().end());

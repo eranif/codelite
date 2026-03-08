@@ -14,7 +14,7 @@ class EditorConfigSettings
 private:
     void SetFlag(EditorConfigSettings::eFlags flag, bool b)
     {
-        if(b) {
+        if (b) {
             m_flags |= flag;
 
         } else {
@@ -28,7 +28,7 @@ public:
 
     bool IsEnabled() const { return m_flags & kEnabled; }
     void SetEnabled(bool b) { SetFlag(kEnabled, b); }
-    
+
     EditorConfigSettings& Load();
     EditorConfigSettings& Save();
 };

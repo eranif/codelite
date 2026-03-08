@@ -1,9 +1,10 @@
 #ifndef EDITORCONFIGCACHE_H
 #define EDITORCONFIGCACHE_H
 
-#include <wx/filename.h>
 #include "clEditorConfig.h"
+
 #include <map>
+#include <wx/filename.h>
 
 class EditorConfigCache
 {
@@ -12,7 +13,7 @@ private:
         clEditorConfigSection section;
         time_t lastModified;
     };
-    
+
     std::map<wxString, CachedItem> m_map;
 
 public:
@@ -23,12 +24,12 @@ public:
      * @brief find cached item for given filename
      */
     bool Get(const wxFileName& filename, clEditorConfigSection& section);
-    
+
     /**
      * @brief add entry to the cache
      */
     void Add(const wxFileName& filename, const clEditorConfigSection& section);
-    
+
     /**
      * @brief clear the cache
      */

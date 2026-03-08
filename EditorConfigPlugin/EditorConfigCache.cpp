@@ -1,14 +1,16 @@
 #include "EditorConfigCache.h"
+
 #include "fileutils.h"
 
 bool EditorConfigCache::Get(const wxFileName& filename, clEditorConfigSection& section)
 {
     wxString key = filename.GetFullPath();
-    if(m_map.count(key) == 0) return false;
+    if (m_map.count(key) == 0)
+        return false;
 
     CachedItem& entry = m_map[key];
     time_t lastModTimeOnDisk = FileUtils::GetFileModificationTime(entry.section.GetFilename());
-    if(lastModTimeOnDisk != entry.lastModified) {
+    if (lastModTimeOnDisk != entry.lastModified) {
         // remove this entry and return false
         m_map.erase(key);
         return false;
@@ -21,7 +23,7 @@ bool EditorConfigCache::Get(const wxFileName& filename, clEditorConfigSection& s
 void EditorConfigCache::Add(const wxFileName& filename, const clEditorConfigSection& section)
 {
     wxString key = filename.GetFullPath();
-    if(m_map.count(key)) {
+    if (m_map.count(key)) {
         m_map.erase(key);
     }
 

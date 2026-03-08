@@ -1,6 +1,7 @@
 #include "EditorConfigSettingsDlg.h"
-#include "cl_config.h"
+
 #include "EditorConfigSettings.h"
+#include "cl_config.h"
 
 EditorConfigSettingsDlg::EditorConfigSettingsDlg(wxWindow* parent)
     : EditorConfigSettingsDlgBase(parent)

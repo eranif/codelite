@@ -1,12 +1,13 @@
 #ifndef __EditorConfigPlugin__
 #define __EditorConfigPlugin__
 
-#include "plugin.h"
-#include "cl_command_event.h"
 #include "EditorConfigCache.h"
-#include <wx/filename.h>
-#include "clEditorConfig.h"
 #include "EditorConfigSettings.h"
+#include "clEditorConfig.h"
+#include "cl_command_event.h"
+#include "plugin.h"
+
+#include <wx/filename.h>
 
 class EditorConfigPlugin : public IPlugin
 {

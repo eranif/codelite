@@ -1,19 +1,18 @@
 #include "editorconfigplugin.h"
+
 #include "EditorConfigSettings.h"
 #include "EditorConfigSettingsDlg.h"
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "file_logger.h"
+
 #include <wx/filename.h>
 #include <wx/menu.h>
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new EditorConfigPlugin(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new EditorConfigPlugin(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -60,13 +59,13 @@ void EditorConfigPlugin::UnPlug()
 void EditorConfigPlugin::OnEditorConfigLoading(clEditorConfigEvent& event)
 {
     event.Skip();
-    if(!m_settings.IsEnabled()) {
+    if (!m_settings.IsEnabled()) {
         return;
     }
 
     clEditorConfigSection section;
     wxFileName fn(event.GetFileName());
-    if(!DoGetEditorConfigForFile(fn, section)) {
+    if (!DoGetEditorConfigForFile(fn, section)) {
         return;
     }
 
@@ -77,7 +76,7 @@ void EditorConfigPlugin::OnEditorConfigLoading(clEditorConfigEvent& event)
 void EditorConfigPlugin::OnActiveEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
-    if(!m_settings.IsEnabled()) {
+    if (!m_settings.IsEnabled()) {
         return;
     }
 
@@ -88,7 +87,7 @@ void EditorConfigPlugin::OnActiveEditorChanged(wxCommandEvent& event)
     CHECK_PTR_RET(conf);
 
     clEditorConfigSection section;
-    if(!DoGetEditorConfigForFile(editor->GetFileName(), section))
+    if (!DoGetEditorConfigForFile(editor->GetFileName(), section))
         return;
     conf->UpdateFromEditorConfig(section);
     editor->ApplyEditorConfig();
@@ -97,18 +96,18 @@ void EditorConfigPlugin::OnActiveEditorChanged(wxCommandEvent& event)
 bool EditorConfigPlugin::DoGetEditorConfigForFile(const wxFileName& filename, clEditorConfigSection& section)
 {
     // Try the cache first
-    if(m_cache.Get(filename, section)) {
+    if (m_cache.Get(filename, section)) {
         section.PrintToLog();
         return true;
     }
 
     // Sanity
-    if(!filename.IsOk() || !filename.FileExists()) {
+    if (!filename.IsOk() || !filename.FileExists()) {
         return false;
     }
 
     clEditorConfig conf;
-    if(!conf.GetSectionForFile(filename, section)) {
+    if (!conf.GetSectionForFile(filename, section)) {
         // Update the cache
         return false;
     }
@@ -120,7 +119,7 @@ bool EditorConfigPlugin::DoGetEditorConfigForFile(const wxFileName& filename, cl
 void EditorConfigPlugin::OnSettings(wxCommandEvent& event)
 {
     EditorConfigSettingsDlg dlg(wxTheApp->GetTopWindow());
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         // Store the settings
         m_settings.SetEnabled(dlg.IsEnabled());
         m_settings.Save();

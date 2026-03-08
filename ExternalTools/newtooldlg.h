@@ -26,9 +26,9 @@
 #ifndef __newtooldlg__
 #define __newtooldlg__
 
+#include "NewToolBase.h"
 #include "externaltooldlg.h"
 #include "imanager.h"
-#include "NewToolBase.h"
 
 class NewToolDlg : public NewToolBase
 {

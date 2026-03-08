@@ -26,10 +26,11 @@
 #ifndef EXTERNALTOOLSPROCESSMANAGER_H
 #define EXTERNALTOOLSPROCESSMANAGER_H
 
-#include <wx/event.h>
 #include "cl_command_event.h"
 #include "externaltoolsdata.h"
+
 #include <vector>
+#include <wx/event.h>
 
 struct ExternalToolItemData {
     wxString m_command;

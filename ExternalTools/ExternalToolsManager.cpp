@@ -1,8 +1,10 @@
 #include "ExternalToolsManager.h"
+
 #include "ExternalToolsProcessManager.h"
 #include "bitmap_loader.h"
 #include "globals.h"
 #include "imanager.h"
+
 #include <algorithm>
 
 ExternalToolsManager::ExternalToolsManager(wxWindow* parent)
@@ -49,7 +51,7 @@ void ExternalToolsManager::DoPopulateTable()
 
 void ExternalToolsManager::DoClear()
 {
-    for(size_t i = 0; i < m_dvListCtrlTasks->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrlTasks->GetItemCount(); ++i) {
         ExternalToolItemData* cd =
             (ExternalToolItemData*)m_dvListCtrlTasks->GetItemData(m_dvListCtrlTasks->RowToItem(i));
         delete cd;

@@ -50,7 +50,7 @@ ToolsTaskManager::~ToolsTaskManager()
 
 ToolsTaskManager* ToolsTaskManager::Instance()
 {
-    if(ms_instance == 0) {
+    if (ms_instance == 0) {
         ms_instance = new ToolsTaskManager();
     }
     return ms_instance;
@@ -58,7 +58,7 @@ ToolsTaskManager* ToolsTaskManager::Instance()
 
 void ToolsTaskManager::Release()
 {
-    if(ms_instance) {
+    if (ms_instance) {
         delete ms_instance;
     }
     ms_instance = 0;
@@ -87,25 +87,27 @@ void ToolsTaskManager::StartTool(const ToolInfo& ti, const wxString& filename)
 {
     wxString command, working_dir;
     command << ti.GetPath();
-    //StringUtils::WrapWithQuotes(command);
-    if(!filename.IsEmpty()) {
+    // StringUtils::WrapWithQuotes(command);
+    if (!filename.IsEmpty()) {
         // If an input file was given, append it to the command
         command << " " << StringUtils::WrapWithDoubleQuotes(filename);
     }
     working_dir = ti.GetWd();
     command = MacroManager::Instance()->Expand(
-        command, clGetManager(),
+        command,
+        clGetManager(),
         (clGetManager()->GetWorkspace() ? clGetManager()->GetWorkspace()->GetActiveProjectName() : ""));
     working_dir = MacroManager::Instance()->Expand(
-        working_dir, clGetManager(),
+        working_dir,
+        clGetManager(),
         (clGetManager()->GetWorkspace() ? clGetManager()->GetWorkspace()->GetActiveProjectName() : ""));
 
     wxString projectName;
     wxString configName;
-    if(clCxxWorkspaceST::Get()->IsOpen()) {
+    if (clCxxWorkspaceST::Get()->IsOpen()) {
         projectName = clCxxWorkspaceST::Get()->GetActiveProjectName();
         BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
-        if(bldConf) {
+        if (bldConf) {
             configName = bldConf->GetName();
         }
     }
@@ -114,10 +116,12 @@ void ToolsTaskManager::StartTool(const ToolInfo& ti, const wxString& filename)
     clDEBUG() << "Running command:" << command << clEndl;
 
     int pid = wxNOT_FOUND;
-    if(ti.GetCaptureOutput()) {
+    if (ti.GetCaptureOutput()) {
         IProcess* proc = ::CreateAsyncProcess(this, command, IProcessCreateConsole | IProcessWrapInShell, working_dir);
-        if(!proc) {
-            ::wxMessageBox(_("Failed to launch tool\n'") + command + "'", "CodeLite", wxICON_ERROR | wxOK | wxCENTER,
+        if (!proc) {
+            ::wxMessageBox(_("Failed to launch tool\n'") + command + "'",
+                           "CodeLite",
+                           wxICON_ERROR | wxOK | wxCENTER,
                            EventNotifier::Get()->TopFrame());
             return;
         }
@@ -131,7 +135,7 @@ void ToolsTaskManager::StartTool(const ToolInfo& ti, const wxString& filename)
         pid = ::wxExecute(command, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER, new ExtToolsMyProcess());
     }
 
-    if(pid > 0) {
+    if (pid > 0) {
         ExternalToolItemData item(command, pid);
         m_tools.insert(std::make_pair(pid, item));
     }
@@ -139,7 +143,7 @@ void ToolsTaskManager::StartTool(const ToolInfo& ti, const wxString& filename)
 
 void ToolsTaskManager::ProcessTerminated(int pid)
 {
-    if(m_tools.find(pid) != m_tools.end()) {
+    if (m_tools.find(pid) != m_tools.end()) {
         m_tools.erase(pid);
     }
 }
@@ -153,7 +157,7 @@ void ToolsTaskManager::StopAll()
 
 void ToolsTaskManager::Stop(int pid)
 {
-    if(m_tools.find(pid) != m_tools.end()) {
+    if (m_tools.find(pid) != m_tools.end()) {
         ::wxKill(pid, wxSIGKILL, NULL, wxKILL_CHILDREN);
     }
 }
@@ -164,7 +168,7 @@ ExternalToolItemData::Map_t& ToolsTaskManager::GetTools()
     // Check that the processes are still alive before we continue
     ExternalToolItemData::Map_t tools;
     for (const auto& p : m_tools) {
-        if(kill(p.first, 0) == 0) {
+        if (kill(p.first, 0) == 0) {
             // alive
             tools.insert(p);
         }

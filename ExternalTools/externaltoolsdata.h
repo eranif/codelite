@@ -27,8 +27,9 @@
 #define __externaltoolsdata__
 
 #include "serialized_object.h"
-#include <vector>
+
 #include <unordered_map>
+#include <vector>
 
 #define MAX_TOOLS 20
 
@@ -56,7 +57,7 @@ public:
 protected:
     void EnableFlag(int flag, bool b)
     {
-        if(b) {
+        if (b) {
             m_flags |= flag;
         } else {
             m_flags &= ~flag;

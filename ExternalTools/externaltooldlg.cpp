@@ -24,9 +24,11 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "externaltooldlg.h"
+
 #include "externaltoolsdata.h"
 #include "globals.h"
 #include "newtooldlg.h"
+
 #include <wx/clntdata.h>
 #include <wx/msgdlg.h>
 
@@ -43,10 +45,17 @@ void ExternalToolDlg::OnItemActivated(wxDataViewEvent& event) { DoEditEntry(even
 void ExternalToolDlg::OnButtonNew(wxCommandEvent& event)
 {
     NewToolDlg dlg(this, m_mgr, NULL);
-    if(dlg.ShowModal() == wxID_OK) {
-        DoUpdateEntry(wxDataViewItem(nullptr), dlg.GetToolId(), dlg.GetToolName(), dlg.GetPath(),
-                      dlg.GetWorkingDirectory(), dlg.GetIcon16(), dlg.GetIcon24(), dlg.GetCaptureOutput(),
-                      dlg.GetSaveAllFiles(), dlg.IsCallOnFileSave());
+    if (dlg.ShowModal() == wxID_OK) {
+        DoUpdateEntry(wxDataViewItem(nullptr),
+                      dlg.GetToolId(),
+                      dlg.GetToolName(),
+                      dlg.GetPath(),
+                      dlg.GetWorkingDirectory(),
+                      dlg.GetIcon16(),
+                      dlg.GetIcon24(),
+                      dlg.GetCaptureOutput(),
+                      dlg.GetSaveAllFiles(),
+                      dlg.IsCallOnFileSave());
     }
 }
 
@@ -77,14 +86,23 @@ void ExternalToolDlg::OnButtonDeleteUI(wxUpdateUIEvent& event)
     event.Enable(m_dvListCtrlTools->GetSelection().IsOk());
 }
 
-void ExternalToolDlg::DoUpdateEntry(const wxDataViewItem& item, const wxString& id, const wxString& name,
-                                    const wxString& path, const wxString& workingDirectory, const wxString& icon16,
-                                    const wxString& icon24, bool captureOutput, bool saveAllFiles, bool callOnFileSave)
+void ExternalToolDlg::DoUpdateEntry(const wxDataViewItem& item,
+                                    const wxString& id,
+                                    const wxString& name,
+                                    const wxString& path,
+                                    const wxString& workingDirectory,
+                                    const wxString& icon16,
+                                    const wxString& icon24,
+                                    bool captureOutput,
+                                    bool saveAllFiles,
+                                    bool callOnFileSave)
 {
-    if(item.IsOk()) { DoDeleteItem(item); }
+    if (item.IsOk()) {
+        DoDeleteItem(item);
+    }
 
-    ExternalToolData* data = new ExternalToolData(id, name, path, workingDirectory, icon16, icon24, captureOutput,
-                                                  saveAllFiles, callOnFileSave);
+    ExternalToolData* data = new ExternalToolData(
+        id, name, path, workingDirectory, icon16, icon24, captureOutput, saveAllFiles, callOnFileSave);
     wxDataViewItem child = m_dvListCtrlTools->AppendItem(id, wxNOT_FOUND, wxNOT_FOUND, (wxUIntPtr)data);
     m_dvListCtrlTools->SetItemText(child, name, 1);
     m_dvListCtrlTools->SetItemText(child, path, 2);
@@ -95,9 +113,16 @@ void ExternalToolDlg::DoEditEntry(const wxDataViewItem& item)
     ExternalToolData* data = GetToolData(item);
     CHECK_PTR_RET(data);
     NewToolDlg dlg(this, m_mgr, data);
-    if(dlg.ShowModal() == wxID_OK) {
-        DoUpdateEntry(item, dlg.GetToolId(), dlg.GetToolName(), dlg.GetPath(), dlg.GetWorkingDirectory(),
-                      dlg.GetIcon16(), dlg.GetIcon24(), dlg.GetCaptureOutput(), dlg.GetSaveAllFiles(),
+    if (dlg.ShowModal() == wxID_OK) {
+        DoUpdateEntry(item,
+                      dlg.GetToolId(),
+                      dlg.GetToolName(),
+                      dlg.GetPath(),
+                      dlg.GetWorkingDirectory(),
+                      dlg.GetIcon16(),
+                      dlg.GetIcon24(),
+                      dlg.GetCaptureOutput(),
+                      dlg.GetSaveAllFiles(),
                       dlg.IsCallOnFileSave());
     }
 }
@@ -106,11 +131,11 @@ std::vector<ToolInfo> ExternalToolDlg::GetTools()
 {
     std::vector<ToolInfo> tools;
     tools.reserve(m_dvListCtrlTools->GetItemCount());
-    for(size_t i = 0; i < m_dvListCtrlTools->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrlTools->GetItemCount(); ++i) {
         ToolInfo ti;
         ExternalToolData* data = GetToolData(m_dvListCtrlTools->RowToItem(i));
 
-        if(data) {
+        if (data) {
             ti.SetId(data->m_id);
             ti.SetName(data->m_name);
             ti.SetPath(data->m_path);
@@ -150,7 +175,9 @@ void ExternalToolDlg::DoClear()
 
 void ExternalToolDlg::DoDeleteItem(const wxDataViewItem& item)
 {
-    if(!item.IsOk()) { return; }
+    if (!item.IsOk()) {
+        return;
+    }
     ExternalToolData* d = GetToolData(item);
     wxDELETE(d);
     m_dvListCtrlTools->DeleteItem(m_dvListCtrlTools->ItemToRow(item));

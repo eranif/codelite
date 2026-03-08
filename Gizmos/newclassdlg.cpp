@@ -61,25 +61,25 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
 
     wxString vdPath;
     TreeItemInfo item = mgr->GetSelectedTreeItemInfo(TreeFileView);
-    if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
+    if (item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
         wxString path = VirtualDirectorySelectorDlg::DoGetPath(m_mgr->GetWorkspaceTree(), item.m_item, false);
-        if(path.IsEmpty() == false) {
+        if (path.IsEmpty() == false) {
             m_textCtrlVD->ChangeValue(path);
         }
     }
 
     // set the class path to be the active project path
     wxString errMsg;
-    if(m_mgr->GetWorkspace()) {
+    if (m_mgr->GetWorkspace()) {
         wxString start_path;
-        if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
+        if (item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
             m_basePath = item.m_fileName.GetPath(wxPATH_GET_VOLUME);
 
         } else {
 
             wxString projname = m_mgr->GetWorkspace()->GetActiveProjectName();
             ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projname, errMsg);
-            if(proj) {
+            if (proj) {
                 m_basePath = proj->GetFileName().GetPath(wxPATH_GET_VOLUME);
             }
         }
@@ -92,10 +92,10 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     m_textClassName->SetFocus();
 
     // Check for file system workspace case
-    if(clFileSystemWorkspace::Get().IsOpen()) {
+    if (clFileSystemWorkspace::Get().IsOpen()) {
         wxArrayString folders, files;
         clFileSystemWorkspace::Get().GetView()->GetSelections(folders, files);
-        if(folders.size() == 1) {
+        if (folders.size() == 1) {
             m_textCtrlGenFilePath->ChangeValue(folders.Item(0));
         }
         m_textCtrlVD->Disable();
@@ -119,7 +119,7 @@ void NewClassDlg::GetInheritance(ClassParentInfo& parent) const
 void NewClassDlg::OnButtonOK(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if(!ValidateInput()) {
+    if (!ValidateInput()) {
         return;
     }
     DoSaveOptions();
@@ -129,7 +129,7 @@ void NewClassDlg::OnButtonOK(wxCommandEvent& e)
 bool NewClassDlg::ValidateInput()
 {
     // validate the class name
-    if(!IsValidCppIdentifier(m_textClassName->GetValue())) {
+    if (!IsValidCppIdentifier(m_textClassName->GetValue())) {
         wxString msg;
         msg << wxT("'") << m_textClassName->GetValue() << _("' is not a valid C++ qualifier");
         wxMessageBox(msg, wxT("CodeLite"), wxOK | wxICON_WARNING);
@@ -137,12 +137,12 @@ bool NewClassDlg::ValidateInput()
     }
 
     // validate the namespace
-    if(!m_textCtrlNamespace->GetValue().IsEmpty()) {
+    if (!m_textCtrlNamespace->GetValue().IsEmpty()) {
         wxArrayString namespacesList;
         this->GetNamespacesList(namespacesList);
         // validate each namespace
-        for(unsigned int i = 0; i < namespacesList.Count(); i++) {
-            if(!IsValidCppIdentifier(namespacesList[i])) {
+        for (unsigned int i = 0; i < namespacesList.Count(); i++) {
+            if (!IsValidCppIdentifier(namespacesList[i])) {
                 wxString msg;
                 msg << wxT("'") << namespacesList[i] << _("' is not a valid C++ qualifier");
                 wxMessageBox(msg, wxT("CodeLite"), wxOK | wxICON_WARNING);
@@ -153,38 +153,40 @@ bool NewClassDlg::ValidateInput()
 
     // validate the path of the class
     wxString path(m_textCtrlGenFilePath->GetValue());
-    if(!wxDir::Exists(path)) {
+    if (!wxDir::Exists(path)) {
         wxString msg;
         msg << wxT("'") << path << _("': directory does not exist");
         wxMessageBox(msg, wxT("CodeLite"), wxOK | wxICON_WARNING);
         return false;
     }
 
-    if(GetClassFile().IsEmpty()) {
+    if (GetClassFile().IsEmpty()) {
         wxMessageBox(_("Empty file name"), wxT("CodeLite"), wxOK | wxICON_WARNING);
         return false;
     }
 
     wxString cpp_file;
     cpp_file << GetClassPath() << wxFileName::GetPathSeparator() << GetClassFile() << wxT(".cpp");
-    if(wxFileName::FileExists(cpp_file)) {
-        if(wxMessageBox(
-               wxString::Format(_("A file with this name: '%s' already exists, continue anyway?"), cpp_file.GetData()),
-               wxT("CodeLite"), wxYES_NO | wxICON_WARNING) == wxNO) {
+    if (wxFileName::FileExists(cpp_file)) {
+        if (wxMessageBox(
+                wxString::Format(_("A file with this name: '%s' already exists, continue anyway?"), cpp_file.GetData()),
+                wxT("CodeLite"),
+                wxYES_NO | wxICON_WARNING) == wxNO) {
             return false;
         }
     }
     wxString h_file;
     h_file << GetClassPath() << wxFileName::GetPathSeparator() << GetClassFile() << wxT(".h");
-    if(wxFileName::FileExists(h_file)) {
-        if(wxMessageBox(
-               wxString::Format(_("A file with this name: '%s' already exists, continue anyway?"), h_file.GetData()),
-               wxT("CodeLite"), wxYES_NO | wxICON_WARNING) == wxNO) {
+    if (wxFileName::FileExists(h_file)) {
+        if (wxMessageBox(
+                wxString::Format(_("A file with this name: '%s' already exists, continue anyway?"), h_file.GetData()),
+                wxT("CodeLite"),
+                wxYES_NO | wxICON_WARNING) == wxNO) {
             return false;
         }
     }
 
-    if(!clFileSystemWorkspace::Get().IsOpen() && GetVirtualDirectoryPath().IsEmpty()) {
+    if (!clFileSystemWorkspace::Get().IsOpen() && GetVirtualDirectoryPath().IsEmpty()) {
         wxMessageBox(_("Please select a virtual directory"), wxT("CodeLite"), wxOK | wxICON_WARNING);
         return false;
     }
@@ -232,7 +234,7 @@ void NewClassDlg::OnCheckImpleAllVirtualFunctions(wxCommandEvent& event)
 
 wxString NewClassDlg::GetClassPath() const
 {
-    if(m_textCtrlGenFilePath->GetValue().Trim().IsEmpty()) {
+    if (m_textCtrlGenFilePath->GetValue().Trim().IsEmpty()) {
         return wxT(".");
     } else {
         return m_textCtrlGenFilePath->GetValue();
@@ -243,12 +245,12 @@ void NewClassDlg::OnBrowseFolder(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     wxString initPath;
-    if(wxFileName::DirExists(m_textCtrlGenFilePath->GetValue())) {
+    if (wxFileName::DirExists(m_textCtrlGenFilePath->GetValue())) {
         initPath = m_textCtrlGenFilePath->GetValue();
     }
     wxString new_path =
         wxDirSelector(_("Select Generated Files Path:"), initPath, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-    if(new_path.IsEmpty() == false) {
+    if (new_path.IsEmpty() == false) {
         m_textCtrlGenFilePath->ChangeValue(new_path);
     }
 }
@@ -257,7 +259,7 @@ void NewClassDlg::OnBrowseVD(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     VirtualDirectorySelectorDlg dlg(this, m_mgr->GetWorkspace(), m_textCtrlVD->GetValue());
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         m_textCtrlVD->ChangeValue(dlg.GetVirtualDirectoryPath());
         DoUpdateGeneratedPath();
     }
@@ -268,12 +270,12 @@ void NewClassDlg::OnBrowseNamespace(wxCommandEvent& e)
     wxUnusedVar(e);
 
     OpenResourceDialog dlg(this, m_mgr, "");
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         std::vector<OpenResourceDialogItemData*> selections = dlg.GetSelections();
-        if(!selections.empty()) {
+        if (!selections.empty()) {
             OpenResourceDialogItemData* item = selections.at(0);
             wxString nameSpace;
-            if(item->m_scope.IsEmpty() == false && item->m_scope != wxT("<global>")) {
+            if (item->m_scope.IsEmpty() == false && item->m_scope != wxT("<global>")) {
                 nameSpace << item->m_scope << wxT("::");
             }
             nameSpace << item->m_name;
@@ -287,13 +289,13 @@ void NewClassDlg::GetNamespacesList(wxArrayString& namespacesArray) const
     wxString textNamespaces = this->GetClassNamespace();
     textNamespaces.Trim();
 
-    if(textNamespaces.IsEmpty())
+    if (textNamespaces.IsEmpty())
         return;
 
     int prevPos = 0;
     size_t pos = textNamespaces.find(wxT("::"), prevPos);
 
-    while(pos != wxString::npos) {
+    while (pos != wxString::npos) {
         wxString token = textNamespaces.Mid(prevPos, pos - prevPos);
 
         namespacesArray.Add(token);
@@ -308,21 +310,21 @@ void NewClassDlg::GetNamespacesList(wxArrayString& namespacesArray) const
 
 wxString NewClassDlg::doSpliteByCaptilization(const wxString& str) const
 {
-    if(str.IsEmpty())
+    if (str.IsEmpty())
         return wxT("");
 
     wxString output;
     bool lastWasLower(true);
 
-    for(int i = str.length() - 1; i >= 0; --i) {
+    for (int i = str.length() - 1; i >= 0; --i) {
 
         int cur = (int)str[i];
-        if(!isalpha(cur)) {
+        if (!isalpha(cur)) {
             output.Prepend((wxChar)cur);
             continue;
         }
 
-        if(isupper(cur) && lastWasLower) {
+        if (isupper(cur) && lastWasLower) {
             output.Prepend((wxChar)cur);
             output.Prepend(wxT('_'));
 
@@ -334,10 +336,10 @@ wxString NewClassDlg::doSpliteByCaptilization(const wxString& str) const
     }
 
     // replace any double underscores with single one
-    while(output.Replace(wxT("__"), wxT("_"))) {}
+    while (output.Replace(wxT("__"), wxT("_"))) {}
 
     // remove any underscore from the start of the word
-    if(output.StartsWith(wxT("_"))) {
+    if (output.StartsWith(wxT("_"))) {
         output.Remove(0, 1);
     }
     return output;
@@ -352,7 +354,7 @@ void NewClassDlg::DoUpdateGeneratedPath()
     vd = vdPath.AfterFirst(wxT(':'));
 
     ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(project, errMsg);
-    if(proj) {
+    if (proj) {
         m_textCtrlGenFilePath->ChangeValue(proj->GetBestPathForVD(vd));
     }
 }
@@ -361,7 +363,7 @@ void NewClassDlg::DoUpdateCheckBoxes()
 {
     bool singleton = m_checkBoxSingleton->IsChecked();
 
-    if(singleton) {
+    if (singleton) {
         // Singleton class must not be copyable or movable
         m_checkBoxNonCopyable->SetValue(true);
         m_checkBoxNonMovable->SetValue(true);
@@ -385,23 +387,23 @@ void NewClassDlg::DoSaveOptions()
     // Save the check boxes ticked
     size_t flags = 0;
 
-    if(m_checkBoxNonCopyable->IsChecked())
+    if (m_checkBoxNonCopyable->IsChecked())
         flags |= NewClassDlgData::NonCopyable;
-    if(m_checkBoxInline->IsChecked())
+    if (m_checkBoxInline->IsChecked())
         flags |= NewClassDlgData::FileIniline;
-    if(m_checkBoxHpp->IsChecked())
+    if (m_checkBoxHpp->IsChecked())
         flags |= NewClassDlgData::HppHeader;
-    if(m_checkBoxSingleton->IsChecked())
+    if (m_checkBoxSingleton->IsChecked())
         flags |= NewClassDlgData::Singleton;
-    if(m_checkBoxVirtualDtor->IsChecked())
+    if (m_checkBoxVirtualDtor->IsChecked())
         flags |= NewClassDlgData::VirtualDtor;
-    if(m_checkBoxPragmaOnce->IsChecked())
+    if (m_checkBoxPragmaOnce->IsChecked())
         flags |= NewClassDlgData::UsePragma;
-    if(m_checkBoxLowercaseFileName->IsChecked())
+    if (m_checkBoxLowercaseFileName->IsChecked())
         flags |= NewClassDlgData::UseLowerCase;
-    if(m_checkBoxNonMovable->IsChecked())
+    if (m_checkBoxNonMovable->IsChecked())
         flags |= NewClassDlgData::NonMovable;
-    if(m_checkBoxNonInheritable->IsChecked())
+    if (m_checkBoxNonInheritable->IsChecked())
         flags |= NewClassDlgData::NonInheritable;
 
     m_options.SetFlags(flags);
@@ -416,7 +418,7 @@ void NewClassDlg::OnUseLowerCaseFileName(wxCommandEvent& event)
 
 wxString NewClassDlg::CreateFileName() const
 {
-    if(m_options.HasFlag(NewClassDlgData::UseLowerCase)) {
+    if (m_options.HasFlag(NewClassDlgData::UseLowerCase)) {
         return m_textClassName->GetValue().Lower();
     }
     return m_textClassName->GetValue();
@@ -427,12 +429,12 @@ void NewClassDlg::OnBrowseParentClass(wxCommandEvent& event)
     wxUnusedVar(event);
 
     OpenResourceDialog dlg(this, m_mgr, "");
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         std::vector<OpenResourceDialogItemData*> selections = dlg.GetSelections();
-        if(!selections.empty()) {
+        if (!selections.empty()) {
             OpenResourceDialogItemData* item = selections[0];
             wxString fullpathName;
-            if(item->m_scope.empty()) {
+            if (item->m_scope.empty()) {
                 fullpathName << item->m_name;
             } else {
                 fullpathName << item->m_scope << "::" << item->m_name;

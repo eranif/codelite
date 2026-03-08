@@ -36,6 +36,7 @@ public:
     virtual ~PluginWizard() = default;
 
     bool Run(NewPluginData& pd);
+
 protected:
     virtual void OnProjectPathChanged(wxFileDirPickerEvent& event);
     virtual void OnFinish(wxWizardEvent& event);

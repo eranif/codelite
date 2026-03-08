@@ -56,10 +56,7 @@ static wxString MI_NEW_NEW_CLASS = "Create new C++ class...";
 enum { ID_MI_NEW_WX_PROJECT = 9000, ID_MI_NEW_CODELITE_PLUGIN, ID_MI_NEW_NEW_CLASS };
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new WizardsPlugin(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new WizardsPlugin(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -76,7 +73,7 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 static void WriteNamespacesDeclaration(const wxArrayString& namespacesList, wxString& buffer)
 {
-    for(unsigned int i = 0; i < namespacesList.Count(); i++) {
+    for (unsigned int i = 0; i < namespacesList.Count(); i++) {
         buffer << "namespace " << namespacesList[i] << "\n{\n\n";
     }
 }
@@ -93,19 +90,37 @@ void WizardsPlugin::CreateToolBar(clToolBarGeneric* toolbar)
     wxUnusedVar(toolbar);
     // Connect the events to us
 #if !USE_AUI_TOOLBAR
-    m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(WizardsPlugin::OnGizmos), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"),
+                                wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(WizardsPlugin::OnGizmos),
+                                NULL,
+                                (wxEvtHandler*)this);
 #endif
-    m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"), wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(WizardsPlugin::OnGizmosUI), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN, wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(WizardsPlugin::OnNewPlugin), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN, wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(WizardsPlugin::OnNewPluginUI), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS, wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(WizardsPlugin::OnNewClass), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS, wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(WizardsPlugin::OnNewClassUI), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"),
+                                wxEVT_UPDATE_UI,
+                                wxUpdateUIEventHandler(WizardsPlugin::OnGizmosUI),
+                                NULL,
+                                (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN,
+                                wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(WizardsPlugin::OnNewPlugin),
+                                NULL,
+                                (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN,
+                                wxEVT_UPDATE_UI,
+                                wxUpdateUIEventHandler(WizardsPlugin::OnNewPluginUI),
+                                NULL,
+                                (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS,
+                                wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(WizardsPlugin::OnNewClass),
+                                NULL,
+                                (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS,
+                                wxEVT_UPDATE_UI,
+                                wxUpdateUIEventHandler(WizardsPlugin::OnNewClassUI),
+                                NULL,
+                                (wxEvtHandler*)this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &WizardsPlugin::OnFolderContentMenu, this);
 }
 
@@ -113,8 +128,8 @@ void WizardsPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
     wxMenuItem* item(NULL);
-    item = new wxMenuItem(menu, ID_MI_NEW_CODELITE_PLUGIN, _("New CodeLite Plugin Wizard..."), wxEmptyString,
-                          wxITEM_NORMAL);
+    item = new wxMenuItem(
+        menu, ID_MI_NEW_CODELITE_PLUGIN, _("New CodeLite Plugin Wizard..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
     item = new wxMenuItem(menu, ID_MI_NEW_NEW_CLASS, _("New Class Wizard..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
@@ -123,7 +138,7 @@ void WizardsPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 
 void WizardsPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 {
-    if(type == MenuTypeFileView_Folder) {
+    if (type == MenuTypeFileView_Folder) {
         // Create the popup menu for the virtual folders
         wxMenuItem* item(NULL);
 
@@ -139,10 +154,16 @@ void WizardsPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void WizardsPlugin::UnPlug()
 {
-    m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"), wxEVT_COMMAND_MENU_SELECTED,
-                                   wxCommandEventHandler(WizardsPlugin::OnGizmos), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"), wxEVT_UPDATE_UI,
-                                   wxUpdateUIEventHandler(WizardsPlugin::OnGizmosUI), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"),
+                                   wxEVT_COMMAND_MENU_SELECTED,
+                                   wxCommandEventHandler(WizardsPlugin::OnGizmos),
+                                   NULL,
+                                   (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"),
+                                   wxEVT_UPDATE_UI,
+                                   wxUpdateUIEventHandler(WizardsPlugin::OnGizmosUI),
+                                   NULL,
+                                   (wxEvtHandler*)this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &WizardsPlugin::OnFolderContentMenu, this);
 }
 
@@ -157,18 +178,18 @@ void WizardsPlugin::DoCreateNewPlugin()
     // Load the wizard
     PluginWizard wiz(wxTheApp->GetTopWindow());
     NewPluginData data;
-    if(wiz.Run(data)) {
+    if (wiz.Run(data)) {
         // load the template file and replace all variables with the
         // actual values provided by user
         wxString filename(m_mgr->GetStartupDirectory() + "/templates/gizmos/liteeditor-plugin.project.wizard");
         wxString content;
-        if(!ReadFileWithConversion(filename, content)) {
+        if (!ReadFileWithConversion(filename, content)) {
             return;
         }
 
         // Convert the paths provided by user to relative paths
         wxFileName fn(data.GetCodelitePath(), "");
-        if(!fn.MakeRelativeTo(wxFileName(data.GetProjectPath()).GetPath())) {
+        if (!fn.MakeRelativeTo(wxFileName(data.GetProjectPath()).GetPath())) {
             clLogMessage("Warning: Failed to convert paths to relative path.");
         }
 
@@ -181,7 +202,7 @@ void WizardsPlugin::DoCreateNewPlugin()
         wxString clpath = fn.GetFullPath();
         fn.Normalize(); // Remove all .. and . from the path
 
-        if(clpath.EndsWith("/") || clpath.EndsWith("\\")) {
+        if (clpath.EndsWith("/") || clpath.EndsWith("\\")) {
             clpath.RemoveLast();
         }
 
@@ -201,7 +222,7 @@ void WizardsPlugin::DoCreateNewPlugin()
             ::wxMkdir(wxFileName(data.GetProjectPath()).GetPath());
         }
         wxFFile file;
-        if(!file.Open(projectFileName, "w+b")) {
+        if (!file.Open(projectFileName, "w+b")) {
             return;
         }
 
@@ -222,7 +243,7 @@ void WizardsPlugin::DoCreateNewPlugin()
         // Generate the source files
         filename = m_mgr->GetStartupDirectory() + "/templates/gizmos/plugin.cpp.wizard";
         content.Clear();
-        if(!ReadFileWithConversion(filename, content)) {
+        if (!ReadFileWithConversion(filename, content)) {
             wxMessageBox(_("Failed to load wizard's file 'plugin.cpp.wizard'"), wxT("CodeLite"), wxICON_WARNING | wxOK);
             return;
         }
@@ -249,7 +270,7 @@ void WizardsPlugin::DoCreateNewPlugin()
         // create the header file
         filename = m_mgr->GetStartupDirectory() + "/templates/gizmos/plugin.h.wizard";
         content.Clear();
-        if(!ReadFileWithConversion(filename, content)) {
+        if (!ReadFileWithConversion(filename, content)) {
             wxMessageBox(_("Failed to load wizard's file 'plugin.h.wizard'"), wxT("CodeLite"), wxICON_WARNING | wxOK);
             return;
         }
@@ -275,9 +296,9 @@ void WizardsPlugin::DoCreateNewPlugin()
         wxFileName cmakeFile(clStandardPaths::Get().GetDataDir(), "CMakeLists.txt.plugin.wizard");
         cmakeFile.AppendDir("templates");
         cmakeFile.AppendDir("gizmos");
-        if(cmakeFile.FileExists()) {
+        if (cmakeFile.FileExists()) {
             wxString cmakeContent;
-            if(FileUtils::ReadFileContent(cmakeFile, cmakeContent)) {
+            if (FileUtils::ReadFileContent(cmakeFile, cmakeContent)) {
                 cmakeContent.Replace("$(PluginName)", data.GetPluginName());
                 cmakeFile.SetFullName("CMakeLists.txt");
                 cmakeFile.SetPath(headerFile.GetPath());
@@ -317,7 +338,7 @@ void WizardsPlugin::OnNewClass(wxCommandEvent& e)
 void WizardsPlugin::DoCreateNewClass()
 {
     NewClassDlg dlg(EventNotifier::Get()->TopFrame(), m_mgr);
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         // do something with the information here
         NewClassInfo info;
         dlg.GetNewClassInfo(info);
@@ -332,18 +353,18 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
     // inactive one.
     OptionsConfigPtr options = EditorConfigST::Get()->GetOptions(); // Globals first
     wxString TargetProj = info.virtualDirectory.BeforeFirst(':');
-    if(!TargetProj.empty()) {
+    if (!TargetProj.empty()) {
         clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetOptions(options,
                                                                  TargetProj); // Then override with any local ones
     }
 
     wxString separator("\t");
-    if(!options->GetIndentUsesTabs()) {
+    if (!options->GetIndentUsesTabs()) {
         separator = wxString(' ', wxMax(1, options->GetTabWidth()));
     }
 
     wxString blockGuard(info.blockGuard);
-    if(blockGuard.IsEmpty()) {
+    if (blockGuard.IsEmpty()) {
         // use the name instead
         blockGuard = info.name;
         blockGuard.MakeUpper();
@@ -365,7 +386,7 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
     //----------------------------------------------------
     // header file
     //----------------------------------------------------
-    if(info.usePragmaOnce) {
+    if (info.usePragmaOnce) {
         header << "#pragma once\n\n";
     } else {
         header << "#ifndef " << blockGuard << "\n";
@@ -374,52 +395,52 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
     }
 
     wxString closeMethod;
-    if(info.isInline) {
+    if (info.isInline) {
         closeMethod << '\n' << separator << "{\n" << separator << "}\n";
     } else {
         closeMethod = ";\n";
     }
 
     // Add include for base classes
-    if(!info.parents.name.empty()) {
+    if (!info.parents.name.empty()) {
         const ClassParentInfo& pi = info.parents;
 
         // Include the header name only (no paths)
         wxFileName includeFileName(pi.fileName);
-        if(!pi.fileName.IsEmpty()) {
+        if (!pi.fileName.IsEmpty()) {
             header << "#include \"" << includeFileName.GetFullName() << "\" // Base class: " << pi.name << "\n";
         }
         header << "\n";
     }
 
     // Open namespace
-    if(!info.namespacesList.IsEmpty()) {
+    if (!info.namespacesList.IsEmpty()) {
         WriteNamespacesDeclaration(info.namespacesList, header);
     }
 
     header << "class " << info.name;
-    if(!info.isInheritable) {
+    if (!info.isInheritable) {
         header << " final";
     }
 
-    if(!info.parents.name.empty()) {
+    if (!info.parents.name.empty()) {
         header << " : ";
         const ClassParentInfo& pi = info.parents;
         header << pi.access << " " << pi.name;
     }
     header << "\n{\n";
-    if(info.isSingleton) {
+    if (info.isSingleton) {
         header << separator << "static " << info.name << "* ms_instance;\n\n";
     }
 
-    if(!info.isAssignable || !info.isMovable) {
+    if (!info.isAssignable || !info.isMovable) {
         header << "private:\n";
-        if(!info.isAssignable) {
+        if (!info.isAssignable) {
             // prohibit use of copy constructor & assignment operator
             header << separator << info.name << "(const " << info.name << "&) = delete;\n";
             header << separator << info.name << "& operator=(const " << info.name << "&) = delete;\n";
         }
-        if(!info.isMovable) {
+        if (!info.isMovable) {
             // prohibit use of move constructor & move assignment operator
             header << separator << info.name << "(" << info.name << "&&) = delete;\n";
             header << separator << info.name << "& operator=(" << info.name << "&&) = delete;\n";
@@ -427,7 +448,7 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
         header << "\n";
     }
 
-    if(info.isSingleton) {
+    if (info.isSingleton) {
         header << "public:\n";
         header << separator << "static " << info.name << "* Instance();\n";
         header << separator << "static void Release();\n\n";
@@ -435,7 +456,7 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
         header << "private:\n";
         header << separator << info.name << "();\n";
 
-        if(info.isVirtualDtor) {
+        if (info.isVirtualDtor) {
             header << separator << "virtual ~" << info.name << "();\n\n";
         } else {
             header << separator << '~' << info.name << "();\n\n";
@@ -443,7 +464,7 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
     } else {
         header << "public:\n";
         header << separator << info.name << "()" << closeMethod;
-        if(info.isVirtualDtor) {
+        if (info.isVirtualDtor) {
             header << separator << "virtual ~" << info.name << "()" << closeMethod << "\n";
         } else {
             header << separator << '~' << info.name << "()" << closeMethod << "\n";
@@ -453,11 +474,11 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
     header << "};\n\n";
 
     // Close namespaces
-    for(unsigned int i = 0; i < info.namespacesList.Count(); i++) {
+    for (unsigned int i = 0; i < info.namespacesList.Count(); i++) {
         header << "}\n\n";
     }
 
-    if(!info.usePragmaOnce) {
+    if (!info.usePragmaOnce) {
         // Close the block guard
         header << "#endif // " << blockGuard << "\n";
     }
@@ -471,9 +492,9 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
     //----------------------------------------------------
     // source file
     //----------------------------------------------------
-    if(!info.isInline) {
+    if (!info.isInline) {
         wxString nsPrefix;
-        if(!info.namespacesList.IsEmpty()) {
+        if (!info.namespacesList.IsEmpty()) {
             for (const auto& s : info.namespacesList) {
                 nsPrefix << s << "::";
             }
@@ -481,7 +502,7 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
 
         cpp << "#include \"" << info.fileName << headerExt << "\"\n";
 
-        if(info.isSingleton) {
+        if (info.isSingleton) {
             cpp << "\n" << nsPrefix << info.name << "* " << nsPrefix << info.name << "::ms_instance{ nullptr };\n\n";
         } else {
             cpp << "\n";
@@ -496,7 +517,7 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
         // Prepend the ns to the class name (we do this after the ctor/dtor impl)
         info.name.Prepend(nsPrefix);
 
-        if(info.isSingleton) {
+        if (info.isSingleton) {
             cpp << info.name << "* " << info.name << "::Instance()\n";
             cpp << "{\n";
             cpp << separator << "if (ms_instance == nullptr) {\n";
@@ -515,16 +536,16 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
         paths.Add(srcFile);
     }
 
-    if(clCxxWorkspaceST::Get()->IsOpen()) {
+    if (clCxxWorkspaceST::Get()->IsOpen()) {
         // We have a .cpp and an .h file, and there may well be a :src and an :include folder available
         // So try to place the files appropriately. If that fails, dump both in the selected folder
-        if(!m_mgr->AddFilesToVirtualFolderIntelligently(info.virtualDirectory, paths)) {
+        if (!m_mgr->AddFilesToVirtualFolderIntelligently(info.virtualDirectory, paths)) {
             m_mgr->AddFilesToVirtualFolder(info.virtualDirectory, paths);
         }
     }
 
     // Open the newly created classes in CodeLite
-    for(const auto& file : paths) {
+    for (const auto& file : paths) {
         m_mgr->OpenFile(file);
     }
 
@@ -573,7 +594,7 @@ void WizardsPlugin::DoPopupButtonMenu(wxPoint pt)
 #if USE_AUI_TOOLBAR
 void WizardsPlugin::OnGizmosAUI(wxAuiToolBarEvent& e)
 {
-    if(e.IsDropDownClicked()) {
+    if (e.IsDropDownClicked()) {
         wxAuiToolBar* tb = static_cast<wxAuiToolBar*>(e.GetEventObject());
         tb->SetToolSticky(e.GetId(), true);
 
@@ -590,7 +611,7 @@ void WizardsPlugin::OnGizmosAUI(wxAuiToolBarEvent& e)
 void WizardsPlugin::OnFolderContentMenu(clContextMenuEvent& event)
 {
     event.Skip();
-    if(clFileSystemWorkspace::Get().IsOpen() || clCxxWorkspaceST::Get()->IsOpen()) {
+    if (clFileSystemWorkspace::Get().IsOpen() || clCxxWorkspaceST::Get()->IsOpen()) {
         auto menu = event.GetMenu();
         menu->Append(ID_MI_NEW_NEW_CLASS, _("New C++ Class"));
     }

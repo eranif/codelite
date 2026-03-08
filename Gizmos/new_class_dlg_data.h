@@ -58,7 +58,7 @@ public:
     size_t GetFlags() const { return m_flags; }
     void EnableFlag(NewClassDlgData::eOptions flag, bool b)
     {
-        if(b) {
+        if (b) {
             m_flags |= flag;
         } else {
             m_flags &= ~flag;

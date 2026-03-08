@@ -7,7 +7,7 @@
     [this](const wxString& label, const wxAny& value) { \
         wxUnusedVar(label);                             \
         wxString str_value;                             \
-        if(value.GetAs(&str_value)) {                   \
+        if (value.GetAs(&str_value)) {                  \
             m_cur_formatter->SETTER_METHOD(str_value);  \
         }                                               \
     }
@@ -16,7 +16,7 @@
     [this](const wxString& label, const wxAny& value) { \
         wxUnusedVar(label);                             \
         bool bool_value;                                \
-        if(value.GetAs(&bool_value)) {                  \
+        if (value.GetAs(&bool_value)) {                 \
             m_cur_formatter->SETTER_METHOD(bool_value); \
         }                                               \
     }
@@ -25,7 +25,7 @@
     [this](const wxString& label, const wxAny& value) {                                      \
         wxUnusedVar(label);                                                                  \
         wxString str_value;                                                                  \
-        if(value.GetAs(&str_value)) {                                                        \
+        if (value.GetAs(&str_value)) {                                                       \
             m_cur_formatter->SetLanguages(wxStringTokenize(str_value, ";", wxTOKEN_STRTOK)); \
         }                                                                                    \
     }

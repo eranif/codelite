@@ -7,14 +7,17 @@ fmtJQ::fmtJQ()
     SetName("jq");
 
     // handle all known JSON files
-    SetFileTypes({ FileExtManager::TypeJSON, FileExtManager::TypeWorkspaceFileSystem,
-                   FileExtManager::TypeWorkspaceDocker, FileExtManager::TypeWxCrafter,
-                   FileExtManager::TypeWorkspaceNodeJS, FileExtManager::TypeWorkspacePHP });
+    SetFileTypes({FileExtManager::TypeJSON,
+                  FileExtManager::TypeWorkspaceFileSystem,
+                  FileExtManager::TypeWorkspaceDocker,
+                  FileExtManager::TypeWxCrafter,
+                  FileExtManager::TypeWorkspaceNodeJS,
+                  FileExtManager::TypeWorkspacePHP});
 
     SetDescription(_("commandline JSON processor"));
     SetShortDescription(_("jq - a json formatter"));
 
     const auto jq_exe = ThePlatform->Which("jq");
-    SetCommand({ jq_exe.value_or("jq"), ".", "-S", R"#("$(CurrentFileRelPath)")#" });
+    SetCommand({jq_exe.value_or("jq"), ".", "-S", R"#("$(CurrentFileRelPath)")#"});
     SetEnabled(jq_exe.has_value());
 }

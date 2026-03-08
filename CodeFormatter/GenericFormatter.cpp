@@ -93,9 +93,9 @@ wxString GenericFormatter::GetCommandAsString() const { return join_array(m_comm
 bool GenericFormatter::SyncFormat(const wxString& cmd, const wxString& wd, bool inplace_formatter, wxString* output)
 {
     // save the current directory
-    clDirChanger cd{ wd };
+    clDirChanger cd{wd};
     auto envlist = CreateLocalEnv();
-    EnvSetter setter{ envlist.get() };
+    EnvSetter setter{envlist.get()};
     bool res = ProcUtils::ShellExecSync(cmd, output) == 0;
     if (inplace_formatter) {
         output->clear();
@@ -106,18 +106,18 @@ bool GenericFormatter::SyncFormat(const wxString& cmd, const wxString& wd, bool 
 /**
  * @brief format source file using background thread, when the formatting is done, fire an event to the sink object
  */
-void GenericFormatter::AsyncFormat(const wxString& cmd, const wxString& wd, const wxString& filepath,
-                                   bool inplace_formatter, wxEvtHandler* sink)
+void GenericFormatter::AsyncFormat(
+    const wxString& cmd, const wxString& wd, const wxString& filepath, bool inplace_formatter, wxEvtHandler* sink)
 {
-    clDirChanger cd{ wd };
+    clDirChanger cd{wd};
 
     // Apply environment
     auto envlist = CreateLocalEnv();
-    EnvSetter setter{ envlist.get() };
+    EnvSetter setter{envlist.get()};
 
     long pid = wxNOT_FOUND;
     if (ProcUtils::ShellExecAsync(cmd, &pid, this)) {
-        m_pid_commands.insert({ pid, CommandMetadata{ cmd, filepath, sink } });
+        m_pid_commands.insert({pid, CommandMetadata{cmd, filepath, sink}});
     }
 }
 
@@ -162,7 +162,7 @@ bool GenericFormatter::FormatRemoteFile(const wxString& filepath, wxEvtHandler* 
     clDEBUG() << "Calling:" << cmd << endl;
 
     clSFTPManager::Get().AsyncExecute(this, clRemoteHost::Instance()->GetActiveAccount(), cmd, wd, nullptr);
-    m_inFlightFiles.push_back({ filepath, sink });
+    m_inFlightFiles.push_back({filepath, sink});
 #else
     wxUnusedVar(filepath);
     wxUnusedVar(sink);
@@ -186,7 +186,7 @@ bool GenericFormatter::FormatString(const wxString& content, const wxString& ful
     fullpath_linux_style.Replace("\\", "/");
 
     wxString dirpart = fullpath_linux_style.BeforeLast('/');
-    clTempFile tmpfile{ dirpart, "txt" };
+    clTempFile tmpfile{dirpart, "txt"};
 
     if (!tmpfile.Write(content)) {
         clWARNING() << "failed to write content to temp file:" << tmpfile.GetFullPath() << endl;
@@ -256,8 +256,8 @@ void GenericFormatter::OnAsyncShellProcessTerminated(clShellProcessEvent& event)
 
     // notify the sink that formatting is done
     if (command_data.m_sink) {
-        clSourceFormatEvent format_completed_event{ IsInplaceFormatter() ? wxEVT_FORMAT_INPLACE_COMPELTED
-                                                                         : wxEVT_FORMAT_COMPELTED };
+        clSourceFormatEvent format_completed_event{IsInplaceFormatter() ? wxEVT_FORMAT_INPLACE_COMPELTED
+                                                                        : wxEVT_FORMAT_COMPELTED};
         format_completed_event.SetFormattedString(IsInplaceFormatter() ? "" : event.GetOutput());
         format_completed_event.SetFileName(command_data.m_filepath);
         command_data.m_sink->QueueEvent(format_completed_event.Clone());
@@ -273,7 +273,7 @@ void GenericFormatter::OnRemoteCommandStdout(clCommandEvent& event)
 
     if (!IsInplaceFormatter()) {
         const wxString& filepath = m_inFlightFiles.front().first;
-        clSourceFormatEvent format_completed_event{ wxEVT_FORMAT_COMPELTED };
+        clSourceFormatEvent format_completed_event{wxEVT_FORMAT_COMPELTED};
         format_completed_event.SetFormattedString(wxString::FromUTF8(event.GetStringRaw()));
         format_completed_event.SetFileName(filepath);
         m_inFlightFiles.front().second->AddPendingEvent(format_completed_event);
@@ -297,7 +297,7 @@ void GenericFormatter::OnRemoteCommandDone(clCommandEvent& event)
     auto sink = m_inFlightFiles.front().second;
     if (IsInplaceFormatter()) {
         const wxString& filepath = m_inFlightFiles.front().first;
-        clSourceFormatEvent format_completed_event{ wxEVT_FORMAT_INPLACE_COMPELTED };
+        clSourceFormatEvent format_completed_event{wxEVT_FORMAT_INPLACE_COMPELTED};
         format_completed_event.SetFileName(filepath);
         sink->AddPendingEvent(format_completed_event);
     }
@@ -316,7 +316,7 @@ void GenericFormatter::OnRemoteCommandError(clCommandEvent& event)
 
 std::unique_ptr<clEnvList_t> GenericFormatter::CreateLocalEnv()
 {
-    std::unique_ptr<clEnvList_t> env{ new clEnvList_t };
+    std::unique_ptr<clEnvList_t> env{new clEnvList_t};
     if (clFileSystemWorkspace::Get().IsOpen()) {
         env.reset(new clEnvList_t(clFileSystemWorkspace::Get().GetEnvironment()));
     }

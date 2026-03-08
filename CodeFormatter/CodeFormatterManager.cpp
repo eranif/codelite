@@ -59,14 +59,14 @@ wxArrayString CodeFormatterManager::GetAllNames() const
 
 void CodeFormatterManager::Load()
 {
-    wxFileName config_file{ clStandardPaths::Get().GetUserDataDir(), "code-formatters.json" };
+    wxFileName config_file{clStandardPaths::Get().GetUserDataDir(), "code-formatters.json"};
     config_file.AppendDir("config");
 
     if (!config_file.FileExists()) {
         return;
     }
 
-    JSON root{ config_file };
+    JSON root{config_file};
     if (!root.isOk() || !root.toElement().isArray()) {
         initialize_defaults();
         return;
@@ -84,7 +84,7 @@ void CodeFormatterManager::Load()
 
 void CodeFormatterManager::Save()
 {
-    wxFileName config_file{ clStandardPaths::Get().GetUserDataDir(), "code-formatters.json" };
+    wxFileName config_file{clStandardPaths::Get().GetUserDataDir(), "code-formatters.json"};
     config_file.AppendDir("config");
     JSON root{JsonType::Array};
     auto arr = root.toElement();

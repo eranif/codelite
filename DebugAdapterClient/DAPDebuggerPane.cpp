@@ -18,7 +18,10 @@ DAPDebuggerPane::DAPDebuggerPane(wxWindow* parent, DebugAdapterClient* adapter, 
     , LOG(log)
     , m_dapPlugin(adapter)
 {
-    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+    m_book = new Notebook(this,
+                          wxID_ANY,
+                          wxDefaultPosition,
+                          wxDefaultSize,
                           kNotebook_Default | kNotebook_AllowDnD | kNotebook_FixedWidth);
 
     SetSizer(new wxBoxSizer(wxVERTICAL));

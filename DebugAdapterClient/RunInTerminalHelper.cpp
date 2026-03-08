@@ -14,7 +14,7 @@ RunInTerminalHelper::~RunInTerminalHelper()
     // don't accept events anymore
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &RunInTerminalHelper::OnProcessTerminated, this);
     EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &RunInTerminalHelper::OnDebugEnded, this);
-    if(m_process) {
+    if (m_process) {
         // don't send us events
         m_process->Detach();
         wxDELETE(m_process);
@@ -29,7 +29,7 @@ void RunInTerminalHelper::OnProcessTerminated(clProcessEvent& event)
 
 int RunInTerminalHelper::RunProcess(const std::vector<wxString>& command, const wxString& wd, const clEnvList_t& env)
 {
-    if(m_process) {
+    if (m_process) {
         return wxNOT_FOUND;
     }
 
@@ -38,7 +38,7 @@ int RunInTerminalHelper::RunProcess(const std::vector<wxString>& command, const 
     LOG_DEBUG(LOG) << "wd:" << wd << endl;
 
     m_process = ::CreateAsyncProcess(this, command, IProcessCreateConsole | IProcessNoRedirect, wd, &env);
-    if(m_process) {
+    if (m_process) {
         m_processId = m_process->GetPid();
         LOG_WARNING(LOG) << "Helper process launched successfully P:" << m_processId << endl;
     } else {
@@ -49,7 +49,7 @@ int RunInTerminalHelper::RunProcess(const std::vector<wxString>& command, const 
 
 void RunInTerminalHelper::Terminate()
 {
-    if(m_process) {
+    if (m_process) {
         m_process->Terminate();
     }
 }

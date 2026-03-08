@@ -49,7 +49,9 @@ void DAPWatchesView::Update(int current_frame_id)
     m_list->DeleteChildren(m_list->GetRootItem());
     for (const auto& word : words) {
         m_plugin->GetClient().EvaluateExpression(
-            word, current_frame_id, dap::EvaluateContext::WATCH,
+            word,
+            current_frame_id,
+            dap::EvaluateContext::WATCH,
             [this, word](bool success, const wxString& result, const wxString& type, int variablesReference) {
                 if (!success) {
                     m_list->AddWatch(word, wxEmptyString, wxEmptyString, 0);

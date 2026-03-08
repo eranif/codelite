@@ -40,7 +40,7 @@ void DapDebuggerSettingsDlg::Initialise()
 {
     m_notebook->DeleteAllPages();
     const auto& entries = m_store.GetEntries();
-    for(const auto& vt : entries) {
+    for (const auto& vt : entries) {
         m_notebook->AddPage(new DapSettingsPage(m_notebook, m_store, vt.second), vt.first);
     }
 }
@@ -57,13 +57,14 @@ void DapDebuggerSettingsDlg::OnDelete(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     int sel = m_notebook->GetSelection();
-    if(sel == wxNOT_FOUND) {
+    if (sel == wxNOT_FOUND) {
         return;
     }
 
     wxString name = m_notebook->GetPageText(sel);
-    if(::wxMessageBox(_("Delete '") + name + "'", "CodeLite", wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_WARNING,
-                      this) != wxYES) {
+    if (::wxMessageBox(
+            _("Delete '") + name + "'", "CodeLite", wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_WARNING, this) !=
+        wxYES) {
         return;
     }
 
@@ -73,8 +74,9 @@ void DapDebuggerSettingsDlg::OnDelete(wxCommandEvent& event)
 
 void DapDebuggerSettingsDlg::OnScan(wxCommandEvent& event)
 {
-    if(::wxMessageBox(_("Are you sure you want to scan for dap servers? (this will override your current settings)"),
-                      "CodeLite", wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_WARNING) != wxYES) {
+    if (::wxMessageBox(_("Are you sure you want to scan for dap servers? (this will override your current settings)"),
+                       "CodeLite",
+                       wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_WARNING) != wxYES) {
         return;
     }
 
@@ -82,11 +84,11 @@ void DapDebuggerSettingsDlg::OnScan(wxCommandEvent& event)
     wxUnusedVar(event);
     DapLocator locator;
     std::vector<DapEntry> entries;
-    if(locator.Locate(&entries) == 0) {
+    if (locator.Locate(&entries) == 0) {
         return;
     }
     m_store.Clear();
-    for(const auto& entry : entries) {
+    for (const auto& entry : entries) {
         m_store.Set(entry);
     }
     Initialise();
@@ -97,7 +99,7 @@ void DapDebuggerSettingsDlg::OnNew(wxCommandEvent& event)
     wxUnusedVar(event);
     // FIXME
     wxString name = clGetTextFromUser(_("Enter name"), _("New dap server name"), "", wxNOT_FOUND, this);
-    if(name.empty()) {
+    if (name.empty()) {
         return;
     }
 

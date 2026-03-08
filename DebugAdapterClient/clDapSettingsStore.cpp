@@ -36,32 +36,32 @@ void clDapSettingsStore::Load(const wxFileName& file)
     Clear();
 
     // ensure that we have something to load
-    if(!file.FileExists()) {
+    if (!file.FileExists()) {
         wxFileName::Mkdir(file.GetPath(), wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
         FileUtils::WriteFileContent(file, "[]");
     }
 
     JSON root(file);
-    if(!root.isOk()) {
+    if (!root.isOk()) {
         return;
     }
 
     JSONItem arr = root.toElement();
     int count = arr.arraySize();
-    for(int i = 0; i < count; ++i) {
+    for (int i = 0; i < count; ++i) {
         DapEntry d;
         d.From(arr[i]);
-        m_entries.insert({ d.GetName(), d });
+        m_entries.insert({d.GetName(), d});
     }
 }
 
 void clDapSettingsStore::Save(const wxFileName& path)
 {
-    if(!path.IsOk()) {
+    if (!path.IsOk()) {
         return;
     }
     JSON root(JsonType::Array);
-    for(const auto& vt : m_entries) {
+    for (const auto& vt : m_entries) {
         root.toElement().arrayAppend(vt.second.To());
     }
 
@@ -70,7 +70,7 @@ void clDapSettingsStore::Save(const wxFileName& path)
 
 bool clDapSettingsStore::Get(const wxString& name, DapEntry* entry) const
 {
-    if(!entry || m_entries.count(name) == 0) {
+    if (!entry || m_entries.count(name) == 0) {
         return false;
     }
 
@@ -81,12 +81,12 @@ bool clDapSettingsStore::Get(const wxString& name, DapEntry* entry) const
 bool clDapSettingsStore::Set(const DapEntry& entry)
 {
     m_entries.erase(entry.GetName());
-    return m_entries.insert({ entry.GetName(), entry }).second;
+    return m_entries.insert({entry.GetName(), entry}).second;
 }
 
 bool clDapSettingsStore::Delete(const wxString& name)
 {
-    if(m_entries.count(name) == 0) {
+    if (m_entries.count(name) == 0) {
         return false;
     }
     m_entries.erase(name);
@@ -101,8 +101,8 @@ void clDapSettingsStore::Set(const std::vector<DapEntry>& entries)
 
 void clDapSettingsStore::Update(const std::vector<DapEntry>& entries)
 {
-    for(const auto& d : entries) {
+    for (const auto& d : entries) {
         m_entries.erase(d.GetName());
-        m_entries.insert({ d.GetName(), d });
+        m_entries.insert({d.GetName(), d});
     }
 }

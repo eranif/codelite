@@ -80,7 +80,7 @@ void DAPMainView::UpdateThreads(int activeThreadId, dap::ThreadsResponse* respon
     }
 
     DeleteAllItems(m_dvListCtrlThreadId, DeleteThreadItemData);
-    wxDataViewItem active_item{ nullptr };
+    wxDataViewItem active_item{nullptr};
 
     for (const auto& thread : response->threads) {
         wxVector<wxVariant> cols;
@@ -173,7 +173,7 @@ void DAPMainView::UpdateScopes(int frameId, dap::ScopesResponse* response)
     wxTreeItemId root = m_variablesTree->GetRootItem();
     auto curitem = m_variablesTree->GetFirstChild(root, cookie);
     while (curitem.IsOk()) {
-        current_scopes.insert({ m_variablesTree->GetItemText(curitem), curitem });
+        current_scopes.insert({m_variablesTree->GetItemText(curitem), curitem});
         curitem = m_variablesTree->GetNextChild(root, cookie);
     }
 

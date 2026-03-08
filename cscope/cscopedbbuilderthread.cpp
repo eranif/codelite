@@ -69,7 +69,7 @@ void CscopeDbBuilderThread::ProcessRequest(ThreadRequest* request)
 CScopeResultTable_t* CscopeDbBuilderThread::ParseResults(const wxArrayString& output)
 {
     CScopeResultTable_t* results = new CScopeResultTable_t();
-    for(size_t i = 0; i < output.GetCount(); i++) {
+    for (size_t i = 0; i < output.GetCount(); i++) {
         // parse each line
         wxString line = output.Item(i);
         CscopeEntryData data;
@@ -77,7 +77,9 @@ CScopeResultTable_t* CscopeDbBuilderThread::ParseResults(const wxArrayString& ou
         // first is the file name
         line = line.Trim().Trim(false);
         // skip errors
-        if(line.StartsWith(wxT("cscope:"))) { continue; }
+        if (line.StartsWith(wxT("cscope:"))) {
+            continue;
+        }
 
         wxString file = line.BeforeFirst(wxT(' '));
         data.SetFile(file);
@@ -104,7 +106,7 @@ CScopeResultTable_t* CscopeDbBuilderThread::ParseResults(const wxArrayString& ou
         // insert the result
         CScopeResultTable_t::const_iterator iter = results->find(data.GetFile());
         std::vector<CscopeEntryData>* vec(NULL);
-        if(iter != results->end()) {
+        if (iter != results->end()) {
             // this file already exist, append the result
             vec = iter->second;
         } else {
@@ -117,7 +119,9 @@ CScopeResultTable_t* CscopeDbBuilderThread::ParseResults(const wxArrayString& ou
     return results;
 }
 
-void CscopeDbBuilderThread::SendStatusEvent(const wxString& msg, int percent, const wxString& findWhat,
+void CscopeDbBuilderThread::SendStatusEvent(const wxString& msg,
+                                            int percent,
+                                            const wxString& findWhat,
                                             wxEvtHandler* owner)
 {
     wxCommandEvent e(wxEVT_CSCOPE_THREAD_UPDATE_STATUS);

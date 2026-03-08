@@ -29,22 +29,22 @@
 #include <wx/string.h>
 class CScopeStatusMessage
 {
-	wxString m_message;
-	int      m_percentage;
-	wxString m_findWhat;
+    wxString m_message;
+    int m_percentage;
+    wxString m_findWhat;
 
 public:
-	CScopeStatusMessage() = default;
-	virtual ~CScopeStatusMessage() = default;
+    CScopeStatusMessage() = default;
+    virtual ~CScopeStatusMessage() = default;
 
-	// Setters
-	void SetMessage   (const wxString& message ) ;
-	void SetPercentage (int percentage);
-	void SetFindWhat  (const wxString& findWhat);
+    // Setters
+    void SetMessage(const wxString& message);
+    void SetPercentage(int percentage);
+    void SetFindWhat(const wxString& findWhat);
 
-	// Getters
-	const wxString&   GetMessage   () const ;
-	const wxString&   GetFindWhat  () const ;
-	int GetPercentage() const;
+    // Getters
+    const wxString& GetMessage() const;
+    const wxString& GetFindWhat() const;
+    int GetPercentage() const;
 };
 #endif // __cscopestatusmessage__

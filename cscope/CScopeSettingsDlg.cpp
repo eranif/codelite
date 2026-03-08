@@ -1,7 +1,8 @@
 #include "CScopeSettingsDlg.h"
-#include "windowattrmanager.h"
+
 #include "csscopeconfdata.h"
 #include "editor_config.h"
+#include "windowattrmanager.h"
 
 CScopeSettingsDlg::CScopeSettingsDlg(wxWindow* parent)
     : CScopeSettingsDlgBase(parent)

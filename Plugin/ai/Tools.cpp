@@ -4,6 +4,7 @@
 #include "FileManager.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspaceView.hpp"
+#include "Platform/Platform.hpp"
 #include "TextViewerDlg.h"
 #include "ai/LLMManager.hpp"
 #include "assistant/function.hpp"
@@ -13,6 +14,7 @@
 #include "codelite_events.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "procutils.h"
 #include "ssh/ssh_account_info.h"
@@ -86,7 +88,7 @@ void PopulateBuiltInFunctions(FunctionTable& table)
             .SetDescription(R"(Search for a given pattern within files in a directory)")
             .SetCallback(FindInFiles)
             .AddRequiredParam("root_folder", "The root directory where the search begins", "string")
-            .AddRequiredParam("find_what", "The text pattern to search fore", "string")
+            .AddRequiredParam("find_what", "The text pattern to search for", "string")
             .AddRequiredParam("file_pattern",
                               "The file pattern to match, such as \"*.txt\" or \"*.py\". Use semi-colon list to "
                               "pass multiple patterns.",
@@ -97,6 +99,12 @@ void PopulateBuiltInFunctions(FunctionTable& table)
             .AddOptionalParam("is_regex",
                               "When enabled, treats find_what as a regular expression pattern. Default is false.",
                               "boolean")
+            .AddOptionalParam("context_lines_before",
+                              "Number of lines to display before each match for context. Default is 0.",
+                              "number")
+            .AddOptionalParam("context_lines_after",
+                              "Number of lines to display after each match for context. Default is 0.",
+                              "number")
             .Build());
     table.Add(FunctionBuilder("ApplyPatch")
                   .SetDescription(R"(Apply a git style diff patch to a file.
@@ -437,10 +445,7 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
 {
     VERIFY_WORKER_THREAD();
 
-    if (args.size() < 3) {
-        return Err("Invalid number of arguments");
-    }
-
+    // Mandatory fields
     ASSIGN_FUNC_ARG_OR_RETURN(std::string root_dir, ::assistant::GetFunctionArg<std::string>(args, "root_folder"));
     ASSIGN_FUNC_ARG_OR_RETURN(std::string find_what, ::assistant::GetFunctionArg<std::string>(args, "find_what"));
     ASSIGN_FUNC_ARG_OR_RETURN(std::string file_pattern, ::assistant::GetFunctionArg<std::string>(args, "file_pattern"));
@@ -452,21 +457,122 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
     bool whole_word = assistant::GetFunctionArg<bool>(args, "whole_word").value_or(true);
     bool case_sensitive = assistant::GetFunctionArg<bool>(args, "case_sensitive").value_or(true);
     bool is_regex = assistant::GetFunctionArg<bool>(args, "is_regex").value_or(false);
+    int context_before = assistant::GetFunctionArg<int>(args, "context_lines_before").value_or(0);
+    int context_after = assistant::GetFunctionArg<int>(args, "context_lines_after").value_or(0);
 
-    clFilesFinder finder;
-    auto matches = finder.Search(root_dir,
-                                 clFilesFinderOptions{
-                                     .find_what = find_what,
-                                     .is_case_sensitive = case_sensitive,
-                                     .is_whole_match = whole_word,
-                                     .is_regex = is_regex,
-                                     .file_spec = file_pattern,
-                                 });
-    OrderedJSON j = OrderedJSON::array();
-    for (const auto& match : matches) {
-        j.push_back(match.ToJson());
+    // Build the grep command.
+    auto grep_command = ThePlatform->Which("grep");
+    if (!grep_command.has_value()) {
+        return Err("Could not find grep tool!");
     }
-    return Ok(wxString::FromUTF8(j.dump()));
+
+    bool is_remote{false};
+#if USE_SFTP
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    is_remote = workspace && workspace->IsRemote();
+    if (is_remote) {
+        grep_command = "/usr/bin/grep";
+    }
+#endif
+
+    // Parse file patterns (semi-colon separated list)
+    wxString file_patterns_str = wxString::FromUTF8(file_pattern);
+    if (!FileUtils::ValidateFilePattern(file_patterns_str)) {
+        return Err("Invalid file patterns. Pattern must be a semicolon-delimited list. Example: "
+                   "*.cpp;*.h;CMakeLists.txt;.bashrc");
+    }
+
+    wxArrayString file_pattern_arr = wxSplit(file_patterns_str, ';', 0);
+    if (file_pattern_arr.IsEmpty()) {
+        return Err("No valid file patterns provided");
+    }
+
+    // Build grep command
+    wxString cmd;
+    cmd << StringUtils::WrapWithDoubleQuotes(grep_command.value());
+
+    // Add flags
+    cmd << " -r"; // Recursive search
+    cmd << " -n"; // Show line numbers
+
+    if (!case_sensitive) {
+        cmd << " -i"; // Case-insensitive
+    }
+
+    if (whole_word && !is_regex) {
+        cmd << " -w"; // Match whole words
+    }
+
+    if (!is_regex) {
+        cmd << " -F"; // Fixed string (literal, not regex)
+    } else {
+        cmd << " -E"; // Regex
+    }
+
+    // Add context lines if specified
+    if (context_before > 0 && context_after > 0 && context_before == context_after) {
+        // Use -C when before and after context are the same
+        cmd << " -C " << context_before;
+    } else {
+        if (context_before > 0) {
+            cmd << " -B " << context_before;
+        }
+        if (context_after > 0) {
+            cmd << " -A " << context_after;
+        }
+    }
+
+    // Add the search pattern (properly escaped)
+    wxString search_pattern = wxString::FromUTF8(find_what);
+    cmd << " " << StringUtils::EscapeAndWrapWithDoubleQuotes(search_pattern);
+
+    // Add the root folder
+    wxString root_folder = wxString::FromUTF8(root_dir);
+    cmd << " " << StringUtils::EscapeAndWrapWithDoubleQuotes(root_folder);
+
+    // Add include patterns for file types
+    for (auto& pattern : file_pattern_arr) {
+        wxString trimmed_pattern = pattern.Trim().Trim(false);
+        if (!trimmed_pattern.IsEmpty()) {
+            cmd << " --include=" << StringUtils::EscapeAndWrapWithDoubleQuotes(trimmed_pattern);
+        }
+    }
+
+    // Execute the grep command
+    wxArrayString output_arr;
+    TerminationFlagGuard termination_flag;
+
+    wxString message;
+    message << "Will run the following command:\n```bash\n" << cmd << "\n```\n";
+    llm::Manager::GetInstance().PrintMessage(message, IconType::kInfo);
+
+#if USE_SFTP
+    if (is_remote) {
+        auto result = clSFTPManager::Get().AwaitExecute(workspace->GetSshAccount(), cmd, workspace->GetDir());
+        std::string out = std::get<0>(result);
+        std::string err = std::get<1>(result);
+
+        if (out.empty() && !err.empty()) {
+            return Err("grep error: " + err);
+        }
+        return Ok(out.empty() ? "No matches found" : out);
+    }
+#endif
+
+    // Local command execution
+    EnvSetter env;
+    ProcUtils::SafeExecuteCommand(cmd, output_arr, termination_flag.GetFlag());
+
+    if (termination_flag.IsSet()) {
+        return Err("grep terminated by user");
+    }
+
+    if (output_arr.empty()) {
+        return Ok("No matches found");
+    }
+
+    wxString output = StringUtils::Join(output_arr);
+    return Ok(output);
 }
 
 FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
@@ -476,6 +582,9 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
         return Err("Invalid number of arguments");
     }
 
+    // Apply patch "Trust" for this session (per path).
+    static thread_local std::unordered_set<std::string> apply_patch_trust_paths;
+
     ASSIGN_FUNC_ARG_OR_RETURN(
         std::string patch_content, ::assistant::GetFunctionArg<std::string>(args, "patch_content"));
     ASSIGN_FUNC_ARG_OR_RETURN(std::string file_path, ::assistant::GetFunctionArg<std::string>(args, "file_path"));
@@ -483,18 +592,29 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
     wxString patch = wxString::FromUTF8(patch_content);
     clDEBUG() << "Applying the patch:\n" << patch << endl;
 
-    auto response = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(
-        _("The model wants to apply the following patch, allow it?"), patch, "patch");
+    clStatusOr<llm::UserAnswer> response;
+    if (apply_patch_trust_paths.contains(file_path)) {
+        response = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(
+            _("The model wants to apply the following patch, allow it?"), patch, "patch");
 
-    if (!response.ok()) {
-        clDEBUG() << "Permission to apply the patch declined." << response.error_message() << endl;
-        return Err("Permission denied");
+        if (!response.ok()) {
+            clDEBUG() << "Permission to apply the patch declined." << response.error_message() << endl;
+            return Err("Permission denied");
+        }
+    } else {
+        // This path is trusted.
+        response = llm::UserAnswer::kYes;
+        wxString message;
+        message << "Will apply the following patch:\n```diff\n" << patch << "\n```\n";
+        llm::Manager::GetInstance().PrintMessage(message, IconType::kInfo);
     }
 
     switch (response.value()) {
     case llm::UserAnswer::kNo:
         return Err("Permission denied");
     case llm::UserAnswer::kTrust:
+        apply_patch_trust_paths.insert(file_path);
+        break;
     case llm::UserAnswer::kYes:
         break;
     }

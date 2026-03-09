@@ -146,29 +146,45 @@ FunctionResult GetCurrentEditorText(const assistant::json& args);
 FunctionResult CreateWorkspace([[maybe_unused]] const assistant::json& args);
 
 /**
- * @brief Searches for text occurrences in files within a specified directory tree.
+ * Brief summary: Search for text patterns within files in a directory tree using grep.
  *
- * Recursively scans the given root directory for files matching the provided pattern,
- * then searches each file for the specified text. Results are returned as a JSON array
- * of match objects. This function is thread-safe but issues a warning if called from
- * the main thread due to potential UI freezing.
+ * Detailed description: Executes a recursive grep command to find all occurrences of a
+ * specified text pattern in files matching given patterns within a root directory. Supports
+ * both local and remote (SFTP) execution. The search can be configured with options for
+ * case sensitivity, whole-word matching, regex patterns, and context lines around matches.
+ * The file_pattern parameter must be more specific than a bare wildcard.
  *
- * @param args JSON object containing the following required fields:
- *   - @b root_folder (string): The directory path to begin searching from.
- *   - @b find_what (string): The text to search for in files.
- *   - @b file_pattern (string): File wildcard pattern (e.g., "*.cpp") to filter files.
- *   Optional fields:
- *   - @b whole_word (bool, default=true): If true, only match whole words.
- *   - @b case_sensitive (bool, default=true): If true, perform case-sensitive search.
+ * Parameters:
+ *   args - A JSON object containing the following fields:
+ *     - root_folder (string, mandatory): The root directory path to search within.
+ *     - find_what (string, mandatory): The text pattern or regex to search for.
+ *     - file_pattern (string, mandatory): Semicolon-separated list of file patterns to
+ *       include (e.g., "*.cpp;*.h;*.rs"). Must not be only "*".
+ *     - whole_word (bool, optional): If true (default), match whole words only.
+ *     - case_sensitive (bool, optional): If true (default), perform case-sensitive matching.
+ *     - is_regex (bool, optional): If true (default false), treat find_what as a regex
+ *       pattern; otherwise treat it as a fixed literal string.
+ *     - context_lines_before (int, optional): Number of lines to display before each
+ *       match (default 0).
+ *     - context_lines_after (int, optional): Number of lines to display after each
+ *       match (default 0).
  *
- * @return FunctionResult containing either:
- *   - On success: A UTF-8 encoded JSON string (as wxString) with an array of match objects.
- *   - On failure: An error message string if arguments are invalid or search fails.
+ * Return value: A FunctionResult object containing either:
+ *   - On success: "No matches found" if no results, or the grep output showing all
+ *     matching lines with file paths and line numbers.
+ *   - On error: An error message describing the failure (e.g., grep tool not found,
+ *     invalid file pattern, grep execution error, or user termination).
  *
- * @throws None directly, but may propagate exceptions from filesystem operations or JSON parsing.
+ * Throws/Errors:
+ *   - Returns an error if the grep tool is not available on the system.
+ *   - Returns an error if file_pattern is set to only "*" without further specification.
+ *   - Returns an error if no valid file patterns are provided.
+ *   - Returns an error if grep execution fails or returns an error message.
+ *   - Returns an error if the operation is terminated by the user.
+ *   - Returns an error if remote (SFTP) execution fails.
  *
- * @see clFilesFinder::Search()
- * @see assistant::GetFunctionArg()
+ * Note: This function must be called from a worker thread (enforced by VERIFY_WORKER_THREAD).
+ * It supports both local command execution and remote execution over SFTP when available.
  */
 FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args);
 

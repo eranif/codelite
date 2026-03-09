@@ -265,5 +265,22 @@ public:
     {
         std::transform(str.begin(), str.end(), str.begin(), [](unsigned char c) { return std::tolower(c); });
     }
+
+    /**
+     * @brief Escapes internal double quotes in a string and wraps it with double quotes.
+     *
+     * This function processes the input string by escaping any internal double-quote
+     * characters with a backslash and then wrapping the entire result in double quotes.
+     * If the input already starts and ends with double quotes, they are removed first
+     * before processing (via recursive call). Empty strings are wrapped as "".
+     *
+     * @param input The input string to be escaped and wrapped. Must be a wxString.
+     *
+     * @return A wxString containing the input with escaped quotes and wrapped in double quotes.
+     *         Returns "" (empty quotes) if input is empty.
+     *
+     * @note This function is recursive when the input already has surrounding quotes.
+     */
+    static wxString EscapeAndWrapWithDoubleQuotes(const wxString& input);
 };
 inline wxString BoolToString(bool b) { return b ? wxT("yes") : wxT("no"); }

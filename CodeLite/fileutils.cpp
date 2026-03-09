@@ -1012,3 +1012,17 @@ wxString FileUtils::GetFileNameWithDirPart(const wxString& fullpath, size_t coun
     }
     return result;
 }
+
+bool FileUtils::ValidateFilePattern(const wxString& patterns)
+{
+    auto patterns_arr = ::wxStringTokenize(patterns, ";", wxTOKEN_STRTOK);
+    for (const wxString& pattern : patterns_arr) {
+        for (const wxChar& ch : pattern) {
+            if (wxIsalnum(ch) || ch == '_' || ch == '-' || ch == '.' || ch == '*') {
+                continue;
+            }
+            return false;
+        }
+    }
+    return true;
+}

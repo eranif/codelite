@@ -24,7 +24,7 @@ AI-powered IDE:
 High:
 -----
 
-- Replace the standard "find-in-files" tool with `grep` command (on all platforms) - this will allow it to run on remote files.
+- Add drop down to switch between models from the same vendor.
 
 Low:
 ----

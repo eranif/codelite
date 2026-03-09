@@ -1221,6 +1221,7 @@ if(MINGW)
     cp.exe
     ls.exe
     mv.exe
+    grep.exe
     patch.exe)
 
   execute_process(

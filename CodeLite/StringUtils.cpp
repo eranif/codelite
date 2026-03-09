@@ -857,3 +857,28 @@ wxArrayString StringUtils::AppendAndMakeUnique(const wxArrayString& arr, const w
     }
     return unique_arr;
 }
+
+wxString StringUtils::EscapeAndWrapWithDoubleQuotes(const wxString& input)
+{
+    if (input.empty()) {
+        return R"("")";
+    }
+
+    // Already starting with `"` and ends with `"` ? remove them and call this method again.
+    if (input.length() >= 2 && input.StartsWith("\"") && input.EndsWith("\"")) {
+        return EscapeAndWrapWithDoubleQuotes(input.Mid(1, input.length() - 2));
+    }
+
+    wxString escaped_string;
+    for (const wxChar& ch : input) {
+        switch (ch) {
+        case '"':
+            escaped_string << "\\" << ch;
+            break;
+        default:
+            escaped_string << ch;
+            break;
+        }
+    }
+    return escaped_string.Prepend("\"").Append("\"");
+}

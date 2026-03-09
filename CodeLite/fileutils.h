@@ -313,7 +313,39 @@ public:
      */
     static bool CopyDir(const wxString& src, const wxString& target);
 
+    /**
+     * Get a file path containing the filename and a specified number of parent directory components.
+     *
+     * This function extracts the filename along with up to 'count' parent directory
+     * components from the given full path. Path separators are normalized to forward
+     * slashes in the output. If the path contains fewer directory components than
+     * requested, all available directory components are included.
+     *
+     * @param fullpath The complete file path to process (may use either forward or
+     *                 backward slashes as separators).
+     * @param count The maximum number of parent directory components to include in
+     *              the result (0 returns only the filename).
+     *
+     * @return A wxString containing the filename and up to 'count' parent directory
+     *         components separated by forward slashes. If the path is empty or
+     *         contains only separators, returns the original fullpath.
+     */
     static wxString GetFileNameWithDirPart(const wxString& fullpath, size_t count = 1);
+
+    /**
+     * @brief Validates that a semicolon-separated list of file patterns contains only allowed characters.
+     *
+     * Splits the input string by semicolons and checks each pattern to ensure it contains only
+     * alphanumeric characters, underscores, hyphens, periods, and asterisks. Returns false
+     * immediately upon encountering any invalid character.
+     *
+     * @param patterns A wxString containing one or more file patterns separated by semicolons.
+     *                 Each pattern may contain alphanumeric characters (a-z, A-Z, 0-9),
+     *                 underscores (_), hyphens (-), periods (.), and asterisks (*).
+     *
+     * @return true if all patterns contain only valid characters, false otherwise.
+     */
+    static bool ValidateFilePattern(const wxString& patterns);
 };
 
 #endif // FILEUTILS_H

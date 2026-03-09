@@ -12,8 +12,12 @@
 #define BORDER_STYLE wxBORDER_THEME
 #endif
 
-DAPVariableListCtrl::DAPVariableListCtrl(wxWindow* parent, dap::Client* client, dap::EvaluateContext dapContext,
-                                         wxWindowID id, const wxPoint& pos, const wxSize& size)
+DAPVariableListCtrl::DAPVariableListCtrl(wxWindow* parent,
+                                         dap::Client* client,
+                                         dap::EvaluateContext dapContext,
+                                         wxWindowID id,
+                                         const wxPoint& pos,
+                                         const wxSize& size)
     : clThemedTreeCtrl(parent, id, pos, size, BORDER_STYLE | wxTR_HIDE_ROOT | wxTR_MULTIPLE)
     , m_client(client)
     , m_dapContext(dapContext)
@@ -40,7 +44,7 @@ void DAPVariableListCtrl::OnItemExpanding(wxTreeEvent& event)
     CHECK_ITEM_RET(child);
 
     wxString text = GetItemText(child);
-    if(text != "<dummy>") {
+    if (text != "<dummy>") {
         // already evaluated
         return;
     }
@@ -52,7 +56,7 @@ void DAPVariableListCtrl::OnItemExpanding(wxTreeEvent& event)
     CHECK_COND_RET(cd->refId != wxNOT_FOUND);
 
     m_client->GetChildrenVariables(cd->refId, m_dapContext);
-    m_pending_items.insert({ cd->refId, item });
+    m_pending_items.insert({cd->refId, item});
 }
 
 void DAPVariableListCtrl::OnMenu(wxTreeEvent& event)
@@ -76,7 +80,7 @@ void DAPVariableListCtrl::OnMenu(wxTreeEvent& event)
 
 DAPVariableListCtrlItemData* DAPVariableListCtrl::GetItemData(const wxTreeItemId& item)
 {
-    if(!item) {
+    if (!item) {
         return nullptr;
     }
 
@@ -93,14 +97,14 @@ void DAPVariableListCtrl::AddWatch(const wxString& expression, const wxString& v
     auto item = AppendItem(root, expression, -1, -1, new DAPVariableListCtrlItemData(varRef, value));
     SetItemText(item, value, 1);
     SetItemText(item, type, 2);
-    if(varRef > 0) {
+    if (varRef > 0) {
         AppendItem(item, "<dummy>");
     }
 }
 
 void DAPVariableListCtrl::UpdateChildren(int varId, dap::VariablesResponse* response)
 {
-    if(m_pending_items.count(varId) == 0) {
+    if (m_pending_items.count(varId) == 0) {
         return;
     }
 
@@ -108,13 +112,13 @@ void DAPVariableListCtrl::UpdateChildren(int varId, dap::VariablesResponse* resp
     m_pending_items.erase(varId);
 
     // update the tree
-    for(auto var : response->variables) {
+    for (auto var : response->variables) {
         auto child =
             AppendItem(item, var.name, -1, -1, new DAPVariableListCtrlItemData(var.variablesReference, var.value));
         SetItemText(child, var.value, 1);
         SetItemText(child, var.type, 2);
 
-        if(var.variablesReference > 0) {
+        if (var.variablesReference > 0) {
             AppendItem(child, "<dummy>");
         }
     }

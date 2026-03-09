@@ -33,16 +33,17 @@
 #ifndef _MEMCHECKLISTCTRLERRORS_H_
 #define _MEMCHECKLISTCTRLERRORS_H_
 
-#include <wx/listctrl.h>
-#include <vector>
-
 #include "imemcheckprocessor.h"
+
+#include <vector>
+#include <wx/listctrl.h>
 
 /**
  * @class MemCheckListCtrlErrors
- * @brief wxListCtrl with wxLC_VIRTUAL need derived class to implement OnGetItemText. So this class is only wrapper to do simple thing "m_data->at(item)"
+ * @brief wxListCtrl with wxLC_VIRTUAL need derived class to implement OnGetItemText. So this class is only wrapper to
+ * do simple thing "m_data->at(item)"
  */
-class MemCheckListCtrlErrors: public wxListCtrl
+class MemCheckListCtrlErrors : public wxListCtrl
 {
 public:
     MemCheckListCtrlErrors(wxWindow* parent,
@@ -57,13 +58,9 @@ public:
     }
     ~MemCheckListCtrlErrors() override = default;
 
-    virtual wxString OnGetItemText(long item, long column) const {
-        return m_data->at(item)->label;
-    }
+    virtual wxString OnGetItemText(long item, long column) const { return m_data->at(item)->label; }
 
-    void SetData(std::vector<MemCheckErrorPtr>* data) {
-        this->m_data = data;
-    }
+    void SetData(std::vector<MemCheckErrorPtr>* data) { this->m_data = data; }
 
 protected:
     std::vector<MemCheckErrorPtr>* m_data;

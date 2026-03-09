@@ -16,7 +16,7 @@ void DAPConsoleOutput::AddOutputEvent(dap::OutputEvent* event)
     CHECK_PTR_RET(event);
     wxArrayString lines = wxStringTokenize(event->output, "\n", wxTOKEN_STRTOK);
     ScrollToEnd();
-    for(auto& line : lines) {
+    for (auto& line : lines) {
         line.Trim();
         AppendLine(line);
     }

@@ -1,4 +1,5 @@
 #include "EditorConfigSettings.h"
+
 #include "cl_config.h"
 
 EditorConfigSettings::EditorConfigSettings()

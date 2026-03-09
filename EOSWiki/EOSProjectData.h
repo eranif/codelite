@@ -12,7 +12,7 @@ class EOSProjectData
 public:
     EOSProjectData();
     virtual ~EOSProjectData();
-    
+
     void SetName(const wxString& name) { this->m_name = name; }
     void SetPath(const wxString& path) { this->m_path = path; }
     void SetToolchainPath(const wxString& toolchainPath) { this->m_toolchainPath = toolchainPath; }

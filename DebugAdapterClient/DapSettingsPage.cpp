@@ -4,7 +4,7 @@
     [this](const wxString& label, const wxAny& value) { \
         wxUnusedVar(label);                             \
         wxString str_value;                             \
-        if(value.GetAs(&str_value)) {                   \
+        if (value.GetAs(&str_value)) {                  \
             DapEntry d;                                 \
             m_store.Get(m_entry.GetName(), &d);         \
             d.SETTER_METHOD(str_value);                 \
@@ -16,7 +16,7 @@
     [this](const wxString& label, const wxAny& value) { \
         wxUnusedVar(label);                             \
         bool bool_value;                                \
-        if(value.GetAs(&bool_value)) {                  \
+        if (value.GetAs(&bool_value)) {                 \
             DapEntry d;                                 \
             m_store.Get(m_entry.GetName(), &d);         \
             d.SETTER_METHOD(bool_value);                \
@@ -33,15 +33,15 @@ DapSettingsPage::DapSettingsPage(wxWindow* win, clDapSettingsStore& store, const
     AddProperty(_("Command"), m_entry.GetCommand(), UPDATE_TEXT_CB(SetCommand));
     AddProperty(_("Connection string"), m_entry.GetConnectionString(), UPDATE_TEXT_CB(SetConnectionString));
 
-    const std::vector<wxString> launch_choices = { "Launch", "Attach" };
+    const std::vector<wxString> launch_choices = {"Launch", "Attach"};
     wxString launch_type = entry.GetLaunchType() == DapLaunchType::LAUNCH ? "Launch" : "Attach";
     AddProperty(_("Launch type"), launch_choices, launch_type, [this](const wxString& label, const wxAny& value) {
         wxUnusedVar(label);
         wxString value_str;
-        if(value.GetAs(&value_str)) {
+        if (value.GetAs(&value_str)) {
             DapEntry d;
             m_store.Get(m_entry.GetName(), &d);
-            if(value_str == "Launch") {
+            if (value_str == "Launch") {
                 d.SetLaunchType(DapLaunchType::LAUNCH);
             } else {
                 d.SetLaunchType(DapLaunchType::ATTACH);
@@ -61,9 +61,9 @@ DapSettingsPage::DapSettingsPage(wxWindow* win, clDapSettingsStore& store, const
     AddHeader(_("Environment variables"));
     AddProperty(_("Server environment"), m_entry.GetEnvironment(), UPDATE_TEXT_CB(SetEnvironment));
 
-    const std::vector<wxString> format_choices = { "List", "Dictionary", "None" };
+    const std::vector<wxString> format_choices = {"List", "Dictionary", "None"};
     int sel = wxNOT_FOUND;
-    switch(m_entry.GetEnvFormat()) {
+    switch (m_entry.GetEnvFormat()) {
     case dap::EnvFormat::LIST:
         sel = 0;
         break;
@@ -78,12 +78,12 @@ DapSettingsPage::DapSettingsPage(wxWindow* win, clDapSettingsStore& store, const
     AddProperty(_("Environment format"), format_choices, sel, [this](const wxString& label, const wxAny& value) {
         wxUnusedVar(label);
         wxString value_str;
-        if(value.GetAs(&value_str)) {
+        if (value.GetAs(&value_str)) {
             DapEntry d;
             m_store.Get(m_entry.GetName(), &d);
-            if(value_str == "List") {
+            if (value_str == "List") {
                 d.SetEnvFormat(dap::EnvFormat::LIST);
-            } else if(value_str == "Dictionary") {
+            } else if (value_str == "Dictionary") {
                 d.SetEnvFormat(dap::EnvFormat::DICTIONARY);
             } else {
                 d.SetEnvFormat(dap::EnvFormat::NONE);

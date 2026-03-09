@@ -28,6 +28,7 @@
 
 #include "external_tools.h"
 #include "externaltoolsdata.h"
+
 #include <vector>
 
 class ExternalToolData : public wxClientData
@@ -57,8 +58,14 @@ public:
     {
     }
 
-    ExternalToolData(const wxString& id, const wxString& name, const wxString& path, const wxString& workingDirectory,
-                     const wxString& icon16, const wxString& icon24, bool captureOutput, bool saveAllFiles,
+    ExternalToolData(const wxString& id,
+                     const wxString& name,
+                     const wxString& path,
+                     const wxString& workingDirectory,
+                     const wxString& icon16,
+                     const wxString& icon24,
+                     bool captureOutput,
+                     bool saveAllFiles,
                      bool callOnFileSave)
         : m_id(id)
         , m_name(name)
@@ -83,9 +90,16 @@ class ExternalToolDlg : public ExternalToolBaseDlg
     IManager* m_mgr;
 
 private:
-    void DoUpdateEntry(const wxDataViewItem& item, const wxString& id, const wxString& name, const wxString& path,
-                       const wxString& workingDirectory, const wxString& icon16, const wxString& icon24,
-                       bool captureOutput, bool saveAllFiles, bool callOnFileSave);
+    void DoUpdateEntry(const wxDataViewItem& item,
+                       const wxString& id,
+                       const wxString& name,
+                       const wxString& path,
+                       const wxString& workingDirectory,
+                       const wxString& icon16,
+                       const wxString& icon24,
+                       bool captureOutput,
+                       bool saveAllFiles,
+                       bool callOnFileSave);
     void DoEditEntry(const wxDataViewItem& item);
     ExternalToolData* GetToolData(const wxDataViewItem& item);
     void DoClear();

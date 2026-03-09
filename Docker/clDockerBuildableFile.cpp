@@ -46,7 +46,7 @@ JSONItem clDockerBuildableFile::ToJSON(const wxString& workspaceDir) const
 
 clDockerBuildableFile::Ptr_t clDockerBuildableFile::New(eDockerFileType type)
 {
-    switch(type) {
+    switch (type) {
     case eDockerFileType::kDockerCompose:
         return clDockerBuildableFile::Ptr_t(new clDockerComposeFile());
     case eDockerFileType::kDockerfile:
@@ -67,7 +67,7 @@ wxString clDockerBuildableFile::GetBuildBaseCommand() const
 void clDockerBuildableFile::GetRunBaseCommand(wxString& docker, wxString& args) const
 {
     docker = GetDockerExe();
-    if(GetType() == eDockerFileType::kDockerfile) {
+    if (GetType() == eDockerFileType::kDockerfile) {
         args = "run";
     } else /* if(GetType() == eDockerFileType::kDockerCompose)*/ {
         args = "up";
@@ -80,16 +80,16 @@ wxString clDockerBuildableFile::GetDockerExe() const
     dockerSettings.Load();
 
     wxFileName dockerCommand;
-    if(GetType() == eDockerFileType::kDockerfile) {
+    if (GetType() == eDockerFileType::kDockerfile) {
         dockerCommand = dockerSettings.GetDocker();
-    } else if(GetType() == eDockerFileType::kDockerCompose) {
+    } else if (GetType() == eDockerFileType::kDockerCompose) {
         dockerCommand = dockerSettings.GetDockerCompose();
     } else {
         // Unknown file type
         return "";
     }
 
-    if(!dockerCommand.FileExists()) {
+    if (!dockerCommand.FileExists()) {
         clGetManager()->SetStatusMessage(
             _("Can't find docker executable. Please install docker and let me know where it is"), 3);
         return "";

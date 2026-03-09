@@ -1,4 +1,5 @@
 #include "gdbmi.hpp"
+
 #include <cctype>
 #include <iostream>
 #include <memory>
@@ -13,8 +14,12 @@ thread_local gdbmi::Node emptyNode;
 namespace
 {
 std::unordered_map<wxString, gdbmi::eToken> words = {
-    { "done", gdbmi::T_DONE },   { "running", gdbmi::T_RUNNING }, { "connected", gdbmi::T_CONNECTED },
-    { "error", gdbmi::T_ERROR }, { "exit", gdbmi::T_EXIT },       { "stopped", gdbmi::T_STOPPED },
+    {"done", gdbmi::T_DONE},
+    {"running", gdbmi::T_RUNNING},
+    {"connected", gdbmi::T_CONNECTED},
+    {"error", gdbmi::T_ERROR},
+    {"exit", gdbmi::T_EXIT},
+    {"stopped", gdbmi::T_STOPPED},
 };
 
 void trim_both(wxString& str)
@@ -30,11 +35,11 @@ void strip_double_backslashes(wxString& str)
     fixed_str.reserve(str.length());
 
     wxChar last_char = 0;
-    for(size_t i = 0; i < str.length(); ++i) {
+    for (size_t i = 0; i < str.length(); ++i) {
         wxChar ch = str[i];
-        if(ch == '\\' && last_char == '\\') {
+        if (ch == '\\' && last_char == '\\') {
             // do nothing
-        } else if(ch == '"' && last_char == '\\') {
+        } else if (ch == '"' && last_char == '\\') {
             // gdb adds an extra annoying '\"' to double quotes
             // making it really hard to view strings in the debugger
             // UI, so lets remove it
@@ -59,12 +64,12 @@ gdbmi::Node::ptr_t gdbmi::Node::add_child(const wxString& name, const wxString& 
     return c;
 }
 
-#define CHECK_EOF()                      \
-    {                                    \
-        if(m_buffer.length() == m_pos) { \
-            *type = T_EOF;               \
-            return {};                   \
-        }                                \
+#define CHECK_EOF()                       \
+    {                                     \
+        if (m_buffer.length() == m_pos) { \
+            *type = T_EOF;                \
+            return {};                    \
+        }                                 \
     }
 
 #define RETURN_TYPE(ret_type)                              \
@@ -85,15 +90,15 @@ gdbmi::StringView gdbmi::Tokenizer::next_token(eToken* type)
     StringView curbuf;
 
     // skip leading whitespaces
-    for(; m_pos < m_buffer.length(); ++m_pos) {
-        if(m_buffer[m_pos] == ' ' || m_buffer[m_pos] == '\t') {
+    for (; m_pos < m_buffer.length(); ++m_pos) {
+        if (m_buffer[m_pos] == ' ' || m_buffer[m_pos] == '\t') {
             continue;
         }
         break;
     }
 
     CHECK_EOF();
-    switch(m_buffer[m_pos]) {
+    switch (m_buffer[m_pos]) {
     case '{':
         RETURN_TYPE(T_TUPLE_OPEN);
     case '}':
@@ -122,7 +127,7 @@ gdbmi::StringView gdbmi::Tokenizer::next_token(eToken* type)
         break;
     }
 
-    if(m_buffer[m_pos] == '"') {
+    if (m_buffer[m_pos] == '"') {
         // c-string
         ++m_pos;
         return read_string(type);
@@ -130,7 +135,7 @@ gdbmi::StringView gdbmi::Tokenizer::next_token(eToken* type)
 
         auto w = read_word(type);
         wxString as_str = w.to_string();
-        if(words.count(as_str)) {
+        if (words.count(as_str)) {
             *type = words[as_str];
             return w;
         } else {
@@ -147,11 +152,11 @@ gdbmi::StringView gdbmi::Tokenizer::read_string(eToken* type)
 
     int state = STATE_NORMAL;
     size_t start_pos = m_pos;
-    for(; m_pos < m_buffer.length(); ++m_pos) {
+    for (; m_pos < m_buffer.length(); ++m_pos) {
         wxChar ch = m_buffer[m_pos];
-        switch(state) {
+        switch (state) {
         case STATE_NORMAL:
-            switch(ch) {
+            switch (ch) {
             case '"': {
                 *type = T_CSTRING;
                 auto cstr = StringView(m_buffer.data() + start_pos, m_pos - start_pos);
@@ -190,7 +195,7 @@ gdbmi::StringView gdbmi::Tokenizer::remainder()
 gdbmi::StringView gdbmi::Tokenizer::read_word(eToken* type)
 {
     size_t start_pos = m_pos;
-    while(std::isalnum(m_buffer[m_pos]) || m_buffer[m_pos] == '-' || m_buffer[m_pos] == '_') {
+    while (std::isalnum(m_buffer[m_pos]) || m_buffer[m_pos] == '-' || m_buffer[m_pos] == '_') {
         ++m_pos;
     }
     *type = T_WORD;
@@ -207,14 +212,14 @@ void gdbmi::Parser::parse(const wxString& buffer, ParsedResult* result)
     constexpr int STATE_RESULT_CLASS = 1;
     constexpr int STATE_POW = 3;
     int state = STATE_START; // initial state
-    while(cont) {
+    while (cont) {
         auto s = tokenizer.next_token(&token);
-        if(token == T_EOF) {
+        if (token == T_EOF) {
             break;
         }
-        switch(state) {
+        switch (state) {
         case STATE_START:
-            switch(token) {
+            switch (token) {
             case T_STAR:
                 result->line_type = LT_EXEC_ASYNC_OUTPUT;
                 state = STATE_RESULT_CLASS;
@@ -258,12 +263,12 @@ void gdbmi::Parser::parse(const wxString& buffer, ParsedResult* result)
             }
             break;
         case STATE_POW:
-            if(token == T_POW) {
+            if (token == T_POW) {
                 state = STATE_RESULT_CLASS;
             }
             break;
         case STATE_RESULT_CLASS:
-            switch(token) {
+            switch (token) {
             case T_DONE:
             case T_RUNNING:
             case T_CONNECTED:
@@ -303,19 +308,19 @@ void gdbmi::Parser::parse_properties(Tokenizer* tokenizer, Node::ptr_t parent)
     int state = STATE_NAME; // initial state
     StringView name;
     StringView value;
-    while(true) {
+    while (true) {
         auto s = tokenizer->next_token(&token);
-        if(token == T_EOF) {
+        if (token == T_EOF) {
             break;
         }
-        if(token == T_COMMA) {
+        if (token == T_COMMA) {
             state = STATE_NAME;
             continue;
         }
 
-        switch(state) {
+        switch (state) {
         case STATE_NAME:
-            switch(token) {
+            switch (token) {
             case T_CSTRING: {
                 // an array look-a-like
                 // create a fake entry id
@@ -342,7 +347,7 @@ void gdbmi::Parser::parse_properties(Tokenizer* tokenizer, Node::ptr_t parent)
             }
             break;
         case STATE_EQUAL:
-            switch(token) {
+            switch (token) {
             case T_EQUAL:
                 state = STATE_VALUE;
                 break;
@@ -354,7 +359,7 @@ void gdbmi::Parser::parse_properties(Tokenizer* tokenizer, Node::ptr_t parent)
             }
             break;
         case STATE_VALUE:
-            switch(token) {
+            switch (token) {
             case T_TUPLE_CLOSE:
             case T_LIST_CLOSE:
                 return;
@@ -384,23 +389,23 @@ void gdbmi::Parser::parse_properties(Tokenizer* tokenizer, Node::ptr_t parent)
 void gdbmi::Parser::print(Node::ptr_t node, int depth)
 {
     std::cout << wxString(depth, ' ');
-    if(!node->name.empty()) {
+    if (!node->name.empty()) {
         std::cout << node->name;
     }
 
-    if(!node->value.empty()) {
+    if (!node->value.empty()) {
         std::cout << " -> " << node->value;
     }
     std::cout << std::endl;
 
-    for(auto child : node->children) {
+    for (auto child : node->children) {
         print(child, depth + 4);
     }
 }
 
 gdbmi::Node& gdbmi::Node::find_child(const wxString& name) const
 {
-    if(children_map.count(name) == 0) {
+    if (children_map.count(name) == 0) {
         return emptyNode;
     }
     return *(children_map.find(name)->second);

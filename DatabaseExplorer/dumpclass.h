@@ -33,22 +33,21 @@
 #include <wx/textfile.h>
 
 /*! \brief DumpClass can save items content (database table data) into sql file. */
-class DumpClass {
+class DumpClass
+{
 
 public:
-	DumpClass(IDbAdapter* pDbAdapter, xsSerializable* pItems, const wxString& fileName);
-	virtual ~DumpClass() = default;
-	
-	/*! \brief start dumping data. Return finally status */
-	wxString DumpData();
+    DumpClass(IDbAdapter* pDbAdapter, xsSerializable* pItems, const wxString& fileName);
+    virtual ~DumpClass() = default;
 
-	
+    /*! \brief start dumping data. Return finally status */
+    wxString DumpData();
+
 protected:
-	int DumpTable(wxTextFile* pFile, Table* pTab);
-	wxString m_fileName;
-	xsSerializable* m_pItems;
-	IDbAdapter* m_pDbAdapter;
-
+    int DumpTable(wxTextFile* pFile, Table* pTab);
+    wxString m_fileName;
+    xsSerializable* m_pItems;
+    IDbAdapter* m_pDbAdapter;
 };
 
 #endif // DUMPCLASS_H

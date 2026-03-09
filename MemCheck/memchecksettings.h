@@ -60,15 +60,13 @@
 
 /////////////////////////////////////////////////////////////////
 
-
-class ValgrindSettings: public clConfigItem
+class ValgrindSettings : public clConfigItem
 {
 public:
     ValgrindSettings();
-    virtual ~ ValgrindSettings() {
-    }
+    virtual ~ValgrindSettings() {}
 
-    virtual void FromJSON(const JSONItem & json);
+    virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;
 
 private:
@@ -83,72 +81,45 @@ private:
     wxArrayString m_suppFiles;
 
 public:
-    void SetBinary(const wxString & binary) {
-        m_binary = binary;
-    }
-    const wxString & GetBinary() const {
-        return m_binary;
-    }
-    void SetOutputInPrivateFolder(bool outputInPrivateFolder) {
-        m_outputInPrivateFolder = outputInPrivateFolder;
-    }
-    bool GetOutputInPrivateFolder() const {
-        return m_outputInPrivateFolder;
-    }
-    void SetOutputFile(const wxString & outputFile) {
-        m_outputFile = outputFile;
-    }
-    const wxString & GetOutputFile() const {
-        return m_outputFile;
-    }
-//  void SetMandatoryOptions(const wxString & mandatoryOptions) {
-//    m_mandatoryOptions = mandatoryOptions;
-//  }
-    const wxString & GetMandatoryOptions() const  {
-        //return wxString::Format(m_mandatoryOptions, m_outputFile);
+    void SetBinary(const wxString& binary) { m_binary = binary; }
+    const wxString& GetBinary() const { return m_binary; }
+    void SetOutputInPrivateFolder(bool outputInPrivateFolder) { m_outputInPrivateFolder = outputInPrivateFolder; }
+    bool GetOutputInPrivateFolder() const { return m_outputInPrivateFolder; }
+    void SetOutputFile(const wxString& outputFile) { m_outputFile = outputFile; }
+    const wxString& GetOutputFile() const { return m_outputFile; }
+    //  void SetMandatoryOptions(const wxString & mandatoryOptions) {
+    //    m_mandatoryOptions = mandatoryOptions;
+    //  }
+    const wxString& GetMandatoryOptions() const
+    {
+        // return wxString::Format(m_mandatoryOptions, m_outputFile);
         return m_mandatoryOptions;
     }
-    void SetOutputFileOption(const wxString& outputFileOption) {
-        m_outputFileOption = outputFileOption;
-    }
-    const wxString& GetOutputFileOption() const {
-        return m_outputFileOption;
-    }
-    void SetSuppressionFileOption(const wxString& suppressionFileOption) {
+    void SetOutputFileOption(const wxString& outputFileOption) { m_outputFileOption = outputFileOption; }
+    const wxString& GetOutputFileOption() const { return m_outputFileOption; }
+    void SetSuppressionFileOption(const wxString& suppressionFileOption)
+    {
         m_suppressionFileOption = suppressionFileOption;
     }
-    const wxString& GetSuppressionFileOption() const {
-        return m_suppressionFileOption;
-    }
-    void SetOptions(const wxString& options) {
-        m_options = options;
-    }
-    const wxString & GetOptions() const {
-        return m_options;
-    }
-    void SetSuppFileInPrivateFolder(bool suppFileInPrivateFolder) {
+    const wxString& GetSuppressionFileOption() const { return m_suppressionFileOption; }
+    void SetOptions(const wxString& options) { m_options = options; }
+    const wxString& GetOptions() const { return m_options; }
+    void SetSuppFileInPrivateFolder(bool suppFileInPrivateFolder)
+    {
         m_suppFileInPrivateFolder = suppFileInPrivateFolder;
     }
-    bool GetSuppFileInPrivateFolder() const {
-        return m_suppFileInPrivateFolder;
-    }
-    void SetSuppFiles(const wxArrayString& suppFiles) {
-        m_suppFiles = suppFiles;
-    }
-    const wxArrayString& GetSuppFiles() const {
-        return m_suppFiles;
-    }
+    bool GetSuppFileInPrivateFolder() const { return m_suppFileInPrivateFolder; }
+    void SetSuppFiles(const wxArrayString& suppFiles) { m_suppFiles = suppFiles; }
+    const wxArrayString& GetSuppFiles() const { return m_suppFiles; }
 };
 
-
-class MemCheckSettings: public clConfigItem
+class MemCheckSettings : public clConfigItem
 {
 public:
     MemCheckSettings();
-    virtual ~ MemCheckSettings() {
-    }
+    virtual ~MemCheckSettings() {}
 
-    virtual void FromJSON(const JSONItem & json);
+    virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;
 
 private:
@@ -168,62 +139,38 @@ private:
     ValgrindSettings m_valgrindSettings;
 
 public:
-    void SetEngine(const wxString & engine) {
-        m_engine = engine;
-    }
-    const wxString & GetEngine() const {
-        return m_engine;
-    }
-//  void SetAvailableEngines(const wxArrayString & availableEngines) {
-//    m_availableEngines = availableEngines;
-//  }
-    const wxArrayString & GetAvailableEngines() const {
-        return m_availableEngines;
-    }
-    void SetResultPageSize(size_t result_page_size) {
-        m_result_page_size = result_page_size;
-    }
-    size_t GetResultPageSize() const {
-        return m_result_page_size;
-    }
-//    void SetResultPageSizeMax(size_t result_page_size_max) {
-//        m_result_page_size_max = result_page_size_max;
-//    }
-    size_t GetResultPageSizeMax() const {
-        return m_result_page_size_max;
-    }
-    void SetOmitNonWorkspace(bool omitNonWorkspace) {
-        m_omitNonWorkspace = omitNonWorkspace;
-    }
-    bool GetOmitNonWorkspace() const {
-        return m_omitNonWorkspace;
-    }
-    void SetOmitDuplications(bool omitDuplications) {
-        m_omitDuplications = omitDuplications;
-    }
-    bool GetOmitDuplications() const {
-        return m_omitDuplications;
-    }
-    void SetOmitSuppressed(bool omitSuppressed) {
-        m_omitSuppressed = omitSuppressed;
-    }
-    bool GetOmitSuppressed() const {
-        return m_omitSuppressed;
-    }
+    void SetEngine(const wxString& engine) { m_engine = engine; }
+    const wxString& GetEngine() const { return m_engine; }
+    //  void SetAvailableEngines(const wxArrayString & availableEngines) {
+    //    m_availableEngines = availableEngines;
+    //  }
+    const wxArrayString& GetAvailableEngines() const { return m_availableEngines; }
+    void SetResultPageSize(size_t result_page_size) { m_result_page_size = result_page_size; }
+    size_t GetResultPageSize() const { return m_result_page_size; }
+    //    void SetResultPageSizeMax(size_t result_page_size_max) {
+    //        m_result_page_size_max = result_page_size_max;
+    //    }
+    size_t GetResultPageSizeMax() const { return m_result_page_size_max; }
+    void SetOmitNonWorkspace(bool omitNonWorkspace) { m_omitNonWorkspace = omitNonWorkspace; }
+    bool GetOmitNonWorkspace() const { return m_omitNonWorkspace; }
+    void SetOmitDuplications(bool omitDuplications) { m_omitDuplications = omitDuplications; }
+    bool GetOmitDuplications() const { return m_omitDuplications; }
+    void SetOmitSuppressed(bool omitSuppressed) { m_omitSuppressed = omitSuppressed; }
+    bool GetOmitSuppressed() const { return m_omitSuppressed; }
 
     /**
      * @brief place for particular handlers of subsetting nodes
      */
-    ValgrindSettings & GetValgrindSettings() {
-        return m_valgrindSettings;
-    }
+    ValgrindSettings& GetValgrindSettings() { return m_valgrindSettings; }
 
-    void SavaToConfig() {
+    void SavaToConfig()
+    {
         clConfig conf(MEMCHECK_CONFIG_FILE);
         conf.WriteItem(*this);
     }
 
-    void LoadFromConfig() {
+    void LoadFromConfig()
+    {
         clConfig conf(MEMCHECK_CONFIG_FILE);
         conf.ReadItem(*this);
     }

@@ -26,10 +26,7 @@
 #include <wx/filedlg.h>
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new MemCheckPlugin(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new MemCheckPlugin(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -55,36 +52,72 @@ MemCheckPlugin::MemCheckPlugin(IManager* manager)
     m_shortName = wxT("MemCheck");
 
     // menu File and OutputView controls
-    m_mgr->GetTheApp()->Connect(MemCheckOutputViewBase::ID_TOOL_STOP_PROCESS, wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(MemCheckPlugin::OnStopProcess), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(MemCheckOutputViewBase::ID_TOOL_STOP_PROCESS,
+                                wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(MemCheckPlugin::OnStopProcess),
+                                NULL,
+                                (wxEvtHandler*)this);
 
-    m_mgr->GetTheApp()->Connect(MemCheckOutputViewBase::ID_TOOL_STOP_PROCESS, wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(MemCheckPlugin::OnStopProcessUI), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(MemCheckOutputViewBase::ID_TOOL_STOP_PROCESS,
+                                wxEVT_UPDATE_UI,
+                                wxUpdateUIEventHandler(MemCheckPlugin::OnStopProcessUI),
+                                NULL,
+                                (wxEvtHandler*)this);
 
-    m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_active_project"), wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(MemCheckPlugin::OnCheckActiveProject), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_active_project"), wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_active_project"),
+                                wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(MemCheckPlugin::OnCheckActiveProject),
+                                NULL,
+                                (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_active_project"),
+                                wxEVT_UPDATE_UI,
+                                wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
+                                NULL,
+                                (wxEvtHandler*)this);
 
-    m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_popup_project"), wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(MemCheckPlugin::OnCheckPopupProject), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_popup_project"), wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_popup_project"),
+                                wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(MemCheckPlugin::OnCheckPopupProject),
+                                NULL,
+                                (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_popup_project"),
+                                wxEVT_UPDATE_UI,
+                                wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
+                                NULL,
+                                (wxEvtHandler*)this);
 
-    m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_popup_editor"), wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(MemCheckPlugin::OnCheckPopupEditor), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_popup_editor"), wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_popup_editor"),
+                                wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(MemCheckPlugin::OnCheckPopupEditor),
+                                NULL,
+                                (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("memcheck_check_popup_editor"),
+                                wxEVT_UPDATE_UI,
+                                wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
+                                NULL,
+                                (wxEvtHandler*)this);
 
-    m_mgr->GetTheApp()->Connect(XRCID("memcheck_import"), wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(MemCheckPlugin::OnImportLog), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Connect(XRCID("memcheck_import"), wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("memcheck_import"),
+                                wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(MemCheckPlugin::OnImportLog),
+                                NULL,
+                                (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("memcheck_import"),
+                                wxEVT_UPDATE_UI,
+                                wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
+                                NULL,
+                                (wxEvtHandler*)this);
 
-    m_mgr->GetTheApp()->Connect(XRCID("memcheck_settings"), wxEVT_COMMAND_MENU_SELECTED,
-                                wxCommandEventHandler(MemCheckPlugin::OnSettings), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Connect(XRCID("memcheck_settings"), wxEVT_UPDATE_UI,
-                                wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("memcheck_settings"),
+                                wxEVT_COMMAND_MENU_SELECTED,
+                                wxCommandEventHandler(MemCheckPlugin::OnSettings),
+                                NULL,
+                                (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Connect(XRCID("memcheck_settings"),
+                                wxEVT_UPDATE_UI,
+                                wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
+                                NULL,
+                                (wxEvtHandler*)this);
 
     // EventNotifier::Get()->Connect( wxEVT_INIT_DONE, wxCommandEventHandler(MemCheckPlugin::OnInitDone), NULL, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &MemCheckPlugin::OnWorkspaceLoaded, this);
@@ -123,8 +156,8 @@ void MemCheckPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
     item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_check")));
     menu->Append(item);
 
-    item = new wxMenuItem(menu, XRCID("memcheck_import"), _("&Load MemCheck log from file..."), wxEmptyString,
-                          wxITEM_NORMAL);
+    item = new wxMenuItem(
+        menu, XRCID("memcheck_import"), _("&Load MemCheck log from file..."), wxEmptyString, wxITEM_NORMAL);
     item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_import")));
     menu->Append(item);
 
@@ -141,19 +174,19 @@ void MemCheckPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 
 void MemCheckPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 {
-    if(type == MenuTypeFileView_Project) {
+    if (type == MenuTypeFileView_Project) {
         // items for the file view/Project context menu
-        if(!menu->FindItem(XRCID("memcheck_MenuTypeFileView_Project"))) {
+        if (!menu->FindItem(XRCID("memcheck_MenuTypeFileView_Project"))) {
             wxMenu* subMenu = new wxMenu();
             wxMenuItem* item(NULL);
 
-            item = new wxMenuItem(subMenu, XRCID("memcheck_check_popup_project"), _("&Run MemCheck"), wxEmptyString,
-                                  wxITEM_NORMAL);
+            item = new wxMenuItem(
+                subMenu, XRCID("memcheck_check_popup_project"), _("&Run MemCheck"), wxEmptyString, wxITEM_NORMAL);
             item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_check")));
             subMenu->Append(item);
 
-            item = new wxMenuItem(subMenu, XRCID("memcheck_import"), _("&Load MemCheck log from file..."),
-                                  wxEmptyString, wxITEM_NORMAL);
+            item = new wxMenuItem(
+                subMenu, XRCID("memcheck_import"), _("&Load MemCheck log from file..."), wxEmptyString, wxITEM_NORMAL);
             item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_import")));
             subMenu->Append(item);
 
@@ -164,8 +197,8 @@ void MemCheckPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
             subMenu->Append(item);
 
             menu->PrependSeparator();
-            item = new wxMenuItem(menu, XRCID("memcheck_MenuTypeFileView_Project"), _("MemCheck"), wxEmptyString,
-                                  wxITEM_NORMAL, subMenu);
+            item = new wxMenuItem(
+                menu, XRCID("memcheck_MenuTypeFileView_Project"), _("MemCheck"), wxEmptyString, wxITEM_NORMAL, subMenu);
             item->SetBitmap(wxXmlResource::Get()->LoadBitmap(wxT("memcheck_check")));
             menu->Prepend(item);
         }
@@ -178,33 +211,60 @@ void MemCheckPlugin::UnPlug()
     m_terminal.Unbind(wxEVT_TERMINAL_COMMAND_EXIT, &MemCheckPlugin::OnProcessTerminated, this);
     m_terminal.Unbind(wxEVT_TERMINAL_COMMAND_OUTPUT, &MemCheckPlugin::OnProcessOutput, this);
 
-    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_active_project"), wxEVT_COMMAND_MENU_SELECTED,
-                                   wxCommandEventHandler(MemCheckPlugin::OnCheckActiveProject), NULL,
+    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_active_project"),
+                                   wxEVT_COMMAND_MENU_SELECTED,
+                                   wxCommandEventHandler(MemCheckPlugin::OnCheckActiveProject),
+                                   NULL,
                                    (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_active_project"), wxEVT_UPDATE_UI,
-                                   wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI), NULL, (wxEvtHandler*)this);
-
-    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_popup_project"), wxEVT_COMMAND_MENU_SELECTED,
-                                   wxCommandEventHandler(MemCheckPlugin::OnCheckPopupProject), NULL,
+    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_active_project"),
+                                   wxEVT_UPDATE_UI,
+                                   wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
+                                   NULL,
                                    (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_popup_project"), wxEVT_UPDATE_UI,
-                                   wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI), NULL, (wxEvtHandler*)this);
 
-    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_popup_editor"), wxEVT_COMMAND_MENU_SELECTED,
-                                   wxCommandEventHandler(MemCheckPlugin::OnCheckPopupEditor), NULL,
+    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_popup_project"),
+                                   wxEVT_COMMAND_MENU_SELECTED,
+                                   wxCommandEventHandler(MemCheckPlugin::OnCheckPopupProject),
+                                   NULL,
                                    (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_popup_editor"), wxEVT_UPDATE_UI,
-                                   wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_popup_project"),
+                                   wxEVT_UPDATE_UI,
+                                   wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
+                                   NULL,
+                                   (wxEvtHandler*)this);
 
-    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_import"), wxEVT_COMMAND_MENU_SELECTED,
-                                   wxCommandEventHandler(MemCheckPlugin::OnImportLog), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_import"), wxEVT_UPDATE_UI,
-                                   wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_popup_editor"),
+                                   wxEVT_COMMAND_MENU_SELECTED,
+                                   wxCommandEventHandler(MemCheckPlugin::OnCheckPopupEditor),
+                                   NULL,
+                                   (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_check_popup_editor"),
+                                   wxEVT_UPDATE_UI,
+                                   wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
+                                   NULL,
+                                   (wxEvtHandler*)this);
 
-    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_settings"), wxEVT_COMMAND_MENU_SELECTED,
-                                   wxCommandEventHandler(MemCheckPlugin::OnSettings), NULL, (wxEvtHandler*)this);
-    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_settings"), wxEVT_UPDATE_UI,
-                                   wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI), NULL, (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_import"),
+                                   wxEVT_COMMAND_MENU_SELECTED,
+                                   wxCommandEventHandler(MemCheckPlugin::OnImportLog),
+                                   NULL,
+                                   (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_import"),
+                                   wxEVT_UPDATE_UI,
+                                   wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
+                                   NULL,
+                                   (wxEvtHandler*)this);
+
+    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_settings"),
+                                   wxEVT_COMMAND_MENU_SELECTED,
+                                   wxCommandEventHandler(MemCheckPlugin::OnSettings),
+                                   NULL,
+                                   (wxEvtHandler*)this);
+    m_mgr->GetTheApp()->Disconnect(XRCID("memcheck_settings"),
+                                   wxEVT_UPDATE_UI,
+                                   wxUpdateUIEventHandler(MemCheckPlugin::OnMemCheckUI),
+                                   NULL,
+                                   (wxEvtHandler*)this);
 
     // EventNotifier::Get()->Disconnect( wxEVT_INIT_DONE, wxCommandEventHandler(MemCheckPlugin::OnInitDone), NULL,
     // this);
@@ -212,7 +272,7 @@ void MemCheckPlugin::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &MemCheckPlugin::OnWorkspaceClosed, this);
 
     // before this plugin is un-plugged we must remove the tab we added
-    if(!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_outputView)) {
+    if (!m_mgr->BookDeletePage(PaneId::BOTTOM_BAR, m_outputView)) {
         m_outputView->Destroy();
     }
     m_outputView = nullptr;
@@ -234,7 +294,7 @@ bool MemCheckPlugin::IsReady(wxUpdateUIEvent& event)
 {
     bool ready = !m_mgr->IsBuildInProgress() && !m_terminal.IsRunning();
     int id = event.GetId();
-    if(id == XRCID("memcheck_check_active_project")) {
+    if (id == XRCID("memcheck_check_active_project")) {
         ready &= !m_mgr->GetWorkspace()->GetActiveProjectName().IsEmpty();
     }
     return ready;
@@ -244,7 +304,7 @@ void MemCheckPlugin::ApplySettings(bool loadLastErrors)
 {
     wxDELETE(m_memcheckProcessor);
     m_memcheckProcessor = new ValgrindMemcheckProcessor(GetSettings());
-    if(loadLastErrors) {
+    if (loadLastErrors) {
         m_outputView->LoadErrors();
 
     } else {
@@ -258,7 +318,7 @@ void MemCheckPlugin::OnCheckActiveProject(wxCommandEvent& event)
 {
     CHECK_CL_SHUTDOWN()
     clCxxWorkspace* workspace = m_mgr->GetWorkspace();
-    if(workspace) {
+    if (workspace) {
         CheckProject(workspace->GetActiveProjectName());
     }
 }
@@ -267,7 +327,7 @@ void MemCheckPlugin::OnCheckPopupProject(wxCommandEvent& event)
 {
     CHECK_CL_SHUTDOWN()
     ProjectPtr project = m_mgr->GetSelectedProject();
-    if(project) {
+    if (project) {
         CheckProject(project->GetName());
     }
 }
@@ -276,16 +336,17 @@ void MemCheckPlugin::OnCheckPopupEditor(wxCommandEvent& event)
 {
     CHECK_CL_SHUTDOWN()
     IEditor* editor = m_mgr->GetActiveEditor();
-    if(editor) {
+    if (editor) {
         CheckProject(editor->GetProjectName());
     }
 }
 
 void MemCheckPlugin::CheckProject(const wxString& projectName)
 {
-    if(m_terminal.IsRunning()) {
+    if (m_terminal.IsRunning()) {
         ::wxMessageBox(_("Another instance is already running. Please stop it before executing another one"),
-                       "CodeLite", wxICON_WARNING | wxCENTER | wxOK);
+                       "CodeLite",
+                       wxICON_WARNING | wxCENTER | wxOK);
         return;
     }
 
@@ -302,13 +363,13 @@ void MemCheckPlugin::CheckProject(const wxString& projectName)
     wxSetWorkingDirectory(path);
     wxSetWorkingDirectory(wd);
     m_mgr->AppendOutputTabText(kOutputTab_Output, _("Launching MemCheck...\n"));
-    m_mgr->AppendOutputTabText(kOutputTab_Output, wxString()
-                                                      << _("Working directory is set to: ") << ::wxGetCwd() << "\n");
+    m_mgr->AppendOutputTabText(
+        kOutputTab_Output, wxString() << _("Working directory is set to: ") << ::wxGetCwd() << "\n");
     wxString cmd;
     wxString cmdArgs;
     m_memcheckProcessor->GetExecutionCommand(command, cmd, cmdArgs);
-    m_mgr->AppendOutputTabText(kOutputTab_Output, wxString()
-                                                      << _("MemCheck command: ") << command << " " << cmdArgs << "\n");
+    m_mgr->AppendOutputTabText(
+        kOutputTab_Output, wxString() << _("MemCheck command: ") << command << " " << cmdArgs << "\n");
     m_terminal.ExecuteConsole(cmd, true, cmdArgs, "", wxString::Format("MemCheck: %s", projectName));
 }
 
@@ -316,16 +377,20 @@ void MemCheckPlugin::OnImportLog(wxCommandEvent& event)
 {
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckPlugin::OnImportLog()"));
 
-    wxFileDialog openFileDialog(m_mgr->GetTheApp()->GetTopWindow(), _("Open log file"), "", "",
-                                "xml files (*.xml)|*.xml|all files (*.*)|*.*", wxFD_OPEN | wxFD_FILE_MUST_EXIST);
-    if(openFileDialog.ShowModal() == wxID_CANCEL)
+    wxFileDialog openFileDialog(m_mgr->GetTheApp()->GetTopWindow(),
+                                _("Open log file"),
+                                "",
+                                "",
+                                "xml files (*.xml)|*.xml|all files (*.*)|*.*",
+                                wxFD_OPEN | wxFD_FILE_MUST_EXIST);
+    if (openFileDialog.ShowModal() == wxID_CANCEL)
         return;
 
     wxWindowDisabler disableAll;
     wxBusyInfo wait(BUSY_MESSAGE);
     m_mgr->GetTheApp()->Yield();
 
-    if(!m_memcheckProcessor->Process(openFileDialog.GetPath()))
+    if (!m_memcheckProcessor->Process(openFileDialog.GetPath()))
         wxMessageBox(_("Output log file cannot be properly loaded."), _("Processing error."), wxICON_ERROR);
 
     m_outputView->LoadErrors();
@@ -336,7 +401,7 @@ void MemCheckPlugin::OnSettings(wxCommandEvent& event)
 {
     // CL_DEBUG1(PLUGIN_PREFIX("MemCheckPlugin::OnSettings()"));
     MemCheckSettingsDialog dialog(m_mgr->GetTheApp()->GetTopWindow(), m_settings);
-    if(dialog.ShowModal() == wxID_OK)
+    if (dialog.ShowModal() == wxID_OK)
         ApplySettings();
 }
 
@@ -348,7 +413,7 @@ void MemCheckPlugin::OnMemCheckUI(wxUpdateUIEvent& event)
 
 void MemCheckPlugin::StopProcess()
 {
-    if(m_terminal.IsRunning())
+    if (m_terminal.IsRunning())
         m_terminal.Terminate();
 }
 
@@ -379,18 +444,18 @@ void MemCheckPlugin::OnStopProcessUI(wxUpdateUIEvent& event) { event.Enable(IsRu
 wxString MemCheckPlugin::PrepareCommand(const wxString& projectName, wxString& wd)
 {
     wd.clear();
-    if(!clCxxWorkspaceST::Get()->IsOpen()) {
+    if (!clCxxWorkspaceST::Get()->IsOpen()) {
         return "";
     }
 
     ProjectPtr proj = clCxxWorkspaceST::Get()->GetProject(projectName);
-    if(!proj) {
+    if (!proj) {
         clWARNING() << "MemCheckPlugin::PrepareCommand(): could not find project:" << projectName;
         return wxEmptyString;
     }
 
     BuildConfigPtr bldConf = clCxxWorkspaceST::Get()->GetProjBuildConf(projectName, wxEmptyString);
-    if(!bldConf) {
+    if (!bldConf) {
         clWARNING() << "MemCheckPlugin::PrepareCommand(): failed to find project configuration for project:"
                     << projectName;
         return wxEmptyString;
@@ -410,22 +475,22 @@ wxString MemCheckPlugin::PrepareCommand(const wxString& projectName, wxString& w
     wd = MacroManager::Instance()->Expand(wd, NULL, projectName);
 
     wxFileName workingDir(wd, "");
-    if(workingDir.IsRelative()) {
+    if (workingDir.IsRelative()) {
         workingDir.MakeAbsolute(projectPath);
     }
 
     wxFileName fileExe(cmd);
-    if(fileExe.IsRelative()) {
+    if (fileExe.IsRelative()) {
         fileExe.MakeAbsolute(workingDir.GetPath());
     }
     fileExe.Normalize();
 
 #ifdef __WXMSW__
-    if(!fileExe.Exists() && fileExe.GetExt().IsEmpty()) {
+    if (!fileExe.Exists() && fileExe.GetExt().IsEmpty()) {
         // Try with .exe
         wxFileName withExe(fileExe);
         withExe.SetExt("exe");
-        if(withExe.Exists()) {
+        if (withExe.Exists()) {
             fileExe = withExe;
         }
     }

@@ -1,4 +1,5 @@
 #include "DockerSettingsDlg.h"
+
 #include "clDockerSettings.h"
 
 DockerSettingsDlg::DockerSettingsDlg(wxWindow* parent)

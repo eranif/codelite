@@ -39,7 +39,7 @@ NewWxProjectDlg::NewWxProjectDlg(wxWindow* parent, IManager* mgr)
     m_choiceApplicationType->SetSelection(wxProjectTypeSimpleMain);
     m_dirPicker->SetPath(
         m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR));
-    const wxString VersionChoices[] = { wxTRANSLATE("Default"), wxT("2.6"), wxT("2.8"), wxT("2.9"), wxT("3.0") };
+    const wxString VersionChoices[] = {wxTRANSLATE("Default"), wxT("2.6"), wxT("2.8"), wxT("2.9"), wxT("3.0")};
     m_stringManager.AddStrings(
         sizeof(VersionChoices) / sizeof(wxString), VersionChoices, wxT("Default"), m_choiceVersion);
 
@@ -63,14 +63,14 @@ void NewWxProjectDlg::OnButtonCancel(wxCommandEvent& e) { EndModal(wxID_CANCEL);
 void NewWxProjectDlg::OnButtonOK(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if(ValidateInput()) {
+    if (ValidateInput()) {
         EndModal(wxID_OK);
     }
 }
 
 bool NewWxProjectDlg::ValidateInput()
 {
-    if(m_textCtrlName->GetValue().IsEmpty()) {
+    if (m_textCtrlName->GetValue().IsEmpty()) {
         wxString msg;
         msg << _("Invalid project name '") << m_textCtrlName->GetValue() << wxT("'\n");
         msg << _("Valid characters for project name are [0-9A-Za-z_]");
@@ -78,9 +78,8 @@ bool NewWxProjectDlg::ValidateInput()
         return false;
     }
 
-    if(m_textCtrlName->GetValue()
-           .find_first_not_of(wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_")) !=
-       wxString::npos) {
+    if (m_textCtrlName->GetValue().find_first_not_of(
+            wxT("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_")) != wxString::npos) {
         wxString msg;
         msg << _("Invalid project name '") << m_textCtrlName->GetValue() << wxT("'\n");
         msg << _("Valid characters for project name are [0-9A-Za-z_]");
@@ -90,13 +89,13 @@ bool NewWxProjectDlg::ValidateInput()
 
     wxString path = m_dirPicker->GetPath();
 
-    if(m_checkBoxCreateSeparateDir->IsChecked()) {
+    if (m_checkBoxCreateSeparateDir->IsChecked()) {
         path << wxFileName::GetPathSeparator();
         path << m_textCtrlName->GetValue();
     }
 
     wxFileName::Mkdir(path, 0777, wxPATH_MKDIR_FULL);
-    if(!wxDirExists(path)) {
+    if (!wxDirExists(path)) {
         wxMessageBox(
             wxString::Format(_("Failed to create the path: %s\nA permissions problem, perhaps?"), path.c_str()),
             _("Error"),
@@ -112,31 +111,31 @@ void NewWxProjectDlg::GetProjectInfo(NewWxProjectInfo& info)
     size_t flag = 0;
     wxString path = m_dirPicker->GetPath();
 
-    if(m_checkBoxMWindows->IsChecked()) {
+    if (m_checkBoxMWindows->IsChecked()) {
         flag |= wxWidgetsSetMWindows;
     }
 
-    if(m_checkBoxWinRes->IsChecked()) {
+    if (m_checkBoxWinRes->IsChecked()) {
         flag |= wxWidgetsWinRes;
     }
 
-    if(m_checkBoxUnicode->IsChecked()) {
+    if (m_checkBoxUnicode->IsChecked()) {
         flag |= wxWidgetsUnicode;
     }
 
-    if(m_checkBoxStatic->IsChecked()) {
+    if (m_checkBoxStatic->IsChecked()) {
         flag |= wxWidgetsStatic;
     }
 
-    if(m_checkBoxUniversal->IsChecked()) {
+    if (m_checkBoxUniversal->IsChecked()) {
         flag |= wxWidgetsUniversal;
     }
 
-    if(m_checkBoxPCH->IsChecked()) {
+    if (m_checkBoxPCH->IsChecked()) {
         flag |= wxWidgetsPCH;
     }
 
-    if(m_checkBoxCreateSeparateDir->IsChecked()) {
+    if (m_checkBoxCreateSeparateDir->IsChecked()) {
         path << wxFileName::GetPathSeparator();
         path << m_textCtrlName->GetValue();
     }
@@ -152,7 +151,7 @@ void NewWxProjectDlg::GetProjectInfo(NewWxProjectInfo& info)
 void NewWxProjectDlg::OnChoiceChanged(wxCommandEvent& e)
 {
 #ifdef __WXMSW__
-    if(e.GetSelection() == wxProjectTypeSimpleMain) {
+    if (e.GetSelection() == wxProjectTypeSimpleMain) {
         m_checkBoxMWindows->SetValue(false);
         m_checkBoxMWindows->Enable(false);
     } else {

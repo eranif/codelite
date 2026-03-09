@@ -21,17 +21,19 @@ DAPBreakpointsView::DAPBreakpointsView(wxWindow* parent, DebugAdapterClient* plu
     m_toolbar->AssignBitmaps(bitmaps);
     m_toolbar->Realize();
 
-    m_toolbar->Bind(wxEVT_TOOL, &DAPBreakpointsView::OnNewFunctionBreakpoint, this,
-                    XRCID("dap-new-function-breakpoint"));
+    m_toolbar->Bind(
+        wxEVT_TOOL, &DAPBreakpointsView::OnNewFunctionBreakpoint, this, XRCID("dap-new-function-breakpoint"));
     m_toolbar->Bind(wxEVT_TOOL, &DAPBreakpointsView::OnNewSourceBreakpoint, this, XRCID("dap-new-source-breakpoint"));
     m_toolbar->Bind(wxEVT_TOOL, &DAPBreakpointsView::OnDeleteAllBreakpoints, this, XRCID("dap-delete-all-breakpoints"));
 
     m_toolbar->Bind(
-        wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Enable(m_plugin->GetClient().CanInteract()); },
+        wxEVT_UPDATE_UI,
+        [&](wxUpdateUIEvent& e) { e.Enable(m_plugin->GetClient().CanInteract()); },
         XRCID("dap-new-function-breakpoint"));
 
     m_toolbar->Bind(
-        wxEVT_UPDATE_UI, [&](wxUpdateUIEvent& e) { e.Enable(m_plugin->GetClient().CanInteract()); },
+        wxEVT_UPDATE_UI,
+        [&](wxUpdateUIEvent& e) { e.Enable(m_plugin->GetClient().CanInteract()); },
         XRCID("dap-new-source-breakpoint"));
 
     m_toolbar->Bind(
@@ -58,7 +60,7 @@ void DAPBreakpointsView::RefreshView(const SessionBreakpoints& breakpoints)
         if (!cd || cd->m_breakpoint.id <= 0) {
             continue;
         }
-        old_breakpoints.insert({ cd->m_breakpoint.id, cd->m_breakpoint });
+        old_breakpoints.insert({cd->m_breakpoint.id, cd->m_breakpoint});
     }
 
     m_dvListCtrl->Begin();
@@ -132,7 +134,8 @@ void DAPBreakpointsView::OnNewFunctionBreakpoint(wxCommandEvent& event)
 
     dap::FunctionBreakpoint new_bp;
     new_bp.name = funcname;
-    auto iter = std::find_if(m_functionBreakpoints.begin(), m_functionBreakpoints.end(),
+    auto iter = std::find_if(m_functionBreakpoints.begin(),
+                             m_functionBreakpoints.end(),
                              [&funcname](const dap::FunctionBreakpoint& bp) { return bp.name == funcname; });
     if (iter != m_functionBreakpoints.end()) {
         return;
@@ -165,10 +168,10 @@ void DAPBreakpointsView::OnNewSourceBreakpoint(wxCommandEvent& event)
             continue;
         }
         if (cd->m_breakpoint.source.path == source) {
-            source_breakpoints.push_back({ cd->m_breakpoint.line, "" });
+            source_breakpoints.push_back({cd->m_breakpoint.line, ""});
         }
     }
-    source_breakpoints.push_back({ static_cast<int>(line_numner), "" });
+    source_breakpoints.push_back({static_cast<int>(line_numner), ""});
     m_plugin->GetClient().SetBreakpointsFile(source, source_breakpoints);
 }
 

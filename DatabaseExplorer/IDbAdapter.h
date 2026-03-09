@@ -27,9 +27,9 @@
 #define IDBADAPTER_H
 
 #include "IDbType.h"
-//#include "columncol.h"
-//#include "databasecol.h"
-//#include "tablecol.h"
+// #include "columncol.h"
+// #include "databasecol.h"
+// #include "tablecol.h"
 
 #include <memory>
 #include <wx/dblayer/include/DatabaseLayer.h>
@@ -49,21 +49,17 @@ class IDbAdapter
 {
 
 public:
-    enum TYPE {
-        atUNKNOWN = 0,
-        atSQLITE,
-        atMYSQL,
-        atPOSTGRES
-    };
-    
+    enum TYPE { atUNKNOWN = 0, atSQLITE, atMYSQL, atPOSTGRES };
+
     IDbAdapter()
         : m_adapterType(atUNKNOWN)
     {
     }
 
     virtual ~IDbAdapter() = default;
-    
-    /*! \brief Return opened DatabaseLayer for selected database. If dbName is empty, DatabaseLayer will be opened without default database. */
+
+    /*! \brief Return opened DatabaseLayer for selected database. If dbName is empty, DatabaseLayer will be opened
+     * without default database. */
     virtual DatabaseLayerPtr GetDatabaseLayer(const wxString& dbName) = 0;
 
     /*! \brief Return true if dbAdapter is connected. DEPRECATED!!! */
@@ -86,7 +82,6 @@ public:
 
     /*! \brief Function connect columns to the DBETable */
     virtual bool GetColumns(Table* pTab) = 0;
-
 
     /*! \brief Return wxString with USE DB statement for dbName */
     virtual wxString GetUseDb(const wxString& dbName) = 0;
@@ -115,20 +110,17 @@ public:
     /*! \brief Return IDbType by name universal name */
     virtual IDbType* GetDbTypeByUniversalName(IDbType::UNIVERSAL_TYPE type) = 0;
     /*! \brief Return wxArrayString of possible db types */
-    virtual wxArrayString* GetDbTypes () = 0;
+    virtual wxArrayString* GetDbTypes() = 0;
 
     /*! \brief Convert IDbType to the special db type. (!!! Old type is deleted !!!) */
-    virtual IDbType* ConvertType (IDbType* pType) = 0;
+    virtual IDbType* ConvertType(IDbType* pType) = 0;
     /*! \brief Return wxArrayString of possible db types */
     virtual void ConvertTable(Table* pTab) = 0;
 
-    const TYPE& GetAdapterType() const {
-        return m_adapterType;
-    }
+    const TYPE& GetAdapterType() const { return m_adapterType; }
 
 protected:
     TYPE m_adapterType;
-
 };
 
 #endif // IDBADAPTER_H

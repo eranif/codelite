@@ -34,6 +34,7 @@
 #define _VALGRINDPROCESSOR_H_
 
 #include "imemcheckprocessor.h"
+
 #include <wx/xml/xml.h>
 
 /**

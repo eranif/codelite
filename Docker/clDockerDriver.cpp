@@ -31,7 +31,7 @@ clDockerDriver::~clDockerDriver()
 
 void clDockerDriver::Stop()
 {
-    if(IsRunning()) {
+    if (IsRunning()) {
         // Stop each process
         for (IProcess* process : m_processes) {
             process->Terminate();
@@ -41,7 +41,7 @@ void clDockerDriver::Stop()
 
 void clDockerDriver::OnProcessOutput(clProcessEvent& event)
 {
-    switch(m_context) {
+    switch (m_context) {
     case kNone:
         break; //??
     case kRun:
@@ -61,14 +61,14 @@ void clDockerDriver::OnProcessOutput(clProcessEvent& event)
 
 void clDockerDriver::OnProcessTerminated(clProcessEvent& event)
 {
-    if(!event.GetProcess() || m_processes.count(event.GetProcess()) == 0) {
+    if (!event.GetProcess() || m_processes.count(event.GetProcess()) == 0) {
         return;
     } // Not our process !?
 
     IProcess* process = event.GetProcess();
     m_processes.erase(process);
     wxDELETE(process);
-    switch(m_context) {
+    switch (m_context) {
     case kListImages:
         ProcessListImagesCommand();
         break;
@@ -95,19 +95,21 @@ void clDockerDriver::ListContainers() { DoListContainers(); }
 void clDockerDriver::RemoveContainers(const wxArrayString& ids)
 {
     // Sanity
-    if(IsRunning())
+    if (IsRunning())
         return;
-    if(ids.IsEmpty())
+    if (ids.IsEmpty())
         return;
 
     wxString command = GetDockerExe();
-    if(command.IsEmpty())
+    if (command.IsEmpty())
         return;
 
     wxString message;
     message << _("Choosing 'Yes' will remove ") << ids.size() << _(" container(s)\nContinue?");
-    if(::wxMessageBox(message, "CodeLite", wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT,
-                      EventNotifier::Get()->TopFrame()) != wxYES) {
+    if (::wxMessageBox(message,
+                       "CodeLite",
+                       wxICON_WARNING | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT,
+                       EventNotifier::Get()->TopFrame()) != wxYES) {
         return;
     }
     command << " rm --force ";
@@ -118,13 +120,15 @@ void clDockerDriver::RemoveContainers(const wxArrayString& ids)
     StartProcessAsync(command, "", IProcessCreateDefault | IProcessWrapInShell, kKillContainers);
 }
 
-void clDockerDriver::StartProcessAsync(const wxString& command, const wxString& wd, size_t flags,
+void clDockerDriver::StartProcessAsync(const wxString& command,
+                                       const wxString& wd,
+                                       size_t flags,
                                        clDockerDriver::eContext context)
 {
     m_output.Clear();
     m_context = context;
     IProcess* process = ::CreateAsyncProcess(this, command, flags, wd);
-    if(process) {
+    if (process) {
         m_processes.insert(process);
     }
 }
@@ -135,7 +139,7 @@ wxString clDockerDriver::GetDockerExe() const
     dockerSettings.Load();
 
     const wxFileName& dockerCommand = dockerSettings.GetDocker();
-    if(!dockerCommand.FileExists()) {
+    if (!dockerCommand.FileExists()) {
         clGetManager()->SetStatusMessage(
             _("Can't find docker executable. Please install docker and let me know where it is"), 3);
         return "";
@@ -174,11 +178,11 @@ void clDockerDriver::ProcessListImagesCommand()
 void clDockerDriver::DoListContainers()
 {
     // Build the command
-    if(IsRunning())
+    if (IsRunning())
         return;
 
     wxString command = GetDockerExe();
-    if(command.IsEmpty())
+    if (command.IsEmpty())
         return;
 
     command << " ps "
@@ -193,11 +197,11 @@ void clDockerDriver::ListImages() { DoListImages(); }
 void clDockerDriver::DoListImages()
 {
     // Build the command
-    if(IsRunning())
+    if (IsRunning())
         return;
 
     wxString command = GetDockerExe();
-    if(command.IsEmpty())
+    if (command.IsEmpty())
         return;
 
     command << " image ls "
@@ -209,17 +213,17 @@ void clDockerDriver::DoListImages()
 void clDockerDriver::ClearUnusedImages()
 {
     // Build the command
-    if(IsRunning())
+    if (IsRunning())
         return;
 
     wxString command = GetDockerExe();
-    if(command.IsEmpty())
+    if (command.IsEmpty())
         return;
 
     command << " image prune --force";
     clDockerSettings s;
     s.Load();
-    if(s.IsRemoveAllImages()) {
+    if (s.IsRemoveAllImages()) {
         command << " --all";
     }
 
@@ -229,13 +233,13 @@ void clDockerDriver::ClearUnusedImages()
 void clDockerDriver::AttachTerminal(const wxArrayString& names)
 {
     // Sanity
-    if(IsRunning())
+    if (IsRunning())
         return;
-    if(names.IsEmpty())
+    if (names.IsEmpty())
         return;
 
     wxString command = GetDockerExe();
-    if(command.IsEmpty())
+    if (command.IsEmpty())
         return;
 
     for (const auto& name : names) {
@@ -249,7 +253,7 @@ wxString clDockerDriver::StartProcessSync(const wxString& command, const wxStrin
 {
     wxString outputString;
     IProcess::Ptr_t proc(::CreateSyncProcess(command, flags, wd));
-    if(proc) {
+    if (proc) {
         proc->WaitForTerminate(outputString);
     }
     return outputString;
@@ -258,7 +262,7 @@ wxString clDockerDriver::StartProcessSync(const wxString& command, const wxStrin
 void clDockerDriver::ExecContainerCommand(const wxString& containerName, const wxString& containerCommand)
 {
     wxString command = GetDockerExe();
-    if(command.IsEmpty())
+    if (command.IsEmpty())
         return;
 
     command << " " << containerCommand << " " << containerName;
@@ -268,11 +272,11 @@ void clDockerDriver::ExecContainerCommand(const wxString& containerName, const w
 
 void clDockerDriver::StopContainer(const wxString& containerName)
 {
-    if(IsRunning())
+    if (IsRunning())
         return;
 
     wxString command = GetDockerExe();
-    if(command.IsEmpty())
+    if (command.IsEmpty())
         return;
 
     command << " stop " << containerName;
@@ -282,11 +286,11 @@ void clDockerDriver::StopContainer(const wxString& containerName)
 
 void clDockerDriver::StartContainer(const wxString& containerName)
 {
-    if(IsRunning())
+    if (IsRunning())
         return;
 
     wxString command = GetDockerExe();
-    if(command.IsEmpty())
+    if (command.IsEmpty())
         return;
 
     command << " restart " << containerName;
@@ -296,7 +300,7 @@ void clDockerDriver::StartContainer(const wxString& containerName)
 
 void clDockerDriver::Build(const wxFileName& filepath, const clDockerWorkspaceSettings& settings)
 {
-    if(IsRunning())
+    if (IsRunning())
         return;
     clDockerBuildableFile::Ptr_t info = settings.GetFileInfo(filepath);
     wxString command = info->GetBuildBaseCommand();
@@ -328,7 +332,7 @@ void clDockerDriver::Run(const wxFileName& filepath, const clDockerWorkspaceSett
     // get user defined options
     wxString runOptions = info->GetRunOptions();
     runOptions.Trim().Trim(false);
-    if(!runOptions.empty()) {
+    if (!runOptions.empty()) {
         args << " " << runOptions;
     }
     clDEBUG() << "Docker run:" << command << " " << args;

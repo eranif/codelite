@@ -47,7 +47,7 @@ public:
      * @return
      */
     wxString GetBuildBaseCommand() const;
-    void GetRunBaseCommand(wxString& docker, wxString &args) const;
+    void GetRunBaseCommand(wxString& docker, wxString& args) const;
 
     /**
      * @brief create new instance of clDockerBuildableFile based on the type

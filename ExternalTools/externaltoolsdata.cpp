@@ -80,7 +80,7 @@ void ExternalToolsData::DeSerialize(Archive& arch)
 
     // now loop over the toolsinfo and serialize them
     m_tools.clear();
-    for(size_t i = 0; i < count; i++) {
+    for (size_t i = 0; i < count; i++) {
         ToolInfo info;
         arch.Read(wxString::Format(wxT("Tool_%d"), (int)i), &info);
         m_tools.push_back(info);
@@ -93,7 +93,7 @@ void ExternalToolsData::Serialize(Archive& arch)
     arch.Write(wxT("toolsCount"), count);
 
     // now loop over the toolsinfo and serialize them
-    for(size_t i = 0; i < m_tools.size(); i++) {
+    for (size_t i = 0; i < m_tools.size(); i++) {
         arch.Write(wxString::Format(wxT("Tool_%d"), (int)i), &m_tools.at(i));
     }
 }

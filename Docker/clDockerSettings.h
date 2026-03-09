@@ -2,6 +2,7 @@
 #define CLDOCKERSETTINGS_H
 
 #include "cl_config.h"
+
 #include <wx/filename.h>
 
 class clDockerSettings : public clConfigItem
@@ -18,7 +19,7 @@ public:
 
     void EnableFlag(int flag, bool b)
     {
-        if(b) {
+        if (b) {
             m_flags |= flag;
         } else {
             m_flags &= ~flag;

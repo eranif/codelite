@@ -35,30 +35,29 @@
 
 #include "memcheckui.h"
 
-class MemCheckSettingsDialog: public MemCheckSettingsDialogBase
+class MemCheckSettingsDialog : public MemCheckSettingsDialogBase
 {
 
 public:
-    MemCheckSettingsDialog(wxWindow *parent,
-                           MemCheckSettings *settings);
+    MemCheckSettingsDialog(wxWindow* parent, MemCheckSettings* settings);
     virtual ~MemCheckSettingsDialog() = default;
 
 protected:
     virtual void OnFilePickerValgrindOutputFileUI(wxUpdateUIEvent& event);
-    
+
     /**
      * @brief Shows popup menu with two functions: add new supp and remove supp
      * @param event
      */
     virtual void OnSuppListRightDown(wxMouseEvent& event);
 
-    MemCheckSettings *m_settings;
+    MemCheckSettings* m_settings;
 
-    void OnAddSupp(wxCommandEvent & event);
-    void OnDelSupp(wxCommandEvent & event);
+    void OnAddSupp(wxCommandEvent& event);
+    void OnDelSupp(wxCommandEvent& event);
 
-    virtual void OnValgrindOutputFileChanged(wxFileDirPickerEvent & event);
-    virtual void ValgrindResetOptions(wxCommandEvent & event);
-    virtual void OnOK(wxCommandEvent & event);
+    virtual void OnValgrindOutputFileChanged(wxFileDirPickerEvent& event);
+    virtual void ValgrindResetOptions(wxCommandEvent& event);
+    virtual void OnOK(wxCommandEvent& event);
 };
 #endif // _MEMCHECKSETTINGSDIALOG_H

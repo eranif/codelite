@@ -13,13 +13,15 @@ void clDockerWorkspaceSettings::FromJSON(const JSONItem& json)
     m_version = json.namedObject("Version").toString();
     JSONItem files = json.namedObject("files");
     int filesCount = files.arraySize();
-    for(int i = 0; i < filesCount; ++i) {
+    for (int i = 0; i < filesCount; ++i) {
         JSONItem fileJson = files.arrayItem(i);
         clDockerBuildableFile::Ptr_t f = clDockerBuildableFile::New(
             (eDockerFileType)fileJson.namedObject("type").toInt((int)eDockerFileType::kDockerfile));
-        if(!f) { continue; }
+        if (!f) {
+            continue;
+        }
         f->FromJSON(fileJson, m_workspaceFile.GetPath());
-        m_files.insert({ f->GetPath(), f });
+        m_files.insert({f->GetPath(), f});
     }
 }
 
@@ -61,12 +63,16 @@ void clDockerWorkspaceSettings::Clear()
 
 clDockerBuildableFile::Ptr_t clDockerWorkspaceSettings::GetFileInfo(const wxFileName& file) const
 {
-    if(m_files.count(file.GetFullPath()) == 0) { return clDockerBuildableFile::Ptr_t(new clDockerBuildableFile()); }
+    if (m_files.count(file.GetFullPath()) == 0) {
+        return clDockerBuildableFile::Ptr_t(new clDockerBuildableFile());
+    }
     return m_files.find(file.GetFullPath())->second;
 }
 
 void clDockerWorkspaceSettings::SetFileInfo(const wxFileName& file, clDockerBuildableFile::Ptr_t info)
 {
-    if(m_files.count(file.GetFullPath())) { m_files.erase(file.GetFullPath()); }
-    m_files.insert({ file.GetFullPath(), info });
+    if (m_files.count(file.GetFullPath())) {
+        m_files.erase(file.GetFullPath());
+    }
+    m_files.insert({file.GetFullPath(), info});
 }

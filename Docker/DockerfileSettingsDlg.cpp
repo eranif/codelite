@@ -1,5 +1,6 @@
-#include "ColoursAndFontsManager.h"
 #include "DockerfileSettingsDlg.h"
+
+#include "ColoursAndFontsManager.h"
 #include "lexer_configuration.h"
 
 DockerfileSettingsDlg::DockerfileSettingsDlg(wxWindow* parent, clDockerBuildableFile::Ptr_t info)

@@ -33,41 +33,41 @@ void GdbMIThreadInfoParser::Parse(const wxString& info)
     wxString buffer = info;
     wxString threadsInfo;
     wxString threadBlock;
-    
-    if ( !ReadBlock(buffer, "[]", threadsInfo) )
+
+    if (!ReadBlock(buffer, "[]", threadsInfo))
         return;
-    
+
     wxString activeThreadId;
     ReadKeyValuePair(buffer, "current-thread-id=", activeThreadId);
-    
-    while ( ReadBlock(threadsInfo, "{}", threadBlock) ) {
+
+    while (ReadBlock(threadsInfo, "{}", threadBlock)) {
         GdbMIThreadInfo ti;
-        ReadKeyValuePair(threadBlock, "id=",        ti.threadId);
+        ReadKeyValuePair(threadBlock, "id=", ti.threadId);
         ReadKeyValuePair(threadBlock, "target-id=", ti.extendedName);
-        ReadKeyValuePair(threadBlock, "func=",      ti.function);
-        ReadKeyValuePair(threadBlock, "file=",      ti.file);
-        ReadKeyValuePair(threadBlock, "line=",      ti.line);
+        ReadKeyValuePair(threadBlock, "func=", ti.function);
+        ReadKeyValuePair(threadBlock, "file=", ti.file);
+        ReadKeyValuePair(threadBlock, "line=", ti.line);
         ti.active = activeThreadId == ti.threadId ? "Yes" : "No";
-        m_threads.push_back( ti );
+        m_threads.push_back(ti);
     }
 }
 
 bool GdbMIThreadInfoParser::ReadBlock(wxString& input, const wxString& pair, wxString& block)
 {
-    wxChar openChar  = pair.GetChar(0);
+    wxChar openChar = pair.GetChar(0);
     wxChar closeChar = pair.GetChar(1);
     block.clear();
     int depth = 0;
-    
+
     const int StateSearchStart = 0;
-    const int StateCollecting  = 1;
-    
+    const int StateCollecting = 1;
+
     int curstate = StateSearchStart;
-    for(size_t i=0; i<input.length(); ++i) {
+    for (size_t i = 0; i < input.length(); ++i) {
         wxChar ch = input.GetChar(i);
-        switch ( curstate ) {
+        switch (curstate) {
         case StateSearchStart:
-            if ( ch == openChar ) {
+            if (ch == openChar) {
                 depth++;
                 curstate = StateCollecting;
             }
@@ -75,18 +75,18 @@ bool GdbMIThreadInfoParser::ReadBlock(wxString& input, const wxString& pair, wxS
         case StateCollecting:
             // Incase the open/close are the same, always
             // test for closeure before an open
-            if ( ch == closeChar ) {
+            if (ch == closeChar) {
                 depth--;
-                if ( depth == 0 ) {
+                if (depth == 0) {
                     // remove the content up to the current position
                     // from input and return the collected block
                     input = input.Mid(i);
                     return true;
                 }
-            } else if ( ch == openChar ) {
+            } else if (ch == openChar) {
                 depth++;
             }
-            
+
             block << ch;
             break;
         }
@@ -97,9 +97,9 @@ bool GdbMIThreadInfoParser::ReadBlock(wxString& input, const wxString& pair, wxS
 bool GdbMIThreadInfoParser::ReadKeyValuePair(const wxString& input, const wxString& key, wxString& value)
 {
     int where = input.Find(key);
-    if ( where == wxNOT_FOUND )
+    if (where == wxNOT_FOUND)
         return false;
-    
+
     wxString sub = input.Mid(where);
     return ReadBlock(sub, "\"\"", value);
 }

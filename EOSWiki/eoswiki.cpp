@@ -16,10 +16,7 @@
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new EOSWiki(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new EOSWiki(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -63,13 +60,16 @@ void EOSWiki::OnNewProject(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     // Check if we have the toolchain installed
-    if(EOSProjectWizard::GetToolchainPath().IsEmpty()) {
-        ::wxMessageBox(_("Could not find EOS CDT installation. Please install it and try again"), "CodeLite",
+    if (EOSProjectWizard::GetToolchainPath().IsEmpty()) {
+        ::wxMessageBox(_("Could not find EOS CDT installation. Please install it and try again"),
+                       "CodeLite",
                        wxICON_WARNING | wxOK | wxOK_DEFAULT);
         return;
     }
     EOSProjectWizard dlg(EventNotifier::Get()->TopFrame());
-    if(dlg.ShowModal() == wxID_OK) { CreateProject(dlg.GetData()); }
+    if (dlg.ShowModal() == wxID_OK) {
+        CreateProject(dlg.GetData());
+    }
 }
 
 enum eAction { kLoadWorkspace, kReloadWorkspace };
@@ -79,11 +79,12 @@ void EOSWiki::CreateProject(const EOSProjectData& data)
     eAction action = kReloadWorkspace;
 
     // Make sure no project with this name already exists
-    if(clCxxWorkspaceST::Get()->IsOpen()) {
+    if (clCxxWorkspaceST::Get()->IsOpen()) {
         ProjectPtr proj = clCxxWorkspaceST::Get()->GetProject(data.GetName());
-        if(proj) {
+        if (proj) {
             ::wxMessageBox(wxString() << _("A project with the same name: '") << data.GetName() << "'\nalready exists",
-                           "CodeLite", wxICON_ERROR | wxOK | wxOK_DEFAULT);
+                           "CodeLite",
+                           wxICON_ERROR | wxOK | wxOK_DEFAULT);
             return;
         }
     }
@@ -93,10 +94,11 @@ void EOSWiki::CreateProject(const EOSProjectData& data)
 
     // If no workspace is opened, create and open it
     wxString errMsg;
-    if(!clCxxWorkspaceST::Get()->IsOpen()) {
+    if (!clCxxWorkspaceST::Get()->IsOpen()) {
         // Create a workspace first
-        if(!clCxxWorkspaceST::Get()->CreateWorkspace(data.GetName(), data.GetPath(), errMsg)) {
-            ::wxMessageBox(wxString() << _("Failed to create workspace:\n") << errMsg, "CodeLite",
+        if (!clCxxWorkspaceST::Get()->CreateWorkspace(data.GetName(), data.GetPath(), errMsg)) {
+            ::wxMessageBox(wxString() << _("Failed to create workspace:\n") << errMsg,
+                           "CodeLite",
                            wxICON_ERROR | wxOK | wxOK_DEFAULT);
             return;
         }
@@ -104,10 +106,10 @@ void EOSWiki::CreateProject(const EOSProjectData& data)
     }
 
     // Create new project
-    if(!clCxxWorkspaceST::Get()->CreateProject(data.GetName(), data.GetPath(), PROJECT_TYPE_EXECUTABLE, "", true,
-                                               errMsg)) {
-        ::wxMessageBox(wxString() << _("Failed to create project:\n") << errMsg, "CodeLite",
-                       wxICON_ERROR | wxOK | wxOK_DEFAULT);
+    if (!clCxxWorkspaceST::Get()->CreateProject(
+            data.GetName(), data.GetPath(), PROJECT_TYPE_EXECUTABLE, "", true, errMsg)) {
+        ::wxMessageBox(
+            wxString() << _("Failed to create project:\n") << errMsg, "CodeLite", wxICON_ERROR | wxOK | wxOK_DEFAULT);
         return;
     }
 
@@ -123,7 +125,7 @@ void EOSWiki::CreateProject(const EOSProjectData& data)
 
     ProjectSettingsCookie cookie;
     BuildConfigPtr bldConf = settings->GetFirstBuildConfiguration(cookie);
-    while(bldConf) {
+    while (bldConf) {
         bldConf->SetBuildSystem("CMake");
         bldConf->SetCompilerType("eosio");
 
@@ -137,7 +139,7 @@ void EOSWiki::CreateProject(const EOSProjectData& data)
     }
     proj->SetSettings(settings);
 
-    if(action == kLoadWorkspace) {
+    if (action == kLoadWorkspace) {
         wxCommandEvent loadEvent(wxEVT_MENU, XRCID("switch_to_workspace"));
         loadEvent.SetEventObject(EventNotifier::Get()->TopFrame());
         loadEvent.SetString(clCxxWorkspaceST::Get()->GetWorkspaceFileName().GetFullPath());
@@ -154,12 +156,12 @@ void EOSWiki::CreateSampleFile(ProjectPtr proj, const EOSProjectData& d)
 {
     // Load the main file sample file
     wxString fileContent = ReadResource("SmartContractSample.txt");
-    ReplacePlaceHolders(fileContent, { { "%CLASS_NAME%", d.GetName() } });
+    ReplacePlaceHolders(fileContent, {{"%CLASS_NAME%", d.GetName()}});
 
     wxFileName sourceFile(d.GetPath(), d.GetName());
     sourceFile.SetExt("cpp");
     sourceFile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-    if(FileUtils::WriteFileContent(sourceFile, fileContent)) {
+    if (FileUtils::WriteFileContent(sourceFile, fileContent)) {
         proj->AddFile(sourceFile.GetFullPath(), "src");
     } else {
         clWARNING() << "Failed to write file content:" << sourceFile;
@@ -170,7 +172,7 @@ void EOSWiki::CreateSampleFile(ProjectPtr proj, const EOSProjectData& d)
 void EOSWiki::ExtractResources()
 {
     wxFileName fnZip(clStandardPaths::Get().GetDataDir(), "eoswiki.zip");
-    if(!fnZip.FileExists()) {
+    if (!fnZip.FileExists()) {
         clWARNING() << "EOS Wiki resource file can't be found:" << fnZip;
         return;
     }
@@ -180,7 +182,9 @@ void EOSWiki::ExtractResources()
     tmpFolder.AppendDir("eoswiki");
 
     // Clear any previous instalation
-    if(tmpFolder.DirExists()) { tmpFolder.Rmdir(wxPATH_RMDIR_RECURSIVE); }
+    if (tmpFolder.DirExists()) {
+        tmpFolder.Rmdir(wxPATH_RMDIR_RECURSIVE);
+    }
 
     // Create the tmp folder
     tmpFolder.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
@@ -194,11 +198,15 @@ wxString EOSWiki::ReadResource(const wxString& filename) const
     wxFileName resourceFile(clStandardPaths::Get().GetTempDir(), "");
     resourceFile.AppendDir("eoswiki");
     resourceFile.SetFullName(filename);
-    if(!resourceFile.FileExists()) { return ""; }
+    if (!resourceFile.FileExists()) {
+        return "";
+    }
 
     // Load the file
     wxString content;
-    if(!FileUtils::ReadFileContent(resourceFile, content)) { return ""; }
+    if (!FileUtils::ReadFileContent(resourceFile, content)) {
+        return "";
+    }
     return content;
 }
 
@@ -218,12 +226,12 @@ void EOSWiki::CreateCMakeListsFile(ProjectPtr proj, const EOSProjectData& d)
     cmakeModulePath.AppendDir("cmake");
     cmakeModulePath.AppendDir("eosio.cdt");
 
-    ReplacePlaceHolders(fileContent,
-                        { { "%CMAKE_MODULE_PATH%", cmakeModulePath.GetPath() }, { "%CONTRACT_NAME%", d.GetName() } });
+    ReplacePlaceHolders(
+        fileContent, {{"%CMAKE_MODULE_PATH%", cmakeModulePath.GetPath()}, {"%CONTRACT_NAME%", d.GetName()}});
 
     wxFileName cmakeListTxt(d.GetPath(), "CMakeLists.txt");
     cmakeListTxt.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-    if(FileUtils::WriteFileContent(cmakeListTxt, fileContent)) {
+    if (FileUtils::WriteFileContent(cmakeListTxt, fileContent)) {
         proj->CreateVirtualDir("resources");
         proj->AddFile(cmakeListTxt.GetFullPath(), "resources");
     } else {

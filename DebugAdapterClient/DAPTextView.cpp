@@ -2,12 +2,12 @@
 
 #include "ColoursAndFontsManager.h"
 #include "bookmark_manager.h"
+#include "clAuiBook.hpp"
+#include "clGenericNotebook.hpp"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
-#include "clAuiBook.hpp"
-#include "clGenericNotebook.hpp"
 
 namespace
 {
@@ -30,9 +30,9 @@ DAPTextView::DAPTextView(wxWindow* parent)
 
     // define the debugger marker
     auto options = EditorConfigST::Get()->GetOptions();
-    if(options->HasOption(OptionsConfig::Opt_Mark_Debugger_Line)) {
-        m_stcTextView->MarkerDefine(smt_indicator, wxSTC_MARK_BACKGROUND, wxNullColour,
-                                    options->GetDebuggerMarkerLine());
+    if (options->HasOption(OptionsConfig::Opt_Mark_Debugger_Line)) {
+        m_stcTextView->MarkerDefine(
+            smt_indicator, wxSTC_MARK_BACKGROUND, wxNullColour, options->GetDebuggerMarkerLine());
         m_stcTextView->MarkerSetAlpha(smt_indicator, 50);
 
     } else {
@@ -71,11 +71,11 @@ void DAPTextView::OnColourChanged(clCommandEvent& event)
 void DAPTextView::ApplyTheme()
 {
     wxString file_name = "file.text";
-    if(!m_current_source.path.empty()) {
+    if (!m_current_source.path.empty()) {
         file_name = wxFileName(m_current_source.path).GetFullName();
-    } else if(!m_mimeType.empty()) {
+    } else if (!m_mimeType.empty()) {
         // try the mime type
-        if(m_mimeType == "text/x-lldb.disassembly") {
+        if (m_mimeType == "text/x-lldb.disassembly") {
             file_name = "file.asm"; // assembly
         }
     }
@@ -103,7 +103,9 @@ void DAPTextView::Clear()
     m_filepath.clear();
 }
 
-void DAPTextView::SetText(const dap::Source& source, const wxString& text, const wxString& path,
+void DAPTextView::SetText(const dap::Source& source,
+                          const wxString& text,
+                          const wxString& path,
                           const wxString& mimeType)
 {
     m_stcTextView->SetEditable(true);
@@ -121,7 +123,7 @@ void DAPTextView::SetFilePath(const wxString& filepath)
     m_filepath = filepath;
     auto book = clGetManager()->GetMainNotebook();
     int where = book->FindPage(this);
-    if(where == wxNOT_FOUND) {
+    if (where == wxNOT_FOUND) {
         return;
     }
     book->SetPageText(where, "[dap]: " + m_filepath);
@@ -139,9 +141,9 @@ void DAPTextView::OnMarginClick(wxStyledTextEvent& event)
 {
     int nLine = m_stcTextView->LineFromPosition(event.GetPosition());
 
-    switch(event.GetMargin()) {
+    switch (event.GetMargin()) {
     case SYMBOLS_MARGIN_ID:
-        if(HasBreakpointMarker(nLine)) {
+        if (HasBreakpointMarker(nLine)) {
             DeleteBreakpointMarkers(nLine);
         } else {
             SetBreakpointMarker(nLine, wxEmptyString);
@@ -165,7 +167,7 @@ size_t DAPTextView::GetBreakpointMarkers(std::vector<int>* lines)
 {
     int mask = (1 << smt_breakpoint);
     int line = m_stcTextView->MarkerNext(0, mask);
-    while(line != wxNOT_FOUND) {
+    while (line != wxNOT_FOUND) {
         lines->push_back(line);
         line = m_stcTextView->MarkerNext(line + 1, mask);
     }
@@ -176,20 +178,20 @@ void DAPTextView::DeleteBreakpointMarkers(int line_number)
 {
     // get a list of lines to work on
     std::vector<int> lines;
-    if(line_number == wxNOT_FOUND) {
+    if (line_number == wxNOT_FOUND) {
         GetBreakpointMarkers(&lines);
     } else {
         lines.push_back(line_number);
     }
 
-    for(int line : lines) {
+    for (int line : lines) {
         m_stcTextView->MarkerDelete(line, smt_breakpoint);
     }
 }
 
 void DAPTextView::SetBreakpointMarker(int line_number, const wxString& tooltip)
 {
-    if(HasBreakpointMarker(line_number)) {
+    if (HasBreakpointMarker(line_number)) {
         return;
     }
     m_stcTextView->MarkerAdd(line_number, smt_breakpoint);

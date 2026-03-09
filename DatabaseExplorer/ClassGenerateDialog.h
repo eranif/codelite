@@ -70,9 +70,14 @@ public:
     bool GenerateClass(Table* pTab, const wxString& path);
 
     /*! \brief Function for generating file for selected table.  */
-    bool GenerateFile(Table* pTab, wxTextFile& htmpFile, wxString& hFile, const wxString& classItemName,
-        const wxString& classItemDef, const wxString& classColName, const wxString& classTableName,
-        const wxString& classUtilName);
+    bool GenerateFile(Table* pTab,
+                      wxTextFile& htmpFile,
+                      wxString& hFile,
+                      const wxString& classItemName,
+                      const wxString& classItemDef,
+                      const wxString& classColName,
+                      const wxString& classTableName,
+                      const wxString& classUtilName);
     /*! \brief Format text file */
     void FormatFile(wxString& content, const wxFileName& filename);
 

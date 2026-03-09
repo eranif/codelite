@@ -23,23 +23,24 @@ ValgrindMemcheckProcessor::ValgrindMemcheckProcessor(MemCheckSettings* const set
 wxArrayString ValgrindMemcheckProcessor::GetSuppressionFiles()
 {
     wxArrayString suppFiles = m_settings->GetValgrindSettings().GetSuppFiles();
-    if(clCxxWorkspaceST::Get()->IsOpen() && m_settings->GetValgrindSettings().GetSuppFileInPrivateFolder()) {
+    if (clCxxWorkspaceST::Get()->IsOpen() && m_settings->GetValgrindSettings().GetSuppFileInPrivateFolder()) {
         wxTextFile defaultSupp(
             wxFileName(clCxxWorkspaceST::Get()->GetPrivateFolder(), "valgrind.memcheck.supp").GetFullPath());
-        if(!defaultSupp.Exists())
+        if (!defaultSupp.Exists())
             defaultSupp.Create();
         suppFiles.Insert(defaultSupp.GetName(), 0);
     }
     return suppFiles;
 }
 
-void ValgrindMemcheckProcessor::GetExecutionCommand(const wxString& originalCommand, wxString& command,
+void ValgrindMemcheckProcessor::GetExecutionCommand(const wxString& originalCommand,
+                                                    wxString& command,
                                                     wxString& command_args)
 {
     m_outputLogFileName = m_settings->GetValgrindSettings().GetOutputFile();
-    if(m_settings->GetValgrindSettings().GetOutputInPrivateFolder() && m_outputLogFileName.IsEmpty())
-        if(m_settings->GetValgrindSettings().GetOutputInPrivateFolder() || m_outputLogFileName.IsEmpty()) {
-            if(clCxxWorkspaceST::Get()->IsOpen())
+    if (m_settings->GetValgrindSettings().GetOutputInPrivateFolder() && m_outputLogFileName.IsEmpty())
+        if (m_settings->GetValgrindSettings().GetOutputInPrivateFolder() || m_outputLogFileName.IsEmpty()) {
+            if (clCxxWorkspaceST::Get()->IsOpen())
                 m_outputLogFileName =
                     wxFileName(clCxxWorkspaceST::Get()->GetPrivateFolder(), "valgrind.memcheck.log.xml").GetFullPath();
             else
@@ -54,33 +55,36 @@ void ValgrindMemcheckProcessor::GetExecutionCommand(const wxString& originalComm
 
     command = m_settings->GetValgrindSettings().GetBinary();
     command_args = wxString::Format(
-        "%s %s %s %s %s", m_settings->GetValgrindSettings().GetMandatoryOptions(),
+        "%s %s %s %s %s",
+        m_settings->GetValgrindSettings().GetMandatoryOptions(),
         wxString::Format("%s=%s", m_settings->GetValgrindSettings().GetOutputFileOption(), m_outputLogFileName),
-        suppressions, m_settings->GetValgrindSettings().GetOptions(), originalCommand);
+        suppressions,
+        m_settings->GetValgrindSettings().GetOptions(),
+        originalCommand);
 }
 
 bool ValgrindMemcheckProcessor::Process(const wxString& outputLogFileName)
 {
     // CL_DEBUG1(PLUGIN_PREFIX("ValgrindMemcheckProcessor::Process()"));
 
-    if(!outputLogFileName.IsEmpty())
+    if (!outputLogFileName.IsEmpty())
         m_outputLogFileName = outputLogFileName;
 
     wxXmlDocument doc;
-    if(!doc.Load(m_outputLogFileName) || doc.GetRoot()->GetName() != wxT("valgrindoutput")) {
+    if (!doc.Load(m_outputLogFileName) || doc.GetRoot()->GetName() != wxT("valgrindoutput")) {
         return false;
     }
     m_errorList.clear();
 
     int i = 0;
     wxXmlNode* errorNode = doc.GetRoot()->GetChildren();
-    while(errorNode) {
-        if(errorNode->GetName() == wxT("error")) {
+    while (errorNode) {
+        if (errorNode->GetName() == wxT("error")) {
             m_errorList.push_back(ProcessError(doc, errorNode));
         }
         errorNode = errorNode->GetNext();
 
-        if(i < 1000)
+        if (i < 1000)
             i++;
         else {
             i = 0;
@@ -101,29 +105,29 @@ MemCheckError ValgrindMemcheckProcessor::ProcessError(wxXmlDocument& doc, wxXmlN
     MemCheckError auxiliaryResult;
 
     wxXmlNode* suberrorNode = errorNode->GetChildren();
-    while(suberrorNode) {
+    while (suberrorNode) {
 
         // retrieving error label
-        if(suberrorNode->GetName() == wxT("what")) {
+        if (suberrorNode->GetName() == wxT("what")) {
             result.label = suberrorNode->GetNodeContent();
-        } else if(suberrorNode->GetName() == wxT("xwhat")) {
+        } else if (suberrorNode->GetName() == wxT("xwhat")) {
             wxXmlNode* child = suberrorNode->GetChildren();
-            while(child) {
-                if(child->GetName() == wxT("text")) {
+            while (child) {
+                if (child->GetName() == wxT("text")) {
                     result.label = child->GetNodeContent();
                     break;
                 }
                 child = child->GetNext();
             }
-        } else if(suberrorNode->GetName() == wxT("auxwhat")) {
+        } else if (suberrorNode->GetName() == wxT("auxwhat")) {
             auxiliaryResult.label = suberrorNode->GetNodeContent();
             auxiliaryResult.type = MemCheckError::TYPE_AUXILIARY;
             auxiliary = true;
-        } else if(suberrorNode->GetName() == wxT("stack")) {
+        } else if (suberrorNode->GetName() == wxT("stack")) {
             wxXmlNode* locationNode = suberrorNode->GetChildren();
-            while(locationNode) {
-                if(locationNode->GetName() == wxT("frame")) {
-                    if(auxiliary) {
+            while (locationNode) {
+                if (locationNode->GetName() == wxT("frame")) {
+                    if (auxiliary) {
                         auxiliaryResult.locations.push_back(ProcessLocation(doc, locationNode));
                     } else {
                         result.locations.push_back(ProcessLocation(doc, locationNode));
@@ -131,10 +135,10 @@ MemCheckError ValgrindMemcheckProcessor::ProcessError(wxXmlDocument& doc, wxXmlN
                 }
                 locationNode = locationNode->GetNext();
             }
-        } else if(suberrorNode->GetName() == wxT("suppression")) {
+        } else if (suberrorNode->GetName() == wxT("suppression")) {
             wxXmlNode* child = suberrorNode->GetChildren();
-            while(child) {
-                if(child->GetName() == wxT("rawtext")) {
+            while (child) {
+                if (child->GetName() == wxT("rawtext")) {
                     result.suppression = child->GetNodeContent();
                     break;
                 }
@@ -144,11 +148,12 @@ MemCheckError ValgrindMemcheckProcessor::ProcessError(wxXmlDocument& doc, wxXmlN
         suberrorNode = suberrorNode->GetNext();
     }
 
-    if(!result.suppression)
-        result.suppression = wxT("#Suppression pattern not present in output log.\n#This plugin requires Valgrind to be "
-                                 "run with '--gen-suppressions=all' option");
+    if (!result.suppression)
+        result.suppression =
+            wxT("#Suppression pattern not present in output log.\n#This plugin requires Valgrind to be "
+                "run with '--gen-suppressions=all' option");
 
-    if(auxiliary)
+    if (auxiliary)
         result.nestedErrors.push_back(auxiliaryResult);
 
     // TODO ? add checkout ?
@@ -174,25 +179,25 @@ MemCheckErrorLocation ValgrindMemcheckProcessor::ProcessLocation(wxXmlDocument& 
     wxString dir;
 
     wxXmlNode* subframeNode = locationNode->GetChildren();
-    while(subframeNode) {
+    while (subframeNode) {
 
-        if(subframeNode->GetName() == wxT("ip")) {
+        if (subframeNode->GetName() == wxT("ip")) {
             // ignoring
-        } else if(subframeNode->GetName() == wxT("obj")) {
+        } else if (subframeNode->GetName() == wxT("obj")) {
             result.obj = subframeNode->GetNodeContent();
-        } else if(subframeNode->GetName() == wxT("fn")) {
+        } else if (subframeNode->GetName() == wxT("fn")) {
             result.func = subframeNode->GetNodeContent();
-        } else if(subframeNode->GetName() == wxT("dir")) {
+        } else if (subframeNode->GetName() == wxT("dir")) {
             dir = subframeNode->GetNodeContent();
-        } else if(subframeNode->GetName() == wxT("file")) {
+        } else if (subframeNode->GetName() == wxT("file")) {
             file = subframeNode->GetNodeContent();
-        } else if(subframeNode->GetName() == wxT("line")) {
+        } else if (subframeNode->GetName() == wxT("line")) {
             result.line = wxAtoi(subframeNode->GetNodeContent());
         }
         subframeNode = subframeNode->GetNext();
     }
 
-    if(!dir.IsEmpty() && !dir.EndsWith(wxT("/")))
+    if (!dir.IsEmpty() && !dir.EndsWith(wxT("/")))
         dir.Append(wxT("/"));
     result.file = dir + file;
 

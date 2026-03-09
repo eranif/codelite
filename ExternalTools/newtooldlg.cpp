@@ -23,12 +23,14 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "newtooldlg.h"
+
 #include "externaltooldlg.h"
 #include "externaltoolsdata.h"
 #include "macrosdlg.h"
-#include "newtooldlg.h"
 #include "windowattrmanager.h"
 #include "workspace.h"
+
 #include <wx/dirdlg.h>
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>
@@ -38,7 +40,7 @@ NewToolDlg::NewToolDlg(wxWindow* parent, IManager* mgr, ExternalToolData* data)
     , m_mgr(mgr)
 {
     wxArrayString choices;
-    for(size_t i = 0; i < MAX_TOOLS; ++i) {
+    for (size_t i = 0; i < MAX_TOOLS; ++i) {
         wxString toolId;
         toolId << "external_tool_" << i;
         choices.Add(toolId);
@@ -46,7 +48,7 @@ NewToolDlg::NewToolDlg(wxWindow* parent, IManager* mgr, ExternalToolData* data)
     m_choiceId->Clear();
     m_choiceId->Append(choices);
     m_choiceId->SetFocus();
-    if(data) {
+    if (data) {
         m_choiceId->SetStringSelection(data->m_id);
         m_textCtrlPath->ChangeValue(data->m_path);
         m_textCtrlWd->ChangeValue(data->m_workingDirectory);
@@ -66,9 +68,11 @@ void NewToolDlg::OnButtonBrowsePath(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString path = m_textCtrlPath->GetValue();
-    wxString new_path = wxFileSelector(_("Select a program:"), path.c_str(), wxT(""), wxT(""),
-                                       wxFileSelectorDefaultWildcardStr, 0, this);
-    if(new_path.IsEmpty() == false) { m_textCtrlPath->SetValue(new_path); }
+    wxString new_path = wxFileSelector(
+        _("Select a program:"), path.c_str(), wxT(""), wxT(""), wxFileSelectorDefaultWildcardStr, 0, this);
+    if (new_path.IsEmpty() == false) {
+        m_textCtrlPath->SetValue(new_path);
+    }
 }
 
 void NewToolDlg::OnButtonBrowseWD(wxCommandEvent& event)
@@ -77,7 +81,9 @@ void NewToolDlg::OnButtonBrowseWD(wxCommandEvent& event)
     wxString path(m_textCtrlWd->GetValue());
     wxString new_path =
         wxDirSelector(_("Select a working directory:"), path, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-    if(new_path.IsEmpty() == false) { m_textCtrlWd->SetValue(new_path); }
+    if (new_path.IsEmpty() == false) {
+        m_textCtrlWd->SetValue(new_path);
+    }
 }
 
 void NewToolDlg::OnButtonHelp(wxCommandEvent& event)
@@ -111,7 +117,9 @@ void NewToolDlg::OnButtonBrowseIcon16(wxCommandEvent& event)
     wxString path = m_textCtrlIcon16->GetValue();
     wxString new_path =
         wxFileSelector(_("Select an icon:"), path.c_str(), wxT(""), wxT(""), wxFileSelectorDefaultWildcardStr, 0, this);
-    if(new_path.IsEmpty() == false) { m_textCtrlIcon16->SetValue(new_path); }
+    if (new_path.IsEmpty() == false) {
+        m_textCtrlIcon16->SetValue(new_path);
+    }
 }
 
 void NewToolDlg::OnButtonBrowseIcon24(wxCommandEvent& event)
@@ -120,7 +128,9 @@ void NewToolDlg::OnButtonBrowseIcon24(wxCommandEvent& event)
     wxString path = m_textCtrlIcon24->GetValue();
     wxString new_path =
         wxFileSelector(_("Select an icon:"), path.c_str(), wxT(""), wxT(""), wxFileSelectorDefaultWildcardStr, 0, this);
-    if(new_path.IsEmpty() == false) { m_textCtrlIcon24->SetValue(new_path); }
+    if (new_path.IsEmpty() == false) {
+        m_textCtrlIcon24->SetValue(new_path);
+    }
 }
 
 void NewToolDlg::OnIdSelected(wxCommandEvent& event) {}

@@ -719,8 +719,8 @@ bool DbgGdb::QueryFileLine()
 
 bool DbgGdb::QueryLocals()
 {
-    return WriteCommand("-stack-list-variables --skip-unavailable --simple-values",
-                        new DbgCmdHandlerLocals(m_observer));
+    return WriteCommand(
+        "-stack-list-variables --skip-unavailable --simple-values", new DbgCmdHandlerLocals(m_observer));
 }
 
 bool DbgGdb::ExecuteCmd(const wxString& cmd)
@@ -1559,8 +1559,8 @@ bool DbgGdb::Disassemble(const wxString& filename, int lineNumber)
     }
 
     // get the current instruction
-    if (!WriteCommand("-data-disassemble -s \"$pc\" -e \"$pc + 1\" -- 0",
-                      new DbgCmdHandlerDisassembleCurLine(m_observer, this)))
+    if (!WriteCommand(
+            "-data-disassemble -s \"$pc\" -e \"$pc + 1\" -- 0", new DbgCmdHandlerDisassembleCurLine(m_observer, this)))
         return false;
 
     return true;

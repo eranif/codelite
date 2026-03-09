@@ -79,7 +79,7 @@ DapEntry create_entry_stdio(const wxString& name, const std::vector<wxString>& c
 void DapLocator::find_lldb_dap(std::vector<DapEntry>* entries)
 {
     // Since LLVM-18, lldb-vscode was renamed to lldb-dap, try to find it as well
-    const wxArrayString names = StdToWX::ToArrayString({ "lldb-dap", "lldb-vscode" });
+    const wxArrayString names = StdToWX::ToArrayString({"lldb-dap", "lldb-vscode"});
 
     const auto lldb_debugger = ThePlatform->AnyWhich(names);
     if (!lldb_debugger) {
@@ -88,11 +88,11 @@ void DapLocator::find_lldb_dap(std::vector<DapEntry>* entries)
 
     const wxString entry_name = wxFileName(*lldb_debugger).GetName();
 #ifdef __WXMAC__
-    auto entry = create_entry(entry_name, 12345, { *lldb_debugger, "--port", "12345" }, DapLaunchType::LAUNCH);
+    auto entry = create_entry(entry_name, 12345, {*lldb_debugger, "--port", "12345"}, DapLaunchType::LAUNCH);
     entry.SetEnvFormat(dap::EnvFormat::LIST);
     entries->push_back(entry);
 #else
-    auto entry = create_entry_stdio(entry_name, { *lldb_debugger }, DapLaunchType::LAUNCH);
+    auto entry = create_entry_stdio(entry_name, {*lldb_debugger}, DapLaunchType::LAUNCH);
     entry.SetEnvFormat(dap::EnvFormat::LIST);
     entries->push_back(entry);
 #endif
@@ -107,14 +107,15 @@ void DapLocator::find_debugpy(std::vector<DapEntry>* entries)
     }
 
     // we got pip
-    wxString line = ProcUtils::GrepCommandOutput({ *python, "-m", "pip", "list" }, "debugpy");
+    wxString line = ProcUtils::GrepCommandOutput({*python, "-m", "pip", "list"}, "debugpy");
     if (line.empty())
         return;
 
     // we have a match
     auto entry =
-        create_entry("debugpy", 12345,
-                     { *python, "-m", "debugpy", "--listen", "12345", "--wait-for-client", "$(CurrentFileFullPath)" },
+        create_entry("debugpy",
+                     12345,
+                     {*python, "-m", "debugpy", "--listen", "12345", "--wait-for-client", "$(CurrentFileFullPath)"},
                      DapLaunchType::ATTACH);
     entry.SetUseNativePath();
     entries->push_back(entry);
@@ -138,7 +139,7 @@ void DapLocator::find_gdb(std::vector<DapEntry>* entries)
     // GNU gdb (GDB) 15.2
     static wxRegEx re_version(R"(GNU gdb \(.*?\) ([0-9\.]+))");
     unsigned long major_version = 0;
-    ProcUtils::GrepCommandOutputWithCallback({ *gdb, "-v" }, [&](const wxString& line) {
+    ProcUtils::GrepCommandOutputWithCallback({*gdb, "-v"}, [&](const wxString& line) {
         clDEBUG() << "Checking line..." << line << endl;
         if (re_version.IsValid() && re_version.Matches(line)) {
             // Got the version line, extract its major version
@@ -154,7 +155,7 @@ void DapLocator::find_gdb(std::vector<DapEntry>* entries)
 
     if (major_version >= 14) {
         // we have a match
-        auto entry = create_entry_stdio("gdb-dap", { *gdb, "-i=dap" }, DapLaunchType::LAUNCH);
+        auto entry = create_entry_stdio("gdb-dap", {*gdb, "-i=dap"}, DapLaunchType::LAUNCH);
         entry.SetUseForwardSlash(true);
         entry.SetUseVolume(true);
         entries->push_back(entry);

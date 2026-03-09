@@ -42,7 +42,7 @@ public:
 
     void SetState(int state) { this->m_state = state; }
     int GetState() const { return m_state; }
-    
+
     bool Parse(const wxString& line);
     using Vect_t = std::vector<clDockerContainer>;
     using Map_t = std::unordered_map<wxString, clDockerContainer>;

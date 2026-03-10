@@ -588,12 +588,10 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
     ASSIGN_FUNC_ARG_OR_RETURN(
         std::string patch_content, ::assistant::GetFunctionArg<std::string>(args, "patch_content"));
     ASSIGN_FUNC_ARG_OR_RETURN(std::string file_path, ::assistant::GetFunctionArg<std::string>(args, "file_path"));
-
     wxString patch = wxString::FromUTF8(patch_content);
-    clDEBUG() << "Applying the patch:\n" << patch << endl;
 
     clStatusOr<llm::UserAnswer> response;
-    if (apply_patch_trust_paths.contains(file_path)) {
+    if (!apply_patch_trust_paths.contains(file_path)) {
         response = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(
             _("The model wants to apply the following patch, allow it?"), patch, "patch");
 

@@ -484,6 +484,49 @@ void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxStri
     // Normalize language for consistency
     wxString normalizedLang = NormalizeLanguage(language);
 
+    // Handle comments for diff/patch files - support all common comment styles
+    if (normalizedLang == "diff" || normalizedLang == "patch") {
+        wxChar ch = accessor.GetCurrentChar();
+
+        // Check for various comment styles
+        bool isComment = false;
+
+        // Single-line comment styles
+        if (ch == '#') {
+            // Hash comments: shell, python, ruby, perl, etc.
+            isComment = true;
+        } else if (ch == '/' && accessor.GetCharAt(1) == '/') {
+            // C++ style comments: //, used in C, C++, Java, JavaScript, Rust, Go, etc.
+            isComment = true;
+        } else if (ch == '-' && accessor.GetCharAt(1) == '-') {
+            // SQL, Lua, Haskell style comments: --
+            isComment = true;
+        } else if (ch == ';') {
+            // Semicolon comments: Lisp, Assembly, INI files
+            isComment = true;
+        } else if (ch == '%') {
+            // Percent comments: LaTeX, MATLAB, Erlang
+            isComment = true;
+        } else if (ch == '/' && accessor.GetCharAt(1) == '*') {
+            // C-style block comments: /* ... */
+            isComment = true;
+        } else if (ch == '<' && accessor.GetCharAt(1) == '!' && accessor.GetCharAt(2) == '-' &&
+                   accessor.GetCharAt(3) == '-') {
+            // HTML/XML comments: <!-- ... -->
+            isComment = true;
+        }
+
+        // If it's a comment, style the entire line
+        if (isComment) {
+            while (accessor.CanNext() && accessor.GetCurrentChar() != '\n') {
+                accessor.SetStyle(MarkdownStyles::kCodeBlockComment, 1);
+            }
+            return;
+        }
+
+        // Continue with regular diff processing if not a comment
+    }
+
     // Handle diff syntax specially
     if (normalizedLang == "diff" || normalizedLang == "patch") {
         wxChar ch = accessor.GetCurrentChar();

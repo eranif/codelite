@@ -27,6 +27,7 @@
 
 #include "ColoursAndFontsManager.h"
 #include "GitDiffOutputParser.h"
+#include "ai/EndpointModelSelector.hpp"
 #include "ai/LLMManager.hpp"
 #include "clSingleChoiceDialog.h"
 #include "fileutils.h"
@@ -70,10 +71,12 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
         markdown_lexer->Apply(m_stcCommitMessage);
     }
 
-    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
-    m_toolbar->AddTool(XRCID("ID_CHECKALL"), _("Toggle files"), images->Add("check-all"));
-    m_toolbar->AddTool(XRCID("ID_HISTORY"), _("Show commit history"), images->Add("history"));
-    m_toolbar->AddTool(XRCID("ID_GENERATE"), _("Generate commit message"), images->Add("wand"));
+    auto images = clGetManager()->GetStdIcons();
+    m_toolbar->AddTool(XRCID("ID_CHECKALL"), _("Toggle files"), images->LoadBitmap("check-all"));
+    m_toolbar->AddTool(XRCID("ID_HISTORY"), _("Show commit history"), images->LoadBitmap("history"));
+    m_toolbar->AddSeparator();
+    m_toolbar->AddTool(XRCID("ID_GENERATE"), _("Generate commit message"), images->LoadBitmap("wand"));
+    m_toolbar->AddControl(new EndpointModelSelector(m_toolbar));
 
     m_toolbar->Realize();
     m_toolbar->Bind(wxEVT_TOOL, &GitCommitDlg::OnToggleCheckAll, this, XRCID("ID_CHECKALL"));

@@ -1,7 +1,7 @@
 {
 	"metadata":	{
 		"m_generatedFilesDir":	".",
-		"m_objCounter":	849,
+		"m_objCounter":	850,
 		"m_includeFiles":	[],
 		"m_bitmapFunction":	"wxCrafterpca4kKInitBitmapResources",
 		"m_bitmapsFile":	"gitui_git_bitmaps.cpp",
@@ -3474,12 +3474,12 @@
 														}],
 													"m_events":	[],
 													"m_children":	[{
-															"m_type":	4461,
+															"m_type":	4463,
 															"proportion":	0,
 															"border":	5,
 															"gbSpan":	"1,1",
 															"gbPosition":	"0,0",
-															"m_styles":	["wxTB_FLAT"],
+															"m_styles":	["wxAUI_TB_PLAIN_BACKGROUND", "wxAUI_TB_DEFAULT_STYLE"],
 															"m_sizerFlags":	["wxEXPAND"],
 															"m_properties":	[{
 																	"type":	"winid",
@@ -3505,26 +3505,6 @@
 																	"type":	"string",
 																	"m_label":	"Margins:",
 																	"m_value":	"-1,-1"
-																}, {
-																	"type":	"string",
-																	"m_label":	"Padding:",
-																	"m_value":	"1"
-																}, {
-																	"type":	"string",
-																	"m_label":	"Separator Size:",
-																	"m_value":	"5"
-																}, {
-																	"type":	"string",
-																	"m_label":	"Class Name:",
-																	"m_value":	"clToolBar"
-																}, {
-																	"type":	"string",
-																	"m_label":	"Include File:",
-																	"m_value":	"clToolBar.h"
-																}, {
-																	"type":	"string",
-																	"m_label":	"Style:",
-																	"m_value":	""
 																}],
 															"m_events":	[],
 															"m_children":	[]

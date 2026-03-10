@@ -411,7 +411,11 @@ GitCommitDlgBase::GitCommitDlgBase(
     wxBoxSizer* bSizer13 = new wxBoxSizer(wxVERTICAL);
     m_panel4->SetSizer(bSizer13);
 
-    m_toolbar = new clToolBar(m_panel4, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_panel4, wxSize(-1, -1)), wxTB_FLAT);
+    m_toolbar = new wxAuiToolBar(m_panel4,
+                                 wxID_ANY,
+                                 wxDefaultPosition,
+                                 wxDLG_UNIT(m_panel4, wxSize(-1, -1)),
+                                 wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_DEFAULT_STYLE);
     m_toolbar->SetToolBitmapSize(wxSize(16, 16));
 
     bSizer13->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));

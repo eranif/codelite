@@ -31,8 +31,10 @@
 #include "clThemedListCtrl.h"
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
-#include <wx/toolbar.h>
-#include "clToolBar.h"
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#include <map>
+#include <wx/menu.h>
 #include <wx/statbox.h>
 #include <wx/srchctrl.h>
 #include <wx/combobox.h>
@@ -42,10 +44,8 @@
 #include <wx/radiobut.h>
 #include <wx/spinctrl.h>
 #include <wx/notebook.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <map>
-#include <wx/menu.h>
+#include <wx/toolbar.h>
+#include "clToolBar.h"
 #include <wx/checklst.h>
 #if wxVERSION_NUMBER >= 2900
 #include <wx/persist.h>
@@ -148,7 +148,7 @@ protected:
     wxPanel* m_panel2;
     clThemedSTC* m_stcDiff;
     wxPanel* m_panel4;
-    clToolBar* m_toolbar;
+    wxAuiToolBar* m_toolbar;
     clThemedSTC* m_stcCommitMessage;
     wxCheckBox* m_checkBoxSignedOff;
     wxCheckBox* m_checkBoxAmend;
@@ -167,7 +167,7 @@ public:
     wxPanel* GetPanel2() { return m_panel2; }
     clThemedSplitterWindow* GetSplitterInner() { return m_splitterInner; }
     wxPanel* GetPanel3() { return m_panel3; }
-    clToolBar* GetToolbar() { return m_toolbar; }
+    wxAuiToolBar* GetToolbar() { return m_toolbar; }
     clThemedSTC* GetStcCommitMessage() { return m_stcCommitMessage; }
     wxPanel* GetPanel4() { return m_panel4; }
     clThemedSplitterWindow* GetSplitterMain() { return m_splitterMain; }

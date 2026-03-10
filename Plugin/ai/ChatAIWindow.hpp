@@ -15,6 +15,7 @@
 #include <wx/stattext.h>
 #include <wx/timer.h>
 
+class EndpointModelSelector;
 using llm::ChatState;
 
 class WXDLLIMPEXP_SDK ChatAIWindow : public AssistanceAIChatWindowBase
@@ -72,15 +73,12 @@ protected:
     void OnSendUI(wxUpdateUIEvent& event);
     void OnClearOutputViewUI(wxUpdateUIEvent& event);
     void OnUpdateTheme(wxCommandEvent& event);
-    void OnEndpointChanged(wxCommandEvent& event);
-    void OnModelChanged(wxCommandEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     void OnOptions(wxAuiToolBarEvent& event);
     void OnNewSession(wxCommandEvent& event);
     void OnRestartClient(wxCommandEvent& event);
     void UpdateTheme();
     void DoSendPrompt();
-    void UpdateChoices();
     void SetFocusToActiveEditor();
     void StyleOutput();
     void AppendOutput(const wxString& text);
@@ -120,4 +118,5 @@ private:
     std::unique_ptr<clEditEventsHandler> m_inputEditHelper;
     std::unique_ptr<clEditEventsHandler> m_outputEditHelper;
     wxStatusBar* m_statusBar{nullptr};
+    EndpointModelSelector* m_model_selector{nullptr};
 };

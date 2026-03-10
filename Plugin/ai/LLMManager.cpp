@@ -16,6 +16,7 @@
 #include "fileutils.h"
 #include "globals.h"
 
+#include <algorithm>
 #include <future>
 #include <wx/msgdlg.h>
 #include <wx/richmsgdlg.h>
@@ -742,6 +743,63 @@ wxArrayString Manager::ListEndpoints()
     return result;
 }
 
+std::optional<std::pair<wxString, wxArrayString>> Manager::GetEndpointModels(const wxString& endpoint)
+{
+    ASSIGN_OPT_OR_RETURN(auto j, GetConfigAsJSON(), std::nullopt);
+    try {
+        std::pair<wxString, wxArrayString> result;
+        std::string endpoint_str = endpoint.ToStdString(wxConvUTF8);
+        auto endpoint_json = j["endpoints"][endpoint_str];
+        auto active_model = endpoint_json["model"].get<std::string>();
+        result.first = wxString::FromUTF8(active_model);
+        if (endpoint_json.contains("models")) {
+            std::vector<std::string> all_models = endpoint_json["models"].get<std::vector<std::string>>();
+            std::set<std::string> models_set;
+            models_set.insert(all_models.begin(), all_models.end());
+            models_set.insert(active_model);
+            for (const auto& model_name : models_set) {
+                auto m = wxString::FromUTF8(model_name);
+                result.second.Add(m);
+            }
+        } else {
+            result.second.Add(result.first);
+        }
+        return result;
+    } catch (const std::exception& e) {
+        return std::nullopt;
+    }
+}
+
+void Manager::SetEndpointModel(const wxString& endpoint, const wxString& model)
+{
+    ASSIGN_OPT_OR_RETURN(auto j, GetConfigAsJSON(), );
+    try {
+        std::string endpoint_str = endpoint.ToStdString(wxConvUTF8);
+        std::string model_str = model.ToStdString(wxConvUTF8);
+
+        auto& endpoint_json = j["endpoints"][endpoint_str];
+        endpoint_json["model"] = model_str;
+        std::vector<std::string> all_models;
+        if (!endpoint_json.contains("models")) {
+            all_models.push_back(model_str);
+        } else {
+            all_models = endpoint_json["models"].get<std::vector<std::string>>();
+            auto iter = std::find_if(all_models.begin(), all_models.end(), [model_str](const std::string& m) -> bool {
+                return m == model_str;
+            });
+
+            if (iter == all_models.end()) {
+                all_models.push_back(model_str);
+            }
+        }
+        endpoint_json["models"] = all_models;
+        if (WriteConfigFile(std::move(j))) {
+            HandleConfigFileUpdated();
+        }
+    } catch ([[maybe_unused]] const std::exception& e) {
+    }
+}
+
 bool Manager::SetActiveEndpoint(const wxString& endpoint)
 {
     ASSIGN_OPT_OR_RETURN(auto j, GetConfigAsJSON(), false);
@@ -832,6 +890,7 @@ void Manager::AddNewEndpoint(const llm::EndpointData& d)
 
         new_endpoint["type"] = d.client_type;
         new_endpoint["model"] = d.model;
+        new_endpoint["models"] = std::vector{d.model};
         if (d.context_size.has_value()) {
             new_endpoint["context_size"] = d.context_size.value();
         }

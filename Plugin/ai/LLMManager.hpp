@@ -102,6 +102,7 @@ struct WXDLLIMPEXP_SDK EndpointData {
     std::string client_type;
     std::string url;
     std::string model;
+    std::vector<std::string> models; // possible models for this endpoint.
     std::optional<size_t> context_size;
     std::optional<std::string> api_key;
     std::optional<size_t> max_tokens;
@@ -364,6 +365,36 @@ public:
      * @return {@code true} if the endpoint was successfully set
      */
     bool SetActiveEndpoint(const wxString& endpoint);
+
+    /**
+     * @brief Sets the active model for a specified endpoint and updates the configuration.
+     *
+     * This method updates the endpoint's current model setting in the JSON configuration
+     * and ensures the model is included in the endpoint's list of available models. If the
+     * model is not already in the list, it is appended. The updated configuration is then
+     * written to the configuration file.
+     *
+     * @param endpoint The name or identifier of the endpoint to configure (as wxString).
+     * @param model The model name to set as active for the endpoint (as wxString).
+     *
+     * @return void This function does not return a value.
+     *
+     * @throws None Exceptions are caught internally; failures result in silent early return.
+     *
+     * @note If GetConfigAsJSON() fails or returns an empty optional, the function returns
+     *       immediately without making changes. Similarly, if a std::exception is thrown
+     *       during JSON manipulation or file writing, it is caught and the function exits
+     *       silently.
+     */
+    void SetEndpointModel(const wxString& endpoint, const wxString& model);
+
+    /**
+     * @brief Return the list of possible models for the input endpoint.
+     *
+     * @param endpoint identifier of the endpoint.
+     * @return pair of {active-model, all-models} for the endpoint.
+     */
+    std::optional<std::pair<wxString, wxArrayString>> GetEndpointModels(const wxString& endpoint);
 
     /**
      * @brief Adds a new LLM endpoint to the manager's internal list.

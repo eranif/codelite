@@ -48,6 +48,10 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     m_choiceEndpoints->SetToolTip(_("Choose the endpoint to use"));
     m_toolbar->AddControl(m_choiceEndpoints);
 
+    m_choiceModels = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, control_size);
+    m_choiceModels->SetToolTip(_("Choose the model to use for this endpoint"));
+    m_toolbar->AddControl(m_choiceModels);
+
     m_inputEditHelper = std::make_unique<clEditEventsHandler>(m_stcInput);
     m_outputEditHelper = std::make_unique<clEditEventsHandler>(m_stcOutput);
 
@@ -71,6 +75,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
 
     m_toolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &ChatAIWindow::OnOptions, this, XRCID("wxID_SETTINGS"));
     m_choiceEndpoints->Bind(wxEVT_CHOICE, &ChatAIWindow::OnEndpointChanged, this);
+    m_choiceModels->Bind(wxEVT_CHOICE, &ChatAIWindow::OnModelChanged, this);
 
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &ChatAIWindow::OnUpdateTheme, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &ChatAIWindow::OnWorkspaceLoaded, this);
@@ -104,6 +109,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnClearOutputViewUI, this, wxID_CLEAR);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnAutoScrollUI, this, XRCID("auto_scroll"));
     m_choiceEndpoints->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnBusyUI, this);
+    m_choiceModels->Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnBusyUI, this);
     UpdateChoices();
 
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);
@@ -301,10 +307,19 @@ void ChatAIWindow::OnSendUI(wxUpdateUIEvent& event)
                  !m_choiceEndpoints->GetStringSelection().empty());
 }
 
+void ChatAIWindow::OnModelChanged(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    // Update the model in the configuration file.
+    llm::Manager::GetInstance().SetEndpointModel(
+        m_choiceEndpoints->GetStringSelection(), m_choiceModels->GetStringSelection());
+}
+
 void ChatAIWindow::OnEndpointChanged(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     llm::Manager::GetInstance().SetActiveEndpoint(m_choiceEndpoints->GetStringSelection());
+    UpdateModelsForEndpoint(m_choiceEndpoints->GetStringSelection());
 }
 
 void ChatAIWindow::OnUpdateTheme(wxCommandEvent& event)
@@ -535,13 +550,26 @@ void ChatAIWindow::OnLLMConfigUpdate(clLLMEvent& event)
 
 void ChatAIWindow::OnInputUI(wxUpdateUIEvent& event) { event.Enable(true); }
 
+void ChatAIWindow::UpdateModelsForEndpoint(const wxString& endpoint)
+{
+    m_choiceModels->Clear();
+    auto result = llm::Manager::GetInstance().GetEndpointModels(endpoint);
+    if (result.has_value()) {
+        m_choiceModels->Append(result.value().second);
+        m_choiceModels->SetStringSelection(result.value().first);
+    }
+}
+
 void ChatAIWindow::UpdateChoices()
 {
     m_choiceEndpoints->Clear();
+    m_choiceModels->Clear();
+
     m_choiceEndpoints->Append(llm::Manager::GetInstance().ListEndpoints());
     auto active_endpoint = llm::Manager::GetInstance().GetActiveEndpoint();
     if (active_endpoint.has_value()) {
         m_choiceEndpoints->SetStringSelection(active_endpoint.value());
+        UpdateModelsForEndpoint(active_endpoint.value());
     }
 }
 

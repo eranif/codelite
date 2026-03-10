@@ -10,7 +10,9 @@ CodeLite 18.2.0 ships with a built-in chat interface that connects to any langua
 
 ---
 
-## 1. Add an LLM Endpoint
+## Add an LLM Endpoint
+
+### New Endpoint
 
 - Open **AI → Add New Endpoint** from the main menu.
 
@@ -23,9 +25,39 @@ CodeLite 18.2.0 ships with a built-in chat interface that connects to any langua
 
 - Test the endpoint: press ++ctrl+shift+h++ to open the chat box and send a short prompt (e.g., "Hello").
 
+### Configuring Multiple Models for a Single Endpoint
+
+Some endpoints support multiple models. For example, when working with Anthropic, you can choose between Haiku, Sonnet, or Opus. CodeLite allows you to configure multiple models for a single endpoint and quickly switch between them from the chat box UI.
+
+To add multiple models:
+
+- Open the AI settings file from the main menu bar: **AI** → **Open Setting File**
+- Locate the endpoint section you want to modify
+- If you do not already have a `models` entry, add one so it resembles the following:
+
+```json
+"https://api.anthropic.com": {
+  "active": true,
+  "context_size": 200000,
+  "http_headers": {
+    "x-api-key": "${ANTHROPIC_KEY}"
+  },
+  "max_tokens": 64000,
+  "model": "claude-sonnet-4-5",
+  "models": [
+    "claude-sonnet-4-5",
+    "claude-haiku-4-5",
+    "claude-opus-4-5"
+  ],
+  "type": "anthropic"
+},
+```
+
+- Save the file. The UI will update automatically.
+
 ---
 
-## 2. The Chat Box
+## The Chat Box
 
 Open the chat box at any time with ++ctrl+shift+h++. The window can be used for casual questions, code-related queries,
 or to instruct the model to perform tasks.
@@ -34,7 +66,7 @@ or to instruct the model to perform tasks.
 
 ---
 
-## 3. Built-in Model Tools
+## Built-in Model Tools
 
 CodeLite exposes the following built-in tools for the model:
 
@@ -102,7 +134,7 @@ The model will automatically call `ReadCompilerOutput`, fetch the log, and then 
 
 ---
 
-## 4. External MCP Servers
+## External MCP Servers
 
 In addition to the built-in tools, CodeLite supports external MCP (Model Context Protocol) servers. You can integrate two types of external servers:
 
@@ -120,7 +152,7 @@ To add an external MCP server, navigate to the menu bar and select one of the fo
 
 ---
 
-## 5. Placeholders
+## Placeholders
 
 CodeLite provides a comprehensive set of placeholders that can be utilized within prompts. When you type `{{` in the chat box,
 a completion menu will appear displaying all available placeholders.
@@ -137,7 +169,7 @@ a completion menu will appear displaying all available placeholders.
 
 ---
 
-## 6. CodeLite Prompt Store
+## CodeLite Prompt Store
 
 ### Overview
 
@@ -156,7 +188,7 @@ These prompts can be used from the Chat-Box "Options" drop down menu.
 
 ---
 
-## 7. AI-Powered IDE Features
+## AI-Powered IDE Features
 
 ### Git Commit Message
 
@@ -172,7 +204,7 @@ Place the cursor inside a function, press ++ctrl+shift+m++, and the model writes
 
 ---
 
-## 8. Getting Help
+## Getting Help
 
 - Open the chat box (++ctrl+shift+h++) and ask any question or ask the model to perform tasks for you.
 - For endpoint-specific issues, use **AI → Settings** to view or edit the stored URLs and tokens.

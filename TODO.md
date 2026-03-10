@@ -24,8 +24,6 @@ AI-powered IDE:
 High:
 -----
 
-- Add drop down to switch between models from the same vendor.
-
 Low:
 ----
 

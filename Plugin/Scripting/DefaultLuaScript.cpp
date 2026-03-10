@@ -30,6 +30,10 @@ Please rewrite the following markdown document to make it professional and polis
 - Maintain all technical accuracy and key information
 - Ensure consistent style throughout
 
+Important: DO NOT:
+- Change heading hierarchy or levels
+- Use numbered lists/headers
+
 **Output only the refactored markdown document. Do not include explanations, language detection notes, or any other text.**
 
 **Original Document:**
@@ -69,6 +73,10 @@ Please rewrite the following markdown document to make it professional and polis
 - Add appropriate formatting (bold, italics, code blocks, lists, tables)
 - Maintain all technical accuracy and key information
 - Ensure consistent style throughout
+
+Important: DO NOT:
+- Change heading hierarchy or levels
+- Use numbered lists/headers
 
 **Output only the refactored markdown document. Do not include explanations, language detection notes, or any other text.**
 

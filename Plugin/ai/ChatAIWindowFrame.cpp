@@ -71,13 +71,13 @@ void ChatAIWindowFrame::OnLLMRestarted(clLLMEvent& event)
 
 void ChatAIWindowFrame::UpdateLabel()
 {
-    static const wxString RIGHT_ARROW = wxT(" ▶ ");
+    static const wxString RIGHT_ARROW = wxT(" ➜ ");
     auto& manager = llm::Manager::GetInstance();
     auto endpoint = manager.GetActiveEndpoint();
     wxString label;
     if (endpoint.has_value()) {
-        label << _("Assistant") << RIGHT_ARROW << manager.GetModelName().value_or("<unknown>") << RIGHT_ARROW
-              << endpoint.value();
+        label << _("Assistant") << RIGHT_ARROW << endpoint.value() << RIGHT_ARROW
+              << manager.GetModelName().value_or("<unknown>");
     } else {
         label << _("Assistant");
     }

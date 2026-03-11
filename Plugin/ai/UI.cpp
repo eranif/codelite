@@ -338,12 +338,10 @@ NewLLMEndpointWizardBase::NewLLMEndpointWizardBase(
 
     flexGridSizer113->Add(m_staticText114, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_textCtrlAPIKey = new wxTextCtrl(m_wizardPageAPI,
-                                      wxID_ANY,
-                                      wxT(""),
-                                      wxDefaultPosition,
-                                      wxDLG_UNIT(m_wizardPageAPI, wxSize(-1, -1)),
-                                      wxTE_PASSWORD);
+    m_textCtrlAPIKey = new wxTextCtrl(
+        m_wizardPageAPI, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_wizardPageAPI, wxSize(-1, -1)), 0);
+    m_textCtrlAPIKey->SetToolTip(_("The API Key to use.\nEnvironment variables are allowed here."));
+    m_textCtrlAPIKey->SetFocus();
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlAPIKey->SetHint(wxT(""));
 #endif

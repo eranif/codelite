@@ -2010,7 +2010,7 @@
 											"border":	5,
 											"gbSpan":	"1,1",
 											"gbPosition":	"0,0",
-											"m_styles":	["wxTE_PASSWORD"],
+											"m_styles":	[],
 											"m_sizerFlags":	["wxALL", "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM", "wxEXPAND"],
 											"m_properties":	[{
 													"type":	"winid",
@@ -2031,7 +2031,7 @@
 												}, {
 													"type":	"multi-string",
 													"m_label":	"Tooltip:",
-													"m_value":	""
+													"m_value":	"The API Key to use.\\nEnvironment variables are allowed here."
 												}, {
 													"type":	"colour",
 													"m_label":	"Bg Colour:",
@@ -2055,7 +2055,7 @@
 												}, {
 													"type":	"bool",
 													"m_label":	"Focused",
-													"m_value":	false
+													"m_value":	true
 												}, {
 													"type":	"string",
 													"m_label":	"Class Name:",

@@ -517,7 +517,7 @@ private:
     mutable std::mutex m_mutex;
     std::map<std::string, std::string> m_prompts GUARDED_BY(m_mutex);
     mutable std::map<wxString, ChatHistory> m_history GUARDED_BY(m_mutex);
-    std::atomic_bool m_enableTools;
+    std::atomic_bool m_enableTools{true};
     wxString m_cachingPolicy GUARDED_BY(m_mutex){llm::kCacheAuto};
 };
 } // namespace llm

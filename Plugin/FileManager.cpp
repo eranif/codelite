@@ -186,7 +186,7 @@ bool FileManager::WriteContent(const wxString& filepath,
 
 #if USE_SFTP
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    if (workspace && workspace->IsRemote()) {
+    if (!options.ignore_workspace && workspace && workspace->IsRemote()) {
         return clSFTPManager::Get().AwaitWriteFile(content, fullpath, workspace->GetSshAccount());
     }
 #endif

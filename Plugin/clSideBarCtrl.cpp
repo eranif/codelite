@@ -25,29 +25,15 @@ wxDEFINE_EVENT(wxEVT_SIDEBAR_CONTEXT_MENU, clContextMenuEvent);
     }
 
 #if USE_NATIVETOOLBAR
-#define TOOL_GET_USER_DATA(tool) m_toolbar->GetUserData(tool)
-#define TOOL_SET_USER_DATA(tool, data) m_toolbar->SetUserData(tool, data)
 #define TOOL_SET_BITMAP(tool, bmp) tool->SetNormalBitmap(bmp)
 #define TOOL_IS_CHECKED(tool) tool->IsToggled()
 #else
-#define TOOL_GET_USER_DATA(tool) tool->GetUserData()
 #define TOOL_SET_BITMAP(tool, bmp) tool->SetBitmap(bmp)
-#define TOOL_SET_USER_DATA(tool, data) tool->SetUserData(data)
 #define TOOL_IS_CHECKED(tool) tool->IsActive()
 #endif
 
 namespace
 {
-
-struct ActionButtonData : public wxObject {
-    ActionButtonData(const wxString& s, ActionButtonCallbackPtr callback)
-        : bmpname_(s)
-        , callback_(callback)
-    {
-    }
-    wxString bmpname_;
-    ActionButtonCallbackPtr callback_;
-};
 
 // Return the wxBORDER_SIMPLE that matches the current application theme
 wxBorder border_simple_theme_aware_bit()
@@ -201,21 +187,19 @@ void clSideBarCtrl::PlaceButtons()
     size_t tools_count = old_toolbar->GetToolBar()->GetToolCount();
     for (size_t i = 0; i < tools_count; ++i) {
         auto tool = old_toolbar->GetToolBar()->FindToolByIndex(i);
-        auto tool_data_id = TOOL_GET_USER_DATA(tool);
-        const clSideBarToolData* cd = GetToolData(tool_data_id);
-        AddTool(tool->GetLabel(), cd ? cd->data : wxString(), i);
-        DeleteToolData(tool_data_id);
+        auto tool_data_id = old_toolbar->GetToolData(tool->GetId());
+        if (tool_data_id.has_value()) {
+            AddTool(tool->GetLabel(), tool_data_id.value().data, i);
+        }
     }
 
     // Copy the action buttons
     size_t action_buttons_count = old_toolbar->GetButtonsToolBar()->GetToolCount();
     for (size_t i = 0; i < action_buttons_count; ++i) {
         auto tool = old_toolbar->GetButtonsToolBar()->FindToolByIndex(i);
-        ActionButtonData* cd = reinterpret_cast<ActionButtonData*>(tool->GetUserData());
-        if (cd) {
-            AddActionButton(cd->bmpname_, tool->GetLabel(), cd->callback_);
-            delete cd;
-            tool->SetUserData(wxUIntPtr(nullptr));
+        auto data_opt = old_toolbar->GetActionButtonData(tool->GetId());
+        if (data_opt.has_value()) {
+            AddActionButton(data_opt.value().bmpname_, tool->GetLabel(), data_opt.value().callback_);
         }
     }
 
@@ -267,8 +251,7 @@ void clSideBarCtrl::AddTool(const wxString& label, const wxString& bmpname, size
 
     auto tool = m_buttonsBar->GetToolBar()->AddTool(wxID_ANY, label, wxBitmapBundle(bmp), label, wxITEM_CHECK);
     auto tool_id = tool->GetId();
-    long tool_data_id = AddToolData(clSideBarToolData(bmpname));
-    TOOL_SET_USER_DATA(tool, tool_data_id);
+    m_buttonsBar->SetToolData(tool_id, clSideBarToolData{.data = bmpname});
 
     m_buttonsBar->GetToolBar()->Bind(
         wxEVT_TOOL,
@@ -306,7 +289,8 @@ void clSideBarCtrl::AddActionButton(const wxString& bmpname, const wxString& too
 
     const wxBitmap& bmp = clSystemSettings::GetAppearance().IsDark() ? dark_theme_bmp : light_theme_bmp;
     auto tool = tb->AddTool(wxID_ANY, tooltip, wxBitmapBundle(bmp), tooltip);
-    tool->SetUserData(wxUIntPtr(new ActionButtonData(bmpname, func)));
+    m_buttonsBar->SetActionButtonData(tool->GetId(), ActionButtonData{.bmpname_ = bmpname, .callback_ = func});
+
     tb->Bind(
         wxEVT_TOOL,
         [func](wxCommandEvent& event) {
@@ -405,10 +389,11 @@ wxString clSideBarCtrl::GetPageBitmap(size_t pos) const
     auto tool = m_buttonsBar->GetToolBar()->FindToolByIndex(pos);
 
     CHECK_POINTER_RETURN(tool, wxEmptyString);
-    auto tool_data = GetToolData(TOOL_GET_USER_DATA(tool));
-    CHECK_POINTER_RETURN(tool_data, wxEmptyString);
-
-    return tool_data->data;
+    auto d = m_buttonsBar->GetToolData(tool->GetId());
+    if (!d.has_value()) {
+        return wxEmptyString;
+    }
+    return d.value().data;
 }
 
 void clSideBarCtrl::SetPageBitmap(size_t pos, const wxString& bmpname)
@@ -417,12 +402,7 @@ void clSideBarCtrl::SetPageBitmap(size_t pos, const wxString& bmpname)
 
     auto tool = m_buttonsBar->GetToolBar()->FindToolByIndex(pos);
     CHECK_POINTER_RETURN(tool, );
-
-    long tool_data_idx = TOOL_GET_USER_DATA(tool);
-    const clSideBarToolData* cd = GetToolData(tool_data_idx);
-    if (cd) {
-        const_cast<clSideBarToolData*>(cd)->data = bmpname;
-    }
+    m_buttonsBar->SetToolData(tool->GetId(), clSideBarToolData{.data = bmpname});
 
     wxBitmap light_theme_bmp, dark_theme_bmp;
     ::clLoadSidebarBitmap(bmpname, m_buttonsBar->GetToolBar(), &light_theme_bmp, &dark_theme_bmp);

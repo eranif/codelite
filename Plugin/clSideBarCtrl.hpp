@@ -61,12 +61,13 @@ public:
 using SideBarToolBar = wxAuiToolBar;
 #endif
 
-struct WXDLLIMPEXP_SDK clSideBarToolData : public wxClientData {
-    clSideBarToolData(const wxString& d)
-        : data(d)
-    {
-    }
+struct clSideBarToolData {
     wxString data;
+};
+
+struct ActionButtonData {
+    wxString bmpname_;
+    ActionButtonCallbackPtr callback_;
 };
 
 class WXDLLIMPEXP_SDK SideBarToolBarContainer : public wxControl
@@ -78,9 +79,39 @@ public:
     inline SideBarToolBar* GetToolBar() { return m_toolbar; }
     inline SideBarToolBar* GetButtonsToolBar() { return m_buttonsBar; }
 
+    std::optional<ActionButtonData> GetActionButtonData(int tool_id)
+    {
+        if (!m_actions.contains(tool_id)) {
+            return std::nullopt;
+        }
+        return m_actions.find(tool_id)->second;
+    }
+
+    void SetActionButtonData(int tool_id, ActionButtonData action_data)
+    {
+        m_actions.erase(tool_id);
+        m_actions.insert({tool_id, std::move(action_data)});
+    }
+
+    std::optional<clSideBarToolData> GetToolData(int tool_id)
+    {
+        if (!m_toolsData.contains(tool_id)) {
+            return std::nullopt;
+        }
+        return m_toolsData.find(tool_id)->second;
+    }
+
+    void SetToolData(int tool_id, clSideBarToolData d)
+    {
+        m_toolsData.erase(tool_id);
+        m_toolsData.insert({tool_id, std::move(d)});
+    }
+
 private:
     SideBarToolBar* m_toolbar{nullptr};
     SideBarToolBar* m_buttonsBar{nullptr};
+    std::unordered_map<int, ActionButtonData> m_actions;
+    std::unordered_map<int, clSideBarToolData> m_toolsData;
 };
 
 class WXDLLIMPEXP_SDK clSideBarCtrl : public wxControl

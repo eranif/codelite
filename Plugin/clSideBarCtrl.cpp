@@ -211,9 +211,11 @@ void clSideBarCtrl::PlaceButtons()
     size_t action_buttons_count = old_toolbar->GetButtonsToolBar()->GetToolCount();
     for (size_t i = 0; i < action_buttons_count; ++i) {
         auto tool = old_toolbar->GetButtonsToolBar()->FindToolByIndex(i);
-        ActionButtonData* cd = dynamic_cast<ActionButtonData*>(tool->GetClientData());
+        ActionButtonData* cd = reinterpret_cast<ActionButtonData*>(tool->GetUserData());
         if (cd) {
             AddActionButton(cd->bmpname_, tool->GetLabel(), cd->callback_);
+            delete cd;
+            tool->SetUserData(wxUIntPtr(nullptr));
         }
     }
 
@@ -304,7 +306,7 @@ void clSideBarCtrl::AddActionButton(const wxString& bmpname, const wxString& too
 
     const wxBitmap& bmp = clSystemSettings::GetAppearance().IsDark() ? dark_theme_bmp : light_theme_bmp;
     auto tool = tb->AddTool(wxID_ANY, tooltip, wxBitmapBundle(bmp), tooltip);
-    tool->SetClientData(new ActionButtonData(bmpname, func));
+    tool->SetUserData(wxUIntPtr(new ActionButtonData(bmpname, func)));
     tb->Bind(
         wxEVT_TOOL,
         [func](wxCommandEvent& event) {

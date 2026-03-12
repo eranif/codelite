@@ -723,6 +723,7 @@ private:
     mutable std::mutex m_mutex;
     /// How many user info bars are alive atm?
     size_t m_pending_user_answers{0};
+    std::atomic_bool m_initialise_called{false};
 };
 
 /**

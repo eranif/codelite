@@ -22,6 +22,11 @@
 #include <wx/richmsgdlg.h>
 #include <wx/xrc/xmlres.h>
 
+#define CHECK_INITIALISE_CALLED() \
+    if (!m_initialise_called) {   \
+        return;                   \
+    }
+
 namespace llm
 {
 namespace
@@ -191,6 +196,9 @@ void Manager::Initialise()
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &Manager::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, [this](wxCommandEvent& e) {
         e.Skip();
+        // Mark the instance as initialised, this needs to be done before we call 'Start'
+        // or it will fail.
+        m_initialise_called = true;
         // Now that all the plugins are loaded, start the agent.
         Start();
     });
@@ -572,12 +580,14 @@ assistant::Config Manager::MakeConfig()
 
 void Manager::Restart()
 {
+    CHECK_INITIALISE_CALLED();
     Stop();
     Start();
 }
 
 void Manager::Stop()
 {
+    CHECK_INITIALISE_CALLED();
     auto bc = std::make_unique<BusyCursor>();
     CHECK_PTR_RET(m_client);
 
@@ -630,6 +640,7 @@ bool Manager::CanRunTool(const std::string& tool_name)
 
 void Manager::Start(std::shared_ptr<assistant::ClientBase> client)
 {
+    CHECK_INITIALISE_CALLED();
     auto bc = std::make_unique<BusyCursor>();
     m_client_config = MakeConfig();
 

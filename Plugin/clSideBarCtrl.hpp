@@ -17,6 +17,7 @@
 
 #include <functional>
 #include <memory>
+#include <optional>
 
 using ActionButtonCallbackPtr = std::shared_ptr<std::function<void()>>;
 

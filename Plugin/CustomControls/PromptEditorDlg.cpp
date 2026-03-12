@@ -143,7 +143,7 @@ void PromptEditorDlg::OnDefaults(wxCommandEvent& event)
     if (::clMessageBox(
             _("This operation discard any changes you have done and restore it to their default values. Continue?"),
             "CodeLite",
-            wxOK | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxCANCEL_DEFAULT | wxICON_WARNING) != wxYES) {
+            wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_WARNING) != wxYES) {
         return;
     }
 

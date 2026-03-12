@@ -162,6 +162,14 @@ void SideBar::CreateGUIControls()
         m_book->SetSelection((size_t)0);
     }
 
+    auto action_ptr = std::make_shared<std::function<void()>>([]() {
+        // Send an event requesting to initiate a chat
+        wxCommandEvent event_chat{wxEVT_MENU, XRCID("ai_show_chat_window")};
+        CHECK_PTR_RET(wxTheApp->GetTopWindow());
+        wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(event_chat);
+    });
+
+    m_book->AddActionButton("chat-bot", "Open AI Chat Window", action_ptr);
     m_mgr->Update();
 }
 
@@ -190,7 +198,7 @@ void SideBar::UpdateProgress(int val)
 
 void SideBar::ApplySavedTabOrder(bool update_ui) const
 {
-    wxWindowUpdateLocker locker{ m_book };
+    wxWindowUpdateLocker locker{m_book};
     wxArrayString tabs;
     int index = -1;
     if (!clConfig::Get().GetWorkspaceTabOrder(tabs, index))

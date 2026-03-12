@@ -15,6 +15,11 @@
 #include <wx/toolbar.h>
 // clang-format on
 
+#include <functional>
+#include <memory>
+
+using ActionButtonCallbackPtr = std::shared_ptr<std::function<void()>>;
+
 #if USE_NATIVETOOLBAR
 struct LongClientData : wxObject {
     long m_data = wxNOT_FOUND;
@@ -64,39 +69,22 @@ struct WXDLLIMPEXP_SDK clSideBarToolData : public wxClientData {
     wxString data;
 };
 
+class WXDLLIMPEXP_SDK SideBarToolBarContainer : public wxControl
+{
+public:
+    SideBarToolBarContainer(wxWindow* parent, int orientation, long tb_style);
+    ~SideBarToolBarContainer() override = default;
+
+    inline SideBarToolBar* GetToolBar() { return m_toolbar; }
+    inline SideBarToolBar* GetButtonsToolBar() { return m_buttonsBar; }
+
+private:
+    SideBarToolBar* m_toolbar{nullptr};
+    SideBarToolBar* m_buttonsBar{nullptr};
+};
+
 class WXDLLIMPEXP_SDK clSideBarCtrl : public wxControl
 {
-    SideBarToolBar* m_toolbar = nullptr;
-    wxSimplebook* m_book = nullptr;
-    wxDirection m_buttonsPosition = wxLEFT;
-    wxBoxSizer* m_mainSizer = nullptr;
-    std::unordered_map<long, clSideBarToolData> m_toolDataMap;
-    int m_selectedToolId = wxNOT_FOUND;
-
-protected:
-    /// Return the page position
-    int SimpleBookGetPageIndex(wxWindow* page) const;
-    void DoRemovePage(size_t pos, bool delete_it);
-    void PlaceButtons();
-    void OnSize(wxSizeEvent& event);
-    void AddTool(const wxString& label, const wxString& bmpname, size_t book_index);
-    void OnDPIChangedEvent(wxDPIChangedEvent& event);
-    void OnContextMenu(
-#if USE_NATIVETOOLBAR
-        wxCommandEvent& event
-#else
-        wxAuiToolBarEvent& event
-#endif
-    );
-
-    const clSideBarToolData* GetToolData(long id) const;
-    /// add tool data, return its unique ID
-    long AddToolData(clSideBarToolData data);
-    void DeleteToolData(long id);
-    void ClearAllToolData();
-    void MSWUpdateToolbarBitmaps(int new_selection, int old_selection);
-    int GetToolIdForBookPos(int book_index) const;
-
 public:
     clSideBarCtrl(wxWindow* parent,
                   wxWindowID id = wxID_ANY,
@@ -106,10 +94,18 @@ public:
     virtual ~clSideBarCtrl();
 
     /// Return the toolbar
-    SideBarToolBar* GetToolBar() { return m_toolbar; }
+    inline SideBarToolBar* GetToolBar()
+    {
+        if (m_buttonsBar) {
+            return m_buttonsBar->GetToolBar();
+        }
+        return nullptr;
+    }
 
     /// Book API
     void AddPage(wxWindow* page, const wxString& label, const wxString& bmpname, bool selected = false);
+
+    void AddActionButton(const wxString& bmpname, const wxString& tooltip, ActionButtonCallbackPtr func);
 
     /// Move page identified by `label` to a new position
     void MovePageToIndex(const wxString& label, int new_pos);
@@ -157,6 +153,38 @@ public:
     void SetButtonPosition(wxDirection direction);
 
     void Realize();
+
+protected:
+    /// Return the page position
+    int SimpleBookGetPageIndex(wxWindow* page) const;
+    void DoRemovePage(size_t pos, bool delete_it);
+    void PlaceButtons();
+    void OnSize(wxSizeEvent& event);
+    void AddTool(const wxString& label, const wxString& bmpname, size_t book_index);
+    void OnDPIChangedEvent(wxDPIChangedEvent& event);
+    void OnContextMenu(
+#if USE_NATIVETOOLBAR
+        wxCommandEvent& event
+#else
+        wxAuiToolBarEvent& event
+#endif
+    );
+
+    const clSideBarToolData* GetToolData(long id) const;
+    /// add tool data, return its unique ID
+    long AddToolData(clSideBarToolData data);
+    void DeleteToolData(long id);
+    void ClearAllToolData();
+    void MSWUpdateToolbarBitmaps(int new_selection, int old_selection);
+    int GetToolIdForBookPos(int book_index) const;
+
+private:
+    SideBarToolBarContainer* m_buttonsBar{nullptr};
+    wxSimplebook* m_book{nullptr};
+    wxDirection m_buttonsPosition{wxLEFT};
+    wxBoxSizer* m_mainSizer{nullptr};
+    std::unordered_map<long, clSideBarToolData> m_toolDataMap;
+    int m_selectedToolId{wxNOT_FOUND};
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SIDEBAR_SELECTION_CHANGED, clCommandEvent);

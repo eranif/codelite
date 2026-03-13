@@ -317,12 +317,13 @@ IProcess* CreateSyncProcess(const wxString& cmd, size_t flags, const wxString& w
 // Static methods:
 bool IProcess::GetProcessExitCode(int pid, int& exitCode)
 {
-    std::unique_lock<std::mutex> lock(g_mutex);
+    std::unique_lock lock(g_mutex);
     auto predicate = [&]() { return g_exit_codes.find(pid) != g_exit_codes.end(); };
 
     // Wait with timeout
     if (g_cv.wait_for(lock, std::chrono::seconds(1), predicate)) {
         exitCode = g_exit_codes[pid];
+        g_exit_codes.erase(pid);
         return true;
     }
     return false;
@@ -330,9 +331,11 @@ bool IProcess::GetProcessExitCode(int pid, int& exitCode)
 
 void IProcess::SetProcessExitCode(int pid, int exitCode)
 {
-    std::unique_lock<std::mutex> lock(g_mutex);
-    g_exit_codes.erase(pid);
-    g_exit_codes[pid] = exitCode;
+    {
+        std::unique_lock lock(g_mutex);
+        g_exit_codes[pid] = exitCode;
+    }
+    g_cv.notify_all();
 }
 
 void IProcess::WaitForTerminate(wxString& output)

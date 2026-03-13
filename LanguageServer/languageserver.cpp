@@ -476,9 +476,7 @@ wxArrayString LanguageServerPlugin::GetBrokenLSPs() const
     wxArrayString broken_lsps;
     const auto& servers = LanguageServerConfig::Get().GetServers();
     for (const auto& [name, server] : servers) {
-        auto argv = StringUtils::BuildArgv(server.GetCommand());
-        // Check that the first argument (the executable path) exists
-        if ((server.IsEnabled() && argv.empty()) || !wxFileName::FileExists(argv[0])) {
+        if (server.IsBroken()) {
             broken_lsps.push_back(name);
         }
     }

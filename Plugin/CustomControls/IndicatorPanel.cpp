@@ -13,7 +13,9 @@ IndicatorPanel::IndicatorPanel(wxWindow* parent, const wxString& initialText)
         return;
     }
 
+    SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     SetSizer(new wxBoxSizer(wxVERTICAL));
+
     wxFlexGridSizer* flexGridSizer = new wxFlexGridSizer(1, 3, 0, 0);
     flexGridSizer->SetFlexibleDirection(wxBOTH);
     flexGridSizer->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);

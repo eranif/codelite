@@ -731,6 +731,11 @@ void Manager::StartServer(const LanguageServerEntry& entry)
         return;
     }
 
+    if (entry.IsBroken() || entry.IsNull()) {
+        LOG_IF_DEBUG { LSP_DEBUG() << "LSP" << entry.GetName() << "is broken. Skipped" << endl; }
+        return;
+    }
+
     // we can only start "remote" servers that use the "stdio" connection
     if (entry.GetConnectionString() != "stdio" && m_remoteHelper->IsRemoteWorkspaceOpened()) {
         LSP_DEBUG() << "can't start remote LSP server:" << entry.GetName() << ". Not an stdio connection" << endl;

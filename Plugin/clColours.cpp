@@ -9,7 +9,7 @@
 #ifdef __WXMAC__
 #define FACTOR_ALTROW 103
 #define FACTOR_SEL_BG_COLOUR_NOFOCUS 110
-#define FACTOR_ALTROW_LIGHT 98
+#define FACTOR_ALTROW_LIGHT 96
 #define FACTOR_ALTROW_DARK 102
 #else
 #define FACTOR_ALTROW_LIGHT 98
@@ -76,11 +76,7 @@ void init_from_colour(clColours* colours, const wxColour& baseColour)
 
 void clColours::InitDefaults()
 {
-#ifdef __WXMAC__
-    InitFromColour(wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX));
-#else
     InitFromColour(clSystemSettings::GetDefaultPanelColour());
-#endif
     itemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXTEXT);
     selItemTextColour = wxSystemSettings::GetColour(wxSYS_COLOUR_LISTBOXHIGHLIGHTTEXT);
 }

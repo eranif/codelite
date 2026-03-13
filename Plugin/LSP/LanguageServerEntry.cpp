@@ -59,6 +59,16 @@ eNetworkType LanguageServerEntry::GetNetType() const
 }
 
 bool LanguageServerEntry::IsNull() const { return m_name.empty(); }
+bool LanguageServerEntry::IsBroken() const
+{
+    auto argv = StringUtils::BuildArgv(GetCommand());
+    if (argv.empty()) {
+        return true;
+    }
+
+    // Check that the first argument (the executable path) exists
+    return IsEnabled() && !wxFileName::FileExists(argv[0]);
+}
 
 bool LanguageServerEntry::IsAutoRestart() const
 {

@@ -26,8 +26,8 @@ public:
     using Map_t = std::map<wxString, LanguageServerEntry>;
 
     bool IsNull() const;
+    bool IsBroken() const;
 
-public:
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;
 

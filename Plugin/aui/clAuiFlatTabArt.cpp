@@ -55,7 +55,7 @@ struct clAuiFlatTabArt::Data {
 
         wxColour colour_face = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
         m_fgNormal = m_fgActive.ChangeLightness(is_dark ? 60 : 115);
-        m_bgNormal = colour_face.ChangeLightness(is_dark ? 70 : 100);
+        m_bgNormal = colour_face;//.ChangeLightness(is_dark ? 90 : 100);
         m_bgWindow = m_bgNormal;
         m_fgHilite = wxSystemSettings::GetColour(wxSYS_COLOUR_HOTLIGHT);
         m_fgDimmed = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);

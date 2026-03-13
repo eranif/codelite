@@ -13,6 +13,7 @@
 #include <wx/app.h>
 #include <wx/button.h>
 #include <wx/dialog.h>
+#include <wx/headerctrl.h>
 #include <wx/panel.h>
 #include <wx/settings.h>
 
@@ -62,22 +63,9 @@ clSystemSettings::clSystemSettings()
 wxColour clSystemSettings::GetColour(int index)
 {
 #ifdef __WXOSX__
-    if (!panel_face.IsOk()) {
-        wxDialog* __p = new wxDialog(nullptr, wxID_ANY, "", wxPoint(-1000, -1000), wxSize(1, 1));
-        panel_face = __p->GetBackgroundColour();
-        wxDELETE(__p);
-    }
-    switch (index) {
-    case wxSYS_COLOUR_TOOLBAR:
-    case wxSYS_COLOUR_3DFACE:
-        return panel_face;
-    case wxSYS_COLOUR_TOOLBARTEXT:
-        return wxSystemSettings::GetColour(wxSYS_COLOUR_MENUTEXT);
-    default:
-        return wxSystemSettings::GetColour((wxSystemColour)index);
-    }
+    return wxSystemSettings::GetColour(static_cast<wxSystemColour>(index));
 #else
-    bool is_dark = DrawingUtils::IsDark(wxSYS_COLOUR_3DFACE);
+    bool is_dark = DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE));
     wxColour bg_colur = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
 #ifdef __WXGTK__
     if (is_dark) {
@@ -150,7 +138,10 @@ std::once_flag once;
 wxColour clSystemSettings::GetDefaultPanelColour()
 {
     wxColour panel_colour;
-#if defined(__WXMAC__) || defined(__WXMSW__)
+
+#if defined(__WXMAC__)
+    panel_colour = GetColour(wxSYS_COLOUR_3DFACE);
+#elif defined(__WXMSW__)
     static wxColour dlg_bg_colour;
     std::call_once(once, []() {
         MyDialog* dlg = new MyDialog(wxTheApp->GetTopWindow());

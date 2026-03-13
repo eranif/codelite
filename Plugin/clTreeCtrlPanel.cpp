@@ -55,6 +55,8 @@ clTreeCtrlPanel::clTreeCtrlPanel(wxWindow* parent)
 {
     int style = wxAUI_TB_PLAIN_BACKGROUND | wxAUI_TB_OVERFLOW;
     m_toolbar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, style);
+    m_toolbar->SetArtProvider(new clAuiToolBarArt());
+
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
 
     auto images = clGetManager()->GetStdIcons();

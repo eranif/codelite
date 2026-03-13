@@ -35,6 +35,7 @@
 #include "SSHAccountManagerDlg.h"
 #include "bitmap_loader.h"
 #include "clFileOrFolderDropTarget.h"
+#include "clSystemSettings.h"
 #include "clToolBarButtonBase.h"
 #include "cl_config.h"
 #include "event_notifier.h"
@@ -62,6 +63,7 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
     : SFTPTreeViewBase(parent)
     , m_plugin(plugin)
 {
+    SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
     m_view = new clRemoteDirCtrl(this);
     GetSizer()->Add(m_view, 1, wxEXPAND);
 
@@ -81,8 +83,11 @@ SFTPTreeView::SFTPTreeView(wxWindow* parent, SFTP* plugin)
 
     auto images = m_toolbar->GetBitmapsCreateIfNeeded();
     m_toolbar->AddTool(XRCID("ID_OPEN_ACCOUNT_MANAGER"), _("Open account manager..."), images->Add("user"));
-    m_toolbar->AddTool(XRCID("ID_SFTP_CONNECT"), _("Disconnected. Click to connect"), images->Add("disconnected"),
-                       wxEmptyString, wxITEM_CHECK);
+    m_toolbar->AddTool(XRCID("ID_SFTP_CONNECT"),
+                       _("Disconnected. Click to connect"),
+                       images->Add("disconnected"),
+                       wxEmptyString,
+                       wxITEM_CHECK);
 #if !wxUSE_NATIVE_TOOLBAR
     m_toolbar->AddTool(XRCID("ID_ADD_BOOKMARK"), _("Add Bookmark"), images->Add("bookmark"), "", wxITEM_DROPDOWN);
 #endif

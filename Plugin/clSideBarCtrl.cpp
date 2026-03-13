@@ -1,5 +1,6 @@
 #include "clSideBarCtrl.hpp"
 
+#include "aui/clAuiToolBarArt.h"
 #include "bitmap_loader.h"
 #include "clSystemSettings.h"
 #include "event_notifier.h"
@@ -96,6 +97,10 @@ SideBarToolBarContainer::SideBarToolBarContainer(wxWindow* parent, int orientati
     SetSizer(new wxBoxSizer(orientation));
     m_toolbar = new SideBarToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, tb_style);
     m_buttonsBar = new SideBarToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, tb_style);
+#if !USE_NATIVETOOLBAR
+    m_buttonsBar->SetArtProvider(new clAuiToolBarArt());
+    m_toolbar->SetArtProvider(new clAuiToolBarArt());
+#endif
     GetSizer()->Add(m_toolbar, wxSizerFlags(1).Expand());
     GetSizer()->Add(m_buttonsBar, wxSizerFlags(0).Expand());
     Layout();

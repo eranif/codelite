@@ -48,6 +48,11 @@ clAuiToolBarArt::~clAuiToolBarArt()
 void clAuiToolBarArt::DrawPlainBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
     wxUnusedVar(wnd);
+    static wxColour bg_colour;
+    if (!bg_colour.IsOk()) {
+        bg_colour = clSystemSettings::GetDefaultPanelColour();
+    }
+
     wxBitmap bmp(rect.GetSize());
     wxMemoryDC dcMem;
     dcMem.SelectObject(bmp);

@@ -11,6 +11,12 @@
 #include <wx/msw/registry.h>
 #endif
 
+namespace
+{
+constexpr const char* kMSYS2RegistryNameV1 = "MSYS2 64bit";
+constexpr const char* kMSYS2RegistryNameV2 = "MSYS2";
+} // namespace
+
 std::optional<wxString> MSYS2::FindInstallDir()
 {
     if (m_checked_for_install_dir) {
@@ -28,7 +34,8 @@ std::optional<wxString> MSYS2::FindInstallDir()
     while (cont) {
         wxString display_name;
         wxRegKey appkey(wxRegKey::HKCU, R"(SOFTWARE\Microsoft\Windows\CurrentVersion\Uninstall\)" + appname);
-        if (appkey.QueryValue("DisplayName", display_name) && display_name == "MSYS2 64bit") {
+        if (appkey.QueryValue("DisplayName", display_name) &&
+            (display_name == kMSYS2RegistryNameV1 || display_name == kMSYS2RegistryNameV2)) {
             appkey.QueryValue("InstallLocation", reg_install_path);
             break;
         }
@@ -145,16 +152,16 @@ std::optional<wxString> MSYS2::GetPath(bool useSystemPath)
         for (const auto& root : m_chroots) {
             paths_to_try.Insert(*msyspath + root + R"(\bin)", 0);
         }
-    }
 
-    // cargo (MSYS2 path)
-    wxFileName cargo_msys_bin{*msyspath, wxEmptyString};
-    cargo_msys_bin.AppendDir("home");
-    cargo_msys_bin.AppendDir(::wxGetUserId());
-    cargo_msys_bin.AppendDir(".cargo");
-    cargo_msys_bin.AppendDir("bin");
-    if (cargo_msys_bin.DirExists()) {
-        paths_to_try.Add(cargo_msys_bin.GetPath());
+        // cargo (MSYS2 path)
+        wxFileName cargo_msys_bin{*msyspath, wxEmptyString};
+        cargo_msys_bin.AppendDir("home");
+        cargo_msys_bin.AppendDir(::wxGetUserId());
+        cargo_msys_bin.AppendDir(".cargo");
+        cargo_msys_bin.AppendDir("bin");
+        if (cargo_msys_bin.DirExists()) {
+            paths_to_try.Add(cargo_msys_bin.GetPath());
+        }
     }
 
     // cargo (Windows native path)

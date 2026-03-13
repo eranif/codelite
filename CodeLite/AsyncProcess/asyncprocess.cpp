@@ -224,13 +224,6 @@ static void __FixArgs(wxArrayString& args)
     }
 }
 
-namespace
-{
-std::mutex g_mutex;
-std::condition_variable g_cv;
-std::unordered_map<pid_t, int> g_exit_codes;
-} // namespace
-
 IProcess* CreateAsyncProcess(wxEvtHandler* parent,
                              const std::vector<wxString>& args,
                              size_t flags,
@@ -317,25 +310,15 @@ IProcess* CreateSyncProcess(const wxString& cmd, size_t flags, const wxString& w
 // Static methods:
 bool IProcess::GetProcessExitCode(int pid, int& exitCode)
 {
-    std::unique_lock lock(g_mutex);
-    auto predicate = [&]() { return g_exit_codes.find(pid) != g_exit_codes.end(); };
-
-    // Wait with timeout
-    if (g_cv.wait_for(lock, std::chrono::seconds(1), predicate)) {
-        exitCode = g_exit_codes[pid];
-        g_exit_codes.erase(pid);
-        return true;
-    }
-    return false;
+    wxUnusedVar(pid);
+    exitCode = 0;
+    return true;
 }
 
 void IProcess::SetProcessExitCode(int pid, int exitCode)
 {
-    {
-        std::unique_lock lock(g_mutex);
-        g_exit_codes[pid] = exitCode;
-    }
-    g_cv.notify_all();
+    wxUnusedVar(pid);
+    wxUnusedVar(exitCode);
 }
 
 void IProcess::WaitForTerminate(wxString& output)

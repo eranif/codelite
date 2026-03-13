@@ -70,57 +70,60 @@ or to instruct the model to perform tasks.
 
 CodeLite exposes the following built-in tools for the model:
 
-### File Operations
-- **ReadFileContent** - Read file contents
-  - `filepath` (required): Path to the file to read
-  - `from_line` (optional): Starting line number (1-based)
-  - `line_count` (optional): Number of lines to read
+### File & Workspace Management
+- **CreateNewFile** - Create a new file at the specified path with optional content
+    - `filepath` (string): The path where the new file should be created
+    - `file_content` (string): The initial content to write to the file
 
-- **CreateNewFile** - Create a new file with optional content
-  - `filepath` (required): Path where the new file should be created
-  - `file_content` (optional): Initial content to write to the file
+- **CreateWorkspace** - Create a new workspace at the given path with the provided name
+    - `path` (string): The directory path where the workspace should be created
+    - `name` (string): The name of the workspace to create
+    - `host` (string): The SSH host for creating a remote workspace
 
-- **OpenFileInEditor** - Open a file for editing or viewing
-  - `filepath` (required): Path of the file to open
+- **ReadFileContent** - Read the content of a file from the disk
+    - `filepath` (string): The path of the file to read
+    - `from_line` (number, optional): Starting line number (1-based) to read from
+    - `line_count` (number, optional): Number of lines to read
 
-- **ApplyPatch** - Apply a git-style diff patch to a file
-  - `file_path` (required): Path to the file to patch
-  - `patch_content` (required): Git-style diff patch content to apply
+- **OpenFileInEditor** - Try to open a file and load it into the editor for editing or viewing
+    - `filepath` (string): The path of the file to open inside the editor
 
-### Search
-- **FindInFiles** - Search for a pattern within files in a directory
-  - `root_folder` (required): Root directory where search begins
-  - `find_what` (required): Text pattern to search for
-  - `file_pattern` (required): File pattern to match (e.g., "*.txt", "*.py")
-  - `case_sensitive` (optional): Enable case-sensitive matching (default: true)
-  - `is_regex` (optional): Treat find_what as regex pattern (default: false)
-  - `whole_word` (optional): Match only complete words (default: true)
+- **GetActiveEditorFilePath** - Retrieves the file path of the currently active editor
+    - (no parameters)
+
+- **GetActiveEditorText** - Return the text of the active tab inside the editor
+    - `from_line` (number, optional): Optional starting line (1-based)
+    - `count` (number, optional): Number of lines to read
 
 ### Git Operations
-- **GetLogInRangeCommit** - Return git history between two commits
-  - `start_commit` (required): First commit in the range
-  - `end_commit` (required): Second commit in the range
+- **ApplyPatch** - Apply a git style diff patch to a file
+    - `patch_content` (string): The git style diff patch content to apply
+    - `file_path` (string): The path to the file that should be patched
 
-### Workspace Management
-- **CreateWorkspace** - Create a new workspace (local or remote)
-  - `path` (required): Directory path where workspace should be created
-  - `name` (optional): Name of the workspace to create
-  - `host` (optional): SSH host for creating a remote workspace
+- **GetLogInRangeCommit** - Return git history of commits between a range of commits
+    - `start_commit` (string): The first commit in the range
+    - `end_commit` (string): The second commit in the range
 
-### Editor Information
-- **GetActiveEditorFilePath** - Get the file path of the currently active editor (no arguments)
+### Search & Exploration
+- **FindInFiles** - Search for a given pattern within files in a directory (using `grep`)
+    - `root_folder` (string): The root directory where the search begins
+    - `find_what` (string): The text pattern to search for
+    - `file_pattern` (string): The file pattern to match
+    - `case_sensitive` (boolean, optional): When enabled, performs case-sensitive matching
+    - `whole_word` (boolean, optional): When enabled, matches only complete words
+    - `is_regex` (boolean, optional): When enabled, treats find_what as a regular expression pattern
+    - `context_lines_before` (number, optional): Number of lines to display before each match
+    - `context_lines_after` (number, optional): Number of lines to display after each match
 
-- **GetActiveEditorText** - Get the text content of the active editor tab (no arguments)
+### System & Execution
+- **GetOS** - Return the current active OS
+    - (no parameters)
 
-### System Information
-- **GetOS** - Get the current active operating system (no arguments)
+- **ShellExecute** - Execute a shell command and return its output
+    - `command` (string): The shell command to execute
 
-### Build & Compilation
-- **ReadCompilerOutput** - Read the most recent build command's compiler output (no arguments)
-
-### Shell Execution
-- **ShellExecute** - Execute a shell command
-  - `command` (required): The shell command to execute
+- **ReadCompilerOutput** - Read and fetches the compiler build log output of the most recent build command executed by the user
+    - (no parameters)
 
 ### Quick Example
 

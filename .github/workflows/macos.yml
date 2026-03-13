@@ -17,6 +17,12 @@ jobs:
   macos:
     runs-on: macos-latest
 
+    strategy:
+      fail-fast: false
+      matrix:
+        wx-version: ['v3.2.8']
+        wx-options: ['--enable-stl', '--disable-stl']
+
     steps:
 
     - name: Install Codelite's dependencies
@@ -37,7 +43,7 @@ jobs:
       uses: actions/checkout@v4
       with:
           repository: wxWidgets/wxWidgets
-          ref: v3.2.8
+          ref: ${{ matrix.wx-version }}
           submodules: recursive
           path: wxWidgets
 
@@ -45,7 +51,7 @@ jobs:
       run: |
         mkdir wxWidgets/build-release
         cd wxWidgets/build-release
-        ../configure --enable-shared --enable-monolithic --with-osx_cocoa CXX='clang++ -std=c++17 -stdlib=libc++ -I../src/tiff/libtiff' CC=clang --disable-debug --disable-mediactrl --enable-stl
+        ../configure --enable-shared --enable-monolithic --with-osx_cocoa CXX='clang++ -std=c++17 -stdlib=libc++ -I../src/tiff/libtiff' CC=clang --disable-debug --disable-mediactrl ${{ matrix.wx-options }}
         make -j$(sysctl -n hw.physicalcpu)
         sudo make install
 

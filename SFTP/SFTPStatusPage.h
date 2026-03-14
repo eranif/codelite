@@ -26,10 +26,11 @@
 #ifndef SFTPSTATUSPAGE_H
 #define SFTPSTATUSPAGE_H
 
-#include "UI.h"
-#include <wx/menu.h>
-#include "cl_command_event.h"
 #include "SFTPGrepStyler.h"
+#include "UI.h"
+#include "cl_command_event.h"
+
+#include <wx/menu.h>
 #include <wx/stc/stc.h>
 
 class SFTPThreadMessage;
@@ -51,7 +52,7 @@ public:
     void ClearSearchOutput();
     void ShowSearchTab();
     void AddSearchText(const wxString& text);
-    
+
 protected:
     virtual void OnContentMenu(wxContextMenuEvent& event);
     virtual void OnClearLog(wxCommandEvent& event);

@@ -5,6 +5,4 @@ SFTPUploadDialog::SFTPUploadDialog(wxWindow* parent)
 {
 }
 
-void SFTPUploadDialog::OnOKUI(wxUpdateUIEvent& event)
-{
-}
+void SFTPUploadDialog::OnOKUI(wxUpdateUIEvent& event) {}

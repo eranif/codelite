@@ -1,4 +1,5 @@
 #include "SFTPQuickConnectDlg.h"
+
 #include "cl_config.h"
 #include "sftp_settings.h"
 #include "windowattrmanager.h"
@@ -26,7 +27,9 @@ SFTPQuickConnectDlg::SFTPQuickConnectDlg(wxWindow* parent)
         m_choiceAccount->Append(account.GetAccountName());
     }
     int where = m_choiceAccount->FindString(selectedAccount);
-    if(where != wxNOT_FOUND) { m_choiceAccount->SetSelection(where); }
+    if (where != wxNOT_FOUND) {
+        m_choiceAccount->SetSelection(where);
+    }
 
     m_checkBoxChooseAccount->SetValue(selecteExistingAccount);
     m_checkBoxQuickConnect->SetValue(!selecteExistingAccount);
@@ -70,7 +73,7 @@ void SFTPQuickConnectDlg::OnQuickConnectUI(wxUpdateUIEvent& event)
 SSHAccountInfo SFTPQuickConnectDlg::GetSelectedAccount() const
 {
     SSHAccountInfo acc;
-    if(m_checkBoxChooseAccount->IsChecked()) {
+    if (m_checkBoxChooseAccount->IsChecked()) {
         SFTPSettings settings;
         settings.Load();
         settings.GetAccount(m_choiceAccount->GetStringSelection(), acc);
@@ -81,7 +84,9 @@ SSHAccountInfo SFTPQuickConnectDlg::GetSelectedAccount() const
         acc.SetPassword(m_textCtrlPassword->GetValue());
         acc.SetHost(m_textCtrlHost->GetValue());
         long nPort = 22; // Default is 22
-        if(!m_textCtrlPort->GetValue().ToCLong(&nPort)) { nPort = 22; }
+        if (!m_textCtrlPort->GetValue().ToCLong(&nPort)) {
+            nPort = 22;
+        }
         acc.SetPort(nPort);
     }
     return acc;

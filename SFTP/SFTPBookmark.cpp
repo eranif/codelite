@@ -27,9 +27,9 @@
 
 void SFTPBookmark::FromJSON(const JSONItem& json)
 {
-    m_account.FromJSON( json.namedObject("m_account") );
-    m_name      = json.namedObject("m_name").toString();
-    m_folder    = json.namedObject("m_folder").toString();
+    m_account.FromJSON(json.namedObject("m_account"));
+    m_name = json.namedObject("m_name").toString();
+    m_folder = json.namedObject("m_folder").toString();
 }
 
 JSONItem SFTPBookmark::ToJSON() const

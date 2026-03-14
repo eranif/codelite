@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "SFTPManageBookmarkDlg.h"
+
 #include "globals.h"
 #include "windowattrmanager.h"
 
@@ -38,7 +39,7 @@ SFTPManageBookmarkDlg::SFTPManageBookmarkDlg(wxWindow* parent, const wxArrayStri
 void SFTPManageBookmarkDlg::OnDelete(wxCommandEvent& event)
 {
     int sel = m_listBoxBookmarks->GetSelection();
-    if(sel == wxNOT_FOUND)
+    if (sel == wxNOT_FOUND)
         return;
 
     m_listBoxBookmarks->Delete(sel);
@@ -52,7 +53,7 @@ void SFTPManageBookmarkDlg::OnDeleteUI(wxUpdateUIEvent& event)
 wxArrayString SFTPManageBookmarkDlg::GetBookmarks() const
 {
     wxArrayString bookmarks;
-    for(unsigned int i = 0; i < m_listBoxBookmarks->GetCount(); ++i) {
+    for (unsigned int i = 0; i < m_listBoxBookmarks->GetCount(); ++i) {
         bookmarks.Add(m_listBoxBookmarks->GetString(i));
     }
     return bookmarks;

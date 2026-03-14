@@ -1,6 +1,7 @@
 #include "SFTPSettingsDialog.h"
-#include "windowattrmanager.h"
+
 #include "sftp_settings.h"
+#include "windowattrmanager.h"
 
 SFTPSettingsDialog::SFTPSettingsDialog(wxWindow* parent)
     : SFTPSettingsDialogBase(parent)

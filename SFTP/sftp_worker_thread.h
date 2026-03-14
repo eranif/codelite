@@ -56,8 +56,10 @@ class SFTPThreadRequest : public ThreadRequest
     int m_lineNumber = wxNOT_FOUND;
 
 public:
-    SFTPThreadRequest(const SSHAccountInfo& accountInfo, const wxString& remoteFile, const wxString& localFile,
-                     size_t permissions);
+    SFTPThreadRequest(const SSHAccountInfo& accountInfo,
+                      const wxString& remoteFile,
+                      const wxString& localFile,
+                      size_t permissions);
     SFTPThreadRequest(const SSHAccountInfo& accountInfo, const wxString& oldName, const wxString& newName);
     SFTPThreadRequest(const SSHAccountInfo& accountInfo, const wxString& fileToDelete);
     explicit SFTPThreadRequest(const RemoteFileInfo& remoteFile);

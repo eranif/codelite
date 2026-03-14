@@ -1,4 +1,5 @@
 #include "SFTPGrep.h"
+
 #include "cl_config.h"
 
 SFTPGrep::SFTPGrep(wxWindow* parent)
@@ -40,10 +41,10 @@ wxString GrepData::GetGrepCommand(const wxString& path) const
     wxString command;
     // use -n -H to include the file:line
     command << "find " << path << " -name \"" << GetSearchIn() << "\" | xargs grep -n -H ";
-    if(IsIgnoreCase()) {
+    if (IsIgnoreCase()) {
         command << " -i ";
     }
-    if(IsWholeWord()) {
+    if (IsWholeWord()) {
         command << " -w ";
     }
     command << " \"" << GetFindWhat() << "\"";

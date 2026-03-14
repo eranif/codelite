@@ -23,19 +23,21 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "ColoursAndFontsManager.h"
 #include "SFTPStatusPage.h"
+
+#include "ColoursAndFontsManager.h"
 #include "SFTPTreeView.h"
 #include "clSSHChannel.hpp"
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "lexer_configuration.h"
 #include "remote_file_info.h"
 #include "sftp.h"
 #include "sftp_item_comparator.hpp"
 #include "sftp_worker_thread.h"
+
 #include <wx/log.h>
 #include <wx/menu.h>
-#include "file_logger.h"
 
 SFTPStatusPage::SFTPStatusPage(wxWindow* parent, SFTP* plugin)
     : SFTPStatusPageBase(parent)
@@ -81,7 +83,7 @@ void SFTPStatusPage::AddLine(SFTPThreadMessage* message)
     wxString msg;
     msg << "[ " << wxDateTime::Now().FormatISOTime() << " ]";
     wxBitmap bmp;
-    switch(message->GetStatus()) {
+    switch (message->GetStatus()) {
     case SFTPThreadMessage::STATUS_ERROR:
         msg << " [ERR]";
         break;
@@ -126,7 +128,7 @@ void SFTPStatusPage::OnThemeChanged(wxCommandEvent& event)
 {
     event.Skip();
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
+    if (lexer) {
         lexer->Apply(m_stcOutput);
         lexer->Apply(m_stcSearch);
     }
@@ -136,7 +138,7 @@ void SFTPStatusPage::OnThemeChanged(wxCommandEvent& event)
 void SFTPStatusPage::OnCopy(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(m_stcOutput->CanCopy()) {
+    if (m_stcOutput->CanCopy()) {
         m_stcOutput->Copy();
     }
 }
@@ -205,8 +207,8 @@ void SFTPStatusPage::AddSearchText(const wxString& text)
 
 int SFTPStatusPage::GetTabIndex(const wxString& name) const
 {
-    for(size_t i = 0; i < m_notebook->GetPageCount(); ++i) {
-        if(name == m_notebook->GetPageText(i)) {
+    for (size_t i = 0; i < m_notebook->GetPageCount(); ++i) {
+        if (name == m_notebook->GetPageText(i)) {
             return i;
         }
     }

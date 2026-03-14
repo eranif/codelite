@@ -58,7 +58,7 @@ TemplateClassDlg::TemplateClassDlg(wxWindow* parent, SnipWiz* plugin, IManager* 
 void TemplateClassDlg::Initialize()
 {
     LexerConf::Ptr_t cppLexer = ColoursAndFontsManager::Get().GetLexer("c++");
-    if(cppLexer) {
+    if (cppLexer) {
         cppLexer->Apply(m_textCtrlHeader, true);
         cppLexer->Apply(m_textCtrlImpl, true);
     }
@@ -67,11 +67,11 @@ void TemplateClassDlg::Initialize()
 
     wxArrayString templates;
     GetStringDb()->GetAllSets(templates);
-    for(wxUint32 i = 0; i < templates.GetCount(); i++) {
+    for (wxUint32 i = 0; i < templates.GetCount(); i++) {
         m_comboxTemplates->AppendString(templates[i]);
         m_comboxCurrentTemplate->AppendString(templates[i]);
     }
-    if(templates.GetCount()) {
+    if (templates.GetCount()) {
         m_comboxTemplates->Select(0);
         wxString set = m_comboxTemplates->GetValue();
         m_textCtrlHeader->SetValue(GetStringDb()->GetString(set, swHeader));
@@ -79,24 +79,24 @@ void TemplateClassDlg::Initialize()
         m_comboxCurrentTemplate->Select(0);
     }
     TreeItemInfo item = m_pManager->GetSelectedTreeItemInfo(TreeFileView);
-    if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
+    if (item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
         m_virtualFolder = VirtualDirectorySelectorDlg::DoGetPath(m_pManager->GetWorkspaceTree(), item.m_item, false);
         m_projectPath = item.m_fileName.GetPath(wxPATH_GET_VOLUME | wxPATH_GET_SEPARATOR);
     }
     m_textCtrlVD->SetValue(m_virtualFolder);
 
-    if(clCxxWorkspaceST::Get()->IsOpen()) {
+    if (clCxxWorkspaceST::Get()->IsOpen()) {
         wxString project, vd;
         project = m_virtualFolder.BeforeFirst(wxT(':'));
         vd = m_virtualFolder.AfterFirst(wxT(':'));
 
         ProjectPtr proj = clCxxWorkspaceST::Get()->GetProject(project);
-        if(proj) {
+        if (proj) {
             m_projectPath = proj->GetBestPathForVD(vd);
         }
     }
 
-    if(m_virtualFolder.IsEmpty() == false) {
+    if (m_virtualFolder.IsEmpty() == false) {
         m_staticProjectTreeFolder->SetForegroundColour(wxColour(0, 128, 0));
     }
     m_textCtrlFilePath->SetValue(m_projectPath);
@@ -107,7 +107,7 @@ void TemplateClassDlg::OnClassNameEntered(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString buffer = m_textCtrlClassName->GetValue();
-    if(buffer.IsEmpty()) {
+    if (buffer.IsEmpty()) {
         m_textCtrlHeaderFile->SetValue(wxT(""));
         m_textCtrlCppFile->SetValue(wxT(""));
         return;
@@ -121,7 +121,7 @@ void TemplateClassDlg::OnBrowseVD(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     VirtualDirectorySelectorDlg dlg(this, m_pManager->GetWorkspace(), m_textCtrlVD->GetValue());
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         m_textCtrlVD->SetValue(dlg.GetVirtualDirectoryPath());
         m_staticProjectTreeFolder->SetForegroundColour(wxColour(0, 128, 0));
         m_staticProjectTreeFolder->Refresh();
@@ -132,12 +132,12 @@ void TemplateClassDlg::OnBrowseFilePath(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString dir = wxT("");
-    if(wxFileName::DirExists(m_projectPath)) {
+    if (wxFileName::DirExists(m_projectPath)) {
         dir = m_projectPath;
     }
 
     dir = wxDirSelector(_("Select output folder"), dir, wxDD_DEFAULT_STYLE, wxDefaultPosition, this);
-    if(!dir.IsEmpty()) {
+    if (!dir.IsEmpty()) {
         m_projectPath = dir;
         m_textCtrlFilePath->SetValue(m_projectPath);
     }
@@ -150,7 +150,7 @@ void TemplateClassDlg::OnGenerate(wxCommandEvent& event)
     wxString newClassName = m_textCtrlClassName->GetValue();
     wxString baseClass = m_comboxCurrentTemplate->GetValue();
 
-    if(!wxEndsWithPathSeparator(m_projectPath))
+    if (!wxEndsWithPathSeparator(m_projectPath))
         m_projectPath += wxFILE_SEP_PATH;
 
     wxString header_file_name = m_textCtrlHeaderFile->GetValue();
@@ -172,7 +172,7 @@ void TemplateClassDlg::OnGenerate(wxCommandEvent& event)
 
     // prepare the implementation file content + name
     // and save it to disk
-    if(!impl_file_content.empty()) {
+    if (!impl_file_content.empty()) {
         buffer = wxString::Format(wxT("#include \"%s\"%s%s"), header_file_name, eol[m_curEol], eol[m_curEol]);
         buffer += impl_file_content;
         buffer.Replace(swPhClass, newClassName);
@@ -182,7 +182,7 @@ void TemplateClassDlg::OnGenerate(wxCommandEvent& event)
     }
 
     // if virtual directory is provided, add the files there
-    if(!vdpath.empty()) {
+    if (!vdpath.empty()) {
         // Create the Success message first, as 'files' may be altered during creation
         wxString msg;
         msg << wxString::Format(wxT("%s%s"), files.Item(0), eol[m_curEol])
@@ -193,8 +193,8 @@ void TemplateClassDlg::OnGenerate(wxCommandEvent& event)
         // So try to place the files appropriately. If that fails, dump both in the selected folder
         bool smartAddFiles = true;
 
-        if((smartAddFiles && m_pManager->AddFilesToVirtualFolderIntelligently(m_textCtrlVD->GetValue(), files)) ||
-           m_pManager->AddFilesToVirtualFolder(m_textCtrlVD->GetValue(), files)) {
+        if ((smartAddFiles && m_pManager->AddFilesToVirtualFolderIntelligently(m_textCtrlVD->GetValue(), files)) ||
+            m_pManager->AddFilesToVirtualFolder(m_textCtrlVD->GetValue(), files)) {
             wxMessageBox(msg, _("Add template class"), wxOK | wxCENTER | wxICON_INFORMATION, this);
         } else {
             EndModal(wxID_CANCEL);
@@ -213,7 +213,7 @@ void TemplateClassDlg::OnGenerateUI(wxUpdateUIEvent& event)
     bool has_path = !m_textCtrlFilePath->GetValue().empty();
     bool has_vd_path = !m_textCtrlVD->GetValue().empty();
     bool enable_cond = has_name && has_header_name && has_template && has_path;
-    if(clCxxWorkspaceST::Get()->IsOpen()) {
+    if (clCxxWorkspaceST::Get()->IsOpen()) {
         enable_cond = enable_cond && has_vd_path;
     }
     event.Enable(enable_cond);
@@ -230,7 +230,7 @@ void TemplateClassDlg::OnTemplateClassSelected(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString set = m_comboxTemplates->GetValue();
-    if(GetStringDb()->IsSet(set)) {
+    if (GetStringDb()->IsSet(set)) {
         m_textCtrlHeader->SetValue(GetStringDb()->GetString(set, swHeader));
         m_textCtrlImpl->SetValue(GetStringDb()->GetString(set, swSource));
     }
@@ -241,14 +241,14 @@ void TemplateClassDlg::OnButtonAdd(wxCommandEvent& event)
     wxUnusedVar(event);
     wxString set = m_comboxTemplates->GetValue();
     bool isSet = GetStringDb()->IsSet(set);
-    if(isSet) {
+    if (isSet) {
         int ret = wxMessageBox(_("Class exists!\nOverwrite?"), _("Add class"), wxYES_NO | wxICON_QUESTION);
-        if(ret == wxNO)
+        if (ret == wxNO)
             return;
     }
     GetStringDb()->SetString(set, swHeader, m_textCtrlHeader->GetValue());
     GetStringDb()->SetString(set, swSource, m_textCtrlImpl->GetValue());
-    if(!isSet) {
+    if (!isSet) {
         m_comboxTemplates->AppendString(set);
     }
 
@@ -267,15 +267,15 @@ void TemplateClassDlg::OnButtonChange(wxCommandEvent& event)
     wxUnusedVar(event);
     wxString set = m_comboxTemplates->GetValue();
     bool isSet = GetStringDb()->IsSet(set);
-    if(!isSet) {
+    if (!isSet) {
         int ret =
             ::wxMessageBox(_("That class doesn't exist!\nTry again?"), _("Change class"), wxYES_NO | wxICON_QUESTION);
-        if(ret == wxNO)
+        if (ret == wxNO)
             return;
     }
     GetStringDb()->SetString(set, swHeader, m_textCtrlHeader->GetValue());
     GetStringDb()->SetString(set, swSource, m_textCtrlImpl->GetValue());
-    if(!isSet)
+    if (!isSet)
         m_comboxTemplates->AppendString(set);
     RefreshTemplateList();
     m_modified = true;
@@ -283,11 +283,11 @@ void TemplateClassDlg::OnButtonChange(wxCommandEvent& event)
 
 void TemplateClassDlg::OnButtonChangeUI(wxUpdateUIEvent& event)
 {
-    if(m_comboxTemplates->GetSelection() == wxNOT_FOUND)
+    if (m_comboxTemplates->GetSelection() == wxNOT_FOUND)
         event.Enable(false);
     else
         event.Enable(true);
-    if(m_textCtrlHeader->IsModified() == false && m_textCtrlImpl->IsModified() == false)
+    if (m_textCtrlHeader->IsModified() == false && m_textCtrlImpl->IsModified() == false)
         event.Enable(false);
 }
 
@@ -296,7 +296,7 @@ void TemplateClassDlg::OnButtonRemove(wxCommandEvent& event)
     wxUnusedVar(event);
     wxString set = m_comboxTemplates->GetValue();
     bool isSet = GetStringDb()->IsSet(set);
-    if(!isSet) {
+    if (!isSet) {
         ::wxMessageBox(wxT("Class not found!\nNothing to remove."), wxT("Remove class"));
         return;
     }
@@ -311,7 +311,7 @@ void TemplateClassDlg::OnButtonRemove(wxCommandEvent& event)
 
 void TemplateClassDlg::OnButtonRemoveUI(wxUpdateUIEvent& event)
 {
-    if(m_comboxTemplates->GetSelection() == wxNOT_FOUND)
+    if (m_comboxTemplates->GetSelection() == wxNOT_FOUND)
         event.Enable(false);
     else
         event.Enable(true);
@@ -331,7 +331,7 @@ void TemplateClassDlg::OnInsertClassKeyword(wxCommandEvent& event)
     wxUnusedVar(event);
     long from, to;
 
-    if(m_notebookFiles->GetSelection() == 0) {
+    if (m_notebookFiles->GetSelection() == 0) {
         m_textCtrlHeader->GetSelection(&from, &to);
         m_textCtrlHeader->Replace(from, to, swPhClass);
         m_textCtrlHeader->SetFocus();
@@ -352,11 +352,11 @@ void TemplateClassDlg::RefreshTemplateList()
     GetStringDb()->GetAllSets(templates);
     m_comboxCurrentTemplate->Clear();
 
-    for(wxUint32 i = 0; i < templates.GetCount(); i++) {
+    for (wxUint32 i = 0; i < templates.GetCount(); i++) {
         m_comboxCurrentTemplate->AppendString(templates[i]);
     }
 
-    if(templates.GetCount()) {
+    if (templates.GetCount()) {
         m_comboxCurrentTemplate->Select(0);
     }
 }
@@ -365,13 +365,14 @@ bool TemplateClassDlg::SaveBufferToFile(const wxString filename, const wxString 
 {
     wxTextFile file(filename);
     wxTextFileType tft = wxTextFileType_Dos;
-    if(file.Exists()) {
-        int ret = wxMessageBox(_("File already exists!\n\n Overwrite?"), _("Generate class files"),
+    if (file.Exists()) {
+        int ret = wxMessageBox(_("File already exists!\n\n Overwrite?"),
+                               _("Generate class files"),
                                wxYES_NO | wxYES_DEFAULT | wxICON_EXCLAMATION);
-        if(ret == wxID_NO)
+        if (ret == wxID_NO)
             return false;
     }
-    switch(m_curEol) {
+    switch (m_curEol) {
     case 0:
         tft = wxTextFileType_Dos;
         break;

@@ -57,12 +57,18 @@ protected:
     void OnThemeChanged(wxCommandEvent& e);
     void OnTimer(wxTimerEvent& event);
     void DoClear();
-    void SetSemanticTokens(const wxString& classes, const wxString& variables, const wxString& methods,
+    void SetSemanticTokens(const wxString& classes,
+                           const wxString& variables,
+                           const wxString& methods,
                            const wxString& others);
 
 public:
-    explicit ZoomText(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                      const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxSTCNameStr);
+    explicit ZoomText(wxWindow* parent,
+                      wxWindowID id = wxID_ANY,
+                      const wxPoint& pos = wxDefaultPosition,
+                      const wxSize& size = wxDefaultSize,
+                      long style = 0,
+                      const wxString& name = wxSTCNameStr);
     ~ZoomText() override;
     void UpdateLexer(IEditor* editor);
     void OnSettingsChanged(wxCommandEvent& e);

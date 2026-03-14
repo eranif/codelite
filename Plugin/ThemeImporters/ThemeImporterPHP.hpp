@@ -1,7 +1,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 //
-// Copyright            : (C) 2015 Eran Ifrah
+// Copyright            : (C) 2026 Eran Ifrah
 // File name            : ThemeImporterPHP.h
 //
 // -------------------------------------------------------------------------
@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef ECLIPSEPHPTHEMEIMPORTER_H
-#define ECLIPSEPHPTHEMEIMPORTER_H
+#pragma once
 
 #include "ThemeImporterBase.hpp" // Base class: ThemeImporterBase
 
@@ -38,4 +37,3 @@ public:
     virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
 };
 
-#endif // ECLIPSEPHPTHEMEIMPORTER_H

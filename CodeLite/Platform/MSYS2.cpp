@@ -1,6 +1,7 @@
 #include "MSYS2.hpp"
 
 #include "cl_standard_paths.h"
+#include "file_logger.h"
 
 #include <wx/arrstr.h>
 #include <wx/filename.h>
@@ -91,6 +92,9 @@ std::optional<wxString> MSYS2::Which(const wxString& command)
     // at the point, the order of search is:
     // MSYS2 -> Executable path -> PATH paths
     for (const auto& path : paths_to_try) {
+        if (!wxFileName::DirExists(path)) {
+            continue;
+        }
         for (const wxString& ext : exts) {
             wxString exepath = path;
             exepath << "\\" << command << ext;
@@ -165,23 +169,26 @@ std::optional<wxString> MSYS2::GetPath(bool useSystemPath)
     }
 
     // cargo (Windows native path)
-    // e.g. /c/users/eran/.cargo/bin
-    wxFileName cargo_bin{::wxGetHomeDir(), wxEmptyString};
-    cargo_bin.AppendDir(".cargo");
-    cargo_bin.AppendDir("bin");
+    // e.g. C:\Users\user\.cargo\bin
+    static const wxString kWindowsUsersBaseDir = R"(C:\Users)";
+    wxFileName cargo_native_bin{kWindowsUsersBaseDir, wxEmptyString};
+    cargo_native_bin.AppendDir(::wxGetUserId());
+    cargo_native_bin.AppendDir(".cargo");
+    cargo_native_bin.AppendDir("bin");
 
-    if (cargo_bin.DirExists()) {
-        paths_to_try.Add(cargo_bin.GetPath());
+    if (cargo_native_bin.DirExists()) {
+        paths_to_try.Add(cargo_native_bin.GetPath());
     }
 
     // local (Windows native path)
-    // e.g. /c/users/eran/.local/bin
-    wxFileName local_bin{::wxGetHomeDir(), wxEmptyString};
-    local_bin.AppendDir(".local");
-    local_bin.AppendDir("bin");
+    // e.g. C:\Users\user\.local\bin
+    wxFileName local_native_bin{kWindowsUsersBaseDir, wxEmptyString};
+    local_native_bin.AppendDir(::wxGetUserId());
+    local_native_bin.AppendDir(".local");
+    local_native_bin.AppendDir("bin");
 
-    if (local_bin.DirExists()) {
-        paths_to_try.Add(local_bin.GetPath());
+    if (local_native_bin.DirExists()) {
+        paths_to_try.Add(local_native_bin.GetPath());
     }
     return ::wxJoin(paths_to_try, ';');
 }

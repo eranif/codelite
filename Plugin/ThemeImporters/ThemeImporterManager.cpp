@@ -13,6 +13,7 @@
 #include "ThemeImporterDockerfile.hpp"
 #include "ThemeImporterFortran.hpp"
 #include "ThemeImporterGo.hpp"
+#include "ThemeImporterHTML.hpp"
 #include "ThemeImporterINI.hpp"
 #include "ThemeImporterInnoSetup.hpp"
 #include "ThemeImporterJSON.hpp"
@@ -70,6 +71,7 @@ ThemeImporterManager::ThemeImporterManager()
     m_importers.push_back(std::make_unique<ThemeImporterGo>());
     m_importers.push_back(std::make_unique<ThemeImporterTerminal>());
     m_importers.push_back(std::make_unique<ThemeImporterCSharp>());
+    m_importers.push_back(std::make_unique<ThemeImporterHTML>());
 }
 
 wxString ThemeImporterManager::Import(const wxString& theme_file)

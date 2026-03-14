@@ -727,8 +727,8 @@ void ColoursAndFontsManager::UpdateLexerColours(LexerConf::Ptr_t lexer, bool for
         } else {
             // don't adjust PHP and HTML default colours, since they also affects the various operators
             // foreground colours
-            if (lexer->GetName() != "php" && lexer->GetName() != "html" && lexer->GetName() != "text" &&
-                lexer->GetName() != "cmake" && lexer->GetName() != "xml") {
+            if (lexer->GetName() != "html" && lexer->GetName() != "text" && lexer->GetName() != "cmake" &&
+                lexer->GetName() != "xml") {
                 lexer->SetDefaultFgColour(wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT));
             }
         }
@@ -932,18 +932,6 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.less");
     }
 
-    if (lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".html")) {
-        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.html;*.htm;*.xhtml");
-    }
-
-    if (lexer->GetName() == "php" && !lexer->GetKeyWords(4).Contains("<?php")) {
-        lexer->SetKeyWords(lexer->GetKeyWords(4) + " <?php <? ", 4);
-    }
-
-    if (lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".php5")) {
-        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.php5");
-    }
-
     if (lexer->GetName() == "php" && !lexer->GetFileSpec().Contains(".ctp")) {
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.ctp");
     }
@@ -1047,7 +1035,7 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
             "implements  protected "
             " volatile double import  public enum "
             "int short null true false",
-            1);
+            0);
     }
 
     if (lexer->GetName() == "python") {

@@ -51,7 +51,10 @@ public:
 
 public:
     SvnCommitDialog(wxWindow* parent, Subversion2* plugin);
-    SvnCommitDialog(wxWindow* parent, const wxArrayString& paths, const wxString& url, Subversion2* plugin,
+    SvnCommitDialog(wxWindow* parent,
+                    const wxArrayString& paths,
+                    const wxString& url,
+                    Subversion2* plugin,
                     const wxString& repoPath);
     virtual ~SvnCommitDialog();
 

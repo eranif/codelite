@@ -25,7 +25,7 @@ public:
     const wxString& GetFontName() const
     {
         static wxString EMPTY_STRING;
-        if(m_checkBoxCustomFont->IsChecked() == false && m_checkBoxPreDefinedFont->IsChecked() == false)
+        if (m_checkBoxCustomFont->IsChecked() == false && m_checkBoxPreDefinedFont->IsChecked() == false)
             return EMPTY_STRING;
 
         return m_fontname;

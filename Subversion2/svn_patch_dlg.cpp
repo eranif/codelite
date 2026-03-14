@@ -24,8 +24,9 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "svn_patch_dlg.h"
-#include "windowattrmanager.h"
+
 #include "editor_config.h"
+#include "windowattrmanager.h"
 
 PatchDlg::PatchDlg(wxWindow* parent)
     : PatchDlgBase(parent)
@@ -34,13 +35,13 @@ PatchDlg::PatchDlg(wxWindow* parent)
     WindowAttrManager::Load(this);
 
     long v = EditorConfigST::Get()->GetInteger(wxT("m_radioBoxEOLPolicy"));
-    if(v != wxNOT_FOUND) {
+    if (v != wxNOT_FOUND) {
         m_radioBoxEOLPolicy->SetSelection(v);
     }
 }
 
 PatchDlg::~PatchDlg()
 {
-    
+
     EditorConfigST::Get()->SetInteger(wxT("m_radioBoxEOLPolicy"), m_radioBoxEOLPolicy->GetSelection());
 }

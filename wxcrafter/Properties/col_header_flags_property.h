@@ -20,7 +20,9 @@ public:
     long GetValueLong() const override;
 
     ColHeaderFlagsProperty();
-    ColHeaderFlagsProperty(const wxString& label, int initialValue, const wxString& tip,
+    ColHeaderFlagsProperty(const wxString& label,
+                           int initialValue,
+                           const wxString& tip,
                            eColumnKind kind = eColumnKind::kListCtrl);
     ~ColHeaderFlagsProperty() override = default;
 

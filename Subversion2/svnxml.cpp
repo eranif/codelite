@@ -32,9 +32,14 @@
 #include <wx/tokenzr.h>
 #include <wx/xml/xml.h>
 
-void SvnXML::GetFiles(const wxString& input, wxArrayString& modifiedFiles, wxArrayString& conflictedFiles,
-                      wxArrayString& unversionedFiles, wxArrayString& newFiles, wxArrayString& deletedFiles,
-                      wxArrayString& lockedFiles, wxArrayString& ignoredFiles)
+void SvnXML::GetFiles(const wxString& input,
+                      wxArrayString& modifiedFiles,
+                      wxArrayString& conflictedFiles,
+                      wxArrayString& unversionedFiles,
+                      wxArrayString& newFiles,
+                      wxArrayString& deletedFiles,
+                      wxArrayString& lockedFiles,
+                      wxArrayString& ignoredFiles)
 {
     // First column information:
     //
@@ -62,9 +67,9 @@ void SvnXML::GetFiles(const wxString& input, wxArrayString& modifiedFiles, wxArr
     //  'B' not locked in repository, lock token present but Broken
     //
     wxArrayString lines = wxStringTokenize(input, wxT("\n\r"), wxTOKEN_STRTOK);
-    for(size_t i = 0; i < lines.GetCount(); i++) {
+    for (size_t i = 0; i < lines.GetCount(); i++) {
         wxString statusLine = lines.Item(i).Trim();
-        if(statusLine.Len() < 7) {
+        if (statusLine.Len() < 7) {
             continue;
         }
 
@@ -73,7 +78,7 @@ void SvnXML::GetFiles(const wxString& input, wxArrayString& modifiedFiles, wxArr
 
         wxChar ch1 = statusLine.GetChar(0);
         wxChar ch6 = statusLine.GetChar(5);
-        switch(ch1) {
+        switch (ch1) {
         case 'I':
             ignoredFiles.Add(filename);
             break;
@@ -96,7 +101,7 @@ void SvnXML::GetFiles(const wxString& input, wxArrayString& modifiedFiles, wxArr
             break;
         }
 
-        switch(ch6) {
+        switch (ch6) {
         case 'K':
             lockedFiles.Add(filename);
             break;
@@ -112,17 +117,17 @@ void SvnXML::GetFiles(const wxString& input, wxArrayString& modifiedFiles, wxArr
 void SvnXML::GetSvnInfo(const wxString& input, SvnInfo& svnInfo)
 {
     int start = input.Find("<info>");
-    if(start == wxNOT_FOUND)
+    if (start == wxNOT_FOUND)
         return;
     wxStringInputStream stream(input);
     wxXmlDocument doc(stream);
 
-    if(!doc.IsOk()) {
+    if (!doc.IsOk()) {
         return;
     }
 
     wxXmlNode* root = doc.GetRoot();
-    if(root) {
+    if (root) {
         wxXmlNode* node = root->GetChildren();
         // in newer versions of svn, there is another top level child named
         // <info>
@@ -130,36 +135,36 @@ void SvnXML::GetSvnInfo(const wxString& input, SvnInfo& svnInfo)
         //    node = node->GetChildren();
         //}
 
-        while(node) {
-            if(node->GetName() == wxT("entry")) {
+        while (node) {
+            if (node->GetName() == wxT("entry")) {
                 node->GetAttribute(wxT("revision"), &svnInfo.m_revision);
 
                 // Look for the URL
                 wxXmlNode* child = node->GetChildren();
-                while(child) {
-                    if(child->GetName() == wxT("url")) {
+                while (child) {
+                    if (child->GetName() == wxT("url")) {
                         svnInfo.m_sourceUrl = child->GetNodeContent();
                     }
 
                     // Last commit info
-                    if(child->GetName() == wxT("commit")) {
+                    if (child->GetName() == wxT("commit")) {
                         wxXmlNode* gchild = child->GetChildren();
-                        while(gchild) {
-                            if(gchild->GetName() == wxT("author")) {
+                        while (gchild) {
+                            if (gchild->GetName() == wxT("author")) {
                                 svnInfo.m_author = gchild->GetNodeContent();
                             }
 
-                            if(gchild->GetName() == wxT("date")) {
+                            if (gchild->GetName() == wxT("date")) {
                                 svnInfo.m_date = gchild->GetNodeContent();
                             }
                             gchild = gchild->GetNext();
                         }
                     }
 
-                    if(child->GetName() == wxT("repository")) {
+                    if (child->GetName() == wxT("repository")) {
                         wxXmlNode* gchild = child->GetChildren();
-                        while(gchild) {
-                            if(gchild->GetName() == wxT("root")) {
+                        while (gchild) {
+                            if (gchild->GetName() == wxT("root")) {
                                 svnInfo.m_url = gchild->GetNodeContent();
                                 break;
                             }

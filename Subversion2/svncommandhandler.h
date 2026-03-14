@@ -26,10 +26,11 @@
 #ifndef SVNCOMMANDHANDLER_H
 #define SVNCOMMANDHANDLER_H
 
-#include <wx/string.h>
+#include "file_logger.h"
+
 #include <wx/event.h>
 #include <wx/log.h>
-#include "file_logger.h"
+#include <wx/string.h>
 
 class Subversion2;
 class IManager;
@@ -71,8 +72,8 @@ public:
 
         wxString svnOutput(output);
         svnOutput.MakeLower();
-        if(svnOutput.Contains(wxT("could not authenticate to server")) ||
-           svnOutput.Contains(wxT(": authorization failed"))) {
+        if (svnOutput.Contains(wxT("could not authenticate to server")) ||
+            svnOutput.Contains(wxT(": authorization failed"))) {
             // failed to login...
             return true;
         }
@@ -83,7 +84,7 @@ public:
     {
         wxString svnOutput(output);
         svnOutput.MakeLower();
-        if(svnOutput.Contains(wxT("certificate verification failed"))) {
+        if (svnOutput.Contains(wxT("certificate verification failed"))) {
             // failed to login...
             return true;
         }
@@ -96,7 +97,7 @@ public:
     {
         wxString svnOutput(output);
         svnOutput.MakeLower();
-        if(svnOutput.Contains(wxT("(r)eject, accept (t)emporarily or accept (p)ermanently"))) {
+        if (svnOutput.Contains(wxT("(r)eject, accept (t)emporarily or accept (p)ermanently"))) {
             // failed to login...
             return true;
         }
@@ -116,7 +117,7 @@ public:
      */
     virtual void ProcessLoginRequired(const wxString& workingDirectory)
     {
-        if((m_commandId != wxNOT_FOUND) && m_owner) {
+        if ((m_commandId != wxNOT_FOUND) && m_owner) {
             int eventId(m_commandId);
             wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, eventId);
 
@@ -135,7 +136,7 @@ public:
      */
     virtual void ProcessLoginRequiredForURL(const wxString& url)
     {
-        if(m_commandId != wxNOT_FOUND && m_owner) {
+        if (m_commandId != wxNOT_FOUND && m_owner) {
             int eventId(m_commandId);
             wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, eventId);
 
@@ -147,10 +148,10 @@ public:
             m_owner->AddPendingEvent(event);
 
         } else {
-            if(m_commandId == wxNOT_FOUND) {
+            if (m_commandId == wxNOT_FOUND) {
                 clLogMessage(wxT("svn: ProcessLoginRequired: passed m_commandId = wxNOT_FOUND"));
 
-            } else if(m_owner == NULL) {
+            } else if (m_owner == NULL) {
                 clLogMessage(wxT("svn: ProcessLoginRequired: passed NULL m_owner"));
             }
         }
@@ -162,7 +163,7 @@ public:
      */
     virtual void ProcessVerificationRequired()
     {
-        if(m_commandId != wxNOT_FOUND && m_owner) {
+        if (m_commandId != wxNOT_FOUND && m_owner) {
             int eventId(m_commandId);
             wxCommandEvent event(wxEVT_COMMAND_MENU_SELECTED, eventId);
             event.SetInt(INTERACTIVE_MODE);

@@ -1,5 +1,7 @@
 #include "myxh_simplebook.h"
+
 #include "wxgui_helpers.h"
+
 #include <wx/log.h>
 #include <wx/simplebook.h>
 #include <wx/sizer.h>
@@ -14,19 +16,20 @@ MyWxSimplebookXmlHandler::MyWxSimplebookXmlHandler()
 
 wxObject* MyWxSimplebookXmlHandler::DoCreateResource()
 {
-    if(m_class == wxT("simplebookpage")) {
+    if (m_class == wxT("simplebookpage")) {
         wxXmlNode* n = GetParamNode(wxT("object"));
 
-        if(!n) n = GetParamNode(wxT("object_ref"));
+        if (!n)
+            n = GetParamNode(wxT("object_ref"));
 
-        if(n) {
+        if (n) {
             bool old_ins = m_isInside;
             m_isInside = false;
             wxObject* item = CreateResFromNode(n, m_notebook, NULL);
             m_isInside = old_ins;
             wxWindow* wnd = wxDynamicCast(item, wxWindow);
 
-            if(wnd) {
+            if (wnd) {
                 m_notebook->AddPage(wnd, GetText(wxT("label")), GetBool(wxT("selected")), wxNOT_FOUND);
 
             } else

@@ -39,13 +39,15 @@ SplitterWindowWrapper::SplitterWindowWrapper()
     PREPEND_STYLE_FALSE(wxSP_PERMIT_UNSPLIT);
     PREPEND_STYLE_FALSE(wxSP_LIVE_UPDATE);
 
-    RegisterEvent(wxT("wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING"), wxT(" wxSplitterEvent"),
+    RegisterEvent(wxT("wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING"),
+                  wxT(" wxSplitterEvent"),
                   _("The sash position is in the process of being changed"));
-    RegisterEvent(wxT("wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED"), wxT(" wxSplitterEvent"),
-                  _("The sash position was changed"));
-    RegisterEvent(wxT("wxEVT_COMMAND_SPLITTER_UNSPLIT"), wxT(" wxSplitterEvent"),
-                  _("The splitter has been just unsplit"));
-    RegisterEvent(wxT("wxEVT_COMMAND_SPLITTER_DOUBLECLICKED"), wxT(" wxSplitterEvent"),
+    RegisterEvent(
+        wxT("wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED"), wxT(" wxSplitterEvent"), _("The sash position was changed"));
+    RegisterEvent(
+        wxT("wxEVT_COMMAND_SPLITTER_UNSPLIT"), wxT(" wxSplitterEvent"), _("The splitter has been just unsplit"));
+    RegisterEvent(wxT("wxEVT_COMMAND_SPLITTER_DOUBLECLICKED"),
+                  wxT(" wxSplitterEvent"),
                   _("The sash was double clicked.\nThe default behaviour is to unsplit the window when this "
                     "happens\n(unless the minimum pane size has been set to a value greater than zero)"));
 
@@ -80,7 +82,9 @@ void SplitterWindowWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     int sashpos = wxCrafter::ToNumber(PropertyString(PROP_SASH_POS), 0);
 
     wxString orientation = "vertical";
-    if(!IsSplitVertically()) { orientation = "horizontal"; }
+    if (!IsSplitVertically()) {
+        orientation = "horizontal";
+    }
 
     text << XRCPrefix() << XRCSize() << XRCCommonAttributes() << XRCStyle() << wxT("<gravity>")
          << wxCrafter::FloatToCString(gravity) << wxT("</gravity>") << wxT("<minsize>") << minsize << wxT("</minsize>")
@@ -98,19 +102,25 @@ void SplitterWindowWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("gravity"));
-    if(propertynode) { SetPropertyString(PROP_SASH_GRAVITY, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_SASH_GRAVITY, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("minsize"));
-    if(propertynode) { SetPropertyString(PROP_MIN_PANE_SIZE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MIN_PANE_SIZE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("sashpos"));
-    if(propertynode) { SetPropertyString(PROP_SASH_POS, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_SASH_POS, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("orientation"));
-    if(propertynode) {
-        SetPropertyString(PROP_SPLIT_MODE, propertynode->GetNodeContent() == "vertical"
-                                               ? wxString("wxSPLIT_VERTICAL")
-                                               : wxString("wxSPLIT_HORIZONTAL"));
+    if (propertynode) {
+        SetPropertyString(PROP_SPLIT_MODE,
+                          propertynode->GetNodeContent() == "vertical" ? wxString("wxSPLIT_VERTICAL")
+                                                                       : wxString("wxSPLIT_HORIZONTAL"));
     }
 }
 
@@ -120,16 +130,24 @@ void SplitterWindowWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("gravity"));
-    if(propertynode) { SetPropertyString(PROP_SASH_GRAVITY, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_SASH_GRAVITY, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("minsize"));
-    if(propertynode) { SetPropertyString(PROP_MIN_PANE_SIZE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MIN_PANE_SIZE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("sashpos"));
-    if(propertynode) { SetPropertyString(PROP_SASH_POS, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_SASH_POS, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("orientation"));
-    if(propertynode) { SetPropertyString(PROP_SPLIT_MODE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_SPLIT_MODE, propertynode->GetNodeContent());
+    }
 }
 
 void SplitterWindowWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -138,16 +156,24 @@ void SplitterWindowWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "sashgravity");
-    if(propertynode) { SetPropertyString(PROP_SASH_GRAVITY, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_SASH_GRAVITY, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "min_pane_size");
-    if(propertynode) { SetPropertyString(PROP_MIN_PANE_SIZE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MIN_PANE_SIZE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "sashpos");
-    if(propertynode) { SetPropertyString(PROP_SASH_POS, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_SASH_POS, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "splitmode");
-    if(propertynode) { SetPropertyString(PROP_SPLIT_MODE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_SPLIT_MODE, propertynode->GetNodeContent());
+    }
 }
 
 bool SplitterWindowWrapper::IsSplitVertically() const

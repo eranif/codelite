@@ -34,6 +34,7 @@
 // License:
 /////////////////////////////////////////////////////////////////////////////
 #include "CorrectSpellingDlg.h"
+
 #include "IHunSpell.h"
 // ------------------------------------------------------------
 CorrectSpellingDlg::CorrectSpellingDlg(wxWindow* parent)
@@ -57,7 +58,8 @@ void CorrectSpellingDlg::OnInitDialog(wxInitDialogEvent& event)
     event.Skip();
     m_pMisspelling->SetValue(m_misspelled);
 
-    if(m_currentPosition.x != -1) Move(m_currentPosition);
+    if (m_currentPosition.x != -1)
+        Move(m_currentPosition);
 }
 // ------------------------------------------------------------
 void CorrectSpellingDlg::OnSuggestionSelected(wxCommandEvent& event)
@@ -86,11 +88,12 @@ void CorrectSpellingDlg::OnSuggestClick(wxCommandEvent& event)
 {
     wxUnusedVar(event);
 
-    if(m_pHs) {
+    if (m_pHs) {
         m_pSuggestions->Clear();
         wxArrayString suggests = m_pHs->GetSuggestions(m_pMisspelling->GetValue());
 
-        for(wxUint32 i = 0; i < suggests.GetCount(); i++) m_pSuggestions->Append(suggests[i]);
+        for (wxUint32 i = 0; i < suggests.GetCount(); i++)
+            m_pSuggestions->Append(suggests[i]);
     }
 }
 // ------------------------------------------------------------
@@ -98,7 +101,8 @@ void CorrectSpellingDlg::SetSuggestions(wxArrayString suggests)
 {
     m_pSuggestions->Clear();
 
-    for(wxUint32 i = 0; i < suggests.GetCount(); i++) m_pSuggestions->Append(suggests[i]);
+    for (wxUint32 i = 0; i < suggests.GetCount(); i++)
+        m_pSuggestions->Append(suggests[i]);
 }
 // ------------------------------------------------------------
 void CorrectSpellingDlg::OnMove(wxMoveEvent& event) { m_currentPosition = GetPosition(); }

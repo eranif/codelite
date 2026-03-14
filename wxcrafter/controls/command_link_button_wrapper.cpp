@@ -24,7 +24,8 @@ CommandLinkButtonWrapper::CommandLinkButtonWrapper()
     DelProperty(_("Control Specific Settings"));
     Add<CategoryProperty>("wxCommandLinkButton");
 
-    RegisterEvent("wxEVT_COMMAND_BUTTON_CLICKED", "wxCommandEvent",
+    RegisterEvent("wxEVT_COMMAND_BUTTON_CLICKED",
+                  "wxCommandEvent",
                   _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."),
                   "wxCommandEventHandler");
 
@@ -52,11 +53,11 @@ wxString CommandLinkButtonWrapper::CppCtorCode() const
             << "wxDefaultPosition, " << SizeAsString() << ", " << StyleFlags("0") << ");\n";
 
     wxString bmpCpp = wxcCodeGeneratorHelper::Get().BitmapCode(PropertyFile(PROP_BITMAP_PATH));
-    if(bmpCpp != "wxNullBitmap") {
+    if (bmpCpp != "wxNullBitmap") {
         cppCode << GetName() << "->SetBitmap(" << bmpCpp << ", wxLEFT );\n";
     }
 
-    if(PropertyBool(PROP_DEFAULT_BUTTON) == "true") {
+    if (PropertyBool(PROP_DEFAULT_BUTTON) == "true") {
         cppCode << GetName() << "->SetDefault();\n";
     }
 

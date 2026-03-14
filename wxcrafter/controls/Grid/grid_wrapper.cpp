@@ -16,14 +16,15 @@ GridWrapper::GridWrapper()
 {
     EnableStyle(wxT("wxWANTS_CHARS"), true);
 
-    const wxArrayString vOpts = StdToWX::ToArrayString({ "wxALIGN_TOP", "wxALIGN_CENTRE", "wxALIGN_BOTTOM" });
-    const wxArrayString hOpts = StdToWX::ToArrayString({ "wxALIGN_LEFT", "wxALIGN_CENTRE", "wxALIGN_RIGHT" });
+    const wxArrayString vOpts = StdToWX::ToArrayString({"wxALIGN_TOP", "wxALIGN_CENTRE", "wxALIGN_BOTTOM"});
+    const wxArrayString hOpts = StdToWX::ToArrayString({"wxALIGN_LEFT", "wxALIGN_CENTRE", "wxALIGN_RIGHT"});
 
     SetPropertyString(_("Common Settings"), "wxGrid");
     Add<CategoryProperty>(_("wxGrid Header"));
     Add<BoolProperty>(PROP_AUTOSIZE_COL, true, _("Auto size column content to fit the column header"));
     Add<BoolProperty>(PROP_GRID_NATIVE_LOOK, true, _("Enable the use of native header window for column labels"));
-    // Add<BoolProperty>(PROP_GRID_NATIVE_COL_LABELS, true, _("Call this in order to make the column labels use a native look"));
+    // Add<BoolProperty>(PROP_GRID_NATIVE_COL_LABELS, true, _("Call this in order to make the column labels use a native
+    // look"));
 
     Add<CategoryProperty>(_("wxGrid Columns Labels"));
     Add<IntProperty>(PROP_HEIGHT, -1, _("Sets the height of the column label"));
@@ -38,64 +39,83 @@ GridWrapper::GridWrapper()
     Add<CategoryProperty>(_("wxGrid Cells"));
     Add<BoolProperty>(PROP_ALLOW_EDITING, true, _("Allow editing grid content"));
 
-    RegisterEvent(wxT("wxEVT_GRID_CELL_CHANGING"), wxT("wxGridEvent"),
+    RegisterEvent(wxT("wxEVT_GRID_CELL_CHANGING"),
+                  wxT("wxGridEvent"),
                   _("The user is about to change the data in a cell. The new cell value as string is available from "
                     "GetString() event object method. This event can be vetoed if the change is not allowed. "
                     "Processes a wxEVT_GRID_CELL_CHANGING event type"));
-    RegisterEvent(wxT("wxEVT_GRID_CELL_CHANGED"), wxT("wxGridEvent"),
+    RegisterEvent(wxT("wxEVT_GRID_CELL_CHANGED"),
+                  wxT("wxGridEvent"),
                   _("The user changed the data in a cell. The old cell value as string is available from GetString() "
                     "event object method. Notice that vetoing this event still works for backwards compatibility "
                     "reasons but any new code should only veto EVT_GRID_CELL_CHANGING event and not this one. "
                     "Processes a wxEVT_GRID_CELL_CHANGED event type."));
-    RegisterEvent(wxT("wxEVT_GRID_CELL_LEFT_CLICK"), wxT("wxGridEvent"),
+    RegisterEvent(wxT("wxEVT_GRID_CELL_LEFT_CLICK"),
+                  wxT("wxGridEvent"),
                   _("The user clicked a cell with the left mouse button. Processes a wxEVT_GRID_CELL_LEFT_CLICK."));
     RegisterEvent(
-        wxT("wxEVT_GRID_CELL_LEFT_DCLICK"), wxT("wxGridEvent"),
+        wxT("wxEVT_GRID_CELL_LEFT_DCLICK"),
+        wxT("wxGridEvent"),
         _("The user double-clicked a cell with the left mouse button. Processes a wxEVT_GRID_CELL_LEFT_DCLICK"));
-    RegisterEvent(wxT("wxEVT_GRID_CELL_RIGHT_CLICK"), wxT("wxGridEvent"),
+    RegisterEvent(wxT("wxEVT_GRID_CELL_RIGHT_CLICK"),
+                  wxT("wxGridEvent"),
                   _("The user clicked a cell with the right mouse button. Processes a wxEVT_GRID_CELL_RIGHT_CLICK."));
     RegisterEvent(
-        wxT("wxEVT_GRID_CELL_RIGHT_DCLICK"), wxT("wxGridEvent"),
+        wxT("wxEVT_GRID_CELL_RIGHT_DCLICK"),
+        wxT("wxGridEvent"),
         _("The user double-clicked a cell with the right mouse button. Processes a wxEVT_GRID_CELL_RIGHT_DCLICK."));
-    RegisterEvent(wxT("wxEVT_GRID_EDITOR_HIDDEN"), wxT("wxGridEvent"),
+    RegisterEvent(wxT("wxEVT_GRID_EDITOR_HIDDEN"),
+                  wxT("wxGridEvent"),
                   _("The editor for a cell was hidden. Processes a wxEVT_GRID_EDITOR_HIDDEN event type."));
-    RegisterEvent(wxT("wxEVT_GRID_EDITOR_SHOWN"), wxT("wxGridEvent"),
+    RegisterEvent(wxT("wxEVT_GRID_EDITOR_SHOWN"),
+                  wxT("wxGridEvent"),
                   _("The editor for a cell was shown. Processes a wxEVT_GRID_EDITOR_SHOWN event type"));
-    RegisterEvent(wxT("wxEVT_GRID_LABEL_LEFT_CLICK"), wxT("wxGridEvent"),
+    RegisterEvent(wxT("wxEVT_GRID_LABEL_LEFT_CLICK"),
+                  wxT("wxGridEvent"),
                   _("The user clicked a label with the left mouse button. Processes a wxEVT_GRID_LABEL_LEFT_CLICK."));
     RegisterEvent(
-        wxT("wxEVT_GRID_LABEL_LEFT_DCLICK"), wxT("wxGridEvent"),
+        wxT("wxEVT_GRID_LABEL_LEFT_DCLICK"),
+        wxT("wxGridEvent"),
         _("The user double-clicked a label with the left mouse button. Processes a wxEVT_GRID_LABEL_LEFT_DCLICK."));
+    RegisterEvent(wxT("wxEVT_GRID_LABEL_RIGHT_CLICK"),
+                  wxT("wxGridEvent"),
+                  _("The user clicked a label with the right mouse button. Processes a wxEVT_GRID_LABEL_RIGHT_CLICK."));
     RegisterEvent(
-        wxT("wxEVT_GRID_LABEL_RIGHT_CLICK"), wxT("wxGridEvent"),
-        _("The user clicked a label with the right mouse button. Processes a wxEVT_GRID_LABEL_RIGHT_CLICK."));
-    RegisterEvent(
-        wxT("wxEVT_GRID_LABEL_RIGHT_DCLICK"), wxT("wxGridEvent"),
+        wxT("wxEVT_GRID_LABEL_RIGHT_DCLICK"),
+        wxT("wxGridEvent"),
         _("The user double-clicked a label with the right mouse button. Processes a wxEVT_GRID_LABEL_RIGHT_DCLICK."));
-    RegisterEvent(wxT("wxEVT_GRID_SELECT_CELL"), wxT("wxGridEvent"),
+    RegisterEvent(wxT("wxEVT_GRID_SELECT_CELL"),
+                  wxT("wxGridEvent"),
                   _("The user moved to, and selected a cell. Processes a wxEVT_GRID_SELECT_CELL."));
     RegisterEvent(
-        wxT("wxEVT_GRID_COL_MOVE"), wxT("wxGridEvent"),
+        wxT("wxEVT_GRID_COL_MOVE"),
+        wxT("wxGridEvent"),
         _("The user tries to change the order of the columns in the grid by dragging the column specified by GetCol(). "
-          "This event can be vetoed to either prevent the user from reordering the column change completely (but notice "
-          "that if you don't want to allow it at all, you simply shouldn't call wxGrid::EnableDragColMove() in the first "
+          "This event can be vetoed to either prevent the user from reordering the column change completely (but "
+          "notice "
+          "that if you don't want to allow it at all, you simply shouldn't call wxGrid::EnableDragColMove() in the "
+          "first "
           "place), "
           "vetoed but handled in some way in the handler, e.g. by really moving the column to the new position at the "
           "associated table level, "
-          "or allowed to proceed in which case wxGrid::SetColPos() is used to reorder the columns display order without "
+          "or allowed to proceed in which case wxGrid::SetColPos() is used to reorder the columns display order "
+          "without "
           "affecting the use of "
           "the column indices otherwise. This event macro corresponds to wxEVT_GRID_COL_MOVE event type."));
-    RegisterEvent(wxT("wxEVT_GRID_COL_SORT"), wxT("wxGridEvent"),
-                  _("This event is generated when a column is clicked by the user and its name is explained by the fact "
-                    "that the custom reaction to a "
-                    "click on a column is to sort the grid contents by this column. However the grid itself has no "
-                    "special support for sorting and it's "
-                    "up to the handler of this event to update the associated table. But if the event is handled (and "
-                    "not vetoed) the grid supposes that "
-                    "the table was indeed resorted and updates the column to indicate the new sort order and refreshes "
-                    "itself. This event macro corresponds "
-                    "to wxEVT_GRID_COL_SORT event type."));
-    RegisterEvent(wxT("wxEVT_GRID_TABBING"), wxT("wxGridEvent"),
+    RegisterEvent(
+        wxT("wxEVT_GRID_COL_SORT"),
+        wxT("wxGridEvent"),
+        _("This event is generated when a column is clicked by the user and its name is explained by the fact "
+          "that the custom reaction to a "
+          "click on a column is to sort the grid contents by this column. However the grid itself has no "
+          "special support for sorting and it's "
+          "up to the handler of this event to update the associated table. But if the event is handled (and "
+          "not vetoed) the grid supposes that "
+          "the table was indeed resorted and updates the column to indicate the new sort order and refreshes "
+          "itself. This event macro corresponds "
+          "to wxEVT_GRID_COL_SORT event type."));
+    RegisterEvent(wxT("wxEVT_GRID_TABBING"),
+                  wxT("wxGridEvent"),
                   _("This event is generated when the user presses TAB or Shift-TAB in the grid. It can be used to "
                     "customize the simple default TAB handling "
                     "logic, e.g. to go to the next non-empty cell instead of just the next cell. See also "
@@ -118,11 +138,11 @@ wxString GridWrapper::CppCtorCode() const
 
     GetRowsCols(rows, cols);
 
-    for(size_t i = 0; i < rows.size(); ++i) {
+    for (size_t i = 0; i < rows.size(); ++i) {
         cppRowColCode << rows.at(i)->Code(i);
     }
 
-    for(size_t i = 0; i < cols.size(); ++i) {
+    for (size_t i = 0; i < cols.size(); ++i) {
         cppRowColCode << cols.at(i)->Code(i);
     }
 
@@ -140,10 +160,14 @@ wxString GridWrapper::CppCtorCode() const
     cppCode << GetName() << wxT("->EnableEditing(") << PropertyBool(PROP_ALLOW_EDITING) << ");\n";
 
     int colHeight = PropertyInt(PROP_HEIGHT, -1);
-    if(colHeight != -1) { cppCode << GetName() << "->SetColLabelSize(" << colHeight << ");\n"; }
+    if (colHeight != -1) {
+        cppCode << GetName() << "->SetColLabelSize(" << colHeight << ");\n";
+    }
 
     int rowLabelWidth = PropertyInt(PROP_WIDTH, -1);
-    if(rowLabelWidth != -1) { cppCode << GetName() << "->SetRowLabelSize(" << rowLabelWidth << ");\n"; }
+    if (rowLabelWidth != -1) {
+        cppCode << GetName() << "->SetRowLabelSize(" << rowLabelWidth << ");\n";
+    }
     return cppCode;
 }
 
@@ -153,7 +177,7 @@ wxString GridWrapper::GetWxClassName() const { return wxT("wxGrid"); }
 
 void GridWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    if(type == XRC_LIVE) {
+    if (type == XRC_LIVE) {
         // Native wx do not support what we do...
         text << XRCPrefix() << XRCSize() << XRCStyle() << XRCCommonAttributes() << XRCSuffix();
 
@@ -169,7 +193,9 @@ void GridWrapper::ToXRC(wxString& text, XRC_TYPE type) const
         wxString style = StyleFlags();
 
         wxArrayString styleArr = wxCrafter::Split(style, "|");
-        if(styleArr.Index("wxBORDER_THEME") != wxNOT_FOUND) { styleArr.Remove("wxBORDER_THEME"); }
+        if (styleArr.Index("wxBORDER_THEME") != wxNOT_FOUND) {
+            styleArr.Remove("wxBORDER_THEME");
+        }
         style = wxCrafter::Join(styleArr, "|");
         style.Prepend("<style>").Append("</style>");
 #else
@@ -226,14 +252,14 @@ void GridWrapper::UnSerialize(const JSONItem& json)
 
     JSONItem styles = json.namedObject(wxT("m_styles"));
     int nCount = styles.arraySize();
-    for(int i = 0; i < nCount; i++) {
+    for (int i = 0; i < nCount; i++) {
         wxString styleName = styles.arrayItem(i).toString();
         EnableStyle(styleName, true);
     }
 
     JSONItem sizerFlags = json.namedObject(wxT("m_sizerFlags"));
     nCount = sizerFlags.arraySize();
-    for(int i = 0; i < nCount; i++) {
+    for (int i = 0; i < nCount; i++) {
         wxString styleName = sizerFlags.arrayItem(i).toString();
         EnableSizerFlag(styleName, true);
     }
@@ -242,33 +268,33 @@ void GridWrapper::UnSerialize(const JSONItem& json)
     JSONItem properties = json.namedObject(wxT("m_properties"));
     nCount = properties.arraySize();
 
-    for(int i = 0; i < nCount; i++) {
+    for (int i = 0; i < nCount; i++) {
         JSONItem jsonProp = properties.arrayItem(i);
         wxString propLabel = jsonProp.namedObject(wxT("m_label")).toString();
 
-        if(propLabel == PROP_COLS_LIST) {
+        if (propLabel == PROP_COLS_LIST) {
             wxString cols_string = jsonProp.namedObject(wxT("m_value")).toString();
             wxArrayString colsArr = wxCrafter::Split(cols_string, ";");
 
-            for(size_t i = 0; i < colsArr.GetCount(); ++i) {
+            for (size_t i = 0; i < colsArr.GetCount(); ++i) {
                 // The old way of creating rows - create new children and add them here
                 wxcWidget* col = Allocator::Instance()->Create(ID_WXGRIDCOL);
                 col->SetName(colsArr.Item(i));
                 AddChild(col);
             }
 
-        } else if(propLabel == PROP_ROWS_LIST) {
+        } else if (propLabel == PROP_ROWS_LIST) {
             wxString rows_string = jsonProp.namedObject(wxT("m_value")).toString();
             wxArrayString rowsArr = wxCrafter::Split(rows_string, ";");
 
-            for(size_t i = 0; i < rowsArr.GetCount(); ++i) {
+            for (size_t i = 0; i < rowsArr.GetCount(); ++i) {
                 // The old way of creating rows - create new children and add them here
                 wxcWidget* row = Allocator::Instance()->Create(ID_WXGRIDROW);
                 row->SetName(rowsArr.Item(i));
                 AddChild(row);
             }
 
-        } else if(m_properties.Contains(propLabel)) {
+        } else if (m_properties.Contains(propLabel)) {
             m_properties.Item(propLabel)->UnSerialize(jsonProp);
         }
     }
@@ -276,7 +302,7 @@ void GridWrapper::UnSerialize(const JSONItem& json)
     // Unserialize the events
     JSONItem events = json.namedObject(wxT("m_events"));
     nCount = events.arraySize();
-    for(int i = 0; i < nCount; i++) {
+    for (int i = 0; i < nCount; i++) {
         JSONItem jsonEvent = events.arrayItem(i);
         ConnectDetails details;
         details.FromJSON(jsonEvent);
@@ -285,10 +311,12 @@ void GridWrapper::UnSerialize(const JSONItem& json)
 
     JSONItem children = json.namedObject(wxT("m_children"));
     int nChildren = children.arraySize();
-    for(int i = 0; i < nChildren; i++) {
+    for (int i = 0; i < nChildren; i++) {
         JSONItem child = children.arrayItem(i);
         wxcWidget* wrapper = Allocator::Instance()->CreateWrapperFromJSON(child);
-        if(wrapper) { AddChild(wrapper); }
+        if (wrapper) {
+            AddChild(wrapper);
+        }
     }
 }
 

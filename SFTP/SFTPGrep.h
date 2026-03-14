@@ -21,7 +21,7 @@ public:
     bool IsIgnoreCase() const { return m_ignoreCase; }
     const wxString& GetSearchIn() const { return m_searchIn; }
     bool IsWholeWord() const { return m_wholeWord; }
-    
+
     wxString GetGrepCommand(const wxString& path) const;
 };
 

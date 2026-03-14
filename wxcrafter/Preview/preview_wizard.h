@@ -2,6 +2,7 @@
 #define PREVIEWWIZARD_H
 
 #include "wizard_wrapper.h"
+
 #include <wx/wizard.h>
 
 class PreviewWizard : public wxWizard

@@ -9,7 +9,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
 #pragma hdrstop
@@ -18,6 +18,7 @@
 #if wxUSE_XRC && wxUSE_RICHTEXT
 
 #include "myxh_richtext.h"
+
 #include <wx/richtext/richtextctrl.h>
 
 MyWxRichTextCtrlXmlHandler::MyWxRichTextCtrlXmlHandler()
@@ -36,12 +37,19 @@ wxObject* MyWxRichTextCtrlXmlHandler::DoCreateResource()
 {
     XRC_MAKE_INSTANCE(text, wxRichTextCtrl)
 
-    text->Create(m_parentAsWindow, GetID(), GetText(wxT("value")), GetPosition(), GetSize(), GetStyle(),
-                 wxDefaultValidator, GetName());
+    text->Create(m_parentAsWindow,
+                 GetID(),
+                 GetText(wxT("value")),
+                 GetPosition(),
+                 GetSize(),
+                 GetStyle(),
+                 wxDefaultValidator,
+                 GetName());
 
     SetupWindow(text);
 
-    if(HasParam(wxT("maxlength"))) text->SetMaxLength(GetLong(wxT("maxlength")));
+    if (HasParam(wxT("maxlength")))
+        text->SetMaxLength(GetLong(wxT("maxlength")));
 
     return text;
 }

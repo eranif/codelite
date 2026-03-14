@@ -45,7 +45,9 @@ void StaticBitmapWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("bitmap"));
-    if(propertynode) { ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_BUTTON"); }
+    if (propertynode) {
+        ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_BUTTON");
+    }
 }
 
 void StaticBitmapWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -54,7 +56,9 @@ void StaticBitmapWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("bitmap"));
-    if(propertynode) { ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_BUTTON"); }
+    if (propertynode) {
+        ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_BUTTON");
+    }
 }
 
 void StaticBitmapWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -63,7 +67,7 @@ void StaticBitmapWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "bitmap");
-    if(propertynode) {
+    if (propertynode) {
         ImportFromwxFB::ProcessBitmapProperty(propertynode->GetNodeContent(), this, PROP_BITMAP_PATH, "wxART_BUTTON");
     }
 }

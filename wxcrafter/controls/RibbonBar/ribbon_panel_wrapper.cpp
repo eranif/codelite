@@ -23,7 +23,8 @@ RibbonPanelWrapper::RibbonPanelWrapper()
     Add<BitmapPickerProperty>(
         PROP_BITMAP_PATH, "", _("Icon to be used in place of the panel's children when the panel is minimised"));
 
-    RegisterEvent("wxEVT_COMMAND_RIBBONPANEL_EXTBUTTON_ACTIVATED", "wxRibbonPanelEvent",
+    RegisterEvent("wxEVT_COMMAND_RIBBONPANEL_EXTBUTTON_ACTIVATED",
+                  "wxRibbonPanelEvent",
                   _("Triggered when the user activate the panel extension button"));
     m_namePattern = "m_ribbonPanel";
 

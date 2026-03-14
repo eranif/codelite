@@ -42,10 +42,12 @@ void FilePickerProperty::UnSerialize(const JSONItem& json)
 void FilePickerProperty::FixPaths(const wxString& cwd)
 {
     wxString wd = cwd;
-    if(wd.IsEmpty()) { wd = wxcProjectMetadata::Get().GetProjectPath(); }
+    if (wd.IsEmpty()) {
+        wd = wxcProjectMetadata::Get().GetProjectPath();
+    }
 
     wxFileName fn(m_path);
-    if(fn.IsAbsolute() && wd.IsEmpty() == false) {
+    if (fn.IsAbsolute() && wd.IsEmpty() == false) {
         fn.MakeRelativeTo(wd);
         m_path = fn.GetFullPath();
     }

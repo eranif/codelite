@@ -1,8 +1,8 @@
 #ifndef WXCAUITOOLSTICKINESS_H
 #define WXCAUITOOLSTICKINESS_H
 
-#include <wx/bitmap.h>
 #include <wx/aui/auibar.h>
+#include <wx/bitmap.h>
 
 class wxcAuiToolStickiness
 {

@@ -26,12 +26,13 @@
 #ifndef __UnitTestPP__
 #define __UnitTestPP__
 
-#include "plugin.h"
-#include <wx/process.h>
-#include "project.h"
-#include <vector>
-#include "cl_command_event.h"
 #include "clTabTogglerHelper.h"
+#include "cl_command_event.h"
+#include "plugin.h"
+#include "project.h"
+
+#include <vector>
+#include <wx/process.h>
 
 class wxMenuItem;
 class IProcess;
@@ -44,7 +45,7 @@ class UnitTestPP : public IPlugin
     wxString m_output;
     UnitTestsPage* m_outputPage;
     clTabTogglerHelper::Ptr_t m_tabHelper;
-    
+
 public:
     UnitTestPP(IManager* manager);
     ~UnitTestPP() override = default;

@@ -26,7 +26,8 @@ FilePickerCtrlWrapper::FilePickerCtrlWrapper()
     PREPEND_STYLE(wxFLP_USE_TEXTCTRL, false);
     PREPEND_STYLE(wxFLP_DEFAULT_STYLE, true);
 
-    RegisterEvent(wxT("wxEVT_COMMAND_FILEPICKER_CHANGED"), wxT("wxFileDirPickerEvent"),
+    RegisterEvent(wxT("wxEVT_COMMAND_FILEPICKER_CHANGED"),
+                  wxT("wxFileDirPickerEvent"),
                   _("The user changed the file selected in the control either using the button or using text "
                     "control\n(see wxFLP_USE_TEXTCTRL; note that in this case the event is fired\nonly if the user's "
                     "input is valid, e.g. an existing file path if wxFLP_FILE_MUST_EXIST was given)."));
@@ -72,13 +73,19 @@ void FilePickerCtrlWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("value"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "message");
-    if(propertynode) { SetPropertyString(PROP_MESSAGE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MESSAGE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "wildcard");
-    if(propertynode) { SetPropertyString(PROP_WILDCARD, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_WILDCARD, propertynode->GetNodeContent());
+    }
 }
 
 void FilePickerCtrlWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -87,13 +94,19 @@ void FilePickerCtrlWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("path"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "message");
-    if(propertynode) { SetPropertyString(PROP_MESSAGE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MESSAGE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "wildcard");
-    if(propertynode) { SetPropertyString(PROP_WILDCARD, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_WILDCARD, propertynode->GetNodeContent());
+    }
 }
 
 void FilePickerCtrlWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -102,11 +115,17 @@ void FilePickerCtrlWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "value");
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "message");
-    if(propertynode) { SetPropertyString(PROP_MESSAGE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MESSAGE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "wildcard");
-    if(propertynode) { SetPropertyString(PROP_WILDCARD, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_WILDCARD, propertynode->GetNodeContent());
+    }
 }

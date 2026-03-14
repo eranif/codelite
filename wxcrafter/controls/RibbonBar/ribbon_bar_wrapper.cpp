@@ -11,20 +11,27 @@
 RibbonBarWrapper::RibbonBarWrapper()
     : wxcWidget(ID_WXRIBBONBAR)
 {
-    RegisterEvent("wxEVT_COMMAND_RIBBONBAR_PAGE_CHANGED", "wxRibbonBarEvent",
+    RegisterEvent("wxEVT_COMMAND_RIBBONBAR_PAGE_CHANGED",
+                  "wxRibbonBarEvent",
                   _("Triggered after the transition from one page being active to a different page being active."));
-    RegisterEvent("wxEVT_COMMAND_RIBBONBAR_PAGE_CHANGING", "wxRibbonBarEvent",
+    RegisterEvent("wxEVT_COMMAND_RIBBONBAR_PAGE_CHANGING",
+                  "wxRibbonBarEvent",
                   _("Triggered prior to the transition from one page being active to a different page being active, "
                     "and can veto the change."));
-    RegisterEvent("wxEVT_COMMAND_RIBBONBAR_TAB_MIDDLE_DOWN", "wxRibbonBarEvent",
+    RegisterEvent("wxEVT_COMMAND_RIBBONBAR_TAB_MIDDLE_DOWN",
+                  "wxRibbonBarEvent",
                   _("Triggered when the middle mouse button is pressed on a tab."));
-    RegisterEvent("wxEVT_COMMAND_RIBBONBAR_TAB_MIDDLE_UP", "wxRibbonBarEvent",
+    RegisterEvent("wxEVT_COMMAND_RIBBONBAR_TAB_MIDDLE_UP",
+                  "wxRibbonBarEvent",
                   _("Triggered when the middle mouse button is released on a tab."));
-    RegisterEvent("wxEVT_COMMAND_RIBBONBAR_TAB_RIGHT_DOWN", "wxRibbonBarEvent",
+    RegisterEvent("wxEVT_COMMAND_RIBBONBAR_TAB_RIGHT_DOWN",
+                  "wxRibbonBarEvent",
                   _("Triggered when the right mouse button is pressed on a tab."));
-    RegisterEvent("wxEVT_COMMAND_RIBBONBAR_TAB_RIGHT_UP", "wxRibbonBarEvent",
+    RegisterEvent("wxEVT_COMMAND_RIBBONBAR_TAB_RIGHT_UP",
+                  "wxRibbonBarEvent",
                   _("Triggered when the right mouse button is released on a tab."));
-    RegisterEvent("wxEVT_COMMAND_RIBBONBAR_TAB_LEFT_DCLICK", "wxRibbonBarEvent",
+    RegisterEvent("wxEVT_COMMAND_RIBBONBAR_TAB_LEFT_DCLICK",
+                  "wxRibbonBarEvent",
                   _("Triggered when the left mouse button is double clicked on a tab."));
 
     PREPEND_STYLE_TRUE(wxRIBBON_BAR_DEFAULT_STYLE);
@@ -40,7 +47,7 @@ RibbonBarWrapper::RibbonBarWrapper()
     DelProperty(PROP_CONTROL_SPECIFIC_SETTINGS);
     Add<CategoryProperty>("wxRibbonBar");
 
-    const wxArrayString themes = StdToWX::ToArrayString({ "Default", "Generic", "MSW" });
+    const wxArrayString themes = StdToWX::ToArrayString({"Default", "Generic", "MSW"});
     Add<ChoiceProperty>(PROP_RIBBON_THEME, themes, 0, _("Select the ribbon bar theme"));
     m_namePattern = "m_ribbonBar";
     SetName(GenerateName());
@@ -53,9 +60,9 @@ wxString RibbonBarWrapper::CppCtorCode() const
     wxString cppCode;
     cppCode << CPPStandardWxCtor("wxRIBBON_BAR_DEFAULT_STYLE");
     wxString theme = PropertyString(PROP_RIBBON_THEME);
-    if(theme == "MSW") {
+    if (theme == "MSW") {
         cppCode << GetName() << "->SetArtProvider(new wxRibbonMSWArtProvider);\n";
-    } else if(theme == "Generic") {
+    } else if (theme == "Generic") {
         cppCode << GetName() << "->SetArtProvider(new wxRibbonAUIArtProvider);\n";
     } else {
         cppCode << GetName() << "->SetArtProvider(new wxRibbonDefaultArtProvider);\n";
@@ -76,9 +83,9 @@ void RibbonBarWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     text << XRCPrefix() << XRCCommonAttributes() << XRCStyle() << XRCSize();
     // set the theme
     wxString theme = PropertyString(PROP_RIBBON_THEME);
-    if(theme == "Generic") {
+    if (theme == "Generic") {
         theme = "aui";
-    } else if(theme == "MSW") {
+    } else if (theme == "MSW") {
         theme = "msw";
     } else {
         theme = "default";
@@ -94,7 +101,7 @@ void RibbonBarWrapper::SetSelection(RibbonPageWrapper* page)
 {
     for (auto child : GetChildren()) {
         RibbonPageWrapper* p = dynamic_cast<RibbonPageWrapper*>(child);
-        if(p) {
+        if (p) {
             p->Select(p == page);
         }
     }
@@ -104,7 +111,7 @@ RibbonPageWrapper* RibbonBarWrapper::GetSelection() const
 {
     for (auto child : GetChildren()) {
         RibbonPageWrapper* p = dynamic_cast<RibbonPageWrapper*>(child);
-        if(p && p->IsSelected()) {
+        if (p && p->IsSelected()) {
             return p;
         }
     }

@@ -24,25 +24,25 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "svnblameeditor.h"
-#include <wx/menu.h>
-#include <wx/xrc/xmlres.h>
+
 #include "drawingutils.h"
+
 #include <map>
-#include <wx/tokenzr.h>
 #include <wx/font.h>
+#include <wx/menu.h>
 #include <wx/settings.h>
+#include <wx/tokenzr.h>
+#include <wx/xrc/xmlres.h>
 
 BEGIN_EVENT_TABLE(SvnBlameEditor, wxStyledTextCtrl)
-    EVT_CONTEXT_MENU(SvnBlameEditor::OnContextMenu)
+EVT_CONTEXT_MENU(SvnBlameEditor::OnContextMenu)
 END_EVENT_TABLE()
 
 #define MARGIN_STYLE_START 48
 #define MARGIN_FIRST_STYLE 49
 
-SvnBlameEditor::SvnBlameEditor(wxWindow *parent, wxWindowID id,
-                               const wxPoint& pos,
-                               const wxSize& size, long style,
-                               const wxString& name)
+SvnBlameEditor::SvnBlameEditor(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
     : wxStyledTextCtrl(parent, id, pos, size, style, name)
 {
     Initialize();
@@ -51,24 +51,24 @@ SvnBlameEditor::SvnBlameEditor(wxWindow *parent, wxWindowID id,
 void SvnBlameEditor::Initialize()
 {
     // Initialize some styles
-    SetMarginType (0, wxSTC_MARGIN_TEXT  );
-    SetMarginType (1, wxSTC_MARGIN_NUMBER);
-    SetMarginWidth(1, 4 + 5*TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9")));
+    SetMarginType(0, wxSTC_MARGIN_TEXT);
+    SetMarginType(1, wxSTC_MARGIN_NUMBER);
+    SetMarginWidth(1, 4 + 5 * TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9")));
     SetMarginWidth(2, 0);
     SetMarginWidth(3, 0);
     SetMarginWidth(4, 0);
     SetTabWidth(4);
-    
+
     // Define some colors to use
-    StyleSetBackground(MARGIN_STYLE_START + 1,  DrawingUtils::LightColour(wxT("GREEN"),      7.0));
-    StyleSetBackground(MARGIN_STYLE_START + 2,  DrawingUtils::LightColour(wxT("BLUE"),       7.0));
-    StyleSetBackground(MARGIN_STYLE_START + 3,  DrawingUtils::LightColour(wxT("ORANGE"),     7.0));
-    StyleSetBackground(MARGIN_STYLE_START + 4,  DrawingUtils::LightColour(wxT("YELLOW"),     7.0));
-    StyleSetBackground(MARGIN_STYLE_START + 5,  DrawingUtils::LightColour(wxT("PURPLE"),     7.0));
-    StyleSetBackground(MARGIN_STYLE_START + 6,  DrawingUtils::LightColour(wxT("RED"),        7.0));
-    StyleSetBackground(MARGIN_STYLE_START + 7,  DrawingUtils::LightColour(wxT("BROWN"),      7.0));
-    StyleSetBackground(MARGIN_STYLE_START + 8,  DrawingUtils::LightColour(wxT("LIGHT GREY"), 7.0));
-    StyleSetBackground(MARGIN_STYLE_START + 9,  DrawingUtils::LightColour(wxT("SIENNA"),     7.0));
+    StyleSetBackground(MARGIN_STYLE_START + 1, DrawingUtils::LightColour(wxT("GREEN"), 7.0));
+    StyleSetBackground(MARGIN_STYLE_START + 2, DrawingUtils::LightColour(wxT("BLUE"), 7.0));
+    StyleSetBackground(MARGIN_STYLE_START + 3, DrawingUtils::LightColour(wxT("ORANGE"), 7.0));
+    StyleSetBackground(MARGIN_STYLE_START + 4, DrawingUtils::LightColour(wxT("YELLOW"), 7.0));
+    StyleSetBackground(MARGIN_STYLE_START + 5, DrawingUtils::LightColour(wxT("PURPLE"), 7.0));
+    StyleSetBackground(MARGIN_STYLE_START + 6, DrawingUtils::LightColour(wxT("RED"), 7.0));
+    StyleSetBackground(MARGIN_STYLE_START + 7, DrawingUtils::LightColour(wxT("BROWN"), 7.0));
+    StyleSetBackground(MARGIN_STYLE_START + 8, DrawingUtils::LightColour(wxT("LIGHT GREY"), 7.0));
+    StyleSetBackground(MARGIN_STYLE_START + 9, DrawingUtils::LightColour(wxT("SIENNA"), 7.0));
 
     StyleSetBackground(MARGIN_STYLE_START + 10, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHT));
     StyleSetForeground(MARGIN_STYLE_START + 10, wxSystemSettings::GetColour(wxSYS_COLOUR_HIGHLIGHTTEXT));
@@ -87,7 +87,7 @@ void SvnBlameEditor::SetText(const wxString& text)
     wxFont font(defFont.GetPointSize(), wxFONTFAMILY_TELETYPE, wxFONTSTYLE_NORMAL, wxFONTWEIGHT_NORMAL);
 
     wxArrayString lines = wxStringTokenize(text, wxT("\n"), wxTOKEN_RET_DELIMS);
-    for (size_t i=0; i<lines.GetCount(); i++) {
+    for (size_t i = 0; i < lines.GetCount(); i++) {
         wxString revision;
         wxString author;
         wxString text;
@@ -110,8 +110,8 @@ void SvnBlameEditor::SetText(const wxString& text)
             style = (*iter).second;
         } else {
             style = s_style;
-            s_style ++;
-            if (s_style > (MARGIN_STYLE_START+9) )
+            s_style++;
+            if (s_style > (MARGIN_STYLE_START + 9))
                 s_style = MARGIN_FIRST_STYLE;
             authorsColorsMap[author] = style;
         }
@@ -129,7 +129,7 @@ void SvnBlameEditor::SetText(const wxString& text)
         // Keep the revision on in array
         BlameLineInfo info;
         info.revision = revision;
-        info.style    = style;
+        info.style = style;
         m_lineInfo.push_back(info);
     }
 
@@ -139,38 +139,41 @@ void SvnBlameEditor::SetText(const wxString& text)
 
 void SvnBlameEditor::OnContextMenu(wxContextMenuEvent& event)
 {
-    wxPoint pt       = event.GetPosition();
+    wxPoint pt = event.GetPosition();
     wxPoint clientPt = ScreenToClient(pt);
 
     int margin = GetMarginWidth(0); // get the margin width
-    if ( clientPt.x < margin ) {
+    if (clientPt.x < margin) {
 
-        GotoPos( PositionFromPoint(clientPt) );
+        GotoPos(PositionFromPoint(clientPt));
         // Margin context menu
         wxMenu menu;
-        menu.Append( XRCID("svn_highlight_revision"), _("Highlight this revision"), _("Highlight this revision"), false);
-        menu.Connect(XRCID("svn_highlight_revision"), wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(SvnBlameEditor::OnHighlightRevision), NULL, this);
+        menu.Append(XRCID("svn_highlight_revision"), _("Highlight this revision"), _("Highlight this revision"), false);
+        menu.Connect(XRCID("svn_highlight_revision"),
+                     wxEVT_COMMAND_MENU_SELECTED,
+                     wxCommandEventHandler(SvnBlameEditor::OnHighlightRevision),
+                     NULL,
+                     this);
 
         PopupMenu(&menu);
 
     } else {
         wxStyledTextCtrl::OnContextMenu(event);
-
     }
 }
 
 void SvnBlameEditor::OnHighlightRevision(wxCommandEvent& event)
 {
     int line = GetCurrentLine();
-    if(line < (int)m_lineInfo.size() && line >= 0) {
+    if (line < (int)m_lineInfo.size() && line >= 0) {
 
-        BlameLineInfo info  = m_lineInfo.at(line);
-        wxString  revision  = info.revision;
+        BlameLineInfo info = m_lineInfo.at(line);
+        wxString revision = info.revision;
 
         // Loop over the lines and adjust the styles
-        for(size_t i=0; i<m_lineInfo.size(); i++) {
+        for (size_t i = 0; i < m_lineInfo.size(); i++) {
             BlameLineInfo lineInfo = m_lineInfo.at(i);
-            if(lineInfo.revision == revision) {
+            if (lineInfo.revision == revision) {
                 // Highlight this line
                 MarginSetStyle((int)i, 10);
 

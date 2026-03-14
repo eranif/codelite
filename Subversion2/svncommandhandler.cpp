@@ -27,8 +27,8 @@
 
 #include "AsyncProcess/asyncprocess.h"
 
-void SvnCommandHandler::OnProcessOutput(IProcess *process, const wxString& output)
+void SvnCommandHandler::OnProcessOutput(IProcess* process, const wxString& output)
 {
-	wxUnusedVar(process);
-	wxUnusedVar(output);
+    wxUnusedVar(process);
+    wxUnusedVar(output);
 }

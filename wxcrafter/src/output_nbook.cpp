@@ -13,8 +13,8 @@
 #include <wx/textctrl.h>
 #include <wx/xml/xml.h>
 
-OutputNBook::OutputNBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
-                         const wxString& name)
+OutputNBook::OutputNBook(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
     : wxNotebook(parent, id, pos, size, style, name)
 {
 }
@@ -25,9 +25,12 @@ void OutputNBook::CppPageSelected(wxStyledTextCtrl* cpptext, wxStyledTextCtrl* h
     wxString cpp, header;
     wxStringMap_t additionalFiles;
 
-    GUICraftMainPanel::m_MainPanel->GenerateCppOutput(cpp, header, headers, additionalFiles,
-                                                      GUICraftMainPanel::kGenCodeForPreview |
-                                                          GUICraftMainPanel::kGenCodeSelectionOnly);
+    GUICraftMainPanel::m_MainPanel->GenerateCppOutput(
+        cpp,
+        header,
+        headers,
+        additionalFiles,
+        GUICraftMainPanel::kGenCodeForPreview | GUICraftMainPanel::kGenCodeSelectionOnly);
 
     wxString prefix;
     headers = wxCrafter::MakeUnique(headers);
@@ -35,7 +38,7 @@ void OutputNBook::CppPageSelected(wxStyledTextCtrl* cpptext, wxStyledTextCtrl* h
     // Prepare the project additional include files
     wxString projectIncludes;
     const wxArrayString& includes = wxcProjectMetadata::Get().GetIncludeFiles();
-    for(size_t i = 0; i < includes.GetCount(); i++) {
+    for (size_t i = 0; i < includes.GetCount(); i++) {
         projectIncludes << wxT("#include ") << wxCrafter::AddQuotes(includes.Item(i)) << wxT("\n");
     }
     prefix << projectIncludes;
@@ -47,7 +50,7 @@ void OutputNBook::CppPageSelected(wxStyledTextCtrl* cpptext, wxStyledTextCtrl* h
     cppPrefix << wxT("#include \"") << headerFile.GetFullName() << wxT("\"\n");
     cppPrefix << projectIncludes << wxT("\n");
     cppPrefix << "// clang-format on\n\n";
-    
+
     header.Prepend(prefix);
     cpp.Prepend(cppPrefix);
 
@@ -69,7 +72,9 @@ void OutputNBook::XrcPageSelected(wxStyledTextCtrl* text) const
     wxStringInputStream str(output);
     wxStringOutputStream out;
     wxXmlDocument doc(str);
-    if(!doc.Save(out)) { ::wxMessageBox(output); }
+    if (!doc.Save(out)) {
+        ::wxMessageBox(output);
+    }
 
     text->SetReadOnly(false);
     text->SetText(out.GetString());

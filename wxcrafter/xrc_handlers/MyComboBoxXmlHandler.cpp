@@ -1,4 +1,5 @@
 #include "MyComboBoxXmlHandler.h"
+
 #include <wx/combobox.h>
 #include <wx/xml/xml.h>
 #include <wx/xrc/xmlres.h>
@@ -17,7 +18,7 @@ MyComboBoxXmlHandler::MyComboBoxXmlHandler()
 
 wxObject* MyComboBoxXmlHandler::DoCreateResource()
 {
-    if(m_class == wxT("wxComboBox")) {
+    if (m_class == wxT("wxComboBox")) {
         // find the selection
         long selection = GetLong(wxT("selection"), -1);
 
@@ -27,12 +28,22 @@ wxObject* MyComboBoxXmlHandler::DoCreateResource()
 
         XRC_MAKE_INSTANCE(control, wxComboBox)
 
-        control->Create(m_parentAsWindow, GetID(), GetText(wxT("value")), GetPosition(), GetSize(), strList, GetStyle(),
-                        wxDefaultValidator, GetName());
+        control->Create(m_parentAsWindow,
+                        GetID(),
+                        GetText(wxT("value")),
+                        GetPosition(),
+                        GetSize(),
+                        strList,
+                        GetStyle(),
+                        wxDefaultValidator,
+                        GetName());
 
-        if(selection != -1) control->SetSelection(selection);
+        if (selection != -1)
+            control->SetSelection(selection);
 
-        if(HasParam("hint")) { control->SetHint(GetText("hint")); }
+        if (HasParam("hint")) {
+            control->SetHint(GetText("hint"));
+        }
 
         SetupWindow(control);
 
@@ -45,7 +56,8 @@ wxObject* MyComboBoxXmlHandler::DoCreateResource()
 
         // add to the list
         wxString str = GetNodeContent(m_node);
-        if(m_resource->GetFlags() & wxXRC_USE_LOCALE) str = wxGetTranslation(str, m_resource->GetDomain());
+        if (m_resource->GetFlags() & wxXRC_USE_LOCALE)
+            str = wxGetTranslation(str, m_resource->GetDomain());
         strList.Add(str);
 
         return NULL;

@@ -1,4 +1,5 @@
 #include "phplintdlg.h"
+
 #include "lintoptions.h"
 #include "windowattrmanager.h"
 

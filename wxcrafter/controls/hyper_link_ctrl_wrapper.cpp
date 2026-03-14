@@ -18,7 +18,8 @@ HyperLinkCtrlWrapper::HyperLinkCtrlWrapper()
     PREPEND_STYLE_FALSE(wxHL_CONTEXTMENU);
     PREPEND_STYLE_TRUE(wxHL_DEFAULT_STYLE);
 
-    RegisterEvent(wxT("wxEVT_COMMAND_HYPERLINK"), wxT("wxHyperlinkEvent"),
+    RegisterEvent(wxT("wxEVT_COMMAND_HYPERLINK"),
+                  wxT("wxHyperlinkEvent"),
                   _("The hyperlink was (left) clicked. If this event is not handled in user's code (or it's skipped; "
                     "see wxEvent::Skip)\nthen a call to wxLaunchDefaultBrowser is done with the hyperlink's URL."));
 
@@ -55,13 +56,19 @@ wxString HyperLinkCtrlWrapper::CppCtorCode() const
     code << CPPCommonAttributes();
     wxString color;
     color = wxCrafter::ColourToCpp(PropertyString(PROP_NORMAL_COLOR));
-    if(color.IsEmpty() == false) { code << GetName() << wxT("->SetNormalColour(") << color << wxT(");\n"); }
+    if (color.IsEmpty() == false) {
+        code << GetName() << wxT("->SetNormalColour(") << color << wxT(");\n");
+    }
 
     color = wxCrafter::ColourToCpp(PropertyString(PROP_HOVER_COLOR));
-    if(color.IsEmpty() == false) { code << GetName() << wxT("->SetHoverColour(") << color << wxT(");\n"); }
+    if (color.IsEmpty() == false) {
+        code << GetName() << wxT("->SetHoverColour(") << color << wxT(");\n");
+    }
 
     color = wxCrafter::ColourToCpp(PropertyString(PROP_VISITED_COLOR));
-    if(color.IsEmpty() == false) { code << GetName() << wxT("->SetVisitedColour(") << color << wxT(");\n"); }
+    if (color.IsEmpty() == false) {
+        code << GetName() << wxT("->SetVisitedColour(") << color << wxT(");\n");
+    }
     return code;
 }
 
@@ -83,7 +90,9 @@ void HyperLinkCtrlWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node); // Baseclass stuff first
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("url"));
-    if(propertynode) { SetPropertyString(PROP_URL, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_URL, propertynode->GetNodeContent());
+    }
     // XRC doesn't seem to do the other properties
 }
 
@@ -92,16 +101,24 @@ void HyperLinkCtrlWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node); // Baseclass stuff first
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("url"));
-    if(propertynode) { SetPropertyString(PROP_URL, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_URL, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("normal_color"));
-    if(propertynode) { SetPropertyString(PROP_NORMAL_COLOR, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_NORMAL_COLOR, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("hover_color"));
-    if(propertynode) { SetPropertyString(PROP_HOVER_COLOR, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_HOVER_COLOR, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("visited_color"));
-    if(propertynode) { SetPropertyString(PROP_VISITED_COLOR, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VISITED_COLOR, propertynode->GetNodeContent());
+    }
 }
 
 void HyperLinkCtrlWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -110,23 +127,31 @@ void HyperLinkCtrlWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "url");
-    if(propertynode) { SetPropertyString(PROP_URL, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_URL, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "hover_color");
-    if(propertynode) {
+    if (propertynode) {
         wxString col = wxCrafter::ValueToColourString(propertynode->GetNodeContent());
-        if(!col.empty()) { SetPropertyString(PROP_HOVER_COLOR, col); }
+        if (!col.empty()) {
+            SetPropertyString(PROP_HOVER_COLOR, col);
+        }
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "normal_color");
-    if(propertynode) {
+    if (propertynode) {
         wxString col = wxCrafter::ValueToColourString(propertynode->GetNodeContent());
-        if(!col.empty()) { SetPropertyString(PROP_NORMAL_COLOR, col); }
+        if (!col.empty()) {
+            SetPropertyString(PROP_NORMAL_COLOR, col);
+        }
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "visited_color");
-    if(propertynode) {
+    if (propertynode) {
         wxString col = wxCrafter::ValueToColourString(propertynode->GetNodeContent());
-        if(!col.empty()) { SetPropertyString(PROP_VISITED_COLOR, col); }
+        if (!col.empty()) {
+            SetPropertyString(PROP_VISITED_COLOR, col);
+        }
     }
 }

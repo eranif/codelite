@@ -32,7 +32,7 @@ MyWxPropGridXmlHandler::MyWxPropGridXmlHandler()
 
 wxObject* MyWxPropGridXmlHandler::DoCreateResource()
 {
-    if(m_class == wxT("wxPGProperty")) {
+    if (m_class == wxT("wxPGProperty")) {
         HandlePgProperty(m_propertyParent);
 
     } else {
@@ -49,12 +49,12 @@ wxObject* MyWxPropGridXmlHandler::DoCreateResource()
 
         // add the splitter property after the children were added
         int splitterLeft = GetBool("splitterleft");
-        if(splitterLeft) {
+        if (splitterLeft) {
             m_pgmgr->SetSplitterLeft();
         }
 
         int splitterPos = GetLong("splitterpos", wxNOT_FOUND);
-        if(splitterPos != wxNOT_FOUND) {
+        if (splitterPos != wxNOT_FOUND) {
             m_pgmgr->GetPage(0)->SetSplitterPosition(splitterPos);
         }
 
@@ -72,7 +72,7 @@ bool MyWxPropGridXmlHandler::CanHandle(wxXmlNode* node)
 
 void MyWxPropGridXmlHandler::HandlePgProperty(wxPGProperty* parent)
 {
-    if(!HasParam(wxT("proptype"))) {
+    if (!HasParam(wxT("proptype"))) {
         return;
     }
 
@@ -89,73 +89,73 @@ void MyWxPropGridXmlHandler::HandlePgProperty(wxPGProperty* parent)
     wxArrayString items = GetArray(GetParamNode("content"));
 
     wxPGProperty* prop = NULL;
-    if(proptype == "wxIntProperty") {
+    if (proptype == "wxIntProperty") {
         long v;
         value.ToLong(&v);
         prop = DoAppendProperty(parent, new wxIntProperty(label, wxPG_LABEL, v));
 
-    } else if(proptype == "wxFloatProperty") {
+    } else if (proptype == "wxFloatProperty") {
         double v;
         value.ToDouble(&v);
         prop = DoAppendProperty(parent, new wxFloatProperty(label, wxPG_LABEL, v));
 
-    } else if(proptype == "wxBoolProperty") {
+    } else if (proptype == "wxBoolProperty") {
         prop = DoAppendProperty(parent, new wxBoolProperty(label, wxPG_LABEL, value == "1"));
 
-    } else if(proptype == "wxStringProperty") {
+    } else if (proptype == "wxStringProperty") {
         prop = DoAppendProperty(parent, new wxStringProperty(label, wxPG_LABEL, value));
 
-    } else if(proptype == "wxLongStringProperty") {
+    } else if (proptype == "wxLongStringProperty") {
         prop = DoAppendProperty(parent, new wxLongStringProperty(label, wxPG_LABEL, value));
 
-    } else if(proptype == "wxDirProperty") {
+    } else if (proptype == "wxDirProperty") {
         prop = DoAppendProperty(parent, new wxDirProperty(label, wxPG_LABEL, value));
 
-    } else if(proptype == "wxArrayStringProperty") {
+    } else if (proptype == "wxArrayStringProperty") {
         prop = DoAppendProperty(parent, new wxArrayStringProperty(label, wxPG_LABEL, items));
 
-    } else if(proptype == "wxFileProperty") {
+    } else if (proptype == "wxFileProperty") {
         prop = DoAppendProperty(parent, new wxFileProperty(label, wxPG_LABEL, value));
         m_pgmgr->SetPropertyAttribute(prop, wxPG_FILE_WILDCARD, wildcard);
 
-    } else if(proptype == "wxPropertyCategory") {
+    } else if (proptype == "wxPropertyCategory") {
         prop = DoAppendProperty(parent, new wxPropertyCategory(label));
 
-    } else if(proptype == "wxEnumProperty") {
+    } else if (proptype == "wxEnumProperty") {
         int sel = items.Index(value);
-        if(sel == wxNOT_FOUND) {
+        if (sel == wxNOT_FOUND) {
             sel = 0;
         }
 
         prop = DoAppendProperty(parent, new wxEnumProperty(label, wxPG_LABEL, items, wxArrayInt(), sel));
 
-    } else if(proptype == "wxEditEnumProperty") {
+    } else if (proptype == "wxEditEnumProperty") {
         prop = DoAppendProperty(parent, new wxEditEnumProperty(label, wxPG_LABEL, items, wxArrayInt(), value));
 
-    } else if(proptype == "wxFlagsProperty") {
+    } else if (proptype == "wxFlagsProperty") {
         prop = DoAppendProperty(parent, new wxFlagsProperty(label, wxPG_LABEL, items, wxArrayInt(), 0));
 
-    } else if(proptype == "wxDateProperty") {
+    } else if (proptype == "wxDateProperty") {
         prop = DoAppendProperty(parent, new wxDateProperty(label, wxPG_LABEL, wxDateTime::Now()));
 
-    } else if(proptype == "wxImageFileProperty") {
+    } else if (proptype == "wxImageFileProperty") {
         prop = DoAppendProperty(parent, new wxImageFileProperty(label));
 
-    } else if(proptype == "wxFontProperty") {
+    } else if (proptype == "wxFontProperty") {
         prop = DoAppendProperty(parent, new wxFontProperty(label));
         prop->SetValueToUnspecified();
 
-    } else if(proptype == "wxSystemColourProperty") {
+    } else if (proptype == "wxSystemColourProperty") {
         prop = DoAppendProperty(parent, new wxSystemColourProperty(label));
         prop->SetValueToUnspecified();
     }
 
     // Handle nested children
-    if(prop) {
-        if(bgcol.IsOk()) {
+    if (prop) {
+        if (bgcol.IsOk()) {
             prop->SetBackgroundColour(bgcol, bgcolRecurse);
         }
-        if(!propEditor.IsEmpty()) {
+        if (!propEditor.IsEmpty()) {
             prop->SetEditor(propEditor);
         }
         prop->SetHelpString(tip);
@@ -173,13 +173,13 @@ void MyWxPropGridXmlHandler::HandlePgProperty(wxPGProperty* parent)
 
 wxArrayString MyWxPropGridXmlHandler::GetArray(const wxXmlNode* node) const
 {
-    if(!node)
+    if (!node)
         return wxArrayString();
 
     wxArrayString items;
     wxXmlNode* child = node->GetChildren();
-    while(child) {
-        if(child->GetName() == "item") {
+    while (child) {
+        if (child->GetName() == "item") {
             items.Add(child->GetNodeContent());
         }
         child = child->GetNext();
@@ -189,7 +189,7 @@ wxArrayString MyWxPropGridXmlHandler::GetArray(const wxXmlNode* node) const
 
 wxPGProperty* MyWxPropGridXmlHandler::DoAppendProperty(wxPGProperty* parent, wxPGProperty* prop)
 {
-    if(parent) {
+    if (parent) {
         return m_pgmgr->GetPage(0)->AppendIn(parent, prop);
     } else {
         return m_pgmgr->GetPage(0)->Append(prop);

@@ -2,6 +2,7 @@
 #define FRAMEWRAPPER_H
 
 #include "top_level_win_wrapper.h" // Base class: TopLevelWinWrapper
+
 #include <wx/gdicmn.h>
 
 class FrameWrapper : public TopLevelWinWrapper

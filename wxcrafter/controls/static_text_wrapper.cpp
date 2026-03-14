@@ -36,7 +36,7 @@ wxString StaticTextWrapper::CppCtorCode() const
          << wxT(", ") << Label() << wxT(", wxDefaultPosition, ") << SizeAsString() << wxT(", ") << StyleFlags(wxT("0"))
          << wxT(");\n");
 
-    if(wxCrafter::ToNumber(PropertyString(PROP_WRAP), -1) >= 0) { // The default value is -1
+    if (wxCrafter::ToNumber(PropertyString(PROP_WRAP), -1) >= 0) { // The default value is -1
         code << GetName() << "->Wrap(" << PropertyString(PROP_WRAP) << ");\n";
     }
 
@@ -48,7 +48,7 @@ void StaticTextWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
     wxString xrc;
     xrc << XRCPrefix() << XRCLabel() << XRCStyle() << XRCSize() << XRCCommonAttributes();
-    if(wxCrafter::ToNumber(PropertyString(PROP_WRAP), -1) >= 0) { // The default value is -1
+    if (wxCrafter::ToNumber(PropertyString(PROP_WRAP), -1) >= 0) { // The default value is -1
         xrc << wxT("<wrap>") << PropertyString(PROP_WRAP) << wxT("</wrap>");
     }
     xrc << XRCSuffix();
@@ -61,7 +61,9 @@ void StaticTextWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("wrap"));
-    if(propertynode) { SetPropertyString(PROP_WRAP, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_WRAP, propertynode->GetNodeContent());
+    }
 }
 
 // wxSmith doesn't wrap
@@ -72,7 +74,9 @@ void StaticTextWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "wrap");
-    if(propertynode) { SetPropertyString(PROP_WRAP, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_WRAP, propertynode->GetNodeContent());
+    }
 }
 
 wxcWidget* StaticTextWrapper::Clone() const { return new StaticTextWrapper(); }

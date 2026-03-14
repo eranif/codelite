@@ -1,4 +1,5 @@
 #include "TailFrame.h"
+
 #include "TailPanel.h"
 #include "codelite_events.h"
 #include "event_notifier.h"

@@ -39,10 +39,10 @@ public:
     wxPGProperty* AddFilePicker(const wxString& label, const wxString& value, const wxString& tip);
     wxPGProperty* AddLongTextProp(const wxString& label, const wxString& value, const wxString& tip);
     wxPGProperty* AddColorProp(const wxString& label, const wxString& value, const wxString& tip);
-    wxPGProperty* AddComboxProp(const wxString& label, const wxArrayString& options, const wxString& value,
-                                const wxString& tip);
-    wxPGProperty* AddFlags(const wxString& label, const wxArrayString& strings, const wxArrayInt& values, long value,
-                           const wxString& tip);
+    wxPGProperty*
+    AddComboxProp(const wxString& label, const wxArrayString& options, const wxString& value, const wxString& tip);
+    wxPGProperty* AddFlags(
+        const wxString& label, const wxArrayString& strings, const wxArrayInt& values, long value, const wxString& tip);
     wxPGProperty* AddFontProp(const wxString& label, const wxString& value, const wxString& tip);
     wxPGProperty* AddVDPicker(const wxString& label, const wxString& value, const wxString& tip);
     wxPGProperty* AddBmpTextPicker(const wxString& label, const wxString& value, const wxString& tip);

@@ -9,7 +9,8 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include <wx/wxprec.h>
+
 #include "wxgui_helpers.h"
 
 #ifdef __BORLANDC__
@@ -27,6 +28,7 @@
 #define wxOVERRIDE override
 
 #include "myxh_grid.h"
+
 #include <wx/xml/xml.h>
 
 MyWxGridXmlHandler::MyWxGridXmlHandler()
@@ -68,16 +70,16 @@ wxObject* MyWxGridXmlHandler::DoCreateResource()
     // Extract columns info
     GridColInfo::Vector_t columns;
     wxXmlNode* columnsNode = GetParamNode(wxT("columns"));
-    if(columnsNode) {
+    if (columnsNode) {
         wxXmlNode* colnode = columnsNode->GetChildren();
-        while(colnode) {
+        while (colnode) {
             wxXmlNode* colAttr = colnode->GetChildren();
             GridColInfo col;
-            while(colAttr) {
-                if(colAttr->GetName() == "name") {
+            while (colAttr) {
+                if (colAttr->GetName() == "name") {
                     col.label = colAttr->GetNodeContent();
 
-                } else if(colAttr->GetName() == "colsize") {
+                } else if (colAttr->GetName() == "colsize") {
                     colAttr->GetNodeContent().ToCLong(&col.size);
                 }
                 colAttr = colAttr->GetNext();
@@ -90,16 +92,16 @@ wxObject* MyWxGridXmlHandler::DoCreateResource()
     // Extract rows info
     GridRowInfo::Vector_t rows;
     wxXmlNode* rowsNode = GetParamNode(wxT("rows"));
-    if(rowsNode) {
+    if (rowsNode) {
         wxXmlNode* rownode = rowsNode->GetChildren();
-        while(rownode) {
+        while (rownode) {
             wxXmlNode* rowAttr = rownode->GetChildren();
             GridRowInfo row;
-            while(rowAttr) {
-                if(rowAttr->GetName() == "name") {
+            while (rowAttr) {
+                if (rowAttr->GetName() == "name") {
                     row.label = rowAttr->GetNodeContent();
 
-                } else if(rowAttr->GetName() == "rowsize") {
+                } else if (rowAttr->GetName() == "rowsize") {
                     rowAttr->GetNodeContent().ToCLong(&row.size);
                 }
                 rowAttr = rowAttr->GetNext();
@@ -110,24 +112,32 @@ wxObject* MyWxGridXmlHandler::DoCreateResource()
     }
 
     grid->CreateGrid(0, columns.size());
-    for(size_t i = 0; i < columns.size(); ++i) {
+    for (size_t i = 0; i < columns.size(); ++i) {
         grid->SetColLabelValue(i, columns.at(i).label);
 
-        if(columns.at(i).size != -1) { grid->SetColSize(i, columns.at(i).size); }
+        if (columns.at(i).size != -1) {
+            grid->SetColSize(i, columns.at(i).size);
+        }
     }
 
-    if(HasParam(wxT("autosizecol"))) {
-        if(GetLong(wxT("autosizecol")) == 1) { grid->AutoSizeColumns(); }
+    if (HasParam(wxT("autosizecol"))) {
+        if (GetLong(wxT("autosizecol")) == 1) {
+            grid->AutoSizeColumns();
+        }
     }
 
-    if(HasParam(wxT("eidtable"))) { grid->EnableEditing((GetLong(wxT("editable")) == 1)); }
+    if (HasParam(wxT("eidtable"))) {
+        grid->EnableEditing((GetLong(wxT("editable")) == 1));
+    }
 
     // Append the rows
-    for(size_t i = 0; i < rows.size(); ++i) {
+    for (size_t i = 0; i < rows.size(); ++i) {
         int rowid = grid->GetNumberRows();
         grid->AppendRows();
         grid->SetRowLabelValue(rowid, rows.at(i).label);
-        if(rows.at(i).size != -1) { grid->SetRowSize(rowid, rows.at(i).size); }
+        if (rows.at(i).size != -1) {
+            grid->SetRowSize(rowid, rows.at(i).size);
+        }
     }
 
     // Alignment
@@ -146,9 +156,13 @@ wxObject* MyWxGridXmlHandler::DoCreateResource()
     long colLabelHeight = GetLong("col-label-size");
     long rowLabelWidth = GetLong("row-label-size");
 
-    if(colLabelHeight != -1) { grid->SetColLabelSize(colLabelHeight); }
+    if (colLabelHeight != -1) {
+        grid->SetColLabelSize(colLabelHeight);
+    }
 
-    if(rowLabelWidth != -1) { grid->SetRowLabelSize(rowLabelWidth); }
+    if (rowLabelWidth != -1) {
+        grid->SetRowLabelSize(rowLabelWidth);
+    }
 
     SetupWindow(grid);
     return grid;
@@ -159,6 +173,8 @@ bool MyWxGridXmlHandler::CanHandle(wxXmlNode* node) { return IsOfClass(node, wxT
 wxString MyWxGridXmlHandler::GetNodeContent(const wxString& name)
 {
     wxXmlNode* node = GetParamNode(name);
-    if(node) { return node->GetNodeContent(); }
+    if (node) {
+        return node->GetNodeContent();
+    }
     return wxEmptyString;
 }

@@ -32,7 +32,7 @@ wxcWidget* BitmapWrapper::Clone() const { return new BitmapWrapper(); }
 
 wxString BitmapWrapper::CppCtorCode() const
 {
-    const wxArrayString exts = StdToWX::ToArrayString({ "", "@2x", "@1.25x", "@1.5x" });
+    const wxArrayString exts = StdToWX::ToArrayString({"", "@2x", "@1.25x", "@1.5x"});
     wxString bmpPath = PropertyString(PROP_BITMAP_PATH);
     wxFileName fn(bmpPath);
     // Support for hi-res images
@@ -55,8 +55,8 @@ wxString BitmapWrapper::CppCtorCode() const
             cppCode << "    wxBitmap bmp;\n";
             cppCode << "    wxIcon icn;\n";
             cppCode << "    bmp = "
-                    << wxcCodeGeneratorHelper::Get().BitmapCode(PropertyString(PROP_BITMAP_PATH),
-                                                                GetName() + exts.Item(i))
+                    << wxcCodeGeneratorHelper::Get().BitmapCode(
+                           PropertyString(PROP_BITMAP_PATH), GetName() + exts.Item(i))
                     << ";\n";
             cppCode << "    if(bmp.IsOk()) {\n";
             cppCode << "        if((m_imagesWidth == bmp.GetWidth()) && (m_imagesHeight == bmp.GetHeight())){\n";

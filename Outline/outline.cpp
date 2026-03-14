@@ -51,10 +51,7 @@
 //--------------------------------------------
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new SymbolViewPlugin(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new SymbolViewPlugin(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {

@@ -219,7 +219,8 @@ Allocator::Allocator()
     Register(new ScrolledWindowWrapper(), "wxscrolledwindow");
     Register(new NotebookWrapper(), "wxnotebook");
     Register(new NotebookPageWrapper(), "notebook-page");
-    Register(new NotebookPageWrapper(), "notebook-page",
+    Register(new NotebookPageWrapper(),
+             "notebook-page",
              ID_WXTREEBOOK_SUB_PAGE); // re-register the same object but with different ID
     Register(new ToolBookWrapper(), "wxtoolbook");
     Register(new ListBookWrapper(), "wxlistbook");
@@ -387,7 +388,7 @@ wxMenu* Allocator::CreateControlsMenu() const
 
 Allocator* Allocator::Instance()
 {
-    if(ms_instance == 0) {
+    if (ms_instance == 0) {
         ms_instance = new Allocator();
     }
     return ms_instance;
@@ -403,7 +404,7 @@ void Allocator::Release()
 wxcWidget* Allocator::Create(int id)
 {
     Map_t::iterator iter = m_objs.find(id);
-    if(iter == m_objs.end())
+    if (iter == m_objs.end())
         return NULL;
 
     return iter->second->Clone();
@@ -412,7 +413,7 @@ wxcWidget* Allocator::Create(int id)
 void Allocator::Register(wxcWidget* obj, const wxString& bmpname, int id)
 {
     int objId = id;
-    if(objId == -1) {
+    if (objId == -1) {
         objId = obj->GetType();
     }
     m_objs[objId] = obj;
@@ -422,7 +423,7 @@ void Allocator::Register(wxcWidget* obj, const wxString& bmpname, int id)
 int Allocator::GetImageId(int controlId) const
 {
     ImageMap_t::const_iterator iter = m_imageIds.find(controlId);
-    if(iter == m_imageIds.end())
+    if (iter == m_imageIds.end())
         return -1;
     return iter->second;
 }
@@ -433,7 +434,7 @@ wxcWidget* Allocator::CreateWrapperFromJSON(const JSONItem& json)
 
     int type = json.namedObject(wxT("m_type")).toInt();
     wrapper = Create(type);
-    if(!wrapper)
+    if (!wrapper)
         return NULL;
 
     wrapper->UnSerialize(json);
@@ -539,10 +540,10 @@ void Allocator::PrepareMenu(wxMenu& menu, wxcWidget* item)
 {
     // ADD_NEW_CONTROL
     bool isChildOfTreeBook = false;
-    if(item) {
+    if (item) {
         wxcWidget* parent = item->GetParent();
-        while(parent) {
-            if(parent->GetType() == ID_WXTREEBOOK) {
+        while (parent) {
+            if (parent->GetType() == ID_WXTREEBOOK) {
                 isChildOfTreeBook = true;
                 break;
             }
@@ -551,33 +552,33 @@ void Allocator::PrepareMenu(wxMenu& menu, wxcWidget* item)
     }
 
     FLAGS_t flags = DoGetValidMenus(item);
-    if(flags & MT_PG_MANAGER) {
+    if (flags & MT_PG_MANAGER) {
         menu.Append(ID_WXPGPROPERTY, _("Add wxPGProperty"));
     }
-    if(flags & MT_PG_PROPERTY) {
+    if (flags & MT_PG_PROPERTY) {
         menu.Append(ID_WXPGPROPERTY_SUB, _("Add wxPGProperty Child"));
     }
-    if(flags & MT_INFOBAR) {
+    if (flags & MT_INFOBAR) {
         menu.Append(ID_WXINFOBARBUTTON, _("Add Button"));
     }
 
-    if(flags & MT_IMGLIST) {
+    if (flags & MT_IMGLIST) {
         menu.Append(ID_WXBITMAP, _("Add Bitmap"));
     }
 
-    if(flags & MT_GRID) {
+    if (flags & MT_GRID) {
         menu.Append(ID_WXGRIDCOL, _("Add Column"));
         menu.Append(ID_WXGRIDROW, _("Add Row"));
     }
 
-    if(flags & MT_COLLPANE) {
+    if (flags & MT_COLLPANE) {
         menu.Append(ID_WXCOLLAPSIBLEPANE_PANE, _("Add Pane"));
     }
 
-    if(flags & MT_TOOLBAR) {
+    if (flags & MT_TOOLBAR) {
         menu.Append(ID_WXTOOLBARITEM, _("Add Tool"));
         menu.Append(wxID_ANY, _("Add Control"), CreateControlsMenu());
-        if(item->GetType() == ID_WXAUITOOLBAR || item->GetType() == ID_WXAUITOOLBARTOPLEVEL) {
+        if (item->GetType() == ID_WXAUITOOLBAR || item->GetType() == ID_WXAUITOOLBARTOPLEVEL) {
             menu.Append(ID_WXAUITOOLBARLABEL, _("Add Label"));
             menu.Append(ID_WXAUITOOLBARITEM_SPACE, _("Add Spacer"));
             menu.Append(ID_WXAUITOOLBARITEM_STRETCHSPACE, _("Add Stretch Spacer"));
@@ -588,148 +589,148 @@ void Allocator::PrepareMenu(wxMenu& menu, wxcWidget* item)
         menu.Append(ID_WXTOOLBARITEM_SEPARATOR, _("Add Separator"));
     }
 
-    if(flags & MT_MENUBAR) {
+    if (flags & MT_MENUBAR) {
         menu.Append(ID_WXMENU, _("Add wxMenu"));
     }
 
-    if(flags & MT_MENU) {
+    if (flags & MT_MENU) {
         menu.Append(ID_WXMENUITEM, _("Add Menu Item"));
         menu.Append(ID_WXSUBMENU, _("Add Sub Menu"));
     }
 
-    if(flags & MT_TOP_LEVEL) {
+    if (flags & MT_TOP_LEVEL) {
 #if STANDALONE_BUILD
         menu.Append(wxID_NEW, _("New Project..."));
 #endif
         menu.Append(ID_FORM_TYPE, _("Add Form"), CreateTopLevelMenu());
     }
 
-    if(flags & MT_WIZARDPAGE) {
+    if (flags & MT_WIZARDPAGE) {
         menu.Append(ID_WXWIZARDPAGE, _("Add Page"));
     }
 
-    if(flags & MT_SIZERS) {
+    if (flags & MT_SIZERS) {
         menu.Append(wxID_ANY, _("Add Sizer"), CreateSizersMenu());
     }
 
-    if(flags & MT_INSERT_INTO_SIZER) {
+    if (flags & MT_INSERT_INTO_SIZER) {
         menu.Append(wxID_ANY, _("Insert into new Sizer"), CreateInsertIntoSizerMenu());
     }
 
-    if(flags & MT_SIZERS_TYPE) {
+    if (flags & MT_SIZERS_TYPE) {
         menu.Append(wxID_ANY, _("Change wxSizer Type"), CreateSizerTypeMenu());
         menu.AppendSeparator();
     }
 
-    if(flags & MT_AUIMGR) {
+    if (flags & MT_AUIMGR) {
         menu.Append(ID_WXAUIMANAGER, _("Add wxAuiManager"));
     }
 
-    if(flags & MT_CONTAINERS) {
+    if (flags & MT_CONTAINERS) {
         menu.Append(wxID_ANY, _("Add Container"), CreateContainersMenu());
     }
 
-    if(flags & MT_CONTROLS) {
+    if (flags & MT_CONTROLS) {
         menu.Append(wxID_ANY, _("Add Control"), CreateControlsMenu());
     }
 
-    if(flags & MT_RIBBON) {
+    if (flags & MT_RIBBON) {
         menu.Append(ID_WXRIBBONPAGE, _("Add wxRibbonPage"));
     }
 
-    if(flags & MT_RIBBON_PAGE) {
+    if (flags & MT_RIBBON_PAGE) {
         menu.Append(ID_WXRIBBONPANEL, _("Add wxRibbonPanel"));
     }
 
-    if(flags & MT_RIBBON_PANEL) {
+    if (flags & MT_RIBBON_PANEL) {
         menu.Append(ID_WXRIBBONBUTTONBAR, _("Add wxRibbonButtonBar"));
         menu.Append(ID_WXRIBBONTOOLBAR, _("Add wxRibbonToolBar"));
         menu.Append(ID_WXRIBBONGALLERY, _("Add wxRibbonGallery"));
     }
 
-    if(flags & MT_RIBBON_BUTTON_BAR) {
+    if (flags & MT_RIBBON_BUTTON_BAR) {
         menu.Append(ID_WXRIBBONBUTTON, _("Add Button"));
         menu.Append(ID_WXRIBBONDROPDOWNBUTTON, _("Add Dropdown Button"));
         menu.Append(ID_WXRIBBONHYBRIDBUTTON, _("Add Hybrid Button"));
         menu.Append(ID_WXRIBBONTOGGLEBUTTON, _("Add Toggle Button"));
     }
 
-    if(flags & MT_RIBBON_TOOL_BAR) {
+    if (flags & MT_RIBBON_TOOL_BAR) {
         menu.Append(ID_WXRIBBONTOOL, _("Add Tool"));
         menu.Append(ID_WXRIBBONDROPDOWNTOOL, _("Add Dropdown Tool"));
         menu.Append(ID_WXRIBBONHYBRIDTOOL, _("Add Hybrid Tool"));
         menu.Append(ID_WXRIBBONTOGGLETOOL, _("Add Toggle Tool"));
     }
-    if(flags & MT_RIBBON_GALLERY) {
+    if (flags & MT_RIBBON_GALLERY) {
         menu.Append(ID_WXRIBBONGALLERYITME, _("Add Gallery Item"));
     }
 
-    if(flags & MT_NOTEBOOK_PAGES) {
+    if (flags & MT_NOTEBOOK_PAGES) {
         menu.Append(ID_WXPANEL_NOTEBOOK_PAGE, _("Add Notebook Page"));
-        if(isChildOfTreeBook) {
+        if (isChildOfTreeBook) {
             menu.Append(ID_WXTREEBOOK_SUB_PAGE, _("Add Sub Page"));
         }
     }
 
-    if(flags & MT_SPLITTERWIN_PAGES) {
+    if (flags & MT_SPLITTERWIN_PAGES) {
         menu.Append(ID_WXSPLITTERWINDOW_PAGE, _("Add Panel"), _("Add Panel"));
     }
 
-    if(flags & MT_DV_LIST_CTRL_COL) {
+    if (flags & MT_DV_LIST_CTRL_COL) {
         menu.Append(ID_WXDATAVIEWCOL, _("Add Column"));
     }
 
-    if(flags & MT_LIST_CTRL_COLUMNS) {
+    if (flags & MT_LIST_CTRL_COLUMNS) {
         menu.Append(ID_WXLISTCTRL_COL, _("Add List Column"));
     }
 
-    if(flags & MT_TREE_LIST_CTRL_COLUMNS) {
+    if (flags & MT_TREE_LIST_CTRL_COLUMNS) {
         menu.Append(ID_WXTREELISTCTRLCOL, _("Add Column"));
     }
 
-    if(flags & MT_EVENTS) {
+    if (flags & MT_EVENTS) {
         DoAddEventsMenu(menu);
     }
 
-    if(flags & MT_CONTROL_EVENTS) {
+    if (flags & MT_CONTROL_EVENTS) {
         DoAddControlEventsMenu(menu);
     }
 
-    if(flags & MT_PROJECT) {
+    if (flags & MT_PROJECT) {
         DoAddProjectMenu(menu);
     }
 
-    if(flags & MT_PREVIEW_CODE) {
-        if(menu.GetMenuItemCount() != 0)
+    if (flags & MT_PREVIEW_CODE) {
+        if (menu.GetMenuItemCount() != 0)
             menu.AppendSeparator();
         menu.Append(ID_GENERATE_CODE, _("Generate code..."));
     }
 
-    if(flags & MT_TIMER) {
-        if(menu.GetMenuItemCount() != 0)
+    if (flags & MT_TIMER) {
+        if (menu.GetMenuItemCount() != 0)
             menu.AppendSeparator();
         menu.Append(ID_WXTIMER, _("Add wxTimer"));
     }
 
-    if(flags & MT_TASKBARICON) {
-        if(menu.GetMenuItemCount() != 0)
+    if (flags & MT_TASKBARICON) {
+        if (menu.GetMenuItemCount() != 0)
             menu.AppendSeparator();
         menu.Append(ID_WXTASKBARICON, _("Add wxTaskBarIcon"));
     }
 
-    if(flags & MT_EDIT) {
+    if (flags & MT_EDIT) {
         DoAddEditMenu(menu);
     }
 
-    if(flags & MT_PASTE) {
+    if (flags & MT_PASTE) {
         menu.Append(ID_PASTE, _("Paste"));
     }
     // Last, add the common menu
-    if(flags & MT_COMMON_MENU) {
+    if (flags & MT_COMMON_MENU) {
         DoAddCommonMenu(menu);
     }
 
-    if(item && item->GetType() == ID_WXSTDDLGBUTTONSIZER) {
+    if (item && item->GetType() == ID_WXSTDDLGBUTTONSIZER) {
         menu.PrependSeparator();
         menu.Prepend(ID_WXSTDBUTTON, _("Add Button"));
     }
@@ -739,14 +740,14 @@ FLAGS_t Allocator::DoGetValidMenus(wxcWidget* item) const
 {
     // ADD_NEW_CONTROL
     FLAGS_t menuflags = 0;
-    if(!item) {
+    if (!item) {
         menuflags |= MT_PROJECT;
         menuflags |= MT_TOP_LEVEL;
         menuflags |= MT_PASTE;
 
     } else {
 
-        switch(item->GetType()) {
+        switch (item->GetType()) {
         case ID_WXRIBBONGALLERYITME:
             menuflags |= MT_COMMON_MENU;
             menuflags |= MT_EDIT;
@@ -871,7 +872,7 @@ FLAGS_t Allocator::DoGetValidMenus(wxcWidget* item) const
         case ID_WXPANEL_TOPLEVEL:
         case ID_WXPOPUPWINDOW:
             menuflags |= MT_TIMER;
-            if(!item->HasMainSizer() && !item->IsAuiManaged()) {
+            if (!item->HasMainSizer() && !item->IsAuiManaged()) {
                 menuflags |= MT_SIZERS;
                 menuflags |= MT_AUIMGR;
             }
@@ -976,7 +977,7 @@ FLAGS_t Allocator::DoGetValidMenus(wxcWidget* item) const
             {
                 // wxTreebook pages are allowed to have notebook pages as their direct children
                 NotebookPageWrapper* page = dynamic_cast<NotebookPageWrapper*>(item);
-                if(page && page->IsTreebookPage()) {
+                if (page && page->IsTreebookPage()) {
                     menuflags |= MT_NOTEBOOK_PAGES;
                 }
             }
@@ -1019,7 +1020,7 @@ FLAGS_t Allocator::DoGetValidMenus(wxcWidget* item) const
 
 void Allocator::DoAddCommonMenu(wxMenu& menu) const
 {
-    if(menu.GetMenuItemCount() != 0) {
+    if (menu.GetMenuItemCount() != 0) {
         menu.AppendSeparator();
     }
     menu.Append(ID_MOVE_NODE_UP, _("Move Up"));
@@ -1032,7 +1033,7 @@ void Allocator::DoAddCommonMenu(wxMenu& menu) const
 
 void Allocator::DoAddProjectMenu(wxMenu& menu) const
 {
-    if(menu.GetMenuItemCount() != 0) {
+    if (menu.GetMenuItemCount() != 0) {
         menu.AppendSeparator();
     }
     menu.Append(ID_SAVE_WXGUI_PROJECT, _("Save"));
@@ -1053,19 +1054,19 @@ bool Allocator::CanPaste(wxcWidget* source, wxcWidget* target) const
     int insertType = Allocator::Instance()->GetInsertionType(source->GetType(), target->GetType(), false);
 
     // we don't allow moving around top level items
-    if(source->IsTopWindow() && target->IsTopWindow())
+    if (source->IsTopWindow() && target->IsTopWindow())
         // allow copying top level windows
         return true;
 
-    if(insertType == Allocator::INSERT_CHILD) {
+    if (insertType == Allocator::INSERT_CHILD) {
         return true;
 
-    } else if(insertType == Allocator::INSERT_MAIN_SIZER) {
-        if(target->HasMainSizer())
+    } else if (insertType == Allocator::INSERT_MAIN_SIZER) {
+        if (target->HasMainSizer())
             return false;
         else
             return true;
-    } else if(insertType == Allocator::INSERT_SIBLING) {
+    } else if (insertType == Allocator::INSERT_SIBLING) {
         // check that the parent can accept it as a child
         CHECK_POINTER_RET_FALSE(target->GetParent());
         int parentInsertType =
@@ -1079,7 +1080,7 @@ bool Allocator::CanPaste(wxcWidget* source, wxcWidget* target) const
 
 void Allocator::DoAddEditMenu(wxMenu& menu) const
 {
-    if(menu.GetMenuItemCount() != 0)
+    if (menu.GetMenuItemCount() != 0)
         menu.AppendSeparator();
     menu.Append(ID_RENAME, _("Rename..."));
     menu.AppendSeparator();
@@ -1092,7 +1093,7 @@ void Allocator::DoAddEditMenu(wxMenu& menu) const
 void Allocator::DoLink(int selected, int aboutToBeInsert, int relation)
 {
     InsertMap_t::iterator iter = m_relations.find(selected);
-    if(iter == m_relations.end()) {
+    if (iter == m_relations.end()) {
         m_relations.insert(std::make_pair(selected, std::map<int, int>()));
     }
     std::map<int, int>& m = m_relations[selected];
@@ -1105,45 +1106,47 @@ int Allocator::GetInsertionType(int controlId, int targetControlId, bool allowPr
     int selected = wxcWidget::GetWidgetType(targetControlId);
 
     bool selectionIsDirectChildOfAUI = false;
-    if(selectedWidget && selectedWidget->GetParent() && selectedWidget->GetParent()->GetType() == ID_WXAUIMANAGER) {
+    if (selectedWidget && selectedWidget->GetParent() && selectedWidget->GetParent()->GetType() == ID_WXAUIMANAGER) {
         // the selected widget is a direct child of wxAuiManager
         selectionIsDirectChildOfAUI = true;
     }
 
     InsertMap_t::const_iterator iter = m_relations.find(selected);
-    if(iter == m_relations.end())
+    if (iter == m_relations.end())
         return INSERT_NONE;
 
     // Get the relations allowed with 'selected'
     const std::map<int, int>& m = m_relations.find(selected)->second;
     std::map<int, int>::const_iterator itRelation = m.find(aboutToBeInsert);
-    if(itRelation == m.end())
+    if (itRelation == m.end())
         return INSERT_NONE;
 
-    if(selectionIsDirectChildOfAUI && itRelation->second == INSERT_SIBLING) {
+    if (selectionIsDirectChildOfAUI && itRelation->second == INSERT_SIBLING) {
         // allow sibling only if wxAuiManager allows to accept it as child
         const std::map<int, int>& m = m_relations.find(TYPE_AUI_MGR)->second;
         std::map<int, int>::const_iterator it = m.find(aboutToBeInsert);
-        if(it == m.end()) {
+        if (it == m.end()) {
             // not allowed
             return INSERT_NONE;
         }
     }
     int type = itRelation->second;
-    if(type == INSERT_PROMPT_CHILD_OR_SIBLING && allowPrompt) {
+    if (type == INSERT_PROMPT_CHILD_OR_SIBLING && allowPrompt) {
         // there is an ambiguity to resolve here - prompt the user
         int res =
             ::PromptForYesNoDialogWithCheckbox(_("This item can be placed either as a sibling or as a child of the "
                                                  "target widget\nWhere should wxCrafter position this widget?"),
-                                               "wxCrafterInsertionType", _("As a Sibling"), _("As a Child"));
-        if(res == wxID_YES) {
+                                               "wxCrafterInsertionType",
+                                               _("As a Sibling"),
+                                               _("As a Child"));
+        if (res == wxID_YES) {
             return INSERT_SIBLING;
 
         } else {
             return INSERT_CHILD;
         }
 
-    } else if(type == INSERT_PROMPT_CHILD_OR_SIBLING) {
+    } else if (type == INSERT_PROMPT_CHILD_OR_SIBLING) {
         // prefer sibling over child
         return INSERT_CHILD;
 
@@ -1619,192 +1622,192 @@ int Allocator::StringToId(const wxString& classname)
     // ADD_NEW_CONTROL
 
     // First the truncated wxFB top-level names :/
-    if(classname == wxT("Frame"))
+    if (classname == wxT("Frame"))
         return ID_WXFRAME;
-    if(classname == wxT("Dialog"))
+    if (classname == wxT("Dialog"))
         return ID_WXDIALOG;
-    if(classname == wxT("Panel"))
+    if (classname == wxT("Panel"))
         return ID_WXPANEL_TOPLEVEL;
-    if(classname == wxT("Wizard"))
+    if (classname == wxT("Wizard"))
         return ID_WXWIZARD;
-    if(classname == wxT("WizardPageSimple"))
+    if (classname == wxT("WizardPageSimple"))
         return ID_WXWIZARDPAGE;
 
-    if(classname == wxT("wxButton"))
+    if (classname == wxT("wxButton"))
         return ID_WXBUTTON;
-    if(classname == wxT("wxBoxSizer"))
+    if (classname == wxT("wxBoxSizer"))
         return ID_WXBOXSIZER;
-    if(classname == wxT("wxFrame"))
+    if (classname == wxT("wxFrame"))
         return ID_WXFRAME;
-    if(classname == wxT("wxFlexGridSizer"))
+    if (classname == wxT("wxFlexGridSizer"))
         return ID_WXFLEXGRIDSIZER;
-    if(classname == wxT("wxBitmapButton"))
+    if (classname == wxT("wxBitmapButton"))
         return ID_WXBITMAPBUTTON;
-    if(classname == wxT("wxStaticText"))
+    if (classname == wxT("wxStaticText"))
         return ID_WXSTATICTEXT;
-    if(classname == wxT("wxTextCtrl"))
+    if (classname == wxT("wxTextCtrl"))
         return ID_WXTEXTCTRL;
-    if(classname == wxT("wxPanel"))
+    if (classname == wxT("wxPanel"))
         return ID_WXPANEL;
-    if(classname == wxT("wxStaticBitmap"))
+    if (classname == wxT("wxStaticBitmap"))
         return ID_WXSTATICBITMAP;
-    if(classname == wxT("wxComboBox"))
+    if (classname == wxT("wxComboBox"))
         return ID_WXCOMBOBOX;
-    if(classname == wxT("wxChoice"))
+    if (classname == wxT("wxChoice"))
         return ID_WXCHOICE;
-    if(classname == wxT("wxListBox"))
+    if (classname == wxT("wxListBox"))
         return ID_WXLISTBOX;
-    if(classname == wxT("wxListCtrl"))
+    if (classname == wxT("wxListCtrl"))
         return ID_WXLISTCTRL;
-    if(classname == wxT("listcol"))
+    if (classname == wxT("listcol"))
         return ID_WXLISTCTRL_COL;
-    if(classname == wxT("wxCheckBox"))
+    if (classname == wxT("wxCheckBox"))
         return ID_WXCHECKBOX;
-    if(classname == wxT("wxRadioBox"))
+    if (classname == wxT("wxRadioBox"))
         return ID_WXRADIOBOX;
-    if(classname == wxT("wxRadioButton"))
+    if (classname == wxT("wxRadioButton"))
         return ID_WXRADIOBUTTON;
-    if(classname == wxT("wxStaticLine"))
+    if (classname == wxT("wxStaticLine"))
         return ID_WXSTATICLINE;
-    if(classname == wxT("wxSlider"))
+    if (classname == wxT("wxSlider"))
         return ID_WXSLIDER;
-    if(classname == wxT("wxGauge"))
+    if (classname == wxT("wxGauge"))
         return ID_WXGAUGE;
-    if(classname == wxT("wxDialog"))
+    if (classname == wxT("wxDialog"))
         return ID_WXDIALOG;
-    if(classname == wxT("wxTreeCtrl"))
+    if (classname == wxT("wxTreeCtrl"))
         return ID_WXTREECTRL;
-    if(classname == wxT("wxHtmlWindow"))
+    if (classname == wxT("wxHtmlWindow"))
         return ID_WXHTMLWIN;
-    if(classname == wxT("wxRichTextCtrl"))
+    if (classname == wxT("wxRichTextCtrl"))
         return ID_WXRICHTEXT;
-    if(classname == wxT("wxCheckListBox"))
+    if (classname == wxT("wxCheckListBox"))
         return ID_WXCHECKLISTBOX;
-    if(classname == wxT("wxGrid"))
+    if (classname == wxT("wxGrid"))
         return ID_WXGRID;
-    if(classname == wxT("wxToggleButton"))
+    if (classname == wxT("wxToggleButton"))
         return ID_WXTOGGLEBUTTON;
-    if(classname == wxT("wxBitmapToggleButton"))
+    if (classname == wxT("wxBitmapToggleButton"))
         return ID_WXBITMAPTOGGLEBUTTON;
-    if(classname == wxT("wxSearchCtrl"))
+    if (classname == wxT("wxSearchCtrl"))
         return ID_WXSEARCHCTRL;
-    if(classname == wxT("wxColourPickerCtrl"))
+    if (classname == wxT("wxColourPickerCtrl"))
         return ID_WXCOLORPICKER;
-    if(classname == wxT("wxFontPickerCtrl"))
+    if (classname == wxT("wxFontPickerCtrl"))
         return ID_WXFONTPICKER;
-    if(classname == wxT("wxFilePickerCtrl"))
+    if (classname == wxT("wxFilePickerCtrl"))
         return ID_WXFILEPICKER;
-    if(classname == wxT("wxDirPickerCtrl"))
+    if (classname == wxT("wxDirPickerCtrl"))
         return ID_WXDIRPICKER;
-    if(classname == wxT("wxDatePickerCtrl"))
+    if (classname == wxT("wxDatePickerCtrl"))
         return ID_WXDATEPICKER;
-    if(classname == wxT("wxCalendarCtrl"))
+    if (classname == wxT("wxCalendarCtrl"))
         return ID_WXCALEDARCTRL;
-    if(classname == wxT("wxScrollBar"))
+    if (classname == wxT("wxScrollBar"))
         return ID_WXSCROLLBAR;
-    if(classname == wxT("wxSpinCtrl"))
+    if (classname == wxT("wxSpinCtrl"))
         return ID_WXSPINCTRL;
-    if(classname == wxT("wxSpinButton"))
+    if (classname == wxT("wxSpinButton"))
         return ID_WXSPINBUTTON;
-    if(classname == wxT("wxHyperlinkCtrl"))
+    if (classname == wxT("wxHyperlinkCtrl"))
         return ID_WXHYPERLINK;
-    if(classname == wxT("wxGenericDirCtrl"))
+    if (classname == wxT("wxGenericDirCtrl"))
         return ID_WXGENERICDIRCTRL;
-    if(classname == wxT("wxScrolledWindow"))
+    if (classname == wxT("wxScrolledWindow"))
         return ID_WXSCROLLEDWIN;
-    if(classname == wxT("wxNotebook"))
+    if (classname == wxT("wxNotebook"))
         return ID_WXNOTEBOOK;
-    if(classname == wxT("wxToolbook"))
+    if (classname == wxT("wxToolbook"))
         return ID_WXTOOLBOOK;
-    if(classname == wxT("wxListbook"))
+    if (classname == wxT("wxListbook"))
         return ID_WXLISTBOOK;
-    if(classname == wxT("wxChoicebook"))
+    if (classname == wxT("wxChoicebook"))
         return ID_WXCHOICEBOOK;
-    if(classname == wxT("wxTreebook"))
+    if (classname == wxT("wxTreebook"))
         return ID_WXTREEBOOK;
-    if(classname == wxT("notebookpage"))
+    if (classname == wxT("notebookpage"))
         return ID_WXPANEL_NOTEBOOK_PAGE;
-    if(classname == wxT("choicebookpage"))
+    if (classname == wxT("choicebookpage"))
         return ID_WXPANEL_NOTEBOOK_PAGE;
-    if(classname == wxT("listbookpage"))
+    if (classname == wxT("listbookpage"))
         return ID_WXPANEL_NOTEBOOK_PAGE;
-    if(classname == wxT("treebookpage"))
+    if (classname == wxT("treebookpage"))
         return ID_WXPANEL_NOTEBOOK_PAGE; // Not ID_WXTREEBOOK_SUB_PAGE, which is only used from the AddSubpage menuitem
-    if(classname == wxT("wxSplitterWindow"))
+    if (classname == wxT("wxSplitterWindow"))
         return ID_WXSPLITTERWINDOW;
-    if(classname == wxT("splitteritem"))
+    if (classname == wxT("splitteritem"))
         return ID_WXSPLITTERWINDOW_PAGE; // XRCed doesn't use this, but wxFB calls it 'splitteritem'
-    if(classname == wxT("wxStaticBoxSizer"))
+    if (classname == wxT("wxStaticBoxSizer"))
         return ID_WXSTATICBOXSIZER;
-    if(classname == wxT("wxWizard"))
+    if (classname == wxT("wxWizard"))
         return ID_WXWIZARD;
-    if(classname == wxT("wxWizardPage"))
+    if (classname == wxT("wxWizardPage"))
         return ID_WXWIZARDPAGE;
-    if(classname == wxT("wxWizardPageSimple"))
+    if (classname == wxT("wxWizardPageSimple"))
         return ID_WXWIZARDPAGE;
-    if(classname == wxT("wxGridSizer"))
+    if (classname == wxT("wxGridSizer"))
         return ID_WXGRIDSIZER;
-    if(classname == wxT("wxGridBagSizer"))
+    if (classname == wxT("wxGridBagSizer"))
         return ID_WXGRIDBAGSIZER;
-    if(classname == wxT("spacer"))
+    if (classname == wxT("spacer"))
         return ID_WXSPACER;
-    if(classname == wxT("wxSpacer"))
+    if (classname == wxT("wxSpacer"))
         return ID_WXSPACER; // XRC actually uses "spacer", but keep this duplicate for completeness
-    if(classname == wxT("wxStdDialogButtonSizer"))
+    if (classname == wxT("wxStdDialogButtonSizer"))
         return ID_WXSTDDLGBUTTONSIZER;
-    if(classname == wxT("stdbutton"))
+    if (classname == wxT("stdbutton"))
         return ID_WXSTDBUTTON;
-    if(classname == wxT("wxAuiNotebook"))
+    if (classname == wxT("wxAuiNotebook"))
         return ID_WXAUINOTEBOOK;
-    if(classname == wxT("wxMenuBar"))
+    if (classname == wxT("wxMenuBar"))
         return ID_WXMENUBAR;
-    if(classname == wxT("wxMenu"))
+    if (classname == wxT("wxMenu"))
         return ID_WXMENU;
-    if(classname == wxT("wxMenuItem"))
+    if (classname == wxT("wxMenuItem"))
         return ID_WXMENUITEM;
-    if(classname == wxT("submenu"))
+    if (classname == wxT("submenu"))
         return ID_WXSUBMENU;
-    if(classname == wxT("wxToolBar"))
+    if (classname == wxT("wxToolBar"))
         return ID_WXTOOLBAR;
-    if(classname == wxT("tool"))
+    if (classname == wxT("tool"))
         return ID_WXTOOLBARITEM;
-    if(classname == wxT("toolSeparator"))
+    if (classname == wxT("toolSeparator"))
         return ID_WXTOOLBARITEM;
-    if(classname == wxT("space"))
+    if (classname == wxT("space"))
         return ID_WXTOOLBARITEM;
-    if(classname == wxT("separator"))
+    if (classname == wxT("separator"))
         return ID_WXMENUITEM; // but in XRC could actually be a toolbar separator
-    if(classname == wxT("wxAuiToolBar"))
+    if (classname == wxT("wxAuiToolBar"))
         return ID_WXAUITOOLBAR;
-    if(classname == wxT("label"))
+    if (classname == wxT("label"))
         return ID_WXAUITOOLBARLABEL;
-    if(classname == wxT("wxStatusBar"))
+    if (classname == wxT("wxStatusBar"))
         return ID_WXSTATUSBAR;
-    if(classname == wxT("unknown"))
+    if (classname == wxT("unknown"))
         return ID_WXCUSTOMCONTROL; // XRC
-    if(classname == wxT("CustomControl"))
+    if (classname == wxT("CustomControl"))
         return ID_WXCUSTOMCONTROL; // wxFB
-    if(classname == wxT("Custom"))
+    if (classname == wxT("Custom"))
         return ID_WXCUSTOMCONTROL; // wxSmith
-    if(classname == wxT("wxDataViewListCtrl"))
+    if (classname == wxT("wxDataViewListCtrl"))
         return ID_WXDATAVIEWLISTCTRL;
-    if(classname == wxT("wxDataViewColumn"))
+    if (classname == wxT("wxDataViewColumn"))
         return ID_WXDATAVIEWCOL;
-    if(classname == wxT("wxPopupWindow"))
+    if (classname == wxT("wxPopupWindow"))
         return ID_WXPOPUPWINDOW;
-    if(classname == wxT("wxSimplebook"))
+    if (classname == wxT("wxSimplebook"))
         return ID_WXSIMPLEBOOK;
-    if(classname == wxT("wxScintilla"))
+    if (classname == wxT("wxScintilla"))
         return ID_WXSTC; // wxFB (sometimes?)
-    if(classname == wxT("wxTreeListCtrl"))
+    if (classname == wxT("wxTreeListCtrl"))
         return ID_WXTREELISTCTRL;
-    if(classname == wxT("wxAnimationCtrl"))
+    if (classname == wxT("wxAnimationCtrl"))
         return ID_WXANIMATIONCTRL;
-    if(classname == wxT("wxSimpleHtmlListBox"))
+    if (classname == wxT("wxSimpleHtmlListBox"))
         return ID_WXSIMPLEHTMLLISTBOX;
-    if(classname == wxT("wxActivityIndicator"))
+    if (classname == wxT("wxActivityIndicator"))
         return ID_WXACTIVITYINDICATOR;
-    if(classname == wxT("wxTimePickerCtrl"))
+    if (classname == wxT("wxTimePickerCtrl"))
         return ID_WXTIMEPICKERCTRL;
     return wxNOT_FOUND;
 };

@@ -1,7 +1,8 @@
 #include "SvnShowRecentChangesDlg.h"
-#include "macros.h"
+
 #include "ColoursAndFontsManager.h"
 #include "lexer_configuration.h"
+#include "macros.h"
 
 struct SvnShowDiffChunkUI : public wxClientData {
     SvnShowDiffChunk m_chunk;
@@ -22,12 +23,12 @@ SvnShowRecentChangesDlg::SvnShowRecentChangesDlg(wxWindow* parent, const SvnShow
     m_listBoxRevisions->Select(0);
 
     LexerConf::Ptr_t diffLexer = ColoursAndFontsManager::Get().GetLexer("diff");
-    if(diffLexer) {
+    if (diffLexer) {
         diffLexer->Apply(m_stcDiff);
     }
 
     LexerConf::Ptr_t textLexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(textLexer) {
+    if (textLexer) {
         textLexer->Apply(m_stcComment);
     }
     DoSelectRevision(0);
@@ -36,7 +37,8 @@ SvnShowRecentChangesDlg::SvnShowRecentChangesDlg(wxWindow* parent, const SvnShow
 void SvnShowRecentChangesDlg::OnRevisionSelected(wxCommandEvent& event)
 {
     int where = event.GetSelection();
-    if(where == wxNOT_FOUND) return;
+    if (where == wxNOT_FOUND)
+        return;
     DoSelectRevision(where);
 }
 
@@ -52,6 +54,6 @@ void SvnShowRecentChangesDlg::DoSelectRevision(int index)
     m_stcDiff->SetReadOnly(false);
     m_stcDiff->SetText(chunk->m_chunk.diff);
     m_stcDiff->SetReadOnly(true);
-    
+
     m_staticTextDesc->SetLabel(chunk->m_chunk.description);
 }

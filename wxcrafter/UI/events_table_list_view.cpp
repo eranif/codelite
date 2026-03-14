@@ -12,9 +12,12 @@ wxString PLACE_HOLDER = "";
 wxDECLARE_EVENT(wxEVT_EVENTS_PROPERTIES_UPDATED, wxCommandEvent);
 
 EventsTableListView::EventsTableListView(wxWindow* parent)
-    : wxPropertyGridManager(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize,
-                            wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED | wxPG_DESCRIPTION |
-                                wxCrafter::GetControlBorder())
+    : wxPropertyGridManager(
+          parent,
+          wxID_ANY,
+          wxDefaultPosition,
+          wxDefaultSize,
+          wxPG_SPLITTER_AUTO_CENTER | wxPG_BOLD_MODIFIED | wxPG_DESCRIPTION | wxCrafter::GetControlBorder())
     , m_eventsDb(NULL)
 {
     Connect(wxEVT_PG_CHANGED, wxPropertyGridEventHandler(EventsTableListView::OnPropertyChanged), NULL, this);
@@ -38,14 +41,14 @@ void EventsTableListView::Construct(EventsEditorPane* dlg, wxcWidget* control, c
     for (const auto& [_, cd] : events.GetEvents()) {
         wxString eventName = cd.GetEventName();
         eventName.Trim().Trim(false);
-        if(eventName.IsEmpty())
+        if (eventName.IsEmpty())
             continue;
 
         // Check to see if this event has a user defined function
         wxString fooname;
-        if(control->HasEvent(eventName)) {
+        if (control->HasEvent(eventName)) {
             fooname = control->GetEvent(eventName).GetFunctionNameAndSignature();
-        } else if(!cd.GetFunctionNameAndSignature().empty()) {
+        } else if (!cd.GetFunctionNameAndSignature().empty()) {
             // A few events (well, just 1 atm) come with a default function
             fooname = cd.GetFunctionNameAndSignature();
         } else {
@@ -64,7 +67,7 @@ void EventsTableListView::Save()
     wxPropertyGrid* grid = GetGrid();
 
     wxPropertyGridIterator it;
-    for(it = grid->GetIterator(); !it.AtEnd(); it++) {
+    for (it = grid->GetIterator(); !it.AtEnd(); it++) {
         wxPGProperty* p = *it;
         wxString event = p->GetLabel();
         wxString func = p->GetValueAsString();
@@ -72,10 +75,10 @@ void EventsTableListView::Save()
         func.Trim().Trim(false);
 
         // If the handler is empty delete the event
-        if(func.IsEmpty() || func == PLACE_HOLDER) {
+        if (func.IsEmpty() || func == PLACE_HOLDER) {
             m_control->RemoveEvent(event);
 
-        } else if(m_eventsDb) {
+        } else if (m_eventsDb) {
             ConnectDetails cd = m_eventsDb->GetEvents().Item(event);
             cd.MakeSignatureForName(func);
             // insert or update

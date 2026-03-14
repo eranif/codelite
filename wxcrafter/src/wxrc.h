@@ -62,13 +62,14 @@ private:
         wxString classValue;
         wxString nameValue;
         wxXmlNode* children;
-        while(node) {
-            if(node->GetName() == wxT("object") && node->GetAttribute(wxT("class"), &classValue) &&
-               node->GetAttribute(wxT("name"), &nameValue)) {
+        while (node) {
+            if (node->GetName() == wxT("object") && node->GetAttribute(wxT("class"), &classValue) &&
+                node->GetAttribute(wxT("name"), &nameValue)) {
                 m_wdata.Add(XRCWidgetData(nameValue, classValue));
             }
             children = node->GetChildren();
-            if(children) BrowseXmlNode(children);
+            if (children)
+                BrowseXmlNode(children);
             node = node->GetNext();
         }
     }
@@ -78,12 +79,12 @@ public:
         : m_className(className)
         , m_parentClassName(parentClassName)
     {
-        if(className == wxT("wxMenu")) {
+        if (className == wxT("wxMenu")) {
             m_ancestorClassNames.insert(wxT("wxMenu"));
             m_ancestorClassNames.insert(wxT("wxMenuBar"));
-        } else if(className == wxT("wxMDIChildFrame")) {
+        } else if (className == wxT("wxMDIChildFrame")) {
             m_ancestorClassNames.insert(wxT("wxMDIParentFrame"));
-        } else if(className == wxT("wxMenuBar") || className == wxT("wxStatusBar") || className == wxT("wxToolBar")) {
+        } else if (className == wxT("wxMenuBar") || className == wxT("wxStatusBar") || className == wxT("wxToolBar")) {
             m_ancestorClassNames.insert(wxT("wxFrame"));
         } else {
             m_ancestorClassNames.insert(wxT("wxWindow"));
@@ -96,9 +97,9 @@ public:
 
     bool CanBeUsedWithXRCCTRL(const wxString& name)
     {
-        if(name == wxT("tool") || name == wxT("data") || name == wxT("unknown") || name == wxT("notebookpage") ||
-           name == wxT("separator") || name == wxT("sizeritem") || name == wxT("wxMenu") || name == wxT("wxMenuBar") ||
-           name == wxT("wxMenuItem") || name.EndsWith(wxT("Sizer"))) {
+        if (name == wxT("tool") || name == wxT("data") || name == wxT("unknown") || name == wxT("notebookpage") ||
+            name == wxT("separator") || name == wxT("sizeritem") || name == wxT("wxMenu") || name == wxT("wxMenuBar") ||
+            name == wxT("wxMenuItem") || name.EndsWith(wxT("Sizer"))) {
             return false;
         }
         return true;
@@ -109,19 +110,23 @@ public:
 
         file.Write(wxT("class ") + m_className + wxT(" : public ") + m_parentClassName + wxT(" {\nprotected:\n"));
         size_t i;
-        for(i = 0; i < m_wdata.GetCount(); ++i) {
+        for (i = 0; i < m_wdata.GetCount(); ++i) {
             const XRCWidgetData& w = m_wdata.Item(i);
-            if(!CanBeUsedWithXRCCTRL(w.GetClass())) continue;
-            if(w.GetName().empty()) continue;
+            if (!CanBeUsedWithXRCCTRL(w.GetClass()))
+                continue;
+            if (w.GetName().empty())
+                continue;
             file.Write(wxT(" ") + w.GetClass() + wxT("* ") + w.GetName() + wxT(";\n"));
         }
         file.Write(wxT("\nprivate:\n void InitWidgetsFromXRC(wxWindow *parent){\n")
                        wxT("  wxXmlResource::Get()->LoadObject(this,parent,wxT(\"") +
                    m_className + wxT("\"), wxT(\"") + m_parentClassName + wxT("\"));\n"));
-        for(i = 0; i < m_wdata.GetCount(); ++i) {
+        for (i = 0; i < m_wdata.GetCount(); ++i) {
             const XRCWidgetData& w = m_wdata.Item(i);
-            if(!CanBeUsedWithXRCCTRL(w.GetClass())) continue;
-            if(w.GetName().empty()) continue;
+            if (!CanBeUsedWithXRCCTRL(w.GetClass()))
+                continue;
+            if (w.GetName().empty())
+                continue;
             file.Write(wxT("  ") + w.GetName() + wxT(" = XRCCTRL(*this,\"") + w.GetName() + wxT("\",") + w.GetClass() +
                        wxT(");\n"));
         }
@@ -129,7 +134,7 @@ public:
 
         file.Write(wxT("public:\n"));
 
-        if(m_ancestorClassNames.size() == 1) {
+        if (m_ancestorClassNames.size() == 1) {
             file.Write(m_className + wxT("(") + *m_ancestorClassNames.begin() + wxT(" *parent=NULL){\n") +
                        wxT("  InitWidgetsFromXRC((wxWindow *)parent);\n") wxT(" }\n") wxT("};\n"));
         } else {

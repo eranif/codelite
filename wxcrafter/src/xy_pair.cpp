@@ -32,13 +32,15 @@ wxString XYPair::ToString(bool withBraces) const
 {
     wxString str;
     str << m_x << wxT(",") << m_y;
-    if(withBraces) { str.Prepend(wxT("(")).Append(wxT(")")); }
+    if (withBraces) {
+        str.Prepend(wxT("(")).Append(wxT(")"));
+    }
     return str;
 }
 
 bool XYPair::operator>(const XYPair& xy) const
 {
-    if(GetX() == xy.GetX()) {
+    if (GetX() == xy.GetX()) {
         return GetY() > xy.GetY();
 
     } else {

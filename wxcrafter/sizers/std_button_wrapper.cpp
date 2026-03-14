@@ -14,10 +14,18 @@ StdButtonWrapper::StdButtonWrapper()
     : wxcWidget(ID_WXSTDBUTTON)
 {
     m_properties.Clear();
-    const wxArrayString ids = StdToWX::ToArrayString({ "wxID_OK", "wxID_YES", "wxID_SAVE", "wxID_APPLY", "wxID_CLOSE",
-                                                       "wxID_NO", "wxID_CANCEL", "wxID_HELP", "wxID_CONTEXT_HELP" });
+    const wxArrayString ids = StdToWX::ToArrayString({"wxID_OK",
+                                                      "wxID_YES",
+                                                      "wxID_SAVE",
+                                                      "wxID_APPLY",
+                                                      "wxID_CLOSE",
+                                                      "wxID_NO",
+                                                      "wxID_CANCEL",
+                                                      "wxID_HELP",
+                                                      "wxID_CONTEXT_HELP"});
 
-    RegisterEvent(wxT("wxEVT_COMMAND_BUTTON_CLICKED"), wxT("wxCommandEvent"),
+    RegisterEvent(wxT("wxEVT_COMMAND_BUTTON_CLICKED"),
+                  wxT("wxCommandEvent"),
                   _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."),
                   wxT("wxCommandEventHandler"));
 
@@ -36,7 +44,9 @@ wxString StdButtonWrapper::CppCtorCode() const
 {
     wxString code;
     code << CPPStandardWxCtorWithLabel("0");
-    if(PropertyString(PROP_DEFAULT_BUTTON) == wxT("1")) { code << GetName() << wxT("->SetDefault();\n"); }
+    if (PropertyString(PROP_DEFAULT_BUTTON) == wxT("1")) {
+        code << GetName() << wxT("->SetDefault();\n");
+    }
     code << CPPCommonAttributes();
     return code;
 }
@@ -59,7 +69,9 @@ void StdButtonWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("default"));
-    if(propertynode) { SetPropertyString(PROP_DEFAULT_BUTTON, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_DEFAULT_BUTTON, propertynode->GetNodeContent());
+    }
 }
 
 // wxFB doesn't do anything here

@@ -53,7 +53,7 @@ public:
 
     void SetEnabled(bool enabled) { this->m_enabled = enabled; }
     bool IsEnabled() const { return m_enabled; }
-    
+
     WordCompletionSettings& Load();
     WordCompletionSettings& Save();
 };

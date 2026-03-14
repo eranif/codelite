@@ -1,4 +1,5 @@
 #include "myxh_cmdlinkbtn.h"
+
 #include <wx/commandlinkbutton.h>
 
 MyWxCommandLinkButtonXmlHandler::MyWxCommandLinkButtonXmlHandler()
@@ -16,10 +17,19 @@ wxObject* MyWxCommandLinkButtonXmlHandler::DoCreateResource()
 {
     XRC_MAKE_INSTANCE(button, wxCommandLinkButton)
 
-    button->Create(m_parentAsWindow, GetID(), GetText(wxS("label")), GetText(wxS("note")), GetPosition(), GetSize(),
-                   GetStyle(), wxDefaultValidator, GetName());
+    button->Create(m_parentAsWindow,
+                   GetID(),
+                   GetText(wxS("label")),
+                   GetText(wxS("note")),
+                   GetPosition(),
+                   GetSize(),
+                   GetStyle(),
+                   wxDefaultValidator,
+                   GetName());
     wxBitmap bmp = GetBitmap();
-    if(bmp.IsOk()) { button->SetBitmap(GetBitmap(), wxLEFT); }
+    if (bmp.IsOk()) {
+        button->SetBitmap(GetBitmap(), wxLEFT);
+    }
     SetupWindow(button);
     return button;
 }

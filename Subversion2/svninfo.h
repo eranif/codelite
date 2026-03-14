@@ -31,15 +31,15 @@
 class SvnInfo
 {
 public:
-	wxString m_url;
-	wxString m_sourceUrl;
-	wxString m_revision;
-	wxString m_author;
-	wxString m_date;
+    wxString m_url;
+    wxString m_sourceUrl;
+    wxString m_revision;
+    wxString m_author;
+    wxString m_date;
 
 public:
-	SvnInfo() {}
-	~SvnInfo() {}
+    SvnInfo() {}
+    ~SvnInfo() {}
 };
 
 #endif // SVNINFO_H

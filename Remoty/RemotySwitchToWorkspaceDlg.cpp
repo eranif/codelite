@@ -41,7 +41,7 @@ RemotySwitchToWorkspaceDlg::~RemotySwitchToWorkspaceDlg()
 {
     RemotyConfig config;
     if (IsRemote()) {
-        RemoteWorkspaceInfo wi{ m_choiceAccount->GetStringSelection(), m_comboBoxPath->GetStringSelection() };
+        RemoteWorkspaceInfo wi{m_choiceAccount->GetStringSelection(), m_comboBoxPath->GetStringSelection()};
         config.UpdateRecentWorkspaces(wi);
     }
     config.SetOpenWorkspaceTypeLocal(m_choiceWorkspaceType->GetStringSelection() == "Local");
@@ -63,7 +63,10 @@ void RemotySwitchToWorkspaceDlg::OnBrowse(wxCommandEvent& event)
         // update the path
         UpdateSelection(m_comboBoxPath, path);
     } else {
-        wxString path = ::wxFileSelector(_("Choose a file"), wxEmptyString, wxEmptyString, wxEmptyString,
+        wxString path = ::wxFileSelector(_("Choose a file"),
+                                         wxEmptyString,
+                                         wxEmptyString,
+                                         wxEmptyString,
                                          "CodeLite Workspace files (*.workspace)|*.workspace");
         if (path.empty()) {
             return;

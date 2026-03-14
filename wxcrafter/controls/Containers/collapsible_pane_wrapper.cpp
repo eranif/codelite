@@ -10,7 +10,8 @@
 CollapsiblePaneWrapper::CollapsiblePaneWrapper()
     : wxcWidget(ID_WXCOLLAPSIBLEPANE)
 {
-    RegisterEvent("wxEVT_COMMAND_COLLPANE_CHANGED", "wxCollapsiblePaneEvent",
+    RegisterEvent("wxEVT_COMMAND_COLLPANE_CHANGED",
+                  "wxCollapsiblePaneEvent",
                   _("The user expanded or collapsed the collapsible pane"));
     RegisterEvent("wxEVT_NAVIGATION_KEY", "wxNavigationKeyEvent", _("Process a navigation key event"));
 
@@ -41,7 +42,7 @@ void CollapsiblePaneWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 
     text << XRCPrefix() << XRCLabel() << XRCSize() << XRCCommonAttributes();
 
-    if(type == XRC_DESIGNER) {
+    if (type == XRC_DESIGNER) {
         text << "<style>wxCP_NO_TLW_RESIZE</style>";
 
     } else {

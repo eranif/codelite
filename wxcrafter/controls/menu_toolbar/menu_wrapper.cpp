@@ -37,10 +37,10 @@ wxString MenuWrapper::CppCtorCode() const
     wxString code;
 
     wxcWidget* ancestor = GetParent(); // Find the first non-menu parent, to check it's kosher
-    while(ancestor && (ancestor->GetType() == ID_WXMENU || ancestor->GetType() == ID_WXSUBMENU)) {
+    while (ancestor && (ancestor->GetType() == ID_WXMENU || ancestor->GetType() == ID_WXSUBMENU)) {
         ancestor = ancestor->GetParent();
     }
-    if(ancestor && ancestor->GetType() == ID_WXTOOLBARITEM) {
+    if (ancestor && ancestor->GetType() == ID_WXTOOLBARITEM) {
         // A toolbaritem dropdown menu (probably an auitoolbar, as that's not yet implemented for the standard one
         // This is handled in a completely different way, so don't emit anything
         return code;
@@ -49,14 +49,14 @@ wxString MenuWrapper::CppCtorCode() const
     code << GetName() << wxT(" = new ") << GetWxClassName() << wxT("();\n");
 
     wxcWidget* parent = GetParent();
-    if(parent) {
-        if(parent->GetType() == ID_WXMENUBAR) {
+    if (parent) {
+        if (parent->GetType() == ID_WXMENUBAR) {
 
             // This menu is a child of a menubar, add it
             code << GetWindowParent() << wxT("->Append(") << GetName() << wxT(", ")
                  << wxCrafter::UNDERSCORE(PropertyString(PROP_LABEL)) << wxT(");\n");
 
-        } else if(parent->GetType() == ID_WXMENU || parent->GetType() == ID_WXSUBMENU) {
+        } else if (parent->GetType() == ID_WXMENU || parent->GetType() == ID_WXSUBMENU) {
 
             // Sub menu
             code << GetWindowParent() << wxT("->AppendSubMenu(") << GetName() << wxT(", ") << Label() << wxT(");\n");

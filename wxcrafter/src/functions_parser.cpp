@@ -16,7 +16,8 @@ FunctionsParser::FunctionsParser(wxcWidget::Map_t& connectedEvents, const wxStri
 #define YYNEXT_RET_ON_EOF()       \
     {                             \
         type = m_scanner.yylex(); \
-        if(type == 0) return;     \
+        if (type == 0)            \
+            return;               \
     }
 #define INC_DEPTH_CONTINUE() \
     {                        \
@@ -27,7 +28,7 @@ FunctionsParser::FunctionsParser(wxcWidget::Map_t& connectedEvents, const wxStri
 #define DEC_DEPTH_BREAK_IF_ZERO() \
     {                             \
         depth--;                  \
-        if(depth == 0) {          \
+        if (depth == 0) {         \
             break;                \
         } else {                  \
             continue;             \
@@ -39,17 +40,18 @@ int FunctionsParser::ReadClassName(wxString& clsname)
     clsname.clear();
     int type = 0;
 
-    while(true) {
+    while (true) {
         type = m_scanner.yylex();
-        if(type == 0) return 0;
+        if (type == 0)
+            return 0;
 
-        if(type == IDENTIFIER) {
+        if (type == IDENTIFIER) {
             clsname = m_scanner.YYText();
 
-        } else if(type == '{' || type == ':') {
+        } else if (type == '{' || type == ':') {
             return type;
 
-        } else if(type == ';') {
+        } else if (type == ';') {
             // we probably encountered a forward declaration or 'friend' statement
             clsname.Clear();
             return (int)';';
@@ -64,10 +66,10 @@ void FunctionsParser::Parse()
     int depth = 0;
 
     // search for the class first
-    while(true) {
+    while (true) {
         YYNEXT_RET_ON_EOF();
 
-        if(type == lexCLASS) {
+        if (type == lexCLASS) {
             // YYNEXT_RET_ON_EOF();
 
             // read all tokens until we find a ':' or '{'
@@ -76,47 +78,50 @@ void FunctionsParser::Parse()
             // until it hits a ':' or '{'
             // the last IDENTIFIER consumed is the class name
             type = ReadClassName(identifierName);
-            if(type == 0) return;
+            if (type == 0)
+                return;
 
-            if(identifierName == m_classname) { break; }
+            if (identifierName == m_classname) {
+                break;
+            }
         }
     }
 
-    if(type == '{') {
+    if (type == '{') {
         // we already consumed the '{' char by calling to ReadClassName()
         depth = 1;
 
     } else {
         // search for the open curly brace
-        while(true) {
+        while (true) {
             YYNEXT_RET_ON_EOF();
-            if(type == '{') {
+            if (type == '{') {
                 depth = 1;
                 break;
             }
         }
     }
 
-    while(true) {
+    while (true) {
         YYNEXT_RET_ON_EOF();
 
-        if(type == '{') {
+        if (type == '{') {
             INC_DEPTH_CONTINUE();
 
-        } else if(type == '}') {
+        } else if (type == '}') {
             DEC_DEPTH_BREAK_IF_ZERO();
 
-        } else if(type == lexVOID && depth == 1) {
+        } else if (type == lexVOID && depth == 1) {
             // Check the next type, we only check if detph == 1 (meaning we are still inside our class scope)
             YYNEXT_RET_ON_EOF();
 
-            if(type == '{') {
+            if (type == '{') {
                 INC_DEPTH_CONTINUE();
 
-            } else if(type == '}') {
+            } else if (type == '}') {
                 DEC_DEPTH_BREAK_IF_ZERO();
 
-            } else if(type == IDENTIFIER) {
+            } else if (type == IDENTIFIER) {
                 CheckIfFunctionsExists(wxString(m_scanner.YYText(), wxConvUTF8));
             }
         }

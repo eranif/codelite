@@ -203,11 +203,15 @@ protected:
 
     bool DoCheckNameUniqueness(const wxString& name, const wxcWidget* widget) const;
     // Copy current wxcWidget children into 'widget'
-    void DoCopyChildren(wxcWidget* widget, enum DuplicatingOptions nametypesToChange,
+    void DoCopyChildren(wxcWidget* widget,
+                        enum DuplicatingOptions nametypesToChange,
                         const std::set<wxString>& existingNames) const;
-    virtual void DoDeepCopy(const wxcWidget& rhs, enum DuplicatingOptions nametypesToChange,
-                            const std::set<wxString>& existingNames, const wxString& chosenName = "",
-                            const wxString& chosenInheritedName = "", const wxString& chosenFilename = "");
+    virtual void DoDeepCopy(const wxcWidget& rhs,
+                            enum DuplicatingOptions nametypesToChange,
+                            const std::set<wxString>& existingNames,
+                            const wxString& chosenName = "",
+                            const wxString& chosenInheritedName = "",
+                            const wxString& chosenFilename = "");
 
 public:
     void SetCopyReason(COPY_REASON cr) { m_copyReason = cr; }
@@ -301,9 +305,15 @@ public:
 protected:
     // Pure virtual
     virtual void GetIncludeFile(wxArrayString& headers) const = 0;
-    void DoTraverseAndGenCode(wxArrayString& headers, wxString& ctorCode, wxString& members, wxString& eventFunctions,
-                              wxString& eventConnectCode, wxStringMap_t& additionalFiles, wxString& dtorCode,
-                              wxString& extraFunctionsImpl, wxString& extraFunctionsDecl) const;
+    void DoTraverseAndGenCode(wxArrayString& headers,
+                              wxString& ctorCode,
+                              wxString& members,
+                              wxString& eventFunctions,
+                              wxString& eventConnectCode,
+                              wxStringMap_t& additionalFiles,
+                              wxString& dtorCode,
+                              wxString& extraFunctionsImpl,
+                              wxString& extraFunctionsDecl) const;
 
     void DoGetCustomControlsName(const wxcWidget* widget, wxArrayString& controls) const;
     wxString DoGenerateEventStubs() const;
@@ -355,8 +365,12 @@ protected:
      */
     virtual wxString CreateBaseclassName() const;
 
-    void RegisterEvent(const wxString& eventName, const wxString& className, const wxString& description,
-                       const wxString& handlerName = "", const wxString& functionNameAndSig = "", bool noBody = false);
+    void RegisterEvent(const wxString& eventName,
+                       const wxString& className,
+                       const wxString& description,
+                       const wxString& handlerName = "",
+                       const wxString& functionNameAndSig = "",
+                       bool noBody = false);
     /**
      * @brief acronym for RegisterEvent(eventName, "wxCommandEvent", "wxCommandEventHandler")
      */
@@ -512,8 +526,10 @@ public:
     /**
      * @brief create a copy of this class - with all its properties / sizers / styles and wxAUI properties copied
      */
-    virtual wxcWidget* Copy(enum DuplicatingOptions nametypesToChange, const std::set<wxString>& existingNames,
-                            const wxString& chosenName = "", const wxString& chosenInheritedName = "",
+    virtual wxcWidget* Copy(enum DuplicatingOptions nametypesToChange,
+                            const std::set<wxString>& existingNames,
+                            const wxString& chosenName = "",
+                            const wxString& chosenInheritedName = "",
                             const wxString& chosenFilename = "") const;
 
     /**

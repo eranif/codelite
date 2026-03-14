@@ -29,7 +29,7 @@ wxString RibbonToolBarWrapper::CppCtorCode() const
     cppCode << CPPStandardWxCtor("0");
     int minRows = PropertyInt(PROP_RIBBON_TOOLBAR_MIN_ROWS, 1);
     int maxRows = PropertyInt(PROP_RIBBON_TOOLBAR_MAX_ROWS, -1);
-    if(minRows > 0 && (maxRows >= minRows || maxRows == -1)) {
+    if (minRows > 0 && (maxRows >= minRows || maxRows == -1)) {
         cppCode << GetName() << "->SetRows(" << minRows << ", " << maxRows << ");\n";
     }
     return cppCode;

@@ -1,3 +1,5 @@
+#include <wx/wxprec.h>
+
 #include "clThemedTextCtrl.hpp"
 
 #include "ColoursAndFontsManager.h"
@@ -12,7 +14,6 @@
 #include <wx/dcgraph.h>
 #include <wx/dcmemory.h>
 #include <wx/msgdlg.h>
-#include <wx/wxprec.h>
 
 #ifndef wxSTC_MAX_MARGIN
 #define wxSTC_MAX_MARGIN 4

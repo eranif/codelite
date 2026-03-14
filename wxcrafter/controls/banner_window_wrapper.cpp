@@ -14,7 +14,7 @@
 BannerWindowWrapper::BannerWindowWrapper()
     : wxcWidget(ID_WXBANNERWINDOW)
 {
-    const wxArrayString options = StdToWX::ToArrayString({ "wxTOP", "wxBOTTOM", "wxLEFT", "wxRIGHT" });
+    const wxArrayString options = StdToWX::ToArrayString({"wxTOP", "wxBOTTOM", "wxLEFT", "wxRIGHT"});
 
     SetPropertyString(_("Common Settings"), "wxBannerWindow");
     Add<MultiStringsProperty>(
@@ -62,7 +62,7 @@ wxString BannerWindowWrapper::CppCtorCode() const
     col1 = wxCrafter::ColourToCpp(PropertyString(PROP_COLOR_GRADIENT_START));
     col2 = wxCrafter::ColourToCpp(PropertyString(PROP_COLOR_GRADIENT_END));
 
-    if(!col1.IsEmpty() && !col2.IsEmpty()) {
+    if (!col1.IsEmpty() && !col2.IsEmpty()) {
         cppCode << GetName() << "->SetGradient(" << col1 << ", " << col2 << ");\n";
     }
 

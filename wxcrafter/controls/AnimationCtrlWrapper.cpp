@@ -41,7 +41,7 @@ wxString AnimationCtrlWrapper::CppCtorCode() const
          << ");\n";
 
     // Load the image file
-    if(PropertyBool(PROP_ANIM_AUTO_PLAY) == "true") {
+    if (PropertyBool(PROP_ANIM_AUTO_PLAY) == "true") {
         code << "if( wxFileName::Exists(" << wxCrafter::WXT(PropertyFile(PROP_BITMAP_PATH)) << ") && " << GetName()
              << "->LoadFile(" << wxCrafter::WXT(PropertyFile(PROP_BITMAP_PATH)) << "))" << GetName() << "->Play();\n";
     }

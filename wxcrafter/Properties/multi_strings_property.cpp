@@ -1,6 +1,8 @@
 #include "multi_strings_property.h"
 
-MultiStringsProperty::MultiStringsProperty(const wxString& label, const wxString& tooltip, const wxString& delim,
+MultiStringsProperty::MultiStringsProperty(const wxString& label,
+                                           const wxString& tooltip,
+                                           const wxString& delim,
                                            const wxString& msg)
     : PropertyBase(tooltip)
     , m_delim(delim)

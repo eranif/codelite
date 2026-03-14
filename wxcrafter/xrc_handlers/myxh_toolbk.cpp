@@ -8,8 +8,9 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
+#include <wx/wxprec.h>
+
 #include "myxh_toolbk.h"
-#include "wx/wxprec.h"
 
 #if wxUSE_XRC && wxUSE_TOOLBOOK
 
@@ -40,31 +41,34 @@ MYwxToolbookXmlHandler::MYwxToolbookXmlHandler()
 
 wxObject* MYwxToolbookXmlHandler::DoCreateResource()
 {
-    if(m_class == wxT("toolbookpage")) {
+    if (m_class == wxT("toolbookpage")) {
         wxXmlNode* n = GetParamNode(wxT("object"));
 
-        if(!n) n = GetParamNode(wxT("object_ref"));
+        if (!n)
+            n = GetParamNode(wxT("object_ref"));
 
-        if(n) {
+        if (n) {
             bool old_ins = m_isInside;
             m_isInside = false;
             wxObject* item = CreateResFromNode(n, m_toolbook, NULL);
             m_isInside = old_ins;
             wxWindow* wnd = wxDynamicCast(item, wxWindow);
 
-            if(wnd) {
+            if (wnd) {
                 int imgId = -1;
 
-                if(HasParam(wxT("bitmap"))) {
+                if (HasParam(wxT("bitmap"))) {
                     wxBitmap bmp = GetBitmap(wxT("bitmap"), wxART_OTHER);
                     wxImageList* imgList = m_toolbook->GetImageList();
-                    if(imgList == NULL) {
+                    if (imgList == NULL) {
                         imgList = new wxImageList(bmp.GetWidth(), bmp.GetHeight());
                         m_toolbook->AssignImageList(imgList);
                     }
                     imgId = imgList->Add(bmp);
-                } else if(HasParam(wxT("image"))) {
-                    if(m_toolbook->GetImageList()) { imgId = (int)GetLong(wxT("image")); }
+                } else if (HasParam(wxT("image"))) {
+                    if (m_toolbook->GetImageList()) {
+                        imgId = (int)GetLong(wxT("image"));
+                    }
                 }
 
                 m_toolbook->AddPage(wnd, GetText(wxT("label")), GetBool(wxT("selected")), imgId);

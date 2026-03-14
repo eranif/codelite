@@ -21,24 +21,24 @@ ImportFromXrc::ImportFromXrc(wxWindow* parent)
 bool ImportFromXrc::ImportProject(ImportDlg::ImportFileData& data) const
 {
     ImportDlg dlg(ImportDlg::IPD_XRC, m_Parent);
-    if(dlg.ShowModal() != wxID_OK) {
+    if (dlg.ShowModal() != wxID_OK) {
         return false;
     }
 
     wxString filepath = dlg.GetFilepath();
 
-    if(filepath.empty() || !wxFileExists(filepath)) {
+    if (filepath.empty() || !wxFileExists(filepath)) {
         return false;
     }
 
     wxXmlDocument doc(filepath);
-    if(!doc.IsOk()) {
+    if (!doc.IsOk()) {
         wxMessageBox(_("Failed to load the file to import"), wxT("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
         return false;
     }
 
     wxcWidget::List_t toplevels;
-    if(ParseFile(doc, toplevels) && !toplevels.empty()) {
+    if (ParseFile(doc, toplevels) && !toplevels.empty()) {
         wxcProjectMetadata::Get().Serialize(toplevels, wxFileName(dlg.GetOutputFilepath()));
         data = dlg.GetData();
         return true;
@@ -49,17 +49,19 @@ bool ImportFromXrc::ImportProject(ImportDlg::ImportFileData& data) const
 bool ImportFromXrc::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels) const
 {
     wxXmlNode* toplevelnode = doc.GetRoot()->GetChildren();
-    while(toplevelnode) {
+    while (toplevelnode) {
         wxString tag = toplevelnode->GetName();
-        if(tag != wxT("object")) {
-            wxMessageBox(_("This doesn't seem to be a valid XRC file. Aborting."), wxT("CodeLite"), wxICON_ERROR | wxOK,
+        if (tag != wxT("object")) {
+            wxMessageBox(_("This doesn't seem to be a valid XRC file. Aborting."),
+                         wxT("CodeLite"),
+                         wxICON_ERROR | wxOK,
                          m_Parent);
             return false;
         }
 
         bool alreadyParented(false);
         wxcWidget* wrapper = ParseNode(toplevelnode, NULL, alreadyParented);
-        if(wrapper) {
+        if (wrapper) {
             toplevels.push_back(wrapper);
         }
 
@@ -104,11 +106,11 @@ wxcWidget* ImportFromXrc::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, b
     wxString classname = XmlUtils::ReadString(node, wxT("class"));
     wxCHECK_MSG(!classname.empty(), NULL, wxT("Object node doesn't have a 'class' attribute"));
 
-    if(classname == wxT("sizeritem")) {
+    if (classname == wxT("sizeritem")) {
         // See the above comment. Replace node with the contained object node
         // We'll process sizeritemnode node separately later
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
-        if(!node) {
+        if (!node) {
             // I don't think this can happen, but...
             return NULL;
         }
@@ -117,12 +119,12 @@ wxcWidget* ImportFromXrc::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, b
         classname = XmlUtils::ReadString(node, wxT("class"));
     }
 
-    else if(classname.Contains(wxT("bookpage"))) {
+    else if (classname.Contains(wxT("bookpage"))) {
         // See the above comment. Replace node with the contained object node
         // We'll process booknode node separately later
         booknode = node;
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
-        if(!node) {
+        if (!node) {
             // I don't think this can happen, but...
             return NULL;
         }
@@ -131,49 +133,49 @@ wxcWidget* ImportFromXrc::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, b
         classname = XmlUtils::ReadString(node, wxT("class"));
     }
 
-    else if(classname == wxT("button")) {
+    else if (classname == wxT("button")) {
         buttonnode = node;
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
-        if(!node) {
+        if (!node) {
             return NULL;
         }
 
         classname = XmlUtils::ReadString(node, wxT("class"));
-        if(classname == "wxButton") { // and it certainly should be
+        if (classname == "wxButton") { // and it certainly should be
             classname = "stdbutton";
         }
     }
 
     int Id = Allocator::StringToId(classname);
-    if(Id == wxNOT_FOUND) {
+    if (Id == wxNOT_FOUND) {
         wxLogWarning(wxString::Format(_("Can't import unknown class %s from XRC"), classname));
         return NULL;
     }
 
-    if((Id == ID_WXPANEL) && (parentwrapper == NULL)) {
+    if ((Id == ID_WXPANEL) && (parentwrapper == NULL)) {
         Id = ID_WXPANEL_TOPLEVEL;
     }
 
-    if(parentwrapper && parentwrapper->GetWidgetType() == TYPE_TOOLBAR) {
+    if (parentwrapper && parentwrapper->GetWidgetType() == TYPE_TOOLBAR) {
         // In XRC, classname == "separator", which gives and Id of ID_WXMENUITEM, could be a menu or toolbar one
         // "space" is a stretchspacer
-        if(classname == "separator") {
+        if (classname == "separator") {
             Id = ID_WXTOOLBARITEM_SEPARATOR;
-        } else if(classname == "space") {
+        } else if (classname == "space") {
             Id = ID_WXTOOLBARITEM_STRETCHSPACE;
         }
     }
 
-    if(parentwrapper && parentwrapper->GetWidgetType() == TYPE_AUITOOLBAR) {
+    if (parentwrapper && parentwrapper->GetWidgetType() == TYPE_AUITOOLBAR) {
         // This time it could be separator, space, or label
         // "space" is a stretchspacer
-        if(classname == "separator") {
+        if (classname == "separator") {
             Id = ID_WXTOOLBARITEM_SEPARATOR; // No need for a specific one for aui
-        } else if(classname == "space") {
+        } else if (classname == "space") {
             // There were briefly 2 different words for 'space': space itself, and nonstretchspace
             // Now the official auitoolbar handler uses 'space' for both, distinguishing by the presence/absence of a
             // 'width' attribute, so do the same
-            if(XmlUtils::FindFirstByTagName(node, "width")) {
+            if (XmlUtils::FindFirstByTagName(node, "width")) {
                 Id = ID_WXAUITOOLBARITEM_SPACE;
             } else {
                 Id = ID_WXAUITOOLBARITEM_STRETCHSPACE;
@@ -181,7 +183,7 @@ wxcWidget* ImportFromXrc::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, b
         }
     }
 
-    if(booknode) {
+    if (booknode) {
         // Correctly label a wxPanel that's really a notebookpage
         Id = ID_WXPANEL_NOTEBOOK_PAGE;
     }
@@ -194,7 +196,7 @@ wxcWidget* ImportFromXrc::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, b
     GetSizeritemContents(sizeritemnode, wrapper); // Now we have a valid wrapper, we can store the sizeritem info in it
 
     int depth = 0;
-    if(booknode) {
+    if (booknode) {
         // For book pages, extract any info from the <foobookpage> node
         NotebookPageWrapper* nbwrapper = dynamic_cast<NotebookPageWrapper*>(wrapper);
         wxCHECK_MSG(nbwrapper, NULL, wxT("A booknode which has no NotebookPageWrapper"));
@@ -202,12 +204,12 @@ wxcWidget* ImportFromXrc::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, b
 
         // If this is a treebook subpage, it needs to be parented by a page, not the book
         // depth will only be >0 in that situation
-        if(depth) {
+        if (depth) {
             NotebookBaseWrapper* nb = dynamic_cast<NotebookBaseWrapper*>(parentwrapper);
             wxCHECK_MSG(nb, NULL, wxT("treebookpage 'parent' not a book"));
 
             wxcWidget* item = nb->GetChildPageAtDepth(depth - 1);
-            if(item) {
+            if (item) {
                 item->AddChild(wrapper);
                 alreadyParented = true;
             } else {
@@ -218,18 +220,18 @@ wxcWidget* ImportFromXrc::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, b
         }
     }
 
-    if(buttonnode) {
+    if (buttonnode) {
         // For wxStdDialogButtonSizer buttons, extract any info from the <buttons> node
         ProcessButtonNode(buttonnode, wrapper);
     }
 
     wxXmlNode* child = node->GetChildren();
-    while(child) {
+    while (child) {
         wxString childname(child->GetName());
-        if(childname == wxT("object")) {
+        if (childname == wxT("object")) {
             bool alreadyParented(false);
             wxcWidget* childwrapper = ParseNode(child, wrapper, alreadyParented);
-            if(childwrapper && !alreadyParented) {
+            if (childwrapper && !alreadyParented) {
                 wrapper->AddChild(childwrapper);
             }
         }
@@ -245,65 +247,65 @@ void ImportFromXrc::GetSizeritemContents(const wxXmlNode* node, wxcWidget* wrapp
     wrapper->ClearSizerAll(); // otherwise the default ones will remain
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("flag"));
-    if(propertynode) {
+    if (propertynode) {
         wxString flags = propertynode->GetNodeContent();
         // We must cope with wxC's American misspellings...
         flags.Replace("wxALIGN_CENTRE", "wxALIGN_CENTER");
 
         // if left|right|top|bottom add wxALL. Duplication does no harm here
-        if(flags.Contains("wxLEFT") && flags.Contains("wxRIGHT") && flags.Contains("wxTOP") &&
-           flags.Contains("wxBOTTOM")) {
+        if (flags.Contains("wxLEFT") && flags.Contains("wxRIGHT") && flags.Contains("wxTOP") &&
+            flags.Contains("wxBOTTOM")) {
             flags << "|wxALL";
         }
 
         wxArrayString flagsarray = wxCrafter::Split(flags, "|");
 
         // Eran: If flagsarray contains 'wxALL' - make sure all the other four stars are also there...
-        if(flagsarray.Index("wxALL") != wxNOT_FOUND) {
+        if (flagsarray.Index("wxALL") != wxNOT_FOUND) {
             flagsarray.Add("wxLEFT");
             flagsarray.Add("wxRIGHT");
             flagsarray.Add("wxTOP");
             flagsarray.Add("wxBOTTOM");
             flagsarray = wxCrafter::MakeUnique(flagsarray);
         }
-        for(size_t n = 0; n < flagsarray.GetCount(); ++n) {
+        for (size_t n = 0; n < flagsarray.GetCount(); ++n) {
             wrapper->EnableSizerFlag(flagsarray.Item(n), true);
         }
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("option")); // 'option' is XRC's term for proportion :/
-    if(propertynode) {
+    if (propertynode) {
         wxString proportion = propertynode->GetNodeContent();
         wrapper->SizerItem().SetProportion(wxCrafter::ToNumber(proportion, 0));
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("border"));
-    if(propertynode) {
+    if (propertynode) {
         wxString border = propertynode->GetNodeContent();
         wrapper->SizerItem().SetBorder(wxCrafter::ToNumber(border, 0));
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("cellpos"));
-    if(propertynode) {
+    if (propertynode) {
         wxString cellpos = propertynode->GetNodeContent();
-        if(!cellpos.empty()) {
+        if (!cellpos.empty()) {
             wrapper->SetGbPos(cellpos);
         }
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("cellspan"));
-    if(propertynode) {
+    if (propertynode) {
         wxString cellspan = propertynode->GetNodeContent();
-        if(!cellspan.empty()) {
+        if (!cellspan.empty()) {
             wrapper->SetGbSpan(cellspan);
         }
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("minsize"));
-    if(propertynode) {
+    if (propertynode) {
         wxString minsize = propertynode->GetNodeContent();
         PropertyBase* prop = wrapper->GetProperty(PROP_MINSIZE);
-        if(prop) {
+        if (prop) {
             prop->SetValue(minsize);
         }
     }
@@ -314,39 +316,40 @@ void ImportFromXrc::GetBookitemContents(const wxXmlNode* node, NotebookPageWrapp
     wxString classname = XmlUtils::ReadString(node, wxT("class"));
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("selected"));
-    if(propertynode) {
+    if (propertynode) {
         wxString selected = propertynode->GetNodeContent();
-        if(selected == "1") {
+        if (selected == "1") {
             wrapper->SetSelected(true);
         }
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("label"));
-    if(propertynode) {
+    if (propertynode) {
         wxString label = propertynode->GetNodeContent();
         PropertyBase* prop = wrapper->GetProperty(PROP_LABEL);
-        if(prop) {
+        if (prop) {
             prop->SetValue(label);
         }
     }
 
-    if(classname != "choicebookpage") { // which don't have bitmaps
+    if (classname != "choicebookpage") { // which don't have bitmaps
         propertynode = XmlUtils::FindFirstByTagName(node, wxT("bitmap"));
-        if(propertynode) {
+        if (propertynode) {
             ImportFromXrc::ProcessBitmapProperty(propertynode, wrapper, "PROP_BITMAP_PATH", "wxART_OTHER");
         }
     }
 
-    if(classname == "treebookpage") {
+    if (classname == "treebookpage") {
         propertynode = XmlUtils::FindFirstByTagName(node, wxT("depth"));
-        if(propertynode) {
+        if (propertynode) {
             depth = wxCrafter::ToNumber(propertynode->GetNodeContent(), 0);
         }
     }
 }
 
 // static  NB This is also used to import from wxSmith
-void ImportFromXrc::ProcessBitmapProperty(const wxXmlNode* node, wxcWidget* wrapper,
+void ImportFromXrc::ProcessBitmapProperty(const wxXmlNode* node,
+                                          wxcWidget* wrapper,
                                           const wxString& property /*= PROP_BITMAP_PATH*/,
                                           const wxString& client_hint /*=""*/)
 {
@@ -354,12 +357,12 @@ void ImportFromXrc::ProcessBitmapProperty(const wxXmlNode* node, wxcWidget* wrap
     // (the some.png is optional here, but is used as a fallback if stock_id fails. wxC doesn't use this atm, so ignore
     // it here)
     wxString artstring = XmlUtils::ReadString(node, "stock_id");
-    if(!artstring.empty()) {
+    if (!artstring.empty()) {
         wxString clientId = XmlUtils::ReadString(node, "stock_client");
-        if(clientId.empty()) {
+        if (clientId.empty()) {
             clientId = client_hint; // Use any hint we were given
         }
-        if(!clientId.empty()) {
+        if (!clientId.empty()) {
             artstring << "," << clientId;
         }
         wrapper->SetPropertyString(property, artstring);
@@ -382,23 +385,23 @@ void ImportFromXrc::DoProcessButtonNode(const wxXmlNode* node, wxcWidget* wrappe
     // Deduce a sensible ID. There isn't an id field in the xrc, so work it out from the name or label
     wxString name = wrapper->GetName().MakeLower();
     wxString label = wrapper->Label().MakeLower();
-    if(name.Contains("ok") || label.Contains("ok")) {
+    if (name.Contains("ok") || label.Contains("ok")) {
         wrapper->SetId("wxID_OK");
-    } else if(name.Contains("cancel") || label.Contains("cancel")) {
+    } else if (name.Contains("cancel") || label.Contains("cancel")) {
         wrapper->SetId("wxID_CANCEL");
-    } else if(name.Contains("yes") || label.Contains("yes")) {
+    } else if (name.Contains("yes") || label.Contains("yes")) {
         wrapper->SetId("wxID_YES");
-    } else if(name.Contains("save") || label.Contains("save")) {
+    } else if (name.Contains("save") || label.Contains("save")) {
         wrapper->SetId("wxID_SAVE");
-    } else if(name.Contains("apply") || label.Contains("apply")) {
+    } else if (name.Contains("apply") || label.Contains("apply")) {
         wrapper->SetId("wxID_APPLY");
-    } else if(name.Contains("close") || label.Contains("close")) {
+    } else if (name.Contains("close") || label.Contains("close")) {
         wrapper->SetId("wxID_CLOSE");
-    } else if(name.Contains("no") || label.Contains("no")) {
+    } else if (name.Contains("no") || label.Contains("no")) {
         wrapper->SetId("wxID_NO");
-    } else if(name.Contains("context") || label.Contains("context")) {
+    } else if (name.Contains("context") || label.Contains("context")) {
         wrapper->SetId("wxID_CONTEXT_HELP");
-    } else if(name.Contains("help") || label.Contains("help")) {
+    } else if (name.Contains("help") || label.Contains("help")) {
         wrapper->SetId("wxID_HELP");
     }
 }
@@ -408,10 +411,10 @@ void ImportFromXrc::ProcessNamedNode(wxXmlNode* node, wxcWidget* parentwrapper, 
     // This is for processing the child menu of an auitoolbar dropdownitem (but might be useful elsewhere in the future)
     // The original node was <dropdown>, not <object>, so normal parsing would ignore any children
     wxXmlNode* childnode = XmlUtils::FindFirstByTagName(node, "object");
-    if(childnode && (XmlUtils::ReadString(childnode, "class") == name)) {
+    if (childnode && (XmlUtils::ReadString(childnode, "class") == name)) {
         bool alreadyParented(false);
         wxcWidget* childwrapper = ParseNode(childnode, parentwrapper, alreadyParented);
-        if(childwrapper) {
+        if (childwrapper) {
             parentwrapper->AddChild(childwrapper);
         }
     }

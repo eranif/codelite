@@ -34,9 +34,9 @@
 
 #include "bookmark_manager.h"
 #include "event_notifier.h"
-#include "zoomtext.h"
 #include "znSettingsDlg.h"
 #include "zn_config_item.h"
+#include "zoomtext.h"
 
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
@@ -99,8 +99,11 @@ ZoomNavigator::ZoomNavigator(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &ZoomNavigator::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_ZN_SETTINGS_UPDATED, &ZoomNavigator::OnSettingsChanged, this);
 
-    m_topWindow->Connect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(ZoomNavigator::OnSettings), nullptr, this);
+    m_topWindow->Connect(XRCID("zn_settings"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(ZoomNavigator::OnSettings),
+                         nullptr,
+                         this);
 
     m_timer = new wxTimer(this);
     Bind(wxEVT_TIMER, &ZoomNavigator::OnTimer, this, m_timer->GetId());
@@ -116,8 +119,11 @@ void ZoomNavigator::UnPlug()
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &ZoomNavigator::OnFileSaved, this);
 
     m_topWindow->Disconnect(wxEVT_IDLE, wxIdleEventHandler(ZoomNavigator::OnIdle), nullptr, this);
-    m_topWindow->Disconnect(XRCID("zn_settings"), wxEVT_COMMAND_MENU_SELECTED,
-                            wxCommandEventHandler(ZoomNavigator::OnSettings), nullptr, this);
+    m_topWindow->Disconnect(XRCID("zn_settings"),
+                            wxEVT_COMMAND_MENU_SELECTED,
+                            wxCommandEventHandler(ZoomNavigator::OnSettings),
+                            nullptr,
+                            this);
     // cancel the timer
     Unbind(wxEVT_TIMER, &ZoomNavigator::OnTimer, this, m_timer->GetId());
     m_timer->Stop();

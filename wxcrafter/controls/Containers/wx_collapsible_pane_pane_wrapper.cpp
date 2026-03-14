@@ -28,7 +28,7 @@ void wxCollapsiblePanePaneWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
     wxString xrc;
     xrc << "<object class=\"panewindow\" name=\"" << wxCrafter::XMLEncode(GetName()) << "\"";
-    if(!PropertyString(PROP_SUBCLASS_NAME).empty()) {
+    if (!PropertyString(PROP_SUBCLASS_NAME).empty()) {
         xrc << " subclass=\"" << wxCrafter::XMLEncode(PropertyString(PROP_SUBCLASS_NAME)) << "\"";
     }
     xrc << ">";

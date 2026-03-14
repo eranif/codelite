@@ -40,14 +40,14 @@ PreviewPanel::PreviewPanel(wxWindow* parent, const TopLevelWinWrapper& fw)
     Center();
     sz->Layout();
     GetSizer()->Fit(this);
-    EventNotifier::Get()->Connect(wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewPanel::OnClosePreviewPreviewPanel),
-                                  NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewPanel::OnClosePreviewPreviewPanel), NULL, this);
 }
 
 PreviewPanel::~PreviewPanel()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_CLOSE_PREVIEW,
-                                     wxCommandEventHandler(PreviewPanel::OnClosePreviewPreviewPanel), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewPanel::OnClosePreviewPreviewPanel), NULL, this);
     wxCommandEvent event(wxEVT_PREVIEW_CLOSED);
     EventNotifier::Get()->AddPendingEvent(event);
 }

@@ -37,7 +37,7 @@ JSONItem IntProperty::Serialize() const
 void IntProperty::SetValue(const wxString& value)
 {
     long i(-1);
-    if(value.ToLong(&i)) {
+    if (value.ToLong(&i)) {
         m_value = i;
     } else {
         m_value = -1;

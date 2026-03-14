@@ -26,34 +26,34 @@
 #ifndef SUBVERSIONLOCALPROPERTIES_H
 #define SUBVERSIONLOCALPROPERTIES_H
 
-#include <wx/string.h>
 #include <map>
+#include <wx/string.h>
 
 using SimpleTable = std::map<wxString, wxString>;
 using GroupTable = std::map<wxString, SimpleTable>;
 
 class SubversionLocalProperties
 {
-	wxString   m_url;
-	GroupTable m_values;
+    wxString m_url;
+    GroupTable m_values;
 
 public:
-	static wxString BUG_TRACKER_URL;
-	static wxString BUG_TRACKER_MESSAGE;
-	static wxString FR_TRACKER_URL;
-	static wxString FR_TRACKER_MESSAGE;
+    static wxString BUG_TRACKER_URL;
+    static wxString BUG_TRACKER_MESSAGE;
+    static wxString FR_TRACKER_URL;
+    static wxString FR_TRACKER_MESSAGE;
 
 protected:
-	wxString GetConfigFile();
-	void     ReadProperties();
-	void     WriteProperties();
+    wxString GetConfigFile();
+    void ReadProperties();
+    void WriteProperties();
 
 public:
-	SubversionLocalProperties(const wxString &url);
-	virtual ~SubversionLocalProperties() = default;
+    SubversionLocalProperties(const wxString& url);
+    virtual ~SubversionLocalProperties() = default;
 
-	wxString ReadProperty (const wxString &propName);
-	void     WriteProperty(const wxString &name, const wxString &val);
+    wxString ReadProperty(const wxString& propName);
+    void WriteProperty(const wxString& name, const wxString& val);
 };
 
 #endif // SUBVERSIONLOCALPROPERTIES_H

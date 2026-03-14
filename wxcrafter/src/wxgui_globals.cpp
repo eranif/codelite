@@ -45,10 +45,10 @@ bool ReadFileContent(const wxString& fileName, wxString& content)
     content.Clear();
     wxFFile file(fileName, wxT("rb"));
 
-    if(file.IsOpened()) {
+    if (file.IsOpened()) {
 
         file.ReadAll(&content);
-        if(content.IsEmpty()) {
+        if (content.IsEmpty()) {
             // now try the Utf8
             file.ReadAll(&content, wxConvUTF8);
         }

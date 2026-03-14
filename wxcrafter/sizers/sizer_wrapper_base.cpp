@@ -35,7 +35,7 @@ wxString SizerWrapperBase::GenerateMinSizeCode() const
 {
     wxString code;
     wxSize sz = wxCrafter::DecodeSize(PropertyString(PROP_MINSIZE));
-    if(sz != wxDefaultSize) {
+    if (sz != wxDefaultSize) {
         code << GetName() << "->SetMinSize(" << wxCrafter::EncodeSize(sz) << ");\n";
     }
     return code;
@@ -43,13 +43,13 @@ wxString SizerWrapperBase::GenerateMinSizeCode() const
 
 wxString SizerWrapperBase::GenerateMinSizeXRC() const
 {
-    if(!IsMainSizer()) {
+    if (!IsMainSizer()) {
         return wxEmptyString;
     }
 
     wxString code;
     wxSize sz = wxCrafter::DecodeSize(m_parent->PropertyString(PROP_MINSIZE));
-    if(sz != wxDefaultSize) {
+    if (sz != wxDefaultSize) {
         code << "<minsize>" << wxCrafter::EncodeSize(sz) << "</minsize>\n";
     }
     return code;

@@ -47,7 +47,7 @@ JSONItem SFTPWorkspaceSettings::ToJSON() const
 void SFTPWorkspaceSettings::Load(SFTPWorkspaceSettings& settings, const wxFileName& workspaceFile)
 {
     wxFileName fn(workspaceFile);
-    if(fn.IsOk() && fn.FileExists()) {
+    if (fn.IsOk() && fn.FileExists()) {
         fn.SetName("sftp-workspace-settings");
         fn.SetExt("conf");
         fn.AppendDir(".codelite");

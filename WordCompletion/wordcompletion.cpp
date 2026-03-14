@@ -16,10 +16,7 @@
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new WordCompletionPlugin(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new WordCompletionPlugin(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -85,13 +82,13 @@ void WordCompletionPlugin::OnWordComplete(clCodeCompletionEvent& event)
     settings.Load();
 
     // Enabled?
-    if(!settings.IsEnabled()) {
+    if (!settings.IsEnabled()) {
         return;
     }
 
     // Build the suggestion list
     static wxBitmap sBmp = wxNullBitmap;
-    if(!sBmp.IsOk()) {
+    if (!sBmp.IsOk()) {
         sBmp = m_mgr->GetStdIcons()->LoadBitmap("word");
     }
 
@@ -105,7 +102,7 @@ void WordCompletionPlugin::OnWordComplete(clCodeCompletionEvent& event)
 
     wxStringSet_t words = m_dictionary->GetWords();
     // Parse the current buffer (if modified), to include non saved words
-    if(activeEditor->IsEditorModified()) {
+    if (activeEditor->IsEditorModified()) {
         // For performance (this parsing is done in the main thread)
         // only parse the visible area of the document
         wxStringSet_t unsavedBufferWords;
@@ -122,9 +119,9 @@ void WordCompletionPlugin::OnWordComplete(clCodeCompletionEvent& event)
 
     // Get the editor keywords and add them
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(activeEditor->GetFileName().GetFullName());
-    if(lexer) {
+    if (lexer) {
         wxString keywords;
-        for(size_t i = 0; i < wxSTC_KEYWORDSET_MAX; ++i) {
+        for (size_t i = 0; i < wxSTC_KEYWORDSET_MAX; ++i) {
             keywords << lexer->GetKeyWords(i) << " ";
         }
         wxArrayString langWords = ::wxStringTokenize(keywords, "\n\t \r", wxTOKEN_STRTOK);
@@ -132,17 +129,17 @@ void WordCompletionPlugin::OnWordComplete(clCodeCompletionEvent& event)
     }
 
     wxStringSet_t filteredSet;
-    if(filter.IsEmpty()) {
+    if (filter.IsEmpty()) {
         filteredSet.swap(words);
     } else {
         for (const auto& word : words) {
             wxString lcWord = word.Lower();
-            if(settings.GetComparisonMethod() == WordCompletionSettings::kComparisonStartsWith) {
-                if(lcWord.StartsWith(filter) && filter != word) {
+            if (settings.GetComparisonMethod() == WordCompletionSettings::kComparisonStartsWith) {
+                if (lcWord.StartsWith(filter) && filter != word) {
                     filteredSet.insert(word);
                 }
             } else {
-                if(lcWord.Contains(filter) && filter != word) {
+                if (lcWord.Contains(filter) && filter != word) {
                     filteredSet.insert(word);
                 }
             }
@@ -164,7 +161,7 @@ void WordCompletionPlugin::OnSettings(wxCommandEvent& event)
 IEditor* WordCompletionPlugin::GetEditor(const wxString& filepath) const
 {
     auto editor = clGetManager()->FindEditor(filepath);
-    if(editor && editor == clGetManager()->GetActiveEditor()) {
+    if (editor && editor == clGetManager()->GetActiveEditor()) {
         return editor;
     }
     return nullptr;

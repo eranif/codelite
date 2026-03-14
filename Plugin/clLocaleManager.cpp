@@ -1,10 +1,11 @@
+#include <wx/wxprec.h>
+
 #include "clLocaleManager.hpp"
 
 #include <thread>
 #include <unordered_set>
 #include <wx/fontmap.h>
 #include <wx/intl.h>
-#include <wx/wxprec.h>
 
 using namespace std;
 

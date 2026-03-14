@@ -32,7 +32,7 @@ wxString FlexGridSizerWrapper::CppCtorCode() const
     wxArrayString growCols = wxCrafter::Split(PropertyString(PROP_GROW_COLS), ",");
     wxArrayString growRows = wxCrafter::Split(PropertyString(PROP_GROW_ROWS), ",");
 
-    if(!KeepAsClassMember()) {
+    if (!KeepAsClassMember()) {
         code << "wxFlexGridSizer* ";
     }
 
@@ -41,16 +41,16 @@ wxString FlexGridSizerWrapper::CppCtorCode() const
          << GetName() << "->SetFlexibleDirection( wxBOTH );\n"
          << GetName() << "->SetNonFlexibleGrowMode( wxFLEX_GROWMODE_SPECIFIED );\n";
 
-    for(size_t i = 0; i < growCols.GetCount(); i++) {
+    for (size_t i = 0; i < growCols.GetCount(); i++) {
         code << GetName() << "->AddGrowableCol(" << growCols.Item(i) << ");\n";
     }
 
-    for(size_t i = 0; i < growRows.GetCount(); i++) {
+    for (size_t i = 0; i < growRows.GetCount(); i++) {
         code << GetName() << "->AddGrowableRow(" << growRows.Item(i) << ");\n";
     }
     code << GenerateMinSizeCode();
-    if(IsMainSizer()) {
-        if(GetParent()->IsTopWindow()) {
+    if (IsMainSizer()) {
+        if (GetParent()->IsTopWindow()) {
             code << "this->SetSizer(" << GetName() << ");\n";
         } else {
             code << GetWindowParent() << "->SetSizer(" << GetName() << ");\n";
@@ -91,32 +91,32 @@ void FlexGridSizerWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
 void FlexGridSizerWrapper::DoLoadXRCProperties(const wxXmlNode* node)
 {
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, "cols");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_COLS, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "rows");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_ROWS, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "vgap");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_VGAP, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "hgap");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_HGAP, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "growablecols");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_GROW_COLS, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "growablerows");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_GROW_ROWS, propertynode->GetNodeContent());
     }
 }
@@ -127,32 +127,32 @@ void FlexGridSizerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "cols");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_COLS, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "rows");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_ROWS, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "vgap");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_VGAP, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "hgap");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_HGAP, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "growablecols");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_GROW_COLS, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "growablerows");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_GROW_ROWS, propertynode->GetNodeContent());
     }
 }

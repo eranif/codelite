@@ -29,7 +29,7 @@ wxString SpacerWrapper::CppCtorCode() const
     wxString cpp;
     wxSize size = GetSize();
 
-    if(GetParent()->GetType() == ID_WXGRIDBAGSIZER) {
+    if (GetParent()->GetType() == ID_WXGRIDBAGSIZER) {
         cpp << GetParent()->GetName() << wxT("->Add(") << wxCrafter::ToString(size.x) << wxT(", ")
             << wxCrafter::ToString(size.y) << wxT(", ") << wxT("wxGBPosition(") << GetGbPos() << wxT("), ")
             << wxT("wxGBSpan(") << GetGbSpan() << wxT("), ") << SizerFlags(wxT("0")) << wxT(", ")
@@ -60,21 +60,27 @@ void SpacerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     // For some curious reason, wxFB stores spacer size in separate height and width nodes :/
     wxString ht("0"), wd("0");
     wxXmlNode* child = node->GetChildren();
-    while(child) {
+    while (child) {
         wxString childname(child->GetName());
-        if(childname == wxT("property")) {
+        if (childname == wxT("property")) {
             wxString attr(XmlUtils::ReadString(child, wxT("name")));
 
-            if(attr == "height") { ht = child->GetNodeContent(); }
+            if (attr == "height") {
+                ht = child->GetNodeContent();
+            }
         }
-        if(childname == wxT("property")) {
+        if (childname == wxT("property")) {
             wxString attr(XmlUtils::ReadString(child, wxT("name")));
 
-            if(attr == "width") { wd = child->GetNodeContent(); }
+            if (attr == "width") {
+                wd = child->GetNodeContent();
+            }
         }
         child = child->GetNext();
     }
 
     PropertyBase* prop = GetProperty(PROP_SIZE);
-    if(prop) { prop->SetValue(wd + "," + ht); }
+    if (prop) {
+        prop->SetValue(wd + "," + ht);
+    }
 }

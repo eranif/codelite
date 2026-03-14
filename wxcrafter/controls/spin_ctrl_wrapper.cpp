@@ -14,7 +14,8 @@ SpinCtrlWrapper::SpinCtrlWrapper()
     PREPEND_STYLE_TRUE(wxSP_ARROW_KEYS);
     PREPEND_STYLE_FALSE(wxSP_WRAP);
 
-    RegisterEvent(wxT("wxEVT_SPINCTRL"), wxT("wxSpinEvent"),
+    RegisterEvent(wxT("wxEVT_SPINCTRL"),
+                  wxT("wxSpinEvent"),
                   _("Generated whenever the numeric value of the spinctrl is updated"));
     RegisterEventCommand(wxT("wxEVT_COMMAND_TEXT_UPDATED"),
                          _("Process a wxEVT_COMMAND_TEXT_UPDATED event, when the spinCtrl text changes."));

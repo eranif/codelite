@@ -28,14 +28,15 @@
 
 #include "serialized_object.h"
 
-class UnitTestData : public SerializedObject {
+class UnitTestData : public SerializedObject
+{
 
 public:
-	UnitTestData() = default;
-	~UnitTestData() = default;
+    UnitTestData() = default;
+    ~UnitTestData() = default;
 
 public:
-	virtual void DeSerialize(Archive &arch);
-	virtual void Serialize(Archive &arch);
+    virtual void DeSerialize(Archive& arch);
+    virtual void Serialize(Archive& arch);
 };
 #endif // __unittestdata__

@@ -4,7 +4,7 @@ CategoryProperty::CategoryProperty(const wxString& name, const wxString& label)
     : PropertyBase(name)
     , m_value(name)
 {
-    if(label.IsEmpty())
+    if (label.IsEmpty())
         SetLabel(name);
     else
         SetLabel(label);

@@ -21,7 +21,7 @@ void wxcSettings::Load()
 {
     wxFileName fn(wxCrafter::GetConfigFile());
     JSON root(fn);
-    if(root.isOk()) {
+    if (root.isOk()) {
         m_flags = root.toElement().namedObject("m_annoyDialogs").toInt(m_flags);
         m_flags &= ~USE_TABBED_MODE;
         m_sashPosition = root.toElement().namedObject("m_sashPosition").toInt(150);
@@ -31,7 +31,7 @@ void wxcSettings::Load()
 
         JSONItem arr = root.toElement().namedObject("m_templateClasses");
         m_templateClasses.clear();
-        for(int i = 0; i < arr.arraySize(); ++i) {
+        for (int i = 0; i < arr.arraySize(); ++i) {
             CustomControlTemplate templateControl;
             templateControl.FromJSON(arr.arrayItem(i));
             templateControl.SetControlId(::wxNewEventType());
@@ -64,7 +64,7 @@ void wxcSettings::Save()
 void wxcSettings::RegisterCustomControl(CustomControlTemplate& cct)
 {
     CustomControlTemplateMap_t::iterator iter = m_templateClasses.find(cct.GetClassName());
-    if(iter != m_templateClasses.end()) {
+    if (iter != m_templateClasses.end()) {
         m_templateClasses.erase(iter);
     }
     cct.SetControlId(::wxNewEventType());
@@ -84,7 +84,7 @@ CustomControlTemplate wxcSettings::FindByControlId(int controlId) const
 CustomControlTemplate wxcSettings::FindByControlName(const wxString& name) const
 {
     CustomControlTemplateMap_t::const_iterator iter = m_templateClasses.find(name);
-    if(iter == m_templateClasses.end()) {
+    if (iter == m_templateClasses.end()) {
         return CustomControlTemplate();
     }
     return iter->second;
@@ -93,7 +93,7 @@ CustomControlTemplate wxcSettings::FindByControlName(const wxString& name) const
 void wxcSettings::DeleteCustomControl(const wxString& name)
 {
     CustomControlTemplateMap_t::iterator iter = m_templateClasses.find(name);
-    if(iter == m_templateClasses.end()) {
+    if (iter == m_templateClasses.end()) {
         return;
     }
 
@@ -102,12 +102,12 @@ void wxcSettings::DeleteCustomControl(const wxString& name)
 
 void wxcSettings::MergeCustomControl(const JSONItem& arr)
 {
-    for(int i = 0; i < arr.arraySize(); ++i) {
+    for (int i = 0; i < arr.arraySize(); ++i) {
         CustomControlTemplate templateControl;
         templateControl.FromJSON(arr.arrayItem(i));
         templateControl.SetControlId(::wxNewEventType());
 
-        if(m_templateClasses.count(templateControl.GetClassName())) {
+        if (m_templateClasses.count(templateControl.GetClassName())) {
             // an instance with this name already exists, replace it
             m_templateClasses.erase(templateControl.GetClassName());
         }

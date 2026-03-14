@@ -1,6 +1,8 @@
 #include "menu_bar_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "wxgui_defs.h"
+
 #include <wx/menu.h>
 
 MenuBarWrapper::MenuBarWrapper()
@@ -20,7 +22,7 @@ wxString MenuBarWrapper::CppCtorCode() const
 {
     wxString code;
     code << GetName() << wxT(" = new ") << GetWxClassName() << wxT("(") << StyleFlags(wxT("0")) << wxT(");\n");
-    if(GetParent() && GetParent()->GetType() == ID_WXFRAME) {
+    if (GetParent() && GetParent()->GetType() == ID_WXFRAME) {
         code << wxT("this->SetMenuBar(") << GetName() << wxT(");\n");
     }
     return code;
@@ -33,7 +35,7 @@ wxString MenuBarWrapper::GetWxClassName() const { return wxT("wxMenuBar"); }
 void MenuBarWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
     wxString menuBarXRC;
-    if(type == XRC_DESIGNER) {
+    if (type == XRC_DESIGNER) {
         return;
         // menuBarXRC << wxT("<object class=\"") << GetWxClassName() << wxT("\" name=\"MENU_BAR_ID\">");
     } else {

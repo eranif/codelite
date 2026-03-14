@@ -16,10 +16,10 @@ std::vector<RemoteWorkspaceInfo> RemotyConfig::GetRecentWorkspaces() const
     std::vector<RemoteWorkspaceInfo> res;
     clConfig::Get().Read(REMOTY_RECENT_WORKSPACES, [&res](const JSONItem& item) {
         size_t count = item.arraySize();
-        if(count) {
+        if (count) {
             res.reserve(count);
         }
-        for(size_t i = 0; i < count; ++i) {
+        for (size_t i = 0; i < count; ++i) {
             JSONItem n = item.arrayItem(i);
             RemoteWorkspaceInfo d;
             d.account = n["account"].toString();
@@ -32,7 +32,7 @@ std::vector<RemoteWorkspaceInfo> RemotyConfig::GetRecentWorkspaces() const
 
 void RemotyConfig::UpdateRecentWorkspaces(const RemoteWorkspaceInfo& workspaceInfo)
 {
-    if(workspaceInfo.path.empty() || workspaceInfo.account.empty()) {
+    if (workspaceInfo.path.empty() || workspaceInfo.account.empty()) {
         return;
     }
 
@@ -40,12 +40,12 @@ void RemotyConfig::UpdateRecentWorkspaces(const RemoteWorkspaceInfo& workspaceIn
     auto where = find_if(curitems.begin(), curitems.end(), [&workspaceInfo](const RemoteWorkspaceInfo& d) {
         return d.path == workspaceInfo.path && d.account == workspaceInfo.account;
     });
-    if(where != curitems.end()) {
+    if (where != curitems.end()) {
         curitems.erase(where);
     }
 
     curitems.insert(curitems.begin(), std::move(workspaceInfo));
-    if(curitems.size() > MAX_ITEMS) {
+    if (curitems.size() > MAX_ITEMS) {
         // shrink the list
         curitems.resize(MAX_ITEMS);
     }
@@ -53,7 +53,7 @@ void RemotyConfig::UpdateRecentWorkspaces(const RemoteWorkspaceInfo& workspaceIn
     // serialise the items
     clConfig::Get().Write(REMOTY_RECENT_WORKSPACES, [&curitems]() -> JSONItem {
         JSONItem arr = JSONItem::createArray();
-        for(const auto& wi : curitems) {
+        for (const auto& wi : curitems) {
             auto d = arr.AddObject(wxEmptyString);
             d.addProperty("account", wi.account);
             d.addProperty("path", wi.path);

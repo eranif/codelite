@@ -76,7 +76,7 @@ wxString TextCtrlWrapper::CppCtorCode() const
     wxString code;
     code << CPPStandardWxCtorWithValue(wxT("0"));
 
-    if(!HasStyle(wxTE_MULTILINE)) {
+    if (!HasStyle(wxTE_MULTILINE)) {
 
         // Only supported for wx30 and later
         code << wxCrafter::WX30_BLOCK_START();
@@ -85,17 +85,17 @@ wxString TextCtrlWrapper::CppCtorCode() const
     }
 
 #if wxUSE_SPELLCHECK
-    if(IsPropertyChecked(PROP_SPELLCHECK)) {
+    if (IsPropertyChecked(PROP_SPELLCHECK)) {
         code << "\n#if wxUSE_SPELLCHECK\n";
         code << GetName() << "->EnableProofCheck();\n";
         code << "#endif\n";
     }
 #endif // wxUSE_SPELLCHECK
 
-    if(IsPropertyChecked(PROP_AUTO_COMPLETE_DIRS)) {
+    if (IsPropertyChecked(PROP_AUTO_COMPLETE_DIRS)) {
         code << GetName() << "->AutoCompleteDirectories();\n";
 
-    } else if(IsPropertyChecked(PROP_AUTO_COMPLETE_FILES)) {
+    } else if (IsPropertyChecked(PROP_AUTO_COMPLETE_FILES)) {
         code << GetName() << "->AutoCompleteFileNames();\n";
     }
     return code;
@@ -106,11 +106,11 @@ void TextCtrlWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     // Filter out maxlen if the textctrl is multiline (otherwise wx2.9 asserts); similarly hint
     wxString maxlen, hint;
 
-    if(!HasStyle(wxTE_MULTILINE)) {
-        if(wxCrafter::ToNumber(PropertyString(PROP_MAXLENGTH), -1) > 0) {
+    if (!HasStyle(wxTE_MULTILINE)) {
+        if (wxCrafter::ToNumber(PropertyString(PROP_MAXLENGTH), -1) > 0) {
             maxlen = "<maxlength>" + PropertyString(PROP_MAXLENGTH) << "</maxlength>";
         }
-        if(!PropertyString(PROP_HINT).empty()) {
+        if (!PropertyString(PROP_HINT).empty()) {
             hint = "<hint>" + wxCrafter::CDATA(PropertyString(PROP_HINT)) << "</hint>";
         }
     }
@@ -125,10 +125,14 @@ void TextCtrlWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("value"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("maxlength"));
-    if(propertynode) { SetPropertyString(PROP_MAXLENGTH, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MAXLENGTH, propertynode->GetNodeContent());
+    }
 }
 
 void TextCtrlWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -137,10 +141,14 @@ void TextCtrlWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("value"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("maxlength"));
-    if(propertynode) { SetPropertyString(PROP_MAXLENGTH, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MAXLENGTH, propertynode->GetNodeContent());
+    }
 }
 
 void TextCtrlWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -149,10 +157,14 @@ void TextCtrlWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "value");
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "maxlength");
-    if(propertynode) { SetPropertyString(PROP_MAXLENGTH, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MAXLENGTH, propertynode->GetNodeContent());
+    }
 }
 
 wxcWidget* TextCtrlWrapper::Clone() const { return new TextCtrlWrapper(); }

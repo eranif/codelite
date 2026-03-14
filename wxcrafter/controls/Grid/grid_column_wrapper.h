@@ -2,6 +2,7 @@
 #define GRIDCOLUMNWRAPPER_H
 
 #include "wxc_widget.h" // Base class: wxcWidget
+
 #include <vector>
 
 class GridColumnWrapper : public wxcWidget

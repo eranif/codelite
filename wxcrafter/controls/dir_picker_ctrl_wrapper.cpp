@@ -21,7 +21,8 @@ DirPickerCtrlWrapper::DirPickerCtrlWrapper()
     PREPEND_STYLE(wxDIRP_DEFAULT_STYLE, true);
     PREPEND_STYLE(wxDIRP_SMALL, true);
 
-    RegisterEvent(wxT("wxEVT_COMMAND_DIRPICKER_CHANGED"), wxT("wxFileDirPickerEvent"),
+    RegisterEvent(wxT("wxEVT_COMMAND_DIRPICKER_CHANGED"),
+                  wxT("wxFileDirPickerEvent"),
                   _("The user changed the directory selected in the control either using the button or using text "
                     "control\n(see wxDIRP_USE_TEXTCTRL; note that in this case the event is fired only if the user's "
                     "input is valid, e.g. an existing directory path)."));
@@ -65,10 +66,14 @@ void DirPickerCtrlWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("value"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "message");
-    if(propertynode) { SetPropertyString(PROP_MESSAGE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MESSAGE, propertynode->GetNodeContent());
+    }
 }
 
 void DirPickerCtrlWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -77,10 +82,14 @@ void DirPickerCtrlWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("path"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "message");
-    if(propertynode) { SetPropertyString(PROP_MESSAGE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MESSAGE, propertynode->GetNodeContent());
+    }
 }
 
 void DirPickerCtrlWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -89,8 +98,12 @@ void DirPickerCtrlWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "value");
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "message");
-    if(propertynode) { SetPropertyString(PROP_MESSAGE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MESSAGE, propertynode->GetNodeContent());
+    }
 }

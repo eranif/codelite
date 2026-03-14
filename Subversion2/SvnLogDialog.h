@@ -33,23 +33,11 @@ public:
     SvnLogDialog(wxWindow* parent);
     virtual ~SvnLogDialog() = default;
 
-    void SetCompact(wxCheckBox* compact) {
-        this->m_compact = compact;
-    }
-    void SetFrom(wxTextCtrl* from) {
-        this->m_from = from;
-    }
-    void SetTo(wxTextCtrl* to) {
-        this->m_to = to;
-    }
-    wxCheckBox* GetCompact() {
-        return m_compact;
-    }
-    wxTextCtrl* GetFrom() {
-        return m_from;
-    }
-    wxTextCtrl* GetTo() {
-        return m_to;
-    }
+    void SetCompact(wxCheckBox* compact) { this->m_compact = compact; }
+    void SetFrom(wxTextCtrl* from) { this->m_from = from; }
+    void SetTo(wxTextCtrl* to) { this->m_to = to; }
+    wxCheckBox* GetCompact() { return m_compact; }
+    wxTextCtrl* GetFrom() { return m_from; }
+    wxTextCtrl* GetTo() { return m_to; }
 };
 #endif // SVNLOGDIALOG_H

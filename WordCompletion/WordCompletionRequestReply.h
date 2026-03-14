@@ -26,7 +26,11 @@
 #ifndef WordCompletionRequestReply_H__
 #define WordCompletionRequestReply_H__
 
+#include "macros.h"
 #include "worker_thread.h"
+
+#include <wx/filename.h>
+#include <wx/string.h>
 
 struct WordCompletionThreadRequest : public ThreadRequest {
     wxString buffer;

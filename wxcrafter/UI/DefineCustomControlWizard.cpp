@@ -13,21 +13,21 @@ DefineCustomControlWizard::DefineCustomControlWizard(wxWindow* parent)
 
 void DefineCustomControlWizard::OnPageChanging(wxWizardEvent& event)
 {
-    if(event.GetDirection()) {
-        if(event.GetPage() == m_wizardPageGeneral && !::IsValidCppIdentifier(m_textClassName->GetValue())) {
+    if (event.GetDirection()) {
+        if (event.GetPage() == m_wizardPageGeneral && !::IsValidCppIdentifier(m_textClassName->GetValue())) {
             wxMessageBox(_("Invalid C++ class name provided!"), wxT("wxCrafter"), wxOK | wxICON_WARNING | wxCENTER);
             event.Veto();
             return;
 
-        } else if(event.GetPage() == m_wizardPageHeader && m_textCtrlIncludeLine->IsEmpty()) {
-            wxMessageBox(_("Please set an include file for this control"), wxT("wxCrafter"),
-                         wxOK | wxICON_WARNING | wxCENTER);
+        } else if (event.GetPage() == m_wizardPageHeader && m_textCtrlIncludeLine->IsEmpty()) {
+            wxMessageBox(
+                _("Please set an include file for this control"), wxT("wxCrafter"), wxOK | wxICON_WARNING | wxCENTER);
             event.Veto();
             return;
 
-        } else if(event.GetPage() == m_wizardPageCpp && m_textCtrlInstantiationLine->IsEmpty()) {
-            wxMessageBox(_("Control instantiation code is missing"), wxT("wxCrafter"),
-                         wxOK | wxICON_WARNING | wxCENTER);
+        } else if (event.GetPage() == m_wizardPageCpp && m_textCtrlInstantiationLine->IsEmpty()) {
+            wxMessageBox(
+                _("Control instantiation code is missing"), wxT("wxCrafter"), wxOK | wxICON_WARNING | wxCENTER);
             event.Veto();
             return;
         }
@@ -45,7 +45,7 @@ CustomControlTemplate DefineCustomControlWizard::GetControl() const
 
     wxStringMap_t events;
     int count = m_dvListCtrlEvents->GetItemCount();
-    for(int i = 0; i < count; ++i) {
+    for (int i = 0; i < count; ++i) {
         wxString eventtype = m_dvListCtrlEvents->GetTextValue(i, 0);
         wxString eventclss = m_dvListCtrlEvents->GetTextValue(i, 1);
 
@@ -68,7 +68,7 @@ void DefineCustomControlWizard::OnDeleteEventUI(wxUpdateUIEvent& event)
 void DefineCustomControlWizard::OnNewEvent(wxCommandEvent& event)
 {
     NewCustomEventDlg dlg(this);
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         wxVector<wxVariant> cols;
         cols.push_back(dlg.GetEventType());
         cols.push_back(dlg.GetEventClass());

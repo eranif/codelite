@@ -1,5 +1,7 @@
 #include "phprefactoringoptions.h"
+
 #include "cl_standard_paths.h"
+
 #include <wx/filename.h>
 
 PHPRefactoringOptions::PHPRefactoringOptions()
@@ -9,7 +11,7 @@ PHPRefactoringOptions::PHPRefactoringOptions()
 {
     // Set default PHAR file
     wxFileName pharFile(clStandardPaths::Get().GetDataDir(), "phprefactor.phar");
-    if(pharFile.FileExists()) {
+    if (pharFile.FileExists()) {
         m_phprefactoringPhar = pharFile.GetFullPath();
     }
 }

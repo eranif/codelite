@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "svncommand.h"
+
 #include "environmentconfig.h"
 #include "file_logger.h"
 #include "globals.h"
@@ -30,7 +32,7 @@
 #include "subversion2.h"
 #include "subversion_strings.h"
 #include "svn_console.h"
-#include "svncommand.h"
+
 #include <wx/aui/framemanager.h>
 
 SvnCommand::SvnCommand(Subversion2* plugin)
@@ -44,11 +46,13 @@ SvnCommand::SvnCommand(Subversion2* plugin)
 
 SvnCommand::~SvnCommand() { ClearAll(); }
 
-bool SvnCommand::Execute(const wxString& command, const wxString& workingDirectory, SvnCommandHandler* handler,
+bool SvnCommand::Execute(const wxString& command,
+                         const wxString& workingDirectory,
+                         SvnCommandHandler* handler,
                          Subversion2* plugin)
 {
     // Don't run 2 commands at the same time
-    if(m_process) {
+    if (m_process) {
         wxDELETE(handler);
         return false;
     }
@@ -63,7 +67,7 @@ bool SvnCommand::Execute(const wxString& command, const wxString& workingDirecto
     EnvSetter env(m_plugin->GetManager()->GetEnv(), useOverrideMap ? &om : NULL);
 
     m_process = CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessWrapInShell, workingDirectory);
-    if(!m_process) {
+    if (!m_process) {
         return false;
     }
     m_workingDirectory = workingDirectory.c_str();
@@ -80,14 +84,14 @@ void SvnCommand::OnProcessOutput(clProcessEvent& event)
 
 void SvnCommand::OnProcessTerminated(clProcessEvent& event)
 {
-    if(m_handler) {
+    if (m_handler) {
         LOG_IF_TRACE { clDEBUG1() << "Subversion:" << m_output << clEndl; }
-        if(m_handler->TestLoginRequired(m_output)) {
+        if (m_handler->TestLoginRequired(m_output)) {
             // re-issue the last command but this time with login dialog
             m_handler->GetPlugin()->GetConsole()->AppendText(_("Authentication failed. Retrying...\n"));
             m_handler->ProcessLoginRequired(m_workingDirectory);
 
-        } else if(m_handler->TestVerificationFailed(m_output)) {
+        } else if (m_handler->TestVerificationFailed(m_output)) {
             m_handler->GetPlugin()->GetConsole()->AppendText(
                 _("Server certificate verification failed. Retrying...\n"));
             m_handler->ProcessVerificationRequired();

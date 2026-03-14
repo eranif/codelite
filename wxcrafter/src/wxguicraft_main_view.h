@@ -57,7 +57,7 @@ public:
     }
     ~GUICraftItemData() override
     {
-        if(m_wxcWidget) {
+        if (m_wxcWidget) {
             delete m_wxcWidget;
             m_wxcWidget = NULL;
         }
@@ -129,16 +129,21 @@ protected:
     wxString GetStyleFromGuiID(int guiId) const;
 
     void Clear();
-    void DoBuildTree(wxTreeItemId& itemToSelect, wxcWidget* wrapper, const wxTreeItemId& parent,
-                     const wxTreeItemId& beforeItem = wxTreeItemId(), bool insertBefore = true);
+    void DoBuildTree(wxTreeItemId& itemToSelect,
+                     wxcWidget* wrapper,
+                     const wxTreeItemId& parent,
+                     const wxTreeItemId& beforeItem = wxTreeItemId(),
+                     bool insertBefore = true);
     void ExpandToItem(const wxString& name, wxTreeItemId& searchFromItem); // Find and select the named item, starting
                                                                            // looking from branch searchFromItem (in
                                                                            // case of a name-clash)
     wxTreeItemId DoFindBestSelection(const wxTreeItemId& item);
     bool DoUpdateNotebookSelection(const wxTreeItemId& item);
 
-    void DoInsertBefore(const wxTreeItemId& sourceItem, const wxTreeItemId& targetItem,
-                        wxcWidget* sourceItemData = NULL, bool insertBefore = true);
+    void DoInsertBefore(const wxTreeItemId& sourceItem,
+                        const wxTreeItemId& targetItem,
+                        wxcWidget* sourceItemData = NULL,
+                        bool insertBefore = true);
     void DoAppendItem(const wxTreeItemId& sourceItem, const wxTreeItemId& targetItem, wxcWidget* sourceItemData = NULL);
     void DoChangeOrInsertIntoSizer(int id);
     wxArrayString GetCustomControlsUsed() const;
@@ -164,7 +169,10 @@ public:
     wxcWidget* GetActiveWizardPage() const;
     wxcWidget* GetActiveTopLevelWin() const;
     wxcWidget* DoGetItemData(const wxTreeItemId& item) const;
-    bool GenerateCppOutput(wxString& cpp, wxString& header, wxArrayString& headers, wxStringMap_t& additionalFiles,
+    bool GenerateCppOutput(wxString& cpp,
+                           wxString& header,
+                           wxArrayString& headers,
+                           wxStringMap_t& additionalFiles,
                            size_t flags = 0) const;
     void GenerateXrcOutput(wxString& output, size_t flags = 0) const;
     /**

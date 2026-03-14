@@ -37,23 +37,24 @@ class Subversion2;
 /** Implementing SvnPreferencesDialogBase */
 class SvnPreferencesDialog : public SvnPreferencesDialogBase
 {
-	Subversion2 *m_plugin;
-protected:
-	// Handlers for SvnPreferencesDialogBase events.
-	void OnBrowseSvnExe    ( wxCommandEvent& event );
-	void OnBrowseDiffViewer( wxCommandEvent& event );
-	void OnBrowseSSHClient ( wxCommandEvent& event );
-	void OnButtonOK        ( wxCommandEvent &event );
-	void OnUseExternalDiffUI( wxUpdateUIEvent &event);
-	void OnAddRevisionMacroUI( wxUpdateUIEvent& event );
+    Subversion2* m_plugin;
 
 protected:
-	wxString DoGetExecutable(const wxString &basePath);
+    // Handlers for SvnPreferencesDialogBase events.
+    void OnBrowseSvnExe(wxCommandEvent& event);
+    void OnBrowseDiffViewer(wxCommandEvent& event);
+    void OnBrowseSSHClient(wxCommandEvent& event);
+    void OnButtonOK(wxCommandEvent& event);
+    void OnUseExternalDiffUI(wxUpdateUIEvent& event);
+    void OnAddRevisionMacroUI(wxUpdateUIEvent& event);
+
+protected:
+    wxString DoGetExecutable(const wxString& basePath);
 
 public:
-	/** Constructor */
-	SvnPreferencesDialog( wxWindow* parent, Subversion2 *plugin );
-	virtual ~SvnPreferencesDialog() = default;
+    /** Constructor */
+    SvnPreferencesDialog(wxWindow* parent, Subversion2* plugin);
+    virtual ~SvnPreferencesDialog() = default;
 };
 
 #endif // __svn_preferences_dialog__

@@ -54,10 +54,10 @@ wxString MenuItemWrapper::CppCtorCode() const
     wxString label;
 
     wxcWidget* parent = GetParent(); // Find the first non-menu parent, to check it's kosher
-    while(parent && (parent->GetType() == ID_WXMENU || parent->GetType() == ID_WXSUBMENU)) {
+    while (parent && (parent->GetType() == ID_WXMENU || parent->GetType() == ID_WXSUBMENU)) {
         parent = parent->GetParent();
     }
-    if(parent && parent->GetType() == ID_WXTOOLBARITEM) {
+    if (parent && parent->GetType() == ID_WXTOOLBARITEM) {
         // An item in a toolbaritem dropdown menu (probably an auitoolbar, as that's not yet implemented for the
         // standard one)
         // This is handled in a completely different way, so don't emit anything
@@ -69,7 +69,7 @@ wxString MenuItemWrapper::CppCtorCode() const
 
     wxString actualKind;
     wxCrafter::TOOL_TYPE toolType = wxCrafter::GetToolType(PropertyString(PROP_KIND));
-    switch(toolType) {
+    switch (toolType) {
     case wxCrafter::TOOL_TYPE_SEPARATOR:
         ID = wxT("wxID_SEPARATOR");
         break;
@@ -88,13 +88,13 @@ wxString MenuItemWrapper::CppCtorCode() const
         break;
     }
 
-    if(ID == wxT("wxID_SEPARATOR")) {
+    if (ID == wxT("wxID_SEPARATOR")) {
         code << GetWindowParent() << wxT("->AppendSeparator();\n");
 
     } else {
         label << PropertyString(PROP_LABEL);
         wxString accel = PropertyString(PROP_ACCELERATOR).Trim().Trim(false);
-        if(!accel.IsEmpty()) {
+        if (!accel.IsEmpty()) {
             label << wxT("\\t") << accel;
         }
         label.Trim().Trim(false);
@@ -106,7 +106,7 @@ wxString MenuItemWrapper::CppCtorCode() const
         code << actualKind << wxT(");\n");
 
         wxString bmpcode = wxcCodeGeneratorHelper::Get().BitmapCode(PropertyFile(PROP_BITMAP_PATH));
-        if(
+        if (
 #if defined(__WXGTK__)
             (toolType ==
              wxCrafter::TOOL_TYPE_NORMAL) && // gtk asserts if you try to give a bitmap to a check/radio menuitem
@@ -117,7 +117,7 @@ wxString MenuItemWrapper::CppCtorCode() const
 
         code << GetWindowParent() << wxT("->Append(") << GetName() << wxT(");\n");
 
-        if((actualKind == wxT("wxITEM_CHECK")) && (PropertyString(PROP_CHECKED) == "1")) {
+        if ((actualKind == wxT("wxITEM_CHECK")) && (PropertyString(PROP_CHECKED) == "1")) {
             code << GetName() << "->Check();\n";
         }
     }
@@ -132,12 +132,12 @@ void MenuItemWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
     bool isSeparator = (WindowID() == wxT("wxID_SEPARATOR") || PropertyString(PROP_KIND) == ITEM_SEPARATOR);
 
-    if(isSeparator) {
+    if (isSeparator) {
         text << wxT("<object class=\"separator\" />");
 
     } else {
         text << XRCPrefix() << XRCKind() << XRCLabel();
-        if(
+        if (
 #if defined(__WXGTK__)
             (PropertyString(PROP_KIND) ==
              ITEM_NORMAL) && // gtk asserts if you try to give a bitmap to a check/radio menuitem
@@ -146,7 +146,7 @@ void MenuItemWrapper::ToXRC(wxString& text, XRC_TYPE type) const
             text << XRCBitmap();
         }
         text << wxT("<accel>") << wxCrafter::CDATA(PropertyString(PROP_ACCELERATOR)) << wxT("</accel>");
-        if((PropertyString(PROP_KIND) == ITEM_CHECK) && (PropertyString(PROP_CHECKED) == "1")) {
+        if ((PropertyString(PROP_KIND) == ITEM_CHECK) && (PropertyString(PROP_CHECKED) == "1")) {
             text << wxT("<checked>") << "1" << wxT("</checked>");
         }
         // Add the help string
@@ -158,10 +158,10 @@ void MenuItemWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 wxString MenuItemWrapper::XRCKind() const
 {
     wxString kind = PropertyString(PROP_KIND);
-    if(kind == ITEM_RADIO)
+    if (kind == ITEM_RADIO)
         return wxT("<radio>1</radio>");
 
-    else if(kind == ITEM_CHECK)
+    else if (kind == ITEM_CHECK)
         return wxT("<checkable>1</checkable>");
 
     else
@@ -188,38 +188,38 @@ void MenuItemWrapper::DoLoadXRCProperties(const wxXmlNode* node)
 {
     // Cope with separators. This will be a menuitem, but we must set its type
     wxString classname = XmlUtils::ReadString(node, wxT("class"));
-    if(classname == "separator") {
+    if (classname == "separator") {
         SetPropertyString(PROP_KIND, ITEM_SEPARATOR);
         return; // Nothing else needed for a separator
     }
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("checkable"));
-    if(propertynode && propertynode->GetNodeContent() == "1") {
+    if (propertynode && propertynode->GetNodeContent() == "1") {
         SetPropertyString(PROP_KIND, ITEM_CHECK);
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("checked"));
-    if(propertynode && propertynode->GetNodeContent() == "1") {
+    if (propertynode && propertynode->GetNodeContent() == "1") {
         SetPropertyString(PROP_CHECKED, "1");
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("radio"));
-    if(propertynode && propertynode->GetNodeContent() == "1") {
+    if (propertynode && propertynode->GetNodeContent() == "1") {
         SetPropertyString(PROP_KIND, ITEM_RADIO);
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "bitmap");
-    if(propertynode) {
+    if (propertynode) {
         ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_MENU");
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "accel");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_ACCELERATOR, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "help");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_HELP, propertynode->GetNodeContent());
     }
 }
@@ -231,17 +231,17 @@ void MenuItemWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
 
     // Next cope with separators. This will be a menuitem, but we must set its type
     wxString classname = XmlUtils::ReadString(node, wxT("class"));
-    if(classname == "separator") {
+    if (classname == "separator") {
         SetPropertyString(PROP_KIND, ITEM_SEPARATOR);
         return; // Nothing else needed for a separator
     }
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "kind");
-    if(propertynode) {
+    if (propertynode) {
         wxString value = propertynode->GetNodeContent();
-        if(value == "wxITEM_CHECK") {
+        if (value == "wxITEM_CHECK") {
             SetPropertyString(PROP_KIND, ITEM_CHECK);
-        } else if(value == "wxITEM_RADIO") {
+        } else if (value == "wxITEM_RADIO") {
             SetPropertyString(PROP_KIND, ITEM_RADIO);
         } else {
             SetPropertyString(PROP_KIND, ITEM_NORMAL);
@@ -249,22 +249,22 @@ void MenuItemWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "bitmap");
-    if(propertynode) {
+    if (propertynode) {
         ImportFromwxFB::ProcessBitmapProperty(propertynode->GetNodeContent(), this, PROP_BITMAP_PATH, "wxART_MENU");
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "shortcut");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_ACCELERATOR, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "help");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_HELP, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", wxT("checked"));
-    if(propertynode && propertynode->GetNodeContent() == "1") {
+    if (propertynode && propertynode->GetNodeContent() == "1") {
         SetPropertyString(PROP_CHECKED, "1");
     }
 }

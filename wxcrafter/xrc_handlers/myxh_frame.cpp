@@ -1,5 +1,7 @@
 #include "myxh_frame.h"
+
 #include "my_frame.h"
+
 #include <wx/dialog.h>
 
 IMPLEMENT_DYNAMIC_CLASS(wxMyFrameXmlHandler, wxXmlResourceHandler)
@@ -44,16 +46,25 @@ wxObject* wxMyFrameXmlHandler::DoCreateResource()
 {
     XRC_MAKE_INSTANCE(frame, MyFrame);
 
-    frame->Create(m_parentAsWindow, GetID(), GetText(wxT("title")), wxDefaultPosition, wxDefaultSize,
-                  GetStyle(wxT("style"), wxDEFAULT_FRAME_STYLE), GetName());
+    frame->Create(m_parentAsWindow,
+                  GetID(),
+                  GetText(wxT("title")),
+                  wxDefaultPosition,
+                  wxDefaultSize,
+                  GetStyle(wxT("style"), wxDEFAULT_FRAME_STYLE),
+                  GetName());
 
-    if(HasParam(wxT("size"))) frame->SetClientSize(GetSize(wxT("size"), frame));
-    if(HasParam(wxT("pos"))) frame->Move(GetPosition());
-    if(HasParam(wxT("icon"))) frame->SetIcons(GetIconBundle(wxT("icon"), wxART_FRAME_ICON));
+    if (HasParam(wxT("size")))
+        frame->SetClientSize(GetSize(wxT("size"), frame));
+    if (HasParam(wxT("pos")))
+        frame->Move(GetPosition());
+    if (HasParam(wxT("icon")))
+        frame->SetIcons(GetIconBundle(wxT("icon"), wxART_FRAME_ICON));
 
     SetupWindow(frame);
     CreateChildren(frame);
-    if(GetBool(wxT("centered"), false)) frame->Centre();
+    if (GetBool(wxT("centered"), false))
+        frame->Centre();
 
     return frame;
 }

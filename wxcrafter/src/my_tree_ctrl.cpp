@@ -13,7 +13,7 @@ wxDataViewItem MyTreeCtrl::AddRoot(const wxString& name, int imgId, int expandIm
 
 void MyTreeCtrl::SelectItem(const wxDataViewItem& item, bool select)
 {
-    if(select)
+    if (select)
         Select(item);
     else
         Unselect(item);
@@ -23,7 +23,7 @@ wxDataViewItem MyTreeCtrl::GetFirstChild(const wxDataViewItem& item)
 {
     m_children.clear();
     GetStore()->GetChildren(item, m_children);
-    if(m_children.IsEmpty())
+    if (m_children.IsEmpty())
         return wxDataViewItem();
     else {
         m_next = 1;
@@ -33,9 +33,11 @@ wxDataViewItem MyTreeCtrl::GetFirstChild(const wxDataViewItem& item)
 
 wxDataViewItem MyTreeCtrl::GetNextChild(const wxDataViewItem& item)
 {
-    if(m_children.IsEmpty()) return wxDataViewItem();
+    if (m_children.IsEmpty())
+        return wxDataViewItem();
 
-    if(m_next >= m_children.GetCount()) return wxDataViewItem();
+    if (m_next >= m_children.GetCount())
+        return wxDataViewItem();
 
     wxDataViewItem chld = m_children.Item(m_next);
     m_next++;

@@ -24,6 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "commitmessagescache.h"
+
 #include "cl_config.h"
 
 CommitMessagesCache::CommitMessagesCache()
@@ -40,7 +41,7 @@ CommitMessagesCache::~CommitMessagesCache()
 
 void CommitMessagesCache::GetMessages(wxArrayString& messages, wxArrayString& previews)
 {
-    for(size_t i = 0; i < m_messages.GetCount(); i++) {
+    for (size_t i = 0; i < m_messages.GetCount(); i++) {
         messages.Add(m_messages.Item(i));
         previews.Add(m_messages.Item(i).BeforeFirst(wxT('\n')));
     }
@@ -49,10 +50,11 @@ void CommitMessagesCache::GetMessages(wxArrayString& messages, wxArrayString& pr
 void CommitMessagesCache::AddMessage(const wxString& message)
 {
     wxString formattedMessage = FormatMessage(message);
-    if(formattedMessage.IsEmpty()) return;
+    if (formattedMessage.IsEmpty())
+        return;
 
     int where = m_messages.Index(formattedMessage);
-    if(where != wxNOT_FOUND) {
+    if (where != wxNOT_FOUND) {
         m_messages.RemoveAt(where);
     }
     // Place the new message at the top of the message list

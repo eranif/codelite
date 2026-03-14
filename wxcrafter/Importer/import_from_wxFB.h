@@ -4,6 +4,7 @@
 #include "import_dlg.h"
 #include "wxc_widget.h"
 #include "wxgui_defs.h"
+
 #include <map>
 
 class wxWindow;
@@ -21,8 +22,10 @@ public:
 
     bool ImportProject(ImportDlg::ImportFileData& data, const wxString& sourceFile = "") const;
     static wxString ConvertFBOptionsString(const wxString& content, const wxString& separator = ";");
-    static void ProcessBitmapProperty(const wxString& value, wxcWidget* wrapper,
-                                      const wxString& property = PROP_BITMAP_PATH, const wxString& client_hint = "");
+    static void ProcessBitmapProperty(const wxString& value,
+                                      wxcWidget* wrapper,
+                                      const wxString& property = PROP_BITMAP_PATH,
+                                      const wxString& client_hint = "");
     bool GetProject() const;
     static wxString GetEventtypeFromHandlerstub(const wxString& stub);
 

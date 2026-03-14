@@ -10,6 +10,7 @@
 /////////////////////////////////////////////////////////////////////////////
 
 #include "myxh_listc.h"
+
 #include <wx/imaglist.h>
 #include <wx/listctrl.h>
 #include <wx/textctrl.h>
@@ -62,9 +63,9 @@ MYwxListCtrlXmlHandler::MYwxListCtrlXmlHandler()
 
 wxObject* MYwxListCtrlXmlHandler::DoCreateResource()
 {
-    if(m_class == LISTITEM_CLASS_NAME) {
+    if (m_class == LISTITEM_CLASS_NAME) {
         HandleListItem();
-    } else if(m_class == LISTCOL_CLASS_NAME) {
+    } else if (m_class == LISTCOL_CLASS_NAME) {
         HandleListCol();
     } else {
         wxASSERT_MSG(m_class == LISTCTRL_CLASS_NAME, wxT("can't handle unknown node"));
@@ -83,8 +84,10 @@ bool MYwxListCtrlXmlHandler::CanHandle(wxXmlNode* node)
 
 void MYwxListCtrlXmlHandler::HandleCommonItemAttrs(wxListItem& item)
 {
-    if(HasParam(wxT("align"))) item.SetAlign((wxListColumnFormat)GetStyle(wxT("align")));
-    if(HasParam(wxT("text"))) item.SetText(GetText(wxT("text")));
+    if (HasParam(wxT("align")))
+        item.SetAlign((wxListColumnFormat)GetStyle(wxT("align")));
+    if (HasParam(wxT("text")))
+        item.SetText(GetText(wxT("text")));
 }
 
 void MYwxListCtrlXmlHandler::HandleListCol()
@@ -92,13 +95,17 @@ void MYwxListCtrlXmlHandler::HandleListCol()
     wxListCtrl* const list = wxDynamicCast(m_parentAsWindow, wxListCtrl);
     wxCHECK_RET(list, wxT("must have wxListCtrl parent"));
 
-    if(!list->HasFlag(wxLC_REPORT)) { return; }
+    if (!list->HasFlag(wxLC_REPORT)) {
+        return;
+    }
 
     wxListItem item;
 
     HandleCommonItemAttrs(item);
-    if(HasParam(wxT("width"))) item.SetWidth((int)GetLong(wxT("width")));
-    if(HasParam(wxT("image"))) item.SetImage((int)GetLong(wxT("image")));
+    if (HasParam(wxT("width")))
+        item.SetWidth((int)GetLong(wxT("width")));
+    if (HasParam(wxT("image")))
+        item.SetImage((int)GetLong(wxT("image")));
 
     list->InsertColumn(list->GetColumnCount(), item);
 }
@@ -112,24 +119,32 @@ void MYwxListCtrlXmlHandler::HandleListItem()
 
     HandleCommonItemAttrs(item);
 
-    if(HasParam(wxT("bg"))) item.SetBackgroundColour(GetColour(wxT("bg")));
-    if(HasParam(wxT("col"))) item.SetColumn((int)GetLong(wxT("col")));
-    if(HasParam(wxT("data"))) item.SetData(GetLong(wxT("data")));
-    if(HasParam(wxT("font"))) item.SetFont(GetFont());
-    if(HasParam(wxT("state"))) item.SetState(GetStyle(wxT("state")));
-    if(HasParam(wxT("textcolour"))) item.SetTextColour(GetColour(wxT("textcolour")));
-    if(HasParam(wxT("textcolor"))) item.SetTextColour(GetColour(wxT("textcolor")));
+    if (HasParam(wxT("bg")))
+        item.SetBackgroundColour(GetColour(wxT("bg")));
+    if (HasParam(wxT("col")))
+        item.SetColumn((int)GetLong(wxT("col")));
+    if (HasParam(wxT("data")))
+        item.SetData(GetLong(wxT("data")));
+    if (HasParam(wxT("font")))
+        item.SetFont(GetFont());
+    if (HasParam(wxT("state")))
+        item.SetState(GetStyle(wxT("state")));
+    if (HasParam(wxT("textcolour")))
+        item.SetTextColour(GetColour(wxT("textcolour")));
+    if (HasParam(wxT("textcolor")))
+        item.SetTextColour(GetColour(wxT("textcolor")));
 
     // the list control icon style, may be 0
     int image;
-    if(list->HasFlag(wxLC_ICON))
+    if (list->HasFlag(wxLC_ICON))
         image = GetImageIndex(list, wxIMAGE_LIST_NORMAL);
-    else if(list->HasFlag(wxLC_SMALL_ICON) || list->HasFlag(wxLC_REPORT) || list->HasFlag(wxLC_LIST))
+    else if (list->HasFlag(wxLC_SMALL_ICON) || list->HasFlag(wxLC_REPORT) || list->HasFlag(wxLC_LIST))
         image = GetImageIndex(list, wxIMAGE_LIST_SMALL);
     else
         image = wxNOT_FOUND;
 
-    if(image != wxNOT_FOUND) item.SetImage(image);
+    if (image != wxNOT_FOUND)
+        item.SetImage(image);
 
     // append the list item to the control
     item.SetId(list->GetItemCount());
@@ -147,9 +162,11 @@ wxListCtrl* MYwxListCtrlXmlHandler::HandleListCtrl()
     // we can optionally have normal and/or small image lists
     wxImageList* imagelist;
     imagelist = GetImageList(wxT("imagelist"));
-    if(imagelist) list->AssignImageList(imagelist, wxIMAGE_LIST_NORMAL);
+    if (imagelist)
+        list->AssignImageList(imagelist, wxIMAGE_LIST_NORMAL);
     imagelist = GetImageList(wxT("imagelist-small"));
-    if(imagelist) list->AssignImageList(imagelist, wxIMAGE_LIST_SMALL);
+    if (imagelist)
+        list->AssignImageList(imagelist, wxIMAGE_LIST_SMALL);
 #endif
 
     CreateChildrenPrivately(list);
@@ -163,7 +180,7 @@ long MYwxListCtrlXmlHandler::GetImageIndex(wxListCtrl* listctrl, int which)
     // use different tag names depending on whether we need a normal or small
     // image
     wxString bmpParam(wxT("bitmap")), imgParam(wxT("image"));
-    switch(which) {
+    switch (which) {
     case wxIMAGE_LIST_SMALL:
         bmpParam += wxT("-small");
         imgParam += wxT("-small");
@@ -180,14 +197,14 @@ long MYwxListCtrlXmlHandler::GetImageIndex(wxListCtrl* listctrl, int which)
 
     // look for either bitmap or image tags
     int imgIndex = wxNOT_FOUND;
-    if(HasParam(bmpParam)) {
+    if (HasParam(bmpParam)) {
         // we implicitly construct an image list containing the specified
         // bitmaps
         wxBitmap bmp = GetBitmap(bmpParam, wxART_OTHER);
 
         // create the image list on demand for the first bitmap
         wxImageList* imgList = listctrl->GetImageList(which);
-        if(!imgList) {
+        if (!imgList) {
             imgList = new wxImageList(bmp.GetWidth(), bmp.GetHeight());
             listctrl->AssignImageList(imgList, which);
         }
@@ -195,7 +212,7 @@ long MYwxListCtrlXmlHandler::GetImageIndex(wxListCtrl* listctrl, int which)
         imgIndex = imgList->Add(bmp);
     }
 
-    if(HasParam(imgParam)) {
+    if (HasParam(imgParam)) {
 
         // just use the specified index directly
         imgIndex = GetLong(imgParam);

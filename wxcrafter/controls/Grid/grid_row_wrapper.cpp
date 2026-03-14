@@ -45,7 +45,7 @@ wxString GridRowWrapper::Code(int rowIndex) const
     cppCode << GetParent()->GetName() << wxT("->SetRowLabelValue(") << rowIndex << wxT(", ")
             << wxCrafter::UNDERSCORE(GetName()) << wxT(");\n");
     int height = PropertyInt(PROP_HEIGHT, -1);
-    if(height != -1) {
+    if (height != -1) {
         cppCode << GetParent()->GetName() << wxT("->SetRowSize(") << rowIndex << ", " << height << ");\n";
     }
     return cppCode;

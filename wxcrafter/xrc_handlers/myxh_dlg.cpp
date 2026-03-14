@@ -1,6 +1,7 @@
 // For compilers that support precompilation, includes "wx.h".
+#include <wx/wxprec.h>
+
 #include "my_dialog.h"
-#include "wx/wxprec.h"
 
 #ifdef __BORLANDC__
 #pragma hdrstop
@@ -46,18 +47,27 @@ wxObject* MyWxDialogXmlHandler::DoCreateResource()
 {
     XRC_MAKE_INSTANCE(dlg, MyDialog);
 
-    dlg->Create(m_parentAsWindow, GetID(), GetText(wxT("title")), wxDefaultPosition, wxDefaultSize,
-                GetStyle(wxT("style"), wxDEFAULT_DIALOG_STYLE), GetName());
+    dlg->Create(m_parentAsWindow,
+                GetID(),
+                GetText(wxT("title")),
+                wxDefaultPosition,
+                wxDefaultSize,
+                GetStyle(wxT("style"), wxDEFAULT_DIALOG_STYLE),
+                GetName());
 
-    if(HasParam(wxT("size"))) dlg->SetClientSize(GetSize(wxT("size"), dlg));
-    if(HasParam(wxT("pos"))) dlg->Move(GetPosition());
-    if(HasParam(wxT("icon"))) dlg->SetIcons(GetIconBundle(wxT("icon"), wxART_FRAME_ICON));
+    if (HasParam(wxT("size")))
+        dlg->SetClientSize(GetSize(wxT("size"), dlg));
+    if (HasParam(wxT("pos")))
+        dlg->Move(GetPosition());
+    if (HasParam(wxT("icon")))
+        dlg->SetIcons(GetIconBundle(wxT("icon"), wxART_FRAME_ICON));
 
     SetupWindow(dlg);
 
     CreateChildren(dlg);
 
-    if(GetBool(wxT("centered"), false)) dlg->Centre();
+    if (GetBool(wxT("centered"), false))
+        dlg->Centre();
 
     return dlg;
 }

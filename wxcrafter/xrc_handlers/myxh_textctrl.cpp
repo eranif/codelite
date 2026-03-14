@@ -1,4 +1,5 @@
 #include "myxh_textctrl.h"
+
 #include <wx/textctrl.h>
 
 MyTextCtrlXrcHandler::MyTextCtrlXrcHandler()
@@ -37,14 +38,23 @@ wxObject* MyTextCtrlXrcHandler::DoCreateResource()
 {
     XRC_MAKE_INSTANCE(text, wxTextCtrl)
 
-    text->Create(m_parentAsWindow, GetID(), GetText(wxT("value")), GetPosition(), GetSize(), GetStyle(),
-                 wxDefaultValidator, GetName());
+    text->Create(m_parentAsWindow,
+                 GetID(),
+                 GetText(wxT("value")),
+                 GetPosition(),
+                 GetSize(),
+                 GetStyle(),
+                 wxDefaultValidator,
+                 GetName());
 
     SetupWindow(text);
 
-    if(HasParam(wxT("maxlength"))) text->SetMaxLength(GetLong(wxT("maxlength")));
+    if (HasParam(wxT("maxlength")))
+        text->SetMaxLength(GetLong(wxT("maxlength")));
 
-    if(HasParam("hint") && !(text->GetWindowStyle() & wxTE_MULTILINE)) { text->SetHint(GetText("hint")); }
+    if (HasParam("hint") && !(text->GetWindowStyle() & wxTE_MULTILINE)) {
+        text->SetHint(GetText("hint"));
+    }
     return text;
 }
 

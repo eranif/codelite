@@ -1,7 +1,9 @@
 #include "SvnShowFileChangesHandler.h"
+
 #include "file_logger.h"
-#include <wx/tokenzr.h>
 #include "subversion2.h"
+
+#include <wx/tokenzr.h>
 
 SvnShowFileChangesHandler::SvnShowFileChangesHandler(Subversion2* plugin, int cmdid, wxEvtHandler* owner)
     : SvnCommandHandler(plugin, cmdid, owner)
@@ -16,22 +18,23 @@ void SvnShowFileChangesHandler::Process(const wxString& output)
     SvnShowDiffChunk::List_t changes;
     SvnShowDiffChunk curchange;
     wxArrayString lines = ::wxStringTokenize(output, "\n", wxTOKEN_RET_DELIMS);
-    if(lines.IsEmpty()) return;
-    
+    if (lines.IsEmpty())
+        return;
+
     // Remove everything until we find the first line that starts with "---------..."
     // Remove it and then break the loop
-    while(!lines.IsEmpty()) {
+    while (!lines.IsEmpty()) {
         wxString firstLine = lines.Item(0);
         lines.RemoveAt(0);
-        if(firstLine.StartsWith("------")) {
+        if (firstLine.StartsWith("------")) {
             break;
         }
     }
 
     eState state = kWaitingHeader;
-    while(!lines.IsEmpty()) {
+    while (!lines.IsEmpty()) {
         wxString curline = lines.Item(0);
-        switch(state) {
+        switch (state) {
         case kWaitingHeader:
             curchange.description = curline.Trim().Trim(false);
             lines.RemoveAt(0);
@@ -39,9 +42,9 @@ void SvnShowFileChangesHandler::Process(const wxString& output)
             break;
 
         case kWaitingDiffBlock:
-            if(curline.StartsWith("======")) {
+            if (curline.StartsWith("======")) {
                 // the line above us was the file name of the diff, restore it
-                if(!curchange.commentArr.IsEmpty()) {
+                if (!curchange.commentArr.IsEmpty()) {
                     wxString fileNameLine = curchange.commentArr.Last();
                     curchange.commentArr.RemoveAt(curchange.commentArr.size() - 1); // Remove the last line
                     lines.Insert(fileNameLine, 0);
@@ -54,7 +57,7 @@ void SvnShowFileChangesHandler::Process(const wxString& output)
             break;
 
         case kWaitingSeparator:
-            if(curline.StartsWith("---------")) {
+            if (curline.StartsWith("---------")) {
                 // our chunk is complete, add it
                 curchange.Finalize();
                 changes.push_back(curchange);

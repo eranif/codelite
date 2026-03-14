@@ -40,25 +40,18 @@ public:
     static void Load(SFTPWorkspaceSettings& settings, const wxFileName& workspaceFile);
     static void Save(const SFTPWorkspaceSettings& settings, const wxFileName& workspaceFile);
 
-    void SetAccount(const wxString& account) {
-        this->m_account = account;
-    }
-    void SetRemoteWorkspacePath(const wxString& remoteWorkspacePath) {
+    void SetAccount(const wxString& account) { this->m_account = account; }
+    void SetRemoteWorkspacePath(const wxString& remoteWorkspacePath)
+    {
         this->m_remoteWorkspacePath = remoteWorkspacePath;
     }
-    const wxString& GetAccount() const {
-        return m_account;
-    }
-    const wxString& GetRemoteWorkspacePath() const {
-        return m_remoteWorkspacePath;
-    }
-    
+    const wxString& GetAccount() const { return m_account; }
+    const wxString& GetRemoteWorkspacePath() const { return m_remoteWorkspacePath; }
+
     void Clear();
-    
-    bool IsOk() const {
-        return !m_account.IsEmpty() && !m_remoteWorkspacePath.IsEmpty();
-    }
-    
+
+    bool IsOk() const { return !m_account.IsEmpty() && !m_remoteWorkspacePath.IsEmpty(); }
+
 public:
     virtual void FromJSON(const JSONItem& json);
     virtual JSONItem ToJSON() const;

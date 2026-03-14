@@ -68,8 +68,8 @@ sci_marker_types ToSciMarkerTypes(ZoomText::MarkerType type)
 }
 } // namespace
 
-ZoomText::ZoomText(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style,
-                   const wxString& name)
+ZoomText::ZoomText(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
 {
     Hide();
     if (!wxStyledTextCtrl::Create(parent, id, pos, size, style | wxNO_BORDER, name)) {
@@ -236,8 +236,8 @@ void ZoomText::OnTimer(wxTimerEvent& event)
 
     if (!editor->GetKeywordClasses().IsEmpty() && (editor->GetFileName().GetFullPath() == m_filename)) {
         // Sync between the keywords
-        SetSemanticTokens(editor->GetKeywordClasses(), editor->GetKeywordLocals(), editor->GetKeywordMethods(),
-                          wxEmptyString);
+        SetSemanticTokens(
+            editor->GetKeywordClasses(), editor->GetKeywordLocals(), editor->GetKeywordMethods(), wxEmptyString);
     }
     m_timer->Start(TIMER_DELAY, true);
 }
@@ -260,7 +260,9 @@ void ZoomText::UpdateMarkers(const std::vector<int>& lines, MarkerType type)
     }
 }
 
-void ZoomText::SetSemanticTokens(const wxString& classes, const wxString& variables, const wxString& methods,
+void ZoomText::SetSemanticTokens(const wxString& classes,
+                                 const wxString& variables,
+                                 const wxString& methods,
                                  const wxString& others)
 {
     IEditor* editor = clGetManager()->GetActiveEditor();

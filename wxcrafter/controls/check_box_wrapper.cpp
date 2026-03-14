@@ -34,7 +34,7 @@ wxString CheckBoxWrapper::CppCtorCode() const
          << wxT(", ") << Label() << wxT(", ") << wxT("wxDefaultPosition") << wxT(", ") << SizeAsString() << wxT(", ")
          << StyleFlags(wxT("0")) << wxT(");\n");
 
-    if(PropertyString(PROP_VALUE) == wxT("1")) {
+    if (PropertyString(PROP_VALUE) == wxT("1")) {
         code << GetName() << wxT("->SetValue(true);\n");
 
     } else {
@@ -60,7 +60,9 @@ void CheckBoxWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("checked"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 }
 
 void CheckBoxWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -69,7 +71,9 @@ void CheckBoxWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("checked"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 }
 
 void CheckBoxWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -78,5 +82,7 @@ void CheckBoxWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", wxT("checked"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 }

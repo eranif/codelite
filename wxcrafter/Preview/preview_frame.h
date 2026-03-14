@@ -2,6 +2,7 @@
 #define PREVIEWFRAME_H
 
 #include "frame_wrapper.h"
+
 #include <wx/frame.h> // Base class: wxFrame
 
 class PreviewFrame : public wxFrame

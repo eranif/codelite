@@ -1,6 +1,8 @@
 #include "calendar_ctrl_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "wxgui_defs.h"
+
 #include <wx/calctrl.h>
 
 CalendarCtrlWrapper::CalendarCtrlWrapper()
@@ -14,13 +16,13 @@ CalendarCtrlWrapper::CalendarCtrlWrapper()
     PREPEND_STYLE_FALSE(wxCAL_SHOW_SURROUNDING_WEEKS);
     PREPEND_STYLE_FALSE(wxCAL_SEQUENTIAL_MONTH_SELECTION);
 
-    RegisterEvent(wxT("wxEVT_CALENDAR_DOUBLECLICKED"), wxT("wxCalendarEvent"),
-                  _("A day was double clicked in the calendar."));
+    RegisterEvent(
+        wxT("wxEVT_CALENDAR_DOUBLECLICKED"), wxT("wxCalendarEvent"), _("A day was double clicked in the calendar."));
     RegisterEvent(wxT("wxEVT_CALENDAR_DAY_CHANGED"), wxT("wxCalendarEvent"), _("The selected day changed."));
     RegisterEvent(wxT("wxEVT_CALENDAR_MONTH_CHANGED"), wxT("wxCalendarEvent"), _("The selected month changed."));
     RegisterEvent(wxT("wxEVT_CALENDAR_SEL_CHANGED"), wxT("wxCalendarEvent"), _("The selected date changed."));
-    RegisterEvent(wxT("wxEVT_CALENDAR_WEEKDAY_CLICKED"), wxT("wxCalendarEvent"),
-                  _("User clicked on the week day header"));
+    RegisterEvent(
+        wxT("wxEVT_CALENDAR_WEEKDAY_CLICKED"), wxT("wxCalendarEvent"), _("User clicked on the week day header"));
     RegisterEvent(wxT("wxEVT_CALENDAR_YEAR_CHANGED"), wxT("wxCalendarEvent"), _("The selected year changed."));
 
     SetPropertyString(_("Common Settings"), "wxCalendarCtrl");

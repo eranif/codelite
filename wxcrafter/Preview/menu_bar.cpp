@@ -26,7 +26,7 @@ MenuBar::MenuBar(wxWindow* parent, wxMenuBar* mb)
     , m_mb(mb)
     , m_controlHeight(30)
 {
-    for(size_t i = 0; i < m_mb->GetMenuCount(); i++) {
+    for (size_t i = 0; i < m_mb->GetMenuCount(); i++) {
         MenuInfo mi;
         mi.label = m_mb->GetMenuLabelText(i);
         mi.menu = m_mb->GetMenu(i);
@@ -35,7 +35,7 @@ MenuBar::MenuBar(wxWindow* parent, wxMenuBar* mb)
 
     // Remove the menus
     size_t nCount = m_mb->GetMenuCount();
-    for(size_t i = 0; i < nCount; ++i) {
+    for (size_t i = 0; i < nCount; ++i) {
         m_mb->Remove(0);
     }
     m_mbname = wxT("MENU_BAR_ID");
@@ -71,14 +71,14 @@ void MenuBar::OnLeftDown(wxMouseEvent& e)
 {
     size_t where = wxString::npos;
     wxPoint pt = e.GetPosition();
-    for(size_t i = 0; i < m_menus.size(); i++) {
-        if(m_menus.at(i).rect.Contains(pt)) {
+    for (size_t i = 0; i < m_menus.size(); i++) {
+        if (m_menus.at(i).rect.Contains(pt)) {
             where = i;
             break;
         }
     }
 
-    if(where == wxString::npos) {
+    if (where == wxString::npos) {
         wxCommandEvent evt(wxEVT_PREVIEW_BAR_SELECTED);
         evt.SetString(wxT(""));
         EventNotifier::Get()->AddPendingEvent(evt);
@@ -86,7 +86,7 @@ void MenuBar::OnLeftDown(wxMouseEvent& e)
     }
 
     wxString name;
-    if(m_menus.at(where).menu) {
+    if (m_menus.at(where).menu) {
         wxMenu* menu = m_menus.at(where).menu;
 
         wxCommandEvent evt(wxEVT_PREVIEW_BAR_SELECTED);
@@ -116,7 +116,7 @@ void MenuBar::OnPaint(wxPaintEvent& e)
     int posy = MARGIN_Y;
 
     size_t count = m_menus.size();
-    for(size_t i = 0; i < count; i++) {
+    for (size_t i = 0; i < count; i++) {
         wxString menuTitle = m_menus.at(i).label;
         dc.GetTextExtent(menuTitle, &width, &height, NULL, NULL, &font);
 

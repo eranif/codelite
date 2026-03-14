@@ -26,24 +26,24 @@
 #ifndef WORDCOMPLETIONTHREAD_H
 #define WORDCOMPLETIONTHREAD_H
 
-#include "worker_thread.h"
-#include <wx/string.h>
-#include <wx/filename.h>
-#include "macros.h"
 #include "WordCompletionRequestReply.h"
+#include "macros.h"
+#include "worker_thread.h"
+
+#include <wx/filename.h>
+#include <wx/string.h>
 
 class WordCompletionDictionary;
 class WordCompletionThread : public WorkerThread
 {
 protected:
     WordCompletionDictionary* m_dict;
-    
-public:
 
+public:
     WordCompletionThread(WordCompletionDictionary* dict);
     ~WordCompletionThread() = default;
     virtual void ProcessRequest(ThreadRequest* request);
-    
+
     /**
      * @brief parse 'buffer' and return set of words to complete
      */

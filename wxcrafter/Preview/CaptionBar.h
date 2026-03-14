@@ -2,6 +2,7 @@
 #define CAPTIONBAR_H
 
 #include "gui.h"
+
 #include <wx/bitmap.h>
 
 class CaptionBar : public CaptionBarBase

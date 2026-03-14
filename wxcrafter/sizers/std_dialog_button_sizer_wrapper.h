@@ -2,6 +2,7 @@
 #define STDDIALOGBUTTONSIZERWRAPPER_H
 
 #include "wxc_widget.h" // Base class: WrapperBase
+
 #include <wx/event.h>
 
 class StdDialogButtonSizerWrapper : public wxEvtHandler, public wxcWidget

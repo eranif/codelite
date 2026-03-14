@@ -38,14 +38,14 @@ PopupWindowPreview::PopupWindowPreview(wxWindow* parent, const PopupWindowWrappe
     Center();
     sz->Layout();
     GetSizer()->Fit(this);
-    EventNotifier::Get()->Connect(wxEVT_CLOSE_PREVIEW,
-                                  wxCommandEventHandler(PopupWindowPreview::OnClosePreviewPreviewPanel), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PopupWindowPreview::OnClosePreviewPreviewPanel), NULL, this);
 }
 
 PopupWindowPreview::~PopupWindowPreview()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_CLOSE_PREVIEW,
-                                     wxCommandEventHandler(PopupWindowPreview::OnClosePreviewPreviewPanel), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PopupWindowPreview::OnClosePreviewPreviewPanel), NULL, this);
     wxCommandEvent event(wxEVT_PREVIEW_CLOSED);
     EventNotifier::Get()->AddPendingEvent(event);
 }

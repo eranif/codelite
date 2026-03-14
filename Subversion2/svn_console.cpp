@@ -66,20 +66,21 @@ void SvnConsole::OnReadProcessOutput(clProcessEvent& event)
     m_output.Append(event.GetOutput());
 
     wxString s = event.GetOutput().Lower();
-    if(m_currCmd.printProcessOutput) AppendText(event.GetOutput());
+    if (m_currCmd.printProcessOutput)
+        AppendText(event.GetOutput());
 
     static wxRegEx reUsername("username[ \t]*:", wxRE_DEFAULT | wxRE_ICASE);
     wxArrayString lines = wxStringTokenize(s, wxT("\n"), wxTOKEN_STRTOK);
-    if(!lines.IsEmpty() && lines.Last().StartsWith(wxT("password for '"))) {
+    if (!lines.IsEmpty() && lines.Last().StartsWith(wxT("password for '"))) {
         m_output.Clear();
         wxString pass = wxGetPasswordFromUser(event.GetOutput(), wxT("Subversion"));
-        if(!pass.IsEmpty() && m_process) {
+        if (!pass.IsEmpty() && m_process) {
             m_process->WriteToConsole(pass);
         }
-    } else if(!lines.IsEmpty() && reUsername.IsValid() && reUsername.Matches(lines.Last())) {
+    } else if (!lines.IsEmpty() && reUsername.IsValid() && reUsername.Matches(lines.Last())) {
         // Prompt the user for "Username:"
         wxString username = ::wxGetTextFromUser(event.GetOutput(), "Subversion");
-        if(!username.IsEmpty() && m_process) {
+        if (!username.IsEmpty() && m_process) {
             m_process->Write(username + "\n");
         }
     }
@@ -88,7 +89,7 @@ void SvnConsole::OnReadProcessOutput(clProcessEvent& event)
 void SvnConsole::OnProcessEnd(clProcessEvent& event)
 {
     wxDELETE(m_process);
-    if(m_currCmd.handler) {
+    if (m_currCmd.handler) {
         // command ended successfully, invoke the "success" callback
         m_currCmd.handler->Process(m_output);
         AppendText(wxT("-----\n"));
@@ -96,7 +97,7 @@ void SvnConsole::OnProcessEnd(clProcessEvent& event)
     }
 
     // do we have more commands to process?
-    if(!m_queue.empty()) {
+    if (!m_queue.empty()) {
         DoProcessNextCommand();
 
     } else {
@@ -107,15 +108,20 @@ void SvnConsole::OnProcessEnd(clProcessEvent& event)
     }
 }
 
-void SvnConsole::ExecuteURL(const wxString& cmd, const wxString& url, SvnCommandHandler* handler,
+void SvnConsole::ExecuteURL(const wxString& cmd,
+                            const wxString& url,
+                            SvnCommandHandler* handler,
                             bool printProcessOutput)
 {
     DoExecute(cmd, handler, wxT(""), printProcessOutput);
     m_url = url;
 }
 
-void SvnConsole::Execute(const wxString& cmd, const wxString& workingDirectory, SvnCommandHandler* handler,
-                         bool printProcessOutput, bool showConsole)
+void SvnConsole::Execute(const wxString& cmd,
+                         const wxString& workingDirectory,
+                         SvnCommandHandler* handler,
+                         bool printProcessOutput,
+                         bool showConsole)
 {
     DoExecute(cmd, handler, workingDirectory, printProcessOutput, showConsole);
 }
@@ -148,7 +154,7 @@ void SvnConsole::Clear()
 
 void SvnConsole::Stop()
 {
-    if(m_process) {
+    if (m_process) {
         delete m_process;
         m_process = NULL;
     }
@@ -165,11 +171,12 @@ void SvnConsole::EnsureVisible() { m_plugin->EnsureVisible(); }
 void SvnConsole::DoProcessNextCommand()
 {
     // If another process is running, we try again when the process is terminated
-    if(m_process) {
+    if (m_process) {
         return;
     }
 
-    if(m_queue.empty()) return;
+    if (m_queue.empty())
+        return;
 
     // Remove the command from the queue
     SvnConsoleCommand* command = m_queue.front();
@@ -199,18 +206,22 @@ void SvnConsole::DoProcessNextCommand()
 
     clDEBUG() << "Running svn command:" << cmdShell << clEndl;
 
-    m_process = CreateAsyncProcess(this, cmdShell,
+    m_process = CreateAsyncProcess(this,
+                                   cmdShell,
                                    m_currCmd.showConsole ? IProcessCreateConsole : IProcessCreateWithHiddenConsole,
                                    m_currCmd.workingDirectory);
-    if(!m_process) {
+    if (!m_process) {
         AppendText(_("Failed to launch Subversion client.\n"));
         return;
     }
     m_sci->SetFocus();
 }
 
-void SvnConsole::DoExecute(const wxString& cmd, SvnCommandHandler* handler, const wxString& workingDirectory,
-                           bool printProcessOutput, bool showConsole)
+void SvnConsole::DoExecute(const wxString& cmd,
+                           SvnCommandHandler* handler,
+                           const wxString& workingDirectory,
+                           bool printProcessOutput,
+                           bool showConsole)
 {
     SvnConsoleCommand* consoleCommand = new SvnConsoleCommand();
     consoleCommand->cmd = cmd.c_str();
@@ -225,13 +236,13 @@ void SvnConsole::DoExecute(const wxString& cmd, SvnCommandHandler* handler, cons
 
 void SvnConsole::OnCharAdded(wxStyledTextEvent& event)
 {
-    if(event.GetKey() == '\n') {
+    if (event.GetKey() == '\n') {
         // an enter was inserted
         // take the last inserted line and send it to the m_process
         wxString line = m_sci->GetTextRange(m_inferiorEnd, m_sci->GetLength());
         line.Trim();
 
-        if(m_process) {
+        if (m_process) {
             m_process->Write(line);
         }
     }
@@ -254,5 +265,7 @@ void SvnConsole::OnKeyDown(wxKeyEvent& event) { event.Skip(); }
 void SvnConsole::DoInitializeFontsAndColours()
 {
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) { lexer->Apply(m_sci); }
+    if (lexer) {
+        lexer->Apply(m_sci);
+    }
 }

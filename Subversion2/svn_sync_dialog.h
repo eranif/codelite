@@ -32,28 +32,27 @@
 class Subversion2;
 class SvnSyncDialog : public SvnSyncDialogBaseClass
 {
-    Subversion2 *m_plugin;
+    Subversion2* m_plugin;
+
 private:
     void UpdateUrl(const wxString& rootDir);
 
 protected:
     virtual void OnOkUI(wxUpdateUIEvent& event);
-    virtual void OnButtonOK( wxCommandEvent& event );
+    virtual void OnButtonOK(wxCommandEvent& event);
 
 public:
     /** Constructor */
-    SvnSyncDialog( wxWindow* parent, Subversion2 *plugin, const wxString& rootDir, bool excludeBin, const wxString& excludeExtensions );
+    SvnSyncDialog(wxWindow* parent,
+                  Subversion2* plugin,
+                  const wxString& rootDir,
+                  bool excludeBin,
+                  const wxString& excludeExtensions);
     virtual ~SvnSyncDialog() = default;
 
-    const wxString& GetRootDir() const {
-        return m_rootDir;
-    }
-    const wxString& GetExcludeExtensions() const {
-        return m_excludeExtensions;
-    }
-    bool GetExcludeBin() const {
-        return m_excludeBin;
-    }
+    const wxString& GetRootDir() const { return m_rootDir; }
+    const wxString& GetExcludeExtensions() const { return m_excludeExtensions; }
+    bool GetExcludeBin() const { return m_excludeBin; }
 
 private:
     wxString m_rootDir;

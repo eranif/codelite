@@ -19,7 +19,8 @@ FontPickerCtrlWrapper::FontPickerCtrlWrapper()
     PREPEND_STYLE(wxFNTP_USEFONT_FOR_LABEL, false);
     PREPEND_STYLE(wxFNTP_DEFAULT_STYLE, true);
 
-    RegisterEvent(wxT("wxEVT_COMMAND_FONTPICKER_CHANGED"), wxT("wxFontPickerEvent"),
+    RegisterEvent(wxT("wxEVT_COMMAND_FONTPICKER_CHANGED"),
+                  wxT("wxFontPickerEvent"),
                   _("Generated whenever the selected font changes."));
     Add<FontProperty>(PROP_VALUE, wxEmptyString, _("Initial font"));
     m_namePattern = wxT("m_fontPicker");
@@ -33,7 +34,7 @@ wxString FontPickerCtrlWrapper::CppCtorCode() const
     wxString code;
     wxString fontCode;
     wxString fontMemberName = GetName() + wxT("Font");
-    if(wxCrafter::FontToCpp(PropertyString(PROP_VALUE), fontMemberName) != wxT("wxNullFont")) {
+    if (wxCrafter::FontToCpp(PropertyString(PROP_VALUE), fontMemberName) != wxT("wxNullFont")) {
         code << wxCrafter::FontToCpp(PropertyString(PROP_VALUE), fontMemberName);
         fontCode = fontMemberName;
 
@@ -68,7 +69,9 @@ void FontPickerCtrlWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("value"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, wxCrafter::XRCToFontstring(propertynode)); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, wxCrafter::XRCToFontstring(propertynode));
+    }
 }
 
 void FontPickerCtrlWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -77,7 +80,9 @@ void FontPickerCtrlWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("value"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, wxCrafter::XRCToFontstring(propertynode)); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, wxCrafter::XRCToFontstring(propertynode));
+    }
 }
 
 void FontPickerCtrlWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -86,8 +91,10 @@ void FontPickerCtrlWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "value");
-    if(propertynode) {
+    if (propertynode) {
         wxString fontasstring = wxCrafter::FBToFontstring(propertynode->GetNodeContent());
-        if(!fontasstring.empty()) { SetPropertyString(PROP_VALUE, fontasstring); }
+        if (!fontasstring.empty()) {
+            SetPropertyString(PROP_VALUE, fontasstring);
+        }
     }
 }

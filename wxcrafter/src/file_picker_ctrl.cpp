@@ -1,4 +1,5 @@
 #include "file_picker_ctrl.h"
+
 #include <wx/filedlg.h>
 #include <wx/filename.h>
 
@@ -30,7 +31,7 @@ void FilePickerCtrl::DoEdit()
     str.Trim().Trim(false);
 
     wxFileName fn;
-    if(m_bmpPath.IsEmpty()) {
+    if (m_bmpPath.IsEmpty()) {
         fn = wxFileName(m_projectPath, wxT(""));
 
     } else {
@@ -40,9 +41,11 @@ void FilePickerCtrl::DoEdit()
 
     wxString wildcard = wxT("PNG files (*.png)|*.png|BMP files (*.bmp)|*.bmp|GIF files (*.gif)|*.gif|All files (*)|*");
     wxString newPath = wxFileSelector(_("Select bitmap"), wxT(""), wxT(""), wxEmptyString, wildcard, wxFD_OPEN);
-    if(newPath.IsEmpty() == false) {
+    if (newPath.IsEmpty() == false) {
         wxFileName newFilePath(newPath);
-        if(m_projectPath.IsEmpty() == false) { newFilePath.MakeRelativeTo(m_projectPath); }
+        if (m_projectPath.IsEmpty() == false) {
+            newFilePath.MakeRelativeTo(m_projectPath);
+        }
         m_bmpPath = newFilePath.GetFullPath(wxPATH_UNIX);
         wxTextCtrl::ChangeValue(m_bmpPath);
         DoNotify();

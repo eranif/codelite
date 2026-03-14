@@ -24,13 +24,15 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "qmakesettingstab.h"
-#include <wx/dir.h>
+
 #include "procutils.h"
-#include <wx/filename.h>
 #include "qmakeconf.h"
 
-QmakeSettingsTab::QmakeSettingsTab( wxWindow* parent, const wxString &name, QmakeConf* conf)
-    : QmakeSettingsTabBase( parent )
+#include <wx/dir.h>
+#include <wx/filename.h>
+
+QmakeSettingsTab::QmakeSettingsTab(wxWindow* parent, const wxString& name, QmakeConf* conf)
+    : QmakeSettingsTabBase(parent)
     , m_name(name)
 {
     Load(conf);
@@ -38,11 +40,11 @@ QmakeSettingsTab::QmakeSettingsTab( wxWindow* parent, const wxString &name, Qmak
 
 void QmakeSettingsTab::Load(QmakeConf* conf)
 {
-    if ( conf ) {
+    if (conf) {
         wxString qmakePath(conf->Read(m_name + wxT("/qmake")));
-        m_filePickerQmakeExec->SetFileName( wxFileName(qmakePath) );
-        
-        m_comboBoxQmakespec->Append( GetSpecList(conf->Read(m_name + wxT("/qmake")) ) );
+        m_filePickerQmakeExec->SetFileName(wxFileName(qmakePath));
+
+        m_comboBoxQmakespec->Append(GetSpecList(conf->Read(m_name + wxT("/qmake"))));
         m_comboBoxQmakespec->SetValue(conf->Read(m_name + wxT("/qmakespec")));
         m_textCtrlQtdir->SetValue(conf->Read(m_name + wxT("/qtdir")));
     }
@@ -50,9 +52,9 @@ void QmakeSettingsTab::Load(QmakeConf* conf)
 
 void QmakeSettingsTab::Save(QmakeConf* conf)
 {
-    conf->Write(m_name + wxT("/qmake"),     m_filePickerQmakeExec->GetPath());
+    conf->Write(m_name + wxT("/qmake"), m_filePickerQmakeExec->GetPath());
     conf->Write(m_name + wxT("/qmakespec"), m_comboBoxQmakespec->GetValue());
-    conf->Write(m_name + wxT("/qtdir"),     m_textCtrlQtdir->GetValue());
+    conf->Write(m_name + wxT("/qtdir"), m_textCtrlQtdir->GetValue());
     conf->Flush();
 }
 
@@ -60,22 +62,23 @@ wxArrayString QmakeSettingsTab::GetSpecList(const wxString& qmakePath)
 {
     wxArrayString specs;
 
-    if ( qmakePath.IsEmpty() == false && wxFileName::FileExists(qmakePath) ) {
+    if (qmakePath.IsEmpty() == false && wxFileName::FileExists(qmakePath)) {
         wxArrayString cmdOutput;
 
-        ProcUtils::SafeExecuteCommand(wxString::Format(wxT("\"%s\" -query QT_INSTALL_DATA"), qmakePath.c_str()), cmdOutput);
-        if ( cmdOutput.IsEmpty() == false ) {
-            wxFileName    installData ( cmdOutput.Item(0).Trim().Trim(false), wxEmptyString );
+        ProcUtils::SafeExecuteCommand(
+            wxString::Format(wxT("\"%s\" -query QT_INSTALL_DATA"), qmakePath.c_str()), cmdOutput);
+        if (cmdOutput.IsEmpty() == false) {
+            wxFileName installData(cmdOutput.Item(0).Trim().Trim(false), wxEmptyString);
             wxArrayString files;
 
             installData.AppendDir(wxT("mkspecs"));
             wxDir::GetAllFiles(installData.GetFullPath(), &files, wxT("*.conf"), wxDIR_DEFAULT);
 
-            for ( size_t i=0; i<files.GetCount(); i++) {
+            for (size_t i = 0; i < files.GetCount(); i++) {
 
                 wxFileName fn(files.Item(i));
-                if ( specs.Index(fn.GetDirs().Last()) == wxNOT_FOUND ) {
-                    specs.Add( fn.GetDirs().Last() );
+                if (specs.Index(fn.GetDirs().Last()) == wxNOT_FOUND) {
+                    specs.Add(fn.GetDirs().Last());
                 }
             }
         }
@@ -86,5 +89,5 @@ wxArrayString QmakeSettingsTab::GetSpecList(const wxString& qmakePath)
 void QmakeSettingsTab::OnFileSelected(wxFileDirPickerEvent& event)
 {
     m_comboBoxQmakespec->Clear();
-    m_comboBoxQmakespec->Append( GetSpecList(m_filePickerQmakeExec->GetPath()) );
+    m_comboBoxQmakespec->Append(GetSpecList(m_filePickerQmakeExec->GetPath()));
 }

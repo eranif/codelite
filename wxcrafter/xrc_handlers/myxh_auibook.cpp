@@ -4,13 +4,14 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
 #pragma hdrstop
 #endif
 
 #include "myxh_auibook.h"
+
 #include <wx/aui/auibook.h>
 #include <wx/log.h>
 #include <wx/sizer.h>
@@ -20,8 +21,11 @@ class MyAuiBook : public wxAuiNotebook
     wxSize m_sz;
 
 public:
-    MyAuiBook(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-              const wxSize& size = wxDefaultSize, long style = wxAUI_NB_DEFAULT_STYLE)
+    MyAuiBook(wxWindow* parent,
+              wxWindowID id = wxID_ANY,
+              const wxPoint& pos = wxDefaultPosition,
+              const wxSize& size = wxDefaultSize,
+              long style = wxAUI_NB_DEFAULT_STYLE)
         : wxAuiNotebook(parent, id, pos, size, style)
     {
         m_sz = size;
@@ -53,21 +57,24 @@ MyWxAuiNotebookXmlHandler::MyWxAuiNotebookXmlHandler()
 
 wxObject* MyWxAuiNotebookXmlHandler::DoCreateResource()
 {
-    if(m_class == wxT("notebookpage")) {
+    if (m_class == wxT("notebookpage")) {
         wxXmlNode* n = GetParamNode(wxT("object"));
 
-        if(!n) n = GetParamNode(wxT("object_ref"));
+        if (!n)
+            n = GetParamNode(wxT("object_ref"));
 
-        if(n) {
+        if (n) {
             bool old_ins = m_isInside;
             m_isInside = false;
             wxObject* item = CreateResFromNode(n, m_notebook, NULL);
             m_isInside = old_ins;
             wxWindow* wnd = wxDynamicCast(item, wxWindow);
 
-            if(wnd) {
+            if (wnd) {
                 wxBitmap bmp = wxNullBitmap;
-                if(HasParam(wxT("bitmap"))) { bmp = GetBitmap(wxT("bitmap"), wxART_OTHER); }
+                if (HasParam(wxT("bitmap"))) {
+                    bmp = GetBitmap(wxT("bitmap"), wxART_OTHER);
+                }
                 m_notebook->AddPage(wnd, GetText(wxT("label")), GetBool(wxT("selected")), bmp);
 
             } else

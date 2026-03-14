@@ -14,9 +14,9 @@ ImportDlg::ImportDlg(IPD_ProjectType type, wxWindow* parent, const wxString& sou
     , m_Type(type)
     , m_modified(false)
 {
-    if(m_Type == IPD_FB) {
+    if (m_Type == IPD_FB) {
         SetLabel(_("Choose a wxFormBuilder project to import"));
-    } else if(m_Type == IPD_Smith) {
+    } else if (m_Type == IPD_Smith) {
         SetLabel(_("Choose a wxSmith project to import"));
     }
 
@@ -37,23 +37,25 @@ void ImportDlg::OnBrowse(wxCommandEvent& event)
     wxUnusedVar(event);
 
     wxString title, ext;
-    if(m_Type == IPD_FB) {
+    if (m_Type == IPD_FB) {
         ext << (wxT("wxFB Project (*.fbp)|*.fbp|Any File (")) << wxFileSelectorDefaultWildcardStr << wxT(")|")
             << wxFileSelectorDefaultWildcardStr;
         title = _("Import a wxFormBuilder project");
     }
-    if(m_Type == IPD_Smith) {
+    if (m_Type == IPD_Smith) {
         ext << (wxT("wxSmith Project (*.wxs)|*.wxs|Any File (")) << wxFileSelectorDefaultWildcardStr << wxT(")|")
             << wxFileSelectorDefaultWildcardStr;
         title = _("Import a wxSmith project");
     }
-    if(m_Type == IPD_XRC) {
+    if (m_Type == IPD_XRC) {
         ext << (wxT("XRC File (*.xrc)|*.xrc|Any File (")) << wxFileSelectorDefaultWildcardStr << wxT(")|")
             << wxFileSelectorDefaultWildcardStr;
         title = _("Import an XRC file");
     }
     wxString path = wxFileSelector(title, wxEmptyString, wxEmptyString, wxEmptyString, ext, wxFD_OPEN, this);
-    if(path.empty()) { return; }
+    if (path.empty()) {
+        return;
+    }
     m_filepathText->ChangeValue(path);
 
     // Use that filepath as the suggested destination, but using .wxcp as the ext
@@ -72,7 +74,8 @@ void ImportDlg::OnBrowseForOutputFolder(wxCommandEvent& event)
     wxString curtext = m_textName->GetValue();
     wxFileName fn(curtext);
     wxString dir = wxDirSelector();
-    if(dir.IsEmpty()) return;
+    if (dir.IsEmpty())
+        return;
 
     wxFileName newpath(dir, fn.GetFullName());
     m_textName->ChangeValue(newpath.GetFullPath());
@@ -81,7 +84,7 @@ void ImportDlg::OnBrowseForOutputFolder(wxCommandEvent& event)
 void ImportDlg::OnBrowseForVirtualFolder(wxCommandEvent& event)
 {
     VirtualDirectorySelectorDlg vds(wxCrafter::TopFrame(), clCxxWorkspaceST::Get());
-    if(vds.ShowModal() == wxID_OK) {
+    if (vds.ShowModal() == wxID_OK) {
         wxString vd = vds.GetVirtualDirectoryPath();
         m_textCtrl1VirtualFolder->ChangeValue(vd);
     }
@@ -107,7 +110,7 @@ void ImportDlg::OnAddToProjectUI(wxUpdateUIEvent& event)
 
 void ImportDlg::OnFileImportTextUpdated(wxCommandEvent& event)
 {
-    if(!m_modified) {
+    if (!m_modified) {
         wxFileName fnWXCPFile(m_filepathText->GetValue());
         fnWXCPFile.SetExt("wxcp");
         m_textName->ChangeValue(fnWXCPFile.GetFullPath());

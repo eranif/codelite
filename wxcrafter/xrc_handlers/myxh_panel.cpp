@@ -1,5 +1,7 @@
 #include "myxh_panel.h"
+
 #include "my_panel.h"
+
 #include <wx/panel.h>
 
 IMPLEMENT_DYNAMIC_CLASS(MyWxPanelXmlHandler, wxXmlResourceHandler)
@@ -20,8 +22,8 @@ wxObject* MyWxPanelXmlHandler::DoCreateResource()
 {
     XRC_MAKE_INSTANCE(panel, MyPanel)
 
-    panel->Create(m_parentAsWindow, GetID(), GetPosition(), GetSize(), GetStyle(wxT("style"), wxTAB_TRAVERSAL),
-                  GetName());
+    panel->Create(
+        m_parentAsWindow, GetID(), GetPosition(), GetSize(), GetStyle(wxT("style"), wxTAB_TRAVERSAL), GetName());
 
     SetupWindow(panel);
     CreateChildren(panel);

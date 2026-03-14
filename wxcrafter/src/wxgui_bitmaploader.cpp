@@ -16,7 +16,7 @@ std::map<wxString, wxString> wxCrafter::ResourceLoader::m_files;
 
 wxCrafter::ResourceLoader::ResourceLoader(const wxString& skin)
 {
-    if(m_bitmaps.empty()) {
+    if (m_bitmaps.empty()) {
         wxString zipFile;
 #ifdef __WXMSW__
         zipFile << wxStandardPaths::Get().GetDataDir() << wxT(INSTALL_DIR) << wxFileName::GetPathSeparator() << skin
@@ -28,23 +28,27 @@ wxCrafter::ResourceLoader::ResourceLoader(const wxString& skin)
 
         std::unordered_map<wxString, clZipReader::Entry> entries;
         zip.ExtractAll(entries);
-        if(entries.empty()) { return; }
+        if (entries.empty()) {
+            return;
+        }
 
         // Loop over the files
-        for(const auto& entry : entries) {
+        for (const auto& entry : entries) {
             wxFileName fn = wxFileName(entry.first);
             wxString name = fn.GetName();
             clZipReader::Entry d = entry.second;
-            if(d.len && d.buffer) {
+            if (d.len && d.buffer) {
                 // Avoid wxAsserts by checking it's likely to be a png before creating the image
-                if(fn.GetExt() == "png") {
+                if (fn.GetExt() == "png") {
                     wxMemoryInputStream is(d.buffer, d.len);
                     wxImage img(is, wxBITMAP_TYPE_PNG);
                     wxBitmap bmp(img);
-                    if(bmp.IsOk()) { m_bitmaps[name] = bmp; }
+                    if (bmp.IsOk()) {
+                        m_bitmaps[name] = bmp;
+                    }
                 } else {
                     wxString fileContent((const char*)d.buffer, d.len);
-                    m_files.insert({ fn.GetFullName(), fileContent });
+                    m_files.insert({fn.GetFullName(), fileContent});
                 }
                 // release the memory
                 free(d.buffer);
@@ -58,7 +62,9 @@ const wxBitmap& wxCrafter::ResourceLoader::Bitmap(const wxString& name) const
 {
     static wxBitmap s_nullBitmap;
     std::map<wxString, wxBitmap>::const_iterator iter = m_bitmaps.find(name);
-    if(iter == m_bitmaps.end()) { return s_nullBitmap; }
+    if (iter == m_bitmaps.end()) {
+        return s_nullBitmap;
+    }
     return iter->second;
 }
 
@@ -66,9 +72,9 @@ wxFileName wxCrafter::ResourceLoader::GetPlaceHolderImagePath() const
 {
     static const wxString PLACEHOLDER_IMG = wxT("placeholder");
     const wxBitmap& bmp = Bitmap(PLACEHOLDER_IMG);
-    if(bmp.IsOk()) {
+    if (bmp.IsOk()) {
         wxFileName path(wxFileName::GetTempDir(), wxT("placeholder.png"));
-        if(bmp.SaveFile(path.GetFullPath(), wxBITMAP_TYPE_PNG)) {
+        if (bmp.SaveFile(path.GetFullPath(), wxBITMAP_TYPE_PNG)) {
             path.MakeRelativeTo(wxcProjectMetadata::Get().GetProjectPath());
             return path;
         }
@@ -80,9 +86,9 @@ wxFileName wxCrafter::ResourceLoader::GetPlaceHolder16ImagePath() const
 {
     static const wxString PLACEHOLDER_IMG16 = wxT("placeholder16");
     const wxBitmap& bmp = Bitmap(PLACEHOLDER_IMG16);
-    if(bmp.IsOk()) {
+    if (bmp.IsOk()) {
         wxFileName path(wxFileName::GetTempDir(), wxT("placeholder16.png"));
-        if(bmp.SaveFile(path.GetFullPath(), wxBITMAP_TYPE_PNG)) {
+        if (bmp.SaveFile(path.GetFullPath(), wxBITMAP_TYPE_PNG)) {
             path.MakeRelativeTo(wxcProjectMetadata::Get().GetProjectPath());
             return path;
         }
@@ -93,6 +99,8 @@ wxFileName wxCrafter::ResourceLoader::GetPlaceHolder16ImagePath() const
 wxString wxCrafter::ResourceLoader::File(const wxString& name) const
 {
     std::map<wxString, wxString>::const_iterator iter = m_files.find(name);
-    if(iter == m_files.end()) { return wxT(""); }
+    if (iter == m_files.end()) {
+        return wxT("");
+    }
     return iter->second;
 }

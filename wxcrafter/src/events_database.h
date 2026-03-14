@@ -22,8 +22,11 @@ protected:
 public:
     ConnectDetails() = default;
 
-    ConnectDetails(const wxString& eventName, const wxString& eventClass, const wxString& description,
-                   bool noBody = false, const wxString& functionNameAndSignature = "")
+    ConnectDetails(const wxString& eventName,
+                   const wxString& eventClass,
+                   const wxString& description,
+                   bool noBody = false,
+                   const wxString& functionNameAndSignature = "")
         : m_eventName(eventName)
         , m_eventClass(eventClass)
         , m_description(description)
@@ -94,8 +97,11 @@ public:
     void FillCommonEvents();
 
     void Add(const ConnectDetails& ed);
-    void Add(const wxString& eventName, const wxString& className, const wxString& description,
-             const wxString& functionNameAndSig = "", bool noBody = false);
+    void Add(const wxString& eventName,
+             const wxString& className,
+             const wxString& description,
+             const wxString& functionNameAndSig = "",
+             bool noBody = false);
     void Clear();
     bool Exists(int menuId) const;
     ConnectDetails Item(int menuId) const;

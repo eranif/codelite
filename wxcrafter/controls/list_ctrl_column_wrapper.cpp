@@ -29,7 +29,8 @@ wxString ListCtrlColumnWrapper::CppCtorCode() const
 {
     wxString cppCode;
     cppCode << GetWindowParent() << wxT("->InsertColumn(") << GetWindowParent() << wxT("->GetColumnCount(), ")
-            << wxCrafter::UNDERSCORE(GetName()) << wxT(", ") << wxT("wxLIST_FORMAT_LEFT, ") << PropertyString(PROP_WIDTH) << wxT(");");
+            << wxCrafter::UNDERSCORE(GetName()) << wxT(", ") << wxT("wxLIST_FORMAT_LEFT, ")
+            << PropertyString(PROP_WIDTH) << wxT(");");
     return cppCode;
 }
 
@@ -53,10 +54,14 @@ void ListCtrlColumnWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("text"));
-    if(propertynode) { SetName(propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetName(propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("width"));
-    if(propertynode) { SetPropertyString(PROP_WIDTH, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_WIDTH, propertynode->GetNodeContent());
+    }
 }
 
 // AFAICT wxSmith & wxFB don't do ListCtrlColumns

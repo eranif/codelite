@@ -45,40 +45,32 @@ class SpellCheckerSettings : public SpellCheckerSettings_base
 {
 protected:
     // Handlers for SpellCheckerSettings_base events.
-    void OnInitDialog( wxInitDialogEvent& event );
-    void OnLanguageSelected( wxCommandEvent& event );
-    void OnUpdateOk( wxUpdateUIEvent& event );
-    void OnOk( wxCommandEvent& event );
-    void OnDirChanged( wxFileDirPickerEvent& event );
-    void OnClearIgnoreList( wxCommandEvent& event );
+    void OnInitDialog(wxInitDialogEvent& event);
+    void OnLanguageSelected(wxCommandEvent& event);
+    void OnUpdateOk(wxUpdateUIEvent& event);
+    void OnOk(wxCommandEvent& event);
+    void OnDirChanged(wxFileDirPickerEvent& event);
+    void OnClearIgnoreList(wxCommandEvent& event);
 
     void FillLanguageList();
 
     IHunSpell* m_pHunspell;
-    wxString   m_dictionaryFileName;
-    wxString   m_dictionaryPath;
-    bool       m_scanStrings;
-    bool       m_scanCPP;
-    bool       m_scanC;
-    bool       m_scanD1;
-    bool       m_scanD2;
-    bool       m_caseSensitiveUserDictionary;
-    bool       m_ignoreSymbolsInTagsDatabase;
+    wxString m_dictionaryFileName;
+    wxString m_dictionaryPath;
+    bool m_scanStrings;
+    bool m_scanCPP;
+    bool m_scanC;
+    bool m_scanD1;
+    bool m_scanD2;
+    bool m_caseSensitiveUserDictionary;
+    bool m_ignoreSymbolsInTagsDatabase;
 
 public:
-    const wxString& GetDictionaryPath() const {
-        return m_dictionaryPath;
-    }
-    const wxString& GetDictionaryFileName() const {
-        return m_dictionaryFileName;
-    }
-    void SetDictionaryFileName( const wxString& dictionaryFileName ) {
-        this->m_dictionaryFileName = dictionaryFileName;
-    }
-    void SetDictionaryPath( const wxString& dictionaryPath );
-    void            SetHunspell( IHunSpell* pHunspell ) {
-        this->m_pHunspell = pHunspell;
-    }
+    const wxString& GetDictionaryPath() const { return m_dictionaryPath; }
+    const wxString& GetDictionaryFileName() const { return m_dictionaryFileName; }
+    void SetDictionaryFileName(const wxString& dictionaryFileName) { this->m_dictionaryFileName = dictionaryFileName; }
+    void SetDictionaryPath(const wxString& dictionaryPath);
+    void SetHunspell(IHunSpell* pHunspell) { this->m_pHunspell = pHunspell; }
     void SetScanC(bool scanC) { this->m_scanC = scanC; }
     void SetScanCPP(bool scanCPP) { this->m_scanCPP = scanCPP; }
     void SetScanD1(bool scanD1) { this->m_scanD1 = scanD1; }
@@ -93,29 +85,15 @@ public:
         this->m_ignoreSymbolsInTagsDatabase = ignoreSymbolsInTagsDatabase;
     }
 
-    bool GetScanC() const {
-        return m_scanC;
-    }
-    bool GetScanCPP() const {
-        return m_scanCPP;
-    }
-    bool GetScanD1() const {
-        return m_scanD1;
-    }
-    bool GetScanD2() const {
-        return m_scanD2;
-    }
-    bool GetScanStrings() const {
-        return m_scanStrings;
-    }
-    bool GetCaseSensitiveUserDictionary() const {
-        return m_caseSensitiveUserDictionary;
-	}
-    bool GetIgnoreSymbolsInTagsDatabase() const {
-        return m_ignoreSymbolsInTagsDatabase;
-    }
+    bool GetScanC() const { return m_scanC; }
+    bool GetScanCPP() const { return m_scanCPP; }
+    bool GetScanD1() const { return m_scanD1; }
+    bool GetScanD2() const { return m_scanD2; }
+    bool GetScanStrings() const { return m_scanStrings; }
+    bool GetCaseSensitiveUserDictionary() const { return m_caseSensitiveUserDictionary; }
+    bool GetIgnoreSymbolsInTagsDatabase() const { return m_ignoreSymbolsInTagsDatabase; }
     /** Constructor */
-    SpellCheckerSettings( wxWindow* parent );
+    SpellCheckerSettings(wxWindow* parent);
     virtual ~SpellCheckerSettings() = default;
 };
 

@@ -39,7 +39,7 @@ SvnBlameFrame::SvnBlameFrame(wxWindow* parent, const wxFileName& filename, const
     m_stc->SetText(content);
     m_stc->SetReadOnly(true);
     LexerConf::Ptr_t lexer = EditorConfigST::Get()->GetLexerForFile(filename.GetFullName());
-    if(lexer) {
+    if (lexer) {
         lexer->Apply(m_stc, true);
     }
     m_stc->Initialize();

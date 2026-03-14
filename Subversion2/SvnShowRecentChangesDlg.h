@@ -1,7 +1,7 @@
 #ifndef SVNSHOWRECENTCHANGESDLG_H
 #define SVNSHOWRECENTCHANGESDLG_H
-#include "subversion2_ui.h"
 #include "SvnShowFileChangesHandler.h"
+#include "subversion2_ui.h"
 
 class SvnShowRecentChangesDlg : public SvnShowRecentChangesBaseDlg
 {

@@ -34,6 +34,7 @@
 // License:
 /////////////////////////////////////////////////////////////////////////////
 // For compilers that support precompilation, includes "wx/wx.h".
+#include <wx/wxprec.h>
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
@@ -54,7 +55,6 @@
 #include <wx/stc/stc.h>
 #include <wx/textfile.h>
 #include <wx/tokenzr.h>
-#include <wx/wxprec.h>
 
 namespace
 {
@@ -62,97 +62,97 @@ namespace
 
 /// Only STRING styles
 std::unordered_map<int, std::unordered_set<int>> ALLOWED_STYLES_STRINGS = {
-    { wxSTC_LEX_ASM, { wxSTC_ASM_STRING } },
-    { wxSTC_LEX_BASH, { wxSTC_SH_STRING } },
-    { wxSTC_LEX_CMAKE, { wxSTC_CMAKE_STRINGDQ, wxSTC_CMAKE_STRINGLQ, wxSTC_CMAKE_STRINGRQ } },
-    { wxSTC_LEX_CSS, { wxSTC_CSS_DOUBLESTRING, wxSTC_CSS_SINGLESTRING } },
-    { wxSTC_LEX_CPP, { wxSTC_C_STRING, wxSTC_C_STRINGRAW, wxSTC_C_STRINGEOL } },
-    { wxSTC_LEX_FORTRAN, { wxSTC_F_STRING1, wxSTC_F_STRING2 } },
-    { wxSTC_LEX_INNOSETUP, { wxSTC_INNO_STRING_DOUBLE, wxSTC_INNO_STRING_SINGLE } },
-    { wxSTC_LEX_JSON, { wxSTC_JSON_STRING, wxSTC_JSON_STRINGEOL } },
-    { wxSTC_LEX_LUA, { wxSTC_LUA_STRING, wxSTC_LUA_LITERALSTRING, wxSTC_LUA_STRINGEOL } },
-    { wxSTC_LEX_MARKDOWN, { wxSTC_MARKDOWN_DEFAULT } },
-    { wxSTC_LEX_HTML,
-      {
-          wxSTC_H_DOUBLESTRING,
-          wxSTC_H_SINGLESTRING,
-          wxSTC_HJ_DOUBLESTRING,
-          wxSTC_HJ_SINGLESTRING,
-          wxSTC_HJ_STRINGEOL,
-          wxSTC_HPHP_HSTRING,
-          wxSTC_HPHP_SIMPLESTRING,
-      } },
-    { wxSTC_LEX_PYTHON,
-      {
-          wxSTC_P_STRING,
-          wxSTC_P_STRINGEOL,
-          wxSTC_P_TRIPLE,
-          wxSTC_P_TRIPLEDOUBLE,
+    {wxSTC_LEX_ASM, {wxSTC_ASM_STRING}},
+    {wxSTC_LEX_BASH, {wxSTC_SH_STRING}},
+    {wxSTC_LEX_CMAKE, {wxSTC_CMAKE_STRINGDQ, wxSTC_CMAKE_STRINGLQ, wxSTC_CMAKE_STRINGRQ}},
+    {wxSTC_LEX_CSS, {wxSTC_CSS_DOUBLESTRING, wxSTC_CSS_SINGLESTRING}},
+    {wxSTC_LEX_CPP, {wxSTC_C_STRING, wxSTC_C_STRINGRAW, wxSTC_C_STRINGEOL}},
+    {wxSTC_LEX_FORTRAN, {wxSTC_F_STRING1, wxSTC_F_STRING2}},
+    {wxSTC_LEX_INNOSETUP, {wxSTC_INNO_STRING_DOUBLE, wxSTC_INNO_STRING_SINGLE}},
+    {wxSTC_LEX_JSON, {wxSTC_JSON_STRING, wxSTC_JSON_STRINGEOL}},
+    {wxSTC_LEX_LUA, {wxSTC_LUA_STRING, wxSTC_LUA_LITERALSTRING, wxSTC_LUA_STRINGEOL}},
+    {wxSTC_LEX_MARKDOWN, {wxSTC_MARKDOWN_DEFAULT}},
+    {wxSTC_LEX_HTML,
+     {
+         wxSTC_H_DOUBLESTRING,
+         wxSTC_H_SINGLESTRING,
+         wxSTC_HJ_DOUBLESTRING,
+         wxSTC_HJ_SINGLESTRING,
+         wxSTC_HJ_STRINGEOL,
+         wxSTC_HPHP_HSTRING,
+         wxSTC_HPHP_SIMPLESTRING,
+     }},
+    {wxSTC_LEX_PYTHON,
+     {
+         wxSTC_P_STRING,
+         wxSTC_P_STRINGEOL,
+         wxSTC_P_TRIPLE,
+         wxSTC_P_TRIPLEDOUBLE,
 #if wxCHECK_VERSION(3, 3, 0)
-          wxSTC_P_FSTRING,
-          wxSTC_P_FCHARACTER,
-          wxSTC_P_FTRIPLE,
-          wxSTC_P_FTRIPLEDOUBLE,
+         wxSTC_P_FSTRING,
+         wxSTC_P_FCHARACTER,
+         wxSTC_P_FTRIPLE,
+         wxSTC_P_FTRIPLEDOUBLE,
 #endif
-      } },
-    { wxSTC_LEX_RUBY,
-      {
-          wxSTC_RB_STRING,
-          wxSTC_RB_STRING_Q,
-          wxSTC_RB_STRING_QQ,
-          wxSTC_RB_STRING_QX,
-          wxSTC_RB_STRING_QR,
-          wxSTC_RB_STRING_QW,
-      } },
-    { wxSTC_LEX_RUST,
-      {
-          wxSTC_RUST_STRING,
-          wxSTC_RUST_STRINGR,
-          wxSTC_RUST_BYTESTRING,
-          wxSTC_RUST_BYTESTRINGR,
-      } },
-    { wxSTC_LEX_NULL, { 0 } },
+     }},
+    {wxSTC_LEX_RUBY,
+     {
+         wxSTC_RB_STRING,
+         wxSTC_RB_STRING_Q,
+         wxSTC_RB_STRING_QQ,
+         wxSTC_RB_STRING_QX,
+         wxSTC_RB_STRING_QR,
+         wxSTC_RB_STRING_QW,
+     }},
+    {wxSTC_LEX_RUST,
+     {
+         wxSTC_RUST_STRING,
+         wxSTC_RUST_STRINGR,
+         wxSTC_RUST_BYTESTRING,
+         wxSTC_RUST_BYTESTRINGR,
+     }},
+    {wxSTC_LEX_NULL, {0}},
 };
 
 /// Only COMMENT styles
 std::unordered_map<int, std::unordered_set<int>> ALLOWED_STYLES_COMMENTS = {
-    { wxSTC_LEX_ASM, { wxSTC_ASM_COMMENT, wxSTC_ASM_COMMENTBLOCK, wxSTC_ASM_COMMENTDIRECTIVE } },
-    { wxSTC_LEX_BASH, { wxSTC_SH_COMMENTLINE } },
-    { wxSTC_LEX_BATCH, { wxSTC_BAT_COMMENT } },
-    { wxSTC_LEX_CMAKE, { wxSTC_CMAKE_COMMENT } },
-    { wxSTC_LEX_CSS, { wxSTC_CSS_COMMENT } },
-    { wxSTC_LEX_CPP, { wxSTC_C_COMMENT, wxSTC_C_COMMENTDOC, wxSTC_C_COMMENTLINE, wxSTC_C_COMMENTLINEDOC } },
-    { wxSTC_LEX_DIFF, { wxSTC_DIFF_COMMENT } },
-    { wxSTC_LEX_FORTRAN, { wxSTC_F_COMMENT } },
-    { wxSTC_LEX_PROPERTIES, { wxSTC_PROPS_COMMENT } },
-    { wxSTC_LEX_INNOSETUP, { wxSTC_INNO_COMMENT } },
-    { wxSTC_LEX_JSON, { wxSTC_JSON_LINECOMMENT, wxSTC_JSON_BLOCKCOMMENT } },
-    { wxSTC_LEX_LUA, { wxSTC_LUA_COMMENT, wxSTC_LUA_COMMENTLINE, wxSTC_LUA_COMMENTDOC } },
-    { wxSTC_LEX_MAKEFILE, { wxSTC_MAKE_COMMENT } },
-    { wxSTC_LEX_MARKDOWN, { wxSTC_MARKDOWN_DEFAULT } },
-    { wxSTC_LEX_HTML,
-      {
-          wxSTC_H_COMMENT,
-          wxSTC_HJ_COMMENT,
-          wxSTC_HJ_COMMENTLINE,
-          wxSTC_HJ_COMMENTDOC,
-          wxSTC_HPHP_COMMENTLINE,
-          wxSTC_HPHP_COMMENT,
-      } },
-    { wxSTC_LEX_PYTHON, { wxSTC_P_COMMENTLINE, wxSTC_P_COMMENTBLOCK } },
-    { wxSTC_LEX_RUBY, { wxSTC_RB_COMMENTLINE } },
-    { wxSTC_LEX_RUST,
-      {
-          wxSTC_RUST_COMMENTBLOCK,
-          wxSTC_RUST_COMMENTLINE,
-          wxSTC_RUST_COMMENTBLOCKDOC,
-          wxSTC_RUST_COMMENTLINEDOC,
-      } },
-    { wxSTC_LEX_SQL, { wxSTC_SQL_COMMENT, wxSTC_SQL_COMMENTLINE, wxSTC_SQL_COMMENTDOC } },
-    { wxSTC_LEX_TCL, { wxSTC_TCL_COMMENT, wxSTC_TCL_COMMENTLINE, wxSTC_TCL_BLOCK_COMMENT, wxSTC_TCL_COMMENT_BOX } },
-    { wxSTC_LEX_NULL, { 0 } },
-    { wxSTC_LEX_XML, { wxSTC_H_COMMENT } },
-    { wxSTC_LEX_YAML, { wxSTC_YAML_COMMENT } },
+    {wxSTC_LEX_ASM, {wxSTC_ASM_COMMENT, wxSTC_ASM_COMMENTBLOCK, wxSTC_ASM_COMMENTDIRECTIVE}},
+    {wxSTC_LEX_BASH, {wxSTC_SH_COMMENTLINE}},
+    {wxSTC_LEX_BATCH, {wxSTC_BAT_COMMENT}},
+    {wxSTC_LEX_CMAKE, {wxSTC_CMAKE_COMMENT}},
+    {wxSTC_LEX_CSS, {wxSTC_CSS_COMMENT}},
+    {wxSTC_LEX_CPP, {wxSTC_C_COMMENT, wxSTC_C_COMMENTDOC, wxSTC_C_COMMENTLINE, wxSTC_C_COMMENTLINEDOC}},
+    {wxSTC_LEX_DIFF, {wxSTC_DIFF_COMMENT}},
+    {wxSTC_LEX_FORTRAN, {wxSTC_F_COMMENT}},
+    {wxSTC_LEX_PROPERTIES, {wxSTC_PROPS_COMMENT}},
+    {wxSTC_LEX_INNOSETUP, {wxSTC_INNO_COMMENT}},
+    {wxSTC_LEX_JSON, {wxSTC_JSON_LINECOMMENT, wxSTC_JSON_BLOCKCOMMENT}},
+    {wxSTC_LEX_LUA, {wxSTC_LUA_COMMENT, wxSTC_LUA_COMMENTLINE, wxSTC_LUA_COMMENTDOC}},
+    {wxSTC_LEX_MAKEFILE, {wxSTC_MAKE_COMMENT}},
+    {wxSTC_LEX_MARKDOWN, {wxSTC_MARKDOWN_DEFAULT}},
+    {wxSTC_LEX_HTML,
+     {
+         wxSTC_H_COMMENT,
+         wxSTC_HJ_COMMENT,
+         wxSTC_HJ_COMMENTLINE,
+         wxSTC_HJ_COMMENTDOC,
+         wxSTC_HPHP_COMMENTLINE,
+         wxSTC_HPHP_COMMENT,
+     }},
+    {wxSTC_LEX_PYTHON, {wxSTC_P_COMMENTLINE, wxSTC_P_COMMENTBLOCK}},
+    {wxSTC_LEX_RUBY, {wxSTC_RB_COMMENTLINE}},
+    {wxSTC_LEX_RUST,
+     {
+         wxSTC_RUST_COMMENTBLOCK,
+         wxSTC_RUST_COMMENTLINE,
+         wxSTC_RUST_COMMENTBLOCKDOC,
+         wxSTC_RUST_COMMENTLINEDOC,
+     }},
+    {wxSTC_LEX_SQL, {wxSTC_SQL_COMMENT, wxSTC_SQL_COMMENTLINE, wxSTC_SQL_COMMENTDOC}},
+    {wxSTC_LEX_TCL, {wxSTC_TCL_COMMENT, wxSTC_TCL_COMMENTLINE, wxSTC_TCL_BLOCK_COMMENT, wxSTC_TCL_COMMENT_BOX}},
+    {wxSTC_LEX_NULL, {0}},
+    {wxSTC_LEX_XML, {wxSTC_H_COMMENT}},
+    {wxSTC_LEX_YAML, {wxSTC_YAML_COMMENT}},
 };
 
 void HighlightWord(IEditor* editor, int pos)
@@ -193,9 +193,11 @@ bool IHunSpell::InitEngine()
     if (m_pSpell != NULL)
         return true;
 
-    m_ignoreList = CustomDictionary(0, StringHashOptionalCase(m_caseSensitiveUserDictionary),
+    m_ignoreList = CustomDictionary(0,
+                                    StringHashOptionalCase(m_caseSensitiveUserDictionary),
                                     StringCompareOptionalCase(m_caseSensitiveUserDictionary));
-    m_userDict = CustomDictionary(0, StringHashOptionalCase(m_caseSensitiveUserDictionary),
+    m_userDict = CustomDictionary(0,
+                                  StringHashOptionalCase(m_caseSensitiveUserDictionary),
                                   StringCompareOptionalCase(m_caseSensitiveUserDictionary));
 
     // check base path
@@ -560,12 +562,16 @@ void IHunSpell::SetCaseSensitiveUserDictionary(const bool caseSensitiveUserDicti
         m_caseSensitiveUserDictionary = caseSensitiveUserDictionary;
 
         // Re-order user dictionary and ignores.
-        CustomDictionary userDict(m_userDict.begin(), m_userDict.end(), 0,
+        CustomDictionary userDict(m_userDict.begin(),
+                                  m_userDict.end(),
+                                  0,
                                   StringHashOptionalCase(caseSensitiveUserDictionary),
                                   StringCompareOptionalCase(caseSensitiveUserDictionary));
         m_userDict.swap(userDict);
 
-        CustomDictionary ignoreList(m_ignoreList.begin(), m_ignoreList.end(), 0,
+        CustomDictionary ignoreList(m_ignoreList.begin(),
+                                    m_ignoreList.end(),
+                                    0,
                                     StringHashOptionalCase(caseSensitiveUserDictionary),
                                     StringCompareOptionalCase(caseSensitiveUserDictionary));
         m_ignoreList.swap(ignoreList);

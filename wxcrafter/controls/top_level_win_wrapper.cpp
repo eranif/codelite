@@ -241,8 +241,8 @@ void TopLevelWinWrapper::GenerateCode(const wxcProjectMetadata& project,
     }
 
     wxFileName headerFile, sourceFile;
-    wxFileName baseFile(wxcProjectMetadata::Get().GetGeneratedFilesDir(),
-                        wxcProjectMetadata::Get().GetOutputFileName());
+    wxFileName baseFile(
+        wxcProjectMetadata::Get().GetGeneratedFilesDir(), wxcProjectMetadata::Get().GetOutputFileName());
 
     // If the files are relative make them abs
     if (baseFile.IsRelative()) {

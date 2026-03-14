@@ -21,12 +21,12 @@ void DeleteCustomControlDlg::OnDeleteControls(wxCommandEvent& event)
     wxString msg;
     msg << _("Are you sure you want to delete the following custom controls:\n");
 
-    for(size_t i = 0; i < m_controlsToDelete.GetCount(); ++i) {
+    for (size_t i = 0; i < m_controlsToDelete.GetCount(); ++i) {
         msg << m_controlsToDelete.Item(i) << "\n";
     }
 
-    if(::wxMessageBox(msg, wxT("wxCrafter"), wxICON_QUESTION | wxCENTER | wxYES_NO) == wxYES) {
-        for(size_t i = 0; i < m_controlsToDelete.GetCount(); ++i) {
+    if (::wxMessageBox(msg, wxT("wxCrafter"), wxICON_QUESTION | wxCENTER | wxYES_NO) == wxYES) {
+        for (size_t i = 0; i < m_controlsToDelete.GetCount(); ++i) {
             wxcSettings::Get().DeleteCustomControl(m_controlsToDelete.Item(i));
         }
         wxcSettings::Get().Save();
@@ -42,12 +42,14 @@ void DeleteCustomControlDlg::OnItemValueChanged(wxDataViewEvent& event)
     wxVariant v;
     m_dvListCtrl->GetValue(v, row, 0);
 
-    if(v.GetBool()) {
-        if(m_controlsToDelete.Index(controlName) == wxNOT_FOUND) m_controlsToDelete.Add(controlName);
+    if (v.GetBool()) {
+        if (m_controlsToDelete.Index(controlName) == wxNOT_FOUND)
+            m_controlsToDelete.Add(controlName);
 
     } else {
         int where = m_controlsToDelete.Index(controlName);
-        if(where != wxNOT_FOUND) m_controlsToDelete.RemoveAt(where);
+        if (where != wxNOT_FOUND)
+            m_controlsToDelete.RemoveAt(where);
     }
 }
 

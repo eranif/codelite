@@ -100,7 +100,7 @@ wxString PropertyGridWrapper::CppCtorCode() const
 {
     wxString grid = GetWindowParent();
     wxString appendFunc = "Append( ";
-    if(GetParent()->GetType() == ID_WXPGPROPERTY) {
+    if (GetParent()->GetType() == ID_WXPGPROPERTY) {
         appendFunc = "AppendIn( " + GetParent()->GetName() + ", ";
     }
 
@@ -112,20 +112,20 @@ wxString PropertyGridWrapper::CppCtorCode() const
     wxString arrIntName = grid + "IntArr";
     wxString propName = GetName();
 
-    if(proptype == "wxBoolProperty") {
+    if (proptype == "wxBoolProperty") {
         strvalue = PropertyString(PROP_PG_BOOL_VALUE);
 
-    } else if(proptype == "wxIntProperty" || proptype == "wxFloatProperty") {
+    } else if (proptype == "wxIntProperty" || proptype == "wxFloatProperty") {
         strvalue = PropertyString(PROP_PG_STRING_VALUE);
         strvalue.Trim().Trim(false);
-        if(strvalue.IsEmpty()) {
+        if (strvalue.IsEmpty()) {
             strvalue = "0";
         }
 
-    } else if(proptype == "wxFlagsProperty") {
+    } else if (proptype == "wxFlagsProperty") {
         strvalue = PropertyString(PROP_PG_STRING_VALUE);
         strvalue.Trim().Trim(false);
-        if(strvalue.IsEmpty()) {
+        if (strvalue.IsEmpty()) {
             strvalue = "0";
         }
 
@@ -133,14 +133,14 @@ wxString PropertyGridWrapper::CppCtorCode() const
         strvalue = wxCrafter::UNDERSCORE(PropertyString(PROP_PG_STRING_VALUE));
     }
 
-    if(proptype == "wxIntProperty" || proptype == "wxFloatProperty" || proptype == "wxBoolProperty" ||
-       proptype == "wxStringProperty" || proptype == "wxLongStringProperty" || proptype == "wxDirProperty" ||
-       proptype == "wxFileProperty") {
+    if (proptype == "wxIntProperty" || proptype == "wxFloatProperty" || proptype == "wxBoolProperty" ||
+        proptype == "wxStringProperty" || proptype == "wxLongStringProperty" || proptype == "wxDirProperty" ||
+        proptype == "wxFileProperty") {
 
         cppCode << propName << " = " << grid << "->" << appendFunc << " new " << proptype << "( "
                 << wxCrafter::UNDERSCORE(PropertyString(PROP_LABEL)) << ", wxPG_LABEL, " << strvalue << ") );\n";
 
-        if(proptype == "wxFileProperty") {
+        if (proptype == "wxFileProperty") {
             cppCode << "#if !defined(__WXOSX__) && !defined(_WIN64)\n";
             cppCode << propName << "->SetAttribute(wxPG_FILE_WILDCARD, "
                     << wxCrafter::WXT(PropertyString(PROP_PG_WILDCARD)) << ");\n";
@@ -148,33 +148,33 @@ wxString PropertyGridWrapper::CppCtorCode() const
             cppCode << propName << "->SetAttribute(\"ShowFullPath\", 1);\n";
         }
 
-    } else if(proptype == "wxPropertyCategory") {
+    } else if (proptype == "wxPropertyCategory") {
         cppCode << propName << " = " << grid << "->" << appendFunc << " new wxPropertyCategory( "
                 << wxCrafter::UNDERSCORE(PropertyString(PROP_LABEL)) << " ) );\n";
 
-    } else if(proptype == "wxArrayStringProperty") {
+    } else if (proptype == "wxArrayStringProperty") {
         wxArrayString options = wxCrafter::Split(PropertyString(PROP_PG_CHOICES), ";");
         cppCode << arrName << ".Clear();\n";
-        for(size_t i = 0; i < options.GetCount(); ++i) {
+        for (size_t i = 0; i < options.GetCount(); ++i) {
             cppCode << arrName << ".Add(" << wxCrafter::UNDERSCORE(options.Item(i)) << ");\n";
         }
         cppCode << propName << " = " << grid << "->" << appendFunc << " new " << proptype << "( "
                 << wxCrafter::UNDERSCORE(PropertyString(PROP_LABEL)) << ", wxPG_LABEL, " << arrName << ") );\n";
 
-    } else if(proptype == "wxEnumProperty") {
+    } else if (proptype == "wxEnumProperty") {
         wxArrayString options = wxCrafter::Split(PropertyString(PROP_PG_CHOICES), ";");
         cppCode << arrName << ".Clear();\n";
         cppCode << arrIntName << ".Clear();\n";
         size_t selection = 0;
-        for(size_t i = 0; i < options.GetCount(); ++i) {
+        for (size_t i = 0; i < options.GetCount(); ++i) {
             cppCode << arrName << ".Add(" << wxCrafter::UNDERSCORE(options.Item(i)) << ");\n";
-            if(wxCrafter::UNDERSCORE(options.Item(i)) == strvalue) {
+            if (wxCrafter::UNDERSCORE(options.Item(i)) == strvalue) {
                 selection = i;
             }
         }
 
         options = wxCrafter::Split(PropertyString(PROP_PG_CHOICES_VALUES), ";");
-        for(size_t i = 0; i < options.GetCount(); ++i) {
+        for (size_t i = 0; i < options.GetCount(); ++i) {
             cppCode << arrIntName << ".Add(" << options.Item(i) << ");\n";
         }
 
@@ -182,16 +182,16 @@ wxString PropertyGridWrapper::CppCtorCode() const
                 << wxCrafter::UNDERSCORE(PropertyString(PROP_LABEL)) << ", wxPG_LABEL, " << arrName << ", "
                 << arrIntName << ", " << selection << ") );\n";
 
-    } else if(proptype == "wxEditEnumProperty") {
+    } else if (proptype == "wxEditEnumProperty") {
         wxArrayString options = wxCrafter::Split(PropertyString(PROP_PG_CHOICES), ";");
         cppCode << arrName << ".Clear();\n";
         cppCode << arrIntName << ".Clear();\n";
-        for(size_t i = 0; i < options.GetCount(); ++i) {
+        for (size_t i = 0; i < options.GetCount(); ++i) {
             cppCode << arrName << ".Add(" << wxCrafter::UNDERSCORE(options.Item(i)) << ");\n";
         }
 
         options = wxCrafter::Split(PropertyString(PROP_PG_CHOICES_VALUES), ";");
-        for(size_t i = 0; i < options.GetCount(); ++i) {
+        for (size_t i = 0; i < options.GetCount(); ++i) {
             cppCode << arrIntName << ".Add(" << options.Item(i) << ");\n";
         }
 
@@ -199,16 +199,16 @@ wxString PropertyGridWrapper::CppCtorCode() const
                 << wxCrafter::UNDERSCORE(PropertyString(PROP_LABEL)) << ", wxPG_LABEL, " << arrName << ", "
                 << arrIntName << ", " << strvalue << ") );\n";
 
-    } else if(proptype == "wxFlagsProperty") {
+    } else if (proptype == "wxFlagsProperty") {
         wxArrayString options = wxCrafter::Split(PropertyString(PROP_PG_CHOICES), ";");
         cppCode << arrName << ".Clear();\n";
         cppCode << arrIntName << ".Clear();\n";
-        for(size_t i = 0; i < options.GetCount(); ++i) {
+        for (size_t i = 0; i < options.GetCount(); ++i) {
             cppCode << arrName << ".Add(" << wxCrafter::UNDERSCORE(options.Item(i)) << ");\n";
         }
 
         options = wxCrafter::Split(PropertyString(PROP_PG_CHOICES_VALUES), ";");
-        for(size_t i = 0; i < options.GetCount(); ++i) {
+        for (size_t i = 0; i < options.GetCount(); ++i) {
             cppCode << arrIntName << ".Add(" << options.Item(i) << ");\n";
         }
 
@@ -216,18 +216,18 @@ wxString PropertyGridWrapper::CppCtorCode() const
                 << wxCrafter::UNDERSCORE(PropertyString(PROP_LABEL)) << ", wxPG_LABEL, " << arrName << ", "
                 << arrIntName << ", " << strvalue << ") );\n";
 
-    } else if(proptype == "wxDateProperty") {
+    } else if (proptype == "wxDateProperty") {
         cppCode << propName << " = " << grid << "->" << appendFunc << " new wxDateProperty( "
                 << wxCrafter::UNDERSCORE(PropertyString(PROP_LABEL)) << ", wxPG_LABEL, wxDateTime::Now()) );\n";
 
-    } else if(proptype == "wxImageFileProperty") {
+    } else if (proptype == "wxImageFileProperty") {
         cppCode << propName << " = " << grid << "->" << appendFunc << " new wxImageFileProperty( "
                 << wxCrafter::UNDERSCORE(PropertyString(PROP_LABEL)) << ") );\n";
 
-    } else if(proptype == "wxFontProperty") {
+    } else if (proptype == "wxFontProperty") {
         wxString fontMemberName = propName + "Font";
         wxString font = wxCrafter::FontToCpp(PropertyString(PROP_FONT), fontMemberName);
-        if(!font.IsEmpty() && font != "wxNullFont") {
+        if (!font.IsEmpty() && font != "wxNullFont") {
             cppCode << font;
             cppCode << propName << " = " << grid << "->" << appendFunc << " new wxFontProperty( "
                     << wxCrafter::UNDERSCORE(PropertyString(PROP_LABEL)) << ", wxPG_LABEL, " << fontMemberName
@@ -238,9 +238,9 @@ wxString PropertyGridWrapper::CppCtorCode() const
                     << wxCrafter::UNDERSCORE(PropertyString(PROP_LABEL)) << ") );\n";
             cppCode << propName << "->SetValueToUnspecified();\n";
         }
-    } else if(proptype == "wxSystemColourProperty") {
+    } else if (proptype == "wxSystemColourProperty") {
         wxString colorname = wxCrafter::ColourToCpp(PropertyString(PROP_PG_COLOUR_DEFAULT));
-        if(!colorname.IsEmpty()) {
+        if (!colorname.IsEmpty()) {
             cppCode << propName << " = " << grid << "->" << appendFunc << " new wxSystemColourProperty( "
                     << wxCrafter::UNDERSCORE(PropertyString(PROP_LABEL)) << ", wxPG_LABEL, " << colorname << ") );\n";
         } else {
@@ -250,13 +250,13 @@ wxString PropertyGridWrapper::CppCtorCode() const
         }
     }
 
-    if(!cppCode.IsEmpty()) {
+    if (!cppCode.IsEmpty()) {
         // set common properties
         cppCode << propName << "->SetHelpString(" << wxCrafter::UNDERSCORE(PropertyString(PROP_TOOLTIP)) << ");\n";
     }
 
     wxString propEditor = PropertyString(PROP_CUSTOM_EDITOR);
-    if(!propEditor.IsEmpty()) {
+    if (!propEditor.IsEmpty()) {
         cppCode << propName << "->SetEditor( " << wxCrafter::WXT(propEditor) << " );\n";
     }
     return cppCode;
@@ -272,12 +272,12 @@ wxString PropertyGridWrapper::GetWxClassName() const { return "wxPGProperty"; }
 
 void PropertyGridWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    if(type == XRC_LIVE) {
+    if (type == XRC_LIVE) {
         return;
 
     } else {
         wxString value = wxCrafter::CDATA(PropertyString(PROP_PG_STRING_VALUE));
-        if(PropertyString(PROP_KIND) == "wxBoolProperty") {
+        if (PropertyString(PROP_KIND) == "wxBoolProperty") {
             value = PropertyString(PROP_PG_BOOL_VALUE);
         }
 
@@ -303,7 +303,7 @@ wxString PropertyGridWrapper::DoGenerateCppCtorCode_End() const
     // all children have been added
     wxString cppCode;
     wxString colorname = wxCrafter::ColourToCpp(PropertyString(PROP_BG));
-    if(!colorname.IsEmpty()) {
+    if (!colorname.IsEmpty()) {
         cppCode << GetName() << "->SetBackgroundColour(" << colorname << ");\n";
     }
     return cppCode;

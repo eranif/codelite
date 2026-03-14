@@ -22,8 +22,8 @@ BitmapComboxWrapper::BitmapComboxWrapper()
     RegisterEventCommand("wxEVT_COMMAND_COMBOBOX_SELECTED",
                          _("Process a wxEVT_COMMAND_COMBOBOX_SELECTED event, when an item on the list is selected. "
                            "Note that calling GetValue returns the new value of selection."));
-    RegisterEventCommand("wxEVT_COMMAND_TEXT_UPDATED",
-                         _("Process a wxEVT_COMMAND_TEXT_UPDATED event, when the comboBox text changes."));
+    RegisterEventCommand(
+        "wxEVT_COMMAND_TEXT_UPDATED", _("Process a wxEVT_COMMAND_TEXT_UPDATED event, when the comboBox text changes."));
     RegisterEventCommand("wxEVT_COMMAND_TEXT_ENTER",
                          _("Process a wxEVT_COMMAND_TEXT_ENTER event, when <RETURN> is pressed in the comboBox."));
 
@@ -53,11 +53,11 @@ wxString BitmapComboxWrapper::CppCtorCode() const
          << ", wxDefaultPosition, " << SizeAsString() << ", wxArrayString(), " << StyleFlags("0") << ");\n";
 
     // Append the items
-    for(size_t i = 0; i < labels.GetCount(); ++i) {
+    for (size_t i = 0; i < labels.GetCount(); ++i) {
         code << GetName() << "->Append(" << wxCrafter::UNDERSCORE(labels.Item(i)) << ", " << bitmaps.Item(i) << ");\n";
     }
     int sel = PropertyInt(PROP_SELECTION);
-    if(sel != wxNOT_FOUND && sel < (int)labels.GetCount()) {
+    if (sel != wxNOT_FOUND && sel < (int)labels.GetCount()) {
         code << GetName() << "->SetSelection(" << sel << ");\n";
     }
     return code;
@@ -83,7 +83,7 @@ void BitmapComboxWrapper::ToXRC(wxString& text, XRC_TYPE type) const
         text << "</object>";
     }
 
-    if(!HasStyle(wxCB_READONLY) && !PropertyString(PROP_HINT).empty()) {
+    if (!HasStyle(wxCB_READONLY) && !PropertyString(PROP_HINT).empty()) {
         // set hint for non-readonly combobox
         text << "<hint>" << wxCrafter::CDATA(PropertyString(PROP_HINT)) << "</hint>";
     }

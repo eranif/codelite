@@ -59,10 +59,14 @@ void GaugeWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("range"));
-    if(propertynode) { SetPropertyString(PROP_RANGE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_RANGE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("value"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 }
 
 void GaugeWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -71,10 +75,14 @@ void GaugeWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("range"));
-    if(propertynode) { SetPropertyString(PROP_RANGE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_RANGE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("value"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 }
 
 void GaugeWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -83,8 +91,12 @@ void GaugeWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "range");
-    if(propertynode) { SetPropertyString(PROP_RANGE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_RANGE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "value");
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 }

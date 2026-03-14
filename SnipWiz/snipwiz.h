@@ -40,6 +40,7 @@
 #include "cl_command_event.h"
 #include "plugin.h"
 #include "swStringDb.h"
+
 #include <vector>
 
 class wxMenuItem;

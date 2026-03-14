@@ -20,9 +20,10 @@ HtmlWindowWrapper::HtmlWindowWrapper()
     Add<StringProperty>(PROP_URL, wxT(""), _("URL to load"));
 
     RegisterEvent(wxT("wxEVT_COMMAND_HTML_CELL_CLICKED"), wxT("wxHtmlCellEvent"), _("A wxHtmlCell was clicked."));
-    RegisterEvent(wxT("wxEVT_COMMAND_HTML_CELL_HOVER"), wxT("wxHtmlCellEvent"),
-                  _("The mouse passed over a wxHtmlCell."));
-    RegisterEvent(wxT("wxEVT_COMMAND_HTML_LINK_CLICKED"), wxT("wxHtmlLinkEvent"),
+    RegisterEvent(
+        wxT("wxEVT_COMMAND_HTML_CELL_HOVER"), wxT("wxHtmlCellEvent"), _("The mouse passed over a wxHtmlCell."));
+    RegisterEvent(wxT("wxEVT_COMMAND_HTML_LINK_CLICKED"),
+                  wxT("wxHtmlLinkEvent"),
                   _("A wxHtmlCell which contains an hyperlink was clicked."));
 
     m_namePattern = wxT("m_htmlWin");
@@ -38,11 +39,15 @@ wxString HtmlWindowWrapper::CppCtorCode() const
 
     wxString htmlCode = PropertyString(PROP_HTMLCODE);
     htmlCode.Trim().Trim(false);
-    if(htmlCode.IsEmpty() == false) { code << GetName() << wxT("->SetPage(") << wxCrafter::WXT(htmlCode) << wxT(");\n"); }
+    if (htmlCode.IsEmpty() == false) {
+        code << GetName() << wxT("->SetPage(") << wxCrafter::WXT(htmlCode) << wxT(");\n");
+    }
 
     wxString url = PropertyFile(PROP_URL);
     url.Trim().Trim(false);
-    if(url.IsEmpty() == false) { code << GetName() << wxT("->LoadPage(") << wxCrafter::WXT(url) << wxT(");\n"); }
+    if (url.IsEmpty() == false) {
+        code << GetName() << wxT("->LoadPage(") << wxCrafter::WXT(url) << wxT(");\n");
+    }
 
     code << CPPCommonAttributes();
     return code;
@@ -61,7 +66,9 @@ void HtmlWindowWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 
     wxString html = PropertyString(PROP_HTMLCODE);
     html.Trim().Trim(false);
-    if(html.IsEmpty() == false) { text << wxT("<htmlcode><![CDATA[") << html << wxT("]]></htmlcode>"); }
+    if (html.IsEmpty() == false) {
+        text << wxT("<htmlcode><![CDATA[") << html << wxT("]]></htmlcode>");
+    }
     text << XRCSuffix();
 }
 
@@ -71,10 +78,14 @@ void HtmlWindowWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("htmlcode"));
-    if(propertynode) { SetPropertyString(PROP_HTMLCODE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_HTMLCODE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("url"));
-    if(propertynode) { SetPropertyString(PROP_URL, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_URL, propertynode->GetNodeContent());
+    }
 }
 
 void HtmlWindowWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -83,10 +94,14 @@ void HtmlWindowWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("htmlcode"));
-    if(propertynode) { SetPropertyString(PROP_HTMLCODE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_HTMLCODE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("url"));
-    if(propertynode) { SetPropertyString(PROP_URL, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_URL, propertynode->GetNodeContent());
+    }
 }
 
 // wxFB doesn't do anything useful for this

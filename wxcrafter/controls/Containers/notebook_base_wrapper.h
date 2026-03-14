@@ -16,8 +16,8 @@ protected:
     NotebookPageWrapper* DoGetSelection(NotebookPageWrapper* page) const;
     bool DoGetPageIndex(const NotebookPageWrapper* page, const NotebookPageWrapper* pageToFind, int& count) const;
     NotebookPageWrapper* GetLastPage() const;
-    NotebookPageWrapper* DoGetChildPageAtDepth(NotebookPageWrapper* page, size_t targetlevel,
-                                               size_t currentlevel) const;
+    NotebookPageWrapper*
+    DoGetChildPageAtDepth(NotebookPageWrapper* page, size_t targetlevel, size_t currentlevel) const;
 
 public:
     wxString CppCtorCode() const override;

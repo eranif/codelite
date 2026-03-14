@@ -57,13 +57,13 @@ void UnitTestCppOutputParser::Parse(TestSummary* summary)
     // group2: total number of tests
     static wxRegEx reErrorSummary(wxT("FAILURE: ([0-9]*) out of ([0-9]*) tests failed"));
 
-    for(size_t i = 0; i < m_output.GetCount(); i++) {
+    for (size_t i = 0; i < m_output.GetCount(); i++) {
         wxString line = m_output.Item(i);
 
-        if(reSuccess.IsValid()) {
+        if (reSuccess.IsValid()) {
             // if the Summary line is in the format of: Success! ,,,
             // nothing is left to be checked
-            if(reSuccess.Matches(m_output.Item(i))) {
+            if (reSuccess.Matches(m_output.Item(i))) {
                 size_t len(0);
                 size_t start(0);
                 wxString match;
@@ -87,7 +87,7 @@ void UnitTestCppOutputParser::Parse(TestSummary* summary)
             infoPattern.lineNumberIndex.ToCLong(&nLineIndex);
             ErrorLineInfo info;
             wxString lineNumber, filename;
-            if(re.Matches(line)) {
+            if (re.Matches(line)) {
                 // found an error
                 info.file = nFileIndex == wxNOT_FOUND ? "" : re.GetMatch(line, nFileIndex);
                 info.line = nLineIndex == wxNOT_FOUND ? "" : re.GetMatch(line, nLineIndex);
@@ -99,7 +99,7 @@ void UnitTestCppOutputParser::Parse(TestSummary* summary)
             }
         }
 
-        if(!isAndErrorLine) {
+        if (!isAndErrorLine) {
             for (const auto& infoPattern : vcErrors) {
                 wxRegEx re(infoPattern.pattern, wxRE_ADVANCED | wxRE_ICASE);
                 long nFileIndex = wxNOT_FOUND;
@@ -108,7 +108,7 @@ void UnitTestCppOutputParser::Parse(TestSummary* summary)
                 infoPattern.lineNumberIndex.ToCLong(&nLineIndex);
                 ErrorLineInfo info;
                 wxString lineNumber, filename;
-                if(re.Matches(line)) {
+                if (re.Matches(line)) {
                     // found an error
                     info.file = nFileIndex == wxNOT_FOUND ? "" : re.GetMatch(line, nFileIndex);
                     info.line = nLineIndex == wxNOT_FOUND ? "" : re.GetMatch(line, nLineIndex);
@@ -122,13 +122,13 @@ void UnitTestCppOutputParser::Parse(TestSummary* summary)
         }
 
         // if this line is an error line, continue
-        if(isAndErrorLine) {
+        if (isAndErrorLine) {
             continue;
         }
 
         // test for error summary line
-        if(reErrorSummary.IsValid()) {
-            if(reErrorSummary.Matches(m_output.Item(i))) {
+        if (reErrorSummary.IsValid()) {
+            if (reErrorSummary.Matches(m_output.Item(i))) {
                 // increase the error count
                 size_t len(0);
                 size_t start(0);

@@ -40,10 +40,7 @@
 #include <wx/msgdlg.h>
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new RemotyPlugin(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new RemotyPlugin(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -94,7 +91,7 @@ void RemotyPlugin::OnFolderContextMenu(clContextMenuEvent& event) { event.Skip()
 void RemotyPlugin::OnNewWorkspace(clCommandEvent& e)
 {
     e.Skip();
-    if(e.GetString() == WORKSPACE_TYPE_NAME) {
+    if (e.GetString() == WORKSPACE_TYPE_NAME) {
         e.Skip(false);
     }
 }
@@ -103,7 +100,7 @@ void RemotyPlugin::OnRecentWorkspaces(clRecentWorkspaceEvent& event)
 {
     event.Skip();
     RemotyConfig config;
-    for(const auto& recent_workspace : config.GetRecentWorkspaces()) {
+    for (const auto& recent_workspace : config.GetRecentWorkspaces()) {
         RecentWorkspace rw;
         rw.path = recent_workspace.path;
         rw.m_account = recent_workspace.account;
@@ -115,7 +112,7 @@ void RemotyPlugin::OnRecentWorkspaces(clRecentWorkspaceEvent& event)
 void RemotyPlugin::OnPluginOpenWorkspace(clWorkspaceEvent& event)
 {
     event.Skip();
-    if(!event.IsRemote()) {
+    if (!event.IsRemote()) {
         return;
     }
 

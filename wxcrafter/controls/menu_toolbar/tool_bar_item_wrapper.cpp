@@ -25,8 +25,8 @@ ToolBarItemWrapper::ToolBarItemWrapper(int type)
     RegisterEventCommand(wxT("wxEVT_COMMAND_TOOL_CLICKED"),
                          _("Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for wxEVT_COMMAND_MENU_SELECTED). "
                            "Pass the id of the tool"));
-    RegisterEventCommand(wxT("wxEVT_COMMAND_TOOL_DROPDOWN_CLICKED"),
-                         _("Process a wxEVT_COMMAND_TOOL_DROPDOWN_CLICKED event"));
+    RegisterEventCommand(
+        wxT("wxEVT_COMMAND_TOOL_DROPDOWN_CLICKED"), _("Process a wxEVT_COMMAND_TOOL_DROPDOWN_CLICKED event"));
 
     m_styles.Clear();
     m_sizerFlags.Clear();
@@ -56,7 +56,7 @@ wxcWidget* ToolBarItemWrapper::Clone() const { return new ToolBarItemWrapper(); 
 static wxString GenerateCppCtorCodeRecursively(wxcWidget* widget) // Helper function for CppCtorCode() dropdown menus
 {
     wxString code;
-    if(wxCrafter::GetToolType(widget->PropertyString(PROP_KIND)) == wxCrafter::TOOL_TYPE_SEPARATOR) {
+    if (wxCrafter::GetToolType(widget->PropertyString(PROP_KIND)) == wxCrafter::TOOL_TYPE_SEPARATOR) {
         code << widget->CppCtorCode();
     } else {
         wxString childcode = widget->CppCtorCode();
@@ -85,7 +85,7 @@ wxString ToolBarItemWrapper::CppCtorCode() const
     wxCrafter::TOOL_TYPE toolType = wxCrafter::GetToolType(PropertyString(PROP_KIND));
     wxCrafter::TOOL_TYPE realToolType = toolType;
 
-    if(isAuiItem && toolType == wxCrafter::TOOL_TYPE_DROPDOWN) {
+    if (isAuiItem && toolType == wxCrafter::TOOL_TYPE_DROPDOWN) {
         /// wxAuiTooBar does not support wxITEM_DROPDOWN
         /// convert the type to wxITEM_NORMAL
         toolType = wxCrafter::TOOL_TYPE_NORMAL;
@@ -101,7 +101,7 @@ wxString ToolBarItemWrapper::CppCtorCode() const
 
     wxString functionName = wxT("AddTool");
 
-    switch(toolType) {
+    switch (toolType) {
     case wxCrafter::TOOL_TYPE_SEPARATOR:
         functionName = wxT("AddSeparator");
         functionArgs.Clear();
@@ -117,19 +117,19 @@ wxString ToolBarItemWrapper::CppCtorCode() const
     }
 
     code << GetWindowParent() << "->" << functionName << wxT("(") << functionArgs << wxT(");\n");
-    if(realToolType == wxCrafter::TOOL_TYPE_DROPDOWN && isAuiItem) {
+    if (realToolType == wxCrafter::TOOL_TYPE_DROPDOWN && isAuiItem) {
         // wxAuiToolBarItem* AddTool(...) is >= wx3.0, so we have to locate the new tool ourselves
         code << "wxAuiToolBarItem* " << GetName() << " = " << GetWindowParent() << "->FindToolByIndex("
              << GetWindowParent() << "->GetToolCount()-1);\n";
         code << "if (" << GetName() << ") {\n";
         code << "    " << GetName() << "->SetHasDropDown(true);\n";
-        if(HasDefaultDropdown()) {
+        if (HasDefaultDropdown()) {
             wxcWidget* menu = GetChildren().front();
             wxASSERT(menu && menu->GetType() == ID_WXMENU);
-            if(menu && menu->GetType() == ID_WXMENU) {
+            if (menu && menu->GetType() == ID_WXMENU) {
                 wxString menuname = menu->GetName();
                 code << "    " << menuname << " = new wxMenu;\n";
-                if(menu && menu->GetType() == ID_WXMENU) {
+                if (menu && menu->GetType() == ID_WXMENU) {
                     // Add each of the wxcWidget menu's children to the generated menu
                     wxcWidget* me = menu->GetParent();
                     menu->SetParent(NULL); // Allow menu code to be emitted here; there's code to prevent this if the
@@ -164,29 +164,33 @@ void ToolBarItemWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     wxString tip = PropertyString(PROP_TOOLTIP);
     wxString help = PropertyString(PROP_HELP);
 
-    if(toolType == wxCrafter::TOOL_TYPE_SEPARATOR) {
+    if (toolType == wxCrafter::TOOL_TYPE_SEPARATOR) {
         text << wxT("<object class=\"separator\"/>");
 
-    } else if(toolType == wxCrafter::TOOL_TYPE_SPACE) {
+    } else if (toolType == wxCrafter::TOOL_TYPE_SPACE) {
         text << wxT("<object class=\"space\"/>");
 
     } else {
         text << wxT("<object class=\"tool\" name=\"") << GetName() << wxT("\">");
 
-        if(toolType == wxCrafter::TOOL_TYPE_CHECK) {
+        if (toolType == wxCrafter::TOOL_TYPE_CHECK) {
             text << wxT("<toggle>1</toggle>");
 
-        } else if(toolType == wxCrafter::TOOL_TYPE_RADIO) {
+        } else if (toolType == wxCrafter::TOOL_TYPE_RADIO) {
             text << wxT("<radio>1</radio>");
 
-        } else if(toolType == wxCrafter::TOOL_TYPE_DROPDOWN) {
+        } else if (toolType == wxCrafter::TOOL_TYPE_DROPDOWN) {
             text << "<dropdown>";
-            if(IsParentAuiToolbar()) { ChildrenXRC(text, type); }
+            if (IsParentAuiToolbar()) {
+                ChildrenXRC(text, type);
+            }
             text << "</dropdown>";
         }
 
         text << XRCLabel();
-        if(!tip.empty()) { text << wxT("<tooltip>") << wxCrafter::CDATA(tip) << wxT("</tooltip>"); }
+        if (!tip.empty()) {
+            text << wxT("<tooltip>") << wxCrafter::CDATA(tip) << wxT("</tooltip>");
+        }
         text << wxT("<longhelp>") << wxCrafter::CDATA(help) << wxT("</longhelp>");
         text << XRCBitmap();
         text << wxT("</object>");
@@ -200,17 +204,17 @@ void ToolBarItemWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
 
     // Next cope with separators. This will be a toolbaritem, but we must set its type
     wxString classname = XmlUtils::ReadString(node, wxT("class"));
-    if(classname == "separator") {
+    if (classname == "separator") {
         SetPropertyString(PROP_KIND, ITEM_SEPARATOR);
         return; // Nothing else needed for a separator
     }
 
-    if(classname == "space") {
+    if (classname == "space") {
         SetPropertyString(PROP_KIND, ITEM_SPACE);
 
         // 'space' plus 'width' means an auitoolbar non-stretch spacer
         wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, "width");
-        if(propertynode) {
+        if (propertynode) {
             SetPropertyString(PROP_WIDTH, propertynode->GetNodeContent());
 
         } else {
@@ -218,22 +222,30 @@ void ToolBarItemWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
             // specify a different one
             wxString ppn = "1";
             propertynode = XmlUtils::FindFirstByTagName(node, "proportion");
-            if(propertynode) { ppn = propertynode->GetNodeContent(); }
+            if (propertynode) {
+                ppn = propertynode->GetNodeContent();
+            }
             SetPropertyString(PROP_PROPORTION, ppn);
         }
     }
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("toggle"));
-    if(propertynode && propertynode->GetNodeContent() == "1") { SetPropertyString(PROP_KIND, ITEM_CHECK); }
+    if (propertynode && propertynode->GetNodeContent() == "1") {
+        SetPropertyString(PROP_KIND, ITEM_CHECK);
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("radio"));
-    if(propertynode && propertynode->GetNodeContent() == "1") { SetPropertyString(PROP_KIND, ITEM_RADIO); }
+    if (propertynode && propertynode->GetNodeContent() == "1") {
+        SetPropertyString(PROP_KIND, ITEM_RADIO);
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("hasdropdown")); // The previous way
-    if(propertynode && propertynode->GetNodeContent() == "1") { SetPropertyString(PROP_KIND, ITEM_DROPDOWN); }
+    if (propertynode && propertynode->GetNodeContent() == "1") {
+        SetPropertyString(PROP_KIND, ITEM_DROPDOWN);
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("dropdown"));
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_KIND, ITEM_DROPDOWN);
         ImportFromXrc imp(NULL);
         imp.ProcessNamedNode(propertynode, this, "wxMenu"); // This should load any contained dropdown menu
@@ -242,15 +254,19 @@ void ToolBarItemWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "bitmap");
-    if(propertynode) { ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_TOOLBAR"); }
+    if (propertynode) {
+        ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_TOOLBAR");
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "bitmap2");
-    if(propertynode) {
+    if (propertynode) {
         ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_DISABLED_BITMAP_PATH, "wxART_TOOLBAR");
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "longhelp");
-    if(propertynode) { SetPropertyString(PROP_HELP, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_HELP, propertynode->GetNodeContent());
+    }
 }
 
 void ToolBarItemWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -260,27 +276,35 @@ void ToolBarItemWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
 
     // Next cope with separators. This will be a toolbaritem, but we must set its type
     wxString classname = XmlUtils::ReadString(node, wxT("class"));
-    if(classname == "separator") {
+    if (classname == "separator") {
         SetPropertyString(PROP_KIND, ITEM_SEPARATOR);
         return; // Nothing else needed for a separator
     }
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("check")); // Not 'toggle'
-    if(propertynode && propertynode->GetNodeContent() == "1") { SetPropertyString(PROP_KIND, ITEM_CHECK); }
+    if (propertynode && propertynode->GetNodeContent() == "1") {
+        SetPropertyString(PROP_KIND, ITEM_CHECK);
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("radio"));
-    if(propertynode && propertynode->GetNodeContent() == "1") { SetPropertyString(PROP_KIND, ITEM_RADIO); }
+    if (propertynode && propertynode->GetNodeContent() == "1") {
+        SetPropertyString(PROP_KIND, ITEM_RADIO);
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "bitmap");
-    if(propertynode) { ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_TOOLBAR"); }
+    if (propertynode) {
+        ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_TOOLBAR");
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "bitmap2");
-    if(propertynode) {
+    if (propertynode) {
         ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_DISABLED_BITMAP_PATH, "wxART_TOOLBAR");
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "longhelp");
-    if(propertynode) { SetPropertyString(PROP_HELP, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_HELP, propertynode->GetNodeContent());
+    }
 }
 
 void ToolBarItemWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -290,33 +314,41 @@ void ToolBarItemWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
 
     // Next cope with separators. This will be a toolbaritem, but we must set its type
     wxString classname = XmlUtils::ReadString(node, wxT("class"));
-    if(classname == "toolSeparator") {
+    if (classname == "toolSeparator") {
         SetPropertyString(PROP_KIND, ITEM_SEPARATOR);
         return; // Nothing else needed for a separator
     }
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "kind");
-    if(propertynode) { SetPropertyString(PROP_KIND, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_KIND, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "bitmap");
-    if(propertynode) {
+    if (propertynode) {
         ImportFromwxFB::ProcessBitmapProperty(propertynode->GetNodeContent(), this, PROP_BITMAP_PATH, "wxART_TOOLBAR");
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "statusbar"); // Yes, 'statusbar' is wxFB's 'help' label
-    if(propertynode) { SetPropertyString(PROP_HELP, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_HELP, propertynode->GetNodeContent());
+    }
 }
 
 void ToolBarItemWrapper::OnPropertiesUpdated()
 {
-    if(IsParentAuiToolbar()) {
-        if(wxCrafter::GetToolType(PropertyString(PROP_KIND)) == wxCrafter::TOOL_TYPE_DROPDOWN) {
+    if (IsParentAuiToolbar()) {
+        if (wxCrafter::GetToolType(PropertyString(PROP_KIND)) == wxCrafter::TOOL_TYPE_DROPDOWN) {
             // If this was a change of type to a dropdown, we need to delete any stale connected event (which will have
             // the wrong signature)
-            if(GetChildren().empty()) { RemoveEvent("wxEVT_COMMAND_TOOL_CLICKED"); }
+            if (GetChildren().empty()) {
+                RemoveEvent("wxEVT_COMMAND_TOOL_CLICKED");
+            }
         } else {
             // If this was a change of type from a dropdown, we again need to delete any stale connected event
-            if(!GetChildren().empty()) { RemoveEvent("wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN"); }
+            if (!GetChildren().empty()) {
+                RemoveEvent("wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN");
+            }
         }
     }
 }
@@ -326,20 +358,21 @@ void ToolBarItemWrapper::UpdateRegisteredEventsIfNeeded()
     bool isAuiItem = IsParentAuiToolbar();
     wxCrafter::TOOL_TYPE toolType = wxCrafter::GetToolType(PropertyString(PROP_KIND));
 
-    if(isAuiItem && toolType == wxCrafter::TOOL_TYPE_DROPDOWN) {
+    if (isAuiItem && toolType == wxCrafter::TOOL_TYPE_DROPDOWN) {
         // A wxAuiItem AND a dropdown menu item -> show only wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN
         m_controlEvents.Clear();
-        RegisterEvent(wxT("wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN"), "wxAuiToolBarEvent",
+        RegisterEvent(wxT("wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN"),
+                      "wxAuiToolBarEvent",
                       _("Process a wxEVT_COMMAND_AUITOOLBAR_TOOL_DROPDOWN event"));
 
-    } else if(isAuiItem) {
+    } else if (isAuiItem) {
         /// Not a dropdown but a wxAuiItem - show only 'Click' event
         m_controlEvents.Clear();
         RegisterEventCommand(wxT("wxEVT_COMMAND_TOOL_CLICKED"),
                              _("Process a wxEVT_COMMAND_TOOL_CLICKED event (a synonym for "
                                "wxEVT_COMMAND_MENU_SELECTED). Pass the id of the tool"));
 
-    } else if(!isAuiItem && !(toolType == wxCrafter::TOOL_TYPE_DROPDOWN)) {
+    } else if (!isAuiItem && !(toolType == wxCrafter::TOOL_TYPE_DROPDOWN)) {
         /// Not a dropdown nor wxAuiItem - show only 'Click' event
         m_controlEvents.Clear();
         RegisterEventCommand(wxT("wxEVT_COMMAND_TOOL_CLICKED"),
@@ -517,8 +550,10 @@ void AuiToolBarLabelWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxString classname = XmlUtils::ReadString(node, wxT("class"));
-    if(classname == "label") {
+    if (classname == "label") {
         wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, "width");
-        if(propertynode) { SetPropertyString(PROP_WIDTH, propertynode->GetNodeContent()); }
+        if (propertynode) {
+            SetPropertyString(PROP_WIDTH, propertynode->GetNodeContent());
+        }
     }
 }

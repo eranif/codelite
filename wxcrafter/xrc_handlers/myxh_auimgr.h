@@ -10,9 +10,8 @@
 #ifndef _WX_XH_AUI_H_
 #define _WX_XH_AUI_H_
 
-#include "wx/xrc/xmlres.h"
-
 #include "wx/vector.h"
+#include "wx/xrc/xmlres.h"
 
 class WXDLLIMPEXP_FWD_AUI wxAuiManager;
 class WXDLLIMPEXP_FWD_AUI wxAuiNotebook;

@@ -22,6 +22,7 @@ public:
     ~StringProperty() override = default;
 
     void operator=(const wxString& src) { m_value = src; }
+
 public:
     wxString GetValue() const override;
     void SetValue(const wxString& value) override;

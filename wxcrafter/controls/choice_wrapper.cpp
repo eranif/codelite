@@ -30,7 +30,7 @@ wxString ChoiceWrapper::CppCtorCode() const
     wxArrayString options = wxCrafter::Split(PropertyString(PROP_OPTIONS), wxT(";"));
 
     code << wxT("wxArrayString ") << GetName() << wxT("Arr;\n");
-    for(size_t i = 0; i < options.GetCount(); i++) {
+    for (size_t i = 0; i < options.GetCount(); i++) {
         code << GetName() << wxT("Arr.Add(") << wxCrafter::UNDERSCORE(options.Item(i)) << wxT(");\n");
     }
 
@@ -40,7 +40,7 @@ wxString ChoiceWrapper::CppCtorCode() const
 
     code << CPPCommonAttributes();
     long sel = wxCrafter::ToNumber(PropertyString(PROP_SELECTION), -1);
-    if(sel != -1 && sel < (long)options.GetCount()) {
+    if (sel != -1 && sel < (long)options.GetCount()) {
         code << GetName() << wxT("->SetSelection(") << sel << wxT(");\n");
     }
     return code;
@@ -68,11 +68,15 @@ void ChoiceWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     // The Options (content) property has a default, so we must clear it even if the node is absent
     wxString multistring;
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("content"));
-    if(propertynode) { multistring = XmlUtils::ChildNodesContentToString(propertynode); }
+    if (propertynode) {
+        multistring = XmlUtils::ChildNodesContentToString(propertynode);
+    }
     SetPropertyString(PROP_OPTIONS, multistring);
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("selection"));
-    if(propertynode) { SetPropertyString(PROP_SELECTION, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_SELECTION, propertynode->GetNodeContent());
+    }
 }
 
 void ChoiceWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -83,11 +87,15 @@ void ChoiceWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     // The Options (content) property has a default, so we must clear it even if the node is absent
     wxString multistring;
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("content"));
-    if(propertynode) { multistring = XmlUtils::ChildNodesContentToString(propertynode); }
+    if (propertynode) {
+        multistring = XmlUtils::ChildNodesContentToString(propertynode);
+    }
     SetPropertyString(PROP_OPTIONS, multistring);
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("selection"));
-    if(propertynode) { SetPropertyString(PROP_SELECTION, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_SELECTION, propertynode->GetNodeContent());
+    }
 }
 
 void ChoiceWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -98,9 +106,13 @@ void ChoiceWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     // The "choices" property has a default, so we should clear it even if the node was absent
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "choices");
     wxString content;
-    if(propertynode) { content = ImportFromwxFB::ConvertFBOptionsString(propertynode->GetNodeContent()); }
+    if (propertynode) {
+        content = ImportFromwxFB::ConvertFBOptionsString(propertynode->GetNodeContent());
+    }
     SetPropertyString(PROP_OPTIONS, content);
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "selection");
-    if(propertynode) { SetPropertyString(PROP_SELECTION, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_SELECTION, propertynode->GetNodeContent());
+    }
 }

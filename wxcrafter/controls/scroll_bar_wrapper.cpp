@@ -12,22 +12,27 @@ ScrollBarWrapper::ScrollBarWrapper()
     PREPEND_STYLE_STR(wxT("wxSB_HORIZONTAL"), wxSB_HORIZONTAL, true);
     PREPEND_STYLE_STR(wxT("wxSB_VERTICAL"), wxSB_VERTICAL, false);
 
-    RegisterEvent(wxT("wxEVT_SCROLL_TOP"), wxT("wxScrollEvent"),
+    RegisterEvent(wxT("wxEVT_SCROLL_TOP"),
+                  wxT("wxScrollEvent"),
                   _("Process wxEVT_SCROLL_TOP scroll-to-top events (minimum position)"));
-    RegisterEvent(wxT("wxEVT_SCROLL_BOTTOM"), wxT("wxScrollEvent"),
+    RegisterEvent(wxT("wxEVT_SCROLL_BOTTOM"),
+                  wxT("wxScrollEvent"),
                   _("Process wxEVT_SCROLL_BOTTOM scroll-to-bottom events (maximum position)."));
     RegisterEvent(wxT("wxEVT_SCROLL_LINEUP"), wxT("wxScrollEvent"), _("Process wxEVT_SCROLL_LINEUP line up events."));
-    RegisterEvent(wxT("wxEVT_SCROLL_LINEDOWN"), wxT("wxScrollEvent"),
-                  _("Process wxEVT_SCROLL_LINEDOWN line down events."));
+    RegisterEvent(
+        wxT("wxEVT_SCROLL_LINEDOWN"), wxT("wxScrollEvent"), _("Process wxEVT_SCROLL_LINEDOWN line down events."));
     RegisterEvent(wxT("wxEVT_SCROLL_PAGEUP"), wxT("wxScrollEvent"), _("Process wxEVT_SCROLL_PAGEUP page up events."));
-    RegisterEvent(wxT("wxEVT_SCROLL_PAGEDOWN"), wxT("wxScrollEvent"),
-                  _("Process wxEVT_SCROLL_PAGEDOWN page down events"));
-    RegisterEvent(wxT("wxEVT_SCROLL_THUMBTRACK"), wxT("wxScrollEvent"),
+    RegisterEvent(
+        wxT("wxEVT_SCROLL_PAGEDOWN"), wxT("wxScrollEvent"), _("Process wxEVT_SCROLL_PAGEDOWN page down events"));
+    RegisterEvent(wxT("wxEVT_SCROLL_THUMBTRACK"),
+                  wxT("wxScrollEvent"),
                   _("Process wxEVT_SCROLL_THUMBTRACK thumbtrack events (frequent events sent as the user drags the "
-                      "thumbtrack)."));
-    RegisterEvent(wxT("wxEVT_SCROLL_THUMBRELEASE"), wxT("wxScrollEvent"),
+                    "thumbtrack)."));
+    RegisterEvent(wxT("wxEVT_SCROLL_THUMBRELEASE"),
+                  wxT("wxScrollEvent"),
                   _("Process wxEVT_SCROLL_THUMBRELEASE thumb release events."));
-    RegisterEvent(wxT("wxEVT_SCROLL_CHANGED"), wxT("wxScrollEvent"),
+    RegisterEvent(wxT("wxEVT_SCROLL_CHANGED"),
+                  wxT("wxScrollEvent"),
                   _("Process wxEVT_SCROLL_CHANGED end of scrolling events (MSW only)."));
 
     SetPropertyString(_("Common Settings"), "wxScrollBar");
@@ -75,16 +80,24 @@ void ScrollBarWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("thumbsize"));
-    if(propertynode) { SetPropertyString(PROP_THUMBSIZE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_THUMBSIZE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("range"));
-    if(propertynode) { SetPropertyString(PROP_RANGE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_RANGE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("pagesize"));
-    if(propertynode) { SetPropertyString(PROP_RANGE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_RANGE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("value"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 }
 
 void ScrollBarWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -93,14 +106,22 @@ void ScrollBarWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "thumbsize");
-    if(propertynode) { SetPropertyString(PROP_THUMBSIZE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_THUMBSIZE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "range");
-    if(propertynode) { SetPropertyString(PROP_RANGE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_RANGE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "pagesize");
-    if(propertynode) { SetPropertyString(PROP_RANGE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_RANGE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "value");
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 }

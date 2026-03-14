@@ -2,6 +2,7 @@
 #define BMPTEXTSELECTORDLG_H
 
 #include "wxcrafter.h"
+
 #include <vector>
 
 using BmpTextVec_t = std::vector<std::pair<wxString, wxString>>;

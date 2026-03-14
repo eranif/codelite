@@ -10,8 +10,11 @@ class MyTreeCtrl : public wxDataViewTreeCtrl
     size_t m_next;
 
 public:
-    MyTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-               const wxSize& size = wxDefaultSize, long style = wxDV_NO_HEADER | wxDV_SINGLE | wxDV_ROW_LINES);
+    MyTreeCtrl(wxWindow* parent,
+               wxWindowID id,
+               const wxPoint& pos = wxDefaultPosition,
+               const wxSize& size = wxDefaultSize,
+               long style = wxDV_NO_HEADER | wxDV_SINGLE | wxDV_ROW_LINES);
     ~MyTreeCtrl() override = default;
 
     wxDataViewItem AddRoot(const wxString& name, int imgId = -1, int expandImgId = -1);

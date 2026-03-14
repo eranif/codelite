@@ -1,5 +1,6 @@
-#include "cl_standard_paths.h"
 #include "lintoptions.h"
+
+#include "cl_standard_paths.h"
 #include "fileutils.h"
 #ifndef __WXMSW__
 #include "globals.h"
@@ -16,17 +17,19 @@ LintOptions::LintOptions()
 {
     wxFileName newConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
                                wxFileName::GetPathSeparator() + "phplint.conf";
-    if(!newConfigFile.FileExists()) {
+    if (!newConfigFile.FileExists()) {
         wxFileName oldConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
                                    wxFileName::GetPathSeparator() + "php.conf";
 
         // If the file does not exist, create a new one
         wxString buf;
-        if(FileUtils::ReadBufferFromFile(newConfigFile, buf, 1) && (buf == "[")) {
+        if (FileUtils::ReadBufferFromFile(newConfigFile, buf, 1) && (buf == "[")) {
             FileUtils::WriteFileContent(newConfigFile, "{}");
         }
-        
-        if(!newConfigFile.FileExists()) { FileUtils::WriteFileContent(newConfigFile, "{}"); }
+
+        if (!newConfigFile.FileExists()) {
+            FileUtils::WriteFileContent(newConfigFile, "{}");
+        }
 
         // Save it
         JSON newRoot(newConfigFile);
@@ -49,21 +52,21 @@ void LintOptions::FromJSON(const JSONItem& json)
 
 #ifndef __WXMSW__
     // Find an installed version of phpcs
-    if(m_phpcsPhar.IsEmpty()) {
+    if (m_phpcsPhar.IsEmpty()) {
         wxFileName phpcsFile;
         ::FileUtils::FindExe("phpcs", phpcsFile);
         SetPhpcsPhar(phpcsFile);
     }
 
     // Find an installed version of phpmd
-    if(m_phpmdPhar.IsEmpty()) {
+    if (m_phpmdPhar.IsEmpty()) {
         wxFileName phpmdFile;
         ::FileUtils::FindExe("phpmd", phpmdFile);
         SetPhpmdPhar(phpmdFile);
     }
 
     // Find an installed version of phpstan
-    if(m_phpstanPhar.IsEmpty()) {
+    if (m_phpstanPhar.IsEmpty()) {
         wxFileName phpstanFile;
         ::FileUtils::FindExe("phpstan", phpstanFile);
         SetPhpstanPhar(phpstanFile);

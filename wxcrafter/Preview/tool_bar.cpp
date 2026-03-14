@@ -24,9 +24,9 @@ void ToolBar::AddToolbar(wxToolBar* tb)
 void ToolBar::OnClick(wxCommandEvent& e)
 {
     e.Skip();
-    if(m_wxtb) {
+    if (m_wxtb) {
         wxToolBarToolBase* tool = m_wxtb->FindById(e.GetId());
-        if(tool) {
+        if (tool) {
             wxString label = tool->GetLabel();
             wxString s;
             s << m_wxtb->GetName() << wxT(":") << label;

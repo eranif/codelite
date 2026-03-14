@@ -37,8 +37,8 @@ void StylesSheetListView::Construct(wxPropertyGrid* pg, wxcWidget* wb)
     wxcWidget::MapStyles_t::ConstIterator iter = flags.Begin();
 
     // The control specific flags will show up first
-    for(; iter != flags.End(); ++iter) {
-        if(iter->first == "0") {
+    for (; iter != flags.End(); ++iter) {
+        if (iter->first == "0") {
             iter++;
             // We found the terminator
             break;
@@ -49,28 +49,32 @@ void StylesSheetListView::Construct(wxPropertyGrid* pg, wxcWidget* wb)
         // wxCAPTION
         size_t flag_fake_value = (1 << count++);
         controlStylesInt.Add(flag_fake_value); // Add the value
-        if(iter->second.is_set) { controlStylesValue |= flag_fake_value; }
+        if (iter->second.is_set) {
+            controlStylesValue |= flag_fake_value;
+        }
     }
 
     // From this point on, everything is belonged to the
     // wxWindow styles
-    for(; iter != flags.End(); ++iter) {
+    for (; iter != flags.End(); ++iter) {
 
         windowStyles.Add(iter->first);               // Add the style name
         windowStylesInt.Add(iter->second.style_bit); // Add the value
-        if(iter->second.is_set) { windowStylesValue |= iter->second.style_bit; }
+        if (iter->second.is_set) {
+            windowStylesValue |= iter->second.style_bit;
+        }
     }
 
     m_controlFlags = NULL;
     m_windowFlags = NULL;
-    if(controlStyles.IsEmpty() == false) {
+    if (controlStyles.IsEmpty() == false) {
         m_controlFlags = (wxFlagsProperty*)pg->Append(
             new wxFlagsProperty(wb->GetWxClassName(), wxPG_LABEL, controlStyles, controlStylesInt, controlStylesValue));
         pg->SetPropertyAttribute(m_controlFlags, wxPG_BOOL_USE_CHECKBOX, true);
         pg->Expand(m_controlFlags);
     }
 
-    if(windowStyles.IsEmpty() == false) {
+    if (windowStyles.IsEmpty() == false) {
         m_windowFlags = (wxFlagsProperty*)pg->Append(
             new wxFlagsProperty(_("wxWindow"), wxPG_LABEL, windowStyles, windowStylesInt, windowStylesValue));
         pg->SetPropertyAttribute(m_windowFlags, wxPG_BOOL_USE_CHECKBOX, true);
@@ -89,19 +93,25 @@ void StylesSheetListView::Changed(wxPropertyGrid* pg, wxPropertyGridEvent& e)
 {
     // We used fake flags in controlStyles to avoid clashes, so we can't just retrieve the value as integer
     // Translating back into the real values won't work either: it just produces the clashes again. So use the strings
-    if(m_wxcWidget) {
+    if (m_wxcWidget) {
         wxString controlStyles;
         wxString windowStyles;
-        if(m_windowFlags) { windowStyles = m_windowFlags->GetValueAsString(); }
+        if (m_windowFlags) {
+            windowStyles = m_windowFlags->GetValueAsString();
+        }
 
-        if(m_controlFlags) { controlStyles = m_controlFlags->GetValueAsString(); }
+        if (m_controlFlags) {
+            controlStyles = m_controlFlags->GetValueAsString();
+        }
 
         // joint flags
-        if(!controlStyles.empty() && !windowStyles.empty()) { controlStyles << ','; }
+        if (!controlStyles.empty() && !windowStyles.empty()) {
+            controlStyles << ',';
+        }
         wxArrayString arr = ::wxStringTokenize(controlStyles + windowStyles, ",", wxTOKEN_STRTOK);
         // Reset the styles
         m_wxcWidget->ClearStyles();
-        for(size_t i = 0; i < arr.GetCount(); ++i) {
+        for (size_t i = 0; i < arr.GetCount(); ++i) {
             m_wxcWidget->EnableStyle(arr.Item(i).Trim().Trim(false), true);
         }
 

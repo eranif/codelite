@@ -16,7 +16,9 @@
 // ----------------------------------------------------------------------------
 
 // for compilers that support precompilation, includes "wx.h".
-#include "CustomControls/clStyledTextCtrlMiniMap.hpp"
+#include <wx/wxprec.h>
+
+#include "clStyledTextCtrlMiniMap.hpp"
 
 #if wxCHECK_VERSION(3, 3, 2)
 
@@ -25,7 +27,6 @@
 #include <wx/dcgraph.h>
 #include <wx/log.h>
 #include <wx/math.h>
-#include <wx/wxprec.h>
 
 // ----------------------------------------------------------------------------
 // constants

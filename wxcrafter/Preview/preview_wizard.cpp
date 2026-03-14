@@ -34,14 +34,14 @@ PreviewWizard::PreviewWizard(wxWindow* parent, const WizardWrapper& dw)
     wxXmlResource::Get()->Unload(xrcFilePath);
 
     Center();
-    EventNotifier::Get()->Connect(wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewWizard::OnClosePreview), NULL,
-                                  this);
+    EventNotifier::Get()->Connect(
+        wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewWizard::OnClosePreview), NULL, this);
 }
 
 PreviewWizard::~PreviewWizard()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewWizard::OnClosePreview), NULL,
-                                     this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewWizard::OnClosePreview), NULL, this);
 
     wxCommandEvent event(wxEVT_PREVIEW_CLOSED);
     EventNotifier::Get()->AddPendingEvent(event);
@@ -62,7 +62,7 @@ void PreviewWizard::OnClose(wxCloseEvent& e)
 void PreviewWizard::Run()
 {
     wxWizardPageSimple* pageOne = XRCCTRL((*this), "WIZARD_PAGE_ONE", wxWizardPageSimple);
-    if(pageOne) {
+    if (pageOne) {
         GetPageAreaSizer()->Add(pageOne);
         RunWizard(pageOne);
     }

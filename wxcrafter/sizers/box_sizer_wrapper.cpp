@@ -11,7 +11,7 @@ BoxSizerWrapper::BoxSizerWrapper()
     m_type = ID_WXBOXSIZER;
     m_styles.Clear(); // Sizer has no styles
 
-    const wxArrayString arr = StdToWX::ToArrayString({ "wxVERTICAL", "wxHORIZONTAL" });
+    const wxArrayString arr = StdToWX::ToArrayString({"wxVERTICAL", "wxHORIZONTAL"});
 
     SetPropertyString(_("Common Settings"), "wxBoxSizer");
     Add<ChoiceProperty>(PROP_ORIENTATION, arr, 0, _("Sizer orientation"));
@@ -28,7 +28,7 @@ wxString BoxSizerWrapper::GetWxClassName() const { return "wxBoxSizer"; }
 wxString BoxSizerWrapper::CppCtorCode() const
 {
     wxString code;
-    if(!KeepAsClassMember()) {
+    if (!KeepAsClassMember()) {
         code << "wxBoxSizer* ";
     }
 
@@ -36,8 +36,8 @@ wxString BoxSizerWrapper::CppCtorCode() const
 
     code << GenerateMinSizeCode();
 
-    if(IsMainSizer()) {
-        if(GetParent()->IsTopWindow()) {
+    if (IsMainSizer()) {
+        if (GetParent()->IsTopWindow()) {
             code << "this->SetSizer(" << GetName() << ");\n";
 
         } else {
@@ -65,7 +65,7 @@ void BoxSizerWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, "orient");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_ORIENTATION, propertynode->GetNodeContent());
     }
 }
@@ -77,12 +77,12 @@ void BoxSizerWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
 
     // wxSmith doesn't use "name" here, but "variable" means the same thing afaict
     wxString value = XmlUtils::ReadString(node, "variable");
-    if(!value.empty()) {
+    if (!value.empty()) {
         SetName(value);
     }
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, "orient");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_ORIENTATION, propertynode->GetNodeContent());
     }
 }
@@ -93,7 +93,7 @@ void BoxSizerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "orient");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_ORIENTATION, propertynode->GetNodeContent());
     }
 }

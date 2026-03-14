@@ -24,16 +24,15 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "svn_sync_dialog.h"
-#include <wx/dirdlg.h>
-#include "subversion2.h"
+
 #include "imanager.h"
+#include "subversion2.h"
 #include "windowattrmanager.h"
 
-SvnSyncDialog::SvnSyncDialog(wxWindow* parent,
-                             Subversion2* plugin,
-                             const wxString& rootDir,
-                             bool excludeBin,
-                             const wxString& excludeExtensions)
+#include <wx/dirdlg.h>
+
+SvnSyncDialog::SvnSyncDialog(
+    wxWindow* parent, Subversion2* plugin, const wxString& rootDir, bool excludeBin, const wxString& excludeExtensions)
     : SvnSyncDialogBaseClass(parent)
     , m_plugin(plugin)
     , m_rootDir(rootDir)
@@ -57,7 +56,7 @@ void SvnSyncDialog::UpdateUrl(const wxString& rootDir)
     m_plugin->DoGetSvnInfoSync(svnInfo, rootDir);
 
     wxString textLine(_("Root URL:  "));
-    if(svnInfo.m_sourceUrl.IsEmpty()) {
+    if (svnInfo.m_sourceUrl.IsEmpty()) {
         textLine += _("<not applicable>");
     } else {
         textLine += svnInfo.m_sourceUrl;

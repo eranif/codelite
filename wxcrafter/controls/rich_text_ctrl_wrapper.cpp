@@ -15,38 +15,48 @@ RichTextCtrlWrapper::RichTextCtrlWrapper()
 
     EnableStyle(wxT("wxWANTS_CHARS"), true);
 
-    RegisterEvent(wxT("wxEVT_COMMAND_RICHTEXT_CHARACTER"), wxT("wxRichTextEvent"),
+    RegisterEvent(wxT("wxEVT_COMMAND_RICHTEXT_CHARACTER"),
+                  wxT("wxRichTextEvent"),
                   _("Process a wxEVT_COMMAND_RICHTEXT_CHARACTER event, generated when the user presses a character "
                     "key.\nValid event functions: GetFlags, GetPosition, GetCharacter."));
-    RegisterEvent(wxT("wxEVT_COMMAND_RICHTEXT_DELETE"), wxT("wxRichTextEvent"),
+    RegisterEvent(wxT("wxEVT_COMMAND_RICHTEXT_DELETE"),
+                  wxT("wxRichTextEvent"),
                   _("Process a wxEVT_COMMAND_RICHTEXT_DELETE event, generated when the user presses the backspace or "
                     "delete key.\nValid event functions: GetFlags, GetPosition"));
-    RegisterEvent(wxT("wxEVT_COMMAND_RICHTEXT_RETURN"), wxT("wxRichTextEvent"),
+    RegisterEvent(wxT("wxEVT_COMMAND_RICHTEXT_RETURN"),
+                  wxT("wxRichTextEvent"),
                   _("Process a wxEVT_COMMAND_RICHTEXT_RETURN event, generated when the user presses the return "
                     "key.\nValid event functions: GetFlags, GetPosition."));
-    RegisterEvent(wxT("wxEVT_COMMAND_RICHTEXT_STYLE_CHANGED"), wxT("wxRichTextEvent"),
+    RegisterEvent(wxT("wxEVT_COMMAND_RICHTEXT_STYLE_CHANGED"),
+                  wxT("wxRichTextEvent"),
                   _("Process a wxEVT_COMMAND_RICHTEXT_STYLE_CHANGED event, generated when styling has been applied "
                     "to the control.\nValid event functions: GetPosition, GetRange."));
-    RegisterEvent(wxT("wxEVT_COMMAND_RICHTEXT_STYLESHEET_CHANGING"), wxT("wxRichTextEvent"),
+    RegisterEvent(wxT("wxEVT_COMMAND_RICHTEXT_STYLESHEET_CHANGING"),
+                  wxT("wxRichTextEvent"),
                   _("Process a wxEVT_COMMAND_RICHTEXT_STYLESHEET_CHANGING event, generated when the control's "
                     "stylesheet has changed,\nfor example the user added, edited or deleted a style.\nValid event "
                     "functions: GetRange, GetPosition."));
-    RegisterEvent(wxT("wxEVT_COMMAND_RICHTEXT_STYLESHEET_REPLACING"), wxT("wxRichTextEvent"),
+    RegisterEvent(wxT("wxEVT_COMMAND_RICHTEXT_STYLESHEET_REPLACING"),
+                  wxT("wxRichTextEvent"),
                   _("Process a wxEVT_COMMAND_RICHTEXT_STYLESHEET_REPLACING event, generated when the control's "
                     "stylesheet is about to be replaced\nfor example when a file is loaded into the control.\nValid "
                     "event functions: Veto, GetOldStyleSheet, GetNewStyleSheet."));
-    RegisterEvent(wxT("wxEVT_COMMAND_RICHTEXT_STYLESHEET_REPLACED"), wxT("wxRichTextEvent"),
+    RegisterEvent(wxT("wxEVT_COMMAND_RICHTEXT_STYLESHEET_REPLACED"),
+                  wxT("wxRichTextEvent"),
                   _("Process a wxEVT_COMMAND_RICHTEXT_STYLESHEET_REPLACED event, generated when the control's "
                     "stylesheet has been replaced\nfor example when a file is loaded into the control\nValid event "
                     "functions: GetOldStyleSheet, GetNewStyleSheet."));
-    RegisterEvent(wxT("wxEVT_COMMAND_RICHTEXT_CONTENT_INSERTED"), wxT("wxRichTextEvent"),
+    RegisterEvent(wxT("wxEVT_COMMAND_RICHTEXT_CONTENT_INSERTED"),
+                  wxT("wxRichTextEvent"),
                   _("Process a wxEVT_COMMAND_RICHTEXT_CONTENT_INSERTED event generated when content has been "
                     "inserted into the control.\nValid event functions: GetPosition, GetRange."));
-    RegisterEvent(wxT("wxEVT_COMMAND_RICHTEXT_CONTENT_DELETED"), wxT("wxRichTextEvent"),
+    RegisterEvent(wxT("wxEVT_COMMAND_RICHTEXT_CONTENT_DELETED"),
+                  wxT("wxRichTextEvent"),
                   _("Process a wxEVT_COMMAND_RICHTEXT_CONTENT_DELETED event, generated when content has been deleted "
                     "from the control\nValid event functions: GetPosition, GetRange."));
     RegisterEvent(
-        wxT("wxEVT_COMMAND_RICHTEXT_BUFFER_RESET"), wxT("wxRichTextEvent"),
+        wxT("wxEVT_COMMAND_RICHTEXT_BUFFER_RESET"),
+        wxT("wxRichTextEvent"),
         _("Process a wxEVT_COMMAND_RICHTEXT_BUFFER_RESET event, generated when the buffer has been reset by deleting "
           "all content.\nYou can use this to set a default style for the first new paragraph."));
     RegisterEventCommand(wxT("wxEVT_COMMAND_TEXT_UPDATED"),
@@ -83,7 +93,7 @@ wxString RichTextCtrlWrapper::GetWxClassName() const { return wxT("wxRichTextCtr
 
 void RichTextCtrlWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    if(type == XRC_LIVE) {
+    if (type == XRC_LIVE) {
         text << XRCUnknown();
 
     } else {

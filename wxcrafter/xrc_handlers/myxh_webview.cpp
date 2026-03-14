@@ -1,4 +1,4 @@
-#include "wx/wxprec.h"
+#include <wx/wxprec.h>
 
 #ifdef __BORLANDC__
 #pragma hdrstop
@@ -27,9 +27,17 @@ wxObject* MyWxWebViewXmlHandler::DoCreateResource()
 {
 #if USE_WEBVIEW
     wxString url = GetText("url", false);
-    if(url.IsEmpty()) { url = "http://www.google.com"; }
-    wxWebView* webview = wxWebView::New(m_parentAsWindow, GetID(), url, GetPosition(), GetSize(),
-                                        wxWebViewBackendDefault, GetStyle(wxT("style")), GetName());
+    if (url.IsEmpty()) {
+        url = "http://www.google.com";
+    }
+    wxWebView* webview = wxWebView::New(m_parentAsWindow,
+                                        GetID(),
+                                        url,
+                                        GetPosition(),
+                                        GetSize(),
+                                        wxWebViewBackendDefault,
+                                        GetStyle(wxT("style")),
+                                        GetName());
 #else
     wxHtmlWindow* webview =
         new wxHtmlWindow(m_parentAsWindow, GetID(), GetPosition(), GetSize(), GetStyle(wxT("style")), GetName());

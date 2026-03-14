@@ -29,7 +29,7 @@ wxString RibbonPageWrapper::CppCtorCode() const
             << Label() << ", " << wxcCodeGeneratorHelper::Get().BitmapCode(PropertyFile(PROP_BITMAP_PATH)) << ", "
             << StyleFlags("0") << ");\n";
     cppCode << CPPCommonAttributes();
-    if(PropertyBool(PROP_SELECTED) == "true") {
+    if (PropertyBool(PROP_SELECTED) == "true") {
         cppCode << GetParent()->GetName() << "->SetActivePage( " << GetName() << " );\n";
     }
     return cppCode;

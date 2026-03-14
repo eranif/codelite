@@ -39,24 +39,24 @@ class IManager;
 /** Implementing NewQtProjBaseDlg */
 class NewQtProjDlg : public NewQtProjBaseDlg
 {
-    QmakeConf *m_conf;
-    IManager  *m_mgr;
+    QmakeConf* m_conf;
+    IManager* m_mgr;
 
 protected:
     virtual void OnOKUI(wxUpdateUIEvent& event);
     // Handlers for NewQtProjBaseDlg events.
-    void OnNewQmakeSettings( wxCommandEvent& event );
+    void OnNewQmakeSettings(wxCommandEvent& event);
 
 public:
     /** Constructor */
-    NewQtProjDlg( wxWindow* parent, QmakeConf *conf, IManager *mgr );
+    NewQtProjDlg(wxWindow* parent, QmakeConf* conf, IManager* mgr);
     virtual ~NewQtProjDlg();
 
-    wxString GetProjectName    () const;
-    wxString GetProjectPath    () const;
-    wxString GetProjectKind    () const;
-    wxString GetQmake          () const;
-    bool     GetCreateDirectory() const;
+    wxString GetProjectName() const;
+    wxString GetProjectPath() const;
+    wxString GetProjectKind() const;
+    wxString GetQmake() const;
+    bool GetCreateDirectory() const;
 };
 
 #endif // __newqtprojdlg__

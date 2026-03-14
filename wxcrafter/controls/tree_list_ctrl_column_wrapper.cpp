@@ -17,7 +17,7 @@ TreeListCtrlColumnWrapper::TreeListCtrlColumnWrapper()
     m_sizerFlags.Clear();
     m_properties.Clear();
 
-    const wxArrayString alignment = StdToWX::ToArrayString({ "wxALIGN_LEFT", "wxALIGN_RIGHT", "wxALIGN_CENTER" });
+    const wxArrayString alignment = StdToWX::ToArrayString({"wxALIGN_LEFT", "wxALIGN_RIGHT", "wxALIGN_CENTER"});
 
     // FIXME: add alignment + column flags here
     Add<CategoryProperty>(_("wxTreeListCtrl Column"));
@@ -57,7 +57,7 @@ wxString TreeListCtrlColumnWrapper::GetWxClassName() const { return ""; }
 
 void TreeListCtrlColumnWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    if(type == XRC_LIVE) {
+    if (type == XRC_LIVE) {
         text << XRCUnknown();
 
     } else {

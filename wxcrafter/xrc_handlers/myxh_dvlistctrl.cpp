@@ -1,4 +1,5 @@
 #include "myxh_dvlistctrl.h"
+
 #include <wx/dataview.h>
 #include <wx/imaglist.h>
 #include <wx/tokenzr.h>
@@ -18,7 +19,7 @@ MyWxDataViewListCtrlHandler::MyWxDataViewListCtrlHandler()
 
 wxObject* MyWxDataViewListCtrlHandler::DoCreateResource()
 {
-    if(m_class == "wxDataViewColumn") {
+    if (m_class == "wxDataViewColumn") {
         HandleListCol();
 
     } else {
@@ -41,7 +42,9 @@ void MyWxDataViewListCtrlHandler::HandleListCol()
     wxDataViewListCtrl* const list = wxDynamicCast(m_parentAsWindow, wxDataViewListCtrl);
     wxCHECK_RET(list, wxT("must have wxDataViewListCtrl parent"));
 
-    if(!HasParam(wxT("coltype"))) { return; }
+    if (!HasParam(wxT("coltype"))) {
+        return;
+    }
 
     // Column properties
     wxString coltype = GetText("coltype");
@@ -52,38 +55,41 @@ void MyWxDataViewListCtrlHandler::HandleListCol()
     wxString cellmode = GetText("cellmode", false);
 
     wxDataViewCellMode mode = wxDATAVIEW_CELL_INERT;
-    if(cellmode == "wxDATAVIEW_CELL_ACTIVATABLE")
+    if (cellmode == "wxDATAVIEW_CELL_ACTIVATABLE")
         mode = wxDATAVIEW_CELL_ACTIVATABLE;
-    else if(cellmode == "")
+    else if (cellmode == "")
         mode = wxDATAVIEW_CELL_EDITABLE;
 
     wxAlignment al = wxALIGN_LEFT;
-    if(salign == "wxALIGN_RIGHT")
+    if (salign == "wxALIGN_RIGHT")
         al = wxALIGN_RIGHT;
-    else if(salign == "wxALIGN_CENTER")
+    else if (salign == "wxALIGN_CENTER")
         al = wxALIGN_CENTER;
 
-    if(coltype == "bitmap") {
+    if (coltype == "bitmap") {
         list->AppendBitmapColumn(label, list->GetColumnCount(), mode, colwidth, al, style);
 
-    } else if(coltype == "check") {
+    } else if (coltype == "check") {
         list->AppendToggleColumn(label, mode, colwidth, al, style);
 
-    } else if(coltype == "text") {
+    } else if (coltype == "text") {
         list->AppendTextColumn(label, mode, colwidth, al, style);
 
-    } else if(coltype == "icontext") {
+    } else if (coltype == "icontext") {
         list->AppendIconTextColumn(label, mode, colwidth, al, style);
 
-    } else if(coltype == "progress") {
+    } else if (coltype == "progress") {
         list->AppendProgressColumn(label, mode, colwidth, al, style);
 
-    } else if(coltype == "choice") {
+    } else if (coltype == "choice") {
         wxString content = GetText("choices", false);
         wxArrayString choices = ::wxStringTokenize(content, ",", wxTOKEN_STRTOK);
         list->AppendColumn(new wxDataViewColumn(label,
                                                 new wxDataViewChoiceRenderer(choices, mode, wxDVR_DEFAULT_ALIGNMENT),
-                                                list->GetColumnCount(), colwidth, al, style));
+                                                list->GetColumnCount(),
+                                                colwidth,
+                                                al,
+                                                style));
     }
 }
 

@@ -22,7 +22,7 @@ DisableFormat:   false
 ExperimentalAutoDetectBinPacking: false
 ForEachMacros:   [ foreach, Q_FOREACH, BOOST_FOREACH ]
 IncludeCategories:
-  - Regex:           '^"wx/wxprec.h"'
+  - Regex:           '^<wx/wxprec.h>'
     Priority:        -1
     SortPriority:    0
   - Regex:           '^".*"'

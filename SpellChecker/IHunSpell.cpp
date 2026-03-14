@@ -34,12 +34,14 @@
 // License:
 /////////////////////////////////////////////////////////////////////////////
 // For compilers that support precompilation, includes "wx/wx.h".
+#include <wx/wxprec.h>
 #ifndef WX_PRECOMP
 #include <wx/wx.h>
 #endif
 
-#include "CorrectSpellingDlg.h"
 #include "IHunSpell.h"
+
+#include "CorrectSpellingDlg.h"
 #include "StringUtils.h"
 #include "file_logger.h"
 #include "globals.h"
@@ -53,7 +55,6 @@
 #include <wx/stc/stc.h>
 #include <wx/textfile.h>
 #include <wx/tokenzr.h>
-#include <wx/wxprec.h>
 
 namespace
 {

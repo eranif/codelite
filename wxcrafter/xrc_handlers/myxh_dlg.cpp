@@ -1,5 +1,5 @@
 // For compilers that support precompilation, includes "wx.h".
-#include "wx/wxprec.h"
+#include <wx/wxprec.h>
 
 #include "my_dialog.h"
 

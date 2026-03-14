@@ -33,9 +33,9 @@
 // Copyright:   2008 Frank Lichtner
 // Licence:		GNU General Public Licence
 /////////////////////////////////////////////////////////////////////////////
-#include "event_notifier.h"
-
 #include <wx/wxprec.h>
+
+#include "event_notifier.h"
 
 #ifndef WX_PRECOMP
 #include <wx/wx.h>

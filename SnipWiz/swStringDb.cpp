@@ -35,8 +35,9 @@
 /////////////////////////////////////////////////////////////////////////////
 
 // For compilers that support precompilation, includes "wx/wx.h".
-#include <wx/filename.h>
 #include <wx/wxprec.h>
+
+#include <wx/filename.h>
 #include <wx/zstream.h>
 
 #ifdef __BORLANDC__

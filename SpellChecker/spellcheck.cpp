@@ -33,6 +33,11 @@
 // Copyright:   2014 Frank Lichtner
 // License:
 /////////////////////////////////////////////////////////////////////////////
+#include <wx/wxprec.h>
+#ifndef WX_PRECOMP
+#include <wx/wx.h>
+#endif
+
 #include "spellcheck.h"
 
 #include "IHunSpell.h"
@@ -46,10 +51,6 @@
 #include "workspace.h"
 #include "wxCustomControls.hpp"
 
-#include <wx/wxprec.h>
-#ifndef WX_PRECOMP
-#include <wx/wx.h>
-#endif
 #include <wx/mstream.h>
 #include <wx/stc/stc.h>
 #include <wx/tokenzr.h>

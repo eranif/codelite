@@ -56,7 +56,8 @@ public:
     void CreatePluginMenu(wxMenu* pluginsMenu) override;
     void HookPopupMenu(wxMenu* menu, MenuType type) override;
     void HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName) override;
-    void UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName) override;
+    void
+    UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName) override;
     void UnPlug() override;
 
     // event handlers

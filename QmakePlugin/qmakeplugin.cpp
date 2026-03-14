@@ -49,10 +49,7 @@
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new QMakePlugin(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new QMakePlugin(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -78,17 +75,17 @@ QMakePlugin::QMakePlugin(IManager* manager)
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &QMakePlugin::OnQmakeOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &QMakePlugin::OnQmakeTerminated, this);
     // Connect items
-    EventNotifier::Get()->Connect(wxEVT_CMD_PROJ_SETTINGS_SAVED,
-                                  clProjectSettingsEventHandler(QMakePlugin::OnSaveConfig), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(QMakePlugin::OnSaveConfig), NULL, this);
     EventNotifier::Get()->Connect(wxEVT_BUILD_STARTING, clBuildEventHandler(QMakePlugin::OnBuildStarting), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_GET_PROJECT_BUILD_CMD, clBuildEventHandler(QMakePlugin::OnGetBuildCommand),
-                                  NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_GET_PROJECT_CLEAN_CMD, clBuildEventHandler(QMakePlugin::OnGetCleanCommand),
-                                  NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_GET_IS_PLUGIN_MAKEFILE, clBuildEventHandler(QMakePlugin::OnGetIsPluginMakefile),
-                                  NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(QMakePlugin::OnOpenFile), NULL,
-                                  this);
+    EventNotifier::Get()->Connect(
+        wxEVT_GET_PROJECT_BUILD_CMD, clBuildEventHandler(QMakePlugin::OnGetBuildCommand), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_GET_PROJECT_CLEAN_CMD, clBuildEventHandler(QMakePlugin::OnGetCleanCommand), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_GET_IS_PLUGIN_MAKEFILE, clBuildEventHandler(QMakePlugin::OnGetIsPluginMakefile), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(QMakePlugin::OnOpenFile), NULL, this);
 }
 
 QMakePlugin::~QMakePlugin() { delete m_conf; }
@@ -98,7 +95,9 @@ void QMakePlugin::CreateToolBar(clToolBarGeneric* toolbar)
     // Support both toolbars icon size
     int size = m_mgr->GetToolbarIconSize();
     auto images = toolbar->GetBitmapsCreateIfNeeded();
-    toolbar->AddTool(XRCID("new_qmake_project"), _("Create new qmake based project"), images->Add("qt", size),
+    toolbar->AddTool(XRCID("new_qmake_project"),
+                     _("Create new qmake based project"),
+                     images->Add("qt", size),
                      _("Create new qmake based project"));
 }
 
@@ -116,18 +115,27 @@ void QMakePlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 
     pluginsMenu->Append(wxID_ANY, _("QMake"), menu);
 
-    wxTheApp->Connect(XRCID("new_qmake_project"), wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(QMakePlugin::OnNewQmakeBasedProject), NULL, (wxEvtHandler*)this);
-    wxTheApp->Connect(XRCID("qmake_settings"), wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(QMakePlugin::OnSettings), NULL, (wxEvtHandler*)this);
-    wxTheApp->Connect(XRCID("qmake_run_qmake"), wxEVT_COMMAND_MENU_SELECTED,
-                      wxCommandEventHandler(QMakePlugin::OnExportMakefile), NULL, this);
+    wxTheApp->Connect(XRCID("new_qmake_project"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(QMakePlugin::OnNewQmakeBasedProject),
+                      NULL,
+                      (wxEvtHandler*)this);
+    wxTheApp->Connect(XRCID("qmake_settings"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(QMakePlugin::OnSettings),
+                      NULL,
+                      (wxEvtHandler*)this);
+    wxTheApp->Connect(XRCID("qmake_run_qmake"),
+                      wxEVT_COMMAND_MENU_SELECTED,
+                      wxCommandEventHandler(QMakePlugin::OnExportMakefile),
+                      NULL,
+                      this);
 }
 
 void QMakePlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 {
-    if(type == MenuTypeFileView_Project) {
-        if(!menu->FindItem(XRCID("qmake_run_qmake"))) {
+    if (type == MenuTypeFileView_Project) {
+        if (!menu->FindItem(XRCID("qmake_run_qmake"))) {
             menu->PrependSeparator();
             menu->Prepend(XRCID("qmake_run_qmake"), _("Run qmake..."), _("Run qmake..."));
         }
@@ -136,35 +144,44 @@ void QMakePlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 
 void QMakePlugin::UnPlug()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_CMD_PROJ_SETTINGS_SAVED,
-                                     clProjectSettingsEventHandler(QMakePlugin::OnSaveConfig), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_BUILD_STARTING, clBuildEventHandler(QMakePlugin::OnBuildStarting), NULL,
-                                     this);
-    EventNotifier::Get()->Disconnect(wxEVT_GET_PROJECT_BUILD_CMD, clBuildEventHandler(QMakePlugin::OnGetBuildCommand),
-                                     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_GET_PROJECT_CLEAN_CMD, clBuildEventHandler(QMakePlugin::OnGetCleanCommand),
-                                     NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_GET_IS_PLUGIN_MAKEFILE,
-                                     clBuildEventHandler(QMakePlugin::OnGetIsPluginMakefile), NULL, this);
-    EventNotifier::Get()->Disconnect(wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(QMakePlugin::OnOpenFile),
-                                     NULL, this);
-    wxTheApp->Disconnect(XRCID("new_qmake_project"), wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(QMakePlugin::OnNewQmakeBasedProject), NULL, (wxEvtHandler*)this);
-    wxTheApp->Disconnect(XRCID("qmake_settings"), wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(QMakePlugin::OnSettings), NULL, (wxEvtHandler*)this);
-    wxTheApp->Disconnect(XRCID("qmake_run_qmake"), wxEVT_COMMAND_MENU_SELECTED,
-                         wxCommandEventHandler(QMakePlugin::OnExportMakefile), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CMD_PROJ_SETTINGS_SAVED, clProjectSettingsEventHandler(QMakePlugin::OnSaveConfig), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_BUILD_STARTING, clBuildEventHandler(QMakePlugin::OnBuildStarting), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_GET_PROJECT_BUILD_CMD, clBuildEventHandler(QMakePlugin::OnGetBuildCommand), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_GET_PROJECT_CLEAN_CMD, clBuildEventHandler(QMakePlugin::OnGetCleanCommand), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_GET_IS_PLUGIN_MAKEFILE, clBuildEventHandler(QMakePlugin::OnGetIsPluginMakefile), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_TREE_ITEM_FILE_ACTIVATED, clCommandEventHandler(QMakePlugin::OnOpenFile), NULL, this);
+    wxTheApp->Disconnect(XRCID("new_qmake_project"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(QMakePlugin::OnNewQmakeBasedProject),
+                         NULL,
+                         (wxEvtHandler*)this);
+    wxTheApp->Disconnect(XRCID("qmake_settings"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(QMakePlugin::OnSettings),
+                         NULL,
+                         (wxEvtHandler*)this);
+    wxTheApp->Disconnect(XRCID("qmake_run_qmake"),
+                         wxEVT_COMMAND_MENU_SELECTED,
+                         wxCommandEventHandler(QMakePlugin::OnExportMakefile),
+                         NULL,
+                         this);
 }
 
 void QMakePlugin::HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName, const wxString& configName)
 {
-    if(!book)
+    if (!book)
         return;
 
     DoUnHookAllTabs(book);
 
     QMakeTab* page = DoGetQmakeTab(configName);
-    if(!page) {
+    if (!page) {
         page = new QMakeTab(book, m_conf);
         page->Load(m_mgr, projectName, configName);
         m_pages[configName] = page;
@@ -172,7 +189,8 @@ void QMakePlugin::HookProjectSettingsTab(wxBookCtrlBase* book, const wxString& p
     book->AddPage(page, wxT("QMake"), true, wxNOT_FOUND);
 }
 
-void QMakePlugin::UnHookProjectSettingsTab(wxBookCtrlBase* book, const wxString& projectName,
+void QMakePlugin::UnHookProjectSettingsTab(wxBookCtrlBase* book,
+                                           const wxString& projectName,
                                            const wxString& configName)
 {
     wxUnusedVar(configName);
@@ -188,7 +206,7 @@ void QMakePlugin::OnSaveConfig(clProjectSettingsEvent& event)
     conf = event.GetConfigName();
 
     QMakeTab* tab = DoGetQmakeTab(conf);
-    if(!tab) {
+    if (!tab) {
         return;
     }
     tab->Save(m_mgr, project, conf);
@@ -197,7 +215,7 @@ void QMakePlugin::OnSaveConfig(clProjectSettingsEvent& event)
 QMakeTab* QMakePlugin::DoGetQmakeTab(const wxString& config)
 {
     std::map<wxString, QMakeTab*>::iterator iter = m_pages.find(config);
-    if(iter == m_pages.end()) {
+    if (iter == m_pages.end()) {
         return NULL;
     }
     return iter->second;
@@ -205,14 +223,14 @@ QMakeTab* QMakePlugin::DoGetQmakeTab(const wxString& config)
 
 void QMakePlugin::DoUnHookAllTabs(wxBookCtrlBase* book)
 {
-    if(!book) {
+    if (!book) {
         return;
     }
 
-    for(size_t i = 0; i < book->GetPageCount(); i++) {
+    for (size_t i = 0; i < book->GetPageCount(); i++) {
         std::map<wxString, QMakeTab*>::iterator iter = m_pages.begin();
-        for(; iter != m_pages.end(); iter++) {
-            if(book->GetPage(i) == iter->second) {
+        for (; iter != m_pages.end(); iter++) {
+            if (book->GetPage(i) == iter->second) {
                 book->RemovePage(i);
                 iter->second->Destroy();
                 m_pages.erase(iter);
@@ -238,11 +256,11 @@ void QMakePlugin::OnBuildStarting(clBuildEvent& event)
     wxString project = event.GetProjectName();
     wxString config = event.GetConfigurationName();
 
-    if(!DoGetData(project, config, bcpd)) {
+    if (!DoGetData(project, config, bcpd)) {
         return;
     }
 
-    if(!bcpd.m_enabled) {
+    if (!bcpd.m_enabled) {
         return;
     }
 
@@ -251,14 +269,15 @@ void QMakePlugin::OnBuildStarting(clBuildEvent& event)
 
     wxString errMsg;
     ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(project, errMsg);
-    if(!p) {
+    if (!p) {
         return;
     }
     QMakeProFileGenerator generator(m_mgr, project, config);
-    if(!wxFileName::Exists(generator.GetProFileName())) {
+    if (!wxFileName::Exists(generator.GetProFileName())) {
         // alert and return
         ::wxMessageBox(_("Could not locate pro file.\nDid you remember to run qmake? (right click on the project)"),
-                       "QMake", wxICON_WARNING | wxCENTER);
+                       "QMake",
+                       wxICON_WARNING | wxCENTER);
         return;
     } else {
         event.Skip();
@@ -269,7 +288,7 @@ bool QMakePlugin::DoGetData(const wxString& project, const wxString& conf, Qmake
 {
     wxString errMsg;
     ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(project, errMsg);
-    if(p) {
+    if (p) {
         wxString rawData = p->GetPluginData(wxT("qmake"));
         QmakePluginData pd(rawData);
         return pd.GetDataForBuildConf(conf, bcpd);
@@ -284,12 +303,12 @@ void QMakePlugin::OnGetCleanCommand(clBuildEvent& event)
     wxString project = event.GetProjectName();
     wxString config = event.GetConfigurationName();
 
-    if(!DoGetData(project, config, bcpd)) {
+    if (!DoGetData(project, config, bcpd)) {
         event.Skip();
         return;
     }
 
-    if(!bcpd.m_enabled) {
+    if (!bcpd.m_enabled) {
         event.Skip();
         return;
     }
@@ -304,12 +323,12 @@ void QMakePlugin::OnGetBuildCommand(clBuildEvent& event)
     wxString project = event.GetProjectName();
     wxString config = event.GetConfigurationName();
 
-    if(!DoGetData(project, config, bcpd)) {
+    if (!DoGetData(project, config, bcpd)) {
         event.Skip();
         return;
     }
 
-    if(!bcpd.m_enabled) {
+    if (!bcpd.m_enabled) {
         event.Skip();
         return;
     }
@@ -325,12 +344,12 @@ void QMakePlugin::OnGetIsPluginMakefile(clBuildEvent& event)
     wxString project = event.GetProjectName();
     wxString config = event.GetConfigurationName();
 
-    if(!DoGetData(project, config, bcpd)) {
+    if (!DoGetData(project, config, bcpd)) {
         event.Skip();
         return;
     }
 
-    if(bcpd.m_enabled) {
+    if (bcpd.m_enabled) {
         // return without calling event.Skip()
         return;
     }
@@ -343,7 +362,7 @@ wxString QMakePlugin::DoGetBuildCommand(const wxString& project, const wxString&
 
     wxString errMsg;
     ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(project, errMsg);
-    if(!p) {
+    if (!p) {
         return wxEmptyString;
     }
 
@@ -356,14 +375,14 @@ wxString QMakePlugin::DoGetBuildCommand(const wxString& project, const wxString&
     StringUtils::WrapWithQuotes(projectMakefile);
     projectMakefile.Replace("\\", "/");
 
-    if(!projectOnly) {
+    if (!projectOnly) {
         // part of a greater makefile, use $(MAKE)
         cmd << wxT("@cd \"") << p->GetFileName().GetPath() << wxT("\" && ");
         cmd << "$(MAKE) -f " << projectMakefile;
     } else {
         // project only
         cmd = bldConf->GetCompiler()->GetTool("MAKE");
-        if(!cmd.Contains("-f")) {
+        if (!cmd.Contains("-f")) {
             cmd << " -f ";
         }
         cmd << " " << projectMakefile;
@@ -374,14 +393,16 @@ wxString QMakePlugin::DoGetBuildCommand(const wxString& project, const wxString&
 void QMakePlugin::OnNewQmakeBasedProject(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(m_conf->GetAllConfigurations().IsEmpty()) {
+    if (m_conf->GetAllConfigurations().IsEmpty()) {
         wxMessageBox(_("There is no qmake defined, please define one from 'Plugins -> Qmake -> Settings'"),
-                     wxT("CodeLite"), wxOK | wxICON_WARNING | wxCENTER, m_mgr->GetTheApp()->GetTopWindow());
+                     wxT("CodeLite"),
+                     wxOK | wxICON_WARNING | wxCENTER,
+                     m_mgr->GetTheApp()->GetTopWindow());
         return;
     }
 
     NewQtProjDlg dlg(m_mgr->GetTheApp()->GetTopWindow(), m_conf, m_mgr);
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         wxString kind = dlg.GetProjectKind();
         wxString name = dlg.GetProjectName();
         wxString path = dlg.GetProjectPath();
@@ -393,15 +414,15 @@ void QMakePlugin::OnNewQmakeBasedProject(wxCommandEvent& event)
         wxString qmake;
         wxString content;
 
-        if(kind == wxT("Static Library")) {
+        if (kind == wxT("Static Library")) {
 
             type = PROJECT_TYPE_STATIC_LIBRARY;
 
-        } else if(kind == wxT("Dynamic Library")) {
+        } else if (kind == wxT("Dynamic Library")) {
 
             type = PROJECT_TYPE_DYNAMIC_LIBRARY;
 
-        } else if(kind == wxT("Console")) {
+        } else if (kind == wxT("Console")) {
 
             type = PROJECT_TYPE_EXECUTABLE;
             configRelease = wxT("0017CONFIG += console");
@@ -415,7 +436,7 @@ void QMakePlugin::OnNewQmakeBasedProject(wxCommandEvent& event)
         }
 
         wxString filename(m_mgr->GetStartupDirectory() + wxT("/templates/qmake/qmake.project"));
-        if(!ReadFileWithConversion(filename, content)) {
+        if (!ReadFileWithConversion(filename, content)) {
             return;
         }
 
@@ -431,20 +452,21 @@ void QMakePlugin::OnNewQmakeBasedProject(wxCommandEvent& event)
         // save the file to the disk
         {
             DirSaver ds;
-            if(!wxSetWorkingDirectory(path)) {
+            if (!wxSetWorkingDirectory(path)) {
                 wxMessageBox(_("Invalid project path!"), wxT("CodeLite"), wxOK | wxCENTER | wxICON_WARNING);
                 return;
             }
 
-            if(dlg.GetCreateDirectory()) {
+            if (dlg.GetCreateDirectory()) {
                 wxMkdir(name);
                 wxSetWorkingDirectory(name);
             }
 
-            if(!WriteFileWithBackup(name + wxT(".project"), content, false)) {
-                wxMessageBox(wxString::Format(_("Failed to create .project file '%s'"),
-                                              wxString(name + wxT(".project")).c_str()),
-                             wxT("CodeLite"), wxOK | wxCENTER | wxICON_WARNING);
+            if (!WriteFileWithBackup(name + wxT(".project"), content, false)) {
+                wxMessageBox(wxString::Format(
+                                 _("Failed to create .project file '%s'"), wxString(name + wxT(".project")).c_str()),
+                             wxT("CodeLite"),
+                             wxOK | wxCENTER | wxICON_WARNING);
                 return;
             }
 
@@ -462,17 +484,17 @@ void QMakePlugin::OnOpenFile(clCommandEvent& event)
 
     // launch it with the default application
     wxFileName fullpath(event.GetFileName());
-    if(fullpath.GetExt().MakeLower() != wxT("ui")) {
+    if (fullpath.GetExt().MakeLower() != wxT("ui")) {
         return;
     }
 
     wxMimeTypesManager* mgr = wxTheMimeTypesManager;
     wxFileType* type = mgr->GetFileTypeFromExtension(fullpath.GetExt());
-    if(type) {
+    if (type) {
         wxString cmd = type->GetOpenCommand(fullpath.GetFullPath());
         delete type;
 
-        if(cmd.IsEmpty() == false) {
+        if (cmd.IsEmpty() == false) {
             event.Skip(false);
             ::wxExecute(cmd);
         }
@@ -481,7 +503,7 @@ void QMakePlugin::OnOpenFile(clCommandEvent& event)
 
 void QMakePlugin::OnExportMakefile(wxCommandEvent& event)
 {
-    if(m_qmakeProcess)
+    if (m_qmakeProcess)
         return;
 
     QmakePluginData::BuildConfPluginData bcpd;
@@ -495,12 +517,12 @@ void QMakePlugin::OnExportMakefile(wxCommandEvent& event)
     wxString project = pProj->GetName();
     wxString config = bldConf->GetName();
 
-    if(!DoGetData(project, config, bcpd)) {
+    if (!DoGetData(project, config, bcpd)) {
         event.Skip();
         return;
     }
 
-    if(bcpd.m_enabled) {
+    if (bcpd.m_enabled) {
         // This project/configuration is qmake project
         QMakeProFileGenerator generator(m_mgr, project, config);
 
@@ -522,23 +544,23 @@ void QMakePlugin::OnExportMakefile(wxCommandEvent& event)
         {
             wxString errMsg;
             ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(project, errMsg);
-            if(!p) {
+            if (!p) {
                 return;
             }
             StringUtils::WrapWithQuotes(qmake_exe);
             qmake_exe_line << qmake_exe << wxT(" -spec ") << qmakespec << wxT(" ") << generator.GetProFileName();
             wxStringMap_t om;
-            om.insert({ "QTDIR", qtdir });
+            om.insert({"QTDIR", qtdir});
 
             // Add the bin folder of the compiler (so qmakw will be able to find g++ or whatever compiler)
             wxString cxx = bldConf->GetCompiler()->GetTool("CXX");
             wxFileName fnCxx(cxx);
             wxString curpath;
             wxString updatedPath = fnCxx.GetPath();
-            if(::wxGetEnv("PATH", &curpath)) {
+            if (::wxGetEnv("PATH", &curpath)) {
                 updatedPath << clPATH_SEPARATOR << curpath;
             }
-            om.insert({ "PATH", updatedPath });
+            om.insert({"PATH", updatedPath});
 
             EnvSetter envGuard(NULL, &om, project, config);
             m_mgr->ClearOutputTab(kOutputTab_Build);

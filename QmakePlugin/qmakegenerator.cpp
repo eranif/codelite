@@ -61,16 +61,22 @@ bool QMakeProFileGenerator::Generate()
     bool needRegenration(true);
 
     ProjectPtr p = m_manager->GetWorkspace()->FindProjectByName(m_project, errMsg);
-    if(!p) { return false; }
+    if (!p) {
+        return false;
+    }
 
     wxString rawData = p->GetPluginData(wxT("qmake"));
     QmakePluginData pd(rawData);
-    if(!pd.GetDataForBuildConf(m_configuration, bcpd)) { return false; }
+    if (!pd.GetDataForBuildConf(m_configuration, bcpd)) {
+        return false;
+    }
 
     // Get CodeLite's build configuration
     ProjectSettingsPtr settings = p->GetSettings();
     BuildConfigPtr bldConf = settings->GetBuildConfiguration(m_configuration);
-    if(!bldConf) { return false; }
+    if (!bldConf) {
+        return false;
+    }
 
     m_makefilePath = p->GetFileName().GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME);
     m_makefilePath += p->GetName();
@@ -97,26 +103,26 @@ bool QMakeProFileGenerator::Generate()
 
     // incase we are building library, set the template back the lib
     wxString type = p->GetSettings()->GetProjectType(bldConf->GetName());
-    if(type == PROJECT_TYPE_DYNAMIC_LIBRARY || type == PROJECT_TYPE_STATIC_LIBRARY) {
+    if (type == PROJECT_TYPE_DYNAMIC_LIBRARY || type == PROJECT_TYPE_STATIC_LIBRARY) {
         pro_file << wxT("TEMPLATE       = lib\n");
     }
 
     // Optimization: check to see if we really need to run qmake
-    if(wxFileName::FileExists(m_makefilePath) == false) {
+    if (wxFileName::FileExists(m_makefilePath) == false) {
         needRegenration = true;
-    } else if(wxFileName::FileExists(GetProFileName()) == false) {
+    } else if (wxFileName::FileExists(GetProFileName()) == false) {
         needRegenration = true;
     } else {
 
         // both files exists, compare the MD5 of the pro file on the disk with the
         wxString content;
-        if(!ReadFileWithConversion(GetProFileName(), content)) {
+        if (!ReadFileWithConversion(GetProFileName(), content)) {
             needRegenration = true;
         } else {
             wxString diskMD5 = wxMD5::GetDigest(content);
             wxString mem_MD5 = wxMD5::GetDigest(pro_file);
 
-            if(diskMD5 != mem_MD5) {
+            if (diskMD5 != mem_MD5) {
                 needRegenration = true;
             } else {
                 needRegenration = false;
@@ -127,7 +133,7 @@ bool QMakeProFileGenerator::Generate()
     // dump the content to a file
     wxFFile output;
     output.Open(GetProFileName(), wxT("w+b"));
-    if(output.IsOpened()) {
+    if (output.IsOpened()) {
         output.Write(pro_file);
         output.Close();
     }
@@ -145,11 +151,11 @@ void QMakeProFileGenerator::SetVariables(wxString& pro_file, BuildConfigPtr bldC
     // since LIBS does not add the -L, we need to add it ourselves here
     CompilerPtr cmp = m_manager->GetBuildSettingsConfigManager()->GetCompiler(bldConf->GetCompilerType());
 
-    if(type == PROJECT_TYPE_EXECUTABLE) {
+    if (type == PROJECT_TYPE_EXECUTABLE) {
         pro_file << wxT("TEMPLATE       = app\n");
         pro_file << wxT("CONFIG         = release qt lex yacc uic resources warn_on precompile_header\n");
 
-    } else if(type == PROJECT_TYPE_DYNAMIC_LIBRARY) {
+    } else if (type == PROJECT_TYPE_DYNAMIC_LIBRARY) {
         pro_file << wxT("TEMPLATE       = lib\n");
         pro_file << wxT("CONFIG         = release qt dll lex yacc uic resources warn_on precompile_header\n");
 
@@ -177,10 +183,10 @@ void QMakeProFileGenerator::SetVariables(wxString& pro_file, BuildConfigPtr bldC
     // Add the global include path
     wxArrayString includes_list;
     includes.Clear();
-    if(cmp) {
+    if (cmp) {
         includes = cmp->GetGlobalIncludePath();
         includes.Trim().Trim(false);
-        if(includes.IsEmpty() == false) {
+        if (includes.IsEmpty() == false) {
             // Get list of include paths
             includes_list = wxStringTokenize(includes, ";", wxTOKEN_STRTOK);
             /*			includes.Replace(wxT(";"), wxT(" "));
@@ -191,7 +197,7 @@ void QMakeProFileGenerator::SetVariables(wxString& pro_file, BuildConfigPtr bldC
     includes.Clear();
     // Append modified values
     includes << wxT("INCLUDEPATH   += ");
-    for(size_t i = 0; i < includes_list.GetCount(); ++i) {
+    for (size_t i = 0; i < includes_list.GetCount(); ++i) {
         includes << "\"" << includes_list.Item(i) << "\" ";
     }
     pro_file << includes << wxT("\n");
@@ -224,11 +230,13 @@ void QMakeProFileGenerator::SetVariables(wxString& pro_file, BuildConfigPtr bldC
     //--------------------------------------------
     wxString libPaths = bldConf->GetLibPath();
     wxString librarySwitch(wxT("-L")); // by default set it to '-L'
-    if(cmp) { librarySwitch = cmp->GetSwitch(wxT("LibraryPath")); }
+    if (cmp) {
+        librarySwitch = cmp->GetSwitch(wxT("LibraryPath"));
+    }
 
     wxArrayString libPathsArr = wxStringTokenize(libPaths, wxT(";"), wxTOKEN_STRTOK);
     libPaths.Clear();
-    for(size_t i = 0; i < libPathsArr.GetCount(); i++) {
+    for (size_t i = 0; i < libPathsArr.GetCount(); i++) {
         libPaths << librarySwitch << wxT("\"") << libPathsArr.Item(i) << wxT("\" ");
     }
 
@@ -236,12 +244,12 @@ void QMakeProFileGenerator::SetVariables(wxString& pro_file, BuildConfigPtr bldC
 
     // Add the global library path
     libPaths.Clear();
-    if(cmp) {
+    if (cmp) {
         libPaths = cmp->GetGlobalLibPath();
         libPaths.Trim().Trim(false);
         libPathsArr = wxStringTokenize(libPaths, wxT(";"), wxTOKEN_STRTOK);
         libPaths.Clear();
-        for(size_t i = 0; i < libPathsArr.GetCount(); i++) {
+        for (size_t i = 0; i < libPathsArr.GetCount(); i++) {
             libPaths << librarySwitch << wxT("\"") << libPathsArr.Item(i) << wxT("\" ");
         }
         pro_file << wxT("LIBS           += ") << libPaths << wxT("\n");
@@ -251,12 +259,12 @@ void QMakeProFileGenerator::SetVariables(wxString& pro_file, BuildConfigPtr bldC
     // Libraries
     //--------------------------------------------
     wxString libs = bldConf->GetLibraries();
-    if(cmp) {
+    if (cmp) {
         wxString libSwitch = cmp->GetSwitch(wxT("Library"));
         wxArrayString libsArr = wxStringTokenize(libs, wxT(";"), wxTOKEN_STRTOK);
         libs.Clear();
 
-        for(size_t i = 0; i < libsArr.GetCount(); i++) {
+        for (size_t i = 0; i < libsArr.GetCount(); i++) {
             libs << libSwitch << libsArr.Item(i) << wxT(" ");
         }
         pro_file << wxT("LIBS           += ") << libs << wxT("\n");
@@ -279,7 +287,7 @@ void QMakeProFileGenerator::SetFiles(wxString& pro_file, ProjectPtr proj)
     wxString BUFF(wxT("             "));
 
     for (wxFileName fn : files) {
-        switch(FileExtManager::GetType(fn.GetFullName())) {
+        switch (FileExtManager::GetType(fn.GetFullName())) {
         case FileExtManager::TypeSourceC:
         case FileExtManager::TypeSourceCpp:
             sources << BUFF << fn.GetFullPath() << wxT("\\\n");
@@ -316,7 +324,7 @@ wxString QMakeProFileGenerator::GetProFileName()
 {
     wxString errMsg;
     ProjectPtr p = m_manager->GetWorkspace()->FindProjectByName(m_project, errMsg);
-    if(p) {
+    if (p) {
         wxFileName fn(wxString::Format(wxT("%s/%s.pro"),
                                        p->GetFileName().GetPath(wxPATH_GET_SEPARATOR | wxPATH_GET_VOLUME).c_str(),
                                        m_project.c_str()));

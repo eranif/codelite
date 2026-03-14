@@ -24,11 +24,13 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "newqtprojdlg.h"
-#include "qmakesettingsdlg.h"
-#include "qmakeconf.h"
+
 #include "imanager.h"
+#include "qmakeconf.h"
+#include "qmakesettingsdlg.h"
 #include "windowattrmanager.h"
 #include "workspace.h"
+
 #include <wx/dirdlg.h>
 
 NewQtProjDlg::NewQtProjDlg(wxWindow* parent, QmakeConf* conf, IManager* mgr)
@@ -36,18 +38,18 @@ NewQtProjDlg::NewQtProjDlg(wxWindow* parent, QmakeConf* conf, IManager* mgr)
     , m_conf(conf)
     , m_mgr(mgr)
 {
-    const wxString ProjKinds[] = { wxT("Console"), wxT("GUI"), wxT("Static Library"), wxT("Dynamic Library") };
+    const wxString ProjKinds[] = {wxT("Console"), wxT("GUI"), wxT("Static Library"), wxT("Dynamic Library")};
     wxArrayString choices(4, ProjKinds);
     m_choiceProjKind->Clear();
     m_choiceProjKind->Append(choices);
     m_choiceProjKind->SetSelection(1);
 
     m_choiceQmake->Append(m_conf->GetAllConfigurations());
-    if(m_choiceQmake->IsEmpty() == false) {
+    if (m_choiceQmake->IsEmpty() == false) {
         m_choiceQmake->SetSelection(0);
     }
 
-    if(m_mgr->IsWorkspaceOpen()) {
+    if (m_mgr->IsWorkspaceOpen()) {
         m_dirPicker4->SetPath(m_mgr->GetWorkspace()->GetWorkspaceFileName().GetPath());
     }
     SetName("NewQtProjDlg");
@@ -59,10 +61,10 @@ NewQtProjDlg::~NewQtProjDlg() {}
 void NewQtProjDlg::OnNewQmakeSettings(wxCommandEvent& event)
 {
     QMakeSettingsDlg dlg(this, m_mgr, m_conf);
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         m_choiceQmake->Clear();
         m_choiceQmake->Append(m_conf->GetAllConfigurations());
-        if(m_choiceQmake->IsEmpty() == false) {
+        if (m_choiceQmake->IsEmpty() == false) {
             m_choiceQmake->SetSelection(0);
         }
     }

@@ -42,9 +42,9 @@ SpellCheckerOptions::SpellCheckerOptions()
     m_dictionaryPath.Empty();
     m_scanStr = true;
     m_scanCPP = false;
-    m_scanC   = false;
-    m_scanD1  = false;
-    m_scanD2  = false;
+    m_scanC = false;
+    m_scanD1 = false;
+    m_scanD2 = false;
     m_checkContinuous = false;
     m_caseSensitiveUserDictionary = true;
     m_ignoreSymbolsInTagsDatabase = false;
@@ -55,32 +55,32 @@ SpellCheckerOptions::SpellCheckerOptions()
 }
 
 // ------------------------------------------------------------
-void SpellCheckerOptions::DeSerialize( Archive& arch )
+void SpellCheckerOptions::DeSerialize(Archive& arch)
 {
-    arch.Read( wxT( "m_dictionary" ), m_dictionary );
-    arch.Read( wxT( "m_dictionaryPath" ), m_dictionaryPath );
-    arch.Read( wxT( "m_scanStr" ), m_scanStr );
-    arch.Read( wxT( "m_scanCPP" ), m_scanCPP );
-    arch.Read( wxT( "m_scanC" ), m_scanC );
-    arch.Read( wxT( "m_scanD1" ), m_scanD1 );
-    arch.Read( wxT( "m_scanD2" ), m_scanD2 );
-    arch.Read( wxT( "m_checkContinuous" ), m_checkContinuous );
-    arch.Read( wxT( "m_caseSensitiveUserDictionary" ), m_caseSensitiveUserDictionary );
-    arch.Read( wxT( "m_ignoreSymbolsInTagsDatabase" ), m_ignoreSymbolsInTagsDatabase );
+    arch.Read(wxT("m_dictionary"), m_dictionary);
+    arch.Read(wxT("m_dictionaryPath"), m_dictionaryPath);
+    arch.Read(wxT("m_scanStr"), m_scanStr);
+    arch.Read(wxT("m_scanCPP"), m_scanCPP);
+    arch.Read(wxT("m_scanC"), m_scanC);
+    arch.Read(wxT("m_scanD1"), m_scanD1);
+    arch.Read(wxT("m_scanD2"), m_scanD2);
+    arch.Read(wxT("m_checkContinuous"), m_checkContinuous);
+    arch.Read(wxT("m_caseSensitiveUserDictionary"), m_caseSensitiveUserDictionary);
+    arch.Read(wxT("m_ignoreSymbolsInTagsDatabase"), m_ignoreSymbolsInTagsDatabase);
 }
 
 // ------------------------------------------------------------
-void SpellCheckerOptions::Serialize( Archive& arch )
+void SpellCheckerOptions::Serialize(Archive& arch)
 {
-    arch.Write( wxT( "m_dictionary" ), m_dictionary );
-    arch.Write( wxT( "m_dictionaryPath" ), m_dictionaryPath );
-    arch.Write( wxT( "m_scanStr" ), m_scanStr );
-    arch.Write( wxT( "m_scanCPP" ), m_scanCPP );
-    arch.Write( wxT( "m_scanC" ), m_scanC );
-    arch.Write( wxT( "m_scanD1" ), m_scanD1 );
-    arch.Write( wxT( "m_scanD2" ), m_scanD2 );
-    arch.Write( wxT( "m_checkContinuous" ), m_checkContinuous );
-    arch.Write( wxT( "m_caseSensitiveUserDictionary" ), m_caseSensitiveUserDictionary );
-    arch.Write( wxT( "m_ignoreSymbolsInTagsDatabase" ), m_ignoreSymbolsInTagsDatabase );
+    arch.Write(wxT("m_dictionary"), m_dictionary);
+    arch.Write(wxT("m_dictionaryPath"), m_dictionaryPath);
+    arch.Write(wxT("m_scanStr"), m_scanStr);
+    arch.Write(wxT("m_scanCPP"), m_scanCPP);
+    arch.Write(wxT("m_scanC"), m_scanC);
+    arch.Write(wxT("m_scanD1"), m_scanD1);
+    arch.Write(wxT("m_scanD2"), m_scanD2);
+    arch.Write(wxT("m_checkContinuous"), m_checkContinuous);
+    arch.Write(wxT("m_caseSensitiveUserDictionary"), m_caseSensitiveUserDictionary);
+    arch.Write(wxT("m_ignoreSymbolsInTagsDatabase"), m_ignoreSymbolsInTagsDatabase);
 }
 // ------------------------------------------------------------

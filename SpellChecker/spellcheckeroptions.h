@@ -41,14 +41,14 @@
 class SpellCheckerOptions : public SerializedObject
 {
 public:
-	SpellCheckerOptions();
-	virtual ~SpellCheckerOptions() = default;
+    SpellCheckerOptions();
+    virtual ~SpellCheckerOptions() = default;
 
-	void DeSerialize( Archive& arch );
-	void Serialize( Archive& arch );
+    void DeSerialize(Archive& arch);
+    void Serialize(Archive& arch);
 
-	void            SetDictionaryPath( const wxString& dictionaryPath ) { this->m_dictionaryPath = dictionaryPath; }
-	void            SetDictionaryFileName( const wxString& dictionary ) { this->m_dictionary = dictionary; }
+    void SetDictionaryPath(const wxString& dictionaryPath) { this->m_dictionaryPath = dictionaryPath; }
+    void SetDictionaryFileName(const wxString& dictionary) { this->m_dictionary = dictionary; }
     void SetScanC(bool scanC) { this->m_scanC = scanC; }
     void SetScanCPP(bool scanCPP) { this->m_scanCPP = scanCPP; }
     void SetScanD1(bool scanD1) { this->m_scanD1 = scanD1; }
@@ -63,28 +63,28 @@ public:
     {
         this->m_ignoreSymbolsInTagsDatabase = ignoreSymbolsInTagsDatabase;
     }
-	bool            GetScanC() const { return m_scanC; }
-	bool            GetScanCPP() const { return m_scanCPP; }
-	bool            GetScanD1() const { return m_scanD1; }
-	bool            GetScanD2() const { return m_scanD2; }
-	bool            GetScanStr() const { return m_scanStr; }
-	const wxString& GetDictionaryPath() const { return m_dictionaryPath; }
-	const wxString& GetDictionaryFileName() const { return m_dictionary; }
-    bool            GetCheckContinuous() const { return m_checkContinuous; }
-    bool            GetCaseSensitiveUserDictionary() const { return m_caseSensitiveUserDictionary; }
-    bool            GetIgnoreSymbolsInTagsDatabase() const { return m_ignoreSymbolsInTagsDatabase; }
+    bool GetScanC() const { return m_scanC; }
+    bool GetScanCPP() const { return m_scanCPP; }
+    bool GetScanD1() const { return m_scanD1; }
+    bool GetScanD2() const { return m_scanD2; }
+    bool GetScanStr() const { return m_scanStr; }
+    const wxString& GetDictionaryPath() const { return m_dictionaryPath; }
+    const wxString& GetDictionaryFileName() const { return m_dictionary; }
+    bool GetCheckContinuous() const { return m_checkContinuous; }
+    bool GetCaseSensitiveUserDictionary() const { return m_caseSensitiveUserDictionary; }
+    bool GetIgnoreSymbolsInTagsDatabase() const { return m_ignoreSymbolsInTagsDatabase; }
 
 protected:
-	wxString m_dictionary;
-	wxString m_dictionaryPath;
-	bool     m_scanStr;
-	bool     m_scanCPP;
-	bool     m_scanC;
-	bool     m_scanD1;
-	bool     m_scanD2;
-    bool     m_checkContinuous;
-    bool     m_caseSensitiveUserDictionary;
-    bool     m_ignoreSymbolsInTagsDatabase;
+    wxString m_dictionary;
+    wxString m_dictionaryPath;
+    bool m_scanStr;
+    bool m_scanCPP;
+    bool m_scanC;
+    bool m_scanD1;
+    bool m_scanD2;
+    bool m_checkContinuous;
+    bool m_caseSensitiveUserDictionary;
+    bool m_ignoreSymbolsInTagsDatabase;
 };
 //------------------------------------------------------------
 #endif // __spellcheckeroptions__

@@ -61,17 +61,17 @@ void SpellCheckerSettings::OnInitDialog(wxInitDialogEvent& event)
 
     m_pCaseSensitiveUserDictionary->SetValue(m_caseSensitiveUserDictionary);
 
-    if(m_pHunspell) {
+    if (m_pHunspell) {
         m_pDirPicker->SetPath(m_dictionaryPath);
 
-        if(!m_dictionaryPath.IsEmpty())
+        if (!m_dictionaryPath.IsEmpty())
             FillLanguageList();
     }
 }
 // ------------------------------------------------------------
 void SpellCheckerSettings::OnLanguageSelected(wxCommandEvent& event)
 {
-    if(m_pHunspell) {
+    if (m_pHunspell) {
         wxString key = m_pLanguageList->GetString(event.GetInt());
         m_pCurrentLanguage->SetValue(m_pHunspell->GetLanguageShort(key));
     }
@@ -79,7 +79,7 @@ void SpellCheckerSettings::OnLanguageSelected(wxCommandEvent& event)
 // ------------------------------------------------------------
 void SpellCheckerSettings::OnUpdateOk(wxUpdateUIEvent& event)
 {
-    if(!m_pCurrentLanguage->GetValue().IsEmpty())
+    if (!m_pCurrentLanguage->GetValue().IsEmpty())
         event.Enable(true);
     else
         event.Enable(false);
@@ -92,7 +92,7 @@ void SpellCheckerSettings::OnOk(wxCommandEvent& event)
     m_dictionaryPath = m_pDirPicker->GetPath();
     m_caseSensitiveUserDictionary = m_pCaseSensitiveUserDictionary->GetValue();
 
-    if(!wxEndsWithPathSeparator(m_dictionaryPath))
+    if (!wxEndsWithPathSeparator(m_dictionaryPath))
         m_dictionaryPath += wxFILE_SEP_PATH;
 }
 
@@ -101,7 +101,7 @@ void SpellCheckerSettings::OnDirChanged(wxFileDirPickerEvent& event)
 {
     m_dictionaryPath = m_pDirPicker->GetPath();
 
-    if(!wxEndsWithPathSeparator(m_dictionaryPath))
+    if (!wxEndsWithPathSeparator(m_dictionaryPath))
         m_dictionaryPath += wxFILE_SEP_PATH;
     m_pLanguageList->Clear();
     m_pCurrentLanguage->SetValue(wxT(""));
@@ -111,7 +111,7 @@ void SpellCheckerSettings::OnDirChanged(wxFileDirPickerEvent& event)
 // ------------------------------------------------------------
 void SpellCheckerSettings::FillLanguageList()
 {
-    if(!m_dictionaryPath.IsEmpty()) {
+    if (!m_dictionaryPath.IsEmpty()) {
         wxArrayString lang;
         m_pHunspell->GetAvailableLanguageKeyNames(m_dictionaryPath, lang);
         m_pLanguageList->Clear();

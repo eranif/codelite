@@ -63,7 +63,7 @@ public:
 
     size_t operator()(const wxString& str) const
     {
-        if(m_isCaseSensitive) {
+        if (m_isCaseSensitive) {
             return std::hash<wxString>()(str);
         } else {
             return std::hash<wxString>()(str.Upper());
@@ -84,7 +84,7 @@ public:
 
     bool operator()(const wxString& lhs, const wxString& rhs) const
     {
-        if(m_isCaseSensitive)
+        if (m_isCaseSensitive)
             return (0 == lhs.Cmp(rhs));
         else
             return (0 == lhs.CmpNoCase(rhs));

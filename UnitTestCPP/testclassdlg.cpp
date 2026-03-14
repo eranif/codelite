@@ -23,13 +23,15 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "testclassdlg.h"
+
 #include "ctags_manager.h"
 #include "globals.h"
 #include "imanager.h"
 #include "open_resource_dialog.h"
-#include "testclassdlg.h"
 #include "unittestpp.h"
 #include "windowattrmanager.h"
+
 #include <algorithm>
 #include <wx/app.h>
 #include <wx/choicdlg.h>
@@ -42,7 +44,7 @@ TestClassDlg::TestClassDlg(wxWindow* parent, IManager* mgr, UnitTestPP* plugin)
 {
     TagEntryPtrVector_t tags;
     m_manager->GetTagsManager()->GetClasses(tags);
-    for(auto tag : tags) {
+    for (auto tag : tags) {
         m_tags[tag->GetName()].push_back(tag);
     }
 
@@ -52,7 +54,7 @@ TestClassDlg::TestClassDlg(wxWindow* parent, IManager* mgr, UnitTestPP* plugin)
         m_choiceProjects->Append(project->GetName());
     }
 
-    if(m_choiceProjects->IsEmpty() == false) {
+    if (m_choiceProjects->IsEmpty() == false) {
         m_choiceProjects->SetSelection(0);
     }
     ::clSetSmallDialogBestSizeAndPosition(this);
@@ -60,9 +62,9 @@ TestClassDlg::TestClassDlg(wxWindow* parent, IManager* mgr, UnitTestPP* plugin)
 
 void TestClassDlg::OnUseActiveEditor(wxCommandEvent& event)
 {
-    if(event.IsChecked()) {
+    if (event.IsChecked()) {
         IEditor* editor = m_manager->GetActiveEditor();
-        if(editor) {
+        if (editor) {
             m_textCtrlFileName->SetValue(editor->GetFileName().GetFullPath());
         }
         m_textCtrlFileName->Enable(true);
@@ -74,7 +76,7 @@ void TestClassDlg::OnUseActiveEditor(wxCommandEvent& event)
 void TestClassDlg::OnCheckAll(wxCommandEvent& e)
 {
     // check all items
-    for(unsigned int idx = 0; idx < m_checkListMethods->GetCount(); idx++) {
+    for (unsigned int idx = 0; idx < m_checkListMethods->GetCount(); idx++) {
         m_checkListMethods->Check(idx, true);
     }
 }
@@ -82,15 +84,15 @@ void TestClassDlg::OnCheckAll(wxCommandEvent& e)
 void TestClassDlg::OnUnCheckAll(wxCommandEvent& e)
 {
     // check all items
-    for(unsigned int idx = 0; idx < m_checkListMethods->GetCount(); idx++) {
+    for (unsigned int idx = 0; idx < m_checkListMethods->GetCount(); idx++) {
         m_checkListMethods->Check(idx, false);
     }
 }
 wxArrayString TestClassDlg::GetTestsList()
 {
     wxArrayString results;
-    for(unsigned int idx = 0; idx < m_checkListMethods->GetCount(); idx++) {
-        if(m_checkListMethods->IsChecked(idx)) {
+    for (unsigned int idx = 0; idx < m_checkListMethods->GetCount(); idx++) {
+        if (m_checkListMethods->IsChecked(idx)) {
             wxString str = m_checkListMethods->GetString(idx);
 
             str = str.BeforeFirst(wxT('('));
@@ -107,7 +109,7 @@ void TestClassDlg::OnUseFixture(wxCommandEvent& e) { m_textCtrlFixtureName->Enab
 void TestClassDlg::OnButtonOk(wxCommandEvent& e)
 {
     // validate the class name
-    if(m_checkListMethods->GetCount() == 0) {
+    if (m_checkListMethods->GetCount() == 0) {
         wxMessageBox(_("There are no tests to generate"), wxT("CodeLite"), wxICON_WARNING | wxOK);
         return;
     }
@@ -118,7 +120,7 @@ void TestClassDlg::OnShowClassListDialog(wxCommandEvent& e)
 {
     m_textCtrlClassName->SetFocus();
     OpenResourceDialog dlg(m_manager->GetTheApp()->GetTopWindow(), m_manager, "");
-    if(dlg.ShowModal() == wxID_OK && !dlg.GetSelections().empty()) {
+    if (dlg.ShowModal() == wxID_OK && !dlg.GetSelections().empty()) {
         OpenResourceDialogItemData* item = dlg.GetSelections().at(0);
         // do something with the selected text
         m_textCtrlClassName->SetValue(item->m_name);
@@ -130,10 +132,11 @@ void TestClassDlg::OnShowClassListDialog(wxCommandEvent& e)
 
 void TestClassDlg::DoRefreshFunctions(bool repportError)
 {
-    if(m_tags.count(m_textCtrlClassName->GetValue()) == 0) {
-        if(repportError) {
+    if (m_tags.count(m_textCtrlClassName->GetValue()) == 0) {
+        if (repportError) {
             wxMessageBox(_("Could not find match for class '") + m_textCtrlClassName->GetValue() + wxT("'"),
-                         wxT("CodeLite"), wxICON_WARNING | wxOK);
+                         wxT("CodeLite"),
+                         wxICON_WARNING | wxOK);
         }
         m_checkListMethods->Clear();
         return;
@@ -141,7 +144,7 @@ void TestClassDlg::DoRefreshFunctions(bool repportError)
 
     std::vector<TagEntryPtr> matches = m_tags[m_textCtrlClassName->GetValue()];
     wxString theClass;
-    if(matches.size() == 1) {
+    if (matches.size() == 1) {
         // single match we are good
         theClass = matches.at(0)->GetPath();
     } else {
@@ -155,7 +158,7 @@ void TestClassDlg::DoRefreshFunctions(bool repportError)
         theClass = wxGetSingleChoice(_("Select class:"), _("Select class:"), choices, this);
     }
 
-    if(theClass.empty()) { // user clicked 'Cancel'
+    if (theClass.empty()) { // user clicked 'Cancel'
         return;
     }
 
@@ -169,7 +172,7 @@ void TestClassDlg::DoRefreshFunctions(bool repportError)
     wxStringSet_t uniqueNames;
     wxArrayString methods;
     for (const auto& m : matches) {
-        if(uniqueNames.count(m->GetName()) == 0) {
+        if (uniqueNames.count(m->GetName()) == 0) {
             methods.push_back(m->GetName());
             uniqueNames.insert(m->GetName());
         }
@@ -179,7 +182,7 @@ void TestClassDlg::DoRefreshFunctions(bool repportError)
     m_checkListMethods->Append(methods);
 
     // check all items
-    for(unsigned int idx = 0; idx < m_checkListMethods->GetCount(); ++idx) {
+    for (unsigned int idx = 0; idx < m_checkListMethods->GetCount(); ++idx) {
         m_checkListMethods->Check(idx, true);
     }
 }

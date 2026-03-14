@@ -23,12 +23,14 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "unittestspage.h"
+
 #include "event_notifier.h"
 #include "globals.h"
 #include "imanager.h"
 #include "plugin.h"
-#include "unittestspage.h"
 #include "workspace.h"
+
 #include <wx/msgdlg.h>
 
 class UTLineInfo : public wxClientData
@@ -73,14 +75,14 @@ void UnitTestsPage::OnItemActivated(wxDataViewEvent& e)
     wxString proj = m_mgr->GetWorkspace()->GetActiveProjectName();
     ProjectPtr p = m_mgr->GetWorkspace()->FindProjectByName(proj, err_msg);
 
-    if(p) {
+    if (p) {
         cwd = p->GetFileName().GetPath();
     }
 
     wxFileName fn(info->m_info.file);
     fn.MakeAbsolute(cwd);
     IEditor* editor = m_mgr->OpenFile(fn.GetFullPath(), wxEmptyString, (lineNumber - 1));
-    if(editor) {
+    if (editor) {
         editor->SetActive();
     }
 }
@@ -106,7 +108,7 @@ void UnitTestsPage::Initialize(TestSummary* summary)
     msg << summary->totalTests - summary->errorCount;
     m_staticTextSuccessTestsNum->SetLabel(msg);
 
-    for(size_t i = 0; i < summary->errorLines.GetCount(); ++i) {
+    for (size_t i = 0; i < summary->errorLines.GetCount(); ++i) {
         const ErrorLineInfo& info = summary->errorLines.Item(i);
         wxVector<wxVariant> cols;
         cols.push_back(info.file);
@@ -118,7 +120,7 @@ void UnitTestsPage::Initialize(TestSummary* summary)
 
 void UnitTestsPage::Clear()
 {
-    for(size_t i = 0; i < m_dvListCtrlErrors->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrlErrors->GetItemCount(); ++i) {
         UTLineInfo* info = (UTLineInfo*)m_dvListCtrlErrors->GetItemData(m_dvListCtrlErrors->RowToItem(i));
         wxDELETE(info);
     }

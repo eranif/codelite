@@ -45,7 +45,7 @@ class NewUnitTestDlg : public NewUnitTestBaseDlg
 
 public:
     /** Constructor */
-    NewUnitTestDlg(wxWindow* parent, UnitTestPP* plugin, IConfigTool *conf);
+    NewUnitTestDlg(wxWindow* parent, UnitTestPP* plugin, IConfigTool* conf);
     virtual ~NewUnitTestDlg() = default;
 
     wxString GetTestName() { return m_textCtrlTestName->GetValue(); }

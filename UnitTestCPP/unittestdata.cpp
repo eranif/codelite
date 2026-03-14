@@ -25,9 +25,5 @@
 
 #include "unittestdata.h"
 
-void UnitTestData::DeSerialize(Archive& arch)
-{
-}
-void UnitTestData::Serialize(Archive& arch)
-{
-}
+void UnitTestData::DeSerialize(Archive& arch) {}
+void UnitTestData::Serialize(Archive& arch) {}

@@ -23,11 +23,13 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "wxfbitemdlg.h"
+
 #include "VirtualDirectorySelectorDlg.h"
 #include "globals.h"
 #include "imanager.h"
 #include "project.h"
-#include "wxfbitemdlg.h"
+
 #include <wx/app.h>
 #include <wx/msgdlg.h>
 
@@ -36,7 +38,7 @@ wxFBItemDlg::wxFBItemDlg(wxWindow* parent, IManager* mgr)
     , m_mgr(mgr)
 {
     TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
-    if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
+    if (item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
         m_textCtrlVD->SetValue(VirtualDirectorySelectorDlg::DoGetPath(m_mgr->GetWorkspaceTree(), item.m_item, false));
     }
     m_textCtrlClassName->SetFocus();
@@ -47,7 +49,7 @@ void wxFBItemDlg::OnGenerate(wxCommandEvent& event)
 {
     wxUnusedVar(event);
 
-    if(!IsValidCppIdentifier(m_textCtrlClassName->GetValue())) {
+    if (!IsValidCppIdentifier(m_textCtrlClassName->GetValue())) {
         wxMessageBox(_("Invalid C++ class name"), wxT("CodeLite"), wxOK | wxICON_WARNING);
         return;
     }
@@ -58,7 +60,7 @@ void wxFBItemDlg::OnGenerate(wxCommandEvent& event)
 void wxFBItemDlg::OnGenerateUI(wxUpdateUIEvent& event)
 {
     bool titleCondition;
-    if(m_textCtrlTitle->IsEnabled()) {
+    if (m_textCtrlTitle->IsEnabled()) {
         titleCondition = !m_textCtrlTitle->IsEmpty();
     } else {
         titleCondition = true;
@@ -76,7 +78,7 @@ void wxFBItemDlg::OnCancel(wxCommandEvent& event)
 void wxFBItemDlg::OnBrowseVD(wxCommandEvent& event)
 {
     VirtualDirectorySelectorDlg dlg(this, m_mgr->GetWorkspace(), m_textCtrlVD->GetValue());
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         m_textCtrlVD->SetValue(dlg.GetVirtualDirectoryPath());
     }
 }

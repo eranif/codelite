@@ -11,16 +11,13 @@ INITIALISE_MODULE_LOG(LSP_LOG_HANDLER, "LSP", "lsp.log");
 namespace LSP
 {
 
-clModuleLogger& GetLogHandle()
-{
-    return LSP_LOG_HANDLER();
-}
+clModuleLogger& GetLogHandle() { return LSP_LOG_HANDLER(); }
 
 wxString FileNameToURI(const wxString& filename)
 {
     wxString uri;
 #ifdef __WXMSW__
-    if(filename.StartsWith("/")) {
+    if (filename.StartsWith("/")) {
         // linux format
         uri << "file://" << filename;
     } else {
@@ -109,7 +106,7 @@ JSONItem TextDocumentItem::ToJSON(const wxString& name) const
 void TextDocumentContentChangeEvent::FromJSON(const JSONItem& json)
 {
     m_text = json.namedObject("text").toString();
-    if(json.hasNamedObject("range")) {
+    if (json.hasNamedObject("range")) {
         m_range.FromJSON(json["range"]);
     }
 }
@@ -117,7 +114,7 @@ void TextDocumentContentChangeEvent::FromJSON(const JSONItem& json)
 JSONItem TextDocumentContentChangeEvent::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
-    if(m_range.IsOk()) {
+    if (m_range.IsOk()) {
         json.addProperty("range", m_range.ToJSON("range"));
     }
     json.addProperty("text", m_text);
@@ -189,12 +186,12 @@ void SignatureInformation::FromJSON(const JSONItem& json)
     m_label = json.namedObject("label").toString();
     m_documentation = json.namedObject("documentation").toString();
     m_parameters.clear();
-    if(json.hasNamedObject("parameters")) {
+    if (json.hasNamedObject("parameters")) {
         JSONItem parameters = json.namedObject("parameters");
         const int size = parameters.arraySize();
-        if(size > 0) {
+        if (size > 0) {
             m_parameters.reserve(size);
-            for(int i = 0; i < size; ++i) {
+            for (int i = 0; i < size; ++i) {
                 ParameterInformation p;
                 p.FromJSON(parameters.arrayItem(i));
                 m_parameters.push_back(p);
@@ -208,7 +205,7 @@ JSONItem SignatureInformation::ToJSON(const wxString& name) const
     JSONItem json = JSONItem::createObject(name);
     json.addProperty("label", m_label);
     json.addProperty("documentation", m_documentation);
-    if(!m_parameters.empty()) {
+    if (!m_parameters.empty()) {
         JSONItem params = JSONItem::createArray();
         for (const auto& paramInfo : m_parameters) {
             params.append(paramInfo.ToJSON(""));
@@ -224,7 +221,7 @@ void SignatureHelp::FromJSON(const JSONItem& json)
     m_signatures.clear();
     JSONItem signatures = json.namedObject("signatures");
     const int count = signatures.arraySize();
-    for(int i = 0; i < count; ++i) {
+    for (int i = 0; i < count; ++i) {
         SignatureInformation si;
         si.FromJSON(signatures.arrayItem(i));
         m_signatures.push_back(si);
@@ -238,7 +235,7 @@ JSONItem SignatureHelp::ToJSON(const wxString& name) const
 {
     JSONItem json = JSONItem::createObject(name);
     JSONItem signatures = JSONItem::createArray();
-    for(const SignatureInformation& si : m_signatures) {
+    for (const SignatureInformation& si : m_signatures) {
         signatures.arrayAppend(si.ToJSON(""));
     }
     json.addProperty("signatures", signatures);
@@ -297,7 +294,7 @@ JSONItem Diagnostic::ToJSON(const wxString& name) const
 TextDocumentContentChangeEvent& TextDocumentContentChangeEvent::SetText(const wxString& text)
 {
     this->m_text.clear();
-    if(!text.empty()) {
+    if (!text.empty()) {
         this->m_text.reserve(text.length() + 1); // for the null
         this->m_text.append(text);
     }
@@ -319,7 +316,7 @@ void DocumentSymbol::FromJSON(const JSONItem& json)
     int size = jsonChildren.arraySize();
     children.clear();
     children.reserve(size);
-    for(int i = 0; i < size; ++i) {
+    for (int i = 0; i < size; ++i) {
         auto child = jsonChildren[i];
         DocumentSymbol ds;
         ds.FromJSON(child);
@@ -344,9 +341,9 @@ void SymbolInformation::FromJSON(const JSONItem& json)
     location.FromJSON(json["location"]);
 
     // manipulate the data: if no container exists, extract it from the name
-    if(containerName.empty() && !name.empty()) {
+    if (containerName.empty() && !name.empty()) {
         int where = name.rfind("::");
-        if(where == wxNOT_FOUND) {
+        if (where == wxNOT_FOUND) {
             return;
         }
 
@@ -364,6 +361,29 @@ JSONItem SymbolInformation::ToJSON(const wxString& name) const
     json.addProperty("location", location.ToJSON("location"));
     json.addProperty("name", this->name);
     return json;
+}
+
+std::vector<SymbolInformation> SymbolInformation::From(const DocumentSymbol& document_symbol,
+                                                       const wxString& container_name)
+{
+    std::vector<SymbolInformation> result;
+    SymbolInformation si;
+    si.name = document_symbol.GetName();
+    si.kind = document_symbol.GetKind();
+    si.containerName = container_name;
+
+    Range range =
+        document_symbol.GetSelectionRange().IsOk() ? document_symbol.GetSelectionRange() : document_symbol.GetRange();
+    si.location.SetRange(range);
+    result.push_back(si);
+    if (!document_symbol.GetChildren().empty()) {
+        wxString scope_name = si.name;
+        for (const DocumentSymbol& child : document_symbol.GetChildren()) {
+            auto children = From(child, scope_name);
+            result.insert(result.end(), children.begin(), children.end());
+        }
+    }
+    return result;
 }
 
 const wxString& URI::GetPath() const { return m_path; }
@@ -391,7 +411,7 @@ JSONItem Command::ToJSON(const wxString& name) const { return {}; }
 
 std::unordered_map<wxString, std::vector<LSP::TextEdit>> ParseWorkspaceEdit(const JSONItem& result)
 {
-    if(!result.isOk()) {
+    if (!result.isOk()) {
         return {};
     }
 
@@ -399,16 +419,16 @@ std::unordered_map<wxString, std::vector<LSP::TextEdit>> ParseWorkspaceEdit(cons
 
     std::unordered_map<wxString, std::vector<LSP::TextEdit>> modifications;
     // some LSPs will reply with "changes" and some with "documentChanges" -> we support them both
-    if(result.hasNamedObject("changes")) {
+    if (result.hasNamedObject("changes")) {
         auto changes = result["changes"];
         auto M = changes.GetAsMap();
 
         modifications.reserve(M.size());
-        for(const auto& [filepath, json] : M) {
+        for (const auto& [filepath, json] : M) {
             int count = json.arraySize();
             std::vector<LSP::TextEdit> file_changes;
             file_changes.reserve(count);
-            for(int i = 0; i < count; ++i) {
+            for (int i = 0; i < count; ++i) {
                 auto e = json[i];
                 LSP::TextEdit te;
                 te.FromJSON(e);
@@ -416,26 +436,26 @@ std::unordered_map<wxString, std::vector<LSP::TextEdit>> ParseWorkspaceEdit(cons
             }
             wxString path = FileUtils::FilePathFromURI(wxString(filepath.data(), filepath.length()));
             modifications.erase(path);
-            modifications.insert({ path, file_changes });
+            modifications.insert({path, file_changes});
         }
-    } else if(result.hasNamedObject("documentChanges")) {
+    } else if (result.hasNamedObject("documentChanges")) {
         auto documentChanges = result["documentChanges"];
         int files_count = documentChanges.arraySize();
-        for(int i = 0; i < files_count; ++i) {
+        for (int i = 0; i < files_count; ++i) {
             auto edits = documentChanges[i]["edits"];
             wxString filepath = documentChanges[i]["textDocument"]["uri"].toString();
             filepath = FileUtils::FilePathFromURI(filepath);
             std::vector<LSP::TextEdit> file_changes;
             int edits_count = edits.arraySize();
             file_changes.reserve(edits_count);
-            for(int j = 0; j < edits_count; ++j) {
+            for (int j = 0; j < edits_count; ++j) {
                 auto e = edits[j];
                 LSP::TextEdit te;
                 te.FromJSON(e);
                 file_changes.push_back(te);
             }
             modifications.erase(filepath);
-            modifications.insert({ filepath, file_changes });
+            modifications.insert({filepath, file_changes});
         }
     }
     return modifications;

@@ -30,6 +30,8 @@ private:
     LSPEvent CreateLSPEvent(const std::vector<LSP::SymbolInformation>& symbols,
                             const wxString& filename,
                             const wxEventType& event_type);
+    std::vector<LSP::DocumentSymbol> FromDocumentSymbolsArray(JSONItem&& result);
+    std::vector<LSP::SymbolInformation> FromSymbolInformationArray(JSONItem&& result);
 };
 } // namespace LSP
 #endif // DOCUMDENET_SYMBOLS_REQUEST_HPP

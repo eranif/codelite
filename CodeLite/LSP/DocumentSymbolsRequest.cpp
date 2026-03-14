@@ -41,7 +41,7 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
     LSP::ResponseMessage& response = const_cast<LSP::ResponseMessage&>(const_response);
     auto json = response.take();
     if (!json->toElement().hasNamedObject("result")) {
-        LSP_WARNING() << "LSP::DocumentSymbolsRequest::OnResponse(): invalid 'result' object";
+        LSP_WARNING() << "LSP::DocumentSymbolsRequest::OnResponse(): missing 'result' object";
         return;
     }
 
@@ -54,46 +54,50 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
     int size = result.arraySize();
     wxString filename = m_params->As<DocumentSymbolParams>()->GetTextDocument().GetPath();
     auto context = m_context;
+    std::vector<LSP::SymbolInformation> symbols;
     if (result[0].hasNamedObject("location")) {
-        auto result = json->toElement().namedObject("result");
-        std::vector<LSP::SymbolInformation> symbols;
-        symbols.reserve(size);
-        for (int i = 0; i < size; ++i) {
-            SymbolInformation si;
-            si.FromJSON(result[i]);
-            symbols.push_back(si);
+        symbols = FromSymbolInformationArray(std::move(result));
+    } else {
+        auto document_symbol_array = FromDocumentSymbolsArray(std::move(result));
+        // For now (until we support tree view in the outline view, convert the
+        // DocumentSymbol array -> SymbolInformation array
+        for (const auto& document_symbol : document_symbol_array) {
+            auto symbol_information_array = SymbolInformation::From(document_symbol);
+            symbols.insert(symbols.end(), symbol_information_array.begin(), symbol_information_array.end());
         }
-
-        // sort the items by line position
-        std::sort(symbols.begin(),
-                  symbols.end(),
-                  [=](const LSP::SymbolInformation& a, const LSP::SymbolInformation& b) -> int {
-                      return a.GetLocation().GetRange().GetStart().GetLine() <
-                             b.GetLocation().GetRange().GetStart().GetLine();
-                  });
-
-        LOG_IF_TRACE { LSP_TRACE() << symbols << endl; }
-
-        // fire event per context
-        if (context & CONTEXT_SEMANTIC_HIGHLIGHT) {
-            QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT);
-        }
-
-        bool outline_event_fired_for_event_notifier{false};
-        if (context & CONTEXT_OUTLINE_VIEW) {
-            QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
-            // if "owner" is "EventNotifier::Get()" do not send the same event twice.
-            outline_event_fired_for_event_notifier = (owner == EventNotifier::Get());
-        }
-
-        if (!outline_event_fired_for_event_notifier) {
-            // always fire the wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW for the EventNotifier
-            // so it might be used by other plugins as well, e.g. "Outline"
-            QueueEvent(EventNotifier::Get(), symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
-        }
-
-        InvokeResponseCallback(CreateLSPEvent(symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE));
     }
+
+    if (symbols.empty()) {
+        return;
+    }
+
+    // sort the items by line position
+    std::sort(
+        symbols.begin(), symbols.end(), [=](const LSP::SymbolInformation& a, const LSP::SymbolInformation& b) -> int {
+            return a.GetLocation().GetRange().GetStart().GetLine() < b.GetLocation().GetRange().GetStart().GetLine();
+        });
+
+    LOG_IF_TRACE { LSP_TRACE() << symbols << endl; }
+
+    // fire event per context
+    if (context & CONTEXT_SEMANTIC_HIGHLIGHT) {
+        QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT);
+    }
+
+    bool outline_event_fired_for_event_notifier{false};
+    if (context & CONTEXT_OUTLINE_VIEW) {
+        QueueEvent(owner, symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
+        // if "owner" is "EventNotifier::Get()" do not send the same event twice.
+        outline_event_fired_for_event_notifier = (owner == EventNotifier::Get());
+    }
+
+    if (!outline_event_fired_for_event_notifier) {
+        // always fire the wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW for the EventNotifier
+        // so it might be used by other plugins as well, e.g. "Outline"
+        QueueEvent(EventNotifier::Get(), symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
+    }
+
+    InvokeResponseCallback(CreateLSPEvent(symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE));
 }
 
 LSPEvent LSP::DocumentSymbolsRequest::CreateLSPEvent(const std::vector<LSP::SymbolInformation>& symbols,
@@ -114,4 +118,40 @@ void LSP::DocumentSymbolsRequest::QueueEvent(wxEvtHandler* owner,
 {
     LSPEvent event = CreateLSPEvent(symbols, filename, event_type);
     owner->QueueEvent(event.Clone());
+}
+
+std::vector<LSP::DocumentSymbol> LSP::DocumentSymbolsRequest::FromDocumentSymbolsArray(JSONItem&& result)
+{
+    if (!result.isArray()) {
+        LSP_WARNING() << "FromDocumentSymbolsArray: result is not an array" << endl;
+        return {};
+    }
+
+    int size = result.arraySize();
+    std::vector<LSP::DocumentSymbol> symbols;
+    symbols.reserve(size);
+    for (int i = 0; i < size; ++i) {
+        DocumentSymbol ds;
+        ds.FromJSON(result[i]);
+        symbols.push_back(std::move(ds));
+    }
+    return symbols;
+}
+
+std::vector<LSP::SymbolInformation> LSP::DocumentSymbolsRequest::FromSymbolInformationArray(JSONItem&& result)
+{
+    if (!result.isArray()) {
+        LSP_WARNING() << "FromSymbolInformationArray: result is not an array" << endl;
+        return {};
+    }
+
+    int size = result.arraySize();
+    std::vector<LSP::SymbolInformation> symbols;
+    symbols.reserve(size);
+    for (int i = 0; i < size; ++i) {
+        SymbolInformation si;
+        si.FromJSON(result[i]);
+        symbols.push_back(std::move(si));
+    }
+    return symbols;
 }

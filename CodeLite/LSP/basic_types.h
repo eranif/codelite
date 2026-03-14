@@ -642,6 +642,19 @@ public:
     const eSymbolKind& GetKind() const { return kind; }
     const Location& GetLocation() const { return location; }
     const wxString& GetName() const { return name; }
+    /**
+     * @brief Converts a hierarchical DocumentSymbol into a flat list of SymbolInformation objects.
+     *
+     * This static method recursively traverses the children of the provided document symbol,
+     * generating a flat representation where each symbol is annotated with its parent's name.
+     *
+     * @param document_symbol The source DocumentSymbol to convert.
+     * @param container_name The name of the parent scope or container for the current symbol.
+     * @return A vector containing the SymbolInformation representation of the input symbol
+     *         and all of its recursive children.
+     */
+    static std::vector<SymbolInformation> From(const DocumentSymbol& document_symbol,
+                                               const wxString& container_name = wxEmptyString);
 };
 
 /// Initialise the library

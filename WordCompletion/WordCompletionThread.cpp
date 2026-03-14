@@ -43,21 +43,21 @@ void WordCompletionThread::ParseBuffer(const wxString& buffer, wxStringSet_t& su
     suggest.insert(filteredWords.begin(), filteredWords.end());
 #else
     WordScanner_t scanner = ::WordLexerNew(buffer);
-    if(!scanner)
+    if (!scanner)
         return;
     WordLexerToken token;
     std::string curword;
-    while(::WordLexerNext(scanner, token)) {
-        switch(token.type) {
+    while (::WordLexerNext(scanner, token)) {
+        switch (token.type) {
         case kWordDelim:
-            if(!curword.empty()) {
+            if (!curword.empty()) {
                 suggest.insert(wxString(curword.c_str(), wxConvUTF8, curword.length()));
             }
             curword.clear();
             break;
 
         case kWordNumber: {
-            if(!curword.empty()) {
+            if (!curword.empty()) {
                 curword += token.text;
             }
             break;

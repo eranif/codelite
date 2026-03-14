@@ -30,6 +30,7 @@
 class WordCompletionSettingsDlg : public WordCompletionSettingsBaseDlg
 {
     bool m_modified;
+
 public:
     WordCompletionSettingsDlg(wxWindow* parent);
     virtual ~WordCompletionSettingsDlg() = default;

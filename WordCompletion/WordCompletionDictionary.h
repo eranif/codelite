@@ -26,12 +26,13 @@
 #ifndef WORDCOMPLETIONDICTIONARY_H
 #define WORDCOMPLETIONDICTIONARY_H
 
-#include "macros.h"
-#include <wx/string.h>
-#include <wx/event.h>
-#include "WordCompletionThread.h"
 #include "WordCompletionRequestReply.h"
+#include "WordCompletionThread.h"
 #include "cl_command_event.h"
+#include "macros.h"
+
+#include <wx/event.h>
+#include <wx/string.h>
 
 class WordCompletionDictionary : public wxEvtHandler
 {
@@ -49,13 +50,13 @@ private:
 public:
     WordCompletionDictionary();
     virtual ~WordCompletionDictionary();
-    
+
     /**
      * @brief this function is called by the word completion thread when parsing phase is done
      * @param reply
      */
     void OnSuggestThread(const WordCompletionThreadReply& reply);
-    
+
     /**
      * @brief return a set of words from the current editors
      */

@@ -1,6 +1,7 @@
 #include "WordCompletionSettingsDlg.h"
-#include "windowattrmanager.h"
+
 #include "globals.h"
+#include "windowattrmanager.h"
 
 WordCompletionSettingsDlg::WordCompletionSettingsDlg(wxWindow* parent)
     : WordCompletionSettingsBaseDlg(parent)

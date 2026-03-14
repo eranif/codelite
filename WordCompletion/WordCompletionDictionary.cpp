@@ -1,10 +1,12 @@
 #include "WordCompletionDictionary.h"
-#include "event_notifier.h"
+
 #include "codelite_events.h"
-#include <algorithm>
+#include "event_notifier.h"
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
+
+#include <algorithm>
 #include <wx/stc/stc.h>
 
 WordCompletionDictionary::WordCompletionDictionary()
@@ -70,7 +72,8 @@ void WordCompletionDictionary::OnSuggestThread(const WordCompletionThreadReply& 
 {
     // Remove the current file's dictionary
     std::map<wxString, wxStringSet_t>::iterator iter = m_files.find(reply.filename.GetFullPath());
-    if(iter != m_files.end()) m_files.erase(iter);
+    if (iter != m_files.end())
+        m_files.erase(iter);
 
     // Keep the words
     m_files.insert(std::make_pair(reply.filename.GetFullPath(), reply.suggest));
@@ -88,17 +91,17 @@ void WordCompletionDictionary::DoCacheActiveEditor(bool overwrite)
     IEditor* activeEditor = ::clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(activeEditor);
 
-    if(!overwrite && m_files.count(activeEditor->GetFileName().GetFullPath()))
+    if (!overwrite && m_files.count(activeEditor->GetFileName().GetFullPath()))
         return; // we already have this file in the cache
-        
+
     m_files.erase(activeEditor->GetFileName().GetFullPath());
-    
+
     // Insert a dummy entry, so we won't queue this file if not needed
     m_files.insert(std::make_pair(activeEditor->GetFileName().GetFullPath(), wxStringSet_t()));
-    
+
     // Queue this file
     wxStyledTextCtrl* stc = activeEditor->GetCtrl();
-    
+
     // Invoke the thread to parse and suggest words for this file
     WordCompletionThreadRequest* req = new WordCompletionThreadRequest;
     req->buffer = stc->GetText();

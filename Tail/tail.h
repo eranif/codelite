@@ -1,10 +1,10 @@
 #ifndef __Tail__
 #define __Tail__
 
-#include "plugin.h"
-#include "clTabTogglerHelper.h"
-#include "clEditorEditEventsHandler.h"
 #include "TailData.h"
+#include "clEditorEditEventsHandler.h"
+#include "clTabTogglerHelper.h"
+#include "plugin.h"
 
 class TailPanel;
 class TailFrame;
@@ -20,7 +20,7 @@ protected:
     void OnInitDone(wxCommandEvent& event);
     void DoDetachWindow();
     void InitTailWindow(wxWindow* parent, bool isNotebook, const TailData& d, bool selectPage);
-    
+
 public:
     Tail(IManager* manager);
     ~Tail() override = default;
@@ -29,12 +29,12 @@ public:
      * @brief detach the tail window from the output notebook
      */
     void DetachTailWindow(const TailData& d);
-    
+
     /**
      * @brief dock the tail window back to the output notebook
      */
     void DockTailWindow(const TailData& d);
-    
+
     //--------------------------------------------
     // Abstract methods
     //--------------------------------------------
@@ -48,7 +48,7 @@ public:
      * @brief Unplug the plugin. Perform here any cleanup needed (e.g. unbind events, destroy allocated windows)
      */
     void UnPlug() override;
-    
+
     TailPanel* GetView() const { return m_view; }
 };
 

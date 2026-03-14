@@ -9,10 +9,7 @@
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new Tail(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new Tail(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -41,7 +38,7 @@ Tail::Tail(IManager* manager)
 void Tail::OnInitDone(wxCommandEvent& event)
 {
     event.Skip();
-    if(clConfig::Get().Read("force-show-tail-tab", true)) {
+    if (clConfig::Get().Read("force-show-tail-tab", true)) {
         clCommandEvent eventShow(wxEVT_SHOW_OUTPUT_TAB);
         eventShow.SetSelected(true).SetString("Tail");
         EventNotifier::Get()->AddPendingEvent(eventShow);
@@ -61,11 +58,11 @@ void Tail::UnPlug()
 
     // Remove our tab
     m_tabHelper.reset(); // before this plugin is un-plugged we must remove the tab we added
-    if(m_view && !m_view->IsDetached()) {
+    if (m_view && !m_view->IsDetached()) {
         DoDetachWindow();
         m_view->Destroy();
         m_view = NULL;
-    } else if(m_view && m_view->GetFrame()) {
+    } else if (m_view && m_view->GetFrame()) {
         m_view->GetFrame()->Destroy();
         m_view->SetFrame(NULL);
     }
@@ -97,7 +94,7 @@ void Tail::InitTailWindow(wxWindow* parent, bool isNotebook, const TailData& d, 
     TailPanel* tmpView = new TailPanel(parent, this);
     tmpView->Initialize(d);
 
-    if(m_view) {
+    if (m_view) {
         // copy the settinhs from the current view
         DoDetachWindow();
         m_view->Destroy();
@@ -107,7 +104,7 @@ void Tail::InitTailWindow(wxWindow* parent, bool isNotebook, const TailData& d, 
     // Hook our output-pane panel
     m_view = tmpView;
     m_editEventsHandler = std::make_unique<clEditEventsHandler>(m_view->GetStc());
-    if(isNotebook) {
+    if (isNotebook) {
         m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_view, "Tail");
     } else {
         m_tabHelper.reset();

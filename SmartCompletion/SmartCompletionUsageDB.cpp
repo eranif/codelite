@@ -1,6 +1,8 @@
 #include "SmartCompletionUsageDB.h"
+
 #include "cl_standard_paths.h"
 #include "file_logger.h"
+
 #include <wx/filename.h>
 
 SmartCompletionUsageDB::~SmartCompletionUsageDB() { Close(); }
@@ -8,7 +10,8 @@ SmartCompletionUsageDB::~SmartCompletionUsageDB() { Close(); }
 void SmartCompletionUsageDB::Open()
 {
     try {
-        if(m_db.IsOpen()) return;
+        if (m_db.IsOpen())
+            return;
 
         wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "SmartCompletions.db");
         fn.AppendDir("config");
@@ -62,7 +65,7 @@ void SmartCompletionUsageDB::LoadCCUsageTable(std::unordered_map<wxString, int>&
     try {
         weightTable.clear();
         wxSQLite3ResultSet res = m_db.ExecuteQuery("select NAME,WEIGHT from CC_USAGE");
-        while(res.NextRow()) {
+        while (res.NextRow()) {
             wxString k = res.GetString(0);
             int v = res.GetInt(1);
             weightTable[k] = v;
@@ -77,7 +80,7 @@ void SmartCompletionUsageDB::LoadGTAUsageTable(std::unordered_map<wxString, int>
     try {
         weightTable.clear();
         wxSQLite3ResultSet res = m_db.ExecuteQuery("select NAME,WEIGHT from GOTO_ANYTHING_USAGE");
-        while(res.NextRow()) {
+        while (res.NextRow()) {
             wxString k = res.GetString(0);
             int v = res.GetInt(1);
             weightTable[k] = v;
@@ -103,7 +106,7 @@ void SmartCompletionUsageDB::StoreCCUsage(const wxString& key, int weight)
 
 void SmartCompletionUsageDB::Close()
 {
-    if(m_db.IsOpen()) {
+    if (m_db.IsOpen()) {
         try {
             m_db.Close();
         } catch (const wxSQLite3Exception& e) {

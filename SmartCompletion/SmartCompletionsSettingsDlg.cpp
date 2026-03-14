@@ -1,4 +1,5 @@
 #include "SmartCompletionsSettingsDlg.h"
+
 #include "SmartCompletionsConfig.h"
 #include "windowattrmanager.h"
 

@@ -1,18 +1,17 @@
 #include "smartcompletion.h"
+
 #include "SmartCompletionsSettingsDlg.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "macros.h"
+
 #include <algorithm>
 #include <queue>
 #include <wx/menu.h>
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point
-CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager)
-{
-    return new SmartCompletion(manager);
-}
+CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new SmartCompletion(manager); }
 
 CL_PLUGIN_API PluginInfo* GetPluginInfo()
 {
@@ -68,7 +67,7 @@ void SmartCompletion::UnPlug()
 void SmartCompletion::OnCodeCompletionSelectionMade(clCodeCompletionEvent& event)
 {
     event.Skip();
-    if(!m_config.IsEnabled())
+    if (!m_config.IsEnabled())
         return;
 
     CHECK_PTR_RET(event.GetEntry());
@@ -77,7 +76,7 @@ void SmartCompletion::OnCodeCompletionSelectionMade(clCodeCompletionEvent& event
     WeightTable_t& T = *m_pCCWeight;
     // we have an associated tag
     wxString k = event.GetEntry()->GetText();
-    if(T.count(k) == 0) {
+    if (T.count(k) == 0) {
         T[k] = 1;
     } else {
         T[k]++;
@@ -88,7 +87,7 @@ void SmartCompletion::OnCodeCompletionSelectionMade(clCodeCompletionEvent& event
 void SmartCompletion::OnCodeCompletionShowing(clCodeCompletionEvent& event)
 {
     event.Skip();
-    if(!m_config.IsEnabled())
+    if (!m_config.IsEnabled())
         return;
 
     // Sort the entries by their weight
@@ -110,7 +109,8 @@ void SmartCompletion::OnCodeCompletionShowing(clCodeCompletionEvent& event)
 
     entries.swap(normalEntries);
     // Step 2: sort the important entries, based on their weight
-    std::sort(importantEntries.begin(), importantEntries.end(),
+    std::sort(importantEntries.begin(),
+              importantEntries.end(),
               [&](wxCodeCompletionBoxEntry::Ptr_t a, wxCodeCompletionBoxEntry::Ptr_t b) {
                   // Sort in descending order
                   return a->GetWeight() > b->GetWeight();
@@ -129,7 +129,7 @@ void SmartCompletion::OnSettings(wxCommandEvent& e)
 void SmartCompletion::OnGotoAnythingSort(clGotoEvent& event)
 {
     event.Skip();
-    if(!m_config.IsEnabled())
+    if (!m_config.IsEnabled())
         return;
 
     // Sort the entries by their weight
@@ -143,7 +143,7 @@ void SmartCompletion::OnGotoAnythingSort(clGotoEvent& event)
         if (T.count(entry.GetDesc())) {
             // This item has weight
             int weight = T[entry.GetDesc()];
-            importantEntries.push_back({ weight, entry });
+            importantEntries.push_back({weight, entry});
         } else {
             normalEntries.push_back(entry);
         }
@@ -154,7 +154,8 @@ void SmartCompletion::OnGotoAnythingSort(clGotoEvent& event)
 
     // Step 2: sort the important entries - the sorting is DESC (lower first)
     std::sort(
-        importantEntries.begin(), importantEntries.end(),
+        importantEntries.begin(),
+        importantEntries.end(),
         [&](const std::pair<int, clGotoEntry>& a, const std::pair<int, clGotoEntry>& b) { return a.first < b.first; });
 
     // Step 3: prepend the important entries (it actually reverse the sorting)
@@ -166,14 +167,14 @@ void SmartCompletion::OnGotoAnythingSort(clGotoEvent& event)
 void SmartCompletion::OnGotoAnythingSelectionMade(clGotoEvent& event)
 {
     event.Skip();
-    if(!m_config.IsEnabled())
+    if (!m_config.IsEnabled())
         return;
 
     // Collect info about this match
     WeightTable_t& T = *m_pGTAWeight;
 
     const wxString& key = event.GetEntry().GetDesc();
-    if(T.count(key) == 0) {
+    if (T.count(key) == 0) {
         T[key] = 1;
     } else {
         T[key]++;

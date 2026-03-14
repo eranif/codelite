@@ -66,6 +66,7 @@ Signed-By: /etc/apt/keyrings/CodeLite.asc" |
     sudo tee /etc/apt/sources.list.d/CodeLite.sources > /dev/null
 ```
 
+
 #### Adding the repository source
 
 Add the appropriate line from the table below:
@@ -157,7 +158,15 @@ yaourt -S codelite
 
 ### Previous CodeLite releases
 ---
-Links to older Linux packages are provided on [this page](./oldDownloads/Repositories18.1.md).
+
+| Version | Link |
+|---------|------|
+| CodeLite 17.0 | [Repositories](/downloads/oldDownloads/Repositories17) |
+| CodeLite 16.0 | [Repositories](/downloads/oldDownloads/Repositories16) |
+| CodeLite 15.0 | [Repositories](/downloads/oldDownloads/Repositories15) |
+| CodeLite 14.0 | [Repositories](/downloads/oldDownloads/Repositories14) |
+| CodeLite 13.0 | [Repositories](/downloads/oldDownloads/Repositories13) |
+| CodeLite 12.0 | [Repositories](/downloads/oldDownloads/Repositories12) |
 
 ### wxCrafter binary packages
 ---

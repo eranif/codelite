@@ -41,8 +41,7 @@ sudo apt-get install clang-tools
 
 After installation, proceed to the [manual configuration section](#manual-configuration).
 
-!!! Note
-    The `clang-tools` package often includes a version number (e.g., `clang-tools-10`). Install the package with the highest available version number.
+> **Note:** The `clang-tools` package often includes a version number (e.g., `clang-tools-10`). Install the package with the highest available version number.
 
 **macOS**
 
@@ -52,23 +51,23 @@ On macOS, `clangd` is provided as part of the `llvm` formula. Install it using H
 brew install llvm
 ```
 
-On ARM-based macOS systems, `clangd` is located at: `/opt/homebrew/opt/llvm/bin/clangd`
+On ARM-based macOS systems, `clangd` is located at `/opt/homebrew/opt/llvm/bin/clangd`.
 
 ### ctagsd (C/C++)
 
 `ctagsd` is CodeLite's built-in code completion engine for C/C++ that implements the Language Server Protocol. It is automatically installed with CodeLite on all platforms.
 
-CodeLite pre-configures `ctagsd`, but it is disabled by default. To enable it:
-
-Navigate to **Plugins → Language Server → Settings**
+CodeLite pre-configures `ctagsd`, but it is disabled by default. To enable it, navigate to **Plugins → Language Server → Settings**.
 
 ### Pyright (Python)
 
 **Prerequisites**
-- Node.js (any maintained LTS version) must be installed on your system.
-- `npm` (bundled with Node.js) must be available in your `PATH`.
+
+- Node.js (any maintained LTS version) must be installed on your system
+- `npm` (bundled with Node.js) must be available in your `PATH`
 
 **Installation**
+
 Install Pyright globally via npm:
 
 ```bash
@@ -76,6 +75,7 @@ npm install -g pyright
 ```
 
 **Verification**
+
 Confirm the installation:
 
 ```bash
@@ -83,6 +83,7 @@ pyright --version
 ```
 
 **Additional Resources**
+
 - [Pyright Documentation](https://github.com/microsoft/pyright)
 - [Pyright on npm](https://www.npmjs.com/package/pyright)
 
@@ -105,22 +106,21 @@ pip install python-lsp-server
 
 Visit the [python-lsp-server project page][3] for additional information.
 
-### phphantom_lsp (PHP)
+### phpantom_lsp (PHP)
 
-`phphantom_lsp` is currently avilable via building it from sources.
+`phpantom_lsp` is currently available via building from sources.
 
 **Standard Installation**
 
 - [Install Rust][13]
 
-**Build phphantom_lsp**
+**Build phpantom_lsp**
 
 ```bash
 git clone https://github.com/AJenbo/phpantom_lsp.git
 cargo build --release
 cargo install --path .
 ```
-
 
 ### TypeScript
 
@@ -210,12 +210,12 @@ You can install and configure any language server that implements the LSP protoc
 |-------|-----------|-------------|
 | Enabled | ✓ | Enable or disable this LSP |
 | Name | ✓ | Provide a descriptive name for this LSP |
-| Remote server | - | When enabled, the command is executed on a remote machine |
+| Remote server | — | When enabled, the command is executed on a remote machine |
 | Command | ✓ | The LSP execution command (e.g., `/usr/bin/clangd` for clangd) |
-| Working directory | - | Path to set before running the command |
+| Working directory | — | Path to set before running the command |
 | Languages | ✓ | Associate this LSP with specific languages. Use the `...` button to view supported languages |
 | Connection string | ✓ | Protocol used for communication (most LSP servers support `stdio`) |
-| Display diagnostics | - | When checked, CodeLite displays error indicators in the editor |
+| Display diagnostics | — | When checked, CodeLite displays error indicators in the editor |
 
 ### Resolving Conflicts
 
@@ -225,11 +225,11 @@ Multiple language servers can be configured for the same programming language (e
 
 ## Restarting Language Servers
 
-To restart the any language server:
+To restart any language server:
 
-1. Press ++ctrl+shift+p++ to open the command palette
+1. Press <kbd>Ctrl</kbd>+<kbd>Shift</kbd>+<kbd>P</kbd> to open the command palette
 2. Type `restart language` and select the appropriate command
-3. Hit ++enter++
+3. Press <kbd>Enter</kbd>
 
 ---
 

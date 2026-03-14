@@ -16,7 +16,10 @@ nav:
           - Linux: getting_started/linux.md
           - macOS: getting_started/macos.md
       - Hello World: hello_world.md
-  - AI: AI/ai.md
+  - AI:
+      - AI/ai.md
+  - LSP:
+      - plugins/lsp.md
   - LUA:
       - Overview: LUA/overview.md
       - Documentation: LUA/lua.md
@@ -73,13 +76,6 @@ nav:
       - CodeLite v17.x - 18.0.0: release_notes/v18_0_0.md
       - CodeLite v16.x - 17.0.0: release_notes/v17_0_0.md
       - CodeLite v15.x - 16.0.0: release_notes/v16_0_0.md
-  - Old Linux Repositories:
-      - CodeLite 17.0: downloads/oldDownloads/Repositories17.md
-      - CodeLite 16.0: downloads/oldDownloads/Repositories16.md
-      - CodeLite 15.0: downloads/oldDownloads/Repositories15.md
-      - CodeLite 14.0: downloads/oldDownloads/Repositories14.md
-      - CodeLite 13.0: downloads/oldDownloads/Repositories13.md
-      - CodeLite 12.0: downloads/oldDownloads/Repositories12.md
 theme:
   name: material
   features:
@@ -87,7 +83,6 @@ theme:
     - navigation.sections
     - navigation.top
     - content.code.copy
-
   palette:
     # Palette toggle for light mode
     - scheme: default
@@ -95,8 +90,9 @@ theme:
       toggle:
         icon: material/toggle-switch-off-outline
         name: Switch to dark mode
-    # Palette toggle for dark mode
     - scheme: slate
+      # Palette toggle for dark mode
+
       primary: black
       toggle:
         icon: material/toggle-switch
@@ -105,7 +101,6 @@ theme:
   font:
     text: Roboto
     code: Roboto Mono
-
 markdown_extensions:
   - pymdownx.keys
   - admonition

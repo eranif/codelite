@@ -16,12 +16,7 @@ JSONItem LSP::InitializeRequest::ToJSON(const wxString& name) const
     JSONItem params = JSONItem::createObject("params");
     json.append(params);
     params.addProperty("processId", GetProcessId());
-    if (GetRootUri().IsEmpty()) {
-        JSON nullItem(JsonType::Null);
-        JSONItem nullObj = nullItem.toElement();
-        params.append(nullObj);
-        (void)nullItem.release(); // don't delete it on destruction, it is now owned by 'params'
-    } else {
+    if (!GetRootUri().IsEmpty()) {
         params.addProperty("rootUri", LSP::FileNameToURI(GetRootUri()));
     }
 
@@ -29,8 +24,7 @@ JSONItem LSP::InitializeRequest::ToJSON(const wxString& name) const
         // Parse the JSON string and set it as the 'initializationOptions
         JSON initializationOptions(m_initOptions);
         if (initializationOptions.isOk()) {
-            cJSON* pjson = initializationOptions.release();
-            params.addProperty(wxString("initializationOptions"), (cJSON*)pjson);
+            params.addProperty(wxString("initializationOptions"), std::move(initializationOptions));
         }
     }
 

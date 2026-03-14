@@ -25,7 +25,6 @@
 
 #include "JSON.h"
 
-#include "StringUtils.h"
 #include "clFontHelper.h"
 #include "fileutils.h"
 
@@ -35,11 +34,6 @@ JSON::JSON(const wxString& text)
     : m_json(NULL)
 {
     m_json = cJSON_Parse(text.mb_str(wxConvUTF8).data());
-}
-
-JSON::JSON(cJSON* json)
-    : m_json(json)
-{
 }
 
 JSON::JSON(JSONItem item)
@@ -95,8 +89,6 @@ JSONItem JSON::toElement() const
     return JSONItem(m_json);
 }
 
-wxString JSON::errorString() const { return _errorString; }
-
 JSONItem JSONItem::namedObject(const wxString& name) const
 {
     if (!m_json) {
@@ -140,33 +132,6 @@ JSONItem::JSONItem(cJSON* json)
         m_propertyName = m_json->string ? m_json->string : "";
         m_type = m_json->type;
     }
-}
-
-JSONItem::JSONItem(const wxString& name, double val)
-    : m_propertyName(name)
-    , m_type(cJSON_Number)
-    , m_valueNumer(val)
-{
-}
-
-JSONItem::JSONItem(const wxString& name, const std::string& val)
-    : m_propertyName(name)
-    , m_type(cJSON_String)
-    , m_valueString(val)
-{
-}
-
-JSONItem::JSONItem(const wxString& name, const char* pval, size_t len)
-    : m_propertyName(name)
-    , m_type(cJSON_String)
-    , m_valueString(pval, len)
-{
-}
-
-JSONItem::JSONItem(const wxString& name, bool val)
-    : m_propertyName(name)
-    , m_type(val ? cJSON_True : cJSON_False)
-{
 }
 
 JSONItem JSONItem::operator[](int index) const
@@ -471,20 +436,26 @@ int JSONItem::arraySize() const
 
 JSONItem& JSONItem::addProperty(const wxString& name, bool value)
 {
-    append(JSONItem(name, value));
+    if (m_json) {
+        if (value) {
+            cJSON_AddTrueToObject(m_json, name.mb_str(wxConvUTF8).data());
+        } else {
+            cJSON_AddFalseToObject(m_json, name.mb_str(wxConvUTF8).data());
+        }
+    }
     return *this;
 }
 
 JSONItem& JSONItem::addProperty(const wxString& name, const wxString& value)
 {
-    const std::string cstr = value.ToStdString(wxConvUTF8);
-    append(JSONItem(name, cstr.data(), cstr.length()));
-    return *this;
+    return addProperty(name, value.ToStdString(wxConvUTF8));
 }
 
 JSONItem& JSONItem::addProperty(const wxString& name, const std::string& value)
 {
-    append(JSONItem(name, value));
+    if (m_json) {
+        cJSON_AddStringToObject(m_json, name.mb_str(wxConvUTF8).data(), value.data());
+    }
     return *this;
 }
 
@@ -495,7 +466,9 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxChar* value)
 
 JSONItem& JSONItem::addProperty(const wxString& name, long value)
 {
-    append(JSONItem(name, (double)value));
+    if (m_json) {
+        cJSON_AddNumberToObject(m_json, name.mb_str(wxConvUTF8).data(), value);
+    }
     return *this;
 }
 
@@ -659,31 +632,7 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxColour& colour)
     return addProperty(name, colourValue);
 }
 #endif
-JSONItem JSONItem::firstChild()
-{
-    m_walker = NULL;
-    if (!m_json) {
-        return JSONItem(NULL);
-    }
 
-    if (!m_json->child) {
-        return JSONItem(NULL);
-    }
-
-    m_walker = m_json->child;
-    return JSONItem(m_walker);
-}
-
-JSONItem JSONItem::nextChild()
-{
-    if (!m_walker) {
-        return JSONItem(NULL);
-    }
-
-    JSONItem element(m_walker->next);
-    m_walker = m_walker->next;
-    return element;
-}
 JSONItem& JSONItem::addProperty(const wxString& name, const char* value, const wxMBConv& conv)
 {
     return addProperty(name, wxString(value, conv));
@@ -729,23 +678,6 @@ bool JSONItem::isNumber() const
     return m_json->type == cJSON_Number;
 }
 
-JSONItem JSONItem::detachProperty(const wxString& name)
-{
-    if (!m_json) {
-        return JSONItem(NULL);
-    }
-    cJSON* j = cJSON_DetachItemFromObject(m_json, name.c_str());
-    return JSONItem(j);
-}
-
-wxFileName JSONItem::toFileName() const
-{
-    if (!m_json) {
-        return wxFileName();
-    }
-    return wxFileName(m_valueString);
-}
-
 JSONItem& JSONItem::addProperty(const wxString& name, const wxFileName& filename)
 {
     return addProperty(name, filename.GetFullPath());
@@ -765,12 +697,12 @@ JSONItem JSONItem::AddObject(const wxString& name)
     return json;
 }
 
-JSONItem& JSONItem::addProperty(const wxString& name, cJSON* pjson)
+JSONItem& JSONItem::addProperty(const wxString& name, JSON&& json)
 {
     if (!m_json) {
         return *this;
     }
-    cJSON_AddItemToObject(m_json, name.mb_str(wxConvUTF8).data(), pjson);
+    cJSON_AddItemToObject(m_json, name.mb_str(wxConvUTF8).data(), json.release());
     return *this;
 }
 

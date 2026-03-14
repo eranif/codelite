@@ -128,12 +128,9 @@ void CodeLiteRemoteHelper::ProcessCodeLiteRemoteJSON(const wxString& filepath)
         }
     }
 
-    auto child = json.firstChild();
-    while (child.isOk()) {
-        const wxString& plugin_name = child.GetPropertyName();
-        auto p = new JSON(child.format(false));
-        m_plugins_configs.insert({ plugin_name, p });
-        child = json.nextChild();
+    for (auto [plugin_name, child] : json.GetAsMap())
+    {
+        m_plugins_configs.emplace(wxString::FromUTF8(std::string(plugin_name)), new JSON(child.format(false)));
     }
 }
 #endif

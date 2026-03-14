@@ -1,4 +1,5 @@
 #include "phprefactoringdlg.h"
+
 #include "phprefactoringoptions.h"
 #include "windowattrmanager.h"
 

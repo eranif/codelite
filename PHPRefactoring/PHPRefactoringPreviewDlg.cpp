@@ -10,7 +10,7 @@ PHPRefactoringPreviewDlg::PHPRefactoringPreviewDlg(wxWindow* parent, const wxStr
     : PHPRefactoringPreviewBaseDlg(parent)
 {
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("diff");
-    if(lexer) {
+    if (lexer) {
         lexer->Apply(m_stcPreview, true);
     }
     m_stcPreview->SetText(patchContent);

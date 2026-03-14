@@ -105,6 +105,23 @@ pip install python-lsp-server
 
 Visit the [python-lsp-server project page][3] for additional information.
 
+### phphantom_lsp (PHP)
+
+`phphantom_lsp` is currently avilable via building it from sources.
+
+**Standard Installation**
+
+- [Install Rust][13]
+
+**Build phphantom_lsp**
+
+```bash
+git clone https://github.com/AJenbo/phpantom_lsp.git
+cargo build --release
+cargo install --path .
+```
+
+
 ### TypeScript
 
 **Prerequisites**

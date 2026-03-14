@@ -972,9 +972,6 @@ if(MINGW AND USE_PCH)
   endif()
 endif()
 
-# add the dtl module include path before we include Plugin folder
-include_directories(submodules/dtl)
-
 if(CMAKE_CXX_COMPILER_ID MATCHES "Clang" OR CMAKE_CXX_COMPILER_ID MATCHES
                                             "AppleClang")
   set(IS_CLANG 1)
@@ -1016,9 +1013,6 @@ if(USE_PCH)
   add_subdirectory(PCH)
 endif()
 
-set(WITHOUT_INSTALL ON)
-add_subdirectory(submodules/cc-wrapper)
-
 # include the yaml-cpp directory
 include_directories("${CL_SRC_ROOT}/submodules/yaml-cpp/include")
 if(UNIX)
@@ -1042,14 +1036,6 @@ add_subdirectory("${CL_SRC_ROOT}/submodules/assistant")
 if(WXC_APP)
   add_subdirectory(wxcrafter)
 else()
-  add_subdirectory(submodules/ctags)
-  install(TARGETS ctags DESTINATION ${CL_INSTALL_BIN})
-  if(MINGW)
-    # build wx-config for Windows
-    add_subdirectory(submodules/wx-config-msys2)
-    install(TARGETS wx-config DESTINATION ${CL_INSTALL_BIN})
-  endif()
-
   if(NOT NO_CORE_PLUGINS)
     add_subdirectory(abbreviation)
     if(NOT DISABLE_CXX)
@@ -1166,26 +1152,10 @@ if(BUILD_TESTING)
 endif(BUILD_TESTING)
 
 message(STATUS "CL_INSTALL_BIN is set to ${CL_INSTALL_BIN}")
-install(TARGETS cc-wrapper DESTINATION ${CL_INSTALL_BIN})
 
 if(NOT WXC_APP)
   # building CodeLite, install the SVGs
   codelite_install_svgs()
-
-  if(NOT APPLE)
-    set_target_properties(ctags PROPERTIES OUTPUT_NAME "codelite-ctags")
-    install(
-      TARGETS ctags
-      DESTINATION ${CL_PREFIX}/bin
-      PERMISSIONS ${EXE_PERM})
-  elseif(APPLE)
-    set_target_properties(ctags PROPERTIES OUTPUT_NAME "codelite-ctags")
-    install(
-      TARGETS ctags
-      DESTINATION ${CMAKE_BINARY_DIR}/codelite.app/Contents/MacOS
-      PERMISSIONS ${EXE_PERM})
-  endif()
-
 endif()
 
 if(MINGW)

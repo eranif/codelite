@@ -28,6 +28,8 @@
 #include "clSFTPManager.hpp"
 #endif
 
+#include "assistant/common/magic_enum.hpp"
+
 #include <thread>
 #include <wx/app.h>
 #include <wx/arrstr.h>
@@ -350,7 +352,20 @@ void Manager::SemanticTokens(IEditor* editor)
 
 void Manager::WorkspaceSymbols(const wxString& filter)
 {
-    auto server = GetServerForFileType(LanguageServerProtocol::workspace_file_type);
+    auto editor = clGetManager()->GetActiveEditor();
+    LanguageServerProtocol::Ptr_t server{nullptr};
+    if (editor) {
+        // search for server for the current file.
+        LSP_DEBUG() << "WorkspaceSymbols: searching for server for file:" << editor->GetRemotePathOrLocal() << endl;
+        server = GetServerForEditor(editor);
+    } else {
+        LSP_DEBUG() << "WorkspaceSymbols: searching for server for workspace type:"
+                    << std::string{magic_enum::enum_name<FileExtManager::FileType>(
+                           LanguageServerProtocol::workspace_file_type)}
+                    << endl;
+        // Try for the workspace.
+        server = GetServerForFileType(LanguageServerProtocol::workspace_file_type);
+    }
     CHECK_PTR_RET(server);
     server->SendWorkspaceSymbolsRequest(filter);
 }
@@ -956,7 +971,10 @@ void Manager::OnWorkspaceOpen(clWorkspaceEvent& event)
 void Manager::SetWorkspaceType(FileExtManager::FileType type)
 {
     LanguageServerProtocol::workspace_file_type = type;
-    LSP_DEBUG() << "*** LSP: workspace type is set:" << LanguageServerProtocol::workspace_file_type << "***" << endl;
+    LSP_DEBUG() << "*** LSP: workspace type is set to:"
+                << std::string{magic_enum::enum_name<FileExtManager::FileType>(
+                       LanguageServerProtocol::workspace_file_type)}
+                << "***" << endl;
 }
 
 void Manager::StopAll(const std::unordered_set<wxString>& languages)

@@ -80,7 +80,7 @@ void SFTPSessionInfoList::FromJSON(const JSONItem& json)
 
 JSONItem SFTPSessionInfoList::ToJSON() const
 {
-    JSONItem json = JSONItem::createArray(GetName());
+    JSONItem json = JSONItem::createArray();
     for (const auto& [_, sess] : m_sessions) {
         json.arrayAppend(sess.ToJSON());
     }

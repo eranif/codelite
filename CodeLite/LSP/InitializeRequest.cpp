@@ -13,8 +13,7 @@ JSONItem LSP::InitializeRequest::ToJSON(const wxString& name) const
     JSONItem json = Request::ToJSON(name);
 
     // add the 'params'
-    JSONItem params = JSONItem::createObject("params");
-    json.append(params);
+    JSONItem params = JSONItem::createObject();
     params.addProperty("processId", GetProcessId());
     if (!GetRootUri().IsEmpty()) {
         params.addProperty("rootUri", LSP::FileNameToURI(GetRootUri()));
@@ -73,6 +72,8 @@ JSONItem LSP::InitializeRequest::ToJSON(const wxString& name) const
         tokenModifiers.arrayAppend("documentation");
         tokenModifiers.arrayAppend("defaultLibrary");
     }
+
+    json.addProperty("params", params);
     return json;
 }
 

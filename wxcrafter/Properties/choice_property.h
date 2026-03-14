@@ -2,6 +2,7 @@
 #define CHOICEPROPERTY_H
 
 #include "property_base.h"
+
 #include <wx/arrstr.h>
 
 class ChoiceProperty : public PropertyBase

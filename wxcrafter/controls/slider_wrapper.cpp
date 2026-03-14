@@ -25,22 +25,27 @@ SliderWrapper::SliderWrapper()
     PREPEND_STYLE(wxSL_SELRANGE, false);
     PREPEND_STYLE(wxSL_INVERSE, false);
 
-    RegisterEvent(wxT("wxEVT_SCROLL_TOP"), wxT("wxScrollEvent"),
+    RegisterEvent(wxT("wxEVT_SCROLL_TOP"),
+                  wxT("wxScrollEvent"),
                   _("Process wxEVT_SCROLL_TOP scroll-to-top events (minimum position)"));
-    RegisterEvent(wxT("wxEVT_SCROLL_BOTTOM"), wxT("wxScrollEvent"),
+    RegisterEvent(wxT("wxEVT_SCROLL_BOTTOM"),
+                  wxT("wxScrollEvent"),
                   _("Process wxEVT_SCROLL_BOTTOM scroll-to-bottom events (maximum position)."));
     RegisterEvent(wxT("wxEVT_SCROLL_LINEUP"), wxT("wxScrollEvent"), _("Process wxEVT_SCROLL_LINEUP line up events."));
-    RegisterEvent(wxT("wxEVT_SCROLL_LINEDOWN"), wxT("wxScrollEvent"),
-                  _("Process wxEVT_SCROLL_LINEDOWN line down events."));
+    RegisterEvent(
+        wxT("wxEVT_SCROLL_LINEDOWN"), wxT("wxScrollEvent"), _("Process wxEVT_SCROLL_LINEDOWN line down events."));
     RegisterEvent(wxT("wxEVT_SCROLL_PAGEUP"), wxT("wxScrollEvent"), _("Process wxEVT_SCROLL_PAGEUP page up events."));
-    RegisterEvent(wxT("wxEVT_SCROLL_PAGEDOWN"), wxT("wxScrollEvent"),
-                  _("Process wxEVT_SCROLL_PAGEDOWN page down events"));
-    RegisterEvent(wxT("wxEVT_SCROLL_THUMBTRACK"), wxT("wxScrollEvent"),
+    RegisterEvent(
+        wxT("wxEVT_SCROLL_PAGEDOWN"), wxT("wxScrollEvent"), _("Process wxEVT_SCROLL_PAGEDOWN page down events"));
+    RegisterEvent(wxT("wxEVT_SCROLL_THUMBTRACK"),
+                  wxT("wxScrollEvent"),
                   _("Process wxEVT_SCROLL_THUMBTRACK thumbtrack events (frequent events sent as the user drags the "
-                      "thumbtrack)."));
-    RegisterEvent(wxT("wxEVT_SCROLL_THUMBRELEASE"), wxT("wxScrollEvent"),
+                    "thumbtrack)."));
+    RegisterEvent(wxT("wxEVT_SCROLL_THUMBRELEASE"),
+                  wxT("wxScrollEvent"),
                   _("Process wxEVT_SCROLL_THUMBRELEASE thumb release events."));
-    RegisterEvent(wxT("wxEVT_SCROLL_CHANGED"), wxT("wxScrollEvent"),
+    RegisterEvent(wxT("wxEVT_SCROLL_CHANGED"),
+                  wxT("wxScrollEvent"),
                   _("Process wxEVT_SCROLL_CHANGED end of scrolling events (MSW only)."));
 
     m_namePattern = wxT("m_slider");
@@ -78,13 +83,19 @@ void SliderWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("min"));
-    if(propertynode) { SetPropertyString(PROP_MINVALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MINVALUE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("max"));
-    if(propertynode) { SetPropertyString(PROP_MAXVALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MAXVALUE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("value"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 }
 
 void SliderWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -93,13 +104,19 @@ void SliderWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("min"));
-    if(propertynode) { SetPropertyString(PROP_MINVALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MINVALUE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("max"));
-    if(propertynode) { SetPropertyString(PROP_MAXVALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MAXVALUE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("value"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 }
 
 void SliderWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -108,11 +125,17 @@ void SliderWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "minValue");
-    if(propertynode) { SetPropertyString(PROP_MINVALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MINVALUE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "maxValue");
-    if(propertynode) { SetPropertyString(PROP_MAXVALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MAXVALUE, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "value");
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 }

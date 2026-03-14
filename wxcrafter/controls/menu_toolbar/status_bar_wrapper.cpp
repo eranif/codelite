@@ -46,7 +46,9 @@ wxString StatusBarWrapper::GetWxClassName() const { return wxT("wxStatusBar"); }
 
 void StatusBarWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    if(type == XRC_DESIGNER) { return; }
+    if (type == XRC_DESIGNER) {
+        return;
+    }
 
     text << XRCPrefix() << XRCStyle() << XRCSize() << XRCCommonAttributes() << wxT("<fields>")
          << wxCrafter::ToNumber(PropertyString(PROP_FIELD_COUNT), 1) << wxT("</fields>") << XRCSuffix();
@@ -68,7 +70,9 @@ void StatusBarWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("fields"));
-    if(propertynode) { SetPropertyString(PROP_FIELD_COUNT, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_FIELD_COUNT, propertynode->GetNodeContent());
+    }
 }
 
 void StatusBarWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -77,7 +81,9 @@ void StatusBarWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("fields"));
-    if(propertynode) { SetPropertyString(PROP_FIELD_COUNT, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_FIELD_COUNT, propertynode->GetNodeContent());
+    }
 }
 
 void StatusBarWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -86,5 +92,7 @@ void StatusBarWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "fields");
-    if(propertynode) { SetPropertyString(PROP_FIELD_COUNT, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_FIELD_COUNT, propertynode->GetNodeContent());
+    }
 }

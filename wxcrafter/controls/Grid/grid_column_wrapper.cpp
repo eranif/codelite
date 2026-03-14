@@ -53,7 +53,7 @@ wxString GridColumnWrapper::Code(int colIndex) const
     cppCode << GetParent()->GetName() << wxT("->SetColLabelValue(") << colIndex << wxT(", ")
             << wxCrafter::UNDERSCORE(GetName()) << wxT(");\n");
     int width = PropertyInt(PROP_WIDTH, -1);
-    if(width != -1) {
+    if (width != -1) {
         cppCode << GetParent()->GetName() << wxT("->SetColSize(") << colIndex << ", " << width << ");\n";
     }
     return cppCode;

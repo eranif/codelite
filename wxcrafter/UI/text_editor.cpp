@@ -12,7 +12,7 @@ TextEditor::TextEditor(wxWindow* parent)
 
 void TextEditor::OnKeyDown(wxKeyEvent& event)
 {
-    if(event.GetKeyCode() == WXK_ESCAPE) {
+    if (event.GetKeyCode() == WXK_ESCAPE) {
         Hide();
     } else {
         event.Skip();

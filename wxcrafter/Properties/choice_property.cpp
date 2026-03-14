@@ -18,21 +18,23 @@ ChoiceProperty::ChoiceProperty(const wxString& label, const wxArrayString& optio
 
 void ChoiceProperty::SetSelection(int selection)
 {
-    if(selection < 0 || selection >= (int)m_options.GetCount()) return;
+    if (selection < 0 || selection >= (int)m_options.GetCount())
+        return;
 
     this->m_selection = selection;
 }
 
 wxString ChoiceProperty::GetValue() const
 {
-    if(m_selection < 0 || m_selection >= (int)m_options.GetCount()) return wxT("");
+    if (m_selection < 0 || m_selection >= (int)m_options.GetCount())
+        return wxT("");
     return m_options.Item(m_selection);
 }
 
 void ChoiceProperty::SetValue(const wxString& value)
 {
     int where = m_options.Index(value);
-    if(where == wxNOT_FOUND) {
+    if (where == wxNOT_FOUND) {
         m_selection = m_options.Add(value);
 
     } else {
@@ -43,7 +45,8 @@ void ChoiceProperty::SetValue(const wxString& value)
 void ChoiceProperty::Add(const wxString& value)
 {
     int where = m_options.Index(value);
-    if(where == wxNOT_FOUND) m_options.Add(value);
+    if (where == wxNOT_FOUND)
+        m_options.Add(value);
 }
 
 JSONItem ChoiceProperty::Serialize() const

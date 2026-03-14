@@ -12,7 +12,9 @@ protected:
     wxString m_value;
 
 public:
-    MultiStringsProperty(const wxString& label, const wxString& tooltip, const wxString& delim = wxT(";"),
+    MultiStringsProperty(const wxString& label,
+                         const wxString& tooltip,
+                         const wxString& delim = wxT(";"),
                          const wxString& msg = wxT(""));
     ~MultiStringsProperty() override = default;
 

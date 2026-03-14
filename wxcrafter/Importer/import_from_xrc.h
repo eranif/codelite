@@ -16,9 +16,12 @@ public:
     bool ImportProject(ImportDlg::ImportFileData& data) const;
     bool GetProject() const;
     static void DoProcessButtonNode(const wxXmlNode* node, wxcWidget* wrapper);
-    static void ProcessBitmapProperty(const wxXmlNode* node, wxcWidget* wrapper,
-                                      const wxString& property = PROP_BITMAP_PATH, const wxString& client_hint = "");
-    void ProcessNamedNode(wxXmlNode* node, wxcWidget* parentwrapper,
+    static void ProcessBitmapProperty(const wxXmlNode* node,
+                                      wxcWidget* wrapper,
+                                      const wxString& property = PROP_BITMAP_PATH,
+                                      const wxString& client_hint = "");
+    void ProcessNamedNode(wxXmlNode* node,
+                          wxcWidget* parentwrapper,
                           const wxString& name) const; // Used for auitoolbar dropdown nodes
 
 protected:

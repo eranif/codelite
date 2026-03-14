@@ -38,14 +38,26 @@ wxObject* MyWxSearchCtrlXmlHandler::DoCreateResource()
 {
     XRC_MAKE_INSTANCE(ctrl, wxSearchCtrl)
 
-    ctrl->Create(m_parentAsWindow, GetID(), GetText(wxT("value")), GetPosition(), GetSize(),
-                 GetStyle(wxT("style"), wxTE_LEFT), wxDefaultValidator, GetName());
+    ctrl->Create(m_parentAsWindow,
+                 GetID(),
+                 GetText(wxT("value")),
+                 GetPosition(),
+                 GetSize(),
+                 GetStyle(wxT("style"), wxTE_LEFT),
+                 wxDefaultValidator,
+                 GetName());
 
-    if(HasParam(wxT("cancelbtn"))) { ctrl->ShowCancelButton(GetLong(wxT("cancelbtn")) == 1); }
+    if (HasParam(wxT("cancelbtn"))) {
+        ctrl->ShowCancelButton(GetLong(wxT("cancelbtn")) == 1);
+    }
 
-    if(HasParam(wxT("searchbtn"))) { ctrl->ShowSearchButton(GetLong(wxT("searchbtn")) == 1); }
+    if (HasParam(wxT("searchbtn"))) {
+        ctrl->ShowSearchButton(GetLong(wxT("searchbtn")) == 1);
+    }
 
-    if(HasParam(wxT("hint"))) { ctrl->SetHint(GetText("hint")); }
+    if (HasParam(wxT("hint"))) {
+        ctrl->SetHint(GetText("hint"));
+    }
 
     SetupWindow(ctrl);
     return ctrl;

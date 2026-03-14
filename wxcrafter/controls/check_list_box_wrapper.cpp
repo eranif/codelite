@@ -21,9 +21,8 @@ CheckListBoxWrapper::CheckListBoxWrapper()
     RegisterEventCommand(wxT("wxEVT_COMMAND_LISTBOX_SELECTED"),
                          _("Process a wxEVT_COMMAND_LISTBOX_SELECTED event\nwhen an item on the list is selected or "
                            "the selection changes."));
-    RegisterEventCommand(
-        wxT("wxEVT_COMMAND_LISTBOX_DOUBLECLICKED"),
-        _("Process a wxEVT_COMMAND_LISTBOX_DOUBLECLICKED event\nwhen the listbox is double-clicked."));
+    RegisterEventCommand(wxT("wxEVT_COMMAND_LISTBOX_DOUBLECLICKED"),
+                         _("Process a wxEVT_COMMAND_LISTBOX_DOUBLECLICKED event\nwhen the listbox is double-clicked."));
     RegisterEventCommand(wxT("wxEVT_COMMAND_CHECKLISTBOX_TOGGLED"),
                          _("Process a wxEVT_COMMAND_CHECKLISTBOX_TOGGLED event\nwhen an item in the check list box "
                            "is checked or unchecked."));
@@ -46,7 +45,7 @@ wxString CheckListBoxWrapper::CppCtorCode() const
     optionsArr << GetName() << wxT("Arr");
 
     code << wxT("wxArrayString ") << optionsArr << wxT(";\n");
-    for(size_t i = 0; i < options.GetCount(); i++) {
+    for (size_t i = 0; i < options.GetCount(); i++) {
         code << optionsArr << wxT(".Add(") << wxCrafter::UNDERSCORE(options.Item(i)) << wxT(");\n");
     }
 
@@ -69,7 +68,7 @@ void CheckListBoxWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     wxArrayString options = wxCrafter::Split(PropertyString(PROP_OPTIONS), wxT(";"));
     text << wxT("<content>");
 
-    for(size_t i = 0; i < options.GetCount(); i++) {
+    for (size_t i = 0; i < options.GetCount(); i++) {
         text << wxT("<item checked=\"0\">") << wxCrafter::XMLEncode(options.Item(i)) << wxT("</item>");
     }
     text << wxT("</content>");
@@ -83,7 +82,9 @@ void CheckListBoxWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("content"));
-    if(propertynode) { SetPropertyString(PROP_OPTIONS, XmlUtils::ChildNodesContentToString(propertynode)); }
+    if (propertynode) {
+        SetPropertyString(PROP_OPTIONS, XmlUtils::ChildNodesContentToString(propertynode));
+    }
     // XRC also allows a 'checked' property for each item, but as neither XRCed, wxFB or (atm) wxC support this...
 }
 
@@ -93,7 +94,7 @@ void CheckListBoxWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("content"));
-    if(propertynode) {
+    if (propertynode) {
         wxString t = XmlUtils::ChildNodesContentToString(propertynode);
         SetPropertyString(PROP_OPTIONS, XmlUtils::ChildNodesContentToString(propertynode));
     }
@@ -108,7 +109,7 @@ void CheckListBoxWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "choices");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_OPTIONS, ImportFromwxFB::ConvertFBOptionsString(propertynode->GetNodeContent()));
     }
 }

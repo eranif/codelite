@@ -35,7 +35,7 @@ wxString TimerWrapper::CppCtorCode() const
     int interval = wxCrafter::ToNumber(PropertyString(PROP_INTERVAL), 1000);
     wxString cppCode;
     cppCode << GetName() << " = new " << GetRealClassName() << ";\n";
-    if(PropertyBool(PROP_START_TIMER) == "true") {
+    if (PropertyBool(PROP_START_TIMER) == "true") {
         cppCode << GetName() << "->Start(" << interval << ", " << PropertyBool(PROP_ONE_SHOT_TIMER) << ");\n";
     }
     return cppCode;

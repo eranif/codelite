@@ -1,10 +1,12 @@
 #include "TimePickerCtrlWrapper.h"
+
 #include "allocator_mgr.h"
 
 TimePickerCtrlWrapper::TimePickerCtrlWrapper()
     : wxcWidget(ID_WXTIMEPICKERCTRL)
 {
-    RegisterEvent(wxT("wxEVT_TIME_CHANGED"), wxT("wxDateEvent"),
+    RegisterEvent(wxT("wxEVT_TIME_CHANGED"),
+                  wxT("wxDateEvent"),
                   _("This event fires when the user changes the current selection in the control"));
     m_namePattern = wxT("m_timePickerCtrl");
     SetPropertyString(_("Common Settings"), "wxTimePickerCtrl");

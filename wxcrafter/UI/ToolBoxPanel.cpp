@@ -14,32 +14,32 @@ void ToolBoxPanel::OnControlUI(wxUpdateUIEvent& event)
 
     GUICraftItemData* data = m_mainView->GetSelItemData();
 
-    if(data && data->m_wxcWidget) {
+    if (data && data->m_wxcWidget) {
         wxcWidget* widget = data->m_wxcWidget;
 
-        if(widget->GetType() == ID_WXSCROLLEDWIN && event.GetId() == ID_WXAUIMANAGER &&
-           Allocator::Instance()->GetInsertionType(event.GetId(), data->m_wxcWidget->GetType(), false) ==
-               Allocator::INSERT_CHILD) {
+        if (widget->GetType() == ID_WXSCROLLEDWIN && event.GetId() == ID_WXAUIMANAGER &&
+            Allocator::Instance()->GetInsertionType(event.GetId(), data->m_wxcWidget->GetType(), false) ==
+                Allocator::INSERT_CHILD) {
             event.Enable(false);
 
-        } else if(widget->IsTopWindow() && widget->HasMenuBar() && event.GetId() == ID_WXMENUBAR) {
+        } else if (widget->IsTopWindow() && widget->HasMenuBar() && event.GetId() == ID_WXMENUBAR) {
             event.Enable(false);
 
-        } else if(widget->IsTopWindow() && widget->HasToolBar() && event.GetId() == ID_WXTOOLBAR) {
+        } else if (widget->IsTopWindow() && widget->HasToolBar() && event.GetId() == ID_WXTOOLBAR) {
             event.Enable(false);
 
-        } else if(widget->IsTopWindow() && widget->HasStatusBar() && event.GetId() == ID_WXSTATUSBAR) {
+        } else if (widget->IsTopWindow() && widget->HasStatusBar() && event.GetId() == ID_WXSTATUSBAR) {
             event.Enable(false);
 
-        } else if(Allocator::Instance()->GetInsertionType(event.GetId(), data->m_wxcWidget->GetType(), false, widget) !=
-                  Allocator::INSERT_NONE) {
+        } else if (Allocator::Instance()->GetInsertionType(
+                       event.GetId(), data->m_wxcWidget->GetType(), false, widget) != Allocator::INSERT_NONE) {
             event.Enable(true);
 
         } else {
             event.Enable(false);
         }
 
-    } else if(!data) {
+    } else if (!data) {
         // Root item is selected
         int type = wxcWidget::GetWidgetType(event.GetId());
         event.Enable(type == TYPE_FORM || type == TYPE_WIZARD || type == TYPE_FORM_FRAME || type == TYPE_IMGLIST);

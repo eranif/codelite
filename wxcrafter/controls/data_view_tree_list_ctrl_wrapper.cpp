@@ -21,46 +21,63 @@ DataViewTreeListCtrlWrapper::DataViewTreeListCtrlWrapper()
     PREPEND_STYLE(wxDV_VARIABLE_LINE_HEIGHT, false);
     PREPEND_STYLE(wxDV_NO_HEADER, false);
 
-    RegisterEvent("wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED", "wxDataViewEvent",
+    RegisterEvent("wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED",
+                  "wxDataViewEvent",
                   _("Process a wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED event"));
-    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED", "wxDataViewEvent",
+    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
+                  "wxDataViewEvent",
                   _("Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double "
                     "clicking an item or pressing some special key (usually \"Enter\") when it is focused"));
-    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING", "wxDataViewEvent",
+    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING",
+                  "wxDataViewEvent",
                   _("Process a wxEVT_COMMAND_DATAVIEW_ITEM_START_EDITING event.\nThis event can be vetoed in order to "
                     "prevent editing on an item by item basis"));
-    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_STARTED", "wxDataViewEvent",
+    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_STARTED",
+                  "wxDataViewEvent",
                   _("Process a wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_STARTED event"));
-    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_DONE", "wxDataViewEvent",
+    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_DONE",
+                  "wxDataViewEvent",
                   _("Process a wxEVT_COMMAND_DATAVIEW_ITEM_EDITING_DONE event"));
-    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSING", "wxDataViewEvent",
+    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSING",
+                  "wxDataViewEvent",
                   _("Process a wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSING event"));
-    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED", "wxDataViewEvent",
+    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED",
+                  "wxDataViewEvent",
                   _("Process a wxEVT_COMMAND_DATAVIEW_ITEM_COLLAPSED event"));
-    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING", "wxDataViewEvent",
+    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING",
+                  "wxDataViewEvent",
                   _("Process a wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDING event"));
-    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED", "wxDataViewEvent",
+    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED",
+                  "wxDataViewEvent",
                   _("Process a wxEVT_COMMAND_DATAVIEW_ITEM_EXPANDED event"));
-    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED", "wxDataViewEvent",
+    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED",
+                  "wxDataViewEvent",
                   _("Process a wxEVT_COMMAND_DATAVIEW_ITEM_VALUE_CHANGED event"));
-    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU", "wxDataViewEvent",
+    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU",
+                  "wxDataViewEvent",
                   _("Process a wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU event generated when the user right clicks "
                     "inside the control.\nNotice that this menu is generated even if the click didn't occur on any "
                     "valid item, in this case wxDataViewEvent::GetItem() simply returns an invalid item."));
-    RegisterEvent("wxEVT_COMMAND_DATAVIEW_COLUMN_HEADER_CLICK", "wxDataViewEvent",
+    RegisterEvent("wxEVT_COMMAND_DATAVIEW_COLUMN_HEADER_CLICK",
+                  "wxDataViewEvent",
                   _("Process a wxEVT_COMMAND_DATAVIEW_COLUMN_HEADER_CLICK event"));
-    RegisterEvent("wxEVT_COMMAND_DATAVIEW_COLUMN_HEADER_RIGHT_CLICK", "wxDataViewEvent",
+    RegisterEvent("wxEVT_COMMAND_DATAVIEW_COLUMN_HEADER_RIGHT_CLICK",
+                  "wxDataViewEvent",
                   _("Process a wxEVT_COMMAND_DATAVIEW_COLUMN_HEADER_RIGHT_CLICK event"));
-    RegisterEvent("wxEVT_COMMAND_DATAVIEW_COLUMN_SORTED", "wxDataViewEvent",
+    RegisterEvent("wxEVT_COMMAND_DATAVIEW_COLUMN_SORTED",
+                  "wxDataViewEvent",
                   _("Process a wxEVT_COMMAND_DATAVIEW_COLUMN_SORTED event"));
-    RegisterEvent("wxEVT_COMMAND_DATAVIEW_COLUMN_REORDERED", "wxDataViewEvent",
+    RegisterEvent("wxEVT_COMMAND_DATAVIEW_COLUMN_REORDERED",
+                  "wxDataViewEvent",
                   _("Process a wxEVT_COMMAND_DATAVIEW_COLUMN_REORDERED event"));
-    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_BEGIN_DRAG", "wxDataViewEvent",
+    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_BEGIN_DRAG",
+                  "wxDataViewEvent",
                   _("Process a wxEVT_COMMAND_DATAVIEW_ITEM_BEGIN_DRAG event"));
-    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_DROP_POSSIBLE", "wxDataViewEvent",
+    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_DROP_POSSIBLE",
+                  "wxDataViewEvent",
                   _("Process a wxEVT_COMMAND_DATAVIEW_ITEM_DROP_POSSIBLE event"));
-    RegisterEvent("wxEVT_COMMAND_DATAVIEW_ITEM_DROP", "wxDataViewEvent",
-                  _("Process a wxEVT_COMMAND_DATAVIEW_ITEM_DROP event"));
+    RegisterEvent(
+        "wxEVT_COMMAND_DATAVIEW_ITEM_DROP", "wxDataViewEvent", _("Process a wxEVT_COMMAND_DATAVIEW_ITEM_DROP event"));
 
     m_namePattern = "m_dataview";
     SetName(GenerateName());
@@ -77,7 +94,7 @@ DataViewTreeListCtrlWrapper::DataViewTreeListCtrlWrapper()
     wxString name = GetName();
     // Using the plain name here, e.g. m_dataview13, creates code that won't compile:
     // wxObjectDataPtr<m_dataview13Model> m_dataview13Model;
-    if(name.Left(2) == "m_") {
+    if (name.Left(2) == "m_") {
         name = name.Mid(2);
     }
     Add<StringProperty>(PROP_DV_MODEL_CLASS_NAME, name + "Model", tip);
@@ -101,7 +118,7 @@ void DataViewTreeListCtrlWrapper::GetIncludeFile(wxArrayString& headers) const
     headers.Add("#include <wx/dataview.h>");
 
     wxString modelName = GetModelName();
-    if(modelName.IsEmpty()) {
+    if (modelName.IsEmpty()) {
         return;
     }
 
@@ -119,14 +136,14 @@ wxString DataViewTreeListCtrlWrapper::GetWxClassName() const { return "wxDataVie
 
 void DataViewTreeListCtrlWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    if(type == XRC_LIVE) {
+    if (type == XRC_LIVE) {
         text << XRCUnknown();
 
     } else {
         text << "<object class=\""
              << "wxDataViewListCtrl"
              << "\" name=\"" << wxCrafter::XMLEncode(GetName()) << "\"";
-        if(!PropertyString(PROP_SUBCLASS_NAME).empty()) {
+        if (!PropertyString(PROP_SUBCLASS_NAME).empty()) {
             text << " subclass=\"" << wxCrafter::XMLEncode(PropertyString(PROP_SUBCLASS_NAME)) << "\"";
         }
         text << ">";
@@ -143,7 +160,7 @@ void DataViewTreeListCtrlWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 void DataViewTreeListCtrlWrapper::GenerateAdditionalFiles(wxStringMap_t& extraFile) const
 {
     wxString modelName = GetModelName();
-    if(modelName.IsEmpty()) {
+    if (modelName.IsEmpty()) {
         return;
     }
 
@@ -185,7 +202,7 @@ wxString DataViewTreeListCtrlWrapper::DoGenerateClassMember() const
     members << wxcWidget::DoGenerateClassMember();
 
     wxString modelName = GetModelName();
-    if(modelName.IsEmpty()) {
+    if (modelName.IsEmpty()) {
         return members;
     }
 
@@ -198,7 +215,7 @@ wxString DataViewTreeListCtrlWrapper::DoGenerateClassMember() const
 wxString DataViewTreeListCtrlWrapper::AssociateModelCode() const
 {
     wxString modelBaseName = GetModelName();
-    if(modelBaseName.IsEmpty()) {
+    if (modelBaseName.IsEmpty()) {
         return "";
     }
 

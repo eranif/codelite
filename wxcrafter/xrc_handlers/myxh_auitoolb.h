@@ -10,9 +10,10 @@
 
 #ifndef _MY_WX_XH_AUITOOLB_H_
 #define _MY_WX_XH_AUITOOLB_H_
-#include <wx/bitmap.h>
 #include "wx/aui/auibar.h"
 #include "wx/menu.h"
+
+#include <wx/bitmap.h>
 #include <wx/xrc/xmlres.h>
 
 class wxAuiToolBar;

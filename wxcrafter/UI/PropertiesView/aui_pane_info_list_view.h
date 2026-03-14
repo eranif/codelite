@@ -2,6 +2,7 @@
 #define AUIPANEINFOLISTVIEW_H
 
 #include "wxc_widget.h"
+
 #include <wx/propgrid/propgrid.h>
 
 class AuiPaneInfoListView

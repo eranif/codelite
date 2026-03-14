@@ -8,7 +8,9 @@ EnterStringsDlg::EnterStringsDlg(wxWindow* parent, const wxString& value)
     : EnterStringsDlgBase(parent)
 {
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text", "Default");
-    if(lexer) { lexer->Apply(m_stc); }
+    if (lexer) {
+        lexer->Apply(m_stc);
+    }
     m_stc->SetText(value);
     SetName("EnterStringsDlg");
     WindowAttrManager::Load(this);
@@ -18,7 +20,7 @@ wxString EnterStringsDlg::GetValue() const { return m_stc->GetText(); }
 
 void EnterStringsDlg::SetMessage(const wxString& msg)
 {
-    if(msg.IsEmpty() == false) {
+    if (msg.IsEmpty() == false) {
         m_staticTextMessage->SetLabel(msg);
         m_staticTextMessage->Show();
     } else {

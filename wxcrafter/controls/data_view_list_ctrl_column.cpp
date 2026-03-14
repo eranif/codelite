@@ -3,8 +3,8 @@
 #include "Properties/category_property.h"
 #include "Properties/choice_property.h"
 #include "Properties/col_header_flags_property.h"
-#include "Properties/string_property.h"
 #include "Properties/multi_strings_property.h"
+#include "Properties/string_property.h"
 #include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "wxgui_helpers.h"
@@ -16,11 +16,10 @@ DataViewListCtrlColumn::DataViewListCtrlColumn()
     m_sizerFlags.Clear();
     m_properties.Clear();
 
-    const wxArrayString coltype =
-        StdToWX::ToArrayString({ "bitmap", "check", "text", "icontext", "progress", "choice" });
-    const wxArrayString alignment = StdToWX::ToArrayString({ "wxALIGN_LEFT", "wxALIGN_RIGHT", "wxALIGN_CENTER" });
+    const wxArrayString coltype = StdToWX::ToArrayString({"bitmap", "check", "text", "icontext", "progress", "choice"});
+    const wxArrayString alignment = StdToWX::ToArrayString({"wxALIGN_LEFT", "wxALIGN_RIGHT", "wxALIGN_CENTER"});
     const wxArrayString cellType =
-        StdToWX::ToArrayString({ "wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE" });
+        StdToWX::ToArrayString({"wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"});
 
     Add<CategoryProperty>(_("wxDataViewListCtrl Column"));
     Add<StringProperty>(PROP_NAME, _("My Column"), _("Column Caption"));
@@ -52,39 +51,39 @@ wxString DataViewListCtrlColumn::CppCtorCode() const
     wxString colFlag = PropertyString(PROP_COL_FLAGS, "0");
     wxString columnWidth;
     columnWidth << "WXC_FROM_DIP(" << PropertyString(PROP_WIDTH) << ")";
-    if(coltype == "bitmap") {
+    if (coltype == "bitmap") {
         cppCode << parentName << "->AppendBitmapColumn(" << label << ", " << parentName << "->GetColumnCount(), "
                 << cellMode << ", " << columnWidth << ", " << alignstring << ", " << colFlag << ");";
 
-    } else if(coltype == "check") {
+    } else if (coltype == "check") {
         cppCode << parentName << "->AppendToggleColumn(" << label << ", ";
-        if(!childOfDataViewListCtrl)
+        if (!childOfDataViewListCtrl)
             cppCode << parentName << "->GetColumnCount(), ";
         cppCode << cellMode << ", " << columnWidth << ", " << alignstring << ", " << colFlag << ");";
 
-    } else if(coltype == "text") {
+    } else if (coltype == "text") {
         cppCode << parentName << "->AppendTextColumn(" << label << ", ";
-        if(!childOfDataViewListCtrl)
+        if (!childOfDataViewListCtrl)
             cppCode << parentName << "->GetColumnCount(), ";
         cppCode << cellMode << ", " << columnWidth << ", " << alignstring << ", " << colFlag << ");";
 
-    } else if(coltype == "icontext") {
+    } else if (coltype == "icontext") {
         cppCode << parentName << "->AppendIconTextColumn(" << label << ", ";
-        if(!childOfDataViewListCtrl)
+        if (!childOfDataViewListCtrl)
             cppCode << parentName << "->GetColumnCount(), ";
         cppCode << cellMode << ", " << columnWidth << ", " << alignstring << ", " << colFlag << ");";
 
-    } else if(coltype == "progress") {
+    } else if (coltype == "progress") {
         cppCode << parentName << "->AppendProgressColumn(" << label << ", ";
-        if(!childOfDataViewListCtrl)
+        if (!childOfDataViewListCtrl)
             cppCode << parentName << "->GetColumnCount(), ";
         cppCode << cellMode << ", " << columnWidth << ", " << alignstring << ", " << colFlag << ");";
-    } else if(coltype == "choice") {
+    } else if (coltype == "choice") {
         cppCode << "{\n";
         cppCode << "    wxArrayString choices;\n";
 
         wxArrayString choices = ::wxStringTokenize(PropertyString(PROP_OPTIONS), ";", wxTOKEN_STRTOK);
-        for(size_t i = 0; i < choices.GetCount(); ++i) {
+        for (size_t i = 0; i < choices.GetCount(); ++i) {
             cppCode << "    choices.Add(" << wxCrafter::UNDERSCORE(choices.Item(i)) << ");\n";
         }
         cppCode << "    " << parentName << "->AppendColumn( new wxDataViewColumn( " << label
@@ -102,7 +101,7 @@ wxString DataViewListCtrlColumn::GetWxClassName() const { return ""; }
 
 void DataViewListCtrlColumn::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    if(type == wxcWidget::XRC_LIVE) {
+    if (type == wxcWidget::XRC_LIVE) {
         text << XRCUnknown();
     } else {
         text << wxT("<object class=\"wxDataViewColumn\">") << wxT("<coltype>")

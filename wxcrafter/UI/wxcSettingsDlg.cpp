@@ -1,4 +1,5 @@
 #include "wxcSettingsDlg.h"
+
 #include "wxc_settings.h"
 
 wxcSettingsDlg::wxcSettingsDlg(wxWindow* parent)
@@ -19,8 +20,8 @@ void wxcSettingsDlg::OnOk(wxCommandEvent& event)
 {
     wxcSettings::Get().EnableFlag(wxcSettings::FORMAT_INHERITED_FILES, m_checkBoxFormatInheritedFiles->IsChecked());
     wxcSettings::Get().EnableFlag(wxcSettings::DUPLICATE_KEEPS_ALL_NAMES, m_checkBoxKeepAllPossibleNames->IsChecked());
-    wxcSettings::Get().EnableFlag(wxcSettings::DUPLICATE_KEEPS_USERSET_NAMES,
-                                  m_checkBoxKeepAllUsersetNames->IsChecked());
+    wxcSettings::Get().EnableFlag(
+        wxcSettings::DUPLICATE_KEEPS_USERSET_NAMES, m_checkBoxKeepAllUsersetNames->IsChecked());
     wxcSettings::Get().EnableFlag(wxcSettings::DUPLICATE_EVENTHANDLERS_TOO, m_checkBoxCopyEventhandlerToo->IsChecked());
     wxcSettings::Get().EnableFlag(wxcSettings::EXIT_MINIMIZE_TO_TRAY, m_checkBoxUseTRay->IsChecked());
     wxcSettings::Get().Save();

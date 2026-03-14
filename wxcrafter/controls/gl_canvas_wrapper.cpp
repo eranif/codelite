@@ -79,9 +79,9 @@ wxString GLCanvasWrapper::CppCtorCode() const
     wxArrayString validAttrsName, validAttrsValue;
     // get the number of attributes provided
     int bufferSize = 0;
-    for(size_t i = 0; i < m_attrs.GetCount(); ++i) {
+    for (size_t i = 0; i < m_attrs.GetCount(); ++i) {
         wxString v = PropertyString(m_attrs.Item(i));
-        if(!v.Trim().Trim(false).IsEmpty()) {
+        if (!v.Trim().Trim(false).IsEmpty()) {
             bufferSize += 2; // one for the property and one for its value
             validAttrsName.Add(m_attrs.Item(i));
             validAttrsValue.Add(v);
@@ -90,7 +90,7 @@ wxString GLCanvasWrapper::CppCtorCode() const
 
     wxString AttrName;
     AttrName << GetName() << "Attr";
-    if(bufferSize) {
+    if (bufferSize) {
         bufferSize++; // terminator
         attrList << "int *" << AttrName << " = new int[ " << bufferSize << " ];\n";
     } else {
@@ -98,14 +98,18 @@ wxString GLCanvasWrapper::CppCtorCode() const
     }
 
     int idx = 0;
-    for(size_t i = 0; i < validAttrsName.GetCount(); ++i) {
+    for (size_t i = 0; i < validAttrsName.GetCount(); ++i) {
         attrList << AttrName << "[" << idx++ << "] = " << validAttrsName.Item(i) << ";\n";
         attrList << AttrName << "[" << idx++ << "] = " << validAttrsValue.Item(i) << ";\n";
     }
 
-    if(validAttrsName.GetCount()) { attrList << AttrName << "[" << idx << "] = 0;\n"; }
+    if (validAttrsName.GetCount()) {
+        attrList << AttrName << "[" << idx << "] = 0;\n";
+    }
 
-    if(!attrList.IsEmpty()) { cppCode << attrList; }
+    if (!attrList.IsEmpty()) {
+        cppCode << attrList;
+    }
 
     cppCode << GetName() << " = new " << GetRealClassName() << "(" << GetWindowParent() << ", " << GetId() << ", "
             << AttrName << ", "
@@ -121,7 +125,7 @@ wxString GLCanvasWrapper::GetWxClassName() const { return "wxGLCanvas"; }
 
 void GLCanvasWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    if(type == XRC_LIVE) {
+    if (type == XRC_LIVE) {
         text << XRCUnknown();
 
     } else {

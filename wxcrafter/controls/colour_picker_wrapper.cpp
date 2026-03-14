@@ -18,7 +18,8 @@ ColourPickerWrapper::ColourPickerWrapper()
 
     SetPropertyString(_("Common Settings"), "wxColourPickerCtrl");
     Add<ColorProperty>(PROP_VALUE, wxT("<Default>"), _("Colour"));
-    RegisterEvent(wxT("wxEVT_COMMAND_COLOURPICKER_CHANGED"), wxT("wxColourPickerEvent"),
+    RegisterEvent(wxT("wxEVT_COMMAND_COLOURPICKER_CHANGED"),
+                  wxT("wxColourPickerEvent"),
                   _("The user changed the colour selected in the control either using the button or using text "
                     "control\n(see wxCLRP_USE_TEXTCTRL; note that in this case the event is fired only if the user's "
                     "input is valid, i.e. recognizable)."));
@@ -33,7 +34,9 @@ wxString ColourPickerWrapper::CppCtorCode() const
 {
     wxString code;
     wxString color = wxCrafter::ColourToCpp(PropertyString(PROP_VALUE));
-    if(color.IsEmpty()) { color << wxT("*wxBLACK"); }
+    if (color.IsEmpty()) {
+        color << wxT("*wxBLACK");
+    }
 
     code << GetName() << wxT(" = new ") << GetRealClassName() << wxT("(") << GetWindowParent() << wxT(", ")
          << WindowID() << wxT(", ") << color << wxT(", ") << wxT("wxDefaultPosition, ") << SizeAsString() << wxT(", ")
@@ -58,7 +61,9 @@ void ColourPickerWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 
     s << XRCPrefix() << XRCStyle() << XRCSize();
 
-    if(value != wxT("<Default>")) { s << wxT("<value>") << wxCrafter::GetColourForXRC(value) << wxT("</value>"); }
+    if (value != wxT("<Default>")) {
+        s << wxT("<value>") << wxCrafter::GetColourForXRC(value) << wxT("</value>");
+    }
 
     s << XRCCommonAttributes() << XRCSuffix();
 
@@ -71,7 +76,9 @@ void ColourPickerWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("value"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 }
 
 void ColourPickerWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -80,7 +87,9 @@ void ColourPickerWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("colour"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 }
 
 void ColourPickerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -89,5 +98,7 @@ void ColourPickerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "colour");
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 }

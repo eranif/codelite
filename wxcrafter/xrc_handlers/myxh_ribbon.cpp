@@ -16,13 +16,13 @@
 #endif
 
 #include "myxh_ribbon.h"
+
 #include <wx/ribbon/bar.h>
 #include <wx/ribbon/buttonbar.h>
 #include <wx/ribbon/gallery.h>
 #include <wx/ribbon/toolbar.h>
-#include <wx/xml/xml.h>
-
 #include <wx/scopeguard.h>
+#include <wx/xml/xml.h>
 
 #ifndef WX_PRECOMP
 #include <wx/menu.h>
@@ -58,23 +58,23 @@ MyWxRibbonXmlHandler::MyWxRibbonXmlHandler()
 
 wxObject* MyWxRibbonXmlHandler::DoCreateResource()
 {
-    if(m_class == wxT("button"))
+    if (m_class == wxT("button"))
         return Handle_button();
-    else if(m_class == wxT("tool"))
+    else if (m_class == wxT("tool"))
         return Handle_tool();
-    else if(m_class == wxT("wxRibbonButtonBar"))
+    else if (m_class == wxT("wxRibbonButtonBar"))
         return Handle_buttonbar();
-    else if(m_class == wxT("item"))
+    else if (m_class == wxT("item"))
         return Handle_galleryitem();
-    else if(m_class == wxT("wxRibbonGallery"))
+    else if (m_class == wxT("wxRibbonGallery"))
         return Handle_gallery();
-    else if(m_class == wxT("wxRibbonPanel") || m_class == wxT("panel"))
+    else if (m_class == wxT("wxRibbonPanel") || m_class == wxT("panel"))
         return Handle_panel();
-    else if(m_class == wxT("wxRibbonPage") || m_class == wxT("page"))
+    else if (m_class == wxT("wxRibbonPage") || m_class == wxT("page"))
         return Handle_page();
-    else if(m_class == wxT("wxRibbonBar"))
+    else if (m_class == wxT("wxRibbonBar"))
         return Handle_bar();
-    else if(m_class == wxT("wxRibbonToolBar"))
+    else if (m_class == wxT("wxRibbonToolBar"))
         return Handle_toolbar();
     else
         return Handle_control();
@@ -102,11 +102,11 @@ void MyWxRibbonXmlHandler::Handle_RibbonArtProvider(wxRibbonControl* control)
 {
     wxString provider = GetText("art-provider", false);
 
-    if(provider == "default" || provider.IsEmpty())
+    if (provider == "default" || provider.IsEmpty())
         control->SetArtProvider(new wxRibbonDefaultArtProvider);
-    else if(provider.CmpNoCase("aui") == 0)
+    else if (provider.CmpNoCase("aui") == 0)
         control->SetArtProvider(new wxRibbonAUIArtProvider);
-    else if(provider.CmpNoCase("msw") == 0)
+    else if (provider.CmpNoCase("msw") == 0)
         control->SetArtProvider(new wxRibbonMSWArtProvider);
     else
         ReportError("invalid ribbon art provider");
@@ -116,7 +116,7 @@ wxObject* MyWxRibbonXmlHandler::Handle_buttonbar()
 {
     XRC_MAKE_INSTANCE(buttonBar, wxRibbonButtonBar);
 
-    if(!buttonBar->Create(wxDynamicCast(m_parent, wxWindow), GetID(), GetPosition(), GetSize(), GetStyle())) {
+    if (!buttonBar->Create(wxDynamicCast(m_parent, wxWindow), GetID(), GetPosition(), GetSize(), GetStyle())) {
         ReportError("could not create ribbon button bar");
     } else {
         buttonBar->SetName(GetName());
@@ -136,7 +136,7 @@ wxObject* MyWxRibbonXmlHandler::Handle_toolbar()
 {
     XRC_MAKE_INSTANCE(toolbar, wxRibbonToolBar);
 
-    if(!toolbar->Create(wxDynamicCast(m_parent, wxWindow), GetID(), GetPosition(), GetSize(), GetStyle())) {
+    if (!toolbar->Create(wxDynamicCast(m_parent, wxWindow), GetID(), GetPosition(), GetSize(), GetStyle())) {
         ReportError("could not create ribbon toolbar");
     } else {
         int minrows = GetLong("minrows", 1);
@@ -161,9 +161,10 @@ wxObject* MyWxRibbonXmlHandler::Handle_tool()
     wxRibbonToolBar* buttonBar = wxStaticCast(m_parent, wxRibbonToolBar);
     wxRibbonButtonKind kind = wxRIBBON_BUTTON_NORMAL;
 
-    if(GetBool(wxT("hybrid"))) kind = wxRIBBON_BUTTON_HYBRID;
+    if (GetBool(wxT("hybrid")))
+        kind = wxRIBBON_BUTTON_HYBRID;
 
-    if(GetBool("separator")) {
+    if (GetBool("separator")) {
         buttonBar->AddSeparator();
         return NULL;
     }
@@ -176,29 +177,33 @@ wxObject* MyWxRibbonXmlHandler::Handle_tool()
     // check whether we have dropdown tag inside
     wxMenu* menu = NULL; // menu for drop down items
     wxXmlNode* const nodeDropdown = GetParamNode("dropdown");
-    if(nodeDropdown) {
-        if(kind == wxRIBBON_BUTTON_NORMAL) kind = wxRIBBON_BUTTON_DROPDOWN;
+    if (nodeDropdown) {
+        if (kind == wxRIBBON_BUTTON_NORMAL)
+            kind = wxRIBBON_BUTTON_DROPDOWN;
 
         // also check for the menu specified inside dropdown (it is
         // optional and may be absent for e.g. dynamically-created
         // menus)
         wxXmlNode* const nodeMenu = nodeDropdown->GetChildren();
-        if(nodeMenu) {
+        if (nodeMenu) {
             wxObject* res = CreateResFromNode(nodeMenu, NULL);
             menu = wxDynamicCast(res, wxMenu);
-            if(!menu) { ReportError(nodeMenu, "drop-down tool contents can only be a wxMenu"); }
+            if (!menu) {
+                ReportError(nodeMenu, "drop-down tool contents can only be a wxMenu");
+            }
 
-            if(nodeMenu->GetNext()) {
+            if (nodeMenu->GetNext()) {
                 ReportError(nodeMenu->GetNext(), "unexpected extra contents under drop-down tool");
             }
         }
     }
 
-    if(!buttonBar->AddTool(GetID(), GetBitmap("bitmap"), GetBitmap("disabled-bitmap"), GetText("help"), kind)) {
+    if (!buttonBar->AddTool(GetID(), GetBitmap("bitmap"), GetBitmap("disabled-bitmap"), GetText("help"), kind)) {
         ReportError("could not create button");
     }
 
-    if(GetBool(wxT("disabled"))) buttonBar->EnableTool(GetID(), false);
+    if (GetBool(wxT("disabled")))
+        buttonBar->EnableTool(GetID(), false);
 
     return NULL; // nothing to return
 }
@@ -209,7 +214,8 @@ wxObject* MyWxRibbonXmlHandler::Handle_button()
 
     wxRibbonButtonKind kind = wxRIBBON_BUTTON_NORMAL;
 
-    if(GetBool(wxT("hybrid"))) kind = wxRIBBON_BUTTON_HYBRID;
+    if (GetBool(wxT("hybrid")))
+        kind = wxRIBBON_BUTTON_HYBRID;
 
     // FIXME: The code below uses wxXmlNode directly but this can't be done
     //        in the ribbon library code as it would force it to always link
@@ -219,30 +225,40 @@ wxObject* MyWxRibbonXmlHandler::Handle_button()
     // check whether we have dropdown tag inside
     wxMenu* menu = NULL; // menu for drop down items
     wxXmlNode* const nodeDropdown = GetParamNode("dropdown");
-    if(nodeDropdown) {
-        if(kind == wxRIBBON_BUTTON_NORMAL) kind = wxRIBBON_BUTTON_DROPDOWN;
+    if (nodeDropdown) {
+        if (kind == wxRIBBON_BUTTON_NORMAL)
+            kind = wxRIBBON_BUTTON_DROPDOWN;
 
         // also check for the menu specified inside dropdown (it is
         // optional and may be absent for e.g. dynamically-created
         // menus)
         wxXmlNode* const nodeMenu = nodeDropdown->GetChildren();
-        if(nodeMenu) {
+        if (nodeMenu) {
             wxObject* res = CreateResFromNode(nodeMenu, NULL);
             menu = wxDynamicCast(res, wxMenu);
-            if(!menu) { ReportError(nodeMenu, "drop-down tool contents can only be a wxMenu"); }
+            if (!menu) {
+                ReportError(nodeMenu, "drop-down tool contents can only be a wxMenu");
+            }
 
-            if(nodeMenu->GetNext()) {
+            if (nodeMenu->GetNext()) {
                 ReportError(nodeMenu->GetNext(), "unexpected extra contents under drop-down tool");
             }
         }
     }
 
-    if(!buttonBar->AddButton(GetID(), GetText("label"), GetBitmap("bitmap"), GetBitmap("small-bitmap"),
-                             GetBitmap("disabled-bitmap"), GetBitmap("small-disabled-bitmap"), kind, GetText("help"))) {
+    if (!buttonBar->AddButton(GetID(),
+                              GetText("label"),
+                              GetBitmap("bitmap"),
+                              GetBitmap("small-bitmap"),
+                              GetBitmap("disabled-bitmap"),
+                              GetBitmap("small-disabled-bitmap"),
+                              kind,
+                              GetText("help"))) {
         ReportError("could not create button");
     }
 
-    if(GetBool(wxT("disabled"))) buttonBar->EnableButton(GetID(), false);
+    if (GetBool(wxT("disabled")))
+        buttonBar->EnableButton(GetID(), false);
 
     return NULL; // nothing to return
 }
@@ -251,9 +267,9 @@ wxObject* MyWxRibbonXmlHandler::Handle_control()
 {
     wxRibbonControl* control = wxDynamicCast(m_instance, wxRibbonControl);
 
-    if(!m_instance)
+    if (!m_instance)
         ReportError("wxRibbonControl must be subclassed");
-    else if(!control)
+    else if (!control)
         ReportError("controls must derive from wxRibbonControl");
 
     control->Create(wxDynamicCast(m_parent, wxWindow), GetID(), GetPosition(), GetSize(), GetStyle());
@@ -265,13 +281,13 @@ wxObject* MyWxRibbonXmlHandler::Handle_page()
 {
     XRC_MAKE_INSTANCE(ribbonPage, wxRibbonPage);
 
-    if(!ribbonPage->Create(wxDynamicCast(m_parent, wxRibbonBar), GetID(), GetText("label"), GetBitmap("icon"),
-                           GetStyle())) {
+    if (!ribbonPage->Create(
+            wxDynamicCast(m_parent, wxRibbonBar), GetID(), GetText("label"), GetBitmap("icon"), GetStyle())) {
         ReportError("could not create ribbon page");
     } else {
         ribbonPage->SetName(GetName());
         bool selected = GetBool("selected");
-        if(selected) {
+        if (selected) {
             wxRibbonBar* ribbonbar = wxDynamicCast(m_parent, wxRibbonBar);
             ribbonbar->SetActivePage(ribbonPage);
         }
@@ -292,7 +308,7 @@ wxObject* MyWxRibbonXmlHandler::Handle_gallery()
 {
     XRC_MAKE_INSTANCE(ribbonGallery, wxRibbonGallery);
 
-    if(!ribbonGallery->Create(wxDynamicCast(m_parent, wxWindow), GetID(), GetPosition(), GetSize(), GetStyle())) {
+    if (!ribbonGallery->Create(wxDynamicCast(m_parent, wxWindow), GetID(), GetPosition(), GetSize(), GetStyle())) {
         ReportError("could not create ribbon gallery");
     } else {
         ribbonGallery->SetName(GetName());
@@ -322,8 +338,13 @@ wxObject* MyWxRibbonXmlHandler::Handle_panel()
 {
     XRC_MAKE_INSTANCE(ribbonPanel, wxRibbonPanel);
 
-    if(!ribbonPanel->Create(wxDynamicCast(m_parent, wxWindow), GetID(), GetText("label"), GetBitmap("icon"),
-                            GetPosition(), GetSize(), GetStyle("style", wxRIBBON_PANEL_DEFAULT_STYLE))) {
+    if (!ribbonPanel->Create(wxDynamicCast(m_parent, wxWindow),
+                             GetID(),
+                             GetText("label"),
+                             GetBitmap("icon"),
+                             GetPosition(),
+                             GetSize(),
+                             GetStyle("style", wxRIBBON_PANEL_DEFAULT_STYLE))) {
         ReportError("could not create ribbon panel");
     } else {
         ribbonPanel->SetName(GetName());
@@ -341,8 +362,11 @@ wxObject* MyWxRibbonXmlHandler::Handle_bar()
 
     Handle_RibbonArtProvider(ribbonBar);
 
-    if(!ribbonBar->Create(wxDynamicCast(m_parent, wxWindow), GetID(), GetPosition(), GetSize(),
-                          GetStyle("style", wxRIBBON_BAR_DEFAULT_STYLE))) {
+    if (!ribbonBar->Create(wxDynamicCast(m_parent, wxWindow),
+                           GetID(),
+                           GetPosition(),
+                           GetSize(),
+                           GetStyle("style", wxRIBBON_BAR_DEFAULT_STYLE))) {
         ReportError("could not create ribbonbar");
     } else {
         ribbonBar->SetName(GetName());

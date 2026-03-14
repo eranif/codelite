@@ -20,5 +20,7 @@ void SingleBitmapAndTextDlg::OnOKUI(wxUpdateUIEvent& event)
 void SingleBitmapAndTextDlg::OnSelectBitmap(wxCommandEvent& event)
 {
     BitmapSelectorDlg dlg(this, m_textCtrlBmp->GetValue());
-    if(dlg.ShowModal() == wxID_OK) { m_textCtrlBmp->ChangeValue(dlg.GetBitmapFile()); }
+    if (dlg.ShowModal() == wxID_OK) {
+        m_textCtrlBmp->ChangeValue(dlg.GetBitmapFile());
+    }
 }

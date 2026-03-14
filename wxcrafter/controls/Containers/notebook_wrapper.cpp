@@ -1,6 +1,8 @@
 #include "notebook_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "wxgui_defs.h"
+
 #include <wx/notebook.h>
 
 NotebookWrapper::NotebookWrapper()
@@ -11,9 +13,10 @@ NotebookWrapper::NotebookWrapper()
     PREPEND_STYLE_FALSE(wxNB_MULTILINE);
     PREPEND_STYLE_FALSE(wxNB_NOPAGETHEME);
 
-    RegisterEvent(wxT("wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED"), wxT("wxNotebookEvent"),
-                  _("The page selection was changed"));
-    RegisterEvent(wxT("wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGING"), wxT("wxNotebookEvent"),
+    RegisterEvent(
+        wxT("wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGED"), wxT("wxNotebookEvent"), _("The page selection was changed"));
+    RegisterEvent(wxT("wxEVT_COMMAND_NOTEBOOK_PAGE_CHANGING"),
+                  wxT("wxNotebookEvent"),
                   _("The page selection is about to be changed. This event can be vetoed"));
     m_namePattern = wxT("m_notebook");
     SetName(GenerateName());

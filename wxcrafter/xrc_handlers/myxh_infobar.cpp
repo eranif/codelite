@@ -1,4 +1,5 @@
 #include "myxh_infobar.h"
+
 #include <wx/infobar.h>
 
 MyWxInfoBarCtrlHandler::MyWxInfoBarCtrlHandler()
@@ -9,7 +10,7 @@ MyWxInfoBarCtrlHandler::MyWxInfoBarCtrlHandler()
 
 wxObject* MyWxInfoBarCtrlHandler::DoCreateResource()
 {
-    if(m_class == "wxInfoBarButton") {
+    if (m_class == "wxInfoBarButton") {
         HandleButton();
 
     } else {
@@ -33,7 +34,9 @@ void MyWxInfoBarCtrlHandler::HandleButton()
 
     wxString buttonLabel = GetText("label");
     int buttonId = GetID();
-    if(buttonId != wxNOT_FOUND) { bar->AddButton(buttonId, buttonLabel); }
+    if (buttonId != wxNOT_FOUND) {
+        bar->AddButton(buttonId, buttonLabel);
+    }
 }
 
 wxInfoBar* MyWxInfoBarCtrlHandler::HandleInfoBar()
@@ -47,16 +50,16 @@ wxInfoBar* MyWxInfoBarCtrlHandler::HandleInfoBar()
 
     int nIconId = wxICON_NONE;
 
-    if(iconId == "wxICON_NONE")
+    if (iconId == "wxICON_NONE")
         nIconId = wxICON_NONE;
 
-    else if(iconId == "wxICON_ERROR")
+    else if (iconId == "wxICON_ERROR")
         nIconId = wxICON_ERROR;
 
-    else if(iconId == "wxICON_INFORMATION")
+    else if (iconId == "wxICON_INFORMATION")
         nIconId = wxICON_INFORMATION;
 
-    else if(iconId == "wxICON_WARNING")
+    else if (iconId == "wxICON_WARNING")
         nIconId = wxICON_WARNING;
 
     infobar->SetName(GetName());

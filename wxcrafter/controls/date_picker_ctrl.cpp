@@ -1,6 +1,8 @@
 #include "date_picker_ctrl.h"
+
 #include "allocator_mgr.h"
 #include "wxgui_defs.h"
+
 #include <wx/datectrl.h>
 
 DatePickerCtrl::DatePickerCtrl()
@@ -12,7 +14,8 @@ DatePickerCtrl::DatePickerCtrl()
     PREPEND_STYLE_FALSE(wxDP_ALLOWNONE);
     PREPEND_STYLE_FALSE(wxDP_SHOWCENTURY);
 
-    RegisterEvent(wxT("wxEVT_DATE_CHANGED"), wxT("wxDateEvent"),
+    RegisterEvent(wxT("wxEVT_DATE_CHANGED"),
+                  wxT("wxDateEvent"),
                   _("This event fires when the user changes the current selection in the control."));
     m_namePattern = wxT("m_datePicker");
     SetName(GenerateName());

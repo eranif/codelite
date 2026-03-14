@@ -15,7 +15,8 @@ void AuiPaneInfoListView::Construct(wxPropertyGrid* pg, wxcWidget* wb)
     m_wxcWidget = wb;
     CHECK_POINTER(m_wxcWidget);
 
-    if(m_wxcWidget->IsAuiPane() == false) return;
+    if (m_wxcWidget->IsAuiPane() == false)
+        return;
 
     m_wxcWidget->GetAuiPaneInfo().Construct(pg);
 }

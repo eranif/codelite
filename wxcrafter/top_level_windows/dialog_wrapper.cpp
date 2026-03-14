@@ -18,10 +18,12 @@ DialogWrapper::DialogWrapper()
     PREPEND_STYLE(wxSTAY_ON_TOP, false);
     PREPEND_STYLE(wxDEFAULT_DIALOG_STYLE, true);
 
-    RegisterEvent(wxT("wxEVT_INIT_DIALOG"), wxT("wxInitDialogEvent"),
+    RegisterEvent(wxT("wxEVT_INIT_DIALOG"),
+                  wxT("wxInitDialogEvent"),
                   _("A wxInitDialogEvent is sent as a dialog or panel is being initialised. Handlers for this event "
                     "can transfer data to the window.\nThe default handler calls wxWindow::TransferDataToWindow"));
-    RegisterEvent(wxT("wxEVT_CLOSE_WINDOW"), wxT("wxCloseEvent"),
+    RegisterEvent(wxT("wxEVT_CLOSE_WINDOW"),
+                  wxT("wxCloseEvent"),
                   _("Process a close event. This event applies to wxFrame and wxDialog classes"));
     RegisterEvent(wxT("wxEVT_ACTIVATE"), wxT("wxActivateEvent"), _("Process a wxEVT_ACTIVATE event"));
     RegisterEvent(wxT("wxEVT_ACTIVATE_APP"), wxT("wxActivateEvent"), _("Process a wxEVT_ACTIVATE_APP event"));
@@ -101,13 +103,13 @@ wxString DialogWrapper::GetWxClassName() const { return wxT("wxDialog"); }
 
 void DialogWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    if(type != wxcWidget::XRC_LIVE) {
+    if (type != wxcWidget::XRC_LIVE) {
         text << wxT("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>")
              << wxT("<resource xmlns=\"http://www.wxwidgets.org/wxxrc\">");
     }
 
     wxString centred;
-    if(!PropertyString(PROP_CENTRE_ON_SCREEN).empty()) {
+    if (!PropertyString(PROP_CENTRE_ON_SCREEN).empty()) {
         centred = wxT("<centered>1</centered>"); // In XRC centring is on/off; it doesn't discriminate between
                                                  // wxBOTH/wxVERTICAL/wxHORIZONTAL
     }
@@ -119,7 +121,9 @@ void DialogWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     ChildrenXRC(text, type);
     text << wxT("</object>");
 
-    if(type != wxcWidget::XRC_LIVE) { text << wxT("</resource>"); }
+    if (type != wxcWidget::XRC_LIVE) {
+        text << wxT("</resource>");
+    }
 }
 
 void DialogWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
@@ -128,13 +132,17 @@ void DialogWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("centered"));
-    if(propertynode) { SetPropertyString(PROP_CENTRE_ON_SCREEN, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_CENTRE_ON_SCREEN, propertynode->GetNodeContent());
+    }
 
     // We've already done 'size' in the baseclass, but do it again for TLWindows
     // That's because if no size was specified, wxC inflicts 500,300. This isn't what the user expected
     // So, if there is *not* a specified size, overwrite the wxC default with wxDefaultSize
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("size"));
-    if(!propertynode) { SetPropertyString(PROP_SIZE, "-1,-1"); }
+    if (!propertynode) {
+        SetPropertyString(PROP_SIZE, "-1,-1");
+    }
 }
 
 void DialogWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -143,13 +151,17 @@ void DialogWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("centered"));
-    if(propertynode) { SetPropertyString(PROP_CENTRE_ON_SCREEN, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_CENTRE_ON_SCREEN, propertynode->GetNodeContent());
+    }
 
     // We've already done 'size' in the baseclass, but do it again for TLWindows
     // That's because if no size was specified, wxC inflicts 500,300. This isn't what the user expected
     // So, if there is *not* a specified size, overwrite the wxC default with wxDefaultSize
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("size"));
-    if(!propertynode) { SetPropertyString(PROP_SIZE, "-1,-1"); }
+    if (!propertynode) {
+        SetPropertyString(PROP_SIZE, "-1,-1");
+    }
 }
 
 void DialogWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -158,10 +170,14 @@ void DialogWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "center");
-    if(propertynode) { SetPropertyString(PROP_CENTRE_ON_SCREEN, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_CENTRE_ON_SCREEN, propertynode->GetNodeContent());
+    }
     // See the comment in LoadPropertiesFromXRC()
     propertynode = XmlUtils::FindNodeByName(node, "property", wxT("size"));
-    if(!propertynode) { SetPropertyString(PROP_SIZE, "-1,-1"); }
+    if (!propertynode) {
+        SetPropertyString(PROP_SIZE, "-1,-1");
+    }
 }
 
 bool DialogWrapper::HasIcon() const { return true; }

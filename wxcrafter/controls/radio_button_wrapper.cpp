@@ -53,7 +53,9 @@ void RadioButtonWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("value"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 }
 
 void RadioButtonWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -62,9 +64,13 @@ void RadioButtonWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("label"));
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("selected"));
-    if(propertynode) { SetPropertyString(PROP_SELECTION, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_SELECTION, propertynode->GetNodeContent());
+    }
 }
 
 void RadioButtonWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -73,5 +79,7 @@ void RadioButtonWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "value");
-    if(propertynode) { SetPropertyString(PROP_VALUE, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_VALUE, propertynode->GetNodeContent());
+    }
 }

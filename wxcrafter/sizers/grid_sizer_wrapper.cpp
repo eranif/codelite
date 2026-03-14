@@ -26,7 +26,7 @@ wxString GridSizerWrapper::CppCtorCode() const
 {
     wxString code;
 
-    if(!KeepAsClassMember()) {
+    if (!KeepAsClassMember()) {
         code << "wxGridSizer* ";
     }
 
@@ -35,8 +35,8 @@ wxString GridSizerWrapper::CppCtorCode() const
 
     code << GenerateMinSizeCode();
 
-    if(IsMainSizer()) {
-        if(GetParent()->IsTopWindow()) {
+    if (IsMainSizer()) {
+        if (GetParent()->IsTopWindow()) {
             code << "this->SetSizer(" << GetName() << ");\n";
         } else {
             code << GetParent()->GetName() << "->SetSizer(" << GetName() << ");\n";
@@ -75,22 +75,22 @@ void GridSizerWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
 void GridSizerWrapper::DoLoadXRCProperties(const wxXmlNode* node)
 {
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, "cols");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_COLS, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "rows");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_ROWS, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "vgap");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_VGAP, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, "hgap");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_HGAP, propertynode->GetNodeContent());
     }
 }
@@ -101,22 +101,22 @@ void GridSizerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "cols");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_COLS, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "rows");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_ROWS, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "vgap");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_VGAP, propertynode->GetNodeContent());
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "hgap");
-    if(propertynode) {
+    if (propertynode) {
         SetPropertyString(PROP_HGAP, propertynode->GetNodeContent());
     }
 }

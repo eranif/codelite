@@ -2,6 +2,7 @@
 #define PREVIEWDIALOG_H
 
 #include "dialog_wrapper.h"
+
 #include <wx/dialog.h>
 
 class PreviewDialog : public wxDialog

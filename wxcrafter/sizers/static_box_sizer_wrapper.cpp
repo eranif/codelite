@@ -11,7 +11,7 @@ StaticBoxSizerWrapper::StaticBoxSizerWrapper()
     m_type = ID_WXSTATICBOXSIZER;
     m_styles.Clear(); // Sizer has no styles
 
-    const wxArrayString arr = StdToWX::ToArrayString({ "Vertical", "Horizontal" });
+    const wxArrayString arr = StdToWX::ToArrayString({"Vertical", "Horizontal"});
 
     SetPropertyString(_("Common Settings"), "wxStaticBoxSizer");
     Add<ChoiceProperty>(PROP_ORIENTATION, arr, 0, _("Sizer orientation"));
@@ -32,15 +32,15 @@ wxString StaticBoxSizerWrapper::CppCtorCode() const
     wxString staticBox;
     staticBox << " new wxStaticBox(" << GetWindowParent() << ", wxID_ANY, " << Label() << ")";
 
-    if(!KeepAsClassMember()) {
+    if (!KeepAsClassMember()) {
         code << "wxStaticBoxSizer* ";
     }
 
     code << GetName() << " = new wxStaticBoxSizer(" << staticBox << ", " << orient << ");\n";
     code << GenerateMinSizeCode();
 
-    if(IsMainSizer()) {
-        if(GetParent()->IsTopWindow()) {
+    if (IsMainSizer()) {
+        if (GetParent()->IsTopWindow()) {
             code << "this->SetSizer(" << GetName() << ");\n";
 
         } else {
@@ -80,7 +80,7 @@ void StaticBoxSizerWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, "orient");
-    if(propertynode) {
+    if (propertynode) {
         // BoxSizerWrapper uses wxVERTICAL/wxHORIZONTAL but for some reason StaticBoxSizerWrapper has
         // Vertical/Horizontal
         bool horizontal = propertynode->GetNodeContent().Lower().Contains("horizontal");
@@ -94,7 +94,7 @@ void StaticBoxSizerWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, "orient");
-    if(propertynode) {
+    if (propertynode) {
         bool horizontal = propertynode->GetNodeContent().Lower().Contains("horizontal");
         SetPropertyString(PROP_ORIENTATION, horizontal ? "Horizontal" : "Vertical");
     }
@@ -106,7 +106,7 @@ void StaticBoxSizerWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "orient");
-    if(propertynode) {
+    if (propertynode) {
         bool horizontal = propertynode->GetNodeContent().Lower().Contains("horizontal");
         SetPropertyString(PROP_ORIENTATION, horizontal ? "Horizontal" : "Vertical");
     }

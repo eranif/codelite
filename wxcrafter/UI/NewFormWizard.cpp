@@ -17,11 +17,11 @@
 
 static wxString GetDisplayName(const wxFileName& fn)
 {
-    if(!fn.IsOk()) {
+    if (!fn.IsOk()) {
         return wxEmptyString;
     }
     wxString displayName;
-    if(fn.GetDirCount()) {
+    if (fn.GetDirCount()) {
         displayName << fn.GetDirs().Last() << wxFileName::GetPathSeparator();
     }
     displayName << fn.GetFullName();
@@ -33,7 +33,7 @@ NewFormWizard::NewFormWizard(wxWindow* parent, IManager* mgr, int type)
     , m_mgr(mgr)
 {
     wxString stringSelection;
-    switch(type) {
+    switch (type) {
     case ID_WXDIALOG:
         stringSelection = wxT("wxDialog");
         break;
@@ -57,14 +57,14 @@ NewFormWizard::NewFormWizard(wxWindow* parent, IManager* mgr, int type)
         break;
     }
 
-    if(stringSelection.IsEmpty() == false)
+    if (stringSelection.IsEmpty() == false)
         m_choiceFormType->SetStringSelection(stringSelection);
 
-    if(m_mgr) {
+    if (m_mgr) {
         TreeItemInfo item = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
-        if(item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
+        if (item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
             wxString path = VirtualDirectorySelectorDlg::DoGetPath(m_mgr->GetWorkspaceTree(), item.m_item, false);
-            if(path.IsEmpty() == false) {
+            if (path.IsEmpty() == false) {
                 m_textCtrlVirtualFolder->ChangeValue(path);
                 m_textCtrlVirtualFolder->SetEditable(false);
             }
@@ -75,39 +75,39 @@ NewFormWizard::NewFormWizard(wxWindow* parent, IManager* mgr, int type)
     std::set<wxString> uniqueFiles;
     std::vector<std::pair<wxString, wxString>> wxcp_files;
 
-    if(clCxxWorkspaceST::Get()->IsOpen()) {
+    if (clCxxWorkspaceST::Get()->IsOpen()) {
         wxArrayString allFiles;
         clCxxWorkspaceST::Get()->GetWorkspaceFiles(allFiles);
-        for(size_t i = 0; i < allFiles.GetCount(); ++i) {
+        for (size_t i = 0; i < allFiles.GetCount(); ++i) {
             const wxString& filename = allFiles.Item(i);
             wxFileName fn(filename);
-            if(fn.GetExt().Lower() == "wxcp") {
-                if(uniqueFiles.count(filename) == 0) {
+            if (fn.GetExt().Lower() == "wxcp") {
+                if (uniqueFiles.count(filename) == 0) {
                     uniqueFiles.insert(filename);
 
                     // we keep {display name:fullpath} pairs
-                    wxcp_files.push_back({ GetDisplayName(fn), fn.GetFullPath() });
+                    wxcp_files.push_back({GetDisplayName(fn), fn.GetFullPath()});
                 }
             }
         }
 
-        for(const auto& p : wxcp_files) {
+        for (const auto& p : wxcp_files) {
             m_choiceWxcp->Append(p.first, new wxStringClientData(p.second));
         }
     }
 
-    if(wxcProjectMetadata::Get().IsLoaded()) {
+    if (wxcProjectMetadata::Get().IsLoaded()) {
         wxFileName fn(wxcProjectMetadata::Get().GetProjectFile());
         m_choiceWxcp->Append(GetDisplayName(fn), new wxStringClientData(fn.GetFullPath()));
     }
 
-    if(!m_choiceWxcp->IsEmpty()) {
+    if (!m_choiceWxcp->IsEmpty()) {
         m_choiceWxcp->SetSelection(0);
     }
 
     wxFileName fnProject(wxcProjectMetadata::Get().GetProjectFile());
     int where = m_choiceWxcp->FindString(GetDisplayName(fnProject));
-    if(where != wxNOT_FOUND) {
+    if (where != wxNOT_FOUND) {
         m_choiceWxcp->SetSelection(where);
     }
 }
@@ -117,11 +117,11 @@ void NewFormWizard::OnFormTypeSelected(wxCommandEvent& event) { event.Skip(); }
 void NewFormWizard::OnSelectVirtualFolder(wxCommandEvent& event)
 {
     wxString suggestedName = m_textCtrlVirtualFolder->GetValue();
-    if(suggestedName.empty() && clCxxWorkspaceST::Get()) {
+    if (suggestedName.empty() && clCxxWorkspaceST::Get()) {
         suggestedName = clCxxWorkspaceST::Get()->GetActiveProjectName();
     }
     VirtualDirectorySelectorDlg selector(this, clCxxWorkspaceST::Get(), suggestedName);
-    if(selector.ShowModal() == wxID_OK) {
+    if (selector.ShowModal() == wxID_OK) {
         m_textCtrlVirtualFolder->SetEditable(true);
         m_textCtrlVirtualFolder->ChangeValue(selector.GetVirtualDirectoryPath());
         m_textCtrlVirtualFolder->SetEditable(false);
@@ -132,19 +132,19 @@ void NewFormWizard::OnFinishClicked(wxWizardEvent& event) { event.Skip(); }
 
 int NewFormWizard::GetFormType() const
 {
-    if(IsDialog())
+    if (IsDialog())
         return ID_WXDIALOG;
-    else if(IsFrame())
+    else if (IsFrame())
         return ID_WXFRAME;
-    else if(IsWizard())
+    else if (IsWizard())
         return ID_WXWIZARD;
-    else if(IsPanel())
+    else if (IsPanel())
         return ID_WXPANEL_TOPLEVEL;
-    else if(IsImageList())
+    else if (IsImageList())
         return ID_WXIMAGELIST;
-    else if(IsAuiToolBar())
+    else if (IsAuiToolBar())
         return ID_WXAUITOOLBARTOPLEVEL;
-    else if(IsPopupWindow())
+    else if (IsPopupWindow())
         return ID_WXPOPUPWINDOW;
     return wxNOT_FOUND;
 }
@@ -157,33 +157,35 @@ wxString NewFormWizard::GetGeneratedFileBaseName() const { return m_textCtrFileN
 
 void NewFormWizard::OnWizardPageChanging(wxWizardEvent& event)
 {
-    if(event.GetDirection() && m_wizardPageGeneratedCode == event.GetPage()) {
+    if (event.GetDirection() && m_wizardPageGeneratedCode == event.GetPage()) {
 
 #if STANDALONE_BUILD
-        if(m_choiceWxcp->IsEmpty()) {
-            ::wxMessageBox(wxString() << _("You must create a project before you can add new forms"), "wxCrafter",
+        if (m_choiceWxcp->IsEmpty()) {
+            ::wxMessageBox(wxString() << _("You must create a project before you can add new forms"),
+                           "wxCrafter",
                            wxOK | wxCENTER | wxICON_WARNING);
             event.Veto();
             return;
         }
 #endif
 
-        if(m_textCtrFileName->IsEmpty() &&
-           (GetFormType() != ID_WXIMAGELIST && GetFormType() != ID_WXAUITOOLBARTOPLEVEL)) {
+        if (m_textCtrFileName->IsEmpty() &&
+            (GetFormType() != ID_WXIMAGELIST && GetFormType() != ID_WXAUITOOLBARTOPLEVEL)) {
             ::wxMessageBox(_("Please enter a file name"), wxT("wxCrafter"), wxICON_WARNING | wxCENTER | wxOK);
             event.Veto();
             return;
         }
 
-        if(m_textCtrlClassName->IsEmpty()) {
+        if (m_textCtrlClassName->IsEmpty()) {
             ::wxMessageBox(_("Please enter a class name"), wxT("wxCrafter"), wxICON_WARNING | wxCENTER | wxOK);
             event.Veto();
             return;
         }
 
 #if !STANDALONE_BUILD
-        if(!clFileSystemWorkspace::Get().IsOpen() && m_textCtrlVirtualFolder->IsEmpty()) {
-            ::wxMessageBox(_("Please select a virtual folder for the generated code"), wxT("wxCrafter"),
+        if (!clFileSystemWorkspace::Get().IsOpen() && m_textCtrlVirtualFolder->IsEmpty()) {
+            ::wxMessageBox(_("Please select a virtual folder for the generated code"),
+                           wxT("wxCrafter"),
                            wxICON_WARNING | wxCENTER | wxOK);
             event.Veto();
             return;
@@ -208,9 +210,9 @@ void NewFormWizard::OnNewWxcpProject(wxCommandEvent& event)
 
     wxFileName defaultValue(::wxGetCwd(), "my_wxcp_file.wxcp");
 
-    if(m_mgr) {
+    if (m_mgr) {
         ProjectPtr project = m_mgr->GetSelectedProject();
-        if(project) {
+        if (project) {
             defaultValue.SetPath(project->GetFileName().GetPath());
         } else {
             defaultValue.SetPath(::wxGetCwd());
@@ -219,7 +221,7 @@ void NewFormWizard::OnNewWxcpProject(wxCommandEvent& event)
     }
 
     wxString newfile = ::wxGetTextFromUser(msg, wxT("wxCrafter"), defaultValue.GetFullPath());
-    if(newfile.IsEmpty())
+    if (newfile.IsEmpty())
         return;
 
     wxFileName fn(newfile);
@@ -227,7 +229,7 @@ void NewFormWizard::OnNewWxcpProject(wxCommandEvent& event)
 
     wxString displayName = GetDisplayName(fn);
     int where = m_choiceWxcp->FindString(displayName);
-    if(where == wxNOT_FOUND) {
+    if (where == wxNOT_FOUND) {
         int newpos = m_choiceWxcp->Append(displayName, new wxStringClientData(fn.GetFullPath()));
         m_choiceWxcp->SetSelection(newpos);
 
@@ -240,7 +242,7 @@ void NewFormWizard::OnNewWxcpProject(wxCommandEvent& event)
 wxString NewFormWizard::GetWxcpFile() const
 {
     int selection = m_choiceWxcp->GetSelection();
-    if(selection == wxNOT_FOUND) {
+    if (selection == wxNOT_FOUND) {
         return "";
     }
 
@@ -276,13 +278,13 @@ void NewFormWizard::OnInheritedNameFocus(wxFocusEvent& event)
 {
     event.Skip();
 
-    if(!m_textCtrlInheritedClassName->IsEmpty() || m_textCtrlClassName->IsEmpty()) {
+    if (!m_textCtrlInheritedClassName->IsEmpty() || m_textCtrlClassName->IsEmpty()) {
         // There's nothing to copy, or we already have an entry
         return;
     }
 
     wxString suggestion = m_textCtrlClassName->GetValue();
-    if(suggestion.Replace("Base", "") || suggestion.Replace("base", "")) {
+    if (suggestion.Replace("Base", "") || suggestion.Replace("base", "")) {
         m_textCtrlInheritedClassName->ChangeValue(suggestion);
     }
 }
@@ -291,7 +293,7 @@ void NewFormWizard::OnFilenameFocus(wxFocusEvent& event)
 {
     event.Skip();
 
-    if(!m_textCtrFileName->IsEmpty() || m_textCtrlInheritedClassName->IsEmpty()) {
+    if (!m_textCtrFileName->IsEmpty() || m_textCtrlInheritedClassName->IsEmpty()) {
         // There's nothing to copy, or we already have an entry
         return;
     }
@@ -327,14 +329,14 @@ void NewFormWizard::OnSelectVDUI(wxUpdateUIEvent& event)
 void NewFormWizard::OnBrowseWxcpFile(wxCommandEvent& event)
 {
     wxString path = wxFileSelector(_("Select wxCrafter file"), wxEmptyString, wxEmptyString, "*.wxcp");
-    if(path.empty()) {
+    if (path.empty()) {
         return;
     }
 
     wxFileName fn(path);
     wxString displayName = GetDisplayName(fn);
     int where = m_choiceWxcp->FindString(displayName);
-    if(where == wxNOT_FOUND) {
+    if (where == wxNOT_FOUND) {
         where = m_choiceWxcp->Append(displayName, new wxStringClientData(path));
     }
     m_choiceWxcp->SetSelection(where);

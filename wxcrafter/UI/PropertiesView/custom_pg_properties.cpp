@@ -6,14 +6,18 @@
 
 bool wxPG_Colour::OnEvent(wxPropertyGrid* propgrid, wxWindow* primary, wxEvent& event)
 {
-    if(propgrid->IsMainButtonEvent(event)) {
+    if (propgrid->IsMainButtonEvent(event)) {
         SetValueToUnspecified();
         ColorProperty* pb = reinterpret_cast<ColorProperty*>(GetClientData());
-        if(pb) { pb->SetValue("<Default>"); }
+        if (pb) {
+            pb->SetValue("<Default>");
+        }
 
         // Notify about modifications
         wxCommandEvent evt(wxEVT_PROPERTIES_MODIFIED);
-        if(pb->GetLabel() == PROP_NAME) { evt.SetString(GetValueAsString()); }
+        if (pb->GetLabel() == PROP_NAME) {
+            evt.SetString(GetValueAsString());
+        }
         EventNotifier::Get()->AddPendingEvent(evt);
         return true;
 
@@ -26,8 +30,10 @@ bool wxPG_Colour::OnEvent(wxPropertyGrid* propgrid, wxWindow* primary, wxEvent& 
 // wxcPGChoiceAndButtonEditor
 // -----------------------------------------------------------------------
 
-wxPGWindowList wxcPGChoiceAndButtonEditor::CreateControls(wxPropertyGrid* propGrid, wxPGProperty* property,
-                                                          const wxPoint& pos, const wxSize& sz) const
+wxPGWindowList wxcPGChoiceAndButtonEditor::CreateControls(wxPropertyGrid* propGrid,
+                                                          wxPGProperty* property,
+                                                          const wxPoint& pos,
+                                                          const wxSize& sz) const
 {
     // Use one two units smaller to match size of the combo's dropbutton.
     // (normally a bigger button is used because it looks better)
@@ -46,7 +52,9 @@ wxPGWindowList wxcPGChoiceAndButtonEditor::CreateControls(wxPropertyGrid* propGr
     wxWindow* bt = propGrid->GenerateEditorButton(bt_pos, bt_sz);
     bt->SetToolTip(_("Clear"));
     wxButton* button = dynamic_cast<wxButton*>(bt);
-    if(button) { button->SetLabel("X"); }
+    if (button) {
+        button->SetLabel("X");
+    }
 
     // Size of choice.
     wxSize ch_sz(sz.x - bt->GetSize().x, sz.y);

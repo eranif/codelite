@@ -19,7 +19,7 @@ wxcAboutDlg::wxcAboutDlg(wxWindow* parent)
     m_staticTextVersion->SetLabel(vers);
 
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
+    if (lexer) {
         lexer->ApplySystemColours(m_stcLicense);
     }
 

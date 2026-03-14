@@ -7,16 +7,16 @@
 
 class wxcWidget;
 #define CHECK_POINTER(d) \
-    if(!d)               \
+    if (!d)              \
         return;
 #define CHECK_POINTER_RET_NULL(d) \
-    if(!d)                        \
+    if (!d)                       \
         return NULL;
 #define CHECK_POINTER_RET_FALSE(d) \
-    if(!d)                         \
+    if (!d)                        \
         return false;
-#define CHECK_TREEITEM(item) \
-    if(item.IsOk() == false) \
+#define CHECK_TREEITEM(item)  \
+    if (item.IsOk() == false) \
         return;
 
 #define STRINGFY(flag) wxString(#flag, wxConvUTF8)
@@ -56,7 +56,7 @@ class wxcWidget;
 #define REMOVE_STYLE(styleBit)                           \
     {                                                    \
         wxString name = wxString(#styleBit, wxConvUTF8); \
-        if(m_styles.Contains(name))                      \
+        if (m_styles.Contains(name))                     \
             m_styles.Remove(name);                       \
     }
 

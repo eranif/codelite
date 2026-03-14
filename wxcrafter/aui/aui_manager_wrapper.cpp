@@ -41,7 +41,8 @@ AuiManagerWrapper::AuiManagerWrapper()
     Add<IntProperty>(PROP_AUI_SASH_SIZE, -1, _("Set the wxAUI sash size"));
 
     Add<CategoryProperty>(_("Caption"));
-    wxArrayString gradientTypes = StdToWX::ToArrayString({"wxAUI_GRADIENT_NONE", "wxAUI_GRADIENT_VERTICAL", "wxAUI_GRADIENT_HORIZONTAL"});
+    wxArrayString gradientTypes =
+        StdToWX::ToArrayString({"wxAUI_GRADIENT_NONE", "wxAUI_GRADIENT_VERTICAL", "wxAUI_GRADIENT_HORIZONTAL"});
     Add<ChoiceProperty>(PROP_AUI_GRADIENT_TYPE, gradientTypes, 0, _("Gradient type"));
 
     Add<ColorProperty>(PROP_AUI_CAPTION_COLOUR, "<Default>", _("Active caption colour"));
@@ -64,15 +65,17 @@ AuiManagerWrapper::AuiManagerWrapper()
     PREPEND_STYLE(wxAUI_MGR_NO_VENETIAN_BLINDS_FADE, false);
     PREPEND_STYLE(wxAUI_MGR_LIVE_RESIZE, true);
 
-    RegisterEvent("wxEVT_AUI_PANE_BUTTON", "wxAuiManagerEvent",
-                  _("Triggered when any button is pressed for any docked panes"));
-    RegisterEvent("wxEVT_AUI_PANE_CLOSE", "wxAuiManagerEvent",
-                  _("Triggered when a docked or floating pane is closed."));
+    RegisterEvent(
+        "wxEVT_AUI_PANE_BUTTON", "wxAuiManagerEvent", _("Triggered when any button is pressed for any docked panes"));
+    RegisterEvent(
+        "wxEVT_AUI_PANE_CLOSE", "wxAuiManagerEvent", _("Triggered when a docked or floating pane is closed."));
     RegisterEvent("wxEVT_AUI_PANE_MAXIMIZE", "wxAuiManagerEvent", _("Triggered when a pane is maximized."));
     RegisterEvent("wxEVT_AUI_PANE_RESTORE", "wxAuiManagerEvent", _("Triggered when a pane is restored."));
-    RegisterEvent("wxEVT_AUI_PANE_ACTIVATED", "wxAuiManagerEvent",
+    RegisterEvent("wxEVT_AUI_PANE_ACTIVATED",
+                  "wxAuiManagerEvent",
                   _("Triggered when a pane is made 'active'. This event is new since wxWidgets 2.9.4."));
-    RegisterEvent("wxEVT_AUI_RENDER", "wxAuiManagerEvent",
+    RegisterEvent("wxEVT_AUI_RENDER",
+                  "wxAuiManagerEvent",
                   _("This event can be caught to override the default renderer in order "
                     "to custom draw your wxAuiManager window (not recommended)."));
 
@@ -87,52 +90,52 @@ wxString AuiManagerWrapper::CppCtorCode() const
     wxString cppCode;
     cppCode << GetName() << " = new wxAuiManager;\n";
 
-    if(GetParent()->IsTopWindow()) {
+    if (GetParent()->IsTopWindow()) {
         cppCode << GetName() << "->SetManagedWindow( this );\n";
     } else {
         cppCode << GetName() << "->SetManagedWindow( " << GetParent()->GetName() << " );\n";
     }
     cppCode << GetName() << "->SetFlags( " << StyleFlags("0") << ");\n";
-    if(PropertyInt(PROP_AUI_SASH_SIZE) != -1)
+    if (PropertyInt(PROP_AUI_SASH_SIZE) != -1)
         cppCode << GetName() << "->GetArtProvider()->SetMetric( wxAUI_DOCKART_SASH_SIZE, "
                 << PropertyInt(PROP_AUI_SASH_SIZE) << ");\n";
 
-    if(PropertyInt(PROP_AUI_PANE_BORDER_SIZE) != -1)
+    if (PropertyInt(PROP_AUI_PANE_BORDER_SIZE) != -1)
         cppCode << GetName() << "->GetArtProvider()->SetMetric( wxAUI_DOCKART_PANE_BORDER_SIZE, "
                 << PropertyInt(PROP_AUI_PANE_BORDER_SIZE) << ");\n";
 
     wxString col;
 
     col = wxCrafter::ColourToCpp(PropertyString(PROP_AUI_SASH_COLOUR));
-    if(!col.IsEmpty())
+    if (!col.IsEmpty())
         cppCode << GetName() << "->GetArtProvider()->SetColor( wxAUI_DOCKART_SASH_COLOUR, " << col << ");\n";
 
     col = wxCrafter::ColourToCpp(PropertyString(PROP_AUI_CAPTION_COLOUR));
-    if(!col.IsEmpty())
+    if (!col.IsEmpty())
         cppCode << GetName() << "->GetArtProvider()->SetColor( wxAUI_DOCKART_ACTIVE_CAPTION_COLOUR, " << col << ");\n";
 
     col = wxCrafter::ColourToCpp(PropertyString(PROP_AUI_CAPTION_COLOUR_GRADIENT));
-    if(!col.IsEmpty())
+    if (!col.IsEmpty())
         cppCode << GetName() << "->GetArtProvider()->SetColor( wxAUI_DOCKART_ACTIVE_CAPTION_GRADIENT_COLOUR, " << col
                 << ");\n";
 
     col = wxCrafter::ColourToCpp(PropertyString(PROP_AUI_INACTIVE_CAPTION_COLOUR));
-    if(!col.IsEmpty())
+    if (!col.IsEmpty())
         cppCode << GetName() << "->GetArtProvider()->SetColor( wxAUI_DOCKART_INACTIVE_CAPTION_COLOUR, " << col
                 << ");\n";
 
     col = wxCrafter::ColourToCpp(PropertyString(PROP_AUI_INACTIVE_CAPTION_COLOUR_GRADIENT));
-    if(!col.IsEmpty())
+    if (!col.IsEmpty())
         cppCode << GetName() << "->GetArtProvider()->SetColor( wxAUI_DOCKART_INACTIVE_CAPTION_GRADIENT_COLOUR, " << col
                 << ");\n";
 
     col = wxCrafter::ColourToCpp(PropertyString(PROP_AUI_ACTIVE_CAPTION_TEXT_COLOUR));
-    if(!col.IsEmpty())
+    if (!col.IsEmpty())
         cppCode << GetName() << "->GetArtProvider()->SetColor( wxAUI_DOCKART_ACTIVE_CAPTION_TEXT_COLOUR, " << col
                 << ");\n";
 
     col = wxCrafter::ColourToCpp(PropertyString(PROP_AUI_INACTIVE_CAPTION_TEXT_COLOUR));
-    if(!col.IsEmpty())
+    if (!col.IsEmpty())
         cppCode << GetName() << "->GetArtProvider()->SetColor( wxAUI_DOCKART_INACTIVE_CAPTION_TEXT_COLOUR, " << col
                 << ");\n";
     cppCode << GetName() << "->GetArtProvider()->SetMetric(wxAUI_DOCKART_GRADIENT_TYPE, "

@@ -1,7 +1,9 @@
 #include "myxh_treelist.h"
+
 #include "designer_panel.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
+
 #include <wx/imaglist.h>
 #include <wx/treelist.h>
 
@@ -24,7 +26,7 @@ bool MyTreeListCtrl::CanHandle(wxXmlNode* node)
 
 wxObject* MyTreeListCtrl::DoCreateResource()
 {
-    if(m_class == "wxTreeListCtrlCol") {
+    if (m_class == "wxTreeListCtrlCol") {
         HandleListCol();
 
     } else {

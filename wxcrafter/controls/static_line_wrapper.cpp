@@ -1,5 +1,7 @@
 #include "static_line_wrapper.h"
+
 #include "allocator_mgr.h"
+
 #include <wx/statline.h>
 
 StaticLineWrapper::StaticLineWrapper()

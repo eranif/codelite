@@ -102,7 +102,7 @@ wxString ImageListWrapper::GetWxClassName() const { return "wxImageList"; }
 
 void ImageListWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    if(type == XRC_DESIGNER) {
+    if (type == XRC_DESIGNER) {
         ChildrenXRC(text, type);
         WrapXRC(text);
     }

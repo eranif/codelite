@@ -38,8 +38,8 @@ wxBorder GetControlBorder();
 wxSize DecodeSize(const wxString& strSize);
 wxString EncodeSize(const wxSize& size);
 wxString GetSizeAsDlgUnits(const wxSize& size, const wxString& parent);
-wxFileName LoadXRC(const wxString& xrcString, const wxString& filename, wxString& caption, wxString& style,
-                   wxString& bmppath);
+wxFileName
+LoadXRC(const wxString& xrcString, const wxString& filename, wxString& caption, wxString& style, wxString& bmppath);
 int ToNumber(const wxString& str, int defaultValue);
 float ToFloat(const wxString& str, float defaultValue);
 wxString FloatToCString(float f);

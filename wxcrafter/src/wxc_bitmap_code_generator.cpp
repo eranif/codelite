@@ -43,14 +43,14 @@ bool wxcCodeGeneratorHelper::CreateXRC()
     wxString text;
     text << wxT("<?xml version=\"1.0\" encoding=\"UTF-8\" ?>\n");
     text << wxT("<resource xmlns=\"http://www.wxwidgets.org/wxxrc\">");
-    if(wxcProjectMetadata::Get().IsAddHandlers()) {
+    if (wxcProjectMetadata::Get().IsAddHandlers()) {
         text << "<!-- Handler Generation is ON -->\n";
     } else {
         text << "<!-- Handler Generation is OFF -->\n";
     }
 
     // Supported hi-res images extension
-    const wxArrayString exts = StdToWX::ToArrayString({ "@2x", "@1.25x", "@1.5x" });
+    const wxArrayString exts = StdToWX::ToArrayString({"@2x", "@1.25x", "@1.5x"});
 
     for (const auto& p : m_bitmapMap) {
         wxFileName fn(p.second);
@@ -87,7 +87,9 @@ bool wxcCodeGeneratorHelper::CreateXRC()
     wxString outputString;
     wxStringOutputStream outStream(&outputString);
 
-    if(!doc.Save(outStream)) { return false; }
+    if (!doc.Save(outStream)) {
+        return false;
+    }
 
     // Check to see if we already got
     m_destCPP =
@@ -97,14 +99,14 @@ bool wxcCodeGeneratorHelper::CreateXRC()
 
     bool isBitmapModifiedOutside = IsGenerateNeeded();
 
-    if(isBitmapModifiedOutside) {
+    if (isBitmapModifiedOutside) {
         // Request for update
         wxCommandEvent evtUpdateDesigner(wxEVT_REFRESH_DESIGNER);
         EventNotifier::Get()->AddPendingEvent(evtUpdateDesigner);
     }
 
 #if !defined(__WXMAC__)
-    if(wxCrafter::IsTheSame(outputString, m_xrcFile) && m_destCPP.FileExists() && !isBitmapModifiedOutside) {
+    if (wxCrafter::IsTheSame(outputString, m_xrcFile) && m_destCPP.FileExists() && !isBitmapModifiedOutside) {
         // the XRC used to generate the file is the same as the new one
         // and we got a CPP file - skip the code generation
         wxCommandEvent eventEnd(wxEVT_BITMAP_CODE_GENERATION_DONE);
@@ -113,7 +115,9 @@ bool wxcCodeGeneratorHelper::CreateXRC()
         return true;
     }
 #endif
-    if(!doc.Save(m_xrcFile.GetFullPath())) { return false; }
+    if (!doc.Save(m_xrcFile.GetFullPath())) {
+        return false;
+    }
 
     {
         wxFrame* topFrame = EventNotifier::Get()->TopFrame();
@@ -143,16 +147,16 @@ wxString wxcCodeGeneratorHelper::GenerateInitCode(TopLevelWinWrapper* tw) const
     wxString code;
     code << "    if ( !bBitmapLoaded ) {\n"
          << "        // We need to initialise the default bitmap handler\n";
-    if(wxcProjectMetadata::Get().IsAddHandlers()) {
+    if (wxcProjectMetadata::Get().IsAddHandlers()) {
         code << "        wxXmlResource::Get()->AddHandler(new wxBitmapXmlHandler);\n";
     }
     code << "        " << wxcProjectMetadata::Get().GetBitmapFunction() << "();\n"
          << "        bBitmapLoaded = true;\n"
          << "    }\n";
 
-    if(tw->HasIcon()) {
+    if (tw->HasIcon()) {
         wxString appIconCode = GenerateTopLevelWindowIconCode();
-        if(!appIconCode.IsEmpty()) {
+        if (!appIconCode.IsEmpty()) {
             // add the icon code here
             code << appIconCode << "\n";
         }
@@ -172,11 +176,13 @@ wxString wxcCodeGeneratorHelper::BitmapCode(const wxString& bmp, const wxString&
     wxString tmpbmp = bmp;
     tmpbmp.Trim().Trim(false);
 
-    if(tmpbmp.IsEmpty()) { return wxT("wxNullBitmap"); }
+    if (tmpbmp.IsEmpty()) {
+        return wxT("wxNullBitmap");
+    }
 
     wxString artId, clientId, sizeHint;
     wxString code;
-    if(wxCrafter::IsArtProviderBitmap(bmp, artId, clientId, sizeHint)) {
+    if (wxCrafter::IsArtProviderBitmap(bmp, artId, clientId, sizeHint)) {
         code << "wxArtProvider::GetBitmap(" << artId << ", " << clientId << ", " << wxCrafter::MakeWxSizeStr(sizeHint)
              << ")";
 
@@ -194,17 +200,22 @@ wxString wxcCodeGeneratorHelper::AddBitmap(const wxString& bitmapFile, const wxS
 {
     wxString bmppath = bitmapFile;
     bmppath.Trim().Trim(false);
-    if(bmppath.IsEmpty()) return "";
+    if (bmppath.IsEmpty())
+        return "";
 
     wxString artId, clientId, sizeHint;
-    if(wxCrafter::IsArtProviderBitmap(bmppath, artId, clientId, sizeHint)) { return ""; }
+    if (wxCrafter::IsArtProviderBitmap(bmppath, artId, clientId, sizeHint)) {
+        return "";
+    }
 
     wxFileName fn(bmppath);
     wxString bmpname;
 
     // set the name + remove old entry
     name.IsEmpty() ? bmpname = fn.GetName() : bmpname = name;
-    if(m_bitmapMap.count(bmpname)) { m_bitmapMap.erase(bmpname); }
+    if (m_bitmapMap.count(bmpname)) {
+        m_bitmapMap.erase(bmpname);
+    }
 
     m_bitmapMap.insert(std::make_pair(bmpname, bmppath));
     return bmpname;
@@ -212,17 +223,19 @@ wxString wxcCodeGeneratorHelper::AddBitmap(const wxString& bitmapFile, const wxS
 
 bool wxcCodeGeneratorHelper::IsGenerateNeeded() const
 {
-    if(!m_xrcFile.FileExists()) { return true; }
+    if (!m_xrcFile.FileExists()) {
+        return true;
+    }
 
     wxString basepath = wxcProjectMetadata::Get().GetProjectPath();
     time_t xrcModTime = m_xrcFile.GetModificationTime().GetTicks();
 
     for (const auto& p : m_bitmapMap) {
         wxFileName bmpFile(p.second);
-        if(bmpFile.MakeAbsolute(basepath)) {
-            if(bmpFile.FileExists()) {
+        if (bmpFile.MakeAbsolute(basepath)) {
+            if (bmpFile.FileExists()) {
                 time_t bmpMod = bmpFile.GetModificationTime().GetTicks();
-                if(bmpMod > xrcModTime) {
+                if (bmpMod > xrcModTime) {
                     // the bmp file is newer than the xrc file - regenerate
                     return true;
                 }
@@ -238,7 +251,9 @@ void wxcCodeGeneratorHelper::ClearWindowIds() { m_winIds.clear(); }
 
 wxString wxcCodeGeneratorHelper::GenerateWinIdEnum() const
 {
-    if(m_winIds.empty() || !wxcProjectMetadata::Get().IsUseEnum()) { return ""; }
+    if (m_winIds.empty() || !wxcProjectMetadata::Get().IsUseEnum()) {
+        return "";
+    }
 
     int firstId = wxcProjectMetadata::Get().GetFirstWindowId();
     wxString enumCode;
@@ -253,9 +268,12 @@ wxString wxcCodeGeneratorHelper::GenerateWinIdEnum() const
 
 void wxcCodeGeneratorHelper::AddIcon(const wxString& bitmapFile)
 {
-    if(bitmapFile.IsEmpty()) { return; }
+    if (bitmapFile.IsEmpty()) {
+        return;
+    }
     wxString bmpadded = AddBitmap(bitmapFile);
-    if(bmpadded.IsEmpty()) return;
+    if (bmpadded.IsEmpty())
+        return;
     m_icons.Add(bmpadded);
 }
 
@@ -263,10 +281,10 @@ wxString wxcCodeGeneratorHelper::GenerateTopLevelWindowIconCode() const
 {
     wxString code;
 
-    if(!m_icons.IsEmpty()) {
+    if (!m_icons.IsEmpty()) {
         code << "    // Set icon(s) to the application/dialog\n";
         code << "    wxIconBundle app_icons;\n";
-        for(size_t i = 0; i < m_icons.GetCount(); ++i) {
+        for (size_t i = 0; i < m_icons.GetCount(); ++i) {
             code << "    {\n"
                  << "        wxBitmap iconBmp = " << BitmapCode(m_icons.Item(i)) << ";\n"
                  << "        wxIcon icn;\n"

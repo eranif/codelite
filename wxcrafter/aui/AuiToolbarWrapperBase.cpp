@@ -10,8 +10,8 @@ bool AuiToolbarWrapperBase::HasDropdownWithMenu(const wxcWidget* widget) const
 {
     for (auto child : widget->GetChildren()) {
         ToolBarItemWrapper* item = dynamic_cast<ToolBarItemWrapper*>(child);
-        if(item && wxCrafter::GetToolType(item->PropertyString(PROP_KIND)) == wxCrafter::TOOL_TYPE_DROPDOWN &&
-           item->PropertyString(PROP_DROPDOWN_MENU) == "1") {
+        if (item && wxCrafter::GetToolType(item->PropertyString(PROP_KIND)) == wxCrafter::TOOL_TYPE_DROPDOWN &&
+            item->PropertyString(PROP_DROPDOWN_MENU) == "1") {
             return true;
         }
     }
@@ -22,7 +22,7 @@ void AuiToolbarWrapperBase::GenerateExtraFunctions(const wxcWidget* widget, wxSt
 {
     TopLevelWinWrapper* tlw = dynamic_cast<TopLevelWinWrapper*>(widget->GetTopLevel());
     CHECK_PTR_RET(tlw);
-    if(!tlw->IsAuiToolBarDropDownHelpersRegistered() && HasDropdownWithMenu(widget)) {
+    if (!tlw->IsAuiToolBarDropDownHelpersRegistered() && HasDropdownWithMenu(widget)) {
         impl << "\n"
              << "void " << tlw->GetName() << "::" << DEFAULT_AUI_DROPDOWN_FUNCTION_AND_SIG << "\n{\n"
              << "    event.Skip();\n"
@@ -51,8 +51,8 @@ wxString AuiToolbarWrapperBase::CppDtorCode(const wxcWidget* widget) const
 {
     wxString cppCode;
     TopLevelWinWrapper* tlw = dynamic_cast<TopLevelWinWrapper*>(widget->GetTopLevel());
-    if(tlw && !tlw->IsAuiToolBarDropDownHelpersRegistered()) {
-        if(HasDropdownWithMenu(widget)) {
+    if (tlw && !tlw->IsAuiToolBarDropDownHelpersRegistered()) {
+        if (HasDropdownWithMenu(widget)) {
             cppCode << "    std::map<int, wxMenu*>::iterator menuIter = m_dropdownMenus.begin();\n"
                     << "    for( ; menuIter != m_dropdownMenus.end(); ++menuIter ) {\n"
                     << "        wxDELETE( menuIter->second );\n"
@@ -68,8 +68,10 @@ wxString AuiToolbarWrapperBase::GenerateClassMembers(const wxcWidget* widget) co
     wxString memberCode = widget->BaseDoGenerateClassMember(); // Base class stuff
 
     TopLevelWinWrapper* tlw = dynamic_cast<TopLevelWinWrapper*>(widget->GetTopLevel());
-    if(tlw && !tlw->IsAuiToolBarDropDownHelpersRegistered() && HasDropdownWithMenu(widget)) {
-        if(!memberCode.empty()) { memberCode << "\n"; }
+    if (tlw && !tlw->IsAuiToolBarDropDownHelpersRegistered() && HasDropdownWithMenu(widget)) {
+        if (!memberCode.empty()) {
+            memberCode << "\n";
+        }
         memberCode << "    std::map<int, wxMenu*> m_dropdownMenus;";
     }
     return memberCode;

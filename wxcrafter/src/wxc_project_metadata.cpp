@@ -33,14 +33,14 @@ void wxcProjectMetadata::FromJSON(const JSONItem& json)
     m_addHandlers = json.namedObject("m_addHandlers").toBool(m_addHandlers);
 
     wxcSettings::Get().MergeCustomControl(json.namedObject("m_templateClasses"));
-    if(m_bitmapFunction.IsEmpty()) {
+    if (m_bitmapFunction.IsEmpty()) {
         DoGenerateBitmapFunctionName();
     }
 
     // for backward-compatibility, we continue to use .h file extension if it's already there
     wxFileName headerFile = BaseCppFile();
     headerFile.SetExt("h");
-    if(headerFile.IsRelative()) {
+    if (headerFile.IsRelative()) {
         headerFile.MakeAbsolute(GetProjectPath());
     }
     wxString header_file = headerFile.GetFullPath();
@@ -82,7 +82,7 @@ wxString wxcProjectMetadata::GetCppFileName() const
 wxString wxcProjectMetadata::GetXrcFileName() const
 {
     wxFileName xrc(m_projectFile);
-    if(!xrc.IsAbsolute()) {
+    if (!xrc.IsAbsolute()) {
         xrc = wxFileName(m_generatedFilesDir, m_projectFile);
     }
     xrc.SetExt("xrc");
@@ -168,7 +168,7 @@ void wxcProjectMetadata::DoGenerateBitmapFunctionName()
 
 wxString wxcProjectMetadata::DoGenerateBitmapsFile() const
 {
-    if(GetProjectFile().IsEmpty()) {
+    if (GetProjectFile().IsEmpty()) {
         return "";
     }
 
@@ -187,7 +187,7 @@ wxString wxcProjectMetadata::DoGenerateBitmapsFile() const
 
 wxString wxcProjectMetadata::GetBitmapsFile() const
 {
-    if(m_bitmapsFile.IsEmpty()) {
+    if (m_bitmapsFile.IsEmpty()) {
         return DoGenerateBitmapsFile();
     }
 
@@ -206,7 +206,7 @@ void wxcProjectMetadata::Serialize(const wxcWidget::List_t& topLevelsList, const
     root.toElement().append(windows);
 
     wxFFile fp(filename.GetFullPath(), "w+b");
-    if(fp.IsOpened()) {
+    if (fp.IsOpened()) {
 
         for (auto widget : topLevelsList) {
             JSONItem obj = JSONItem::createObject();
@@ -222,7 +222,7 @@ void wxcProjectMetadata::Serialize(const wxcWidget::List_t& topLevelsList, const
 
 wxString wxcProjectMetadata::GetOutputFileName() const
 {
-    if(m_outputFileName.IsEmpty()) {
+    if (m_outputFileName.IsEmpty()) {
         wxFileName fn(GetProjectFile());
         return fn.GetName();
     }
@@ -239,10 +239,10 @@ void wxcProjectMetadata::SetProjectFile(const wxString& filename)
 
 void wxcProjectMetadata::UpdatePaths()
 {
-    if(m_generatedFilesDir.IsEmpty()) {
+    if (m_generatedFilesDir.IsEmpty()) {
         m_generatedFilesDir = ".";
     }
-    if(m_bitmapsFile.IsEmpty()) {
+    if (m_bitmapsFile.IsEmpty()) {
         m_bitmapsFile = DoGenerateBitmapsFile();
     }
 }

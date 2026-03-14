@@ -47,8 +47,13 @@ public:
      */
     virtual wxString GetParentCtorInitArgumentList() const { return "(parent)"; }
 
-    virtual void GenerateCode(const wxcProjectMetadata& project, bool promptUser, bool baseOnly, wxString& baseCpp,
-                              wxString& baseHeader, wxArrayString& headers, wxStringMap_t& additionalFiles);
+    virtual void GenerateCode(const wxcProjectMetadata& project,
+                              bool promptUser,
+                              bool baseOnly,
+                              wxString& baseCpp,
+                              wxString& baseHeader,
+                              wxArrayString& headers,
+                              wxStringMap_t& additionalFiles);
 
     bool IsTopWindow() const override { return true; }
     /**

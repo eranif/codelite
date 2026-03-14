@@ -1,6 +1,8 @@
 #include "tool_book_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "wxgui_defs.h"
+
 #include <wx/notebook.h>
 #include <wx/toolbook.h>
 
@@ -13,9 +15,10 @@ ToolBookWrapper::ToolBookWrapper()
     PREPEND_STYLE_FALSE(wxTBK_HORZ_LAYOUT);
 #endif
 
-    RegisterEvent(wxT("wxEVT_COMMAND_TOOLBOOK_PAGE_CHANGED"), wxT("wxToolbookEvent"),
-                  _("The page selection was changed"));
-    RegisterEvent(wxT("wxEVT_COMMAND_TOOLBOOK_PAGE_CHANGING"), wxT("wxToolbookEvent"),
+    RegisterEvent(
+        wxT("wxEVT_COMMAND_TOOLBOOK_PAGE_CHANGED"), wxT("wxToolbookEvent"), _("The page selection was changed"));
+    RegisterEvent(wxT("wxEVT_COMMAND_TOOLBOOK_PAGE_CHANGING"),
+                  wxT("wxToolbookEvent"),
                   _("The page selection is about to be changed. This event can be vetoed"));
     m_namePattern = wxT("m_toolbook");
     SetName(GenerateName());

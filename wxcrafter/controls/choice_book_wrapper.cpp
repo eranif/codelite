@@ -5,9 +5,10 @@
 ChoiceBookWrapper::ChoiceBookWrapper()
     : NotebookBaseWrapper(ID_WXCHOICEBOOK)
 {
-    RegisterEvent(wxT("wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED"), wxT("wxChoicebookEvent"),
-                  _("The page selection was changed"));
-    RegisterEvent(wxT("wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING"), wxT("wxChoicebookEvent"),
+    RegisterEvent(
+        wxT("wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED"), wxT("wxChoicebookEvent"), _("The page selection was changed"));
+    RegisterEvent(wxT("wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGING"),
+                  wxT("wxChoicebookEvent"),
                   _("The page selection is about to be changed. This event can be vetoed"));
 
     SetPropertyString(_("Common Settings"), "wxChoicebook");

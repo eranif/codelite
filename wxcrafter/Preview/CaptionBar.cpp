@@ -54,7 +54,7 @@ void CaptionBar::OnPaint(wxPaintEvent& event)
 #endif
 
     wxCoord curx = 5;
-    if(m_icon.IsOk()) {
+    if (m_icon.IsOk()) {
         // Draw the frame icon
         wxCoord bmpy = (GetClientRect().GetHeight() - m_icon.GetHeight()) / 2;
         dc.DrawBitmap(m_icon, 5, bmpy);
@@ -82,20 +82,20 @@ void CaptionBar::OnPaint(wxPaintEvent& event)
     int bmpSize = 0;
 
     const wxBitmap& bmpClose = myImages.Bitmap("button_close");
-    if(styles.Index("wxCLOSE_BOX") != wxNOT_FOUND || styles.Index("wxDEFAULT_DIALOG_STYLE") != wxNOT_FOUND ||
-       styles.Index("wxDEFAULT_FRAME_STYLE") != wxNOT_FOUND) {
+    if (styles.Index("wxCLOSE_BOX") != wxNOT_FOUND || styles.Index("wxDEFAULT_DIALOG_STYLE") != wxNOT_FOUND ||
+        styles.Index("wxDEFAULT_FRAME_STYLE") != wxNOT_FOUND) {
         // draw close box
         draw_close_button = true;
         bmpSize += bmpClose.GetWidth();
     }
 
-    if(styles.Index("wxMINIMIZE_BOX") != wxNOT_FOUND || styles.Index("wxDEFAULT_FRAME_STYLE") != wxNOT_FOUND) {
+    if (styles.Index("wxMINIMIZE_BOX") != wxNOT_FOUND || styles.Index("wxDEFAULT_FRAME_STYLE") != wxNOT_FOUND) {
         // draw close box
         draw_minimize_button = true;
         bmpSize += bmpClose.GetWidth();
     }
 
-    if(styles.Index("wxMAXIMIZE_BOX") != wxNOT_FOUND || styles.Index("wxDEFAULT_FRAME_STYLE") != wxNOT_FOUND) {
+    if (styles.Index("wxMAXIMIZE_BOX") != wxNOT_FOUND || styles.Index("wxDEFAULT_FRAME_STYLE") != wxNOT_FOUND) {
         // draw close box
         draw_maximize_button = true;
         bmpSize += bmpClose.GetWidth();
@@ -105,17 +105,17 @@ void CaptionBar::OnPaint(wxPaintEvent& event)
 
     int button_x = clientRect.GetWidth() - bmpSize - 2;
     int button_y = (clientRect.GetHeight() - bmpClose.GetHeight()) / 2;
-    if(draw_minimize_button) {
+    if (draw_minimize_button) {
         dc.DrawBitmap(myImages.Bitmap("button_minimize"), button_x, button_y, true);
         button_x += bmpClose.GetWidth();
     }
 
-    if(draw_maximize_button) {
+    if (draw_maximize_button) {
         dc.DrawBitmap(myImages.Bitmap("button_maximize"), button_x, button_y, true);
         button_x += bmpClose.GetWidth();
     }
 
-    if(draw_close_button) {
+    if (draw_close_button) {
         dc.DrawBitmap(myImages.Bitmap("button_close"), button_x, button_y, true);
         button_x += bmpClose.GetWidth();
     }

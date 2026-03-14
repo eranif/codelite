@@ -14,7 +14,7 @@ BoolProperty::BoolProperty()
 
 wxString BoolProperty::GetValue() const
 {
-    if(m_value) {
+    if (m_value) {
         return wxT("1");
 
     } else {
@@ -24,7 +24,7 @@ wxString BoolProperty::GetValue() const
 
 void BoolProperty::SetValue(const wxString& value)
 {
-    if(value == wxT("1")) {
+    if (value == wxT("1")) {
         m_value = true;
     } else {
         m_value = false;

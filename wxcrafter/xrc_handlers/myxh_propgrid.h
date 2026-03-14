@@ -10,8 +10,8 @@
 #ifndef _WX_XH_PROPGRID_H_
 #define _WX_XH_PROPGRID_H_
 
-#include <wx/xrc/xmlres.h>
 #include <wx/propgrid/property.h>
+#include <wx/xrc/xmlres.h>
 
 class wxPGProperty;
 class wxPropertyGrid;

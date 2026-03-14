@@ -38,7 +38,7 @@ wxString PanelWrapperTopLevel::CppCtorCode() const { return TopLevelWinWrapper::
 
 void PanelWrapperTopLevel::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    if(type != wxcWidget::XRC_LIVE) {
+    if (type != wxcWidget::XRC_LIVE) {
         text << wxT("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>")
              << wxT("<resource xmlns=\"http://www.wxwidgets.org/wxxrc\" >");
     }
@@ -48,7 +48,9 @@ void PanelWrapperTopLevel::ToXRC(wxString& text, XRC_TYPE type) const
     ChildrenXRC(text, type);
     text << wxT("</object>");
 
-    if(type != wxcWidget::XRC_LIVE) { text << wxT("</resource>"); }
+    if (type != wxcWidget::XRC_LIVE) {
+        text << wxT("</resource>");
+    }
 }
 
 wxString PanelWrapperTopLevel::DesignerXRC(bool forPreviewDialog) const
@@ -94,7 +96,9 @@ void PanelWrapperTopLevel::LoadPropertiesFromXRC(const wxXmlNode* node)
     // That's because if no size was specified, wxC inflicts 500,300. This isn't what the user expected
     // So, if there is *not* a specified size, overwrite the wxC default with wxDefaultSize
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("size"));
-    if(!propertynode) { SetPropertyString(PROP_SIZE, "-1,-1"); }
+    if (!propertynode) {
+        SetPropertyString(PROP_SIZE, "-1,-1");
+    }
 }
 
 void PanelWrapperTopLevel::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -106,7 +110,9 @@ void PanelWrapperTopLevel::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     // That's because if no size was specified, wxC inflicts 500,300. This isn't what the user expected
     // So, if there is *not* a specified size, overwrite the wxC default with wxDefaultSize
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("size"));
-    if(!propertynode) { SetPropertyString(PROP_SIZE, "-1,-1"); }
+    if (!propertynode) {
+        SetPropertyString(PROP_SIZE, "-1,-1");
+    }
 }
 
 void PanelWrapperTopLevel::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -116,5 +122,7 @@ void PanelWrapperTopLevel::LoadPropertiesFromwxFB(const wxXmlNode* node)
 
     // See the comment in LoadPropertiesFromXRC()
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", wxT("size"));
-    if(!propertynode) { SetPropertyString(PROP_SIZE, "-1,-1"); }
+    if (!propertynode) {
+        SetPropertyString(PROP_SIZE, "-1,-1");
+    }
 }

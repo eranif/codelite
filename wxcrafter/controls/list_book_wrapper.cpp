@@ -1,6 +1,8 @@
 #include "list_book_wrapper.h"
+
 #include "allocator_mgr.h"
 #include "wxgui_defs.h"
+
 #include <wx/listbook.h>
 
 ListBookWrapper::ListBookWrapper()
@@ -13,9 +15,10 @@ ListBookWrapper::ListBookWrapper()
     PREPEND_STYLE_FALSE(wxLB_TOP);
     PREPEND_STYLE_FALSE(wxLB_BOTTOM);
 
-    RegisterEvent(wxT("wxEVT_COMMAND_LISTBOOK_PAGE_CHANGED"), wxT("wxListbookEvent"),
-                  _("The page selection was changed"));
-    RegisterEvent(wxT("wxEVT_COMMAND_LISTBOOK_PAGE_CHANGING"), wxT("wxListbookEvent"),
+    RegisterEvent(
+        wxT("wxEVT_COMMAND_LISTBOOK_PAGE_CHANGED"), wxT("wxListbookEvent"), _("The page selection was changed"));
+    RegisterEvent(wxT("wxEVT_COMMAND_LISTBOOK_PAGE_CHANGING"),
+                  wxT("wxListbookEvent"),
                   _("The page selection is about to be changed. This event can be vetoed"));
     m_namePattern = wxT("m_listbook");
     SetName(GenerateName());

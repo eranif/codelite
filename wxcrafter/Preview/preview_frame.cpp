@@ -34,7 +34,7 @@ PreviewFrame::PreviewFrame(wxWindow* parent, const TopLevelWinWrapper& fw)
     Center();
     SetSizeHints(sz);
 
-    if(wxcAuiManager::Get().Find(this)) {
+    if (wxcAuiManager::Get().Find(this)) {
         wxcAuiManager::Get().Find(this)->Update();
     } else {
         Layout();
@@ -46,8 +46,8 @@ PreviewFrame::PreviewFrame(wxWindow* parent, const TopLevelWinWrapper& fw)
 PreviewFrame::~PreviewFrame()
 {
     wxcAuiManager::Get().UnInit(this);
-    EventNotifier::Get()->Disconnect(wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewFrame::OnClosePreview), NULL,
-                                     this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CLOSE_PREVIEW, wxCommandEventHandler(PreviewFrame::OnClosePreview), NULL, this);
     wxCommandEvent event(wxEVT_PREVIEW_CLOSED);
     EventNotifier::Get()->AddPendingEvent(event);
 }

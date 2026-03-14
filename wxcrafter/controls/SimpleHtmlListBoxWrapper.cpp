@@ -16,12 +16,13 @@ SimpleHtmlListBoxWrapper::SimpleHtmlListBoxWrapper()
 
     // Events
     RegisterEventCommand("wxEVT_LISTBOX", _("Process a wxEVT_LISTBOX event, when an item on the list is selected"));
-    RegisterEventCommand("wxEVT_LISTBOX_DCLICK",
-                         _("Process a wxEVT_LISTBOX_DCLICK event, when the listbox is double-clicked"));
+    RegisterEventCommand(
+        "wxEVT_LISTBOX_DCLICK", _("Process a wxEVT_LISTBOX_DCLICK event, when the listbox is double-clicked"));
     RegisterEvent("wxEVT_HTML_CELL_CLICKED", "wxHtmlCellEvent", _("A wxHtmlCell was clicked. See wxHtmlCellEvent"));
-    RegisterEvent("wxEVT_HTML_CELL_HOVER", "wxHtmlCellEvent",
-                  _("The mouse passed over a wxHtmlCell. See wxHtmlCellEvent"));
-    RegisterEvent("wxEVT_HTML_LINK_CLICKED", "wxHtmlLinkEvent",
+    RegisterEvent(
+        "wxEVT_HTML_CELL_HOVER", "wxHtmlCellEvent", _("The mouse passed over a wxHtmlCell. See wxHtmlCellEvent"));
+    RegisterEvent("wxEVT_HTML_LINK_CLICKED",
+                  "wxHtmlLinkEvent",
                   _("A wxHtmlCell which contains an hyperlink was clicked. See wxHtmlLinkEvent"));
     SetPropertyString(_("Common Settings"), "wxSimpleHtmlListBox");
     Add<MultiStringsProperty>(
@@ -47,7 +48,7 @@ wxString SimpleHtmlListBoxWrapper::CppCtorCode() const
     optionsArr << GetName() << wxT("Arr");
 
     code << wxT("wxArrayString ") << optionsArr << wxT(";\n");
-    for(size_t i = 0; i < options.GetCount(); i++) {
+    for (size_t i = 0; i < options.GetCount(); i++) {
 
         code << optionsArr << wxT(".Add(") << wxCrafter::UNDERSCORE(options.Item(i)) << wxT(");\n");
     }
@@ -58,7 +59,7 @@ wxString SimpleHtmlListBoxWrapper::CppCtorCode() const
     code << CPPCommonAttributes();
 
     int sel = wxCrafter::ToNumber(PropertyString(PROP_SELECTION), -1);
-    if(sel >= 0 && sel < (int)options.GetCount()) {
+    if (sel >= 0 && sel < (int)options.GetCount()) {
         code << GetName() << wxT("->SetSelection(") << PropertyString(PROP_SELECTION) << wxT(");\n");
     }
     return code;

@@ -1,4 +1,5 @@
 #include "popup_window_wrapper.h"
+
 #include "allocator_mgr.h"
 
 PopupWindowWrapper::PopupWindowWrapper()
@@ -31,7 +32,7 @@ wxString PopupWindowWrapper::GetWxClassName() const { return "wxPopupWindow"; }
 
 void PopupWindowWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    if(type != wxcWidget::XRC_LIVE) {
+    if (type != wxcWidget::XRC_LIVE) {
         text << wxT("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>")
              << wxT("<resource xmlns=\"http://www.wxwidgets.org/wxxrc\" >");
     }
@@ -43,7 +44,9 @@ void PopupWindowWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     ChildrenXRC(text, type);
     text << wxT("</object>");
 
-    if(type != wxcWidget::XRC_LIVE) { text << wxT("</resource>"); }
+    if (type != wxcWidget::XRC_LIVE) {
+        text << wxT("</resource>");
+    }
 }
 
 wxString PopupWindowWrapper::BaseCtorDecl() const

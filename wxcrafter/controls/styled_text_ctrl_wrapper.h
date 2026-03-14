@@ -2,6 +2,7 @@
 #define STYLEDTEXTCTRLWRAPPER_H
 
 #include "wxc_widget.h" // Base class: WrapperBase
+
 #include <map>
 
 class StyledTextCtrlWrapper : public wxcWidget

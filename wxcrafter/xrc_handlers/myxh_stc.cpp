@@ -2,6 +2,7 @@
 #include "wx/wxprec.h"
 
 #include "myxh_stc.h"
+
 #include <map>
 #include <wx/stc/stc.h>
 
@@ -18,7 +19,7 @@ MyWxStcXmlHandler::MyWxStcXmlHandler()
     : wxXmlResourceHandler()
 {
     AddWindowStyles();
-    if(s_lexers.empty()) {
+    if (s_lexers.empty()) {
         ADD_LEXER(wxSTC_LEX_CONTAINER);
         ADD_LEXER(wxSTC_LEX_NULL);
         ADD_LEXER(wxSTC_LEX_PYTHON);
@@ -136,8 +137,8 @@ wxObject* MyWxStcXmlHandler::DoCreateResource()
     wxFont font = GetFont();
 
     text->StyleClearAll();
-    if(font.IsOk()) {
-        for(int i = 0; i < wxSTC_STYLE_MAX; ++i) {
+    if (font.IsOk()) {
+        for (int i = 0; i < wxSTC_STYLE_MAX; ++i) {
             text->StyleSetFont(i, font);
         }
     }
@@ -145,11 +146,15 @@ wxObject* MyWxStcXmlHandler::DoCreateResource()
     text->SetViewEOL(displayEol);
     text->SetWrapMode(wrapText);
 
-    if(eolMode != -1) { text->SetEOLMode(eolMode); }
+    if (eolMode != -1) {
+        text->SetEOLMode(eolMode);
+    }
     text->SetIndentationGuides(indentGuides);
 
     int lexer = wxSTC_LEX_NULL;
-    if(s_lexers.count(slexerId)) { lexer = s_lexers.find(slexerId)->second; }
+    if (s_lexers.count(slexerId)) {
+        lexer = s_lexers.find(slexerId)->second;
+    }
     text->SetLexer(lexer);
     text->SetProperty("fold", "1");
     text->SetProperty("fold.html", "1");

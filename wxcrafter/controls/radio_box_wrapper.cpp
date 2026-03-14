@@ -42,7 +42,7 @@ wxString RadioBoxWrapper::CppCtorCode() const
 
     code << wxT("wxArrayString ") << arrname << wxT(";\n");
 
-    for(size_t i = 0; i < options.GetCount(); i++) {
+    for (size_t i = 0; i < options.GetCount(); i++) {
         code << arrname << wxT(".Add(") << wxCrafter::UNDERSCORE(options.Item(i)) << wxT(");\n");
     }
 
@@ -54,7 +54,7 @@ wxString RadioBoxWrapper::CppCtorCode() const
          << wxT(", ") << PropertyString(PROP_MAJORDIM) << wxT(", ") << StyleFlags(wxT("0")) << wxT(");\n");
     code << CPPCommonAttributes();
     int sel = wxCrafter::ToNumber(PropertyString(PROP_SELECTION), -1);
-    if(sel >= 0 && sel < (int)options.GetCount()) {
+    if (sel >= 0 && sel < (int)options.GetCount()) {
         code << GetName() << wxT("->SetSelection(") << PropertyString(PROP_SELECTION) << wxT(");\n");
     }
     return code;
@@ -79,14 +79,20 @@ void RadioBoxWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     // The Options (content) property has a default, so we must clear it even if the node is absent
     wxString multistring;
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("content"));
-    if(propertynode) { multistring = XmlUtils::ChildNodesContentToString(propertynode); }
+    if (propertynode) {
+        multistring = XmlUtils::ChildNodesContentToString(propertynode);
+    }
     SetPropertyString(PROP_OPTIONS, multistring);
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("selection"));
-    if(propertynode) { SetPropertyString(PROP_SELECTION, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_SELECTION, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("dimension"));
-    if(propertynode) { SetPropertyString(PROP_MAJORDIM, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MAJORDIM, propertynode->GetNodeContent());
+    }
 }
 
 void RadioBoxWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -97,14 +103,20 @@ void RadioBoxWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     // The Options (content) property has a default, so we must clear it even if the node is absent
     wxString multistring;
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("content"));
-    if(propertynode) { multistring = XmlUtils::ChildNodesContentToString(propertynode); }
+    if (propertynode) {
+        multistring = XmlUtils::ChildNodesContentToString(propertynode);
+    }
     SetPropertyString(PROP_OPTIONS, multistring);
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("default"));
-    if(propertynode) { SetPropertyString(PROP_SELECTION, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_SELECTION, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("dimension"));
-    if(propertynode) { SetPropertyString(PROP_MAJORDIM, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MAJORDIM, propertynode->GetNodeContent());
+    }
 }
 
 void RadioBoxWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -115,12 +127,18 @@ void RadioBoxWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     // The "choices" property has a default, so we should clear it even if the node was absent
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "choices");
     wxString content;
-    if(propertynode) { content = ImportFromwxFB::ConvertFBOptionsString(propertynode->GetNodeContent()); }
+    if (propertynode) {
+        content = ImportFromwxFB::ConvertFBOptionsString(propertynode->GetNodeContent());
+    }
     SetPropertyString(PROP_OPTIONS, content);
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "selection");
-    if(propertynode) { SetPropertyString(PROP_SELECTION, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_SELECTION, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "majorDimension");
-    if(propertynode) { SetPropertyString(PROP_MAJORDIM, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_MAJORDIM, propertynode->GetNodeContent());
+    }
 }

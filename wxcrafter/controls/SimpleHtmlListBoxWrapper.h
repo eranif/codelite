@@ -14,7 +14,6 @@ public:
     wxString CppCtorCode() const override;
     void ToXRC(wxString& text, XRC_TYPE type) const override;
     wxcWidget* Clone() const override { return new SimpleHtmlListBoxWrapper(); }
-
 };
 
 #endif // SIMPLEHTMLLISTBOXWRAPPER_H

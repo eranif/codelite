@@ -1,7 +1,9 @@
 #include "wxc_edit_manager.h"
+
 #include "event_notifier.h"
 #include "wxc_project_metadata.h"
 #include "wxguicraft_main_view.h"
+
 #include <wx/app.h>
 
 wxDEFINE_EVENT(wxEVT_MULTIPLE_UNREDO, wxCommandEvent);
@@ -11,16 +13,16 @@ const int FIRST_MENU_ID = 10000;
 wxcEditManager::wxcEditManager()
     : m_isModified(false)
 {
-    EventNotifier::Get()->Connect(wxEVT_WXGUI_PROJECT_SAVED, wxCommandEventHandler(wxcEditManager::OnProjectSaved),
-                                  NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WXC_PROJECT_LOADED, wxCommandEventHandler(wxcEditManager::OnProjectLoaded),
-                                  NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(wxcEditManager::OnProjectClosed),
-                                  NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_PROJECT_METADATA_MODIFIED,
-                                  wxCommandEventHandler(wxcEditManager::OnProjectMetadataChanged), NULL, this);
-    EventNotifier::Get()->Connect(wxEVT_PROPERTIES_MODIFIED, wxCommandEventHandler(wxcEditManager::OnPropertyChanged),
-                                  NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WXGUI_PROJECT_SAVED, wxCommandEventHandler(wxcEditManager::OnProjectSaved), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WXC_PROJECT_LOADED, wxCommandEventHandler(wxcEditManager::OnProjectLoaded), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_WXGUI_PROJECT_CLOSED, wxCommandEventHandler(wxcEditManager::OnProjectClosed), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_PROJECT_METADATA_MODIFIED, wxCommandEventHandler(wxcEditManager::OnProjectMetadataChanged), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_PROPERTIES_MODIFIED, wxCommandEventHandler(wxcEditManager::OnPropertyChanged), NULL, this);
 }
 
 wxcEditManager& wxcEditManager::Get()
@@ -54,7 +56,7 @@ void wxcEditManager::OnUndoDropdownItem(wxCommandEvent& event)
 {
     const int count = event.GetId() - FIRST_MENU_ID + 1;
     wxCHECK_RET(count > 0 && count <= (int)m_undoList.size(), "Invalid command index");
-    for(int n = 0; n < count; ++n) {
+    for (int n = 0; n < count; ++n) {
         State::Ptr_t state = m_undoList.back();
         m_undoList.pop_back();
         m_redoList.push_back(state);
@@ -71,7 +73,7 @@ void wxcEditManager::OnRedoDropdownItem(wxCommandEvent& event)
 {
     const int count = event.GetId() - FIRST_MENU_ID + 1;
     wxCHECK_RET(count > 0 && count <= (int)m_redoList.size(), "Invalid command index");
-    for(int n = 0; n < count; ++n) {
+    for (int n = 0; n < count; ++n) {
         State::Ptr_t state = m_redoList.back();
         m_redoList.pop_back();
         m_undoList.push_back(state);
@@ -100,7 +102,8 @@ void wxcEditManager::Clear()
 
 State::Ptr_t wxcEditManager::GetCurrentState() const
 {
-    if(m_undoList.empty()) return m_initialState;
+    if (m_undoList.empty())
+        return m_initialState;
     return m_undoList.back();
 }
 
@@ -141,7 +144,7 @@ void wxcEditManager::OnPropertyChanged(wxCommandEvent& event)
 
 void wxcEditManager::PushState(const wxString& label)
 {
-    if(GUICraftMainPanel::m_MainPanel) {
+    if (GUICraftMainPanel::m_MainPanel) {
         SetModified(true);
         State::Ptr_t state = GUICraftMainPanel::m_MainPanel->CurrentState();
         state->label = label;
@@ -164,7 +167,7 @@ void wxcEditManager::NotifyProjectSynched()
 void wxcEditManager::SetModified(bool modified)
 {
     m_isModified = modified;
-    if(m_isModified) {
+    if (m_isModified) {
         NotifyProjectModified();
     } else {
         NotifyProjectSynched();
@@ -181,17 +184,21 @@ void wxcEditManager::DoPopulateUnRedoMenu(wxMenu& menu, bool undoing)
     int id = FIRST_MENU_ID;
     int count = 0;
 
-    if(undoing) {
-        if(m_undoList.size() > 0) {
-            for(State::List_t::const_reverse_iterator iter = m_undoList.rbegin(); iter != m_undoList.rend(); ++iter) {
+    if (undoing) {
+        if (m_undoList.size() > 0) {
+            for (State::List_t::const_reverse_iterator iter = m_undoList.rbegin(); iter != m_undoList.rend(); ++iter) {
                 State::Ptr_t command = *iter;
-                if(command) { menu.Append(id++, wxString::Format("%i ", ++count) + prefix + command->label); }
+                if (command) {
+                    menu.Append(id++, wxString::Format("%i ", ++count) + prefix + command->label);
+                }
             }
         }
     } else {
-        for(State::List_t::const_reverse_iterator iter = m_redoList.rbegin(); iter != m_redoList.rend(); ++iter) {
+        for (State::List_t::const_reverse_iterator iter = m_redoList.rbegin(); iter != m_redoList.rend(); ++iter) {
             State::Ptr_t command = *iter;
-            if(command) { menu.Append(id++, wxString::Format("%i ", ++count) + prefix + command->label); }
+            if (command) {
+                menu.Append(id++, wxString::Format("%i ", ++count) + prefix + command->label);
+            }
         }
     }
 }

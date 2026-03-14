@@ -15,22 +15,34 @@ wxString AuiPaneInfo::ToCppCode() const
 {
     wxString cppCode = "wxAuiPaneInfo()";
 
-    if(m_name.IsEmpty() == false) { cppCode << ".Name(" << wxCrafter::WXT(m_name) << ")"; }
+    if (m_name.IsEmpty() == false) {
+        cppCode << ".Name(" << wxCrafter::WXT(m_name) << ")";
+    }
 
-    if(m_caption.IsEmpty() == false) { cppCode << ".Caption(" << wxCrafter::UNDERSCORE(m_caption) << ")"; }
+    if (m_caption.IsEmpty() == false) {
+        cppCode << ".Caption(" << wxCrafter::UNDERSCORE(m_caption) << ")";
+    }
 
     cppCode << ".Direction(" << m_dockDirection << ")";
     cppCode << ".Layer(" << m_layer << ")";
     cppCode << ".Row(" << m_row << ")";
     cppCode << ".Position(" << m_position << ")";
 
-    if(m_bestSize != wxDefaultSize) { cppCode << ".BestSize(" << wxCrafter::EncodeSize(m_bestSize) << ")"; }
+    if (m_bestSize != wxDefaultSize) {
+        cppCode << ".BestSize(" << wxCrafter::EncodeSize(m_bestSize) << ")";
+    }
 
-    if(m_minSize != wxDefaultSize) { cppCode << ".MinSize(" << wxCrafter::EncodeSize(m_minSize) << ")"; }
+    if (m_minSize != wxDefaultSize) {
+        cppCode << ".MinSize(" << wxCrafter::EncodeSize(m_minSize) << ")";
+    }
 
-    if(m_maxSize != wxDefaultSize) { cppCode << ".MaxSize(" << wxCrafter::EncodeSize(m_maxSize) << ")"; }
+    if (m_maxSize != wxDefaultSize) {
+        cppCode << ".MaxSize(" << wxCrafter::EncodeSize(m_maxSize) << ")";
+    }
 
-    if(!m_resizable) { cppCode << ".Fixed()"; }
+    if (!m_resizable) {
+        cppCode << ".Fixed()";
+    }
 
     cppCode << ".CaptionVisible(" << BOOL_TO_STR(m_captionVisible) << ")";
     cppCode << ".MaximizeButton(" << BOOL_TO_STR(m_maxButton) << ")";
@@ -38,7 +50,9 @@ wxString AuiPaneInfo::ToCppCode() const
     cppCode << ".MinimizeButton(" << BOOL_TO_STR(m_minButton) << ")";
     cppCode << ".PinButton(" << BOOL_TO_STR(m_pinButton) << ")";
 
-    if(m_toolbarPane) { cppCode << ".ToolbarPane()"; }
+    if (m_toolbarPane) {
+        cppCode << ".ToolbarPane()";
+    }
     return cppCode;
 }
 
@@ -65,7 +79,7 @@ void AuiPaneInfo::Construct(wxPropertyGrid* pg) const
     pg->Expand(dockings);
 
     const wxArrayString directions = StdToWX::ToArrayString(
-        { "wxAUI_DOCK_TOP", "wxAUI_DOCK_RIGHT", "wxAUI_DOCK_BOTTOM", "wxAUI_DOCK_LEFT", "wxAUI_DOCK_CENTER" });
+        {"wxAUI_DOCK_TOP", "wxAUI_DOCK_RIGHT", "wxAUI_DOCK_BOTTOM", "wxAUI_DOCK_LEFT", "wxAUI_DOCK_CENTER"});
     wxEnumProperty* dir = (wxEnumProperty*)pg->Append(new wxEnumProperty(_("Direction"), wxPG_LABEL, directions));
     pg->Expand(dir);
     dir->SetChoiceSelection(directions.Index(m_dockDirection));
@@ -98,12 +112,15 @@ void AuiPaneInfo::Construct(wxPropertyGrid* pg) const
 void AuiPaneInfo::FromJSON(const JSONItem& json)
 {
     Reset();
-    if(json.isOk() == false) { return; }
+    if (json.isOk() == false) {
+        return;
+    }
 
     m_name = json.namedObject("m_name").toString();
     m_caption = json.namedObject("m_caption").toString();
     m_dockDirection = json.namedObject("m_dockDirection").toString();
-    if(m_dockDirection.IsEmpty()) m_dockDirection = "wxAUI_DOCK_LEFT";
+    if (m_dockDirection.IsEmpty())
+        m_dockDirection = "wxAUI_DOCK_LEFT";
 
     m_layer = json.namedObject("m_layer").toInt();
     m_row = json.namedObject("m_row").toInt();
@@ -168,39 +185,39 @@ void AuiPaneInfo::OnChanged(wxPropertyGridEvent& e)
     wxSize szValue = wxCrafter::DecodeSize(value);
     bool bValue = prop->GetValue().GetBool();
 
-    if(label == _("Name"))
+    if (label == _("Name"))
         m_name = value;
-    else if(label == _("Caption"))
+    else if (label == _("Caption"))
         m_caption = value;
-    else if(label == _("Caption Visible"))
+    else if (label == _("Caption Visible"))
         m_captionVisible = bValue;
-    else if(label == _("Resizable"))
+    else if (label == _("Resizable"))
         m_resizable = bValue;
-    else if(label == _("Direction"))
+    else if (label == _("Direction"))
         m_dockDirection = value;
-    else if(label == _("Layer"))
+    else if (label == _("Layer"))
         m_layer = iValue;
-    else if(label == _("Row"))
+    else if (label == _("Row"))
         m_row = iValue;
-    else if(label == _("Position"))
+    else if (label == _("Position"))
         m_position = iValue;
 
-    else if(label == _("Best Size"))
+    else if (label == _("Best Size"))
         m_bestSize = szValue;
-    else if(label == _("Min Size"))
+    else if (label == _("Min Size"))
         m_minSize = szValue;
-    else if(label == _("Max Size"))
+    else if (label == _("Max Size"))
         m_maxSize = szValue;
 
-    else if(label == _("Close Button"))
+    else if (label == _("Close Button"))
         m_closeButton = bValue;
-    else if(label == _("Minimize Button"))
+    else if (label == _("Minimize Button"))
         m_minButton = bValue;
-    else if(label == _("Maximize Button"))
+    else if (label == _("Maximize Button"))
         m_maxButton = bValue;
-    else if(label == _("Pin Button"))
+    else if (label == _("Pin Button"))
         m_pinButton = bValue;
-    else if(label == _("ToolBar Pane"))
+    else if (label == _("ToolBar Pane"))
         m_toolbarPane = bValue;
 }
 
@@ -232,15 +249,15 @@ wxString AuiPaneInfo::ToXRC(const wxString& objXRC) const
         << "<max_size>" << wxCrafter::EncodeSize(m_maxSize) << "</max_size>"
         << "<min_size>" << wxCrafter::EncodeSize(m_minSize) << "</min_size>";
 
-    if(m_dockDirection == "wxAUI_DOCK_TOP")
+    if (m_dockDirection == "wxAUI_DOCK_TOP")
         xrc << "<top>1</top>";
-    else if(m_dockDirection == "wxAUI_DOCK_BOTTOM")
+    else if (m_dockDirection == "wxAUI_DOCK_BOTTOM")
         xrc << "<bottom>1</bottom>";
-    else if(m_dockDirection == "wxAUI_DOCK_LEFT")
+    else if (m_dockDirection == "wxAUI_DOCK_LEFT")
         xrc << "<left>1</left>";
-    else if(m_dockDirection == "wxAUI_DOCK_RIGHT")
+    else if (m_dockDirection == "wxAUI_DOCK_RIGHT")
         xrc << "<right>1</right>";
-    else if(m_dockDirection == "wxAUI_DOCK_CENTER" || m_dockDirection == "wxAUI_DOCK_CENTRE")
+    else if (m_dockDirection == "wxAUI_DOCK_CENTER" || m_dockDirection == "wxAUI_DOCK_CENTRE")
         xrc << "<centre>1</centre>";
     else
         xrc << "<left>1</left>"; // Default
@@ -256,7 +273,9 @@ wxString AuiPaneInfo::ToXRC(const wxString& objXRC) const
         << "<maximize_button>" << XRC_BOOL_TO_STR(m_maxButton) << "</maximize_button>"
         << "<pin_button>" << XRC_BOOL_TO_STR(m_pinButton) << "</pin_button>";
 
-    if(m_toolbarPane) { xrc << "<toolbar_pane>" << XRC_BOOL_TO_STR(m_toolbarPane) << "</toolbar_pane>"; }
+    if (m_toolbarPane) {
+        xrc << "<toolbar_pane>" << XRC_BOOL_TO_STR(m_toolbarPane) << "</toolbar_pane>";
+    }
     xrc << objXRC << "</object>";
     return xrc;
 }

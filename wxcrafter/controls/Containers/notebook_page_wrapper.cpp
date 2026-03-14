@@ -38,26 +38,30 @@ wxcWidget* NotebookPageWrapper::Clone() const { return new NotebookPageWrapper()
 
 wxString NotebookPageWrapper::CppCtorCode() const
 {
-    if(IsTreebookPage()) { return DoTreebookCppCtorCode(); }
+    if (IsTreebookPage()) {
+        return DoTreebookCppCtorCode();
+    }
 
     wxString code;
     code << CPPStandardWxCtor(wxT("wxTAB_TRAVERSAL"));
 
     // If our parent is not a notebook, return the code
     NotebookBaseWrapper* book = GetNotebook();
-    if(!book) { return code; }
+    if (!book) {
+        return code;
+    }
 
     bool isAuiPage = (book->GetType() == ID_WXAUINOTEBOOK);
     bool isChoicePage = (book->GetType() == ID_WXCHOICEBOOK);
 
-    if(!isChoicePage) {
+    if (!isChoicePage) {
         // wxChoicebook does not support images (yet)
         wxcCodeGeneratorHelper::Get().AddBitmap(PropertyFile(PROP_BITMAP_PATH));
     }
 
     bool bHasBitmap = (GetImageSize() != wxSize(-1, -1));
     wxString imgListName, imgIndex;
-    if(!isChoicePage && !isAuiPage && bHasBitmap) {
+    if (!isChoicePage && !isAuiPage && bHasBitmap) {
         imgListName << GetParent()->GetName() << wxT("_il");
         imgIndex << GetName() << wxT("ImgIndex");
         code << wxT("int ") << imgIndex << wxT(";\n");
@@ -65,14 +69,14 @@ wxString NotebookPageWrapper::CppCtorCode() const
              << wxcCodeGeneratorHelper::Get().BitmapCode(PropertyFile(PROP_BITMAP_PATH)) << wxT(");\n");
     }
 
-    if(isAuiPage && bHasBitmap) {
+    if (isAuiPage && bHasBitmap) {
         // Aui passes the bitmap in the AddPage(...) call
         // Add this page to the notebook
         code << GetParent()->GetName() << wxT("->AddPage(") << GetName() << wxT(", ") << Label() << wxT(", ")
              << PropertyBool(PROP_SELECTED) << wxT(", ")
              << wxcCodeGeneratorHelper::Get().BitmapCode(PropertyFile(PROP_BITMAP_PATH)) << wxT(");\n");
 
-    } else if(bHasBitmap && !imgIndex.IsEmpty()) {
+    } else if (bHasBitmap && !imgIndex.IsEmpty()) {
         // Add this page to the notebook
         code << GetParent()->GetName() << wxT("->AddPage(") << GetName() << wxT(", ") << Label() << wxT(", ")
              << PropertyBool(PROP_SELECTED) << wxT(", ") << imgIndex << wxT(");\n");
@@ -96,9 +100,11 @@ wxString NotebookPageWrapper::GetWxClassName() const { return wxT("wxPanel"); }
 void NotebookPageWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
     NotebookBaseWrapper* book = dynamic_cast<NotebookBaseWrapper*>(GetParent());
-    if(!book) { return; }
+    if (!book) {
+        return;
+    }
 
-    if(IsTreebookPage()) {
+    if (IsTreebookPage()) {
         int depth(0);
         DoTreebookXRC(text, type, depth);
         return;
@@ -106,12 +112,14 @@ void NotebookPageWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 
     text << wxT("<object class=\"") << book->GetXRCPageClass() << wxT("\">") << XRCLabel();
 
-    if(!IsChoicebookPage()) {
+    if (!IsChoicebookPage()) {
         wxString bmp = PropertyFile(PROP_BITMAP_PATH);
-        if(bmp.IsEmpty() == false) { text << XRCBitmap(); }
+        if (bmp.IsEmpty() == false) {
+            text << XRCBitmap();
+        }
     }
 
-    if(type == XRC_LIVE) {
+    if (type == XRC_LIVE) {
         text << wxT("<selected>") << wxCrafter::XMLEncode(PropertyString(PROP_SELECTED)) << wxT("</selected>");
 
     } else {
@@ -134,17 +142,21 @@ void NotebookPageWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     // There are 3 possible properties. Not all will apply to all bookpage types, but the XRC should only supply
     // relevant ones...
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("bitmap"));
-    if(propertynode) {
+    if (propertynode) {
         wxString value = propertynode->GetNodeContent();
         PropertyBase* prop = GetProperty(PROP_BITMAP_PATH);
-        if(prop) { prop->SetValue(value); }
+        if (prop) {
+            prop->SetValue(value);
+        }
     }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("selection"));
-    if(propertynode) {
+    if (propertynode) {
         wxString value = propertynode->GetNodeContent();
         PropertyBase* prop = GetProperty(PROP_SELECTION);
-        if(prop) { prop->SetValue(value); }
+        if (prop) {
+            prop->SetValue(value);
+        }
     }
     /*
         propertynode = XmlUtils::FindFirstByTagName(node, wxT("depth"));
@@ -165,10 +177,12 @@ void NotebookPageWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     // There are 3 possible properties. Not all will apply to all bookpage types, but the XRC should only supply
     // relevant ones...
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("selection"));
-    if(propertynode) {
+    if (propertynode) {
         wxString value = propertynode->GetNodeContent();
         PropertyBase* prop = GetProperty(PROP_SELECTION);
-        if(prop) { prop->SetValue(value); }
+        if (prop) {
+            prop->SetValue(value);
+        }
     }
 }
 
@@ -177,9 +191,9 @@ wxSize NotebookPageWrapper::GetImageSize() const
     clDirChanger dc(wxcProjectMetadata::Get().GetProjectPath());
     wxString bmp = PropertyFile(PROP_BITMAP_PATH);
     wxFileName fn(bmp);
-    if(fn.FileExists()) {
+    if (fn.FileExists()) {
         wxBitmap bmpFile(fn.GetFullPath(), wxBITMAP_TYPE_ANY);
-        if(bmpFile.IsOk()) {
+        if (bmpFile.IsOk()) {
             wxSize bmpSize;
             bmpSize.x = bmpFile.GetWidth();
             bmpSize.y = bmpFile.GetHeight();
@@ -192,10 +206,10 @@ wxSize NotebookPageWrapper::GetImageSize() const
 void NotebookPageWrapper::SetParent(wxcWidget* parent)
 {
     wxcWidget::SetParent(parent);
-    if(IsChoicebookPage()) {
+    if (IsChoicebookPage()) {
         DelProperty(PROP_BITMAP_PATH);
 
-    } else if(IsTreebookPage()) {
+    } else if (IsTreebookPage()) {
         Add<BoolProperty>(PROP_EXPANDED, true, _("Expand this node"));
     }
 }
@@ -207,9 +221,11 @@ bool NotebookPageWrapper::IsTreebookPage() const
     bool isTreebookPage = false;
     // Find the first parent of type Notebook
     NotebookBaseWrapper* book = GetNotebook();
-    if(book) { isTreebookPage = (dynamic_cast<TreeBookWrapper*>(book) != NULL); }
+    if (book) {
+        isTreebookPage = (dynamic_cast<TreeBookWrapper*>(book) != NULL);
+    }
 
-    if(!isTreebookPage) {
+    if (!isTreebookPage) {
         NotebookPageWrapper* parent = dynamic_cast<NotebookPageWrapper*>(GetParent());
         isTreebookPage = (parent != NULL);
     }
@@ -220,12 +236,14 @@ void NotebookPageWrapper::DoTreebookXRC(wxString& text, XRC_TYPE type, int depth
 {
     text << wxT("<object class=\"treebookpage\">") << XRCLabel();
 
-    if(!IsChoicebookPage()) {
+    if (!IsChoicebookPage()) {
         wxString bmp = PropertyFile(PROP_BITMAP_PATH);
-        if(bmp.IsEmpty() == false) { text << XRCBitmap(); }
+        if (bmp.IsEmpty() == false) {
+            text << XRCBitmap();
+        }
     }
 
-    if(type == XRC_LIVE) {
+    if (type == XRC_LIVE) {
         text << wxT("<selected>") << wxCrafter::XMLEncode(PropertyString(PROP_SELECTED)) << wxT("</selected>");
 
     } else {
@@ -249,7 +267,9 @@ void NotebookPageWrapper::DoTreebookXRC(wxString& text, XRC_TYPE type, int depth
 
         } else {
             child->ToXRC(xrc, type);
-            if (child->IsSizerItem()) { xrc = child->WrapInSizerXRC(xrc); }
+            if (child->IsSizerItem()) {
+                xrc = child->WrapInSizerXRC(xrc);
+            }
         }
         text << xrc;
     }
@@ -263,12 +283,15 @@ NotebookBaseWrapper* NotebookPageWrapper::GetNotebook() const
 {
     // Find the first parent of type Notebook
     wxcWidget* parent = GetParent();
-    while(parent) {
-        if(dynamic_cast<NotebookBaseWrapper*>(parent)) { break; }
+    while (parent) {
+        if (dynamic_cast<NotebookBaseWrapper*>(parent)) {
+            break;
+        }
         parent = parent->GetParent();
     }
 
-    if(!parent) return NULL;
+    if (!parent)
+        return NULL;
 
     return dynamic_cast<NotebookBaseWrapper*>(parent);
 }
@@ -276,19 +299,24 @@ NotebookBaseWrapper* NotebookPageWrapper::GetNotebook() const
 int NotebookPageWrapper::GetPageIndex() const
 {
     NotebookBaseWrapper* book = GetNotebook();
-    if(!book) { return wxNOT_FOUND; }
+    if (!book) {
+        return wxNOT_FOUND;
+    }
 
     return book->GetPageIndex((const NotebookPageWrapper*)this);
 }
 
 wxString NotebookPageWrapper::DoTreebookCppCtorCode() const
 {
-    if(!GetNotebook()) return wxT("");
+    if (!GetNotebook())
+        return wxT("");
 
     wxString code;
     bool isNullPage = (PropertyBool(PROP_NULL_BOOK_PAGE) == "true");
 
-    if(!isNullPage) { code << CPPStandardWxCtor(wxT("wxTAB_TRAVERSAL")); }
+    if (!isNullPage) {
+        code << CPPStandardWxCtor(wxT("wxTAB_TRAVERSAL"));
+    }
 
     bool bHasBitmap = false;
     wxString imgListName, imgIndex;
@@ -299,7 +327,7 @@ wxString NotebookPageWrapper::DoTreebookCppCtorCode() const
     wxcCodeGeneratorHelper::Get().AddBitmap(PropertyFile(PROP_BITMAP_PATH));
 
     wxSize sz = GetImageSize();
-    if(sz != wxSize(-1, -1)) {
+    if (sz != wxSize(-1, -1)) {
 
         imgListName << book->GetName() << wxT("_il");
         imgIndex << GetName() << wxT("ImgIndex");
@@ -309,16 +337,16 @@ wxString NotebookPageWrapper::DoTreebookCppCtorCode() const
         bHasBitmap = true;
     }
 
-    if(parentPage) {
+    if (parentPage) {
         // This is a sub page
         int parentIndex = parentPage->GetPageIndex();
-        if(parentIndex != wxNOT_FOUND) {
+        if (parentIndex != wxNOT_FOUND) {
             code << book->GetName() << wxT("->InsertSubPage(") << parentIndex << wxT(", ")
                  << (isNullPage ? wxString("NULL") : GetName()) << wxT(", ") << Label() << wxT(", ")
                  << PropertyBool(PROP_SELECTED) << wxT(", ")
                  << (bHasBitmap && !imgIndex.IsEmpty() ? imgIndex : wxT("wxNOT_FOUND")) << wxT(");\n");
 
-            if(PropertyBool(PROP_EXPANDED) == wxT("true")) {
+            if (PropertyBool(PROP_EXPANDED) == wxT("true")) {
                 wxcNotebookCodeHelper::Get().Code()
                     << book->GetName() << wxT("->ExpandNode( ") << GetPageIndex() << wxT(", true );\n");
             }
@@ -329,7 +357,7 @@ wxString NotebookPageWrapper::DoTreebookCppCtorCode() const
              << Label() << wxT(", ") << PropertyBool(PROP_SELECTED) << wxT(", ")
              << (bHasBitmap && !imgIndex.IsEmpty() ? imgIndex : wxT("wxNOT_FOUND")) << wxT(");\n");
 
-        if(PropertyBool(PROP_EXPANDED) == wxT("true")) {
+        if (PropertyBool(PROP_EXPANDED) == wxT("true")) {
             wxcNotebookCodeHelper::Get().Code()
                 << book->GetName() << wxT("->ExpandNode( ") << GetPageIndex() << wxT(", true );\n");
         }

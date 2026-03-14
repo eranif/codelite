@@ -40,7 +40,7 @@ AuiToolBarTopLevelWrapper::AuiToolBarTopLevelWrapper()
     Add<StringProperty>(
         PROP_CLASS_DECORATOR, "", _("MSW Only\nC++ macro decorator - allows exporting this class from a DLL"));
 
-    if(m_properties.Contains(PROP_NAME)) {
+    if (m_properties.Contains(PROP_NAME)) {
         m_properties.Item(PROP_NAME)->SetTooltip(_("The generated C++ class name"));
     }
 
@@ -98,7 +98,7 @@ wxString AuiToolBarTopLevelWrapper::CppCtorCode() const
     code << "SetToolBitmapSize(wxSize" << pr.ToString(true) << ");\n";
 
     XYPair margins(PropertyString(PROP_MARGINS), -1, -1);
-    if(margins != XYPair(-1, -1)) {
+    if (margins != XYPair(-1, -1)) {
         code << "    SetMargins(" << margins.ToString() << ");\n";
     }
     return code;
@@ -133,7 +133,7 @@ wxString AuiToolBarTopLevelWrapper::GetWxClassName() const { return "wxAuiToolBa
 
 void AuiToolBarTopLevelWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    if(type == XRC_PREVIEW) {
+    if (type == XRC_PREVIEW) {
         text << "<object class=\"wxPanel\" name=\"" << GetName() << "\">"
              << "<size>-1,-1</size>"
              // Fake a sizer
@@ -146,7 +146,7 @@ void AuiToolBarTopLevelWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     XYPair prSize(PropertyString(PROP_BITMAP_SIZE), 16, 16);
     XYPair prMargins(PropertyString(PROP_MARGINS), -1, -1);
 
-    if(type == XRC_PREVIEW) {
+    if (type == XRC_PREVIEW) {
         // IN Preview Mode, append to the class name
         // a number to distinguish it from the panel
         // that we added earlier in this function
@@ -157,14 +157,14 @@ void AuiToolBarTopLevelWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     }
     text << XRCStyle() << XRCCommonAttributes() << "<bitmapsize>" << prSize.ToString() << "</bitmapsize>";
 
-    if(prMargins != XYPair(-1, -1)) {
+    if (prMargins != XYPair(-1, -1)) {
         text << "<margins>" << prMargins.ToString() << "</margins>";
     }
 
     ChildrenXRC(text, type);
     text << XRCSuffix();
 
-    if(type == XRC_PREVIEW) {
+    if (type == XRC_PREVIEW) {
         text << "</object>"  // sizeritem
              << "</object>"  // wxBoxSizer
              << "</object>"; // PreviewPanel

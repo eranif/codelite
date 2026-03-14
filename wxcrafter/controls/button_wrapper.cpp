@@ -23,9 +23,10 @@ ButtonWrapper::ButtonWrapper()
     PREPEND_STYLE(wxBU_RIGHT, false);
     PREPEND_STYLE(wxBU_TOP, false);
 
-    const wxArrayString directions = StdToWX::ToArrayString({ "wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM" });
+    const wxArrayString directions = StdToWX::ToArrayString({"wxLEFT", "wxRIGHT", "wxTOP", "wxBOTTOM"});
 
-    RegisterEvent(wxT("wxEVT_COMMAND_BUTTON_CLICKED"), wxT("wxCommandEvent"),
+    RegisterEvent(wxT("wxEVT_COMMAND_BUTTON_CLICKED"),
+                  wxT("wxCommandEvent"),
                   _("Process a wxEVT_COMMAND_BUTTON_CLICKED event, when the button is clicked."),
                   wxT("wxCommandEventHandler"));
 
@@ -59,10 +60,12 @@ wxString ButtonWrapper::CppCtorCode() const
          << wxT(", ") << Label() << wxT(", wxDefaultPosition, ") << SizeAsString() << wxT(", ") << StyleFlags(wxT("0"))
          << wxT(");\n");
 
-    if(PropertyString(PROP_DEFAULT_BUTTON) == wxT("1")) { code << GetName() << wxT("->SetDefault();\n"); }
+    if (PropertyString(PROP_DEFAULT_BUTTON) == wxT("1")) {
+        code << GetName() << wxT("->SetDefault();\n");
+    }
 
     wxString bmpCpp = wxcCodeGeneratorHelper::Get().BitmapCode(PropertyFile(PROP_BITMAP_PATH));
-    if(bmpCpp != "wxNullBitmap") {
+    if (bmpCpp != "wxNullBitmap") {
         code << wxCrafter::WX294_BLOCK_START();
         code << GetName() << "->SetBitmap(" << bmpCpp << ", " << PropertyString(PROP_DIRECTION) << ");\n";
         code << GetName() << "->SetBitmapMargins(" << xy.ToString() << ");\n";
@@ -89,10 +92,14 @@ void ButtonWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("bitmap"));
-    if(propertynode) { ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_BUTTON"); }
+    if (propertynode) {
+        ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_BUTTON");
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("default"));
-    if(propertynode) { SetPropertyString(PROP_DEFAULT_BUTTON, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_DEFAULT_BUTTON, propertynode->GetNodeContent());
+    }
 }
 
 void ButtonWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -101,10 +108,14 @@ void ButtonWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxSmith(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("bitmap"));
-    if(propertynode) { ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_BUTTON"); }
+    if (propertynode) {
+        ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_BUTTON");
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("default"));
-    if(propertynode) { SetPropertyString(PROP_DEFAULT_BUTTON, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_DEFAULT_BUTTON, propertynode->GetNodeContent());
+    }
 }
 
 void ButtonWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -113,10 +124,12 @@ void ButtonWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "bitmap");
-    if(propertynode) {
+    if (propertynode) {
         ImportFromwxFB::ProcessBitmapProperty(propertynode->GetNodeContent(), this, PROP_BITMAP_PATH, "wxART_BUTTON");
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "default");
-    if(propertynode) { SetPropertyString(PROP_DEFAULT_BUTTON, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_DEFAULT_BUTTON, propertynode->GetNodeContent());
+    }
 }

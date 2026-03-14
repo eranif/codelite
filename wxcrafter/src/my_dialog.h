@@ -8,8 +8,12 @@ class MyDialog : public wxDialog
 public:
     MyDialog() = default;
     // Constructor with no modal flag - the new convention.
-    MyDialog(wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos = wxDefaultPosition,
-             const wxSize& size = wxDefaultSize, long style = wxDEFAULT_DIALOG_STYLE,
+    MyDialog(wxWindow* parent,
+             wxWindowID id,
+             const wxString& title,
+             const wxPoint& pos = wxDefaultPosition,
+             const wxSize& size = wxDefaultSize,
+             long style = wxDEFAULT_DIALOG_STYLE,
              const wxString& name = wxDialogNameStr)
         : wxDialog(parent, id, title, pos, size, style, name)
     {

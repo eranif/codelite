@@ -28,7 +28,7 @@ wxString InfoBarWrapper::GetWxClassName() const { return "wxInfoBar"; }
 
 void InfoBarWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    if(type == XRC_LIVE) {
+    if (type == XRC_LIVE) {
         text << XRCUnknown();
     } else {
 

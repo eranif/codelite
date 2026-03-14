@@ -16,8 +16,7 @@ TaskBarIconWrapper::TaskBarIconWrapper()
 {
     m_styles.Clear();
     Add<StringProperty>(PROP_TOOLTIP, _("Set the wxTaskBarIcon tooltip"));
-    const wxArrayString types =
-        StdToWX::ToArrayString({ "wxTBI_DEFAULT_TYPE", "wxTBI_DOCK", "wxTBI_CUSTOM_STATUSITEM" });
+    const wxArrayString types = StdToWX::ToArrayString({"wxTBI_DEFAULT_TYPE", "wxTBI_DOCK", "wxTBI_CUSTOM_STATUSITEM"});
 
     SetPropertyString(_("Common Settings"), "wxTaskBarIcon");
     Add<ChoiceProperty>(PROP_TASKBAR_ICONTYPE, types, 0, _("The iconType is only applicable on wxOSX_Cocoa"));
@@ -44,7 +43,7 @@ wxString TaskBarIconWrapper::CppCtorCode() const
 
     wxString code;
     code << GetName() << " = new " << GetRealClassName() << "(" << PropertyString(PROP_TASKBAR_ICONTYPE) << ");\n";
-    if(!bmp.IsEmpty()) {
+    if (!bmp.IsEmpty()) {
         code << "{\n";
         code << "    wxIcon icn;\n";
         code << "    icn.CopyFromBitmap(" << wxcCodeGeneratorHelper::Get().BitmapCode(PropertyFile(PROP_BITMAP_PATH))

@@ -24,23 +24,23 @@ bool ImportFromwxFB::ImportProject(ImportDlg::ImportFileData& data, const wxStri
 {
     ImportDlg dlg(ImportDlg::IPD_FB, m_Parent, sourceFile);
 
-    if(dlg.ShowModal() != wxID_OK) {
+    if (dlg.ShowModal() != wxID_OK) {
         return false;
     }
 
     wxString filepath = dlg.GetFilepath();
-    if(filepath.empty() || !wxFileExists(filepath)) {
+    if (filepath.empty() || !wxFileExists(filepath)) {
         return false;
     }
 
     wxXmlDocument doc(filepath);
-    if(!doc.IsOk()) {
+    if (!doc.IsOk()) {
         wxMessageBox(_("Failed to load the file to import"), wxT("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
         return false;
     }
 
     wxcWidget::List_t toplevels;
-    if(ParseFile(doc, toplevels) && !toplevels.empty()) {
+    if (ParseFile(doc, toplevels) && !toplevels.empty()) {
         wxcProjectMetadata::Get().Serialize(toplevels, wxFileName(dlg.GetOutputFilepath()));
         data = dlg.GetData();
         return true;
@@ -52,12 +52,12 @@ bool ImportFromwxFB::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels)
 {
     wxString abortmsg(_("This doesn't seem to be a valid wxFormBuilder project file. Aborting."));
     wxXmlNode* wxFBProj = XmlUtils::FindFirstByTagName(doc.GetRoot(), wxT("object"));
-    if(!wxFBProj) {
+    if (!wxFBProj) {
         wxMessageBox(abortmsg, wxT("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
         return false;
     }
 
-    if(XmlUtils::ReadString(wxFBProj, wxT("class")) != "Project") {
+    if (XmlUtils::ReadString(wxFBProj, wxT("class")) != "Project") {
         wxMessageBox(abortmsg, wxT("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
         return false;
     }
@@ -75,21 +75,21 @@ bool ImportFromwxFB::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels)
 
     // The first interesting thing is a child node of Project e.g. <object class="Dialog" expanded="1">
     wxXmlNode* toplevelnode = XmlUtils::FindFirstByTagName(wxFBProj, wxT("object"));
-    if(!toplevelnode) {
+    if (!toplevelnode) {
         wxMessageBox(abortmsg, wxT("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
         return false;
     }
 
-    while(toplevelnode) {
+    while (toplevelnode) {
         wxString tag = toplevelnode->GetName();
-        if(tag != wxT("object")) {
+        if (tag != wxT("object")) {
             wxMessageBox(abortmsg, wxT("CodeLite"), wxICON_ERROR | wxOK, m_Parent);
             return false;
         }
 
         bool alreadyParented(false);
         wxcWidget* wrapper = ParseNode(toplevelnode, NULL, alreadyParented);
-        if(wrapper) {
+        if (wrapper) {
             toplevels.push_back(wrapper);
         }
 
@@ -113,11 +113,11 @@ wxcWidget* ImportFromwxFB::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, 
     wxXmlNode* gbsizeritemnode = node;
     wxXmlNode* booknode = NULL;
 
-    if(classname == wxT("sizeritem")) {
+    if (classname == wxT("sizeritem")) {
         // See the comment in import_from_xrc. Replace node with the contained object node
         // We'll process sizeritemnode node separately later
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
-        if(!node) {
+        if (!node) {
             // I don't think this can happen, but...
             return NULL;
         }
@@ -126,12 +126,12 @@ wxcWidget* ImportFromwxFB::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, 
         classname = XmlUtils::ReadString(node, wxT("class"));
     }
 
-    else if(classname == "gbsizeritem") {
+    else if (classname == "gbsizeritem") {
         // wxFB deals with this separately
         // We'll process gbsizeritem node separately later
         gbsizeritemnode = node;
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
-        if(!node) {
+        if (!node) {
             // I don't think this can happen, but...
             return NULL;
         }
@@ -140,12 +140,12 @@ wxcWidget* ImportFromwxFB::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, 
         classname = XmlUtils::ReadString(node, wxT("class"));
     }
 
-    else if(classname.Contains(wxT("bookpage"))) {
+    else if (classname.Contains(wxT("bookpage"))) {
         // See the above comment. Replace node with the contained object node
         // We'll process booknode node separately later
         booknode = node;
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
-        if(!node) {
+        if (!node) {
             // I don't think this can happen, but...
             return NULL;
         }
@@ -154,11 +154,11 @@ wxcWidget* ImportFromwxFB::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, 
         classname = XmlUtils::ReadString(node, wxT("class"));
     }
 
-    else if(classname == "splitteritem") {
+    else if (classname == "splitteritem") {
         // wxFB uses this for a splitterwindow page, but it holds no extra info :/
         // so just substitute the contained object
         node = XmlUtils::FindFirstByTagName(node, wxT("object"));
-        if(!node) {
+        if (!node) {
             // I don't think this can happen, but...
             return NULL;
         }
@@ -166,19 +166,19 @@ wxcWidget* ImportFromwxFB::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, 
     }
 
     int Id = Allocator::StringToId(classname);
-    if(Id == wxNOT_FOUND) {
+    if (Id == wxNOT_FOUND) {
         wxLogWarning(wxString::Format(_("Can't import unknown class %s from wxFB"), classname));
         return NULL;
     }
 
-    if((Id == ID_WXPANEL) && (parentwrapper == NULL)) {
+    if ((Id == ID_WXPANEL) && (parentwrapper == NULL)) {
         Id = ID_WXPANEL_TOPLEVEL;
 
-    } else if(Id == ID_WXPANEL && parentwrapper && parentwrapper->GetType() == ID_WXSPLITTERWINDOW) {
+    } else if (Id == ID_WXPANEL && parentwrapper && parentwrapper->GetType() == ID_WXSPLITTERWINDOW) {
         Id = ID_WXSPLITTERWINDOW_PAGE;
     }
 
-    if(booknode) {
+    if (booknode) {
         // Correctly label a wxPanel that's really a notebookpage
         Id = ID_WXPANEL_NOTEBOOK_PAGE;
     }
@@ -192,7 +192,7 @@ wxcWidget* ImportFromwxFB::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, 
     GetGridBagSizerItem(gbsizeritemnode, wrapper); // Similarly with these, which wxFB stores separately
 
     int depth = 0;
-    if(booknode) {
+    if (booknode) {
         // For book pages, extract any info from the <foobookpage> node
         NotebookPageWrapper* nbwrapper = dynamic_cast<NotebookPageWrapper*>(wrapper);
         wxCHECK_MSG(nbwrapper, NULL, wxT("A booknode which has no NotebookPageWrapper"));
@@ -200,12 +200,12 @@ wxcWidget* ImportFromwxFB::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, 
 
         // If this is a treebook subpage, it needs to be parented by a page, not the book
         // depth will only be >0 in that situation
-        if(depth) {
+        if (depth) {
             NotebookBaseWrapper* nb = dynamic_cast<NotebookBaseWrapper*>(parentwrapper);
             wxCHECK_MSG(nb, NULL, wxT("treebookpage 'parent' not a book"));
 
             wxcWidget* item = nb->GetChildPageAtDepth(depth - 1);
-            if(item) {
+            if (item) {
                 item->AddChild(wrapper);
                 alreadyParented = true;
             } else {
@@ -217,12 +217,12 @@ wxcWidget* ImportFromwxFB::ParseNode(wxXmlNode* node, wxcWidget* parentwrapper, 
     }
 
     wxXmlNode* child = node->GetChildren();
-    while(child) {
+    while (child) {
         wxString childname(child->GetName());
-        if(childname == wxT("object")) {
+        if (childname == wxT("object")) {
             bool alreadyParented(false);
             wxcWidget* childwrapper = ParseNode(child, wrapper, alreadyParented);
-            if(childwrapper && !alreadyParented) {
+            if (childwrapper && !alreadyParented) {
                 wrapper->AddChild(childwrapper);
             }
         }
@@ -239,25 +239,25 @@ void ImportFromwxFB::GetSizeritemContents(const wxXmlNode* node, wxcWidget* wrap
 
     // Unlike XRC, wxFB stores everything in <property name=foo>value</property> nodes
     wxXmlNode* child = node->GetChildren();
-    while(child) {
+    while (child) {
         wxString childname(child->GetName());
-        if(childname == wxT("property")) {
+        if (childname == wxT("property")) {
 
-            if(XmlUtils::ReadString(child, wxT("name")) == "flag") {
+            if (XmlUtils::ReadString(child, wxT("name")) == "flag") {
                 wxString flags = child->GetNodeContent();
                 // We must cope with wxC's American misspellings...
                 flags.Replace("wxALIGN_CENTRE", "wxALIGN_CENTER");
 
                 // if left|right|top|bottom add wxALL. Duplication does no harm here
-                if(flags.Contains("wxLEFT") && flags.Contains("wxRIGHT") && flags.Contains("wxTOP") &&
-                   flags.Contains("wxBOTTOM")) {
+                if (flags.Contains("wxLEFT") && flags.Contains("wxRIGHT") && flags.Contains("wxTOP") &&
+                    flags.Contains("wxBOTTOM")) {
                     flags << "|wxALL";
                 }
 
                 wxArrayString flagsarray = wxCrafter::Split(flags, "|");
 
                 // Eran: If flagsarray contains 'wxALL' - make sure all the other four stars are also there...
-                if(flagsarray.Index("wxALL") != wxNOT_FOUND) {
+                if (flagsarray.Index("wxALL") != wxNOT_FOUND) {
                     flagsarray.Add("wxLEFT");
                     flagsarray.Add("wxRIGHT");
                     flagsarray.Add("wxTOP");
@@ -265,17 +265,17 @@ void ImportFromwxFB::GetSizeritemContents(const wxXmlNode* node, wxcWidget* wrap
                     flagsarray = wxCrafter::MakeUnique(flagsarray);
                 }
 
-                for(size_t n = 0; n < flagsarray.GetCount(); ++n) {
+                for (size_t n = 0; n < flagsarray.GetCount(); ++n) {
                     wrapper->EnableSizerFlag(flagsarray.Item(n), true);
                 }
             }
 
-            if(XmlUtils::ReadString(child, wxT("name")) == "proportion") {
+            if (XmlUtils::ReadString(child, wxT("name")) == "proportion") {
                 wxString proportion = child->GetNodeContent();
                 wrapper->SizerItem().SetProportion(wxCrafter::ToNumber(proportion, 0));
             }
 
-            if(XmlUtils::ReadString(child, wxT("name")) == "border") {
+            if (XmlUtils::ReadString(child, wxT("name")) == "border") {
                 wxString border = child->GetNodeContent();
                 wrapper->SizerItem().SetBorder(wxCrafter::ToNumber(border, 0));
             }
@@ -294,21 +294,21 @@ void ImportFromwxFB::GetGridBagSizerItem(const wxXmlNode* node, wxcWidget* wrapp
     wxString row, column, rowspan, colspan; // wxFB holds these individually; wxC needs pairs
 
     wxXmlNode* child = node->GetChildren();
-    while(child) {
+    while (child) {
         wxString childname(child->GetName());
-        if(childname == wxT("property")) {
-            if(XmlUtils::ReadString(child, wxT("name")) == "row") {
+        if (childname == wxT("property")) {
+            if (XmlUtils::ReadString(child, wxT("name")) == "row") {
                 row = child->GetNodeContent();
             }
 
-            if(XmlUtils::ReadString(child, wxT("name")) == "column") {
+            if (XmlUtils::ReadString(child, wxT("name")) == "column") {
                 column = child->GetNodeContent();
             }
-            if(XmlUtils::ReadString(child, wxT("name")) == "rowspan") {
+            if (XmlUtils::ReadString(child, wxT("name")) == "rowspan") {
                 rowspan = child->GetNodeContent();
             }
 
-            if(XmlUtils::ReadString(child, wxT("name")) == "colspan") {
+            if (XmlUtils::ReadString(child, wxT("name")) == "colspan") {
                 colspan = child->GetNodeContent();
             }
         }
@@ -324,25 +324,25 @@ void ImportFromwxFB::GetBookitemContents(const wxXmlNode* node, NotebookPageWrap
     wxString classname = XmlUtils::ReadString(node, wxT("class"));
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "select");
-    if(propertynode) {
+    if (propertynode) {
         wxString selected = propertynode->GetNodeContent();
-        if(selected == "1") {
+        if (selected == "1") {
             wrapper->SetSelected(true);
         }
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "label");
-    if(propertynode) {
+    if (propertynode) {
         wxString label = propertynode->GetNodeContent();
         PropertyBase* prop = wrapper->GetProperty(PROP_LABEL);
-        if(prop) {
+        if (prop) {
             prop->SetValue(label);
         }
     }
 
-    if(classname != "choicebookpage") { // which don't have bitmaps
+    if (classname != "choicebookpage") { // which don't have bitmaps
         propertynode = XmlUtils::FindNodeByName(node, "property", "bitmap");
-        if(propertynode) {
+        if (propertynode) {
             wxString bitmap = propertynode->GetNodeContent();
             ProcessBitmapProperty(bitmap, wrapper);
         }
@@ -372,11 +372,12 @@ wxString ImportFromwxFB::ConvertFBOptionsString(const wxString& content, const w
 }
 
 // static
-void ImportFromwxFB::ProcessBitmapProperty(const wxString& bitmapinfo, wxcWidget* wrapper,
+void ImportFromwxFB::ProcessBitmapProperty(const wxString& bitmapinfo,
+                                           wxcWidget* wrapper,
                                            const wxString& property /*= PROP_BITMAP_PATH*/,
                                            const wxString& client_hint /*=""*/)
 {
-    if(bitmapinfo.empty()) {
+    if (bitmapinfo.empty()) {
         return; // This isn't an error; the field may well be empty
     }
 
@@ -388,49 +389,49 @@ void ImportFromwxFB::ProcessBitmapProperty(const wxString& bitmapinfo, wxcWidget
     // or:  <property name="bitmap">Load From Icon Resource; resourcename; [-1; -1]</property>
     wxArrayString arr =
         wxCrafter::Split(bitmapinfo, ";"); // ToDo: when we can load an icon resource, deal with the ';' in [-1; -1]!
-    if(bitmapinfo.Contains("Load From File")) {
+    if (bitmapinfo.Contains("Load From File")) {
         wxString bitmappath;
-        if(arr.Item(0).Contains("Load From File")) {
+        if (arr.Item(0).Contains("Load From File")) {
             bitmappath = arr.Item(1);
-        } else if(arr.Item(1).Contains("Load From File")) {
+        } else if (arr.Item(1).Contains("Load From File")) {
             bitmappath = arr.Item(0);
         }
-        if(!bitmappath.empty()) {
+        if (!bitmappath.empty()) {
             PropertyBase* prop = wrapper->GetProperty(property); // Either PROP_BITMAP_PATH or PROP_DISABLED_BITMAP_PATH
-            if(prop) {
+            if (prop) {
                 wxFileName fn(bitmappath.Trim(false)); // wxFB will probably have supplied a relative path
-                if(fn.Normalize()) {
+                if (fn.Normalize()) {
                     prop->SetValue(fn.GetFullPath());
                 }
             }
         }
     }
 
-    else if(bitmapinfo.Contains("Load From Art Provider")) {
+    else if (bitmapinfo.Contains("Load From Art Provider")) {
         // "Load From Art Provider; wxART_GO_HOME; wxART_BUTTON"
         //  but we don't know for sure that the stock_client attribute will be present, or which order they'll be in.
         //  So:
         wxString idstring, clientstring, sizeHint;
-        for(size_t n = 0; n < arr.GetCount(); ++n) {
-            if(arr.Item(n).Contains("wxART_")) {
+        for (size_t n = 0; n < arr.GetCount(); ++n) {
+            if (arr.Item(n).Contains("wxART_")) {
                 // Could be e.g. wxART_GO_HOME, or the client hint e.g. wxART_BUTTON. Abuse IsArtProviderBitmap() to
                 // find out which
                 wxString artId, clientId, fake = arr.Item(n) + ",foo";
-                if(wxCrafter::IsArtProviderBitmap(fake, artId, clientId, sizeHint)) {
+                if (wxCrafter::IsArtProviderBitmap(fake, artId, clientId, sizeHint)) {
                     idstring = arr.Item(n);
                 } else {
                     clientstring = arr.Item(n);
                 }
             }
         }
-        if(!idstring.empty()) {
+        if (!idstring.empty()) {
             PropertyBase* prop = wrapper->GetProperty(property);
-            if(prop) {
+            if (prop) {
                 wxString artdata = idstring;
-                if(clientstring.empty()) {
+                if (clientstring.empty()) {
                     clientstring = client_hint; // Use any hint we were given
                 }
-                if(!clientstring.empty()) {
+                if (!clientstring.empty()) {
                     artdata << "," << clientstring;
                 }
                 prop->SetValue(artdata);
@@ -445,7 +446,7 @@ wxString ImportFromwxFB::GetEventtypeFromHandlerstub(const wxString& stub)
 {
     // Despite the class name, this does XRC and wxSmith too. The 'duplicate' events are their way of labelling
 
-    if(sm_eventMap.size() == 0) {
+    if (sm_eventMap.size() == 0) {
         // 'Common' eventtypes
         sm_eventMap.insert(std::pair<wxString, wxString>("OnKeyDown", "wxEVT_KEY_DOWN"));
         sm_eventMap.insert(std::pair<wxString, wxString>("EVT_KEY_DOWN", "wxEVT_KEY_DOWN"));
@@ -762,8 +763,8 @@ wxString ImportFromwxFB::GetEventtypeFromHandlerstub(const wxString& stub)
             std::pair<wxString, wxString>("EVT_SPLITTER_SASH_POS_CHANGED", "wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGED"));
         sm_eventMap.insert(
             std::pair<wxString, wxString>("OnSplitterSashPosChanging", "wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING"));
-        sm_eventMap.insert(std::pair<wxString, wxString>("EVT_SPLITTER_SASH_POS_CHANGING",
-                                                         "wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING"));
+        sm_eventMap.insert(std::pair<wxString, wxString>(
+            "EVT_SPLITTER_SASH_POS_CHANGING", "wxEVT_COMMAND_SPLITTER_SASH_POS_CHANGING"));
         sm_eventMap.insert(std::pair<wxString, wxString>("OnSplitterUnsplit", "wxEVT_COMMAND_SPLITTER_UNSPLIT"));
         sm_eventMap.insert(std::pair<wxString, wxString>("EVT_SPLITTER_UNSPLIT", "wxEVT_COMMAND_SPLITTER_UNSPLIT"));
         sm_eventMap.insert(std::pair<wxString, wxString>("OnText", "wxEVT_COMMAND_TEXT_UPDATED"));

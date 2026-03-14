@@ -1,5 +1,6 @@
-#include "MediaCtrl.h"
 #include "wx/wxprec.h"
+
+#include "MediaCtrl.h"
 
 #ifdef __BORLANDC__
 #pragma hdrstop

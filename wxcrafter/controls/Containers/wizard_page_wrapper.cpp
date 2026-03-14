@@ -34,14 +34,16 @@ wxString WizardPageWrapper::CppCtorCode() const
     code << wxT("m_pages.push_back(") << GetName() << wxT(");\n");
 
     WizardWrapper* wizard = dynamic_cast<WizardWrapper*>(GetParent());
-    if(!wizard) { return code; }
+    if (!wizard) {
+        return code;
+    }
 
     // If this is the last page, perform the 'Chain' call
     // We use |@@| as a special delimiter here (to avoid indenting this code)
     // it will be replaced later by the TopLevelWindowWrapper to an empty string
     const wxcWidget::List_t& siblings = wizard->GetChildren();
     const wxcWidget* lastChild = siblings.back();
-    if(lastChild == this) {
+    if (lastChild == this) {
         code << wxT("|@@|if (m_pages.size() > 1) {\n") << wxT("|@@|    for(size_t i=1; i<m_pages.size(); i++) {\n")
              << wxT("|@@|        wxWizardPageSimple::Chain(m_pages.at(i-1), m_pages.at(i));\n") << wxT("|@@|    }\n")
              << wxT("|@@|}\n");
@@ -56,9 +58,10 @@ void WizardPageWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
     bool isFirstPage = (GetParent()->GetChildren().front() == this);
 
-    if(type == XRC_DESIGNER) {
+    if (type == XRC_DESIGNER) {
         // HACK: Only display the active page
-        if(GUICraftMainPanel::m_MainPanel->GetActiveWizardPage() != this) return;
+        if (GUICraftMainPanel::m_MainPanel->GetActiveWizardPage() != this)
+            return;
 
         text << XRCCommonAttributes() << XRCSize() << XRCStyle() << XRCBitmap();
 
@@ -73,8 +76,8 @@ void WizardPageWrapper::ToXRC(wxString& text, XRC_TYPE type) const
         text << wxT("</object>");
         text << wxT("</object>");
 
-    } else if(type == XRC_PREVIEW) {
-        if(isFirstPage) {
+    } else if (type == XRC_PREVIEW) {
+        if (isFirstPage) {
             text << wxT("<object class=\"") << GetWxClassName() << wxT("\" name=\"WIZARD_PAGE_ONE\">");
         } else {
             text << XRCPrefix();
@@ -83,7 +86,7 @@ void WizardPageWrapper::ToXRC(wxString& text, XRC_TYPE type) const
         text << XRCCommonAttributes() << XRCSize() << XRCStyle() << XRCBitmap();
         ChildrenXRC(text, type);
         text << XRCSuffix();
-    } else if(type == XRC_LIVE) {
+    } else if (type == XRC_LIVE) {
         text << "<object class=\"" << GetWxClassName() << "\" name=\"" << GetName() << "\">";
         text << XRCCommonAttributes() << XRCSize() << XRCStyle() << XRCBitmap();
         ChildrenXRC(text, type);
@@ -97,7 +100,9 @@ void WizardPageWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("bitmap"));
-    if(propertynode) { ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_OTHER"); }
+    if (propertynode) {
+        ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_OTHER");
+    }
 }
 
 void WizardPageWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -106,7 +111,7 @@ void WizardPageWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "bitmap");
-    if(propertynode) {
+    if (propertynode) {
         ImportFromwxFB::ProcessBitmapProperty(propertynode->GetNodeContent(), this, PROP_BITMAP_PATH, "wxART_OTHER");
     }
 }

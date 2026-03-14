@@ -57,7 +57,9 @@ void ToggleButtonWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("checked"));
-    if(propertynode) { SetPropertyString(PROP_CHECKED, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_CHECKED, propertynode->GetNodeContent());
+    }
 }
 
 void ToggleButtonWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
@@ -66,7 +68,9 @@ void ToggleButtonWrapper::LoadPropertiesFromwxSmith(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("checked"));
-    if(propertynode) { SetPropertyString(PROP_CHECKED, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_CHECKED, propertynode->GetNodeContent());
+    }
 }
 
 void ToggleButtonWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -75,5 +79,7 @@ void ToggleButtonWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "value");
-    if(propertynode) { SetPropertyString(PROP_CHECKED, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_CHECKED, propertynode->GetNodeContent());
+    }
 }

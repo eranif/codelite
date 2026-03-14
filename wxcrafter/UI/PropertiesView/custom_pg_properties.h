@@ -39,35 +39,39 @@ public:
 
         wxString origlbl = property->GetLabel();
         wxString lbl = origlbl;
-        if(lbl.EndsWith(":") == false) { lbl << ":"; }
+        if (lbl.EndsWith(":") == false) {
+            lbl << ":";
+        }
 
-        if(lbl == PROP_TOOLTIP || lbl == PROP_LABEL || lbl == PROP_MESSAGE || lbl == PROP_TITLE ||
-           lbl == PROP_CB_CHOICES) {
+        if (lbl == PROP_TOOLTIP || lbl == PROP_LABEL || lbl == PROP_MESSAGE || lbl == PROP_TITLE ||
+            lbl == PROP_CB_CHOICES) {
             delim = "\\n";
         }
 
         bool wordsSplit = false;
-        if(origlbl == PROP_KEYWORDS_SET_1 || origlbl == PROP_KEYWORDS_SET_2 || origlbl == PROP_KEYWORDS_SET_3 ||
-           origlbl == PROP_KEYWORDS_SET_4 || origlbl == PROP_KEYWORDS_SET_5) {
+        if (origlbl == PROP_KEYWORDS_SET_1 || origlbl == PROP_KEYWORDS_SET_2 || origlbl == PROP_KEYWORDS_SET_3 ||
+            origlbl == PROP_KEYWORDS_SET_4 || origlbl == PROP_KEYWORDS_SET_5) {
             wordsSplit = true;
             delim = " ";
         }
 
         wxArrayString arr = wxCrafter::SplitByString(property->GetValueAsString(), delim, true);
 
-        for(size_t i = 0; i < arr.GetCount(); i++) {
+        for (size_t i = 0; i < arr.GetCount(); i++) {
             str << arr.Item(i) << wxT("\n");
         }
 
-        if(str.IsEmpty() == false) { str.RemoveLast(); }
+        if (str.IsEmpty() == false) {
+            str.RemoveLast();
+        }
 
         EnterStringsDlg dlg(wxCrafter::TopFrame(), str);
         dlg.SetMessage(wxT(""));
-        if(dlg.ShowModal() == wxID_OK) {
+        if (dlg.ShowModal() == wxID_OK) {
 
             wxString value = dlg.GetValue();
 
-            if(wordsSplit) {
+            if (wordsSplit) {
                 wxArrayString strings = wxCrafter::Split(value, wxT("\n\r; \t"), wxTOKEN_STRTOK);
                 value = wxCrafter::Join(strings, delim);
 
@@ -96,7 +100,7 @@ public:
     bool DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* property) override
     {
         FontPickerDlg dlg(wxCrafter::TopFrame(), property->GetValueAsString());
-        if(dlg.ShowModal() == wxID_OK) {
+        if (dlg.ShowModal() == wxID_OK) {
             wxString fontName = dlg.GetFontName();
             SetValue(fontName);
             return true;
@@ -118,7 +122,7 @@ public:
     bool DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* property) override
     {
         BitmapSelectorDlg dlg(wxCrafter::TopFrame(), property->GetValueAsString());
-        if(dlg.ShowModal() == wxID_OK) {
+        if (dlg.ShowModal() == wxID_OK) {
             wxString bmpname = dlg.GetBitmapFile();
             SetValue(bmpname);
             return true;
@@ -211,11 +215,13 @@ public:
 
         wxString wildcard =
             wxT("PNG files (*.png)|*.png|BMP files (*.bmp)|*.bmp|GIF files (*.gif)|*.gif|All files (*)|*");
-        wxString newPath = ::wxFileSelector(_("Select bitmap"), wxT(""), wxT(""), wxEmptyString, wildcard, wxFD_OPEN,
-                                            wxCrafter::TopFrame());
-        if(newPath.IsEmpty() == false) {
+        wxString newPath = ::wxFileSelector(
+            _("Select bitmap"), wxT(""), wxT(""), wxEmptyString, wildcard, wxFD_OPEN, wxCrafter::TopFrame());
+        if (newPath.IsEmpty() == false) {
             wxFileName newFilePath(newPath);
-            if(m_projectPath.IsEmpty() == false) { newFilePath.MakeRelativeTo(m_projectPath); }
+            if (m_projectPath.IsEmpty() == false) {
+                newFilePath.MakeRelativeTo(m_projectPath);
+            }
             SetValue(newFilePath.GetFullPath(wxPATH_UNIX));
             return true;
         }
@@ -243,13 +249,16 @@ public:
 
     bool DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* property) override
     {
-        wxString newPath = ::wxDirSelector("Select a folder", wxEmptyString, wxDD_DEFAULT_STYLE, wxDefaultPosition,
-                                           wxCrafter::TopFrame());
-        if(newPath.IsEmpty() == false) {
+        wxString newPath = ::wxDirSelector(
+            "Select a folder", wxEmptyString, wxDD_DEFAULT_STYLE, wxDefaultPosition, wxCrafter::TopFrame());
+        if (newPath.IsEmpty() == false) {
             wxFileName newFilePath(newPath, "");
-            if(m_projectPath.IsEmpty() == false) { newFilePath.MakeRelativeTo(m_projectPath); }
+            if (m_projectPath.IsEmpty() == false) {
+                newFilePath.MakeRelativeTo(m_projectPath);
+            }
             wxString new_path = newFilePath.GetFullPath(wxPATH_UNIX);
-            if(new_path.IsEmpty()) new_path = ".";
+            if (new_path.IsEmpty())
+                new_path = ".";
             SetValue(new_path);
             return true;
         }
@@ -263,7 +272,9 @@ class wxPG_DirPickerProperty : public wxStringProperty
     wxString m_projectPath;
 
 public:
-    wxPG_DirPickerProperty(const wxString& label, const wxString& projectPath, const wxString& name = wxPG_LABEL,
+    wxPG_DirPickerProperty(const wxString& label,
+                           const wxString& projectPath,
+                           const wxString& name = wxPG_LABEL,
                            const wxString& value = "")
         : wxStringProperty(label, name, value)
         , m_projectPath(projectPath)
@@ -285,7 +296,9 @@ class wxPG_FilePickerProperty : public wxStringProperty
     wxString m_projectPath;
 
 public:
-    wxPG_FilePickerProperty(const wxString& label, const wxString& projectPath, const wxString& name = wxPG_LABEL,
+    wxPG_FilePickerProperty(const wxString& label,
+                            const wxString& projectPath,
+                            const wxString& name = wxPG_LABEL,
                             const wxString& value = "")
         : wxStringProperty(label, name, value)
         , m_projectPath(projectPath)
@@ -323,7 +336,7 @@ public:
     {
 
         VirtualDirectorySelectorDlg selector(wxCrafter::TopFrame(), clCxxWorkspaceST::Get(), m_vdPath);
-        if(selector.ShowModal() == wxID_OK) {
+        if (selector.ShowModal() == wxID_OK) {
             m_vdPath = selector.GetVirtualDirectoryPath();
             SetValue(m_vdPath);
             return true;
@@ -370,7 +383,7 @@ public:
     bool DoShowDialog(wxPropertyGrid* propGrid, wxPGProperty* property) override
     {
         BmpTextSelectorDlg selector(wxCrafter::TopFrame(), m_initialValue);
-        if(selector.ShowModal() == wxID_OK) {
+        if (selector.ShowModal() == wxID_OK) {
             m_initialValue = selector.GetValue();
             SetValue(m_initialValue);
             return true;
@@ -399,7 +412,8 @@ public:
 class wxPG_Colour : public wxSystemColourProperty
 {
 public:
-    wxPG_Colour(const wxString& label = wxPG_LABEL, const wxString& name = wxPG_LABEL,
+    wxPG_Colour(const wxString& label = wxPG_LABEL,
+                const wxString& name = wxPG_LABEL,
                 const wxColourPropertyValue& value = wxColourPropertyValue())
         : wxSystemColourProperty(label, name, value)
     {

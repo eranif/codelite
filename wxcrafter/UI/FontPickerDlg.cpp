@@ -8,10 +8,12 @@ FontPickerDlg::FontPickerDlg(wxWindow* parent, const wxString& font)
     , m_fontname(font)
 {
     wxFont f = wxCrafter::StringToFont(m_fontname);
-    if(wxCrafter::IsSystemFont(m_fontname)) {
+    if (wxCrafter::IsSystemFont(m_fontname)) {
         wxString name = m_fontname.BeforeFirst(wxT(','));
         int where = m_choiceSystemFonts->FindString(name);
-        if(where != wxNOT_FOUND) { m_choiceSystemFonts->SetSelection(where); }
+        if (where != wxNOT_FOUND) {
+            m_choiceSystemFonts->SetSelection(where);
+        }
 
         m_checkBoxBold->SetValue(f.GetWeight() == wxFONTWEIGHT_BOLD);
         m_checkBoxItalic->SetValue(f.GetStyle() == wxFONTSTYLE_ITALIC);
@@ -19,13 +21,13 @@ FontPickerDlg::FontPickerDlg(wxWindow* parent, const wxString& font)
         m_checkBoxPreDefinedFont->SetValue(true);
         DoUpdateSelectionToPreDefinedFont();
 
-    } else if(f.IsOk()) {
+    } else if (f.IsOk()) {
         m_fontPicker->SetSelectedFont(f);
         m_checkBoxCustomFont->SetValue(true);
         DoUpdateSelectionToCustomFont();
     }
 
-    if(f.IsOk()) {
+    if (f.IsOk()) {
         m_staticTextSample->SetFont(f);
         m_staticTextSample->SetLabel(_("Sample Text"));
     }
@@ -62,23 +64,23 @@ void FontPickerDlg::DoUpdateSelectionToPreDefinedFont()
 {
     // Update the preview
     wxFont font = wxCrafter::StringToFont(m_choiceSystemFonts->GetStringSelection());
-    if(font.IsOk()) {
+    if (font.IsOk()) {
 
-        if(wxCrafter::IsSystemFont(m_choiceSystemFonts->GetStringSelection())) {
+        if (wxCrafter::IsSystemFont(m_choiceSystemFonts->GetStringSelection())) {
             m_fontname = m_choiceSystemFonts->GetStringSelection();
-            if(m_checkBoxItalic->IsChecked()) {
+            if (m_checkBoxItalic->IsChecked()) {
                 m_fontname << wxT(",italic");
                 font.SetStyle(wxFONTSTYLE_ITALIC);
             } else
                 m_fontname << wxT(",normal");
 
-            if(m_checkBoxBold->IsChecked()) {
+            if (m_checkBoxBold->IsChecked()) {
                 m_fontname << wxT(",bold");
                 font.SetWeight(wxFONTWEIGHT_BOLD);
             } else
                 m_fontname << wxT(",normal");
 
-            if(m_checkBoxUnderlined->IsChecked()) {
+            if (m_checkBoxUnderlined->IsChecked()) {
                 m_fontname << wxT(",underlined");
                 font.SetUnderlined(true);
             } else

@@ -14,7 +14,7 @@ EditCustomControlDlg::EditCustomControlDlg(wxWindow* parent)
         m_choiceControls->Append(p.first);
     }
 
-    if(c.empty() == false) {
+    if (c.empty() == false) {
         m_choiceControls->SetSelection(0);
 
         wxCommandEvent dummy;
@@ -26,11 +26,13 @@ EditCustomControlDlg::EditCustomControlDlg(wxWindow* parent)
 
 void EditCustomControlDlg::OnSelectControl(wxCommandEvent& event)
 {
-    if(m_isModified) { OnSave(event); }
+    if (m_isModified) {
+        OnSave(event);
+    }
 
     wxString controlName = m_choiceControls->GetStringSelection();
     CustomControlTemplate cct = wxcSettings::Get().FindByControlName(controlName);
-    if(cct.IsValid()) {
+    if (cct.IsValid()) {
         m_textCtrlInstantiationLine->ChangeValue(cct.GetAllocationLine());
         m_textCtrlIncludeFile->ChangeValue(cct.GetIncludeFile());
         m_textCtrlXRCClass->ChangeValue(cct.GetXrcPreviewClass());
@@ -56,7 +58,7 @@ void EditCustomControlDlg::OnSave(wxCommandEvent& event)
 
     wxStringMap_t events;
     int count = m_dvListCtrlEvents->GetItemCount();
-    for(int i = 0; i < count; ++i) {
+    for (int i = 0; i < count; ++i) {
         wxString eventtype = m_dvListCtrlEvents->GetTextValue(i, 0);
         wxString eventclss = m_dvListCtrlEvents->GetTextValue(i, 1);
 
@@ -81,7 +83,7 @@ void EditCustomControlDlg::OnDeleteEvent(wxCommandEvent& event)
 void EditCustomControlDlg::OnNewEvent(wxCommandEvent& event)
 {
     NewCustomEventDlg dlg(wxCrafter::TopFrame());
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
 
         wxVector<wxVariant> cols;
         cols.push_back(dlg.GetEventType());

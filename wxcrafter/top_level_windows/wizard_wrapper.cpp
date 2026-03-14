@@ -26,21 +26,26 @@ WizardWrapper::WizardWrapper()
     EnableStyle(wxT("wxCAPTION"), false);
 
     // Wizard related events
-    RegisterEvent(wxT("wxEVT_WIZARD_PAGE_CHANGED"), wxT("wxWizardEvent"),
+    RegisterEvent(wxT("wxEVT_WIZARD_PAGE_CHANGED"),
+                  wxT("wxWizardEvent"),
                   _("The page has just been changed (this event cannot be vetoed)"));
-    RegisterEvent(wxT("wxEVT_WIZARD_PAGE_CHANGING"), wxT("wxWizardEvent"),
+    RegisterEvent(wxT("wxEVT_WIZARD_PAGE_CHANGING"),
+                  wxT("wxWizardEvent"),
                   _("The page is being changed (this event can be vetoed)."));
     RegisterEvent(wxT("wxEVT_WIZARD_PAGE_SHOWN"), wxT("wxWizardEvent"), _("The page was shown and laid out."));
-    RegisterEvent(wxT("wxEVT_WIZARD_CANCEL"), wxT("wxWizardEvent"),
+    RegisterEvent(wxT("wxEVT_WIZARD_CANCEL"),
+                  wxT("wxWizardEvent"),
                   _("The user attempted to cancel the wizard (this event may also be vetoed)."));
     RegisterEvent(wxT("wxEVT_WIZARD_HELP"), wxT("wxWizardEvent"), _("The wizard help button was pressed."));
     RegisterEvent(wxT("wxEVT_WIZARD_FINISHED"), wxT("wxWizardEvent"), _("The wizard finished button was pressed."));
 
     // Dialog related events
-    RegisterEvent(wxT("wxEVT_INIT_DIALOG"), wxT("wxInitDialogEvent"),
+    RegisterEvent(wxT("wxEVT_INIT_DIALOG"),
+                  wxT("wxInitDialogEvent"),
                   _("A wxInitDialogEvent is sent as a dialog or panel is being initialised. Handlers for this event "
                     "can transfer data to the window.\nThe default handler calls wxWindow::TransferDataToWindow"));
-    RegisterEvent(wxT("wxEVT_CLOSE_WINDOW"), wxT("wxCloseEvent"),
+    RegisterEvent(wxT("wxEVT_CLOSE_WINDOW"),
+                  wxT("wxCloseEvent"),
                   _("Process a close event. This event applies to wxFrame and wxDialog classes"));
     RegisterEvent(wxT("wxEVT_ACTIVATE"), wxT("wxActivateEvent"), _("Process a wxEVT_ACTIVATE event"));
     RegisterEvent(wxT("wxEVT_ACTIVATE_APP"), wxT("wxActivateEvent"), _("Process a wxEVT_ACTIVATE_APP event"));
@@ -94,13 +99,13 @@ wxString WizardWrapper::DesignerXRC(bool forPreviewDialog) const
 
 void WizardWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
-    if(type != wxcWidget::XRC_LIVE) {
+    if (type != wxcWidget::XRC_LIVE) {
         text << wxT("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\" ?>")
              << wxT("<resource xmlns=\"http://www.wxwidgets.org/wxxrc\" >");
     }
 
     wxString centred;
-    if(!PropertyString(PROP_CENTRE_ON_SCREEN).empty()) {
+    if (!PropertyString(PROP_CENTRE_ON_SCREEN).empty()) {
         centred = wxT("<centered>1</centered>"); // In XRC centring is on/off; it doesn't discriminate between
                                                  // wxBOTH/wxVERTICAL/wxHORIZONTAL
     }
@@ -113,7 +118,9 @@ void WizardWrapper::ToXRC(wxString& text, XRC_TYPE type) const
     ChildrenXRC(text, type);
     text << wxT("</object>");
 
-    if(type != wxcWidget::XRC_LIVE) { text << wxT("</resource>"); }
+    if (type != wxcWidget::XRC_LIVE) {
+        text << wxT("</resource>");
+    }
 }
 
 void WizardWrapper::GetIncludeFile(wxArrayString& headers) const
@@ -152,16 +159,22 @@ void WizardWrapper::LoadPropertiesFromXRC(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromXRC(node);
 
     wxXmlNode* propertynode = XmlUtils::FindFirstByTagName(node, wxT("centered"));
-    if(propertynode) { SetPropertyString(PROP_CENTRE_ON_SCREEN, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_CENTRE_ON_SCREEN, propertynode->GetNodeContent());
+    }
 
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("bitmap"));
-    if(propertynode) { ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_OTHER"); }
+    if (propertynode) {
+        ImportFromXrc::ProcessBitmapProperty(propertynode, this, PROP_BITMAP_PATH, "wxART_OTHER");
+    }
 
     // We've already done 'size' in the baseclass, but do it again for TLWindows
     // That's because if no size was specified, wxC inflicts 500,300. This isn't what the user expected
     // So, if there is *not* a specified size, overwrite the wxC default with wxDefaultSize
     propertynode = XmlUtils::FindFirstByTagName(node, wxT("size"));
-    if(!propertynode) { SetPropertyString(PROP_SIZE, "-1,-1"); }
+    if (!propertynode) {
+        SetPropertyString(PROP_SIZE, "-1,-1");
+    }
 }
 
 void WizardWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
@@ -170,15 +183,19 @@ void WizardWrapper::LoadPropertiesFromwxFB(const wxXmlNode* node)
     wxcWidget::LoadPropertiesFromwxFB(node);
 
     wxXmlNode* propertynode = XmlUtils::FindNodeByName(node, "property", "bitmap");
-    if(propertynode) {
+    if (propertynode) {
         ImportFromwxFB::ProcessBitmapProperty(propertynode->GetNodeContent(), this, PROP_BITMAP_PATH, "wxART_OTHER");
     }
 
     propertynode = XmlUtils::FindNodeByName(node, "property", "center");
-    if(propertynode) { SetPropertyString(PROP_CENTRE_ON_SCREEN, propertynode->GetNodeContent()); }
+    if (propertynode) {
+        SetPropertyString(PROP_CENTRE_ON_SCREEN, propertynode->GetNodeContent());
+    }
     // See the comment in LoadPropertiesFromXRC()
     propertynode = XmlUtils::FindNodeByName(node, "property", wxT("size"));
-    if(!propertynode) { SetPropertyString(PROP_SIZE, "-1,-1"); }
+    if (!propertynode) {
+        SetPropertyString(PROP_SIZE, "-1,-1");
+    }
 }
 
 bool WizardWrapper::HasIcon() const { return true; }

@@ -172,10 +172,15 @@ public:
 
     SvnConsole* GetSubversionConsole() { return m_subversionConsole; }
     void DisconnectEvents();
-    void UpdateTree(const wxArrayString& modifiedFiles, const wxArrayString& conflictedFiles,
-                    const wxArrayString& unversionedFiles, const wxArrayString& newFiles,
-                    const wxArrayString& deletedFiles, const wxArrayString& lockedFiles,
-                    const wxArrayString& ignoreFiles, bool fileExplorerOnly, const wxString& rootDir);
+    void UpdateTree(const wxArrayString& modifiedFiles,
+                    const wxArrayString& conflictedFiles,
+                    const wxArrayString& unversionedFiles,
+                    const wxArrayString& newFiles,
+                    const wxArrayString& deletedFiles,
+                    const wxArrayString& lockedFiles,
+                    const wxArrayString& ignoreFiles,
+                    bool fileExplorerOnly,
+                    const wxString& rootDir);
     void BuildTree();
     void BuildTree(const wxString& root);
 

@@ -27,18 +27,25 @@
 
 #include "svninfo.h"
 
-#include <wx/string.h>
 #include <wx/arrstr.h>
+#include <wx/string.h>
 
 class SvnXML
 {
 public:
-	SvnXML() = default;
-	~SvnXML() = default;
+    SvnXML() = default;
+    ~SvnXML() = default;
 
-	static void GetFiles(const wxString& input, wxArrayString& modifiedFiles, wxArrayString& conflictedFiles, wxArrayString& unversionedFiles, wxArrayString& newFiles, wxArrayString& deletedFiles, wxArrayString& lockedFiles, wxArrayString& ignoredFiles);
+    static void GetFiles(const wxString& input,
+                         wxArrayString& modifiedFiles,
+                         wxArrayString& conflictedFiles,
+                         wxArrayString& unversionedFiles,
+                         wxArrayString& newFiles,
+                         wxArrayString& deletedFiles,
+                         wxArrayString& lockedFiles,
+                         wxArrayString& ignoredFiles);
 
-	static void GetSvnInfo(const wxString& input, SvnInfo &svnInfo);
+    static void GetSvnInfo(const wxString& input, SvnInfo& svnInfo);
 };
 
-#endif //SVNXMLPARSER_H
+#endif // SVNXMLPARSER_H

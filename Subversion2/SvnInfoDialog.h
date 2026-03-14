@@ -32,20 +32,10 @@ class SvnInfoDialog : public SvnInfoDialogBase
 public:
     SvnInfoDialog(wxWindow* parent);
     virtual ~SvnInfoDialog() = default;
-    wxTextCtrl* GetTextCtrlAuthor() {
-        return m_textCtrlAuthor;
-    }
-    wxTextCtrl* GetTextCtrlDate() {
-        return m_textCtrlDate;
-    }
-    wxTextCtrl* GetTextCtrlRevision() {
-        return m_textCtrlRevision;
-    }
-    wxTextCtrl* GetTextCtrlRootURL() {
-        return m_textCtrlRootURL;
-    }
-    wxTextCtrl* GetTextCtrlURL() {
-        return m_textCtrlURL;
-    }
+    wxTextCtrl* GetTextCtrlAuthor() { return m_textCtrlAuthor; }
+    wxTextCtrl* GetTextCtrlDate() { return m_textCtrlDate; }
+    wxTextCtrl* GetTextCtrlRevision() { return m_textCtrlRevision; }
+    wxTextCtrl* GetTextCtrlRootURL() { return m_textCtrlRootURL; }
+    wxTextCtrl* GetTextCtrlURL() { return m_textCtrlURL; }
 };
 #endif // SVNINFODIALOG_H

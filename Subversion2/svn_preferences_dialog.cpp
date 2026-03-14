@@ -24,12 +24,14 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "svn_preferences_dialog.h"
-#include <wx/imaglist.h>
-#include "windowattrmanager.h"
+
 #include "imanager.h"
 #include "subversion2.h"
+#include "windowattrmanager.h"
+
 #include <wx/filedlg.h>
 #include <wx/filename.h>
+#include <wx/imaglist.h>
 
 SvnPreferencesDialog::SvnPreferencesDialog(wxWindow* parent, Subversion2* plugin)
     : SvnPreferencesDialogBase(parent)
@@ -60,7 +62,7 @@ void SvnPreferencesDialog::OnBrowseSvnExe(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString path = DoGetExecutable(m_textCtrlSvnExecutable->GetValue());
-    if(path.IsEmpty() == false) {
+    if (path.IsEmpty() == false) {
         m_textCtrlSvnExecutable->SetValue(path);
     }
 }
@@ -69,7 +71,7 @@ void SvnPreferencesDialog::OnBrowseDiffViewer(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString path = DoGetExecutable(m_textCtrlDiffViewer->GetValue());
-    if(path.IsEmpty() == false) {
+    if (path.IsEmpty() == false) {
         m_textCtrlDiffViewer->SetValue(path);
     }
 }
@@ -78,7 +80,7 @@ void SvnPreferencesDialog::OnBrowseSSHClient(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxString path = DoGetExecutable(m_textCtrlSSHClient->GetValue());
-    if(path.IsEmpty() == false) {
+    if (path.IsEmpty() == false) {
         m_textCtrlSSHClient->SetValue(path);
     }
 }
@@ -86,9 +88,9 @@ void SvnPreferencesDialog::OnBrowseSSHClient(wxCommandEvent& event)
 wxString SvnPreferencesDialog::DoGetExecutable(const wxString& basePath)
 {
     wxString path;
-    if(basePath.IsEmpty() == false) {
+    if (basePath.IsEmpty() == false) {
         wxFileName fn(basePath);
-        if(fn.IsRelative() == false) {
+        if (fn.IsRelative() == false) {
             path = fn.GetPath();
         }
     }
@@ -113,29 +115,30 @@ void SvnPreferencesDialog::OnButtonOK(wxCommandEvent& event)
     // so read its current value before adding the other
     // flags
     size_t flags(0);
-    if(m_plugin->GetSettings().GetFlags() & SvnLinkEditor) flags = SvnLinkEditor;
+    if (m_plugin->GetSettings().GetFlags() & SvnLinkEditor)
+        flags = SvnLinkEditor;
 
-    if(m_checkBoxAddToSvn->IsChecked()) {
+    if (m_checkBoxAddToSvn->IsChecked()) {
         flags |= SvnAddFileToSvn;
     }
 
-    if(m_checkBoxRetag->IsChecked()) {
+    if (m_checkBoxRetag->IsChecked()) {
         flags |= SvnRetagWorkspace;
     }
 
-    if(m_checkBoxUseExternalDiff->IsChecked()) {
+    if (m_checkBoxUseExternalDiff->IsChecked()) {
         flags |= SvnUseExternalDiff;
     }
 
-    if(m_checkBoxExposeRevisionMacro->IsChecked()) {
+    if (m_checkBoxExposeRevisionMacro->IsChecked()) {
         flags |= SvnExposeRevisionMacro;
     }
 
-    if(m_checkBoxRenameFile->IsChecked()) {
+    if (m_checkBoxRenameFile->IsChecked()) {
         flags |= SvnRenameFileInRepo;
     }
 
-    if(m_checkBoxUsePosixLocale->IsChecked()) {
+    if (m_checkBoxUsePosixLocale->IsChecked()) {
         flags |= SvnUsePosixLocale;
     }
 

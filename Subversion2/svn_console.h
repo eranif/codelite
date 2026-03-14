@@ -26,11 +26,12 @@
 #ifndef SVNSHELL_H
 #define SVNSHELL_H
 
-#include "svncommandhandler.h"
-#include <deque>
-#include <wx/stc/stc.h>
-#include <wx/event.h>
 #include "cl_command_event.h"
+#include "svncommandhandler.h"
+
+#include <deque>
+#include <wx/event.h>
+#include <wx/stc/stc.h>
 
 class IProcess;
 class Subversion2;

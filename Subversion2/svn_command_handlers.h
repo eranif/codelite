@@ -26,8 +26,8 @@
 #ifndef SVNCOMMITHANDLER_H
 #define SVNCOMMITHANDLER_H
 
-#include "svn_default_command_handler.h" // Base class
 #include "project.h"
+#include "svn_default_command_handler.h" // Base class
 
 //----------------------------------------------------
 // Commit Handler
@@ -88,8 +88,9 @@ public:
 
 class SvnPatchHandler : public SvnDefaultCommandHandler
 {
-    bool     delFileWhenDone;
+    bool delFileWhenDone;
     wxString patchFile;
+
 public:
     SvnPatchHandler(Subversion2* plugin, int commandId, wxEvtHandler* owner, bool d, const wxString& pf)
         : SvnDefaultCommandHandler(plugin, commandId, owner)
@@ -109,7 +110,7 @@ public:
 
 class SvnPatchDryRunHandler : public SvnDefaultCommandHandler
 {
-    bool     delFileWhenDone;
+    bool delFileWhenDone;
     wxString patchFile;
 
 public:
@@ -126,7 +127,7 @@ public:
 };
 
 //----------------------------------------------------
-//Svn version handler
+// Svn version handler
 //----------------------------------------------------
 
 class SvnVersionHandler : public SvnDefaultCommandHandler
@@ -144,22 +145,24 @@ public:
 };
 
 //----------------------------------------------------
-//Svn Log handler
+// Svn Log handler
 //----------------------------------------------------
 
 class SvnLogHandler : public SvnDefaultCommandHandler
 {
-    bool     m_compact;
+    bool m_compact;
     wxString m_url;
 
 protected:
-    wxString Compact(const wxString &message);
+    wxString Compact(const wxString& message);
+
 public:
-    SvnLogHandler(Subversion2 *plugin, const wxString &url, bool compact, int commandId, wxEvtHandler *owner)
+    SvnLogHandler(Subversion2* plugin, const wxString& url, bool compact, int commandId, wxEvtHandler* owner)
         : SvnDefaultCommandHandler(plugin, commandId, owner)
         , m_compact(compact)
         , m_url(url)
-    {}
+    {
+    }
 
     ~SvnLogHandler() override = default;
 
@@ -191,6 +194,7 @@ public:
 class SvnBlameHandler : public SvnCommandHandler
 {
     wxString m_filename;
+
 public:
     SvnBlameHandler(Subversion2* plugin, int commandId, wxEvtHandler* owner, const wxString& filename)
         : SvnCommandHandler(plugin, commandId, owner)

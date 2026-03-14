@@ -26,8 +26,9 @@
 #ifndef SVNSETTINGSDATA_H
 #define SVNSETTINGSDATA_H
 
-#include "serialized_object.h" // Base class
 #include "Notebook.h"
+#include "serialized_object.h" // Base class
+
 #include <map>
 
 enum SvnSettingsDataFlags {

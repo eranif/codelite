@@ -24,11 +24,12 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "diff_dialog.h"
-#include "windowattrmanager.h"
-#include "imanager.h"
 
-DiffDialog::DiffDialog( wxWindow* parent, IManager *manager )
-    : DiffDialogBase( parent )
+#include "imanager.h"
+#include "windowattrmanager.h"
+
+DiffDialog::DiffDialog(wxWindow* parent, IManager* manager)
+    : DiffDialogBase(parent)
     , m_manager(manager)
 {
     m_textCtrlFromRev->SetFocus();
@@ -41,7 +42,7 @@ wxString DiffDialog::GetFromRevision() const
     wxString from = m_textCtrlFromRev->GetValue();
     from.Trim().Trim(false);
 
-    if(from.IsEmpty()) {
+    if (from.IsEmpty()) {
         return wxT("BASE");
     } else {
         return from;
@@ -55,7 +56,4 @@ wxString DiffDialog::GetToRevision() const
     return to;
 }
 
-bool DiffDialog::IgnoreWhitespaces() const
-{
-    return m_checkBoxIgnoreWhitespace->IsChecked();
-}
+bool DiffDialog::IgnoreWhitespaces() const { return m_checkBoxIgnoreWhitespace->IsChecked(); }

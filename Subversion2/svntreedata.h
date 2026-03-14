@@ -31,43 +31,35 @@
 class SvnTreeData : public wxTreeItemData
 {
 public:
-	enum SvnNodeType {
-		SvnNodeTypeInvalid = -1,
-		SvnNodeTypeRoot,
-		SvnNodeTypeModifiedRoot,
-		SvnNodeTypeUnversionedRoot,
-		SvnNodeTypeDeletedRoot,
-		SvnNodeTypeAddedRoot,
-		SvnNodeTypeConflictRoot,
-		SvnNodeTypeFile,
-		SvnNodeTypeLockedRoot,
-		SvnNodeTypeFolder
-	};
+    enum SvnNodeType {
+        SvnNodeTypeInvalid = -1,
+        SvnNodeTypeRoot,
+        SvnNodeTypeModifiedRoot,
+        SvnNodeTypeUnversionedRoot,
+        SvnNodeTypeDeletedRoot,
+        SvnNodeTypeAddedRoot,
+        SvnNodeTypeConflictRoot,
+        SvnNodeTypeFile,
+        SvnNodeTypeLockedRoot,
+        SvnNodeTypeFolder
+    };
 
-	SvnNodeType m_type;
-	wxString    m_filepath;
+    SvnNodeType m_type;
+    wxString m_filepath;
 
 public:
-	SvnTreeData(SvnNodeType type, const wxString &filepath)
-			: m_type(type)
-			, m_filepath(filepath) {
-	}
+    SvnTreeData(SvnNodeType type, const wxString& filepath)
+        : m_type(type)
+        , m_filepath(filepath)
+    {
+    }
 
-	virtual ~SvnTreeData() {
-	}
+    virtual ~SvnTreeData() {}
 
-	void SetType(const SvnNodeType& type) {
-		this->m_type = type;
-	}
-	const SvnNodeType& GetType() const {
-		return m_type;
-	}
-	void SetFilepath(const wxString& filepath) {
-		this->m_filepath = filepath;
-	}
-	const wxString& GetFilepath() const {
-		return m_filepath;
-	}
+    void SetType(const SvnNodeType& type) { this->m_type = type; }
+    const SvnNodeType& GetType() const { return m_type; }
+    void SetFilepath(const wxString& filepath) { this->m_filepath = filepath; }
+    const wxString& GetFilepath() const { return m_filepath; }
 };
 
 #endif // SVNTREEDATA_H

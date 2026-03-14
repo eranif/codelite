@@ -39,11 +39,11 @@ class IManager;
 class DiffDialog : public DiffDialogBase
 {
 protected:
-    IManager *m_manager;
+    IManager* m_manager;
 
 public:
     /** Constructor */
-    DiffDialog( wxWindow* parent, IManager *manager );
+    DiffDialog(wxWindow* parent, IManager* manager);
     //// end generated class members
 
     virtual ~DiffDialog() = default;

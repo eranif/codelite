@@ -37,7 +37,10 @@ class SvnStatusHandler : public SvnCommandHandler
     wxString m_rootDir;
 
 public:
-    SvnStatusHandler(Subversion2* plugin, int commandId, wxEvtHandler* owner, bool fileExplorerOnly = false,
+    SvnStatusHandler(Subversion2* plugin,
+                     int commandId,
+                     wxEvtHandler* owner,
+                     bool fileExplorerOnly = false,
                      const wxString& rootDir = wxT(""));
     virtual ~SvnStatusHandler() = default;
 

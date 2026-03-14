@@ -40,18 +40,14 @@ class PatchDlg : public PatchDlgBase
 {
 public:
     /** Constructor */
-    PatchDlg( wxWindow* parent );
+    PatchDlg(wxWindow* parent);
     //// end generated class members
 
     virtual ~PatchDlg();
-    
-    wxFilePickerCtrl* GetFilePicker() const {
-        return m_filePicker;
-    }
-    
-    wxRadioBox* GetRadioBoxPolicy() const {
-        return m_radioBoxEOLPolicy;
-    }
+
+    wxFilePickerCtrl* GetFilePicker() const { return m_filePicker; }
+
+    wxRadioBox* GetRadioBoxPolicy() const { return m_radioBoxEOLPolicy; }
 };
 
 #endif // __svn_patch_dlg__

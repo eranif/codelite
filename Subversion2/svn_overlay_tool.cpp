@@ -23,12 +23,14 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <wx/dcmemory.h>
 #include "svn_overlay_tool.h"
-#include <wx/settings.h>
+
 #include "bitmap_loader.h"
 #include "globals.h"
 #include "imanager.h"
+
+#include <wx/dcmemory.h>
+#include <wx/settings.h>
 
 wxBitmap SvnOverlayTool::ms_bmpOK;
 wxBitmap SvnOverlayTool::ms_bmpConflict;

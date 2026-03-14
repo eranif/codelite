@@ -31,21 +31,21 @@
 class Subversion2;
 class SvnSelectLocalRepoDlg : public SvnSelectLocalRepoBase
 {
-	Subversion2 *m_svn;
-	
+    Subversion2* m_svn;
+
 protected:
-	// Handlers for SvnSelectLocalRepoBase events.
-	void OnPathSelected( wxCommandEvent& event );
-	void OnPathActivated( wxCommandEvent& event );
-	void OnMenu( wxMouseEvent& event );
-	
-	void OnRemoveEntry(wxCommandEvent &e);
-	
+    // Handlers for SvnSelectLocalRepoBase events.
+    void OnPathSelected(wxCommandEvent& event);
+    void OnPathActivated(wxCommandEvent& event);
+    void OnMenu(wxMouseEvent& event);
+
+    void OnRemoveEntry(wxCommandEvent& e);
+
 public:
-	/** Constructor */
-	SvnSelectLocalRepoDlg( wxWindow* parent, Subversion2* plugin, const wxString &curpath );
-	virtual ~SvnSelectLocalRepoDlg() = default;
-	wxString GetPath() const;
+    /** Constructor */
+    SvnSelectLocalRepoDlg(wxWindow* parent, Subversion2* plugin, const wxString& curpath);
+    virtual ~SvnSelectLocalRepoDlg() = default;
+    wxString GetPath() const;
 };
 
 #endif // __svn_select_local_repo_dlg__

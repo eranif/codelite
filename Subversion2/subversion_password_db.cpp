@@ -54,14 +54,14 @@ SubversionPasswordDb::~SubversionPasswordDb()
 bool SubversionPasswordDb::GetLogin(const wxString& url, wxString& user, wxString& password)
 {
     wxString escapedUrl(wxMD5::GetDigest(url));
-    if(m_fileConfig->HasGroup(escapedUrl) == false)
+    if (m_fileConfig->HasGroup(escapedUrl) == false)
         return false;
-    
+
     // read and decrypt the password/username
     m_fileConfig->Read(escapedUrl + wxT("/user"), &user);
     XORString userXor(user);
     user = userXor.Decrypt();
-    
+
     m_fileConfig->Read(escapedUrl + wxT("/password"), &password);
     XORString passXor(password);
     password = passXor.Decrypt();
@@ -71,7 +71,7 @@ bool SubversionPasswordDb::GetLogin(const wxString& url, wxString& user, wxStrin
 void SubversionPasswordDb::SetLogin(const wxString& url, const wxString& user, const wxString& password)
 {
     wxString escapedUrl(wxMD5::GetDigest(url));
-    if(m_fileConfig->HasGroup(escapedUrl)) {
+    if (m_fileConfig->HasGroup(escapedUrl)) {
         m_fileConfig->DeleteGroup(escapedUrl);
     }
 
@@ -83,7 +83,7 @@ void SubversionPasswordDb::SetLogin(const wxString& url, const wxString& user, c
 void SubversionPasswordDb::DeleteLogin(const wxString& url)
 {
     wxString escapedUrl(wxMD5::GetDigest(url));
-    if(m_fileConfig->HasGroup(escapedUrl)) {
+    if (m_fileConfig->HasGroup(escapedUrl)) {
         m_fileConfig->DeleteGroup(escapedUrl);
     }
     m_fileConfig->Flush();

@@ -50,7 +50,7 @@ public:
      * @param message
      */
     void AddMessage(const wxString& message);
-    
+
     /**
      * @brief is the cache empty?
      */

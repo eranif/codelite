@@ -24,9 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "workspacesvnsettings.h"
+
+#include "cl_config.h"
 #include "cl_standard_paths.h"
 #include "workspace.h"
-#include "cl_config.h"
 
 WorkspaceSvnSettings::WorkspaceSvnSettings()
     : clConfigItem("svn-settings")
@@ -39,10 +40,7 @@ WorkspaceSvnSettings::WorkspaceSvnSettings(const wxFileName& fn)
 {
 }
 
-void WorkspaceSvnSettings::FromJSON(const JSONItem& json)
-{
-    m_repoPath = json.namedObject("m_repoPath").toString();
-}
+void WorkspaceSvnSettings::FromJSON(const JSONItem& json) { m_repoPath = json.namedObject("m_repoPath").toString(); }
 
 JSONItem WorkspaceSvnSettings::ToJSON() const
 {
@@ -66,7 +64,7 @@ void WorkspaceSvnSettings::Save()
 
 wxFileName WorkspaceSvnSettings::GetLocalConfigFile() const
 {
-    if ( m_workspaceFileName.IsOk() && m_workspaceFileName.Exists() ) {
+    if (m_workspaceFileName.IsOk() && m_workspaceFileName.Exists()) {
         wxFileName fn(m_workspaceFileName.GetPath(), "subversion.conf");
         fn.AppendDir(".codelite");
         return fn;
@@ -75,8 +73,5 @@ wxFileName WorkspaceSvnSettings::GetLocalConfigFile() const
         wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "subversion.conf");
         fn.AppendDir("config");
         return fn;
-        
     }
 }
-
-

@@ -37,21 +37,22 @@ class Subversion2;
 /** Implementing SvnCheckoutDialogBase */
 class SvnCheckoutDialog : public SvnCheckoutDialogBase
 {
-	Subversion2 *m_plugin;
-protected:
-	// Handlers for SvnCheckoutDialogBase events.
-	void OnBrowseDirectory      ( wxCommandEvent  &event );
-	void OnOkUI                 ( wxUpdateUIEvent &event );
+    Subversion2* m_plugin;
 
-	virtual void OnOK( wxCommandEvent& event );
+protected:
+    // Handlers for SvnCheckoutDialogBase events.
+    void OnBrowseDirectory(wxCommandEvent& event);
+    void OnOkUI(wxUpdateUIEvent& event);
+
+    virtual void OnOK(wxCommandEvent& event);
 
 public:
-	/** Constructor */
-	SvnCheckoutDialog( wxWindow* parent, Subversion2 *plugin );
-	virtual ~SvnCheckoutDialog();
+    /** Constructor */
+    SvnCheckoutDialog(wxWindow* parent, Subversion2* plugin);
+    virtual ~SvnCheckoutDialog();
 
-	wxString GetURL();
-	wxString GetTargetDir();
+    wxString GetURL();
+    wxString GetTargetDir();
 };
 
 #endif // __svn_checkout_dialog__

@@ -2,6 +2,7 @@
 #define SVNSHOWFILECHANGESHANDLER_H
 
 #include "svncommandhandler.h" // Base class: SvnCommandHandler
+
 #include <algorithm>
 #include <list>
 
@@ -24,7 +25,7 @@ struct SvnShowDiffChunk {
         commentArr.Clear();
         // Extract the revision number
         revision = description.BeforeFirst('|').Trim().Trim(false);
-        
+
         description.Trim().Trim(false);
     }
 

@@ -26,8 +26,8 @@
 #ifndef CLCOMMANDLINEPARSER_H
 #define CLCOMMANDLINEPARSER_H
 
-#include <wx/string.h>
 #include <wx/arrstr.h>
+#include <wx/string.h>
 
 class clCommandLineParser
 {

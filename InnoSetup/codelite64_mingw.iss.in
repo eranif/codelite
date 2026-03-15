@@ -17,10 +17,10 @@ AppUpdatesURL=={#SupportURL}
 
 VersionInfoDescription={#AppName} installer
 VersionInfoProductName={#AppName}
-VersionInfoVersion==@CODELITE_VERSION@
+VersionInfoVersion=@CODELITE_VERSION@
 AppCopyright={#CurrentYear} {#AppAuthor}
 
-UninstallDisplay=Codelite
+UninstallDisplay={#AppName}
 UninstallDisplayIcon={app}\bin\codelite.exe,0
 AppPublisher={#AppAuthor}
 

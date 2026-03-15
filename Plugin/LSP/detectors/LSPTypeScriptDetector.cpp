@@ -1,6 +1,5 @@
 #include "LSPTypeScriptDetector.hpp"
 
-#include "StdToWX.h"
 #include "StringUtils.h"
 #include "fileutils.h"
 
@@ -33,7 +32,7 @@ bool LSPTypeScriptDetector::DoLocate()
 
     command << " --stdio";
     SetCommand(command);
-    SetLanguages(StdToWX::ToArrayString({ "javascript", "typescript" }));
+    SetLanguages({"javascript", "typescript"});
     SetConnectionString("stdio");
     return true;
 }

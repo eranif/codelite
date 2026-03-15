@@ -1,6 +1,5 @@
 #include "col_header_flags_property.h"
 
-#include "StdToWX.h"
 #include "wxgui_helpers.h"
 
 #include <wx/dataview.h>
@@ -15,12 +14,12 @@ ColHeaderFlagsProperty::ColHeaderFlagsProperty(const wxString& label,
 {
     SetLabel(label);
     if (kind == eColumnKind::kListCtrl) {
-        m_names = StdToWX::ToArrayString({
+        m_names = {
             "wxCOL_RESIZABLE",
             "wxCOL_SORTABLE",
             "wxCOL_REORDERABLE",
             "wxCOL_HIDDEN",
-        });
+        };
 
         m_values.Add(wxCOL_RESIZABLE);
         m_values.Add(wxCOL_SORTABLE);
@@ -28,10 +27,10 @@ ColHeaderFlagsProperty::ColHeaderFlagsProperty(const wxString& label,
         m_values.Add(wxCOL_HIDDEN);
 
     } else {
-        m_names = StdToWX::ToArrayString({"wxDATAVIEW_COL_RESIZABLE",
-                                          "wxDATAVIEW_COL_SORTABLE",
-                                          "wxDATAVIEW_COL_REORDERABLE",
-                                          "wxDATAVIEW_COL_HIDDEN"});
+        m_names = {"wxDATAVIEW_COL_RESIZABLE",
+                   "wxDATAVIEW_COL_SORTABLE",
+                   "wxDATAVIEW_COL_REORDERABLE",
+                   "wxDATAVIEW_COL_HIDDEN"};
         m_values.Add(wxDATAVIEW_COL_RESIZABLE);
         m_values.Add(wxDATAVIEW_COL_SORTABLE);
         m_values.Add(wxDATAVIEW_COL_REORDERABLE);

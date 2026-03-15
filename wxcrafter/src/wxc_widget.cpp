@@ -9,7 +9,6 @@
 #include "Properties/multi_strings_property.h"
 #include "Properties/string_property.h"
 #include "Properties/winid_property.h"
-#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "controls/Containers/notebook_base_wrapper.h"
 #include "controls/Containers/notebook_page_wrapper.h"
@@ -2277,12 +2276,12 @@ void wxcWidget::SetStyles(size_t value)
 void wxcWidget::EnableSizerFlag(const wxString& flag, bool enable)
 {
     static const std::map<wxString, wxArrayString> s_antiGroup = {
-        {"wxALIGN_LEFT", StdToWX::ToArrayString({"wxALIGN_CENTER_HORIZONTAL", "wxALIGN_RIGHT"})},
-        {"wxALIGN_CENTER_HORIZONTAL", StdToWX::ToArrayString({"wxALIGN_LEFT", "wxALIGN_RIGHT"})},
-        {"wxALIGN_RIGHT", StdToWX::ToArrayString({"wxALIGN_LEFT", "wxALIGN_CENTER_HORIZONTAL"})},
-        {"wxALIGN_TOP", StdToWX::ToArrayString({"wxALIGN_CENTER_VERTICAL", "wxALIGN_BOTTOM"})},
-        {"wxALIGN_CENTER_VERTICAL", StdToWX::ToArrayString({"wxALIGN_TOP", "wxALIGN_BOTTOM"})},
-        {"wxALIGN_BOTTOM", StdToWX::ToArrayString({"wxALIGN_TOP", "wxALIGN_CENTER_VERTICAL"})}};
+        {"wxALIGN_LEFT", {"wxALIGN_CENTER_HORIZONTAL", "wxALIGN_RIGHT"}},
+        {"wxALIGN_CENTER_HORIZONTAL", {"wxALIGN_LEFT", "wxALIGN_RIGHT"}},
+        {"wxALIGN_RIGHT", {"wxALIGN_LEFT", "wxALIGN_CENTER_HORIZONTAL"}},
+        {"wxALIGN_TOP", {"wxALIGN_CENTER_VERTICAL", "wxALIGN_BOTTOM"}},
+        {"wxALIGN_CENTER_VERTICAL", {"wxALIGN_TOP", "wxALIGN_BOTTOM"}},
+        {"wxALIGN_BOTTOM", {"wxALIGN_TOP", "wxALIGN_CENTER_VERTICAL"}}};
 
     if (m_sizerFlags.Contains(flag)) {
         m_sizerFlags.Item(flag).is_set = enable;

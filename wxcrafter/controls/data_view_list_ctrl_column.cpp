@@ -5,7 +5,6 @@
 #include "Properties/col_header_flags_property.h"
 #include "Properties/multi_strings_property.h"
 #include "Properties/string_property.h"
-#include "StdToWX.h"
 #include "allocator_mgr.h"
 #include "wxgui_helpers.h"
 
@@ -16,10 +15,9 @@ DataViewListCtrlColumn::DataViewListCtrlColumn()
     m_sizerFlags.Clear();
     m_properties.Clear();
 
-    const wxArrayString coltype = StdToWX::ToArrayString({"bitmap", "check", "text", "icontext", "progress", "choice"});
-    const wxArrayString alignment = StdToWX::ToArrayString({"wxALIGN_LEFT", "wxALIGN_RIGHT", "wxALIGN_CENTER"});
-    const wxArrayString cellType =
-        StdToWX::ToArrayString({"wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"});
+    const wxArrayString coltype = {"bitmap", "check", "text", "icontext", "progress", "choice"};
+    const wxArrayString alignment = {"wxALIGN_LEFT", "wxALIGN_RIGHT", "wxALIGN_CENTER"};
+    const wxArrayString cellType = {"wxDATAVIEW_CELL_INERT", "wxDATAVIEW_CELL_ACTIVATABLE", "wxDATAVIEW_CELL_EDITABLE"};
 
     Add<CategoryProperty>(_("wxDataViewListCtrl Column"));
     Add<StringProperty>(PROP_NAME, _("My Column"), _("Column Caption"));

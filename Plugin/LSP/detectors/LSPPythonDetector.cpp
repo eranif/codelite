@@ -1,7 +1,6 @@
 #include "LSPPythonDetector.hpp"
 
 #include "Platform/Platform.hpp"
-#include "StdToWX.h"
 #include "StringUtils.h"
 #include "procutils.h"
 
@@ -13,7 +12,7 @@ LSPPythonDetector::LSPPythonDetector()
 bool LSPPythonDetector::DoLocate()
 {
     // locate python3
-    auto python = ThePlatform->AnyWhich(StdToWX::ToArrayString({ "python", "python3" }));
+    auto python = ThePlatform->AnyWhich({"python", "python3"});
     if (!python) {
         return false;
     }

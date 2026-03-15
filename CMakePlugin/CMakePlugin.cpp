@@ -56,7 +56,6 @@
 #include "AsyncProcess/processreaderthread.h"
 #include "CMakeBuilder.h"
 #include "ICompilerLocator.h"
-#include "StdToWX.h"
 #include "StringUtils.h"
 #include "build_config.h"
 #include "environmentconfig.h"
@@ -174,13 +173,13 @@ wxArrayString CMakePlugin::GetSupportedGenerators() const
 {
 #ifdef __WXMSW__
     // Windows supported generators
-    return StdToWX::ToArrayString({"MinGW Makefiles"});
+    return {"MinGW Makefiles"};
 #else
     // Linux / Mac supported generators
-    return StdToWX::ToArrayString({
+    return {
         "Unix Makefiles",
         // "Ninja",
-    });
+    };
 #endif
 }
 
@@ -515,11 +514,10 @@ bool CMakePlugin::IsCMakeListsExists() const
     return false;
 }
 
-wxString CMakePlugin::WriteCMakeListsAndOpenIt(const std::vector<wxString>& lines) const
+wxString CMakePlugin::WriteCMakeListsAndOpenIt(const wxString& lines) const
 {
     wxFileName cmakelists_txt{::wxGetCwd(), "CMakeLists.txt"};
-    const wxArrayString wx_lines = StdToWX::ToArrayString(lines);
-    FileUtils::WriteFileContent(cmakelists_txt, wxJoin(wx_lines, '\n'));
+    FileUtils::WriteFileContent(cmakelists_txt, lines);
     clGetManager()->OpenFile(cmakelists_txt.GetFullPath());
     return cmakelists_txt.GetFullPath();
 }
@@ -552,28 +550,30 @@ clStatusOr<wxString> CMakePlugin::CreateCMakeListsFile(CMakePlugin::TargetType t
         return StatusOther("User cancelled");
     }
 
-    wxString cmakelists_txt = WriteCMakeListsAndOpenIt({
-        "cmake_minimum_required(VERSION 3.16)",
-        wxString::Format("project(%s)", name),
-        wxEmptyString,
-        wxEmptyString,
-        "set(CMAKE_EXPORT_COMPILE_COMMANDS 1)",
-        "set(CMAKE_CXX_STANDARD 17)",
-        "set(CMAKE_CXX_STANDARD_REQUIRED ON)",
-        wxEmptyString,
-        "file(GLOB CXX_SRCS \"*.cpp\")",
-        "file(GLOB C_SRCS \"*.c\")",
-        wxEmptyString,
-        target_line,
-        "if(NOT ${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_SOURCE_DIR})",
-        "    add_custom_command(",
-        wxString::Format("        TARGET %s", name),
-        "        POST_BUILD",
-        "        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/compile_commands.json",
-        "                ${CMAKE_SOURCE_DIR}/compile_commands.json)",
-        "endif()",
-        wxEmptyString,
-    });
+    wxString cmakelists_txt = WriteCMakeListsAndOpenIt(
+        wxString::Format("cmake_minimum_required(VERSION 3.16)\n"
+                         "project(%s)\n"
+                         "\n"
+                         "\n"
+                         "set(CMAKE_EXPORT_COMPILE_COMMANDS 1)\n"
+                         "set(CMAKE_CXX_STANDARD 17)\n"
+                         "set(CMAKE_CXX_STANDARD_REQUIRED ON)\n"
+                         "\n"
+                         "file(GLOB CXX_SRCS \"*.cpp\")\n"
+                         "file(GLOB C_SRCS \"*.c\")\n"
+                         "\n"
+                         "%s\n"
+                         "if(NOT ${CMAKE_BINARY_DIR} STREQUAL ${CMAKE_SOURCE_DIR})\n"
+                         "    add_custom_command(\n"
+                         "        TARGET %s\n"
+                         "        POST_BUILD\n"
+                         "        COMMAND ${CMAKE_COMMAND} -E copy ${CMAKE_BINARY_DIR}/compile_commands.json\n"
+                         "                ${CMAKE_SOURCE_DIR}/compile_commands.json)\n"
+                         "endif()\n"
+                         "\n",
+                         name,
+                         target_line,
+                         name));
     return cmakelists_txt;
 }
 

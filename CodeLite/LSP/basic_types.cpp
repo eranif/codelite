@@ -208,7 +208,7 @@ JSONItem SignatureInformation::ToJSON() const
     if (!m_parameters.empty()) {
         JSONItem params = JSONItem::createArray();
         for (const auto& paramInfo : m_parameters) {
-            params.append(paramInfo.ToJSON());
+            params.arrayAppend(paramInfo.ToJSON());
         }
         json.addProperty("parameters", params);
     }

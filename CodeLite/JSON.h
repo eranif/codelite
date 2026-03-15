@@ -164,11 +164,6 @@ public:
      */
     JSONItem AddObject(const wxString& name);
 
-    /**
-     * @brief append new element to this json element
-     */
-    void append(const JSONItem& element);
-
     JSONItem& addProperty(const wxString& name, const wxString& value);
     JSONItem& addProperty(const wxString& name, const std::string& value);
     JSONItem& addProperty(const wxString& name, const wxChar* value);

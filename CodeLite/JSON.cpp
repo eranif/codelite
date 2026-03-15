@@ -244,42 +244,6 @@ bool JSONItem::isString() const
     return m_json->type == cJSON_String;
 }
 
-void JSONItem::append(const JSONItem& element)
-{
-    if (!m_json) {
-        return;
-    }
-
-    switch (element.getType()) {
-    case cJSON_False:
-        cJSON_AddFalseToObject(m_json, element.GetPropertyName().mb_str(wxConvUTF8).data());
-        break;
-
-    case cJSON_True:
-        cJSON_AddTrueToObject(m_json, element.GetPropertyName().mb_str(wxConvUTF8).data());
-        break;
-
-    case cJSON_NULL:
-        cJSON_AddNullToObject(m_json, element.GetPropertyName().mb_str(wxConvUTF8).data());
-        break;
-
-    case cJSON_Number:
-        cJSON_AddNumberToObject(m_json, element.GetPropertyName().mb_str(wxConvUTF8).data(), element.m_valueNumer);
-        break;
-
-    case cJSON_String:
-        cJSON_AddStringToObject(m_json,
-                                element.GetPropertyName().mb_str(wxConvUTF8).data(),
-                                element.m_valueString.mb_str(wxConvUTF8).data());
-        break;
-
-    case cJSON_Array:
-    case cJSON_Object:
-        cJSON_AddItemToObject(m_json, element.GetPropertyName().mb_str(wxConvUTF8).data(), element.m_json);
-        break;
-    }
-}
-
 void JSONItem::arrayAppend(const char* value)
 {
     if (!m_json) {
@@ -691,8 +655,8 @@ JSONItem JSONItem::AddArray(const wxString& name)
 
 JSONItem JSONItem::AddObject(const wxString& name)
 {
-    JSONItem json = createObject(name);
-    append(json);
+    JSONItem json = createObject();
+    addProperty(name, json);
     return json;
 }
 

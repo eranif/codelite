@@ -53,7 +53,7 @@ JSONItem LanguageServerConfig::ToJSON() const
     json.addProperty("flags", m_flags);
     JSONItem servers = JSONItem::createArray();
     for (const auto& p : m_servers) {
-        servers.append(p.second.ToJSON());
+        servers.arrayAppend(p.second.ToJSON());
     }
     json.addProperty("servers", servers);
     return json;

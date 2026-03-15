@@ -1159,7 +1159,7 @@ bool ColoursAndFontsManager::ExportThemesToFile(const wxFileName& outputFile, co
         }
     }
     for (const auto& lexer : Lexers) {
-        arr.append(lexer->ToJSON(true));
+        arr.arrayAppend(lexer->ToJSON(true));
     }
     return FileUtils::WriteFileContent(outputFile, root.toElement().format());
 }

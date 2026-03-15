@@ -12,8 +12,8 @@ AppVersion=@CODELITE_VERSION@
 AppVerName={#AppName} @CODELITE_VERSION@
 
 AppPublisherURL={#SupportURL}
-AppSupportURL=={#SupportURL}
-AppUpdatesURL=={#SupportURL}
+AppSupportURL={#SupportURL}
+AppUpdatesURL={#SupportURL}
 
 VersionInfoDescription={#AppName} installer
 VersionInfoProductName={#AppName}

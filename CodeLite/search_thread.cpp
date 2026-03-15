@@ -24,9 +24,9 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "search_thread.h"
 
+#include "StringUtils.h"
 #include "clFilesCollector.h"
 #include "clWildMatch.hpp"
-#include "StringUtils.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "macros.h"
@@ -154,7 +154,7 @@ void SearchThread::GetFiles(const SearchData* data, wxArrayString& files)
 
     // Populate "unique_files" with list of files to scan
     // Filter files that do no match the pattern
-    clFileExtensionMatcher ext_matcher{ data->GetExtensions() };
+    clFileExtensionMatcher ext_matcher{data->GetExtensions()};
     for (const auto& file : non_filtered_files) {
         if (unique_files.insert(file).second && ext_matcher.matches(file)) {
             files.Add(file);
@@ -164,7 +164,7 @@ void SearchThread::GetFiles(const SearchData* data, wxArrayString& files)
     clDEBUG() << "Scanning directories..." << endl;
     sw.Start();
 
-    clPathExcluder path_excluder{ data->GetExcludePatterns() };
+    clPathExcluder path_excluder{data->GetExcludePatterns()};
 
     wxStringSet_t visited_dirs;
     for (const auto& rootDir : rootDirs) {
@@ -377,6 +377,7 @@ void SearchThread::DoSearchLineRE(
             result.SetLen(iCorrectedLen);
             result.SetFlags(data->m_flags);
             result.SetFindWhat(data->GetFindString());
+
             wxArrayString regexCaptures;
             for (size_t i = 0; i < re.GetMatchCount(); ++i) {
                 regexCaptures.Add(re.GetMatch(modLine, i));

@@ -94,7 +94,7 @@ void add_formatter_tool(JSONItem& tools_arr, const wxString& name, const wxStrin
     tool.addProperty("name", name);
     tool.addProperty("command", command);
     tool.addProperty("working_directory", wd);
-    tools_arr.arrayAppend(tool);
+    tools_arr.arrayAppend(std::move(tool));
 }
 } // namespace
 

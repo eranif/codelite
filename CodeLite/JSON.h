@@ -54,6 +54,7 @@ class JSON;
 class WXDLLIMPEXP_CL JSONItem
 {
     friend JSON;
+
 public:
     explicit JSONItem(cJSON* json);
     JSONItem() = default;
@@ -204,7 +205,7 @@ public:
      * @brief append new number
      * @return the newly added property
      */
-    void arrayAppend(const JSONItem& element);
+    void arrayAppend(JSONItem&& element);
     void arrayAppend(const wxString& value);
     void arrayAppend(const char* value);
     void arrayAppend(const std::string& value);
@@ -214,10 +215,6 @@ public:
     bool isOk() const { return m_json != NULL; }
 
 private:
-
-    int getType() const { return m_type; }
-    void setType(int m_type) { this->m_type = m_type; }
-
     /**
      * @brief release the internal pointer
      */
@@ -227,20 +224,14 @@ private:
         m_json = nullptr;
         return temp;
     }
+
 private:
     cJSON* m_json = nullptr;
-
-    int m_type = wxNOT_FOUND;
-
-    // Values
-    wxString m_valueString;
-    double m_valueNumer = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-enum class JsonType
-{
+enum class JsonType {
     Array,
     Null,
     Object,

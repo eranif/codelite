@@ -128,9 +128,6 @@ cJSON* JSON::release()
 JSONItem::JSONItem(cJSON* json)
     : m_json(json)
 {
-    if (m_json) {
-        m_type = m_json->type;
-    }
 }
 
 JSONItem JSONItem::operator[](int index) const
@@ -267,54 +264,25 @@ void JSONItem::arrayAppend(int number) { arrayAppend((double)number); }
 
 void JSONItem::arrayAppend(const wxString& value) { arrayAppend((const char*)value.mb_str(wxConvUTF8).data()); }
 
-void JSONItem::arrayAppend(const JSONItem& element)
+void JSONItem::arrayAppend(JSONItem&& element)
 {
     if (!m_json) {
         return;
     }
-
-    cJSON* p = NULL;
-    switch (element.getType()) {
-    case cJSON_False:
-        p = cJSON_CreateFalse();
-        break;
-
-    case cJSON_True:
-        p = cJSON_CreateTrue();
-        break;
-
-    case cJSON_NULL:
-        p = cJSON_CreateNull();
-        break;
-
-    case cJSON_Number:
-        p = cJSON_CreateNumber(element.m_valueNumer);
-        break;
-
-    case cJSON_String:
-        p = cJSON_CreateString(element.m_valueString.mb_str(wxConvUTF8).data());
-        break;
-    case cJSON_Array:
-    case cJSON_Object:
-        p = element.m_json;
-        break;
-    }
-    if (p) {
-        cJSON_AddItemToArray(m_json, p);
+    if (element.m_json) {
+        cJSON_AddItemToArray(m_json, element.m_json);
     }
 }
 
 JSONItem JSONItem::createArray()
 {
     JSONItem arr(cJSON_CreateArray());
-    arr.setType(cJSON_Array);
     return arr;
 }
 
 JSONItem JSONItem::createObject()
 {
     JSONItem obj(cJSON_CreateObject());
-    obj.setType(cJSON_Object);
     return obj;
 }
 
@@ -560,7 +528,7 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxStringMap_t& strin
         JSONItem obj = JSONItem::createObject();
         obj.addProperty("key", key);
         obj.addProperty("value", value);
-        arr.arrayAppend(obj);
+        arr.arrayAppend(std::move(obj));
     }
     addProperty(name, arr);
     return *this;
@@ -719,11 +687,7 @@ std::vector<int> JSONItem::toIntArray(const std::vector<int>& defaultValue) cons
 
 JSONItem& JSONItem::addProperty(const wxString& name, const std::vector<int>& arr_int)
 {
-    if (!m_json) {
-        return *this;
-    }
-
-    if (m_type != cJSON_Object) {
+    if (!m_json || !isObject()) {
         return *this;
     }
 

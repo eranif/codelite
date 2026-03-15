@@ -77,7 +77,7 @@ wxString BmpTextSelectorDlg::ToString(const BmpTextVec_t& vec)
         JSONItem element = JSONItem::createObject();
         element.addProperty("bmp", bmp);
         element.addProperty("label", label);
-        root.toElement().arrayAppend(element);
+        root.toElement().arrayAppend(std::move(element));
     }
     wxString asString(root.toElement().format());
     asString.Replace("\n", "");

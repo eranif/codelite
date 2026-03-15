@@ -49,9 +49,9 @@ std::pair<JSONItem, JSONItem> clFileSystemWorkspaceConfig::ToJSON() const
 
     for (const auto& vt : m_buildTargets) {
         JSONItem target = JSONItem::createArray();
-        arrTargets.arrayAppend(target);
         target.arrayAppend(vt.first);
         target.arrayAppend(vt.second);
+        arrTargets.arrayAppend(std::move(target));
     }
 
     shared.addProperty("file_extensions", m_fileExtensions);

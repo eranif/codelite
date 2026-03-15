@@ -660,7 +660,7 @@ void wxcWidget::Serialize(JSONItem& json) const
     for (; child_iter != m_children.end(); child_iter++) {
         JSONItem child = JSONItem::createObject();
         (*child_iter)->Serialize(child);
-        children.arrayAppend(child);
+        children.arrayAppend(std::move(child));
     }
 
     json.addProperty("m_children", children);

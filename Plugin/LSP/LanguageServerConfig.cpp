@@ -49,7 +49,7 @@ void LanguageServerConfig::FromJSON(const JSONItem& json)
 
 JSONItem LanguageServerConfig::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject(GetName());
+    JSONItem json = JSONItem::createObject();
     json.addProperty("flags", m_flags);
     JSONItem servers = JSONItem::createArray();
     for (const auto& p : m_servers) {

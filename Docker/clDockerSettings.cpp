@@ -45,7 +45,7 @@ void clDockerSettings::FromJSON(const JSONItem& json)
 
 JSONItem clDockerSettings::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject(GetName());
+    JSONItem json = JSONItem::createObject();
     json.addProperty("docker", m_docker.GetFullPath());
     json.addProperty("docker-compose", m_dockerCompose.GetFullPath());
     json.addProperty("flags", m_flags);

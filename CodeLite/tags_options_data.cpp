@@ -596,7 +596,7 @@ void TagsOptionsData::FromJSON(const JSONItem& json)
 
 JSONItem TagsOptionsData::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject(GetName());
+    JSONItem json = JSONItem::createObject();
     json.addProperty("version", m_version);
     json.addProperty("m_ccFlags", m_ccFlags);
     json.addProperty("m_ccColourFlags", m_ccColourFlags);

@@ -38,7 +38,7 @@ void SFTPWorkspaceSettings::FromJSON(const JSONItem& json)
 
 JSONItem SFTPWorkspaceSettings::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject(GetName());
+    JSONItem element = JSONItem::createObject();
     element.addProperty("m_account", m_account);
     element.addProperty("m_remoteWorkspacePath", m_remoteWorkspacePath);
     return element;

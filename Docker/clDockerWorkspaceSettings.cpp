@@ -27,7 +27,7 @@ void clDockerWorkspaceSettings::FromJSON(const JSONItem& json)
 
 JSONItem clDockerWorkspaceSettings::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject(GetName());
+    JSONItem json = JSONItem::createObject();
     json.addProperty("Version", DOCKER_VERSION);
     JSONItem files = JSONItem::createArray();
     for (const auto& p : m_files) {

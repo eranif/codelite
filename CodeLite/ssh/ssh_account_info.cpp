@@ -57,7 +57,7 @@ void SSHAccountInfo::FromJSON(const JSONItem& json)
 
 JSONItem SSHAccountInfo::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject(GetName());
+    JSONItem element = JSONItem::createObject();
     element.addProperty("m_accountName", m_accountName);
     element.addProperty("m_username", m_username);
     element.addProperty("m_port", m_port);

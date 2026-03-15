@@ -129,7 +129,6 @@ JSONItem::JSONItem(cJSON* json)
     : m_json(json)
 {
     if (m_json) {
-        m_propertyName = m_json->string ? m_json->string : "";
         m_type = m_json->type;
     }
 }
@@ -312,10 +311,9 @@ JSONItem JSONItem::createArray()
     return arr;
 }
 
-JSONItem JSONItem::createObject(const wxString& name)
+JSONItem JSONItem::createObject()
 {
     JSONItem obj(cJSON_CreateObject());
-    obj.SetPropertyName(name);
     obj.setType(cJSON_Object);
     return obj;
 }

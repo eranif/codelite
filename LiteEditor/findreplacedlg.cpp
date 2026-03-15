@@ -102,7 +102,7 @@ void FindReplaceData::FromJSON(const JSONItem& json)
 
 JSONItem FindReplaceData::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject(GetName());
+    JSONItem element = JSONItem::createObject();
     element.addProperty("m_findString", m_findString);
     element.addProperty("m_replaceString", m_replaceString);
     element.addProperty("m_flags", m_flags);

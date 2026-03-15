@@ -516,7 +516,7 @@ void SettersGetterData::FromJSON(const JSONItem& json) { m_flags = json.namedObj
 
 JSONItem SettersGetterData::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject(GetName());
+    JSONItem element = JSONItem::createObject();
     element.addProperty("m_flags", m_flags);
     return element;
 }

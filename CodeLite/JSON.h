@@ -144,10 +144,10 @@ public:
     // Writers
     ////////////////////////////////////////////////
     /**
-     * @brief create new named object and append it to this json element
+     * @brief create new object
      * @return the newly created object
      */
-    static JSONItem createObject(const wxString& name = wxT(""));
+    static JSONItem createObject();
     /**
      * @brief create new array
      * @return the newly created array
@@ -215,8 +215,6 @@ public:
 
 private:
 
-    const wxString& GetPropertyName() const { return m_propertyName; }
-    void SetPropertyName(const wxString& name) { m_propertyName = name; }
     int getType() const { return m_type; }
     void setType(int m_type) { this->m_type = m_type; }
 
@@ -231,7 +229,7 @@ private:
     }
 private:
     cJSON* m_json = nullptr;
-    wxString m_propertyName;
+
     int m_type = wxNOT_FOUND;
 
     // Values

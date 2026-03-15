@@ -15,7 +15,7 @@ void WordCompletionSettings::FromJSON(const JSONItem& json)
 
 JSONItem WordCompletionSettings::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject(GetName());
+    JSONItem element = JSONItem::createObject();
     element.addProperty("m_comparisonMethod", m_comparisonMethod);
     element.addProperty("m_enabled", m_enabled);
     return element;

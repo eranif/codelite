@@ -42,7 +42,7 @@ void DiffConfig::FromJSON(const JSONItem& json)
 
 JSONItem DiffConfig::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject(GetName());
+    JSONItem element = JSONItem::createObject();
     element.addProperty("m_flags", m_flags);
     element.addProperty("m_viewFlags", m_viewFlags);
     element.addProperty("m_leftFile", m_leftFile);

@@ -10,7 +10,7 @@ void VimSettings::FromJSON(const JSONItem& json) { m_enabled = json.namedObject(
 
 JSONItem VimSettings::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject(GetName());
+    JSONItem element = JSONItem::createObject();
     element.addProperty("enabled", m_enabled);
     return element;
 }

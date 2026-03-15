@@ -41,7 +41,7 @@ void znConfigItem::FromJSON(const JSONItem& json)
 
 JSONItem znConfigItem::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject(GetName());
+    JSONItem element = JSONItem::createObject();
     element.addProperty("m_highlightColour", m_highlightColour);
     element.addProperty("m_enabled", m_enabled);
     element.addProperty("m_zoomFactor", m_zoomFactor);

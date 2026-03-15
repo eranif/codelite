@@ -42,7 +42,7 @@ void HelpPluginSettings::FromJSON(const JSONItem& json)
 
 JSONItem HelpPluginSettings::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject(GetName());
+    JSONItem json = JSONItem::createObject();
     json.addProperty("m_cxxDocset", m_cxxDocset);
     json.addProperty("m_phpDocset", m_phpDocset);
     json.addProperty("m_htmlDocset", m_htmlDocset);

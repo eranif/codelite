@@ -44,7 +44,7 @@ void WorkspaceSvnSettings::FromJSON(const JSONItem& json) { m_repoPath = json.na
 
 JSONItem WorkspaceSvnSettings::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject(GetName());
+    JSONItem json = JSONItem::createObject();
     json.addProperty("m_repoPath", m_repoPath);
     return json;
 }

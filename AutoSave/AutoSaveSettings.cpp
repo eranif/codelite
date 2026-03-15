@@ -15,7 +15,7 @@ void AutoSaveSettings::FromJSON(const JSONItem& json)
 
 JSONItem AutoSaveSettings::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject(GetName());
+    JSONItem json = JSONItem::createObject();
     json.addProperty("m_flags", m_flags);
     json.addProperty("m_checkInterval", m_checkInterval);
     return json;

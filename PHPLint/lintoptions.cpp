@@ -76,7 +76,7 @@ void LintOptions::FromJSON(const JSONItem& json)
 
 JSONItem LintOptions::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject(GetName());
+    JSONItem element = JSONItem::createObject();
     element.addProperty("lintOnFileLoad", m_lintOnFileLoad);
     element.addProperty("lintOnFileSave", m_lintOnFileSave);
     element.addProperty("phpcsPhar", m_phpcsPhar);

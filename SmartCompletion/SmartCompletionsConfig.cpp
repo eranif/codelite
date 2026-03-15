@@ -31,7 +31,7 @@ void SmartCompletionsConfig::FromJSON(const JSONItem& json)
 
 JSONItem SmartCompletionsConfig::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject(GetName());
+    JSONItem json = JSONItem::createObject();
     json.addProperty("m_flags", m_flags);
     return json;
 }

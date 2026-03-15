@@ -5,9 +5,9 @@ LSP::Request::Request()
 {
 }
 
-JSONItem LSP::Request::ToJSON(const wxString& name) const
+JSONItem LSP::Request::ToJSON() const
 {
-    JSONItem json = MessageWithParams::ToJSON(name);
+    JSONItem json = MessageWithParams::ToJSON();
     json.addProperty("id", GetId());
     return json;
 }

@@ -77,7 +77,7 @@ class WXDLLIMPEXP_CL Position : public Serializable
 
 public:
     void FromJSON(const JSONItem& json) override;
-    JSONItem ToJSON(const wxString& name) const override;
+    JSONItem ToJSON() const override;
 
     Position(int line, int col)
         : m_line(line)
@@ -113,8 +113,8 @@ class WXDLLIMPEXP_CL Range : public Serializable
     Position m_end;
 
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     Range(const Position& start, const Position& end)
         : m_start(start)
@@ -147,8 +147,8 @@ class WXDLLIMPEXP_CL TextDocumentContentChangeEvent : public Serializable
     Range m_range; // Optional
 
 public:
-    virtual JSONItem ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONItem& json);
+    JSONItem ToJSON() const override;
+    void FromJSON(const JSONItem& json) override;
 
     TextDocumentContentChangeEvent() = default;
     TextDocumentContentChangeEvent(const wxString& text)
@@ -170,8 +170,8 @@ class WXDLLIMPEXP_CL TextDocumentIdentifier : public Serializable
     URI m_filename;
 
 public:
-    virtual JSONItem ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONItem& json);
+    JSONItem ToJSON() const override;
+    void FromJSON(const JSONItem& json) override;
 
     TextDocumentIdentifier() = default;
     TextDocumentIdentifier(const wxString& filename) { URI::FromString(filename, &m_filename); }
@@ -194,8 +194,8 @@ class WXDLLIMPEXP_CL VersionedTextDocumentIdentifier : public TextDocumentIdenti
     int m_version = 1;
 
 public:
-    virtual JSONItem ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONItem& json);
+    JSONItem ToJSON() const override;
+    void FromJSON(const JSONItem& json) override;
 
     VersionedTextDocumentIdentifier() = default;
     VersionedTextDocumentIdentifier(int version)
@@ -222,9 +222,9 @@ class WXDLLIMPEXP_CL TextEdit : public LSP::Serializable
 
 public:
     TextEdit() = default;
-    virtual ~TextEdit() = default;
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    ~TextEdit() override = default;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
     void SetNewText(const wxString& newText) { this->m_newText = newText; }
     void SetRange(const Range& range) { this->m_range = range; }
     const wxString& GetNewText() const { return m_newText; }
@@ -240,8 +240,8 @@ class WXDLLIMPEXP_CL Location : public Serializable
     wxString m_name;
 
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     Location(const wxString& uri, const Range& range)
         : m_range(range)
@@ -282,8 +282,8 @@ class WXDLLIMPEXP_CL TextDocumentItem : public Serializable
     int m_version = 1;
 
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     TextDocumentItem(const wxString& uri, const wxString& langId, const wxString& text, int version = 1)
         : m_languageId(langId)
@@ -343,8 +343,8 @@ public:
     }
     const wxString& GetDocumentation() const { return m_documentation; }
     const wxString& GetLabel() const { return m_label; }
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     using Vec_t = std::vector<ParameterInformation>;
 };
@@ -379,8 +379,8 @@ public:
     }
     const wxString& GetDocumentation() const { return m_documentation; }
     const wxString& GetLabel() const { return m_label; }
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 };
 
 class WXDLLIMPEXP_CL SignatureHelp : public LSP::Serializable
@@ -411,8 +411,8 @@ public:
     int GetActiveParameter() const { return m_activeParameter; }
     int GetActiveSignature() const { return m_activeSignature; }
     const SignatureInformation::Vec_t& GetSignatures() const { return m_signatures; }
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 };
 
 class WXDLLIMPEXP_CL MarkupContent : public LSP::Serializable
@@ -435,8 +435,8 @@ public:
         return *this;
     }
     const wxString& GetValue() const { return m_value; }
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 };
 
 class WXDLLIMPEXP_CL Hover : public LSP::Serializable
@@ -459,8 +459,8 @@ public:
         return *this;
     }
     const Range& GetRange() const { return m_range; }
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 };
 
 enum DiagnosticSeverity {
@@ -489,8 +489,8 @@ class WXDLLIMPEXP_CL Diagnostic : public Serializable
     DiagnosticSeverity m_severity = DiagnosticSeverity::Error;
 
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     Diagnostic(const Range& range, const wxString& message)
         : m_range(range)
@@ -523,7 +523,7 @@ class WXDLLIMPEXP_CL Command : public Serializable
 
 public:
     void FromJSON(const JSONItem& json) override;
-    JSONItem ToJSON(const wxString& name) const override;
+    JSONItem ToJSON() const override;
 
     Command() = default;
     virtual ~Command() = default;
@@ -574,8 +574,8 @@ class WXDLLIMPEXP_CL DocumentSymbol : public Serializable
     std::vector<DocumentSymbol> children;
 
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     DocumentSymbol() = default;
     virtual ~DocumentSymbol() = default;
@@ -628,8 +628,8 @@ class WXDLLIMPEXP_CL SymbolInformation : public Serializable
     wxString containerName;
 
 public:
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     SymbolInformation() = default;
     virtual ~SymbolInformation() = default;

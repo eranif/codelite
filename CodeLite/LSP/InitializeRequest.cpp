@@ -8,9 +8,9 @@ LSP::InitializeRequest::InitializeRequest(bool withTokenTypes, const wxString& r
     m_rootUri = rootUri;
 }
 
-JSONItem LSP::InitializeRequest::ToJSON(const wxString& name) const
+JSONItem LSP::InitializeRequest::ToJSON() const
 {
-    JSONItem json = Request::ToJSON(name);
+    JSONItem json = Request::ToJSON();
 
     // add the 'params'
     JSONItem params = JSONItem::createObject();

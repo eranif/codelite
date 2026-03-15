@@ -27,7 +27,7 @@ public:
     }
     int GetProcessId() const { return m_processId; }
     const wxString& GetRootUri() const { return m_rootUri; }
-    JSONItem ToJSON(const wxString& name) const override;
+    JSONItem ToJSON() const override;
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
     bool IsPositionDependentRequest() const override { return false; }
     void SetInitOptions(const wxString& initOptions) { this->m_initOptions = initOptions; }

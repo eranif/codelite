@@ -24,10 +24,10 @@ protected:
 
 public:
     MessageWithParams() = default;
-    virtual ~MessageWithParams() = default;
-    virtual JSONItem ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONItem& json);
-    virtual std::string ToString() const;
+    ~MessageWithParams() override = default;
+    JSONItem ToJSON() const override;
+    void FromJSON(const JSONItem& json) override;
+    std::string ToString() const override;
 
     void SetMethod(const wxString& method) { this->m_method = method; }
     const wxString& GetMethod() const { return m_method; }

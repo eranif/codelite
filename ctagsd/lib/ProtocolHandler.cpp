@@ -1091,7 +1091,7 @@ void ProtocolHandler::on_workspace_symbol(std::unique_ptr<JSON>&& msg, Channel::
 
     auto symbols = LSPUtils::to_symbol_information_array(tags, false);
     for (const LSP::SymbolInformation& symbol : symbols) {
-        result.arrayAppend(symbol.ToJSON(wxEmptyString));
+        result.arrayAppend(symbol.ToJSON());
     }
     channel->write_reply(response);
 }
@@ -1139,7 +1139,7 @@ void ProtocolHandler::on_document_symbol(std::unique_ptr<JSON>&& msg, Channel::p
 
     auto symbols = LSPUtils::to_symbol_information_array(tags, true);
     for (const LSP::SymbolInformation& symbol : symbols) {
-        result.arrayAppend(symbol.ToJSON(wxEmptyString));
+        result.arrayAppend(symbol.ToJSON());
     }
     channel->write_reply(response);
 }
@@ -1220,10 +1220,9 @@ void ProtocolHandler::on_document_signature_help(std::unique_ptr<JSON>&& msg, Ch
     }
     JSON root(JsonType::Object);
     JSONItem response = root.toElement();
-    auto result = sh.ToJSON("result");
     response.addProperty("id", id);
     response.addProperty("jsonrpc", "2.0");
-    response.append(result);
+    response.addProperty("result", sh.ToJSON());
     channel->write_reply(response);
 }
 
@@ -1447,7 +1446,7 @@ void ProtocolHandler::do_definition(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
         auto match = result.AddObject(wxEmptyString);
         LSP::Range range;
         range.SetStart({0, 0}).SetEnd({0, 0});
-        match.append(range.ToJSON("range"));
+        match.addProperty("range", range.ToJSON());
         match.addProperty("uri", FileUtils::FilePathToURI(file_match));
     } else {
         // add all the results
@@ -1458,7 +1457,7 @@ void ProtocolHandler::do_definition(std::unique_ptr<JSON>&& msg, Channel::ptr_t 
             // we can only provide line number...
             LSP::Range range;
             range.SetStart({tag->GetLine() - 1, 0}).SetEnd({tag->GetLine() - 1, 0});
-            match.append(range.ToJSON("range"));
+            match.addProperty("range", range.ToJSON());
             match.addProperty("uri", FileUtils::FilePathToURI(tag->GetFile()));
 
             // we will use this to highlight the selection

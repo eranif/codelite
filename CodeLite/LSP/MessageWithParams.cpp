@@ -5,12 +5,12 @@
 #include <sstream>
 #include <wx/string.h>
 
-JSONItem LSP::MessageWithParams::ToJSON(const wxString& name) const
+JSONItem LSP::MessageWithParams::ToJSON() const
 {
-    JSONItem json = Message::ToJSON(name);
+    JSONItem json = Message::ToJSON();
     json.addProperty("method", GetMethod());
     if (m_params) {
-        json.addProperty("params", m_params->ToJSON("params"));
+        json.addProperty("params", m_params->ToJSON());
     }
     return json;
 }
@@ -24,7 +24,7 @@ void LSP::MessageWithParams::FromJSON(const JSONItem& json)
 std::string LSP::MessageWithParams::ToString() const
 {
     // Serialize the object and construct a JSON-RPC message
-    JSONItem json = ToJSON("");
+    JSONItem json = ToJSON();
     char* data = json.FormatRawString(false);
 
     std::string s;

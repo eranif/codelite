@@ -19,9 +19,9 @@ public:
 
 public:
     Result() = default;
-    virtual ~Result() = default;
+    ~Result() override = default;
     template <typename T> T* As() const { return dynamic_cast<T*>(const_cast<Result*>(this)); }
-    virtual JSONItem ToJSON(const wxString& name) const { return JSONItem(nullptr); }
+    JSONItem ToJSON() const override { return JSONItem(nullptr); }
 };
 
 //===----------------------------------------------------------------------------------

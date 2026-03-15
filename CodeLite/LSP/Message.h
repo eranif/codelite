@@ -19,9 +19,9 @@ public:
 
 public:
     Message() = default;
-    virtual ~Message() = default;
-    virtual JSONItem ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONItem& json);
+    ~Message() override = default;
+    JSONItem ToJSON() const override;
+    void FromJSON(const JSONItem& json) override;
 
     /**
      * @brief serialize this message into string

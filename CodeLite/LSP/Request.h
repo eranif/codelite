@@ -19,7 +19,7 @@ public:
     void SetId(int id) { this->m_id = id; }
     int GetId() const { return m_id; }
 
-    JSONItem ToJSON(const wxString& name) const override;
+    JSONItem ToJSON() const override;
     void FromJSON(const JSONItem& json) override;
 
     /**

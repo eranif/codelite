@@ -20,7 +20,7 @@ VersionInfoProductName={#AppName}
 VersionInfoVersion=@CODELITE_VERSION@
 AppCopyright={#CurrentYear} {#AppAuthor}
 
-UninstallDisplay={#AppName}
+UninstallDisplayName={#AppName}
 UninstallDisplayIcon={app}\bin\codelite.exe,0
 AppPublisher={#AppAuthor}
 

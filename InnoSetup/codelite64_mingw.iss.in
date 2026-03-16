@@ -51,7 +51,11 @@ LanguageDetectionMethod=uilanguage
 
 [Languages]
 Name: "eng"; MessagesFile: "compiler:Default.isl"
+Name: "cze"; MessagesFile: "compiler:Languages\Czech.isl"
+Name: "fre"; MessagesFile: "compiler:Languages\French.isl"
 Name: "ita"; MessagesFile: "compiler:Languages\Italian.isl"
+Name: "jpn"; MessagesFile: "compiler:Languages\Japanese.isl"
+Name: "rus"; MessagesFile: "compiler:Languages\Russian.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked

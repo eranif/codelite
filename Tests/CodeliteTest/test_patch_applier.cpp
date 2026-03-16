@@ -9,12 +9,80 @@
 #include <wx/string.h>
 #include <wx/tokenzr.h>
 
+// Enhanced MockTextArea that supports actual modifications
+struct EditableMockTextArea : public ITextArea {
+    EditableMockTextArea(const wxString& content) { m_lines = wxStringTokenize(content, "\n", wxTOKEN_RET_EMPTY_ALL); }
+
+    int GetLineCount() override { return m_lines.size(); }
+
+    wxString GetLine(int line) override
+    {
+        if (line >= 0 && line < static_cast<int>(m_lines.size())) {
+            wxString result = m_lines[line];
+            if (!result.EndsWith("\n")) {
+                result += "\n";
+            }
+            return result;
+        }
+        return "";
+    }
+
+    int PositionFromLine(int line) override
+    {
+        int pos = 0;
+        for (int i = 0; i < line && i < static_cast<int>(m_lines.size()); ++i) {
+            pos += m_lines[i].Length() + 1; // +1 for newline
+        }
+        return pos;
+    }
+
+    void DeleteRange(int start, int lengthDelete) override
+    {
+        // Find which line contains the start position
+        int currentPos = 0;
+        for (int i = 0; i < static_cast<int>(m_lines.size()); ++i) {
+            int lineLength = m_lines[i].Length() + 1; // +1 for newline
+            if (currentPos == start && lengthDelete == lineLength) {
+                // Delete entire line
+                m_lines.RemoveAt(i);
+                return;
+            }
+            currentPos += lineLength;
+        }
+    }
+
+    void InsertText(int pos, const wxString& text) override
+    {
+        // Find which line contains the position
+        int currentPos = 0;
+        for (int i = 0; i < static_cast<int>(m_lines.size()); ++i) {
+            int lineLength = m_lines[i].Length() + 1;
+            if (currentPos == pos) {
+                // Insert before this line
+                wxString textToInsert = text;
+                textToInsert.Trim(true); // Remove trailing whitespace including newline
+                m_lines.Insert(textToInsert, i);
+                return;
+            }
+            currentPos += lineLength;
+        }
+        // If position is at the end, append
+        if (currentPos == pos) {
+            wxString textToInsert = text;
+            textToInsert.Trim(true);
+            m_lines.Add(textToInsert);
+        }
+    }
+
+    wxArrayString m_lines;
+};
+
 struct MockTextArea : public ITextArea {
     MockTextArea(const wxString& content) { m_lines = wxStringTokenize(content, "\n", wxTOKEN_RET_EMPTY_ALL); }
 
     int GetLineCount() override { return m_lines.size(); }
     wxString GetLine(int line) override { return m_lines[line]; }
-    int PositionFromLine([[maybe_unused]] int line) override { return 0; }
+    int PositionFromLine([[maybe_unused]] int line) override { return line * 10; }
     void DeleteRange([[maybe_unused]] int start, [[maybe_unused]] int lengthDelete) override {}
     void InsertText([[maybe_unused]] int pos, [[maybe_unused]] const wxString& text) override {}
 
@@ -55,16 +123,19 @@ TEST_CASE("ParseUnifiedPatchLoose - Custom Format Without Line Numbers")
     CHECK_EQ(hunk.lines.size(), 13);
 
     // Check that lines are properly categorized
-    int deletions = 0, additions = 0;
+    int deletions = 0, additions = 0, context = 0;
     for (const auto& line : hunk.lines) {
         if (line.StartsWith("-")) {
             deletions++;
         } else if (line.StartsWith("+")) {
             additions++;
+        } else if (line.StartsWith(" ")) {
+            context++;
         }
     }
     CHECK_EQ(deletions, 3);
     CHECK_EQ(additions, 10);
+    CHECK_EQ(context, 0);
 }
 
 TEST_CASE("ParseUnifiedPatchLoose - Standard Format With Line Numbers")
@@ -254,4 +325,401 @@ TEST_CASE("ParseUnifiedPatchLoose - Whitespace Only Patch")
 
     // Whitespace-only patch should result in no hunks
     CHECK_EQ(patch.hunks.size(), 0);
+}
+
+// ============================================================================
+// ApplyHunkLoose Tests
+// ============================================================================
+
+TEST_CASE("ApplyHunkLoose - Simple Match at Beginning")
+{
+    wxString source = R"(#include <iostream>
+int main() {
+    printf("Hello");
+    return 0;
+})";
+
+    EditableMockTextArea ctrl{source};
+
+    wxArrayString hunkLines;
+    hunkLines.Add(" #include <iostream>");
+    hunkLines.Add("-int main() {");
+    hunkLines.Add("+int main(int argc, char** argv) {");
+
+    auto result = PatchApplier::ApplyHunkLoose(&ctrl, hunkLines, 0);
+
+    REQUIRE(result.ok());
+    CHECK_EQ(result.value(), 2); // Should return line after modifications
+
+    // Verify the change was applied
+    wxString line1 = ctrl.GetLine(1);
+    line1.Trim();
+    CHECK(line1.Contains("int main(int argc, char** argv) {"));
+}
+
+TEST_CASE("ApplyHunkLoose - Match Found in Middle of File")
+{
+    wxString source = R"(#include <stdio.h>
+#include <stdlib.h>
+
+void helper() {
+    printf("Helper");
+}
+
+int main() {
+    printf("Old");
+    return 0;
+})";
+
+    EditableMockTextArea ctrl{source};
+
+    wxArrayString hunkLines;
+    hunkLines.Add(" int main() {");
+    hunkLines.Add("-    printf(\"Old\");");
+    hunkLines.Add("+    printf(\"New\");");
+
+    auto result = PatchApplier::ApplyHunkLoose(&ctrl, hunkLines, 0);
+
+    REQUIRE(result.ok());
+
+    // Verify the change was applied - should find it at line 7
+    wxString line8 = ctrl.GetLine(8);
+    line8.Trim();
+    CHECK(line8.Contains("printf(\"New\");"));
+}
+
+TEST_CASE("ApplyHunkLoose - Multiple Context Lines")
+{
+    wxString source = R"(void test() {
+    line1();
+    line2();
+    line3();
+    line4();
+})";
+
+    EditableMockTextArea ctrl{source};
+
+    wxArrayString hunkLines;
+    hunkLines.Add(" void test() {");
+    hunkLines.Add("     line1();");
+    hunkLines.Add("-    line2();");
+    hunkLines.Add("+    line2_modified();");
+    hunkLines.Add("     line3();");
+
+    auto result = PatchApplier::ApplyHunkLoose(&ctrl, hunkLines, 0);
+
+    REQUIRE(result.ok());
+
+    // Verify the change
+    wxString line2 = ctrl.GetLine(2);
+    line2.Trim();
+    CHECK(line2.Contains("line2_modified();"));
+}
+
+TEST_CASE("ApplyHunkLoose - Addition Only at Found Location")
+{
+    wxString source = R"(#include <stdio.h>
+
+int main() {
+    return 0;
+})";
+
+    EditableMockTextArea ctrl{source};
+
+    wxArrayString hunkLines;
+    hunkLines.Add(" #include <stdio.h>");
+    hunkLines.Add("+#include <stdlib.h>");
+
+    auto result = PatchApplier::ApplyHunkLoose(&ctrl, hunkLines, 0);
+
+    REQUIRE(result.ok());
+
+    // Should have inserted the new line
+    CHECK_EQ(ctrl.GetLineCount(), 6);
+    wxString line1 = ctrl.GetLine(1);
+    line1.Trim();
+    CHECK(line1.Contains("#include <stdlib.h>"));
+}
+
+TEST_CASE("ApplyHunkLoose - Deletion at Found Location")
+{
+    wxString source = R"(#include <stdio.h>
+#include <stdlib.h>
+#include <string.h>
+
+int main() {
+})";
+
+    EditableMockTextArea ctrl{source};
+
+    wxArrayString hunkLines;
+    hunkLines.Add(" #include <stdio.h>");
+    hunkLines.Add("-#include <stdlib.h>");
+    hunkLines.Add(" #include <string.h>");
+
+    auto result = PatchApplier::ApplyHunkLoose(&ctrl, hunkLines, 0);
+
+    REQUIRE(result.ok());
+
+    // Should have deleted the middle line
+    CHECK_EQ(ctrl.GetLineCount(), 5);
+}
+
+TEST_CASE("ApplyHunkLoose - No Match Found")
+{
+    wxString source = R"(#include <stdio.h>
+int main() {
+    return 0;
+})";
+
+    EditableMockTextArea ctrl{source};
+
+    wxArrayString hunkLines;
+    hunkLines.Add(" void nonexistent() {");
+    hunkLines.Add("-    oldcode();");
+    hunkLines.Add("+    newcode();");
+
+    auto result = PatchApplier::ApplyHunkLoose(&ctrl, hunkLines, 0);
+
+    REQUIRE_FALSE(result.ok());
+    CHECK(result.error_message().Contains("Could not find matching lines"));
+}
+
+TEST_CASE("ApplyHunkLoose - Partial Match Should Continue Searching")
+{
+    wxString source = R"(void test1() {
+    line1();
+    line2();
+}
+
+void test2() {
+    line1();
+    line3();
+})";
+
+    EditableMockTextArea ctrl{source};
+
+    wxArrayString hunkLines;
+    hunkLines.Add("     line1();");
+    hunkLines.Add("-    line3();");
+    hunkLines.Add("+    line3_modified();");
+
+    auto result = PatchApplier::ApplyHunkLoose(&ctrl, hunkLines, 0);
+
+    REQUIRE(result.ok());
+
+    // Should skip test1 and match in test2
+    wxString line7 = ctrl.GetLine(7);
+    line7.Trim();
+    CHECK(line7.Contains("line3_modified();"));
+}
+
+TEST_CASE("ApplyHunkLoose - Start From Specific Line")
+{
+    wxString source = R"(void test1() {
+    printf("test");
+}
+
+void test2() {
+    printf("test");
+})";
+
+    EditableMockTextArea ctrl{source};
+
+    wxArrayString hunkLines;
+    hunkLines.Add("-    printf(\"test\");");
+    hunkLines.Add("+    printf(\"modified\");");
+
+    // Start search from line 4, should find second occurrence
+    auto result = PatchApplier::ApplyHunkLoose(&ctrl, hunkLines, 4);
+
+    REQUIRE(result.ok());
+
+    // First occurrence should be unchanged
+    wxString line1 = ctrl.GetLine(1);
+    line1.Trim();
+    CHECK(line1.Contains("printf(\"test\");"));
+
+    // Second occurrence should be modified
+    wxString line5 = ctrl.GetLine(5);
+    line5.Trim();
+    CHECK(line5.Contains("printf(\"modified\");"));
+}
+
+TEST_CASE("ApplyHunkLoose - Invalid Arguments - Empty Hunk")
+{
+    wxString source = R"(int main() {
+    return 0;
+})";
+
+    EditableMockTextArea ctrl{source};
+    wxArrayString emptyLines;
+
+    auto result = PatchApplier::ApplyHunkLoose(&ctrl, emptyLines, 0);
+
+    REQUIRE_FALSE(result.ok());
+    CHECK(result.error_message().Contains("Empty hunk"));
+}
+
+TEST_CASE("ApplyHunkLoose - Invalid Arguments - Null Control")
+{
+    wxArrayString hunkLines;
+    hunkLines.Add(" test");
+
+    auto result = PatchApplier::ApplyHunkLoose(nullptr, hunkLines, 0);
+
+    REQUIRE_FALSE(result.ok());
+    CHECK(result.error_message().Contains("Empty hunk"));
+}
+
+TEST_CASE("ApplyHunkLoose - Invalid Arguments - Out of Range Start Line")
+{
+    wxString source = R"(int main() {
+    return 0;
+})";
+
+    EditableMockTextArea ctrl{source};
+
+    wxArrayString hunkLines;
+    hunkLines.Add(" test");
+
+    auto result = PatchApplier::ApplyHunkLoose(&ctrl, hunkLines, 100);
+
+    REQUIRE_FALSE(result.ok());
+    CHECK(result.error_message().Contains("Not enough lines"));
+}
+
+TEST_CASE("ApplyHunkLoose - Only Additions - Should Fail")
+{
+    wxString source = R"(int main() {
+    return 0;
+})";
+
+    EditableMockTextArea ctrl{source};
+
+    wxArrayString hunkLines;
+    hunkLines.Add("+new line 1");
+    hunkLines.Add("+new line 2");
+
+    auto result = PatchApplier::ApplyHunkLoose(&ctrl, hunkLines, 0);
+
+    REQUIRE_FALSE(result.ok());
+    CHECK(result.error_message().Contains("no context or deletion lines"));
+}
+
+TEST_CASE("ApplyHunkLoose - Invalid Line Prefix")
+{
+    wxString source = R"(int main() {
+    return 0;
+})";
+
+    EditableMockTextArea ctrl{source};
+
+    wxArrayString hunkLines;
+    hunkLines.Add(" int main() {");
+    hunkLines.Add("*invalid prefix");
+
+    auto result = PatchApplier::ApplyHunkLoose(&ctrl, hunkLines, 0);
+
+    REQUIRE_FALSE(result.ok());
+    CHECK(result.error_message().Contains("must start with"));
+}
+
+TEST_CASE("ApplyHunkLoose - Match at End of File")
+{
+    wxString source = R"(void test1() {
+}
+
+void test2() {
+    return;
+})";
+
+    EditableMockTextArea ctrl{source};
+
+    wxArrayString hunkLines;
+    hunkLines.Add(" void test2() {");
+    hunkLines.Add("-    return;");
+    hunkLines.Add("+    return 0;");
+
+    auto result = PatchApplier::ApplyHunkLoose(&ctrl, hunkLines, 0);
+
+    REQUIRE(result.ok());
+
+    wxString line4 = ctrl.GetLine(4);
+    line4.Trim();
+    CHECK(line4.Contains("return 0;"));
+}
+
+TEST_CASE("ApplyHunkLoose - Complex Real World Scenario")
+{
+    wxString source = R"(#include <iostream>
+#include <string>
+
+class MyClass {
+public:
+    void method1() {
+        std::cout << "Method 1" << std::endl;
+    }
+
+    void method2() {
+        std::cout << "Method 2" << std::endl;
+    }
+
+    void method3() {
+        std::cout << "Method 3" << std::endl;
+    }
+};
+)";
+
+    EditableMockTextArea ctrl{source};
+
+    // First hunk: modify method1
+    wxArrayString hunk1;
+    hunk1.Add("     void method1() {");
+    hunk1.Add("-        std::cout << \"Method 1\" << std::endl;");
+    hunk1.Add("+        std::cout << \"Updated Method 1\" << std::endl;");
+
+    auto result1 = PatchApplier::ApplyHunkLoose(&ctrl, hunk1, 0);
+    REQUIRE(result1.ok());
+
+    // Second hunk: modify method3, starting from where first hunk ended
+    wxArrayString hunk2;
+    hunk2.Add("     void method3() {");
+    hunk2.Add("-        std::cout << \"Method 3\" << std::endl;");
+    hunk2.Add("+        std::cout << \"Updated Method 3\" << std::endl;");
+
+    auto result2 = PatchApplier::ApplyHunkLoose(&ctrl, hunk2, result1.value());
+    REQUIRE(result2.ok());
+
+    // Verify both changes were applied
+    wxString method1Line = ctrl.GetLine(6);
+    method1Line.Trim();
+    CHECK(method1Line.Contains("Updated Method 1"));
+
+    wxString method3Line = ctrl.GetLine(14);
+    method3Line.Trim();
+    CHECK(method3Line.Contains("Updated Method 3"));
+}
+
+TEST_CASE("ApplyHunkLoose - Empty Lines in Source")
+{
+    wxString source = R"(void test() {
+
+    printf("hello");
+
+})";
+
+    EditableMockTextArea ctrl{source};
+
+    wxArrayString hunkLines;
+    hunkLines.Add("-    printf(\"hello\");");
+    hunkLines.Add("+    printf(\"goodbye\");");
+
+    auto result = PatchApplier::ApplyHunkLoose(&ctrl, hunkLines, 0);
+
+    REQUIRE(result.ok());
+
+    wxString line2 = ctrl.GetLine(2);
+    line2.Trim();
+    CHECK(line2.Contains("printf(\"goodbye\");"));
 }

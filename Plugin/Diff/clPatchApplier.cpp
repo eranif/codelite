@@ -245,6 +245,157 @@ PatchApplier::ApplyPatchStrict(const wxString& filePath, const wxString& patchCo
     }
 }
 
+clStatusOr<int> PatchApplier::ApplyHunkLoose(ITextArea* ctrl, const wxArrayString& lines, int start_line)
+{
+    if (!ctrl || lines.IsEmpty()) {
+        return StatusInvalidArgument("Empty hunk");
+    }
+
+    int totalLines = ctrl->GetLineCount();
+    if (start_line < 0 || start_line > totalLines) {
+        return StatusInvalidArgument("Not enough lines");
+    }
+
+    // Find the first non-addition line (context or deletion) to use as an anchor
+    wxString anchor_line;
+    int anchor_index = -1;
+    for (int i = 0; i < static_cast<int>(lines.GetCount()); ++i) {
+        if (lines[i].empty()) {
+            continue;
+        }
+        wxChar prefix = lines[i][0];
+        if (prefix == ' ' || prefix == '-') {
+            anchor_line = lines[i].Mid(1).Trim();
+            anchor_index = i;
+            break;
+        }
+    }
+
+    // If we only have additions, we can't find a match
+    if (anchor_index == -1) {
+        return StatusInvalidArgument("Hunk has no context or deletion lines to match");
+    }
+
+    // Validate the hunk + prepare list of lines to search in the editor (removed or context lines).
+    wxArrayString lines_to_find;
+    for (auto l : lines) {
+        if (l.empty()) {
+            return StatusInvalidArgument("Invalid hunk");
+        }
+
+        wxChar prefix = l[0];
+        switch (prefix) {
+        case ' ':
+        case '-':
+            lines_to_find.push_back(l.Mid(1).Trim());
+            break;
+        case '+':
+            break;
+        default:
+            return StatusInvalidArgument("Hunk lines must start with ' ', '-' or '+'");
+        }
+    }
+
+    // Search for the anchor line starting from start_line
+    int hunk_found_line = wxNOT_FOUND;
+
+    // Count how many context/deletion lines come before the anchor
+    int context_lines_before_anchor = 0;
+    for (int i = 0; i < anchor_index; ++i) {
+        if (lines[i][0] == ' ' || lines[i][0] == '-') {
+            context_lines_before_anchor++;
+        }
+    }
+
+    for (int current_editor_line_number = start_line; current_editor_line_number < totalLines;
+         ++current_editor_line_number) {
+        wxString editor_line = ctrl->GetLine(current_editor_line_number);
+        editor_line.Trim();
+
+        if (editor_line != anchor_line) {
+            continue;
+        }
+
+        // Found a potential match, now verify the rest of the hunk matches
+        bool hunk_found = true;
+        int hunk_line_index = 0; // Index into lines_to_find
+
+        for (int hunk_line_number = anchor_index; hunk_line_number < static_cast<int>(lines.GetCount());
+             ++hunk_line_number) {
+            wxString hunk_line = lines[hunk_line_number];
+            wxChar prefix = hunk_line[0];
+
+            // Skip addition lines when matching
+            if (prefix == '+') {
+                continue;
+            }
+
+            // For context and deletion lines, verify they match the editor
+            int editor_line_to_check = current_editor_line_number + (hunk_line_index - context_lines_before_anchor);
+
+            if (editor_line_to_check < 0 || editor_line_to_check >= totalLines) {
+                hunk_found = false;
+                break;
+            }
+
+            wxString editor_content = ctrl->GetLine(editor_line_to_check);
+            editor_content.Trim();
+            wxString expected_content = lines_to_find[hunk_line_index];
+
+            if (editor_content != expected_content) {
+                hunk_found = false;
+                break;
+            }
+
+            hunk_line_index++;
+        }
+
+        if (hunk_found) {
+            hunk_found_line = current_editor_line_number - context_lines_before_anchor;
+            break;
+        }
+    }
+
+    if (hunk_found_line == wxNOT_FOUND) {
+        return StatusNotFound("Could not find matching lines in editor");
+    }
+
+    // Apply the hunk starting at the found location
+    int currentLine = hunk_found_line;
+    for (size_t i = 0; i < lines.GetCount(); ++i) {
+        wxString line = lines[i];
+        if (line.IsEmpty()) {
+            continue;
+        }
+
+        wxChar prefix = line[0];
+        wxString content = line.Mid(1);
+
+        if (prefix == ' ') {
+            // Context line - just move to next line
+            currentLine++;
+        } else if (prefix == '-') {
+            // Delete line
+            int lineStart = ctrl->PositionFromLine(currentLine);
+            int lineEnd = ctrl->PositionFromLine(currentLine + 1);
+            ctrl->DeleteRange(lineStart, lineEnd - lineStart);
+            // Don't increment currentLine since we deleted the line
+        } else if (prefix == '+') {
+            // Add line
+            int pos = ctrl->PositionFromLine(currentLine);
+            // Ensure content has a line ending
+            if (!content.EndsWith("\n") && !content.EndsWith("\r\n")) {
+                content += "\n";
+            }
+            ctrl->InsertText(pos, content);
+            currentLine++;
+        }
+    }
+
+    // Return the line where the next hunk can be applied
+    return currentLine;
+}
+
 clStatusOr<int> PatchApplier::ApplyHunk(ITextArea* ctrl, const wxArrayString& lines, int start_line)
 {
     if (!ctrl || lines.IsEmpty()) {
@@ -389,7 +540,7 @@ PatchResult PatchApplier::ApplyPatchLoose(const wxString& filePath, const wxStri
     stc->BeginUndoAction();
     StcViewArea ctrl{stc};
     for (const auto& hunk : patch.hunks) {
-        auto res = ApplyHunk(&ctrl, hunk.lines, start_line);
+        auto res = ApplyHunkLoose(&ctrl, hunk.lines, start_line);
         if (!res.ok()) {
             // Revert the changes
             stc->EndUndoAction();

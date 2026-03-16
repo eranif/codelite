@@ -114,6 +114,25 @@ public:
      */
     static UnifiedPatch ParseUnifiedPatch(const wxString& patchContent);
 
+    /**
+     * Parses a unified patch format string with lenient line handling.
+     *
+     * This function performs a loose parse of unified patch content, extracting hunks and their
+     * constituent lines. It is tolerant of minor formatting variations and does not enforce strict
+     * validation of line counts or patch structure. Hunk headers are recognized by the @@ marker
+     * and may or may not include explicit line number information; missing line numbers default to
+     * zero. Lines within hunks are classified by their leading character (space for context, plus
+     * for additions, minus for deletions) and stored as-is, including the leading character. Empty
+     * lines are skipped within hunks, and unrecognized line types are silently ignored.
+     *
+     * Parameters:
+     *   patchContent - A wxString containing the complete unified patch content to be parsed,
+     *                  with lines separated by newline characters.
+     *
+     * Return value:
+     *   An UnifiedPatch structure containing the parsed hunks and their associated line data.
+     *   If no valid hunk headers are found, the patch will be empty.
+     */
     static UnifiedPatch ParseUnifiedPatchLoose(const wxString& patchContent);
 
     /**
@@ -159,4 +178,5 @@ public:
      * @return The line number where the next hunk can be applied, or wxNOT_FOUND if the hunk failed to apply.
      */
     static clStatusOr<int> ApplyHunk(ITextArea* ctrl, const wxArrayString& lines, int start_line);
+    static clStatusOr<int> ApplyHunkLoose(ITextArea* ctrl, const wxArrayString& lines, int start_line);
 };

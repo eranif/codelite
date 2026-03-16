@@ -611,7 +611,7 @@ void Manager::Stop()
 
 static std::unordered_set<std::string> allowed_tools;
 
-bool Manager::CanRunTool(const std::string& tool_name)
+bool Manager::CanRunTool(const std::string& tool_name, [[maybe_unused]] assistant::json args)
 {
     if (allowed_tools.contains(tool_name)) {
         return true;
@@ -669,7 +669,7 @@ void Manager::Start(std::shared_ptr<assistant::ClientBase> client)
     }
 
     m_client->SetCachingPolicy(GetConfig().GetCachePolicy());
-    m_client->SetTookInvokeCallback(&Manager::CanRunTool);
+    m_client->SetToolInvokeCallback(&Manager::CanRunTool);
     m_client->ClearSystemMessages();
     m_client->AddSystemMessage(kSystemMessageRetryProtocol);
 
@@ -896,6 +896,10 @@ void Manager::AddNewEndpoint(const llm::EndpointData& d)
             // Ollama local
             llm::json http_headers;
             http_headers["Host"] = "127.0.0.1";
+            new_endpoint["http_headers"] = http_headers;
+        } else if (d.client_type == kClientTypeOpenAI) {
+            llm::json http_headers;
+            http_headers["Authorization"] = "Bearer " + d.api_key.value_or("<INSERT_API_KEY>");
             new_endpoint["http_headers"] = http_headers;
         }
 

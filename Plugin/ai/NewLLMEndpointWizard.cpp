@@ -8,6 +8,7 @@ namespace
 const wxString kProviderOllamaLocal = "Ollama (Local)";
 const wxString kProviderOllamaCloud = "Ollama (Cloud)";
 const wxString kProviderAnthropic = "Anthropic";
+const wxString kProviderOpenAI = "OpenAI";
 
 bool IsValidURL(const std::string& url)
 {
@@ -17,7 +18,8 @@ bool IsValidURL(const std::string& url)
 
 } // namespace
 
-NewLLMEndpointWizard::NewLLMEndpointWizard(wxWindow* parent) : NewLLMEndpointWizardBase(parent)
+NewLLMEndpointWizard::NewLLMEndpointWizard(wxWindow* parent)
+    : NewLLMEndpointWizardBase(parent)
 {
     int where = m_choiceProviders->FindString(kProviderOllamaLocal);
     if (where != wxNOT_FOUND) {
@@ -37,6 +39,8 @@ void NewLLMEndpointWizard::OnProviderChanged(wxCommandEvent& event)
         m_textCtrlBaseURL->ChangeValue("https://ollama.com");
     } else if (provider == kProviderOllamaLocal) {
         m_textCtrlBaseURL->ChangeValue("http://127.0.0.1:11434");
+    } else if (provider == kProviderOpenAI) {
+        m_textCtrlBaseURL->ChangeValue("https://api.openai.com");
     }
 }
 
@@ -115,22 +119,28 @@ llm::EndpointData NewLLMEndpointWizard::GetData() const
                                  .model = m_textCtrlModel->GetValue().ToStdString(wxConvUTF8),
                                  .context_size = m_spinCtrlContextSizeKB->GetValue() * 1024,
                                  .api_key = m_textCtrlAPIKey->GetValue().ToStdString(wxConvUTF8)};
-    } else {
+    } else if (provider == kProviderAnthropic) {
         // Anthropic
         data = llm::EndpointData{.client_type = llm::kClientTypeAnthropic,
                                  .url = m_textCtrlBaseURL->GetValue().ToStdString(wxConvUTF8),
                                  .model = m_textCtrlModel->GetValue().ToStdString(wxConvUTF8),
                                  .api_key = m_textCtrlAPIKey->GetValue().ToStdString(wxConvUTF8),
                                  .max_tokens = m_spinCtrlMaxTokens->GetValue()};
+    } else {
+        // OpenAI
+        data = llm::EndpointData{.client_type = llm::kClientTypeOpenAI,
+                                 .url = m_textCtrlBaseURL->GetValue().ToStdString(wxConvUTF8),
+                                 .model = m_textCtrlModel->GetValue().ToStdString(wxConvUTF8),
+                                 .api_key = m_textCtrlAPIKey->GetValue().ToStdString(wxConvUTF8),
+                                 .max_tokens = m_spinCtrlMaxTokens->GetValue()};
     }
-
     return data;
 }
 
 void NewLLMEndpointWizard::OnApiKeyUI(wxUpdateUIEvent& event)
 {
     wxString provider = m_choiceProviders->GetStringSelection();
-    event.Enable(provider == kProviderAnthropic || provider == kProviderOllamaCloud);
+    event.Enable(provider == kProviderAnthropic || provider == kProviderOllamaCloud || provider == kProviderOpenAI);
 }
 
 void NewLLMEndpointWizard::OnMaxTokensUI(wxUpdateUIEvent& event)

@@ -240,6 +240,7 @@ NewLLMEndpointWizardBase::NewLLMEndpointWizardBase(
     m_choiceProvidersArr.Add(_("Ollama (Local)"));
     m_choiceProvidersArr.Add(_("Ollama (Cloud)"));
     m_choiceProvidersArr.Add(_("Anthropic"));
+    m_choiceProvidersArr.Add(_("OpenAI"));
     m_choiceProviders = new wxChoice(m_wizardPageSettings,
                                      wxID_ANY,
                                      wxDefaultPosition,

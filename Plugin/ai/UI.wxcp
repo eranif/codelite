@@ -1269,7 +1269,7 @@
 												}, {
 													"type":	"multi-string",
 													"m_label":	"Choices:",
-													"m_value":	"Ollama (Local);Ollama (Cloud);Anthropic"
+													"m_value":	"Ollama (Local);Ollama (Cloud);Anthropic;OpenAI"
 												}, {
 													"type":	"string",
 													"m_label":	"Selection:",

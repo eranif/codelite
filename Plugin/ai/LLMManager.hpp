@@ -136,6 +136,7 @@ struct WXDLLIMPEXP_SDK ThreadTask {
 // Type of providers.
 constexpr const char* kClientTypeAnthropic = "anthropic";
 constexpr const char* kClientTypeOllama = "ollama";
+constexpr const char* kClientTypeOpenAI = "openai";
 
 /**
  * @brief Singleton manager class for handling LLM (Large Language Model) operations.
@@ -706,7 +707,7 @@ private:
     assistant::Config MakeConfig();
     void OnFileSaved(clCommandEvent& event);
     std::optional<llm::json> GetConfigAsJSON();
-    static bool CanRunTool(const std::string& tool_name);
+    static bool CanRunTool(const std::string& tool_name, assistant::json args);
 
     std::unique_ptr<std::thread> m_worker_thread;
     std::shared_ptr<assistant::ClientBase> m_client;

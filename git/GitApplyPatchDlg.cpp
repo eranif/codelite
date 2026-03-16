@@ -24,8 +24,10 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "GitApplyPatchDlg.h"
-#include <wx/filename.h>
+
 #include "windowattrmanager.h"
+
+#include <wx/filename.h>
 
 GitApplyPatchDlg::GitApplyPatchDlg(wxWindow* parent)
     : GitApplyPatchDlgBase(parent)

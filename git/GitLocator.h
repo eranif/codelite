@@ -30,11 +30,12 @@
 
 class GitLocator
 {
-    bool DoCheckGitInFolder(const wxString &folder, wxString& git) const;
+    bool DoCheckGitInFolder(const wxString& folder, wxString& git) const;
+
 public:
     GitLocator() = default;
     virtual ~GitLocator() = default;
-    
+
     bool GetExecutable(wxFileName& gitpath) const;
     /**
      * @brief return the command required to open a git shell

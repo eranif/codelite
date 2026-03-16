@@ -55,15 +55,15 @@ GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin
 
     m_selectedRadio1 = data.GetGitDiffChooseDlgRadioSel1();
     m_selectedRadio2 = data.GetGitDiffChooseDlgRadioSel2();
-    wxRadioButton* radiosL[] = { m_radioBranch1, m_radioTag1, m_radioCommit1, m_radioUserEntered1 };
-    wxRadioButton* radiosR[] = { m_radioBranch2, m_radioTag2, m_radioCommit2, m_radioUserEntered2 };
-    wxItemContainerImmutable* choicesL[] = { m_choiceBranch1, m_choiceTag1, m_choiceCommit1, m_comboCommitish1 };
-    wxItemContainerImmutable* choicesR[] = { m_choiceBranch2, m_choiceTag2, m_choiceCommit2, m_comboCommitish2 };
-    if(m_selectedRadio1 > -1 && m_selectedRadio1 < 4) {
+    wxRadioButton* radiosL[] = {m_radioBranch1, m_radioTag1, m_radioCommit1, m_radioUserEntered1};
+    wxRadioButton* radiosR[] = {m_radioBranch2, m_radioTag2, m_radioCommit2, m_radioUserEntered2};
+    wxItemContainerImmutable* choicesL[] = {m_choiceBranch1, m_choiceTag1, m_choiceCommit1, m_comboCommitish1};
+    wxItemContainerImmutable* choicesR[] = {m_choiceBranch2, m_choiceTag2, m_choiceCommit2, m_comboCommitish2};
+    if (m_selectedRadio1 > -1 && m_selectedRadio1 < 4) {
         radiosL[m_selectedRadio1]->SetValue(1);
         m_activeChoice1 = choicesL[m_selectedRadio1];
     }
-    if(m_selectedRadio2 > -1 && m_selectedRadio2 < 4) {
+    if (m_selectedRadio2 > -1 && m_selectedRadio2 < 4) {
         radiosR[m_selectedRadio2]->SetValue(1);
         m_activeChoice2 = choicesR[m_selectedRadio2];
     }
@@ -77,7 +77,8 @@ GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin
             m_choiceBranch1->Set(items);
             m_choiceBranch1->Set(items);
         },
-        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryPath());
+        IProcessCreateDefault | IProcessWrapInShell,
+        m_plugin->GetRepositoryPath());
 
     m_plugin->AsyncRunGitWithCallback(
         " --no-pager tag",
@@ -86,7 +87,8 @@ GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin
             m_choiceTag1->Set(items);
             m_choiceTag2->Set(items);
         },
-        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryPath());
+        IProcessCreateDefault | IProcessWrapInShell,
+        m_plugin->GetRepositoryPath());
 
     // Restrict the commits to 1000: filling a wxChoice with many more froze CodeLite for several minutes
     // and in any case, selecting one particular commit out of hundreds is not easy!
@@ -97,26 +99,27 @@ GitDiffChooseCommitishDlg::GitDiffChooseCommitishDlg(wxWindow* parent, GitPlugin
             m_choiceCommit1->Set(items);
             m_choiceCommit2->Set(items);
         },
-        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryPath());
+        IProcessCreateDefault | IProcessWrapInShell,
+        m_plugin->GetRepositoryPath());
 }
 
 GitDiffChooseCommitishDlg::~GitDiffChooseCommitishDlg()
 {
     wxArrayString comboCommitish1Strings = m_comboCommitish1->GetStrings();
-    if(m_selectedRadio1 == 3) {
+    if (m_selectedRadio1 == 3) {
         wxString sel = m_comboCommitish1->GetValue();
-        if(!sel.empty()) {
-            if(comboCommitish1Strings.Index(sel) != wxNOT_FOUND) {
+        if (!sel.empty()) {
+            if (comboCommitish1Strings.Index(sel) != wxNOT_FOUND) {
                 comboCommitish1Strings.Remove(sel);
             }
             comboCommitish1Strings.Insert(sel, 0);
         }
     }
     wxArrayString comboCommitish2Strings = m_comboCommitish2->GetStrings();
-    if(m_selectedRadio1 == 3) {
+    if (m_selectedRadio1 == 3) {
         wxString sel = m_comboCommitish2->GetValue();
-        if(!sel.empty()) {
-            if(comboCommitish2Strings.Index(sel) != wxNOT_FOUND) {
+        if (!sel.empty()) {
+            if (comboCommitish2Strings.Index(sel) != wxNOT_FOUND) {
                 comboCommitish2Strings.Remove(sel);
             }
             comboCommitish2Strings.Insert(sel, 0);
@@ -137,9 +140,9 @@ GitDiffChooseCommitishDlg::~GitDiffChooseCommitishDlg()
 wxString GitDiffChooseCommitishDlg::GetAncestorSetting(wxSpinCtrl* spin) const
 {
     wxString setting;
-    if(spin) {
+    if (spin) {
         int value = spin->GetValue();
-        if(value > 0) {
+        if (value > 0) {
             setting = wxString::Format("~%i", value);
         }
     }
@@ -204,10 +207,10 @@ void GitDiffChooseCommitishDlg::OnTextFirstUI(wxUpdateUIEvent& event)
 {
     wxString text =
         (m_activeChoice1 == m_comboCommitish1) ? m_comboCommitish1->GetValue() : m_activeChoice1->GetStringSelection();
-    if(text.StartsWith("* ")) {
+    if (text.StartsWith("* ")) {
         text = text.Mid(2); // Remove the 'active branch' marker
     }
-    if(m_activeChoice1 == m_choiceCommit1) {
+    if (m_activeChoice1 == m_choiceCommit1) {
         text = text.BeforeFirst(' '); // We want only the commit hash, not the message
     }
 
@@ -217,10 +220,10 @@ void GitDiffChooseCommitishDlg::OnTextSecondUI(wxUpdateUIEvent& event)
 {
     wxString text =
         (m_activeChoice2 == m_comboCommitish2) ? m_comboCommitish2->GetValue() : m_activeChoice2->GetStringSelection();
-    if(text.StartsWith("* ")) {
+    if (text.StartsWith("* ")) {
         text = text.Mid(2); // Remove the 'active branch' marker
     }
-    if(m_activeChoice2 == m_choiceCommit2) {
+    if (m_activeChoice2 == m_choiceCommit2) {
         text = text.BeforeFirst(' '); // We want only the commit hash, not the message
     }
 
@@ -229,7 +232,7 @@ void GitDiffChooseCommitishDlg::OnTextSecondUI(wxUpdateUIEvent& event)
 void GitDiffChooseCommitishDlg::OnBranch1Changed(wxCommandEvent& event)
 {
     wxString newBranch = m_choiceBranch1->GetString(event.GetInt());
-    if(newBranch.StartsWith("* ")) {
+    if (newBranch.StartsWith("* ")) {
         newBranch = newBranch.Mid(2); // Remove the 'active branch' marker
     }
     m_plugin->AsyncRunGitWithCallback(
@@ -238,12 +241,13 @@ void GitDiffChooseCommitishDlg::OnBranch1Changed(wxCommandEvent& event)
             wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
             m_choiceCommit1->Set(items);
         },
-        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryPath());
+        IProcessCreateDefault | IProcessWrapInShell,
+        m_plugin->GetRepositoryPath());
 }
 void GitDiffChooseCommitishDlg::OnBranch2Changed(wxCommandEvent& event)
 {
     wxString newBranch = m_choiceBranch2->GetString(event.GetInt());
-    if(newBranch.StartsWith("* ")) {
+    if (newBranch.StartsWith("* ")) {
         newBranch = newBranch.Mid(2); // Remove the 'active branch' marker
     }
 
@@ -253,5 +257,6 @@ void GitDiffChooseCommitishDlg::OnBranch2Changed(wxCommandEvent& event)
             wxArrayString items = wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
             m_choiceCommit2->Set(items);
         },
-        IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryPath());
+        IProcessCreateDefault | IProcessWrapInShell,
+        m_plugin->GetRepositoryPath());
 }

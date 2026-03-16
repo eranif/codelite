@@ -30,7 +30,9 @@
 #include "gitentry.h"
 #include "windowattrmanager.h"
 
-GitSettingsDlg::GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath, const wxString& userEnteredRepoPath,
+GitSettingsDlg::GitSettingsDlg(wxWindow* parent,
+                               const wxString& localRepoPath,
+                               const wxString& userEnteredRepoPath,
                                const wxString& projectNameHash)
     : GitSettingsDlgBase(parent)
     , m_userEnteredRepoPath(userEnteredRepoPath)
@@ -66,14 +68,14 @@ void GitSettingsDlg::OnOK(wxCommandEvent& event)
 
     wxString repopath = m_dirPickerGitRepoPath->GetPath();
     // Sanity-check the entered path: we don't want /foo/bar/.git/, just /foo/bar
-    if(repopath.Right(1) == "/") {
+    if (repopath.Right(1) == "/") {
         repopath.RemoveLast();
     }
-    if(repopath.Right(5) == "/.git") {
+    if (repopath.Right(5) == "/.git") {
         repopath.RemoveLast(5);
     }
 
-    if(!m_projectNameHash.empty() && (repopath != m_userEnteredRepoPath)) {
+    if (!m_projectNameHash.empty() && (repopath != m_userEnteredRepoPath)) {
         m_userEnteredRepoPath = repopath;
         data.SetProjectUserEnteredRepoPath(repopath, m_projectNameHash);
         data.Save();
@@ -89,13 +91,13 @@ void GitSettingsDlg::OnOK(wxCommandEvent& event)
     data.SetDifftool(m_choiceDiffTools->GetStringSelection()); // can be an empty string
 
     size_t flags = 0;
-    if(m_checkBoxLog->IsChecked())
+    if (m_checkBoxLog->IsChecked())
         flags |= GitEntry::VerboseLog;
 
-    if(m_checkBoxTerminal->IsChecked())
+    if (m_checkBoxTerminal->IsChecked())
         flags |= GitEntry::ShowTerminal;
 
-    if(m_checkBoxShowBlameInStatusBar->IsChecked())
+    if (m_checkBoxShowBlameInStatusBar->IsChecked())
         flags |= GitEntry::ShowCommitInfo;
 
     data.SetFlags(flags);

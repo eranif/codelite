@@ -33,8 +33,8 @@
 #ifndef __gitCommitEditor__
 #define __gitCommitEditor__
 
-#include <wx/wx.h>
 #include <wx/stc/stc.h>
+#include <wx/wx.h>
 
 class GitCommitEditor : public wxStyledTextCtrl
 {

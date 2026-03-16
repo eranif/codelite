@@ -36,6 +36,7 @@
 #include "cl_command_event.h"
 #include "gitui.h"
 #include "macros.h"
+
 #include <map>
 
 class GitCommitEditor;

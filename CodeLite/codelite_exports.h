@@ -37,11 +37,11 @@
 //////////////////////////////////////
 
 #ifdef WXMAKINGDLL_CL
-#    define WXDLLIMPEXP_CL __declspec(dllexport)
+#define WXDLLIMPEXP_CL __declspec(dllexport)
 #elif defined(WXUSINGDLL_CL)
-#    define WXDLLIMPEXP_CL __declspec(dllimport)
+#define WXDLLIMPEXP_CL __declspec(dllimport)
 #else // not making nor using DLL
-#    define WXDLLIMPEXP_CL
+#define WXDLLIMPEXP_CL
 #endif
 
 //////////////////////////////////////
@@ -52,18 +52,16 @@
 #endif
 
 #ifdef WXMAKINGDLL_SDK
-#    define WXDLLIMPEXP_SDK __declspec(dllexport)
+#define WXDLLIMPEXP_SDK __declspec(dllexport)
 #elif defined(WXUSINGDLL_SDK)
-#    define WXDLLIMPEXP_SDK __declspec(dllimport)
+#define WXDLLIMPEXP_SDK __declspec(dllimport)
 #else // not making nor using DLL
-#    define WXDLLIMPEXP_SDK
+#define WXDLLIMPEXP_SDK
 #endif
 
 #else // !MSW
-#    define WXDLLIMPEXP_CL
-#    define WXDLLIMPEXP_SDK
+#define WXDLLIMPEXP_CL
+#define WXDLLIMPEXP_SDK
 #endif
 
 #endif // CODELITE_EXPORTS
-
-

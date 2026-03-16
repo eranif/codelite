@@ -4,7 +4,7 @@
 
 wxString clStringView::MakeString() const
 {
-    if(!m_pdata) {
+    if (!m_pdata) {
         return wxString();
     } else {
         return wxString(m_pdata, m_length);
@@ -21,7 +21,7 @@ bool clStringView::Advance(size_t count)
 {
     // sanity: if the requested count is more than the current length
     // clear the string
-    if(count > m_length) {
+    if (count > m_length) {
         return false;
     }
 
@@ -32,11 +32,11 @@ bool clStringView::Advance(size_t count)
 
 int clStringView::Find(const wxString& what) const
 {
-    if(empty()) {
+    if (empty()) {
         return wxNOT_FOUND;
     }
     const wxChar* match = ::wxStrstr(m_pdata, what);
-    if(match == nullptr) {
+    if (match == nullptr) {
         return wxNOT_FOUND;
     }
     return match - m_pdata;

@@ -22,7 +22,7 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
- #ifndef CODELITE_CPPSCANNER_H
+#ifndef CODELITE_CPPSCANNER_H
 #define CODELITE_CPPSCANNER_H
 
 #include "FlexLexer.h"
@@ -33,31 +33,30 @@
 class WXDLLIMPEXP_CL CppScanner : public flex::yyFlexLexer
 {
 public:
-	CppScanner();
-	~CppScanner();
+    CppScanner();
+    ~CppScanner();
 
-	/// Override the LexerInput function
-	int LexerInput(char *buf, int max_size);
-	void SetText(const char* data);
-	void Reset();
+    /// Override the LexerInput function
+    int LexerInput(char* buf, int max_size);
+    void SetText(const char* data);
+    void Reset();
 
+    ///	Note about comment and line number:
+    ///	If the last text consumed is a comment, the line number
+    ///	returned is the line number of the last line of the comment
+    ///	incase the comment spans over number of lines
+    ///	(i.e. /* ... */ comment style)
 
-	///	Note about comment and line number:
-	///	If the last text consumed is a comment, the line number
-	///	returned is the line number of the last line of the comment
-	///	incase the comment spans over number of lines
-	///	(i.e. /* ... */ comment style)
-
-	int LineNo() const { return yylineno; }
-	void ClearComment() { m_comment = wxEmptyString; }
-	const wxChar* GetComment() const { return m_comment.GetData(); }
-	void KeepComment(int keep) { m_keepComments = keep; }
-	void ReturnWhite(int rw) { m_returnWhite = rw; }
+    int LineNo() const { return yylineno; }
+    void ClearComment() { m_comment = wxEmptyString; }
+    const wxChar* GetComment() const { return m_comment.GetData(); }
+    void KeepComment(int keep) { m_keepComments = keep; }
+    void ReturnWhite(int rw) { m_returnWhite = rw; }
 
 private:
-	char *m_data;
-	char *m_pcurr;
-	int   m_curr;
+    char* m_data;
+    char* m_pcurr;
+    int m_curr;
 };
 
 using CppScannerPtr = std::unique_ptr<CppScanner>;

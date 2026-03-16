@@ -5,7 +5,8 @@
 wxFont clFontHelper::FromString(const wxString& str)
 {
     wxArrayString parts = ::wxStringTokenize(str, ";", wxTOKEN_STRTOK);
-    if(parts.size() != 5) return wxNullFont;
+    if (parts.size() != 5)
+        return wxNullFont;
 
     long iPointSize, iFamily, iWeight, iStyle;
     wxString facename = parts.Item(0);
@@ -22,7 +23,7 @@ wxFont clFontHelper::FromString(const wxString& str)
 
 wxString clFontHelper::ToString(const wxFont& font)
 {
-    if(!font.IsOk()) {
+    if (!font.IsOk()) {
         return "";
     }
     wxString str;

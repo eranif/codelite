@@ -8,16 +8,16 @@
 
 clDebuggerBreakpoint::clDebuggerBreakpoint(const clDebuggerBreakpoint& BI)
 {
-    if(this == &BI) {
+    if (this == &BI) {
         return;
     }
 
     // call operator=
     *this = BI;
 
-    if(!is_windows || !file.Contains("/")) {
+    if (!is_windows || !file.Contains("/")) {
         // Normalize the file name
-        if(!file.IsEmpty()) {
+        if (!file.IsEmpty()) {
             wxFileName fn(file);
             fn.Normalize(wxPATH_NORM_ALL & ~wxPATH_NORM_LONG);
             file = fn.GetFullPath();
@@ -27,7 +27,7 @@ clDebuggerBreakpoint::clDebuggerBreakpoint(const clDebuggerBreakpoint& BI)
 
 clDebuggerBreakpoint& clDebuggerBreakpoint::operator=(const clDebuggerBreakpoint& BI)
 {
-    if(this == &BI) {
+    if (this == &BI) {
         return *this;
     }
 

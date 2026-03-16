@@ -25,30 +25,25 @@
 #ifndef __stringaccessor__
 #define __stringaccessor__
 
-#include <wx/string.h>
 #include "codelite_exports.h"
+
 #include <string>
+#include <wx/string.h>
 
 class WXDLLIMPEXP_CL StringAccessor
 {
     std::wstring m_str;
 
 public:
-    StringAccessor(const wxString &str);
+    StringAccessor(const wxString& str);
     virtual ~StringAccessor() = default;
 
-    size_t length() {
-        return m_str.size();
-    }
+    size_t length() { return m_str.size(); }
     char safeAt(size_t pos);
     bool isWordChar(char ch);
 
-    void setStr(const wxString& str) {
-        this->m_str = str.c_str();
-    }
-    wxChar* getStr() const {
-        return (wchar_t*)m_str.c_str();
-    }
-    bool match(const char *str, size_t from);
+    void setStr(const wxString& str) { this->m_str = str.c_str(); }
+    wxChar* getStr() const { return (wchar_t*)m_str.c_str(); }
+    bool match(const char* str, size_t from);
 };
 #endif // __stringaccessor__

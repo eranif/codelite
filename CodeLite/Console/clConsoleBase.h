@@ -48,7 +48,6 @@ protected:
     wxString m_callbackUID;
 
 protected:
-
     wxString WrapWithQuotesIfNeeded(const wxString& s) const;
     virtual bool StartProcess(const wxString& command);
     void MacAddArgsIfNeeded(wxString* outcmd);

@@ -87,7 +87,7 @@ public:
     Position() = default;
     ~Position() override = default;
     bool operator==(const Position& rhs) const = default;
-    auto operator<=> (const Position& rhs) const = default;
+    auto operator<=>(const Position& rhs) const = default;
 
     Position& SetCharacter(int character)
     {

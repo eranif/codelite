@@ -1,4 +1,5 @@
 #include "PHPEntityBase.h"
+
 #include <algorithm>
 
 PHPEntityBase::PHPEntityBase()
@@ -13,7 +14,7 @@ PHPEntityBase::PHPEntityBase()
 void PHPEntityBase::AddChild(PHPEntityBase::Ptr_t child)
 {
     // Add the child to this entity
-    if(m_childrenMap.count(child->GetFullName()) == 0) {
+    if (m_childrenMap.count(child->GetFullName()) == 0) {
         m_children.push_back(child);
         m_childrenMap.insert(std::make_pair(child->GetFullName(), child));
         child->m_parent = this;
@@ -23,18 +24,18 @@ void PHPEntityBase::AddChild(PHPEntityBase::Ptr_t child)
 PHPEntityBase::Ptr_t PHPEntityBase::FindChild(const wxString& name, bool tryPrependingDollar) const
 {
     PHPEntityBase::Map_t::const_iterator iter = m_childrenMap.find(name);
-    if(iter != m_childrenMap.end()) {
+    if (iter != m_childrenMap.end()) {
         return iter->second;
     }
 
     // Could not find an exact match, try prepending
-    if(tryPrependingDollar) {
+    if (tryPrependingDollar) {
         wxString modName = name;
-        if(!modName.StartsWith("$")) {
+        if (!modName.StartsWith("$")) {
             modName.Prepend("$");
         }
         iter = m_childrenMap.find(modName);
-        if(iter != m_childrenMap.end()) {
+        if (iter != m_childrenMap.end()) {
             return iter->second;
         }
     }
@@ -69,20 +70,20 @@ void PHPEntityBase::SetFullName(const wxString& fullname)
 void PHPEntityBase::RemoveChild(PHPEntityBase::Ptr_t child)
 {
     // Remove the child from the map
-    if(m_childrenMap.count(child->GetFullName())) {
+    if (m_childrenMap.count(child->GetFullName())) {
         m_childrenMap.erase(child->GetFullName());
     }
-    
+
     // Remove the child from the list as well
     PHPEntityBase::List_t::iterator iter =
         std::find_if(m_children.begin(), m_children.end(), [&](PHPEntityBase::Ptr_t c) {
-            if(c->GetFullName() == child->GetFullName()) {
+            if (c->GetFullName() == child->GetFullName()) {
                 return true;
             }
             return false;
         });
 
-    if(iter != m_children.end()) {
+    if (iter != m_children.end()) {
         m_children.erase(iter);
     }
     child->m_parent = NULL;

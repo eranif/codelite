@@ -44,9 +44,9 @@ static wxString __get_user_name()
     // So try to make it more suitable to be an extension
     name.MakeLower();
     name.Replace(wxT(" "), wxT("_"));
-    for(size_t i = 0; i < name.Len(); ++i) {
+    for (size_t i = 0; i < name.Len(); ++i) {
         wxChar ch = name.GetChar(i);
-        if((ch < wxT('a') || ch > wxT('z')) && ch != wxT('_')) {
+        if ((ch < wxT('a') || ch > wxT('z')) && ch != wxT('_')) {
             // Non [a-z_] character: skip it
         } else {
             squashedname << ch;
@@ -69,26 +69,26 @@ namespace
 {
 void copy_directory(const wxString& from, const wxString& to)
 {
-    if(!wxDirExists(from)) {
+    if (!wxDirExists(from)) {
         return;
     }
 
     wxString source_dir = from;
     wxString target_dir = to;
-    if(!source_dir.EndsWith("/")) {
+    if (!source_dir.EndsWith("/")) {
         source_dir << "/";
     }
 
-    if(!target_dir.EndsWith("/")) {
+    if (!target_dir.EndsWith("/")) {
         target_dir << "/";
     }
 
     wxDir dir(source_dir);
     wxString filename;
     bool bla = dir.GetFirst(&filename);
-    if(bla) {
+    if (bla) {
         do {
-            if(wxDirExists(source_dir + filename)) {
+            if (wxDirExists(source_dir + filename)) {
                 // a directory
                 wxFileName::Mkdir(target_dir + filename, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
                 copy_directory(source_dir + filename, target_dir + filename);
@@ -96,7 +96,7 @@ void copy_directory(const wxString& from, const wxString& to)
                 // a file, copy it
                 wxCopyFile(source_dir + filename, target_dir + filename);
             }
-        } while(dir.GetNext(&filename));
+        } while (dir.GetNext(&filename));
     }
 }
 } // namespace
@@ -105,7 +105,7 @@ void copy_directory(const wxString& from, const wxString& to)
 wxString clStandardPaths::GetUserDataDir() const
 {
     // If the user has provided an alternative datadir, use it
-    if(!m_path.empty()) {
+    if (!m_path.empty()) {
         return m_path;
     }
 
@@ -124,15 +124,15 @@ wxString clStandardPaths::GetUserDataDir() const
     return wxStandardPaths::Get().GetUserDataDir();
 #else
     // use ~/.codelite on macOS as well
-    wxFileName path{ wxGetHomeDir(), wxEmptyString };
+    wxFileName path{wxGetHomeDir(), wxEmptyString};
     path.AppendDir(".codelite");
 
     // upgrade path
     static bool upgrade_needed = true;
-    if(upgrade_needed) {
+    if (upgrade_needed) {
         upgrade_needed = false;
 
-        if(wxFileName::DirExists(wxStandardPaths::Get().GetUserDataDir()) && !path.DirExists()) {
+        if (wxFileName::DirExists(wxStandardPaths::Get().GetUserDataDir()) && !path.DirExists()) {
             // we have an old setting directory but not a new one
             // copy the content
             copy_directory(wxStandardPaths::Get().GetUserDataDir(), path.GetPath());
@@ -162,7 +162,7 @@ wxString clStandardPaths::GetPluginsDirectory() const
 
 wxString clStandardPaths::GetDataDir() const
 {
-    if(!m_dataDir.IsEmpty()) {
+    if (!m_dataDir.IsEmpty()) {
         return m_dataDir;
     }
 
@@ -189,7 +189,7 @@ wxString clStandardPaths::GetBinaryFullPath(const wxString& toolname, bool unixS
 #endif
 
     wxString fullpath = binary.GetFullPath();
-    if(unixStylePath) {
+    if (unixStylePath) {
         fullpath.Replace("\\", "/");
     }
     return fullpath;
@@ -231,7 +231,7 @@ wxString clStandardPaths::GetTempDir() const
 {
     static bool once = true;
     static wxString tmpdir;
-    if(once) {
+    if (once) {
         wxString username = __get_user_name();
 #if defined(__WXGTK__) || defined(__WXOSX__)
         tmpdir << "/tmp/codelite/";
@@ -254,7 +254,7 @@ wxString clStandardPaths::GetDocumentsDir() const
     // but what we really want is ~/Documents
     wxFileName fp(path, "");
     fp.AppendDir("Documents");
-    if(fp.DirExists()) {
+    if (fp.DirExists()) {
         return fp.GetPath();
     }
 #endif

@@ -17,7 +17,7 @@ constexpr int DEFAULT_FONT_SIZE = 14;
 #endif
 
 #ifdef __WXMSW__
-const std::unordered_set<wxString> words = { "SemiBold", "Semibold", "Extended", "Semi Bold", "Semi bold" };
+const std::unordered_set<wxString> words = {"SemiBold", "Semibold", "Extended", "Semi Bold", "Semi bold"};
 #endif
 
 std::unordered_map<wxString, wxString> fixed_fonts_cache;
@@ -46,7 +46,7 @@ const wxString& GetFontInfo(const wxString& font_desc)
 #endif
 
     // update the cache
-    fixed_fonts_cache.insert({ font_desc, desc });
+    fixed_fonts_cache.insert({font_desc, desc});
     // return the cached entry
     return fixed_fonts_cache[font_desc];
 }

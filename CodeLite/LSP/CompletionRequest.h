@@ -10,7 +10,8 @@ namespace LSP
 class WXDLLIMPEXP_CL CompletionRequest : public LSP::Request
 {
 public:
-    CompletionRequest(const LSP::TextDocumentIdentifier& textDocument, const LSP::Position& position,
+    CompletionRequest(const LSP::TextDocumentIdentifier& textDocument,
+                      const LSP::Position& position,
                       bool userTriggered);
     ~CompletionRequest() override = default;
     void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;

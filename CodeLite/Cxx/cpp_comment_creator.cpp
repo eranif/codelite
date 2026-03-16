@@ -22,10 +22,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "precompiled_header.h"
+
 #include "cpp_comment_creator.h"
 
 #include "language.h"
-#include "precompiled_header.h"
 
 #define trimMe(str)            \
     {                          \
@@ -41,9 +42,9 @@ CppCommentCreator::CppCommentCreator(TagEntryPtr tag, wxChar keyPrefix)
 
 wxString CppCommentCreator::CreateComment()
 {
-    if(m_tag->GetKind() == wxT("class") || m_tag->GetKind() == wxT("struct")) {
+    if (m_tag->GetKind() == wxT("class") || m_tag->GetKind() == wxT("struct")) {
         return wxT("$(ClassPattern)\n");
-    } else if(m_tag->IsMethod()) {
+    } else if (m_tag->IsMethod()) {
         return FunctionComment();
     } else {
         return wxEmptyString;
@@ -70,8 +71,8 @@ wxString CppCommentCreator::FunctionComment()
         trimMe(type);
         trimMe(name);
 
-        if(type != wxT("void") // void has no return value
-           && name != type) {  // and not a constructor
+        if (type != wxT("void") // void has no return value
+            && name != type) {  // and not a constructor
             comment << wxT(" * ") << m_keyPrefix << wxT("return \n");
         }
     }

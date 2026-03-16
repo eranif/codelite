@@ -16,15 +16,15 @@ LSP::GotoDefinitionRequest::GotoDefinitionRequest(const wxString& filename, size
 void LSP::GotoDefinitionRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     JSONItem result = response.Get("result");
-    if(!result.isOk()) {
+    if (!result.isOk()) {
         return;
     }
 
     std::vector<LSP::Location> locations;
-    if(result.isArray()) {
+    if (result.isArray()) {
         int count = result.arraySize();
         locations.reserve(count);
-        for(int i = 0; i < count; ++i) {
+        for (int i = 0; i < count; ++i) {
             LSP::Location loc;
             loc.FromJSON(result.arrayItem(i));
             locations.emplace_back(loc);
@@ -35,7 +35,7 @@ void LSP::GotoDefinitionRequest::OnResponse(const LSP::ResponseMessage& response
         locations.push_back(loc);
     }
 
-    if(locations.empty()) {
+    if (locations.empty()) {
         return;
     }
 

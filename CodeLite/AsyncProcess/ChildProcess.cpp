@@ -11,11 +11,11 @@
 ChildProcess::~ChildProcess()
 {
 #if USE_IPROCESS
-    if(m_process) {
+    if (m_process) {
         m_process->Detach();
     }
 #else
-    if(m_childProcess) {
+    if (m_childProcess) {
         m_childProcess->Detach();
     }
 #endif
@@ -25,7 +25,7 @@ namespace
 {
 wxString& wrap_with_quotes(wxString& str)
 {
-    if(!str.empty() && str.Contains(" ") && !str.StartsWith("\"") && !str.EndsWith("\"")) {
+    if (!str.empty() && str.Contains(" ") && !str.StartsWith("\"") && !str.EndsWith("\"")) {
         str.Prepend("\"").Append("\"");
     }
     return str;
@@ -34,7 +34,7 @@ wxString& wrap_with_quotes(wxString& str)
 
 void ChildProcess::Start(const wxArrayString& args)
 {
-    if(args.IsEmpty()) {
+    if (args.IsEmpty()) {
         return;
     }
 #if USE_IPROCESS
@@ -51,7 +51,7 @@ void ChildProcess::Start(const wxArrayString& args)
 
     // Launch the process
     m_process.reset(::CreateAsyncProcess(this, command, IProcessCreateDefault | IProcessStderrEvent));
-    if(!m_process) {
+    if (!m_process) {
         throw clException(wxString() << "Failed to execute process: " << command);
     };
 #else
@@ -63,7 +63,7 @@ void ChildProcess::Write(const wxString& message) { Write(StringUtils::ToStdStri
 
 void ChildProcess::Write(const std::string& message)
 {
-    if(!IsOk()) {
+    if (!IsOk()) {
         return;
     }
 #if USE_IPROCESS

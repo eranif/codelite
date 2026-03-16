@@ -33,6 +33,7 @@
 #include "cl_ssh.h"
 #include "codelite_exports.h"
 #include "ssh_account_info.h"
+
 #include <memory>
 #include <wx/buffer.h>
 #include <wx/filename.h>
@@ -73,8 +74,8 @@ public:
      * @brief given a remote file path, return the path to the local
      * file used by SFTP
      */
-    static wxFileName GetLocalFileName(const SSHAccountInfo& accountInfo, const wxString& remotePath,
-                                       bool mkdirRecrusive = false);
+    static wxFileName
+    GetLocalFileName(const SSHAccountInfo& accountInfo, const wxString& remotePath, bool mkdirRecrusive = false);
 
     /**
      * @brief return the underlying ssh session

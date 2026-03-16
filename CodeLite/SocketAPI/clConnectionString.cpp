@@ -1,4 +1,5 @@
 #include "clConnectionString.h"
+
 #include "file_logger.h"
 
 clConnectionString::clConnectionString(const wxString& connectionString)
@@ -14,9 +15,9 @@ void clConnectionString::DoParse(const wxString& connectionString)
     // get the protocol part
     clDEBUG() << "Parsing connection string:" << connectionString << clEndl;
     wxString protocol = connectionString.BeforeFirst(':');
-    if(protocol == "tcp") {
+    if (protocol == "tcp") {
         m_protocol = kTcp;
-    } else if(protocol == "unix") {
+    } else if (protocol == "unix") {
 #ifdef __WXMSW__
         clWARNING() << "unix protocol is not supported on Windows" << clEndl;
         return;
@@ -30,7 +31,7 @@ void clConnectionString::DoParse(const wxString& connectionString)
 
     wxString address = connectionString.AfterFirst(':');
     address = address.Mid(2); // Skip the "//"
-    if(m_protocol == kUnixLocalSocket) {
+    if (m_protocol == kUnixLocalSocket) {
         // The rest is the file path
         m_path = address;
         m_isOK = !m_path.IsEmpty();
@@ -38,7 +39,7 @@ void clConnectionString::DoParse(const wxString& connectionString)
         // we now expect host[:port]
         m_host = address.BeforeFirst(':');
         wxString port = address.AfterFirst(':');
-        if(!port.IsEmpty()) {
+        if (!port.IsEmpty()) {
             port.ToCLong(&m_port);
         }
         m_isOK = !m_host.IsEmpty() && (m_port != wxNOT_FOUND);

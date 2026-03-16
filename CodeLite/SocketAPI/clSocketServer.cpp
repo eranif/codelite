@@ -23,14 +23,15 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include "clConnectionString.h"
 #include "clSocketServer.h"
 
+#include "clConnectionString.h"
+
 #ifndef _WIN32
-#include <sys/param.h>
 #include <arpa/inet.h>
 #include <netinet/in.h>
 #include <stdio.h>
+#include <sys/param.h>
 #include <sys/socket.h>
 #include <sys/stat.h>
 #include <sys/types.h>
@@ -46,7 +47,7 @@ int clSocketServer::CreateServer(const std::string& pipePath)
     unlink(pipePath.c_str());
 
     // Create a socket
-    if((m_socket = ::socket(AF_UNIX, SOCK_STREAM, 0)) == INVALID_SOCKET) {
+    if ((m_socket = ::socket(AF_UNIX, SOCK_STREAM, 0)) == INVALID_SOCKET) {
         throw clSocketException("Could not create socket: " + error());
     }
 
@@ -66,7 +67,7 @@ int clSocketServer::CreateServer(const std::string& pipePath)
     strcpy(server.sun_path, pipePath.c_str());
 
     // Bind
-    if(::bind(m_socket, (struct sockaddr*)&server, sizeof(server)) == -1) {
+    if (::bind(m_socket, (struct sockaddr*)&server, sizeof(server)) == -1) {
         throw clSocketException("CreateServer: bind operation failed: " + error());
     }
 
@@ -86,7 +87,7 @@ int clSocketServer::CreateServer(const std::string& pipePath)
 int clSocketServer::CreateServer(const std::string& address, int port)
 {
     // Create a socket
-    if((m_socket = ::socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
+    if ((m_socket = ::socket(AF_INET, SOCK_STREAM, 0)) == INVALID_SOCKET) {
         throw clSocketException("Could not create socket: " + error());
     }
 
@@ -111,24 +112,26 @@ int clSocketServer::CreateServer(const std::string& address, int port)
     server.sin_port = htons(port);
 
     // Bind
-    if(::bind(m_socket, (struct sockaddr*)&server, sizeof(server)) != 0) {
+    if (::bind(m_socket, (struct sockaddr*)&server, sizeof(server)) != 0) {
         throw clSocketException("CreateServer: bind() error: " + error());
     }
 
-    if(port == 0) {
+    if (port == 0) {
         struct sockaddr_in socket_name;
 #ifdef __WXMSW__
         int name_len = sizeof(socket_name);
 #else
         socklen_t name_len = sizeof(socket_name);
 #endif
-        if(::getsockname(m_socket, (struct sockaddr*)&socket_name, &name_len) != 0) {
+        if (::getsockname(m_socket, (struct sockaddr*)&socket_name, &name_len) != 0) {
             throw clSocketException("CreateServer: getsockname() error: " + error());
         }
         port = ntohs(socket_name.sin_port);
     }
     // define the accept queue size
-    if(::listen(m_socket, 10) != 0) { throw clSocketException("CreateServer: listen() error: " + error()); }
+    if (::listen(m_socket, 10) != 0) {
+        throw clSocketException("CreateServer: listen() error: " + error());
+    }
 
     // return the bound port number
     return port;
@@ -137,8 +140,10 @@ int clSocketServer::CreateServer(const std::string& address, int port)
 int clSocketServer::Start(const wxString& connectionString)
 {
     clConnectionString cs(connectionString);
-    if(!cs.IsOK()) { throw clSocketException("Invalid connection string provided"); }
-    if(cs.GetProtocol() == clConnectionString::kTcp) {
+    if (!cs.IsOK()) {
+        throw clSocketException("Invalid connection string provided");
+    }
+    if (cs.GetProtocol() == clConnectionString::kTcp) {
         return CreateServer(cs.GetHost().mb_str(wxConvUTF8).data(), cs.GetPort());
     } else {
         return CreateServer(cs.GetPath().mb_str(wxConvUTF8).data());
@@ -152,8 +157,12 @@ clSocketBase::Ptr_t clSocketServer::WaitForNewConnection(long timeout)
 
 clSocketBase* clSocketServer::WaitForNewConnectionRaw(long timeout)
 {
-    if(SelectRead(timeout) == kTimeout) { return NULL; }
+    if (SelectRead(timeout) == kTimeout) {
+        return NULL;
+    }
     int fd = ::accept(m_socket, 0, 0);
-    if(fd < 0) { throw clSocketException("accept error: " + error()); }
+    if (fd < 0) {
+        throw clSocketException("accept error: " + error());
+    }
     return new clSocketBase(fd);
 }

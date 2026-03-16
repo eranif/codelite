@@ -18,18 +18,18 @@ bool HasCompleteMessage(const std::string& inbuf, unsigned long content_length, 
 int ReadHeaders(const std::string& message, std::unordered_map<std::string, std::string>& headers)
 {
     int where = message.find("\r\n\r\n");
-    if(where == wxNOT_FOUND) {
+    if (where == wxNOT_FOUND) {
         return wxNOT_FOUND;
     }
 
     auto headerSection = message.substr(0, where); // excluding the "\r\n\r\n"
     wxArrayString lines = ::wxStringTokenize(headerSection, "\n", wxTOKEN_STRTOK);
-    for(wxString& header : lines) {
+    for (wxString& header : lines) {
         header.Trim().Trim(false);
         wxString name = header.BeforeFirst(':');
         wxString value = header.AfterFirst(':');
         headers.insert(
-            { name.Trim().Trim(false).mb_str(wxConvUTF8).data(), value.Trim().Trim(false).mb_str(wxConvUTF8).data() });
+            {name.Trim().Trim(false).mb_str(wxConvUTF8).data(), value.Trim().Trim(false).mb_str(wxConvUTF8).data()});
     }
 
     // return the headers section + the separator
@@ -58,26 +58,26 @@ std::unique_ptr<JSON> LSP::Message::GetJSONPayload(std::string& network_buffer)
     // Strip the headers
     std::unordered_map<std::string, std::string> headers;
     int headersSize = ReadHeaders(network_buffer, headers);
-    if(headersSize == wxNOT_FOUND) {
+    if (headersSize == wxNOT_FOUND) {
         LSP_WARNING() << "Unable to read headers from buffer:" << endl;
         LSP_WARNING() << network_buffer << endl;
         return nullptr;
     }
 
-    if(headers.count(HEADER_CONTENT_LENGTH) == 0) {
+    if (headers.count(HEADER_CONTENT_LENGTH) == 0) {
         LSP_WARNING() << "LSP message header does not contain the Content-Length header!" << endl;
         return nullptr;
     }
 
     unsigned long contentLength = 0;
     wxString contentLengthValue = headers[HEADER_CONTENT_LENGTH];
-    if(!contentLengthValue.ToCULong(&contentLength)) {
+    if (!contentLengthValue.ToCULong(&contentLength)) {
         LSP_WARNING() << "Failed to convert Content-Length header to number" << endl;
         LSP_WARNING() << "Content-Length:" << headers[HEADER_CONTENT_LENGTH] << endl;
         return nullptr;
     }
 
-    if(!HasCompleteMessage(network_buffer, contentLength, headersSize)) {
+    if (!HasCompleteMessage(network_buffer, contentLength, headersSize)) {
         LSP_DEBUG() << "Input buffer is too small" << endl;
         return nullptr;
     }
@@ -94,7 +94,7 @@ std::unique_ptr<JSON> LSP::Message::GetJSONPayload(std::string& network_buffer)
 
     LOG_IF_TRACE
     {
-        if(json_str.length() != payload.length()) {
+        if (json_str.length() != payload.length()) {
             LSP_TRACE() << "UTF8 chars detected" << endl;
             LSP_TRACE() << "wx.length()=" << json_str.length() << endl;
             LSP_TRACE() << "c.length()=" << payload.length() << endl;
@@ -102,7 +102,7 @@ std::unique_ptr<JSON> LSP::Message::GetJSONPayload(std::string& network_buffer)
         }
     }
 
-    if(!json_str.EndsWith("}")) {
+    if (!json_str.EndsWith("}")) {
         LSP_WARNING() << "JSON payload does not end with '}'" << endl;
 
         // for debugging purposes, dump the content
@@ -116,7 +116,7 @@ std::unique_ptr<JSON> LSP::Message::GetJSONPayload(std::string& network_buffer)
     }
 
     std::unique_ptr<JSON> json(new JSON(json_str));
-    if(!json->isOk()) {
+    if (!json->isOk()) {
         LSP_ERROR() << "Unable to parse JSON object from response!" << endl;
         return json;
     }

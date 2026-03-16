@@ -34,8 +34,8 @@ WorkerThread::~WorkerThread() { Stop(); }
 
 static ThreadRequest* QueueGet(std::mutex& m, std::queue<ThreadRequest*>& q, std::condition_variable& cv)
 {
-    std::unique_lock<std::mutex> lock{ m }; // acquiring the mutex
-    while(q.empty()) {
+    std::unique_lock<std::mutex> lock{m}; // acquiring the mutex
+    while (q.empty()) {
         cv.wait(lock); // waiting to be notified of new data
     }
 
@@ -47,21 +47,22 @@ static ThreadRequest* QueueGet(std::mutex& m, std::queue<ThreadRequest*>& q, std
 
 static void QueuePut(std::mutex& m, std::queue<ThreadRequest*>& q, std::condition_variable& cv, ThreadRequest* req)
 {
-    std::unique_lock<std::mutex> lock{ m }; // Acquires the mutex
-    q.push(req);                            // Forward the param to the
-    lock.unlock();                          // operation on the wrapped collection
+    std::unique_lock<std::mutex> lock{m}; // Acquires the mutex
+    q.push(req);                          // Forward the param to the
+    lock.unlock();                        // operation on the wrapped collection
     cv.notify_one();
 }
 
 void* WorkerThread::Entry()
 {
-    while(true) {
+    while (true) {
         // Did we get a request to terminate?
-        if(TestDestroy()) break;
+        if (TestDestroy())
+            break;
 
         // Get the next entry from the queue
         ThreadRequest* request = QueueGet(m_mutex, m_Q, m_cv);
-        if(request == nullptr) {
+        if (request == nullptr) {
             // this dummy message was sent to tell us to exit
             break;
         }
@@ -74,7 +75,9 @@ void* WorkerThread::Entry()
 
 void WorkerThread::Add(ThreadRequest* request)
 {
-    if(!request) { return; }
+    if (!request) {
+        return;
+    }
     QueuePut(m_mutex, m_Q, m_cv, request);
 }
 
@@ -84,7 +87,7 @@ void WorkerThread::Stop()
     // wait for it
     QueuePut(m_mutex, m_Q, m_cv, nullptr); // Make sure that the thread wakes up
 
-    if(IsAlive()) {
+    if (IsAlive()) {
         Delete(NULL, wxTHREAD_WAIT_BLOCK);
 
     } else {
@@ -102,7 +105,7 @@ void WorkerThread::Start(int priority)
 void WorkerThread::ClearQueue()
 {
     std::unique_lock<std::mutex> lk(m_mutex);
-    while(!m_Q.empty()) {
+    while (!m_Q.empty()) {
         m_Q.pop();
     }
 }

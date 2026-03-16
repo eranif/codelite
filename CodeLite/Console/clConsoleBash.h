@@ -3,6 +3,7 @@
 
 #include "clConsoleBase.h"
 #include "codelite_exports.h"
+
 #include <wx/filename.h>
 
 class WXDLLIMPEXP_CL clConsoleBash : public clConsoleBase

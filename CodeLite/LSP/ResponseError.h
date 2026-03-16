@@ -11,7 +11,7 @@ class WXDLLIMPEXP_CL ResponseError : public Message
 {
     int m_errorCode = wxNOT_FOUND;
     wxString m_message;
-    
+
 public:
     enum eErrorCodes {
         kErrorCodeParseError = -32700,

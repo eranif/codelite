@@ -22,10 +22,11 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "precompiled_header.h"
+
 #include "cl_calltip.h"
 
 #include "ctags_manager.h"
-#include "precompiled_header.h"
 
 #include <map>
 
@@ -34,10 +35,7 @@ struct tagCallTipInfo {
     std::vector<std::pair<int, int>> paramLen;
 };
 
-clCallTip::clCallTip(const std::vector<TagEntryPtr>& tips)
-{
-    Initialize(tips);
-}
+clCallTip::clCallTip(const std::vector<TagEntryPtr>& tips) { Initialize(tips); }
 
 wxString clCallTip::First()
 {
@@ -165,7 +163,7 @@ void clCallTip::FormatTagsToTips(const TagEntryPtrVector_t& tags, std::vector<cl
                             curtoken == "&self") {
                             // skip it
                         } else {
-                            cti.paramLen.push_back({ startOffset, j - startOffset });
+                            cti.paramLen.push_back({startOffset, j - startOffset});
                         }
                         startOffset = j + 1;
                         curtoken.clear();
@@ -179,7 +177,7 @@ void clCallTip::FormatTagsToTips(const TagEntryPtrVector_t& tags, std::vector<cl
 
             if (startOffset != (int)j) {
                 // -1 here since its likely that the signature ends with a ")" so don't include it
-                cti.paramLen.push_back({ startOffset, j - startOffset - 1 });
+                cti.paramLen.push_back({startOffset, j - startOffset - 1});
             }
             cti.sig = raw_sig;
             mymap[raw_sig] = cti;

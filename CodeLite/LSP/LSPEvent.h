@@ -38,7 +38,7 @@ protected:
 public:
     LSPEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
     LSPEvent(const LSPEvent&) = default;
-    LSPEvent& operator=(const LSPEvent& ) = delete;
+    LSPEvent& operator=(const LSPEvent&) = delete;
     ~LSPEvent() override = default;
 
     void SetTriggerKind(LSP::CompletionItem::eTriggerKind triggerKind) { this->m_triggerKind = triggerKind; }
@@ -119,7 +119,8 @@ using LSPEventFunction = void (wxEvtHandler::*)(LSPEvent&);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DEFINITION, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_INITIALIZED, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_COMPLETION_READY, LSPEvent);
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE,
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL,
+                         wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE,
                          LSPEvent); // fired twice: m_owner && EventNotifier
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, LSPEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, LSPEvent);

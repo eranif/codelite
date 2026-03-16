@@ -26,24 +26,30 @@
 #ifndef CLEXCEPTION_H
 #define CLEXCEPTION_H
 
-#include <wx/string.h>
 #include "codelite_exports.h"
+
+#include <wx/string.h>
 
 class WXDLLIMPEXP_CL clException
 {
     wxString m_message;
-    int      m_errorCode;
+    int m_errorCode;
+
 public:
-    clException(const wxString& message) : m_message(message), m_errorCode(0) {}
-    clException(const wxString& message, int errorCode) : m_message(message), m_errorCode(errorCode) {}
+    clException(const wxString& message)
+        : m_message(message)
+        , m_errorCode(0)
+    {
+    }
+    clException(const wxString& message, int errorCode)
+        : m_message(message)
+        , m_errorCode(errorCode)
+    {
+    }
     virtual ~clException() = default;
-    
-    const wxString& What() const {
-        return m_message;
-    }
-    int ErrorCode() const {
-        return m_errorCode;
-    }
+
+    const wxString& What() const { return m_message; }
+    int ErrorCode() const { return m_errorCode; }
 };
 
 #endif // CLEXCEPTION_H

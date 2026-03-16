@@ -23,31 +23,31 @@ static const wxString VARIABLE_REG_EXPR = R"#(\$[\(\{]?([\w]+)[\\/\)\}]?)#";
 /// pattern -> `${HOME}`
 std::vector<std::pair<wxString, wxString>> FindVariablesInString(wxString str)
 {
-    wxRegEx re{ VARIABLE_REG_EXPR };
+    wxRegEx re{VARIABLE_REG_EXPR};
     std::vector<std::pair<wxString, wxString>> result;
     bool cont = true;
-    while(cont) {
+    while (cont) {
         cont = false;
-        if(re.Matches(str)) {
+        if (re.Matches(str)) {
             wxString pattern;
             wxString varname;
             size_t offset = wxString::npos;
             {
                 size_t start, len;
-                if(re.GetMatch(&start, &len, 0)) {
+                if (re.GetMatch(&start, &len, 0)) {
                     pattern = str.Mid(start, len);
                     offset = start + len;
                 }
             }
             {
                 size_t start, len;
-                if(re.GetMatch(&start, &len, 1)) {
+                if (re.GetMatch(&start, &len, 1)) {
                     varname = str.Mid(start, len);
                 }
             }
 
-            if(!varname.empty() && !pattern.empty()) {
-                result.push_back({ varname, pattern });
+            if (!varname.empty() && !pattern.empty()) {
+                result.push_back({varname, pattern});
                 cont = true;
                 str = str.Mid(offset);
             }
@@ -61,27 +61,27 @@ std::vector<std::pair<wxString, wxString>> FindVariablesInString(wxString str)
 clEnvironment::clEnvironment()
 {
     wxXmlDocument doc;
-    wxFileName config{ clStandardPaths::Get().GetUserDataDir(), "environment_variables.xml" };
+    wxFileName config{clStandardPaths::Get().GetUserDataDir(), "environment_variables.xml"};
     config.AppendDir("config");
-    if(!doc.Load(config.GetFullPath()))
+    if (!doc.Load(config.GetFullPath()))
         return;
 
     wxXmlNode* node = XmlUtils::FindFirstByTagName(doc.GetRoot(), "ArchiveObject");
-    if(node) {
+    if (node) {
         Archive arc;
         arc.SetXmlNode(node);
 
         wxString activeSet;
         clEnvList_t list;
-        if(arc.Read("m_activeSet", activeSet)) {
+        if (arc.Read("m_activeSet", activeSet)) {
             wxStringMap_t global_env_map;
-            if(arc.Read("m_envVarSets", global_env_map) && global_env_map.count(activeSet)) {
+            if (arc.Read("m_envVarSets", global_env_map) && global_env_map.count(activeSet)) {
                 wxString envstr = global_env_map[activeSet];
                 list = FileUtils::CreateEnvironment(envstr);
             }
         }
 
-        if(!list.empty()) {
+        if (!list.empty()) {
             ApplyFromList(&list);
         }
     }
@@ -95,13 +95,13 @@ clEnvironment::clEnvironment(const clEnvList_t* envlist)
 
 clEnvironment::~clEnvironment()
 {
-    for(const auto& p : m_old_env) {
-        if(p.second.IsNull()) {
+    for (const auto& p : m_old_env) {
+        if (p.second.IsNull()) {
             // remove this environment
             ::wxUnsetEnv(p.first);
         } else {
             wxString strvalue;
-            if(p.second.GetAs(&strvalue)) {
+            if (p.second.GetAs(&strvalue)) {
                 ::wxSetEnv(p.first, strvalue);
             }
         }
@@ -110,29 +110,29 @@ clEnvironment::~clEnvironment()
 
 void clEnvironment::ApplyFromList(const clEnvList_t* envlist)
 {
-    if(!envlist) {
+    if (!envlist) {
         return;
     }
 
     std::unordered_set<wxString> V;
 
     // keep track of the previous values
-    for(const auto& [varname, varvalue] : *envlist) {
+    for (const auto& [varname, varvalue] : *envlist) {
         const auto& [iter, succeeded] = V.insert(varname);
-        if(succeeded) {
+        if (succeeded) {
             wxString old_value;
-            if(wxGetEnv(varname, &old_value)) {
-                m_old_env.push_back({ varname, old_value });
+            if (wxGetEnv(varname, &old_value)) {
+                m_old_env.push_back({varname, old_value});
             } else {
-                m_old_env.push_back({ varname, wxAny{} });
+                m_old_env.push_back({varname, wxAny{}});
             }
         }
     }
 
-    for(auto [varname, varvalue] : *envlist) {
+    for (auto [varname, varvalue] : *envlist) {
         auto vars = FindVariablesInString(varvalue);
 
-        for(const auto& p : vars) {
+        for (const auto& p : vars) {
             // the variable name, e.g. "HOME"
             const wxString& name = p.first;
 

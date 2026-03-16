@@ -26,9 +26,9 @@
 #ifndef PHPENTITYCLASSIMPL_H
 #define PHPENTITYCLASSIMPL_H
 
-#include "codelite_exports.h"
-#include "PHPEntityBase.h" // Base class: PHPEntityBase
 #include "PHPDocVar.h"
+#include "PHPEntityBase.h" // Base class: PHPEntityBase
+#include "codelite_exports.h"
 
 class WXDLLIMPEXP_CL PHPEntityClass : public PHPEntityBase
 {
@@ -46,10 +46,10 @@ public:
     virtual void Store(PHPLookupTable* lookup);
     virtual void FromResultSet(wxSQLite3ResultSet& res);
     virtual void PrintStdout(int indent) const;
-    
+
     void FromJSON(const JSONItem& json);
     JSONItem ToJSON() const;
-    
+
     /**
      * @brief return an array of inheritance (extends, implements and traits)
      */

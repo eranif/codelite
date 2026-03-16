@@ -10,8 +10,8 @@ void LSP::CompletionItem::FromJSON(const JSONItem& json)
 
     // parse the documentation
     auto doc = json.namedObject("documentation");
-    if(doc.isOk()) {
-        if(doc.isString()) {
+    if (doc.isOk()) {
+        if (doc.isString()) {
             // plain string, nothing more to be done here
             m_documentation.SetKind("plaintext");
             m_documentation.SetValue(doc.toString());
@@ -25,10 +25,10 @@ void LSP::CompletionItem::FromJSON(const JSONItem& json)
     m_insertText = json.namedObject("insertText").toString();
     m_insertTextFormat = json.namedObject("insertTextFormat").toString();
     m_vAdditionalText.clear();
-    if(json.hasNamedObject("additionalTextEdits")) {
+    if (json.hasNamedObject("additionalTextEdits")) {
         JSONItem additionalTextEdits = json.namedObject("additionalTextEdits");
         int count = additionalTextEdits.arraySize();
-        for(int i = 0; i < count; ++i) {
+        for (int i = 0; i < count; ++i) {
             auto edit = std::make_shared<TextEdit>();
             edit->FromJSON(additionalTextEdits.arrayItem(i));
             m_vAdditionalText.push_back(edit);
@@ -39,7 +39,7 @@ void LSP::CompletionItem::FromJSON(const JSONItem& json)
     m_label.Trim().Trim(false);
     m_detail.Trim().Trim(false);
     m_documentation.SetValue(wxString(m_documentation.GetValue()).Trim().Trim(false));
-    if(json.hasNamedObject("textEdit") && !json.namedObject("textEdit").isNull()) {
+    if (json.hasNamedObject("textEdit") && !json.namedObject("textEdit").isNull()) {
         m_textEdit.reset(new LSP::TextEdit());
         m_textEdit->FromJSON(json.namedObject("textEdit"));
     }

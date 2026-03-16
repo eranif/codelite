@@ -70,7 +70,7 @@ private:
 private:
     void deleteText()
     {
-        if(m_owned && text) {
+        if (m_owned && text) {
             free(text);
         }
         m_owned = false;
@@ -121,7 +121,7 @@ public:
 
     CxxLexerToken(const CxxLexerToken& other)
     {
-        if(this == &other)
+        if (this == &other)
             return;
         *this = other;
     }
@@ -132,7 +132,7 @@ public:
         lineNumber = other.lineNumber;
         column = other.column;
         type = other.type;
-        if(other.text) {
+        if (other.text) {
             m_owned = true;
 #ifdef __WXMSW__
             text = _strdup(other.text);
@@ -176,7 +176,7 @@ private:
 public:
     void Clear()
     {
-        if(m_currentPF) {
+        if (m_currentPF) {
             ::fclose(m_currentPF);
             m_currentPF = NULL;
         }

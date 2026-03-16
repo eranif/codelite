@@ -101,7 +101,7 @@ public:
     bool check_subscript_operator() const { return !m_subscript_params.empty(); }
     void pop_subscript_operator()
     {
-        if(!m_subscript_params.empty()) {
+        if (!m_subscript_params.empty()) {
             m_subscript_params.erase(m_subscript_params.begin());
         }
     }

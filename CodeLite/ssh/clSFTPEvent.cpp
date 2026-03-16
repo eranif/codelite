@@ -12,4 +12,3 @@ clSFTPEvent::clSFTPEvent(wxEventType commandType, int winid)
     : clCommandEvent(commandType, winid)
 {
 }
-

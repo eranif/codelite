@@ -45,7 +45,9 @@ bool clProgressDlg::Update(int value, const wxString& msg)
     m_staticLabel->SetLabel(msg);
     m_gauge->SetValue(value);
 
-    if(value % 20 == 0) { wxSafeYield(this, true); }
+    if (value % 20 == 0) {
+        wxSafeYield(this, true);
+    }
     return true;
 }
 
@@ -53,7 +55,8 @@ bool clProgressDlg::Pulse(const wxString& msg)
 {
     int curval = m_gauge->GetValue();
     m_gauge->SetValue(curval + 1);
-    if(!msg.IsEmpty()) m_staticLabel->SetLabel(msg);
+    if (!msg.IsEmpty())
+        m_staticLabel->SetLabel(msg);
     return true;
 }
 

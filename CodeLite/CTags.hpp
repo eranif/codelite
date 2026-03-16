@@ -21,8 +21,10 @@ protected:
      * @param output if provided, holds the ctags content
      * @return true on success, false otherwise
      */
-    static bool DoGenerate(const wxString& filesContent, const wxString& codelite_indexer,
-                           const wxStringMap_t& macro_table, const wxString& ctags_kinds = wxEmptyString,
+    static bool DoGenerate(const wxString& filesContent,
+                           const wxString& codelite_indexer,
+                           const wxStringMap_t& macro_table,
+                           const wxString& ctags_kinds = wxEmptyString,
                            wxString* output = nullptr);
 
     static void Initialise(const wxString& codelite_indexer);
@@ -31,25 +33,35 @@ public:
     /**
      * @brief given a list of files, generate an output tags file and place it under 'path'
      */
-    static size_t ParseFiles(const std::vector<wxString>& files, const wxString& codelite_indexer,
-                             const wxStringMap_t& macro_table, std::vector<TagEntryPtr>& tags);
+    static size_t ParseFiles(const std::vector<wxString>& files,
+                             const wxString& codelite_indexer,
+                             const wxStringMap_t& macro_table,
+                             std::vector<TagEntryPtr>& tags);
 
     /**
      * @brief given a list of files, generate an output tags file and place it under 'path'
      */
-    static size_t ParseFile(const wxString& file, const wxString& codelite_indexer, const wxStringMap_t& macro_table,
+    static size_t ParseFile(const wxString& file,
+                            const wxString& codelite_indexer,
+                            const wxStringMap_t& macro_table,
                             std::vector<TagEntryPtr>& tags);
 
     /**
      * @brief run codelite-indexer on a buffer and return list of tags
      */
-    static size_t ParseBuffer(const wxFileName& filename, const wxString& buffer, const wxString& codelite_indexer,
-                              const wxStringMap_t& macro_table, std::vector<TagEntryPtr>& tags);
+    static size_t ParseBuffer(const wxFileName& filename,
+                              const wxString& buffer,
+                              const wxString& codelite_indexer,
+                              const wxStringMap_t& macro_table,
+                              std::vector<TagEntryPtr>& tags);
     /**
      * @brief parse list of local variables from a given source file
      */
-    static size_t ParseLocals(const wxFileName& filename, const wxString& buffer, const wxString& codelite_indexer,
-                              const wxStringMap_t& macro_table, std::vector<TagEntryPtr>& tags);
+    static size_t ParseLocals(const wxFileName& filename,
+                              const wxString& buffer,
+                              const wxString& codelite_indexer,
+                              const wxStringMap_t& macro_table,
+                              std::vector<TagEntryPtr>& tags);
 };
 
 #endif // CTAGSGENERATOR_HPP

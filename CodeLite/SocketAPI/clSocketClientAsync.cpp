@@ -33,7 +33,7 @@ void clAsyncSocket::Stop() { wxDELETE(m_thread); }
 
 void clAsyncSocket::Send(const std::string& buffer)
 {
-    if(m_thread) {
+    if (m_thread) {
         clSocketAsyncThread::MyRequest req;
         req.m_command = clSocketAsyncThread::kSend;
         req.m_buffer = buffer;
@@ -46,7 +46,9 @@ void clAsyncSocket::Send(const wxString& buffer) { Send(StringUtils::ToStdString
 //-----------------------------------------------------------------------------------------------
 // The helper thread
 //-----------------------------------------------------------------------------------------------
-clSocketAsyncThread::clSocketAsyncThread(wxEvtHandler* sink, const wxString& connectionString, size_t mode,
+clSocketAsyncThread::clSocketAsyncThread(wxEvtHandler* sink,
+                                         const wxString& connectionString,
+                                         size_t mode,
                                          const wxString& keepAliveMessage)
     : wxThread(wxTHREAD_JOINABLE)
     , m_sink(sink)
@@ -60,7 +62,7 @@ clSocketAsyncThread::~clSocketAsyncThread() { Stop(); }
 
 void* clSocketAsyncThread::Entry()
 {
-    if(m_mode & kAsyncSocketClient) {
+    if (m_mode & kAsyncSocketClient) {
         return ClientMain();
     } else {
         return ServerMain();
@@ -72,23 +74,23 @@ void* clSocketAsyncThread::ServerMain()
     try {
         clSocketServer server;
         int port = server.Start(m_connectionString);
-        
+
         // Notify that we are ready to accept connections
         clCommandEvent eventReady(wxEVT_ASYNC_SOCKET_SERVER_READY);
         eventReady.SetInt(port);
         m_sink->AddPendingEvent(eventReady);
 
         clSocketBase::Ptr_t conn;
-        while(!TestDestroy()) {
+        while (!TestDestroy()) {
             conn = server.WaitForNewConnection(1);
-            if(conn) {
+            if (conn) {
                 clCommandEvent event(wxEVT_ASYNC_SOCKET_CONNECTED);
                 m_sink->AddPendingEvent(event);
                 break;
             }
         }
 
-        if(m_mode & kAsyncSocketMessage) {
+        if (m_mode & kAsyncSocketMessage) {
             MessageLoop(conn);
         } else {
             BufferLoop(conn);
@@ -110,18 +112,18 @@ void* clSocketAsyncThread::ClientMain()
     bool connected = false;
 
     // Try to connect and wait up to 5 seconds
-    if(m_mode & kAsyncSocketNonBlocking) {
+    if (m_mode & kAsyncSocketNonBlocking) {
         bool wouldBlock = false;
         connected = client->ConnectNonBlocking(m_connectionString, wouldBlock);
-        if(!connected && wouldBlock) {
+        if (!connected && wouldBlock) {
             // We should select here (wait for the socket to be writable)
-            for(size_t i = 0; i < 5; ++i) {
+            for (size_t i = 0; i < 5; ++i) {
                 int rc = client->SelectWrite(1);
-                if(rc == clSocketBase::kSuccess) {
+                if (rc == clSocketBase::kSuccess) {
                     // we are connected
                     connected = true;
                     break;
-                } else if(rc == clSocketBase::kError) {
+                } else if (rc == clSocketBase::kError) {
                     // an error occurred
                     break;
                 } else {
@@ -130,14 +132,18 @@ void* clSocketAsyncThread::ClientMain()
                 }
 
                 // Test for thread shutdown before we continue
-                if(TestDestroy()) { break; }
+                if (TestDestroy()) {
+                    break;
+                }
             }
         }
     } else {
-        for(size_t i = 0; i < 10; ++i) {
+        for (size_t i = 0; i < 10; ++i) {
             connected = client->Connect(m_connectionString, false);
-            if(connected) { break; }
-            if(TestDestroy()) {
+            if (connected) {
+                break;
+            }
+            if (TestDestroy()) {
                 // We were requested to go down during connect phase
                 return NULL;
             }
@@ -146,7 +152,7 @@ void* clSocketAsyncThread::ClientMain()
     }
 
     // Connected?
-    if(!connected) {
+    if (!connected) {
         // report error and go out
         clCommandEvent event(wxEVT_ASYNC_SOCKET_CONNECT_ERROR);
         event.SetString(socket->error());
@@ -158,7 +164,7 @@ void* clSocketAsyncThread::ClientMain()
     clCommandEvent event(wxEVT_ASYNC_SOCKET_CONNECTED);
     m_sink->AddPendingEvent(event);
 
-    if(m_mode & kAsyncSocketMessage) {
+    if (m_mode & kAsyncSocketMessage) {
         MessageLoop(socket);
     } else {
         BufferLoop(socket);
@@ -170,19 +176,19 @@ void clSocketAsyncThread::MessageLoop(clSocketBase::Ptr_t socket)
 {
     try {
         int counter = 0;
-        while(!TestDestroy()) {
+        while (!TestDestroy()) {
             MyRequest req;
-            if(m_queue.ReceiveTimeout(100, req) == wxMSGQUEUE_NO_ERROR) {
+            if (m_queue.ReceiveTimeout(100, req) == wxMSGQUEUE_NO_ERROR) {
                 // got something
-                if(req.m_command == kDisconnect) {
+                if (req.m_command == kDisconnect) {
                     socket.reset();
                     return;
 
-                } else if(req.m_command == kSend) {
+                } else if (req.m_command == kSend) {
                     socket->WriteMessage(req.m_buffer);
                     wxString replyMessage;
-                    while(socket->ReadMessage(replyMessage, 1) == clSocketBase::kTimeout) {
-                        if(TestDestroy()) {
+                    while (socket->ReadMessage(replyMessage, 1) == clSocketBase::kTimeout) {
+                        if (TestDestroy()) {
                             // Going down
                             return;
                         }
@@ -194,7 +200,7 @@ void clSocketAsyncThread::MessageLoop(clSocketBase::Ptr_t socket)
                 }
             } else {
                 // Make sure that the socket is still alive
-                if((counter % 10) == 0) {
+                if ((counter % 10) == 0) {
                     socket->WriteMessage("");
                     counter = 0;
                 }
@@ -213,37 +219,37 @@ void clSocketAsyncThread::BufferLoop(clSocketBase::Ptr_t socket)
 {
     try {
         int counter = 0;
-        while(!TestDestroy()) {
+        while (!TestDestroy()) {
             // Wait for request from the user
             ++counter;
-            if(!m_keepAliveMessage.IsEmpty() && (counter % 10) == 0) {
+            if (!m_keepAliveMessage.IsEmpty() && (counter % 10) == 0) {
                 // Fire the keep alive message
                 // if we lost the socket, it will raise an exception
                 socket->Send(m_keepAliveMessage);
             }
 
             MyRequest req;
-            if(m_queue.ReceiveTimeout(1, req) == wxMSGQUEUE_NO_ERROR) {
+            if (m_queue.ReceiveTimeout(1, req) == wxMSGQUEUE_NO_ERROR) {
                 // got something
-                if(req.m_command == kDisconnect) {
+                if (req.m_command == kDisconnect) {
                     socket.reset();
                     return;
 
-                } else if(req.m_command == kSend) {
+                } else if (req.m_command == kSend) {
                     socket->Send(req.m_buffer);
                 }
             }
 
             // timeout, test to see if we got something on the socket
             wxString buffer;
-            if(socket->SelectReadMS(5) == clSocketBase::kSuccess) {
+            if (socket->SelectReadMS(5) == clSocketBase::kSuccess) {
                 int rc = socket->Read(buffer);
-                if(rc == clSocketBase::kSuccess) {
+                if (rc == clSocketBase::kSuccess) {
                     clCommandEvent event(wxEVT_ASYNC_SOCKET_INPUT);
                     event.SetString(buffer);
                     m_sink->AddPendingEvent(event);
 
-                } else if(rc == clSocketBase::kError) {
+                } else if (rc == clSocketBase::kError) {
                     // Connection lost
                     clCommandEvent event(wxEVT_ASYNC_SOCKET_CONNECTION_LOST);
                     m_sink->AddPendingEvent(event);

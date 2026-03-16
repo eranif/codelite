@@ -36,9 +36,12 @@ private:
 public:
     virtual ~clSSHInteractiveChannel();
 
-    static clSSHInteractiveChannel::Ptr_t Create(wxEvtHandler* parent, clSSH::Ptr_t ssh,
-                                                 const std::vector<wxString>& args, size_t flags,
-                                                 const wxString& workingDir, const clEnvList_t* env);
+    static clSSHInteractiveChannel::Ptr_t Create(wxEvtHandler* parent,
+                                                 clSSH::Ptr_t ssh,
+                                                 const std::vector<wxString>& args,
+                                                 size_t flags,
+                                                 const wxString& workingDir,
+                                                 const clEnvList_t* env);
 
     /// Stop notifying the parent window about input/output from the process
     /// this is useful when we wish to terminate the process onExit but we don't want

@@ -15,18 +15,18 @@ const PHPDocParam::Vec_t& PHPDocParam::Parse()
     m_params.clear();
 
     wxStringTokenizer tokenizer(m_comment, " \n\r", wxTOKEN_STRTOK);
-    while(tokenizer.HasMoreTokens()) {
+    while (tokenizer.HasMoreTokens()) {
         wxString word = tokenizer.GetNextToken();
 
-        if(word == "@param") {
+        if (word == "@param") {
             // Next word should be the type
-            if(!tokenizer.HasMoreTokens()) {
+            if (!tokenizer.HasMoreTokens()) {
                 break;
             }
             stype = tokenizer.GetNextToken();
 
             // Next comes the name
-            if(!tokenizer.HasMoreTokens()) {
+            if (!tokenizer.HasMoreTokens()) {
                 break;
             }
             sname = tokenizer.GetNextToken();

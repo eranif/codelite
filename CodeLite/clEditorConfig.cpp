@@ -15,19 +15,19 @@ bool clEditorConfig::LoadForFile(const wxFileName& filename, wxFileName& editorC
     editorConfigFile = wxFileName(filename.GetPath(), ".editorconfig");
 
     bool foundFile = false;
-    while(editorConfigFile.GetDirCount()) {
-        if(editorConfigFile.FileExists()) {
+    while (editorConfigFile.GetDirCount()) {
+        if (editorConfigFile.FileExists()) {
             foundFile = true;
             break;
         }
         editorConfigFile.RemoveLastDir();
     }
 
-    if(!foundFile)
+    if (!foundFile)
         return false;
 
     wxString content;
-    if(!FileUtils::ReadFileContent(editorConfigFile, content)) {
+    if (!FileUtils::ReadFileContent(editorConfigFile, content)) {
         clDEBUG() << "Failed to read file:" << editorConfigFile << clEndl;
         return false;
     }
@@ -44,11 +44,11 @@ bool clEditorConfig::LoadForFile(const wxFileName& filename, wxFileName& editorC
 
         strLine.Trim().Trim(false);
 
-        if(strLine.IsEmpty())
+        if (strLine.IsEmpty())
             continue;
 
         // Process the line
-        if(strLine.StartsWith("[") && strLine.EndsWith("]")) {
+        if (strLine.StartsWith("[") && strLine.EndsWith("]")) {
             strLine.RemoveLast().Remove(0, 1); // remove the []
             clEditorConfigSection section;
             section.patterns = ProcessSection(strLine);
@@ -116,7 +116,7 @@ public:
 private:
     void DoGetLeaves(clEditorConfigTreeNode* node, clEditorConfigTreeNode::Vec_t& leaves)
     {
-        if(node->children.empty()) {
+        if (node->children.empty()) {
             // leaf node
             leaves.push_back(node);
         } else {
@@ -131,7 +131,7 @@ private:
      */
     void DoGetPatterns(clEditorConfigTreeNode* node, wxArrayString& patterns, const wxString& curpattern)
     {
-        if(node->children.empty()) {
+        if (node->children.empty()) {
             // leaf node
             patterns.Add(curpattern + node->data);
         } else {
@@ -146,7 +146,7 @@ private:
      */
     void DoAddToAllLeaves(clEditorConfigTreeNode* node, const wxString& pattern)
     {
-        if(node->children.empty()) {
+        if (node->children.empty()) {
             // leaf node
             node->data << pattern;
         } else {
@@ -172,12 +172,12 @@ wxArrayString clEditorConfig::ProcessSection(wxString& strLine)
     trees.push_back(tree);
 
     wxString curpattern;
-    while(!strLine.IsEmpty()) {
-        switch(state) {
+    while (!strLine.IsEmpty()) {
+        switch (state) {
         case kEC_STATE_NORMAL: {
             wxChar ch = strLine.at(0);
             strLine.Remove(0, 1);
-            switch(ch) {
+            switch (ch) {
             case '{':
                 state = kEC_STATE_IN_CURLYGRP;
                 break;
@@ -186,7 +186,7 @@ wxArrayString clEditorConfig::ProcessSection(wxString& strLine)
                 break;
             case ',':
                 // new pattern
-                if(!curpattern.IsEmpty()) {
+                if (!curpattern.IsEmpty()) {
                     tree->Add(curpattern);
 
                     tree = new clEditorConfigTreeNode;
@@ -202,14 +202,14 @@ wxArrayString clEditorConfig::ProcessSection(wxString& strLine)
         }
         case kEC_STATE_IN_CURLYGRP: {
             // if we got something so far, add it before we continue
-            if(!curpattern.IsEmpty()) {
+            if (!curpattern.IsEmpty()) {
                 tree->Add(curpattern);
                 curpattern.clear();
             }
 
             // read the buffer until we hit the closing brace
             wxString buffer;
-            if(!ReadUntil('}', strLine, buffer)) {
+            if (!ReadUntil('}', strLine, buffer)) {
                 return wxArrayString();
             }
             state = kEC_STATE_NORMAL;
@@ -219,7 +219,7 @@ wxArrayString clEditorConfig::ProcessSection(wxString& strLine)
         }
         case kEC_STATE_IN_SQUAREGRP: {
             wxString buffer;
-            if(!ReadUntil(']', strLine, buffer)) {
+            if (!ReadUntil(']', strLine, buffer)) {
                 return wxArrayString();
             }
             state = kEC_STATE_NORMAL;
@@ -229,7 +229,7 @@ wxArrayString clEditorConfig::ProcessSection(wxString& strLine)
     }
 
     // Remainder
-    if(!curpattern.IsEmpty()) {
+    if (!curpattern.IsEmpty()) {
         tree->Add(curpattern);
     }
 
@@ -256,42 +256,42 @@ void clEditorConfig::ProcessDirective(wxString& strLine)
     key.Trim().Trim(false);
     value.Trim().Trim(false);
 
-    if(key == "indent_style") {
+    if (key == "indent_style") {
         cursection->SetIndentStyle(value.Lower());
 
-    } else if(key == "indent_size") {
+    } else if (key == "indent_size") {
         long lv = 4;
         value.ToCLong(&lv);
         cursection->SetIndentSize(lv);
 
-    } else if(key == "tab_width") {
+    } else if (key == "tab_width") {
         long lv = 4;
         value.ToCLong(&lv);
         cursection->SetTabWidth(lv);
 
-    } else if(key == "charset") {
+    } else if (key == "charset") {
         cursection->SetCharset(value.Lower());
 
-    } else if(key == "trim_trailing_whitespace") {
+    } else if (key == "trim_trailing_whitespace") {
         cursection->SetTrimTrailingWhitespace(IS_TRUE(value));
 
-    } else if(key == "insert_final_newline") {
+    } else if (key == "insert_final_newline") {
         cursection->SetInsertFinalNewline(IS_TRUE(value));
 
-    } else if(key == "end_of_line") {
+    } else if (key == "end_of_line") {
         cursection->SetEndOfLine(value.Lower());
 
-    } else if(key == "root") {
+    } else if (key == "root") {
         m_rootFileFound = IS_TRUE(value);
     }
 }
 
 bool clEditorConfig::ReadUntil(wxChar delim, wxString& strLine, wxString& output)
 {
-    while(!strLine.IsEmpty()) {
+    while (!strLine.IsEmpty()) {
         wxChar ch = strLine.at(0);
         strLine.Remove(0, 1);
-        if(ch == delim) {
+        if (ch == delim) {
             return true;
         } else {
             output << ch;
@@ -303,7 +303,7 @@ bool clEditorConfig::ReadUntil(wxChar delim, wxString& strLine, wxString& output
 bool clEditorConfig::GetSectionForFile(const wxFileName& filename, clEditorConfigSection& section)
 {
     wxFileName editorConfigFile;
-    if(!LoadForFile(filename, editorConfigFile))
+    if (!LoadForFile(filename, editorConfigFile))
         return false;
     section = clEditorConfigSection();
     section.filename = editorConfigFile;
@@ -315,27 +315,27 @@ bool clEditorConfig::GetSectionForFile(const wxFileName& filename, clEditorConfi
             wxString fullpath = filename.GetFullPath(wxPATH_UNIX);
             wxString fullname = filename.GetFullName();
 
-            if((is_wild && ::wxMatchWild(pattern, fullpath, false)) || (!is_wild && fullname == pattern)) {
+            if ((is_wild && ::wxMatchWild(pattern, fullpath, false)) || (!is_wild && fullname == pattern)) {
                 match_found = true;
-                if(sec.IsCharsetSet()) {
+                if (sec.IsCharsetSet()) {
                     section.SetCharset(sec.GetCharset());
                 }
-                if(sec.IsIndentSizeSet()) {
+                if (sec.IsIndentSizeSet()) {
                     section.SetIndentSize(sec.GetIndentSize());
                 }
-                if(sec.IsIndentStyleSet()) {
+                if (sec.IsIndentStyleSet()) {
                     section.SetIndentStyle(sec.GetIndentStyle());
                 }
-                if(sec.IsInsertFinalNewlineSet()) {
+                if (sec.IsInsertFinalNewlineSet()) {
                     section.SetInsertFinalNewline(sec.IsInsertFinalNewline());
                 }
-                if(sec.IsSetEndOfLineSet()) {
+                if (sec.IsSetEndOfLineSet()) {
                     section.SetEndOfLine(sec.GetEndOfLine());
                 }
-                if(sec.IsTabWidthSet()) {
+                if (sec.IsTabWidthSet()) {
                     section.SetTabWidth(sec.GetTabWidth());
                 }
-                if(sec.IsTrimTrailingWhitespaceSet()) {
+                if (sec.IsTrimTrailingWhitespaceSet()) {
                     section.SetTrimTrailingWhitespace(sec.IsTrimTrailingWhitespace());
                 }
                 break;
@@ -344,7 +344,7 @@ bool clEditorConfig::GetSectionForFile(const wxFileName& filename, clEditorConfi
     }
 
     // Print the match to the log file
-    if(match_found) {
+    if (match_found) {
         section.PrintToLog();
     }
     return match_found;
@@ -355,25 +355,25 @@ void clEditorConfigSection::PrintToLog()
     LOG_IF_TRACE
     {
         clDEBUG1() << ".editorconfig (" << filename << ") :" << clEndl;
-        if(IsCharsetSet()) {
+        if (IsCharsetSet()) {
             clDEBUG1() << "charset:" << GetCharset() << clEndl;
         }
-        if(IsIndentSizeSet()) {
+        if (IsIndentSizeSet()) {
             clDEBUG1() << "indent_size:" << GetIndentSize() << clEndl;
         }
-        if(IsIndentStyleSet()) {
+        if (IsIndentStyleSet()) {
             clDEBUG1() << "indent_style:" << GetIndentStyle() << clEndl;
         }
-        if(IsInsertFinalNewlineSet()) {
+        if (IsInsertFinalNewlineSet()) {
             clDEBUG1() << "insert_final_newline:" << IsInsertFinalNewline() << clEndl;
         }
-        if(IsSetEndOfLineSet()) {
+        if (IsSetEndOfLineSet()) {
             clDEBUG1() << "end_of_line:" << GetEndOfLine() << clEndl;
         }
-        if(IsTabWidthSet()) {
+        if (IsTabWidthSet()) {
             clDEBUG1() << "tab_width:" << GetTabWidth() << clEndl;
         }
-        if(IsTrimTrailingWhitespaceSet()) {
+        if (IsTrimTrailingWhitespaceSet()) {
             clDEBUG1() << "trim_trailing_whitespace:" << IsTrimTrailingWhitespace() << clEndl;
         }
     }

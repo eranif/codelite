@@ -16,7 +16,7 @@ void CxxPreProcessor::Parse(const wxFileName& filename, size_t options)
 
         // Remove the option so recursive scanner won't get it
         m_options &= ~kLexerOpt_DontCollectMacrosDefinedInThisFile;
-        if(!scanner.IsNull()) {
+        if (!scanner.IsNull()) {
             scanner.Parse(this);
         }
     } catch (const CxxLexerException& e) {
@@ -27,19 +27,20 @@ void CxxPreProcessor::Parse(const wxFileName& filename, size_t options)
     CxxPreProcessorToken::Map_t filteredMap;
     filteredMap.reserve(m_tokens.size());
 
-    for(const auto& p : m_tokens) {
-        if(!p.second.deleteOnExit) {
+    for (const auto& p : m_tokens) {
+        if (!p.second.deleteOnExit) {
             filteredMap.insert(std::make_pair(p.first, p.second));
         }
     }
     m_tokens.swap(filteredMap);
 }
 
-bool CxxPreProcessor::ExpandInclude(const wxFileName& currentFile, const wxString& includeStatement,
+bool CxxPreProcessor::ExpandInclude(const wxFileName& currentFile,
+                                    const wxString& includeStatement,
                                     wxFileName& outFile)
 {
     // skip STL debug folders
-    if(includeStatement.StartsWith("<debug/")) {
+    if (includeStatement.StartsWith("<debug/")) {
         return false;
     }
 
@@ -52,26 +53,26 @@ bool CxxPreProcessor::ExpandInclude(const wxFileName& currentFile, const wxStrin
     wxArrayString paths = m_includePaths;
     paths.Insert(currentFile.GetPath(), 0);
 
-    if(m_noSuchFiles.count(includeStatement)) {
+    if (m_noSuchFiles.count(includeStatement)) {
         // wxPrintf("No such file hit\n");
         return false;
     }
 
     auto iter = m_fileMapping.find(includeStatement);
-    if(iter != m_fileMapping.end()) {
+    if (iter != m_fileMapping.end()) {
         // if this file has a mapped file, it means that we either
         // already scanned it or could not find a match for it
         // wxPrintf("File already been scanned\n");
         return false;
     }
 
-    for(size_t i = 0; i < paths.GetCount(); ++i) {
+    for (size_t i = 0; i < paths.GetCount(); ++i) {
         wxString tmpfile;
         tmpfile << paths.Item(i) << "/" << includeName;
         wxFileName fn(tmpfile);
-        if(fn.FileExists()) {
+        if (fn.FileExists()) {
             fn.MakeAbsolute();
-            m_fileMapping.insert({ includeStatement, fn.GetFullPath() });
+            m_fileMapping.insert({includeStatement, fn.GetFullPath()});
             outFile = fn;
             return true;
         }

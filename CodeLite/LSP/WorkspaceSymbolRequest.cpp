@@ -8,12 +8,12 @@ namespace
 {
 clModuleLogger& operator<<(clModuleLogger& logger, const std::vector<LSP::SymbolInformation>& symbols)
 {
-    if(!logger.CanLog())
+    if (!logger.CanLog())
         return logger;
 
     wxString s;
     s << "\n[\n";
-    for(const LSP::SymbolInformation& d : symbols) {
+    for (const LSP::SymbolInformation& d : symbols) {
         s << "  " << d.GetContainerName() << "." << d.GetName() << ",\n";
     }
     s << "]\n";
@@ -59,18 +59,18 @@ void LSP::WorkspaceSymbolRequest::OnResponse(const LSP::ResponseMessage& respons
     wxUnusedVar(owner);
 
     auto result = response.Get("result");
-    if(!result.isOk()) {
+    if (!result.isOk()) {
         LSP_WARNING() << "LSP::WorkspaceSymbolRequest::OnResponse(): invalid 'result' object";
         return;
     }
-    if(!result.isArray()) {
+    if (!result.isArray()) {
         LSP_WARNING() << "workspace/symbol: expected array result" << endl;
         return;
     }
 
     int size = result.arraySize();
-    if(size == 0) {
-        LSPEvent symbols_event{ wxEVT_LSP_WORKSPACE_SYMBOLS };
+    if (size == 0) {
+        LSPEvent symbols_event{wxEVT_LSP_WORKSPACE_SYMBOLS};
         owner->QueueEvent(symbols_event.Clone());
         return;
     }
@@ -78,11 +78,11 @@ void LSP::WorkspaceSymbolRequest::OnResponse(const LSP::ResponseMessage& respons
     LOG_IF_TRACE { LSP_TRACE() << result.format() << endl; }
     // only SymbolInformation has the `location` property
     // fire an event with all the symbols
-    LSPEvent symbols_event{ wxEVT_LSP_WORKSPACE_SYMBOLS };
+    LSPEvent symbols_event{wxEVT_LSP_WORKSPACE_SYMBOLS};
     auto& symbols = symbols_event.GetSymbolsInformation();
     symbols.reserve(size);
 
-    for(int i = 0; i < size; ++i) {
+    for (int i = 0; i < size; ++i) {
         SymbolInformation si;
         si.FromJSON(result[i]);
         symbols.push_back(si);

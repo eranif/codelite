@@ -40,10 +40,10 @@ CppWordScanner::CppWordScanner(const wxString& fileName)
     wxCSConv fontEncConv(wxFONTENCODING_ISO8859_1);
 
     wxFFile thefile(m_filename, wxT("rb"));
-    if(thefile.IsOpened()) {
+    if (thefile.IsOpened()) {
         m_text.Clear();
         thefile.ReadAll(&m_text, fontEncConv);
-        if(m_text.IsEmpty()) {
+        if (m_text.IsEmpty()) {
             // Try another converter
             fontEncConv = wxFONTENCODING_UTF8;
             thefile.ReadAll(&m_text, fontEncConv);
@@ -74,73 +74,74 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l, int from, i
     size_t t = (to == wxNOT_FOUND) ? m_text.size() : to;
 
     // sanity
-    if(f > m_text.size() || t > m_text.size()) return;
+    if (f > m_text.size() || t > m_text.size())
+        return;
 
-    for(size_t i = f; i < t; i++) {
+    for (size_t i = f; i < t; i++) {
         char ch = accessor.safeAt(i);
 
         // Keep track of line numbers
-        if(accessor.match("\n", i) && (state == STATE_NORMAL || state == STATE_PRE_PROCESSING ||
-                                       state == STATE_CPP_COMMENT || state == STATE_C_COMMENT)) {
+        if (accessor.match("\n", i) && (state == STATE_NORMAL || state == STATE_PRE_PROCESSING ||
+                                        state == STATE_CPP_COMMENT || state == STATE_C_COMMENT)) {
             lineNo++;
         }
 
-        switch(state) {
+        switch (state) {
 
         case STATE_NORMAL:
-            if(accessor.match("#", i)) {
+            if (accessor.match("#", i)) {
 
-                if(i == 0 ||                      // start of document
-                   accessor.match("\n", i - 1)) { // we are at start of line
+                if (i == 0 ||                      // start of document
+                    accessor.match("\n", i - 1)) { // we are at start of line
                     state = STATE_PRE_PROCESSING;
                 }
-            } else if(accessor.match("//", i)) {
+            } else if (accessor.match("//", i)) {
 
                 // C++ comment, advance i
                 state = STATE_CPP_COMMENT;
                 i++;
 
-            } else if(accessor.match("/*", i)) {
+            } else if (accessor.match("/*", i)) {
 
                 // C comment
                 state = STATE_C_COMMENT;
                 i++;
 
-            } else if(accessor.match("'", i)) {
+            } else if (accessor.match("'", i)) {
 
                 // single quoted string
                 state = STATE_SINGLE_STRING;
 
-            } else if(accessor.match("\"", i)) {
+            } else if (accessor.match("\"", i)) {
 
                 // double quoted string
                 state = STATE_DQ_STRING;
 
-            } else if(accessor.isWordChar(ch)) {
+            } else if (accessor.isWordChar(ch)) {
 
                 // is valid C++ word?
                 token.append(ch);
-                if(token.getOffset() == wxString::npos) {
+                if (token.getOffset() == wxString::npos) {
                     token.setOffset(i + m_offset);
                 }
             } else {
 
-                if(token.getName().empty() == false) {
+                if (token.getName().empty() == false) {
 
-                    if((int)token.getName().at(0) >= 48 && (int)token.getName().at(0) <= 57) {
+                    if ((int)token.getName().at(0) >= 48 && (int)token.getName().at(0) <= 57) {
                         token.reset();
                     } else {
                         // don't add C++ key words
                         wxString tmpName(token.getName());
 
-                        if(m_keywords.count(tmpName) == 0) {
+                        if (m_keywords.count(tmpName) == 0) {
 
                             token.setFilename(m_filename);
                             token.setLineNumber(lineNo);
 
                             // Ok, we are not a number!
                             // filter out non matching words
-                            if(filter.empty() || filter == token.getName()) {
+                            if (filter.empty() || filter == token.getName()) {
                                 l.addToken(token);
                             }
                         }
@@ -153,46 +154,46 @@ void CppWordScanner::doFind(const wxString& filter, CppTokensMap& l, int from, i
         case STATE_PRE_PROCESSING:
             // if the char before the \n is \ (backslash) or \r\ (CR followed by backslash) remain in pre-processing
             // state
-            if(accessor.match("\n", i) && (!accessor.match("\\", i - 1) && !accessor.match("\\\r", i - 2))) {
+            if (accessor.match("\n", i) && (!accessor.match("\\", i - 1) && !accessor.match("\\\r", i - 2))) {
                 // no wrap
                 state = STATE_NORMAL;
 
-            } else if(accessor.match("//", i)) {
+            } else if (accessor.match("//", i)) {
                 // C++ comment, advance i
                 state = STATE_CPP_COMMENT;
                 i++;
             }
             break;
         case STATE_C_COMMENT:
-            if(accessor.match("*/", i)) {
+            if (accessor.match("*/", i)) {
                 state = STATE_NORMAL;
                 i++;
             }
             break;
         case STATE_CPP_COMMENT:
-            if(accessor.match("\n", i)) {
+            if (accessor.match("\n", i)) {
                 state = STATE_NORMAL;
             }
             break;
         case STATE_DQ_STRING:
-            if(accessor.match("\\\"", i)) {
+            if (accessor.match("\\\"", i)) {
                 // escaped string
                 i++;
-            } else if(accessor.match("\\", i)) {
+            } else if (accessor.match("\\", i)) {
                 i++;
-            } else if(accessor.match("\"", i)) {
+            } else if (accessor.match("\"", i)) {
                 state = STATE_NORMAL;
             }
             break;
         case STATE_SINGLE_STRING:
-            if(accessor.match("\\'", i)) {
+            if (accessor.match("\\'", i)) {
                 // escaped single string
                 i++;
 
-            } else if(accessor.match("\\", i)) {
+            } else if (accessor.match("\\", i)) {
                 i++;
 
-            } else if(accessor.match("'", i)) {
+            } else if (accessor.match("'", i)) {
                 state = STATE_NORMAL;
             }
             break;

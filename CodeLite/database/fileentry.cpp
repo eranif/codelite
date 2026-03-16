@@ -28,8 +28,8 @@
 #include <ctime>
 
 FileEntry::FileEntry()
-		: m_id                   (wxNOT_FOUND)
-		, m_file                 (wxEmptyString)
-		, m_lastRetaggedTimestamp((int)time(NULL))
+    : m_id(wxNOT_FOUND)
+    , m_file(wxEmptyString)
+    , m_lastRetaggedTimestamp((int)time(NULL))
 {
 }

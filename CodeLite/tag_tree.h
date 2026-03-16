@@ -29,8 +29,8 @@
 #include "database/entry.h"
 #include "tree.h"
 
-#include <wx/string.h>
 #include <memory>
+#include <wx/string.h>
 
 using TagNode = TreeNode<wxString, TagEntry>;
 
@@ -45,29 +45,27 @@ using TagNode = TreeNode<wxString, TagEntry>;
 class WXDLLIMPEXP_CL TagTree : public Tree<wxString, TagEntry>
 {
 public:
-	/**
-	 * Construct a tree with roots' values key & data.
-	 * \param key Root's key
-	 * \param data Root's data
-	 */
-	TagTree(const wxString& key, const TagEntry& data);
+    /**
+     * Construct a tree with roots' values key & data.
+     * \param key Root's key
+     * \param data Root's data
+     */
+    TagTree(const wxString& key, const TagEntry& data);
 
+    /**
+     * Destructor
+     */
+    virtual ~TagTree() = default;
 
-	/**
-	 * Destructor
-	 */
-	virtual ~TagTree() = default;
-
-	/**
-	 * Add an entry to the tree.
-	 * This functions will add all parents of the tag to the tree if non exist (or some of some exist).
-	 * For example: if TagName is box::m_string, this functions will make sure that a node 'box' exists.
-	 * If not, it will add it and then will add m_string to it as its child.
-	 * \param tag Tag to add
-	 * \return new node that was added to the tree.
-	 */
-	TagNode* AddEntry(TagEntry& tag);
-
+    /**
+     * Add an entry to the tree.
+     * This functions will add all parents of the tag to the tree if non exist (or some of some exist).
+     * For example: if TagName is box::m_string, this functions will make sure that a node 'box' exists.
+     * If not, it will add it and then will add m_string to it as its child.
+     * \param tag Tag to add
+     * \return new node that was added to the tree.
+     */
+    TagNode* AddEntry(TagEntry& tag);
 };
 
 using TagTreePtr = std::shared_ptr<TagTree>;

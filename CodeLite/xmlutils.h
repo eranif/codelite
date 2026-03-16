@@ -76,7 +76,8 @@ public:
      * \param separator the string to use to separate each child's content, ';' by default
      * \return a wxString containing the content of each child, separated by 'separator'
      */
-    static wxString ChildNodesContentToString(const wxXmlNode* node, const wxString& tagName = wxT(""),
+    static wxString ChildNodesContentToString(const wxXmlNode* node,
+                                              const wxString& tagName = wxT(""),
                                               const wxString& separator = wxT(";"));
 
     /**
@@ -98,8 +99,8 @@ public:
      * \param propName the property name
      * \param defaultValue default value to return if no property exist
      */
-    static wxString ReadString(const wxXmlNode* node, const wxString& propName,
-                               const wxString& defaultValue = wxEmptyString);
+    static wxString
+    ReadString(const wxXmlNode* node, const wxString& propName, const wxString& defaultValue = wxEmptyString);
 
     /**
      * Read long property from the given node

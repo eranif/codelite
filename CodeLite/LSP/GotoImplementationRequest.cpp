@@ -14,18 +14,18 @@ LSP::GotoImplementationRequest::GotoImplementationRequest(const wxString& filena
 void LSP::GotoImplementationRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     JSONItem result = response.Get("result");
-    if(!result.isOk()) {
+    if (!result.isOk()) {
         return;
     }
     LSP::Location loc;
-    if(result.isArray()) {
+    if (result.isArray()) {
         loc.FromJSON(result.arrayItem(0));
     } else {
         loc.FromJSON(result);
     }
 
     // We send the same event for declaration as we do for definition
-    if(!loc.GetPath().IsEmpty()) {
+    if (!loc.GetPath().IsEmpty()) {
         LSPEvent definitionEvent(wxEVT_LSP_DEFINITION);
         definitionEvent.SetLocation(loc);
         owner->AddPendingEvent(definitionEvent);

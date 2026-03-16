@@ -207,7 +207,7 @@ IProcess::Ptr_t clSSHChannel::Execute(
 
     channel->m_thread = new clSSHChannelReader(channel, channel->m_channel, channel->m_wantStderr);
     channel->m_thread->Start();
-    return IProcess::Ptr_t{ channel };
+    return IProcess::Ptr_t{channel};
 }
 
 wxString clSSHChannel::BuildError(const wxString& prefix)

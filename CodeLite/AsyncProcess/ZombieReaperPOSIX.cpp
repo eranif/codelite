@@ -42,10 +42,10 @@ ZombieReaperPOSIX::ZombieReaperPOSIX()
 
 void* ZombieReaperPOSIX::Entry()
 {
-    while(!TestDestroy()) {
+    while (!TestDestroy()) {
         int status(0);
         pid_t pid = ::waitpid((pid_t)-1, &status, WNOHANG);
-        if(pid > 0) {
+        if (pid > 0) {
             // Notify about this process termination
             wxProcessEvent event(0, pid, status);
             event.SetEventType(wxEVT_CL_PROCESS_TERMINATED);
@@ -61,7 +61,7 @@ void* ZombieReaperPOSIX::Entry()
 
 void ZombieReaperPOSIX::Stop()
 {
-    if(IsAlive()) {
+    if (IsAlive()) {
         Delete(NULL, wxTHREAD_WAIT_BLOCK);
     } else {
         Wait(wxTHREAD_WAIT_BLOCK);

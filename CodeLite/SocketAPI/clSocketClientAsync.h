@@ -94,7 +94,7 @@ public:
      */
     void Stop()
     {
-        if(IsAlive()) {
+        if (IsAlive()) {
             Delete(NULL, wxTHREAD_WAIT_BLOCK);
 
         } else {
@@ -102,7 +102,9 @@ public:
         }
     }
 
-    clSocketAsyncThread(wxEvtHandler* sink, const wxString& connectionString, size_t mode,
+    clSocketAsyncThread(wxEvtHandler* sink,
+                        const wxString& connectionString,
+                        size_t mode,
                         const wxString& keepAliveMessage = "");
     virtual ~clSocketAsyncThread();
 };
@@ -117,8 +119,7 @@ public:
     using Ptr_t = std::shared_ptr<clAsyncSocket>;
 
 public:
-    clAsyncSocket(const wxString& connectionString,
-                  size_t mode = (kAsyncSocketClient | kAsyncSocketBuffer));
+    clAsyncSocket(const wxString& connectionString, size_t mode = (kAsyncSocketClient | kAsyncSocketBuffer));
     virtual ~clAsyncSocket();
 
     /**

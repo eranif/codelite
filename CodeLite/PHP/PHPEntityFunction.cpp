@@ -23,7 +23,7 @@ void PHPEntityFunction::PrintStdout(int indent) const
 
 wxString PHPEntityFunction::GetSignature() const
 {
-    if(!m_strSignature.IsEmpty()) {
+    if (!m_strSignature.IsEmpty()) {
         return m_strSignature;
     } else {
 
@@ -36,13 +36,13 @@ wxString PHPEntityFunction::GetSignature() const
                 break;
             }
         }
-        if(strSignature.EndsWith(", ")) {
+        if (strSignature.EndsWith(", ")) {
             strSignature.RemoveLast(2);
         }
         strSignature << ")";
-        if(!GetReturnValue().IsEmpty()) {
+        if (!GetReturnValue().IsEmpty()) {
             strSignature << ": ";
-            if(HasFlag(kFunc_ReturnNullable)) {
+            if (HasFlag(kFunc_ReturnNullable)) {
                 strSignature << "?";
             }
             strSignature << GetReturnValue();
@@ -55,7 +55,7 @@ void PHPEntityFunction::Store(PHPLookupTable* lookup)
 {
     wxString fullname;
     fullname << GetScope() << "\\" << GetShortName();
-    while(fullname.Replace("\\\\", "\\")) {}
+    while (fullname.Replace("\\\\", "\\")) {}
 
     try {
         wxSQLite3Database& db = lookup->Database();
@@ -95,7 +95,7 @@ void PHPEntityFunction::FromResultSet(wxSQLite3ResultSet& res)
 
 wxString PHPEntityFunction::GetScope() const
 {
-    if(Parent()) {
+    if (Parent()) {
         return Parent()->GetFullName();
     }
     return "";
@@ -112,25 +112,25 @@ wxString PHPEntityFunction::FormatPhpDoc(const CommentConfigData& data) const
         << " * @brief \n";
     for (const auto& child : m_children) {
         const PHPEntityVariable* var = child->Cast<PHPEntityVariable>();
-        if(var) {
+        if (var) {
             hasParams = true;
             doc << " * @param ";
-            if(var->IsNullable() || var->GetDefaultValue().Matches("null")) {
+            if (var->IsNullable() || var->GetDefaultValue().Matches("null")) {
                 doc << "?";
             }
             doc << (var->GetTypeHint().IsEmpty() ? "mixed" : var->GetTypeHint()) << " " << var->GetFullName();
-            if(!var->GetDefaultValue().IsEmpty()) {
+            if (!var->GetDefaultValue().IsEmpty()) {
                 doc << " [" << var->GetDefaultValue() << "]";
             }
             doc << " \n";
         }
     }
-    if(!GetShortName().Matches("__construct")) {
-        if(hasParams) {
+    if (!GetShortName().Matches("__construct")) {
+        if (hasParams) {
             doc << " *\n";
         }
         doc << " * @return ";
-        if(HasFlag(kFunc_ReturnNullable)) {
+        if (HasFlag(kFunc_ReturnNullable)) {
             doc << "?";
         }
         doc << (GetReturnValue().IsEmpty() ? "mixed" : GetReturnValue()) << " \n";
@@ -143,10 +143,10 @@ wxString PHPEntityFunction::GetFullPath() const
 {
     wxString fullpath = GetFullName();
     size_t where = fullpath.rfind(GetShortName());
-    if(where != wxString::npos) {
-        if(where > 0) {
+    if (where != wxString::npos) {
+        if (where > 0) {
             fullpath = fullpath.Mid(0, where - 1);
-            if(fullpath.IsEmpty()) {
+            if (fullpath.IsEmpty()) {
                 fullpath << "\\";
             } else {
                 fullpath << "::";
@@ -177,7 +177,7 @@ wxString PHPEntityFunction::ToTooltip() const
 {
     wxString tip;
     tip << GetShortName() << GetSignature();
-    if(!GetReturnValue().IsEmpty()) {
+    if (!GetReturnValue().IsEmpty()) {
         tip << " : " << GetReturnValue();
     }
     return tip;

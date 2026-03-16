@@ -163,9 +163,9 @@ void clSFTP::Write(const wxMemoryBuffer& fileContent, const wxString& remotePath
     auto cb = tmpRemoteFile.mb_str(wxConvUTF8);
     file = sftp_open(m_sftp, cb.data(), access_type, 0644);
     if (file == NULL) {
-        throw clException(wxString() << _("Can't open file: ") << tmpRemoteFile << ". "
-                                     << ssh_get_error(m_ssh->GetSession()),
-                          sftp_get_error(m_sftp));
+        throw clException(
+            wxString() << _("Can't open file: ") << tmpRemoteFile << ". " << ssh_get_error(m_ssh->GetSession()),
+            sftp_get_error(m_sftp));
     }
 
     char* p = (char*)fileContent.GetData();
@@ -191,9 +191,9 @@ void clSFTP::Write(const wxMemoryBuffer& fileContent, const wxString& remotePath
     SFTPAttribute::Ptr_t pattr(new SFTPAttribute(sftp_stat(m_sftp, char_buffer_remote.data())));
 
     if (pattr->IsOk() && sftp_unlink(m_sftp, char_buffer_remote.data()) < 0) {
-        throw clException(wxString() << _("Failed to unlink file: ") << remotePath << ". "
-                                     << ssh_get_error(m_ssh->GetSession()),
-                          sftp_get_error(m_sftp));
+        throw clException(
+            wxString() << _("Failed to unlink file: ") << remotePath << ". " << ssh_get_error(m_ssh->GetSession()),
+            sftp_get_error(m_sftp));
     }
 
     // Rename the file
@@ -219,9 +219,9 @@ SFTPAttribute::List_t clSFTP::List(const wxString& folder, size_t flags, const w
 
     dir = sftp_opendir(m_sftp, folder.mb_str(wxConvUTF8).data());
     if (!dir) {
-        throw clException(wxString() << _("Failed to list directory: ") << folder << ". "
-                                     << ssh_get_error(m_ssh->GetSession()),
-                          sftp_get_error(m_sftp));
+        throw clException(
+            wxString() << _("Failed to list directory: ") << folder << ". " << ssh_get_error(m_ssh->GetSession()),
+            sftp_get_error(m_sftp));
     }
 
     // Keep the current folder name
@@ -277,16 +277,16 @@ SFTPAttribute::Ptr_t clSFTP::Read(const wxString& remotePath, wxMemoryBuffer& bu
 
     sftp_file file = sftp_open(m_sftp, remotePath.mb_str(wxConvUTF8).data(), O_RDONLY, 0);
     if (file == NULL) {
-        throw clException(wxString() << _("Failed to open remote file: ") << remotePath << ". "
-                                     << ssh_get_error(m_ssh->GetSession()),
-                          sftp_get_error(m_sftp));
+        throw clException(
+            wxString() << _("Failed to open remote file: ") << remotePath << ". " << ssh_get_error(m_ssh->GetSession()),
+            sftp_get_error(m_sftp));
     }
 
     SFTPAttribute::Ptr_t fileAttr = Stat(remotePath);
     if (!fileAttr) {
-        throw clException(wxString() << _("Could not stat file:") << remotePath << ". "
-                                     << ssh_get_error(m_ssh->GetSession()),
-                          sftp_get_error(m_sftp));
+        throw clException(
+            wxString() << _("Could not stat file:") << remotePath << ". " << ssh_get_error(m_ssh->GetSession()),
+            sftp_get_error(m_sftp));
     }
     wxInt64 fileSize = fileAttr->GetSize();
     if (fileSize == 0)
@@ -311,9 +311,9 @@ SFTPAttribute::Ptr_t clSFTP::Read(const wxString& remotePath, wxMemoryBuffer& bu
     if (bytesRead != fileSize) {
         sftp_close(file);
         buffer.Clear();
-        throw clException(wxString() << _("Could not read file:") << remotePath << ". "
-                                     << ssh_get_error(m_ssh->GetSession()),
-                          sftp_get_error(m_sftp));
+        throw clException(
+            wxString() << _("Could not read file:") << remotePath << ". " << ssh_get_error(m_ssh->GetSession()),
+            sftp_get_error(m_sftp));
     }
     sftp_close(file);
     return fileAttr;
@@ -355,8 +355,8 @@ void clSFTP::Rename(const wxString& oldpath, const wxString& newpath)
     rc = sftp_rename(m_sftp, oldpath.mb_str(wxConvUTF8).data(), newpath.mb_str(wxConvUTF8).data());
 
     if (rc != SSH_OK) {
-        throw clException(wxString() << _("Failed to rename path. ") << ssh_get_error(m_ssh->GetSession()),
-                          sftp_get_error(m_sftp));
+        throw clException(
+            wxString() << _("Failed to rename path. ") << ssh_get_error(m_ssh->GetSession()), sftp_get_error(m_sftp));
     }
 }
 
@@ -384,9 +384,9 @@ void clSFTP::UnlinkFile(const wxString& path)
     rc = sftp_unlink(m_sftp, path.mb_str(wxConvUTF8).data());
 
     if (rc != SSH_OK) {
-        throw clException(wxString() << _("Failed to unlink path: ") << path << ". "
-                                     << ssh_get_error(m_ssh->GetSession()),
-                          sftp_get_error(m_sftp));
+        throw clException(
+            wxString() << _("Failed to unlink path: ") << path << ". " << ssh_get_error(m_ssh->GetSession()),
+            sftp_get_error(m_sftp));
     }
 }
 
@@ -480,9 +480,9 @@ void clSFTP::Chmod(const wxString& remotePath, size_t permissions)
 
     int rc = sftp_chmod(m_sftp, remotePath.mb_str(wxConvUTF8).data(), permissions);
     if (rc != SSH_OK) {
-        throw clException(wxString() << _("Failed to chmod file: ") << remotePath << ". "
-                                     << ssh_get_error(m_ssh->GetSession()),
-                          sftp_get_error(m_sftp));
+        throw clException(
+            wxString() << _("Failed to chmod file: ") << remotePath << ". " << ssh_get_error(m_ssh->GetSession()),
+            sftp_get_error(m_sftp));
     }
 }
 

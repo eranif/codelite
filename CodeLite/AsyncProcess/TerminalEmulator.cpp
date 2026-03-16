@@ -23,21 +23,25 @@ public:
         : wxProcess(parent)
         , m_parent(parent)
     {
-        if(m_parent) { m_parent->m_myProcesses.push_back(this); }
+        if (m_parent) {
+            m_parent->m_myProcesses.push_back(this);
+        }
     }
 
     virtual ~MyProcess() { m_parent = NULL; }
     void OnTerminate(int pid, int status)
     {
-        if(m_parent) {
+        if (m_parent) {
             clCommandEvent terminateEvent(wxEVT_TERMINAL_COMMAND_EXIT);
             m_parent->AddPendingEvent(terminateEvent);
             m_parent->m_pid = wxNOT_FOUND;
 
-            std::list<wxProcess*>::iterator iter =
-                std::find_if(m_parent->m_myProcesses.begin(), m_parent->m_myProcesses.end(),
-                             [&](wxProcess* proc) { return proc == this; });
-            if(iter != m_parent->m_myProcesses.end()) { m_parent->m_myProcesses.erase(iter); }
+            std::list<wxProcess*>::iterator iter = std::find_if(m_parent->m_myProcesses.begin(),
+                                                                m_parent->m_myProcesses.end(),
+                                                                [&](wxProcess* proc) { return proc == this; });
+            if (iter != m_parent->m_myProcesses.end()) {
+                m_parent->m_myProcesses.erase(iter);
+            }
             delete this;
         }
     }
@@ -61,8 +65,11 @@ TerminalEmulator::~TerminalEmulator()
     }
 }
 
-bool TerminalEmulator::ExecuteConsole(const wxString& command, bool waitOnExit, const wxString& command_args,
-                                      const wxString& workingDirectory, const wxString& title)
+bool TerminalEmulator::ExecuteConsole(const wxString& command,
+                                      bool waitOnExit,
+                                      const wxString& command_args,
+                                      const wxString& workingDirectory,
+                                      const wxString& title)
 {
     wxUnusedVar(title);
     clConsoleBase::Ptr_t console = clConsoleBase::GetTerminal();
@@ -72,7 +79,7 @@ bool TerminalEmulator::ExecuteConsole(const wxString& command, bool waitOnExit, 
     console->SetCallback(new MyProcess(this));
 
     wxString strTitle = title;
-    if(strTitle.IsEmpty()) {
+    if (strTitle.IsEmpty()) {
         strTitle << "'" << command << "'";
     } else {
         strTitle.Prepend("'").Append("'");
@@ -94,9 +101,11 @@ void TerminalEmulator::OnProcessTerminated(clProcessEvent& event)
 
 void TerminalEmulator::Terminate()
 {
-    if(IsRunning()) {
-        if(m_process) { m_process->Terminate(); }
-        if(m_pid != wxNOT_FOUND) {
+    if (IsRunning()) {
+        if (m_process) {
+            m_process->Terminate();
+        }
+        if (m_pid != wxNOT_FOUND) {
             wxKill(m_pid, wxSIGKILL, NULL, wxKILL_CHILDREN);
             m_pid = wxNOT_FOUND;
         }
@@ -114,7 +123,7 @@ void TerminalEmulator::OnProcessOutput(clProcessEvent& event)
 
 bool TerminalEmulator::ExecuteNoConsole(const wxString& commandToRun, const wxString& workingDirectory)
 {
-    if(m_process) {
+    if (m_process) {
         // another process is running
         return false;
     }
@@ -122,7 +131,9 @@ bool TerminalEmulator::ExecuteNoConsole(const wxString& commandToRun, const wxSt
     wxString command;
 #ifdef __WXMSW__
     wxString shell = wxGetenv("COMSPEC");
-    if(shell.IsEmpty()) { shell = "CMD"; }
+    if (shell.IsEmpty()) {
+        shell = "CMD";
+    }
 
     command << shell << wxT(" /c \"");
     command << commandToRun << wxT("\"");

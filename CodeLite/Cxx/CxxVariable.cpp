@@ -17,7 +17,7 @@ wxString CxxVariable::GetTypeAsString(const wxStringTable_t& table) const
 
 wxString CxxVariable::GetTypeAsCxxString(const wxStringTable_t& table) const
 {
-    if(IsUsing()) {
+    if (IsUsing()) {
         // A name of the real data type is parsed as assignment expression
         return m_defaultValue;
     }
@@ -29,21 +29,23 @@ wxString CxxVariable::ToString(size_t flags) const
     wxString str;
     str << GetTypeAsString({});
 
-    if(!GetPointerOrReference().IsEmpty()) {
+    if (!GetPointerOrReference().IsEmpty()) {
         str << GetPointerOrReference();
     }
 
-    if(flags & kToString_Name) {
+    if (flags & kToString_Name) {
         str << " " << GetName();
     }
 
-    if((flags & kToString_DefaultValue) && !GetDefaultValue().IsEmpty()) {
+    if ((flags & kToString_DefaultValue) && !GetDefaultValue().IsEmpty()) {
         str << " = " << GetDefaultValue();
     }
     return str;
 }
 
-wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxStandard standard, bool omitClassKeyword,
+wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type,
+                               eCxxStandard standard,
+                               bool omitClassKeyword,
                                const wxStringTable_t& table)
 {
     CxxTokenizer tokenizer;
@@ -51,20 +53,20 @@ wxString CxxVariable::PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxS
 
     // create a string with spaces
     wxString packed;
-    for(const CxxVariable::LexerToken& tok : type) {
+    for (const CxxVariable::LexerToken& tok : type) {
         packed << tok.text << " ";
     }
 
     tokenizer.Reset(packed);
     wxString s;
-    while(tokenizer.NextToken(token)) {
-        if(s.empty() && (token.GetType() == T_CLASS || token.GetType() == T_STRUCT || token.GetType() == T_ENUM) &&
-           omitClassKeyword)
+    while (tokenizer.NextToken(token)) {
+        if (s.empty() && (token.GetType() == T_CLASS || token.GetType() == T_STRUCT || token.GetType() == T_ENUM) &&
+            omitClassKeyword)
             continue;
 
-        if(token.is_keyword() || token.is_builtin_type()) {
+        if (token.is_keyword() || token.is_builtin_type()) {
             s << token.GetWXString() << " ";
-        } else if(token.is_pp_keyword()) {
+        } else if (token.is_pp_keyword()) {
             continue;
         } else {
             s << token.GetWXString();

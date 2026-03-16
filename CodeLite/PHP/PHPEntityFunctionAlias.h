@@ -26,8 +26,8 @@
 #ifndef PHPENTITYFUNCTIONALIAS_H
 #define PHPENTITYFUNCTIONALIAS_H
 
-#include "codelite_exports.h"
 #include "PHPEntityBase.h"
+#include "codelite_exports.h"
 
 class WXDLLIMPEXP_CL PHPEntityFunctionAlias : public PHPEntityBase
 {
@@ -44,9 +44,9 @@ public:
     PHPEntityFunctionAlias() = default;
     virtual ~PHPEntityFunctionAlias() = default;
 
-    void FromJSON(const JSONItem &json);
+    void FromJSON(const JSONItem& json);
     JSONItem ToJSON() const;
-    
+
 public:
     virtual bool Is(eEntityType type) const;
     virtual void Store(PHPLookupTable* lookup);

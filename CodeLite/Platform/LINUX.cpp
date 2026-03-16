@@ -44,10 +44,7 @@ std::optional<wxString> LINUX::get_rustup_bin_folder()
     return RUST_TOOLCHAIN_BIN;
 }
 
-std::optional<wxString> LINUX::FindInstallDir()
-{
-    return "/";
-}
+std::optional<wxString> LINUX::FindInstallDir() { return "/"; }
 
 std::optional<wxString> LINUX::FindHomeDir()
 {
@@ -154,7 +151,7 @@ LINUX* LINUX::Get() { return &instance; }
 std::optional<wxString> LINUX::MacFindApp(const wxString& appname, bool new_instance)
 {
 #ifdef __WXMAC__
-    wxFileName path{ "/Applications", wxEmptyString };
+    wxFileName path{"/Applications", wxEmptyString};
     path.AppendDir(appname + ".app");
 
     // search for app name

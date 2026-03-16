@@ -30,15 +30,15 @@
 
 wxXmlNode* XmlUtils::FindNodeByName(const wxXmlNode* parent, const wxString& tagName, const wxString& name)
 {
-    if(!parent) {
+    if (!parent) {
         return nullptr;
     }
 
     wxXmlNode* child = parent->GetChildren();
-    while(child) {
-        if(child->GetName() == tagName) {
-            if((child->GetAttribute(wxT("Name"), wxEmptyString) == name) ||
-               (child->GetAttribute(wxT("name"), wxEmptyString) == name)) {
+    while (child) {
+        if (child->GetName() == tagName) {
+            if ((child->GetAttribute(wxT("Name"), wxEmptyString) == name) ||
+                (child->GetAttribute(wxT("name"), wxEmptyString) == name)) {
                 return child;
             }
         }
@@ -49,13 +49,13 @@ wxXmlNode* XmlUtils::FindNodeByName(const wxXmlNode* parent, const wxString& tag
 
 wxXmlNode* XmlUtils::FindFirstByTagName(const wxXmlNode* parent, const wxString& tagName)
 {
-    if(!parent) {
+    if (!parent) {
         return nullptr;
     }
 
     wxXmlNode* child = parent->GetChildren();
-    while(child) {
-        if(child->GetName() == tagName) {
+    while (child) {
+        if (child->GetName() == tagName) {
             return child;
         }
         child = child->GetNext();
@@ -67,8 +67,8 @@ wxXmlNode* XmlUtils::FindLastByTagName(const wxXmlNode* parent, const wxString& 
 {
     wxXmlNode* last_node = nullptr;
     wxXmlNode* child = parent->GetChildren();
-    while(child) {
-        if(child->GetName() == tagName) {
+    while (child) {
+        if (child->GetName() == tagName) {
             last_node = child;
         }
         child = child->GetNext();
@@ -79,8 +79,8 @@ wxXmlNode* XmlUtils::FindLastByTagName(const wxXmlNode* parent, const wxString& 
 void XmlUtils::UpdateProperty(wxXmlNode* node, const wxString& name, const wxString& value)
 {
     auto prop = node->GetAttributes();
-    while(prop) {
-        if(prop->GetName() == name) {
+    while (prop) {
+        if (prop->GetName() == name) {
             prop->SetValue(value);
             return;
         }
@@ -104,14 +104,14 @@ bool XmlUtils::ReadStringIfExists(const wxXmlNode* node, const wxString& propNam
 long XmlUtils::ReadLong(const wxXmlNode* node, const wxString& propName, long defaultValue)
 {
     wxString val = node->GetAttribute(propName, wxEmptyString);
-    if(val.IsEmpty()) {
+    if (val.IsEmpty()) {
         return defaultValue;
     }
 
-    if(val.StartsWith(wxT("\""))) {
+    if (val.StartsWith(wxT("\""))) {
         val = val.AfterFirst(wxT('"'));
     }
-    if(val.EndsWith(wxT("\""))) {
+    if (val.EndsWith(wxT("\""))) {
         val = val.BeforeLast(wxT('"'));
     }
     long retVal = defaultValue;
@@ -122,14 +122,14 @@ long XmlUtils::ReadLong(const wxXmlNode* node, const wxString& propName, long de
 bool XmlUtils::ReadLongIfExists(const wxXmlNode* node, const wxString& propName, long& answer)
 {
     wxString value;
-    if(!node->GetAttribute(propName, &value)) {
+    if (!node->GetAttribute(propName, &value)) {
         return false;
     }
 
-    if(value.StartsWith(wxT("\""))) {
+    if (value.StartsWith(wxT("\""))) {
         value = value.AfterFirst(wxT('"'));
     }
-    if(value.EndsWith(wxT("\""))) {
+    if (value.EndsWith(wxT("\""))) {
         value = value.BeforeLast(wxT('"'));
     }
 
@@ -141,12 +141,12 @@ bool XmlUtils::ReadBool(const wxXmlNode* node, const wxString& propName, bool de
 {
     wxString val = node->GetAttribute(propName, wxEmptyString);
 
-    if(val.IsEmpty()) {
+    if (val.IsEmpty()) {
         return defaultValue;
     }
 
     bool retVal = defaultValue;
-    if(val.CmpNoCase(wxT("yes")) == 0) {
+    if (val.CmpNoCase(wxT("yes")) == 0) {
         retVal = true;
     } else {
         retVal = false;
@@ -157,11 +157,11 @@ bool XmlUtils::ReadBool(const wxXmlNode* node, const wxString& propName, bool de
 bool XmlUtils::ReadBoolIfExists(const wxXmlNode* node, const wxString& propName, bool& answer)
 {
     wxString value;
-    if(!node->GetAttribute(propName, &value)) {
+    if (!node->GetAttribute(propName, &value)) {
         return false;
     }
 
-    if(value.CmpNoCase(wxT("yes")) == 0) {
+    if (value.CmpNoCase(wxT("yes")) == 0) {
         answer = true;
     } else {
         answer = false;
@@ -173,13 +173,13 @@ wxArrayString XmlUtils::ChildNodesContentToArray(const wxXmlNode* node, const wx
 {
     wxArrayString arr;
 
-    if(!node) {
+    if (!node) {
         return arr;
     }
 
     wxXmlNode* child = node->GetChildren();
-    while(child) {
-        if(tagName.empty() || child->GetName() == tagName) {
+    while (child) {
+        if (tagName.empty() || child->GetName() == tagName) {
             arr.Add(child->GetNodeContent());
         }
         child = child->GetNext();
@@ -188,24 +188,25 @@ wxArrayString XmlUtils::ChildNodesContentToArray(const wxXmlNode* node, const wx
     return arr;
 }
 
-wxString XmlUtils::ChildNodesContentToString(const wxXmlNode* node, const wxString& tagName /* = wxT("")*/,
+wxString XmlUtils::ChildNodesContentToString(const wxXmlNode* node,
+                                             const wxString& tagName /* = wxT("")*/,
                                              const wxString& separator /* = wxT(";")*/)
 {
     wxString str;
 
-    if(!node) {
+    if (!node) {
         return str;
     }
 
     wxXmlNode* child = node->GetChildren();
-    while(child) {
-        if(tagName.empty() || child->GetName() == tagName) {
+    while (child) {
+        if (tagName.empty() || child->GetName() == tagName) {
             str << child->GetNodeContent() << separator;
         }
         child = child->GetNext();
     }
 
-    if(!str.empty()) {
+    if (!str.empty()) {
         str.RemoveLast(separator.Len());
     }
 
@@ -216,21 +217,21 @@ void XmlUtils::SetNodeContent(wxXmlNode* node, const wxString& text)
 {
     wxXmlNode* n = node->GetChildren();
     wxXmlNode* contentNode = nullptr;
-    while(n) {
-        if(n->GetType() == wxXML_TEXT_NODE || n->GetType() == wxXML_CDATA_SECTION_NODE) {
+    while (n) {
+        if (n->GetType() == wxXML_TEXT_NODE || n->GetType() == wxXML_CDATA_SECTION_NODE) {
             contentNode = n;
             break;
         }
         n = n->GetNext();
     }
 
-    if(contentNode) {
+    if (contentNode) {
         // remove old node
         node->RemoveChild(contentNode);
         delete contentNode;
     }
 
-    if(!text.IsEmpty()) {
+    if (!text.IsEmpty()) {
         contentNode = new wxXmlNode(wxXML_TEXT_NODE, wxEmptyString, text);
         node->AddChild(contentNode);
     }
@@ -239,7 +240,7 @@ void XmlUtils::SetNodeContent(wxXmlNode* node, const wxString& text)
 void XmlUtils::RemoveChildren(wxXmlNode* node)
 {
     wxXmlNode* child = node->GetChildren();
-    while(child) {
+    while (child) {
         wxXmlNode* nextChild = child->GetNext();
         node->RemoveChild(child);
         delete child;
@@ -251,21 +252,21 @@ void XmlUtils::SetCDATANodeContent(wxXmlNode* node, const wxString& text)
 {
     wxXmlNode* n = node->GetChildren();
     wxXmlNode* contentNode = nullptr;
-    while(n) {
-        if(n->GetType() == wxXML_TEXT_NODE || n->GetType() == wxXML_CDATA_SECTION_NODE) {
+    while (n) {
+        if (n->GetType() == wxXML_TEXT_NODE || n->GetType() == wxXML_CDATA_SECTION_NODE) {
             contentNode = n;
             break;
         }
         n = n->GetNext();
     }
 
-    if(contentNode) {
+    if (contentNode) {
         // remove old node
         node->RemoveChild(contentNode);
         delete contentNode;
     }
 
-    if(!text.IsEmpty()) {
+    if (!text.IsEmpty()) {
         contentNode = new wxXmlNode(wxXML_CDATA_SECTION_NODE, wxEmptyString, text);
         node->AddChild(contentNode);
     }
@@ -276,12 +277,12 @@ bool XmlUtils::StaticReadObject(wxXmlNode* root, const wxString& name, Serialize
     // find the object node in the xml file
 
     wxXmlNode* node = XmlUtils::FindNodeByName(root, wxT("ArchiveObject"), name);
-    if(node) {
+    if (node) {
 
         // Check to see if we need a version check
         wxString objectVersion = obj->GetVersion();
-        if(objectVersion.IsEmpty() == false) {
-            if(node->GetAttribute(wxT("Version"), wxT("")) != objectVersion) {
+        if (objectVersion.IsEmpty() == false) {
+            if (node->GetAttribute(wxT("Version"), wxT("")) != objectVersion) {
                 return false;
             }
         }
@@ -296,12 +297,12 @@ bool XmlUtils::StaticReadObject(wxXmlNode* root, const wxString& name, Serialize
 
 bool XmlUtils::StaticWriteObject(wxXmlNode* root, const wxString& name, SerializedObject* obj)
 {
-    if(!root)
+    if (!root)
         return false;
 
     Archive arch;
     wxXmlNode* child = XmlUtils::FindNodeByName(root, wxT("ArchiveObject"), name);
-    if(child) {
+    if (child) {
         wxXmlNode* n = root;
         n->RemoveChild(child);
         delete child;
@@ -312,7 +313,7 @@ bool XmlUtils::StaticWriteObject(wxXmlNode* root, const wxString& name, Serializ
     root->AddChild(child);
 
     wxString objectVersion = obj->GetVersion();
-    if(objectVersion.IsEmpty() == false)
+    if (objectVersion.IsEmpty() == false)
         child->AddAttribute(wxT("Version"), objectVersion);
 
     child->AddAttribute(wxT("Name"), name);
@@ -322,7 +323,6 @@ bool XmlUtils::StaticWriteObject(wxXmlNode* root, const wxString& name, Serializ
     obj->Serialize(arch);
     return true;
 }
-
 
 bool XmlUtils::LoadXmlFile(wxXmlDocument* doc, const wxString& filepath)
 {

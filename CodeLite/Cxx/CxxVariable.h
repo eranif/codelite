@@ -83,8 +83,10 @@ public:
     // @see ToString() for description about 'table'
     wxString GetTypeAsCxxString(const wxStringTable_t& table = wxStringTable_t()) const;
 
-    static wxString PackType(const CxxVariable::LexerToken::Vec_t& type, eCxxStandard standard,
-                             bool omitClassKeyword = false, const wxStringTable_t& table = wxStringTable_t());
+    static wxString PackType(const CxxVariable::LexerToken::Vec_t& type,
+                             eCxxStandard standard,
+                             bool omitClassKeyword = false,
+                             const wxStringTable_t& table = wxStringTable_t());
 
     /**
      * @brief return true if this variable was constructed from a statement like:

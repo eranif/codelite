@@ -41,12 +41,12 @@ const PHPDocProperty::Tuple_t& PHPDocProperty::ParseMethods()
     m_params.clear();
     wxArrayString lines = ::wxStringTokenize(m_comment, "\n\r", wxTOKEN_STRTOK);
     for (wxString& line : lines) {
-        if(line.Contains("@method")) {
+        if (line.Contains("@method")) {
             int where = line.Find("@method");
             line = line.Mid(where + 7); // skip "@method"
             line.Replace("\t", " ");
             line.Trim().Trim(false);
-        
+
             // @method [return type] [name]([[type] [parameter]<, …>]) [<description>]
             wxString sig;
             sig = line.AfterFirst('(');
@@ -56,9 +56,9 @@ const PHPDocProperty::Tuple_t& PHPDocProperty::ParseMethods()
 
             line = line.BeforeFirst('(');
             wxArrayString params = ::wxStringTokenize(line, " ", wxTOKEN_STRTOK);
-            if((params.size() == 2) && !sig.IsEmpty()) {
+            if ((params.size() == 2) && !sig.IsEmpty()) {
                 m_params.push_back(std::make_tuple(m_sourceFile.MakeIdentifierAbsolute(params[0]), params[1], sig));
-            } else if(params.size() == 1 && !sig.IsEmpty()) {
+            } else if (params.size() == 1 && !sig.IsEmpty()) {
                 m_params.push_back(std::make_tuple(wxEmptyString, params[0], sig));
             }
         }

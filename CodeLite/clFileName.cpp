@@ -22,15 +22,15 @@ const wxString& __uname()
     static wxString uname_output;
     static bool firstTime = true;
 
-    if(firstTime) {
+    if (firstTime) {
         firstTime = false;
         wxFileName uname;
-        if(FileUtils::FindExe("uname", uname)) {
+        if (FileUtils::FindExe("uname", uname)) {
             firstTime = false;
             clDEBUG() << "Running `uname -s`..." << endl;
             wxString cmd;
             cmd << uname.GetFullPath();
-            if(cmd.Contains(" ")) {
+            if (cmd.Contains(" ")) {
                 cmd.Prepend("\"").Append("\"");
             }
             cmd << " -s";
@@ -65,15 +65,15 @@ clFileName::clFileName(const wxString& dir, const wxString& name)
 
 wxString clFileName::FromCygwin(const wxString& fullpath)
 {
-    if(!is_cygwin_env()) {
+    if (!is_cygwin_env()) {
         return fullpath;
     }
     wxString tmppath;
-    if(fullpath.StartsWith("/cygdrive/")) {
+    if (fullpath.StartsWith("/cygdrive/")) {
         // "/cygdrive/c/Users/eran/devl/codelite/CodeLite/clFileName.cpp"
         tmppath = fullpath;
         tmppath.Replace("/cygdrive/", "");
-        if(tmppath.IsEmpty()) {
+        if (tmppath.IsEmpty()) {
             return fullpath;
         }
 
@@ -91,17 +91,17 @@ wxString clFileName::FromCygwin(const wxString& fullpath)
 wxString clFileName::ToCygwin(const wxString& fullpath) { return ToCygwin(wxFileName(fullpath)); }
 wxString clFileName::ToCygwin(const wxFileName& fullpath)
 {
-    if(!is_cygwin_env()) {
+    if (!is_cygwin_env()) {
         return fullpath.GetFullPath();
     }
     wxFileName fn(fullpath);
-    if(fn.GetVolume().empty()) {
+    if (fn.GetVolume().empty()) {
         // non windows path
         return fullpath.GetFullPath();
     }
     wxString drive = fn.GetVolume();
     wxString cygwin_path = fn.GetFullPath();
-    if(cygwin_path.size() < 2) {
+    if (cygwin_path.size() < 2) {
         return fullpath.GetFullPath();
     }
 

@@ -26,10 +26,7 @@
 
 CppToken::CppToken() { reset(); }
 
-bool CppToken::operator<(const CppToken& rhs) const
-{
-    return this->getName() < rhs.getName();
-}
+bool CppToken::operator<(const CppToken& rhs) const { return this->getName() < rhs.getName(); }
 
 void CppToken::reset()
 {
@@ -61,7 +58,7 @@ void CppTokensMap::addToken(const CppToken& token)
     // try to locate an entry with this name
     std::unordered_map<wxString, std::vector<CppToken>*>::iterator iter = m_tokens.find(token.getName());
     std::vector<CppToken>* tokensList(NULL);
-    if(iter != m_tokens.end()) {
+    if (iter != m_tokens.end()) {
         tokensList = iter->second;
     } else {
         // create new list and add it to the map

@@ -3,11 +3,11 @@
 #include <cstring>
 
 #define CHECK_SIZE_RET_FALSE(pos) \
-    if(pos >= BITS_SIZE)          \
+    if (pos >= BITS_SIZE)         \
     return false
 
 #define CHECK_SIZE_RET(pos) \
-    if(pos >= BITS_SIZE)    \
+    if (pos >= BITS_SIZE)   \
     return
 
 clBitset::clBitset() { memset(bits, 0, sizeof(bits)); }
@@ -27,7 +27,7 @@ bool clBitset::test(size_t pos) const
 wxString clBitset::to_string() const
 {
     wxString str;
-    for(auto ch : bits) {
+    for (auto ch : bits) {
         str << (ch == 1 ? "1" : "0");
     }
     return str;
@@ -35,10 +35,10 @@ wxString clBitset::to_string() const
 
 void clBitset::from_string(const wxString& str)
 {
-    if(str.length() < BITS_SIZE)
+    if (str.length() < BITS_SIZE)
         return;
 
-    for(size_t i = 0; i < BITS_SIZE; ++i) {
+    for (size_t i = 0; i < BITS_SIZE; ++i) {
         bits[i] = (str[i] == '1' ? 1 : 0);
     }
 }

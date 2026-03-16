@@ -28,7 +28,7 @@ void PHPEntityNamespace::Store(PHPLookupTable* lookup)
                 db.PrepareStatement("SELECT * FROM SCOPE_TABLE WHERE FULLNAME=:FULLNAME LIMIT 1");
             statement.Bind(statement.GetParamIndex(":FULLNAME"), GetFullName());
             wxSQLite3ResultSet res = statement.ExecuteQuery();
-            if(res.NextRow()) {
+            if (res.NextRow()) {
                 // we have a match, update this item database ID to match
                 // what we have found in the database
                 PHPEntityNamespace ns;
@@ -83,12 +83,13 @@ wxString PHPEntityNamespace::FormatPhpDoc(const CommentConfigData& data) const
 void PHPEntityNamespace::DoEnsureNamespacePathExists(wxSQLite3Database& db, const wxString& path)
 {
     wxArrayString paths = ::wxStringTokenize(path, "\\", wxTOKEN_STRTOK);
-    if(paths.IsEmpty()) return;
+    if (paths.IsEmpty())
+        return;
 
     wxString currentPath;
     try {
-        for(size_t i = 0; i < paths.GetCount(); ++i) {
-            if(!currentPath.EndsWith("\\")) {
+        for (size_t i = 0; i < paths.GetCount(); ++i) {
+            if (!currentPath.EndsWith("\\")) {
                 currentPath << "\\";
             }
             currentPath << paths.Item(i);
@@ -110,12 +111,13 @@ void PHPEntityNamespace::DoEnsureNamespacePathExists(wxSQLite3Database& db, cons
 
 wxString PHPEntityNamespace::GetParentNamespace() const
 {
-    if(GetFullName() == "\\") {
+    if (GetFullName() == "\\") {
         // this is the global namespace
         return "\\";
     }
     wxString parentPath = GetFullName().BeforeLast('\\');
-    if(parentPath.IsEmpty()) return "\\";
+    if (parentPath.IsEmpty())
+        return "\\";
     return parentPath;
 }
 
@@ -123,15 +125,11 @@ wxString PHPEntityNamespace::BuildNamespace(const wxString& part1, const wxStrin
 {
     wxString ns;
     ns << part1 << "\\" << part2;
-    while(ns.Replace("\\\\", "\\")) {
-    }
+    while (ns.Replace("\\\\", "\\")) {}
     return ns;
 }
 
-void PHPEntityNamespace::FromJSON(const JSONItem& json)
-{
-    BaseFromJSON(json);
-}
+void PHPEntityNamespace::FromJSON(const JSONItem& json) { BaseFromJSON(json); }
 
 JSONItem PHPEntityNamespace::ToJSON() const
 {

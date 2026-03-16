@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "precompiled_header.h"
+
 #include "entry.h"
 
 #include "CompletionHelper.hpp"
@@ -31,7 +33,6 @@
 #include "ctags_manager.h"
 #include "macros.h"
 #include "pptable.h"
-#include "precompiled_header.h"
 #include "tokenizer.h"
 
 #include <wx/tokenzr.h>
@@ -89,8 +90,12 @@ bool TagEntry::operator==(const TagEntry& rhs) const
     return res;
 }
 
-void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNumber, const wxString& pattern,
-                      const wxString& kind, wxStringMap_t& extFields)
+void TagEntry::Create(const wxString& fileName,
+                      const wxString& name,
+                      int lineNumber,
+                      const wxString& pattern,
+                      const wxString& kind,
+                      wxStringMap_t& extFields)
 {
     m_flags = 0;
     m_extFields = extFields;
@@ -104,10 +109,10 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
     wxString path;
 
     // Check if we can get full name (including path)
-    static std::vector<wxString> scope_fields = { "class", "struct", "namespace", "interface", "enum", "function" };
-    for(const wxString& scope_field : scope_fields) {
+    static std::vector<wxString> scope_fields = {"class", "struct", "namespace", "interface", "enum", "function"};
+    for (const wxString& scope_field : scope_fields) {
         path = GetExtField(scope_field);
-        if(!path.IsEmpty()) {
+        if (!path.IsEmpty()) {
             UpdatePath(path);
             break;
         }
@@ -115,11 +120,11 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
 
     // still no path?
     // try union
-    if(path.empty()) {
+    if (path.empty()) {
         path = GetExtField("union");
         wxString tmpname = path.AfterLast(':');
-        if(!path.IsEmpty()) {
-            if(!tmpname.StartsWith("__anon")) {
+        if (!path.IsEmpty()) {
+            if (!tmpname.StartsWith("__anon")) {
                 UpdatePath(path);
             } else {
                 // anonymous union, remove the anonymous part from its name
@@ -132,14 +137,14 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
 
     // update the method properties
     SetTagProperties(GetExtField("properties"));
-    if(!path.IsEmpty()) {
+    if (!path.IsEmpty()) {
         SetScope(path);
     } else {
         SetScope("<global>");
     }
 
     // If there is no path, path is set to name
-    if(GetPath().IsEmpty()) {
+    if (GetPath().IsEmpty()) {
         SetPath(GetName());
     }
 
@@ -152,10 +157,10 @@ void TagEntry::Create(const wxString& fileName, const wxString& name, int lineNu
 
     // parse auto
     m_assignment = TypenameFromPattern(this);
-    if(IsAuto(this)) {
+    if (IsAuto(this)) {
         m_tag_properties_flags |= TAG_PROP_AUTO_VARIABLE;
     }
-    if(IsFunction() && GetName().StartsWith("__anon")) {
+    if (IsFunction() && GetName().StartsWith("__anon")) {
         m_tag_properties_flags |= TAG_PROP_INLINE;
     }
 }
@@ -180,7 +185,7 @@ void TagEntry::Print()
 wxString TagEntry::Key() const
 {
     wxString key;
-    if(IsPrototype() || IsMacro()) {
+    if (IsPrototype() || IsMacro()) {
         key << GetKind() << ": ";
     }
 
@@ -199,7 +204,7 @@ wxString TagEntry::GetFullDisplayName() const
 {
     wxString name;
 
-    if(GetParent() == "<global>") {
+    if (GetParent() == "<global>") {
         name << GetDisplayName();
     } else {
         name << GetParent() << "::" << GetName() << GetSignature();
@@ -226,14 +231,11 @@ wxString TagEntry::GetKind() const
     return kind;
 }
 
-bool TagEntry::IsContainer() const
-{
-    return IsClass() || IsStruct() || IsUnion() || IsNamespace() || IsEnumClass();
-}
+bool TagEntry::IsContainer() const { return IsClass() || IsStruct() || IsUnion() || IsNamespace() || IsEnumClass(); }
 
 void TagEntry::UpdatePath(wxString& path)
 {
-    if(!path.IsEmpty()) {
+    if (!path.IsEmpty()) {
         wxString name(path);
         name += "::";
         name += GetName();
@@ -244,7 +246,7 @@ void TagEntry::UpdatePath(wxString& path)
 const wxString& TagEntry::GetExtField(const wxString& extField) const
 {
     static wxString empty_string;
-    if(m_extFields.count(extField) == 0) {
+    if (m_extFields.count(extField) == 0) {
         return empty_string;
     }
     return m_extFields.find(extField)->second;
@@ -281,12 +283,12 @@ void TagEntry::FromLine(const wxString& line)
     // or
     // line number followed by ;"
     int end = strLine.Find(";\"");
-    if(end == wxNOT_FOUND) {
+    if (end == wxNOT_FOUND) {
         // invalid pattern found
         return;
     }
 
-    if(strLine.StartsWith("/^")) {
+    if (strLine.StartsWith("/^")) {
         // regular expression pattern found
         pattern = strLine.Mid(0, end);
         strLine = strLine.Right(strLine.Length() - (end + 2));
@@ -302,16 +304,16 @@ void TagEntry::FromLine(const wxString& line)
     }
 
     // next is the kind of the token
-    if(strLine.StartsWith("\t")) {
+    if (strLine.StartsWith("\t")) {
         strLine = strLine.AfterFirst('\t');
     }
 
     kind = strLine.BeforeFirst('\t');
     strLine = strLine.AfterFirst('\t');
 
-    if(strLine.IsEmpty() == false) {
+    if (strLine.IsEmpty() == false) {
         wxStringTokenizer tkz(strLine, '\t');
-        while(tkz.HasMoreTokens()) {
+        while (tkz.HasMoreTokens()) {
             wxString token = tkz.NextToken();
             wxString key = token.BeforeFirst(':');
             wxString val = token.AfterFirst(':');
@@ -320,21 +322,21 @@ void TagEntry::FromLine(const wxString& line)
 
             val = val.Trim();
             val = val.Trim(false);
-            if(key == "line" && !val.IsEmpty()) {
+            if (key == "line" && !val.IsEmpty()) {
                 val.ToLong(&lineNumber);
             } else {
-                if(key == "union" || key == "struct") {
+                if (key == "union" || key == "struct") {
 
                     // remove the anonymous part of the struct / union
-                    if(!val.StartsWith("__anon")) {
+                    if (!val.StartsWith("__anon")) {
                         // an internal anonymous union / struct
                         // remove all parts of the
                         wxArrayString scopeArr;
                         wxString tmp, new_val;
 
                         scopeArr = wxStringTokenize(val, ":", wxTOKEN_STRTOK);
-                        for(size_t i = 0; i < scopeArr.GetCount(); i++) {
-                            if(scopeArr.Item(i).StartsWith("__anon") == false) {
+                        for (size_t i = 0; i < scopeArr.GetCount(); i++) {
+                            if (scopeArr.Item(i).StartsWith("__anon") == false) {
                                 tmp << scopeArr.Item(i) << "::";
                             }
                         }
@@ -343,7 +345,7 @@ void TagEntry::FromLine(const wxString& line)
                         val.swap(new_val);
                     }
                 }
-                extFields.insert({ key, val });
+                extFields.insert({key, val});
             }
         }
     }
@@ -357,7 +359,7 @@ void TagEntry::FromLine(const wxString& line)
 
 bool TagEntry::IsConstructor() const
 {
-    if(GetKind() != "function" && GetKind() != "prototype") {
+    if (GetKind() != "function" && GetKind() != "prototype") {
         return false;
     }
     return GetName() == GetScope();
@@ -365,7 +367,7 @@ bool TagEntry::IsConstructor() const
 
 bool TagEntry::IsDestructor() const
 {
-    if(GetKind() != "function" && GetKind() != "prototype") {
+    if (GetKind() != "function" && GetKind() != "prototype") {
         return false;
     }
     return GetName().StartsWith("~");
@@ -417,12 +419,12 @@ wxArrayString TagEntry::GetInheritsAsArrayNoTemplates() const
     wxArrayString parentsArr;
 
     int depth(0);
-    for(size_t i = 0; i < inherits.Length(); i++) {
+    for (size_t i = 0; i < inherits.Length(); i++) {
         wxChar ch = inherits.GetChar(i);
 
-        switch(ch) {
+        switch (ch) {
         case '<':
-            if(depth == 0 && parent.IsEmpty() == false) {
+            if (depth == 0 && parent.IsEmpty() == false) {
                 parent.Trim().Trim(false);
                 parentsArr.Add(parent);
                 parent.Clear();
@@ -435,7 +437,7 @@ wxArrayString TagEntry::GetInheritsAsArrayNoTemplates() const
             break;
 
         case ',':
-            if(depth == 0 && parent.IsEmpty() == false) {
+            if (depth == 0 && parent.IsEmpty() == false) {
                 parent.Trim().Trim(false);
                 parentsArr.Add(parent);
                 parent.Clear();
@@ -443,14 +445,14 @@ wxArrayString TagEntry::GetInheritsAsArrayNoTemplates() const
             break;
 
         default:
-            if(depth == 0) {
+            if (depth == 0) {
                 parent << ch;
             }
             break;
         }
     }
 
-    if(parent.IsEmpty() == false) {
+    if (parent.IsEmpty() == false) {
         parent.Trim().Trim(false);
         parentsArr.Add(parent);
     }
@@ -465,10 +467,10 @@ wxArrayString TagEntry::GetInheritsAsArrayWithTemplates() const
     wxArrayString parentsArr;
 
     int depth(0);
-    for(size_t i = 0; i < inherits.Length(); i++) {
+    for (size_t i = 0; i < inherits.Length(); i++) {
         wxChar ch = inherits.GetChar(i);
 
-        switch(ch) {
+        switch (ch) {
         case '<':
             depth++;
             parent << ch;
@@ -480,12 +482,12 @@ wxArrayString TagEntry::GetInheritsAsArrayWithTemplates() const
             break;
 
         case ',':
-            if(depth == 0 && parent.IsEmpty() == false) {
+            if (depth == 0 && parent.IsEmpty() == false) {
                 parent.Trim().Trim(false);
                 parentsArr.Add(parent);
                 parent.Clear();
 
-            } else if(depth != 0) {
+            } else if (depth != 0) {
                 parent << ch;
             }
             break;
@@ -496,7 +498,7 @@ wxArrayString TagEntry::GetInheritsAsArrayWithTemplates() const
         }
     }
 
-    if(parent.IsEmpty() == false) {
+    if (parent.IsEmpty() == false) {
         parent.Trim().Trim(false);
         parentsArr.Add(parent);
     }
@@ -505,12 +507,12 @@ wxArrayString TagEntry::GetInheritsAsArrayWithTemplates() const
 
 TagEntryPtr TagEntry::ReplaceSimpleMacro()
 {
-    if(IsMacro()) {
+    if (IsMacro()) {
         PPToken tok = TagsManagerST::Get()->GetDatabase()->GetMacro(GetName());
-        if(tok.flags & PPToken::IsValid && !(tok.flags & PPToken::IsFunctionLike)) {
+        if (tok.flags & PPToken::IsValid && !(tok.flags & PPToken::IsFunctionLike)) {
             std::vector<TagEntryPtr> tags;
             TagsManagerST::Get()->FindByNameAndScope(tok.replacement, GetScopeName(), tags);
-            if(tags.size() == 1) {
+            if (tags.size() == 1) {
                 // replace the current tag content with the new match
                 return tags.at(0);
             }
@@ -530,11 +532,11 @@ wxString TagEntry::GetPatternClean() const
 {
     wxString p = GetPattern();
     p.Trim();
-    if(p.StartsWith("/^")) {
+    if (p.StartsWith("/^")) {
         p.Replace("/^", "");
     }
 
-    if(p.EndsWith("$/")) {
+    if (p.EndsWith("$/")) {
         p.Replace("$/", "");
     }
     return p;
@@ -546,7 +548,7 @@ namespace
 {
 void enable_function_flag_if_exists(const wxStringSet_t& S, const wxString& propname, const size_t flag, size_t& flags)
 {
-    if(S.count(propname)) {
+    if (S.count(propname)) {
         flags |= flag;
     } else {
         flags &= ~flag;
@@ -559,7 +561,7 @@ void TagEntry::SetTagProperties(const wxString& props)
     m_tag_properties = props;
     auto tokens = wxStringTokenize(m_tag_properties, ",", wxTOKEN_STRTOK);
     wxStringSet_t S;
-    for(auto& token : tokens) {
+    for (auto& token : tokens) {
         token.Trim().Trim(false);
         S.insert(token);
     }
@@ -575,7 +577,7 @@ void TagEntry::SetTagProperties(const wxString& props)
     enable_function_flag_if_exists(S, "scopedenum", TAG_PROP_SCOPEDENUM, m_tag_properties_flags);
 
     // change the kind to "enum class"
-    if(is_scoped_enum()) {
+    if (is_scoped_enum()) {
         m_tag_kind = eTagKind::TAG_KIND_CENUM;
     }
 }
@@ -594,25 +596,25 @@ bool TagEntry::is_lambda() const { return m_tag_properties_flags & TAG_PROP_LAMB
 
 wxString TagEntry::GetFunctionDeclaration() const
 {
-    if(!IsMethod()) {
+    if (!IsMethod()) {
         return wxEmptyString;
     }
     wxString decl;
-    if(is_func_inline()) {
+    if (is_func_inline()) {
         decl << "inline ";
     }
-    if(is_func_virtual()) {
+    if (is_func_virtual()) {
         decl << "virtual ";
     }
     decl << GetTypename() << " ";
-    if(!GetScope().empty()) {
+    if (!GetScope().empty()) {
         decl << GetScope() << "::";
     }
     decl << GetName() << GetSignature();
-    if(is_const()) {
+    if (is_const()) {
         decl << " const";
     }
-    if(is_func_pure()) {
+    if (is_func_pure()) {
         decl << " = 0";
     }
     decl << ";";
@@ -622,11 +624,11 @@ wxString TagEntry::GetFunctionDeclaration() const
 wxString TagEntry::GetFunctionDefinition() const
 {
     wxString impl;
-    if(!IsMethod()) {
+    if (!IsMethod()) {
         return wxEmptyString;
     }
     impl << GetTypename() << " ";
-    if(!GetScope().empty()) {
+    if (!GetScope().empty()) {
         impl << GetScope() << "::";
     }
 
@@ -640,14 +642,22 @@ wxString TagEntry::GetFunctionDefinition() const
 namespace
 {
 std::unordered_map<wxString, eTagKind> g_kind_table = {
-    { "class", eTagKind::TAG_KIND_CLASS },         { "struct", eTagKind::TAG_KIND_STRUCT },
-    { "namespace", eTagKind::TAG_KIND_NAMESPACE }, { "union", eTagKind::TAG_KIND_UNION },
-    { "enum", eTagKind::TAG_KIND_ENUM },           { "member", eTagKind::TAG_KIND_MEMBER },
-    { "variable", eTagKind::TAG_KIND_VARIABLE },   { "macro", eTagKind::TAG_KIND_MACRO },
-    { "typedef", eTagKind::TAG_KIND_TYPEDEF },     { "local", eTagKind::TAG_KIND_LOCAL },
-    { "parameter", eTagKind::TAG_KIND_PARAMETER }, { "prototype", eTagKind::TAG_KIND_PROTOTYPE },
-    { "cpp_keyword", eTagKind::TAG_KIND_KEYWORD }, { "keyword", eTagKind::TAG_KIND_KEYWORD },
-    { "function", eTagKind::TAG_KIND_FUNCTION },   { "enumerator", eTagKind::TAG_KIND_ENUMERATOR },
+    {"class", eTagKind::TAG_KIND_CLASS},
+    {"struct", eTagKind::TAG_KIND_STRUCT},
+    {"namespace", eTagKind::TAG_KIND_NAMESPACE},
+    {"union", eTagKind::TAG_KIND_UNION},
+    {"enum", eTagKind::TAG_KIND_ENUM},
+    {"member", eTagKind::TAG_KIND_MEMBER},
+    {"variable", eTagKind::TAG_KIND_VARIABLE},
+    {"macro", eTagKind::TAG_KIND_MACRO},
+    {"typedef", eTagKind::TAG_KIND_TYPEDEF},
+    {"local", eTagKind::TAG_KIND_LOCAL},
+    {"parameter", eTagKind::TAG_KIND_PARAMETER},
+    {"prototype", eTagKind::TAG_KIND_PROTOTYPE},
+    {"cpp_keyword", eTagKind::TAG_KIND_KEYWORD},
+    {"keyword", eTagKind::TAG_KIND_KEYWORD},
+    {"function", eTagKind::TAG_KIND_FUNCTION},
+    {"enumerator", eTagKind::TAG_KIND_ENUMERATOR},
 };
 }
 
@@ -657,15 +667,15 @@ void TagEntry::SetKind(const wxString& kind)
     m_kind = kind;
     // turn on bits
     m_tag_kind = eTagKind::TAG_KIND_UNKNOWN;
-    if(g_kind_table.count(m_kind)) {
+    if (g_kind_table.count(m_kind)) {
         m_tag_kind = g_kind_table[m_kind];
     }
 }
 
 namespace
 {
-void read_until_find(CxxTokenizer& tokenizer, CxxLexerToken& token, int type_1, int type_2, int* what_was_found,
-                     wxString* consumed)
+void read_until_find(
+    CxxTokenizer& tokenizer, CxxLexerToken& token, int type_1, int type_2, int* what_was_found, wxString* consumed)
 {
     // search until we find the `=`
     int depth = 0;
@@ -673,27 +683,27 @@ void read_until_find(CxxTokenizer& tokenizer, CxxLexerToken& token, int type_1, 
     *what_was_found = 0;
     consumed->reserve(256); // 256 bytes should be enough for most cases
 
-    while(tokenizer.NextToken(token)) {
-        if(depth == 0 && token.GetType() == type_1) {
+    while (tokenizer.NextToken(token)) {
+        if (depth == 0 && token.GetType() == type_1) {
             *what_was_found = type_1;
             consumed->Trim().Trim(false);
             return;
-        } else if(depth == 0 && token.GetType() == type_2) {
+        } else if (depth == 0 && token.GetType() == type_2) {
             *what_was_found = type_2;
             consumed->Trim().Trim(false);
             return;
         }
 
-        if(token.is_keyword() || token.is_builtin_type()) {
+        if (token.is_keyword() || token.is_builtin_type()) {
             consumed->Append(token.GetWXString() + " ");
             continue;
-        } else if(token.is_pp_keyword()) {
+        } else if (token.is_pp_keyword()) {
             continue;
         }
 
         // append it
         consumed->Append(token.GetWXString());
-        switch(token.GetType()) {
+        switch (token.GetType()) {
         case '<':
         case '{':
         case '[':
@@ -717,12 +727,12 @@ void read_until_find(CxxTokenizer& tokenizer, CxxLexerToken& token, int type_1, 
 } // namespace
 
 #define CHECK_FOUND(What, Expected) \
-    if(What != Expected)            \
+    if (What != Expected)           \
     return wxEmptyString
 
 wxString TagEntry::TypenameFromPattern(const TagEntry* tag)
 {
-    if(!tag->IsLocalVariable() && !tag->IsVariable()) {
+    if (!tag->IsLocalVariable() && !tag->IsVariable()) {
         return wxEmptyString;
     }
     CxxTokenizer tokenizer;
@@ -734,11 +744,11 @@ wxString TagEntry::TypenameFromPattern(const TagEntry* tag)
     int what_was_found = 0;
     wxString consumed;
     read_until_find(tokenizer, token, T_FOR, '=', &what_was_found, &consumed);
-    if(what_was_found == 0) {
+    if (what_was_found == 0) {
         return wxEmptyString;
     }
 
-    if(what_was_found == '=') {
+    if (what_was_found == '=') {
         // read until we reach eof or ';'
         read_until_find(tokenizer, token, ';', 0, &what_was_found, &consumed);
         return consumed;
@@ -780,8 +790,8 @@ void TagEntry::SetMacrodef(const wxString& value) { set_extra_field("macrodef", 
 
 void TagEntry::set_extra_field(const wxString& name, const wxString& value)
 {
-    if(m_extFields.count(name)) {
+    if (m_extFields.count(name)) {
         m_extFields.erase(name);
     }
-    m_extFields.insert({ name, value });
+    m_extFields.insert({name, value});
 }

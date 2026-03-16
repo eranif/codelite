@@ -82,8 +82,10 @@ protected:
     /**
      * @brief fix the return value full path
      */
-    bool FixReturnValueNamespace(
-        PHPLookupTable& lookup, PHPEntityBase::Ptr_t parent, const wxString& classFullpath, wxString& fixedpath);
+    bool FixReturnValueNamespace(PHPLookupTable& lookup,
+                                 PHPEntityBase::Ptr_t parent,
+                                 const wxString& classFullpath,
+                                 wxString& fixedpath);
 
 public:
     PHPExpression(const wxString& fulltext, const wxString& exprText = wxString(), bool functionCalltipExpr = false);
@@ -102,12 +104,12 @@ public:
      * @param matches [output]
      */
     void Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& lookup, PHPEntityBase::List_t& matches);
-    
+
     /**
      * @brief return true of the token before the expression is "<?"
      */
     bool IsExprStartsWithOpenTag() const { return m_exprStartsWithOpenTag; }
-    
+
     /**
      * @brief return the elements count in the expression.
      * For example:

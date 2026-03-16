@@ -26,12 +26,13 @@
 #ifndef TERMINALEMULATORFRAME_H
 #define TERMINALEMULATORFRAME_H
 
-#include "TerminalEmulatorUIBase.h"
 #include "TerminalEmulatorUI.h"
+#include "TerminalEmulatorUIBase.h"
 #if wxUSE_GUI
 class WXDLLIMPEXP_CL TerminalEmulatorFrame : public TerminalEmulatorFrameBase
 {
     TerminalEmulatorUI* m_terminal;
+
 public:
     TerminalEmulatorFrame(wxWindow* parent);
     virtual ~TerminalEmulatorFrame() = default;

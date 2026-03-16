@@ -131,8 +131,8 @@ wxArrayString clFilesFinder::CollectFiles(const wxString& root_folder, const clF
     clFilesScanner scanner;
 
     // Use the Scan method with file spec and exclusions. Skip hidden folders.
-    scanner.Scan(root_folder, files, options.file_spec, options.exclude_file_spec,
-                 options.exclude_folders_spec + ",.*");
+    scanner.Scan(
+        root_folder, files, options.file_spec, options.exclude_file_spec, options.exclude_folders_spec + ",.*");
 
     return files;
 }

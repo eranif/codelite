@@ -48,11 +48,17 @@ public:
     UnixProcessImpl(wxEvtHandler* parent);
     virtual ~UnixProcessImpl();
 
-    static IProcess* Execute(wxEvtHandler* parent, const wxArrayString& args, size_t flags,
-                             const wxString& workingDirectory = wxEmptyString, IProcessCallback* cb = NULL);
+    static IProcess* Execute(wxEvtHandler* parent,
+                             const wxArrayString& args,
+                             size_t flags,
+                             const wxString& workingDirectory = wxEmptyString,
+                             IProcessCallback* cb = NULL);
 
-    static IProcess* Execute(wxEvtHandler* parent, const wxString& cmd, size_t flags,
-                             const wxString& workingDirectory = wxEmptyString, IProcessCallback* cb = NULL);
+    static IProcess* Execute(wxEvtHandler* parent,
+                             const wxString& cmd,
+                             size_t flags,
+                             const wxString& workingDirectory = wxEmptyString,
+                             IProcessCallback* cb = NULL);
 
     void SetReadHandle(int readHandle) { this->m_readHandle = readHandle; }
     void SetWriteHandler(int writeHandler) { this->m_writeHandle = writeHandler; }

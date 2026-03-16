@@ -27,18 +27,18 @@ void PHPDocVar::Parse(PHPSourceFile& sourceFile, const wxString& doc)
     // @var Type $name
     // @var Type
     // @var $Name Type
-    if(!tokenizer.HasMoreTokens() || tokenizer.GetNextToken() != "@var") {
+    if (!tokenizer.HasMoreTokens() || tokenizer.GetNextToken() != "@var") {
         return;
     }
 
     // Next word should be the type
-    if(!tokenizer.HasMoreTokens()) {
+    if (!tokenizer.HasMoreTokens()) {
         return;
     }
     stype = tokenizer.GetNextToken();
 
     // Next comes the name
-    if(tokenizer.HasMoreTokens()) {
+    if (tokenizer.HasMoreTokens()) {
         sname = tokenizer.GetNextToken();
     }
 

@@ -1,6 +1,7 @@
 #include "DidOpenTextDocumentRequest.h"
 
-LSP::DidOpenTextDocumentRequest::DidOpenTextDocumentRequest(const wxString& filename, const wxString& text,
+LSP::DidOpenTextDocumentRequest::DidOpenTextDocumentRequest(const wxString& filename,
+                                                            const wxString& text,
                                                             const wxString& language)
 {
     SetMethod("textDocument/didOpen");

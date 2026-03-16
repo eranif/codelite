@@ -54,11 +54,11 @@ public:
     // special types printing
     clModuleLogger& operator<<(const std::vector<wxString>& arr)
     {
-        if(!CanLog()) {
+        if (!CanLog()) {
             return *this;
         }
 
-        if(!m_buffer.empty()) {
+        if (!m_buffer.empty()) {
             m_buffer << " ";
         }
 
@@ -75,15 +75,15 @@ public:
 
     clModuleLogger& operator<<(const wxStringSet_t& S)
     {
-        if(!CanLog()) {
+        if (!CanLog()) {
             return *this;
         }
-        if(!m_buffer.empty()) {
+        if (!m_buffer.empty()) {
             m_buffer << " ";
         }
         m_buffer << "{";
-        if(!S.empty()) {
-            for(const wxString& s : S) {
+        if (!S.empty()) {
+            for (const wxString& s : S) {
                 m_buffer << s << ", ";
             }
             m_buffer.RemoveLast(2);
@@ -94,15 +94,15 @@ public:
 
     clModuleLogger& operator<<(const wxStringMap_t& M)
     {
-        if(!CanLog()) {
+        if (!CanLog()) {
             return *this;
         }
-        if(!m_buffer.empty()) {
+        if (!m_buffer.empty()) {
             m_buffer << " ";
         }
         m_buffer << "{";
-        if(!M.empty()) {
-            for(const auto& vt : M) {
+        if (!M.empty()) {
+            for (const auto& vt : M) {
                 m_buffer << "{" << vt.first << ", " << vt.second << "}, ";
             }
             m_buffer.RemoveLast(2);
@@ -113,17 +113,17 @@ public:
 
     clModuleLogger& operator<<(const wxArrayString& arr)
     {
-        if(!CanLog()) {
+        if (!CanLog()) {
             return *this;
         }
-        std::vector<wxString> v{ arr.begin(), arr.end() };
+        std::vector<wxString> v{arr.begin(), arr.end()};
         *this << v;
         return *this;
     }
 
     clModuleLogger& operator<<(const wxColour& colour)
     {
-        if(!CanLog()) {
+        if (!CanLog()) {
             return *this;
         }
 
@@ -133,7 +133,7 @@ public:
 
     clModuleLogger& operator<<(const wxPoint& point)
     {
-        if(!CanLog()) {
+        if (!CanLog()) {
             return *this;
         }
 
@@ -145,7 +145,7 @@ public:
 
     clModuleLogger& operator<<(const wxSize& size)
     {
-        if(!CanLog()) {
+        if (!CanLog()) {
             return *this;
         }
 
@@ -157,7 +157,7 @@ public:
 
     clModuleLogger& operator<<(const wxRect& rect)
     {
-        if(!CanLog()) {
+        if (!CanLog()) {
             return *this;
         }
 
@@ -172,10 +172,10 @@ public:
      */
     clModuleLogger& operator<<(const wxString& str)
     {
-        if(!CanLog()) {
+        if (!CanLog()) {
             return *this;
         }
-        if(!m_buffer.empty()) {
+        if (!m_buffer.empty()) {
             m_buffer << " ";
         }
         m_buffer << str;
@@ -186,7 +186,7 @@ public:
      */
     clModuleLogger& operator<<(const char* str)
     {
-        if(!CanLog()) {
+        if (!CanLog()) {
             return *this;
         }
         wxString s(str);
@@ -198,10 +198,10 @@ public:
      */
     clModuleLogger& operator<<(const wxFileName& fn)
     {
-        if(!CanLog()) {
+        if (!CanLog()) {
             return *this;
         }
-        if(!m_buffer.empty()) {
+        if (!m_buffer.empty()) {
             m_buffer << " ";
         }
         m_buffer << fn.GetFullPath();
@@ -211,9 +211,10 @@ public:
     /**
      * @brief append any type to the buffer, take log level into consideration
      */
-    template <typename T> clModuleLogger& Append(const T& elem)
+    template <typename T>
+    clModuleLogger& Append(const T& elem)
     {
-        if(!m_buffer.empty()) {
+        if (!m_buffer.empty()) {
             m_buffer << " ";
         }
         m_buffer << elem;
@@ -232,9 +233,10 @@ inline clModuleLogger& endl(clModuleLogger& d)
     return d;
 }
 
-template <typename T> clModuleLogger& operator<<(clModuleLogger& logger, const T& obj)
+template <typename T>
+clModuleLogger& operator<<(clModuleLogger& logger, const T& obj)
 {
-    if(!logger.CanLog()) {
+    if (!logger.CanLog()) {
         return logger;
     }
 
@@ -249,22 +251,22 @@ template <typename T> clModuleLogger& operator<<(clModuleLogger& logger, const T
 #define LOG_TRACE(LOG) LOG.SetCurrentLogLevel(FileLogger::Developer) << LOG.Prefix()
 
 /// place this at the top of the C++ file you want to have custom logger
-#define INITIALISE_MODULE_LOG(LOG, MODULE_NAME, FILE_NAME)                                \
-    namespace                                                                             \
-    {                                                                                     \
-        clModuleLogger& LOG()                                                             \
-        {                                                                                 \
-            thread_local static clModuleLogger instance = []() {                          \
-                wxFileName logfile{ clStandardPaths::Get().GetUserDataDir(), FILE_NAME }; \
-                logfile.AppendDir("logs");                                                \
-                logfile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);                        \
-                clModuleLogger logger;                                                    \
-                logger.SetModule(MODULE_NAME);                                            \
-                logger.Open(logfile.GetFullPath());                                       \
-                return logger;                                                            \
-            }();                                                                          \
-            return instance;                                                              \
-        }                                                                                 \
+#define INITIALISE_MODULE_LOG(LOG, MODULE_NAME, FILE_NAME)                          \
+    namespace                                                                       \
+    {                                                                               \
+    clModuleLogger& LOG()                                                           \
+    {                                                                               \
+        thread_local static clModuleLogger instance = []() {                        \
+            wxFileName logfile{clStandardPaths::Get().GetUserDataDir(), FILE_NAME}; \
+            logfile.AppendDir("logs");                                              \
+            logfile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);                      \
+            clModuleLogger logger;                                                  \
+            logger.SetModule(MODULE_NAME);                                          \
+            logger.Open(logfile.GetFullPath());                                     \
+            return logger;                                                          \
+        }();                                                                        \
+        return instance;                                                            \
+    }                                                                               \
     }
 
 #endif // CLMODULELOGGER_HPP

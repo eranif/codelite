@@ -53,7 +53,7 @@ void LSPNetworkSTDIO::OnProcessOutput(clProcessEvent& event)
     evt.SetString(dataRead);
     evt.SetStringRaw(dataReadRaw);
 
-    LSP_TRACE() << dataRead << endl;
+    LSP_TRACE() << "[**STDOUT**]" << dataRead << endl;
     AddPendingEvent(evt);
 }
 

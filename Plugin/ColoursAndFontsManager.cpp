@@ -1027,14 +1027,11 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     // Set the JavaScript keywords
     if (lexer->GetName() == "php" && !lexer->GetKeyWords(1).Contains("instanceof")) {
         lexer->SetKeyWords(
-            "break do instanceof typeof case else new var catch finally return void continue for switch while "
-            "debugger function this with default if throw delete in try abstract  export interface  static "
-            "boolean  extends "
-            "long super"
-            "byte final native synchronized char float package throws class goto private transient const "
-            "implements  protected "
-            " volatile double import  public enum "
-            "int short null true false",
+            "abstract and array as break callable case catch class clone const continue declare default die do echo "
+            "else elseif empty enddeclare endfor endforeach endif endswitch endwhile eval exit extends final finally "
+            "fn for foreach from function global goto if implements include include_once instanceof insteadof "
+            "interface isset list match namespace new or print private protected public readonly require require_once "
+            "return static switch throw trait try unset use var while xor yield",
             0);
     }
 

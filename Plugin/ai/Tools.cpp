@@ -28,121 +28,9 @@
 
 namespace llm
 {
-// Register CodeLite tools with the model.
-void PopulateBuiltInFunctions(FunctionTable& table)
-{
-    table.Add(FunctionBuilder("ReadFileContent")
-                  .SetDescription("Reads the content of the file 'filepath' from the disk. "
-                                  "By default, returns the entire file's content. "
-                                  "If 'from_line' and 'line_count' are provided, reads only the specified "
-                                  "range of lines (1-based line numbering). "
-                                  "Both optional parameters must be provided together or omitted entirely. "
-                                  "On success, this function returns the requested file content.")
-                  .AddRequiredParam("filepath", "The path of the file to read.", "string")
-                  .AddOptionalParam("from_line", "Starting line number (1-based) to read from", "number")
-                  .AddOptionalParam("line_count", "Number of lines to read", "number")
-                  .SetCallback(ReadFileContent)
-                  .Build());
-
-    table.Add(FunctionBuilder("OpenFileInEditor")
-                  .SetDescription("Try to open file 'filepath' and load it into the "
-                                  "editor for editing or viewing.")
-                  .AddRequiredParam("filepath", "The path of the file to open inside the editor.", "string")
-                  .SetCallback(OpenFileInEditor)
-                  .Build());
-
-    table.Add(FunctionBuilder("GetActiveEditorFilePath")
-                  .SetDescription(R"#(Retrieves the file path of the currently active editor)#")
-                  .SetCallback(GetCurrentEditorPath)
-                  .Build());
-
-    table.Add(FunctionBuilder("ReadCompilerOutput")
-                  .SetDescription("Read and fetches the compiler build log output of "
-                                  "the most recent build command executed by "
-                                  "the user and return it to the caller. Use this "
-                                  "method to read the compiler output. This is "
-                                  "useful for helping explaining and resolving build "
-                                  "issues. On success read, this function return "
-                                  "the complete build log output.")
-                  .SetCallback(GetCompilerOutput)
-                  .Build());
-
-    table.Add(FunctionBuilder("GetActiveEditorText")
-                  .SetDescription("Return the text of the active tab inside the editor.")
-                  .AddOptionalParam("from_line", "Optional starting line (1-based)", "number")
-                  .AddOptionalParam("count", "Number of lines to read", "number")
-                  .SetCallback(GetCurrentEditorText)
-                  .Build());
-    table.Add(
-        FunctionBuilder("CreateWorkspace")
-            .SetDescription(" This function attempts to create a new workspace at the given path with the "
-                            "provided name. If a host is specified, it creates a remote workspace using SSH/SFTP; "
-                            "otherwise, it creates a local filesystem workspace")
-            .SetCallback(CreateWorkspace)
-            .AddRequiredParam("path", " The directory path where the workspace should be created", "string")
-            .AddOptionalParam("name", "The name of the workspace to create", "string")
-            .AddOptionalParam("host", "The SSH host for creating a remote workspace", "string")
-            .Build());
-    table.Add(
-        FunctionBuilder("FindInFiles")
-            .SetDescription(R"(Search for a given pattern within files in a directory)")
-            .SetCallback(FindInFiles)
-            .AddRequiredParam("root_folder", "The root directory where the search begins", "string")
-            .AddRequiredParam("find_what", "The text pattern to search for", "string")
-            .AddRequiredParam("file_pattern",
-                              "The file pattern to match, such as \"*.txt\" or \"*.py\". Use semi-colon list to "
-                              "pass multiple patterns.",
-                              "string")
-            .AddOptionalParam("whole_word", "When enabled, matches only complete words. Default is true.", "boolean")
-            .AddOptionalParam(
-                "case_sensitive", "When enabled, performs case-sensitive matching. Default is true.", "boolean")
-            .AddOptionalParam("is_regex",
-                              "When enabled, treats find_what as a regular expression pattern. Default is false.",
-                              "boolean")
-            .AddOptionalParam("context_lines_before",
-                              "Number of lines to display before each match for context. Default is 0.",
-                              "number")
-            .AddOptionalParam("context_lines_after",
-                              "Number of lines to display after each match for context. Default is 0.",
-                              "number")
-            .Build());
-    table.Add(FunctionBuilder("ApplyPatch")
-                  .SetDescription(R"(Apply a git style diff patch to a file.
-IMPORTANT: Patches fail when the original lines don't exactly match the current file content.
-To ensure accuracy:
-1. ALWAYS read the target file first using ReadFileContent tool before creating a patch
-2. Verify the exact current content, including whitespace, indentation, and line endings
-3. Include at least 3-5 lines of unchanged context before and after the modifications
-4. Ensure the "---" lines in your patch match the current file state character-for-character
-5. Use sufficient context to make the location unique within the file)")
-                  .SetCallback(ApplyPatch)
-                  .AddRequiredParam("patch_content", "The git style diff patch content to apply", "string")
-                  .AddRequiredParam("file_path", "The path to the file that should be patched", "string")
-                  .Build());
-    table.Add(FunctionBuilder("CreateNewFile")
-                  .SetDescription(R"(Create a new file at the specified path with optional content)")
-                  .SetCallback(CreateNewFile)
-                  .AddRequiredParam("filepath", "The path where the new file should be created", "string")
-                  .AddOptionalParam("file_content", "The initial content to write to the file", "string")
-                  .Build());
-    table.Add(FunctionBuilder("ShellExecute")
-                  .SetDescription(R"(Execute a shell command and return its output.
-IMPORTANT: Before using this tool, you should call the GetOS tool first to determine the host operating system.
-This ensures you can construct OS-appropriate commands (e.g., 'dir' vs 'ls', backslash vs forward slash paths).)")
-                  .SetCallback(ToolShellExecute)
-                  .AddRequiredParam("command", "The shell command to execute", "string")
-                  .Build());
-    table.Add(
-        FunctionBuilder("GetOS")
-            .SetDescription(
-                R"(Return the current active OS. The purpose of this tool is to suggest the LLM on which host the MCP server is running so it can
-adjust the commands it runs)")
-            .SetCallback(GetOS)
-            .Build());
-}
+using assistant::CanInvokeToolResult;
 
 /// Implementation details
-
 #define VERIFY_WORKER_THREAD()                                                                   \
     if (wxIsMainThread()) {                                                                      \
         wxString message;                                                                        \
@@ -575,30 +463,41 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
     return Ok(output);
 }
 
-FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
+/// Will be invoked by the library before calling to the "ApplyPatch"
+CanInvokeToolResult ApplyPatchConfirm(const std::string& tool_name, assistant::json args)
 {
-    VERIFY_WORKER_THREAD();
-    if (args.size() < 2) {
-        return Err("Invalid number of arguments");
+    if (wxIsMainThread()) {
+        return CanInvokeToolResult{
+            .can_invoke = false,
+            .reason = "Internal Error.",
+        };
     }
 
+    if (args.size() < 2) {
+        return CanInvokeToolResult{
+            .can_invoke = false,
+            .reason = "Invalid number of arguments",
+        };
+    }
+
+    std::string file_path = ::assistant::GetFunctionArg<std::string>(args, "file_path").value_or("");
+    std::string patch_content = ::assistant::GetFunctionArg<std::string>(args, "patch_content").value_or("");
+
+    wxString patch = wxString::FromUTF8(patch_content);
     // Apply patch "Trust" for this session (per path).
     static thread_local std::unordered_set<std::string> apply_patch_trust_paths;
-
-    ASSIGN_FUNC_ARG_OR_RETURN(
-        std::string patch_content, ::assistant::GetFunctionArg<std::string>(args, "patch_content"));
-    ASSIGN_FUNC_ARG_OR_RETURN(std::string file_path, ::assistant::GetFunctionArg<std::string>(args, "file_path"));
-    wxString patch = wxString::FromUTF8(patch_content);
-
     clStatusOr<llm::UserAnswer> response;
     if (!apply_patch_trust_paths.contains(file_path)) {
         response = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(
             _("The model wants to apply the following patch, allow it?"), patch, "patch");
 
         if (!response.ok()) {
-            clDEBUG() << "Permission to apply the patch declined." << response.error_message() << endl;
-            return Err("Permission denied");
+            return CanInvokeToolResult{
+                .can_invoke = false,
+                .reason = "Permission denied",
+            };
         }
+
     } else {
         // This path is trusted.
         response = llm::UserAnswer::kYes;
@@ -608,14 +507,35 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
     }
 
     switch (response.value()) {
-    case llm::UserAnswer::kNo:
-        return Err("Permission denied");
     case llm::UserAnswer::kTrust:
         apply_patch_trust_paths.insert(file_path);
-        break;
+        return CanInvokeToolResult{
+            .can_invoke = true,
+        };
     case llm::UserAnswer::kYes:
-        break;
+        return CanInvokeToolResult{
+            .can_invoke = true,
+        };
+    case llm::UserAnswer::kNo:
+    default:
+        return CanInvokeToolResult{
+            .can_invoke = false,
+            .reason = "Permission denied",
+        };
     }
+}
+
+FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
+{
+    VERIFY_WORKER_THREAD();
+    if (args.size() < 2) {
+        return Err("Invalid number of arguments");
+    }
+
+    ASSIGN_FUNC_ARG_OR_RETURN(
+        std::string patch_content, ::assistant::GetFunctionArg<std::string>(args, "patch_content"));
+    ASSIGN_FUNC_ARG_OR_RETURN(std::string file_path, ::assistant::GetFunctionArg<std::string>(args, "file_path"));
+    wxString patch = wxString::FromUTF8(patch_content);
 
     // ApplyPatchLoose must be called from the main thread only (it manipulates GUI).
     return EventNotifier::Get()->RunOnMain<FunctionResult>([file_path, patch]() -> FunctionResult {
@@ -629,29 +549,75 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
     });
 }
 
+CanInvokeToolResult ShellExecuteConfirm(const std::string& tool_name, const assistant::json& args)
+{
+    if (wxIsMainThread()) {
+        return CanInvokeToolResult{.can_invoke = false, .reason = "Internal Error."};
+    }
+
+    if (args.size() != 1) {
+        return CanInvokeToolResult{.can_invoke = false, .reason = "Invalid number of arguments"};
+    }
+
+    auto command = ::assistant::GetFunctionArg<std::string>(args, "command");
+    if (!command.has_value()) {
+        return CanInvokeToolResult{
+            .can_invoke = false,
+            .reason = "Missing mandatory field 'command'",
+        };
+    }
+
+    // Apply patch "Trust" for this session (per path).
+    static thread_local std::unordered_set<std::string> shell_execute_trust_commands;
+
+    if (shell_execute_trust_commands.contains(command.value())) {
+        // trusted
+        return CanInvokeToolResult{
+            .can_invoke = true,
+        };
+    }
+
+    wxString cmd = wxString::FromUTF8(command.value());
+    auto result = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(
+        _("The model wants to run the following shell command, allow it?"), cmd, "bash");
+
+    if (!result.ok()) {
+        return CanInvokeToolResult{
+            .can_invoke = false,
+            .reason = "Permission denied",
+        };
+    }
+
+    switch (result.value()) {
+    case llm::UserAnswer::kYes:
+        return CanInvokeToolResult{
+            .can_invoke = true,
+        };
+    case llm::UserAnswer::kTrust:
+        // We trust this specific command, not the entire tool.
+        shell_execute_trust_commands.erase(command.value());
+        shell_execute_trust_commands.insert(command.value());
+        return CanInvokeToolResult{
+            .can_invoke = true,
+        };
+    default:
+    case llm::UserAnswer::kNo:
+        return CanInvokeToolResult{
+            .can_invoke = false,
+            .reason = "Permission denied",
+        };
+    }
+}
+
 FunctionResult ToolShellExecute([[maybe_unused]] const assistant::json& args)
 {
     VERIFY_WORKER_THREAD();
-    if (args.size() < 1) {
+    if (args.size() != 1) {
         return Err("Invalid number of arguments");
     }
 
     ASSIGN_FUNC_ARG_OR_RETURN(std::string command, ::assistant::GetFunctionArg<std::string>(args, "command"));
     wxString cmd = wxString::FromUTF8(command);
-    auto result = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(
-        _("The model wants to run the following shell command, allow it?"), cmd, "bash");
-
-    if (!result.ok()) {
-        return Err(result.error_message());
-    }
-
-    switch (result.value()) {
-    case llm::UserAnswer::kNo:
-        return Err("Permission denied");
-    case llm::UserAnswer::kYes:
-    case llm::UserAnswer::kTrust:
-        break;
-    }
 
     std::string command_output;
     FunctionResult func_result{.isError = false};
@@ -732,6 +698,122 @@ FunctionResult GetOS([[maybe_unused]] const assistant::json& args)
 #endif
 
     return Ok(os_name);
+}
+
+// Register CodeLite tools with the model.
+void PopulateBuiltInFunctions(FunctionTable& table)
+{
+    table.Add(FunctionBuilder("ReadFileContent")
+                  .SetDescription("Reads the content of the file 'filepath' from the disk. "
+                                  "By default, returns the entire file's content. "
+                                  "If 'from_line' and 'line_count' are provided, reads only the specified "
+                                  "range of lines (1-based line numbering). "
+                                  "Both optional parameters must be provided together or omitted entirely. "
+                                  "On success, this function returns the requested file content.")
+                  .AddRequiredParam("filepath", "The path of the file to read.", "string")
+                  .AddOptionalParam("from_line", "Starting line number (1-based) to read from", "number")
+                  .AddOptionalParam("line_count", "Number of lines to read", "number")
+                  .SetCallback(ReadFileContent)
+                  .Build());
+
+    table.Add(FunctionBuilder("OpenFileInEditor")
+                  .SetDescription("Try to open file 'filepath' and load it into the "
+                                  "editor for editing or viewing.")
+                  .AddRequiredParam("filepath", "The path of the file to open inside the editor.", "string")
+                  .SetCallback(OpenFileInEditor)
+                  .Build());
+
+    table.Add(FunctionBuilder("GetActiveEditorFilePath")
+                  .SetDescription(R"#(Retrieves the file path of the currently active editor)#")
+                  .SetCallback(GetCurrentEditorPath)
+                  .Build());
+
+    table.Add(FunctionBuilder("ReadCompilerOutput")
+                  .SetDescription("Read and fetches the compiler build log output of "
+                                  "the most recent build command executed by "
+                                  "the user and return it to the caller. Use this "
+                                  "method to read the compiler output. This is "
+                                  "useful for helping explaining and resolving build "
+                                  "issues. On success read, this function return "
+                                  "the complete build log output.")
+                  .SetCallback(GetCompilerOutput)
+                  .Build());
+
+    table.Add(FunctionBuilder("GetActiveEditorText")
+                  .SetDescription("Return the text of the active tab inside the editor.")
+                  .AddOptionalParam("from_line", "Optional starting line (1-based)", "number")
+                  .AddOptionalParam("count", "Number of lines to read", "number")
+                  .SetCallback(GetCurrentEditorText)
+                  .Build());
+    table.Add(
+        FunctionBuilder("CreateWorkspace")
+            .SetDescription(" This function attempts to create a new workspace at the given path with the "
+                            "provided name. If a host is specified, it creates a remote workspace using SSH/SFTP; "
+                            "otherwise, it creates a local filesystem workspace")
+            .SetCallback(CreateWorkspace)
+            .AddRequiredParam("path", " The directory path where the workspace should be created", "string")
+            .AddOptionalParam("name", "The name of the workspace to create", "string")
+            .AddOptionalParam("host", "The SSH host for creating a remote workspace", "string")
+            .Build());
+    table.Add(
+        FunctionBuilder("FindInFiles")
+            .SetDescription(R"(Search for a given pattern within files in a directory)")
+            .SetCallback(FindInFiles)
+            .AddRequiredParam("root_folder", "The root directory where the search begins", "string")
+            .AddRequiredParam("find_what", "The text pattern to search for", "string")
+            .AddRequiredParam("file_pattern",
+                              "The file pattern to match, such as \"*.txt\" or \"*.py\". Use semi-colon list to "
+                              "pass multiple patterns.",
+                              "string")
+            .AddOptionalParam("whole_word", "When enabled, matches only complete words. Default is true.", "boolean")
+            .AddOptionalParam(
+                "case_sensitive", "When enabled, performs case-sensitive matching. Default is true.", "boolean")
+            .AddOptionalParam("is_regex",
+                              "When enabled, treats find_what as a regular expression pattern. Default is false.",
+                              "boolean")
+            .AddOptionalParam("context_lines_before",
+                              "Number of lines to display before each match for context. Default is 0.",
+                              "number")
+            .AddOptionalParam("context_lines_after",
+                              "Number of lines to display after each match for context. Default is 0.",
+                              "number")
+            .Build());
+    table.Add(FunctionBuilder("ApplyPatch")
+                  .SetDescription(R"(Apply a git style diff patch to a file.
+IMPORTANT: Patches fail when the original lines don't exactly match the current file content.
+To ensure accuracy:
+1. ALWAYS read the target file first using ReadFileContent tool before creating a patch
+2. Verify the exact current content, including whitespace, indentation, and line endings
+3. Include at least 3-5 lines of unchanged context before and after the modifications
+4. Ensure the "---" lines in your patch match the current file state character-for-character
+5. Use sufficient context to make the location unique within the file
+ALWAYS RESPOND WITH A GIT-STYLE DIFF THAT CAN BE APPLIED DIRECTLY. NEVER PROVIDE PLAIN EXPLANATIONS ALONE; IF YOU NEED TO EXPLAIN, APPEND A BRIEF NOTE AFTER THE DIFF.)")
+                  .AddRequiredParam("patch_content", "The git style diff patch content to apply", "string")
+                  .AddRequiredParam("file_path", "The path to the file that should be patched", "string")
+                  .SetCallback(ApplyPatch)
+                  .SetHumanInTheLoopCallabck(ApplyPatchConfirm)
+                  .Build());
+    table.Add(FunctionBuilder("CreateNewFile")
+                  .SetDescription(R"(Create a new file at the specified path with optional content)")
+                  .SetCallback(CreateNewFile)
+                  .AddRequiredParam("filepath", "The path where the new file should be created", "string")
+                  .AddOptionalParam("file_content", "The initial content to write to the file", "string")
+                  .Build());
+    table.Add(FunctionBuilder("ShellExecute")
+                  .SetDescription(R"(Execute a shell command and return its output.
+IMPORTANT: Before using this tool, you should call the GetOS tool first to determine the host operating system.
+This ensures you can construct OS-appropriate commands (e.g., 'dir' vs 'ls', backslash vs forward slash paths).)")
+                  .SetCallback(ToolShellExecute)
+                  .SetHumanInTheLoopCallabck(ShellExecuteConfirm)
+                  .AddRequiredParam("command", "The shell command to execute", "string")
+                  .Build());
+    table.Add(
+        FunctionBuilder("GetOS")
+            .SetDescription(
+                R"(Return the current active OS. The purpose of this tool is to suggest the LLM on which host the MCP server is running so it can
+adjust the commands it runs)")
+            .SetCallback(GetOS)
+            .Build());
 }
 
 } // namespace llm

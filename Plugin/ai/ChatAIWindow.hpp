@@ -54,6 +54,25 @@ public:
      */
     void AppendText(const wxString& text, bool force_style = true);
 
+    /**
+     * Scrolls the output text control to the end and sets focus to it.
+     *
+     * This function positions the caret at the last character of the output text control,
+     * scrolls the view to display the end of the content, and asynchronously sets keyboard
+     * focus to the text control. The focus is set via CallAfter to ensure it occurs after
+     * the current event processing cycle.
+     *
+     * Parameters:
+     *   None.
+     *
+     * Return value:
+     *   void - This function does not return a value.
+     *
+     * Remarks:
+     *   Requires m_stcOutput to be a valid pointer to a wxStyledTextCtrl object.
+     */
+    void ScrollToEnd();
+
     wxString GetText() const;
 
 protected:

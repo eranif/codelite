@@ -114,6 +114,8 @@ public:
      */
     static UnifiedPatch ParseUnifiedPatch(const wxString& patchContent);
 
+    static UnifiedPatch ParseUnifiedPatchLoose(const wxString& patchContent);
+
     /**
      * @brief Applies a unified diff patch to a file with loose matching and optional save.
      *

@@ -49,6 +49,7 @@ static const wxString kDefaultSettings = R"#({
 namespace llm
 {
 using assistant::AddFlagSet;
+using assistant::CanInvokeToolResult;
 using assistant::ChatOptions;
 using assistant::FunctionBase;
 using assistant::FunctionBuilder;
@@ -287,13 +288,6 @@ public:
      * requests.</p>
      */
     void Restart();
-
-    /**
-     * @brief Executes a user-provided tool function immediately.
-     *
-     * @param tool a callable object that encapsulates the tool logic
-     */
-    void RunTool(std::function<void()> tool) { tool(); }
 
     /**
      * @brief Provides mutable access to the current configuration.
@@ -707,7 +701,7 @@ private:
     assistant::Config MakeConfig();
     void OnFileSaved(clCommandEvent& event);
     std::optional<llm::json> GetConfigAsJSON();
-    static bool CanRunTool(const std::string& tool_name, assistant::json args);
+    static CanInvokeToolResult CanRunTool(const std::string& tool_name, assistant::json args);
 
     std::unique_ptr<std::thread> m_worker_thread;
     std::shared_ptr<assistant::ClientBase> m_client;

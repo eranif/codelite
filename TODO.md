@@ -21,8 +21,10 @@ others:
 AI-powered IDE:
 --------
 
-High:
+Medium:
 -----
+
+- Support auto reading AGENTS.md file and convert it into System-Messages.
 
 Low:
 ----

@@ -26,6 +26,7 @@
 #pragma once
 
 #include "LSP/CompletionItem.h"
+#include "assistant/common.hpp"
 #include "clDebuggerBreakpoint.hpp"
 #include "clEditorConfig.h"
 #include "clGotoEntry.h"
@@ -33,6 +34,7 @@
 #include "wxCodeCompletionBoxEntry.hpp"
 
 #include <memory>
+#include <optional>
 #include <vector>
 #include <wx/arrstr.h>
 #include <wx/event.h>
@@ -936,21 +938,22 @@ public:
     ~clLLMEvent() override = default;
     wxEvent* Clone() const override { return new clLLMEvent(*this); }
 
-    void SetPrompt(const wxString& prompt) { this->m_prompt = prompt; }
-    const wxString& GetPrompt() const { return m_prompt; }
-    void SetResponseRaw(const std::string& response) { SetStringRaw(response); }
-    const std::string& GetResponseRaw() const { return GetStringRaw(); }
-
-    void SetIsError(bool isError) { this->m_isError = isError; }
-    bool IsError() const { return m_isError; }
-
-    void SetRequestCancelled(bool request_cancelled) { this->m_request_cancelled = request_cancelled; }
-    bool IsRequestCancelled() const { return m_request_cancelled; }
+    inline void SetPrompt(const wxString& prompt) { this->m_prompt = prompt; }
+    inline const wxString& GetPrompt() const { return m_prompt; }
+    inline void SetResponseRaw(const std::string& response) { SetStringRaw(response); }
+    inline const std::string& GetResponseRaw() const { return GetStringRaw(); }
+    inline void SetIsError(bool isError) { this->m_isError = isError; }
+    inline bool IsError() const { return m_isError; }
+    inline void SetRequestCancelled(bool request_cancelled) { this->m_request_cancelled = request_cancelled; }
+    inline bool IsRequestCancelled() const { return m_request_cancelled; }
+    inline void SetOutputReason(std::optional<assistant::Reason> output_reason) { m_output_reason = output_reason; }
+    inline std::optional<assistant::Reason> GetOutputReason() const { return m_output_reason; }
 
 protected:
     wxString m_prompt;
     bool m_isError{false};
     bool m_request_cancelled{false};
+    std::optional<assistant::Reason> m_output_reason{std::nullopt};
 };
 
 using clLLMEventFunction = void (wxEvtHandler::*)(clLLMEvent&);

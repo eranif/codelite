@@ -284,6 +284,18 @@ void Manager::WorkerMain()
 
                         saved_thinking_state = thinking;
                         switch (reason) {
+                        case assistant::Reason::kToolAllowed: {
+                            clLLMEvent event{wxEVT_LLM_OUTPUT};
+                            event.SetOutputReason(reason);
+                            event.SetResponseRaw(message);
+                            owner->AddPendingEvent(event);
+                        } break;
+                        case assistant::Reason::kToolDenied: {
+                            clLLMEvent event{wxEVT_LLM_OUTPUT};
+                            event.SetOutputReason(reason);
+                            event.SetResponseRaw(message);
+                            owner->AddPendingEvent(event);
+                        } break;
                         case assistant::Reason::kFatalError: {
                             NotifyDoneWithError(owner, message);
                             abort_loop = true;
@@ -298,6 +310,7 @@ void Manager::WorkerMain()
                             if (shared_state.current_batch == shared_state.total_batch_count) {
                                 // No more batches to process, fire the DONE event.
                                 clLLMEvent event{wxEVT_LLM_OUTPUT_DONE};
+                                event.SetOutputReason(reason);
                                 event.SetResponseRaw(message);
                                 owner->AddPendingEvent(event);
                             } else {
@@ -305,6 +318,7 @@ void Manager::WorkerMain()
                                 // normal "output" event.
                                 shared_state.current_batch++;
                                 clLLMEvent event{wxEVT_LLM_OUTPUT};
+                                event.SetOutputReason(reason);
                                 event.SetResponseRaw(message);
                                 owner->AddPendingEvent(event);
                             }
@@ -325,6 +339,7 @@ void Manager::WorkerMain()
                             break;
                         case assistant::Reason::kPartialResult: {
                             clLLMEvent event{wxEVT_LLM_OUTPUT};
+                            event.SetOutputReason(reason);
                             event.SetResponseRaw(message);
                             owner->AddPendingEvent(event);
                             if (cancellation_token && !cancellation_token->Incr()) {
@@ -611,30 +626,38 @@ void Manager::Stop()
 
 static std::unordered_set<std::string> allowed_tools;
 
-bool Manager::CanRunTool(const std::string& tool_name, [[maybe_unused]] assistant::json args)
+CanInvokeToolResult Manager::CanRunTool(const std::string& tool_name, [[maybe_unused]] assistant::json args)
 {
     if (allowed_tools.contains(tool_name)) {
-        return true;
+        return CanInvokeToolResult{.can_invoke = true};
     }
 
     wxString message;
     message << _("The model wants to run the tool: \"") << tool_name << _("\". Continue?");
     auto result = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message);
     if (!result.ok()) {
-        ::wxMessageBox(result.error_message(), "CanRunTool");
-        return false;
+        return CanInvokeToolResult{
+            .can_invoke = false,
+            .reason = "Internal Error. " + result.error_message().ToStdString(wxConvUTF8),
+        };
     }
 
     switch (result.value()) {
     case llm::UserAnswer::kNo:
-        return false;
+        return CanInvokeToolResult{
+            .can_invoke = false,
+            .reason = "Permission denied",
+        };
     case llm::UserAnswer::kYes:
-        return true;
+        return CanInvokeToolResult{.can_invoke = true};
     case llm::UserAnswer::kTrust:
         allowed_tools.insert(tool_name);
-        return true;
+        return CanInvokeToolResult{.can_invoke = true};
     default:
-        return false;
+        return CanInvokeToolResult{
+            .can_invoke = false,
+            .reason = "Permission denied",
+        };
     }
 }
 
@@ -1216,6 +1239,7 @@ Manager::PromptUserYesNoTrustQuestion(const wxString& text, const wxString& code
         InfoBar* bar = new InfoBar(parent, promise_ptr);
         parent->GetSizer()->Insert(0, bar, wxSizerFlags(0).Expand());
         bar->ShowMessage(text, wxICON_QUESTION);
+        GetChatWindow()->ScrollToEnd();
     };
 
     EventNotifier::Get()->RunOnMain<void>(std::move(func));

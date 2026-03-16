@@ -446,6 +446,15 @@ void ChatAIWindow::OnChatAIOutput(clLLMEvent& event)
         break;
     case ChatState::kWorking:
     case ChatState::kReady:
+        if (event.GetOutputReason().has_value()) {
+            if (event.GetOutputReason().value() == assistant::Reason::kToolDenied ||
+                event.GetOutputReason().value() == assistant::Reason::kToolAllowed) {
+                if (!m_stcOutput->GetText().EndsWith("\n")) {
+                    // Make sure these lines are placed on their own line.
+                    content.Prepend("\n");
+                }
+            }
+        }
         AppendOutput(content);
         break;
     }
@@ -549,6 +558,13 @@ void ChatAIWindow::AppendMarker()
 
 wxString ChatAIWindow::GetText() const { return m_stcOutput->GetText(); }
 
+void ChatAIWindow::ScrollToEnd()
+{
+    clSTCHelper::SetCaretAt(m_stcOutput, m_stcOutput->GetLastPosition());
+    m_stcOutput->ScrollToEnd();
+    m_stcOutput->CallAfter(&wxStyledTextCtrl::SetFocus);
+}
+
 void ChatAIWindow::AppendText(const wxString& text, bool force_style)
 {
     AppendOutput(text);
@@ -568,8 +584,7 @@ void ChatAIWindow::AppendOutput(const wxString& text)
     m_stcOutput->SetReadOnly(true);
 
     if (m_autoScroll) {
-        m_stcOutput->ScrollToEnd();
-        clSTCHelper::SetCaretAt(m_stcOutput, m_stcOutput->GetLastPosition());
+        ScrollToEnd();
     }
 }
 
@@ -577,8 +592,7 @@ void ChatAIWindow::StyleOutput()
 {
     m_markdownStyler->StyleText();
     if (m_autoScroll) {
-        m_stcOutput->ScrollToEnd();
-        clSTCHelper::SetCaretAt(m_stcOutput, m_stcOutput->GetLastPosition());
+        ScrollToEnd();
     } else {
         m_stcOutput->ClearSelections();
     }

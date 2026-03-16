@@ -18,6 +18,98 @@
 #include "wx/tokenzr.h"
 
 #include <optional>
+/*
+
+*** Begin Patch
+*** Update File: C:\msys64\home\eran\devl\test_workspace\FileManager.cpp
+@@
+-#include "FileManager.h"
+-#include <fstream>
++#include "FileManager.h"
++#include <filesystem>
++#include <fstream>
+*** End Patch*
+
+*/
+
+UnifiedPatch PatchApplier::ParseUnifiedPatchLoose(const wxString& patchContent)
+{
+    UnifiedPatch patch;
+
+    // Split content into lines
+    wxArrayString contentLines = wxStringTokenize(patchContent, "\n", wxTOKEN_RET_EMPTY_ALL);
+
+    PatchHunk* currentHunk = nullptr;
+
+    for (size_t lineIdx = 0; lineIdx < contentLines.size(); ++lineIdx) {
+        wxString line = contentLines[lineIdx];
+
+        // Check if this is a hunk header (starts with @@)
+        if (line.StartsWith("@@")) {
+            // Start a new hunk
+            patch.hunks.emplace_back();
+            currentHunk = &patch.hunks.back();
+
+            // Initialize with default values
+            // The hunk may or may not include starting/ending line numbers
+            currentHunk->originalStart = 0;
+            currentHunk->originalCount = 0;
+            currentHunk->newStart = 0;
+            currentHunk->newCount = 0;
+
+            // Try to extract line numbers if they exist
+            // Format: @@ -l,s +l,s @@ or variations like @@ -l +l @@ or just @@
+            wxRegEx hunkHeaderRegex(
+                wxT("^@@[[:space:]]+-([0-9]+)(,([0-9]+))?[[:space:]]+\\+([0-9]+)(,([0-9]+))?[[:space:]]+@@"));
+
+            if (hunkHeaderRegex.Matches(line)) {
+                long val;
+                hunkHeaderRegex.GetMatch(line, 1).ToLong(&val);
+                currentHunk->originalStart = static_cast<int>(val);
+
+                wxString origCountStr = hunkHeaderRegex.GetMatch(line, 3);
+                if (!origCountStr.empty()) {
+                    origCountStr.ToLong(&val);
+                    currentHunk->originalCount = static_cast<int>(val);
+                } else {
+                    currentHunk->originalCount = 1;
+                }
+
+                hunkHeaderRegex.GetMatch(line, 4).ToLong(&val);
+                currentHunk->newStart = static_cast<int>(val);
+
+                wxString newCountStr = hunkHeaderRegex.GetMatch(line, 6);
+                if (!newCountStr.empty()) {
+                    newCountStr.ToLong(&val);
+                    currentHunk->newCount = static_cast<int>(val);
+                } else {
+                    currentHunk->newCount = 1;
+                }
+            }
+            // If regex doesn't match, keep the default values (0s)
+            continue;
+        }
+
+        // Process lines within a hunk
+        if (currentHunk != nullptr && !line.empty()) {
+            wxChar firstChar = line[0];
+
+            if (firstChar == ' ') {
+                // Context line
+                currentHunk->lines.push_back(line);
+            } else if (firstChar == '+') {
+                // Addition
+                currentHunk->lines.push_back(line);
+            } else if (firstChar == '-') {
+                // Deletion
+                currentHunk->lines.push_back(line);
+            }
+            // Anything else is ignored
+        }
+    }
+
+    return patch;
+}
 
 UnifiedPatch PatchApplier::ParseUnifiedPatch(const wxString& patchContent)
 {
@@ -269,7 +361,7 @@ PatchResult PatchApplier::ApplyPatchLoose(const wxString& filePath, const wxStri
         return PatchResult{.success = false, .errorMessage = "ApplyPatchLoose can only be called from the main thread"};
     }
 
-    auto patch = ParseUnifiedPatch(patchContent);
+    auto patch = ParseUnifiedPatchLoose(patchContent);
     if (patch.hunks.empty()) {
         return PatchResult{.success = false, .errorMessage = "Failed to parse patch hunks"};
     }

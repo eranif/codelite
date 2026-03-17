@@ -125,7 +125,7 @@ if(NOT APPLE)
     install(FILES ${CL_SRC_ROOT}/LICENSE DESTINATION ${CL_RESOURCES_DIR})
 
     # Manual pages
-    install(DIRECTORY ${CL_SRC_ROOT}/Runtime/man1 DESTINATION ${CL_RESOURCES_DIR}/man)
+    install(DIRECTORY ${CL_SRC_ROOT}/Runtime/man1 DESTINATION ${CMAKE_INSTALL_PREFIX}/share/man)
 
     # Copy default configuration files
     install(FILES ${CL_SRC_ROOT}/Runtime/config/build_settings.xml.default DESTINATION ${CL_RESOURCES_DIR}/config)

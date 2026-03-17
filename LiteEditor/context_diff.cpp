@@ -22,12 +22,9 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 #include "context_diff.h"
+
 #include "cl_editor.h"
 #include "editor_config.h"
-#include "frame.h"
-#include "manager.h"
-#include <wx/regex.h>
-#include <wx/xrc/xmlres.h>
 
 ContextDiff::ContextDiff()
     : ContextBase(wxT("Diff"))
@@ -41,7 +38,10 @@ ContextDiff::ContextDiff(clEditor* container)
     ApplySettings();
 }
 
-ContextBase* ContextDiff::NewInstance(clEditor* container) { return new ContextDiff(container); }
+std::shared_ptr<ContextBase> ContextDiff::NewInstance(clEditor* container)
+{
+    return std::make_shared<ContextDiff>(container);
+}
 
 void ContextDiff::ApplySettings()
 {

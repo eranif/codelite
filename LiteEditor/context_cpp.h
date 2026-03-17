@@ -26,7 +26,6 @@
 #define CONTEXT_CPP_H
 
 #include "LSP/LSPEvent.h"
-#include "Cxx/cpptoken.h"
 #include "cl_command_event.h"
 #include "context_base.h"
 #include "ctags_manager.h"
@@ -70,19 +69,18 @@ public:
      * @return
      */
     bool IsAtLineComment() const override;
-    ContextCpp(clEditor* container);
+    explicit ContextCpp(clEditor* container);
     bool IsDefaultContext() const override;
 
-    virtual ~ContextCpp();
+    ~ContextCpp() override;
     ContextCpp();
-    ContextBase* NewInstance(clEditor* container) override;
+    std::shared_ptr<ContextBase> NewInstance(clEditor* container) override;
     bool CompleteWord() override;
     bool CodeComplete(long pos = wxNOT_FOUND) override;
     bool GotoDefinition() override;
     wxString GetCurrentScopeName() override;
     void AutoIndent(const wxChar&) override;
     bool IsCommentOrString(long pos) override;
-    virtual bool IsComment(long pos);
     void AddMenuDynamicContent(wxMenu* menu) override;
     void RemoveMenuDynamicContent(wxMenu* menu) override;
     void ApplySettings() override;
@@ -92,6 +90,7 @@ public:
     void SemicolonShift() override;
     void ProcessIdleActions() override;
 
+    bool IsComment(long pos) const;
     // override swapfiles features
     virtual void SwapFiles(const wxFileName& fileName);
 

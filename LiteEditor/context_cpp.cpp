@@ -26,11 +26,11 @@
 #include "context_cpp.h"
 
 #include "AddFunctionsImpDlg.h"
-#include "CTags.hpp"
 #include "CompletionHelper.hpp"
+#include "Cxx/FlexLexer.h"
+#include "Cxx/cpp_scanner.h"
 #include "Debugger/debuggermanager.h"
 #include "LSP/LSPManager.hpp"
-#include "SelectProjectsDlg.h"
 #include "addincludefiledlg.h"
 #include "clEditorStateLocker.h"
 #include "clFileSystemEvent.h"
@@ -40,7 +40,6 @@
 #include "codelite_events.h"
 #include "commentconfigdata.h"
 #include "ctags_manager.h"
-#include "drawingutils.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -49,21 +48,18 @@
 #include "fileview.h"
 #include "frame.h"
 #include "globals.h"
-#include "language.h"
 #include "macromanager.h"
 #include "manager.h"
 #include "movefuncimpldlg.h"
 #include "new_quick_watch_dlg.h"
-#include "pluginmanager.h"
 #include "precompiled_header.h"
 #include "resources/clXmlResource.hpp"
 #include "setters_getters_dlg.h"
+#include "variable.h"
 #include "workspacetab.h"
 
-#include <algorithm>
 #include <wx/choicdlg.h>
 #include <wx/file.h>
-#include <wx/progdlg.h>
 #include <wx/regex.h>
 #include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
@@ -181,7 +177,10 @@ ContextCpp::~ContextCpp()
     wxDELETE(m_rclickMenu);
 }
 
-ContextBase* ContextCpp::NewInstance(clEditor* container) { return new ContextCpp(container); }
+std::shared_ptr<ContextBase> ContextCpp::NewInstance(clEditor* container)
+{
+    return std::make_shared<ContextCpp>(container);
+}
 
 void ContextCpp::OnDwellEnd(wxStyledTextEvent& event)
 {
@@ -1680,7 +1679,7 @@ void ContextCpp::AutoAddComment()
     rCtrl.ChooseCaretX(); // set new column as "current" column
 }
 
-bool ContextCpp::IsComment(long pos)
+bool ContextCpp::IsComment(long pos) const
 {
     int style;
     style = GetCtrl().GetStyleAt(pos);

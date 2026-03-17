@@ -28,7 +28,6 @@
 #include "clEditorColouriseLocker.h"
 #include "clEditorWordCharsLocker.h"
 #include "cl_editor.h"
-#include "editor_config.h"
 #include "file_logger.h"
 
 ContextGeneric::ContextGeneric(clEditor* container, const wxString& name)
@@ -38,7 +37,10 @@ ContextGeneric::ContextGeneric(clEditor* container, const wxString& name)
     ApplySettings();
 }
 
-ContextBase* ContextGeneric::NewInstance(clEditor* container) { return new ContextGeneric(container, GetName()); }
+std::shared_ptr<ContextBase> ContextGeneric::NewInstance(clEditor* container)
+{
+    return std::make_shared<ContextGeneric>(container, GetName());
+}
 
 void ContextGeneric::ApplySettings()
 {

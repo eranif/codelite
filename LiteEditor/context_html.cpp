@@ -198,8 +198,6 @@ TagEntryPtr ContextHtml::GetTagAtCaret(bool scoped, bool impl) { return NULL; }
 
 bool ContextHtml::GotoDefinition() { return false; }
 
-void ContextHtml::GotoPreviousDefintion() {}
-
 bool ContextHtml::IsCommentOrString(long pos)
 {
     int style = GetCtrl().GetStyleAt(pos);
@@ -214,7 +212,10 @@ bool ContextHtml::IsCommentOrString(long pos)
 
 bool ContextHtml::IsDefaultContext() const { return false; }
 
-ContextBase* ContextHtml::NewInstance(clEditor* container) { return new ContextHtml(container); }
+std::shared_ptr<ContextBase> ContextHtml::NewInstance(clEditor* container)
+{
+    return std::make_shared<ContextHtml>(container);
+}
 
 void ContextHtml::OnCallTipClick(wxStyledTextEvent& event) {}
 
@@ -225,8 +226,6 @@ void ContextHtml::OnDbgDwellEnd(wxStyledTextEvent& event) {}
 void ContextHtml::OnDbgDwellStart(wxStyledTextEvent& event) {}
 
 void ContextHtml::OnDwellEnd(wxStyledTextEvent& event) {}
-
-void ContextHtml::OnDwellStart(wxStyledTextEvent& event) {}
 
 void ContextHtml::OnEnterHit() {}
 
@@ -275,7 +274,7 @@ void ContextHtml::SemicolonShift()
 
 void ContextHtml::SetActive() {}
 
-bool ContextHtml::IsComment(long pos)
+bool ContextHtml::IsComment(long pos) const
 {
     int style = GetCtrl().GetStyleAt(pos);
     return style == wxSTC_H_COMMENT || style == wxSTC_H_XCCOMMENT || style == wxSTC_H_SGML_COMMENT ||

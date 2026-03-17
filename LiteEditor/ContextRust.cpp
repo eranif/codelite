@@ -130,8 +130,6 @@ wxMenu* ContextRust::GetMenu() { return ContextBase::GetMenu(); }
 
 TagEntryPtr ContextRust::GetTagAtCaret(bool scoped, bool impl) { return NULL; }
 
-void ContextRust::GotoPreviousDefintion() {}
-
 bool ContextRust::IsCommentOrString(long pos)
 {
     static std::unordered_set<int> string_styles = { wxSTC_RUST_BYTECHARACTER, wxSTC_RUST_BYTESTRING,
@@ -143,7 +141,10 @@ bool ContextRust::IsCommentOrString(long pos)
 
 bool ContextRust::IsDefaultContext() const { return false; }
 
-ContextBase* ContextRust::NewInstance(clEditor* container) { return new ContextRust(container); }
+std::shared_ptr<ContextBase> ContextRust::NewInstance(clEditor* container)
+{
+    return std::make_shared<ContextRust>(container);
+}
 
 void ContextRust::OnCallTipClick(wxStyledTextEvent& event) { wxUnusedVar(event); }
 
@@ -154,8 +155,6 @@ void ContextRust::OnDbgDwellEnd(wxStyledTextEvent& event) { wxUnusedVar(event); 
 void ContextRust::OnDbgDwellStart(wxStyledTextEvent& event) { wxUnusedVar(event); }
 
 void ContextRust::OnDwellEnd(wxStyledTextEvent& event) { wxUnusedVar(event); }
-
-void ContextRust::OnDwellStart(wxStyledTextEvent& event) { wxUnusedVar(event); }
 
 void ContextRust::OnEnterHit() {}
 
@@ -200,7 +199,7 @@ void ContextRust::SemicolonShift()
 
 void ContextRust::SetActive() {}
 
-bool ContextRust::IsComment(long pos)
+bool ContextRust::IsComment(long pos) const
 {
     static std::unordered_set<int> comment_styles = { wxSTC_RUST_COMMENTBLOCK, wxSTC_RUST_COMMENTLINE,
                                                       wxSTC_RUST_COMMENTBLOCKDOC, wxSTC_RUST_COMMENTLINEDOC };

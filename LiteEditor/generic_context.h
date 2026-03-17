@@ -53,19 +53,19 @@ public:
         : ContextBase(wxT("Text"))
     {
     }
-    ContextGeneric(const wxString& name)
+    explicit ContextGeneric(const wxString& name)
         : ContextBase(name)
     {
     }
 
-    virtual ~ContextGeneric() = default;
-    virtual ContextBase* NewInstance(clEditor* container);
+    ~ContextGeneric() override = default;
+    std::shared_ptr<ContextBase> NewInstance(clEditor* container) override;
 
     //---------------------------------------
     // Operations
     //---------------------------------------
     virtual void ApplySettings();
-    
+
     void ProcessIdleActions();
 };
 #endif // CONTEXT_GENERIC_H

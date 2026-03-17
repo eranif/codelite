@@ -17,7 +17,7 @@ void SourceFormatterBase::FromJSON(const JSONItem& json)
 
 JSONItem SourceFormatterBase::ToJSON() const
 {
-    JSONItem ele = JSONItem::createObject(GetName());
+    JSONItem ele = JSONItem::createObject();
     ele.addProperty("languages", m_languages);
     ele.addProperty("flags", m_flags);
     ele.addProperty("config_file", m_configFile);

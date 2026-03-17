@@ -100,7 +100,7 @@ void DbExplorerSettings::FromJSON(const JSONItem& json)
 
 JSONItem DbExplorerSettings::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject(GetName());
+    JSONItem element = JSONItem::createObject();
     element.addProperty("m_recentFiles", m_recentFiles);
     element.addProperty("m_sqlHistory", m_sqlHistory);
 
@@ -125,7 +125,7 @@ DbConnectionInfo::DbConnectionInfo()
 
 JSONItem DbConnectionInfo::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject(GetName());
+    JSONItem element = JSONItem::createObject();
     element.addProperty("m_connectionName", m_connectionName);
     element.addProperty("m_connectionType", m_connectionType);
     element.addProperty("m_defaultDatabase", m_defaultDatabase);

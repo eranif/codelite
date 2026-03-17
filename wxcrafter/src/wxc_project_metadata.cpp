@@ -210,7 +210,7 @@ void wxcProjectMetadata::Serialize(const wxcWidget::List_t& topLevelsList, const
             JSONItem obj = JSONItem::createObject();
             widget->FixPaths(filename.GetPath()); // Fix abs paths to fit the new project file
             widget->Serialize(obj);
-            windows.arrayAppend(obj);
+            windows.arrayAppend(std::move(obj));
         }
         root.toElement().addProperty("windows", windows);
 

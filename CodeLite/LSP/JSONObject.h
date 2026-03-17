@@ -14,7 +14,7 @@ class WXDLLIMPEXP_CL Serializable
 public:
     Serializable() = default;
     virtual ~Serializable() = default;
-    virtual JSONItem ToJSON(const wxString& name) const = 0;
+    virtual JSONItem ToJSON() const = 0;
     virtual void FromJSON(const JSONItem& json) = 0;
 
     bool operator==(const Serializable&) const = default;

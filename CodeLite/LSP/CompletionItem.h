@@ -64,9 +64,9 @@ public:
 
 public:
     CompletionItem() = default;
-    virtual ~CompletionItem() = default;
-    virtual JSONItem ToJSON(const wxString& name) const;
-    virtual void FromJSON(const JSONItem& json);
+    ~CompletionItem() override = default;
+    JSONItem ToJSON() const override;
+    void FromJSON(const JSONItem& json) override;
     void SetDetail(const wxString& detail) { this->m_detail = detail; }
     void SetDocumentation(const MarkupContent& documentation) { this->m_documentation = documentation; }
     void SetFilterText(const wxString& filterText) { this->m_filterText = filterText; }

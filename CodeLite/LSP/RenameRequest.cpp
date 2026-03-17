@@ -35,7 +35,7 @@ void LSP::RenameRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtH
         for(const auto& [filepath, changes] : modifications) {
             LSP_DEBUG() << "  " << filepath << modifications.size() << "changes:" << endl;
             for(const auto& change : changes) {
-                LSP_DEBUG() << "    " << change.ToJSON(wxEmptyString).format(false) << endl;
+                LSP_DEBUG() << "    " << change.ToJSON().format(false) << endl;
             }
         }
     }

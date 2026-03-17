@@ -394,7 +394,7 @@ wxFileName CompilationDatabase::ConvertCodeLiteCompilationDatabaseToCMake(const 
             element.addProperty("directory", cwd);
             element.addProperty("command", cmp_flags);
             element.addProperty("file", file_name);
-            arr.arrayAppend(element);
+            arr.arrayAppend(std::move(element));
         }
 
         wxFileName fn(compile_file.GetPath(), "compile_commands.json");

@@ -42,7 +42,7 @@ void PHPConfigurationData::FromJSON(const JSONItem& json)
 
 JSONItem PHPConfigurationData::ToJSON() const
 {
-    JSONItem e = JSONItem::createObject(GetName());
+    JSONItem e = JSONItem::createObject();
     e.addProperty("m_xdebugPort", m_xdebugPort);
     e.addProperty("m_xdebugHost", m_xdebugHost);
     e.addProperty("m_ccIncludePath", m_ccIncludePath);

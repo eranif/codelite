@@ -50,7 +50,7 @@ void PHPProjectSettingsData::FromJSON(const JSONItem& ele)
 
 JSONItem PHPProjectSettingsData::ToJSON() const
 {
-    JSONItem settings = JSONItem::createObject("settings");
+    JSONItem settings = JSONItem::createObject();
     settings.addProperty("m_runAs", m_runAs);
     settings.addProperty("m_phpExe", m_phpExe);
     settings.addProperty("m_indexFile", m_indexFile);

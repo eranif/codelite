@@ -45,7 +45,7 @@ void ValgrindSettings::FromJSON(const JSONItem& json)
 
 JSONItem ValgrindSettings::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject(GetName());
+    JSONItem element = JSONItem::createObject();
     element.addProperty("m_binary", m_binary);
     element.addProperty("m_outputInPrivateFolder", m_outputInPrivateFolder);
     element.addProperty("m_outputFile", m_outputFile);
@@ -91,7 +91,7 @@ void MemCheckSettings::FromJSON(const JSONItem& json)
 
 JSONItem MemCheckSettings::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject(GetName());
+    JSONItem element = JSONItem::createObject();
     element.addProperty("m_engine", m_engine);
     element.addProperty("m_result_page_size", m_result_page_size);
     element.addProperty("m_result_page_size_max", m_result_page_size_max);

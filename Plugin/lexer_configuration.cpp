@@ -434,7 +434,7 @@ void LexerConf::SetLineNumbersFgColour(const wxColour& colour)
 
 JSONItem LexerConf::ToJSON(bool forExport) const
 {
-    JSONItem json = JSONItem::createObject(GetName());
+    JSONItem json = JSONItem::createObject();
     json.addProperty("Name", GetName());
     json.addProperty("Theme", GetThemeName());
     json.addProperty("Flags", m_flags);

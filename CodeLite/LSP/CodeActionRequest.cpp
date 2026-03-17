@@ -11,7 +11,7 @@ LSP::CodeActionRequest::CodeActionRequest(const LSP::TextDocumentIdentifier& tex
     m_params->As<CodeActionParams>()->SetTextDocument(textDocument);
     m_params->As<CodeActionParams>()->SetRange(range);
     m_params->As<CodeActionParams>()->SetDiagnostics(diags);
-    LSP_DEBUG() << ToJSON(wxEmptyString).format(true) << endl;
+    LSP_DEBUG() << ToJSON().format(true) << endl;
 }
 
 void LSP::CodeActionRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)

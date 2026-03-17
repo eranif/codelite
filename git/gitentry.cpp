@@ -138,7 +138,7 @@ void GitEntry::FromJSON(const JSONItem& json)
 
 JSONItem GitEntry::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject(GetName());
+    JSONItem json = JSONItem::createObject();
     json.addProperty("m_entries", m_entries);
     if (m_colourTrackedFile.IsOk()) {
         json.addProperty("m_colourTrackedFile", m_colourTrackedFile.GetAsString(wxC2S_HTML_SYNTAX));
@@ -416,10 +416,10 @@ void GitCommandsEntries::ToJSON(JSONItem& arr) const
         JSONItem e = JSONItem::createObject();
         e.addProperty("label", command.label);
         e.addProperty("command", command.command);
-        commandsArr.arrayAppend(e);
+        commandsArr.arrayAppend(std::move(e));
     }
     obj.addProperty("m_commands", commandsArr);
-    arr.arrayAppend(obj);
+    arr.arrayAppend(std::move(obj));
 }
 
 const wxString GitWorkspace::GetProjectUserEnteredRepoPath(const wxString& projectName)
@@ -443,10 +443,10 @@ void GitWorkspace::FromJSON(const JSONItem& json)
 void GitWorkspace::ToJSON(JSONItem& arr) const
 {
     if (!GetWorkspaceName().empty()) {
-        JSONItem json = JSONItem::createObject(GetWorkspaceName());
+        JSONItem json = JSONItem::createObject();
         json.addProperty("m_workspaceName", GetWorkspaceName());
         json.addProperty("m_projectData", m_projectData);
         json.addProperty("m_userEnteredRepoPath", m_userEnteredRepoPath);
-        arr.arrayAppend(json);
+        arr.arrayAppend(std::move(json));
     }
 }

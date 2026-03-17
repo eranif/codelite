@@ -93,7 +93,7 @@ void PluginInfoArray::FromJSON(const JSONItem& json)
 
 JSONItem PluginInfoArray::ToJSON() const
 {
-    JSONItem el = JSONItem::createObject(GetName());
+    JSONItem el = JSONItem::createObject();
     el.addProperty("enabledPlugins", m_enabledPlugins);
     return el;
 }

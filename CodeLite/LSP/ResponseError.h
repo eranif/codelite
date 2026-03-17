@@ -30,10 +30,10 @@ public:
 public:
     ResponseError(const wxString& message);
     ResponseError() = default;
-    virtual ~ResponseError() = default;
-    void FromJSON(const JSONItem& json);
-    JSONItem ToJSON(const wxString& name) const;
-    virtual std::string ToString() const;
+    ~ResponseError() override = default;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
+    std::string ToString() const override;
     void SetErrorCode(int errorCode) { this->m_errorCode = errorCode; }
     void SetMessage(const wxString& message) { this->m_message = message; }
     int GetErrorCode() const { return m_errorCode; }

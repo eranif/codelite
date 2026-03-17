@@ -38,9 +38,9 @@ int ReadHeaders(const std::string& message, std::unordered_map<std::string, std:
 
 } // namespace
 
-JSONItem LSP::Message::ToJSON(const wxString& name) const
+JSONItem LSP::Message::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject(name);
+    JSONItem json = JSONItem::createObject();
     json.addProperty("jsonrpc", m_jsonrpc);
     return json;
 }

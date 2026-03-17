@@ -55,7 +55,7 @@ void wxcSettings::Save()
     JSONItem arr = JSONItem::createArray();
 
     for (const auto& p : m_templateClasses) {
-        arr.append(p.second.ToJSON());
+        arr.arrayAppend(p.second.ToJSON());
     }
     root.toElement().addProperty("m_templateClasses", arr);
     root.save(fn);
@@ -123,7 +123,7 @@ JSONItem wxcSettings::GetCustomControlsAsJSON(const wxArrayString& controls) con
     JSONItem arr = JSONItem::createArray();
     for (const auto& p : m_templateClasses) {
         if (controls.Index(p.first) != wxNOT_FOUND) {
-            arr.append(p.second.ToJSON());
+            arr.arrayAppend(p.second.ToJSON());
         }
     }
     return arr;

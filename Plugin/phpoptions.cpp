@@ -68,7 +68,7 @@ void PhpOptions::FromJSON(const JSONItem& json)
 
 JSONItem PhpOptions::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject(GetName());
+    JSONItem element = JSONItem::createObject();
     element.addProperty("m_phpExe", m_phpExe);
     element.addProperty("m_errorReporting", m_errorReporting);
     element.addProperty("m_includePaths", m_includePaths);

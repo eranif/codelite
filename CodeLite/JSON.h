@@ -54,6 +54,7 @@ class JSON;
 class WXDLLIMPEXP_CL JSONItem
 {
     friend JSON;
+
 public:
     explicit JSONItem(cJSON* json);
     JSONItem() = default;
@@ -144,10 +145,10 @@ public:
     // Writers
     ////////////////////////////////////////////////
     /**
-     * @brief create new named object and append it to this json element
+     * @brief create new object
      * @return the newly created object
      */
-    static JSONItem createObject(const wxString& name = wxT(""));
+    static JSONItem createObject();
     /**
      * @brief create new array
      * @return the newly created array
@@ -163,11 +164,6 @@ public:
      * @brief add object to this json and return a reference to the newly added object
      */
     JSONItem AddObject(const wxString& name);
-
-    /**
-     * @brief append new element to this json element
-     */
-    void append(const JSONItem& element);
 
     JSONItem& addProperty(const wxString& name, const wxString& value);
     JSONItem& addProperty(const wxString& name, const std::string& value);
@@ -209,7 +205,7 @@ public:
      * @brief append new number
      * @return the newly added property
      */
-    void arrayAppend(const JSONItem& element);
+    void arrayAppend(JSONItem&& element);
     void arrayAppend(const wxString& value);
     void arrayAppend(const char* value);
     void arrayAppend(const std::string& value);
@@ -219,12 +215,6 @@ public:
     bool isOk() const { return m_json != NULL; }
 
 private:
-
-    const wxString& GetPropertyName() const { return m_propertyName; }
-    void SetPropertyName(const wxString& name) { m_propertyName = name; }
-    int getType() const { return m_type; }
-    void setType(int m_type) { this->m_type = m_type; }
-
     /**
      * @brief release the internal pointer
      */
@@ -234,20 +224,14 @@ private:
         m_json = nullptr;
         return temp;
     }
+
 private:
     cJSON* m_json = nullptr;
-    wxString m_propertyName;
-    int m_type = wxNOT_FOUND;
-
-    // Values
-    wxString m_valueString;
-    double m_valueNumer = 0;
 };
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
-enum class JsonType
-{
+enum class JsonType {
     Array,
     Null,
     Object,

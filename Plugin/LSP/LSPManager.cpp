@@ -478,7 +478,7 @@ void Manager::OnSymbolFound(LSPEvent& event)
             editor->SelectRangeAfter(location.GetRange());
         }
         BrowseRecord current_location{location};
-        clDEBUG() << "location:" << location.ToJSON("").format() << endl;
+        clDEBUG() << "location:" << location.ToJSON().format() << endl;
         clDEBUG() << "Calling StoreCurrentLocation with:" << current_location << endl;
         NavMgr::Get()->StoreCurrentLocation(from, current_location);
     };

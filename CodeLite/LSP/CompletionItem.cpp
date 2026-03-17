@@ -1,6 +1,6 @@
 #include "CompletionItem.h"
 
-JSONItem LSP::CompletionItem::ToJSON(const wxString& name) const { return JSONItem(NULL); }
+JSONItem LSP::CompletionItem::ToJSON() const { return JSONItem(NULL); }
 
 void LSP::CompletionItem::FromJSON(const JSONItem& json)
 {

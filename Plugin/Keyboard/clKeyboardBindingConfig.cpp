@@ -70,7 +70,7 @@ clKeyboardBindingConfig& clKeyboardBindingConfig::Save()
         binding.addProperty("parentMenu", menuItem.parentMenu);
         binding.addProperty("description", menuItem.action);
         binding.addProperty("accelerator", menuItem.accel.ToString());
-        menuArr.arrayAppend(binding);
+        menuArr.arrayAppend(std::move(binding));
     }
     mainObj.addProperty("menus", menuArr);
     wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "keybindings.conf");

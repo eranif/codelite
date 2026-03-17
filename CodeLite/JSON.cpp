@@ -128,10 +128,6 @@ cJSON* JSON::release()
 JSONItem::JSONItem(cJSON* json)
     : m_json(json)
 {
-    if (m_json) {
-        m_propertyName = m_json->string ? m_json->string : "";
-        m_type = m_json->type;
-    }
 }
 
 JSONItem JSONItem::operator[](int index) const
@@ -244,42 +240,6 @@ bool JSONItem::isString() const
     return m_json->type == cJSON_String;
 }
 
-void JSONItem::append(const JSONItem& element)
-{
-    if (!m_json) {
-        return;
-    }
-
-    switch (element.getType()) {
-    case cJSON_False:
-        cJSON_AddFalseToObject(m_json, element.GetPropertyName().mb_str(wxConvUTF8).data());
-        break;
-
-    case cJSON_True:
-        cJSON_AddTrueToObject(m_json, element.GetPropertyName().mb_str(wxConvUTF8).data());
-        break;
-
-    case cJSON_NULL:
-        cJSON_AddNullToObject(m_json, element.GetPropertyName().mb_str(wxConvUTF8).data());
-        break;
-
-    case cJSON_Number:
-        cJSON_AddNumberToObject(m_json, element.GetPropertyName().mb_str(wxConvUTF8).data(), element.m_valueNumer);
-        break;
-
-    case cJSON_String:
-        cJSON_AddStringToObject(m_json,
-                                element.GetPropertyName().mb_str(wxConvUTF8).data(),
-                                element.m_valueString.mb_str(wxConvUTF8).data());
-        break;
-
-    case cJSON_Array:
-    case cJSON_Object:
-        cJSON_AddItemToObject(m_json, element.GetPropertyName().mb_str(wxConvUTF8).data(), element.m_json);
-        break;
-    }
-}
-
 void JSONItem::arrayAppend(const char* value)
 {
     if (!m_json) {
@@ -304,55 +264,25 @@ void JSONItem::arrayAppend(int number) { arrayAppend((double)number); }
 
 void JSONItem::arrayAppend(const wxString& value) { arrayAppend((const char*)value.mb_str(wxConvUTF8).data()); }
 
-void JSONItem::arrayAppend(const JSONItem& element)
+void JSONItem::arrayAppend(JSONItem&& element)
 {
     if (!m_json) {
         return;
     }
-
-    cJSON* p = NULL;
-    switch (element.getType()) {
-    case cJSON_False:
-        p = cJSON_CreateFalse();
-        break;
-
-    case cJSON_True:
-        p = cJSON_CreateTrue();
-        break;
-
-    case cJSON_NULL:
-        p = cJSON_CreateNull();
-        break;
-
-    case cJSON_Number:
-        p = cJSON_CreateNumber(element.m_valueNumer);
-        break;
-
-    case cJSON_String:
-        p = cJSON_CreateString(element.m_valueString.mb_str(wxConvUTF8).data());
-        break;
-    case cJSON_Array:
-    case cJSON_Object:
-        p = element.m_json;
-        break;
-    }
-    if (p) {
-        cJSON_AddItemToArray(m_json, p);
+    if (element.m_json) {
+        cJSON_AddItemToArray(m_json, element.m_json);
     }
 }
 
 JSONItem JSONItem::createArray()
 {
     JSONItem arr(cJSON_CreateArray());
-    arr.setType(cJSON_Array);
     return arr;
 }
 
-JSONItem JSONItem::createObject(const wxString& name)
+JSONItem JSONItem::createObject()
 {
     JSONItem obj(cJSON_CreateObject());
-    obj.SetPropertyName(name);
-    obj.setType(cJSON_Object);
     return obj;
 }
 
@@ -598,7 +528,7 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxStringMap_t& strin
         JSONItem obj = JSONItem::createObject();
         obj.addProperty("key", key);
         obj.addProperty("value", value);
-        arr.arrayAppend(obj);
+        arr.arrayAppend(std::move(obj));
     }
     addProperty(name, arr);
     return *this;
@@ -691,8 +621,8 @@ JSONItem JSONItem::AddArray(const wxString& name)
 
 JSONItem JSONItem::AddObject(const wxString& name)
 {
-    JSONItem json = createObject(name);
-    append(json);
+    JSONItem json = createObject();
+    addProperty(name, json);
     return json;
 }
 
@@ -757,11 +687,7 @@ std::vector<int> JSONItem::toIntArray(const std::vector<int>& defaultValue) cons
 
 JSONItem& JSONItem::addProperty(const wxString& name, const std::vector<int>& arr_int)
 {
-    if (!m_json) {
-        return *this;
-    }
-
-    if (m_type != cJSON_Object) {
+    if (!m_json || !isObject()) {
         return *this;
     }
 

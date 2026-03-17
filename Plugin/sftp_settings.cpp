@@ -60,11 +60,11 @@ void SFTPSettings::FromJSON(const JSONItem& json)
 
 JSONItem SFTPSettings::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject(GetName());
+    JSONItem element = JSONItem::createObject();
     element.addProperty("sshClient", m_sshClient);
     JSONItem arrAccounts = JSONItem::createArray();
     for(size_t i = 0; i < m_accounts.size(); ++i) {
-        arrAccounts.append(m_accounts.at(i).ToJSON());
+        arrAccounts.arrayAppend(m_accounts.at(i).ToJSON());
     }
     element.addProperty("accounts", arrAccounts);
     return element;

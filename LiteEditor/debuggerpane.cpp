@@ -269,7 +269,7 @@ void DebuggerPaneConfig::FromJSON(const JSONItem& json) { m_windows = json.named
 
 JSONItem DebuggerPaneConfig::ToJSON() const
 {
-    JSONItem e = JSONItem::createObject(GetName());
+    JSONItem e = JSONItem::createObject();
     e.addProperty("m_windows", m_windows);
     return e;
 }

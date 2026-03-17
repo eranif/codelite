@@ -30,13 +30,13 @@ class WorkspaceSymbolParams : public Params
 
 public:
     WorkspaceSymbolParams() = default;
-    virtual ~WorkspaceSymbolParams() = default;
+    ~WorkspaceSymbolParams() override = default;
 
-    virtual void FromJSON(const JSONItem& json) { m_query = json["query"].toString(); }
+    void FromJSON(const JSONItem& json) override { m_query = json["query"].toString(); }
 
-    virtual JSONItem ToJSON(const wxString& name) const
+    JSONItem ToJSON() const override
     {
-        JSONItem json = JSONItem::createObject(name);
+        JSONItem json = JSONItem::createObject();
         json.addProperty("query", m_query);
         return json;
     }

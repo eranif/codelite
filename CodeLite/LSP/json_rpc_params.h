@@ -35,10 +35,10 @@ class WXDLLIMPEXP_CL TextDocumentPositionParams : public Params
 
 public:
     TextDocumentPositionParams() = default;
-    virtual ~TextDocumentPositionParams() = default;
+    ~TextDocumentPositionParams() override = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     void SetPosition(const Position& position) { this->m_position = position; }
     void SetTextDocument(const TextDocumentIdentifier& textDocument) { this->m_textDocument = textDocument; }
@@ -60,10 +60,10 @@ class WXDLLIMPEXP_CL RenameParams : public TextDocumentPositionParams
 
 public:
     RenameParams() = default;
-    virtual ~RenameParams() = default;
+    ~RenameParams() override = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
     void SetNewName(const wxString& newName) { this->m_newName = newName; }
     const wxString& GetNewName() const { return m_newName; }
 };
@@ -77,10 +77,10 @@ class WXDLLIMPEXP_CL ReferenceParams : public TextDocumentPositionParams
 
 public:
     ReferenceParams(bool includeDeclaration);
-    virtual ~ReferenceParams() = default;
+    ~ReferenceParams() override = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
     void SetIncludeDeclaration(bool includeDeclaration) { this->m_includeDeclaration = includeDeclaration; }
     bool IsIncludeDeclaration() const { return m_includeDeclaration; }
 };
@@ -94,10 +94,10 @@ class WXDLLIMPEXP_CL SemanticTokensParams : public Params
 
 public:
     SemanticTokensParams() = default;
-    virtual ~SemanticTokensParams() = default;
+    ~SemanticTokensParams() override = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     void SetTextDocument(const TextDocumentIdentifier& textDocument) { this->m_textDocument = textDocument; }
     const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
@@ -119,10 +119,10 @@ class WXDLLIMPEXP_CL DocumentSymbolParams : public Params
 
 public:
     DocumentSymbolParams() = default;
-    virtual ~DocumentSymbolParams() = default;
+    ~DocumentSymbolParams() override = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     void SetTextDocument(const TextDocumentIdentifier& textDocument) { this->m_textDocument = textDocument; }
     const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
@@ -135,10 +135,10 @@ class WXDLLIMPEXP_CL CompletionParams : public TextDocumentPositionParams
 {
 public:
     CompletionParams() = default;
-    virtual ~CompletionParams() = default;
+    ~CompletionParams() override = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 };
 
 //===----------------------------------------------------------------------------------
@@ -151,10 +151,10 @@ class WXDLLIMPEXP_CL ExecuteCommandParams : public Params
 
 public:
     ExecuteCommandParams(const wxString& command, const wxString& arguments);
-    virtual ~ExecuteCommandParams() = default;
+    ~ExecuteCommandParams() = default;
 
     void FromJSON(const JSONItem& json) override;
-    JSONItem ToJSON(const wxString& name) const override;
+    JSONItem ToJSON() const override;
 };
 
 //===----------------------------------------------------------------------------------
@@ -171,7 +171,7 @@ public:
     virtual ~CodeActionParams() = default;
 
     void FromJSON(const JSONItem& json) override;
-    JSONItem ToJSON(const wxString& name) const override;
+    JSONItem ToJSON() const override;
 
     void SetTextDocument(const TextDocumentIdentifier& textDocument) { this->m_textDocument = textDocument; }
     const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
@@ -192,10 +192,10 @@ class WXDLLIMPEXP_CL DidOpenTextDocumentParams : public Params
 
 public:
     DidOpenTextDocumentParams() = default;
-    virtual ~DidOpenTextDocumentParams() = default;
+    ~DidOpenTextDocumentParams() override = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
     DidOpenTextDocumentParams& SetTextDocument(const TextDocumentItem& textDocument)
     {
@@ -214,10 +214,10 @@ class WXDLLIMPEXP_CL DidCloseTextDocumentParams : public Params
 
 public:
     DidCloseTextDocumentParams() = default;
-    virtual ~DidCloseTextDocumentParams() = default;
+    ~DidCloseTextDocumentParams() override = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
     DidCloseTextDocumentParams& SetTextDocument(const TextDocumentIdentifier& textDocument)
     {
         this->m_textDocument = textDocument;
@@ -236,10 +236,10 @@ class WXDLLIMPEXP_CL DidChangeTextDocumentParams : public Params
 
 public:
     DidChangeTextDocumentParams() = default;
-    virtual ~DidChangeTextDocumentParams() = default;
+    ~DidChangeTextDocumentParams() override = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
     DidChangeTextDocumentParams& SetContentChanges(const std::vector<TextDocumentContentChangeEvent>& contentChanges)
     {
         this->m_contentChanges = contentChanges;
@@ -264,10 +264,10 @@ class WXDLLIMPEXP_CL DidSaveTextDocumentParams : public Params
 
 public:
     DidSaveTextDocumentParams() = default;
-    virtual ~DidSaveTextDocumentParams() = default;
+    ~DidSaveTextDocumentParams() override = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON(const wxString& name) const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
     DidSaveTextDocumentParams& SetTextDocument(const TextDocumentIdentifier& textDocument)
     {
         this->m_textDocument = textDocument;

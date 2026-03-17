@@ -3,10 +3,9 @@
 namespace LSP
 {
 struct InitializedParams : public Params {
-    JSONItem ToJSON(const wxString& name) const override
+    JSONItem ToJSON() const override
     {
-        wxUnusedVar(name);
-        return JSONItem::createObject(name);
+        return JSONItem::createObject();
     }
 
     void FromJSON(const JSONItem& json) override { wxUnusedVar(json); };

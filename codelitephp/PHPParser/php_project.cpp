@@ -103,7 +103,7 @@ void PHPProject::ToJSON(JSONItem& pro) const
     pro.addProperty("m_isActive", m_isActive);
     pro.addProperty("m_importFileSpec", m_importFileSpec);
     pro.addProperty("m_excludeFolders", m_excludeFolders);
-    pro.append(m_settings.ToJSON());
+    pro.addProperty("settings", m_settings.ToJSON());
 }
 
 wxArrayString& PHPProject::GetFiles(wxProgressDialog* progress)

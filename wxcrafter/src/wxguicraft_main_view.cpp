@@ -1039,7 +1039,7 @@ JSONItem GUICraftMainPanel::ToJSON(const wxTreeItemId& fromItem)
             itemData->m_wxcWidget->FixPaths(
                 wxcProjectMetadata::Get().GetProjectPath()); // Fix abs paths to fit the new project file
             itemData->m_wxcWidget->Serialize(obj);
-            json.arrayAppend(obj);
+            json.arrayAppend(std::move(obj));
         }
 
         child = m_treeControls->GetNextChild(rootItem, cookie);

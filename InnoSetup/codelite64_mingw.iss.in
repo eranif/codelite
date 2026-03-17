@@ -6,6 +6,9 @@
 #define CurrentYear  GetDateTimeString('yyyy','','')
 #define SupportURL   "https://codelite.org"
 
+; external file with language and custom message definitions
+#include             "codelite64_mingw.localization.iss.in" 
+
 [Setup]
 AppName={#AppName}
 AppVersion=@CODELITE_VERSION@
@@ -48,14 +51,6 @@ LanguageDetectionMethod=uilanguage
 ;; 64 bit setup
 ;;==================================
 #define INSTALL_DIR "@CMAKE_INSTALL_PREFIX@"
-
-[Languages]
-Name: "eng"; MessagesFile: "compiler:Default.isl"
-Name: "cze"; MessagesFile: "compiler:Languages\Czech.isl"
-Name: "fre"; MessagesFile: "compiler:Languages\French.isl"
-Name: "ita"; MessagesFile: "compiler:Languages\Italian.isl"
-Name: "jpn"; MessagesFile: "compiler:Languages\Japanese.isl"
-Name: "rus"; MessagesFile: "compiler:Languages\Russian.isl"
 
 [Tasks]
 Name: "desktopicon"; Description: "{cm:CreateDesktopIcon}"; GroupDescription: "{cm:AdditionalIcons}"; Flags: unchecked
@@ -108,7 +103,7 @@ begin
         RegDeleteKeyIncludingSubkeys(HKCR, '*\shell\Open With CodeLite');
         if IsSilentInstall() = False then begin
             // Prompt the user to delete all his settings, default to "No"
-            if MsgBox('Would you like to keep your user settings?', mbConfirmation, MB_YESNO or MB_DEFBUTTON1) = IDNO
+            if MsgBox(ExpandConstant('{cm:KeepUserSettings}'), mbConfirmation, MB_YESNO or MB_DEFBUTTON1) = IDNO
             then begin
                 DelTree(ExpandConstant('{userappdata}') + '\codelite', True, True, True);
             end;
@@ -203,7 +198,7 @@ begin
         DelTree(sCodeLitePath + '\*.dat', False, True, False)
         
         if IsSilentInstall() = False then
-            if MsgBox('Would you like to keep your local settings?', mbConfirmation, MB_YESNO or MB_DEFBUTTON1) = IDNO
+            if MsgBox(ExpandConstant('{cm:KeepLocalSettings}'), mbConfirmation, MB_YESNO or MB_DEFBUTTON1) = IDNO
             then
             BEGIN
                 DelTree(ExpandConstant('{userappdata}') + '\codelite', True, True, True)

@@ -79,6 +79,13 @@ Type: filesandordirs; Name: "{app}"
 Filename: "{app}\bin\codelite.exe"; Description: "Launch CodeLite"; Flags: postinstall nowait skipifsilent
 
 [Code]
+procedure InitializeWizard();
+begin
+  // This forces a specific font name and size onto the license box
+  WizardForm.LicenseMemo.Font.Name := 'Segoe UI';
+  WizardForm.LicenseMemo.Font.Size := 10;
+end;
+
 function IsSilentInstall(): Boolean;
 var
   j: Integer;

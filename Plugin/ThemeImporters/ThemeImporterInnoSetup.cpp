@@ -39,7 +39,7 @@ ThemeImporterInnoSetup::ThemeImporterInnoSetup()
 
     SetKeywords4("  begin break case const continue do downto else end except finally for function   if of procedure "
                  "repeat then to try until uses var while with   ");
-    SetFileExtensions("*.iss");
+    SetFileExtensions("*.iss;*.iss.in");
     m_langName = "innosetup";
 }
 

@@ -936,6 +936,10 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
         lexer->SetFileSpec(lexer->GetFileSpec() + ";*.ctp");
     }
 
+    if (lexer->GetName() == "innosetup" && !lexer->GetFileSpec().Contains(".iss.in")) {
+        lexer->SetFileSpec(lexer->GetFileSpec() + ";*.iss.in");
+    }
+
     // Add wxcp file extension to the JavaScript lexer
     if (lexer->GetName() == "javascript") {
         // remove the JSON file from the JavaScript

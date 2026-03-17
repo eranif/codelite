@@ -2,6 +2,7 @@
 #define FILEPATH_HPP
 
 #include "codelite_exports.h"
+
 #include <wx/string.h>
 
 namespace LSP

@@ -9,7 +9,8 @@ namespace LSP
 class WXDLLIMPEXP_CL CodeActionRequest : public Request
 {
 public:
-    CodeActionRequest(const LSP::TextDocumentIdentifier& textDocument, const LSP::Range& range,
+    CodeActionRequest(const LSP::TextDocumentIdentifier& textDocument,
+                      const LSP::Range& range,
                       const std::vector<LSP::Diagnostic>& diags = {});
     ~CodeActionRequest() override = default;
 

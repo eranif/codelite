@@ -43,7 +43,7 @@ protected:
 protected:
     void SetBit(bool b, size_t bit)
     {
-        if(b) {
+        if (b) {
             m_flags |= bit;
         } else {
             m_flags &= ~bit;

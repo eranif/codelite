@@ -1,4 +1,5 @@
 #include "HoverRequest.hpp"
+
 #include "LSP/LSPEvent.h"
 
 LSP::HoverRequest::HoverRequest(const wxString& filename, size_t line, size_t column)
@@ -11,7 +12,7 @@ LSP::HoverRequest::HoverRequest(const wxString& filename, size_t line, size_t co
 
 void LSP::HoverRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
-    if(!response.Has("result")) {
+    if (!response.Has("result")) {
         return;
     }
     JSONItem res = response.Get("result");

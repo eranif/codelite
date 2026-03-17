@@ -52,12 +52,12 @@ void clProcess::Terminate(wxSignal signalNo)
 
 long clProcess::Start(bool hide)
 {
-    if(m_redirect) {
+    if (m_redirect) {
         Redirect();
     }
 
     long flags = wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER;
-    if(!hide) {
+    if (!hide) {
         flags |= wxEXEC_NOHIDE;
     }
 
@@ -67,27 +67,27 @@ long clProcess::Start(bool hide)
 
 bool clProcess::HasInput(wxString& input, wxString& errors)
 {
-    if(m_redirect == false) {
+    if (m_redirect == false) {
         wxASSERT_MSG(false, wxT("Process is not redirected"));
         return false;
     }
 
     bool hasInput = false;
-    while(IsInputAvailable()) {
+    while (IsInputAvailable()) {
         wxTextInputStream tis(*GetInputStream());
         wxChar ch = tis.GetChar();
         input << ch;
         hasInput = true;
-        if(ch == wxT('\n'))
+        if (ch == wxT('\n'))
             break;
     }
 
-    while(IsErrorAvailable()) {
+    while (IsErrorAvailable()) {
         wxTextInputStream tis(*GetErrorStream());
         wxChar ch = tis.GetChar();
         errors << ch;
         hasInput = true;
-        if(ch == wxT('\n'))
+        if (ch == wxT('\n'))
             break;
     }
     return hasInput;
@@ -95,19 +95,19 @@ bool clProcess::HasInput(wxString& input, wxString& errors)
 
 bool clProcess::ReadAll(wxString& input, wxString& errors)
 {
-    if(m_redirect == false) {
+    if (m_redirect == false) {
         wxASSERT_MSG(false, wxT("Process is not redirected"));
         return false;
     }
 
     bool hasInput = false;
-    while(IsInputAvailable()) {
+    while (IsInputAvailable()) {
         wxTextInputStream tis(*GetInputStream());
         input << tis.GetChar();
         hasInput = true;
     }
 
-    while(IsErrorAvailable()) {
+    while (IsErrorAvailable()) {
         wxTextInputStream tis(*GetErrorStream());
         errors << tis.GetChar();
         hasInput = true;
@@ -117,7 +117,7 @@ bool clProcess::ReadAll(wxString& input, wxString& errors)
 
 bool clProcess::Write(const wxString& text)
 {
-    if(m_redirect == false) {
+    if (m_redirect == false) {
         wxASSERT_MSG(false, wxT("Process is not redirected"));
         return false;
     }

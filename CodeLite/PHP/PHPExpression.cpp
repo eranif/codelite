@@ -15,13 +15,13 @@ PHPExpression::PHPExpression(const wxString& fulltext, const wxString& exprText,
     , m_text(fulltext)
     , m_functionCalltipExpr(functionCalltipExpr)
 {
-    if(exprText.IsEmpty()) {
+    if (exprText.IsEmpty()) {
         // use the full text to extract the expression
         m_expression = CreateExpression(fulltext);
 
     } else {
         wxString phpExprText = exprText;
-        if(!exprText.StartsWith("<?php")) {
+        if (!exprText.StartsWith("<?php")) {
             // without this, the parser will refuse to work :)
             phpExprText.Prepend("<?php ");
         }
@@ -42,11 +42,12 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
     // strip the text from any comments
     PHPScanner_t scanner = ::phpLexerNew(text);
     phpLexerToken token, lastToken;
-    while(::phpLexerNext(scanner, token)) {
+    while (::phpLexerNext(scanner, token)) {
         lastToken = token;
-        switch(token.type) {
+        switch (token.type) {
         case kPHP_T_OPEN_TAG:
-            if(current) current->push_back(token);
+            if (current)
+                current->push_back(token);
             break;
         // the following are tokens that once seen
         // we should start a new expression:
@@ -128,27 +129,31 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
         case '@':
         case '<':
         case '*':
-            if(current) current->clear();
+            if (current)
+                current->clear();
             break;
         case '(':
         case '[':
-            if(current) current->push_back(token);
+            if (current)
+                current->push_back(token);
             stack.push(phpLexerToken::Vet_t());
             current = &stack.top();
             break;
         case ')':
         case ']':
-            if(stack.size() < 2) {
+            if (stack.size() < 2) {
                 // parse error...
                 return phpLexerToken::Vet_t();
             }
             // switch back to the previous set of tokens
             stack.pop();
             current = &stack.top();
-            if(current) current->push_back(token);
+            if (current)
+                current->push_back(token);
             break;
         default:
-            if(current) current->push_back(token);
+            if (current)
+                current->push_back(token);
             break;
         }
     }
@@ -156,19 +161,19 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
     ::phpLexerDestroy(&scanner);
     phpLexerToken::Vet_t result;
 
-    if(m_functionCalltipExpr) {
+    if (m_functionCalltipExpr) {
         // the expression parser was constructed for the purpose of
         // function-calltip so replace the current expression with the previous one from the stack
         // i.e. the one before the first open brace
-        if(stack.size() > 1) {
+        if (stack.size() > 1) {
             stack.pop(); // remove the last token sequence
             current = &stack.top();
         }
     }
 
-    if(current && !current->empty()) {
-        if(current->at(0).type == kPHP_T_OPEN_TAG) {
-            if(current->at(0).Text() == "<?") {
+    if (current && !current->empty()) {
+        if (current->at(0).type == kPHP_T_OPEN_TAG) {
+            if (current->at(0).Text() == "<?") {
                 m_exprStartsWithOpenTag = true;
             }
             current->erase(current->begin());
@@ -180,14 +185,15 @@ phpLexerToken::Vet_t PHPExpression::CreateExpression(const wxString& text)
 
 PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wxString& sourceFileName)
 {
-    if(m_expression.empty()) return PHPEntityBase::Ptr_t(NULL);
+    if (m_expression.empty())
+        return PHPEntityBase::Ptr_t(NULL);
 
     m_sourceFile.reset(new PHPSourceFile(m_text, &lookpTable));
     m_sourceFile->SetParseFunctionBody(true);
     m_sourceFile->SetFilename(sourceFileName);
     m_sourceFile->Parse();
 
-    if(m_expression.size() == 1 && m_expression.at(0).type == kPHP_T_NS_SEPARATOR) {
+    if (m_expression.size() == 1 && m_expression.at(0).type == kPHP_T_NS_SEPARATOR) {
         // user typed '\'
         return lookpTable.FindScope("\\");
     }
@@ -195,16 +201,16 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
     wxString asString = DoSimplifyExpression(0, m_sourceFile);
     wxUnusedVar(asString);
 
-    if(m_parts.empty() && !m_filter.IsEmpty()) {
+    if (m_parts.empty() && !m_filter.IsEmpty()) {
 
         // We have no expression, but the user did type something...
         // Return the parent scope of what the user typed so far
-        if(m_filter.Contains("\\")) {
+        if (m_filter.Contains("\\")) {
             // A namespace separator was found in the filter, break
             // the filter into 2:
             // scope + filter
             wxString scopePart = m_filter.BeforeLast('\\');
-            if(!scopePart.StartsWith("\\")) {
+            if (!scopePart.StartsWith("\\")) {
                 scopePart.Prepend("\\");
             }
 
@@ -233,22 +239,22 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
         if (!currentToken) {
             // first token
             // Check locks first
-            if(part.m_text.StartsWith("$") && m_sourceFile->CurrentScope()) {
+            if (part.m_text.StartsWith("$") && m_sourceFile->CurrentScope()) {
                 // a variable
                 currentToken = m_sourceFile->CurrentScope()->FindChild(part.m_text);
             }
-            if(!currentToken) {
+            if (!currentToken) {
                 currentToken = lookpTable.FindScope(part.m_text);
-                if(!currentToken) {
+                if (!currentToken) {
                     // If we are inside a namespace, try prepending the namespace
                     // to the first token
-                    if(m_sourceFile->Namespace() && m_sourceFile->Namespace()->GetFullName() != "\\") {
+                    if (m_sourceFile->Namespace() && m_sourceFile->Namespace()->GetFullName() != "\\") {
                         // Not the global namespace
                         wxString fullns =
                             PHPEntityNamespace::BuildNamespace(m_sourceFile->Namespace()->GetFullName(), part.m_text);
                         // Check if it exists
                         PHPEntityBase::Ptr_t pGuess = lookpTable.FindScope(fullns);
-                        if(pGuess) {
+                        if (pGuess) {
                             currentToken = pGuess;
                             part.m_text = fullns;
                         } else {
@@ -265,7 +271,7 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
         } else {
             // load the children of the current token (optionally, filter by the text)
             currentToken = lookpTable.FindMemberOf(currentToken->GetDbId(), part.m_text);
-            if(currentToken && currentToken->Is(kEntityTypeFunctionAlias)) {
+            if (currentToken && currentToken->Is(kEntityTypeFunctionAlias)) {
                 // If the member is a function-alias, use the actual function instead
                 currentToken = currentToken->Cast<PHPEntityFunctionAlias>()->GetFunc();
             }
@@ -275,35 +281,35 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
         // an object operator ("->") we need to resolve the operator to the actual type (
         // incase of a function it will be the return value, and in case of a variable it will be
         // the type hint)
-        if(currentToken) {
-            if(part.m_operator == kPHP_T_OBJECT_OPERATOR || part.m_operator == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
+        if (currentToken) {
+            if (part.m_operator == kPHP_T_OBJECT_OPERATOR || part.m_operator == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
                 wxString actualType;
-                if(currentToken->Is(kEntityTypeFunction)) {
+                if (currentToken->Is(kEntityTypeFunction)) {
                     // return the function return value
                     actualType = currentToken->Cast<PHPEntityFunction>()->GetReturnValue();
-                    
-                    if((actualType == "self" || actualType == "\\self") && parentToken) {
+
+                    if ((actualType == "self" || actualType == "\\self") && parentToken) {
                         // Resolve self to the actual class name
                         actualType = parentToken->GetFullName();
                     }
-                    
-                } else if(currentToken->Is(kEntityTypeVariable)) {
+
+                } else if (currentToken->Is(kEntityTypeVariable)) {
                     // return the type hint
                     actualType = currentToken->Cast<PHPEntityVariable>()->GetTypeHint();
                 }
 
                 wxString fixedpath;
-                if(!actualType.IsEmpty() && FixReturnValueNamespace(lookpTable, parentToken, actualType, fixedpath)) {
+                if (!actualType.IsEmpty() && FixReturnValueNamespace(lookpTable, parentToken, actualType, fixedpath)) {
                     actualType.swap(fixedpath);
                 }
 
-                if(!actualType.IsEmpty()) {
+                if (!actualType.IsEmpty()) {
                     currentToken = lookpTable.FindScope(actualType);
                 }
             }
         }
 
-        if(!currentToken) {
+        if (!currentToken) {
             // return NULL
             return currentToken;
         }
@@ -314,13 +320,13 @@ PHPEntityBase::Ptr_t PHPExpression::Resolve(PHPLookupTable& lookpTable, const wx
 
 wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sourceFile)
 {
-    if(depth > 5 || sourceFile == NULL) {
+    if (depth > 5 || sourceFile == NULL) {
         // avoid infinite recursion, by limiting the nest level to 5
         return "";
     }
 
     // Use the provided sourceFile if 'm_sourceFile' is NULL
-    if(!m_sourceFile) {
+    if (!m_sourceFile) {
         m_sourceFile = sourceFile;
     }
 
@@ -337,35 +343,39 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
     wxString newExpr;
     wxString firstToken;
     int firstTokenType = wxNOT_FOUND;
-    for(size_t i = 0; i < m_expression.size(); ++i) {
+    for (size_t i = 0; i < m_expression.size(); ++i) {
         phpLexerToken token = m_expression.at(i);
-        if(i == 0) {
+        if (i == 0) {
             // Perform basic replacements that we can conduct here without the need of the global
             // lookup table
-            if(token.type == kPHP_T_PARENT) {
-                if(!innerClass) return "";
+            if (token.type == kPHP_T_PARENT) {
+                if (!innerClass)
+                    return "";
                 firstToken = innerClass->GetFullName();
                 firstTokenType = kPHP_T_PARENT;
 
-            } else if(token.type == kPHP_T_THIS) {
+            } else if (token.type == kPHP_T_THIS) {
                 // the first token is $this
                 // replace it with the current class absolute path
-                if(!innerClass) return "";
+                if (!innerClass)
+                    return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
 
-            } else if(token.type == kPHP_T_SELF) {
+            } else if (token.type == kPHP_T_SELF) {
                 // Same as $this: replace it with the current class absolute path
-                if(!innerClass) return "";
+                if (!innerClass)
+                    return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
                 firstTokenType = kPHP_T_SELF;
 
-            } else if(token.type == kPHP_T_STATIC) {
+            } else if (token.type == kPHP_T_STATIC) {
                 // Same as $this: replace it with the current class absolute path
-                if(!innerClass) return "";
+                if (!innerClass)
+                    return "";
                 firstToken = innerClass->GetFullName(); // Is always in absolute path
                 firstTokenType = kPHP_T_STATIC;
 
-            } else if(token.type == kPHP_T_VARIABLE) {
+            } else if (token.type == kPHP_T_VARIABLE) {
                 // the expression being evaluated starts with a variable (e.g. $a->something()->)
                 // in this case, use the current scope ('scope') and replace it with the real type
                 // Note that the type can be another expression
@@ -379,18 +389,18 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
                 // \MyClass->getQuery->fetchAll-> and this is something that we can evaluate easily using
                 // our lookup tables (note that the parenthesis are missing on purpose)
                 PHPEntityBase::Ptr_t local = scope->FindChild(token.Text());
-                if(local && local->Cast<PHPEntityVariable>()) {
-                    if(!local->Cast<PHPEntityVariable>()->GetTypeHint().IsEmpty()) {
+                if (local && local->Cast<PHPEntityVariable>()) {
+                    if (!local->Cast<PHPEntityVariable>()->GetTypeHint().IsEmpty()) {
                         // we have type hint! - use it
                         firstToken = local->Cast<PHPEntityVariable>()->GetTypeHint();
 
-                    } else if(!local->Cast<PHPEntityVariable>()->GetExpressionHint().IsEmpty()) {
+                    } else if (!local->Cast<PHPEntityVariable>()->GetExpressionHint().IsEmpty()) {
                         // we have an expression hint - use it
                         // append the "->" to the expression to make sure that the parser will understand it
                         // as an expression
                         PHPExpression e(m_text, local->Cast<PHPEntityVariable>()->GetExpressionHint() + "->");
                         firstToken = e.DoSimplifyExpression(depth + 1, m_sourceFile);
-                        if(firstToken.EndsWith("->")) {
+                        if (firstToken.EndsWith("->")) {
                             // remove the last 2 characters
                             firstToken.RemoveLast(2);
                         }
@@ -402,13 +412,13 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
                     return "";
                 }
 
-            } else if(token.type == kPHP_T_IDENTIFIER) {
+            } else if (token.type == kPHP_T_IDENTIFIER) {
                 // an identifier, convert it to the fullpath
                 firstToken = sourceFile->MakeIdentifierAbsolute(token.Text());
             }
         }
 
-        if(!firstToken.IsEmpty()) {
+        if (!firstToken.IsEmpty()) {
             newExpr = firstToken;
             firstToken.Clear();
         } else {
@@ -427,11 +437,11 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
     wxString currentText;
     for (const auto& token : m_expression) {
         // Remove any braces and split by object kPHP_T_OBJECT_OPERATOR and kPHP_T_PAAMAYIM_NEKUDOTAYIM
-        switch(token.type) {
+        switch (token.type) {
         case kPHP_T_OPEN_TAG:
             break;
         case '(':
-            if(!currentText.IsEmpty()) {
+            if (!currentText.IsEmpty()) {
                 part.m_text = currentText;
             }
             break;
@@ -440,8 +450,8 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
             break;
         case kPHP_T_PAAMAYIM_NEKUDOTAYIM:
         case kPHP_T_OBJECT_OPERATOR:
-            if(!currentText.IsEmpty() && part.m_text.IsEmpty()) {
-                if(m_parts.empty() && token.type == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
+            if (!currentText.IsEmpty() && part.m_text.IsEmpty()) {
+                if (m_parts.empty() && token.type == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
                     // The first token in the "parts" list has a scope resolving operator ("::")
                     // we need to make sure that the identifier is provided in fullpath
                     part.m_text = sourceFile->MakeIdentifierAbsolute(currentText);
@@ -450,7 +460,7 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
                 }
             }
 
-            if(m_parts.empty()) {
+            if (m_parts.empty()) {
                 // If the first token before the simplification was 'parent'
                 // keyword, we need to carry this over
                 part.m_textType = firstTokenType;
@@ -478,7 +488,7 @@ wxString PHPExpression::DoSimplifyExpression(int depth, PHPSourceFile::Ptr_t sou
         }
     }
 
-    if(!currentText.IsEmpty()) {
+    if (!currentText.IsEmpty()) {
         m_filter = currentText;
     }
 
@@ -501,17 +511,18 @@ wxString PHPExpression::GetExpressionAsString() const
 size_t PHPExpression::GetLookupFlags() const
 {
     size_t flags(0);
-    if(m_parts.empty()) return flags;
+    if (m_parts.empty())
+        return flags;
 
-    if(m_parts.size() == 1 && m_parts.back().m_textType == kPHP_T_PARENT) {
+    if (m_parts.size() == 1 && m_parts.back().m_textType == kPHP_T_PARENT) {
         Part firstPart = m_parts.back();
-        if(firstPart.m_textType == kPHP_T_PARENT) {
+        if (firstPart.m_textType == kPHP_T_PARENT) {
             flags |= PHPLookupTable::kLookupFlags_Parent;
         }
     } else {
         Part lastExpressionPart = m_parts.back();
-        if(lastExpressionPart.m_operator == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
-            if(lastExpressionPart.m_textType == kPHP_T_SELF)
+        if (lastExpressionPart.m_operator == kPHP_T_PAAMAYIM_NEKUDOTAYIM) {
+            if (lastExpressionPart.m_textType == kPHP_T_SELF)
                 flags |= PHPLookupTable::kLookupFlags_Self;
             else
                 flags |= PHPLookupTable::kLookupFlags_Static;
@@ -523,7 +534,8 @@ size_t PHPExpression::GetLookupFlags() const
 void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& lookup, PHPEntityBase::List_t& matches)
 {
     // sanity
-    if(!resolved) return;
+    if (!resolved)
+        return;
     PHPEntityBase::Ptr_t currentScope = GetSourceFile()->CurrentScope();
 
     // GetCount() == 0 && !GetFilter().IsEmpty() i.e. a word completion is required.
@@ -534,7 +546,7 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
     // - Function arguments
     // - Local variables (of the current scope)
     // - And aliases e.g. 'use foo\bar as Bar;'
-    if(GetCount() == 0 && !GetFilter().IsEmpty()) {
+    if (GetCount() == 0 && !GetFilter().IsEmpty()) {
 
         // For functions and constants, PHP will fall back to global functions or constants if a
         // namespaced function or constant does not exist.
@@ -542,12 +554,12 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
             lookup.FindGlobalFunctionAndConsts(PHPLookupTable::kLookupFlags_Contains, GetFilter());
         matches.insert(matches.end(), globals.begin(), globals.end());
 
-        if(currentScope && (currentScope->Is(kEntityTypeFunction) || currentScope->Is(kEntityTypeNamespace))) {
+        if (currentScope && (currentScope->Is(kEntityTypeFunction) || currentScope->Is(kEntityTypeNamespace))) {
             // If the current scope is a function
             // add the local variables + function arguments to the current list of matches
             for (const auto& child : currentScope->GetChildren()) {
                 if (child->Is(kEntityTypeVariable) && child->GetShortName().Contains(GetFilter()) &&
-                   child->GetShortName() != GetFilter()) {
+                    child->GetShortName() != GetFilter()) {
                     matches.push_back(child);
                 }
             }
@@ -565,7 +577,7 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
         {
             // Add $this incase we are inside a class (but only if '$this' contains the filter string)
             wxString lcFilter = GetFilter().Lower();
-            if(GetSourceFile()->Class() && wxString("$this").Contains(lcFilter)) {
+            if (GetSourceFile()->Class() && wxString("$this").Contains(lcFilter)) {
                 PHPEntityBase::Ptr_t thiz(new PHPEntityVariable());
                 thiz->SetFullName("$this");
                 thiz->SetShortName("$this");
@@ -578,17 +590,17 @@ void PHPExpression::Suggest(PHPEntityBase::Ptr_t resolved, PHPLookupTable& looku
     // Add the scoped matches
     // for the code completion
     size_t flags = PHPLookupTable::kLookupFlags_Contains | GetLookupFlags();
-    if(resolved->Is(kEntityTypeClass)) {
-        if(resolved->Cast<PHPEntityClass>()->IsInterface() || resolved->Cast<PHPEntityClass>()->IsAbstractClass()) {
+    if (resolved->Is(kEntityTypeClass)) {
+        if (resolved->Cast<PHPEntityClass>()->IsInterface() || resolved->Cast<PHPEntityClass>()->IsAbstractClass()) {
             flags |= PHPLookupTable::kLookupFlags_IncludeAbstractMethods;
         }
     }
-    
+
     PHPEntityBase::List_t scopeChildren = lookup.FindChildren(resolved->GetDbId(), flags, GetFilter());
     matches.insert(matches.end(), scopeChildren.begin(), scopeChildren.end());
 
     // Incase the resolved is a namespace, suggest all children namespaces
-    if(resolved->Is(kEntityTypeNamespace)) {
+    if (resolved->Is(kEntityTypeNamespace)) {
         PHPEntityBase::List_t namespaces = lookup.FindNamespaces(resolved->GetFullName(), GetFilter());
         matches.insert(matches.end(), namespaces.begin(), namespaces.end());
     }
@@ -615,9 +627,10 @@ bool PHPExpression::FixReturnValueNamespace(PHPLookupTable& lookup,
                                             const wxString& classFullpath,
                                             wxString& fixedpath)
 {
-    if(!parent) return false;
+    if (!parent)
+        return false;
     PHPEntityBase::Ptr_t pClass = lookup.FindClass(classFullpath);
-    if(!pClass) {
+    if (!pClass) {
         // classFullpath does not exist
         // prepend the parent namespace to its path and check again
         wxString parentNamespace = parent->GetFullName().BeforeLast('\\');
@@ -626,7 +639,7 @@ bool PHPExpression::FixReturnValueNamespace(PHPLookupTable& lookup,
         wxString newType = PHPEntityNamespace::BuildNamespace(parentNamespace, returnValueNamespace);
         newType << "\\" << returnValueName;
         pClass = lookup.FindClass(newType);
-        if(pClass) {
+        if (pClass) {
             fixedpath = newType;
             return true;
         }

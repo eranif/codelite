@@ -22,7 +22,11 @@ public:
 public:
     Params() = default;
     virtual ~Params() = default;
-    template <typename T> T* As() const { return dynamic_cast<T*>(const_cast<Params*>(this)); }
+    template <typename T>
+    T* As() const
+    {
+        return dynamic_cast<T*>(const_cast<Params*>(this));
+    }
 };
 
 //===----------------------------------------------------------------------------------

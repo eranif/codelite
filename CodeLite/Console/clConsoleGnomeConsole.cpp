@@ -21,10 +21,10 @@ bool clConsoleGnomeConsole::FindProcessByCommand(const wxString& name, wxString&
 
     ProcUtils::SafeExecuteCommand(psCommand, arrOutput);
 
-    for(auto &curline : arrOutput) {
+    for (auto& curline : arrOutput) {
         curline.Trim().Trim(false);
         wxArrayString tokens = ::wxStringTokenize(curline, " ", wxTOKEN_STRTOK);
-        if(tokens.GetCount() < 3) {
+        if (tokens.GetCount() < 3) {
             continue;
         }
 
@@ -32,7 +32,7 @@ bool clConsoleGnomeConsole::FindProcessByCommand(const wxString& name, wxString&
         curline.Replace("\t", " ");
 
         // remove any duplicate spaces
-        while(curline.Replace("  ", " ")) {}
+        while (curline.Replace("  ", " ")) {}
 
         wxString tmp_pid = curline.BeforeFirst(' ');
         curline = curline.AfterFirst(' ');
@@ -43,7 +43,7 @@ bool clConsoleGnomeConsole::FindProcessByCommand(const wxString& name, wxString&
         wxString command = curline; // the remainder
         command.Trim().Trim(false);
 
-        if(command == name) {
+        if (command == name) {
             // we got our match
             tmp_tty = tmp_tty.AfterLast('/');
             tmp_tty.Prepend("/dev/pts/");
@@ -78,7 +78,7 @@ bool clConsoleGnomeConsole::StartForDebugger()
     sleepCommand << " " << secondsToSleep;
 
     wxString homedir = wxGetHomeDir();
-    if(homedir.Contains(" ")) {
+    if (homedir.Contains(" ")) {
         homedir.Prepend("\"").Append("\"");
     }
     wxString commandToExecute = GetTerminalCommand();
@@ -87,8 +87,8 @@ bool clConsoleGnomeConsole::StartForDebugger()
     ::wxExecute(commandToExecute);
 
     // Let it start ... (wait for it up to 5 seconds)
-    for(size_t i = 0; i < 100; ++i) {
-        if(FindProcessByCommand(sleepCommand, m_tty, m_pid)) {
+    for (size_t i = 0; i < 100; ++i) {
+        if (FindProcessByCommand(sleepCommand, m_tty, m_pid)) {
             // On GTK, redirection to TTY does not work with lldb
             // as a workaround, we create a symlink with different name
 
@@ -99,7 +99,7 @@ bool clConsoleGnomeConsole::StartForDebugger()
             symlinkName.Replace("/dev/pts/", "/tmp/pts");
             wxString lnCommand;
             lnCommand << "ln -sf " << m_tty << " " << symlinkName;
-            if(::system(lnCommand.mb_str(wxConvUTF8).data()) == 0) {
+            if (::system(lnCommand.mb_str(wxConvUTF8).data()) == 0) {
                 m_tty.swap(symlinkName);
             }
             break;
@@ -114,20 +114,20 @@ wxString clConsoleGnomeConsole::PrepareCommand()
     wxString commandToExecute;
     bool hasCommand = !GetCommand().IsEmpty();
     commandToExecute = hasCommand ? GetTerminalCommand() : GetEmptyTerminalCommand();
-    if(!IsTerminalNeeded()) {
+    if (!IsTerminalNeeded()) {
         commandToExecute = "%COMMAND%";
     }
 
-    if(IsTerminalNeeded()) {
+    if (IsTerminalNeeded()) {
         // set the working directory
         wxString workingDirectory = WrapWithQuotesIfNeeded(GetWorkingDirectory());
-        if(workingDirectory.IsEmpty()) {
+        if (workingDirectory.IsEmpty()) {
             workingDirectory = ".";
         }
         commandToExecute.Replace("%WD%", workingDirectory);
     }
 
-    if(hasCommand) {
+    if (hasCommand) {
         wxFileName scriptPath = PrepareExecScript();
         wxString rowCommand;
         rowCommand << "/bin/bash -f \"" << scriptPath.GetFullPath() << "\"";

@@ -18,14 +18,14 @@ CxxTokenizer::CxxTokenizer()
 
 CxxTokenizer::~CxxTokenizer()
 {
-    if(m_scanner) {
+    if (m_scanner) {
         ::LexerDestroy(&m_scanner);
     }
 }
 
 bool CxxTokenizer::NextToken(CxxLexerToken& token)
 {
-    if(!m_scanner)
+    if (!m_scanner)
         return false;
     m_lastToken = token;
     return ::LexerNext(m_scanner, token);
@@ -33,7 +33,7 @@ bool CxxTokenizer::NextToken(CxxLexerToken& token)
 
 bool CxxTokenizer::UngetToken()
 {
-    if(!m_scanner) {
+    if (!m_scanner) {
         return false;
     }
     ::LexerUnget(m_scanner);
@@ -42,10 +42,10 @@ bool CxxTokenizer::UngetToken()
 
 void CxxTokenizer::Reset(const wxString& buffer)
 {
-    if(m_scanner) {
+    if (m_scanner) {
         ::LexerDestroy(&m_scanner);
     }
-    if(!buffer.empty()) {
+    if (!buffer.empty()) {
         m_buffer = buffer;
         m_scanner = ::LexerNew(buffer, 0);
     }
@@ -54,7 +54,7 @@ void CxxTokenizer::Reset(const wxString& buffer)
 int CxxTokenizer::PeekToken(wxString& text)
 {
     CxxLexerToken tok;
-    if(!NextToken(tok)) {
+    if (!NextToken(tok)) {
         return false;
     }
     text = tok.GetWXString();
@@ -73,14 +73,14 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
     int parenthesisDepth = 0;
     int state = SCP_STATE_NORMAL;
     CppLexerUserData* scannerData = GetUserData();
-    while(NextToken(token)) {
+    while (NextToken(token)) {
         // Skip pre-processor block
-        if(scannerData && scannerData->IsInPreProcessorSection()) {
+        if (scannerData && scannerData->IsInPreProcessorSection()) {
             continue;
         }
-        switch(state) {
+        switch (state) {
         case SCP_STATE_NORMAL:
-            switch(token.GetType()) {
+            switch (token.GetType()) {
             case T_PP_STATE_EXIT:
                 break;
             case '{':
@@ -89,7 +89,7 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
                 currentScope.clear();
                 break;
             case '}':
-                if(scopes.empty())
+                if (scopes.empty())
                     return ""; // Invalid braces count
                 currentScope = scopes.top();
                 scopes.pop();
@@ -117,7 +117,7 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
                 // Handle lambda
                 // If we are entering lambda function definition, collect the locals
                 // this is exactly what we in 'catch' hence the state change to SCP_STATE_IN_CATCH
-                if(GetLastToken().GetType() == ']') {
+                if (GetLastToken().GetType() == ']') {
                     state = SCP_STATE_IN_CATCH;
                 }
                 break;
@@ -126,7 +126,7 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
                 currentScope << ")";
                 break;
             default:
-                if(parenthesisDepth == 0) {
+                if (parenthesisDepth == 0) {
                     currentScope << " " << token.GetWXString();
                 }
                 break;
@@ -134,7 +134,7 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
             break;
         case SCP_STATE_IN_WHILE:
         case SCP_STATE_IN_IF:
-            switch(token.GetType()) {
+            switch (token.GetType()) {
             case '(':
                 parenthesisDepth++;
                 currentScope << "(";
@@ -142,14 +142,14 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
             case ')':
                 parenthesisDepth--;
                 currentScope << ")";
-                if(parenthesisDepth == 0) {
+                if (parenthesisDepth == 0) {
                     state = SCP_STATE_NORMAL;
                 }
                 break;
             }
             break;
         case SCP_STATE_IN_FOR_NO_SEMICOLON:
-            switch(token.GetType()) {
+            switch (token.GetType()) {
             case '(':
                 parenthesisDepth++;
                 currentScope << "(";
@@ -157,7 +157,7 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
             case ')':
                 parenthesisDepth--;
                 currentScope << ")";
-                if(parenthesisDepth == 0) {
+                if (parenthesisDepth == 0) {
                     state = SCP_STATE_NORMAL;
                 }
                 break;
@@ -171,7 +171,7 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
             }
             break;
         case SCP_STATE_IN_FOR:
-            switch(token.GetType()) {
+            switch (token.GetType()) {
             case '(':
                 parenthesisDepth++;
                 currentScope << "(";
@@ -179,7 +179,7 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
             case ')':
                 parenthesisDepth--;
                 currentScope << ")";
-                if(parenthesisDepth == 0) {
+                if (parenthesisDepth == 0) {
                     state = SCP_STATE_NORMAL;
                 }
                 break;
@@ -188,7 +188,7 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
             }
             break;
         case SCP_STATE_IN_CATCH:
-            switch(token.GetType()) {
+            switch (token.GetType()) {
             case '(':
                 currentScope << "(";
                 parenthesisDepth++;
@@ -196,7 +196,7 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
             case ')':
                 parenthesisDepth--;
                 currentScope << ")";
-                if(parenthesisDepth == 0) {
+                if (parenthesisDepth == 0) {
                     state = SCP_STATE_NORMAL;
                 }
                 break;
@@ -211,7 +211,7 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
     }
 
     wxString s;
-    while(!scopes.empty()) {
+    while (!scopes.empty()) {
         s.Prepend(scopes.top());
         scopes.pop();
     }
@@ -221,40 +221,40 @@ wxString CxxTokenizer::GetVisibleScope(const wxString& inputString)
 
 CppLexerUserData* CxxTokenizer::GetUserData() const
 {
-    if(!m_scanner)
+    if (!m_scanner)
         return NULL;
     return ::LexerGetUserData(m_scanner);
 }
 
-void CxxTokenizer::read_until_find(CxxLexerToken& token, int type_1, int type_2, int* what_was_found,
-                                   wxString* consumed)
+void CxxTokenizer::read_until_find(
+    CxxLexerToken& token, int type_1, int type_2, int* what_was_found, wxString* consumed)
 {
     int depth = 0;
     consumed->clear();
     *what_was_found = 0;
     consumed->reserve(256); // 256 bytes should be enough for most cases
 
-    while(NextToken(token)) {
-        if(depth == 0 && token.GetType() == type_1) {
+    while (NextToken(token)) {
+        if (depth == 0 && token.GetType() == type_1) {
             *what_was_found = type_1;
             consumed->Trim().Trim(false);
             return;
-        } else if(depth == 0 && token.GetType() == type_2) {
+        } else if (depth == 0 && token.GetType() == type_2) {
             *what_was_found = type_2;
             consumed->Trim().Trim(false);
             return;
         }
 
-        if(token.is_keyword() || token.is_builtin_type()) {
+        if (token.is_keyword() || token.is_builtin_type()) {
             consumed->Append(token.GetWXString() + " ");
             continue;
-        } else if(token.is_pp_keyword()) {
+        } else if (token.is_pp_keyword()) {
             continue;
         }
 
         // append it
         consumed->Append(token.GetWXString());
-        switch(token.GetType()) {
+        switch (token.GetType()) {
         case '<':
         case '{':
         case '[':

@@ -41,7 +41,7 @@ void PHPEntityFunctionAlias::Store(PHPLookupTable* lookup)
 
 wxString PHPEntityFunctionAlias::FormatPhpDoc(const CommentConfigData& data) const
 {
-    if(m_func) {
+    if (m_func) {
         return m_func->FormatPhpDoc(data);
     }
     return "";
@@ -53,7 +53,7 @@ void PHPEntityFunctionAlias::PrintStdout(int indent) const { wxUnusedVar(indent)
 
 wxString PHPEntityFunctionAlias::Type() const
 {
-    if(m_func) {
+    if (m_func) {
         return m_func->Type();
     }
     return "";
@@ -64,7 +64,7 @@ void PHPEntityFunctionAlias::FromJSON(const JSONItem& json)
     BaseFromJSON(json);
     m_realname = json.namedObject("realName").toString();
     m_scope = json.namedObject("scope").toString();
-    if(json.hasNamedObject("func")) {
+    if (json.hasNamedObject("func")) {
         JSONItem func = json.namedObject("func");
         m_func = std::make_shared<PHPEntityFunction>();
         m_func->FromJSON(func);
@@ -76,7 +76,7 @@ JSONItem PHPEntityFunctionAlias::ToJSON() const
     JSONItem json = BaseToJSON("a");
     json.addProperty("realName", m_realname);
     json.addProperty("scope", m_scope);
-    if(m_func) {
+    if (m_func) {
         JSONItem func = m_func->ToJSON();
         json.addProperty("func", func);
     }

@@ -27,6 +27,7 @@
 #define COMMANDLINEPARSER_H
 
 #include "codelite_exports.h"
+
 #include <set>
 #include <wx/arrstr.h>
 #include <wx/filename.h>

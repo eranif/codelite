@@ -54,20 +54,28 @@ public:
     ~WinProcessImpl() override;
 
     // Create process asynchronously and return a process object
-    static IProcess* Execute(wxEvtHandler* parent, const wxString& cmd, size_t flags = IProcessCreateDefault,
-                             const wxString& workingDir = wxEmptyString, IProcessCallback* cb = NULL);
+    static IProcess* Execute(wxEvtHandler* parent,
+                             const wxString& cmd,
+                             size_t flags = IProcessCreateDefault,
+                             const wxString& workingDir = wxEmptyString,
+                             IProcessCallback* cb = NULL);
 
     // Create process asynchronously and return a process object
-    static IProcess* Execute(wxEvtHandler* parent, const wxArrayString& args, size_t flags = IProcessCreateDefault,
-                             const wxString& workingDir = wxEmptyString, IProcessCallback* cb = NULL);
+    static IProcess* Execute(wxEvtHandler* parent,
+                             const wxArrayString& args,
+                             size_t flags = IProcessCreateDefault,
+                             const wxString& workingDir = wxEmptyString,
+                             IProcessCallback* cb = NULL);
 
     // Create process asynchronously and return a process object
-    static IProcess* ExecuteConPTY(wxEvtHandler* parent, const std::vector<wxString>& args,
+    static IProcess* ExecuteConPTY(wxEvtHandler* parent,
+                                   const std::vector<wxString>& args,
                                    size_t flags = IProcessCreateWithHiddenConsole,
                                    const wxString& workingDir = wxEmptyString);
 
     // Create process asynchronously and return a process object
-    static IProcess* ExecuteConPTY(wxEvtHandler* parent, const wxString& cmd,
+    static IProcess* ExecuteConPTY(wxEvtHandler* parent,
+                                   const wxString& cmd,
                                    size_t flags = IProcessCreateWithHiddenConsole,
                                    const wxString& workingDir = wxEmptyString);
 
@@ -103,7 +111,7 @@ private:
            hChildStderrRd = INVALID_HANDLE_VALUE, hChildStderrWr = INVALID_HANDLE_VALUE,
            hChildStderrRdDup = INVALID_HANDLE_VALUE, hSaveStdin = INVALID_HANDLE_VALUE,
            hSaveStdout = INVALID_HANDLE_VALUE, hSaveStderr = INVALID_HANDLE_VALUE;
-    
+
     VOID* m_hPseudoConsole = nullptr;
     // Child process id & information
     DWORD dwProcessId = wxNOT_FOUND;

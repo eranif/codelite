@@ -15,7 +15,7 @@ public:
     clDirChanger(const wxString& newDirectory)
     {
         m_oldDirectory = ::wxGetCwd();
-        if(!newDirectory.IsEmpty()) {
+        if (!newDirectory.IsEmpty()) {
             ::wxSetWorkingDirectory(newDirectory);
         }
     }

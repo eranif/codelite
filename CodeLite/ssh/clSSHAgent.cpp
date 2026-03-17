@@ -40,8 +40,8 @@ void clSSHAgent::Start()
     PidVec_t P = ProcUtils::PS("ssh-agent");
     if (P.empty()) {
         clDEBUG() << "Could not find a running instance of ssh-agent, starting one...";
-        m_process = ::CreateAsyncProcess(nullptr, sshAgent.GetFullPath(),
-                                         IProcessCreateWithHiddenConsole | IProcessCreateDefault);
+        m_process = ::CreateAsyncProcess(
+            nullptr, sshAgent.GetFullPath(), IProcessCreateWithHiddenConsole | IProcessCreateDefault);
         if (m_process) {
             clDEBUG() << "Started" << sshAgent << "with process ID:" << m_process->GetPid() << clEndl;
         } else {

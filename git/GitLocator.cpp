@@ -14,11 +14,11 @@ bool GitLocator::GetExecutable(wxFileName& gitpath) const
     // Common to all platforms:
     // use the PATH environment variable to locate git executable
     wxString path;
-    if(::wxGetEnv("PATH", &path)) {
+    if (::wxGetEnv("PATH", &path)) {
         wxArrayString paths = ::wxStringTokenize(path, ";", wxTOKEN_STRTOK);
-        for(size_t i = 0; i < paths.GetCount(); ++i) {
+        for (size_t i = 0; i < paths.GetCount(); ++i) {
             wxString gitExeFullPath;
-            if(DoCheckGitInFolder(paths.Item(i), gitExeFullPath)) {
+            if (DoCheckGitInFolder(paths.Item(i), gitExeFullPath)) {
                 gitpath = gitExeFullPath;
                 return true;
             }
@@ -30,11 +30,11 @@ bool GitLocator::GetExecutable(wxFileName& gitpath) const
     wxRegKey regGit(wxRegKey::HKLM, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Git_is1");
     wxRegKey regGit2(wxRegKey::HKLM, "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Git_is1");
     wxString installLocation;
-    if(((regGit.Exists() && regGit.QueryValue("InstallLocation", installLocation)) ||
-           (regGit2.Exists() && regGit2.QueryValue("InstallLocation", installLocation))) &&
+    if (((regGit.Exists() && regGit.QueryValue("InstallLocation", installLocation)) ||
+         (regGit2.Exists() && regGit2.QueryValue("InstallLocation", installLocation))) &&
         ::wxDirExists(installLocation)) {
         wxString gitExeFullPath;
-        if(DoCheckGitInFolder(installLocation, gitExeFullPath)) {
+        if (DoCheckGitInFolder(installLocation, gitExeFullPath)) {
             gitpath = gitExeFullPath;
             return true;
         }
@@ -46,14 +46,14 @@ bool GitLocator::GetExecutable(wxFileName& gitpath) const
 bool GitLocator::DoCheckGitInFolder(const wxString& folder, wxString& git) const
 {
     wxFileName gitExe(folder, "git.exe");
-    if(gitExe.Exists()) {
+    if (gitExe.Exists()) {
         git = gitExe.GetFullPath();
         return true;
     }
 
     // try to see if we have git.exe under an internal folder
     gitExe.AppendDir("bin");
-    if(gitExe.Exists()) {
+    if (gitExe.Exists()) {
         git = gitExe.GetFullPath();
         return true;
     }
@@ -66,14 +66,14 @@ bool GitLocator::MSWGetGitShellCommand(wxString& bashCommand) const
     wxRegKey regGit(wxRegKey::HKLM, "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Git_is1");
     wxRegKey regGit2(wxRegKey::HKLM, "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall\\Git_is1");
     wxString installLocation;
-    if(((regGit.Exists() && regGit.QueryValue("InstallLocation", installLocation)) ||
-           (regGit2.Exists() && regGit2.QueryValue("InstallLocation", installLocation))) &&
+    if (((regGit.Exists() && regGit.QueryValue("InstallLocation", installLocation)) ||
+         (regGit2.Exists() && regGit2.QueryValue("InstallLocation", installLocation))) &&
         ::wxDirExists(installLocation)) {
         wxString gitExeFullPath;
-        if(DoCheckGitInFolder(installLocation, gitExeFullPath)) {
+        if (DoCheckGitInFolder(installLocation, gitExeFullPath)) {
             wxFileName gitpath = gitExeFullPath;
             gitpath.SetName("bash");
-            if(gitpath.Exists()) {
+            if (gitpath.Exists()) {
                 bashCommand = gitpath.GetFullPath();
                 StringUtils::WrapWithQuotes(bashCommand);
                 bashCommand << " --login -i";

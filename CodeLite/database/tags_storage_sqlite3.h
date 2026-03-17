@@ -120,7 +120,7 @@ public:
 
     void Close()
     {
-        if(IsOpen())
+        if (IsOpen())
             wxSQLite3Database::Close();
 
         m_statements.clear();
@@ -213,8 +213,8 @@ public:
      * @param path Database file name
      * @return result set
      */
-    virtual void SelectTagsByFile(const wxString& file, std::vector<TagEntryPtr>& tags,
-                                  const wxFileName& path = wxFileName());
+    virtual void
+    SelectTagsByFile(const wxString& file, std::vector<TagEntryPtr>& tags, const wxFileName& path = wxFileName());
 
     /**
      * Delete all entries from database that are related to filename.
@@ -342,9 +342,13 @@ public:
      * @param partialNameAllowed
      * @param tags [output]
      */
-    virtual void GetTagsByScopeAndName(const wxString& scope, const wxString& name, bool partialNameAllowed,
+    virtual void GetTagsByScopeAndName(const wxString& scope,
+                                       const wxString& name,
+                                       bool partialNameAllowed,
                                        std::vector<TagEntryPtr>& tags);
-    virtual void GetTagsByScopeAndName(const wxArrayString& scope, const wxString& name, bool partialNameAllowed,
+    virtual void GetTagsByScopeAndName(const wxArrayString& scope,
+                                       const wxString& name,
+                                       bool partialNameAllowed,
                                        std::vector<TagEntryPtr>& tags);
 
     /**
@@ -362,7 +366,9 @@ public:
      * @param order OrderAsc, OrderDesc or use OrderNone for no ordering the results
      * @param tags [output]
      */
-    virtual void GetTagsByKind(const wxArrayString& kinds, const wxString& orderingColumn, int order,
+    virtual void GetTagsByKind(const wxArrayString& kinds,
+                               const wxString& orderingColumn,
+                               int order,
                                std::vector<TagEntryPtr>& tags);
 
     /**
@@ -372,8 +378,10 @@ public:
      */
     virtual void GetTagsByPath(const wxArrayString& path, std::vector<TagEntryPtr>& tags);
     virtual void GetTagsByPath(const wxString& path, std::vector<TagEntryPtr>& tags, int limit = 1);
-    virtual void GetTagsByPathAndKind(const wxString& path, std::vector<TagEntryPtr>& tags,
-                                      const std::vector<wxString>& kinds, int limit = 1);
+    virtual void GetTagsByPathAndKind(const wxString& path,
+                                      std::vector<TagEntryPtr>& tags,
+                                      const std::vector<wxString>& kinds,
+                                      int limit = 1);
     /**
      * @brief return array of items by name and parent
      * @param path
@@ -419,8 +427,8 @@ public:
      * @param kinds array of possible kinds
      * @param tags [output]
      */
-    virtual void GetTagsByScopesAndKind(const wxArrayString& scopes, const wxArrayString& kinds,
-                                        std::vector<TagEntryPtr>& tags);
+    virtual void
+    GetTagsByScopesAndKind(const wxArrayString& scopes, const wxArrayString& kinds, std::vector<TagEntryPtr>& tags);
 
     /**
      * @brief get list of tags by kind and file
@@ -429,8 +437,11 @@ public:
      * @param order OrderAsc, OrderDesc or use OrderNone for no ordering the results
      * @param tags
      */
-    virtual void GetTagsByKindAndFile(const wxArrayString& kind, const wxString& fileName,
-                                      const wxString& orderingColumn, int order, std::vector<TagEntryPtr>& tags);
+    virtual void GetTagsByKindAndFile(const wxArrayString& kind,
+                                      const wxString& fileName,
+                                      const wxString& orderingColumn,
+                                      int order,
+                                      std::vector<TagEntryPtr>& tags);
 
     /**
      * @brief delete an entry by file name
@@ -492,7 +503,9 @@ public:
      */
     void GetTagsByPartName(const wxArrayString& parts, std::vector<TagEntryPtr>& tags);
 
-    virtual size_t GetFileScopedTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
+    virtual size_t GetFileScopedTags(const wxString& filepath,
+                                     const wxString& name,
+                                     const wxArrayString& kinds,
                                      std::vector<TagEntryPtr>& tags);
 
     virtual size_t GetParameters(const wxString& function_path, std::vector<TagEntryPtr>& tags);

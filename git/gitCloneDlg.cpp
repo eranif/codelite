@@ -24,7 +24,9 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #include "gitCloneDlg.h"
+
 #include "windowattrmanager.h"
+
 #include <wx/uri.h>
 
 gitCloneDlg::gitCloneDlg(wxWindow* parent)

@@ -26,8 +26,8 @@
 #ifndef PHPENTITYVISITOR_H
 #define PHPENTITYVISITOR_H
 
-#include "codelite_exports.h"
 #include "PHPEntityBase.h"
+#include "codelite_exports.h"
 
 /**
  * @class PHPEntityVisitor
@@ -40,7 +40,7 @@ public:
     virtual ~PHPEntityVisitor() = default;
 
     void Visit(PHPEntityBase::Ptr_t parent);
-    
+
     /**
      * @brief called whenever an entity is visited
      * @param entity

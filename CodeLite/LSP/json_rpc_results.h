@@ -20,7 +20,11 @@ public:
 public:
     Result() = default;
     ~Result() override = default;
-    template <typename T> T* As() const { return dynamic_cast<T*>(const_cast<Result*>(this)); }
+    template <typename T>
+    T* As() const
+    {
+        return dynamic_cast<T*>(const_cast<Result*>(this));
+    }
     JSONItem ToJSON() const override { return JSONItem(nullptr); }
 };
 

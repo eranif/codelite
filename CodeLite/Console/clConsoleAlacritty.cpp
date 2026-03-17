@@ -22,8 +22,8 @@ wxString clConsoleAlacritty::PrepareCommand()
     wxString command = GetCommand();
     command.Trim().Trim(false);
 
-    if(IsTerminalNeeded()) {
-        if(m_terminal.empty()) {
+    if (IsTerminalNeeded()) {
+        if (m_terminal.empty()) {
             // no terminal, but a terminal is required...
             return wxEmptyString;
         }
@@ -31,16 +31,16 @@ wxString clConsoleAlacritty::PrepareCommand()
         // on mac, add `--args` here
         full_command = m_terminal;
         MacAddArgsIfNeeded(&full_command);
-        if(!GetWorkingDirectory().empty()) {
+        if (!GetWorkingDirectory().empty()) {
             full_command << " --working-directory " << WrapWithQuotesIfNeeded(GetWorkingDirectory());
         }
 
-        if(IsWaitWhenDone()) {
+        if (IsWaitWhenDone()) {
             full_command << " --hold";
         }
 
         // set the title
-        if(!command.empty()) {
+        if (!command.empty()) {
             full_command << " -t " << WrapWithQuotesIfNeeded(command);
             full_command << " -e " << command;
         }
@@ -48,7 +48,7 @@ wxString clConsoleAlacritty::PrepareCommand()
         full_command << " " << command;
     }
 
-    if(!GetCommandArgs().IsEmpty()) {
+    if (!GetCommandArgs().IsEmpty()) {
         full_command << " " << GetCommandArgs();
     }
 

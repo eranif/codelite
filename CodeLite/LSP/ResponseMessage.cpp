@@ -11,7 +11,7 @@ LSP::ResponseMessage::ResponseMessage(std::unique_ptr<JSON>&& json)
 
 std::string LSP::ResponseMessage::ToString() const
 {
-    if(!m_json || !m_json->isOk()) {
+    if (!m_json || !m_json->isOk()) {
         return "";
     }
     return StringUtils::ToStdString(m_json->toElement().format(false));
@@ -33,7 +33,7 @@ bool LSP::ResponseMessage::Has(const wxString& property) const
 
 JSONItem LSP::ResponseMessage::Get(const wxString& property) const
 {
-    if(!Has(property)) {
+    if (!Has(property)) {
         return JSONItem(nullptr);
     }
     return m_json->toElement().namedObject(property);
@@ -42,14 +42,14 @@ JSONItem LSP::ResponseMessage::Get(const wxString& property) const
 std::vector<LSP::Diagnostic> LSP::ResponseMessage::GetDiagnostics() const
 {
     JSONItem params = Get("params");
-    if(!params.isOk()) {
+    if (!params.isOk()) {
         return {};
     }
 
     std::vector<LSP::Diagnostic> res;
     JSONItem arrDiags = params.namedObject("diagnostics");
     int size = arrDiags.arraySize();
-    for(int i = 0; i < size; ++i) {
+    for (int i = 0; i < size; ++i) {
         LSP::Diagnostic d;
         d.FromJSON(arrDiags.arrayItem(i));
         res.push_back(d);
@@ -60,7 +60,7 @@ std::vector<LSP::Diagnostic> LSP::ResponseMessage::GetDiagnostics() const
 wxString LSP::ResponseMessage::GetDiagnosticsUri() const
 {
     JSONItem params = Get("params");
-    if(!params.isOk()) {
+    if (!params.isOk()) {
         return "";
     }
     return params.namedObject("uri").toString();

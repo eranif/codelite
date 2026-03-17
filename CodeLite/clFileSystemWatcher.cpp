@@ -38,7 +38,7 @@ clFileSystemWatcher::~clFileSystemWatcher()
 void clFileSystemWatcher::SetFile(const wxFileName& filename)
 {
 #if CL_FSW_USE_TIMER
-    if(filename.Exists()) {
+    if (filename.Exists()) {
         m_files.clear();
         File f;
         f.filename = filename;
@@ -69,7 +69,7 @@ void clFileSystemWatcher::Start()
 void clFileSystemWatcher::Stop()
 {
 #if CL_FSW_USE_TIMER
-    if(m_timer) {
+    if (m_timer) {
         m_timer->Stop();
     }
     wxDELETE(m_timer);
@@ -94,10 +94,10 @@ void clFileSystemWatcher::OnTimer(wxTimerEvent& event)
     std::set<wxString> nonExistingFiles;
     for (const auto& [_, f] : m_files) {
         const wxFileName& fn = f.filename;
-        if(!fn.Exists()) {
+        if (!fn.Exists()) {
 
             // fire file not found event
-            if(GetOwner()) {
+            if (GetOwner()) {
                 clFileSystemEvent evt(wxEVT_FILE_NOT_FOUND);
                 evt.SetPath(fn.GetFullPath());
                 GetOwner()->AddPendingEvent(evt);
@@ -106,7 +106,7 @@ void clFileSystemWatcher::OnTimer(wxTimerEvent& event)
             // add the missing file to a set
             nonExistingFiles.insert(fn.GetFullPath());
         } else {
-            
+
 #ifdef __WXMSW__
             size_t prev_value = f.file_size;
             size_t curr_value = FileUtils::GetFileSize(fn);
@@ -115,9 +115,9 @@ void clFileSystemWatcher::OnTimer(wxTimerEvent& event)
             time_t curr_value = FileUtils::GetFileModificationTime(fn);
 #endif
 
-            if(prev_value != curr_value) {
+            if (prev_value != curr_value) {
                 // Fire a modified event
-                if(GetOwner()) {
+                if (GetOwner()) {
                     clFileSystemEvent evt(wxEVT_FILE_MODIFIED);
                     evt.SetPath(fn.GetFullPath());
                     GetOwner()->AddPendingEvent(evt);
@@ -140,7 +140,7 @@ void clFileSystemWatcher::OnTimer(wxTimerEvent& event)
         m_files.erase(fn);
     }
 
-    if(m_timer) {
+    if (m_timer) {
         m_timer->Start(FILE_CHECK_INTERVAL, true);
     }
 }
@@ -149,10 +149,10 @@ void clFileSystemWatcher::OnTimer(wxTimerEvent& event)
 #if !CL_FSW_USE_TIMER
 void clFileSystemWatcher::OnFileModified(wxFileSystemWatcherEvent& event)
 {
-    if(event.GetChangeType() == wxFSW_EVENT_MODIFY) {
+    if (event.GetChangeType() == wxFSW_EVENT_MODIFY) {
         const wxFileName& modpath = event.GetPath();
-        if(modpath == m_watchedFile) {
-            if(GetOwner()) {
+        if (modpath == m_watchedFile) {
+            if (GetOwner()) {
                 clFileSystemEvent evt(wxEVT_FILE_MODIFIED);
                 evt.SetPath(modpath.GetFullPath());
                 GetOwner()->AddPendingEvent(evt);
@@ -165,7 +165,7 @@ void clFileSystemWatcher::OnFileModified(wxFileSystemWatcherEvent& event)
 void clFileSystemWatcher::RemoveFile(const wxFileName& filename)
 {
 #if CL_FSW_USE_TIMER
-    if(m_files.count(filename.GetFullPath())) {
+    if (m_files.count(filename.GetFullPath())) {
         m_files.erase(filename.GetFullPath());
     }
 #endif

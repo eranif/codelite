@@ -11,11 +11,11 @@ bool clModuleLogger::CanLog() const { return FileLogger::CanLog(m_current_log_le
 
 void clModuleLogger::Flush()
 {
-    if(m_buffer.empty()) {
+    if (m_buffer.empty()) {
         return;
     }
 
-    if(m_buffer.Last() != '\n') {
+    if (m_buffer.Last() != '\n') {
         m_buffer.Append('\n');
     }
     FileUtils::AppendFileContent(m_logfile, m_buffer, wxConvUTF8);
@@ -26,7 +26,7 @@ void clModuleLogger::Open(const wxFileName& filepath) { m_logfile = filepath; }
 
 clModuleLogger& clModuleLogger::SetCurrentLogLevel(int level)
 {
-    if(!m_buffer.empty()) {
+    if (!m_buffer.empty()) {
         // flush the current content
         Flush();
     }
@@ -36,7 +36,7 @@ clModuleLogger& clModuleLogger::SetCurrentLogLevel(int level)
 
 wxString clModuleLogger::Prefix()
 {
-    if(!CanLog()) {
+    if (!CanLog()) {
         return wxEmptyString;
     }
 
@@ -48,7 +48,7 @@ wxString clModuleLogger::Prefix()
     // add the thread ID
     prefix << wxT(" T:") << wxThread::GetCurrentId();
 
-    switch(m_current_log_level) {
+    switch (m_current_log_level) {
     case FileLogger::System:
         prefix << wxT(" SYSTEM]");
         break;
@@ -66,7 +66,7 @@ wxString clModuleLogger::Prefix()
         break;
     }
 
-    if(!m_module.empty()) {
+    if (!m_module.empty()) {
         prefix << " " << m_module << ">";
     }
     return prefix;

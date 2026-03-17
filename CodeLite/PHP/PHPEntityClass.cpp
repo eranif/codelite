@@ -9,12 +9,12 @@ void PHPEntityClass::PrintStdout(int indent) const
 {
     wxString indentString(' ', indent);
     wxPrintf("%sClass name: %s", indentString, GetFullName());
-    if(!GetExtends().IsEmpty()) {
+    if (!GetExtends().IsEmpty()) {
         wxPrintf(", extends %s", GetExtends());
     }
-    if(!GetImplements().IsEmpty()) {
+    if (!GetImplements().IsEmpty()) {
         wxPrintf(", implements: ");
-        for(size_t i = 0; i < GetImplements().GetCount(); ++i) {
+        for (size_t i = 0; i < GetImplements().GetCount(); ++i) {
             wxPrintf("%s ", GetImplements().Item(i));
         }
     }
@@ -29,11 +29,11 @@ void PHPEntityClass::Store(PHPLookupTable* lookup)
 {
     try {
         wxSQLite3Database& db = lookup->Database();
-        wxSQLite3Statement statement = db.PrepareStatement(
-            "REPLACE INTO SCOPE_TABLE (ID, SCOPE_TYPE, SCOPE_ID, NAME, FULLNAME, EXTENDS, "
-            "IMPLEMENTS, USING_TRAITS, FLAGS, DOC_COMMENT, "
-            "LINE_NUMBER, FILE_NAME) VALUES (NULL, 1, :SCOPE_ID, :NAME, :FULLNAME, :EXTENDS, "
-            ":IMPLEMENTS, :USING_TRAITS, :FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
+        wxSQLite3Statement statement =
+            db.PrepareStatement("REPLACE INTO SCOPE_TABLE (ID, SCOPE_TYPE, SCOPE_ID, NAME, FULLNAME, EXTENDS, "
+                                "IMPLEMENTS, USING_TRAITS, FLAGS, DOC_COMMENT, "
+                                "LINE_NUMBER, FILE_NAME) VALUES (NULL, 1, :SCOPE_ID, :NAME, :FULLNAME, :EXTENDS, "
+                                ":IMPLEMENTS, :USING_TRAITS, :FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
 
         statement.Bind(statement.GetParamIndex(":SCOPE_ID"), Parent()->GetDbId());
         statement.Bind(statement.GetParamIndex(":NAME"), GetShortName());
@@ -79,8 +79,8 @@ wxArrayString PHPEntityClass::GetInheritanceArray() const
     arr.insert(arr.end(), GetImplements().begin(), GetImplements().end());
     arr.insert(arr.end(), GetTraits().begin(), GetTraits().end());
 
-    for(size_t i = 0; i < arr.GetCount(); ++i) {
-        if(uniqueArr.Index(arr.Item(i)) == wxNOT_FOUND) {
+    for (size_t i = 0; i < arr.GetCount(); ++i) {
+        if (uniqueArr.Index(arr.Item(i)) == wxNOT_FOUND) {
             uniqueArr.Add(arr.Item(i));
         }
     }

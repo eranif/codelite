@@ -11,7 +11,7 @@ void clJoinableThread::Stop()
 {
     // Notify the thread to exit and
     // wait for it
-    if(IsAlive()) {
+    if (IsAlive()) {
         Delete(NULL, wxTHREAD_WAIT_BLOCK);
 
     } else {

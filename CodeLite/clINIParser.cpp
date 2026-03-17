@@ -231,8 +231,9 @@ const clINISection& clINIParser::operator[](const char* section) const
 
 const clINISection& clINIParser::operator[](const wxString& section_name) const
 {
-    auto where = std::find_if(m_sections.begin(), m_sections.end(),
-                              [&section_name](const clINISection& d) -> bool { return d.GetName() == section_name; });
+    auto where = std::find_if(m_sections.begin(), m_sections.end(), [&section_name](const clINISection& d) -> bool {
+        return d.GetName() == section_name;
+    });
     if (where == m_sections.end()) {
         return clNullINISection;
     }
@@ -241,7 +242,8 @@ const clINISection& clINIParser::operator[](const wxString& section_name) const
 
 bool clINIParser::HasSection(const wxString& section_name) const
 {
-    auto where = std::find_if(m_sections.begin(), m_sections.end(),
-                              [&section_name](const clINISection& d) -> bool { return d.GetName() == section_name; });
+    auto where = std::find_if(m_sections.begin(), m_sections.end(), [&section_name](const clINISection& d) -> bool {
+        return d.GetName() == section_name;
+    });
     return where != m_sections.end();
 }

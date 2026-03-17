@@ -26,12 +26,12 @@
 #ifndef PhpLexerAPI_H__
 #define PhpLexerAPI_H__
 
+#include "PHPScannerTokens.h"
+#include "codelite_exports.h"
+
 #include <string>
 #include <vector>
 #include <wx/filename.h>
-
-#include "codelite_exports.h"
-#include "PHPScannerTokens.h"
 
 enum ePhpLexerOptions {
     kPhpLexerOpt_None = 0x00000000,
@@ -112,7 +112,7 @@ private:
 public:
     void Clear()
     {
-        if(m_fp) {
+        if (m_fp) {
             ::fclose(m_fp);
         }
         m_fp = NULL;
@@ -141,7 +141,7 @@ public:
     bool IsCollectingAllNonPhp() const { return m_flags & kPhpLexerOpt_ReturnAllNonPhp; }
     void SetCollectingWhitespace(bool b)
     {
-        if(b) {
+        if (b) {
             m_flags |= kPhpLexerOpt_ReturnWhitespace;
         } else {
             m_flags &= ~kPhpLexerOpt_ReturnWhitespace;
@@ -237,7 +237,7 @@ struct WXDLLIMPEXP_CL PHPScannerLocker {
 
     ~PHPScannerLocker()
     {
-        if(scanner) {
+        if (scanner) {
             ::phpLexerDestroy(&scanner);
         }
     }

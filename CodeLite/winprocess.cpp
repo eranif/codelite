@@ -35,7 +35,7 @@ WinProcess* WinProcess::Execute(const wxString& cmd, wxString& errMsg, const wxS
     BOOL fSuccess;
 
     wxString wd(workingDir);
-    if(workingDir.IsEmpty()) {
+    if (workingDir.IsEmpty()) {
         wd = wxGetCwd();
     }
 
@@ -58,21 +58,26 @@ WinProcess* WinProcess::Execute(const wxString& cmd, wxString& errMsg, const wxS
     prc->hSaveStdout = GetStdHandle(STD_OUTPUT_HANDLE);
 
     // Create a pipe for the child process's STDOUT.
-    if(!CreatePipe(&prc->hChildStdoutRd, &prc->hChildStdoutWr, &saAttr, 0)) {
+    if (!CreatePipe(&prc->hChildStdoutRd, &prc->hChildStdoutWr, &saAttr, 0)) {
         delete prc;
         return NULL;
     }
 
     // Set a write handle to the pipe to be STDOUT.
-    if(!SetStdHandle(STD_OUTPUT_HANDLE, prc->hChildStdoutWr)) {
+    if (!SetStdHandle(STD_OUTPUT_HANDLE, prc->hChildStdoutWr)) {
         delete prc;
         return NULL;
     }
 
     // Create noninheritable read handle and close the inheritable read handle.
-    fSuccess = DuplicateHandle(GetCurrentProcess(), prc->hChildStdoutRd, GetCurrentProcess(), &prc->hChildStdoutRdDup,
-                               0, FALSE, DUPLICATE_SAME_ACCESS);
-    if(!fSuccess) {
+    fSuccess = DuplicateHandle(GetCurrentProcess(),
+                               prc->hChildStdoutRd,
+                               GetCurrentProcess(),
+                               &prc->hChildStdoutRdDup,
+                               0,
+                               FALSE,
+                               DUPLICATE_SAME_ACCESS);
+    if (!fSuccess) {
         delete prc;
         return NULL;
     }
@@ -90,20 +95,24 @@ WinProcess* WinProcess::Execute(const wxString& cmd, wxString& errMsg, const wxS
     prc->hSaveStdin = GetStdHandle(STD_INPUT_HANDLE);
 
     // Create a pipe for the child process's STDIN.
-    if(!CreatePipe(&prc->hChildStdinRd, &prc->hChildStdinWr, &saAttr, 0)) {
+    if (!CreatePipe(&prc->hChildStdinRd, &prc->hChildStdinWr, &saAttr, 0)) {
         delete prc;
         return NULL;
     }
     // Set a read handle to the pipe to be STDIN.
-    if(!SetStdHandle(STD_INPUT_HANDLE, prc->hChildStdinRd)) {
+    if (!SetStdHandle(STD_INPUT_HANDLE, prc->hChildStdinRd)) {
         delete prc;
         return NULL;
     }
     // Duplicate the write handle to the pipe so it is not inherited.
-    fSuccess = DuplicateHandle(GetCurrentProcess(), prc->hChildStdinWr, GetCurrentProcess(), &prc->hChildStdinWrDup, 0,
+    fSuccess = DuplicateHandle(GetCurrentProcess(),
+                               prc->hChildStdinWr,
+                               GetCurrentProcess(),
+                               &prc->hChildStdinWrDup,
+                               0,
                                FALSE, // not inherited
                                DUPLICATE_SAME_ACCESS);
-    if(!fSuccess) {
+    if (!fSuccess) {
         delete prc;
         return NULL;
     }
@@ -123,7 +132,7 @@ WinProcess* WinProcess::Execute(const wxString& cmd, wxString& errMsg, const wxS
     // Set the window to hide
     siStartInfo.wShowWindow = SW_HIDE;
     BOOL ret = CreateProcess(NULL,
-                             cmd.wchar_str(), // shell line execution command
+                             cmd.wchar_str(),   // shell line execution command
                              NULL,              // process security attributes
                              NULL,              // primary thread security attributes
                              TRUE,              // handles are inherited
@@ -132,7 +141,7 @@ WinProcess* WinProcess::Execute(const wxString& cmd, wxString& errMsg, const wxS
                              wd.c_str(),        // CD to tmp dir
                              &siStartInfo,      // STARTUPINFO pointer
                              &prc->piProcInfo); // receives PROCESS_INFORMATION
-    if(ret) {
+    if (ret) {
         prc->dwProcessId = prc->piProcInfo.dwProcessId;
     } else {
         int err = GetLastError();
@@ -142,11 +151,11 @@ WinProcess* WinProcess::Execute(const wxString& cmd, wxString& errMsg, const wxS
     }
 
     // After process creation, restore the saved STDIN and STDOUT.
-    if(!SetStdHandle(STD_INPUT_HANDLE, prc->hSaveStdin)) {
+    if (!SetStdHandle(STD_INPUT_HANDLE, prc->hSaveStdin)) {
         delete prc;
         return NULL;
     }
-    if(!SetStdHandle(STD_OUTPUT_HANDLE, prc->hSaveStdout)) {
+    if (!SetStdHandle(STD_OUTPUT_HANDLE, prc->hSaveStdout)) {
 
         delete prc;
         return NULL;
@@ -167,7 +176,7 @@ WinProcess::WinProcess()
 bool WinProcess::Read(wxString& buff)
 {
     constexpr auto bufferSize = 65536; // 64K should be sufficient buffer
-    std::vector<char> chBuf(bufferSize + 1, '\0'); 
+    std::vector<char> chBuf(bufferSize + 1, '\0');
 
     // Make the pipe to non-blocking mode
     DWORD dwMode = PIPE_READMODE_BYTE | PIPE_NOWAIT;
@@ -204,15 +213,15 @@ bool WinProcess::Write(const wxString& buff)
     SetNamedPipeHandleState(hChildStdinWrDup, &dwMode, NULL,
                             NULL); // Timeout of 30 seconds
     DWORD dwWritten;
-    if(!WriteFile(hChildStdinWrDup, chBuf, (unsigned long)strlen(chBuf), &dwWritten, NULL))
+    if (!WriteFile(hChildStdinWrDup, chBuf, (unsigned long)strlen(chBuf), &dwWritten, NULL))
         return false;
     return true;
 }
 
 bool WinProcess::IsAlive()
 {
-    if(GetExitCodeProcess(piProcInfo.hProcess, &exit_code)) {
-        if(exit_code == STILL_ACTIVE)
+    if (GetExitCodeProcess(piProcInfo.hProcess, &exit_code)) {
+        if (exit_code == STILL_ACTIVE)
             return true;
     }
     return false;
@@ -220,7 +229,7 @@ bool WinProcess::IsAlive()
 
 void WinProcess::Cleanup()
 {
-    if(IsAlive())
+    if (IsAlive())
         TerminateProcess(piProcInfo.hProcess, 255);
 
     CloseHandle(hChildStdinRd);

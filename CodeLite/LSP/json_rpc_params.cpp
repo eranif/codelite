@@ -67,10 +67,10 @@ void DidChangeTextDocumentParams::FromJSON(const JSONItem& json)
 {
     m_textDocument.FromJSON(json["textDocument"]);
     m_contentChanges.clear();
-    if(json.hasNamedObject("contentChanges")) {
+    if (json.hasNamedObject("contentChanges")) {
         JSONItem arr = json.namedObject("contentChanges");
         int count = arr.arraySize();
-        for(int i = 0; i < count; ++i) {
+        for (int i = 0; i < count; ++i) {
             TextDocumentContentChangeEvent c;
             c.FromJSON(arr.arrayItem(i));
             m_contentChanges.push_back(c);
@@ -137,8 +137,8 @@ JSONItem ExecuteCommandParams::ToJSON() const
     json.addProperty("command", m_command);
     // parse the "arguments"
     // and add them
-    JSON root{ m_arguments };
-    if(root.isOk()) {
+    JSON root{m_arguments};
+    if (root.isOk()) {
         json.addProperty("arguments", std::move(root));
     }
     return json;
@@ -159,7 +159,7 @@ JSONItem CodeActionParams::ToJSON() const
     // add empty context
     auto context = json.AddObject("context");
     auto diags_arr = context.AddArray("diagnostics"); // empty array
-    for(const auto& diag : m_diagnostics) {
+    for (const auto& diag : m_diagnostics) {
         diags_arr.arrayAppend(diag.ToJSON());
     }
     return json;

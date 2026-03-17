@@ -148,7 +148,7 @@ public:
         }
         void operator()(TagEntryPtr tag)
         {
-            if(tag->IsConstructor()) {
+            if (tag->IsConstructor()) {
                 m_matches.push_back(tag);
             }
         }
@@ -253,8 +253,12 @@ public:
      * \param extFields Map of extension fields (key:value)
      * \param project Project name
      */
-    void Create(const wxString& fileName, const wxString& name, int lineNumber, const wxString& pattern,
-                const wxString& kind, wxStringMap_t& extFields);
+    void Create(const wxString& fileName,
+                const wxString& name,
+                int lineNumber,
+                const wxString& pattern,
+                const wxString& kind,
+                wxStringMap_t& extFields);
 
     /**
      * Test if this entry has been initialised.

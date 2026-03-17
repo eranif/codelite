@@ -53,7 +53,7 @@ enum IProcessCreateFlags {
     IProcessInteractiveSSH = (1 << 9),
     IProcessWrapInShell = (1 << 10),   // wrap the command in the OS shell (CMD, BASH)
     IProcessPseudoConsole = (1 << 11), // MSW only: use CreatePseudoConsole API for creating the process
-    IProcessNoPty = (1 << 12),        // Unix only: do not use forkpty, use normal fork()
+    IProcessNoPty = (1 << 12),         // Unix only: do not use forkpty, use normal fork()
 };
 
 class WXDLLIMPEXP_CL IProcess;
@@ -186,7 +186,8 @@ public:
  * @param workingDir set the working directory of the executed process
  * @return
  */
-WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString& cmd,
+WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent,
+                                            const wxString& cmd,
                                             size_t flags = IProcessCreateDefault,
                                             const wxString& workingDir = wxEmptyString,
                                             const clEnvList_t* env = nullptr,
@@ -194,7 +195,8 @@ WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxString
 /**
  * @brief same as above, but uses array of instead of a single string
  */
-WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayString& args,
+WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent,
+                                            const wxArrayString& args,
                                             size_t flags = IProcessCreateDefault,
                                             const wxString& workingDir = wxEmptyString,
                                             const clEnvList_t* env = nullptr,
@@ -204,7 +206,8 @@ WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const wxArrayS
  * @brief a wrapper for the variant that accepts wxArrayString.
  * This is because wxArrayString does not allow initializer list
  */
-WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const std::vector<wxString>& args,
+WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent,
+                                            const std::vector<wxString>& args,
                                             size_t flags = IProcessCreateDefault,
                                             const wxString& workingDir = wxEmptyString,
                                             const clEnvList_t* env = nullptr,
@@ -217,7 +220,8 @@ WXDLLIMPEXP_CL IProcess* CreateAsyncProcess(wxEvtHandler* parent, const std::vec
  * @param workingDir working directory for the new process
  * @return IProcess handle on success
  */
-WXDLLIMPEXP_CL IProcess* CreateSyncProcess(const wxString& cmd, size_t flags = IProcessCreateDefault,
+WXDLLIMPEXP_CL IProcess* CreateSyncProcess(const wxString& cmd,
+                                           size_t flags = IProcessCreateDefault,
                                            const wxString& workingDir = wxEmptyString,
                                            const clEnvList_t* env = nullptr);
 
@@ -229,8 +233,10 @@ WXDLLIMPEXP_CL IProcess* CreateSyncProcess(const wxString& cmd, size_t flags = I
  * @param workingDir set the working directory of the executed process
  * @param env
  */
-WXDLLIMPEXP_CL void CreateAsyncProcessCB(const wxString& cmd, std::function<void(const wxString&)> cb,
+WXDLLIMPEXP_CL void CreateAsyncProcessCB(const wxString& cmd,
+                                         std::function<void(const wxString&)> cb,
                                          size_t flags = IProcessCreateDefault,
-                                         const wxString& workingDir = wxEmptyString, const clEnvList_t* env = nullptr);
+                                         const wxString& workingDir = wxEmptyString,
+                                         const clEnvList_t* env = nullptr);
 
 #endif // I_PROCESS_H

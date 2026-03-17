@@ -82,16 +82,16 @@ void GitDiffDlg::CreateDiff()
 
     wxString command = PrepareCommand();
     m_plugin->DisplayMessage("GitDiff: " + command);
-    m_process = m_plugin->AsyncRunGit(this, command, IProcessCreateDefault | IProcessWrapInShell,
-                                      m_plugin->GetRepositoryPath());
+    m_process = m_plugin->AsyncRunGit(
+        this, command, IProcessCreateDefault | IProcessWrapInShell, m_plugin->GetRepositoryPath());
 }
 
 wxString GitDiffDlg::PrepareCommand() const
 {
     wxString commitsString = m_commits;
-    if(commitsString.empty()) {
+    if (commitsString.empty()) {
         // Standard diff of changes against HEAD, but which sort?
-        switch(m_radioBoxStaged->GetSelection()) {
+        switch (m_radioBoxStaged->GetSelection()) {
         case 0:
             commitsString = "";
             break; // Unstaged only
@@ -104,7 +104,7 @@ wxString GitDiffDlg::PrepareCommand() const
     }
 
     wxString command(" --no-pager diff ");
-    if(m_checkIgnoreSpace->GetValue()) {
+    if (m_checkIgnoreSpace->GetValue()) {
         command << "--ignore-all-space "; // -w
     }
 
@@ -127,7 +127,7 @@ void GitDiffDlg::SetDiff(const wxString& diff)
     m_editor->SetReadOnly(false);
     m_editor->SetText(wxT(""));
 
-    if(m_diffMap.size() != 0) {
+    if (m_diffMap.size() != 0) {
         wxStringMap_t::iterator it = m_diffMap.begin();
         m_editor->SetText((*it).second);
         m_fileListBox->Select(0);
@@ -148,7 +148,7 @@ void GitDiffDlg::OnChangeFile(wxCommandEvent& e)
 void GitDiffDlg::OnChoseCommits(wxCommandEvent& event)
 {
     GitDiffChooseCommitishDlg dlg(this, m_plugin);
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         wxString commit1 = dlg.GetFirstCommit();
         wxString joiner = dlg.GetJoiner(); // May be ' ' or '...'
         wxString commit2 = dlg.GetSecondCommit();

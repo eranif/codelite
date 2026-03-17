@@ -3,7 +3,8 @@
 #include "LSP/LSPEvent.h"
 #include "event_notifier.h"
 
-LSP::CodeActionRequest::CodeActionRequest(const LSP::TextDocumentIdentifier& textDocument, const LSP::Range& range,
+LSP::CodeActionRequest::CodeActionRequest(const LSP::TextDocumentIdentifier& textDocument,
+                                          const LSP::Range& range,
                                           const std::vector<LSP::Diagnostic>& diags)
 {
     SetMethod("textDocument/codeAction");
@@ -20,7 +21,7 @@ void LSP::CodeActionRequest::OnResponse(const LSP::ResponseMessage& response, wx
     LSP_DEBUG() << "LSP::CodeActionRequest::OnResponse()" << endl;
     LSP_DEBUG() << response.ToString() << endl;
     auto result_arr = response.Get("result");
-    if(!result_arr.isArray()) {
+    if (!result_arr.isArray()) {
         LSP_WARNING() << "CodeAction result is expected to be of type array" << endl;
         return;
     }
@@ -28,11 +29,11 @@ void LSP::CodeActionRequest::OnResponse(const LSP::ResponseMessage& response, wx
     // expected array of commands
     size_t count = result_arr.arraySize();
 
-    LSPEvent event{ wxEVT_LSP_CODE_ACTIONS };
+    LSPEvent event{wxEVT_LSP_CODE_ACTIONS};
     auto& commands = event.GetCommands();
     commands.reserve(count);
 
-    for(size_t i = 0; i < count; ++i) {
+    for (size_t i = 0; i < count; ++i) {
         LSP::Command cmd;
         cmd.FromJSON(result_arr[i]);
         commands.push_back(cmd);

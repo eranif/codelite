@@ -13,7 +13,6 @@ clCommandProcessor::clCommandProcessor(const wxString& command, const wxString& 
 {
     Bind(wxEVT_ASYNC_PROCESS_OUTPUT, &clCommandProcessor::OnProcessOutput, this);
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &clCommandProcessor::OnProcessTerminated, this);
-    
 }
 
 void clCommandProcessor::ExecuteCommand()
@@ -24,10 +23,10 @@ void clCommandProcessor::ExecuteCommand()
     clCommandEvent eventStart(wxEVT_COMMAND_PROCESSOR_OUTPUT);
     eventStart.SetString(message);
     GetFirst()->ProcessEvent(eventStart);
-    
+
     m_output.Clear();
     m_process.reset(::CreateAsyncProcess(this, m_command, m_processFlags, m_workingDirectory));
-    if(!m_process) {
+    if (!m_process) {
         clCommandEvent eventEnd(wxEVT_COMMAND_PROCESSOR_ENDED);
         eventEnd.SetString(wxString::Format(_("Failed to execute command: %s"), m_command));
         GetFirst()->ProcessEvent(eventEnd);
@@ -42,7 +41,7 @@ void clCommandProcessor::OnProcessOutput(clProcessEvent& event)
     m_output << event.GetOutput();
     eventStart.SetString(event.GetOutput());
     GetFirst()->ProcessEvent(eventStart);
-    if(eventStart.GetString() != event.GetOutput()) {
+    if (eventStart.GetString() != event.GetOutput()) {
         // user provided some input, write it to the running process
         m_process->WriteToConsole(eventStart.GetString());
     }
@@ -50,10 +49,10 @@ void clCommandProcessor::OnProcessOutput(clProcessEvent& event)
 
 void clCommandProcessor::OnProcessTerminated(clProcessEvent& event)
 {
-    if(m_obj && m_postExecCallback) {
+    if (m_obj && m_postExecCallback) {
         // Call the user callback, if the user returns false
         // stop the processor
-        if(!(m_obj->*m_postExecCallback)(this)) {
+        if (!(m_obj->*m_postExecCallback)(this)) {
             clCommandEvent eventEnd(wxEVT_COMMAND_PROCESSOR_ENDED);
             GetFirst()->ProcessEvent(eventEnd);
             DeleteChain();
@@ -61,7 +60,7 @@ void clCommandProcessor::OnProcessTerminated(clProcessEvent& event)
         }
     }
 
-    if(m_next) {
+    if (m_next) {
         m_process.reset();
         // more commands, don't report an 'END' event
         m_next->ExecuteCommand();
@@ -77,7 +76,7 @@ void clCommandProcessor::OnProcessTerminated(clProcessEvent& event)
 clCommandProcessor* clCommandProcessor::Link(clCommandProcessor* next)
 {
     this->m_next = next;
-    if(m_next) {
+    if (m_next) {
         m_next->m_prev = this;
     }
     return next;
@@ -89,7 +88,7 @@ void clCommandProcessor::DeleteChain()
     clCommandProcessor* first = GetFirst();
 
     // delete
-    while(first) {
+    while (first) {
         clCommandProcessor* next = first->m_next;
         wxDELETE(first);
         first = next;
@@ -99,7 +98,7 @@ void clCommandProcessor::DeleteChain()
 clCommandProcessor* clCommandProcessor::GetFirst()
 {
     clCommandProcessor* first = this;
-    while(first->m_prev) {
+    while (first->m_prev) {
         first = first->m_prev;
     }
     return first;
@@ -108,8 +107,8 @@ clCommandProcessor* clCommandProcessor::GetFirst()
 void clCommandProcessor::Terminate()
 {
     clCommandProcessor* first = GetFirst();
-    while(first) {
-        if(first->m_process) {
+    while (first) {
+        if (first->m_process) {
             first->m_process->Terminate();
             break;
         }

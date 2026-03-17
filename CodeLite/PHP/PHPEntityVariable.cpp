@@ -10,16 +10,16 @@ void PHPEntityVariable::PrintStdout(int indent) const
 {
     wxString indentString(' ', indent);
     wxPrintf("%s%s: %s", indentString, IsMember() ? "Member" : "Variable", GetShortName());
-    if(!GetTypeHint().IsEmpty()) {
+    if (!GetTypeHint().IsEmpty()) {
         wxPrintf(", TypeHint: %s", GetTypeHint());
     }
-    if(!GetExpressionHint().IsEmpty()) {
+    if (!GetExpressionHint().IsEmpty()) {
         wxPrintf(", ExpressionHint: %s", GetExpressionHint());
     }
-    if(IsReference()) {
+    if (IsReference()) {
         wxPrintf(", Reference");
     }
-    if(!GetDefaultValue().IsEmpty()) {
+    if (!GetDefaultValue().IsEmpty()) {
         wxPrintf(", Default: %s", GetDefaultValue());
     }
 
@@ -33,7 +33,7 @@ void PHPEntityVariable::PrintStdout(int indent) const
 
 void PHPEntityVariable::SetVisibility(int visibility)
 {
-    switch(visibility) {
+    switch (visibility) {
     case kPHP_T_PUBLIC:
         m_flags &= ~kVar_Private;
         m_flags &= ~kVar_Protected;
@@ -56,45 +56,45 @@ void PHPEntityVariable::SetVisibility(int visibility)
 
 wxString PHPEntityVariable::ToFuncArgString() const
 {
-    if(!IsFunctionArg()) {
+    if (!IsFunctionArg()) {
         return "";
     }
 
     wxString str;
-    if(!GetTypeHint().IsEmpty()) {
-        if(IsNullable()) {
+    if (!GetTypeHint().IsEmpty()) {
+        if (IsNullable()) {
             str << "?";
         }
         str << GetTypeHint() << " ";
     }
 
-    if(IsReference()) {
+    if (IsReference()) {
         str << "&";
     }
 
     str << GetShortName();
-    if(!GetDefaultValue().IsEmpty()) {
+    if (!GetDefaultValue().IsEmpty()) {
         str << " = " << GetDefaultValue();
     }
     return str;
 }
 void PHPEntityVariable::Store(PHPLookupTable* lookup)
 {
-    if(IsFunctionArg() || IsMember() || IsDefine()) {
+    if (IsFunctionArg() || IsMember() || IsDefine()) {
         try {
             wxSQLite3Database& db = lookup->Database();
-            wxSQLite3Statement statement = db.PrepareStatement(
-                "INSERT OR REPLACE INTO VARIABLES_TABLE VALUES (NULL, "
-                ":SCOPE_ID, :FUNCTION_ID, :NAME, :FULLNAME, :SCOPE, :TYPEHINT, :DEFAULT_VALUE, "
-                ":FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
+            wxSQLite3Statement statement =
+                db.PrepareStatement("INSERT OR REPLACE INTO VARIABLES_TABLE VALUES (NULL, "
+                                    ":SCOPE_ID, :FUNCTION_ID, :NAME, :FULLNAME, :SCOPE, :TYPEHINT, :DEFAULT_VALUE, "
+                                    ":FLAGS, :DOC_COMMENT, :LINE_NUMBER, :FILE_NAME)");
             wxLongLong functionId, scopeId;
-            if(IsFunctionArg()) {
+            if (IsFunctionArg()) {
                 functionId = Parent()->GetDbId();
             } else {
                 functionId = -1;
             }
 
-            if(IsMember() || IsDefine()) {
+            if (IsMember() || IsDefine()) {
                 scopeId = Parent()->GetDbId();
             } else {
                 scopeId = -1;
@@ -135,13 +135,13 @@ void PHPEntityVariable::FromResultSet(wxSQLite3ResultSet& res)
 wxString PHPEntityVariable::GetScope() const
 {
     PHPEntityBase* parent = Parent();
-    if(parent && parent->Is(kEntityTypeFunction) && IsFunctionArg()) {
+    if (parent && parent->Is(kEntityTypeFunction) && IsFunctionArg()) {
         return parent->Cast<PHPEntityFunction>()->GetScope();
 
-    } else if(parent && parent->Is(kEntityTypeClass) && IsMember()) {
+    } else if (parent && parent->Is(kEntityTypeClass) && IsMember()) {
         return parent->GetFullName();
 
-    } else if(parent && parent->Is(kEntityTypeNamespace) && IsDefine()) {
+    } else if (parent && parent->Is(kEntityTypeNamespace) && IsDefine()) {
         return parent->GetFullName();
 
     } else {
@@ -156,7 +156,7 @@ wxString PHPEntityVariable::GetDisplayName() const { return GetFullName(); }
 wxString PHPEntityVariable::GetNameNoDollar() const
 {
     wxString name = GetShortName();
-    if(name.StartsWith("$")) {
+    if (name.StartsWith("$")) {
         name.Remove(0, 1);
     }
     name.Trim().Trim(false);
@@ -173,7 +173,7 @@ wxString PHPEntityVariable::FormatPhpDoc(const CommentConfigData& data) const
 
 wxString PHPEntityVariable::ToTooltip() const
 {
-    if(IsConst() && !GetDefaultValue().IsEmpty()) {
+    if (IsConst() && !GetDefaultValue().IsEmpty()) {
         return GetDefaultValue();
     } else {
         return wxEmptyString;

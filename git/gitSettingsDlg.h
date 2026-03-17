@@ -42,9 +42,12 @@ class GitSettingsDlg : public GitSettingsDlgBase
     const wxString m_projectNameHash;
 
 public:
-    GitSettingsDlg(wxWindow* parent, const wxString& localRepoPath, const wxString& userEnteredRepoPath, const wxString& projectNameHash);
+    GitSettingsDlg(wxWindow* parent,
+                   const wxString& localRepoPath,
+                   const wxString& userEnteredRepoPath,
+                   const wxString& projectNameHash);
     virtual ~GitSettingsDlg() = default;
-    
+
     const wxString GetNewGitRepoPath() const { return m_userEnteredRepoPath; }
 
 protected:

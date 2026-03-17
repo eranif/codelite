@@ -17,7 +17,7 @@ thread_local bool is_macrodef_supported = false;
 wxString CTags::WrapSpaces(const wxString& file)
 {
     wxString fixed = file;
-    if(fixed.Contains(" ")) {
+    if (fixed.Contains(" ")) {
         fixed.Prepend("\"").Append("\"");
     }
     return fixed;
@@ -28,13 +28,16 @@ wxString fix_macro_entry(const wxString& macro)
 {
     wxString fixed = macro;
     fixed.Replace("%", "__arg_");
-    //fixed.Replace("\"", "\\\"");
+    // fixed.Replace("\"", "\\\"");
     return fixed;
 }
 } // namespace
 
-bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_indexer, const wxStringMap_t& macro_table,
-                       const wxString& ctags_kinds, wxString* output)
+bool CTags::DoGenerate(const wxString& filesContent,
+                       const wxString& codelite_indexer,
+                       const wxStringMap_t& macro_table,
+                       const wxString& ctags_kinds,
+                       wxString* output)
 {
     Initialise(codelite_indexer);
     clDEBUG() << "Generating ctags files" << clEndl;
@@ -44,15 +47,15 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
     std::vector<wxString> options_arr;
     options_arr.reserve(500);
     wxString fields_cxx = "--fields-c++=+{template}+{properties}";
-    if(is_macrodef_supported) {
+    if (is_macrodef_supported) {
         fields_cxx << "+{macrodef}";
     }
 
-    options_arr = { "--extras=-p",       "--excmd=pattern",      "--sort=no",
-                    "--fields=aKmSsnit", "--language-force=c++", fields_cxx };
+    options_arr = {
+        "--extras=-p", "--excmd=pattern", "--sort=no", "--fields=aKmSsnit", "--language-force=c++", fields_cxx};
 
     wxString kinds_string;
-    if(ctags_kinds.empty()) {
+    if (ctags_kinds.empty()) {
         // default
         kinds_string << " --c-kinds=+pxz --C++-kinds=+pxz ";
     } else {
@@ -61,12 +64,12 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
 
     // we want the macros ordered, so we push them into std::set
     std::set<wxString> macros;
-    for(const auto& vt : macro_table) {
+    for (const auto& vt : macro_table) {
         wxString macro_replacements;
         wxString fixed_macro_name = fix_macro_entry(vt.first);
         wxString fixed_macro_value = fix_macro_entry(vt.second);
 
-        if(fixed_macro_value.empty()) {
+        if (fixed_macro_value.empty()) {
             // simple -D
             macro_replacements << "-D" << fixed_macro_name;
         } else {
@@ -78,17 +81,17 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
     }
 
     // write the options into a file
-    wxFileName ctags_options_file(clStandardPaths::Get().GetUserDataDir(),
-                                  wxString() << "options-" << wxThread::GetCurrentId() << ".ctags");
-    FileUtils::Deleter d{ ctags_options_file };
+    wxFileName ctags_options_file(
+        clStandardPaths::Get().GetUserDataDir(), wxString() << "options-" << wxThread::GetCurrentId() << ".ctags");
+    FileUtils::Deleter d{ctags_options_file};
 
     wxString ctags_options_file_content;
-    for(const wxString& option : options_arr) {
+    for (const wxString& option : options_arr) {
         ctags_options_file_content << option << "\n";
     }
 
     // append the macros
-    for(const auto& macro : macros) {
+    for (const auto& macro : macros) {
         ctags_options_file_content << macro << "\n";
     }
     ctags_options_file_content.Trim();
@@ -99,8 +102,8 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
 
     sw.Start();
     // Split the list of files
-    wxFileName file_list(clStandardPaths::Get().GetTempDir(),
-                         wxString() << "file-list-" << wxThread::GetCurrentId() << ".txt");
+    wxFileName file_list(
+        clStandardPaths::Get().GetTempDir(), wxString() << "file-list-" << wxThread::GetCurrentId() << ".txt");
     FileUtils::WriteFileContent(file_list, filesContent);
 
     wxString command_to_run;
@@ -118,15 +121,17 @@ bool CTags::DoGenerate(const wxString& filesContent, const wxString& codelite_in
     return true;
 }
 
-size_t CTags::ParseFiles(const std::vector<wxString>& files, const wxString& codelite_indexer,
-                         const wxStringMap_t& macro_table, std::vector<TagEntryPtr>& tags)
+size_t CTags::ParseFiles(const std::vector<wxString>& files,
+                         const wxString& codelite_indexer,
+                         const wxStringMap_t& macro_table,
+                         std::vector<TagEntryPtr>& tags)
 {
     wxString filesList;
-    for(const auto& file : files) {
+    for (const auto& file : files) {
         filesList << file << "\n";
     }
     wxString content;
-    if(!DoGenerate(filesList, codelite_indexer, macro_table, wxEmptyString, &content)) {
+    if (!DoGenerate(filesList, codelite_indexer, macro_table, wxEmptyString, &content)) {
         return 0;
     }
 
@@ -136,9 +141,9 @@ size_t CTags::ParseFiles(const std::vector<wxString>& files, const wxString& cod
 
     // convert the lines into tags
     TagEntryPtr prev_scoped_tag = nullptr;
-    for(wxString& line : lines) {
+    for (wxString& line : lines) {
         line.Trim(false).Trim();
-        if(line.empty()) {
+        if (line.empty()) {
             continue;
         }
 
@@ -147,18 +152,18 @@ size_t CTags::ParseFiles(const std::vector<wxString>& files, const wxString& cod
         auto tag = tags.back();
         tag->FromLine(line);
 
-        if(tag->IsEnumerator()                                // looking at an enumerator
-           && prev_scoped_tag                                 // we have a previously seen scope
-           && prev_scoped_tag->GetFile() == tag->GetFile()    /// and they are on the same file
-           && prev_scoped_tag->GetName() == tag->GetParent()) // and it belongs to it
+        if (tag->IsEnumerator()                                // looking at an enumerator
+            && prev_scoped_tag                                 // we have a previously seen scope
+            && prev_scoped_tag->GetFile() == tag->GetFile()    /// and they are on the same file
+            && prev_scoped_tag->GetName() == tag->GetParent()) // and it belongs to it
         {
             // remove one part of the scope
             wxArrayString scopes = ::wxStringTokenize(tag->GetScope(), ":", wxTOKEN_STRTOK);
-            if(scopes.size()) {
+            if (scopes.size()) {
                 scopes.pop_back(); // remove the last part of the scope
                 wxString new_scope;
-                for(const wxString& scope : scopes) {
-                    if(!new_scope.empty()) {
+                for (const wxString& scope : scopes) {
+                    if (!new_scope.empty()) {
                         new_scope << "::";
                     }
                     new_scope << scope;
@@ -168,25 +173,30 @@ size_t CTags::ParseFiles(const std::vector<wxString>& files, const wxString& cod
             }
         }
 
-        if(tag->IsEnum()) {
+        if (tag->IsEnum()) {
             prev_scoped_tag = tag;
         }
     }
 
-    if(tags.empty()) {
+    if (tags.empty()) {
         clDEBUG() << "0 tags, ctags output:" << content << endl;
     }
     return tags.size();
 }
 
-size_t CTags::ParseFile(const wxString& file, const wxString& codelite_indexer, const wxStringMap_t& macro_table,
+size_t CTags::ParseFile(const wxString& file,
+                        const wxString& codelite_indexer,
+                        const wxStringMap_t& macro_table,
                         std::vector<TagEntryPtr>& tags)
 {
-    return ParseFiles({ file }, codelite_indexer, macro_table, tags);
+    return ParseFiles({file}, codelite_indexer, macro_table, tags);
 }
 
-size_t CTags::ParseBuffer(const wxFileName& filename, const wxString& buffer, const wxString& codelite_indexer,
-                          const wxStringMap_t& macro_table, std::vector<TagEntryPtr>& tags)
+size_t CTags::ParseBuffer(const wxFileName& filename,
+                          const wxString& buffer,
+                          const wxString& codelite_indexer,
+                          const wxStringMap_t& macro_table,
+                          std::vector<TagEntryPtr>& tags)
 {
     // create a temporary file with the content we want to parse
     clTempFile temp_file("cpp");
@@ -194,14 +204,17 @@ size_t CTags::ParseBuffer(const wxFileName& filename, const wxString& buffer, co
     // parse the file
     ParseFile(temp_file.GetFileName().GetFullPath(), codelite_indexer, macro_table, tags);
     // set the file name to the correct file
-    for(TagEntryPtr tag : tags) {
+    for (TagEntryPtr tag : tags) {
         tag->SetFile(filename.GetFullPath());
     }
     return tags.size();
 }
 
-size_t CTags::ParseLocals(const wxFileName& filename, const wxString& buffer, const wxString& codelite_indexer,
-                          const wxStringMap_t& macro_table, std::vector<TagEntryPtr>& tags)
+size_t CTags::ParseLocals(const wxFileName& filename,
+                          const wxString& buffer,
+                          const wxString& codelite_indexer,
+                          const wxStringMap_t& macro_table,
+                          std::vector<TagEntryPtr>& tags)
 {
     wxString content;
     {
@@ -212,7 +225,7 @@ size_t CTags::ParseLocals(const wxFileName& filename, const wxString& buffer, co
         filesList << temp_file.GetFullPath() << "\n";
 
         // we want locals + functions (to resolve the scope)
-        if(!DoGenerate(filesList, codelite_indexer, macro_table, "lzpvfm", &content)) {
+        if (!DoGenerate(filesList, codelite_indexer, macro_table, "lzpvfm", &content)) {
             return 0;
         }
     }
@@ -222,9 +235,9 @@ size_t CTags::ParseLocals(const wxFileName& filename, const wxString& buffer, co
     tags.reserve(lines.size());
 
     // convert the lines into tags
-    for(auto& line : lines) {
+    for (auto& line : lines) {
         line.Trim().Trim(false);
-        if(line.empty()) {
+        if (line.empty()) {
             continue;
         }
 
@@ -235,7 +248,7 @@ size_t CTags::ParseLocals(const wxFileName& filename, const wxString& buffer, co
         tag->SetFile(filename.GetFullPath());
     }
 
-    if(tags.empty()) {
+    if (tags.empty()) {
         clDEBUG() << "0 local tags, ctags output:" << content << endl;
     }
     return tags.size();
@@ -243,22 +256,22 @@ size_t CTags::ParseLocals(const wxFileName& filename, const wxString& buffer, co
 
 void CTags::Initialise(const wxString& codelite_indexer)
 {
-    if(is_initialised) {
+    if (is_initialised) {
         return;
     }
 
     is_initialised = true;
     // check whether we have `macrodef` supported
     wxString output;
-    std::vector<wxString> command = { codelite_indexer, "--list-fields=c++" };
+    std::vector<wxString> command = {codelite_indexer, "--list-fields=c++"};
     auto process = ::CreateAsyncProcess(nullptr, command, IProcessCreateSync, wxEmptyString, nullptr, wxEmptyString);
-    if(process) {
+    if (process) {
         process->WaitForTerminate(output);
     }
 
     wxArrayString lines = ::wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
-    for(const auto& line : lines) {
-        if(line.Contains("macrodef")) {
+    for (const auto& line : lines) {
+        if (line.Contains("macrodef")) {
             is_macrodef_supported = true;
             break;
         }

@@ -26,18 +26,20 @@
 #ifndef INCLUDE_FINDER_H
 #define INCLUDE_FINDER_H
 
-#include <vector>
-#include <string>
 #include "codelite_exports.h"
 
-class WXDLLIMPEXP_CL IncludeStatement {
+#include <string>
+#include <vector>
+
+class WXDLLIMPEXP_CL IncludeStatement
+{
 public:
-	std::string file;
-	int         line;
-	std::string includedFrom;
-	std::string pattern;
+    std::string file;
+    int line;
+    std::string includedFrom;
+    std::string pattern;
 };
 
-extern WXDLLIMPEXP_CL int IncludeFinder( const char* filePath, std::vector<IncludeStatement> &includes );
+extern WXDLLIMPEXP_CL int IncludeFinder(const char* filePath, std::vector<IncludeStatement>& includes);
 
 #endif

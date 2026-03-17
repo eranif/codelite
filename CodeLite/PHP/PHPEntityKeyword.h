@@ -27,6 +27,7 @@
 #define PHPENTITYKEYWORD_H
 
 #include "PHPEntityBase.h"
+
 #include <wx/string.h>
 
 class WXDLLIMPEXP_CL PHPEntityKeyword : public PHPEntityBase
@@ -36,7 +37,7 @@ public:
     virtual ~PHPEntityKeyword() = default;
     void FromJSON(const JSONItem& json);
     JSONItem ToJSON() const;
-    
+
 public:
     virtual wxString FormatPhpDoc(const CommentConfigData& data) const;
     virtual void FromResultSet(wxSQLite3ResultSet& res);

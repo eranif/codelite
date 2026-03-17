@@ -50,11 +50,10 @@ class WXDLLIMPEXP_CL DirTraverser : public wxDirTraverser
     wxArrayString m_excludeDirs;
 
 public:
-
     /**
      * Construct a DirTraverser with a given file spec
      */
-    DirTraverser(const wxString &filespec);
+    DirTraverser(const wxString& filespec);
     virtual ~DirTraverser() = default;
 
     /**
@@ -66,7 +65,7 @@ public:
      * \param filename name of the file that was found
      * \return one of the values wxDIR_STOP, wxDIR_IGNORE or wxDIR_CONTINUE
      */
-    virtual wxDirTraverseResult  OnFile(const wxString& filename);
+    virtual wxDirTraverseResult OnFile(const wxString& filename);
 
     /**
      * This function is called once a directory is found. The traverse of the directories
@@ -79,20 +78,14 @@ public:
      */
     virtual wxDirTraverseResult OnDir(const wxString& dirname);
 
-    void SetExcludeDirs(const wxArrayString& excludeDirs) {
-        this->m_excludeDirs = excludeDirs;
-    }
-    const wxArrayString& GetExcludeDirs() const {
-        return m_excludeDirs;
-    }
+    void SetExcludeDirs(const wxArrayString& excludeDirs) { this->m_excludeDirs = excludeDirs; }
+    const wxArrayString& GetExcludeDirs() const { return m_excludeDirs; }
 
     /**
      * Return list of files found
      * \return Return list of files found
      */
-    wxArrayString& GetFiles() {
-        return m_files;
-    }
+    wxArrayString& GetFiles() { return m_files; }
 };
 
-#endif //DIRTRAVERSER_H
+#endif // DIRTRAVERSER_H

@@ -26,6 +26,7 @@
 #if USE_SFTP
 
 #include "cl_sftp_attribute.h"
+
 #include <libssh/sftp.h>
 
 SFTPAttribute::SFTPAttribute(SFTPAttribute_t attr)
@@ -46,7 +47,7 @@ void SFTPAttribute::Assign(SFTPAttribute_t attr)
 
 void SFTPAttribute::DoClear()
 {
-    if(m_attributes) {
+    if (m_attributes) {
         sftp_attributes_free(m_attributes);
     }
     m_attributes = NULL;
@@ -58,7 +59,7 @@ void SFTPAttribute::DoClear()
 
 void SFTPAttribute::DoConstruct()
 {
-    if(!m_attributes)
+    if (!m_attributes)
         return;
 
     m_name = m_attributes->name;
@@ -66,7 +67,7 @@ void SFTPAttribute::DoConstruct()
     m_permissions = m_attributes->permissions;
     m_flags = 0;
 
-    switch(m_attributes->type) {
+    switch (m_attributes->type) {
     case SSH_FILEXFER_TYPE_DIRECTORY:
         m_flags |= TYPE_FOLDER;
         break;
@@ -90,20 +91,20 @@ void SFTPAttribute::DoConstruct()
 
 wxString SFTPAttribute::GetTypeAsString() const
 {
-    if(IsSymlink()) {
-        if(IsFolder()) {
+    if (IsSymlink()) {
+        if (IsFolder()) {
             return " -> " + GetSymlinkPath();
-        } else if(IsFile()) {
+        } else if (IsFile()) {
             return " -> " + GetSymlinkPath();
         } else {
             return "Symlink";
         }
     } else {
-        if(IsSpecial()) {
+        if (IsSpecial()) {
             return "Special";
-        } else if(IsFolder()) {
+        } else if (IsFolder()) {
             return "Folder";
-        } else if(IsFile()) {
+        } else if (IsFile()) {
             return "File";
         } else {
             return "Unknown";
@@ -113,10 +114,10 @@ wxString SFTPAttribute::GetTypeAsString() const
 
 bool SFTPAttribute::Compare(SFTPAttribute::Ptr_t one, SFTPAttribute::Ptr_t two)
 {
-    if(one->IsFolder() && !two->IsFolder()) {
+    if (one->IsFolder() && !two->IsFolder()) {
         return true;
 
-    } else if(!one->IsFolder() && two->IsFolder()) {
+    } else if (!one->IsFolder() && two->IsFolder()) {
         return false;
 
     } else {

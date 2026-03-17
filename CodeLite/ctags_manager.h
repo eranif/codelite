@@ -29,8 +29,8 @@
 #include "codelite_exports.h"
 #include "database/istorage.h"
 #include "macros.h"
-#include "tags_options_data.h"
 #include "tag_tree.h"
+#include "tags_options_data.h"
 
 #include <wx/event.h>
 
@@ -168,7 +168,8 @@ public:
      * @brief parse source file (from memory) and return list of tags
      * If "filename" is passed, each returned TagEntryPtr will have it as its "File" attribute
      */
-    TagEntryPtrVector_t ParseBuffer(const wxString& content, const wxString& filename = wxEmptyString,
+    TagEntryPtrVector_t ParseBuffer(const wxString& content,
+                                    const wxString& filename = wxEmptyString,
                                     const wxString& kinds = "cdefgmnpstuv");
 
     /**
@@ -303,7 +304,8 @@ public:
      * set to false
      * @return stripped functions signature
      */
-    wxString NormalizeFunctionSig(const wxString& sig, size_t flags = Normalize_Func_Name,
+    wxString NormalizeFunctionSig(const wxString& sig,
+                                  size_t flags = Normalize_Func_Name,
                                   std::vector<std::pair<int, int>>* paramLen = NULL);
 
     /**
@@ -318,7 +320,9 @@ public:
      * to place the function body. set visibility to 0 for 'public' function, 1 for 'protected' and 2 for private
      * return true if this function succeeded, false otherwise
      */
-    bool InsertFunctionDecl(const wxString& clsname, const wxString& functionDecl, wxString& sourceContent,
+    bool InsertFunctionDecl(const wxString& clsname,
+                            const wxString& functionDecl,
+                            wxString& sourceContent,
                             int visibility = 0);
 
     /**
@@ -329,8 +333,11 @@ public:
      * @param line [output] line number where to add the forward declaration
      * @param impExpMacro [optional/input] Windows DLL Imp/Exp macro
      */
-    void InsertForwardDeclaration(const wxString& classname, const wxString& fileContent, wxString& lineToAdd,
-                                  int& line, const wxString& impExpMacro = "");
+    void InsertForwardDeclaration(const wxString& classname,
+                                  const wxString& fileContent,
+                                  wxString& lineToAdd,
+                                  int& line,
+                                  const wxString& impExpMacro = "");
 
 protected:
     std::map<wxString, bool> m_typeScopeCache;
@@ -352,13 +359,17 @@ private:
      * @param derivationList
      * @param scannedInherits
      */
-    bool GetDerivationList(const wxString& path, TagEntryPtr parentTag,
-                           std::vector<std::pair<wxString, int>>& derivationList, std::unordered_set<wxString>& visited,
+    bool GetDerivationList(const wxString& path,
+                           TagEntryPtr parentTag,
+                           std::vector<std::pair<wxString, int>>& derivationList,
+                           std::unordered_set<wxString>& visited,
                            int depth);
 
-    bool GetDerivationListInternal(const wxString& path, TagEntryPtr parentTag,
+    bool GetDerivationListInternal(const wxString& path,
+                                   TagEntryPtr parentTag,
                                    std::vector<std::pair<wxString, int>>& derivationList,
-                                   std::unordered_set<wxString>& visited, int depth);
+                                   std::unordered_set<wxString>& visited,
+                                   int depth);
 
 public:
     /**

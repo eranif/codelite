@@ -26,8 +26,9 @@
 #ifndef PHPENTITYNAMESPACE_H
 #define PHPENTITYNAMESPACE_H
 
-#include "codelite_exports.h"
 #include "PHPEntityBase.h" // Base class: PHPEntityBase
+#include "codelite_exports.h"
+
 #include <wx/string.h>
 
 class WXDLLIMPEXP_CL PHPEntityNamespace : public PHPEntityBase
@@ -38,7 +39,7 @@ protected:
 public:
     void FromJSON(const JSONItem& json);
     JSONItem ToJSON() const;
-    
+
     wxString GetParentNamespace() const;
     virtual wxString FormatPhpDoc(const CommentConfigData& data) const;
     virtual wxString GetDisplayName() const;
@@ -49,11 +50,11 @@ public:
     virtual void PrintStdout(int indent) const;
     PHPEntityNamespace() = default;
     virtual ~PHPEntityNamespace() = default;
-    
+
     /**
      * @brief build namespace from 2 strings
      */
-    static wxString BuildNamespace(const wxString &part1, const wxString &part2);
+    static wxString BuildNamespace(const wxString& part1, const wxString& part2);
 };
 
 #endif // PHPENTITYNAMESPACE_H

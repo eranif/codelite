@@ -8,7 +8,7 @@ LSP::ResponseError::ResponseError(const wxString& message)
 
 void LSP::ResponseError::FromJSON(const JSONItem& json)
 {
-    if(json.hasNamedObject("error")) {
+    if (json.hasNamedObject("error")) {
         // serialize the parent
         this->Message::FromJSON(json);
 

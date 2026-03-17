@@ -37,8 +37,19 @@ std::unordered_set<int> set_operators_tokens = {
 };
 
 std::unordered_set<int> set_builtin_types = {
-    T_BOOL, T_CHAR,  T_CHAR16_T, T_CHAR32_T, T_DOUBLE, T_FLOAT,   T_INT,
-    T_LONG, T_SHORT, T_SIGNED,   T_UNSIGNED, T_VOID,   T_WCHAR_T,
+    T_BOOL,
+    T_CHAR,
+    T_CHAR16_T,
+    T_CHAR32_T,
+    T_DOUBLE,
+    T_FLOAT,
+    T_INT,
+    T_LONG,
+    T_SHORT,
+    T_SIGNED,
+    T_UNSIGNED,
+    T_VOID,
+    T_WCHAR_T,
 };
 std::unordered_set<int> set_keywords_tokens = {
     T_ALIGNAS,     T_ALIGNOF,      T_AND,          T_AND_EQ,

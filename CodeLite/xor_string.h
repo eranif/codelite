@@ -33,14 +33,14 @@
 class WXDLLIMPEXP_CL XORString
 {
     wxString m_value;
-    
+
 protected:
-    wxString toHexString(const wxString &value) const;
+    wxString toHexString(const wxString& value) const;
     wxString fromHexString(const wxString& hexString) const;
     wxString XOR(const wxString& str, const wxChar KEY) const;
-    
+
 public:
-    XORString(const wxString &value);
+    XORString(const wxString& value);
     XORString() = default;
     virtual ~XORString() = default;
 

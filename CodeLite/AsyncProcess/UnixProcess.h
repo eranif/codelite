@@ -1,6 +1,7 @@
 #ifndef UNIX_PROCESS_H
 #define UNIX_PROCESS_H
 #if defined(__WXGTK__) || defined(__WXOSX__)
+#include <atomic>
 #include <exception>
 #include <functional>
 #include <iostream>
@@ -8,16 +9,15 @@
 #include <sys/wait.h>
 #include <thread>
 #include <unistd.h>
-#include <wx/thread.h>
-#include <wx/msgqueue.h>
-#include <atomic>
 #include <wx/event.h>
+#include <wx/msgqueue.h>
+#include <wx/thread.h>
 
 // Wrapping pipe in a class makes sure they are closed when we leave scope
-#define CLOSE_FD(fd)        \
-    if(fd != wxNOT_FOUND) { \
-        ::close(fd);        \
-        fd = wxNOT_FOUND;   \
+#define CLOSE_FD(fd)         \
+    if (fd != wxNOT_FOUND) { \
+        ::close(fd);         \
+        fd = wxNOT_FOUND;    \
     }
 
 class CPipe
@@ -39,7 +39,7 @@ public:
     bool Open()
     {
         int fd[2];
-        if(pipe(fd) == 0) {
+        if (pipe(fd) == 0) {
             m_readFd = fd[0];
             m_writeFd = fd[1];
             return true;

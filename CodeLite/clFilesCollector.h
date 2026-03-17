@@ -45,25 +45,38 @@ public:
      * @param excludeFolders list of folder to exclude from the search
      * @return number of files found
      */
-    size_t Scan(const wxString& rootFolder, std::vector<wxString>& filesOutput, const wxString& filespec = "*",
-                const wxString& excludeFilespec = "", const wxStringSet_t& excludeFolders = wxStringSet_t());
+    size_t Scan(const wxString& rootFolder,
+                std::vector<wxString>& filesOutput,
+                const wxString& filespec = "*",
+                const wxString& excludeFilespec = "",
+                const wxStringSet_t& excludeFolders = wxStringSet_t());
     /**
      * @brief same as above, but accepts the ignore directories list in a spec format
      */
-    size_t Scan(const wxString& rootFolder, std::vector<wxFileName>& filesOutput, const wxString& filespec,
-                const wxString& excludeFilespec, const wxString& excludeFoldersSpec);
-    size_t Scan(const wxString& rootFolder, wxArrayString& filesOutput, const wxString& filespec,
-                const wxString& excludeFilespec, const wxString& excludeFoldersSpec);
+    size_t Scan(const wxString& rootFolder,
+                std::vector<wxFileName>& filesOutput,
+                const wxString& filespec,
+                const wxString& excludeFilespec,
+                const wxString& excludeFoldersSpec);
+    size_t Scan(const wxString& rootFolder,
+                wxArrayString& filesOutput,
+                const wxString& filespec,
+                const wxString& excludeFilespec,
+                const wxString& excludeFoldersSpec);
     /**
      * @brief similar to the above, however, whenever a method is found, collect_cb is invoked
      */
-    size_t Scan(const wxString& rootFolder, const wxString& filespec, const wxString& excludeFilespec,
-                const wxString& excludeFoldersSpec, std::function<bool(const wxString&)>&& collect_cb);
+    size_t Scan(const wxString& rootFolder,
+                const wxString& filespec,
+                const wxString& excludeFilespec,
+                const wxString& excludeFoldersSpec,
+                std::function<bool(const wxString&)>&& collect_cb);
     /**
      * @brief scan folder for files and folders. This function does not recurse into folders. Everything that matches
      * "matchSpec" will get collected.
      */
-    size_t ScanNoRecurse(const wxString& rootFolder, clFilesScanner::EntryData::Vec_t& results,
+    size_t ScanNoRecurse(const wxString& rootFolder,
+                         clFilesScanner::EntryData::Vec_t& results,
                          const wxString& matchSpec = "*");
 
     /**
@@ -73,8 +86,10 @@ public:
      * it
      * @param on_file_cb called when a file is found.
      */
-    void ScanWithCallbacks(const wxString& rootFolder, std::function<bool(const wxString&)>&& on_folder_cb,
-                           std::function<void(const wxArrayString&)>&& on_file_cb, size_t search_flags = SF_DEFAULT);
+    void ScanWithCallbacks(const wxString& rootFolder,
+                           std::function<bool(const wxString&)>&& on_folder_cb,
+                           std::function<void(const wxArrayString&)>&& on_file_cb,
+                           size_t search_flags = SF_DEFAULT);
 };
 
 #endif // CLFILESCOLLECTOR_H

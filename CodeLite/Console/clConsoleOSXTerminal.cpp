@@ -29,11 +29,11 @@ wxString clConsoleOSXTerminal::PrepareCommand()
     // osascript -e 'tell app "Terminal" to do script "echo hello"'
     wxFileName scriptPath = PrepareExecScript();
 
-    if(IsTerminalNeeded()) {
+    if (IsTerminalNeeded()) {
         commandToExecute << "open -n -a " << GetTerminalApp();
     }
 
-    if(!GetCommand().IsEmpty()) {
+    if (!GetCommand().IsEmpty()) {
         commandToExecute << " " << scriptPath.GetFullPath();
     }
     clDEBUG() << commandToExecute;

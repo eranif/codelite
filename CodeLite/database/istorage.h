@@ -80,7 +80,7 @@ public:
 
     void SetSingleSearchLimit(int singleSearchLimit)
     {
-        if(singleSearchLimit < 0) {
+        if (singleSearchLimit < 0) {
             singleSearchLimit = MAX_SEARCH_LIMIT;
         }
         this->m_singleSearchLimit = singleSearchLimit;
@@ -98,9 +98,13 @@ public:
      * @param name
      * @param partialNameAllowed
      */
-    virtual void GetTagsByScopeAndName(const wxString& scope, const wxString& name, bool partialNameAllowed,
+    virtual void GetTagsByScopeAndName(const wxString& scope,
+                                       const wxString& name,
+                                       bool partialNameAllowed,
                                        std::vector<TagEntryPtr>& tags) = 0;
-    virtual void GetTagsByScopeAndName(const wxArrayString& scope, const wxString& name, bool partialNameAllowed,
+    virtual void GetTagsByScopeAndName(const wxArrayString& scope,
+                                       const wxString& name,
+                                       bool partialNameAllowed,
                                        std::vector<TagEntryPtr>& tags) = 0;
 
     /**
@@ -120,7 +124,9 @@ public:
      * @param order OrderAsc, OrderDesc or use OrderNone for no ordering the results
      * @param tags
      */
-    virtual void GetTagsByKind(const wxArrayString& kinds, const wxString& orderingColumn, int order,
+    virtual void GetTagsByKind(const wxArrayString& kinds,
+                               const wxString& orderingColumn,
+                               int order,
                                std::vector<TagEntryPtr>& tags) = 0;
 
     /**
@@ -130,16 +136,18 @@ public:
      */
     virtual void GetTagsByPath(const wxArrayString& path, std::vector<TagEntryPtr>& tags) = 0;
     virtual void GetTagsByPath(const wxString& path, std::vector<TagEntryPtr>& tags, int limit = 1) = 0;
-    virtual void GetTagsByPathAndKind(const wxString& path, std::vector<TagEntryPtr>& tags,
-                                      const std::vector<wxString>& kinds, int limit = 1) = 0;
+    virtual void GetTagsByPathAndKind(const wxString& path,
+                                      std::vector<TagEntryPtr>& tags,
+                                      const std::vector<wxString>& kinds,
+                                      int limit = 1) = 0;
 
     /**
      * @brief return array of items by name and parent
      * @param path
      * @param tags
      */
-    virtual void GetTagsByNameAndParent(const wxString& name, const wxString& parent,
-                                        std::vector<TagEntryPtr>& tags) = 0;
+    virtual void
+    GetTagsByNameAndParent(const wxString& name, const wxString& parent, std::vector<TagEntryPtr>& tags) = 0;
 
     /**
      * @brief return array of tags by kind and path
@@ -147,8 +155,8 @@ public:
      * @param path
      * @param tags  [output]
      */
-    virtual void GetTagsByKindAndPath(const wxArrayString& kinds, const wxString& path,
-                                      std::vector<TagEntryPtr>& tags) = 0;
+    virtual void
+    GetTagsByKindAndPath(const wxArrayString& kinds, const wxString& path, std::vector<TagEntryPtr>& tags) = 0;
 
     /**
      * @brief return tags by file and line number
@@ -164,7 +172,9 @@ public:
      * @param kinds
      * @param tags [output]
      */
-    virtual void GetTagsByScopeAndKind(const wxString& scope, const wxArrayString& kinds, const wxString& filter,
+    virtual void GetTagsByScopeAndKind(const wxString& scope,
+                                       const wxArrayString& kinds,
+                                       const wxString& filter,
                                        std::vector<TagEntryPtr>& tags) = 0;
 
     /**
@@ -174,8 +184,11 @@ public:
      * @param order OrderAsc, OrderDesc or use OrderNone for no ordering the results
      * @param tags
      */
-    virtual void GetTagsByKindAndFile(const wxArrayString& kind, const wxString& fileName,
-                                      const wxString& orderingColumn, int order, std::vector<TagEntryPtr>& tags) = 0;
+    virtual void GetTagsByKindAndFile(const wxArrayString& kind,
+                                      const wxString& fileName,
+                                      const wxString& orderingColumn,
+                                      int order,
+                                      std::vector<TagEntryPtr>& tags) = 0;
 
     /**
      * @brief
@@ -222,8 +235,8 @@ public:
      * @param path Database file name
      * @return result set
      */
-    virtual void SelectTagsByFile(const wxString& file, std::vector<TagEntryPtr>& tags,
-                                  const wxFileName& path = wxFileName()) = 0;
+    virtual void
+    SelectTagsByFile(const wxString& file, std::vector<TagEntryPtr>& tags, const wxFileName& path = wxFileName()) = 0;
 
     /**
      * @brief return true if type exist under a given scope.
@@ -320,8 +333,8 @@ public:
      * @param kinds array of possible kinds
      * @param tags [output]
      */
-    virtual void GetTagsByScopesAndKind(const wxArrayString& scopes, const wxArrayString& kinds,
-                                        std::vector<TagEntryPtr>& tags) = 0;
+    virtual void
+    GetTagsByScopesAndKind(const wxArrayString& scopes, const wxArrayString& kinds, std::vector<TagEntryPtr>& tags) = 0;
 
     /**
      * @brief return macro evaluation
@@ -354,7 +367,9 @@ public:
      * this usually includes static members, or any entity
      * in an anonymous namespace
      */
-    virtual size_t GetFileScopedTags(const wxString& filepath, const wxString& name, const wxArrayString& kinds,
+    virtual size_t GetFileScopedTags(const wxString& filepath,
+                                     const wxString& name,
+                                     const wxArrayString& kinds,
                                      std::vector<TagEntryPtr>& tags) = 0;
 
     /**

@@ -95,12 +95,14 @@ private:
     void DoAddNameFilter(wxString& sql, const wxString& nameHint, size_t flags);
 
     void CreateSchema();
-    PHPEntityBase::Ptr_t DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName,
-                                        bool parentIsNamespace = false);
+    PHPEntityBase::Ptr_t
+    DoFindMemberOf(wxLongLong parentDbId, const wxString& exactName, bool parentIsNamespace = false);
 
     void DoFixVarsDocComment(PHPEntityBase::List_t& matches, wxLongLong parentId);
-    void DoGetInheritanceParentIDs(PHPEntityBase::Ptr_t cls, std::vector<wxLongLong>& parents,
-                                   std::set<wxLongLong>& parentsVisited, bool excludeSelf);
+    void DoGetInheritanceParentIDs(PHPEntityBase::Ptr_t cls,
+                                   std::vector<wxLongLong>& parents,
+                                   std::set<wxLongLong>& parentsVisited,
+                                   bool excludeSelf);
 
     /**
      * @brief find namespace by fullname. If it does not exist, add it and return a pointer to it
@@ -126,7 +128,9 @@ private:
      * @brief load entities from table and name hint
      * if nameHint is empty, return empty list
      */
-    void LoadFromTableByNameHint(PHPEntityBase::List_t& matches, const wxString& tableName, const wxString& nameHint,
+    void LoadFromTableByNameHint(PHPEntityBase::List_t& matches,
+                                 const wxString& tableName,
+                                 const wxString& nameHint,
                                  eLookupFlags flags);
 
     /**
@@ -137,7 +141,9 @@ private:
     /**
      * @brief return children of parentId _WITHOUT_ taking inheritance into consideration
      */
-    void DoFindChildren(PHPEntityBase::List_t& matches, wxLongLong parentId, size_t flags = kLookupFlags_None,
+    void DoFindChildren(PHPEntityBase::List_t& matches,
+                        wxLongLong parentId,
+                        size_t flags = kLookupFlags_None,
                         const wxString& nameHint = "");
 
     /**
@@ -236,8 +242,8 @@ public:
     /**
      * @brief find children of a scope by its database ID.
      */
-    PHPEntityBase::List_t FindChildren(wxLongLong parentId, size_t flags = kLookupFlags_None,
-                                       const wxString& nameHint = "");
+    PHPEntityBase::List_t
+    FindChildren(wxLongLong parentId, size_t flags = kLookupFlags_None, const wxString& nameHint = "");
 
     /**
      * @brief find list of symbols with a given name (regardless of the type / scope)
@@ -260,7 +266,8 @@ public:
      * @brief load list of entities from all the tables that matches 'nameHint'
      * if nameHint is empty, return an empty list
      */
-    void LoadAllByFilter(PHPEntityBase::List_t& matches, const wxString& nameHint,
+    void LoadAllByFilter(PHPEntityBase::List_t& matches,
+                         const wxString& nameHint,
                          eLookupFlags flags = kLookupFlags_Contains);
     /**
      * @brief save source file into the database
@@ -271,7 +278,9 @@ public:
      * @brief update list of source files
      */
     template <typename GoindDownFunc>
-    void RecreateSymbolsDatabase(const wxArrayString& files, eUpdateMode updateMode, GoindDownFunc pFuncGoingDown,
+    void RecreateSymbolsDatabase(const wxArrayString& files,
+                                 eUpdateMode updateMode,
+                                 GoindDownFunc pFuncGoingDown,
                                  bool parseFuncBodies = true);
 
     /**
@@ -294,8 +303,10 @@ public:
 };
 
 template <typename GoindDownFunc>
-void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdateMode updateMode,
-                                             GoindDownFunc pFuncGoingDown, bool parseFuncBodies)
+void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files,
+                                             eUpdateMode updateMode,
+                                             GoindDownFunc pFuncGoingDown,
+                                             bool parseFuncBodies)
 {
     try {
 
@@ -311,8 +322,8 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
 
         m_allClasses.clear(); // clear the cache
         m_db.Begin();
-        for(size_t i = 0; i < files.GetCount(); ++i) {
-            if(pFuncGoingDown()) {
+        for (size_t i = 0; i < files.GetCount(); ++i) {
+            if (pFuncGoingDown()) {
                 break;
             }
             {
@@ -326,36 +337,36 @@ void PHPLookupTable::RecreateSymbolsDatabase(const wxArrayString& files, eUpdate
             wxFileName fnFile(files.Item(i));
             bool reParseNeeded(true);
 
-            if(updateMode == kUpdateMode_Fast) {
+            if (updateMode == kUpdateMode_Fast) {
                 // Check to see if we need to re-parse this file
                 // and store it to the database
 
-                if(!fnFile.Exists()) {
+                if (!fnFile.Exists()) {
                     reParseNeeded = false;
                 } else {
                     time_t lastModifiedOnDisk = fnFile.GetModificationTime().GetTicks();
                     wxLongLong lastModifiedInDB = GetFileLastParsedTimestamp(fnFile);
-                    if(lastModifiedOnDisk <= lastModifiedInDB.ToLong()) {
+                    if (lastModifiedOnDisk <= lastModifiedInDB.ToLong()) {
                         reParseNeeded = false;
                     }
                 }
             }
 
             // Ensure that the file exists
-            if(!fnFile.Exists()) {
+            if (!fnFile.Exists()) {
                 reParseNeeded = false;
             }
 
             // Parse only valid PHP files
-            if(FileExtManager::GetType(fnFile.GetFullName()) != FileExtManager::TypePhp) {
+            if (FileExtManager::GetType(fnFile.GetFullName()) != FileExtManager::TypePhp) {
                 reParseNeeded = false;
             }
 
-            if(reParseNeeded) {
+            if (reParseNeeded) {
                 // For performance reasons, load the file into memory and then parse it
                 wxFileName fnSourceFile(files.Item(i));
                 wxString content;
-                if(!FileUtils::ReadFileContent(fnSourceFile, content, wxConvISO8859_1)) {
+                if (!FileUtils::ReadFileContent(fnSourceFile, content, wxConvISO8859_1)) {
                     clWARNING() << "PHP: Failed to read file:" << fnSourceFile << "for parsing" << clEndl;
                     continue;
                 }

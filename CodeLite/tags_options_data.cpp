@@ -22,11 +22,12 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "precompiled_header.h"
+
 #include "tags_options_data.h"
 
 #include "cl_config.h"
 #include "ctags_manager.h"
-#include "precompiled_header.h"
 
 #include <wx/ffile.h>
 #include <wx/tokenzr.h>
@@ -37,16 +38,16 @@ size_t TagsOptionsData::CURRENT_VERSION = 7100;
 
 static bool _IsValidCppIdentifier(const wxString& id)
 {
-    if(id.IsEmpty()) {
+    if (id.IsEmpty()) {
         return false;
     }
     // first char can be only _A-Za-z
     wxString first(id.Mid(0, 1));
-    if(first.find_first_not_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") != wxString::npos) {
+    if (first.find_first_not_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ") != wxString::npos) {
         return false;
     }
     // make sure that rest of the id contains only a-zA-Z0-9_
-    if(id.find_first_not_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") != wxString::npos) {
+    if (id.find_first_not_of("_abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789") != wxString::npos) {
         return false;
     }
     return true;
@@ -55,7 +56,7 @@ static bool _IsValidCppIdentifier(const wxString& id)
 static bool _IsCppKeyword(const wxString& word)
 {
     static wxStringSet_t words;
-    if(words.empty()) {
+    if (words.empty()) {
         TagsManager::GetCXXKeywords(words);
     }
     return words.count(word);
@@ -447,7 +448,7 @@ TagsOptionsData::TagsOptionsData()
 void TagsOptionsData::AddDefaultTokens()
 {
     m_tokens.reserve(m_tokens.size() + DEFAULT_TOKENS.size());
-    for(const auto& token : DEFAULT_TOKENS) {
+    for (const auto& token : DEFAULT_TOKENS) {
         m_tokens.Add(token);
     }
 }
@@ -459,9 +460,9 @@ wxString TagsOptionsData::ToString() const
     static wxString file_name;
     wxString file_content;
 
-    if(file_name.IsEmpty()) {
+    if (file_name.IsEmpty()) {
         char* ctagsReplacement = getenv("CTAGS_REPLACEMENTS");
-        if(ctagsReplacement) {
+        if (ctagsReplacement) {
             file_name = wxString(ctagsReplacement, wxConvUTF8).c_str();
         }
     }
@@ -474,7 +475,7 @@ wxString TagsOptionsData::ToString() const
                 file_content << p.first << "=" << p.second << "\n";
             } else {
 
-                if(options.IsEmpty()) {
+                if (options.IsEmpty()) {
                     options = " -I";
                 }
 
@@ -483,7 +484,7 @@ wxString TagsOptionsData::ToString() const
             }
         }
 
-        if(options.IsEmpty() == false) {
+        if (options.IsEmpty() == false) {
             options.RemoveLast();
         }
 
@@ -491,9 +492,9 @@ wxString TagsOptionsData::ToString() const
     }
 
     // write the file content
-    if(file_name.IsEmpty() == false) {
+    if (file_name.IsEmpty() == false) {
         wxFFile fp(file_name, "w+b");
-        if(fp.IsOpened()) {
+        if (fp.IsOpened()) {
             fp.Write(file_content);
             fp.Close();
         }
@@ -510,7 +511,7 @@ wxString TagsOptionsData::ToString() const
 std::map<std::string, std::string> TagsOptionsData::GetTokensMap() const
 {
     std::map<std::string, std::string> tokens;
-    for(size_t i = 0; i < m_tokens.GetCount(); i++) {
+    for (size_t i = 0; i < m_tokens.GetCount(); i++) {
         // const wxCharBuffer bufKey = _C(
         wxString item = m_tokens.Item(i);
         item.Trim().Trim(false);
@@ -520,7 +521,7 @@ std::map<std::string, std::string> TagsOptionsData::GetTokensMap() const
         const wxCharBuffer bufKey = _C(k);
         std::string key = bufKey.data();
         std::string value;
-        if(!v.empty()) {
+        if (!v.empty()) {
             const wxCharBuffer bufValue = _C(v);
             value = bufValue.data();
         }
@@ -541,7 +542,7 @@ void TagsOptionsData::SetTokens(const wxString& tokens)
 void TagsOptionsData::DoUpdateTokensWxMap()
 {
     m_tokensWxMap.clear();
-    for(size_t i = 0; i < m_tokens.GetCount(); i++) {
+    for (size_t i = 0; i < m_tokens.GetCount(); i++) {
         wxString item = m_tokens.Item(i).Trim().Trim(false);
         wxString k = item.BeforeFirst('=');
         wxString v = item.AfterFirst('=');
@@ -552,11 +553,11 @@ void TagsOptionsData::DoUpdateTokensWxMap()
 void TagsOptionsData::DoUpdateTokensWxMapReversed()
 {
     m_tokensWxMapReversed.clear();
-    for(size_t i = 0; i < m_tokens.GetCount(); i++) {
+    for (size_t i = 0; i < m_tokens.GetCount(); i++) {
         wxString item = m_tokens.Item(i).Trim().Trim(false);
         wxString k = item.AfterFirst('=');
         wxString v = item.BeforeFirst('=');
-        if(_IsValidCppIdentifier(k) && !_IsCppKeyword(k)) {
+        if (_IsValidCppIdentifier(k) && !_IsCppKeyword(k)) {
             m_tokensWxMapReversed[k] = v;
         }
     }
@@ -585,7 +586,7 @@ void TagsOptionsData::FromJSON(const JSONItem& json)
     m_clangCachePolicy = json.namedObject("m_clangCachePolicy").toString();
     m_ccNumberOfDisplayItems = json.namedObject("m_ccNumberOfDisplayItems").toSize_t(m_ccNumberOfDisplayItems);
 
-    if(!m_fileSpec.Contains("*.hxx")) {
+    if (!m_fileSpec.Contains("*.hxx")) {
         m_fileSpec = "*.cpp;*.cc;*.cxx;*.h;*.hpp;*.c;*.c++;*.tcc;*.hxx;*.h++";
     }
 
@@ -623,11 +624,11 @@ JSONItem TagsOptionsData::ToJSON() const
 wxString TagsOptionsData::DoJoinArray(const wxArrayString& arr) const
 {
     wxString s;
-    for(size_t i = 0; i < arr.GetCount(); ++i) {
+    for (size_t i = 0; i < arr.GetCount(); ++i) {
         s << arr.Item(i) << "\n";
     }
 
-    if(s.IsEmpty() == false) {
+    if (s.IsEmpty() == false) {
         s.RemoveLast();
     }
 
@@ -641,7 +642,7 @@ void TagsOptionsData::Merge(const TagsOptionsData& tod)
     m_types = conf.MergeArrays(m_types, tod.m_types);
     DoUpdateTokensWxMapReversed();
     DoUpdateTokensWxMap();
-    if(m_version != TagsOptionsData::CURRENT_VERSION) {
+    if (m_version != TagsOptionsData::CURRENT_VERSION) {
         m_ccNumberOfDisplayItems = tod.m_ccNumberOfDisplayItems;
     }
     m_version = TagsOptionsData::CURRENT_VERSION;

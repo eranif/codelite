@@ -48,7 +48,7 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
     c.Replace("@@GERESH@@", "\\\"");
 
     // Check for makefile directory changes lines
-    if(cmdline.Contains("Entering directory `")) {
+    if (cmdline.Contains("Entering directory `")) {
         wxString currentDir = cmdline.AfterFirst('`');
         m_directory = currentDir.BeforeLast('\'');
 
@@ -56,12 +56,12 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
 
         m_argv = StringUtils::BuildArgv(c, m_argc);
 
-        for(int i = 0; i < m_argc; i++) {
+        for (int i = 0; i < m_argc; i++) {
             wxString opt = wxString(m_argv[i], wxConvUTF8);
             opt.Trim().Trim(false);
 
             wxString rest;
-            if(opt.StartsWith("`") && opt.EndsWith("`")) {
+            if (opt.StartsWith("`") && opt.EndsWith("`")) {
                 // backtick
                 opt = opt.Mid(1);
                 opt.RemoveLast();
@@ -72,21 +72,22 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
                 // Parse the result
                 CompilerCommandLineParser cclp(result, workingDirectory);
                 m_includes.insert(m_includes.end(), cclp.GetIncludes().begin(), cclp.GetIncludes().end());
-                m_includesWithPrefix.insert(m_includesWithPrefix.end(), cclp.GetIncludesWithPrefix().begin(),
+                m_includesWithPrefix.insert(m_includesWithPrefix.end(),
+                                            cclp.GetIncludesWithPrefix().begin(),
                                             cclp.GetIncludesWithPrefix().end());
                 m_macros.insert(m_macros.end(), cclp.GetMacros().begin(), cclp.GetMacros().end());
-                m_macrosWithPrefix.insert(m_macrosWithPrefix.end(), cclp.GetMacrosWithPrefix().begin(),
-                                          cclp.GetMacrosWithPrefix().end());
+                m_macrosWithPrefix.insert(
+                    m_macrosWithPrefix.end(), cclp.GetMacrosWithPrefix().begin(), cclp.GetMacrosWithPrefix().end());
                 m_frameworks.insert(m_frameworks.end(), cclp.GetFrameworks().begin(), cclp.GetFrameworks().end());
-            } else if(opt.StartsWith("@") && (opt.Contains("includes_C.rsp") || opt.Contains("includes_CXX.rsp"))) {
+            } else if (opt.StartsWith("@") && (opt.Contains("includes_C.rsp") || opt.Contains("includes_CXX.rsp"))) {
 
                 // The include folders are inside the file - read the file and process its content
                 wxFileName fnIncludes(workingDirectory + "/" + opt.Mid(1));
-                if(fnIncludes.Exists()) {
+                if (fnIncludes.Exists()) {
                     AddIncludesFromFile(fnIncludes);
                 }
 
-            } else if(opt == "-isystem" && (i + 1 < m_argc)) {
+            } else if (opt == "-isystem" && (i + 1 < m_argc)) {
 
                 // the next arg is the include folder
                 wxString include_path = m_argv[i + 1];
@@ -96,13 +97,13 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
                 m_includesWithPrefix.Add(wxString() << "-I" << include_path);
                 ++i;
 
-            } else if(opt.StartsWith("-I", &rest)) {
+            } else if (opt.StartsWith("-I", &rest)) {
                 rest.Replace("\"", wxEmptyString);
                 wxFileName path(rest, wxEmptyString);
                 m_includes.Add(path.GetPath());
                 m_includesWithPrefix.Add("-I" + path.GetPath());
 
-            } else if(opt.StartsWith("/I", &rest)) {
+            } else if (opt.StartsWith("/I", &rest)) {
                 rest.Replace("\"", wxEmptyString);
                 wxFileName path(rest, wxEmptyString);
                 m_includes.Add(path.GetPath());
@@ -110,36 +111,36 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
 
             }
 
-            else if(opt.StartsWith("-D", &rest) || opt.StartsWith("/D", &rest)) {
+            else if (opt.StartsWith("-D", &rest) || opt.StartsWith("/D", &rest)) {
                 m_macros.Add(rest);
                 m_macrosWithPrefix.Add(opt);
             }
 
-            else if(opt.StartsWith("-include-path ", &rest)) {
+            else if (opt.StartsWith("-include-path ", &rest)) {
                 m_includesWithPrefix.Add(rest);
                 rest.Trim().Trim(false);
                 m_pchFile = rest;
             }
 
-            else if((opt == "-include") && (i + 1 < m_argc)) {
+            else if ((opt == "-include") && (i + 1 < m_argc)) {
                 wxString include_path = m_argv[i + 1];
                 include_path.Trim().Trim(false);
                 m_pchFile = include_path;
                 ++i;
-            } else if((opt == "-isysroot") && (i + 1 < m_argc)) {
+            } else if ((opt == "-isysroot") && (i + 1 < m_argc)) {
                 wxString include_path = m_argv[i + 1];
                 include_path.Trim().Trim(false);
                 m_sysroots.Add(include_path);
                 ++i;
             }
 
-            else if(opt.StartsWith("/FI", &rest)) {
+            else if (opt.StartsWith("/FI", &rest)) {
                 rest.Trim().Trim(false);
                 m_pchFile = rest;
             }
 
             // Support for Apple's Framework include paths
-            else if(opt.StartsWith("-F", &rest)) {
+            else if (opt.StartsWith("-F", &rest)) {
 
                 m_includesWithPrefix.Add(opt);
                 rest.Trim().Trim(false);
@@ -148,10 +149,10 @@ CompilerCommandLineParser::CompilerCommandLineParser(const wxString& cmdline, co
             }
 
             // std
-            else if(opt.StartsWith("-std=", &rest) || opt.StartsWith("/std:", &rest)) {
+            else if (opt.StartsWith("-std=", &rest) || opt.StartsWith("/std:", &rest)) {
                 rest.Trim().Trim(false);
 
-                if(!rest.IsEmpty()) {
+                if (!rest.IsEmpty()) {
                     m_standard = rest;
                 }
                 // keep the std as an option as well
@@ -172,7 +173,7 @@ CompilerCommandLineParser::~CompilerCommandLineParser()
 
 wxString CompilerCommandLineParser::GetStandardWithPrefix() const
 {
-    if(m_standard.IsEmpty()) {
+    if (m_standard.IsEmpty()) {
         return "";
     }
     return "-std=" + m_standard;
@@ -181,14 +182,14 @@ wxString CompilerCommandLineParser::GetStandardWithPrefix() const
 void CompilerCommandLineParser::AddIncludesFromFile(const wxFileName& includeFile)
 {
     wxFFile fp(includeFile.GetFullPath(), "rb");
-    if(fp.IsOpened()) {
+    if (fp.IsOpened()) {
         wxString content;
         fp.ReadAll(&content);
         content.Replace("\n", " ");
         CompilerCommandLineParser cclp(content);
         m_includes.insert(m_includes.end(), cclp.GetIncludes().begin(), cclp.GetIncludes().end());
-        m_includesWithPrefix.insert(m_includesWithPrefix.end(), cclp.GetIncludesWithPrefix().begin(),
-                                    cclp.GetIncludesWithPrefix().end());
+        m_includesWithPrefix.insert(
+            m_includesWithPrefix.end(), cclp.GetIncludesWithPrefix().begin(), cclp.GetIncludesWithPrefix().end());
         fp.Close();
     }
 }

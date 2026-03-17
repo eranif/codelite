@@ -14,7 +14,7 @@ public:
     virtual ~BreakpointInfoArray() = default;
     void SetBreakpoints(const clDebuggerBreakpoint::Vec_t& breakpoints) { this->m_breakpoints = breakpoints; }
     const clDebuggerBreakpoint::Vec_t& GetBreakpoints() const { return m_breakpoints; }
-    
+
     void DeSerialize(Archive& arch) override;
     void Serialize(Archive& arch) override;
 };

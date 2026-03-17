@@ -39,10 +39,10 @@ wxString wrap_lines(const wxString& str)
         }
         curLineBytes++;
 
-        if(curLineBytes == MAX_TIP_LINE_SIZE) {
+        if (curLineBytes == MAX_TIP_LINE_SIZE) {
 
             // Wrap the lines
-            if(wrappedString.IsEmpty() == false && wrappedString.Last() != '\n') {
+            if (wrappedString.IsEmpty() == false && wrappedString.Last() != '\n') {
                 wrappedString << "\n";
             }
             curLineBytes = 0;
@@ -64,19 +64,19 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
     std::vector<std::pair<wxString, int>> tokens;
     tokens.reserve(10000);
 
-    while(tokenizer.NextToken(token)) {
-        tokens.push_back({ token.GetWXString(), token.GetType() });
+    while (tokenizer.NextToken(token)) {
+        tokens.push_back({token.GetWXString(), token.GetType()});
     }
 
     int i = static_cast<int>(tokens.size() - 1);
     bool cont = true;
     int parentheses_depth = 0;
-    if(for_calltip) {
+    if (for_calltip) {
         // read backwards until we find the first open parentheses
-        for(; (i >= 0) && cont; --i) {
-            switch(tokens[i].second) {
+        for (; (i >= 0) && cont; --i) {
+            switch (tokens[i].second) {
             case '(':
-                if(parentheses_depth == 0) {
+                if (parentheses_depth == 0) {
                     cont = false;
                 } else {
                     parentheses_depth--;
@@ -95,15 +95,15 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
     std::vector<int> types;
     int depth = 0;
     cont = true;
-    for(; (i >= 0) && cont; --i) {
+    for (; (i >= 0) && cont; --i) {
         const wxString& text = tokens[i].first;
         int type = tokens[i].second;
-        switch(type) {
+        switch (type) {
         case '[':
         case '{':
         case '(':
         case '<':
-            if(depth == 0) {
+            if (depth == 0) {
                 cont = false;
             } else {
                 PREPEND_STRING(text);
@@ -113,7 +113,7 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
         case '>':
         case ']':
         case ')':
-            if(depth == 0 && LAST_TOKEN_IS(T_IDENTIFIER)) {
+            if (depth == 0 && LAST_TOKEN_IS(T_IDENTIFIER)) {
                 cont = false;
             } else {
                 PREPEND_STRING(text);
@@ -121,7 +121,7 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
             }
             break;
         case '}':
-            if(depth == 0) {
+            if (depth == 0) {
                 cont = false;
             } else {
                 PREPEND_STRING(text);
@@ -159,14 +159,14 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
             cont = false;
             break;
         case '=':
-            if(depth == 0) {
+            if (depth == 0) {
                 cont = false;
             } else {
                 PREPEND_STRING(text);
             }
             break;
         case T_IDENTIFIER:
-            if(LAST_TOKEN_IS(T_IDENTIFIER)) {
+            if (LAST_TOKEN_IS(T_IDENTIFIER)) {
                 // we do not allow two consecutive T_IDENTIFIER
                 cont = false;
                 break;
@@ -292,7 +292,7 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
         case ':':
         case '-':
         case '@':
-            if(depth <= 0) {
+            if (depth <= 0) {
                 cont = false;
             } else {
                 PREPEND_STRING(text);
@@ -311,28 +311,30 @@ wxString CompletionHelper::get_expression(const wxString& file_content, bool for
 
     // build the expression from the vector
     wxString expression_string;
-    for(const auto& t : expression) {
+    for (const auto& t : expression) {
         expression_string << t;
     }
-    if(last_word && !expression.empty()) {
+    if (last_word && !expression.empty()) {
         *last_word = expression[expression.size() - 1];
     }
     return expression_string;
 #undef LAST_TOKEN_IS
 }
 
-wxString CompletionHelper::truncate_file_to_location(const wxString& file_content, size_t line, size_t column,
+wxString CompletionHelper::truncate_file_to_location(const wxString& file_content,
+                                                     size_t line,
+                                                     size_t column,
                                                      size_t flags) const
 {
     size_t curline = 0;
     size_t offset = 0;
 
     // locate the line
-    for(const auto& ch : file_content) {
-        if(curline == line) {
+    for (const auto& ch : file_content) {
+        if (curline == line) {
             break;
         }
-        switch(ch.GetValue()) {
+        switch (ch.GetValue()) {
         case '\n':
             ++curline;
             ++offset;
@@ -343,23 +345,23 @@ wxString CompletionHelper::truncate_file_to_location(const wxString& file_conten
         }
     }
 
-    if(curline != line) {
+    if (curline != line) {
         return wxEmptyString;
     }
 
     // columns
     offset += column;
 
-    if(offset < file_content.size()) {
-        if(flags & (TRUNCATE_COMPLETE_WORDS | TRUNCATE_COMPLETE_LINES)) {
-            while(true) {
+    if (offset < file_content.size()) {
+        if (flags & (TRUNCATE_COMPLETE_WORDS | TRUNCATE_COMPLETE_LINES)) {
+            while (true) {
                 size_t next_pos = offset;
 
-                if(next_pos < file_content.size()) {
+                if (next_pos < file_content.size()) {
                     wxChar next_char = file_content[next_pos];
-                    if(flags & TRUNCATE_COMPLETE_WORDS) {
+                    if (flags & TRUNCATE_COMPLETE_WORDS) {
                         // complete words only
-                        if(is_word_char(next_char)) {
+                        if (is_word_char(next_char)) {
                             offset += 1;
                         } else {
                             break;
@@ -367,7 +369,7 @@ wxString CompletionHelper::truncate_file_to_location(const wxString& file_conten
 
                     } else {
                         // TRUNCATE_COMPLETE_LINES
-                        if(next_char == '\n') {
+                        if (next_char == '\n') {
                             break;
                         } else {
                             offset += 1;
@@ -388,7 +390,7 @@ namespace
 {
 void populate_keywords()
 {
-    if(words.empty()) {
+    if (words.empty()) {
         words.insert("auto");
         words.insert("break");
         words.insert("case");
@@ -472,15 +474,15 @@ bool CompletionHelper::is_cxx_keyword(const wxString& word)
     return words.count(word) != 0;
 }
 
-std::vector<wxString> CompletionHelper::split_function_signature(const wxString& signature, wxString* return_value,
-                                                                 size_t flags) const
+std::vector<wxString>
+CompletionHelper::split_function_signature(const wxString& signature, wxString* return_value, size_t flags) const
 {
     // ---------------------------------------------------------------------------------------------
     // ----------------macros start-------------------------------------------------------------------
     // ---------------------------------------------------------------------------------------------
 #define ADD_CURRENT_PARAM(current_param) \
     current_param->Trim().Trim(false);   \
-    if(!current_param->empty()) {        \
+    if (!current_param->empty()) {       \
         args.push_back(*current_param);  \
     }                                    \
     current_param->clear();
@@ -491,13 +493,13 @@ std::vector<wxString> CompletionHelper::split_function_signature(const wxString&
 #define LAST_TOKEN_IS_ONE_OF_5(t1, t2, t3, t4, t5) (LAST_TOKEN_IS_ONE_OF_4(t1, t2, t3, t4) || LAST_TOKEN_IS(t5))
 #define LAST_TOKEN_IS_CLOSING_PARENTHESES() LAST_TOKEN_IS_ONE_OF_4('}', ']', '>', ')')
 #define LAST_TOKEN_IS_OPEN_PARENTHESES() LAST_TOKEN_IS_ONE_OF_4('{', '[', '<', '(')
-#define REMOVE_TRAILING_SPACE()                                                         \
-    if(!current_param->empty() && (*current_param)[current_param->size() - 1] == ' ') { \
-        current_param->RemoveLast();                                                    \
+#define REMOVE_TRAILING_SPACE()                                                          \
+    if (!current_param->empty() && (*current_param)[current_param->size() - 1] == ' ') { \
+        current_param->RemoveLast();                                                     \
     }
-#define APPEND_SPACE_IF_MISSING()                                                         \
-    if(!current_param->empty() && ((*current_param)[current_param->size() - 1] != ' ')) { \
-        current_param->Append(" ");                                                       \
+#define APPEND_SPACE_IF_MISSING()                                                          \
+    if (!current_param->empty() && ((*current_param)[current_param->size() - 1] != ' ')) { \
+        current_param->Append(" ");                                                        \
     }
 
     // ---------------------------------------------------------------------------------------------
@@ -516,8 +518,8 @@ std::vector<wxString> CompletionHelper::split_function_signature(const wxString&
 
     std::vector<int> types;
     // search for the first opening brace
-    while(tokenizer.NextToken(token)) {
-        if(token.GetType() == '(') {
+    while (tokenizer.NextToken(token)) {
+        if (token.GetType() == '(') {
             depth = 1;
             break;
         }
@@ -527,12 +529,12 @@ std::vector<wxString> CompletionHelper::split_function_signature(const wxString&
     constexpr int STATE_NORMAL = 0;
     constexpr int STATE_DEFAULT_VALUE = 1;
     int state = STATE_NORMAL;
-    while(tokenizer.NextToken(token)) {
-        switch(state) {
+    while (tokenizer.NextToken(token)) {
+        switch (state) {
         case STATE_DEFAULT_VALUE:
             // consume everything until we reach signature end
             // or until we hit a "," (where depth==1)
-            switch(token.GetType()) {
+            switch (token.GetType()) {
             case '<':
             case '{':
             case '(':
@@ -546,7 +548,7 @@ std::vector<wxString> CompletionHelper::split_function_signature(const wxString&
                 break;
             case ')':
                 depth--;
-                if(depth == 0) {
+                if (depth == 0) {
                     // end of argument reading, switch back to the normal state
                     tokenizer.UngetToken();
                     // restore the depth
@@ -555,7 +557,7 @@ std::vector<wxString> CompletionHelper::split_function_signature(const wxString&
                 }
                 break;
             case ',':
-                if(depth == 1) {
+                if (depth == 1) {
                     tokenizer.UngetToken();
                     state = STATE_NORMAL;
                 }
@@ -565,7 +567,7 @@ std::vector<wxString> CompletionHelper::split_function_signature(const wxString&
             }
             break;
         case STATE_NORMAL:
-            switch(token.GetType()) {
+            switch (token.GetType()) {
             case T_ALIGNAS:
             case T_ALIGNOF:
             case T_AND:
@@ -679,7 +681,7 @@ std::vector<wxString> CompletionHelper::split_function_signature(const wxString&
                 APPEND_SPACE_IF_MISSING();
                 break;
             case '*':
-                if(LAST_TOKEN_IS('*')) {
+                if (LAST_TOKEN_IS('*')) {
                     REMOVE_TRAILING_SPACE();
                 }
                 current_param->Append(token.GetWXString());
@@ -690,27 +692,27 @@ std::vector<wxString> CompletionHelper::split_function_signature(const wxString&
                 bool add_identifier = true;
                 int next_token_type = tokenizer.PeekToken(peeked_token_text);
                 // Check if we want to ignore the argument name
-                if((depth == 1) && (next_token_type == ',' || next_token_type == '=' || next_token_type == ')') &&
-                   (flags & STRIP_NO_NAME)) {
+                if ((depth == 1) && (next_token_type == ',' || next_token_type == '=' || next_token_type == ')') &&
+                    (flags & STRIP_NO_NAME)) {
                     // two consecutive T_IDENTIFIER, don't add it
                     add_identifier = false;
-                } else if(LAST_TOKEN_IS_CLOSING_PARENTHESES() || LAST_TOKEN_IS_ONE_OF_2(T_IDENTIFIER, '*')) {
+                } else if (LAST_TOKEN_IS_CLOSING_PARENTHESES() || LAST_TOKEN_IS_ONE_OF_2(T_IDENTIFIER, '*')) {
                     APPEND_SPACE_IF_MISSING();
                 }
 
-                if(add_identifier) {
+                if (add_identifier) {
                     current_param->Append(token.GetWXString());
                 }
             } break;
             case T_ARROW:
-                if(done_collecting_args) {
+                if (done_collecting_args) {
                     // we are collecting function return value now, disregard it
                 } else {
                     current_param->Append(token.GetWXString());
                 }
                 break;
             case ',':
-                if(depth == 1) {
+                if (depth == 1) {
                     ADD_CURRENT_PARAM(current_param);
                 } else {
                     current_param->Append(",");
@@ -726,13 +728,13 @@ std::vector<wxString> CompletionHelper::split_function_signature(const wxString&
                 break;
             case ')':
                 depth--;
-                if(!done_collecting_args && depth == 0) {
+                if (!done_collecting_args && depth == 0) {
                     // reached signature end
                     ADD_CURRENT_PARAM(current_param);
                     func_args.swap(args);
                     done_collecting_args = true;
                 } else {
-                    if(LAST_TOKEN_IS_CLOSING_PARENTHESES() || LAST_TOKEN_IS(T_IDENTIFIER)) {
+                    if (LAST_TOKEN_IS_CLOSING_PARENTHESES() || LAST_TOKEN_IS(T_IDENTIFIER)) {
                         REMOVE_TRAILING_SPACE();
                     }
                     current_param->Append(token.GetWXString());
@@ -747,7 +749,7 @@ std::vector<wxString> CompletionHelper::split_function_signature(const wxString&
                 current_param->Append(token.GetWXString());
                 break;
             case '=':
-                if((depth == 1) && (flags & STRIP_NO_DEFAULT_VALUES)) {
+                if ((depth == 1) && (flags & STRIP_NO_DEFAULT_VALUES)) {
                     state = STATE_DEFAULT_VALUE;
                 } else {
                     APPEND_SPACE_IF_MISSING();
@@ -764,13 +766,13 @@ std::vector<wxString> CompletionHelper::split_function_signature(const wxString&
         types.push_back(token.GetType());
     }
 
-    if(!done_collecting_args) {
+    if (!done_collecting_args) {
         // we did not complete
         func_args.swap(args);
     } else {
         // check if we have a return value
         ADD_CURRENT_PARAM(current_param);
-        if(!args.empty() && return_value) {
+        if (!args.empty() && return_value) {
             *return_value = args[0].Trim().Trim(false);
         }
     }
@@ -806,29 +808,29 @@ wxString CompletionHelper::format_comment(TagEntryPtr tag, const wxString& input
 wxString CompletionHelper::format_comment(TagEntry* tag, const wxString& input_comment) const
 {
     wxString beautified_comment;
-    if(tag) {
-        if(tag->IsMethod()) {
+    if (tag) {
+        if (tag->IsMethod()) {
             auto args = split_function_signature(tag->GetSignature(), nullptr);
             beautified_comment << "```\n";
-            if(args.empty()) {
+            if (args.empty()) {
                 beautified_comment << tag->GetName() << "()\n";
             } else {
                 beautified_comment << tag->GetName() << "(\n";
-                for(const wxString& arg : args) {
+                for (const wxString& arg : args) {
                     beautified_comment << "  " << arg << ",\n";
                 }
 
-                if(beautified_comment.EndsWith(",\n")) {
+                if (beautified_comment.EndsWith(",\n")) {
                     beautified_comment.RemoveLast(2);
                 }
                 beautified_comment << ")\n";
             }
             beautified_comment << "```\n";
-        } else if(tag->GetKind() == "variable" || tag->GetKind() == "member" || tag->IsLocalVariable()) {
+        } else if (tag->GetKind() == "variable" || tag->GetKind() == "member" || tag->IsLocalVariable()) {
             wxString clean_pattern = tag->GetPatternClean();
             clean_pattern.Trim().Trim(false);
 
-            if(!clean_pattern.empty()) {
+            if (!clean_pattern.empty()) {
                 beautified_comment << "```\n";
                 beautified_comment << clean_pattern << "\n";
                 beautified_comment << "```\n";
@@ -839,7 +841,7 @@ wxString CompletionHelper::format_comment(TagEntry* tag, const wxString& input_c
             // other
             wxString clean_pattern = tag->GetPatternClean();
             clean_pattern.Trim().Trim(false);
-            if(!clean_pattern.empty()) {
+            if (!clean_pattern.empty()) {
                 beautified_comment << "```\n";
                 beautified_comment << clean_pattern << "\n";
                 beautified_comment << "```\n";
@@ -847,42 +849,42 @@ wxString CompletionHelper::format_comment(TagEntry* tag, const wxString& input_c
         }
     }
     wxString formatted_comment;
-    if(!input_comment.empty()) {
+    if (!input_comment.empty()) {
         formatted_comment = wrap_lines(input_comment);
 
-        if(reDoxyParam.IsValid() && reDoxyParam.Matches(formatted_comment)) {
+        if (reDoxyParam.IsValid() && reDoxyParam.Matches(formatted_comment)) {
             reDoxyParam.ReplaceAll(&formatted_comment, "\nParameter\n`\\2`");
         }
 
-        if(reDoxyBrief.IsValid() && reDoxyBrief.Matches(formatted_comment)) {
+        if (reDoxyBrief.IsValid() && reDoxyBrief.Matches(formatted_comment)) {
             reDoxyBrief.ReplaceAll(&formatted_comment, "");
         }
 
-        if(reDoxyThrow.IsValid() && reDoxyThrow.Matches(formatted_comment)) {
+        if (reDoxyThrow.IsValid() && reDoxyThrow.Matches(formatted_comment)) {
             reDoxyThrow.ReplaceAll(&formatted_comment, "\n`Throws:`\n");
         }
 
-        if(reDoxyReturn.IsValid() && reDoxyReturn.Matches(formatted_comment)) {
+        if (reDoxyReturn.IsValid() && reDoxyReturn.Matches(formatted_comment)) {
             reDoxyReturn.ReplaceAll(&formatted_comment, "\n`Returns:`\n");
         }
 
-        if(reDoxyToDo.IsValid() && reDoxyToDo.Matches(formatted_comment)) {
+        if (reDoxyToDo.IsValid() && reDoxyToDo.Matches(formatted_comment)) {
             reDoxyToDo.ReplaceAll(&formatted_comment, "\nTODO\n");
         }
 
-        if(reDoxyRemark.IsValid() && reDoxyRemark.Matches(formatted_comment)) {
+        if (reDoxyRemark.IsValid() && reDoxyRemark.Matches(formatted_comment)) {
             reDoxyRemark.ReplaceAll(&formatted_comment, "\n  ");
         }
 
-        if(reDate.IsValid() && reDate.Matches(formatted_comment)) {
+        if (reDate.IsValid() && reDate.Matches(formatted_comment)) {
             reDate.ReplaceAll(&formatted_comment, "Date ");
         }
 
-        if(reFN.IsValid() && reFN.Matches(formatted_comment)) {
+        if (reFN.IsValid() && reFN.Matches(formatted_comment)) {
             size_t fnStart, fnLen, fnEnd;
-            if(reFN.GetMatch(&fnStart, &fnLen)) {
+            if (reFN.GetMatch(&fnStart, &fnLen)) {
                 fnEnd = formatted_comment.find('\n', fnStart);
-                if(fnEnd != wxString::npos) {
+                if (fnEnd != wxString::npos) {
                     // remove the string from fnStart -> fnEnd (including ther terminating \n)
                     formatted_comment.Remove(fnStart, (fnEnd - fnStart) + 1);
                 }
@@ -890,7 +892,7 @@ wxString CompletionHelper::format_comment(TagEntry* tag, const wxString& input_c
         }
 
         // horizontal line
-        if(!beautified_comment.empty()) {
+        if (!beautified_comment.empty()) {
             beautified_comment << "---\n";
         }
         beautified_comment << formatted_comment;
@@ -909,20 +911,20 @@ bool CompletionHelper::is_line_include_statement(const wxString& line, wxString*
 
     // search for the "#"
     wxString remainder;
-    if(!tmp_line.StartsWith("#", &remainder)) {
+    if (!tmp_line.StartsWith("#", &remainder)) {
         return false;
     }
 
-    if(!reIncludeFile.Matches(remainder)) {
+    if (!reIncludeFile.Matches(remainder)) {
         return false;
     }
 
-    if(file_name) {
+    if (file_name) {
         *file_name = reIncludeFile.GetMatch(remainder, 1);
     }
 
-    if(suffix) {
-        if(tmp_line.Contains("<")) {
+    if (suffix) {
+        if (tmp_line.Contains("<")) {
             *suffix = ">";
         } else {
             *suffix = "\"";
@@ -934,13 +936,13 @@ bool CompletionHelper::is_line_include_statement(const wxString& line, wxString*
 bool CompletionHelper::is_include_statement(const wxString& f_content, wxString* file_name, wxString* suffix) const
 {
     // read backward until we find LF
-    if(f_content.empty()) {
+    if (f_content.empty()) {
         return false;
     }
 
     int i = f_content.size() - 1;
-    for(; i >= 0; --i) {
-        if(f_content[i] == '\n') {
+    for (; i >= 0; --i) {
+        if (f_content[i] == '\n') {
             break;
         }
     }
@@ -959,16 +961,16 @@ wxString CompletionHelper::normalize_function(const TagEntry* tag, size_t flags)
     fullname << name << "(";
     std::vector<wxString> args = split_function_signature(signature, &return_value, flags);
     wxString funcsig;
-    for(const wxString& arg : args) {
+    for (const wxString& arg : args) {
         funcsig << arg << ", ";
     }
 
-    if(funcsig.EndsWith(", ")) {
+    if (funcsig.EndsWith(", ")) {
         funcsig.RemoveLast(2);
     }
 
     fullname << funcsig << ")";
-    if(tag->is_const()) {
+    if (tag->is_const()) {
         fullname << " const";
     }
     return fullname;
@@ -983,7 +985,7 @@ void CompletionHelper::get_cxx_keywords(std::vector<wxString>& keywords)
 {
     populate_keywords();
     keywords.reserve(words.size());
-    for(const wxString& word : words) {
+    for (const wxString& word : words) {
         keywords.push_back(word);
     }
 }

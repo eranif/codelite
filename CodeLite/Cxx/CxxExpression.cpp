@@ -11,17 +11,17 @@ std::vector<CxxExpression> CxxExpression::from_expression(const wxString& expres
     wxString cast_type;
     tokenizer.Reset(expression);
 
-    if(handle_cxx_casting(tokenizer, &cast_type)) {
+    if (handle_cxx_casting(tokenizer, &cast_type)) {
         tokenizer.Reset(cast_type);
     }
 
     std::vector<CxxExpression> arr;
     CxxExpression curexpr;
 
-    while(tokenizer.NextToken(tk)) {
-        switch(tk.GetType()) {
+    while (tokenizer.NextToken(tk)) {
+        switch (tk.GetType()) {
         case T_IDENTIFIER:
-            if(curexpr.m_type_name.empty()) {
+            if (curexpr.m_type_name.empty()) {
                 curexpr.m_type_name = tk.GetWXString();
             }
             break;
@@ -40,16 +40,16 @@ std::vector<CxxExpression> CxxExpression::from_expression(const wxString& expres
             parse_template(tokenizer, &curexpr.m_template_init_list);
             break;
         case '(':
-            if(curexpr.m_type_name.empty()) {
+            if (curexpr.m_type_name.empty()) {
                 int delim_found = 0;
                 wxString consumed;
                 tokenizer.read_until_find(tk, ')', 0, &delim_found, &consumed);
-                if(delim_found == 0) {
+                if (delim_found == 0) {
                     return {}; // unbalacned parenthesis
                 }
                 consumed += ".";
                 auto parts = from_expression(consumed, nullptr);
-                if(!parts.empty()) {
+                if (!parts.empty()) {
                     arr.insert(arr.end(), parts.begin(), parts.end() - 1);
                     parts.back().set_operand(0); // remove the dummy operand
                     curexpr = parts.back();
@@ -68,13 +68,13 @@ std::vector<CxxExpression> CxxExpression::from_expression(const wxString& expres
         }
     }
 
-    if(!curexpr.m_type_name.empty() && remainder) {
+    if (!curexpr.m_type_name.empty() && remainder) {
         // build the remainder
         remainder->filter = curexpr.type_name();
     }
 
     // always copy the operand
-    if(remainder && !arr.empty()) {
+    if (remainder && !arr.empty()) {
         // copy the operand string from the last expression in the chain
         remainder->operand_string = arr.back().operand_string();
     }
@@ -85,16 +85,16 @@ bool CxxExpression::parse_list(CxxTokenizer& tokenizer, wxArrayString* params, i
 {
 #define ADD_IF_NOT_EMPTY(param)   \
     param.Trim().Trim(false);     \
-    if(!param.empty()) {          \
+    if (!param.empty()) {         \
         params->push_back(param); \
     }
 
     CxxLexerToken tk;
     int depth = 0;
     wxString curparam;
-    while(tokenizer.NextToken(tk)) {
-        if(close_char == tk.GetType()) {
-            if(depth == 0) {
+    while (tokenizer.NextToken(tk)) {
+        if (close_char == tk.GetType()) {
+            if (depth == 0) {
                 ADD_IF_NOT_EMPTY(curparam);
                 return true;
             } else {
@@ -103,15 +103,15 @@ bool CxxExpression::parse_list(CxxTokenizer& tokenizer, wxArrayString* params, i
             }
             continue;
 
-        } else if(open_char == tk.GetType()) {
+        } else if (open_char == tk.GetType()) {
             depth++;
             curparam << tk.GetWXString();
             continue;
 
-        } else if(tk.is_keyword()) {
+        } else if (tk.is_keyword()) {
             continue;
         } else {
-            switch(tk.GetType()) {
+            switch (tk.GetType()) {
             case T_DOUBLE_COLONS:
             case T_IDENTIFIER:
                 curparam << tk.GetWXString();
@@ -122,7 +122,7 @@ bool CxxExpression::parse_list(CxxTokenizer& tokenizer, wxArrayString* params, i
                 // ignore these
                 break;
             case ',':
-                if(depth == 0) {
+                if (depth == 0) {
                     ADD_IF_NOT_EMPTY(curparam);
                     curparam.clear();
                 } else {
@@ -131,7 +131,7 @@ bool CxxExpression::parse_list(CxxTokenizer& tokenizer, wxArrayString* params, i
                 break;
 
             default:
-                if(tk.is_builtin_type() || tk.GetType() == T_IDENTIFIER) {
+                if (tk.is_builtin_type() || tk.GetType() == T_IDENTIFIER) {
                     curparam << " " << tk.GetWXString();
 
                 } else {
@@ -163,7 +163,7 @@ bool CxxExpression::parse_func_call(CxxTokenizer& tokenizer, wxArrayString* func
 bool CxxExpression::handle_cxx_casting(CxxTokenizer& tokenizer, wxString* cast_type)
 {
     CxxLexerToken t;
-    if(!tokenizer.NextToken(t)) {
+    if (!tokenizer.NextToken(t)) {
         return false;
     }
 
@@ -172,7 +172,7 @@ bool CxxExpression::handle_cxx_casting(CxxTokenizer& tokenizer, wxString* cast_t
     constexpr int STATE_C_CAST = 2;
 
     int state = STATE_NORMAL;
-    switch(t.GetType()) {
+    switch (t.GetType()) {
     case T_CONST_CAST:
     case T_DYNAMIC_CAST:
     case T_REINTERPRET_CAST:
@@ -184,34 +184,34 @@ bool CxxExpression::handle_cxx_casting(CxxTokenizer& tokenizer, wxString* cast_t
     }
 
     // did not find cast expression
-    if(state == STATE_NORMAL) {
+    if (state == STATE_NORMAL) {
         tokenizer.UngetToken();
         return false;
-    } else if(state == STATE_C_CAST) {
+    } else if (state == STATE_C_CAST) {
         // append the remainder
-        while(tokenizer.NextToken(t)) {
+        while (tokenizer.NextToken(t)) {
             cast_type->Append(t.GetWXString() + " ");
         }
         return true;
     }
 
     // we are expecting '<'
-    if(!tokenizer.NextToken(t) || t.GetType() != '<') {
+    if (!tokenizer.NextToken(t) || t.GetType() != '<') {
         return false;
     }
 
     // read the cast type
     int depth = 1;
     bool cast_found = false;
-    while(!cast_found && tokenizer.NextToken(t)) {
-        switch(t.GetType()) {
+    while (!cast_found && tokenizer.NextToken(t)) {
+        switch (t.GetType()) {
         case '<':
             depth++;
             cast_type->Append('<');
             break;
         case '>':
             depth--;
-            if(depth == 0) {
+            if (depth == 0) {
                 cast_found = true;
             } else {
                 cast_type->Append('>');
@@ -222,23 +222,23 @@ bool CxxExpression::handle_cxx_casting(CxxTokenizer& tokenizer, wxString* cast_t
             break;
         }
     }
-    if(!cast_found) {
+    if (!cast_found) {
         return false;
     }
 
     // next token should be `(`
-    if(!tokenizer.NextToken(t) || t.GetType() != '(') {
+    if (!tokenizer.NextToken(t) || t.GetType() != '(') {
         return false;
     }
 
     // read the castee
     wxArrayString dummy;
-    if(!parse_func_call(tokenizer, &dummy)) {
+    if (!parse_func_call(tokenizer, &dummy)) {
         return false;
     }
 
     // append the remainder to the cast_type
-    while(tokenizer.NextToken(t)) {
+    while (tokenizer.NextToken(t)) {
         cast_type->Append(t.GetWXString() + " ");
     }
     return true;
@@ -246,12 +246,12 @@ bool CxxExpression::handle_cxx_casting(CxxTokenizer& tokenizer, wxString* cast_t
 
 void CxxExpression::parse_template_placeholders(const wxString& expr)
 {
-#define CHECK_TYPE(Type)     \
-    if(tk.GetType() != Type) \
+#define CHECK_TYPE(Type)      \
+    if (tk.GetType() != Type) \
     return
 #define ADD_PLACHOLDER()            \
     placeholder.Trim().Trim(false); \
-    if(!placeholder.empty()) {      \
+    if (!placeholder.empty()) {     \
         arr.Add(placeholder);       \
         placeholder.clear();        \
     }
@@ -263,7 +263,7 @@ void CxxExpression::parse_template_placeholders(const wxString& expr)
     tokenizer.NextToken(tk);
 
     // optionally, we expect `template` (depending of the source of the `expr`)
-    if(tk.GetType() != T_TEMPLATE) {
+    if (tk.GetType() != T_TEMPLATE) {
         tokenizer.UngetToken();
     }
 
@@ -279,15 +279,15 @@ void CxxExpression::parse_template_placeholders(const wxString& expr)
     constexpr int STATE_DEFAULT_VALUE = 1;
     int state = STATE_NORMAL;
 
-    while(cont && tokenizer.NextToken(tk)) {
-        if(tk.is_pp_keyword() || tk.is_keyword()) {
+    while (cont && tokenizer.NextToken(tk)) {
+        if (tk.is_pp_keyword() || tk.is_keyword()) {
             continue;
         }
-        switch(state) {
+        switch (state) {
         case STATE_NORMAL:
-            switch(tk.GetType()) {
+            switch (tk.GetType()) {
             case ',':
-                if(depth == 1) {
+                if (depth == 1) {
                     ADD_PLACHOLDER();
                 } else {
                     placeholder << ",";
@@ -299,7 +299,7 @@ void CxxExpression::parse_template_placeholders(const wxString& expr)
                 break;
             case '>':
                 depth--;
-                if(depth == 0) {
+                if (depth == 0) {
                     // we are done
                     ADD_PLACHOLDER();
                     cont = false;
@@ -308,7 +308,7 @@ void CxxExpression::parse_template_placeholders(const wxString& expr)
                 }
                 break;
             case '=':
-                if(depth == 1) {
+                if (depth == 1) {
                     // default value -> skip it
                     state = STATE_DEFAULT_VALUE;
 
@@ -319,7 +319,7 @@ void CxxExpression::parse_template_placeholders(const wxString& expr)
 
             default:
                 placeholder << tk.GetWXString();
-                if(tk.is_builtin_type() || tk.GetType() == T_IDENTIFIER) {
+                if (tk.is_builtin_type() || tk.GetType() == T_IDENTIFIER) {
                     placeholder << " ";
                 }
                 break;
@@ -327,20 +327,20 @@ void CxxExpression::parse_template_placeholders(const wxString& expr)
             break;
         case STATE_DEFAULT_VALUE:
             // read until we find "," or end of template definition
-            switch(tk.GetType()) {
+            switch (tk.GetType()) {
             case '<':
                 depth++;
                 break;
             case '>':
                 depth--;
-                if(depth == 0) {
+                if (depth == 0) {
                     state = STATE_NORMAL;
                     // let the default state handle this case
                     tokenizer.UngetToken();
                 }
                 break;
             case ',':
-                if(depth == 0) {
+                if (depth == 0) {
                     state = STATE_NORMAL;
                     // let the default state handle this case
                     tokenizer.UngetToken();
@@ -362,8 +362,8 @@ wxStringMap_t CxxExpression::get_template_placeholders_map() const
 {
     wxStringMap_t M;
     size_t count = std::min(m_template_placeholder_list.size(), m_template_init_list.size());
-    for(size_t i = 0; i < count; i++) {
-        M.insert({ m_template_placeholder_list[i], m_template_init_list[i] });
+    for (size_t i = 0; i < count; i++) {
+        M.insert({m_template_placeholder_list[i], m_template_init_list[i]});
     }
     return M;
 }
@@ -373,7 +373,7 @@ const wxString& CxxExpression::operand_string() const { return m_operand_string;
 void CxxExpression::set_operand(int op)
 {
     m_operand = op;
-    switch(m_operand) {
+    switch (m_operand) {
     case T_DOUBLE_COLONS:
         m_operand_string = "::";
         break;
@@ -397,8 +397,8 @@ std::vector<wxString> CxxExpression::split_subclass_expression(const wxString& s
     tokenizer.Reset(subclass_pattern);
 
     // consume everything until the `:`
-    while(tokenizer.NextToken(token)) {
-        if(token.GetType() == ':') {
+    while (tokenizer.NextToken(token)) {
+        if (token.GetType() == ':') {
             break;
         }
     }
@@ -409,13 +409,13 @@ std::vector<wxString> CxxExpression::split_subclass_expression(const wxString& s
 
     int depth = 0;
     bool cont = true;
-    while(cont && tokenizer.NextToken(token)) {
-        if(token.is_keyword()) {
+    while (cont && tokenizer.NextToken(token)) {
+        if (token.is_keyword()) {
             continue;
         }
-        switch(token.GetType()) {
+        switch (token.GetType()) {
         case ',':
-            if(depth == 0) {
+            if (depth == 0) {
                 result.push_back(curexpr);
                 curexpr.clear();
             } else {
@@ -423,7 +423,7 @@ std::vector<wxString> CxxExpression::split_subclass_expression(const wxString& s
             }
             break;
         case '{':
-            if(depth == 0) {
+            if (depth == 0) {
                 cont = false;
             } else {
                 depth++;
@@ -449,7 +449,7 @@ std::vector<wxString> CxxExpression::split_subclass_expression(const wxString& s
         }
     }
 
-    if(!curexpr.empty()) {
+    if (!curexpr.empty()) {
         result.push_back(curexpr);
     }
     return result;

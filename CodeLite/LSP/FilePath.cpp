@@ -4,9 +4,8 @@ LSP::FilePath::FilePath(const wxString& path)
     : m_path(path)
 {
 #ifdef __WXMSW__
-    if(!m_path.StartsWith("file://") && !m_path.StartsWith("/")) {
+    if (!m_path.StartsWith("file://") && !m_path.StartsWith("/")) {
         m_path.Replace("/", "\\");
     }
 #endif
 }
-

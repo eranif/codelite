@@ -9,7 +9,7 @@ bool clConsoleCMD::Start()
 {
     DirSaver ds; // restore the directory upon exiting this function
     wxFileName fn(GetWorkingDirectory(), "");
-    if(fn.DirExists()) {
+    if (fn.DirExists()) {
         ::wxSetWorkingDirectory(fn.GetPath());
     }
     return StartProcess(PrepareCommand());
@@ -21,7 +21,7 @@ wxString clConsoleCMD::PrepareCommand()
 {
     // no args? just return the cmd command
     wxString command = WrapWithQuotesIfNeeded(GetCommand());
-    if(command.empty()) {
+    if (command.empty()) {
         return "cmd";
     }
 
@@ -30,7 +30,7 @@ wxString clConsoleCMD::PrepareCommand()
 
     wxString rest_cmd;
     // if "wait-when-done" enabled, wrap the command with codelite-exec
-    if(IsWaitWhenDone()) {
+    if (IsWaitWhenDone()) {
         wxFileName fnCodeliteExec(clStandardPaths::Get().GetBinaryFullPath("codelite-exec"));
         wxString strCodeLiteExec = WrapWithQuotesIfNeeded(fnCodeliteExec.GetFullPath());
         rest_cmd << strCodeLiteExec << " ";
@@ -38,7 +38,7 @@ wxString clConsoleCMD::PrepareCommand()
 
     // append the command to run
     rest_cmd << command;
-    if(!GetCommandArgs().IsEmpty()) {
+    if (!GetCommandArgs().IsEmpty()) {
         rest_cmd << " " << GetCommandArgs();
     }
     return commandToExecute + rest_cmd;

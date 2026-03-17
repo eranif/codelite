@@ -26,9 +26,9 @@
 #ifndef CXXTEMPLATEFUNCTION_H
 #define CXXTEMPLATEFUNCTION_H
 
+#include "CxxLexerAPI.h"
 #include "codelite_exports.h"
 #include "database/entry.h"
-#include "CxxLexerAPI.h"
 
 class WXDLLIMPEXP_CL CxxTemplateFunction
 {
@@ -46,9 +46,9 @@ public:
      */
     virtual void ParseDefinitionList();
     const wxArrayString& GetList() const { return m_list; }
-    
+
     /**
-     * @brief can the template arguments be deduced from the function 
+     * @brief can the template arguments be deduced from the function
      * signature?
      */
     bool CanTemplateArgsDeduced();

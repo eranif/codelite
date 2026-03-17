@@ -18,12 +18,12 @@ void PHPDocVisitor::OnEntity(PHPEntityBase::Ptr_t entity)
     // Locate a comment for this entity
     entity->SetFilename(m_sourceFile.GetFilename());
 
-    if(!entity->GetDocComment().IsEmpty()) {
+    if (!entity->GetDocComment().IsEmpty()) {
         // PHPDoc was already assigned to this entity during the parsing phase
-        if(entity->Is(kEntityTypeClass)) {
+        if (entity->Is(kEntityTypeClass)) {
             // Process @property tags here
             PHPDocComment docComment(m_sourceFile, entity->GetDocComment());
-            if(!docComment.GetProperties().empty()) {
+            if (!docComment.GetProperties().empty()) {
                 // Got some @properties
                 for (const auto& p : docComment.GetProperties()) {
                     PHPEntityBase::Ptr_t child = entity->FindChild(p.second.name);
@@ -40,7 +40,7 @@ void PHPDocVisitor::OnEntity(PHPEntityBase::Ptr_t entity)
                         entity->AddChild(child);
                     }
                 }
-            } else if(!docComment.GetMethods().empty()) {
+            } else if (!docComment.GetMethods().empty()) {
                 for (const auto& method : docComment.GetMethods()) {
                     entity->AddChild(method);
                 }
@@ -56,36 +56,36 @@ void PHPDocVisitor::OnEntity(PHPEntityBase::Ptr_t entity)
         wxUnusedVar(entityName);
 
         std::map<int, phpLexerToken>::iterator iter = m_comments.find(lineNum);
-        if(iter == m_comments.end()) {
+        if (iter == m_comments.end()) {
             // try to locate a comment on the same line
             ++lineNum;
             iter = m_comments.find(lineNum);
         }
 
-        if(iter != m_comments.end()) {
+        if (iter != m_comments.end()) {
 
             // we got a match
             entity->SetDocComment(iter->second.Text());
             m_comments.erase(iter);
 
             PHPDocComment docComment(m_sourceFile, entity->GetDocComment());
-            if(entity->Is(kEntityTypeFunction) && !docComment.GetReturn().IsEmpty()) {
+            if (entity->Is(kEntityTypeFunction) && !docComment.GetReturn().IsEmpty()) {
                 entity->Cast<PHPEntityFunction>()->SetReturnValue(docComment.GetReturn());
                 if (docComment.IsReturnNullable()) {
                     entity->Cast<PHPEntityFunction>()->SetFlag(kFunc_ReturnNullable);
                 }
-            } else if(entity->Is(kEntityTypeVariable) && !entity->Cast<PHPEntityVariable>()->IsFunctionArg()) {
+            } else if (entity->Is(kEntityTypeVariable) && !entity->Cast<PHPEntityVariable>()->IsFunctionArg()) {
                 // A global variable, const or a member
                 entity->Cast<PHPEntityVariable>()->SetTypeHint(docComment.GetVar());
             }
 
-        } else if(entity->Is(kEntityTypeVariable) && entity->Parent() && entity->Parent()->Is(kEntityTypeFunction) &&
-            entity->Cast<PHPEntityVariable>()->IsFunctionArg()) {
+        } else if (entity->Is(kEntityTypeVariable) && entity->Parent() && entity->Parent()->Is(kEntityTypeFunction) &&
+                   entity->Cast<PHPEntityVariable>()->IsFunctionArg()) {
             // A function argument
             PHPDocComment docComment(m_sourceFile, entity->Parent()->GetDocComment());
             wxString typeHint = docComment.GetParam(entity->GetFullName());
             const wxString& currentTypeHint = entity->Cast<PHPEntityVariable>()->GetTypeHint();
-            if(!typeHint.IsEmpty() && currentTypeHint.IsEmpty()) {
+            if (!typeHint.IsEmpty() && currentTypeHint.IsEmpty()) {
                 // The typehint of a function argument should have more value than the one provided
                 // in the documentation
                 entity->Cast<PHPEntityVariable>()->SetTypeHint(typeHint);

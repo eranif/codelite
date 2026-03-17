@@ -25,6 +25,9 @@ IncludeCategories:
   - Regex:           '^<wx/wxprec.h>'
     Priority:        -1
     SortPriority:    0
+  - Regex:           '^"precompiled_header.h"'
+    Priority:        -1
+    SortPriority:    0
   - Regex:           '^".*"'
     Priority:        1
     SortPriority:    0
@@ -54,7 +57,7 @@ SpacesInAngles:  false
 SpacesInContainerLiterals: true
 SpacesInCStyleCastParentheses: false
 SpacesInParentheses: false
-Standard: C++11
+Standard: c++20
 TabWidth: 4
 UseTab: Never
 SortIncludes: true

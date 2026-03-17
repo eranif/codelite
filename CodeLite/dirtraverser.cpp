@@ -29,7 +29,7 @@
 #include <wx/filename.h>
 #include <wx/tokenzr.h>
 
-DirTraverser::DirTraverser(const wxString &filespec)
+DirTraverser::DirTraverser(const wxString& filespec)
     : wxDirTraverser()
     , m_filespec(filespec)
 {
@@ -47,9 +47,9 @@ wxDirTraverseResult DirTraverser::OnFile(const wxString& filename)
     return wxDIR_CONTINUE;
 }
 
-wxDirTraverseResult DirTraverser::OnDir(const wxString &dirname)
+wxDirTraverseResult DirTraverser::OnDir(const wxString& dirname)
 {
-    for (size_t i=0; i<m_excludeDirs.GetCount(); i++) {
+    for (size_t i = 0; i < m_excludeDirs.GetCount(); i++) {
         wxString tmpDir(dirname);
         tmpDir.Replace(wxT("\\"), wxT("/"));
         wxArrayString toks = wxStringTokenize(tmpDir, wxT("/"), wxTOKEN_STRTOK);

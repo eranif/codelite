@@ -87,7 +87,6 @@ private:
     CxxVariable::Map_t m_locals;
 
 public:
-
     /**
      * @brief given fileContent, locate the best line to place a class forward declaration
      * statement
@@ -132,7 +131,9 @@ public:
      * to place the function body. set visibility to 0 for 'public' function, 1 for 'protected' and 2 for private
      * return true if this function succeeded, false otherwise
      */
-    bool InsertFunctionDecl(const wxString& clsname, const wxString& functionDecl, wxString& sourceContent,
+    bool InsertFunctionDecl(const wxString& clsname,
+                            const wxString& functionDecl,
+                            wxString& sourceContent,
                             int visibility = 0);
 
 private:

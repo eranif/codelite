@@ -14,5 +14,5 @@ LSP::DidChangeTextDocumentRequest::DidChangeTextDocumentRequest(const wxString& 
 
     TextDocumentContentChangeEvent changeEvent;
     changeEvent.SetText(fileContent);
-    m_params->As<DidChangeTextDocumentParams>()->SetContentChanges({ changeEvent });
+    m_params->As<DidChangeTextDocumentParams>()->SetContentChanges({changeEvent});
 }

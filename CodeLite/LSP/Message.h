@@ -34,7 +34,11 @@ public:
      */
     static std::unique_ptr<JSON> GetJSONPayload(std::string& network_buffer);
 
-    template <typename T> T* As() const { return dynamic_cast<T*>(const_cast<Message*>(this)); }
+    template <typename T>
+    T* As() const
+    {
+        return dynamic_cast<T*>(const_cast<Message*>(this));
+    }
 };
 
 } // namespace LSP

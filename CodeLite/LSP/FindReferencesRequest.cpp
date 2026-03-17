@@ -4,7 +4,9 @@
 #include "LSP/LSPEvent.h"
 #include "event_notifier.h"
 
-LSP::FindReferencesRequest::FindReferencesRequest(const wxString& filename, size_t line, size_t column,
+LSP::FindReferencesRequest::FindReferencesRequest(const wxString& filename,
+                                                  size_t line,
+                                                  size_t column,
                                                   bool includeDeclaration)
 {
     SetMethod("textDocument/references");
@@ -22,11 +24,11 @@ void LSP::FindReferencesRequest::OnResponse(const LSP::ResponseMessage& response
     // An array of locations
     int array_size = result.arraySize();
 
-    LSPEvent references_event{ wxEVT_LSP_REFERENCES };
+    LSPEvent references_event{wxEVT_LSP_REFERENCES};
     std::vector<LSP::Location>& locations = references_event.GetLocations();
     locations.reserve(array_size);
 
-    for(int i = 0; i < array_size; ++i) {
+    for (int i = 0; i < array_size; ++i) {
         auto d = result[i];
         LSP::Location loc;
         loc.FromJSON(d);

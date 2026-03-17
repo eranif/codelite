@@ -67,7 +67,7 @@ protected:
 protected:
     void EnableFlag(bool b, eFlags f)
     {
-        if(b) {
+        if (b) {
             this->m_flags |= f;
         } else {
             this->m_flags &= ~f;
@@ -100,7 +100,9 @@ public:
     {
     }
 
-    wxCodeCompletionBoxEntry(const wxString& text, const wxBitmap& bmp, const wxString& helpText,
+    wxCodeCompletionBoxEntry(const wxString& text,
+                             const wxBitmap& bmp,
+                             const wxString& helpText,
                              wxClientData* userData = NULL)
         : m_text(text)
         , m_comment(helpText)
@@ -135,7 +137,7 @@ public:
 
     void SetSignature(const wxString& signature) { this->m_signature = signature; }
     const wxString& GetSignature() const { return m_signature; }
-    
+
     void SetTriggerInclude(bool isTriggerInclude) { EnableFlag(isTriggerInclude, kTriggerInclude); }
     bool IsTriggerInclude() const { return HasFlag(kTriggerInclude); }
 
@@ -147,8 +149,8 @@ public:
     /**
      * @brief helper method for allocating wxCodeCompletionBoxEntry::Ptr
      */
-    static wxCodeCompletionBoxEntry::Ptr_t New(const wxString& text, int imgId = wxNOT_FOUND,
-                                               wxClientData* userData = NULL)
+    static wxCodeCompletionBoxEntry::Ptr_t
+    New(const wxString& text, int imgId = wxNOT_FOUND, wxClientData* userData = NULL)
     {
         wxCodeCompletionBoxEntry::Ptr_t pEntry(new wxCodeCompletionBoxEntry(text, imgId, userData));
         return pEntry;
@@ -166,8 +168,8 @@ public:
     /**
      * @brief helper method for allocating wxCodeCompletionBoxEntry::Ptr
      */
-    static wxCodeCompletionBoxEntry::Ptr_t New(const wxString& text, const wxString& helpText, const wxBitmap& bmp,
-                                               wxClientData* userData = NULL)
+    static wxCodeCompletionBoxEntry::Ptr_t
+    New(const wxString& text, const wxString& helpText, const wxBitmap& bmp, wxClientData* userData = NULL)
     {
         wxCodeCompletionBoxEntry::Ptr_t pEntry(new wxCodeCompletionBoxEntry(text, bmp, helpText, userData));
         return pEntry;

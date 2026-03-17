@@ -87,7 +87,7 @@ public:
      * @brief clear the request queue
      */
     void ClearQueue();
-    
+
     /**
      * Set the window to be notified when a change was done
      * between current source file tree and the actual tree.

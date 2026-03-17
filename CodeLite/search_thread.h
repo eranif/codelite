@@ -77,7 +77,7 @@ private:
     // An internal helper function that set/remove an option bit
     void SetOption(int option, bool set)
     {
-        if(set) {
+        if (set) {
             m_flags |= option;
         } else {
             m_flags &= ~(option);
@@ -169,7 +169,7 @@ public:
 
     SearchResult& operator=(const SearchResult& rhs)
     {
-        if(this == &rhs)
+        if (this == &rhs)
             return *this;
         m_position = rhs.m_position;
         m_column = rhs.m_column;
@@ -229,7 +229,7 @@ public:
     const wxArrayString& GetRegexCaptures() const { return m_regexCaptures; }
     wxString GetRegexCapture(size_t backref) const
     {
-        if(m_regexCaptures.size() > backref) {
+        if (m_regexCaptures.size() > backref) {
             return m_regexCaptures[backref];
         } else {
             return wxEmptyString;
@@ -283,7 +283,7 @@ public:
     wxString GetMessage() const
     {
         wxString msg;
-        if(m_fileScanned) {
+        if (m_fileScanned) {
             msg << _("====== Number of files scanned: ") << m_fileScanned << _(", Matches found: ");
         } else {
             msg << _("====== Matches found: ");
@@ -293,7 +293,7 @@ public:
         int msecs = m_elapsed % 1000;
 
         msg << _(", elapsed time: ") << secs << wxT(".") << msecs << _(" seconds") << wxT(" ======");
-        if(!m_failedFiles.IsEmpty()) {
+        if (!m_failedFiles.IsEmpty()) {
             msg << "\n";
             msg << "====== " << _("Failed to open the following files for scan:") << "\n";
             for (const auto& filename : m_failedFiles) {
@@ -370,11 +370,19 @@ private:
     void DoSearchFile(const wxString& fileName, const SearchData* data);
 
     // Perform search on a line
-    void DoSearchLine(const wxString& line, const int lineNum, const int lineOffset, const wxString& fileName,
-                      const SearchData* data, const wxString& findWhat, const wxArrayString& filters);
+    void DoSearchLine(const wxString& line,
+                      const int lineNum,
+                      const int lineOffset,
+                      const wxString& fileName,
+                      const SearchData* data,
+                      const wxString& findWhat,
+                      const wxArrayString& filters);
 
     // Perform search on a line using regular expression
-    void DoSearchLineRE(const wxString& line, const int lineNum, const int lineOffset, const wxString& fileName,
+    void DoSearchLineRE(const wxString& line,
+                        const int lineNum,
+                        const int lineOffset,
+                        const wxString& fileName,
                         const SearchData* data);
 
     // Send an event to the notified window

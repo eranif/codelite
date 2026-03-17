@@ -24,7 +24,7 @@ void LSP::RenameRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtH
 
     std::unordered_map<wxString, std::vector<LSP::TextEdit>> modifications = ParseWorkspaceEdit(result);
 
-    LSPEvent event_edit_files{ wxEVT_LSP_EDIT_FILES };
+    LSPEvent event_edit_files{wxEVT_LSP_EDIT_FILES};
     event_edit_files.SetAnswer(true); // Prompt the user
     event_edit_files.SetChanges(modifications);
     owner->AddPendingEvent(event_edit_files);
@@ -32,9 +32,9 @@ void LSP::RenameRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtH
     LOG_IF_DEBUG
     {
         LSP_DEBUG() << "Updating" << modifications.size() << "files:" << endl;
-        for(const auto& [filepath, changes] : modifications) {
+        for (const auto& [filepath, changes] : modifications) {
             LSP_DEBUG() << "  " << filepath << modifications.size() << "changes:" << endl;
-            for(const auto& change : changes) {
+            for (const auto& change : changes) {
                 LSP_DEBUG() << "    " << change.ToJSON().format(false) << endl;
             }
         }
@@ -48,6 +48,6 @@ void LSP::RenameRequest::OnError(const LSP::ResponseMessage& response, wxEvtHand
     // {"error":{"code":-32001,"message":"invalid name: conflict with the symbol in
     // C:/msys64/home/eran/devl/test_cpp/main.cpp:9:17"},"id":111,"jsonrpc":"2.0"}
     LSP::ResponseError errMsg(response.ToString());
-    wxMessageBox(wxString::Format(_("Rename symbol error:\n%s"), errMsg.GetMessage()), "CodeLite",
-                 wxICON_ERROR | wxCENTER);
+    wxMessageBox(
+        wxString::Format(_("Rename symbol error:\n%s"), errMsg.GetMessage()), "CodeLite", wxICON_ERROR | wxCENTER);
 }

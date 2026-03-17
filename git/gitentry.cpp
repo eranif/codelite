@@ -293,7 +293,8 @@ void GitEntry::WriteGitProperties(const wxString& localRepoPath, const GitEntry:
                         fpo.Close();
                     }
                 } else {
-                    ::wxMessageBox("Could not save GIT global configuration. Configuration is unmodified", "git",
+                    ::wxMessageBox("Could not save GIT global configuration. Configuration is unmodified",
+                                   "git",
                                    wxICON_WARNING | wxOK | wxCENTER);
                 }
             }
@@ -323,7 +324,8 @@ void GitEntry::WriteGitProperties(const wxString& localRepoPath, const GitEntry:
                     fpo.Close();
                 }
             } else {
-                ::wxMessageBox("Could not save GIT local configuration. Configuration is unmodified", "git",
+                ::wxMessageBox("Could not save GIT local configuration. Configuration is unmodified",
+                               "git",
                                wxICON_WARNING | wxOK | wxCENTER);
             }
         }

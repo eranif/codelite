@@ -27,6 +27,7 @@
 #define CLSOCKETCLIENT_H
 
 #include "clSocketBase.h"
+
 #include <wx/string.h>
 
 class WXDLLIMPEXP_CL clSocketClient : public clSocketBase

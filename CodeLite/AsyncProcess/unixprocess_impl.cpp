@@ -284,7 +284,7 @@ namespace
 {
 bool create_pipe(int& read_end, int& write_end)
 {
-    int fds[2] = { 0, 0 };
+    int fds[2] = {0, 0};
     errno = 0;
     if (::pipe(fds) < 0) {
         clERROR() << "Failed to create pipe()." << strerror(errno);
@@ -296,8 +296,11 @@ bool create_pipe(int& read_end, int& write_end)
 }
 } // namespace
 
-IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxArrayString& args, size_t flags,
-                                   const wxString& workingDirectory, IProcessCallback* cb)
+IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent,
+                                   const wxArrayString& args,
+                                   size_t flags,
+                                   const wxString& workingDirectory,
+                                   IProcessCallback* cb)
 {
     int argc = 0;
     char** argv = make_argv(args, argc);
@@ -461,8 +464,8 @@ IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxArrayString& ar
     }
 }
 
-IProcess* UnixProcessImpl::Execute(wxEvtHandler* parent, const wxString& cmd, size_t flags,
-                                   const wxString& workingDirectory, IProcessCallback* cb)
+IProcess* UnixProcessImpl::Execute(
+    wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDirectory, IProcessCallback* cb)
 {
     wxArrayString args = StringUtils::BuildArgv(cmd);
     clDEBUG() << "Executing:" << cmd << endl;

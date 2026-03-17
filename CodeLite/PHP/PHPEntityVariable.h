@@ -26,8 +26,9 @@
 #ifndef PHPENTITYVARIABLE_H
 #define PHPENTITYVARIABLE_H
 
-#include "codelite_exports.h"
 #include "PHPEntityBase.h" // Base class: PHPEntityBase
+#include "codelite_exports.h"
+
 #include <wx/string.h>
 
 class WXDLLIMPEXP_CL PHPEntityVariable : public PHPEntityBase
@@ -55,10 +56,10 @@ public:
     wxString GetScope() const;
     virtual void Store(PHPLookupTable* lookup);
     virtual void PrintStdout(int indent) const;
-    
+
     void FromJSON(const JSONItem& json);
     JSONItem ToJSON() const;
-    
+
     /**
      * @brief format this variable
      */
@@ -75,7 +76,7 @@ public:
     const wxString& GetDefaultValue() const { return m_defaultValue; }
     wxString GetNameNoDollar() const;
     virtual wxString ToTooltip() const;
-    
+
     // Aliases
     void SetIsReference(bool isReference) { SetFlag(kVar_Reference, isReference); }
     void SetIsNullable(bool isNullable) { SetFlag(kVar_Nullable, isNullable); }

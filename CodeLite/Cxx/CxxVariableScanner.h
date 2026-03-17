@@ -73,7 +73,9 @@ protected:
     bool skip_parenthesis_block(Scanner_t scanner);
 
 public:
-    CxxVariableScanner(const wxString& buffer, eCxxStandard standard, const wxStringTable_t& macros,
+    CxxVariableScanner(const wxString& buffer,
+                       eCxxStandard standard,
+                       const wxStringTable_t& macros,
                        bool isFuncSignature);
     virtual ~CxxVariableScanner() = default;
 

@@ -15,7 +15,7 @@ LSP::SignatureHelpRequest::SignatureHelpRequest(const wxString& filename, size_t
 
 void LSP::SignatureHelpRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
-    if(!response.Has("result")) {
+    if (!response.Has("result")) {
         return;
     }
     JSONItem res = response.Get("result");

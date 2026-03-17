@@ -50,17 +50,18 @@ protected:
     bool m_defined = false;
     bool m_valueSet = false;
     double m_valueLong;
+
 private:
     /**
      * @brief return the value as 'bool'
      */
     bool DoIsTrue();
-    
+
     /**
      * @brief return the value as 'long'
      */
     double DoGetLong();
-    
+
 public:
     CxxPreProcessorExpression(bool value);
     virtual ~CxxPreProcessorExpression() = default;
@@ -70,24 +71,15 @@ public:
     /**
      * @brief return true if this expression already assigned with a value
      */
-    bool IsValueSet() const
-    {
-        return m_valueSet;
-    }
+    bool IsValueSet() const { return m_valueSet; }
     /**
      * @brief the current expression is from a 'defined' condition?
      */
-    void SetDefined(bool defined)
-    {
-        this->m_defined = defined;
-    }
+    void SetDefined(bool defined) { this->m_defined = defined; }
     /**
      * @brief is the current expression is from a 'defined' condition?
      */
-    bool IsDefined() const
-    {
-        return m_defined;
-    }
+    bool IsDefined() const { return m_defined; }
     /**
      * @brief when encountering an expression of type
      * #if !(expression) => SetNot() marks the exclamation mark

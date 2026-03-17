@@ -73,8 +73,11 @@ public:
      * "Hit any key to continue"
      * @param title set the terminal title. If an empty string is provided, use the command as the title
      */
-    bool ExecuteConsole(const wxString& command, bool waitOnExit = false, const wxString& command_args = "",
-                        const wxString& workingDirectory = "", const wxString& title = "");
+    bool ExecuteConsole(const wxString& command,
+                        bool waitOnExit = false,
+                        const wxString& command_args = "",
+                        const wxString& workingDirectory = "",
+                        const wxString& title = "");
     /**
      * @brief execute a command without attaching console
      */

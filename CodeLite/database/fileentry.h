@@ -31,25 +31,21 @@
 
 class FileEntry
 {
-	long      m_id;
-	wxString  m_file;
-	int       m_lastRetaggedTimestamp;
+    long m_id;
+    wxString m_file;
+    int m_lastRetaggedTimestamp;
 
 public:
-	FileEntry();
-	~FileEntry() = default;
+    FileEntry();
+    ~FileEntry() = default;
 
 public:
-	void SetFile(const wxString& file) {
-		this->m_file = file;
-	}
-	void SetLastRetaggedTimestamp(int lastRetaggedTimestamp) { this->m_lastRetaggedTimestamp = lastRetaggedTimestamp; }
-	const wxString& GetFile() const {
-		return m_file;
-	}
-	int GetLastRetaggedTimestamp() const { return m_lastRetaggedTimestamp; }
-	void SetId(long id) { this->m_id = id; }
-	long GetId() const { return m_id; }
+    void SetFile(const wxString& file) { this->m_file = file; }
+    void SetLastRetaggedTimestamp(int lastRetaggedTimestamp) { this->m_lastRetaggedTimestamp = lastRetaggedTimestamp; }
+    const wxString& GetFile() const { return m_file; }
+    int GetLastRetaggedTimestamp() const { return m_lastRetaggedTimestamp; }
+    void SetId(long id) { this->m_id = id; }
+    long GetId() const { return m_id; }
 };
 using FileEntryPtr = std::unique_ptr<FileEntry>;
 

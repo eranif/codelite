@@ -2,6 +2,7 @@
 #define GITDIFFOUTPUTPARSER_H
 
 #include "macros.h"
+
 #include <wx/string.h>
 class GitDiffOutputParser
 {

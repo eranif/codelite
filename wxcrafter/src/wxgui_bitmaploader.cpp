@@ -19,8 +19,11 @@ wxCrafter::ResourceLoader::ResourceLoader(const wxString& skin)
     if (m_bitmaps.empty()) {
         wxString zipFile;
 #ifdef __WXMSW__
-        zipFile << wxStandardPaths::Get().GetDataDir() << wxT(INSTALL_DIR) << wxFileName::GetPathSeparator() << skin
-                << wxT(".zip");
+        wxFileName zip_path{wxStandardPaths::Get().GetExecutablePath()};
+        zip_path.SetName(skin);
+        zip_path.SetExt("zip");
+        zip_path.RemoveLastDir();
+        zipFile = zip_path.GetFullPath();
 #else
         zipFile << wxStandardPaths::Get().GetDataDir() << wxFileName::GetPathSeparator() << skin << wxT(".zip");
 #endif

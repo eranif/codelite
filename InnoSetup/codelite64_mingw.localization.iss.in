@@ -1,0 +1,18 @@
+[Languages]
+Name: "eng"; MessagesFile: "compiler:Default.isl"
+Name: "cze"; MessagesFile: "compiler:Languages\Czech.isl"
+Name: "fre"; MessagesFile: "compiler:Languages\French.isl"
+Name: "ita"; MessagesFile: "compiler:Languages\Italian.isl"
+Name: "jpn"; MessagesFile: "compiler:Languages\Japanese.isl"
+Name: "rus"; MessagesFile: "compiler:Languages\Russian.isl"
+
+
+[CustomMessages]
+eng.KeepUserSettings=Would you like to keep your user settings?
+eng.KeepLocalSettings=Would you like to keep your local settings?
+
+eng.KeepUserSettings=Souhaitez-vous conserver vos paramètres utilisateur?
+fra.KeepLocalSettings=Souhaitez-vous conserver vos paramètres locaux?
+
+ita.KeepUserSettings=Vuoi mantenere le impostazioni utente?
+ita.KeepLocalSettings=Vuoi mantenere le impostazioni locali?

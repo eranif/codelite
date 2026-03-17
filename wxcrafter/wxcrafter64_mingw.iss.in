@@ -22,12 +22,12 @@ Compression=lzma/ultra
 SolidCompression=true
 InternalCompressLevel=ultra
 PrivilegesRequired=none
-UninstallDisplayIcon={app}\wxcrafter.exe,0
+UninstallDisplayIcon={app}\bin\wxcrafter.exe,0
 
 ;;==================================
 ;; 64 bit setup
 ;;==================================
-#define INSTALL_DIR "@CL_INSTALL_BIN@"
+#define INSTALL_DIR "@CMAKE_INSTALL_PREFIX@"
 
 [Languages]
 Name: "eng"; MessagesFile: "compiler:Default.isl"
@@ -41,10 +41,10 @@ Name: "quicklaunchicon"; Description: "{cm:CreateQuickLaunchIcon}"; GroupDescrip
 Source: "{#INSTALL_DIR}\*"; Excludes: "*.a"; DestDir: "{app}"; Flags: ignoreversion recursesubdirs;
 
 [Icons]
-Name: "{group}\wxCrafter "; Filename: "{app}\wxcrafter.exe"; WorkingDir: "{app}"
+Name: "{group}\wxCrafter "; Filename: "{app}\bin\wxcrafter.exe"; WorkingDir: "{app}"
 Name: "{group}\{cm:UninstallProgram, wxCrafter}"; Filename: "{uninstallexe}"
-Name: "{userdesktop}\wxCrafter "; Filename: "{app}\wxcrafter.exe"; WorkingDir: "{app}" ;Tasks: desktopicon
-Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\wxCrafter"; WorkingDir: "{app}"; Filename: "{app}\wxcrafter.exe"; Tasks: quicklaunchicon
+Name: "{userdesktop}\wxCrafter "; Filename: "{app}\bin\wxcrafter.exe"; WorkingDir: "{app}" ;Tasks: desktopicon
+Name: "{userappdata}\Microsoft\Internet Explorer\Quick Launch\wxCrafter"; WorkingDir: "{app}"; Filename: "{app}\bin\wxcrafter.exe"; Tasks: quicklaunchicon
 
 [INI]
 
@@ -55,7 +55,7 @@ Root: HKLM; Subkey: "Software\wxcrafter\settings"; ValueType: string; ValueName:
 Type: filesandordirs; Name: "{app}"
 
 [Run]
-Filename: "{app}\wxcrafter.exe"; Description: "Launch wxCrafter"; Flags: postinstall nowait skipifsilent
+Filename: "{app}\bin\wxcrafter.exe"; Description: "Launch wxCrafter"; Flags: postinstall nowait skipifsilent
 
 [Code]
 var

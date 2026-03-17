@@ -449,9 +449,13 @@ void ChatAIWindow::OnChatAIOutput(clLLMEvent& event)
         if (event.GetOutputReason().has_value()) {
             if (event.GetOutputReason().value() == assistant::Reason::kToolDenied ||
                 event.GetOutputReason().value() == assistant::Reason::kToolAllowed) {
+                // Make sure these lines are placed on their own line.
                 if (!m_stcOutput->GetText().EndsWith("\n")) {
-                    // Make sure these lines are placed on their own line.
                     content.Prepend("\n");
+                }
+
+                if (!content.EndsWith("\n")) {
+                    content << "\n";
                 }
             }
         }

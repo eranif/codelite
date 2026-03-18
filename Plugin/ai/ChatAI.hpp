@@ -62,7 +62,9 @@ public:
 
 private:
     void OnInitDone(wxCommandEvent& event);
+    void EnsureVisible();
 
     ChatAIWindowFrame* m_chatWindowFrame{nullptr};
-    std::optional<PaneId> m_dockedPaneId{std::nullopt};
+    ChatAIWindow* m_chatWindow{nullptr};
+    bool m_dock_chat{true};
 };

@@ -25,39 +25,54 @@
 #include "ChatAI.hpp"
 
 #include "ai/LLMManager.hpp"
+#include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
-
-namespace
-{
-const wxString CHAT_AI_LABEL = _("Chat AI");
-} // namespace
+#include "globals.h"
 
 ChatAI::ChatAI()
 {
+    m_dock_chat = clConfig::Get().Read(CHAT_AI_DOCKED, m_dock_chat);
     llm::Manager::GetInstance().GetConfig().Load();
-    m_chatWindowFrame = new ChatAIWindowFrame(EventNotifier::Get()->TopFrame(), this);
+
+    if (m_dock_chat) {
+        m_chatWindow = new ChatAIWindow(clGetManager()->BookGet(PaneId::BOTTOM_BAR));
+        clGetManager()->BookAddPage(PaneId::BOTTOM_BAR, m_chatWindow, CHAT_AI_LABEL);
+    } else {
+        m_chatWindowFrame = new ChatAIWindowFrame(EventNotifier::Get()->TopFrame(), this);
+        m_chatWindow = m_chatWindowFrame->GetChatWindow();
+    }
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &ChatAI::OnInitDone, this);
 }
 
-ChatAI::~ChatAI() { bool is_docked = m_dockedPaneId.has_value(); }
+ChatAI::~ChatAI() { EventNotifier::Get()->Unbind(wxEVT_INIT_DONE, &ChatAI::OnInitDone, this); }
 
 void ChatAI::ShowChatWindow(const wxString& prompt)
 {
-    ChatAIWindow* chat_view = GetChatWindow();
+    EnsureVisible();
     if (!prompt.empty()) {
-        chat_view->Chat(prompt);
+        m_chatWindow->Chat(prompt);
     }
+    m_chatWindow->GetStcInput()->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 
 void ChatAI::OnInitDone(wxCommandEvent& event) { event.Skip(); }
 
+void ChatAI::EnsureVisible()
+{
+    if (m_dock_chat) {
+        clGetManager()->ShowManagementWindow(CHAT_AI_LABEL, true);
+    } else {
+        if (!m_chatWindowFrame->IsShown()) {
+            m_chatWindowFrame->Show();
+        }
+    }
+}
+
 ChatAIWindow* ChatAI::GetChatWindow()
 {
-    if (!m_chatWindowFrame->IsShown()) {
-        m_chatWindowFrame->Show();
-    }
-    return m_chatWindowFrame->GetChatWindow();
+    EnsureVisible();
+    return m_chatWindow;
 }
 
 void ChatAI::AppendTextAndStyle(const wxString& text)

@@ -18,6 +18,9 @@
 class EndpointModelSelector;
 using llm::ChatState;
 
+inline const wxString CHAT_AI_LABEL = _("Chat AI");
+inline const wxString CHAT_AI_DOCKED = "chat-ai-docked";
+
 class WXDLLIMPEXP_SDK ChatAIWindow : public AssistanceAIChatWindowBase
 {
 public:

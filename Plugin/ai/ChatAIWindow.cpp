@@ -23,7 +23,6 @@
 
 namespace
 {
-const wxString CHAT_AI_LABEL = _("Chat AI");
 const wxString LONG_MODEL_NAME = "claude-sonnet-4-5-1234567890";
 
 enum StatusBarIndex {
@@ -180,6 +179,7 @@ void ChatAIWindow::OnOptions(wxAuiToolBarEvent& event)
 {
     auto& llm_manager = llm::Manager::GetInstance();
 
+    bool is_docked = clConfig::Get().Read(CHAT_AI_DOCKED, true);
     wxMenu menu;
     wxMenu* caching_policy_menu = new wxMenu;
     auto& conf = llm_manager.GetConfig();
@@ -240,6 +240,18 @@ void ChatAIWindow::OnOptions(wxAuiToolBarEvent& event)
         }
         menu.Append(wxID_ANY, _("Insert Prompt"), prompt_selection);
     }
+    menu.AppendSeparator();
+    menu.Append(XRCID("dock-chat-window"), _("Dock Chat Window"), wxEmptyString, wxITEM_CHECK)->Check(is_docked);
+    menu.Bind(
+        wxEVT_MENU,
+        [](wxCommandEvent& event) {
+            clConfig::Get().Write(CHAT_AI_DOCKED, event.IsChecked());
+            ::clMessageBox(_("A restart is required for changes to take effect"),
+                           "CodeLite",
+                           wxICON_INFORMATION | wxOK | wxCENTER);
+        },
+        XRCID("dock-chat-window"));
+
     menu.AppendSeparator();
     menu.Append(XRCID("chat_history"), _("Chat History"))->Enable(CurrentEndpointHasHistory());
     menu.Bind(wxEVT_MENU, &ChatAIWindow::OnHistory, this, XRCID("chat_history"));

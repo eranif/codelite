@@ -642,13 +642,16 @@ wxAuiToolBar* clStatusBar::CreatePaneButtonsToolbar()
 
     BitmapLoader* images = clGetManager()->GetStdIcons();
     toolbar->AddTool(
-        XRCID("sidebar-button"), _("Show sidebar"), images->LoadBitmap("sidebar"), wxEmptyString, wxITEM_CHECK);
-    toolbar->AddTool(
-        XRCID("bottombar-button"), _("Show output pane"), images->LoadBitmap("bottombar"), wxEmptyString, wxITEM_CHECK);
+        XRCID("sidebar-button"), _("Show sidebar"), images->LoadBitmap("sidebar"), _("Show sidebar"), wxITEM_CHECK);
+    toolbar->AddTool(XRCID("bottombar-button"),
+                     _("Show output pane"),
+                     images->LoadBitmap("bottombar"),
+                     _("Show output pane"),
+                     wxITEM_CHECK);
     toolbar->AddTool(XRCID("secondary-sidebar-button"),
                      _("Show secondary sidebar"),
                      images->LoadBitmap("secondary-sidebar"),
-                     wxEmptyString,
+                     _("Show secondary sidebar"),
                      wxITEM_CHECK);
     toolbar->Realize();
 

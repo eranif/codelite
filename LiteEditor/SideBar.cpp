@@ -26,14 +26,11 @@
 
 #include "clWorkspaceView.h"
 #include "cl_config.h"
-#include "cl_editor.h"
 #include "codelite_events.h"
-#include "dockablepanemenumanager.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "fileexplorer.h"
-#include "fileview.h"
-#include "frame.h"
+#include "SecondarySideBar.hpp"
 #include "globals.h"
 #include "openwindowspanel.h"
 #include "pluginmanager.h"
@@ -41,7 +38,6 @@
 #include "workspacetab.h"
 
 #include <wx/app.h>
-#include <wx/bitmap.h>
 #include <wx/gauge.h>
 #include <wx/menu.h>
 #include <wx/sizer.h>
@@ -61,10 +57,10 @@
 
 namespace
 {
-const wxString WORKSPACE_LABEL = _("Workspace");
-const wxString EXPLORER_LABEL = _("Explorer");
-const wxString TABS_LABEL = _("Tabs");
-const wxString GROUPS_LABEL = _("Groups");
+wxString WorkspaceLabel() { return _("Workspace"); }
+wxString ExplorerLabel() { return _("Explorer"); }
+wxString TabsLabel() { return _("Tabs"); }
+wxString GroupsLabel() { return _("Groups"); }
 } // namespace
 
 SideBar::SideBar(wxWindow* parent, const wxString& caption, wxAuiManager* mgr, long style)
@@ -109,7 +105,7 @@ void SideBar::CreateGUIControls()
     // Calculate the widest tab (the one with the 'Workspace' label)
     int xx, yy;
     wxFont fnt = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-    wxWindow::GetTextExtent(WORKSPACE_LABEL, &xx, &yy, NULL, NULL, &fnt);
+    wxWindow::GetTextExtent(WorkspaceLabel(), &xx, &yy, NULL, NULL, &fnt);
 
     mainSizer->Add(m_book, 1, wxEXPAND | wxALL, 0);
 
@@ -126,37 +122,37 @@ void SideBar::CreateGUIControls()
     // the IManager instance
     IManager* mgr = PluginManager::Get();
 
-    m_workspaceTab = new WorkspaceTab(m_book, WORKSPACE_LABEL);
-    m_book->AddPage(m_workspaceTab, WORKSPACE_LABEL, "workspace-button", true);
+    m_workspaceTab = new WorkspaceTab(m_book, WorkspaceLabel());
+    m_book->AddPage(m_workspaceTab, WorkspaceLabel(), "workspace-button", true);
 
-    m_tabs.insert(std::make_pair(WORKSPACE_LABEL, Tab(WORKSPACE_LABEL, m_workspaceTab)));
-    mgr->AddWorkspaceTab(WORKSPACE_LABEL);
+    m_tabs.emplace(WorkspaceLabel(), Tab(WorkspaceLabel(), m_workspaceTab));
+    mgr->AddWorkspaceTab(WorkspaceLabel());
 
     // Add the explorer tab
-    m_explorer = new FileExplorer(m_book, EXPLORER_LABEL);
-    m_book->AddPage(m_explorer, EXPLORER_LABEL, "file-explorer-button", false);
+    m_explorer = new FileExplorer(m_book, ExplorerLabel());
+    m_book->AddPage(m_explorer, ExplorerLabel(), "file-explorer-button", false);
 
-    m_tabs.insert(std::make_pair(EXPLORER_LABEL, Tab(EXPLORER_LABEL, m_explorer)));
-    mgr->AddWorkspaceTab(EXPLORER_LABEL);
+    m_tabs.emplace(ExplorerLabel(), Tab(ExplorerLabel(), m_explorer));
+    mgr->AddWorkspaceTab(ExplorerLabel());
 
     // Add the "File Explorer" view to the list of files managed by the workspace-view
-    m_workspaceTab->GetView()->AddPage(m_explorer, EXPLORER_LABEL, false);
+    m_workspaceTab->GetView()->AddPage(m_explorer, ExplorerLabel(), false);
 
     // Add the Open Windows Panel (Tabs)
     // #ifndef __WXOSX__
-    m_openWindowsPane = new OpenWindowsPanel(m_book, TABS_LABEL);
-    m_book->AddPage(m_openWindowsPane, TABS_LABEL, "tabs-button");
+    m_openWindowsPane = new OpenWindowsPanel(m_book, TabsLabel());
+    m_book->AddPage(m_openWindowsPane, TabsLabel(), "tabs-button");
 
-    m_tabs.insert(std::make_pair(TABS_LABEL, Tab(TABS_LABEL, m_openWindowsPane)));
-    mgr->AddWorkspaceTab(TABS_LABEL);
+    m_tabs.emplace(TabsLabel(), Tab(TabsLabel(), m_openWindowsPane));
+    mgr->AddWorkspaceTab(TabsLabel());
     // #endif
 
     // Add the Tabgroups tab
-    m_TabgroupsPane = new TabgroupsPane(m_book, GROUPS_LABEL);
-    m_book->AddPage(m_TabgroupsPane, GROUPS_LABEL, "groups-button");
+    m_TabgroupsPane = new TabgroupsPane(m_book, GroupsLabel());
+    m_book->AddPage(m_TabgroupsPane, GroupsLabel(), "groups-button");
 
-    m_tabs.insert(std::make_pair(GROUPS_LABEL, Tab(GROUPS_LABEL, m_TabgroupsPane)));
-    mgr->AddWorkspaceTab(GROUPS_LABEL);
+    m_tabs.emplace(GroupsLabel(), Tab(GroupsLabel(), m_TabgroupsPane));
+    mgr->AddWorkspaceTab(GroupsLabel());
 
     if (m_book->GetPageCount() > 0) {
         m_book->SetSelection((size_t)0);
@@ -169,7 +165,7 @@ void SideBar::CreateGUIControls()
         wxTheApp->GetTopWindow()->GetEventHandler()->AddPendingEvent(event_chat);
     });
 
-    m_book->AddActionButton("chat-bot", "Open AI Chat Window", action_ptr);
+    m_book->AddActionButton("chat-bot", _("Open AI Chat Window"), action_ptr);
     m_mgr->Update();
 }
 
@@ -224,21 +220,6 @@ void SideBar::SaveWorkspaceViewTabOrder() const
     clConfig::Get().SetWorkspaceTabOrder(panes, m_book->GetSelection());
 }
 
-wxWindow* SideBar::DoGetControlByName(const wxString& title)
-{
-    if (title == EXPLORER_LABEL)
-        return m_explorer;
-    else if (title == WORKSPACE_LABEL)
-        return m_workspaceTab;
-#ifndef __WXOSX__
-    else if (title == TABS_LABEL)
-        return m_openWindowsPane;
-#endif
-    else if (title == GROUPS_LABEL)
-        return m_TabgroupsPane;
-    return NULL;
-}
-
 bool SideBar::IsTabVisible(int flag)
 {
     wxWindow* win(NULL);
@@ -246,22 +227,22 @@ bool SideBar::IsTabVisible(int flag)
 
     switch (flag) {
     case View_Show_Workspace_Tab:
-        title = WORKSPACE_LABEL;
-        win = DoGetControlByName(WORKSPACE_LABEL);
+        title = WorkspaceLabel();
+        win = m_workspaceTab;
         break;
     case View_Show_Explorer_Tab:
-        title = EXPLORER_LABEL;
-        win = DoGetControlByName(EXPLORER_LABEL);
+        title = ExplorerLabel();
+        win = m_explorer;
         break;
 #ifndef __WXOSX__
     case View_Show_Tabs_Tab:
-        title = TABS_LABEL;
-        win = DoGetControlByName(TABS_LABEL);
+        title = TabsLabel();
+        win = m_openWindowsPane;
         break;
 #endif
     case View_Show_Tabgroups_Tab:
-        title = GROUPS_LABEL;
-        win = DoGetControlByName(GROUPS_LABEL);
+        title = GroupsLabel();
+        win = m_TabgroupsPane;
         break;
     }
 

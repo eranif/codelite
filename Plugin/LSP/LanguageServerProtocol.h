@@ -272,6 +272,8 @@ public:
      */
     void FindReferences(IEditor* editor);
 
+    void SendAck(size_t message_id);
+
     /**
      * @brief rename a symbol
      */

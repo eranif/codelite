@@ -562,6 +562,14 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxColour& colour)
 }
 #endif
 
+JSONItem& JSONItem::addNull(const wxString& name)
+{
+    if (m_json) {
+        cJSON_AddNullToObject(m_json, name.ToStdString(wxConvUTF8).data());
+    }
+    return *this;
+}
+
 JSONItem& JSONItem::addProperty(const wxString& name, const char* value, const wxMBConv& conv)
 {
     return addProperty(name, wxString(value, conv));

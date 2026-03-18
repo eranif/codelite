@@ -27,7 +27,11 @@ JSONItem LSP::InitializeRequest::ToJSON() const
         }
     }
 
-    auto textDocumentCapabilities = params.AddObject("capabilities").AddObject("textDocument");
+    auto capabilities = params.AddObject("capabilities");
+    auto windowCapabilities = capabilities.AddObject("window");
+    windowCapabilities.addProperty("workDoneProgress", true);
+
+    auto textDocumentCapabilities = capabilities.AddObject("textDocument");
     auto docFormat =
         textDocumentCapabilities.AddObject("completion").AddObject("completionItem").AddArray("documentationFormat");
     docFormat.arrayAppend("plaintext");

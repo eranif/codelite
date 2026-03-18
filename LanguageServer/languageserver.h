@@ -33,6 +33,9 @@ public:
      * @brief log message to the output tab
      */
     void LogMessage(const wxString& server_name, const wxString& message, int log_leve);
+    void LogMessageInfo(const wxString& server_name, const wxString& message) { LogMessage(server_name, message, 3); }
+    void LogMessageError(const wxString& server_name, const wxString& message) { LogMessage(server_name, message, 1); }
+    void LogMessageWarn(const wxString& server_name, const wxString& message) { LogMessage(server_name, message, 2); }
 
 protected:
     void OnSettings(wxCommandEvent& e);

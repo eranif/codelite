@@ -460,4 +460,33 @@ std::unordered_map<wxString, std::vector<LSP::TextEdit>> ParseWorkspaceEdit(cons
     }
     return modifications;
 }
+
+// =====---------------
+// Progress
+// =====---------------
+
+std::optional<Progress> Progress::FromJSON(const JSONItem& json)
+{
+    if (!json.hasNamedObject("params")) {
+        return std::nullopt;
+    }
+
+    if (!json["params"].hasNamedObject("value")) {
+        return std::nullopt;
+    }
+
+    static const std::unordered_map<wxString, ProgressKind> ProgressKindMap{
+        {"begin", ProgressKind::begin}, {"report", ProgressKind::report}, {"end", ProgressKind::end}};
+    auto kind = json["params"]["value"]["kind"].toString();
+    if (!ProgressKindMap.contains(kind)) {
+        return std::nullopt;
+    }
+
+    Progress result;
+    result.m_message = json["params"]["value"]["message"].toString();
+    result.m_percentage = json["params"]["value"]["percentage"].toDouble(0.0);
+    result.m_token = json["params"]["token"].toString();
+    result.m_kind = ProgressKindMap.find(kind)->second;
+    return result;
+}
 } // namespace LSP

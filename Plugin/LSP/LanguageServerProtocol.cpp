@@ -13,7 +13,9 @@
 #include "LSP/HoverRequest.hpp"
 #include "LSP/InitializeRequest.h"
 #include "LSP/InitializedNotification.hpp"
+#include "LSP/JSONRpcMessage.hpp"
 #include "LSP/LSPEvent.h"
+#include "LSP/LSPManager.hpp"
 #include "LSP/LSPNetworkRemoteSTDIO.hpp"
 #include "LSP/LSPNetworkSTDIO.h"
 #include "LSP/LSPNetworkSocketClient.h"
@@ -647,24 +649,43 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
 
         if (message_method == "window/logMessage" || message_method == "window/showMessage") {
             // log this message
-            LSPEvent log_event(wxEVT_LSP_LOGMESSAGE);
-            log_event.SetServerName(GetName());
-            log_event.SetMessage(json_item["params"]["message"].toString());
-            log_event.SetLogMessageSeverity(json_item["params"]["type"].toInt());
-            m_cluster->AddPendingEvent(log_event);
+            LSP::Manager::GetInstance().LogMessage(GetName(),
+                                                   json_item["params"]["message"].toString(),
+                                                   LSP::Manager::LogLevelFromInt(json_item["params"]["type"].toInt(1)));
+
+        } else if (message_method == "window/workDoneProgress/create") {
+            // The server is asking to create a work-done progress token.
+            // For now we accept it and let the generic response handling reply success.
+            auto token = json_item["params"]["token"].toString();
+            auto message_id = json_item["id"].toSize_t(0);
+            LSP_DEBUG() << GetLogPrefix() << "Received window/workDoneProgress/create: token=" << token
+                        << ", id=" << message_id << endl;
+            // A typical message will look like this:
+            // {"jsonrpc":"2.0","method":"window/workDoneProgress/create","params":{"token":"find_references"},"id":1}
+            SendAck(message_id);
 
         } else if (message_method == "telemetry/event") {
             // show dialog to the user
             // log this message
-            LSPEvent log_event(wxEVT_LSP_LOGMESSAGE);
-            log_event.SetServerName(GetName());
-            log_event.SetMessage(json_item["params"].toString());
-            m_cluster->AddPendingEvent(log_event);
+            LSP::Manager::GetInstance().LogMessage(
+                GetName(), json_item["params"].toString(), LSP::Manager::LogLevel::Info);
+
         } else if (message_method == "workspace/applyEdit") {
 
             // the server is requesting us to apply an edit
             HandleWorkspaceEdit(json_item["params"]["edit"]);
 
+        } else if (message_method == "$/progress") {
+            // Progress notifications associated with work-done progress tokens.
+            // For now just log them, so they do not get treated as unknown messages.
+            auto progress = LSP::Progress::FromJSON(json_item);
+            LSP_DEBUG() << GetLogPrefix() << "Received $/progress: " << json_item.format(false) << endl;
+            if (progress.has_value()) {
+                LSP::Manager::GetInstance().LogMessage(
+                    GetName(), progress.value().GetMessage(), LSP::Manager::LogLevel::Info);
+            } else {
+                LSP_DEBUG() << "Failed to parse progress object" << endl;
+            }
         } else {
             // other response
             LSP::ResponseMessage res(std::move(json));
@@ -719,6 +740,11 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
 
                     // Move the content of the pending queue into the main queue
                     m_Queue.Move(m_pendingQueue);
+
+                } else if (message_method == "window/workDoneProgress/create") {
+                    // Unexpected in this branch, but keep it harmless if it arrives here.
+                    LSP_DEBUG() << GetLogPrefix()
+                                << "Ignoring unexpected window/workDoneProgress/create before init completion" << endl;
 
                 } else {
                     LSP_DEBUG() << GetLogPrefix() << "Server not initialized. This message is ignored";
@@ -892,6 +918,34 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
             EventNotifier::Get()->AddPendingEvent(eventClearDiags);
         }
     }
+}
+
+void LanguageServerProtocol::SendAck(size_t message_id)
+{
+    LSP_DEBUG() << GetLogPrefix() << "Sending success message ID:" << message_id << endl;
+    // ACK is a special type of message where the client does not accept a response
+    // so we bypass the queue and write to the network directly.
+
+    // {
+    //  "jsonrpc": "2.0",
+    //  "id": 42,
+    //  "result": null
+    // }
+
+    if (!m_network) {
+        LSP_ERROR() << GetLogPrefix() << "SendAck(): no network available!" << endl;
+        return;
+    }
+
+    auto json = JSONItem::createObject();
+    json.addProperty("jsonrpc", "2.0");
+    json.addProperty("id", message_id);
+    json.addNull("result");
+
+    LSP::JSONRpcMessage message{std::move(json)};
+    auto str = message.ToString();
+    LSP_TRACE() << GetLogPrefix() << "==>" << str << endl;
+    m_network->Send(str);
 }
 
 void LanguageServerProtocol::FindReferences(IEditor* editor)

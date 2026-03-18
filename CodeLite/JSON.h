@@ -191,6 +191,7 @@ public:
     JSONItem& addProperty(const wxString& name, const wxStringMap_t& stringMap);
     JSONItem& addProperty(const wxString& name, const JSONItem& element);
     JSONItem& addProperty(const wxString& name, const char* value, const wxMBConv& conv = wxConvUTF8);
+    JSONItem& addNull(const wxString& name);
 
     /**
      * @brief delete property by name

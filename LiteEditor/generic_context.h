@@ -64,8 +64,8 @@ public:
     //---------------------------------------
     // Operations
     //---------------------------------------
-    virtual void ApplySettings();
+    void ApplySettings() override;
 
-    void ProcessIdleActions();
+    void ProcessIdleActions() override;
 };
 #endif // CONTEXT_GENERIC_H

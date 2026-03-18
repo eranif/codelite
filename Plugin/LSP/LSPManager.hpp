@@ -24,6 +24,24 @@ class WXDLLIMPEXP_SDK Manager : public wxEvtHandler
 {
 public:
     using Ptr_t = std::shared_ptr<Manager>;
+    enum class LogLevel {
+        Error = 1,
+        Warning = 2,
+        Info = 3,
+    };
+
+    inline static LogLevel LogLevelFromInt(int level)
+    {
+        switch (level) {
+        case 1:
+            return LogLevel::Error;
+        case 2:
+            return LogLevel::Warning;
+        default:
+            return LogLevel::Info;
+        }
+    }
+
     void StartServer(const LanguageServerEntry& entry);
     void StartServer(const wxString& entry);
     void RestartServer(const wxString& name);
@@ -211,6 +229,32 @@ public:
      */
     bool RequestSymbolsForEditor(IEditor* editor, std::function<void(const LSPEvent&)> cb);
 
+    /**
+     * @brief Logs a message through the configured log sink.
+     *
+     * Forwards the supplied server name, message, and log level to the active
+     * log sink if one is installed. If no log sink is configured, the function
+     * returns immediately and does nothing.
+     *
+     * @param server_name const wxString& The name of the server associated with the log entry.
+     * @param message const wxString& The log message to record.
+     * @param level Manager::LogLevel The severity or category of the log message.
+     *
+     * @return void This function does not return a value.
+     */
+    void LogMessage(const wxString& server_name, const wxString& message, Manager::LogLevel level)
+    {
+        if (!m_logsink) {
+            return;
+        }
+        m_logsink(server_name, message, level);
+    }
+
+    void SetLogSink(std::function<void(const wxString, const wxString&, Manager::LogLevel)> logsink)
+    {
+        m_logsink = std::move(logsink);
+    }
+
 protected:
     void OnSignatureHelp(LSPEvent& event);
     void OnHover(LSPEvent& event);
@@ -229,7 +273,6 @@ protected:
     void OnShowQuickOutlineDlg(LSPEvent& event);
     void OnOulineViewSymbols(LSPEvent& event);
     void OnSemanticTokens(LSPEvent& event);
-    void OnLogMessage(LSPEvent& event);
     void OnDocumentSymbolsForHighlight(LSPEvent& event);
     void OnBuildEnded(clBuildEvent& event);
     void OnOpenResource(wxCommandEvent& event);
@@ -271,5 +314,6 @@ protected:
     LSPOutlineViewDlg* m_quick_outline_dlg{nullptr};
     std::unique_ptr<CodeLiteRemoteHelper> m_remoteHelper;
     bool m_shutdown_in_progress{false};
+    std::function<void(const wxString, const wxString&, Manager::LogLevel)> m_logsink{nullptr};
 };
 } // namespace LSP

@@ -158,7 +158,6 @@ Manager::Manager()
     Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, &Manager::OnOulineViewSymbols, this);
     Bind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &Manager::OnDocumentSymbolsForHighlight, this);
     Bind(wxEVT_LSP_SEMANTICS, &Manager::OnSemanticTokens, this);
-    Bind(wxEVT_LSP_LOGMESSAGE, &Manager::OnLogMessage, this);
     Bind(wxEVT_LSP_EDIT_FILES, &Manager::OnApplyEdits, this);
 
     // Global accelerators
@@ -198,7 +197,6 @@ Manager::~Manager()
     Unbind(wxEVT_LSP_HOVER, &Manager::OnHover, this);
     Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW, &Manager::OnOulineViewSymbols, this);
     Unbind(wxEVT_LSP_SEMANTICS, &Manager::OnSemanticTokens, this);
-    Unbind(wxEVT_LSP_LOGMESSAGE, &Manager::OnLogMessage, this);
     Unbind(wxEVT_LSP_DOCUMENT_SYMBOLS_FOR_HIGHLIGHT, &Manager::OnDocumentSymbolsForHighlight, this);
     Unbind(wxEVT_LSP_EDIT_FILES, &Manager::OnApplyEdits, this);
 
@@ -1211,12 +1209,6 @@ LanguageServerProtocol::Ptr_t Manager::GetServerForFileType(FileExtManager::File
         return nullptr;
     }
     return GetServerForLanguage(lang);
-}
-
-void Manager::OnLogMessage(LSPEvent& event)
-{
-    event.Skip();
-    // m_plugin->LogMessage(event.GetServerName(), event.GetMessage(), event.GetLogMessageSeverity());
 }
 
 void Manager::OnDocumentSymbolsForHighlight(LSPEvent& event)

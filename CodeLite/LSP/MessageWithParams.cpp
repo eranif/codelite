@@ -1,6 +1,7 @@
 #include "LSP/MessageWithParams.h"
 
 #include "JSON.h"
+#include "LSP/JSONRpcMessage.hpp"
 
 #include <sstream>
 #include <wx/string.h>
@@ -25,24 +26,8 @@ std::string LSP::MessageWithParams::ToString() const
 {
     // Serialize the object and construct a JSON-RPC message
     JSONItem json = ToJSON();
-    char* data = json.FormatRawString(false);
-
-    std::string s;
-    size_t len = strlen(data);
-
-    // Build the request header
-    std::stringstream ss;
-    ss << "Content-Length: " << len << "\r\n";
-    ss << "Content-Type: application/json; charset=utf-8" << "\r\n";
-    ss << "\r\n";
-    s = ss.str();
-
-    // append the data
-    s.append(data, len);
-
-    // release the buffer
-    free(data);
-    return s;
+    JSONRpcMessage message{std::move(json)};
+    return message.ToString();
 }
 
 LSP::MessageWithParams::Ptr_t LSP::MessageWithParams::MakeRequest(LSP::MessageWithParams* message_ptr)

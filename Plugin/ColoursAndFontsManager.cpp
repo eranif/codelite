@@ -1029,14 +1029,17 @@ LexerConf::Ptr_t ColoursAndFontsManager::DoAddLexer(JSONItem json)
     }
 
     // Set the JavaScript keywords
-    if (lexer->GetName() == "php" && !lexer->GetKeyWords(1).Contains("instanceof")) {
-        lexer->SetKeyWords(
-            "abstract and array as break callable case catch class clone const continue declare default die do echo "
-            "else elseif empty enddeclare endfor endforeach endif endswitch endwhile eval exit extends final finally "
-            "fn for foreach from function global goto if implements include include_once instanceof insteadof "
-            "interface isset list match namespace new or print private protected public readonly require require_once "
-            "return static switch throw trait try unset use var while xor yield",
-            0);
+    if (lexer->GetName() == "php" && !lexer->GetKeyWords(0).Contains("string")) {
+        lexer->SetKeyWords("abstract and array as break case catch class clone const continue declare default "
+                           "die do echo else elseif empty enddeclare endfor endforeach endif endswitch endwhile "
+                           "enum eval exit extends final finally fn for foreach function global goto if implements "
+                           "include include_once instanceof insteadof interface isset list match namespace new or "
+                           "print private protected public readonly require require_once return static switch throw "
+                           "trait try unset use var while xor yield yield from true false null "
+                           "__halt_compiler __class__ __dir__ __file__ __function__ __line__ __method__ "
+                           "__namespace__ __trait__ parent self static mixed never iterable object resource "
+                           "int float string bool callable void",
+                           0);
     }
 
     if (lexer->GetName() == "python") {

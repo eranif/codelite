@@ -4,6 +4,7 @@
 #include "CustomControls/TextGenerationPreviewFrame.hpp"
 #include "Keyboard/clKeyboardManager.h"
 #include "LSP/LSPDetectorManager.hpp"
+#include "LSP/LSPManager.hpp"
 #include "LSP/LanguageServerConfig.h"
 #include "LSP/LanguageServerSettingsDlg.h"
 #include "StringUtils.h"
@@ -80,6 +81,20 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     /// initialise the LSP library
     LSP::Initialise();
 
+    LSP::Manager::GetInstance().SetLogSink(
+        [this](const wxString& server, const wxString& message, LSP::Manager::LogLevel log_level) {
+            switch (log_level) {
+            case LSP::Manager::LogLevel::Info:
+                CallAfter(&LanguageServerPlugin::LogMessageInfo, server, message);
+                break;
+            case LSP::Manager::LogLevel::Warning:
+                CallAfter(&LanguageServerPlugin::LogMessageWarn, server, message);
+                break;
+            case LSP::Manager::LogLevel::Error:
+                CallAfter(&LanguageServerPlugin::LogMessageError, server, message);
+                break;
+            }
+        });
     CallAfter(&LanguageServerPlugin::CheckServers);
 }
 

@@ -6,6 +6,7 @@
 #include "clModuleLogger.hpp"
 #include "codelite_exports.h"
 
+#include <optional>
 #include <vector>
 
 // Helper macros to be used outside of this library
@@ -655,6 +656,53 @@ public:
      */
     static std::vector<SymbolInformation> From(const DocumentSymbol& document_symbol,
                                                const wxString& container_name = wxEmptyString);
+};
+
+enum class ProgressKind {
+    begin,
+    report,
+    end,
+};
+
+struct WXDLLIMPEXP_CL Progress {
+    wxString m_token;
+    wxString m_message;
+    ProgressKind m_kind{ProgressKind::begin};
+    double m_percentage{0.0};
+    /**
+     * @brief Creates a Progress object from a JSON representation.
+     *
+     * @details Parses the expected "params.value" structure from the given JSON object and
+     * returns a populated Progress instance when the required fields are present and the
+     * "kind" value is one of the supported progress kinds. If any required field is missing
+     * or the kind is unrecognized, the function returns std::nullopt.
+     *
+     * @param json const JSONItem& The JSON object to parse, expected to contain "params",
+     *        "params.value", "params.value.kind", "params.value.message",
+     *        "params.value.percentage", and "params.token" fields.
+     *
+     * @return std::optional<Progress> A populated Progress object on success, or std::nullopt
+     *         if the JSON does not match the expected format.
+     */
+    static std::optional<Progress> FromJSON(const JSONItem& json);
+    /**
+     * @brief Formats the progress state into a human-readable message string.
+     *
+     * Builds a message from the current token and message text, and appends the
+     * percentage when this progress entry represents a report. This method does not
+     * modify the object state.
+     *
+     * @return wxString The formatted message string.
+     */
+    inline wxString GetMessage() const
+    {
+        wxString message;
+        message << "(" << m_token << ") " << m_message;
+        if (m_kind == LSP::ProgressKind::report) {
+            message << ". Progress: " << m_percentage << "%";
+        }
+        return message;
+    }
 };
 
 /// Initialise the library

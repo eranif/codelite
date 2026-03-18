@@ -15,25 +15,24 @@ others:
 - SFTP plugin: re-use the remote find in files dialog
 - SFTP plugin: use clTerminalViewCtrl for the log view
 - Spell Checker: enable it for the commit dialog
-- build tab: add AI option to the context menu.
 - use json instead of cJSON everywhere
-
-AI-powered IDE:
---------
 
 Medium:
 -----
 
 - Support auto reading AGENTS.md file and convert it into System-Messages.
+- Drop ctagsd from the code base.
+- Install standard `ctags` and use it to implement `code_symbols` tool for AI.
+- Modify the "Document Method" ( `Ctrl-Shift-M` ) to use the new `code_symbols` tool - this will ensure that it works
+  for all languages.
 
 Low:
 ----
 
+- build tab: add AI option to the context menu.
+- Add progress bar table for LSP progress messages (currently we only print messages in the LOG view)
 - MarkdownStyler: mark gcc style lines "file:line" as hyperlink and clickable.
 - Add `codelite-api.lua` file to the installation folder to provide completion for LUA LSPs.
-- Add support for OpenAI client
-
-Prepare release notes per version (e.g. 18.2.0, 18.3.0 etc)
 
 BUGS
 ----

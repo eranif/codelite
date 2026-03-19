@@ -55,7 +55,8 @@ private:
     bool DoCodeComplete(long pos);
     void DoCreateFile(const wxFileName& fn);
     void DoUpdateCalltipHighlight();
-    size_t DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& prototypes, std::vector<TagEntryPtr>& functions,
+    size_t DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& prototypes,
+                                        std::vector<TagEntryPtr>& functions,
                                         wxString& otherfile);
 
 public:
@@ -84,7 +85,6 @@ public:
     void AddMenuDynamicContent(wxMenu* menu) override;
     void RemoveMenuDynamicContent(wxMenu* menu) override;
     void ApplySettings() override;
-    void RetagFile() override;
     wxString CallTipContent() override;
     void SetActive() override;
     void SemicolonShift() override;
@@ -120,7 +120,6 @@ public:
     virtual void OnMoveImpl(wxCommandEvent& e);
     virtual void OnAddImpl(wxCommandEvent& e);
     virtual void OnAddMultiImpl(wxCommandEvent& e);
-    virtual void OnRetagFile(wxCommandEvent& e);
     virtual void OnUserTypedXChars(const wxString& word);
     void OnCallTipClick(wxStyledTextEvent& e) override;
     void OnCalltipCancel() override;

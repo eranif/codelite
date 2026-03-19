@@ -164,11 +164,8 @@ protected:
     virtual void OnCleanProjectOnly(wxCommandEvent& event);
     virtual void OnRebuildProjectOnly(wxCommandEvent& event);
     virtual void OnStopBuild(wxCommandEvent& event);
-    virtual void OnRetagProject(wxCommandEvent& event);
-    virtual void OnRetagWorkspace(wxCommandEvent& event);
     virtual void OnBuildInProgress(wxUpdateUIEvent& event);
     virtual void OnExcludeFromBuildUI(wxUpdateUIEvent& event);
-    virtual void OnRetagInProgressUI(wxUpdateUIEvent& event);
     virtual void OnItemBeginDrag(wxTreeEvent& event);
     virtual void OnItemEndDrag(wxTreeEvent& event);
     virtual void OnImportDirectory(wxCommandEvent& e);

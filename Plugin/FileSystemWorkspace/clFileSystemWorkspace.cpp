@@ -1047,7 +1047,7 @@ void clFileSystemWorkspace::OnFileSystemUpdated(clFileSystemEvent& event)
     }
 }
 
-void cl`ystemWorkspace::CreateCompileFlagsFile()
+void clFileSystemWorkspace::CreateCompileFlagsFile()
 {
     wxBusyCursor bc;
     const wxFileName& filename = clFileSystemWorkspace::Get().GetFileName();

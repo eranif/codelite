@@ -95,7 +95,6 @@ protected:
     std::list<QueueCommand> m_buildQueue;
     wxArrayString m_dbgWatchExpressions;
     DisplayVariableDlg* m_watchDlg;
-    bool m_retagInProgress;
     DbgStackInfo m_dbgCurrentFrameInfo;
     PerspectiveManager m_perspectiveManager;
     clDebuggerTerminalPOSIX m_debuggerTerminal;
@@ -110,9 +109,6 @@ public:
     DisplayVariableDlg* GetDebuggerTip();
 
     PerspectiveManager& GetPerspectiveManager() { return m_perspectiveManager; }
-
-    void SetRetagInProgress(bool retagInProgress) { this->m_retagInProgress = retagInProgress; }
-    bool GetRetagInProgress() const { return m_retagInProgress; }
 
     const wxString& GetOriginalCwd() const { return m_originalCwd; }
     void SetOriginalCwd(const wxString& path) { m_originalCwd = path; }
@@ -297,17 +293,6 @@ public:
      * return list of files that are part of the workspace
      */
     void GetWorkspaceFiles(std::vector<wxFileName>& files, bool absPath = false);
-
-    /**
-     * retag workspace
-     */
-    void RetagWorkspace(TagsManager::RetagType type);
-
-    /**
-     * @brief retag a given file
-     * @param filename
-     */
-    void RetagFile(const wxString& filename);
 
     /**
      * @brief Launch the ParseThread to update the preprocessor visualization

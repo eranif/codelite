@@ -1438,10 +1438,6 @@ void clEditor::DoEnsureCaretIsVisible(int pos, bool preserveSelection)
 void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
 {
     event.Skip();
-
-    // Time this block
-    BlockTimer timer{"clEditor::OnSciUpdateUI", FileLogger::Developer};
-
     m_scrollbar_recalc_is_required = true;
 
     // keep the last line we visited this method

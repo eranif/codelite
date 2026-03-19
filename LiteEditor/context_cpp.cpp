@@ -965,7 +965,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)
     // get the file name and line where to insert the setters getters
     SettersGettersDlg dlg(EventNotifier::Get()->TopFrame());
     if (!dlg.Init(member_tags, function_tags, editor.GetFileName(), lineno)) {
-        ::wxMessageBox(_("Seems like you have all the getters/setters you need..."), wxT("CodeLite"));
+        ::clMessageBox(_("Seems like you have all the getters/setters you need..."), wxT("CodeLite"));
         return;
     }
 
@@ -1341,7 +1341,7 @@ size_t ContextCpp::DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& protot
 
     // locate the c++ file
     if (!FindSwappedFile(rCtrl.GetFileName(), otherfile)) {
-        wxMessageBox(_("Could not locate implementation file!"), "CodeLite", wxICON_WARNING | wxOK);
+        clMessageBox(_("Could not locate implementation file!"), "CodeLite", wxICON_WARNING | wxOK);
         return 0;
     }
 
@@ -1355,7 +1355,7 @@ size_t ContextCpp::DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& protot
     } else {
         // read it from the file system
         if (!FileUtils::ReadFileContent(otherfile, implContent)) {
-            wxMessageBox(_("Could not read file: ") + otherfile, "CodeLite", wxICON_WARNING | wxOK);
+            clMessageBox(_("Could not read file: ") + otherfile, "CodeLite", wxICON_WARNING | wxOK);
             return 0;
         }
     }
@@ -1382,7 +1382,7 @@ void ContextCpp::DoAddFunctionImplementation(int line_number)
     std::vector<TagEntryPtr> functions;
     wxString otherfile;
     if (DoGetEntriesForHeaderAndImpl(prototypes, functions, otherfile) == 0) {
-        wxMessageBox(_("No prototypes were found"), "CodeLite", wxICON_INFORMATION | wxOK);
+        clMessageBox(_("No prototypes were found"), "CodeLite", wxICON_INFORMATION | wxOK);
         return;
     }
 
@@ -1391,7 +1391,7 @@ void ContextCpp::DoAddFunctionImplementation(int line_number)
     wxString context = rCtrl.GetTextRange(0, pos);
     wxString scopeName = TagsManagerST::Get()->GetScopeName(context);
     if (scopeName.IsEmpty() || scopeName == "<global>") {
-        wxMessageBox(_("'Add Functions Implementation' can only work inside valid scope, got (") + scopeName + ")",
+        clMessageBox(_("'Add Functions Implementation' can only work inside valid scope, got (") + scopeName + ")",
                      wxT("CodeLite"),
                      wxICON_INFORMATION | wxOK);
         return;
@@ -1419,7 +1419,7 @@ void ContextCpp::DoAddFunctionImplementation(int line_number)
     }
 
     if (unimplPrototypes.empty()) {
-        wxMessageBox(_("No un-implemented functions found"), "CodeLite", wxICON_INFORMATION | wxOK);
+        clMessageBox(_("No un-implemented functions found"), "CodeLite", wxICON_INFORMATION | wxOK);
         return;
     }
 

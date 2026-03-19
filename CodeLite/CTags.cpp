@@ -89,19 +89,14 @@ CTags::DoCxxGenerate(const wxString& filesContent, const wxString& ctags_exe, co
     }
 
     // write the options into a file
-    wxFileName ctags_options_file(
-        clStandardPaths::Get().GetUserDataDir(), wxString() << "options-" << wxThread::GetCurrentId() << ".ctags");
-    FileUtils::Deleter d{ctags_options_file};
-
-    wxString ctags_options_file_content;
-    for (const wxString& option : options_arr) {
-        ctags_options_file_content << option << "\n";
-    }
+    clTempFile ctags_options_file(clStandardPaths::Get().GetUserDataDir(), "options");
+    wxString ctags_options_file_content = StringUtils::Join(options_arr);
+    ctags_options_file_content << "\n";
 
     // append the macros
     ctags_options_file_content.Trim();
     if (!FileUtils::WriteFileContent(ctags_options_file.GetFullPath(), ctags_options_file_content)) {
-        clDEBUG() << "Failed to write ctags options file: " << ctags_options_file.GetFullPath() << endl;
+        clWARNING() << "Failed to write ctags options file: " << ctags_options_file.GetFullPath(true) << endl;
         return std::nullopt;
     }
 
@@ -110,21 +105,27 @@ CTags::DoCxxGenerate(const wxString& filesContent, const wxString& ctags_exe, co
 
     sw.Start();
     // Split the list of files
-    wxFileName file_list(
-        clStandardPaths::Get().GetTempDir(), wxString() << "file-list-" << wxThread::GetCurrentId() << ".txt");
-    if (!FileUtils::WriteFileContent(file_list, filesContent)) {
-        clDEBUG() << "Failed to write ctags file list: " << file_list.GetFullPath() << endl;
+    clTempFile file_list(clStandardPaths::Get().GetTempDir(), "txt");
+    if (!FileUtils::WriteFileContent(file_list.GetFullPath(), filesContent)) {
+        clWARNING() << "Failed to write ctags file list: " << file_list.GetFullPath(true) << endl;
         return std::nullopt;
     }
 
     wxString command_to_run;
+    clTempFile tags_file(clStandardPaths::Get().GetTempDir(), "tags");
     command_to_run << StringUtils::WrapWithDoubleQuotes(ctags_exe)
-                   << " --options=" << StringUtils::WrapWithDoubleQuotes(ctags_options_file.GetFullPath())
-                   << kinds_string << " -L " << StringUtils::WrapWithDoubleQuotes(file_list.GetFullPath()) << " -f - ";
-    ProcUtils::WrapInShell(command_to_run);
+                   << " --options=" << ctags_options_file.GetFullPath(true) << kinds_string << " -L "
+                   << file_list.GetFullPath(true) << " -f " << tags_file.GetFullPath(true);
     clDEBUG() << "Running command:" << command_to_run << endl;
 
-    auto output = ProcUtils::SafeExecuteCommand(command_to_run);
+    ProcUtils::WrapInShell(command_to_run);
+    ProcUtils::SafeExecuteCommand(command_to_run);
+
+    wxString output;
+    if (!FileUtils::ReadFileContent(tags_file.GetFullPath(), output)) {
+        clWARNING() << "Failed to read tags output file." << tags_file.GetFullPath(true) << endl;
+        return std::nullopt;
+    }
     long elapsed = sw.Time();
 
     clDEBUG() << "ctags generation took:" << (elapsed / 1000) << "secs," << (elapsed % 1000) << "ms" << endl;
@@ -134,18 +135,18 @@ CTags::DoCxxGenerate(const wxString& filesContent, const wxString& ctags_exe, co
 
 std::vector<TagEntryPtr> CTags::ParseCxxFiles(const std::vector<wxString>& files, const wxString& ctags_exe)
 {
-    wxString filesList;
-    for (const auto& file : files) {
-        filesList << file << "\n";
-    }
+    wxString filesList = StringUtils::Join(files, "\n");
+    filesList << "\n";
+
     auto result = DoCxxGenerate(filesList, ctags_exe);
     if (!result.has_value()) {
         return {};
     }
 
-    auto content = std::move(result.value());
+    auto content = result.value();
     std::vector<TagEntryPtr> tags;
     wxArrayString lines = ::wxStringTokenize(content, "\n", wxTOKEN_STRTOK);
+    clDEBUG() << "Processing" << lines.size() << "lines" << endl;
     tags.reserve(lines.size());
 
     // convert the lines into tags
@@ -190,6 +191,10 @@ std::vector<TagEntryPtr> CTags::ParseCxxFiles(const std::vector<wxString>& files
     if (tags.empty()) {
         clDEBUG() << "0 tags, ctags output:" << content << endl;
     }
+
+    for (auto t : tags) {
+        clDEBUG() << "Tag:" << t->GetName() << ", Kind:" << t->GetKind() << endl;
+    }
     return tags;
 }
 
@@ -208,7 +213,7 @@ CTags::ParseCxxBuffer(const wxFileName& filename, const wxString& buffer, const 
     auto tags = ParseCxxFile(temp_file.GetFileName().GetFullPath(), ctags_exe);
     // set the file name to the correct file
     const wxString full_path = filename.GetFullPath();
-    for (const auto& tag : tags) {
+    for (auto tag : tags) {
         tag->SetFile(full_path);
     }
     return tags;

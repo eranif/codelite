@@ -132,7 +132,11 @@ MSYS2::MSYS2()
     // last entry -> most important (reverse order)
     m_chroots.Add(R"(\usr)");
     m_chroots.Add(R"(\mingw64)");
+#ifdef __aarch64__
+    m_chroots.Add(R"(\clangarm64)");
+#else
     m_chroots.Add(R"(\clang64)");
+#endif
 }
 
 std::optional<wxString> MSYS2::GetPath(bool useSystemPath)
@@ -147,9 +151,6 @@ std::optional<wxString> MSYS2::GetPath(bool useSystemPath)
         wxGetEnv("PATH", &pathenv);
         paths_to_try = ::wxStringTokenize(pathenv, ";", wxTOKEN_STRTOK);
     }
-
-    // add the executable path (this is how windows work: we first look at the executable path)
-    paths_to_try.Insert(wxFileName(clStandardPaths::Get().GetExecutablePath()).GetPath(), 0);
 
     // if we have msys2 installed, add the bin folder (we place them at start)
     if (msyspath) {
@@ -190,5 +191,8 @@ std::optional<wxString> MSYS2::GetPath(bool useSystemPath)
     if (local_native_bin.DirExists()) {
         paths_to_try.Add(local_native_bin.GetPath());
     }
+
+    // Finally, add the executable path.
+    paths_to_try.push_back(wxFileName{clStandardPaths::Get().GetExecutablePath()}.GetPath());
     return ::wxJoin(paths_to_try, ';');
 }

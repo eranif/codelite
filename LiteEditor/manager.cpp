@@ -259,7 +259,6 @@ Manager::Manager()
     , m_tipWinPos(wxNOT_FOUND)
     , m_frameLineno(wxNOT_FOUND)
     , m_watchDlg(NULL)
-    , m_retagInProgress(false)
 {
     Bind(wxEVT_RESTART_CODELITE, &Manager::OnRestart, this);
     Bind(wxEVT_FORCE_RESTART_CODELITE, &Manager::OnForcedRestart, this);
@@ -649,7 +648,6 @@ void Manager::CreateProject(ProjectData& data, const wxString& workspaceFolder)
     }
 
     wxString projectName = proj->GetName();
-    RetagProject(projectName, true);
 
     // Update the parser search paths
     CallAfter(&Manager::UpdateParserPaths, false);
@@ -681,7 +679,6 @@ void Manager::AddProject(const wxString& path)
 
     wxFileName fn(path);
     wxString projectName(fn.GetName());
-    RetagProject(projectName, true);
 
     clCommandEvent evtProjectAdded(wxEVT_PROJ_ADDED);
     evtProjectAdded.SetString(projectName);
@@ -879,21 +876,6 @@ void Manager::GetWorkspaceFiles(std::vector<wxFileName>& files, bool absPath)
     }
 }
 
-void Manager::RetagWorkspace(TagsManager::RetagType type)
-{
-    if (!clWorkspaceManager::Get().IsWorkspaceOpened()) {
-        return;
-    }
-
-    if (type == TagsManager::Retag_Quick) {
-        TagsManagerST::Get()->ParseWorkspaceIncremental();
-    } else {
-        TagsManagerST::Get()->ParseWorkspaceFull(clWorkspaceManager::Get().GetWorkspace()->GetDir());
-    }
-}
-
-void Manager::RetagFile(const wxString& filename) { wxUnusedVar(filename); }
-
 //--------------------------- Project Files Mgmt -----------------------------
 
 int Manager::AddVirtualDirectory(const wxString& virtualDirFullPath, bool createIt)
@@ -1046,11 +1028,6 @@ void Manager::AddFilesToProject(const wxArrayString& files, const wxString& vdFu
         vFiles.push_back(actualAdded.Item(i));
     }
 
-    // re-tag the added files
-    if (vFiles.empty() == false) {
-        TagsManagerST::Get()->ParseWorkspaceIncremental();
-    }
-
     if (!actualAdded.IsEmpty()) {
         clCommandEvent evtAddFiles(wxEVT_PROJ_FILE_ADDED);
         evtAddFiles.SetStrings(actualAdded);
@@ -1122,9 +1099,6 @@ bool Manager::RenameFile(const wxString& origName, const wxString& newName, cons
     wxString projName = vdFullPath.BeforeFirst(wxT(':'));
     ProjectPtr proj = GetProject(projName);
     proj->FastAddFile(newName, vdFullPath.AfterFirst(wxT(':')));
-
-    // Step 3: retag the new file
-    RetagFile(newName);
 
     // Step 4: send an event about new file was added
     // to the workspace
@@ -1249,7 +1223,6 @@ void Manager::RetagProject(const wxString& projectName, bool quickRetag)
 {
     wxUnusedVar(projectName);
     wxUnusedVar(quickRetag);
-    TagsManagerST::Get()->ParseWorkspaceIncremental();
 }
 
 void Manager::GetProjectFiles(const wxString& project, wxArrayString& files)

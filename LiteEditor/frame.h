@@ -526,7 +526,6 @@ protected:
     void OnReconcileProject(wxCommandEvent& event);
     void OnWorkspaceOpen(wxUpdateUIEvent& event);
     void OnNewProjectUI(wxUpdateUIEvent& event);
-    void OnRetagWorkspaceUI(wxUpdateUIEvent& event);
     void OnAddEnvironmentVariable(wxCommandEvent& event);
     void OnAdvanceSettings(wxCommandEvent& event);
     void OnCtagsOptions(wxCommandEvent& event);
@@ -536,7 +535,6 @@ protected:
     void OnShowBuildMenu(wxCommandEvent& e);
     void OnBuildAndRunProject(wxCommandEvent& event);
     void OnRebuildProject(wxCommandEvent& event);
-    void OnRetagWorkspace(wxCommandEvent& event);
     void OnBuildProjectUI(wxUpdateUIEvent& event);
     void OnStopBuild(wxCommandEvent& event);
     void OnStopBuildUI(wxUpdateUIEvent& event);

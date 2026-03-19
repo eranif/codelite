@@ -367,9 +367,6 @@ if(MINGW OR CYGWIN)
     write_file(${POST_INSTALL_SCRIPT} "file(GLOB FILES_TO_REMOVE \"${CL_INSTALL_BIN}/plugins/*.a\")")
     write_file(${POST_INSTALL_SCRIPT} "file(REMOVE \${FILES_TO_REMOVE})" APPEND)
 
-    # remove test executables from ctagsd
-    write_file(${POST_INSTALL_SCRIPT} "file(REMOVE \"${CL_INSTALL_BIN}/ctagsd-tests.exe\")" APPEND)
-
     # remove libdapcxx.dll.a & libdatabaselayersqlite.dll.a
     write_file(${POST_INSTALL_SCRIPT} "file(REMOVE \"${CL_INSTALL_BIN}/libdapcxx.dll.a\")" APPEND)
     write_file(${POST_INSTALL_SCRIPT} "file(REMOVE \"${CL_INSTALL_BIN}/libdatabaselayersqlite.dll.a\")" APPEND)

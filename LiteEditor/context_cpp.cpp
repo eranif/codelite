@@ -144,7 +144,6 @@ EVT_MENU(XRCID("add_multi_impl"), ContextCpp::OnAddMultiImpl)
 EVT_MENU(XRCID("setters_getters"), ContextCpp::OnGenerateSettersGetters)
 EVT_MENU(XRCID("add_include_file"), ContextCpp::OnAddIncludeFile)
 EVT_MENU(XRCID("add_forward_decl"), ContextCpp::OnAddForwardDecl)
-EVT_MENU(XRCID("retag_file"), ContextCpp::OnRetagFile)
 EVT_MENU(XRCID("open_include_file"), ContextCpp::OnContextOpenDocument)
 END_EVENT_TABLE()
 
@@ -1686,36 +1685,6 @@ bool ContextCpp::IsComment(long pos) const
     return (style == wxSTC_C_COMMENT || style == wxSTC_C_COMMENTLINE || style == wxSTC_C_COMMENTDOC ||
             style == wxSTC_C_COMMENTLINEDOC || style == wxSTC_C_COMMENTDOCKEYWORD ||
             style == wxSTC_C_COMMENTDOCKEYWORDERROR);
-}
-
-void ContextCpp::OnRetagFile(wxCommandEvent& e)
-{
-    CHECK_JS_RETURN_VOID();
-    VALIDATE_WORKSPACE();
-
-    wxUnusedVar(e);
-    clEditor& editor = GetCtrl();
-    if (editor.GetModify()) {
-        wxMessageBox(wxString::Format(_("Please save the file before retagging it")));
-        return;
-    }
-
-    RetagFile();
-    editor.SetActive();
-}
-
-void ContextCpp::RetagFile()
-{
-    CHECK_JS_RETURN_VOID();
-    if (ManagerST::Get()->GetRetagInProgress()) {
-        return;
-    }
-
-    clEditor& editor = GetCtrl();
-    ManagerST::Get()->RetagFile(editor.GetFileName().GetFullPath());
-
-    // incase this file is not cache this function does nothing
-    TagsManagerST::Get()->ClearCachedFile(editor.GetFileName().GetFullPath());
 }
 
 void ContextCpp::OnUserTypedXChars(const wxString& word)

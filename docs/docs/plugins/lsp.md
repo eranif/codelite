@@ -53,12 +53,6 @@ brew install llvm
 
 On ARM-based macOS systems, `clangd` is located at `/opt/homebrew/opt/llvm/bin/clangd`.
 
-### ctagsd (C/C++)
-
-`ctagsd` is CodeLite's built-in code completion engine for C/C++ that implements the Language Server Protocol. It is automatically installed with CodeLite on all platforms.
-
-CodeLite pre-configures `ctagsd`, but it is disabled by default. To enable it, navigate to **Plugins → Language Server → Settings**.
-
 ### Pyright (Python)
 
 **Prerequisites**
@@ -219,7 +213,7 @@ You can install and configure any language server that implements the LSP protoc
 
 ### Resolving Conflicts
 
-Multiple language servers can be configured for the same programming language (e.g., both `ctagsd` and `clangd` for C++). However, ensure that only one is enabled at a time to avoid conflicts.
+Multiple language servers can be configured for the same programming language. However, ensure that only one is enabled at a time to avoid conflicts.
 
 ---
 
@@ -235,19 +229,19 @@ To restart any language server:
 
 ## CMake Integration
 
-### Using clangd and ctagsd with CMake
+### Using clangd with CMake
 
-Both `clangd` and `ctagsd` rely on `compile_flags.txt` or `compile_commands.json` files for build instructions. These language servers search for these files starting from the active file's directory and traversing up the parent directories until a match is found.
+`clangd` relies on either `compile_flags.txt` or `compile_commands.json` to obtain build instructions. It searches for these files starting from the active file’s directory and moving up through the parent directories until a matching file is found.
 
-If both files exist in the same directory, `compile_flags.txt` takes precedence.
+If both files are present in the same directory, `compile_flags.txt` takes precedence.
 
 **CodeLite Default C++ Workspace**
 
-When using CodeLite's [default C++ workspace](../workspaces/default.md), these files are generated automatically after the build process completes.
+When using CodeLite’s [default C++ workspace](../workspaces/default.md), these files are generated automatically after the build process completes.
 
 **Other Workspace Types**
 
-When using other workspace types (e.g., [File System Workspace](../workspaces/file_system.md)), you must provide at least one of these files manually for `clangd` code completion to function.
+When using other workspace types, such as the [File System Workspace](../workspaces/file_system.md), you must manually provide at least one of these files for `clangd` code completion to work.
 
 ### Generating compile_commands.json with CMake
 

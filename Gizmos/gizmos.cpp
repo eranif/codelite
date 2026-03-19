@@ -553,9 +553,6 @@ void WizardsPlugin::CreateClass(NewClassInfo& info)
     clFileSystemEvent eventFilesCreated(wxEVT_FILE_CREATED);
     eventFilesCreated.GetPaths().swap(paths);
     EventNotifier::Get()->QueueEvent(eventFilesCreated.Clone());
-
-    // Notify CodeLite to parse the files
-    TagsManagerST::Get()->ParseWorkspaceIncremental();
 }
 
 void WizardsPlugin::OnGizmos(wxCommandEvent& e)

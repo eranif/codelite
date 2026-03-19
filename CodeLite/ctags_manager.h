@@ -215,16 +215,6 @@ public:
     void CloseDatabase();
 
     /**
-     * @brief trigger a complete parsing of the workspace
-     */
-    void ParseWorkspaceFull(const wxString& workspace_dir);
-
-    /**
-     * @brief trigger an incremental workspace parsing
-     */
-    void ParseWorkspaceIncremental();
-
-    /**
      * return tags belongs to given scope and kind
      * @param scopeName the scope to search
      * @param kind list of tags kind to return

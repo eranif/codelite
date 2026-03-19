@@ -754,32 +754,3 @@ void TagsManager::GetTagsByPartialNames(const wxArrayString& partialNames, std::
 {
     GetDatabase()->GetTagsByPartName(partialNames, tags);
 }
-
-void TagsManager::ParseWorkspaceIncremental()
-{
-    // restart ctagsd (this way we ensure that new settings are loaded)
-    clLanguageServerEvent stop_event{wxEVT_LSP_RESTART};
-    stop_event.SetLspName("ctagsd");
-    EventNotifier::Get()->AddPendingEvent(stop_event);
-}
-
-void TagsManager::ParseWorkspaceFull(const wxString& workspace_dir)
-{
-    // stop ctagsd
-    clLanguageServerEvent stop_event{wxEVT_LSP_STOP};
-    stop_event.SetLspName("ctagsd");
-    EventNotifier::Get()->ProcessEvent(stop_event);
-
-    // delete the tags.db file
-    wxFileName tags_db{workspace_dir, "tags.db"};
-    tags_db.AppendDir(".ctagsd");
-
-    if (tags_db.FileExists()) {
-        FileUtils::RemoveFile(tags_db, wxEmptyString);
-    }
-
-    // start ctagsd again
-    clLanguageServerEvent start_event{wxEVT_LSP_START};
-    start_event.SetLspName("ctagsd");
-    EventNotifier::Get()->ProcessEvent(start_event);
-}

@@ -686,11 +686,6 @@ void wxCrafterPlugin::OnBitmapCodeGenerationCompleted(wxCommandEvent& e)
     wxString msg;
     msg << _("wxCrafter: code generation completed successfully!");
     wxCrafter::SetStatusMessage(msg);
-
-    // Restart ctagsd
-    clLanguageServerEvent restart_event{wxEVT_LSP_RESTART};
-    restart_event.SetLspName("ctagsd");
-    EventNotifier::Get()->ProcessEvent(restart_event);
 }
 
 wxMenu* wxCrafterPlugin::DoCreateFolderMenu()

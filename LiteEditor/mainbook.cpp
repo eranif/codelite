@@ -1031,18 +1031,6 @@ void MainBook::ReloadExternallyModified(bool prompt)
 
     // reset the recursive protector
     depth = wxNOT_FOUND;
-
-    std::vector<wxFileName> filesToRetag;
-    for (size_t i = 0; i < files.size(); i++) {
-        if (files[i].second) {
-            editors[i]->ReloadFromDisk(true);
-            filesToRetag.push_back(files[i].first);
-        }
-    }
-
-    if (filesToRetag.size() > 1) {
-        TagsManagerST::Get()->ParseWorkspaceIncremental();
-    }
 }
 
 bool MainBook::ClosePage(wxWindow* page)

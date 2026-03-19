@@ -105,7 +105,6 @@ EVT_MENU(XRCID("pin_project"), FileViewTree::OnPinProject)
 EVT_MENU(XRCID("rebuild_project"), FileViewTree::OnReBuild)
 EVT_MENU(XRCID("generate_makefile"), FileViewTree::OnRunPremakeStep)
 EVT_MENU(XRCID("stop_build"), FileViewTree::OnStopBuild)
-EVT_MENU(XRCID("retag_project"), FileViewTree::OnRetagProject)
 EVT_MENU(XRCID("build_project_only"), FileViewTree::OnBuildProjectOnly)
 EVT_MENU(XRCID("clean_project_only"), FileViewTree::OnCleanProjectOnly)
 EVT_MENU(XRCID("rebuild_project_only"), FileViewTree::OnRebuildProjectOnly)
@@ -140,8 +139,6 @@ EVT_UPDATE_UI(XRCID("build_order"), FileViewTree::OnBuildInProgress)
 EVT_UPDATE_UI(XRCID("clean_project"), FileViewTree::OnBuildInProgress)
 EVT_UPDATE_UI(XRCID("build_project"), FileViewTree::OnBuildInProgress)
 EVT_UPDATE_UI(XRCID("rebuild_project"), FileViewTree::OnBuildInProgress)
-EVT_UPDATE_UI(XRCID("retag_project"), FileViewTree::OnRetagInProgressUI)
-EVT_UPDATE_UI(XRCID("retag_workspace"), FileViewTree::OnRetagInProgressUI)
 EVT_UPDATE_UI(XRCID("build_project_only"), FileViewTree::OnBuildInProgress)
 EVT_UPDATE_UI(XRCID("clean_project_only"), FileViewTree::OnBuildInProgress)
 EVT_UPDATE_UI(XRCID("rebuild_project_only"), FileViewTree::OnBuildInProgress)
@@ -1335,22 +1332,6 @@ size_t FileViewTree::GetMultiSelection(wxArrayTreeItemIds& arr)
     }
 }
 
-void FileViewTree::OnRetagProject(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    wxTreeItemId item = GetSingleSelection();
-    if (item.IsOk()) {
-        wxString projectName = GetItemText(item);
-        ManagerST::Get()->RetagProject(projectName, true);
-    }
-}
-
-void FileViewTree::OnRetagWorkspace(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    ManagerST::Get()->RetagWorkspace(TagsManager::Retag_Quick);
-}
-
 void FileViewTree::OnItemBeginDrag(wxTreeEvent& event)
 {
     wxArrayTreeItemIds selections;
@@ -2060,11 +2041,6 @@ void FileViewTree::OnLocalWorkspaceSettings(wxCommandEvent& e)
     }
 }
 
-void FileViewTree::OnRetagInProgressUI(wxUpdateUIEvent& event)
-{
-    event.Enable(!ManagerST::Get()->GetRetagInProgress());
-}
-
 void FileViewTree::OnOpenWithDefaultApplication(wxCommandEvent& event)
 {
     wxArrayTreeItemIds items;
@@ -2433,10 +2409,6 @@ void FileViewTree::OnFolderDropped(clCommandEvent& event)
         evtOpenworkspace.SetEventObject(clMainFrame::Get());
         clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evtOpenworkspace);
     }
-
-    // And trigger a full reparse of the workspace
-    wxCommandEvent evtOpenworkspace(wxEVT_MENU, XRCID("full_retag_workspace"));
-    clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evtOpenworkspace);
 }
 
 void FileViewTree::FolderDropped(const wxArrayString& folders)

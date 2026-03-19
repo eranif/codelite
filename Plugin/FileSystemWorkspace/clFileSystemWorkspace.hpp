@@ -64,7 +64,6 @@ protected:
     void OnCloseWorkspace(clCommandEvent& event);
     void OnAllEditorsClosed(wxCommandEvent& event);
     void OnScanCompleted(clFileSystemEvent& event);
-    void OnParseWorkspace(wxCommandEvent& event);
     void OnBuildProcessTerminated(clProcessEvent& event);
     void OnBuildProcessOutput(clProcessEvent& event);
     void OnSaveSession(clCommandEvent& event);
@@ -157,11 +156,6 @@ public:
      * @brief save the workspace settings
      */
     void Save(bool parse);
-
-    /**
-     * @brief parse the workspace
-     */
-    void Parse(bool fullParse);
 
     /**
      * @brief is this workspace opened?

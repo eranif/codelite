@@ -1113,9 +1113,7 @@ else()
 
   # utility for importing themes
   add_subdirectory(codelite-generate-themes)
-
   add_subdirectory(codelite_echo)
-  add_subdirectory(ctagsd)
 
   add_subdirectory(LiteEditor)
   if(NOT APPLE)
@@ -1126,7 +1124,6 @@ else()
   add_dependencies(plugin libcodelite)
   add_dependencies(codelite plugin)
   add_dependencies(codelite ctags)
-  add_dependencies(codelite ctagsd)
   add_dependencies(codelite cc-wrapper)
   if(MINGW)
     add_dependencies(codelite wx-config)

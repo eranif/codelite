@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "precompiled_header.h"
+
 #include "context_cpp.h"
 
 #include "AddFunctionsImpDlg.h"
@@ -52,7 +54,6 @@
 #include "manager.h"
 #include "movefuncimpldlg.h"
 #include "new_quick_watch_dlg.h"
-#include "precompiled_header.h"
 #include "resources/clXmlResource.hpp"
 #include "setters_getters_dlg.h"
 #include "variable.h"
@@ -849,7 +850,7 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
     }
 
     wxString text = editor.GetTextRange(0, endPos);
-    TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer(text);
+    TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseCxxBuffer(text);
 
     if (!tags.empty()) {
         // the last tag is our function
@@ -940,7 +941,7 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)
     wxString text = editor.GetTextRange(0, pos);
     wxString scopeName = tagmgr->GetScopeName(text);
     std::vector<TagEntryPtr> tags =
-        TagsManagerST::Get()->ParseBuffer(editor.GetText(), editor.GetFileName().GetFullPath());
+        TagsManagerST::Get()->ParseCxxBuffer(editor.GetText(), editor.GetFileName().GetFullPath());
 
     // filter all tags that are do not belong to the current scope
     std::vector<TagEntryPtr> function_tags; // both prototypes + definitions
@@ -1194,7 +1195,7 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
 
     // Find the tag
     std::vector<TagEntryPtr> tags =
-        TagsManagerST::Get()->ParseBuffer(GetCtrl().GetText(), GetCtrl().GetFileName().GetFullPath(), "f");
+        TagsManagerST::Get()->ParseCxxBuffer(GetCtrl().GetText(), GetCtrl().GetFileName().GetFullPath(), "f");
     CHECK_EXPECTED_RETURN(tags.empty(), false);
 
     TagEntryPtr tag;
@@ -1327,7 +1328,7 @@ size_t ContextCpp::DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& protot
     prototypes.clear();
     functions.clear();
     std::vector<TagEntryPtr> tmp_tags;
-    prototypes = TagsManagerST::Get()->ParseBuffer(rCtrl.GetEditorText());
+    prototypes = TagsManagerST::Get()->ParseCxxBuffer(rCtrl.GetEditorText());
 
     // filter non prototypes
     tmp_tags.reserve(prototypes.size());
@@ -1358,7 +1359,7 @@ size_t ContextCpp::DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& protot
             return 0;
         }
     }
-    functions = TagsManagerST::Get()->ParseBuffer(implContent);
+    functions = TagsManagerST::Get()->ParseCxxBuffer(implContent);
     // filter non functions
     tmp_tags.clear();
     tmp_tags.reserve(functions.size());
@@ -1621,7 +1622,7 @@ void ContextCpp::AutoAddComment()
                 wxCommandEvent dummy;
                 // Parse the source file
                 wxString text = rCtrl.GetTextRange(curpos, rCtrl.GetLength());
-                TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseBuffer(text);
+                TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseCxxBuffer(text);
                 if (!tags.empty()) {
                     TagEntryPtr t = tags[0];
 

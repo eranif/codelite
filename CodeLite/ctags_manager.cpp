@@ -739,14 +739,11 @@ void TagsManager::GetCXXKeywords(wxArrayString& words)
              "xor",          "xor_eq"};
 }
 
-TagEntryPtrVector_t TagsManager::ParseBuffer(const wxString& content, const wxString& filename, const wxString& kinds)
+TagEntryPtrVector_t
+TagsManager::ParseCxxBuffer(const wxString& content, const wxString& filename, const wxString& kinds)
 {
-    TagEntryPtrVector_t tagsVec;
-    CTags::ParseBuffer(filename,
-                       content,
-                       clStandardPaths::Get().GetBinaryFullPath("codelite-ctags"),
-                       GetCtagsOptions().GetTokensWxMap(),
-                       tagsVec);
+    TagEntryPtrVector_t tagsVec =
+        CTags::ParseCxxBuffer(filename, content, clStandardPaths::Get().GetBinaryFullPath("codelite-ctags"));
     return tagsVec;
 }
 

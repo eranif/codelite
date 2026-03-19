@@ -83,9 +83,9 @@ std::optional<wxString> MSYS2::FindHomeDir()
     return m_home_dir;
 }
 
-std::optional<wxString> MSYS2::Which(const wxString& command)
+std::optional<wxString> MSYS2::Which(const wxString& command, bool useSystemPath)
 {
-    wxString path = GetPath(m_flags & SEARCH_PATH_ENV).value_or("");
+    wxString path = GetPath(useSystemPath).value_or("");
 
     wxArrayString paths_to_try = ::wxStringTokenize(path, ";", wxTOKEN_STRTOK);
     static const wxString exts[] = {".exe", ".cmd"};
@@ -106,9 +106,10 @@ std::optional<wxString> MSYS2::Which(const wxString& command)
     return std::nullopt;
 }
 
-std::optional<wxString> MSYS2::WhichWithVersion(const wxString& command, const std::vector<int>& versions)
+std::optional<wxString>
+MSYS2::WhichWithVersion(const wxString& command, const std::vector<int>& versions, bool useSystemPath)
 {
-    return PlatformCommon::WhichWithVersion(command, versions);
+    return PlatformCommon::WhichWithVersion(command, versions, useSystemPath);
 }
 
 void MSYS2::SetChroot(const wxString& chroot)

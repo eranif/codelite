@@ -7,9 +7,6 @@
 [submodule "submodules/cJSON"]
 	path = submodules/cJSON
 	url = https://github.com/DaveGamble/cJSON
-[submodule "ctags"]
-	path = submodules/ctags
-	url = https://github.com/eranif/ctags
 [submodule "submodules/doctest"]
 	path = submodules/doctest
 	url = https://github.com/doctest/doctest

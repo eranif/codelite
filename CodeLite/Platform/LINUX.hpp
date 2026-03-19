@@ -35,7 +35,7 @@ public:
     /**
      * @brief check if a command "command" is installed and return its fullpath
      */
-    std::optional<wxString> Which(const wxString& command) override;
+    std::optional<wxString> Which(const wxString& command, bool useSystemPath = true) override;
 
     /// on macOS, applications are usually placed under /Application
     /// and are opened with the `open` command
@@ -45,7 +45,8 @@ public:
      * @brief some vendors deliver binaries with "-N" where N is the version number
      * this method attempts to search for command-<N>...command (in this order)
      */
-    std::optional<wxString> WhichWithVersion(const wxString& command, const std::vector<int>& versions);
+    std::optional<wxString>
+    WhichWithVersion(const wxString& command, const std::vector<int>& versions, bool useSystemPath = true);
 
     /**
      * @brief return environment variable value

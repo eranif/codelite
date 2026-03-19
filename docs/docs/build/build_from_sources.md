@@ -18,6 +18,7 @@ pacman -S mingw-w64-clang-x86_64-zlib     \
           mingw-w64-clang-x86_64-sqlite3  \
           mingw-w64-clang-x86_64-libmariadbclient \
           mingw-w64-clang-x86_64-postgresql \
+          mingw-w64-clang-x86_64-ctags \
           flex bison patch
 ```
 
@@ -69,6 +70,7 @@ cd build-release/install
                      libmariadb-dev             \
                      libpq-dev                  \
                      libpcre2-dev bison flex    \
+                     universal-ctags            \
                      fonts-noto
     sudo fc-cache -fv 
 ```
@@ -133,14 +135,15 @@ Preparation:
 
 ```bash
 brew update
-brew install git        \
-             cmake      \
-             flex       \
-             autoconf   \
-             automake   \
-             libtool    \
-             mariadb    \
-             postgresql \
+brew install git            \
+             cmake          \
+             universal-ctags\
+             flex           \
+             autoconf       \
+             automake       \
+             libtool        \
+             mariadb        \
+             postgresql     \
              gettext
 ```
 

@@ -27,7 +27,8 @@ public:
      * @brief some vendors deliver binaries with "-N" where N is the version number
      * this method attempts to search for command-<N>...command (in this order)
      */
-    std::optional<wxString> WhichWithVersion(const wxString& command, const std::vector<int>& versions);
+    std::optional<wxString>
+    WhichWithVersion(const wxString& command, const std::vector<int>& versions, bool useSystemPath = true);
 
     /**
      * @brief locate rustup bin folder (on platforms that this is available)
@@ -35,18 +36,19 @@ public:
     std::optional<wxString> FindRustupToolchainBinDir();
 
     /// override this in the platform specific code
-    virtual std::optional<wxString> Which(const wxString& command)
+    virtual std::optional<wxString> Which(const wxString& command, bool useSystemPath = true)
     {
         wxUnusedVar(command);
+        wxUnusedVar(useSystemPath);
         return std::nullopt;
     }
 
     /// Find the first command in the array and return its full path
     /// we stop on the first match
-    std::optional<wxString> AnyWhich(const wxArrayString& commands)
+    std::optional<wxString> AnyWhich(const wxArrayString& commands, bool useSystemPath = true)
     {
         for (const auto& cmd : commands) {
-            if (const auto command_fullpath = Which(cmd)) {
+            if (const auto command_fullpath = Which(cmd, useSystemPath)) {
                 return command_fullpath;
             }
         }

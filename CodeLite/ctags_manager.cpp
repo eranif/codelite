@@ -30,6 +30,7 @@
 #include "Cxx/CxxLexerAPI.h"
 #include "Cxx/CxxVariableScanner.h"
 #include "Cxx/cpp_comment_creator.h"
+#include "Platform/Platform.hpp"
 #include "cl_command_event.h"
 #include "codelite_events.h"
 #include "database/tags_storage_sqlite3.h"
@@ -739,12 +740,26 @@ void TagsManager::GetCXXKeywords(wxArrayString& words)
              "xor",          "xor_eq"};
 }
 
-TagEntryPtrVector_t
+clStatusOr<TagEntryPtrVector_t>
 TagsManager::ParseCxxBuffer(const wxString& content, const wxString& filename, const wxString& kinds)
 {
-    TagEntryPtrVector_t tagsVec =
-        CTags::ParseCxxBuffer(filename, content, clStandardPaths::Get().GetBinaryFullPath("codelite-ctags"));
-    return tagsVec;
+#ifdef __WXMAC__
+    // On macOS, we get a default ctags under /usr/bin/ctags which is very ancient
+    // skip it by ignoring system PATH.
+    static bool use_system_path{false};
+#else
+    static bool use_system_path{true};
+#endif
+
+    static thread_local std::optional<wxString> ctags_exe{std::nullopt};
+    if (!ctags_exe.has_value()) {
+        ctags_exe = ThePlatform->Which("ctags", use_system_path);
+    }
+
+    if (!ctags_exe.has_value()) {
+        return StatusNotFound("Could not locate ctags. Please install it and try again");
+    }
+    return CTags::ParseCxxBuffer(filename, content, ctags_exe.value());
 }
 
 void TagsManager::GetTagsByPartialNames(const wxArrayString& partialNames, std::vector<TagEntryPtr>& tags)

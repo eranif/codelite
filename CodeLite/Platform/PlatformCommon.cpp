@@ -9,7 +9,8 @@
 #include "procutils.h"
 #endif
 
-std::optional<wxString> PlatformCommon::WhichWithVersion(const wxString& command, const std::vector<int>& versions)
+std::optional<wxString>
+PlatformCommon::WhichWithVersion(const wxString& command, const std::vector<int>& versions, bool useSystemPath)
 {
     std::vector<int> sorted_versions = versions;
 
@@ -25,7 +26,7 @@ std::optional<wxString> PlatformCommon::WhichWithVersion(const wxString& command
         names.Add(wxString() << command << "-" << ver);
     }
     for (const wxString& name : names) {
-        if (const auto command_fullpath = Which(name)) {
+        if (const auto command_fullpath = Which(name, useSystemPath)) {
             return command_fullpath;
         }
     }

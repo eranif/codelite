@@ -850,8 +850,13 @@ void ContextCpp::OnInsertDoxyComment(wxCommandEvent& event)
     }
 
     wxString text = editor.GetTextRange(0, endPos);
-    TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseCxxBuffer(text);
+    auto res = TagsManagerST::Get()->ParseCxxBuffer(text);
+    if (!res.ok()) {
+        ::clMessageBox(res.error_message(), "CodeLite", wxOK | wxICON_WARNING);
+        return;
+    }
 
+    auto tags = res.value();
     if (!tags.empty()) {
         // the last tag is our function
         TagEntryPtr t = tags.at(tags.size() - 1);
@@ -940,9 +945,12 @@ void ContextCpp::OnGenerateSettersGetters(wxCommandEvent& event)
 
     wxString text = editor.GetTextRange(0, pos);
     wxString scopeName = tagmgr->GetScopeName(text);
-    std::vector<TagEntryPtr> tags =
-        TagsManagerST::Get()->ParseCxxBuffer(editor.GetText(), editor.GetFileName().GetFullPath());
-
+    auto res = TagsManagerST::Get()->ParseCxxBuffer(editor.GetText(), editor.GetFileName().GetFullPath());
+    if (!res.ok()) {
+        ::clMessageBox(res.error_message(), "CodeLite", wxOK | wxICON_WARNING);
+        return;
+    }
+    auto tags = res.value();
     // filter all tags that are do not belong to the current scope
     std::vector<TagEntryPtr> function_tags; // both prototypes + definitions
     std::vector<TagEntryPtr> member_tags;   // member variables
@@ -1194,8 +1202,12 @@ void ContextCpp::OnMoveImpl(wxCommandEvent& e)
     }
 
     // Find the tag
-    std::vector<TagEntryPtr> tags =
-        TagsManagerST::Get()->ParseCxxBuffer(GetCtrl().GetText(), GetCtrl().GetFileName().GetFullPath(), "f");
+    auto res = TagsManagerST::Get()->ParseCxxBuffer(GetCtrl().GetText(), GetCtrl().GetFileName().GetFullPath(), "f");
+    if (!res.ok()) {
+        ::clMessageBox(res.error_message(), "CodeLite", wxOK | wxICON_WARNING);
+        return;
+    }
+    auto tags = res.value();
     CHECK_EXPECTED_RETURN(tags.empty(), false);
 
     TagEntryPtr tag;
@@ -1328,9 +1340,14 @@ size_t ContextCpp::DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& protot
     prototypes.clear();
     functions.clear();
     std::vector<TagEntryPtr> tmp_tags;
-    prototypes = TagsManagerST::Get()->ParseCxxBuffer(rCtrl.GetEditorText());
+    auto res = TagsManagerST::Get()->ParseCxxBuffer(rCtrl.GetEditorText());
+    if (!res.ok()) {
+        ::clMessageBox(res.error_message(), "CodeLite", wxOK | wxICON_WARNING);
+        return 0;
+    }
 
     // filter non prototypes
+    prototypes = res.value();
     tmp_tags.reserve(prototypes.size());
     for (TagEntryPtr tag : prototypes) {
         if (tag->IsPrototype()) {
@@ -1359,7 +1376,14 @@ size_t ContextCpp::DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& protot
             return 0;
         }
     }
-    functions = TagsManagerST::Get()->ParseCxxBuffer(implContent);
+
+    res = TagsManagerST::Get()->ParseCxxBuffer(implContent);
+    if (!res.ok()) {
+        ::clMessageBox(res.error_message(), "CodeLite", wxOK | wxICON_WARNING);
+        return 0;
+    }
+
+    functions = res.value();
     // filter non functions
     tmp_tags.clear();
     tmp_tags.reserve(functions.size());
@@ -1622,7 +1646,13 @@ void ContextCpp::AutoAddComment()
                 wxCommandEvent dummy;
                 // Parse the source file
                 wxString text = rCtrl.GetTextRange(curpos, rCtrl.GetLength());
-                TagEntryPtrVector_t tags = TagsManagerST::Get()->ParseCxxBuffer(text);
+                auto res = TagsManagerST::Get()->ParseCxxBuffer(text);
+                if (!res.ok()) {
+                    ::clMessageBox(res.error_message(), "CodeLite", wxOK | wxICON_WARNING);
+                    return;
+                }
+
+                auto tags = res.value();
                 if (!tags.empty()) {
                     TagEntryPtr t = tags[0];
 

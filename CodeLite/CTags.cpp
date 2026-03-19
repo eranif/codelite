@@ -2,6 +2,7 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "StringUtils.h"
+#include "assistant/Process.hpp"
 #include "clTempFile.hpp"
 #include "cl_standard_paths.h"
 #include "file_logger.h"
@@ -80,12 +81,12 @@ CTags::DoCxxGenerate(const wxString& filesContent, const wxString& ctags_exe, co
     options_arr = {
         "--extras=-p", "--excmd=pattern", "--sort=no", "--fields=aKmSsnit", "--language-force=c++", fields_cxx};
 
-    wxString kinds_string;
+    std::vector<wxString> kinds_arr;
     if (ctags_kinds.empty()) {
         // default
-        kinds_string << " --c-kinds=+pxz --C++-kinds=+pxz ";
+        kinds_arr = {"--c-kinds=+pxz", "--C++-kinds=+pxz"};
     } else {
-        kinds_string << " --c-kinds=" << ctags_kinds << " --C++-kinds=" << ctags_kinds << " ";
+        kinds_arr = {"--c-kinds=" + ctags_kinds, "--C++-kinds=" + ctags_kinds};
     }
 
     // write the options into a file
@@ -112,20 +113,21 @@ CTags::DoCxxGenerate(const wxString& filesContent, const wxString& ctags_exe, co
     }
 
     wxString command_to_run;
-    clTempFile tags_file(clStandardPaths::Get().GetTempDir(), "tags");
-    command_to_run << StringUtils::WrapWithDoubleQuotes(ctags_exe)
-                   << " --options=" << ctags_options_file.GetFullPath(true) << kinds_string << " -L "
-                   << file_list.GetFullPath(true) << " -f " << tags_file.GetFullPath(true);
-    clDEBUG() << "Running command:" << command_to_run << endl;
+    std::vector<wxString> cmdarr{
+        ctags_exe, " --options=" + ctags_options_file.GetFullPath(true), "-L", file_list.GetFullPath(true)};
+    cmdarr.insert(cmdarr.end(), kinds_arr.begin(), kinds_arr.end());
+    cmdarr.push_back("-f");
+    cmdarr.push_back("-");
+    clDEBUG() << "Running command:" << StringUtils::Join(command_to_run, " ") << endl;
 
-    ProcUtils::WrapInShell(command_to_run);
-    ProcUtils::SafeExecuteCommand(command_to_run);
-
-    wxString output;
-    if (!FileUtils::ReadFileContent(tags_file.GetFullPath(), output)) {
-        clWARNING() << "Failed to read tags output file." << tags_file.GetFullPath(true) << endl;
+    auto command = StringUtils::ToStdStrings(cmdarr);
+    auto result = assistant::Process::RunProcessAndWait(command);
+    if (!result.ok) {
+        clWARNING() << "Failed to execute command. stderr:" << result.err << endl;
         return std::nullopt;
     }
+
+    wxString output = wxString::FromUTF8(result.out);
     long elapsed = sw.Time();
 
     clDEBUG() << "ctags generation took:" << (elapsed / 1000) << "secs," << (elapsed % 1000) << "ms" << endl;

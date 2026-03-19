@@ -55,9 +55,9 @@ std::optional<wxString> LINUX::FindHomeDir()
 #endif
 }
 
-std::optional<wxString> LINUX::Which(const wxString& command)
+std::optional<wxString> LINUX::Which(const wxString& command, bool useSystemPath)
 {
-    const wxString pathenv = GetPath(m_flags & SEARCH_PATH_ENV).value_or("");
+    const wxString pathenv = GetPath(useSystemPath).value_or("");
     wxArrayString paths = ::wxStringTokenize(pathenv, ":", wxTOKEN_STRTOK);
     for (auto path : paths) {
         path << "/" << command;
@@ -137,9 +137,10 @@ std::optional<wxString> LINUX::GetPath(bool useSystemPath)
     return wxJoin(paths, ':');
 }
 
-std::optional<wxString> LINUX::WhichWithVersion(const wxString& command, const std::vector<int>& versions)
+std::optional<wxString>
+LINUX::WhichWithVersion(const wxString& command, const std::vector<int>& versions, bool useSystemPath)
 {
-    return PlatformCommon::WhichWithVersion(command, versions);
+    return PlatformCommon::WhichWithVersion(command, versions, useSystemPath);
 }
 
 namespace

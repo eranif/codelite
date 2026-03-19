@@ -27,13 +27,10 @@
 #define CODECOMPLETIONMANAGER_H
 
 #include "cl_command_event.h"
-#include "cl_editor.h"
+#include "clWorkspaceEvent.hpp"
 #include "clangd/CompileCommandsGenerator.h"
 
-#include <thread>
 #include <wx/event.h>
-#include <wx/filename.h>
-#include <wx/string.h>
 
 class CodeCompletionManager : public wxEvtHandler
 {

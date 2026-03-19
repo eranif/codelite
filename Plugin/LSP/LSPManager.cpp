@@ -774,64 +774,6 @@ void Manager::StartServer(const LanguageServerEntry& entry)
     LanguageServerProtocol::Ptr_t lsp(new LanguageServerProtocol(entry.GetName(), entry.GetNetType(), this));
     lsp->SetDisplayDiagnostics(entry.IsDisplayDiagnostics());
 
-    if (lsp->GetName() == "ctagsd") {
-        // set startup callback
-        auto cb = [=]() {
-            if (!clWorkspaceManager::Get().IsWorkspaceOpened()) {
-                return;
-            }
-
-            wxFileName fn(clWorkspaceManager::Get().GetWorkspace()->GetDir(), wxEmptyString);
-            fn.AppendDir(".ctagsd");
-            fn.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
-
-            wxFileName settings_json(fn.GetPath(), "ctagsd.json");
-            {
-                if (!settings_json.FileExists()) {
-                    // create an empty json object file
-                    FileUtils::WriteFileContent(settings_json, "{}");
-                } else {
-                    // the file exists, ensure its a valid json
-                    JSON root(settings_json);
-                    if (!root.isOk()) {
-                        FileUtils::WriteFileContent(settings_json, "{}");
-                    }
-                }
-            }
-
-            JSON root(settings_json);
-            JSONItem json = root.toElement();
-
-            if (json.hasNamedObject("limit_results")) {
-                json.removeProperty("limit_results");
-                LSP_DEBUG() << "ctagsd: found limit_results -> removing it" << endl;
-            }
-
-            // update the entries
-            if (json.hasNamedObject("codelite_indexer")) {
-                json.removeProperty("codelite_indexer");
-                LSP_DEBUG() << "ctagsd: found codelite_indexer -> removing it" << endl;
-            }
-
-            json.addProperty("codelite_indexer", clStandardPaths::Get().GetBinaryFullPath("codelite-ctags"));
-            json.addProperty("limit_results", TagsManagerST::Get()->GetCtagsOptions().GetCcNumberOfDisplayItems());
-            root.save(settings_json);
-            LSP_DEBUG() << "ctagsd: writing new file:" << settings_json << endl;
-
-            // create the file_list.txt file
-            wxFileName file_list(fn.GetPath(), "file_list.txt");
-            wxArrayString files;
-            clWorkspaceManager::Get().GetWorkspace()->GetWorkspaceFiles(files);
-
-            wxString file_list_content;
-            for (const auto& filepath : files) {
-                file_list_content << filepath << "\n";
-            }
-            FileUtils::WriteFileContent(file_list, file_list_content);
-        };
-        lsp->SetStartedCallback(std::move(cb));
-    }
-
     bool is_remote = m_remoteHelper->IsRemoteWorkspaceOpened();
     wxString command;
     wxString working_directory;

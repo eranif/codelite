@@ -60,8 +60,6 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
         EventNotifier::Get()->Bind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &clFileSystemWorkspace::OnNewWorkspace, this);
         EventNotifier::Get()->Bind(wxEVT_ALL_EDITORS_CLOSED, &clFileSystemWorkspace::OnAllEditorsClosed, this);
         EventNotifier::Get()->Bind(wxEVT_FS_SCAN_COMPLETED, &clFileSystemWorkspace::OnScanCompleted, this);
-        EventNotifier::Get()->Bind(wxEVT_CMD_RETAG_WORKSPACE, &clFileSystemWorkspace::OnParseWorkspace, this);
-        EventNotifier::Get()->Bind(wxEVT_CMD_RETAG_WORKSPACE_FULL, &clFileSystemWorkspace::OnParseWorkspace, this);
         EventNotifier::Get()->Bind(wxEVT_SAVE_SESSION_NEEDED, &clFileSystemWorkspace::OnSaveSession, this);
         EventNotifier::Get()->Bind(wxEVT_SOURCE_CONTROL_PULLED, &clFileSystemWorkspace::OnSourceControlPulled, this);
 
@@ -104,8 +102,6 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_SAVE_SESSION_NEEDED, &clFileSystemWorkspace::OnSaveSession, this);
 
         // parsing event
-        EventNotifier::Get()->Unbind(wxEVT_CMD_RETAG_WORKSPACE, &clFileSystemWorkspace::OnParseWorkspace, this);
-        EventNotifier::Get()->Unbind(wxEVT_CMD_RETAG_WORKSPACE_FULL, &clFileSystemWorkspace::OnParseWorkspace, this);
         EventNotifier::Get()->Unbind(wxEVT_SOURCE_CONTROL_PULLED, &clFileSystemWorkspace::OnSourceControlPulled, this);
 
         // Build events
@@ -439,34 +435,9 @@ void clFileSystemWorkspace::OnScanCompleted(clFileSystemEvent& event)
     }
     clGetManager()->SetStatusMessage(_("File system scan completed"));
 
-    // Trigger a non full reparse
-    Parse(false);
-
     clDEBUG() << "Sending wxEVT_WORKSPACE_FILES_SCANNED event..." << endl;
     clWorkspaceEvent event_scan{wxEVT_WORKSPACE_FILES_SCANNED};
     EventNotifier::Get()->ProcessEvent(event_scan);
-}
-
-void clFileSystemWorkspace::OnParseWorkspace(wxCommandEvent& event)
-{
-    if (!m_isLoaded) {
-        event.Skip();
-        return;
-    }
-    Parse(event.GetInt() == (event.GetEventType() == wxEVT_CMD_RETAG_WORKSPACE));
-}
-
-void clFileSystemWorkspace::Parse(bool fullParse)
-{
-    if (m_files.IsEmpty()) {
-        return;
-    }
-
-    if (fullParse) {
-        TagsManagerST::Get()->ParseWorkspaceFull(GetDir());
-    } else {
-        TagsManagerST::Get()->ParseWorkspaceIncremental();
-    }
 }
 
 void clFileSystemWorkspace::Close() { DoClose(); }
@@ -1073,13 +1044,10 @@ void clFileSystemWorkspace::OnFileSystemUpdated(clFileSystemEvent& event)
         for (const wxString& path : paths) {
             m_files.Add(path);
         }
-
-        // Parse the newly added files
-        Parse(false);
     }
 }
 
-void clFileSystemWorkspace::CreateCompileFlagsFile()
+void cl`ystemWorkspace::CreateCompileFlagsFile()
 {
     wxBusyCursor bc;
     const wxFileName& filename = clFileSystemWorkspace::Get().GetFileName();

@@ -13,33 +13,44 @@ namespace
 {
 std::vector<std::unordered_map<wxString, wxString>> TOOLCHAINS = {
     // GCC
-    { { "CC", "gcc" },
-      { "CXX", "g++" },
-      { "AR", "ar" },
-      { "AS", "as" },
-      { "LD", "g++" },
-      { "MAKE", "mingw32-make" },
-      { "WINDRES", "windres" },
-      { "MKDIR", "mkdir" },
-      { "DEBUGGER", "gdb" } },
+    {{"CC", "gcc"},
+     {"CXX", "g++"},
+     {"AR", "ar"},
+     {"AS", "as"},
+     {"LD", "g++"},
+     {"MAKE", "mingw32-make"},
+     {"WINDRES", "windres"},
+     {"MKDIR", "mkdir"},
+     {"DEBUGGER", "gdb"}},
     // Clang
-    { { "CC", "clang" },
-      { "CXX", "clang++" },
-      { "AR", "ar" },
-      { "AS", "as" },
-      { "LD", "clang++" },
-      { "MAKE", "mingw32-make" },
-      { "WINDRES", "windres" },
-      { "MKDIR", "mkdir" },
-      { "DEBUGGER", "gdb" } }
-};
+    {{"CC", "clang"},
+     {"CXX", "clang++"},
+     {"AR", "ar"},
+     {"AS", "as"},
+     {"LD", "clang++"},
+     {"MAKE", "mingw32-make"},
+     {"WINDRES", "windres"},
+     {"MKDIR", "mkdir"},
+     {"DEBUGGER", "gdb"}}};
 }
 
-CompilerLocatorMSYS2Usr::CompilerLocatorMSYS2Usr() { m_msys2.SetChroot("\\usr"); }
+CompilerLocatorMSYS2Usr::CompilerLocatorMSYS2Usr()
+{
+    m_msys2.SetChroot("\\usr");
+    m_useSystemPath = false;
+}
 
-CompilerLocatorMSYS2Mingw64::CompilerLocatorMSYS2Mingw64() { m_msys2.SetChroot("\\mingw64"); }
+CompilerLocatorMSYS2Mingw64::CompilerLocatorMSYS2Mingw64()
+{
+    m_msys2.SetChroot("\\mingw64");
+    m_useSystemPath = false;
+}
 
-CompilerLocatorMSYS2Clang64::CompilerLocatorMSYS2Clang64() { m_msys2.SetChroot("\\clang64"); }
+CompilerLocatorMSYS2Clang64::CompilerLocatorMSYS2Clang64()
+{
+    m_msys2.SetChroot("\\clang64");
+    m_useSystemPath = false;
+}
 
 CompilerLocatorMSYS2Env::CompilerLocatorMSYS2Env() { m_cmdShell = true; }
 
@@ -72,7 +83,7 @@ bool CompilerLocatorMSYS2::Locate()
     m_compilers.clear();
 
     // try some defaults
-    const auto gcc_exe = m_msys2.Which("gcc");
+    const auto gcc_exe = m_msys2.Which("gcc", m_useSystemPath);
     if (!gcc_exe) {
         return false;
     }

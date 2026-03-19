@@ -13,18 +13,21 @@ CompilerLocatorMSYS2ClangUsr::CompilerLocatorMSYS2ClangUsr()
 {
     m_repository = "";
     m_msys2.SetChroot("\\usr");
+    m_useSystemPath = false;
 }
 
 CompilerLocatorMSYS2ClangMingw64::CompilerLocatorMSYS2ClangMingw64()
 {
     m_repository = "mingw64";
     m_msys2.SetChroot("\\mingw64");
+    m_useSystemPath = false;
 }
 
 CompilerLocatorMSYS2ClangClang64::CompilerLocatorMSYS2ClangClang64()
 {
     m_repository = "clang64";
     m_msys2.SetChroot("\\clang64");
+    m_useSystemPath = false;
 }
 
 // --------------------------------------------------
@@ -35,7 +38,7 @@ bool CompilerLocatorMSYS2Clang::Locate()
     m_compilers.clear();
 
     // try some defaults
-    const auto clang_exe = m_msys2.Which("clang");
+    const auto clang_exe = m_msys2.Which("clang", m_useSystemPath);
     if (!clang_exe) {
         return false;
     }

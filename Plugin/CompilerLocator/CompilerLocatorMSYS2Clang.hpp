@@ -12,6 +12,7 @@ class WXDLLIMPEXP_SDK CompilerLocatorMSYS2Clang : public ICompilerLocator
 protected:
     MSYS2 m_msys2;
     wxString m_repository;
+    bool m_useSystemPath{true};
 
 protected:
     wxFileName GetFileName(const wxString& bin_dir, const wxString& fullname) const;

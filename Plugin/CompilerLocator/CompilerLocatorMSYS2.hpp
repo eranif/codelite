@@ -29,7 +29,8 @@ protected:
     CompilerPtr TryToolchain(const wxString& folder, const std::unordered_map<wxString, wxString>& toolchain);
 
     MSYS2 m_msys2;
-    bool m_cmdShell = false;
+    bool m_useSystemPath{true};
+    bool m_cmdShell{false};
 };
 
 class WXDLLIMPEXP_SDK CompilerLocatorMSYS2Usr : public CompilerLocatorMSYS2

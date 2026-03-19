@@ -162,13 +162,9 @@ bool clCxxWorkspace::CreateWorkspace(const wxString& name, const wxString& path,
     ::wxSetWorkingDirectory(m_fileName.GetPath());
     m_buildMatrix = nullptr;
 
-    wxFileName dbFileName = GetTagsFileName();
-    TagsManagerST::Get()->OpenDatabase(dbFileName);
-
     wxXmlNode* root = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("CodeLite_Workspace"));
     m_doc.SetRoot(root);
     m_doc.GetRoot()->AddAttribute(wxT("Name"), name);
-    m_doc.GetRoot()->AddAttribute(wxT("Database"), dbFileName.GetFullPath(wxPATH_UNIX));
 
     m_doc.GetRoot()->DeleteAttribute(wxT("SWTLW"));
     if (GetLocalWorkspace()->GetParserFlags() & LocalWorkspace::EnableSWTLW) {

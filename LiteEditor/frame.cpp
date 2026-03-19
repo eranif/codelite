@@ -23,6 +23,8 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
+#include "precompiled_header.h"
+
 #include "frame.h"
 
 #include "BreakpointsView.hpp"
@@ -101,7 +103,6 @@
 #include "plugin.h"
 #include "pluginmanager.h"
 #include "pluginmgrdlg.h"
-#include "precompiled_header.h"
 #include "project.h"
 #include "quickdebugdlg.h"
 #include "resources/clXmlResource.hpp"
@@ -457,8 +458,6 @@ EVT_MENU(XRCID("new_project"), clMainFrame::OnProjectNewProject)
 EVT_MENU(XRCID("file_new_project"), clMainFrame::OnProjectNewProject)
 EVT_MENU(XRCID("add_project"), clMainFrame::OnProjectAddProject)
 EVT_MENU(XRCID("reconcile_project"), clMainFrame::OnReconcileProject)
-EVT_MENU(XRCID("retag_workspace"), clMainFrame::OnRetagWorkspace)
-EVT_MENU(XRCID("full_retag_workspace"), clMainFrame::OnRetagWorkspace)
 EVT_MENU(XRCID("project_properties"), clMainFrame::OnShowActiveProjectSettings)
 EVT_MENU(XRCID("set_active_project"), clMainFrame::OnSetActivePoject)
 
@@ -471,8 +470,6 @@ EVT_UPDATE_UI(XRCID("add_project"), clMainFrame::OnWorkspaceMenuUI)
 EVT_UPDATE_UI(XRCID("file_new_project"), clMainFrame::OnWorkspaceOpen)
 EVT_UPDATE_UI(XRCID("new_project"), clMainFrame::OnNewProjectUI)
 EVT_UPDATE_UI(XRCID("reconcile_project"), clMainFrame::OnShowActiveProjectSettingsUI)
-EVT_UPDATE_UI(XRCID("retag_workspace"), clMainFrame::OnRetagWorkspaceUI)
-EVT_UPDATE_UI(XRCID("full_retag_workspace"), clMainFrame::OnRetagWorkspaceUI)
 EVT_UPDATE_UI(XRCID("project_properties"), clMainFrame::OnShowActiveProjectSettingsUI)
 EVT_UPDATE_UI(XRCID("set_active_project"), clMainFrame::OnSetActivePojectUI)
 
@@ -1229,8 +1226,7 @@ void clMainFrame::AddKeyboardAccelerators()
                          {"import_from_msvs", _("Import other IDEs solution/workspace files...")},
                          {"project_properties", _("Open Active Project Settings..."), "Alt-F7"},
                          {"new_project", _("Create New Project")},
-                         {"add_project", _("Add an Existing Project")},
-                         {"full_retag_workspace", _("Parse Workspace")}});
+                         {"add_project", _("Add an Existing Project")}});
 }
 
 clMainFrame* clMainFrame::Get() { return m_theFrame; }
@@ -2461,10 +2457,6 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
     if ((newColVars != colVars) || (colourTypes != m_tagsOptionsData.GetCcColourFlags())) {
         GetMainBook()->UpdateColours();
     }
-
-    // When new include paths were added, an incremental parse is enough
-    wxCommandEvent e(wxEVT_MENU, XRCID("retag_workspace"));
-    AddPendingEvent(e);
 }
 
 void clMainFrame::RegisterDockWindow(int menuItemId, const wxString& name)
@@ -2949,16 +2941,6 @@ void clMainFrame::OnTimer(wxTimerEvent& event)
     // clear navigation queue
     if (GetMainBook()->GetCurrentPage() == 0) {
         NavMgr::Get()->Clear();
-    }
-
-    // ReTag workspace database if needed (this can happen due to schema version changes)
-    // It is important to place the retag code here since the retag workspace should take place after
-    // the parser search path have been updated (if needed)
-    if (m_workspaceRetagIsRequired) {
-        m_workspaceRetagIsRequired = false;
-        wxCommandEvent evt(wxEVT_COMMAND_MENU_SELECTED, XRCID("full_retag_workspace"));
-        this->AddPendingEvent(evt);
-        m_infoBar->DisplayMessage(_("A workspace reparse is needed"), wxICON_INFORMATION);
     }
 
     // For some reason, under Linux we need to force the menu accelerator again
@@ -4658,31 +4640,6 @@ void clMainFrame::OnIncrementalReplace(wxCommandEvent& event)
     GetMainBook()->ShowQuickBar(true);
 }
 
-void clMainFrame::OnRetagWorkspace(wxCommandEvent& event)
-{
-    // See if any of the plugins want to handle this event by itself
-    bool fullRetag = !(event.GetId() == XRCID("retag_workspace"));
-    wxCommandEvent e(fullRetag ? wxEVT_CMD_RETAG_WORKSPACE_FULL : wxEVT_CMD_RETAG_WORKSPACE, GetId());
-    e.SetEventObject(this);
-    if (EventNotifier::Get()->ProcessEvent(e)) {
-        return;
-    }
-
-    TagsManager::RetagType type = TagsManager::Retag_Quick_No_Scan;
-    if (event.GetId() == XRCID("retag_workspace")) {
-        type = TagsManager::Retag_Quick;
-    }
-
-    else if (event.GetId() == XRCID("full_retag_workspace")) {
-        type = TagsManager::Retag_Full;
-    }
-
-    else if (event.GetId() == XRCID("retag_workspace_no_includes")) {
-        type = TagsManager::Retag_Quick_No_Scan;
-    }
-    ManagerST::Get()->RetagWorkspace(type);
-}
-
 void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
 {
     wxUnusedVar(e);
@@ -5101,8 +5058,6 @@ void clMainFrame::UpdateAUI()
     SetAUIManagerFlags();
     m_mgr.Update();
 }
-
-void clMainFrame::OnRetagWorkspaceUI(wxUpdateUIEvent& event) { CHECK_SHUTDOWN(); }
 
 void clMainFrame::OnViewWordWrap(wxCommandEvent& e)
 {

@@ -1,15 +1,6 @@
 cmake_minimum_required(VERSION 3.18)
 
 # ######################################################################################################################
-# Check submodules are here
-# ######################################################################################################################
-find_path(CTAGS_SUBMODULE CMakeLists.txt PATHS ${CMAKE_CURRENT_SOURCE_DIR}/ctags/)
-if(NOT CTAGS_SUBMODULE)
-  message(STATUS "Could not locate `${CMAKE_CURRENT_SOURCE_DIR}/ctags/CMakeLists.txt` file")
-  message(FATAL_ERROR "Please make sure you have run `git submodule update --init`")
-endif()
-
-# ######################################################################################################################
 # cc-wrapper
 # ######################################################################################################################
 set(WITHOUT_INSTALL ON)

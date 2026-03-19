@@ -84,7 +84,6 @@ protected:
 
 protected:
     void CreateGUIControls();
-    wxWindow* DoGetControlByName(const wxString& title);
     void OnInitDone(wxCommandEvent& event);
     void OnSettingsChanged(wxCommandEvent& event);
     void OnContextMenu(clContextMenuEvent& event);

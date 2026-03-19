@@ -8,7 +8,7 @@ msgid ""
 msgstr ""
 "Project-Id-Version: CodeLite\n"
 "Report-Msgid-Bugs-To: \n"
-"POT-Creation-Date: 2026-03-17 15:54+0000\n"
+"POT-Creation-Date: 2026-03-18 22:28+0100\n"
 "PO-Revision-Date: YEAR-MO-DA HO:MI+ZONE\n"
 "Last-Translator: FULL NAME <EMAIL@ADDRESS>\n"
 "Language-Team: LANGUAGE <LL@li.org>\n"
@@ -3830,6 +3830,10 @@ msgstr ""
 
 #: LiteEditor/SideBar.cpp:117 LiteEditor/SideBar.cpp:181
 msgid "Parsing workspace..."
+msgstr ""
+
+#: LiteEditor/SideBar.cpp:168
+msgid "Open AI Chat Window"
 msgstr ""
 
 #: LiteEditor/SideBar.cpp:194
@@ -11800,10 +11804,6 @@ msgstr ""
 msgid "Add a missing header file"
 msgstr ""
 
-#: Plugin/ai/ChatAI.cpp:33 Plugin/ai/ChatAIWindow.cpp:26
-msgid "Chat AI"
-msgstr ""
-
 #: Plugin/ai/ChatAIWindow.cpp:45
 msgid "Clear the chat history"
 msgstr ""
@@ -11841,6 +11841,10 @@ msgid "Insert Prompt"
 msgstr ""
 
 #: Plugin/ai/ChatAIWindow.cpp:244
+msgid "Dock Chat Window"
+msgstr ""
+
+#: Plugin/ai/ChatAIWindow.cpp:256
 msgid "Chat History"
 msgstr ""
 

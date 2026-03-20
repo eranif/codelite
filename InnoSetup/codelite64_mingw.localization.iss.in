@@ -10,9 +10,12 @@ Name: "rus"; MessagesFile: "compiler:Languages\Russian.isl"
 [CustomMessages]
 eng.KeepUserSettings=Would you like to keep your user settings?
 eng.KeepLocalSettings=Would you like to keep your local settings?
+eng.LaunchCodeLite=Launch CodeLite
 
 fre.KeepUserSettings=Souhaitez-vous conserver vos paramètres utilisateur?
 fre.KeepLocalSettings=Souhaitez-vous conserver vos paramètres locaux?
+fre.LaunchCodeLite=Lancer CodeLite
 
 ita.KeepUserSettings=Vuoi mantenere le impostazioni utente?
 ita.KeepLocalSettings=Vuoi mantenere le impostazioni locali?
+ita.LaunchCodeLite=Esegui CodeLite

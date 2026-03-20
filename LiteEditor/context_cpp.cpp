@@ -1433,7 +1433,7 @@ void ContextCpp::DoAddFunctionImplementation(int line_number)
     for (auto t : prototypes) {
         if (scopeName == t->GetScope()) {
             wxString name = ch.normalize_function(t);
-            if (implHash.count(name) == 0) {
+            if (!implHash.contains(name) && !t->is_func_default() && !t->is_func_deleted()) {
                 // this prototype does not have an implementation
                 if (line_number == wxNOT_FOUND || t->GetLine() == line_number) {
                     unimplPrototypes.push_back(t);

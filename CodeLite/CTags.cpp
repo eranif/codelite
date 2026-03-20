@@ -89,22 +89,10 @@ CTags::DoCxxGenerate(const wxString& filesContent, const wxString& ctags_exe, co
         kinds_arr = {"--c-kinds=" + ctags_kinds, "--C++-kinds=" + ctags_kinds};
     }
 
-    // write the options into a file
-    clTempFile ctags_options_file(clStandardPaths::Get().GetUserDataDir(), "options");
-    wxString ctags_options_file_content = StringUtils::Join(options_arr);
-    ctags_options_file_content << "\n";
-
-    // append the macros
-    ctags_options_file_content.Trim();
-    if (!FileUtils::WriteFileContent(ctags_options_file.GetFullPath(), ctags_options_file_content)) {
-        clWARNING() << "Failed to write ctags options file: " << ctags_options_file.GetFullPath(true) << endl;
-        return std::nullopt;
-    }
-
     // start timer
     wxStopWatch sw;
-
     sw.Start();
+
     // Split the list of files
     clTempFile file_list(clStandardPaths::Get().GetTempDir(), "txt");
     if (!FileUtils::WriteFileContent(file_list.GetFullPath(), filesContent)) {
@@ -112,13 +100,14 @@ CTags::DoCxxGenerate(const wxString& filesContent, const wxString& ctags_exe, co
         return std::nullopt;
     }
 
-    wxString command_to_run;
-    std::vector<wxString> cmdarr{
-        ctags_exe, " --options=" + ctags_options_file.GetFullPath(true), "-L", file_list.GetFullPath(true)};
+    std::vector<wxString> cmdarr{ctags_exe};
+    cmdarr.insert(cmdarr.end(), options_arr.begin(), options_arr.end());
     cmdarr.insert(cmdarr.end(), kinds_arr.begin(), kinds_arr.end());
-    cmdarr.push_back("-f");
+    cmdarr.push_back("-o");
     cmdarr.push_back("-");
-    clDEBUG() << "Running command:" << StringUtils::Join(command_to_run, " ") << endl;
+    cmdarr.push_back("-L");
+    cmdarr.push_back(file_list.GetFullPath(true));
+    clDEBUG() << "Running command:" << StringUtils::Join(cmdarr, " ") << endl;
 
     auto command = StringUtils::ToStdStrings(cmdarr);
     auto result = assistant::Process::RunProcessAndWait(command);
@@ -130,6 +119,8 @@ CTags::DoCxxGenerate(const wxString& filesContent, const wxString& ctags_exe, co
     wxString output = wxString::FromUTF8(result.out);
     long elapsed = sw.Time();
 
+    clDEBUG() << "STDOUT:" << result.out << endl;
+    clDEBUG() << "STDERR:" << result.err << endl;
     clDEBUG() << "ctags generation took:" << (elapsed / 1000) << "secs," << (elapsed % 1000) << "ms" << endl;
     clDEBUG() << "Generating ctags files... Success" << endl;
     return output;

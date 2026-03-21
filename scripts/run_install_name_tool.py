@@ -86,7 +86,6 @@ for file in extra_files_set:
 # add executables
 files_set.add(f"{bundle_dir}/Contents/MacOS/codelite")
 files_set.add(f"{bundle_dir}/Contents/MacOS/codelite-make")
-files_set.add(f"{bundle_dir}/Contents/MacOS/ctagsd")
 
 # for each file, run install name tool
 for file in files_set:

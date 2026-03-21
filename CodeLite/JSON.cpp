@@ -29,10 +29,7 @@
 
 #include <wx/filename.h>
 
-JSON::JSON(const wxString& text)
-{
-    m_json = cJSON_Parse(text.mb_str(wxConvUTF8).data());
-}
+JSON::JSON(const wxString& text) { m_json = cJSON_Parse(text.mb_str(wxConvUTF8).data()); }
 
 JSON::JSON(JsonType type)
 {
@@ -413,15 +410,16 @@ wxArrayString JSONItem::toArrayString(const wxArrayString& defaultValue) const
     return arr;
 }
 
-bool JSONItem::hasNamedObject(const wxString& name) const
+bool JSONItem::contains(const wxString& name) const
 {
     if (!m_json) {
         return false;
     }
 
-    cJSON* obj = cJSON_GetObjectItem(m_json, name.mb_str(wxConvUTF8).data());
-    return obj != nullptr;
+    std::string name_cstr = name.ToStdString(wxConvUTF8);
+    return cJSON_GetObjectItem(m_json, name_cstr.c_str()) != nullptr;
 }
+
 #if wxUSE_GUI
 
 JSONItem& JSONItem::addProperty(const wxString& name, const wxSize& sz)

@@ -1343,9 +1343,24 @@ void Manager::OnGenerateDocString(wxCommandEvent& event)
         return;
     }
 
-    int start_pos = stc->PositionFromLine(symbol_range.value().start_line - 1);
-    int end_pos = stc->PositionFromLine(symbol_range.value().end_line.value_or(stc->GetLineCount()) - 1);
-    wxString func_text = stc->GetTextRange(start_pos, end_pos);
+    int start_line = symbol_range.value().start_line - 1;
+    int end_line = symbol_range.value().end_line.value_or(stc->GetLineCount()) - 1;
+
+    wxString func_text;
+    if (start_line == end_line) {
+        // take the entire line
+        func_text = stc->GetLine(start_line);
+    } else {
+        // Take everything between the start and end line.
+        int start_pos = stc->PositionFromLine(start_line);
+        int end_pos = stc->PositionFromLine(end_line) + stc->LineLength(end_line);
+        func_text = stc->GetTextRange(start_pos, end_pos);
+    }
+
+    if (func_text.empty()) {
+        ::clMessageBox(_("Unable to gather enough context to generate docstring"), "CodeLite", wxOK | wxICON_WARNING);
+        return;
+    }
 
     clGetManager()->SetStatusMessage(_("Generating DocString..."), 1);
     wxString prompt = GetConfig().GetPrompt(llm::PromptKind::kCommentGeneration);

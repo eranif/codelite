@@ -60,7 +60,18 @@ public:
     // Readers
     ////////////////////////////////////////////////
     JSONItem namedObject(const wxString& name) const;
-    bool hasNamedObject(const wxString& name) const;
+    /**
+     * @brief Checks whether this JSON object contains a member with the specified name.
+     *
+     * @param name wxString The name of the member to search for in the JSON object.
+     * @return bool true if the object contains a member with the given name; otherwise false.
+     */
+    bool contains(const wxString& name) const;
+
+    /**
+     * @brief An alias to the `contains` method above.
+     */
+    bool hasNamedObject(const wxString& name) const { return contains(name); }
 
     /// If your array is big (hundred of entries) use
     /// `GetAsVector` and iterate it instead

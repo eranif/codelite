@@ -14,7 +14,7 @@ PropertyeType CategoryProperty::GetType() { return PT_CATEGORY; }
 
 wxString CategoryProperty::GetValue() const { return m_value; }
 
-JSONItem CategoryProperty::Serialize() const { return JSONItem(NULL); }
+JSONItem CategoryProperty::Serialize() const { return JSONItem(nullptr); }
 
 void CategoryProperty::SetValue(const wxString& value) { m_value = value; }
 

@@ -988,7 +988,6 @@ endif()
 add_subdirectory(submodules/lexilla)
 
 add_subdirectory(submodules)
-include_directories(submodules/cJSON)
 
 add_subdirectory(sdk/wxsqlite3)
 add_subdirectory(sdk/databaselayer)

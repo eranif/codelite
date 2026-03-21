@@ -30,20 +30,17 @@
 #include "macros.h"
 
 #include <cJSON.h>
-#include <map>
 #include <string_view>
 #include <type_traits>
+#include <unordered_map>
 #include <vector>
 #include <wx/filename.h>
 #include <wx/gdicmn.h>
 #include <wx/string.h>
-#include <wx/variant.h>
 #include <wx/vector.h>
 
 #if wxUSE_GUI
 #include <wx/arrstr.h>
-#include <wx/colour.h>
-#include <wx/font.h>
 #endif
 
 //////////////////////////////////////////////////////////////////////////
@@ -56,7 +53,7 @@ class WXDLLIMPEXP_CL JSONItem
     friend JSON;
 
 public:
-    explicit JSONItem(cJSON* json);
+    explicit JSONItem(std::nullptr_t) {}
     JSONItem() = default;
     virtual ~JSONItem() = default;
 
@@ -104,11 +101,12 @@ public:
     int arraySize() const;
     int toInt(int defaultVal = -1) const;
 
-    /// Convert the value into `T` from
-    template <typename T>
-    T fromNumber(T default_value) const
+    /// Convert the value into `E` from
+    template <typename E>
+        requires(std::is_enum_v<E>)
+    E fromNumber(E default_value) const
     {
-        return static_cast<T>(toInt((int)default_value));
+        return static_cast<E>(toInt(static_cast<int>(default_value)));
     }
 
     template <typename T>
@@ -135,10 +133,7 @@ public:
     size_t toSize_t(size_t defaultVal = 0) const;
     double toDouble(double defaultVal = -1.0) const;
 
-    wxColour toColour(const wxColour& defaultColour = wxNullColour) const;
-    wxFont toFont(const wxFont& defaultFont = wxNullFont) const;
     wxSize toSize() const;
-    wxPoint toPoint() const;
 
     wxStringMap_t toStringMap(const wxStringMap_t& default_map = {}) const;
 
@@ -165,6 +160,8 @@ public:
      */
     JSONItem AddObject(const wxString& name);
 
+    JSONItem& addNull(const wxString& name);
+
     JSONItem& addProperty(const wxString& name, const wxString& value);
     JSONItem& addProperty(const wxString& name, const std::string& value);
     JSONItem& addProperty(const wxString& name, const wxChar* value);
@@ -183,15 +180,11 @@ public:
     }
 
     JSONItem& addProperty(const wxString& name, const wxSize& sz);
-    JSONItem& addProperty(const wxString& name, const wxPoint& pt);
-    JSONItem& addProperty(const wxString& name, const wxColour& colour);
-    JSONItem& addProperty(const wxString& name, const wxFont& font);
 
     JSONItem& addProperty(const wxString& name, const wxArrayString& arr);
     JSONItem& addProperty(const wxString& name, const wxStringMap_t& stringMap);
     JSONItem& addProperty(const wxString& name, const JSONItem& element);
     JSONItem& addProperty(const wxString& name, const char* value, const wxMBConv& conv = wxConvUTF8);
-    JSONItem& addNull(const wxString& name);
 
     /**
      * @brief delete property by name
@@ -213,9 +206,11 @@ public:
     void arrayAppend(int number);
     void arrayAppend(double number);
 
-    bool isOk() const { return m_json != NULL; }
+    bool isOk() const { return m_json != nullptr; }
 
 private:
+    explicit JSONItem(cJSON* json);
+
     /**
      * @brief release the internal pointer
      */
@@ -240,26 +235,27 @@ enum class JsonType {
 
 class WXDLLIMPEXP_CL JSON
 {
+    friend JSONItem;
+
 public:
     explicit JSON(JsonType type);
     explicit JSON(const wxString& text);
     explicit JSON(const wxFileName& filename);
-    explicit JSON(JSONItem item);
 
     // Make this class not copyable
     JSON(const JSON&) = delete;
     JSON& operator=(const JSON&) = delete;
-    virtual ~JSON();
+    ~JSON();
 
     void save(const wxFileName& fn) const;
-    bool isOk() const { return m_json != NULL; }
+    bool isOk() const { return m_json != nullptr; }
 
     JSONItem toElement() const;
 
-    void clear();
+private:
     cJSON* release();
 
-protected:
+private:
     cJSON* m_json = nullptr;
 };
 

@@ -33,6 +33,7 @@
 #include <map>
 #include <memory>
 #include <wx/filename.h>
+#include <wx/colour.h>
 
 ////////////////////////////////////////////////////////
 

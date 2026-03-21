@@ -9,12 +9,6 @@ add_subdirectory(cc-wrapper)
 install(TARGETS cc-wrapper DESTINATION ${CL_INSTALL_BIN})
 
 # ######################################################################################################################
-# cJSON
-# ######################################################################################################################
-add_library(cJSON STATIC ${CMAKE_CURRENT_SOURCE_DIR}/cJSON/cJSON.c ${CMAKE_CURRENT_SOURCE_DIR}/cJSON/cJSON.h)
-target_include_directories(cJSON PUBLIC ${CMAKE_CURRENT_SOURCE_DIR}/cJSON)
-
-# ######################################################################################################################
 # doctest
 # a library header for test framework
 # ######################################################################################################################

@@ -11,8 +11,8 @@ public:
     RenameRequest(const wxString& new_name, const wxString& filename, size_t line, size_t column);
     virtual ~RenameRequest() = default;
 
-    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
-    void OnError(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
+    std::optional<LSPEvent> OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
+    void HandleError(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
 };
 
 } // namespace LSP

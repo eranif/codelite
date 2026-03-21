@@ -14,12 +14,14 @@ LSP::RenameRequest::RenameRequest(const wxString& new_name, const wxString& file
     m_params->As<RenameParams>()->SetNewName(new_name);
 }
 
-void LSP::RenameRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+std::optional<LSPEvent> LSP::RenameRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     LOG_IF_TRACE { LSP_TRACE() << "RenameRequest::OnResponse() is called" << endl; }
     wxUnusedVar(owner);
     JSONItem result = response.Get("result");
-    CHECK_EXPECTED_RETURN(result.isOk(), true);
+    if (!result.isOk()) {
+        return std::nullopt;
+    }
     LOG_IF_TRACE { LSP_TRACE() << result.format(false) << endl; }
 
     std::unordered_map<wxString, std::vector<LSP::TextEdit>> modifications = ParseWorkspaceEdit(result);
@@ -39,9 +41,10 @@ void LSP::RenameRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtH
             }
         }
     }
+    return event_edit_files;
 }
 
-void LSP::RenameRequest::OnError(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+void LSP::RenameRequest::HandleError(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     wxUnusedVar(owner);
     // an example for such an error:

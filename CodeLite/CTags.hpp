@@ -1,6 +1,7 @@
 #ifndef CTAGSGENERATOR_HPP
 #define CTAGSGENERATOR_HPP
 
+#include "clResult.hpp"
 #include "codelite_exports.h"
 #include "database/entry.h"
 #include "fileextmanager.h"
@@ -13,6 +14,34 @@
 class WXDLLIMPEXP_CL CTags
 {
 public:
+    enum class SymbolKind {
+        kClass,
+        kStruct,
+        kTrait,
+        kFunction,
+        kPrototype,
+        kGlobalMethod,
+        kMethod,
+    };
+
+    struct SymbolInfo {
+        wxString name;
+        SymbolKind kind = SymbolKind::kFunction;
+        int line = 0;
+        /**
+         * Optional ending line reported by ctags JSON output.
+         * If missing, callers should compute the end from the next symbol.
+         */
+        std::optional<int> end_line{std::nullopt};
+        wxString signature;
+
+        inline wxString to_string() const
+        {
+            wxString s;
+            s << name << signature << ". Line:" << line << ", EndLine:" << end_line.value_or(-1);
+            return s;
+        }
+    };
     /**
      * Parse C++ source files with ctags and convert the generated output into tag entries.
      *
@@ -77,6 +106,62 @@ public:
     static std::vector<TagEntryPtr>
     ParseCxxLocals(const wxFileName& filename, const wxString& buffer, const wxString& ctags_exe);
 
+    /**
+     * @brief Parses symbols from a file using ctags and returns them in sorted order.
+     *
+     * This function reads the file content, optionally writes it to a temporary file when
+     * the input path has no extension but the content-based extension can be detected, and
+     * then invokes ctags symbol generation before parsing the output into symbol records.
+     * The resulting symbols are sorted by line number and then by symbol name.
+     *
+     * @param file const wxString& Path to the file whose symbols should be parsed.
+     * @param ctags_exe const wxString& Path to the ctags executable used to generate symbol data.
+     *
+     * @return std::vector<CTags::SymbolInfo> A vector of parsed symbols, sorted by line number
+     *         and then by name. Returns an empty vector if the file cannot be read, temporary
+     *         file creation or writing fails, or symbol generation/parsing does not produce data.
+     */
+    static std::vector<SymbolInfo> ParseFileSymbols(const wxString& file, const wxString& ctags_exe);
+
+    /**
+     * @brief Parses symbols from an in-memory buffer by writing it to a temporary file and invoking ctags.
+     *
+     * This function determines the appropriate file extension from the provided filename and buffer,
+     * writes the buffer to a temporary file with that extension, and then parses symbols from that file
+     * using the specified ctags executable. If the extension cannot be determined or the temporary file
+     * cannot be written, an empty symbol list is returned.
+     *
+     * @param filename const wxString& The original file name used to help determine the buffer's file extension.
+     * @param buffer const wxString& The source code contents to analyze.
+     * @param ctags_exe const wxString& The path to the ctags executable used for symbol extraction.
+     *
+     * @return std::vector<CTags::SymbolInfo> A vector of parsed symbol information, or an empty vector on failure.
+     */
+    static std::vector<SymbolInfo>
+    ParseBufferSymbols(const wxString& filename, const wxString& buffer, const wxString& ctags_exe);
+
+    struct SymbolRangeInfo {
+        SymbolInfo symbol;
+        int start_line{0};
+        /**
+         * Optional ending line for the matched symbol range.
+         * This is taken from ctags JSON "end" when available,
+         * otherwise it is inferred from the next symbol in the list.
+         */
+        std::optional<int> end_line{std::nullopt};
+        inline wxString to_string() const { return symbol.to_string(); }
+    };
+
+    /**
+     * Find the symbol range near a line and also return the matched symbol.
+     *
+     * The returned range uses the symbol's own ctags-provided end line when available;
+     * otherwise, the end is inferred from the next symbol in the sorted list.
+     */
+    static std::optional<SymbolRangeInfo> FindSymbolsRangeNearLine(const std::vector<SymbolInfo>& symbols, int line);
+
+    static clStatusOr<wxString> LocateExe();
+
 private:
     static std::optional<wxString>
     /**
@@ -99,6 +184,12 @@ private:
      *         functions, which may fail internally when writing temporary files or executing ctags.
      */
     DoCxxGenerate(const wxString& filesContent, const wxString& ctags_exe, const wxString& ctags_kinds = wxEmptyString);
+
+    static std::optional<wxString> DoSymbolGenerate(const wxString& file, const wxString& ctags_exe);
+    static bool IsSupportedSymbolLanguage(const wxString& language);
+    static std::vector<SymbolInfo> ParseSymbolOutput(const wxString& content);
+    static std::optional<SymbolKind>
+    MapSymbolKind(const wxString& kind, const wxString& scope, const wxString& kind_from_ctags);
 
     static void Initialise(const wxString& ctags_exe);
 };

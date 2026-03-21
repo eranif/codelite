@@ -66,6 +66,7 @@ struct Matcher {
 namespace
 {
 std::map<wxString, FileExtManager::FileType> m_map;
+std::unordered_map<FileExtManager::FileType, wxString> m_type_to_ext_map;
 std::map<wxString, std::vector<FileExtManager::FileType>> m_language_bundle;
 std::unordered_map<int, wxString> m_file_type_to_lang;
 std::vector<Matcher> m_matchers;
@@ -205,6 +206,11 @@ void FileExtManager::Init()
         m_map["md"] = TypeMarkdown;
         m_map["dart"] = TypeDart;
         m_map["cs"] = TypeCSharp;
+
+        for (const auto& [ext, type] : m_map) {
+            // We only need one entry, so we don't mind `insert` to fail.
+            m_type_to_ext_map.insert({type, ext});
+        }
 
         m_language_bundle.insert({"C/C++", {TypeSourceCpp, TypeSourceC, TypeHeader}});
         m_language_bundle.insert({"Windows resource files", {TypeResource}});
@@ -357,6 +363,25 @@ bool FileExtManager::AutoDetectByContent(const wxString& filename, FileExtManage
         return false;
     }
     return GetContentType(fileContent, fileType);
+}
+
+std::optional<wxString> FileExtManager::GetFileExtenstion(const wxString& filename, const wxString& string_content)
+{
+    wxFileName fn{filename};
+    if (!fn.GetExt().empty()) {
+        return fn.GetExt();
+    }
+
+    FileType type{FileType::TypeOther};
+    if (!GetContentType(string_content, type)) {
+        return std::nullopt;
+    }
+
+    auto iter = m_file_type_to_lang.find(type);
+    if (iter == m_file_type_to_lang.end()) {
+        return std::nullopt;
+    }
+    return iter->second;
 }
 
 bool FileExtManager::GetContentType(const wxString& string_content, FileExtManager::FileType& fileType)

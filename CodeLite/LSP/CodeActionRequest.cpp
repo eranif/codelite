@@ -15,7 +15,7 @@ LSP::CodeActionRequest::CodeActionRequest(const LSP::TextDocumentIdentifier& tex
     LSP_DEBUG() << ToJSON().format(true) << endl;
 }
 
-void LSP::CodeActionRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+std::optional<LSPEvent> LSP::CodeActionRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     wxUnusedVar(owner);
     LSP_DEBUG() << "LSP::CodeActionRequest::OnResponse()" << endl;
@@ -23,7 +23,7 @@ void LSP::CodeActionRequest::OnResponse(const LSP::ResponseMessage& response, wx
     auto result_arr = response.Get("result");
     if (!result_arr.isArray()) {
         LSP_WARNING() << "CodeAction result is expected to be of type array" << endl;
-        return;
+        return std::nullopt;
     }
 
     // expected array of commands
@@ -42,4 +42,5 @@ void LSP::CodeActionRequest::OnResponse(const LSP::ResponseMessage& response, wx
     LSP_DEBUG() << "Read" << commands.size() << "code actions" << endl;
     event.SetFileName(m_params->As<CodeActionParams>()->GetTextDocument().GetPath());
     EventNotifier::Get()->AddPendingEvent(event);
+    return event;
 }

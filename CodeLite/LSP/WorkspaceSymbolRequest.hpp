@@ -10,7 +10,7 @@ class WXDLLIMPEXP_CL WorkspaceSymbolRequest : public LSP::Request
 public:
     explicit WorkspaceSymbolRequest(const wxString& query);
     virtual ~WorkspaceSymbolRequest() = default;
-    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
+    std::optional<LSPEvent> OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner);
 };
 } // namespace LSP
 #endif // WORKSPACESYMBOLREQUEST_HPP

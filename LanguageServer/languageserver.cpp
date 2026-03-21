@@ -1,5 +1,6 @@
 #include "languageserver.h"
 
+#include "CTags.hpp"
 #include "ColoursAndFontsManager.h"
 #include "CustomControls/TextGenerationPreviewFrame.hpp"
 #include "Keyboard/clKeyboardManager.h"
@@ -280,31 +281,34 @@ void LanguageServerPlugin::OnGenerateDocString(wxCommandEvent& event)
     IEditor* editor = clGetManager()->GetActiveEditor();
     CHECK_PTR_RET(editor);
 
-    // Refresh the symbols for the current file and then ask the LLM to generate a comment.
-    LSP::Manager::GetInstance().RequestSymbolsForEditor(editor, [this](const LSPEvent& lsp_event) {
-        clGetManager()->GetNavigationBar()->UpdateScopesForCurrentEditor(lsp_event.GetSymbolsInformation());
-        auto func_text = clGetManager()->GetNavigationBar()->GetCurrentScopeText();
-        if (!func_text.has_value()) {
-            return;
-        }
+    auto res = CTags::LocateExe();
+    if (!res.ok()) {
+        ::clMessageBox(res.error_message(), "CodeLite", wxOK | wxICON_WARNING);
+        return;
+    }
 
-        IEditor* editor = clGetManager()->GetActiveEditor();
-        CHECK_PTR_RET(editor);
+    auto stc = editor->GetCtrl();
+    auto symbols = CTags::ParseFileSymbols(editor->GetRemotePathOrLocal(), res.value());
+    if (symbols.empty()) {
+        clDEBUG() << "No symbols found for file:" << editor->GetRemotePathOrLocal() << endl;
+        return;
+    }
 
-        clGetManager()->SetStatusMessage(_("Generating DocString..."), 1);
-        wxString language = "text";
-        LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetFileName().GetFullName());
-        if (lexer) {
-            language = lexer->GetName().Lower();
-        }
+    auto symbol_range = CTags::FindSymbolsRangeNearLine(symbols, editor->GetCurrentLine() + 1);
+    if (!symbol_range.has_value()) {
+        return;
+    }
 
-        wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kCommentGeneration);
-        prompt.Replace("{{lang}}", language);
-        prompt.Replace("{{function}}", func_text.value());
+    int start_pos = stc->PositionFromLine(symbol_range.value().start_line - 1);
+    int end_pos = stc->PositionFromLine(symbol_range.value().end_line.value_or(stc->GetLineCount()) - 1);
+    wxString func_text = stc->GetTextRange(start_pos, end_pos);
 
-        m_commentGenerationView->InitialiseFor(PreviewKind::kCommentGeneration);
-        llm::Manager::GetInstance().ShowTextGenerationDialog(prompt, m_commentGenerationView, std::nullopt);
-    });
+    clGetManager()->SetStatusMessage(_("Generating DocString..."), 1);
+    wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kCommentGeneration);
+    prompt.Replace("{{function}}", func_text);
+
+    m_commentGenerationView->InitialiseFor(PreviewKind::kCommentGeneration);
+    llm::Manager::GetInstance().ShowTextGenerationDialog(prompt, m_commentGenerationView, std::nullopt);
 }
 
 void LanguageServerPlugin::ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& lsps)

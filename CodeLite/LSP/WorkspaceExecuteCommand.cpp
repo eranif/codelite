@@ -10,11 +10,12 @@ WorkspaceExecuteCommand::WorkspaceExecuteCommand(const wxString& filepath, const
     LSP_DEBUG() << ToJSON().format(true) << endl;
 }
 
-void WorkspaceExecuteCommand::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+std::optional<LSPEvent> WorkspaceExecuteCommand::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     wxUnusedVar(owner);
     wxUnusedVar(response);
     LSP_DEBUG() << "WorkspaceExecuteCommand::OnResponse()" << endl;
     LSP_DEBUG() << response.ToString() << endl;
+    return std::nullopt;
 }
 } // namespace LSP

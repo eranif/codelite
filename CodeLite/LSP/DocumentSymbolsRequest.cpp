@@ -35,20 +35,21 @@ LSP::DocumentSymbolsRequest::DocumentSymbolsRequest(const wxString& filename, si
     m_params->As<DocumentSymbolParams>()->SetTextDocument(TextDocumentIdentifier(filename));
 }
 
-void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_response, wxEvtHandler* owner)
+std::optional<LSPEvent> LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_response,
+                                                                wxEvtHandler* owner)
 {
     LSP_DEBUG() << "LSP::DocumentSymbolsRequest::OnResponse() is called!" << endl;
     LSP::ResponseMessage& response = const_cast<LSP::ResponseMessage&>(const_response);
     auto json = response.take();
     if (!json->toElement().hasNamedObject("result")) {
         LSP_WARNING() << "LSP::DocumentSymbolsRequest::OnResponse(): missing 'result' object";
-        return;
+        return std::nullopt;
     }
 
     auto result = json->toElement().namedObject("result");
     if (!result.isArray() || result.arraySize() == 0) {
         // Nothing to display
-        return;
+        return std::nullopt;
     }
 
     int size = result.arraySize();
@@ -68,7 +69,7 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
     }
 
     if (symbols.empty()) {
-        return;
+        return std::nullopt;
     }
 
     // sort the items by line position
@@ -96,8 +97,7 @@ void LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_r
         // so it might be used by other plugins as well, e.g. "Outline"
         QueueEvent(EventNotifier::Get(), symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_OUTLINE_VIEW);
     }
-
-    InvokeResponseCallback(CreateLSPEvent(symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE));
+    return CreateLSPEvent(symbols, filename, wxEVT_LSP_DOCUMENT_SYMBOLS_QUICK_OUTLINE);
 }
 
 LSPEvent LSP::DocumentSymbolsRequest::CreateLSPEvent(const std::vector<LSP::SymbolInformation>& symbols,

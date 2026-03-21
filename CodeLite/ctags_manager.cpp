@@ -743,23 +743,13 @@ void TagsManager::GetCXXKeywords(wxArrayString& words)
 clStatusOr<TagEntryPtrVector_t>
 TagsManager::ParseCxxBuffer(const wxString& content, const wxString& filename, const wxString& kinds)
 {
-#ifdef __WXMAC__
-    // On macOS, we get a default ctags under /usr/bin/ctags which is very ancient
-    // skip it by ignoring system PATH.
-    static bool use_system_path{false};
-#else
-    static bool use_system_path{true};
-#endif
-
-    static thread_local std::optional<wxString> ctags_exe{std::nullopt};
-    if (!ctags_exe.has_value()) {
-        ctags_exe = ThePlatform->Which("ctags", use_system_path);
+    auto res = CTags::LocateExe();
+    if (!res.ok()) {
+        return res.status();
     }
 
-    if (!ctags_exe.has_value()) {
-        return StatusNotFound("Could not locate ctags. Please install it and try again");
-    }
-    return CTags::ParseCxxBuffer(filename, content, ctags_exe.value());
+    wxString ctags_exe = res.value();
+    return CTags::ParseCxxBuffer(filename, content, ctags_exe);
 }
 
 void TagsManager::GetTagsByPartialNames(const wxArrayString& partialNames, std::vector<TagEntryPtr>& tags)

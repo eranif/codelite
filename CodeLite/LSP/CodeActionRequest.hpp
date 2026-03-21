@@ -14,7 +14,7 @@ public:
                       const std::vector<LSP::Diagnostic>& diags = {});
     ~CodeActionRequest() override = default;
 
-    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
+    std::optional<LSPEvent> OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
 };
 
 } // namespace LSP

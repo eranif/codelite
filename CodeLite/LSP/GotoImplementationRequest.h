@@ -15,7 +15,7 @@ public:
     explicit GotoImplementationRequest(const wxString& filename, size_t line, size_t column);
     ~GotoImplementationRequest() override = default;
 
-    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
+    std::optional<LSPEvent> OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
     bool IsPositionDependentRequest() const override { return true; }
     bool IsValidAt(const wxString& filename, size_t line, size_t col) const override;
 };

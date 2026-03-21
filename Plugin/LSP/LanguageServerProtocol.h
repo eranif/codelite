@@ -49,6 +49,8 @@ public:
     void Move(LSPRequestMessageQueue& other);
 };
 
+using LSPCallback = std::function<void(const LSPEvent&)>;
+
 class WXDLLIMPEXP_SDK LanguageServerProtocol : public wxEvtHandler
 {
     enum eState {
@@ -238,6 +240,11 @@ public:
 
     /**
      * @brief find the definition of the item at the caret position
+     */
+    void FindDefinition(IEditor* editor, LSPCallback cb);
+
+    /**
+     * @brief find the definition of the item at the caret position
      * @param for_add_missing_header the context of the `FindDeclaration` is `Add include header` request
      */
     void FindDeclaration(IEditor* editor, bool for_add_missing_header);
@@ -284,7 +291,7 @@ public:
      * @param editor the current editor
      * @param context_flags request context. See LSP::DocumentSymbolsRequest::eDocumentSymbolsContext (bit or'd)
      */
-    void DocumentSymbols(IEditor* editor, size_t context_flags, std::function<void(const LSPEvent&)> cb);
+    void DocumentSymbols(IEditor* editor, size_t context_flags, LSP::ResponseCallback cb);
 
     /**
      * @brief execute remote command `workspace/executeCommand`

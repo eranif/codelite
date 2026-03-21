@@ -4,11 +4,14 @@
 #include "LSP/MessageWithParams.h"
 
 #include <functional>
+#include <optional>
 #include <wx/string.h>
 #include <wx/thread.h>
 
 namespace LSP
 {
+
+using ResponseCallback = std::function<void(std::optional<LSPEvent>)>;
 
 class WXDLLIMPEXP_CL Request : public LSP::MessageWithParams
 {
@@ -41,20 +44,24 @@ public:
         return true;
     }
 
+    virtual std::optional<LSPEvent> OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) = 0;
+
     /**
      * @brief this method will get called by the protocol for handling the response.
      * Override it in the various requests
      */
-    virtual void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+    void HandleResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
     {
-        wxUnusedVar(response);
-        wxUnusedVar(owner);
+        auto event = OnResponse(response, owner);
+        if (event.has_value()) {
+            InvokeResponseCallback(event.value());
+        }
     }
 
     /**
      * @brief this method will get called by the protocol for handling the errors
      */
-    virtual void OnError(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+    virtual void HandleError(const LSP::ResponseMessage& response, wxEvtHandler* owner)
     {
         wxUnusedVar(response);
         wxUnusedVar(owner);
@@ -63,8 +70,8 @@ public:
     void SetServerName(const wxString& server_name) { this->m_server_name = server_name; }
     const wxString& GetServerName() const { return m_server_name; }
 
-    inline void SetResponseCallback(std::function<void(const LSPEvent&)> cb) { m_on_response_callback = std::move(cb); }
-    inline void InvokeResponseCallback(const LSPEvent& event)
+    inline void SetResponseCallback(ResponseCallback cb) { m_on_response_callback = std::move(cb); }
+    inline void InvokeResponseCallback(std::optional<LSPEvent> event)
     {
         if (!wxThread::IsMain() || !m_on_response_callback) {
             return;
@@ -75,6 +82,6 @@ public:
 protected:
     int m_id = wxNOT_FOUND;
     wxString m_server_name;
-    std::function<void(const LSPEvent&)> m_on_response_callback{nullptr};
+    ResponseCallback m_on_response_callback{nullptr};
 };
 } // namespace LSP

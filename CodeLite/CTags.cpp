@@ -1,19 +1,24 @@
 #include "CTags.hpp"
 
 #include "AsyncProcess/asyncprocess.h"
+#include "Platform/Platform.hpp"
 #include "StringUtils.h"
 #include "assistant/Process.hpp"
+#include "assistant/common/json.hpp"
 #include "clTempFile.hpp"
 #include "cl_standard_paths.h"
 #include "file_logger.h"
 #include "fileutils.h"
 #include "procutils.h"
 
+#include <algorithm>
 #include <wx/stopwatch.h>
 #include <wx/tokenzr.h>
 
 thread_local bool is_initialised = false;
 thread_local bool is_macrodef_supported = false;
+
+using assistant::json;
 
 namespace
 {
@@ -62,7 +67,203 @@ std::optional<wxString> GetLang(FileExtManager::FileType file_type)
         return std::nullopt;
     }
 }
+wxString NormalizeSymbolLanguage(const wxString& language)
+{
+    const wxString lang = language.Lower();
+    if (lang == "bash" || lang == "shell") {
+        return "sh";
+    }
+    if (lang == "cpp") {
+        return "c++";
+    }
+    if (lang == "py") {
+        return "python";
+    }
+    if (lang == "rb") {
+        return "ruby";
+    }
+    return lang;
+}
 } // namespace
+
+bool CTags::IsSupportedSymbolLanguage(const wxString& language)
+{
+    static const std::unordered_set<wxString> supported = {
+        "c++", "c", "rust", "python", "php", "ruby", "tcl", "java", "sh"};
+    if (language.empty()) {
+        return true;
+    }
+
+    const wxString lang = language.Lower();
+    return std::find(supported.begin(), supported.end(), lang) != supported.end();
+}
+
+std::optional<CTags::SymbolKind>
+CTags::MapSymbolKind(const wxString& kind, const wxString& scope, const wxString& kind_from_ctags)
+{
+    const wxString k = kind.Lower();
+    const wxString c = kind_from_ctags.Lower();
+    if (k == "class")
+        return SymbolKind::kClass;
+    if (k == "struct")
+        return SymbolKind::kStruct;
+    if (k == "trait")
+        return SymbolKind::kTrait;
+    if (k == "prototype" || c == "prototype")
+        return SymbolKind::kPrototype;
+    if (k == "method" || c == "method")
+        return SymbolKind::kMethod;
+    if (k == "function") {
+        if (scope.empty() || scope == "<global>")
+            return SymbolKind::kGlobalMethod;
+        return SymbolKind::kMethod;
+    }
+    return std::nullopt;
+}
+
+std::optional<wxString> CTags::DoSymbolGenerate(const wxString& file, const wxString& ctags_exe)
+{
+    Initialise(ctags_exe);
+    if (!wxFileExists(file)) {
+        clWARNING() << "Symbol file does not exist: " << file << endl;
+        return std::nullopt;
+    }
+
+    std::vector<wxString> cmdarr{ctags_exe, "--output-format=json", "--fields=+nKsSe", "--extras=+q", "-f", "-", file};
+    auto command = StringUtils::ToStdStrings(cmdarr);
+    clDEBUG() << "Running command:" << StringUtils::Join(cmdarr) << endl;
+    auto result = assistant::Process::RunProcessAndWait(command);
+    clDEBUG() << "Running command...done" << endl;
+
+    if (!result.ok) {
+        return std::nullopt;
+    }
+    return wxString::FromUTF8(result.out);
+}
+
+std::vector<CTags::SymbolInfo> CTags::ParseSymbolOutput(const wxString& content)
+{
+    std::vector<SymbolInfo> out;
+    wxArrayString lines = ::wxStringTokenize(content, "\n", wxTOKEN_STRTOK);
+    for (auto& line : lines) {
+        line.Trim(false).Trim();
+        if (line.empty())
+            continue;
+        try {
+            json entry = json::parse(line.ToStdString(wxConvUTF8));
+            if (!entry.is_object() || !entry.contains("kind") || !entry.contains("name") || !entry.contains("line")) {
+                continue;
+            }
+
+            wxString kind = wxString::FromUTF8(entry["kind"].get<std::string>());
+            wxString name = wxString::FromUTF8(entry["name"].get<std::string>());
+            wxString scope;
+            if (entry.contains("scope") && entry["scope"].is_string()) {
+                scope = wxString::FromUTF8(entry["scope"].get<std::string>());
+            }
+
+            auto mapped_kind = MapSymbolKind(kind, scope, kind);
+            if (!mapped_kind) {
+                continue;
+            }
+
+            SymbolInfo info;
+            info.name = name;
+            info.kind = *mapped_kind;
+            info.line = entry["line"].get<int>();
+            if (entry.contains("end") && entry["end"].is_number_integer()) {
+                info.end_line = entry["end"].get<int>();
+            }
+            if ((info.kind == SymbolKind::kMethod || info.kind == SymbolKind::kGlobalMethod ||
+                 info.kind == SymbolKind::kPrototype) &&
+                entry.contains("signature") && entry["signature"].is_string()) {
+                info.signature = wxString::FromUTF8(entry["signature"].get<std::string>());
+            }
+            out.push_back(std::move(info));
+        } catch (...) {
+            continue;
+        }
+    }
+    return out;
+}
+
+std::vector<CTags::SymbolInfo>
+CTags::ParseBufferSymbols(const wxString& filename, const wxString& buffer, const wxString& ctags_exe)
+{
+    auto ext = FileExtManager::GetFileExtenstion(filename, buffer);
+    if (!ext.has_value()) {
+        return {};
+    }
+
+    clTempFile tmpfile{ext.value()};
+    if (!tmpfile.Write(buffer)) {
+        return {};
+    }
+    return ParseFileSymbols(tmpfile.GetFullPath(), ctags_exe);
+}
+
+std::vector<CTags::SymbolInfo> CTags::ParseFileSymbols(const wxString& file, const wxString& ctags_exe)
+{
+    wxString file_content;
+    if (!FileUtils::ReadFileContent(file, file_content)) {
+        return {};
+    }
+
+    auto ext = FileExtManager::GetFileExtenstion(file, file_content);
+    std::unique_ptr<clTempFile> tmpfile;
+    if (ext.has_value() && wxFileName{file}.GetExt().empty()) {
+        tmpfile = std::make_unique<clTempFile>(ext.value());
+        if (!tmpfile->Write(file_content)) {
+            return {};
+        }
+    }
+
+    auto content = DoSymbolGenerate(tmpfile.get() ? tmpfile->GetFullPath() : file, ctags_exe);
+    if (!content)
+        return {};
+
+    clDEBUG() << "Parsing symbols..." << endl;
+    auto symbols = ParseSymbolOutput(*content);
+    clDEBUG() << "Parsing symbols...done" << endl;
+
+    clDEBUG() << "Sorting symbols..." << endl;
+    std::sort(symbols.begin(), symbols.end(), [](const SymbolInfo& lhs, const SymbolInfo& rhs) {
+        if (lhs.line != rhs.line) {
+            return lhs.line < rhs.line;
+        }
+        return lhs.name < rhs.name;
+    });
+    clDEBUG() << "Sorting symbols...done" << endl;
+    return symbols;
+}
+
+std::optional<CTags::SymbolRangeInfo> CTags::FindSymbolsRangeNearLine(const std::vector<SymbolInfo>& symbols, int line)
+{
+    if (symbols.empty() || line <= 0) {
+        return std::nullopt;
+    }
+
+    auto it = std::upper_bound(
+        symbols.begin(), symbols.end(), line, [](int value, const SymbolInfo& sym) { return value < sym.line; });
+
+    if (it == symbols.begin()) {
+        return std::nullopt;
+    }
+
+    --it;
+    SymbolRangeInfo result;
+    result.symbol = *it;
+    result.start_line = it->line;
+    if (it->end_line.has_value()) {
+        result.end_line = it->end_line;
+    } else {
+        auto next_it = std::next(it);
+        if (next_it != symbols.end()) {
+            result.end_line = next_it->line;
+        }
+    }
+    return result;
+}
 
 std::optional<wxString>
 CTags::DoCxxGenerate(const wxString& filesContent, const wxString& ctags_exe, const wxString& ctags_kinds)
@@ -277,4 +478,27 @@ void CTags::Initialise(const wxString& ctags_exe)
         }
     }
     is_initialised = true;
+}
+
+clStatusOr<wxString> CTags::LocateExe()
+{
+#ifdef __WXMAC__
+    // On macOS, we get a default ctags under /usr/bin/ctags which is very ancient
+    // skip it by ignoring system PATH.
+    static bool use_system_path{false};
+#else
+    static bool use_system_path{true};
+#endif
+
+    static thread_local std::optional<wxString> ctags_exe{std::nullopt};
+    if (!ctags_exe.has_value()) {
+        ctags_exe = ThePlatform->Which("ctags", use_system_path);
+    }
+
+    if (!ctags_exe.has_value()) {
+        return StatusNotFound("Could not locate ctags. Please install it and try again");
+    }
+
+    wxString path = ctags_exe.value();
+    return path;
 }

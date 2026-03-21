@@ -21,7 +21,7 @@ public:
     size_t GetColumn() const { return m_column; }
     const wxString& GetFilename() const { return m_filename; }
     size_t GetLine() const { return m_line; }
-    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
+    std::optional<LSPEvent> OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
     bool IsPositionDependentRequest() const override { return true; }
     bool IsValidAt(const wxString& filename, size_t line, size_t col) const override;
 };

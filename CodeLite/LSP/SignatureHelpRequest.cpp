@@ -13,10 +13,10 @@ LSP::SignatureHelpRequest::SignatureHelpRequest(const wxString& filename, size_t
     m_params->As<TextDocumentPositionParams>()->SetPosition(Position(line, column));
 }
 
-void LSP::SignatureHelpRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+std::optional<LSPEvent> LSP::SignatureHelpRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     if (!response.Has("result")) {
-        return;
+        return std::nullopt;
     }
     JSONItem res = response.Get("result");
     LSP::SignatureHelp sh;
@@ -25,6 +25,7 @@ void LSP::SignatureHelpRequest::OnResponse(const LSP::ResponseMessage& response,
     LSPEvent event(wxEVT_LSP_SIGNATURE_HELP);
     event.SetSignatureHelp(sh);
     owner->AddPendingEvent(event);
+    return event;
 }
 
 bool LSP::SignatureHelpRequest::IsValidAt(const wxString& filename, size_t line, size_t col) const

@@ -11,11 +11,12 @@ LSP::GotoImplementationRequest::GotoImplementationRequest(const wxString& filena
     m_params->As<TextDocumentPositionParams>()->SetPosition(Position(line, column));
 }
 
-void LSP::GotoImplementationRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+std::optional<LSPEvent> LSP::GotoImplementationRequest::OnResponse(const LSP::ResponseMessage& response,
+                                                                   wxEvtHandler* owner)
 {
     JSONItem result = response.Get("result");
     if (!result.isOk()) {
-        return;
+        return std::nullopt;
     }
     LSP::Location loc;
     if (result.isArray()) {
@@ -29,7 +30,9 @@ void LSP::GotoImplementationRequest::OnResponse(const LSP::ResponseMessage& resp
         LSPEvent definitionEvent(wxEVT_LSP_DEFINITION);
         definitionEvent.SetLocation(loc);
         owner->AddPendingEvent(definitionEvent);
+        return definitionEvent;
     }
+    return std::nullopt;
 }
 
 bool LSP::GotoImplementationRequest::IsValidAt(const wxString& filename, size_t line, size_t col) const

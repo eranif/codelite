@@ -54,25 +54,26 @@ LSP::WorkspaceSymbolRequest::WorkspaceSymbolRequest(const wxString& query)
     m_params->As<WorkspaceSymbolParams>()->SetQuery(query);
 }
 
-void LSP::WorkspaceSymbolRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+std::optional<LSPEvent> LSP::WorkspaceSymbolRequest::OnResponse(const LSP::ResponseMessage& response,
+                                                                wxEvtHandler* owner)
 {
     wxUnusedVar(owner);
 
     auto result = response.Get("result");
     if (!result.isOk()) {
         LSP_WARNING() << "LSP::WorkspaceSymbolRequest::OnResponse(): invalid 'result' object";
-        return;
+        return std::nullopt;
     }
     if (!result.isArray()) {
         LSP_WARNING() << "workspace/symbol: expected array result" << endl;
-        return;
+        return std::nullopt;
     }
 
     int size = result.arraySize();
     if (size == 0) {
         LSPEvent symbols_event{wxEVT_LSP_WORKSPACE_SYMBOLS};
         owner->QueueEvent(symbols_event.Clone());
-        return;
+        return std::nullopt;
     }
 
     LOG_IF_TRACE { LSP_TRACE() << result.format() << endl; }
@@ -90,4 +91,5 @@ void LSP::WorkspaceSymbolRequest::OnResponse(const LSP::ResponseMessage& respons
 
     LOG_IF_TRACE { LSP_TRACE() << symbols_event.GetSymbolsInformation() << endl; }
     EventNotifier::Get()->QueueEvent(symbols_event.Clone());
+    return symbols_event;
 }

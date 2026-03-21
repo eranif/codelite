@@ -174,6 +174,7 @@ public:
     clStatusOr(Value&& v) { m_value = std::move(v); }
 
     StatusCode code() const { return m_status.code(); }
+    clStatus status() const { return m_status; }
 
 private:
     Value m_value;

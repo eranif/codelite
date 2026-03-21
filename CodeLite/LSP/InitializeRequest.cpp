@@ -81,8 +81,9 @@ JSONItem LSP::InitializeRequest::ToJSON() const
     return json;
 }
 
-void LSP::InitializeRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+std::optional<LSPEvent> LSP::InitializeRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     wxUnusedVar(response);
     wxUnusedVar(owner);
+    return std::nullopt;
 }

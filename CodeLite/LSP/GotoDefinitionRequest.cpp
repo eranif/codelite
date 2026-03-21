@@ -13,11 +13,12 @@ LSP::GotoDefinitionRequest::GotoDefinitionRequest(const wxString& filename, size
     m_params->As<TextDocumentPositionParams>()->SetPosition(Position(line, column));
 }
 
-void LSP::GotoDefinitionRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+std::optional<LSPEvent> LSP::GotoDefinitionRequest::OnResponse(const LSP::ResponseMessage& response,
+                                                               wxEvtHandler* owner)
 {
     JSONItem result = response.Get("result");
     if (!result.isOk()) {
-        return;
+        return std::nullopt;
     }
 
     std::vector<LSP::Location> locations;
@@ -36,13 +37,14 @@ void LSP::GotoDefinitionRequest::OnResponse(const LSP::ResponseMessage& response
     }
 
     if (locations.empty()) {
-        return;
+        return std::nullopt;
     }
 
     // Fire an event with the matching location
     LSPEvent definitionEvent(wxEVT_LSP_DEFINITION);
     definitionEvent.SetLocations(locations);
     owner->AddPendingEvent(definitionEvent);
+    return definitionEvent;
 }
 
 bool LSP::GotoDefinitionRequest::IsValidAt(const wxString& filename, size_t line, size_t col) const

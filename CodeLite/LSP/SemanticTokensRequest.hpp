@@ -16,7 +16,7 @@ public:
     explicit SemanticTokensRequest(const wxString& filename);
     ~SemanticTokensRequest() override = default;
 
-    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
+    std::optional<LSPEvent> OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
 };
 } // namespace LSP
 

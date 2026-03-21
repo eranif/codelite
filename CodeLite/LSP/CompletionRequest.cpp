@@ -15,12 +15,12 @@ LSP::CompletionRequest::CompletionRequest(const LSP::TextDocumentIdentifier& tex
     m_params->As<CompletionParams>()->SetTextDocument(textDocument);
 }
 
-void LSP::CompletionRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+std::optional<LSPEvent> LSP::CompletionRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     JSONItem result = response.Get("result");
     if (!result.isOk()) {
         LSP_WARNING() << "LSP::CompletionRequest::OnResponse(): invalid 'result' object";
-        return;
+        return std::nullopt;
     }
 
     // We now accept the 'items' array
@@ -34,7 +34,7 @@ void LSP::CompletionRequest::OnResponse(const LSP::ResponseMessage& response, wx
     JSONItem* pItems = items.isOk() ? &items : &result;
     if (!pItems->isArray()) {
         LSP_WARNING() << "LSP::CompletionRequest::OnResponse(): items is not of type array";
-        return;
+        return std::nullopt;
     }
 
     CompletionItem::Vec_t completions;
@@ -55,7 +55,9 @@ void LSP::CompletionRequest::OnResponse(const LSP::ResponseMessage& response, wx
         event.SetCompletions(completions);
         event.SetTriggerKind(m_userTrigger ? CompletionItem::kTriggerUser : CompletionItem::kTriggerKindInvoked);
         owner->QueueEvent(event.Clone());
+        return event;
     }
+    return std::nullopt;
 }
 
 bool LSP::CompletionRequest::IsValidAt(const wxString& filename, size_t line, size_t col) const

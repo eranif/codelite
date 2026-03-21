@@ -13,7 +13,7 @@ public:
     WorkspaceExecuteCommand(const wxString& filepath, const LSP::Command& command);
     virtual ~WorkspaceExecuteCommand() = default;
 
-    void OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
+    std::optional<LSPEvent> OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner) override;
 };
 } // namespace LSP
 

@@ -19,12 +19,13 @@ LSP::GotoDeclarationRequest::GotoDeclarationRequest(const wxString& filename,
     m_params->As<TextDocumentPositionParams>()->SetPosition(Position(line, column));
 }
 
-void LSP::GotoDeclarationRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+std::optional<LSPEvent> LSP::GotoDeclarationRequest::OnResponse(const LSP::ResponseMessage& response,
+                                                                wxEvtHandler* owner)
 {
     LOG_IF_TRACE { LSP_TRACE() << "GotoDeclarationRequest::OnResponse() is called" << endl; }
     JSONItem result = response.Get("result");
     if (!result.isOk()) {
-        return;
+        return std::nullopt;
     }
 
     LSP::Location loc;
@@ -42,14 +43,17 @@ void LSP::GotoDeclarationRequest::OnResponse(const LSP::ResponseMessage& respons
             event.SetLocation(loc);
             event.SetFileName(m_filename);
             EventNotifier::Get()->AddPendingEvent(event);
+            return event;
         } else {
             // We send the same event for declaration as we do for definition
             LSPEvent event{wxEVT_LSP_DEFINITION};
             event.SetLocation(loc);
             event.SetFileName(m_filename);
             owner->AddPendingEvent(event);
+            return event;
         }
     }
+    return std::nullopt;
 }
 
 bool LSP::GotoDeclarationRequest::IsValidAt(const wxString& filename, size_t line, size_t col) const

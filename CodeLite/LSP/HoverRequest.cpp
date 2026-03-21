@@ -10,11 +10,12 @@ LSP::HoverRequest::HoverRequest(const wxString& filename, size_t line, size_t co
     m_params->As<TextDocumentPositionParams>()->SetPosition(Position(line, column));
 }
 
-void LSP::HoverRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+std::optional<LSPEvent> LSP::HoverRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     if (!response.Has("result")) {
-        return;
+        return std::nullopt;
     }
+
     JSONItem res = response.Get("result");
     LSP::Hover h;
     h.FromJSON(res);
@@ -22,4 +23,5 @@ void LSP::HoverRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHa
     LSPEvent event(wxEVT_LSP_HOVER);
     event.SetHover(h);
     owner->AddPendingEvent(event);
+    return event;
 }

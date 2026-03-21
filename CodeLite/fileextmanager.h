@@ -29,6 +29,7 @@
 #include "codelite_exports.h"
 
 #include <map>
+#include <optional>
 #include <vector>
 #include <wx/filename.h>
 #include <wx/string.h>
@@ -159,10 +160,31 @@ public:
      * @brief attempt to autodetect the file type by examining its content
      */
     static bool AutoDetectByContent(const wxString& filename, FileExtManager::FileType& fileType);
+
     /**
      * @brief given input string, return the content type
      */
     static bool GetContentType(const wxString& string_content, FileExtManager::FileType& fileType);
+
+    /**
+     * @brief Returns a file extension inferred from the file name or file content.
+     *
+     * Looks up the extension from "filename" first; if the file name already has an
+     * extension, that value is returned immediately. Otherwise, the function attempts
+     * to detect the content type from "string_content" and map it to a known extension
+     * using the FileExtManager's content-type-to-language table.
+     *
+     * @param filename const wxString& The file name to inspect for an existing extension.
+     * @param string_content const wxString& The file contents used to infer a type when
+     *     "filename" has no extension.
+     *
+     * @return std::optional<wxString> The existing file extension, or a mapped extension
+     *     inferred from content; std::nullopt if no extension can be determined.
+     *
+     * @note This is a member function of FileExtManager and depends on the instance's
+     *     internal content-type mapping.
+     */
+    static std::optional<wxString> GetFileExtenstion(const wxString& filename, const wxString& string_content);
 
     /**
      * @brief return the file type only by checking its extension

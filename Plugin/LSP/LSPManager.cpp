@@ -230,9 +230,13 @@ void Manager::ShowOutlineView(IEditor* editor)
         return;
     }
 
-    auto cb = [this](const LSPEvent& event) {
+    auto cb = [this](std::optional<LSPEvent> event) {
         clGetManager()->SetStatusMessage(_("Showing outline view dialog"), 1);
-        ShowQuickOutlineDialog(event);
+        if (event.has_value()) {
+            ShowQuickOutlineDialog(event.value());
+        } else {
+            ::clMessageBox(_("Could not find symbols for the current editor"));
+        }
     };
     RequestSymbolsForEditor(editor, std::move(cb));
 }
@@ -382,7 +386,7 @@ void Manager::FindHeaderFile(IEditor* editor)
     server->FindDeclaration(editor, true);
 }
 
-bool Manager::RequestSymbolsForEditor(IEditor* editor, std::function<void(const LSPEvent&)> cb)
+bool Manager::RequestSymbolsForEditor(IEditor* editor, LSP::ResponseCallback cb)
 {
     CHECK_PTR_RET_FALSE(editor);
     auto server = GetServerForEditor(editor);

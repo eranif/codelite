@@ -15,11 +15,11 @@ LSP::SemanticTokensRequest::SemanticTokensRequest(const wxString& filename)
     m_params->As<SemanticTokensParams>()->SetTextDocument(filename);
 }
 
-void LSP::SemanticTokensRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+std::optional<LSPEvent> LSP::SemanticTokensRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
     // build set of classes, locals so we can colour them
     if (!owner) {
-        return;
+        return std::nullopt;
     }
 
     std::vector<int> encoded_types;
@@ -32,7 +32,7 @@ void LSP::SemanticTokensRequest::OnResponse(const LSP::ResponseMessage& response
     // sanity: each token is represented by a set of 5 integers
     // { line, startChar, length, tokenType, tokenModifiers}
     if (encoded_types.size() % 5 != 0) {
-        return;
+        return std::nullopt;
     }
 
     int last_line = 0;
@@ -70,4 +70,5 @@ void LSP::SemanticTokensRequest::OnResponse(const LSP::ResponseMessage& response
         LSP_DEBUG() << "Colouring" << semantic_tokens.size() << "tokens" << endl;
         LSP_DEBUG() << "Colouring file:" << filename << endl;
     }
+    return event;
 }

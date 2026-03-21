@@ -15,11 +15,14 @@ LSP::FindReferencesRequest::FindReferencesRequest(const wxString& filename,
     m_params->As<ReferenceParams>()->SetPosition(Position(line, column));
 }
 
-void LSP::FindReferencesRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
+std::optional<LSPEvent> LSP::FindReferencesRequest::OnResponse(const LSP::ResponseMessage& response,
+                                                               wxEvtHandler* owner)
 {
     wxUnusedVar(owner);
     JSONItem result = response.Get("result");
-    CHECK_EXPECTED_RETURN(result.isOk(), true);
+    if (!result.isOk()) {
+        return std::nullopt;
+    }
 
     // An array of locations
     int array_size = result.arraySize();
@@ -37,4 +40,5 @@ void LSP::FindReferencesRequest::OnResponse(const LSP::ResponseMessage& response
 
     // fire an event
     EventNotifier::Get()->AddPendingEvent(references_event);
+    return references_event;
 }

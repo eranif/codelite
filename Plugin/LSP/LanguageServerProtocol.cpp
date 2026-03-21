@@ -771,9 +771,7 @@ void LanguageServerProtocol::OnEditorChanged(wxCommandEvent& event)
     }
 }
 
-void LanguageServerProtocol::DocumentSymbols(IEditor* editor,
-                                             size_t context_flags,
-                                             std::function<void(const LSPEvent&)> cb)
+void LanguageServerProtocol::DocumentSymbols(IEditor* editor, size_t context_flags, LSP::ResponseCallback cb)
 {
     CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
@@ -873,7 +871,7 @@ void LanguageServerProtocol::HandleResponseError(LSP::ResponseMessage& response,
 
     // finally, call the request handler
     if (msg_ptr->As<LSP::Request>()) {
-        msg_ptr->As<LSP::Request>()->OnError(response, m_cluster);
+        msg_ptr->As<LSP::Request>()->HandleError(response, m_cluster);
     }
 }
 
@@ -891,7 +889,7 @@ void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP:
         preq->SetServerName(GetName());
         LSP_DEBUG() << "Processing response for request:" << preq->GetMethod() << endl;
         LSP_TRACE() << response.ToString() << endl;
-        preq->OnResponse(response, m_cluster);
+        preq->HandleResponse(response, m_cluster);
 
     } else if (response.IsPushDiagnostics()) {
         // Get the URI

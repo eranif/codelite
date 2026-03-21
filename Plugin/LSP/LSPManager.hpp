@@ -227,7 +227,7 @@ public:
      *         pre‑conditions failed (e.g., `editor` is `nullptr`, no server is
      *         available, or the server does not support document symbols).
      */
-    bool RequestSymbolsForEditor(IEditor* editor, std::function<void(const LSPEvent&)> cb);
+    bool RequestSymbolsForEditor(IEditor* editor, LSP::ResponseCallback cb);
 
     /**
      * @brief Logs a message through the configured log sink.

@@ -220,6 +220,7 @@ bool Manager::IsAvailable()
 
 void Manager::OnEditorContextMenu(clContextMenuEvent& event)
 {
+    event.Skip();
     if (IsAvailable()) {
         // Load the LLM generation sub-menu
         wxMenu* menu = event.GetMenu();

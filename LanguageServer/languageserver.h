@@ -43,8 +43,6 @@ protected:
     void OnInitDone(wxCommandEvent& event);
     void OnEditorContextMenu(clContextMenuEvent& event);
 
-    void OnGenerateDocString(wxCommandEvent& event);
-    void OnDocStringGenerationDone();
     void ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& lsps);
 
     void OnLSPStopOne(clLanguageServerEvent& event);
@@ -63,7 +61,6 @@ protected:
 
     clTabTogglerHelper::Ptr_t m_tabToggler;
     LanguageServerLogView* m_logView{nullptr};
-    std::shared_ptr<TextGenerationPreviewFrame> m_commentGenerationView{nullptr};
 };
 
 #endif // LanguageServerPlugin

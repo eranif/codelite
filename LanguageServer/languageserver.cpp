@@ -17,7 +17,6 @@
 #include "globals.h"
 #include "ieditor.h"
 #include "macros.h"
-#include "resources/clXmlResource.hpp"
 
 #include <thread>
 #include <wx/app.h>
@@ -55,9 +54,6 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     m_mgr->BookAddPage(PaneId::BOTTOM_BAR, m_logView, _("Language Server"));
     m_tabToggler.reset(new clTabTogglerHelper(_("Language Server"), m_logView, "", NULL));
 
-    m_commentGenerationView = std::make_shared<TextGenerationPreviewFrame>(PreviewKind::kCommentGeneration);
-    m_commentGenerationView->Hide();
-
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &LanguageServerPlugin::OnInitDone, this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &LanguageServerPlugin::OnEditorContextMenu, this);
     wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnSettings, this, XRCID("language-server-settings"));
@@ -72,12 +68,6 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_LSP_DELETE, &LanguageServerPlugin::OnLSPDelete, this);
     EventNotifier::Get()->Bind(wxEVT_LSP_OPEN_SETTINGS_DLG, &LanguageServerPlugin::OnLSPShowSettingsDlg, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &LanguageServerPlugin::OnWorkspaceClosed, this);
-
-    clKeyboardManager::Get()->AddAccelerator(
-        _("Language Server"),
-        {{"lsp_document_scope", _("Generate an AI-powered comment for the current function"), "Ctrl-Shift-M"}});
-
-    wxTheApp->Bind(wxEVT_MENU, &LanguageServerPlugin::OnGenerateDocString, this, XRCID("lsp_document_scope"));
 
     /// initialise the LSP library
     LSP::Initialise();
@@ -221,16 +211,6 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     LanguageServerProtocol::Ptr_t lsp = LSP::Manager::GetInstance().GetServerForEditor(editor);
     if (!lsp) {
         wxMenu* menu = event.GetMenu();
-        if (llm::Manager::GetInstance().IsAvailable()) {
-            // Load the LLM generation sub-menu. LoadMenu will also load any LUA based menu entries.
-            wxMenu* ai_menu = clXmlResource::Get().LoadMenu("editor_context_menu_llm_generation");
-            auto item = menu->Prepend(wxID_ANY, _("AI-Powered Options"), ai_menu);
-            item->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("wand"));
-
-            // Disable the docstring menu entry (no LSP to work with)
-            ai_menu->Enable(XRCID("lsp_document_scope"), false);
-            menu->PrependSeparator();
-        }
         return;
     }
 
@@ -244,16 +224,6 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     }
 
     wxMenu* menu = event.GetMenu();
-    if (llm::Manager::GetInstance().IsAvailable()) {
-        // Load the LLM generation sub-menu
-        wxMenu* ai_menu = clXmlResource::Get().LoadMenu("editor_context_menu_llm_generation");
-
-        menu->PrependSeparator();
-        auto item = menu->Prepend(wxID_ANY, _("AI-Powered Options"), ai_menu);
-        item->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("wand"));
-        ai_menu->Bind(wxEVT_MENU, &LanguageServerPlugin::OnGenerateDocString, this, XRCID("lsp_document_scope"));
-    }
-
     if (add_find_references) {
         menu->PrependSeparator();
         menu->Prepend(XRCID("lsp_find_references"), _("Find references"));
@@ -264,51 +234,6 @@ void LanguageServerPlugin::OnEditorContextMenu(clContextMenuEvent& event)
         menu->Prepend(XRCID("lsp_rename_symbol"), _("Rename symbol"));
     }
     menu->Prepend(XRCID("lsp_find_symbol"), _("Find symbol"));
-}
-
-void LanguageServerPlugin::OnDocStringGenerationDone()
-{
-    if (m_commentGenerationView->IsShown()) {
-        return;
-    }
-    m_commentGenerationView->Show();
-}
-
-void LanguageServerPlugin::OnGenerateDocString(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-
-    IEditor* editor = clGetManager()->GetActiveEditor();
-    CHECK_PTR_RET(editor);
-
-    auto res = CTags::LocateExe();
-    if (!res.ok()) {
-        ::clMessageBox(res.error_message(), "CodeLite", wxOK | wxICON_WARNING);
-        return;
-    }
-
-    auto stc = editor->GetCtrl();
-    auto symbols = CTags::ParseFileSymbols(editor->GetRemotePathOrLocal(), res.value());
-    if (symbols.empty()) {
-        clDEBUG() << "No symbols found for file:" << editor->GetRemotePathOrLocal() << endl;
-        return;
-    }
-
-    auto symbol_range = CTags::FindSymbolsRangeNearLine(symbols, editor->GetCurrentLine() + 1);
-    if (!symbol_range.has_value()) {
-        return;
-    }
-
-    int start_pos = stc->PositionFromLine(symbol_range.value().start_line - 1);
-    int end_pos = stc->PositionFromLine(symbol_range.value().end_line.value_or(stc->GetLineCount()) - 1);
-    wxString func_text = stc->GetTextRange(start_pos, end_pos);
-
-    clGetManager()->SetStatusMessage(_("Generating DocString..."), 1);
-    wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kCommentGeneration);
-    prompt.Replace("{{function}}", func_text);
-
-    m_commentGenerationView->InitialiseFor(PreviewKind::kCommentGeneration);
-    llm::Manager::GetInstance().ShowTextGenerationDialog(prompt, m_commentGenerationView, std::nullopt);
 }
 
 void LanguageServerPlugin::ConfigureLSPs(const std::vector<LSPDetector::Ptr_t>& lsps)

@@ -13,6 +13,7 @@ ChildProcess::~ChildProcess()
 #if USE_IPROCESS
     if (m_process) {
         m_process->Detach();
+        m_process->Terminate();
     }
 #else
     if (m_childProcess) {

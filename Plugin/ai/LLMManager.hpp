@@ -13,6 +13,7 @@
 #include "assistant/client/client_base.hpp"
 #include "assistant/function.hpp"
 #include "clResult.hpp"
+#include "cl_command_event.h"
 
 #include <algorithm>
 #include <atomic>
@@ -655,9 +656,13 @@ public:
         return m_pending_user_answers != 0;
     }
 
+    void OnGenerateDocString(wxCommandEvent& event);
+
 private:
     Manager() = default;
     ~Manager();
+
+    void CompleteInitialisation();
 
     clStatusOr<wxString> CreateOrOpenConfig();
     /**
@@ -693,6 +698,7 @@ private:
 
     bool WriteConfigFile(llm::json j);
     void HandleConfigFileUpdated();
+    void OnEditorContextMenu(clContextMenuEvent& event);
 
     void PostTask(ThreadTask task);
     void WorkerMain();
@@ -719,6 +725,7 @@ private:
     /// How many user info bars are alive atm?
     size_t m_pending_user_answers{0};
     std::atomic_bool m_initialise_called{false};
+    std::shared_ptr<TextGenerationPreviewFrame> m_commentGenerationView{nullptr};
 };
 
 /**

@@ -1,6 +1,8 @@
 #include "LLMManager.hpp"
 
+#include "CTags.hpp"
 #include "FileManager.hpp"
+#include "Keyboard/clKeyboardManager.h"
 #include "ai/ConfirmDialog.hpp"
 #include "ai/InfoBar.hpp"
 #include "assistant/assistant.hpp"
@@ -15,9 +17,12 @@
 #include "fileextmanager.h"
 #include "fileutils.h"
 #include "globals.h"
+#include "resources/clXmlResource.hpp"
 
 #include <algorithm>
 #include <future>
+#include <wx/app.h>
+#include <wx/menu.h>
 #include <wx/msgdlg.h>
 #include <wx/richmsgdlg.h>
 #include <wx/xrc/xmlres.h>
@@ -188,6 +193,8 @@ Manager::~Manager()
 {
     Stop();
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &Manager::OnFileSaved, this);
+    wxTheApp->Unbind(wxEVT_MENU, &Manager::OnGenerateDocString, this, XRCID("lsp_document_scope"));
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &Manager::OnEditorContextMenu, this);
 }
 
 void Manager::Initialise()
@@ -199,6 +206,8 @@ void Manager::Initialise()
         // Mark the instance as initialised, this needs to be done before we call 'Start'
         // or it will fail.
         m_initialise_called = true;
+        CompleteInitialisation();
+
         // Now that all the plugins are loaded, start the agent.
         Start();
     });
@@ -208,6 +217,20 @@ bool Manager::IsAvailable()
 {
     // return true if we have an active endpoint.
     return GetActiveEndpoint().has_value();
+}
+
+void Manager::OnEditorContextMenu(clContextMenuEvent& event)
+{
+    if (IsAvailable()) {
+        // Load the LLM generation sub-menu
+        wxMenu* menu = event.GetMenu();
+        wxMenu* ai_menu = clXmlResource::Get().LoadMenu("editor_context_menu_llm_generation");
+        menu->PrependSeparator();
+
+        auto item = menu->Prepend(wxID_ANY, _("AI-Powered Options"), ai_menu);
+        item->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("wand"));
+        ai_menu->Bind(wxEVT_MENU, &Manager::OnGenerateDocString, this, XRCID("lsp_document_scope"));
+    }
 }
 
 void Manager::DeleteCollector(ResponseCollector* collector) { wxDELETE(collector); }
@@ -1290,5 +1313,56 @@ void Manager::DeleteTerminationFlag(std::shared_ptr<std::atomic_bool> flag)
     std::lock_guard lk{m_mutex};
     std::erase_if(
         m_termination_flags, [flag](std::shared_ptr<std::atomic_bool> f) -> bool { return flag.get() == f.get(); });
+}
+
+void Manager::OnGenerateDocString(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+
+    IEditor* editor = clGetManager()->GetActiveEditor();
+    CHECK_PTR_RET(editor);
+    CHECK_PTR_RET(m_commentGenerationView);
+
+    auto res = CTags::LocateExe();
+    if (!res.ok()) {
+        ::clMessageBox(res.error_message(), "CodeLite", wxOK | wxICON_WARNING);
+        return;
+    }
+
+    auto stc = editor->GetCtrl();
+    auto symbols = CTags::ParseFileSymbols(editor->GetRemotePathOrLocal(), res.value());
+    if (symbols.empty()) {
+        clDEBUG() << "No symbols found for file:" << editor->GetRemotePathOrLocal() << endl;
+        return;
+    }
+
+    auto symbol_range = CTags::FindSymbolsRangeNearLine(symbols, editor->GetCurrentLine() + 1);
+    if (!symbol_range.has_value()) {
+        return;
+    }
+
+    int start_pos = stc->PositionFromLine(symbol_range.value().start_line - 1);
+    int end_pos = stc->PositionFromLine(symbol_range.value().end_line.value_or(stc->GetLineCount()) - 1);
+    wxString func_text = stc->GetTextRange(start_pos, end_pos);
+
+    clGetManager()->SetStatusMessage(_("Generating DocString..."), 1);
+    wxString prompt = GetConfig().GetPrompt(llm::PromptKind::kCommentGeneration);
+    prompt.Replace("{{function}}", func_text);
+
+    m_commentGenerationView->InitialiseFor(PreviewKind::kCommentGeneration);
+    ShowTextGenerationDialog(prompt, m_commentGenerationView, std::nullopt);
+}
+
+void Manager::CompleteInitialisation()
+{
+    m_commentGenerationView = std::make_shared<TextGenerationPreviewFrame>(PreviewKind::kCommentGeneration);
+    m_commentGenerationView->Hide();
+
+    clKeyboardManager::Get()->AddAccelerator(
+        _("AI"),
+        {{"lsp_document_scope", _("Generate an AI-powered comment for the current function"), "Ctrl-Shift-M"}});
+
+    wxTheApp->Bind(wxEVT_MENU, &Manager::OnGenerateDocString, this, XRCID("lsp_document_scope"));
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &Manager::OnEditorContextMenu, this);
 }
 } // namespace llm

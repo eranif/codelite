@@ -831,7 +831,7 @@ msgstr "<Projet actif>"
 
 #: CodeLite/macros.h:99
 msgid "<Current File's Project>"
-msgstr "<Dossier en cours du Projet>"
+msgstr "<Dossier du Projet courant>"
 
 #: CodeLite/macros.h:100
 msgid "<Current File>"
@@ -851,7 +851,7 @@ msgstr "<Utiliser les valeurs par défaut>"
 
 #: CodeLite/search_thread.h:319
 msgid ", Matches found: "
-msgstr ", correspondances trouvés : "
+msgstr ", correspondances trouvées : "
 
 #: CodeLite/search_thread.h:319
 msgid "====== Number of files scanned: "
@@ -859,7 +859,7 @@ msgstr "====== Nombre de fichiers scannés : "
 
 #: CodeLite/search_thread.h:321
 msgid "====== Matches found: "
-msgstr "====== Correspondances trouvée : "
+msgstr "====== Correspondances trouvées : "
 
 #: CodeLite/search_thread.h:327
 msgid " seconds"
@@ -1046,11 +1046,11 @@ msgstr "Sans-titre"
 
 #: CodeLiteDiff/codelitediff.cpp:76 CodeLiteDiff/codelitediff.cpp:86
 msgid "CodeLite Diff Plugin"
-msgstr "Extension de Différrenciation 'CodeLite'"
+msgstr "Extension 'CodeLite' de comparaison"
 
 #: CodeLiteDiff/codelitediff.cpp:94 CodeLiteDiff/codelitediff.cpp:106
 msgid "Diff Tool"
-msgstr "Outil de différenciation"
+msgstr "Outil de comparaison"
 
 #: CodeLiteDiff/codelitediff.cpp:95 CodeLiteDiff/codelitediff.cpp:104
 msgid "New File Comparison"
@@ -1100,11 +1100,11 @@ msgstr "Compilation"
 
 #: Copyright/copyright.cpp:66
 msgid "Copyright Plugin - a small plugin that allows you to place copyright block on top of your source files"
-msgstr "Extension 'Copyright' - un petit extension qui vous permet de placer un bloc de propriété intellectuelle au dessus de vos fichiers sources source"
+msgstr "Extension 'Copyright' - un petit extension qui vous permet de placer un bloc de propriété intellectuelle en en-tête de vos fichiers sources"
 
 #: Copyright/copyright.cpp:76
 msgid "Copyright Plugin - Place copyright block on top of your source files"
-msgstr "Extension de propriété - Placez un bloc de propriété intellectuelle au-dessus de vos fichiers sources"
+msgstr "Extension de propriété - Placez un bloc de propriété intellectuelle en en-tête de vos fichiers sources"
 
 #: Copyright/copyright.cpp:86
 msgid "Copyright"
@@ -1225,7 +1225,7 @@ msgstr "Sélectionnez les projets pour insérer le bloc des droits d'auteur :"
 #: LiteEditor/plugindlgbase.cpp:70 LiteEditor/setters_getters.cpp:53
 #: UnitTestCPP/testclassbasedlg.cpp:136
 msgid "Check &All"
-msgstr "&Tout vérifier"
+msgstr "&Tout cocher"
 
 #: Copyright/copyrights_proj_sel_base_dlg.cpp:66
 msgid "&Un-Check All"
@@ -1294,7 +1294,7 @@ msgstr "Erreur (%d) : %s"
 #: DatabaseExplorer/SqlCommandPanel.cpp:264
 #: DatabaseExplorer/SqlCommandPanel.cpp:269
 msgid "DB Error"
-msgstr "Erreur base de données"
+msgstr "Erreur de base de données"
 
 #: DatabaseExplorer/DbSettingDialog.cpp:86
 #: DatabaseExplorer/DbSettingDialog.cpp:159
@@ -1418,7 +1418,7 @@ msgstr "Abandon table"
 
 #: DatabaseExplorer/DbViewerPanel.cpp:413
 msgid "Table dropped successfully"
-msgstr "La table est supprimée avec succès"
+msgstr "La table a été supprimée avec succès"
 
 #: DatabaseExplorer/DbViewerPanel.cpp:423
 #, c-format
@@ -1483,7 +1483,7 @@ msgstr "Ouvrir le panneau 'SQL'"
 
 #: DatabaseExplorer/DbViewerPanel.cpp:717
 msgid "Open SQL command panel for the database"
-msgstr "Ouvrir le panneau de commande 'SQ'L pour la base de données"
+msgstr "Ouvrir le panneau de commande 'SQL' pour la base de données"
 
 #: DatabaseExplorer/DbViewerPanel.cpp:721
 msgid "Run SQL command for deleting Database"
@@ -1515,11 +1515,11 @@ msgstr "Exporter les instructions 'CREATE SQL' de la base de données dans un fi
 
 #: DatabaseExplorer/DbViewerPanel.cpp:734
 msgid "Dump data to file"
-msgstr "Vider les données dans un fichier"
+msgstr "Ecrire les données dans un fichier"
 
 #: DatabaseExplorer/DbViewerPanel.cpp:735
 msgid "Dump data from database into .sql file"
-msgstr "Vider les données de la base de données dans un fichier '.sql'"
+msgstr "Ecrire les données de la base de données dans un fichier '.sql'"
 
 #: DatabaseExplorer/DbViewerPanel.cpp:743
 msgid "Open SQL command panel for the table"
@@ -1807,7 +1807,7 @@ msgstr ""
 
 #: DebugAdapterClient/DAPBreakpointsView.cpp:18
 msgid "New source breakpoint"
-msgstr "Nouveau point d'arrêt source"
+msgstr "Nouveau point d'arrêt de source"
 
 #: DebugAdapterClient/DAPBreakpointsView.cpp:19
 #: DebugAdapterClient/DAPBreakpointsView.cpp:120
@@ -1954,7 +1954,7 @@ msgstr "Expression"
 #: Plugin/FileSystemWorkspace/clFileSystemWorkspaceDlgBase.cpp:420
 #: Plugin/wxTerminalCtrl/clBuiltinTerminalPane.cpp:35 Runtime/rc/menu.xrc:988
 msgid "New"
-msgstr "Créer"
+msgstr "Nouveau"
 
 #: DebugAdapterClient/DAPWatchesView.cpp:20
 #: DebugAdapterClient/DapDebuggerSettingsDlg.cpp:19 LanguageServer/UI.cpp:81
@@ -2340,7 +2340,7 @@ msgid ""
 "For example:\n"
 "'-t my_container .'"
 msgstr ""
-"Définissez ici les options de construction à passer à la commande\n"
+"Définissez ici les options de construction à passer à la\n"
 "commande 'docker build'.\n"
 "Par exemple :\n"
 "'-t mon_conteneur .'"
@@ -2360,7 +2360,7 @@ msgid ""
 "For example:\n"
 "'-i my_container .'"
 msgstr ""
-"Définissez ici les options de construction à passer à la commande\n"
+"Définissez ici les options de construction à passer à la\n"
 "commande 'docker run'.\n"
 "Par exemple :\n"
 "'-i mon_conteneur .'"
@@ -2415,7 +2415,7 @@ msgstr "Fichier paramètres du Conteneur"
 
 #: Docker/clDockerBuildableFile.cpp:94 Docker/clDockerDriver.cpp:140
 msgid "Can't find docker executable. Please install docker and let me know where it is"
-msgstr "Impossible de trouver l'exécutable 'docker'. Veuillez installer 'docker' et me faire savoir où il se trouve"
+msgstr "Impossible de trouver l'exécutable 'docker'. Veuillez installer 'docker' et signaler où il se trouve"
 
 #: Docker/clDockerDriver.cpp:108
 msgid ""
@@ -2517,7 +2517,7 @@ msgstr "Activer la prise en charge de '.editorconfig'"
 
 #: EditorConfigPlugin/EditorConfigUI.h:48
 msgid "EditorConfig Settings"
-msgstr "'EditorConfig' Paramètres"
+msgstr "Paramètres de 'EditorConfig'"
 
 #: EditorConfigPlugin/editorconfigplugin.cpp:23
 #: EditorConfigPlugin/editorconfigplugin.cpp:33
@@ -2550,7 +2550,7 @@ msgstr "Le nom est utilisé pour identifier cet outil dans la barre d'outils « 
 
 #: ExternalTools/NewToolBase.cpp:65
 msgid "Tool path:"
-msgstr "Trajectoire de l'outil :"
+msgstr "Chemin de l'outil :"
 
 #: ExternalTools/NewToolBase.cpp:70
 msgid "Path to the executable to run"
@@ -2600,7 +2600,7 @@ msgstr "Avant d'exécuter cet outil, sauvegardez tous les fichiers"
 
 #: ExternalTools/NewToolBase.cpp:158
 msgid "Capture process output"
-msgstr "Capturer les résultats du processus"
+msgstr "Capturer la sortie du processus"
 
 #: ExternalTools/NewToolBase.cpp:164
 msgid "Run this tool when a file is saved"
@@ -2611,7 +2611,7 @@ msgid ""
 "Whenever a file is being saved, this tool is called with\n"
 "the file's fullpath as the first input argument."
 msgstr ""
-"Chaque fois qu'un fichier est sauvegardé, cet outil est appelé avec le chemin complet du fichier comme premier argument d'entrée.\n"
+"Chaque fois qu'un fichier est sauvegardé, cet outil est appelé avec\n"
 "le chemin complet du fichier comme premier argument d'entrée."
 
 #: ExternalTools/NewToolBase.cpp:186 ExternalTools/NewToolBase.cpp:187
@@ -2708,7 +2708,7 @@ msgstr "Nom de plugin invalide"
 
 #: Gizmos/PluginWizard.cpp:65
 msgid "codelite folder does not exists"
-msgstr "- Le dossier 'codelite' n'existe pas"
+msgstr "Le dossier 'codelite' n'existe pas"
 
 #: Gizmos/PluginWizard.cpp:71
 msgid "The selected plugin folder does not exist"
@@ -2719,12 +2719,12 @@ msgid ""
 "Wizards Plugin - a collection of useful wizards for C++:\n"
 "new Class Wizard, new wxWidgets Wizard, new Plugin Wizard"
 msgstr ""
-"Extension d'assistants  - une collection d'assistants utiles pour le C++ :\n"
+"Extension d'assistants - une collection d'assistants utiles pour le C++ :\n"
 "nouvel assistant de classe, nouvel assistant de 'wxWidgets', nouvel assistant de plugin"
 
 #: Gizmos/gizmos.cpp:87
 msgid "Wizards Plugin - a collection of useful utils for C++"
-msgstr "Extension d'assistants - une collection d'utilitaires utiles pour C++"
+msgstr "Extension d'assistants - une collection d'utilitaires pour le C++"
 
 #: Gizmos/gizmos.cpp:116
 msgid "New CodeLite Plugin Wizard..."
@@ -2835,7 +2835,7 @@ msgstr "Bloc de garde :"
 
 #: Gizmos/newclassbasedlg.cpp:126
 msgid "Set block guard to prevent multiple file inclusion. If left empty, the class name is used"
-msgstr "Définit la protection des blocs pour empêcher l'inclusion de plusieurs fichiers. S'il est laissé vide, le nom de la classe est utilisé"
+msgstr "Définit les blocs de garde pour empêcher l'inclusion de plusieurs fichiers. S'il est laissé vide, le nom de la classe est utilisé"
 
 #: Gizmos/newclassbasedlg.cpp:135
 msgid "Virtual Directory:"
@@ -2859,11 +2859,11 @@ msgstr "Si cette case est cochée, le fichier d'en-tête généré sera 'foo.hpp
 
 #: Gizmos/newclassbasedlg.cpp:195
 msgid "Use #pragma once"
-msgstr "Utiliser '#pragma' une fois"
+msgstr "Utiliser '#pragma once'"
 
 #: Gizmos/newclassbasedlg.cpp:200
 msgid "Use lowercase file names"
-msgstr "Utiliser des noms de fichiers en minuscules"
+msgstr "Utiliser des noms de fichiers en minuscule"
 
 #: Gizmos/newclassbasedlg.cpp:207
 msgid "Inline class"
@@ -3690,7 +3690,7 @@ msgstr "Gestionnaire de configuration"
 #: LiteEditor/DbgCommandBaseDlg.cpp:36 LiteEditor/compiler_pages.cpp:1076
 #: Plugin/NewProjectDialogBase.cpp:78 codelitephp/php-plugin/new_class.cpp:40
 msgid "Type:"
-msgstr "Type:"
+msgstr "Type :"
 
 #: LiteEditor/DbgCommandBaseDlg.cpp:41
 msgid ""
@@ -3870,7 +3870,7 @@ msgstr "Visibilité de l'indentation"
 
 #: LiteEditor/EditorOptionsGeneralGuidesPanel.cpp:62
 msgid "EOL Style"
-msgstr "Style fin de ligne"
+msgstr "Style des fins de ligne"
 
 #: LiteEditor/EditorOptionsGeneralGuidesPanel.cpp:66
 msgid "Line spacing"
@@ -5987,7 +5987,7 @@ msgstr "Visibilité des espaces :"
 
 #: LiteEditor/editorsettingslocalbase.cpp:281
 msgid "EOL Mode:"
-msgstr "Mode fin de ligne (EOL) :"
+msgstr "Mode des fins de ligne (EOL) :"
 
 #: LiteEditor/editorsettingslocalbase.cpp:289
 msgid "Set the editor's EOL mode (End Of Line). When set to 'Default' CodeLite will set the EOL according to the hosting OS"
@@ -7309,7 +7309,7 @@ msgstr "Basculer chaque repli dans la sélection"
 
 #: LiteEditor/frame.cpp:1184 Plugin/clStatusBar.cpp:539
 msgid "Display EOL"
-msgstr "Affichage fin de ligne"
+msgstr "Affichage des fins de ligne"
 
 #: LiteEditor/frame.cpp:1185 Runtime/rc/menu.xrc:310
 msgid "Next tab"
@@ -11635,7 +11635,7 @@ msgstr "Compilateur :"
 
 #: Plugin/NewProjectDialogBase.cpp:111
 msgid "Build System:"
-msgstr "Build System:"
+msgstr "Système de construction :"
 
 #: Plugin/NewProjectDialogBase.h:89 Runtime/rc/menu.xrc:990
 #: wxcrafter/src/main.cpp:209
@@ -12372,7 +12372,7 @@ msgstr "Convertir les indentations en espaces"
 
 #: Plugin/clStatusBar.cpp:496
 msgid "Use Tabs"
-msgstr "Utiliser des onglets"
+msgstr "Utiliser des tabulations"
 
 #: Plugin/clStatusBar.cpp:497
 msgid "Use Spaces"
@@ -13620,7 +13620,7 @@ msgstr "Basculer &Tous les replis dans la sélection"
 
 #: Runtime/rc/menu.xrc:274
 msgid "&Display EOL"
-msgstr "&Affichage fin de ligne"
+msgstr "&Affichage des fins de ligne"
 
 #: Runtime/rc/menu.xrc:278 ZoomNavigator/zoomnavigator.cpp:52
 msgid "Zoom"
@@ -21311,7 +21311,7 @@ msgstr "Afficher les guides d'indentation (lignes verticales)"
 #: wxcrafter/controls/styled_text_ctrl_wrapper.cpp:192
 #: wxcrafter/src/wxgui_defs.h:225
 msgid "EOL Mode"
-msgstr "Mode fin de ligne"
+msgstr "Mode des fins de ligne"
 
 #: wxcrafter/controls/styled_text_ctrl_wrapper.cpp:193
 msgid "Display the line endings characters"

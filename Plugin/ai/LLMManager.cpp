@@ -193,7 +193,6 @@ Manager::~Manager()
 {
     Stop();
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &Manager::OnFileSaved, this);
-    wxTheApp->Unbind(wxEVT_MENU, &Manager::OnGenerateDocString, this, XRCID("lsp_document_scope"));
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &Manager::OnEditorContextMenu, this);
 }
 
@@ -1181,10 +1180,11 @@ void Manager::EnableFunctionByName(const wxString& name, bool b)
 void Manager::ShowChatWindow(const wxString& prompt) { m_chatAI->ShowChatWindow(prompt); }
 
 void Manager::ShowTextGenerationDialog(const wxString& prompt,
-                                       std::shared_ptr<TextGenerationPreviewFrame> preview_frame,
                                        std::optional<assistant::ChatOptions> chat_options,
+                                       PreviewKind preview_kind,
                                        std::function<void()> completion_callback)
 {
+    CHECK_PTR_RET(m_commentGenerationView);
     assistant::ChatOptions opts{assistant::ChatOptions::kNoTools};
     assistant::AddFlagSet(opts, assistant::ChatOptions::kNoHistory);
 
@@ -1192,29 +1192,30 @@ void Manager::ShowTextGenerationDialog(const wxString& prompt,
         opts = std::move(chat_options.value());
     }
 
-    preview_frame->Show();
-    preview_frame->StartProgress(_("Working..."));
+    m_commentGenerationView->InitialiseFor(preview_kind);
+    m_commentGenerationView->Show();
+    m_commentGenerationView->StartProgress(_("Working..."));
 
     auto collector = new llm::ResponseCollector();
-    collector->SetStateChangingCB([preview_frame](llm::ChatState state) {
+    collector->SetStateChangingCB([this](llm::ChatState state) {
         if (!wxThread::IsMain()) {
             clWARNING() << "StateChangingCB called for non main thread!" << endl;
             return;
         }
         switch (state) {
         case llm::ChatState::kThinking:
-            preview_frame->UpdateProgress(_("Thinking..."));
+            m_commentGenerationView->UpdateProgress(_("Thinking..."));
             break;
         case llm::ChatState::kWorking:
-            preview_frame->UpdateProgress(_("Working..."));
+            m_commentGenerationView->UpdateProgress(_("Working..."));
             break;
         case llm::ChatState::kReady:
-            preview_frame->StopProgress(_("Ready"));
+            m_commentGenerationView->StopProgress(_("Ready"));
             break;
         }
     });
 
-    collector->SetStreamCallback([preview_frame, completion_callback = std::move(completion_callback)](
+    collector->SetStreamCallback([this, completion_callback = std::move(completion_callback)](
                                      const std::string& message, llm::StreamCallbackReason reason) {
         if (llm::IsFlagSet(reason, llm::StreamCallbackReason::kCancelled)) {
             if (completion_callback) {
@@ -1225,9 +1226,9 @@ void Manager::ShowTextGenerationDialog(const wxString& prompt,
 
         bool is_done = llm::IsFlagSet(reason, llm::StreamCallbackReason::kDone);
 
-        preview_frame->AppendText(wxString::FromUTF8(message));
-        if (is_done && !preview_frame->IsShown()) {
-            preview_frame->Show();
+        m_commentGenerationView->AppendText(wxString::FromUTF8(message));
+        if (is_done && !m_commentGenerationView->IsShown()) {
+            m_commentGenerationView->Show();
         }
 
         if (is_done && completion_callback) {
@@ -1350,12 +1351,12 @@ void Manager::OnGenerateDocString(wxCommandEvent& event)
     prompt.Replace("{{function}}", func_text);
 
     m_commentGenerationView->InitialiseFor(PreviewKind::kCommentGeneration);
-    ShowTextGenerationDialog(prompt, m_commentGenerationView, std::nullopt);
+    ShowTextGenerationDialog(prompt, std::nullopt, PreviewKind::kCommentGeneration);
 }
 
 void Manager::CompleteInitialisation()
 {
-    m_commentGenerationView = std::make_shared<TextGenerationPreviewFrame>(PreviewKind::kCommentGeneration);
+    m_commentGenerationView = new TextGenerationPreviewFrame(PreviewKind::kCommentGeneration);
     m_commentGenerationView->Hide();
 
     clKeyboardManager::Get()->AddAccelerator(

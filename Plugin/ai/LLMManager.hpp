@@ -461,8 +461,6 @@ public:
      * the generation process.
      *
      * @param prompt The input prompt string to send to the AI assistant for text generation.
-     * @param preview_frame A shared pointer to the TextGenerationPreviewFrame that will display
-     *                      the progress and generated text output.
      * @param chat_options Optional ChatOptions to customize the chat behavior. If not provided,
      *                     defaults to kNoTools and kNoHistory flags.
      * @param completion_callback A function to be called when text generation completes and the
@@ -476,24 +474,14 @@ public:
      * @warning If StateChangingCB is invoked from a non-main thread, a warning is logged and
      *          the callback returns early without updating the UI.
      *
-     * @code
-     * auto preview = std::make_shared<TextGenerationPreviewFrame>(parent);
-     * manager->ShowTextGenerationDialog(
-     *     "Generate a hello world function",
-     *     preview,
-     *     assistant::ChatOptions::kNoHistory,
-     *     []() { wxLogMessage("Generation complete"); }
-     * );
-     * @endcode
-     *
      * @see TextGenerationPreviewFrame
      * @see assistant::ChatOptions
      * @see llm::ResponseCollector
      * @see Manager::Chat
      */
     void ShowTextGenerationDialog(const wxString& prompt,
-                                  std::shared_ptr<TextGenerationPreviewFrame> preview_frame,
                                   std::optional<assistant::ChatOptions> chat_options,
+                                  PreviewKind preview_kind,
                                   std::function<void()> completion_callback = nullptr);
 
     const std::vector<wxString>& GetAvailablePlaceHolders() const;
@@ -725,7 +713,7 @@ private:
     /// How many user info bars are alive atm?
     size_t m_pending_user_answers{0};
     std::atomic_bool m_initialise_called{false};
-    std::shared_ptr<TextGenerationPreviewFrame> m_commentGenerationView{nullptr};
+    TextGenerationPreviewFrame* m_commentGenerationView{nullptr};
 };
 
 /**

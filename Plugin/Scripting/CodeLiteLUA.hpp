@@ -484,6 +484,5 @@ private:
     lua_State* m_state{nullptr};
     std::unordered_map<std::string, std::vector<LuaMenuItem>> m_menu_items;
     std::unordered_map<std::string, std::vector<int>> m_items_added_to_menu_bar_menus;
-    std::shared_ptr<TextGenerationPreviewFrame> m_textGenerationFrame{nullptr};
     bool m_generationInProgress{false};
 };

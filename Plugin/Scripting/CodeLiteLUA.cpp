@@ -51,9 +51,6 @@ void CodeLiteLUA::Shutdown()
         lua_close(self.m_state);
         self.m_state = nullptr;
     }
-
-    self.m_textGenerationFrame->Destroy();
-    self.m_textGenerationFrame = nullptr;
 }
 
 void CodeLiteLUA::Initialise()
@@ -132,13 +129,7 @@ void CodeLiteLUA::InitialiseInternal()
         ::wxMessageBox(errmsg, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
         return;
     }
-
     clDEBUG() << "Successfully executed script file:" << codelite_lua << endl;
-
-    if (m_textGenerationFrame == nullptr) {
-        m_textGenerationFrame = std::make_shared<TextGenerationPreviewFrame>(PreviewKind::kDefault);
-        m_textGenerationFrame->Hide();
-    }
 }
 
 CodeLiteLUA::CodeLiteLUA() {}
@@ -291,9 +282,8 @@ void CodeLiteLUA::generate(const std::string& prompt)
     }
 
     Get().m_generationInProgress = true;
-    Get().m_textGenerationFrame->InitialiseFor(PreviewKind::kDefault);
     llm::Manager::GetInstance().ShowTextGenerationDialog(
-        prompt, Get().m_textGenerationFrame, std::nullopt, []() { CodeLiteLUA::Get().m_generationInProgress = false; });
+        prompt, std::nullopt, PreviewKind::kDefault, []() { CodeLiteLUA::Get().m_generationInProgress = false; });
 }
 
 void CodeLiteLUA::chat(const std::string& prompt)

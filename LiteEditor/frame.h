@@ -115,7 +115,6 @@ class clMainFrame : public wxFrame
     wxPanel* m_mainPanel;
     wxString m_codeliteDownloadPageURL;
     wxString m_defaultLayout;
-    bool m_workspaceRetagIsRequired{false};
     bool m_loadLastSession;
     wxMenuBar* m_mainMenuBar;
 

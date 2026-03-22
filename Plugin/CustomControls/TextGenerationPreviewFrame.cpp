@@ -130,6 +130,7 @@ void TextGenerationPreviewFrame::AppendText(const wxString& text)
     m_editor->EnsureCaretVisible();
     m_editor->ClearSelections();
     clSTCHelper::SetCaretAt(m_editor, m_editor->GetLastPosition());
+    m_editor->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 
 void TextGenerationPreviewFrame::Reset()

@@ -931,12 +931,14 @@ void Manager::AddNewEndpoint(const llm::EndpointData& d)
             llm::json http_headers;
             http_headers["x-api-key"] = d.api_key.value_or("<INSERT_API_KEY>");
             new_endpoint["http_headers"] = http_headers;
+            new_endpoint["verify_server_ssl"] = false;
 
         } else if (d.client_type == kClientTypeOllama && d.api_key.has_value()) {
             // Ollama cloud
             llm::json http_headers;
             http_headers["Authorization"] = "Bearer " + d.api_key.value();
             new_endpoint["http_headers"] = http_headers;
+            new_endpoint["verify_server_ssl"] = false;
 
         } else if (d.client_type == kClientTypeOllama) {
             // Ollama local
@@ -947,6 +949,7 @@ void Manager::AddNewEndpoint(const llm::EndpointData& d)
             llm::json http_headers;
             http_headers["Authorization"] = "Bearer " + d.api_key.value_or("<INSERT_API_KEY>");
             new_endpoint["http_headers"] = http_headers;
+            new_endpoint["verify_server_ssl"] = false;
         }
 
         new_endpoint["type"] = d.client_type;

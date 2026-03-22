@@ -20,11 +20,8 @@ others:
 Medium:
 -----
 
-- Support auto reading AGENTS.md file and convert it into System-Messages.
-- Drop ctagsd from the code base.
-- Install standard `ctags` and use it to implement `code_symbols` tool for AI.
-- Modify the "Document Method" ( `Ctrl-Shift-M` ) to use the new `code_symbols` tool - this will ensure that it works
-  for all languages.
+- Support auto reading `AGENTS.md` file and convert it into System-Messages.
+- Implement `code_symbols` tool for AI.
 
 Low:
 ----

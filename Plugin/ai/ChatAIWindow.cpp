@@ -153,11 +153,12 @@ ChatAIWindow::~ChatAIWindow()
     clConfig::Get().Write("chat-ai/sash-position", m_mainSplitter->GetSashPosition());
 
     auto& conf = llm::Manager::GetInstance().GetConfig();
+
     // Store the current session
     auto active_endpoint = llm::Manager::GetInstance().GetActiveEndpoint();
-    if (active_endpoint.has_value()) {
-        auto conversation = llm::Manager::GetInstance().GetConversation();
-        conf.AddConversation(active_endpoint.value(), conversation);
+    auto c = llm::Manager::GetInstance().GetConversation(m_stcOutput->GetText());
+    if (active_endpoint.has_value() && c.has_value()) {
+        conf.AddConversation(active_endpoint.value(), c.value());
     }
     conf.Save();
 }
@@ -418,10 +419,11 @@ void ChatAIWindow::OnNewSession(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     // Store the current conversation
-    auto conversation = llm::Manager::GetInstance().GetConversation();
+    wxString content = m_stcOutput->GetText();
+    auto conversation = llm::Manager::GetInstance().GetConversation(content);
     auto active_endpoint = llm::Manager::GetInstance().GetActiveEndpoint();
-    if (active_endpoint.has_value()) {
-        llm::Manager::GetInstance().GetConfig().AddConversation(active_endpoint.value(), conversation);
+    if (active_endpoint.has_value() && conversation.has_value()) {
+        llm::Manager::GetInstance().GetConfig().AddConversation(active_endpoint.value(), conversation.value());
         llm::Manager::GetInstance().GetConfig().Save();
     }
     DoClearOutputView();
@@ -656,16 +658,7 @@ void ChatAIWindow::OnHistory(wxCommandEvent& event)
     }
 
     const auto& conversation = dlg.GetSelectedConversation();
-    // Restore the chat text
-    for (const auto& msg : conversation.messages) {
-        if (msg.role == "assistant") {
-            AppendOutput("**assistant**:\n");
-            AppendOutput(wxString() << wxString::FromUTF8(msg.text) << "\n\n");
-        } else if (msg.role == "user") {
-            AppendOutput(wxString() << "**" << ::wxGetUserId() << "**:\n");
-            AppendOutput(wxString() << wxString::FromUTF8(msg.text) << "\n\n");
-        }
-    }
+    AppendOutput(conversation.content_);
     StyleOutput();
     llm::Manager::GetInstance().LoadConversation(conversation);
     m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);

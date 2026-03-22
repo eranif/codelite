@@ -13,11 +13,7 @@ ChatHistoryPage::ChatHistoryPage(wxChoicebook* parent, ChatHistoryDialog* dlg, c
     m_coversations.clear();
     auto hist = llm::Manager::GetInstance().GetConfig().GetHistory(m_endpoint);
     for (const auto& conv : hist.conversations) {
-        auto label_opt = conv.GetConversationLabel();
-        if (!label_opt.has_value()) {
-            continue;
-        }
-        wxString label = wxString::FromUTF8(label_opt.value());
+        wxString label = wxString::FromUTF8(conv.GetLabel());
         wxVector<wxVariant> cols;
         cols.push_back(label);
         auto p = std::make_shared<llm::Conversation>(conv);

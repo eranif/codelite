@@ -775,18 +775,27 @@ void Manager::ClearHistory()
     m_client->ClearHistoryMessages();
 }
 
-llm::Conversation Manager::GetConversation() const
+std::optional<llm::Conversation> Manager::GetConversation(const wxString& conversation_text) const
 {
     if (!m_client) {
-        return {};
+        return std::nullopt;
     }
-    return m_client->GetHistory();
+
+    auto lines = wxStringTokenize(conversation_text, "\n", wxTOKEN_STRTOK);
+    for (wxString& line : lines) {
+        line.Trim().Trim(false);
+        if (line.empty() || line.StartsWith("**")) {
+            continue;
+        }
+        return llm::Conversation(m_client->GetHistory(), conversation_text, line);
+    }
+    return std::nullopt;
 }
 
 void Manager::LoadConversation(const llm::Conversation& conversation)
 {
     CHECK_PTR_RET(m_client);
-    m_client->SetHistory(conversation.messages);
+    m_client->SetHistory(conversation.messages_);
 }
 
 wxArrayString Manager::ListEndpoints()

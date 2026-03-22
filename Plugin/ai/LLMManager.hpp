@@ -251,16 +251,18 @@ public:
     void ClearHistory();
 
     /**
-     * @brief Retrieves the current message history from the underlying client.
+     * @brief Extracts the first non-empty, non-markdown line from a conversation text and builds a Conversation.
      *
-     * Returns a copy of the message history maintained by the internal client.
-     * If the client is not initialized (i.e., `m_client` is `nullptr`), returns an empty vector.
-     * The method does not modify the internal state and is safe to call concurrently with other const operations.
+     * This method tokenizes the provided text by newline, skips blank lines and lines starting with "**",
+     * and returns a Conversation constructed from the first remaining line together with the client's history
+     * and the original conversation text. If no client is available or no suitable line is found, no value is returned.
      *
-     * @return std::vector<assistant::Message> A vector containing the message history; empty if the client is
-     * unavailable.
+     * @param conversation_text const wxString& The raw conversation text to inspect.
+     *
+     * @return std::optional<llm::Conversation> A Conversation initialized from the first eligible line, or std::nullopt
+     *         if the manager has no client or no valid line is present.
      */
-    llm::Conversation GetConversation() const;
+    std::optional<llm::Conversation> GetConversation(const wxString& conversation_text) const;
 
     /**
      * Sets the conversation history for the underlying assistant client.

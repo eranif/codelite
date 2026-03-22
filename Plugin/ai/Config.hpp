@@ -76,66 +76,45 @@ inline std::string PromptKindToString(PromptKind kind)
 
 using nlohmann::json;
 struct WXDLLIMPEXP_SDK Conversation {
-    std::vector<assistant::Message> messages;
+    assistant::messages messages_;
+    wxString content_;
+    wxString label_;
+
     Conversation() = default;
     ~Conversation() = default;
-    Conversation(const std::vector<assistant::Message>& msgs)
-        : messages(msgs)
+    explicit Conversation(const assistant::messages& msgs, const wxString& content, const wxString& label)
+        : messages_(msgs)
+        , content_(content)
+        , label_(label)
     {
     }
 
     json to_json() const
     {
-        auto messages_json = json::array();
-        for (const auto& msg : messages) {
-            json m = json::object();
-            m["role"] = msg.role;
-            m["content"] = msg.text;
-            messages_json.push_back(m);
-        }
-        return messages_json;
+        auto j = json::object();
+        j["messages"] = messages_.to_json();
+        j["content"] = content_.ToStdString(wxConvUTF8);
+        j["label"] = label_.ToStdString(wxConvUTF8);
+        return j;
     }
 
     static std::optional<Conversation> from_json(json j)
     {
         try {
             Conversation c;
-            for (const auto& entry : j) {
-                assistant::Message msg;
-                msg.role = entry["role"].get<std::string>();
-                msg.text = entry["content"].get<std::string>();
-                c.messages.push_back(msg);
+            for (auto& message_json : j["messages"]) {
+                assistant::message msg;
+                c.messages_.push_back(std::move(msg));
             }
+            c.content_ = wxString::FromUTF8(j["content"].get<std::string>());
+            c.label_ = wxString::FromUTF8(j["label"].get<std::string>());
             return c;
         } catch (...) {
             return std::nullopt;
         }
     }
 
-    /**
-     * @brief Extracts a label for a conversation based on the first message's text.
-     *
-     * @details This function derives a conversation label by taking the first line of the
-     * first message in the conversation history, trimming any leading and trailing whitespace.
-     * The label can be used for display purposes such as conversation list titles or tabs.
-     *
-     * @param history The conversation history containing messages to extract the label from.
-     *
-     * @return An optional string containing the trimmed first line of the first message's text,
-     *         or std::nullopt if the conversation history is empty.
-     *
-     * @see Conversation
-     */
-    std::optional<std::string> GetConversationLabel() const
-    {
-        if (messages.empty()) {
-            return std::nullopt;
-        }
-        wxString first_prompt = wxString::FromUTF8(messages[0].text);
-        first_prompt.Trim().Trim(false);
-        first_prompt = first_prompt.BeforeFirst('\n').Trim().Trim(false);
-        return first_prompt.ToStdString(wxConvUTF8);
-    }
+    inline const wxString& GetLabel() const { return label_; }
 };
 
 struct ChatHistory {
@@ -143,19 +122,10 @@ struct ChatHistory {
     json to_json() const
     {
 
-        // {
-        //      "conv1" : [{role, text}...],
-        //      ...
-        //      "convN" : [{role, text}...]
-        //  }
-
-        nlohmann::json conv_json = nlohmann::json::object();
+        // [{conv1}, {conv2}...{convN}]
+        nlohmann::json conv_json = nlohmann::json::array();
         for (const auto& conv : conversations) {
-            auto label = conv.GetConversationLabel();
-            if (!label.has_value()) {
-                continue;
-            }
-            conv_json[label.value()] = conv.to_json();
+            conv_json.push_back(conv.to_json());
         }
         return conv_json;
     }
@@ -164,11 +134,11 @@ struct ChatHistory {
     {
         try {
             ChatHistory h;
-            if (!j.is_object()) {
+            if (!j.is_array()) {
                 return std::nullopt;
             }
-            for (const auto& kv : j.items()) {
-                auto res = Conversation::from_json(kv.value());
+            for (const auto& conv_json : j) {
+                auto res = Conversation::from_json(conv_json);
                 if (!res.has_value()) {
                     return std::nullopt;
                 }
@@ -181,23 +151,20 @@ struct ChatHistory {
     }
 
     /**
-     * @brief Finds a conversation by its label.
+     * Finds the first conversation whose label matches the given label.
      *
-     * Searches through the conversations collection for a conversation with a matching label.
-     * The search performs an exact string comparison against each conversation's label.
+     * Searches the conversation range linearly and returns an iterator to the
+     * first matching Conversation, or conversations.end() if no match is found.
      *
-     * @param label The label string to search for in the conversations collection.
-     *
-     * @return std::optional<Conversation> Returns the matching Conversation if found,
-     *         or std::nullopt if no conversation with the specified label exists.
-     *
-     * @note This function performs a linear search through all conversations.
+     * @param conversations Container of Conversation objects to search.
+     * @param label The conversation label to match against each Conversation.
+     * @return auto An iterator to the first Conversation with a matching label,
+     *         or conversations.end() if no matching conversation exists.
      */
     std::optional<Conversation> FindConversation(const wxString& label)
     {
-        auto iter = std::find_if(conversations.begin(), conversations.end(), [&label](const Conversation& h) {
-            auto l = h.GetConversationLabel();
-            return l.has_value() && l.value() == label;
+        auto iter = std::find_if(conversations.begin(), conversations.end(), [&label](const Conversation& c) {
+            return c.GetLabel() == label;
         });
         if (iter == conversations.end()) {
             return std::nullopt;
@@ -206,27 +173,23 @@ struct ChatHistory {
     }
 
     /**
-     * @brief Deletes a conversation from the collection by its label.
+     * @brief Finds the first conversation whose label matches the requested label.
      *
-     * Searches through the conversations collection for a conversation with a matching label
-     * and removes it. If no conversation with the specified label exists, the behavior is undefined
-     * (attempting to erase an invalid iterator).
+     * @details Searches the provided conversations range from beginning to end and returns
+     * an iterator to the first Conversation whose label is equal to the given label. If no
+     * matching conversation is found, the returned iterator will be equal to conversations.end().
      *
-     * @param label The label of the conversation to delete.
+     * @param conversations The container or range of Conversation objects to search.
+     * @param label const std::string& The label to match against each conversation's label.
      *
-     * @return void This function does not return a value.
-     *
-     * @note If no conversation with the given label is found, this function will cause undefined
-     *       behavior by attempting to erase an invalid iterator (conversations.end()).
-     *
-     * @see Conversation::GetConversationLabel()
+     * @return auto An iterator to the first matching Conversation, or conversations.end() if no match exists.
      */
     void DeleteConversation(const wxString& label)
     {
-        auto iter = std::find_if(conversations.begin(), conversations.end(), [&label](const Conversation& h) {
-            auto l = h.GetConversationLabel();
-            return l.has_value() && l.value() == label;
+        auto iter = std::find_if(conversations.begin(), conversations.end(), [&label](const Conversation& c) {
+            return c.GetLabel() == label;
         });
+
         if (iter != conversations.end()) {
             conversations.erase(iter);
         }
@@ -235,28 +198,17 @@ struct ChatHistory {
     /**
      * @brief Adds a conversation to the collection, replacing any existing conversation with the same label.
      *
-     * This method first retrieves the conversation label; if the label is absent, the function returns early
-     * without modifying the collection. If a label exists, any existing conversation with that label is removed
-     * before inserting the new conversation at the beginning of the collection.
+     * @details This method first removes any conversation whose label matches the provided conversation,
+     * then inserts the new conversation at the beginning of the collection. It is intended for use within
+     * the enclosing class as part of conversation management.
      *
-     * @param conversation The Conversation object to be added. Must have a valid conversation label to be inserted.
+     * @param conversation const Conversation& The conversation to add to the collection.
      *
-     * @return void This function does not return a value.
-     *
-     * @note If the conversation does not have a label (i.e., GetConversationLabel() returns std::nullopt),
-     *       the function returns immediately without making any changes to the collection.
-     * @note The new conversation is always inserted at the beginning of the conversations collection.
-     *
-     * @see DeleteConversation
-     * @see Conversation::GetConversationLabel
+     * @return void
      */
     void AddConversation(const Conversation& conversation)
     {
-        auto label = conversation.GetConversationLabel();
-        if (!label.has_value()) {
-            return;
-        }
-        DeleteConversation(label.value());
+        DeleteConversation(conversation.GetLabel());
         conversations.insert(conversations.begin(), conversation);
     }
 

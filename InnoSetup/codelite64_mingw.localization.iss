@@ -16,6 +16,18 @@ fre.KeepUserSettings=Souhaitez-vous conserver vos paramètres utilisateur?
 fre.KeepLocalSettings=Souhaitez-vous conserver vos paramètres locaux?
 fre.LaunchCodeLite=Lancer CodeLite
 
+cze.KeepUserSettings=Chcete zachovat vaše uživatelská nastavení?
+cze.KeepLocalSettings=Chcete zachovat vaše místní nastavení?
+cze.LaunchCodeLite=Spustit CodeLite
+
 ita.KeepUserSettings=Vuoi mantenere le impostazioni utente?
 ita.KeepLocalSettings=Vuoi mantenere le impostazioni locali?
 ita.LaunchCodeLite=Esegui CodeLite
+
+jpn.KeepUserSettings=ユーザー設定を保持しますか？
+jpn.KeepLocalSettings=ローカル設定を保持しますか？
+jpn.LaunchCodeLite=CodeLite を起動
+
+rus.KeepUserSettings=Сохранить пользовательские настройки?
+rus.KeepLocalSettings=Сохранить локальные настройки?
+rus.LaunchCodeLite=Запустить CodeLite

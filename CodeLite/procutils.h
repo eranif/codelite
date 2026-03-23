@@ -104,14 +104,47 @@ public:
     static PidVec_t PS(const wxString& name);
 
     /**
-     * \brief a safe function that executes 'command' and returns its output. This function
-     * is safe to be called from secondary thread (hence, SafeExecuteCommand)
-     * \param command
-     * \param output
+     * Executes a command safely and collects its standard output.
+     *
+     * On Windows, this method launches the command using a process wrapper, polls for completion,
+     * and optionally aborts early if the provided shutdown flag is set. Any captured output is split
+     * into lines and stored in the output array. On non-Windows platforms, it delegates to the
+     * platform-specific Popen implementation.
+     *
+     * @param command The command line to execute.
+     * @param output wxArrayString reference that receives the captured output, split on newline
+     *               characters.
+     * @param shutdown_flag Shared atomic flag that can be set to request early termination; may be
+     *                      null.
+     *
+     * @return The process exit code on successful completion, or wxNOT_FOUND if the process could not
+     *         be started. If execution is interrupted by shutdown on Windows, returns -1.
+     *
+     * @throws No exceptions are thrown by this function.
      */
     static int SafeExecuteCommand(const wxString& command,
                                   wxArrayString& output,
                                   std::shared_ptr<std::atomic_bool> shutdown_flag = nullptr);
+
+    /**
+     * @brief Executes a shell command safely, optionally changing to a working directory first.
+     *
+     * This ProcUtils method builds a shell command string, prepends a "cd" into the specified
+     * working directory when provided, wraps the result in the appropriate shell invocation, and
+     * then executes it through the safer command execution path while collecting any output.
+     *
+     * @param command The shell command to execute.
+     * @param working_directory The directory to switch to before running the command; if empty,
+     * no directory change is performed.
+     * @param output wxArrayString reference that receives the command output.
+     * @param shutdown_flag Shared atomic flag used to request early termination of execution.
+     *
+     * @return int The result code returned by SafeExecuteCommand.
+     */
+    static int SafeExecuteShellCommand(const wxString& command,
+                                       const wxString& working_directory,
+                                       wxArrayString& output,
+                                       std::shared_ptr<std::atomic_bool> shutdown_flag = nullptr);
 
     /**
      * @brief execute a command and return its output as plain string

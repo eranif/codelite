@@ -696,6 +696,8 @@ private:
     void CleanupAfterWorkerExit();
     assistant::Config MakeConfig();
     void OnFileSaved(clCommandEvent& event);
+    void OnWorkspaceOpened(clWorkspaceEvent& event);
+    void OnWorkspaceClosed(clWorkspaceEvent& event);
     std::optional<llm::json> GetConfigAsJSON();
     static CanInvokeToolResult CanRunTool(const std::string& tool_name, assistant::json args);
 

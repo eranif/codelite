@@ -481,6 +481,20 @@ bool ProcUtils::Locate(const wxString& name, wxString& where)
     return false;
 }
 
+int ProcUtils::SafeExecuteShellCommand(const wxString& command,
+                                       const wxString& working_directory,
+                                       wxArrayString& output,
+                                       std::shared_ptr<std::atomic_bool> shutdown_flag)
+{
+    wxString full_command;
+    if (!working_directory.empty()) {
+        full_command << "cd " << working_directory << " && ";
+    }
+    full_command << command;
+    WrapInShell(full_command);
+    return SafeExecuteCommand(full_command, output, shutdown_flag);
+}
+
 int ProcUtils::SafeExecuteCommand(const wxString& command,
                                   wxArrayString& output,
                                   std::shared_ptr<std::atomic_bool> shutdown_flag)

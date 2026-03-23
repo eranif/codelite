@@ -1394,4 +1394,8 @@ void Manager::CompleteInitialisation()
     wxTheApp->Bind(wxEVT_MENU, &Manager::OnGenerateDocString, this, XRCID("lsp_document_scope"));
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &Manager::OnEditorContextMenu, this);
 }
+
+void Manager::OnWorkspaceOpened(clWorkspaceEvent& event) { event.Skip(); }
+void Manager::OnWorkspaceClosed(clWorkspaceEvent& event) { event.Skip(); }
+
 } // namespace llm

@@ -555,7 +555,7 @@ CanInvokeToolResult ShellExecuteConfirm(const std::string& tool_name, const assi
         return CanInvokeToolResult{.can_invoke = false, .reason = "Internal Error."};
     }
 
-    if (args.size() != 1) {
+    if (args.size() != 2) {
         return CanInvokeToolResult{.can_invoke = false, .reason = "Invalid number of arguments"};
     }
 
@@ -567,10 +567,19 @@ CanInvokeToolResult ShellExecuteConfirm(const std::string& tool_name, const assi
         };
     }
 
-    // Apply patch "Trust" for this session (per path).
+    auto working_directory = ::assistant::GetFunctionArg<std::string>(args, "working_directory");
+    if (!working_directory.has_value()) {
+        return CanInvokeToolResult{
+            .can_invoke = false,
+            .reason = "Missing mandatory field 'working_directory'",
+        };
+    }
+
+    // We trust commands based on the execat command and working directory.
     static thread_local std::unordered_set<std::string> shell_execute_trust_commands;
 
-    if (shell_execute_trust_commands.contains(command.value())) {
+    std::string unique_command = working_directory.value() + " " + command.value();
+    if (shell_execute_trust_commands.contains(unique_command)) {
         // trusted
         return CanInvokeToolResult{
             .can_invoke = true,
@@ -578,8 +587,11 @@ CanInvokeToolResult ShellExecuteConfirm(const std::string& tool_name, const assi
     }
 
     wxString cmd = wxString::FromUTF8(command.value());
+    wxString codeblock;
+    codeblock << "# Working directory\n" << wxString::FromUTF8(working_directory.value()) << "\n\n";
+    codeblock << "# Command\n" << cmd;
     auto result = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(
-        _("The model wants to run the following shell command, allow it?"), cmd, "bash");
+        _("The model wants to run the following shell command, allow it?"), codeblock, "bash");
 
     if (!result.ok()) {
         return CanInvokeToolResult{
@@ -595,8 +607,8 @@ CanInvokeToolResult ShellExecuteConfirm(const std::string& tool_name, const assi
         };
     case llm::UserAnswer::kTrust:
         // We trust this specific command, not the entire tool.
-        shell_execute_trust_commands.erase(command.value());
-        shell_execute_trust_commands.insert(command.value());
+        shell_execute_trust_commands.erase(unique_command);
+        shell_execute_trust_commands.insert(unique_command);
         return CanInvokeToolResult{
             .can_invoke = true,
         };
@@ -609,24 +621,21 @@ CanInvokeToolResult ShellExecuteConfirm(const std::string& tool_name, const assi
     }
 }
 
-FunctionResult ToolShellExecute([[maybe_unused]] const assistant::json& args)
+FunctionResult ToolShellExecute(const assistant::json& args)
 {
     VERIFY_WORKER_THREAD();
-    if (args.size() != 1) {
-        return Err("Invalid number of arguments");
-    }
-
+    ASSIGN_FUNC_ARG_OR_RETURN(
+        std::string working_directory, ::assistant::GetFunctionArg<std::string>(args, "working_directory"));
     ASSIGN_FUNC_ARG_OR_RETURN(std::string command, ::assistant::GetFunctionArg<std::string>(args, "command"));
     wxString cmd = wxString::FromUTF8(command);
-
-    std::string command_output;
+    wxString wd = wxString::FromUTF8(working_directory);
     FunctionResult func_result{.isError = false};
-    TerminationFlagGuard termination_flag;
+
 #if USE_SFTP
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     bool is_remote = workspace && workspace->IsRemote();
     if (is_remote) {
-        auto result = clSFTPManager::Get().AwaitExecute(workspace->GetSshAccount(), cmd, workspace->GetDir());
+        auto result = clSFTPManager::Get().AwaitExecute(workspace->GetSshAccount(), cmd, wd);
         std::string out = std::get<0>(result);
         std::string err = std::get<1>(result);
         func_result.isError = false;
@@ -634,40 +643,27 @@ FunctionResult ToolShellExecute([[maybe_unused]] const assistant::json& args)
         if (!err.empty()) {
             func_result.text += "\n" + err;
         }
-
-    } else {
-        // Local command.
-        ProcUtils::WrapInShell(cmd);
-        wxArrayString output_arr;
-        EnvSetter env;
-        ProcUtils::SafeExecuteCommand(cmd, output_arr, termination_flag.GetFlag());
-        if (termination_flag.IsSet()) {
-            return FunctionResult{.isError = true, .text = "Command terminated by user"};
-        }
-        wxString output = StringUtils::Join(output_arr);
-        command_output = output.ToStdString(wxConvUTF8);
-        func_result.isError = false;
-        func_result.text = command_output;
+        llm::Manager::GetInstance().PrintMessage(
+            _("Command output:\n```bash\n") + func_result.text + "\n```\n", IconType::kInfo);
+        return func_result;
     }
-#else
+#endif
+
     // Local command.
-    ProcUtils::WrapInShell(cmd);
+    std::string command_output;
+    TerminationFlagGuard termination_flag;
     wxArrayString output_arr;
     EnvSetter env;
-    ProcUtils::SafeExecuteCommand(cmd, output_arr, termination_flag.GetFlag());
-    llm::Manager::GetInstance().DeleteTerminationFlag(termination_flag.GetFlag());
+    ProcUtils::SafeExecuteShellCommand(cmd, wd, output_arr, termination_flag.GetFlag());
     if (termination_flag.IsSet()) {
         return FunctionResult{.isError = true, .text = "Command terminated by user"};
     }
-
     wxString output = StringUtils::Join(output_arr);
-    command_output = output.ToStdString(wxConvUTF8);
     func_result.isError = false;
-    func_result.text = command_output;
-#endif
+    func_result.text = output.ToStdString(wxConvUTF8);
 
     llm::Manager::GetInstance().PrintMessage(
-        _("Successfully executed the command. Output:\n```bash\n") + func_result.text + "\n```\n", IconType::kInfo);
+        _("Command Output:\n```bash\n") + func_result.text + "\n```\n", IconType::kInfo);
     return func_result;
 }
 
@@ -698,6 +694,21 @@ FunctionResult GetOS([[maybe_unused]] const assistant::json& args)
 #endif
 
     return Ok(os_name);
+}
+
+FunctionResult GetWorkingDirectory([[maybe_unused]] const assistant::json& args)
+{
+    VERIFY_WORKER_THREAD();
+    auto workspace_path_cb = []() -> std::optional<wxString> {
+        auto workspace = clWorkspaceManager::Get().GetWorkspace();
+        if (workspace == nullptr) {
+            return std::nullopt;
+        }
+        return workspace->GetDir();
+    };
+
+    auto workspace_path = EventNotifier::Get()->RunOnMain<std::optional<wxString>>(std::move(workspace_path_cb));
+    return Ok(workspace_path.value_or(wxGetCwd()));
 }
 
 // Register CodeLite tools with the model.
@@ -806,7 +817,14 @@ This ensures you can construct OS-appropriate commands (e.g., 'dir' vs 'ls', bac
                   .SetCallback(ToolShellExecute)
                   .SetHumanInTheLoopCallabck(ShellExecuteConfirm)
                   .AddRequiredParam("command", "The shell command to execute", "string")
+                  .AddRequiredParam("working_directory", "The directory where the command should be executed", "string")
                   .Build());
+    table.Add(
+        FunctionBuilder("GetWorkingDirectory")
+            .SetDescription(
+                R"(Return the current working directory. If a workspace is open, returns the workspace directory; otherwise returns the process current directory.)")
+            .SetCallback(GetWorkingDirectory)
+            .Build());
     table.Add(
         FunctionBuilder("GetOS")
             .SetDescription(

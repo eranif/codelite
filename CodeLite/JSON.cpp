@@ -29,16 +29,20 @@
 
 #include <wx/filename.h>
 
-JSON::JSON(const wxString& text) { m_json = cJSON_Parse(text.mb_str(wxConvUTF8).data()); }
+JSON::JSON(const wxString& text)
+{
+    m_json = std::make_shared<nlohmann::ordered_json>(nlohmann::ordered_json::parse(text.mb_str(wxConvUTF8).data()));
+}
 
 JSON::JSON(JsonType type)
 {
-    if (type == JsonType::Array)
-        m_json = cJSON_CreateArray();
-    else if (type == JsonType::Null)
-        m_json = cJSON_CreateNull();
-    else
-        m_json = cJSON_CreateObject();
+    if (type == JsonType::Array) {
+        m_json = std::make_shared<nlohmann::ordered_json>(nlohmann::ordered_json::array());
+    } else if (type == JsonType::Null) {
+        m_json = std::make_shared<nlohmann::ordered_json>(nlohmann::ordered_json(nullptr));
+    } else {
+        m_json = std::make_shared<nlohmann::ordered_json>(nlohmann::ordered_json::object());
+    }
 }
 
 JSON::JSON(const wxFileName& filename)
@@ -47,17 +51,7 @@ JSON::JSON(const wxFileName& filename)
     if (!FileUtils::ReadFileContent(filename, content)) {
         return;
     }
-
-    const std::string cstr = content.ToStdString(wxConvUTF8);
-    m_json = cJSON_Parse(cstr.c_str());
-}
-
-JSON::~JSON()
-{
-    if (m_json) {
-        cJSON_Delete(m_json);
-        m_json = nullptr;
-    }
+    m_json = std::make_shared<nlohmann::ordered_json>(nlohmann::ordered_json::parse(content.ToStdString(wxConvUTF8)));
 }
 
 void JSON::save(const wxFileName& fn) const
@@ -74,59 +68,109 @@ JSONItem JSON::toElement() const
     if (!m_json) {
         return JSONItem(nullptr);
     }
-    return JSONItem(m_json);
+    return JSONItem(m_json, m_json.get());
 }
 
-JSONItem JSONItem::namedObject(const wxString& name) const
+JSONItem JSONItem::createArray()
+{
+    auto root = std::make_shared<nlohmann::ordered_json>(nlohmann::ordered_json::array());
+    return JSONItem(root, root.get());
+}
+
+JSONItem JSONItem::createObject()
+{
+    auto root = std::make_shared<nlohmann::ordered_json>(nlohmann::ordered_json::object());
+    return JSONItem(root, root.get());
+}
+
+///////////////////////////////////////////////////////////////////////////////
+JSONItem::JSONItem(std::shared_ptr<nlohmann::ordered_json> root, nlohmann::ordered_json* json)
+    : m_root(std::move(root))
+    , m_json(json)
+{
+}
+
+char* JSONItem::FormatRawString(bool formatted) const
 {
     if (!m_json) {
+        return nullptr;
+    }
+    const auto s = m_json->dump(formatted ? 2 : -1);
+    return strdup(s.data());
+}
+
+wxString JSONItem::format(bool formatted) const
+{
+    if (!m_json) {
+        return wxT("");
+    }
+    return wxString::FromUTF8(m_json->dump(formatted ? 2 : -1));
+}
+
+bool JSONItem::isNull() const { return m_json && m_json->is_null(); }
+bool JSONItem::isBool() const { return m_json && m_json->is_boolean(); }
+bool JSONItem::isString() const { return m_json && m_json->is_string(); }
+bool JSONItem::isNumber() const { return m_json && m_json->is_number(); }
+bool JSONItem::isArray() const { return m_json && m_json->is_array(); }
+bool JSONItem::isObject() const { return m_json && m_json->is_object(); }
+
+bool JSONItem::toBool(bool defaultValue) const
+{
+    if (!m_json || !isBool()) {
+        return defaultValue;
+    }
+    return m_json->get<bool>();
+}
+
+wxString JSONItem::toString(const wxString& defaultValue) const
+{
+    if (!m_json || !isString()) {
+        return defaultValue;
+    }
+    return wxString::FromUTF8(m_json->get<std::string>());
+}
+
+int JSONItem::toInt(int defaultValue) const
+{
+    if (!m_json || !isNumber()) {
+        return defaultValue;
+    }
+    return m_json->get<int>();
+}
+
+size_t JSONItem::toSize_t(size_t defaultValue) const
+{
+    if (!m_json || !isNumber()) {
+        return defaultValue;
+    }
+    return m_json->get<std::size_t>();
+}
+
+double JSONItem::toDouble(double defaultValue) const
+{
+    if (!m_json || !isNumber()) {
+        return defaultValue;
+    }
+    return m_json->get<double>();
+}
+
+int JSONItem::arraySize() const
+{
+    if (!m_json || !isArray()) {
+        return 0;
+    }
+    return static_cast<int>(m_json->size());
+}
+
+JSONItem JSONItem::arrayItem(int pos) const
+{
+    if (!m_json || !isArray() || pos < 0 || arraySize() <= pos) {
         return JSONItem(nullptr);
     }
-
-    cJSON* obj = cJSON_GetObjectItem(m_json, name.mb_str(wxConvUTF8).data());
-    if (!obj) {
-        return JSONItem(nullptr);
-    }
-    return JSONItem(obj);
+    return JSONItem(m_root, &m_json->at(pos));
 }
 
-cJSON* JSON::release()
-{
-    cJSON* p = m_json;
-    m_json = nullptr;
-    return p;
-}
-
-///////////////////////////////////////////////////////////
-///////////////////////////////////////////////////////////
-JSONItem::JSONItem(cJSON* json)
-    : m_json(json)
-{
-}
-
-JSONItem JSONItem::operator[](int index) const
-{
-    if (isArray()) {
-        return arrayItem(index);
-    }
-    return JSONItem(nullptr);
-}
-
-std::unordered_map<std::string_view, JSONItem> JSONItem::GetAsMap() const
-{
-    if (!m_json || !isObject()) {
-        return {};
-    }
-
-    std::unordered_map<std::string_view, JSONItem> res;
-    cJSON* c = m_json->child;
-    while (c) {
-        res.erase(c->string);
-        res.insert({c->string, JSONItem{c}});
-        c = c->next;
-    }
-    return res;
-}
+JSONItem JSONItem::operator[](int index) const { return arrayItem(index); }
 
 std::vector<JSONItem> JSONItem::GetAsVector() const
 {
@@ -136,82 +180,119 @@ std::vector<JSONItem> JSONItem::GetAsVector() const
 
     std::vector<JSONItem> res;
     res.reserve(arraySize());
-    cJSON* c = m_json->child;
-    while (c) {
-        res.emplace_back(JSONItem{c});
-        c = c->next;
+    for (auto& child : *m_json) {
+        res.emplace_back(JSONItem{m_root, &child});
     }
     return res;
 }
 
+wxArrayString JSONItem::toArrayString(const wxArrayString& defaultValue) const
+{
+    if (!m_json || !isArray()) {
+        return defaultValue;
+    }
+
+    const int arr_size = arraySize();
+    if (arr_size == 0) {
+        return defaultValue;
+    }
+
+    wxArrayString arr;
+    arr.reserve(arr_size);
+    for (const auto& child : *m_json) {
+        arr.push_back(wxString::FromUTF8(child.get<std::string>()));
+    }
+    return arr;
+}
+
+std::vector<double> JSONItem::toDoubleArray(const std::vector<double>& defaultValue) const
+{
+    if (!m_json || !isArray()) {
+        return defaultValue;
+    }
+
+    const int arr_size = arraySize();
+    if (arr_size == 0) {
+        return defaultValue;
+    }
+
+    std::vector<double> arr;
+    arr.reserve(arr_size);
+    for (const auto& child : *m_json) {
+        arr.push_back(child.get<double>());
+    }
+    return arr;
+}
+
+std::vector<int> JSONItem::toIntArray(const std::vector<int>& defaultValue) const
+{
+    if (!m_json || !isArray()) {
+        return defaultValue;
+    }
+
+    const int arr_size = arraySize();
+    if (arr_size == 0) {
+        return defaultValue;
+    }
+
+    std::vector<int> arr;
+    arr.reserve(arr_size);
+    for (const auto& child : *m_json) {
+        arr.push_back(child.get<int>());
+    }
+    return arr;
+}
+
+bool JSONItem::contains(const wxString& name) const
+{
+    if (!m_json || !isObject()) {
+        return false;
+    }
+    const auto keyBuffer = name.mb_str(wxConvUTF8);
+    return m_json->contains(keyBuffer.data());
+}
+
+JSONItem JSONItem::namedObject(const wxString& name) const
+{
+    if (!m_json || !isObject()) {
+        return JSONItem(nullptr);
+    }
+    const auto keyBuffer = name.mb_str(wxConvUTF8);
+    if (m_json->contains(keyBuffer.data())) {
+        return {m_root, &m_json->at(keyBuffer.data())};
+    } else {
+        return JSONItem(nullptr);
+    }
+}
+
 JSONItem JSONItem::operator[](const wxString& name) const { return namedObject(name); }
 
-JSONItem JSONItem::arrayItem(int pos) const
+std::unordered_map<std::string_view, JSONItem> JSONItem::GetAsMap() const
 {
-    if (!m_json) {
-        return JSONItem(nullptr);
+    if (!m_json || !isObject()) {
+        return {};
     }
 
-    if (m_json->type != cJSON_Array)
-        return JSONItem(nullptr);
-
-    int size = cJSON_GetArraySize(m_json);
-    if (pos >= size)
-        return JSONItem(nullptr);
-
-    return JSONItem(cJSON_GetArrayItem(m_json, pos));
+    std::unordered_map<std::string_view, JSONItem> res;
+    for (auto& [key, child] : m_json->items()) {
+        res.emplace(key, JSONItem{m_root, &child});
+    }
+    return res;
 }
 
-bool JSONItem::isNull() const
+wxStringMap_t JSONItem::toStringMap(const wxStringMap_t& default_map) const
 {
-    if (!m_json) {
-        return false;
+    if (!m_json || !isArray()) {
+        return default_map;
     }
-    return m_json->type == cJSON_NULL;
-}
+    wxStringMap_t res;
 
-bool JSONItem::toBool(bool defaultValue) const
-{
-    if (!m_json) {
-        return defaultValue;
+    for (int i = 0; i < arraySize(); ++i) {
+        wxString key = arrayItem(i).namedObject("key").toString();
+        wxString val = arrayItem(i).namedObject("value").toString();
+        res.emplace(key, val);
     }
-
-    if (!isBool()) {
-        return defaultValue;
-    }
-
-    return m_json->type == cJSON_True;
-}
-
-wxString JSONItem::toString(const wxString& defaultValue) const
-{
-    if (!m_json) {
-        return defaultValue;
-    }
-
-    if (m_json->type != cJSON_String) {
-        return defaultValue;
-    }
-
-    return wxString(m_json->valuestring, wxConvUTF8);
-}
-
-bool JSONItem::isBool() const
-{
-    if (!m_json) {
-        return false;
-    }
-
-    return m_json->type == cJSON_True || m_json->type == cJSON_False;
-}
-
-bool JSONItem::isString() const
-{
-    if (!m_json) {
-        return false;
-    }
-
-    return m_json->type == cJSON_String;
+    return res;
 }
 
 void JSONItem::arrayAppend(const char* value)
@@ -219,24 +300,21 @@ void JSONItem::arrayAppend(const char* value)
     if (!m_json) {
         return;
     }
-    cJSON* p = cJSON_CreateString(value);
-    cJSON_AddItemToArray(m_json, p);
+    m_json->push_back(value);
 }
 
 void JSONItem::arrayAppend(const std::string& value) { arrayAppend(value.c_str()); }
+void JSONItem::arrayAppend(const wxString& value) { arrayAppend(value.mb_str(wxConvUTF8).data()); }
 
 void JSONItem::arrayAppend(double number)
 {
     if (!m_json) {
         return;
     }
-    cJSON* p = cJSON_CreateNumber(number);
-    cJSON_AddItemToArray(m_json, p);
+    m_json->push_back(number);
 }
 
-void JSONItem::arrayAppend(int number) { arrayAppend((double)number); }
-
-void JSONItem::arrayAppend(const wxString& value) { arrayAppend(value.mb_str(wxConvUTF8).data()); }
+void JSONItem::arrayAppend(int number) { arrayAppend(static_cast<double>(number)); }
 
 void JSONItem::arrayAppend(JSONItem&& element)
 {
@@ -244,107 +322,37 @@ void JSONItem::arrayAppend(JSONItem&& element)
         return;
     }
     if (element.m_json) {
-        cJSON_AddItemToArray(m_json, element.m_json);
+        m_json->push_back(*element.m_json);
+        element.m_root = nullptr;
+        element.m_json = nullptr;
     }
 }
 
-JSONItem JSONItem::createArray()
+JSONItem& JSONItem::addNull(const wxString& name)
 {
-    JSONItem arr(cJSON_CreateArray());
-    return arr;
+    if (m_json) {
+        m_json->emplace(name.ToStdString(wxConvUTF8).data(), nullptr);
+    }
+    return *this;
+}
+JSONItem JSONItem::AddArray(const wxString& name)
+{
+    JSONItem json = createArray();
+    addProperty(name, json);
+    return namedObject(name);
 }
 
-JSONItem JSONItem::createObject()
+JSONItem JSONItem::AddObject(const wxString& name)
 {
-    JSONItem obj(cJSON_CreateObject());
-    return obj;
-}
-
-char* JSONItem::FormatRawString(bool formatted) const
-{
-    if (!m_json) {
-        return nullptr;
-    }
-
-    if (formatted) {
-        return cJSON_Print(m_json);
-
-    } else {
-        return cJSON_PrintUnformatted(m_json);
-    }
-}
-
-wxString JSONItem::format(bool formatted) const
-{
-    if (!m_json) {
-        return wxT("");
-    }
-
-    auto p = formatted ? cJSON_Print(m_json) : cJSON_PrintUnformatted(m_json);
-    auto utf8_str = wxString::FromUTF8(p);
-    free(p);
-    return utf8_str;
-}
-
-int JSONItem::toInt(int defaultVal) const
-{
-    if (!m_json) {
-        return defaultVal;
-    }
-
-    if (m_json->type != cJSON_Number) {
-        return defaultVal;
-    }
-
-    return m_json->valueint;
-}
-
-size_t JSONItem::toSize_t(size_t defaultVal) const
-{
-    if (!m_json) {
-        return defaultVal;
-    }
-
-    if (m_json->type != cJSON_Number) {
-        return defaultVal;
-    }
-
-    return (size_t)m_json->valueint;
-}
-
-double JSONItem::toDouble(double defaultVal) const
-{
-    if (!m_json) {
-        return defaultVal;
-    }
-
-    if (m_json->type != cJSON_Number) {
-        return defaultVal;
-    }
-
-    return m_json->valuedouble;
-}
-
-int JSONItem::arraySize() const
-{
-    if (!m_json) {
-        return 0;
-    }
-
-    if (m_json->type != cJSON_Array)
-        return 0;
-
-    return cJSON_GetArraySize(m_json);
+    JSONItem json = createObject();
+    addProperty(name, json);
+    return namedObject(name);
 }
 
 JSONItem& JSONItem::addProperty(const wxString& name, bool value)
 {
     if (m_json) {
-        if (value) {
-            cJSON_AddTrueToObject(m_json, name.mb_str(wxConvUTF8).data());
-        } else {
-            cJSON_AddFalseToObject(m_json, name.mb_str(wxConvUTF8).data());
-        }
+        m_json->emplace(name.mb_str(wxConvUTF8).data(), value);
     }
     return *this;
 }
@@ -357,7 +365,7 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxString& value)
 JSONItem& JSONItem::addProperty(const wxString& name, const std::string& value)
 {
     if (m_json) {
-        cJSON_AddStringToObject(m_json, name.mb_str(wxConvUTF8).data(), value.data());
+        m_json->emplace(name.mb_str(wxConvUTF8).data(), value);
     }
     return *this;
 }
@@ -370,7 +378,7 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxChar* value)
 JSONItem& JSONItem::addProperty(const wxString& name, long value)
 {
     if (m_json) {
-        cJSON_AddNumberToObject(m_json, name.mb_str(wxConvUTF8).data(), value);
+        m_json->emplace(name.mb_str(wxConvUTF8).data(), value);
     }
     return *this;
 }
@@ -385,90 +393,15 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxArrayString& arr)
     return *this;
 }
 
-wxArrayString JSONItem::toArrayString(const wxArrayString& defaultValue) const
-{
-    if (!m_json) {
-        return defaultValue;
-    }
-
-    if (m_json->type != cJSON_Array) {
-        return defaultValue;
-    }
-
-    int arr_size = arraySize();
-    if (arr_size == 0) {
-        return defaultValue;
-    }
-
-    wxArrayString arr;
-    arr.reserve(arr_size);
-    auto child = m_json->child;
-    while (child) {
-        arr.push_back(wxString(child->valuestring, wxConvUTF8));
-        child = child->next;
-    }
-    return arr;
-}
-
-bool JSONItem::contains(const wxString& name) const
-{
-    if (!m_json) {
-        return false;
-    }
-
-    std::string name_cstr = name.ToStdString(wxConvUTF8);
-    return cJSON_GetObjectItem(m_json, name_cstr.c_str()) != nullptr;
-}
-
-#if wxUSE_GUI
-
-JSONItem& JSONItem::addProperty(const wxString& name, const wxSize& sz)
-{
-    wxString szStr;
-    szStr << sz.x << "," << sz.y;
-    return addProperty(name, szStr);
-}
-
-wxSize JSONItem::toSize() const
-{
-    if (!m_json) {
-        return wxDefaultSize;
-    }
-
-    if (m_json->type != cJSON_String) {
-        return wxDefaultSize;
-    }
-
-    wxString str = m_json->valuestring;
-    wxString x = str.BeforeFirst(',');
-    wxString y = str.AfterFirst(',');
-
-    long nX(-1), nY(-1);
-    if (!x.ToLong(&nX) || !y.ToLong(&nY))
-        return wxDefaultSize;
-
-    return wxSize(nX, nY);
-}
-
-#endif
-
 JSONItem& JSONItem::addProperty(const wxString& name, const JSONItem& element)
 {
-    if (!m_json) {
+    if (!m_json || !element.m_json) {
         return *this;
     }
-    cJSON_AddItemToObject(m_json, name.mb_str(wxConvUTF8).data(), element.m_json);
+    (*m_json)[name.mb_str(wxConvUTF8).data()] = *element.m_json;
     return *this;
 }
 
-void JSONItem::removeProperty(const wxString& name)
-{
-    // delete child property
-    if (!m_json) {
-        return;
-    }
-    cJSON_DeleteItemFromObject(m_json, name.mb_str(wxConvUTF8).data());
-}
 #if wxUSE_GUI
 JSONItem& JSONItem::addProperty(const wxString& name, const wxStringMap_t& stringMap)
 {
@@ -486,58 +419,12 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxStringMap_t& strin
     return *this;
 }
 #endif
-wxStringMap_t JSONItem::toStringMap(const wxStringMap_t& default_map) const
-{
-    wxStringMap_t res;
-    if (!m_json || m_json->type != cJSON_Array) {
-        return default_map;
-    }
-
-    for (int i = 0; i < arraySize(); ++i) {
-        wxString key = arrayItem(i).namedObject("key").toString();
-        wxString val = arrayItem(i).namedObject("value").toString();
-        res.insert(std::make_pair(key, val));
-    }
-    return res;
-}
 
 JSONItem& JSONItem::addProperty(const wxString& name, size_t value) { return addProperty(name, (int)value); }
-
-JSONItem& JSONItem::addNull(const wxString& name)
-{
-    if (m_json) {
-        cJSON_AddNullToObject(m_json, name.ToStdString(wxConvUTF8).data());
-    }
-    return *this;
-}
 
 JSONItem& JSONItem::addProperty(const wxString& name, const char* value, const wxMBConv& conv)
 {
     return addProperty(name, wxString(value, conv));
-}
-
-bool JSONItem::isArray() const
-{
-    if (!m_json) {
-        return false;
-    }
-    return m_json->type == cJSON_Array;
-}
-
-bool JSONItem::isObject() const
-{
-    if (!m_json) {
-        return false;
-    }
-    return m_json->type == cJSON_Object;
-}
-
-bool JSONItem::isNumber() const
-{
-    if (!m_json) {
-        return false;
-    }
-    return m_json->type == cJSON_Number;
 }
 
 JSONItem& JSONItem::addProperty(const wxString& name, const wxFileName& filename)
@@ -545,77 +432,14 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxFileName& filename
     return addProperty(name, filename.GetFullPath());
 }
 
-JSONItem JSONItem::AddArray(const wxString& name)
-{
-    JSONItem json = createArray();
-    addProperty(name, json);
-    return json;
-}
-
-JSONItem JSONItem::AddObject(const wxString& name)
-{
-    JSONItem json = createObject();
-    addProperty(name, json);
-    return json;
-}
-
 JSONItem& JSONItem::addProperty(const wxString& name, JSON&& json)
 {
-    if (!m_json) {
+    if (!m_json || !json.m_json) {
         return *this;
     }
-    cJSON_AddItemToObject(m_json, name.mb_str(wxConvUTF8).data(), json.release());
+    (*m_json)[name.mb_str(wxConvUTF8).data()] = std::move(*json.m_json);
+    json.m_json = nullptr;
     return *this;
-}
-
-std::vector<double> JSONItem::toDoubleArray(const std::vector<double>& defaultValue) const
-{
-    if (!m_json) {
-        return defaultValue;
-    }
-
-    if (m_json->type != cJSON_Array) {
-        return defaultValue;
-    }
-
-    int arr_size = arraySize();
-    if (arr_size == 0) {
-        return defaultValue;
-    }
-
-    std::vector<double> arr;
-    arr.reserve(arr_size);
-    auto child = m_json->child;
-    while (child) {
-        arr.push_back(child->valuedouble);
-        child = child->next;
-    }
-    return arr;
-}
-
-std::vector<int> JSONItem::toIntArray(const std::vector<int>& defaultValue) const
-{
-    if (!m_json) {
-        return defaultValue;
-    }
-
-    if (m_json->type != cJSON_Array) {
-        return defaultValue;
-    }
-
-    int arr_size = arraySize();
-    if (arr_size == 0) {
-        return defaultValue;
-    }
-
-    std::vector<int> arr;
-    arr.reserve(arr_size);
-    auto child = m_json->child;
-    while (child) {
-        arr.push_back(child->valueint);
-        child = child->next;
-    }
-    return arr;
 }
 
 JSONItem& JSONItem::addProperty(const wxString& name, const std::vector<int>& arr_int)
@@ -627,7 +451,40 @@ JSONItem& JSONItem::addProperty(const wxString& name, const std::vector<int>& ar
     // create array
     JSONItem arr = AddArray(name);
     for (size_t n : arr_int) {
-        cJSON_AddItemToArray(arr.m_json, cJSON_CreateNumber(n));
+        arr.m_json->push_back(n);
     }
     return *this;
+}
+
+void JSONItem::removeProperty(const wxString& name)
+{
+    // delete child property
+    if (!m_json) {
+        return;
+    }
+    m_json->erase(name.mb_str(wxConvUTF8).data());
+}
+
+JSONItem& JSONItem::addProperty(const wxString& name, const wxSize& sz)
+{
+    wxString szStr;
+    szStr << sz.x << "," << sz.y;
+    return addProperty(name, szStr);
+}
+
+wxSize JSONItem::toSize() const
+{
+    if (!m_json || !isString()) {
+        return wxDefaultSize;
+    }
+    wxString str = toString();
+    wxString x = str.BeforeFirst(',');
+    wxString y = str.AfterFirst(',');
+
+    long nX(-1), nY(-1);
+    if (!x.ToLong(&nX) || !y.ToLong(&nY)) {
+        return wxDefaultSize;
+    }
+
+    return wxSize(nX, nY);
 }

@@ -167,7 +167,7 @@ TEST_CASE("number json")
     CHECK(item.isNumber());
     CHECK(!item.isArray());
     CHECK(!item.isObject());
-    CHECK(item.format() == "12.340000");
+    CHECK(item.format() == "12.34");
 
     CHECK(item.toBool(false) == false);
     CHECK(item.toBool(true) == true);
@@ -267,7 +267,7 @@ TEST_CASE("array append")
     item.arrayAppend("world");
     item.arrayAppend(wxString(L"..."));
     item.arrayAppend(JSONItem::createObject());
-    CHECK(item.format(false) == R"([4.200000,51,"Hello","world","...",{}])");
+    CHECK(item.format(false) == R"([4.2,51.0,"Hello","world","...",{}])");
     CHECK(item.format(false) == json.toElement().format(false));
 }
 

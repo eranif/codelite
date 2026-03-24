@@ -158,6 +158,32 @@ void NotifyRequestCancelled(wxEvtHandler* owner, const std::string& message)
     event.SetRequestCancelled(true);
     owner->AddPendingEvent(event);
 }
+
+/**
+ * @brief Creates a short label from the first meaningful line of text.
+ *
+ * The function splits the input into lines, trims leading and trailing whitespace from each line,
+ * skips empty lines and lines that start with "**", and returns the first remaining line truncated
+ * to at most 50 characters.
+ *
+ * @param text const wxString& The input text to scan for a label.
+ *
+ * @return std::optional<wxString> The first non-empty, non-markup line truncated to 50 characters,
+ *         or std::nullopt if no suitable line is found.
+ */
+std::optional<wxString> MakeLabelFromText(const wxString& text)
+{
+    auto lines = wxStringTokenize(text, "\n", wxTOKEN_STRTOK);
+    for (wxString& line : lines) {
+        line.Trim().Trim(false);
+        if (line.empty() || line.StartsWith("**")) {
+            continue;
+        }
+        return line.Mid(0, 50);
+    }
+    return std::nullopt;
+}
+
 } // namespace
 
 constexpr const char* kPlaceHolderEditorSelection = "{{current_selection}}";
@@ -782,13 +808,9 @@ std::optional<llm::Conversation> Manager::NewConversation(const wxString& conver
         return std::nullopt;
     }
 
-    auto lines = wxStringTokenize(conversation_text, "\n", wxTOKEN_STRTOK);
-    for (wxString& line : lines) {
-        line.Trim().Trim(false);
-        if (line.empty() || line.StartsWith("**")) {
-            continue;
-        }
-        return llm::Conversation(m_client->GetHistory(), conversation_text, line);
+    auto label = MakeLabelFromText(conversation_text);
+    if (label.has_value()) {
+        return llm::Conversation(m_client->GetHistory(), conversation_text, label.value());
     }
     return std::nullopt;
 }

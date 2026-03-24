@@ -192,6 +192,17 @@ private:
     static std::optional<SymbolKind>
     MapSymbolKind(const wxString& kind, const wxString& scope, const wxString& kind_from_ctags);
 
+    /**
+     * @brief Initializes CTags support by probing the configured ctags executable.
+     *
+     * This method performs a one-time initialization for the CTags instance. It runs
+     * the ctags command with a field-list query, checks the output for "macrodef"
+     * support, and records the result for later use.
+     *
+     * @param ctags_exe const wxString& Path or name of the ctags executable to invoke.
+     *
+     * @return void This function does not return a value.
+     */
     static void Initialise(const wxString& ctags_exe);
 };
 

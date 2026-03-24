@@ -12,11 +12,13 @@
 #include "procutils.h"
 
 #include <algorithm>
+#include <mutex>
 #include <wx/stopwatch.h>
 #include <wx/tokenzr.h>
 
 thread_local bool is_initialised = false;
 thread_local bool is_macrodef_supported = false;
+static std::once_flag s_initialise_once;
 
 using assistant::json;
 
@@ -463,22 +465,24 @@ void CTags::Initialise(const wxString& ctags_exe)
         return;
     }
 
-    // check whether we have `macrodef` supported
-    wxString output;
-    std::vector<wxString> command = {ctags_exe, "--list-fields=c++"};
-    auto process = ::CreateAsyncProcess(nullptr, command, IProcessCreateSync, wxEmptyString, nullptr, wxEmptyString);
-    if (process) {
-        process->WaitForTerminate(output);
-    }
-
-    wxArrayString lines = ::wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
-    for (const auto& line : lines) {
-        if (line.Contains("macrodef")) {
-            is_macrodef_supported = true;
-            break;
+    std::call_once(s_initialise_once, [&ctags_exe]() {
+        // check whether we have `macrodef` supported
+        wxString output;
+        std::vector<wxString> command = {ctags_exe, "--list-fields=c++"};
+        auto process = ::CreateAsyncProcess(nullptr, command, IProcessCreateSync, wxEmptyString, nullptr, wxEmptyString);
+        if (process) {
+            process->WaitForTerminate(output);
         }
-    }
-    is_initialised = true;
+
+        wxArrayString lines = ::wxStringTokenize(output, "\n", wxTOKEN_STRTOK);
+        for (const auto& line : lines) {
+            if (line.Contains("macrodef")) {
+                is_macrodef_supported = true;
+                break;
+            }
+        }
+        is_initialised = true;
+    });
 }
 
 clStatusOr<wxString> CTags::LocateExe()

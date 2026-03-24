@@ -23,6 +23,7 @@ public:
      * @return void This method does not return a value.
      */
     void Dismiss() override;
+    void ShowMessage(const wxString& msg, int flags = wxICON_INFORMATION) override;
 
 protected:
     void OnYes(wxCommandEvent& e);

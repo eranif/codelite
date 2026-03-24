@@ -9,6 +9,7 @@
 #include "assistant/common/magic_enum.hpp"
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
+#include "cl_config.h"
 #include "cl_standard_paths.h"
 #include "codelite_events.h"
 #include "environmentconfig.h"
@@ -1272,7 +1273,7 @@ Manager::PromptUserYesNoTrustQuestion(const wxString& text, const wxString& code
             GetChatWindow()->AppendText(prompt);
         }
 
-        auto parent = ::wxGetTopLevelParent(GetChatWindow());
+        auto parent = GetChatWindow()->GetSplitterPageBottom();
         InfoBar* bar = new InfoBar(parent, promise_ptr);
         parent->GetSizer()->Insert(0, bar, wxSizerFlags(0).Expand());
         bar->ShowMessage(text, wxICON_QUESTION);

@@ -16,10 +16,15 @@ InfoBar::InfoBar(wxWindow* parent, std::shared_ptr<std::promise<llm::UserAnswer>
     AddButton(wxID_YES, _("Yes"));
     AddButton(wxID_NO, _("No"));
     AddButton(wxID_YESTOALL, _("Trust"));
-
     Bind(wxEVT_BUTTON, &InfoBar::OnYes, this, wxID_YES);
     Bind(wxEVT_BUTTON, &InfoBar::OnNo, this, wxID_NO);
     Bind(wxEVT_BUTTON, &InfoBar::OnTrust, this, wxID_YESTOALL);
+}
+
+void InfoBar::ShowMessage(const wxString& msg, int flags)
+{
+    wxInfoBar::ShowMessage(msg, flags);
+    CallAfter(&wxInfoBar::SetFocus);
 }
 
 void InfoBar::Dismiss()

@@ -141,7 +141,7 @@ std::optional<wxString> CTags::DoSymbolGenerate(const wxString& file, const wxSt
     return wxString::FromUTF8(result.out);
 }
 
-std::vector<CTags::SymbolInfo> CTags::ParseSymbolOutput(const wxString& content)
+std::vector<CTags::SymbolInfo> CTags::ParseSymbolOutput(const wxString& content, const wxString& filename)
 {
     std::vector<SymbolInfo> out;
     wxArrayString lines = ::wxStringTokenize(content, "\n", wxTOKEN_STRTOK);
@@ -171,6 +171,7 @@ std::vector<CTags::SymbolInfo> CTags::ParseSymbolOutput(const wxString& content)
             info.name = name;
             info.kind = *mapped_kind;
             info.line = entry["line"].get<int>();
+            info.file = filename;
             if (entry.contains("end") && entry["end"].is_number_integer()) {
                 info.end_line = entry["end"].get<int>();
             }
@@ -223,7 +224,7 @@ std::vector<CTags::SymbolInfo> CTags::ParseFileSymbols(const wxString& file, con
         return {};
 
     clDEBUG() << "Parsing symbols..." << endl;
-    auto symbols = ParseSymbolOutput(*content);
+    auto symbols = ParseSymbolOutput(*content, file);
     clDEBUG() << "Parsing symbols...done" << endl;
 
     clDEBUG() << "Sorting symbols..." << endl;

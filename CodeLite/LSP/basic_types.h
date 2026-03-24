@@ -1,6 +1,7 @@
 #ifndef JSONRPC_BASICTYPES_H
 #define JSONRPC_BASICTYPES_H
 
+#include "CTags.hpp"
 #include "JSON.h"
 #include "JSONObject.h"
 #include "clModuleLogger.hpp"
@@ -656,6 +657,19 @@ public:
      */
     static std::vector<SymbolInformation> From(const DocumentSymbol& document_symbol,
                                                const wxString& container_name = wxEmptyString);
+
+    /**
+     * @brief Creates a SymbolInformation object from a ctags symbol description.
+     *
+     * Converts a CTags::SymbolInfo record into the internal SymbolInformation
+     * representation by mapping the symbol name, kind, and source range.
+     *
+     * @param ctags_symbol_info const CTags::SymbolInfo& The ctags symbol metadata to convert, including name,
+     *        signature, kind, and source line information.
+     *
+     * @return SymbolInformation The converted symbol information object.
+     */
+    static SymbolInformation From(const CTags::SymbolInfo& ctags_symbol_info);
 };
 
 enum class ProgressKind {

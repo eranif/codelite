@@ -26,6 +26,7 @@ public:
 
     struct SymbolInfo {
         wxString name;
+        wxString file;
         SymbolKind kind = SymbolKind::kFunction;
         int line = 0;
         /**
@@ -187,7 +188,7 @@ private:
 
     static std::optional<wxString> DoSymbolGenerate(const wxString& file, const wxString& ctags_exe);
     static bool IsSupportedSymbolLanguage(const wxString& language);
-    static std::vector<SymbolInfo> ParseSymbolOutput(const wxString& content);
+    static std::vector<SymbolInfo> ParseSymbolOutput(const wxString& content, const wxString& filename);
     static std::optional<SymbolKind>
     MapSymbolKind(const wxString& kind, const wxString& scope, const wxString& kind_from_ctags);
 

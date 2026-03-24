@@ -363,6 +363,43 @@ JSONItem SymbolInformation::ToJSON() const
     return json;
 }
 
+SymbolInformation SymbolInformation::From(const CTags::SymbolInfo& ctags_symbol_info)
+{
+    SymbolInformation si;
+    si.name = ctags_symbol_info.name + ctags_symbol_info.signature;
+    switch (ctags_symbol_info.kind) {
+    case CTags::SymbolKind::kClass:
+        si.kind = eSymbolKind::kSK_Class;
+        break;
+    case CTags::SymbolKind::kFunction:
+        si.kind = eSymbolKind::kSK_Method;
+        break;
+    case CTags::SymbolKind::kGlobalMethod:
+        si.kind = eSymbolKind::kSK_Function;
+        break;
+    case CTags::SymbolKind::kPrototype:
+        si.kind = eSymbolKind::kSK_Function;
+        break;
+    case CTags::SymbolKind::kStruct:
+        si.kind = eSymbolKind::kSK_Struct;
+        break;
+    case CTags::SymbolKind::kTrait:
+        si.kind = eSymbolKind::kSK_Interface;
+        break;
+    default:
+        si.kind = eSymbolKind::kSK_Variable;
+        break;
+    }
+    Range range;
+    range.SetStart(Position{ctags_symbol_info.line, 0});
+    if (ctags_symbol_info.end_line.has_value()) {
+        range.SetEnd(Position{ctags_symbol_info.end_line.value(), 0});
+    }
+    si.location.SetRange(range);
+    si.location.SetPath(ctags_symbol_info.file);
+    return si;
+}
+
 std::vector<SymbolInformation> SymbolInformation::From(const DocumentSymbol& document_symbol,
                                                        const wxString& container_name)
 {

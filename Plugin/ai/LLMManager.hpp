@@ -6,6 +6,7 @@
 #include "ai/ChatAI.hpp"
 #include "ai/Common.hpp"
 #include "ai/Config.hpp"
+#include "ai/HistoryManager.hpp"
 #include "ai/LLMEvents.hpp"
 #include "ai/ProgressToken.hpp"
 #include "ai/ResponseCollector.hpp"
@@ -262,7 +263,7 @@ public:
      * @return std::optional<llm::Conversation> A Conversation initialized from the first eligible line, or std::nullopt
      *         if the manager has no client or no valid line is present.
      */
-    std::optional<llm::Conversation> GetConversation(const wxString& conversation_text) const;
+    std::optional<llm::Conversation> NewConversation(const wxString& conversation_text) const;
 
     /**
      * Sets the conversation history for the underlying assistant client.
@@ -298,6 +299,24 @@ public:
      * @return reference to the {@link Config} object managed by the {@code Manager}
      */
     Config& GetConfig() { return m_config; }
+
+    const HistoryStore& GetHistoryStore() const { return m_history; }
+
+    /**
+     * @brief Stores the current conversation text in the history for the active endpoint.
+     *
+     * In the Manager context, this method creates a new conversation record from the
+     * provided text and saves it through the history store associated with the currently
+     * active endpoint. The operation fails if there is no active endpoint, if the
+     * conversation cannot be created, or if the history store rejects the record.
+     *
+     * @param conversation_text const wxString& The conversation content to persist.
+     *
+     * @return bool True if the conversation was successfully stored; false otherwise.
+     *
+     * @throws None. This function reports failure by returning false.
+     */
+    bool StoreCurrentConverstation(const wxString& conversation_text);
 
     /**
      * @brief Provides read-only access to the current configuration.
@@ -705,6 +724,7 @@ private:
     std::shared_ptr<assistant::ClientBase> m_client;
 
     Config m_config;
+    HistoryStore m_history;
     assistant::Config m_default_config;
     assistant::Config m_client_config;
     wxMessageQueue<ThreadTask> m_queue;

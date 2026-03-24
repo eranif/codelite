@@ -66,10 +66,14 @@ void ChatHistoryDialog::DoItemSelected()
     CHECK_PTR_RET(GetActivePage());
 
     auto s = GetActivePage()->GetSelection();
-    if (s.has_value()) {
-        SetSelectedPrompt(s.value());
-        EndModal(wxID_OK);
+    if (!s.has_value()) {
+        return;
     }
+
+    clSYSTEM() << "Inserting conversion:" << s.value() << "for endpoint:" << GetActivePage()->GetEndpoint() << endl;
+    m_selectedConversation =
+        llm::Manager::GetInstance().GetHistoryStore().Get(GetActivePage()->GetEndpoint(), s.value());
+    EndModal(wxID_OK);
 }
 
 void ChatHistoryDialog::OnInsertUI(wxUpdateUIEvent& event)

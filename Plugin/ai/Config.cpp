@@ -38,8 +38,6 @@ void Config::Load()
 
     // defaults
     m_prompts = kDefaultPromptTable;
-    m_history = {};
-
     wxString content;
     if (!FileUtils::ReadFileContent(GetFullPath(), content, wxConvUTF8)) {
         return;
@@ -51,17 +49,6 @@ void Config::Load()
         m_prompts = ReadValue(json, "prompts", kDefaultPromptTable);
         m_cachingPolicy = ReadValue<std::string>(json, "caching_policy", llm::kCacheAuto.ToStdString(wxConvUTF8));
         m_enableTools = ReadValue<bool>(json, "enable_tools", true);
-
-        if (json.contains("history") && json["history"].is_object()) {
-            for (const auto& kv : json["history"].items()) {
-                wxString endpoint_name = wxString::FromUTF8(kv.key());
-                auto history = ChatHistory::from_json(kv.value());
-                if (!history.has_value()) {
-                    continue;
-                }
-                m_history.insert({endpoint_name, history.value()});
-            }
-        }
 
     } catch (const std::exception& e) {
         clERROR() << "Failed to parse JSON file:" << GetFullPath() << "." << e.what() << endl;
@@ -83,25 +70,11 @@ void Config::Save()
     }
 
     j["prompts"] = m_prompts;
-    j["history"] = json::object();
-
-    auto& history = j["history"];
-    for (const auto& [endpoint, chat_history] : m_history) {
-        history[endpoint] = chat_history.to_json();
-    }
-
     j["enable_tools"] = m_enableTools.load();
     j["caching_policy"] = m_cachingPolicy.ToStdString(wxConvUTF8);
 
     wxString content = wxString::FromUTF8(j.dump(2));
     FileUtils::WriteFileContent(GetFullPath(), content, wxConvUTF8);
-}
-
-void Config::AddConversation(const wxString& endpoint, const Conversation& conversation)
-{
-    std::scoped_lock lk{m_mutex};
-    auto& history = GetOrAddHistory(endpoint);
-    history.AddConversation(conversation);
 }
 
 wxString Config::GetPrompt(PromptKind kind) const
@@ -169,8 +142,6 @@ void Config::ResetPrompts()
     m_prompts.clear();
     m_prompts = kDefaultPromptTable;
 }
-
-ChatHistory& Config::GetOrAddHistory(const wxString& endpoint) { return m_history[endpoint]; }
 
 wxString Config::GetFullPath()
 {

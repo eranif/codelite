@@ -10,15 +10,11 @@ ChatHistoryPage::ChatHistoryPage(wxChoicebook* parent, ChatHistoryDialog* dlg, c
     , m_endpoint{endpoint}
     , m_dialog{dlg}
 {
-    m_coversations.clear();
-    auto hist = llm::Manager::GetInstance().GetConfig().GetHistory(m_endpoint);
-    for (const auto& conv : hist.conversations) {
-        wxString label = wxString::FromUTF8(conv.GetLabel());
+    auto labels = llm::Manager::GetInstance().GetHistoryStore().List(endpoint);
+    for (const auto& label : labels) {
         wxVector<wxVariant> cols;
         cols.push_back(label);
-        auto p = std::make_shared<llm::Conversation>(conv);
-        m_dvListCtrlPrompts->AppendItem(cols, reinterpret_cast<wxUIntPtr>(p.get()));
-        m_coversations.push_back(p); // Keep a copy to keep the `p` pointer valid.
+        m_dvListCtrlPrompts->AppendItem(cols);
     }
 }
 
@@ -27,10 +23,7 @@ ChatHistoryPage::~ChatHistoryPage() {}
 void ChatHistoryPage::Clear()
 {
     m_dvListCtrlPrompts->DeleteAllItems();
-    m_coversations.clear();
-
-    llm::Manager::GetInstance().GetConfig().SetHistory(m_endpoint, {});
-    llm::Manager::GetInstance().GetConfig().Save();
+    llm::Manager::GetInstance().GetHistoryStore().DeleteAll(m_endpoint);
 }
 
 void ChatHistoryPage::OnItemActivated(wxDataViewEvent& event)
@@ -46,10 +39,14 @@ void ChatHistoryPage::DeleteSelections()
     if (items.empty()) {
         return;
     }
+
+    wxArrayString labels;
     std::vector<size_t> lines;
     lines.reserve(items.size());
     for (const auto& item : items) {
-        lines.push_back(m_dvListCtrlPrompts->ItemToRow(item));
+        size_t row = m_dvListCtrlPrompts->ItemToRow(item);
+        labels.push_back(m_dvListCtrlPrompts->GetTextValue(row, 0));
+        lines.push_back(row);
     }
 
     // Sort in descending order
@@ -60,22 +57,10 @@ void ChatHistoryPage::DeleteSelections()
     }
 
     // Update the history.
-    llm::Manager::GetInstance().GetConfig().SetHistory(m_endpoint, GetHistory());
-    llm::Manager::GetInstance().GetConfig().Save();
+    llm::Manager::GetInstance().GetHistoryStore().DeleteMulti(m_endpoint, labels);
 }
 
-llm::ChatHistory ChatHistoryPage::GetHistory() const
-{
-    llm::ChatHistory v;
-    v.conversations.reserve(m_dvListCtrlPrompts->GetItemCount());
-    for (auto i = 0; i < m_dvListCtrlPrompts->GetItemCount(); ++i) {
-        v.conversations.push_back(
-            *reinterpret_cast<llm::Conversation*>(m_dvListCtrlPrompts->GetItemData(m_dvListCtrlPrompts->RowToItem(i))));
-    }
-    return v;
-}
-
-std::optional<llm::Conversation> ChatHistoryPage::GetSelection() const
+std::optional<wxString> ChatHistoryPage::GetSelection() const
 {
     wxDataViewItemArray sels;
     m_dvListCtrlPrompts->GetSelections(sels);
@@ -84,9 +69,6 @@ std::optional<llm::Conversation> ChatHistoryPage::GetSelection() const
         return std::nullopt;
     }
 
-    auto cd = reinterpret_cast<llm::Conversation*>(m_dvListCtrlPrompts->GetItemData(sels.Item(0)));
-    if (!cd) {
-        return std::nullopt;
-    }
-    return *cd;
+    size_t row = m_dvListCtrlPrompts->ItemToRow(sels[0]);
+    return m_dvListCtrlPrompts->GetTextValue(row, 0);
 }

@@ -152,15 +152,8 @@ ChatAIWindow::~ChatAIWindow()
 
     clConfig::Get().Write("chat-ai/sash-position", m_mainSplitter->GetSashPosition());
 
-    auto& conf = llm::Manager::GetInstance().GetConfig();
-
     // Store the current session
-    auto active_endpoint = llm::Manager::GetInstance().GetActiveEndpoint();
-    auto c = llm::Manager::GetInstance().GetConversation(m_stcOutput->GetText());
-    if (active_endpoint.has_value() && c.has_value()) {
-        conf.AddConversation(active_endpoint.value(), c.value());
-    }
-    conf.Save();
+    llm::Manager::GetInstance().StoreCurrentConverstation(m_stcOutput->GetText());
 }
 
 namespace
@@ -419,13 +412,7 @@ void ChatAIWindow::OnNewSession(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     // Store the current conversation
-    wxString content = m_stcOutput->GetText();
-    auto conversation = llm::Manager::GetInstance().GetConversation(content);
-    auto active_endpoint = llm::Manager::GetInstance().GetActiveEndpoint();
-    if (active_endpoint.has_value() && conversation.has_value()) {
-        llm::Manager::GetInstance().GetConfig().AddConversation(active_endpoint.value(), conversation.value());
-        llm::Manager::GetInstance().GetConfig().Save();
-    }
+    llm::Manager::GetInstance().StoreCurrentConverstation(m_stcOutput->GetText());
     DoClearOutputView();
 }
 
@@ -657,19 +644,26 @@ void ChatAIWindow::OnHistory(wxCommandEvent& event)
         return;
     }
 
-    const auto& conversation = dlg.GetSelectedConversation();
-    AppendOutput(conversation.content_);
+    auto conversation = dlg.GetSelectedConversation();
+    if (!conversation.has_value()) {
+        clSYSTEM() << "No conversation to set" << endl;
+        return;
+    }
+
+    AppendOutput(conversation.value().content_);
     StyleOutput();
-    llm::Manager::GetInstance().LoadConversation(conversation);
+    llm::Manager::GetInstance().LoadConversation(conversation.value());
     m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 
 bool ChatAIWindow::CurrentEndpointHasHistory() const
 {
     auto active_endpoint = llm::Manager::GetInstance().GetActiveEndpoint();
-    auto& config = llm::Manager::GetInstance().GetConfig();
-    return active_endpoint.has_value() && !config.GetHistory(active_endpoint.value()).empty() &&
-           m_state == ChatState::kReady;
+    if (!active_endpoint.has_value()) {
+        return false;
+    }
+    const auto& history = llm::Manager::GetInstance().GetHistoryStore();
+    return (history.Count(active_endpoint.value()) > 0) && (m_state == ChatState::kReady);
 }
 
 void ChatAIWindow::OnStop(wxCommandEvent& event)

@@ -775,7 +775,7 @@ void Manager::ClearHistory()
     m_client->ClearHistoryMessages();
 }
 
-std::optional<llm::Conversation> Manager::GetConversation(const wxString& conversation_text) const
+std::optional<llm::Conversation> Manager::NewConversation(const wxString& conversation_text) const
 {
     if (!m_client) {
         return std::nullopt;
@@ -1398,4 +1398,17 @@ void Manager::CompleteInitialisation()
 void Manager::OnWorkspaceOpened(clWorkspaceEvent& event) { event.Skip(); }
 void Manager::OnWorkspaceClosed(clWorkspaceEvent& event) { event.Skip(); }
 
+bool Manager::StoreCurrentConverstation(const wxString& conversation_text)
+{
+    auto ep = GetActiveEndpoint();
+    if (!ep.has_value()) {
+        return false;
+    }
+    auto c = NewConversation(conversation_text);
+    if (!c.has_value()) {
+        return false;
+    }
+
+    return GetHistoryStore().Put(ep.value(), c.value());
+}
 } // namespace llm

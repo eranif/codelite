@@ -743,13 +743,7 @@ void TagsManager::GetCXXKeywords(wxArrayString& words)
 clStatusOr<TagEntryPtrVector_t>
 TagsManager::ParseCxxBuffer(const wxString& content, const wxString& filename, const wxString& kinds)
 {
-    auto res = CTags::LocateExe();
-    if (!res.ok()) {
-        return res.status();
-    }
-
-    wxString ctags_exe = res.value();
-    return CTags::ParseCxxBuffer(filename, content, ctags_exe);
+    return CTags::ParseCxxBuffer(filename, content);
 }
 
 void TagsManager::GetTagsByPartialNames(const wxArrayString& partialNames, std::vector<TagEntryPtr>& tags)

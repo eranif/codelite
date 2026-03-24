@@ -1360,14 +1360,14 @@ void Manager::OnGenerateDocString(wxCommandEvent& event)
     CHECK_PTR_RET(editor);
     CHECK_PTR_RET(m_commentGenerationView);
 
-    auto res = CTags::LocateExe();
+    auto stc = editor->GetCtrl();
+    auto res = CTags::ParseBufferSymbols(editor->GetRemotePathOrLocal(), stc->GetText());
     if (!res.ok()) {
         ::clMessageBox(res.error_message(), "CodeLite", wxOK | wxICON_WARNING);
         return;
     }
 
-    auto stc = editor->GetCtrl();
-    auto symbols = CTags::ParseBufferSymbols(editor->GetRemotePathOrLocal(), stc->GetText(), res.value());
+    auto symbols = res.value();
     if (symbols.empty()) {
         clDEBUG() << "No symbols found for file:" << editor->GetRemotePathOrLocal() << endl;
         return;

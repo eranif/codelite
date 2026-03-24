@@ -44,32 +44,35 @@ public:
         }
     };
     /**
-     * Parse C++ source files with ctags and convert the generated output into tag entries.
+     * Parse C++ source files with universal-ctags and return the resulting tag entries.
      *
-     * This method builds a newline-separated file list, invokes the C++ tag generator, and
-     * parses each returned line into a TagEntry object. It also adjusts enumerator scope
-     * information when an enumerator belongs to the most recently seen enum in the same file.
+     * This method invokes the configured ctags executable to generate tags for the given files,
+     * then converts each output line into a TagEntry. It also adjusts enumerator scope information
+     * when an enumerator is detected to belong to the most recently seen enum in the same file.
      *
-     * @param files A vector of wxString file paths to parse.
-     * @param ctags_exe The path to the ctags executable to use for tag generation.
-     * @return A std::vector<TagEntryPtr> containing the parsed tag entries, or an empty vector
-     *         if tag generation failed or produced no usable output.
+     * @param files const std::vector<wxString>& A list of C++ source file paths to parse.
+     * @return clStatusOr<std::vector<TagEntryPtr>> A status-or containing the parsed tag entries on
+     * success, or an error status if ctags is not installed. If ctags runs but produces no output,
+     * an empty vector is returned.
+     * @throws StatusNotFound If the universal-ctags executable is not available.
      */
-    static std::vector<TagEntryPtr> ParseCxxFiles(const std::vector<wxString>& files, const wxString& ctags_exe);
+    static clStatusOr<std::vector<TagEntryPtr>> ParseCxxFiles(const std::vector<wxString>& files);
 
     /**
-     * @brief Parse a single C++ source file using ctags.
+     * @brief Parses a single C++ source file and returns the collected tag entries.
      *
-     * This is a convenience wrapper around ParseCxxFiles() for parsing one file. It
-     * forwards the provided file path as a single-element list and returns the tags
-     * produced by the underlying ctags invocation.
+     * This is a convenience wrapper around ParseCxxFiles() for processing one file in the
+     * context of the CTags parser. It delegates the actual parsing work to the multi-file
+     * overload and returns whatever status or results that function produces.
      *
-     * @param file The path to the C++ source file to parse.
-     * @param ctags_exe The path to the ctags executable to use.
+     * @param file const wxString& The path to the C++ source file to parse.
      *
-     * @return std::vector<TagEntryPtr> A vector containing the parsed tag entries.
+     * @return clStatusOr<std::vector<TagEntryPtr>> A status-or object containing the
+     *         resulting vector of TagEntryPtr entries on success, or an error status on failure.
+     *
+     * @throws Any errors reported by ParseCxxFiles(), including parsing or file access failures.
      */
-    static std::vector<TagEntryPtr> ParseCxxFile(const wxString& file, const wxString& ctags_exe);
+    static clStatusOr<std::vector<TagEntryPtr>> ParseCxxFile(const wxString& file);
 
     /**
      * Parses C++ tags from an in-memory buffer by writing it to a temporary file and reusing the file-based parser.
@@ -84,62 +87,45 @@ public:
      *
      * @return std::vector<TagEntryPtr> A vector of parsed tag entries extracted from the buffer.
      */
-    static std::vector<TagEntryPtr>
-    ParseCxxBuffer(const wxFileName& filename, const wxString& buffer, const wxString& ctags_exe);
-    /**
-     * Parse C++ local symbols from ctags output for the given source buffer.
-     *
-     * This method writes the supplied buffer to a temporary file, runs ctags with
-     * the options needed to capture local symbols and functions, and converts each
-     * output line into a TagEntry associated with the provided file name.
-     *
-     * @param filename const wxFileName& The source file name to associate with the
-     *        generated tags.
-     * @param buffer const wxString& The C++ source text to analyze.
-     * @param ctags_exe const wxString& The path to the ctags executable to run.
-     *
-     * @return std::vector<TagEntryPtr> A vector of parsed tag entries. Returns an
-     *         empty vector if ctags fails or produces no usable output.
-     *
-     * @throws None. Failure to generate ctags output is handled by returning an
-     *         empty vector.
-     */
-    static std::vector<TagEntryPtr>
-    ParseCxxLocals(const wxFileName& filename, const wxString& buffer, const wxString& ctags_exe);
+    static clStatusOr<std::vector<TagEntryPtr>> ParseCxxBuffer(const wxFileName& filename, const wxString& buffer);
 
     /**
-     * @brief Parses symbols from a file using ctags and returns them in sorted order.
+     * Parses the symbols found in a source file using universal-ctags.
      *
-     * This function reads the file content, optionally writes it to a temporary file when
-     * the input path has no extension but the content-based extension can be detected, and
-     * then invokes ctags symbol generation before parsing the output into symbol records.
-     * The resulting symbols are sorted by line number and then by symbol name.
+     * If the file has no extension but its content suggests one, the function writes the
+     * content to a temporary file with the inferred extension before invoking ctags.
+     * The resulting symbols are parsed and returned in ascending order by line number,
+     * then by symbol name.
      *
      * @param file const wxString& Path to the file whose symbols should be parsed.
-     * @param ctags_exe const wxString& Path to the ctags executable used to generate symbol data.
-     *
-     * @return std::vector<CTags::SymbolInfo> A vector of parsed symbols, sorted by line number
-     *         and then by name. Returns an empty vector if the file cannot be read, temporary
-     *         file creation or writing fails, or symbol generation/parsing does not produce data.
+     * @return clStatusOr<std::vector<CTags::SymbolInfo>> A vector of parsed symbol
+     *     information on success, or a status error if the ctags executable is missing,
+     *     the file cannot be read, or a temporary file cannot be written. If symbol
+     *     generation fails, an empty vector is returned.
+     * @throws No exceptions are thrown directly; errors are reported through the
+     *     returned clStatusOr status value.
      */
-    static std::vector<SymbolInfo> ParseFileSymbols(const wxString& file, const wxString& ctags_exe);
+    static clStatusOr<std::vector<SymbolInfo>> ParseFileSymbols(const wxString& file);
 
     /**
-     * @brief Parses symbols from an in-memory buffer by writing it to a temporary file and invoking ctags.
+     * @brief Parses symbols from an in-memory buffer by writing it to a temporary file and analyzing it with ctags.
      *
-     * This function determines the appropriate file extension from the provided filename and buffer,
-     * writes the buffer to a temporary file with that extension, and then parses symbols from that file
-     * using the specified ctags executable. If the extension cannot be determined or the temporary file
-     * cannot be written, an empty symbol list is returned.
+     * This helper resolves the most likely file extension from the provided filename and buffer, writes the buffer to a
+     * temporary file with that extension, and then reuses the file-based symbol parser. The function requires a
+     * configured universal-ctags executable and may fail if the extension cannot be determined or the temporary file
+     * cannot be written.
      *
-     * @param filename const wxString& The original file name used to help determine the buffer's file extension.
-     * @param buffer const wxString& The source code contents to analyze.
-     * @param ctags_exe const wxString& The path to the ctags executable used for symbol extraction.
+     * @param filename const wxString& The original file name used to infer the file extension.
+     * @param buffer const wxString& The in-memory contents to parse for symbols.
      *
-     * @return std::vector<CTags::SymbolInfo> A vector of parsed symbol information, or an empty vector on failure.
+     * @return clStatusOr<std::vector<CTags::SymbolInfo>> A status-or containing the parsed symbol list on success, or
+     * an error status describing why parsing failed.
+     *
+     * @throws StatusNotFound If the universal-ctags executable is not configured or cannot be found.
+     * @throws StatusInvalidArgument If the file extension cannot be resolved from the provided inputs.
+     * @throws StatusIOError If the temporary file cannot be written to disk.
      */
-    static std::vector<SymbolInfo>
-    ParseBufferSymbols(const wxString& filename, const wxString& buffer, const wxString& ctags_exe);
+    static clStatusOr<std::vector<SymbolInfo>> ParseBufferSymbols(const wxString& filename, const wxString& buffer);
 
     struct SymbolRangeInfo {
         SymbolInfo symbol;
@@ -154,17 +140,43 @@ public:
     };
 
     /**
-     * Find the symbol range near a line and also return the matched symbol.
+     * @brief Finds the first symbol whose line number is greater than the given value.
      *
-     * The returned range uses the symbol's own ctags-provided end line when available;
-     * otherwise, the end is inferred from the next symbol in the sorted list.
+     * This call is intended to be used with a sorted symbol range and a line number
+     * threshold. It performs a binary-search-style lookup over the provided symbol
+     * sequence and returns the position of the first element whose "line" member is
+     * strictly greater than the supplied value.
+     *
+     * @param symbols.begin() iterator to the first symbol in the range being searched.
+     * @param symbols.end() iterator one past the last symbol in the range being searched.
+     * @param line int line number used as the search threshold.
+     * @param value comparator capture representing the line number to compare against each symbol.
+     *
+     * @return Iterator to the first symbol with sym.line > line, or symbols.end() if no such symbol exists.
+     *
+     * @note The searched range must be ordered consistently with the comparison predicate
+     *       for the result to be meaningful.
      */
     static std::optional<SymbolRangeInfo> FindSymbolsRangeNearLine(const std::vector<SymbolInfo>& symbols, int line);
 
-    static clStatusOr<wxString> LocateExe();
+    /**
+     * @brief Initializes the ctags executable path and detects whether the installed ctags supports "macrodef".
+     *
+     * This one-time initialization locates the ctags executable, stores it for later use, and logs either
+     * the discovered path or an error message. It then runs ctags with "--list-fields=c++" and scans the
+     * output to determine whether the "macrodef" field is supported.
+     *
+     * @param None This function takes no parameters.
+     *
+     * @return void; this function does not return a value.
+     *
+     * @throws None This function does not throw exceptions directly. Errors from locating ctags or
+     *         launching the process are handled internally by logging and by leaving the relevant state unchanged.
+     */
+    static void Initialise();
 
 private:
-    static std::optional<wxString>
+    static clStatusOr<wxString> LocateExe();
     /**
      * Generate ctags output for a list of source files using a temporary options file.
      *
@@ -184,26 +196,45 @@ private:
      * @throws None explicitly. Errors are handled by the underlying file and process utility
      *         functions, which may fail internally when writing temporary files or executing ctags.
      */
+    static std::optional<wxString>
     DoCxxGenerate(const wxString& filesContent, const wxString& ctags_exe, const wxString& ctags_kinds = wxEmptyString);
-
+    /**
+     * @brief Generates a JSON symbol listing for a source file using ctags.
+     *
+     * This method first verifies that the input file exists, then runs the configured
+     * ctags executable with JSON output enabled and returns the captured standard output
+     * as a wxString. If the file is missing or the external process fails, no value is
+     * returned.
+     *
+     * @param file const wxString& Path to the source file to analyze.
+     * @param ctags_exe const wxString& Path to the ctags executable to invoke.
+     *
+     * @return std::optional<wxString> The JSON output produced by ctags on success,
+     *         or std::nullopt if the file does not exist or the command fails.
+     *
+     * @note This is a CTags class method and depends on an external ctags process.
+     * @throws None. Failures are reported by returning std::nullopt.
+     */
     static std::optional<wxString> DoSymbolGenerate(const wxString& file, const wxString& ctags_exe);
     static bool IsSupportedSymbolLanguage(const wxString& language);
+    /**
+     * @brief Parses newline-delimited JSON symbol records into a list of symbol information entries.
+     *
+     * This function reads each non-empty line from the provided content, attempts to parse it as JSON,
+     * and converts valid symbol objects into CTags::SymbolInfo instances. Invalid lines, malformed JSON,
+     * and entries missing required fields are silently skipped.
+     *
+     * @param content wxString The input text containing one JSON object per line.
+     * @param filename wxString The file path to assign to each parsed symbol entry.
+     *
+     * @return std::vector<CTags::SymbolInfo> A vector of parsed symbol records, possibly empty if no valid entries are
+     * found.
+     *
+     * @throws None. Any parsing or conversion errors are caught internally and the corresponding line is ignored.
+     */
     static std::vector<SymbolInfo> ParseSymbolOutput(const wxString& content, const wxString& filename);
     static std::optional<SymbolKind>
     MapSymbolKind(const wxString& kind, const wxString& scope, const wxString& kind_from_ctags);
-
-    /**
-     * @brief Initializes CTags support by probing the configured ctags executable.
-     *
-     * This method performs a one-time initialization for the CTags instance. It runs
-     * the ctags command with a field-list query, checks the output for "macrodef"
-     * support, and records the result for later use.
-     *
-     * @param ctags_exe const wxString& Path or name of the ctags executable to invoke.
-     *
-     * @return void This function does not return a value.
-     */
-    static void Initialise(const wxString& ctags_exe);
 };
 
 #endif // CTAGSGENERATOR_HPP

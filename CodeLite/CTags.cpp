@@ -16,9 +16,9 @@
 #include <wx/stopwatch.h>
 #include <wx/tokenzr.h>
 
-thread_local bool is_initialised = false;
-thread_local bool is_macrodef_supported = false;
+static std::atomic_bool is_macrodef_supported{false};
 static std::once_flag s_initialise_once;
+static const wxString s_ctags_executable = wxEmptyString;
 
 using assistant::json;
 
@@ -125,7 +125,6 @@ CTags::MapSymbolKind(const wxString& kind, const wxString& scope, const wxString
 
 std::optional<wxString> CTags::DoSymbolGenerate(const wxString& file, const wxString& ctags_exe)
 {
-    Initialise(ctags_exe);
     if (!wxFileExists(file)) {
         clWARNING() << "Symbol file does not exist: " << file << endl;
         return std::nullopt;
@@ -190,26 +189,34 @@ std::vector<CTags::SymbolInfo> CTags::ParseSymbolOutput(const wxString& content,
     return out;
 }
 
-std::vector<CTags::SymbolInfo>
-CTags::ParseBufferSymbols(const wxString& filename, const wxString& buffer, const wxString& ctags_exe)
+clStatusOr<std::vector<CTags::SymbolInfo>> CTags::ParseBufferSymbols(const wxString& filename, const wxString& buffer)
 {
+    if (s_ctags_executable.empty()) {
+        return StatusNotFound("Please install universal-ctags and try again");
+    }
+
     auto ext = FileExtManager::GetFileExtenstion(filename, buffer);
     if (!ext.has_value()) {
-        return {};
+        return StatusInvalidArgument(wxString() << _("Failed to resolve file extension for file: ") << filename);
     }
 
     clTempFile tmpfile{ext.value()};
     if (!tmpfile.Write(buffer)) {
-        return {};
+        return StatusIOError(wxString() << _("Failed to write temporary file: ") << tmpfile.GetFullPath()
+                                        << _(" to disk"));
     }
-    return ParseFileSymbols(tmpfile.GetFullPath(), ctags_exe);
+    return ParseFileSymbols(tmpfile.GetFullPath());
 }
 
-std::vector<CTags::SymbolInfo> CTags::ParseFileSymbols(const wxString& file, const wxString& ctags_exe)
+clStatusOr<std::vector<CTags::SymbolInfo>> CTags::ParseFileSymbols(const wxString& file)
 {
+    if (s_ctags_executable.empty()) {
+        return StatusNotFound("Please install universal-ctags and try again");
+    }
+
     wxString file_content;
     if (!FileUtils::ReadFileContent(file, file_content)) {
-        return {};
+        return StatusIOError(wxString() << _("Failed to read file content: ") << file << _(" from disk"));
     }
 
     auto ext = FileExtManager::GetFileExtenstion(file, file_content);
@@ -217,13 +224,14 @@ std::vector<CTags::SymbolInfo> CTags::ParseFileSymbols(const wxString& file, con
     if (ext.has_value() && wxFileName{file}.GetExt().empty()) {
         tmpfile = std::make_unique<clTempFile>(ext.value());
         if (!tmpfile->Write(file_content)) {
-            return {};
+            return StatusIOError(wxString()
+                                 << _("Failed to write temporary file: ") << tmpfile->GetFullPath() << _(" to disk"));
         }
     }
 
-    auto content = DoSymbolGenerate(tmpfile.get() ? tmpfile->GetFullPath() : file, ctags_exe);
+    auto content = DoSymbolGenerate(tmpfile.get() ? tmpfile->GetFullPath() : file, s_ctags_executable);
     if (!content)
-        return {};
+        return std::vector<CTags::SymbolInfo>{};
 
     clDEBUG() << "Parsing symbols..." << endl;
     auto symbols = ParseSymbolOutput(*content, file);
@@ -271,7 +279,6 @@ std::optional<CTags::SymbolRangeInfo> CTags::FindSymbolsRangeNearLine(const std:
 std::optional<wxString>
 CTags::DoCxxGenerate(const wxString& filesContent, const wxString& ctags_exe, const wxString& ctags_kinds)
 {
-    Initialise(ctags_exe);
     clDEBUG() << "Generating ctags files" << clEndl;
 
     // prepare the options file
@@ -330,14 +337,18 @@ CTags::DoCxxGenerate(const wxString& filesContent, const wxString& ctags_exe, co
     return output;
 }
 
-std::vector<TagEntryPtr> CTags::ParseCxxFiles(const std::vector<wxString>& files, const wxString& ctags_exe)
+clStatusOr<std::vector<TagEntryPtr>> CTags::ParseCxxFiles(const std::vector<wxString>& files)
 {
+    if (s_ctags_executable.empty()) {
+        return StatusNotFound("Please install universal-ctags and try again");
+    }
+
     wxString filesList = StringUtils::Join(files, "\n");
     filesList << "\n";
 
-    auto result = DoCxxGenerate(filesList, ctags_exe);
+    auto result = DoCxxGenerate(filesList, s_ctags_executable);
     if (!result.has_value()) {
-        return {};
+        return std::vector<TagEntryPtr>{};
     }
 
     auto content = result.value();
@@ -395,20 +406,26 @@ std::vector<TagEntryPtr> CTags::ParseCxxFiles(const std::vector<wxString>& files
     return tags;
 }
 
-std::vector<TagEntryPtr> CTags::ParseCxxFile(const wxString& file, const wxString& ctags_exe)
-{
-    return ParseCxxFiles({file}, ctags_exe);
-}
+clStatusOr<std::vector<TagEntryPtr>> CTags::ParseCxxFile(const wxString& file) { return ParseCxxFiles({file}); }
 
-std::vector<TagEntryPtr>
-CTags::ParseCxxBuffer(const wxFileName& filename, const wxString& buffer, const wxString& ctags_exe)
+clStatusOr<std::vector<TagEntryPtr>> CTags::ParseCxxBuffer(const wxFileName& filename, const wxString& buffer)
 {
+    if (s_ctags_executable.empty()) {
+        return StatusNotFound("Please install universal-ctags and try again");
+    }
+
     // create a temporary file with the content we want to parse
     clTempFile temp_file("cpp");
     temp_file.Write(buffer);
+
     // parse the file
-    auto tags = ParseCxxFile(temp_file.GetFileName().GetFullPath(), ctags_exe);
+    auto res = ParseCxxFile(temp_file.GetFileName().GetFullPath());
+    if (!res.ok()) {
+        return res.status();
+    }
+
     // set the file name to the correct file
+    auto tags = res.value();
     const wxString full_path = filename.GetFullPath();
     for (auto tag : tags) {
         tag->SetFile(full_path);
@@ -416,60 +433,23 @@ CTags::ParseCxxBuffer(const wxFileName& filename, const wxString& buffer, const 
     return tags;
 }
 
-std::vector<TagEntryPtr>
-CTags::ParseCxxLocals(const wxFileName& filename, const wxString& buffer, const wxString& ctags_exe)
+void CTags::Initialise()
 {
-    wxString content;
-    {
-        clTempFile temp_file("cpp");
-        temp_file.Write(buffer);
-
-        wxString filesList;
-        filesList << temp_file.GetFullPath() << "\n";
-
-        // we want locals + functions (to resolve the scope)
-        auto result = DoCxxGenerate(filesList, ctags_exe, "lzpvfm");
-        if (!result.has_value()) {
-            return {};
-        }
-        content = std::move(result.value());
-    }
-
-    std::vector<TagEntryPtr> tags;
-    wxArrayString lines = ::wxStringTokenize(content, "\n", wxTOKEN_STRTOK);
-    tags.reserve(lines.size());
-
-    // convert the lines into tags
-    for (auto& line : lines) {
-        line.Trim(false).Trim();
-        if (line.empty()) {
-            continue;
+    std::call_once(s_initialise_once, []() {
+        auto res = LocateExe();
+        if (res.ok()) {
+            const_cast<wxString&>(s_ctags_executable) = res.value();
+            clSYSTEM() << "ctags executable found:" << s_ctags_executable << endl;
+        } else {
+            clWARNING() << res.error_message() << endl;
+            return;
         }
 
-        // construct a tag from the line
-        tags.emplace_back(new TagEntry());
-        auto tag = tags.back();
-        tag->FromLine(line);
-        tag->SetFile(filename.GetFullPath());
-    }
-
-    if (tags.empty()) {
-        clDEBUG() << "0 local tags, ctags output:" << content << endl;
-    }
-    return tags;
-}
-
-void CTags::Initialise(const wxString& ctags_exe)
-{
-    if (is_initialised) {
-        return;
-    }
-
-    std::call_once(s_initialise_once, [&ctags_exe]() {
         // check whether we have `macrodef` supported
         wxString output;
-        std::vector<wxString> command = {ctags_exe, "--list-fields=c++"};
-        auto process = ::CreateAsyncProcess(nullptr, command, IProcessCreateSync, wxEmptyString, nullptr, wxEmptyString);
+        std::vector<wxString> command = {s_ctags_executable, "--list-fields=c++"};
+        auto process =
+            ::CreateAsyncProcess(nullptr, command, IProcessCreateSync, wxEmptyString, nullptr, wxEmptyString);
         if (process) {
             process->WaitForTerminate(output);
         }
@@ -481,7 +461,6 @@ void CTags::Initialise(const wxString& ctags_exe)
                 break;
             }
         }
-        is_initialised = true;
     });
 }
 

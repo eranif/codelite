@@ -772,6 +772,9 @@ bool CodeLiteApp::OnInit()
     // Make sure that the colours and fonts manager is instantiated
     ColoursAndFontsManager::Get().Load();
 
+    // Initialise CTags
+    CTags::Initialise();
+
     // Create the main application window
     clMainFrame::Initialize((m_parser.GetParamCount() == 0) && !IsStartedInDebuggerMode());
     m_pMainFrame = clMainFrame::Get();

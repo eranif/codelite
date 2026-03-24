@@ -1367,7 +1367,7 @@ void Manager::OnGenerateDocString(wxCommandEvent& event)
     }
 
     auto stc = editor->GetCtrl();
-    auto symbols = CTags::ParseFileSymbols(editor->GetRemotePathOrLocal(), res.value());
+    auto symbols = CTags::ParseBufferSymbols(editor->GetRemotePathOrLocal(), stc->GetText(), res.value());
     if (symbols.empty()) {
         clDEBUG() << "No symbols found for file:" << editor->GetRemotePathOrLocal() << endl;
         return;

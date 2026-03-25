@@ -226,15 +226,18 @@ private:
      *
      * @param content wxString The input text containing one JSON object per line.
      * @param filename wxString The file path to assign to each parsed symbol entry.
-     *
+     * @param file_ext wxString the filename extension.
      * @return std::vector<CTags::SymbolInfo> A vector of parsed symbol records, possibly empty if no valid entries are
      * found.
      *
      * @throws None. Any parsing or conversion errors are caught internally and the corresponding line is ignored.
      */
-    static std::vector<SymbolInfo> ParseSymbolOutput(const wxString& content, const wxString& filename);
-    static std::optional<SymbolKind>
-    MapSymbolKind(const wxString& kind, const wxString& scope, const wxString& kind_from_ctags);
+    static std::vector<SymbolInfo>
+    ParseSymbolOutput(const wxString& content, const wxString& filename, const wxString& file_ext);
+    static std::optional<SymbolKind> MapSymbolKind(const wxString& kind,
+                                                   const wxString& scope,
+                                                   const wxString& kind_from_ctags,
+                                                   const wxString& file_ext);
 };
 
 #endif // CTAGSGENERATOR_HPP

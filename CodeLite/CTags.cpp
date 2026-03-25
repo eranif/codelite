@@ -100,8 +100,10 @@ bool CTags::IsSupportedSymbolLanguage(const wxString& language)
     return std::find(supported.begin(), supported.end(), lang) != supported.end();
 }
 
-std::optional<CTags::SymbolKind>
-CTags::MapSymbolKind(const wxString& kind, const wxString& scope, const wxString& kind_from_ctags)
+std::optional<CTags::SymbolKind> CTags::MapSymbolKind(const wxString& kind,
+                                                      const wxString& scope,
+                                                      const wxString& kind_from_ctags,
+                                                      const wxString& file_ext)
 {
     const wxString k = kind.Lower();
     const wxString c = kind_from_ctags.Lower();
@@ -114,6 +116,9 @@ CTags::MapSymbolKind(const wxString& kind, const wxString& scope, const wxString
     if (k == "prototype" || c == "prototype")
         return SymbolKind::kPrototype;
     if (k == "method" || c == "method")
+        return SymbolKind::kMethod;
+    if (file_ext == "py" && c == "member")
+        // Python methods are marked as "members"
         return SymbolKind::kMethod;
     if (k == "function") {
         if (scope.empty() || scope == "<global>")
@@ -142,7 +147,8 @@ std::optional<wxString> CTags::DoSymbolGenerate(const wxString& file, const wxSt
     return wxString::FromUTF8(result.out);
 }
 
-std::vector<CTags::SymbolInfo> CTags::ParseSymbolOutput(const wxString& content, const wxString& filename)
+std::vector<CTags::SymbolInfo>
+CTags::ParseSymbolOutput(const wxString& content, const wxString& filename, const wxString& file_ext)
 {
     std::vector<SymbolInfo> out;
     wxArrayString lines = ::wxStringTokenize(content, "\n", wxTOKEN_STRTOK);
@@ -163,7 +169,7 @@ std::vector<CTags::SymbolInfo> CTags::ParseSymbolOutput(const wxString& content,
                 scope = wxString::FromUTF8(entry["scope"].get<std::string>());
             }
 
-            auto mapped_kind = MapSymbolKind(kind, scope, kind);
+            auto mapped_kind = MapSymbolKind(kind, scope, kind, file_ext);
             if (!mapped_kind) {
                 continue;
             }
@@ -233,8 +239,9 @@ clStatusOr<std::vector<CTags::SymbolInfo>> CTags::ParseFileSymbols(const wxStrin
     if (!content)
         return std::vector<CTags::SymbolInfo>{};
 
+    wxString file_ext = wxFileName{tmpfile.get() ? tmpfile->GetFullPath() : file}.GetExt();
     clDEBUG() << "Parsing symbols..." << endl;
-    auto symbols = ParseSymbolOutput(*content, file);
+    auto symbols = ParseSymbolOutput(*content, file, file_ext);
     clDEBUG() << "Parsing symbols...done" << endl;
 
     clDEBUG() << "Sorting symbols..." << endl;

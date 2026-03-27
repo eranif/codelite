@@ -15926,10 +15926,6 @@ msgid ""
 "like to overwrite it?"
 msgstr ""
 
-#: wxcrafter/src/wxcrafter_plugin.cpp:588
-msgid "'"
-msgstr ""
-
 #: abbreviation/abbreviationssettingsdlg.cpp:250
 #, c-format
 msgid "Abbreviations were exported to '%s'"
@@ -23578,7 +23574,8 @@ msgid "Make sure that the virtual folder entry is valid (it must exist)\n"
 msgstr ""
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:588
-msgid "Virtual Folder provided was: '"
+#, c-format
+msgid "Virtual Folder provided was: '%s'"
 msgstr ""
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:687

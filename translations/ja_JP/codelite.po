@@ -15207,10 +15207,6 @@ msgstr "'%s' を削除しますか"
 msgid "This folder already contains a file named 'abbreviations.conf' - would you like to overwrite it?"
 msgstr "このフォルダーには、既に 'abbreviations.conf' という名前のファイルが含まれています - 上書きしますか？"
 
-#: wxcrafter/src/wxcrafter_plugin.cpp:588
-msgid "'"
-msgstr "'"
-
 #: abbreviation/abbreviationssettingsdlg.cpp:250
 #, c-format
 msgid "Abbreviations were exported to '%s'"
@@ -22329,8 +22325,9 @@ msgid "Make sure that the virtual folder entry is valid (it must exist)\n"
 msgstr "仮想フォルダーの項目が有効 (存在している) であることを確認してください\n"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:588
-msgid "Virtual Folder provided was: '"
-msgstr "指定された仮想フォルダーは: '"
+#, c-format
+msgid "Virtual Folder provided was: '%s'"
+msgstr "指定された仮想フォルダーは: '%s'"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:687
 msgid "wxCrafter: code generation completed successfully!"

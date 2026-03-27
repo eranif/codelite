@@ -585,7 +585,7 @@ void wxCrafterPlugin::OnBitmapCodeGenerationCompleted(wxCommandEvent& e)
                 wxString msg;
                 msg << _("Could not find target project: '") << projectName << _("'\n");
                 msg << _("Make sure that the virtual folder entry is valid (it must exist)\n");
-                msg << _("Virtual Folder provided was: '") << vd << _("'");
+                msg << wxString::Format(_("Virtual Folder provided was: '%s'"), vd);
                 ::wxMessageBox(msg, _("wxCrafter"), wxOK | wxICON_ERROR);
                 return;
             }

@@ -16091,10 +16091,6 @@ msgstr "Jste si jistí s vymazáním  '%s'"
 msgid "This folder already contains a file named 'abbreviations.conf' - would you like to overwrite it?"
 msgstr ""
 
-#: wxcrafter/src/wxcrafter_plugin.cpp:588
-msgid "'"
-msgstr "'"
-
 #: abbreviation/abbreviationssettingsdlg.cpp:250
 #, c-format
 msgid "Abbreviations were exported to '%s'"
@@ -23404,8 +23400,9 @@ msgstr ""
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:588
 #, fuzzy
-msgid "Virtual Folder provided was: '"
-msgstr "Virtuální sžka ro řidání nových souborů"
+#, c-format
+msgid "Virtual Folder provided was: '%s'"
+msgstr "Virtuální sžka ro řidání nových souborů '%s'"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:687
 msgid "wxCrafter: code generation completed successfully!"

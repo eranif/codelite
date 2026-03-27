@@ -247,8 +247,9 @@ void AbbreviationsSettingsDlg::OnExport(wxCommandEvent& event)
             return;
     }
     m_config.Save(fn);
-    ::wxMessageBox(
-        _("Abbreviations were exported to '") + fn.GetFullPath() + _("'"), "wxCrafter", wxICON_INFORMATION | wxOK);
+    ::wxMessageBox(wxString::Format(_("Abbreviations were exported to '%s'"), fn.GetFullPath()),
+                   "wxCrafter",
+                   wxICON_INFORMATION | wxOK);
 }
 
 void AbbreviationsSettingsDlg::OnImport(wxCommandEvent& event)

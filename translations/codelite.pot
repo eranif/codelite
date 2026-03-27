@@ -15926,14 +15926,14 @@ msgid ""
 "like to overwrite it?"
 msgstr ""
 
-#: abbreviation/abbreviationssettingsdlg.cpp:251
 #: wxcrafter/src/wxcrafter_plugin.cpp:588
 #: wxcrafter/src/wxguicraft_main_view.cpp:2894
 msgid "'"
 msgstr ""
 
-#: abbreviation/abbreviationssettingsdlg.cpp:251
-msgid "Abbreviations were exported to '"
+#: abbreviation/abbreviationssettingsdlg.cpp:250
+#, c-format
+msgid "Abbreviations were exported to '%s'"
 msgstr ""
 
 #: abbreviation/abbreviationssettingsdlg.cpp:264

@@ -15253,13 +15253,14 @@ msgstr "Vuoi eliminare '%s'"
 msgid "This folder already contains a file named 'abbreviations.conf' - would you like to overwrite it?"
 msgstr "Questa cartella contiene già un file denominato 'abbreviations.conf': vuoi sovrascriverlo?"
 
-#: abbreviation/abbreviationssettingsdlg.cpp:251 wxcrafter/src/wxcrafter_plugin.cpp:588 wxcrafter/src/wxguicraft_main_view.cpp:2894
+#: wxcrafter/src/wxcrafter_plugin.cpp:588 wxcrafter/src/wxguicraft_main_view.cpp:2894
 msgid "'"
 msgstr "'"
 
-#: abbreviation/abbreviationssettingsdlg.cpp:251
-msgid "Abbreviations were exported to '"
-msgstr "Le abbreviazioni sono state esportate in '"
+#: abbreviation/abbreviationssettingsdlg.cpp:250
+#, c-format
+msgid "Abbreviations were exported to '%s'"
+msgstr "Le abbreviazioni sono state esportate in '%s'"
 
 #: abbreviation/abbreviationssettingsdlg.cpp:264
 msgid "The file does not seem to contain a valid abbreviations entries"

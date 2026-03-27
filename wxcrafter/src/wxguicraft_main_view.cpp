@@ -2890,8 +2890,7 @@ void GUICraftMainPanel::OnRename(wxCommandEvent& event)
         CHECK_POINTER(itemData);
         CHECK_POINTER(itemData->m_wxcWidget);
 
-        wxString msg;
-        msg << _("Rename '") << itemData->m_wxcWidget->GetName() << _("'");
+        wxString msg = wxString::Format(_("Rename '%s'"), itemData->m_wxcWidget->GetName());
         wxString new_name = ::wxGetTextFromUser(_("Enter the new name:"), msg, itemData->m_wxcWidget->GetName(), this);
         if (new_name.empty()) {
             return;

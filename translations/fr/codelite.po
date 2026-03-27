@@ -15188,7 +15188,7 @@ msgstr "Êtes-vous sûr de vouloir supprimer « %s » ?"
 msgid "This folder already contains a file named 'abbreviations.conf' - would you like to overwrite it?"
 msgstr "Ce dossier contient déjà un fichier nommé 'abbreviations.conf' - souhaitez-vous l'écraser ?"
 
-#: wxcrafter/src/wxcrafter_plugin.cpp:588 wxcrafter/src/wxguicraft_main_view.cpp:2894
+#: wxcrafter/src/wxcrafter_plugin.cpp:588
 msgid "'"
 msgstr ""
 
@@ -23103,9 +23103,10 @@ msgstr "Un calibreur principal ne peut pas être placé dans une fenêtre géré
 msgid "Can't insert this item here"
 msgstr "Impossible d'insérer cet élément ici"
 
-#: wxcrafter/src/wxguicraft_main_view.cpp:2894
-msgid "Rename '"
-msgstr "Renommer '"
+#: wxcrafter/src/wxguicraft_main_view.cpp:2893
+#, c-format
+msgid "Rename '%s'"
+msgstr "Renommer '%s'"
 
 #: wxcrafter/src/wxguicraft_main_view.cpp:2895
 msgid "Enter the new name:"

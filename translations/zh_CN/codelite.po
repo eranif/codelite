@@ -15184,7 +15184,7 @@ msgstr "你确定要删除“%s”"
 msgid "This folder already contains a file named 'abbreviations.conf' - would you like to overwrite it?"
 msgstr "该文件夹已包含一个名为“abbreviations.conf”的文件 - 你想要覆盖它吗？"
 
-#: wxcrafter/src/wxcrafter_plugin.cpp:588 wxcrafter/src/wxguicraft_main_view.cpp:2894
+#: wxcrafter/src/wxcrafter_plugin.cpp:588
 msgid "'"
 msgstr "”"
 
@@ -23096,9 +23096,10 @@ msgstr "无法在 wxAui 托管窗口中放置主调整器"
 msgid "Can't insert this item here"
 msgstr "无法在此处插入此项目"
 
-#: wxcrafter/src/wxguicraft_main_view.cpp:2894
-msgid "Rename '"
-msgstr "重命名”"
+#: wxcrafter/src/wxguicraft_main_view.cpp:2893
+#, c-format
+msgid "Rename '%s'"
+msgstr "重命名“%s”"
 
 #: wxcrafter/src/wxguicraft_main_view.cpp:2895
 msgid "Enter the new name:"

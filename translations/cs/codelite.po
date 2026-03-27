@@ -16091,7 +16091,7 @@ msgstr "Jste si jistí s vymazáním  '%s'"
 msgid "This folder already contains a file named 'abbreviations.conf' - would you like to overwrite it?"
 msgstr ""
 
-#: wxcrafter/src/wxcrafter_plugin.cpp:588 wxcrafter/src/wxguicraft_main_view.cpp:2894
+#: wxcrafter/src/wxcrafter_plugin.cpp:588
 msgid "'"
 msgstr "'"
 
@@ -24289,10 +24289,10 @@ msgstr ""
 msgid "Can't insert this item here"
 msgstr ""
 
-#: wxcrafter/src/wxguicraft_main_view.cpp:2894
-#, fuzzy
-msgid "Rename '"
-msgstr "Přejmenovat"
+#: wxcrafter/src/wxguicraft_main_view.cpp:2893
+#, c-format
+msgid "Rename '%s'"
+msgstr "Přejmenovat '%s'"
 
 #: wxcrafter/src/wxguicraft_main_view.cpp:2895
 #, fuzzy

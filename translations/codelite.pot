@@ -15927,7 +15927,6 @@ msgid ""
 msgstr ""
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:588
-#: wxcrafter/src/wxguicraft_main_view.cpp:2894
 msgid "'"
 msgstr ""
 
@@ -24381,7 +24380,8 @@ msgid "Can't insert this item here"
 msgstr ""
 
 #: wxcrafter/src/wxguicraft_main_view.cpp:2894
-msgid "Rename '"
+#, c-format
+msgid "Rename '%s'"
 msgstr ""
 
 #: wxcrafter/src/wxguicraft_main_view.cpp:2895

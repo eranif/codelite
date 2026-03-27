@@ -15253,7 +15253,7 @@ msgstr "Vuoi eliminare '%s'"
 msgid "This folder already contains a file named 'abbreviations.conf' - would you like to overwrite it?"
 msgstr "Questa cartella contiene già un file denominato 'abbreviations.conf': vuoi sovrascriverlo?"
 
-#: wxcrafter/src/wxcrafter_plugin.cpp:588 wxcrafter/src/wxguicraft_main_view.cpp:2894
+#: wxcrafter/src/wxcrafter_plugin.cpp:588
 msgid "'"
 msgstr "'"
 
@@ -23289,9 +23289,10 @@ msgstr "Un Main Sizer non può essere inserito in una finestra gestita da wxAui"
 msgid "Can't insert this item here"
 msgstr "Impossibile inserire questo elemento qui"
 
-#: wxcrafter/src/wxguicraft_main_view.cpp:2894
-msgid "Rename '"
-msgstr "Rinomina '"
+#: wxcrafter/src/wxguicraft_main_view.cpp:2893
+#, c-format
+msgid "Rename '%s'"
+msgstr "Rinomina '%s'"
 
 #: wxcrafter/src/wxguicraft_main_view.cpp:2895
 msgid "Enter the new name:"

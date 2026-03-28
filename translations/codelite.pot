@@ -596,7 +596,8 @@ msgid "Formatter with similar name already exists"
 msgstr ""
 
 #: CodeFormatter/codeformatterdlg.cpp:120
-msgid "Delete formatter '"
+#, c-format
+msgid "Delete formatter '%s'?"
 msgstr ""
 
 #: CodeFormatter/codeformatterdlg.cpp:121

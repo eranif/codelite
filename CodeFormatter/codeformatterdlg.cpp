@@ -117,7 +117,7 @@ void CodeFormatterDlg::OnDelete(wxCommandEvent& event)
     }
 
     wxString formatter_name = m_dvListCtrl->GetItemText(item);
-    if (::wxMessageBox(_("Delete formatter '") + formatter_name + "'",
+    if (::wxMessageBox(wxString::Format(_("Delete formatter '%s'?"), formatter_name),
                        _("Delete formatter"),
                        wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_QUESTION) != wxYES) {
         return;

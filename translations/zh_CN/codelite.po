@@ -520,8 +520,9 @@ msgid "Formatter with similar name already exists"
 msgstr "同名的格式化器已存在"
 
 #: CodeFormatter/codeformatterdlg.cpp:120
-msgid "Delete formatter '"
-msgstr "删除格式化器“"
+#, c-format
+msgid "Delete formatter '%s'?"
+msgstr "删除格式化器“%s”？"
 
 #: CodeFormatter/codeformatterdlg.cpp:121
 msgid "Delete formatter"

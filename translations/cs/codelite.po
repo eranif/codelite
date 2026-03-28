@@ -556,8 +556,9 @@ msgstr "Překladač s tímto jménem již existuje"
 
 #: CodeFormatter/codeformatterdlg.cpp:120
 #, fuzzy
-msgid "Delete formatter '"
-msgstr "Vymazat kompilátor"
+#, c-format
+msgid "Delete formatter '%s'?"
+msgstr "Vymazat kompilátor '%s'?"
 
 #: CodeFormatter/codeformatterdlg.cpp:121
 #, fuzzy

@@ -3321,7 +3321,8 @@ msgid "Delete Breakpoint"
 msgstr ""
 
 #: LiteEditor/BuildOrderDialog.cpp:12
-msgid "Edit build order for project '"
+#, c-format
+msgid "Edit build order for project '%s'"
 msgstr ""
 
 #: LiteEditor/BuildOrderDialog.cpp:162

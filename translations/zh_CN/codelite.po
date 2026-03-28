@@ -2902,8 +2902,9 @@ msgid "Delete Breakpoint"
 msgstr "删除断点"
 
 #: LiteEditor/BuildOrderDialog.cpp:12
-msgid "Edit build order for project '"
-msgstr "编辑该项目构建顺序”"
+#, c-format
+msgid "Edit build order for project '%s'"
+msgstr "编辑该项目构建顺序“%s”"
 
 #: LiteEditor/BuildOrderDialog.cpp:162
 msgid "You have un-saved changes, would you like to save them before changing configuration?"

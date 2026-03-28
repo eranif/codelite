@@ -3079,9 +3079,10 @@ msgid "Delete Breakpoint"
 msgstr "Smazat všechny breakpointy"
 
 #: LiteEditor/BuildOrderDialog.cpp:12
+#, c-format
 #, fuzzy
-msgid "Edit build order for project '"
-msgstr "Nelze najít vytvořenou konfiguraci projektu '"
+msgid "Edit build order for project '%s'"
+msgstr "Nelze najít vytvořenou konfiguraci projektu '%s'"
 
 #: LiteEditor/BuildOrderDialog.cpp:162
 msgid "You have un-saved changes, would you like to save them before changing configuration?"

@@ -9,7 +9,7 @@ BuildOrderDialog::BuildOrderDialog(wxWindow* parent, const wxString& projectName
     : BuildOrderDialogBase(parent)
     , m_projectName(projectName)
 {
-    SetLabel(_("Edit build order for project '") + projectName + "'");
+    SetLabel(wxString::Format(_("Edit build order for project '%s'"), projectName));
 
     m_dvListCtrlProjects->SetSortFunction(
         [](clRowEntry* a, clRowEntry* b) { return a->GetLabel(0).CmpNoCase(b->GetLabel(0)) < 0; });

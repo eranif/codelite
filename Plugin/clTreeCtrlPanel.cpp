@@ -124,13 +124,10 @@ void clTreeCtrlPanel::OnContextMenu(wxTreeEvent& event)
         if (IsTopLevelFolder(item)) {
             // Disable items for top-level folders
             menu->Enable(XRCID("tree_ctrl_delete_folder"), false);
-            menu->Enable(XRCID("separator_delete"), false);
             menu->Enable(XRCID("tree_ctrl_rename_folder"), false);
-            menu->Enable(XRCID("separator_rename"), false);
         } else {
             // Disable items for non top-level folders
             menu->Enable(XRCID("tree_ctrl_close_folder"), false);
-            menu->Enable(XRCID("separator_close"), false);
         }
 
         menu->Bind(

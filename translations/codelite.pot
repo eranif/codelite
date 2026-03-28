@@ -2018,8 +2018,9 @@ msgstr ""
 msgid "Help"
 msgstr ""
 
-#: DebugAdapterClient/DapDebuggerSettingsDlg.cpp:66
-msgid "Delete '"
+#: DebugAdapterClient/DapDebuggerSettingsDlg.cpp:65
+#, c-format
+msgid "Delete '%s'?"
 msgstr ""
 
 #: DebugAdapterClient/DapDebuggerSettingsDlg.cpp:77

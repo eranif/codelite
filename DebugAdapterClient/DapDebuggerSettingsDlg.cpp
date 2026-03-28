@@ -62,9 +62,10 @@ void DapDebuggerSettingsDlg::OnDelete(wxCommandEvent& event)
     }
 
     wxString name = m_notebook->GetPageText(sel);
-    if (::wxMessageBox(
-            _("Delete '") + name + "'", "CodeLite", wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_WARNING, this) !=
-        wxYES) {
+    if (::wxMessageBox(wxString::Format(_("Delete '%s'"), name),
+                       "CodeLite",
+                       wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_WARNING,
+                       this) != wxYES) {
         return;
     }
 

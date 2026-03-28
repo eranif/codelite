@@ -1734,9 +1734,10 @@ msgstr "Scansione"
 msgid "Help"
 msgstr "Aiuto"
 
-#: DebugAdapterClient/DapDebuggerSettingsDlg.cpp:66
-msgid "Delete '"
-msgstr "Eliminare '"
+#: DebugAdapterClient/DapDebuggerSettingsDlg.cpp:65
+#, c-format
+msgid "Delete '%s'?"
+msgstr "Eliminare '%s'?"
 
 #: DebugAdapterClient/DapDebuggerSettingsDlg.cpp:77
 msgid "Are you sure you want to scan for dap servers? (this will override your current settings)"

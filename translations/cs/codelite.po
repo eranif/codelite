@@ -1814,10 +1814,11 @@ msgstr ""
 msgid "Help"
 msgstr "Nápověda"
 
-#: DebugAdapterClient/DapDebuggerSettingsDlg.cpp:66
+#: DebugAdapterClient/DapDebuggerSettingsDlg.cpp:65
+#, c-format
 #, fuzzy
-msgid "Delete '"
-msgstr "Smazat"
+msgid "Delete '%s'?"
+msgstr "Smazat '%s'?"
 
 #: DebugAdapterClient/DapDebuggerSettingsDlg.cpp:77
 #, fuzzy

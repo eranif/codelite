@@ -245,18 +245,11 @@ void clEditorBar::OnButtonActions(wxCommandEvent& event)
     wxUnusedVar(event);
 
     wxMenu menu;
-    wxString text;
 
-    text << _("Copy '") << m_filename << _("' to the clipboard");
-    wxMenuItem* idCopyFullPath = menu.Append(wxID_ANY, text);
-
-    text.Clear();
-    text << _("Copy '") << wxFileName(m_filename).GetFullName() << _("' to the clipboard");
-    wxMenuItem* idCopyName = menu.Append(wxID_ANY, text);
-
-    text.Clear();
-    text << _("Copy '") << wxFileName(m_filename).GetPath() << _("' to the clipboard");
-    wxMenuItem* idCopyPath = menu.Append(wxID_ANY, text);
+    const auto& formatStr = _("Copy '%s' to the clipboard");
+    wxMenuItem* idCopyFullPath = menu.Append(wxID_ANY, wxString::Format(formatStr, m_filename));
+    wxMenuItem* idCopyName = menu.Append(wxID_ANY, wxString::Format(formatStr, wxFileName(m_filename).GetFullName()));
+    wxMenuItem* idCopyPath = menu.Append(wxID_ANY, wxString::Format(formatStr, wxFileName(m_filename).GetPath()));
 
     menu.AppendSeparator();
     wxMenuItem *idOpenExplorer, *idOpenShell;
@@ -280,7 +273,7 @@ void clEditorBar::OnButtonActions(wxCommandEvent& event)
     if (selection == wxID_NONE)
         return;
 
-    text.Clear();
+    wxString text;
     if (selection == idCopyFullPath->GetId()) {
         text = m_filename;
     } else if (selection == idCopyName->GetId()) {

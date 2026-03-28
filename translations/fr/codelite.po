@@ -11625,13 +11625,10 @@ msgstr "Espaceur"
 msgid "Separator"
 msgstr "Séparateur"
 
-#: Plugin/clEditorBar.cpp:250 Plugin/clEditorBar.cpp:254 Plugin/clEditorBar.cpp:258
-msgid "' to the clipboard"
-msgstr "vers le presse-papiers"
-
-#: Plugin/clEditorBar.cpp:250 Plugin/clEditorBar.cpp:254 Plugin/clEditorBar.cpp:258
-msgid "Copy '"
-msgstr "Copier '"
+#: Plugin/clEditorBar.cpp:249
+#, c-format
+msgid "Copy '%s' to the clipboard"
+msgstr "Copier '%s' vers le presse-papiers"
 
 #: Plugin/clEditorBar.cpp:299
 msgid "' copied!"

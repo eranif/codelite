@@ -12351,14 +12351,9 @@ msgstr ""
 msgid "Separator"
 msgstr ""
 
-#: Plugin/clEditorBar.cpp:250 Plugin/clEditorBar.cpp:254
-#: Plugin/clEditorBar.cpp:258
-msgid "' to the clipboard"
-msgstr ""
-
-#: Plugin/clEditorBar.cpp:250 Plugin/clEditorBar.cpp:254
-#: Plugin/clEditorBar.cpp:258
-msgid "Copy '"
+#: Plugin/clEditorBar.cpp:249
+#, c-format
+msgid "Copy '%s' to the clipboard"
 msgstr ""
 
 #: Plugin/clEditorBar.cpp:299

@@ -12297,15 +12297,11 @@ msgstr ""
 msgid "Separator"
 msgstr "enumerator"
 
-#: Plugin/clEditorBar.cpp:250 Plugin/clEditorBar.cpp:254 Plugin/clEditorBar.cpp:258
+#: Plugin/clEditorBar.cpp:249
 #, fuzzy
-msgid "' to the clipboard"
-msgstr "Kopírovat příkaz SWL do schránky"
-
-#: Plugin/clEditorBar.cpp:250 Plugin/clEditorBar.cpp:254 Plugin/clEditorBar.cpp:258
-#, fuzzy
-msgid "Copy '"
-msgstr "Kopírovat"
+#, c-format
+msgid "Copy '%s' to the clipboard"
+msgstr "Kopírovat '%s' příkaz SWL do schránky"
 
 #: Plugin/clEditorBar.cpp:299
 msgid "' copied!"

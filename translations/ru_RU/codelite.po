@@ -11697,13 +11697,10 @@ msgstr "Разделитель"
 msgid "Separator"
 msgstr "Разделитель"
 
-#: Plugin/clEditorBar.cpp:250 Plugin/clEditorBar.cpp:254 Plugin/clEditorBar.cpp:258
-msgid "' to the clipboard"
-msgstr "' в буфер обмена"
-
-#: Plugin/clEditorBar.cpp:250 Plugin/clEditorBar.cpp:254 Plugin/clEditorBar.cpp:258
-msgid "Copy '"
-msgstr "Копировать '"
+#: Plugin/clEditorBar.cpp:249
+#, c-format
+msgid "Copy '%s' to the clipboard"
+msgstr "Копировать '%s' в буфер обмена"
 
 #: Plugin/clEditorBar.cpp:299
 msgid "' copied!"

@@ -11615,13 +11615,10 @@ msgstr "空格"
 msgid "Separator"
 msgstr "分隔符"
 
-#: Plugin/clEditorBar.cpp:250 Plugin/clEditorBar.cpp:254 Plugin/clEditorBar.cpp:258
-msgid "' to the clipboard"
-msgstr "“到粘贴板"
-
-#: Plugin/clEditorBar.cpp:250 Plugin/clEditorBar.cpp:254 Plugin/clEditorBar.cpp:258
-msgid "Copy '"
-msgstr "复制”"
+#: Plugin/clEditorBar.cpp:249
+#, c-format
+msgid "Copy '%s' to the clipboard"
+msgstr "复制“%s”到粘贴板"
 
 #: Plugin/clEditorBar.cpp:299
 msgid "' copied!"

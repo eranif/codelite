@@ -11687,13 +11687,10 @@ msgstr "Distanziatore"
 msgid "Separator"
 msgstr "Separatore"
 
-#: Plugin/clEditorBar.cpp:250 Plugin/clEditorBar.cpp:254 Plugin/clEditorBar.cpp:258
-msgid "' to the clipboard"
-msgstr "' negli appunti"
-
-#: Plugin/clEditorBar.cpp:250 Plugin/clEditorBar.cpp:254 Plugin/clEditorBar.cpp:258
-msgid "Copy '"
-msgstr "Copia '"
+#: Plugin/clEditorBar.cpp:249
+#, c-format
+msgid "Copy '%s' to the clipboard"
+msgstr "Copia '%s' negli appunti"
 
 #: Plugin/clEditorBar.cpp:299
 msgid "' copied!"

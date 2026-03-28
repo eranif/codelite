@@ -11635,13 +11635,10 @@ msgstr "スペーサー"
 msgid "Separator"
 msgstr "区切り"
 
-#: Plugin/clEditorBar.cpp:250 Plugin/clEditorBar.cpp:254 Plugin/clEditorBar.cpp:258
-msgid "' to the clipboard"
-msgstr "' をクリップボードにコピー"
-
-#: Plugin/clEditorBar.cpp:250 Plugin/clEditorBar.cpp:254 Plugin/clEditorBar.cpp:258
-msgid "Copy '"
-msgstr "コピー '"
+#: Plugin/clEditorBar.cpp:249
+#, c-format
+msgid "Copy '%s' to the clipboard"
+msgstr "コピー '%s' をクリップボードにコピー"
 
 #: Plugin/clEditorBar.cpp:299
 msgid "' copied!"

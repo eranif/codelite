@@ -47,3 +47,9 @@ include("${wxWidgets_USE_FILE}")
 
 add_subdirectory(lua)
 add_subdirectory(LuaBridge)
+
+# ######################################################################################################################
+# wxTerminalEmulator
+# ######################################################################################################################
+set(BUILD_WXTERMINAL_DEMO OFF)
+add_subdirectory(wxTerminalEmulator)

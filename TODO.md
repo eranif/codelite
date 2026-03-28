@@ -19,6 +19,7 @@ others:
 Medium:
 -----
 
+- Change the tool invocation bar into a free text, allowing the user to stop the model.
 - Support auto reading `AGENTS.md` file and convert it into System-Messages.
 - Implement `code_symbols` tool for AI.
 - Add tool management configuration which allows users to trust tools permanently

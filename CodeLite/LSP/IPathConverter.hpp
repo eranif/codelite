@@ -7,7 +7,7 @@
 #include <memory>
 #include <wx/string.h>
 
-class WXDLLIMPEXP_CL IPathConverter
+class IPathConverter
 {
 public:
     using Ptr_t = std::shared_ptr<IPathConverter>;

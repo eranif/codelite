@@ -22310,12 +22310,9 @@ msgid "Could not create virtual folder 'wxcrafter'"
 msgstr "Impossible de créer le dossier virtuel 'wxcrafter'"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:990
-msgid "'.\n"
-msgstr ""
-
-#: wxcrafter/src/wxcrafter_plugin.cpp:990
-msgid "Error while reading file content: '"
-msgstr "Erreur lors de la lecture du contenu du fichier : '"
+#, c-format
+msgid "Error while reading file content: '%s'.\n"
+msgstr "Erreur lors de la lecture du contenu du fichier : '%s'.\n"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:991
 msgid "Could not read file content"

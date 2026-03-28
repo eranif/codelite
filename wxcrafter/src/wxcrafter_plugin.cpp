@@ -982,7 +982,7 @@ bool wxCrafterPlugin::DoReadFileContentAndPrompt(const wxFileName& fn, wxString&
     // Read the header file content from the disk
     if (!wxCrafter::ReadFileContent(fn.GetFullPath(), content)) {
         wxString msg;
-        msg << _("Error while reading file content: '") << fn.GetFullPath() << _("'.\n")
+        msg << wxString::Format(_("Error while reading file content: '%s'.\n"), fn.GetFullPath())
             << _("Could not read file content");
         ::wxMessageBox(msg, _("wxCrafter"), wxICON_WARNING | wxOK | wxCENTER, EventNotifier::Get()->TopFrame());
         return false;

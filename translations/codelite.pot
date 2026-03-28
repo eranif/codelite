@@ -23588,11 +23588,8 @@ msgid "Could not create virtual folder 'wxcrafter'"
 msgstr ""
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:990
-msgid "'.\n"
-msgstr ""
-
-#: wxcrafter/src/wxcrafter_plugin.cpp:990
-msgid "Error while reading file content: '"
+#, c-format
+msgid "Error while reading file content: '%s'.\n"
 msgstr ""
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:991

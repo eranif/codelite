@@ -5004,12 +5004,9 @@ msgid "Rename"
 msgstr "名前を変更"
 
 #: LiteEditor/edit_configuration.cpp:183
-msgid "Remove configuration '"
-msgstr "構成を削除しますか '"
-
-#: LiteEditor/edit_configuration.cpp:184
-msgid "' ?"
-msgstr "' ？"
+#, c-format
+msgid "Remove configuration '%s'?"
+msgstr "構成を削除しますか '%s'？"
 
 #: LiteEditor/edit_configuration.h:67
 msgid "Edit Configurations"

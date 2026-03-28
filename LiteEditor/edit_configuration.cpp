@@ -180,8 +180,7 @@ void EditConfigurationDialog::OnButtonDelete(wxCommandEvent& event)
     if(selection.IsEmpty()) {
         return;
     }
-    wxString msg(_("Remove configuration '"));
-    msg << selection << _("' ?");
+    wxString msg = wxString::Format(_("Remove configuration '%s'?"), selection);
     if(wxMessageBox(msg, _("Confirm"), wxYES_NO | wxCANCEL | wxICON_WARNING) == wxYES) {
         ProjectSettingsPtr settings = ManagerST::Get()->GetProjectSettings(m_projectName);
         if(settings) {

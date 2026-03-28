@@ -4999,12 +4999,9 @@ msgid "Rename"
 msgstr "重命名"
 
 #: LiteEditor/edit_configuration.cpp:183
-msgid "Remove configuration '"
-msgstr "移除配置”"
-
-#: LiteEditor/edit_configuration.cpp:184
-msgid "' ?"
-msgstr "“？"
+#, c-format
+msgid "Remove configuration '%s'?"
+msgstr "移除配置“%s”？"
 
 #: LiteEditor/edit_configuration.h:67
 msgid "Edit Configurations"

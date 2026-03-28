@@ -2833,9 +2833,10 @@ msgstr "AiutoPlugin"
 msgid "Help Plugin"
 msgstr "Aiuto Plugin"
 
-#: HelpPlugin/helpplugin.cpp:86
-msgid "Search the docs for '"
-msgstr "Cerca nei documenti '"
+#: HelpPlugin/helpplugin.cpp:85
+#, c-format
+msgid "Search the docs for '%s'"
+msgstr "Cerca nei documenti '%s'"
 
 #: LanguageServer/languageserver.cpp:35 LanguageServer/languageserver.cpp:45
 msgid "Support for Language Server Protocol (LSP)"

@@ -2803,9 +2803,10 @@ msgstr "Модуль справки"
 msgid "Help Plugin"
 msgstr "Модуль справки"
 
-#: HelpPlugin/helpplugin.cpp:86
-msgid "Search the docs for '"
-msgstr "Найти в документации сведения о '"
+#: HelpPlugin/helpplugin.cpp:85
+#, c-format
+msgid "Search the docs for '%s'"
+msgstr "Найти в документации сведения о '%s'"
 
 #: LanguageServer/languageserver.cpp:35 LanguageServer/languageserver.cpp:45
 msgid "Support for Language Server Protocol (LSP)"

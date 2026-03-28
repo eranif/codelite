@@ -3199,8 +3199,9 @@ msgstr ""
 msgid "Help Plugin"
 msgstr ""
 
-#: HelpPlugin/helpplugin.cpp:86
-msgid "Search the docs for '"
+#: HelpPlugin/helpplugin.cpp:85
+#, c-format
+msgid "Search the docs for '%s'"
 msgstr ""
 
 #: LanguageServer/languageserver.cpp:35 LanguageServer/languageserver.cpp:45

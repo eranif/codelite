@@ -82,8 +82,7 @@ void HelpPlugin::OnEditorContextMenu(clContextMenuEvent& event)
     wxMenu* menu = event.GetMenu();
     wxBitmap helpBitmap = wxXmlResource::Get()->LoadBitmap("svn_info");
     menu->AppendSeparator();
-    wxString label;
-    label << _("Search the docs for '") << modSelection << "'";
+    wxString label = wxString::Format(_("Search the docs for '%s'"), modSelection);
     menu->Append(XRCID("ID_ZEAL_HELP"), label)->SetBitmap(helpBitmap);
     menu->AppendSeparator();
 }

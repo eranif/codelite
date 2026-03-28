@@ -2784,9 +2784,10 @@ msgstr "Aide sur les extensions"
 msgid "Help Plugin"
 msgstr "Aide sur les extensions"
 
-#: HelpPlugin/helpplugin.cpp:86
-msgid "Search the docs for '"
-msgstr "Recherchez dans la documentation '"
+#: HelpPlugin/helpplugin.cpp:85
+#, c-format
+msgid "Search the docs for '%s'"
+msgstr "Recherchez '%s' dans la documentation"
 
 #: LanguageServer/languageserver.cpp:35 LanguageServer/languageserver.cpp:45
 msgid "Support for Language Server Protocol (LSP)"

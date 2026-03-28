@@ -2956,10 +2956,11 @@ msgstr "&Pluginy"
 msgid "Help Plugin"
 msgstr "&Pluginy"
 
-#: HelpPlugin/helpplugin.cpp:86
+#: HelpPlugin/helpplugin.cpp:85
+#, c-format
 #, fuzzy
-msgid "Search the docs for '"
-msgstr "Hledat v těchto typech souborů"
+msgid "Search the docs for '%s'"
+msgstr "Hledat v těchto typech souborů '%s'"
 
 #: LanguageServer/languageserver.cpp:35 LanguageServer/languageserver.cpp:45
 msgid "Support for Language Server Protocol (LSP)"

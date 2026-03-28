@@ -2790,9 +2790,10 @@ msgstr "帮助插件"
 msgid "Help Plugin"
 msgstr "帮助插件"
 
-#: HelpPlugin/helpplugin.cpp:86
-msgid "Search the docs for '"
-msgstr "从文档搜索“"
+#: HelpPlugin/helpplugin.cpp:85
+#, c-format
+msgid "Search the docs for '%s'"
+msgstr "从文档搜索“%s”"
 
 #: LanguageServer/languageserver.cpp:35 LanguageServer/languageserver.cpp:45
 msgid "Support for Language Server Protocol (LSP)"

@@ -2505,7 +2505,8 @@ msgid "Could not find EOS CDT installation. Please install it and try again"
 msgstr ""
 
 #: EOSWiki/eoswiki.cpp:85
-msgid "A project with the same name: '"
+#, c-format
+msgid "A project with the same name: '%s'\nalready exists"
 msgstr ""
 
 #: EOSWiki/eoswiki.cpp:100 LiteEditor/fileview.cpp:2369

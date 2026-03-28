@@ -2186,8 +2186,9 @@ msgid "Could not find EOS CDT installation. Please install it and try again"
 msgstr "Impossibile trovare l'installazione di EOS CDT.Installalo e riprova"
 
 #: EOSWiki/eoswiki.cpp:85
-msgid "A project with the same name: '"
-msgstr "Un progetto con lo stesso nome: '"
+#, c-format
+msgid "A project with the same name: '%s'\nalready exists"
+msgstr "Un progetto con lo stesso nome: '%s'\nesiste già"
 
 #: EOSWiki/eoswiki.cpp:100 LiteEditor/fileview.cpp:2369
 msgid "Failed to create workspace:\n"

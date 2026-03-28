@@ -95,7 +95,7 @@ void AbbreviationsSettingsDlg::OnDelete(wxCommandEvent& event)
         return;
     }
 
-    if (wxMessageBox(wxString::Format(_("Are you sure you want to delete '%s'"), m_activeItemName.c_str()),
+    if (wxMessageBox(wxString::Format(_("Are you sure you want to delete '%s'?"), m_activeItemName),
                      wxT("CodeLite"),
                      wxYES_NO | wxCANCEL | wxCENTER | wxICON_QUESTION,
                      this) != wxYES) {

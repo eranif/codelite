@@ -3014,8 +3014,10 @@ msgid "Are you sure you want to delete this compiler option?"
 msgstr "你确定要删除这个编译器选项吗？"
 
 #: LiteEditor/CompilerMainPage.cpp:230 Plugin/LSP/LanguageServerSettingsDlg.cpp:58
-msgid "Are you sure you want to delete '"
-msgstr "你确定要删除“"
+#: abbreviation/abbreviationssettingsdlg.cpp:98
+#, c-format
+msgid "Are you sure you want to delete '%s'?"
+msgstr "你确定要删除“%s”?"
 
 #: LiteEditor/CompilerMainPage.cpp:241
 msgid "Are you sure you want to delete this linker option?"
@@ -15172,11 +15174,6 @@ msgstr "新建缩略语..."
 #: abbreviation/abbreviationssettingsdlg.cpp:76
 msgid "An abbreviation with this name already exists!"
 msgstr "同名缩略语已存在！"
-
-#: abbreviation/abbreviationssettingsdlg.cpp:98
-#, c-format
-msgid "Are you sure you want to delete '%s'"
-msgstr "你确定要删除“%s”"
 
 #: abbreviation/abbreviationssettingsdlg.cpp:244
 msgid "This folder already contains a file named 'abbreviations.conf' - would you like to overwrite it?"

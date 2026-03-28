@@ -3444,7 +3444,9 @@ msgstr ""
 
 #: LiteEditor/CompilerMainPage.cpp:230
 #: Plugin/LSP/LanguageServerSettingsDlg.cpp:58
-msgid "Are you sure you want to delete '"
+#: abbreviation/abbreviationssettingsdlg.cpp:98
+#, c-format
+msgid "Are you sure you want to delete '%s'?"
 msgstr ""
 
 #: LiteEditor/CompilerMainPage.cpp:241
@@ -15909,11 +15911,6 @@ msgstr ""
 
 #: abbreviation/abbreviationssettingsdlg.cpp:76
 msgid "An abbreviation with this name already exists!"
-msgstr ""
-
-#: abbreviation/abbreviationssettingsdlg.cpp:98
-#, c-format
-msgid "Are you sure you want to delete '%s'"
 msgstr ""
 
 #: abbreviation/abbreviationssettingsdlg.cpp:244

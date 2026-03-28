@@ -3009,8 +3009,10 @@ msgid "Are you sure you want to delete this compiler option?"
 msgstr "Êtes-vous sûr de vouloir supprimer cette option du compilateur ?"
 
 #: LiteEditor/CompilerMainPage.cpp:230 Plugin/LSP/LanguageServerSettingsDlg.cpp:58
-msgid "Are you sure you want to delete '"
-msgstr "Êtes-vous sûr de vouloir supprimer '"
+#: abbreviation/abbreviationssettingsdlg.cpp:98
+#, c-format
+msgid "Are you sure you want to delete '%s'?"
+msgstr "Êtes-vous sûr de vouloir supprimer '%s' ?"
 
 #: LiteEditor/CompilerMainPage.cpp:241
 msgid "Are you sure you want to delete this linker option?"
@@ -15176,11 +15178,6 @@ msgstr "Nouvelle abréviation..."
 #: abbreviation/abbreviationssettingsdlg.cpp:76
 msgid "An abbreviation with this name already exists!"
 msgstr "Une abréviation de ce nom existe déjà !"
-
-#: abbreviation/abbreviationssettingsdlg.cpp:98
-#, c-format
-msgid "Are you sure you want to delete '%s'"
-msgstr "Êtes-vous sûr de vouloir supprimer « %s » ?"
 
 #: abbreviation/abbreviationssettingsdlg.cpp:244
 msgid "This folder already contains a file named 'abbreviations.conf' - would you like to overwrite it?"

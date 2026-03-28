@@ -12303,8 +12303,9 @@ msgstr "enumerator"
 msgid "Copy '%s' to the clipboard"
 msgstr "Kopírovat '%s' příkaz SWL do schránky"
 
-#: Plugin/clEditorBar.cpp:299
-msgid "' copied!"
+#: Plugin/clEditorBar.cpp:292
+#, c-format
+msgid "'%s' copied!"
 msgstr ""
 
 #: Plugin/clGotoAnythingManager.cpp:156

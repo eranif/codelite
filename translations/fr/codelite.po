@@ -11630,9 +11630,10 @@ msgstr "Séparateur"
 msgid "Copy '%s' to the clipboard"
 msgstr "Copier '%s' vers le presse-papiers"
 
-#: Plugin/clEditorBar.cpp:299
-msgid "' copied!"
-msgstr "copié !"
+#: Plugin/clEditorBar.cpp:292
+#, c-format
+msgid "'%s' copied!"
+msgstr "'%s' copié !"
 
 #: Plugin/clGotoAnythingManager.cpp:156
 msgid "Current Tab > Close Tabs To The Right"

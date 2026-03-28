@@ -11620,9 +11620,10 @@ msgstr "分隔符"
 msgid "Copy '%s' to the clipboard"
 msgstr "复制“%s”到粘贴板"
 
-#: Plugin/clEditorBar.cpp:299
-msgid "' copied!"
-msgstr "“已复制！"
+#: Plugin/clEditorBar.cpp:292
+#, c-format
+msgid "'%s' copied!"
+msgstr "“%s”已复制！"
 
 #: Plugin/clGotoAnythingManager.cpp:156
 msgid "Current Tab > Close Tabs To The Right"

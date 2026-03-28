@@ -289,7 +289,7 @@ void clEditorBar::OnButtonActions(wxCommandEvent& event)
     // Clipboard action?
     if (!text.IsEmpty()) {
         ::CopyToClipboard(text);
-        clGetManager()->SetStatusMessage((wxString() << "'" << text << _("' copied!")), 2);
+        clGetManager()->SetStatusMessage(wxString::Format(_("'%s' copied!"), text), 2);
     }
 }
 

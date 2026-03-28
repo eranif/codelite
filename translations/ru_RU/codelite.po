@@ -11702,9 +11702,10 @@ msgstr "Разделитель"
 msgid "Copy '%s' to the clipboard"
 msgstr "Копировать '%s' в буфер обмена"
 
-#: Plugin/clEditorBar.cpp:299
-msgid "' copied!"
-msgstr "' скопирован!"
+#: Plugin/clEditorBar.cpp:292
+#, c-format
+msgid "'%s' copied!"
+msgstr "'%s' скопирован!"
 
 #: Plugin/clGotoAnythingManager.cpp:156
 msgid "Current Tab > Close Tabs To The Right"

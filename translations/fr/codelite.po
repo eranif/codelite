@@ -5013,9 +5013,10 @@ msgstr "Modifier la configuration"
 msgid "&Close"
 msgstr "&Fermer"
 
-#: LiteEditor/edit_workspace_conf_dlg.cpp:119
-msgid "Remove workspace configuration '"
-msgstr "Supprimer la configuration de l'espace de travail '"
+#: LiteEditor/edit_workspace_conf_dlg.cpp:118
+#, c-format
+msgid "Remove workspace configuration '%s'?"
+msgstr "Supprimer la configuration de l'espace de travail '%s' ?"
 
 #: LiteEditor/edit_workspace_conf_dlg.cpp:132
 msgid "New Configuration Name:"

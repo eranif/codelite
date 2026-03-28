@@ -5268,9 +5268,10 @@ msgstr "Upravit konfigurace"
 msgid "&Close"
 msgstr "&Zavřít"
 
-#: LiteEditor/edit_workspace_conf_dlg.cpp:119
-msgid "Remove workspace configuration '"
-msgstr "Odstranit konfiguraci pracovní plochy '"
+#: LiteEditor/edit_workspace_conf_dlg.cpp:118
+#, c-format
+msgid "Remove workspace configuration '%s'?"
+msgstr "Odstranit konfiguraci pracovní plochy '%s'?"
 
 #: LiteEditor/edit_workspace_conf_dlg.cpp:132
 msgid "New Configuration Name:"

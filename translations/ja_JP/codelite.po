@@ -5019,9 +5019,10 @@ msgstr "構成を編集"
 msgid "&Close"
 msgstr "閉じる (&C)"
 
-#: LiteEditor/edit_workspace_conf_dlg.cpp:119
-msgid "Remove workspace configuration '"
-msgstr "ワークスペースの構成を削除しますか '"
+#: LiteEditor/edit_workspace_conf_dlg.cpp:118
+#, c-format
+msgid "Remove workspace configuration '%s'?"
+msgstr "ワークスペースの構成を削除しますか '%s'?"
 
 #: LiteEditor/edit_workspace_conf_dlg.cpp:132
 msgid "New Configuration Name:"

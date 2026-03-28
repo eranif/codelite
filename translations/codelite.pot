@@ -5571,8 +5571,9 @@ msgstr ""
 msgid "&Close"
 msgstr ""
 
-#: LiteEditor/edit_workspace_conf_dlg.cpp:119
-msgid "Remove workspace configuration '"
+#: LiteEditor/edit_workspace_conf_dlg.cpp:118
+#, c-format
+msgid "Remove workspace configuration '%s'?"
 msgstr ""
 
 #: LiteEditor/edit_workspace_conf_dlg.cpp:132

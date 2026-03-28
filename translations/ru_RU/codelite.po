@@ -7160,9 +7160,10 @@ msgstr "Редактировать выражение"
 msgid "Insert new value for '%s':"
 msgstr "Добавить новое значение для «%s»:"
 
-#: LiteEditor/mainbook.cpp:384
-msgid "Save changes to '"
-msgstr "Сохранить изменения в '"
+#: LiteEditor/mainbook.cpp:383
+#, c-format
+msgid "Save changes to '%s'?"
+msgstr "Сохранить изменения в '%s'?"
 
 #: LiteEditor/mainbook.cpp:922 LiteEditor/mainbook.cpp:1079 LiteEditor/mainbook.cpp:1120 LiteEditor/replaceinfilespanel.cpp:428
 msgid "Save Modified Files"

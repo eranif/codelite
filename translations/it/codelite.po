@@ -7194,9 +7194,10 @@ msgstr "Modifica espressione"
 msgid "Insert new value for '%s':"
 msgstr "Inserisci un nuovo valore per '%s':"
 
-#: LiteEditor/mainbook.cpp:384
-msgid "Save changes to '"
-msgstr "Salva le modifiche in \""
+#: LiteEditor/mainbook.cpp:383
+#, c-format
+msgid "Save changes to '%s'?"
+msgstr "Salva le modifiche in '%s'?"
 
 #: LiteEditor/mainbook.cpp:922 LiteEditor/mainbook.cpp:1079 LiteEditor/mainbook.cpp:1120 LiteEditor/replaceinfilespanel.cpp:428
 msgid "Save Modified Files"

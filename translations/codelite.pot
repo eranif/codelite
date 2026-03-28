@@ -7758,8 +7758,9 @@ msgstr ""
 msgid "Insert new value for '%s':"
 msgstr ""
 
-#: LiteEditor/mainbook.cpp:384
-msgid "Save changes to '"
+#: LiteEditor/mainbook.cpp:383
+#, c-format
+msgid "Save changes to '%s'?"
 msgstr ""
 
 #: LiteEditor/mainbook.cpp:922 LiteEditor/mainbook.cpp:1079

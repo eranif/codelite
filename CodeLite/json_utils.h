@@ -66,6 +66,15 @@ inline wxStringMap_t ToStringMap(const nlohmann::json& json)
 
 inline std::string ToJsonValue(const wxSize& sz) { return std::to_string(sz.x) + "," + std::to_string(sz.y); }
 
+inline nlohmann::json ToJson(const wxArrayString& strings)
+{
+    nlohmann::json json = nlohmann::json::array();
+    for (const auto& s : strings) {
+        json.emplace_back(s.ToStdString(wxConvUTF8));
+    }
+    return json;
+}
+
 inline nlohmann::json ToJson(const wxStringMap_t& map)
 {
     nlohmann::json json;

@@ -98,6 +98,24 @@ JSONItem::JSONItem(std::shared_ptr<nlohmann::ordered_json> root, nlohmann::order
 {
 }
 
+JSONItem::JSONItem(const nlohmann::json& json)
+{
+    if (json.is_discarded()) {
+        return;
+    }
+    m_root = std::make_shared<nlohmann::ordered_json>(json);
+    m_json = m_root.get();
+}
+
+JSONItem::JSONItem(const nlohmann::ordered_json& json)
+{
+    if (json.is_discarded()) {
+        return;
+    }
+    m_root = std::make_shared<nlohmann::ordered_json>(json);
+    m_json = m_root.get();
+}
+
 char* JSONItem::FormatRawString(bool formatted) const
 {
     if (!m_json) {
@@ -375,9 +393,7 @@ JSONItem& JSONItem::addProperty(const wxString& name, bool value)
 }
 
 JSONItem& JSONItem::addProperty(const wxString& name, const wxString& value)
-{
-    return addProperty(name, value.ToStdString(wxConvUTF8));
-}
+{ return addProperty(name, value.ToStdString(wxConvUTF8)); }
 
 JSONItem& JSONItem::addProperty(const wxString& name, const std::string& value)
 {
@@ -388,9 +404,7 @@ JSONItem& JSONItem::addProperty(const wxString& name, const std::string& value)
 }
 
 JSONItem& JSONItem::addProperty(const wxString& name, const wxChar* value)
-{
-    return addProperty(name, wxString(value));
-}
+{ return addProperty(name, wxString(value)); }
 
 JSONItem& JSONItem::addProperty(const wxString& name, long value)
 {
@@ -440,14 +454,10 @@ JSONItem& JSONItem::addProperty(const wxString& name, const wxStringMap_t& strin
 JSONItem& JSONItem::addProperty(const wxString& name, size_t value) { return addProperty(name, (int)value); }
 
 JSONItem& JSONItem::addProperty(const wxString& name, const char* value, const wxMBConv& conv)
-{
-    return addProperty(name, wxString(value, conv));
-}
+{ return addProperty(name, wxString(value, conv)); }
 
 JSONItem& JSONItem::addProperty(const wxString& name, const wxFileName& filename)
-{
-    return addProperty(name, filename.GetFullPath());
-}
+{ return addProperty(name, filename.GetFullPath()); }
 
 JSONItem& JSONItem::addProperty(const wxString& name, JSON&& json)
 {

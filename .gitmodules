@@ -4,9 +4,6 @@
 [submodule "cc-wrapper"]
 	path = submodules/cc-wrapper
 	url = https://github.com/eranif/cc-wrapper
-[submodule "submodules/cJSON"]
-	path = submodules/cJSON
-	url = https://github.com/DaveGamble/cJSON
 [submodule "submodules/doctest"]
 	path = submodules/doctest
 	url = https://github.com/doctest/doctest

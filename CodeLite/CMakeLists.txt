@@ -97,8 +97,7 @@ target_link_libraries(
   ${GTK_LIBS}
   ${ADDITIONAL_LIBRARIES}
   ${LIBUCHARDET_LIB}
-  assistantlib
-  cJSON)
+  assistantlib)
 
 if(MINGW)
   set_target_properties(

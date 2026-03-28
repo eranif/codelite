@@ -15,7 +15,6 @@ others:
 - SFTP plugin: re-use the remote find in files dialog
 - SFTP plugin: use clTerminalViewCtrl for the log view
 - Spell Checker: enable it for the commit dialog
-- use json instead of cJSON everywhere
 
 Medium:
 -----

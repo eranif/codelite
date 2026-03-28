@@ -29,19 +29,17 @@
 #include "codelite_exports.h"
 #include "macros.h"
 
-#include <cJSON.h>
+#include <assistant/common/json.hpp>
+#include <memory>
 #include <string_view>
 #include <type_traits>
 #include <unordered_map>
 #include <vector>
+#include <wx/arrstr.h>
 #include <wx/filename.h>
 #include <wx/gdicmn.h>
 #include <wx/string.h>
 #include <wx/vector.h>
-
-#if wxUSE_GUI
-#include <wx/arrstr.h>
-#endif
 
 //////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////
@@ -73,19 +71,10 @@ public:
      */
     bool hasNamedObject(const wxString& name) const { return contains(name); }
 
-    /// If your array is big (hundred of entries) use
-    /// `GetAsVector` and iterate it instead
     JSONItem operator[](int index) const;
     JSONItem operator[](const wxString& name) const;
 
-    /// the C implementation for accessing large arrays, is the sum of an arithmetic progression.
-    /// Use this method to get an array with `O(1)` access
-    /// This call is `O(n)`
     std::vector<JSONItem> GetAsVector() const;
-
-    /// the C implementation for accessing by name is by `O(n)`
-    /// Use this method when you have large number of items and
-    /// `O(1)` is required
     std::unordered_map<std::string_view, JSONItem> GetAsMap() const;
 
     bool toBool(bool defaultValue = false) const;
@@ -110,14 +99,14 @@ public:
      */
     char* FormatRawString(bool formatted = true) const;
     int arraySize() const;
-    int toInt(int defaultVal = -1) const;
+    int toInt(int defaultValue = -1) const;
 
     /// Convert the value into `E` from
     template <typename E>
         requires(std::is_enum_v<E>)
-    E fromNumber(E default_value) const
+    E fromNumber(E defaultValue) const
     {
-        return static_cast<E>(toInt(static_cast<int>(default_value)));
+        return static_cast<E>(toInt(static_cast<int>(defaultValue)));
     }
 
     template <typename T>
@@ -141,8 +130,8 @@ public:
             static_assert(!std::is_same_v<T, T>, "GetValue called with unsupported type.");
         }
     }
-    size_t toSize_t(size_t defaultVal = 0) const;
-    double toDouble(double defaultVal = -1.0) const;
+    size_t toSize_t(size_t defaultValue = 0) const;
+    double toDouble(double defaultValue = -1.0) const;
 
     wxSize toSize() const;
 
@@ -220,20 +209,11 @@ public:
     bool isOk() const { return m_json != nullptr; }
 
 private:
-    explicit JSONItem(cJSON* json);
-
-    /**
-     * @brief release the internal pointer
-     */
-    cJSON* release()
-    {
-        cJSON* temp = m_json;
-        m_json = nullptr;
-        return temp;
-    }
+    JSONItem(std::shared_ptr<nlohmann::ordered_json> root, nlohmann::ordered_json* current);
 
 private:
-    cJSON* m_json = nullptr;
+    std::shared_ptr<nlohmann::ordered_json> m_root;
+    nlohmann::ordered_json* m_json = nullptr;
 };
 
 //////////////////////////////////////////////////////////////////////////
@@ -256,7 +236,7 @@ public:
     // Make this class not copyable
     JSON(const JSON&) = delete;
     JSON& operator=(const JSON&) = delete;
-    ~JSON();
+    ~JSON() = default;
 
     void save(const wxFileName& fn) const;
     bool isOk() const { return m_json != nullptr; }
@@ -264,10 +244,7 @@ public:
     JSONItem toElement() const;
 
 private:
-    cJSON* release();
-
-private:
-    cJSON* m_json = nullptr;
+    std::shared_ptr<nlohmann::ordered_json> m_json;
 };
 
 #endif // ZJSONNODE_H

@@ -2,6 +2,14 @@
 
 #include <doctest.h>
 
+TEST_CASE("json parsing")
+{
+    JSON invalidJson("invalid");
+    CHECK(!invalidJson.isOk());
+    JSON validJson("42");
+    CHECK(validJson.isOk());
+}
+
 TEST_CASE("empty json")
 {
     JSONItem item{};
@@ -167,7 +175,7 @@ TEST_CASE("number json")
     CHECK(item.isNumber());
     CHECK(!item.isArray());
     CHECK(!item.isObject());
-    CHECK(item.format() == "12.340000");
+    CHECK(item.format() == "12.34");
 
     CHECK(item.toBool(false) == false);
     CHECK(item.toBool(true) == true);
@@ -245,6 +253,9 @@ TEST_CASE("object json")
     CHECK(item.arraySize() == 0);
     CHECK(!item[0].isOk());
 
+    CHECK(item.contains("key1"));
+    CHECK(item.contains("key2"));
+    CHECK(!item.contains("key"));
     CHECK(item.hasNamedObject("key1"));
     CHECK(item.hasNamedObject("key2"));
     CHECK(!item.hasNamedObject("key"));
@@ -267,7 +278,7 @@ TEST_CASE("array append")
     item.arrayAppend("world");
     item.arrayAppend(wxString(L"..."));
     item.arrayAppend(JSONItem::createObject());
-    CHECK(item.format(false) == R"([4.200000,51,"Hello","world","...",{}])");
+    CHECK(item.format(false) == R"([4.2,51.0,"Hello","world","...",{}])");
     CHECK(item.format(false) == json.toElement().format(false));
 }
 
@@ -291,4 +302,80 @@ TEST_CASE("object append/remove")
     CHECK(item.format(false) ==
           R"({"key1":true,"key2":51,"key3":"Hello","key4":"world","key6":[],"key7":[4,8,15,16,23,42]})");
     CHECK(item.format(false) == json.toElement().format(false));
+}
+
+TEST_CASE("object addXxx")
+{
+    JSON json(JsonType::Object);
+    auto item = json.toElement();
+    auto array = item.AddArray("array");
+    array.arrayAppend(42);
+    auto& self = item.addNull("Null");
+    CHECK(&self == &item);
+    auto object = item.AddObject("object");
+    auto object2 = JSONItem::createObject();
+    auto& object3 = object.addProperty("inner", object2);
+    CHECK(&object == &object3);
+    JSON moved(JsonType::Object);
+    moved.toElement().addProperty("a", 1);
+    item.addProperty("moved", std::move(moved));
+    CHECK(item.format(false) == R"({"array":[42.0],"Null":null,"object":{"inner":{}},"moved":{"a":1}})");
+}
+
+TEST_CASE("toArrayString")
+{
+    wxArrayString strings{"hello", "world"};
+
+    JSON root(JsonType::Object);
+    root.toElement().addProperty("strings", strings);
+
+    CHECK(strings == root.toElement()["strings"].toArrayString());
+}
+
+TEST_CASE("toIntArray")
+{
+    const std::vector<int> v{4, 8, 15, 16, 23, 42};
+
+    JSON root(JsonType::Object);
+    root.toElement().addProperty("v", v);
+
+    CHECK(v == root.toElement()["v"].toIntArray());
+}
+
+TEST_CASE("toDoubleArray")
+{
+    const std::vector<double> v{1.1, 2.2, 3.3};
+
+    JSON root(JsonType::Array);
+    for (auto d : v) {
+        root.toElement().arrayAppend(d);
+    }
+
+    CHECK(v == root.toElement().toDoubleArray());
+}
+
+TEST_CASE("toStringMap") {
+    const wxStringMap_t map{{"1", "one"}, {"2", "two"}};
+
+    JSON root(JsonType::Object);
+    root.toElement().addProperty("map", map);
+
+    CHECK(map == root.toElement()["map"].toStringMap());
+}
+
+TEST_CASE("GetAsVector") {
+    JSON root("[1,2,3]");
+    const auto v = root.toElement().GetAsVector();
+    REQUIRE(v.size() == 3);
+    CHECK(1 == v[0].toInt());
+    CHECK(2 == v[1].toInt());
+    CHECK(3 == v[2].toInt());
+}
+
+TEST_CASE("GetAsMap") {
+    JSON root(R"({"age":42,"name":"Doe"})");
+    const auto m = root.toElement().GetAsMap();
+    REQUIRE(m.size() == 2);
+    CHECK(42 == m.at("age").toInt());
+    CHECK("Doe" == m.at("name").toString());
 }

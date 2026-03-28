@@ -525,8 +525,9 @@ msgid "Formatter with similar name already exists"
 msgstr "Esiste già un formattatore con nome simile"
 
 #: CodeFormatter/codeformatterdlg.cpp:120
-msgid "Delete formatter '"
-msgstr "Elimina formattatore '"
+#, c-format
+msgid "Delete formatter '%s'?"
+msgstr "Elimina formattatore '%s'?"
 
 #: CodeFormatter/codeformatterdlg.cpp:121
 msgid "Delete formatter"
@@ -1734,9 +1735,10 @@ msgstr "Scansione"
 msgid "Help"
 msgstr "Aiuto"
 
-#: DebugAdapterClient/DapDebuggerSettingsDlg.cpp:66
-msgid "Delete '"
-msgstr "Eliminare '"
+#: DebugAdapterClient/DapDebuggerSettingsDlg.cpp:65
+#, c-format
+msgid "Delete '%s'?"
+msgstr "Eliminare '%s'?"
 
 #: DebugAdapterClient/DapDebuggerSettingsDlg.cpp:77
 msgid "Are you sure you want to scan for dap servers? (this will override your current settings)"
@@ -2184,8 +2186,9 @@ msgid "Could not find EOS CDT installation. Please install it and try again"
 msgstr "Impossibile trovare l'installazione di EOS CDT.Installalo e riprova"
 
 #: EOSWiki/eoswiki.cpp:85
-msgid "A project with the same name: '"
-msgstr "Un progetto con lo stesso nome: '"
+#, c-format
+msgid "A project with the same name: '%s'\nalready exists"
+msgstr "Un progetto con lo stesso nome: '%s'\nesiste già"
 
 #: EOSWiki/eoswiki.cpp:100 LiteEditor/fileview.cpp:2369
 msgid "Failed to create workspace:\n"
@@ -2830,9 +2833,10 @@ msgstr "AiutoPlugin"
 msgid "Help Plugin"
 msgstr "Aiuto Plugin"
 
-#: HelpPlugin/helpplugin.cpp:86
-msgid "Search the docs for '"
-msgstr "Cerca nei documenti '"
+#: HelpPlugin/helpplugin.cpp:85
+#, c-format
+msgid "Search the docs for '%s'"
+msgstr "Cerca nei documenti '%s'"
 
 #: LanguageServer/languageserver.cpp:35 LanguageServer/languageserver.cpp:45
 msgid "Support for Language Server Protocol (LSP)"
@@ -2940,8 +2944,9 @@ msgid "Delete Breakpoint"
 msgstr "Elimina punto di interruzione"
 
 #: LiteEditor/BuildOrderDialog.cpp:12
-msgid "Edit build order for project '"
-msgstr "Modifica l'ordine di compilazione per il progetto '"
+#, c-format
+msgid "Edit build order for project '%s'"
+msgstr "Modifica l'ordine di compilazione per il progetto '%s'"
 
 #: LiteEditor/BuildOrderDialog.cpp:162
 msgid "You have un-saved changes, would you like to save them before changing configuration?"
@@ -3056,8 +3061,10 @@ msgid "Are you sure you want to delete this compiler option?"
 msgstr "Vuoi eliminare questa opzione del compilatore?"
 
 #: LiteEditor/CompilerMainPage.cpp:230 Plugin/LSP/LanguageServerSettingsDlg.cpp:58
-msgid "Are you sure you want to delete '"
-msgstr "Vuoi eliminare '"
+#: abbreviation/abbreviationssettingsdlg.cpp:98
+#, c-format
+msgid "Are you sure you want to delete '%s'?"
+msgstr "Vuoi eliminare '%s'?"
 
 #: LiteEditor/CompilerMainPage.cpp:241
 msgid "Are you sure you want to delete this linker option?"
@@ -5063,12 +5070,9 @@ msgid "Rename"
 msgstr "Rinominare"
 
 #: LiteEditor/edit_configuration.cpp:183
-msgid "Remove configuration '"
-msgstr "Rimuovi configurazione '"
-
-#: LiteEditor/edit_configuration.cpp:184
-msgid "' ?"
-msgstr "'?"
+#, c-format
+msgid "Remove configuration '%s'?"
+msgstr "Rimuovi configurazione '%s'?"
 
 #: LiteEditor/edit_configuration.h:67
 msgid "Edit Configurations"
@@ -5078,9 +5082,10 @@ msgstr "Modifica configurazioni"
 msgid "&Close"
 msgstr "&Chiudi"
 
-#: LiteEditor/edit_workspace_conf_dlg.cpp:119
-msgid "Remove workspace configuration '"
-msgstr "Rimuovi la configurazione dell'area di lavoro '"
+#: LiteEditor/edit_workspace_conf_dlg.cpp:118
+#, c-format
+msgid "Remove workspace configuration '%s'?"
+msgstr "Rimuovi la configurazione dell'area di lavoro '%s'?"
 
 #: LiteEditor/edit_workspace_conf_dlg.cpp:132
 msgid "New Configuration Name:"
@@ -7193,9 +7198,10 @@ msgstr "Modifica espressione"
 msgid "Insert new value for '%s':"
 msgstr "Inserisci un nuovo valore per '%s':"
 
-#: LiteEditor/mainbook.cpp:384
-msgid "Save changes to '"
-msgstr "Salva le modifiche in \""
+#: LiteEditor/mainbook.cpp:383
+#, c-format
+msgid "Save changes to '%s'?"
+msgstr "Salva le modifiche in '%s'?"
 
 #: LiteEditor/mainbook.cpp:922 LiteEditor/mainbook.cpp:1079 LiteEditor/mainbook.cpp:1120 LiteEditor/replaceinfilespanel.cpp:428
 msgid "Save Modified Files"
@@ -11687,17 +11693,15 @@ msgstr "Distanziatore"
 msgid "Separator"
 msgstr "Separatore"
 
-#: Plugin/clEditorBar.cpp:250 Plugin/clEditorBar.cpp:254 Plugin/clEditorBar.cpp:258
-msgid "' to the clipboard"
-msgstr "' negli appunti"
+#: Plugin/clEditorBar.cpp:249
+#, c-format
+msgid "Copy '%s' to the clipboard"
+msgstr "Copia '%s' negli appunti"
 
-#: Plugin/clEditorBar.cpp:250 Plugin/clEditorBar.cpp:254 Plugin/clEditorBar.cpp:258
-msgid "Copy '"
-msgstr "Copia '"
-
-#: Plugin/clEditorBar.cpp:299
-msgid "' copied!"
-msgstr "' copiato!"
+#: Plugin/clEditorBar.cpp:292
+#, c-format
+msgid "'%s' copied!"
+msgstr "'%s' copiato!"
 
 #: Plugin/clGotoAnythingManager.cpp:156
 msgid "Current Tab > Close Tabs To The Right"
@@ -15244,22 +15248,14 @@ msgstr "Nuova abbreviazione..."
 msgid "An abbreviation with this name already exists!"
 msgstr "Esiste già un'abbreviazione con questo nome!"
 
-#: abbreviation/abbreviationssettingsdlg.cpp:98
-#, c-format
-msgid "Are you sure you want to delete '%s'"
-msgstr "Vuoi eliminare '%s'"
-
 #: abbreviation/abbreviationssettingsdlg.cpp:244
 msgid "This folder already contains a file named 'abbreviations.conf' - would you like to overwrite it?"
 msgstr "Questa cartella contiene già un file denominato 'abbreviations.conf': vuoi sovrascriverlo?"
 
-#: abbreviation/abbreviationssettingsdlg.cpp:251 wxcrafter/src/wxcrafter_plugin.cpp:588 wxcrafter/src/wxguicraft_main_view.cpp:2894
-msgid "'"
-msgstr "'"
-
-#: abbreviation/abbreviationssettingsdlg.cpp:251
-msgid "Abbreviations were exported to '"
-msgstr "Le abbreviazioni sono state esportate in '"
+#: abbreviation/abbreviationssettingsdlg.cpp:250
+#, c-format
+msgid "Abbreviations were exported to '%s'"
+msgstr "Le abbreviazioni sono state esportate in '%s'"
 
 #: abbreviation/abbreviationssettingsdlg.cpp:264
 msgid "The file does not seem to contain a valid abbreviations entries"
@@ -22473,20 +22469,18 @@ msgstr ""
 "Vuoi salvare le modifiche?"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:586
-msgid "'\n"
-msgstr "'\n"
-
-#: wxcrafter/src/wxcrafter_plugin.cpp:586
-msgid "Could not find target project: '"
-msgstr "Impossibile trovare il progetto destinazione: '"
+#, c-format
+msgid "Could not find target project: '%s'\n"
+msgstr "Impossibile trovare il progetto destinazione: '%s'\n"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:587
 msgid "Make sure that the virtual folder entry is valid (it must exist)\n"
 msgstr "Assicurati che la voce della cartella virtuale sia valida (deve esistere)\n"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:588
-msgid "Virtual Folder provided was: '"
-msgstr "La cartella virtuale fornita era: '"
+#, c-format
+msgid "Virtual Folder provided was: '%s'"
+msgstr "La cartella virtuale fornita era: '%s'"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:687
 msgid "wxCrafter: code generation completed successfully!"
@@ -22501,12 +22495,9 @@ msgid "Could not create virtual folder 'wxcrafter'"
 msgstr "Impossibile creare la cartella virtuale 'wxcrafter'"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:990
-msgid "'.\n"
-msgstr "'.\n"
-
-#: wxcrafter/src/wxcrafter_plugin.cpp:990
-msgid "Error while reading file content: '"
-msgstr "Errore durante la lettura del contenuto del file: '"
+#, c-format
+msgid "Error while reading file content: '%s'.\n"
+msgstr "Errore durante la lettura del contenuto del file: '%s'.\n"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:991
 msgid "Could not read file content"
@@ -23288,9 +23279,10 @@ msgstr "Un Main Sizer non può essere inserito in una finestra gestita da wxAui"
 msgid "Can't insert this item here"
 msgstr "Impossibile inserire questo elemento qui"
 
-#: wxcrafter/src/wxguicraft_main_view.cpp:2894
-msgid "Rename '"
-msgstr "Rinomina '"
+#: wxcrafter/src/wxguicraft_main_view.cpp:2893
+#, c-format
+msgid "Rename '%s'"
+msgstr "Rinomina '%s'"
 
 #: wxcrafter/src/wxguicraft_main_view.cpp:2895
 msgid "Enter the new name:"

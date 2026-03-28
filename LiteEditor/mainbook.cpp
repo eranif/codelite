@@ -380,8 +380,7 @@ bool MainBook::AskUserToSave(clEditor* editor)
         return true;
 
     // unsaved changes
-    wxString msg;
-    msg << _("Save changes to '") << editor->GetFileName().GetFullName() << wxT("' ?");
+    wxString msg = wxString::Format(_("Save changes to '%s'?"), editor->GetFileName().GetFullName());
     long style = wxYES_NO | wxICON_WARNING;
     if (!ManagerST::Get()->IsShutdownInProgress()) {
         style |= wxCANCEL;

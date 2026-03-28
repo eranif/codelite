@@ -55,8 +55,10 @@ void LanguageServerSettingsDlg::OnDeleteLSP(wxCommandEvent& event)
     }
     wxString serverName = m_notebook->GetPageText(sel);
 
-    if (::wxMessageBox(wxString() << _("Are you sure you want to delete '") << serverName << "' ?", "CodeLite",
-                       wxICON_QUESTION | wxCENTRE | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT, this) != wxYES) {
+    if (::wxMessageBox(wxString::Format(_("Are you sure you want to delete '%s'?"), serverName),
+                       "CodeLite",
+                       wxICON_QUESTION | wxCENTRE | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT,
+                       this) != wxYES) {
         return;
     }
     LanguageServerConfig::Get().RemoveServer(serverName);

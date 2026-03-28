@@ -82,7 +82,7 @@ void EOSWiki::CreateProject(const EOSProjectData& data)
     if (clCxxWorkspaceST::Get()->IsOpen()) {
         ProjectPtr proj = clCxxWorkspaceST::Get()->GetProject(data.GetName());
         if (proj) {
-            ::wxMessageBox(wxString() << _("A project with the same name: '") << data.GetName() << "'\nalready exists",
+            ::wxMessageBox(wxString::Format(_("A project with the same name: '%s'\nalready exists"), data.GetName()),
                            "CodeLite",
                            wxICON_ERROR | wxOK | wxOK_DEFAULT);
             return;

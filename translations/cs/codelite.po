@@ -556,8 +556,9 @@ msgstr "Překladač s tímto jménem již existuje"
 
 #: CodeFormatter/codeformatterdlg.cpp:120
 #, fuzzy
-msgid "Delete formatter '"
-msgstr "Vymazat kompilátor"
+#, c-format
+msgid "Delete formatter '%s'?"
+msgstr "Vymazat kompilátor '%s'?"
 
 #: CodeFormatter/codeformatterdlg.cpp:121
 #, fuzzy
@@ -1814,10 +1815,11 @@ msgstr ""
 msgid "Help"
 msgstr "Nápověda"
 
-#: DebugAdapterClient/DapDebuggerSettingsDlg.cpp:66
+#: DebugAdapterClient/DapDebuggerSettingsDlg.cpp:65
+#, c-format
 #, fuzzy
-msgid "Delete '"
-msgstr "Smazat"
+msgid "Delete '%s'?"
+msgstr "Smazat '%s'?"
 
 #: DebugAdapterClient/DapDebuggerSettingsDlg.cpp:77
 #, fuzzy
@@ -2289,7 +2291,8 @@ msgid "Could not find EOS CDT installation. Please install it and try again"
 msgstr ""
 
 #: EOSWiki/eoswiki.cpp:85
-msgid "A project with the same name: '"
+#, c-format
+msgid "A project with the same name: '%s'\nalready exists"
 msgstr ""
 
 #: EOSWiki/eoswiki.cpp:100 LiteEditor/fileview.cpp:2369
@@ -2953,10 +2956,11 @@ msgstr "&Pluginy"
 msgid "Help Plugin"
 msgstr "&Pluginy"
 
-#: HelpPlugin/helpplugin.cpp:86
+#: HelpPlugin/helpplugin.cpp:85
+#, c-format
 #, fuzzy
-msgid "Search the docs for '"
-msgstr "Hledat v těchto typech souborů"
+msgid "Search the docs for '%s'"
+msgstr "Hledat v těchto typech souborů '%s'"
 
 #: LanguageServer/languageserver.cpp:35 LanguageServer/languageserver.cpp:45
 msgid "Support for Language Server Protocol (LSP)"
@@ -3075,9 +3079,10 @@ msgid "Delete Breakpoint"
 msgstr "Smazat všechny breakpointy"
 
 #: LiteEditor/BuildOrderDialog.cpp:12
+#, c-format
 #, fuzzy
-msgid "Edit build order for project '"
-msgstr "Nelze najít vytvořenou konfiguraci projektu '"
+msgid "Edit build order for project '%s'"
+msgstr "Nelze najít vytvořenou konfiguraci projektu '%s'"
 
 #: LiteEditor/BuildOrderDialog.cpp:162
 msgid "You have un-saved changes, would you like to save them before changing configuration?"
@@ -3204,9 +3209,10 @@ msgid "Are you sure you want to delete this compiler option?"
 msgstr "JJste si jisti smazáním této volby komilátoru?"
 
 #: LiteEditor/CompilerMainPage.cpp:230 Plugin/LSP/LanguageServerSettingsDlg.cpp:58
-#, fuzzy
-msgid "Are you sure you want to delete '"
-msgstr "Jste si jistí s vymazáním  '%s'"
+#: abbreviation/abbreviationssettingsdlg.cpp:98
+#, c-format
+msgid "Are you sure you want to delete '%s'?"
+msgstr "Jste si jistí s vymazáním '%s'?"
 
 #: LiteEditor/CompilerMainPage.cpp:241
 msgid "Are you sure you want to delete this linker option?"
@@ -5252,12 +5258,9 @@ msgid "Rename"
 msgstr "Přejmenovat"
 
 #: LiteEditor/edit_configuration.cpp:183
-msgid "Remove configuration '"
-msgstr "Odstranit konfiguraci '"
-
-#: LiteEditor/edit_configuration.cpp:184
-msgid "' ?"
-msgstr "' ?"
+#, c-format
+msgid "Remove configuration '%s'?"
+msgstr "Odstranit konfiguraci '%s'?"
 
 #: LiteEditor/edit_configuration.h:67
 msgid "Edit Configurations"
@@ -5267,9 +5270,10 @@ msgstr "Upravit konfigurace"
 msgid "&Close"
 msgstr "&Zavřít"
 
-#: LiteEditor/edit_workspace_conf_dlg.cpp:119
-msgid "Remove workspace configuration '"
-msgstr "Odstranit konfiguraci pracovní plochy '"
+#: LiteEditor/edit_workspace_conf_dlg.cpp:118
+#, c-format
+msgid "Remove workspace configuration '%s'?"
+msgstr "Odstranit konfiguraci pracovní plochy '%s'?"
 
 #: LiteEditor/edit_workspace_conf_dlg.cpp:132
 msgid "New Configuration Name:"
@@ -7577,9 +7581,10 @@ msgstr "Upravit výraz"
 msgid "Insert new value for '%s':"
 msgstr "Vložit novou hodnotu pro '%s':"
 
-#: LiteEditor/mainbook.cpp:384
-msgid "Save changes to '"
-msgstr "Uložit změny do '"
+#: LiteEditor/mainbook.cpp:383
+#, c-format
+msgid "Save changes to '%s'?"
+msgstr "Uložit změny do '%s'?"
 
 #: LiteEditor/mainbook.cpp:922 LiteEditor/mainbook.cpp:1079 LiteEditor/mainbook.cpp:1120 LiteEditor/replaceinfilespanel.cpp:428
 msgid "Save Modified Files"
@@ -12297,18 +12302,15 @@ msgstr ""
 msgid "Separator"
 msgstr "enumerator"
 
-#: Plugin/clEditorBar.cpp:250 Plugin/clEditorBar.cpp:254 Plugin/clEditorBar.cpp:258
+#: Plugin/clEditorBar.cpp:249
 #, fuzzy
-msgid "' to the clipboard"
-msgstr "Kopírovat příkaz SWL do schránky"
+#, c-format
+msgid "Copy '%s' to the clipboard"
+msgstr "Kopírovat '%s' příkaz SWL do schránky"
 
-#: Plugin/clEditorBar.cpp:250 Plugin/clEditorBar.cpp:254 Plugin/clEditorBar.cpp:258
-#, fuzzy
-msgid "Copy '"
-msgstr "Kopírovat"
-
-#: Plugin/clEditorBar.cpp:299
-msgid "' copied!"
+#: Plugin/clEditorBar.cpp:292
+#, c-format
+msgid "'%s' copied!"
 msgstr ""
 
 #: Plugin/clGotoAnythingManager.cpp:156
@@ -16082,21 +16084,13 @@ msgstr "Nová zkratka"
 msgid "An abbreviation with this name already exists!"
 msgstr "Zkratka s tímto jménem již existuje!"
 
-#: abbreviation/abbreviationssettingsdlg.cpp:98
-#, c-format
-msgid "Are you sure you want to delete '%s'"
-msgstr "Jste si jistí s vymazáním  '%s'"
-
 #: abbreviation/abbreviationssettingsdlg.cpp:244
 msgid "This folder already contains a file named 'abbreviations.conf' - would you like to overwrite it?"
 msgstr ""
 
-#: abbreviation/abbreviationssettingsdlg.cpp:251 wxcrafter/src/wxcrafter_plugin.cpp:588 wxcrafter/src/wxguicraft_main_view.cpp:2894
-msgid "'"
-msgstr "'"
-
-#: abbreviation/abbreviationssettingsdlg.cpp:251
-msgid "Abbreviations were exported to '"
+#: abbreviation/abbreviationssettingsdlg.cpp:250
+#, c-format
+msgid "Abbreviations were exported to '%s'"
 msgstr ""
 
 #: abbreviation/abbreviationssettingsdlg.cpp:264
@@ -23389,13 +23383,9 @@ msgstr "Jste si vědomi ztráty všech změn?"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:586
 #, fuzzy
-msgid "'\n"
-msgstr "'"
-
-#: wxcrafter/src/wxcrafter_plugin.cpp:586
-#, fuzzy
-msgid "Could not find target project: '"
-msgstr "Není možné najíc cílový projekt"
+#, c-format
+msgid "Could not find target project: '%s'\n"
+msgstr "Není možné najíc cílový projekt '%s'\n"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:587
 msgid "Make sure that the virtual folder entry is valid (it must exist)\n"
@@ -23403,8 +23393,9 @@ msgstr ""
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:588
 #, fuzzy
-msgid "Virtual Folder provided was: '"
-msgstr "Virtuální sžka ro řidání nových souborů"
+#, c-format
+msgid "Virtual Folder provided was: '%s'"
+msgstr "Virtuální sžka ro řidání nových souborů '%s'"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:687
 msgid "wxCrafter: code generation completed successfully!"
@@ -23420,11 +23411,8 @@ msgid "Could not create virtual folder 'wxcrafter'"
 msgstr "Nelze generovat cílový soubor '%s'"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:990
-msgid "'.\n"
-msgstr ""
-
-#: wxcrafter/src/wxcrafter_plugin.cpp:990
-msgid "Error while reading file content: '"
+#, c-format
+msgid "Error while reading file content: '%s'.\n"
 msgstr ""
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:991
@@ -24288,10 +24276,10 @@ msgstr ""
 msgid "Can't insert this item here"
 msgstr ""
 
-#: wxcrafter/src/wxguicraft_main_view.cpp:2894
-#, fuzzy
-msgid "Rename '"
-msgstr "Přejmenovat"
+#: wxcrafter/src/wxguicraft_main_view.cpp:2893
+#, c-format
+msgid "Rename '%s'"
+msgstr "Přejmenovat '%s'"
 
 #: wxcrafter/src/wxguicraft_main_view.cpp:2895
 #, fuzzy

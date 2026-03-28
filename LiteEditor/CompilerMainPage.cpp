@@ -227,7 +227,7 @@ void CompilerMainPage::OnDeleteFileType(wxCommandEvent& event)
     wxDataViewItem item = m_dvListCtrlFileTemplates->RowToItem(sel);
     wxString filetype = m_dvListCtrlFileTemplates->GetItemText(item);
 
-    if (wxMessageBox(wxString() << _("Are you sure you want to delete '") << filetype << "'?",
+    if (wxMessageBox(wxString::Format(_("Are you sure you want to delete '%s'?"), filetype),
                      wxT("CodeLite"),
                      wxYES_NO | wxCANCEL) == wxYES) {
         m_dvListCtrlFileTemplates->DeleteItem(sel);

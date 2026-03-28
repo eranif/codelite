@@ -583,9 +583,9 @@ void wxCrafterPlugin::OnBitmapCodeGenerationCompleted(wxCommandEvent& e)
 
             if (!project) {
                 wxString msg;
-                msg << _("Could not find target project: '") << projectName << _("'\n");
+                msg << wxString::Format(_("Could not find target project: '%s'\n"), projectName);
                 msg << _("Make sure that the virtual folder entry is valid (it must exist)\n");
-                msg << _("Virtual Folder provided was: '") << vd << _("'");
+                msg << wxString::Format(_("Virtual Folder provided was: '%s'"), vd);
                 ::wxMessageBox(msg, _("wxCrafter"), wxOK | wxICON_ERROR);
                 return;
             }
@@ -982,7 +982,7 @@ bool wxCrafterPlugin::DoReadFileContentAndPrompt(const wxFileName& fn, wxString&
     // Read the header file content from the disk
     if (!wxCrafter::ReadFileContent(fn.GetFullPath(), content)) {
         wxString msg;
-        msg << _("Error while reading file content: '") << fn.GetFullPath() << _("'.\n")
+        msg << wxString::Format(_("Error while reading file content: '%s'.\n"), fn.GetFullPath())
             << _("Could not read file content");
         ::wxMessageBox(msg, _("wxCrafter"), wxICON_WARNING | wxOK | wxCENTER, EventNotifier::Get()->TopFrame());
         return false;

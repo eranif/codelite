@@ -22405,12 +22405,9 @@ msgstr ""
 "Сохранить изменения?"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:586
-msgid "'\n"
-msgstr "'\n"
-
-#: wxcrafter/src/wxcrafter_plugin.cpp:586
-msgid "Could not find target project: '"
-msgstr "Не удалось найти целевой проект: '"
+#, c-format
+msgid "Could not find target project: '%s'\n"
+msgstr "Не удалось найти целевой проект: '%s'\n"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:587
 msgid "Make sure that the virtual folder entry is valid (it must exist)\n"

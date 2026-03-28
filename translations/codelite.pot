@@ -23562,11 +23562,8 @@ msgid ""
 msgstr ""
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:586
-msgid "'\n"
-msgstr ""
-
-#: wxcrafter/src/wxcrafter_plugin.cpp:586
-msgid "Could not find target project: '"
+#, c-format
+msgid "Could not find target project: '%s'\n"
 msgstr ""
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:587

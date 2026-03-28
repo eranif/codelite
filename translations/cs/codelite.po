@@ -23386,13 +23386,9 @@ msgstr "Jste si vědomi ztráty všech změn?"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:586
 #, fuzzy
-msgid "'\n"
-msgstr "'"
-
-#: wxcrafter/src/wxcrafter_plugin.cpp:586
-#, fuzzy
-msgid "Could not find target project: '"
-msgstr "Není možné najíc cílový projekt"
+#, c-format
+msgid "Could not find target project: '%s'\n"
+msgstr "Není možné najíc cílový projekt '%s'\n"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:587
 msgid "Make sure that the virtual folder entry is valid (it must exist)\n"

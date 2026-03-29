@@ -42,16 +42,14 @@ void PHPConfigurationData::FromJSON(const JSONItem& json)
 
 JSONItem PHPConfigurationData::ToJSON() const
 {
-    JSONItem e = JSONItem::createObject();
-    e.addProperty("m_xdebugPort", m_xdebugPort);
-    e.addProperty("m_xdebugHost", m_xdebugHost);
-    e.addProperty("m_ccIncludePath", m_ccIncludePath);
-    e.addProperty("m_flags", m_flags);
-    e.addProperty("m_xdebugIdeKey", m_xdebugIdeKey);
-    e.addProperty("m_findInFilesMask", m_findInFilesMask);
-    e.addProperty("m_workspaceType", m_workspaceType);
-    e.addProperty("m_settersGettersFlags", m_settersGettersFlags);
-    return e;
+    return nlohmann::json{{"m_xdebugPort", m_xdebugPort},
+                          {"m_xdebugHost", StringUtils::ToStdString(m_xdebugHost)},
+                          {"m_ccIncludePath", JsonUtils::ToJson(m_ccIncludePath)},
+                          {"m_flags", m_flags},
+                          {"m_xdebugIdeKey", StringUtils::ToStdString(m_xdebugIdeKey)},
+                          {"m_findInFilesMask", StringUtils::ToStdString(m_findInFilesMask)},
+                          {"m_workspaceType", m_workspaceType},
+                          {"m_settersGettersFlags", m_settersGettersFlags}};
 }
 
 wxString PHPConfigurationData::GetIncludePathsAsString() const

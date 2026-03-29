@@ -45,11 +45,9 @@ void clDockerSettings::FromJSON(const JSONItem& json)
 
 JSONItem clDockerSettings::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("docker", m_docker.GetFullPath());
-    json.addProperty("docker-compose", m_dockerCompose.GetFullPath());
-    json.addProperty("flags", m_flags);
-    return json;
+    return nlohmann::json{{"docker", StringUtils::ToStdString(m_docker.GetFullPath())},
+                          {"docker-compose", StringUtils::ToStdString(m_dockerCompose.GetFullPath())},
+                          {"flags", m_flags}};
 }
 
 void clDockerSettings::Load()

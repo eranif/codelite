@@ -513,13 +513,7 @@ SettersGetterData::SettersGetterData()
 }
 
 void SettersGetterData::FromJSON(const JSONItem& json) { m_flags = json.namedObject("m_flags").toSize_t(m_flags); }
-
-JSONItem SettersGetterData::ToJSON() const
-{
-    JSONItem element = JSONItem::createObject();
-    element.addProperty("m_flags", m_flags);
-    return element;
-}
+JSONItem SettersGetterData::ToJSON() const { return nlohmann::json{{"m_flags", m_flags}}; }
 void SettersGettersDlg::OnFilter(wxCommandEvent& event) { UpdateTree(); }
 void SettersGettersDlg::OnSettersReturnReference(wxCommandEvent& event)
 {

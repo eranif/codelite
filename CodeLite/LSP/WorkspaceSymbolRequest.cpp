@@ -34,12 +34,7 @@ public:
 
     void FromJSON(const JSONItem& json) override { m_query = json["query"].toString(); }
 
-    JSONItem ToJSON() const override
-    {
-        JSONItem json = JSONItem::createObject();
-        json.addProperty("query", m_query);
-        return json;
-    }
+    JSONItem ToJSON() const override { return nlohmann::json{{"query", StringUtils::ToStdString(m_query)}}; }
 
     void SetQuery(const wxString& query) { this->m_query = query; }
     const wxString& GetQuery() const { return this->m_query; }

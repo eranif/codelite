@@ -50,19 +50,17 @@ void PHPProjectSettingsData::FromJSON(const JSONItem& ele)
 
 JSONItem PHPProjectSettingsData::ToJSON() const
 {
-    JSONItem settings = JSONItem::createObject();
-    settings.addProperty("m_runAs", m_runAs);
-    settings.addProperty("m_phpExe", m_phpExe);
-    settings.addProperty("m_indexFile", m_indexFile);
-    settings.addProperty("m_args", m_args);
-    settings.addProperty("m_workingDirectory", m_workingDirectory);
-    settings.addProperty("m_projectURL", m_projectURL);
-    settings.addProperty("m_includePath", m_includePath);
-    settings.addProperty("m_ccIncludePath", m_ccIncludePath);
-    settings.addProperty("m_flags", m_flags);
-    settings.addProperty("m_phpIniFile", m_phpIniFile);
-    settings.addProperty("m_fileMapping", m_fileMapping);
-    return settings;
+    return nlohmann::json{{"m_runAs", m_runAs},
+                          {"m_phpExe", StringUtils::ToStdString(m_phpExe)},
+                          {"m_indexFile", StringUtils::ToStdString(m_indexFile)},
+                          {"m_args", StringUtils::ToStdString(m_args)},
+                          {"m_workingDirectory", StringUtils::ToStdString(m_workingDirectory)},
+                          {"m_projectURL", StringUtils::ToStdString(m_projectURL)},
+                          {"m_includePath", StringUtils::ToStdString(m_includePath)},
+                          {"m_ccIncludePath", StringUtils::ToStdString(m_ccIncludePath)},
+                          {"m_flags", m_flags},
+                          {"m_phpIniFile", StringUtils::ToStdString(m_phpIniFile)},
+                          {"m_fileMapping", JsonUtils::ToJson(m_fileMapping)}};
 }
 
 void PHPProjectSettingsData::MergeWithGlobalSettings()

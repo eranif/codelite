@@ -42,15 +42,13 @@ void HelpPluginSettings::FromJSON(const JSONItem& json)
 
 JSONItem HelpPluginSettings::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("m_cxxDocset", m_cxxDocset);
-    json.addProperty("m_phpDocset", m_phpDocset);
-    json.addProperty("m_htmlDocset", m_htmlDocset);
-    json.addProperty("m_cmakeDocset", m_cmakeDocset);
-    json.addProperty("m_cssDocset", m_cssDocset);
-    json.addProperty("m_jsDocset", m_jsDocset);
-    json.addProperty("m_javaDocset", m_javaDocset);
-    return json;
+    return nlohmann::json{{"m_cxxDocset", StringUtils::ToStdString(m_cxxDocset)},
+                          {"m_phpDocset", StringUtils::ToStdString(m_phpDocset)},
+                          {"m_htmlDocset", StringUtils::ToStdString(m_htmlDocset)},
+                          {"m_cmakeDocset", StringUtils::ToStdString(m_cmakeDocset)},
+                          {"m_cssDocset", StringUtils::ToStdString(m_cssDocset)},
+                          {"m_jsDocset", StringUtils::ToStdString(m_jsDocset)},
+                          {"m_javaDocset", StringUtils::ToStdString(m_javaDocset)}};
 }
 
 wxString HelpPluginSettings::GetDocset(FileExtManager::FileType type) const

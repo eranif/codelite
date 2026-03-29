@@ -76,14 +76,12 @@ void LintOptions::FromJSON(const JSONItem& json)
 
 JSONItem LintOptions::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject();
-    element.addProperty("lintOnFileLoad", m_lintOnFileLoad);
-    element.addProperty("lintOnFileSave", m_lintOnFileSave);
-    element.addProperty("phpcsPhar", m_phpcsPhar);
-    element.addProperty("phpmdPhar", m_phpmdPhar);
-    element.addProperty("phpmdRules", m_phpmdRules);
-    element.addProperty("phpstanPhar", m_phpstanPhar);
-    return element;
+    return nlohmann::json{{"lintOnFileLoad", m_lintOnFileLoad},
+                          {"lintOnFileSave", m_lintOnFileSave},
+                          {"phpcsPhar", StringUtils::ToStdString(m_phpcsPhar)},
+                          {"phpmdPhar", StringUtils::ToStdString(m_phpmdPhar)},
+                          {"phpmdRules", StringUtils::ToStdString(m_phpmdRules)},
+                          {"phpstanPhar", StringUtils::ToStdString(m_phpstanPhar)}};
 }
 
 LintOptions& LintOptions::Load()

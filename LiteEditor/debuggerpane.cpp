@@ -267,12 +267,7 @@ void DebuggerPane::OnSettingsChanged(wxCommandEvent& event)
 
 void DebuggerPaneConfig::FromJSON(const JSONItem& json) { m_windows = json.namedObject("m_windows").toSize_t(All); }
 
-JSONItem DebuggerPaneConfig::ToJSON() const
-{
-    JSONItem e = JSONItem::createObject();
-    e.addProperty("m_windows", m_windows);
-    return e;
-}
+JSONItem DebuggerPaneConfig::ToJSON() const { return nlohmann::json{{"m_windows", m_windows}}; }
 
 DebuggerPaneConfig::DebuggerPaneConfig()
     : clConfigItem("debuggerWindows")

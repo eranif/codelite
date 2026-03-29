@@ -42,12 +42,10 @@ void DiffConfig::FromJSON(const JSONItem& json)
 
 JSONItem DiffConfig::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject();
-    element.addProperty("m_flags", m_flags);
-    element.addProperty("m_viewFlags", m_viewFlags);
-    element.addProperty("m_leftFile", m_leftFile);
-    element.addProperty("m_rightFile", m_rightFile);
-    return element;
+    return nlohmann::json{{"m_flags", m_flags},
+                          {"m_viewFlags", m_viewFlags},
+                          {"m_leftFile", StringUtils::ToStdString(m_leftFile)},
+                          {"m_rightFile", StringUtils::ToStdString(m_rightFile)}};
 }
 
 DiffConfig& DiffConfig::Load()

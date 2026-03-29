@@ -58,13 +58,7 @@ struct WXDLLIMPEXP_SDK WordSetIndex {
     {
     }
     WordSetIndex() = default;
-    JSONItem to_json() const
-    {
-        auto item = JSONItem::createObject();
-        item.addProperty("index", index);
-        item.addProperty("is_substyle", is_substyle);
-        return item;
-    }
+    JSONItem to_json() const { return nlohmann::json{{"index", index}, {"is_substyle", is_substyle}}; }
 
     void from_json(const JSONItem& json)
     {

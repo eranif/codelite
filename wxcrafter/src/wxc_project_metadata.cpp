@@ -49,21 +49,18 @@ void wxcProjectMetadata::FromJSON(const JSONItem& json)
 
 JSONItem wxcProjectMetadata::ToJSON()
 {
-    JSONItem metadata = JSONItem::createObject();
     UpdatePaths();
-
-    metadata.addProperty("m_generatedFilesDir", m_generatedFilesDir);
-    metadata.addProperty("m_objCounter", (int)m_objCounter);
-    metadata.addProperty("m_includeFiles", m_includeFiles);
-    metadata.addProperty("m_bitmapFunction", m_bitmapFunction);
-    metadata.addProperty("m_bitmapsFile", m_bitmapsFile);
-    metadata.addProperty("m_GenerateCodeTypes", m_GenerateCodeTypes);
-    metadata.addProperty("m_outputFileName", m_outputFileName);
-    metadata.addProperty("m_firstWindowId", m_firstWindowId);
-    metadata.addProperty("m_useEnum", m_useEnum);
-    metadata.addProperty("m_useUnderscoreMacro", m_useUnderscoreMacro);
-    metadata.addProperty("m_addHandlers", m_addHandlers);
-    return metadata;
+    return nlohmann::json{{"m_generatedFilesDir", StringUtils::ToStdString(m_generatedFilesDir)},
+                          {"m_objCounter", m_objCounter},
+                          {"m_includeFiles", JsonUtils::ToJson(m_includeFiles)},
+                          {"m_bitmapFunction", StringUtils::ToStdString(m_bitmapFunction)},
+                          {"m_bitmapsFile", StringUtils::ToStdString(m_bitmapsFile)},
+                          {"m_GenerateCodeTypes", m_GenerateCodeTypes},
+                          {"m_outputFileName", StringUtils::ToStdString(m_outputFileName)},
+                          {"m_firstWindowId", m_firstWindowId},
+                          {"m_useEnum", m_useEnum},
+                          {"m_useUnderscoreMacro", m_useUnderscoreMacro},
+                          {"m_addHandlers", m_addHandlers}};
 }
 
 void wxcProjectMetadata::AppendCustomControlsJSON(const wxArrayString& controls, JSONItem& element) const

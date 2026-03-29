@@ -4,15 +4,13 @@
 
 JSONItem DapEntry::To() const
 {
-    auto json = JSONItem::createObject();
-    json.addProperty("name", m_name);
-    json.addProperty("command", m_command);
-    json.addProperty("connection_string", m_connection_string);
-    json.addProperty("environment", m_environment);
-    json.addProperty("flags", m_flags);
-    json.addProperty("env_format", (int)m_envFormat);
-    json.addProperty("launch_type", (int)m_launch_type);
-    return json;
+    return nlohmann::json{{"name", StringUtils::ToStdString(m_name)},
+                          {"command", StringUtils::ToStdString(m_command)},
+                          {"connection_string", StringUtils::ToStdString(m_connection_string)},
+                          {"environment", StringUtils::ToStdString(m_environment)},
+                          {"flags", m_flags},
+                          {"env_format", m_envFormat},
+                          {"launch_type", m_launch_type}};
 }
 
 void DapEntry::From(const JSONItem& json)

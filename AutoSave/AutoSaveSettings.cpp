@@ -14,12 +14,7 @@ void AutoSaveSettings::FromJSON(const JSONItem& json)
 }
 
 JSONItem AutoSaveSettings::ToJSON() const
-{
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("m_flags", m_flags);
-    json.addProperty("m_checkInterval", m_checkInterval);
-    return json;
-}
+{ return nlohmann::json{{"m_flags", m_flags}, {"m_checkInterval", m_checkInterval}}; }
 
 AutoSaveSettings AutoSaveSettings::Load()
 {

@@ -40,13 +40,11 @@ void PluginInfo::FromJSON(const JSONItem& json)
 
 JSONItem PluginInfo::ToJSON() const
 {
-    JSONItem e = JSONItem::createObject();
-    e.addProperty("name", m_name);
-    e.addProperty("author", m_author);
-    e.addProperty("description", m_description);
-    e.addProperty("version", m_version);
-    e.addProperty("flags", m_flags);
-    return e;
+    return nlohmann::json{{"name", StringUtils::ToStdString(m_name)},
+                          {"author", StringUtils::ToStdString(m_author)},
+                          {"description", StringUtils::ToStdString(m_description)},
+                          {"version", StringUtils::ToStdString(m_version)},
+                          {"flags", m_flags}};
 }
 
 //-------------------------------------------
@@ -92,11 +90,7 @@ void PluginInfoArray::FromJSON(const JSONItem& json)
 }
 
 JSONItem PluginInfoArray::ToJSON() const
-{
-    JSONItem el = JSONItem::createObject();
-    el.addProperty("enabledPlugins", m_enabledPlugins);
-    return el;
-}
+{ return nlohmann::json{{"enabledPlugins", JsonUtils::ToJson(m_enabledPlugins)}}; }
 
 void PluginInfoArray::EnablePlugin(const wxString& plugin)
 {

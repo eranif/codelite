@@ -48,9 +48,4 @@ void AbbreviationJSONEntry::FromJSON(const JSONItem& json)
 }
 
 JSONItem AbbreviationJSONEntry::ToJSON() const
-{
-    JSONItem ele = JSONItem::createObject();
-    ele.addProperty("entries", m_entries);
-    ele.addProperty("autoInsert", m_autoInsert);
-    return ele;
-}
+{ return nlohmann::json{{"entries", JsonUtils::ToJson(m_entries)}, {"autoInsert", m_autoInsert}}; }

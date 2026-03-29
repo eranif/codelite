@@ -138,25 +138,24 @@ void AuiPaneInfo::FromJSON(const JSONItem& json)
 
 JSONItem AuiPaneInfo::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject();
-    element.addProperty(wxT("m_name"), m_name);
-    element.addProperty(wxT("m_caption"), m_caption);
-    element.addProperty(wxT("m_dockDirection"), m_dockDirection);
-    element.addProperty(wxT("m_layer"), m_layer);
-    element.addProperty(wxT("m_row"), m_row);
-    element.addProperty(wxT("m_position"), m_position);
-    element.addProperty(wxT("m_bestSize"), m_bestSize);
-    element.addProperty(wxT("m_minSize"), m_minSize);
-    element.addProperty(wxT("m_maxSize"), m_maxSize);
-    element.addProperty(wxT("m_resizable"), m_resizable);
-    element.addProperty(wxT("m_captionVisible"), m_captionVisible);
-    element.addProperty(wxT("m_closeButton"), m_closeButton);
-    element.addProperty(wxT("m_minButton"), m_minButton);
-    element.addProperty(wxT("m_maxButton"), m_maxButton);
-    element.addProperty(wxT("m_pinButton"), m_pinButton);
-    element.addProperty(wxT("m_toolbarPane"), m_toolbarPane);
-    return element;
+    return nlohmann::json{{"m_name", StringUtils::ToStdString(m_name)},
+                          {"m_caption", StringUtils::ToStdString(m_caption)},
+                          {"m_dockDirection", StringUtils::ToStdString(m_dockDirection)},
+                          {"m_layer", m_layer},
+                          {"m_row", m_row},
+                          {"m_position", m_position},
+                          {"m_bestSize", JsonUtils::ToJsonValue(m_bestSize)},
+                          {"m_minSize", JsonUtils::ToJsonValue(m_minSize)},
+                          {"m_maxSize", JsonUtils::ToJsonValue(m_maxSize)},
+                          {"m_resizable", m_resizable},
+                          {"m_captionVisible", m_captionVisible},
+                          {"m_closeButton", m_closeButton},
+                          {"m_minButton", m_minButton},
+                          {"m_maxButton", m_maxButton},
+                          {"m_pinButton", m_pinButton},
+                          {"m_toolbarPane", m_toolbarPane}};
 }
+
 void AuiPaneInfo::Reset()
 {
     m_dockDirection = "wxAUI_DOCK_LEFT";

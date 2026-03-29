@@ -597,28 +597,26 @@ void TagsOptionsData::FromJSON(const JSONItem& json)
 
 JSONItem TagsOptionsData::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("version", m_version);
-    json.addProperty("m_ccFlags", m_ccFlags);
-    json.addProperty("m_ccColourFlags", m_ccColourFlags);
-    json.addProperty("m_tokens", m_tokens);
-    json.addProperty("m_types", m_types);
-    json.addProperty("m_fileSpec", m_fileSpec);
-    json.addProperty("m_languages", m_languages);
-    json.addProperty("m_minWordLen", m_minWordLen);
-    json.addProperty("m_parserSearchPaths", m_parserSearchPaths);
-    json.addProperty("m_parserEnabled", m_parserEnabled);
-    json.addProperty("m_parserExcludePaths", m_parserExcludePaths);
-    json.addProperty("m_maxItemToColour", m_maxItemToColour);
-    json.addProperty("m_macrosFiles", m_macrosFiles);
-    json.addProperty("m_clangOptions", m_clangOptions);
-    json.addProperty("m_clangBinary", m_clangBinary);
-    json.addProperty("m_clangCmpOptions", m_clangCmpOptions);
-    json.addProperty("m_clangSearchPaths", m_clangSearchPaths);
-    json.addProperty("m_clangMacros", m_clangMacros);
-    json.addProperty("m_clangCachePolicy", m_clangCachePolicy);
-    json.addProperty("m_ccNumberOfDisplayItems", m_ccNumberOfDisplayItems);
-    return json;
+    return nlohmann::json{{"version", m_version},
+                          {"m_ccFlags", m_ccFlags},
+                          {"m_ccColourFlags", m_ccColourFlags},
+                          {"m_tokens", JsonUtils::ToJson(m_tokens)},
+                          {"m_types", JsonUtils::ToJson(m_types)},
+                          {"m_fileSpec", StringUtils::ToStdString(m_fileSpec)},
+                          {"m_languages", JsonUtils::ToJson(m_languages)},
+                          {"m_minWordLen", m_minWordLen},
+                          {"m_parserSearchPaths", JsonUtils::ToJson(m_parserSearchPaths)},
+                          {"m_parserEnabled", m_parserEnabled},
+                          {"m_parserExcludePaths", JsonUtils::ToJson(m_parserExcludePaths)},
+                          {"m_maxItemToColour", m_maxItemToColour},
+                          {"m_macrosFiles", StringUtils::ToStdString(m_macrosFiles)},
+                          {"m_clangOptions", m_clangOptions},
+                          {"m_clangBinary", StringUtils::ToStdString(m_clangBinary)},
+                          {"m_clangCmpOptions", StringUtils::ToStdString(m_clangCmpOptions)},
+                          {"m_clangSearchPaths", JsonUtils::ToJson(m_clangSearchPaths)},
+                          {"m_clangMacros", StringUtils::ToStdString(m_clangMacros)},
+                          {"m_clangCachePolicy", StringUtils::ToStdString(m_clangCachePolicy)},
+                          {"m_ccNumberOfDisplayItems", m_ccNumberOfDisplayItems}};
 }
 
 wxString TagsOptionsData::DoJoinArray(const wxArrayString& arr) const

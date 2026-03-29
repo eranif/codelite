@@ -62,18 +62,18 @@ void StyleProperty::FromJSON(const JSONItem& json)
 
 JSONItem StyleProperty::ToJSON(bool portable) const
 {
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("Id", GetId());
-    json.addProperty("Name", GetName());
-    json.addProperty("Flags", m_flags);
-    json.addProperty("FontDesc", portable ? wxString() : GetFontInfoDesc());
-    json.addProperty("Colour", GetFgColour());
-    json.addProperty("BgColour", GetBgColour());
-    json.addProperty("Size", m_fontSize);
-    json.addProperty("Bold", m_isBold);
-    json.addProperty("Italic", m_isItalic);
-    json.addProperty("Underlined", m_isUnderlined);
-    return json;
+    return nlohmann::json{
+        {"Id", GetId()},
+        {"Name", StringUtils::ToStdString(GetName())},
+        {"Flags", m_flags},
+        {"FontDesc", StringUtils::ToStdString(portable ? wxString() : GetFontInfoDesc())},
+        {"Colour", StringUtils::ToStdString(GetFgColour())},
+        {"BgColour", StringUtils::ToStdString(GetBgColour())},
+        {"Size", m_fontSize},
+        {"Bold", m_isBold},
+        {"Italic", m_isItalic},
+        {"Underlined", m_isUnderlined},
+    };
 }
 
 void StyleProperty::FromAttributes(wxFont* font) const

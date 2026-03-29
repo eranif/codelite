@@ -25,9 +25,4 @@ void XDebugBreakpoint::FromJSON(const JSONItem& json)
 }
 
 JSONItem XDebugBreakpoint::ToJSON() const
-{
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("m_fileName", m_fileName);
-    json.addProperty("m_line", m_line);
-    return json;
-}
+{ return nlohmann::json{{"m_fileName", StringUtils::ToStdString(m_fileName)}, {"m_line", m_line}}; }

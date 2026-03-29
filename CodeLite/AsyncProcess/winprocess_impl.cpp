@@ -308,25 +308,13 @@ IProcess* WinProcessImpl::Execute(
     bool redirectOutput = !(flags & IProcessNoRedirect);
 
     // The steps for redirecting child process's STDOUT:
-    //     1. Save current STDOUT, to be restored later.
-    //     2. Create anonymous pipe to be STDOUT for child process.
-    //     3. Set STDOUT of the parent process to be write handle to
-    //        the pipe, so it is inherited by the child process.
-    //     4. Create a noninheritable duplicate of the read handle and
+    //     1. Create anonymous pipe to be STDOUT for child process.
+    //     2. Create a noninheritable duplicate of the read handle and
     //        close the inheritable read handle.
 
     if (redirectOutput) {
-        // Save the handle to the current STDOUT.
-        prc->hSaveStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-
         // Create a pipe for the child process's STDOUT.
         if (!CreatePipe(&prc->hChildStdoutRd, &prc->hChildStdoutWr, &saAttr, 0)) {
-            delete prc;
-            return NULL;
-        }
-
-        // Set a write handle to the pipe to be STDOUT.
-        if (!SetStdHandle(STD_OUTPUT_HANDLE, prc->hChildStdoutWr)) {
             delete prc;
             return NULL;
         }
@@ -346,24 +334,12 @@ IProcess* WinProcessImpl::Execute(
         CloseHandle(prc->hChildStdoutRd);
 
         // The steps for redirecting child process's STDERR:
-        //     1. Save current STDERR, to be restored later.
-        //     2. Create anonymous pipe to be STDERR for child process.
-        //     3. Set STDERR of the parent process to be write handle to
-        //        the pipe, so it is inherited by the child process.
-        //     4. Create a noninheritable duplicate of the read handle and
+        //     1. Create anonymous pipe to be STDERR for child process.
+        //     2. Create a noninheritable duplicate of the read handle and
         //        close the inheritable read handle.
-
-        // Save the handle to the current STDERR.
-        prc->hSaveStderr = GetStdHandle(STD_ERROR_HANDLE);
 
         // Create a pipe for the child process's STDERR.
         if (!CreatePipe(&prc->hChildStderrRd, &prc->hChildStderrWr, &saAttr, 0)) {
-            delete prc;
-            return NULL;
-        }
-
-        // Set a write handle to the pipe to be STDERR.
-        if (!SetStdHandle(STD_ERROR_HANDLE, prc->hChildStderrWr)) {
             delete prc;
             return NULL;
         }
@@ -383,26 +359,16 @@ IProcess* WinProcessImpl::Execute(
         CloseHandle(prc->hChildStderrRd);
 
         // The steps for redirecting child process's STDIN:
-        //     1.  Save current STDIN, to be restored later.
-        //     2.  Create anonymous pipe to be STDIN for child process.
-        //     3.  Set STDIN of the parent to be the read handle to the
-        //         pipe, so it is inherited by the child process.
-        //     4.  Create a noninheritable duplicate of the write handle,
+        //     1.  Create anonymous pipe to be STDIN for child process.
+        //     2.  Create a noninheritable duplicate of the write handle,
         //         and close the inheritable write handle.
-
-        // Save the handle to the current STDIN.
-        prc->hSaveStdin = GetStdHandle(STD_INPUT_HANDLE);
 
         // Create a pipe for the child process's STDIN.
         if (!CreatePipe(&prc->hChildStdinRd, &prc->hChildStdinWr, &saAttr, 0)) {
             delete prc;
             return NULL;
         }
-        // Set a read handle to the pipe to be STDIN.
-        if (!SetStdHandle(STD_INPUT_HANDLE, prc->hChildStdinRd)) {
-            delete prc;
-            return NULL;
-        }
+
         // Duplicate the write handle to the pipe so it is not inherited.
         fSuccess = DuplicateHandle(GetCurrentProcess(),
                                    prc->hChildStdinWr,
@@ -439,7 +405,14 @@ IProcess* WinProcessImpl::Execute(
 
     if (flags & IProcessCreateWithHiddenConsole) {
         siStartInfo.wShowWindow = SW_HIDE;
-        creationFlags = CREATE_NEW_CONSOLE | CREATE_NEW_PROCESS_GROUP;
+        // When redirecting output, we cannot use CREATE_NEW_CONSOLE because Windows
+        // ignores STARTF_USESTDHANDLES when CREATE_NEW_CONSOLE is set. The child would
+        // get its own console buffer that we cannot read from. Use CREATE_NO_WINDOW instead.
+        if (redirectOutput) {
+            creationFlags = CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP;
+        } else {
+            creationFlags = CREATE_NEW_CONSOLE | CREATE_NEW_PROCESS_GROUP;
+        }
     }
 
     LOG_IF_TRACE { clDEBUG1() << "Running process:" << cmd << endl; }
@@ -465,30 +438,6 @@ IProcess* WinProcessImpl::Execute(
         wxUnusedVar(err);
         wxDELETE(prc);
         return NULL;
-    }
-
-    if (redirectOutput) {
-        // After process creation, restore the saved STDIN and STDOUT.
-        if (!SetStdHandle(STD_INPUT_HANDLE, prc->hSaveStdin)) {
-            delete prc;
-            return NULL;
-        }
-        if (!SetStdHandle(STD_OUTPUT_HANDLE, prc->hSaveStdout)) {
-            delete prc;
-            return NULL;
-        }
-        if (!SetStdHandle(STD_OUTPUT_HANDLE, prc->hSaveStderr)) {
-            delete prc;
-            return NULL;
-        }
-    }
-
-    if ((prc->m_flags & IProcessCreateConsole) || (prc->m_flags & IProcessCreateWithHiddenConsole)) {
-        ConsoleAttacher ca(prc->GetPid());
-        if (ca.isAttached) {
-            freopen("CONOUT$", "wb", stdout); // reopen stout handle as console window output
-            freopen("CONOUT$", "wb", stderr); // reopen stderr handle as console window output
-        }
     }
     prc->SetPid(prc->dwProcessId);
     if (!(prc->m_flags & IProcessCreateSync)) {

@@ -91,7 +91,7 @@ UnixProcess::~UnixProcess()
     Wait();
 }
 
-bool UnixProcess::ReadAll(int fd, std::string& content, int timeoutMilliseconds)
+UnixProcess::ReadResult UnixProcess::ReadAll(int fd, std::string& content, int timeoutMilliseconds)
 {
     fd_set rset;
     char buff[65536];
@@ -105,19 +105,31 @@ bool UnixProcess::ReadAll(int fd, std::string& content, int timeoutMilliseconds)
     int rc = ::select(fd + 1, &rset, nullptr, nullptr, &tv);
     if (rc > 0) {
         for (;;) {
+            // fd is non blocking, read until we EWOULDBLOCK, EAGAIN
+            // or the server process terminated.
+            errno = 0;
             int len = read(fd, buff, (sizeof(buff) - 1));
-            if (len <= 0)
-                break;
-            buff[len] = 0;
-            content.append(buff);
+            if (len < 0) {
+                if (errno == EWOULDBLOCK || errno == EAGAIN) {
+                    return ReadResult::kOk;
+                }
+                // read error
+                return ReadResult::kError;
+            } else if (len == 0) {
+                return ReadResult::kTerminated;
+            } else {
+                // we read something
+                buff[len] = 0;
+                content.append(buff);
+            }
         }
-        return true;
     } else if (rc == 0) {
         // timeout
-        return true;
+        return ReadResult::kTimeout;
+    } else {
+        // select returned error
+        return ReadResult::kError;
     }
-    // error
-    return false;
 }
 
 bool UnixProcess::Write(int fd, const std::string& message, std::atomic_bool& shutdown)
@@ -194,34 +206,41 @@ void UnixProcess::StartReaderThread()
             fcntl(stdoutFd, F_SETFL, O_NONBLOCK);
             fcntl(stderrFd, F_SETFL, O_NONBLOCK);
 
-            while (!process->m_goingDown.load()) {
-                std::string content;
-                if (!ReadAll(stdoutFd, content, 10)) {
-                    clProcessEvent evt(wxEVT_ASYNC_PROCESS_TERMINATED);
-                    wxString error_message;
-                    int exit_code = process->Wait();
-                    error_message << "Process exit code (" << exit_code << "):" << strerror(exit_code);
-                    evt.SetString(error_message);
-                    process->m_owner->AddPendingEvent(evt);
-                    break;
-                } else if (!content.empty()) {
-                    clProcessEvent evt(wxEVT_ASYNC_PROCESS_OUTPUT);
+            // Returns true if the fd is still alive
+            auto ReadFD = [](UnixProcess* process, int fd, wxEventType event_type, std::string& content) -> bool {
+                content.clear();
+                auto result = ReadAll(fd, content, 10);
+                if (result == UnixProcess::ReadResult::kOk && !content.empty()) {
+                    clProcessEvent evt(event_type);
                     evt.SetOutput(wxString::FromUTF8(content));
                     evt.SetOutputRaw(content);
                     process->m_owner->AddPendingEvent(evt);
                 }
-                content.clear();
-                if (!ReadAll(stderrFd, content, 10)) {
-                    clProcessEvent evt(wxEVT_ASYNC_PROCESS_TERMINATED);
-                    process->m_owner->AddPendingEvent(evt);
-                    break;
-                } else if (!content.empty()) {
-                    clProcessEvent evt(wxEVT_ASYNC_PROCESS_STDERR);
-                    evt.SetOutput(wxString::FromUTF8(content));
-                    evt.SetOutputRaw(content);
-                    process->m_owner->AddPendingEvent(evt);
+                return result != UnixProcess::ReadResult::kError && result != UnixProcess::ReadResult::kTerminated;
+            };
+
+            bool stdoutAlive{true};
+            bool stderrAlive{true};
+
+            // Keep draining stdout / stderr until both are closed
+            // or both the process got a shutdown request.
+            while (!process->m_goingDown.load() && (stdoutAlive || stderrAlive)) {
+                std::string content;
+                if (stdoutAlive) {
+                    stdoutAlive = ReadFD(process, stdoutFd, wxEVT_ASYNC_PROCESS_OUTPUT, content);
+                }
+                if (stderrAlive) {
+                    stderrAlive = ReadFD(process, stderrFd, wxEVT_ASYNC_PROCESS_STDERR, content);
                 }
             }
+
+            // Both fds closed - send termination event
+            clProcessEvent evt(wxEVT_ASYNC_PROCESS_TERMINATED);
+            wxString error_message;
+            int exit_code = process->Wait();
+            error_message << "Process exit code (" << exit_code << "):" << strerror(exit_code);
+            evt.SetString(error_message);
+            process->m_owner->AddPendingEvent(evt);
             clDEBUG1() << "UnixProcess reader thread: going down" << endl;
         },
         this,

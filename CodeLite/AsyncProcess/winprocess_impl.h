@@ -67,18 +67,6 @@ public:
                              const wxString& workingDir = wxEmptyString,
                              IProcessCallback* cb = NULL);
 
-    // Create process asynchronously and return a process object
-    static IProcess* ExecuteConPTY(wxEvtHandler* parent,
-                                   const std::vector<wxString>& args,
-                                   size_t flags = IProcessCreateWithHiddenConsole,
-                                   const wxString& workingDir = wxEmptyString);
-
-    // Create process asynchronously and return a process object
-    static IProcess* ExecuteConPTY(wxEvtHandler* parent,
-                                   const wxString& cmd,
-                                   size_t flags = IProcessCreateWithHiddenConsole,
-                                   const wxString& workingDir = wxEmptyString);
-
     /**
      * @brief read data from stdout and error
      * @param buff check the buffer when true is returned

@@ -284,117 +284,10 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent,
     return Execute(parent, cmd, flags, workingDirectory, cb);
 }
 
-IProcess*
-WinProcessImpl::ExecuteConPTY(wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDir)
-{
-    // - Close these after CreateProcess of child application with pseudoconsole object.
-    HANDLE inputReadSide, outputWriteSide;
-
-    // - Hold onto these and use them for communication with the child through the pseudoconsole.
-    HANDLE outputReadSide, inputWriteSide;
-    HPCON hPC = 0;
-
-    // Create the in/out pipes:
-    if (!CreatePipe(&inputReadSide, &inputWriteSide, NULL, 0)) {
-        return nullptr;
-    }
-    if (!CreatePipe(&outputReadSide, &outputWriteSide, NULL, 0)) {
-        ::CloseHandle(inputReadSide);
-        ::CloseHandle(inputWriteSide);
-        return nullptr;
-    }
-
-#if !defined(_MSC_VER)
-    // Create the Pseudo Console, using the pipes
-    if (loadOnce) {
-        loadOnce = false;
-        auto hDLL = ::LoadLibrary(L"Kernel32.dll");
-        if (hDLL) {
-            CreatePseudoConsoleFunc = (CreatePseudoConsole_T)::GetProcAddress(hDLL, "CreatePseudoConsole");
-            ClosePseudoConsoleFunc = (ClosePseudoConsole_T)::GetProcAddress(hDLL, "ClosePseudoConsole");
-            FreeLibrary(hDLL);
-        }
-    }
-#endif
-
-    if (!CreatePseudoConsoleFunc || !ClosePseudoConsoleFunc) {
-        ::CloseHandle(inputReadSide);
-        ::CloseHandle(outputWriteSide);
-        ::CloseHandle(inputWriteSide);
-        ::CloseHandle(outputReadSide);
-        return nullptr;
-    }
-    auto hr = CreatePseudoConsoleFunc({1000, 32}, inputReadSide, outputWriteSide, 0, &hPC);
-    if (FAILED(hr)) {
-        ::CloseHandle(inputReadSide);
-        ::CloseHandle(outputWriteSide);
-        ::CloseHandle(inputWriteSide);
-        ::CloseHandle(outputReadSide);
-        return nullptr;
-    }
-
-    // Prepare the StartupInfoEx structure attached to the ConPTY.
-    STARTUPINFOEX siEx{};
-    PrepareStartupInformation(hPC, &siEx);
-
-    WinProcessImpl* prc = new WinProcessImpl(parent);
-    ::ZeroMemory(&prc->piProcInfo, sizeof(prc->piProcInfo));
-
-    auto fSuccess = CreateProcess(nullptr,
-                                  (wchar_t*)cmd.wc_str(),
-                                  nullptr,
-                                  nullptr,
-                                  FALSE,
-                                  EXTENDED_STARTUPINFO_PRESENT,
-                                  nullptr,
-                                  nullptr,
-                                  &siEx.StartupInfo,
-                                  &prc->piProcInfo);
-
-    if (!fSuccess) {
-        clERROR() << "Failed to launch process:" << cmd << "." << GetLastError() << endl;
-        wxDELETE(prc);
-        return nullptr;
-    }
-    ::CloseHandle(inputReadSide);
-    ::CloseHandle(outputWriteSide);
-
-    if (!(prc->m_flags & IProcessCreateSync)) {
-        prc->StartReaderThread();
-    }
-    prc->m_writerThread = new WinWriterThread(prc->piProcInfo.hProcess, inputWriteSide);
-    prc->m_writerThread->Start();
-
-    prc->m_callback = nullptr;
-    prc->m_flags = flags;
-    prc->m_pid = prc->piProcInfo.dwProcessId;
-    prc->hChildStdoutRdDup = outputReadSide;
-    prc->m_hPseudoConsole = hPC;
-    return prc;
-}
-
-IProcess* WinProcessImpl::ExecuteConPTY(wxEvtHandler* parent,
-                                        const std::vector<wxString>& args,
-                                        size_t flags,
-                                        const wxString& workingDir)
-{
-    wxArrayString wxarr;
-    wxarr.reserve(args.size());
-    for (const auto& arg : args) {
-        wxarr.Add(arg);
-    }
-    wxString cmd = ArrayJoin(wxarr, flags);
-    return ExecuteConPTY(parent, cmd, flags, workingDir);
-}
-
 /*static*/
 IProcess* WinProcessImpl::Execute(
     wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDir, IProcessCallback* cb)
 {
-    if (flags & IProcessPseudoConsole) {
-        return ExecuteConPTY(parent, cmd, flags, workingDir);
-    }
-
     SECURITY_ATTRIBUTES saAttr;
     BOOL fSuccess;
 
@@ -829,46 +722,7 @@ void WinProcessImpl::Terminate()
     }
 }
 
-bool WinProcessImpl::WriteToConsole(const wxString& buff)
-{
-    wxString pass(buff);
-    pass.Trim().Trim(false);
-
-    // To write password, we need to attach to the child process console
-    if (!(m_flags & (IProcessCreateWithHiddenConsole | IProcessCreateConsole)))
-        return false;
-
-    ConsoleAttacher ca(GetPid());
-    if (ca.isAttached == false)
-        return false;
-
-    HANDLE hStdIn = ::CreateFile(
-        L"CONIN$", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, 0);
-    if (hStdIn == INVALID_HANDLE_VALUE) {
-        return false;
-    }
-
-    pass += wxT("\r\n");
-    std::vector<INPUT_RECORD> pKeyEvents(pass.Len());
-
-    for (size_t i = 0; i < pass.Len(); i++) {
-        pKeyEvents[i].EventType = KEY_EVENT;
-        pKeyEvents[i].Event.KeyEvent.bKeyDown = TRUE;
-        pKeyEvents[i].Event.KeyEvent.wRepeatCount = 1;
-        pKeyEvents[i].Event.KeyEvent.wVirtualKeyCode = LOBYTE(::VkKeyScan(pass[i]));
-        pKeyEvents[i].Event.KeyEvent.wVirtualScanCode = 0;
-        pKeyEvents[i].Event.KeyEvent.uChar.UnicodeChar = pass[i];
-        pKeyEvents[i].Event.KeyEvent.dwControlKeyState = 0;
-    }
-
-    DWORD dwTextWritten;
-    if (::WriteConsoleInput(hStdIn, pKeyEvents.data(), pass.Len(), &dwTextWritten) == FALSE) {
-        CloseHandle(hStdIn);
-        return false;
-    }
-    CloseHandle(hStdIn);
-    return true;
-}
+bool WinProcessImpl::WriteToConsole(const wxString& buff) { return Write(buff); }
 
 void WinProcessImpl::Detach()
 {

@@ -131,7 +131,7 @@ void wxTerminalCtrl::StartShell()
             SetTerminalWorkingDirectory(m_startingDirectory);
         }
         LOG_DEBUG(TERM_LOG()) << "Successfully started shell terminal" << endl;
-        wxTerminalEvent readyEvent(wxEVT_TERMINAL_CTRL_READY);
+        wxTerminalCtrlEvent readyEvent(wxEVT_TERMINAL_CTRL_READY);
         readyEvent.SetEventObject(this);
         GetEventHandler()->AddPendingEvent(readyEvent);
     } else {
@@ -165,7 +165,7 @@ void wxTerminalCtrl::AppendText(wxStringView text)
     m_inputCtrl->SetWritePositionEnd();
 
     if (!window_title.empty()) {
-        wxTerminalEvent titleEvent(wxEVT_TERMINAL_CTRL_SET_TITLE);
+        wxTerminalCtrlEvent titleEvent(wxEVT_TERMINAL_CTRL_SET_TITLE);
         titleEvent.SetEventObject(this);
         titleEvent.SetString(window_title);
         GetEventHandler()->AddPendingEvent(titleEvent);
@@ -193,7 +193,7 @@ void wxTerminalCtrl::DoProcessTerminated()
 {
     wxDELETE(m_shell);
     if (m_terminating) {
-        wxTerminalEvent outputEvent(wxEVT_TERMINAL_CTRL_DONE);
+        wxTerminalCtrlEvent outputEvent(wxEVT_TERMINAL_CTRL_DONE);
         outputEvent.SetEventObject(this);
         GetEventHandler()->AddPendingEvent(outputEvent);
     } else {

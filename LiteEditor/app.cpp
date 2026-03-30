@@ -25,6 +25,7 @@
 
 #include "app.h"
 
+#include <algorithm>
 #ifdef __WXGTK__
 #include "exelocator.h"
 #endif
@@ -1182,4 +1183,8 @@ void CodeLiteApp::FinalizeShutdown()
     // Delete the temp folder
     wxFileName::Rmdir(clStandardPaths::Get().GetTempDir(), wxPATH_RMDIR_RECURSIVE);
     clDEBUG() << "Finalizing shutdown...success" << endl;
+}
+
+int CodeLiteApp::FilterEvent(wxEvent& event) {
+    return EventNotifier::Get()->FilterEvent(event);
 }

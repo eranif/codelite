@@ -27,6 +27,7 @@
 #include "clPersistenceManager.h"
 #include "frame.h"
 
+#include <functional>
 #include <memory>
 #include <wx/cmdline.h>
 #include <wx/snglinst.h>
@@ -35,35 +36,6 @@ class CodeLiteApp : public wxApp
 {
 public:
     enum PluginPolicy { PP_None = 0, PP_All, PP_FromList };
-
-protected:
-    clMainFrame* m_pMainFrame;
-    wxSingleInstanceChecker* m_singleInstance;
-    wxArrayString m_parserPaths;
-    wxLocale m_locale;
-    wxArrayString m_allowedPlugins;
-    PluginPolicy m_pluginLoadPolicy;
-    std::unique_ptr<clPersistenceManager> m_persistenceManager;
-    bool m_startedInDebuggerMode;
-
-    // When starting in debugger mode
-    wxString m_exeToDebug;
-    wxString m_debuggerArgs;
-    wxString m_debuggerWorkingDirectory;
-    static bool m_restartCodeLite;
-    static wxString m_restartCommand;
-    static wxString m_restartWD;
-    wxCmdLineParser m_parser;
-
-private: // Methods
-    bool CopySettings(const wxString& destDir, wxString& installPath);
-    bool IsSingleInstance(const wxCmdLineParser& parser);
-    void DoCopyGdbPrinters();
-    void MSWReadRegistry();
-    wxString DoFindMenuFile(const wxString& installDirectory);
-    void AdjustPathForCygwinIfNeeded();
-    void AdjustPathForMSYSIfNeeded();
-    void PrintUsage(const wxCmdLineParser& parser);
 
 public:
     CodeLiteApp();
@@ -104,11 +76,39 @@ public:
 
     void ProcessCommandLineParams();
 
+private: // Methods
+    bool CopySettings(const wxString& destDir, wxString& installPath);
+    bool IsSingleInstance(const wxCmdLineParser& parser);
+    void DoCopyGdbPrinters();
+    void MSWReadRegistry();
+    wxString DoFindMenuFile(const wxString& installDirectory);
+    void AdjustPathForCygwinIfNeeded();
+    void AdjustPathForMSYSIfNeeded();
+    void PrintUsage(const wxCmdLineParser& parser);
+    int FilterEvent(wxEvent& event) override;
+
 protected:
-    virtual bool OnInit();
-    virtual int OnExit();
-    virtual void OnFatalException();
+    bool OnInit() override;
+    int OnExit() override;
+    void OnFatalException() override;
     void OpenFolder(const wxString& path);
     void OpenFile(const wxString& path, long lineNumber);
     void OpenItem(const wxString& path, long lineNumber);
+    clMainFrame* m_pMainFrame;
+    wxSingleInstanceChecker* m_singleInstance;
+    wxArrayString m_parserPaths;
+    wxLocale m_locale;
+    wxArrayString m_allowedPlugins;
+    PluginPolicy m_pluginLoadPolicy;
+    std::unique_ptr<clPersistenceManager> m_persistenceManager;
+    bool m_startedInDebuggerMode;
+
+    // When starting in debugger mode
+    wxString m_exeToDebug;
+    wxString m_debuggerArgs;
+    wxString m_debuggerWorkingDirectory;
+    static bool m_restartCodeLite;
+    static wxString m_restartCommand;
+    static wxString m_restartWD;
+    wxCmdLineParser m_parser;
 };

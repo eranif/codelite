@@ -112,8 +112,11 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     wxStringClientData* cd = dynamic_cast<wxStringClientData*>(m_terminal_types->GetClientObject(selection));
     const wxString& cmd = cd->GetData();
 
-    EnvSetter env;
-    TerminalView* ctrl = new TerminalView(m_book, cmd);
+    // By default, inherit parent's env.
+    EnvSetter env_setter{};
+    std::optional<TerminalView::EnvironmentList> env{std::nullopt};
+
+    TerminalView* ctrl = new TerminalView(m_book, cmd, env);
     m_book->AddPage(ctrl, cmd, true);
     m_book->SetPageToolTip(m_book->GetPageCount() - 1, cmd);
 

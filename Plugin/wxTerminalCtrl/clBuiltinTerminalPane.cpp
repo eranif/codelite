@@ -8,6 +8,7 @@
 #include "clFileName.hpp"
 #include "clINIParser.hpp"
 #include "clWorkspaceManager.h"
+#include "cl_aui_tool_stickness.h"
 #include "codelite_events.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
@@ -23,6 +24,7 @@
 #include <wx/choicdlg.h>
 #include <wx/dir.h>
 #include <wx/frame.h>
+#include <wx/menu.h>
 #include <wx/sizer.h>
 #include <wx/xrc/xmlres.h>
 
@@ -54,6 +56,9 @@ std::map<wxString, wxString> LocateDefaultTerminals()
 clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     : wxPanel(parent, id)
 {
+    // Load saved settings
+    m_safeDrawingEnabled = clConfig::Get().Read("terminal/safe_drawing", false);
+
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_book = new Notebook(this,
                           wxID_ANY,
@@ -82,18 +87,22 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
 #endif
 
     m_toolbar->AddSeparator();
-
     // Get list of terminals
     m_choice_themes = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxSize(FromDIP(200), wxNOT_FOUND));
     m_toolbar->AddControl(m_choice_themes);
     m_choice_themes->SetToolTip(_("Choose terminal theme"));
     m_choice_themes->Bind(wxEVT_CHOICE, &clBuiltinTerminalPane::OnChoiceTheme, this);
     UpdateFont();
+    m_toolbar->AddSeparator();
 
+    m_toolbar->AddTool(
+        wxID_PREFERENCES, _("Settings"), image_list->LoadBitmap("cog"), _("Terminal Settings"), wxITEM_NORMAL);
+    m_toolbar->SetToolDropDown(wxID_PREFERENCES, true);
     m_toolbar->Realize();
 
     m_toolbar->Bind(wxEVT_TOOL, &clBuiltinTerminalPane::OnNew, this, wxID_NEW);
     m_toolbar->Bind(wxEVT_TOOL, &clBuiltinTerminalPane::OnScanForTerminals, this, wxID_REFRESH);
+    m_toolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &clBuiltinTerminalPane::OnSettingsMenu, this, wxID_PREFERENCES);
 
     GetSizer()->Fit(this);
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
@@ -147,6 +156,9 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     TerminalView* ctrl = new TerminalView(m_book, cmd, env);
     ctrl->SetTheme(m_activeTheme.has_value() ? *m_activeTheme : wxTerminalTheme::MakeDarkTheme());
     m_book->AddPage(ctrl, cmd, true);
+
+    // Apply safe drawing setting to the new terminal
+    ctrl->EnableSafeDrawing(m_safeDrawingEnabled);
     m_book->SetPageToolTip(m_book->GetPageCount() - 1, cmd);
 
     ctrl->Bind(wxEVT_TERMINAL_TITLE_CHANGED, [ctrl, this](wxTerminalEvent& event) {
@@ -538,6 +550,43 @@ void clBuiltinTerminalPane::OnChoiceTheme(wxCommandEvent& event)
         m_activeTheme = wxTerminalTheme::MakeDarkTheme();
     }
     ApplyThemeChanges();
+}
+
+void clBuiltinTerminalPane::OnSettingsMenu(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+
+    wxMenu menu;
+    wxMenuItem* safeDrawingItem = menu.AppendCheckItem(wxID_ANY, _("Enable Safe Drawing"));
+    safeDrawingItem->Check(m_safeDrawingEnabled);
+
+    menu.Bind(
+        wxEVT_MENU,
+        [this](wxCommandEvent& e) {
+            m_safeDrawingEnabled = !m_safeDrawingEnabled;
+            clDEBUG() << "Safe Drawing:" << (m_safeDrawingEnabled ? "Enabled" : "Disabled") << endl;
+
+            // Persist the setting
+            clConfig::Get().Write("terminal/safe_drawing", m_safeDrawingEnabled);
+            clConfig::Get().Save();
+
+            // Apply to all terminals
+            for (size_t i = 0; i < m_book->GetPageCount(); ++i) {
+                auto terminal = dynamic_cast<TerminalView*>(m_book->GetPage(i));
+                if (terminal) {
+                    terminal->EnableSafeDrawing(m_safeDrawingEnabled);
+                    terminal->Refresh();
+                }
+            }
+        },
+        safeDrawingItem->GetId());
+
+    wxRect rect = m_toolbar->GetToolRect(wxID_PREFERENCES);
+    wxPoint pt = m_toolbar->ClientToScreen(rect.GetBottomLeft());
+    pt = ScreenToClient(pt);
+
+    clAuiToolStickness st{m_toolbar, event.GetId()};
+    PopupMenu(&menu, pt);
 }
 
 void clBuiltinTerminalPane::ApplyThemeChanges()

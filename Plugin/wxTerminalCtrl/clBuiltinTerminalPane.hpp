@@ -57,6 +57,8 @@ protected:
     void OnChoiceTheme(wxCommandEvent& event);
     void ApplyThemeChanges();
     void UpdateFont();
+    void OnSettingsMenu(wxCommandEvent& event);
+    void OnToggleSafeDrawing(wxCommandEvent& event);
 
 private:
     static std::optional<wxTerminalTheme> FromTOML(const wxFileName& filepath);
@@ -71,6 +73,7 @@ private:
     std::map<wxString, wxTerminalTheme> m_themes;
     std::optional<wxTerminalTheme> m_activeTheme{std::nullopt};
     wxFont m_activeFont;
+    bool m_safeDrawingEnabled = false;
 };
 
 #endif // CLBUILTINTERMINALPANE_HPP

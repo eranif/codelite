@@ -149,8 +149,8 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'E', XRCID("Ctrl_ID_end_of_line")});
 
     wxAcceleratorTable accel_table(V.size(), V.data());
-
     ctrl->SetAcceleratorTable(accel_table);
+
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlR, this, XRCID("Ctrl_ID_command"));
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlU, this, XRCID("Ctrl_ID_clear_line"));
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlL, this, XRCID("Ctrl_ID_clear_screen"));
@@ -293,6 +293,7 @@ void clBuiltinTerminalPane::OnCtrlR(wxCommandEvent& e)
     CHECK_IF_CAN_HANDLE(e);
     terminal->SendCtrlR();
 }
+
 void clBuiltinTerminalPane::OnCtrlU(wxCommandEvent& e)
 {
     CHECK_IF_CAN_HANDLE(e);
@@ -353,3 +354,5 @@ void clBuiltinTerminalPane::OnCtrlE(wxCommandEvent& e)
     terminal->SendCtrlE();
 }
 #undef CHECK_IF_CAN_HANDLE
+
+void clBuiltinTerminalPane::OnInitDone(wxCommandEvent& e) { e.Skip(); }

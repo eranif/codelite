@@ -511,6 +511,9 @@ int ProcUtils::SafeExecuteCommand(const wxString& command,
         if (!err.empty()) {
             accumlated_output += err;
         }
+        if (shutdown_flag == nullptr) {
+            return true;
+        }
         return !shutdown_flag->load();
     };
 

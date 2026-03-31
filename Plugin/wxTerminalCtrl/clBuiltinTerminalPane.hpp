@@ -20,6 +20,7 @@ public:
 
 protected:
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
+    void OnInitDone(wxCommandEvent& e);
     void OnPageChanged(wxBookCtrlEvent& event);
     void OnSetTitle(wxTerminalEvent& event);
     void OnNew(wxCommandEvent& event);

@@ -896,6 +896,7 @@ bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& m_parser)
     return true;
 }
 
+#ifdef __WXMAC__
 void CodeLiteApp::MacOpenFile(const wxString& fileName)
 {
     switch (FileExtManager::GetType(fileName)) {
@@ -907,6 +908,7 @@ void CodeLiteApp::MacOpenFile(const wxString& fileName)
         break;
     }
 }
+#endif
 
 void CodeLiteApp::MSWReadRegistry()
 {

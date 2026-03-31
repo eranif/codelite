@@ -49,7 +49,9 @@ public:
     void SetParserPaths(const wxArrayString& parserPaths) { this->m_parserPaths = parserPaths; }
     const wxArrayString& GetParserPaths() const { return m_parserPaths; }
 
+#ifdef __WXMAC__
     void MacOpenFile(const wxString& fileName) override;
+#endif
 
     void SetStartedInDebuggerMode(bool startedInDebuggerMode) { this->m_startedInDebuggerMode = startedInDebuggerMode; }
     bool IsStartedInDebuggerMode() const { return m_startedInDebuggerMode; }

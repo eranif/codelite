@@ -30,7 +30,7 @@ EnvironmentVariablesDlg::EnvironmentVariablesDlg(wxWindow* parent)
 
     wxStyledTextCtrl* sci = m_textCtrlDefault;
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
+    if (lexer) {
         lexer->Apply(sci);
     }
 
@@ -47,14 +47,14 @@ EnvironmentVariablesDlg::EnvironmentVariablesDlg(wxWindow* parent)
     }
 
     m_book->SetSelection(0);
-    for(size_t i = 0; i < m_book->GetPageCount(); i++) {
-        if(m_book->GetPageText(i) == activePage) {
+    for (size_t i = 0; i < m_book->GetPageCount(); i++) {
+        if (m_book->GetPageText(i) == activePage) {
             m_book->GetPage(i)->SetFocus();
             m_book->SetSelection(i);
         }
         wxWindow* page = m_book->GetPage(i);
         wxStyledTextCtrl* ctrl = dynamic_cast<wxStyledTextCtrl*>(page);
-        if(ctrl) {
+        if (ctrl) {
             ctrl->SetSavePoint();
             ctrl->EmptyUndoBuffer();
         }
@@ -68,7 +68,7 @@ void EnvironmentVariablesDlg::DoAddPage(const wxString& name, const wxString& co
 {
     wxStyledTextCtrl* page = new wxStyledTextCtrl(m_book, wxID_ANY, wxDefaultPosition, wxSize(0, 0));
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
+    if (lexer) {
         lexer->Apply(page);
     }
 
@@ -83,14 +83,15 @@ void EnvironmentVariablesDlg::OnButtonOk(wxCommandEvent& event)
     wxStringMap_t envSets;
     envSets[wxT("Default")] = m_textCtrlDefault->GetText().Trim().Trim(false);
 
-    for(size_t i = 1; i < m_book->GetPageCount(); i++) {
-        if(i == (size_t)m_book->GetSelection()) {
+    for (size_t i = 1; i < m_book->GetPageCount(); i++) {
+        if (i == (size_t)m_book->GetSelection()) {
             vars.SetActiveSet(m_book->GetPageText(i));
         }
 
         const wxStyledTextCtrl* page = (wxStyledTextCtrl*)m_book->GetPage(i);
         envSets[m_book->GetPageText(i)] = page->GetText().Trim().Trim(false);
     }
+
     vars.SetEnvVarSets(envSets);
     EnvironmentConfig::Instance()->WriteObject(wxT("Variables"), &vars);
 
@@ -105,12 +106,14 @@ void EnvironmentVariablesDlg::OnDeleteSet(wxCommandEvent& event)
     wxUnusedVar(event);
 
     int selection = m_book->GetSelection();
-    if(selection == wxNOT_FOUND)
+    if (selection == wxNOT_FOUND)
         return;
 
     wxString name = m_book->GetPageText((size_t)selection);
-    if(wxMessageBox(wxString::Format(_("Delete environment variables set\n'%s' ?"), name.c_str()), _("Confirm"),
-                    wxYES_NO | wxICON_QUESTION, this) != wxYES)
+    if (wxMessageBox(wxString::Format(_("Delete environment variables set\n'%s' ?"), name.c_str()),
+                     _("Confirm"),
+                     wxYES_NO | wxICON_QUESTION,
+                     this) != wxYES)
         return;
     m_book->DeletePage((size_t)selection);
 }
@@ -124,7 +127,7 @@ void EnvironmentVariablesDlg::OnDeleteSetUI(wxUpdateUIEvent& event)
 void EnvironmentVariablesDlg::OnExport(wxCommandEvent& event)
 {
     int selection = m_book->GetSelection();
-    if(selection == wxNOT_FOUND)
+    if (selection == wxNOT_FOUND)
         return;
 
 #ifdef __WXMSW__
@@ -134,21 +137,21 @@ void EnvironmentVariablesDlg::OnExport(wxCommandEvent& event)
 #endif
 
     wxString text;
-    if(selection == 0) {
+    if (selection == 0) {
         text = m_textCtrlDefault->GetText();
     } else {
         wxStyledTextCtrl* page = dynamic_cast<wxStyledTextCtrl*>(m_book->GetPage((size_t)selection));
-        if(page) {
+        if (page) {
             text = page->GetText();
         }
     }
 
-    if(text.IsEmpty())
+    if (text.IsEmpty())
         return;
 
     wxArrayString lines = wxStringTokenize(text, wxT("\r\n"), wxTOKEN_STRTOK);
     wxString envfile;
-    if(isWindows) {
+    if (isWindows) {
         envfile << wxT("environment.bat");
     } else {
         envfile << wxT("environment");
@@ -156,21 +159,23 @@ void EnvironmentVariablesDlg::OnExport(wxCommandEvent& event)
 
     wxFileName fn(wxGetCwd(), envfile);
     wxFFile fp(fn.GetFullPath(), wxT("w+b"));
-    if(fp.IsOpened() == false) {
+    if (fp.IsOpened() == false) {
         wxMessageBox(wxString::Format(_("Failed to open file: '%s' for write"), fn.GetFullPath().c_str()),
-                     wxT("CodeLite"), wxOK | wxCENTER | wxICON_WARNING, this);
+                     wxT("CodeLite"),
+                     wxOK | wxCENTER | wxICON_WARNING,
+                     this);
         return;
     }
 
-    for(size_t i = 0; i < lines.GetCount(); i++) {
+    for (size_t i = 0; i < lines.GetCount(); i++) {
 
         wxString sLine = lines.Item(i).Trim().Trim(false);
-        if(sLine.IsEmpty())
+        if (sLine.IsEmpty())
             continue;
 
         static wxRegEx reVarPattern(wxT("\\$\\(( *)([a-zA-Z0-9_]+)( *)\\)"));
-        if(isWindows) {
-            while(reVarPattern.Matches(sLine)) {
+        if (isWindows) {
+            while (reVarPattern.Matches(sLine)) {
                 wxString varName = reVarPattern.GetMatch(sLine, 2);
                 wxString match = reVarPattern.GetMatch(sLine);
                 sLine.Replace(match, wxString::Format(wxT("%%%s%%"), varName.c_str()));
@@ -179,7 +184,7 @@ void EnvironmentVariablesDlg::OnExport(wxCommandEvent& event)
             sLine.Append(wxT("\r\n"));
 
         } else {
-            while(reVarPattern.Matches(sLine)) {
+            while (reVarPattern.Matches(sLine)) {
                 wxString varName = reVarPattern.GetMatch(sLine, 2);
                 wxString match = reVarPattern.GetMatch(sLine);
                 sLine.Replace(match, wxString::Format(wxT("$%s"), varName.c_str()));
@@ -190,8 +195,10 @@ void EnvironmentVariablesDlg::OnExport(wxCommandEvent& event)
         fp.Write(sLine);
     }
 
-    wxMessageBox(wxString::Format(_("Environment exported to: '%s' successfully"), fn.GetFullPath()), wxT("CodeLite"),
-                 wxOK | wxCENTRE, this);
+    wxMessageBox(wxString::Format(_("Environment exported to: '%s' successfully"), fn.GetFullPath()),
+                 wxT("CodeLite"),
+                 wxOK | wxCENTRE,
+                 this);
 }
 
 void EnvironmentVariablesDlg::OnNewSet(wxCommandEvent& event) { CallAfter(&EnvironmentVariablesDlg::DoAddNewSet); }
@@ -207,9 +214,9 @@ void EnvironmentVariablesDlg::OnCancel(wxCommandEvent& event)
 void EnvironmentVariablesDlg::DoAddNewSet()
 {
     wxTextEntryDialog dlg(this, _("Name:"), wxT("Create a new set"), "My New Set");
-    if(dlg.ShowModal() == wxID_OK) {
+    if (dlg.ShowModal() == wxID_OK) {
         wxString name = dlg.GetValue();
-        if(name.IsEmpty())
+        if (name.IsEmpty())
             return;
         DoAddPage(name, wxT(""), false);
     }

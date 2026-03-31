@@ -78,6 +78,7 @@
 #include <algorithm>
 #include <wx/dataobj.h>
 #include <wx/display.h>
+#include <wx/ffile.h>
 #include <wx/filedlg.h>
 #include <wx/filefn.h>
 #include <wx/filename.h>

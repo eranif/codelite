@@ -25,6 +25,7 @@
 
 #include "app.h"
 
+#include <algorithm>
 #ifdef __WXGTK__
 #include "exelocator.h"
 #endif
@@ -517,6 +518,12 @@ bool CodeLiteApp::OnInit()
     FileLogger::OpenLog("codelite.log", clConfig::Get().Read(kConfigLogVerbosity, FileLogger::Error));
     clDEBUG() << "Starting codelite..." << endl;
 
+#ifdef __WXMSW__
+    if (FreeConsole()) {
+        clSYSTEM() << "Successfully detached from console" << endl;
+    }
+#endif
+
     // Copy gdb pretty printers from the installation folder to a writeable location
     // this is  needed because python complies the files and in most cases the user
     // running CodeLite has no write permissions to /usr/share/codelite/...
@@ -889,6 +896,7 @@ bool CodeLiteApp::IsSingleInstance(const wxCmdLineParser& m_parser)
     return true;
 }
 
+#ifdef __WXMAC__
 void CodeLiteApp::MacOpenFile(const wxString& fileName)
 {
     switch (FileExtManager::GetType(fileName)) {
@@ -900,6 +908,7 @@ void CodeLiteApp::MacOpenFile(const wxString& fileName)
         break;
     }
 }
+#endif
 
 void CodeLiteApp::MSWReadRegistry()
 {
@@ -1183,3 +1192,5 @@ void CodeLiteApp::FinalizeShutdown()
     wxFileName::Rmdir(clStandardPaths::Get().GetTempDir(), wxPATH_RMDIR_RECURSIVE);
     clDEBUG() << "Finalizing shutdown...success" << endl;
 }
+
+int CodeLiteApp::FilterEvent(wxEvent& event) { return EventNotifier::Get()->FilterEvent(event); }

@@ -76,7 +76,7 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     static PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
     info.SetName(wxT("SFTP"));
-    info.SetDescription(_("SFTP plugin for codelite IDE"));
+    info.SetDescription(_("SFTP plugin for CodeLite IDE"));
     info.SetVersion(wxT("v1.0"));
     return &info;
 }
@@ -86,7 +86,7 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 SFTP::SFTP(IManager* manager)
     : IPlugin(manager)
 {
-    m_longName = _("SFTP plugin for codelite IDE");
+    m_longName = _("SFTP plugin for CodeLite IDE");
     m_shortName = wxT("SFTP");
 
     wxTheApp->Connect(

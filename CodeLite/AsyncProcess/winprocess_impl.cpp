@@ -71,30 +71,6 @@ thread_local ClosePseudoConsole_T ClosePseudoConsoleFunc = nullptr;
 
 using HPCON = HANDLE;
 
-/**
- * @class ConsoleAttacher
- * @date 11/03/10
- * @brief a helper class to attach this process to a process' console
- * this allows us to write directly into that process console-input-buffer
- * One should check isAttached once this object is constructed
- */
-class ConsoleAttacher
-{
-public:
-    bool isAttached;
-
-public:
-    ConsoleAttacher(long pid) { isAttached = AttachConsole(pid); }
-
-    ~ConsoleAttacher()
-    {
-        if (isAttached) {
-            FreeConsole();
-        }
-        isAttached = false;
-    }
-};
-
 static bool CheckIsAlive(HANDLE hProcess)
 {
     DWORD dwExitCode;
@@ -284,117 +260,10 @@ IProcess* WinProcessImpl::Execute(wxEvtHandler* parent,
     return Execute(parent, cmd, flags, workingDirectory, cb);
 }
 
-IProcess*
-WinProcessImpl::ExecuteConPTY(wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDir)
-{
-    // - Close these after CreateProcess of child application with pseudoconsole object.
-    HANDLE inputReadSide, outputWriteSide;
-
-    // - Hold onto these and use them for communication with the child through the pseudoconsole.
-    HANDLE outputReadSide, inputWriteSide;
-    HPCON hPC = 0;
-
-    // Create the in/out pipes:
-    if (!CreatePipe(&inputReadSide, &inputWriteSide, NULL, 0)) {
-        return nullptr;
-    }
-    if (!CreatePipe(&outputReadSide, &outputWriteSide, NULL, 0)) {
-        ::CloseHandle(inputReadSide);
-        ::CloseHandle(inputWriteSide);
-        return nullptr;
-    }
-
-#if !defined(_MSC_VER)
-    // Create the Pseudo Console, using the pipes
-    if (loadOnce) {
-        loadOnce = false;
-        auto hDLL = ::LoadLibrary(L"Kernel32.dll");
-        if (hDLL) {
-            CreatePseudoConsoleFunc = (CreatePseudoConsole_T)::GetProcAddress(hDLL, "CreatePseudoConsole");
-            ClosePseudoConsoleFunc = (ClosePseudoConsole_T)::GetProcAddress(hDLL, "ClosePseudoConsole");
-            FreeLibrary(hDLL);
-        }
-    }
-#endif
-
-    if (!CreatePseudoConsoleFunc || !ClosePseudoConsoleFunc) {
-        ::CloseHandle(inputReadSide);
-        ::CloseHandle(outputWriteSide);
-        ::CloseHandle(inputWriteSide);
-        ::CloseHandle(outputReadSide);
-        return nullptr;
-    }
-    auto hr = CreatePseudoConsoleFunc({1000, 32}, inputReadSide, outputWriteSide, 0, &hPC);
-    if (FAILED(hr)) {
-        ::CloseHandle(inputReadSide);
-        ::CloseHandle(outputWriteSide);
-        ::CloseHandle(inputWriteSide);
-        ::CloseHandle(outputReadSide);
-        return nullptr;
-    }
-
-    // Prepare the StartupInfoEx structure attached to the ConPTY.
-    STARTUPINFOEX siEx{};
-    PrepareStartupInformation(hPC, &siEx);
-
-    WinProcessImpl* prc = new WinProcessImpl(parent);
-    ::ZeroMemory(&prc->piProcInfo, sizeof(prc->piProcInfo));
-
-    auto fSuccess = CreateProcess(nullptr,
-                                  (wchar_t*)cmd.wc_str(),
-                                  nullptr,
-                                  nullptr,
-                                  FALSE,
-                                  EXTENDED_STARTUPINFO_PRESENT,
-                                  nullptr,
-                                  nullptr,
-                                  &siEx.StartupInfo,
-                                  &prc->piProcInfo);
-
-    if (!fSuccess) {
-        clERROR() << "Failed to launch process:" << cmd << "." << GetLastError() << endl;
-        wxDELETE(prc);
-        return nullptr;
-    }
-    ::CloseHandle(inputReadSide);
-    ::CloseHandle(outputWriteSide);
-
-    if (!(prc->m_flags & IProcessCreateSync)) {
-        prc->StartReaderThread();
-    }
-    prc->m_writerThread = new WinWriterThread(prc->piProcInfo.hProcess, inputWriteSide);
-    prc->m_writerThread->Start();
-
-    prc->m_callback = nullptr;
-    prc->m_flags = flags;
-    prc->m_pid = prc->piProcInfo.dwProcessId;
-    prc->hChildStdoutRdDup = outputReadSide;
-    prc->m_hPseudoConsole = hPC;
-    return prc;
-}
-
-IProcess* WinProcessImpl::ExecuteConPTY(wxEvtHandler* parent,
-                                        const std::vector<wxString>& args,
-                                        size_t flags,
-                                        const wxString& workingDir)
-{
-    wxArrayString wxarr;
-    wxarr.reserve(args.size());
-    for (const auto& arg : args) {
-        wxarr.Add(arg);
-    }
-    wxString cmd = ArrayJoin(wxarr, flags);
-    return ExecuteConPTY(parent, cmd, flags, workingDir);
-}
-
 /*static*/
 IProcess* WinProcessImpl::Execute(
     wxEvtHandler* parent, const wxString& cmd, size_t flags, const wxString& workingDir, IProcessCallback* cb)
 {
-    if (flags & IProcessPseudoConsole) {
-        return ExecuteConPTY(parent, cmd, flags, workingDir);
-    }
-
     SECURITY_ATTRIBUTES saAttr;
     BOOL fSuccess;
 
@@ -415,25 +284,13 @@ IProcess* WinProcessImpl::Execute(
     bool redirectOutput = !(flags & IProcessNoRedirect);
 
     // The steps for redirecting child process's STDOUT:
-    //     1. Save current STDOUT, to be restored later.
-    //     2. Create anonymous pipe to be STDOUT for child process.
-    //     3. Set STDOUT of the parent process to be write handle to
-    //        the pipe, so it is inherited by the child process.
-    //     4. Create a noninheritable duplicate of the read handle and
+    //     1. Create anonymous pipe to be STDOUT for child process.
+    //     2. Create a noninheritable duplicate of the read handle and
     //        close the inheritable read handle.
 
     if (redirectOutput) {
-        // Save the handle to the current STDOUT.
-        prc->hSaveStdout = GetStdHandle(STD_OUTPUT_HANDLE);
-
         // Create a pipe for the child process's STDOUT.
         if (!CreatePipe(&prc->hChildStdoutRd, &prc->hChildStdoutWr, &saAttr, 0)) {
-            delete prc;
-            return NULL;
-        }
-
-        // Set a write handle to the pipe to be STDOUT.
-        if (!SetStdHandle(STD_OUTPUT_HANDLE, prc->hChildStdoutWr)) {
             delete prc;
             return NULL;
         }
@@ -453,24 +310,12 @@ IProcess* WinProcessImpl::Execute(
         CloseHandle(prc->hChildStdoutRd);
 
         // The steps for redirecting child process's STDERR:
-        //     1. Save current STDERR, to be restored later.
-        //     2. Create anonymous pipe to be STDERR for child process.
-        //     3. Set STDERR of the parent process to be write handle to
-        //        the pipe, so it is inherited by the child process.
-        //     4. Create a noninheritable duplicate of the read handle and
+        //     1. Create anonymous pipe to be STDERR for child process.
+        //     2. Create a noninheritable duplicate of the read handle and
         //        close the inheritable read handle.
-
-        // Save the handle to the current STDERR.
-        prc->hSaveStderr = GetStdHandle(STD_ERROR_HANDLE);
 
         // Create a pipe for the child process's STDERR.
         if (!CreatePipe(&prc->hChildStderrRd, &prc->hChildStderrWr, &saAttr, 0)) {
-            delete prc;
-            return NULL;
-        }
-
-        // Set a write handle to the pipe to be STDERR.
-        if (!SetStdHandle(STD_ERROR_HANDLE, prc->hChildStderrWr)) {
             delete prc;
             return NULL;
         }
@@ -490,26 +335,16 @@ IProcess* WinProcessImpl::Execute(
         CloseHandle(prc->hChildStderrRd);
 
         // The steps for redirecting child process's STDIN:
-        //     1.  Save current STDIN, to be restored later.
-        //     2.  Create anonymous pipe to be STDIN for child process.
-        //     3.  Set STDIN of the parent to be the read handle to the
-        //         pipe, so it is inherited by the child process.
-        //     4.  Create a noninheritable duplicate of the write handle,
+        //     1.  Create anonymous pipe to be STDIN for child process.
+        //     2.  Create a noninheritable duplicate of the write handle,
         //         and close the inheritable write handle.
-
-        // Save the handle to the current STDIN.
-        prc->hSaveStdin = GetStdHandle(STD_INPUT_HANDLE);
 
         // Create a pipe for the child process's STDIN.
         if (!CreatePipe(&prc->hChildStdinRd, &prc->hChildStdinWr, &saAttr, 0)) {
             delete prc;
             return NULL;
         }
-        // Set a read handle to the pipe to be STDIN.
-        if (!SetStdHandle(STD_INPUT_HANDLE, prc->hChildStdinRd)) {
-            delete prc;
-            return NULL;
-        }
+
         // Duplicate the write handle to the pipe so it is not inherited.
         fSuccess = DuplicateHandle(GetCurrentProcess(),
                                    prc->hChildStdinWr,
@@ -546,13 +381,19 @@ IProcess* WinProcessImpl::Execute(
 
     if (flags & IProcessCreateWithHiddenConsole) {
         siStartInfo.wShowWindow = SW_HIDE;
-        creationFlags = CREATE_NEW_CONSOLE | CREATE_NEW_PROCESS_GROUP;
+        // When redirecting output, we cannot use CREATE_NEW_CONSOLE because Windows
+        // ignores STARTF_USESTDHANDLES when CREATE_NEW_CONSOLE is set. The child would
+        // get its own console buffer that we cannot read from. Use CREATE_NO_WINDOW instead.
+        if (redirectOutput) {
+            creationFlags = CREATE_NO_WINDOW | CREATE_NEW_PROCESS_GROUP;
+        } else {
+            creationFlags = CREATE_NEW_CONSOLE | CREATE_NEW_PROCESS_GROUP;
+        }
     }
 
     LOG_IF_TRACE { clDEBUG1() << "Running process:" << cmd << endl; }
     BOOL ret = FALSE;
     {
-        ConsoleAttacher ca(prc->GetPid());
         ret = CreateProcess(NULL,
                             cmd.wchar_str(),   // shell line execution command
                             NULL,              // process security attributes
@@ -572,30 +413,6 @@ IProcess* WinProcessImpl::Execute(
         wxUnusedVar(err);
         wxDELETE(prc);
         return NULL;
-    }
-
-    if (redirectOutput) {
-        // After process creation, restore the saved STDIN and STDOUT.
-        if (!SetStdHandle(STD_INPUT_HANDLE, prc->hSaveStdin)) {
-            delete prc;
-            return NULL;
-        }
-        if (!SetStdHandle(STD_OUTPUT_HANDLE, prc->hSaveStdout)) {
-            delete prc;
-            return NULL;
-        }
-        if (!SetStdHandle(STD_OUTPUT_HANDLE, prc->hSaveStderr)) {
-            delete prc;
-            return NULL;
-        }
-    }
-
-    if ((prc->m_flags & IProcessCreateConsole) || (prc->m_flags & IProcessCreateWithHiddenConsole)) {
-        ConsoleAttacher ca(prc->GetPid());
-        if (ca.isAttached) {
-            freopen("CONOUT$", "wb", stdout); // reopen stout handle as console window output
-            freopen("CONOUT$", "wb", stderr); // reopen stderr handle as console window output
-        }
     }
     prc->SetPid(prc->dwProcessId);
     if (!(prc->m_flags & IProcessCreateSync)) {
@@ -829,46 +646,7 @@ void WinProcessImpl::Terminate()
     }
 }
 
-bool WinProcessImpl::WriteToConsole(const wxString& buff)
-{
-    wxString pass(buff);
-    pass.Trim().Trim(false);
-
-    // To write password, we need to attach to the child process console
-    if (!(m_flags & (IProcessCreateWithHiddenConsole | IProcessCreateConsole)))
-        return false;
-
-    ConsoleAttacher ca(GetPid());
-    if (ca.isAttached == false)
-        return false;
-
-    HANDLE hStdIn = ::CreateFile(
-        L"CONIN$", GENERIC_WRITE | GENERIC_READ, FILE_SHARE_READ | FILE_SHARE_WRITE, NULL, OPEN_EXISTING, 0, 0);
-    if (hStdIn == INVALID_HANDLE_VALUE) {
-        return false;
-    }
-
-    pass += wxT("\r\n");
-    std::vector<INPUT_RECORD> pKeyEvents(pass.Len());
-
-    for (size_t i = 0; i < pass.Len(); i++) {
-        pKeyEvents[i].EventType = KEY_EVENT;
-        pKeyEvents[i].Event.KeyEvent.bKeyDown = TRUE;
-        pKeyEvents[i].Event.KeyEvent.wRepeatCount = 1;
-        pKeyEvents[i].Event.KeyEvent.wVirtualKeyCode = LOBYTE(::VkKeyScan(pass[i]));
-        pKeyEvents[i].Event.KeyEvent.wVirtualScanCode = 0;
-        pKeyEvents[i].Event.KeyEvent.uChar.UnicodeChar = pass[i];
-        pKeyEvents[i].Event.KeyEvent.dwControlKeyState = 0;
-    }
-
-    DWORD dwTextWritten;
-    if (::WriteConsoleInput(hStdIn, pKeyEvents.data(), pass.Len(), &dwTextWritten) == FALSE) {
-        CloseHandle(hStdIn);
-        return false;
-    }
-    CloseHandle(hStdIn);
-    return true;
-}
+bool WinProcessImpl::WriteToConsole(const wxString& buff) { return Write(buff); }
 
 void WinProcessImpl::Detach()
 {

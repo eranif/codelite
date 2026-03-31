@@ -1,6 +1,7 @@
 #include "RemotyConfig.hpp"
 
 #include "cl_config.h"
+#include "file_logger.h"
 
 #include <algorithm>
 
@@ -52,14 +53,18 @@ void RemotyConfig::UpdateRecentWorkspaces(const RemoteWorkspaceInfo& workspaceIn
 
     // serialise the items
     clConfig::Get().Write(REMOTY_RECENT_WORKSPACES, [&curitems]() -> JSONItem {
+        clDEBUG() << "Writing remote workspaces to disk" << endl;
         JSONItem arr = JSONItem::createArray();
         for (const auto& wi : curitems) {
-            auto d = arr.AddObject(wxEmptyString);
+            auto d = JSONItem::createObject();
             d.addProperty("account", wi.account);
             d.addProperty("path", wi.path);
+            arr.arrayAppend(std::move(d));
         }
+        clDEBUG() << "Array content:" << arr.FormatRawString() << endl;
         return arr;
     });
+    clConfig::Get().Save();
 }
 
 bool RemotyConfig::IsOpenWorkspaceTypeLocal() const { return clConfig::Get().Read(REMOTY_OPEN_WORKSPACE_TYPE, true); }

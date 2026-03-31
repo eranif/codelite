@@ -9,7 +9,7 @@
 #include <wx/utils.h>
 
 /// a wxCommandEvent that takes ownership of the clientData
-class WXDLLIMPEXP_SDK wxTerminalEvent : public wxCommandEvent
+class WXDLLIMPEXP_SDK wxTerminalCtrlEvent : public wxCommandEvent
 {
 protected:
     wxArrayString m_strings;
@@ -22,41 +22,41 @@ protected:
     std::string m_stringRaw;
 
 public:
-    wxTerminalEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
-    wxTerminalEvent(const wxTerminalEvent&) = default;
-    wxTerminalEvent& operator=(const wxTerminalEvent&) = delete;
-    ~wxTerminalEvent() override = default;
+    wxTerminalCtrlEvent(wxEventType commandType = wxEVT_NULL, int winid = 0);
+    wxTerminalCtrlEvent(const wxTerminalCtrlEvent&) = default;
+    wxTerminalCtrlEvent& operator=(const wxTerminalCtrlEvent&) = delete;
+    ~wxTerminalCtrlEvent() override = default;
 
     //wxClientData* GetClientObject() const;
     wxEvent* Clone() const override;
 
-    wxTerminalEvent& SetLineNumber(int lineNumber)
+    wxTerminalCtrlEvent& SetLineNumber(int lineNumber)
     {
         this->m_lineNumber = lineNumber;
         return *this;
     }
     int GetLineNumber() const { return m_lineNumber; }
-    wxTerminalEvent& SetAllowed(bool allowed)
+    wxTerminalCtrlEvent& SetAllowed(bool allowed)
     {
         this->m_allowed = allowed;
         return *this;
     }
-    wxTerminalEvent& SetAnswer(bool answer)
+    wxTerminalCtrlEvent& SetAnswer(bool answer)
     {
         this->m_answer = answer;
         return *this;
     }
-    wxTerminalEvent& SetFileName(const wxString& fileName)
+    wxTerminalCtrlEvent& SetFileName(const wxString& fileName)
     {
         this->m_fileName = fileName;
         return *this;
     }
-    wxTerminalEvent& SetOldName(const wxString& oldName)
+    wxTerminalCtrlEvent& SetOldName(const wxString& oldName)
     {
         this->m_oldName = oldName;
         return *this;
     }
-    wxTerminalEvent& SetStrings(const wxArrayString& strings)
+    wxTerminalCtrlEvent& SetStrings(const wxArrayString& strings)
     {
         this->m_strings = strings;
         return *this;
@@ -71,19 +71,19 @@ public:
     void SetStringRaw(const std::string& str) { m_stringRaw = str; }
 };
 
-using wxTerminalEventFunction = void (wxEvtHandler::*)(wxTerminalEvent&);
+using wxTerminalEventFunction = void (wxEvtHandler::*)(wxTerminalCtrlEvent&);
 #define wxTerminalEventHandler(func) wxEVENT_HANDLER_CAST(wxTerminalEventFunction, func)
 
 // The terminal is ready. This event will include the PTS name (e.g. /dev/pts/12).
 // Use event.GetString()
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_READY, wxTerminalEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_READY, wxTerminalCtrlEvent);
 // Fired when stdout output is ready
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_OUTPUT, wxTerminalEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_OUTPUT, wxTerminalCtrlEvent);
 // Fired when stderr output is ready
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_STDERR, wxTerminalEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_STDERR, wxTerminalCtrlEvent);
 // The terminal has exited
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_DONE, wxTerminalEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_DONE, wxTerminalCtrlEvent);
 // Set the terminal title
-wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_SET_TITLE, wxTerminalEvent);
+wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_TERMINAL_CTRL_SET_TITLE, wxTerminalCtrlEvent);
 
 #endif // WXTERMINALEVENT_HPP

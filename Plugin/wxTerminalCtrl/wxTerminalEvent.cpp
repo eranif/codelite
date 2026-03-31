@@ -1,15 +1,15 @@
 #include "wxTerminalEvent.hpp"
 
-wxTerminalEvent::wxTerminalEvent(wxEventType commandType, int winid)
+wxTerminalCtrlEvent::wxTerminalCtrlEvent(wxEventType commandType, int winid)
     : wxCommandEvent(commandType, winid)
 {
 }
 
-wxEvent* wxTerminalEvent::Clone() const { return new wxTerminalEvent(*this); }
+wxEvent* wxTerminalCtrlEvent::Clone() const { return new wxTerminalCtrlEvent(*this); }
 
 // A specialization of MyProcess for redirecting the output
-wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_READY, wxTerminalEvent);
-wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_OUTPUT, wxTerminalEvent);
-wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_STDERR, wxTerminalEvent);
-wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_DONE, wxTerminalEvent);
-wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_SET_TITLE, wxTerminalEvent);
+wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_READY, wxTerminalCtrlEvent);
+wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_OUTPUT, wxTerminalCtrlEvent);
+wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_STDERR, wxTerminalCtrlEvent);
+wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_DONE, wxTerminalCtrlEvent);
+wxDEFINE_EVENT(wxEVT_TERMINAL_CTRL_SET_TITLE, wxTerminalCtrlEvent);

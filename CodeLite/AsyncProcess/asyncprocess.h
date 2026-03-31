@@ -44,16 +44,13 @@ enum IProcessCreateFlags {
     IProcessCreateWithHiddenConsole = (1 << 2), // Create process with a hidden console
     IProcessCreateSync =
         (1 << 3), // Create a synchronous process (i.e. there is no background thread that performs the reads)
-    IProcessCreateAsSuperuser = (1 << 4), // On platforms that support it, start the process as superuser
-    IProcessNoRedirect = (1 << 5),
-    IProcessStderrEvent = (1 << 6), // fire a separate event for stderr output
-    IProcessRawOutput = (1 << 7),   // return the process output as is, don't strip anything. By default CodeLite strips
+    IProcessNoRedirect = (1 << 4),
+    IProcessStderrEvent = (1 << 5), // fire a separate event for stderr output
+    IProcessRawOutput = (1 << 6),   // return the process output as is, don't strip anything. By default CodeLite strips
                                     // terminal colours escape sequences
-    IProcessCreateSSH = (1 << 8),   // Create a remote process, over SSH
-    IProcessInteractiveSSH = (1 << 9),
-    IProcessWrapInShell = (1 << 10),   // wrap the command in the OS shell (CMD, BASH)
-    IProcessPseudoConsole = (1 << 11), // MSW only: use CreatePseudoConsole API for creating the process
-    IProcessNoPty = (1 << 12),         // Unix only: do not use forkpty, use normal fork()
+    IProcessCreateSSH = (1 << 7),   // Create a remote process, over SSH
+    IProcessWrapInShell = (1 << 8), // wrap the command in the OS shell (CMD, BASH)
+    IProcessNoPty = (1 << 9),       // Unix only: do not use forkpty, use normal fork()
 };
 
 class WXDLLIMPEXP_CL IProcess;

@@ -110,6 +110,8 @@ target_link_libraries(
          lualib
          LuaBridge
   PRIVATE dtl wxterminal_lib)
+target_include_directories(plugin
+                           PUBLIC ${CL_SRC_ROOT}/submodules/wxTerminalEmulator)
 
 if(USE_PCH)
   codelite_add_pch(plugin)
@@ -129,3 +131,5 @@ else()
     LIBRARY DESTINATION ${CL_INSTALL_BIN}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 endif()
+
+codelite_install_terminal_themes()

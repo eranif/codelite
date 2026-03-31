@@ -3,172 +3,131 @@
 #include "ColoursAndFontsManager.h"
 #include "CompilerLocator/CompilerLocatorMSVC.h"
 #include "FontUtils.hpp"
+#include "Platform/Platform.hpp"
 #include "bitmap_loader.h"
 #include "clFileName.hpp"
+#include "clINIParser.hpp"
 #include "clWorkspaceManager.h"
+#include "codelite_events.h"
+#include "environmentconfig.h"
 #include "event_notifier.h"
+#include "file_logger.h"
+#include "globals.h"
 #include "imanager.h"
 #include "macros.h"
 #include "ssh/ssh_account_info.h"
+#include "terminal_view.h"
 #include "wxTerminalOutputCtrl.hpp"
 
 #include <wx/app.h>
 #include <wx/choicdlg.h>
+#include <wx/dir.h>
+#include <wx/frame.h>
 #include <wx/sizer.h>
+#include <wx/xrc/xmlres.h>
+
+namespace
+{
+std::map<wxString, wxString> LocateDefaultTerminals()
+{
+    std::map<wxString, wxString> terminals;
+    auto bash = ThePlatform->Which("bash");
+    auto zsh = ThePlatform->Which("zsh");
+    auto cmd = ThePlatform->Which("powershell");
+    if (bash.has_value()) {
+        terminals.insert(
+            {wxString::Format("%s --login -i", bash.value()), wxString::Format("%s --login -i", bash.value())});
+    }
+
+    if (zsh.has_value()) {
+        terminals.insert(
+            {wxString::Format("%s --login -i", zsh.value()), wxString::Format("%s --login -i", zsh.value())});
+    }
+
+    if (cmd.has_value()) {
+        terminals.insert({cmd.value(), cmd.value()});
+    }
+    return terminals;
+}
+} // namespace
 
 clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     : wxPanel(parent, id)
 {
-    Bind(wxEVT_IDLE, &clBuiltinTerminalPane::OnIdle, this);
-
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_book = new Notebook(this, wxID_ANY, wxDefaultPosition, wxDefaultSize,
+    m_book = new Notebook(this,
+                          wxID_ANY,
+                          wxDefaultPosition,
+                          wxDefaultSize,
                           kNotebook_CloseButtonOnActiveTab | kNotebook_ShowFileListButton |
                               kNotebook_MouseMiddleClickClosesTab | kNotebook_FixedWidth | kNotebook_AllowDnD);
 
-    m_toolbar = new clToolBar(this);
-
+    m_toolbar = new wxAuiToolBar(this);
     GetSizer()->Add(m_toolbar, wxSizerFlags().Expand().Proportion(0));
     GetSizer()->Add(m_book, wxSizerFlags().Expand().Proportion(1));
 
-    auto image_list = m_toolbar->GetBitmapsCreateIfNeeded();
-    m_toolbar->AddTool(wxID_NEW, _("New"), image_list->Add("file_new"), wxEmptyString, wxITEM_DROPDOWN);
+    auto image_list = clGetManager()->GetStdIcons();
+    m_toolbar->AddTool(wxID_NEW, _("New"), image_list->LoadBitmap("file_new"), wxEmptyString, wxITEM_NORMAL);
 
     // Get list of terminals
-    m_terminal_types = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxSize(FromDIP(150), wxNOT_FOUND));
+    m_terminal_types = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxSize(FromDIP(300), wxNOT_FOUND));
+    m_terminal_types->SetToolTip(_("Choose shell interpreter"));
     UpdateTerminalsChoice(false);
     m_toolbar->AddControl(m_terminal_types);
 
+    // Get list of terminals
+    m_choice_themes = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxSize(FromDIP(200), wxNOT_FOUND));
+    m_toolbar->AddControl(m_choice_themes);
+    m_choice_themes->SetToolTip(_("Choose terminal theme"));
+    m_choice_themes->Bind(wxEVT_CHOICE, &clBuiltinTerminalPane::OnChoiceTheme, this);
+    UpdateFont();
+
 #ifdef __WXMSW__
-    m_toolbar->AddTool(wxID_REFRESH, _("Scan"), image_list->Add("debugger_restart"), wxEmptyString, wxITEM_NORMAL);
+    m_toolbar->AddTool(
+        wxID_REFRESH, _("Scan"), image_list->LoadBitmap("debugger_restart"), wxEmptyString, wxITEM_NORMAL);
 #endif
 
     m_toolbar->Realize();
 
-    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &clBuiltinTerminalPane::OnNewDropdown, this, wxID_NEW);
     m_toolbar->Bind(wxEVT_TOOL, &clBuiltinTerminalPane::OnNew, this, wxID_NEW);
     m_toolbar->Bind(wxEVT_TOOL, &clBuiltinTerminalPane::OnScanForTerminals, this, wxID_REFRESH);
 
     GetSizer()->Fit(this);
-    UpdateTextAttributes();
-    wxTheApp->Bind(wxEVT_TERMINAL_CTRL_SET_TITLE, &clBuiltinTerminalPane::OnSetTitle, this);
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clBuiltinTerminalPane::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clBuiltinTerminalPane::OnInitDone, this);
+
+#ifdef __WXMAC__
+    wxTheApp->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCopy, this, wxID_COPY);
+    wxTheApp->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnPaste, this, wxID_PASTE);
+#endif
 }
 
 clBuiltinTerminalPane::~clBuiltinTerminalPane()
 {
-    Unbind(wxEVT_IDLE, &clBuiltinTerminalPane::OnIdle, this);
-    wxTheApp->Unbind(wxEVT_TERMINAL_CTRL_SET_TITLE, &clBuiltinTerminalPane::OnSetTitle, this);
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clBuiltinTerminalPane::OnThemeChanged, this);
     clConfig::Get().Write("terminal/last_used_terminal", m_terminal_types->GetStringSelection());
-}
-
-void clBuiltinTerminalPane::UpdateTextAttributes()
-{
-    for (size_t i = 0; i < m_book->GetPageCount(); ++i) {
-        auto terminal = static_cast<wxTerminalCtrl*>(m_book->GetPage(i));
-        auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
-        auto default_style = lexer->GetProperty(0);
-        wxColour bg_colour = default_style.GetBgColour();
-        wxColour fg_colour = default_style.GetFgColour();
-
-        wxFont text_font;
-        if (default_style.GetFontInfoDesc().empty()) {
-            text_font = FontUtils::GetDefaultMonospacedFont();
-        } else {
-            text_font.SetNativeFontInfo(default_style.GetFontInfoDesc());
-        }
-        terminal->GetView()->SetAttributes(bg_colour, fg_colour, text_font);
-        terminal->GetView()->ReloadSettings();
-    }
 }
 
 void clBuiltinTerminalPane::OnWorkspaceLoaded(clWorkspaceEvent& event) { event.Skip(); }
 
-void clBuiltinTerminalPane::Focus()
-{
-    if (GetActiveTerminal()) {
-        GetActiveTerminal()->GetInputCtrl()->SetFocus();
-    }
-}
-
-wxTerminalCtrl* clBuiltinTerminalPane::GetActiveTerminal()
+TerminalView* clBuiltinTerminalPane::GetActiveTerminal()
 {
     // when we add tabs, return the active selected tab's terminal
     if (m_book->GetPageCount() == 0) {
         return nullptr;
     }
-    return static_cast<wxTerminalCtrl*>(m_book->GetPage(m_book->GetSelection()));
-}
-
-void clBuiltinTerminalPane::OnNewDropdown(wxCommandEvent& event)
-{
-    // now show the menu for choosing the location for this terminal
-    if (!GetActiveTerminal()) {
-        // this functionality requires an active terminal running
-        return;
-    }
-
-    wxMenu menu;
-    wxString default_path;          // contains the wd for the terminal
-    wxString workspace_ssh_account; // if remote workspace is loaded, this variable will contains its account
-    auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    if (workspace) {
-        if (workspace->IsRemote()) {
-            workspace_ssh_account = workspace->GetSshAccount();
-        }
-        default_path = wxFileName(workspace->GetFileName()).GetPath();
-        default_path.Replace("\\", "/");
-    }
-
-    if (!default_path.empty()) {
-        wxString label;
-        label << "Workspace: " << default_path;
-        if (!workspace_ssh_account.empty()) {
-            label << "@" << workspace_ssh_account;
-        }
-
-        auto item = menu.Append(wxID_ANY, label);
-        menu.Bind(
-            wxEVT_MENU,
-            [this, default_path, workspace_ssh_account](wxCommandEvent& event) {
-                if (workspace_ssh_account.empty()) {
-                    GetActiveTerminal()->SetTerminalWorkingDirectory(default_path);
-                } else {
-                    GetActiveTerminal()->SSHAndSetWorkingDirectory(workspace_ssh_account, default_path);
-                }
-                Focus();
-            },
-            item->GetId());
-        menu.AppendSeparator();
-    }
-
-    auto all_accounts = SSHAccountInfo::Load();
-    for (const auto& account : all_accounts) {
-        auto item = menu.Append(wxID_ANY, "SSH: " + account.GetAccountName());
-        menu.Bind(
-            wxEVT_MENU,
-            [this, account](wxCommandEvent& event) {
-                GetActiveTerminal()->SSHAndSetWorkingDirectory(account.GetAccountName(), wxEmptyString);
-                Focus();
-            },
-            item->GetId());
-    }
-    m_toolbar->ShowMenuForButton(wxID_NEW, &menu);
+    return static_cast<TerminalView*>(m_book->GetPage(m_book->GetSelection()));
 }
 
 void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-
-    wxString working_directory;
-    wxString shell;
-    auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    if (workspace && !workspace->IsRemote()) {
-        wxFileName fn{ workspace->GetFileName() };
-        working_directory = clFileName::ToMSYS2(fn.GetPath());
+    if (m_terminal_types->IsEmpty()) {
+        return;
     }
 
     int selection = m_terminal_types->GetSelection();
@@ -179,14 +138,62 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     wxStringClientData* cd = dynamic_cast<wxStringClientData*>(m_terminal_types->GetClientObject(selection));
     const wxString& cmd = cd->GetData();
 
-    wxTerminalCtrl* ctrl = new wxTerminalCtrl(m_book, wxID_ANY, working_directory);
-    static size_t terminal_id = 0;
-    ctrl->SetShellCommand(cmd);
-
-    m_book->AddPage(ctrl, wxString::Format("Terminal %d", ++terminal_id), true);
+    // By default, inherit parent's env.
+    EnvSetter env_setter{};
+    std::optional<TerminalView::EnvironmentList> env{std::nullopt};
+    TerminalView* ctrl = new TerminalView(m_book, cmd, env);
+    ctrl->SetTheme(m_activeTheme.has_value() ? *m_activeTheme : wxTerminalTheme::MakeDarkTheme());
+    m_book->AddPage(ctrl, cmd, true);
     m_book->SetPageToolTip(m_book->GetPageCount() - 1, cmd);
 
-    Focus();
+    ctrl->Bind(wxEVT_TERMINAL_TITLE_CHANGED, [ctrl, this](wxTerminalEvent& event) {
+        int where = m_book->FindPage(ctrl);
+        if (where != wxNOT_FOUND) {
+            m_book->SetPageText(where, event.GetTitle());
+        }
+    });
+    ctrl->Bind(wxEVT_TERMINAL_TERMINATED, [ctrl, this](wxTerminalEvent& event) {
+        wxUnusedVar(event);
+        int where = m_book->FindPage(ctrl);
+        if (where != wxNOT_FOUND) {
+            m_book->DeletePage(where, ctrl);
+        }
+    });
+
+    // Register standard keyboard shortcuts for the terminal.
+    std::vector<wxAcceleratorEntry> V;
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'R', XRCID("Ctrl_ID_command")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'U', XRCID("Ctrl_ID_clear_line")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'L', XRCID("Ctrl_ID_clear_screen")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'D', XRCID("Ctrl_ID_logout")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'C', XRCID("Ctrl_ID_ctrl_c")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'W', XRCID("Ctrl_ID_delete_word")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'Z', XRCID("Ctrl_ID_suspend")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_ALT, (int)'B', XRCID("Alt_ID_backward")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_ALT, (int)'F', XRCID("Alt_ID_forward")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'A', XRCID("Ctrl_ID_start_of_line")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'E', XRCID("Ctrl_ID_end_of_line")});
+
+#ifdef __WXMAC__
+    V.push_back(wxAcceleratorEntry{wxACCEL_CMD, (int)'V', wxID_PASTE});
+    V.push_back(wxAcceleratorEntry{wxACCEL_CMD, (int)'C', wxID_COPY});
+#endif
+
+    wxAcceleratorTable accel_table(V.size(), V.data());
+    ctrl->SetAcceleratorTable(accel_table);
+
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlR, this, XRCID("Ctrl_ID_command"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlU, this, XRCID("Ctrl_ID_clear_line"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlL, this, XRCID("Ctrl_ID_clear_screen"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlD, this, XRCID("Ctrl_ID_logout"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlC, this, XRCID("Ctrl_ID_ctrl_c"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlW, this, XRCID("Ctrl_ID_delete_word"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlZ, this, XRCID("Ctrl_ID_suspend"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnAltB, this, XRCID("Alt_ID_backward"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnAltF, this, XRCID("Alt_ID_forward"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlA, this, XRCID("Ctrl_ID_start_of_line"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlE, this, XRCID("Ctrl_ID_end_of_line"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlE, this, XRCID("Ctrl_ID_end_of_line"));
 }
 
 void clBuiltinTerminalPane::OnSetTitle(wxTerminalEvent& event)
@@ -195,34 +202,25 @@ void clBuiltinTerminalPane::OnSetTitle(wxTerminalEvent& event)
     wxWindow* win = dynamic_cast<wxWindow*>(event.GetEventObject());
     CHECK_PTR_RET(win);
 
-    for (size_t i = 0; i < m_book->GetPageCount(); ++i) {
-        if (win == m_book->GetPage(i)) {
-            m_book->SetPageText(i, event.GetString());
-            break;
-        }
+    int index = m_book->FindPage(win);
+    if (index != wxNOT_FOUND) {
+        m_book->SetPageText(index, event.GetTitle());
     }
 }
 
 void clBuiltinTerminalPane::OnPageChanged(wxBookCtrlEvent& event)
 {
     event.Skip();
-    CallAfter(&clBuiltinTerminalPane::Focus);
-}
-
-bool clBuiltinTerminalPane::IsFocused()
-{
-    if (GetActiveTerminal()) {
-        return IsShown() && GetActiveTerminal()->IsFocused();
-    } else {
-        return IsShown();
-    }
+    auto terminal = GetActiveTerminal();
+    CHECK_PTR_RET(terminal);
+    terminal->CallAfter(&TerminalView::SetFocus);
 }
 
 void clBuiltinTerminalPane::DetectTerminals(std::map<wxString, wxString>& terminals)
 {
 #ifdef __WXMSW__
-    terminals.clear();
-    terminals = { { "bash", "bash" }, { "CMD", "CMD" } };
+    terminals = LocateDefaultTerminals();
+
     CompilerLocatorMSVC locator_msvc{};
     if (locator_msvc.Locate()) {
         // attempt to locate MSVC compilers
@@ -231,7 +229,7 @@ void clBuiltinTerminalPane::DetectTerminals(std::map<wxString, wxString>& termin
             wxString build_tool = compiler->GetTool("MAKE");
             build_tool = build_tool.BeforeLast('>');
             build_tool.Prepend("CMD /K ");
-            terminals.insert({ "CMD for " + compiler->GetName(), build_tool });
+            terminals.insert({"CMD for " + compiler->GetName(), build_tool});
         }
     }
     WriteTerminalOptionsToDisk(terminals);
@@ -250,7 +248,7 @@ bool clBuiltinTerminalPane::ReadTerminalOptionsFromDisk(std::map<wxString, wxStr
     for (size_t i = 0; i < results.size() / 2; ++i) {
         wxString name = results[i * 2];
         wxString command = results[i * 2 + 1];
-        terminals.insert({ name, command });
+        terminals.insert({name, command});
     }
     return true;
 }
@@ -271,10 +269,8 @@ void clBuiltinTerminalPane::WriteTerminalOptionsToDisk(const std::map<wxString, 
 
 std::map<wxString, wxString> clBuiltinTerminalPane::GetTerminalsOptions(bool scan)
 {
-    std::map<wxString, wxString> terminals;
+    std::map<wxString, wxString> terminals = LocateDefaultTerminals();
 #ifdef __WXMSW__
-    terminals.insert({ "bash", "bash" });
-    terminals.insert({ "CMD", "CMD" });
     if (scan) {
         terminals.clear();
         DetectTerminals(terminals);
@@ -286,7 +282,6 @@ std::map<wxString, wxString> clBuiltinTerminalPane::GetTerminalsOptions(bool sca
     }
 #else
     wxUnusedVar(scan);
-    terminals.insert({ "bash", "bash" });
 #endif
     return terminals;
 }
@@ -301,41 +296,267 @@ void clBuiltinTerminalPane::OnScanForTerminals(wxCommandEvent& event)
 void clBuiltinTerminalPane::UpdateTerminalsChoice(bool scan)
 {
     auto terminals = GetTerminalsOptions(scan);
-#ifdef __WXMSW__
-    int choiceWidth = 60;
-#endif
-
     int initial_value = 0;
     wxString last_selection = clConfig::Get().Read("terminal/last_used_terminal", wxString());
 
     m_terminal_types->Clear();
     for (const auto& [name, command] : terminals) {
-#ifdef __WXMSW__
-        choiceWidth = wxMax(choiceWidth, GetTextExtent(name).GetWidth());
-#endif
         int item_pos = m_terminal_types->Append(name, new wxStringClientData(command));
         if (!last_selection.empty() && last_selection == name) {
             initial_value = item_pos;
         }
     }
 
-#ifdef __WXMSW__
-    int controlWidth = choiceWidth == wxNOT_FOUND ? wxNOT_FOUND : FromDIP(choiceWidth);
-    m_terminal_types->SetSize(controlWidth, wxNOT_FOUND);
-    m_terminal_types->SetSizeHints(controlWidth, wxNOT_FOUND);
-#endif
-
     if (!m_terminal_types->IsEmpty()) {
         m_terminal_types->SetSelection(initial_value);
     }
 }
 
-void clBuiltinTerminalPane::OnIdle(wxIdleEvent& event)
-{
-    CHECK_COND_RET(EventNotifier::Get()->TopFrame()->IsActive());
-    event.Skip();
+#define CHECK_IF_CAN_HANDLE(event)            \
+    auto terminal = GetActiveTerminal();      \
+    if (!terminal || !terminal->HasFocus()) { \
+        event.Skip();                         \
+        return;                               \
+    }
 
-    // pass it to the active tab
-    CHECK_PTR_RET(GetActiveTerminal());
-    GetActiveTerminal()->ProcessIdle();
+void clBuiltinTerminalPane::OnCtrlR(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendCtrlR();
+}
+
+void clBuiltinTerminalPane::OnCtrlU(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendCtrlU();
+}
+
+void clBuiltinTerminalPane::OnCtrlL(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendCtrlL();
+}
+
+void clBuiltinTerminalPane::OnCtrlD(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendCtrlD();
+}
+
+void clBuiltinTerminalPane::OnCtrlC(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendCtrlC();
+}
+
+void clBuiltinTerminalPane::OnCtrlW(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendCtrlW();
+}
+
+void clBuiltinTerminalPane::OnCtrlZ(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendCtrlZ();
+}
+
+void clBuiltinTerminalPane::OnAltF(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendAltF();
+}
+
+void clBuiltinTerminalPane::OnAltB(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendAltB();
+}
+
+void clBuiltinTerminalPane::OnCtrlA(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendCtrlA();
+}
+
+void clBuiltinTerminalPane::OnCtrlE(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendCtrlE();
+}
+
+void clBuiltinTerminalPane::OnInitDone(wxCommandEvent& e)
+{
+    e.Skip();
+    std::thread([this]() {
+        wxFileName themes_path{clStandardPaths::Get().GetDataDir(), wxEmptyString};
+        themes_path.AppendDir("terminal_themes");
+        themes_path.AppendDir("themes");
+        wxArrayString theme_files;
+        wxDir::GetAllFiles(themes_path.GetPath(), &theme_files, "*.toml", wxDIR_FILES);
+
+        std::map<wxString, wxTerminalTheme> themes;
+        for (const wxString& toml_file : theme_files) {
+            wxFileName fn{toml_file};
+            auto theme = clBuiltinTerminalPane::FromTOML(fn);
+            if (theme.has_value()) {
+                themes.insert({fn.GetName(), *theme});
+            }
+        }
+
+        {
+            wxMutexLocker locker(m_themes_mutex);
+            m_themes.swap(themes);
+        }
+        EventNotifier::Get()->RunOnMain<void>([this]() { ThemesUpdated(); });
+    }).detach();
+}
+
+#ifdef __WXMAC__
+void clBuiltinTerminalPane::OnCopy(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->Copy();
+}
+
+void clBuiltinTerminalPane::OnPaste(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->Paste();
+}
+
+#endif
+
+void clBuiltinTerminalPane::OnThemeChanged(clCommandEvent& event)
+{
+    event.Skip();
+    UpdateFont();
+    ApplyThemeChanges();
+}
+
+std::optional<wxTerminalTheme> clBuiltinTerminalPane::FromTOML(const wxFileName& filepath)
+{
+    clDEBUG() << "   > Importing Alacritty Theme (TOML) file:" << filepath << endl;
+    std::string filename = StringUtils::ToStdString(filepath.GetFullPath());
+
+    clINIParser ini_parser;
+    ini_parser.ParseFile(filepath.GetFullPath());
+
+    wxTerminalTheme theme;
+    theme.bg = ini_parser["colors.primary"]["background"].GetValue();
+    theme.fg = ini_parser["colors.primary"]["foreground"].GetValue();
+
+    if (!theme.bg.IsOk() || !theme.fg.IsOk()) {
+        clSYSTEM() << "Can not import theme:" << filepath << endl;
+        return std::nullopt;
+    }
+
+    bool is_dark = DrawingUtils::IsDark(theme.bg);
+
+    wxString section_name = "colors.normal";
+    theme.black = ini_parser[section_name]["black"].GetValue();
+    theme.red = ini_parser[section_name]["red"].GetValue();
+    theme.green = ini_parser[section_name]["green"].GetValue();
+    theme.yellow = ini_parser[section_name]["yellow"].GetValue();
+    theme.blue = ini_parser[section_name]["blue"].GetValue();
+    theme.magenta = ini_parser[section_name]["magenta"].GetValue();
+    theme.cyan = ini_parser[section_name]["cyan"].GetValue();
+    theme.white = ini_parser[section_name]["white"].GetValue();
+
+    section_name = "colors.bright";
+    theme.brightBlack = ini_parser[section_name]["black"].GetValue();
+    theme.brightRed = ini_parser[section_name]["red"].GetValue();
+    theme.brightGreen = ini_parser[section_name]["green"].GetValue();
+    theme.brightYellow = ini_parser[section_name]["yellow"].GetValue();
+    theme.brightBlue = ini_parser[section_name]["blue"].GetValue();
+    theme.brightMagenta = ini_parser[section_name]["magenta"].GetValue();
+    theme.brightCyan = ini_parser[section_name]["cyan"].GetValue();
+    theme.brightWhite = ini_parser[section_name]["white"].GetValue();
+
+    // Optional colours
+    theme.cursorColour = ini_parser["colors.cursor"]["cursor"].GetValue();
+    theme.selectionBg = ini_parser["colors.selection"]["background"].GetValue();
+    theme.highlightBg = ini_parser["colors.search.matches"]["background"].GetValue();
+
+    if (!theme.cursorColour.IsOk()) {
+        theme.cursorColour = is_dark ? *wxYELLOW : *wxBLACK;
+    }
+
+    if (!theme.selectionBg.IsOk()) {
+        theme.selectionBg = is_dark ? wxT("ORANGE") : wxT("BLUE");
+    }
+
+    if (!theme.highlightBg.IsOk()) {
+        theme.selectionBg = is_dark ? wxT("GOLD") : wxT("PINK");
+    }
+
+    if (!theme.black.IsOk() || !theme.red.IsOk() || !theme.green.IsOk() || !theme.yellow.IsOk() || !theme.blue.IsOk() ||
+        !theme.magenta.IsOk() || !theme.cyan.IsOk() || !theme.white.IsOk() || !theme.brightBlack.IsOk() ||
+        !theme.brightRed.IsOk() || !theme.brightGreen.IsOk() || !theme.brightYellow.IsOk() ||
+        !theme.brightBlue.IsOk() || !theme.brightMagenta.IsOk() || !theme.brightCyan.IsOk() ||
+        !theme.brightWhite.IsOk()) {
+        clSYSTEM() << "failed to read basic colour for theme:" << filepath << endl;
+        return std::nullopt;
+    }
+    return theme;
+}
+
+void clBuiltinTerminalPane::ThemesUpdated()
+{
+    m_choice_themes->Clear();
+    if (m_themes.empty()) {
+        return;
+    }
+    for (const auto& [theme_name, _] : m_themes) {
+        m_choice_themes->Append(theme_name);
+    }
+
+    wxString selected_theme = m_themes.begin()->first;
+    selected_theme = clConfig::Get().Read("terminal/theme", selected_theme);
+    m_choice_themes->SetStringSelection(selected_theme);
+
+    if (m_themes.contains(selected_theme)) {
+        m_activeTheme = m_themes[selected_theme];
+    } else {
+        m_activeTheme = wxTerminalTheme::MakeDarkTheme();
+    }
+    ApplyThemeChanges();
+}
+
+void clBuiltinTerminalPane::OnChoiceTheme(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxString selected_theme = m_choice_themes->GetStringSelection();
+    if (m_themes.contains(selected_theme)) {
+        m_activeTheme = m_themes[selected_theme];
+        clConfig::Get().Write("terminal/theme", selected_theme);
+        clConfig::Get().Save();
+    } else {
+        m_activeTheme = wxTerminalTheme::MakeDarkTheme();
+    }
+    ApplyThemeChanges();
+}
+
+void clBuiltinTerminalPane::ApplyThemeChanges()
+{
+    if (!m_activeTheme.has_value()) {
+        return;
+    }
+
+    m_activeTheme.value().font = m_activeFont;
+
+    for (size_t i = 0; i < m_book->GetPageCount(); ++i) {
+        auto terminal = dynamic_cast<TerminalView*>(m_book->GetPage(i));
+        if (terminal) {
+            terminal->SetTheme(m_activeTheme.value());
+        }
+    }
+}
+
+void clBuiltinTerminalPane::UpdateFont()
+{
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if (lexer) {
+        m_activeFont = lexer->GetFontForStyle(0, this);
+    }
 }

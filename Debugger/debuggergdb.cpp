@@ -305,10 +305,6 @@ bool DbgGdb::Start(const DebugSessionInfo& si, clEnvList_t* env_list)
 #endif
 
         size_t flags = needs_console ? IProcessCreateConsole : IProcessCreateDefault;
-        if (m_info.flags & DebuggerInformation::kRunAsSuperuser) {
-            flags |= IProcessCreateAsSuperuser;
-        }
-
         m_gdbProcess = ::CreateAsyncProcess(this, cmd, flags, si.cwd, env_list);
         if (!m_gdbProcess) {
             return false;
@@ -1603,9 +1599,6 @@ bool DbgGdb::Attach(const DebugSessionInfo& si, clEnvList_t* env_list)
 
     // Build the process creation flags
     size_t createFlags = IProcessCreateDefault;
-    if (m_info.flags & DebuggerInformation::kRunAsSuperuser) {
-        createFlags |= IProcessCreateAsSuperuser;
-    }
     m_gdbProcess = CreateAsyncProcess(this, cmd, createFlags, wxEmptyString, env_list);
     if (!m_gdbProcess) {
         return false;

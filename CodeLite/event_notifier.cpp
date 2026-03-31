@@ -102,3 +102,47 @@ void EventNotifier::NotifyWorkspaceReloadStartEvet(const wxString& workspaceFile
 void EventNotifier::AddPendingEvent(const wxEvent& event) { wxEvtHandler::AddPendingEvent(event); }
 
 bool EventNotifier::ProcessEvent(wxEvent& event) { return wxEvtHandler::ProcessEvent(event); }
+
+EventFilterCallbackToken EventNotifier::AddEventTypeFilter(wxEventType type, EventFilterCallback callback)
+{
+    static EventFilterCallbackToken event_filter_id{0};
+    auto& callbacks = m_eventFilterCallbacks[type];
+    // Place it first
+    ++event_filter_id;
+    EventFilterCallbackContainer container{.id = event_filter_id, .callback = std::move(callback)};
+    callbacks.insert(callbacks.begin(), std::move(container));
+    return event_filter_id;
+}
+
+void EventNotifier::RemoveEventTypeFilter(wxEventType type, EventFilterCallbackToken token)
+{
+    auto iter = m_eventFilterCallbacks.find(type);
+    if (iter == m_eventFilterCallbacks.end()) {
+        return;
+    }
+
+    auto& v = iter->second;
+    size_t count = std::erase_if(v, [token](const EventFilterCallbackContainer& c) { return c.id == token; });
+    if (count && v.empty()) {
+        m_eventFilterCallbacks.erase(iter);
+    }
+}
+
+int EventNotifier::FilterEvent(wxEvent& event)
+{
+    if (m_eventFilterCallbacks.empty()) {
+        return wxEventFilter::Event_Skip;
+    }
+
+    auto iter = m_eventFilterCallbacks.find(event.GetEventType());
+    if (iter == m_eventFilterCallbacks.end()) {
+        return wxEventFilter::Event_Skip;
+    }
+
+    for (auto& cb : iter->second) {
+        if (cb.callback(event)) {
+            return wxEventFilter::Event_Processed;
+        }
+    }
+    return wxEventFilter::Event_Skip;
+}

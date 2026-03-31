@@ -26,6 +26,7 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "StringUtils.h"
+#include "assistant/Process.hpp"
 #include "cl_command_event.h"
 #include "file_logger.h"
 #include "fileutils.h"
@@ -500,56 +501,32 @@ int ProcUtils::SafeExecuteCommand(const wxString& command,
                                   std::shared_ptr<std::atomic_bool> shutdown_flag)
 {
 #ifdef __WXMSW__
-    wxString errMsg;
-    LOG_IF_TRACE { clDEBUG1() << "executing process:" << command << endl; }
-    std::unique_ptr<WinProcess> proc{WinProcess::Execute(command, errMsg)};
-    if (!proc) {
-        return wxNOT_FOUND;
-    }
-
-    // wait for the process to terminate
-    wxString tmpbuf;
-    wxString buff;
-
-    LOG_IF_TRACE { clDEBUG1() << "reading process output..." << endl; }
-    bool shutdown_cleanly{true};
-    while (proc->IsAlive()) {
-        if (shutdown_flag && shutdown_flag->load()) {
-            // Check for termination flag state
-            shutdown_cleanly = false;
-            break;
+    auto argv = StringUtils::BuildArgv(command);
+    auto argv_std = StringUtils::ToStdStrings(argv);
+    std::string accumlated_output;
+    auto output_cb = [shutdown_flag, &accumlated_output](const std::string& out, const std::string& err) -> bool {
+        if (!out.empty()) {
+            accumlated_output += out;
         }
+        if (!err.empty()) {
+            accumlated_output += err;
+        }
+        if (shutdown_flag == nullptr) {
+            return true;
+        }
+        return !shutdown_flag->load();
+    };
 
-        tmpbuf.Clear();
-        if (proc->Read(tmpbuf)) {
-            // as long as we read something, don't sleep...
-            buff << tmpbuf;
-        } else {
-            wxThread::Sleep(1);
-        }
-    }
-
-    int exit_code{-1};
-    if (shutdown_cleanly) {
-        tmpbuf.Clear();
-        exit_code = proc->GetExitCode();
-        LOG_IF_TRACE
-        {
-            clDEBUG1() << "process terminated with exit code:" << exit_code << endl;
-            // Read any unread output
-            clDEBUG1() << "reading process output remainder..." << endl;
-        }
-        proc->Read(tmpbuf);
-        while (!tmpbuf.IsEmpty()) {
-            buff << tmpbuf;
-            tmpbuf.Clear();
-            proc->Read(tmpbuf);
-        }
-        proc->Cleanup();
-        LOG_IF_TRACE { clDEBUG1() << "reading process output remainder...done" << endl; }
+    int exit_code = assistant::Process::RunProcessAndWait(argv_std, output_cb);
+    wxString out_str = wxString::FromUTF8(accumlated_output);
+    LOG_IF_TRACE
+    {
+        clDEBUG1() << "process terminated with exit code:" << exit_code << endl;
+        // Read any unread output
+        clDEBUG1() << "reading process output remainder..." << endl;
     }
     // Convert buff into wxArrayString
-    output = ::wxStringTokenize(buff, "\n", wxTOKEN_STRTOK);
+    output = ::wxStringTokenize(out_str, "\n", wxTOKEN_STRTOK);
     return exit_code;
 #else
     return Popen(command, output, shutdown_flag);

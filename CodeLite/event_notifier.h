@@ -26,8 +26,11 @@
 #ifndef EVENTNOTIFIER_H
 #define EVENTNOTIFIER_H
 
+#include <functional>
 #include <future>
+#include <unordered_map>
 #include <wx/event.h>
+#include <wx/eventfilter.h>
 #include <wx/thread.h>
 
 #if wxUSE_GUI
@@ -36,12 +39,16 @@
 
 #include "codelite_exports.h"
 
+using EventFilterCallback = std::function<bool(wxEvent&)>;
+using EventFilterCallbackToken = size_t;
+
+struct WXDLLIMPEXP_CL EventFilterCallbackContainer {
+    EventFilterCallbackToken id{0};
+    EventFilterCallback callback;
+};
+
 class WXDLLIMPEXP_CL EventNotifier : public wxEvtHandler
 {
-private:
-    EventNotifier() = default;
-    virtual ~EventNotifier() = default;
-
 public:
     static EventNotifier* Get();
     static void Release();
@@ -115,6 +122,17 @@ public:
         }
         return f.get();
     }
+
+    EventFilterCallbackToken AddEventTypeFilter(wxEventType type, EventFilterCallback callback);
+    void RemoveEventTypeFilter(wxEventType type, EventFilterCallbackToken token);
+
+    int FilterEvent(wxEvent& event);
+
+private:
+    EventNotifier() = default;
+    virtual ~EventNotifier() = default;
+
+    std::unordered_map<wxEventType, std::vector<EventFilterCallbackContainer>> m_eventFilterCallbacks;
 };
 
 #endif // EVENTNOTIFIER_H

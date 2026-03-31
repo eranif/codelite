@@ -27,6 +27,7 @@
 
 #include "FontUtils.hpp"
 #include "cl_standard_paths.h"
+#include "file_logger.h"
 #include "fileutils.h"
 
 #include <wx/filefn.h>

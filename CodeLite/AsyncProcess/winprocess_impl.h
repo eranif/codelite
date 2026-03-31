@@ -67,18 +67,6 @@ public:
                              const wxString& workingDir = wxEmptyString,
                              IProcessCallback* cb = NULL);
 
-    // Create process asynchronously and return a process object
-    static IProcess* ExecuteConPTY(wxEvtHandler* parent,
-                                   const std::vector<wxString>& args,
-                                   size_t flags = IProcessCreateWithHiddenConsole,
-                                   const wxString& workingDir = wxEmptyString);
-
-    // Create process asynchronously and return a process object
-    static IProcess* ExecuteConPTY(wxEvtHandler* parent,
-                                   const wxString& cmd,
-                                   size_t flags = IProcessCreateWithHiddenConsole,
-                                   const wxString& workingDir = wxEmptyString);
-
     /**
      * @brief read data from stdout and error
      * @param buff check the buffer when true is returned
@@ -109,8 +97,7 @@ private:
            hChildStdinWrDup = INVALID_HANDLE_VALUE, hChildStdoutRd = INVALID_HANDLE_VALUE,
            hChildStdoutWr = INVALID_HANDLE_VALUE, hChildStdoutRdDup = INVALID_HANDLE_VALUE,
            hChildStderrRd = INVALID_HANDLE_VALUE, hChildStderrWr = INVALID_HANDLE_VALUE,
-           hChildStderrRdDup = INVALID_HANDLE_VALUE, hSaveStdin = INVALID_HANDLE_VALUE,
-           hSaveStdout = INVALID_HANDLE_VALUE, hSaveStderr = INVALID_HANDLE_VALUE;
+           hChildStderrRdDup = INVALID_HANDLE_VALUE;
 
     VOID* m_hPseudoConsole = nullptr;
     // Child process id & information

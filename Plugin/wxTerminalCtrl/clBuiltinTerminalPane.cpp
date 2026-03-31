@@ -21,6 +21,7 @@
 #include <wx/choicdlg.h>
 #include <wx/frame.h>
 #include <wx/sizer.h>
+#include <wx/xrc/xmlres.h>
 
 namespace
 {
@@ -77,39 +78,10 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     GetSizer()->Fit(this);
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
-
-    auto on_key_down = [this](wxEvent& event) -> bool {
-        auto terminal = GetActiveTerminal();
-        CHECK_PTR_RET_FALSE(terminal);
-        CHECK_COND_RET_FALSE(terminal->HasFocus());
-        wxKeyEvent* key_event = dynamic_cast<wxKeyEvent*>(&event);
-        if (!key_event) {
-            return false;
-        }
-        return terminal->GetEventHandler()->ProcessEvent(*key_event);
-    };
-    auto on_char_hook = [this](wxEvent& event) -> bool {
-        auto terminal = GetActiveTerminal();
-        CHECK_PTR_RET_FALSE(terminal);
-        CHECK_COND_RET_FALSE(terminal->HasFocus());
-        wxKeyEvent* key_event = dynamic_cast<wxKeyEvent*>(&event);
-        if (!key_event) {
-            return false;
-        }
-        return terminal->GetEventHandler()->ProcessEvent(*key_event);
-    };
-    m_tokens.push_back(
-        {EventNotifier::Get()->AddEventTypeFilter(wxEVT_KEY_DOWN, std::move(on_key_down)), wxEVT_KEY_DOWN});
-    m_tokens.push_back(
-        {EventNotifier::Get()->AddEventTypeFilter(wxEVT_CHAR_HOOK, std::move(on_char_hook)), wxEVT_CHAR_HOOK});
 }
 
 clBuiltinTerminalPane::~clBuiltinTerminalPane()
 {
-    for (const auto& [token, evt_type] : m_tokens) {
-        EventNotifier::Get()->RemoveEventTypeFilter(evt_type, token);
-    }
-
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
     clConfig::Get().Write("terminal/last_used_terminal", m_terminal_types->GetStringSelection());
@@ -161,6 +133,35 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
             m_book->DeletePage(where, ctrl);
         }
     });
+
+    // Register standard keyboard shortcuts for the terminal.
+    std::vector<wxAcceleratorEntry> V;
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'R', XRCID("Ctrl_ID_command")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'U', XRCID("Ctrl_ID_clear_line")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'L', XRCID("Ctrl_ID_clear_screen")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'D', XRCID("Ctrl_ID_logout")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'C', XRCID("Ctrl_ID_ctrl_c")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'W', XRCID("Ctrl_ID_delete_word")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'Z', XRCID("Ctrl_ID_suspend")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_ALT, (int)'B', XRCID("Alt_ID_backward")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_ALT, (int)'F', XRCID("Alt_ID_forward")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'A', XRCID("Ctrl_ID_start_of_line")});
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'E', XRCID("Ctrl_ID_end_of_line")});
+
+    wxAcceleratorTable accel_table(V.size(), V.data());
+
+    ctrl->SetAcceleratorTable(accel_table);
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlR, this, XRCID("Ctrl_ID_command"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlU, this, XRCID("Ctrl_ID_clear_line"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlL, this, XRCID("Ctrl_ID_clear_screen"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlD, this, XRCID("Ctrl_ID_logout"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlC, this, XRCID("Ctrl_ID_ctrl_c"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlW, this, XRCID("Ctrl_ID_delete_word"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlZ, this, XRCID("Ctrl_ID_suspend"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnAltB, this, XRCID("Alt_ID_backward"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnAltF, this, XRCID("Alt_ID_forward"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlA, this, XRCID("Ctrl_ID_start_of_line"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlE, this, XRCID("Ctrl_ID_end_of_line"));
 }
 
 void clBuiltinTerminalPane::OnSetTitle(wxTerminalEvent& event)
@@ -279,3 +280,76 @@ void clBuiltinTerminalPane::UpdateTerminalsChoice(bool scan)
         m_terminal_types->SetSelection(initial_value);
     }
 }
+
+#define CHECK_IF_CAN_HANDLE(event)            \
+    auto terminal = GetActiveTerminal();      \
+    if (!terminal || !terminal->HasFocus()) { \
+        event.Skip();                         \
+        return;                               \
+    }
+
+void clBuiltinTerminalPane::OnCtrlR(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendCtrlR();
+}
+void clBuiltinTerminalPane::OnCtrlU(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendCtrlU();
+}
+
+void clBuiltinTerminalPane::OnCtrlL(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendCtrlL();
+}
+
+void clBuiltinTerminalPane::OnCtrlD(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendCtrlD();
+}
+
+void clBuiltinTerminalPane::OnCtrlC(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendCtrlC();
+}
+
+void clBuiltinTerminalPane::OnCtrlW(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendCtrlW();
+}
+
+void clBuiltinTerminalPane::OnCtrlZ(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendCtrlZ();
+}
+
+void clBuiltinTerminalPane::OnAltF(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendAltF();
+}
+
+void clBuiltinTerminalPane::OnAltB(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendAltB();
+}
+
+void clBuiltinTerminalPane::OnCtrlA(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendCtrlA();
+}
+
+void clBuiltinTerminalPane::OnCtrlE(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->SendCtrlE();
+}
+#undef CHECK_IF_CAN_HANDLE

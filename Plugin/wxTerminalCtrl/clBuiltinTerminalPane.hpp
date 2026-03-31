@@ -29,6 +29,17 @@ protected:
     std::map<wxString, wxString> GetTerminalsOptions(bool scan = false);
     void OnScanForTerminals(wxCommandEvent& event);
     void UpdateTerminalsChoice(bool scan);
+    void OnCtrlR(wxCommandEvent& e);
+    void OnCtrlU(wxCommandEvent& e);
+    void OnCtrlL(wxCommandEvent& e);
+    void OnCtrlD(wxCommandEvent& e);
+    void OnCtrlC(wxCommandEvent& e);
+    void OnCtrlW(wxCommandEvent& e);
+    void OnCtrlZ(wxCommandEvent& e);
+    void OnAltF(wxCommandEvent& e);
+    void OnAltB(wxCommandEvent& e);
+    void OnCtrlA(wxCommandEvent& e);
+    void OnCtrlE(wxCommandEvent& e);
 
 private:
     TerminalView* GetActiveTerminal();

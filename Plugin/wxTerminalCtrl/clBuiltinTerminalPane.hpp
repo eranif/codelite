@@ -3,15 +3,21 @@
 
 #include "Notebook.h"
 #include "clWorkspaceEvent.hpp"
+#include "cl_command_event.h"
 #include "event_notifier.h"
 #include "terminal_event.h"
+#include "terminal_theme.h"
 
+#include <map>
+#include <optional>
 #include <vector>
 #include <wx/aui/auibar.h>
 #include <wx/choice.h>
 #include <wx/panel.h>
+#include <wx/thread.h>
 
 class TerminalView;
+
 class WXDLLIMPEXP_SDK clBuiltinTerminalPane : public wxPanel
 {
 public:
@@ -41,14 +47,30 @@ protected:
     void OnAltB(wxCommandEvent& e);
     void OnCtrlA(wxCommandEvent& e);
     void OnCtrlE(wxCommandEvent& e);
+#ifdef __WXMAC__
+    void OnCopy(wxCommandEvent& e);
+    void OnPaste(wxCommandEvent& e);
+#endif
+
+    void OnThemeChanged(clCommandEvent& event);
+    void ThemesUpdated();
+    void OnChoiceTheme(wxCommandEvent& event);
+    void ApplyThemeChanges();
+    void UpdateFont();
 
 private:
+    static std::optional<wxTerminalTheme> FromTOML(const wxFileName& filepath);
     TerminalView* GetActiveTerminal();
 
     wxAuiToolBar* m_toolbar = nullptr;
     Notebook* m_book = nullptr;
     wxChoice* m_terminal_types = nullptr;
+    wxChoice* m_choice_themes = nullptr;
     std::vector<std::pair<EventFilterCallbackToken, wxEventType>> m_tokens;
+    wxMutex m_themes_mutex;
+    std::map<wxString, wxTerminalTheme> m_themes;
+    std::optional<wxTerminalTheme> m_activeTheme{std::nullopt};
+    wxFont m_activeFont;
 };
 
 #endif // CLBUILTINTERMINALPANE_HPP

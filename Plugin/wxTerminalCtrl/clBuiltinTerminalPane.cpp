@@ -6,10 +6,12 @@
 #include "Platform/Platform.hpp"
 #include "bitmap_loader.h"
 #include "clFileName.hpp"
+#include "clINIParser.hpp"
 #include "clWorkspaceManager.h"
 #include "codelite_events.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
+#include "file_logger.h"
 #include "globals.h"
 #include "imanager.h"
 #include "macros.h"
@@ -19,6 +21,7 @@
 
 #include <wx/app.h>
 #include <wx/choicdlg.h>
+#include <wx/dir.h>
 #include <wx/frame.h>
 #include <wx/sizer.h>
 #include <wx/xrc/xmlres.h>
@@ -29,10 +32,16 @@ std::map<wxString, wxString> LocateDefaultTerminals()
 {
     std::map<wxString, wxString> terminals;
     auto bash = ThePlatform->Which("bash");
+    auto zsh = ThePlatform->Which("zsh");
     auto cmd = ThePlatform->Which("powershell");
     if (bash.has_value()) {
         terminals.insert(
             {wxString::Format("%s --login -i", bash.value()), wxString::Format("%s --login -i", bash.value())});
+    }
+
+    if (zsh.has_value()) {
+        terminals.insert(
+            {wxString::Format("%s --login -i", zsh.value()), wxString::Format("%s --login -i", zsh.value())});
     }
 
     if (cmd.has_value()) {
@@ -62,8 +71,16 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
 
     // Get list of terminals
     m_terminal_types = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxSize(FromDIP(300), wxNOT_FOUND));
+    m_terminal_types->SetToolTip(_("Choose shell interpreter"));
     UpdateTerminalsChoice(false);
     m_toolbar->AddControl(m_terminal_types);
+
+    // Get list of terminals
+    m_choice_themes = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxSize(FromDIP(200), wxNOT_FOUND));
+    m_toolbar->AddControl(m_choice_themes);
+    m_choice_themes->SetToolTip(_("Choose terminal theme"));
+    m_choice_themes->Bind(wxEVT_CHOICE, &clBuiltinTerminalPane::OnChoiceTheme, this);
+    UpdateFont();
 
 #ifdef __WXMSW__
     m_toolbar->AddTool(
@@ -78,12 +95,20 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     GetSizer()->Fit(this);
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clBuiltinTerminalPane::OnThemeChanged, this);
+    EventNotifier::Get()->Bind(wxEVT_INIT_DONE, &clBuiltinTerminalPane::OnInitDone, this);
+
+#ifdef __WXMAC__
+    wxTheApp->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCopy, this, wxID_COPY);
+    wxTheApp->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnPaste, this, wxID_PASTE);
+#endif
 }
 
 clBuiltinTerminalPane::~clBuiltinTerminalPane()
 {
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clBuiltinTerminalPane::OnThemeChanged, this);
     clConfig::Get().Write("terminal/last_used_terminal", m_terminal_types->GetStringSelection());
 }
 
@@ -117,6 +142,7 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     EnvSetter env_setter{};
     std::optional<TerminalView::EnvironmentList> env{std::nullopt};
     TerminalView* ctrl = new TerminalView(m_book, cmd, env);
+    ctrl->SetTheme(m_activeTheme.has_value() ? *m_activeTheme : wxTerminalTheme::MakeDarkTheme());
     m_book->AddPage(ctrl, cmd, true);
     m_book->SetPageToolTip(m_book->GetPageCount() - 1, cmd);
 
@@ -148,6 +174,11 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'A', XRCID("Ctrl_ID_start_of_line")});
     V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'E', XRCID("Ctrl_ID_end_of_line")});
 
+#ifdef __WXMAC__
+    V.push_back(wxAcceleratorEntry{wxACCEL_CMD, (int)'V', wxID_PASTE});
+    V.push_back(wxAcceleratorEntry{wxACCEL_CMD, (int)'C', wxID_COPY});
+#endif
+
     wxAcceleratorTable accel_table(V.size(), V.data());
     ctrl->SetAcceleratorTable(accel_table);
 
@@ -161,6 +192,7 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnAltB, this, XRCID("Alt_ID_backward"));
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnAltF, this, XRCID("Alt_ID_forward"));
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlA, this, XRCID("Ctrl_ID_start_of_line"));
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlE, this, XRCID("Ctrl_ID_end_of_line"));
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlE, this, XRCID("Ctrl_ID_end_of_line"));
 }
 
@@ -238,7 +270,6 @@ void clBuiltinTerminalPane::WriteTerminalOptionsToDisk(const std::map<wxString, 
 std::map<wxString, wxString> clBuiltinTerminalPane::GetTerminalsOptions(bool scan)
 {
     std::map<wxString, wxString> terminals = LocateDefaultTerminals();
-    ;
 #ifdef __WXMSW__
     if (scan) {
         terminals.clear();
@@ -353,6 +384,179 @@ void clBuiltinTerminalPane::OnCtrlE(wxCommandEvent& e)
     CHECK_IF_CAN_HANDLE(e);
     terminal->SendCtrlE();
 }
-#undef CHECK_IF_CAN_HANDLE
 
-void clBuiltinTerminalPane::OnInitDone(wxCommandEvent& e) { e.Skip(); }
+void clBuiltinTerminalPane::OnInitDone(wxCommandEvent& e)
+{
+    e.Skip();
+    std::thread([this]() {
+        wxFileName themes_path{clStandardPaths::Get().GetDataDir(), wxEmptyString};
+        themes_path.AppendDir("terminal_themes");
+        themes_path.AppendDir("themes");
+        wxArrayString theme_files;
+        wxDir::GetAllFiles(themes_path.GetPath(), &theme_files, "*.toml", wxDIR_FILES);
+
+        std::map<wxString, wxTerminalTheme> themes;
+        for (const wxString& toml_file : theme_files) {
+            wxFileName fn{toml_file};
+            auto theme = clBuiltinTerminalPane::FromTOML(fn);
+            if (theme.has_value()) {
+                themes.insert({fn.GetName(), *theme});
+            }
+        }
+
+        {
+            wxMutexLocker locker(m_themes_mutex);
+            m_themes.swap(themes);
+        }
+        EventNotifier::Get()->RunOnMain<void>([this]() { ThemesUpdated(); });
+    }).detach();
+}
+
+#ifdef __WXMAC__
+void clBuiltinTerminalPane::OnCopy(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->Copy();
+}
+
+void clBuiltinTerminalPane::OnPaste(wxCommandEvent& e)
+{
+    CHECK_IF_CAN_HANDLE(e);
+    terminal->Paste();
+}
+
+#endif
+
+void clBuiltinTerminalPane::OnThemeChanged(clCommandEvent& event)
+{
+    event.Skip();
+    UpdateFont();
+    ApplyThemeChanges();
+}
+
+std::optional<wxTerminalTheme> clBuiltinTerminalPane::FromTOML(const wxFileName& filepath)
+{
+    clDEBUG() << "   > Importing Alacritty Theme (TOML) file:" << filepath << endl;
+    std::string filename = StringUtils::ToStdString(filepath.GetFullPath());
+
+    clINIParser ini_parser;
+    ini_parser.ParseFile(filepath.GetFullPath());
+
+    wxTerminalTheme theme;
+    theme.bg = ini_parser["colors.primary"]["background"].GetValue();
+    theme.fg = ini_parser["colors.primary"]["foreground"].GetValue();
+
+    if (!theme.bg.IsOk() || !theme.fg.IsOk()) {
+        clSYSTEM() << "Can not import theme:" << filepath << endl;
+        return std::nullopt;
+    }
+
+    bool is_dark = DrawingUtils::IsDark(theme.bg);
+
+    wxString section_name = "colors.normal";
+    theme.black = ini_parser[section_name]["black"].GetValue();
+    theme.red = ini_parser[section_name]["red"].GetValue();
+    theme.green = ini_parser[section_name]["green"].GetValue();
+    theme.yellow = ini_parser[section_name]["yellow"].GetValue();
+    theme.blue = ini_parser[section_name]["blue"].GetValue();
+    theme.magenta = ini_parser[section_name]["magenta"].GetValue();
+    theme.cyan = ini_parser[section_name]["cyan"].GetValue();
+    theme.white = ini_parser[section_name]["white"].GetValue();
+
+    section_name = "colors.bright";
+    theme.brightBlack = ini_parser[section_name]["black"].GetValue();
+    theme.brightRed = ini_parser[section_name]["red"].GetValue();
+    theme.brightGreen = ini_parser[section_name]["green"].GetValue();
+    theme.brightYellow = ini_parser[section_name]["yellow"].GetValue();
+    theme.brightBlue = ini_parser[section_name]["blue"].GetValue();
+    theme.brightMagenta = ini_parser[section_name]["magenta"].GetValue();
+    theme.brightCyan = ini_parser[section_name]["cyan"].GetValue();
+    theme.brightWhite = ini_parser[section_name]["white"].GetValue();
+
+    // Optional colours
+    theme.cursorColour = ini_parser["colors.cursor"]["cursor"].GetValue();
+    theme.selectionBg = ini_parser["colors.selection"]["background"].GetValue();
+    theme.highlightBg = ini_parser["colors.search.matches"]["background"].GetValue();
+
+    if (!theme.cursorColour.IsOk()) {
+        theme.cursorColour = is_dark ? *wxYELLOW : *wxBLACK;
+    }
+
+    if (!theme.selectionBg.IsOk()) {
+        theme.selectionBg = is_dark ? wxT("ORANGE") : wxT("BLUE");
+    }
+
+    if (!theme.highlightBg.IsOk()) {
+        theme.selectionBg = is_dark ? wxT("GOLD") : wxT("PINK");
+    }
+
+    if (!theme.black.IsOk() || !theme.red.IsOk() || !theme.green.IsOk() || !theme.yellow.IsOk() || !theme.blue.IsOk() ||
+        !theme.magenta.IsOk() || !theme.cyan.IsOk() || !theme.white.IsOk() || !theme.brightBlack.IsOk() ||
+        !theme.brightRed.IsOk() || !theme.brightGreen.IsOk() || !theme.brightYellow.IsOk() ||
+        !theme.brightBlue.IsOk() || !theme.brightMagenta.IsOk() || !theme.brightCyan.IsOk() ||
+        !theme.brightWhite.IsOk()) {
+        clSYSTEM() << "failed to read basic colour for theme:" << filepath << endl;
+        return std::nullopt;
+    }
+    return theme;
+}
+
+void clBuiltinTerminalPane::ThemesUpdated()
+{
+    m_choice_themes->Clear();
+    if (m_themes.empty()) {
+        return;
+    }
+    for (const auto& [theme_name, _] : m_themes) {
+        m_choice_themes->Append(theme_name);
+    }
+
+    wxString selected_theme = m_themes.begin()->first;
+    selected_theme = clConfig::Get().Read("terminal/theme", selected_theme);
+    m_choice_themes->SetStringSelection(selected_theme);
+
+    if (m_themes.contains(selected_theme)) {
+        m_activeTheme = m_themes[selected_theme];
+    } else {
+        m_activeTheme = wxTerminalTheme::MakeDarkTheme();
+    }
+    ApplyThemeChanges();
+}
+
+void clBuiltinTerminalPane::OnChoiceTheme(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxString selected_theme = m_choice_themes->GetStringSelection();
+    if (m_themes.contains(selected_theme)) {
+        m_activeTheme = m_themes[selected_theme];
+        clConfig::Get().Write("terminal/theme", selected_theme);
+        clConfig::Get().Save();
+    } else {
+        m_activeTheme = wxTerminalTheme::MakeDarkTheme();
+    }
+    ApplyThemeChanges();
+}
+
+void clBuiltinTerminalPane::ApplyThemeChanges()
+{
+    if (!m_activeTheme.has_value()) {
+        return;
+    }
+
+    m_activeTheme.value().font = m_activeFont;
+
+    for (size_t i = 0; i < m_book->GetPageCount(); ++i) {
+        auto terminal = dynamic_cast<TerminalView*>(m_book->GetPage(i));
+        if (terminal) {
+            terminal->SetTheme(m_activeTheme.value());
+        }
+    }
+}
+
+void clBuiltinTerminalPane::UpdateFont()
+{
+    auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
+    if (lexer) {
+        m_activeFont = lexer->GetFontForStyle(0, this);
+    }
+}

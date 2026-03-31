@@ -131,3 +131,5 @@ else()
     LIBRARY DESTINATION ${CL_INSTALL_BIN}
     ARCHIVE DESTINATION ${CMAKE_INSTALL_PREFIX}/lib)
 endif()
+
+codelite_install_terminal_themes()

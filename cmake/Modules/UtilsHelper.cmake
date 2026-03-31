@@ -102,6 +102,14 @@ macro(codelite_install_svgs)
     PATTERN "*.svg")
 endmacro()
 
+macro(codelite_install_terminal_themes)
+  install(
+    DIRECTORY ${CL_SRC_ROOT}/Plugin/wxTerminalCtrl/themes
+    DESTINATION ${CL_RESOURCES_DIR}/terminal_themes
+    FILES_MATCHING
+    PATTERN "*.toml")
+endmacro()
+
 function(get_distro_name DISTRO_NAME)
   execute_process(
     COMMAND /bin/bash "-c" "cat /etc/os-release |grep ^ID=|cut -d = -f 2"

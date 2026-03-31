@@ -49,7 +49,7 @@ public:
     void SetParserPaths(const wxArrayString& parserPaths) { this->m_parserPaths = parserPaths; }
     const wxArrayString& GetParserPaths() const { return m_parserPaths; }
 
-    void MacOpenFile(const wxString& fileName);
+    void MacOpenFile(const wxString& fileName) override;
 
     void SetStartedInDebuggerMode(bool startedInDebuggerMode) { this->m_startedInDebuggerMode = startedInDebuggerMode; }
     bool IsStartedInDebuggerMode() const { return m_startedInDebuggerMode; }

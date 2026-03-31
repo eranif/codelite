@@ -75,17 +75,20 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     UpdateTerminalsChoice(false);
     m_toolbar->AddControl(m_terminal_types);
 
+#ifdef __WXMSW__
+    m_toolbar->AddTool(
+        wxID_REFRESH, _("Scan"), image_list->LoadBitmap("debugger_restart"), _("Re-scan for terminals"), wxITEM_NORMAL);
+
+#endif
+
+    m_toolbar->AddSeparator();
+
     // Get list of terminals
     m_choice_themes = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxSize(FromDIP(200), wxNOT_FOUND));
     m_toolbar->AddControl(m_choice_themes);
     m_choice_themes->SetToolTip(_("Choose terminal theme"));
     m_choice_themes->Bind(wxEVT_CHOICE, &clBuiltinTerminalPane::OnChoiceTheme, this);
     UpdateFont();
-
-#ifdef __WXMSW__
-    m_toolbar->AddTool(
-        wxID_REFRESH, _("Scan"), image_list->LoadBitmap("debugger_restart"), wxEmptyString, wxITEM_NORMAL);
-#endif
 
     m_toolbar->Realize();
 

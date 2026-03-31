@@ -35,4 +35,8 @@ Low:
 BUGS
 ----
 
-Application hangs when renaming a symbol & the `MiniMap` editor is loaded...
+- Application hangs when renaming a symbol & the `MiniMap` editor is loaded...
+- AI: Unable to restart the client once a single "Confirm" bar was shown.
+- AI: Replace the "Confirm" dialog with a free text, allowing the user to interrupt the model.
+- AI: Extend all the tools with a "Purpose" mandatory field, so each model will be forced to report the reason for the invocation.
+

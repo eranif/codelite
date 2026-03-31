@@ -517,9 +517,12 @@ bool CodeLiteApp::OnInit()
     // CodeLite itself :/
     FileLogger::OpenLog("codelite.log", clConfig::Get().Read(kConfigLogVerbosity, FileLogger::Error));
     clDEBUG() << "Starting codelite..." << endl;
+
+#ifdef __WXMSW__
     if (FreeConsole()) {
         clSYSTEM() << "Successfully detached from console" << endl;
     }
+#endif
 
     // Copy gdb pretty printers from the installation folder to a writeable location
     // this is  needed because python complies the files and in most cases the user

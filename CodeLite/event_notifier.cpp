@@ -139,5 +139,10 @@ int EventNotifier::FilterEvent(wxEvent& event)
         return wxEventFilter::Event_Skip;
     }
 
+    for (auto& cb : iter->second) {
+        if (cb.callback(event)) {
+            return wxEventFilter::Event_Processed;
+        }
+    }
     return wxEventFilter::Event_Skip;
 }

@@ -28,7 +28,7 @@ std::map<wxString, wxString> LocateDefaultTerminals()
 {
     std::map<wxString, wxString> terminals;
     auto bash = ThePlatform->Which("bash");
-    auto cmd = ThePlatform->Which("cmd");
+    auto cmd = ThePlatform->Which("powershell");
     if (bash.has_value()) {
         terminals.insert(
             {wxString::Format("%s --login -i", bash.value()), wxString::Format("%s --login -i", bash.value())});
@@ -77,10 +77,39 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     GetSizer()->Fit(this);
     m_book->Bind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
+
+    auto on_key_down = [this](wxEvent& event) -> bool {
+        auto terminal = GetActiveTerminal();
+        CHECK_PTR_RET_FALSE(terminal);
+        CHECK_COND_RET_FALSE(terminal->HasFocus());
+        wxKeyEvent* key_event = dynamic_cast<wxKeyEvent*>(&event);
+        if (!key_event) {
+            return false;
+        }
+        return terminal->GetEventHandler()->ProcessEvent(*key_event);
+    };
+    auto on_char_hook = [this](wxEvent& event) -> bool {
+        auto terminal = GetActiveTerminal();
+        CHECK_PTR_RET_FALSE(terminal);
+        CHECK_COND_RET_FALSE(terminal->HasFocus());
+        wxKeyEvent* key_event = dynamic_cast<wxKeyEvent*>(&event);
+        if (!key_event) {
+            return false;
+        }
+        return terminal->GetEventHandler()->ProcessEvent(*key_event);
+    };
+    m_tokens.push_back(
+        {EventNotifier::Get()->AddEventTypeFilter(wxEVT_KEY_DOWN, std::move(on_key_down)), wxEVT_KEY_DOWN});
+    m_tokens.push_back(
+        {EventNotifier::Get()->AddEventTypeFilter(wxEVT_CHAR_HOOK, std::move(on_char_hook)), wxEVT_CHAR_HOOK});
 }
 
 clBuiltinTerminalPane::~clBuiltinTerminalPane()
 {
+    for (const auto& [token, evt_type] : m_tokens) {
+        EventNotifier::Get()->RemoveEventTypeFilter(evt_type, token);
+    }
+
     m_book->Unbind(wxEVT_BOOK_PAGE_CHANGED, &clBuiltinTerminalPane::OnPageChanged, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &clBuiltinTerminalPane::OnWorkspaceLoaded, this);
     clConfig::Get().Write("terminal/last_used_terminal", m_terminal_types->GetStringSelection());
@@ -115,7 +144,6 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     // By default, inherit parent's env.
     EnvSetter env_setter{};
     std::optional<TerminalView::EnvironmentList> env{std::nullopt};
-
     TerminalView* ctrl = new TerminalView(m_book, cmd, env);
     m_book->AddPage(ctrl, cmd, true);
     m_book->SetPageToolTip(m_book->GetPageCount() - 1, cmd);

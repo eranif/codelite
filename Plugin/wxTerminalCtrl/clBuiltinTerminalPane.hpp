@@ -3,8 +3,10 @@
 
 #include "Notebook.h"
 #include "clWorkspaceEvent.hpp"
+#include "event_notifier.h"
 #include "terminal_event.h"
 
+#include <vector>
 #include <wx/aui/auibar.h>
 #include <wx/choice.h>
 #include <wx/panel.h>
@@ -34,6 +36,7 @@ private:
     wxAuiToolBar* m_toolbar = nullptr;
     Notebook* m_book = nullptr;
     wxChoice* m_terminal_types = nullptr;
+    std::vector<std::pair<EventFilterCallbackToken, wxEventType>> m_tokens;
 };
 
 #endif // CLBUILTINTERMINALPANE_HPP

@@ -71,30 +71,6 @@ thread_local ClosePseudoConsole_T ClosePseudoConsoleFunc = nullptr;
 
 using HPCON = HANDLE;
 
-/**
- * @class ConsoleAttacher
- * @date 11/03/10
- * @brief a helper class to attach this process to a process' console
- * this allows us to write directly into that process console-input-buffer
- * One should check isAttached once this object is constructed
- */
-class ConsoleAttacher
-{
-public:
-    bool isAttached;
-
-public:
-    ConsoleAttacher(long pid) { isAttached = AttachConsole(pid); }
-
-    ~ConsoleAttacher()
-    {
-        if (isAttached) {
-            FreeConsole();
-        }
-        isAttached = false;
-    }
-};
-
 static bool CheckIsAlive(HANDLE hProcess)
 {
     DWORD dwExitCode;
@@ -418,7 +394,6 @@ IProcess* WinProcessImpl::Execute(
     LOG_IF_TRACE { clDEBUG1() << "Running process:" << cmd << endl; }
     BOOL ret = FALSE;
     {
-        ConsoleAttacher ca(prc->GetPid());
         ret = CreateProcess(NULL,
                             cmd.wchar_str(),   // shell line execution command
                             NULL,              // process security attributes

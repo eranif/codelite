@@ -126,13 +126,13 @@ clBuiltinTerminalPane::~clBuiltinTerminalPane()
 
 void clBuiltinTerminalPane::OnWorkspaceLoaded(clWorkspaceEvent& event) { event.Skip(); }
 
-TerminalView* clBuiltinTerminalPane::GetActiveTerminal()
+wxTerminalViewCtrl* clBuiltinTerminalPane::GetActiveTerminal()
 {
     // when we add tabs, return the active selected tab's terminal
     if (m_book->GetPageCount() == 0) {
         return nullptr;
     }
-    return static_cast<TerminalView*>(m_book->GetPage(m_book->GetSelection()));
+    return static_cast<wxTerminalViewCtrl*>(m_book->GetPage(m_book->GetSelection()));
 }
 
 void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
@@ -152,8 +152,8 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
 
     // By default, inherit parent's env.
     EnvSetter env_setter{};
-    std::optional<TerminalView::EnvironmentList> env{std::nullopt};
-    TerminalView* ctrl = new TerminalView(m_book, cmd, env);
+    std::optional<wxTerminalViewCtrl::EnvironmentList> env{std::nullopt};
+    wxTerminalViewCtrl* ctrl = new wxTerminalViewCtrl(m_book, cmd, env);
     ctrl->SetTheme(m_activeTheme.has_value() ? *m_activeTheme : wxTerminalTheme::MakeDarkTheme());
     m_book->AddPage(ctrl, cmd, true);
 
@@ -228,7 +228,7 @@ void clBuiltinTerminalPane::OnPageChanged(wxBookCtrlEvent& event)
     event.Skip();
     auto terminal = GetActiveTerminal();
     CHECK_PTR_RET(terminal);
-    terminal->CallAfter(&TerminalView::SetFocus);
+    terminal->CallAfter(&wxTerminalViewCtrl::SetFocus);
 }
 
 void clBuiltinTerminalPane::DetectTerminals(std::map<wxString, wxString>& terminals)
@@ -572,7 +572,7 @@ void clBuiltinTerminalPane::OnSettingsMenu(wxCommandEvent& event)
 
             // Apply to all terminals
             for (size_t i = 0; i < m_book->GetPageCount(); ++i) {
-                auto terminal = dynamic_cast<TerminalView*>(m_book->GetPage(i));
+                auto terminal = dynamic_cast<wxTerminalViewCtrl*>(m_book->GetPage(i));
                 if (terminal) {
                     terminal->EnableSafeDrawing(m_safeDrawingEnabled);
                     terminal->Refresh();
@@ -598,7 +598,7 @@ void clBuiltinTerminalPane::ApplyThemeChanges()
     m_activeTheme.value().font = m_activeFont;
 
     for (size_t i = 0; i < m_book->GetPageCount(); ++i) {
-        auto terminal = dynamic_cast<TerminalView*>(m_book->GetPage(i));
+        auto terminal = dynamic_cast<wxTerminalViewCtrl*>(m_book->GetPage(i));
         if (terminal) {
             terminal->SetTheme(m_activeTheme.value());
         }

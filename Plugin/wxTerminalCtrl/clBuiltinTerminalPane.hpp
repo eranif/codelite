@@ -16,7 +16,7 @@
 #include <wx/panel.h>
 #include <wx/thread.h>
 
-class TerminalView;
+class wxTerminalViewCtrl;
 
 class WXDLLIMPEXP_SDK clBuiltinTerminalPane : public wxPanel
 {
@@ -62,7 +62,7 @@ protected:
 
 private:
     static std::optional<wxTerminalTheme> FromTOML(const wxFileName& filepath);
-    TerminalView* GetActiveTerminal();
+    wxTerminalViewCtrl* GetActiveTerminal();
 
     wxAuiToolBar* m_toolbar = nullptr;
     Notebook* m_book = nullptr;

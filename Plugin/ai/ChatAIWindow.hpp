@@ -9,6 +9,9 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 
+#include <future>
+#include <thread>
+#include <vector>
 #include <wx/activityindicator.h>
 #include <wx/checkbox.h>
 #include <wx/msgqueue.h>
@@ -56,6 +59,7 @@ public:
      * @see StyleOutput()
      */
     void AppendText(const wxString& text, bool force_style = true);
+    void AppendTextWithLF(const wxString& text, bool force_style = true);
 
     /**
      * Scrolls the output text control to the end and sets focus to it.
@@ -77,6 +81,26 @@ public:
     void ScrollToEnd();
 
     wxString GetText() const;
+
+    using PromisePtr = std::shared_ptr<std::promise<std::string>>;
+
+    void PushPromise(PromisePtr proms)
+    {
+        std::lock_guard lock{m_promises_mutex};
+        m_promises.push_back(proms);
+    }
+
+    std::optional<PromisePtr> PopPromise()
+    {
+        std::lock_guard lock{m_promises_mutex};
+        if (m_promises.empty()) {
+            return std::nullopt;
+        }
+
+        auto ptr = m_promises.front();
+        m_promises.erase(m_promises.begin());
+        return ptr;
+    }
 
 protected:
     bool CurrentEndpointHasHistory() const;
@@ -141,4 +165,6 @@ private:
     std::unique_ptr<clEditEventsHandler> m_outputEditHelper;
     wxStatusBar* m_statusBar{nullptr};
     EndpointModelSelector* m_model_selector{nullptr};
+    std::mutex m_promises_mutex;
+    std::vector<PromisePtr> m_promises;
 };

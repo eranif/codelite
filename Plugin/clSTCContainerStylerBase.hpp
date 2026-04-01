@@ -29,10 +29,47 @@ public:
     }
 
     /// Return the current character pointed by the this object.
-    inline wxChar GetCurrentChar() const
+    inline int GetCurrentChar() const
     {
         int curpos = m_ctrl->GetEndStyled();
         return m_ctrl->GetCharAt(curpos);
+    }
+
+    /**
+     * @brief Returns whether the current position matches the location of the given character sequence.
+     *
+     * Compares the result of Contains(chars) with the current position and returns true only when they are equal.
+     *
+     * @param chars std::vector<int> The character sequence to compare against.
+     * @return bool True if Contains(chars) equals GetPosition(), otherwise false.
+     */
+    inline bool StartsWith(std::vector<int> chars) const { return Contains(chars) == GetPosition(); }
+
+    /// Starting from `from` check if the `chars` sequence exists
+    inline int Contains(std::vector<int> chars, size_t from = 0) const
+    {
+        const size_t start_pos = static_cast<size_t>(m_ctrl->GetEndStyled()) + from;
+        const size_t last_pos = static_cast<size_t>(m_ctrl->GetLastPosition());
+
+        if (chars.empty() || start_pos >= last_pos) {
+            return wxNOT_FOUND;
+        }
+
+        for (size_t pos = start_pos; pos + chars.size() <= last_pos; ++pos) {
+            bool matches = true;
+            for (size_t i = 0; i < chars.size(); ++i) {
+                if (m_ctrl->GetCharAt(static_cast<int>(pos + i)) != chars[i]) {
+                    matches = false;
+                    break;
+                }
+            }
+
+            if (matches) {
+                return static_cast<int>(pos);
+            }
+        }
+
+        return wxNOT_FOUND;
     }
 
     /// Return character from the current position and a given offset.
@@ -43,7 +80,7 @@ public:
         return m_ctrl->GetCharAt(m_ctrl->PositionRelative(curpos, at));
     }
 
-    /// Return teh current position
+    /// Return the current position
     inline int GetPosition() const { return m_ctrl->GetEndStyled(); }
 
     /// Return the word at the current position
@@ -121,12 +158,22 @@ public:
     /// Check if `sv` exists in the current line.
     inline bool CurrentLineContains(size_t from, const char* str)
     {
-        wxString sv{str, strlen(str)};
+        wxString sv(str, wxConvUTF8, strlen(str));
         wxString substr = GetSubStringUntilNewLine(from);
         if (substr.empty()) {
             return false;
         }
         return substr.find(sv) != wxString::npos;
+    }
+
+    /// Check if `sv` exists in the current line.
+    inline bool CurrentLineContains(size_t from, const wxString& str)
+    {
+        wxString substr = GetSubStringUntilNewLine(from);
+        if (substr.empty()) {
+            return false;
+        }
+        return substr.find(str) != wxString::npos;
     }
 
     inline bool CanNext() const { return m_ctrl->GetEndStyled() != m_ctrl->GetLastPosition(); }

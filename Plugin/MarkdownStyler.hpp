@@ -34,16 +34,18 @@ enum MarkdownStyles {
     kNumberedListItem,    // 22
     kNumberedListItemDot, // 23
     kUrl,                 // 24
-    kCodeBlockKeyword,    // 25
-    kCodeBlockString,     // 26
-    kCodeBlockNumber,     // 27
-    kCodeBlockFunction,   // 28
-    kCodeBlockOperator,   // 29
-    kCodeBlockMacro,      // 30
-    kCodeBlockComment,    // 31
+    kActor,               // 25
+    kKeyboardKey,         // 26
+    kCodeBlockKeyword,    // 27
+    kCodeBlockString,     // 28
+    kCodeBlockNumber,     // 29
+    kCodeBlockFunction,   // 30
+    kCodeBlockOperator,   // 31
     // Skip to 40 since 32-39 are used internally
-    kDiffAdd = 40,        // 40
-    kDiffDelete,          // 42
+    kCodeBlockMacro = 40, // 40
+    kCodeBlockComment,    // 41
+    kDiffAdd,             // 42
+    kDiffDelete,          // 43
 };
 
 enum class MarkdownState {
@@ -58,6 +60,8 @@ enum class MarkdownState {
     kEmphasis2Text,
     kHeaderText,
     kUrl,
+    kActorText,
+    kKeyboardKeyText,
 };
 
 class WXDLLIMPEXP_SDK MarkdownStyler : public clSTCContainerStylerBase

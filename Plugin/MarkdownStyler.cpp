@@ -265,6 +265,8 @@ inline bool IsValidUrlChar(wxChar c)
     }
 }
 
+// ⟪ ⟫
+
 /// Check if `sv` is a number
 bool IsNumber(wxStringView sv)
 {
@@ -313,6 +315,9 @@ void MarkdownStyler::InitStyles()
     default_bg = default_prop.GetBgColour();
     default_fg = default_prop.GetFgColour();
     code_bg = default_bg.ChangeLightness(is_dark ? 110 : 90);
+    wxColour actor_colour = rust_lexer->GetProperty(wxSTC_RUST_COMMENTLINE).GetFgColour();
+    wxColour key_colour_bg = rust_lexer->GetProperty(wxSTC_RUST_NUMBER).GetFgColour();
+    wxColour key_colour_fg = default_bg;
 
     auto keyword = rust_lexer->GetProperty(wxSTC_RUST_WORD);
     auto macro = rust_lexer->GetProperty(wxSTC_RUST_MACRO);
@@ -384,6 +389,14 @@ void MarkdownStyler::InitStyles()
     m_ctrl->StyleSetForeground(MarkdownStyles::kUrl, wxSystemSettings::GetColour(wxSYS_COLOUR_HOTLIGHT));
     m_ctrl->StyleSetUnderline(MarkdownStyles::kUrl, true);
     m_ctrl->StyleSetHotSpot(MarkdownStyles::kUrl, true);
+
+    // Custom markings
+    m_ctrl->StyleSetForeground(MarkdownStyles::kActor, actor_colour);
+    m_ctrl->StyleSetBold(MarkdownStyles::kActor, false);
+
+    m_ctrl->StyleSetForeground(MarkdownStyles::kKeyboardKey, key_colour_fg);
+    m_ctrl->StyleSetBackground(MarkdownStyles::kKeyboardKey, key_colour_bg);
+    m_ctrl->StyleSetBold(MarkdownStyles::kKeyboardKey, true);
 
     // Code block syntax highlighting styles
     m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockKeyword, keyword.GetFgColour());
@@ -762,7 +775,9 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
     m_states.push(MarkdownState::kDefault);
     while (accessor.CanNext() && !m_states.empty()) {
         MarkdownState current_state = m_states.top();
-        wxChar ch = accessor.GetCurrentChar();
+        int ch = accessor.GetCurrentChar();
+        int ch1 = accessor.GetCharAt(accessor.GetPosition() + 1);
+        int ch2 = accessor.GetCharAt(accessor.GetPosition() + 2);
 
         switch (current_state) {
         case MarkdownState::kDefault:
@@ -777,6 +792,14 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                     accessor.SetStyle(MarkdownStyles::kNumberedListItemDot, 1);
                     break;
                 }
+            }
+
+            if (accessor.IsAtStartOfLine() && accessor.StartsWith({226, 157, 176}) &&
+                accessor.Contains({226, 157, 177}) != wxNOT_FOUND) {
+                int actor_end = accessor.Contains({226, 157, 177}, 1);
+                accessor.SetStyleUntilEndOfLine(MarkdownStyles::kActor);
+                accessor.SetStyle(MarkdownStyles::kDefault, 1);
+                break;
             }
 
             // not a number, run the switch statement.
@@ -870,6 +893,36 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
             } else {
                 accessor.SetStyle(MarkdownStyles::kDefault, 1);
                 m_states.pop();
+            }
+            break;
+        case MarkdownState::kActorText:
+            switch (ch) {
+            case wxT('❱'):
+                accessor.SetStyle(MarkdownStyles::kActor, 1);
+                m_states.pop();
+                break;
+            case '\n':
+                accessor.SetStyle(MarkdownStyles::kActor, 1);
+                m_states.pop();
+                break;
+            default:
+                accessor.SetStyle(MarkdownStyles::kActor, 1);
+                break;
+            }
+            break;
+        case MarkdownState::kKeyboardKeyText:
+            switch (ch) {
+            case wxT('⟫'):
+                accessor.SetStyle(MarkdownStyles::kKeyboardKey, 1);
+                m_states.pop();
+                break;
+            case '\n':
+                accessor.SetStyle(MarkdownStyles::kKeyboardKey, 1);
+                m_states.pop();
+                break;
+            default:
+                accessor.SetStyle(MarkdownStyles::kKeyboardKey, 1);
+                break;
             }
             break;
         case MarkdownState::kCodeBlockTag:

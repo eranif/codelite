@@ -609,6 +609,27 @@ public:
      */
     void PrintMessage(const wxString& msg, IconType icon);
 
+    using PromptFuture = std::shared_ptr<std::future<std::string>>;
+    using PromptPromise = std::shared_ptr<std::promise<std::string>>;
+
+    /**
+     * @brief Appends a formatted message to the chat window and returns a future for a pending response.
+     *
+     * This callback captures the message, icon, and current object context, writes the message into the
+     * associated chat window with an icon-derived prefix, and creates a promise/future pair that is stored
+     * on the chat window for later fulfillment.
+     *
+     * @param msg The message text to append to the chat window.
+     * @param icon The icon type used to generate the string prefix shown before the message.
+     * @param this The current object instance used to access the chat window and queue the response promise.
+     *
+     * @return Manager::PromptFuture A shared future wrapping a std::future<std::string> that will receive
+     *         the eventual response text.
+     *
+     * @throws std::bad_alloc If memory allocation fails while creating the promise, future, or message data.
+     */
+    PromptFuture PromptUser(const wxString& msg, IconType icon);
+
     /**
      * @brief Creates and registers a new termination flag for task cancellation.
      *

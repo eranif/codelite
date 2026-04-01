@@ -277,6 +277,20 @@ void ChatAIWindow::DoSendPrompt()
     prompt.Trim().Trim(false);
     m_cancel_token->Reset();
 
+    if (prompt.empty()) {
+        return;
+    }
+
+    // Always clear the prompt window.
+    m_stcInput->ClearAll();
+
+    // Check if someone is waiting for this message
+    auto promise = PopPromise();
+    if (promise.has_value()) {
+        promise.value()->set_value(prompt.ToStdString(wxConvUTF8));
+        return;
+    }
+
     llm::ChatOptions chat_options{llm::ChatOptions::kDefault};
     if (!llm::Manager::GetInstance().GetConfig().AreToolsEnabled()) {
         // No tools.
@@ -284,8 +298,22 @@ void ChatAIWindow::DoSendPrompt()
     }
     llm::Manager::GetInstance().Chat(this, prompt, m_cancel_token, chat_options);
 
-    prompt.Prepend(wxString() << "\n**" << ::wxGetUserId() << "**:\n");
-    AppendOutput(prompt + "\n\n");
+    wxString text_to_append;
+    text_to_append << wxT("❰") << wxGetUserId() << wxT("❱\n") << prompt << "\n\n";
+
+    int last_char = m_stcOutput->GetCharAt(m_stcOutput->GetLastPosition());
+    int before_last_char = m_stcOutput->GetCharAt(m_stcOutput->GetLastPosition() - 1);
+
+    wxString prefix = "";
+    if (!m_stcOutput->IsEmpty()) {
+        if (last_char == '\n' && before_last_char != '\n') {
+            prefix << "\n";
+        } else if (last_char != '\n') {
+            prefix << "\n\n";
+        }
+    }
+    AppendTextWithLF(prefix + text_to_append);
+
     m_stcInput->ClearAll();
     ShowIndicator(true);
 }
@@ -420,7 +448,7 @@ void ChatAIWindow::OnChatStarted(clLLMEvent& event)
 {
     event.Skip();
     m_state = ChatState::kWorking;
-    AppendOutput("**assistant**:\n");
+    AppendTextWithLF(wxT("❰assistant❱\n"));
     ShowIndicator(true);
 }
 
@@ -568,6 +596,19 @@ void ChatAIWindow::ScrollToEnd()
     clSTCHelper::SetCaretAt(m_stcOutput, m_stcOutput->GetLastPosition());
     m_stcOutput->ScrollToEnd();
     m_stcOutput->CallAfter(&wxStyledTextCtrl::SetFocus);
+}
+
+void ChatAIWindow::AppendTextWithLF(const wxString& text, bool force_style)
+{
+    CHECK_COND_RET(!text.empty());
+
+    // Make sure our text appear on its own line
+    wxString current_text = m_stcOutput->GetText();
+    if (!current_text.empty() && !current_text.EndsWith("\n") && !text.StartsWith("\n")) {
+        AppendOutput("\n" + text);
+    } else {
+        AppendOutput(text);
+    }
 }
 
 void ChatAIWindow::AppendText(const wxString& text, bool force_style)

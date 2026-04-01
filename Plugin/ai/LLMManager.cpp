@@ -683,30 +683,32 @@ CanInvokeToolResult Manager::CanRunTool(const std::string& tool_name, [[maybe_un
     }
 
     wxString message;
-    message << _("The model wants to run the tool: \"") << tool_name << _("\". Continue?");
-    auto result = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message);
-    if (!result.ok()) {
-        return CanInvokeToolResult{
-            .can_invoke = false,
-            .reason = "Internal Error. " + result.error_message().ToStdString(wxConvUTF8),
-        };
-    }
+    message << _("The model wants to run the tool: `") << tool_name << _("`\n");
+    message << _("Type `t` to trust this tool for the current session, `y` to allow once, or `n` to decline the request.");
+    auto fut = llm::Manager::GetInstance().PromptUser(message, IconType::kQuestion);
+    auto res = fut->get();
+    wxString response_text = wxString::FromUTF8(res);
+    response_text.Trim().Trim(false);
 
-    switch (result.value()) {
-    case llm::UserAnswer::kNo:
+    if (response_text == "yes" || response_text == "y" || response_text == "ok") {
+        return CanInvokeToolResult{
+            .can_invoke = true,
+        };
+    } else if (response_text == "no" || response_text == "n") {
         return CanInvokeToolResult{
             .can_invoke = false,
             .reason = "Permission denied",
         };
-    case llm::UserAnswer::kYes:
-        return CanInvokeToolResult{.can_invoke = true};
-    case llm::UserAnswer::kTrust:
+    } else if (response_text == "trust" || response_text == "t") {
         allowed_tools.insert(tool_name);
-        return CanInvokeToolResult{.can_invoke = true};
-    default:
+        return CanInvokeToolResult{
+            .can_invoke = true,
+        };
+    } else {
+        // Something else - send the text as it is.
         return CanInvokeToolResult{
             .can_invoke = false,
-            .reason = "Permission denied",
+            .reason = res,
         };
     }
 }
@@ -1312,6 +1314,34 @@ void Manager::SetCachingPolicy(llm::CachePolicy policy)
 {
     CHECK_PTR_RET(m_client);
     m_client->SetCachingPolicy(policy);
+}
+
+Manager::PromptFuture Manager::PromptUser(const wxString& msg, IconType icon)
+{
+    CHECK_PTR_RET_NULL(m_client);
+    CHECK_PTR_RET_NULL(GetChatWindow());
+
+    auto cb = [msg, icon, this]() -> Manager::PromptFuture {
+        auto chat_win = GetChatWindow();
+        wxString symbol = IconType_ToString(icon) + " ";
+
+        wxString current_text = chat_win->GetText();
+        wxString message_to_add;
+        if (!current_text.EndsWith("\n")) {
+            message_to_add = "\n";
+        }
+        message_to_add << symbol << msg;
+        if (!msg.EndsWith("\n")) {
+            message_to_add << "\n";
+        }
+        chat_win->AppendText(message_to_add);
+
+        auto response_promise = std::make_shared<std::promise<std::string>>();
+        auto fut = response_promise->get_future();
+        chat_win->PushPromise(response_promise);
+        return std::make_shared<std::future<std::string>>(std::move(fut));
+    };
+    return EventNotifier::Get()->RunOnMain<Manager::PromptFuture>(std::move(cb));
 }
 
 void Manager::PrintMessage(const wxString& msg, IconType icon)

@@ -19,8 +19,6 @@ others:
 High:
 -----
 
-- Restarting the AI agent while it is pending a response, will cause a hang.
-
 Medium:
 -----
 

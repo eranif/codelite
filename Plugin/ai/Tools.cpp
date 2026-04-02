@@ -488,7 +488,7 @@ CanInvokeToolResult ApplyPatchConfirm(const std::string& tool_name, assistant::j
     static thread_local std::unordered_set<std::string> apply_patch_trust_paths;
     if (!apply_patch_trust_paths.contains(file_path)) {
         wxString message;
-        message << _("The model wants to apply the following patch:\n```patch\n") << patch << "```\n";
+        message << _("The model wants to apply the following patch:\n```patch\n") << patch << "\n```\n";
         return llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(
             message, [file_path]() { // User trusts the tool for this path
                 apply_patch_trust_paths.insert(file_path);

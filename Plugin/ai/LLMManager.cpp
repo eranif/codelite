@@ -661,8 +661,10 @@ void Manager::Stop()
         m_termination_flags.clear();
     }
 
+    m_clientStopInProgress.store(true);
     m_client->Interrupt();
     CleanupAfterWorkerExit();
+    m_clientStopInProgress.store(false);
     m_client.reset();
 
     clLLMEvent stop_event{wxEVT_LLM_STOPPED};
@@ -1262,7 +1264,19 @@ CanInvokeToolResult Manager::PromptUserYesNoTrustQuestion(const wxString& text, 
     message << _("Type ") << kTrust << _(" to trust this tool for the current session, ") << kYes
             << _(" to allow once, or ") << kNo << _(" to decline the request.");
     auto fut = GetInstance().PromptUser(message, IconType::kNoIcon);
-    auto res = fut->get();
+
+    // Avoid blocking the worker thread forever
+    auto& mgr = GetInstance();
+    std::string res;
+    while (fut && fut->wait_for(std::chrono::milliseconds(10)) != std::future_status::ready) {
+        if (mgr.IsClientStopping()) {
+            return CanInvokeToolResult{
+                .can_invoke = false,
+                .reason = "Permission request aborted during shutdown/restart",
+            };
+        }
+    }
+    res = fut->get();
     wxString response_text = wxString::FromUTF8(res);
     response_text.Trim().Trim(false);
 

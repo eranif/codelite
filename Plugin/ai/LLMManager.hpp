@@ -685,6 +685,7 @@ public:
     }
 
     void OnGenerateDocString(wxCommandEvent& event);
+    inline bool IsClientStopping() const { return m_clientStopInProgress.load(); }
 
 private:
     Manager() = default;
@@ -757,6 +758,7 @@ private:
     size_t m_pending_user_answers{0};
     std::atomic_bool m_initialise_called{false};
     TextGenerationPreviewFrame* m_commentGenerationView{nullptr};
+    std::atomic_bool m_clientStopInProgress{false};
 };
 
 /**

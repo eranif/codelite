@@ -345,7 +345,7 @@ void clCodeLiteRemoteProcess::ListFiles(const wxString& root_dir,
     // build the command and send it
     const nlohmann::json json = {
         {"command", "ls"},
-        {"root_dir", StringUtils::ToStdString(root_dir)},
+        {"root_dir", root_dir.ToStdString(wxConvUTF8)},
         {"file_extensions", StringUtils::ToStdStrings(::wxStringTokenize(extensions, ",; |", wxTOKEN_STRTOK))},
         {"exclude_extensions",
          StringUtils::ToStdStrings(::wxStringTokenize(exclude_extensions, ",; |", wxTOKEN_STRTOK))},
@@ -372,8 +372,8 @@ void clCodeLiteRemoteProcess::Search(const wxString& root_dir,
     // build the command and send it
     const nlohmann::json json = {
         {"command", "find"},
-        {"root_dir", StringUtils::ToStdString(root_dir)},
-        {"find_what", StringUtils::ToStdString(find_what)},
+        {"root_dir", root_dir.ToStdString(wxConvUTF8)},
+        {"find_what", find_what.ToStdString(wxConvUTF8)},
         {"file_extensions", StringUtils::ToStdStrings(::wxStringTokenize(extensions, ",; |", wxTOKEN_STRTOK))},
         {"exclude_patterns", StringUtils::ToStdStrings(::wxStringTokenize(exclude_patterns, ",; |", wxTOKEN_STRTOK))},
         {"icase", icase},
@@ -397,9 +397,9 @@ void clCodeLiteRemoteProcess::Locate(const wxString& path,
 
     // build the command and send it
     const nlohmann::json json = {{"command", "locate"},
-                                 {"path", StringUtils::ToStdString(path)},
-                                 {"name", StringUtils::ToStdString(name)},
-                                 {"ext", StringUtils::ToStdString(ext)},
+                                 {"path", path.ToStdString(wxConvUTF8)},
+                                 {"name", name.ToStdString(wxConvUTF8)},
+                                 {"ext", ext.ToStdString(wxConvUTF8)},
                                  {"versions", StringUtils::ToStdStrings(versions)}};
 
     const auto command = json.dump();
@@ -417,7 +417,7 @@ void clCodeLiteRemoteProcess::FindPath(const wxString& path)
     }
 
     // build the command and send it
-    const nlohmann::json json = {{"command", "find_path"}, {"path", StringUtils::ToStdString(path)}};
+    const nlohmann::json json = {{"command", "find_path"}, {"path", path.ToStdString(wxConvUTF8)}};
     const auto command = json.dump();
     m_process->Write(command + "\n");
     LOG_IF_TRACE { clDEBUG1() << command << endl; }
@@ -440,12 +440,12 @@ bool clCodeLiteRemoteProcess::DoExec(
     }
 
     // build the command and send it
-    nlohmann::json json = {{"command", "exec"}, {"wd", StringUtils::ToStdString(working_directory)}, {"cmd", cmd}};
+    nlohmann::json json = {{"command", "exec"}, {"wd", working_directory.ToStdString(wxConvUTF8)}, {"cmd", cmd}};
 
     auto& envarr = json["env"];
     envarr = nlohmann::json::array();
     for (const auto& [name, value] : env) {
-        envarr.push_back({{"name", StringUtils::ToStdString(name)}, {"value", StringUtils::ToStdString(value)}});
+        envarr.push_back({{"name", name.ToStdString(wxConvUTF8)}, {"value", value.ToStdString(wxConvUTF8)}});
     }
 
     wxString command = json.dump();
@@ -758,9 +758,9 @@ void clCodeLiteRemoteProcess::Replace(const wxString& root_dir,
     // build the command and send it
     const nlohmann::json json = {
         {"command", "replace"},
-        {"root_dir", StringUtils::ToStdString(root_dir)},
-        {"find_what", StringUtils::ToStdString(find_what)},
-        {"replace_with", StringUtils::ToStdString(replace_with)},
+        {"root_dir", root_dir.ToStdString(wxConvUTF8)},
+        {"find_what", find_what.ToStdString(wxConvUTF8)},
+        {"replace_with", replace_with.ToStdString(wxConvUTF8)},
         {"file_extensions", StringUtils::ToStdStrings(::wxStringTokenize(extensions, ",; |", wxTOKEN_STRTOK))},
         {"exclude_patterns", StringUtils::ToStdStrings(::wxStringTokenize(exclude_patterns, ",; |", wxTOKEN_STRTOK))},
         {"icase", icase},

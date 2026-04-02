@@ -14,7 +14,7 @@ std::string LSP::ResponseMessage::ToString() const
     if (!m_json || !m_json->isOk()) {
         return "";
     }
-    return StringUtils::ToStdString(m_json->toElement().format(false));
+    return m_json->toElement().format(false).ToStdString(wxConvUTF8);
 }
 
 // we don't really serialise response messages

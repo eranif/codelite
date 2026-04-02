@@ -798,9 +798,7 @@ bool cksum(const std::string& file, size_t* checksum)
 } // namespace
 
 bool FileUtils::GetChecksum(const wxString& filepath, size_t* checksum)
-{
-    return cksum(StringUtils::ToStdString(filepath), checksum);
-}
+{ return cksum(filepath.ToStdString(wxConvUTF8), checksum); }
 
 bool FileUtils::IsBinaryExecutable(const wxString& filename)
 {

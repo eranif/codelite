@@ -24,7 +24,6 @@
 //////////////////////////////////////////////////////////////////////////////
 
 #if USE_SFTP
-#include "StringUtils.h"
 #include "event_notifier.h"
 #include "file_logger.h"
 
@@ -92,8 +91,8 @@ void clSSH::Open(int seconds)
     ssh_set_blocking(m_session, 0);
     int verbosity = SSH_LOG_NOLOG;
     int strict_check = 0;
-    std::string host = StringUtils::ToStdString(m_host);
-    std::string user = StringUtils::ToStdString(GetUsername());
+    std::string host = m_host.ToStdString(wxConvUTF8);
+    std::string user = GetUsername().ToStdString(wxConvUTF8);
     ssh_options_set(m_session, SSH_OPTIONS_HOST, host.c_str());
     ssh_options_set(m_session, SSH_OPTIONS_LOG_VERBOSITY, &verbosity);
     ssh_options_set(m_session, SSH_OPTIONS_PORT, &m_port);
@@ -247,7 +246,7 @@ bool clSSH::LoginAuthNone(bool throwExc)
 
     int rc;
     // interactive keyboard method failed, try another method
-    auto username = StringUtils::ToStdString(GetUsername());
+    auto username = GetUsername().ToStdString(wxConvUTF8);
     rc = ssh_userauth_none(m_session, username.c_str());
     if (rc == SSH_AUTH_SUCCESS) {
         return true;
@@ -377,7 +376,7 @@ bool clSSH::LoginPublicKey(bool throwExc)
             // User cancelled
             return false;
         }
-        passphrase = StringUtils::ToStdString(text);
+        passphrase = text.ToStdString(wxConvUTF8);
     }
 
     const char* c_passphrase = passphrase.has_value() ? passphrase.value().c_str() : nullptr;
@@ -389,7 +388,7 @@ bool clSSH::LoginPublicKey(bool throwExc)
         return true;
     } else {
         // Try the user provided keys
-        std::string file = StringUtils::ToStdString(m_key.path.value());
+        std::string file = m_key.path.value().ToStdString(wxConvUTF8);
         clDEBUG() << "Trying to login with user key:" << file << endl;
         ssh_key sshkey;
         auto error_code = ssh_pki_import_privkey_file(file.c_str(), c_passphrase, nullptr, nullptr, &sshkey);
@@ -435,7 +434,7 @@ void clSSH::Login()
 {
     int rc;
 
-    std::string username = StringUtils::ToStdString(GetUsername());
+    std::string username = GetUsername().ToStdString(wxConvUTF8);
     if (!username.empty()) {
         ssh_options_set(m_session, SSH_OPTIONS_USER, username.c_str());
     }

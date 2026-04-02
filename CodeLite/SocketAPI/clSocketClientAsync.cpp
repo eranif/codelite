@@ -41,7 +41,7 @@ void clAsyncSocket::Send(const std::string& buffer)
     }
 }
 
-void clAsyncSocket::Send(const wxString& buffer) { Send(StringUtils::ToStdString(buffer)); }
+void clAsyncSocket::Send(const wxString& buffer) { Send(buffer.ToStdString(wxConvUTF8)); }
 
 //-----------------------------------------------------------------------------------------------
 // The helper thread

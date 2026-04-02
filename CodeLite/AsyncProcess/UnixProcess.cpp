@@ -1,6 +1,5 @@
 #include "UnixProcess.h"
 #if defined(__WXGTK__) || defined(__WXOSX__)
-#include "StringUtils.h"
 #include "cl_command_event.h"
 #include "file_logger.h"
 #include "processreaderthread.h"
@@ -57,7 +56,7 @@ UnixProcess::UnixProcess(wxEvtHandler* owner, const wxArrayString& args)
                 wx_arg.Remove(0, 1).RemoveLast();
             }
 
-            std::string cstr_arg = StringUtils::ToStdString(wx_arg);
+            std::string cstr_arg = wx_arg.ToStdString(wxConvUTF8);
             argv[i] = new char[cstr_arg.length() + 1];
             strcpy(argv[i], cstr_arg.c_str());
             argv[i][cstr_arg.length()] = 0;

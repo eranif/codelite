@@ -70,7 +70,7 @@ inline nlohmann::json ToJson(const wxStringMap_t& map)
 {
     nlohmann::json json;
     for (const auto& [key, value] : map) {
-        json[StringUtils::ToStdString(key)] = StringUtils::ToStdString(value);
+        json[key.ToStdString(wxConvUTF8)] = value.ToStdString(wxConvUTF8);
     }
     return json;
 }

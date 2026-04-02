@@ -329,6 +329,8 @@ void MarkdownStyler::InitStyles()
     auto codeblock_function = rust_lexer->GetProperty(wxSTC_RUST_WORD6);
     auto diff_del = diff_lexer->GetProperty(wxSTC_DIFF_DELETED);
     auto diff_add = diff_lexer->GetProperty(wxSTC_DIFF_ADDED);
+    auto check_mark = diff_lexer->GetProperty(wxSTC_DIFF_ADDED);
+    auto error_mark = diff_lexer->GetProperty(wxSTC_DIFF_DELETED);
 
     auto header_1 = markdown_lexer->GetProperty(wxSTC_MARKDOWN_HEADER1);
     auto header_2 = markdown_lexer->GetProperty(wxSTC_MARKDOWN_HEADER2);
@@ -427,6 +429,9 @@ void MarkdownStyler::InitStyles()
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockComment, line_comment.GetFgColour());
     m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockComment, code_bg);
+
+    m_ctrl->StyleSetForeground(MarkdownStyles::kCheckMarkSymbol, check_mark.GetFgColour());
+    m_ctrl->StyleSetForeground(MarkdownStyles::kErrorSymbol, error_mark.GetFgColour());
 
     SetStyleCallback([this](clSTCAccessor& accessor) { this->OnStyle(accessor); });
 }
@@ -798,6 +803,17 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 int actor_end = accessor.Contains({226, 157, 177}, 1);
                 accessor.SetStyleUntilEndOfLine(MarkdownStyles::kActor);
                 accessor.SetStyle(MarkdownStyles::kDefault, 1);
+                break;
+            }
+
+            if (accessor.StartsWith({226, 156, 148})) {
+                accessor.SetStyle(MarkdownStyles::kCheckMarkSymbol, 3);
+                break;
+            }
+
+            if (accessor.StartsWith({226, 157, 140, 239, 184, 143}) || accessor.StartsWith({226, 157, 140})) {
+                accessor.SetStyle(
+                    MarkdownStyles::kErrorSymbol, accessor.StartsWith({226, 157, 140, 239, 184, 143}) ? 6 : 3);
                 break;
             }
 

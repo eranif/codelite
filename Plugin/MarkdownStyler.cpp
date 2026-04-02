@@ -404,15 +404,19 @@ void MarkdownStyler::InitStyles()
     m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockKeyword, code_bg);
 
     // Diff styles
-    wxColour diff_add_fg = diff_add.GetFgColour();
-    wxColour diff_add_bg = diff_add_fg.ChangeLightness(is_dark ? 50 : 150);
+    wxColour diff_add_base_colour = diff_add.GetFgColour();
+    wxColour diff_add_bg = diff_add_base_colour.ChangeLightness(is_dark ? 70 : 150);
+    wxColour diff_add_fg = diff_add_base_colour.ChangeLightness(is_dark ? 170 : 50);
+    diff_add_bg.Set(diff_add_bg.GetRed(), diff_add_bg.GetGreen(), diff_add_bg.GetBlue(), 50);
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kDiffAdd, diff_add_fg);
     m_ctrl->StyleSetBackground(MarkdownStyles::kDiffAdd, diff_add_bg);
     m_ctrl->StyleSetEOLFilled(MarkdownStyles::kDiffAdd, true);
 
-    wxColour diff_del_fg = diff_del.GetFgColour();
-    wxColour diff_del_bg = diff_del_fg.ChangeLightness(is_dark ? 50 : 150);
+    wxColour diff_del_base_colour = diff_del.GetFgColour();
+    wxColour diff_del_bg = diff_del_base_colour.ChangeLightness(is_dark ? 50 : 150);
+    wxColour diff_del_fg = diff_del_base_colour.ChangeLightness(is_dark ? 170 : 50);
+    diff_del_bg.Set(diff_del_bg.GetRed(), diff_del_bg.GetGreen(), diff_del_bg.GetBlue(), 50);
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kDiffDelete, diff_del_fg);
     m_ctrl->StyleSetBackground(MarkdownStyles::kDiffDelete, diff_del_bg);

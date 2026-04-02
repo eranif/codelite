@@ -46,6 +46,7 @@ enum MarkdownStyles {
     kCodeBlockComment,    // 41
     kDiffAdd,             // 42
     kDiffDelete,          // 43
+    kKeyboardKeyBracket,  // 44
 };
 
 enum class MarkdownState {
@@ -60,8 +61,6 @@ enum class MarkdownState {
     kEmphasis2Text,
     kHeaderText,
     kUrl,
-    kActorText,
-    kKeyboardKeyText,
 };
 
 class WXDLLIMPEXP_SDK MarkdownStyler : public clSTCContainerStylerBase

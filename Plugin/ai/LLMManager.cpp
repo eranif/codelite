@@ -683,9 +683,13 @@ CanInvokeToolResult Manager::CanRunTool(const std::string& tool_name, [[maybe_un
     }
 
     wxString message;
+    const wxString kTrust = wxT("⟪t⟫");
+    const wxString kYes = wxT("⟪y⟫");
+    const wxString kNo = wxT("⟪n⟫");
     message << _("The model wants to run the tool: `") << tool_name << _("`\n");
-    message << _("Type `t` to trust this tool for the current session, `y` to allow once, or `n` to decline the request.");
-    auto fut = llm::Manager::GetInstance().PromptUser(message, IconType::kQuestion);
+    message << _("Type ") << kTrust << _(" to trust this tool for the current session, ") << kYes
+            << _(" to allow once, or ") << kNo << _(" to decline the request.");
+    auto fut = llm::Manager::GetInstance().PromptUser(message, IconType::kNoIcon);
     auto res = fut->get();
     wxString response_text = wxString::FromUTF8(res);
     response_text.Trim().Trim(false);
@@ -1323,7 +1327,10 @@ Manager::PromptFuture Manager::PromptUser(const wxString& msg, IconType icon)
 
     auto cb = [msg, icon, this]() -> Manager::PromptFuture {
         auto chat_win = GetChatWindow();
-        wxString symbol = IconType_ToString(icon) + " ";
+        wxString symbol = IconType_ToString(icon);
+        if (!symbol.empty()) {
+            symbol << " ";
+        }
 
         wxString current_text = chat_win->GetText();
         wxString message_to_add;
@@ -1335,7 +1342,8 @@ Manager::PromptFuture Manager::PromptUser(const wxString& msg, IconType icon)
             message_to_add << "\n";
         }
         chat_win->AppendText(message_to_add);
-
+        // Switch the focus to the answer window.
+        chat_win->GetStcInput()->CallAfter(&wxStyledTextCtrl::SetFocus);
         auto response_promise = std::make_shared<std::promise<std::string>>();
         auto fut = response_promise->get_future();
         chat_win->PushPromise(response_promise);

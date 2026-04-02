@@ -595,7 +595,6 @@ void ChatAIWindow::ScrollToEnd()
 {
     clSTCHelper::SetCaretAt(m_stcOutput, m_stcOutput->GetLastPosition());
     m_stcOutput->ScrollToEnd();
-    m_stcOutput->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 
 void ChatAIWindow::AppendTextWithLF(const wxString& text, bool force_style)

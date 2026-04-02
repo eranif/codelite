@@ -4,6 +4,7 @@
 #include <wx/string.h>
 
 enum class IconType {
+    kNoIcon,
     kQuestion,
     kInfo,
     kError,

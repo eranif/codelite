@@ -315,9 +315,9 @@ void MarkdownStyler::InitStyles()
     default_bg = default_prop.GetBgColour();
     default_fg = default_prop.GetFgColour();
     code_bg = default_bg.ChangeLightness(is_dark ? 110 : 90);
-    wxColour actor_colour = rust_lexer->GetProperty(wxSTC_RUST_COMMENTLINE).GetFgColour();
-    wxColour key_colour_bg = rust_lexer->GetProperty(wxSTC_RUST_NUMBER).GetFgColour();
-    wxColour key_colour_fg = default_bg;
+    wxColour actor_colour = default_bg.ChangeLightness(is_dark ? 120 : 80);
+    wxColour key_colour_fg = is_dark ? wxColour("#FF9933") : wxColour("#CC33FF");
+    wxColour key_bracket_colour_fg = default_bg.ChangeLightness(is_dark ? 120 : 80);
 
     auto keyword = rust_lexer->GetProperty(wxSTC_RUST_WORD);
     auto macro = rust_lexer->GetProperty(wxSTC_RUST_MACRO);
@@ -395,8 +395,7 @@ void MarkdownStyler::InitStyles()
     m_ctrl->StyleSetBold(MarkdownStyles::kActor, false);
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kKeyboardKey, key_colour_fg);
-    m_ctrl->StyleSetBackground(MarkdownStyles::kKeyboardKey, key_colour_bg);
-    m_ctrl->StyleSetBold(MarkdownStyles::kKeyboardKey, true);
+    m_ctrl->StyleSetForeground(MarkdownStyles::kKeyboardKeyBracket, key_bracket_colour_fg);
 
     // Code block syntax highlighting styles
     m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockKeyword, keyword.GetFgColour());
@@ -802,6 +801,17 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 break;
             }
 
+            if (accessor.StartsWith({226, 159, 170})) {
+                int keyboard_key_start = accessor.Contains({226, 159, 170});
+                int keyboard_key_end = accessor.Contains({226, 159, 171});
+                if (keyboard_key_end - keyboard_key_start == 4) {
+                    accessor.SetStyle(MarkdownStyles::kKeyboardKeyBracket, 3); // ⟪ (3 positions)
+                    accessor.SetStyle(MarkdownStyles::kKeyboardKey, 1);        // the letter itself
+                    accessor.SetStyle(MarkdownStyles::kKeyboardKeyBracket, 3); // ⟫ (3 positions)
+                    break;
+                }
+            }
+
             // not a number, run the switch statement.
             switch (ch) {
             case 'h':
@@ -893,36 +903,6 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
             } else {
                 accessor.SetStyle(MarkdownStyles::kDefault, 1);
                 m_states.pop();
-            }
-            break;
-        case MarkdownState::kActorText:
-            switch (ch) {
-            case wxT('❱'):
-                accessor.SetStyle(MarkdownStyles::kActor, 1);
-                m_states.pop();
-                break;
-            case '\n':
-                accessor.SetStyle(MarkdownStyles::kActor, 1);
-                m_states.pop();
-                break;
-            default:
-                accessor.SetStyle(MarkdownStyles::kActor, 1);
-                break;
-            }
-            break;
-        case MarkdownState::kKeyboardKeyText:
-            switch (ch) {
-            case wxT('⟫'):
-                accessor.SetStyle(MarkdownStyles::kKeyboardKey, 1);
-                m_states.pop();
-                break;
-            case '\n':
-                accessor.SetStyle(MarkdownStyles::kKeyboardKey, 1);
-                m_states.pop();
-                break;
-            default:
-                accessor.SetStyle(MarkdownStyles::kKeyboardKey, 1);
-                break;
             }
             break;
         case MarkdownState::kCodeBlockTag:

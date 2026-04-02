@@ -40,9 +40,7 @@ void TextDocumentIdentifier::FromJSON(const JSONItem& json)
 }
 
 JSONItem TextDocumentIdentifier::ToJSON() const
-{
-    return nlohmann::json{"uri", StringUtils::ToStdString(GetPathAsURI())};
-}
+{ return nlohmann::json{{"uri", StringUtils::ToStdString(GetPathAsURI())}}; }
 
 //===----------------------------------------------------------------------------------
 // VersionedTextDocumentIdentifier

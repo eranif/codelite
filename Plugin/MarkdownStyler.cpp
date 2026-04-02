@@ -314,7 +314,7 @@ void MarkdownStyler::InitStyles()
     auto default_prop = markdown_lexer->GetProperty(wxSTC_MARKDOWN_DEFAULT);
     default_bg = default_prop.GetBgColour();
     default_fg = default_prop.GetFgColour();
-    code_bg = default_bg.ChangeLightness(is_dark ? 110 : 90);
+    code_bg = default_bg.ChangeLightness(is_dark ? 105 : 95);
     wxColour actor_colour = default_bg.ChangeLightness(is_dark ? 120 : 80);
     wxColour key_colour_fg = is_dark ? wxColour("#FF9933") : wxColour("#CC33FF");
     wxColour key_bracket_colour_fg = default_bg.ChangeLightness(is_dark ? 120 : 80);
@@ -404,19 +404,15 @@ void MarkdownStyler::InitStyles()
     m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockKeyword, code_bg);
 
     // Diff styles
-    wxColour diff_add_base_colour = diff_add.GetFgColour();
-    wxColour diff_add_bg = diff_add_base_colour.ChangeLightness(is_dark ? 70 : 150);
-    wxColour diff_add_fg = diff_add_base_colour.ChangeLightness(is_dark ? 170 : 50);
-    diff_add_bg.Set(diff_add_bg.GetRed(), diff_add_bg.GetGreen(), diff_add_bg.GetBlue(), 50);
+    wxColour diff_add_bg = is_dark ? wxColour("#1E4839") : wxColour("#E6FFEC");
+    wxColour diff_add_fg = is_dark ? wxColour("#B9E0D3") : wxColour("#117134");
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kDiffAdd, diff_add_fg);
     m_ctrl->StyleSetBackground(MarkdownStyles::kDiffAdd, diff_add_bg);
     m_ctrl->StyleSetEOLFilled(MarkdownStyles::kDiffAdd, true);
 
-    wxColour diff_del_base_colour = diff_del.GetFgColour();
-    wxColour diff_del_bg = diff_del_base_colour.ChangeLightness(is_dark ? 50 : 150);
-    wxColour diff_del_fg = diff_del_base_colour.ChangeLightness(is_dark ? 170 : 50);
-    diff_del_bg.Set(diff_del_bg.GetRed(), diff_del_bg.GetGreen(), diff_del_bg.GetBlue(), 50);
+    wxColour diff_del_bg = is_dark ? wxColour("#4C232D") : wxColour("#FFEBE9");
+    wxColour diff_del_fg = is_dark ? wxColour("#E8B9B8") : wxColour("#CF222E");
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kDiffDelete, diff_del_fg);
     m_ctrl->StyleSetBackground(MarkdownStyles::kDiffDelete, diff_del_bg);

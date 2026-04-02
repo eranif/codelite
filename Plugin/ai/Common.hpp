@@ -8,10 +8,4 @@ enum class ChatState {
     kWorking,
 };
 
-enum class UserAnswer {
-    kYes,
-    kNo,
-    kTrust,
-};
-
 } // namespace llm

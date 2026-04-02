@@ -486,7 +486,6 @@ CanInvokeToolResult ApplyPatchConfirm(const std::string& tool_name, assistant::j
     wxString patch = wxString::FromUTF8(patch_content);
     // Apply patch "Trust" for this session (per path).
     static thread_local std::unordered_set<std::string> apply_patch_trust_paths;
-    clStatusOr<llm::UserAnswer> response;
     if (!apply_patch_trust_paths.contains(file_path)) {
         wxString message;
         message << _("The model wants to apply the following patch:\n```patch\n") << patch << "```\n";
@@ -496,7 +495,6 @@ CanInvokeToolResult ApplyPatchConfirm(const std::string& tool_name, assistant::j
             });
     } else {
         // This path is trusted.
-        response = llm::UserAnswer::kYes;
         wxString message;
         message << "Will apply the following patch:\n```diff\n" << patch << "\n```\n";
         llm::Manager::GetInstance().PrintMessage(message, IconType::kInfo);

@@ -24,6 +24,7 @@ Medium:
 - Implement `code_symbols` tool for AI.
 - Add tool management configuration which allows users to trust tools permanently
 - Make compiler errors clickable in the new terminal
+- Scan for CMD as a valid terminal on Windows.
 
 Low:
 ----

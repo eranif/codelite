@@ -1,11 +1,9 @@
 #include "ChatAIWindow.hpp"
 
-#include "ChatAI.hpp"
 #include "ChatAIWindowFrame.hpp"
 #include "ChatHistoryDialog.hpp"
 #include "ColoursAndFontsManager.h"
 #include "MarkdownStyler.hpp"
-#include "ai/ConfirmDialog.hpp"
 #include "ai/EndpointModelSelector.hpp"
 #include "ai/LLMManager.hpp"
 #include "aui/clAuiToolBarArt.h"

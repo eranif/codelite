@@ -287,7 +287,7 @@ struct WxStyleInfo {
     JSONItem ToJSON() const
     {
         return nlohmann::json{
-            {"style_name", StringUtils::ToStdString(style_name)}, {"style_bit", style_bit}, {"is_set", is_set}};
+            {"style_name", style_name.ToStdString(wxConvUTF8)}, {"style_bit", style_bit}, {"is_set", is_set}};
     }
 
     void FromJSON(const JSONItem& json)

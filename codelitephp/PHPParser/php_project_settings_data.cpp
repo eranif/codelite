@@ -51,15 +51,15 @@ void PHPProjectSettingsData::FromJSON(const JSONItem& ele)
 JSONItem PHPProjectSettingsData::ToJSON() const
 {
     return nlohmann::json{{"m_runAs", m_runAs},
-                          {"m_phpExe", StringUtils::ToStdString(m_phpExe)},
-                          {"m_indexFile", StringUtils::ToStdString(m_indexFile)},
-                          {"m_args", StringUtils::ToStdString(m_args)},
-                          {"m_workingDirectory", StringUtils::ToStdString(m_workingDirectory)},
-                          {"m_projectURL", StringUtils::ToStdString(m_projectURL)},
-                          {"m_includePath", StringUtils::ToStdString(m_includePath)},
-                          {"m_ccIncludePath", StringUtils::ToStdString(m_ccIncludePath)},
+                          {"m_phpExe", m_phpExe.ToStdString(wxConvUTF8)},
+                          {"m_indexFile", m_indexFile.ToStdString(wxConvUTF8)},
+                          {"m_args", m_args.ToStdString(wxConvUTF8)},
+                          {"m_workingDirectory", m_workingDirectory.ToStdString(wxConvUTF8)},
+                          {"m_projectURL", m_projectURL.ToStdString(wxConvUTF8)},
+                          {"m_includePath", m_includePath.ToStdString(wxConvUTF8)},
+                          {"m_ccIncludePath", m_ccIncludePath.ToStdString(wxConvUTF8)},
                           {"m_flags", m_flags},
-                          {"m_phpIniFile", StringUtils::ToStdString(m_phpIniFile)},
+                          {"m_phpIniFile", m_phpIniFile.ToStdString(wxConvUTF8)},
                           {"m_fileMapping", JsonUtils::ToJson(m_fileMapping)}};
 }
 

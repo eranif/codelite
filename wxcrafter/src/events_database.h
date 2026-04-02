@@ -40,10 +40,10 @@ public:
 
     JSONItem ToJSON() const
     {
-        return nlohmann::json{{"m_eventName", StringUtils::ToStdString(m_eventName)},
-                              {"m_eventClass", StringUtils::ToStdString(m_eventClass)},
-                              {"m_functionNameAndSignature", StringUtils::ToStdString(m_functionNameAndSignature)},
-                              {"m_description", StringUtils::ToStdString(m_description)},
+        return nlohmann::json{{"m_eventName", m_eventName.ToStdString(wxConvUTF8)},
+                              {"m_eventClass", m_eventClass.ToStdString(wxConvUTF8)},
+                              {"m_functionNameAndSignature", m_functionNameAndSignature.ToStdString(wxConvUTF8)},
+                              {"m_description", m_description.ToStdString(wxConvUTF8)},
                               {"m_noBody", m_noBody}};
     }
 

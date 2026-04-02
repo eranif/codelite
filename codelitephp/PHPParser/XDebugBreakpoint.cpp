@@ -25,4 +25,4 @@ void XDebugBreakpoint::FromJSON(const JSONItem& json)
 }
 
 JSONItem XDebugBreakpoint::ToJSON() const
-{ return nlohmann::json{{"m_fileName", StringUtils::ToStdString(m_fileName)}, {"m_line", m_line}}; }
+{ return nlohmann::json{{"m_fileName", m_fileName.ToStdString(wxConvUTF8)}, {"m_line", m_line}}; }

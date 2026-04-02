@@ -576,11 +576,11 @@ SearchThread* SearchThreadST::Get()
 JSONItem SearchResult::ToJSON() const
 {
     return nlohmann::json{
-        {"file", StringUtils::ToStdString(m_fileName)},
+        {"file", m_fileName.ToStdString(wxConvUTF8)},
         {"line", m_lineNumber},
         {"col", m_column},
         {"pos", m_position},
-        {"pattern", StringUtils::ToStdString(m_pattern)},
+        {"pattern", m_pattern.ToStdString(wxConvUTF8)},
         {"len", m_len},
         {"flags", m_flags},
         {"columnInChars", m_columnInChars},
@@ -610,8 +610,8 @@ JSONItem SearchSummary::ToJSON() const
         {"matchesFound", m_matchesFound},
         {"elapsed", m_elapsed},
         {"failedFiles", JsonUtils::ToJson(m_failedFiles)},
-        {"findWhat", StringUtils::ToStdString(m_findWhat)},
-        {"replaceWith", StringUtils::ToStdString(m_replaceWith)},
+        {"findWhat", m_findWhat.ToStdString(wxConvUTF8)},
+        {"replaceWith", m_replaceWith.ToStdString(wxConvUTF8)},
     };
 }
 

@@ -43,11 +43,11 @@ void PHPConfigurationData::FromJSON(const JSONItem& json)
 JSONItem PHPConfigurationData::ToJSON() const
 {
     return nlohmann::json{{"m_xdebugPort", m_xdebugPort},
-                          {"m_xdebugHost", StringUtils::ToStdString(m_xdebugHost)},
+                          {"m_xdebugHost", m_xdebugHost.ToStdString(wxConvUTF8)},
                           {"m_ccIncludePath", JsonUtils::ToJson(m_ccIncludePath)},
                           {"m_flags", m_flags},
-                          {"m_xdebugIdeKey", StringUtils::ToStdString(m_xdebugIdeKey)},
-                          {"m_findInFilesMask", StringUtils::ToStdString(m_findInFilesMask)},
+                          {"m_xdebugIdeKey", m_xdebugIdeKey.ToStdString(wxConvUTF8)},
+                          {"m_findInFilesMask", m_findInFilesMask.ToStdString(wxConvUTF8)},
                           {"m_workspaceType", m_workspaceType},
                           {"m_settersGettersFlags", m_settersGettersFlags}};
 }

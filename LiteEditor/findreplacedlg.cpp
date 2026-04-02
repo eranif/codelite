@@ -106,9 +106,9 @@ JSONItem FindReplaceData::ToJSON() const
                           {"m_replaceString", JsonUtils::ToJson(m_replaceString)},
                           {"m_flags", m_flags},
                           {"m_findWhere", JsonUtils::ToJson(m_findWhere)},
-                          {"m_encoding", StringUtils::ToStdString(m_encoding)},
+                          {"m_encoding", m_encoding.ToStdString(wxConvUTF8)},
                           {"m_fileMask", JsonUtils::ToJson(m_fileMask)},
-                          {"m_selectedMask", StringUtils::ToStdString(m_selectedMask)},
+                          {"m_selectedMask", m_selectedMask.ToStdString(wxConvUTF8)},
                           {"m_file_scanner_flags", m_file_scanner_flags}};
 }
 

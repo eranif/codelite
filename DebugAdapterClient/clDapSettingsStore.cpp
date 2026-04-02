@@ -4,10 +4,10 @@
 
 JSONItem DapEntry::To() const
 {
-    return nlohmann::json{{"name", StringUtils::ToStdString(m_name)},
-                          {"command", StringUtils::ToStdString(m_command)},
-                          {"connection_string", StringUtils::ToStdString(m_connection_string)},
-                          {"environment", StringUtils::ToStdString(m_environment)},
+    return nlohmann::json{{"name", m_name.ToStdString(wxConvUTF8)},
+                          {"command", m_command.ToStdString(wxConvUTF8)},
+                          {"connection_string", m_connection_string.ToStdString(wxConvUTF8)},
+                          {"environment", m_environment.ToStdString(wxConvUTF8)},
                           {"flags", m_flags},
                           {"env_format", m_envFormat},
                           {"launch_type", m_launch_type}};

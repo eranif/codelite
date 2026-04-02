@@ -138,9 +138,9 @@ void AuiPaneInfo::FromJSON(const JSONItem& json)
 
 JSONItem AuiPaneInfo::ToJSON() const
 {
-    return nlohmann::json{{"m_name", StringUtils::ToStdString(m_name)},
-                          {"m_caption", StringUtils::ToStdString(m_caption)},
-                          {"m_dockDirection", StringUtils::ToStdString(m_dockDirection)},
+    return nlohmann::json{{"m_name", m_name.ToStdString(wxConvUTF8)},
+                          {"m_caption", m_caption.ToStdString(wxConvUTF8)},
+                          {"m_dockDirection", m_dockDirection.ToStdString(wxConvUTF8)},
                           {"m_layer", m_layer},
                           {"m_row", m_row},
                           {"m_position", m_position},

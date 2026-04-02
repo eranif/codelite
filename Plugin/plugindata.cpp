@@ -40,10 +40,10 @@ void PluginInfo::FromJSON(const JSONItem& json)
 
 JSONItem PluginInfo::ToJSON() const
 {
-    return nlohmann::json{{"name", StringUtils::ToStdString(m_name)},
-                          {"author", StringUtils::ToStdString(m_author)},
-                          {"description", StringUtils::ToStdString(m_description)},
-                          {"version", StringUtils::ToStdString(m_version)},
+    return nlohmann::json{{"name", m_name.ToStdString(wxConvUTF8)},
+                          {"author", m_author.ToStdString(wxConvUTF8)},
+                          {"description", m_description.ToStdString(wxConvUTF8)},
+                          {"version", m_version.ToStdString(wxConvUTF8)},
                           {"flags", m_flags}};
 }
 

@@ -64,11 +64,11 @@ JSONItem StyleProperty::ToJSON(bool portable) const
 {
     return nlohmann::json{
         {"Id", GetId()},
-        {"Name", StringUtils::ToStdString(GetName())},
+        {"Name", GetName().ToStdString(wxConvUTF8)},
         {"Flags", m_flags},
-        {"FontDesc", StringUtils::ToStdString(portable ? wxString() : GetFontInfoDesc())},
-        {"Colour", StringUtils::ToStdString(GetFgColour())},
-        {"BgColour", StringUtils::ToStdString(GetBgColour())},
+        {"FontDesc", portable ? std::string() : GetFontInfoDesc().ToStdString(wxConvUTF8)},
+        {"Colour", GetFgColour().ToStdString(wxConvUTF8)},
+        {"BgColour", GetBgColour().ToStdString(wxConvUTF8)},
         {"Size", m_fontSize},
         {"Bold", m_isBold},
         {"Italic", m_isItalic},

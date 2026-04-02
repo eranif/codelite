@@ -149,9 +149,9 @@ void CustomControlTemplate::FromJSON(const JSONItem& json)
 
 JSONItem CustomControlTemplate::ToJSON() const
 {
-    return nlohmann::json{{"m_includeFile", StringUtils::ToStdString(m_includeFile)},
-                          {"m_allocationLine", StringUtils::ToStdString(m_allocationLine)},
-                          {"m_className", StringUtils::ToStdString(m_className)},
-                          {"m_xrcPreviewClass", StringUtils::ToStdString(m_xrcPreviewClass)},
+    return nlohmann::json{{"m_includeFile", m_includeFile.ToStdString(wxConvUTF8)},
+                          {"m_allocationLine", m_allocationLine.ToStdString(wxConvUTF8)},
+                          {"m_className", m_className.ToStdString(wxConvUTF8)},
+                          {"m_xrcPreviewClass", m_xrcPreviewClass.ToStdString(wxConvUTF8)},
                           {"m_events", JsonUtils::ToJson(m_events)}};
 }

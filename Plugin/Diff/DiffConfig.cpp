@@ -44,8 +44,8 @@ JSONItem DiffConfig::ToJSON() const
 {
     return nlohmann::json{{"m_flags", m_flags},
                           {"m_viewFlags", m_viewFlags},
-                          {"m_leftFile", StringUtils::ToStdString(m_leftFile)},
-                          {"m_rightFile", StringUtils::ToStdString(m_rightFile)}};
+                          {"m_leftFile", m_leftFile.ToStdString(wxConvUTF8)},
+                          {"m_rightFile", m_rightFile.ToStdString(wxConvUTF8)}};
 }
 
 DiffConfig& DiffConfig::Load()

@@ -78,10 +78,10 @@ JSONItem LintOptions::ToJSON() const
 {
     return nlohmann::json{{"lintOnFileLoad", m_lintOnFileLoad},
                           {"lintOnFileSave", m_lintOnFileSave},
-                          {"phpcsPhar", StringUtils::ToStdString(m_phpcsPhar)},
-                          {"phpmdPhar", StringUtils::ToStdString(m_phpmdPhar)},
-                          {"phpmdRules", StringUtils::ToStdString(m_phpmdRules)},
-                          {"phpstanPhar", StringUtils::ToStdString(m_phpstanPhar)}};
+                          {"phpcsPhar", m_phpcsPhar.ToStdString(wxConvUTF8)},
+                          {"phpmdPhar", m_phpmdPhar.ToStdString(wxConvUTF8)},
+                          {"phpmdRules", m_phpmdRules.ToStdString(wxConvUTF8)},
+                          {"phpstanPhar", m_phpstanPhar.ToStdString(wxConvUTF8)}};
 }
 
 LintOptions& LintOptions::Load()

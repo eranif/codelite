@@ -50,13 +50,13 @@ void wxcProjectMetadata::FromJSON(const JSONItem& json)
 JSONItem wxcProjectMetadata::ToJSON()
 {
     UpdatePaths();
-    return nlohmann::json{{"m_generatedFilesDir", StringUtils::ToStdString(m_generatedFilesDir)},
+    return nlohmann::json{{"m_generatedFilesDir", m_generatedFilesDir.ToStdString(wxConvUTF8)},
                           {"m_objCounter", m_objCounter},
                           {"m_includeFiles", JsonUtils::ToJson(m_includeFiles)},
-                          {"m_bitmapFunction", StringUtils::ToStdString(m_bitmapFunction)},
-                          {"m_bitmapsFile", StringUtils::ToStdString(m_bitmapsFile)},
+                          {"m_bitmapFunction", m_bitmapFunction.ToStdString(wxConvUTF8)},
+                          {"m_bitmapsFile", m_bitmapsFile.ToStdString(wxConvUTF8)},
                           {"m_GenerateCodeTypes", m_GenerateCodeTypes},
-                          {"m_outputFileName", StringUtils::ToStdString(m_outputFileName)},
+                          {"m_outputFileName", m_outputFileName.ToStdString(wxConvUTF8)},
                           {"m_firstWindowId", m_firstWindowId},
                           {"m_useEnum", m_useEnum},
                           {"m_useUnderscoreMacro", m_useUnderscoreMacro},

@@ -43,7 +43,7 @@ WorkspaceSvnSettings::WorkspaceSvnSettings(const wxFileName& fn)
 void WorkspaceSvnSettings::FromJSON(const JSONItem& json) { m_repoPath = json.namedObject("m_repoPath").toString(); }
 
 JSONItem WorkspaceSvnSettings::ToJSON() const
-{ return nlohmann::json{{"m_repoPath", StringUtils::ToStdString(m_repoPath)}}; }
+{ return nlohmann::json{{"m_repoPath", m_repoPath.ToStdString(wxConvUTF8)}}; }
 
 WorkspaceSvnSettings& WorkspaceSvnSettings::Load()
 {

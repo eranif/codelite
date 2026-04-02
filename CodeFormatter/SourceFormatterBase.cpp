@@ -19,10 +19,10 @@ JSONItem SourceFormatterBase::ToJSON() const
 {
     return nlohmann::json{{"languages", JsonUtils::ToJson(m_languages)},
                           {"flags", m_flags},
-                          {"config_file", StringUtils::ToStdString(m_configFile)},
-                          {"name", StringUtils::ToStdString(m_name)},
-                          {"description", StringUtils::ToStdString(m_description)},
-                          {"short_description", StringUtils::ToStdString(m_shortDescription)}};
+                          {"config_file", m_configFile.ToStdString(wxConvUTF8)},
+                          {"name", m_name.ToStdString(wxConvUTF8)},
+                          {"description", m_description.ToStdString(wxConvUTF8)},
+                          {"short_description", m_shortDescription.ToStdString(wxConvUTF8)}};
 }
 
 bool SourceFormatterBase::CanHandle(FileExtManager::FileType file_type) const

@@ -103,15 +103,15 @@ JSONItem clDebuggerBreakpoint::ToJSON() const
 {
     wxString command_list(commandlist);
     command_list.Trim(false).Trim(true);
-    return nlohmann::json{{"file", StringUtils::ToStdString(file)},
+    return nlohmann::json{{"file", file.ToStdString(wxConvUTF8)},
                           {"lineno", lineno},
-                          {"function_name", StringUtils::ToStdString(function_name)},
+                          {"function_name", function_name.ToStdString(wxConvUTF8)},
                           {"bp_type", bp_type},
                           {"watchpoint_type", watchpoint_type},
-                          {"watchpt_data", StringUtils::ToStdString(watchpt_data)},
-                          {"commandlist", StringUtils::ToStdString(command_list)},
+                          {"watchpt_data", watchpt_data.ToStdString(wxConvUTF8)},
+                          {"commandlist", command_list.ToStdString(wxConvUTF8)},
                           {"ignore_number", ignore_number},
-                          {"conditions", StringUtils::ToStdString(conditions)}};
+                          {"conditions", conditions.ToStdString(wxConvUTF8)}};
 }
 
 void clDebuggerBreakpoint::FromJSON(const JSONItem& json)

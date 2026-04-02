@@ -68,8 +68,8 @@ void PhpOptions::FromJSON(const JSONItem& json)
 
 JSONItem PhpOptions::ToJSON() const
 {
-    return nlohmann::json{{"m_phpExe", StringUtils::ToStdString(m_phpExe)},
-                          {"m_errorReporting", StringUtils::ToStdString(m_errorReporting)},
+    return nlohmann::json{{"m_phpExe", m_phpExe.ToStdString(wxConvUTF8)},
+                          {"m_errorReporting", m_errorReporting.ToStdString(wxConvUTF8)},
                           {"m_includePaths", JsonUtils::ToJson(m_includePaths)}};
 }
 

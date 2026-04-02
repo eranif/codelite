@@ -40,7 +40,7 @@ void TextDocumentIdentifier::FromJSON(const JSONItem& json)
 }
 
 JSONItem TextDocumentIdentifier::ToJSON() const
-{ return nlohmann::json{{"uri", StringUtils::ToStdString(GetPathAsURI())}}; }
+{ return nlohmann::json{{"uri", GetPathAsURI().ToStdString(wxConvUTF8)}}; }
 
 //===----------------------------------------------------------------------------------
 // VersionedTextDocumentIdentifier
@@ -83,10 +83,10 @@ void TextDocumentItem::FromJSON(const JSONItem& json)
 
 JSONItem TextDocumentItem::ToJSON() const
 {
-    return nlohmann::json{{"uri", StringUtils::ToStdString(GetPathAsURI())},
-                          {"languageId", StringUtils::ToStdString(GetLanguageId())},
+    return nlohmann::json{{"uri", GetPathAsURI().ToStdString(wxConvUTF8)},
+                          {"languageId", GetLanguageId().ToStdString(wxConvUTF8)},
                           {"version", GetVersion()},
-                          {"text", StringUtils::ToStdString(GetText())}};
+                          {"text", GetText().ToStdString(wxConvUTF8)}};
 }
 //===----------------------------------------------------------------------------------
 // TextDocumentContentChangeEvent
@@ -164,7 +164,7 @@ void ParameterInformation::FromJSON(const JSONItem& json)
 JSONItem ParameterInformation::ToJSON() const
 {
     return nlohmann::json{
-        {"label", StringUtils::ToStdString(m_label)}, {"documentation", StringUtils::ToStdString(m_documentation)}};
+        {"label", m_label.ToStdString(wxConvUTF8)}, {"documentation", m_documentation.ToStdString(wxConvUTF8)}};
 }
 
 void SignatureInformation::FromJSON(const JSONItem& json)
@@ -237,7 +237,7 @@ void MarkupContent::FromJSON(const JSONItem& json)
 }
 
 JSONItem MarkupContent::ToJSON() const
-{ return nlohmann::json{{"kind", StringUtils::ToStdString(m_kind)}, {"value", StringUtils::ToStdString(m_value)}}; }
+{ return nlohmann::json{{"kind", m_kind.ToStdString(wxConvUTF8)}, {"value", m_value.ToStdString(wxConvUTF8)}}; }
 
 void Hover::FromJSON(const JSONItem& json)
 {

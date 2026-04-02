@@ -45,13 +45,13 @@ void ValgrindSettings::FromJSON(const JSONItem& json)
 
 JSONItem ValgrindSettings::ToJSON() const
 {
-    return nlohmann::json{{"m_binary", StringUtils::ToStdString(m_binary)},
+    return nlohmann::json{{"m_binary", m_binary.ToStdString(wxConvUTF8)},
                           {"m_outputInPrivateFolder", m_outputInPrivateFolder},
-                          {"m_outputFile", StringUtils::ToStdString(m_outputFile)},
-                          {"m_mandatoryOptions", StringUtils::ToStdString(m_mandatoryOptions)},
-                          {"m_outputFileOption", StringUtils::ToStdString(m_outputFileOption)},
-                          {"m_suppressionFileOption", StringUtils::ToStdString(m_suppressionFileOption)},
-                          {"m_options", StringUtils::ToStdString(m_options)},
+                          {"m_outputFile", m_outputFile.ToStdString(wxConvUTF8)},
+                          {"m_mandatoryOptions", m_mandatoryOptions.ToStdString(wxConvUTF8)},
+                          {"m_outputFileOption", m_outputFileOption.ToStdString(wxConvUTF8)},
+                          {"m_suppressionFileOption", m_suppressionFileOption.ToStdString(wxConvUTF8)},
+                          {"m_options", m_options.ToStdString(wxConvUTF8)},
                           {"m_suppFileInPrivateFolder", m_suppFileInPrivateFolder},
                           {"m_suppFiles", JsonUtils::ToJson(m_suppFiles)}};
 }

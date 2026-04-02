@@ -33,16 +33,16 @@ void LanguageServerEntry::FromJSON(const JSONItem& json)
 
 JSONItem LanguageServerEntry::ToJSON() const
 {
-    return nlohmann::json{{"name", StringUtils::ToStdString(m_name)},
-                          {"exepath", StringUtils::ToStdString(m_exepath)},
-                          {"args", StringUtils::ToStdString(m_args)},
+    return nlohmann::json{{"name", m_name.ToStdString(wxConvUTF8)},
+                          {"exepath", m_exepath.ToStdString(wxConvUTF8)},
+                          {"args", m_args.ToStdString(wxConvUTF8)},
                           {"languages", JsonUtils::ToJson(m_languages)},
                           {"enabled", m_enabled},
-                          {"workingDirectory", StringUtils::ToStdString(m_workingDirectory)},
-                          {"connectionString", StringUtils::ToStdString(m_connectionString)},
+                          {"workingDirectory", m_workingDirectory.ToStdString(wxConvUTF8)},
+                          {"connectionString", m_connectionString.ToStdString(wxConvUTF8)},
                           {"displayDiagnostics", m_displayDiagnostics},
-                          {"command", StringUtils::ToStdString(m_command)},
-                          {"initOptions", StringUtils::ToStdString(m_initOptions)}};
+                          {"command", m_command.ToStdString(wxConvUTF8)},
+                          {"initOptions", m_initOptions.ToStdString(wxConvUTF8)}};
 }
 
 eNetworkType LanguageServerEntry::GetNetType() const

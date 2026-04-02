@@ -488,39 +488,20 @@ CanInvokeToolResult ApplyPatchConfirm(const std::string& tool_name, assistant::j
     static thread_local std::unordered_set<std::string> apply_patch_trust_paths;
     clStatusOr<llm::UserAnswer> response;
     if (!apply_patch_trust_paths.contains(file_path)) {
-        response = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(
-            _("The model wants to apply the following patch, allow it?"), patch, "patch");
-
-        if (!response.ok()) {
-            return CanInvokeToolResult{
-                .can_invoke = false,
-                .reason = "Permission denied",
-            };
-        }
-
+        wxString message;
+        message << _("The model wants to apply the following patch:\n```patch\n") << patch << "```\n";
+        return llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(
+            message, [file_path]() { // User trusts the tool for this path
+                apply_patch_trust_paths.insert(file_path);
+            });
     } else {
         // This path is trusted.
         response = llm::UserAnswer::kYes;
         wxString message;
         message << "Will apply the following patch:\n```diff\n" << patch << "\n```\n";
         llm::Manager::GetInstance().PrintMessage(message, IconType::kInfo);
-    }
-
-    switch (response.value()) {
-    case llm::UserAnswer::kTrust:
-        apply_patch_trust_paths.insert(file_path);
         return CanInvokeToolResult{
             .can_invoke = true,
-        };
-    case llm::UserAnswer::kYes:
-        return CanInvokeToolResult{
-            .can_invoke = true,
-        };
-    case llm::UserAnswer::kNo:
-    default:
-        return CanInvokeToolResult{
-            .can_invoke = false,
-            .reason = "Permission denied",
         };
     }
 }
@@ -587,38 +568,14 @@ CanInvokeToolResult ShellExecuteConfirm(const std::string& tool_name, const assi
     }
 
     wxString cmd = wxString::FromUTF8(command.value());
-    wxString codeblock;
-    codeblock << "# Working directory\n" << wxString::FromUTF8(working_directory.value()) << "\n\n";
-    codeblock << "# Command\n" << cmd;
-    auto result = llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(
-        _("The model wants to run the following shell command, allow it?"), codeblock, "bash");
-
-    if (!result.ok()) {
-        return CanInvokeToolResult{
-            .can_invoke = false,
-            .reason = "Permission denied",
-        };
-    }
-
-    switch (result.value()) {
-    case llm::UserAnswer::kYes:
-        return CanInvokeToolResult{
-            .can_invoke = true,
-        };
-    case llm::UserAnswer::kTrust:
-        // We trust this specific command, not the entire tool.
+    wxString message;
+    message << _("The model wants to run the following shell command:\n") << _("# Working directory\n")
+            << wxString::FromUTF8(working_directory.value()) << "\n\n"
+            << _("# Command\n") << cmd;
+    return llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message, [unique_command]() {
         shell_execute_trust_commands.erase(unique_command);
         shell_execute_trust_commands.insert(unique_command);
-        return CanInvokeToolResult{
-            .can_invoke = true,
-        };
-    default:
-    case llm::UserAnswer::kNo:
-        return CanInvokeToolResult{
-            .can_invoke = false,
-            .reason = "Permission denied",
-        };
-    }
+    });
 }
 
 FunctionResult ToolShellExecute(const assistant::json& args)

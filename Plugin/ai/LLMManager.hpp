@@ -562,9 +562,7 @@ public:
      * @throws StatusResourceBusy if another prompt is already waiting for user response.
      * @throws StatusOther if there is a message queue error reading the user's response.
      */
-    clStatusOr<UserAnswer> PromptUserYesNoTrustQuestion(const wxString& text,
-                                                        const wxString& code_block = wxEmptyString,
-                                                        const wxString& code_block_lang = wxEmptyString);
+    CanInvokeToolResult PromptUserYesNoTrustQuestion(const wxString& text, std::function<void()> on_trust_cb = nullptr);
 
     /**
      * @brief Sets the caching policy for the assistant client.

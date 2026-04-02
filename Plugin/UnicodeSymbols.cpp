@@ -8,13 +8,13 @@ wxString IconType_ToString(IconType type)
         symbol = wxT("?");
         break;
     case IconType::kInfo:
-        symbol = wxT("ℹ️");
+        symbol = wxT("⋮");
         break;
     case IconType::kError:
         symbol = wxT("❌");
         break;
     case IconType::kSuccess:
-        symbol = wxT("✅");
+        symbol = wxT("✔");
         break;
     case IconType::kNoIcon:
         symbol = "";

@@ -16,8 +16,6 @@ public:
     bool Show(bool show = true) override;
     ChatAIWindow* GetChatWindow() { return m_view; }
 
-    void DeleteInfoBar(InfoBar* bar);
-
 protected:
     void OnClose(wxCloseEvent& event) override;
     void OnLLMRestarted(clLLMEvent& event);

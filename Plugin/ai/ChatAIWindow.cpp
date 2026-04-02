@@ -474,22 +474,24 @@ void ChatAIWindow::OnChatAIOutput(clLLMEvent& event)
     case ChatState::kThinking:
         break;
     case ChatState::kWorking:
-    case ChatState::kReady:
+    case ChatState::kReady: {
+        bool reported{false};
         if (event.GetOutputReason().has_value()) {
-            if (event.GetOutputReason().value() == assistant::Reason::kToolDenied ||
-                event.GetOutputReason().value() == assistant::Reason::kToolAllowed) {
-                // Make sure these lines are placed on their own line.
-                if (!m_stcOutput->GetText().EndsWith("\n")) {
-                    content.Prepend("\n");
-                }
-
-                if (!content.EndsWith("\n")) {
-                    content << "\n";
-                }
+            if (event.GetOutputReason().value() == assistant::Reason::kToolDenied) {
+                content.Trim().Trim(false).Append("\n");
+                AppendTextWithLF(IconType_ToString(IconType::kError) + " " + content);
+                reported = true;
+            } else if (event.GetOutputReason().value() == assistant::Reason::kToolAllowed) {
+                content.Trim().Trim(false).Append("\n");
+                AppendTextWithLF(IconType_ToString(IconType::kSuccess) + " " + content);
+                reported = true;
             }
         }
-        AppendOutput(content);
-        break;
+
+        if (!reported) {
+            AppendOutput(content);
+        }
+    } break;
     }
 
     UpdateStatusBar();

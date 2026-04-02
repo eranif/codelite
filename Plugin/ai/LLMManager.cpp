@@ -3,13 +3,9 @@
 #include "CTags.hpp"
 #include "FileManager.hpp"
 #include "Keyboard/clKeyboardManager.h"
-#include "ai/ConfirmDialog.hpp"
-#include "ai/InfoBar.hpp"
 #include "assistant/assistant.hpp"
-#include "assistant/common/magic_enum.hpp"
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
-#include "cl_config.h"
 #include "cl_standard_paths.h"
 #include "codelite_events.h"
 #include "environmentconfig.h"
@@ -682,39 +678,9 @@ CanInvokeToolResult Manager::CanRunTool(const std::string& tool_name, [[maybe_un
         return CanInvokeToolResult{.can_invoke = true};
     }
 
-    wxString message;
-    const wxString kTrust = wxT("⟪t⟫");
-    const wxString kYes = wxT("⟪y⟫");
-    const wxString kNo = wxT("⟪n⟫");
-    message << _("The model wants to run the tool: `") << tool_name << _("`\n");
-    message << _("Type ") << kTrust << _(" to trust this tool for the current session, ") << kYes
-            << _(" to allow once, or ") << kNo << _(" to decline the request.");
-    auto fut = llm::Manager::GetInstance().PromptUser(message, IconType::kNoIcon);
-    auto res = fut->get();
-    wxString response_text = wxString::FromUTF8(res);
-    response_text.Trim().Trim(false);
-
-    if (response_text == "yes" || response_text == "y" || response_text == "ok") {
-        return CanInvokeToolResult{
-            .can_invoke = true,
-        };
-    } else if (response_text == "no" || response_text == "n") {
-        return CanInvokeToolResult{
-            .can_invoke = false,
-            .reason = "Permission denied",
-        };
-    } else if (response_text == "trust" || response_text == "t") {
-        allowed_tools.insert(tool_name);
-        return CanInvokeToolResult{
-            .can_invoke = true,
-        };
-    } else {
-        // Something else - send the text as it is.
-        return CanInvokeToolResult{
-            .can_invoke = false,
-            .reason = res,
-        };
-    }
+    wxString base_message;
+    base_message << _("The model wants to run the tool: `") << tool_name << _("`\n");
+    return GetInstance().PromptUserYesNoTrustQuestion(base_message, [tool_name]() { allowed_tools.insert(tool_name); });
 }
 
 void Manager::Start(std::shared_ptr<assistant::ClientBase> client)
@@ -1283,35 +1249,46 @@ void Manager::ShowTextGenerationDialog(const wxString& prompt,
 
 const std::vector<wxString>& Manager::GetAvailablePlaceHolders() const { return kPlaceHolders; }
 
-clStatusOr<UserAnswer>
-Manager::PromptUserYesNoTrustQuestion(const wxString& text, const wxString& code_block, const wxString& code_block_lang)
+CanInvokeToolResult Manager::PromptUserYesNoTrustQuestion(const wxString& text, std::function<void()> on_trust_cb)
 {
-    if (::wxIsMainThread()) {
-        return StatusOther("Function must not be called from the main thread");
+    const wxString kTrust = wxT("⟪t⟫");
+    const wxString kYes = wxT("⟪y⟫");
+    const wxString kNo = wxT("⟪n⟫");
+    wxString message;
+    message << text;
+    if (!text.EndsWith("\n")) {
+        message << "\n";
     }
+    message << _("Type ") << kTrust << _(" to trust this tool for the current session, ") << kYes
+            << _(" to allow once, or ") << kNo << _(" to decline the request.");
+    auto fut = GetInstance().PromptUser(message, IconType::kNoIcon);
+    auto res = fut->get();
+    wxString response_text = wxString::FromUTF8(res);
+    response_text.Trim().Trim(false);
 
-    // GUI manipulations must be done on the main thread.
-    auto promise_ptr = std::make_shared<std::promise<UserAnswer>>();
-    auto fut = promise_ptr->get_future();
-    auto func = [text, code_block, code_block_lang, promise_ptr, this]() {
-        IncrPendingAnswerCounter(); // Keep track of messages
-        if (!code_block.empty() && GetChatWindow()) {
-            wxString prompt;
-            prompt << "```" << code_block_lang << "\n" << code_block << "\n```\n";
-            GetChatWindow()->AppendText(prompt);
+    if (response_text == "yes" || response_text == "y" || response_text == "ok") {
+        return CanInvokeToolResult{
+            .can_invoke = true,
+        };
+    } else if (response_text == "no" || response_text == "n") {
+        return CanInvokeToolResult{
+            .can_invoke = false,
+            .reason = "Permission denied",
+        };
+    } else if (response_text == "trust" || response_text == "t") {
+        if (on_trust_cb) {
+            on_trust_cb();
         }
-
-        auto parent = GetChatWindow()->GetSplitterPageBottom();
-        InfoBar* bar = new InfoBar(parent, promise_ptr);
-        parent->GetSizer()->Insert(0, bar, wxSizerFlags(0).Expand());
-        bar->ShowMessage(text, wxICON_QUESTION);
-        GetChatWindow()->ScrollToEnd();
-    };
-
-    EventNotifier::Get()->RunOnMain<void>(std::move(func));
-    // Now wait for the answer
-    auto result = fut.get();
-    return result;
+        return CanInvokeToolResult{
+            .can_invoke = true,
+        };
+    } else {
+        // Something else - send the text as it is.
+        return CanInvokeToolResult{
+            .can_invoke = false,
+            .reason = res,
+        };
+    }
 }
 
 void Manager::SetCachingPolicy(llm::CachePolicy policy)

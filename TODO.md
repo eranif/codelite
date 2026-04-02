@@ -23,6 +23,7 @@ Medium:
 - Support auto reading `AGENTS.md` file and convert it into System-Messages.
 - Implement `code_symbols` tool for AI.
 - Add tool management configuration which allows users to trust tools permanently
+- Make compiler errors clickable in the new terminal
 
 Low:
 ----

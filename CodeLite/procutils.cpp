@@ -30,7 +30,6 @@
 #include "cl_command_event.h"
 #include "file_logger.h"
 #include "fileutils.h"
-#include "winprocess.h"
 
 #include <memory>
 #include <wx/process.h>

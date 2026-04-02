@@ -29,10 +29,11 @@ public:
     }
 
     /// Return the current character pointed by the this object.
-    inline int GetCurrentChar() const
+    template <typename T>
+    inline T GetCurrentChar() const
     {
         int curpos = m_ctrl->GetEndStyled();
-        return m_ctrl->GetCharAt(curpos);
+        return static_cast<T>(m_ctrl->GetCharAt(curpos));
     }
 
     /**
@@ -74,10 +75,11 @@ public:
 
     /// Return character from the current position and a given offset.
     /// This is basically like returning `m_buffer[m_curpos + at]`
-    inline wxChar GetCharAt(size_t at) const
+    template <typename T>
+    inline T GetCharAt(size_t at) const
     {
         int curpos = m_ctrl->GetEndStyled();
-        return m_ctrl->GetCharAt(m_ctrl->PositionRelative(curpos, at));
+        return static_cast<T>(m_ctrl->GetCharAt(m_ctrl->PositionRelative(curpos, at)));
     }
 
     /// Return the current position

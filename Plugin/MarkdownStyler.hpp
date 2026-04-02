@@ -84,6 +84,7 @@ private:
      * @param language The language tag (e.g., "c++", "python", "javascript")
      */
     void StyleCodeBlockContent(clSTCAccessor& accessor, const wxString& language);
+    bool StyleDiffPatchCommentInCodeBlock(clSTCAccessor& accessor);
 
     /**
      * @brief Check if a word is a keyword for the given language

@@ -16,6 +16,11 @@ others:
 - SFTP plugin: use clTerminalViewCtrl for the log view
 - Spell Checker: enable it for the commit dialog
 
+High:
+-----
+
+- Restarting the AI agent while it is pending a response, will cause a hang.
+
 Medium:
 -----
 
@@ -25,6 +30,9 @@ Medium:
 - Add tool management configuration which allows users to trust tools permanently
 - Make compiler errors clickable in the new terminal
 - Scan for CMD as a valid terminal on Windows.
+- AI: Extend all the tools with a "Purpose" mandatory field, so each model will be forced to report the reason for the invocation.
+- AI: Add a system-message that instruct the model to NEVER create a summary file
+- File System Workspace: change the dialog box when deleting a file into `clMessageBox`
 
 Low:
 ----
@@ -38,5 +46,3 @@ BUGS
 ----
 
 - Application hangs when renaming a symbol & the `MiniMap` editor is loaded...
-- AI: Extend all the tools with a "Purpose" mandatory field, so each model will be forced to report the reason for the invocation.
-- AI: Add a system-message that instruct the model to NEVER create a summary file

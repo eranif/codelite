@@ -404,13 +404,19 @@ void MarkdownStyler::InitStyles()
     m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockKeyword, code_bg);
 
     // Diff styles
-    m_ctrl->StyleSetForeground(MarkdownStyles::kDiffAdd, diff_add.GetFgColour());
-    m_ctrl->StyleSetBackground(MarkdownStyles::kDiffAdd, code_bg);
-    m_ctrl->StyleSetBold(MarkdownStyles::kDiffAdd, true);
+    wxColour diff_add_fg = diff_add.GetFgColour();
+    wxColour diff_add_bg = diff_add_fg.ChangeLightness(is_dark ? 50 : 150);
 
-    m_ctrl->StyleSetForeground(MarkdownStyles::kDiffDelete, diff_del.GetFgColour());
-    m_ctrl->StyleSetBackground(MarkdownStyles::kDiffDelete, code_bg);
-    m_ctrl->StyleSetBold(MarkdownStyles::kDiffDelete, true);
+    m_ctrl->StyleSetForeground(MarkdownStyles::kDiffAdd, diff_add_fg);
+    m_ctrl->StyleSetBackground(MarkdownStyles::kDiffAdd, diff_add_bg);
+    m_ctrl->StyleSetEOLFilled(MarkdownStyles::kDiffAdd, true);
+
+    wxColour diff_del_fg = diff_del.GetFgColour();
+    wxColour diff_del_bg = diff_del_fg.ChangeLightness(is_dark ? 50 : 150);
+
+    m_ctrl->StyleSetForeground(MarkdownStyles::kDiffDelete, diff_del_fg);
+    m_ctrl->StyleSetBackground(MarkdownStyles::kDiffDelete, diff_del_bg);
+    m_ctrl->StyleSetEOLFilled(MarkdownStyles::kDiffDelete, true);
 
     m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockString, string.GetFgColour());
     m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockString, code_bg);
@@ -496,57 +502,28 @@ bool MarkdownStyler::IsOperator(wxChar ch) const
     }
 }
 
+namespace
+{
+void StyleToEndOfLine(clSTCAccessor& accessor, int style, bool include_lf)
+{
+    while (accessor.CanNext() && accessor.GetCurrentChar<int>() != '\n') {
+        accessor.SetStyle(style, 1);
+    }
+
+    if (include_lf && accessor.CanNext() && accessor.GetCurrentChar<int>() == '\n') {
+        accessor.SetStyle(style, 1);
+    }
+}
+} // namespace
+
 void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxString& language)
 {
     // Normalize language for consistency
     wxString normalizedLang = NormalizeLanguage(language);
 
-    // Handle comments for diff/patch files - support all common comment styles
-    if (normalizedLang == "diff" || normalizedLang == "patch") {
-        wxChar ch = accessor.GetCurrentChar();
-
-        // Check for various comment styles
-        bool isComment = false;
-
-        // Single-line comment styles
-        if (ch == '#') {
-            // Hash comments: shell, python, ruby, perl, etc.
-            isComment = true;
-        } else if (ch == '/' && accessor.GetCharAt(1) == '/') {
-            // C++ style comments: //, used in C, C++, Java, JavaScript, Rust, Go, etc.
-            isComment = true;
-        } else if (ch == '-' && accessor.GetCharAt(1) == '-') {
-            // SQL, Lua, Haskell style comments: --
-            isComment = true;
-        } else if (ch == ';') {
-            // Semicolon comments: Lisp, Assembly, INI files
-            isComment = true;
-        } else if (ch == '%') {
-            // Percent comments: LaTeX, MATLAB, Erlang
-            isComment = true;
-        } else if (ch == '/' && accessor.GetCharAt(1) == '*') {
-            // C-style block comments: /* ... */
-            isComment = true;
-        } else if (ch == '<' && accessor.GetCharAt(1) == '!' && accessor.GetCharAt(2) == '-' &&
-                   accessor.GetCharAt(3) == '-') {
-            // HTML/XML comments: <!-- ... -->
-            isComment = true;
-        }
-
-        // If it's a comment, style the entire line
-        if (isComment) {
-            while (accessor.CanNext() && accessor.GetCurrentChar() != '\n') {
-                accessor.SetStyle(MarkdownStyles::kCodeBlockComment, 1);
-            }
-            return;
-        }
-
-        // Continue with regular diff processing if not a comment
-    }
-
     // Handle diff syntax specially
     if (normalizedLang == "diff" || normalizedLang == "patch") {
-        wxChar ch = accessor.GetCurrentChar();
+        wxChar ch = accessor.GetCurrentChar<wxChar>();
 
         // Check if we're at the start of a line for diff-specific line markers
         if (accessor.IsAtStartOfLine()) {
@@ -555,15 +532,11 @@ void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxStri
                 // Check for '+++' (file marker)
                 if (accessor.GetSubstr(3) == "+++") {
                     // Style the entire line as keyword
-                    while (accessor.CanNext() && accessor.GetCurrentChar() != '\n') {
-                        accessor.SetStyle(MarkdownStyles::kCodeBlockKeyword, 1);
-                    }
+                    StyleToEndOfLine(accessor, MarkdownStyles::kCodeBlockKeyword, false);
                     return;
                 } else {
                     // Style the entire line as string (additions in green)
-                    while (accessor.CanNext() && accessor.GetCurrentChar() != '\n') {
-                        accessor.SetStyle(MarkdownStyles::kDiffAdd, 1);
-                    }
+                    StyleToEndOfLine(accessor, MarkdownStyles::kDiffAdd, true);
                     return;
                 }
             }
@@ -572,27 +545,26 @@ void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxStri
                 // Check for '---' (file marker)
                 if (accessor.GetSubstr(3) == "---") {
                     // Style the entire line as keyword
-                    while (accessor.CanNext() && accessor.GetCurrentChar() != '\n') {
-                        accessor.SetStyle(MarkdownStyles::kCodeBlockKeyword, 1);
-                    }
+                    StyleToEndOfLine(accessor, MarkdownStyles::kCodeBlockKeyword, false);
                     return;
                 } else {
                     // Style the entire line as comment (deletions in muted color)
-                    while (accessor.CanNext() && accessor.GetCurrentChar() != '\n') {
-                        accessor.SetStyle(MarkdownStyles::kDiffDelete, 1);
-                    }
+                    StyleToEndOfLine(accessor, MarkdownStyles::kDiffDelete, true);
                     return;
                 }
             }
             // Lines starting with '@@' or starting with 'diff', 'index', etc.
-            else if ((ch == '@' && accessor.GetCharAt(1) == '@') || accessor.GetSubstr(4) == "diff" ||
+            else if ((ch == '@' && accessor.GetCharAt<wxChar>(1) == '@') || accessor.GetSubstr(4) == "diff" ||
                      accessor.GetSubstr(5) == "index") {
                 // Style the entire line as keyword
-                while (accessor.CanNext() && accessor.GetCurrentChar() != '\n') {
-                    accessor.SetStyle(MarkdownStyles::kCodeBlockKeyword, 1);
-                }
+                StyleToEndOfLine(accessor, MarkdownStyles::kCodeBlockKeyword, false);
                 return;
             }
+        }
+
+        // Check for comments inside a diff / patch
+        if (StyleDiffPatchCommentInCodeBlock(accessor)) {
+            return;
         }
     }
 
@@ -607,29 +579,29 @@ void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxStri
          normalizedLang == "docker" || normalizedLang == "makefile" || normalizedLang == "php" ||
          normalizedLang == "python" || normalizedLang == "ruby");
 
-    if (supportsCppComments && accessor.GetCurrentChar() == '/' && accessor.GetCharAt(1) == '/') {
+    if (supportsCppComments && accessor.GetCurrentChar<wxChar>() == '/' && accessor.GetCharAt<wxChar>(1) == '/') {
         // Style the entire line as a comment
-        while (accessor.CanNext() && accessor.GetCurrentChar() != '\n') {
+        while (accessor.CanNext() && accessor.GetCurrentChar<wxChar>() != '\n') {
             accessor.SetStyle(MarkdownStyles::kCodeBlockComment, 1);
         }
         return;
     }
 
-    if (supportsHashComments && accessor.GetCurrentChar() == '#') {
+    if (supportsHashComments && accessor.GetCurrentChar<wxChar>() == '#') {
         // Style the entire line as a comment
-        while (accessor.CanNext() && accessor.GetCurrentChar() != '\n') {
+        while (accessor.CanNext() && accessor.GetCurrentChar<wxChar>() != '\n') {
             accessor.SetStyle(MarkdownStyles::kCodeBlockComment, 1);
         }
         return;
     }
 
-    wxChar ch = accessor.GetCurrentChar();
+    wxChar ch = accessor.GetCurrentChar<wxChar>();
 
     // Handle strings (double quotes)
     if (ch == '"') {
         accessor.SetStyle(MarkdownStyles::kCodeBlockString, 1);
         while (accessor.CanNext()) {
-            ch = accessor.GetCurrentChar();
+            ch = accessor.GetCurrentChar<wxChar>();
             if (ch == '\\') {
                 // Escape sequence
                 accessor.SetStyle(MarkdownStyles::kCodeBlockString, 1);
@@ -653,7 +625,7 @@ void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxStri
     if (ch == '\'') {
         accessor.SetStyle(MarkdownStyles::kCodeBlockString, 1);
         while (accessor.CanNext()) {
-            ch = accessor.GetCurrentChar();
+            ch = accessor.GetCurrentChar<wxChar>();
             if (ch == '\\') {
                 // Escape sequence
                 accessor.SetStyle(MarkdownStyles::kCodeBlockString, 1);
@@ -683,7 +655,7 @@ void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxStri
     if (::wxIsdigit(ch)) {
         int count = 1;
         while (accessor.CanPeek(count)) {
-            wxChar next = accessor.GetCharAt(count);
+            wxChar next = accessor.GetCharAt<wxChar>(count);
             if (::wxIsdigit(next) || next == '.' || next == 'x' || next == 'X' || next == 'e' || next == 'E' ||
                 next == 'f' || next == 'F' || next == 'u' || next == 'U' || next == 'l' || next == 'L') {
                 count++;
@@ -709,7 +681,7 @@ void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxStri
         int count = 1;
 
         while (accessor.CanPeek(count)) {
-            wxChar next = accessor.GetCharAt(count);
+            wxChar next = accessor.GetCharAt<wxChar>(count);
             if (::wxIsalnum(next) || next == '_') {
                 word << next;
                 count++;
@@ -723,7 +695,7 @@ void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxStri
             bool isMacro = false;
             int peek = count;
             while (accessor.CanPeek(peek)) {
-                wxChar next = accessor.GetCharAt(peek);
+                wxChar next = accessor.GetCharAt<wxChar>(peek);
                 if (next == '!') {
                     isMacro = true;
                     // Include the '!' in the macro style
@@ -751,7 +723,7 @@ void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxStri
         bool isFunction = false;
         int peek = count;
         while (accessor.CanPeek(peek)) {
-            wxChar next = accessor.GetCharAt(peek);
+            wxChar next = accessor.GetCharAt<wxChar>(peek);
             if (next == '(') {
                 isFunction = true;
                 break;
@@ -779,19 +751,17 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
     m_states.push(MarkdownState::kDefault);
     while (accessor.CanNext() && !m_states.empty()) {
         MarkdownState current_state = m_states.top();
-        int ch = accessor.GetCurrentChar();
-        int ch1 = accessor.GetCharAt(accessor.GetPosition() + 1);
-        int ch2 = accessor.GetCharAt(accessor.GetPosition() + 2);
+        wxChar ch = accessor.GetCurrentChar<wxChar>();
 
         switch (current_state) {
         case MarkdownState::kDefault:
             // we support up to 99 bullets.
             if (::wxIsdigit(ch) && accessor.IsAtStartOfLine()) {
-                if (::wxIsdigit(accessor.GetCharAt(1)) && accessor.GetCharAt(2) == '.') {
+                if (::wxIsdigit(accessor.GetCharAt<wxChar>(1)) && accessor.GetCharAt<wxChar>(2) == '.') {
                     accessor.SetStyle(MarkdownStyles::kNumberedListItem, 2);
                     accessor.SetStyle(MarkdownStyles::kNumberedListItemDot, 1);
                     break;
-                } else if (accessor.GetCharAt(1) == '.') {
+                } else if (accessor.GetCharAt<wxChar>(1) == '.') {
                     accessor.SetStyle(MarkdownStyles::kNumberedListItem, 1);
                     accessor.SetStyle(MarkdownStyles::kNumberedListItemDot, 1);
                     break;
@@ -862,7 +832,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 }
                 break;
             case '-':
-                if (accessor.IsAtStartOfLine() && accessor.GetCharAt(1) == ' ') {
+                if (accessor.IsAtStartOfLine() && accessor.GetCharAt<wxChar>(1) == ' ') {
                     accessor.SetStyle(MarkdownStyles::kListItem, 2);
                 } else {
                     accessor.SetStyle(MarkdownStyles::kDefault, 1);
@@ -1007,7 +977,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
             switch (ch) {
             case '`':
                 // we support backticks in header text.
-                if (accessor.GetCharAt(1) != '`') {
+                if (accessor.GetCharAt<wxChar>(1) != '`') {
                     accessor.SetStyle(MarkdownStyles::kBacktick, 1);
                     m_states.push(MarkdownState::kCodeWord);
                 } else {
@@ -1055,4 +1025,43 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
             break;
         }
     }
+}
+
+bool MarkdownStyler::StyleDiffPatchCommentInCodeBlock(clSTCAccessor& accessor)
+{
+    wxChar ch = accessor.GetCurrentChar<wxChar>();
+
+    // Check for various comment styles
+    bool isComment = false;
+
+    // Single-line comment styles
+    if (ch == '#') {
+        // Hash comments: shell, python, ruby, perl, etc.
+        isComment = true;
+    } else if (ch == '/' && accessor.GetCharAt<wxChar>(1) == '/') {
+        // C++ style comments: //, used in C, C++, Java, JavaScript, Rust, Go, etc.
+        isComment = true;
+    } else if (ch == '-' && accessor.GetCharAt<wxChar>(1) == '-') {
+        // SQL, Lua, Haskell style comments: --
+        isComment = true;
+    } else if (ch == ';') {
+        // Semicolon comments: Lisp, Assembly, INI files
+        isComment = true;
+    } else if (ch == '%') {
+        // Percent comments: LaTeX, MATLAB, Erlang
+        isComment = true;
+    } else if (ch == '/' && accessor.GetCharAt<wxChar>(1) == '*') {
+        // C-style block comments: /* ... */
+        isComment = true;
+    } else if (ch == '<' && accessor.GetCharAt<wxChar>(1) == '!' && accessor.GetCharAt<wxChar>(2) == '-' &&
+               accessor.GetCharAt<wxChar>(3) == '-') {
+        // HTML/XML comments: <!-- ... -->
+        isComment = true;
+    }
+
+    // If it's a comment, style the entire line
+    if (isComment) {
+        accessor.SetStyleUntilEndOfLine(MarkdownStyles::kCodeBlockComment);
+    }
+    return isComment;
 }

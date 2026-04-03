@@ -22,11 +22,9 @@ High:
 Medium:
 -----
 
-- Change the tool invocation bar into a free text, allowing the user to stop the model.
 - Support auto reading `AGENTS.md` file and convert it into System-Messages.
 - Implement `code_symbols` tool for AI.
 - Add tool management configuration which allows users to trust tools permanently
-- Make compiler errors clickable in the new terminal
 - Scan for CMD as a valid terminal on Windows.
 - AI: Extend all the tools with a "Purpose" mandatory field, so each model will be forced to report the reason for the invocation.
 - AI: Add a system-message that instruct the model to NEVER create a summary file
@@ -39,6 +37,7 @@ Low:
 - Add progress bar table for LSP progress messages (currently we only print messages in the LOG view)
 - MarkdownStyler: mark gcc style lines "file:line" as hyperlink and clickable.
 - Add `codelite-api.lua` file to the installation folder to provide completion for LUA LSPs.
+- MarkdownStyler: ensure that all types of checkmarks are coloured in green (same for `x` symbols)
 
 BUGS
 ----

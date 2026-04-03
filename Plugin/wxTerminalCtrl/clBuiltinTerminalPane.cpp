@@ -33,9 +33,11 @@ namespace
 std::map<wxString, wxString> LocateDefaultTerminals()
 {
     std::map<wxString, wxString> terminals;
+
+    // Common shells
     auto bash = ThePlatform->Which("bash");
     auto zsh = ThePlatform->Which("zsh");
-    auto cmd = ThePlatform->Which("powershell");
+
     if (bash.has_value()) {
         terminals.insert(
             {wxString::Format("%s --login -i", bash.value()), wxString::Format("%s --login -i", bash.value())});
@@ -46,9 +48,17 @@ std::map<wxString, wxString> LocateDefaultTerminals()
             {wxString::Format("%s --login -i", zsh.value()), wxString::Format("%s --login -i", zsh.value())});
     }
 
-    if (cmd.has_value()) {
-        terminals.insert({cmd.value(), cmd.value()});
+#ifdef __WXMSW__
+    auto pwershell = ThePlatform->Which("powershell");
+    auto cmd = ThePlatform->Which("cmd");
+    if (pwershell.has_value()) {
+        terminals.insert({pwershell.value(), pwershell.value()});
     }
+
+    if (pwershell.has_value()) {
+        terminals.insert({pwershell.value(), pwershell.value()});
+    }
+#endif
     return terminals;
 }
 } // namespace

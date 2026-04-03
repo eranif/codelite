@@ -418,6 +418,11 @@ void MarkdownStyler::InitStyles()
     m_ctrl->StyleSetBackground(MarkdownStyles::kDiffDelete, diff_del_bg);
     m_ctrl->StyleSetEOLFilled(MarkdownStyles::kDiffDelete, true);
 
+    wxColour diff_header_fg = is_dark ? wxColour("#7EE0FF") : wxColour("#7952B3");
+    m_ctrl->StyleSetForeground(MarkdownStyles::kDiffHeader, diff_header_fg);
+    m_ctrl->StyleSetBackground(MarkdownStyles::kDiffHeader, code_bg);
+    m_ctrl->StyleSetEOLFilled(MarkdownStyles::kDiffHeader, true);
+
     m_ctrl->StyleSetForeground(MarkdownStyles::kCodeBlockString, string.GetFgColour());
     m_ctrl->StyleSetBackground(MarkdownStyles::kCodeBlockString, code_bg);
 
@@ -506,12 +511,23 @@ namespace
 {
 void StyleToEndOfLine(clSTCAccessor& accessor, int style, bool include_lf)
 {
-    while (accessor.CanNext() && accessor.GetCurrentChar<int>() != '\n') {
-        accessor.SetStyle(style, 1);
+    size_t count{0};
+    while (true) {
+        if (accessor.IsEofInNSteps(count) || accessor.GetCharAt<int>(count) == '\n') {
+            break;
+        }
+        ++count;
+    }
+
+    if (count > 0) {
+        // Style the entire range in one call.
+        accessor.SetStyle(style, count);
     }
 
     if (include_lf && accessor.CanNext() && accessor.GetCurrentChar<int>() == '\n') {
+        clSYSTEM() << "Styling LF" << endl;
         accessor.SetStyle(style, 1);
+        clSYSTEM() << "Next Char (not styled): [" << accessor.GetCurrentChar<wxChar>() << "]" << endl;
     }
 }
 } // namespace
@@ -526,46 +542,46 @@ void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxStri
         wxChar ch = accessor.GetCurrentChar<wxChar>();
 
         // Check if we're at the start of a line for diff-specific line markers
-        if (accessor.IsAtStartOfLine()) {
+        if (accessor.IsAtLineStart()) {
             // Lines starting with '+'
             if (ch == '+') {
                 // Check for '+++' (file marker)
                 if (accessor.GetSubstr(3) == "+++") {
                     // Style the entire line as keyword
-                    StyleToEndOfLine(accessor, MarkdownStyles::kCodeBlockKeyword, false);
-                    return;
+                    StyleToEndOfLine(accessor, MarkdownStyles::kDiffHeader, true);
                 } else {
                     // Style the entire line as string (additions in green)
                     StyleToEndOfLine(accessor, MarkdownStyles::kDiffAdd, true);
-                    return;
                 }
+                return;
             }
             // Lines starting with '-'
             else if (ch == '-') {
                 // Check for '---' (file marker)
                 if (accessor.GetSubstr(3) == "---") {
                     // Style the entire line as keyword
-                    StyleToEndOfLine(accessor, MarkdownStyles::kCodeBlockKeyword, false);
-                    return;
+                    StyleToEndOfLine(accessor, MarkdownStyles::kDiffHeader, true);
                 } else {
                     // Style the entire line as comment (deletions in muted color)
                     StyleToEndOfLine(accessor, MarkdownStyles::kDiffDelete, true);
-                    return;
                 }
+                return;
             }
             // Lines starting with '@@' or starting with 'diff', 'index', etc.
             else if ((ch == '@' && accessor.GetCharAt<wxChar>(1) == '@') || accessor.GetSubstr(4) == "diff" ||
                      accessor.GetSubstr(5) == "index") {
                 // Style the entire line as keyword
-                StyleToEndOfLine(accessor, MarkdownStyles::kCodeBlockKeyword, false);
+                StyleToEndOfLine(accessor, MarkdownStyles::kDiffHeader, true);
                 return;
+            } else if (ch == ' ') {
+                // A context line
+                if (StyleDiffPatchCommentInCodeBlock(accessor)) {
+                    return;
+                }
             }
         }
-
-        // Check for comments inside a diff / patch
-        if (StyleDiffPatchCommentInCodeBlock(accessor)) {
-            return;
-        }
+        StyleToEndOfLine(accessor, MarkdownStyles::kCodeBlockText, true);
+        return;
     }
 
     // Handle C++ style comments (//) for languages that support them
@@ -581,17 +597,13 @@ void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxStri
 
     if (supportsCppComments && accessor.GetCurrentChar<wxChar>() == '/' && accessor.GetCharAt<wxChar>(1) == '/') {
         // Style the entire line as a comment
-        while (accessor.CanNext() && accessor.GetCurrentChar<wxChar>() != '\n') {
-            accessor.SetStyle(MarkdownStyles::kCodeBlockComment, 1);
-        }
+        StyleToEndOfLine(accessor, MarkdownStyles::kCodeBlockComment, false);
         return;
     }
 
     if (supportsHashComments && accessor.GetCurrentChar<wxChar>() == '#') {
         // Style the entire line as a comment
-        while (accessor.CanNext() && accessor.GetCurrentChar<wxChar>() != '\n') {
-            accessor.SetStyle(MarkdownStyles::kCodeBlockComment, 1);
-        }
+        StyleToEndOfLine(accessor, MarkdownStyles::kCodeBlockComment, false);
         return;
     }
 
@@ -756,7 +768,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
         switch (current_state) {
         case MarkdownState::kDefault:
             // we support up to 99 bullets.
-            if (::wxIsdigit(ch) && accessor.IsAtStartOfLine()) {
+            if (::wxIsdigit(ch) && accessor.IsAtLineStartIgnoringWhitespace()) {
                 if (::wxIsdigit(accessor.GetCharAt<wxChar>(1)) && accessor.GetCharAt<wxChar>(2) == '.') {
                     accessor.SetStyle(MarkdownStyles::kNumberedListItem, 2);
                     accessor.SetStyle(MarkdownStyles::kNumberedListItemDot, 1);
@@ -768,7 +780,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 }
             }
 
-            if (accessor.IsAtStartOfLine() && accessor.StartsWith({226, 157, 176}) &&
+            if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.StartsWith({226, 157, 176}) &&
                 accessor.Contains({226, 157, 177}) != wxNOT_FOUND) {
                 int actor_end = accessor.Contains({226, 157, 177}, 1);
                 accessor.SetStyleUntilEndOfLine(MarkdownStyles::kActor);
@@ -812,7 +824,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 }
                 break;
             case '#':
-                if (accessor.IsAtStartOfLine()) {
+                if (accessor.IsAtLineStartIgnoringWhitespace()) {
                     if (accessor.GetSubstr(6) == "######") {
                         accessor.SetStyle(MarkdownStyles::kHeader6, 6);
                     } else if (accessor.GetSubstr(5) == "#####") {
@@ -832,7 +844,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
                 }
                 break;
             case '-':
-                if (accessor.IsAtStartOfLine() && accessor.GetCharAt<wxChar>(1) == ' ') {
+                if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.GetCharAt<wxChar>(1) == ' ') {
                     accessor.SetStyle(MarkdownStyles::kListItem, 2);
                 } else {
                     accessor.SetStyle(MarkdownStyles::kDefault, 1);
@@ -906,7 +918,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
         case MarkdownState::kCodeBlock3:
             switch (ch) {
             case '`':
-                if (accessor.IsAtStartOfLine() && accessor.GetSubstr(3) == "```") {
+                if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.GetSubstr(3) == "```") {
                     accessor.SetStyle(MarkdownStyles::kBacktick, 3);
                     m_currentCodeBlockLanguage.Clear();
                     m_states.pop();
@@ -922,7 +934,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
         case MarkdownState::kCodeBlock4:
             switch (ch) {
             case '`':
-                if (accessor.IsAtStartOfLine() && accessor.GetSubstr(4) == "````") {
+                if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.GetSubstr(4) == "````") {
                     accessor.SetStyle(MarkdownStyles::kBacktick, 4);
                     m_currentCodeBlockLanguage.Clear();
                     m_states.pop();
@@ -938,7 +950,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
         case MarkdownState::kCodeBlock5:
             switch (ch) {
             case '`':
-                if (accessor.IsAtStartOfLine() && accessor.GetSubstr(5) == "`````") {
+                if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.GetSubstr(5) == "`````") {
                     accessor.SetStyle(MarkdownStyles::kBacktick, 5);
                     m_currentCodeBlockLanguage.Clear();
                     m_states.pop();

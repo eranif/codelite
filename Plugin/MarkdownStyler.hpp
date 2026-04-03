@@ -49,6 +49,8 @@ enum MarkdownStyles {
     kKeyboardKeyBracket,  // 44
     kCheckMarkSymbol,     // 45
     kErrorSymbol,         // 46
+    kDiffHeader,          // 47
+    kDiffFileMarker,      // 48
 };
 
 enum class MarkdownState {

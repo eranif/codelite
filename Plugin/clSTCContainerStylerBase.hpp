@@ -82,6 +82,15 @@ public:
         return static_cast<T>(m_ctrl->GetCharAt(m_ctrl->PositionRelative(curpos, at)));
     }
 
+    /// Return if EOF will be reached in `n` steps.
+    /// If `n` == 0 we return if the current position is at EOF.
+    /// Otherwise, we add `n` to the current position and check.
+    inline bool IsEofInNSteps(size_t n = 0) const
+    {
+        int curpos = m_ctrl->GetEndStyled() + n;
+        return curpos > m_ctrl->GetLastPosition();
+    }
+
     /// Return the current position
     inline int GetPosition() const { return m_ctrl->GetEndStyled(); }
 
@@ -106,6 +115,23 @@ public:
         return m_ctrl->GetTextRange(start, end);
     }
 
+    /// Returns true if the current caret position is at the start of a line.
+    ///
+    /// Checks the styled-end position in the associated control and determines whether
+    /// it is either at the beginning of the document or immediately preceded by a
+    /// newline character. This method does not modify any state.
+    ///
+    /// @return bool True if the current position is at line start; otherwise false.
+    inline bool IsAtLineStart() const
+    {
+        int curpos = m_ctrl->GetEndStyled();
+        if (curpos == 0) {
+            return true;
+        }
+        int pos_before = m_ctrl->PositionBefore(curpos);
+        return m_ctrl->GetCharAt(pos_before) == '\n';
+    }
+
     /**
      * @brief Determines whether the current caret position is at the start of a line (ignoring leading whitespace).
      *
@@ -117,7 +143,7 @@ public:
      *
      * @return {@code true} if the caret is at the start of a line, {@code false} otherwise.
      */
-    inline bool IsAtStartOfLine() const
+    inline bool IsAtLineStartIgnoringWhitespace() const
     {
         int curpos = m_ctrl->GetEndStyled();
         if (curpos == 0) {
@@ -179,6 +205,7 @@ public:
     }
 
     inline bool CanNext() const { return m_ctrl->GetEndStyled() != m_ctrl->GetLastPosition(); }
+    inline bool CanNextFromPos(size_t pos) const { return static_cast<int>(pos) < m_ctrl->GetLastPosition(); }
 
     /// Check if we can peek ahead 'count' characters from the current position
     inline bool CanPeek(size_t count) const

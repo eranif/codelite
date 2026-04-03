@@ -567,9 +567,9 @@ CanInvokeToolResult ShellExecuteConfirm(const std::string& tool_name, const assi
 
     wxString cmd = wxString::FromUTF8(command.value());
     wxString message;
-    message << _("The model wants to run the following shell command:\n") << _("# Working directory\n")
+    message << _("The model wants to run the following shell command:\n```bash\n") << _("# Working directory\n")
             << wxString::FromUTF8(working_directory.value()) << "\n\n"
-            << _("# Command\n") << cmd;
+            << _("# Command\n") << cmd << "\n```\n";
     return llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message, [unique_command]() {
         shell_execute_trust_commands.erase(unique_command);
         shell_execute_trust_commands.insert(unique_command);

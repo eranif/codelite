@@ -20,6 +20,7 @@
 #include "terminal_view.h"
 #include "wxTerminalOutputCtrl.hpp"
 
+#include <unordered_map>
 #include <wx/app.h>
 #include <wx/choicdlg.h>
 #include <wx/dir.h>
@@ -30,35 +31,33 @@
 
 namespace
 {
-std::map<wxString, wxString> LocateDefaultTerminals()
+std::vector<std::pair<wxString, wxString>> LocateDefaultTerminals()
 {
-    std::map<wxString, wxString> terminals;
+    std::vector<std::pair<wxString, wxString>> terminals;
 
     // Common shells
-    auto bash = ThePlatform->Which("bash");
-    auto zsh = ThePlatform->Which("zsh");
-
-    if (bash.has_value()) {
-        terminals.insert(
-            {wxString::Format("%s --login -i", bash.value()), wxString::Format("%s --login -i", bash.value())});
-    }
-
-    if (zsh.has_value()) {
-        terminals.insert(
-            {wxString::Format("%s --login -i", zsh.value()), wxString::Format("%s --login -i", zsh.value())});
-    }
-
 #ifdef __WXMSW__
-    auto pwershell = ThePlatform->Which("powershell");
-    auto cmd = ThePlatform->Which("cmd");
-    if (pwershell.has_value()) {
-        terminals.insert({pwershell.value(), pwershell.value()});
-    }
-
-    if (pwershell.has_value()) {
-        terminals.insert({pwershell.value(), pwershell.value()});
-    }
+    std::vector<std::pair<wxString, wxString>> shells_to_find{
+        {"cmd", wxEmptyString},
+        {"powershell", wxEmptyString},
+        {"bash", " --login -i"},
+        {"zsh", " --login -i"},
+    };
+#else
+    std::vector<std::pair<wxString, wxString>> shells_to_find{
+        {"bash", " --login -i"},
+        {"zsh", " --login -i"},
+    };
 #endif
+
+    for (const auto& [shell, extra_args] : shells_to_find) {
+        auto fullcmd = ThePlatform->Which(shell);
+        if (!fullcmd.has_value()) {
+            continue;
+        }
+        terminals.push_back(std::make_pair(wxString::Format("%s%s", fullcmd.value(), extra_args),
+                                           wxString::Format("%s%s", fullcmd.value(), extra_args)));
+    }
     return terminals;
 }
 } // namespace
@@ -122,8 +121,8 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
 
 #ifdef __WXMAC__
     wxTheApp->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCopy, this, wxID_COPY);
-    wxTheApp->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnPaste, this, wxID_PASTE);
 #endif
+    wxTheApp->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnPaste, this, wxID_PASTE);
 }
 
 clBuiltinTerminalPane::~clBuiltinTerminalPane()
@@ -202,6 +201,8 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
 #ifdef __WXMAC__
     V.push_back(wxAcceleratorEntry{wxACCEL_CMD, (int)'V', wxID_PASTE});
     V.push_back(wxAcceleratorEntry{wxACCEL_CMD, (int)'C', wxID_COPY});
+#else
+    V.push_back(wxAcceleratorEntry{wxACCEL_RAW_CTRL, (int)'V', wxID_PASTE});
 #endif
 
     wxAcceleratorTable accel_table(V.size(), V.data());
@@ -241,7 +242,7 @@ void clBuiltinTerminalPane::OnPageChanged(wxBookCtrlEvent& event)
     terminal->CallAfter(&wxTerminalViewCtrl::SetFocus);
 }
 
-void clBuiltinTerminalPane::DetectTerminals(std::map<wxString, wxString>& terminals)
+void clBuiltinTerminalPane::DetectTerminals(std::vector<std::pair<wxString, wxString>>& terminals)
 {
 #ifdef __WXMSW__
     terminals = LocateDefaultTerminals();
@@ -254,14 +255,14 @@ void clBuiltinTerminalPane::DetectTerminals(std::map<wxString, wxString>& termin
             wxString build_tool = compiler->GetTool("MAKE");
             build_tool = build_tool.BeforeLast('>');
             build_tool.Prepend("CMD /K ");
-            terminals.insert({"CMD for " + compiler->GetName(), build_tool});
+            terminals.push_back({"CMD for " + compiler->GetName(), build_tool});
         }
     }
     WriteTerminalOptionsToDisk(terminals);
 #endif
 }
 
-bool clBuiltinTerminalPane::ReadTerminalOptionsFromDisk(std::map<wxString, wxString>& terminals)
+bool clBuiltinTerminalPane::ReadTerminalOptionsFromDisk(std::vector<std::pair<wxString, wxString>>& terminals)
 {
     wxArrayString results = clConfig::Get().Read("terminal/options", wxArrayString{});
     if (results.empty() || results.size() % 2 != 0) {
@@ -269,16 +270,16 @@ bool clBuiltinTerminalPane::ReadTerminalOptionsFromDisk(std::map<wxString, wxStr
     }
 
     terminals.clear();
-    // we serialise the map into array as pairs of: [key,value,key2,value...]
+    // we serialise the map into vectr as pairs of: [key,value,key2,value...]
     for (size_t i = 0; i < results.size() / 2; ++i) {
         wxString name = results[i * 2];
         wxString command = results[i * 2 + 1];
-        terminals.insert({name, command});
+        terminals.push_back(std::make_pair(name, command));
     }
     return true;
 }
 
-void clBuiltinTerminalPane::WriteTerminalOptionsToDisk(const std::map<wxString, wxString>& terminals)
+void clBuiltinTerminalPane::WriteTerminalOptionsToDisk(const std::vector<std::pair<wxString, wxString>>& terminals)
 {
     wxArrayString result;
     result.reserve(terminals.size() * 2);
@@ -292,9 +293,9 @@ void clBuiltinTerminalPane::WriteTerminalOptionsToDisk(const std::map<wxString, 
     clConfig::Get().Write("terminal/options", result);
 }
 
-std::map<wxString, wxString> clBuiltinTerminalPane::GetTerminalsOptions(bool scan)
+std::vector<std::pair<wxString, wxString>> clBuiltinTerminalPane::GetTerminalsOptions(bool scan)
 {
-    std::map<wxString, wxString> terminals = LocateDefaultTerminals();
+    auto terminals = LocateDefaultTerminals();
 #ifdef __WXMSW__
     if (scan) {
         terminals.clear();
@@ -443,14 +444,13 @@ void clBuiltinTerminalPane::OnCopy(wxCommandEvent& e)
     CHECK_IF_CAN_HANDLE(e);
     terminal->Copy();
 }
+#endif
 
 void clBuiltinTerminalPane::OnPaste(wxCommandEvent& e)
 {
     CHECK_IF_CAN_HANDLE(e);
     terminal->Paste();
 }
-
-#endif
 
 void clBuiltinTerminalPane::OnThemeChanged(clCommandEvent& event)
 {

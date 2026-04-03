@@ -30,10 +30,10 @@ protected:
     void OnPageChanged(wxBookCtrlEvent& event);
     void OnSetTitle(wxTerminalEvent& event);
     void OnNew(wxCommandEvent& event);
-    void DetectTerminals(std::map<wxString, wxString>& terminals);
-    bool ReadTerminalOptionsFromDisk(std::map<wxString, wxString>& terminals);
-    void WriteTerminalOptionsToDisk(const std::map<wxString, wxString>& terminals);
-    std::map<wxString, wxString> GetTerminalsOptions(bool scan = false);
+    void DetectTerminals(std::vector<std::pair<wxString, wxString>>& terminals);
+    bool ReadTerminalOptionsFromDisk(std::vector<std::pair<wxString, wxString>>& terminals);
+    void WriteTerminalOptionsToDisk(const std::vector<std::pair<wxString, wxString>>& terminals);
+    std::vector<std::pair<wxString, wxString>> GetTerminalsOptions(bool scan = false);
     void OnScanForTerminals(wxCommandEvent& event);
     void UpdateTerminalsChoice(bool scan);
     void OnCtrlR(wxCommandEvent& e);
@@ -47,9 +47,9 @@ protected:
     void OnAltB(wxCommandEvent& e);
     void OnCtrlA(wxCommandEvent& e);
     void OnCtrlE(wxCommandEvent& e);
+    void OnPaste(wxCommandEvent& e);
 #ifdef __WXMAC__
     void OnCopy(wxCommandEvent& e);
-    void OnPaste(wxCommandEvent& e);
 #endif
 
     void OnThemeChanged(clCommandEvent& event);

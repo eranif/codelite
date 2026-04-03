@@ -28,8 +28,10 @@
 #include "cl_standard_paths.h"
 
 #include <chrono>
+#include <iostream>
 #include <wx/ffile.h>
 #include <wx/filename.h>
+#include <wx/log.h>
 
 int FileLogger::m_globalLogVerbosity = FileLogger::Error;
 wxString FileLogger::m_logfile;
@@ -145,10 +147,17 @@ void FileLogger::Flush()
     if (m_buffer.IsEmpty()) {
         return;
     }
-    wxFFile fp(m_logfile, "a+");
-    if (fp.IsOpened()) {
-        fp.Write(m_buffer + wxT("\n"), wxConvUTF8);
-        fp.Close();
+
+    wxLogNull noLog;
+    if (m_logfile.empty() || !wxFileName::FileExists(m_logfile)) {
+        // Use stdout
+        std::cout << m_buffer.ToStdString(wxConvUTF8) << std::endl;
+    } else {
+        wxFFile fp(m_logfile, "a+");
+        if (fp.IsOpened()) {
+            fp.Write(m_buffer + wxT("\n"), wxConvUTF8);
+            fp.Close();
+        }
     }
     m_buffer.Clear();
 }

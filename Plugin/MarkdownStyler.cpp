@@ -532,9 +532,7 @@ void StyleToEndOfLine(AccessorBase& accessor, int style, bool include_lf)
     }
 
     if (include_lf && accessor.CanNext() && accessor.GetCurrentChar<int>() == '\n') {
-        clSYSTEM() << "Styling LF" << endl;
         accessor.SetStyle(style, 1);
-        clSYSTEM() << "Next Char (not styled): [" << accessor.GetCurrentChar<wxChar>() << "]" << endl;
     }
 }
 } // namespace

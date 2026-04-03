@@ -1,6 +1,9 @@
-#include "MarkdownStyler.hpp"
-
 #include <doctest.h>
+
+// clang-format off
+#include "MarkdownStyler.hpp"
+#include "neseted_diff.h"
+// clang-format on
 
 class MockAccessor final : public AccessorBase
 {
@@ -10,10 +13,7 @@ public:
     {
     }
 
-    wxString GetSubstr(size_t count) const override
-    {
-        return m_text.Mid(m_pos, count);
-    }
+    wxString GetSubstr(size_t count) const override { return m_text.Mid(m_pos, count); }
 
     bool StartsWith(std::vector<int> chars) const override
     {
@@ -143,15 +143,14 @@ TEST_CASE("MarkdownStyler OnStyle styles multiple markdown constructs")
 {
     MarkdownStyler styler{nullptr};
 
-    const wxString text =
-        "# Title\n"
-        "- bullet item\n"
-        "1. numbered item\n"
-        "Visit https://example.com/path?q=1\n"
-        "This is **strong** and __emphasis__\n"
-        "```cpp\n"
-        "int x = 42; // comment\n"
-        "```\n";
+    const wxString text = "# Title\n"
+                          "- bullet item\n"
+                          "1. numbered item\n"
+                          "Visit https://example.com/path?q=1\n"
+                          "This is **strong** and __emphasis__\n"
+                          "```cpp\n"
+                          "int x = 42; // comment\n"
+                          "```\n";
 
     MockAccessor accessor{text};
     styler.OnStyle(accessor);
@@ -203,4 +202,61 @@ TEST_CASE("MarkdownStyler OnStyle styles multiple markdown constructs")
     const size_t comment_pos = text.find("// comment");
     REQUIRE(comment_pos != wxString::npos);
     CHECK(accessor.m_styles[comment_pos] == kCodeBlockComment);
+}
+
+TEST_CASE("MarkdownStyler OnStyle handles nested diff content inside a fenced block")
+{
+    MarkdownStyler styler{nullptr};
+    wxString text = kNestedDiffSample;
+    MockAccessor accessor{text};
+    styler.OnStyle(accessor);
+
+    REQUIRE(accessor.m_styles.size() == text.length());
+
+    const size_t fence_pos = text.find("```patch");
+    REQUIRE(fence_pos != wxString::npos);
+    CHECK(accessor.m_styles[fence_pos] == kBacktick);
+
+    const size_t header_pos = text.find("--- a/README.md");
+    REQUIRE(header_pos != wxString::npos);
+    CHECK(accessor.m_styles[header_pos] == kDiffHeader);
+
+    const size_t index_pos = text.find("@@ -43,6 +43,8 @@");
+    REQUIRE(index_pos != wxString::npos);
+    CHECK(accessor.m_styles[index_pos] == kDiffHeader);
+
+    const size_t plus_plus_pos = text.find("+++ b/README.md");
+    REQUIRE(plus_plus_pos != wxString::npos);
+    CHECK(accessor.m_styles[plus_plus_pos] == kDiffHeader);
+
+    const size_t minus_line_pos = text.find("-- `wxEVT_TERMINAL_TERMINATED`");
+    REQUIRE(minus_line_pos != wxString::npos);
+    CHECK(accessor.m_styles[minus_line_pos] == kDiffDelete);
+
+    const size_t context_line_pos = text.find("#### Terminal Theme");
+    REQUIRE(context_line_pos != wxString::npos);
+    CHECK(accessor.m_styles[context_line_pos] == kCodeBlockText);
+
+    const size_t code_block_pos = text.find("```cpp");
+    REQUIRE(code_block_pos != wxString::npos);
+    CHECK(accessor.m_styles[code_block_pos] == kDiffAdd);
+
+    const size_t add_pos = text.find("+- **Clickable text/links**");
+    REQUIRE(add_pos != wxString::npos);
+    CHECK(accessor.m_styles[add_pos] == kDiffAdd);
+
+    const size_t add_pos2 = text.find("+- **Double-click word selection**");
+    REQUIRE(add_pos2 != wxString::npos);
+    CHECK(accessor.m_styles[add_pos2] == kDiffAdd);
+
+    // The fenced block is styled as diff content, so markdown emphasis inside it should
+    // not be interpreted as MarkdownStyler inline formatting.
+    const size_t strong_pos = text.find("**wxWidgets**");
+    REQUIRE(strong_pos != wxString::npos);
+    CHECK(accessor.m_styles[strong_pos] == kDiffHeader);
+    CHECK(accessor.m_styles[strong_pos + 1] == accessor.m_styles[strong_pos]);
+
+    const size_t closing_fence_pos = text.rfind("```");
+    REQUIRE(closing_fence_pos != wxString::npos);
+    CHECK(accessor.m_styles[closing_fence_pos] == kBacktick);
 }

@@ -2,8 +2,9 @@
 
 // clang-format off
 #include "MarkdownStyler.hpp"
-#include "neseted_diff.h"
 // clang-format on
+//
+const std::string& GetNestedDiffSample();
 
 class MockAccessor final : public AccessorBase
 {
@@ -207,8 +208,8 @@ TEST_CASE("MarkdownStyler OnStyle styles multiple markdown constructs")
 TEST_CASE("MarkdownStyler OnStyle handles nested diff content inside a fenced block")
 {
     MarkdownStyler styler{nullptr};
-    wxString text = kNestedDiffSample;
-    MockAccessor accessor{text};
+    const std::string &text = GetNestedDiffSample();
+    MockAccessor accessor{wxString::FromUTF8(text)};
     styler.OnStyle(accessor);
 
     REQUIRE(accessor.m_styles.size() == text.length());

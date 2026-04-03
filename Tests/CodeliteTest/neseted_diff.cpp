@@ -1,11 +1,11 @@
-#pragma once
+#include <string>
 
-#include <wx/string.h>
-
-static inline const wxString kNestedDiffSample = R"RAW(```patch
+const std::string& GetNestedDiffSample()
+{
+    static std::string kNestedDiffSample = R"RAW(```patch
 --- a/README.md
 +++ b/README.md
-@@ -43,6 +43,8 @@ All you need is **wxWidgets** and **CMake** — no third-party libraries are re
+@@ -43,6 +43,8 @@ All you need is **wxWidgets** and **CMake** - no third-party libraries are re
  - **Custom font selection** in the demo application
  - **Mouse selection, copy/paste, and programmatic selection**
  - **Buffered rendering** with wxWidgets drawing APIs
@@ -106,4 +106,7 @@ static inline const wxString kNestedDiffSample = R"RAW(```patch
  ## Terminal Capabilities
  
  ### Supported Escape Sequences
-```)RAW";
+```
+)RAW";
+    return kNestedDiffSample;
+}

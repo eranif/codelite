@@ -76,7 +76,7 @@ public:
     void Reset() override;
     wxString GetUrlFromPosition(int pos);
 
-    void OnStyle(clSTCAccessor& accessor);
+    void OnStyle(AccessorBase& accessor);
     void OnHostspotClicked(wxStyledTextEvent& event);
 
 private:
@@ -85,8 +85,8 @@ private:
      * @param accessor The text accessor
      * @param language The language tag (e.g., "c++", "python", "javascript")
      */
-    void StyleCodeBlockContent(clSTCAccessor& accessor, const wxString& language);
-    bool StyleDiffPatchCommentInCodeBlock(clSTCAccessor& accessor);
+    void StyleCodeBlockContent(AccessorBase& accessor, const wxString& language);
+    bool StyleDiffPatchCommentInCodeBlock(AccessorBase& accessor);
 
     /**
      * @brief Check if a word is a keyword for the given language

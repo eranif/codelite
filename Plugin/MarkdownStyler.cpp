@@ -509,7 +509,7 @@ bool MarkdownStyler::IsOperator(wxChar ch) const
 
 namespace
 {
-void StyleToEndOfLine(clSTCAccessor& accessor, int style, bool include_lf)
+void StyleToEndOfLine(AccessorBase& accessor, int style, bool include_lf)
 {
     size_t count{0};
     while (true) {
@@ -532,7 +532,7 @@ void StyleToEndOfLine(clSTCAccessor& accessor, int style, bool include_lf)
 }
 } // namespace
 
-void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxString& language)
+void MarkdownStyler::StyleCodeBlockContent(AccessorBase& accessor, const wxString& language)
 {
     // Normalize language for consistency
     wxString normalizedLang = NormalizeLanguage(language);
@@ -758,7 +758,7 @@ void MarkdownStyler::StyleCodeBlockContent(clSTCAccessor& accessor, const wxStri
     accessor.SetStyle(MarkdownStyles::kCodeBlockText, 1);
 }
 
-void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
+void MarkdownStyler::OnStyle(AccessorBase& accessor)
 {
     m_states.push(MarkdownState::kDefault);
     while (accessor.CanNext() && !m_states.empty()) {
@@ -1039,7 +1039,7 @@ void MarkdownStyler::OnStyle(clSTCAccessor& accessor)
     }
 }
 
-bool MarkdownStyler::StyleDiffPatchCommentInCodeBlock(clSTCAccessor& accessor)
+bool MarkdownStyler::StyleDiffPatchCommentInCodeBlock(AccessorBase& accessor)
 {
     wxChar ch = accessor.GetCurrentChar<wxChar>();
 

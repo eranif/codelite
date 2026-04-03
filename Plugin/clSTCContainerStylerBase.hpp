@@ -47,6 +47,8 @@ public:
     virtual bool CanNextFromPos(size_t pos) const = 0;
     virtual bool CanPeek(size_t count) const = 0;
 
+    virtual bool HasReachedEnd() const = 0;
+
 protected:
     virtual int GetCurrentCharAsInt() const = 0;
     virtual int GetCharAtAsInt(size_t at) const = 0;
@@ -249,6 +251,8 @@ public:
     {
         return (m_ctrl->GetEndStyled() + static_cast<int>(count)) <= m_ctrl->GetLastPosition();
     }
+
+    bool HasReachedEnd() const override { return m_ctrl->GetEndStyled() >= m_ctrl->GetLastPosition(); }
 
 private:
     wxString GetSubStringUntilNewLine(size_t from)

@@ -7,8 +7,10 @@
 clSTCContainerStylerBase::clSTCContainerStylerBase(wxStyledTextCtrl* ctrl)
     : m_ctrl(ctrl)
 {
-    m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
-    m_ctrl->SetIdleStyling(wxSTC_IDLESTYLING_AFTERVISIBLE); // style all the visible text at once
+    if (m_ctrl) {
+        m_ctrl->SetLexer(wxSTC_LEX_CONTAINER);
+        m_ctrl->SetIdleStyling(wxSTC_IDLESTYLING_AFTERVISIBLE); // style all the visible text at once
+    }
     EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clSTCContainerStylerBase::OnThemChanged, this);
 }
 

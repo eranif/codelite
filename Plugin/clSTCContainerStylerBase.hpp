@@ -272,7 +272,7 @@ public:
     clSTCContainerStylerBase(wxStyledTextCtrl* stc);
     virtual ~clSTCContainerStylerBase();
 
-    void SetStyleCallback(std::function<void(clSTCAccessor&)> cb) { m_on_style_callback = std::move(cb); }
+    void SetStyleCallback(std::function<void(AccessorBase&)> cb) { m_on_style_callback = std::move(cb); }
 
     /// Initialise the subclass colours & styles.
     virtual void InitStyles() = 0;
@@ -287,5 +287,5 @@ protected:
     void InitInternal();
 
     wxStyledTextCtrl* m_ctrl{nullptr};
-    std::function<void(clSTCAccessor& styles)> m_on_style_callback{nullptr};
+    std::function<void(AccessorBase& styles)> m_on_style_callback{nullptr};
 };

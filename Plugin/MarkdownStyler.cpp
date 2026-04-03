@@ -282,11 +282,18 @@ wxDEFINE_EVENT(wxEVT_MARKDOWN_LINK_CLICKED, clCommandEvent);
 MarkdownStyler::MarkdownStyler(wxStyledTextCtrl* ctrl)
     : clSTCContainerStylerBase(ctrl)
 {
-    InitInternal(); // Will call the pure virtual method "InitStyles"
-    m_ctrl->Bind(wxEVT_STC_HOTSPOT_CLICK, &MarkdownStyler::OnHostspotClicked, this);
+    if (m_ctrl) {
+        InitInternal(); // Will call the pure virtual method "InitStyles"
+        m_ctrl->Bind(wxEVT_STC_HOTSPOT_CLICK, &MarkdownStyler::OnHostspotClicked, this);
+    }
 }
 
-MarkdownStyler::~MarkdownStyler() { m_ctrl->Unbind(wxEVT_STC_HOTSPOT_CLICK, &MarkdownStyler::OnHostspotClicked, this); }
+MarkdownStyler::~MarkdownStyler()
+{
+    if (m_ctrl) {
+        m_ctrl->Unbind(wxEVT_STC_HOTSPOT_CLICK, &MarkdownStyler::OnHostspotClicked, this);
+    }
+}
 
 void MarkdownStyler::OnHostspotClicked(wxStyledTextEvent& event)
 {
@@ -444,7 +451,7 @@ void MarkdownStyler::InitStyles()
     m_ctrl->StyleSetForeground(MarkdownStyles::kCheckMarkSymbol, check_mark.GetFgColour());
     m_ctrl->StyleSetForeground(MarkdownStyles::kErrorSymbol, error_mark.GetFgColour());
 
-    SetStyleCallback([this](clSTCAccessor& accessor) { this->OnStyle(accessor); });
+    SetStyleCallback([this](AccessorBase& accessor) { this->OnStyle(accessor); });
 }
 
 wxString MarkdownStyler::GetUrlFromPosition(int pos)

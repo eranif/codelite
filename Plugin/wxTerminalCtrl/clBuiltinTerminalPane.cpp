@@ -501,18 +501,22 @@ std::optional<wxTerminalTheme> clBuiltinTerminalPane::FromTOML(const wxFileName&
     // Optional colours
     theme.cursorColour = ini_parser["colors.cursor"]["cursor"].GetValue();
     theme.selectionBg = ini_parser["colors.selection"]["background"].GetValue();
+    theme.selectionFg = ini_parser["colors.selection"]["text"].GetValue();
     theme.highlightBg = ini_parser["colors.search.matches"]["background"].GetValue();
+    theme.highlightFg = ini_parser["colors.search.matches"]["foreground"].GetValue();
 
     if (!theme.cursorColour.IsOk()) {
         theme.cursorColour = is_dark ? *wxYELLOW : *wxBLACK;
     }
 
-    if (!theme.selectionBg.IsOk()) {
-        theme.selectionBg = is_dark ? wxT("ORANGE") : wxT("BLUE");
+    if (!theme.selectionBg.IsOk() || !theme.selectionFg.IsOk()) {
+        theme.selectionBg = is_dark ? wxT("#121212") : wxT("#F5F5DC");
+        theme.selectionFg = is_dark ? wxT("#F2F2F2") : wxT("#000080");
     }
 
-    if (!theme.highlightBg.IsOk()) {
-        theme.selectionBg = is_dark ? wxT("GOLD") : wxT("PINK");
+    if (!theme.highlightBg.IsOk() || !theme.highlightFg.IsOk()) {
+        theme.highlightBg = is_dark ? wxT("#264F78") : wxT("#FFF200");
+        theme.highlightFg = is_dark ? wxT("#FFFFFF") : wxT("#000000");
     }
 
     if (!theme.black.IsOk() || !theme.red.IsOk() || !theme.green.IsOk() || !theme.yellow.IsOk() || !theme.blue.IsOk() ||

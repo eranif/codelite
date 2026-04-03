@@ -510,13 +510,13 @@ std::optional<wxTerminalTheme> clBuiltinTerminalPane::FromTOML(const wxFileName&
     }
 
     if (!theme.selectionBg.IsOk() || !theme.selectionFg.IsOk()) {
-        theme.selectionBg = is_dark ? wxT("#121212") : wxT("#F5F5DC");
-        theme.selectionFg = is_dark ? wxT("#F2F2F2") : wxT("#000080");
+        theme.selectionBg = is_dark ? wxT("#264F78") : wxT("#D1F2EB");
+        theme.selectionFg = is_dark ? wxT("#FFFFFF") : wxT("#000000");
     }
 
     if (!theme.highlightBg.IsOk() || !theme.highlightFg.IsOk()) {
-        theme.highlightBg = is_dark ? wxT("#264F78") : wxT("#FFF200");
-        theme.highlightFg = is_dark ? wxT("#FFFFFF") : wxT("#000000");
+        theme.highlightBg = is_dark ? wxT("#FFF200") : wxT("#8A0885");
+        theme.highlightFg = is_dark ? wxT("#1A1917") : wxT("#F7F2F7");
     }
 
     if (!theme.black.IsOk() || !theme.red.IsOk() || !theme.green.IsOk() || !theme.yellow.IsOk() || !theme.blue.IsOk() ||

@@ -76,10 +76,10 @@ public:
     void Reset() override;
     wxString GetUrlFromPosition(int pos);
 
-private:
     void OnStyle(clSTCAccessor& accessor);
     void OnHostspotClicked(wxStyledTextEvent& event);
 
+private:
     /**
      * @brief Style code block content with syntax highlighting
      * @param accessor The text accessor

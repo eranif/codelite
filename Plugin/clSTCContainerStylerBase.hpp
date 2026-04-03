@@ -13,7 +13,46 @@
         return what;                   \
     }
 
-class WXDLLIMPEXP_SDK clSTCAccessor
+class WXDLLIMPEXP_SDK AccessorBase
+{
+public:
+    virtual ~AccessorBase() = default;
+
+    virtual wxString GetSubstr(size_t count) const = 0;
+    virtual bool StartsWith(std::vector<int> chars) const = 0;
+    virtual int Contains(std::vector<int> chars, size_t from = 0) const = 0;
+
+    template <typename T>
+    T GetCurrentChar() const
+    {
+        return static_cast<T>(GetCurrentCharAsInt());
+    }
+
+    template <typename T>
+    T GetCharAt(size_t at) const
+    {
+        return static_cast<T>(GetCharAtAsInt(at));
+    }
+
+    virtual bool IsEofInNSteps(size_t n = 0) const = 0;
+    virtual int GetPosition() const = 0;
+    virtual wxString GetWordAtCurrentPosition() const = 0;
+    virtual bool IsAtLineStart() const = 0;
+    virtual bool IsAtLineStartIgnoringWhitespace() const = 0;
+    virtual void SetStyle(int style, size_t count) = 0;
+    virtual void SetStyleUntilEndOfLine(int style) = 0;
+    virtual bool CurrentLineContains(size_t from, const char* str) = 0;
+    virtual bool CurrentLineContains(size_t from, const wxString& str) = 0;
+    virtual bool CanNext() const = 0;
+    virtual bool CanNextFromPos(size_t pos) const = 0;
+    virtual bool CanPeek(size_t count) const = 0;
+
+protected:
+    virtual int GetCurrentCharAsInt() const = 0;
+    virtual int GetCharAtAsInt(size_t at) const = 0;
+};
+
+class WXDLLIMPEXP_SDK clSTCAccessor : public AccessorBase
 {
 public:
     clSTCAccessor(wxStyledTextCtrl* ctrl)
@@ -21,7 +60,7 @@ public:
     {
     }
 
-    inline wxString GetSubstr(size_t count) const
+    wxString GetSubstr(size_t count) const override
     {
         int curpos = m_ctrl->GetEndStyled();
         int end = std::min(static_cast<int>(m_ctrl->GetLastPosition()), static_cast<int>(curpos + count));
@@ -29,11 +68,10 @@ public:
     }
 
     /// Return the current character pointed by the this object.
-    template <typename T>
-    inline T GetCurrentChar() const
+    int GetCurrentCharAsInt() const override
     {
         int curpos = m_ctrl->GetEndStyled();
-        return static_cast<T>(m_ctrl->GetCharAt(curpos));
+        return m_ctrl->GetCharAt(curpos);
     }
 
     /**
@@ -44,10 +82,10 @@ public:
      * @param chars std::vector<int> The character sequence to compare against.
      * @return bool True if Contains(chars) equals GetPosition(), otherwise false.
      */
-    inline bool StartsWith(std::vector<int> chars) const { return Contains(chars) == GetPosition(); }
+    bool StartsWith(std::vector<int> chars) const override { return Contains(chars) == GetPosition(); }
 
     /// Starting from `from` check if the `chars` sequence exists
-    inline int Contains(std::vector<int> chars, size_t from = 0) const
+    int Contains(std::vector<int> chars, size_t from = 0) const override
     {
         const size_t start_pos = static_cast<size_t>(m_ctrl->GetEndStyled()) + from;
         const size_t last_pos = static_cast<size_t>(m_ctrl->GetLastPosition());
@@ -75,27 +113,26 @@ public:
 
     /// Return character from the current position and a given offset.
     /// This is basically like returning `m_buffer[m_curpos + at]`
-    template <typename T>
-    inline T GetCharAt(size_t at) const
+    int GetCharAtAsInt(size_t at) const override
     {
         int curpos = m_ctrl->GetEndStyled();
-        return static_cast<T>(m_ctrl->GetCharAt(m_ctrl->PositionRelative(curpos, at)));
+        return m_ctrl->GetCharAt(m_ctrl->PositionRelative(curpos, at));
     }
 
     /// Return if EOF will be reached in `n` steps.
     /// If `n` == 0 we return if the current position is at EOF.
     /// Otherwise, we add `n` to the current position and check.
-    inline bool IsEofInNSteps(size_t n = 0) const
+    bool IsEofInNSteps(size_t n = 0) const override
     {
         int curpos = m_ctrl->GetEndStyled() + n;
         return curpos > m_ctrl->GetLastPosition();
     }
 
     /// Return the current position
-    inline int GetPosition() const { return m_ctrl->GetEndStyled(); }
+    int GetPosition() const override { return m_ctrl->GetEndStyled(); }
 
     /// Return the word at the current position
-    inline wxString GetWordAtCurrentPosition() const
+    wxString GetWordAtCurrentPosition() const override
     {
         int curpos = m_ctrl->GetEndStyled();
         if (curpos < 0 || curpos > m_ctrl->GetLastPosition()) {
@@ -122,7 +159,7 @@ public:
     /// newline character. This method does not modify any state.
     ///
     /// @return bool True if the current position is at line start; otherwise false.
-    inline bool IsAtLineStart() const
+    bool IsAtLineStart() const override
     {
         int curpos = m_ctrl->GetEndStyled();
         if (curpos == 0) {
@@ -143,7 +180,7 @@ public:
      *
      * @return {@code true} if the caret is at the start of a line, {@code false} otherwise.
      */
-    inline bool IsAtLineStartIgnoringWhitespace() const
+    bool IsAtLineStartIgnoringWhitespace() const override
     {
         int curpos = m_ctrl->GetEndStyled();
         if (curpos == 0) {
@@ -173,10 +210,10 @@ public:
     }
 
     /// Apply style to the next `count` bytes. This also moves the last styled position.
-    inline void SetStyle(int style, size_t count) { m_ctrl->SetStyling(count, style); }
+    void SetStyle(int style, size_t count) override { m_ctrl->SetStyling(count, style); }
 
     /// Apply style until end of line reached or end of buffer.
-    inline void SetStyleUntilEndOfLine(int style)
+    void SetStyleUntilEndOfLine(int style) override
     {
         int curpos = m_ctrl->GetEndStyled();
         int end_pos = m_ctrl->GetLineEndPosition(m_ctrl->LineFromPosition(curpos));
@@ -184,7 +221,7 @@ public:
     }
 
     /// Check if `sv` exists in the current line.
-    inline bool CurrentLineContains(size_t from, const char* str)
+    bool CurrentLineContains(size_t from, const char* str) override
     {
         wxString sv(str, wxConvUTF8, strlen(str));
         wxString substr = GetSubStringUntilNewLine(from);
@@ -195,7 +232,7 @@ public:
     }
 
     /// Check if `sv` exists in the current line.
-    inline bool CurrentLineContains(size_t from, const wxString& str)
+    bool CurrentLineContains(size_t from, const wxString& str) override
     {
         wxString substr = GetSubStringUntilNewLine(from);
         if (substr.empty()) {
@@ -204,11 +241,11 @@ public:
         return substr.find(str) != wxString::npos;
     }
 
-    inline bool CanNext() const { return m_ctrl->GetEndStyled() != m_ctrl->GetLastPosition(); }
-    inline bool CanNextFromPos(size_t pos) const { return static_cast<int>(pos) < m_ctrl->GetLastPosition(); }
+    bool CanNext() const override { return m_ctrl->GetEndStyled() != m_ctrl->GetLastPosition(); }
+    bool CanNextFromPos(size_t pos) const override { return static_cast<int>(pos) < m_ctrl->GetLastPosition(); }
 
     /// Check if we can peek ahead 'count' characters from the current position
-    inline bool CanPeek(size_t count) const
+    bool CanPeek(size_t count) const override
     {
         return (m_ctrl->GetEndStyled() + static_cast<int>(count)) <= m_ctrl->GetLastPosition();
     }

@@ -294,12 +294,6 @@ public:
      */
     void GetWorkspaceFiles(std::vector<wxFileName>& files, bool absPath = false);
 
-    /**
-     * @brief Launch the ParseThread to update the preprocessor visualization
-     * @param filename
-     */
-    void UpdatePreprocessorFile(clEditor* editor);
-
     //--------------------------- Project Files Mgmt -----------------------------
 public:
     /**

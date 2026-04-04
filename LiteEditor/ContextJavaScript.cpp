@@ -167,11 +167,7 @@ void ContextJavaScript::AutoIndent(const wxChar& nChar)
     rCtrl.ChooseCaretX();
 }
 
-wxString ContextJavaScript::CallTipContent() { return wxEmptyString; }
-
 int ContextJavaScript::DoGetCalltipParamterIndex() { return ContextBase::DoGetCalltipParamterIndex(); }
-
-wxString ContextJavaScript::GetCurrentScopeName() { return wxT(""); }
 
 wxMenu* ContextJavaScript::GetMenu() { return ContextBase::GetMenu(); }
 
@@ -192,8 +188,6 @@ std::shared_ptr<ContextBase> ContextJavaScript::NewInstance(clEditor* container)
 
 void ContextJavaScript::OnCallTipClick(wxStyledTextEvent& event) {}
 
-void ContextJavaScript::OnCalltipCancel() {}
-
 void ContextJavaScript::OnDbgDwellEnd(wxStyledTextEvent& event) {}
 
 void ContextJavaScript::OnDbgDwellStart(wxStyledTextEvent& event) {}
@@ -201,8 +195,6 @@ void ContextJavaScript::OnDbgDwellStart(wxStyledTextEvent& event) {}
 void ContextJavaScript::OnDwellEnd(wxStyledTextEvent& event) {}
 
 void ContextJavaScript::OnEnterHit() {}
-
-void ContextJavaScript::OnFileSaved() {}
 
 void ContextJavaScript::OnKeyDown(wxKeyEvent& event) { ContextBase::OnKeyDown(event); }
 
@@ -213,8 +205,6 @@ void ContextJavaScript::OnSciUpdateUI(wxStyledTextEvent& event)
         ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
     }
 }
-
-void ContextJavaScript::RemoveMenuDynamicContent(wxMenu* menu) {}
 
 void ContextJavaScript::RetagFile() {}
 

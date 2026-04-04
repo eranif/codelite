@@ -32,15 +32,10 @@
 #include "database/entry.h"
 #include "macros.h"
 
-#include <map>
-
 class RefactorSource;
 
 class ContextCpp : public ContextBase
 {
-    std::map<wxString, int> m_propertyInt;
-    wxMenu* m_rclickMenu;
-
 protected:
     void OnShowCodeNavMenu(clCodeCompletionEvent& e);
     void OnCodeCompleteFiles(clCodeCompletionEvent& event);
@@ -52,7 +47,6 @@ private:
 
     bool DoGetFunctionBody(long curPos, long& blockStartPos, long& blockEndPos, wxString& content);
     void Initialize();
-    bool DoCodeComplete(long pos);
     void DoCreateFile(const wxFileName& fn);
     void DoUpdateCalltipHighlight();
     size_t DoGetEntriesForHeaderAndImpl(std::vector<TagEntryPtr>& prototypes,
@@ -76,16 +70,10 @@ public:
     ~ContextCpp() override;
     ContextCpp();
     std::shared_ptr<ContextBase> NewInstance(clEditor* container) override;
-    bool CompleteWord() override;
-    bool CodeComplete(long pos = wxNOT_FOUND) override;
-    bool GotoDefinition() override;
-    wxString GetCurrentScopeName() override;
     void AutoIndent(const wxChar&) override;
     bool IsCommentOrString(long pos) override;
     void AddMenuDynamicContent(wxMenu* menu) override;
-    void RemoveMenuDynamicContent(wxMenu* menu) override;
     void ApplySettings() override;
-    wxString CallTipContent() override;
     void SetActive() override;
     void SemicolonShift() override;
     void ProcessIdleActions() override;
@@ -99,7 +87,6 @@ public:
     void OnDbgDwellEnd(wxStyledTextEvent& event) override;
     void OnDbgDwellStart(wxStyledTextEvent& event) override;
     void OnSciUpdateUI(wxStyledTextEvent& event) override;
-    void OnFileSaved() override;
     void AutoAddComment() override;
 
     // Capture menu events
@@ -122,12 +109,10 @@ public:
     virtual void OnAddMultiImpl(wxCommandEvent& e);
     virtual void OnUserTypedXChars(const wxString& word);
     void OnCallTipClick(wxStyledTextEvent& e) override;
-    void OnCalltipCancel() override;
     DECLARE_EVENT_TABLE()
 
 private:
     wxString GetExpression(long pos, bool onlyWord, clEditor* editor = NULL, bool forCC = true);
-    bool DoGotoSymbol(TagEntryPtr tag);
     bool IsIncludeStatement(const wxString& line, wxString* fileName = NULL, wxString* fileNameUpToCaret = NULL);
     int FindLineToAddInclude();
     /**

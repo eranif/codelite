@@ -54,7 +54,6 @@ protected:
     clEditor* m_container;
     wxString m_name;
     wxString m_selectedWord;
-    std::vector<wxMenuItem*> m_dynItems;
     wxStringSet_t m_completionTriggerStrings;
 
 protected:
@@ -114,19 +113,15 @@ public:
     // functions with default implementation:
     virtual bool IsDefaultContext() const { return true; }
     virtual void OnCallTipClick(wxStyledTextEvent& event) { event.Skip(); }
-    virtual void OnCalltipCancel() {}
     virtual void OnDwellEnd(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnDbgDwellEnd(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnDbgDwellStart(wxStyledTextEvent& event) { event.Skip(); }
     virtual void OnKeyDown(wxKeyEvent& event);
     virtual void AddMenuDynamicContent(wxMenu* WXUNUSED(menu)) {}
-    virtual void RemoveMenuDynamicContent(wxMenu* WXUNUSED(menu)) {}
     virtual void OnSciUpdateUI(wxStyledTextEvent& WXUNUSED(event)) {}
-    virtual void OnFileSaved() {}
     virtual void OnEnterHit() {}
     virtual void RetagFile() {}
     virtual void OnUserTypedXChars(int pos);
-    virtual wxString CallTipContent() { return wxEmptyString; }
     virtual void SetActive() {}
     virtual bool IsCommentOrString(long WXUNUSED(pos)) { return false; }
     /**
@@ -139,15 +134,7 @@ public:
     virtual bool IsAtLineComment() const { return false; }
     virtual void AutoIndent(const wxChar&);
     virtual void AutoAddComment();
-    virtual bool CompleteWord() { return false; }
-    virtual bool CodeComplete(long pos = wxNOT_FOUND)
-    {
-        wxUnusedVar(pos);
-        return false;
-    }
-    virtual bool GotoDefinition() { return false; }
     virtual TagEntryPtr GetTagAtCaret(bool scoped, bool impl) { return NULL; }
-    virtual wxString GetCurrentScopeName() { return wxEmptyString; }
     virtual void SemicolonShift() {}
     virtual int DoGetCalltipParamterIndex();
 

@@ -123,7 +123,6 @@ void ContextBase::PrependMenuItem(wxMenu* menu, const wxString& text, wxObjectEv
     item = new wxMenuItem(menu, eventId, text);
     menu->Prepend(item);
     menu->Connect(eventId, wxEVT_COMMAND_MENU_SELECTED, func, NULL, this);
-    m_dynItems.push_back(item);
 }
 
 void ContextBase::PrependMenuItem(wxMenu* menu, const wxString& text, int id)
@@ -132,7 +131,6 @@ void ContextBase::PrependMenuItem(wxMenu* menu, const wxString& text, int id)
     wxString menuItemText;
     item = new wxMenuItem(menu, id, text);
     menu->Prepend(item);
-    m_dynItems.push_back(item);
 }
 
 void ContextBase::PrependMenuItemSeparator(wxMenu* menu)
@@ -140,7 +138,6 @@ void ContextBase::PrependMenuItemSeparator(wxMenu* menu)
     wxMenuItem* item;
     item = new wxMenuItem(menu, wxID_SEPARATOR);
     menu->Prepend(item);
-    m_dynItems.push_back(item);
 }
 
 int ContextBase::DoGetCalltipParamterIndex()

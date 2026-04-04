@@ -820,7 +820,7 @@
             }, {
              "type": "multi-string",
              "m_label": "Label:",
-             "m_value": "codelite root dir:"
+             "m_value": "CodeLite root dir:"
             }, {
              "type": "string",
              "m_label": "Wrap:",
@@ -855,7 +855,7 @@
             }, {
              "type": "multi-string",
              "m_label": "Tooltip:",
-             "m_value": "Select the location of codelite's source tree"
+             "m_value": "Select the location of CodeLite's source tree"
             }, {
              "type": "colour",
              "m_label": "Bg Colour:",

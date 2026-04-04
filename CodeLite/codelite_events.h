@@ -668,7 +668,7 @@ wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_EXPR_TOOLTIP, clDebugEvent);
 // This event is sent by CodeLite to all plugins to determine whether a plugin is actually a debugger.
 // A plugin should *always* call event.Skip() when handling this event. If the plugin is actually a debugger
 // plugin, it should add itself like this: event.GetStrings().Add("<the-debugger-name")
-// This string is later will be available for Codelite to display it in various dialogs (e.g. Quick Debug, project
+// This string will be available later for CodeLite to display it in various dialogs (e.g. Quick Debug, project
 // settings etc)
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_DBG_IS_PLUGIN_DEBUGGER, clDebugEvent);
 

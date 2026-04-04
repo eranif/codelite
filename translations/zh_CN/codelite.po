@@ -2333,7 +2333,7 @@ msgid "Invalid plugin name"
 msgstr "无效的插件名称"
 
 #: Gizmos/PluginWizard.cpp:64
-msgid "codelite folder does not exists"
+msgid "CodeLite folder does not exists"
 msgstr "CodeLite 文件夹不存在"
 
 #: Gizmos/PluginWizard.cpp:70
@@ -2401,11 +2401,11 @@ msgid "Provide the plugin a short description"
 msgstr "插件提供了一个简短的描述"
 
 #: Gizmos/gizmos_base.cpp:83
-msgid "codelite root dir:"
+msgid "CodeLite root dir:"
 msgstr "CodeLite 根目录："
 
 #: Gizmos/gizmos_base.cpp:88
-msgid "Select the location of codelite's source tree"
+msgid "Select the location of CodeLite's source tree"
 msgstr "选择 CodeLite 源代码树的位置"
 
 #: Gizmos/gizmos_base.cpp:92 QmakePlugin/NewQtProj.cpp:47 codelitephp/php-plugin/php_ui.cpp:1692
@@ -4543,7 +4543,7 @@ msgstr "对象名称与文件名称是一样的"
 
 #: LiteEditor/compiler_pages.cpp:828
 msgid ""
-"By default, codelite will prepend the relative directory to the file name to compose an object name (e.g. src/a.cpp will generate object: src_a.o).\n"
+"By default, CodeLite will prepend the relative directory to the file name to compose an object name (e.g. src/a.cpp will generate object: src_a.o).\n"
 "Uncheck this option to make the object name exactly as the file name without any prefixes"
 msgstr ""
 "默认情况下，CodeLite 会预先考虑通过相关目录以及文件名称来构成一个目标文件名称(例如 src/a.cpp 将生成目标：src_a.o)。\n"
@@ -4838,10 +4838,10 @@ msgstr "用 CTRL 键对光标下面的表达式求值"
 
 #: LiteEditor/debuggersettingsbasedlg.cpp:448
 msgid ""
-"When enabled, codelite will evaluate the expression under the cursor only if the CTRL key is down. \n"
+"When enabled, CodeLite will evaluate the expression under the cursor only if the CTRL key is down. \n"
 "Otherwise, it will evaluate it automatically"
 msgstr ""
-"当启用时，codelite 仅在按下 CTRL 键时对光标下的表达式求值。\n"
+"当启用时，CodeLite 仅在按下 CTRL 键时对光标下的表达式求值。\n"
 "否则自动对它求值"
 
 #: LiteEditor/debuggersettingsbasedlg.cpp:453
@@ -7250,7 +7250,7 @@ msgstr "程序退出\n"
 
 #: LiteEditor/manager.cpp:1814
 msgid "Failed to locate the configured default terminal application required by CodeLite, please install it or check your configuration!"
-msgstr "未能定位 Codelite 已配置的默认终端程序，请安装它或者检查你的配置！"
+msgstr "未能定位 CodeLite 已配置的默认终端程序，请安装它或者检查你的配置！"
 
 #: LiteEditor/manager.cpp:1878
 msgid "': debugger not loaded\n"
@@ -7654,7 +7654,7 @@ msgid "Use separate debugger args"
 msgstr "启用单独的调试器参数"
 
 #: LiteEditor/project_settings_base_dlg.cpp:252
-msgid "When enabled (.e.g. set to True) codelite will pass the arguments set in 'Debug Program Arguments'"
+msgid "When enabled (.e.g. set to True) CodeLite will pass the arguments set in 'Debug Program Arguments'"
 msgstr "当启用(如设置为 True)CodeLite时将会在“调试程序参数”中传递参数设置"
 
 #: LiteEditor/project_settings_base_dlg.cpp:255
@@ -13735,7 +13735,7 @@ msgid "Remote Grep"
 msgstr "远程 Grep"
 
 #: SFTP/sftp.cpp:79 SFTP/sftp.cpp:89
-msgid "SFTP plugin for codelite IDE"
+msgid "SFTP plugin for CodeLite IDE"
 msgstr "SFTP 插件"
 
 #: SFTP/sftp.cpp:126 SFTP/sftp.cpp:129 SFTP/sftp.cpp:135 SFTP/sftp.cpp:152 SFTP/sftp.cpp:177 SFTP/sftp.cpp:340 SFTP/sftp.cpp:457 SFTP/sftp.cpp:500 SFTP/sftp.cpp:535 SFTP/sftp.cpp:554 SFTP/sftp.cpp:577 codelitephp/php-plugin/PhpSFTPHandler.cpp:180
@@ -15130,7 +15130,7 @@ msgid ""
 "You may also use any of the known macros to CodeLite (click the 'Help' button)"
 msgstr ""
 "你可以使用“|”字符设置插入符号的位置\n"
-"你也可以使用任意已知的 Codelite 宏命令(点击“帮助”按钮)"
+"你也可以使用任意已知的 CodeLite 宏命令(点击“帮助”按钮)"
 
 #: abbreviation/abbreviationssettingsbase.cpp:50 abbreviation/abbreviationssettingsbase.cpp:51
 msgid "Create a new abbreviation"
@@ -15210,7 +15210,7 @@ msgid "Generate Themes"
 msgstr "生成主题"
 
 #: codelite_make/cl_make_generator_app.cpp:212
-msgid "A makefile generator based on codelite's workspace"
+msgid "A makefile generator based on CodeLite's workspace"
 msgstr "一个基于 CodeLite 工作区的 makefile 文件生成器"
 
 #: codelite_vim/VIM.cpp:35
@@ -15440,13 +15440,13 @@ msgstr ""
 "一个单独类"
 
 #: codelitephp/php-plugin/php.cpp:55
-msgid "Enable PHP support for codelite IDE"
-msgstr "对 codelite IDE 启用 PHP 支持"
+msgid "Enable PHP support for CodeLite IDE"
+msgstr "对 CodeLite IDE 启用 PHP 支持"
 
 #: codelitephp/php-plugin/php.cpp:73
 #, fuzzy
 msgid "PHP Plugin for the CodeLite IDE"
-msgstr "Codelite 的 PHP 插件"
+msgstr "CodeLite 的 PHP 插件"
 
 #: codelitephp/php-plugin/php.cpp:300
 #, c-format
@@ -15564,11 +15564,11 @@ msgstr "在该主机上等待来自 XDebug 的连接"
 
 #: codelitephp/php-plugin/php_ui.cpp:514 codelitephp/php-plugin/php_ui.cpp:521
 msgid ""
-"The port on which codelite is accepting debug sessions from XDebug\n"
+"The port on which CodeLite is accepting debug sessions from XDebug\n"
 "This value must be the same as the value set in the 'xdebug.remote_port'\n"
 "directive"
 msgstr ""
-"codelite 上的该端口正在接受来自 XDebug 调试会话\n"
+"CodeLite 上的该端口正在接受来自 XDebug 调试会话\n"
 "这个值必须与“xdebug.remote_port”指令中的值\n"
 "相同"
 
@@ -15824,7 +15824,7 @@ msgid ""
 "There is no need to add the project folders, these are parsed automatically"
 msgstr ""
 "为使代码补全更好工作你可以在这里添加文件夹\n"
-"Codelite 将会扫描这些文件夹以使 PHP 文件的代码补全能够更好的工作\n"
+"CodeLite 将会扫描这些文件夹以使 PHP 文件的代码补全能够更好的工作\n"
 "\n"
 "不需要在这里添加项目文件夹，因为它们都是自动解析的"
 
@@ -17152,7 +17152,7 @@ msgstr "git 可用的附加参数："
 
 #: git/gitui.cpp:1554
 msgid ""
-"By default, codelite uses the command 'git apply --whitespace=nowarn --ignore-whitespace' for applying patch files.\n"
+"By default, CodeLite uses the command 'git apply --whitespace=nowarn --ignore-whitespace' for applying patch files.\n"
 "Set here an extra flags to use with this command, e.g.:\n"
 "\n"
 "--reverse\n"
@@ -20389,6 +20389,8 @@ msgid "The title, if any"
 msgstr "标题，如有"
 
 #: wxcrafter/controls/top_level_win_wrapper.cpp:62
+#: wxcrafter/top_level_windows/AuiToolBarTopLevel.cpp:47
+#: wxcrafter/top_level_windows/image_list_wrapper.cpp:21
 msgid "CodeLite's virtual folder for the generated files"
 msgstr "用于生成文件的 CodeLite 虚拟文件夹"
 
@@ -22316,8 +22318,8 @@ msgid "[wxCrafter]"
 msgstr "[wxCrafter]"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:1202
-msgid "In order for the change to take place, you need to restart codelite"
-msgstr "为使更改生效，您需要重新启动 codelite"
+msgid "In order for the change to take place, you need to restart CodeLite"
+msgstr "为使更改生效，您需要重新启动 CodeLite"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:1261
 msgid "Open with wxCrafter..."
@@ -23127,10 +23129,6 @@ msgstr "生成代码..."
 #: wxcrafter/src/wxguicraft_main_view.cpp:3350
 msgid "Generated Code For the following projects:\n"
 msgstr "为以下项目生成代码：\n"
-
-#: wxcrafter/top_level_windows/AuiToolBarTopLevel.cpp:47 wxcrafter/top_level_windows/image_list_wrapper.cpp:21
-msgid "codelite's virtual folder for the generated files"
-msgstr "用于生成文件的 codelite 虚拟文件夹"
 
 #: wxcrafter/top_level_windows/dialog_wrapper.cpp:23 wxcrafter/top_level_windows/wizard_wrapper.cpp:45
 msgid ""

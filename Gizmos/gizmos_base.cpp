@@ -80,12 +80,12 @@ PluginWizardBase::PluginWizardBase(wxWindow* parent, wxWindowID id, const wxStri
     
     boxSizer22->Add(flexGridSizer24, 1, wxALL|wxEXPAND, 5);
     
-    m_staticText42 = new wxStaticText(m_wizardPage2, wxID_ANY, _("codelite root dir:"), wxDefaultPosition, wxSize(-1,-1), 0);
+    m_staticText42 = new wxStaticText(m_wizardPage2, wxID_ANY, _("CodeLite root dir:"), wxDefaultPosition, wxSize(-1,-1), 0);
     
     flexGridSizer24->Add(m_staticText42, 0, wxALL|wxALIGN_RIGHT|wxALIGN_CENTER_VERTICAL, 5);
     
     m_dirPickerCodeliteDir = new wxDirPickerCtrl(m_wizardPage2, wxID_ANY, wxEmptyString, _("Select a folder"), wxDefaultPosition, wxSize(-1,-1), wxDIRP_DEFAULT_STYLE|wxDIRP_USE_TEXTCTRL|wxDIRP_DIR_MUST_EXIST);
-    m_dirPickerCodeliteDir->SetToolTip(_("Select the location of codelite's source tree"));
+    m_dirPickerCodeliteDir->SetToolTip(_("Select the location of CodeLite's source tree"));
     
     flexGridSizer24->Add(m_dirPickerCodeliteDir, 0, wxALL|wxEXPAND, 5);
     

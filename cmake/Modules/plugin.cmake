@@ -31,7 +31,7 @@ function(CL_PLUGIN PLUGIN_NAME)
     # Define the output - shared library
     add_library(${PLUGIN_NAME} SHARED ${PLUGIN_SRCS})
 
-    # Codelite plugins doesn't use the "lib" prefix.
+    # CodeLite plugins doesn't use the "lib" prefix.
     set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
     target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} libcodelite plugin wxsqlite3)
 

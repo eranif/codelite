@@ -22,7 +22,7 @@ if(USE_PCH)
     target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)
 endif()
 
-# Codelite plugins doesn't use the "lib" prefix.
+# CodeLite plugins doesn't use the "lib" prefix.
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} libcodelite plugin)
 # Installation destination

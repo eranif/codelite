@@ -825,7 +825,7 @@ CompilerMainPageBase::CompilerMainPageBase(wxWindow* parent, wxWindowID id, cons
                        wxDLG_UNIT(m_panelAdvanced, wxSize(-1, -1)), 0);
     m_checkBoxObjectNameSameAsFileName->SetValue(false);
     m_checkBoxObjectNameSameAsFileName->SetToolTip(
-        _("By default, codelite will prepend the relative directory to the file name to compose an object name (e.g. "
+        _("By default, CodeLite will prepend the relative directory to the file name to compose an object name (e.g. "
           "src/a.cpp will generate object: src_a.o).\nUncheck this option to make the object name exactly as the file "
           "name without any prefixes"));
 

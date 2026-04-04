@@ -52,7 +52,7 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     static PluginInfo info;
     info.SetAuthor(wxT("Eran Ifrah"));
     info.SetName(wxT("PHP"));
-    info.SetDescription(_("Enable PHP support for codelite IDE"));
+    info.SetDescription(_("Enable PHP support for CodeLite IDE"));
     info.SetVersion(wxT("v1.0"));
     return &info;
 }

@@ -356,14 +356,14 @@ void VirtualDirectorySelectorDlg::OnNewVD(wxCommandEvent& event)
 
     /*    if ( newname.Contains(":") ) { // No, don't check this: we may have been passed a multi-segment path, or be
        trying to create one
-            wxMessageBox(_("':' is not a valid virtual folder character"), "codelite");
+            wxMessageBox(_("':' is not a valid virtual folder character"), "CodeLite");
             return;
         }*/
 
     curpath << ":" << newname;
     wxString errmsg;
     if(!clCxxWorkspaceST::Get()->CreateVirtualDirectory(curpath, errmsg, true)) {
-        wxMessageBox(_("Error occurred while creating virtual folder:\n") + errmsg, "codelite",
+        wxMessageBox(_("Error occurred while creating virtual folder:\n") + errmsg, "CodeLite",
                      wxOK | wxICON_WARNING | wxCENTER);
         return;
     }

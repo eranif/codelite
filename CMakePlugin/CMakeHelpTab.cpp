@@ -25,7 +25,7 @@
 
 /* ************************************************************************ */
 /*                                                                          */
-/* CMakePlugin for Codelite                                                 */
+/* CMakePlugin for CodeLite                                                 */
 /* Copyright (C) 2013 Jiří Fatka <ntsfka@gmail.com>                         */
 /*                                                                          */
 /* This program is free software: you can redistribute it and/or modify     */
@@ -63,7 +63,7 @@
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
 
-// Codelite
+// CodeLite
 #include "file_logger.h"
 #include "ieditor.h"
 #include "imanager.h"

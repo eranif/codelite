@@ -14,7 +14,7 @@ include("${wxWidgets_USE_FILE}")
 
 # Validate that -DCL_SRC_ROOT was passed
 if(NOT CL_SRC_ROOT)
-    message(FATAL_ERROR "**** CL_SRC_ROOT variable is not set. Please set to codelite's source folder")
+    message(FATAL_ERROR "**** CL_SRC_ROOT variable is not set. Please set to CodeLite's source folder")
 else(NOT CL_SRC_ROOT)
     message("-- CL_SRC_ROOT is set to ${CL_SRC_ROOT}")
 endif(NOT CL_SRC_ROOT)

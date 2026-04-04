@@ -2346,7 +2346,7 @@ msgid "Invalid plugin name"
 msgstr "Недопустимое имя модуля"
 
 #: Gizmos/PluginWizard.cpp:64
-msgid "codelite folder does not exists"
+msgid "CodeLite folder does not exists"
 msgstr "Папка CodeLite не существует"
 
 #: Gizmos/PluginWizard.cpp:70
@@ -2414,11 +2414,11 @@ msgid "Provide the plugin a short description"
 msgstr "Добавьте краткое описание модуля"
 
 #: Gizmos/gizmos_base.cpp:83
-msgid "codelite root dir:"
+msgid "CodeLite root dir:"
 msgstr "Корневой каталог CodeLite:"
 
 #: Gizmos/gizmos_base.cpp:88
-msgid "Select the location of codelite's source tree"
+msgid "Select the location of CodeLite's source tree"
 msgstr "Выберите расположение дерева исходного кода СodeLite"
 
 #: Gizmos/gizmos_base.cpp:92 QmakePlugin/NewQtProj.cpp:47 codelitephp/php-plugin/php_ui.cpp:1692
@@ -4567,7 +4567,7 @@ msgstr "Имя объекта совпадает с именем файла"
 
 #: LiteEditor/compiler_pages.cpp:828
 msgid ""
-"By default, codelite will prepend the relative directory to the file name to compose an object name (e.g. src/a.cpp will generate object: src_a.o).\n"
+"By default, CodeLite will prepend the relative directory to the file name to compose an object name (e.g. src/a.cpp will generate object: src_a.o).\n"
 "Uncheck this option to make the object name exactly as the file name without any prefixes"
 msgstr ""
 "По умолчанию СodeLite будет добавлять соответствующий каталог перед именем файла, чтобы составить имя объекта (например, src/a.cpp создаст объект src_a.o).\n"
@@ -4862,7 +4862,7 @@ msgstr "Использовать клавишу CTRL для вычисления
 
 #: LiteEditor/debuggersettingsbasedlg.cpp:448
 msgid ""
-"When enabled, codelite will evaluate the expression under the cursor only if the CTRL key is down. \n"
+"When enabled, CodeLite will evaluate the expression under the cursor only if the CTRL key is down. \n"
 "Otherwise, it will evaluate it automatically"
 msgstr ""
 "Если флажок установлен, CodeLite будет вычислять выражение под курсором только при нажатии клавиши CTRL. \n"
@@ -7690,7 +7690,7 @@ msgid "Use separate debugger args"
 msgstr "Использовать отдельные аргументы отладчика"
 
 #: LiteEditor/project_settings_base_dlg.cpp:252
-msgid "When enabled (.e.g. set to True) codelite will pass the arguments set in 'Debug Program Arguments'"
+msgid "When enabled (.e.g. set to True) CodeLite will pass the arguments set in 'Debug Program Arguments'"
 msgstr "Если флажок установлен (например, установлено значение True), CodeLite будет передавать аргументы, указанные в поле «Аргументы программы отладки»"
 
 #: LiteEditor/project_settings_base_dlg.cpp:255
@@ -13839,7 +13839,7 @@ msgid "Remote Grep"
 msgstr "Удалённая Grep"
 
 #: SFTP/sftp.cpp:79 SFTP/sftp.cpp:89
-msgid "SFTP plugin for codelite IDE"
+msgid "SFTP plugin for CodeLite IDE"
 msgstr "Модуль SFTP для CodeLite IDE"
 
 #: SFTP/sftp.cpp:126 SFTP/sftp.cpp:129 SFTP/sftp.cpp:135 SFTP/sftp.cpp:152 SFTP/sftp.cpp:177 SFTP/sftp.cpp:340 SFTP/sftp.cpp:457 SFTP/sftp.cpp:500 SFTP/sftp.cpp:535 SFTP/sftp.cpp:554 SFTP/sftp.cpp:577 codelitephp/php-plugin/PhpSFTPHandler.cpp:180
@@ -15314,7 +15314,7 @@ msgid "Generate Themes"
 msgstr "Создать темы"
 
 #: codelite_make/cl_make_generator_app.cpp:212
-msgid "A makefile generator based on codelite's workspace"
+msgid "A makefile generator based on CodeLite's workspace"
 msgstr "Генератор файлов Makefile на основе рабочего пространства CodeLite"
 
 #: codelite_vim/VIM.cpp:35
@@ -15544,7 +15544,7 @@ msgstr ""
 "класс"
 
 #: codelitephp/php-plugin/php.cpp:55
-msgid "Enable PHP support for codelite IDE"
+msgid "Enable PHP support for CodeLite IDE"
 msgstr "Включает поддержку PHP для CodeLite IDE"
 
 #: codelitephp/php-plugin/php.cpp:73
@@ -15668,7 +15668,7 @@ msgstr "Ожидать подключения XDebug на этом хосте"
 
 #: codelitephp/php-plugin/php_ui.cpp:514 codelitephp/php-plugin/php_ui.cpp:521
 msgid ""
-"The port on which codelite is accepting debug sessions from XDebug\n"
+"The port on which CodeLite is accepting debug sessions from XDebug\n"
 "This value must be the same as the value set in the 'xdebug.remote_port'\n"
 "directive"
 msgstr ""
@@ -17275,7 +17275,7 @@ msgstr "Дополнительные флаги git apply, которые сле
 
 #: git/gitui.cpp:1554
 msgid ""
-"By default, codelite uses the command 'git apply --whitespace=nowarn --ignore-whitespace' for applying patch files.\n"
+"By default, CodeLite uses the command 'git apply --whitespace=nowarn --ignore-whitespace' for applying patch files.\n"
 "Set here an extra flags to use with this command, e.g.:\n"
 "\n"
 "--reverse\n"
@@ -20517,6 +20517,8 @@ msgid "The title, if any"
 msgstr "Заголовок, если имеется"
 
 #: wxcrafter/controls/top_level_win_wrapper.cpp:62
+#: wxcrafter/top_level_windows/AuiToolBarTopLevel.cpp:47
+#: wxcrafter/top_level_windows/image_list_wrapper.cpp:21
 msgid "CodeLite's virtual folder for the generated files"
 msgstr "Виртуальная папка CodeLite для создаваемых файлов"
 
@@ -22444,7 +22446,7 @@ msgid "[wxCrafter]"
 msgstr "[wxCrafter]"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:1202
-msgid "In order for the change to take place, you need to restart codelite"
+msgid "In order for the change to take place, you need to restart CodeLite"
 msgstr "Чтобы изменения вступили в силу, необходимо перезапустить CodeLite"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:1261
@@ -23255,10 +23257,6 @@ msgstr "Создание кода..."
 #: wxcrafter/src/wxguicraft_main_view.cpp:3350
 msgid "Generated Code For the following projects:\n"
 msgstr "Создаваемый код для следующих проектов:\n"
-
-#: wxcrafter/top_level_windows/AuiToolBarTopLevel.cpp:47 wxcrafter/top_level_windows/image_list_wrapper.cpp:21
-msgid "codelite's virtual folder for the generated files"
-msgstr "Виртуальная папка CodeLite для создаваемых файлов"
 
 #: wxcrafter/top_level_windows/dialog_wrapper.cpp:23 wxcrafter/top_level_windows/wizard_wrapper.cpp:45
 msgid ""

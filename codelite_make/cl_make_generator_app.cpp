@@ -209,7 +209,7 @@ bool clMakeGeneratorApp::OnInit()
 bool clMakeGeneratorApp::DoParseCommandLine(wxCmdLineParser& parser)
 {
     parser.SetDesc(g_cmdDesc);
-    parser.AddUsageText(_("A makefile generator based on codelite's workspace"));
+    parser.AddUsageText(_("A makefile generator based on CodeLite's workspace"));
 
     int res = parser.Parse(false);
     if (res == wxNOT_FOUND)

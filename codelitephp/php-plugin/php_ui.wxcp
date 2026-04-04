@@ -4175,7 +4175,7 @@
 																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Tooltip:",
-																	"m_value":	"The port on which codelite is accepting debug sessions from XDebug\\nThis value must be the same as the value set in the 'xdebug.remote_port'\\ndirective "
+																	"m_value":	"The port on which CodeLite is accepting debug sessions from XDebug\\nThis value must be the same as the value set in the 'xdebug.remote_port'\\ndirective "
 																}, {
 																	"type":	"colour",
 																	"m_label":	"Bg Colour:",
@@ -4250,7 +4250,7 @@
 																}, {
 																	"type":	"multi-string",
 																	"m_label":	"Tooltip:",
-																	"m_value":	"The port on which codelite is accepting debug sessions from XDebug\\nThis value must be the same as the value set in the 'xdebug.remote_port'\\ndirective "
+																	"m_value":	"The port on which CodeLite is accepting debug sessions from XDebug\\nThis value must be the same as the value set in the 'xdebug.remote_port'\\ndirective "
 																}, {
 																	"type":	"colour",
 																	"m_label":	"Bg Colour:",

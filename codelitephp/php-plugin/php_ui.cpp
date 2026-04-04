@@ -511,14 +511,14 @@ PHPSettingsBaseDlg::PHPSettingsBaseDlg(wxWindow* parent, wxWindowID id, const wx
 
     m_staticText10 =
         new wxStaticText(m_panel13, wxID_ANY, _("Port:"), wxDefaultPosition, wxDLG_UNIT(m_panel13, wxSize(-1, -1)), 0);
-    m_staticText10->SetToolTip(_("The port on which codelite is accepting debug sessions from XDebug\nThis value must "
+    m_staticText10->SetToolTip(_("The port on which CodeLite is accepting debug sessions from XDebug\nThis value must "
                                  "be the same as the value set in the 'xdebug.remote_port'\ndirective"));
 
     fgSizer5->Add(m_staticText10, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     m_textCtrlXDebugPort =
         new wxTextCtrl(m_panel13, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel13, wxSize(-1, -1)), 0);
-    m_textCtrlXDebugPort->SetToolTip(_("The port on which codelite is accepting debug sessions from XDebug\nThis value "
+    m_textCtrlXDebugPort->SetToolTip(_("The port on which CodeLite is accepting debug sessions from XDebug\nThis value "
                                        "must be the same as the value set in the 'xdebug.remote_port'\ndirective"));
 #if wxVERSION_NUMBER >= 3000
     m_textCtrlXDebugPort->SetHint(wxT(""));

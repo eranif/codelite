@@ -1551,7 +1551,7 @@ GitApplyPatchDlgBase::GitApplyPatchDlgBase(
 
     m_textCtrlExtraFlags =
         new wxTextCtrl(this, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_textCtrlExtraFlags->SetToolTip(_("By default, codelite uses the command 'git apply --whitespace=nowarn "
+    m_textCtrlExtraFlags->SetToolTip(_("By default, CodeLite uses the command 'git apply --whitespace=nowarn "
                                        "--ignore-whitespace' for applying patch files.\nSet here an extra flags to use "
                                        "with this command, e.g.:\n\n--reverse\n\nSee the git manual for more options"));
 #if wxVERSION_NUMBER >= 3000

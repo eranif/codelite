@@ -17,6 +17,7 @@
 #include "globals.h"
 #include "imanager.h"
 #include "macros.h"
+#include "procutils.h"
 #include "ssh/ssh_account_info.h"
 #include "terminal_view.h"
 #include "wxTerminalOutputCtrl.hpp"
@@ -59,6 +60,46 @@ std::vector<std::pair<wxString, wxString>> LocateDefaultTerminals()
         terminals.push_back(std::make_pair(wxString::Format("%s%s", fullcmd.value(), extra_args),
                                            wxString::Format("%s%s", fullcmd.value(), extra_args)));
     }
+
+#ifdef __WXMSW__
+    // Custom code to handle WSL terminals
+    auto wsl = ThePlatform->Which("wsl");
+    if (wsl.has_value()) {
+        wxString wsl_command = StringUtils::WrapWithDoubleQuotes(wsl.value());
+        clDEBUG() << "Found WSL:" << wsl_command << endl;
+
+        // List the available distros we got.
+        std::vector<wxString> command = {wsl.value(), "-l"};
+        wxString list_output;
+
+        clEnvList_t env;
+        env.push_back({"WSL_UTF8", "1"});
+        auto process = ::CreateAsyncProcess(nullptr, command, IProcessCreateSync, wxEmptyString, &env, wxEmptyString);
+        if (process) {
+            process->WaitForTerminate(list_output);
+        }
+        clDEBUG() << list_output << endl;
+
+        wxArrayString lines = wxStringTokenize(list_output, "\r\n", wxTOKEN_STRTOK);
+        for (auto& output_line : lines) {
+            output_line.Trim().Trim(false);
+            wxString lc_line = output_line.Lower();
+            if (lc_line.Contains("windows subsystem for linux distributions") || lc_line.empty()) {
+                clDEBUG() << "Ignoring line: [" << lc_line << "]" << endl;
+                continue;
+            }
+
+            clDEBUG() << "  Checking WSL distro: '" << output_line << "'" << output_line.size() << " bytes" << endl;
+            wxString title;
+            title << "WSL: " << output_line;
+            wxString cmd;
+            cmd << wsl_command << " --distribution " << StringUtils::WrapWithDoubleQuotes(output_line) << " --cd ~";
+            clDEBUG() << "Adding:" << title << "=>" << cmd << endl;
+            terminals.push_back(std::make_pair(title, cmd));
+        }
+    }
+#endif
+
     return terminals;
 }
 } // namespace
@@ -640,9 +681,7 @@ void clBuiltinTerminalPane::OnLinkClicked(wxTerminalEvent& event)
     }
 
     if (wxFileName::DirExists(text)) {
-        CallAfter([text]() {
-            FileUtils::OpenFileExplorer(text);
-        });
+        CallAfter([text]() { FileUtils::OpenFileExplorer(text); });
         return;
     }
 

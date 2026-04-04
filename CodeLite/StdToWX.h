@@ -40,11 +40,6 @@ public:
      * @brief
      */
     static void Trim(std::string& str, bool fromRight = true);
-
-    /**
-     * @brief convert std::vector into wxArrayString
-     */
-    static wxArrayString ToArrayString(const std::vector<wxString>& vec);
 };
 
 #endif // STDTOWX_H

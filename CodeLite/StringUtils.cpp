@@ -787,12 +787,11 @@ wxArrayString StringUtils::BuildCommandArrayFromString(const wxString& command)
     return command_array;
 }
 
-wxString StringUtils::BuildCommandStringFromArray(const wxArrayString& command_arr, size_t flags)
+wxString StringUtils::BuildCommandStringFromArray(std::span<const wxString> commands, size_t flags)
 {
+    const bool span_multiple_lines = !(flags & ONE_LINER);
+    const bool include_comment_block = (flags & WITH_COMMENT_PREFIX);
     wxString command;
-
-    bool span_multiple_lines = !(flags & ONE_LINER);
-    bool include_comment_block = (flags & WITH_COMMENT_PREFIX);
 
     if (span_multiple_lines && include_comment_block) {
         command << "# Command to execute:\n";
@@ -802,11 +801,11 @@ wxString StringUtils::BuildCommandStringFromArray(const wxArrayString& command_a
     const wxString SPACE = span_multiple_lines ? "  " : " ";
     const wxString COMMAND_SEPARATOR = span_multiple_lines ? "\n" : " ";
 
-    for (size_t i = 0; i < command_arr.size(); ++i) {
+    for (size_t i = 0; i < commands.size(); ++i) {
         if (i > 0) {
             command << SPACE;
         }
-        command << command_arr[i] << COMMAND_SEPARATOR;
+        command << commands[i] << COMMAND_SEPARATOR;
     }
     return command;
 }

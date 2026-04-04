@@ -28,6 +28,7 @@
 #include "codelite_exports.h"
 
 #include <algorithm>
+#include <span>
 #include <string>
 #include <string_view>
 #include <unordered_set>
@@ -211,10 +212,10 @@ public:
 
     /**
      * @brief build command string from array of commands
-     * @param command the command array
+     * @param commands the command array
      * @param flags see `StringUtils::BuildCommandFlags`
      */
-    static wxString BuildCommandStringFromArray(const wxArrayString& command_arr,
+    static wxString BuildCommandStringFromArray(std::span<const wxString> commands,
                                                 size_t flags = BuildCommandFlags::ONE_LINER);
 
     /**

@@ -14,6 +14,7 @@
 #include <condition_variable>
 #include <functional>
 #include <mutex>
+#include <span>
 #include <thread>
 #include <unordered_map>
 #include <wx/event.h>
@@ -278,12 +279,11 @@ public:
      * @returns `ReadOutput_t` is a pair: stdout and stderr
      */
     ReadOutput_t AwaitExecute(const wxString& accountName,
-                              const std::vector<wxString>& command,
+                              std::span<const wxString> commands,
                               const wxString& wd,
                               clEnvList_t* env = nullptr)
     {
-        const wxArrayString arr = StdToWX::ToArrayString(command);
-        return AwaitExecute(accountName, StringUtils::BuildCommandStringFromArray(arr), wd, env);
+        return AwaitExecute(accountName, StringUtils::BuildCommandStringFromArray(commands), wd, env);
     }
 
     /**
@@ -301,12 +301,11 @@ public:
      */
     void AsyncExecute(wxEvtHandler* sink,
                       const wxString& accountName,
-                      const std::vector<wxString>& command,
+                      std::span<const wxString> commands,
                       const wxString& wd,
                       clEnvList_t* env = nullptr)
     {
-        const wxArrayString arr = StdToWX::ToArrayString(command);
-        return AsyncExecute(sink, accountName, StringUtils::BuildCommandStringFromArray(arr), wd, env);
+        return AsyncExecute(sink, accountName, StringUtils::BuildCommandStringFromArray(commands), wd, env);
     }
 };
 

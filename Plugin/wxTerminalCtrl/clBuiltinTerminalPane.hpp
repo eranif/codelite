@@ -29,6 +29,7 @@ protected:
     void OnInitDone(wxCommandEvent& e);
     void OnPageChanged(wxBookCtrlEvent& event);
     void OnSetTitle(wxTerminalEvent& event);
+    void OnLinkClicked(wxTerminalEvent& event);
     void OnNew(wxCommandEvent& event);
     void DetectTerminals(std::vector<std::pair<wxString, wxString>>& terminals);
     bool ReadTerminalOptionsFromDisk(std::vector<std::pair<wxString, wxString>>& terminals);
@@ -58,7 +59,6 @@ protected:
     void ApplyThemeChanges();
     void UpdateFont();
     void OnSettingsMenu(wxCommandEvent& event);
-    void OnToggleSafeDrawing(wxCommandEvent& event);
 
 private:
     static std::optional<wxTerminalTheme> FromTOML(const wxFileName& filepath);

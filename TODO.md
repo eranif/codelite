@@ -27,7 +27,7 @@ Medium:
 - Add tool management configuration which allows users to trust tools permanently
 - AI: Extend all the tools with a "Purpose" mandatory field, so each model will be forced to report the reason for the invocation.
 - AI: Add a system-message that instruct the model to NEVER create a summary file
-- File System Workspace: change the dialog box when deleting a file into `clMessageBox`
+- If the terminal appends line, clear the selection.
 
 Low:
 ----

@@ -13,6 +13,7 @@
 #include "environmentconfig.h"
 #include "event_notifier.h"
 #include "file_logger.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "imanager.h"
 #include "macros.h"
@@ -163,6 +164,7 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     EnvSetter env_setter{};
     std::optional<wxTerminalViewCtrl::EnvironmentList> env{std::nullopt};
     wxTerminalViewCtrl* ctrl = new wxTerminalViewCtrl(m_book, cmd, env);
+    ctrl->SetSelectionDelimChars(" \t\n\r()[]{}<>,;'\"@|&=*?!");
     ctrl->SetTheme(m_activeTheme.has_value() ? *m_activeTheme : wxTerminalTheme::MakeDarkTheme());
     m_book->AddPage(ctrl, cmd, true);
 
@@ -183,6 +185,7 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
             m_book->DeletePage(where, ctrl);
         }
     });
+    ctrl->Bind(wxEVT_TERMINAL_TEXT_LINK, &clBuiltinTerminalPane::OnLinkClicked, this);
 
     // Register standard keyboard shortcuts for the terminal.
     std::vector<wxAcceleratorEntry> V;
@@ -625,4 +628,33 @@ void clBuiltinTerminalPane::UpdateFont()
     if (lexer) {
         m_activeFont = lexer->GetFontForStyle(0, this);
     }
+}
+
+void clBuiltinTerminalPane::OnLinkClicked(wxTerminalEvent& event)
+{
+    clDEBUG() << "Text clicked inside terminal:" << event.GetClickedText() << endl;
+    const wxString& text = event.GetClickedText();
+    if (text.StartsWith("http://") || text.StartsWith("https://")) {
+        ::wxLaunchDefaultBrowser(text);
+        return;
+    }
+
+    if (wxFileName::DirExists(text)) {
+        CallAfter([text]() {
+            FileUtils::OpenFileExplorer(text);
+        });
+        return;
+    }
+
+    wxFileName fn{text};
+    if (fn.GetExt() == "exe" && fn.FileExists()) {
+        ::wxLaunchDefaultApplication(text);
+        return;
+    }
+
+    clBuildEvent event_clicked(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED);
+    event_clicked.SetBuildDir(wxEmptyString); // can be empty
+    event_clicked.SetFileName(text);
+    event_clicked.SetLineNumber(0);
+    EventNotifier::Get()->AddPendingEvent(event_clicked);
 }

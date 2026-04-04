@@ -25,7 +25,6 @@ Medium:
 - Support auto reading `AGENTS.md` file and convert it into System-Messages.
 - Implement `code_symbols` tool for AI.
 - Add tool management configuration which allows users to trust tools permanently
-- Scan for CMD as a valid terminal on Windows.
 - AI: Extend all the tools with a "Purpose" mandatory field, so each model will be forced to report the reason for the invocation.
 - AI: Add a system-message that instruct the model to NEVER create a summary file
 - File System Workspace: change the dialog box when deleting a file into `clMessageBox`

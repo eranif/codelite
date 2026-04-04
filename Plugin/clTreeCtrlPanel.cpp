@@ -635,51 +635,50 @@ void clTreeCtrlPanel::OnDeleteSelections(wxCommandEvent& event)
     wxString message;
     message << _("Are you sure you want to delete the selected items?");
 
-    wxRichMessageDialog dialog(EventNotifier::Get()->TopFrame(),
-                               message,
-                               _("Confirm"),
-                               wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxCENTER | wxICON_WARNING);
+    bool delete_items =
+        ::clMessageBox(message, _("Confirm"), wxYES_NO | wxCANCEL | wxNO_DEFAULT | wxCENTER | wxICON_WARNING) == wxYES;
 
     wxWindowUpdateLocker locker(GetTreeCtrl());
-    wxArrayTreeItemIds deletedItems;
+    std::vector<wxTreeItemId> deletedItems;
     wxArrayString deletedFiles, deletedFolders;
-    if (dialog.ShowModal() == wxID_YES) {
+    if (delete_items) {
         wxLogNull nl;
-        for (size_t i = 0; i < v.size(); ++i) {
-            if (v.at(i).folder) {
-                if (wxFileName::Rmdir(v.at(i).path, wxPATH_RMDIR_RECURSIVE)) {
-                    deletedItems.Add(v.at(i).item);
-                    deletedFolders.Add(v.at(i).path);
+        for (const auto& entry : v) {
+            if (entry.folder) {
+                if (wxFileName::Rmdir(entry.path, wxPATH_RMDIR_RECURSIVE)) {
+                    deletedItems.push_back(entry.item);
+                    deletedFolders.push_back(entry.path);
                 }
             } else {
-                if (clRemoveFile(v.at(i).path)) {
-                    deletedItems.Add(v.at(i).item);
-                    deletedFiles.Add(v.at(i).path);
+                if (FileUtils::RemoveFile(entry.path)) {
+                    deletedItems.push_back(entry.item);
+                    deletedFiles.push_back(entry.path);
                 }
             }
         }
-    }
 
-    // Notify about the folder/files deletion
-    {
-        clFileSystemEvent evt(wxEVT_FILE_DELETED);
-        evt.SetPaths(deletedFiles);
-        evt.SetEventObject(this);
-        EventNotifier::Get()->AddPendingEvent(evt);
-    }
-    {
-        clFileSystemEvent evt(wxEVT_FOLDER_DELETED);
-        evt.SetPaths(deletedFolders);
-        evt.SetEventObject(this);
-        EventNotifier::Get()->AddPendingEvent(evt);
+        // Notify about the folder/files deletion
+        if (!deletedFiles.empty()) {
+            clFileSystemEvent files_deleted(wxEVT_FILE_DELETED);
+            files_deleted.SetPaths(deletedFiles);
+            files_deleted.SetEventObject(this);
+            EventNotifier::Get()->AddPendingEvent(files_deleted);
+        }
+
+        if (!deletedFolders.empty()) {
+            clFileSystemEvent folders_deleted(wxEVT_FOLDER_DELETED);
+            folders_deleted.SetPaths(deletedFolders);
+            folders_deleted.SetEventObject(this);
+            EventNotifier::Get()->AddPendingEvent(folders_deleted);
+        }
     }
 
     // Update the UI
-    for (size_t i = 0; i < deletedItems.size(); ++i) {
+    for (wxTreeItemId item : deletedItems) {
         // Before we delete the item from the tree, update the parent cache
-        UpdateItemDeleted(deletedItems.Item(i));
+        UpdateItemDeleted(item);
         // And now remove the item from the tree
-        GetTreeCtrl()->Delete(deletedItems.Item(i));
+        GetTreeCtrl()->Delete(item);
     }
 }
 

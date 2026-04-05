@@ -9,5 +9,3 @@ void StdToWX::Trim(std::string& str, bool fromRight)
         str.erase(0, str.find_first_not_of(trimString));
     }
 }
-
-wxArrayString StdToWX::ToArrayString(const std::vector<wxString>& vec) { return {vec.size(), vec.data()}; }

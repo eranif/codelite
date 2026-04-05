@@ -249,7 +249,7 @@ void CMakeSettingsManager::LoadProject(const wxString& name)
     const wxString jsonStr = project->GetPluginData("CMakePlugin");
 
     // Create JSON object
-    nlohmann::json json = nlohmann::json::parse(StringUtils::ToStdString(jsonStr), nullptr, false);
+    nlohmann::json json = nlohmann::json::parse(jsonStr.ToStdString(wxConvUTF8), nullptr, false);
 
     // Unable to parse
     if (json.is_discarded())

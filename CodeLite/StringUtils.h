@@ -61,10 +61,6 @@ public:
     };
 
 public:
-    /**
-     * @brief convert string into std::string
-     */
-    static std::string ToStdString(const wxString& str);
 
     /**
      * @brief convert wxArrayString into std::vector<std::string>

@@ -1,6 +1,5 @@
 #include "ChildProcess.h"
 
-#include "StringUtils.h"
 #include "asyncprocess.h"
 #include "cl_exception.h"
 
@@ -60,7 +59,7 @@ void ChildProcess::Start(const wxArrayString& args)
 #endif
 }
 
-void ChildProcess::Write(const wxString& message) { Write(StringUtils::ToStdString(message)); }
+void ChildProcess::Write(const wxString& message) { Write(message.ToStdString(wxConvUTF8)); }
 
 void ChildProcess::Write(const std::string& message)
 {

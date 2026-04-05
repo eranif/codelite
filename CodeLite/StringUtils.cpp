@@ -70,20 +70,6 @@ clEnvList_t split_env_string(const wxString& env_str)
 }
 
 } // namespace
-std::string StringUtils::ToStdString(const wxString& str)
-{
-    const char* data = str.mb_str(wxConvUTF8).data();
-    if (!data) {
-        data = str.To8BitData();
-    }
-
-    std::string res;
-    if (!data) {
-        return res;
-    }
-    res = data;
-    return res;
-}
 
 std::vector<std::string> StringUtils::ToStdStrings(const wxArrayString& strs)
 {
@@ -91,7 +77,7 @@ std::vector<std::string> StringUtils::ToStdStrings(const wxArrayString& strs)
     res.reserve(strs.size());
 
     for (const auto& s : strs) {
-        res.push_back(ToStdString(s));
+        res.push_back(s.ToStdString(wxConvUTF8));
     }
     return res;
 }
@@ -102,7 +88,7 @@ std::vector<std::string> StringUtils::ToStdStrings(const std::vector<wxString>& 
     res.reserve(strs.size());
 
     for (const auto& s : strs) {
-        res.push_back(ToStdString(s));
+        res.push_back(s.ToStdString(wxConvUTF8));
     }
     return res;
 }
@@ -261,7 +247,7 @@ wxString StringUtils::StripTerminalOSC(wxStringView buffer)
 
 void StringUtils::StripTerminalColouring(const wxString& buffer, wxString& modbuffer)
 {
-    std::string source = ToStdString(buffer);
+    std::string source = buffer.ToStdString(wxConvUTF8);
     std::string output;
     StripTerminalColouring(source, output);
     if (!output.empty()) {

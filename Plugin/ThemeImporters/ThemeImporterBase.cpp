@@ -2,7 +2,6 @@
 
 #include "ColoursAndFontsManager.h"
 #include "JSON.h"
-#include "StringUtils.h"
 #include "clINIParser.hpp"
 #include "drawingutils.h"
 #include "file_logger.h"
@@ -392,7 +391,7 @@ LexerConf::Ptr_t
 ThemeImporterBase::ImportAlacrittyThemeToml(const wxFileName& theme_file, const wxString& langName, int langId)
 {
     clDEBUG() << "   > Importing Alacritty Theme (TOML) file:" << theme_file << ". Language:" << langName << endl;
-    std::string filename = StringUtils::ToStdString(theme_file.GetFullPath());
+    std::string filename = theme_file.GetFullPath().ToStdString(wxConvUTF8);
 
     clINIParser ini_parser;
     ini_parser.ParseFile(theme_file.GetFullPath());
@@ -445,7 +444,7 @@ ThemeImporterBase::ImportAlacrittyThemeYAML(const wxFileName& theme_file, const 
 {
     clDEBUG() << "   > Importing Alacritty Theme (YAML) file:" << theme_file << ". Language:" << langName << endl;
 
-    std::string filename = StringUtils::ToStdString(theme_file.GetFullPath());
+    std::string filename = theme_file.GetFullPath().ToStdString(wxConvUTF8);
 
     // load the file (this might throw)
     YAML::Node config;

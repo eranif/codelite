@@ -4,7 +4,6 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
-#include "StringUtils.h"
 #include "file_logger.h"
 #include "fileutils.h"
 
@@ -285,17 +284,9 @@ bool clSSHInteractiveChannel::Write(const std::string& buff)
     return true;
 }
 
-bool clSSHInteractiveChannel::Write(const wxString& buff)
-{
-    std::string str = StringUtils::ToStdString(buff);
-    return Write(str);
-}
+bool clSSHInteractiveChannel::Write(const wxString& buff) { return Write(buff.ToStdString(wxConvUTF8)); }
 
-bool clSSHInteractiveChannel::WriteRaw(const wxString& buff)
-{
-    std::string str = StringUtils::ToStdString(buff);
-    return WriteRaw(str);
-}
+bool clSSHInteractiveChannel::WriteRaw(const wxString& buff) { return WriteRaw(buff.ToStdString(wxConvUTF8)); }
 
 bool clSSHInteractiveChannel::WriteRaw(const std::string& buff)
 {
@@ -406,7 +397,7 @@ void clSSHInteractiveChannel::OnChannelStdout(clCommandEvent& event)
             if (!remainder.empty()) {
                 clProcessEvent event_stdout{wxEVT_ASYNC_PROCESS_OUTPUT};
                 event_stdout.SetProcess(nullptr);
-                event_stdout.SetOutputRaw(StringUtils::ToStdString(remainder));
+                event_stdout.SetOutputRaw(remainder.ToStdString(wxConvUTF8));
                 event_stdout.SetOutput(remainder);
                 AddPendingEvent(event_stdout);
                 LOG_DEBUG(LOG()) << "stdout (active): `" << remainder << "`" << endl;

@@ -1,6 +1,7 @@
 #include "myxh_textctrl.h"
 
 #include <wx/textctrl.h>
+#include <wx/xrc/xmlres.h>
 
 MyTextCtrlXrcHandler::MyTextCtrlXrcHandler()
     : wxXmlResourceHandler()

@@ -4,7 +4,6 @@
 #include <wx/arrstr.h>
 #include <wx/xrc/xmlreshandler.h> // Base class: wxXmlResourceHandler
 
-class wxXmlNode;
 class MyComboBoxXmlHandler : public wxXmlResourceHandler
 {
 private:

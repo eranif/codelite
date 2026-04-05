@@ -66,7 +66,6 @@ wxString XRCToFontstring(const wxXmlNode* propertynode);
 wxString FBToFontstring(const wxString& FBstr);
 wxString FontToCpp(const wxString& font, const wxString& fontMemberName);
 wxString XMLEncode(const wxString& text, bool decode = false);
-wxString ToBool(const wxString& text);
 wxString CDATA(const wxString& text);
 wxArrayString MakeUnique(const wxArrayString& arr);
 wxString AddQuotes(const wxString& str);
@@ -150,12 +149,6 @@ wxString WX30_BLOCK_START();
  * @return
  */
 wxString WX31_BLOCK_START();
-/**
- *
- * @brief print wx3.3 preprocessor start condition
- * @return
- */
-wxString WX33_BLOCK_START();
 
 /**
  *
@@ -223,10 +216,6 @@ void NotifyFileSaved(const wxFileName& fn);
  */
 void WrapInIfBlock(const wxString& condname, wxString& codeblock);
 
-/**
- * @brief return the workspace files as set
- */
-void GetWorkspaceFiles(wxStringSet_t& files);
 /**
  * @brief return the workspace files as set
  */

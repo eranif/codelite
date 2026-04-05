@@ -14,11 +14,9 @@
 
 #if wxUSE_XRC && wxUSE_TOOLBOOK
 
-#include "wx/log.h"
-#include "wx/sizer.h"
-
 #include <wx/imaglist.h>
 #include <wx/toolbook.h>
+#include <wx/xrc/xmlres.h>
 
 MYwxToolbookXmlHandler::MYwxToolbookXmlHandler()
     : wxXmlResourceHandler()

@@ -1012,29 +1012,6 @@ void wxCrafterPlugin::OnAllEditorsClosed(wxCommandEvent& e)
     }
 }
 
-void wxCrafterPlugin::OnDebugStarting(clDebugEvent& e)
-{
-    if (!m_mainPanel) {
-        e.Skip();
-        return;
-    }
-
-    if (!m_mgr) {
-        e.Skip();
-        return;
-    }
-
-    if (IsTabMode() && m_mgr->GetActivePage() == m_mainPanel) {
-
-        // Show the preview instead
-        wxCommandEvent showPreviewEvent(wxEVT_COMMAND_MENU_SELECTED, ID_SHOW_PREVIEW);
-        m_mainPanel->GetEventHandler()->ProcessEvent(showPreviewEvent);
-
-    } else {
-        e.Skip();
-    }
-}
-
 void wxCrafterPlugin::DoWriteFileContent(const wxFileName& fn, const wxString& content, IEditor* editor)
 {
     if (editor) {

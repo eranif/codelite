@@ -5,6 +5,7 @@
 
 #include <map>
 #include <wx/stc/stc.h>
+#include <wx/xrc/xmlres.h>
 
 #define NUMBER_MARGIN_ID 0
 #define EDIT_TRACKER_MARGIN_ID 1

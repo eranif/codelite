@@ -1,8 +1,8 @@
 #include "myxh_dvlistctrl.h"
 
 #include <wx/dataview.h>
-#include <wx/imaglist.h>
 #include <wx/tokenzr.h>
+#include <wx/xrc/xmlres.h>
 
 MyWxDataViewListCtrlHandler::MyWxDataViewListCtrlHandler()
     : wxXmlResourceHandler()

@@ -18,7 +18,9 @@
 #if wxUSE_XRC && wxUSE_SEARCHCTRL
 
 #include "myxh_searchctrl.h"
-#include "wx/srchctrl.h"
+
+#include <wx/srchctrl.h>
+#include <wx/xrc/xmlres.h>
 
 MyWxSearchCtrlXmlHandler::MyWxSearchCtrlXmlHandler()
     : wxXmlResourceHandler()

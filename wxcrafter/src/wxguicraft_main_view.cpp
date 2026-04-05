@@ -2543,15 +2543,6 @@ void GUICraftMainPanel::OnLabelCurrentState(wxCommandEvent& event)
     //}
 }
 
-void GUICraftMainPanel::OnEditMenuOpened(wxMenuEvent& event)
-{
-    if (m_plugin->IsTabMode() && !m_plugin->IsMainViewActive()) {
-        event.Skip(); // This event is nothing to do with us
-        return;
-    }
-    // wxcEditManager::Get().PrepareLabelledStatesMenu(event.GetMenu());
-}
-
 void GUICraftMainPanel::OnLoadCurrentState(
     wxCommandEvent& WXUNUSED(event)) // Called after a multiple unredo has changed the GetCurrentState() value
 {

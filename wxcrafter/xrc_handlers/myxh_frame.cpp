@@ -3,6 +3,7 @@
 #include "my_frame.h"
 
 #include <wx/dialog.h>
+#include <wx/xrc/xmlres.h>
 
 IMPLEMENT_DYNAMIC_CLASS(wxMyFrameXmlHandler, wxXmlResourceHandler)
 

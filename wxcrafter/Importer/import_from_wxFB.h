@@ -13,8 +13,7 @@ class NotebookPageWrapper;
 class ImportFromwxFB
 {
     static std::map<wxString, wxString> sm_eventMap;
-    wxWindow* m_Parent;
-    bool m_loadWhenDone;
+    wxWindow* m_Parent = nullptr;
 
 public:
     ImportFromwxFB(wxWindow* parent);
@@ -26,10 +25,7 @@ public:
                                       wxcWidget* wrapper,
                                       const wxString& property = PROP_BITMAP_PATH,
                                       const wxString& client_hint = "");
-    bool GetProject() const;
     static wxString GetEventtypeFromHandlerstub(const wxString& stub);
-
-    bool IsLoadWhenDone() const { return m_loadWhenDone; }
 
 protected:
     bool ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels) const;

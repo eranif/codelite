@@ -11,7 +11,7 @@
 #ifndef _WX_XRC_XH_RIBBON_H_
 #define _WX_XRC_XH_RIBBON_H_
 
-#include "wx/xrc/xmlres.h"
+#include <wx/xrc/xmlreshandler.h>
 
 class wxRibbonControl;
 
@@ -19,8 +19,8 @@ class MyWxRibbonXmlHandler : public wxXmlResourceHandler
 {
 public:
     MyWxRibbonXmlHandler();
-    virtual wxObject* DoCreateResource();
-    virtual bool CanHandle(wxXmlNode* node);
+    wxObject* DoCreateResource() override;
+    bool CanHandle(wxXmlNode* node) override;
 
 private:
     const wxClassInfo* m_isInside;

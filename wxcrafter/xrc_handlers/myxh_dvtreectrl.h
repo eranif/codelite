@@ -1,7 +1,7 @@
 #ifndef _WX_MYXH_DVTREECTRL_H_
 #define _WX_MYXH_DVTREECTRL_H_
 
-#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xmlreshandler.h>
 
 class wxDataViewTreeCtrl;
 
@@ -9,8 +9,8 @@ class MyWxDataViewTreeCtrlHandler : public wxXmlResourceHandler
 {
 public:
     MyWxDataViewTreeCtrlHandler();
-    virtual wxObject* DoCreateResource();
-    virtual bool CanHandle(wxXmlNode* node);
+    wxObject* DoCreateResource() override;
+    bool CanHandle(wxXmlNode* node) override;
 
 private:
     // handlers for wxListCtrl itself and its listcol and listitem children

@@ -294,8 +294,6 @@ void PropertyGridWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 
 bool PropertyGridWrapper::IsValidParent() const { return false; }
 
-bool PropertyGridWrapper::IsWxWindow() const { return false; }
-
 wxString PropertyGridWrapper::DoGenerateCppCtorCode_End() const
 {
     // We set the colour attribute here since it needs to be placed after

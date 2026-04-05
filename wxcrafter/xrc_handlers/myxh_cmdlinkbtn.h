@@ -1,7 +1,7 @@
 #ifndef _WX_MYXH_CMDLINKBTN_H_
 #define _WX_MYXH_CMDLINKBTN_H_
 
-#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xmlreshandler.h>
 
 class wxCommandLinkButton;
 
@@ -9,8 +9,8 @@ class MyWxCommandLinkButtonXmlHandler : public wxXmlResourceHandler
 {
 public:
     MyWxCommandLinkButtonXmlHandler();
-    virtual wxObject* DoCreateResource();
-    virtual bool CanHandle(wxXmlNode* node);
+    wxObject* DoCreateResource() override;
+    bool CanHandle(wxXmlNode* node) override;
 };
 
 #endif // _WX_MYXH_CMDLINKBTN_H_

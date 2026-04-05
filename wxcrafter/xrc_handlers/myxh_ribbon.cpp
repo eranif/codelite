@@ -23,6 +23,7 @@
 #include <wx/ribbon/toolbar.h>
 #include <wx/scopeguard.h>
 #include <wx/xml/xml.h>
+#include <wx/xrc/xmlres.h>
 
 #ifndef WX_PRECOMP
 #include <wx/menu.h>

@@ -968,8 +968,6 @@ void MainFrame::OnFindUI(wxUpdateUIEvent& event)
     event.Enable(stc != NULL);
 }
 
-void MainFrame::EnsureVisibile() { DisplayDesigner(); }
-
 void MainFrame::OnBatchGenerateCode(wxCommandEvent& event)
 {
     wxCommandEvent evtGenCode(wxEVT_WXC_CMD_BATCH_GENERATE_CODE);

@@ -2,7 +2,7 @@
 
 #include "my_panel.h"
 
-#include <wx/panel.h>
+#include <wx/xrc/xmlres.h>
 
 IMPLEMENT_DYNAMIC_CLASS(MyWxPanelXmlHandler, wxXmlResourceHandler)
 

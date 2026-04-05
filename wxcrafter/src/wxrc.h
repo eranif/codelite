@@ -171,13 +171,10 @@ private:
     wxString GetInternalFileName(const wxString& name, const wxArrayString& flist);
     void DeleteTempFiles(const wxArrayString& flist);
     void MakePackageCPP(const wxArrayString& flist);
-    void MakePackagePython(const wxArrayString& flist);
 
-    void OutputGettext();
     ExtractedStrings FindStrings();
     ExtractedStrings FindStrings(const wxString& filename, wxXmlNode* node);
 
     ArrayOfXRCWndClassData aXRCWndClassData;
-    void GenCPPHeader();
 };
 #endif

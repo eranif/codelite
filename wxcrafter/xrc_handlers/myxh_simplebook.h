@@ -1,7 +1,7 @@
 #ifndef _WX_XH_SIMPLEBOOK_H
 #define _WX_XH_SIMPLEBOOK_H
 
-#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xmlreshandler.h>
 
 class wxSimplebook;
 
@@ -9,8 +9,8 @@ class MyWxSimplebookXmlHandler : public wxXmlResourceHandler
 {
 public:
     MyWxSimplebookXmlHandler();
-    virtual wxObject* DoCreateResource();
-    virtual bool CanHandle(wxXmlNode* node);
+    wxObject* DoCreateResource() override;
+    bool CanHandle(wxXmlNode* node) override;
 
 private:
     bool m_isInside;

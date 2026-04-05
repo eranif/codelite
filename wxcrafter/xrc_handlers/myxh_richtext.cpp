@@ -20,6 +20,7 @@
 #include "myxh_richtext.h"
 
 #include <wx/richtext/richtextctrl.h>
+#include <wx/xrc/xmlres.h>
 
 MyWxRichTextCtrlXmlHandler::MyWxRichTextCtrlXmlHandler()
     : wxXmlResourceHandler()

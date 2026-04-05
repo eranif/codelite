@@ -356,8 +356,6 @@ void ImportFromwxFB::GetBookitemContents(const wxXmlNode* node, NotebookPageWrap
         }*/
 }
 
-bool ImportFromwxFB::GetProject() const { return false; }
-
 // static
 wxString ImportFromwxFB::ConvertFBOptionsString(const wxString& content, const wxString& separator /*= ";"*/)
 {

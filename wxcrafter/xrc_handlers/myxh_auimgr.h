@@ -10,8 +10,8 @@
 #ifndef _WX_XH_AUI_H_
 #define _WX_XH_AUI_H_
 
-#include "wx/vector.h"
-#include "wx/xrc/xmlres.h"
+#include <wx/vector.h>
+#include <wx/xrc/xmlreshandler.h>
 
 class WXDLLIMPEXP_FWD_AUI wxAuiManager;
 class WXDLLIMPEXP_FWD_AUI wxAuiNotebook;
@@ -20,8 +20,8 @@ class MyWxAuiManagerXmlHandler : public wxXmlResourceHandler
 {
 public:
     MyWxAuiManagerXmlHandler();
-    virtual wxObject* DoCreateResource();
-    virtual bool CanHandle(wxXmlNode* node);
+    wxObject* DoCreateResource() override;
+    bool CanHandle(wxXmlNode* node) override;
 
     // Returns the wxAuiManager for the specified window
     wxAuiManager* GetAuiManager(wxWindow* managed) const;

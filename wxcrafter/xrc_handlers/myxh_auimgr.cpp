@@ -17,6 +17,7 @@
 
 #include <wx/aui/auibook.h>
 #include <wx/aui/framemanager.h>
+#include <wx/xrc/xmlres.h>
 
 wxIMPLEMENT_DYNAMIC_CLASS(MyWxAuiManagerXmlHandler, wxXmlResourceHandler)
 

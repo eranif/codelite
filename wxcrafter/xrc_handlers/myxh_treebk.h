@@ -10,7 +10,7 @@
 #ifndef _WX_MYXH_TREEBK_H_
 #define _WX_MYXH_TREEBK_H_
 
-#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xmlreshandler.h>
 
 #if wxUSE_XRC && wxUSE_TREEBOOK
 
@@ -31,8 +31,8 @@ class MYwxTreebookXmlHandler : public wxXmlResourceHandler
 {
 public:
     MYwxTreebookXmlHandler();
-    virtual wxObject* DoCreateResource();
-    virtual bool CanHandle(wxXmlNode* node);
+    wxObject* DoCreateResource() override;
+    bool CanHandle(wxXmlNode* node) override;
 
 private:
     wxTreebook* m_tbk;

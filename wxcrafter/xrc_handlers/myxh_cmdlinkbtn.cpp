@@ -1,6 +1,7 @@
 #include "myxh_cmdlinkbtn.h"
 
 #include <wx/commandlinkbutton.h>
+#include <wx/xrc/xmlres.h>
 
 MyWxCommandLinkButtonXmlHandler::MyWxCommandLinkButtonXmlHandler()
     : wxXmlResourceHandler()

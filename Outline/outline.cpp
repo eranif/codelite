@@ -25,27 +25,6 @@
 
 #include "outline.h"
 
-#include "cl_command_event.h"
-#include "codelite_events.h"
-#include "ctags_manager.h"
-#include "detachedpanesinfo.h"
-#include "event_notifier.h"
-#include "fileextmanager.h"
-#include "iconfigtool.h"
-#include "macros.h"
-#include "workspace.h"
-
-#include <set>
-#include <wx/app.h>
-#include <wx/busyinfo.h>
-#include <wx/log.h>
-#include <wx/menu.h>
-#include <wx/settings.h>
-#include <wx/tokenzr.h>
-#include <wx/utils.h>
-#include <wx/wupdlock.h>
-#include <wx/xrc/xmlres.h>
-
 //--------------------------------------------
 // Plugin Interface
 //--------------------------------------------

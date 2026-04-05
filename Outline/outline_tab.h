@@ -21,10 +21,10 @@ private:
     void ClearView();
 
 public:
-    OutlineTab(wxWindow* parent);
-    virtual ~OutlineTab();
+    explicit OutlineTab(wxWindow* parent);
+    ~OutlineTab() override;
 
 protected:
-    virtual void OnItemSelected(wxDataViewEvent& event);
+    void OnItemSelected(wxDataViewEvent& event) override;
 };
 #endif // OUTLINETAB_H

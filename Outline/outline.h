@@ -26,20 +26,8 @@
 #ifndef __SymbolView__
 #define __SymbolView__
 
-#include "clTabTogglerHelper.h"
-#include "cl_command_event.h"
-#include "dockablepane.h"
-#include "globals.h"
 #include "outline_tab.h"
 #include "plugin.h"
-#include "windowstack.h"
-
-#include <map>
-#include <queue>
-#include <wx/choice.h>
-#include <wx/imaglist.h>
-#include <wx/splitter.h>
-#include <wx/treectrl.h>
 
 class SymbolViewPlugin : public IPlugin
 {
@@ -50,7 +38,7 @@ public:
     //--------------------------------------------
     // Constructors/Destructors
     //--------------------------------------------
-    SymbolViewPlugin(IManager* manager);
+    explicit SymbolViewPlugin(IManager* manager);
     ~SymbolViewPlugin() override = default;
 
     //--------------------------------------------

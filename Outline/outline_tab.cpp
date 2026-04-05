@@ -6,7 +6,6 @@
 #include "clSideBarCtrl.hpp"
 #include "codelite_events.h"
 #include "event_notifier.h"
-#include "file_logger.h"
 #include "globals.h"
 #include "imanager.h"
 #include "macros.h"

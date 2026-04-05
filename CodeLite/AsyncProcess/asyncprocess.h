@@ -27,6 +27,7 @@
 #define I_PROCESS_H
 
 #include "clEnvironment.hpp"
+#include "clResult.hpp"
 #include "codelite_exports.h"
 
 #include <functional>
@@ -70,18 +71,10 @@ public:
  */
 class WXDLLIMPEXP_CL IProcess : public wxEvtHandler
 {
-protected:
-    wxEvtHandler* m_parent = nullptr;
-    int m_pid = wxNOT_FOUND;
-    bool m_hardKill = false;
-    IProcessCallback* m_callback = nullptr;
-    size_t m_flags; // The creation flags
-    ProcessReaderThread* m_thr = nullptr;
-
 public:
     using Ptr_t = std::shared_ptr<IProcess>;
+    using StreamCallback = std::function<bool(const wxString&, const wxString&)>;
 
-public:
     IProcess(wxEvtHandler* parent)
         : m_parent(parent)
         , m_pid(-1)
@@ -92,7 +85,6 @@ public:
     }
     virtual ~IProcess() = default;
 
-public:
     // Handle process exit code. This is done this way this
     // under Linux / Mac the exit code is returned only after the signal child has been
     // handled by CodeLite
@@ -126,7 +118,25 @@ public:
      * @brief wait for process to terminate and return all its output to the caller
      * Note that this function is blocking
      */
-    virtual void WaitForTerminate(wxString& output);
+    void WaitForTerminate(wxString& output);
+
+    /**
+     * Waits for the process to terminate while periodically delivering output to a callback.
+     *
+     * If the process is redirected, this method reads stdout and stderr as they become available
+     * and passes the decoded text to the callback. Otherwise, it polls the process until it exits
+     * and invokes the callback with empty strings so the caller can monitor progress or request
+     * termination.
+     *
+     * @param output_cb std::function<bool(const wxString&, const wxString&)> Callback that receives
+     *        the current stdout and stderr text. Return true to continue waiting, or false to
+     *        request that the process be terminated.
+     *
+     * @return clStatus Returns StatusOk() on success, or StatusInvalidArgument() if output_cb is null.
+     *
+     * @throws None. Errors are reported through the returned clStatus value.
+     */
+    clStatus WaitForTerminate(StreamCallback output_cb);
 
     /**
      * @brief this method is mostly needed on MSW where writing a password
@@ -172,6 +182,14 @@ public:
      * @brief resume reading process output in the background
      */
     void ResumeAsyncReads();
+
+protected:
+    wxEvtHandler* m_parent = nullptr;
+    int m_pid = wxNOT_FOUND;
+    bool m_hardKill = false;
+    IProcessCallback* m_callback = nullptr;
+    size_t m_flags; // The creation flags
+    ProcessReaderThread* m_thr = nullptr;
 };
 
 // Help method

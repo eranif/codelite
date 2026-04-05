@@ -342,6 +342,38 @@ void IProcess::WaitForTerminate(wxString& output)
     }
 }
 
+clStatus IProcess::WaitForTerminate(StreamCallback output_cb)
+{
+    if (output_cb == nullptr) {
+        return StatusInvalidArgument(_("streaming callback must not be null"));
+    }
+    if (IsRedirect()) {
+        wxString stdout_buff;
+        wxString stderr_buff;
+        std::string raw_buff;
+        std::string raw_buff_err;
+        while (Read(stdout_buff, stderr_buff, raw_buff, raw_buff_err)) {
+            wxUnusedVar(raw_buff);
+            wxUnusedVar(raw_buff_err);
+            if (!output_cb(stdout_buff, stderr_buff)) {
+                Terminate();
+                break;
+            }
+        }
+    } else {
+        // Just wait for the process to terminate in a busy loop
+        while (IsAlive()) {
+            wxThread::Sleep(10);
+            // Trigger the callback and give the user a chance to terminate the process
+            if (!output_cb(wxEmptyString, wxEmptyString)) {
+                Terminate();
+                break;
+            }
+        }
+    }
+    return StatusOk();
+}
+
 void IProcess::SuspendAsyncReads()
 {
     if (m_thr) {

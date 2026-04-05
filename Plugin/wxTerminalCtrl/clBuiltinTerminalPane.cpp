@@ -111,12 +111,12 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     m_safeDrawingEnabled = clConfig::Get().Read("terminal/safe_drawing", false);
 
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_book = new Notebook(this,
-                          wxID_ANY,
-                          wxDefaultPosition,
-                          wxDefaultSize,
-                          kNotebook_CloseButtonOnActiveTab | kNotebook_ShowFileListButton |
-                              kNotebook_MouseMiddleClickClosesTab | kNotebook_FixedWidth | kNotebook_AllowDnD);
+    m_book = new clAuiBook(this,
+                           wxID_ANY,
+                           wxDefaultPosition,
+                           wxDefaultSize,
+                           kNotebook_CloseButtonOnActiveTab | kNotebook_ShowFileListButton |
+                               kNotebook_MouseMiddleClickClosesTab | kNotebook_AllowDnD);
 
     m_toolbar = new wxAuiToolBar(this);
     GetSizer()->Add(m_toolbar, wxSizerFlags().Expand().Proportion(0));

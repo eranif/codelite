@@ -19,8 +19,6 @@ others:
 High:
 -----
 
-- `CreateAsyncProcess(...IProcessCreateSync...)` - add a `shutdown_flag` flag to `process->WaitForTerminate(list_output, shutdown_flag)`
-
 Medium:
 -----
 
@@ -30,7 +28,6 @@ Medium:
 - AI: Extend all the tools with a "Purpose" mandatory field, so each model will be forced to report the reason for the invocation.
 - AI: Add a system-message that instruct the model to NEVER create a summary file
 - If the terminal appends line, clear the selection.
-- Terminal: do we want to have "Linux" style copy? (on-select, and use mouse-middle for paste)
 
 Low:
 ----

@@ -2,6 +2,7 @@
 #define CLBUILTINTERMINALPANE_HPP
 
 #include "Notebook.h"
+#include "clAuiBook.hpp"
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "event_notifier.h"
@@ -65,7 +66,7 @@ private:
     wxTerminalViewCtrl* GetActiveTerminal();
 
     wxAuiToolBar* m_toolbar = nullptr;
-    Notebook* m_book = nullptr;
+    clAuiBook* m_book = nullptr;
     wxChoice* m_terminal_types = nullptr;
     wxChoice* m_choice_themes = nullptr;
     std::vector<std::pair<EventFilterCallbackToken, wxEventType>> m_tokens;

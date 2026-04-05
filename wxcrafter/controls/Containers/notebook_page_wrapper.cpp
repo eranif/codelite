@@ -13,7 +13,7 @@
 #include "wxc_project_metadata.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 NotebookPageWrapper::NotebookPageWrapper()
     : wxcWidget(ID_WXPANEL_NOTEBOOK_PAGE)

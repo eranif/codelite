@@ -27,9 +27,9 @@
 #define __localoptions__
 
 #include "VirtualDirectoryColour.h"
-#include "clXmlDocument.hpp"
 #include "codelite_exports.h"
 #include "optionsconfig.h"
+#include "xml/clXmlDocument.hpp"
 
 #include <memory>
 #include <optional>

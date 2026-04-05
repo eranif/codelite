@@ -1,7 +1,7 @@
 #include "spin_wrapper_base.h"
 
 #include "wxgui_helpers.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 SpinWrapperBase::SpinWrapperBase(int ID)
     : wxcWidget(ID)

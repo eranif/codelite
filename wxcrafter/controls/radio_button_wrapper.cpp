@@ -3,7 +3,7 @@
 #include "Properties/bool_property.h"
 #include "Properties/string_property.h"
 #include "allocator_mgr.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 RadioButtonWrapper::RadioButtonWrapper()
     : wxcWidget(ID_WXRADIOBUTTON)

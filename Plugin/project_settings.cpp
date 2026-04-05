@@ -26,7 +26,7 @@
 
 #include "macros.h"
 #include "project.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 ProjectSettings::ProjectSettings(wxXmlNode* node)
 {

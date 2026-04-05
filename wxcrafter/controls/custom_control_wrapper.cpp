@@ -5,7 +5,7 @@
 #include "file_logger.h"
 #include "macromanager.h"
 #include "wxc_settings.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/regex.h>
 

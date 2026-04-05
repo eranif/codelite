@@ -31,7 +31,7 @@
 #include "frame.h"
 #include "manager.h"
 #include "tabgroupspane.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/dir.h>
 #include <wx/filename.h>

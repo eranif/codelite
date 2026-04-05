@@ -1,7 +1,7 @@
 #include "std_dialog_button_sizer_wrapper.h"
 
 #include "allocator_mgr.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 StdDialogButtonSizerWrapper::StdDialogButtonSizerWrapper()
     : wxcWidget(ID_WXSTDDLGBUTTONSIZER)

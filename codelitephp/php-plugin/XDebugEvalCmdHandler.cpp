@@ -3,7 +3,7 @@
 #include "XVariable.h"
 #include "event_notifier.h"
 #include "xdebugevent.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/xml/xml.h>
 

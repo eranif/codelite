@@ -10,7 +10,7 @@
 #include "wxc_bitmap_code_generator.h"
 #include "wxc_widget.h"
 #include "wxgui_helpers.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/frame.h>
 #include <wx/toplevel.h>

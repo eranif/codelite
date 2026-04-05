@@ -25,7 +25,7 @@
 #ifndef SERIALIZED_OBJECT_H
 #define SERIALIZED_OBJECT_H
 
-#include "archive.h"
+#include "xml/archive.h"
 
 /**
  * \class SerializedObject

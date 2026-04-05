@@ -18,7 +18,7 @@
 #include "wxc_settings.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <algorithm>
 #include <wx/regex.h>

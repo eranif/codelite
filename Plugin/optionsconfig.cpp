@@ -27,7 +27,7 @@
 #include "StringUtils.h"
 #include "editor_config.h"
 #include "macros.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/fontmap.h>
 

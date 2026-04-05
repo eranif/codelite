@@ -7,7 +7,7 @@
 #include "php.h" // PhpPlugin
 #include "php_utils.h"
 #include "xdebugevent.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/msgdlg.h>
 #include <wx/socket.h>

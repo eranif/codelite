@@ -14,7 +14,7 @@
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_bitmaploader.h"
 #include "wxgui_helpers.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 wxDECLARE_EVENT(wxEVT_EVENTS_PROPERTIES_UPDATED, wxCommandEvent);
 

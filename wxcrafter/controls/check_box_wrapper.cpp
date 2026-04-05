@@ -4,7 +4,7 @@
 #include "Properties/string_property.h"
 #include "allocator_mgr.h"
 #include "wxgui_defs.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/checkbox.h>
 

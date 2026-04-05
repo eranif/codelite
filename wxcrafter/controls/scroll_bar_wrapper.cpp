@@ -4,7 +4,7 @@
 #include "allocator_mgr.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 ScrollBarWrapper::ScrollBarWrapper()
     : wxcWidget(ID_WXSCROLLBAR)

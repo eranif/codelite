@@ -31,7 +31,7 @@
 #include "conffilelocator.h"
 #include "event_notifier.h"
 #include "file_logger.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/tokenzr.h>
 

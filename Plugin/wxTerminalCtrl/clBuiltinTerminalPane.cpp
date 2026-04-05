@@ -126,7 +126,9 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     m_toolbar->AddTool(wxID_NEW, _("New"), image_list->LoadBitmap("file_new"), wxEmptyString, wxITEM_NORMAL);
 
     // Get list of terminals
-    m_terminal_types = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxSize(FromDIP(300), wxNOT_FOUND));
+    m_terminal_types =
+        new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxSize(FromDIP(300), wxNOT_FOUND), wxArrayString{}, 0);
+    m_terminal_types->SetWindowVariant(wxWINDOW_VARIANT_MINI);
     m_terminal_types->SetToolTip(_("Choose shell interpreter"));
     UpdateTerminalsChoice(false);
     m_toolbar->AddControl(m_terminal_types);
@@ -139,7 +141,9 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
 
     m_toolbar->AddSeparator();
     // Get list of terminals
-    m_choice_themes = new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxSize(FromDIP(200), wxNOT_FOUND));
+    m_choice_themes =
+        new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxSize(FromDIP(200), wxNOT_FOUND), wxArrayString{}, 0);
+    m_choice_themes->SetWindowVariant(wxWINDOW_VARIANT_MINI);
     m_toolbar->AddControl(m_choice_themes);
     m_choice_themes->SetToolTip(_("Choose terminal theme"));
     m_choice_themes->Bind(wxEVT_CHOICE, &clBuiltinTerminalPane::OnChoiceTheme, this);

@@ -7,7 +7,9 @@
 
 #include "memcheckerror.h"
 
-#include "file_logger.h"
+#include "memcheckdefs.h"
+
+#include <wx/tokenzr.h>
 
 bool MemCheckErrorLocation::operator==(const MemCheckErrorLocation& other) const
 {

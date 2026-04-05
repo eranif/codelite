@@ -33,59 +33,58 @@
 #ifndef _MEMCHECKOUTPUTVIEW_H_
 #define _MEMCHECKOUTPUTVIEW_H_
 
-#include "imemcheckprocessor.h"
+#include "memcheckerror.h"
 #include "memcheck.h"
 #include "memcheckui.h"
 
-#include <wx/tipwin.h>
 #include <wx/valnum.h>
 
 class MemCheckOutputView : public MemCheckOutputViewBase
 {
 public:
     MemCheckOutputView(wxWindow* parent, MemCheckPlugin* plugin, IManager* mgr);
-    virtual ~MemCheckOutputView();
+    ~MemCheckOutputView() override;
 
 protected:
-    virtual void OnClearOutputUpdateUI(wxUpdateUIEvent& event);
-    virtual void OnClearOutput(wxCommandEvent& event);
-    virtual void OnStop(wxCommandEvent& event);
-    virtual void OnStopUI(wxUpdateUIEvent& event);
-    virtual void OnListCtrlErrorsMouseLeave(wxMouseEvent& event);
-    virtual void OnListCtrlErrorsChar(wxKeyEvent& event);
-    virtual void OnListCtrlErrorsKeyDown(wxKeyEvent& event);
-    virtual void OnListCtrlErrorsKeyUp(wxKeyEvent& event);
-    virtual void OnListCtrlErrorsLeftDown(wxMouseEvent& event);
-    virtual void OnListCtrlErrorsLeftUp(wxMouseEvent& event);
-    virtual void OnListCtrlErrorsDeselected(wxListEvent& event);
-    virtual void OnListCtrlErrorsSelected(wxListEvent& event);
-    virtual void OnListCtrlErrorsActivated(wxListEvent& event);
-    virtual void OutputViewPageChanged(wxNotebookEvent& event);
-    virtual void OnSuppFileOpen(wxCommandEvent& event);
-    virtual void OnErrorsPanelUI(wxUpdateUIEvent& event);
-    virtual void OnSuppPanelUI(wxUpdateUIEvent& event);
-    virtual void OnListCtrlErrorsMouseMotion(wxMouseEvent& event);
-    virtual void OnListCtrlErrorsResize(wxSizeEvent& event);
-    virtual void OnPageSelect(wxCommandEvent& event);
-    virtual void OnClearFilter(wxCommandEvent& event);
-    virtual void OnPageFirst(wxCommandEvent& event);
-    virtual void OnPageLast(wxCommandEvent& event);
-    virtual void OnPageNext(wxCommandEvent& event);
-    virtual void OnPagePrev(wxCommandEvent& event);
-    virtual void OnSearchNonworkspace(wxCommandEvent& event);
-    virtual void OnOpenPlain(wxCommandEvent& event);
-    virtual void OnFilterErrors(wxCommandEvent& event);
-    virtual void OnSuppFileSelected(wxCommandEvent& event);
-    virtual void OnSuppressAll(wxCommandEvent& event);
-    virtual void OnSuppressSelected(wxCommandEvent& event);
-    virtual void OnSelectionChanged(wxDataViewEvent& event);
-    virtual void OnContextMenu(wxDataViewEvent& event);
-    virtual void OnMemCheckUI(wxUpdateUIEvent& event);
-    virtual void OnActivated(wxDataViewEvent& event);
-    virtual void OnJumpToNext(wxCommandEvent& event);
-    virtual void OnJumpToPrev(wxCommandEvent& event);
-    virtual void OnExpandAll(wxCommandEvent& event);
+    void OnClearOutputUpdateUI(wxUpdateUIEvent& event) override;
+    void OnClearOutput(wxCommandEvent& event) override;
+    void OnStop(wxCommandEvent& event) override;
+    void OnStopUI(wxUpdateUIEvent& event) override;
+    void OnListCtrlErrorsMouseLeave(wxMouseEvent& event) override;
+    void OnListCtrlErrorsChar(wxKeyEvent& event) override;
+    void OnListCtrlErrorsKeyDown(wxKeyEvent& event) override;
+    void OnListCtrlErrorsKeyUp(wxKeyEvent& event) override;
+    void OnListCtrlErrorsLeftDown(wxMouseEvent& event) override;
+    void OnListCtrlErrorsLeftUp(wxMouseEvent& event) override;
+    void OnListCtrlErrorsDeselected(wxListEvent& event) override;
+    void OnListCtrlErrorsSelected(wxListEvent& event) override;
+    void OnListCtrlErrorsActivated(wxListEvent& event) override;
+    void OutputViewPageChanged(wxNotebookEvent& event) override;
+    void OnSuppFileOpen(wxCommandEvent& event) override;
+    void OnErrorsPanelUI(wxUpdateUIEvent& event) override;
+    void OnSuppPanelUI(wxUpdateUIEvent& event) override;
+    void OnListCtrlErrorsMouseMotion(wxMouseEvent& event) override;
+    void OnListCtrlErrorsResize(wxSizeEvent& event) override;
+    void OnPageSelect(wxCommandEvent& event) override;
+    void OnClearFilter(wxCommandEvent& event) override;
+    void OnPageFirst(wxCommandEvent& event) override;
+    void OnPageLast(wxCommandEvent& event) override;
+    void OnPageNext(wxCommandEvent& event) override;
+    void OnPagePrev(wxCommandEvent& event) override;
+    void OnOpenPlain(wxCommandEvent& event) override;
+    void OnFilterErrors(wxCommandEvent& event) override;
+    void OnSuppFileSelected(wxCommandEvent& event) override;
+    void OnSuppressAll(wxCommandEvent& event) override;
+    void OnSuppressSelected(wxCommandEvent& event) override;
+    void OnSelectionChanged(wxDataViewEvent& event) override;
+    void OnContextMenu(wxDataViewEvent& event) override;
+    void OnMemCheckUI(wxUpdateUIEvent& event) override;
+    void OnActivated(wxDataViewEvent& event) override;
+    void OnJumpToNext(wxCommandEvent& event) override;
+    void OnJumpToPrev(wxCommandEvent& event) override;
+    void OnExpandAll(wxCommandEvent& event) override;
 
+    void OnSearchNonworkspace(wxCommandEvent& event);
     // common things for both notebooks
     MemCheckPlugin* m_plugin;
     IManager* m_mgr;

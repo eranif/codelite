@@ -36,11 +36,10 @@
 #ifndef _MEMCHECKERROR_H_
 #define _MEMCHECKERROR_H_
 
-#include "memcheckdefs.h"
-
+#include <iterator>
 #include <list>
-#include <wx/tokenzr.h>
-#include <wx/wx.h>
+#include <wx/clntdata.h>
+#include <wx/string.h>
 
 class MemCheckErrorLocation;
 class MemCheckError;

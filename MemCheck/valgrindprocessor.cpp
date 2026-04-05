@@ -7,12 +7,10 @@
 
 #include "valgrindprocessor.h"
 
-#include "file_logger.h"
-#include "memcheckdefs.h"
 #include "memchecksettings.h"
 #include "workspace.h"
 
-#include <wx/stdpaths.h>
+#include <wx/app.h>
 #include <wx/textfile.h>
 
 ValgrindMemcheckProcessor::ValgrindMemcheckProcessor(MemCheckSettings* const settings)

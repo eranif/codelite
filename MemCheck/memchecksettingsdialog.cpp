@@ -7,8 +7,6 @@
 
 #include "memchecksettingsdialog.h"
 
-#include "file_logger.h"
-#include "memcheckdefs.h"
 #include "memchecksettings.h"
 #include "windowattrmanager.h"
 

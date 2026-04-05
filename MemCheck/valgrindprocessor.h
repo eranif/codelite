@@ -50,7 +50,7 @@ public:
      * @brief interface implementation, does nothing more than inherited ctor
      * @param settings
      */
-    ValgrindMemcheckProcessor(MemCheckSettings* const settings);
+    explicit ValgrindMemcheckProcessor(MemCheckSettings* settings);
 
     /**
      * @brief interface implementation
@@ -59,7 +59,7 @@ public:
      * Some files are specified in setting. Workspace specific supp file need to be named just before analyse run,
      * according to current opened workspace.
      */
-    virtual wxArrayString GetSuppressionFiles();
+    wxArrayString GetSuppressionFiles() override;
 
     /**
      * @brief interface implementation
@@ -68,7 +68,7 @@ public:
      *
      * Takes original command and prepend it with Valgrind command and its arguments.
      */
-    virtual void GetExecutionCommand(const wxString& originalCommand, wxString& command, wxString& command_args);
+    void GetExecutionCommand(const wxString& originalCommand, wxString& command, wxString& command_args) override;
 
     /**
      * @brief interface implementation
@@ -77,7 +77,7 @@ public:
      *
      * Loads Valgrind's xml log to wxXmlDocument, and goes trought nodes
      */
-    virtual bool Process(const wxString& outputLogFileName = wxEmptyString);
+    bool Process(const wxString& outputLogFileName = wxEmptyString) override;
 
 protected:
     /**

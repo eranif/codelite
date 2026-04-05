@@ -210,11 +210,7 @@ void ContextPhp::AutoIndent(const wxChar& nChar)
     rCtrl.ChooseCaretX();
 }
 
-wxString ContextPhp::CallTipContent() { return wxEmptyString; }
-
 int ContextPhp::DoGetCalltipParamterIndex() { return ContextBase::DoGetCalltipParamterIndex(); }
-
-wxString ContextPhp::GetCurrentScopeName() { return wxT(""); }
 
 wxMenu* ContextPhp::GetMenu() { return ContextBase::GetMenu(); }
 
@@ -241,8 +237,6 @@ std::shared_ptr<ContextBase> ContextPhp::NewInstance(clEditor* container)
 
 void ContextPhp::OnCallTipClick(wxStyledTextEvent& event) {}
 
-void ContextPhp::OnCalltipCancel() {}
-
 void ContextPhp::OnDbgDwellEnd(wxStyledTextEvent& event) {}
 
 void ContextPhp::OnDbgDwellStart(wxStyledTextEvent& event) {}
@@ -250,8 +244,6 @@ void ContextPhp::OnDbgDwellStart(wxStyledTextEvent& event) {}
 void ContextPhp::OnDwellEnd(wxStyledTextEvent& event) {}
 
 void ContextPhp::OnEnterHit() {}
-
-void ContextPhp::OnFileSaved() {}
 
 void ContextPhp::OnKeyDown(wxKeyEvent& event) { ContextBase::OnKeyDown(event); }
 
@@ -262,8 +254,6 @@ void ContextPhp::OnSciUpdateUI(wxStyledTextEvent& event)
         ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex());
     }
 }
-
-void ContextPhp::RemoveMenuDynamicContent(wxMenu* menu) {}
 
 void ContextPhp::RetagFile() {}
 

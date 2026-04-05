@@ -3178,8 +3178,6 @@ void Manager::GetActiveProjectAndConf(wxString& project, wxString& conf)
     matrix->GetProjectSelectedConf(workspaceConf, project);
 }
 
-void Manager::UpdatePreprocessorFile(clEditor* editor) { wxUnusedVar(editor); }
-
 bool Manager::DbgCanInteract()
 {
     /// First, we also propagate this question to the plugins

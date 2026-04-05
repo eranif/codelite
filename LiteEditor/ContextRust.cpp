@@ -120,11 +120,7 @@ void ContextRust::AutoIndent(const wxChar& nChar)
     ContextGeneric::AutoIndent(nChar);
 }
 
-wxString ContextRust::CallTipContent() { return wxEmptyString; }
-
 int ContextRust::DoGetCalltipParamterIndex() { return ContextBase::DoGetCalltipParamterIndex(); }
-
-wxString ContextRust::GetCurrentScopeName() { return wxT(""); }
 
 wxMenu* ContextRust::GetMenu() { return ContextBase::GetMenu(); }
 
@@ -148,8 +144,6 @@ std::shared_ptr<ContextBase> ContextRust::NewInstance(clEditor* container)
 
 void ContextRust::OnCallTipClick(wxStyledTextEvent& event) { wxUnusedVar(event); }
 
-void ContextRust::OnCalltipCancel() {}
-
 void ContextRust::OnDbgDwellEnd(wxStyledTextEvent& event) { wxUnusedVar(event); }
 
 void ContextRust::OnDbgDwellStart(wxStyledTextEvent& event) { wxUnusedVar(event); }
@@ -158,13 +152,9 @@ void ContextRust::OnDwellEnd(wxStyledTextEvent& event) { wxUnusedVar(event); }
 
 void ContextRust::OnEnterHit() {}
 
-void ContextRust::OnFileSaved() {}
-
 void ContextRust::OnKeyDown(wxKeyEvent& event) { ContextBase::OnKeyDown(event); }
 
 void ContextRust::OnSciUpdateUI(wxStyledTextEvent& event) { wxUnusedVar(event); }
-
-void ContextRust::RemoveMenuDynamicContent(wxMenu* menu) {}
 
 void ContextRust::RetagFile() {}
 

@@ -150,7 +150,6 @@ END_EVENT_TABLE()
 
 ContextCpp::ContextCpp(clEditor* container)
     : ContextBase(container)
-    , m_rclickMenu(NULL)
 {
     Initialize();
     SetName("c++");
@@ -162,7 +161,6 @@ ContextCpp::ContextCpp(clEditor* container)
 
 ContextCpp::ContextCpp()
     : ContextBase("c++")
-    , m_rclickMenu(NULL)
 {
     EventNotifier::Get()->Connect(
         wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), NULL, this);
@@ -174,7 +172,6 @@ ContextCpp::~ContextCpp()
 {
     EventNotifier::Get()->Disconnect(
         wxEVT_CC_SHOW_QUICK_NAV_MENU, clCodeCompletionEventHandler(ContextCpp::OnShowCodeNavMenu), NULL, this);
-    wxDELETE(m_rclickMenu);
 }
 
 std::shared_ptr<ContextBase> ContextCpp::NewInstance(clEditor* container)
@@ -333,18 +330,6 @@ bool ContextCpp::IsCommentOrString(long pos)
 // >>>>>>>>>>>>>>>>>>>>>>>> CodeCompletion API - START
 //=============================================================================
 
-// user pressed ., -> or ::
-bool ContextCpp::CodeComplete(long pos)
-{
-    CHECK_JS_RETURN_FALSE();
-    VALIDATE_WORKSPACE_FALSE();
-    long from = pos;
-    if (from == wxNOT_FOUND) {
-        from = GetCtrl().GetCurrentPos();
-    }
-    return DoCodeComplete(from);
-}
-
 void ContextCpp::OnContextOpenDocument(wxCommandEvent& event)
 {
     wxUnusedVar(event);
@@ -360,15 +345,6 @@ void ContextCpp::OnContextOpenDocument(wxCommandEvent& event)
     clCodeCompletionEvent definition_event{wxEVT_CC_FIND_SYMBOL_DEFINITION};
     definition_event.SetFileName(rCtrl.GetFileName().GetFullPath());
     EventNotifier::Get()->AddPendingEvent(definition_event);
-}
-
-void ContextCpp::RemoveMenuDynamicContent(wxMenu* menu)
-{
-    for (auto item : m_dynItems) {
-        menu->Destroy(item);
-    }
-    m_dynItems.clear();
-    m_selectedWord.Empty();
 }
 
 void ContextCpp::AddMenuDynamicContent(wxMenu* menu)
@@ -531,39 +507,9 @@ bool ContextCpp::IsIncludeStatement(const wxString& line, wxString* fileName, wx
     return false;
 }
 
-bool ContextCpp::CompleteWord() { return false; }
-
 //=============================================================================
 // <<<<<<<<<<<<<<<<<<<<<<<<<<< CodeCompletion API - END
 //=============================================================================
-
-struct ContextCpp_ClientData : public wxClientData {
-    TagEntryPtr m_ptr;
-
-    ContextCpp_ClientData(TagEntryPtr ptr) { m_ptr = ptr; }
-    ~ContextCpp_ClientData() override = default;
-};
-
-bool ContextCpp::DoGotoSymbol(TagEntryPtr tag)
-{
-    CHECK_JS_RETURN_FALSE();
-    if (tag) {
-        clEditor* editor =
-            clMainFrame::Get()->GetMainBook()->OpenFile(tag->GetFile(), wxEmptyString, tag->GetLine() - 1);
-        if (editor) {
-            editor->FindAndSelectV(tag->GetPattern(), tag->GetName());
-        }
-        return true;
-    } else {
-        return false;
-    }
-}
-
-bool ContextCpp::GotoDefinition()
-{
-    CHECK_JS_RETURN_FALSE();
-    return DoGotoSymbol(GetTagAtCaret(false, false));
-}
 
 void ContextCpp::SwapFiles(const wxFileName& fileName)
 {
@@ -1482,26 +1428,6 @@ void ContextCpp::DoFormatEditor(clEditor* editor)
     }
 }
 
-void ContextCpp::OnFileSaved()
-{
-    PERF_FUNCTION();
-
-    if (!IsJavaScript()) {
-        VariableList var_list;
-
-        wxArrayString varList;
-        wxArrayString projectTags;
-        VALIDATE_WORKSPACE();
-
-        // if there is nothing to color, go ahead and return
-        if (!(TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_COLOUR_VARS)) {
-            return;
-        }
-        // Update preprocessor visualization
-        ManagerST::Get()->UpdatePreprocessorFile(&GetCtrl());
-    }
-}
-
 void ContextCpp::ApplySettings()
 {
     //-----------------------------------------------
@@ -1726,17 +1652,6 @@ void ContextCpp::OnUserTypedXChars(const wxString& word)
     }
 }
 
-wxString ContextCpp::CallTipContent()
-{
-    // if we have an active call tip, return its content
-    if (GetCtrl().GetFunctionTip()->IsActive()) {
-        return GetCtrl().GetFunctionTip()->GetText();
-    }
-    return wxEmptyString;
-}
-
-bool ContextCpp::DoCodeComplete(long pos) { return false; }
-
 void ContextCpp::DoCreateFile(const wxFileName& fn)
 {
     // get the file name from the user
@@ -1774,8 +1689,6 @@ void ContextCpp::DoCreateFile(const wxFileName& fn)
 }
 
 void ContextCpp::OnCallTipClick(wxStyledTextEvent& e) { e.Skip(); }
-
-void ContextCpp::OnCalltipCancel() {}
 
 void ContextCpp::DoUpdateCalltipHighlight()
 {
@@ -1821,20 +1734,6 @@ void ContextCpp::SemicolonShift()
             }
         }
     }
-}
-
-wxString ContextCpp::GetCurrentScopeName()
-{
-    if (IsJavaScript()) {
-        return wxEmptyString;
-    }
-
-    TagEntryPtr tag =
-        TagsManagerST::Get()->FunctionFromFileLine(GetCtrl().GetFileName(), GetCtrl().GetCurrentLine() + 1);
-    if (tag) {
-        return tag->GetParent();
-    }
-    return wxEmptyString;
 }
 
 wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bool forCC)

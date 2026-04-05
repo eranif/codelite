@@ -186,17 +186,11 @@ void ContextHtml::AutoIndent(const wxChar& nChar)
     rCtrl.ChooseCaretX();
 }
 
-wxString ContextHtml::CallTipContent() { return wxEmptyString; }
-
 int ContextHtml::DoGetCalltipParamterIndex() { return ContextBase::DoGetCalltipParamterIndex(); }
-
-wxString ContextHtml::GetCurrentScopeName() { return wxT(""); }
 
 wxMenu* ContextHtml::GetMenu() { return ContextBase::GetMenu(); }
 
 TagEntryPtr ContextHtml::GetTagAtCaret(bool scoped, bool impl) { return NULL; }
-
-bool ContextHtml::GotoDefinition() { return false; }
 
 bool ContextHtml::IsCommentOrString(long pos)
 {
@@ -219,8 +213,6 @@ std::shared_ptr<ContextBase> ContextHtml::NewInstance(clEditor* container)
 
 void ContextHtml::OnCallTipClick(wxStyledTextEvent& event) {}
 
-void ContextHtml::OnCalltipCancel() {}
-
 void ContextHtml::OnDbgDwellEnd(wxStyledTextEvent& event) {}
 
 void ContextHtml::OnDbgDwellStart(wxStyledTextEvent& event) {}
@@ -229,8 +221,6 @@ void ContextHtml::OnDwellEnd(wxStyledTextEvent& event) {}
 
 void ContextHtml::OnEnterHit() {}
 
-void ContextHtml::OnFileSaved() {}
-
 void ContextHtml::OnKeyDown(wxKeyEvent& event) { event.Skip(); }
 
 void ContextHtml::OnSciUpdateUI(wxStyledTextEvent& event)
@@ -238,8 +228,6 @@ void ContextHtml::OnSciUpdateUI(wxStyledTextEvent& event)
     clEditor& ctrl = GetCtrl();
     if(ctrl.GetFunctionTip()->IsActive()) { ctrl.GetFunctionTip()->Highlight(DoGetCalltipParamterIndex()); }
 }
-
-void ContextHtml::RemoveMenuDynamicContent(wxMenu* menu) {}
 
 void ContextHtml::RetagFile() {}
 

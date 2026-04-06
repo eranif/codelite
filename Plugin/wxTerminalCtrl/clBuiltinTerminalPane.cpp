@@ -690,14 +690,22 @@ void clBuiltinTerminalPane::OnLinkClicked(wxTerminalEvent& event)
     }
 
     wxFileName fn{text};
-    if (fn.GetExt() == "exe" && fn.FileExists()) {
-        ::wxLaunchDefaultApplication(text);
+    if (FileUtils::IsBinaryExecutable(fn)) {
+        ::wxLaunchDefaultApplication(fn.GetFullPath());
         return;
     }
 
-    clBuildEvent event_clicked(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED);
-    event_clicked.SetBuildDir(wxEmptyString); // can be empty
-    event_clicked.SetFileName(text);
-    event_clicked.SetLineNumber(0);
-    EventNotifier::Get()->AddPendingEvent(event_clicked);
+    auto res = FileUtils::ParseTriplet(text);
+    if (res.has_value()) {
+        const auto& triplet = res.value();
+        clDEBUG() << "Firing event for file:" << triplet.filename << ", line:" << triplet.line_number
+                  << ", column:" << triplet.column << endl;
+        clBuildEvent event_clicked(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED);
+        event_clicked.SetBuildDir(wxEmptyString); // can be empty
+        event_clicked.SetFileName(triplet.filename);
+        event_clicked.SetLineNumber(triplet.line_number);
+        EventNotifier::Get()->AddPendingEvent(event_clicked);
+    } else {
+        clDEBUG() << "Failed to parse file triplet:" << text << endl;
+    }
 }

@@ -798,7 +798,9 @@ bool cksum(const std::string& file, size_t* checksum)
 } // namespace
 
 bool FileUtils::GetChecksum(const wxString& filepath, size_t* checksum)
-{ return cksum(filepath.ToStdString(wxConvUTF8), checksum); }
+{
+    return cksum(filepath.ToStdString(wxConvUTF8), checksum);
+}
 
 bool FileUtils::IsBinaryExecutable(const wxString& filename)
 {
@@ -1024,4 +1026,62 @@ bool FileUtils::ValidateFilePattern(const wxString& patterns)
         }
     }
     return true;
+}
+
+std::optional<FileUtils::Triplet> FileUtils::ParseTriplet(const wxString& line)
+{
+    // A triplet is file[:line[:column]] usually produced by compilers (gcc, clang, rustc etc).
+    // An example of such line:
+    // C:\msys64\home\eran\devl\wxTerminalEmulator/terminal_core.h:50:8:
+    // ../../file.cpp:100
+    // /home/user/file.cpp:100:5
+
+    if (line.empty()) {
+        return std::nullopt;
+    }
+
+    wxString input = line;
+    input.Trim().Trim(false);
+
+    if (input.empty()) {
+        return std::nullopt;
+    }
+
+    // Remove trailing colons
+    while (input.EndsWith(":")) {
+        input.RemoveLast();
+    }
+
+    if (input.empty()) {
+        return std::nullopt;
+    }
+
+    int startSearchPos = 0;
+    wxString drive;
+    // Skip Windows drive letter if present (e.g., "C:")
+    if (input.length() >= 2 && wxIsalpha(input[0]) && input[1] == ':') {
+        drive = input.Mid(0, 2);
+        input = input.Mid(2);
+    }
+
+    auto arr = wxStringTokenize(input, ":", wxTOKEN_STRTOK);
+    if (arr.size() == 0 || arr[0].empty()) {
+        return std::nullopt;
+    }
+
+    Triplet result;
+    result.filename = drive + arr[0];
+    if (arr.size() > 1) {
+        long line_number{-1};
+        if (arr[1].ToCLong(&line_number)) {
+            result.line_number = line_number;
+        }
+    }
+    if (arr.size() > 2) {
+        long column{-1};
+        if (arr[2].ToCLong(&column)) {
+            result.column = column;
+        }
+    }
+    return result;
 }

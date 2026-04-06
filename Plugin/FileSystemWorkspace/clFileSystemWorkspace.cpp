@@ -87,6 +87,8 @@ clFileSystemWorkspace::clFileSystemWorkspace(bool dummy)
         EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &clFileSystemWorkspace::OnDebug, this);
 
         EventNotifier::Get()->Bind(wxEVT_FILE_CREATED, &clFileSystemWorkspace::OnFileSystemUpdated, this);
+        EventNotifier::Get()->Bind(
+            wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, &clFileSystemWorkspace::OnTerminalLineClicked, this);
     }
 }
 
@@ -110,7 +112,8 @@ clFileSystemWorkspace::~clFileSystemWorkspace()
         EventNotifier::Get()->Unbind(wxEVT_STOP_BUILD, &clFileSystemWorkspace::OnStopBuild, this);
         EventNotifier::Get()->Unbind(
             wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING, &clFileSystemWorkspace::OnCustomTargetMenu, this);
-
+        EventNotifier::Get()->Unbind(
+            wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, &clFileSystemWorkspace::OnTerminalLineClicked, this);
         Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &clFileSystemWorkspace::OnBuildProcessTerminated, this);
         Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &clFileSystemWorkspace::OnBuildProcessOutput, this);
         Unbind(wxEVT_TERMINAL_EXIT, &clFileSystemWorkspace::OnExecProcessTerminated, this);
@@ -1250,4 +1253,22 @@ int clFileSystemWorkspace::GetIndentWidth()
 
     m_indentWidth = ::GetClangFormatIntProperty(content, "IndentWidth");
     return *m_indentWidth;
+}
+
+void clFileSystemWorkspace::OnTerminalLineClicked(clBuildEvent& event)
+{
+    if (!IsOpen()) {
+        event.Skip();
+        return;
+    }
+
+    int nLine = event.GetLineNumber();
+    auto cb = [=](IEditor* editor) {
+        editor->GetCtrl()->ClearSelections();
+        // compilers report line numbers starting from `1`
+        // our editor sees line numbers starting from `0`
+        editor->CenterLine(nLine > 0 ? nLine - 1 : 0, wxNOT_FOUND);
+        editor->SetActive();
+    };
+    clGetManager()->OpenFileAndAsyncExecute(event.GetFileName(), std::move(cb));
 }

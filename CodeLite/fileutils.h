@@ -346,6 +346,14 @@ public:
      * @return true if all patterns contain only valid characters, false otherwise.
      */
     static bool ValidateFilePattern(const wxString& patterns);
+
+    struct Triplet {
+        wxString filename;
+        int line_number{wxNOT_FOUND};
+        int column{wxNOT_FOUND};
+    };
+
+    static std::optional<FileUtils::Triplet> ParseTriplet(const wxString& line);
 };
 
 #endif // FILEUTILS_H

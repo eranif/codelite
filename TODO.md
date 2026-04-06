@@ -42,4 +42,3 @@ BUGS
 ----
 
 - Application hangs when renaming a symbol & the `MiniMap` editor is loaded...
-- Ctrl-CLICK on a link does not open the file in CodeLite.

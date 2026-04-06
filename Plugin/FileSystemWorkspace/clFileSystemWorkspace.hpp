@@ -76,6 +76,7 @@ protected:
     void OnDebug(clDebugEvent& event);
     void OnFileSystemUpdated(clFileSystemEvent& event);
     void OnReloadWorkspace(clCommandEvent& event);
+    void OnTerminalLineClicked(clBuildEvent& event);
 
 protected:
     bool Load(const wxFileName& file);

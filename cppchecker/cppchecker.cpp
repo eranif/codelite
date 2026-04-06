@@ -28,38 +28,21 @@
 #include "AsyncProcess/processreaderthread.h"
 #include "IWorkspace.h"
 #include "Keyboard/clKeyboardManager.h"
-#include "Notebook.h"
 #include "Platform/Platform.hpp"
 #include "StringUtils.h"
 #include "build_settings_config.h"
-#include "clAnsiEscapeCodeColourBuilder.hpp"
 #include "clWorkspaceManager.h"
-#include "cl_process.h"
 #include "codelite_events.h"
 #include "cppchecksettingsdlg.h"
 #include "event_notifier.h"
-#include "file_logger.h"
 #include "fileextmanager.h"
 #include "globals.h"
 #include "imanager.h"
-#include "macros.h"
-#include "procutils.h"
-#include "project.h"
 #include "shell_command.h"
-#include "workspace.h"
 
-#include <wx/app.h>
-#include <wx/dir.h>
-#include <wx/ffile.h>
-#include <wx/imaglist.h>
-#include <wx/log.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
-#include <wx/process.h>
-#include <wx/sstream.h>
-#include <wx/stdpaths.h>
 #include <wx/tokenzr.h>
-#include <wx/xml/xml.h>
 #include <wx/xrc/xmlres.h>
 
 // Define the plugin entry point

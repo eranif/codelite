@@ -28,6 +28,7 @@
 #include "clEnvironment.hpp"
 #include "codelite_exports.h"
 
+#include <optional>
 #include <wx/filename.h>
 #include <wx/string.h>
 
@@ -353,6 +354,19 @@ public:
         int column{wxNOT_FOUND};
     };
 
+    /**
+     * @brief Parses a file location triplet from a compiler-style string.
+     *
+     * This function accepts strings in the form "file[:line[:column]]", trims
+     * surrounding whitespace, removes trailing colons, and attempts to extract a
+     * filename, optional line number, and optional column number. Windows drive
+     * prefixes such as "C:" are preserved as part of the filename.
+     *
+     * @param line const wxString& Input text containing a file triplet.
+     * @return std::optional<FileUtils::Triplet> A populated Triplet on success,
+     *         or std::nullopt if the input is empty, malformed, or does not
+     *         contain a usable filename component.
+     */
     static std::optional<FileUtils::Triplet> ParseTriplet(const wxString& line);
 };
 

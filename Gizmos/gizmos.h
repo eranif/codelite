@@ -26,7 +26,6 @@
 #define GIZMOS_H
 
 #include "newclassdlg.h"
-#include "newwxprojectinfo.h"
 #include "plugin.h"
 
 #include <vector>
@@ -42,7 +41,7 @@ protected:
     void OnFolderContentMenu(clContextMenuEvent& event);
 
 public:
-    WizardsPlugin(IManager* manager);
+    explicit WizardsPlugin(IManager* manager);
     ~WizardsPlugin() override = default;
 
     //--------------------------------------------

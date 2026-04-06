@@ -32,14 +32,14 @@
 class PluginWizard : public PluginWizardBase
 {
 public:
-    PluginWizard(wxWindow* parent);
-    virtual ~PluginWizard() = default;
+    explicit PluginWizard(wxWindow* parent);
+    ~PluginWizard() override = default;
 
     bool Run(NewPluginData& pd);
 
 protected:
-    virtual void OnProjectPathChanged(wxFileDirPickerEvent& event);
-    virtual void OnFinish(wxWizardEvent& event);
-    virtual void OnPageChanging(wxWizardEvent& event);
+    void OnProjectPathChanged(wxFileDirPickerEvent& event) override;
+    void OnFinish(wxWizardEvent& event) override;
+    void OnPageChanging(wxWizardEvent& event) override;
 };
 #endif // PLUGINWIZARD_H

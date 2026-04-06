@@ -33,15 +33,14 @@
 #include "imanager.h"
 #include "new_class_dlg_data.h"
 #include "open_resource_dialog.h"
-#include "windowattrmanager.h"
+#include "project.h"
 #include "workspace.h"
 
+#include <wx/defs.h>
 #include <wx/dir.h>
 #include <wx/dirdlg.h>
 #include <wx/filename.h>
 #include <wx/msgdlg.h>
-#include <wx/tokenzr.h>
-#include <wx/xrc/xmlres.h>
 
 NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     : NewClassBaseDlg(parent)
@@ -59,7 +58,6 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     m_checkBoxNonMovable->SetValue(m_options.GetFlags() & NewClassDlgData::NonMovable);
     m_checkBoxNonInheritable->SetValue(m_options.GetFlags() & NewClassDlgData::NonInheritable);
 
-    wxString vdPath;
     TreeItemInfo item = mgr->GetSelectedTreeItemInfo(TreeFileView);
     if (item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
         wxString path = VirtualDirectorySelectorDlg::DoGetPath(m_mgr->GetWorkspaceTree(), item.m_item, false);
@@ -69,15 +67,13 @@ NewClassDlg::NewClassDlg(wxWindow* parent, IManager* mgr)
     }
 
     // set the class path to be the active project path
-    wxString errMsg;
     if (m_mgr->GetWorkspace()) {
         wxString start_path;
         if (item.m_item.IsOk() && item.m_itemType == ProjectItem::TypeVirtualDirectory) {
             m_basePath = item.m_fileName.GetPath(wxPATH_GET_VOLUME);
-
         } else {
-
             wxString projname = m_mgr->GetWorkspace()->GetActiveProjectName();
+            wxString errMsg;
             ProjectPtr proj = m_mgr->GetWorkspace()->FindProjectByName(projname, errMsg);
             if (proj) {
                 m_basePath = proj->GetFileName().GetPath(wxPATH_GET_VOLUME);
@@ -226,12 +222,6 @@ void NewClassDlg::OnCheckSingleton(wxCommandEvent& event)
     DoUpdateCheckBoxes();
 }
 
-void NewClassDlg::OnCheckImpleAllVirtualFunctions(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    DoUpdateCheckBoxes();
-}
-
 wxString NewClassDlg::GetClassPath() const
 {
     if (m_textCtrlGenFilePath->GetValue().Trim().IsEmpty()) {
@@ -308,43 +298,6 @@ void NewClassDlg::GetNamespacesList(wxArrayString& namespacesArray) const
     namespacesArray.Add(lastToken);
 }
 
-wxString NewClassDlg::doSpliteByCaptilization(const wxString& str) const
-{
-    if (str.IsEmpty())
-        return wxT("");
-
-    wxString output;
-    bool lastWasLower(true);
-
-    for (int i = str.length() - 1; i >= 0; --i) {
-
-        int cur = (int)str[i];
-        if (!isalpha(cur)) {
-            output.Prepend((wxChar)cur);
-            continue;
-        }
-
-        if (isupper(cur) && lastWasLower) {
-            output.Prepend((wxChar)cur);
-            output.Prepend(wxT('_'));
-
-        } else {
-            output.Prepend((wxChar)cur);
-        }
-
-        lastWasLower = islower(cur);
-    }
-
-    // replace any double underscores with single one
-    while (output.Replace(wxT("__"), wxT("_"))) {}
-
-    // remove any underscore from the start of the word
-    if (output.StartsWith(wxT("_"))) {
-        output.Remove(0, 1);
-    }
-    return output;
-}
-
 void NewClassDlg::DoUpdateGeneratedPath()
 {
     wxString vdPath = m_textCtrlVD->GetValue();
@@ -377,9 +330,7 @@ void NewClassDlg::DoUpdateCheckBoxes()
 }
 
 void NewClassDlg::OnOkUpdateUI(wxUpdateUIEvent& event)
-{
-    event.Enable(!(GetClassFile().IsEmpty() || GetVirtualDirectoryPath().IsEmpty()));
-}
+{ event.Enable(!(GetClassFile().IsEmpty() || GetVirtualDirectoryPath().IsEmpty())); }
 void NewClassDlg::OnBlockGuardUI(wxUpdateUIEvent& event) { event.Enable(!m_checkBoxPragmaOnce->IsChecked()); }
 
 void NewClassDlg::DoSaveOptions()

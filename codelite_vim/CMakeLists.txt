@@ -4,12 +4,8 @@ set(PLUGIN_NAME "codelite_vim")
 # Our project is called 'plugin' this is how it will be called in visual studio, and in our makefiles.
 project(${PLUGIN_NAME})
 
-# It was noticed that when using MinGW gcc it is essential that 'core' is mentioned before 'base'.
-
 # wxWidgets include (this will do all the magic to configure everything)
 include("${wxWidgets_USE_FILE}")
-
-# set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -g -O0")        ## No optimization, debug info
 
 if(USE_PCH AND NOT MINGW)
     add_definitions(-include "${CL_PCH_FILE}")

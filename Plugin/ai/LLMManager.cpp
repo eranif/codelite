@@ -172,7 +172,7 @@ std::optional<wxString> MakeLabelFromText(const wxString& text)
     auto lines = wxStringTokenize(text, "\n", wxTOKEN_STRTOK);
     for (wxString& line : lines) {
         line.Trim().Trim(false);
-        if (line.empty() || line.StartsWith("**")) {
+        if (line.empty() || line.StartsWith(wxT("❰"))) {
             continue;
         }
         return line.Mid(0, 50);

@@ -52,7 +52,7 @@ struct clAuiFlatTabArt::Data {
 
         // The tab bar and inactive tabs are drawn darker than the active tab
         // so the active tab (which matches the editor content area) stands out.
-        m_bgActive = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).ChangeLightness(dark ? 120 : 100);
+        m_bgActive = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).ChangeLightness(dark ? 110 : 100);
         wxColour face = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
         m_bgNormal = face.ChangeLightness(dark ? 80 : 92);
         m_bgWindow = m_bgNormal;

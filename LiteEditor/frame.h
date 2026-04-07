@@ -145,6 +145,7 @@ class clMainFrame : public wxFrame
     // the main tool default style
     int m_mainToolbarStyle = wxTB_FLAT | wxTB_NODIVIDER /* toolbar is hidden by default */;
     wxString m_mainFrameTitleTemplate;
+    wxWindow* m_lastFocusedWindow = nullptr;
 
 public:
     static bool m_initCompleted;
@@ -613,6 +614,7 @@ protected:
     void OnLinkClicked(wxHtmlLinkEvent& e);
     void OnLoadSession(wxCommandEvent& e);
     void OnAppActivated(wxActivateEvent& event);
+    void OnChildFocus(wxChildFocusEvent& event);
     void OnReloadExternallModified(wxCommandEvent& e);
     void OnReloadExternallModifiedNoPrompt(wxCommandEvent& e);
     void OnCompileFile(wxCommandEvent& e);

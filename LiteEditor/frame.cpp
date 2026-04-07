@@ -797,6 +797,7 @@ clMainFrame::~clMainFrame()
 
     m_infoBar->Unbind(wxEVT_BUTTON, &clMainFrame::OnInfobarButton, this);
     wxTheApp->Unbind(wxEVT_ACTIVATE_APP, &clMainFrame::OnAppActivated, this);
+    Unbind(wxEVT_CHILD_FOCUS, &clMainFrame::OnChildFocus, this);
     wxTheApp->Disconnect(
         wxID_COPY, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::DispatchCommandEvent), NULL, this);
     wxTheApp->Disconnect(
@@ -943,6 +944,7 @@ void clMainFrame::Construct()
     wxTheApp->Connect(
         wxID_CUT, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::DispatchUpdateUIEvent), NULL, this);
     wxTheApp->Bind(wxEVT_ACTIVATE_APP, &clMainFrame::OnAppActivated, this);
+    Bind(wxEVT_CHILD_FOCUS, &clMainFrame::OnChildFocus, this);
     EventNotifier::Get()->Bind(
         wxEVT_ENVIRONMENT_VARIABLES_MODIFIED, &clMainFrame::OnEnvironmentVariablesModified, this);
     EventNotifier::Get()->Connect(wxEVT_LOAD_SESSION, wxCommandEventHandler(clMainFrame::OnLoadSession), NULL, this);
@@ -3711,13 +3713,15 @@ void clMainFrame::OnAppActivated(wxActivateEvent& e)
         wxCommandEvent evtGotFocus(wxEVT_CODELITE_MAINFRAME_GOT_FOCUS);
         EventNotifier::Get()->AddPendingEvent(evtGotFocus);
 
-#ifdef __WXOSX__
-        // Set the focus back to the active editor
-        clEditor* activeEditor = dynamic_cast<clEditor*>(GetMainBook()->GetActiveEditor());
-        if (activeEditor) {
-            activeEditor->CallAfter(&clEditor::SetActive);
+        // Restore focus to the window that had it before we lost focus
+        if (m_lastFocusedWindow && m_lastFocusedWindow->IsShown()) {
+            m_lastFocusedWindow->CallAfter(&wxWindow::SetFocus);
+        } else {
+            clEditor* activeEditor = dynamic_cast<clEditor*>(GetMainBook()->GetActiveEditor());
+            if (activeEditor) {
+                activeEditor->CallAfter(&clEditor::SetActive);
+            }
         }
-#endif
 
     } else if (m_theFrame) {
 
@@ -3732,6 +3736,12 @@ void clMainFrame::OnAppActivated(wxActivateEvent& e)
     }
 
     e.Skip();
+}
+
+void clMainFrame::OnChildFocus(wxChildFocusEvent& event)
+{
+    event.Skip();
+    m_lastFocusedWindow = event.GetWindow();
 }
 
 void clMainFrame::OnCompileFileProject(wxCommandEvent& e)

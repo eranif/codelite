@@ -2069,7 +2069,7 @@
 												}, {
 													"type":	"multi-string",
 													"m_label":	"Tooltip:",
-													"m_value":	"When enabled (.e.g. set to True) codelite will pass the arguments set in 'Debug Program Arguments'"
+													"m_value":	"When enabled (.e.g. set to True) CodeLite will pass the arguments set in 'Debug Program Arguments'"
 												}, {
 													"type":	"colour",
 													"m_label":	"Bg Colour:",

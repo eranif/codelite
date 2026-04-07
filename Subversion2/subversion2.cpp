@@ -1498,7 +1498,7 @@ void Subversion2::OnRevertToRevision(wxCommandEvent& event)
 
     long nRevision;
     if (!revision.ToCLong(&nRevision)) {
-        ::wxMessageBox(_("Invalid revision number"), "codelite", wxOK | wxICON_ERROR | wxCENTER);
+        ::wxMessageBox(_("Invalid revision number"), "CodeLite", wxOK | wxICON_ERROR | wxCENTER);
         return;
     }
 

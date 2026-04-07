@@ -203,7 +203,7 @@ void GitCommitDlg::OnChangeFile(wxDataViewEvent& e)
 void GitCommitDlg::OnCommitOK(wxCommandEvent& event)
 {
     if (m_stcCommitMessage->GetText().IsEmpty() && !IsAmending()) {
-        ::clMessageBox(_("Git requires a commit message"), "codelite", wxICON_WARNING | wxOK | wxCENTER);
+        ::clMessageBox(_("Git requires a commit message"), "CodeLite", wxICON_WARNING | wxOK | wxCENTER);
         return;
     }
     m_dismissedWithOk = true;

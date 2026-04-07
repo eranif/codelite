@@ -18,7 +18,7 @@ ImageListWrapper::ImageListWrapper()
     Add<CategoryProperty>(_("Inherited C++ Class Properties"));
     Add<StringProperty>(PROP_NAME, "", _("The generated C++ class name"));
     Add<StringProperty>(PROP_FILE, "", _("The filenames for the generated files"));
-    Add<VirtualFolderProperty>(PROP_VIRTUAL_FOLDER, "", _("codelite's virtual folder for the generated files"));
+    Add<VirtualFolderProperty>(PROP_VIRTUAL_FOLDER, "", _("CodeLite's virtual folder for the generated files"));
     Add<StringProperty>(
         PROP_CLASS_DECORATOR, "", _("MSW Only\nC++ macro decorator - allows exporting this class from a DLL"));
     Add<CategoryProperty>(_("wxImageList"));

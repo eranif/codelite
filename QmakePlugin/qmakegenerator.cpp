@@ -83,8 +83,8 @@ bool QMakeProFileGenerator::Generate()
     m_makefilePath += wxT(".mk");
 
     pro_file << wxT("##########################################\n");
-    pro_file << wxT("# codelite's qmake configuration: ") << bcpd.m_qmakeConfig << wxT("\n");
-    pro_file << wxT("# codelite's qmake exec line    : ") << bcpd.m_qmakeExecutionLine << wxT("\n");
+    pro_file << wxT("# CodeLite's qmake configuration: ") << bcpd.m_qmakeConfig << wxT("\n");
+    pro_file << wxT("# CodeLite's qmake exec line    : ") << bcpd.m_qmakeExecutionLine << wxT("\n");
     pro_file << wxT("##########################################\n");
 
     // Generate the pro file content

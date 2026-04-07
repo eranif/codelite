@@ -1701,7 +1701,7 @@
                                             <property name="size" />
                                             <property name="style" />
                                             <property name="subclass" />
-                                            <property name="tooltip">When enabled, codelite will use the arguments specified in the &apos;Debug Arguments&apos; when running the program under debugger. &#x0A;Otherwise, codelite will use the arguments speicified in the &apos;Program Arguments&apos; field</property>
+                                            <property name="tooltip">When enabled, CodeLite will use the arguments specified in the &apos;Debug Arguments&apos; when running the program under debugger. &#x0A;Otherwise, CodeLite will use the arguments speicified in the &apos;Program Arguments&apos; field</property>
                                             <property name="validator_data_type" />
                                             <property name="validator_style">wxFILTER_NONE</property>
                                             <property name="validator_type">wxDefaultValidator</property>

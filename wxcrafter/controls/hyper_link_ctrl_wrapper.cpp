@@ -24,7 +24,7 @@ HyperLinkCtrlWrapper::HyperLinkCtrlWrapper()
                     "see wxEvent::Skip)\nthen a call to wxLaunchDefaultBrowser is done with the hyperlink's URL."));
 
     SetPropertyString(_("Common Settings"), "wxHyperLinkCtrl");
-    Add<StringProperty>(PROP_LABEL, wxT("codelite IDE"), _("The label of the hyperlink"));
+    Add<StringProperty>(PROP_LABEL, wxT("CodeLite IDE"), _("The label of the hyperlink"));
     Add<StringProperty>(PROP_URL, wxT("http://www.codelite.org"), _("The URL associated with the given label"));
     Add<ColorProperty>(PROP_NORMAL_COLOR,
                        wxT("#0000FF"),

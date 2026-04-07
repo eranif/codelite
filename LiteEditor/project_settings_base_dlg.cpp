@@ -249,7 +249,7 @@ PSGeneralPageBase::PSGeneralPageBase(wxWindow* parent, wxWindowID id, const wxPo
     m_pgPropUseSeparateDebuggerArgs =
         m_pgMgr136->AppendIn(CATEGORY_DEBUGGER, new wxBoolProperty(_("Use separate debugger args"), wxPG_LABEL, 1));
     m_pgPropUseSeparateDebuggerArgs->SetHelpString(
-        _("When enabled (.e.g. set to True) codelite will pass the arguments set in 'Debug Program Arguments'"));
+        _("When enabled (.e.g. set to True) CodeLite will pass the arguments set in 'Debug Program Arguments'"));
 
     m_pgPropDebugArgs = m_pgMgr136->AppendIn(
         CATEGORY_DEBUGGER, new wxLongStringProperty(_("Debug Program Arguments"), wxPG_LABEL, wxT("")));

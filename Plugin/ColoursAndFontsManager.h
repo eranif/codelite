@@ -114,7 +114,7 @@ public:
      */
     void SaveGlobalSettings(bool notify = true);
     /**
-     * @brief adjust the lexer colours to fit codelite's general look and feel
+     * @brief adjust the lexer colours to fit CodeLite's general look and feel
      */
     void UpdateLexerColours(LexerConf::Ptr_t lexer, bool force);
 

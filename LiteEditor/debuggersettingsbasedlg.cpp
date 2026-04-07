@@ -445,7 +445,7 @@ DbgPageGeneralBase::DbgPageGeneralBase(wxWindow* parent, wxWindowID id, const wx
                        wxDefaultPosition, wxDLG_UNIT(m_panelTooltip, wxSize(-1, -1)), 0);
     m_showTooltipsRequiresControl->SetValue(true);
     m_showTooltipsRequiresControl->SetToolTip(
-        _("When enabled, codelite will evaluate the expression under the cursor only if the CTRL key is down. "
+        _("When enabled, CodeLite will evaluate the expression under the cursor only if the CTRL key is down. "
           "\nOtherwise, it will evaluate it automatically"));
 
     boxSizer83->Add(m_showTooltipsRequiresControl, 0, wxALL, WXC_FROM_DIP(5));

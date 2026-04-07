@@ -55,19 +55,19 @@ void PluginWizard::OnPageChanging(wxWizardEvent& event)
         wxString pluginName = m_textCtrlName->GetValue();
         pluginName.Trim();
         if (pluginName.IsEmpty() || !::IsValidCppIdentifier(pluginName)) {
-            ::wxMessageBox(_("Invalid plugin name"), "codelite");
+            ::wxMessageBox(_("Invalid plugin name"), "CodeLite");
             event.Veto();
             return;
         }
     } else if (event.GetDirection() && event.GetPage() == m_pages.at(1)) {
         if (!wxDir::Exists(m_dirPickerCodeliteDir->GetPath())) {
-            ::wxMessageBox(_("codelite folder does not exists"), "codelite");
+            ::wxMessageBox(_("CodeLite folder does not exists"), "CodeLite");
             event.Veto();
             return;
         }
 
         if (!wxDir::Exists(m_dirPickerPluginPath->GetPath())) {
-            ::wxMessageBox(_("The selected plugin folder does not exist"), "codelite");
+            ::wxMessageBox(_("The selected plugin folder does not exist"), "CodeLite");
             event.Veto();
             return;
         }

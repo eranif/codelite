@@ -83,11 +83,11 @@ msgstr ""
 
 #: CMakePlugin/CMakePlugin.cpp:121
 msgid "CMake integration for CodeLite"
-msgstr "Intégration de 'CMake' pour 'CodeLite'"
+msgstr "Intégration de 'CMake' pour CodeLite"
 
 #: CMakePlugin/CMakePlugin.cpp:145
 msgid "CMake integration with CodeLite"
-msgstr "Intégration de 'CMake' avec 'CodeLite'"
+msgstr "Intégration de 'CMake' avec CodeLite"
 
 #: CMakePlugin/CMakePlugin.cpp:288 CMakePlugin/CMakePlugin.cpp:398
 msgid "Open CMakeLists.txt"
@@ -908,7 +908,7 @@ msgstr "Sans-titre"
 
 #: CodeLiteDiff/codelitediff.cpp:76 CodeLiteDiff/codelitediff.cpp:86
 msgid "CodeLite Diff Plugin"
-msgstr "Extension 'CodeLite' de comparaison"
+msgstr "Extension CodeLite de comparaison"
 
 #: CodeLiteDiff/codelitediff.cpp:94 CodeLiteDiff/codelitediff.cpp:106
 msgid "Diff Tool"
@@ -1055,7 +1055,7 @@ msgstr "Ignorer la chaîne :"
 
 #: Copyright/copyrights_options_base_dlg.cpp:78
 msgid "Set here a string that once found in the source file CodeLite will not prepend the Copyrights block to the file"
-msgstr "Définir ici une chaîne de caractères qui, une fois trouvée dans le fichier source, permettra à 'CodeLite' de ne pas ajouter le bloc de droit d'auteur au fichier"
+msgstr "Définir ici une chaîne de caractères qui, une fois trouvée dans le fichier source, permettra à CodeLite de ne pas ajouter le bloc de droit d'auteur au fichier"
 
 #: Copyright/copyrights_options_base_dlg.cpp:85
 msgid "Backup modified files"
@@ -1554,7 +1554,7 @@ msgstr "Insérer le modèle d'instruction 'SQL DELETE' dans l'éditeur."
 
 #: DatabaseExplorer/databaseexplorer.cpp:98 DatabaseExplorer/databaseexplorer.cpp:120
 msgid "DatabaseExplorer for CodeLite"
-msgstr "Explorateur de bases de données pour 'CodeLite'"
+msgstr "Explorateur de bases de données pour CodeLite"
 
 #: DatabaseExplorer/databaseexplorer.cpp:117 DatabaseExplorer/databaseexplorer.cpp:118
 msgid "DbExplorer"
@@ -2106,7 +2106,7 @@ msgstr "Construire..."
 
 #: Docker/docker.cpp:22 Docker/docker.cpp:32
 msgid "Docker for CodeLite"
-msgstr "Conteneur pour 'CodeLite'"
+msgstr "Conteneur pour CodeLite"
 
 #: EOSWiki/eosUI.cpp:49 Gizmos/newclassbasedlg.cpp:156 Plugin/NewProjectDialogBase.cpp:36 Plugin/sftp_ui.cpp:423 Remoty/RemotyUI.cpp:75 Remoty/RemotyUI.cpp:186 SnipWiz/templateclassbasedlg.cpp:145 codelitephp/php-plugin/php_ui.cpp:86 codelitephp/php-plugin/php_ui.cpp:207
 msgid "Path:"
@@ -2126,7 +2126,7 @@ msgstr "Nouveau projet 'EOS'"
 
 #: EOSWiki/eoswiki.cpp:26 EOSWiki/eoswiki.cpp:36
 msgid "CodeLite for EOS"
-msgstr "Codelite pour EOS"
+msgstr "CodeLite pour EOS"
 
 #: EOSWiki/eoswiki.cpp:53 LiteEditor/fileview.cpp:2679 wxcrafter/src/allocator_mgr.cpp:603
 msgid "New Project..."
@@ -2163,7 +2163,7 @@ msgstr "Paramètres de 'EditorConfig'"
 
 #: EditorConfigPlugin/editorconfigplugin.cpp:22 EditorConfigPlugin/editorconfigplugin.cpp:32
 msgid "Support for .editorconfig files in CodeLite"
-msgstr "Prise en charge des fichiers '.editorconfig' dans 'CodeLite'"
+msgstr "Prise en charge des fichiers '.editorconfig' dans CodeLite"
 
 #: EditorConfigPlugin/editorconfigplugin.cpp:49
 msgid "EditorConfig"
@@ -2295,7 +2295,7 @@ msgstr "Êtes-vous sûr de vouloir supprimer cet outil ?"
 
 #: ExternalTools/externaltools.cpp:54 ExternalTools/externaltools.cpp:67
 msgid "A plugin that allows user to launch external tools from within CodeLite"
-msgstr "Un extension qui permet à l'utilisateur de lancer des outils externes à partir de 'CodeLite'"
+msgstr "Un extension qui permet à l'utilisateur de lancer des outils externes à partir de CodeLite"
 
 #: ExternalTools/externaltools.cpp:91
 #, c-format
@@ -2327,8 +2327,8 @@ msgid "Invalid plugin name"
 msgstr "Nom de plugin invalide"
 
 #: Gizmos/PluginWizard.cpp:64
-msgid "codelite folder does not exists"
-msgstr "Le dossier 'codelite' n'existe pas"
+msgid "CodeLite folder does not exists"
+msgstr "Le dossier CodeLite n'existe pas"
 
 #: Gizmos/PluginWizard.cpp:70
 msgid "The selected plugin folder does not exist"
@@ -2348,7 +2348,7 @@ msgstr "Extension d'assistants - une collection d'utilitaires pour le C++"
 
 #: Gizmos/gizmos.cpp:132
 msgid "New CodeLite Plugin Wizard..."
-msgstr "Nouvelle extension d'assistants 'CodeLite' ..."
+msgstr "Nouvelle extension d'assistants CodeLite..."
 
 #: Gizmos/gizmos.cpp:134
 msgid "New Class Wizard..."
@@ -2395,12 +2395,12 @@ msgid "Provide the plugin a short description"
 msgstr "Fournir une brève description de l'extension"
 
 #: Gizmos/gizmos_base.cpp:83
-msgid "codelite root dir:"
-msgstr "répertoire racine de 'codelite' :"
+msgid "CodeLite root dir:"
+msgstr "répertoire racine de CodeLite :"
 
 #: Gizmos/gizmos_base.cpp:88
-msgid "Select the location of codelite's source tree"
-msgstr "Sélectionner l'emplacement de l'arbre source de 'Codelite'"
+msgid "Select the location of CodeLite's source tree"
+msgstr "Sélectionner l'emplacement de l'arbre source de CodeLite"
 
 #: Gizmos/gizmos_base.cpp:92 QmakePlugin/NewQtProj.cpp:47 codelitephp/php-plugin/php_ui.cpp:1692
 msgid "Project path:"
@@ -2966,7 +2966,7 @@ msgstr "Tout sélectionner"
 
 #: LiteEditor/CodeLiteUpgradeFrameBase.cpp:38 LiteEditor/CodeLiteUpgradeFrameBase.h:65
 msgid "Initializing CodeLite"
-msgstr "Initialisation de 'CodeLite'"
+msgstr "Initialisation de CodeLite"
 
 #: LiteEditor/CompilerMainPage.cpp:55 LiteEditor/CompilerMainPage.cpp:60 LiteEditor/symbols_dialog.cpp:46
 msgid "Pattern"
@@ -4015,7 +4015,7 @@ msgstr "a l'attribut lecture seule défini"
 
 #: LiteEditor/cl_editor.cpp:329
 msgid "Would you like CodeLite to try and remove it?"
-msgstr "Souhaitez-vous que 'CodeLite' tente de le supprimer ?"
+msgstr "Souhaitez-vous que CodeLite tente de le supprimer ?"
 
 #: LiteEditor/cl_editor.cpp:335
 msgid "Failed to open file"
@@ -4541,10 +4541,10 @@ msgstr "Le nom de l'objet est identique au nom du fichier"
 
 #: LiteEditor/compiler_pages.cpp:828
 msgid ""
-"By default, codelite will prepend the relative directory to the file name to compose an object name (e.g. src/a.cpp will generate object: src_a.o).\n"
+"By default, CodeLite will prepend the relative directory to the file name to compose an object name (e.g. src/a.cpp will generate object: src_a.o).\n"
 "Uncheck this option to make the object name exactly as the file name without any prefixes"
 msgstr ""
-"Par défaut, 'codelite' ajoutera le répertoire relatif au nom du fichier pour composer un nom d'objet (par exemple, src/a.cpp générera l'objet : src_a.o).\n"
+"Par défaut, CodeLite ajoutera le répertoire relatif au nom du fichier pour composer un nom d'objet (par exemple, src/a.cpp générera l'objet : src_a.o).\n"
 "Décochez cette option pour que le nom de l'objet corresponde exactement au nom du fichier sans aucun préfixe"
 
 #: LiteEditor/compiler_pages.cpp:1063
@@ -4774,7 +4774,7 @@ msgid ""
 "\n"
 "gdb has an option to 'remember' any breakpoints that it can't initially set, and automatically to set them when it becomes possible. It doesn't always work! However, tick this box to tell gdb to try."
 msgstr ""
-"Certains points d'arrêt ne peuvent pas être appliqués avant l'exécution du programme, ou même plus tard. C'est notamment un problème lorsque l'on essaie de déboguer à l'intérieur d'une bibliothèque qui est chargée dynamiquement ('CodeLite' lui-même contient des exemples de ce type).\n"
+"Certains points d'arrêt ne peuvent pas être appliqués avant l'exécution du programme, ou même plus tard. C'est notamment un problème lorsque l'on essaie de déboguer à l'intérieur d'une bibliothèque qui est chargée dynamiquement (CodeLite lui-même contient des exemples de ce type).\n"
 "\n"
 "'gdb' dispose d'une option qui lui permet de « mémoriser » les points d'arrêt qu'il ne peut pas définir initialement, et de les définir automatiquement lorsque cela devient possible. Cela ne fonctionne pas toujours ! Cependant, cochez cette case pour demander à gdb d'essayer."
 
@@ -4784,7 +4784,7 @@ msgstr "Appliquer des points d'arrêt après l'exécution de la fonction princip
 
 #: LiteEditor/debuggersettingsbasedlg.cpp:390
 msgid "Sometimes, some breakpoints won't apply cleanly until after main() has been reached. If this box is ticked, CodeLite won't try to apply them earlier."
-msgstr "Parfois, certains points d'arrêt ne s'appliqueront proprement qu'après que main() ait été atteint. Si cette case est cochée, 'CodeLite' n'essaiera pas de les appliquer plus tôt."
+msgstr "Parfois, certains points d'arrêt ne s'appliqueront proprement qu'après que main() ait été atteint. Si cette case est cochée, CodeLite n'essaiera pas de les appliquer plus tôt."
 
 #: LiteEditor/debuggersettingsbasedlg.cpp:395
 msgid "Automatically set breakpoint at main"
@@ -4800,14 +4800,14 @@ msgstr "Interruption lorsqu'une exception 'C++' est levée"
 
 #: LiteEditor/debuggersettingsbasedlg.cpp:411
 msgid "Raise CodeLite when a breakpoint is hit"
-msgstr "Lancer 'CodeLite' lorsqu'un point d'arrêt est atteint"
+msgstr "Lancer CodeLite lorsqu'un point d'arrêt est atteint"
 
 #: LiteEditor/debuggersettingsbasedlg.cpp:415
 msgid ""
 "Normally, when a breakpoint is hit, you'll want CodeLite to be raise to the top of the window z-order, so that you can examine values of variables etc.\n"
 "However you won't always want that to happen; in particular, not if the breakpoint has commands, which end in 'continue'. If so untick this box to stop it happening."
 msgstr ""
-"Normalement, lorsqu'un point d'arrêt est atteint, vous voudrez que 'CodeLite' remonte en haut de l'ordre z de la fenêtre, afin que vous puissiez examiner les valeurs des variables, etc.\n"
+"Normalement, lorsqu'un point d'arrêt est atteint, vous voudrez que CodeLite remonte en haut de l'ordre z de la fenêtre, afin que vous puissiez examiner les valeurs des variables, etc.\n"
 "Cependant, vous ne voudrez pas toujours que cela se produise ; en particulier, pas si le point d'arrêt a des commandes qui se terminent par « continue ». Dans ce cas, décochez cette case pour éviter que cela ne se produise."
 
 #: LiteEditor/debuggersettingsbasedlg.cpp:422
@@ -4836,10 +4836,10 @@ msgstr "Utiliser la touche 'CTRL' pour évaluer les expressions sous le curseur"
 
 #: LiteEditor/debuggersettingsbasedlg.cpp:448
 msgid ""
-"When enabled, codelite will evaluate the expression under the cursor only if the CTRL key is down. \n"
+"When enabled, CodeLite will evaluate the expression under the cursor only if the CTRL key is down. \n"
 "Otherwise, it will evaluate it automatically"
 msgstr ""
-"Lorsque cette option est activée, 'Codelite' évalue l'expression sous le curseur uniquement si la touche 'CTRL' est enfoncée. \n"
+"Lorsque cette option est activée, CodeLite évalue l'expression sous le curseur uniquement si la touche 'CTRL' est enfoncée.\n"
 "Sinon, il l'évalue automatiquement"
 
 #: LiteEditor/debuggersettingsbasedlg.cpp:453
@@ -4904,7 +4904,7 @@ msgstr "Nombre maximal de trames à autoriser dans une pile d'appels"
 
 #: LiteEditor/debuggersettingsbasedlg.cpp:620
 msgid "The maximum number of frames that CodeLite will display in the Call Stack tab. This protects against a very long hang while trying to show 100,000 frames in an infinite recursion situation."
-msgstr "Le nombre maximum d'images que 'CodeLite' affichera dans l'onglet Pile d'appel. Cela permet de se prémunir contre un blocage très long en essayant d'afficher 100 000 images dans une situation de récursivité infinie."
+msgstr "Le nombre maximum d'images que CodeLite affichera dans l'onglet Pile d'appel. Cela permet de se prémunir contre un blocage très long en essayant d'afficher 100 000 images dans une situation de récursivité infinie."
 
 #: LiteEditor/debuggersettingsbasedlg.cpp:627
 msgid "MinGW / Cygwin:"
@@ -5373,7 +5373,7 @@ msgstr "Mode des fins de ligne (EOL) :"
 
 #: LiteEditor/editorsettingslocalbase.cpp:289
 msgid "Set the editor's EOL mode (End Of Line). When set to 'Default' CodeLite will set the EOL according to the hosting OS"
-msgstr "Définit le mode 'EOL (End Of Line)' de l'éditeur. Lorsqu'il est réglé sur « Défaut », 'CodeLite' règle l'EOL' en fonction du système d'exploitation de l'hébergeur"
+msgstr "Définit le mode 'EOL (End Of Line)' de l'éditeur. Lorsqu'il est réglé sur « Défaut », CodeLite règle l'EOL' en fonction du système d'exploitation de l'hébergeur"
 
 #: LiteEditor/editorsettingslocalbase.cpp:300
 msgid "File font encoding"
@@ -6875,7 +6875,7 @@ msgstr "Démarrer ou poursuivre le débogage"
 
 #: LiteEditor/frame.cpp:1689
 msgid "Applying your choices and restarting CodeLite"
-msgstr "Appliquer vos choix et redémarrer 'CodeLite'"
+msgstr "Appliquer vos choix et redémarrer CodeLite"
 
 #: LiteEditor/frame.cpp:1691
 msgid "Applying your choices, this may take a few seconds"
@@ -6896,15 +6896,15 @@ msgstr "Eran Ifrah (Administrateur du projet)"
 
 #: LiteEditor/frame.cpp:1926
 msgid "CodeLite Home"
-msgstr "Accueil 'CodeLite'"
+msgstr "Accueil CodeLite"
 
 #: LiteEditor/frame.cpp:1935 Plugin/clAboutDialogBase.cpp:122
 msgid "CodeLite IDE"
-msgstr "Interface graphique 'CodeLite'"
+msgstr "Interface graphique CodeLite"
 
 #: LiteEditor/frame.cpp:1936 Plugin/clAboutDialogBase.cpp:55
 msgid "CodeLite, a free, open source, C/C++/Rust/Python/PHP and JavaScript IDE"
-msgstr "'CodeLite', une interface graphique 'C/C++/Rust/Python/PHP' et ''JavaScript gratuit et libre d'accès"
+msgstr "CodeLite, une interface graphique 'C/C++/Rust/Python/PHP' et JavaScript gratuit et libre d'accès"
 
 #: LiteEditor/frame.cpp:2089
 msgid ""
@@ -7005,11 +7005,11 @@ msgstr "Construire et déboguer"
 #: LiteEditor/frame.cpp:4013
 #, fuzzy
 msgid "The latest version of CodeLite is already installed on your system."
-msgstr "Une nouvelle version de 'CodeLite' est disponible au téléchargement"
+msgstr "Une nouvelle version de CodeLite est disponible au téléchargement"
 
 #: LiteEditor/frame.cpp:4022
 msgid "A new version of CodeLite is available for download"
-msgstr "Une nouvelle version de 'CodeLite' est disponible au téléchargement"
+msgstr "Une nouvelle version de CodeLite est disponible au téléchargement"
 
 #: LiteEditor/frame.cpp:4025
 msgid "Download"
@@ -7024,7 +7024,7 @@ msgid ""
 "Workspace or project settings have been modified outside of CodeLite\n"
 "Would you like to reload the workspace?"
 msgstr ""
-"Les paramètres de l'espace de travail ou du projet ont été modifiés en dehors de 'CodeLite'\n"
+"Les paramètres de l'espace de travail ou du projet ont été modifiés en dehors de CodeLite\n"
 "Voulez-vous recharger l'espace de travail ?"
 
 #: LiteEditor/frame.cpp:4776 Remoty/RemotyWorkspaceView.cpp:149 codelitephp/php-plugin/php_workspace_view.cpp:333
@@ -7551,7 +7551,7 @@ msgstr "Générateur de fichiers de fabrication"
 
 #: LiteEditor/project_settings_base_dlg.cpp:186
 msgid "Select the Makefile generator to use. By default, CodeLite uses its builtin Makefile generator"
-msgstr "Sélectionnez le générateur de 'Makefile' à utiliser. Par défaut, 'CodeLite' utilise son générateur de 'Makefile' intégré"
+msgstr "Sélectionnez le générateur de 'Makefile' à utiliser. Par défaut, CodeLite utilise son générateur de 'Makefile' intégré"
 
 #: LiteEditor/project_settings_base_dlg.cpp:189
 msgid "Arguments"
@@ -7573,7 +7573,7 @@ msgid ""
 msgstr ""
 "Sélectionnez le compilateur à utiliser. Le compilateur contrôle deux aspects du projet :\n"
 "- Si le projet n'est _pas_ une construction personnalisée, alors ce compilateur est utilisé pour la compilation\n"
-"- 'CodeLite' utilise la définition du compilateur pour analyser la sortie"
+"- CodeLite utilise la définition du compilateur pour analyser la sortie"
 
 #: LiteEditor/project_settings_base_dlg.cpp:203
 msgid "Intermediate Directory"
@@ -7613,7 +7613,7 @@ msgstr "Ce programme est une application graphique"
 
 #: LiteEditor/project_settings_base_dlg.cpp:222
 msgid "By marking the project as a GUI project, CodeLite will launch the program without any console terminal wrapping the process execution"
-msgstr "En marquant le projet comme un projet GUI, 'CodeLite' lancera le programme sans qu'aucun terminal de console n'entoure l'exécution du processus"
+msgstr "En marquant le projet comme un projet GUI, CodeLite lancera le programme sans qu'aucun terminal de console n'entoure l'exécution du processus"
 
 #: LiteEditor/project_settings_base_dlg.cpp:226
 msgid "Executable to Run / Debug"
@@ -7652,8 +7652,8 @@ msgid "Use separate debugger args"
 msgstr "Utiliser des arguments distincts pour le débogueur"
 
 #: LiteEditor/project_settings_base_dlg.cpp:252
-msgid "When enabled (.e.g. set to True) codelite will pass the arguments set in 'Debug Program Arguments'"
-msgstr "Lorsque cette option est activée (par exemple, si elle est réglée sur vrai), 'Codelite' transmet les arguments définis dans « Arguments du programme de débogage »."
+msgid "When enabled (.e.g. set to True) CodeLite will pass the arguments set in 'Debug Program Arguments'"
+msgstr "Lorsque cette option est activée (par exemple, si elle est réglée sur vrai), CodeLite transmet les arguments définis dans « Arguments du programme de débogage »."
 
 #: LiteEditor/project_settings_base_dlg.cpp:255
 msgid "Debug Program Arguments"
@@ -7693,7 +7693,7 @@ msgstr "Utilisation des paramètres globaux"
 
 #: LiteEditor/project_settings_base_dlg.cpp:338
 msgid "Define how CodeLite will merge the compiler settings defined in the 'Global Settings' with the settings defined on this page"
-msgstr "Définir comment 'CodeLite' va fusionner les paramètres du compilateur définis dans les 'Paramètres globaux' avec les paramètres définis sur cette page"
+msgstr "Définir comment CodeLite va fusionner les paramètres du compilateur définis dans les 'Paramètres globaux' avec les paramètres définis sur cette page"
 
 #: LiteEditor/project_settings_base_dlg.cpp:342 LiteEditor/project_settings_base_dlg.cpp:1295
 msgid "C++ Compiler Options"
@@ -7801,7 +7801,7 @@ msgstr "Utilisation avec les paramètres globaux"
 
 #: LiteEditor/project_settings_base_dlg.cpp:473 LiteEditor/project_settings_base_dlg.cpp:864
 msgid "Define how CodeLite will merge the linker settings defined in the 'Global Settings' with the settings defined on this page"
-msgstr "Définir comment 'CodeLite' va fusionner les paramètres de l'éditeur de liens définis dans les 'Paramètres globaux' avec les paramètres définis sur cette page"
+msgstr "Définir comment CodeLite va fusionner les paramètres de l'éditeur de liens définis dans les 'Paramètres globaux' avec les paramètres définis sur cette page"
 
 #: LiteEditor/project_settings_base_dlg.cpp:478
 msgid "Add additional linker options separated by semi-colon"
@@ -8463,7 +8463,7 @@ msgstr "Échec de l'enregistrement du fichier :\n"
 
 #: LiteEditor/replaceinfilespanel.cpp:174 LiteEditor/replaceinfilespanel.cpp:206
 msgid "CodeLite - Replace"
-msgstr "'CodeLite' - Remplacer"
+msgstr "CodeLite - Remplacer"
 
 #: LiteEditor/replaceinfilespanel.cpp:206
 msgid "Failed to open file:\n"
@@ -8539,7 +8539,7 @@ msgstr "Résoudre les ambiguïtés"
 
 #: LiteEditor/syntaxhighlightbasedlg.cpp:79
 msgid "CodeLite appearance:"
-msgstr "Apparence 'CodeLite' :"
+msgstr "Apparence CodeLite :"
 
 #: LiteEditor/syntaxhighlightbasedlg.cpp:84
 msgid "System default"
@@ -8592,7 +8592,7 @@ msgid ""
 "the same family"
 msgstr ""
 "Définir un thème global pour toutes les langues supportées.\n"
-"Si le thème n'est pas disponible pour un langage donnée, 'CodeLite' utilisera le prochain thème disponible de la\n"
+"Si le thème n'est pas disponible pour un langage donné, CodeLite utilisera le prochain thème disponible de la\n"
 "de la même famille"
 
 #: LiteEditor/syntaxhighlightbasedlg.cpp:219 codelitephp/php-plugin/php_ui.cpp:1717
@@ -9031,7 +9031,7 @@ msgstr "'BACKSPACE' déclenche l'achèvement du code"
 
 #: LiteEditor/tags_options_base_dlg.cpp:84
 msgid "Deleting character will cause CodeLite to re-trigger the code completion"
-msgstr "L'effacement d'un caractère entraînera le ré-déclenchement de l'achèvement du code par 'CodeLite'"
+msgstr "L'effacement d'un caractère entraînera le ré-déclenchement de la complétion du code par CodeLite"
 
 #: LiteEditor/tags_options_base_dlg.cpp:88
 msgid "Generate compile_commands.json file"
@@ -9050,8 +9050,8 @@ msgid ""
 "The minimum number of characters to type in order for CodeLite\n"
 "to trigger code completion"
 msgstr ""
-"Le nombre minimum de caractères à taper pour que 'CodeLite'\n"
-"déclenche l'achèvement du code"
+"Le nombre minimum de caractères à taper pour que CodeLite\n"
+"déclenche la complétion du code"
 
 #: LiteEditor/tags_options_base_dlg.cpp:114
 msgid "Number of chars to type before showing the code completion box"
@@ -9102,7 +9102,7 @@ msgid ""
 "However, you may choose a different\n"
 "set to become the active set when this workspace is loaded selecting it here."
 msgstr ""
-"Par défaut, 'CodeLite' utilise les variables d'environnement actives définies dans la boîte de dialogue Paramètres > Variables d'environnement.\n"
+"Par défaut, CodeLite utilise les variables d'environnement actives définies dans la boîte de dialogue Paramètres > Variables d'environnement.\n"
 "dans la boîte de dialogue Paramètres > Variables d'environnement.\n"
 "Cependant, vous pouvez choisir un\n"
 "pour qu'il devienne le jeu actif lors du chargement de cet espace de travail en le sélectionnant ici."
@@ -10211,7 +10211,7 @@ msgstr "Différences des dossiers"
 
 #: Plugin/Diff/clDiffFrame.cpp:13 Plugin/Diff/clDiffFrame.cpp:36 Plugin/Diff/clDiffFrame.cpp:57
 msgid "CodeLite - Diff View"
-msgstr "'CodeLite' - Voir les différences"
+msgstr "CodeLite - Voir les différences"
 
 #: Plugin/EnvironmentVariablesDlg.cpp:112
 #, c-format
@@ -10237,7 +10237,7 @@ msgid ""
 "Define here set of environment variables which will be applied by CodeLite before launching processes.\n"
 "Variables are defined in the format of NAME=VALUE"
 msgstr ""
-"Définissez ici un ensemble de variables d'environnement qui seront appliquées par 'CodeLite' avant le lancement des processus.\n"
+"Définissez ici un ensemble de variables d'environnement qui seront appliquées par CodeLite avant le lancement des processus.\n"
 "Les variables sont définies dans le format suivant : NOM=VALEUR"
 
 #: Plugin/EnvironmentVariablesDlgBase.cpp:39
@@ -10445,8 +10445,8 @@ msgstr ""
 "-I/home/eran/wx/include\n"
 "-DSOME=1'\n"
 "\n"
-"Ces drapeaux seront utilisés par 'CodeLite' pour un meilleur\n"
-"achèvement du code"
+"Ces drapeaux seront utilisés par CodeLite pour une meilleure\n"
+"complétion du code"
 
 #: Plugin/FileSystemWorkspace/clFileSystemWorkspaceDlgBase.cpp:663
 msgid "Environment variables:"
@@ -10943,7 +10943,7 @@ msgid ""
 "Would like CodeLite to fix this for you?"
 msgstr ""
 "Le compilateur basé sur 'MSYS' nécessite un générateur de 'Makefile UNIX'\n"
-"Vous souhaitez que 'CodeLite' corrige ce problème pour vous ?"
+"Souhaitez-vous que CodeLite corrige ce problème pour vous ?"
 
 #: Plugin/NewProjectDialog.cpp:260
 msgid ""
@@ -10951,7 +10951,7 @@ msgid ""
 "Would like CodeLite to fix this for you?"
 msgstr ""
 "Le compilateur 'Visual C++' nécessite un générateur 'NMake'\n"
-"Vous souhaitez que 'CodeLite' corrige ce problème pour vous ?"
+"Souhaitez-vous que CodeLite corrige ce problème pour vous ?"
 
 #: Plugin/NewProjectDialogBase.cpp:60
 msgid "Create the project in its own folder"
@@ -11437,7 +11437,7 @@ msgstr "' qui est nécessaire\n"
 
 #: Plugin/builder/builder_NMake.cpp:173 Plugin/builder/builder_gnumake.cpp:164 Plugin/builder/builder_gnumake_default.cpp:184
 msgid "CodeLite can not find project '"
-msgstr "'CodeLite' ne trouve pas le projet '"
+msgstr "CodeLite ne trouve pas le projet '"
 
 #: Plugin/builder/builder_NMake.cpp:174 Plugin/builder/builder_gnumake.cpp:165 Plugin/builder/builder_gnumake_default.cpp:185
 msgid "for building project '"
@@ -11497,7 +11497,7 @@ msgstr "Bienvenue dans l'assistant de configuration"
 
 #: Plugin/clBoostrapWizardBase.cpp:35
 msgid "This wizard will help you setup CodeLite to fit your coding style. Click Next to continue"
-msgstr "Cet assistant vous aidera à configurer 'CodeLite' en fonction de votre style de codage. Cliquez sur Suivant pour continuer"
+msgstr "Cet assistant vous aidera à configurer CodeLite en fonction de votre style de codage. Cliquez sur Suivant pour continuer"
 
 #: Plugin/clBoostrapWizardBase.cpp:48
 msgid "Not this time!"
@@ -11505,7 +11505,7 @@ msgstr "Pas cette fois-ci !"
 
 #: Plugin/clBoostrapWizardBase.cpp:49
 msgid "If your CodeLite is already configured the way you like it, click to skip the Wizard"
-msgstr "Si votre 'CodeLite' est déjà configuré comme vous le souhaitez, cliquez sur pour ignorer l'assistant"
+msgstr "Si votre CodeLite est déjà configuré comme vous le souhaitez, cliquez spour ignorer l'assistant"
 
 #: Plugin/clBoostrapWizardBase.cpp:65
 msgid "Development Profile"
@@ -11533,7 +11533,7 @@ msgstr "Mise en place des compilateurs"
 
 #: Plugin/clBoostrapWizardBase.cpp:101
 msgid "Let CodeLite configure your installed compilers or help you install one"
-msgstr "Laissez 'CodeLite' configurer les compilateurs installés ou vous aider à en installer un"
+msgstr "Laissez CodeLite configurer les compilateurs installés ou vous aider à en installer un"
 
 #: Plugin/clBoostrapWizardBase.cpp:108
 msgid "Click to scan your computer for installed compilers"
@@ -11581,7 +11581,7 @@ msgstr ""
 
 #: Plugin/clBoostrapWizardBase.cpp:232
 msgid "Should CodeLite use TABS or SPACES for indentation?"
-msgstr "'CodeLite' doit-il utiliser les 'TABULATIONS' ou les ESPACES pour l'indentation ?"
+msgstr "CodeLite doit-il utiliser les 'TABULATIONS' ou les ESPACES pour l'indentation ?"
 
 #: Plugin/clBoostrapWizardBase.cpp:232
 msgid "Whitespace & Indentation"
@@ -12140,7 +12140,7 @@ msgstr "Extension à la date du jour"
 
 #: Plugin/macrosdlg.cpp:98
 msgid "Expands to CodeLite's startup directory on (e.g. on Unix it expands to ~/.codelite/)"
-msgstr "S'étend au répertoire de démarrage de 'CodeLite' (par exemple, sous 'Unix', il s'étend à '~/.codelite/')."
+msgstr "S'étend au répertoire de démarrage de CodeLite (par exemple, sous 'Unix', il s'étend à '~/.codelite/')."
 
 #: Plugin/macrosdlg.cpp:101
 msgid "A space delimited string containing all of the project files in a relative path to the project file"
@@ -12644,7 +12644,7 @@ msgstr "Nouveau projet 'Qmake'"
 
 #: QmakePlugin/qmakeplugin.cpp:59 QmakePlugin/qmakeplugin.cpp:70
 msgid "Qt's QMake integration with CodeLite"
-msgstr "Intégration de 'QMake' avec 'CodeLite'"
+msgstr "Intégration de 'QMake' avec CodeLite"
 
 #: QmakePlugin/qmakeplugin.cpp:99 QmakePlugin/qmakeplugin.cpp:101
 msgid "Create new qmake based project"
@@ -12742,7 +12742,7 @@ msgstr "ligne d'exécution de 'qmake' :"
 
 #: QmakePlugin/qmaketabbase.cpp:63
 msgid "CodeLite will place the below text after the auto generated section (so you may override the generated variables)"
-msgstr "'CodeLite' placera le texte ci-dessous après la section générée automatiquement (vous pouvez donc remplacer les variables générées)"
+msgstr "CodeLite placera le texte ci-dessous après la section générée automatiquement (vous pouvez donc remplacer les variables générées)"
 
 #: Remoty/RemotyNewWorkspaceDlg.cpp:18
 msgid "Seelct a folder"
@@ -13573,7 +13573,7 @@ msgstr "Cacher"
 
 #: Runtime/rc/menu.xrc:1063
 msgid "Open in CodeLite"
-msgstr "Ouvrir dans 'CodeLite'"
+msgstr "Ouvrir dans CodeLite"
 
 #: Runtime/rc/menu.xrc:1066
 msgid "Open with &Default Application"
@@ -13633,7 +13633,7 @@ msgstr "Génère la chaîne documentaire pour le scope actuel"
 
 #: Rust/RustPlugin.cpp:64 Rust/RustPlugin.cpp:74
 msgid "Rust plugin for CodeLite IDE"
-msgstr "Extension 'Rust' pour l'IDE 'CodeLite'"
+msgstr "Extension 'Rust' pour l'IDE CodeLite"
 
 #: Rust/RustPlugin.cpp:216
 msgid "Select the folder to run 'cargo new'"
@@ -13744,8 +13744,8 @@ msgid "Remote Grep"
 msgstr "'Grep' à distance"
 
 #: SFTP/sftp.cpp:79 SFTP/sftp.cpp:89
-msgid "SFTP plugin for codelite IDE"
-msgstr "Extension 'SFTP' pour l'IDE Codelite'"
+msgid "SFTP plugin for CodeLite IDE"
+msgstr "Extension 'SFTP' pour l'IDE CodeLite"
 
 #: SFTP/sftp.cpp:126 SFTP/sftp.cpp:129 SFTP/sftp.cpp:135 SFTP/sftp.cpp:152 SFTP/sftp.cpp:177 SFTP/sftp.cpp:340 SFTP/sftp.cpp:457 SFTP/sftp.cpp:500 SFTP/sftp.cpp:535 SFTP/sftp.cpp:554 SFTP/sftp.cpp:577 codelitephp/php-plugin/PhpSFTPHandler.cpp:180
 msgid "SFTP"
@@ -14075,11 +14075,11 @@ msgstr "Aucune faute d'orthographe n'a été trouvée !"
 
 #: SpellChecker/spellcheck.cpp:89
 msgid "CodeLite spell checker"
-msgstr "Vérificateur d'orthographe 'CodeLite'"
+msgstr "Vérificateur d'orthographe CodeLite"
 
 #: SpellChecker/spellcheck.cpp:130
 msgid "CodeLite spell-checker"
-msgstr "Vérificateur d'orthographe 'CodeLite'"
+msgstr "Vérificateur d'orthographe CodeLite"
 
 #: SpellChecker/spellcheck.cpp:171
 msgid "Check spelling..."
@@ -14355,7 +14355,7 @@ msgstr "Utiliser la localisation 'POSIX'"
 
 #: Subversion2/subversion2_ui.cpp:454
 msgid "When checked, CodeLite will use the default \"C\" locale instead of the current locale. This will ensure that svn command line output is parsed properly."
-msgstr "Si cette option est cochée, 'CodeLite' utilisera la locale 'C' par défaut au lieu de la locale actuelle. Cela permet de s'assurer que la ligne de commande 'svn' est correctement analysée."
+msgstr "Si cette option est cochée, CodeLite utilisera la locale 'C' par défaut au lieu de la locale actuelle. Cela permet de s'assurer que la ligne de commande 'svn' est correctement analysée."
 
 #: Subversion2/subversion2_ui.cpp:461
 msgid "External Diff"
@@ -14482,7 +14482,7 @@ msgid ""
 "Enter here the message to add to the commit log. You may use the $(BUG_URL) and $(BUGID) macros.\n"
 "An example: \"Fixed: BUG#$(BUGID), See $(BUG_URL) for more details\""
 msgstr ""
-"Si cette option est cochée, 'CodeLite' utilisera la commande Entrer ici le message à ajouter au journal de livraison. Vous pouvez utiliser les macros $(BUG_URL) et $(BUGID).\n"
+"Si cette option est cochée, CodeLite utilisera la commande Entrer ici le message à ajouter au journal de livraison. Vous pouvez utiliser les macros $(BUG_URL) et $(BUGID).\n"
 "Voici un exemple : « Fixed : BUG#$(BUGID), See $(BUG_URL) for more details « locale par défaut “C” au lieu de la locale actuelle. Cela permet de s'assurer que la ligne de commande 'svn' est correctement analysée."
 
 #: Subversion2/subversion2_ui.cpp:1189
@@ -14905,8 +14905,8 @@ msgid ""
 "The name of the file of which CodeLite will generate the test code.\n"
 "When left empty, CodeLite will use the first available source file in target project"
 msgstr ""
-"Le nom du fichier dont 'CodeLite' générera le code de test.\n"
-"S'il est laissé vide, 'CodeLite' utilisera le premier fichier source disponible dans le projet cible"
+"Le nom du fichier dont CodeLite générera le code de test.\n"
+"S'il est laissé vide, CodeLite utilisera le premier fichier source disponible dans le projet cible"
 
 #: UnitTestCPP/newunittestbasedlg.cpp:77
 msgid "Project to whom this unit test should be added to:"
@@ -15133,7 +15133,7 @@ msgid ""
 "You may also use any of the known macros to CodeLite (click the 'Help' button)"
 msgstr ""
 "Vous pouvez utiliser le caractère '|' (pipe) pour définir la position du curseur.\n"
-"Vous pouvez également utiliser l'une des macros connues de 'CodeLite' (cliquez sur le bouton « Aide »)."
+"Vous pouvez également utiliser l'une des macros connues de CodeLite (cliquez sur le bouton « Aide »)."
 
 #: abbreviation/abbreviationssettingsbase.cpp:50 abbreviation/abbreviationssettingsbase.cpp:51
 msgid "Create a new abbreviation"
@@ -15213,8 +15213,8 @@ msgid "Generate Themes"
 msgstr "Générer des thèmes"
 
 #: codelite_make/cl_make_generator_app.cpp:212
-msgid "A makefile generator based on codelite's workspace"
-msgstr "Un générateur de 'makefile' basé sur l'espace de travail de 'codelite'"
+msgid "A makefile generator based on CodeLite's workspace"
+msgstr "Un générateur de makefile basé sur l'espace de travail de CodeLite"
 
 #: codelite_vim/VIM.cpp:35
 msgid "Enable vim mode"
@@ -15226,7 +15226,7 @@ msgstr "Paramètres de 'Vim'"
 
 #: codelite_vim/codelite_vim.cpp:24 codelite_vim/codelite_vim.cpp:34
 msgid "vim bindings for CodeLite"
-msgstr "liens 'vim' pour 'CodeLite'"
+msgstr "liens 'vim' pour CodeLite"
 
 #: codelite_vim/vimCommands.cpp:1935 codelite_vim/vim_manager.cpp:223
 msgid "Searching: "
@@ -15443,13 +15443,13 @@ msgstr ""
 "classe"
 
 #: codelitephp/php-plugin/php.cpp:55
-msgid "Enable PHP support for codelite IDE"
-msgstr "Activer le support PHP pour l'IDE' Codelite'"
+msgid "Enable PHP support for CodeLite IDE"
+msgstr "Activer le support PHP pour l'IDE CodeLite"
 
 #: codelitephp/php-plugin/php.cpp:73
 #, fuzzy
 msgid "PHP Plugin for the CodeLite IDE"
-msgstr "Extension 'PHP' pour l'IDE 'Codelite'"
+msgstr "Extension 'PHP' pour l'IDE CodeLite"
 
 #: codelitephp/php-plugin/php.cpp:300
 #, c-format
@@ -15567,11 +15567,11 @@ msgstr "Attendre la connexion de 'XDebug' sur cet hôte"
 
 #: codelitephp/php-plugin/php_ui.cpp:514 codelitephp/php-plugin/php_ui.cpp:521
 msgid ""
-"The port on which codelite is accepting debug sessions from XDebug\n"
+"The port on which CodeLite is accepting debug sessions from XDebug\n"
 "This value must be the same as the value set in the 'xdebug.remote_port'\n"
 "directive"
 msgstr ""
-"Le port sur lequel 'Codelite' accepte les sessions de débogage de 'XDebug'.\n"
+"Le port sur lequel CodeLite accepte les sessions de débogage de 'XDebug'.\n"
 "Cette valeur doit être la même que celle définie dans la directive 'xdebug.remote_port'\n"
 "de la directive"
 
@@ -15581,7 +15581,7 @@ msgstr "Clé 'IDE :"
 
 #: codelitephp/php-plugin/php_ui.cpp:531
 msgid "This field defines the session name between CodeLite and XDebug"
-msgstr "Ce champ définit le nom de la session entre 'CodeLite' et 'XDebug'"
+msgstr "Ce champ définit le nom de la session entre CodeLite et 'XDebug'"
 
 #: codelitephp/php-plugin/php_ui.cpp:537
 msgid "The XDebug session name"
@@ -15665,7 +15665,7 @@ msgid ""
 "CodeLite will only display these file types in the project view"
 msgstr ""
 "Définir les extensions de fichiers à inclure dans ce projet\n"
-"'CodeLite' n'affichera que ces types de fichiers dans la vue du projet"
+"CodeLite n'affichera que ces types de fichiers dans la vue du projet"
 
 #: codelitephp/php-plugin/php_ui.cpp:831
 msgid "Exclude folders"
@@ -15827,7 +15827,7 @@ msgid ""
 "There is no need to add the project folders, these are parsed automatically"
 msgstr ""
 "Vous pouvez ajouter des dossiers ici pour une meilleure complétion du code.\n"
-"'CodeLite' scrutera ces dossiers à la recherche de fichiers PHP pour une meilleure complétion du code.\n"
+"CodeLite scrutera ces dossiers à la recherche de fichiers PHP pour une meilleure complétion du code.\n"
 "\n"
 "Il n'est pas nécessaire d'ajouter les dossiers du projet, ils sont analysés automatiquement"
 
@@ -15841,7 +15841,7 @@ msgid ""
 "CodeLite will listen on this port for new incoming messages from XDebug"
 msgstr ""
 "Configurer le numéro de port 'XDebug'\n"
-"'CodeLite' écoutera sur ce port les nouveaux messages entrants en provenance de 'XDebug'"
+"CodeLite écoutera sur ce port les nouveaux messages entrants en provenance de 'XDebug'"
 
 #: codelitephp/php-plugin/php_ui.cpp:1912
 msgid "Port number:"
@@ -15849,15 +15849,15 @@ msgstr "Numéro de port :"
 
 #: codelitephp/php-plugin/php_ui.cpp:1920
 msgid "Set the port on which CodeLite will be listening for new connections from XDebug. The default port is 9000"
-msgstr "Définit le port sur lequel 'CodeLite' écoutera les nouvelles connexions en provenance de 'XDebug'. Le port par défaut est 9000"
+msgstr "Définit le port sur lequel CodeLite écoutera les nouvelles connexions en provenance de 'XDebug'. Le port par défaut est 9000"
 
 #: codelitephp/php-plugin/php_ui.cpp:1936
 msgid "CodeLite IP address"
-msgstr "Adresse 'IP' de 'CodeLite'"
+msgstr "Adresse 'IP' de CodeLite"
 
 #: codelitephp/php-plugin/php_ui.cpp:1936
 msgid "Set the IP address on which CodeLite is running"
-msgstr "Définir l'adresse 'IP' sur laquelle 'CodeLite' s'exécute"
+msgstr "Définir l'adresse 'IP' sur laquelle CodeLite s'exécute"
 
 #: codelitephp/php-plugin/php_ui.cpp:1949
 msgid "IP address:"
@@ -15868,7 +15868,7 @@ msgid ""
 "Set the IP address on which CodeLite is listening.\n"
 "This IP needs to be visible to the machine where XDebug is running."
 msgstr ""
-"Définissez l'adresse IP sur laquelle 'CodeLite' écoute.\n"
+"Définissez l'adresse IP sur laquelle CodeLite écoute.\n"
 "Cette adresse IP doit être visible par la machine sur laquelle 'XDebug' s'exécute."
 
 #: codelitephp/php-plugin/php_ui.cpp:1973
@@ -15877,7 +15877,7 @@ msgstr "Clé 'IDE'"
 
 #: codelitephp/php-plugin/php_ui.cpp:1973 codelitephp/php-plugin/php_ui.cpp:1993
 msgid "Set the IDE key between CodeLite and XDebug"
-msgstr "Définir la clé de l'IDE entre 'CodeLite' et 'XDebug'"
+msgstr "Définir la clé de l'IDE entre CodeLite et 'XDebug'"
 
 #: codelitephp/php-plugin/php_ui.cpp:2015
 msgid "Setup XDebug INI settings"
@@ -16140,11 +16140,11 @@ msgstr "Faire cela pour tous les fichiers"
 
 #: cppchecker/cppchecker.cpp:73
 msgid "CppChecker integration for CodeLite IDE"
-msgstr "Intégration de 'CppChecker' dans l'IDE 'CodeLite'"
+msgstr "Intégration de 'CppChecker' dans l'IDE CodeLite"
 
 #: cppchecker/cppchecker.cpp:85
 msgid "CppCheck integration for CodeLite IDE"
-msgstr "Intégration de 'CppCheck' dans l'IDE 'CodeLite'"
+msgstr "Intégration de 'CppCheck' dans l'IDE CodeLite"
 
 #: cppchecker/cppchecker.cpp:101 cppchecker/cppchecker.cpp:109
 msgid "Run cppcheck..."
@@ -16236,7 +16236,7 @@ msgstr "Paramètres du 'CScope'"
 
 #: cscope/cscope.cpp:64 cscope/cscope.cpp:75
 msgid "CScope Integration for CodeLite"
-msgstr "Intégration de 'CScope' pour 'CodeLite'"
+msgstr "Intégration de 'CScope' pour CodeLite"
 
 #: cscope/cscope.cpp:94 cscope/cscope.cpp:214
 msgid "Find selected text"
@@ -17155,14 +17155,14 @@ msgstr "'git' applique des drapeaux supplémentaires à utiliser :"
 
 #: git/gitui.cpp:1554
 msgid ""
-"By default, codelite uses the command 'git apply --whitespace=nowarn --ignore-whitespace' for applying patch files.\n"
+"By default, CodeLite uses the command 'git apply --whitespace=nowarn --ignore-whitespace' for applying patch files.\n"
 "Set here an extra flags to use with this command, e.g.:\n"
 "\n"
 "--reverse\n"
 "\n"
 "See the git manual for more options"
 msgstr ""
-"Par défaut, 'codelite' utilise la commande 'git apply --whitespace=nowarn --ignore-whitespace' pour appliquer les corrections.\n"
+"Par défaut, CodeLite utilise la commande 'git apply --whitespace=nowarn --ignore-whitespace' pour appliquer les corrections.\n"
 "Définissez ici un drapeau supplémentaire à utiliser avec cette commande, par exemple :\n"
 "\n"
 "--reverse\n"
@@ -17251,8 +17251,8 @@ msgid ""
 "CodeLite to terminate the release note generation process\n"
 "when the number of tokens generated hits this limit."
 msgstr ""
-"Les modèle ne sont pas parfaits. Cette limites hautes instruit\n"
-"Codelite de terminer le processus de génération de noes de release\n"
+"Les modèles ne sont pas parfaits. Cette limite haute instruit\n"
+"CodeLite de terminer le processus de génération de notes de release\n"
 "lorsque le nombre de tokens générés atteint cette limite."
 
 #: git/gitui.cpp:2028
@@ -20395,8 +20395,10 @@ msgid "The title, if any"
 msgstr "Le titre, le cas échéant"
 
 #: wxcrafter/controls/top_level_win_wrapper.cpp:62
+#: wxcrafter/top_level_windows/AuiToolBarTopLevel.cpp:47
+#: wxcrafter/top_level_windows/image_list_wrapper.cpp:21
 msgid "CodeLite's virtual folder for the generated files"
-msgstr "Dossier virtuel de 'CodeLite' pour les fichiers générés"
+msgstr "Dossier virtuel de CodeLite pour les fichiers générés"
 
 #: wxcrafter/controls/top_level_win_wrapper.cpp:66
 msgid "Centre on parent. This may be in both dimensions (the default); only vertically or horizontally; or not at all."
@@ -21262,7 +21264,7 @@ msgstr "Générer le code"
 
 #: wxcrafter/src/main.cpp:224
 msgid "Back to CodeLite"
-msgstr "Retour à 'CodeLite'"
+msgstr "Retour à CodeLite"
 
 #: wxcrafter/src/main.cpp:727
 msgid "Create an empty wxCrafter project"
@@ -22322,8 +22324,8 @@ msgid "[wxCrafter]"
 msgstr ""
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:1202
-msgid "In order for the change to take place, you need to restart codelite"
-msgstr "Pour que la modification soit prise en compte, vous devez redémarrer 'Codelite'"
+msgid "In order for the change to take place, you need to restart CodeLite"
+msgstr "Pour que la modification soit prise en compte, vous devez redémarrer CodeLite"
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:1261
 msgid "Open with wxCrafter..."
@@ -23134,10 +23136,6 @@ msgstr "Génération du code ..."
 msgid "Generated Code For the following projects:\n"
 msgstr "Code généré pour les projets suivants :\n"
 
-#: wxcrafter/top_level_windows/AuiToolBarTopLevel.cpp:47 wxcrafter/top_level_windows/image_list_wrapper.cpp:21
-msgid "codelite's virtual folder for the generated files"
-msgstr "le dossier virtuel de codelite pour les fichiers générés"
-
 #: wxcrafter/top_level_windows/dialog_wrapper.cpp:23 wxcrafter/top_level_windows/wizard_wrapper.cpp:45
 msgid ""
 "A wxInitDialogEvent is sent as a dialog or panel is being initialised. Handlers for this event can transfer data to the window.\n"
@@ -23272,7 +23270,7 @@ msgstr "Nom de classe 'C++' invalide"
 
 #: wxformbuilder/wxformbuilder.cpp:54 wxformbuilder/wxformbuilder.cpp:65
 msgid "wxFormBuilder integration with CodeLite"
-msgstr "- Intégration de wxFormBuilder' avec 'CodeLite'"
+msgstr "- Intégration de wxFormBuilder' avec CodeLite"
 
 #: wxformbuilder/wxformbuilder.cpp:109 wxformbuilder/wxformbuilder.cpp:122
 msgid "wxFormBuilder"

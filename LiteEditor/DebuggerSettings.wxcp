@@ -3460,7 +3460,7 @@
 																		}, {
 																			"type":	"multi-string",
 																			"m_label":	"Tooltip:",
-																			"m_value":	"When enabled, codelite will evaluate the expression under the cursor only if the CTRL key is down. \\nOtherwise, it will evaluate it automatically"
+																			"m_value":	"When enabled, CodeLite will evaluate the expression under the cursor only if the CTRL key is down. \\nOtherwise, it will evaluate it automatically"
 																		}, {
 																			"type":	"colour",
 																			"m_label":	"Bg Colour:",

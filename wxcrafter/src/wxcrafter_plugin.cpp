@@ -1194,7 +1194,7 @@ void wxCrafterPlugin::OnSettings(wxCommandEvent& e)
     dlg.ShowModal();
 
     if (dlg.IsRestartRequired()) {
-        ::wxMessageBox(_("In order for the change to take place, you need to restart codelite"), _("wxCrafter"));
+        ::wxMessageBox(_("In order for the change to take place, you need to restart CodeLite"), _("wxCrafter"));
     }
 }
 

@@ -44,7 +44,7 @@ AuiToolBarTopLevelWrapper::AuiToolBarTopLevelWrapper()
         m_properties.Item(PROP_NAME)->SetTooltip(_("The generated C++ class name"));
     }
 
-    Add<VirtualFolderProperty>(PROP_VIRTUAL_FOLDER, "", _("codelite's virtual folder for the generated files"));
+    Add<VirtualFolderProperty>(PROP_VIRTUAL_FOLDER, "", _("CodeLite's virtual folder for the generated files"));
 
     Add<CategoryProperty>(_("Control Specific Settings"));
     Add<StringProperty>(PROP_BITMAP_SIZE, "16,16", _("Sets the default size of each tool bitmap"));

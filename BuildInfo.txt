@@ -78,7 +78,7 @@ Next, build codelite:
  $> cd codelite-src/
  $> ./mac-build.sh --cmake
  
- ... codelite will compile and will create a bundle, to run it:
+ ... CodeLite will compile and will create a bundle, to run it:
  
  $> open build-release/pack/codelite.app/
  

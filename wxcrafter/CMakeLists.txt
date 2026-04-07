@@ -139,7 +139,7 @@ else()
 endif()
 
 if(NOT WXC_APP)
-  # wxCrafter as codelite's plugin
+  # wxCrafter as CodeLite's plugin
   cl_install_plugin(${PLUGIN_NAME})
   cl_install_file_shared(${WXC_DIR}/wxgui.zip)
 elseif(NOT MINGW)

@@ -2709,7 +2709,7 @@ msgid "Invalid plugin name"
 msgstr ""
 
 #: Gizmos/PluginWizard.cpp:64
-msgid "codelite folder does not exists"
+msgid "CodeLite folder does not exists"
 msgstr ""
 
 #: Gizmos/PluginWizard.cpp:70
@@ -2774,11 +2774,11 @@ msgid "Provide the plugin a short description"
 msgstr ""
 
 #: Gizmos/gizmos_base.cpp:83
-msgid "codelite root dir:"
+msgid "CodeLite root dir:"
 msgstr ""
 
 #: Gizmos/gizmos_base.cpp:88
-msgid "Select the location of codelite's source tree"
+msgid "Select the location of CodeLite's source tree"
 msgstr ""
 
 #: Gizmos/gizmos_base.cpp:92 QmakePlugin/NewQtProj.cpp:47
@@ -5053,7 +5053,7 @@ msgstr ""
 
 #: LiteEditor/compiler_pages.cpp:828
 msgid ""
-"By default, codelite will prepend the relative directory to the file name to "
+"By default, CodeLite will prepend the relative directory to the file name to "
 "compose an object name (e.g. src/a.cpp will generate object: src_a.o).\n"
 "Uncheck this option to make the object name exactly as the file name without "
 "any prefixes"
@@ -5375,7 +5375,7 @@ msgstr ""
 
 #: LiteEditor/debuggersettingsbasedlg.cpp:448
 msgid ""
-"When enabled, codelite will evaluate the expression under the cursor only if "
+"When enabled, CodeLite will evaluate the expression under the cursor only if "
 "the CTRL key is down. \n"
 "Otherwise, it will evaluate it automatically"
 msgstr ""
@@ -8294,7 +8294,7 @@ msgstr ""
 
 #: LiteEditor/project_settings_base_dlg.cpp:252
 msgid ""
-"When enabled (.e.g. set to True) codelite will pass the arguments set in "
+"When enabled (.e.g. set to True) CodeLite will pass the arguments set in "
 "'Debug Program Arguments'"
 msgstr ""
 
@@ -14497,7 +14497,7 @@ msgid "Remote Grep"
 msgstr ""
 
 #: SFTP/sftp.cpp:79 SFTP/sftp.cpp:89
-msgid "SFTP plugin for codelite IDE"
+msgid "SFTP plugin for CodeLite IDE"
 msgstr ""
 
 #: SFTP/sftp.cpp:126 SFTP/sftp.cpp:129 SFTP/sftp.cpp:135 SFTP/sftp.cpp:152
@@ -15949,7 +15949,7 @@ msgid "Generate Themes"
 msgstr ""
 
 #: codelite_make/cl_make_generator_app.cpp:212
-msgid "A makefile generator based on codelite's workspace"
+msgid "A makefile generator based on CodeLite's workspace"
 msgstr ""
 
 #: codelite_vim/VIM.cpp:35
@@ -16181,7 +16181,7 @@ msgid ""
 msgstr ""
 
 #: codelitephp/php-plugin/php.cpp:55
-msgid "Enable PHP support for codelite IDE"
+msgid "Enable PHP support for CodeLite IDE"
 msgstr ""
 
 #: codelitephp/php-plugin/php.cpp:73
@@ -16308,7 +16308,7 @@ msgstr ""
 
 #: codelitephp/php-plugin/php_ui.cpp:514 codelitephp/php-plugin/php_ui.cpp:521
 msgid ""
-"The port on which codelite is accepting debug sessions from XDebug\n"
+"The port on which CodeLite is accepting debug sessions from XDebug\n"
 "This value must be the same as the value set in the 'xdebug.remote_port'\n"
 "directive"
 msgstr ""
@@ -17887,7 +17887,7 @@ msgstr ""
 
 #: git/gitui.cpp:1554
 msgid ""
-"By default, codelite uses the command 'git apply --whitespace=nowarn --"
+"By default, CodeLite uses the command 'git apply --whitespace=nowarn --"
 "ignore-whitespace' for applying patch files.\n"
 "Set here an extra flags to use with this command, e.g.:\n"
 "\n"
@@ -21603,6 +21603,8 @@ msgid "The title, if any"
 msgstr ""
 
 #: wxcrafter/controls/top_level_win_wrapper.cpp:62
+#: wxcrafter/top_level_windows/AuiToolBarTopLevel.cpp:47
+#: wxcrafter/top_level_windows/image_list_wrapper.cpp:21
 msgid "CodeLite's virtual folder for the generated files"
 msgstr ""
 
@@ -23598,7 +23600,7 @@ msgid "[wxCrafter]"
 msgstr ""
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:1202
-msgid "In order for the change to take place, you need to restart codelite"
+msgid "In order for the change to take place, you need to restart CodeLite"
 msgstr ""
 
 #: wxcrafter/src/wxcrafter_plugin.cpp:1261
@@ -24406,11 +24408,6 @@ msgstr ""
 
 #: wxcrafter/src/wxguicraft_main_view.cpp:3350
 msgid "Generated Code For the following projects:\n"
-msgstr ""
-
-#: wxcrafter/top_level_windows/AuiToolBarTopLevel.cpp:47
-#: wxcrafter/top_level_windows/image_list_wrapper.cpp:21
-msgid "codelite's virtual folder for the generated files"
 msgstr ""
 
 #: wxcrafter/top_level_windows/dialog_wrapper.cpp:23

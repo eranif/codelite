@@ -13,7 +13,7 @@ file(GLOB PLUGIN_SRCS "*.cpp")
 # Define the output - shared library
 add_library(${PLUGIN_NAME} SHARED ${PLUGIN_SRCS})
 
-# Codelite plugins doesn't use the "lib" prefix.
+# CodeLite plugins doesn't use the "lib" prefix.
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${LIBLLDB} libcodelite plugin dapcxx)
 target_include_directories(${PLUGIN_NAME} PRIVATE "${CL_SRC_ROOT}/submodules/wxdap")

@@ -54,10 +54,17 @@ struct clAuiFlatTabArt::Data {
         bool is_dark = DrawingUtils::IsDark(m_bgActive);
 
         wxColour colour_face = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-        m_fgNormal = m_fgActive.ChangeLightness(is_dark ? 60 : 115);
-        m_bgNormal = colour_face;//.ChangeLightness(is_dark ? 90 : 100);
-        m_bgWindow = m_bgNormal;
+#ifdef __WXMAC__
+        m_fgNormal = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
         m_fgHilite = wxSystemSettings::GetColour(wxSYS_COLOUR_HOTLIGHT);
+        m_bgNormal = colour_face;
+        m_bgWindow = colour_face.ChangeLightness(110);
+#else
+        m_fgNormal = m_fgActive.ChangeLightness(is_dark ? 150 : 115);
+        m_fgHilite = wxSystemSettings::GetColour(wxSYS_COLOUR_HOTLIGHT);
+        m_bgNormal = colour_face;
+        m_bgWindow = m_bgNormal;
+#endif
         m_fgDimmed = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
     }
 
@@ -175,13 +182,24 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
         dc.SetPen(*wxTRANSPARENT_PEN);
 
         // 1px border is too thin to be noticeable, so make it thicker.
+#if defined(__WXMAC__)
+        const int THICKNESS = wnd->FromDIP(1);
+#else
         const int THICKNESS = wnd->FromDIP(2);
+#endif
 
         const int y = m_flags & wxAUI_NB_BOTTOM ? page.rect.GetBottom() - THICKNESS : page.rect.GetTop();
 
         dc.DrawRectangle(page.rect.GetLeft() + 1, y, page.rect.GetWidth() - 1, THICKNESS);
         dc.SetPen(GetBorderColour());
         dc.DrawLine(page.rect.GetTopLeft(), page.rect.GetBottomLeft());
+
+#ifdef __WXMAC__
+        wxColour right_side_border = wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW);
+#else
+        wxColour right_side_border = GetBorderColour().ChangeLightness(50);
+#endif
+        dc.SetPen(wxPen(right_side_border, THICKNESS));
         dc.DrawLine(page.rect.GetTopRight(), page.rect.GetBottomRight());
     } else {
         dc.SetPen(GetBorderColour());
@@ -190,16 +208,6 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
 
     // Draw the icon, if any.
     int xStart = rect.x + wnd->FromDIP(Data::PADDING_X);
-#if 0
-    if (page.bitmap.IsOk()) {
-        const wxBitmap bmp = page.bitmap.GetBitmapFor(wnd);
-        const wxSize bitmapSize = bmp.GetLogicalSize();
-
-        dc.DrawBitmap(bmp, xStart, rect.y + (size.y - bitmapSize.y - 1) / 2, true /* use mask */);
-
-        xStart += bitmapSize.x + wnd->FromDIP(Data::MARGIN);
-    }
-#endif
 
     // Draw buttons: start by computing their total width (note that we don't
     // use any margin between them currently because the bitmaps we use don't

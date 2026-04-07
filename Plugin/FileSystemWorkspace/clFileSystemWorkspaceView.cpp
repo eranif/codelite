@@ -37,6 +37,13 @@ clFileSystemWorkspaceView::clFileSystemWorkspaceView(wxWindow* parent, const wxS
     m_choiceConfigs = new wxChoice(GetToolBar(), wxID_ANY, wxDefaultPosition, wxSize(width, wxNOT_FOUND));
     m_choiceConfigs->SetToolTip(_("Choose build configuration"));
     m_choiceConfigs->Bind(wxEVT_CHOICE, &clFileSystemWorkspaceView::OnChoiceConfigSelected, this);
+
+#if defined(__WXMAC__)
+    m_choiceConfigs->SetWindowVariant(wxWINDOW_VARIANT_MINI);
+#elif defined(__WXMSW__)
+    m_choiceConfigs->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+#endif
+
     GetToolBar()->AddSeparator();
     GetToolBar()->AddControl(m_choiceConfigs);
 

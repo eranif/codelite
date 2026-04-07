@@ -1,6 +1,7 @@
 #include "clAuiFlatTabArt.hpp"
 
 #if wxCHECK_VERSION(3, 3, 0)
+#ifndef __WXMAC__
 #include "drawingutils.h"
 
 #include <wx/app.h>
@@ -54,17 +55,10 @@ struct clAuiFlatTabArt::Data {
         bool is_dark = DrawingUtils::IsDark(m_bgActive);
 
         wxColour colour_face = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
-#ifdef __WXMAC__
-        m_fgNormal = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
-        m_fgHilite = wxSystemSettings::GetColour(wxSYS_COLOUR_HOTLIGHT);
-        m_bgNormal = colour_face;
-        m_bgWindow = colour_face.ChangeLightness(110);
-#else
         m_fgNormal = m_fgActive.ChangeLightness(is_dark ? 150 : 115);
         m_fgHilite = wxSystemSettings::GetColour(wxSYS_COLOUR_HOTLIGHT);
         m_bgNormal = colour_face;
         m_bgWindow = m_bgNormal;
-#endif
         m_fgDimmed = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
     }
 
@@ -98,6 +92,13 @@ clAuiFlatTabArt::clAuiFlatTabArt(clAuiFlatTabArt* other)
 }
 
 clAuiFlatTabArt::~clAuiFlatTabArt() { delete m_data; }
+
+void clAuiFlatTabArt::DoDrawBackground([[maybe_unused]] wxDC& dc,
+                                       [[maybe_unused]] wxWindow* wnd,
+                                       [[maybe_unused]] const wxRect& rect,
+                                       [[maybe_unused]] bool with_bg)
+{
+}
 
 void clAuiFlatTabArt::UpdateColoursFromSystem() { m_data->InitColours(); }
 
@@ -135,7 +136,7 @@ void clAuiFlatTabArt::DrawBackground(wxDC& dc, wxWindow* WXUNUSED(wnd), const wx
 
 void clAuiFlatTabArt::DrawBorder(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
-#if defined(__WXMAC__) || defined(__WXMSW__)
+#if defined(__WXMSW__)
     wxDCBrushChanger brush_changer{dc, *wxTRANSPARENT_BRUSH};
     wxDCPenChanger pen_changer{dc, wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE)};
     dc.DrawRectangle(rect);
@@ -182,11 +183,7 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
         dc.SetPen(*wxTRANSPARENT_PEN);
 
         // 1px border is too thin to be noticeable, so make it thicker.
-#if defined(__WXMAC__)
-        const int THICKNESS = wnd->FromDIP(1);
-#else
         const int THICKNESS = wnd->FromDIP(2);
-#endif
 
         const int y = m_flags & wxAUI_NB_BOTTOM ? page.rect.GetBottom() - THICKNESS : page.rect.GetTop();
 
@@ -194,11 +191,7 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
         dc.SetPen(GetBorderColour());
         dc.DrawLine(page.rect.GetTopLeft(), page.rect.GetBottomLeft());
 
-#ifdef __WXMAC__
-        wxColour right_side_border = wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW);
-#else
         wxColour right_side_border = GetBorderColour().ChangeLightness(50);
-#endif
         dc.SetPen(wxPen(right_side_border, THICKNESS));
         dc.DrawLine(page.rect.GetTopRight(), page.rect.GetBottomRight());
     } else {
@@ -346,4 +339,5 @@ int clAuiFlatTabArt::GetBestTabCtrlSize(wxWindow* wnd,
 
 int clAuiFlatTabArt::GetIndentSize() { return 0; }
 
+#endif
 #endif

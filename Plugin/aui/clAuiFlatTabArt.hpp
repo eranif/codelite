@@ -43,6 +43,7 @@ private:
     explicit clAuiFlatTabArt(clAuiFlatTabArt* other);
 
     virtual wxColour GetButtonColour(wxAuiButtonId button, wxAuiPaneButtonState state) const override;
+    void DoDrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect, bool with_bg);
 
     struct Data;
     Data* const m_data{nullptr};

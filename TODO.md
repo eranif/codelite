@@ -29,6 +29,7 @@ Medium:
 - AI: Add a system-message that instruct the model to NEVER create a summary file
 - Terminal: when optimizing for drawing, make sure that exclude cells with default attributes only.
 - When CodeLite looses focus, (AppKill) - remember which window had the focus and when CodeLite gains the focus, restore the focus to that window.
+
 Low:
 ----
 

@@ -42,15 +42,16 @@ struct clAuiFlatTabArt::Data {
 
     void InitColours()
     {
+        bool dark = DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
         m_bgActive = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW);
         m_fgActive = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
-        m_fgNormal = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
+        m_fgNormal = dark ? wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT)
+                          : wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT).ChangeLightness(97);
         m_fgHilite = wxSystemSettings::GetColour(wxSYS_COLOUR_HOTLIGHT);
         m_fgDimmed = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
 
         // The tab bar and inactive tabs are drawn darker than the active tab
         // so the active tab (which matches the editor content area) stands out.
-        bool dark = DrawingUtils::IsDark(wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW));
         m_bgActive = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOW).ChangeLightness(dark ? 120 : 100);
         wxColour face = wxSystemSettings::GetColour(wxSYS_COLOUR_3DFACE);
         m_bgNormal = face.ChangeLightness(dark ? 80 : 92);
@@ -115,6 +116,22 @@ wxAuiTabArt* clAuiFlatTabArt::Clone() { return new clAuiFlatTabArt(this); }
 // Drawing
 // ---------------------------------------------------------------------------
 
+static int kThickness = 4;
+static int GetThinRectY(const wxRect& rect, bool bottom_tabs)
+{
+    int y = bottom_tabs ? rect.GetBottom() - kThickness + 1 : rect.GetY() + kThickness - 1;
+    return y;
+}
+
+static int GetThinRectTo(const wxRect& rect, bool bottom_tabs) { return bottom_tabs ? rect.GetY() : rect.GetBottom(); }
+
+static wxColour GetDarkBorderColour(const wxColour& bgColour)
+{
+    wxColour border_colour =
+        DrawingUtils::IsDark(bgColour) ? *wxBLACK : wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW);
+    return border_colour;
+}
+
 void clAuiFlatTabArt::DoDrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect, bool with_bg)
 {
     // Uniform tab-bar surface.
@@ -124,18 +141,21 @@ void clAuiFlatTabArt::DoDrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& re
         dc.DrawRectangle(rect);
     }
 
+    bool bottom_tabs = (m_flags & wxAUI_NB_BOTTOM);
+    wxColour dark_pen = GetDarkBorderColour(m_data->m_bgWindow);
     {
-        int y = m_flags & wxAUI_NB_BOTTOM ? rect.GetTop() : rect.GetBottom();
-        wxColour pen_colour =
-            DrawingUtils::IsDark(m_data->m_bgWindow) ? *wxBLACK : wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);
-        dc.SetPen(wxPen(pen_colour, 1));
-        dc.DrawLine(rect.GetLeft(), y, rect.GetRight(), y);
+        dc.SetPen(dark_pen);
+        dc.SetBrush(m_data->m_bgActive);
+        wxRect thin_rect = rect;
+        thin_rect.SetHeight(kThickness);
+        thin_rect.y -= 1;
+        thin_rect.x -= 2;
+        thin_rect.width += 4;
+        dc.DrawRectangle(thin_rect);
     }
     {
-        const int thickness = 4;
-        int y = m_flags & wxAUI_NB_BOTTOM ? (rect.GetBottom() - thickness) : rect.GetTop();
-        wxColour pen_colour = m_data->m_bgActive;
-        dc.SetPen(wxPen(pen_colour, thickness));
+        int y = GetThinRectTo(rect, bottom_tabs);
+        dc.SetPen(wxPen(dark_pen, 1));
         dc.DrawLine(rect.GetLeft(), y, rect.GetRight(), y);
     }
 }
@@ -167,29 +187,30 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
     wxColour bg = page.active ? m_data->m_bgActive : m_data->m_bgNormal;
     wxColour textColour = page.active ? m_data->m_fgActive : m_data->m_fgNormal;
 
-    bool use_dynamic_colour = page.active && page.window && dynamic_cast<wxStyledTextCtrl*>(page.window) && false;
-    if (use_dynamic_colour) {
-        auto stc = dynamic_cast<wxStyledTextCtrl*>(page.window);
-        bg = stc->StyleGetBackground(0);
-        textColour =
-            DrawingUtils::IsDark(bg) ? wxColour("WHITE").ChangeLightness(90) : wxColour("BLACK").ChangeLightness(110);
-    }
-
-    // --- Fill the tab ---
-    dc.SetBrush(bg);
-    dc.SetPen(*wxTRANSPARENT_PEN);
-    dc.DrawRectangle(page.rect);
-
     if (page.active) {
+        bool is_dark = DrawingUtils::IsDark(m_data->m_bgWindow);
+        // --- Fill the tab ---
+        dc.SetBrush(bg);
+        dc.SetPen(*wxTRANSPARENT_PEN);
+        dc.DrawRectangle(page.rect);
+
         // Light border on both left and right edges (iTerm2 style).
         // Stop above the bottom underline.
         wxColour bar = m_data->m_bgActive;
         wxColour left_edge = bar.ChangeLightness(dark ? 110 : 90);
         dc.SetPen(left_edge);
-        dc.DrawLine(page.rect.GetTopLeft(), page.rect.GetBottomLeft());
-        wxColour right_edge = bar.ChangeLightness(dark ? 120 : 80);
+        bool bottom_tabs = m_flags & wxAUI_NB_BOTTOM;
+        int y1 = GetThinRectY(page.rect, bottom_tabs);
+        int y2 = GetThinRectTo(page.rect, bottom_tabs);
+        dc.DrawLine(page.rect.GetLeft(), y1, page.rect.GetLeft(), y2);
+
+        wxColour right_edge = bar.ChangeLightness(dark ? 115 : 70);
         dc.SetPen(right_edge);
-        dc.DrawLine(page.rect.GetTopRight(), page.rect.GetBottomRight());
+        dc.DrawLine(page.rect.GetRight(), y1, page.rect.GetRight(), y2);
+
+        dc.SetPen(wxPen{wxSystemSettings::GetColour(wxSYS_COLOUR_HOTLIGHT), 2});
+        int x_offset = is_dark ? 0 : 1;
+        dc.DrawLine(page.rect.GetLeft() + x_offset, y2, page.rect.GetRight() - x_offset, y2);
     }
 
     // --- Close / action buttons ---
@@ -237,11 +258,6 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
     const wxString& text = wxControl::Ellipsize(page.caption, dc, wxELLIPSIZE_END, xEnd - xStart);
     const int textHeight = dc.GetTextExtent(text).y;
     dc.DrawText(text, xStart, rect.y + (size.y - textHeight - 1) / 2);
-
-    if (!use_dynamic_colour) {
-        DoDrawBackground(dc, wnd, rect, false);
-    }
-
     return xExtent;
 }
 

@@ -300,6 +300,9 @@ protected:
     wxButton* m_button216;
 
 protected:
+    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnPersist(wxCommandEvent& event) { event.Skip(); }
+
 public:
     wxStaticText* GetStaticTextMessage() { return m_staticTextMessage; }
     wxDataViewListCtrl* GetDvListCtrlOptions() { return m_dvListCtrlOptions; }

@@ -846,6 +846,13 @@ ToolTrustLevelDlgBase::ToolTrustLevelDlgBase(
     } else {
         wxPersistenceManager::Get().Restore(this);
     }
+    // Connect events
+    m_dvListCtrlOptions->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &ToolTrustLevelDlgBase::OnItemActivated, this);
+    m_checkBox->Bind(wxEVT_COMMAND_CHECKBOX_CLICKED, &ToolTrustLevelDlgBase::OnPersist, this);
 }
 
-ToolTrustLevelDlgBase::~ToolTrustLevelDlgBase() {}
+ToolTrustLevelDlgBase::~ToolTrustLevelDlgBase()
+{
+    m_dvListCtrlOptions->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &ToolTrustLevelDlgBase::OnItemActivated, this);
+    m_checkBox->Unbind(wxEVT_COMMAND_CHECKBOX_CLICKED, &ToolTrustLevelDlgBase::OnPersist, this);
+}

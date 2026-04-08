@@ -19,4 +19,7 @@ public:
 
 private:
     std::vector<std::pair<wxString, wxString>> m_data;
+protected:
+    void OnItemActivated(wxDataViewEvent& event) override;
+    void OnPersist(wxCommandEvent& event) override;
 };

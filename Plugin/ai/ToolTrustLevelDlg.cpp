@@ -1,6 +1,7 @@
 #include "ToolTrustLevelDlg.hpp"
 
 #include "event_notifier.h"
+#include "wxCustomControls.hpp"
 
 #include <algorithm>
 
@@ -39,4 +40,25 @@ std::optional<wxString> ToolTrustLevelDlg::GetValue() const
     }
 
     return iter->second;
+}
+
+void ToolTrustLevelDlg::OnItemActivated(wxDataViewEvent& event)
+{
+    event.Skip();
+    CallAfter(&ToolTrustLevelDlg::EndModal, wxID_OK);
+}
+
+void ToolTrustLevelDlg::OnPersist(wxCommandEvent& event)
+{
+    auto result = GetValue();
+    if (!result.has_value()) {
+        return;
+    }
+
+    bool persist_entire_tool = result.value() == "*";
+    if (event.IsChecked() && persist_entire_tool) {
+        ::clMessageBox(_("Persisting an entire tool is not allowed"), "CodeLite", wxICON_WARNING | wxOK);
+        m_checkBox->CallAfter(&wxCheckBox::SetValue, false);
+        return;
+    }
 }

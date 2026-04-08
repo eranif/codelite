@@ -8382,7 +8382,15 @@
                       "m_value": ""
                     }
                   ],
-                  "m_events": [],
+                  "m_events": [
+                    {
+                      "m_eventName": "wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED",
+                      "m_eventClass": "wxDataViewEvent",
+                      "m_functionNameAndSignature": "OnItemActivated(wxDataViewEvent& event)",
+                      "m_description": "Process a wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED event.\nThis event is triggered by double clicking an item or pressing some special key (usually \"Enter\") when it is focused",
+                      "m_noBody": false
+                    }
+                  ],
                   "m_children": [
                     {
                       "m_type": 4472,
@@ -8548,7 +8556,15 @@
                       "m_value": false
                     }
                   ],
-                  "m_events": [],
+                  "m_events": [
+                    {
+                      "m_eventName": "wxEVT_COMMAND_CHECKBOX_CLICKED",
+                      "m_eventClass": "wxCommandEvent",
+                      "m_functionNameAndSignature": "OnPersist(wxCommandEvent& event)",
+                      "m_description": "Process a wxEVT_COMMAND_CHECKBOX_CLICKED event, when the checkbox is clicked.",
+                      "m_noBody": false
+                    }
+                  ],
                   "m_children": []
                 }
               ]

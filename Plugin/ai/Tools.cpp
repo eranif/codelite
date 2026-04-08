@@ -499,7 +499,7 @@ CanInvokeToolResult ApplyPatchConfirm(const std::string& tool_name, assistant::j
 
             std::vector<std::pair<wxString, wxString>> options{
                 {wxString::Format(_("Specific path: %s"), fullpath), fullpath},
-                {wxString::Format(_("Entire directory: %s/*"), dirpath), dirpath},
+                {wxString::Format(_("Entire directory: %s/*"), dirpath), dirpath + "/*"},
                 {_("Entire tool"), "*"},
             };
 

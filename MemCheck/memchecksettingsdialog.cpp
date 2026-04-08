@@ -11,6 +11,7 @@
 #include "windowattrmanager.h"
 
 #include <wx/app.h>
+#include <wx/filedlg.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
 

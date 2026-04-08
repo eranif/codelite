@@ -62,6 +62,12 @@ using assistant::OnResponseCallback;
 using assistant::Reason;
 using assistant::Usage;
 
+enum class PathMatch {
+    kNone = 0,
+    kIsPath = (1 << 0),
+    kExactMatchOnly = (1 << 1),
+};
+
 template <typename T>
 inline clStatusOr<T> CheckType(const llm::json& j, const std::string& name)
 {
@@ -700,7 +706,21 @@ public:
      *
      * @return bool True if the tool is trusted for the specified path; otherwise false.
      */
-    bool ChecIfPathIsAllowedForTool(const wxString& toolname, const wxString& path);
+    bool
+    CheckIfPathIsAllowedForTool(const wxString& toolname, const wxString& path, PathMatch flags = PathMatch::kNone);
+    /**
+     * @brief Checks whether all commands in a shell command string are allowed for a given tool.
+     *
+     * The command string is split into individual shell commands, and only the main executable
+     * from each command is validated against the tool's allowed path rules. If any command is
+     * empty or any executable is not permitted, the function returns false.
+     *
+     * @param toolname const wxString& Name of the tool requesting the command check.
+     * @param cmd const wxString& Full shell command string to validate.
+     * @param working_directory const wxString& Working directory associated with the command.
+     * @return bool true if every extracted command is allowed; false otherwise.
+     */
+    bool CheckIfShellCommandAllowed(const wxString& toolname, const wxString& cmd, const wxString& working_directory);
 
     /**
      * @brief Shows a dialog to choose a trust level for a tool.

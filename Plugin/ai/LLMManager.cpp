@@ -690,6 +690,9 @@ CanInvokeToolResult Manager::CanRunTool(const std::string& tool_name, [[maybe_un
         message << _("Would you like to persist trust for the tool '") << tool_name_utf8 << _("' for future sessions?");
         bool persist = ::clMessageBox(message, _("Confirm"), wxYES_NO | wxICON_QUESTION | wxNO_DEFAULT) == wxYES;
         GetInstance().GetConfig().AddTrustedTool(tool_name_utf8, wxEmptyString, persist);
+        if (persist) {
+            GetInstance().GetConfig().Save();
+        }
     });
 }
 
@@ -1492,23 +1495,65 @@ Manager::ShowTrustLevelDialog(const wxString& toolname, const std::vector<std::p
     return std::make_pair(result.value(), dlg.IsChecked());
 }
 
-bool Manager::ChecIfPathIsAllowedForTool(const wxString& toolname, const wxString& path)
+bool Manager::CheckIfPathIsAllowedForTool(const wxString& toolname, const wxString& path, PathMatch flags)
 {
-    return GetConfig().IsToolTrustedFor(toolname, [toolname, path](const wxString& trusted_pattern) -> bool {
-        wxString normalized_path = FileUtils::NormalizePath(path);
+    return GetConfig().IsToolTrustedFor(toolname, [toolname, path, flags](const wxString& trusted_pattern) -> bool {
+        wxString normalized_path = llm::IsFlagSet(flags, PathMatch::kIsPath) ? FileUtils::NormalizePath(path) : path;
         clDEBUG() << "Checking if tool:" << toolname << "with trusted pattern:" << trusted_pattern
-                  << "is allowed for file:" << normalized_path;
-        if (trusted_pattern == "*") {
+                  << "is allowed for file: '" << normalized_path << "'";
+        bool result{false};
+        bool exact_match_only = llm::IsFlagSet(flags, PathMatch::kExactMatchOnly);
+
+        if (!exact_match_only && trusted_pattern == "*") {
             // All
-            return true;
-        } else if (trusted_pattern.EndsWith("*")) {
+            clDEBUG() << "Allowed pattern is * => true" << endl;
+            result = true;
+        } else if (!exact_match_only && trusted_pattern.EndsWith("*")) {
             wxString dirprefix = trusted_pattern.Mid(0, trusted_pattern.size() - 1);
             // Prefix
-            return normalized_path.StartsWith(dirprefix);
+            result = normalized_path.StartsWith(dirprefix);
+            clDEBUG() << "checking if: '" << normalized_path << "' starts_with: '" << dirprefix << "'" << "=>" << result
+                      << endl;
         } else {
             // Exact match
-            return normalized_path == trusted_pattern;
+            result = (normalized_path == trusted_pattern);
+            clDEBUG() << "Using exact match between '" << normalized_path << "' and '" << trusted_pattern << "'"
+                      << "=>" << result << endl;
         }
+        return result;
     });
+}
+
+bool Manager::CheckIfShellCommandAllowed(const wxString& toolname,
+                                         const wxString& cmd,
+                                         const wxString& working_directory)
+{
+    clDEBUG() << "Checking if command:" << cmd << "is allowed." << endl;
+
+    // Split the command for the "main" command to check
+    auto commands = StringUtils::SplitShellCommand(cmd);
+    if (commands.empty()) {
+        return false;
+    }
+
+    wxArrayString commands_to_check;
+    for (const auto& v : commands) {
+        if (v.empty())
+            continue;
+        commands_to_check.Add(v[0] + " "); // Need the extra space since we keep items as "ls *"
+    }
+
+    if (commands_to_check.empty()) {
+        return false;
+    }
+
+    clDEBUG() << "Checking if the following commands:" << commands_to_check << "are allowed." << endl;
+    for (const wxString& cmd_to_check : commands_to_check) {
+        if (!GetInstance().CheckIfPathIsAllowedForTool(toolname, cmd_to_check)) {
+            return false;
+        }
+    }
+    // All commands are allowed.
+    return true;
 }
 } // namespace llm

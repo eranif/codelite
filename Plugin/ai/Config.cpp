@@ -177,8 +177,9 @@ void Config::AddTrustedTool(const wxString& toolname, const wxString& pattern, b
         auto it = std::ranges::find_if(patterns, [&pat](const std::string& p) { return p == pat; });
         if (it == patterns.end()) {
             patterns.push_back(pat);
+        } else {
+            *it = pat;
         }
-        *it = pat;
     }
 }
 
@@ -201,18 +202,26 @@ bool Config::IsToolTrustedFor(const wxString& toolname, std::function<bool(const
         return &it->second;
     };
 
-    auto pattens = check_list(m_persistingTrustedTools);
-    if (pattens == nullptr) {
-        pattens = check_list(m_transientTrustedTools);
+    std::vector<std::string> all_patterns;
+    auto patterns_persist = check_list(m_persistingTrustedTools);
+    auto patterns_non_persistent = check_list(m_transientTrustedTools);
+    if (patterns_persist) {
+        all_patterns.insert(all_patterns.end(), patterns_persist->begin(), patterns_persist->end());
     }
 
-    if (pattens == nullptr) {
+    if (patterns_non_persistent) {
+        all_patterns.insert(all_patterns.end(), patterns_non_persistent->begin(), patterns_non_persistent->end());
+    }
+
+    if (all_patterns.empty()) {
         return false;
     }
+
     if (check_pattern_cb == nullptr) {
         return true;
     }
-    for (const auto& pat : *pattens) {
+
+    for (const auto& pat : all_patterns) {
         if (check_pattern_cb(pat.empty() ? wxString{} : wxString::FromUTF8(pat)))
             return true;
     }

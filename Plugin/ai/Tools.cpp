@@ -487,7 +487,7 @@ CanInvokeToolResult ApplyPatchConfirm(const std::string& tool_name, assistant::j
     wxString fullpath = FileUtils::NormalizePath(wxString::FromUTF8(file_path));
     static constexpr const char* kApplyPatch = "ApplyPatch";
 
-    bool is_trusted = llm::Manager::GetInstance().ChecIfPathIsAllowedForTool(kApplyPatch, fullpath);
+    bool is_trusted = llm::Manager::GetInstance().CheckIfPathIsAllowedForTool(kApplyPatch, fullpath);
 
     // Apply patch "Trust" for this session (per path).
     if (!is_trusted) {
@@ -570,25 +570,64 @@ CanInvokeToolResult ShellExecuteConfirm(const std::string& tool_name, const assi
         };
     }
 
-    // We trust commands based on the execat command and working directory.
-    static thread_local std::unordered_set<std::string> shell_execute_trust_commands;
+    // Check if this command was already in the store.
+    static constexpr const char* kShellExecute = "ShellExecute";
+    wxString command_string = wxString::FromUTF8(command.value());
+    wxString working_dir = wxString::FromUTF8(working_directory.value());
+    bool is_trusted =
+        llm::Manager::GetInstance().CheckIfShellCommandAllowed(kShellExecute, command_string, working_dir) ||
+        llm::Manager::GetInstance().CheckIfPathIsAllowedForTool(
+            kShellExecute, command_string, llm::PathMatch::kExactMatchOnly);
 
-    std::string unique_command = working_directory.value() + " " + command.value();
-    if (shell_execute_trust_commands.contains(unique_command)) {
-        // trusted
+    if (is_trusted) {
         return CanInvokeToolResult{
             .can_invoke = true,
+            .reason = "Command is trusted.",
         };
     }
 
-    wxString cmd = wxString::FromUTF8(command.value());
     wxString message;
     message << _("The model wants to run the following shell command:\n```bash\n") << _("# Working directory\n")
-            << wxString::FromUTF8(working_directory.value()) << "\n\n"
-            << _("# Command\n") << cmd << "\n```\n";
-    return llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message, [unique_command]() {
-        shell_execute_trust_commands.erase(unique_command);
-        shell_execute_trust_commands.insert(unique_command);
+            << working_dir << "\n\n"
+            << _("# Command\n") << command_string << "\n```\n";
+
+    return llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message, [command_string]() {
+        auto commands_array = StringUtils::SplitShellCommand(command_string);
+
+        // Build a "Trust" options.
+        std::vector<std::pair<wxString, wxString>> options = {
+            {wxString::Format(_("Exact command: %s"), command_string), command_string}};
+        if (!commands_array.empty()) {
+            wxString command_list = "[";
+            for (const auto& commands : commands_array) {
+                if (commands.empty())
+                    continue;
+                command_list << commands[0] << " *;";
+            }
+            if (command_list.size() > 1) {
+                command_list.RemoveLast();
+            }
+            command_list << "]";
+            options.push_back(std::make_pair(wxString::Format(_("Tools: %s"), command_list), command_list));
+        }
+        options.push_back(std::make_pair(_("Entire tool"), "*"));
+
+        auto& config = llm::Manager::GetInstance().GetConfig();
+        auto result = llm::Manager::GetInstance().ShowTrustLevelDialog(kShellExecute, options);
+        if (result.has_value()) {
+            wxArrayString commands;
+            if (result->first.StartsWith("[") && result->first.EndsWith("]")) {
+                wxString trusted_string = result->first.Mid(1, result->first.size() - 2);
+                commands = wxStringTokenize(trusted_string, ";", wxTOKEN_STRTOK);
+            } else {
+                // Keep the exact string.
+                commands.Add(result->first);
+            }
+            for (const wxString& trusted_pattern : commands) {
+                config.AddTrustedTool(kShellExecute, trusted_pattern, result->second);
+            }
+            config.Save();
+        }
     });
 }
 

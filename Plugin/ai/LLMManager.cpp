@@ -689,7 +689,7 @@ CanInvokeToolResult Manager::CanRunTool(const std::string& tool_name, [[maybe_un
         wxString tool_name_utf8 = wxString::FromUTF8(tool_name);
         message << _("Would you like to persist trust for the tool '") << tool_name_utf8 << _("' for future sessions?");
         bool persist = ::clMessageBox(message, _("Confirm"), wxYES_NO | wxICON_QUESTION | wxNO_DEFAULT) == wxYES;
-        GetInstance().GetConfig().AddTrustedTool(tool_name_utf8, wxEmptyString, persist);
+        GetInstance().GetConfig().AddTrustedTool(tool_name_utf8, "*", persist);
         if (persist) {
             GetInstance().GetConfig().Save();
         }

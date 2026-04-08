@@ -190,7 +190,7 @@ void Config::DeleteTrustedTool(const wxString& toolname)
     m_transientTrustedTools.erase(toolname.ToStdString(wxConvUTF8));
 }
 
-bool Config::IsToolTrustedFor(const wxString& toolname, std::function<bool(const wxString&)> check_pattern_cb) const
+bool Config::IsToolTrustedFor(const wxString& toolname, OnTrustPattern check_pattern_cb) const
 {
     std::scoped_lock lk{m_mutex};
     auto check_list =

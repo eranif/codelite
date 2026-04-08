@@ -506,7 +506,9 @@ CanInvokeToolResult ApplyPatchConfirm(const std::string& tool_name, assistant::j
             auto result = llm::Manager::GetInstance().ShowTrustLevelDialog(kApplyPatch, options);
             if (result.has_value()) {
                 config.AddTrustedTool(kApplyPatch, result->first, result->second);
-                config.Save();
+                if (result->second) {
+                    config.Save();
+                }
             }
         });
     } else {
@@ -623,10 +625,14 @@ CanInvokeToolResult ShellExecuteConfirm(const std::string& tool_name, const assi
                 // Keep the exact string.
                 commands.Add(result->first);
             }
+
             for (const wxString& trusted_pattern : commands) {
                 config.AddTrustedTool(kShellExecute, trusted_pattern, result->second);
             }
-            config.Save();
+
+            if (result->second) {
+                config.Save();
+            }
         }
     });
 }

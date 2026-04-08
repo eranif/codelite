@@ -675,7 +675,8 @@ void Manager::Stop()
 
 CanInvokeToolResult Manager::CanRunTool(const std::string& tool_name, [[maybe_unused]] assistant::json args)
 {
-    if (GetInstance().GetConfig().IsToolTrustedFor(tool_name, nullptr)) {
+    if (GetInstance().GetConfig().IsToolTrustedFor(
+            tool_name, [](const wxString& pattern) -> bool { return pattern == "*"; })) {
         return CanInvokeToolResult{
             .can_invoke = true,
             .reason = "Tool is trusted",

@@ -27,11 +27,13 @@
 #define __CppChecker__
 
 #include "AsyncProcess/asyncprocess.h"
-#include "clTabTogglerHelper.h"
+#include "clToolBar.h"
+#include "clWorkspaceEvent.hpp"
+#include "cl_command_event.h"
+#include "imanager.h"
 #include "plugin.h"
 
-class wxMenuItem;
-class CppCheckReportPage;
+#include <wx/menu.h>
 
 class CppCheckPlugin : public IPlugin
 {
@@ -57,7 +59,7 @@ protected:
     void OnWorkspaceClosed(clWorkspaceEvent& e);
 
 public:
-    CppCheckPlugin(IManager* manager);
+    explicit CppCheckPlugin(IManager* manager);
     ~CppCheckPlugin() override = default;
 
     //--------------------------------------------
@@ -71,7 +73,7 @@ public:
     /**
      * @brief return true if analysis currently running
      */
-    bool AnalysisInProgress() const { return m_cppcheckProcess != NULL; }
+    bool AnalysisInProgress() const { return m_cppcheckProcess != nullptr; }
 };
 
 #endif // CppChecker

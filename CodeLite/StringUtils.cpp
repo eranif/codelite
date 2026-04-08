@@ -719,6 +719,110 @@ wxArrayString StringUtils::BuildArgv(const wxString& str)
     return arrArgv;
 }
 
+std::vector<std::vector<wxString>> StringUtils::SplitShellCommand(const wxString& command)
+{
+    std::vector<std::vector<wxString>> result;
+
+    // This splitter only separates top-level shell operators.
+    // Content inside quotes/backticks is preserved and handed off to BuildArgv().
+    //
+    // Compatibility notes:
+    // - `&&`, `||`, `|`, `;`, and single `&` are treated as separators only when not inside quotes.
+    // - Empty chunks between separators are skipped.
+    // - Command text is later tokenized by BuildArgv(), so tokenization rules
+    //   are intentionally kept consistent with the existing command parser.
+    wxString current_command;
+    enum class ShellSplitState {
+        Normal,
+        SingleQuote,
+        DoubleQuote,
+        Backtick,
+        Escape,
+    };
+    ShellSplitState state = ShellSplitState::Normal;
+
+    auto flush_command = [&result](const wxString& cmd) {
+        auto argv = StringUtils::BuildArgv(cmd);
+        if (!argv.empty()) {
+            result.emplace_back(argv.begin(), argv.end());
+        }
+    };
+
+    for (size_t i = 0; i < command.length(); ++i) {
+        wxChar ch = command[i];
+        wxChar next_ch = (i + 1 < command.length()) ? command[i + 1] : wxUniChar(0);
+
+        switch (state) {
+        case ShellSplitState::Normal:
+            if (ch == '\\') {
+                state = ShellSplitState::Escape;
+                current_command << ch;
+            } else if (ch == '"') {
+                state = ShellSplitState::DoubleQuote;
+                current_command << ch;
+            } else if (ch == '\'') {
+                state = ShellSplitState::SingleQuote;
+                current_command << ch;
+            } else if (ch == '`') {
+                state = ShellSplitState::Backtick;
+                current_command << ch;
+            } else if (ch == '&' && next_ch == '&') {
+                flush_command(current_command);
+                current_command.clear();
+                ++i;
+            } else if (ch == '&') {
+                flush_command(current_command);
+                current_command.clear();
+            } else if (ch == '|') {
+                flush_command(current_command);
+                current_command.clear();
+            } else if (ch == ';') {
+                flush_command(current_command);
+                current_command.clear();
+            } else {
+                current_command << ch;
+            }
+            break;
+
+        case ShellSplitState::DoubleQuote:
+            current_command << ch;
+            if (ch == '\\') {
+                state = ShellSplitState::Escape;
+            } else if (ch == '"') {
+                state = ShellSplitState::Normal;
+            }
+            break;
+
+        case ShellSplitState::SingleQuote:
+            current_command << ch;
+            if (ch == '\\') {
+                state = ShellSplitState::Escape;
+            } else if (ch == '\'') {
+                state = ShellSplitState::Normal;
+            }
+            break;
+
+        case ShellSplitState::Backtick:
+            current_command << ch;
+            if (ch == '\\') {
+                state = ShellSplitState::Escape;
+            } else if (ch == '`') {
+                state = ShellSplitState::Normal;
+            }
+            break;
+
+        case ShellSplitState::Escape:
+            current_command << ch;
+            state = ShellSplitState::Normal;
+            break;
+        }
+    }
+
+    flush_command(current_command);
+
+    return result;
+}
+
 clEnvList_t StringUtils::BuildEnvFromString(const wxString& envstr) { return split_env_string(envstr); }
 
 clEnvList_t StringUtils::ResolveEnvList(const clEnvList_t& env_list)

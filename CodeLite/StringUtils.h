@@ -61,7 +61,6 @@ public:
     };
 
 public:
-
     /**
      * @brief convert wxArrayString into std::vector<std::string>
      */
@@ -181,6 +180,26 @@ public:
      * @brief build argv out of str
      */
     static wxArrayString BuildArgv(const wxString& str);
+
+    /**
+     * @brief split a shell command into command groups separated by shell operators.
+     *
+     * Recognized separators outside quotes/backticks:
+     * - `&&`
+     * - `||`
+     * - `|`
+     * - `;`
+     * - `&`
+     *
+     * Empty chunks are skipped.
+     * Each group is tokenized using `BuildArgv()`.
+     *
+     * Example:
+     *   `git diff && ls -l && echo "hello && world"`
+     * becomes:
+     *   {{"git", "diff"}, {"ls", "-l"}, {"echo", "hello && world"}}
+     */
+    static std::vector<std::vector<wxString>> SplitShellCommand(const wxString& command);
 
     /**
      * @brief free argv created by StringUtils::BuildArgv method

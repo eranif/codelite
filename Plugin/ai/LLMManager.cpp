@@ -3,6 +3,7 @@
 #include "CTags.hpp"
 #include "FileManager.hpp"
 #include "Keyboard/clKeyboardManager.h"
+#include "ai/ToolTrustLevelDlg.hpp"
 #include "assistant/assistant.hpp"
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
@@ -672,17 +673,24 @@ void Manager::Stop()
     AddPendingEvent(stop_event);
 }
 
-static std::unordered_set<std::string> allowed_tools;
-
 CanInvokeToolResult Manager::CanRunTool(const std::string& tool_name, [[maybe_unused]] assistant::json args)
 {
-    if (allowed_tools.contains(tool_name)) {
-        return CanInvokeToolResult{.can_invoke = true};
+    if (GetInstance().GetConfig().IsToolTrustedFor(tool_name, nullptr)) {
+        return CanInvokeToolResult{
+            .can_invoke = true,
+            .reason = "Tool is trusted",
+        };
     }
 
     wxString base_message;
     base_message << _("The model wants to run the tool: `") << tool_name << _("`\n");
-    return GetInstance().PromptUserYesNoTrustQuestion(base_message, [tool_name]() { allowed_tools.insert(tool_name); });
+    return GetInstance().PromptUserYesNoTrustQuestion(base_message, [tool_name]() {
+        wxString message;
+        wxString tool_name_utf8 = wxString::FromUTF8(tool_name);
+        message << _("Would you like to persist trust for the tool '") << tool_name_utf8 << _("' for future sessions?");
+        bool persist = ::clMessageBox(message, _("Confirm"), wxYES_NO | wxICON_QUESTION | wxNO_DEFAULT) == wxYES;
+        GetInstance().GetConfig().AddTrustedTool(tool_name_utf8, wxEmptyString, persist);
+    });
 }
 
 void Manager::Start(std::shared_ptr<assistant::ClientBase> client)
@@ -1293,7 +1301,7 @@ CanInvokeToolResult Manager::PromptUserYesNoTrustQuestion(const wxString& text, 
         };
     } else if (response_text == "trust" || response_text == "t") {
         if (on_trust_cb) {
-            on_trust_cb();
+            EventNotifier::Get()->RunOnMain<void>(std::move(on_trust_cb));
         }
         return CanInvokeToolResult{
             .can_invoke = true,
@@ -1464,5 +1472,43 @@ bool Manager::StoreCurrentConverstation(const wxString& conversation_text)
     }
 
     return GetHistoryStore().Put(ep.value(), c.value());
+}
+
+std::optional<std::pair<wxString, bool>>
+Manager::ShowTrustLevelDialog(const wxString& toolname, const std::vector<std::pair<wxString, wxString>>& options)
+{
+    ToolTrustLevelDlg dlg(nullptr, options, 0);
+    dlg.SetMessage(wxString::Format(_("Define the level of trust for: '%s'"), toolname));
+    dlg.Check(false);
+
+    if (dlg.ShowModal() != wxID_OK) {
+        return std::nullopt;
+    }
+
+    auto result = dlg.GetValue();
+    if (!result.has_value()) {
+        return std::nullopt;
+    }
+    return std::make_pair(result.value(), dlg.IsChecked());
+}
+
+bool Manager::ChecIfPathIsAllowedForTool(const wxString& toolname, const wxString& path)
+{
+    return GetConfig().IsToolTrustedFor(toolname, [toolname, path](const wxString& trusted_pattern) -> bool {
+        wxString normalized_path = FileUtils::NormalizePath(path);
+        clDEBUG() << "Checking if tool:" << toolname << "with trusted pattern:" << trusted_pattern
+                  << "is allowed for file:" << normalized_path;
+        if (trusted_pattern == "*") {
+            // All
+            return true;
+        } else if (trusted_pattern.EndsWith("*")) {
+            wxString dirprefix = trusted_pattern.Mid(0, trusted_pattern.size() - 1);
+            // Prefix
+            return normalized_path.StartsWith(dirprefix);
+        } else {
+            // Exact match
+            return normalized_path == trusted_pattern;
+        }
+    });
 }
 } // namespace llm

@@ -307,6 +307,18 @@ public:
     static wxString NormalizePath(const wxString& path);
 
     /**
+     * Returns the directory portion of a normalized file path.
+     *
+     * This method first normalizes the input path and then strips everything after
+     * the last '/' character. If the path does not contain a '/', the result is
+     * empty.
+     *
+     * @param filename const wxString& Input file name or path to process.
+     * @return wxString The path portion of the normalized file name.
+     */
+    static wxString GetPath(const wxString& filename);
+
+    /**
      * \brief copy entire directory content (recursively) from source to target
      * \param src source path
      * \param target target path

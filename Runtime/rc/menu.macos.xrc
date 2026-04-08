@@ -801,11 +801,58 @@
       <label>Save</label>
     </object>
   </object>
-  <object class="wxMenu" name="editor_tab_right_click"><object class="wxMenuItem" name="close_file"><label>Close</label></object><object class="wxMenuItem" name="wxID_CLOSE_ALL"><label>Close All</label></object><object class="wxMenuItem" name="close_other_tabs"><label>Close Other Tabs</label></object><object class="wxMenuItem" name="close_tabs_to_the_right"><label>Close Tabs To The Right</label></object><object class="wxMenuItem" name="wxID_SEPARATOR"/><object class="wxMenuItem" name="duplicate_tab"><label>Duplicate Tab...</label></object><object class="wxMenuItem" name="wxID_SEPARATOR"/><object class="wxMenuItem" name="mark_readonly"><label>Make Read Only</label><checkable>1</checkable></object><object class="wxMenuItem" name="wxID_SEPARATOR"/><object class="wxMenuItem" name="refresh_file"><label>Reload</label></object><object class="wxMenuItem" name="save_file"><label>Save</label></object><object class="wxMenuItem" name="wxID_SEPARATOR"/><object class="wxMenu" name="wxID_ANY"><label>Copy File Name</label><object class="wxMenuItem" name="copy_file_name_only"><label>Copy File Name to Clipboard</label></object><object class="wxMenuItem" name="copy_file_name"><label>Copy Full Path to Clipboard</label></object><object class="wxMenuItem" name="copy_file_path"><label>Copy Path to Clipboard</label></object><object class="wxMenuItem" name="wxID_SEPARATOR"/><object class="wxMenuItem" name="copy_file_relative_path_to_workspace"><label>Copy Path Relative to Workspace</label></object></object><object class="wxMenuItem" name="wxID_SEPARATOR"/><object class="wxMenuItem" name="ID_DETACH_EDITOR"><label>Detach Editor</label></object>
-    --&gt;
+  <object class="wxMenu" name="editor_tab_right_click">
+    <object class="wxMenuItem" name="close_file">
+      <label>Close</label>
+    </object>
+    <object class="wxMenuItem" name="wxID_CLOSE_ALL">
+      <label>Close All</label>
+    </object>
+    <object class="wxMenuItem" name="close_other_tabs">
+      <label>Close Other Tabs</label>
+    </object>
+    <object class="wxMenuItem" name="close_tabs_to_the_right">
+      <label>Close Tabs To The Right</label>
+    </object>
     <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-    <object class="wxMenuItem" name="open_shell_from_filepath"><label>Open Shell</label></object>
-    <object class="wxMenuItem" name="open_file_explorer"><label>Open Containing Folder</label></object>
+    <object class="wxMenuItem" name="duplicate_tab">
+      <label>Duplicate Tab...</label>
+    </object>
+    <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+    <object class="wxMenuItem" name="mark_readonly">
+      <label>Make Read Only</label>
+      <checkable>1</checkable>
+    </object>
+    <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+    <object class="wxMenuItem" name="refresh_file">
+      <label>Reload</label>
+    </object>
+    <object class="wxMenuItem" name="save_file">
+      <label>Save</label>
+    </object>
+    <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+    <object class="wxMenuItem" name="copy_full_path_file_name">
+      <label>Copy Path</label>
+    </object>
+    <object class="wxMenu" name="wxID_ANY">
+      <label>More Copy Options</label>
+      <object class="wxMenuItem" name="copy_file_name_only">
+        <label>Copy File Name to Clipboard</label>
+      </object>
+      <object class="wxMenuItem" name="copy_file_path">
+        <label>Copy Directory Path to Clipboard</label>
+      </object>
+      <object class="wxMenuItem" name="copy_file_relative_path_to_workspace">
+        <label>Copy Path Relative to Workspace</label>
+      </object>
+    </object>
+    <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+    <object class="wxMenuItem" name="open_shell_from_filepath">
+      <label>Open Shell</label>
+    </object>
+    <object class="wxMenuItem" name="open_file_explorer">
+      <label>Open Containing Folder</label>
+    </object>
   </object>
   <object class="wxMenu" name="editor_right_click">
     <object class="wxMenuItem" name="swap_files">

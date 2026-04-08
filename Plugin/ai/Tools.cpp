@@ -5,10 +5,8 @@
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspaceView.hpp"
 #include "Platform/Platform.hpp"
-#include "TextViewerDlg.h"
 #include "ai/LLMManager.hpp"
 #include "assistant/function.hpp"
-#include "clFilesFinder.h"
 #include "clSFTPManager.hpp"
 #include "clWorkspaceManager.h"
 #include "codelite_events.h"
@@ -484,15 +482,33 @@ CanInvokeToolResult ApplyPatchConfirm(const std::string& tool_name, assistant::j
     std::string patch_content = ::assistant::GetFunctionArg<std::string>(args, "patch_content").value_or("");
 
     wxString patch = wxString::FromUTF8(patch_content);
+    auto& config = llm::Manager::GetInstance().GetConfig();
+
+    wxString fullpath = FileUtils::NormalizePath(wxString::FromUTF8(file_path));
+    static constexpr const char* kApplyPatch = "ApplyPatch";
+
+    bool is_trusted = llm::Manager::GetInstance().ChecIfPathIsAllowedForTool(kApplyPatch, fullpath);
+
     // Apply patch "Trust" for this session (per path).
-    static thread_local std::unordered_set<std::string> apply_patch_trust_paths;
-    if (!apply_patch_trust_paths.contains(file_path)) {
+    if (!is_trusted) {
         wxString message;
         message << _("Will apply the following patch:") << "\n```diff\n" << patch << "\n```\n";
-        return llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(
-            message, [file_path]() { // User trusts the tool for this path
-                apply_patch_trust_paths.insert(file_path);
-            });
+        return llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message, [&config, &fullpath]() {
+            // User trusts the tool for this path,add it to the trust store.
+            wxString dirpath = FileUtils::GetPath(fullpath);
+
+            std::vector<std::pair<wxString, wxString>> options{
+                {wxString::Format(_("Specific path: %s"), fullpath), fullpath},
+                {wxString::Format(_("Entire directory: %s/*"), dirpath), dirpath},
+                {_("Entire tool"), "*"},
+            };
+
+            auto result = llm::Manager::GetInstance().ShowTrustLevelDialog(kApplyPatch, options);
+            if (result.has_value()) {
+                config.AddTrustedTool(kApplyPatch, result->first, result->second);
+                config.Save();
+            }
+        });
     } else {
         // This path is trusted.
         wxString message;

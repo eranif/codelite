@@ -10,9 +10,11 @@
 #include "codelite_exports.h"
 
 #include <algorithm>
+#include <functional>
 #include <map>
 #include <mutex>
 #include <optional>
+#include <set>
 #include <vector>
 #include <wx/arrstr.h>
 
@@ -245,11 +247,22 @@ public:
         return m_prompts.contains(prompt.ToStdString(wxConvUTF8));
     }
 
+    void AddTrustedTool(const wxString& toolname, const wxString& pattern, bool persist);
+    void DeleteTrustedTool(const wxString& toolname);
+    bool IsToolTrustedFor(const wxString& toolname, std::function<bool(const wxString&)> check_pattern_cb) const;
+
 private:
     wxString GetFullPath();
 
+    struct TrustedToolPattern {
+        std::string pattern;
+        bool persist{true};
+    };
+
     mutable std::mutex m_mutex;
     std::map<std::string, std::string> m_prompts GUARDED_BY(m_mutex);
+    std::map<std::string, std::vector<std::string>> m_persistingTrustedTools GUARDED_BY(m_mutex);
+    std::map<std::string, std::vector<std::string>> m_transientTrustedTools GUARDED_BY(m_mutex);
     std::atomic_bool m_enableTools{true};
     wxString m_cachingPolicy GUARDED_BY(m_mutex){llm::kCacheAuto};
 };

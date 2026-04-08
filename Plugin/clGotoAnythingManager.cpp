@@ -189,7 +189,7 @@ void clGotoAnythingManager::DoAddCurrentTabActions(clGotoEntry::Vec_t& V)
         }
         {
             clGotoEntry entry(
-                _("Current Tab > Copy fullpath (name, extension and directory)"), "", XRCID("copy_file_name"));
+                _("Current Tab > Copy fullpath (name, extension and directory)"), "", XRCID("copy_full_path_file_name"));
             V.push_back(entry);
         }
         {

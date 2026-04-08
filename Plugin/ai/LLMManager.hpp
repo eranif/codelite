@@ -687,6 +687,41 @@ public:
     void OnGenerateDocString(wxCommandEvent& event);
     inline bool IsClientStopping() const { return m_clientStopInProgress.load(); }
 
+    /**
+     * @brief Checks whether a tool is trusted for the given file path.
+     *
+     * This method delegates the trust decision to the configuration and validates the
+     * file path against each trusted pattern. Pattern matching supports three forms:
+     * "*" matches all paths, a trailing "*" performs a prefix match, and any other
+     * value requires an exact path match.
+     *
+     * @param toolname The tool name to validate.
+     * @param path The file path to compare against the trusted patterns.
+     *
+     * @return bool True if the tool is trusted for the specified path; otherwise false.
+     */
+    bool ChecIfPathIsAllowedForTool(const wxString& toolname, const wxString& path);
+
+    /**
+     * @brief Shows a dialog to choose a trust level for a tool.
+     *
+     * Displays a modal ToolTrustLevelDlg configured with the provided options and
+     * prompt text for the specified tool name. If the dialog is accepted and a
+     * value is selected, the chosen value and checkbox state are returned.
+     *
+     * @param toolname const wxString& The name of the tool to display in the dialog message.
+     * @param options const std::vector<std::pair<wxString, wxString>>& The available trust-level options, as pairs of
+     * display text and values.
+     *
+     * @return std::optional<std::pair<wxString, bool>> Returns the selected value and the checked state if the dialog
+     * is accepted and a value is available; otherwise returns std::nullopt.
+     *
+     * @throws None. This function does not throw exceptions; it reports cancellation or missing selection by returning
+     * std::nullopt.
+     */
+    std::optional<std::pair<wxString, bool>>
+    ShowTrustLevelDialog(const wxString& toolname, const std::vector<std::pair<wxString, wxString>>& options);
+
 private:
     Manager() = default;
     ~Manager();

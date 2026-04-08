@@ -650,7 +650,7 @@ EVT_MENU(XRCID("detach_debugger_tab"), clMainFrame::OnDetachDebuggerViewTab)
 EVT_MENU(XRCID("close_other_tabs"), clMainFrame::OnCloseAllButThis)
 EVT_MENU(XRCID("close_tabs_to_the_right"), clMainFrame::OnCloseTabsToTheRight)
 EVT_MENU(XRCID("copy_file_relative_path_to_workspace"), clMainFrame::OnCopyFilePathRelativeToWorkspace)
-EVT_MENU(XRCID("copy_file_name"), clMainFrame::OnCopyFileFullPath)
+EVT_MENU(XRCID("copy_full_path_file_name"), clMainFrame::OnCopyFileFullPath)
 EVT_MENU(XRCID("copy_file_path"), clMainFrame::OnCopyFolder)
 EVT_MENU(XRCID("copy_file_name_only"), clMainFrame::OnCopyFileFullName)
 EVT_MENU(XRCID("open_shell_from_filepath"), clMainFrame::OnOpenShellFromFilePath)
@@ -660,7 +660,7 @@ EVT_MENU(XRCID("mark_readonly"), clMainFrame::OnMarkEditorReadonly)
 
 EVT_UPDATE_UI(XRCID("mark_readonly"), clMainFrame::OnMarkEditorReadonlyUI)
 EVT_UPDATE_UI(XRCID("copy_file_relative_path_to_workspace"), clMainFrame::OnCopyFilePathRelativeToWorkspaceUI)
-EVT_UPDATE_UI(XRCID("copy_file_name"), clMainFrame::OnFileExistUpdateUI)
+EVT_UPDATE_UI(XRCID("copy_full_path_file_name"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("copy_file_path"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("open_shell_from_filepath"), clMainFrame::OnFileExistUpdateUI)
 EVT_UPDATE_UI(XRCID("open_file_explorer"), clMainFrame::OnFileExistUpdateUI)
@@ -1119,7 +1119,7 @@ void clMainFrame::AddKeyboardAccelerators()
          {"convert_eol_unix", _("Convert to Unix Format")},
          {"trim_trailing", _("Trim Trailing Spaces")},
          {"copy_file_relative_path_to_workspace", _("Copy Path Relative to Workspace"), "Ctrl-Alt-Shift-C"},
-         {"copy_file_name", _("Copy Path to Clipboard")},
+         {"copy_full_path_file_name", _("Copy Path to Clipboard")},
          {"copy_file_path", _("Copy Full Path to Clipboard")},
          {"copy_file_name_only", _("Copy File Name to Clipboard")}});
     mgr->AddAccelerator(_("File"),

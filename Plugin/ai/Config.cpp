@@ -5,6 +5,8 @@
 #include "file_logger.h"
 #include "fileutils.h"
 
+#include <algorithm>
+
 namespace llm
 {
 constexpr size_t kMaxHistorySize = 50;
@@ -48,6 +50,7 @@ void Config::Load()
         auto json = nlohmann::json::parse(cstr_content);
         m_prompts = ReadValue(json, "prompts", kDefaultPromptTable);
         m_cachingPolicy = ReadValue<std::string>(json, "caching_policy", llm::kCacheAuto.ToStdString(wxConvUTF8));
+        m_persistingTrustedTools = ReadValue(json, "trusted_tools", decltype(m_persistingTrustedTools){});
         m_enableTools = ReadValue<bool>(json, "enable_tools", true);
 
     } catch (const std::exception& e) {
@@ -72,6 +75,7 @@ void Config::Save()
     j["prompts"] = m_prompts;
     j["enable_tools"] = m_enableTools.load();
     j["caching_policy"] = m_cachingPolicy.ToStdString(wxConvUTF8);
+    j["trusted_tools"] = m_persistingTrustedTools;
 
     wxString content = wxString::FromUTF8(j.dump(2));
     FileUtils::WriteFileContent(GetFullPath(), content, wxConvUTF8);
@@ -153,6 +157,66 @@ bool Config::IsBuiltInPrompt(const wxString& prompt) const
 {
     std::string label = prompt.ToStdString(wxConvUTF8);
     return kDefaultPromptTable.contains(label);
+}
+
+void Config::AddTrustedTool(const wxString& toolname, const wxString& pattern, bool persist)
+{
+    CHECK_COND_RET(!toolname.empty());
+
+    std::scoped_lock lk{m_mutex};
+    std::string tool = toolname.ToStdString(wxConvUTF8);
+    auto& patterns = persist ? m_persistingTrustedTools[tool] : m_transientTrustedTools[tool];
+    if (pattern.empty()) {
+        // Just add an entry with empty string
+        patterns.push_back(std::string{});
+
+    } else {
+        std::string pat = pattern.ToStdString(wxConvUTF8);
+
+        // Pick the data structure to use.
+        auto it = std::ranges::find_if(patterns, [&pat](const std::string& p) { return p == pat; });
+        if (it == patterns.end()) {
+            patterns.push_back(pat);
+        }
+        *it = pat;
+    }
+}
+
+void Config::DeleteTrustedTool(const wxString& toolname)
+{
+    std::scoped_lock lk{m_mutex};
+    m_persistingTrustedTools.erase(toolname.ToStdString(wxConvUTF8));
+    m_transientTrustedTools.erase(toolname.ToStdString(wxConvUTF8));
+}
+
+bool Config::IsToolTrustedFor(const wxString& toolname, std::function<bool(const wxString&)> check_pattern_cb) const
+{
+    std::scoped_lock lk{m_mutex};
+    auto check_list =
+        [&toolname](
+            const std::map<std::string, std::vector<std::string>>& trusted_tools) -> const std::vector<std::string>* {
+        auto it = trusted_tools.find(toolname.ToStdString(wxConvUTF8));
+        if (it == trusted_tools.end())
+            return nullptr;
+        return &it->second;
+    };
+
+    auto pattens = check_list(m_persistingTrustedTools);
+    if (pattens == nullptr) {
+        pattens = check_list(m_transientTrustedTools);
+    }
+
+    if (pattens == nullptr) {
+        return false;
+    }
+    if (check_pattern_cb == nullptr) {
+        return true;
+    }
+    for (const auto& pat : *pattens) {
+        if (check_pattern_cb(pat.empty() ? wxString{} : wxString::FromUTF8(pat)))
+            return true;
+    }
+    return false;
 }
 
 } // namespace llm

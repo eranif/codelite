@@ -913,7 +913,7 @@ wxString FileUtils::NormalizePath(const wxString& path)
     wxString normalized_path(path);
     normalized_path.Trim().Trim(false);
     normalized_path.Replace("\\", "/");
-    while (normalized_path.Replace("//", "/")) {}
+    while (normalized_path.Replace("//", "/") > 0) {}
     return normalized_path;
 }
 
@@ -1084,4 +1084,11 @@ std::optional<FileUtils::Triplet> FileUtils::ParseTriplet(const wxString& line)
         }
     }
     return result;
+}
+
+wxString FileUtils::GetPath(const wxString& filename)
+{
+    wxString normalised_path = NormalizePath(filename);
+    wxString path = normalised_path.BeforeLast('/');
+    return path;
 }

@@ -823,28 +823,21 @@
       <label>Save</label>
     </object>
     <object class="wxMenuItem" name="wxID_SEPARATOR"/>
+    <object class="wxMenuItem" name="copy_full_path_file_name">
+      <label>Copy Path</label>
+    </object>
     <object class="wxMenu" name="wxID_ANY">
-      <label>Copy File Name</label>
+      <label>More Copy Options</label>
       <object class="wxMenuItem" name="copy_file_name_only">
         <label>Copy File Name to Clipboard</label>
       </object>
-      <object class="wxMenuItem" name="copy_file_name">
-        <label>Copy Full Path to Clipboard</label>
-      </object>
       <object class="wxMenuItem" name="copy_file_path">
-        <label>Copy Path to Clipboard</label>
+        <label>Copy Directory Path to Clipboard</label>
       </object>
-      <object class="wxMenuItem" name="wxID_SEPARATOR"/>
       <object class="wxMenuItem" name="copy_file_relative_path_to_workspace">
         <label>Copy Path Relative to Workspace</label>
       </object>
     </object>
-    <!--
-    <object class="wxMenuItem" name="wxID_SEPARATOR"/>
-    <object class="wxMenuItem" name="ID_DETACH_EDITOR">
-      <label>Detach Editor</label>
-    </object>
-    -->
     <object class="wxMenuItem" name="wxID_SEPARATOR"/>
     <object class="wxMenuItem" name="open_shell_from_filepath">
       <label>Open Shell</label>

@@ -1254,15 +1254,17 @@ const std::vector<wxString>& Manager::GetAvailablePlaceHolders() const { return 
 CanInvokeToolResult Manager::PromptUserYesNoTrustQuestion(const wxString& text, std::function<void()> on_trust_cb)
 {
     const wxString kTrust = wxT("⟪t⟫");
-    const wxString kYes = wxT("⟪y⟫");
-    const wxString kNo = wxT("⟪n⟫");
+    const wxString kTriplet = wxT("⟪y/n/t⟫");
     wxString message;
     message << text;
     if (!text.EndsWith("\n")) {
         message << "\n";
     }
-    message << _("Type ") << kTrust << _(" to trust this tool for the current session, ") << kYes
-            << _(" to allow once, or ") << kNo << _(" to decline the request.");
+
+    wxString question_message;
+    question_message << _("Allow this action? use ") << kTrust
+                     << _(" to trust (always allow this tool for the session). ") << kTriplet;
+    message << question_message;
     auto fut = GetInstance().PromptUser(message, IconType::kNoIcon);
 
     // Avoid blocking the worker thread forever

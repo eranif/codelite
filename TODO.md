@@ -28,6 +28,8 @@ Medium:
 - AI: Extend all the tools with a "Purpose" mandatory field, so each model will be forced to report the reason for the invocation.
 - AI: Add a system-message that instruct the model to NEVER create a summary file
 - Terminal: when optimizing for drawing, make sure that exclude cells with default attributes only.
+- Terminal: when changing a terminal theme, apply it to newly opened terminals only.
+- Terminal: remember, on per terminal type, the last theme used for it.
 
 Low:
 ----

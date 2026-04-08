@@ -785,6 +785,7 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
                 }
             }
 
+            // Check for actor: ❰ACTOR_NAME❱
             if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.StartsWith({226, 157, 176}) &&
                 accessor.Contains({226, 157, 177}) != wxNOT_FOUND) {
                 int actor_end = accessor.Contains({226, 157, 177}, 1);
@@ -793,6 +794,7 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
                 break;
             }
 
+            // Checkmark ✔
             if (accessor.StartsWith({226, 156, 148})) {
                 accessor.SetStyle(MarkdownStyles::kCheckMarkSymbol, 3);
                 break;
@@ -804,13 +806,26 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
                 break;
             }
 
-            if (accessor.StartsWith({226, 159, 170})) {
-                int keyboard_key_start = accessor.Contains({226, 159, 170});
+            // ⟪y/n/t⟫
+            if (int keyboard_key_start = accessor.Contains({226, 159, 170});
+                keyboard_key_start == accessor.GetPosition()) {
+                // search for the closing brace.
                 int keyboard_key_end = accessor.Contains({226, 159, 171});
-                if (keyboard_key_end - keyboard_key_start == 4) {
-                    accessor.SetStyle(MarkdownStyles::kKeyboardKeyBracket, 3); // ⟪ (3 positions)
-                    accessor.SetStyle(MarkdownStyles::kKeyboardKey, 1);        // the letter itself
-                    accessor.SetStyle(MarkdownStyles::kKeyboardKeyBracket, 3); // ⟫ (3 positions)
+                if (keyboard_key_end != wxNOT_FOUND && keyboard_key_end - keyboard_key_start >= 3) {
+                    accessor.SetStyle(MarkdownStyles::kKeyboardKeyBracket, 3); // ⟪ is 3 positions
+                    for (int i = keyboard_key_start + 3; i < keyboard_key_end; ++i) {
+                        // Anything else in between, unless it is a "/" is marked
+                        // as keyboard-key
+                        if (accessor.GetCurrentChar<wxChar>() == '/') {
+                            accessor.SetStyle(MarkdownStyles::kKeyboardKeyBracket, 1);
+                        } else {
+                            accessor.SetStyle(MarkdownStyles::kKeyboardKey, 1);
+                        }
+                    }
+                    accessor.SetStyle(MarkdownStyles::kKeyboardKeyBracket, 3); // ⟫ is 3 positions
+                    break;
+                } else {
+                    accessor.SetStyle(MarkdownStyles::kDefault, 3); // Style the ⟪ as normal.
                     break;
                 }
             }

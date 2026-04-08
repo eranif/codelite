@@ -243,7 +243,6 @@ public:
         return substr.find(str) != wxString::npos;
     }
 
-    bool CanNext() const override { return m_ctrl->GetEndStyled() != m_ctrl->GetLastPosition(); }
     bool CanNextFromPos(size_t pos) const override { return static_cast<int>(pos) < m_ctrl->GetLastPosition(); }
 
     /// Check if we can peek ahead 'count' characters from the current position
@@ -253,6 +252,7 @@ public:
     }
 
     bool HasReachedEnd() const override { return m_ctrl->GetEndStyled() >= m_ctrl->GetLastPosition(); }
+    bool CanNext() const override { return !HasReachedEnd(); }
 
 private:
     wxString GetSubStringUntilNewLine(size_t from)

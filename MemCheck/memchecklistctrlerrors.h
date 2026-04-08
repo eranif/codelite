@@ -58,12 +58,12 @@ public:
     }
     ~MemCheckListCtrlErrors() override = default;
 
-    virtual wxString OnGetItemText(long item, long column) const { return m_data->at(item)->label; }
+    wxString OnGetItemText(long item, long column) const override { return m_data->at(item)->label; }
 
     void SetData(std::vector<MemCheckErrorPtr>* data) { this->m_data = data; }
 
 protected:
-    std::vector<MemCheckErrorPtr>* m_data;
+    std::vector<MemCheckErrorPtr>* m_data = nullptr;
 };
 
 #endif

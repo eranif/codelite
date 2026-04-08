@@ -290,7 +290,7 @@ void MemCheckPlugin::OnWorkspaceClosed(clWorkspaceEvent& event)
     event.Skip();
 }
 
-bool MemCheckPlugin::IsReady(wxUpdateUIEvent& event)
+bool MemCheckPlugin::IsReady(wxUpdateUIEvent& event) const
 {
     bool ready = !m_mgr->IsBuildInProgress() && !m_terminal.IsRunning();
     int id = event.GetId();

@@ -64,10 +64,10 @@ class ValgrindSettings : public clConfigItem
 {
 public:
     ValgrindSettings();
-    virtual ~ValgrindSettings() {}
+    ~ValgrindSettings() override = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
 private:
     wxString m_binary;
@@ -117,10 +117,10 @@ class MemCheckSettings : public clConfigItem
 {
 public:
     MemCheckSettings();
-    virtual ~MemCheckSettings() {}
+    ~MemCheckSettings() override = default;
 
-    virtual void FromJSON(const JSONItem& json);
-    virtual JSONItem ToJSON() const;
+    void FromJSON(const JSONItem& json) override;
+    JSONItem ToJSON() const override;
 
 private:
     wxString m_engine;

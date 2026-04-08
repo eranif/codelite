@@ -7,9 +7,6 @@
 
 #include "memcheckoutputview.h"
 
-#include "dirsaver.h"
-#include "event_notifier.h"
-#include "file_logger.h"
 #include "memcheckdefs.h"
 #include "memchecksettings.h"
 #include "search_thread.h"

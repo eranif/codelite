@@ -39,14 +39,12 @@
 #include "memcheckui.h"
 #include "plugin.h"
 
-#include <wx/process.h>
-
 class MemCheckOutputView;
 
 class MemCheckPlugin : public IPlugin
 {
 public:
-    MemCheckPlugin(IManager* manager);
+    explicit MemCheckPlugin(IManager* manager);
     ~MemCheckPlugin() override;
 
     //--------------------------------------------
@@ -58,9 +56,9 @@ public:
     void HookPopupMenu(wxMenu* menu, MenuType type) override;
     void UnPlug() override;
 
-    MemCheckSettings* const GetSettings() { return m_settings; };
+    MemCheckSettings* GetSettings() { return m_settings; };
 
-    virtual IMemCheckProcessor* GetProcessor() { return m_memcheckProcessor; }
+    IMemCheckProcessor* GetProcessor() { return m_memcheckProcessor; }
 
     /**
      * @brief true if test is not running and GUI can respond, otherwise if test is running user can't listing errors
@@ -68,7 +66,7 @@ public:
      * @param event
      * @return Plugin status.
      */
-    bool IsReady(wxUpdateUIEvent& event);
+    bool IsReady(wxUpdateUIEvent& event) const;
     /**
      * @brief stop the current running process using SIGTERM
      */
@@ -78,7 +76,6 @@ public:
      * @brief return true if a test is currently running
      * @return
      */
-    //    bool IsRunning() const { return m_process != NULL; }
     bool IsRunning() const { return m_terminal.IsRunning(); }
 
 protected:

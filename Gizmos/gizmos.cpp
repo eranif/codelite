@@ -29,9 +29,6 @@
 #include "cl_command_event.h"
 #include "cl_standard_paths.h"
 #include "codelite_events.h"
-#include "ctags_manager.h"
-#include "database/entry.h"
-#include "dirsaver.h"
 #include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -39,10 +36,8 @@
 #include "globals.h"
 #include "newclassdlg.h"
 #include "newplugindata.h"
-#include "newwxprojectdlg.h"
 #include "workspace.h"
 
-#include <algorithm>
 #include <wx/app.h>
 #include <wx/ffile.h>
 #include <wx/log.h>
@@ -63,8 +58,8 @@ CL_PLUGIN_API PluginInfo* GetPluginInfo()
     static PluginInfo info;
     info.SetAuthor("Eran Ifrah");
     info.SetName("Wizards");
-    info.SetDescription(_("Wizards Plugin - a collection of useful wizards for C++:\nnew Class Wizard, new wxWidgets "
-                          "Wizard, new Plugin Wizard"));
+    info.SetDescription(_("Wizards Plugin - a collection of useful wizards for C++:\n"
+                          "new Class Wizard, new wxWidgets Wizard, new Plugin Wizard"));
     info.SetVersion("v1.1");
     return &info;
 }
@@ -93,41 +88,41 @@ void WizardsPlugin::CreateToolBar(clToolBarGeneric* toolbar)
     m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"),
                                 wxEVT_COMMAND_MENU_SELECTED,
                                 wxCommandEventHandler(WizardsPlugin::OnGizmos),
-                                NULL,
-                                (wxEvtHandler*)this);
+                                nullptr,
+                                this);
 #endif
     m_mgr->GetTheApp()->Connect(XRCID("gizmos_options"),
                                 wxEVT_UPDATE_UI,
                                 wxUpdateUIEventHandler(WizardsPlugin::OnGizmosUI),
-                                NULL,
-                                (wxEvtHandler*)this);
+                                nullptr,
+                                this);
     m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN,
                                 wxEVT_COMMAND_MENU_SELECTED,
                                 wxCommandEventHandler(WizardsPlugin::OnNewPlugin),
-                                NULL,
-                                (wxEvtHandler*)this);
+                                nullptr,
+                                this);
     m_mgr->GetTheApp()->Connect(ID_MI_NEW_CODELITE_PLUGIN,
                                 wxEVT_UPDATE_UI,
                                 wxUpdateUIEventHandler(WizardsPlugin::OnNewPluginUI),
-                                NULL,
-                                (wxEvtHandler*)this);
+                                nullptr,
+                                this);
     m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS,
                                 wxEVT_COMMAND_MENU_SELECTED,
                                 wxCommandEventHandler(WizardsPlugin::OnNewClass),
-                                NULL,
-                                (wxEvtHandler*)this);
+                                nullptr,
+                                this);
     m_mgr->GetTheApp()->Connect(ID_MI_NEW_NEW_CLASS,
                                 wxEVT_UPDATE_UI,
                                 wxUpdateUIEventHandler(WizardsPlugin::OnNewClassUI),
-                                NULL,
-                                (wxEvtHandler*)this);
+                                nullptr,
+                                this);
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FOLDER, &WizardsPlugin::OnFolderContentMenu, this);
 }
 
 void WizardsPlugin::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
+    wxMenuItem* item(nullptr);
     item = new wxMenuItem(
         menu, ID_MI_NEW_CODELITE_PLUGIN, _("New CodeLite Plugin Wizard..."), wxEmptyString, wxITEM_NORMAL);
     menu->Append(item);
@@ -140,7 +135,7 @@ void WizardsPlugin::HookPopupMenu(wxMenu* menu, MenuType type)
 {
     if (type == MenuTypeFileView_Folder) {
         // Create the popup menu for the virtual folders
-        wxMenuItem* item(NULL);
+        wxMenuItem* item(nullptr);
 
         item = new wxMenuItem(menu, wxID_SEPARATOR);
         menu->Prepend(item);
@@ -157,12 +152,12 @@ void WizardsPlugin::UnPlug()
     m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"),
                                    wxEVT_COMMAND_MENU_SELECTED,
                                    wxCommandEventHandler(WizardsPlugin::OnGizmos),
-                                   NULL,
+                                   nullptr,
                                    (wxEvtHandler*)this);
     m_mgr->GetTheApp()->Disconnect(XRCID("gizmos_options"),
                                    wxEVT_UPDATE_UI,
                                    wxUpdateUIEventHandler(WizardsPlugin::OnGizmosUI),
-                                   NULL,
+                                   nullptr,
                                    (wxEvtHandler*)this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FOLDER, &WizardsPlugin::OnFolderContentMenu, this);
 }
@@ -307,10 +302,6 @@ void WizardsPlugin::DoCreateNewPlugin()
         }
 
         // add the new project to the workspace
-        wxString errMsg;
-
-        // convert the path to be full path as required by the
-        // workspace manager
         m_mgr->AddProject(projectFileName);
     }
 }
@@ -571,10 +562,6 @@ void WizardsPlugin::OnGizmosUI(wxUpdateUIEvent& e)
 
 void WizardsPlugin::DoPopupButtonMenu(wxPoint pt)
 {
-#ifdef __WXMSW__
-    wxFont font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-#endif
-
     wxMenu popupMenu;
 
     std::map<wxString, int> options;
@@ -582,8 +569,7 @@ void WizardsPlugin::DoPopupButtonMenu(wxPoint pt)
     options[MI_NEW_NEW_CLASS] = ID_MI_NEW_NEW_CLASS;
 
     for (const auto& [text, id] : options) {
-        wxMenuItem* item = new wxMenuItem(&popupMenu, id, text, text, wxITEM_NORMAL);
-        popupMenu.Append(item);
+        popupMenu.Append(new wxMenuItem(&popupMenu, id, text, text, wxITEM_NORMAL));
     }
     m_mgr->GetTheApp()->GetTopWindow()->PopupMenu(&popupMenu, pt);
 }

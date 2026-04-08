@@ -28,8 +28,6 @@
 #include "new_class_dlg_data.h"
 #include "newclassbasedlg.h"
 
-#include <vector>
-
 class IManager;
 
 struct ClassParentInfo {
@@ -45,29 +43,15 @@ struct NewClassInfo {
     wxString path;
     wxString fileName;
     wxString virtualDirectory;
-    bool isSingleton;
-    bool isAssignable;
-    bool isMovable;
-    bool isInheritable;
-    bool isVirtualDtor;
-    bool isInline;
-    bool hppHeader;
-    bool usePragmaOnce;
+    bool isSingleton = false;
+    bool isAssignable = false;
+    bool isMovable = false;
+    bool isInheritable = false;
+    bool isVirtualDtor = false;
+    bool isInline = false;
+    bool hppHeader = false;
+    bool usePragmaOnce = false;
     ClassParentInfo parents;
-
-    NewClassInfo()
-        : isSingleton(false)
-        , isAssignable(false)
-        , isMovable(false)
-        , isInheritable(false)
-        , isVirtualDtor(false)
-        , isInline(false)
-        , hppHeader(false)
-        , usePragmaOnce(false)
-    {
-    }
-
-    ~NewClassInfo() = default;
 };
 
 /** Implementing NewClassBaseDlg */
@@ -79,21 +63,20 @@ class NewClassDlg : public NewClassBaseDlg
     wxString m_parentClass;
 
 protected:
-    virtual void OnCheckSingleton(wxCommandEvent& event);
-    virtual void OnCheckImpleAllVirtualFunctions(wxCommandEvent& event);
-    virtual void OnUseLowerCaseFileName(wxCommandEvent& event);
-    virtual void OnBlockGuardUI(wxUpdateUIEvent& event);
-    void OnBrowseParentClass(wxCommandEvent& event);
+    void OnCheckSingleton(wxCommandEvent& event) override;
+    void OnUseLowerCaseFileName(wxCommandEvent& event) override;
+    void OnBlockGuardUI(wxUpdateUIEvent& event) override;
     // Handlers for NewClassBaseDlg events.
-    void OnButtonOK(wxCommandEvent& e);
+    void OnButtonOK(wxCommandEvent& e) override;
+    void OnTextEnter(wxCommandEvent& e) override;
+    void OnBrowseFolder(wxCommandEvent& e) override;
+    void OnBrowseVD(wxCommandEvent& e) override;
+
+    void OnBrowseParentClass(wxCommandEvent& event);
     bool ValidateInput();
-    void OnTextEnter(wxCommandEvent& e);
-    void OnBrowseFolder(wxCommandEvent& e);
-    void OnBrowseVD(wxCommandEvent& e);
     void OnBrowseNamespace(wxCommandEvent& e);
     void OnOkUpdateUI(wxUpdateUIEvent& event);
 
-    wxString doSpliteByCaptilization(const wxString& str) const;
     void DoUpdateGeneratedPath();
     void DoUpdateCheckBoxes();
     void DoSaveOptions();
@@ -102,7 +85,7 @@ protected:
 public:
     /** Constructor */
     NewClassDlg(wxWindow* parent, IManager* mgr);
-    virtual ~NewClassDlg();
+    ~NewClassDlg() override;
 
     void GetNewClassInfo(NewClassInfo& info) const;
 

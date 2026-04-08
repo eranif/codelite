@@ -48,11 +48,11 @@ public:
 
 public:
     NewClassDlgData();
-    virtual ~NewClassDlgData() = default;
+    ~NewClassDlgData() override = default;
 
 public:
-    virtual void DeSerialize(Archive& arch);
-    virtual void Serialize(Archive& arch);
+    void DeSerialize(Archive& arch) override;
+    void Serialize(Archive& arch) override;
 
     void SetFlags(size_t flags) { this->m_flags = flags; }
     size_t GetFlags() const { return m_flags; }

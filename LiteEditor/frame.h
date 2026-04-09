@@ -145,7 +145,7 @@ class clMainFrame : public wxFrame
     // the main tool default style
     int m_mainToolbarStyle = wxTB_FLAT | wxTB_NODIVIDER /* toolbar is hidden by default */;
     wxString m_mainFrameTitleTemplate;
-    wxWindow* m_lastFocusedWindow = nullptr;
+    wxWindowID m_lastFocusedWindowID{wxNOT_FOUND};
 
 public:
     static bool m_initCompleted;

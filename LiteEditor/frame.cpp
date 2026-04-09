@@ -3715,8 +3715,12 @@ void clMainFrame::OnAppActivated(wxActivateEvent& e)
         EventNotifier::Get()->AddPendingEvent(evtGotFocus);
 
         // Restore focus to the window that had it before we lost focus
-        if (m_lastFocusedWindow && m_lastFocusedWindow->IsShown()) {
-            m_lastFocusedWindow->CallAfter(&wxWindow::SetFocus);
+        wxWindow* lastActiveWindow{nullptr};
+        if (m_lastFocusedWindowID != wxNOT_FOUND) {
+            lastActiveWindow = wxWindow::FindWindowById(m_lastFocusedWindowID);
+        }
+        if (lastActiveWindow && lastActiveWindow->IsShown()) {
+            lastActiveWindow->CallAfter(&wxWindow::SetFocus);
         } else {
             clEditor* activeEditor = dynamic_cast<clEditor*>(GetMainBook()->GetActiveEditor());
             if (activeEditor) {
@@ -3742,7 +3746,7 @@ void clMainFrame::OnAppActivated(wxActivateEvent& e)
 void clMainFrame::OnChildFocus(wxChildFocusEvent& event)
 {
     event.Skip();
-    m_lastFocusedWindow = event.GetWindow();
+    m_lastFocusedWindowID = event.GetWindow() ? event.GetWindow()->GetId() : wxNOT_FOUND;
 }
 
 void clMainFrame::OnCompileFileProject(wxCommandEvent& e)

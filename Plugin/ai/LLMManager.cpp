@@ -1441,7 +1441,7 @@ void Manager::OnGenerateDocString(wxCommandEvent& event)
     }
 
     clGetManager()->SetStatusMessage(_("Generating DocString..."), 1);
-    wxString prompt = GetConfig().GetPrompt(llm::PromptKind::kCommentGeneration);
+    wxString prompt = GetConfig().GetPrompt(llm::kPromptGenerateComment);
     prompt.Replace("{{function}}", func_text);
 
     m_commentGenerationView->InitialiseFor(PreviewKind::kCommentGeneration);

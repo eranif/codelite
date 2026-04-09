@@ -24,11 +24,19 @@ T ReadValue(const nlohmann::json& j, const std::string& name, const T& d = {})
     }
 }
 
-const std::map<std::string, std::string> kDefaultPromptTable = {
-    {PromptKindToString(PromptKind::kCommentGeneration), PROMPT_DOCSTRING_GEN},
-    {PromptKindToString(PromptKind::kReleaseNotesGenerate), PROMPT_GIT_RELEASE_NOTES},
-    {PromptKindToString(PromptKind::kGitChangesCodeReview), PROMPT_GIT_CODE_REVIEW},
-    {PromptKindToString(PromptKind::kGitCommitMessage), PROMPT_GIT_COMMIT_MSG}};
+static const std::unordered_set<std::string> builtin_prompts = {
+    {kPromptGenerateComment},
+    {kPromptGenerateReleaseNotes},
+    {kPromptGenerateCommitMessage},
+    {kPromptGenerateCodeReview},
+};
+
+static const std::map<std::string, std::string> kDefaultPromptTable = {
+    {kPromptGenerateComment, PROMPT_DOCSTRING_GEN},
+    {kPromptGenerateReleaseNotes, PROMPT_GIT_RELEASE_NOTES},
+    {kPromptGenerateCommitMessage, PROMPT_GIT_COMMIT_MSG},
+    {kPromptGenerateCodeReview, PROMPT_GIT_CODE_REVIEW},
+};
 
 Config::Config() {}
 
@@ -81,31 +89,22 @@ void Config::Save()
     FileUtils::WriteFileContent(GetFullPath(), content, wxConvUTF8);
 }
 
-wxString Config::GetPrompt(PromptKind kind) const
+wxString Config::GetPrompt(const wxString& label) const
 {
-    if (kind == PromptKind::kMax) {
-        return wxEmptyString;
-    }
-
     std::scoped_lock lk{m_mutex};
-    auto key = PromptKindToString(kind);
-    auto prompt_iter = m_prompts.find(key);
+    auto prompt_iter = m_prompts.find(label.ToStdString(wxConvUTF8));
     if (prompt_iter != m_prompts.end() && !prompt_iter->second.empty()) {
         return wxString::FromUTF8(prompt_iter->second);
     }
-
-    // Return the default prompt
-    prompt_iter = kDefaultPromptTable.find(key);
-    if (prompt_iter != m_prompts.end()) {
-        return prompt_iter->second;
-    }
-    clWARNING() << "No prompt found for key: '" << key << "'" << endl;
+    clWARNING() << "No prompt found for key: '" << label << "'" << endl;
     return wxEmptyString;
 }
 
 void Config::DeletePrompt(const wxString& label)
 {
     std::scoped_lock lk{m_mutex};
+    if (IsBuiltInPrompt(label))
+        return;
     m_prompts.erase(label.ToStdString(wxConvUTF8));
 }
 
@@ -113,8 +112,7 @@ void Config::AddPrompt(const wxString& label, const wxString& prompt)
 {
     std::scoped_lock lk{m_mutex};
     std::string utf8 = label.ToStdString(wxConvUTF8);
-    m_prompts.erase(utf8);
-    m_prompts.insert({utf8, prompt.ToStdString(wxConvUTF8)});
+    m_prompts.insert_or_assign(utf8, prompt.ToStdString(wxConvUTF8));
 }
 
 std::vector<std::pair<wxString, wxString>> Config::GetAllPrompts() const
@@ -126,18 +124,6 @@ std::vector<std::pair<wxString, wxString>> Config::GetAllPrompts() const
         result.push_back({wxString::FromUTF8(label), wxString::FromUTF8(prompt)});
     }
     return result;
-}
-
-void Config::SetPrompt(PromptKind kind, const wxString& prompt)
-{
-    switch (kind) {
-    case PromptKind::kMax:
-        break;
-    default: {
-        auto label = PromptKindToString(kind);
-        AddPrompt(wxString::FromUTF8(label), prompt);
-    } break;
-    }
 }
 
 void Config::ResetPrompts()
@@ -155,8 +141,7 @@ wxString Config::GetFullPath()
 
 bool Config::IsBuiltInPrompt(const wxString& prompt) const
 {
-    std::string label = prompt.ToStdString(wxConvUTF8);
-    return kDefaultPromptTable.contains(label);
+    return builtin_prompts.contains(prompt.ToStdString(wxConvUTF8));
 }
 
 void Config::AddTrustedTool(const wxString& toolname, const wxString& pattern, bool persist)

@@ -37,6 +37,7 @@ Medium:
 - AI: Add 2 new options to the "AI" menu:
     1. Reset all trust options.
     2. Open Global Settings file.
+- AI: Store prompts in files and not directly in the JSON. The JSON should only hold the reference to the file `@filename`.
 - Terminal: when optimizing for drawing, make sure that exclude cells with default attributes only.
 - Terminal: when changing a terminal theme, apply it to newly opened terminals only.
 - Terminal: remember, on per terminal type, the last theme used for it.

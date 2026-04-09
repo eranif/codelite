@@ -20,13 +20,10 @@
 
 namespace llm
 {
-enum class PromptKind {
-    kCommentGeneration,
-    kGitCommitMessage,
-    kReleaseNotesGenerate,
-    kGitChangesCodeReview,
-    kMax, // Must be last
-};
+inline constexpr char kPromptGenerateComment[] = "Generate Comment";
+inline constexpr char kPromptGenerateReleaseNotes[] = "Generate Release Notes";
+inline constexpr char kPromptGenerateCommitMessage[] = "Generate Commit Message";
+inline constexpr char kPromptGenerateCodeReview[] = "Code Review";
 
 // Cache Policy
 inline static wxString kCacheAuto = "Auto";
@@ -57,23 +54,6 @@ inline CachePolicy CachePolicyFromString(const wxString& policy)
     } else {
         return CachePolicy::kAuto;
     }
-}
-
-inline std::string PromptKindToString(PromptKind kind)
-{
-    switch (kind) {
-    case llm::PromptKind::kReleaseNotesGenerate:
-        return "Generate Release Notes";
-    case llm::PromptKind::kCommentGeneration:
-        return "Generate Comment";
-    case llm::PromptKind::kGitCommitMessage:
-        return "Generate Commit Message";
-    case llm::PromptKind::kGitChangesCodeReview:
-        return "Code Review";
-    case llm::PromptKind::kMax:
-        return "";
-    }
-    return "";
 }
 
 using nlohmann::json;
@@ -114,36 +94,20 @@ public:
      *       thanks to the scoped lock on {@code m_mutex}.
      */
     void Save();
-    /**
-     * @brief Retrieves the prompt string associated with a given {@link PromptKind}.
-     *
-     * This method safely accesses the internal prompt storage (`m_prompts`) by
-     * acquiring a scoped lock on {@code m_mutex}. It first checks whether the
-     * requested {@code kind} is {@code PromptKind::kMax}, in which case an empty
-     * string is returned. Otherwise it obtains the corresponding key via
-     * {@link Config::GetPromptString}, looks up the key in the map, and returns
-     * the stored UTF‑8 string converted to a {@code wxString}. If the key is not
-     * present, an empty string is returned.
-     *
-     * @param kind The kind of prompt to retrieve.
-     *
-     * @return The prompt string for the requested {@code kind}, or an empty
-     *         {@code wxString} if the kind is {@code PromptKind::kMax} or if no
-     *         entry exists for the generated key.
-     */
-    wxString GetPrompt(PromptKind kind) const;
 
     /**
-     * @brief Sets the prompt string for a specific {@code PromptKind}.
+     * @brief Retrieves the configured prompt text for the given label.
      *
-     * Retrieves the label corresponding to {@code kind} via {@code GetPromptString},
-     * then updates the internal prompt map with the provided {@code prompt}. The
-     * update is performed while holding {@code m_mutex} to ensure thread safety.
+     * Looks up the prompt associated with @p label in the internal prompt map and
+     * returns it as a wxString. If no matching prompt exists, or the stored prompt
+     * is empty, the function logs a warning and returns an empty string.
      *
-     * @param kind The type of prompt to set. {@code PromptKind::kMax} is ignored.
-     * @param prompt The prompt text to associate with the specified {@code kind}.
+     * @param label wxString. The prompt key to look up.
+     *
+     * @return wxString. The stored prompt text for @p label, or wxEmptyString if
+     *         no non-empty prompt is found.
      */
-    void SetPrompt(PromptKind kind, const wxString& prompt);
+    wxString GetPrompt(const wxString& label) const;
 
     /**
      * Retrieves all configured prompts as a vector of label-prompt pairs.

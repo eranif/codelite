@@ -142,18 +142,12 @@ void TextGenerationPreviewFrame::Reset()
 void TextGenerationPreviewFrame::InitialiseFor(PreviewKind kind)
 {
     Reset();
-    m_kind = kind;
-    switch (m_kind) {
-    case PreviewKind::kDefault:
-    case PreviewKind::kCommentGeneration: {
-        auto editor = clGetManager()->GetActiveEditor();
-        if (editor) {
-            auto lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetRemotePathOrLocal());
-            if (lexer) {
-                lexer->Apply(m_editor, true);
-            }
+    auto editor = clGetManager()->GetActiveEditor();
+    if (editor) {
+        auto lexer = ColoursAndFontsManager::Get().GetLexerForFile(editor->GetRemotePathOrLocal());
+        if (lexer) {
+            lexer->Apply(m_editor, true);
         }
-    } break;
     }
 }
 

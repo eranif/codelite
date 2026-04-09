@@ -272,7 +272,7 @@ void GitCommitDlg::OnGenerate(wxCommandEvent& event)
         raw_diff << diff << "\n";
     }
 
-    wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::PromptKind::kGitCommitMessage);
+    wxString prompt = llm::Manager::GetInstance().GetConfig().GetPrompt(llm::kPromptGenerateComment);
     prompt.Replace("{{context}}", raw_diff);
 
     m_indicatorPanel->Start(_("Generating commit message..."));

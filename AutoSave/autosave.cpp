@@ -65,8 +65,9 @@ void AutoSave::UpdateTimers()
         return;
     }
 
+    m_checkIntervalSeconds = conf.GetCheckInterval();
     m_timer = new wxTimer(this, XRCID("auto_save_timer"));
-    m_timer->Start((conf.GetCheckInterval() * 1000), true);
+    m_timer->Start((m_checkIntervalSeconds * 1000), true);
     Bind(wxEVT_TIMER, &AutoSave::OnTimer, this);
 }
 
@@ -85,9 +86,8 @@ void AutoSave::OnTimer(wxTimerEvent& event)
         }
     }
 
-    // Restart the timer
-    AutoSaveSettings conf = AutoSaveSettings::Load();
-    m_timer->Start((conf.GetCheckInterval() * 1000), true);
+    // Restart the timer using the cached interval
+    m_timer->Start((m_checkIntervalSeconds * 1000), true);
 }
 
 void AutoSave::DeleteTimer()

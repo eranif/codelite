@@ -33,6 +33,7 @@
 class AutoSave : public IPlugin
 {
     wxTimer* m_timer;
+    size_t m_checkIntervalSeconds = 5;
 
 protected:
     void OnSettings(wxCommandEvent& event);

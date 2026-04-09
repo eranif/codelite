@@ -1160,6 +1160,8 @@ void clEditor::OnSavePoint(wxStyledTextEvent& event)
 
 void clEditor::OnCharAdded(wxStyledTextEvent& event)
 {
+    BlockTimer timer{"OnCharAdded", FileLogger::LogLevel::Dbg};
+
     bool hasSingleCaret = (GetSelections() == 1);
     OptionsConfigPtr options = GetOptions();
     if (m_prevSelectionInfo.IsOk()) {
@@ -3266,7 +3268,7 @@ void clEditor::OnContextMenu(wxContextMenuEvent& event)
 
 void clEditor::OnKeyDown(wxKeyEvent& event)
 {
-    BlockTimer timer{"clEditor::OnKeyDown", FileLogger::Developer};
+    BlockTimer timer{"clEditor::OnKeyDown", FileLogger::Dbg};
     if (event.GetKeyCode() == WXK_BACK) {
         bool is_pos_before_whitespace = wxIsspace(SafeGetChar(PositionBefore(GetCurrentPos())));
         bool backspace_triggers_cc = TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_BACKSPACE_TRIGGER;
@@ -5986,6 +5988,14 @@ void clEditor::SetSemanticTokens(const wxString& classes,
     flatStrLocals.Trim().Trim(false);
     flatStrOthers.Trim().Trim(false);
     flatStrMethods.Trim().Trim(false);
+
+    // Optimization: skip expensive Colourise call if keywords haven't changed
+    if (flatStrClasses == GetKeywordClasses() && flatStrLocals == GetKeywordLocals() &&
+        flatStrMethods == GetKeywordMethods() && flatStrOthers == GetKeywordOthers()) {
+        return;
+    }
+
+    BlockTimer timer{"SetSemanticTokens", FileLogger::LogLevel::Dbg};
 
     // locate the lexer
     auto lexer = ColoursAndFontsManager::Get().GetLexerForFile(FileUtils::RealPath(GetFileName().GetFullPath()));

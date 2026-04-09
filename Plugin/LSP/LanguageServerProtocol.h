@@ -120,7 +120,7 @@ protected:
     /**
      * @brief notify about file open
      */
-    void SendOpenOrChangeRequest(IEditor* editor, const wxString& fileContent, const wxString& languageId);
+    bool SendOpenOrChangeRequest(IEditor* editor, const wxString& fileContent, const wxString& languageId);
 
     /**
      * @brief report a file-close notification

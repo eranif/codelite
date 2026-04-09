@@ -296,11 +296,11 @@ void LanguageServerProtocol::FindDefinition(IEditor* editor)
     QueueMessage(req);
 }
 
-void LanguageServerProtocol::SendOpenOrChangeRequest(IEditor* editor,
+bool LanguageServerProtocol::SendOpenOrChangeRequest(IEditor* editor,
                                                      const wxString& fileContent,
                                                      const wxString& languageId)
 {
-    CHECK_PTR_RET(editor);
+    CHECK_PTR_RET_FALSE(editor);
     wxString filename = GetEditorFilePath(editor);
 
     wxString preContent;
@@ -310,7 +310,7 @@ void LanguageServerProtocol::SendOpenOrChangeRequest(IEditor* editor,
         if (changes.empty()) {
             // everything is up-to-date
             LOG_IF_TRACE { LSP_TRACE() << GetLogPrefix() << "No changes detected in file:" << filename << endl; }
-            return;
+            return false;
         }
 
         LSP_DEBUG() << "Sending textDocument/didChange request" << endl;
@@ -334,13 +334,12 @@ void LanguageServerProtocol::SendOpenOrChangeRequest(IEditor* editor,
         LSP::DidOpenTextDocumentRequest::Ptr_t req =
             LSP::MessageWithParams::MakeRequest(new LSP::DidOpenTextDocumentRequest(filename, fileContent, languageId));
         QueueMessage(req);
-
-        // send a semantic request
-        SendSemanticTokensRequest(editor);
     }
 
     // update the content for the file
     m_filesTracker.update_content(filename, fileContent);
+    // Send "true" to notify that we did not send a semantic tokens request and we need one
+    return true;
 }
 
 void LanguageServerProtocol::SendCloseRequest(const wxString& filename)
@@ -364,14 +363,14 @@ void LanguageServerProtocol::SendSaveRequest(IEditor* editor, const wxString& fi
 
         // before sending the save request, send a change request
         LSP_DEBUG() << "Flushing changes before save" << endl;
-        SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
+        bool need_semantic_tokens = SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
 
         LSP::CompletionRequest::Ptr_t req =
             LSP::MessageWithParams::MakeRequest(new LSP::DidSaveTextDocumentRequest(filename, fileContent));
         QueueMessage(req);
-
-        // update the tracking by removing the file
-        SendSemanticTokensRequest(editor);
+        if (need_semantic_tokens) {
+            SendSemanticTokensRequest(editor);
+        }
     }
 }
 
@@ -453,8 +452,9 @@ void LanguageServerProtocol::OpenEditor(IEditor* editor)
 
     if (editor && ShouldHandleFile(editor)) {
         wxString fileContent = editor->GetEditorText();
-        SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
-        SendSemanticTokensRequest(editor);
+        if (SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor))) {
+            SendSemanticTokensRequest(editor);
+        }
         // cache symbols
         DocumentSymbols(editor, LSP::DocumentSymbolsRequest::CONTEXT_OUTLINE_VIEW, nullptr);
     }

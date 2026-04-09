@@ -7,6 +7,7 @@
 #include "assistant/attributes.hpp"
 #include "assistant/client/client_base.hpp"
 #include "assistant/common/json.hpp"
+#include "clResult.hpp"
 #include "codelite_exports.h"
 
 #include <algorithm>
@@ -93,7 +94,7 @@ public:
      * @note The operation is atomic with respect to other threads accessing the configuration,
      *       thanks to the scoped lock on {@code m_mutex}.
      */
-    void Save();
+    void Save(bool save_prompts);
 
     /**
      * @brief Retrieves the configured prompt text for the given label.
@@ -223,6 +224,10 @@ private:
         std::string pattern;
         bool persist{true};
     };
+
+    clStatus WritePromptToFile(const wxString& label, const wxString& content) const;
+    clStatusOr<wxString> ReadPromptFromFile(const wxString& label) const;
+    wxString GetPromptFilePath(const wxString& label) const;
 
     mutable std::mutex m_mutex;
     std::map<std::string, std::string> m_prompts GUARDED_BY(m_mutex);

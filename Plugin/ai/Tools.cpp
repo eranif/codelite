@@ -507,7 +507,7 @@ CanInvokeToolResult ApplyPatchConfirm(const std::string& tool_name, assistant::j
             if (result.has_value()) {
                 config.AddTrustedTool(kApplyPatch, result->first, result->second);
                 if (result->second) {
-                    config.Save();
+                    config.Save(false);
                 }
             }
         });
@@ -631,7 +631,7 @@ CanInvokeToolResult ShellExecuteConfirm(const std::string& tool_name, const assi
             }
 
             if (result->second) {
-                config.Save();
+                config.Save(false);
             }
         }
     });

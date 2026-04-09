@@ -157,7 +157,8 @@ public:
     explicit operator bool() const { return ok(); }
 
     /// return the success result
-    Value value() const { return m_value; }
+    const Value& value() const { return m_value; }
+    Value& value() { return m_value; }
 
     clStatusOr() {}
     clStatusOr(const clStatus& status) { *this = status; }

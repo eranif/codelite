@@ -2,6 +2,7 @@
 
 #include "FileManager.hpp"
 #include "Prompts.cpp"
+#include "cl_standard_paths.h"
 #include "file_logger.h"
 #include "fileutils.h"
 
@@ -46,17 +47,46 @@ void Config::Load()
 {
     std::scoped_lock lk{m_mutex};
 
-    // defaults
-    m_prompts = kDefaultPromptTable;
     wxString content;
     if (!FileUtils::ReadFileContent(GetFullPath(), content, wxConvUTF8)) {
         return;
     }
     std::string cstr_content = content.ToStdString(wxConvUTF8);
 
+    // defaults
+    m_prompts = kDefaultPromptTable;
+    wxString doc_string_prompt_label = GetPromptFilePath(kPromptGenerateComment);
+    if (!wxFileName::FileExists(doc_string_prompt_label)) {
+        clSYSTEM() << "Initializing prompt store with default values" << endl;
+        // First time, write default prompts
+        for (const auto& [prompt_label, prompt_content] : m_prompts) {
+            wxString label = wxString::FromUTF8(prompt_label);
+            wxString content = wxString::FromUTF8(prompt_content);
+            auto result = WritePromptToFile(label, content);
+            if (!result.ok()) {
+                clWARNING() << "Failed to write default prompt file:" << GetPromptFilePath(label) << "."
+                            << result.message() << endl;
+            }
+            clSYSTEM() << "Default prompt:" << label << "written to file:" << GetPromptFilePath(label) << endl;
+        }
+    }
+
     try {
         auto json = nlohmann::json::parse(cstr_content);
-        m_prompts = ReadValue(json, "prompts", kDefaultPromptTable);
+        m_prompts.clear();
+        if (json.contains("prompts") && json["prompts"].is_object()) {
+            for (const auto& kv : json["prompts"].items()) {
+                std::string prompt_label = kv.key();
+                const auto st = ReadPromptFromFile(wxString::FromUTF8(prompt_label));
+                if (!st.ok()) {
+                    clWARNING() << "Failed to read prompt file:" << GetPromptFilePath(prompt_label) << "."
+                                << st.error_message() << endl;
+                    continue;
+                }
+                m_prompts[prompt_label] = st.value().ToStdString(wxConvUTF8);
+            }
+        }
+
         m_cachingPolicy = ReadValue<std::string>(json, "caching_policy", llm::kCacheAuto.ToStdString(wxConvUTF8));
         m_persistingTrustedTools = ReadValue(json, "trusted_tools", decltype(m_persistingTrustedTools){});
         m_enableTools = ReadValue<bool>(json, "enable_tools", true);
@@ -67,7 +97,7 @@ void Config::Load()
     }
 }
 
-void Config::Save()
+void Config::Save(bool save_prompts)
 {
     std::scoped_lock lk{m_mutex};
     nlohmann::json j;
@@ -80,7 +110,24 @@ void Config::Save()
         m_prompts.insert({k, v});
     }
 
-    j["prompts"] = m_prompts;
+    if (save_prompts) {
+        // Write the prompts.
+        for (const auto& [prompt_label, prompt_content] : m_prompts) {
+            wxString label = wxString::FromUTF8(prompt_label);
+            wxString content = wxString::FromUTF8(prompt_content);
+            auto result = WritePromptToFile(label, content);
+            if (!result.ok()) {
+                clWARNING() << "Failed to write prompt file:" << GetPromptFilePath(label) << "." << result.message()
+                            << endl;
+            }
+        }
+    }
+    std::map<std::string, std::string> prompts;
+    for (const auto& [prompt_label, _] : m_prompts) {
+        prompts[prompt_label] = "@" + GetPromptFilePath(wxString::FromUTF8(prompt_label));
+    }
+
+    j["prompts"] = prompts;
     j["enable_tools"] = m_enableTools.load();
     j["caching_policy"] = m_cachingPolicy.ToStdString(wxConvUTF8);
     j["trusted_tools"] = m_persistingTrustedTools;
@@ -211,6 +258,41 @@ bool Config::IsToolTrustedFor(const wxString& toolname, OnTrustPattern check_pat
             return true;
     }
     return false;
+}
+
+wxString Config::GetPromptFilePath(const wxString& label) const
+{
+    wxString file_name = FileUtils::NormaliseFilename(label);
+    wxFileName fn{clStandardPaths::Get().GetUserDataDir(), file_name};
+    fn.AppendDir("db");
+    fn.AppendDir("assistant");
+    fn.AppendDir("prompts");
+    fn.SetExt("md");
+    fn.Mkdir(wxS_DIR_DEFAULT);
+    return fn.GetFullPath();
+}
+
+clStatus Config::WritePromptToFile(const wxString& label, const wxString& content) const
+{
+    wxFileName file_name{GetPromptFilePath(label)};
+    if (!FileUtils::WriteFileContent(file_name, content)) {
+        return StatusIOError("Write error");
+    }
+    return StatusOk();
+}
+
+clStatusOr<wxString> Config::ReadPromptFromFile(const wxString& label) const
+{
+    wxFileName file_name{GetPromptFilePath(label)};
+    if (!file_name.FileExists()) {
+        return StatusNotFound();
+    }
+
+    wxString content;
+    if (!FileUtils::ReadFileContent(file_name, content)) {
+        return StatusIOError("Read error");
+    }
+    return content;
 }
 
 } // namespace llm

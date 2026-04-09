@@ -692,7 +692,7 @@ CanInvokeToolResult Manager::CanRunTool(const std::string& tool_name, [[maybe_un
         bool persist = ::clMessageBox(message, _("Confirm"), wxYES_NO | wxICON_QUESTION | wxNO_DEFAULT) == wxYES;
         GetInstance().GetConfig().AddTrustedTool(tool_name_utf8, "*", persist);
         if (persist) {
-            GetInstance().GetConfig().Save();
+            GetInstance().GetConfig().Save(false);
         }
     });
 }

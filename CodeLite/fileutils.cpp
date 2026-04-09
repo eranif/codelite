@@ -829,12 +829,14 @@ bool FileUtils::IsBinaryExecutable(const wxString& filename)
 
 wxString FileUtils::NormaliseFilename(const wxString& str)
 {
-    wxString fixed = str;
-    for (size_t i = 0; i < fixed.length(); ++i) {
-        if (VALID_CHARS.count(fixed[i])) {
+    wxString fixed;
+    fixed.reserve(str.size());
+    for (const auto& ch : str) {
+        if (wxIsalnum(ch) || ch == '-' || ch == '_' || ch == '.') {
+            fixed << ch;
             continue;
         }
-        fixed[i] = '_';
+        fixed << '_';
     }
     return fixed;
 }

@@ -163,7 +163,7 @@ void SetCachePolicy(llm::CachePolicy policy)
     auto& conf = llm_manager.GetConfig();
     conf.SetCachePolicy(policy);
     llm_manager.SetCachingPolicy(policy);
-    conf.Save();
+    conf.Save(false);
 }
 } // namespace
 
@@ -181,7 +181,7 @@ void ChatAIWindow::OnOptions(wxAuiToolBarEvent& event)
         wxEVT_MENU,
         [&conf](wxCommandEvent& e) {
             conf.SetToolsEnabled(e.IsChecked());
-            conf.Save();
+            conf.Save(false);
         },
         XRCID("wxID_TOOLS_ENABLED"));
 

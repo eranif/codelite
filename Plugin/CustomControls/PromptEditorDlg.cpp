@@ -85,7 +85,7 @@ void PromptEditorDlg::OnSave(wxCommandEvent& event)
         styler.StyleText(true);
         llm::Manager::GetInstance().GetConfig().AddPrompt(d->m_label, ctrl->GetText());
     }
-    llm::Manager::GetInstance().GetConfig().Save();
+    llm::Manager::GetInstance().GetConfig().Save(true);
 }
 
 void PromptEditorDlg::OnSaveUI(wxUpdateUIEvent& event)
@@ -149,7 +149,7 @@ void PromptEditorDlg::OnDefaults(wxCommandEvent& event)
 
     wxUnusedVar(event);
     llm::Manager::GetInstance().GetConfig().ResetPrompts();
-    llm::Manager::GetInstance().GetConfig().Save();
+    llm::Manager::GetInstance().GetConfig().Save(true);
     LoadPrompts();
 }
 
@@ -168,7 +168,7 @@ void PromptEditorDlg::OnNew(wxCommandEvent& e)
     }
 
     conf.AddPrompt(label, wxEmptyString);
-    conf.Save();
+    conf.Save(true);
 
     LoadPrompts();
     CallAfter(&PromptEditorDlg::SelectLabel, label);
@@ -192,7 +192,7 @@ void PromptEditorDlg::OnDelete(wxCommandEvent& e)
     }
 
     llm::Manager::GetInstance().GetConfig().DeletePrompt(label);
-    llm::Manager::GetInstance().GetConfig().Save();
+    llm::Manager::GetInstance().GetConfig().Save(true);
     CallAfter(&PromptEditorDlg::LoadPrompts);
 }
 

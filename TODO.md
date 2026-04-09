@@ -20,7 +20,7 @@ High:
 -----
 
 - When showing the output pane, move the focus to the active tab
-- Terminal: when using UP / DOWN while the scrolled up, the terminal is scrolled to the bottom (as expected) but the style of the last command is invisible.
+
 
 Medium:
 -----
@@ -35,7 +35,6 @@ Medium:
 - AI: ReadFileContent: add custom confirmation check with options: exact path, directory or entire tool.
 - AI: Trust level dialog: add an option to check if an "entire tool" can persist, currently this is hard coded to FALSE.
 
-- Terminal: when optimizing for drawing, make sure that exclude cells with default attributes only.
 - Terminal: when changing a terminal theme, apply it to newly opened terminals only.
 - Terminal: remember, on per terminal type, the last theme used for it.
 

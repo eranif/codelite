@@ -72,6 +72,63 @@ FunctionResult CreateNewFile(const assistant::json& args)
     return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
 }
 
+/// Will be invoked by the library before calling to the "ReadFileContent"
+CanInvokeToolResult ReadFileContentConfirm(const std::string& tool_name, assistant::json args)
+{
+    if (wxIsMainThread()) {
+        return CanInvokeToolResult{
+            .can_invoke = false,
+            .reason = "Internal Error.",
+        };
+    }
+
+    std::string filepath = ::assistant::GetFunctionArg<std::string>(args, "filepath").value_or("");
+    if (filepath.empty()) {
+        return CanInvokeToolResult{
+            .can_invoke = false,
+            .reason = "Missing or empty mandatory field 'filepath'",
+        };
+    }
+
+    wxString fullpath = FileUtils::NormalizePath(wxString::FromUTF8(filepath));
+    auto& config = llm::Manager::GetInstance().GetConfig();
+    static constexpr const char* kReadFileContent = "ReadFileContent";
+
+    bool is_trusted = llm::Manager::GetInstance().CheckIfPathIsAllowedForTool(kReadFileContent, fullpath);
+
+    // Apply read file "Trust" for this session (per path).
+    if (!is_trusted) {
+        wxString message;
+        message << _("The model wants to read the file:") << "\n```\n" << fullpath << "\n```\n";
+        return llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message, [&config, &fullpath]() {
+            // User trusts the tool for this path, add it to the trust store.
+            wxString dirpath = FileUtils::GetPath(fullpath);
+
+            std::vector<std::pair<wxString, wxString>> options{
+                {wxString::Format(_("Specific path: %s"), fullpath), fullpath},
+                {wxString::Format(_("Entire directory: %s/*"), dirpath), dirpath + "/*"},
+                {_("Entire tool"), "*"},
+            };
+
+            auto result = llm::Manager::GetInstance().ShowTrustLevelDialog(kReadFileContent, options);
+            if (result.has_value()) {
+                config.AddTrustedTool(kReadFileContent, result->first, result->second);
+                if (result->second) {
+                    config.Save(false);
+                }
+            }
+        });
+    } else {
+        // This path is trusted.
+        wxString message;
+        message << _("Reading file:") << "\n```\n" << fullpath << "\n```\n";
+        llm::Manager::GetInstance().PrintMessage(message, IconType::kInfo);
+        return CanInvokeToolResult{
+            .can_invoke = true,
+        };
+    }
+}
+
 FunctionResult ReadFileContent(const assistant::json& args)
 {
     VERIFY_WORKER_THREAD();
@@ -461,7 +518,6 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
     return Ok(output);
 }
 
-/// Will be invoked by the library before calling to the "ApplyPatch"
 CanInvokeToolResult ApplyPatchConfirm(const std::string& tool_name, assistant::json args)
 {
     if (wxIsMainThread()) {
@@ -536,9 +592,15 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
 
     // ApplyPatchLoose must be called from the main thread only (it manipulates GUI).
     return EventNotifier::Get()->RunOnMain<FunctionResult>([file_path, patch]() -> FunctionResult {
-        auto result = PatchApplier::ApplyPatchLoose(wxString::FromUTF8(file_path), patch, true);
+        wxString file = wxString::FromUTF8(file_path);
+        auto result = PatchApplier::ApplyPatchLoose(file, patch, true);
         if (!result.success) {
             clDEBUG() << "Failed to apply the patch:" << result.errorMessage.ToStdString(wxConvUTF8) << endl;
+            // revert any changes done to the file.
+            auto editor = clGetManager()->FindEditor(file);
+            if (editor) {
+                editor->ReloadFromDisk();
+            }
             return Err(result.errorMessage.ToStdString(wxConvUTF8));
         }
         clDEBUG() << "Patch applied successfully" << endl;
@@ -546,7 +608,7 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
     });
 }
 
-CanInvokeToolResult ShellExecuteConfirm(const std::string& tool_name, const assistant::json& args)
+CanInvokeToolResult ToolShellExecuteConfirm(const std::string& tool_name, const assistant::json& args)
 {
     if (wxIsMainThread()) {
         return CanInvokeToolResult{.can_invoke = false, .reason = "Internal Error."};
@@ -741,6 +803,7 @@ void PopulateBuiltInFunctions(FunctionTable& table)
                   .AddOptionalParam("from_line", "Starting line number (1-based) to read from", "number")
                   .AddOptionalParam("line_count", "Number of lines to read", "number")
                   .SetCallback(ReadFileContent)
+                  .SetHumanInTheLoopCallabck(ReadFileContentConfirm)
                   .Build());
 
     table.Add(FunctionBuilder("OpenFileInEditor")
@@ -831,7 +894,7 @@ ALWAYS RESPOND WITH A GIT-STYLE DIFF THAT CAN BE APPLIED DIRECTLY. NEVER PROVIDE
 IMPORTANT: Before using this tool, you should call the GetOS tool first to determine the host operating system.
 This ensures you can construct OS-appropriate commands (e.g., 'dir' vs 'ls', backslash vs forward slash paths).)")
                   .SetCallback(ToolShellExecute)
-                  .SetHumanInTheLoopCallabck(ShellExecuteConfirm)
+                  .SetHumanInTheLoopCallabck(ToolShellExecuteConfirm)
                   .AddRequiredParam("command", "The shell command to execute", "string")
                   .AddRequiredParam("working_directory", "The directory where the command should be executed", "string")
                   .Build());

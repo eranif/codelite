@@ -312,7 +312,7 @@ public:
                           const wxString& title = _("Choose an option"),
                           const wxPoint& pos = wxDefaultPosition,
                           const wxSize& size = wxSize(-1, -1),
-                          long style = wxDEFAULT_DIALOG_STYLE);
+                          long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     virtual ~ToolTrustLevelDlgBase();
 };
 

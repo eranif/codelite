@@ -807,7 +807,7 @@ ToolTrustLevelDlgBase::ToolTrustLevelDlgBase(
     m_dvListCtrlOptions = new wxDataViewListCtrl(this,
                                                  wxID_ANY,
                                                  wxDefaultPosition,
-                                                 wxDLG_UNIT(this, wxSize(250, 200)),
+                                                 wxDLG_UNIT(this, wxSize(400, 200)),
                                                  wxDV_NO_HEADER | wxDV_ROW_LINES | wxDV_SINGLE);
     m_dvListCtrlOptions->SetFocus();
 

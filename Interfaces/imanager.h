@@ -454,6 +454,19 @@ public:
      */
     virtual void ReloadWorkspace() = 0;
 
+    /***
+     * Reloads the specified file from disk if it is currently open.
+     *
+     * This method of PluginManager locates the editor associated with the
+     * given filename and reloads the file content from disk. If no editor
+     * is found for the specified file, this function returns silently.
+     *
+     * @param filename The wxString containing the path of the file to reload.
+     *
+     * @return Nothing.
+     */
+    virtual void ReloadFile(const wxString& filename) = 0;
+
     /**
      * @brief search for loaded plugin by its name, if the plugin is loaded returns its pointer
      * @param pluginName plugin to search

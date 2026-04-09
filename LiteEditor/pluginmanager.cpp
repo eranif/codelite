@@ -446,6 +446,15 @@ void PluginManager::ReloadWorkspace()
     clMainFrame::Get()->GetEventHandler()->AddPendingEvent(evt);
 }
 
+void PluginManager::ReloadFile(const wxString& filename)
+{
+    auto editor = FindEditor(filename);
+    if (!editor) {
+        return;
+    }
+    editor->ReloadFromDisk();
+}
+
 IPlugin* PluginManager::GetPlugin(const wxString& pluginName)
 {
     std::map<wxString, IPlugin*>::iterator iter = m_plugins.find(pluginName);

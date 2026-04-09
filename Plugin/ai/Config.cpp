@@ -3,8 +3,10 @@
 #include "FileManager.hpp"
 #include "Prompts.cpp"
 #include "cl_standard_paths.h"
+#include "event_notifier.h"
 #include "file_logger.h"
 #include "fileutils.h"
+#include "globals.h"
 
 #include <algorithm>
 
@@ -135,7 +137,9 @@ void Config::Save(bool save_prompts)
     j["trusted_tools"] = m_persistingTrustedTools;
 
     wxString content = wxString::FromUTF8(j.dump(2));
-    FileUtils::WriteFileContent(GetFullPath(), content, wxConvUTF8);
+    if (FileUtils::WriteFileContent(GetFullPath(), content, wxConvUTF8)) {
+        clGetManager()->ReloadFile(GetFullPath());
+    }
 }
 
 wxString Config::GetPrompt(const wxString& label) const

@@ -56,7 +56,7 @@ void ToolTrustLevelDlg::OnPersist(wxCommandEvent& event)
     }
 
     bool persist_entire_tool = result.value() == "*";
-    if (event.IsChecked() && persist_entire_tool) {
+    if (!m_allowTrustEntireTool && event.IsChecked() && persist_entire_tool) {
         ::clMessageBox(_("Persisting an entire tool is not allowed"), "CodeLite", wxICON_WARNING | wxOK);
         m_checkBox->CallAfter(&wxCheckBox::SetValue, false);
         return;

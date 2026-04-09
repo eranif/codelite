@@ -1054,10 +1054,13 @@ void Manager::AddNewMcp(const llm::LocalMcp& d)
 bool Manager::WriteConfigFile(llm::json j)
 {
     const WriteOptions opts{.ignore_workspace = true};
-    if (!FileManager::WriteSettingsFileContent(kAssistantConfigFile, wxString::FromUTF8(j.dump(2)), opts)) {
-        clERROR() << "Failed to write configuration file:" << kAssistantConfigFile << endl;
+    const wxString filepath =
+        FileManager::GetSettingFileFullPath(kAssistantConfigFile, WriteOptions{.ignore_workspace = true});
+    if (!FileManager::WriteSettingsFileContent(filepath, wxString::FromUTF8(j.dump(2)), opts)) {
+        clERROR() << "Failed to write configuration file:" << filepath << endl;
         return false;
     }
+    clGetManager()->ReloadFile(filepath);
     return true;
 }
 
@@ -1514,6 +1517,7 @@ Manager::ShowTrustLevelDialog(const wxString& toolname, const std::vector<std::p
     ToolTrustLevelDlg dlg(nullptr, options, 0);
     dlg.SetMessage(wxString::Format(_("Define the level of trust for: '%s'"), toolname));
     dlg.Check(false);
+    dlg.SetAllowTrustEntireTool(true);
 
     if (dlg.ShowModal() != wxID_OK) {
         return std::nullopt;

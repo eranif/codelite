@@ -124,6 +124,7 @@ public:
     wxString GetProjectExecutionCommand(const wxString& projectName, wxString& wd) override;
     wxApp* GetTheApp() override;
     void ReloadWorkspace() override;
+    void ReloadFile(const wxString& filename) override;
     IPlugin* GetPlugin(const wxString& pluginName) override;
     wxEvtHandler* GetOutputWindow() override;
     bool SaveAll(bool prompt = true) override;

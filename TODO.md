@@ -32,9 +32,6 @@ Medium:
 - AI: Add a system-message that instruct the model to NEVER create a summary file
 - AI: Add token usage
 - AI: Add "compact" or "summary" button to when the AI is losing it and needs a fresh start :)
-- AI: ReadFileContent: add custom confirmation check with options: exact path, directory or entire tool.
-- AI: Trust level dialog: add an option to check if an "entire tool" can persist, currently this is hard coded to FALSE.
-
 - Terminal: when changing a terminal theme, apply it to newly opened terminals only.
 - Terminal: remember, on per terminal type, the last theme used for it.
 

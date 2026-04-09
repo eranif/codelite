@@ -97,7 +97,7 @@ wxTerminal::wxTerminal(wxWindow* parent)
 {
     Bind(wxEVT_IDLE, &wxTerminal::OnIdle, this);
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
+    if (lexer) {
         lexer->Apply(m_textCtrl);
         m_textCtrl->MarkerSetForeground(MARKER_ID, lexer->GetProperty(0).GetFgColour());
         m_textCtrl->MarkerSetBackground(MARKER_ID, lexer->GetProperty(0).GetBgColour());
@@ -130,16 +130,16 @@ wxTerminal::~wxTerminal()
 
 void wxTerminal::OnEnter()
 {
-    if(m_interactive) {
+    if (m_interactive) {
         wxString lineText = GetCommandText();
-        if(lineText.IsEmpty()) {
+        if (lineText.IsEmpty()) {
             return;
         }
         clCommandEvent event(wxEVT_TERMINAL_EXECUTE_COMMAND);
         event.SetEventObject(this);
         event.SetString(lineText);
         // We first try the event way
-        if(!GetEventHandler()->ProcessEvent(event)) {
+        if (!GetEventHandler()->ProcessEvent(event)) {
             // Do the default action
             DoProcessCommand(lineText);
         } else {
@@ -151,7 +151,7 @@ void wxTerminal::OnEnter()
 void wxTerminal::OnUp(wxKeyEvent& event)
 {
     const wxString& command = m_history->ArrowUp();
-    if(command.IsEmpty())
+    if (command.IsEmpty())
         return;
     InsertCommandText(command);
 }
@@ -161,9 +161,11 @@ void wxTerminal::OnProcessEnd(clProcessEvent& event)
     wxDELETE(m_process);
 
     // Make sure we flush everything
-    DoFlushOutputBuffer();
+    if (!m_outputBuffer.IsEmpty()) {
+        DoFlushOutputBuffer();
+    }
 
-    if(m_exitWhenProcessDies) {
+    if (m_exitWhenProcessDies) {
         AddTextWithEOL(_("\nPress any key to continue..."));
         m_exitOnKey = true;
     }
@@ -175,14 +177,14 @@ void wxTerminal::DoCtrlC()
 {
     clCommandEvent event(wxEVT_TERMINAL_CTRL_C);
     event.SetEventObject(this);
-    if(!GetEventHandler()->ProcessEvent(event) && m_process) {
+    if (!GetEventHandler()->ProcessEvent(event) && m_process) {
         wxKill(m_process->GetPid(), wxSIGINT, nullptr, wxKILL_CHILDREN);
     }
 }
 
 void wxTerminal::Execute(const wxString& command, bool exitWhenDone, const wxString& workingDir)
 {
-    if(m_process)
+    if (m_process)
         return;
     m_textCtrl->ClearAll();
     m_textCtrl->SetFocus();
@@ -196,7 +198,7 @@ void wxTerminal::DoProcessCommand(const wxString& command)
 {
     wxString cmd(command);
     cmd.Trim().Trim(false);
-    if(cmd.IsEmpty())
+    if (cmd.IsEmpty())
         return;
     m_history->Add(cmd);
 
@@ -208,7 +210,7 @@ void wxTerminal::DoProcessCommand(const wxString& command)
     // real command
     IProcess* cmdPrc =
         ::CreateAsyncProcess(this, cmdShell, IProcessCreateWithHiddenConsole | IProcessWrapInShell, m_workingDir);
-    if(cmdPrc) {
+    if (cmdPrc) {
         m_process = cmdPrc;
 
     } else {
@@ -216,7 +218,7 @@ void wxTerminal::DoProcessCommand(const wxString& command)
         AddTextWithEOL(wxString() << _("\nFailed to execute command: ") << cmdShell << _("\nWorking directory")
                                   << m_workingDir);
 
-        if(m_exitWhenProcessDies) {
+        if (m_exitWhenProcessDies) {
             AddTextWithEOL(_("\nPress any key to continue..."));
             m_exitOnKey = true;
         }
@@ -227,7 +229,7 @@ void wxTerminal::KillInferior()
 {
     clCommandEvent event(wxEVT_TERMINAL_KILL_INFERIOR);
     event.SetEventObject(this);
-    if(!GetEventHandler()->ProcessEvent(event) && m_process) {
+    if (!GetEventHandler()->ProcessEvent(event) && m_process) {
         wxKill(m_process->GetPid(), wxSIGKILL, NULL, wxKILL_CHILDREN);
     }
 }
@@ -248,18 +250,18 @@ wxString wxTerminal::StartTTY()
     m_process = NULL;
     // Open the master side of a pseudo terminal
     int master = ::posix_openpt(O_RDWR | O_NOCTTY);
-    if(master < 0) {
+    if (master < 0) {
         return "";
     }
 
     // Grant access to the slave pseudo terminal
-    if(::grantpt(master) < 0) {
+    if (::grantpt(master) < 0) {
         ::close(master);
         return "";
     }
 
     // Clear the lock flag on the slave pseudo terminal
-    if(::unlockpt(master) < 0) {
+    if (::unlockpt(master) < 0) {
         ::close(master);
         return "";
     }
@@ -295,14 +297,16 @@ void wxTerminal::StopTTY()
 void wxTerminal::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
-    DoFlushOutputBuffer();
+    if (!m_outputBuffer.IsEmpty()) {
+        DoFlushOutputBuffer();
+    }
 }
 
 void wxTerminal::DoFlushOutputBuffer()
 {
-    if(!m_outputBuffer.IsEmpty()) {
+    if (!m_outputBuffer.IsEmpty()) {
         CaretToEnd();
-        if(!m_outputBuffer.EndsWith("\n")) {
+        if (!m_outputBuffer.EndsWith("\n")) {
             m_outputBuffer << "\n";
         }
         AddTextRaw(m_outputBuffer);
@@ -312,29 +316,29 @@ void wxTerminal::DoFlushOutputBuffer()
 
 void wxTerminal::OnCopy(wxCommandEvent& event)
 {
-    if(wxWindow::FindFocus() != m_textCtrl) {
+    if (wxWindow::FindFocus() != m_textCtrl) {
         event.Skip();
         return;
     }
-    if(m_textCtrl->CanCopy()) {
+    if (m_textCtrl->CanCopy()) {
         m_textCtrl->Copy();
     }
 }
 
 void wxTerminal::OnCut(wxCommandEvent& event)
 {
-    if(wxWindow::FindFocus() != m_textCtrl) {
+    if (wxWindow::FindFocus() != m_textCtrl) {
         event.Skip();
         return;
     }
-    if(m_textCtrl->CanCut()) {
+    if (m_textCtrl->CanCut()) {
         m_textCtrl->Cut();
     }
 }
 
 void wxTerminal::OnSelectAll(wxCommandEvent& event)
 {
-    if(wxWindow::FindFocus() != m_textCtrl) {
+    if (wxWindow::FindFocus() != m_textCtrl) {
         event.Skip();
         return;
     }
@@ -344,7 +348,7 @@ void wxTerminal::OnSelectAll(wxCommandEvent& event)
 void wxTerminal::OnDown(wxKeyEvent& event)
 {
     const wxString& command = m_history->ArrowDown();
-    if(command.IsEmpty())
+    if (command.IsEmpty())
         return;
     InsertCommandText(command);
 }
@@ -352,13 +356,13 @@ void wxTerminal::OnDown(wxKeyEvent& event)
 void wxTerminal::OnLeft(wxKeyEvent& event)
 {
     // Don't allow moving LEFT when at the begin of a line
-    if(m_textCtrl->GetColumn(m_textCtrl->GetCurrentPos()) == 0) {
+    if (m_textCtrl->GetColumn(m_textCtrl->GetCurrentPos()) == 0) {
         return;
     }
 
     // Right / Left movement is allowed only on the last line
     int curline = m_textCtrl->GetCurrentLine();
-    if(curline == (m_textCtrl->GetLineCount() - 1)) {
+    if (curline == (m_textCtrl->GetLineCount() - 1)) {
         event.Skip();
     }
 }
@@ -367,7 +371,7 @@ void wxTerminal::OnRight(wxKeyEvent& event)
 {
     // Right / Left movement is allowed only on the last line
     int curline = m_textCtrl->GetCurrentLine();
-    if(curline == (m_textCtrl->GetLineCount() - 1)) {
+    if (curline == (m_textCtrl->GetLineCount() - 1)) {
         event.Skip();
     }
 }
@@ -384,7 +388,7 @@ void wxTerminal::InsertCommandText(const wxString& command)
 wxString wxTerminal::GetCommandText()
 {
     int line_before_last = m_textCtrl->GetLineCount() - 2;
-    if(line_before_last < 0)
+    if (line_before_last < 0)
         return "";
     int lineStartPos = m_textCtrl->PositionFromLine(line_before_last);
     int lineLen = m_textCtrl->LineLength(line_before_last);
@@ -397,7 +401,7 @@ void wxTerminal::OnThemeChanged(wxCommandEvent& event)
 {
     event.Skip();
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
+    if (lexer) {
         lexer->Apply(m_textCtrl);
         m_textCtrl->MarkerSetForeground(MARKER_ID, lexer->GetProperty(0).GetFgColour());
         m_textCtrl->MarkerSetBackground(MARKER_ID, lexer->GetProperty(0).GetBgColour());
@@ -414,10 +418,10 @@ void wxTerminal::AddTextWithEOL(const wxString& text)
 {
     wxString textToAdd = text;
     textToAdd.Trim().Trim(false);
-    if(textToAdd.IsEmpty()) {
+    if (textToAdd.IsEmpty()) {
         return;
     }
-    if(!textToAdd.EndsWith("\n")) {
+    if (!textToAdd.EndsWith("\n")) {
         textToAdd << "\n";
     }
     m_textCtrl->SetReadOnly(false);
@@ -438,7 +442,7 @@ void wxTerminal::AddTextRaw(const wxString& text)
 
 void wxTerminal::OnKey(wxKeyEvent& event)
 {
-    if(m_exitOnKey) {
+    if (m_exitOnKey) {
         clCommandEvent event(wxEVT_TERMINAL_EXIT_WHEN_DONE);
         GetEventHandler()->AddPendingEvent(event);
     } else {

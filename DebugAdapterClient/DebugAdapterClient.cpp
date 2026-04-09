@@ -40,6 +40,7 @@
 #include "Debugger/debuggermanager.h"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "StringUtils.h"
+#include "clIdleEventThrottler.hpp"
 #include "clResizableTooltip.h"
 #include "clWorkspaceManager.h"
 #include "environmentconfig.h"
@@ -1457,6 +1458,10 @@ clEnvList_t DebugAdapterClient::PrepareEnvForFileSystemWorkspace(const DapEntry&
 void DebugAdapterClient::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
+    static clIdleEventThrottler event_throttler{500};
+    if (!event_throttler.CanHandle()) {
+        return;
+    }
     CHECK_PTR_RET(m_client.IsConnected());
 
     if (!m_client.CanInteract()) {

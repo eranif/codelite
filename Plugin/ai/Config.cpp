@@ -43,13 +43,13 @@ Config::Config() {}
 
 Config::~Config() {}
 
-void Config::Load()
+clStatus Config::Load()
 {
     std::scoped_lock lk{m_mutex};
 
     wxString content;
     if (!FileUtils::ReadFileContent(GetFullPath(), content, wxConvUTF8)) {
-        return;
+        return StatusIOError("Read error");
     }
     std::string cstr_content = content.ToStdString(wxConvUTF8);
 
@@ -92,9 +92,11 @@ void Config::Load()
         m_enableTools = ReadValue<bool>(json, "enable_tools", true);
 
     } catch (const std::exception& e) {
-        clERROR() << "Failed to parse JSON file:" << GetFullPath() << "." << e.what() << endl;
-        return;
+        wxString errmsg;
+        errmsg << "Invalid JSON file:" << GetFullPath() << "." << e.what();
+        return StatusOther(errmsg);
     }
+    return StatusOk();
 }
 
 void Config::Save(bool save_prompts)

@@ -592,6 +592,7 @@ EVT_MENU(XRCID("manage_plugins"), clMainFrame::OnManagePlugins)
 //-------------------------------------------------------
 EVT_MENU(XRCID("ai_prompt_editor"), clMainFrame::OnAiPromptEditor)
 EVT_MENU(XRCID("ai_settings"), clMainFrame::OnAiSettings)
+EVT_MENU(XRCID("ai_global_settings"), clMainFrame::OnAiGlobalSettings)
 EVT_MENU(XRCID("ai_show_chat_window"), clMainFrame::OnAiShowChatBox)
 EVT_MENU(XRCID("ai_configure_endpoint"), clMainFrame::OnAiConfigureEndpoint)
 EVT_MENU(XRCID("ai_new_mcp_server"), clMainFrame::OnAiAddNewMCPServer)
@@ -6287,6 +6288,12 @@ void clMainFrame::OnAiSettings(wxCommandEvent& e)
 {
     wxUnusedVar(e);
     llm::Manager::GetInstance().OpenSettingsFileInEditor();
+}
+
+void clMainFrame::OnAiGlobalSettings(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    clGetManager()->OpenFile(llm::Config::GetFullPath());
 }
 
 void clMainFrame::OnAiAvailableUI(wxUpdateUIEvent& e) { e.Enable(llm::Manager::GetInstance().IsAvailable()); }

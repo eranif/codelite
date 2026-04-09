@@ -782,6 +782,7 @@ private:
 
     bool WriteConfigFile(llm::json j);
     void HandleConfigFileUpdated();
+    void HandleGlobalConfigFileUpdated();
     void OnEditorContextMenu(clContextMenuEvent& event);
 
     void PostTask(ThreadTask task);

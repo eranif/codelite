@@ -653,6 +653,7 @@ protected:
 
     void OnAiPromptEditor(wxCommandEvent& e);
     void OnAiSettings(wxCommandEvent& e);
+    void OnAiGlobalSettings(wxCommandEvent& e);
     void OnAiShowChatBox(wxCommandEvent& e);
     void OnAiConfigureEndpoint(wxCommandEvent& e);
     void OnAiAddNewMCPServer(wxCommandEvent& e);

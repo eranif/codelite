@@ -78,7 +78,7 @@ public:
      * @note The function does not propagate exceptions; any errors are handled
      * internally and reported through logging.
      */
-    void Load();
+    clStatus Load();
     /**
      * @brief Saves the current configuration to disk.
      *
@@ -216,10 +216,9 @@ public:
     void DeleteTrustedTool(const wxString& toolname);
     using OnTrustPattern = std::function<bool(const wxString&)>;
     bool IsToolTrustedFor(const wxString& toolname, OnTrustPattern check_pattern_cb) const;
+    static wxString GetFullPath();
 
 private:
-    wxString GetFullPath();
-
     struct TrustedToolPattern {
         std::string pattern;
         bool persist{true};

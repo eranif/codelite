@@ -34,10 +34,7 @@ Medium:
 - AI: Add "compact" or "summary" button to when the AI is losing it and needs a fresh start :)
 - AI: ReadFileContent: add custom confirmation check with options: exact path, directory or entire tool.
 - AI: Trust level dialog: add an option to check if an "entire tool" can persist, currently this is hard coded to FALSE.
-- AI: Add 2 new options to the "AI" menu:
-    1. Reset all trust options.
-    2. Open Global Settings file.
-- AI: Store prompts in files and not directly in the JSON. The JSON should only hold the reference to the file `@filename`.
+
 - Terminal: when optimizing for drawing, make sure that exclude cells with default attributes only.
 - Terminal: when changing a terminal theme, apply it to newly opened terminals only.
 - Terminal: remember, on per terminal type, the last theme used for it.

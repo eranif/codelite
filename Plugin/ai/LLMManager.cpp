@@ -1077,15 +1077,34 @@ void Manager::OnFileSaved(clCommandEvent& event)
 
     CHECK_PTR_RET(clGetManager()->GetActiveEditor());
 
-    const WriteOptions opts{.converter = nullptr, .ignore_workspace = true};
-    wxString llm_config_file = FileManager::GetSettingFileFullPath(kAssistantConfigFile, opts);
+    {
+        // assistant.json file.?
+        wxString llm_config_file =
+            FileManager::GetSettingFileFullPath(kAssistantConfigFile, WriteOptions{.ignore_workspace = true});
 
-    wxString filepath = clGetManager()->GetActiveEditor()->GetRemotePathOrLocal();
-    if (filepath != llm_config_file) {
-        return;
+        wxString filepath = clGetManager()->GetActiveEditor()->GetRemotePathOrLocal();
+        if (filepath == llm_config_file) {
+            HandleConfigFileUpdated();
+        }
     }
 
-    HandleConfigFileUpdated();
+    {
+        // ~/.codelite/config/assistant-global-settings.json file.?
+        wxFileName global_agent_config{llm::Config::GetFullPath()};
+
+        wxString filepath = clGetManager()->GetActiveEditor()->GetRemotePathOrLocal();
+        if (filepath == global_agent_config.GetFullPath()) {
+            // Add validation
+            llm::Config tmp_config;
+            auto status = tmp_config.Load();
+            if (!status.ok()) {
+                ::clMessageBox(status.message(), "CodeLite", wxICON_WARNING | wxOK);
+            } else {
+                // New content is valid -> load the configuration
+                HandleGlobalConfigFileUpdated();
+            }
+        }
+    }
 }
 
 /**
@@ -1105,6 +1124,17 @@ void Manager::HandleConfigFileUpdated()
     }
 
     clLLMEvent event_config_updates{wxEVT_LLM_CONFIG_UPDATED};
+    event_config_updates.SetEventObject(this);
+    AddPendingEvent(event_config_updates);
+}
+
+void Manager::HandleGlobalConfigFileUpdated()
+{
+    // Reload configuration
+    wxBusyCursor bc{};
+    GetConfig().Load();
+
+    clLLMEvent event_config_updates{wxEVT_LLM_GLOBAL_CONFIG_UPDATED};
     event_config_updates.SetEventObject(this);
     AddPendingEvent(event_config_updates);
 }

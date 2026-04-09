@@ -732,6 +732,9 @@
       <object class="wxMenuItem" name="ai_settings">
         <label>Open &amp;Settings File...</label>
       </object>
+      <object class="wxMenuItem" name="ai_global_settings">
+        <label>Open &amp;Global Settings File...</label>
+      </object>
     </object>
     <object class="wxMenu" name="settings_menu">
       <label>Settin&amp;gs</label>

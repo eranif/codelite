@@ -381,6 +381,7 @@ void SpellCheck::OnContinuousCheck(wxCommandEvent& e)
 // ------------------------------------------------------------
 void SpellCheck::OnTimer(wxTimerEvent& e)
 {
+    CHECK_COND_RET(GetCheckContinuous());
     wxTopLevelWindow* pWnd = dynamic_cast<wxTopLevelWindow*>(GetTopWnd());
 
     if (!pWnd->IsActive()) {
@@ -389,7 +390,6 @@ void SpellCheck::OnTimer(wxTimerEvent& e)
 
     IEditor* editor = m_mgr->GetActiveEditor();
     CHECK_PTR_RET(editor);
-    CHECK_COND_RET(GetCheckContinuous());
 
     // Only run the checks if we've not run them or the file is modified.
     const auto modificationCount(editor->GetModificationCount());

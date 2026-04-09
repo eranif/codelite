@@ -55,12 +55,10 @@
 #include "gitSettingsDlg.h"
 #include "gitentry.h"
 #include "globals.h"
-#include "overlaytool.h"
 #include "procutils.h"
 #include "project.h"
 #include "workspace.h"
 
-#include <stack>
 #include <unordered_set>
 #include <wx/ffile.h>
 #include <wx/msgdlg.h>
@@ -988,28 +986,20 @@ void GitPlugin::OnStartGitk(wxCommandEvent& e)
 void GitPlugin::OnListModified(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    wxArrayString choices;
-
-    // First get a map of the filepaths/treeitemids of modified files
-    std::map<wxString, wxTreeItemId> modifiedIDs;
-    CreateFilesTreeIDsMap(modifiedIDs, true);
-
-    for (const auto& p : modifiedIDs) {
-        if (p.second.IsOk())
-            choices.Add(p.first);
-    }
-
-    if (choices.GetCount() == 0)
+    if (m_modifiedFiles.empty())
         return;
+
+    wxArrayString choices;
+    choices.reserve(m_modifiedFiles.size());
+    for (const auto& file : m_modifiedFiles) {
+        choices.Add(file);
+    }
+    choices.Sort();
 
     wxString choice =
         wxGetSingleChoice(_("Jump to modified file"), _("Modified files"), choices, EventNotifier::Get()->TopFrame());
     if (!choice.IsEmpty()) {
-        wxTreeItemId id = modifiedIDs[choice];
-        if (id.IsOk()) {
-            m_mgr->GetWorkspaceTree()->EnsureVisible(id);
-            m_mgr->GetWorkspaceTree()->SelectItem(id);
-        }
+        m_mgr->OpenFile(choice, wxEmptyString, wxNOT_FOUND);
     }
 }
 
@@ -1413,13 +1403,6 @@ void GitPlugin::ProcessGitActionQueue()
 
 void GitPlugin::FinishGitListAction(const gitAction& ga)
 {
-    clConfig conf("git.conf");
-    GitEntry data;
-    conf.ReadItem(data);
-
-    if (!(data.GetFlags() & GitEntry::ColourTreeView))
-        return;
-
     wxArrayString tmpArray = wxStringTokenize(m_commandOutput, wxT("\n"), wxTOKEN_STRTOK);
 
     // Convert path to absolute
@@ -1433,40 +1416,10 @@ void GitPlugin::FinishGitListAction(const gitAction& ga)
     wxStringSet_t gitFileSet;
     gitFileSet.insert(tmpArray.begin(), tmpArray.end());
 
-    if (ga.action == gitListAll) {
-        m_mgr->SetStatusMessage(_("Colouring tracked git files..."), 0);
-        ColourFileTree(m_mgr->GetWorkspaceTree(), gitFileSet, OverlayTool::Bmp_OK);
-        m_trackedFiles.swap(gitFileSet);
-
-    } else if (ga.action == gitListModified) {
-        m_mgr->SetStatusMessage(_("Colouring modified git files..."), 0);
-        // Reset modified files
-        ColourFileTree(m_mgr->GetWorkspaceTree(), m_modifiedFiles, OverlayTool::Bmp_OK);
-        // First get an up to date map of the filepaths/treeitemids
-        // (Trying to cache these results in segfaults when the tree has been modified)
-        std::map<wxString, wxTreeItemId> IDs;
-        CreateFilesTreeIDsMap(IDs);
-
-        // Now filter using the list of modified files, gitFileList, to find which IDs to colour differently
-        wxStringSet_t toColour;
-        for (const auto& filename : gitFileSet) {
-            wxTreeItemId id = IDs[filename];
-            if (id.IsOk()) {
-                DoSetTreeItemImage(m_mgr->GetWorkspaceTree(), id, OverlayTool::Bmp_Modified);
-
-            } else {
-                toColour.insert(filename);
-            }
-        }
-
-        if (!toColour.empty()) {
-            ColourFileTree(m_mgr->GetWorkspaceTree(), toColour, OverlayTool::Bmp_Modified);
-        }
-
-        // Finally, cache the modified-files list: it's used in other functions
+    if (ga.action == gitListModified) {
+        // Cache the modified-files list: it's used in other functions
         m_modifiedFiles.swap(gitFileSet);
     }
-    m_mgr->SetStatusMessage("", 0);
 }
 
 void GitPlugin::ListBranchAction(const gitAction& ga)
@@ -2051,77 +2004,6 @@ void GitPlugin::AddDefaultActions()
     m_gitActionQueue.push_back(ga);
 }
 
-void GitPlugin::ColourFileTree(clTreeCtrl* tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const
-{
-    clConfig conf("git.conf");
-    GitEntry entry;
-    conf.ReadItem(entry);
-
-    if (!(entry.GetFlags() & GitEntry::ColourTreeView))
-        return;
-
-    std::stack<wxTreeItemId> items;
-    if (tree->GetRootItem().IsOk())
-        items.push(tree->GetRootItem());
-
-    while (!items.empty()) {
-        wxTreeItemId next = items.top();
-        items.pop();
-
-        if (next != tree->GetRootItem()) {
-            FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(tree->GetItemData(next));
-            const wxString& path = data->GetData().GetFile();
-            if (!path.IsEmpty() && files.count(path)) {
-                DoSetTreeItemImage(tree, next, bmpType);
-            }
-        }
-
-        wxTreeItemIdValue cookie;
-        wxTreeItemId nextChild = tree->GetFirstChild(next, cookie);
-        while (nextChild.IsOk()) {
-            items.push(nextChild);
-            nextChild = tree->GetNextSibling(nextChild);
-        }
-    }
-}
-
-void GitPlugin::CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified /*=false*/) const
-{
-    clTreeCtrl* tree = m_mgr->GetWorkspaceTree();
-    if (!tree) {
-        return;
-    }
-
-    IDs.clear();
-
-    std::stack<wxTreeItemId> items;
-    if (tree->GetRootItem().IsOk())
-        items.push(tree->GetRootItem());
-
-    while (!items.empty()) {
-        wxTreeItemId next = items.top();
-        items.pop();
-
-        if (next != tree->GetRootItem()) {
-            FilewViewTreeItemData* data = static_cast<FilewViewTreeItemData*>(tree->GetItemData(next));
-            const wxString& path = data->GetData().GetFile();
-            if (!path.IsEmpty()) {
-                // If m_modifiedFiles has already been filled, only include files listed there
-                if (!ifmodified || m_modifiedFiles.count(path)) {
-                    IDs[path] = next;
-                }
-            }
-        }
-
-        wxTreeItemIdValue cookie;
-        wxTreeItemId nextChild = tree->GetFirstChild(next, cookie);
-        while (nextChild.IsOk()) {
-            items.push(nextChild);
-            nextChild = tree->GetNextSibling(nextChild);
-        }
-    }
-}
-
 void GitPlugin::OnProgressTimer(wxTimerEvent& Event) {}
 
 void GitPlugin::ShowProgress(const wxString& message)
@@ -2160,7 +2042,6 @@ void GitPlugin::DoCleanup()
     m_remotes.Clear();
     m_localBranchList.Clear();
     m_remoteBranchList.Clear();
-    m_trackedFiles.clear();
     m_modifiedFiles.clear();
     m_addedFiles = false;
     m_progressMessage.Clear();
@@ -2175,13 +2056,6 @@ void GitPlugin::DoCleanup()
     m_blameMap.clear();
     clGetManager()->GetNavigationBar()->ClearLabel();
     m_lastBlameMessage.clear();
-}
-
-void GitPlugin::DoSetTreeItemImage(clTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const
-{
-    wxUnusedVar(ctrl);
-    wxUnusedVar(item);
-    wxUnusedVar(bmpType);
 }
 
 void GitPlugin::OnClone(wxCommandEvent& e)

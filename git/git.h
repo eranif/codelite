@@ -43,7 +43,6 @@
 #include "gitentry.h"
 #include "gitui.h"
 #include "ieditor.h"
-#include "overlaytool.h"
 #include "plugin.h"
 #include "project.h" // wxStringSet_t
 
@@ -148,7 +147,6 @@ class GitPlugin : public IPlugin
 
     wxArrayString m_localBranchList;
     wxArrayString m_remoteBranchList;
-    wxStringSet_t m_trackedFiles;
     wxStringSet_t m_modifiedFiles;
     bool m_addedFiles;
     wxArrayString m_remotes;
@@ -199,13 +197,10 @@ private:
     bool
     DoExecuteCommandSync(const wxString& command, wxString* commandOutput, const wxString& workingDir = wxEmptyString);
 
-    void DoSetTreeItemImage(clTreeCtrl* ctrl, const wxTreeItemId& item, OverlayTool::BmpType bmpType) const;
     void InitDefaults();
     void AddDefaultActions();
     void LoadDefaultGitCommands(GitEntry& data, bool overwrite = false);
     void ProcessGitActionQueue();
-    void ColourFileTree(clTreeCtrl* tree, const wxStringSet_t& files, OverlayTool::BmpType bmpType) const;
-    void CreateFilesTreeIDsMap(std::map<wxString, wxTreeItemId>& IDs, bool ifmodified = false) const;
     void DoShowCommitDialog(const wxString& diff, wxString& commitArgs);
     void DoRefreshView(bool ensureVisible);
 

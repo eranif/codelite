@@ -95,6 +95,7 @@ protected:
     void OnNetError(clCommandEvent& event);
     void OnNetLogMessage(clCommandEvent& event);
     void EventMainLoop(clCommandEvent& event);
+    void DrainOutputBuffer();
 
     void OnFileLoaded(clCommandEvent& event);
     void OnFileClosed(clCommandEvent& event);

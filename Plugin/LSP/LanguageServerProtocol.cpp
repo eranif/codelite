@@ -617,7 +617,18 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
     LSP_DEBUG() << "Received data from LSP server of size:" << m_outputBuffer.size() << "bytes" << endl;
 
     m_Queue.SetWaitingResponse(false);
-    while (!m_outputBuffer.empty()) {
+    DrainOutputBuffer();
+}
+
+void LanguageServerProtocol::DrainOutputBuffer()
+{
+    // Process at most a small number of messages per call to keep the UI responsive.
+    // If more data remains, schedule a continuation via CallAfter so that pending
+    // UI events (e.g. keystrokes) get a chance to run between batches.
+    constexpr int MAX_MESSAGES_PER_BATCH = 5;
+    int processed = 0;
+
+    while (!m_outputBuffer.empty() && processed < MAX_MESSAGES_PER_BATCH) {
         // attempt to consume a complete JSON payload from the aggregated network buffer
         auto json = LSP::Message::GetJSONPayload(m_outputBuffer);
         if (!json) {
@@ -751,8 +762,14 @@ void LanguageServerProtocol::EventMainLoop(clCommandEvent& event)
                 }
             }
         }
+        processed++;
     }
     ProcessQueue();
+
+    // If there is still data in the buffer, yield to the event loop and continue later
+    if (!m_outputBuffer.empty()) {
+        CallAfter(&LanguageServerProtocol::DrainOutputBuffer);
+    }
 }
 
 void LanguageServerProtocol::Stop()

@@ -5995,7 +5995,7 @@ void clEditor::SetSemanticTokens(const wxString& classes,
         return;
     }
 
-    BlockTimer timer{"SetSemanticTokens", FileLogger::Dbg};
+    BlockTimer timer{"SetSemanticTokens", FileLogger::Developer};
 
     // locate the lexer
     auto lexer = ColoursAndFontsManager::Get().GetLexerForFile(FileUtils::RealPath(GetFileName().GetFullPath()));

@@ -6,7 +6,7 @@
 class BlockTimer final
 {
 public:
-    BlockTimer(const wxString& label, FileLogger::LogLevel log_level = FileLogger::Dbg)
+    BlockTimer(const wxString& label, FileLogger::LogLevel log_level = FileLogger::Developer)
         : m_label(label)
         , m_logLevel(log_level)
     {

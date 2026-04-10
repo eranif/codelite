@@ -586,7 +586,7 @@ void Manager::OnReparseNeeded(LSPEvent& event)
 
 void Manager::OnSemanticTokens(LSPEvent& event)
 {
-    auto timer = std::make_unique<BlockTimer>("OnSemanticTokens", FileLogger::LogLevel::Dbg);
+    auto timer = std::make_unique<BlockTimer>("OnSemanticTokens", FileLogger::LogLevel::Developer);
     LanguageServerProtocol::Ptr_t server = GetServerByName(event.GetServerName());
     CHECK_PTR_RET(server);
 

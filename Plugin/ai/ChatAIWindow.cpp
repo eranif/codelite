@@ -78,6 +78,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     Bind(wxEVT_LLM_OUTPUT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
     Bind(wxEVT_LLM_THINK_SATRTED, &ChatAIWindow::OnThinkingStart, this);
     Bind(wxEVT_LLM_THINK_ENDED, &ChatAIWindow::OnThinkingEnd, this);
+    Bind(wxEVT_LLM_MAX_GENERATED_TOKENS, &ChatAIWindow::OnChatAIMaxGenTokens, this);
 
     llm::Manager::GetInstance().Bind(wxEVT_LLM_CONFIG_UPDATED, &ChatAIWindow::OnLLMConfigUpdate, this);
     llm::Manager::GetInstance().Bind(wxEVT_LLM_STARTED, &ChatAIWindow::OnLLMConfigUpdate, this);
@@ -142,6 +143,7 @@ ChatAIWindow::~ChatAIWindow()
     Unbind(wxEVT_LLM_OUTPUT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
     Unbind(wxEVT_LLM_THINK_SATRTED, &ChatAIWindow::OnThinkingStart, this);
     Unbind(wxEVT_LLM_THINK_ENDED, &ChatAIWindow::OnThinkingEnd, this);
+    Unbind(wxEVT_LLM_MAX_GENERATED_TOKENS, &ChatAIWindow::OnChatAIMaxGenTokens, this);
 
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_CONFIG_UPDATED, &ChatAIWindow::OnLLMConfigUpdate, this);
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_STARTED, &ChatAIWindow::OnLLMConfigUpdate, this);
@@ -462,6 +464,18 @@ void ChatAIWindow::OnThinkingEnd(clLLMEvent& event)
     event.Skip();
     m_state = ChatState::kWorking;
     m_statusBar->SetStatusText(_("Working..."), StatusBarIndex::kProgressText);
+}
+
+void ChatAIWindow::OnChatAIMaxGenTokens(clLLMEvent& event)
+{
+    wxUnusedVar(event);
+    m_state = ChatState::kReady;
+    m_cancel_token->Reset();
+    StyleOutput();
+    ShowIndicator(false);
+
+    // Notify the user
+    ::clMessageBox(wxString::FromUTF8(event.GetResponseRaw()), "CodeLite", wxOK | wxICON_WARNING);
 }
 
 void ChatAIWindow::OnChatAIOutput(clLLMEvent& event)

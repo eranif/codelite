@@ -137,9 +137,9 @@ std::optional<wxString> CTags::DoSymbolGenerate(const wxString& file, const wxSt
 
     std::vector<wxString> cmdarr{ctags_exe, "--output-format=json", "--fields=+nKsSe", "--extras=+q", "-f", "-", file};
     auto command = StringUtils::ToStdStrings(cmdarr);
-    clDEBUG() << "Running command:" << StringUtils::Join(cmdarr) << endl;
+    clSYSTEM() << "Running command:" << StringUtils::Join(cmdarr) << endl;
     auto result = assistant::Process::RunProcessAndWait(command);
-    clDEBUG() << "Running command...done" << endl;
+    clSYSTEM() << "Running command...done" << endl;
 
     if (!result.ok) {
         return std::nullopt;
@@ -325,7 +325,7 @@ CTags::DoCxxGenerate(const wxString& filesContent, const wxString& ctags_exe, co
     cmdarr.push_back("-");
     cmdarr.push_back("-L");
     cmdarr.push_back(file_list.GetFullPath(true));
-    clDEBUG() << "Running command:" << StringUtils::Join(cmdarr, " ") << endl;
+    clSYSTEM() << "Running command:" << StringUtils::Join(cmdarr, " ") << endl;
 
     auto command = StringUtils::ToStdStrings(cmdarr);
     auto result = assistant::Process::RunProcessAndWait(command);

@@ -337,6 +337,13 @@ void Manager::WorkerMain()
                             event.SetResponseRaw(message);
                             owner->AddPendingEvent(event);
                         } break;
+                        case assistant::Reason::kMaxTokensReached: {
+                            clLLMEvent event{wxEVT_LLM_MAX_GENERATED_TOKENS};
+                            event.SetOutputReason(reason);
+                            event.SetResponseRaw(message);
+                            owner->AddPendingEvent(event);
+                            abort_loop = true;
+                        } break;
                         case assistant::Reason::kToolDenied: {
                             clLLMEvent event{wxEVT_LLM_OUTPUT};
                             event.SetOutputReason(reason);

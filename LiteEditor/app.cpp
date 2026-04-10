@@ -1192,5 +1192,3 @@ void CodeLiteApp::FinalizeShutdown()
     wxFileName::Rmdir(clStandardPaths::Get().GetTempDir(), wxPATH_RMDIR_RECURSIVE);
     clDEBUG() << "Finalizing shutdown...success" << endl;
 }
-
-int CodeLiteApp::FilterEvent(wxEvent& event) { return EventNotifier::Get()->FilterEvent(event); }

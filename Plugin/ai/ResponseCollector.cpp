@@ -9,6 +9,7 @@ ResponseCollector::ResponseCollector()
 {
     Bind(wxEVT_LLM_OUTPUT, &ResponseCollector::OnOutput, this);
     Bind(wxEVT_LLM_OUTPUT_DONE, &ResponseCollector::OnOutputDone, this);
+    Bind(wxEVT_LLM_MAX_GENERATED_TOKENS, &ResponseCollector::OnOutputDone, this);
     Bind(wxEVT_LLM_THINK_SATRTED, &ResponseCollector::OnThinkStarted, this);
     Bind(wxEVT_LLM_THINK_ENDED, &ResponseCollector::OnThinkEnded, this);
     Bind(wxEVT_LLM_CHAT_STARTED, &ResponseCollector::OnChatStarted, this);
@@ -18,6 +19,7 @@ ResponseCollector::~ResponseCollector()
 {
     Unbind(wxEVT_LLM_OUTPUT, &ResponseCollector::OnOutput, this);
     Unbind(wxEVT_LLM_OUTPUT_DONE, &ResponseCollector::OnOutputDone, this);
+    Unbind(wxEVT_LLM_MAX_GENERATED_TOKENS, &ResponseCollector::OnOutputDone, this);
     Unbind(wxEVT_LLM_THINK_SATRTED, &ResponseCollector::OnThinkStarted, this);
     Unbind(wxEVT_LLM_THINK_ENDED, &ResponseCollector::OnThinkEnded, this);
     Unbind(wxEVT_LLM_CHAT_STARTED, &ResponseCollector::OnChatStarted, this);

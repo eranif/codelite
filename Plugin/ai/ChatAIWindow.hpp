@@ -139,6 +139,7 @@ protected:
     void OnLLMConfigUpdate(clLLMEvent& event);
     void OnChatStarted(clLLMEvent& event);
     void OnChatAIOutput(clLLMEvent& event);
+    void OnChatAIMaxGenTokens(clLLMEvent& event);
     void OnChatAIOutputDone(clLLMEvent& event);
     void OnThinkingStart(clLLMEvent& event);
     void OnThinkingEnd(clLLMEvent& event);

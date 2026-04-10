@@ -87,7 +87,6 @@ private: // Methods
     void AdjustPathForCygwinIfNeeded();
     void AdjustPathForMSYSIfNeeded();
     void PrintUsage(const wxCmdLineParser& parser);
-    int FilterEvent(wxEvent& event) override;
 
 protected:
     bool OnInit() override;

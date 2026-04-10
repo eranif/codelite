@@ -254,7 +254,7 @@ clModuleLogger& operator<<(clModuleLogger& logger, const T& obj)
 #define INITIALISE_MODULE_LOG(LOG, MODULE_NAME, FILE_NAME)                          \
     namespace                                                                       \
     {                                                                               \
-    clModuleLogger& LOG()                                                           \
+    inline clModuleLogger& LOG()                                                    \
     {                                                                               \
         thread_local static clModuleLogger instance = []() {                        \
             wxFileName logfile{clStandardPaths::Get().GetUserDataDir(), FILE_NAME}; \

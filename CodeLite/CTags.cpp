@@ -137,9 +137,9 @@ std::optional<wxString> CTags::DoSymbolGenerate(const wxString& file, const wxSt
 
     std::vector<wxString> cmdarr{ctags_exe, "--output-format=json", "--fields=+nKsSe", "--extras=+q", "-f", "-", file};
     auto command = StringUtils::ToStdStrings(cmdarr);
-    clSYSTEM() << "Running command:" << StringUtils::Join(cmdarr) << endl;
+    clDEBUG() << "Running command:" << StringUtils::Join(cmdarr) << endl;
     auto result = assistant::Process::RunProcessAndWait(command);
-    clSYSTEM() << "Running command...done" << endl;
+    clDEBUG() << "Running command...done" << endl;
 
     if (!result.ok) {
         return std::nullopt;
@@ -325,7 +325,7 @@ CTags::DoCxxGenerate(const wxString& filesContent, const wxString& ctags_exe, co
     cmdarr.push_back("-");
     cmdarr.push_back("-L");
     cmdarr.push_back(file_list.GetFullPath(true));
-    clSYSTEM() << "Running command:" << StringUtils::Join(cmdarr, " ") << endl;
+    clDEBUG() << "Running command:" << StringUtils::Join(cmdarr, " ") << endl;
 
     auto command = StringUtils::ToStdStrings(cmdarr);
     auto result = assistant::Process::RunProcessAndWait(command);
@@ -446,7 +446,7 @@ void CTags::Initialise()
         auto res = LocateExe();
         if (res.ok()) {
             const_cast<wxString&>(s_ctags_executable) = res.value();
-            clSYSTEM() << "ctags executable found:" << s_ctags_executable << endl;
+            clDEBUG() << "ctags executable found:" << s_ctags_executable << endl;
         } else {
             clWARNING() << res.error_message() << endl;
             return;

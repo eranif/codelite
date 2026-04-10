@@ -66,7 +66,7 @@ clRemoteFindDialog::clRemoteFindDialog(wxWindow* parent, const wxString& account
     UpdateComboBox(m_comboBoxTypes, m_data.files_array, m_data.files);
     UpdateComboBox(m_comboBoxReplaceWith, m_data.replace_with_array, m_data.replace_with);
 
-    auto lex = ColoursAndFontsManager::Get().GetLexer("default");
+    auto lex = ColoursAndFontsManager::Get().GetLexer("text");
     auto font = lex->GetFontForStyle(0, this);
     m_comboBoxFindWhat->SetFont(font);
     m_comboBoxWhere->SetFont(font);

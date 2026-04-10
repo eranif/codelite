@@ -129,7 +129,7 @@ wxCodeCompletionBox::wxCodeCompletionBox(wxWindow* parent, wxEvtHandler* eventOb
 
     m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-cpp"));    // 14
     m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-h"));      // 15
-    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-text"));   // 16
+    m_bitmaps.push_back(bmpLoader->LoadBitmap("mime-txt"));    // 16
     m_bitmaps.push_back(bmpLoader->LoadBitmap("cpp_keyword")); // 17
     m_lspCompletionItemImageIndexMap.insert({LSP::CompletionItem::kKindKeyword, m_bitmaps.size() - 1});
 

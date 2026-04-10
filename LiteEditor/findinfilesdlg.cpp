@@ -74,7 +74,7 @@ FindInFilesDialog::FindInFilesDialog(wxWindow* parent, wxWindow* handler)
 {
     // Load the find-in-files data
     SessionManager::Get().LoadFindInFilesSession(&m_data);
-    auto lex = ColoursAndFontsManager::Get().GetLexer("default");
+    auto lex = ColoursAndFontsManager::Get().GetLexer("text");
     lex->ApplyFont(m_findString);
     lex->ApplyFont(m_replaceString);
     lex->ApplyFont(m_fileTypes);

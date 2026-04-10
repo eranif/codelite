@@ -191,7 +191,7 @@ void GitBlamePage::InitialiseView()
     // Set blame editor style and fonts
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexerForFile(m_filename);
     if (!lexer) {
-        lexer = ColoursAndFontsManager::Get().GetLexer("default");
+        lexer = ColoursAndFontsManager::Get().GetLexer("text");
     }
     lexer->Apply(this, true);
 

@@ -1160,7 +1160,7 @@ void clEditor::OnSavePoint(wxStyledTextEvent& event)
 
 void clEditor::OnCharAdded(wxStyledTextEvent& event)
 {
-    BlockTimer timer{"OnCharAdded", FileLogger::LogLevel::Dbg};
+    BlockTimer timer{"OnCharAdded", FileLogger::LogLevel::Developer};
 
     bool hasSingleCaret = (GetSelections() == 1);
     OptionsConfigPtr options = GetOptions();
@@ -3268,7 +3268,7 @@ void clEditor::OnContextMenu(wxContextMenuEvent& event)
 
 void clEditor::OnKeyDown(wxKeyEvent& event)
 {
-    BlockTimer timer{"clEditor::OnKeyDown", FileLogger::Dbg};
+    BlockTimer timer{"clEditor::OnKeyDown", FileLogger::Developer};
     if (event.GetKeyCode() == WXK_BACK) {
         bool is_pos_before_whitespace = wxIsspace(SafeGetChar(PositionBefore(GetCurrentPos())));
         bool backspace_triggers_cc = TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_BACKSPACE_TRIGGER;
@@ -5995,7 +5995,7 @@ void clEditor::SetSemanticTokens(const wxString& classes,
         return;
     }
 
-    BlockTimer timer{"SetSemanticTokens", FileLogger::LogLevel::Dbg};
+    BlockTimer timer{"SetSemanticTokens", FileLogger::Dbg};
 
     // locate the lexer
     auto lexer = ColoursAndFontsManager::Get().GetLexerForFile(FileUtils::RealPath(GetFileName().GetFullPath()));
@@ -6046,7 +6046,10 @@ void clEditor::SetSemanticTokens(const wxString& classes,
             SetKeywordLocals(flatStrLocals);
         }
     }
+
+#ifndef __WXMSW__
     Colourise(0, wxSTC_INVALID_POSITION);
+#endif
 }
 
 int clEditor::GetColumnInChars(int pos)
@@ -6127,6 +6130,13 @@ void clEditor::OnColoursAndFontsUpdated(clCommandEvent& event)
 {
     event.Skip();
     UpdateDefaultTextWidth();
+
+    // Clear the keywords - this ensures that we pass the optimization check at the start
+    // of the method "SetSemanticTokens" on the next call.
+    SetKeywordClasses(wxEmptyString);
+    SetKeywordLocals(wxEmptyString);
+    SetKeywordMethods(wxEmptyString);
+    SetKeywordOthers(wxEmptyString);
 }
 
 void clEditor::UpdateDefaultTextWidth() { m_default_text_width = TextWidth(wxSTC_STYLE_LINENUMBER, "X"); }

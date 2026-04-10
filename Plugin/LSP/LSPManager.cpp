@@ -586,7 +586,7 @@ void Manager::OnReparseNeeded(LSPEvent& event)
 
 void Manager::OnSemanticTokens(LSPEvent& event)
 {
-    BlockTimer timer{"OnSemanticTokens", FileLogger::LogLevel::Dbg};
+    auto timer = std::make_unique<BlockTimer>("OnSemanticTokens", FileLogger::LogLevel::Dbg);
     LanguageServerProtocol::Ptr_t server = GetServerByName(event.GetServerName());
     CHECK_PTR_RET(server);
 
@@ -667,9 +667,10 @@ void Manager::OnSemanticTokens(LSPEvent& event)
         LSP_TRACE() << variabls_str << endl;
     }
 
-    LSP_TRACE() << "Calling editor->SetSemanticTokens" << endl;
     if (!classes_str.empty() || !variabls_str.empty() || !method_str.empty()) {
         // we got something to colour
+        timer.reset(); // SetSemanticTokens has its own timer
+        LSP_TRACE() << "Calling editor->SetSemanticTokens" << endl;
         editor->SetSemanticTokens(classes_str, variabls_str, method_str, wxEmptyString);
     } else {
         LSP_TRACE() << "empty semantic tokens, leaving editor untouched" << endl;

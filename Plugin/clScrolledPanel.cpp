@@ -4,6 +4,7 @@
 #include "clScrollBar.h"
 #include "drawingutils.h"
 
+#include <optional>
 #include <wx/dcscreen.h>
 #include <wx/log.h>
 #include <wx/settings.h>
@@ -368,7 +369,11 @@ void clScrolledPanel::DoBeginDrag()
     }
 
     // Change the cursor indicating DnD in progress
-    SetCursor(wxCURSOR_HAND);
+    static std::optional<wxCursor> curHand{std::nullopt};
+    if (!curHand) {
+        curHand = wxCursor{wxCURSOR_HAND};
+    }
+    SetCursor(curHand.value());
     m_dragging = true;
 }
 
@@ -376,7 +381,14 @@ void clScrolledPanel::DoCancelDrag()
 {
     m_dragStartTime.Set((time_t)-1); // Reset the saved values
     m_dragStartPos = wxPoint();
-    SetCursor(wxCURSOR_DEFAULT);
+
+    // Change the cursor indicating DnD in progress
+    static std::optional<wxCursor> curDefault{std::nullopt};
+    if (!curDefault) {
+        curDefault = wxCursor{wxCURSOR_DEFAULT};
+    }
+
+    SetCursor(curDefault.value());
     m_dragging = false;
 }
 

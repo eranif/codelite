@@ -252,7 +252,7 @@ void Manager::CodeComplete(IEditor* editor, LSP::CompletionItem::eTriggerKind ki
     auto ctrl = editor->GetCtrl();
     int curpos = ctrl->GetCurrentPos();
     auto file_path = editor->GetRemotePathOrLocal();
-    timer_preps.Finish();
+    __PERF_IF_ENABLED(timer_preps.Finish());
 
     if (server == nullptr || clSTCHelper::IsPositionInComment(ctrl, curpos)) {
         __PERF_IF_ENABLED(BlockTimer timer_word_completion{"WordCompletion"};)
@@ -597,8 +597,8 @@ void Manager::OnReparseNeeded(LSPEvent& event)
 
 void Manager::OnSemanticTokens(LSPEvent& event)
 {
-    auto timer = std::make_unique < __PERF_IF_ENABLED(BlockTimer > ("OnSemanticTokens");)
-                                        LanguageServerProtocol::Ptr_t server = GetServerByName(event.GetServerName());
+    __PERF_IF_ENABLED(BlockTimer timer{"OnSemanticTokens"})
+    LanguageServerProtocol::Ptr_t server = GetServerByName(event.GetServerName());
     CHECK_PTR_RET(server);
 
     LSP_DEBUG() << "Processing semantic tokens from server:" << server->GetName() << "file:" << event.GetFileName()

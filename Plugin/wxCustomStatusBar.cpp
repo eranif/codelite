@@ -247,10 +247,8 @@ wxCustomStatusBar::~wxCustomStatusBar()
 
 void wxCustomStatusBar::OnPaint(wxPaintEvent& event)
 {
-    wxPaintDC abdc(this);
-    wxGCDC gcdc;
-    wxDC& dc = DrawingUtils::GetGCDC(abdc, gcdc);
-
+    wxUnusedVar(event);
+    wxAutoBufferedPaintDC dc(this);
     PrepareDC(dc);
     wxRect rect = GetClientRect();
     rect.Inflate(1);

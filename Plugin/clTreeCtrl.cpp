@@ -83,12 +83,8 @@ void clTreeCtrl::UpdateLineHeight()
     wxBitmap bmp;
     bmp.CreateWithDIPSize(wxSize(1, 1), GetDPIScaleFactor());
 
-#ifdef __WXMSW__
-    wxClientDC dc{this};
-#else
     wxMemoryDC memDC(bmp);
     wxGCDC dc(memDC);
-#endif
 
     dc.SetFont(GetDefaultFont());
     wxSize textSize = dc.GetTextExtent("Tp");
@@ -138,15 +134,21 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
 {
     wxUnusedVar(event);
 
-#if defined(__WXMAC__)
+#ifdef __WXMSW__
+    wxPaintDC pdc(this);
+    PrepareDC(pdc);
+    wxGCDC gcdc;
+    wxDC& dc = DrawingUtils::GetGCDC(pdc, gcdc);
+
+#elif defined(__WXMAC__)
     wxPaintDC pdc(this);
     PrepareDC(pdc);
     wxGCDC dc(pdc);
 
 #else
-    wxAutoBufferedPaintDC dc(this);
-    PrepareDC(dc);
-    //wxDC& dc = pdc;
+    wxAutoBufferedPaintDC pdc(this);
+    PrepareDC(pdc);
+    wxDC& dc = pdc;
 #endif
 
     // ------------------------------------------------

@@ -1,5 +1,6 @@
 #include "LSP/DocumentSymbolsRequest.hpp"
 
+#include "BlockTimer.hpp"
 #include "LSP/LSPEvent.h"
 #include "event_notifier.h"
 #include "file_logger.h"
@@ -38,6 +39,7 @@ LSP::DocumentSymbolsRequest::DocumentSymbolsRequest(const wxString& filename, si
 std::optional<LSPEvent> LSP::DocumentSymbolsRequest::OnResponse(const LSP::ResponseMessage& const_response,
                                                                 wxEvtHandler* owner)
 {
+    __PERF_IF_ENABLED(BlockTimer timer{"DocumentSymbolsRequest->OnResponse"})
     LSP_DEBUG() << "LSP::DocumentSymbolsRequest::OnResponse() is called!" << endl;
     LSP::ResponseMessage& response = const_cast<LSP::ResponseMessage&>(const_response);
     auto json = response.take();

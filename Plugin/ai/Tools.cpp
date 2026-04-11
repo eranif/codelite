@@ -112,7 +112,7 @@ CanInvokeToolResult ReadFileContentConfirm(const std::string& tool_name, assista
     if (line_count > 200) {
         return CanInvokeToolResult{
             .can_invoke = false,
-            .reason = "line_count must be between 1 and 200 (inclusive)",
+            .reason = "The line count must be between 1 and 200, inclusive.",
         };
     }
 
@@ -206,6 +206,98 @@ FunctionResult ReadFileContent(const assistant::json& args)
                << partial_content.size() << " bytes.";
         llm.PrintMessage(logmsg, IconType::kSuccess);
         return Ok(partial_content);
+    };
+    return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
+}
+
+/// Will be invoked by the library before calling to the "ReadFileMetadata"
+CanInvokeToolResult ReadFileMetadataConfirm(const std::string& tool_name, assistant::json args)
+{
+    if (wxIsMainThread()) {
+        return CanInvokeToolResult{
+            .can_invoke = false,
+            .reason = "Internal Error.",
+        };
+    }
+
+    CONFIRM_ARG(std::string,
+                filepath,
+                "",
+                ::assistant::GetFunctionArg<std::string>(args, "filepath"),
+                "Missing mandatory field 'filepath'");
+
+    wxString fullpath = FileUtils::NormalizePath(wxString::FromUTF8(filepath));
+    auto& config = llm::Manager::GetInstance().GetConfig();
+    static constexpr const char* kReadFileMetadata = "ReadFileMetadata";
+
+    bool is_trusted = llm::Manager::GetInstance().CheckIfPathIsAllowedForTool(kReadFileMetadata, fullpath);
+
+    // Apply read file "Trust" for this session (per path).
+    if (!is_trusted) {
+        wxString message;
+        message << _("The model wants to read metadata for the file:") << "\n```\n" << fullpath << "\n```\n";
+        return llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message, [&config, &fullpath]() {
+            // User trusts the tool for this path, add it to the trust store.
+            wxString dirpath = FileUtils::GetPath(fullpath);
+
+            std::vector<std::pair<wxString, wxString>> options{
+                {wxString::Format(_("Specific path: %s"), fullpath), fullpath},
+                {wxString::Format(_("Entire directory: %s/*"), dirpath), dirpath + "/*"},
+                {_("Entire tool"), "*"},
+            };
+
+            auto result = llm::Manager::GetInstance().ShowTrustLevelDialog(kReadFileMetadata, options);
+            if (result.has_value()) {
+                config.AddTrustedTool(kReadFileMetadata, result->first, result->second);
+                if (result->second) {
+                    config.Save(false);
+                }
+            }
+        });
+    } else {
+        // This path is trusted.
+        wxString message;
+        message << _("Reading file metadata:") << "\n```\n" << fullpath << "\n```\n";
+        llm::Manager::GetInstance().PrintMessage(message, IconType::kInfo);
+        return CanInvokeToolResult{
+            .can_invoke = true,
+        };
+    }
+}
+
+FunctionResult ReadFileMetadata(const assistant::json& args)
+{
+    VERIFY_WORKER_THREAD();
+    if (args.size() != 1) {
+        return Err("Invalid number of arguments");
+    }
+
+    ASSIGN_FUNC_ARG_OR_RETURN(std::string filepath, ::assistant::GetFunctionArg<std::string>(args, "filepath"));
+
+    auto cb = [=]() -> FunctionResult {
+        auto& llm = llm::Manager::GetInstance();
+        wxString fullpath = FileManager::GetFullPath(wxString::FromUTF8(filepath));
+        std::optional<wxString> content = FileManager::ReadContent(fullpath);
+        if (!content.has_value()) {
+            wxString logmsg;
+            logmsg << "Failed to read file: " << filepath << ". ";
+            llm.PrintMessage(logmsg, IconType::kError);
+            return Err(logmsg);
+        }
+
+        // Split content into lines
+        wxArrayString lines = wxStringTokenize(content.value(), "\n", wxTOKEN_RET_DELIMS);
+
+        // Prepare a JSON metadata object.
+        llm::json md = llm::json::object();
+        md["fullpath"] = fullpath.ToStdString(wxConvUTF8);
+        md["size"] = content.value().size();
+        md["lines_count"] = lines.size();
+
+        wxString logmsg;
+        logmsg << "File Metadata:\n```json\n" << md.dump(1) << "\n```\n";
+        llm.PrintMessage(logmsg, IconType::kSuccess);
+        return Ok(wxString::FromUTF8(md.dump()));
     };
     return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
 }
@@ -801,14 +893,24 @@ void PopulateBuiltInFunctions(FunctionTable& table)
 {
     table.Add(
         FunctionBuilder("ReadFileContent")
-            .SetDescription("Reads the range of lines (1-based line numbering) of the file 'filepath' from the disk. "
-                            "On success, this function returns the requested file content.")
+            .SetDescription(
+                "Retrieves a block of text from a file. Requires a filepath, a 1-indexed starting line (from_line), "
+                "and a line_count (must be between 1 and 200). Returns the specified file content if successful.")
             .AddRequiredParam("filepath", "The path of the file to read.", "string")
-            .AddRequiredParam("from_line", "Starting line number (1-based) to read from", "number")
-            .AddRequiredParam("line_count", "Number of lines to read. Maximum lines to read at once is 200", "number")
+            .AddRequiredParam("from_line", "The starting line number to read from (1-based indexing).", "number")
+            .AddRequiredParam("line_count",
+                              "The number of lines to read from the starting line. Must be between 1 and 200.",
+                              "number")
             .SetCallback(ReadFileContent)
             .SetHumanInTheLoopCallabck(ReadFileContentConfirm)
             .Build());
+
+    table.Add(FunctionBuilder("ReadFileMetadata")
+                  .SetDescription("Reads metadata (path, size, and line count) of the file 'filepath' from the disk.")
+                  .AddRequiredParam("filepath", "The path of the file to read metadata for.", "string")
+                  .SetCallback(ReadFileMetadata)
+                  .SetHumanInTheLoopCallabck(ReadFileMetadataConfirm)
+                  .Build());
 
     table.Add(FunctionBuilder("OpenFileInEditor")
                   .SetDescription("Try to open file 'filepath' and load it into the "

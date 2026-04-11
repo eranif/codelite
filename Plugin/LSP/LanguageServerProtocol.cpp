@@ -524,12 +524,12 @@ void LanguageServerProtocol::ProcessQueue()
     if (m_Queue.IsEmpty()) {
         return;
     }
-
-    __PERF_IF_ENABLED(BlockTimer timer{"LSP->ProcessQueue"})
     if (m_Queue.IsWaitingResponse()) {
         LSP_DEBUG() << "LSP is busy, will not send message";
         return;
     }
+
+    __PERF_IF_ENABLED(BlockTimer timer{"LSP->ProcessQueue"})
     LSP::MessageWithParams::Ptr_t req = m_Queue.Get();
     if (!IsRunning()) {
         LSP_DEBUG() << GetLogPrefix() << "is down.";
@@ -641,6 +641,7 @@ void LanguageServerProtocol::DrainOutputBuffer()
     int processed = 0;
 
     __PERF_IF_ENABLED(BlockTimer timer{"LSP->DrainOutputBuffer"})
+
     while (!m_outputBuffer.empty() && processed < MAX_MESSAGES_PER_BATCH) {
         // attempt to consume a complete JSON payload from the aggregated network buffer
         auto json = LSP::Message::GetJSONPayload(m_outputBuffer);
@@ -664,6 +665,7 @@ void LanguageServerProtocol::DrainOutputBuffer()
             }
             break;
         }
+        __PERF_IF_ENABLED(BlockTimer timer_2{"Processing JSON Payload"})
 
         auto json_item = json->toElement();
         // check the message type

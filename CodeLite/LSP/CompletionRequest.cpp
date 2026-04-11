@@ -1,5 +1,6 @@
 #include "CompletionRequest.h"
 
+#include "BlockTimer.hpp"
 #include "LSP/CompletionItem.h"
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
@@ -17,6 +18,7 @@ LSP::CompletionRequest::CompletionRequest(const LSP::TextDocumentIdentifier& tex
 
 std::optional<LSPEvent> LSP::CompletionRequest::OnResponse(const LSP::ResponseMessage& response, wxEvtHandler* owner)
 {
+    __PERF_IF_ENABLED(BlockTimer timer{"CompletionRequest->OnResponse"})
     JSONItem result = response.Get("result");
     if (!result.isOk()) {
         LSP_WARNING() << "LSP::CompletionRequest::OnResponse(): invalid 'result' object";

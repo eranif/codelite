@@ -198,6 +198,9 @@ const std::unordered_map<wxString, std::unordered_set<wxString>> g_languageKeywo
              "disown",   "suspend", "true",    "false",    "enable",  "disable",  "builtin",  "command",  "type",
              "hash",     "help",    "cd",      "pwd",      "pushd",   "popd",     "setopt",   "unsetopt", "limit",
              "unlimit",  "whence",  "where",   "which",    "rehash",  "emulate",  "zmodload", "zcompile"}},
+    {"json", {"true", "false", "null"}},
+    {"yaml", {"true", "false", "null"}},
+    {"yml", {"true", "false", "null"}},
     {"tcsh",
      {"if",     "then",     "else",   "else if",  "endif",   "switch",   "case",       "breaksw",  "endsw",  "foreach",
       "end",    "while",    "break",  "continue", "goto",    "repeat",   "alias",      "unalias",  "set",    "unset",
@@ -227,6 +230,9 @@ wxString NormalizeLanguage(const wxString& lang)
         return "rust";
     } else if (lower == "golang") {
         return "go";
+    }
+    if (lower == "yml") {
+        return "yaml";
     }
     return lower;
 }
@@ -541,6 +547,12 @@ void MarkdownStyler::StyleCodeBlockContent(AccessorBase& accessor, const wxStrin
 {
     // Normalize language for consistency
     wxString normalizedLang = NormalizeLanguage(language);
+
+    // If no language is provided or explicitly set to "text", don't attempt to highlight keywords/operators, etc.
+    if (normalizedLang.IsEmpty() || normalizedLang == "text") {
+        StyleToEndOfLine(accessor, MarkdownStyles::kCodeBlockText, true);
+        return;
+    }
 
     // Handle diff syntax specially
     if (normalizedLang == "diff" || normalizedLang == "patch") {

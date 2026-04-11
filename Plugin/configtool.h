@@ -25,6 +25,7 @@
 #ifndef CONFIGTOOL_H
 #define CONFIGTOOL_H
 
+#include "clXmlDocument.hpp"
 #include "codelite_exports.h"
 
 #include <wx/xml/xml.h>
@@ -39,16 +40,17 @@ class SerializedObject;
  */
 class WXDLLIMPEXP_SDK ConfigTool
 {
-    wxXmlDocument m_doc;
-    wxString m_fileName;
-
 public:
-    ConfigTool();
+    ConfigTool() = default;
     ~ConfigTool() = default;
 
     bool Load(const wxString& basename, const wxString& version);
     bool WriteObject(const wxString& name, SerializedObject* obj);
     bool ReadObject(const wxString& name, SerializedObject* obj);
+
+private:
+    clXmlDocument m_doc;
+    wxString m_fileName;
 };
 
 #endif // CONFIGTOOL_H

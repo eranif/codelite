@@ -22,13 +22,14 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "precompiled_header.h"
+
 #include "editor_config.h"
 
 #include "ColoursAndFontsManager.h"
 #include "cl_standard_paths.h"
 #include "event_notifier.h"
 #include "file_logger.h"
-#include "precompiled_header.h"
 #include "workspace.h"
 #include "xmlutils.h"
 
@@ -48,10 +49,7 @@ void SimpleStringValue::DeSerialize(Archive& arch) { arch.Read(wxT("m_value"), m
 
 //-------------------------------------------------------------------------------------------
 
-EditorConfig::EditorConfig()
-{
-    m_doc = new wxXmlDocument();
-}
+EditorConfig::EditorConfig() { m_doc = new clXmlDocument(); }
 
 EditorConfig::~EditorConfig() { wxDELETE(m_doc); }
 
@@ -61,7 +59,7 @@ bool EditorConfig::DoLoadDefaultSettings()
     m_fileName = wxFileName(clStandardPaths::Get().GetDataDir(), "codelite.xml.default");
     m_fileName.AppendDir("config");
     clDEBUG() << "Loading default config:" << m_fileName << endl;
-    if(!m_fileName.FileExists()) {
+    if (!m_fileName.FileExists()) {
         return false;
     }
 
@@ -87,11 +85,11 @@ bool EditorConfig::Load()
     bool userSettingsLoaded(false);
     bool loadSuccess(false);
 
-    if(!m_fileName.FileExists()) {
+    if (!m_fileName.FileExists()) {
         clDEBUG() << "User configuration file:" << m_fileName << "does not exist. Loading defaults" << endl;
         loadSuccess = DoLoadDefaultSettings();
 
-        if(loadSuccess) {
+        if (loadSuccess) {
             // Copy the content of the default codelite.xml file into the user's local file
             wxCopyFile(m_fileName.GetFullPath(), localFileName);
         }
@@ -102,16 +100,16 @@ bool EditorConfig::Load()
         loadSuccess = m_doc->Load(m_fileName.GetFullPath());
     }
 
-    if(!loadSuccess) {
+    if (!loadSuccess) {
         return false;
     }
 
     // Check the CodeLite's version for this file
     wxString version;
     bool found = m_doc->GetRoot()->GetAttribute(wxT("Version"), &version);
-    if(userSettingsLoaded) {
-        if(!found || (found && version != this->m_version)) {
-            if(DoLoadDefaultSettings() == false) {
+    if (userSettingsLoaded) {
+        if (!found || (found && version != this->m_version)) {
+            if (DoLoadDefaultSettings() == false) {
                 return false;
             }
         }
@@ -144,13 +142,13 @@ OptionsConfigPtr EditorConfig::GetOptions() const
 
     // import legacy tab-width setting into opts
     long tabWidth = const_cast<EditorConfig*>(this)->GetInteger(wxT("EditorTabWidth"), -1);
-    if(tabWidth != -1) {
+    if (tabWidth != -1) {
         opts->SetTabWidth(tabWidth);
     }
 
     OptionsConfigPtr confOptions(opts);
     // Now let any local preferences overwrite the global equivalent
-    if(clCxxWorkspaceST::Get()->IsOpen()) {
+    if (clCxxWorkspaceST::Get()->IsOpen()) {
         clCxxWorkspaceST::Get()->GetLocalWorkspace()->GetOptions(confOptions, wxEmptyString);
     }
     return confOptions;
@@ -160,7 +158,7 @@ void EditorConfig::SetOptions(OptionsConfigPtr opts)
 {
     // remove legacy tab-width setting
     wxXmlNode* child = XmlUtils::FindNodeByName(m_doc->GetRoot(), wxT("ArchiveObject"), wxT("EditorTabWidth"));
-    if(child) {
+    if (child) {
         m_doc->GetRoot()->RemoveChild(child);
         delete child;
     }
@@ -168,7 +166,7 @@ void EditorConfig::SetOptions(OptionsConfigPtr opts)
     // locate the current node
     wxString nodeName = wxT("Options");
     wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), nodeName);
-    if(node) {
+    if (node) {
         m_doc->GetRoot()->RemoveChild(node);
         delete node;
     }
@@ -189,11 +187,11 @@ int clSortStringsFunc(const wxString& first, const wxString& second)
 
 void EditorConfig::GetRecentItems(wxArrayString& files, const wxString& nodeName)
 {
-    if(nodeName.IsEmpty()) {
+    if (nodeName.IsEmpty()) {
         return;
     }
 
-    if(m_cacheRecentItems.count(nodeName)) {
+    if (m_cacheRecentItems.count(nodeName)) {
         files = m_cacheRecentItems.find(nodeName)->second;
         // files.Sort(clSortStringsFunc);
         return;
@@ -201,13 +199,13 @@ void EditorConfig::GetRecentItems(wxArrayString& files, const wxString& nodeName
 
     // find the root node
     wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), nodeName);
-    if(node) {
+    if (node) {
         wxXmlNode* child = node->GetChildren();
-        while(child) {
-            if(child->GetName() == wxT("File")) {
+        while (child) {
+            if (child->GetName() == wxT("File")) {
                 wxString fileName = XmlUtils::ReadString(child, wxT("Name"));
                 // wxXmlDocument Saves/Loads items in reverse order, so prepend, not add.
-                if(wxFileExists(fileName))
+                if (wxFileExists(fileName))
                     files.Insert(fileName, 0);
             }
             child = child->GetNext();
@@ -218,13 +216,13 @@ void EditorConfig::GetRecentItems(wxArrayString& files, const wxString& nodeName
 
 void EditorConfig::SetRecentItems(const wxArrayString& files, const wxString& nodeName)
 {
-    if(nodeName.IsEmpty()) {
+    if (nodeName.IsEmpty()) {
         return;
     }
 
     // find the root node
     wxXmlNode* node = XmlUtils::FindFirstByTagName(m_doc->GetRoot(), nodeName);
-    if(node) {
+    if (node) {
         wxXmlNode* root = m_doc->GetRoot();
         root->RemoveChild(node);
         delete node;
@@ -232,14 +230,14 @@ void EditorConfig::SetRecentItems(const wxArrayString& files, const wxString& no
     // create new entry in the configuration file
     node = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, nodeName);
     m_doc->GetRoot()->AddChild(node);
-    for(size_t i = 0; i < files.GetCount(); i++) {
+    for (size_t i = 0; i < files.GetCount(); i++) {
         wxXmlNode* child = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("File"));
         child->AddAttribute(wxT("Name"), files.Item(i));
         node->AddChild(child);
     }
 
     // Update the cache
-    if(m_cacheRecentItems.count(nodeName)) {
+    if (m_cacheRecentItems.count(nodeName)) {
         m_cacheRecentItems.erase(nodeName);
     }
     m_cacheRecentItems.insert(std::make_pair(nodeName, files));
@@ -253,7 +251,7 @@ void EditorConfig::SetRecentItems(const wxArrayString& files, const wxString& no
 
 bool EditorConfig::WriteObject(const wxString& name, SerializedObject* obj)
 {
-    if(!XmlUtils::StaticWriteObject(m_doc->GetRoot(), name, obj))
+    if (!XmlUtils::StaticWriteObject(m_doc->GetRoot(), name, obj))
         return false;
 
     // save the archive
@@ -282,11 +280,11 @@ long EditorConfig::GetInteger(const wxString& name, long defaultValue)
 {
     // Check the cache first
     std::map<wxString, long>::iterator iter = m_cacheLongValues.find(name);
-    if(iter != m_cacheLongValues.end())
+    if (iter != m_cacheLongValues.end())
         return iter->second;
 
     SimpleLongValue data;
-    if(!ReadObject(name, &data)) {
+    if (!ReadObject(name, &data)) {
         return defaultValue;
     }
 
@@ -299,11 +297,11 @@ wxString EditorConfig::GetString(const wxString& key, const wxString& defaultVal
 {
     // Check the cache first
     std::map<wxString, wxString>::iterator iter = m_cacheStringValues.find(key);
-    if(iter != m_cacheStringValues.end())
+    if (iter != m_cacheStringValues.end())
         return iter->second;
 
     SimpleStringValue data;
-    if(!ReadObject(key, &data)) {
+    if (!ReadObject(key, &data)) {
         return defaultValue;
     }
 
@@ -365,34 +363,34 @@ void EditorConfig::SetInstallDir(const wxString& instlDir) { m_installDir = inst
 
 bool EditorConfig::GetPaneStickiness(const wxString& caption)
 {
-    if(caption == _("Build")) {
+    if (caption == _("Build")) {
         return GetOptions()->GetHideOutputPaneNotIfBuild();
 
-    } else if(caption == _("Search")) {
+    } else if (caption == _("Search")) {
         return GetOptions()->GetHideOutputPaneNotIfSearch();
-    } else if(caption == _("Replace")) {
+    } else if (caption == _("Replace")) {
         return GetOptions()->GetHideOutputPaneNotIfReplace();
-    } else if(caption == _("References")) {
+    } else if (caption == _("References")) {
         return GetOptions()->GetHideOutputPaneNotIfReferences();
-    } else if(caption == _("Output")) {
+    } else if (caption == _("Output")) {
         return GetOptions()->GetHideOutputPaneNotIfOutput();
-    } else if(caption == _("Debug")) {
+    } else if (caption == _("Debug")) {
         return GetOptions()->GetHideOutputPaneNotIfDebug();
-    } else if(caption == _("Trace")) {
+    } else if (caption == _("Trace")) {
         return GetOptions()->GetHideOutputPaneNotIfTrace();
-    } else if(caption == _("Tasks")) {
+    } else if (caption == _("Tasks")) {
         return GetOptions()->GetHideOutputPaneNotIfTasks();
-    } else if(caption == _("BuildQ")) {
+    } else if (caption == _("BuildQ")) {
         return GetOptions()->GetHideOutputPaneNotIfBuildQ();
-    } else if(caption == _("CppCheck")) {
+    } else if (caption == _("CppCheck")) {
         return GetOptions()->GetHideOutputPaneNotIfCppCheck();
-    } else if(caption == _("Subversion")) {
+    } else if (caption == _("Subversion")) {
         return GetOptions()->GetHideOutputPaneNotIfSvn();
-    } else if(caption == _("CScope")) {
+    } else if (caption == _("CScope")) {
         return GetOptions()->GetHideOutputPaneNotIfCscope();
-    } else if(caption == _("Git")) {
+    } else if (caption == _("Git")) {
         return GetOptions()->GetHideOutputPaneNotIfGit();
-    } else if(caption == _("MemCheck")) {
+    } else if (caption == _("MemCheck")) {
         return GetOptions()->GetHideOutputPaneNotIfMemCheck();
     }
 
@@ -403,33 +401,33 @@ bool EditorConfig::GetPaneStickiness(const wxString& caption)
 void EditorConfig::SetPaneStickiness(const wxString& caption, bool stickiness)
 {
     OptionsConfigPtr options = GetOptions();
-    if(caption == _("Build")) {
+    if (caption == _("Build")) {
         options->SetHideOutputPaneNotIfBuild(stickiness);
-    } else if(caption == _("Search")) {
+    } else if (caption == _("Search")) {
         options->SetHideOutputPaneNotIfSearch(stickiness);
-    } else if(caption == _("Replace")) {
+    } else if (caption == _("Replace")) {
         options->SetHideOutputPaneNotIfReplace(stickiness);
-    } else if(caption == _("References")) {
+    } else if (caption == _("References")) {
         options->SetHideOutputPaneNotIfReferences(stickiness);
-    } else if(caption == _("Output")) {
+    } else if (caption == _("Output")) {
         options->SetHideOutputPaneNotIfOutput(stickiness);
-    } else if(caption == _("Debug")) {
+    } else if (caption == _("Debug")) {
         options->SetHideOutputPaneNotIfDebug(stickiness);
-    } else if(caption == _("Trace")) {
+    } else if (caption == _("Trace")) {
         options->SetHideOutputPaneNotIfTrace(stickiness);
-    } else if(caption == _("Tasks")) {
+    } else if (caption == _("Tasks")) {
         options->SetHideOutputPaneNotIfTasks(stickiness);
-    } else if(caption == _("BuildQ")) {
+    } else if (caption == _("BuildQ")) {
         options->SetHideOutputPaneNotIfBuildQ(stickiness);
-    } else if(caption == _("CppCheck")) {
+    } else if (caption == _("CppCheck")) {
         options->SetHideOutputPaneNotIfCppCheck(stickiness);
-    } else if(caption == _("Subversion")) {
+    } else if (caption == _("Subversion")) {
         options->SetHideOutputPaneNotIfSvn(stickiness);
-    } else if(caption == _("Cscope")) {
+    } else if (caption == _("Cscope")) {
         options->SetHideOutputPaneNotIfCscope(stickiness);
-    } else if(caption == _("Git")) {
+    } else if (caption == _("Git")) {
         options->SetHideOutputPaneNotIfGit(stickiness);
-    } else if(caption == _("MemCheck")) {
+    } else if (caption == _("MemCheck")) {
         options->SetHideOutputPaneNotIfMemCheck(stickiness);
     } else {
         return;
@@ -443,7 +441,7 @@ void EditorConfig::SetPaneStickiness(const wxString& caption, bool stickiness)
 static EditorConfig* gs_EditorConfig = NULL;
 void EditorConfigST::Free()
 {
-    if(gs_EditorConfig) {
+    if (gs_EditorConfig) {
         delete gs_EditorConfig;
         gs_EditorConfig = NULL;
     }
@@ -451,7 +449,7 @@ void EditorConfigST::Free()
 
 EditorConfig* EditorConfigST::Get()
 {
-    if(gs_EditorConfig == NULL) {
+    if (gs_EditorConfig == NULL) {
         gs_EditorConfig = new EditorConfig;
     }
     return gs_EditorConfig;

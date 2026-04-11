@@ -324,7 +324,7 @@ bool XmlUtils::StaticWriteObject(wxXmlNode* root, const wxString& name, Serializ
     return true;
 }
 
-bool XmlUtils::LoadXmlFile(wxXmlDocument* doc, const wxString& filepath)
+bool XmlUtils::LoadXmlFile(clXmlDocument* doc, const wxString& filepath)
 {
     CHECK_PTR_RET_FALSE(doc);
 
@@ -337,14 +337,8 @@ bool XmlUtils::LoadXmlFile(wxXmlDocument* doc, const wxString& filepath)
     return doc->Load(sis);
 }
 
-bool XmlUtils::SaveXmlToFile(const wxXmlDocument* doc, const wxString& filename)
+bool XmlUtils::SaveXmlToFile(const clXmlDocument* doc, const wxString& filename)
 {
     CHECK_PTR_RET_FALSE(doc);
-
-    wxString content;
-    wxStringOutputStream sos(&content);
-    if (doc->Save(sos)) {
-        return FileUtils::WriteFileContent(filename, content);
-    }
-    return false;
+    return doc->SaveIfNeeded(filename);
 }

@@ -338,7 +338,7 @@ bool LocalWorkspace::SanityCheck()
 
 bool LocalWorkspace::Create()
 {
-    m_doc = wxXmlDocument();
+    m_doc = clXmlDocument();
     // The idea is to make a name in the format foo.workspace.frodo
     m_fileName = DoGetFilePath();
     m_fileName.MakeAbsolute();

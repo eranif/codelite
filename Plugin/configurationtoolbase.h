@@ -25,6 +25,7 @@
 #ifndef __configurationtoolbase__
 #define __configurationtoolbase__
 
+#include "clXmlDocument.hpp"
 #include "codelite_exports.h"
 
 #include <wx/xml/xml.h>
@@ -34,7 +35,7 @@ class SerializedObject;
 class WXDLLIMPEXP_SDK ConfigurationToolBase
 {
 protected:
-    wxXmlDocument m_doc;
+    clXmlDocument m_doc;
     wxString m_fileName;
 
 public:

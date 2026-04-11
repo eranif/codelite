@@ -27,6 +27,7 @@
 
 #include "build_system.h"
 #include "builder/builder.h"
+#include "clXmlDocument.hpp"
 #include "codelite_exports.h"
 #include "compiler.h"
 
@@ -55,7 +56,7 @@ public:
  */
 class WXDLLIMPEXP_SDK BuildSettingsConfig
 {
-    std::unique_ptr<wxXmlDocument> m_doc;
+    std::unique_ptr<clXmlDocument> m_doc;
     wxFileName m_fileName;
     wxString m_version;
     std::unordered_map<wxString, CompilerPtr> m_compilers;

@@ -28,41 +28,37 @@
 #include "serialized_object.h"
 #include "xmlutils.h"
 
-ConfigTool::ConfigTool()
-    : m_fileName(wxEmptyString)
-{
-}
-
 bool ConfigTool::Load(const wxString& basename, const wxString& version)
 {
     wxString initialSettings = ConfFileLocator::Instance()->Locate(basename);
     bool loaded = XmlUtils::LoadXmlFile(&m_doc, initialSettings);
     wxString xmlVersion;
-    if(loaded) {
+    if (loaded) {
         xmlVersion = m_doc.GetRoot()->GetAttribute(wxT("Version"), wxEmptyString);
     }
 
-    if(xmlVersion != version) {
+    if (xmlVersion != version) {
         loaded = XmlUtils::LoadXmlFile(&m_doc, ConfFileLocator::Instance()->GetDefaultCopy(basename));
     }
+
     m_fileName = ConfFileLocator::Instance()->GetLocalCopy(basename);
     return loaded;
 }
 
 bool ConfigTool::WriteObject(const wxString& name, SerializedObject* obj)
 {
-    if(m_doc.IsOk() == false) {
+    if (m_doc.IsOk() == false) {
         return false;
     }
 
-    if(!XmlUtils::StaticWriteObject(m_doc.GetRoot(), name, obj))
+    if (!XmlUtils::StaticWriteObject(m_doc.GetRoot(), name, obj))
         return false;
     return XmlUtils::SaveXmlToFile(&m_doc, m_fileName);
 }
 
 bool ConfigTool::ReadObject(const wxString& name, SerializedObject* obj)
 {
-    if(m_doc.IsOk() == false) {
+    if (m_doc.IsOk() == false) {
         return false;
     }
 

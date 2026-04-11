@@ -281,21 +281,25 @@ int clScrolledPanel::GetPageSize() const { return m_pageSize; }
 void clScrolledPanel::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
+    if (!m_vsb || !m_showSBOnFocus) {
+        // fast exit
+        return;
+    }
+
     static clIdleEventThrottler event_throttler{200};
     if (!event_throttler.CanHandle()) {
         return;
     }
-    if (m_vsb && m_showSBOnFocus) {
-        wxWindow* focus_win = wxWindow::FindFocus();
-        bool inOurWindows = IsDescendant(focus_win);
-        if (ShouldShowScrollBar() && !m_vsb->IsShown() && inOurWindows) {
-            // Update the scrollbar with the latest values
-            m_vsb->Show();
-            DoPositionVScrollbar();
-            m_vsb->SetScrollbar(m_position, m_thumbSize, m_rangeSize, m_pageSize);
-        } else if (!inOurWindows && m_vsb->IsShown()) {
-            m_vsb->Hide();
-        }
+
+    wxWindow* focus_win = wxWindow::FindFocus();
+    bool inOurWindows = IsDescendant(focus_win);
+    if (ShouldShowScrollBar() && !m_vsb->IsShown() && inOurWindows) {
+        // Update the scrollbar with the latest values
+        m_vsb->Show();
+        DoPositionVScrollbar();
+        m_vsb->SetScrollbar(m_position, m_thumbSize, m_rangeSize, m_pageSize);
+    } else if (!inOurWindows && m_vsb->IsShown()) {
+        m_vsb->Hide();
     }
     ProcessIdle();
 }

@@ -25,6 +25,7 @@
 #ifndef LITEEDITOR_EDITOR_CONFIG_H
 #define LITEEDITOR_EDITOR_CONFIG_H
 
+#include "clXmlDocument.hpp"
 #include "cl_config.h"
 #include "codelite_exports.h"
 #include "lexer_configuration.h"
@@ -113,7 +114,7 @@ public:
 class WXDLLIMPEXP_SDK EditorConfig : public IConfigTool
 {
     friend class EditorConfigST;
-    wxXmlDocument* m_doc;
+    clXmlDocument* m_doc;
     wxFileName m_fileName;
     bool m_transaction = false;
     wxString m_svnRevision;

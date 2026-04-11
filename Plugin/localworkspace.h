@@ -27,6 +27,7 @@
 #define __localoptions__
 
 #include "VirtualDirectoryColour.h"
+#include "clXmlDocument.hpp"
 #include "codelite_exports.h"
 #include "optionsconfig.h"
 
@@ -146,7 +147,7 @@ public:
 
 private:
     friend class LocalWorkspaceST;
-    wxXmlDocument m_doc;
+    clXmlDocument m_doc;
     wxFileName m_fileName;
 
 protected:

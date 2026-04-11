@@ -82,11 +82,16 @@ void clTreeCtrl::UpdateLineHeight()
 {
     wxBitmap bmp;
     bmp.CreateWithDIPSize(wxSize(1, 1), GetDPIScaleFactor());
-    wxMemoryDC memDC(bmp);
-    wxGCDC gcdc(memDC);
 
-    gcdc.SetFont(GetDefaultFont());
-    wxSize textSize = gcdc.GetTextExtent("Tp");
+#ifdef __WXMSW__
+    wxClientDC dc{this};
+#else
+    wxMemoryDC memDC(bmp);
+    wxGCDC dc(memDC);
+#endif
+
+    dc.SetFont(GetDefaultFont());
+    wxSize textSize = dc.GetTextExtent("Tp");
 
     SetLineHeight(m_spacerY + textSize.GetHeight() + m_spacerY);
     SetIndent(GetLineHeight() / 2);
@@ -133,22 +138,15 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
 {
     wxUnusedVar(event);
 
-#ifdef __WXMSW__
-    wxPaintDC pdc(this);
-    PrepareDC(pdc);
-    wxGCDC gcdc;
-    wxDC& dc = DrawingUtils::GetGCDC(pdc, gcdc);
-
-#elif defined(__WXMAC__)
+#if defined(__WXMAC__)
     wxPaintDC pdc(this);
     PrepareDC(pdc);
     wxGCDC dc(pdc);
 
 #else
-    wxAutoBufferedPaintDC pdc(this);
-    PrepareDC(pdc);
-    wxDC& dc = pdc;
-
+    wxAutoBufferedPaintDC dc(this);
+    PrepareDC(dc);
+    //wxDC& dc = pdc;
 #endif
 
     // ------------------------------------------------
@@ -280,8 +278,12 @@ void clTreeCtrl::OnPaint(wxPaintEvent& event)
     }
 }
 
-wxTreeItemId clTreeCtrl::InsertItem(const wxTreeItemId& parent, const wxTreeItemId& previous, const wxString& text,
-                                    int image, int selImage, wxTreeItemData* data)
+wxTreeItemId clTreeCtrl::InsertItem(const wxTreeItemId& parent,
+                                    const wxTreeItemId& previous,
+                                    const wxString& text,
+                                    int image,
+                                    int selImage,
+                                    wxTreeItemData* data)
 {
     wxTreeItemId item = m_model.InsertItem(parent, previous, text, image, selImage, data);
     if (!m_bulkInsert) {
@@ -293,8 +295,8 @@ wxTreeItemId clTreeCtrl::InsertItem(const wxTreeItemId& parent, const wxTreeItem
     return item;
 }
 
-wxTreeItemId clTreeCtrl::AppendItem(const wxTreeItemId& parent, const wxString& text, int image, int selImage,
-                                    wxTreeItemData* data)
+wxTreeItemId
+clTreeCtrl::AppendItem(const wxTreeItemId& parent, const wxString& text, int image, int selImage, wxTreeItemData* data)
 {
     wxTreeItemId item = m_model.AppendItem(parent, text, image, selImage, data);
     if (!m_bulkInsert) {

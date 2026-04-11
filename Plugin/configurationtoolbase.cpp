@@ -42,13 +42,13 @@ bool ConfigurationToolBase::Load(const wxString& fileName)
     wxFileName userFile(clStandardPaths::Get().GetUserDataDir() + wxT("/") + fileName);
     m_fileName = userFile.GetFullPath();
 
-    if(userFile.FileExists() == false) {
+    if (userFile.FileExists() == false) {
         // no such file, create an empty file
         wxString content;
         content << wxT("<") << GetRootName() << wxT("/>");
         wxFFile file;
         file.Open(userFile.GetFullPath(), wxT("w+b"));
-        if(file.IsOpened()) {
+        if (file.IsOpened()) {
             file.Write(content);
             file.Close();
         }
@@ -58,18 +58,18 @@ bool ConfigurationToolBase::Load(const wxString& fileName)
 
 bool ConfigurationToolBase::WriteObject(const wxString& name, SerializedObject* obj)
 {
-    if(m_doc.IsOk() == false) {
+    if (m_doc.IsOk() == false) {
         return false;
     }
 
-    if(!XmlUtils::StaticWriteObject(m_doc.GetRoot(), name, obj))
+    if (!XmlUtils::StaticWriteObject(m_doc.GetRoot(), name, obj))
         return false;
     return XmlUtils::SaveXmlToFile(&m_doc, m_fileName);
 }
 
 bool ConfigurationToolBase::ReadObject(const wxString& name, SerializedObject* obj)
 {
-    if(m_doc.IsOk() == false) {
+    if (m_doc.IsOk() == false) {
         return false;
     }
 

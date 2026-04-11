@@ -29,6 +29,7 @@
 #include "serialized_object.h"
 
 #include <wx/xml/xml.h>
+#include "clXmlDocument.hpp"
 
 /// A collection of XML utils
 class WXDLLIMPEXP_CL XmlUtils
@@ -169,12 +170,12 @@ public:
     /**
      * @brief save an xml document to file
      */
-    static bool SaveXmlToFile(const wxXmlDocument* doc, const wxString& filename);
+    static bool SaveXmlToFile(const clXmlDocument* doc, const wxString& filename);
 
     /**
      * @brief an efficient way to load XML from file
      */
-    static bool LoadXmlFile(wxXmlDocument* doc, const wxString& filepath);
+    static bool LoadXmlFile(clXmlDocument* doc, const wxString& filepath);
 };
 
 #endif // XMLUTILS_H

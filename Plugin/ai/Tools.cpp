@@ -36,6 +36,15 @@ using assistant::CanInvokeToolResult;
         return Err(message);                                                                     \
     }
 
+#define CONFIRM_ARG(VarType, VarName, InvalidValue, Expr, ErrorMsg) \
+    VarType VarName = Expr.value_or(InvalidValue);                  \
+    if (VarName == InvalidValue) {                                  \
+        return CanInvokeToolResult{                                 \
+            .can_invoke = false,                                    \
+            .reason = ErrorMsg,                                     \
+        };                                                          \
+    }
+
 FunctionResult CreateNewFile(const assistant::json& args)
 {
     VERIFY_WORKER_THREAD();
@@ -82,11 +91,28 @@ CanInvokeToolResult ReadFileContentConfirm(const std::string& tool_name, assista
         };
     }
 
-    std::string filepath = ::assistant::GetFunctionArg<std::string>(args, "filepath").value_or("");
-    if (filepath.empty()) {
+    CONFIRM_ARG(std::string,
+                filepath,
+                "",
+                ::assistant::GetFunctionArg<std::string>(args, "filepath"),
+                "Missing mandatory field 'filepath'");
+
+    CONFIRM_ARG(int,
+                from_line,
+                -1,
+                ::assistant::GetFunctionArg<int>(args, "from_line"),
+                "Missing or invalid value for mandatory field 'from_line'");
+
+    CONFIRM_ARG(int,
+                line_count,
+                -1,
+                ::assistant::GetFunctionArg<int>(args, "line_count"),
+                "Missing or invalid value for mandatory field 'line_count'");
+
+    if (line_count > 200) {
         return CanInvokeToolResult{
             .can_invoke = false,
-            .reason = "Missing or empty mandatory field 'filepath'",
+            .reason = "line_count must be between 1 and 200 (inclusive)",
         };
     }
 
@@ -132,20 +158,13 @@ CanInvokeToolResult ReadFileContentConfirm(const std::string& tool_name, assista
 FunctionResult ReadFileContent(const assistant::json& args)
 {
     VERIFY_WORKER_THREAD();
-    if (args.size() < 1 || args.size() > 3) {
+    if (args.size() != 3) {
         return Err("Invalid number of arguments");
     }
 
     ASSIGN_FUNC_ARG_OR_RETURN(std::string filepath, ::assistant::GetFunctionArg<std::string>(args, "filepath"));
-
-    // Check for optional parameters
-    auto from_line_opt = ::assistant::GetFunctionArg<int>(args, "from_line");
-    auto line_count_opt = ::assistant::GetFunctionArg<int>(args, "line_count");
-
-    // Validate that both optional params are provided or none of them
-    if (from_line_opt.has_value() != line_count_opt.has_value()) {
-        return Err("Both 'from_line' and 'line_count' must be provided together, or none of them");
-    }
+    ASSIGN_FUNC_ARG_OR_RETURN(int from_line, ::assistant::GetFunctionArg<int>(args, "from_line"));
+    ASSIGN_FUNC_ARG_OR_RETURN(int line_count, ::assistant::GetFunctionArg<int>(args, "line_count"));
 
     auto cb = [=]() -> FunctionResult {
         auto& llm = llm::Manager::GetInstance();
@@ -158,47 +177,35 @@ FunctionResult ReadFileContent(const assistant::json& args)
             return Err(logmsg);
         }
 
-        // If partial read is requested
-        if (from_line_opt.has_value() && line_count_opt.has_value()) {
-            int from_line = from_line_opt.value();
-            int line_count = line_count_opt.value();
+        // Validate parameters
+        if (from_line < 1) {
+            return Err("'from_line' must be >= 1");
+        }
+        if (line_count < 1) {
+            return Err("'line_count' must be >= 1");
+        }
 
-            // Validate parameters
-            if (from_line < 1) {
-                return Err("'from_line' must be >= 1");
-            }
-            if (line_count < 1) {
-                return Err("'line_count' must be >= 1");
-            }
+        // Split content into lines
+        wxArrayString lines = wxStringTokenize(content.value(), "\n", wxTOKEN_RET_DELIMS);
 
-            // Split content into lines
-            wxArrayString lines = wxStringTokenize(content.value(), "\n", wxTOKEN_RET_DELIMS);
+        // Check if from_line is within bounds
+        if (from_line > (int)lines.size()) {
+            return Err(wxString::Format("'from_line' (%d) exceeds total file lines (%zu)", from_line, lines.size()));
+        }
 
-            // Check if from_line is within bounds
-            if (from_line > (int)lines.size()) {
-                return Err(
-                    wxString::Format("'from_line' (%d) exceeds total file lines (%zu)", from_line, lines.size()));
-            }
-
-            // Extract the requested lines (from_line is 1-based)
-            int start_idx = from_line - 1;
-            int end_idx = wxMin(start_idx + line_count, (int)lines.size());
-            wxString partial_content;
-            for (int i = start_idx; i < end_idx; ++i) {
-                partial_content << lines[i];
-            }
-
-            wxString logmsg;
-            logmsg << "Successfully read file: " << filepath << " (lines " << from_line << "-" << (end_idx) << "). "
-                   << partial_content.size() << " bytes.";
-            llm.PrintMessage(logmsg, IconType::kSuccess);
-            return Ok(partial_content);
+        // Extract the requested lines (from_line is 1-based)
+        int start_idx = from_line - 1;
+        int end_idx = wxMin(start_idx + line_count, static_cast<int>(lines.size()));
+        wxString partial_content;
+        for (int i = start_idx; i < end_idx; ++i) {
+            partial_content << lines[i];
         }
 
         wxString logmsg;
-        logmsg << "Successfully read file: " << filepath << ". " << content.value().size() << " bytes.";
+        logmsg << "Successfully read file: " << filepath << " (lines " << from_line << "-" << (end_idx) << "). "
+               << partial_content.size() << " bytes.";
         llm.PrintMessage(logmsg, IconType::kSuccess);
-        return Ok(content.value());
+        return Ok(partial_content);
     };
     return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
 }
@@ -792,19 +799,16 @@ FunctionResult GetWorkingDirectory([[maybe_unused]] const assistant::json& args)
 // Register CodeLite tools with the model.
 void PopulateBuiltInFunctions(FunctionTable& table)
 {
-    table.Add(FunctionBuilder("ReadFileContent")
-                  .SetDescription("Reads the content of the file 'filepath' from the disk. "
-                                  "By default, returns the entire file's content. "
-                                  "If 'from_line' and 'line_count' are provided, reads only the specified "
-                                  "range of lines (1-based line numbering). "
-                                  "Both optional parameters must be provided together or omitted entirely. "
-                                  "On success, this function returns the requested file content.")
-                  .AddRequiredParam("filepath", "The path of the file to read.", "string")
-                  .AddOptionalParam("from_line", "Starting line number (1-based) to read from", "number")
-                  .AddOptionalParam("line_count", "Number of lines to read", "number")
-                  .SetCallback(ReadFileContent)
-                  .SetHumanInTheLoopCallabck(ReadFileContentConfirm)
-                  .Build());
+    table.Add(
+        FunctionBuilder("ReadFileContent")
+            .SetDescription("Reads the range of lines (1-based line numbering) of the file 'filepath' from the disk. "
+                            "On success, this function returns the requested file content.")
+            .AddRequiredParam("filepath", "The path of the file to read.", "string")
+            .AddRequiredParam("from_line", "Starting line number (1-based) to read from", "number")
+            .AddRequiredParam("line_count", "Number of lines to read. Maximum lines to read at once is 200", "number")
+            .SetCallback(ReadFileContent)
+            .SetHumanInTheLoopCallabck(ReadFileContentConfirm)
+            .Build());
 
     table.Add(FunctionBuilder("OpenFileInEditor")
                   .SetDescription("Try to open file 'filepath' and load it into the "

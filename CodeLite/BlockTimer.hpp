@@ -9,7 +9,7 @@
 #endif
 
 // Change to 0 to globally disable timing
-#define clENABLE_PERF 0
+#define clENABLE_PERF 1
 #include "StringUtils.h"
 
 #include <sstream>

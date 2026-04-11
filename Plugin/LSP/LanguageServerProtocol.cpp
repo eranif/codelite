@@ -1,5 +1,6 @@
 #include "LanguageServerProtocol.h"
 
+#include "BlockTimer.hpp"
 #include "LSP/CodeActionRequest.hpp"
 #include "LSP/CompletionRequest.h"
 #include "LSP/DidChangeTextDocumentRequest.h"
@@ -178,7 +179,10 @@ void LanguageServerProtocol::QueueMessage(LSP::MessageWithParams::Ptr_t request)
     if (request->As<LSP::CompletionRequest>()) {
         m_lastCompletionRequestId = request->As<LSP::CompletionRequest>()->GetId();
     }
+    __PERF_IF_ENABLED(BlockTimer timer{"LSP->QueueMessage"})
+    __PERF_IF_ENABLED(timer << request->GetMethod())
     m_Queue.Push(request);
+
     ProcessQueue();
 }
 
@@ -300,6 +304,7 @@ bool LanguageServerProtocol::SendOpenOrChangeRequest(IEditor* editor,
                                                      const wxString& fileContent,
                                                      const wxString& languageId)
 {
+    __PERF_IF_ENABLED(BlockTimer timer{"SendOpenOrChangeRequest"})
     CHECK_PTR_RET_FALSE(editor);
     wxString filename = GetEditorFilePath(editor);
 
@@ -398,6 +403,7 @@ void LanguageServerProtocol::SendCodeActionRequest(IEditor* editor, const std::v
 
 void LanguageServerProtocol::SendCodeCompleteRequest(IEditor* editor, size_t line, size_t column, bool userTriggered)
 {
+    __PERF_IF_ENABLED(BlockTimer timer{"SendCodeCompleteRequest"})
     CHECK_PTR_RET(editor);
     wxString filename = GetEditorFilePath(editor);
     if (ShouldHandleFile(editor)) {
@@ -500,8 +506,10 @@ void LanguageServerProtocol::HoverTip(IEditor* editor)
 void LanguageServerProtocol::CodeComplete(IEditor* editor, bool userTriggered)
 {
     // sanity
+    __PERF_IF_ENABLED(BlockTimer timer{"LSP->CodeComplete"})
     CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
+
     // If the editor is modified, we need to tell the LSP to reparse the source file
     wxString fileContent = editor->GetEditorText();
     SendOpenOrChangeRequest(editor, fileContent, GetLanguageId(editor));
@@ -516,6 +524,8 @@ void LanguageServerProtocol::ProcessQueue()
     if (m_Queue.IsEmpty()) {
         return;
     }
+
+    __PERF_IF_ENABLED(BlockTimer timer{"LSP->ProcessQueue"})
     if (m_Queue.IsWaitingResponse()) {
         LSP_DEBUG() << "LSP is busy, will not send message";
         return;
@@ -527,6 +537,7 @@ void LanguageServerProtocol::ProcessQueue()
     }
 
     // Write the message length as string of 10 bytes
+    __PERF_IF_ENABLED(BlockTimer timer2{"Network Send"})
     m_network->Send(req->ToString());
     m_Queue.SetWaitingResponse(true);
     m_Queue.Pop();
@@ -552,6 +563,7 @@ void LanguageServerProtocol::FindDeclaration(IEditor* editor, bool for_add_missi
         return;
     }
 
+    __PERF_IF_ENABLED(BlockTimer timer{"LSP->FindDeclaration"})
     LSP_DEBUG() << GetLogPrefix() << "FindDeclaration() is called" << endl;
     CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
@@ -628,6 +640,7 @@ void LanguageServerProtocol::DrainOutputBuffer()
     constexpr int MAX_MESSAGES_PER_BATCH = 5;
     int processed = 0;
 
+    __PERF_IF_ENABLED(BlockTimer timer{"LSP->DrainOutputBuffer"})
     while (!m_outputBuffer.empty() && processed < MAX_MESSAGES_PER_BATCH) {
         // attempt to consume a complete JSON payload from the aggregated network buffer
         auto json = LSP::Message::GetJSONPayload(m_outputBuffer);
@@ -781,6 +794,7 @@ void LanguageServerProtocol::Stop()
 void LanguageServerProtocol::OnEditorChanged(wxCommandEvent& event)
 {
     event.Skip();
+    __PERF_IF_ENABLED(BlockTimer timer{"LSP->OnEditorChanged"})
     IEditor* editor = clGetManager()->GetActiveEditor();
     if (editor) {
         OpenEditor(editor);
@@ -792,7 +806,7 @@ void LanguageServerProtocol::DocumentSymbols(IEditor* editor, size_t context_fla
 {
     CHECK_PTR_RET(editor);
     CHECK_COND_RET(ShouldHandleFile(editor));
-
+    __PERF_IF_ENABLED(BlockTimer timer{"LSP->DocumentSymbols"})
     const wxString& filename = GetEditorFilePath(editor);
     LSP::MessageWithParams::Ptr_t req =
         LSP::MessageWithParams::MakeRequest(new LSP::DocumentSymbolsRequest(filename, context_flags));
@@ -829,6 +843,7 @@ void LanguageServerProtocol::SendSemanticTokensRequest(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
     wxString filepath = GetEditorFilePath(editor);
+    __PERF_IF_ENABLED(BlockTimer timer{"LSP->SendSemanticTokensRequest"})
 
     // check if this is implemented by the server
     if (IsSemanticTokensSupported()) {
@@ -894,9 +909,11 @@ void LanguageServerProtocol::HandleResponseError(LSP::ResponseMessage& response,
 
 void LanguageServerProtocol::HandleResponse(LSP::ResponseMessage& response, LSP::MessageWithParams::Ptr_t msg_ptr)
 {
+    __PERF_IF_ENABLED(BlockTimer timer{"LSP->HandleResponse"})
     if (msg_ptr && msg_ptr->As<LSP::Request>()) {
         LOG_IF_TRACE { LSP_TRACE() << GetLogPrefix() << "received a response"; }
         LSP::Request* preq = msg_ptr->As<LSP::Request>();
+        __PERF_IF_ENABLED(timer << preq->GetMethod())
         if (preq->As<LSP::CompletionRequest>() && (preq->GetId() < m_lastCompletionRequestId)) {
             LSP_TRACE() << "Received a response for completion message ID#" << preq->GetId()
                         << ". However, a newer completion request with ID#" << m_lastCompletionRequestId
@@ -952,6 +969,7 @@ void LanguageServerProtocol::SendAck(size_t message_id)
         return;
     }
 
+    __PERF_IF_ENABLED(BlockTimer timer{"LSP->SendAck"})
     auto json = JSONItem::createObject();
     json.addProperty("jsonrpc", "2.0");
     json.addProperty("id", message_id);
@@ -967,6 +985,7 @@ void LanguageServerProtocol::FindReferences(IEditor* editor)
 {
     CHECK_PTR_RET(editor);
     CHECK_EXPECTED_RETURN(IsReferencesSupported(), true);
+    __PERF_IF_ENABLED(BlockTimer timer{"LSP->FindReferences"})
 
     // send "references" message
     LSP_DEBUG() << GetLogPrefix() << "Sending `find references` request" << endl;

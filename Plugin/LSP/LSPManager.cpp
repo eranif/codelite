@@ -244,13 +244,18 @@ void Manager::ShowOutlineView(IEditor* editor)
 
 void Manager::CodeComplete(IEditor* editor, LSP::CompletionItem::eTriggerKind kind)
 {
+    __PERF_IF_ENABLED(BlockTimer timer{"CodeComplete"};)
     CHECK_PTR_RET(editor);
+
+    __PERF_IF_ENABLED(BlockTimer timer_preps{"Preps"};)
     auto server = GetServerForEditor(editor);
     auto ctrl = editor->GetCtrl();
     int curpos = ctrl->GetCurrentPos();
     auto file_path = editor->GetRemotePathOrLocal();
+    timer_preps.Finish();
 
     if (server == nullptr || clSTCHelper::IsPositionInComment(ctrl, curpos)) {
+        __PERF_IF_ENABLED(BlockTimer timer_word_completion{"WordCompletion"};)
         clCodeCompletionEvent evt{wxEVT_CC_CODE_COMPLETE};
         evt.SetPosition(curpos);
         evt.SetTriggerKind(kind);
@@ -263,10 +268,16 @@ void Manager::CodeComplete(IEditor* editor, LSP::CompletionItem::eTriggerKind ki
         return;
     }
 
-    if (editor->GetCtrl() != wxWindow::FindFocus()) {
-        return;
+    {
+        __PERF_IF_ENABLED(BlockTimer timer_focus_completion{"FindFocus"};)
+        if (editor->GetCtrl() != wxWindow::FindFocus()) {
+            return;
+        }
     }
-    server->CodeComplete(editor, kind == LSP::CompletionItem::kTriggerUser);
+    {
+        __PERF_IF_ENABLED(BlockTimer timer_cc{"Calling Code Complete"};)
+        server->CodeComplete(editor, kind == LSP::CompletionItem::kTriggerUser);
+    }
 }
 
 void Manager::FindDeclaration(IEditor* editor)
@@ -586,8 +597,8 @@ void Manager::OnReparseNeeded(LSPEvent& event)
 
 void Manager::OnSemanticTokens(LSPEvent& event)
 {
-    auto timer = std::make_unique<BlockTimer>("OnSemanticTokens", FileLogger::LogLevel::Developer);
-    LanguageServerProtocol::Ptr_t server = GetServerByName(event.GetServerName());
+    auto timer = std::make_unique < __PERF_IF_ENABLED(BlockTimer > ("OnSemanticTokens");)
+                                        LanguageServerProtocol::Ptr_t server = GetServerByName(event.GetServerName());
     CHECK_PTR_RET(server);
 
     LSP_DEBUG() << "Processing semantic tokens from server:" << server->GetName() << "file:" << event.GetFileName()
@@ -669,7 +680,6 @@ void Manager::OnSemanticTokens(LSPEvent& event)
 
     if (!classes_str.empty() || !variabls_str.empty() || !method_str.empty()) {
         // we got something to colour
-        timer.reset(); // SetSemanticTokens has its own timer
         LSP_TRACE() << "Calling editor->SetSemanticTokens" << endl;
         editor->SetSemanticTokens(classes_str, variabls_str, method_str, wxEmptyString);
     } else {

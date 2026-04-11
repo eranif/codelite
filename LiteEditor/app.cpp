@@ -36,6 +36,7 @@
 #include "procutils.h"
 #endif
 
+#include "BlockTimer.hpp"
 #include "ColoursAndFontsManager.h"
 #include "Keyboard/clKeyboardManager.h"
 #include "SideBar.hpp"
@@ -139,6 +140,12 @@ static const wxCmdLineEntryDesc cmdLineDesc[] = {
      "Start CodeLite without any plugins",
      wxCMD_LINE_VAL_STRING,
      wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_SWITCH,
+     "r",
+     "perf",
+     "Enable performance measurments",
+     wxCMD_LINE_VAL_STRING,
+     wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_OPTION,
      "g",
      "dbg",
@@ -181,7 +188,8 @@ static const wxCmdLineEntryDesc cmdLineDesc[] = {
      "Input file",
      wxCMD_LINE_VAL_STRING,
      wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL},
-    {wxCMD_LINE_NONE}};
+    {wxCMD_LINE_NONE},
+};
 
 static void massCopy(const wxString& sourceDir, const wxString& spec, const wxString& destDir)
 {
@@ -385,6 +393,7 @@ bool CodeLiteApp::OnInit()
         PrintUsage(m_parser);
         return false;
     }
+
     wxString newDataDir(wxEmptyString);
     if (m_parser.Found(wxT("d"), &newDataDir)) {
         // ensure that the data dir exists
@@ -396,6 +405,11 @@ bool CodeLiteApp::OnInit()
             dd.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
         }
         clStandardPaths::Get().SetUserDataDir(dd.GetFullPath());
+    }
+
+    if (m_parser.Found(wxT("r"))) {
+        // Performance mode enabled.
+        BlockTimer::Enable();
     }
 
     // Init resources and add the PNG handler

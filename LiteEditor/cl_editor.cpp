@@ -26,6 +26,11 @@
 #include "cl_editor.h"
 
 #include "BlockTimer.hpp"
+
+// Disable BlockTimer for this file
+#undef __PERF_IF_ENABLED
+#define __PERF_IF_ENABLED __PERF_DISABLE
+
 #include "BreakpointsView.hpp"
 #include "ColoursAndFontsManager.h"
 #include "CompletionHelper.hpp"
@@ -1160,7 +1165,7 @@ void clEditor::OnSavePoint(wxStyledTextEvent& event)
 
 void clEditor::OnCharAdded(wxStyledTextEvent& event)
 {
-    BlockTimer timer{"OnCharAdded", FileLogger::LogLevel::Developer};
+    __PERF_IF_ENABLED(BlockTimer timer{"OnCharAdded"};)
 
     bool hasSingleCaret = (GetSelections() == 1);
     OptionsConfigPtr options = GetOptions();
@@ -1440,15 +1445,20 @@ void clEditor::DoEnsureCaretIsVisible(int pos, bool preserveSelection)
 
 void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
 {
+    __PERF_DISABLE(BlockTimer timer{"OnSciUpdateUI"};)
     event.Skip();
     m_scrollbar_recalc_is_required = true;
 
     // keep the last line we visited this method
     int lastLine = m_editorState.current_line;
 
-    // Update the line numbers if needed (only when using custom drawing line numbers)
-    UpdateLineNumbers(false);
+    {
+        // Update the line numbers if needed (only when using custom drawing line numbers)
+        __PERF_DISABLE(BlockTimer timer_2{"UpdateLineNumbers"};)
+        UpdateLineNumbers(false);
+    }
 
+    __PERF_DISABLE(BlockTimer preps{"Preps"})
     // Get current position
     long curpos = GetCurrentPos();
 
@@ -1464,30 +1474,39 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
     const int selectionLn = std::abs(LineFromPosition(selectionEnd) - LineFromPosition(selectionStart)) + 1;
     int mainSelectionPos = GetSelectionNCaret(GetMainSelection());
     int curLine = LineFromPosition(mainSelectionPos);
+    __PERF_DISABLE(preps.Finish();)
 
     if (m_trigger_cc_at_pos > 0) {
         // trigger CC
+        __PERF_DISABLE(BlockTimer cc_timer{"Calling CC"})
         m_context->CallAfter(&ContextBase::OnUserTypedXChars, m_trigger_cc_at_pos - 1);
         m_trigger_cc_at_pos = wxNOT_FOUND;
     }
 
-    SetIndicatorCurrent(INDICATOR_MATCH);
-    IndicatorClearRange(0, curpos);
+    {
+        __PERF_DISABLE(BlockTimer timer_2{"IndicatorClearRange"})
+        SetIndicatorCurrent(INDICATOR_MATCH);
+        IndicatorClearRange(0, curpos);
 
-    int end = PositionFromLine(curLine + 1);
-    if (end >= curpos && end < GetTextLength()) {
-        IndicatorClearRange(end, GetTextLength() - end);
+        int end = PositionFromLine(curLine + 1);
+        if (end >= curpos && end < GetTextLength()) {
+            IndicatorClearRange(end, GetTextLength() - end);
+        }
     }
 
     // get the current position
-    if (curLine != lastLine) {
-        clCodeCompletionEvent evtUpdateNavBar(wxEVT_CC_UPDATE_NAVBAR);
-        evtUpdateNavBar.SetLineNumber(curLine);
-        evtUpdateNavBar.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
-        EventNotifier::Get()->AddPendingEvent(evtUpdateNavBar);
+    {
+        __PERF_DISABLE(BlockTimer timer_2{"NavBar update"})
+        if ((curLine != lastLine) && clMainFrame::Get()->GetMainBook()->IsNavBarShown()) {
+            clCodeCompletionEvent evtUpdateNavBar(wxEVT_CC_UPDATE_NAVBAR);
+            evtUpdateNavBar.SetLineNumber(curLine);
+            evtUpdateNavBar.SetFileName(FileUtils::RealPath(GetFileName().GetFullPath()));
+            EventNotifier::Get()->AddPendingEvent(evtUpdateNavBar);
+        }
     }
 
     if (curpos != m_lastUpdatePosition) {
+        __PERF_DISABLE(BlockTimer timer_2{"StatusBar update"})
         // update the status bar
         m_lastUpdatePosition = curpos;
         wxString message;
@@ -1524,13 +1543,22 @@ void clEditor::OnSciUpdateUI(wxStyledTextEvent& event)
 #endif
     }
 
-    DoBraceMatching();
+    {
+        __PERF_DISABLE(BlockTimer timer_2{"Brace Matching"})
+        DoBraceMatching();
+    }
 
-    // let the context handle this as well
-    m_context->OnSciUpdateUI(event);
+    {
+        __PERF_DISABLE(BlockTimer timer_2{"Context UpdateUI"})
+        // let the context handle this as well
+        m_context->OnSciUpdateUI(event);
+    }
 
-    // Keep the current state
-    m_editorState = EditorViewState::From(this);
+    {
+        __PERF_DISABLE(BlockTimer timer_2{"Saving Editor State"})
+        // Keep the current state
+        m_editorState = EditorViewState::From(this);
+    }
 }
 
 void clEditor::OnMarginClick(wxStyledTextEvent& event)
@@ -2272,9 +2300,6 @@ void clEditor::BraceMatch(long pos)
     long endPos = wxStyledTextCtrl::BraceMatch(pos);
     if (endPos != wxSTC_INVALID_POSITION) {
         wxStyledTextCtrl::BraceHighlight(pos, endPos);
-#ifdef __WXMSW__
-        Refresh();
-#endif
         if (GetIndentationGuides() != 0 && GetIndent() > 0) {
             // Highlight indent guide if exist
             indentCol =
@@ -3268,7 +3293,7 @@ void clEditor::OnContextMenu(wxContextMenuEvent& event)
 
 void clEditor::OnKeyDown(wxKeyEvent& event)
 {
-    BlockTimer timer{"clEditor::OnKeyDown", FileLogger::Developer};
+    __PERF_IF_ENABLED(BlockTimer timer{"clEditor::OnKeyDown"})
     if (event.GetKeyCode() == WXK_BACK) {
         bool is_pos_before_whitespace = wxIsspace(SafeGetChar(PositionBefore(GetCurrentPos())));
         bool backspace_triggers_cc = TagsManagerST::Get()->GetCtagsOptions().GetFlags() & CC_BACKSPACE_TRIGGER;
@@ -3280,6 +3305,7 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
 
     m_prevSelectionInfo.Clear();
     if (HasSelection()) {
+        __PERF_IF_ENABLED(BlockTimer timer_selection{"HasSelection"})
         for (int i = 0; i < GetSelections(); ++i) {
             int selStart = GetSelectionNStart(i);
             int selEnd = GetSelectionNEnd(i);
@@ -3383,17 +3409,26 @@ void clEditor::OnKeyDown(wxKeyEvent& event)
             }
         }
     }
-    m_context->OnKeyDown(event);
+
+    {
+        __PERF_IF_ENABLED(BlockTimer context_key_down{"ContextKeyDown"})
+        m_context->OnKeyDown(event);
+    }
 }
 
 void clEditor::OnLeftUp(wxMouseEvent& event)
 {
+    __PERF_IF_ENABLED(BlockTimer timer{"OnLeftUp"})
     m_isDragging = false; // We can't still be in D'n'D, so stop disabling callticks
     DoQuickJump(event, false);
 
     PostCmdEvent(wxEVT_EDITOR_CLICKED);
     event.Skip();
-    UpdateLineNumbers(true);
+
+    {
+        __PERF_IF_ENABLED(BlockTimer timer_line_numbers{"UpdateLineNumbers"})
+        UpdateLineNumbers(true);
+    }
 }
 
 void clEditor::OnLeaveWindow(wxMouseEvent& event)
@@ -3466,12 +3501,17 @@ void clEditor::OnMotion(wxMouseEvent& event)
 
 void clEditor::OnLeftDown(wxMouseEvent& event)
 {
+    __PERF_IF_ENABLED(BlockTimer timer{"clEditor::OnLeftDown"})
+
     HighlightWord(false);
     wxDELETE(m_richTooltip);
 
-    // Clear context word highlight
-    SetIndicatorCurrent(INDICATOR_CONTEXT_WORD_HIGHLIGHT);
-    IndicatorClearRange(0, GetLength());
+    {
+        // Clear context word highlight
+        __PERF_IF_ENABLED(BlockTimer timer_highlight_word{"ClearIndicators"})
+        SetIndicatorCurrent(INDICATOR_CONTEXT_WORD_HIGHLIGHT);
+        IndicatorClearRange(0, GetLength());
+    }
 
     // hide completion box
     DoCancelCalltip();
@@ -3487,14 +3527,21 @@ void clEditor::OnLeftDown(wxMouseEvent& event)
         ClearSelections();
         SetCaretAt(PositionFromPointClose(event.GetX(), event.GetY()));
     }
-    SetActive();
 
-    // Destroy any floating tooltips out there
-    clCommandEvent destroyEvent(wxEVT_TOOLTIP_DESTROY);
-    EventNotifier::Get()->AddPendingEvent(destroyEvent);
+    {
+        __PERF_IF_ENABLED(BlockTimer timer2{"SetActive"})
+        SetActive();
+    }
 
-    // Clear any messages from the status bar
-    clGetManager()->GetStatusBar()->SetMessage(wxEmptyString);
+    {
+        __PERF_IF_ENABLED(BlockTimer timer3{"TipDestroy + StatusBar"})
+        // Destroy any floating tooltips out there
+        clCommandEvent destroyEvent(wxEVT_TOOLTIP_DESTROY);
+        EventNotifier::Get()->AddPendingEvent(destroyEvent);
+
+        // Clear any messages from the status bar
+        clGetManager()->GetStatusBar()->SetMessage(wxEmptyString);
+    }
     event.Skip();
 }
 
@@ -4065,10 +4112,13 @@ void clEditor::DoHighlightWord()
 
 void clEditor::HighlightWord(bool highlight)
 {
+    __PERF_IF_ENABLED(BlockTimer timer{"HighlightWord"})
     if (highlight) {
+        __PERF_IF_ENABLED(BlockTimer timer_enable{"Enable"})
         DoHighlightWord();
 
     } else if (m_highlightedWordInfo.IsHasMarkers()) {
+        __PERF_IF_ENABLED(BlockTimer timer_clear{"Clearing"})
         SetIndicatorCurrent(INDICATOR_WORD_HIGHLIGHT);
         IndicatorClearRange(0, GetLength());
         m_highlightedWordInfo.Clear();
@@ -5270,41 +5320,39 @@ void clEditor::OnTimer(wxTimerEvent& event)
     if (!HasFocus())
         return;
 
-    if (!HasSelection()) {
+    if (!HasSelection() && m_highlightedWordInfo.IsHasMarkers()) {
         HighlightWord(false);
 
-    } else {
-        if (EditorConfigST::Get()->GetInteger("highlight_word") == 1) {
-            int pos = GetCurrentPos();
-            int wordStartPos = WordStartPos(pos, true);
-            int wordEndPos = WordEndPos(pos, true);
-            wxString word = GetTextRange(wordStartPos, wordEndPos);
+    } else if (HasSelection() && EditorConfigST::Get()->GetInteger("highlight_word") == 1) {
+        int pos = GetCurrentPos();
+        int wordStartPos = WordStartPos(pos, true);
+        int wordEndPos = WordEndPos(pos, true);
+        wxString word = GetTextRange(wordStartPos, wordEndPos);
 
-            // Read the primary selected text
-            int mainSelectionStart = GetSelectionNStart(GetMainSelection());
-            int mainSelectionEnd = GetSelectionNEnd(GetMainSelection());
+        // Read the primary selected text
+        int mainSelectionStart = GetSelectionNStart(GetMainSelection());
+        int mainSelectionEnd = GetSelectionNEnd(GetMainSelection());
 
-            wxString selectedText = GetTextRange(mainSelectionStart, mainSelectionEnd);
-            if (!m_highlightedWordInfo.IsValid(this)) {
+        wxString selectedText = GetTextRange(mainSelectionStart, mainSelectionEnd);
+        if (!m_highlightedWordInfo.IsValid(this)) {
 
-                // Check to see if we have marker already on
-                // we got a selection
-                bool textMatches = (selectedText == word);
-                if (textMatches) {
-                    // No markers set yet
-                    DoHighlightWord();
+            // Check to see if we have marker already on
+            // we got a selection
+            bool textMatches = (selectedText == word);
+            if (textMatches) {
+                // No markers set yet
+                DoHighlightWord();
 
-                } else if (!textMatches) {
-                    // clear markers if the text does not match
-                    HighlightWord(false);
-                }
+            } else if (!textMatches) {
+                // clear markers if the text does not match
+                HighlightWord(false);
+            }
+        } else {
+            // we got the markers on, check that they still matches the highlighted word
+            if (selectedText != m_highlightedWordInfo.GetWord()) {
+                HighlightWord(false);
             } else {
-                // we got the markers on, check that they still matches the highlighted word
-                if (selectedText != m_highlightedWordInfo.GetWord()) {
-                    HighlightWord(false);
-                } else {
-                    // clDEBUG1() << "Markers are valid - nothing more to be done" << clEndl;
-                }
+                // clDEBUG1() << "Markers are valid - nothing more to be done" << clEndl;
             }
         }
     }
@@ -5995,7 +6043,7 @@ void clEditor::SetSemanticTokens(const wxString& classes,
         return;
     }
 
-    BlockTimer timer{"SetSemanticTokens", FileLogger::Developer};
+    __PERF_IF_ENABLED(BlockTimer timer{"SetSemanticTokens"})
 
     // locate the lexer
     auto lexer = ColoursAndFontsManager::Get().GetLexerForFile(FileUtils::RealPath(GetFileName().GetFullPath()));
@@ -6216,17 +6264,12 @@ void clEditor::DoClearBraceHighlight()
 
 void clEditor::DoBraceMatching()
 {
-    if (!m_hightlightMatchedBraces) {
+    if (!m_hightlightMatchedBraces || HasSelection()) {
         DoClearBraceHighlight();
         return;
     }
 
     long current_position = GetCurrentPosition();
-    if (HasSelection()) {
-        DoClearBraceHighlight();
-        return;
-    }
-
     if (m_context->IsCommentOrString(PositionBefore(current_position))) {
         DoClearBraceHighlight();
         return;

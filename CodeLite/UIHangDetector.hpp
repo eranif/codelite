@@ -40,8 +40,10 @@ public:
 
 private:
     void WatchdogLoop();
-    static void CaptureMainThreadStack(HANDLE threadHandle, DWORD threadId);
-    static std::string GetThreadStackTrace(HANDLE threadHandle, DWORD threadId);
+#ifdef __WXMSW__
+    static void MSWCaptureMainThreadStack(HANDLE threadHandle, DWORD threadId);
+    static std::string MSWGetThreadStackTrace(HANDLE threadHandle, DWORD threadId);
+#endif
     static uint64_t GetCurrentTimeMs();
 
     std::atomic<bool> m_running{false};

@@ -112,6 +112,7 @@ uint64_t UIHangDetector::GetCurrentTimeMs()
 
 void UIHangDetector::WatchdogLoop()
 {
+#ifdef __WXMSW__
     CHECK_ENABLED()
     size_t idle_loops = 10000 / m_checkIntervalMs;
 
@@ -140,7 +141,7 @@ void UIHangDetector::WatchdogLoop()
                 HLOG() << "=== UI HANG DETECTED ===" << endl;
                 HLOG() << "Main Thread was not responsive for over" << timeSinceLastActivity << "ms" << endl;
                 HLOG() << "=== (Live Capture) ===" << endl;
-                CaptureMainThreadStack(m_mainThreadHandle, m_mainThreadId);
+                MSWCaptureMainThreadStack(m_mainThreadHandle, m_mainThreadId);
 
                 // To avoid flooding logs during a permanent hang,
                 // you might want to sleep longer here or set a flag.
@@ -162,29 +163,26 @@ void UIHangDetector::WatchdogLoop()
 
     if (monitor.joinable())
         monitor.join();
+#endif
 }
 
-void UIHangDetector::CaptureMainThreadStack(HANDLE threadHandle, DWORD threadId)
-{
 #ifdef __WXMSW__
+void UIHangDetector::MSWCaptureMainThreadStack(HANDLE threadHandle, DWORD threadId)
+{
     if (!threadHandle) {
         HLOG() << "No main thread handle available" << endl;
         return;
     }
 
-    std::string stackTrace = GetThreadStackTrace(threadHandle, threadId);
+    std::string stackTrace = MSWGetThreadStackTrace(threadHandle, threadId);
 
     HLOG() << "=== MAIN THREAD STACK TRACE ===" << endl << stackTrace << "================================" << endl;
-#else
-    HLOG() << "Stack capture not implemented for this platform" << endl;
-#endif
 }
 
-std::string UIHangDetector::GetThreadStackTrace(HANDLE threadHandle, DWORD threadId)
+std::string UIHangDetector::MSWGetThreadStackTrace(HANDLE threadHandle, DWORD threadId)
 {
     std::stringstream ss;
 
-#ifdef __WXMSW__
 #ifndef _M_X64
     ss << "Stack trace is only supported on x86_64 Windows" << std::endl;
     return ss.str();
@@ -291,7 +289,6 @@ std::string UIHangDetector::GetThreadStackTrace(HANDLE threadHandle, DWORD threa
     ResumeThread(threadHandle);
 
 #endif // _M_X64
-#endif // __WXMSW__
-
     return ss.str();
 }
+#endif

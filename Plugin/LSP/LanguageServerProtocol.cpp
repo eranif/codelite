@@ -641,7 +641,8 @@ void LanguageServerProtocol::DrainOutputBuffer()
     int processed = 0;
 
     __PERF_IF_ENABLED(BlockTimer timer{"LSP->DrainOutputBuffer"})
-
+    
+    bool schedule_another_try{true};
     while (!m_outputBuffer.empty() && processed < MAX_MESSAGES_PER_BATCH) {
         // attempt to consume a complete JSON payload from the aggregated network buffer
         auto json = LSP::Message::GetJSONPayload(m_outputBuffer);
@@ -663,6 +664,8 @@ void LanguageServerProtocol::DrainOutputBuffer()
                     LSP_SYSTEM() << "Dumped m_outputBuffer into:" << tmp_filename.GetFullPath() << endl;
                 }
             }
+            // We break the loop because of partial message, so don't schedule another retry.
+            schedule_another_try = false;
             break;
         }
         __PERF_IF_ENABLED(BlockTimer timer_2{"Processing JSON Payload"})
@@ -782,7 +785,7 @@ void LanguageServerProtocol::DrainOutputBuffer()
     ProcessQueue();
 
     // If there is still data in the buffer, yield to the event loop and continue later
-    if (!m_outputBuffer.empty()) {
+    if (schedule_another_try && !m_outputBuffer.empty()) {
         CallAfter(&LanguageServerProtocol::DrainOutputBuffer);
     }
 }

@@ -789,6 +789,7 @@ private:
     void WorkerMain();
     void PushThreadWork(ThreadTask work) { m_queue.Post(std::move(work)); }
     void CleanupAfterWorkerExit();
+    bool TryJoinWorker(int timeout_ms = 200);
     assistant::Config MakeConfig();
     void OnFileSaved(clCommandEvent& event);
     void OnWorkspaceOpened(clWorkspaceEvent& event);

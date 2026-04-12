@@ -417,7 +417,7 @@ void Manager::WorkerMain()
             }
         } // Prompt loop
     } // Main Loop
-    clDEBUG() << "LLM Worker thread started - exiting." << endl;
+    clDEBUG() << "LLM Worker thread exited" << endl;
     m_worker_thread_running.store(false);
     m_worker_busy.store(false);
 }
@@ -441,9 +441,35 @@ void Manager::CleanupAfterWorkerExit()
     m_queue.Clear();
 
     if (m_worker_thread) {
-        m_worker_thread->join();
+        TryJoinWorker();
         m_worker_thread.reset();
     }
+}
+
+bool Manager::TryJoinWorker(int timeout_ms)
+{
+    if (!m_worker_thread || !m_worker_thread->joinable()) {
+        return true;
+    }
+
+    // Poll for the worker thread to finish within the timeout
+    constexpr int POLL_INTERVAL_MS = 10;
+    int waited = 0;
+    while (m_worker_thread_running.load() && waited < timeout_ms) {
+        wxMilliSleep(POLL_INTERVAL_MS);
+        waited += POLL_INTERVAL_MS;
+    }
+
+    if (!m_worker_thread_running.load()) {
+        m_worker_thread->join();
+        clDEBUG() << "LLM Worker thread joined after" << waited << "ms" << endl;
+        return true;
+    }
+
+    // Worker is still busy (e.g. in-flight HTTP request), detach to avoid blocking the UI
+    m_worker_thread->detach();
+    clDEBUG() << "LLM Worker thread detached after" << timeout_ms << "ms timeout" << endl;
+    return false;
 }
 
 void Manager::PostTask(ThreadTask task)

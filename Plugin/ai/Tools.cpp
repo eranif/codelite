@@ -6,6 +6,7 @@
 #include "FileSystemWorkspace/clFileSystemWorkspaceView.hpp"
 #include "Platform/Platform.hpp"
 #include "ai/LLMManager.hpp"
+#include "ai/ToolsUtils.hpp"
 #include "assistant/function.hpp"
 #include "clSFTPManager.hpp"
 #include "clWorkspaceManager.h"
@@ -28,22 +29,17 @@ namespace llm
 {
 using assistant::CanInvokeToolResult;
 
-/// Implementation details
-#define VERIFY_WORKER_THREAD()                                                                   \
-    if (wxIsMainThread()) {                                                                      \
-        wxString message;                                                                        \
-        message << _("Tool ") << __PRETTY_FUNCTION__ << _(" can not be run on the main thread"); \
-        return Err(message);                                                                     \
-    }
+CanInvokeToolResult CreateNewFileConfirm(const std::string& tool_name, assistant::json args)
+{
+    CONFIRM_ARG(std::string,
+                filepath,
+                "",
+                ::assistant::GetFunctionArg<std::string>(args, "filepath"),
+                "Missing or empty mandatory field 'filepath'");
 
-#define CONFIRM_ARG(VarType, VarName, InvalidValue, Expr, ErrorMsg) \
-    VarType VarName = Expr.value_or(InvalidValue);                  \
-    if (VarName == InvalidValue) {                                  \
-        return CanInvokeToolResult{                                 \
-            .can_invoke = false,                                    \
-            .reason = ErrorMsg,                                     \
-        };                                                          \
-    }
+    static constexpr const char kCreateNewFile[] = "CreateNewFile";
+    return ConfirmPathTool(kCreateNewFile, _("The model wants to create the file:"), _("Creating new file:"), filepath);
+}
 
 FunctionResult CreateNewFile(const assistant::json& args)
 {
@@ -84,13 +80,6 @@ FunctionResult CreateNewFile(const assistant::json& args)
 /// Will be invoked by the library before calling to the "ReadFileContent"
 CanInvokeToolResult ReadFileContentConfirm(const std::string& tool_name, assistant::json args)
 {
-    if (wxIsMainThread()) {
-        return CanInvokeToolResult{
-            .can_invoke = false,
-            .reason = "Internal Error.",
-        };
-    }
-
     CONFIRM_ARG(std::string,
                 filepath,
                 "",
@@ -116,43 +105,17 @@ CanInvokeToolResult ReadFileContentConfirm(const std::string& tool_name, assista
         };
     }
 
-    wxString fullpath = FileUtils::NormalizePath(wxString::FromUTF8(filepath));
-    auto& config = llm::Manager::GetInstance().GetConfig();
     static constexpr const char* kReadFileContent = "ReadFileContent";
-
-    bool is_trusted = llm::Manager::GetInstance().CheckIfPathIsAllowedForTool(kReadFileContent, fullpath);
-
-    // Apply read file "Trust" for this session (per path).
-    if (!is_trusted) {
-        wxString message;
-        message << _("The model wants to read the file:") << "\n```\n" << fullpath << "\n```\n";
-        return llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message, [&config, &fullpath]() {
-            // User trusts the tool for this path, add it to the trust store.
-            wxString dirpath = FileUtils::GetPath(fullpath);
-
-            std::vector<std::pair<wxString, wxString>> options{
-                {wxString::Format(_("Specific path: %s"), fullpath), fullpath},
-                {wxString::Format(_("Entire directory: %s/*"), dirpath), dirpath + "/*"},
-                {_("Entire tool"), "*"},
-            };
-
-            auto result = llm::Manager::GetInstance().ShowTrustLevelDialog(kReadFileContent, options);
-            if (result.has_value()) {
-                config.AddTrustedTool(kReadFileContent, result->first, result->second);
-                if (result->second) {
-                    config.Save(false);
-                }
+    return ConfirmPathTool(
+        kReadFileContent, _("The model wants to read the file:"), _("Reading file:"), filepath, [&]() {
+            if (line_count > 200) {
+                return CanInvokeToolResult{
+                    .can_invoke = false,
+                    .reason = "The line count must be between 1 and 200, inclusive.",
+                };
             }
+            return CanInvokeToolResult{.can_invoke = true};
         });
-    } else {
-        // This path is trusted.
-        wxString message;
-        message << _("Reading file:") << "\n```\n" << fullpath << "\n```\n";
-        llm::Manager::GetInstance().PrintMessage(message, IconType::kInfo);
-        return CanInvokeToolResult{
-            .can_invoke = true,
-        };
-    }
 }
 
 FunctionResult ReadFileContent(const assistant::json& args)
@@ -213,56 +176,15 @@ FunctionResult ReadFileContent(const assistant::json& args)
 /// Will be invoked by the library before calling to the "ReadFileMetadata"
 CanInvokeToolResult ReadFileMetadataConfirm(const std::string& tool_name, assistant::json args)
 {
-    if (wxIsMainThread()) {
-        return CanInvokeToolResult{
-            .can_invoke = false,
-            .reason = "Internal Error.",
-        };
-    }
-
     CONFIRM_ARG(std::string,
                 filepath,
                 "",
                 ::assistant::GetFunctionArg<std::string>(args, "filepath"),
                 "Missing mandatory field 'filepath'");
 
-    wxString fullpath = FileUtils::NormalizePath(wxString::FromUTF8(filepath));
-    auto& config = llm::Manager::GetInstance().GetConfig();
     static constexpr const char* kReadFileMetadata = "ReadFileMetadata";
-
-    bool is_trusted = llm::Manager::GetInstance().CheckIfPathIsAllowedForTool(kReadFileMetadata, fullpath);
-
-    // Apply read file "Trust" for this session (per path).
-    if (!is_trusted) {
-        wxString message;
-        message << _("The model wants to read metadata for the file:") << "\n```\n" << fullpath << "\n```\n";
-        return llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message, [&config, &fullpath]() {
-            // User trusts the tool for this path, add it to the trust store.
-            wxString dirpath = FileUtils::GetPath(fullpath);
-
-            std::vector<std::pair<wxString, wxString>> options{
-                {wxString::Format(_("Specific path: %s"), fullpath), fullpath},
-                {wxString::Format(_("Entire directory: %s/*"), dirpath), dirpath + "/*"},
-                {_("Entire tool"), "*"},
-            };
-
-            auto result = llm::Manager::GetInstance().ShowTrustLevelDialog(kReadFileMetadata, options);
-            if (result.has_value()) {
-                config.AddTrustedTool(kReadFileMetadata, result->first, result->second);
-                if (result->second) {
-                    config.Save(false);
-                }
-            }
-        });
-    } else {
-        // This path is trusted.
-        wxString message;
-        message << _("Reading file metadata:") << "\n```\n" << fullpath << "\n```\n";
-        llm::Manager::GetInstance().PrintMessage(message, IconType::kInfo);
-        return CanInvokeToolResult{
-            .can_invoke = true,
-        };
-    }
+    return ConfirmPathTool(
+        kReadFileMetadata, _("The model wants to read metadata for the file:"), _("Reading file metadata:"), filepath);
 }
 
 FunctionResult ReadFileMetadata(const assistant::json& args)
@@ -565,11 +487,11 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
     }
 
     // Add the search pattern (properly escaped)
-    wxString search_pattern = wxString::FromUTF8(find_what);
+    wxString search_pattern = FileUtils::NormalizePath(wxString::FromUTF8(find_what));
     cmd << " " << StringUtils::EscapeAndWrapWithDoubleQuotes(search_pattern);
 
     // Add the root folder
-    wxString root_folder = wxString::FromUTF8(root_dir);
+    wxString root_folder = FileUtils::NormalizePath(wxString::FromUTF8(root_dir));
     cmd << " " << StringUtils::EscapeAndWrapWithDoubleQuotes(root_folder);
 
     // Add include patterns for file types
@@ -597,7 +519,7 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
         if (out.empty() && !err.empty()) {
             return Err("grep error: " + err);
         }
-        return Ok(out.empty() ? "No matches found" : out);
+        return Ok(out.empty() ? "No matches found" : wxString::FromUTF8(out));
     }
 #endif
 
@@ -992,6 +914,7 @@ ALWAYS RESPOND WITH A GIT-STYLE DIFF THAT CAN BE APPLIED DIRECTLY. NEVER PROVIDE
     table.Add(FunctionBuilder("CreateNewFile")
                   .SetDescription(R"(Create a new file at the specified path with optional content)")
                   .SetCallback(CreateNewFile)
+                  .SetHumanInTheLoopCallabck(CreateNewFileConfirm)
                   .AddRequiredParam("filepath", "The path where the new file should be created", "string")
                   .AddOptionalParam("file_content", "The initial content to write to the file", "string")
                   .Build());

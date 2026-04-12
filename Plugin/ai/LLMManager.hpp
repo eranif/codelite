@@ -11,6 +11,7 @@
 #include "ai/ProgressToken.hpp"
 #include "ai/ResponseCollector.hpp"
 #include "ai/Tools.hpp"
+#include "ai/ToolsUtils.hpp"
 #include "assistant/client/client_base.hpp"
 #include "assistant/function.hpp"
 #include "clResult.hpp"
@@ -51,7 +52,6 @@ static const wxString kDefaultSettings = R"#({
 namespace llm
 {
 using assistant::AddFlagSet;
-using assistant::CanInvokeToolResult;
 using assistant::ChatOptions;
 using assistant::FunctionBase;
 using assistant::FunctionBuilder;

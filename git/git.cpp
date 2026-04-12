@@ -281,32 +281,6 @@ GitPlugin::GitPlugin(IManager* manager)
     GitEntry data;
     conf.ReadItem(data);
     m_configFlags = data.GetFlags();
-
-    auto GetLogInRangeCommit = [this](const assistant::json& args) -> llm::FunctionResult {
-        return EventNotifier::Get()->RunOnMain<llm::FunctionResult>([=, this]() -> llm::FunctionResult {
-            // Function implementation: return list of changes between 2 commits.
-            LLM_ASSIGN_ARG_OR_RETURN_ERR(std::string start_commit, args, "start_commit", std::string);
-            LLM_ASSIGN_ARG_OR_RETURN_ERR(std::string end_commit, args, "end_commit", std::string);
-            LLM_CHECK_OR_RETURN_ERR(!start_commit.empty());
-            LLM_CHECK_OR_RETURN_ERR(!end_commit.empty());
-
-            // Build and execute the command.
-            wxBusyCursor bc{};
-            auto result = FetchLogBetweenCommits(start_commit, end_commit);
-            if (!result || result.value().size() == 0) {
-                return llm::Err(result.error_message());
-            }
-            return llm::Ok(result.value().Item(0));
-        });
-    };
-
-    llm::Manager::GetInstance().GetPluginFunctionTable().Add(
-        llm::FunctionBuilder("GetLogInRangeCommit")
-            .SetDescription("Return git history of commits between range of commits: 'start_commit' and 'end_commit'.")
-            .AddRequiredParam("start_commit", "The first commit in the range.", "string")
-            .AddRequiredParam("end_commit", "The second commit in the range.", "string")
-            .SetCallback(std::move(GetLogInRangeCommit))
-            .Build());
 }
 
 void GitPlugin::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }

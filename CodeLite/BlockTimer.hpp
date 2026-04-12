@@ -26,6 +26,18 @@
 #define __PERF_IF_ENABLED(Statement)
 #endif
 
+class WXDLLIMPEXP_CL SlowdownTracker final
+{
+public:
+    explicit SlowdownTracker(const char* label, long dump_backtrace_threshold_ms);
+    ~SlowdownTracker();
+
+private:
+    const char* m_label{nullptr};
+    long m_dump_backtrace_threshold_ms{LONG_MAX};
+    wxStopWatch m_sw;
+};
+
 class WXDLLIMPEXP_CL BlockTimer final
 {
 public:
@@ -53,6 +65,7 @@ public:
 
     void Finish();
     static void Enable();
+    static bool IsEnabled();
 
     struct Content {
         wxString duration;

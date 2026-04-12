@@ -27,6 +27,7 @@
 
 #include "frame.h"
 
+#include "BlockTimer.hpp"
 #include "BreakpointsView.hpp"
 #include "ColoursAndFontsManager.h"
 #include "CustomControls/PromptEditorDlg.hpp"
@@ -1955,6 +1956,12 @@ void clMainFrame::OnClose(wxCloseEvent& event)
         return;
     }
 
+#if clENABLE_PERF
+    if (m_uiHangDetector) {
+        m_uiHangDetector->Stop();
+    }
+#endif
+
     SaveGeneralSettings();
     event.Skip();
 
@@ -3672,6 +3679,12 @@ void clMainFrame::CompleteInitialization()
     if (GetMainBook()->GetActiveEditor() == nullptr) {
         GetWorkspacePane()->GetWorkspaceTab()->SetFocus();
     }
+#endif
+
+#if clENABLE_PERF
+    // This is harmless if we don't pass "-r" on startup.
+    m_uiHangDetector = std::make_unique<UIHangDetector>();
+    m_uiHangDetector->Start(500, 50);
 #endif
 }
 

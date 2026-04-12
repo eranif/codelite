@@ -79,7 +79,7 @@ if(UNIX)
     set(ADDITIONAL_LIBRARIES "-ldl -lutil")
   endif()
 else(UNIX)
-  set(ADDITIONAL_LIBRARIES "-lws2_32")
+  set(ADDITIONAL_LIBRARIES "-lws2_32 -ldbghelp")
 endif(UNIX)
 
 if(UNIX OR APPLE)

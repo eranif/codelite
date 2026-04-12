@@ -47,7 +47,8 @@ struct clAuiFlatTabArt::Data {
         m_fgActive = wxSystemSettings::GetColour(wxSYS_COLOUR_WINDOWTEXT);
         m_fgNormal = dark ? wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT)
                           : wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT).ChangeLightness(97);
-        m_fgHilite = wxSystemSettings::GetColour(wxSYS_COLOUR_HOTLIGHT);
+        m_fgHilite = dark ? *wxBLACK : wxSystemSettings::GetColour(wxSYS_COLOUR_HOTLIGHT);
+        m_HilitePenWidth = dark ? 1 : 2;
         m_fgDimmed = wxSystemSettings::GetColour(wxSYS_COLOUR_GRAYTEXT);
 
         // The tab bar and inactive tabs are drawn darker than the active tab
@@ -65,7 +66,7 @@ struct clAuiFlatTabArt::Data {
     wxColour m_bgWindow;
     wxColour m_fgHilite;
     wxColour m_fgDimmed;
-
+    int m_HilitePenWidth{1};
     static const int MARGIN = 3;
     static const int PADDING_X = 10;
     static const int PADDING_Y = 7;
@@ -208,7 +209,7 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
         dc.SetPen(right_edge);
         dc.DrawLine(page.rect.GetRight(), y1, page.rect.GetRight(), y2);
 
-        dc.SetPen(wxPen{wxSystemSettings::GetColour(wxSYS_COLOUR_HOTLIGHT), 2});
+        dc.SetPen(wxPen{m_data->m_fgHilite, m_data->m_HilitePenWidth});
         int x_offset = is_dark ? 0 : 1;
         dc.DrawLine(page.rect.GetLeft() + x_offset, y2, page.rect.GetRight() - x_offset, y2);
     }

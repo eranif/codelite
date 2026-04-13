@@ -38,7 +38,6 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
 {
     const auto& conf = llm::Manager::GetInstance().GetConfig();
     auto images = clGetManager()->GetStdIcons();
-    m_toolbar->SetArtProvider(new clAuiToolBarArt());
     clAuiToolBarArt::AddTool(m_toolbar, wxID_CLEAR, _("Clear the chat history"), images->LoadBitmap("clear"));
     m_toolbar->AddSeparator();
 
@@ -76,12 +75,12 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     Bind(wxEVT_LLM_CHAT_STARTED, &ChatAIWindow::OnChatStarted, this);
     Bind(wxEVT_LLM_OUTPUT, &ChatAIWindow::OnChatAIOutput, this);
     Bind(wxEVT_LLM_OUTPUT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
-    Bind(wxEVT_LLM_THINK_SATRTED, &ChatAIWindow::OnThinkingStart, this);
-    Bind(wxEVT_LLM_THINK_ENDED, &ChatAIWindow::OnThinkingEnd, this);
     Bind(wxEVT_LLM_MAX_GENERATED_TOKENS, &ChatAIWindow::OnChatAIMaxGenTokens, this);
 
     llm::Manager::GetInstance().Bind(wxEVT_LLM_CONFIG_UPDATED, &ChatAIWindow::OnLLMConfigUpdate, this);
     llm::Manager::GetInstance().Bind(wxEVT_LLM_STARTED, &ChatAIWindow::OnLLMConfigUpdate, this);
+    llm::Manager::GetInstance().Bind(wxEVT_LLM_WORKER_IDLE, &ChatAIWindow::OnLLMWorkerIdle, this);
+    llm::Manager::GetInstance().Bind(wxEVT_LLM_WORKER_BUSY, &ChatAIWindow::OnLLMWorkerBusy, this);
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->SetCodePage(wxSTC_CP_UTF8);
@@ -127,7 +126,6 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     m_statusBar->SetStatusWidths(4, widths);
     m_statusBar->SetStatusStyles(4, styles);
     CallAfter(&ChatAIWindow::RestoreUI);
-    ShowIndicator(false);
     m_cancel_token = std::make_shared<llm::CancellationToken>();
 }
 
@@ -141,12 +139,12 @@ ChatAIWindow::~ChatAIWindow()
     Unbind(wxEVT_LLM_CHAT_STARTED, &ChatAIWindow::OnChatStarted, this);
     Unbind(wxEVT_LLM_OUTPUT, &ChatAIWindow::OnChatAIOutput, this);
     Unbind(wxEVT_LLM_OUTPUT_DONE, &ChatAIWindow::OnChatAIOutputDone, this);
-    Unbind(wxEVT_LLM_THINK_SATRTED, &ChatAIWindow::OnThinkingStart, this);
-    Unbind(wxEVT_LLM_THINK_ENDED, &ChatAIWindow::OnThinkingEnd, this);
     Unbind(wxEVT_LLM_MAX_GENERATED_TOKENS, &ChatAIWindow::OnChatAIMaxGenTokens, this);
 
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_CONFIG_UPDATED, &ChatAIWindow::OnLLMConfigUpdate, this);
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_STARTED, &ChatAIWindow::OnLLMConfigUpdate, this);
+    llm::Manager::GetInstance().Unbind(wxEVT_LLM_WORKER_IDLE, &ChatAIWindow::OnLLMWorkerIdle, this);
+    llm::Manager::GetInstance().Unbind(wxEVT_LLM_WORKER_BUSY, &ChatAIWindow::OnLLMWorkerBusy, this);
 
     Unbind(wxEVT_SIZE, &ChatAIWindow::OnSize, this);
 
@@ -313,9 +311,7 @@ void ChatAIWindow::DoSendPrompt()
         }
     }
     AppendTextWithLF(prefix + text_to_append);
-
     m_stcInput->ClearAll();
-    ShowIndicator(true);
 }
 
 void ChatAIWindow::OnClearOutputViewUI(wxUpdateUIEvent& event)
@@ -449,21 +445,18 @@ void ChatAIWindow::OnChatStarted(clLLMEvent& event)
     event.Skip();
     m_state = ChatState::kWorking;
     AppendTextWithLF(wxT("❰assistant❱\n"));
-    ShowIndicator(true);
 }
 
 void ChatAIWindow::OnThinkingStart(clLLMEvent& event)
 {
     event.Skip();
     m_state = ChatState::kThinking;
-    m_statusBar->SetStatusText(_("Thinking..."), StatusBarIndex::kProgressText);
 }
 
 void ChatAIWindow::OnThinkingEnd(clLLMEvent& event)
 {
     event.Skip();
     m_state = ChatState::kWorking;
-    m_statusBar->SetStatusText(_("Working..."), StatusBarIndex::kProgressText);
 }
 
 void ChatAIWindow::OnChatAIMaxGenTokens(clLLMEvent& event)
@@ -472,7 +465,6 @@ void ChatAIWindow::OnChatAIMaxGenTokens(clLLMEvent& event)
     m_state = ChatState::kReady;
     m_cancel_token->Reset();
     StyleOutput();
-    ShowIndicator(false);
 
     // Notify the user
     ::clMessageBox(wxString::FromUTF8(event.GetResponseRaw()), "CodeLite", wxOK | wxICON_WARNING);
@@ -524,7 +516,6 @@ void ChatAIWindow::OnChatAIOutputDone(clLLMEvent& event)
 
     m_cancel_token->Reset();
     StyleOutput();
-    ShowIndicator(false);
 }
 
 void ChatAIWindow::ShowIndicator(bool show)
@@ -778,4 +769,18 @@ void ChatAIWindow::OnSize(wxSizeEvent& event)
     if (GetSizer()) {
         Layout();
     }
+}
+
+void ChatAIWindow::OnLLMWorkerIdle(clLLMEvent& event)
+{
+    event.Skip();
+    m_state = ChatState::kReady;
+    ShowIndicator(false);
+}
+
+void ChatAIWindow::OnLLMWorkerBusy(clLLMEvent& event)
+{
+    event.Skip();
+    m_state = ChatState::kWorking;
+    ShowIndicator(true);
 }

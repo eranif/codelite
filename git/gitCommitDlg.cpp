@@ -73,8 +73,6 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
     }
 
     auto images = clGetManager()->GetStdIcons();
-    m_toolbar->SetArtProvider(new clAuiToolBarArt());
-
     clAuiToolBarArt::AddTool(
         m_toolbar, XRCID("ID_CHECKALL"), _("Toggle files"), images->LoadBitmap("check-all"), _("Toggle files"));
     clAuiToolBarArt::AddTool(m_toolbar,

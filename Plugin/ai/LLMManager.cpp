@@ -274,6 +274,10 @@ void Manager::WorkerMain()
     clDEBUG() << "LLM Worker thread started" << endl;
     m_worker_thread_running.store(true);
     bool cont{true};
+
+    clLLMEvent idle_event{wxEVT_LLM_WORKER_IDLE};
+    AddPendingEvent(idle_event);
+
     while (cont && !client->IsInterrupted()) {
         m_worker_busy.store(false);
         ThreadTask task;
@@ -292,6 +296,9 @@ void Manager::WorkerMain()
 
         clLLMEvent event_starting{wxEVT_LLM_CHAT_STARTED};
         owner->AddPendingEvent(event_starting);
+
+        clLLMEvent busy_event{wxEVT_LLM_WORKER_BUSY};
+        AddPendingEvent(busy_event);
 
         SharedState shared_state;
         shared_state.total_batch_count = task.prompt_array.size();
@@ -418,6 +425,10 @@ void Manager::WorkerMain()
                 break;
             }
         } // Prompt loop
+
+        clLLMEvent idle_event{wxEVT_LLM_WORKER_IDLE};
+        AddPendingEvent(idle_event);
+
     } // Main Loop
     clDEBUG() << "LLM Worker thread exited" << endl;
     m_worker_thread_running.store(false);

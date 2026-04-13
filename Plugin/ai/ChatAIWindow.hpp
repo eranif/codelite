@@ -137,6 +137,8 @@ protected:
 
     /// LLM events
     void OnLLMConfigUpdate(clLLMEvent& event);
+    void OnLLMWorkerIdle(clLLMEvent& event);
+    void OnLLMWorkerBusy(clLLMEvent& event);
     void OnChatStarted(clLLMEvent& event);
     void OnChatAIOutput(clLLMEvent& event);
     void OnChatAIMaxGenTokens(clLLMEvent& event);

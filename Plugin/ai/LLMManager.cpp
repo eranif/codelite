@@ -4,6 +4,7 @@
 #include "FileManager.hpp"
 #include "Keyboard/clKeyboardManager.h"
 #include "ai/ToolTrustLevelDlg.hpp"
+#include "assistant/EnvExpander.hpp"
 #include "assistant/assistant.hpp"
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
@@ -351,6 +352,7 @@ void Manager::WorkerMain()
                             owner->AddPendingEvent(event);
                         } break;
                         case assistant::Reason::kFatalError: {
+                            clERROR() << "LLM response ended with an error:" << wxString::FromUTF8(message) << endl;
                             NotifyDoneWithError(owner, message);
                             abort_loop = true;
                             return false;
@@ -775,15 +777,12 @@ void Manager::Start(std::shared_ptr<assistant::ClientBase> client)
 
 bool Manager::ReloadConfig(std::optional<wxString> config_content, bool prompt)
 {
-    if (prompt && ::wxMessageBox(_("Reloading the configuration will restart "
+    if (prompt && ::clMessageBox(_("Reloading the configuration will restart "
                                    "the LLM client.\nContinue?"),
                                  "CodeLite",
                                  wxICON_QUESTION | wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxCENTER) != wxYES) {
         return false;
     }
-
-    // First stop the running instance
-    Stop();
 
     wxString content;
     if (config_content.has_value()) {
@@ -793,11 +792,30 @@ bool Manager::ReloadConfig(std::optional<wxString> config_content, bool prompt)
         content = FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts).value_or(kDefaultSettings);
     }
 
+    {
+        // Check that the file does not contain any un-resolved environment variables
+        EnvSetter env;
+        assistant::EnvExpander env_expander;
+        auto result = env_expander.ExpandWithResult(content.ToStdString(wxConvUTF8));
+        if (!result.IsSuccess()) {
+            if (::wxIsMainThread()) {
+                wxString errmsg;
+                errmsg << _("Failed to reload AI configuration:\n") << wxString::FromUTF8(result.GetErrorMessage());
+                ::clMessageBox(errmsg, "CodeLite", wxICON_WARNING | wxOK | wxCENTRE);
+            }
+            clWARNING() << "Failed to reload AI configuration:" << wxString::FromUTF8(result.GetErrorMessage()) << endl;
+            return false;
+        }
+    }
+
+    // First stop the running instance
+    Stop();
+
     EnvSetter env;
     auto result = assistant::ConfigBuilder::FromContent(content.ToStdString(wxConvUTF8));
     if (!result.ok()) {
         if (::wxIsMainThread()) {
-            ::wxMessageBox(result.errmsg_, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
+            ::clMessageBox(result.errmsg_, "CodeLite", wxICON_ERROR | wxOK | wxCENTER);
         }
         return false;
     }

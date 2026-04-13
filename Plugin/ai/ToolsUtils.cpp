@@ -69,7 +69,7 @@ wxArrayString TruncateStdout(const std::string& out, size_t max_lines)
     }
 
     result.resize(max_lines);
-    result.shrink_to_fit();
+    result.Shrink();
     return result;
 }
 } // namespace llm

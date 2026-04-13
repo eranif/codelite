@@ -8,6 +8,16 @@ namespace
 {
 // Reference text for calculating control width
 const wxString LONG_MODEL_NAME = "claude-sonnet-4-5-1234567890";
+
+void SetWindowVariantSmall(wxWindow* ctrl)
+{
+#ifdef __WXMAC__
+    ctrl->SetWindowVariant(wxWINDOW_VARIANT_MINI);
+#else
+    ctrl->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+#endif
+}
+
 } // namespace
 
 EndpointModelSelector::EndpointModelSelector(wxWindow* parent)
@@ -21,6 +31,10 @@ EndpointModelSelector::EndpointModelSelector(wxWindow* parent)
     GetSizer()->Add(m_choiceModels, wxSizerFlags(1).Expand().Border(wxALL, 5));
     m_choiceModels->SetToolTip(_("Choose the model to use for this endpoint"));
     m_choiceEndpoints->SetToolTip(_("Choose the endpoint to use"));
+
+    SetWindowVariantSmall(m_choiceEndpoints);
+    SetWindowVariantSmall(m_choiceModels);
+
     GetSizer()->Layout();
 
     m_choiceModels->Bind(wxEVT_CHOICE, &EndpointModelSelector::OnModelChanged, this);

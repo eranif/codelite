@@ -749,6 +749,8 @@ private:
     void CompleteInitialisation();
 
     clStatusOr<wxString> CreateOrOpenConfig();
+    clStatus ValidateConfigFile(std::optional<wxString> content = std::nullopt) const;
+
     /**
      * @brief Replaces placeholder tokens in a ThreadTask's prompt array with their corresponding runtime values.
      *
@@ -789,7 +791,7 @@ private:
     void WorkerMain();
     void PushThreadWork(ThreadTask work) { m_queue.Post(std::move(work)); }
     void CleanupAfterWorkerExit();
-    bool TryJoinWorker(int timeout_ms = 200);
+    bool DetachWorkerThread();
     assistant::Config MakeConfig();
     void OnFileSaved(clCommandEvent& event);
     void OnWorkspaceOpened(clWorkspaceEvent& event);
@@ -805,7 +807,7 @@ private:
     assistant::Config m_default_config;
     assistant::Config m_client_config;
     wxMessageQueue<ThreadTask> m_queue;
-    std::atomic_bool m_worker_thread_running{false};
+    std::shared_ptr<std::atomic_bool> m_worker_thread_running;
     std::atomic_bool m_worker_busy{false};
     FunctionTable m_plugin_functions;
     std::unique_ptr<ChatAI> m_chatAI{nullptr};

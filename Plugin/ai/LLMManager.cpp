@@ -224,6 +224,7 @@ Manager::~Manager()
 void Manager::Initialise()
 {
     m_chatAI = std::make_unique<ChatAI>();
+    m_worker_thread_running = std::make_shared<std::atomic_bool>(false);
     EventNotifier::Get()->Bind(wxEVT_FILE_SAVED, &Manager::OnFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_INIT_DONE, [this](wxCommandEvent& e) {
         e.Skip();
@@ -262,6 +263,10 @@ void Manager::DeleteCollector(ResponseCollector* collector) { wxDELETE(collector
 
 void Manager::WorkerMain()
 {
+    // Capture a copy of the shared_ptr to keep it alive for this thread,
+    // even if the Manager is destroyed or the thread is detached
+    auto worker_thread_running = m_worker_thread_running;
+
     CHECK_PTR_RET(m_client);
 
     // Create our own copy to make sure that when reloading configuration, this instance
@@ -272,7 +277,7 @@ void Manager::WorkerMain()
     // once it drops out of scope. This way we ensure that the collector will be destroyed
     // without pending events.
     clDEBUG() << "LLM Worker thread started" << endl;
-    m_worker_thread_running.store(true);
+    worker_thread_running->store(true);
     bool cont{true};
 
     clLLMEvent idle_event{wxEVT_LLM_WORKER_IDLE};
@@ -430,8 +435,8 @@ void Manager::WorkerMain()
         AddPendingEvent(idle_event);
 
     } // Main Loop
-    clDEBUG() << "LLM Worker thread exited" << endl;
-    m_worker_thread_running.store(false);
+    clDEBUG() << "LLM worker thread exited" << endl;
+    worker_thread_running->store(false);
     m_worker_busy.store(false);
 }
 
@@ -443,6 +448,7 @@ void Manager::CleanupAfterWorkerExit()
         return;
     }
 
+    // Drain the worker thread input queue
     ThreadTask w;
     while (m_queue.ReceiveTimeout(1, w) == wxMSGQUEUE_NO_ERROR) {
         TaskDropper dropper{w};
@@ -452,42 +458,29 @@ void Manager::CleanupAfterWorkerExit()
     }
 
     m_queue.Clear();
+    DetachWorkerThread();
 
-    if (m_worker_thread) {
-        TryJoinWorker();
-        m_worker_thread.reset();
-    }
+    // Create a new "is worker running" variable.
+    m_worker_thread_running = std::make_shared<std::atomic_bool>(false);
 }
 
-bool Manager::TryJoinWorker(int timeout_ms)
+bool Manager::DetachWorkerThread()
 {
-    if (!m_worker_thread || !m_worker_thread->joinable()) {
-        return true;
-    }
-
-    // Poll for the worker thread to finish within the timeout
-    constexpr int POLL_INTERVAL_MS = 10;
-    int waited = 0;
-    while (m_worker_thread_running.load() && waited < timeout_ms) {
-        wxMilliSleep(POLL_INTERVAL_MS);
-        waited += POLL_INTERVAL_MS;
-    }
-
-    if (!m_worker_thread_running.load()) {
-        m_worker_thread->join();
-        clDEBUG() << "LLM Worker thread joined after" << waited << "ms" << endl;
+    if (!m_worker_thread) {
         return true;
     }
 
     // Worker is still busy (e.g. in-flight HTTP request), detach to avoid blocking the UI
     m_worker_thread->detach();
-    clDEBUG() << "LLM Worker thread detached after" << timeout_ms << "ms timeout" << endl;
-    return false;
+    m_worker_thread.reset();
+
+    clDEBUG() << "LLM Worker thread detached" << endl;
+    return true;
 }
 
 void Manager::PostTask(ThreadTask task)
 {
-    if (!m_worker_thread_running.load()) {
+    if (!m_worker_thread_running->load()) {
         clDEBUG() << "Restarting worker thread." << endl;
         CleanupAfterWorkerExit();
         Start();
@@ -805,16 +798,13 @@ bool Manager::ReloadConfig(std::optional<wxString> config_content, bool prompt)
 
     {
         // Check that the file does not contain any un-resolved environment variables
-        EnvSetter env;
-        assistant::EnvExpander env_expander;
-        auto result = env_expander.ExpandWithResult(content.ToStdString(wxConvUTF8));
-        if (!result.IsSuccess()) {
+        auto result = ValidateConfigFile(content);
+        if (!result.ok()) {
             if (::wxIsMainThread()) {
                 wxString errmsg;
-                errmsg << _("Failed to reload AI configuration:\n") << wxString::FromUTF8(result.GetErrorMessage());
+                errmsg << _("Failed to reload AI configuration:\n") << result.message();
                 ::clMessageBox(errmsg, "CodeLite", wxICON_WARNING | wxOK | wxCENTRE);
             }
-            clWARNING() << "Failed to reload AI configuration:" << wxString::FromUTF8(result.GetErrorMessage()) << endl;
             return false;
         }
     }
@@ -1204,6 +1194,34 @@ void Manager::HandleGlobalConfigFileUpdated()
     AddPendingEvent(event_config_updates);
 }
 
+clStatus Manager::ValidateConfigFile(std::optional<wxString> content) const
+{
+    wxString config_content;
+    if (content.has_value()) {
+        config_content = content.value();
+    } else {
+        const WriteOptions opts{.ignore_workspace = true};
+        auto file_content = FileManager::ReadSettingsFileContent(kAssistantConfigFile, opts);
+        if (!file_content.has_value()) {
+            return StatusNotFound();
+        }
+        config_content = file_content.value();
+    }
+
+    EnvSetter env;
+    assistant::EnvExpander expander;
+    auto expand_result = expander.ExpandWithResult(config_content.ToStdString(wxConvUTF8));
+    if (!expand_result.IsSuccess()) {
+        return StatusExpandError(wxString::FromUTF8(expand_result.GetErrorMessage()));
+    }
+
+    auto parse_result = assistant::ConfigBuilder::FromContent(expand_result.GetString());
+    if (!parse_result.ok()) {
+        return StatusParseError(wxString::FromUTF8(parse_result.errmsg_));
+    }
+    return StatusOk();
+}
+
 /**
  * @brief Creates or opens the assistant configuration file, ensuring it is valid and up-to-date.
  *
@@ -1220,12 +1238,12 @@ clStatusOr<wxString> Manager::CreateOrOpenConfig()
     const WriteOptions opts{.ignore_workspace = true};
     wxString global_config_path = FileManager::GetSettingFileFullPath(kAssistantConfigFile, opts);
     wxString backup_file_path = global_config_path + ".old";
-    bool valid_file{false};
-    EnvSetter env;
-    auto result = assistant::ConfigBuilder::FromFile(global_config_path.ToStdString(wxConvUTF8));
-    valid_file = result.ok();
 
-    if (!valid_file) {
+    auto validate_result = ValidateConfigFile();
+
+    if (!validate_result.ok() && (StatusIsParseError(validate_result) || StatusIsNotFound(validate_result))) {
+        // File not found or invalid JSON format.
+
         // Backup old file
         if (wxFileName::FileExists(global_config_path)) {
             wxLogNull nl;

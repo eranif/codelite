@@ -16,6 +16,8 @@ enum class StatusCode {
     kProtocolError,
     kAlreadyExists,
     kResourceBusy,
+    kParseError,
+    kExpandError,
     kTimeout,
 };
 
@@ -35,6 +37,12 @@ public:
     {
         wxString msg;
         switch (m_code) {
+        case StatusCode::kExpandError:
+            msg = "Expand error";
+            break;
+        case StatusCode::kParseError:
+            msg = "Parsing error.";
+            break;
         case StatusCode::kResourceBusy:
             msg = "Resource is busy";
             break;
@@ -93,6 +101,21 @@ private:
     wxString m_message;
 };
 
+inline bool StatusIsInvalidArgument(const clStatus& st) { return st.code() == StatusCode::kInvalidArgument; }
+inline bool StatusIsSuccess(const clStatus& st) { return st.code() == StatusCode::kSuccess; }
+inline bool StatusIsNotFound(const clStatus& st) { return st.code() == StatusCode::kNotFound; }
+inline bool StatusIsOther(const clStatus& st) { return st.code() == StatusCode::kOther; }
+inline bool StatusIsPermissionDenied(const clStatus& st) { return st.code() == StatusCode::kPermissionDenied; }
+inline bool StatusIsIOError(const clStatus& st) { return st.code() == StatusCode::kIOError; }
+inline bool StatusIsNetError(const clStatus& st) { return st.code() == StatusCode::kNetError; }
+inline bool StatusIsNeedMoreData(const clStatus& st) { return st.code() == StatusCode::kNeedMoreData; }
+inline bool StatusIsProtocolError(const clStatus& st) { return st.code() == StatusCode::kProtocolError; }
+inline bool StatusIsAlreadyExists(const clStatus& st) { return st.code() == StatusCode::kAlreadyExists; }
+inline bool StatusIsResourceBusy(const clStatus& st) { return st.code() == StatusCode::kResourceBusy; }
+inline bool StatusIsParseError(const clStatus& st) { return st.code() == StatusCode::kParseError; }
+inline bool StatusIsExpandError(const clStatus& st) { return st.code() == StatusCode::kExpandError; }
+inline bool StatusIsTimeout(const clStatus& st) { return st.code() == StatusCode::kTimeout; }
+
 ///-------------------
 /// Helper methods
 ///-------------------
@@ -141,6 +164,16 @@ inline clStatus StatusNeedMoreData(const wxString& msg = wxEmptyString)
 inline clStatus StatusAlreadyExists(const wxString& msg = wxEmptyString)
 {
     return clStatus::MakeStatus(StatusCode::kAlreadyExists, msg);
+}
+
+inline clStatus StatusParseError(const wxString& msg = wxEmptyString)
+{
+    return clStatus::MakeStatus(StatusCode::kParseError, msg);
+}
+
+inline clStatus StatusExpandError(const wxString& msg = wxEmptyString)
+{
+    return clStatus::MakeStatus(StatusCode::kExpandError, msg);
 }
 
 ///--------------------------------------

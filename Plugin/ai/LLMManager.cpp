@@ -1208,14 +1208,7 @@ clStatus Manager::ValidateConfigFile(std::optional<wxString> content) const
         config_content = file_content.value();
     }
 
-    EnvSetter env;
-    assistant::EnvExpander expander;
-    auto expand_result = expander.ExpandWithResult(config_content.ToStdString(wxConvUTF8));
-    if (!expand_result.IsSuccess()) {
-        return StatusExpandError(wxString::FromUTF8(expand_result.GetErrorMessage()));
-    }
-
-    auto parse_result = assistant::ConfigBuilder::FromContent(expand_result.GetString());
+    auto parse_result = assistant::ConfigBuilder::FromContent(config_content.ToStdString(wxConvUTF8));
     if (!parse_result.ok()) {
         return StatusParseError(wxString::FromUTF8(parse_result.errmsg_));
     }

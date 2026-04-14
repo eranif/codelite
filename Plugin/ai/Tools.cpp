@@ -268,13 +268,8 @@ FunctionResult GetCurrentEditorText([[maybe_unused]] const assistant::json& args
     VERIFY_WORKER_THREAD();
 
     // Check for optional parameters
-    auto from_line_opt = ::assistant::GetFunctionArg<int>(args, "from_line");
-    auto count_opt = ::assistant::GetFunctionArg<int>(args, "count");
-
-    // Validate that both optional params are provided or none of them
-    if (from_line_opt.has_value() != count_opt.has_value()) {
-        return Err("Both 'from_line' and 'count' must be provided together, or none of them");
-    }
+    ASSIGN_FUNC_ARG_OR_RETURN(int from_line, ::assistant::GetFunctionArg<int>(args, "from_line"));
+    ASSIGN_FUNC_ARG_OR_RETURN(int line_count, ::assistant::GetFunctionArg<int>(args, "count"));
 
     auto cb = [=]() -> FunctionResult {
         auto active_editor = clGetManager()->GetActiveEditor();
@@ -284,40 +279,34 @@ FunctionResult GetCurrentEditorText([[maybe_unused]] const assistant::json& args
 
         wxString full_text = active_editor->GetEditorText();
 
-        // If partial read is requested
-        if (from_line_opt.has_value() && count_opt.has_value()) {
-            int from_line = from_line_opt.value();
-            int line_count = count_opt.value();
-
-            // Validate parameters
-            if (from_line < 1) {
-                return Err("'from_line' must be >= 1");
-            }
-            if (line_count < 1) {
-                return Err("'count' must be >= 1");
-            }
-
-            // Split content into lines
-            wxArrayString lines = wxStringTokenize(full_text, "\n", wxTOKEN_RET_DELIMS);
-
-            // Check if from_line is within bounds
-            if (from_line > (int)lines.size()) {
-                return Err(
-                    wxString::Format("'from_line' (%d) exceeds total editor lines (%zu)", from_line, lines.size()));
-            }
-
-            // Extract the requested lines (from_line is 1-based)
-            int start_idx = from_line - 1;
-            int end_idx = wxMin(start_idx + line_count, (int)lines.size());
-            wxString partial_content;
-            for (int i = start_idx; i < end_idx; ++i) {
-                partial_content << lines[i];
-            }
-
-            return Ok(partial_content);
+        // Validate parameters
+        if (from_line < 1) {
+            return Err("'from_line' must be >= 1");
+        }
+        if (line_count < 1) {
+            return Err("'count' must be >= 1");
         }
 
-        return Ok(full_text);
+        if (line_count > 200) {
+            return Err("The line count must be between 1 and 200, inclusive.");
+        }
+
+        // Split content into lines
+        wxArrayString lines = wxStringTokenize(full_text, "\n", wxTOKEN_RET_DELIMS);
+
+        // Check if from_line is within bounds
+        if (from_line > static_cast<int>(lines.size())) {
+            return Err(wxString::Format("'from_line' (%d) exceeds total editor lines (%zu)", from_line, lines.size()));
+        }
+
+        // Extract the requested lines (from_line is 1-based)
+        int start_idx = from_line - 1;
+        int end_idx = wxMin(start_idx + line_count, (int)lines.size());
+        wxString partial_content;
+        for (int i = start_idx; i < end_idx; ++i) {
+            partial_content << lines[i];
+        }
+        return Ok(partial_content);
     };
     return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
 }
@@ -859,8 +848,8 @@ void PopulateBuiltInFunctions(FunctionTable& table)
 
     table.Add(FunctionBuilder("GetActiveEditorText")
                   .SetDescription("Return the text of the active tab inside the editor.")
-                  .AddOptionalParam("from_line", "Optional starting line (1-based)", "number")
-                  .AddOptionalParam("count", "Number of lines to read", "number")
+                  .AddRequiredParam("from_line", "Optional starting line (1-based)", "number")
+                  .AddRequiredParam("count", "Number of lines to read", "number")
                   .SetCallback(GetCurrentEditorText)
                   .Build());
     table.Add(

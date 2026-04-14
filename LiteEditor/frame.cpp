@@ -1200,7 +1200,7 @@ void clMainFrame::AddKeyboardAccelerators()
                          {"prev_tab", _("Previous tab"), "Ctrl-Alt-LEFT"},
                          {"full_screen", _("Full Screen...")},
                          {"output_pane", _("Output Pane"), "Ctrl-`"},
-                         {"show_terminal_pane", _("Show Builtin Terminal"), "F6"},
+                         {"show_terminal_pane", _("Toggle Terminal View"), "F6"},
                          {"workspace_pane", _("Workspace Pane"), "Ctrl-Alt-W"},
                          {"debugger_pane", _("Debugger Pane"), "Ctrl-Alt-D"},
                          {"show_nav_toolbar", _("Navigation Bar"), "Ctrl-Alt-N"},

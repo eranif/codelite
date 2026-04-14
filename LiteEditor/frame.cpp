@@ -1421,7 +1421,14 @@ void clMainFrame::CreateGUIControls()
     CreateRecentlyOpenedFilesMenu();
 
     m_outputPane = new OutputPane(m_mainPanel, "Output View", wxTAB_TRAVERSAL | get_border_simple_theme_aware_bit());
-    RegisterDockWindow(XRCID("output_pane"), "Output View");
+    RegisterDockWindow(XRCID("output_pane"), "Output View", [this]() {
+        auto book = GetOutputPane()->GetNotebook();
+        CHECK_PTR_RET(book);
+        auto page = book->GetCurrentPage();
+        CHECK_PTR_RET(page);
+        // Set the focus to the selected page
+        page->CallAfter(&wxWindow::SetFocus);
+    });
 
     long show_nav = EditorConfigST::Get()->GetInteger("ShowNavBar", 0);
     m_mainBook->ShowNavBar(show_nav ? true : false);
@@ -2470,11 +2477,11 @@ void clMainFrame::OnCtagsOptions(wxCommandEvent& event)
     }
 }
 
-void clMainFrame::RegisterDockWindow(int menuItemId, const wxString& name)
+void clMainFrame::RegisterDockWindow(int menuItemId, const wxString& name, std::function<void()> on_show_callback)
 {
-    m_panes[menuItemId] = name;
-    Connect(menuItemId, wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(clMainFrame::OnViewPane), NULL, this);
-    Connect(menuItemId, wxEVT_UPDATE_UI, wxUpdateUIEventHandler(clMainFrame::OnViewPaneUI), NULL, this);
+    m_panes[menuItemId] = std::make_pair(name, std::move(on_show_callback));
+    Bind(wxEVT_MENU, &clMainFrame::OnViewPane, this, menuItemId);
+    Bind(wxEVT_UPDATE_UI, &clMainFrame::OnViewPaneUI, this, menuItemId);
 }
 
 void clMainFrame::OnToggleMainTBars(wxCommandEvent& event)
@@ -2531,17 +2538,24 @@ void clMainFrame::ToggleToolBars(bool std)
 void clMainFrame::OnViewPane(wxCommandEvent& event)
 {
     auto iter = m_panes.find(event.GetId());
-    if (iter != m_panes.end()) {
-        // In >wxGTK-2.9.4 event.GetChecked() is invalid when coming from an accelerator; instead examine the actual
-        // state
-        wxAuiPaneInfo& info = m_mgr.GetPane(iter->second);
-        if (info.IsOk()) {
-            if (info.IsShown()) {
-                ViewPane(iter->second, false);
-                // set the focus to the editor
-                CODELITE_SET_BEST_FOCUS();
-            } else {
-                ViewPane(iter->second, true);
+    if (iter == m_panes.end()) {
+        return;
+    }
+
+    // In >wxGTK-2.9.4 event.GetChecked() is invalid when coming from an accelerator; instead examine the actual
+    // state
+    wxString pane_name = iter->second.first;
+    const auto& OnShowCB = iter->second.second;
+    wxAuiPaneInfo& info = m_mgr.GetPane(pane_name);
+    if (info.IsOk()) {
+        if (info.IsShown()) {
+            ViewPane(pane_name, false);
+            // set the focus to the editor
+            CODELITE_SET_BEST_FOCUS();
+        } else {
+            ViewPane(pane_name, true);
+            if (OnShowCB) {
+                OnShowCB();
             }
         }
     }
@@ -2550,9 +2564,9 @@ void clMainFrame::OnViewPane(wxCommandEvent& event)
 void clMainFrame::OnViewPaneUI(wxUpdateUIEvent& event)
 {
     CHECK_SHUTDOWN();
-    std::map<int, wxString>::iterator iter = m_panes.find(event.GetId());
+    auto iter = m_panes.find(event.GetId());
     if (iter != m_panes.end()) {
-        ViewPaneUI(iter->second, event);
+        ViewPaneUI(iter->second.first, event);
     }
 }
 

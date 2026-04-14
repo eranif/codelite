@@ -917,7 +917,7 @@ void PluginManager::ToggleOutputPane(const wxString& selectedWindow)
             } else {
                 // The output pane is visible, but the selected tab is not the one we wanted
                 // Select it
-                ManagerST::Get()->ShowOutputPane(selectedWindow, true, false);
+                ManagerST::Get()->ShowOutputPane(selectedWindow, true, true);
             }
         } else {
             // The output pane is visible and the selected tab is the one we requested
@@ -926,7 +926,7 @@ void PluginManager::ToggleOutputPane(const wxString& selectedWindow)
         }
     } else {
         // The output pane is hidden, show it and select the requested tab
-        ManagerST::Get()->ShowOutputPane(selectedWindow, true, false);
+        ManagerST::Get()->ShowOutputPane(selectedWindow, true, true);
     }
 }
 

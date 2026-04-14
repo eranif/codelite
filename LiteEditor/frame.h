@@ -49,6 +49,7 @@
 #include "tags_options_dlg.h"
 #include "wxCustomControls.hpp"
 
+#include <functional>
 #include <set>
 #include <wx/aui/aui.h>
 #include <wx/choice.h>
@@ -110,7 +111,7 @@ class clMainFrame : public wxFrame
     DebuggerPane* m_debuggerPane;
     ePostBuildEndAction m_postBuildEndAction{ePostBuildEndAction::kNone};
     GeneralInfo m_frameGeneralInfo;
-    std::map<int, wxString> m_panes;
+    std::map<int, std::pair<wxString, std::function<void()>>> m_panes;
     bool m_highlightWord{false};
     DockablePaneMenuManager* m_DPmenuMgr;
     wxPanel* m_mainPanel;
@@ -308,7 +309,7 @@ public:
      */
     void CompleteInitialization();
 
-    void RegisterDockWindow(int menuItemId, const wxString& name);
+    void RegisterDockWindow(int menuItemId, const wxString& name, std::function<void()> on_show_callback = nullptr);
 
     const GeneralInfo& GetFrameGeneralInfo() const { return m_frameGeneralInfo; }
 

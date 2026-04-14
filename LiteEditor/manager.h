@@ -439,6 +439,8 @@ public:
      */
     bool ShowOutputPane(const wxString& focusWin, bool show, bool take_focus);
 
+    bool IsOutputPaneVisible();
+
     /**
      * Show the debugger pane
      */

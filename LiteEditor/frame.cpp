@@ -64,6 +64,7 @@
 #include "clLocaleManager.hpp"
 #include "clSTCHelper.hpp"
 #include "clSingleChoiceDialog.h"
+#include "clStrings.h"
 #include "clToolBarButtonBase.h"
 #include "clWorkspaceManager.h"
 #include "cl_aui_dock_art.h"
@@ -4671,7 +4672,15 @@ void clMainFrame::OnIncrementalReplace(wxCommandEvent& event)
 void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    ManagerST::Get()->ShowOutputPane(_("Terminal"), true, true);
+    clGetManager()->ToggleOutputPane(_("Terminal"));
+
+    if (!ManagerST::Get()->IsOutputPaneVisible()) {
+        // we just hide it - set the focus to the active editor
+        auto editor = clGetManager()->GetActiveEditor();
+        if (editor) {
+            editor->GetCtrl()->CallAfter(&wxWindow::SetFocus);
+        }
+    }
 }
 
 void clMainFrame::OnShowFullScreen(wxCommandEvent& e)

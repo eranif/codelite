@@ -1398,6 +1398,7 @@ wxString Manager::GetProjectExecutionCommand(const wxString& projectName, wxStri
 }
 
 //--------------------------- Top Level Pane Management -----------------------------
+bool Manager::IsOutputPaneVisible() { return IsPaneVisible(wxT("Output View")); }
 
 bool Manager::IsPaneVisible(const wxString& pane_name)
 {

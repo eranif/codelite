@@ -19,6 +19,7 @@ others:
 High:
 -----
 
+- Terminal loses scroll back on re-size.
 - When showing the output pane, move the focus to the active tab
 - Change the "Find-In-Files" to use the following strategy:
 

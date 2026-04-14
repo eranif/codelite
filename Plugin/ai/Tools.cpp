@@ -407,6 +407,7 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
         return Err("'file_pattern' can not be only '*', it must be more specific. For example '*.cpp;*.h;*.rs'");
     }
 
+    bool recursive = assistant::GetFunctionArg<int>(args, "recursive").value_or(false);
     bool whole_word = assistant::GetFunctionArg<bool>(args, "whole_word").value_or(true);
     bool case_sensitive = assistant::GetFunctionArg<bool>(args, "case_sensitive").value_or(true);
     bool is_regex = assistant::GetFunctionArg<bool>(args, "is_regex").value_or(false);
@@ -445,7 +446,9 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
     cmd << StringUtils::WrapWithDoubleQuotes(grep_command.value());
 
     // Add flags
-    cmd << " -r"; // Recursive search
+    if (recursive) {
+        cmd << " -r"; // Recursive search
+    }
     cmd << " -n"; // Show line numbers
 
     if (!case_sensitive) {
@@ -461,6 +464,12 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
     } else {
         cmd << " -E"; // Regex
     }
+
+    constexpr int kMaxContextLine = 3;
+
+    // Clamp the context values
+    context_after = std::clamp(context_after, 0, kMaxContextLine);
+    context_before = std::clamp(context_before, 0, kMaxContextLine);
 
     // Add context lines if specified
     if (context_before > 0 && context_after > 0 && context_before == context_after) {
@@ -867,6 +876,7 @@ void PopulateBuiltInFunctions(FunctionTable& table)
             .SetDescription(R"(Search for a given pattern within files in a directory)")
             .SetCallback(FindInFiles)
             .AddRequiredParam("root_folder", "The root directory where the search begins", "string")
+            .AddRequiredParam("recursive", "Recurse into subdirectories,default is false", "boolean")
             .AddRequiredParam("find_what", "The text pattern to search for", "string")
             .AddRequiredParam("file_pattern",
                               "The file pattern to match, such as \"*.txt\" or \"*.py\". Use semi-colon list to "

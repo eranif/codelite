@@ -658,7 +658,7 @@ assistant::Config Manager::MakeConfig()
                 LLOG_DEBUG() << wxString::FromUTF8(msg) << endl;
                 break;
             case assistant::LogLevel::kTrace:
-                LLOG_DEBUG() << wxString::FromUTF8(msg) << endl;
+                LLOG_TRACE() << wxString::FromUTF8(msg) << endl;
                 break;
             }
         });

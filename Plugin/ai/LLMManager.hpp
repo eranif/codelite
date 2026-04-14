@@ -1,30 +1,26 @@
 #pragma once
 
 #include "CustomControls/TextGenerationPreviewFrame.hpp"
-#include "JSON.h"
 #include "UnicodeSymbols.hpp"
 #include "ai/ChatAI.hpp"
-#include "ai/Common.hpp"
 #include "ai/Config.hpp"
 #include "ai/HistoryManager.hpp"
-#include "ai/LLMEvents.hpp"
 #include "ai/ProgressToken.hpp"
 #include "ai/ResponseCollector.hpp"
 #include "ai/Tools.hpp"
 #include "ai/ToolsUtils.hpp"
 #include "assistant/client/client_base.hpp"
 #include "assistant/function.hpp"
+#include "clModuleLogger.hpp"
 #include "clResult.hpp"
 #include "cl_command_event.h"
 
-#include <algorithm>
 #include <atomic>
 #include <functional>
 #include <mutex>
 #include <optional>
 #include <string>
 #include <thread>
-#include <unordered_map>
 #include <vector>
 #include <wx/event.h>
 #include <wx/msgqueue.h>
@@ -48,6 +44,12 @@ static const wxString kDefaultSettings = R"#({
   "stream": true
 }
 )#";
+
+INITIALISE_MODULE_LOG(LLOG, "LLM", "assistant.log")
+#define LLOG_ERROR() LLOG().SetCurrentLogLevel(FileLogger::Error) << LLOG().Prefix()
+#define LLOG_DEBUG() LLOG().SetCurrentLogLevel(FileLogger::Dbg) << LLOG().Prefix()
+#define LLOG_TRACE() LLOG().SetCurrentLogLevel(FileLogger::Developer) << LLOG().Prefix()
+#define LLOG_WARN() LLOG().SetCurrentLogLevel(FileLogger::Warning) << LLOG().Prefix()
 
 namespace llm
 {

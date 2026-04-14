@@ -648,15 +648,17 @@ assistant::Config Manager::MakeConfig()
         assistant::SetLogSink([](assistant::LogLevel level, std::string msg) {
             switch (level) {
             case assistant::LogLevel::kError:
-                clERROR() << "LLM:" << wxString::FromUTF8(msg) << endl;
+                LLOG_ERROR() << wxString::FromUTF8(msg) << endl;
                 break;
             case assistant::LogLevel::kWarning:
-                clWARNING() << "LLM:" << wxString::FromUTF8(msg) << endl;
+                LLOG_WARN() << wxString::FromUTF8(msg) << endl;
                 break;
             case assistant::LogLevel::kInfo:
             case assistant::LogLevel::kDebug:
+                LLOG_DEBUG() << wxString::FromUTF8(msg) << endl;
+                break;
             case assistant::LogLevel::kTrace:
-                clDEBUG1() << "LLM:" << wxString::FromUTF8(msg) << endl;
+                LLOG_TRACE() << wxString::FromUTF8(msg) << endl;
                 break;
             }
         });

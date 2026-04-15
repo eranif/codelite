@@ -5,15 +5,10 @@
 #include <wx/app.h>
 // clang-format on
 
-#include <atomic>
-#include <string>
-#include <thread>
-
-#ifdef __WXMSW__
-#include <windows.h>
-#endif
-
 #include "codelite_exports.h"
+
+#include <atomic>
+#include <thread>
 
 class WXDLLIMPEXP_CL UIHangDetector
 {
@@ -40,19 +35,10 @@ public:
 
 private:
     void WatchdogLoop();
-#ifdef __WXMSW__
-    static void MSWCaptureMainThreadStack(HANDLE threadHandle, DWORD threadId);
-    static std::string MSWGetThreadStackTrace(HANDLE threadHandle, DWORD threadId);
-#endif
     static uint64_t GetCurrentTimeMs();
 
     std::atomic<bool> m_running{false};
     std::thread m_watchdogThread;
-
-#ifdef __WXMSW__
-    HANDLE m_mainThreadHandle{nullptr};
-    DWORD m_mainThreadId{0};
-#endif
 
     long m_hangThresholdMs{50};
     long m_checkIntervalMs{10};

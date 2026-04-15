@@ -686,25 +686,30 @@ void clBuiltinTerminalPane::UpdateFont()
 
 void clBuiltinTerminalPane::OnLinkClicked(wxTerminalEvent& event)
 {
-    clDEBUG() << "Text clicked inside terminal:" << event.GetClickedText() << endl;
-    const wxString& text = event.GetClickedText();
-    if (text.StartsWith("http://") || text.StartsWith("https://")) {
-        ::wxLaunchDefaultBrowser(text);
+    event.Skip();
+    CallAfter(&clBuiltinTerminalPane::DoOpenLink, event.GetClickedText());
+}
+
+void clBuiltinTerminalPane::DoOpenLink(const wxString& linkText)
+{
+    clDEBUG() << "Text clicked inside terminal:" << linkText << endl;
+    if (linkText.StartsWith("http://") || linkText.StartsWith("https://")) {
+        ::wxLaunchDefaultBrowser(linkText);
         return;
     }
 
-    if (wxFileName::DirExists(text)) {
-        CallAfter([text]() { FileUtils::OpenFileExplorer(text); });
+    if (wxFileName::DirExists(linkText)) {
+        CallAfter([linkText]() { FileUtils::OpenFileExplorer(linkText); });
         return;
     }
 
-    wxFileName fn{text};
+    wxFileName fn{linkText};
     if (FileUtils::IsBinaryExecutable(fn)) {
         ::wxLaunchDefaultApplication(fn.GetFullPath());
         return;
     }
 
-    auto res = FileUtils::ParseTriplet(text);
+    auto res = FileUtils::ParseTriplet(linkText);
     if (res.has_value()) {
         const auto& triplet = res.value();
         clDEBUG() << "Firing event for file:" << triplet.filename << ", line:" << triplet.line_number
@@ -715,6 +720,6 @@ void clBuiltinTerminalPane::OnLinkClicked(wxTerminalEvent& event)
         event_clicked.SetLineNumber(triplet.line_number);
         EventNotifier::Get()->AddPendingEvent(event_clicked);
     } else {
-        clDEBUG() << "Failed to parse file triplet:" << text << endl;
+        clDEBUG() << "Failed to parse file triplet:" << linkText << endl;
     }
 }

@@ -60,6 +60,7 @@ protected:
     void ApplyThemeChanges();
     void UpdateFont();
     void OnSettingsMenu(wxCommandEvent& event);
+    void DoOpenLink(const wxString& linkText);
 
 private:
     static std::optional<wxTerminalTheme> FromTOML(const wxFileName& filepath);

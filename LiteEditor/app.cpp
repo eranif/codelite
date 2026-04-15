@@ -25,7 +25,10 @@
 
 #include "app.h"
 
+#include "StackWalker/StackWalker.hpp"
+
 #include <algorithm>
+
 #ifdef __WXGTK__
 #include "exelocator.h"
 #endif
@@ -58,7 +61,6 @@
 #include "pluginmanager.h"
 #include "resources/clXmlResource.hpp"
 #include "singleinstancethreadjob.h"
-#include "stack_walker.h"
 
 #include <wx/dir.h>
 #include <wx/msgdlg.h>
@@ -83,7 +85,136 @@
 #endif
 
 #ifdef __WXMSW__
+#include <DbgHelp.h>
+#include <time.h>
 #include <wx/msw/registry.h> //registry keys
+
+// Windows Unhandled Exception Filter (Last Exception Block)
+static const char* GetExceptionCodeString(DWORD code)
+{
+    switch (code) {
+    case EXCEPTION_ACCESS_VIOLATION:
+        return "Access Violation";
+    case EXCEPTION_ARRAY_BOUNDS_EXCEEDED:
+        return "Array Bounds Exceeded";
+    case EXCEPTION_BREAKPOINT:
+        return "Breakpoint";
+    case EXCEPTION_DATATYPE_MISALIGNMENT:
+        return "Datatype Misalignment";
+    case EXCEPTION_FLT_DIVIDE_BY_ZERO:
+        return "Float Divide by Zero";
+    case EXCEPTION_FLT_INVALID_OPERATION:
+        return "Float Invalid Operation";
+    case EXCEPTION_FLT_OVERFLOW:
+        return "Float Overflow";
+    case EXCEPTION_FLT_STACK_CHECK:
+        return "Float Stack Check";
+    case EXCEPTION_FLT_UNDERFLOW:
+        return "Float Underflow";
+    case EXCEPTION_ILLEGAL_INSTRUCTION:
+        return "Illegal Instruction";
+    case EXCEPTION_IN_PAGE_ERROR:
+        return "In Page Error";
+    case EXCEPTION_INT_DIVIDE_BY_ZERO:
+        return "Integer Divide by Zero";
+    case EXCEPTION_INT_OVERFLOW:
+        return "Integer Overflow";
+    case EXCEPTION_INVALID_DISPOSITION:
+        return "Invalid Disposition";
+    case EXCEPTION_NONCONTINUABLE_EXCEPTION:
+        return "Noncontinuable Exception";
+    case EXCEPTION_PRIV_INSTRUCTION:
+        return "Privileged Instruction";
+    case EXCEPTION_SINGLE_STEP:
+        return "Single Step";
+    case EXCEPTION_STACK_OVERFLOW:
+        return "Stack Overflow";
+    default:
+        return "Unknown Exception";
+    }
+}
+
+LONG WINAPI CodeLiteUnhandledExceptionFilter(EXCEPTION_POINTERS* exceptionInfo)
+{
+    // Generate crash dump file with timestamp
+    SYSTEMTIME st;
+    GetLocalTime(&st);
+
+    wxString crashDumpPath = wxStandardPaths::Get().GetUserDataDir();
+    if (!wxDirExists(crashDumpPath)) {
+        wxFileName::Mkdir(crashDumpPath, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+    }
+
+    wxString dumpFileName = wxString::Format(wxT("%s\\codelite_crash_%04d%02d%02d_%02d%02d%02d.dmp"),
+                                             crashDumpPath,
+                                             st.wYear,
+                                             st.wMonth,
+                                             st.wDay,
+                                             st.wHour,
+                                             st.wMinute,
+                                             st.wSecond);
+
+    // Get the executable path for the debug command
+    wxString exePath;
+    wxChar buf[MAX_PATH];
+    if (GetModuleFileNameW(NULL, buf, MAX_PATH) > 0) {
+        exePath = buf;
+    } else {
+        exePath = wxT("codelite.exe");
+    }
+
+    // Create the dump file
+    HANDLE hFile =
+        CreateFileW(dumpFileName.wc_str(), GENERIC_WRITE, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+
+    if (hFile != INVALID_HANDLE_VALUE) {
+        MINIDUMP_EXCEPTION_INFORMATION mdei;
+        mdei.ThreadId = GetCurrentThreadId();
+        mdei.ExceptionPointers = exceptionInfo;
+        mdei.ClientPointers = FALSE;
+
+        // Write the minidump with full memory
+        MINIDUMP_TYPE dumpType = (MINIDUMP_TYPE)(MiniDumpWithFullMemory | MiniDumpWithHandleData |
+                                                 MiniDumpWithThreadInfo | MiniDumpWithUnloadedModules);
+
+        BOOL success =
+            MiniDumpWriteDump(GetCurrentProcess(), GetCurrentProcessId(), hFile, dumpType, &mdei, NULL, NULL);
+
+        CloseHandle(hFile);
+
+        if (success) {
+            // Build ready-to-use debug commands
+            wxString lldbCommand = wxString::Format(wxT("lldb \"%s\" -c \"%s\""), exePath, dumpFileName);
+            wxString gdbCommand = wxString::Format(wxT("gdb \"%s\" -c \"%s\""), exePath, dumpFileName);
+
+            gdbCommand.Replace("\\", "/");
+            lldbCommand.Replace("\\", "/");
+
+            // Log to SYSTEM log with copy-paste ready commands
+            clSYSTEM() << "======================================";
+            clSYSTEM() << "CODELITE CRASHED";
+            clSYSTEM() << "======================================";
+            clSYSTEM() << "Exception: 0x"
+                       << wxString::Format(wxT("%08X"), exceptionInfo->ExceptionRecord->ExceptionCode) << " ("
+                       << GetExceptionCodeString(exceptionInfo->ExceptionRecord->ExceptionCode) << ")";
+            clSYSTEM() << "Address: "
+                       << wxString::Format(wxT("0x%p"), exceptionInfo->ExceptionRecord->ExceptionAddress);
+            clSYSTEM() << "Minidump: " << dumpFileName;
+            clSYSTEM() << "";
+            clSYSTEM() << "To debug with LLDB (copy & paste):";
+            clSYSTEM() << "  " << lldbCommand;
+            clSYSTEM() << "To debug with GDB (copy & paste):";
+            clSYSTEM() << "  " << gdbCommand;
+            clSYSTEM() << "======================================";
+        }
+    }
+
+    // Return to let the default handler terminate the application
+    // or return EXCEPTION_CONTINUE_SEARCH to pass to the next handler
+    return EXCEPTION_EXECUTE_HANDLER;
+}
+
+// Enable debug privileges for better crash dumps
 void EnableDebugPriv()
 {
     HANDLE hToken;
@@ -381,6 +512,10 @@ bool CodeLiteApp::OnInit()
         }
         FreeLibrary(user32Dll);
     }
+
+    // Install Windows crash handler (Last Exception Block)
+    SetUnhandledExceptionFilter(CodeLiteUnhandledExceptionFilter);
+    EnableDebugPriv();
 #endif
 
     wxLog::EnableLogging(false);
@@ -813,6 +948,8 @@ bool CodeLiteApp::OnInit()
     // don't show the tooltip too fast
     wxToolTip::SetDelay(500);
     wxToolTip::SetReshow(500);
+
+    StackWalker::Initialise();
     return TRUE;
 }
 
@@ -833,7 +970,11 @@ void CodeLiteApp::ProcessCommandLineParams()
     }
 }
 
-int CodeLiteApp::OnExit() { return 0; }
+int CodeLiteApp::OnExit()
+{
+    StackWalker::Shutdown();
+    return 0;
+}
 
 bool CodeLiteApp::CopySettings(const wxString& destDir, wxString& installPath)
 {
@@ -851,14 +992,7 @@ bool CodeLiteApp::CopySettings(const wxString& destDir, wxString& installPath)
 void CodeLiteApp::OnFatalException()
 {
 #if wxUSE_STACKWALKER
-    wxString startdir;
-    startdir << clStandardPaths::Get().GetUserDataDir() << wxT("/crash.log");
-
-    wxFileOutputStream outfile(startdir);
-    wxTextOutputStream out(outfile);
-    out.WriteString(wxDateTime::Now().FormatDate() + wxT(" - ") + wxDateTime::Now().FormatTime() + wxT("\n"));
-    StackWalker walker(&out);
-    walker.Walk();
+    StackWalker::Dump({"CODELITE CRASHED"}, true);
     wxAppBase::ExitMainLoop();
 #endif
 }

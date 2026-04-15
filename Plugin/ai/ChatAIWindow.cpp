@@ -38,16 +38,16 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
 {
     const auto& conf = llm::Manager::GetInstance().GetConfig();
     auto images = clGetManager()->GetStdIcons();
-    clAuiToolBarArt::AddTool(m_toolbar, wxID_CLEAR, _("Clear the chat history"), images->LoadBitmap("clear"));
-    m_toolbar->AddSeparator();
-
-    m_model_selector = new EndpointModelSelector(m_toolbar);
-    m_toolbar->AddControl(m_model_selector);
 
     m_inputEditHelper = std::make_unique<clEditEventsHandler>(m_stcInput);
     m_outputEditHelper = std::make_unique<clEditEventsHandler>(m_stcOutput);
 
-    clAuiToolBarArt::AddTool(m_toolbar, wxID_EXECUTE, _("Submit"), images->LoadBitmap("run"));
+    clAuiToolBarArt::AddTool(m_toolbar, wxID_OPEN, _("Load Chat"), images->LoadBitmap("file_open"));
+    clAuiToolBarArt::AddTool(m_toolbar, wxID_SAVE, _("Save Chat"), images->LoadBitmap("file_save"));
+    m_toolbar->AddSeparator();
+    m_model_selector = new EndpointModelSelector(m_toolbar);
+    m_toolbar->AddControl(m_model_selector);
+    clAuiToolBarArt::AddTool(m_toolbar, wxID_EXECUTE, _("Submit"), images->LoadBitmap("fold"));
     clAuiToolBarArt::AddTool(m_toolbar, wxID_STOP, _("Stop"), images->LoadBitmap("execute_stop"));
     m_toolbar->AddSeparator();
     clAuiToolBarArt::AddTool(m_toolbar, wxID_REFRESH, _("Restart the client"), images->LoadBitmap("debugger_restart"));
@@ -61,6 +61,9 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
                              images->LoadBitmap("link_editor"),
                              wxEmptyString,
                              wxITEM_CHECK);
+    m_toolbar->AddSeparator();
+
+    clAuiToolBarArt::AddTool(m_toolbar, wxID_CLEAR, _("Clear the chat history"), images->LoadBitmap("clear"));
 
     clAuiToolBarArt::Finalise(m_toolbar);
     m_toolbar->Realize();
@@ -87,7 +90,11 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     m_stcInput->SetCodePage(wxSTC_CP_UTF8);
     m_stcOutput->SetReadOnly(true);
 
-    Bind(wxEVT_MENU, &ChatAIWindow::OnNewSession, this, wxID_CLEAR);
+    Bind(wxEVT_MENU, &ChatAIWindow::OnSaveSession, this, wxID_SAVE);
+    Bind(wxEVT_MENU, &ChatAIWindow::OnLoadSession, this, wxID_OPEN);
+    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSaveSessionUI, this, wxID_SAVE);
+    Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnLoadSessionUI, this, wxID_OPEN);
+    Bind(wxEVT_MENU, &ChatAIWindow::OnClearSession, this, wxID_CLEAR);
     Bind(wxEVT_MENU, &ChatAIWindow::OnRestartClient, this, wxID_REFRESH);
     Bind(wxEVT_MENU, &ChatAIWindow::OnSend, this, wxID_EXECUTE);
     Bind(wxEVT_MENU, &ChatAIWindow::OnStop, this, wxID_STOP);
@@ -149,9 +156,6 @@ ChatAIWindow::~ChatAIWindow()
     Unbind(wxEVT_SIZE, &ChatAIWindow::OnSize, this);
 
     clConfig::Get().Write("chat-ai/sash-position", m_mainSplitter->GetSashPosition());
-
-    // Store the current session
-    llm::Manager::GetInstance().StoreCurrentConverstation(m_stcOutput->GetText());
 }
 
 namespace
@@ -245,7 +249,7 @@ void ChatAIWindow::OnOptions(wxAuiToolBarEvent& event)
         XRCID("dock-chat-window"));
 
     menu.AppendSeparator();
-    menu.Append(XRCID("chat_history"), _("Chat History"))->Enable(CurrentEndpointHasHistory());
+    menu.Append(XRCID("chat_history"), _("Manage Chat History"))->Enable(CurrentEndpointHasHistory());
     menu.Bind(wxEVT_MENU, &ChatAIWindow::OnHistory, this, XRCID("chat_history"));
 
     clAuiToolStickness stickness{m_toolbar, event.GetId()};
@@ -432,11 +436,22 @@ void ChatAIWindow::DoClearOutputView()
     llm::Manager::GetInstance().ClearHistory();
 }
 
-void ChatAIWindow::OnNewSession(wxCommandEvent& event)
+void ChatAIWindow::OnClearSession(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    // Store the current conversation
-    llm::Manager::GetInstance().StoreCurrentConverstation(m_stcOutput->GetText());
+
+    wxStandardID answer = ::PromptForYesNoDialogWithCheckbox(
+        _("Proceeding with this operation will result in the loss of the current chat context. You may "
+          "choose to save it before continuing.\nDo you wish to proceed with clearing the context?"),
+        "ChatAIWindowClearSession",
+        _("Yes"),
+        _("No"),
+        _("Remember my answer"),
+        wxYES_NO | wxICON_WARNING | wxYES_DEFAULT);
+
+    if (answer != wxID_YES) {
+        return;
+    }
     DoClearOutputView();
 }
 
@@ -570,16 +585,6 @@ void ChatAIWindow::OnLLMConfigUpdate(clLLMEvent& event)
 
 void ChatAIWindow::OnInputUI(wxUpdateUIEvent& event) { event.Enable(true); }
 
-void ChatAIWindow::UpdateModelsForEndpoint(const wxString& endpoint)
-{
-    m_choiceModels->Clear();
-    auto result = llm::Manager::GetInstance().GetEndpointModels(endpoint);
-    if (result.has_value()) {
-        m_choiceModels->Append(result.value().second);
-        m_choiceModels->SetStringSelection(result.value().first);
-    }
-}
-
 void ChatAIWindow::SetFocusToActiveEditor()
 {
     auto editor = clGetManager()->GetActiveEditor();
@@ -623,11 +628,14 @@ void ChatAIWindow::AppendText(const wxString& text, bool force_style)
     }
 }
 
-void ChatAIWindow::AppendOutput(const wxString& text)
+void ChatAIWindow::AppendOutput(const wxString& text, bool clear)
 {
     CHECK_COND_RET(!text.empty());
 
     m_stcOutput->SetReadOnly(false);
+    if (clear) {
+        m_stcOutput->ClearAll();
+    }
     m_stcOutput->SetInsertionPointEnd();
     m_stcOutput->SetSelection(m_stcOutput->GetLastPosition(), m_stcOutput->GetLastPosition());
     m_stcOutput->AppendText(text);
@@ -685,20 +693,7 @@ void ChatAIWindow::OnDetachView(wxCommandEvent& event) { wxUnusedVar(event); }
 void ChatAIWindow::OnHistory(wxCommandEvent& event)
 {
     ChatHistoryDialog dlg(EventNotifier::Get()->TopFrame());
-    if (dlg.ShowModal() != wxID_OK) {
-        return;
-    }
-
-    auto conversation = dlg.GetSelectedConversation();
-    if (!conversation.has_value()) {
-        clSYSTEM() << "No conversation to set" << endl;
-        return;
-    }
-
-    AppendOutput(conversation.value().content_);
-    StyleOutput();
-    llm::Manager::GetInstance().LoadConversation(conversation.value());
-    m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
+    dlg.ShowModal();
 }
 
 bool ChatAIWindow::CurrentEndpointHasHistory() const
@@ -783,4 +778,63 @@ void ChatAIWindow::OnLLMWorkerBusy(clLLMEvent& event)
     event.Skip();
     m_state = ChatState::kWorking;
     ShowIndicator(true);
+}
+
+void ChatAIWindow::OnLoadSession(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxString active_endpoint = m_model_selector->GetEndpoint();
+    const auto& store = llm::Manager::GetInstance().GetHistoryStore();
+    auto sessions = store.List(active_endpoint);
+    if (sessions.empty()) {
+        wxString msg;
+        msg << _("There are no stored sessions to load for endpoint: ") << active_endpoint;
+        ::clMessageBox(msg);
+        return;
+    }
+
+    auto m = llm::HistoryEntryHelper::GetAsMap(sessions);
+    auto labels = llm::HistoryEntryHelper::GetLabels(sessions);
+
+    wxString sel = ::wxGetSingleChoice(_("Choose a chat to load"), "CodeLite", labels, 0);
+    if (sel.empty()) {
+        return;
+    }
+
+    auto chat = store.Get(active_endpoint, m[sel]);
+    if (!chat.has_value()) {
+        return;
+    }
+
+    // Load the chat
+    llm::Manager::GetInstance().LoadConversation(chat.value());
+    AppendOutput(chat.value().content_, true);
+    StyleOutput();
+    m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
+}
+
+void ChatAIWindow::OnLoadSessionUI(wxUpdateUIEvent& event)
+{
+    wxString active_endpoint = m_model_selector->GetEndpoint();
+    if (active_endpoint.empty()) {
+        event.Enable(false);
+        return;
+    }
+    event.Enable(true);
+}
+
+void ChatAIWindow::OnSaveSession(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    wxString chat_name = wxGetTextFromUser(_("Enter chat name:"), "CodeLite");
+    if (chat_name.empty()) {
+        return;
+    }
+    llm::Manager::GetInstance().StoreCurrentConverstation(m_stcOutput->GetText(), chat_name);
+}
+
+void ChatAIWindow::OnSaveSessionUI(wxUpdateUIEvent& event)
+{
+    wxString active_endpoint = m_model_selector->GetEndpoint();
+    event.Enable(!active_endpoint.empty() && !m_stcOutput->IsEmpty());
 }

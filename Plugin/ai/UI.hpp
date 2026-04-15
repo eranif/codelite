@@ -160,8 +160,6 @@ class ChatHistoryDialogBase : public wxDialog
 {
 protected:
     wxChoicebook* m_choicebook;
-    wxButton* m_button130;
-    wxStaticLine* m_staticLine131;
     wxButton* m_button126;
     wxButton* m_button129;
     wxStaticLine* m_staticLine132;
@@ -169,8 +167,6 @@ protected:
 
 protected:
     virtual void OnEndpointChanged(wxChoicebookEvent& event) { event.Skip(); }
-    virtual void OnInsert(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnInsertUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnDeleteUI(wxUpdateUIEvent& event) { event.Skip(); }
     virtual void OnDelete(wxCommandEvent& event) { event.Skip(); }
     virtual void OnClearUI(wxUpdateUIEvent& event) { event.Skip(); }
@@ -178,15 +174,13 @@ protected:
 
 public:
     wxChoicebook* GetChoicebook() { return m_choicebook; }
-    wxButton* GetButton130() { return m_button130; }
-    wxStaticLine* GetStaticLine131() { return m_staticLine131; }
     wxButton* GetButton126() { return m_button126; }
     wxButton* GetButton129() { return m_button129; }
     wxStaticLine* GetStaticLine132() { return m_staticLine132; }
     wxButton* GetButton127() { return m_button127; }
     ChatHistoryDialogBase(wxWindow* parent,
                           wxWindowID id = wxID_ANY,
-                          const wxString& title = _("Chat History"),
+                          const wxString& title = _("Manage Chat History"),
                           const wxPoint& pos = wxDefaultPosition,
                           const wxSize& size = wxSize(-1, -1),
                           long style = wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
@@ -277,8 +271,6 @@ protected:
     wxDataViewListCtrl* m_dvListCtrlPrompts;
 
 protected:
-    virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
-
 public:
     wxDataViewListCtrl* GetDvListCtrlPrompts() { return m_dvListCtrlPrompts; }
     ChatHistoryPageBase(wxWindow* parent,

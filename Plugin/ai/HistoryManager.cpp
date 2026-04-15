@@ -14,15 +14,11 @@ namespace
 /**
  * @brief Normalizes a label string into an identifier-friendly form.
  *
- * Replaces every non-alphanumeric character in the input with an underscore
- * while preserving all alphanumeric characters in order. The result is built
- * with the same length as the input and is suitable for use where simple
- * normalized names are needed.
+ * Replaces every non-alphanumeric character with an underscore while preserving
+ * alphanumeric characters.
  *
- * @param label const wxString& The input label to normalize.
- *
- * @return wxString The normalized label, with non-alphanumeric characters
- *         replaced by '_' characters.
+ * @param label The input label to normalize.
+ * @return wxString The normalized label.
  */
 inline wxString NormaliseLabel(const wxString& label)
 {
@@ -43,8 +39,6 @@ inline wxString NormaliseLabel(const wxString& label)
 namespace llm
 {
 constexpr size_t kMaxFilesPerEndpoint = 50;
-
-/// Conversation
 
 std::optional<Conversation> Conversation::from_json(assistant::json j)
 {
@@ -89,7 +83,6 @@ std::optional<Conversation> Conversation::from_file(std::string path)
     }
 }
 
-/// HistoryManager
 wxFileName HistoryStore::MakeFilePath(const wxString& endpoint, const wxString& label) const
 {
     wxFileName fn{GetEndpointDir(endpoint), NormaliseLabel(label)};
@@ -106,22 +99,21 @@ bool HistoryStore::Put(const wxString& endpoint, const Conversation& conversatio
         return false;
     }
 
-    // Make sure that the number of files in the endpoint directory doest not exceed the limit.
+    // Make sure that the number of files in the endpoint directory does not exceed the limit.
     Evict(endpoint);
     return true;
 }
 
-std::optional<Conversation> HistoryStore::Get(const wxString& endpoint, const wxString& label) const
+std::optional<Conversation> HistoryStore::Get(const wxString& endpoint, const HistoryEntry& entry) const
 {
-    auto conversation_file = MakeFilePath(endpoint, label);
-    if (!conversation_file.FileExists()) {
-        clWARNING() << "Failed to read conversation from disk:" << conversation_file << ". No such file" << endl;
+    if (!wxFileName::FileExists(entry.filepath)) {
+        clWARNING() << "Failed to read conversation from disk:" << entry.filepath << ". No such file" << endl;
         return std::nullopt;
     }
 
     wxString content;
-    if (!FileUtils::ReadFileContent(conversation_file, content)) {
-        clWARNING() << "Failed to read conversation content from disk:" << conversation_file << endl;
+    if (!FileUtils::ReadFileContent(entry.filepath, content)) {
+        clWARNING() << "Failed to read conversation content from disk:" << entry.filepath << endl;
         return std::nullopt;
     }
 
@@ -135,29 +127,27 @@ std::optional<Conversation> HistoryStore::Get(const wxString& endpoint, const wx
     return c;
 }
 
-size_t HistoryStore::DeleteMulti(const wxString& endpoint, const wxArrayString& labels) const
+size_t HistoryStore::DeleteMulti(const wxString& endpoint, const std::vector<HistoryEntry>& entries) const
 {
     size_t deleted{0};
-    for (const wxString& label : labels) {
-        if (Delete(endpoint, label)) {
+    for (const HistoryEntry& entry : entries) {
+        if (Delete(endpoint, entry)) {
             ++deleted;
         }
     }
     return deleted;
 }
 
-bool HistoryStore::Delete(const wxString& endpoint, const wxString& label) const
+bool HistoryStore::Delete(const wxString& endpoint, const HistoryEntry& entry) const
 {
-    auto conversation_file = MakeFilePath(endpoint, label);
-    if (!conversation_file.FileExists()) {
+    if (!wxFileName::FileExists(entry.filepath)) {
         return false;
     }
 
-    if (!wxRemoveFile(conversation_file.GetFullPath())) {
-        clWARNING() << "Failed to delete conversation from disk." << conversation_file.GetFullPath() << endl;
+    if (!wxRemoveFile(entry.filepath)) {
+        clWARNING() << "Failed to delete conversation from disk." << entry.filepath << endl;
         return false;
     }
-
     return true;
 }
 
@@ -183,13 +173,13 @@ size_t HistoryStore::DeleteAll(const wxString& endpoint) const
     return deleted;
 }
 
-wxArrayString HistoryStore::List(const wxString& endpoint) const
+std::vector<HistoryEntry> HistoryStore::List(const wxString& endpoint) const
 {
-    wxArrayString labels;
+    std::vector<HistoryEntry> entries;
 
     wxString endpoint_dir = GetEndpointDir(endpoint);
     if (!wxDirExists(endpoint_dir)) {
-        return labels;
+        return entries;
     }
 
     wxArrayString json_files;
@@ -198,10 +188,13 @@ wxArrayString HistoryStore::List(const wxString& endpoint) const
     for (const wxString& file : json_files) {
         auto conv = Conversation::from_file(file.ToStdString(wxConvUTF8));
         if (conv.has_value()) {
-            labels.Add(conv.value().GetLabel());
+            entries.push_back(HistoryEntry{
+                .filepath = file,
+                .label = conv.value().GetLabel(),
+            });
         }
     }
-    return labels;
+    return entries;
 }
 
 size_t HistoryStore::Count(const wxString& endpoint) const

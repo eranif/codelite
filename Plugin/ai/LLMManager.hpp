@@ -271,7 +271,7 @@ public:
      * @return std::optional<llm::Conversation> A Conversation initialized from the first eligible line, or std::nullopt
      *         if the manager has no client or no valid line is present.
      */
-    std::optional<llm::Conversation> NewConversation(const wxString& conversation_text) const;
+    std::optional<llm::Conversation> NewConversation(const wxString& conversation_text, const wxString& label) const;
 
     /**
      * Sets the conversation history for the underlying assistant client.
@@ -324,7 +324,7 @@ public:
      *
      * @throws None. This function reports failure by returning false.
      */
-    bool StoreCurrentConverstation(const wxString& conversation_text);
+    bool StoreCurrentConverstation(const wxString& conversation_text, const wxString& label);
 
     /**
      * @brief Provides read-only access to the current configuration.

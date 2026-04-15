@@ -20,6 +20,9 @@ public:
         return m_choiceModels->GetSelection() != wxNOT_FOUND && m_choiceEndpoints->GetSelection() != wxNOT_FOUND;
     }
 
+    wxString GetModel() const { return m_choiceModels->GetStringSelection(); }
+    wxString GetEndpoint() const { return m_choiceEndpoints->GetStringSelection(); }
+
 private:
     void UpdateModelsForEndpoint(const wxString& endpoint);
     void OnModelChanged(wxCommandEvent& event);

@@ -6,9 +6,10 @@
 
 #include "assistant/assistant.hpp"
 #include "codelite_exports.h"
-#include "file_logger.h"
-#include "fileutils.h"
+#include "wx/filename.h"
 
+#include <map>
+#include <vector>
 #include <wx/arrstr.h>
 #include <wx/string.h>
 #include <wx/wxcrt.h>
@@ -22,6 +23,13 @@ struct WXDLLIMPEXP_SDK Conversation {
 
     Conversation() = default;
     ~Conversation() = default;
+    /**
+     * @brief Constructs a conversation from messages, rendered content, and a label.
+     *
+     * @param msgs The assistant message sequence to store.
+     * @param content The conversation content as plain text.
+     * @param label The human-readable label for this conversation.
+     */
     explicit Conversation(const assistant::messages& msgs, const wxString& content, const wxString& label)
         : messages_(msgs)
         , content_(content)
@@ -38,10 +46,86 @@ struct WXDLLIMPEXP_SDK Conversation {
         return j;
     }
 
+    /**
+     * @brief Creates a conversation from a JSON value.
+     *
+     * @param j JSON object containing messages, content, and label fields.
+     * @return std::optional<Conversation> Parsed conversation, or std::nullopt on failure.
+     */
     static std::optional<Conversation> from_json(assistant::json j);
+
+    /**
+     * @brief Creates a conversation from a JSON string.
+     *
+     * @param s UTF-8 encoded JSON string representation of a conversation.
+     * @return std::optional<Conversation> Parsed conversation, or std::nullopt on failure.
+     */
     static std::optional<Conversation> from_string(std::string s);
+
+    /**
+     * @brief Loads a conversation from a JSON file.
+     *
+     * @param path UTF-8 encoded file system path to a conversation file.
+     * @return std::optional<Conversation> Parsed conversation, or std::nullopt on failure.
+     */
     static std::optional<Conversation> from_file(std::string path);
+
+    /**
+     * @brief Returns the conversation label.
+     *
+     * @return const wxString& The stored label.
+     */
     inline const wxString& GetLabel() const { return label_; }
+};
+
+/**
+ * @brief File-system entry for a stored conversation.
+ */
+struct WXDLLIMPEXP_SDK HistoryEntry {
+    /**
+     * @brief Full path to the conversation JSON file.
+     */
+    wxString filepath;
+    /**
+     * @brief Display label for the stored conversation.
+     */
+    wxString label;
+};
+
+/**
+ * @brief Helper utilities for working with collections of history entries.
+ */
+struct WXDLLIMPEXP_SDK HistoryEntryHelper {
+    /**
+     * @brief Extracts labels from a sequence of history entries.
+     *
+     * @param entries History entries to process.
+     * @return wxArrayString Labels in the same order as the input entries.
+     */
+    static inline wxArrayString GetLabels(const std::vector<HistoryEntry>& entries)
+    {
+        wxArrayString labels;
+        labels.reserve(entries.size());
+        for (const auto& e : entries) {
+            labels.Add(e.label);
+        }
+        return labels;
+    }
+
+    /**
+     * @brief Indexes history entries by label.
+     *
+     * @param entries History entries to process.
+     * @return std::map<wxString, HistoryEntry> Map keyed by entry label.
+     */
+    static inline std::map<wxString, HistoryEntry> GetAsMap(const std::vector<HistoryEntry>& entries)
+    {
+        std::map<wxString, HistoryEntry> m;
+        for (const auto& e : entries) {
+            m.emplace(e.label, e);
+        }
+        return m;
+    }
 };
 
 class WXDLLIMPEXP_SDK HistoryStore
@@ -54,14 +138,10 @@ public:
      * storage directory using a normalized label-based file name, and then evicts
      * old entries to keep the number of files within the configured limit.
      *
-     * @param endpoint wxString The endpoint whose conversation store directory will receive the file.
-     * @param conversation Conversation The conversation to persist to disk.
+     * @param endpoint The endpoint whose conversation store directory will receive the file.
+     * @param conversation The conversation to persist to disk.
      *
-     * @return bool True if the conversation was written successfully and eviction
-     *         was performed; false if writing the file failed.
-     *
-     * @note This method belongs to HistoryStore and performs file-system
-     *       I/O as part of storing persistent history.
+     * @return bool True if the conversation was written successfully; false otherwise.
      */
     bool Put(const wxString& endpoint, const Conversation& conversation) const;
 
@@ -73,15 +153,13 @@ public:
      * exist, cannot be read, or cannot be parsed, the function returns an empty
      * optional.
      *
-     * @param endpoint const wxString& The endpoint whose history directory should
-     * be searched.
-     * @param label const wxString& The conversation label used to locate the
-     * stored file.
+     * @param endpoint The endpoint whose history directory should be searched.
+     * @param entry The history entry used to locate the stored file.
      *
-     * @return std::optional<Conversation> The parsed Conversation if found and
-     * successfully loaded; otherwise std::nullopt.
+     * @return std::optional<Conversation> The parsed Conversation if found and successfully loaded; otherwise
+     * std::nullopt.
      */
-    std::optional<Conversation> Get(const wxString& endpoint, const wxString& label) const;
+    std::optional<Conversation> Get(const wxString& endpoint, const HistoryEntry& entry) const;
 
     /**
      * @brief Deletes a stored conversation file for the given endpoint and label.
@@ -90,25 +168,25 @@ public:
      * endpoint directory and normalized label, then removes the corresponding JSON
      * file from disk if it exists.
      *
-     * @param endpoint const wxString& The endpoint whose conversation directory is searched.
-     * @param label const wxString& The conversation label used to identify the file to delete.
+     * @param endpoint The endpoint whose conversation directory is searched.
+     * @param entry The history entry identifying the file to delete.
      *
-     * @return bool True if the file existed and was successfully removed; false if the file
-     *         did not exist or deletion failed.
+     * @return bool True if the file existed and was successfully removed; false otherwise.
      */
-    bool Delete(const wxString& endpoint, const wxString& label) const;
+    bool Delete(const wxString& endpoint, const HistoryEntry& entry) const;
+
     /**
      * @brief Deletes multiple history entries for a given endpoint.
      *
-     * This HistoryStore method iterates over the provided labels and attempts to delete
-     * each matching entry for the specified endpoint, counting only the successful deletions.
+     * This HistoryStore method iterates over the provided entries and attempts to delete
+     * each one for the specified endpoint, counting only the successful deletions.
      *
-     * @param endpoint const wxString& The endpoint whose history entries should be removed.
-     * @param labels const wxArrayString& The labels identifying the history entries to delete.
+     * @param endpoint The endpoint whose history entries should be removed.
+     * @param entries The history entries to delete.
      *
      * @return size_t The number of entries that were successfully deleted.
      */
-    size_t DeleteMulti(const wxString& endpoint, const wxArrayString& labels) const;
+    size_t DeleteMulti(const wxString& endpoint, const std::vector<HistoryEntry>& entries) const;
 
     /**
      * @brief Deletes all stored conversation files for a given endpoint.
@@ -117,7 +195,7 @@ public:
      * each one from disk. If the directory does not exist, nothing is deleted and
      * zero is returned.
      *
-     * @param endpoint const wxString& The endpoint whose conversation directory is searched.
+     * @param endpoint The endpoint whose conversation directory is searched.
      *
      * @return size_t The number of JSON files successfully deleted.
      */
@@ -131,11 +209,11 @@ public:
      * conversation. If the endpoint directory does not exist, an empty array is
      * returned.
      *
-     * @param endpoint wxString The endpoint identifier whose stored conversation labels should be listed.
+     * @param endpoint The endpoint identifier whose stored conversation labels should be listed.
      *
-     * @return wxArrayString An array containing the labels of all conversations that could be loaded successfully.
+     * @return std::vector<HistoryEntry> All conversations that could be loaded successfully.
      */
-    wxArrayString List(const wxString& endpoint) const;
+    std::vector<HistoryEntry> List(const wxString& endpoint) const;
 
     /**
      * @brief Counts the stored conversations for a given endpoint.
@@ -143,7 +221,7 @@ public:
      * Counts the number of JSON conversation files present in the endpoint-specific
      * storage directory. If the directory does not exist, zero is returned.
      *
-     * @param endpoint const wxString& The endpoint whose stored conversations should be counted.
+     * @param endpoint The endpoint whose stored conversations should be counted.
      *
      * @return size_t The number of stored conversations found on disk.
      */

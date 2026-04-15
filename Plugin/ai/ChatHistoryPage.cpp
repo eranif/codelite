@@ -5,13 +5,16 @@
 
 #include <vector>
 
-ChatHistoryPage::ChatHistoryPage(wxChoicebook* parent, ChatHistoryDialog* dlg, const wxString& endpoint)
+ChatHistoryPage::ChatHistoryPage(wxChoicebook* parent, const wxString& endpoint)
     : ChatHistoryPageBase(parent)
     , m_endpoint{endpoint}
-    , m_dialog{dlg}
 {
-    auto labels = llm::Manager::GetInstance().GetHistoryStore().List(endpoint);
-    for (const auto& label : labels) {
+    auto entries = llm::Manager::GetInstance().GetHistoryStore().List(endpoint);
+    for (const auto& entry : entries) {
+        m_chats.insert({entry.label, entry});
+    }
+
+    for (const auto& [label, _] : m_chats) {
         wxVector<wxVariant> cols;
         cols.push_back(label);
         m_dvListCtrlPrompts->AppendItem(cols);
@@ -23,41 +26,29 @@ ChatHistoryPage::~ChatHistoryPage() {}
 void ChatHistoryPage::Clear()
 {
     m_dvListCtrlPrompts->DeleteAllItems();
+    m_chats.clear();
     llm::Manager::GetInstance().GetHistoryStore().DeleteAll(m_endpoint);
-}
-
-void ChatHistoryPage::OnItemActivated(wxDataViewEvent& event)
-{
-    wxUnusedVar(event);
-    m_dialog->CallAfter(&ChatHistoryDialog::DoItemSelected);
 }
 
 void ChatHistoryPage::DeleteSelections()
 {
     wxDataViewItemArray items;
     m_dvListCtrlPrompts->GetSelections(items);
-    if (items.empty()) {
+    if (items.size() != 1) {
         return;
     }
 
-    wxArrayString labels;
-    std::vector<size_t> lines;
-    lines.reserve(items.size());
-    for (const auto& item : items) {
-        size_t row = m_dvListCtrlPrompts->ItemToRow(item);
-        labels.push_back(m_dvListCtrlPrompts->GetTextValue(row, 0));
-        lines.push_back(row);
+    auto item = items[0];
+    size_t row = m_dvListCtrlPrompts->ItemToRow(item);
+    wxString label = m_dvListCtrlPrompts->GetTextValue(row, 0);
+    m_dvListCtrlPrompts->DeleteItem(row);
+
+    // Update the history
+    auto iter = m_chats.find(label);
+    if (iter != m_chats.end()) {
+        llm::Manager::GetInstance().GetHistoryStore().Delete(m_endpoint, iter->second);
+        m_chats.erase(iter);
     }
-
-    // Sort in descending order
-    std::sort(lines.begin(), lines.end(), std::greater<size_t>());
-
-    for (auto line : lines) {
-        m_dvListCtrlPrompts->DeleteItem(line);
-    }
-
-    // Update the history.
-    llm::Manager::GetInstance().GetHistoryStore().DeleteMulti(m_endpoint, labels);
 }
 
 std::optional<wxString> ChatHistoryPage::GetSelection() const

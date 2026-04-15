@@ -430,16 +430,6 @@ ChatHistoryDialogBase::ChatHistoryDialogBase(
 
     boxSizer120->Add(boxSizer124, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_button130 = new wxButton(this, wxID_ADD, _("&Insert"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
-    m_button130->SetToolTip(_("Enter this prompt into the chat input box"));
-
-    boxSizer124->Add(m_button130, 0, wxALL, WXC_FROM_DIP(5));
-
-    m_staticLine131 =
-        new wxStaticLine(this, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), wxLI_HORIZONTAL);
-
-    boxSizer124->Add(m_staticLine131, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
     m_button126 = new wxButton(this, wxID_DELETE, _("&Delete"), wxDefaultPosition, wxDLG_UNIT(this, wxSize(-1, -1)), 0);
     m_button126->SetToolTip(_("Delete selected entry"));
 
@@ -487,8 +477,6 @@ ChatHistoryDialogBase::ChatHistoryDialogBase(
     }
     // Connect events
     m_choicebook->Bind(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED, &ChatHistoryDialogBase::OnEndpointChanged, this);
-    m_button130->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ChatHistoryDialogBase::OnInsert, this);
-    m_button130->Bind(wxEVT_UPDATE_UI, &ChatHistoryDialogBase::OnInsertUI, this);
     m_button126->Bind(wxEVT_UPDATE_UI, &ChatHistoryDialogBase::OnDeleteUI, this);
     m_button126->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &ChatHistoryDialogBase::OnDelete, this);
     m_button129->Bind(wxEVT_UPDATE_UI, &ChatHistoryDialogBase::OnClearUI, this);
@@ -498,8 +486,6 @@ ChatHistoryDialogBase::ChatHistoryDialogBase(
 ChatHistoryDialogBase::~ChatHistoryDialogBase()
 {
     m_choicebook->Unbind(wxEVT_COMMAND_CHOICEBOOK_PAGE_CHANGED, &ChatHistoryDialogBase::OnEndpointChanged, this);
-    m_button130->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &ChatHistoryDialogBase::OnInsert, this);
-    m_button130->Unbind(wxEVT_UPDATE_UI, &ChatHistoryDialogBase::OnInsertUI, this);
     m_button126->Unbind(wxEVT_UPDATE_UI, &ChatHistoryDialogBase::OnDeleteUI, this);
     m_button126->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &ChatHistoryDialogBase::OnDelete, this);
     m_button129->Unbind(wxEVT_UPDATE_UI, &ChatHistoryDialogBase::OnClearUI, this);
@@ -772,14 +758,9 @@ ChatHistoryPageBase::ChatHistoryPageBase(
     if (GetSizer()) {
         GetSizer()->Fit(this);
     }
-    // Connect events
-    m_dvListCtrlPrompts->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &ChatHistoryPageBase::OnItemActivated, this);
 }
 
-ChatHistoryPageBase::~ChatHistoryPageBase()
-{
-    m_dvListCtrlPrompts->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &ChatHistoryPageBase::OnItemActivated, this);
-}
+ChatHistoryPageBase::~ChatHistoryPageBase() {}
 
 ToolTrustLevelDlgBase::ToolTrustLevelDlgBase(
     wxWindow* parent, wxWindowID id, const wxString& title, const wxPoint& pos, const wxSize& size, long style)

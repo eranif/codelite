@@ -29,7 +29,6 @@ class WXDLLIMPEXP_SDK ChatAIWindow : public AssistanceAIChatWindowBase
 public:
     ChatAIWindow(wxWindow* parent);
     virtual ~ChatAIWindow();
-    wxString GetActiveModel() const { return m_choiceEndpoints->GetStringSelection(); }
     bool IsDetached() const;
     /**
      * @brief Sends a chat prompt to the AI window.
@@ -121,19 +120,22 @@ protected:
     void OnUpdateTheme(wxCommandEvent& event);
     void OnKeyDown(wxKeyEvent& event);
     void OnOptions(wxAuiToolBarEvent& event);
-    void OnNewSession(wxCommandEvent& event);
+    void OnClearSession(wxCommandEvent& event);
+    void OnSaveSession(wxCommandEvent& event);
+    void OnLoadSession(wxCommandEvent& event);
+    void OnSaveSessionUI(wxUpdateUIEvent& event);
+    void OnLoadSessionUI(wxUpdateUIEvent& event);
     void OnRestartClient(wxCommandEvent& event);
     void UpdateTheme();
     void DoSendPrompt();
     void SetFocusToActiveEditor();
     void StyleOutput();
-    void AppendOutput(const wxString& text);
+    void AppendOutput(const wxString& text, bool clear = false);
     void AppendMarker();
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnWorkspaceClosed(clWorkspaceEvent& event);
     void LoadGlobalConfig();
     void RestoreUI();
-    void UpdateModelsForEndpoint(const wxString& endpoint);
 
     /// LLM events
     void OnLLMConfigUpdate(clLLMEvent& event);
@@ -155,8 +157,6 @@ protected:
     void UpdateStatusBar();
 
 private:
-    wxChoice* m_choiceEndpoints{nullptr};
-    wxChoice* m_choiceModels{nullptr};
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
     ChatState m_state{ChatState::kReady};
 #if wxCHECK_VERSION(3, 3, 0)

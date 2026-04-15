@@ -1,15 +1,17 @@
 #pragma once
 
 #include "UI.hpp"
+#include "ai/HistoryManager.hpp"
 #include "codelite_exports.h"
 
+#include <map>
 #include <optional>
 
 class ChatHistoryDialog;
 class WXDLLIMPEXP_SDK ChatHistoryPage : public ChatHistoryPageBase
 {
 public:
-    explicit ChatHistoryPage(wxChoicebook* parent, ChatHistoryDialog* dlg, const wxString& endpoint);
+    explicit ChatHistoryPage(wxChoicebook* parent, const wxString& endpoint);
     ~ChatHistoryPage() override;
 
     wxDataViewListCtrl* GetListView() { return m_dvListCtrlPrompts; }
@@ -18,10 +20,7 @@ public:
     std::optional<wxString> GetSelection() const;
     const wxString& GetEndpoint() const { return m_endpoint; }
 
-protected:
-    void OnItemActivated(wxDataViewEvent& event) override;
-
 private:
     wxString m_endpoint;
-    ChatHistoryDialog* m_dialog{nullptr};
+    std::map<wxString, llm::HistoryEntry> m_chats;
 };

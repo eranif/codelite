@@ -842,17 +842,13 @@ void Manager::ClearHistory()
     m_client->ClearHistoryMessages();
 }
 
-std::optional<llm::Conversation> Manager::NewConversation(const wxString& conversation_text) const
+std::optional<llm::Conversation> Manager::NewConversation(const wxString& conversation_text,
+                                                          const wxString& label) const
 {
     if (!m_client) {
         return std::nullopt;
     }
-
-    auto label = MakeLabelFromText(conversation_text);
-    if (label.has_value()) {
-        return llm::Conversation(m_client->GetHistory(), conversation_text, label.value());
-    }
-    return std::nullopt;
+    return llm::Conversation(m_client->GetHistory(), conversation_text, label);
 }
 
 void Manager::LoadConversation(const llm::Conversation& conversation)
@@ -1572,13 +1568,14 @@ void Manager::CompleteInitialisation()
 void Manager::OnWorkspaceOpened(clWorkspaceEvent& event) { event.Skip(); }
 void Manager::OnWorkspaceClosed(clWorkspaceEvent& event) { event.Skip(); }
 
-bool Manager::StoreCurrentConverstation(const wxString& conversation_text)
+bool Manager::StoreCurrentConverstation(const wxString& conversation_text, const wxString& label)
 {
     auto ep = GetActiveEndpoint();
     if (!ep.has_value()) {
         return false;
     }
-    auto c = NewConversation(conversation_text);
+
+    auto c = NewConversation(conversation_text, label);
     if (!c.has_value()) {
         return false;
     }

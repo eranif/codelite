@@ -17,6 +17,7 @@ static HANDLE g_mainThreadHandle{nullptr};
 static DWORD g_mainThreadId{0};
 #endif
 
+#if wxUSE_STACKWALKER
 class MyStackWalker : public wxStackWalker
 {
 public:
@@ -33,6 +34,7 @@ public:
 private:
     wxString& m_output;
 };
+#endif
 
 void StackWalker::Shutdown()
 {
@@ -224,8 +226,12 @@ void StackWalker::Dump(const std::vector<wxString>& prefix, bool dumpCurrentThre
     }
     clERROR() << text << "\n";
 #else
+#if wxUSE_STACKWALKER
     MyStackWalker walker{text};
     walker.Walk();
     clERROR() << text << "\n";
+#else
+    clERROR() << "Stack Walker is not available on this architecture\n";
+#endif
 #endif
 }

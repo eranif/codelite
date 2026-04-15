@@ -17,7 +17,7 @@ ToolTrustLevelDlg::ToolTrustLevelDlg(wxWindow* parent,
         m_dvListCtrlOptions->AppendItem(cols);
     }
 
-    if (initial < m_dvListCtrlOptions->GetItemCount()) {
+    if (initial < static_cast<size_t>(m_dvListCtrlOptions->GetItemCount())) {
         m_dvListCtrlOptions->SelectRow(initial);
     }
 

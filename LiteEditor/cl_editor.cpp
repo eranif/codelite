@@ -1356,7 +1356,7 @@ void clEditor::OnCharAdded(wxStyledTextEvent& event)
     strTyped2 << firstChar << charTyped;
 
     CompletionHelper helper;
-    if (helper.is_include_statement(GetLine(GetCurrentLine()), nullptr, nullptr)) {
+    if (helper.is_include_statement(GetLine(GetCurrentLine()))) {
         CallAfter(&clEditor::CompleteWord, LSP::CompletionItem::kTriggerUser, false);
     } else if ((GetContext()->IsStringTriggerCodeComplete(strTyped) ||
                 GetContext()->IsStringTriggerCodeComplete(strTyped2)) &&

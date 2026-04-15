@@ -40,14 +40,12 @@ public:
     /**
      * @brief go backward and check if the caret line is an include statement
      * @param file_content the current file. The caret is assumed at the end of the string
-     * @param file_name [output]
-     * @param suffix [output] does the completion entry should end with '>' or with '"'?
      */
-    bool is_include_statement(const wxString& file_content, wxString* file_name, wxString* suffix) const;
+    bool is_include_statement(const wxString& file_content) const;
     /**
      * @brief Similar to the above, but for the current line check if the current line matches an include statement
      */
-    bool is_line_include_statement(const wxString& line, wxString* file_name, wxString* suffix) const;
+    bool is_line_include_statement(const wxString& line) const;
 };
 
 #endif // COMPLETIONHELPER_HPP

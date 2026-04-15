@@ -321,7 +321,7 @@ CompletionHelper::split_function_signature(const wxString& signature, wxString* 
 
 thread_local wxRegEx reIncludeFile("include *[\\\"\\<]{1}([a-zA-Z0-9_/\\.\\+\\-]*)");
 
-bool CompletionHelper::is_line_include_statement(const wxString& line, wxString* file_name, wxString* suffix) const
+bool CompletionHelper::is_line_include_statement(const wxString& line) const
 {
     wxString tmp_line = line;
 
@@ -337,22 +337,10 @@ bool CompletionHelper::is_line_include_statement(const wxString& line, wxString*
     if (!reIncludeFile.Matches(remainder)) {
         return false;
     }
-
-    if (file_name) {
-        *file_name = reIncludeFile.GetMatch(remainder, 1);
-    }
-
-    if (suffix) {
-        if (tmp_line.Contains("<")) {
-            *suffix = ">";
-        } else {
-            *suffix = "\"";
-        }
-    }
     return true;
 }
 
-bool CompletionHelper::is_include_statement(const wxString& f_content, wxString* file_name, wxString* suffix) const
+bool CompletionHelper::is_include_statement(const wxString& f_content) const
 {
     // read backward until we find LF
     if (f_content.empty()) {
@@ -367,7 +355,7 @@ bool CompletionHelper::is_include_statement(const wxString& f_content, wxString*
     }
 
     wxString line = f_content.Mid(i);
-    return is_line_include_statement(line, file_name, suffix);
+    return is_line_include_statement(line);
 }
 
 wxString CompletionHelper::normalize_function(const TagEntry* tag, size_t flags)

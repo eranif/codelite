@@ -576,9 +576,6 @@ void ChatAIWindow::OnLLMConfigUpdate(clLLMEvent& event)
 {
     // Always call Skip()
     event.Skip();
-
-    // Clear the output view
-    DoClearOutputView();
     UpdateStatusBar();
 }
 

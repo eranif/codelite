@@ -116,7 +116,7 @@ protected:
     wxStaticText* m_staticText114;
     wxTextCtrl* m_textCtrlAPIKey;
     wxStaticText* m_staticText117;
-    wxSpinCtrl* m_spinCtrlMaxTokens;
+    wxSpinCtrl* m_spinCtrlMaxTokensKB;
 
 protected:
     virtual void OnPageChanging(wxWizardEvent& event) { event.Skip(); }
@@ -139,7 +139,7 @@ public:
     wxStaticText* GetStaticText114() { return m_staticText114; }
     wxTextCtrl* GetTextCtrlAPIKey() { return m_textCtrlAPIKey; }
     wxStaticText* GetStaticText117() { return m_staticText117; }
-    wxSpinCtrl* GetSpinCtrlMaxTokens() { return m_spinCtrlMaxTokens; }
+    wxSpinCtrl* GetSpinCtrlMaxTokensKB() { return m_spinCtrlMaxTokensKB; }
     wxWizardPageSimple* GetWizardPageAPI() { return m_wizardPageAPI; }
     NewLLMEndpointWizardBase(wxWindow* parent,
                              wxWindowID id = wxID_ANY,

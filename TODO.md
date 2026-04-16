@@ -19,32 +19,7 @@ others:
 High:
 -----
 
-- Terminal loses scroll back on re-size.
 - When showing the output pane, move the focus to the active tab
-- Change the "Find-In-Files" to use the following strategy:
-
-### 1. Implementation of "Summary Mode" (The Most Impactful)
-Instead of returning all matches by default, change the tool's output strategy based on the number of results.
-
-*   **The Threshold Trigger:** If the number of matches exceeds a certain limit (e.g., 10 matches), the tool should **stop** returning the actual line content.
-*   **The Summary Response:** Instead of the text, return a summarized list:
-    *   `file_path`: The path to the file.
-    *   `match_count`: Number of matches in that file.
-    *   `line_numbers`: A list of line numbers where matches occurred.
-*   **The LLM Loop:** This forces the LLM to see the "map" of where the code is first, and then explicitly call `ReadFileContent` for the specific files/lines it actually cares about.
-
-### 2. Response Formatting (Structure over Prose)
-Avoid verbose natural language in the tool's output. Use a compact format (JSON or a tight TSV-like string) that the LLM can parse efficiently.
-
-**Bad (Verbose):**
-`Match found in src/main.py at line 42: "def calculate_total(price, tax):"`
-
-**Better (Compact JSON):**
-```json
-[{"f": "src/main.py", "l": 42, "t": "def calculate_total(price, tax):"}]
-```
-
-*Using short keys (`f` for file, `l` for line, `t` for text) significantly reduces the input token count for the LLM when processing large result sets.*
 
 Medium:
 -----

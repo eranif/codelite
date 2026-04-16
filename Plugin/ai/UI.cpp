@@ -350,24 +350,28 @@ NewLLMEndpointWizardBase::NewLLMEndpointWizardBase(
 
     flexGridSizer113->Add(m_textCtrlAPIKey, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
-    m_staticText117 = new wxStaticText(
-        m_wizardPageAPI, wxID_ANY, _("Max Tokens:"), wxDefaultPosition, wxDLG_UNIT(m_wizardPageAPI, wxSize(-1, -1)), 0);
+    m_staticText117 = new wxStaticText(m_wizardPageAPI,
+                                       wxID_ANY,
+                                       _("Max Tokens (KB):"),
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(m_wizardPageAPI, wxSize(-1, -1)),
+                                       0);
 
     flexGridSizer113->Add(m_staticText117, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
-    m_spinCtrlMaxTokens = new wxSpinCtrl(m_wizardPageAPI,
-                                         wxID_ANY,
-                                         wxT("10240"),
-                                         wxDefaultPosition,
-                                         wxDLG_UNIT(m_wizardPageAPI, wxSize(-1, -1)),
-                                         wxSP_ARROW_KEYS);
-    m_spinCtrlMaxTokens->SetToolTip(
+    m_spinCtrlMaxTokensKB = new wxSpinCtrl(m_wizardPageAPI,
+                                           wxID_ANY,
+                                           wxT("10"),
+                                           wxDefaultPosition,
+                                           wxDLG_UNIT(m_wizardPageAPI, wxSize(-1, -1)),
+                                           wxSP_ARROW_KEYS);
+    m_spinCtrlMaxTokensKB->SetToolTip(
         _("Is a required parameter that controls the maximum number of tokens Claude will generate in its "
           "response.\nIt serves as an upper limit on the length of Claude's output"));
-    m_spinCtrlMaxTokens->SetRange(0, 1000000);
-    m_spinCtrlMaxTokens->SetValue(10240);
+    m_spinCtrlMaxTokensKB->SetRange(0, 1000000);
+    m_spinCtrlMaxTokensKB->SetValue(10);
 
-    flexGridSizer113->Add(m_spinCtrlMaxTokens, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+    flexGridSizer113->Add(m_spinCtrlMaxTokensKB, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 
     SetName(wxT("NewLLMEndpointWizardBase"));
     SetSize(wxDLG_UNIT(this, wxSize(-1, -1)));
@@ -390,7 +394,7 @@ NewLLMEndpointWizardBase::NewLLMEndpointWizardBase(
     m_choiceProviders->Bind(wxEVT_COMMAND_CHOICE_SELECTED, &NewLLMEndpointWizardBase::OnProviderChanged, this);
     m_spinCtrlContextSizeKB->Bind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnContextSizeUI, this);
     m_textCtrlAPIKey->Bind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnApiKeyUI, this);
-    m_spinCtrlMaxTokens->Bind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnMaxTokensUI, this);
+    m_spinCtrlMaxTokensKB->Bind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnMaxTokensUI, this);
 }
 
 NewLLMEndpointWizardBase::~NewLLMEndpointWizardBase()
@@ -400,7 +404,7 @@ NewLLMEndpointWizardBase::~NewLLMEndpointWizardBase()
     m_choiceProviders->Unbind(wxEVT_COMMAND_CHOICE_SELECTED, &NewLLMEndpointWizardBase::OnProviderChanged, this);
     m_spinCtrlContextSizeKB->Unbind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnContextSizeUI, this);
     m_textCtrlAPIKey->Unbind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnApiKeyUI, this);
-    m_spinCtrlMaxTokens->Unbind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnMaxTokensUI, this);
+    m_spinCtrlMaxTokensKB->Unbind(wxEVT_UPDATE_UI, &NewLLMEndpointWizardBase::OnMaxTokensUI, this);
 }
 
 ChatHistoryDialogBase::ChatHistoryDialogBase(

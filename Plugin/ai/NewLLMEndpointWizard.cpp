@@ -37,19 +37,24 @@ void NewLLMEndpointWizard::OnProviderChanged(wxCommandEvent& event)
     wxString provider = m_choiceProviders->GetStringSelection();
     if (provider == kProviderAnthropic) {
         m_textCtrlBaseURL->ChangeValue("https://api.anthropic.com");
-        m_spinCtrlContextSizeKB->SetValue(400);
+        m_spinCtrlContextSizeKB->SetValue(256);
+        m_spinCtrlContextSizeKB->SetValue(64);
     } else if (provider == kProviderOllamaCloud) {
         m_textCtrlBaseURL->ChangeValue("https://ollama.com");
+        m_spinCtrlContextSizeKB->SetValue(32);
         m_spinCtrlContextSizeKB->SetValue(32);
     } else if (provider == kProviderOllamaLocal) {
         m_textCtrlBaseURL->ChangeValue("http://127.0.0.1:11434");
         m_spinCtrlContextSizeKB->SetValue(4);
+        m_spinCtrlMaxTokensKB->SetValue(4);
     } else if (provider == kProviderOpenAI) {
         m_textCtrlBaseURL->ChangeValue("https://api.openai.com");
         m_spinCtrlContextSizeKB->SetValue(400);
+        m_spinCtrlMaxTokensKB->SetValue(64);
     } else if (provider == kProviderMoonshotAI) {
         m_textCtrlBaseURL->ChangeValue("https://api.moonshot.ai");
-        m_spinCtrlContextSizeKB->SetValue(400);
+        m_spinCtrlContextSizeKB->SetValue(256);
+        m_spinCtrlMaxTokensKB->SetValue(256);
     }
 }
 
@@ -117,39 +122,49 @@ llm::EndpointData NewLLMEndpointWizard::GetData() const
     llm::EndpointData data;
     if (provider == kProviderOllamaLocal) {
         // Local ollama
-        data = llm::EndpointData{.client_type = llm::kClientTypeOllama,
-                                 .url = m_textCtrlBaseURL->GetValue().ToStdString(wxConvUTF8),
-                                 .model = m_textCtrlModel->GetValue().ToStdString(wxConvUTF8),
-                                 .context_size = m_spinCtrlContextSizeKB->GetValue() * 1024};
+        data = llm::EndpointData{
+            .client_type = llm::kClientTypeOllama,
+            .url = m_textCtrlBaseURL->GetValue().ToStdString(wxConvUTF8),
+            .model = m_textCtrlModel->GetValue().ToStdString(wxConvUTF8),
+            .context_size = m_spinCtrlContextSizeKB->GetValue() * 1024,
+        };
     } else if (provider == kProviderOllamaCloud) {
         // Cloud ollama
-        data = llm::EndpointData{.client_type = llm::kClientTypeOllama,
-                                 .url = m_textCtrlBaseURL->GetValue().ToStdString(wxConvUTF8),
-                                 .model = m_textCtrlModel->GetValue().ToStdString(wxConvUTF8),
-                                 .context_size = m_spinCtrlContextSizeKB->GetValue() * 1024,
-                                 .api_key = m_textCtrlAPIKey->GetValue().ToStdString(wxConvUTF8)};
+        data = llm::EndpointData{
+            .client_type = llm::kClientTypeOllama,
+            .url = m_textCtrlBaseURL->GetValue().ToStdString(wxConvUTF8),
+            .model = m_textCtrlModel->GetValue().ToStdString(wxConvUTF8),
+            .context_size = m_spinCtrlContextSizeKB->GetValue() * 1024,
+            .api_key = m_textCtrlAPIKey->GetValue().ToStdString(wxConvUTF8),
+        };
     } else if (provider == kProviderMoonshotAI) {
         // MoonshotAI
-        data = llm::EndpointData{.client_type = llm::kClientTypeMoonshotAI,
-                                 .url = m_textCtrlBaseURL->GetValue().ToStdString(wxConvUTF8),
-                                 .model = m_textCtrlModel->GetValue().ToStdString(wxConvUTF8),
-                                 .context_size = m_spinCtrlContextSizeKB->GetValue() * 1024,
-                                 .api_key = m_textCtrlAPIKey->GetValue().ToStdString(wxConvUTF8),
-                                 .max_tokens = m_spinCtrlMaxTokens->GetValue()};
+        data = llm::EndpointData{
+            .client_type = llm::kClientTypeMoonshotAI,
+            .url = m_textCtrlBaseURL->GetValue().ToStdString(wxConvUTF8),
+            .model = m_textCtrlModel->GetValue().ToStdString(wxConvUTF8),
+            .context_size = m_spinCtrlContextSizeKB->GetValue() * 1024,
+            .api_key = m_textCtrlAPIKey->GetValue().ToStdString(wxConvUTF8),
+            .max_tokens = m_spinCtrlMaxTokensKB->GetValue() * 1024,
+        };
     } else if (provider == kProviderAnthropic) {
         // Anthropic
-        data = llm::EndpointData{.client_type = llm::kClientTypeAnthropic,
-                                 .url = m_textCtrlBaseURL->GetValue().ToStdString(wxConvUTF8),
-                                 .model = m_textCtrlModel->GetValue().ToStdString(wxConvUTF8),
-                                 .api_key = m_textCtrlAPIKey->GetValue().ToStdString(wxConvUTF8),
-                                 .max_tokens = m_spinCtrlMaxTokens->GetValue()};
+        data = llm::EndpointData{
+            .client_type = llm::kClientTypeAnthropic,
+            .url = m_textCtrlBaseURL->GetValue().ToStdString(wxConvUTF8),
+            .model = m_textCtrlModel->GetValue().ToStdString(wxConvUTF8),
+            .api_key = m_textCtrlAPIKey->GetValue().ToStdString(wxConvUTF8),
+            .max_tokens = m_spinCtrlMaxTokensKB->GetValue() * 1024,
+        };
     } else {
         // OpenAI
-        data = llm::EndpointData{.client_type = llm::kClientTypeOpenAI,
-                                 .url = m_textCtrlBaseURL->GetValue().ToStdString(wxConvUTF8),
-                                 .model = m_textCtrlModel->GetValue().ToStdString(wxConvUTF8),
-                                 .api_key = m_textCtrlAPIKey->GetValue().ToStdString(wxConvUTF8),
-                                 .max_tokens = m_spinCtrlMaxTokens->GetValue()};
+        data = llm::EndpointData{
+            .client_type = llm::kClientTypeOpenAI,
+            .url = m_textCtrlBaseURL->GetValue().ToStdString(wxConvUTF8),
+            .model = m_textCtrlModel->GetValue().ToStdString(wxConvUTF8),
+            .api_key = m_textCtrlAPIKey->GetValue().ToStdString(wxConvUTF8),
+            .max_tokens = m_spinCtrlMaxTokensKB->GetValue() * 1024,
+        };
     }
     return data;
 }

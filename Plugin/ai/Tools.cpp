@@ -517,13 +517,20 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
         if (out.empty() && !err.empty()) {
             return Err("grep error: " + err);
         }
-        return Ok(out.empty() ? "No matches found" : wxString::FromUTF8(out));
+        if (out.empty()) {
+            return Ok("No matches found");
+        }
+        // Parse remote output similarly to local
+        wxArrayString remote_output_arr = wxStringTokenize(wxString::FromUTF8(out), wxT("\n"), wxTOKEN_RET_EMPTY);
+        output_arr = remote_output_arr;
     }
 #endif
 
-    // Local command execution
-    EnvSetter env;
-    ProcUtils::SafeExecuteCommand(cmd, output_arr, termination_flag.GetFlag());
+    // Local command execution (only if not remote)
+    if (!is_remote) {
+        EnvSetter env;
+        ProcUtils::SafeExecuteCommand(cmd, output_arr, termination_flag.GetFlag());
+    }
 
     if (termination_flag.IsSet()) {
         return Err("grep terminated by user");
@@ -533,8 +540,16 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
         return Ok("No matches found");
     }
 
-    wxString output = StringUtils::Join(output_arr);
-    return Ok(output);
+    constexpr size_t kMaxGrepReponses = 10;
+    if (output_arr.size() <= kMaxGrepReponses) {
+        return Ok(StringUtils::Join(output_arr));
+    }
+
+    // Parse the grep output and format as JSON
+    std::vector<FileMatchInfo> matches = ParseGrepOutput(output_arr);
+    std::string json_output = FormatGrepMatchesAsJson(output_arr, matches);
+
+    return Ok(wxString::FromUTF8(json_output));
 }
 
 CanInvokeToolResult ApplyPatchConfirm(const std::string& tool_name, assistant::json args)

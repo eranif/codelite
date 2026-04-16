@@ -3172,7 +3172,7 @@
                         {
                           "type": "multi-string",
                           "m_label": "Label:",
-                          "m_value": "Max Tokens:"
+                          "m_value": "Max Tokens (KB):"
                         },
                         {
                           "type": "string",
@@ -3219,7 +3219,7 @@
                         {
                           "type": "string",
                           "m_label": "Name:",
-                          "m_value": "m_spinCtrlMaxTokens"
+                          "m_value": "m_spinCtrlMaxTokensKB"
                         },
                         {
                           "type": "multi-string",
@@ -3274,7 +3274,7 @@
                         {
                           "type": "string",
                           "m_label": "Value:",
-                          "m_value": "10240"
+                          "m_value": "10"
                         },
                         {
                           "type": "string",

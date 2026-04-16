@@ -770,6 +770,7 @@ void ChatAIWindow::OnLLMWorkerIdle(clLLMEvent& event)
     event.Skip();
     m_state = ChatState::kReady;
     ShowIndicator(false);
+    StyleOutput();
 }
 
 void ChatAIWindow::OnLLMWorkerBusy(clLLMEvent& event)

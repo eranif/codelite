@@ -547,7 +547,6 @@ void ChatAIWindow::ShowIndicator(bool show)
         m_activityIndicator->Hide();
 #endif
         m_statusBar->SetStatusText(_("Ready"), StatusBarIndex::kProgressText);
-        m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
     }
 }
 

@@ -237,10 +237,11 @@ NewLLMEndpointWizardBase::NewLLMEndpointWizardBase(
     flexGridSizer68->Add(m_staticText69, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
 
     wxArrayString m_choiceProvidersArr;
-    m_choiceProvidersArr.Add(_("Ollama (Local)"));
-    m_choiceProvidersArr.Add(_("Ollama (Cloud)"));
     m_choiceProvidersArr.Add(_("Anthropic"));
     m_choiceProvidersArr.Add(_("OpenAI"));
+    m_choiceProvidersArr.Add(_("MoonshotAI"));
+    m_choiceProvidersArr.Add(_("Ollama (Cloud)"));
+    m_choiceProvidersArr.Add(_("Ollama (Local)"));
     m_choiceProviders = new wxChoice(m_wizardPageSettings,
                                      wxID_ANY,
                                      wxDefaultPosition,
@@ -305,13 +306,13 @@ NewLLMEndpointWizardBase::NewLLMEndpointWizardBase(
 
     m_spinCtrlContextSizeKB = new wxSpinCtrl(m_wizardPageSettings,
                                              wxID_ANY,
-                                             wxT("4"),
+                                             wxT("10"),
                                              wxDefaultPosition,
                                              wxDLG_UNIT(m_wizardPageSettings, wxSize(-1, -1)),
                                              wxSP_ARROW_KEYS);
     m_spinCtrlContextSizeKB->SetToolTip(_("The model context size, in kilobytes."));
     m_spinCtrlContextSizeKB->SetRange(4, 1000);
-    m_spinCtrlContextSizeKB->SetValue(4);
+    m_spinCtrlContextSizeKB->SetValue(10);
 
     flexGridSizer68->Add(m_spinCtrlContextSizeKB, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 

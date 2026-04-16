@@ -148,6 +148,7 @@ struct WXDLLIMPEXP_SDK ThreadTask {
 constexpr const char* kClientTypeAnthropic = "anthropic";
 constexpr const char* kClientTypeOllama = "ollama";
 constexpr const char* kClientTypeOpenAI = "openai";
+constexpr const char* kClientTypeMoonshotAI = "moonshotai";
 
 /**
  * @brief Singleton manager class for handling LLM (Large Language Model) operations.

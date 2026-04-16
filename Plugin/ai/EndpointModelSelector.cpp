@@ -42,14 +42,12 @@ EndpointModelSelector::EndpointModelSelector(wxWindow* parent)
     m_choiceEndpoints->Bind(wxEVT_UPDATE_UI, &EndpointModelSelector::OnBusyUI, this);
     m_choiceModels->Bind(wxEVT_UPDATE_UI, &EndpointModelSelector::OnBusyUI, this);
     llm::Manager::GetInstance().Bind(wxEVT_LLM_CONFIG_UPDATED, &EndpointModelSelector::OnLLMConfigUpdate, this);
-    llm::Manager::GetInstance().Bind(wxEVT_LLM_CONFIG_UPDATED, &EndpointModelSelector::OnLLMConfigUpdate, this);
     llm::Manager::GetInstance().Bind(wxEVT_LLM_STARTED, &EndpointModelSelector::OnLLMConfigUpdate, this);
     CallAfter(&EndpointModelSelector::UpdateChoices);
 }
 
 EndpointModelSelector::~EndpointModelSelector()
 {
-    llm::Manager::GetInstance().Unbind(wxEVT_LLM_CONFIG_UPDATED, &EndpointModelSelector::OnLLMConfigUpdate, this);
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_CONFIG_UPDATED, &EndpointModelSelector::OnLLMConfigUpdate, this);
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_STARTED, &EndpointModelSelector::OnLLMConfigUpdate, this);
 }

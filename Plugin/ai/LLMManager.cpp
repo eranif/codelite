@@ -1001,6 +1001,13 @@ void Manager::AddNewEndpoint(const llm::EndpointData& d)
             new_endpoint["http_headers"] = http_headers;
             new_endpoint["verify_server_ssl"] = false;
 
+        } else if (d.client_type == kClientTypeMoonshotAI) {
+            // MoonshotAI
+            llm::json http_headers;
+            http_headers["Authorization"] = "Bearer " + d.api_key.value_or("<INSERT_API_KEY>");
+            new_endpoint["http_headers"] = http_headers;
+            new_endpoint["verify_server_ssl"] = false;
+
         } else if (d.client_type == kClientTypeOllama && d.api_key.has_value()) {
             // Ollama cloud
             llm::json http_headers;
@@ -1158,6 +1165,8 @@ void Manager::OnFileSaved(clCommandEvent& event)
             }
         }
     }
+
+    clGetManager()->GetActiveEditor()->GetCtrl()->CallAfter(&wxWindow::SetFocus);
 }
 
 /**
@@ -1170,26 +1179,30 @@ void Manager::OnFileSaved(clCommandEvent& event)
  */
 void Manager::HandleConfigFileUpdated()
 {
-    // Reload configuration
-    wxBusyCursor bc{};
-    if (!llm::Manager::GetInstance().ReloadConfig(std::nullopt, false)) {
-        return;
-    }
+    CallAfter([this]() {
+        // Reload configuration
+        wxBusyCursor bc{};
+        if (!llm::Manager::GetInstance().ReloadConfig(std::nullopt, false)) {
+            return;
+        }
 
-    clLLMEvent event_config_updates{wxEVT_LLM_CONFIG_UPDATED};
-    event_config_updates.SetEventObject(this);
-    AddPendingEvent(event_config_updates);
+        clLLMEvent event_config_updates{wxEVT_LLM_CONFIG_UPDATED};
+        event_config_updates.SetEventObject(this);
+        AddPendingEvent(event_config_updates);
+    });
 }
 
 void Manager::HandleGlobalConfigFileUpdated()
 {
-    // Reload configuration
-    wxBusyCursor bc{};
-    GetConfig().Load();
+    CallAfter([this]() {
+        // Reload configuration
+        wxBusyCursor bc{};
+        GetConfig().Load();
 
-    clLLMEvent event_config_updates{wxEVT_LLM_GLOBAL_CONFIG_UPDATED};
-    event_config_updates.SetEventObject(this);
-    AddPendingEvent(event_config_updates);
+        clLLMEvent event_config_updates{wxEVT_LLM_GLOBAL_CONFIG_UPDATED};
+        event_config_updates.SetEventObject(this);
+        AddPendingEvent(event_config_updates);
+    });
 }
 
 clStatus Manager::ValidateConfigFile(std::optional<wxString> content) const

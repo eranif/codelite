@@ -116,8 +116,6 @@ protected:
 
 public:
     static wxString CLANG_CACHE_ON_FILE_LOAD;
-    static const std::vector<wxString>& GetDefaultTokens();
-    static const std::vector<wxString>& GetDefaultTypes();
 
 public:
     TagsOptionsData();
@@ -149,7 +147,6 @@ public:
     void SetLanguages(const wxArrayString& langs) { m_languages = langs; }
     const wxArrayString& GetLanguages() const { return m_languages; }
 
-    void SetTokens(const wxString& tokens);
     void SetTypes(const wxString& types) { this->m_types = ::wxStringTokenize(types, "\r\n", wxTOKEN_STRTOK); }
     wxString GetTokens() const { return DoJoinArray(m_tokens); }
 
@@ -164,10 +161,6 @@ public:
     void SetMinWordLen(int minWordLen) { this->m_minWordLen = minWordLen; }
     // Getters
     int GetMinWordLen() const { return m_minWordLen; }
-
-    // Serialization API
-
-    wxString ToString() const;
 
     /**
      * @brief Sync the data stored in this object with the file system

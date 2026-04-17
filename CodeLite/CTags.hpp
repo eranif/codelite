@@ -216,7 +216,6 @@ private:
      * @throws None. Failures are reported by returning std::nullopt.
      */
     static std::optional<wxString> DoSymbolGenerate(const wxString& file, const wxString& ctags_exe);
-    static bool IsSupportedSymbolLanguage(const wxString& language);
     /**
      * @brief Parses newline-delimited JSON symbol records into a list of symbol information entries.
      *

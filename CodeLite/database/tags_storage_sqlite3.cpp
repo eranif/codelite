@@ -231,58 +231,6 @@ wxString TagsStorageSQLite::GetSchemaVersion() const
     } catch (const wxSQLite3Exception&) {    \
     }
 
-void TagsStorageSQLite::Store(const std::vector<TagEntryPtr>& tags, bool auto_commit)
-{
-    try {
-        if (auto_commit)
-            m_db->Begin();
-    } catch (const wxSQLite3Exception& e) {
-        clWARNING() << "failed to start tx." << e.GetMessage() << endl;
-        SAFE_ROLLBACK_IF_NEEDED(auto_commit);
-        return;
-    }
-
-    // build list of files
-    wxStringSet_t files;
-    for (auto tag : tags) {
-        files.insert(tag->GetFile());
-    }
-
-    try {
-        // delete all tags owned by these files
-        for (const wxString& file : files) {
-            DeleteByFileName({}, file, false);
-        }
-    } catch (const wxSQLite3Exception& e) {
-        clWARNING() << "TagsStorageSQLite::Store() error:" << e.GetMessage() << endl;
-        SAFE_ROLLBACK_IF_NEEDED(auto_commit);
-        return;
-    }
-
-    // store the tags
-    try {
-        for (auto tag : tags) {
-            // we don't store local variables
-            if (tag->IsLocalVariable())
-                continue;
-            DoInsertTagEntry(*tag);
-        }
-    } catch (const wxSQLite3Exception& e) {
-        clWARNING() << "TagsStorageSQLite::Store(): failed to insert entries into the db. " << e.GetMessage() << endl;
-        SAFE_ROLLBACK_IF_NEEDED(auto_commit);
-    }
-
-    // commit
-    try {
-        if (auto_commit)
-            m_db->Commit();
-    } catch (const wxSQLite3Exception& e) {
-        clWARNING() << "failed to commit tx." << e.GetMessage() << endl;
-        SAFE_ROLLBACK_IF_NEEDED(auto_commit);
-        return;
-    }
-}
-
 void TagsStorageSQLite::SelectTagsByFile(const wxString& file, std::vector<TagEntryPtr>& tags, const wxFileName& path)
 {
     // Incase empty file path is provided, use the current file name
@@ -352,42 +300,6 @@ void TagsStorageSQLite::ExecuteUpdate(const wxString& sql)
 }
 
 bool TagsStorageSQLite::IsOpen() const { return m_db->IsOpen(); }
-
-void TagsStorageSQLite::GetFilesForCC(const wxString& userTyped, wxArrayString& matches)
-{
-    try {
-        wxString query;
-        wxString tmpName(userTyped);
-
-        // Files are kept in native format in the database
-        // so it only makes sense to search them with the correct path
-        // separator
-        tmpName.Replace("\\", "/");
-        tmpName.Replace("/", wxString() << wxFILE_SEP_PATH);
-        tmpName.Replace(wxT("_"), wxT("^_"));
-        query << wxT("select * from files where file like '%%") << tmpName << wxT("%%' ESCAPE '^' ")
-              << wxT("order by file");
-
-        wxString pattern = userTyped;
-        pattern.Replace("\\", "/");
-
-        wxSQLite3ResultSet res = m_db->ExecuteQuery(query);
-        while (res.NextRow()) {
-            // Keep the part from where the user typed and until the end of the file name
-            wxString matchedFile = res.GetString(1);
-            matchedFile.Replace("\\", "/");
-
-            int where = matchedFile.Find(pattern);
-            if (where == wxNOT_FOUND)
-                continue;
-            matchedFile = matchedFile.Mid(where);
-            matches.Add(matchedFile);
-        }
-
-    } catch (const wxSQLite3Exception& e) {
-        wxUnusedVar(e);
-    }
-}
 
 void TagsStorageSQLite::GetFiles(const wxString& partialName, std::vector<FileEntryPtr>& files)
 {
@@ -573,44 +485,6 @@ void TagsStorageSQLite::DoFetchTags(const wxString& sql, std::vector<TagEntryPtr
     }
 }
 
-void TagsStorageSQLite::GetTagsByScopeAndName(const wxString& scope,
-                                              const wxString& name,
-                                              bool partialNameAllowed,
-                                              std::vector<TagEntryPtr>& tags)
-{
-    if (name.IsEmpty())
-        return;
-
-    wxString sql;
-    sql << wxT("select * from tags where ");
-
-    // did we get scope?
-    if (scope.IsEmpty() || scope == wxT("<global>")) {
-        sql << wxT("ID IN (select tag_id from global_tags where ");
-        DoAddNamePartToQuery(sql, name, partialNameAllowed, false);
-        sql << wxT(" ) ");
-
-    } else {
-        sql << " scope = '" << scope << "' ";
-        DoAddNamePartToQuery(sql, name, partialNameAllowed, true);
-    }
-
-    sql << wxT(" LIMIT ") << this->GetSingleSearchLimit();
-
-    // get get the tags
-    DoFetchTags(sql, tags);
-}
-
-void TagsStorageSQLite::GetTagsByScope(const wxString& scope, std::vector<TagEntryPtr>& tags)
-{
-    wxString sql;
-
-    // Build the SQL statement
-    sql << wxT("select * from tags where scope='") << scope << wxT("' ORDER BY NAME limit ") << GetSingleSearchLimit();
-
-    DoFetchTags(sql, tags);
-}
-
 void TagsStorageSQLite::GetTagsByKind(const wxArrayString& kinds,
                                       const wxString& orderingColumn,
                                       int order,
@@ -690,13 +564,6 @@ void TagsStorageSQLite::GetTagsByKindAndPath(const wxArrayString& kinds,
     DoFetchTags(sql, tags, kinds);
 }
 
-void TagsStorageSQLite::GetTagsByFileAndLine(const wxString& file, int line, std::vector<TagEntryPtr>& tags)
-{
-    wxString sql;
-    sql << wxT("select * from tags where file='") << file << wxT("' and line=") << line << wxT(" ");
-    DoFetchTags(sql, tags);
-}
-
 void TagsStorageSQLite::GetTagsByKindAndFile(const wxArrayString& kind,
                                              const wxString& fileName,
                                              const wxString& orderingColumn,
@@ -743,72 +610,6 @@ int TagsStorageSQLite::DeleteFileEntry(const wxString& filename)
     } catch (const wxSQLite3Exception& exc) {
         if (exc.ErrorCodeAsString(exc.GetErrorCode()) == wxT("SQLITE_CONSTRAINT"))
             return TagExist;
-        return TagError;
-    }
-    return TagOk;
-}
-
-int TagsStorageSQLite::InsertFileEntry(const wxString& filename, int timestamp)
-{
-    try {
-        wxSQLite3Statement statement =
-            m_db->GetPrepareStatement(wxT("INSERT OR REPLACE INTO FILES VALUES(NULL, ?, ?)"));
-        statement.Bind(1, filename);
-        statement.Bind(2, timestamp);
-        statement.ExecuteUpdate();
-
-    } catch (const wxSQLite3Exception& exc) {
-        return TagError;
-    }
-    return TagOk;
-}
-
-int TagsStorageSQLite::UpdateFileEntry(const wxString& filename, int timestamp)
-{
-    try {
-        wxSQLite3Statement statement =
-            m_db->GetPrepareStatement(wxT("UPDATE OR REPLACE FILES SET last_retagged=? WHERE file=?"));
-        statement.Bind(1, timestamp);
-        statement.Bind(2, filename);
-        statement.ExecuteUpdate();
-
-    } catch (const wxSQLite3Exception& exc) {
-        return TagError;
-    }
-    return TagOk;
-}
-
-int TagsStorageSQLite::DoInsertTagEntry(const TagEntry& tag)
-{
-    // If this node is a dummy, (IsOk() == false) we don't insert it to database
-    if (!tag.IsOk())
-        return TagOk;
-
-    // does not matter if we insert or update, the cache must be cleared for any related tags
-    if (GetUseCache()) {
-        ClearCache();
-    }
-
-    try {
-        wxSQLite3Statement statement = m_db->GetPrepareStatement(
-            wxT("INSERT OR REPLACE INTO TAGS VALUES (NULL, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)"));
-        statement.Bind(1, tag.GetName());
-        statement.Bind(2, wxFileName(tag.GetFile()).GetFullPath());
-        statement.Bind(3, tag.GetLine());
-        statement.Bind(4, tag.GetKind());
-        statement.Bind(5, tag.GetAccess());
-        statement.Bind(6, tag.GetSignature());
-        statement.Bind(7, tag.GetPattern());
-        statement.Bind(8, tag.GetParent());
-        statement.Bind(9, tag.GetInheritsAsString());
-        statement.Bind(10, tag.GetPath());
-        statement.Bind(11, tag.GetTypename());
-        statement.Bind(12, tag.GetScope());
-        statement.Bind(13, tag.GetTemplateDefinition());
-        statement.Bind(14, tag.GetTagProperties());
-        statement.Bind(15, tag.GetMacrodef());
-        statement.ExecuteUpdate();
-    } catch (const wxSQLite3Exception& exc) {
         return TagError;
     }
     return TagOk;
@@ -906,86 +707,6 @@ void TagsStorageSQLite::GetTagsByScopesAndKind(const wxArrayString& scopes,
     }
 }
 
-void TagsStorageSQLite::GetTagsByPath(const wxString& path, std::vector<TagEntryPtr>& tags, int limit)
-{
-    if (path.empty())
-        return;
-
-    wxString sql;
-    sql << wxT("select * from tags where path ='") << path << wxT("' LIMIT ") << limit;
-    DoFetchTags(sql, tags);
-}
-
-void TagsStorageSQLite::GetTagsByScopeAndName(const wxArrayString& scope,
-                                              const wxString& name,
-                                              bool partialNameAllowed,
-                                              std::vector<TagEntryPtr>& tags)
-{
-    if (scope.empty())
-        return;
-    if (name.IsEmpty())
-        return;
-
-    wxArrayString scopes = scope;
-
-    // Check the given scopes and remove the '<global>' scope from it
-    // we use the more specialized method for the <global> scope by querying the
-    // GLOBAL_TAGS table
-    int where = scopes.Index(wxT("<global>"));
-    if (where != wxNOT_FOUND) {
-        scopes.RemoveAt(where);
-        GetTagsByScopeAndName(wxString(wxT("<global>")), name, partialNameAllowed, tags);
-    }
-
-    if (scopes.IsEmpty() == false) {
-        wxString sql;
-        sql << wxT("select * from tags where scope in(");
-
-        for (size_t i = 0; i < scopes.GetCount(); i++) {
-            sql << wxT("'") << scopes.Item(i) << wxT("',");
-        }
-        sql.RemoveLast();
-        sql << wxT(") ");
-
-        DoAddNamePartToQuery(sql, name, partialNameAllowed, true);
-        DoAddLimitPartToQuery(sql, tags);
-        // get get the tags
-        DoFetchTags(sql, tags);
-    }
-}
-
-void TagsStorageSQLite::GetTagsByScopeAndKind(const wxString& scope,
-                                              const wxArrayString& kinds,
-                                              const wxString& filter,
-                                              std::vector<TagEntryPtr>& tags)
-{
-    if (kinds.empty()) {
-        return;
-    }
-
-    wxString sql;
-    sql << "select * from tags where scope='" << scope << "' ";
-    if (!filter.empty()) {
-        sql << "and name LIKE '" << filter << "%%' ESCAPE '^' ";
-    }
-
-    if (!kinds.empty()) {
-        sql << " and KIND IN(";
-        wxString kinds_buffer;
-        for (const wxString& kind : kinds) {
-            if (!kinds_buffer.empty()) {
-                kinds_buffer << ",";
-            }
-            kinds_buffer << "'" << kind << "'";
-        }
-        kinds_buffer << ") ";
-        sql << kinds_buffer;
-    }
-
-    sql << " LIMIT " << GetSingleSearchLimit();
-    DoFetchTags(sql, tags);
-}
-
 bool TagsStorageSQLite::IsTypeAndScopeExistLimitOne(const wxString& typeName, const wxString& scope)
 {
     wxString sql;
@@ -1009,20 +730,6 @@ bool TagsStorageSQLite::IsTypeAndScopeExistLimitOne(const wxString& typeName, co
         wxUnusedVar(e);
     }
     return false;
-}
-
-void TagsStorageSQLite::GetDereferenceOperator(const wxString& scope, std::vector<TagEntryPtr>& tags)
-{
-    wxString sql;
-    sql << wxT("select * from tags where scope ='") << scope << wxT("' and name like 'operator%->%' LIMIT 1");
-    DoFetchTags(sql, tags);
-}
-
-void TagsStorageSQLite::GetSubscriptOperator(const wxString& scope, std::vector<TagEntryPtr>& tags)
-{
-    wxString sql;
-    sql << wxT("select * from tags where scope ='") << scope << wxT("' and name like 'operator%[%]%' LIMIT 1");
-    DoFetchTags(sql, tags);
 }
 
 //---------------------------------------------------------------------
@@ -1118,23 +825,6 @@ PPToken TagsStorageSQLite::GetMacro(const wxString& name)
 
 void TagsStorageSQLite::SetUseCache(bool useCache) { ITagsStorage::SetUseCache(useCache); }
 
-void TagsStorageSQLite::GetTagsByName(const wxString& prefix, std::vector<TagEntryPtr>& tags, bool exactMatch)
-{
-    try {
-        if (prefix.IsEmpty())
-            return;
-
-        wxString sql;
-        sql << wxT("select * from tags where ");
-        DoAddNamePartToQuery(sql, prefix, !exactMatch, false);
-        DoAddLimitPartToQuery(sql, tags);
-        DoFetchTags(sql, tags);
-
-    } catch (const wxSQLite3Exception& e) {
-        clDEBUG() << e.GetMessage() << endl;
-    }
-}
-
 void TagsStorageSQLite::DoAddNamePartToQuery(wxString& sql, const wxString& name, bool partial, bool prependAnd)
 {
     if (name.empty())
@@ -1201,53 +891,10 @@ TagEntryPtr TagsStorageSQLite::GetTagsByNameLimitOne(const wxString& name)
     return NULL;
 }
 
-void TagsStorageSQLite::GetTagsByPartName(const wxString& partname, std::vector<TagEntryPtr>& tags)
-{
-    try {
-        if (partname.IsEmpty())
-            return;
-
-        wxString tmpName(partname);
-        tmpName.Replace(wxT("_"), wxT("^_"));
-
-        wxString sql;
-        sql << wxT("select * from tags where name like '%%") << tmpName << wxT("%%' ESCAPE '^' ");
-        DoAddLimitPartToQuery(sql, tags);
-        DoFetchTags(sql, tags);
-
-    } catch (const wxSQLite3Exception& e) {
-        clDEBUG() << e.GetMessage() << endl;
-    }
-}
-
 const wxString& TagsStorageSQLite::GetVersion() const
 {
     static const wxString gTagsDatabaseVersion = "CodeLite v16.0.5";
     return gTagsDatabaseVersion;
-}
-
-void TagsStorageSQLite::GetTagsByPartName(const wxArrayString& parts, std::vector<TagEntryPtr>& tags)
-{
-    wxString sql;
-    try {
-        if (parts.IsEmpty()) {
-            return;
-        }
-
-        wxString filterQuery = "where ";
-        for (size_t i = 0; i < parts.size(); ++i) {
-            wxString tmpName = parts.Item(i);
-            tmpName.Replace(wxT("_"), wxT("^_"));
-            filterQuery << "path like '%%" << tmpName << "%%' " << ((i == (parts.size() - 1)) ? "" : "AND ");
-        }
-
-        sql << "select * from tags " << filterQuery << " ESCAPE '^' ";
-        DoAddLimitPartToQuery(sql, tags);
-        DoFetchTags(sql, tags);
-
-    } catch (const wxSQLite3Exception& e) {
-        clWARNING() << sql << ":" << e.GetMessage() << clEndl;
-    }
 }
 
 void TagsStorageSQLite::ReOpenDatabase()
@@ -1280,32 +927,6 @@ void TagsStorageSQLite::ReOpenDatabase()
     clDEBUG() << "Database reopened successfully";
 }
 
-void TagsStorageSQLite::GetTagsByPathAndKind(const wxString& path,
-                                             std::vector<TagEntryPtr>& tags,
-                                             const std::vector<wxString>& kinds,
-                                             int limit)
-{
-    if (path.empty())
-        return;
-
-    wxString sql;
-
-    sql << "select * from tags where path='" << path << "'";
-    if (!kinds.empty()) {
-        sql << " and kind in (";
-        for (const wxString& kind : kinds) {
-            sql << "'" << kind << "',";
-        }
-        sql.RemoveLast();
-        sql << ")";
-    }
-    // to avoid any kind of specialization, sort the entries by DBid
-    sql << " order by ID asc";
-    sql << " limit " << limit;
-    LOG_IF_TRACE { clDEBUG1() << "Running SQL:" << sql << endl; }
-    DoFetchTags(sql, tags);
-}
-
 TagEntryPtr TagsStorageSQLite::GetScope(const wxString& filename, int line_number)
 {
     if (filename.empty() || line_number == wxNOT_FOUND)
@@ -1323,75 +944,4 @@ TagEntryPtr TagsStorageSQLite::GetScope(const wxString& filename, int line_numbe
         return tags[0];
     }
     return nullptr;
-}
-
-size_t TagsStorageSQLite::GetFileScopedTags(const wxString& filepath,
-                                            const wxString& name,
-                                            const wxArrayString& kinds,
-                                            std::vector<TagEntryPtr>& tags)
-{
-    if (filepath.empty())
-        return 0;
-
-    // get anonymous tags first
-    wxString sql;
-    std::vector<TagEntryPtr> tags_1;
-    std::vector<TagEntryPtr> tags_2;
-    sql << "select * from tags where file='" << filepath << "' and scope like '__anon%'";
-    if (!name.empty()) {
-        sql << " and name like '" << name << "%'";
-    }
-    LOG_IF_TRACE { clDEBUG1() << "Running SQL:" << sql << endl; }
-    tags_1.reserve(100);
-    DoFetchTags(sql, tags_1, kinds);
-
-    // get static members
-    sql.Clear();
-    sql << "select * from tags where file='" << filepath
-        << "' and kind in ('member','variable','class','struct','enum')";
-    if (!name.empty()) {
-        sql << " and name like '" << name << "%'";
-    }
-    LOG_IF_TRACE { clDEBUG1() << "Running SQL:" << sql << endl; }
-    tags_2.reserve(100);
-    DoFetchTags(sql, tags_2);
-
-    // filter duplicate
-    tags.reserve(tags_2.size() + tags_1.size());
-    std::unordered_set<int> visited;
-    for (auto tag : tags_1) {
-        if (!visited.insert(tag->GetId()).second)
-            continue;
-        tags.emplace_back(tag);
-    }
-
-    for (auto tag : tags_2) {
-        if (!visited.insert(tag->GetId()).second)
-            continue;
-        tags.emplace_back(tag);
-    }
-
-    // sort by line number (asc)
-    std::sort(tags.begin(), tags.end(), [](TagEntryPtr a, TagEntryPtr b) { return a->GetLine() < b->GetLine(); });
-
-    // release the extra memory
-    tags.shrink_to_fit();
-    return tags.size();
-}
-
-size_t TagsStorageSQLite::GetParameters(const wxString& function_path, std::vector<TagEntryPtr>& tags)
-{
-    wxString sql;
-    sql << "select * from tags where kind = 'parameter' and scope = '" << function_path << "' order by ID asc";
-    DoFetchTags(sql, tags);
-    return tags.size();
-}
-
-size_t TagsStorageSQLite::GetLambdas(const wxString& parent_function, std::vector<TagEntryPtr>& tags)
-{
-    wxString sql;
-    // assuming `parent_function` is a function, this will return all the lambda children
-    sql << "select * from tags where kind = 'function' and scope = '" << parent_function << "' order by ID asc";
-    DoFetchTags(sql, tags);
-    return tags.size();
 }

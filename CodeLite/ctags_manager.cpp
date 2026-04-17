@@ -127,13 +127,6 @@ void TagsManager::Delete(const wxFileName& path, const wxString& fileName)
     GetDatabase()->DeleteByFileName(path, fileName);
 }
 
-void TagsManager::FindSymbol(const wxString& name, std::vector<TagEntryPtr>& tags)
-{
-    // since we don't get a scope, we better user a search that only uses the
-    // name (GetTagsByScopeAndName) is optimized to search the global tags table
-    GetDatabase()->GetTagsByName(name, tags, true);
-}
-
 void TagsManager::FindByNameAndScope(const wxString& name, const wxString& scope, std::vector<TagEntryPtr>& tags)
 {
     wxString _name = DoReplaceMacros(name);
@@ -340,16 +333,6 @@ void TagsManager::GetFiles(const wxString& partialName, std::vector<FileEntryPtr
     }
 }
 
-void TagsManager::GetFiles(const wxString& partialName, std::vector<wxFileName>& files)
-{
-    std::vector<FileEntryPtr> f;
-    GetFiles(partialName, f);
-
-    for (const auto& fileEntryPtr : f) {
-        files.push_back(wxFileName(fileEntryPtr->GetFile()));
-    }
-}
-
 TagEntryPtr TagsManager::FunctionFromFileLine(const wxFileName& fileName, int lineno)
 {
     if (!GetDatabase()) {
@@ -468,14 +451,6 @@ void TagsManager::CacheFile(const wxString& fileName)
     GetDatabase()->SetUseCache(true);
 }
 
-void TagsManager::ClearCachedFile(const wxString& fileName)
-{
-    if (fileName == m_cachedFile) {
-        m_cachedFile.Clear();
-        m_cachedFileFunctionsTags.clear();
-    }
-}
-
 bool TagsManager::IsFileCached(const wxString& fileName) const { return fileName == m_cachedFile; }
 
 wxString TagsManager::DoReplaceMacros(const wxString& name)
@@ -494,89 +469,6 @@ wxString TagsManager::DoReplaceMacros(const wxString& name)
         }
     }
     return _name;
-}
-
-void TagsManager::FilterNonNeededFilesForRetaging(wxArrayString& strFiles, ITagsStoragePtr db)
-{
-    std::vector<FileEntryPtr> files_entries;
-    db->GetFiles(files_entries);
-    std::unordered_set<wxString> files_set;
-
-    for (const auto& filename : strFiles) {
-        files_set.insert(filename);
-    }
-
-    for (const FileEntryPtr& fe : files_entries) {
-        // does the file exist in both lists?
-        std::unordered_set<wxString>::iterator iter = files_set.find(fe->GetFile());
-        if (iter != files_set.end()) {
-            // get the actual modification time of the file from the disk
-            struct stat buff;
-            int modified(0);
-
-            const wxCharBuffer cname = _C((*iter));
-            if (stat(cname.data(), &buff) == 0) {
-                modified = (int)buff.st_mtime;
-            }
-
-            // if the timestamp from the database < then the actual timestamp, re-tag the file
-            if (fe->GetLastRetaggedTimestamp() >= modified) {
-                files_set.erase(iter);
-            }
-        }
-    }
-
-    // copy back the files to the array
-    strFiles.Clear();
-    strFiles.Alloc(files_set.size());
-    for (const auto& s : files_set) {
-        strFiles.Add(s);
-    }
-}
-
-void TagsManager::GetDereferenceOperator(const wxString& scope, std::vector<TagEntryPtr>& tags)
-{
-    std::vector<std::pair<wxString, int>> derivationList;
-
-    // add this scope as well to the derivation list
-    wxString _scopeName = DoReplaceMacros(scope);
-    derivationList.push_back({_scopeName, 0});
-    std::unordered_set<wxString> visited;
-    GetDerivationList(_scopeName, NULL, derivationList, visited, 1);
-
-    // make enough room for max of 500 elements in the vector
-    for (auto [tmpScope, _] : derivationList) {
-        tmpScope = DoReplaceMacros(tmpScope);
-
-        GetDatabase()->GetDereferenceOperator(tmpScope, tags);
-        if (!tags.empty()) {
-            // No need to further check
-            break;
-        }
-    }
-}
-
-void TagsManager::GetSubscriptOperator(const wxString& scope, std::vector<TagEntryPtr>& tags)
-{
-    std::vector<std::pair<wxString, int>> derivationList;
-
-    // add this scope as well to the derivation list
-    wxString _scopeName = DoReplaceMacros(scope);
-    derivationList.push_back({_scopeName, 0});
-    std::unordered_set<wxString> visited;
-    GetDerivationList(_scopeName, NULL, derivationList, visited, 1);
-
-    // make enough room for max of 500 elements in the vector
-    for (auto [tmpScope, _] : derivationList) {
-        tmpScope = DoReplaceMacros(tmpScope);
-
-        GetDatabase()->GetSubscriptOperator(tmpScope, tags);
-        if (!tags.empty()) {
-
-            // No need to further check
-            break;
-        }
-    }
 }
 
 bool TagsManager::IsBinaryFile(const wxString& filepath, const TagsOptionsData& tod)
@@ -680,11 +572,6 @@ void TagsManager::InsertForwardDeclaration(
     line = GetLanguage()->GetBestLineForForwardDecl(fileContent);
 }
 
-void TagsManager::GetFilesForCC(const wxString& userTyped, wxArrayString& matches)
-{
-    GetDatabase()->GetFilesForCC(userTyped, matches);
-}
-
 void TagsManager::GetCXXKeywords(wxStringSet_t& words)
 {
     wxArrayString arr;
@@ -744,9 +631,4 @@ clStatusOr<TagEntryPtrVector_t>
 TagsManager::ParseCxxBuffer(const wxString& content, const wxString& filename, const wxString& kinds)
 {
     return CTags::ParseCxxBuffer(filename, content);
-}
-
-void TagsManager::GetTagsByPartialNames(const wxArrayString& partialNames, std::vector<TagEntryPtr>& tags)
-{
-    GetDatabase()->GetTagsByPartName(partialNames, tags);
 }

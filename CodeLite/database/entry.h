@@ -41,19 +41,6 @@ class TagEntry;
 using TagEntryPtr = std::shared_ptr<TagEntry>;
 using TagEntryPtrVector_t = std::vector<TagEntryPtr>;
 
-#define KIND_CLASS "class"
-#define KIND_ENUM "enum"
-#define KIND_CLASS_ENUM "cenum"
-#define KIND_ENUMERATOR "enumerator"
-#define KIND_FUNCTION "function"
-#define KIND_PROTOTYPE "prototype"
-#define KIND_MEMBER "member"
-#define KIND_NAMESPACE "namespace"
-#define KIND_VARIABLE "variable"
-#define KIND_UNION "union"
-#define KIND_TYPEDEF "typedef"
-#define KIND_MACRO "macro"
-#define KIND_STRUCT "struct"
 #define KIND_FILE "file"
 
 // make it public
@@ -105,7 +92,6 @@ private:
         TAG_PROP_PURE = (1 << 8),
         TAG_PROP_SCOPEDENUM = (1 << 9),
         TAG_PROP_AUTO_VARIABLE = (1 << 10),
-        TAG_PROP_LAMBDA = (1 << 11),
     };
 
 private:
@@ -136,24 +122,6 @@ public:
         Tag_No_Return_Value_Eval = 0x00000002 // Do not evaluate the return value. Use GetReturnValue() instead
     };
 
-    // Used by std::for_each to copy elements which are constructors
-    class ForEachCopyIfCtor
-    {
-        TagEntryPtrVector_t& m_matches;
-
-    public:
-        ForEachCopyIfCtor(TagEntryPtrVector_t& v)
-            : m_matches(v)
-        {
-        }
-        void operator()(TagEntryPtr tag)
-        {
-            if (tag->IsConstructor()) {
-                m_matches.push_back(tag);
-            }
-        }
-    };
-
     void set_extra_field(const wxString& name, const wxString& value);
 
 public:
@@ -168,25 +136,14 @@ public:
 
     void FromLine(const wxString& line);
 
-    bool IsClassTemplate() const;
-    wxString GetTemplateDefinition() const;
-
     // function properties
-    bool is_func_virtual() const;
     bool is_func_default() const;
-    bool is_func_override() const;
     bool is_func_deleted() const;
-    bool is_func_inline() const;
-    bool is_func_pure() const;
     bool is_const() const;
-    bool is_static() const;
     bool is_scoped_enum() const;
-    bool is_auto() const;
-    bool is_lambda() const;
     const wxString& get_assignment() const { return m_assignment; }
 
     void SetTagProperties(const wxString& prop);
-    const wxString& GetTagProperties() const { return m_tag_properties; }
 
     /**
      * @brief assuming this tag is a variable, return its rvalue
@@ -198,12 +155,6 @@ public:
      * @brief return true if this tag a local variable of type `auto`
      */
     static bool IsAuto(const TagEntry* tag);
-
-    /**
-     * @brief create a function signature (including return value + properties)
-     * that could be used in a header file
-     */
-    wxString GetFunctionDeclaration() const;
 
     /**
      * @brief create a function signature that could be used in a definition file
@@ -267,20 +218,6 @@ public:
     bool IsOk() const { return GetKind() != _T("<unknown>"); }
 
     /**
-     * Test of this tag is a container (class, union, struct or namespace
-     */
-    bool IsContainer() const;
-
-    /**
-     * @brief return true if this tag represents a constructor
-     */
-    bool IsConstructor() const;
-    /**
-     * @brief return true if this tag represents a destructor
-     */
-    bool IsDestructor() const;
-
-    /**
      * @brief return true of the this tag is a function or prototype
      */
     bool IsMethod() const;
@@ -288,19 +225,10 @@ public:
     bool IsFunction() const;
     bool IsPrototype() const;
     bool IsMacro() const;
-    bool IsClass() const;
-    bool IsStruct() const;
-    bool IsScopeGlobal() const;
-    bool IsTypedef() const;
     bool IsMember() const;
-    bool IsNamespace() const;
     bool IsEnum() const;
-    bool IsEnumClass() const;
-    bool IsParameter() const;
     bool IsVariable() const;
-    bool IsUnion() const;
     bool IsEnumerator() const;
-    bool IsKeyword() const;
 
     //------------------------------------------
     // Operations
@@ -350,7 +278,6 @@ public:
     wxArrayString GetInheritsAsArrayWithTemplates() const;
 
     wxString GetTypename() const;
-    wxString GetMacrodef() const;
     void SetTypename(const wxString& value);
     void SetMacrodef(const wxString& value);
     void SetTemplateDefinition(const wxString& def) { set_extra_field("template", def); }
@@ -381,13 +308,6 @@ public:
      * \return tag display name
      */
     wxString GetDisplayName() const;
-
-    /**
-     * Generate a full display name for this tag that includes:
-     * full scope + name + signature
-     * \return tag full display name
-     */
-    wxString GetFullDisplayName() const;
 
     //------------------------------------------
     // Extension fields

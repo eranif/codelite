@@ -16328,9 +16328,10 @@ msgstr "找不到 Cscope"
 msgid "cscope results for: find global definition of '%s'"
 msgstr "cscope 结果：找到全局定义“%s”"
 
-#: cscope/cscope.cpp:566
-msgid "cscope results for: functions called by '"
-msgstr "cscope 结果：函数调用者为”"
+#: cscope/cscope.cpp:564
+#, c-format
+msgid "cscope results for: functions called by '%s'"
+msgstr "cscope 结果：函数调用者为“%s”"
 
 #: cscope/cscope.cpp:593
 msgid "cscope results for: functions calling '"

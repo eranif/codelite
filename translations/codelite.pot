@@ -17069,8 +17069,9 @@ msgstr ""
 msgid "cscope results for: find global definition of '%s'"
 msgstr ""
 
-#: cscope/cscope.cpp:566
-msgid "cscope results for: functions called by '"
+#: cscope/cscope.cpp:564
+#, c-format
+msgid "cscope results for: functions called by '%s'"
 msgstr ""
 
 #: cscope/cscope.cpp:593

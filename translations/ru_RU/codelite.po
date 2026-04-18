@@ -16433,9 +16433,10 @@ msgstr "CScope не найден"
 msgid "cscope results for: find global definition of '%s'"
 msgstr "Результаты CScope для: найти глобальное определение '%s'"
 
-#: cscope/cscope.cpp:566
-msgid "cscope results for: functions called by '"
-msgstr "Результаты CScope для: функции, вызванные '"
+#: cscope/cscope.cpp:564
+#, c-format
+msgid "cscope results for: functions called by '%s'"
+msgstr "Результаты CScope для: функции, вызванные '%s'"
 
 #: cscope/cscope.cpp:593
 msgid "cscope results for: functions calling '"

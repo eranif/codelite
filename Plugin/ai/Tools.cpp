@@ -465,25 +465,6 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
         cmd << " -E"; // Regex
     }
 
-    constexpr int kMaxContextLine = 3;
-
-    // Clamp the context values
-    context_after = std::clamp(context_after, 0, kMaxContextLine);
-    context_before = std::clamp(context_before, 0, kMaxContextLine);
-
-    // Add context lines if specified
-    if (context_before > 0 && context_after > 0 && context_before == context_after) {
-        // Use -C when before and after context are the same
-        cmd << " -C " << context_before;
-    } else {
-        if (context_before > 0) {
-            cmd << " -B " << context_before;
-        }
-        if (context_after > 0) {
-            cmd << " -A " << context_after;
-        }
-    }
-
     // Add the search pattern (properly escaped)
     wxString search_pattern = FileUtils::NormalizePath(wxString::FromUTF8(find_what));
     cmd << " " << StringUtils::EscapeAndWrapWithDoubleQuotes(search_pattern);
@@ -542,14 +523,21 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
 
     constexpr size_t kMaxGrepReponses = 10;
     if (output_arr.size() <= kMaxGrepReponses) {
-        return Ok(StringUtils::Join(output_arr));
+        wxString logmsg;
+        wxString result = StringUtils::Join(output_arr);
+        logmsg << "Find In Files Result:\n```text\n" << result << "\n```\n";
+        llm::Manager::GetInstance().PrintMessage(logmsg, IconType::kSuccess);
+        return Ok(result);
     }
 
     // Parse the grep output and format as JSON
     std::vector<FileMatchInfo> matches = ParseGrepOutput(output_arr);
     std::string json_output = FormatGrepMatchesAsJson(output_arr, matches);
-
-    return Ok(wxString::FromUTF8(json_output));
+    wxString logmsg;
+    wxString result = wxString::FromUTF8(json_output);
+    logmsg << "Find In Files Result:\n```json\n" << result << "\n```\n";
+    llm::Manager::GetInstance().PrintMessage(logmsg, IconType::kSuccess);
+    return Ok(result);
 }
 
 CanInvokeToolResult ApplyPatchConfirm(const std::string& tool_name, assistant::json args)
@@ -903,12 +891,6 @@ void PopulateBuiltInFunctions(FunctionTable& table)
             .AddOptionalParam("is_regex",
                               "When enabled, treats find_what as a regular expression pattern. Default is false.",
                               "boolean")
-            .AddOptionalParam("context_lines_before",
-                              "Number of lines to display before each match for context. Default is 0.",
-                              "number")
-            .AddOptionalParam("context_lines_after",
-                              "Number of lines to display after each match for context. Default is 0.",
-                              "number")
             .Build());
     table.Add(FunctionBuilder("ApplyPatch")
                   .SetDescription(R"(Apply a git style diff patch to a file.

@@ -1043,7 +1043,7 @@ std::optional<FileUtils::Triplet> FileUtils::ParseTriplet(const wxString& line)
     }
 
     wxString input = line;
-    input.Trim().Trim(false);
+    input.Trim(false);  // Only trim leading whitespace, preserve trailing in matched_text
 
     if (input.empty()) {
         return std::nullopt;
@@ -1093,4 +1093,71 @@ wxString FileUtils::GetPath(const wxString& filename)
     wxString normalised_path = NormalizePath(filename);
     wxString path = normalised_path.BeforeLast('/');
     return path;
+}
+
+std::optional<FileUtils::GrepMatch> FileUtils::ParseGrepLine(const wxString& line)
+{
+    // Grep output format: filename:line_number:matched_text
+    // Examples:
+    // src/file.cpp:42:some matched text
+    // /home/user/file.cpp:100:text with : colons
+    // C:\path\to\file.txt:50:matched text
+    // ../../relative/path.cpp:10:some text
+
+    if (line.empty()) {
+        return std::nullopt;
+    }
+
+    wxString input = line;
+    input.Trim(false);  // Only trim leading whitespace, preserve trailing in matched_text
+
+    if (input.empty()) {
+        return std::nullopt;
+    }
+
+    wxString drive;
+    int searchStartPos = 0;
+
+    // Check for Windows drive letter (e.g., "C:")
+    // Only consider it a drive if it's at the beginning and followed by a path separator
+    if (input.length() >= 3 && wxIsalpha(input[0]) && input[1] == ':' && (input[2] == '\\' || input[2] == '/')) {
+        drive = input.Mid(0, 2);
+        searchStartPos = 2;
+    }
+
+    wxUnusedVar(drive);
+
+    // Find the first colon after the drive (if any)
+    // This colon separates the filename from the line number
+    int firstColonPos = input.find(':', searchStartPos);
+    if (firstColonPos == wxNOT_FOUND) {
+        return std::nullopt;
+    }
+
+    wxString filename = input.Mid(0, firstColonPos);
+    if (filename.empty()) {
+        return std::nullopt;
+    }
+
+    // Find the second colon (separates line number from matched text)
+    int secondColonPos = input.find(':', firstColonPos + 1);
+    if (secondColonPos == wxNOT_FOUND) {
+        return std::nullopt;
+    }
+
+    // Extract line number
+    wxString lineNumStr = input.Mid(firstColonPos + 1, secondColonPos - firstColonPos - 1);
+    long lineNum = -1;
+    if (!lineNumStr.ToCLong(&lineNum) || lineNum < 0) {
+        return std::nullopt;
+    }
+
+    // Extract matched text (everything after the second colon)
+    wxString matchedText = input.Mid(secondColonPos + 1);
+
+    GrepMatch result;
+    result.filename = filename;
+    result.line_number = static_cast<int>(lineNum);
+    result.matched_text = matchedText;
+    return result;
 }

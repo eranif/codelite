@@ -74,32 +74,71 @@ wxArrayString TruncateStdout(const std::string& out, size_t max_lines)
     return result;
 }
 
+namespace
+{
+// List of non-interesting folders to filter out from grep results
+const wxArrayString& GetNonInterestingFolders()
+{
+    static const wxArrayString folders = []() {
+        wxArrayString arr;
+        // Wildcard patterns for non-interesting folders
+        arr.Add(wxT("*/.git/*"));         // Git repository data
+        arr.Add(wxT("*/.github/*"));      // GitHub repository data
+        arr.Add(wxT("*/.cache/*"));       // Cache directories
+        arr.Add(wxT("*/.svn/*"));         // SVN repository data
+        arr.Add(wxT("*/.hg/*"));          // Mercurial repository data
+        arr.Add(wxT("*/node_modules/*")); // Node.js modules
+        arr.Add(wxT("*/__pycache__/*"));  // Python cache
+        arr.Add(wxT("*/.vscode/*"));      // VS Code settings
+        arr.Add(wxT("*/.idea/*"));        // JetBrains IDE settings
+        arr.Add(wxT("*/build/*"));        // Build output
+        arr.Add(wxT("*/dist/*"));         // Distribution packages
+        arr.Add(wxT("*/.build-*/*"));     // Build directories with prefixes
+        arr.Add(wxT("*/.codelite/*"));    // CodeLite workspace files
+        return arr;
+    }();
+    return folders;
+}
+
+bool IsPathInNonInterestingFolder(const wxString& filepath)
+{
+    const wxArrayString& non_interesting = GetNonInterestingFolders();
+    wxString path = filepath;
+
+    // Use FileUtils::WildMatch for pattern matching
+    for (const wxString& mask : non_interesting) {
+        if (FileUtils::WildMatch(mask, path)) {
+            return true;
+        }
+    }
+    return false;
+}
+} // anonymous namespace
+
 std::vector<FileMatchInfo> ParseGrepOutput(const wxArrayString& output_arr)
 {
     std::unordered_map<wxString, FileMatchInfo> file_matches;
-
     for (const wxString& line : output_arr) {
         // Skip separator lines from context (they look like "--")
         if (line == wxT("--")) {
             continue;
         }
 
-        // Find the first colon which separates filepath from line number
-        int first_colon = line.Find(':');
-        if (first_colon == wxNOT_FOUND) {
+        auto result = FileUtils::ParseGrepLine(line);
+        if (!result.has_value()) {
             continue;
         }
 
-        wxString filepath = line.Mid(0, first_colon);
-        wxString rest = line.Mid(first_colon + 1);
+        const FileUtils::GrepMatch& match = result.value();
 
-        // Extract line number (digits before next colon)
-        long line_num = 0;
-        rest.BeforeFirst(':').ToLong(&line_num);
+        // Skip files in non-interesting folders
+        if (IsPathInNonInterestingFolder(match.filename)) {
+            continue;
+        }
 
-        if (line_num > 0) {
-            file_matches[filepath].filepath = filepath;
-            file_matches[filepath].line_numbers.push_back(static_cast<int>(line_num));
+        if (match.line_number > 0) {
+            file_matches[match.filename].filepath = match.filename;
+            file_matches[match.filename].line_numbers.push_back(static_cast<int>(match.line_number));
         }
     }
 

@@ -366,6 +366,12 @@ public:
         int column{wxNOT_FOUND};
     };
 
+    struct GrepMatch {
+        wxString filename;
+        int line_number{wxNOT_FOUND};
+        wxString matched_text;
+    };
+
     /**
      * @brief Parses a file location triplet from a compiler-style string.
      *
@@ -380,6 +386,23 @@ public:
      *         contain a usable filename component.
      */
     static std::optional<FileUtils::Triplet> ParseTriplet(const wxString& line);
+
+    /**
+     * @brief Parses a grep output line into its components.
+     *
+     * This function parses grep output in the format "filename:line_number:matched_text".
+     * It correctly handles:
+     * - Relative paths (e.g., "src/file.cpp:42:text")
+     * - Absolute paths (e.g., "/home/user/file.cpp:42:text")
+     * - Windows paths with drive letters (e.g., "C:\path\file.txt:42:text")
+     * - Colons in the matched text portion
+     *
+     * @param line const wxString& Input line from grep output
+     * @return std::optional<FileUtils::GrepMatch> A populated GrepMatch on success,
+     *         or std::nullopt if the input is empty, malformed, or does not
+     *         contain the required components (filename and line number).
+     */
+    static std::optional<FileUtils::GrepMatch> ParseGrepLine(const wxString& line);
 };
 
 #endif // FILEUTILS_H

@@ -16394,9 +16394,10 @@ msgstr "Oppure dimmi dove lo trovi, dal menù: 'Plugins |CSscope |Impostazioni'"
 msgid "CScope not found"
 msgstr "CScope non trovato"
 
-#: cscope/cscope.cpp:539
-msgid "cscope results for: find global definition of '"
-msgstr "Risultati cscope per: trova la definizione globale di '"
+#: cscope/cscope.cpp:538
+#, c-format
+msgid "cscope results for: find global definition of '%s'"
+msgstr "Risultati cscope per: trova la definizione globale di '%s'"
 
 #: cscope/cscope.cpp:566
 msgid "cscope results for: functions called by '"

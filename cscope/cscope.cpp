@@ -534,9 +534,8 @@ void Cscope::OnFindGlobalDefinition(wxCommandEvent& e)
 
     // Do the actual search
     wxString command;
-    wxString endMsg;
     command << GetCscopeExeName() << " -d -L -1 " << word << " -i " << list_file;
-    endMsg << _("cscope results for: find global definition of '") << word << "'";
+    wxString endMsg = wxString::Format(_("cscope results for: find global definition of '%s'"), word);
     DoCscopeCommand(command, word, endMsg);
 }
 

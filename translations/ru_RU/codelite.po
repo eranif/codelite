@@ -16443,9 +16443,10 @@ msgstr "Результаты CScope для: функции, вызванные '
 msgid "cscope results for: functions calling '%s'"
 msgstr "Результаты CScope для: функции, вызывающие '%s'"
 
-#: cscope/cscope.cpp:635
-msgid "cscope results for: files that #include '"
-msgstr "Результаты CScope для: файлы, включающие '"
+#: cscope/cscope.cpp:631
+#, c-format
+msgid "cscope results for: files that #include '%s'"
+msgstr "Результаты CScope для: файлы, включающие '%s'"
 
 #: cscope/cscope.cpp:659
 msgid "Recreated inverted CScope DB"

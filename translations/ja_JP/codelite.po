@@ -16358,9 +16358,10 @@ msgstr "CScope の結果: 呼び出し先の関数 '%s'"
 msgid "cscope results for: functions calling '%s'"
 msgstr "CScope の結果: 呼び出し元の関数 '%s'"
 
-#: cscope/cscope.cpp:635
-msgid "cscope results for: files that #include '"
-msgstr "CScope の結果: #include 元のファイル '"
+#: cscope/cscope.cpp:631
+#, c-format
+msgid "cscope results for: files that #include '%s'"
+msgstr "CScope の結果: #include 元のファイル '%s'"
 
 #: cscope/cscope.cpp:659
 msgid "Recreated inverted CScope DB"

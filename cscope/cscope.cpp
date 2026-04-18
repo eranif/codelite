@@ -627,9 +627,8 @@ void Cscope::OnFindFilesIncludingThisFname(wxCommandEvent& e)
 
     // Do the actual search
     wxString command;
-    wxString endMsg;
     command << GetCscopeExeName() << rebuildOption << " -L -8 " << word << " -i " << list_file;
-    endMsg << _("cscope results for: files that #include '") << word << "'";
+    wxString endMsg = wxString::Format(_("cscope results for: files that #include '%s'"), word);
     DoCscopeCommand(command, word, endMsg);
 }
 

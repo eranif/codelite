@@ -16338,9 +16338,10 @@ msgstr "cscope 结果：函数调用者为“%s”"
 msgid "cscope results for: functions calling '%s'"
 msgstr "cscope 结果：函数调用了“%s”"
 
-#: cscope/cscope.cpp:635
-msgid "cscope results for: files that #include '"
-msgstr "cscope 结果：函数调用者为“"
+#: cscope/cscope.cpp:631
+#, c-format
+msgid "cscope results for: files that #include '%s'"
+msgstr "cscope 结果：函数调用者为“%s”"
 
 #: cscope/cscope.cpp:659
 msgid "Recreated inverted CScope DB"

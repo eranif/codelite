@@ -17079,8 +17079,9 @@ msgstr ""
 msgid "cscope results for: functions calling '%s'"
 msgstr ""
 
-#: cscope/cscope.cpp:635
-msgid "cscope results for: files that #include '"
+#: cscope/cscope.cpp:631
+#, c-format
+msgid "cscope results for: files that #include '%s'"
 msgstr ""
 
 #: cscope/cscope.cpp:659

@@ -31,7 +31,7 @@
 #include "build_system.h"
 #include "file_logger.h"
 #include "project.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/regex.h>
 

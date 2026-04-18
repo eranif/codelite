@@ -27,9 +27,9 @@
 
 #include "build_system.h"
 #include "builder/builder.h"
-#include "clXmlDocument.hpp"
 #include "codelite_exports.h"
 #include "compiler.h"
+#include "xml/clXmlDocument.hpp"
 
 #include <memory>
 #include <vector>

@@ -13,7 +13,7 @@
 #include "php_workspace.h"
 #include "plugin.h"
 #include "ssh_workspace_settings.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/msgdlg.h>
 #include <wx/richmsgdlg.h>

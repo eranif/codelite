@@ -7,7 +7,7 @@
 #include "import_from_xrc.h"
 #include "wxc_project_metadata.h"
 #include "wxgui_helpers.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/log.h>
 #include <wx/msgdlg.h>

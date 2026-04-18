@@ -25,8 +25,8 @@
 #ifndef __configurationtoolbase__
 #define __configurationtoolbase__
 
-#include "clXmlDocument.hpp"
 #include "codelite_exports.h"
+#include "xml/clXmlDocument.hpp"
 
 #include <wx/xml/xml.h>
 

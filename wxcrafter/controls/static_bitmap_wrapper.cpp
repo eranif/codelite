@@ -5,7 +5,7 @@
 #include "Properties/bitmap_picker_property.h"
 #include "allocator_mgr.h"
 #include "wxc_bitmap_code_generator.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 StaticBitmapWrapper::StaticBitmapWrapper()
     : wxcWidget(ID_WXSTATICBITMAP)

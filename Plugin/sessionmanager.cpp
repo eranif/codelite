@@ -33,7 +33,7 @@
 #include "file_logger.h"
 #include "fileutils.h"
 #include "macros.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <memory>
 #include <wx/ffile.h>

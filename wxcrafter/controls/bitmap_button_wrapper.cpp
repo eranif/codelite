@@ -7,7 +7,7 @@
 #include "allocator_mgr.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_bitmaploader.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/anybutton.h>
 

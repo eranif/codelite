@@ -26,7 +26,7 @@
 
 #include "clFontHelper.h"
 #include "serialized_object.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/colour.h>
 #include <wx/xml/xml.h>

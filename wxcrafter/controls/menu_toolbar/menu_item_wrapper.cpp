@@ -12,7 +12,7 @@
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 MenuItemWrapper::MenuItemWrapper()
     : wxcWidget(ID_WXMENUITEM)

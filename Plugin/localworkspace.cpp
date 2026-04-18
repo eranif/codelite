@@ -31,7 +31,7 @@
 #include "globals.h"
 #include "optionsconfig.h"
 #include "workspace.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/fontmap.h>
 #include <wx/log.h>

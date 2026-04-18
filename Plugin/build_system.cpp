@@ -25,7 +25,7 @@
 
 #include "build_system.h"
 
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/thread.h>
 

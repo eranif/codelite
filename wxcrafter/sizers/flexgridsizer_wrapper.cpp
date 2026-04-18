@@ -3,7 +3,7 @@
 #include "Properties/string_property.h"
 #include "allocator_mgr.h"
 #include "wxgui_helpers.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 FlexGridSizerWrapper::FlexGridSizerWrapper()
 {

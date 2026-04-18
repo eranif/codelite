@@ -27,7 +27,6 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "BreakpointInfoArray.hpp"
-#include "archive.h"
 #include "clDebuggerBreakpoint.hpp"
 #include "cl_standard_paths.h"
 #include "macros.h"

@@ -5,7 +5,7 @@
 #include "event_notifier.h"
 #include "php_utils.h"
 #include "xdebugevent.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/socket.h>
 #include <wx/xml/xml.h>

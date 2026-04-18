@@ -4,7 +4,7 @@
 #include "cl_standard_paths.h"
 #include "fileutils.h"
 #include "globals.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/dir.h>
 #include <wx/stc/stc.h>

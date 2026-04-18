@@ -5,7 +5,7 @@
 #include "Properties/winid_property.h"
 #include "allocator_mgr.h"
 #include "wxgui_defs.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 #include "xy_pair.h"
 
 #include <wx/aui/auibar.h>

@@ -25,7 +25,6 @@
 #ifndef LITEEDITOR_EDITOR_CONFIG_H
 #define LITEEDITOR_EDITOR_CONFIG_H
 
-#include "clXmlDocument.hpp"
 #include "cl_config.h"
 #include "codelite_exports.h"
 #include "lexer_configuration.h"
@@ -33,6 +32,7 @@
 #include "plugin.h"
 #include "serialized_object.h"
 #include "singleton.h"
+#include "xml/clXmlDocument.hpp"
 
 #include <map>
 #include <vector>

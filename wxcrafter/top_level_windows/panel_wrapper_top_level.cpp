@@ -1,7 +1,7 @@
 #include "panel_wrapper_top_level.h"
 
 #include "allocator_mgr.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/ffile.h>
 #include <wx/filename.h>

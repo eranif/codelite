@@ -1,9 +1,9 @@
 #include "clEnvironment.hpp"
 
-#include "archive.h"
 #include "cl_standard_paths.h"
 #include "fileutils.h"
-#include "xmlutils.h"
+#include "xml/archive.h"
+#include "xml/xmlutils.h"
 
 #include <unordered_set>
 #include <wx/any.h>

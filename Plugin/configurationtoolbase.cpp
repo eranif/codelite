@@ -26,7 +26,7 @@
 
 #include "cl_standard_paths.h"
 #include "serialized_object.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/ffile.h>
 #include <wx/filename.h>

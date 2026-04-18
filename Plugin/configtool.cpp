@@ -26,7 +26,7 @@
 
 #include "conffilelocator.h"
 #include "serialized_object.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 bool ConfigTool::Load(const wxString& basename, const wxString& version)
 {

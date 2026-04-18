@@ -31,7 +31,7 @@
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "workspace.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/xml/xml.h>
 

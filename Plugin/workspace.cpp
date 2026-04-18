@@ -41,7 +41,7 @@
 #include "macros.h"
 #include "plugin.h"
 #include "project.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/app.h>
 #include <wx/log.h>

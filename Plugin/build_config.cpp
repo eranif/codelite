@@ -33,7 +33,7 @@
 #include "macromanager.h"
 #include "project.h"
 #include "workspace.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/tokenzr.h>
 

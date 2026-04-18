@@ -25,8 +25,8 @@
 #ifndef CONFIGTOOL_H
 #define CONFIGTOOL_H
 
-#include "clXmlDocument.hpp"
 #include "codelite_exports.h"
+#include "xml/clXmlDocument.hpp"
 
 #include <wx/xml/xml.h>
 

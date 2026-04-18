@@ -25,7 +25,7 @@
 #include "svnxml.h"
 
 #include "file_logger.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/log.h>
 #include <wx/sstream.h>

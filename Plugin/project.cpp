@@ -39,7 +39,7 @@
 #include "macros.h"
 #include "workspace.h"
 #include "wxArrayStringAppender.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <algorithm>
 #include <queue>

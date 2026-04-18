@@ -26,7 +26,7 @@
 #include "build_config_common.h"
 
 #include "StringUtils.h"
-#include "xmlutils.h"
+#include "xml/xmlutils.h"
 
 #include <wx/tokenzr.h>
 

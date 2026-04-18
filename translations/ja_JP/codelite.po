@@ -16353,9 +16353,10 @@ msgstr "CScope の結果: グローバルな定義を検索 '%s'"
 msgid "cscope results for: functions called by '%s'"
 msgstr "CScope の結果: 呼び出し先の関数 '%s'"
 
-#: cscope/cscope.cpp:593
-msgid "cscope results for: functions calling '"
-msgstr "CScope の結果: 呼び出し元の関数 '"
+#: cscope/cscope.cpp:590
+#, c-format
+msgid "cscope results for: functions calling '%s'"
+msgstr "CScope の結果: 呼び出し元の関数 '%s'"
 
 #: cscope/cscope.cpp:635
 msgid "cscope results for: files that #include '"

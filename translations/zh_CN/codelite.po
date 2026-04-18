@@ -16333,9 +16333,10 @@ msgstr "cscope 结果：找到全局定义“%s”"
 msgid "cscope results for: functions called by '%s'"
 msgstr "cscope 结果：函数调用者为“%s”"
 
-#: cscope/cscope.cpp:593
-msgid "cscope results for: functions calling '"
-msgstr "cscope 结果：函数调用了“"
+#: cscope/cscope.cpp:590
+#, c-format
+msgid "cscope results for: functions calling '%s'"
+msgstr "cscope 结果：函数调用了“%s”"
 
 #: cscope/cscope.cpp:635
 msgid "cscope results for: files that #include '"

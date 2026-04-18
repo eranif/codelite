@@ -16336,9 +16336,10 @@ msgstr "résultats de 'cscope' pour : trouver la définition globale de '%s'"
 msgid "cscope results for: functions called by '%s'"
 msgstr "- Résultats du 'cscope' pour : fonctions appelées par '%s'"
 
-#: cscope/cscope.cpp:593
-msgid "cscope results for: functions calling '"
-msgstr "- Résultats du 'cscope' pour : fonctions appelantes '"
+#: cscope/cscope.cpp:590
+#, c-format
+msgid "cscope results for: functions calling '%s'"
+msgstr "- Résultats du 'cscope' pour : fonctions appelantes '%s'"
 
 #: cscope/cscope.cpp:635
 msgid "cscope results for: files that #include '"

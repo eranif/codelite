@@ -586,9 +586,8 @@ void Cscope::OnFindFunctionsCallingThisFunction(wxCommandEvent& e)
 
     // Do the actual search
     wxString command;
-    wxString endMsg;
     command << GetCscopeExeName() << rebuildOption << " -L -3 " << word << " -i " << list_file;
-    endMsg << _("cscope results for: functions calling '") << word << "'";
+    wxString endMsg = wxString::Format(_("cscope results for: functions calling '%s'"), word);
     DoCscopeCommand(command, word, endMsg);
 }
 

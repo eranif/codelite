@@ -6,6 +6,7 @@
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "event_notifier.h"
+#include "ssh/ssh_account_info.h"
 #include "terminal_event.h"
 #include "terminal_theme.h"
 
@@ -24,6 +25,27 @@ class WXDLLIMPEXP_SDK clBuiltinTerminalPane : public wxPanel
 public:
     clBuiltinTerminalPane(wxWindow* parent, wxWindowID id = wxID_ANY);
     virtual ~clBuiltinTerminalPane();
+
+    /**
+     * @brief Open a new terminal tab with the specified working directory
+     * @param workingDirectory The working directory for the terminal
+     * @param sshAccount Optional SSH account for remote connections
+     * @param tabTitle Optional custom title for the tab (defaults to the shell name)
+     * @param makeVisible If true, shows the Terminal pane and selects the new tab
+     * @return pointer to the created terminal control, or nullptr on failure
+     */
+    wxTerminalViewCtrl* OpenNewTerminalTab(const wxString& workingDirectory,
+                                           const std::optional<SSHAccountInfo>& sshAccount = std::nullopt,
+                                           const wxString& tabTitle = wxEmptyString,
+                                           bool makeVisible = true);
+
+    /**
+     * @brief Find an existing terminal tab by its title
+     * @param tabTitle The title of the tab to find
+     * @param makeVisible If true and tab is found, shows the Terminal pane and selects the tab
+     * @return pointer to the terminal control if found, or nullptr if not found
+     */
+    wxTerminalViewCtrl* FindTerminalByTitle(const wxString& tabTitle, bool makeVisible = false);
 
 protected:
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
@@ -65,6 +87,14 @@ protected:
 private:
     static std::optional<wxTerminalTheme> FromTOML(const wxFileName& filepath);
     wxTerminalViewCtrl* GetActiveTerminal();
+    
+    /**
+     * @brief Helper method to create and setup a terminal control
+     * @param shellCommand The shell command to run
+     * @param tabTitle The title for the terminal tab
+     * @param makeActive If true, make this tab the active tab
+     */
+    wxTerminalViewCtrl* DoCreateTerminal(const wxString& shellCommand, const wxString& tabTitle, bool makeActive);
 
     wxAuiToolBar* m_toolbar = nullptr;
     clAuiBook* m_book = nullptr;

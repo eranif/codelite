@@ -7,6 +7,7 @@
 #include "bitmap_loader.h"
 #include "clFileName.hpp"
 #include "clINIParser.hpp"
+#include "clStrings.h"
 #include "clWorkspaceManager.h"
 #include "cl_aui_tool_stickness.h"
 #include "codelite_events.h"
@@ -199,33 +200,24 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::GetActiveTerminal()
     return static_cast<wxTerminalViewCtrl*>(m_book->GetPage(m_book->GetSelection()));
 }
 
-void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
+wxTerminalViewCtrl*
+clBuiltinTerminalPane::DoCreateTerminal(const wxString& shellCommand, const wxString& tabTitle, bool makeActive)
 {
-    wxUnusedVar(event);
-    if (m_terminal_types->IsEmpty()) {
-        return;
-    }
-
-    int selection = m_terminal_types->GetSelection();
-    if (selection == wxNOT_FOUND) {
-        return;
-    }
-
-    wxStringClientData* cd = dynamic_cast<wxStringClientData*>(m_terminal_types->GetClientObject(selection));
-    const wxString& cmd = cd->GetData();
-
     // By default, inherit parent's env.
     EnvSetter env_setter{};
     std::optional<wxTerminalViewCtrl::EnvironmentList> env{std::nullopt};
-    wxTerminalViewCtrl* ctrl = new wxTerminalViewCtrl(m_book, cmd, env);
+    wxTerminalViewCtrl* ctrl = new wxTerminalViewCtrl(m_book, shellCommand, env);
     ctrl->SetSelectionDelimChars(" \t\n\r()[]{}<>,;'\"@|&=*?!");
     ctrl->SetTheme(m_activeTheme.has_value() ? *m_activeTheme : wxTerminalTheme::MakeDarkTheme());
-    m_book->AddPage(ctrl, cmd, true);
+
+    // Add the page to the notebook
+    m_book->AddPage(ctrl, tabTitle, makeActive);
 
     // Apply safe drawing setting to the new terminal
     ctrl->EnableSafeDrawing(m_safeDrawingEnabled);
-    m_book->SetPageToolTip(m_book->GetPageCount() - 1, cmd);
+    m_book->SetPageToolTip(m_book->GetPageCount() - 1, tabTitle);
 
+    // Bind events
     ctrl->Bind(wxEVT_TERMINAL_TITLE_CHANGED, [ctrl, this](wxTerminalEvent& event) {
         int where = m_book->FindPage(ctrl);
         if (where != wxNOT_FOUND) {
@@ -265,6 +257,7 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     wxAcceleratorTable accel_table(V.size(), V.data());
     ctrl->SetAcceleratorTable(accel_table);
 
+    // Bind menu events for keyboard shortcuts
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlR, this, XRCID("Ctrl_ID_command"));
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlU, this, XRCID("Ctrl_ID_clear_line"));
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlL, this, XRCID("Ctrl_ID_clear_screen"));
@@ -276,7 +269,148 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnAltF, this, XRCID("Alt_ID_forward"));
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlA, this, XRCID("Ctrl_ID_start_of_line"));
     ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlE, this, XRCID("Ctrl_ID_end_of_line"));
-    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCtrlE, this, XRCID("Ctrl_ID_end_of_line"));
+#ifdef __WXMAC__
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnCopy, this, wxID_COPY);
+#endif
+    ctrl->Bind(wxEVT_MENU, &clBuiltinTerminalPane::OnPaste, this, wxID_PASTE);
+
+    return ctrl;
+}
+
+wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& workingDirectory,
+                                                              const std::optional<SSHAccountInfo>& sshAccount,
+                                                              const wxString& tabTitle,
+                                                              bool makeVisible)
+{
+    // Validate that we have at least one terminal type available
+    if (m_terminal_types->IsEmpty()) {
+        return nullptr;
+    }
+
+    int selection = m_terminal_types->GetSelection();
+    if (selection == wxNOT_FOUND) {
+        // If no selection, use the first one
+        selection = 0;
+        m_terminal_types->SetSelection(selection);
+    }
+
+    wxStringClientData* cd = dynamic_cast<wxStringClientData*>(m_terminal_types->GetClientObject(selection));
+    if (!cd) {
+        return nullptr;
+    }
+
+    const wxString& cmd = cd->GetData();
+
+    // Determine the tab title
+    wxString finalTabTitle = tabTitle.IsEmpty() ? cmd : tabTitle;
+
+    // Create the terminal using the helper method
+    wxTerminalViewCtrl* ctrl = DoCreateTerminal(cmd, finalTabTitle, makeVisible);
+    if (!ctrl) {
+        return nullptr;
+    }
+
+    // If working directory is provided, change to it
+    // Handle SSH connection first if provided
+    if (sshAccount.has_value() && sshAccount->IsOk()) {
+        // Build SSH connection command
+        auto ssh = ThePlatform->Which("ssh");
+        if (!ssh) {
+            clWARNING() << "Could not locate ssh executable in PATH" << endl;
+            // Continue without SSH - terminal will still be usable locally
+        } else {
+            wxString sshCommand;
+            sshCommand << ssh.value();
+
+            // Add key file if specified
+            if (sshAccount->GetKeyFile().path.has_value()) {
+                sshCommand << " -i " << StringUtils::WrapWithDoubleQuotes(sshAccount->GetKeyFile().path.value());
+            }
+
+            // Add user@host
+            sshCommand << " " << sshAccount->GetUsername() << "@" << sshAccount->GetHost();
+
+            // Add port if specified
+            if (sshAccount->GetPort() != wxNOT_FOUND) {
+                sshCommand << " -p " << sshAccount->GetPort();
+            }
+
+            ctrl->SendCommand(sshCommand);
+            // Give SSH time to connect before sending cd command
+            // The user will see the connection prompt in the terminal
+        }
+    }
+
+    // If working directory is provided and we're not using SSH, change to it locally
+    if (!workingDirectory.IsEmpty() && !sshAccount.has_value()) {
+#ifdef __WXMSW__
+        // On Windows, we need to handle drive letters and use 'cd /d'
+        wxString cdCommand;
+        cdCommand << "cd /d \"" << workingDirectory << "\"";
+        ctrl->SendCommand(cdCommand);
+#else
+        // On Unix-like systems (Linux, macOS)
+        wxString cdCommand;
+        cdCommand << "cd \"" << workingDirectory << "\"";
+        ctrl->SendCommand(cdCommand);
+#endif
+    }
+
+    // If we have SSH and a working directory, send cd command for the remote system
+    if (!workingDirectory.IsEmpty() && sshAccount.has_value() && sshAccount->IsOk()) {
+        ctrl->CallAfter(&wxTerminalViewCtrl::SendCommand, wxString::Format("cd \"%s\"", workingDirectory));
+    }
+
+    // If makeVisible is true, show the output pane and select the Terminal tab
+    if (makeVisible) {
+        clGetManager()->ShowOutputPane(TERMINAL_TAB);
+    }
+
+    return ctrl;
+}
+
+wxTerminalViewCtrl* clBuiltinTerminalPane::FindTerminalByTitle(const wxString& tabTitle, bool makeVisible)
+{
+    if (tabTitle.IsEmpty()) {
+        return nullptr;
+    }
+
+    // Iterate through all tabs to find a matching title
+    for (size_t i = 0; i < m_book->GetPageCount(); ++i) {
+        if (m_book->GetPageText(i) == tabTitle) {
+            wxTerminalViewCtrl* ctrl = static_cast<wxTerminalViewCtrl*>(m_book->GetPage(i));
+            if (makeVisible) {
+                m_book->SetSelection(i);
+                clGetManager()->ShowOutputPane(TERMINAL_TAB);
+            }
+            return ctrl;
+        }
+    }
+
+    return nullptr;
+}
+
+void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    if (m_terminal_types->IsEmpty()) {
+        return;
+    }
+
+    int selection = m_terminal_types->GetSelection();
+    if (selection == wxNOT_FOUND) {
+        return;
+    }
+
+    wxStringClientData* cd = dynamic_cast<wxStringClientData*>(m_terminal_types->GetClientObject(selection));
+    if (!cd) {
+        return;
+    }
+
+    const wxString& cmd = cd->GetData();
+
+    // Create the terminal using the helper method (tab title = shell command, makeActive = true)
+    DoCreateTerminal(cmd, cmd, true);
 }
 
 void clBuiltinTerminalPane::OnSetTitle(wxTerminalEvent& event)

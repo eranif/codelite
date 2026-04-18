@@ -17322,20 +17322,24 @@ msgstr "Nebo sdělte, kde může být nainstalovaná, z menu: 'Pluginy | CScope 
 msgid "CScope not found"
 msgstr "CScope nenalezeno"
 
-#: cscope/cscope.cpp:539
-msgid "cscope results for: find global definition of '"
-msgstr "Výsledek cscope pro: najít globální definici '"
+#: cscope/cscope.cpp:538
+#, c-format
+msgid "cscope results for: find global definition of '%s'"
+msgstr "Výsledek cscope pro: najít globální definici '%s'"
 
-#: cscope/cscope.cpp:566
-msgid "cscope results for: functions called by '"
+#: cscope/cscope.cpp:564
+#, c-format
+msgid "cscope results for: functions called by '%s'"
 msgstr ""
 
-#: cscope/cscope.cpp:593
-msgid "cscope results for: functions calling '"
+#: cscope/cscope.cpp:590
+#, c-format
+msgid "cscope results for: functions calling '%s'"
 msgstr ""
 
-#: cscope/cscope.cpp:635
-msgid "cscope results for: files that #include '"
+#: cscope/cscope.cpp:631
+#, c-format
+msgid "cscope results for: files that #include '%s'"
 msgstr ""
 
 #: cscope/cscope.cpp:659

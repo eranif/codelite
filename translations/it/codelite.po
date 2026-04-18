@@ -16394,21 +16394,25 @@ msgstr "Oppure dimmi dove lo trovi, dal menù: 'Plugins |CSscope |Impostazioni'"
 msgid "CScope not found"
 msgstr "CScope non trovato"
 
-#: cscope/cscope.cpp:539
-msgid "cscope results for: find global definition of '"
-msgstr "Risultati cscope per: trova la definizione globale di '"
+#: cscope/cscope.cpp:538
+#, c-format
+msgid "cscope results for: find global definition of '%s'"
+msgstr "Risultati cscope per: trova la definizione globale di '%s'"
 
-#: cscope/cscope.cpp:566
-msgid "cscope results for: functions called by '"
-msgstr "Risultati cscope per: funzioni chiamate da '"
+#: cscope/cscope.cpp:564
+#, c-format
+msgid "cscope results for: functions called by '%s'"
+msgstr "Risultati cscope per: funzioni chiamate da '%s'"
 
-#: cscope/cscope.cpp:593
-msgid "cscope results for: functions calling '"
-msgstr "Risultati cscope per: funzioni che chiamano '"
+#: cscope/cscope.cpp:590
+#, c-format
+msgid "cscope results for: functions calling '%s'"
+msgstr "Risultati cscope per: funzioni che chiamano '%s'"
 
-#: cscope/cscope.cpp:635
-msgid "cscope results for: files that #include '"
-msgstr "Risultati cscope per: file che #includono '"
+#: cscope/cscope.cpp:631
+#, c-format
+msgid "cscope results for: files that #include '%s'"
+msgstr "Risultati cscope per: file che #includono '%s'"
 
 #: cscope/cscope.cpp:659
 msgid "Recreated inverted CScope DB"

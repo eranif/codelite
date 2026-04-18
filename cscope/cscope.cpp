@@ -534,9 +534,8 @@ void Cscope::OnFindGlobalDefinition(wxCommandEvent& e)
 
     // Do the actual search
     wxString command;
-    wxString endMsg;
     command << GetCscopeExeName() << " -d -L -1 " << word << " -i " << list_file;
-    endMsg << _("cscope results for: find global definition of '") << word << "'";
+    wxString endMsg = wxString::Format(_("cscope results for: find global definition of '%s'"), word);
     DoCscopeCommand(command, word, endMsg);
 }
 
@@ -561,9 +560,8 @@ void Cscope::OnFindFunctionsCalledByThisFunction(wxCommandEvent& e)
 
     // Do the actual search
     wxString command;
-    wxString endMsg;
     command << GetCscopeExeName() << rebuildOption << " -L -2 " << word << " -i " << list_file;
-    endMsg << _("cscope results for: functions called by '") << word << "'";
+    wxString endMsg = wxString::Format(_("cscope results for: functions called by '%s'"), word);
     DoCscopeCommand(command, word, endMsg);
 }
 
@@ -588,9 +586,8 @@ void Cscope::OnFindFunctionsCallingThisFunction(wxCommandEvent& e)
 
     // Do the actual search
     wxString command;
-    wxString endMsg;
     command << GetCscopeExeName() << rebuildOption << " -L -3 " << word << " -i " << list_file;
-    endMsg << _("cscope results for: functions calling '") << word << "'";
+    wxString endMsg = wxString::Format(_("cscope results for: functions calling '%s'"), word);
     DoCscopeCommand(command, word, endMsg);
 }
 
@@ -630,9 +627,8 @@ void Cscope::OnFindFilesIncludingThisFname(wxCommandEvent& e)
 
     // Do the actual search
     wxString command;
-    wxString endMsg;
     command << GetCscopeExeName() << rebuildOption << " -L -8 " << word << " -i " << list_file;
-    endMsg << _("cscope results for: files that #include '") << word << "'";
+    wxString endMsg = wxString::Format(_("cscope results for: files that #include '%s'"), word);
     DoCscopeCommand(command, word, endMsg);
 }
 

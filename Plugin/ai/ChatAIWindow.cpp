@@ -14,6 +14,7 @@
 #include "codelite_events.h"
 #include "event_notifier.h"
 #include "globals.h"
+#include "wx/wupdlock.h"
 #include "wxCustomControls.hpp"
 
 #include <algorithm>
@@ -401,13 +402,15 @@ void ChatAIWindow::OnKeyDown(wxKeyEvent& event)
 void ChatAIWindow::OnRestartClient(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-
-    if (llm::Manager::GetInstance().IsPendingUserAnswer()) {
-        ::wxMessageBox(_("Cannot restart while the model is awaiting response"));
+    if (::clMessageBox(_("Restarting the client will result in the loss of all the current session data.\nDo you wish "
+                         "to continue?"),
+                       "CodeLite",
+                       wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_WARNING) != wxYES) {
         return;
     }
-    m_cancel_token->Cancel();
 
+    m_cancel_token->Cancel();
+    DoClearOutputView();
     // Reload configuration
     wxBusyCursor bc{};
     if (llm::Manager::GetInstance().ReloadConfig(std::nullopt, false)) {
@@ -654,11 +657,7 @@ void ChatAIWindow::StyleOutput()
 
 void ChatAIWindow::OnWorkspaceLoaded(clWorkspaceEvent& event) { event.Skip(); }
 
-void ChatAIWindow::OnWorkspaceClosed(clWorkspaceEvent& event)
-{
-    event.Skip();
-    DoRestart();
-}
+void ChatAIWindow::OnWorkspaceClosed(clWorkspaceEvent& event) { event.Skip(); }
 
 void ChatAIWindow::RestoreUI()
 {
@@ -704,14 +703,33 @@ bool ChatAIWindow::CurrentEndpointHasHistory() const
 
 void ChatAIWindow::OnStop(wxCommandEvent& event)
 {
-    event.Skip();
+    // Save the current session
+    llm::Manager::GetInstance().StoreCurrentConverstation(m_stcOutput->GetText(), "__last_session__");
+    DoClearOutputView();
+    llm::Manager::GetInstance().Restart();
 
-    if (llm::Manager::GetInstance().IsPendingUserAnswer()) {
-        ::wxMessageBox(_("The client cannot be stopped while the model is awaiting a response"));
+    // Restore the last session
+    wxString active_endpoint = m_model_selector->GetEndpoint();
+    const auto& store = llm::Manager::GetInstance().GetHistoryStore();
+    auto v = store.List(active_endpoint);
+    auto iter = std::find_if(
+        v.begin(), v.end(), [](const llm::HistoryEntry& entry) { return entry.label == "__last_session__"; });
+    if (iter == v.end()) {
         return;
     }
 
-    llm::Manager::GetInstance().Restart();
+    auto chat = store.Get(active_endpoint, *iter);
+    if (!chat.has_value()) {
+        return;
+    }
+
+    // Load the chat and style the view
+    llm::Manager::GetInstance().LoadConversation(chat.value());
+    wxBusyCursor bc{};
+    wxWindowUpdateLocker locker{m_stcOutput};
+    AppendOutput(chat.value().content_, true);
+    StyleOutput();
+    m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 
 void ChatAIWindow::OnStopUI(wxUpdateUIEvent& event) { event.Enable(llm::Manager::GetInstance().IsBusy()); }
@@ -805,6 +823,8 @@ void ChatAIWindow::OnLoadSession(wxCommandEvent& event)
 
     // Load the chat
     llm::Manager::GetInstance().LoadConversation(chat.value());
+    wxBusyCursor bc{};
+    wxWindowUpdateLocker locker{m_stcOutput};
     AppendOutput(chat.value().content_, true);
     StyleOutput();
     m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);

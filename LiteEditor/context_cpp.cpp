@@ -29,8 +29,6 @@
 
 #include "AddFunctionsImpDlg.h"
 #include "CompletionHelper.hpp"
-#include "Cxx/FlexLexer.h"
-#include "Cxx/cpp_scanner.h"
 #include "Debugger/debuggermanager.h"
 #include "LSP/LSPManager.hpp"
 #include "addincludefiledlg.h"
@@ -56,7 +54,6 @@
 #include "new_quick_watch_dlg.h"
 #include "resources/clXmlResource.hpp"
 #include "setters_getters_dlg.h"
-#include "variable.h"
 #include "workspacetab.h"
 
 #include <wx/choicdlg.h>
@@ -442,7 +439,6 @@ void ContextCpp::OnAddIncludeFile(wxCommandEvent& e)
     }
 
     int word_end = rCtrl.WordEndPosition(pos, true);
-    wxString expr = GetExpression(word_end, false);
 
     // get the scope
     wxString text = rCtrl.GetTextRange(0, word_end);
@@ -1042,7 +1038,7 @@ void ContextCpp::OnDbgDwellStart(wxStyledTextEvent& event)
             GetCtrl().IndicatorFillRange(sel_start, sel_end - sel_start);
 
         } else {
-            word = GetExpression(end, false, &GetCtrl(), false);
+            word = GetExpression(end, false, &GetCtrl());
             word.Trim().Trim(false);
 
             // Mark the code we are going to try and show tip for
@@ -1736,7 +1732,7 @@ void ContextCpp::SemicolonShift()
     }
 }
 
-wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bool forCC)
+wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor) const
 {
     if (IsJavaScript()) {
         return wxEmptyString;
@@ -1745,12 +1741,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
     bool cont(true);
     int depth(0);
 
-    clEditor* ctrl(NULL);
-    if (!editor) {
-        ctrl = &GetCtrl();
-    } else {
-        ctrl = editor;
-    }
+    clEditor* ctrl = editor ? editor : &GetCtrl();
 
     int position(pos);
     int at(position);
@@ -1870,23 +1861,7 @@ wxString ContextCpp::GetExpression(long pos, bool onlyWord, clEditor* editor, bo
     if (at < 0) {
         at = 0;
     }
-    wxString expr = ctrl->GetTextRange(at, pos);
-    if (!forCC) {
-        // If we do not require the expression for CodeCompletion
-        // return the un-touched buffer
-        return expr;
-    }
-
-    // remove comments from it
-    CppScanner sc;
-    sc.SetText(_C(expr));
-    wxString expression;
-    while ((sc.yylex()) != 0) {
-        wxString token = _U(sc.YYText());
-        expression += token;
-        expression += " ";
-    }
-    return expression;
+    return ctrl->GetTextRange(at, pos);
 }
 
 bool ContextCpp::IsDefaultContext() const { return false; }

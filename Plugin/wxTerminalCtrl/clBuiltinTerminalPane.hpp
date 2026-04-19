@@ -46,6 +46,8 @@ public:
      */
     wxTerminalViewCtrl* FindTerminalByTitle(const wxString& tabTitle, bool makeVisible = false);
 
+    wxTerminalViewCtrl* GetActiveTerminal();
+
 protected:
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnInitDone(wxCommandEvent& e);
@@ -85,8 +87,6 @@ protected:
 
 private:
     static std::optional<wxTerminalTheme> FromTOML(const wxFileName& filepath);
-    wxTerminalViewCtrl* GetActiveTerminal();
-
     /**
      * @brief Helper method to create and setup a terminal control
      * @param shellCommand The shell command to run

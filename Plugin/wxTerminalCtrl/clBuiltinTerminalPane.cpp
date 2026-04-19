@@ -5,6 +5,7 @@
 #include "FontUtils.hpp"
 #include "Platform/Platform.hpp"
 #include "bitmap_loader.h"
+#include "clAuiFlatTabArt.hpp"
 #include "clFileName.hpp"
 #include "clINIParser.hpp"
 #include "clStrings.h"
@@ -112,12 +113,19 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
     m_safeDrawingEnabled = clConfig::Get().Read("terminal/safe_drawing", false);
 
     SetSizer(new wxBoxSizer(wxVERTICAL));
-    m_book = new clAuiBook(this,
-                           wxID_ANY,
-                           wxDefaultPosition,
-                           wxDefaultSize,
-                           kNotebook_CloseButtonOnActiveTab | kNotebook_ShowFileListButton |
-                               kNotebook_MouseMiddleClickClosesTab | kNotebook_AllowDnD);
+    m_book = new wxAuiNotebook(
+        this,
+        wxID_ANY,
+        wxDefaultPosition,
+        wxDefaultSize,
+        wxAUI_NB_TAB_MOVE | wxAUI_NB_TAB_FIXED_WIDTH | wxAUI_NB_TAB_SPLIT | wxAUI_NB_CLOSE_ON_ACTIVE_TAB);
+
+    wxFont font = clTabRenderer::GetTabFont(false);
+    auto art = new clAuiFlatTabArt();
+    art->SetMeasuringFont(font);
+    art->SetNormalFont(font);
+    art->SetSelectedFont(font);
+    m_book->SetArtProvider(art);
 
     m_toolbar = new wxAuiToolBar(this);
     GetSizer()->Add(m_toolbar, wxSizerFlags().Expand().Proportion(0));
@@ -233,7 +241,7 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::DoCreateTerminal(const wxString& shel
         wxUnusedVar(event);
         int where = m_book->FindPage(ctrl);
         if (where != wxNOT_FOUND) {
-            m_book->DeletePage(where, ctrl);
+            m_book->DeletePage(where);
         }
     });
     ctrl->Bind(wxEVT_TERMINAL_TEXT_LINK, &clBuiltinTerminalPane::OnLinkClicked, this);
@@ -315,7 +323,6 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
         return nullptr;
     }
 
-    clSYSTEM() << "Successfully created terminal:" << tabTitle << endl;
     // If working directory is provided, change to it
     // Handle SSH connection first if provided
     if (sshAccount.has_value() && sshAccount->IsOk()) {

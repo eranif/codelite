@@ -99,7 +99,7 @@ private:
     DoCreateTerminal(const wxString& shellCommand, const wxString& tabTitle, bool makeActive, bool persistTabTitle);
 
     wxAuiToolBar* m_toolbar = nullptr;
-    clAuiBook* m_book = nullptr;
+    wxAuiNotebook* m_book = nullptr;
     wxChoice* m_terminal_types = nullptr;
     wxChoice* m_choice_themes = nullptr;
     std::vector<std::pair<EventFilterCallbackToken, wxEventType>> m_tokens;

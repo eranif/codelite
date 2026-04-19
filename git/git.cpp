@@ -920,7 +920,6 @@ void GitPlugin::OnPush(wxCommandEvent& e)
     }
 
     CHECK_PTR_RET(terminal);
-    clSYSTEM() << "Sending command: git push" << endl;
     terminal->SendCommand("git push");
 }
 

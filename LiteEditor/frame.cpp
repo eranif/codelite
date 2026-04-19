@@ -3183,7 +3183,7 @@ void clMainFrame::OnDebug(wxCommandEvent& e)
         DebuggerMgr::Get().GetActiveDebugger() && DebuggerMgr::Get().GetActiveDebugger()->IsRunning();
 
     if (!clCxxWorkspaceST::Get()->IsOpen()) {
-        // We hae no workspace opened and yet we got here.
+        // We have no workspace opened and yet we got here.
         // this can mean one of two:
         // 1. A non C++ workspace is opened - so we initiate the debugger start command
         // 2. User wishes to run QuickDebug// Let the plugin know that we are about to start debugging
@@ -3241,10 +3241,11 @@ void clMainFrame::OnDebug(wxCommandEvent& e)
         QueueCommand dbgCmd(QueueCommand::kDebug);
 
         wxStandardID res =
-            ::PromptForYesNoDialogWithCheckbox(_("Would you like to build the project before debugging it?"),
-                                               "BuildBeforeDebug",
-                                               _("Build and Debug"),
-                                               _("Debug"));
+            ::PromptForYesNoCancelDialogWithCheckbox(_("Would you like to build the project before debugging it?"),
+                                                     "BuildBeforeDebug",
+                                                     _("Build and Debug"),
+                                                     _("Debug"),
+                                                     _("Cancel"));
         // Don't do anything if "X" is pressed
         if (res != wxID_CANCEL) {
             if (res == wxID_YES) {

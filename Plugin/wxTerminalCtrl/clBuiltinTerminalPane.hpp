@@ -1,7 +1,6 @@
 #ifndef CLBUILTINTERMINALPANE_HPP
 #define CLBUILTINTERMINALPANE_HPP
 
-#include "Notebook.h"
 #include "clAuiBook.hpp"
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
@@ -87,14 +86,17 @@ protected:
 private:
     static std::optional<wxTerminalTheme> FromTOML(const wxFileName& filepath);
     wxTerminalViewCtrl* GetActiveTerminal();
-    
+
     /**
      * @brief Helper method to create and setup a terminal control
      * @param shellCommand The shell command to run
      * @param tabTitle The title for the terminal tab
      * @param makeActive If true, make this tab the active tab
+     * @param persistTabTitle If true, the initial tab title is persisted and the control will ignore any attempt to
+     * change it using ANSI escape sequences.
      */
-    wxTerminalViewCtrl* DoCreateTerminal(const wxString& shellCommand, const wxString& tabTitle, bool makeActive);
+    wxTerminalViewCtrl*
+    DoCreateTerminal(const wxString& shellCommand, const wxString& tabTitle, bool makeActive, bool persistTabTitle);
 
     wxAuiToolBar* m_toolbar = nullptr;
     clAuiBook* m_book = nullptr;

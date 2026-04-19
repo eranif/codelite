@@ -199,6 +199,8 @@ public:
     void ShowBuildMenu(clToolBar* toolbar, wxWindowID buttonId) override;
     void ShowBuildMenu(wxAuiToolBar* toolbar, wxWindowID buttonId) override;
     void OpenFileAndAsyncExecute(const wxString& fileName, std::function<void(IEditor*)>&& func) override;
+    clBuiltinTerminalPane* GetTerminalManager() override;
+
     /**
      * @brief return list of all breakpoints
      */

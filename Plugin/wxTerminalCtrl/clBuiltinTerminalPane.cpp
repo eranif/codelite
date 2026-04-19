@@ -200,8 +200,10 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::GetActiveTerminal()
     return static_cast<wxTerminalViewCtrl*>(m_book->GetPage(m_book->GetSelection()));
 }
 
-wxTerminalViewCtrl*
-clBuiltinTerminalPane::DoCreateTerminal(const wxString& shellCommand, const wxString& tabTitle, bool makeActive)
+wxTerminalViewCtrl* clBuiltinTerminalPane::DoCreateTerminal(const wxString& shellCommand,
+                                                            const wxString& tabTitle,
+                                                            bool makeActive,
+                                                            bool persistTabTitle)
 {
     // By default, inherit parent's env.
     EnvSetter env_setter{};
@@ -218,7 +220,10 @@ clBuiltinTerminalPane::DoCreateTerminal(const wxString& shellCommand, const wxSt
     m_book->SetPageToolTip(m_book->GetPageCount() - 1, tabTitle);
 
     // Bind events
-    ctrl->Bind(wxEVT_TERMINAL_TITLE_CHANGED, [ctrl, this](wxTerminalEvent& event) {
+    ctrl->Bind(wxEVT_TERMINAL_TITLE_CHANGED, [ctrl, persistTabTitle, this](wxTerminalEvent& event) {
+        if (persistTabTitle) {
+            return;
+        }
         int where = m_book->FindPage(ctrl);
         if (where != wxNOT_FOUND) {
             m_book->SetPageText(where, event.GetTitle());
@@ -305,11 +310,12 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
     wxString finalTabTitle = tabTitle.IsEmpty() ? cmd : tabTitle;
 
     // Create the terminal using the helper method
-    wxTerminalViewCtrl* ctrl = DoCreateTerminal(cmd, finalTabTitle, makeVisible);
+    wxTerminalViewCtrl* ctrl = DoCreateTerminal(cmd, finalTabTitle, makeVisible, true);
     if (!ctrl) {
         return nullptr;
     }
 
+    clSYSTEM() << "Successfully created terminal:" << tabTitle << endl;
     // If working directory is provided, change to it
     // Handle SSH connection first if provided
     if (sshAccount.has_value() && sshAccount->IsOk()) {
@@ -343,17 +349,9 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
 
     // If working directory is provided and we're not using SSH, change to it locally
     if (!workingDirectory.IsEmpty() && !sshAccount.has_value()) {
-#ifdef __WXMSW__
-        // On Windows, we need to handle drive letters and use 'cd /d'
-        wxString cdCommand;
-        cdCommand << "cd /d \"" << workingDirectory << "\"";
-        ctrl->SendCommand(cdCommand);
-#else
-        // On Unix-like systems (Linux, macOS)
         wxString cdCommand;
         cdCommand << "cd \"" << workingDirectory << "\"";
         ctrl->SendCommand(cdCommand);
-#endif
     }
 
     // If we have SSH and a working directory, send cd command for the remote system
@@ -365,7 +363,6 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
     if (makeVisible) {
         clGetManager()->ShowOutputPane(TERMINAL_TAB);
     }
-
     return ctrl;
 }
 
@@ -410,7 +407,7 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
     const wxString& cmd = cd->GetData();
 
     // Create the terminal using the helper method (tab title = shell command, makeActive = true)
-    DoCreateTerminal(cmd, cmd, true);
+    DoCreateTerminal(cmd, cmd, true, false);
 }
 
 void clBuiltinTerminalPane::OnSetTitle(wxTerminalEvent& event)

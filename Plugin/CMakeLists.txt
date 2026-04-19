@@ -109,7 +109,8 @@ target_link_libraries(
          libcodelite
          lualib
          LuaBridge
-  PRIVATE dtl wxterminal_lib)
+         wxterminal_lib
+  PRIVATE dtl)
 target_include_directories(plugin
                            PUBLIC ${CL_SRC_ROOT}/submodules/wxTerminalEmulator)
 

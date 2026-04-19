@@ -989,6 +989,11 @@ void PluginManager::OpenFileAndAsyncExecute(const wxString& fileName, std::funct
     clMainFrame::Get()->GetMainBook()->OpenFileAsync(fileName, std::move(func));
 }
 
+clBuiltinTerminalPane* PluginManager::GetTerminalManager()
+{
+    return clMainFrame::Get()->GetOutputPane()->GetBuiltInTerminal();
+}
+
 bool PluginManager::SelectEditor(IEditor* editor)
 {
     // find editor and select it

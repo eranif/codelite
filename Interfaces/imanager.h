@@ -38,6 +38,7 @@
 #include "optionsconfig.h"
 #include "project.h"
 #include "queuecommand.h"
+#include "wxTerminalCtrl/clBuiltinTerminalPane.hpp"
 
 #include <optional>
 #include <vector>
@@ -760,6 +761,8 @@ public:
      * @brief build and display the build menu for a toolbar button
      */
     virtual void ShowBuildMenu(wxAuiToolBar* toolbar, wxWindowID buttonId) = 0;
+
+    virtual clBuiltinTerminalPane* GetTerminalManager() = 0;
 
     ///--------------------
     /// Book management

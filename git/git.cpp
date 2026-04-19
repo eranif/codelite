@@ -57,6 +57,7 @@
 #include "globals.h"
 #include "procutils.h"
 #include "project.h"
+#include "terminal_view.h"
 #include "workspace.h"
 
 #include <unordered_set>
@@ -895,12 +896,32 @@ void GitPlugin::OnPush(wxCommandEvent& e)
     }
 
     wxStandardID res = ::PromptForYesNoDialogWithCheckbox(_("Push all local commits?"), "GitPromptBeforePush");
-    if (res == wxID_YES) {
-        gitAction ga(gitPush, /*remote + wxT(" ") + m_currentBranch*/ wxEmptyString);
-        m_gitActionQueue.push_back(ga);
-        m_mgr->ShowManagementWindow(GIT_TAB_NAME, true);
-        ProcessGitActionQueue();
+    if (res != wxID_YES) {
+        return;
     }
+
+    const wxString kGitTerminalTitle = _("Git");
+    auto terminal = clGetManager()->GetTerminalManager()->FindTerminalByTitle(kGitTerminalTitle, true);
+    if (!terminal) {
+        std::optional<SSHAccountInfo> account_info{std::nullopt};
+#if USE_SFTP
+        if (!m_remoteWorkspaceAccount.empty()) {
+            SSHAccountInfo::Load([&account_info, this](const SSHAccountInfo& account) {
+                if (account.GetAccountName() == m_remoteWorkspaceAccount) {
+                    account_info = account;
+                    return true;
+                }
+                return false;
+            });
+        }
+#endif
+        terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
+            m_repositoryDirectory, account_info, kGitTerminalTitle);
+    }
+
+    CHECK_PTR_RET(terminal);
+    clSYSTEM() << "Sending command: git push" << endl;
+    terminal->SendCommand("git push");
 }
 
 void GitPlugin::OnPull(wxCommandEvent& e)

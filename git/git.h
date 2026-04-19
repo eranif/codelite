@@ -56,6 +56,7 @@
 #include "cl_ssh.h"
 #endif
 
+class wxTerminalViewCtrl;
 class clTreeCtrl;
 class clCommandProcessor;
 class GitCommitDlg;
@@ -380,6 +381,10 @@ public:
                                                      const wxString& end_commit,
                                                      bool oneline = true,
                                                      size_t chunk_size = wxString::npos);
+
+    wxTerminalViewCtrl* GetOrCreateGitTerminal();
+
+    wxString PrependGitExec(const wxString& args);
 
     //--------------------------------------------
     // Abstract methods

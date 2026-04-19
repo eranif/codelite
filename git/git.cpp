@@ -567,6 +567,29 @@ void GitPlugin::UnPlug()
     m_remoteProcess.Unbind(wxEVT_CODELITE_REMOTE_FINDPATH_DONE, &GitPlugin::OnFindPath, this);
 }
 
+wxTerminalViewCtrl* GitPlugin::GetOrCreateGitTerminal()
+{
+    const wxString kGitTerminalTitle = _("Git");
+    auto terminal = clGetManager()->GetTerminalManager()->FindTerminalByTitle(kGitTerminalTitle, true);
+    if (!terminal) {
+        std::optional<SSHAccountInfo> account_info{std::nullopt};
+#if USE_SFTP
+        if (!m_remoteWorkspaceAccount.empty()) {
+            SSHAccountInfo::Load([&account_info, this](const SSHAccountInfo& account) {
+                if (account.GetAccountName() == m_remoteWorkspaceAccount) {
+                    account_info = account;
+                    return true;
+                }
+                return false;
+            });
+        }
+#endif
+        terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
+            m_repositoryDirectory, account_info, kGitTerminalTitle);
+    }
+    return terminal;
+}
+
 void GitPlugin::DoSetRepoPath(const wxString& repo_path)
 {
     m_repositoryDirectory.clear();
@@ -899,28 +922,9 @@ void GitPlugin::OnPush(wxCommandEvent& e)
     if (res != wxID_YES) {
         return;
     }
-
-    const wxString kGitTerminalTitle = _("Git");
-    auto terminal = clGetManager()->GetTerminalManager()->FindTerminalByTitle(kGitTerminalTitle, true);
-    if (!terminal) {
-        std::optional<SSHAccountInfo> account_info{std::nullopt};
-#if USE_SFTP
-        if (!m_remoteWorkspaceAccount.empty()) {
-            SSHAccountInfo::Load([&account_info, this](const SSHAccountInfo& account) {
-                if (account.GetAccountName() == m_remoteWorkspaceAccount) {
-                    account_info = account;
-                    return true;
-                }
-                return false;
-            });
-        }
-#endif
-        terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
-            m_repositoryDirectory, account_info, kGitTerminalTitle);
-    }
-
+    auto terminal = GetOrCreateGitTerminal();
     CHECK_PTR_RET(terminal);
-    terminal->SendCommand("git push");
+    terminal->SendCommand(PrependGitExec("push"));
 }
 
 void GitPlugin::OnPull(wxCommandEvent& e)
@@ -934,24 +938,26 @@ void GitPlugin::OnPull(wxCommandEvent& e)
 
     wxStandardID res =
         ::PromptForYesNoDialogWithCheckbox(_("Save all changes and pull remote changes?"), "GitPullRemoteChanges");
-    if (res == wxID_YES) {
-        m_mgr->SaveAll();
-        if (m_console->IsDirty()) {
-            gitAction ga(gitStash, wxT(""));
-            m_gitActionQueue.push_back(ga);
-        }
-        {
-            gitAction ga(gitPull, argumentString);
-            m_gitActionQueue.push_back(ga);
-        }
-        if (m_console->IsDirty()) {
-            gitAction ga(gitStashPop, wxT(""));
-            m_gitActionQueue.push_back(ga);
-        }
-        AddDefaultActions();
-        m_mgr->ShowManagementWindow(GIT_TAB_NAME, true);
-        ProcessGitActionQueue();
+    if (res != wxID_YES) {
+        return;
     }
+
+    m_mgr->SaveAll();
+    wxArrayString commands;
+
+    if (m_console->IsDirty()) {
+        commands.Add(PrependGitExec("stash"));
+    }
+
+    commands.Add(PrependGitExec(wxString::Format("pull %s", argumentString)));
+    if (m_console->IsDirty()) {
+        commands.Add(PrependGitExec("stash pop"));
+    }
+
+    wxString pull_command = StringUtils::Join(commands, " && ");
+    auto terminal = GetOrCreateGitTerminal();
+    CHECK_PTR_RET(terminal);
+    terminal->SendCommand(pull_command);
 }
 
 void GitPlugin::OnResetRepository(wxCommandEvent& e)
@@ -3176,4 +3182,12 @@ std::optional<wxString> GitPlugin::CheckForIndexLock() const
         }
     }
     return std::nullopt;
+}
+
+wxString GitPlugin::PrependGitExec(const wxString& args)
+{
+    if (m_isRemoteWorkspace) {
+        return "git " + args;
+    }
+    return wxString::Format("\"%s\" %s", m_pathGITExecutable, args);
 }

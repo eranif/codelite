@@ -131,11 +131,6 @@ public:
     bool IsFileCached(const wxString& fileName) const;
 
     /**
-     * @brief clear the file cached
-     */
-    void ClearCachedFile(const wxString& fileName);
-
-    /**
      * @brief load fileName into cache, note that this call will clear previous
      * cache
      */
@@ -157,13 +152,6 @@ public:
      * @param options options to use
      */
     void SetCtagsOptions(const TagsOptionsData& options);
-
-    /**
-     * Locate symbol by name in database
-     * @param name name to search
-     * @param tags [output] result vector
-     */
-    void FindSymbol(const wxString& name, std::vector<TagEntryPtr>& tags);
 
     /**
      * @brief parse source file (from memory) and return list of tags
@@ -237,12 +225,6 @@ public:
      * @param files [output] array of files
      */
     void GetFiles(const wxString& partialName, std::vector<FileEntryPtr>& files);
-    void GetFiles(const wxString& partialName, std::vector<wxFileName>& files);
-    /**
-     * @brief this function is for supporting CC inside an include statement
-     * line
-     */
-    void GetFilesForCC(const wxString& userTyped, wxArrayString& matches);
 
     /**
      * Return function that is close to current line number and matches
@@ -254,28 +236,10 @@ public:
     TagEntryPtr FunctionFromFileLine(const wxFileName& fileName, int lineno);
 
     /**
-     * @brief
-     * @param scope
-     * @param tags
-     */
-    virtual void GetSubscriptOperator(const wxString& scope, std::vector<TagEntryPtr>& tags);
-    /**
-     * @brief
-     * @param scope
-     * @param tags
-     */
-    virtual void GetDereferenceOperator(const wxString& scope, std::vector<TagEntryPtr>& tags);
-
-    /**
      * @brief return list of all classes.
      * @param tags [output] vector of tags for the classes
      */
     void GetClasses(std::vector<TagEntryPtr>& tags);
-
-    /**
-     * @brief return list of tags by their partial names
-     */
-    void GetTagsByPartialNames(const wxArrayString& partialNames, std::vector<TagEntryPtr>& tags);
 
     /**
      * @brief return true if type & scope do exist in the symbols database
@@ -298,13 +262,6 @@ public:
     wxString NormalizeFunctionSig(const wxString& sig,
                                   size_t flags = Normalize_Func_Name,
                                   std::vector<std::pair<int, int>>* paramLen = NULL);
-
-    /**
-     * @brief filter a recently tagged files from the strFiles array
-     * @param strFiles
-     * @param db
-     */
-    void FilterNonNeededFilesForRetaging(wxArrayString& strFiles, ITagsStoragePtr db);
 
     /**
      * @brief insert functionBody into clsname. This function will search for best location

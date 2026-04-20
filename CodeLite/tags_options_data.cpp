@@ -386,37 +386,6 @@ thread_local std::vector<wxString> DEFAULT_TOKENS = {
 #endif
 };
 
-thread_local std::vector<wxString> DEFAULT_TYPES = {
-    "std::unique_ptr::pointer=_Tp", // needed for unique_ptr
-                                    // {unordered}_map / map / {unordered}_multimap
-    "std::*map::*iterator=std::pair<_Key, _Tp>",
-    "std::*map::value_type=std::pair<_Key, _Tp>",
-    "std::*map::key_type=_Key",
-    "std::*map::mapped_type=_Tp",
-    // unordered_set / unordered_multiset
-    "std::unordered_*set::*iterator=_Value",
-    "std::unordered_*set::value_type=_Value",
-    // set / multiset
-    "std::set::*iterator=_Key",
-    "std::multiset::*iterator=_Key",
-    "std::set::value_type=_Key",
-    // vector
-    "std::vector::*reference=_Tp",
-    "std::vector::*iterator=_Tp",
-    // queue / priority_queue
-    "std::*que*::*reference=_Tp",
-    "std::*que*::*iterator=_Tp",
-    // stack
-    "std::stack::*reference=_Tp",
-    // list
-    "std::list::*reference=_Tp",
-    // shared_ptr
-    "std::shared_ptr::element_type=_Tp",
-};
-
-const std::vector<wxString>& TagsOptionsData::GetDefaultTokens() { return DEFAULT_TOKENS; }
-const std::vector<wxString>& TagsOptionsData::GetDefaultTypes() { return DEFAULT_TYPES; }
-
 TagsOptionsData::TagsOptionsData()
     : clConfigItem("code-completion")
     , m_ccFlags(CC_DISP_TYPE_INFO | CC_DISP_FUNC_CALLTIP)
@@ -453,61 +422,6 @@ void TagsOptionsData::AddDefaultTokens()
     }
 }
 
-wxString TagsOptionsData::ToString() const
-{
-    wxString options(wxEmptyString);
-
-    static wxString file_name;
-    wxString file_content;
-
-    if (file_name.IsEmpty()) {
-        char* ctagsReplacement = getenv("CTAGS_REPLACEMENTS");
-        if (ctagsReplacement) {
-            file_name = wxString(ctagsReplacement, wxConvUTF8).c_str();
-        }
-    }
-
-    const wxStringTable_t& tokensMap = GetTokensWxMap();
-    if (tokensMap.empty() == false) {
-        for (const auto& p : tokensMap) {
-            if (!p.second.IsEmpty() || (p.second.IsEmpty() && p.first.Find("%0") != wxNOT_FOUND)) {
-                // Key = Value pair. Place this one in the output file
-                file_content << p.first << "=" << p.second << "\n";
-            } else {
-
-                if (options.IsEmpty()) {
-                    options = " -I";
-                }
-
-                options << p.first;
-                options << ",";
-            }
-        }
-
-        if (options.IsEmpty() == false) {
-            options.RemoveLast();
-        }
-
-        options += " ";
-    }
-
-    // write the file content
-    if (file_name.IsEmpty() == false) {
-        wxFFile fp(file_name, "w+b");
-        if (fp.IsOpened()) {
-            fp.Write(file_content);
-            fp.Close();
-        }
-    }
-
-    //    if(GetLanguages().IsEmpty() == false) {
-    //        options += " --language-force=";
-    //        options += GetLanguages().Item(0);
-    //        options += " ";
-    //    }
-    return options;
-}
-
 std::map<std::string, std::string> TagsOptionsData::GetTokensMap() const
 {
     std::map<std::string, std::string> tokens;
@@ -531,13 +445,6 @@ std::map<std::string, std::string> TagsOptionsData::GetTokensMap() const
 }
 
 const wxStringTable_t& TagsOptionsData::GetTokensWxMap() const { return m_tokensWxMap; }
-
-void TagsOptionsData::SetTokens(const wxString& tokens)
-{
-    this->m_tokens = ::wxStringTokenize(tokens, "\r\n", wxTOKEN_STRTOK);
-    DoUpdateTokensWxMapReversed();
-    DoUpdateTokensWxMap();
-}
 
 void TagsOptionsData::DoUpdateTokensWxMap()
 {

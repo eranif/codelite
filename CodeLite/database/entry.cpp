@@ -200,24 +200,6 @@ wxString TagEntry::GetDisplayName() const
     return name;
 }
 
-wxString TagEntry::GetFullDisplayName() const
-{
-    wxString name;
-
-    if (GetParent() == "<global>") {
-        name << GetDisplayName();
-    } else {
-        name << GetParent() << "::" << GetName() << GetSignature();
-    }
-
-    return name;
-}
-
-bool TagEntry::IsClassTemplate() const
-{
-    return m_extFields.count("template") && !m_extFields.find("template")->second.empty();
-}
-
 //----------------------------------------------------------------------------
 // Database operations
 //----------------------------------------------------------------------------
@@ -230,8 +212,6 @@ wxString TagEntry::GetKind() const
     kind.Trim();
     return kind;
 }
-
-bool TagEntry::IsContainer() const { return IsClass() || IsStruct() || IsUnion() || IsNamespace() || IsEnumClass(); }
 
 void TagEntry::UpdatePath(wxString& path)
 {
@@ -357,30 +337,6 @@ void TagEntry::FromLine(const wxString& line)
     Create(fileName, name, lineNumber, pattern, kind, extFields);
 }
 
-bool TagEntry::IsConstructor() const
-{
-    if (GetKind() != "function" && GetKind() != "prototype") {
-        return false;
-    }
-    return GetName() == GetScope();
-}
-
-bool TagEntry::IsDestructor() const
-{
-    if (GetKind() != "function" && GetKind() != "prototype") {
-        return false;
-    }
-    return GetName().StartsWith("~");
-}
-
-wxString TagEntry::GetTemplateDefinition() const
-{
-    // template:<class T>
-    wxString definition = GetExtField("template");
-    definition.Trim().Trim(false);
-    return definition;
-}
-
 void TagEntry::SetTypename(const wxString& val) { m_extFields["typeref"] = "typename:" + val; }
 
 wxString TagEntry::GetTypename() const
@@ -390,24 +346,15 @@ wxString TagEntry::GetTypename() const
     return returnValue.AfterFirst(':');
 }
 
-bool TagEntry::IsKeyword() const { return m_tag_kind == eTagKind::TAG_KIND_KEYWORD; }
 bool TagEntry::IsEnum() const { return m_tag_kind == eTagKind::TAG_KIND_ENUM; }
 bool TagEntry::IsEnumerator() const { return m_tag_kind == eTagKind::TAG_KIND_ENUMERATOR; }
-bool TagEntry::IsParameter() const { return m_tag_kind == eTagKind::TAG_KIND_PARAMETER; }
 bool TagEntry::IsVariable() const { return m_tag_kind == eTagKind::TAG_KIND_VARIABLE; }
-bool TagEntry::IsEnumClass() const { return m_tag_kind == eTagKind::TAG_KIND_CENUM; }
 bool TagEntry::IsLocalVariable() const { return m_tag_kind == eTagKind::TAG_KIND_LOCAL; }
 bool TagEntry::IsMember() const { return m_tag_kind == eTagKind::TAG_KIND_MEMBER; }
-bool TagEntry::IsNamespace() const { return m_tag_kind == eTagKind::TAG_KIND_NAMESPACE; }
 bool TagEntry::IsFunction() const { return m_tag_kind == eTagKind::TAG_KIND_FUNCTION; }
 bool TagEntry::IsPrototype() const { return m_tag_kind == eTagKind::TAG_KIND_PROTOTYPE; }
-bool TagEntry::IsClass() const { return m_tag_kind == eTagKind::TAG_KIND_CLASS; }
 bool TagEntry::IsMacro() const { return m_tag_kind == eTagKind::TAG_KIND_MACRO; }
-bool TagEntry::IsStruct() const { return m_tag_kind == eTagKind::TAG_KIND_STRUCT; }
-bool TagEntry::IsUnion() const { return m_tag_kind == eTagKind::TAG_KIND_UNION; }
-bool TagEntry::IsTypedef() const { return m_tag_kind == eTagKind::TAG_KIND_TYPEDEF; }
 bool TagEntry::IsMethod() const { return IsPrototype() || IsFunction(); }
-bool TagEntry::IsScopeGlobal() const { return GetScope().IsEmpty() || GetScope() == "<global>"; }
 
 wxString TagEntry::GetInheritsAsString() const { return GetExtField(_T("inherits")); }
 
@@ -582,44 +529,10 @@ void TagEntry::SetTagProperties(const wxString& props)
     }
 }
 
-bool TagEntry::is_func_virtual() const { return m_tag_properties_flags & TAG_PROP_VIRTUAL; }
 bool TagEntry::is_func_default() const { return m_tag_properties_flags & TAG_PROP_DEFAULT; }
-bool TagEntry::is_func_override() const { return m_tag_properties_flags & TAG_PROP_OVERRIDE; }
 bool TagEntry::is_func_deleted() const { return m_tag_properties_flags & TAG_PROP_DELETED; }
-bool TagEntry::is_func_inline() const { return m_tag_properties_flags & TAG_PROP_INLINE; }
-bool TagEntry::is_func_pure() const { return m_tag_properties_flags & TAG_PROP_PURE; }
 bool TagEntry::is_scoped_enum() const { return m_tag_properties_flags & TAG_PROP_SCOPEDENUM; }
 bool TagEntry::is_const() const { return m_tag_properties_flags & TAG_PROP_CONST; }
-bool TagEntry::is_static() const { return m_tag_properties_flags & TAG_PROP_STATIC; }
-bool TagEntry::is_auto() const { return m_tag_properties_flags & TAG_PROP_AUTO_VARIABLE; }
-bool TagEntry::is_lambda() const { return m_tag_properties_flags & TAG_PROP_LAMBDA; }
-
-wxString TagEntry::GetFunctionDeclaration() const
-{
-    if (!IsMethod()) {
-        return wxEmptyString;
-    }
-    wxString decl;
-    if (is_func_inline()) {
-        decl << "inline ";
-    }
-    if (is_func_virtual()) {
-        decl << "virtual ";
-    }
-    decl << GetTypename() << " ";
-    if (!GetScope().empty()) {
-        decl << GetScope() << "::";
-    }
-    decl << GetName() << GetSignature();
-    if (is_const()) {
-        decl << " const";
-    }
-    if (is_func_pure()) {
-        decl << " = 0";
-    }
-    decl << ";";
-    return decl;
-}
 
 wxString TagEntry::GetFunctionDefinition() const
 {
@@ -783,8 +696,6 @@ bool TagEntry::IsAuto(const TagEntry* tag)
     read_until_find(tokenizer, token, T_AUTO, 0, &found, &consumed);
     return found == T_AUTO;
 }
-
-wxString TagEntry::GetMacrodef() const { return GetExtField("macrodef"); }
 
 void TagEntry::SetMacrodef(const wxString& value) { set_extra_field("macrodef", value); }
 

@@ -93,31 +93,6 @@ public:
     // -----------------------------------------------------------------
 
     /**
-     * @brief return list of tags based on scope and name
-     * @param scope the scope to search. If 'scope' is empty the scope is omitted from the search
-     * @param name
-     * @param partialNameAllowed
-     */
-    virtual void GetTagsByScopeAndName(const wxString& scope,
-                                       const wxString& name,
-                                       bool partialNameAllowed,
-                                       std::vector<TagEntryPtr>& tags) = 0;
-    virtual void GetTagsByScopeAndName(const wxArrayString& scope,
-                                       const wxString& name,
-                                       bool partialNameAllowed,
-                                       std::vector<TagEntryPtr>& tags) = 0;
-
-    /**
-     * @brief return list of tags by scope. If the cache is enabled, tags will be fetched from the
-     * cache instead of accessing the disk
-     * @param scope
-     * @param limit maximum items to fetch
-     * @param limitExceeded set to true if the
-     * @param tags
-     */
-    virtual void GetTagsByScope(const wxString& scope, std::vector<TagEntryPtr>& tags) = 0;
-
-    /**
      * @brief return array of tags by kind.
      * @param kinds array of kinds
      * @param orderingColumn the column that the output should be ordered by (leave empty for no sorting)
@@ -135,11 +110,6 @@ public:
      * @param tags
      */
     virtual void GetTagsByPath(const wxArrayString& path, std::vector<TagEntryPtr>& tags) = 0;
-    virtual void GetTagsByPath(const wxString& path, std::vector<TagEntryPtr>& tags, int limit = 1) = 0;
-    virtual void GetTagsByPathAndKind(const wxString& path,
-                                      std::vector<TagEntryPtr>& tags,
-                                      const std::vector<wxString>& kinds,
-                                      int limit = 1) = 0;
 
     /**
      * @brief return array of items by name and parent
@@ -159,25 +129,6 @@ public:
     GetTagsByKindAndPath(const wxArrayString& kinds, const wxString& path, std::vector<TagEntryPtr>& tags) = 0;
 
     /**
-     * @brief return tags by file and line number
-     * @param file
-     * @param line
-     * @param tags [output]
-     */
-    virtual void GetTagsByFileAndLine(const wxString& file, int line, std::vector<TagEntryPtr>& tags) = 0;
-
-    /**
-     * @brief return list by kind and scope while using a filter
-     * @param scope
-     * @param kinds
-     * @param tags [output]
-     */
-    virtual void GetTagsByScopeAndKind(const wxString& scope,
-                                       const wxArrayString& kinds,
-                                       const wxString& filter,
-                                       std::vector<TagEntryPtr>& tags) = 0;
-
-    /**
      * @brief get list of tags by kind and file
      * @param kind
      * @param orderingColumn the column that the output should be ordered by (leave empty for no sorting)
@@ -190,20 +141,6 @@ public:
                                       int order,
                                       std::vector<TagEntryPtr>& tags) = 0;
 
-    /**
-     * @brief
-     * @param scope
-     * @param tags
-     */
-    virtual void GetDereferenceOperator(const wxString& scope, std::vector<TagEntryPtr>& tags) = 0;
-
-    /**
-     * @brief
-     * @param scope
-     * @param tags
-     */
-    virtual void GetSubscriptOperator(const wxString& scope, std::vector<TagEntryPtr>& tags) = 0;
-
     // -------------------------- Files Table -------------------------------------------
 
     /**
@@ -212,21 +149,6 @@ public:
      * @return
      */
     virtual int DeleteFileEntry(const wxString& filename) = 0;
-
-    /**
-     * @brief insert entry by file name
-     * @param filename
-     * @return
-     */
-    virtual int InsertFileEntry(const wxString& filename, int timestamp) = 0;
-
-    /**
-     * @brief update file entry using file name as key
-     * @param filename
-     * @param timestamp new timestamp
-     * @return
-     */
-    virtual int UpdateFileEntry(const wxString& filename, int timestamp) = 0;
 
     // -------------------------- TagEntry -------------------------------------------
     /**
@@ -273,14 +195,6 @@ public:
     virtual TagEntryPtr GetScope(const wxString& filename, int line_number) = 0;
 
     /**
-     * Store tree of tags into db.
-     * @param tree Tags tree to store
-     * @param path Database file name
-     * @param autoCommit handle the Store operation inside a transaction or let the user handle it
-     */
-    virtual void Store(const std::vector<TagEntryPtr>& tags, bool auto_commit = true) = 0;
-
-    /**
      * return list of files from the database. The returned list is ordered
      * by name (ascending)
      * @param partialName part of the file name to act as a filter
@@ -293,12 +207,6 @@ public:
      * @param files vector of database record
      */
     virtual void GetFiles(std::vector<FileEntryPtr>& files) = 0;
-
-    /**
-     * @brief this function is for supporting CC inside an include statement
-     * line
-     */
-    virtual void GetFilesForCC(const wxString& userTyped, wxArrayString& matches) = 0;
 
     /**
      * @brief for transactional storage, provide begin/commit/rollback methods
@@ -343,44 +251,9 @@ public:
     virtual PPToken GetMacro(const wxString& name) = 0;
 
     /**
-     * @brief return list of tags for a given prefix
-     */
-    virtual void GetTagsByName(const wxString& prefix, std::vector<TagEntryPtr>& tags, bool exactMatch = false) = 0;
-
-    /**
-     * @brief return list of tags for a given partial name
-     */
-    virtual void GetTagsByPartName(const wxString& partname, std::vector<TagEntryPtr>& tags) = 0;
-
-    /**
-     * @brief same as above, but allow multiple name parts
-     */
-    virtual void GetTagsByPartName(const wxArrayString& parts, std::vector<TagEntryPtr>& tags) = 0;
-
-    /**
      * @brief search for a single match in the database for an entry with a given name
      */
     virtual TagEntryPtr GetTagsByNameLimitOne(const wxString& name) = 0;
-
-    /**
-     * @brief return list of tags only visible to `filepath`
-     * this usually includes static members, or any entity
-     * in an anonymous namespace
-     */
-    virtual size_t GetFileScopedTags(const wxString& filepath,
-                                     const wxString& name,
-                                     const wxArrayString& kinds,
-                                     std::vector<TagEntryPtr>& tags) = 0;
-
-    /**
-     * @brief load function parameters
-     */
-    virtual size_t GetParameters(const wxString& function_path, std::vector<TagEntryPtr>& tags) = 0;
-
-    /**
-     * @brief load all lambda functions for a given function
-     */
-    virtual size_t GetLambdas(const wxString& parent_function, std::vector<TagEntryPtr>& tags) = 0;
 };
 
 enum { TagOk = 0, TagExist, TagError };

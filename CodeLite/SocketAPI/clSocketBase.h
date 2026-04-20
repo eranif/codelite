@@ -109,11 +109,6 @@ public:
      */
     socket_t Release();
 
-    /**
-     * @brief initialize the socket library
-     */
-    static void Initialize();
-
     socket_t GetSocket() const { return m_socket; }
 
     /**

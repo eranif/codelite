@@ -219,14 +219,6 @@ public:
     wxString GetScopeName(const wxString& scope);
 
     /**
-     * return list of files from the database(s). The returned list is ordered
-     * by name (ascending)
-     * @param partialName part of the file name to act as a filter
-     * @param files [output] array of files
-     */
-    void GetFiles(const wxString& partialName, std::vector<FileEntryPtr>& files);
-
-    /**
      * Return function that is close to current line number and matches
      * file name
      * @param fileName file to search for

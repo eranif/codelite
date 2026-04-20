@@ -271,11 +271,6 @@ public:
     static void
     DrawButton(wxWindow* win, wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, eButtonState state);
 
-    /**
-     * @brief draw chevron button
-     */
-    static void DrawChevron(wxWindow* win, wxDC& dc, const wxRect& rect, const clTabColours& colours);
-
     static int GetXButtonSize();
     /**
      * @brief Adjust colours per renderer

@@ -299,11 +299,6 @@ public:
     wxString Key() const;
 
     /**
-     * @brief return the local variable type
-     */
-    wxString GetLocalType() const;
-
-    /**
      * Generate a display name for this tag to be used by the symbol tree
      * \return tag display name
      */
@@ -317,7 +312,6 @@ public:
     //------------------------------------------
     // Misc
     //------------------------------------------
-    void Print();
     TagEntryPtr ReplaceSimpleMacro();
 
 private:

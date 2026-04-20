@@ -27,12 +27,6 @@ public:
      */
     static wxString ToCygwin(const wxString& fullpath);
     static wxString ToCygwin(const wxFileName& fullpath);
-    /**
-     * @brief conversion to and from MSYS2
-     */
-    static wxString ToMSYS2(const wxString& fullpath);
-    static wxString ToMSYS2(const wxFileName& fullpath);
-    static wxString FromMSYS2(const wxString& fullpath);
 
     const wxString& GetAccount() const { return m_account; }
     void SetRemote(const wxString& account)

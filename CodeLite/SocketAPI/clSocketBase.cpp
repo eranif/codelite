@@ -48,14 +48,6 @@ clSocketBase::clSocketBase(socket_t sockfd)
 
 clSocketBase::~clSocketBase() { DestroySocket(); }
 
-void clSocketBase::Initialize()
-{
-#ifdef _WIN32
-    WSADATA wsa;
-    WSAStartup(MAKEWORD(2, 2), &wsa);
-#endif
-}
-
 // Read API
 int clSocketBase::Read(wxMemoryBuffer& content, long timeout)
 {

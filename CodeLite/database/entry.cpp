@@ -165,23 +165,6 @@ void TagEntry::Create(const wxString& fileName,
     }
 }
 
-void TagEntry::Print()
-{
-    std::cout << "======================================" << std::endl;
-    std::cout << "Name:\t\t" << GetName() << std::endl;
-    std::cout << "File:\t\t" << GetFile() << std::endl;
-    std::cout << "Line:\t\t" << GetLine() << std::endl;
-    std::cout << "Pattern\t\t" << GetPattern() << std::endl;
-    std::cout << "Kind:\t\t" << GetKind() << std::endl;
-    std::cout << "Parent:\t\t" << GetParent() << std::endl;
-
-    std::cout << " ---- Ext fields: ---- " << std::endl;
-    for (const auto& p : m_extFields) {
-        std::cout << p.first << ":\t\t" << p.second << std::endl;
-    }
-    std::cout << "======================================" << std::endl;
-}
-
 wxString TagEntry::Key() const
 {
     wxString key;
@@ -488,8 +471,6 @@ wxString TagEntry::GetPatternClean() const
     }
     return p;
 }
-
-wxString TagEntry::GetLocalType() const { return GetExtField("type"); }
 
 namespace
 {

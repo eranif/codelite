@@ -87,7 +87,7 @@ using WorkspaceConfigurationPtr = std::shared_ptr<WorkspaceConfiguration>;
 
 class WXDLLIMPEXP_SDK BuildMatrix
 {
-    std::list<WorkspaceConfigurationPtr> m_configurationList;
+    std::vector<WorkspaceConfigurationPtr> m_configurationList;
     wxString m_selectedConfiguration;
 
 protected:
@@ -98,7 +98,7 @@ public:
     BuildMatrix(wxXmlNode* node, const wxString& selectedConfiguration);
     virtual ~BuildMatrix() = default;
     wxXmlNode* ToXml() const;
-    const std::list<WorkspaceConfigurationPtr>& GetConfigurations() const { return m_configurationList; }
+    const std::vector<WorkspaceConfigurationPtr>& GetConfigurations() const { return m_configurationList; }
     void RemoveConfiguration(const wxString& configName);
     void SetConfiguration(WorkspaceConfigurationPtr conf);
     wxString GetProjectSelectedConf(const wxString& configName, const wxString& project) const;

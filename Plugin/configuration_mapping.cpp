@@ -31,10 +31,10 @@
 BuildMatrix::BuildMatrix(wxXmlNode* node, const wxString& selectedConfiguration)
     : m_selectedConfiguration(selectedConfiguration)
 {
-    if(node) {
+    if (node) {
         wxXmlNode* config = node->GetChildren();
-        while(config) {
-            if(config->GetName() == wxT("WorkspaceConfiguration")) {
+        while (config) {
+            if (config->GetName() == wxT("WorkspaceConfiguration")) {
                 m_configurationList.push_back(std::make_shared<WorkspaceConfiguration>(config));
             }
             config = config->GetNext();
@@ -46,7 +46,7 @@ BuildMatrix::BuildMatrix(wxXmlNode* node, const wxString& selectedConfiguration)
     }
 
     // verify the selected configuration
-    if(m_selectedConfiguration.IsEmpty() || !FindConfiguration(m_selectedConfiguration)) {
+    if (m_selectedConfiguration.IsEmpty() || !FindConfiguration(m_selectedConfiguration)) {
         SelectFirstConfiguration();
     }
 }
@@ -62,15 +62,15 @@ wxXmlNode* BuildMatrix::ToXml() const
 
 void BuildMatrix::RemoveConfiguration(const wxString& configName)
 {
-    std::list<WorkspaceConfigurationPtr>::iterator iter = m_configurationList.begin();
-    for(; iter != m_configurationList.end(); iter++) {
-        if((*iter)->GetName() == configName) {
+    auto iter = m_configurationList.begin();
+    for (; iter != m_configurationList.end(); iter++) {
+        if ((*iter)->GetName() == configName) {
             m_configurationList.erase(iter);
             break;
         }
     }
 
-    if(m_selectedConfiguration == configName) {
+    if (m_selectedConfiguration == configName) {
         // the deleted configuration was the selected one,
         // set the first one as selected
         SelectFirstConfiguration();
@@ -115,14 +115,14 @@ WorkspaceConfigurationPtr BuildMatrix::FindConfiguration(const wxString& name) c
 
 void BuildMatrix::SetSelectedConfigurationName(const wxString& name)
 {
-    if(FindConfiguration(name)) {
+    if (FindConfiguration(name)) {
         m_selectedConfiguration = name;
     }
 }
 
 void BuildMatrix::SelectFirstConfiguration()
 {
-    if(!m_configurationList.empty()) {
+    if (!m_configurationList.empty()) {
         m_selectedConfiguration = m_configurationList.front()->GetName();
     } else {
         // there are no available configurations...
@@ -145,15 +145,15 @@ WorkspaceConfiguration::WorkspaceConfiguration(const wxString& name)
 
 WorkspaceConfiguration::WorkspaceConfiguration(wxXmlNode* node)
 {
-    if(node) {
+    if (node) {
         m_name = XmlUtils::ReadString(node, wxT("Name"));
         wxXmlNode* child = node->GetChildren();
-        while(child) {
-            if(child->GetName() == wxT("Project")) {
+        while (child) {
+            if (child->GetName() == wxT("Project")) {
                 wxString projName = XmlUtils::ReadString(child, wxT("Name"));
                 wxString conf = XmlUtils::ReadString(child, wxT("ConfigName"));
                 m_mappingList.push_back(ConfigMappingEntry(projName, conf));
-            } else if(child->GetName() == "Environment") {
+            } else if (child->GetName() == "Environment") {
                 m_environmentVariables = child->GetNodeContent();
             }
             child = child->GetNext();

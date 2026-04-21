@@ -6,8 +6,8 @@
 #include "frame.h"
 #include "manager.h"
 
-clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxWindowID winid, const wxPoint& pos,
-                                                           const wxSize& size, long style)
+clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(
+    wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size, long style)
     : wxPanel(parent, winid, pos, size, style)
 {
     SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
@@ -20,10 +20,10 @@ clConfigurationSelectionCtrl::clConfigurationSelectionCtrl(wxWindow* parent, wxW
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clConfigurationSelectionCtrl::OnWorkspaceClosed, this);
     EventNotifier::Get()->Bind(wxEVT_PROJ_ADDED, &clConfigurationSelectionCtrl::OnProjectAdded, this);
     EventNotifier::Get()->Bind(wxEVT_PROJ_REMOVED, &clConfigurationSelectionCtrl::OnProjectRemoved, this);
-    wxTheApp->Bind(wxEVT_MENU, &clConfigurationSelectionCtrl::OnConfigurationManager, this,
-                   XRCID("configuration_manager"));
-    EventNotifier::Get()->Bind(wxEVT_ACTIVE_PROJECT_CHANGED, &clConfigurationSelectionCtrl::OnActiveProjectChanged,
-                               this);
+    wxTheApp->Bind(
+        wxEVT_MENU, &clConfigurationSelectionCtrl::OnConfigurationManager, this, XRCID("configuration_manager"));
+    EventNotifier::Get()->Bind(
+        wxEVT_ACTIVE_PROJECT_CHANGED, &clConfigurationSelectionCtrl::OnActiveProjectChanged, this);
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, [this](clCommandEvent& e) {
         e.Skip();
         SetBackgroundColour(clSystemSettings::GetDefaultPanelColour());
@@ -38,10 +38,10 @@ clConfigurationSelectionCtrl::~clConfigurationSelectionCtrl()
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &clConfigurationSelectionCtrl::OnWorkspaceClosed, this);
     EventNotifier::Get()->Unbind(wxEVT_PROJ_ADDED, &clConfigurationSelectionCtrl::OnProjectAdded, this);
     EventNotifier::Get()->Unbind(wxEVT_PROJ_REMOVED, &clConfigurationSelectionCtrl::OnProjectRemoved, this);
-    wxTheApp->Unbind(wxEVT_MENU, &clConfigurationSelectionCtrl::OnConfigurationManager, this,
-                     XRCID("configuration_manager"));
-    EventNotifier::Get()->Unbind(wxEVT_ACTIVE_PROJECT_CHANGED, &clConfigurationSelectionCtrl::OnActiveProjectChanged,
-                                 this);
+    wxTheApp->Unbind(
+        wxEVT_MENU, &clConfigurationSelectionCtrl::OnConfigurationManager, this, XRCID("configuration_manager"));
+    EventNotifier::Get()->Unbind(
+        wxEVT_ACTIVE_PROJECT_CHANGED, &clConfigurationSelectionCtrl::OnActiveProjectChanged, this);
 }
 
 void clConfigurationSelectionCtrl::Update(const wxArrayString& projects, const wxArrayString& configurations)
@@ -57,7 +57,7 @@ void clConfigurationSelectionCtrl::SetActiveConfiguration(const wxString& active
     m_activeConfiguration = activeConfiguration;
 
     int where = m_choice->FindString(m_activeConfiguration);
-    if(where != wxNOT_FOUND) {
+    if (where != wxNOT_FOUND) {
         m_choice->SetSelection(where);
     }
 }
@@ -65,11 +65,11 @@ void clConfigurationSelectionCtrl::SetActiveConfiguration(const wxString& active
 void clConfigurationSelectionCtrl::OnChoice(wxCommandEvent& event)
 {
     int where = event.GetSelection();
-    if(where == wxNOT_FOUND)
+    if (where == wxNOT_FOUND)
         return;
 
     wxString selectedString = m_choice->GetString(where);
-    if(selectedString != OPEN_CONFIG_MGR_STR) {
+    if (selectedString != OPEN_CONFIG_MGR_STR) {
 
         SetActiveConfiguration(selectedString);
         DoConfigChanged(selectedString);
@@ -90,7 +90,7 @@ void clConfigurationSelectionCtrl::SetConfigurations(const wxArrayString& config
     m_configurations.push_back(OPEN_CONFIG_MGR_STR);
     m_choice->Set(m_configurations);
     int where = m_choice->FindString(m_activeConfiguration);
-    if(where != wxNOT_FOUND) {
+    if (where != wxNOT_FOUND) {
         m_choice->SetSelection(where);
     }
 }
@@ -98,7 +98,7 @@ void clConfigurationSelectionCtrl::SetConfigurations(const wxArrayString& config
 void clConfigurationSelectionCtrl::OnWorkspaceLoaded(clWorkspaceEvent& event)
 {
     event.Skip();
-    if(ManagerST::Get()->IsWorkspaceOpen()) {
+    if (ManagerST::Get()->IsWorkspaceOpen()) {
         Enable(true);
         DoWorkspaceConfig();
     }
@@ -110,15 +110,9 @@ void clConfigurationSelectionCtrl::OnWorkspaceClosed(clWorkspaceEvent& event)
     Enable(false);
 }
 
-void clConfigurationSelectionCtrl::OnProjectAdded(clCommandEvent& event)
-{
-    event.Skip();
-}
+void clConfigurationSelectionCtrl::OnProjectAdded(clCommandEvent& event) { event.Skip(); }
 
-void clConfigurationSelectionCtrl::OnProjectRemoved(clCommandEvent& event)
-{
-    event.Skip();
-}
+void clConfigurationSelectionCtrl::OnProjectRemoved(clCommandEvent& event) { event.Skip(); }
 
 void clConfigurationSelectionCtrl::DoWorkspaceConfig()
 {
@@ -126,12 +120,12 @@ void clConfigurationSelectionCtrl::DoWorkspaceConfig()
     BuildMatrixPtr matrix = clCxxWorkspaceST::Get()->GetBuildMatrix();
     auto confs = matrix->GetConfigurations();
 
-    confs.sort([](WorkspaceConfigurationPtr one, WorkspaceConfigurationPtr two) {
+    std::sort(confs.begin(), confs.end(), [](WorkspaceConfigurationPtr one, WorkspaceConfigurationPtr two) {
         return one->GetName().CmpNoCase(two->GetName()) < 0;
     });
 
     wxArrayString configurations;
-    for (const auto& conf : confs) {
+    for (auto conf : confs) {
         configurations.push_back(conf->GetName());
     }
 
@@ -167,7 +161,7 @@ void clConfigurationSelectionCtrl::DoConfigChanged(const wxString& newConfigName
 
     // Set the focus to the active editor if any
     clEditor* editor = clMainFrame::Get()->GetMainBook()->GetActiveEditor();
-    if(editor) {
+    if (editor) {
         editor->SetActive();
     }
 

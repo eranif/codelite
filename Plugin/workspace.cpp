@@ -201,9 +201,11 @@ void clCxxWorkspace::AddProjectToBuildMatrix(ProjectPtr prj)
     }
 
     BuildMatrixPtr matrix = GetBuildMatrix();
+    CHECK_PTR_RET(matrix);
+
     wxString selConfName = matrix->GetSelectedConfigurationName();
 
-    for (const auto& workspaceConfig : matrix->GetConfigurations()) {
+    for (auto workspaceConfig : matrix->GetConfigurations()) {
         WorkspaceConfiguration::ConfigMappingList prjList = workspaceConfig->GetMapping();
         wxString wspCnfName = workspaceConfig->GetName();
 
@@ -257,8 +259,8 @@ void clCxxWorkspace::RemoveProjectFromBuildMatrix(ProjectPtr prj)
     BuildMatrixPtr matrix = GetBuildMatrix();
     wxString selConfName = matrix->GetSelectedConfigurationName();
 
-    std::list<WorkspaceConfigurationPtr> wspList = matrix->GetConfigurations();
-    for (const auto& workspaceConfig : wspList) {
+    const auto& wspList = matrix->GetConfigurations();
+    for (auto workspaceConfig : wspList) {
         WorkspaceConfiguration::ConfigMappingList prjList = workspaceConfig->GetMapping();
 
         WorkspaceConfiguration::ConfigMappingList::iterator it = prjList.begin();

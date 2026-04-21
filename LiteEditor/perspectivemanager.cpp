@@ -25,6 +25,7 @@
 
 #include "perspectivemanager.h"
 
+#include "SideBar.hpp"
 #include "clStrings.h"
 #include "debuggerpane.h"
 #include "dockablepanemenumanager.h"
@@ -133,51 +134,12 @@ void PerspectiveManager::SavePerspectiveIfNotExists(const wxString& name)
     }
 }
 
-void PerspectiveManager::DoEnsureDebuggerPanesAreVisible()
-{
-    bool needUpdate = false;
-    // First time, make sure that the debugger pane is visible
-    wxAuiPaneInfo& info = clMainFrame::Get()->GetDockingManager().GetPane(PANE_DEBUGGER);
-    if (info.IsOk() && !info.IsShown()) {
-        info.Show();
-        needUpdate = true;
-    }
-
-    // read the debugger pane configuration and make sure that all the windows
-    // are visible according to the configuration
-    clConfig conf("debugger-view.conf");
-    DebuggerPaneConfig item;
-    conf.ReadItem(item);
-
-    DoShowPane(item.WindowName(DebuggerPaneConfig::AsciiViewer), (item.GetWindows() & DebuggerPaneConfig::AsciiViewer),
-               needUpdate);
-    DoShowPane(item.WindowName(DebuggerPaneConfig::Threads), (item.GetWindows() & DebuggerPaneConfig::Threads),
-               needUpdate);
-    DoShowPane(item.WindowName(DebuggerPaneConfig::Callstack), (item.GetWindows() & DebuggerPaneConfig::Callstack),
-               needUpdate);
-    DoShowPane(item.WindowName(DebuggerPaneConfig::Breakpoints), (item.GetWindows() & DebuggerPaneConfig::Breakpoints),
-               needUpdate);
-    DoShowPane(item.WindowName(DebuggerPaneConfig::Watches), (item.GetWindows() & DebuggerPaneConfig::Watches),
-               needUpdate);
-    DoShowPane(item.WindowName(DebuggerPaneConfig::Locals), (item.GetWindows() & DebuggerPaneConfig::Locals),
-               needUpdate);
-    DoShowPane(item.WindowName(DebuggerPaneConfig::Output), (item.GetWindows() & DebuggerPaneConfig::Output),
-               needUpdate);
-    DoShowPane(item.WindowName(DebuggerPaneConfig::Memory), (item.GetWindows() & DebuggerPaneConfig::Memory),
-               needUpdate);
-    DoShowPane(item.WindowName(DebuggerPaneConfig::Disassemble), (item.GetWindows() & DebuggerPaneConfig::Disassemble),
-               needUpdate);
-
-    if (needUpdate) {
-        clMainFrame::Get()->GetDockingManager().Update();
-    }
-}
+void PerspectiveManager::DoEnsureDebuggerPanesAreVisible() { ShowPane(PANE_DEBUGGER, true); }
 
 void PerspectiveManager::OnPaneClosing(wxAuiManagerEvent& event)
 {
     event.Skip();
-    if (!m_aui)
-        return;
+    CHECK_COND_RET(m_aui);
 
     wxAuiPaneInfo& pane_info = m_aui->GetPane(PANE_OUTPUT);
     if (pane_info.IsOk() && pane_info.IsShown()) {
@@ -190,10 +152,11 @@ void PerspectiveManager::OnPaneClosing(wxAuiManagerEvent& event)
 void PerspectiveManager::ConnectEvents(wxAuiManager* mgr)
 {
     m_aui = mgr;
-    if (m_aui) {
-        mgr->Bind(wxEVT_AUI_PANE_BUTTON, &PerspectiveManager::OnPaneClosing, this);
-        mgr->Bind(wxEVT_AUI_RENDER, &PerspectiveManager::OnAuiRender, this);
-    }
+    CHECK_PTR_RET(mgr);
+    CHECK_PTR_RET(mgr->GetFrame());
+
+    mgr->GetFrame()->Bind(wxEVT_AUI_PANE_BUTTON, &PerspectiveManager::OnPaneClosing, this);
+    mgr->GetFrame()->Bind(wxEVT_AUI_RENDER, &PerspectiveManager::OnAuiRender, this);
 }
 
 void PerspectiveManager::ShowOutputPane(const wxString& tab, bool show, bool take_focus)
@@ -202,13 +165,21 @@ void PerspectiveManager::ShowOutputPane(const wxString& tab, bool show, bool tak
         return;
     }
 
-    if (tab.empty() || !show) {
+    if (!show) {
+        // Make sure we set a focus to something
+        auto editor = clGetManager()->GetActiveEditor();
+        CHECK_PTR_RET(editor);
+        editor->GetCtrl()->CallAfter(&wxWindow::SetFocus);
+        return;
+    }
+
+    // show == true
+    if (tab.empty()) {
         return;
     }
 
     auto pane = clMainFrame::Get()->GetOutputPane();
     auto notebook = pane->GetNotebook();
-    // select the requested tab (or unhide it)
 
     int index = wxNOT_FOUND;
     for (size_t i = 0; i < notebook->GetPageCount(); ++i) {
@@ -219,63 +190,90 @@ void PerspectiveManager::ShowOutputPane(const wxString& tab, bool show, bool tak
     }
 
     if (index == wxNOT_FOUND) {
-        // possibly that tab is hidden, unhide it
-        pane->ShowTab(tab, true);
-        for (size_t i = 0; i < notebook->GetPageCount(); ++i) {
-            if (notebook->GetPageText(i) == tab) {
-                index = i;
-                break;
-            }
+        return;
+    }
+    wxWindow* old_focus = wxWindow::FindFocus();
+    notebook->ChangeSelection(index);
+    // set the focus to the selected tab
+    if (take_focus) {
+        ::SetBestFocus(notebook->GetPage(index));
+    } else {
+        // On GTK port, wxNotbook::ChangeSelection steals the focus
+        // whether we want it or not
+        if (old_focus) {
+            old_focus->CallAfter(&wxWindow::SetFocus);
+        }
+    }
+}
+
+void PerspectiveManager::ShowSideBar(bool left_sidebar, const wxString& tab, bool show, bool take_focus)
+{
+    const wxString pane_name = left_sidebar ? PANE_LEFT_SIDEBAR : PANE_RIGHT_SIDEBAR;
+    if (!ShowPane(pane_name, show)) {
+        return;
+    }
+
+    if (!show) {
+        // Make sure we set a focus to something
+        auto editor = clGetManager()->GetActiveEditor();
+        CHECK_PTR_RET(editor);
+        editor->GetCtrl()->CallAfter(&wxWindow::SetFocus);
+        return;
+    }
+
+    // show == true
+    if (tab.empty()) {
+        return;
+    }
+
+    clSideBarCtrl* book{nullptr};
+    if (left_sidebar) {
+        book = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
+    } else {
+        book = clMainFrame::Get()->GetSecondarySideBar()->GetNotebook();
+    }
+
+    int index = wxNOT_FOUND;
+    for (size_t i = 0; i < book->GetPageCount(); ++i) {
+        if (book->GetPageText(i) == tab) {
+            index = i;
+            break;
         }
     }
 
-    if (index != wxNOT_FOUND) {
-        wxWindow* old_focus = wxWindow::FindFocus();
-        notebook->ChangeSelection(index);
-        // set the focus to the selected tab
-        if (take_focus) {
-            ::SetBestFocus(notebook->GetPage(index));
-        } else {
-            // On GTK port, wxNotbook::ChangeSelection steals the focus
-            // whether we want it or not
-            if (old_focus) {
-                old_focus->CallAfter(&wxWindow::SetFocus);
-            }
+    if (index == wxNOT_FOUND) {
+        return;
+    }
+
+    wxWindow* old_focus = wxWindow::FindFocus();
+    book->ChangeSelection(index);
+    // set the focus to the selected tab
+    if (take_focus) {
+        ::SetBestFocus(book->GetPage(index));
+    } else {
+        // On GTK port, wxNotbook::ChangeSelection steals the focus
+        // whether we want it or not
+        if (old_focus) {
+            old_focus->CallAfter(&wxWindow::SetFocus);
         }
     }
 }
 
 void PerspectiveManager::DisconnectEvents()
 {
-    if (m_aui) {
-        m_aui->Disconnect(wxEVT_AUI_PANE_BUTTON, wxAuiManagerEventHandler(PerspectiveManager::OnPaneClosing), NULL,
-                          this);
+    if (m_aui && m_aui->GetFrame()) {
+        m_aui->GetFrame()->Unbind(wxEVT_AUI_PANE_BUTTON, &PerspectiveManager::OnPaneClosing, this);
+        m_aui->GetFrame()->Unbind(wxEVT_AUI_RENDER, &PerspectiveManager::OnAuiRender, this);
     }
     m_aui = NULL;
-}
-
-void PerspectiveManager::DoShowPane(const wxString& panename, bool show, bool& needUpdate)
-{
-    wxAuiManager* aui = &clMainFrame::Get()->GetDockingManager();
-    wxAuiPaneInfo& pane_info = aui->GetPane(panename);
-    if (pane_info.IsOk()) {
-        if (show && !pane_info.IsShown()) {
-            pane_info.Show();
-            needUpdate = true;
-
-        } else if (!show && pane_info.IsShown()) {
-            pane_info.Show(false);
-            needUpdate = true;
-        }
-    }
 }
 
 void PerspectiveManager::OnAuiRender(wxAuiManagerEvent& event)
 {
     event.Skip();
-    CHECK_PTR_RET(m_aui);
-    CHECK_COND_RET(!GetActive().IsEmpty());
-    SavePerspective(GetActive(), false);
+    //    CHECK_PTR_RET(m_aui);
+    //    wxString name = GetActive().empty() ? NORMAL_LAYOUT : GetActive();
+    //    SavePerspective(GetActive(), false);
 }
 
 bool PerspectiveManager::GetPerspective(const wxString& name, wxString* perspective) const
@@ -301,39 +299,63 @@ bool PerspectiveManager::GetPerspective(const wxString& name, wxString* perspect
 
 void PerspectiveManager::SetPerspectiveToCache(const wxString& name, const wxString& content)
 {
-    if (m_perspectives.count(name)) {
-        m_perspectives.erase(name);
-    }
-    m_perspectives.insert({ name, content });
+    m_perspectives.insert_or_assign(name, content);
 }
 
 void PerspectiveManager::FlushCacheToDisk()
 {
-    for (const auto& vt : m_perspectives) {
-        const wxString& name = vt.first;
-        const wxString& value = vt.second;
-
+    for (const auto& [name, value] : m_perspectives) {
         wxString path = DoGetPathFromName(name);
         FileUtils::WriteFileContent(path, value);
         clDEBUG() << "Saving perspective:" << name << "to file:" << path << endl;
     }
 }
 
+void PerspectiveManager::DoShowPane(wxAuiPaneInfo& pane_info)
+{
+    if (pane_info.IsOk() && m_aui && pane_info.best_size != wxDefaultSize) {
+        pane_info.MinSize(pane_info.best_size); // saved while hiding
+        pane_info.Show();
+        m_aui->Update();
+        pane_info.MinSize(10, 5); // so it can't disappear if undocked
+        m_aui->Update();
+    }
+}
+
+void PerspectiveManager::DoHidePane(wxAuiPaneInfo& pane_info)
+{
+    if (pane_info.IsOk() && m_aui) {
+        int width = 0;
+        int height = 0;
+        pane_info.window->GetSize(&width, &height);
+        pane_info.BestSize(width, height); // save for later subsequent show
+        pane_info.Hide();
+        m_aui->Update();
+    }
+}
+
+bool PerspectiveManager::ShowPane(wxAuiPaneInfo& pane, bool show)
+{
+    if (!show) {
+        DoHidePane(pane);
+    } else {
+        DoShowPane(pane);
+    }
+    return true;
+}
+
 bool PerspectiveManager::ShowPane(const wxString& pane, bool show)
 {
-    if (!m_aui)
-        return false;
+    CHECK_PTR_RET_FALSE(m_aui);
 
-    wxAuiPaneInfo& info = m_aui->GetPane(pane);
-    if (!info.IsOk()) {
-        return false;
-    }
+    wxAuiPaneInfo& aui_pane_info = m_aui->GetPane(pane);
+    CHECK_COND_RET_FALSE(aui_pane_info.IsOk());
+    return ShowPane(aui_pane_info, show);
+}
 
-    if (show) {
-        DockablePaneMenuManager::HackShowPane(info, m_aui);
-    } else {
-        DockablePaneMenuManager::HackHidePane(true, info, m_aui);
-    }
-    clMainFrame::Get()->SendSizeEvent(wxSEND_EVENT_POST);
-    return true;
+bool PerspectiveManager::IsPaneVisible(const wxString& name) const
+{
+    CHECK_PTR_RET_FALSE(m_aui);
+    wxAuiPaneInfo& aui_pane_info = m_aui->GetPane(name);
+    return aui_pane_info.IsOk() && aui_pane_info.IsShown();
 }

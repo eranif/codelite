@@ -1038,7 +1038,7 @@ void GitPlugin::DoGitBlame(const wxString& args) // Called by OnGitBlame or the 
 void GitPlugin::OnRefresh(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    DoRefreshView(true);
+    DoRefreshView(false);
 }
 
 void GitPlugin::OnGarbageColletion(wxCommandEvent& e)
@@ -2770,15 +2770,12 @@ void GitPlugin::DisplayMessage(const wxString& message) const
 
 void GitPlugin::DoRefreshView(bool ensureVisible)
 {
+    wxUnusedVar(ensureVisible);
     CHECK_ENABLED_RETURN();
 
     gitAction ga(gitListAll, wxT(""));
     m_gitActionQueue.push_back(ga);
     AddDefaultActions();
-    if (ensureVisible) {
-        m_mgr->ShowPane(PANE_LEFT_SIDEBAR, true);
-        m_mgr->ShowManagementWindow("Git", true);
-    }
     ProcessGitActionQueue();
 }
 
@@ -3061,7 +3058,7 @@ void GitPlugin::OnSideBarPageChanged(clCommandEvent& event)
 {
     event.Skip();
     if (event.GetString() == "Git") {
-        DoRefreshView(true);
+        DoRefreshView(false);
     }
 }
 

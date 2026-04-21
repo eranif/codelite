@@ -4687,21 +4687,7 @@ void clMainFrame::OnIncrementalReplace(wxCommandEvent& event)
 void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    if (ManagerST::Get()->IsOutputPaneVisible() && clGetManager()->GetTerminalManager()->GetActiveTerminal() &&
-        !clGetManager()->GetTerminalManager()->GetActiveTerminal()->HasFocus()) {
-        // Just set the focus to the active terminal
-        clGetManager()->GetTerminalManager()->GetActiveTerminal()->SetFocus();
-        return;
-    }
     clGetManager()->ToggleOutputPane(_("Terminal"));
-
-    if (!ManagerST::Get()->IsOutputPaneVisible()) {
-        // we just hide it - set the focus to the active editor
-        auto editor = clGetManager()->GetActiveEditor();
-        if (editor) {
-            editor->GetCtrl()->CallAfter(&wxWindow::SetFocus);
-        }
-    }
 }
 
 void clMainFrame::OnShowFullScreen(wxCommandEvent& e)

@@ -1454,38 +1454,22 @@ void Manager::ShowDebuggerPane(bool show)
 
 void Manager::ShowWorkspacePane(wxString focusWin, bool commit)
 {
-    // make the output pane visible
-    auto& aui = clMainFrame::Get()->GetDockingManager();
-    wxAuiPaneInfo& info = aui.GetPane(PANE_LEFT_SIDEBAR);
-    if (info.IsOk() && !info.IsShown()) {
-        DockablePaneMenuManager::HackShowPane(info, &aui);
+    auto& mgr = GetPerspectiveManager();
+    if (!mgr.IsPaneVisible(PANE_LEFT_SIDEBAR)) {
+        mgr.ShowSideBar(true, focusWin, true, true);
+        return;
     }
-
-    // set the selection to focus win
-    auto book = clMainFrame::Get()->GetWorkspacePane()->GetNotebook();
-    int index = book->GetPageIndex(focusWin);
-    if (index != wxNOT_FOUND && index != book->GetSelection()) {
-        book->SetSelection((size_t)index);
-    } else if (index == wxNOT_FOUND) {
-        clMainFrame::Get()->GetWorkspacePane()->ShowTab(focusWin, true);
-    }
+    mgr.ShowSideBar(true, focusWin, false, false);
 }
 
 void Manager::ShowSecondarySideBarPane(wxString focusWin, bool commit)
 {
-    // make the output pane visible
-    auto& aui = clMainFrame::Get()->GetDockingManager();
-    wxAuiPaneInfo& info = aui.GetPane(PANE_RIGHT_SIDEBAR);
-    if (info.IsOk() && !info.IsShown()) {
-        DockablePaneMenuManager::HackShowPane(info, &aui);
+    auto& mgr = GetPerspectiveManager();
+    if (!mgr.IsPaneVisible(PANE_RIGHT_SIDEBAR)) {
+        mgr.ShowSideBar(false, focusWin, true, true);
+        return;
     }
-
-    // set the selection to focus win
-    auto book = clMainFrame::Get()->GetSecondarySideBar()->GetNotebook();
-    int index = book->GetPageIndex(focusWin);
-    if (index != wxNOT_FOUND && index != book->GetSelection()) {
-        book->SetSelection((size_t)index);
-    }
+    mgr.ShowSideBar(false, focusWin, false, false);
 }
 
 void Manager::HidePane(const wxString& paneName, bool commit)

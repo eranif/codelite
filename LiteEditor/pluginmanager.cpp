@@ -790,32 +790,27 @@ void PluginManager::ShowOutputPane(const wxString& selectedWindow)
 
 void PluginManager::ShowManagementWindow(const wxString& selectedWindow, bool show)
 {
-    // locate the window
-    wxWindow* page = BookGetPage(PaneId::SIDE_BAR, selectedWindow);
-    if (page) {
-        if (show) {
-            ManagerST::Get()->ShowWorkspacePane(selectedWindow, true);
-        } else {
-            ManagerST::Get()->HidePane(SIDEBAR);
-        }
+    std::optional<bool> is_left{std::nullopt};
+    bool page_found{false};
+    if ([[maybe_unused]] auto page = BookGetPage(PaneId::SIDE_BAR, selectedWindow)) {
+        is_left = true;
+        page_found = true;
+    } else if ([[maybe_unused]] auto page = BookGetPage(PaneId::SECONDARY_SIDE_BAR, selectedWindow)) {
+        is_left = false;
+        page_found = true;
+    } else if ([[maybe_unused]] auto page = BookGetPage(PaneId::BOTTOM_BAR, selectedWindow)) {
+        page_found = true;
+    }
+
+    if (!page_found) {
+        return;
+    }
+
+    auto& mgr = ManagerST::Get()->GetPerspectiveManager();
+    if (is_left.has_value()) {
+        mgr.ShowSideBar(is_left.value(), selectedWindow, show, true);
     } else {
-        page = BookGetPage(PaneId::BOTTOM_BAR, selectedWindow);
-        if (page) {
-            if (show) {
-                ShowOutputPane(selectedWindow);
-            } else {
-                ManagerST::Get()->HidePane(BOTTOM_BAR);
-            }
-        } else {
-            page = BookGetPage(PaneId::SECONDARY_SIDE_BAR, selectedWindow);
-            if (page) {
-                if (show) {
-                    ManagerST::Get()->ShowSecondarySideBarPane(selectedWindow);
-                } else {
-                    ManagerST::Get()->HidePane(SECONDARY_SIDEBAR);
-                }
-            }
-        }
+        mgr.ShowOutputPane(selectedWindow, show, true);
     }
 }
 
@@ -835,10 +830,11 @@ clStatusBar* PluginManager::GetStatusBar()
 
 void PluginManager::ToggleSidebarPane(const wxString& selectedWindow)
 {
-    if (ManagerST::Get()->IsPaneVisible(SIDEBAR)) {
-        ManagerST::Get()->HidePane(SIDEBAR);
+    auto& mgr = ManagerST::Get()->GetPerspectiveManager();
+    if (mgr.IsPaneVisible(PANE_LEFT_SIDEBAR)) {
+        mgr.ShowSideBar(true, selectedWindow, false, false);
     } else {
-        ManagerST::Get()->ShowWorkspacePane(selectedWindow, true);
+        mgr.ShowSideBar(true, selectedWindow, true, true);
     }
 }
 
@@ -894,39 +890,21 @@ bool PluginManager::IsPaneShown(const wxString& pane_name, const wxString& tab)
 
 void PluginManager::ToggleSecondarySidebarPane(const wxString& selectedWindow)
 {
-    if (ManagerST::Get()->IsPaneVisible(PANE_RIGHT_SIDEBAR)) {
-        ManagerST::Get()->HidePane(PANE_RIGHT_SIDEBAR);
+    auto& mgr = ManagerST::Get()->GetPerspectiveManager();
+    if (mgr.IsPaneVisible(PANE_RIGHT_SIDEBAR)) {
+        mgr.ShowSideBar(false, selectedWindow, false, false);
     } else {
-        ManagerST::Get()->ShowWorkspacePane(selectedWindow, true);
+        mgr.ShowSideBar(false, selectedWindow, true, true);
     }
 }
 
 void PluginManager::ToggleOutputPane(const wxString& selectedWindow)
 {
-    if (ManagerST::Get()->IsPaneVisible(PANE_OUTPUT)) {
-        if (!selectedWindow.IsEmpty()) {
-            wxString selectedTabName;
-            Notebook* book = clMainFrame::Get()->GetOutputPane()->GetNotebook();
-            int where = book->GetSelection();
-            if (where != wxNOT_FOUND) {
-                selectedTabName = book->GetPageText(where);
-            }
-            if (selectedTabName == selectedWindow) {
-                // The requested tab is already selected, just hide the pane
-                ManagerST::Get()->HidePane(PANE_OUTPUT);
-            } else {
-                // The output pane is visible, but the selected tab is not the one we wanted
-                // Select it
-                ManagerST::Get()->ShowOutputPane(selectedWindow, true, true);
-            }
-        } else {
-            // The output pane is visible and the selected tab is the one we requested
-            // So just hide it
-            ManagerST::Get()->HidePane(PANE_OUTPUT);
-        }
+    auto& mgr = ManagerST::Get()->GetPerspectiveManager();
+    if (mgr.IsPaneVisible(PANE_OUTPUT)) {
+        mgr.ShowOutputPane(selectedWindow, false, false);
     } else {
-        // The output pane is hidden, show it and select the requested tab
-        ManagerST::Get()->ShowOutputPane(selectedWindow, true, true);
+        mgr.ShowOutputPane(selectedWindow, true, true);
     }
 }
 

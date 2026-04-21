@@ -8,14 +8,8 @@ public:
     struct ImportFileData {
         wxFileName wxcpFilename;
         wxString virtualFolder;
-        bool addToProject;
-        bool loadWhenDone;
-
-        ImportFileData()
-            : addToProject(false)
-            , loadWhenDone(false)
-        {
-        }
+        bool addToProject = false;
+        bool loadWhenDone = false;
     };
 
 public:

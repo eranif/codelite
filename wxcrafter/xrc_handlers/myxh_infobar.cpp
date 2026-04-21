@@ -1,6 +1,7 @@
 #include "myxh_infobar.h"
 
 #include <wx/infobar.h>
+#include <wx/xrc/xmlres.h>
 
 MyWxInfoBarCtrlHandler::MyWxInfoBarCtrlHandler()
     : wxXmlResourceHandler()

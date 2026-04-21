@@ -1,12 +1,11 @@
 #include "myxh_propgrid.h"
 
 #include <wx/datetime.h>
-#include <wx/log.h>
 #include <wx/propgrid/advprops.h>
 #include <wx/propgrid/manager.h>
 #include <wx/propgrid/propgrid.h>
-#include <wx/sizer.h>
 #include <wx/xml/xml.h>
+#include <wx/xrc/xmlres.h>
 
 MyWxPropGridXmlHandler::MyWxPropGridXmlHandler()
     : wxXmlResourceHandler()

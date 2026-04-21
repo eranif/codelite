@@ -1,11 +1,9 @@
 #include "myxh_treelist.h"
 
-#include "designer_panel.h"
 #include "wxgui_helpers.h"
-#include "wxguicraft_main_view.h"
 
-#include <wx/imaglist.h>
 #include <wx/treelist.h>
+#include <wx/xrc/xmlres.h>
 
 MyTreeListCtrl::MyTreeListCtrl()
     : wxXmlResourceHandler()

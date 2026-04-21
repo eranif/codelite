@@ -72,7 +72,6 @@ protected:
     void OnBuildStarting(wxCommandEvent& e);
     void OnAllEditorsClosing(wxCommandEvent& e);
     void OnAllEditorsClosed(wxCommandEvent& e);
-    void OnDebugStarting(clDebugEvent& e);
     void OnSave(wxCommandEvent& e);
     void OnSaveAll(clCommandEvent& e);
     void OnSaveProject(wxCommandEvent& e);

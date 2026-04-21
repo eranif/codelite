@@ -3,10 +3,9 @@
 
 #include "JSON.h"
 
-#include <wx/aui/framemanager.h>
 #include <wx/propgrid/propgrid.h>
+#include <wx/string.h>
 
-class wxPropertyGrid;
 class AuiPaneInfo
 {
     wxString m_name;

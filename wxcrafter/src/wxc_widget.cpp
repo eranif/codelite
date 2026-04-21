@@ -2255,17 +2255,6 @@ PropertyBase* wxcWidget::GetProperty(const wxString& name)
 
 void wxcWidget::DelProperty(const wxString& name) { m_properties.Remove(name); }
 
-size_t wxcWidget::SizerFlagsAsInteger() const
-{
-    size_t flags = 0;
-    for (const auto& [_, styleInfo] : m_sizerFlags) {
-        if (styleInfo.is_set) {
-            flags |= styleInfo.style_bit;
-        }
-    }
-    return flags;
-}
-
 void wxcWidget::SetStyles(size_t value)
 {
     for (const auto& [_, styleInfo] : m_styles) {
@@ -2310,17 +2299,6 @@ void wxcWidget::GenerateAdditionalFiles(wxStringMap_t& additionalFiles) const { 
 bool wxcWidget::IsAuiPane() const { return GetParent() && GetParent()->GetType() == ID_WXAUIMANAGER; }
 
 wxString wxcWidget::WrapInAuiPaneXRC(const wxString& objXRC) const { return m_auiPaneInfo.ToXRC(objXRC); }
-
-size_t wxcWidget::StyleFlagsAsInteger() const
-{
-    size_t flags = 0;
-    for (const auto& [_, styleInfo] : m_styles) {
-        if (styleInfo.is_set) {
-            flags |= styleInfo.style_bit;
-        }
-    }
-    return flags;
-}
 
 int wxcWidget::PropertyInt(const wxString& propname, int defval) const
 {

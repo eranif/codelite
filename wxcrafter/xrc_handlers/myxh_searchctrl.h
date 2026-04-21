@@ -11,7 +11,7 @@
 #ifndef _WX_MYXH_SRCH_H_
 #define _WX_MYXH_SRCH_H_
 
-#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xmlreshandler.h>
 
 #if wxUSE_XRC && wxUSE_SEARCHCTRL
 
@@ -20,8 +20,8 @@ class MyWxSearchCtrlXmlHandler : public wxXmlResourceHandler
 public:
     MyWxSearchCtrlXmlHandler();
 
-    virtual wxObject* DoCreateResource();
-    virtual bool CanHandle(wxXmlNode* node);
+    wxObject* DoCreateResource() override;
+    bool CanHandle(wxXmlNode* node) override;
 };
 
 #endif // wxUSE_XRC && wxUSE_SEARCHCTRL

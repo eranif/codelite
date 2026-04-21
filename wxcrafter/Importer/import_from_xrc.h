@@ -14,7 +14,6 @@ public:
     ~ImportFromXrc() = default;
 
     bool ImportProject(ImportDlg::ImportFileData& data) const;
-    bool GetProject() const;
     static void DoProcessButtonNode(const wxXmlNode* node, wxcWidget* wrapper);
     static void ProcessBitmapProperty(const wxXmlNode* node,
                                       wxcWidget* wrapper,

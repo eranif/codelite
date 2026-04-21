@@ -10,7 +10,7 @@
 #ifndef MY_WX_XH_NOTBK_H_
 #define MY_WX_XH_NOTBK_H_
 
-#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xmlreshandler.h>
 
 class wxAuiNotebook;
 
@@ -18,8 +18,8 @@ class MyWxAuiNotebookXmlHandler : public wxXmlResourceHandler
 {
 public:
     MyWxAuiNotebookXmlHandler();
-    virtual wxObject* DoCreateResource();
-    virtual bool CanHandle(wxXmlNode* node);
+    wxObject* DoCreateResource() override;
+    bool CanHandle(wxXmlNode* node) override;
 
 private:
     bool m_isInside;

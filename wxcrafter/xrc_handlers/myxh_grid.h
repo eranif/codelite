@@ -11,7 +11,7 @@
 #ifndef _WX_MYXH_GRD_H_
 #define _WX_MYXH_GRD_H_
 
-#include "wx/xrc/xmlres.h"
+#include <wx/xrc/xmlreshandler.h>
 
 class MyWxGridXmlHandler : public wxXmlResourceHandler
 {
@@ -21,8 +21,8 @@ protected:
 public:
     MyWxGridXmlHandler();
 
-    virtual wxObject* DoCreateResource();
-    virtual bool CanHandle(wxXmlNode* node);
+    wxObject* DoCreateResource() override;
+    bool CanHandle(wxXmlNode* node) override;
 };
 
 #endif // _WX_XH_GRD_H_

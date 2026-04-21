@@ -239,7 +239,6 @@ public:
     void OnRedoUI(wxUpdateUIEvent& e);
     void OnUndoUI(wxUpdateUIEvent& e);
     void OnLabelCurrentState(wxCommandEvent& e);
-    void OnEditMenuOpened(wxMenuEvent& event);
     void OnLoadCurrentState(wxCommandEvent& e);
     void OnBeginDrag(wxTreeEvent& event);
     void OnEndDrag(wxTreeEvent& event);

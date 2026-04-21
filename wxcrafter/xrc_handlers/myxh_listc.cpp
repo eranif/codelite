@@ -13,7 +13,7 @@
 
 #include <wx/imaglist.h>
 #include <wx/listctrl.h>
-#include <wx/textctrl.h>
+#include <wx/xrc/xmlres.h>
 
 namespace
 {

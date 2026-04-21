@@ -2,18 +2,14 @@
 
 #include "EventsEditorDlg.h"
 #include "allocator_mgr.h"
-#include "drawingutils.h"
+#include "codelite_events.h"
 #include "event_notifier.h"
-#include "globals.h"
-#include "plugin.h"
 #include "workspace.h"
 #include "wxc_project_metadata.h"
 #include "wxcrafter.h"
 #include "wxgui_defs.h"
 #include "wxgui_helpers.h"
 #include "wxguicraft_main_view.h"
-
-#include <wx/aui/auibar.h>
 
 const wxEventType wxEVT_SHOW_WXCRAFTER_DESIGNER = wxNewEventType();
 

@@ -9,6 +9,8 @@
 
 #include "myxh_dlg.h"
 
+#include <wx/xrc/xmlres.h>
+
 IMPLEMENT_DYNAMIC_CLASS(MyWxDialogXmlHandler, wxXmlResourceHandler)
 
 MyWxDialogXmlHandler::MyWxDialogXmlHandler()

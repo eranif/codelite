@@ -1,15 +1,15 @@
 #ifndef MYXH_TREELIST_H
 #define MYXH_TREELIST_H
 
-#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xmlreshandler.h>
 
 class wxTreeListCtrl;
 class MyTreeListCtrl : public wxXmlResourceHandler
 {
 public:
     MyTreeListCtrl();
-    virtual wxObject* DoCreateResource();
-    virtual bool CanHandle(wxXmlNode* node);
+    wxObject* DoCreateResource() override;
+    bool CanHandle(wxXmlNode* node) override;
 
 private:
     // handlers for wxListCtrl itself and its listcol and listitem children

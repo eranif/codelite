@@ -332,5 +332,3 @@ void ImportFromwxSmith::GetBookitemContents(const wxXmlNode* node, NotebookPageW
         }
     }
 }
-
-bool ImportFromwxSmith::GetProject() const { return false; }

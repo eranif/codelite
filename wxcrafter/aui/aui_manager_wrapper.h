@@ -17,7 +17,6 @@ public:
     wxString GetWxClassName() const override;
     void ToXRC(wxString& text, XRC_TYPE type) const override;
     bool IsValidParent() const override { return false; }
-    bool IsWxWindow() const override { return false; }
 };
 
 #endif // AUIMANAGERWRAPPER_H

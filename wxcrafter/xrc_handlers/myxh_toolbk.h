@@ -10,7 +10,7 @@
 #ifndef WXCRAFTER_WX_XH_TOOLBK_H_
 #define WXCRAFTER_WX_XH_TOOLBK_H_
 
-#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xmlreshandler.h>
 
 #if wxUSE_XRC && wxUSE_TOOLBOOK
 
@@ -21,8 +21,8 @@ class MYwxToolbookXmlHandler : public wxXmlResourceHandler
 public:
     MYwxToolbookXmlHandler();
 
-    virtual wxObject* DoCreateResource();
-    virtual bool CanHandle(wxXmlNode* node);
+    wxObject* DoCreateResource() override;
+    bool CanHandle(wxXmlNode* node) override;
 
 private:
     bool m_isInside;

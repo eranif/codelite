@@ -11,7 +11,7 @@
 #ifndef _WX_MYXH_RICHTEXT_H_
 #define _WX_MYXH_RICHTEXT_H_
 
-#include "wx/xrc/xmlres.h"
+#include <wx/xrc/xmlreshandler.h>
 
 #if wxUSE_XRC && wxUSE_RICHTEXT
 
@@ -19,8 +19,8 @@ class MyWxRichTextCtrlXmlHandler : public wxXmlResourceHandler
 {
 public:
     MyWxRichTextCtrlXmlHandler();
-    virtual wxObject* DoCreateResource();
-    virtual bool CanHandle(wxXmlNode* node);
+    wxObject* DoCreateResource() override;
+    bool CanHandle(wxXmlNode* node) override;
 };
 
 #endif // wxUSE_XRC && wxUSE_RICHTEXT

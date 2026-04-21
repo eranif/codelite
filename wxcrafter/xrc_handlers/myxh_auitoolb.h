@@ -10,11 +10,11 @@
 
 #ifndef _MY_WX_XH_AUITOOLB_H_
 #define _MY_WX_XH_AUITOOLB_H_
-#include "wx/aui/auibar.h"
-#include "wx/menu.h"
 
-#include <wx/bitmap.h>
-#include <wx/xrc/xmlres.h>
+#include <wx/aui/auibar.h>
+#include <wx/event.h>
+#include <wx/menu.h>
+#include <wx/xrc/xmlreshandler.h>
 
 class wxAuiToolBar;
 
@@ -22,8 +22,8 @@ class MyWxAuiToolBarXmlHandler : public wxXmlResourceHandler
 {
 public:
     MyWxAuiToolBarXmlHandler();
-    virtual wxObject* DoCreateResource();
-    virtual bool CanHandle(wxXmlNode* node);
+    wxObject* DoCreateResource() override;
+    bool CanHandle(wxXmlNode* node) override;
 
 private:
     bool m_isInside;

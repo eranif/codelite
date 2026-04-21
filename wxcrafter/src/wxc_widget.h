@@ -652,10 +652,6 @@ public:
     virtual bool IsTopWindow() const { return false; }
 
     /**
-     * @brief is this wxcWidget represents a wxWindow derived object?
-     */
-    virtual bool IsWxWindow() const { return true; }
-    /**
      * @brief return true if this window has a child of type toolbar
      */
     bool HasToolBar() const;
@@ -741,9 +737,7 @@ public:
     wxSize GetSize() const;
     void RemoveFromParent();
     wxString SizerFlags(const wxString& defaultFlags) const;
-    size_t SizerFlagsAsInteger() const;
     wxString StyleFlags(const wxString& defaultStyle = "") const;
-    size_t StyleFlagsAsInteger() const;
     virtual wxMenu* GetEventsMenu() { return m_eventsMenu; }
 
     static CONTROL_TYPE GetWidgetType(int type);

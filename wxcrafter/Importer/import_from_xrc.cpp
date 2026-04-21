@@ -419,5 +419,3 @@ void ImportFromXrc::ProcessNamedNode(wxXmlNode* node, wxcWidget* parentwrapper, 
         }
     }
 }
-
-bool ImportFromXrc::GetProject() const { return false; }

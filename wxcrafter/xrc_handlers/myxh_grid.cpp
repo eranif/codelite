@@ -30,6 +30,7 @@
 #include "myxh_grid.h"
 
 #include <wx/xml/xml.h>
+#include <wx/xrc/xmlres.h>
 
 MyWxGridXmlHandler::MyWxGridXmlHandler()
     : wxXmlResourceHandler()

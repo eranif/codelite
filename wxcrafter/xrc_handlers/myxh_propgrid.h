@@ -11,7 +11,7 @@
 #define _WX_XH_PROPGRID_H_
 
 #include <wx/propgrid/property.h>
-#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xmlreshandler.h>
 
 class wxPGProperty;
 class wxPropertyGrid;
@@ -21,8 +21,8 @@ class MyWxPropGridXmlHandler : public wxXmlResourceHandler
 {
 public:
     MyWxPropGridXmlHandler();
-    virtual wxObject* DoCreateResource();
-    virtual bool CanHandle(wxXmlNode* node);
+    wxObject* DoCreateResource() override;
+    bool CanHandle(wxXmlNode* node) override;
 
 protected:
     void HandlePgProperty(wxPGProperty* parent);

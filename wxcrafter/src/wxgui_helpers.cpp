@@ -829,14 +829,6 @@ wxString wxCrafter::XMLEncode(const wxString& text, bool decode /*=false*/)
     return str;
 }
 
-wxString wxCrafter::ToBool(const wxString& text)
-{
-    if (text == wxT("1"))
-        return wxT("true");
-    else
-        return wxT("false");
-}
-
 wxString wxCrafter::CDATA(const wxString& text)
 {
     wxString s;
@@ -1110,47 +1102,15 @@ wxString wxCrafter::ValueToColourString(const wxString& value)
     return col.GetAsString();
 }
 
-wxString wxCrafter::WXVER_CHECK_BLOCK_END()
-{
-    wxString code;
-    code << "#endif\n";
-    return code;
-}
+wxString wxCrafter::WXVER_CHECK_BLOCK_END() { return "#endif\n"; }
 
-wxString wxCrafter::WX294_BLOCK_START()
-{
-    wxString code;
-    code << "#if wxVERSION_NUMBER >= 2904\n";
-    return code;
-}
+wxString wxCrafter::WX294_BLOCK_START() { return "#if wxVERSION_NUMBER >= 2904\n"; }
 
-wxString wxCrafter::WX30_BLOCK_START()
-{
-    wxString code;
-    code << "#if wxVERSION_NUMBER >= 3000\n";
-    return code;
-}
+wxString wxCrafter::WX30_BLOCK_START() { return "#if wxVERSION_NUMBER >= 3000\n"; }
 
-wxString wxCrafter::WX31_BLOCK_START()
-{
-    wxString code;
-    code << "#if wxVERSION_NUMBER >= 3100\n";
-    return code;
-}
+wxString wxCrafter::WX31_BLOCK_START() { return "#if wxVERSION_NUMBER >= 3100\n"; }
 
-wxString wxCrafter::WX33_BLOCK_START()
-{
-    wxString code;
-    code << "#if wxVERSION_NUMBER >= 3300\n";
-    return code;
-}
-
-wxString wxCrafter::WX29_BLOCK_START()
-{
-    wxString code;
-    code << "#if wxVERSION_NUMBER >= 2900\n";
-    return code;
-}
+wxString wxCrafter::WX29_BLOCK_START() { return "#if wxVERSION_NUMBER >= 2900\n"; }
 
 wxString wxCrafter::AddQuotes(const wxString& str)
 {
@@ -1365,15 +1325,6 @@ void wxCrafter::WrapInIfBlock(const wxString& condname, wxString& codeblock)
     bottomBlock << "#endif // " << condname << "\n";
 
     codeblock.Prepend(topBlock).Append(bottomBlock);
-}
-
-void wxCrafter::GetWorkspaceFiles(wxStringSet_t& files)
-{
-    wxArrayString arrFiles;
-    clCxxWorkspaceST::Get()->GetWorkspaceFiles(arrFiles);
-    for (size_t i = 0; i < arrFiles.GetCount(); ++i) {
-        files.insert(arrFiles.Item(i));
-    }
 }
 
 void wxCrafter::GetProjectFiles(const wxString& projectName, wxStringSet_t& files)

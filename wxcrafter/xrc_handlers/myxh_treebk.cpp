@@ -26,6 +26,7 @@
 #include <wx/imaglist.h>
 #include <wx/treebook.h>
 #include <wx/xml/xml.h>
+#include <wx/xrc/xmlres.h>
 
 MYwxTreebookXmlHandler::MYwxTreebookXmlHandler()
     : wxXmlResourceHandler()

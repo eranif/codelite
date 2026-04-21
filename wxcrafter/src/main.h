@@ -76,7 +76,6 @@ protected:
     wxTextCtrl* GetActiveTextCtrl();
     wxStyledTextCtrl* GetActiveSTC();
     bool DoFindText(wxStyledTextCtrl* stc, const wxFindReplaceData& frd, bool findNext);
-    void EnsureVisibile();
     void DoOpenWxcpProject();
     void DoCreateRecentMenu(wxMenu& menu, wxArrayString& history, std::shared_ptr<wxString> result);
 

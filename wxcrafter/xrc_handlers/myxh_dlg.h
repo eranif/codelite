@@ -1,7 +1,7 @@
 #ifndef _MYWX_XH_DLG_H_
 #define _MYWX_XH_DLG_H_
 
-#include <wx/xrc/xmlres.h>
+#include <wx/xrc/xmlreshandler.h>
 
 class MyWxDialogXmlHandler : public wxXmlResourceHandler
 {
@@ -9,8 +9,8 @@ class MyWxDialogXmlHandler : public wxXmlResourceHandler
 
 public:
     MyWxDialogXmlHandler();
-    virtual wxObject* DoCreateResource();
-    virtual bool CanHandle(wxXmlNode* node);
+    wxObject* DoCreateResource() override;
+    bool CanHandle(wxXmlNode* node) override;
 };
 
 #endif // _MYWX_XH_DLG_H_

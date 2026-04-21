@@ -201,12 +201,20 @@ void clCxxWorkspace::AddProjectToBuildMatrix(ProjectPtr prj)
     }
 
     BuildMatrixPtr matrix = GetBuildMatrix();
-    CHECK_PTR_RET(matrix);
+    if (!matrix) {
+        // Create default build matrix with Release & Debug configurations.
+        // set "Debug" as the default.
+        auto build_matrix = std::make_shared<BuildMatrix>(nullptr, "Debug");
+        SetBuildMatrix(build_matrix);
+        matrix = GetBuildMatrix();
+    }
+
+    // This should not fail now
+    CHECK_COND_RET(matrix);
 
     wxString selConfName = matrix->GetSelectedConfigurationName();
 
     for (auto workspaceConfig : matrix->GetConfigurations()) {
-        WorkspaceConfiguration::ConfigMappingList prjList = workspaceConfig->GetMapping();
         wxString wspCnfName = workspaceConfig->GetName();
 
         ProjectSettingsCookie cookie;
@@ -241,9 +249,9 @@ void clCxxWorkspace::AddProjectToBuildMatrix(ProjectPtr prj)
             }
         }
 
+        // Add the new entry, make sure no duplicates are added.
         ConfigMappingEntry entry(prj->GetName(), matchConf->GetName());
-        prjList.push_back(entry);
-        workspaceConfig->SetConfigMappingList(prjList);
+        workspaceConfig->AddMapping(entry);
         matrix->SetConfiguration(workspaceConfig);
     }
 

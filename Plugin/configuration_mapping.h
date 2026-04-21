@@ -27,8 +27,8 @@
 
 #include "codelite_exports.h"
 
-#include <list>
 #include <memory>
+#include <vector>
 #include <wx/string.h>
 #include <wx/xml/xml.h>
 
@@ -57,7 +57,7 @@ public:
 class WXDLLIMPEXP_SDK WorkspaceConfiguration
 {
 public:
-    using ConfigMappingList = std::list<ConfigMappingEntry>;
+    using ConfigMappingList = std::vector<ConfigMappingEntry>;
 
 private:
     wxString m_name;
@@ -74,6 +74,19 @@ public:
 
     const wxString& GetName() const { return m_name; }
     const ConfigMappingList& GetMapping() const { return m_mappingList; }
+
+    void AddMapping(const ConfigMappingEntry& entry)
+    {
+        auto iter = std::find_if(m_mappingList.begin(), m_mappingList.end(), [entry](const ConfigMappingEntry& e) {
+            return entry.m_project == e.m_project;
+        });
+
+        if (iter != m_mappingList.end()) {
+            m_mappingList.erase(iter);
+        }
+        m_mappingList.push_back(entry);
+    }
+
     void SetConfigMappingList(const ConfigMappingList& mapList) { m_mappingList = mapList; }
     void SetName(const wxString& name) { m_name = name; }
     const wxString& GetEnvironmentVariables() const { return m_environmentVariables; }

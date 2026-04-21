@@ -31,6 +31,11 @@
         return;                   \
     }
 
+#define CEHCK_SHUTDOWN_IN_PROGRESS()              \
+    if (clGetManager()->IsShutdownInProgress()) { \
+        return;                                   \
+    }
+
 namespace llm
 {
 namespace
@@ -247,6 +252,8 @@ bool Manager::IsAvailable()
 void Manager::OnEditorContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
+    CEHCK_SHUTDOWN_IN_PROGRESS();
+    
     if (IsAvailable()) {
         // Load the LLM generation sub-menu
         wxMenu* menu = event.GetMenu();
@@ -1134,7 +1141,7 @@ bool Manager::WriteConfigFile(llm::json j)
 void Manager::OnFileSaved(clCommandEvent& event)
 {
     event.Skip();
-
+    CEHCK_SHUTDOWN_IN_PROGRESS();
     CHECK_PTR_RET(clGetManager()->GetActiveEditor());
 
     {

@@ -480,6 +480,10 @@ void MainBook::RestoreSession(const SessionEntry& session)
 
 clEditor* MainBook::GetActiveEditor()
 {
+    if (m_book == nullptr) {
+        return nullptr;
+    }
+
     if (!GetCurrentPage()) {
         return NULL;
     }
@@ -1461,11 +1465,24 @@ bool MainBook::IsMiniMapInSync()
 #endif
 
 void MainBook::DoUpdateNotebookTheme() {}
-wxWindow* MainBook::GetCurrentPage() { return m_book->GetCurrentPage(); }
-int MainBook::GetCurrentPageIndex() { return m_book->GetSelection(); }
+wxWindow* MainBook::GetCurrentPage()
+{
+    CHECK_PTR_RET_NULL(m_book);
+    return m_book->GetCurrentPage();
+}
+
+int MainBook::GetCurrentPageIndex()
+{
+    if (m_book == nullptr) {
+        return wxNOT_FOUND;
+    };
+    return m_book->GetSelection();
+}
 
 void MainBook::OnClosePage(wxBookCtrlEvent& e)
 {
+    CHECK_PTR_RET(m_book);
+
     clWindowUpdateLocker locker(this);
     int where = e.GetSelection();
     if (where == wxNOT_FOUND) {
@@ -1483,6 +1500,7 @@ void MainBook::DoHandleFrameMenu(clEditor* editor) { wxUnusedVar(editor); }
 
 void MainBook::OnPageChanging(wxBookCtrlEvent& e)
 {
+    CHECK_PTR_RET(m_book);
     clEditor* editor = GetActiveEditor();
     if (editor) {
         editor->CallTipCancel();

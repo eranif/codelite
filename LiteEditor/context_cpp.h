@@ -112,7 +112,7 @@ public:
     DECLARE_EVENT_TABLE()
 
 private:
-    wxString GetExpression(long pos, bool onlyWord, clEditor* editor = NULL, bool forCC = true);
+    wxString GetExpression(long pos, bool onlyWord, clEditor* editor) const;
     bool IsIncludeStatement(const wxString& line, wxString* fileName = NULL, wxString* fileNameUpToCaret = NULL);
     int FindLineToAddInclude();
     /**

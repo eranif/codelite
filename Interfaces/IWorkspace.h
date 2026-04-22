@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef IWORKSPACE_H
-#define IWORKSPACE_H
+#pragma once
 
 #include "AsyncProcess/asyncprocess.h"
 
@@ -161,6 +160,14 @@ public:
 
     /// Open (or create if missing) `filepath` and load it into an editor.
     virtual IEditor* OpenFileInEditor(const wxString& filepath, bool createIfMissing = true) = 0;
-};
 
-#endif // IWORKSPACE_H
+    /// Return the command to run / debug.
+    struct CommandResult {
+        std::vector<wxString> argv;
+        wxString working_directory;
+
+        inline void Add(const wxString& arg) { argv.push_back(arg); }
+        inline void Add(const std::vector<wxString>& args) { argv.insert(argv.end(), args.begin(), args.end()); }
+    };
+    virtual std::optional<CommandResult> GetCommand(bool for_debug = false) const { return std::nullopt; }
+};

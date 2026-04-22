@@ -313,6 +313,8 @@ public:
      */
     wxString GetActiveProjectName() const override;
 
+    std::optional<IWorkspace::CommandResult> GetCommand(bool for_debug = false) const override;
+
     /**
      * Set project as active
      * \param name  project name

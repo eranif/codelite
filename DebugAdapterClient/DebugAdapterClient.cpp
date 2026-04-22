@@ -46,7 +46,6 @@
 #include "clWorkspaceManager.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
-#include "file_logger.h"
 #include "globals.h"
 #include "macromanager.h"
 #include "wx/msgqueue.h"
@@ -401,92 +400,23 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
     DAP_DEBUG() << "working directory is:" << ::wxGetCwd() << endl;
 
     // the following 4 variables are used for launching the debugger
-    wxString working_directory;
-    wxString exepath;
-    wxString args;
-    clEnvList_t env;
-    wxString ssh_account;
 
-    if (clCxxWorkspaceST::Get()->IsOpen()) {
-        //
-        // standard C++ workspace
-        //
-        ProjectPtr project = clCxxWorkspaceST::Get()->GetActiveProject();
-        if (!project) {
-            ::wxMessageBox(
-                wxString() << _("Could not locate project: ") << clCxxWorkspaceST::Get()->GetActiveProjectName(),
-                DAP_MESSAGE_BOX_TITLE,
-                wxICON_ERROR | wxOK | wxCENTER);
-            DAP_ERROR() << "unable to locate project:" << clCxxWorkspaceST::Get()->GetActiveProjectName() << endl;
-            return;
-        }
-
-        BuildConfigPtr bldConf = project->GetBuildConfiguration();
-        if (!bldConf) {
-            ::wxMessageBox(wxString() << _("Could not locate the requested build configuration"),
-                           DAP_MESSAGE_BOX_TITLE,
-                           wxICON_ERROR | wxOK | wxCENTER);
-            return;
-        }
-
-        // Determine the executable to debug, working directory and arguments
-        DAP_DEBUG() << "Preparing environment variables.." << endl;
-        env = bldConf->GetEnvironment(project.get());
-        DAP_DEBUG() << "Success" << endl;
-        exepath = bldConf->GetCommand();
-
-        // Get the debugging arguments.
-        if (bldConf->GetUseSeparateDebugArgs()) {
-            args = bldConf->GetDebugArgs();
-        } else {
-            args = bldConf->GetCommandArguments();
-        }
-
-        working_directory = MacroManager::Instance()->Expand(bldConf->GetWorkingDirectory(), m_mgr, project->GetName());
-        exepath = MacroManager::Instance()->Expand(exepath, m_mgr, project->GetName());
-
-        if (working_directory.empty()) {
-            working_directory = wxGetCwd();
-        }
-        wxFileName fn(exepath);
-        if (fn.IsRelative()) {
-            fn.MakeAbsolute(working_directory);
-        }
-        exepath = fn.GetFullPath();
-    } else if (clFileSystemWorkspace::Get().IsOpen()) {
-        //
-        // Handle file system workspace
-        //
-        auto conf = clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig();
-        if (!conf) {
-            DAP_ERROR() << "No active configuration found!" << endl;
-            return;
-        }
-
-        auto workspace = clWorkspaceManager::Get().GetWorkspace();
-        bool is_remote = workspace->IsRemote();
-        ssh_account = workspace->GetSshAccount();
-
-        clFileSystemWorkspace::Get().GetExecutable(exepath, args, working_directory);
-        if (is_remote) {
-            env = StringUtils::BuildEnvFromString(conf->GetEnvironment());
-        } else {
-            env = StringUtils::ResolveEnvList(conf->GetEnvironment());
-            wxFileName fnExepath(exepath);
-            if (fnExepath.IsRelative()) {
-                fnExepath.MakeAbsolute(workspace->GetDir());
-            }
-            exepath = fnExepath.GetFullPath();
-        }
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if (!workspace) {
+        return;
     }
 
-    if (working_directory.empty()) {
-        // always pass a working directory
-        working_directory =
-            clWorkspaceManager::Get().IsWorkspaceOpened()
-                ? wxFileName(clWorkspaceManager::Get().GetWorkspace()->GetFileName()).GetPath(wxPATH_UNIX)
-                : ::wxGetCwd();
+    auto command = workspace->GetCommand();
+    if (!command || command->argv.empty()) {
+        return;
     }
+
+    wxString working_directory = command->working_directory;
+    wxString exepath = command->argv[0];
+    command->argv.erase(command->argv.begin());
+    wxString args = StringUtils::BuildCommandFromArray(command->argv);
+    clEnvList_t env = workspace->GetEnvironment();
+    wxString ssh_account = workspace->IsRemote() ? workspace->GetSshAccount() : wxString{};
 
     // start the debugger
     DAP_DEBUG() << "Initializing debugger for executable:" << exepath << endl;

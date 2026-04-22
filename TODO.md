@@ -19,6 +19,9 @@ others:
 High:
 -----
 
+- DAP: Support remote debugging
+    - DAP: Auto-configure remote gdb & remote lldb that can be used on a remote machines.
+    - DAP: In case of a remote workspace, make sure we can open the files by using the SFTP manager.
 - GDB: use the new terminal to launch and avoid opening custom terminals for this purpose.
 
 Medium:

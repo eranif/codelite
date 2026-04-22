@@ -971,3 +971,15 @@ wxString StringUtils::EscapeAndWrapWithDoubleQuotes(const wxString& input)
     }
     return escaped_string.Prepend("\"").Append("\"");
 }
+
+wxString StringUtils::BuildCommandFromArray(std::span<const wxString> commands)
+{
+    wxString result;
+    for (const wxString& s : commands) {
+        result << WrapWithDoubleQuotes(s) << " ";
+    }
+    if (!result.empty()) {
+        result.RemoveLast();
+    }
+    return result;
+}

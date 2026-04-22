@@ -1272,3 +1272,22 @@ void clFileSystemWorkspace::OnTerminalLineClicked(clBuildEvent& event)
     };
     clGetManager()->OpenFileAndAsyncExecute(event.GetFileName(), std::move(cb));
 }
+
+std::optional<IWorkspace::CommandResult> clFileSystemWorkspace::GetCommand(bool for_debug) const
+{
+    wxUnusedVar(for_debug);
+    auto config = m_settings.GetSelectedConfig();
+    if (config == nullptr || config->GetExecutable().empty()) {
+        return std::nullopt;
+    }
+
+    IWorkspace::CommandResult result;
+    result.working_directory = config->GetWorkingDirectory().empty() ? GetDir() : config->GetWorkingDirectory();
+    result.Add(config->GetExecutable());
+
+    auto command_args = StringUtils::BuildCommandArrayFromString(config->GetArgs());
+    if (!command_args.empty()) {
+        result.Add(command_args);
+    }
+    return result;
+}

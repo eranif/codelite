@@ -234,6 +234,17 @@ public:
                                                 size_t flags = BuildCommandFlags::ONE_LINER);
 
     /**
+     * @brief Builds a single command string from an array of command arguments.
+     *
+     * Concatenates each argument wrapped in double quotes (if needed) with a space separator.
+     * Trailing whitespace is removed from the final result.
+     *
+     * @param commands A span of wxString elements representing individual command arguments.
+     * @return A wxString containing the concatenated, quoted command arguments.
+     */
+    static wxString BuildCommandFromArray(std::span<const wxString> commands);
+
+    /**
      * @brief wrap string with quotes if needed
      */
     static wxString& WrapWithQuotes(wxString& str);

@@ -153,6 +153,7 @@ public:
                         bool icase);
 
     int GetIndentWidth() override;
+    std::optional<IWorkspace::CommandResult> GetCommand(bool for_debug = false) const override;
 
 protected:
     void BindEvents();
@@ -197,8 +198,6 @@ protected:
     void OnBuildHotspotClicked(clBuildEvent& event);
     void OnCustomTargetMenu(clContextMenuEvent& event);
     void OnNewWorkspace(clCommandEvent& event);
-    void OnDebugStarting(clDebugEvent& event);
-    void OnDebugEnded(clDebugEvent& event);
     void OnRun(clExecuteEvent& event);
     void OnStop(clExecuteEvent& event);
     void OnIsProgramRunning(clExecuteEvent& event);

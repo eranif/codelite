@@ -1604,3 +1604,50 @@ clEnvList_t clCxxWorkspace::GetEnvironment() const
     }
     return env_list;
 }
+
+std::optional<IWorkspace::CommandResult> clCxxWorkspace::GetCommand(bool for_debug) const
+{
+    wxUnusedVar(for_debug);
+    auto project = GetActiveProject();
+    if (project == nullptr) {
+        return std::nullopt;
+    }
+
+    BuildConfigPtr bldConf = project->GetBuildConfiguration();
+    if (!bldConf) {
+        return std::nullopt;
+    }
+
+    // Determine the executable to debug, working directory and arguments
+    auto exepath = bldConf->GetCommand();
+    if (exepath.empty()) {
+        return std::nullopt;
+    }
+
+    IWorkspace::CommandResult result;
+
+    // Get the debugging arguments.
+    wxString arguments_string;
+    if (bldConf->GetUseSeparateDebugArgs()) {
+        arguments_string = bldConf->GetDebugArgs();
+    } else {
+        arguments_string = bldConf->GetCommandArguments();
+    }
+
+    result.working_directory =
+        MacroManager::Instance()->Expand(bldConf->GetWorkingDirectory(), nullptr, project->GetName());
+    exepath = MacroManager::Instance()->Expand(exepath, nullptr, project->GetName());
+
+    if (result.working_directory.empty()) {
+        result.working_directory = wxGetCwd();
+    }
+
+    wxFileName fn(exepath);
+    if (fn.IsRelative()) {
+        fn.MakeAbsolute(result.working_directory);
+    }
+    result.Add(fn.GetFullPath());
+    auto argv_array = StringUtils::BuildCommandArrayFromString(arguments_string);
+    result.Add(argv_array);
+    return result;
+}

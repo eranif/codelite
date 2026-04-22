@@ -107,7 +107,6 @@ void RemotyWorkspace::BindEvents()
         return;
     }
 
-    EventNotifier::Get()->Bind(wxEVT_DBG_UI_START, &RemotyWorkspace::OnDebugStarting, this);
     EventNotifier::Get()->Bind(wxEVT_SWITCHING_TO_WORKSPACE, &RemotyWorkspace::OnOpenWorkspace, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_RELOAD_WORKSPACE, &RemotyWorkspace::OnReloadWorkspace, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_CLOSE_WORKSPACE, &RemotyWorkspace::OnCloseWorkspace, this);
@@ -117,7 +116,6 @@ void RemotyWorkspace::BindEvents()
     EventNotifier::Get()->Bind(wxEVT_BUILD_CUSTOM_TARGETS_MENU_SHOWING, &RemotyWorkspace::OnCustomTargetMenu, this);
     EventNotifier::Get()->Bind(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, &RemotyWorkspace::OnBuildHotspotClicked, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RemotyWorkspace::OnNewWorkspace, this);
-    EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &RemotyWorkspace::OnDebugEnded, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &RemotyWorkspace::OnRun, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &RemotyWorkspace::OnStop, this);
     EventNotifier::Get()->Bind(wxEVT_CMD_IS_PROGRAM_RUNNING, &RemotyWorkspace::OnIsProgramRunning, this);
@@ -172,8 +170,6 @@ void RemotyWorkspace::UnbindEvents()
     EventNotifier::Get()->Unbind(wxEVT_GET_IS_BUILD_IN_PROGRESS, &RemotyWorkspace::OnIsBuildInProgress, this);
     EventNotifier::Get()->Unbind(wxEVT_BUILD_OUTPUT_HOTSPOT_CLICKED, &RemotyWorkspace::OnBuildHotspotClicked, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_CREATE_NEW_WORKSPACE, &RemotyWorkspace::OnNewWorkspace, this);
-    EventNotifier::Get()->Unbind(wxEVT_DBG_UI_START, &RemotyWorkspace::OnDebugStarting, this);
-    EventNotifier::Get()->Unbind(wxEVT_DEBUG_ENDED, &RemotyWorkspace::OnDebugEnded, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_EXECUTE_ACTIVE_PROJECT, &RemotyWorkspace::OnRun, this);
     EventNotifier::Get()->Unbind(wxEVT_CMD_STOP_EXECUTED_PROGRAM, &RemotyWorkspace::OnStop, this);
     EventNotifier::Get()->Unbind(wxEVT_FILE_FIND_MATCHING_PAIR, &RemotyWorkspace::OnFindSwapped, this);
@@ -617,110 +613,6 @@ void RemotyWorkspace::DoOpen(const wxString& file_path, const wxString& account)
     CallAfter(&RemotyWorkspace::RestoreSession);
 }
 
-void RemotyWorkspace::OnDebugStarting(clDebugEvent& event)
-{
-    EnvSetter env;
-    CHECK_EVENT(event);
-    auto conf = m_settings.GetSelectedConfig();
-    CHECK_PTR_RET(conf);
-
-    DebuggerMgr::Get().SetActiveDebugger(conf->GetDebugger());
-    IDebugger* dbgr = DebuggerMgr::Get().GetActiveDebugger();
-    if (!dbgr) {
-        return;
-    }
-
-    // if already running, skip this
-    // the default behaviour is to "continue"
-    if (dbgr->IsRunning()) {
-        event.Skip();
-        return;
-    }
-
-    // Update the debugger information
-    DebuggerInformation dinfo = dbgr->GetDebuggerInformation();
-    dinfo.breakAtWinMain = true;
-    dbgr->SetDebuggerInformation(dinfo);
-    dbgr->SetIsRemoteDebugging(false);
-
-    // Setup the debug session
-    wxString exe, args, wd;
-    GetExecutable(exe, args, wd);
-
-    // Start the debugger
-    DebugSessionInfo session_info;
-
-    const wxString& user_debugger = conf->GetDebuggerPath();
-
-    session_info.debuggerPath = user_debugger.empty() ? "gdb" : user_debugger;
-    session_info.init_file_content = conf->GetDebuggerCommands();
-
-    session_info.exeName = exe;
-    session_info.cwd = wd;
-    session_info.bpList = clGetManager()->GetBreakpoints();
-    session_info.isSSHDebugging = true;
-    session_info.sshAccountName = m_account.GetAccountName();
-
-    // open new terminal on the remote host
-    m_remote_terminal.reset(new clRemoteTerminal(m_account));
-    if (!m_remote_terminal->Start()) {
-        ::clMessageBox(_("Failed to start remote terminal process. Do you have `ssh` client installed and in PATH?"),
-                       "CodeLite",
-                       wxICON_ERROR | wxOK | wxOK_DEFAULT);
-        return;
-    }
-
-    // wait for the tty
-    wxBusyCursor bc;
-    size_t count = 100; // 10 seconds
-    wxString tty;
-
-    clDEBUG() << "Waiting for tty..." << endl;
-    while (--count) {
-        tty = m_remote_terminal->ReadTty();
-        if (tty.empty()) {
-            wxMilliSleep(100);
-        } else {
-            break;
-        }
-    }
-
-    clDEBUG() << "Using remote tty:" << tty << endl;
-
-    // convert the envlist into map
-    auto envlist = FileUtils::CreateEnvironment(conf->GetEnvironment());
-    wxStringMap_t envmap;
-    envmap.reserve(envlist.size());
-    envmap.insert(envlist.begin(), envlist.end());
-
-    // override the gdb executable with the one provided with the GDB environment variable
-    if (envmap.count("GDB")) {
-        const wxString& gdbpath = envmap["GDB"];
-        session_info.debuggerPath = gdbpath;
-    }
-    clDEBUG() << "Using gdb:" << session_info.debuggerPath << endl;
-
-    session_info.ttyName = tty;
-    session_info.enablePrettyPrinting = true;
-
-    clDEBUG() << "Starting gdb:" << session_info.debuggerPath << endl;
-    if (!dbgr->Start(session_info, &envlist)) {
-        // message box about this and cancel the debugge session
-        ::clMessageBox(_("Failed to start debugger!"), "CodeLite", wxICON_ERROR | wxOK | wxOK_DEFAULT);
-        clDebugEvent eventStarted(wxEVT_DEBUG_ENDED);
-        EventNotifier::Get()->ProcessEvent(eventStarted);
-    }
-
-    // Notify that debug session started
-    // this will ensure that the debug layout is loaded
-    clDebugEvent eventStarted(wxEVT_DEBUG_STARTED);
-    eventStarted.SetClientData(&session_info);
-    EventNotifier::Get()->ProcessEvent(eventStarted);
-
-    // Now run the debuggee
-    dbgr->Run(args, "");
-}
-
 void RemotyWorkspace::GetExecutable(wxString& exe, wxString& args, wxString& wd)
 {
     auto conf = m_settings.GetSelectedConfig();
@@ -743,12 +635,6 @@ IProcess* RemotyWorkspace::DoRunSSHProcess(const wxString& scriptContent, bool s
 }
 
 wxString RemotyWorkspace::GetRemoteWorkingDir() const { return m_remoteWorkspaceFile.BeforeLast('/'); }
-
-void RemotyWorkspace::OnDebugEnded(clDebugEvent& event)
-{
-    event.Skip();
-    m_remote_terminal.reset();
-}
 
 void RemotyWorkspace::OnRun(clExecuteEvent& event)
 {
@@ -1395,4 +1281,23 @@ void RemotyWorkspace::OnCreateNew(clWorkspaceEvent& event)
     wxString name = event.GetWorkspaceName();
     wxString account = event.GetSshAccount();
     CreateNew(path, name, account);
+}
+
+std::optional<IWorkspace::CommandResult> RemotyWorkspace::GetCommand(bool for_debug) const
+{
+    wxUnusedVar(for_debug);
+    auto config = m_settings.GetSelectedConfig();
+    if (config == nullptr || config->GetExecutable().empty()) {
+        return std::nullopt;
+    }
+
+    IWorkspace::CommandResult result;
+    result.working_directory = config->GetWorkingDirectory().empty() ? GetDir() : config->GetWorkingDirectory();
+    result.Add(config->GetExecutable());
+
+    auto command_args = StringUtils::BuildCommandArrayFromString(config->GetArgs());
+    if (!command_args.empty()) {
+        result.Add(command_args);
+    }
+    return result;
 }

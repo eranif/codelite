@@ -107,6 +107,7 @@ public:
     wxString GetDebuggerName() const override;
     clEnvList_t GetEnvironment() const override;
     int GetIndentWidth() override;
+    std::optional<IWorkspace::CommandResult> GetCommand(bool for_debug = false) const override;
 
     /**
      * @brief return the executable to run + args + working directory

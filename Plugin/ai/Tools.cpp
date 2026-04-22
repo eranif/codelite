@@ -522,22 +522,18 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
     }
 
     constexpr size_t kMaxGrepReponses = 10;
+    wxString report_message = wxString::Format("Found %u matches", output_arr.size());
     if (output_arr.size() <= kMaxGrepReponses) {
-        wxString logmsg;
         wxString result = StringUtils::Join(output_arr);
-        logmsg << "Find In Files Result:\n```text\n" << result << "\n```\n";
-        llm::Manager::GetInstance().PrintMessage(logmsg, IconType::kSuccess);
+        llm::Manager::GetInstance().PrintMessage(report_message, IconType::kSuccess);
         return Ok(result);
     }
 
     // Parse the grep output and format as JSON
     std::vector<FileMatchInfo> matches = ParseGrepOutput(output_arr);
     std::string json_output = FormatGrepMatchesAsJson(output_arr, matches);
-    wxString logmsg;
-    wxString result = wxString::FromUTF8(json_output);
-    logmsg << "Find In Files Result:\n```json\n" << result << "\n```\n";
-    llm::Manager::GetInstance().PrintMessage(logmsg, IconType::kSuccess);
-    return Ok(result);
+    llm::Manager::GetInstance().PrintMessage(report_message, IconType::kSuccess);
+    return Ok(wxString::FromUTF8(json_output));
 }
 
 CanInvokeToolResult ApplyPatchConfirm(const std::string& tool_name, assistant::json args)

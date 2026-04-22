@@ -19,7 +19,6 @@ others:
 High:
 -----
 
-- When showing the output pane, move the focus to the active tab
 - GDB: use the new terminal to launch and avoid opening custom terminals for this purpose.
 
 Medium:

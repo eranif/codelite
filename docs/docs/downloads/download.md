@@ -36,6 +36,7 @@ CodeLite will be installed at `/Applications/CodeLite.app`.
 ---
 ### Ubuntu / Debian
 ---
+
 #### Setup
 
 This page lists the binary packages for CodeLite 18.2.0. The RAD plugin **wxCrafter** (now free open‑source software) is included in all packages.
@@ -44,9 +45,32 @@ The packages already contain the required wxWidgets libraries (`wx3.2.2` or `wx3
 
 Ubuntu 16.04 (xenial) and newer provide official CodeLite packages. To avoid a name clash, our packages have the suffix **unofficial** (except for Debian 12 bookworm, see below).
 
+### Debian 13 (trixie)
+
+1. Fetch the key
+
+```bash
+wget -qO- http://repos.codelite.org/codelite-repo-key.asc | sudo tee /etc/apt/trusted.gpg.d/codelite-repo-key.asc
+```
+
+2. Add the repo line
+
+```bash
+cat > /etc/apt/sources.list.d/codelite.list<<EOF
+deb https://repos.codelite.org/debian/ trixie devel
+EOF
+```
+
+3. Updates & Install
+
+```bash
+sudo apt update -y
+sudo apt install codelite libnotify4 -y
+```
+
 #### Adding the repository key
 
-*For Debian 12 (bookworm), Debian 13 (trixie), Mint 22.2 (Zara) and earlier:*
+*For Debian 12 (bookworm), Mint 22.2 (Zara) and earlier:*
 
 ```bash
 wget -qO- http://repos.codelite.org/CodeLite.asc | sudo tee /etc/apt/trusted.gpg.d/CodeLite.asc
@@ -66,7 +90,6 @@ Signed-By: /etc/apt/keyrings/CodeLite.asc" |
     sudo tee /etc/apt/sources.list.d/CodeLite.sources > /dev/null
 ```
 
-
 #### Adding the repository source
 
 Add the appropriate line from the table below:
@@ -83,7 +106,6 @@ sudo apt-add-repository 'deb https://repos.codelite.org/ubuntu/ questing univers
 | Distro / Release | Repository line |
 |------------------|-----------------|
 | Debian bookworm  | `deb https://repos.codelite.org/debian/ bookworm devel` |
-| Debian trixie    | `deb https://repos.codelite.org/debian/ trixie devel` |
 | Ubuntu noble, oracular, plucky, questing | `deb https://repos.codelite.org/ubuntu/ questing universe` |
 
 After adding the source, update the package list and install CodeLite:

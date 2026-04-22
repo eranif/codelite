@@ -34,8 +34,31 @@ CodeLite will be installed at `/Applications/CodeLite.app`.
 
 ## Linux
 ---
+
+### Debian 13 (trixie)
+
+- Fetch the key
+
+```bash
+wget -qO- http://repos.codelite.org/codelite-repo-key.asc | sudo tee /etc/apt/trusted.gpg.d/codelite-repo-key.asc
+```
+
+- Add the repo line
+
+```bash
+cat > /etc/apt/sources.list.d/codelite.list<<EOF
+deb https://repos.codelite.org/debian/ trixie devel
+EOF
+```
+
+- Updates & Install
+
+```bash
+sudo apt update -y
+sudo apt install codelite libnotify4 -y
+```
+
 ### Ubuntu / Debian
----
 
 #### Setup
 
@@ -44,29 +67,6 @@ This page lists the binary packages for CodeLite 18.2.0. The RAD plugin **wxCr
 The packages already contain the required wxWidgets libraries (`wx3.2.2` or `wx3.2.4`), so you do not need to install wxWidgets separately unless you want to build applications against them.
 
 Ubuntu 16.04 (xenial) and newer provide official CodeLite packages. To avoid a name clash, our packages have the suffix **unofficial** (except for Debian 12 bookworm, see below).
-
-### Debian 13 (trixie)
-
-1. Fetch the key
-
-```bash
-wget -qO- http://repos.codelite.org/codelite-repo-key.asc | sudo tee /etc/apt/trusted.gpg.d/codelite-repo-key.asc
-```
-
-2. Add the repo line
-
-```bash
-cat > /etc/apt/sources.list.d/codelite.list<<EOF
-deb https://repos.codelite.org/debian/ trixie devel
-EOF
-```
-
-3. Updates & Install
-
-```bash
-sudo apt update -y
-sudo apt install codelite libnotify4 -y
-```
 
 #### Adding the repository key
 

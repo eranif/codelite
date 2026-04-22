@@ -313,7 +313,7 @@ void PerspectiveManager::FlushCacheToDisk()
 
 void PerspectiveManager::DoShowPane(wxAuiPaneInfo& pane_info)
 {
-    if (pane_info.IsOk() && m_aui && pane_info.best_size != wxDefaultSize) {
+    if (pane_info.IsOk() && !pane_info.IsShown() && m_aui && pane_info.best_size != wxDefaultSize) {
         pane_info.MinSize(pane_info.best_size); // saved while hiding
         pane_info.Show();
         m_aui->Update();
@@ -324,7 +324,7 @@ void PerspectiveManager::DoShowPane(wxAuiPaneInfo& pane_info)
 
 void PerspectiveManager::DoHidePane(wxAuiPaneInfo& pane_info)
 {
-    if (pane_info.IsOk() && m_aui) {
+    if (pane_info.IsOk() && pane_info.IsShown() && m_aui) {
         int width = 0;
         int height = 0;
         pane_info.window->GetSize(&width, &height);

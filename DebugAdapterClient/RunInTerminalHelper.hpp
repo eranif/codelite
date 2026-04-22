@@ -3,9 +3,7 @@
 
 #include "AsyncProcess/asyncprocess.h"
 #include "AsyncProcess/processreaderthread.h"
-#include "clModuleLogger.hpp"
 #include "cl_command_event.h"
-#include "codelite_events.h"
 
 #include <vector>
 #include <wx/event.h>
@@ -13,7 +11,6 @@
 class RunInTerminalHelper : public wxEvtHandler
 {
     IProcess* m_process = nullptr;
-    clModuleLogger& LOG;
     int m_processId = wxNOT_FOUND;
 
 protected:
@@ -21,7 +18,7 @@ protected:
     void OnDebugEnded(clDebugEvent& event);
 
 public:
-    RunInTerminalHelper(clModuleLogger& log);
+    RunInTerminalHelper();
     virtual ~RunInTerminalHelper();
 
     /**

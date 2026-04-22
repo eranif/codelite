@@ -37,6 +37,7 @@
 #include "DAPWatchesView.h"
 #include "DapDebuggerSettingsDlg.h"
 #include "DapLocator.hpp"
+#include "DapLogger.hpp"
 #include "Debugger/debuggermanager.h"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "StringUtils.h"
@@ -62,8 +63,6 @@
 
 namespace
 {
-clModuleLogger LOG;
-
 const wxString DAP_DEBUGGER_PANE = _("Debugger Client");
 const wxString DAP_MESSAGE_BOX_TITLE = "CodeLite - Debug Adapter Client";
 
@@ -105,7 +104,7 @@ public:
     bool Read(std::string& buffer, int msTimeout) override
     {
         if (wxThread::IsMain()) {
-            LOG_ERROR(LOG) << "StdioTransport::Read is called from the main thread!" << endl;
+            DAP_ERROR() << "StdioTransport::Read is called from the main thread!" << endl;
             return false;
         }
 
@@ -160,20 +159,13 @@ CL_PLUGIN_API int GetPluginInterfaceVersion() { return PLUGIN_INTERFACE_VERSION;
 
 DebugAdapterClient::DebugAdapterClient(IManager* manager)
     : IPlugin(manager)
-    , m_terminal_helper(LOG)
     , m_isPerspectiveLoaded(false)
 {
     // setup custom logger for this module
     wxFileName logfile(clStandardPaths::Get().GetUserDataDir(), "dap.log");
     logfile.AppendDir("logs");
 
-    LOG.Open(logfile);
-    LOG.SetModule("dap");
-
-    // even though set to DBG, the check is done against the global log verbosity
-    LOG.SetCurrentLogLevel(FileLogger::Dbg);
-
-    LOG_DEBUG(LOG) << "Debug Adapter Client started" << endl;
+    DAP_DEBUG() << "Debug Adapter Client started" << endl;
     m_longName = _("Debug Adapter Client");
     m_shortName = wxT("DebugAdapterClient");
 
@@ -383,7 +375,7 @@ void DebugAdapterClient::OnDebugContinue(clDebugEvent& event)
     CHECK_IS_DAP_CONNECTED();
     // call continue
     m_client.Continue();
-    LOG_DEBUG(LOG) << "Sending 'continue' command" << endl;
+    DAP_DEBUG() << "Sending 'continue' command" << endl;
 }
 
 void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
@@ -394,11 +386,11 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
         return;
     }
 
-    LOG_DEBUG(LOG) << "debug-start event is called for debugger:" << event.GetDebuggerName() << endl;
+    DAP_DEBUG() << "debug-start event is called for debugger:" << event.GetDebuggerName() << endl;
 
     if (!IsDebuggerOwnedByPlugin(event.GetDebuggerName())) {
         event.Skip();
-        LOG_DEBUG(LOG) << "Not a dap debugger (" << event.GetDebuggerName() << ")" << endl;
+        DAP_DEBUG() << "Not a dap debugger (" << event.GetDebuggerName() << ")" << endl;
         return;
     }
 
@@ -406,7 +398,7 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
     DapEntry dap_server;
     m_dap_store.Get(event.GetDebuggerName(), &dap_server);
 
-    LOG_DEBUG(LOG) << "working directory is:" << ::wxGetCwd() << endl;
+    DAP_DEBUG() << "working directory is:" << ::wxGetCwd() << endl;
 
     // the following 4 variables are used for launching the debugger
     wxString working_directory;
@@ -425,7 +417,7 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
                 wxString() << _("Could not locate project: ") << clCxxWorkspaceST::Get()->GetActiveProjectName(),
                 DAP_MESSAGE_BOX_TITLE,
                 wxICON_ERROR | wxOK | wxCENTER);
-            LOG_ERROR(LOG) << "unable to locate project:" << clCxxWorkspaceST::Get()->GetActiveProjectName() << endl;
+            DAP_ERROR() << "unable to locate project:" << clCxxWorkspaceST::Get()->GetActiveProjectName() << endl;
             return;
         }
 
@@ -438,9 +430,9 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
         }
 
         // Determine the executable to debug, working directory and arguments
-        LOG_DEBUG(LOG) << "Preparing environment variables.." << endl;
+        DAP_DEBUG() << "Preparing environment variables.." << endl;
         env = bldConf->GetEnvironment(project.get());
-        LOG_DEBUG(LOG) << "Success" << endl;
+        DAP_DEBUG() << "Success" << endl;
         exepath = bldConf->GetCommand();
 
         // Get the debugging arguments.
@@ -467,7 +459,7 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
         //
         auto conf = clFileSystemWorkspace::Get().GetSettings().GetSelectedConfig();
         if (!conf) {
-            LOG_ERROR(LOG) << "No active configuration found!" << endl;
+            DAP_ERROR() << "No active configuration found!" << endl;
             return;
         }
 
@@ -497,7 +489,7 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
     }
 
     // start the debugger
-    LOG_DEBUG(LOG) << "Initializing debugger for executable:" << exepath << endl;
+    DAP_DEBUG() << "Initializing debugger for executable:" << exepath << endl;
     if (!InitialiseSession(dap_server, exepath, args, working_directory, ssh_account, env)) {
         return;
     }
@@ -507,14 +499,14 @@ void DebugAdapterClient::OnDebugStart(clDebugEvent& event)
 void DebugAdapterClient::OnDebugNext(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
-    LOG_DEBUG(LOG) << "-> Next" << endl;
+    DAP_DEBUG() << "-> Next" << endl;
     m_client.Next();
 }
 
 void DebugAdapterClient::OnDebugStop(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
-    LOG_DEBUG(LOG) << "-> Stop" << endl;
+    DAP_DEBUG() << "-> Stop" << endl;
     DoCleanup();
 }
 
@@ -534,14 +526,14 @@ void DebugAdapterClient::OnDebugStepIn(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
     m_client.StepIn();
-    LOG_DEBUG(LOG) << "-> StopIn" << endl;
+    DAP_DEBUG() << "-> StopIn" << endl;
 }
 
 void DebugAdapterClient::OnDebugStepOut(clDebugEvent& event)
 {
     CHECK_IS_DAP_CONNECTED();
     m_client.StepOut();
-    LOG_DEBUG(LOG) << "-> StopOut" << endl;
+    DAP_DEBUG() << "-> StopOut" << endl;
 }
 
 void DebugAdapterClient::RestoreUI()
@@ -633,7 +625,7 @@ void DebugAdapterClient::InitializeUI()
 {
     wxWindow* parent = m_mgr->GetDockingManager()->GetManagedWindow();
     if (!m_debuggerPane) {
-        m_debuggerPane = new DAPDebuggerPane(parent, this, LOG);
+        m_debuggerPane = new DAPDebuggerPane(parent, this);
         m_mgr->GetDockingManager()->AddPane(m_debuggerPane,
                                             wxAuiPaneInfo()
                                                 .MinSize(300, 300)
@@ -751,7 +743,7 @@ void DebugAdapterClient::OnInitDone(wxCommandEvent& event)
     if (locator.Locate(&entries) > 0) {
         m_dap_store.Set(entries);
         m_dap_store.Save(get_dap_settings_file());
-        LOG_SYSTEM(LOG) << "Found and configured" << entries.size() << "dap servers" << endl;
+        DAP_SYSTEM() << "Found and configured" << entries.size() << "dap servers" << endl;
         RegisterDebuggers();
     }
 }
@@ -870,14 +862,14 @@ void DebugAdapterClient::OnDebugShowCursor(clDebugEvent& event)
 void DebugAdapterClient::OnDapExited(DAPEvent& event)
 {
     event.Skip();
-    LOG_DEBUG(LOG) << "dap-server exited" << endl;
+    DAP_DEBUG() << "dap-server exited" << endl;
     DoCleanup();
 }
 
 void DebugAdapterClient::OnDapLog(DAPEvent& event)
 {
     event.Skip();
-    LOG_DEBUG(LOG) << event.GetString() << endl;
+    DAP_DEBUG() << event.GetString() << endl;
 }
 
 void DebugAdapterClient::OnDapOutputEvent(DAPEvent& event)
@@ -919,13 +911,13 @@ void DebugAdapterClient::OnDapInitializeResponse(DAPEvent& event)
                 : ::wxGetCwd();
     }
 
-    LOG_DEBUG(LOG) << "got initialize response" << endl;
-    LOG_DEBUG(LOG) << "Starting debugger for command:" << endl;
-    LOG_DEBUG(LOG) << m_session.command << endl;
-    LOG_DEBUG(LOG) << "working directory:" << m_session.working_directory << endl;
+    DAP_DEBUG() << "got initialize response" << endl;
+    DAP_DEBUG() << "Starting debugger for command:" << endl;
+    DAP_DEBUG() << m_session.command << endl;
+    DAP_DEBUG() << "working directory:" << m_session.working_directory << endl;
 
     // FIXME: apply the environment here
-    LOG_DEBUG(LOG) << "Calling Launch() with command:" << m_session.command << endl;
+    DAP_DEBUG() << "Calling Launch() with command:" << m_session.command << endl;
     if (m_session.dap_server.GetLaunchType() == DapLaunchType::LAUNCH) {
         auto v = m_session.command;
         m_client.Launch(std::move(v), m_session.working_directory, m_session.MakeEnvironment());
@@ -965,7 +957,7 @@ void DebugAdapterClient::OnDapStoppedEvent(DAPEvent& event)
         m_session.need_to_set_breakpoints = false;
     }
 
-    LOG_DEBUG(LOG) << " *** DAP Stopped Event *** " << endl;
+    DAP_DEBUG() << " *** DAP Stopped Event *** " << endl;
     dap::StoppedEvent* stopped_data = event.GetDapEvent()->As<dap::StoppedEvent>();
     if (stopped_data) {
         m_client.GetThreads();
@@ -1012,7 +1004,7 @@ void DebugAdapterClient::OnDapScopesResponse(DAPEvent& event)
     CHECK_PTR_RET(GetThreadsView());
 
     if (!response->success) {
-        LOG_DEBUG(LOG) << "failed to retrieve scopes." << response->message << endl;
+        DAP_DEBUG() << "failed to retrieve scopes." << response->message << endl;
         return;
     }
     GetThreadsView()->UpdateScopes(response->refId, response);
@@ -1068,8 +1060,8 @@ void DebugAdapterClient::OnDapSetSourceBreakpointResponse(DAPEvent& event)
     // delete all breakpoints associated with the reported file
     // in some cases, the DAP server does not report back a file
     // so we use the originating request path instead
-    LOG_DEBUG(LOG) << "Deleting session breakpoints for file:"
-                   << (resp->originSource.empty() ? set_bp_req->arguments.source.path : resp->originSource) << endl;
+    DAP_DEBUG() << "Deleting session breakpoints for file:"
+                << (resp->originSource.empty() ? set_bp_req->arguments.source.path : resp->originSource) << endl;
     m_sessionBreakpoints.delete_by_path(resp->originSource);
 
     for (auto bp : resp->breakpoints) {
@@ -1110,7 +1102,7 @@ void DebugAdapterClient::OnDapRunInTerminal(DAPEvent& event)
     int process_id = m_terminal_helper.RunProcess(request->arguments.args, wxEmptyString, {});
     // send the response back to the dap server
     auto response = m_client.MakeRequest<dap::RunInTerminalResponse>();
-    LOG_DEBUG(LOG) << "RunInTerminal process ID:" << process_id << endl;
+    DAP_DEBUG() << "RunInTerminal process ID:" << process_id << endl;
     response->request_seq = request->seq;
     if (process_id == wxNOT_FOUND) {
         response->success = false;
@@ -1143,7 +1135,7 @@ bool DebugAdapterClient::StartSocketDap()
     const DapEntry& dap_server = m_session.dap_server;
     wxString command = ReplacePlaceholders(dap_server.GetCommand());
 
-    LOG_DEBUG(LOG) << "starting dap with command:" << command << endl;
+    DAP_DEBUG() << "starting dap with command:" << command << endl;
 
     if (m_session.debug_over_ssh) {
         // launch ssh process
@@ -1175,7 +1167,7 @@ dap::Transport* DebugAdapterClient::StartStdioDap()
     const DapEntry& dap_server = m_session.dap_server;
     wxString command = ReplacePlaceholders(dap_server.GetCommand());
 
-    LOG_DEBUG(LOG) << "starting dap with command:" << command << endl;
+    DAP_DEBUG() << "starting dap with command:" << command << endl;
 
     auto transport = new StdioTransport();
 
@@ -1238,7 +1230,7 @@ bool DebugAdapterClient::InitialiseSession(const DapEntry& dap_server,
     if (m_session.debug_over_ssh) {
         m_session.ssh_acount = SSHAccountInfo::LoadAccount(ssh_account);
         if (m_session.ssh_acount.GetAccountName().empty()) {
-            LOG_ERROR(LOG) << "failed to load ssh account:" << ssh_account << endl;
+            DAP_ERROR() << "failed to load ssh account:" << ssh_account << endl;
             m_session.Clear();
             return false;
         }
@@ -1253,10 +1245,10 @@ void DebugAdapterClient::StartAndConnectToDapServer()
     m_client.Reset();
     m_dap_server.reset();
 
-    LOG_DEBUG(LOG) << "Connecting to dap-server:" << m_session.dap_server.GetName() << endl;
-    LOG_DEBUG(LOG) << "exepath:" << m_session.command << endl;
-    LOG_DEBUG(LOG) << "working_directory:" << m_session.working_directory << endl;
-    LOG_DEBUG(LOG) << "env:" << to_string_array(m_session.environment) << endl;
+    DAP_DEBUG() << "Connecting to dap-server:" << m_session.dap_server.GetName() << endl;
+    DAP_DEBUG() << "exepath:" << m_session.command << endl;
+    DAP_DEBUG() << "working_directory:" << m_session.working_directory << endl;
+    DAP_DEBUG() << "env:" << to_string_array(m_session.environment) << endl;
 
     dap::Transport* transport = nullptr;
     if (m_session.dap_server.GetConnectionString().CmpNoCase("stdio") == 0) {
@@ -1268,14 +1260,14 @@ void DebugAdapterClient::StartAndConnectToDapServer()
     } else {
         // start the dap server (for the current session)
         if (!StartSocketDap()) {
-            LOG_WARNING(LOG) << "Failed to start dap server" << endl;
+            DAP_WARNING() << "Failed to start dap server" << endl;
             return;
         }
-        LOG_DEBUG(LOG) << "dap server started!" << endl;
+        DAP_DEBUG() << "dap server started!" << endl;
         wxBusyCursor cursor;
         // Using socket transport
         auto socket_transport = new dap::SocketTransport();
-        LOG_DEBUG(LOG) << "Connecting to dap server:" << m_session.dap_server.GetConnectionString() << endl;
+        DAP_DEBUG() << "Connecting to dap server:" << m_session.dap_server.GetConnectionString() << endl;
         if (!socket_transport->Connect(m_session.dap_server.GetConnectionString().ToStdString(), 10)) {
             wxMessageBox(
                 "Failed to connect to DAP server using socket", DAP_MESSAGE_BOX_TITLE, wxICON_ERROR | wxOK | wxCENTRE);
@@ -1284,11 +1276,11 @@ void DebugAdapterClient::StartAndConnectToDapServer()
             m_dap_server.reset();
             return;
         }
-        LOG_DEBUG(LOG) << "Success" << endl;
+        DAP_DEBUG() << "Success" << endl;
         transport = socket_transport;
     }
 
-    m_breakpointsHelper = std::make_unique<BreakpointsHelper>(m_client, m_session, LOG);
+    m_breakpointsHelper = std::make_unique<BreakpointsHelper>(m_client, m_session);
 
     // Notify about debug start event
     // + load the UI
@@ -1303,7 +1295,7 @@ void DebugAdapterClient::StartAndConnectToDapServer()
     // construct new client with the transport
     m_client.SetTransport(transport);
 
-    LOG_DEBUG(LOG) << "Sending Initialize request" << endl;
+    DAP_DEBUG() << "Sending Initialize request" << endl;
     // send protocol Initialize request
     dap::InitializeRequestArguments init_request_args;
     init_request_args.clientID = "CodeLite";
@@ -1334,8 +1326,8 @@ void DebugAdapterClient::OnProcessTerminated(clProcessEvent& event)
     m_dap_server.reset();
 
     RestoreUI();
-    LOG_DEBUG(LOG) << event.GetOutput() << endl;
-    LOG_DEBUG(LOG) << "dap-server terminated" << endl;
+    DAP_DEBUG() << event.GetOutput() << endl;
+    DAP_DEBUG() << "dap-server terminated" << endl;
 
     clDebugEvent e(wxEVT_DEBUG_ENDED);
     EventNotifier::Get()->AddPendingEvent(e);
@@ -1345,7 +1337,7 @@ void DebugAdapterClient::StopProcess()
 {
     if (m_dap_server) {
         // wxEVT_DEBUG_ENDED is sent in OnProcessTerminated() handler
-        LOG_DEBUG(LOG) << "Terminating dap-server..." << endl;
+        DAP_DEBUG() << "Terminating dap-server..." << endl;
         m_dap_server->Terminate();
 
     } else {
@@ -1386,9 +1378,9 @@ void DebugAdapterClient::LoadFile(const dap::Source& sourceId, int line_number)
 
         // the is already loaded
         wxString file_to_load = fp.GetFullPath();
-        LOG_DEBUG(LOG) << "Loading file.." << file_to_load << endl;
+        DAP_DEBUG() << "Loading file.." << file_to_load << endl;
         file_to_load = NormaliseReceivedPath(file_to_load);
-        LOG_DEBUG(LOG) << "Normalised form:" << file_to_load << endl;
+        DAP_DEBUG() << "Normalised form:" << file_to_load << endl;
 
         if (m_session.debug_over_ssh) {
             clGetManager()->SetStatusMessage(_("ERROR: (dap) loading remote file over SSH is not supported yet"));
@@ -1426,7 +1418,7 @@ void DebugAdapterClient::LoadFile(const dap::Source& sourceId, int line_number)
                 if (!success) {
                     return;
                 }
-                LOG_DEBUG(LOG) << "mimeType:" << mimeType << endl;
+                DAP_DEBUG() << "mimeType:" << mimeType << endl;
                 clGetManager()->SelectPage(m_textView);
                 m_textView->SetText(sourceId,
                                     content,

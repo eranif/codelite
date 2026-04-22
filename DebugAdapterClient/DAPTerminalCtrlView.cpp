@@ -10,9 +10,8 @@
 #include <wx/arrstr.h>
 #include <wx/tokenzr.h>
 
-DAPTerminalCtrlView::DAPTerminalCtrlView(wxWindow* parent, clModuleLogger& log)
+DAPTerminalCtrlView::DAPTerminalCtrlView(wxWindow* parent)
     : wxPanel(parent)
-    , LOG(log)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
 

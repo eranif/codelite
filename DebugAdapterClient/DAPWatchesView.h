@@ -3,14 +3,12 @@
 
 #include "DAPVariableListCtrl.hpp"
 #include "UI.h"
-#include "clModuleLogger.hpp"
 
 class DebugAdapterClient;
 class DAPWatchesView : public DAPWatchesViewBase
 {
     DAPVariableListCtrl* m_list = nullptr;
     DebugAdapterClient* m_plugin = nullptr;
-    clModuleLogger& LOG;
 
 protected:
     void OnNewWatch(wxCommandEvent& event);
@@ -20,7 +18,7 @@ protected:
     void OnDeleteWatchUI(wxUpdateUIEvent& event);
 
 public:
-    DAPWatchesView(wxWindow* parent, DebugAdapterClient* plugin, clModuleLogger& log);
+    DAPWatchesView(wxWindow* parent, DebugAdapterClient* plugin);
     virtual ~DAPWatchesView() = default;
 
     void Clear();

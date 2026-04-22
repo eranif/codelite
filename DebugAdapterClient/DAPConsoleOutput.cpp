@@ -6,8 +6,8 @@
 #include <wx/arrstr.h>
 #include <wx/tokenzr.h>
 
-DAPConsoleOutput::DAPConsoleOutput(wxWindow* parent, clModuleLogger& log)
-    : DAPTerminalCtrlView(parent, log)
+DAPConsoleOutput::DAPConsoleOutput(wxWindow* parent)
+    : DAPTerminalCtrlView(parent)
 {
 }
 

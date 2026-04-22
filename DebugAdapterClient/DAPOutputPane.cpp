@@ -4,15 +4,15 @@
 
 #include <wx/sizer.h>
 
-DAPOutputPane::DAPOutputPane(wxWindow* parent, clModuleLogger& log)
+DAPOutputPane::DAPOutputPane(wxWindow* parent)
     : wxPanel(parent)
 {
     SetSizer(new wxBoxSizer(wxVERTICAL));
     m_notebook = new Notebook(this, wxID_ANY);
     GetSizer()->Add(m_notebook, 1, wxEXPAND);
 
-    m_consoleTab = new DAPConsoleOutput(m_notebook, log);
-    m_moduleTab = new DAPModuleView(m_notebook, log);
+    m_consoleTab = new DAPConsoleOutput(m_notebook);
+    m_moduleTab = new DAPModuleView(m_notebook);
     m_notebook->AddPage(m_consoleTab, _("Output"), true);
     m_notebook->AddPage(m_moduleTab, _("Modules"), false);
 }

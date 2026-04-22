@@ -1,5 +1,6 @@
 #include "DAPMainView.h"
 
+#include "DapLogger.hpp"
 #include "DebugAdapterClient.hpp"
 #include "globals.h"
 #include "macros.h"
@@ -37,10 +38,9 @@ void DeleteAllItems(ListCtrl* list, std::function<void(wxUIntPtr)> deleter)
 }
 } // namespace
 
-DAPMainView::DAPMainView(wxWindow* parent, DebugAdapterClient* plugin, clModuleLogger& log)
+DAPMainView::DAPMainView(wxWindow* parent, DebugAdapterClient* plugin)
     : DAPMainViewBase(parent)
     , m_plugin(plugin)
-    , LOG(log)
 {
     m_timer = new wxTimer(this);
     Bind(wxEVT_TIMER, &DAPMainView::OnTimerCheckCanInteract, this);
@@ -61,7 +61,7 @@ DAPMainView::DAPMainView(wxWindow* parent, DebugAdapterClient* plugin, clModuleL
     auto width = dc.GetTextExtent("1234567890 X Thread Name").GetWidth();
     m_splitterThreadsFrames->SetSashPosition(width);
 
-    m_outputPane = new DAPOutputPane(m_splitterPageBottom, LOG);
+    m_outputPane = new DAPOutputPane(m_splitterPageBottom);
     m_splitterPageBottom->GetSizer()->Add(m_outputPane, 1, wxEXPAND);
 }
 
@@ -157,8 +157,8 @@ void DAPMainView::UpdateFrames(int threadId, dap::StackTraceResponse* response)
 
 void DAPMainView::UpdateScopes(int frameId, dap::ScopesResponse* response)
 {
-    LOG_DEBUG(LOG) << "Current frame id:" << m_scopesFrameId << endl;
-    LOG_DEBUG(LOG) << "updating scopes for frame:" << frameId << endl;
+    DAP_DEBUG() << "Current frame id:" << m_scopesFrameId << endl;
+    DAP_DEBUG() << "updating scopes for frame:" << frameId << endl;
     bool changed_frame = m_scopesFrameId != frameId;
     m_scopesFrameId = frameId;
 

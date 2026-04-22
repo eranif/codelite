@@ -4,7 +4,6 @@
 #include "DAPConsoleOutput.hpp"
 #include "DAPModuleView.h"
 #include "Notebook.h"
-#include "clModuleLogger.hpp"
 #include "dap/dap.hpp"
 
 #include <wx/panel.h>
@@ -16,7 +15,7 @@ class DAPOutputPane : public wxPanel
     DAPModuleView* m_moduleTab = nullptr;
 
 public:
-    DAPOutputPane(wxWindow* parent, clModuleLogger& log);
+    DAPOutputPane(wxWindow* parent);
     virtual ~DAPOutputPane() = default;
 
     void AddEvent(dap::ModuleEvent* event);

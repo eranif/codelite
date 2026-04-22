@@ -1,5 +1,7 @@
 #include "BreakpointsHelper.hpp"
 
+#include "DapLogger.hpp"
+#include "codelite_events.h"
 #include "event_notifier.h"
 
 #include <algorithm>
@@ -30,10 +32,9 @@ dap::FunctionBreakpoint to_dap_function_bp(const clDebuggerBreakpoint& bp)
 
 } // namespace
 
-BreakpointsHelper::BreakpointsHelper(dap::Client& client, const DebugSession& session, clModuleLogger& log)
+BreakpointsHelper::BreakpointsHelper(dap::Client& client, const DebugSession& session)
     : m_client(client)
     , m_session(session)
-    , LOG(log)
 {
     // create a snapshot of the breakpoints manager
     clDebuggerBreakpoint::Vec_t all_bps;
@@ -58,15 +59,15 @@ BreakpointsHelper::~BreakpointsHelper()
     // restore the breakpoints
     clDebuggerBreakpoint::Vec_t all_bps;
     for (const auto& vt : m_ui_breakpoints) {
-        LOG_DEBUG(LOG) << "Restoring breakpoints for file:" << vt.first << " -" << vt.second.size() << "breakpoints"
-                       << endl;
+        DAP_DEBUG() << "Restoring breakpoints for file:" << vt.first << " -" << vt.second.size() << "breakpoints"
+                    << endl;
         for (const auto& bp : vt.second) {
             all_bps.push_back(bp);
         }
     }
 
     clGetManager()->SetBreakpoints(all_bps);
-    LOG_DEBUG(LOG) << "Restoring breakpoints...done" << endl;
+    DAP_DEBUG() << "Restoring breakpoints...done" << endl;
 
     // refresh markers
     EventNotifier::Get()->Unbind(wxEVT_DBG_UI_TOGGLE_BREAKPOINT, &BreakpointsHelper::OnToggleBreakpoint, this);
@@ -77,7 +78,7 @@ void BreakpointsHelper::OnToggleBreakpoint(clDebugEvent& event)
     // this instance only exists while an active debug session is running
     // during such a session, we capture all the UI breakpoints adding/deleting
     event.Skip();
-    LOG_DEBUG(LOG) << "Toggle breakpoint called for:" << event.GetFileName() << ":" << event.GetLineNumber() << endl;
+    DAP_DEBUG() << "Toggle breakpoint called for:" << event.GetFileName() << ":" << event.GetLineNumber() << endl;
     if (m_ui_breakpoints.count(event.GetFileName()) == 0) {
         m_ui_breakpoints.insert({event.GetFileName(), {}});
     }
@@ -90,10 +91,10 @@ void BreakpointsHelper::OnToggleBreakpoint(clDebugEvent& event)
     if (iter == file_breakpoints.end()) {
         auto bp = clGetManager()->CreateBreakpoint(event.GetFileName(), event.GetLineNumber());
         file_breakpoints.push_back(bp);
-        LOG_DEBUG(LOG) << "Breakpoint does not exist - adding it" << endl;
+        DAP_DEBUG() << "Breakpoint does not exist - adding it" << endl;
     } else {
         file_breakpoints.erase(iter);
-        LOG_DEBUG(LOG) << "Breakpoint exists - deleting it" << endl;
+        DAP_DEBUG() << "Breakpoint exists - deleting it" << endl;
     }
 
     // need to apply the breakpoints for this file
@@ -105,7 +106,7 @@ void BreakpointsHelper::ApplyBreakpoints(const wxString& path)
     if (!m_client.IsConnected()) {
         return;
     }
-    LOG_DEBUG(LOG) << "Applying breakpoints" << endl;
+    DAP_DEBUG() << "Applying breakpoints" << endl;
     std::unordered_map<wxString, std::vector<dap::SourceBreakpoint>> dap_source_breakpoints;
     std::vector<dap::FunctionBreakpoint> dap_function_breakpoints;
 
@@ -140,18 +141,18 @@ void BreakpointsHelper::ApplyBreakpoints(const wxString& path)
     // don't pass empty array, it will tell dap to clear all breakpoints
     for (const auto& vt : dap_source_breakpoints) {
         wxFileName filepath(vt.first);
-        LOG_DEBUG(LOG) << "Applying breakpoints for file:" << filepath << endl;
+        DAP_DEBUG() << "Applying breakpoints for file:" << filepath << endl;
         for (const auto& bp : vt.second) {
-            LOG_DEBUG(LOG) << "Line:" << bp.line << ". Condition: " << bp.condition << endl;
+            DAP_DEBUG() << "Line:" << bp.line << ". Condition: " << bp.condition << endl;
         }
         wxString source_path = NormalisePathForSend(filepath.GetFullPath());
         m_client.SetBreakpointsFile(source_path, vt.second);
     }
 
     if (!dap_function_breakpoints.empty()) {
-        LOG_DEBUG(LOG) << "Applying function breakpoints:" << endl;
+        DAP_DEBUG() << "Applying function breakpoints:" << endl;
         for (const auto& bp : dap_function_breakpoints) {
-            LOG_DEBUG(LOG) << "Function name:" << bp.name << ". Condition: " << bp.condition << endl;
+            DAP_DEBUG() << "Function name:" << bp.name << ". Condition: " << bp.condition << endl;
         }
         m_client.SetFunctionBreakpoints(dap_function_breakpoints);
     }

@@ -1,9 +1,10 @@
 #include "RunInTerminalHelper.hpp"
 
+#include "DapLogger.hpp"
+#include "codelite_events.h"
 #include "event_notifier.h"
 
-RunInTerminalHelper::RunInTerminalHelper(clModuleLogger& log)
-    : LOG(log)
+RunInTerminalHelper::RunInTerminalHelper()
 {
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &RunInTerminalHelper::OnProcessTerminated, this);
     EventNotifier::Get()->Bind(wxEVT_DEBUG_ENDED, &RunInTerminalHelper::OnDebugEnded, this);
@@ -23,7 +24,7 @@ RunInTerminalHelper::~RunInTerminalHelper()
 
 void RunInTerminalHelper::OnProcessTerminated(clProcessEvent& event)
 {
-    LOG_DEBUG(LOG) << "Helper process terminated!" << endl;
+    DAP_DEBUG() << "Helper process terminated!" << endl;
     wxDELETE(m_process);
 }
 
@@ -34,15 +35,15 @@ int RunInTerminalHelper::RunProcess(const std::vector<wxString>& command, const 
     }
 
     m_processId = wxNOT_FOUND;
-    LOG_DEBUG(LOG) << "Starting run-in-terminal process:" << command << endl;
-    LOG_DEBUG(LOG) << "wd:" << wd << endl;
+    DAP_DEBUG() << "Starting run-in-terminal process:" << command << endl;
+    DAP_DEBUG() << "wd:" << wd << endl;
 
     m_process = ::CreateAsyncProcess(this, command, IProcessCreateConsole | IProcessNoRedirect, wd, &env);
     if (m_process) {
         m_processId = m_process->GetPid();
-        LOG_WARNING(LOG) << "Helper process launched successfully P:" << m_processId << endl;
+        DAP_WARNING() << "Helper process launched successfully P:" << m_processId << endl;
     } else {
-        LOG_WARNING(LOG) << "Failed to launch helper process:" << command << endl;
+        DAP_WARNING() << "Failed to launch helper process:" << command << endl;
     }
     return m_processId;
 }

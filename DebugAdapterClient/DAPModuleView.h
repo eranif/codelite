@@ -2,7 +2,6 @@
 #define DAPMODULEVIEW_H
 
 #include "DAPTerminalCtrlView.h"
-#include "UI.h"
 #include "clTerminalViewCtrl.hpp"
 #include "dap/dap.hpp"
 
@@ -14,7 +13,7 @@ protected:
     void OnMenu(wxDataViewEvent& event);
 
 public:
-    DAPModuleView(wxWindow* parent, clModuleLogger& log);
+    DAPModuleView(wxWindow* parent);
     virtual ~DAPModuleView() = default;
 
     void AddModuleEvent(dap::ModuleEvent* event);

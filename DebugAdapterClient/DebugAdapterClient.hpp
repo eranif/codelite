@@ -119,8 +119,12 @@ private:
     bool StartSocketDap();
     dap::Transport* StartStdioDap();
     void RefreshBreakpointsView();
-    bool InitialiseSession(const DapEntry& dap_server, const wxString& exepath, const wxString& args,
-                           const wxString& working_directory, const wxString& ssh_account, const clEnvList_t& env);
+    bool InitialiseSession(const DapEntry& dap_server,
+                           const wxString& exepath,
+                           const wxString& args,
+                           const wxString& working_directory,
+                           const wxString& ssh_account,
+                           const clEnvList_t& env);
 
     clEnvList_t PrepareEnvForFileSystemWorkspace(const DapEntry& dap_server, bool resolve_vars);
 

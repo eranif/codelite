@@ -13,9 +13,8 @@ const wxString DAP_BREAKPOINTS_VIEW = _("Breakpoints");
 const wxString DAP_WATCHES_VIEW = _("Watches");
 } // namespace
 
-DAPDebuggerPane::DAPDebuggerPane(wxWindow* parent, DebugAdapterClient* adapter, clModuleLogger& log)
+DAPDebuggerPane::DAPDebuggerPane(wxWindow* parent, DebugAdapterClient* adapter)
     : wxPanel(parent)
-    , LOG(log)
     , m_dapPlugin(adapter)
 {
     m_book = new Notebook(this,
@@ -27,13 +26,13 @@ DAPDebuggerPane::DAPDebuggerPane(wxWindow* parent, DebugAdapterClient* adapter, 
     SetSizer(new wxBoxSizer(wxVERTICAL));
     GetSizer()->Add(m_book, 1, wxEXPAND);
 
-    m_mainView = new DAPMainView(m_book, m_dapPlugin, LOG);
+    m_mainView = new DAPMainView(m_book, m_dapPlugin);
     m_book->AddPage(m_mainView, DAP_MAIN_VIEW, true);
 
-    m_watchesView = new DAPWatchesView(m_book, m_dapPlugin, LOG);
+    m_watchesView = new DAPWatchesView(m_book, m_dapPlugin);
     m_book->AddPage(m_watchesView, DAP_WATCHES_VIEW, false);
 
-    m_breakpointsView = new DAPBreakpointsView(m_book, m_dapPlugin, LOG);
+    m_breakpointsView = new DAPBreakpointsView(m_book, m_dapPlugin);
     m_book->AddPage(m_breakpointsView, DAP_BREAKPOINTS_VIEW, false);
 
     GetSizer()->Fit(this);

@@ -11,7 +11,6 @@
 class DAPTerminalCtrlView : public wxPanel
 {
 protected:
-    clModuleLogger& LOG;
     wxStyledTextCtrl* m_ctrl = nullptr;
 
 protected:
@@ -19,7 +18,7 @@ protected:
     void ApplyTheme();
 
 public:
-    DAPTerminalCtrlView(wxWindow* parent, clModuleLogger& log);
+    DAPTerminalCtrlView(wxWindow* parent);
     virtual ~DAPTerminalCtrlView();
 
     void AppendLine(const wxString& line);

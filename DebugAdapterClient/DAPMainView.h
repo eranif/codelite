@@ -3,9 +3,6 @@
 
 #include "DAPOutputPane.hpp"
 #include "UI.h"
-#include "clModuleLogger.hpp"
-#include "dap/Client.hpp"
-#include "dap/DAPEvent.hpp"
 #include "dap/dap.hpp"
 
 #include <wx/timer.h>
@@ -68,7 +65,7 @@ struct FrameInfo {
 class DAPMainView : public DAPMainViewBase
 {
 public:
-    DAPMainView(wxWindow* parent, DebugAdapterClient* plugin, clModuleLogger& log);
+    DAPMainView(wxWindow* parent, DebugAdapterClient* plugin);
     virtual ~DAPMainView();
 
     void UpdateThreads(int activeThreadId, dap::ThreadsResponse* response);
@@ -108,7 +105,6 @@ private:
     // the variables displayed in the view are owned by this frame Id
     int m_scopesFrameId = wxNOT_FOUND;
 
-    clModuleLogger& LOG;
     DAPOutputPane* m_outputPane = nullptr;
     std::vector<size_t> m_getFramesRequests;
 };

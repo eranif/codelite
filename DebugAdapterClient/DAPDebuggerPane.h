@@ -15,7 +15,7 @@ class DAPOutputPane;
 class DAPDebuggerPane : public wxPanel
 {
 public:
-    DAPDebuggerPane(wxWindow* parent, DebugAdapterClient* adapter, clModuleLogger& log);
+    DAPDebuggerPane(wxWindow* parent, DebugAdapterClient* adapter);
     virtual ~DAPDebuggerPane() = default;
 
     DAPMainView* GetMainView() const { return m_mainView; }
@@ -25,7 +25,6 @@ public:
     void Clear();
 
 private:
-    clModuleLogger& LOG;
     Notebook* m_book = nullptr;
     DebugAdapterClient* m_dapPlugin = nullptr;
     DAPMainView* m_mainView = nullptr;

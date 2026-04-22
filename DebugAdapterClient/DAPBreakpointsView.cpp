@@ -1,15 +1,16 @@
 #include "DAPBreakpointsView.h"
 
+#include "DapLogger.hpp"
 #include "DebugAdapterClient.hpp"
 #include "dap/dap.hpp"
 
 #include <unordered_map>
+#include <unordered_set>
 #include <wx/msgdlg.h>
 
-DAPBreakpointsView::DAPBreakpointsView(wxWindow* parent, DebugAdapterClient* plugin, clModuleLogger& log)
+DAPBreakpointsView::DAPBreakpointsView(wxWindow* parent, DebugAdapterClient* plugin)
     : DAPBreakpointsViewBase(parent)
     , m_plugin(plugin)
-    , LOG(log)
 {
     m_dvListCtrl->SetSortFunction(
         [](const clRowEntry* a, const clRowEntry* b) { return a->GetLabel().CmpNoCase(b->GetLabel()); });
@@ -185,8 +186,8 @@ void DAPBreakpointsView::OnDeleteAllBreakpoints(wxCommandEvent& event)
         if (!cd) {
             continue;
         }
-        LOG_DEBUG(LOG) << "Will delete breakpoint:" << cd->m_breakpoint.source.sourceReference << ","
-                       << cd->m_breakpoint.source.path << endl;
+        DAP_DEBUG() << "Will delete breakpoint:" << cd->m_breakpoint.source.sourceReference << ","
+                    << cd->m_breakpoint.source.path << endl;
         if (cd->m_breakpoint.source.path.empty()) {
             continue;
         }
@@ -195,7 +196,7 @@ void DAPBreakpointsView::OnDeleteAllBreakpoints(wxCommandEvent& event)
     }
 
     for (const wxString& path : paths) {
-        LOG_DEBUG(LOG) << "Deleting breakpoints with path:" << path << endl;
+        DAP_DEBUG() << "Deleting breakpoints with path:" << path << endl;
         m_plugin->GetClient().SetBreakpointsFile(path, {});
     }
 }

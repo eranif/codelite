@@ -6,12 +6,10 @@
 #include "imanager.h"
 #include "macros.h"
 
-DAPWatchesView::DAPWatchesView(wxWindow* parent, DebugAdapterClient* plugin, clModuleLogger& log)
+DAPWatchesView::DAPWatchesView(wxWindow* parent, DebugAdapterClient* plugin)
     : DAPWatchesViewBase(parent)
     , m_plugin(plugin)
-    , LOG(log)
 {
-    wxUnusedVar(LOG);
     m_list = new DAPVariableListCtrl(this, &m_plugin->GetClient(), dap::EvaluateContext::WATCH);
     GetSizer()->Add(m_list, wxSizerFlags(1).Expand());
 

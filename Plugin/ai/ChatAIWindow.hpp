@@ -167,7 +167,7 @@ private:
     std::unique_ptr<clEditEventsHandler> m_inputEditHelper;
     std::unique_ptr<clEditEventsHandler> m_outputEditHelper;
     wxStatusBar* m_statusBar{nullptr};
-    EndpointModelSelector* m_model_selector{nullptr};
+    std::unique_ptr<EndpointModelSelector> m_model_selector{nullptr};
     std::mutex m_promises_mutex;
     std::vector<PromisePtr> m_promises;
 };

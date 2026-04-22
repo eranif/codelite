@@ -86,9 +86,9 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
                              _("Generate commit message"),
                              images->LoadBitmap("wand"),
                              _("Generate commit message"));
-    m_toolbar->AddControl(new EndpointModelSelector(m_toolbar));
-
+    m_endpointSelector = std::make_unique<EndpointModelSelector>(m_toolbar);
     m_toolbar->Realize();
+
     m_toolbar->Bind(wxEVT_TOOL, &GitCommitDlg::OnToggleCheckAll, this, XRCID("ID_CHECKALL"));
     m_toolbar->Bind(wxEVT_TOOL, &GitCommitDlg::OnCommitHistory, this, XRCID("ID_HISTORY"));
     m_toolbar->Bind(wxEVT_TOOL, &GitCommitDlg::OnGenerate, this, XRCID("ID_GENERATE"));

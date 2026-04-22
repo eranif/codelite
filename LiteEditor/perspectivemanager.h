@@ -117,8 +117,6 @@ private:
     std::unordered_map<wxString, int> m_menuIdToName;
     std::unordered_map<wxString, wxString> m_perspectives;
     std::unordered_map<wxString, SavedPaneInfo> m_hiddenPanes;
-    bool m_showPaneInProgress = false;
-    int m_nextId;
     wxString m_active;
     wxString m_buildPerspective;
     wxAuiManager* m_aui = nullptr;

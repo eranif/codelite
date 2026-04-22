@@ -2,16 +2,17 @@
 
 #include "cl_command_event.h"
 #include "codelite_exports.h"
+#include "wx/aui/auibar.h"
 
 #include <memory>
 #include <wx/choice.h>
 #include <wx/control.h>
 #include <wx/window.h>
 
-class WXDLLIMPEXP_SDK EndpointModelSelector : public wxControl
+class WXDLLIMPEXP_SDK EndpointModelSelector : public wxEvtHandler
 {
 public:
-    explicit EndpointModelSelector(wxWindow* parent);
+    explicit EndpointModelSelector(wxAuiToolBar* parent);
     ~EndpointModelSelector() override;
 
     void UpdateChoices();
@@ -32,6 +33,7 @@ private:
 
     wxChoice* m_choiceEndpoints{nullptr};
     wxChoice* m_choiceModels{nullptr};
+    wxAuiToolBar* m_parent{nullptr};
 
     /**
      * @brief Internal helper to calculate a reasonable control width

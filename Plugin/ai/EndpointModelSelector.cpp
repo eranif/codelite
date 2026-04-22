@@ -20,22 +20,20 @@ void SetWindowVariantSmall(wxWindow* ctrl)
 
 } // namespace
 
-EndpointModelSelector::EndpointModelSelector(wxWindow* parent)
-    : wxControl(parent, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxBORDER_NONE)
+EndpointModelSelector::EndpointModelSelector(wxAuiToolBar* parent)
+    : m_parent{parent}
 {
-    SetSizer(new wxBoxSizer(wxHORIZONTAL));
     int control_width = CalculateControlWidth(LONG_MODEL_NAME);
-    m_choiceEndpoints = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(control_width, -1));
-    m_choiceModels = new wxChoice(this, wxID_ANY, wxDefaultPosition, wxSize(control_width, -1));
-    GetSizer()->Add(m_choiceEndpoints, wxSizerFlags(1).Expand().Border(wxALL, 5));
-    GetSizer()->Add(m_choiceModels, wxSizerFlags(1).Expand().Border(wxALL, 5));
+    m_choiceEndpoints = new wxChoice(parent, wxID_ANY, wxDefaultPosition, wxSize(control_width, -1));
+    m_choiceModels = new wxChoice(parent, wxID_ANY, wxDefaultPosition, wxSize(control_width, -1));
+
+    m_parent->AddControl(m_choiceEndpoints);
+    m_parent->AddControl(m_choiceModels);
     m_choiceModels->SetToolTip(_("Choose the model to use for this endpoint"));
     m_choiceEndpoints->SetToolTip(_("Choose the endpoint to use"));
 
     SetWindowVariantSmall(m_choiceEndpoints);
     SetWindowVariantSmall(m_choiceModels);
-
-    GetSizer()->Layout();
 
     m_choiceModels->Bind(wxEVT_CHOICE, &EndpointModelSelector::OnModelChanged, this);
     m_choiceEndpoints->Bind(wxEVT_CHOICE, &EndpointModelSelector::OnEndpointChanged, this);

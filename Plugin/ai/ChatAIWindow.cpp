@@ -46,8 +46,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     clAuiToolBarArt::AddTool(m_toolbar, wxID_OPEN, _("Load Chat"), images->LoadBitmap("file_open"));
     clAuiToolBarArt::AddTool(m_toolbar, wxID_SAVE, _("Save Chat"), images->LoadBitmap("file_save"));
     m_toolbar->AddSeparator();
-    m_model_selector = new EndpointModelSelector(m_toolbar);
-    m_toolbar->AddControl(m_model_selector);
+    m_model_selector = std::make_unique<EndpointModelSelector>(m_toolbar);
     clAuiToolBarArt::AddTool(m_toolbar, wxID_EXECUTE, _("Submit"), images->LoadBitmap("fold"));
     clAuiToolBarArt::AddTool(m_toolbar, wxID_STOP, _("Stop"), images->LoadBitmap("execute_stop"));
     m_toolbar->AddSeparator();
@@ -328,7 +327,7 @@ void ChatAIWindow::OnSendUI(wxUpdateUIEvent& event)
 {
     wxString prompt = m_stcInput->GetText();
     prompt.Trim().Trim(false);
-    event.Enable(!llm::Manager::GetInstance().IsBusy() && !prompt.empty() && m_model_selector->IsOk());
+    event.Enable((m_state == ChatState::kReady) && !prompt.empty() && m_model_selector->IsOk());
 }
 
 void ChatAIWindow::OnUpdateTheme(wxCommandEvent& event)

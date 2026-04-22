@@ -34,6 +34,7 @@
 #define __gitCommitDlg__
 
 #include "CustomControls/IndicatorPanel.hpp"
+#include "ai/EndpointModelSelector.hpp"
 #include "ai/ResponseCollector.hpp"
 #include "clEditorEditEventsHandler.h"
 #include "gitui.h"
@@ -87,6 +88,7 @@ private:
     wxString m_rawDiff;
     bool m_generationInProgress{false};
     IndicatorPanel* m_indicatorPanel{nullptr};
+    std::unique_ptr<EndpointModelSelector> m_endpointSelector{nullptr};
 };
 
 #endif

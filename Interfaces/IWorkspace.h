@@ -167,7 +167,7 @@ public:
         wxString working_directory;
 
         inline void Add(const wxString& arg) { argv.push_back(arg); }
-        inline void Add(const std::vector<wxString>& args) { argv.insert(argv.end(), args.begin(), args.end()); }
+        inline void Add(const wxArrayString& args) { argv.insert(argv.end(), args.begin(), args.end()); }
     };
     virtual std::optional<CommandResult> GetCommand(bool for_debug = false) const { return std::nullopt; }
 };

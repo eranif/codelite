@@ -363,7 +363,7 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
 
     // If we have SSH and a working directory, send cd command for the remote system
     if (!workingDirectory.IsEmpty() && sshAccount.has_value() && sshAccount->IsOk()) {
-        ctrl->CallAfter(&wxTerminalViewCtrl::SendCommand, wxString::Format("cd \"%s\"", workingDirectory));
+        ctrl->SendCommand(wxString::Format("cd \"%s\"", workingDirectory));
     }
 
     // If makeVisible is true, show the output pane and select the Terminal tab

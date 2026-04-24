@@ -853,7 +853,15 @@ void DebugAdapterClient::OnDapInitializeResponse(DAPEvent& event)
     DAP_DEBUG() << "Calling Launch() with command:" << m_session.command << endl;
     if (m_session.dap_server.GetLaunchType() == DapLaunchType::LAUNCH) {
         auto v = m_session.command;
-        m_client.Launch(std::move(v), m_session.working_directory, m_session.MakeEnvironment());
+        dap::LaunchRequestArguments launch_args;
+        launch_args.program = v.empty() ? wxString{} : v[0];
+        if (!v.empty()) {
+            v.erase(v.begin());
+        }
+        launch_args.args = v;
+        launch_args.cwd = m_session.working_directory;
+        launch_args.env = m_session.MakeEnvironment();
+        m_client.Launch(std::move(launch_args));
 
     } else {
         auto v = m_session.command;
@@ -1237,7 +1245,7 @@ void DebugAdapterClient::StartAndConnectToDapServer()
     init_request_args.clientName = "CodeLite IDE";
     init_request_args.supportsRunInTerminalRequest = true;
     init_request_args.supportsArgsCanBeInterpretedByShell = true;
-    m_client.Initialize(&init_request_args);
+    m_client.Initialize(std::move(init_request_args));
 }
 
 void DebugAdapterClient::OnFileLoaded(clCommandEvent& event) { event.Skip(); }

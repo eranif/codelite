@@ -34,6 +34,8 @@ int RunInTerminalHelper::RunProcess(const std::vector<wxString>& command, const 
         return wxNOT_FOUND;
     }
 
+    // TODO: support launching the helper process on the remote machine
+
     m_processId = wxNOT_FOUND;
     DAP_DEBUG() << "Starting run-in-terminal process:" << command << endl;
     DAP_DEBUG() << "wd:" << wd << endl;

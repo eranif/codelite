@@ -17181,12 +17181,12 @@
         {
           "type": "string",
           "m_label": "Inherited Class",
-          "m_value": "GitConsole"
+          "m_value": "GitView"
         },
         {
           "type": "string",
           "m_label": "File:",
-          "m_value": "GitConsole"
+          "m_value": "GitView"
         },
         {
           "type": "string",

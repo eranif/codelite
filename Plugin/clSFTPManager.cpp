@@ -486,6 +486,34 @@ bool clSFTPManager::AwaitWriteFile(clSFTP::Ptr_t sftp, const wxString& content, 
     return DoSyncSaveFileWithConn(sftp, tmpfile.GetFullPath(), remotePath, true);
 }
 
+bool clSFTPManager::AwaitDeleteFile(clSFTP::Ptr_t sftp, const wxString& remotePath)
+{
+    if (!sftp) {
+        return false;
+    }
+
+    std::promise<bool> promise;
+    auto future = promise.get_future();
+    auto func = [sftp, remotePath, &promise]() {
+        try {
+            sftp->UnlinkFile(remotePath);
+            promise.set_value(true);
+        } catch (const clException& e) {
+            clERROR() << "AwaitDeleteFile() error." << e.What();
+            promise.set_value(false);
+        }
+    };
+    m_q.push_back(std::move(func));
+    return future.get();
+}
+
+bool clSFTPManager::AwaitDeleteFile(const wxString& accountName, const wxString& remotePath)
+{
+    auto conn = GetConnectionPtrAddIfMissing(accountName);
+    CHECK_PTR_RET_FALSE(conn);
+    return AwaitDeleteFile(conn, remotePath);
+}
+
 bool clSFTPManager::DeleteConnection(const wxString& accountName, bool promptUser)
 {
     auto iter = m_connections.find(accountName);

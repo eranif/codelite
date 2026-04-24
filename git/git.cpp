@@ -32,10 +32,10 @@
 #include "Diff/clDiffFrame.h"
 #include "GitApplyPatchDlg.h"
 #include "GitBlamePage.h"
-#include "GitConsole.h"
 #include "GitLocator.h"
 #include "GitStatusCode.hpp"
 #include "GitUserEmailDialog.h"
+#include "GitView.h"
 #include "StringUtils.h"
 #include "ai/LLMManager.hpp"
 #include "bitmap_loader.h"
@@ -271,7 +271,7 @@ GitPlugin::GitPlugin(IManager* manager)
     EventNotifier::Get()->Bind(wxEVT_SOURCE_CONTROL_RESET_FILES, &GitPlugin::OnGitActionDone, this);
 
     // Add the console
-    m_console = new GitConsole(m_mgr->BookGet(PaneId::SIDE_BAR), this);
+    m_console = new GitView(m_mgr->BookGet(PaneId::SIDE_BAR), this);
     m_mgr->BookAddPage(PaneId::SIDE_BAR, m_console, _("Git"), "git-orange");
     m_progressTimer.SetOwner(this);
 

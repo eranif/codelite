@@ -195,6 +195,22 @@ public:
     bool AwaitWriteFile(clSFTP::Ptr_t sftp, const wxString& content, const wxString& remotePath);
 
     /**
+     * @brief delete a remote file using the provided SFTP connection
+     * @param sftp active SFTP connection to use
+     * @param remotePath file path on the remote machine
+     * @return true on success or false
+     */
+    bool AwaitDeleteFile(clSFTP::Ptr_t sftp, const wxString& remotePath);
+
+    /**
+     * @brief delete a remote file using the connection associated with the given account
+     * @param accountName the account name to use
+     * @param remotePath file path on the remote machine
+     * @return true on success or false
+     */
+    bool AwaitDeleteFile(const wxString& accountName, const wxString& remotePath);
+
+    /**
      * @brief delete a connection
      * if promptUser is set to true and any un-saved files belonged to the connection
      * are opened, the user is prompted to save them

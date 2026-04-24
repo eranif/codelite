@@ -2,7 +2,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //
 // copyright            : (C) 2014 Eran Ifrah
-// file name            : GitConsole.h
+// file name            : GitView.h
 //
 // -------------------------------------------------------------------------
 // A
@@ -37,11 +37,11 @@
 #include <wx/dataview.h>
 
 class GitPlugin;
-class GitConsole : public GitConsoleBase
+class GitView : public GitConsoleBase
 {
 public:
-    GitConsole(wxWindow* parent, GitPlugin* git);
-    virtual ~GitConsole();
+    GitView(wxWindow* parent, GitPlugin* git);
+    virtual ~GitView();
     void AddText(const wxString& text);
     void AddLine(const wxString& line);
     void PrintPrompt();
@@ -86,6 +86,7 @@ protected:
     virtual void OnStopGitProcess(wxCommandEvent& event);
     virtual void OnOpenUnversionedFiles(wxCommandEvent& event);
     virtual void OnAddUnversionedFiles(wxCommandEvent& event);
+    virtual void OnDeleteUnversionedFiles(wxCommandEvent& event);
     void OnSysColoursChanged(clCommandEvent& event);
 
     void OnOpenFile(wxCommandEvent& e);

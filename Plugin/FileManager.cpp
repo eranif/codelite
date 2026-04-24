@@ -200,3 +200,15 @@ bool FileManager::WriteSettingsFileContent(const wxString& name, const wxString&
     wxString fullpath = GetSettingFileFullPath(name, options);
     return WriteContent(fullpath, content, true, options);
 }
+
+bool FileManager::RemoveFile(const wxString& filepath, const WriteOptions& options)
+{
+    auto fullpath = GetFullPath(filepath, options);
+#if USE_SFTP
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if (!options.ignore_workspace && workspace && workspace->IsRemote()) {
+        return clSFTPManager::Get().AwaitDeleteFile(workspace->GetSshAccount(), fullpath);
+    }
+#endif
+    return FileUtils::RemoveFile(fullpath);
+}

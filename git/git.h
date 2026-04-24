@@ -80,7 +80,7 @@ public:
     ~gitAction() = default;
 };
 
-class GitConsole;
+class GitView;
 class GitCommitListDlg;
 
 struct GitCmd {
@@ -101,7 +101,7 @@ struct GitCmd {
 
 class GitPlugin : public IPlugin
 {
-    friend class GitConsole;
+    friend class GitView;
     friend class GitCommitListDlg;
     friend class GitCommitDlg;
 
@@ -169,7 +169,7 @@ class GitPlugin : public IPlugin
     wxMenu* m_pluginMenu;
     IntMap_t m_treeImageMapping;
     int m_baseImageCount;
-    GitConsole* m_console;
+    GitView* m_console;
     wxString m_workspace_file;
     GitCommitListDlg* m_commitListDlg;
     wxArrayString m_filesSelected;
@@ -338,7 +338,7 @@ public:
      */
     void FetchNextCommits(int skip, const wxString& args);
 
-    GitConsole* GetConsole() { return m_console; }
+    GitView* GetConsole() { return m_console; }
     IProcess* GetProcess() { return m_process; }
     clCommandProcessor* GetFolderProcess() { return m_commandProcessor; }
 

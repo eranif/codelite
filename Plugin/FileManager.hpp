@@ -95,4 +95,17 @@ public:
     /// Write a configuration file.
     static bool
     WriteSettingsFileContent(const wxString& name, const wxString& content, const WriteOptions& options = {});
+    /**
+     * @brief Removes a file, either locally or through SFTP when the active workspace is remote.
+     *
+     * Resolves the given path to a full path using the provided write options, then deletes the file.
+     * If SFTP support is enabled and the current workspace is remote, the deletion is performed via
+     * the SFTP manager unless workspace handling is being ignored.
+     *
+     * @param filepath const wxString& The file path to remove.
+     * @param options const WriteOptions& Options used to resolve the full path and control workspace handling.
+     *
+     * @return bool True if the file was removed successfully; otherwise false.
+     */
+    static bool RemoveFile(const wxString& filepath, const WriteOptions& options = {});
 };

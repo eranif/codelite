@@ -1,6 +1,7 @@
 #include "BreakpointsHelper.hpp"
 
 #include "DapLogger.hpp"
+#include "clWorkspaceManager.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
 
@@ -58,10 +59,9 @@ BreakpointsHelper::~BreakpointsHelper()
 {
     // restore the breakpoints
     clDebuggerBreakpoint::Vec_t all_bps;
-    for (const auto& vt : m_ui_breakpoints) {
-        DAP_DEBUG() << "Restoring breakpoints for file:" << vt.first << " -" << vt.second.size() << "breakpoints"
-                    << endl;
-        for (const auto& bp : vt.second) {
+    for (const auto& [path, breakpoints] : m_ui_breakpoints) {
+        DAP_DEBUG() << "Restoring breakpoints for file:" << path << " -" << breakpoints.size() << "breakpoints" << endl;
+        for (const auto& bp : breakpoints) {
             all_bps.push_back(bp);
         }
     }
@@ -138,15 +138,16 @@ void BreakpointsHelper::ApplyBreakpoints(const wxString& path)
         }
     }
 
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
     // don't pass empty array, it will tell dap to clear all breakpoints
-    for (const auto& vt : dap_source_breakpoints) {
-        wxFileName filepath(vt.first);
-        DAP_DEBUG() << "Applying breakpoints for file:" << filepath << endl;
-        for (const auto& bp : vt.second) {
+    for (const auto& [file_path, breakpoints_arr] : dap_source_breakpoints) {
+        wxString source_path = (workspace && workspace->IsRemote()) ? file_path : wxFileName{file_path}.GetFullPath();
+        DAP_DEBUG() << "Applying breakpoints for file:" << source_path << endl;
+        for (const auto& bp : breakpoints_arr) {
             DAP_DEBUG() << "Line:" << bp.line << ". Condition: " << bp.condition << endl;
         }
-        wxString source_path = NormalisePathForSend(filepath.GetFullPath());
-        m_client.SetBreakpointsFile(source_path, vt.second);
+        source_path = NormalisePathForSend(source_path);
+        m_client.SetBreakpointsFile(source_path, breakpoints_arr);
     }
 
     if (!dap_function_breakpoints.empty()) {
@@ -160,6 +161,11 @@ void BreakpointsHelper::ApplyBreakpoints(const wxString& path)
 
 wxString BreakpointsHelper::NormalisePathForSend(const wxString& path) const
 {
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if (workspace && workspace->IsRemote()) {
+        return path;
+    }
+
     wxFileName fn(path);
 
     // easy path

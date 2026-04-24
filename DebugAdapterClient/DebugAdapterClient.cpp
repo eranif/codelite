@@ -39,10 +39,12 @@
 #include "DapLocator.hpp"
 #include "DapLogger.hpp"
 #include "Debugger/debuggermanager.h"
+#include "FileManager.hpp"
 #include "FileSystemWorkspace/clFileSystemWorkspace.hpp"
 #include "StringUtils.h"
 #include "clIdleEventThrottler.hpp"
 #include "clResizableTooltip.h"
+#include "clSFTPManager.hpp"
 #include "clWorkspaceManager.h"
 #include "environmentconfig.h"
 #include "event_notifier.h"
@@ -1278,6 +1280,11 @@ void DebugAdapterClient::StopProcess()
 
 wxString DebugAdapterClient::NormaliseReceivedPath(const wxString& path) const
 {
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if (workspace && workspace->IsRemote()) {
+        return path;
+    }
+
     wxFileName fn(path);
     if (m_session.debug_over_ssh) {
         if (fn.IsRelative()) {
@@ -1302,6 +1309,19 @@ wxString DebugAdapterClient::NormaliseReceivedPath(const wxString& path) const
 void DebugAdapterClient::LoadFile(const dap::Source& sourceId, int line_number)
 {
     if (sourceId.sourceReference <= 0 && !sourceId.path.empty()) {
+#if USE_SFTP
+        auto workspace = clWorkspaceManager::Get().GetWorkspace();
+        if (workspace && workspace->IsRemote()) {
+            DAP_DEBUG() << "Loading remote file:" << sourceId.path << endl;
+            auto editor = clSFTPManager::Get().OpenFile(sourceId.path, workspace->GetSshAccount());
+            if (editor) {
+                DAPTextView::ClearMarker(editor->GetCtrl());
+                DAPTextView::SetMarker(editor->GetCtrl(), line_number);
+                DAP_DEBUG() << "Setting marker at line:" << line_number << endl;
+            }
+            return;
+        }
+#endif
         // use local file system
         // not a server file, load it locally
         wxFileName fp(sourceId.path);
@@ -1312,24 +1332,19 @@ void DebugAdapterClient::LoadFile(const dap::Source& sourceId, int line_number)
         file_to_load = NormaliseReceivedPath(file_to_load);
         DAP_DEBUG() << "Normalised form:" << file_to_load << endl;
 
-        if (m_session.debug_over_ssh) {
-            clGetManager()->SetStatusMessage(_("ERROR: (dap) loading remote file over SSH is not supported yet"));
+        wxFileName fn(file_to_load);
+        if (!fn.FileExists()) {
+            clGetManager()->SetStatusMessage(_("ERROR: (dap) file:") + file_to_load + _(" does not exist"));
             return;
-        } else {
-            wxFileName fn(file_to_load);
-            if (!fn.FileExists()) {
-                clGetManager()->SetStatusMessage(_("ERROR: (dap) file:") + file_to_load + _(" does not exist"));
-                return;
-            }
+        }
 
-            auto callback = [line_number](IEditor* editor) {
-                DAPTextView::ClearMarker(editor->GetCtrl());
-                DAPTextView::SetMarker(editor->GetCtrl(), line_number);
-            };
-            clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), callback);
-            if (m_textView) {
-                m_textView->ClearMarker();
-            }
+        auto callback = [line_number](IEditor* editor) {
+            DAPTextView::ClearMarker(editor->GetCtrl());
+            DAPTextView::SetMarker(editor->GetCtrl(), line_number);
+        };
+        clGetManager()->OpenFileAndAsyncExecute(fn.GetFullPath(), callback);
+        if (m_textView) {
+            m_textView->ClearMarker();
         }
 
     } else if (sourceId.sourceReference > 0) {

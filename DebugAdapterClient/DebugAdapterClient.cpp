@@ -1032,10 +1032,11 @@ void DebugAdapterClient::OnDapRunInTerminal(DAPEvent& event)
     auto request = event.GetDapRequest()->As<dap::RunInTerminalRequest>();
     CHECK_PTR_RET(request);
 
+    DAP_INFO() << "Received RunInTerminal request: " << request->arguments.args << endl;
     int process_id = m_terminal_helper.RunProcess(request->arguments.args, wxEmptyString, {});
     // send the response back to the dap server
     auto response = m_client.MakeRequest<dap::RunInTerminalResponse>();
-    DAP_DEBUG() << "RunInTerminal process ID:" << process_id << endl;
+    DAP_INFO() << "RunInTerminal process ID:" << process_id << endl;
     response->request_seq = request->seq;
     if (process_id == wxNOT_FOUND) {
         response->success = false;
@@ -1234,6 +1235,8 @@ void DebugAdapterClient::StartAndConnectToDapServer()
     init_request_args.clientID = "CodeLite";
     init_request_args.linesStartAt1 = true;
     init_request_args.clientName = "CodeLite IDE";
+    init_request_args.supportsRunInTerminalRequest = true;
+    init_request_args.supportsArgsCanBeInterpretedByShell = true;
     m_client.Initialize(&init_request_args);
 }
 

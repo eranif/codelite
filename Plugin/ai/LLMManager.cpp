@@ -661,6 +661,8 @@ assistant::Config Manager::MakeConfig()
                 LLOG_WARN() << wxString::FromUTF8(msg) << endl;
                 break;
             case assistant::LogLevel::kInfo:
+                LLOG_INFO() << wxString::FromUTF8(msg) << endl;
+                break;
             case assistant::LogLevel::kDebug:
                 LLOG_DEBUG() << wxString::FromUTF8(msg) << endl;
                 break;

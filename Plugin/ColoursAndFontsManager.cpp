@@ -616,7 +616,7 @@ void ColoursAndFontsManager::RestoreDefaults()
         wxLogNull noLog;
         wxFileName fnLexersJSON(clStandardPaths::Get().GetUserLexersDir(), "lexers.json");
         if (fnLexersJSON.Exists()) {
-            clSYSTEM() << "Deleting user setting file:" << fnLexersJSON.GetFullPath() << endl;
+            clINFO() << "Deleting user setting file:" << fnLexersJSON.GetFullPath() << endl;
             clRemoveFile(fnLexersJSON.GetFullPath());
         }
 
@@ -626,7 +626,7 @@ void ColoursAndFontsManager::RestoreDefaults()
 
         bool result = ::wxCopyFile(fnInstallLexers.GetFullPath(), fnLexersJSON.GetFullPath(), true);
         if (result) {
-            clSYSTEM() << "Successfully copied:" << fnInstallLexers << "->" << fnLexersJSON << endl;
+            clINFO() << "Successfully copied:" << fnInstallLexers << "->" << fnLexersJSON << endl;
         } else {
             clERROR() << "Error occurred when copying" << fnInstallLexers << "->" << fnLexersJSON << endl;
         }
@@ -688,12 +688,12 @@ void ColoursAndFontsManager::LoadLexersFromFile()
     m_allLexers.clear();
     m_lexersMap.clear();
 
-    clSYSTEM() << "Loading lexers. System file:" << fnInstallLexers << endl;
-    clSYSTEM() << "Loading lexers. Local file:" << fnUserLexers << endl;
+    clINFO() << "Loading lexers. System file:" << fnInstallLexers << endl;
+    clINFO() << "Loading lexers. Local file:" << fnUserLexers << endl;
 
     if (m_lexersVersion < LEXERS_VERSION || !fnUserLexers.FileExists()) {
-        clSYSTEM() << "Loading default lexers. CodeLite expected version:" << LEXERS_VERSION
-                   << ". Current version found in configuration file:" << m_lexersVersion << endl;
+        clINFO() << "Loading default lexers. CodeLite expected version:" << LEXERS_VERSION
+                 << ". Current version found in configuration file:" << m_lexersVersion << endl;
         // The loaded version from the configuration file is less than the compiled version
         // merge the lexers (or the user file does not exist)
         LoadJSON(fnInstallLexers);
@@ -706,7 +706,7 @@ void ColoursAndFontsManager::LoadLexersFromFile()
         LoadJSON(fnUserLexers);
     }
 
-    clSYSTEM() << "Success" << endl;
+    clINFO() << "Success" << endl;
     // Update lexers versions
     clConfig::Get().Write(LEXERS_VERSION_STRING, LEXERS_VERSION);
 }

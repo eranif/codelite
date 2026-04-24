@@ -133,7 +133,6 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
     AddProperty(_("File text encoding"), astrEncodings, selected_encoding, UPDATE_TEXT_CB(SetFileFontEncoding));
     AddProperty(_("Enable localization"), m_options->GetUseLocale(), UPDATE_BOOL_CB(SetUseLocale));
     AddProperty(_("Locale to use"), locales, selected_locale, UPDATE_TEXT_CB(SetPreferredLocale));
-
     AddHeader(_("Log"));
 
     std::vector<wxString> log_levels = {

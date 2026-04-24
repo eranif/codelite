@@ -326,10 +326,12 @@ inline wxString GetLocation(const char* filename, int line)
 #define clERROR() FileLogger(FileLogger::Error) << FileLogger::Prefix(FileLogger::Error) << LOCATION()
 #define clWARNING() FileLogger(FileLogger::Warning) << FileLogger::Prefix(FileLogger::Warning) << LOCATION()
 #define clSYSTEM() FileLogger(FileLogger::System) << FileLogger::Prefix(FileLogger::System) << LOCATION()
+#define clINFO() FileLogger(FileLogger::Info) << FileLogger::Prefix(FileLogger::Info) << LOCATION()
 
 #define LOG_IF_DEBUG if (FileLogger::CanLog(FileLogger::Dbg))
 #define LOG_IF_TRACE if (FileLogger::CanLog(FileLogger::Trace))
-#define LOG_IF_WARN if (FileLogger::CanLog(FileLogger::Trace))
+#define LOG_IF_WARN if (FileLogger::CanLog(FileLogger::Warning))
+#define LOG_IF_INFO if (FileLogger::CanLog(FileLogger::Info))
 
 // A replacement for wxLogMessage
 #define clLogMessage(msg) clDEBUG() << msg

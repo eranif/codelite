@@ -719,7 +719,7 @@ std::optional<wxTerminalTheme> clBuiltinTerminalPane::FromTOML(const wxFileName&
         !theme.brightRed.IsOk() || !theme.brightGreen.IsOk() || !theme.brightYellow.IsOk() ||
         !theme.brightBlue.IsOk() || !theme.brightMagenta.IsOk() || !theme.brightCyan.IsOk() ||
         !theme.brightWhite.IsOk()) {
-        clSYSTEM() << "failed to read basic colour for theme:" << filepath << endl;
+        clWARNING() << "failed to read basic colour for theme:" << filepath << endl;
         return std::nullopt;
     }
     return theme;

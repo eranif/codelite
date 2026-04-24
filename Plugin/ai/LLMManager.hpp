@@ -50,6 +50,7 @@ INITIALISE_MODULE_LOG(LLOG, "LLM", "assistant.log")
 #define LLOG_DEBUG() LLOG().SetCurrentLogLevel(FileLogger::Dbg) << LLOG().Prefix()
 #define LLOG_TRACE() LLOG().SetCurrentLogLevel(FileLogger::Trace) << LLOG().Prefix()
 #define LLOG_WARN() LLOG().SetCurrentLogLevel(FileLogger::Warning) << LLOG().Prefix()
+#define LLOG_INFO() LLOG().SetCurrentLogLevel(FileLogger::Info) << LLOG().Prefix()
 
 namespace llm
 {

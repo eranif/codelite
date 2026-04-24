@@ -1,10 +1,8 @@
 #ifndef DAPTOOLTIP_HPP
 #define DAPTOOLTIP_HPP
 
-#include "clThemedTreeCtrl.h"
 #include "dap/Client.hpp"
 
-#include <unordered_map>
 #include <wx/popupwin.h>
 
 class DAPVariableListCtrl;

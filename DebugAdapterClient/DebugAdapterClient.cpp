@@ -561,10 +561,11 @@ void DebugAdapterClient::InitializeUI()
         m_mgr->GetDockingManager()->AddPane(m_debuggerPane,
                                             wxAuiPaneInfo()
                                                 .MinSize(300, 300)
-                                                .Layer(10)
                                                 .Bottom()
+                                                .Layer(1)
                                                 .Position(1)
                                                 .CloseButton(false)
+                                                .CaptionVisible(false)
                                                 .Caption(DAP_DEBUGGER_PANE)
                                                 .Name(DAP_DEBUGGER_PANE));
     }

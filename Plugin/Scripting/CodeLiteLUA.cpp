@@ -232,7 +232,7 @@ std::string CodeLiteLUA::editor_filepath()
 void CodeLiteLUA::log_message(const std::string& msg, FileLogger::LogLevel level)
 {
     switch (level) {
-    case FileLogger::LogLevel::Developer:
+    case FileLogger::LogLevel::Trace:
         clDEBUG1() << wxString::FromUTF8(msg) << endl;
         break;
     case FileLogger::LogLevel::Dbg:

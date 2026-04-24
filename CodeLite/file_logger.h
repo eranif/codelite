@@ -43,7 +43,7 @@ using FileLoggerFunction = FileLogger& (*)(FileLogger&);
 class WXDLLIMPEXP_CL FileLogger final
 {
 public:
-    enum LogLevel { System = -1, Error = 0, Warning = 1, Dbg = 2, Developer = 3 };
+    enum LogLevel { System = -1, Error = 0, Warning = 1, Info = 2, Dbg = 3, Trace = 4 };
 
 public:
     // construct a file logger entry with a given verbosity
@@ -320,7 +320,7 @@ inline wxString GetLocation(const char* filename, int line)
 
 // New API
 #define clDEBUG() FileLogger(FileLogger::Dbg) << FileLogger::Prefix(FileLogger::Dbg) << LOCATION()
-#define clDEBUG1() FileLogger(FileLogger::Developer) << FileLogger::Prefix(FileLogger::Developer) << LOCATION()
+#define clDEBUG1() FileLogger(FileLogger::Trace) << FileLogger::Prefix(FileLogger::Trace) << LOCATION()
 #define clTRACE() clDEBUG1()
 
 #define clERROR() FileLogger(FileLogger::Error) << FileLogger::Prefix(FileLogger::Error) << LOCATION()
@@ -328,8 +328,8 @@ inline wxString GetLocation(const char* filename, int line)
 #define clSYSTEM() FileLogger(FileLogger::System) << FileLogger::Prefix(FileLogger::System) << LOCATION()
 
 #define LOG_IF_DEBUG if (FileLogger::CanLog(FileLogger::Dbg))
-#define LOG_IF_TRACE if (FileLogger::CanLog(FileLogger::Developer))
-#define LOG_IF_WARN if (FileLogger::CanLog(FileLogger::Developer))
+#define LOG_IF_TRACE if (FileLogger::CanLog(FileLogger::Trace))
+#define LOG_IF_WARN if (FileLogger::CanLog(FileLogger::Trace))
 
 // A replacement for wxLogMessage
 #define clLogMessage(msg) clDEBUG() << msg

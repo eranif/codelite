@@ -40,14 +40,17 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
     : OptionsConfigPage(parent, options)
 {
     AddHeader(_("General"));
-    AddProperty(_("Allow only single instance"), clConfig::Get().Read(kConfigSingleInstance, false),
+    AddProperty(_("Allow only single instance"),
+                clConfig::Get().Read(kConfigSingleInstance, false),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigSingleInstance));
     AddProperty(_("Web search URL"), m_options->GetWebSearchPrefix(), UPDATE_TEXT_CB(SetWebSearchPrefix));
 #ifdef __WXMSW__
-    AddProperty(_("Use Direct2D editor drawings"), clConfig::Get().Read("Editor/UseDirect2D", true),
+    AddProperty(_("Use Direct2D editor drawings"),
+                clConfig::Get().Read("Editor/UseDirect2D", true),
                 UPDATE_CLCONFIG_BOOL_CB("Editor/UseDirect2D"));
 #endif
-    AddProperty(_("Frame title"), clConfig::Get().Read(kConfigFrameTitlePattern, wxString("$workspace $fullpath")),
+    AddProperty(_("Frame title"),
+                clConfig::Get().Read(kConfigFrameTitlePattern, wxString("$workspace $fullpath")),
                 UPDATE_CLCONFIG_TEXT_CB(kConfigFrameTitlePattern));
     AddHeader(_("File path handling"));
     AddProperty(_("Resolve symlinks in file paths"),
@@ -61,33 +64,45 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
                     FileUtils::RealPathSetModeResolveSymlinks(value_bool);
                 });
     AddHeader(_("Startup"));
-    AddProperty(_("Check for new version on startup"), clConfig::Get().Read(kConfigCheckForNewVersion, true),
+    AddProperty(_("Check for new version on startup"),
+                clConfig::Get().Read(kConfigCheckForNewVersion, true),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigCheckForNewVersion));
-    AddProperty(_("Only prompt for stable releases"), clConfig::Get().Read("PromptForNewReleaseOnly", false),
+    AddProperty(_("Only prompt for stable releases"),
+                clConfig::Get().Read("PromptForNewReleaseOnly", false),
                 UPDATE_CLCONFIG_BOOL_CB("PromptForNewReleaseOnly"));
-    AddProperty(_("Load last session on startup"), clConfig::Get().Read(kConfigRestoreLastSession, true),
+    AddProperty(_("Load last session on startup"),
+                clConfig::Get().Read(kConfigRestoreLastSession, true),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigRestoreLastSession));
-    AddProperty(_("Show splashscreen"), clConfig::Get().Read("ShowSplashScreen", true),
+    AddProperty(_("Show splashscreen"),
+                clConfig::Get().Read("ShowSplashScreen", true),
                 UPDATE_CLCONFIG_BOOL_CB("ShowSplashScreen"));
 
     AddHeader(_("Status bar"));
-    AddProperty(_("Show current line number"), clConfig::Get().Read(kConfigStatusbarShowLine, true),
+    AddProperty(_("Show current line number"),
+                clConfig::Get().Read(kConfigStatusbarShowLine, true),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigStatusbarShowLine));
-    AddProperty(_("Show current column"), clConfig::Get().Read(kConfigStatusbarShowColumn, true),
+    AddProperty(_("Show current column"),
+                clConfig::Get().Read(kConfigStatusbarShowColumn, true),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigStatusbarShowColumn));
-    AddProperty(_("Show number of lines"), clConfig::Get().Read(kConfigStatusbarShowLineCount, false),
+    AddProperty(_("Show number of lines"),
+                clConfig::Get().Read(kConfigStatusbarShowLineCount, false),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigStatusbarShowLineCount));
-    AddProperty(_("Show current position"), clConfig::Get().Read(kConfigStatusbarShowPosition, true),
+    AddProperty(_("Show current position"),
+                clConfig::Get().Read(kConfigStatusbarShowPosition, true),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigStatusbarShowPosition));
-    AddProperty(_("Show file length"), clConfig::Get().Read(kConfigStatusbarShowLength, false),
+    AddProperty(_("Show file length"),
+                clConfig::Get().Read(kConfigStatusbarShowLength, false),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigStatusbarShowLength));
-    AddProperty(_("Show number of selected chars"), clConfig::Get().Read(kConfigStatusbarShowSelectedChars, true),
+    AddProperty(_("Show number of selected chars"),
+                clConfig::Get().Read(kConfigStatusbarShowSelectedChars, true),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigStatusbarShowSelectedChars));
-    AddProperty(_("Show number of selected lines"), clConfig::Get().Read(kConfigStatusbarShowSelectedLines, true),
+    AddProperty(_("Show number of selected lines"),
+                clConfig::Get().Read(kConfigStatusbarShowSelectedLines, true),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigStatusbarShowSelectedLines));
 
     AddHeader(_("Tool bar"));
-    AddProperty(_("Space between button groups"), clConfig::Get().Read(kConfigToolbarGroupSpacing, 30),
+    AddProperty(_("Space between button groups"),
+                clConfig::Get().Read(kConfigToolbarGroupSpacing, 30),
                 UPDATE_CLCONFIG_INT_CB(kConfigToolbarGroupSpacing));
     wxArrayString locales;
     int selected_locale = FindAvailableLocales(&locales);
@@ -95,21 +110,23 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
     wxFontEncoding fontEnc;
     int selected_encoding = 0;
     size_t iEncCnt = wxFontMapper::GetSupportedEncodingsCount();
-    for(size_t i = 0; i < iEncCnt; i++) {
+    for (size_t i = 0; i < iEncCnt; i++) {
         fontEnc = wxFontMapper::GetEncoding(i);
-        if(wxFONTENCODING_SYSTEM == fontEnc) { // skip system, it is changed to UTF-8 in optionsconfig
+        if (wxFONTENCODING_SYSTEM == fontEnc) { // skip system, it is changed to UTF-8 in optionsconfig
             continue;
         }
         astrEncodings.Add(wxFontMapper::GetEncodingName(fontEnc));
-        if(fontEnc == options->GetFileFontEncoding()) {
+        if (fontEnc == options->GetFileFontEncoding()) {
             selected_encoding = i;
         }
     }
 
     AddHeader(_("Launch"));
-    AddProperty(_("Clear output before launch"), clConfig::Get().Read(kConfigClearOutputOnLaunch, false),
+    AddProperty(_("Clear output before launch"),
+                clConfig::Get().Read(kConfigClearOutputOnLaunch, false),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigClearOutputOnLaunch));
-    AddProperty(_("Switch to output on launch"), clConfig::Get().Read(kConfigShowOutputOnLaunch, true),
+    AddProperty(_("Switch to output on launch"),
+                clConfig::Get().Read(kConfigShowOutputOnLaunch, true),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigShowOutputOnLaunch));
 
     AddHeader(_("Locale"));
@@ -119,42 +136,48 @@ EditorSettingsMiscPanel::EditorSettingsMiscPanel(wxWindow* parent, OptionsConfig
 
     AddHeader(_("Log"));
 
-    std::vector<wxString> log_levels = { FileLogger::GetVerbosityAsString(FileLogger::System),
-                                         FileLogger::GetVerbosityAsString(FileLogger::Error),
-                                         FileLogger::GetVerbosityAsString(FileLogger::Warning),
-                                         FileLogger::GetVerbosityAsString(FileLogger::Dbg),
-                                         FileLogger::GetVerbosityAsString(FileLogger::Developer) };
+    std::vector<wxString> log_levels = {
+        FileLogger::GetVerbosityAsString(FileLogger::System),
+        FileLogger::GetVerbosityAsString(FileLogger::Error),
+        FileLogger::GetVerbosityAsString(FileLogger::Warning),
+        FileLogger::GetVerbosityAsString(FileLogger::Info),
+        FileLogger::GetVerbosityAsString(FileLogger::Dbg),
+        FileLogger::GetVerbosityAsString(FileLogger::Trace),
+    };
 
     int cur_log = clConfig::Get().Read(kConfigLogVerbosity, FileLogger::Error);
 
-    AddProperty(_("Log file verbosity"), log_levels, FileLogger::GetVerbosityAsString(cur_log),
+    AddProperty(_("Log file verbosity"),
+                log_levels,
+                FileLogger::GetVerbosityAsString(cur_log),
                 [](const wxString&, const wxAny& value) {
                     wxString str;
-                    if(value.GetAs(&str)) {
+                    if (value.GetAs(&str)) {
                         clConfig::Get().Write(kConfigLogVerbosity, FileLogger::GetVerbosityAsNumber(str));
                         FileLogger::SetGlobalLogVerbosity(FileLogger::GetVerbosityAsNumber(str));
                     }
                 });
 #ifdef __WXGTK__
-    AddProperty(_("Redirect stdout/stderr to file"), clConfig::Get().Read(kConfigRedirectLogOutput, true),
+    AddProperty(_("Redirect stdout/stderr to file"),
+                clConfig::Get().Read(kConfigRedirectLogOutput, true),
                 UPDATE_CLCONFIG_BOOL_CB(kConfigRedirectLogOutput));
 #endif
 
     AddHeader(_("History"));
-    AddPropertyButton(_("Forget recent workspaces and files"), _("Clear ") + wxT("\u232B"),
-                      [](const wxString&, const wxAny& value) {
-                          wxUnusedVar(value);
-                          ManagerST::Get()->ClearWorkspaceHistory();
-                          clMainFrame::Get()->GetMainBook()->ClearFileHistory();
-                          wxMessageBox(_("Success!"));
-                      });
+    AddPropertyButton(
+        _("Forget recent workspaces and files"), _("Clear ") + wxT("\u232B"), [](const wxString&, const wxAny& value) {
+            wxUnusedVar(value);
+            ManagerST::Get()->ClearWorkspaceHistory();
+            clMainFrame::Get()->GetMainBook()->ClearFileHistory();
+            wxMessageBox(_("Success!"));
+        });
 
-    AddPropertyButton(_("Reset annoying dialogs answers"), _("Clear ") + wxT("\u232B"),
-                      [](const wxString&, const wxAny& value) {
-                          wxUnusedVar(value);
-                          clConfig::Get().ClearAnnoyingDlgAnswers();
-                          wxMessageBox(_("Success!"));
-                      });
+    AddPropertyButton(
+        _("Reset annoying dialogs answers"), _("Clear ") + wxT("\u232B"), [](const wxString&, const wxAny& value) {
+            wxUnusedVar(value);
+            clConfig::Get().ClearAnnoyingDlgAnswers();
+            wxMessageBox(_("Success!"));
+        });
 }
 
 int EditorSettingsMiscPanel::FindAvailableLocales(wxArrayString* locales)

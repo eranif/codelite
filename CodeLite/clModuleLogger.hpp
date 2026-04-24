@@ -248,7 +248,7 @@ clModuleLogger& operator<<(clModuleLogger& logger, const T& obj)
 #define LOG_ERROR(LOG) LOG.SetCurrentLogLevel(FileLogger::Error) << LOG.Prefix()
 #define LOG_WARNING(LOG) LOG.SetCurrentLogLevel(FileLogger::Warning) << LOG.Prefix()
 #define LOG_DEBUG(LOG) LOG.SetCurrentLogLevel(FileLogger::Dbg) << LOG.Prefix()
-#define LOG_TRACE(LOG) LOG.SetCurrentLogLevel(FileLogger::Developer) << LOG.Prefix()
+#define LOG_TRACE(LOG) LOG.SetCurrentLogLevel(FileLogger::Trace) << LOG.Prefix()
 
 /// place this at the top of the C++ file you want to have custom logger
 #define INITIALISE_MODULE_LOG(LOG, MODULE_NAME, FILE_NAME)                          \

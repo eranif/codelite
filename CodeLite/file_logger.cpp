@@ -76,21 +76,19 @@ void FileLogger::SetGlobalLogVerbosity(int level)
 
 int FileLogger::GetVerbosityAsNumber(const wxString& verbosity)
 {
-    if (verbosity == wxT("Debug") || verbosity == "DBG") {
+    auto verbosity_lowercase = verbosity.Lower();
+    if (verbosity_lowercase == wxT("debug") || verbosity_lowercase == "dbg") {
         return FileLogger::Dbg;
-
-    } else if (verbosity == wxT("Error") || verbosity == "ERR") {
+    } else if (verbosity_lowercase == wxT("error") || verbosity_lowercase == "err") {
         return FileLogger::Error;
-
-    } else if (verbosity == wxT("Warning") || verbosity == "WARN") {
+    } else if (verbosity_lowercase == wxT("warning") || verbosity_lowercase == "warn") {
         return FileLogger::Warning;
-
-    } else if (verbosity == wxT("System") || verbosity == "INFO" || verbosity == "SYS") {
+    } else if (verbosity_lowercase == wxT("info")) {
+        return FileLogger::Info;
+    } else if (verbosity_lowercase == wxT("system") || verbosity_lowercase == "info" || verbosity_lowercase == "sys") {
         return FileLogger::System;
-
-    } else if (verbosity == wxT("Developer") || verbosity == "TRACE") {
-        return FileLogger::Developer;
-
+    } else if (verbosity_lowercase == wxT("developer") || verbosity_lowercase == "trace") {
+        return FileLogger::Trace;
     } else {
         return FileLogger::Error;
     }
@@ -101,19 +99,16 @@ wxString FileLogger::GetVerbosityAsString(int verbosity)
     switch (verbosity) {
     case FileLogger::Dbg:
         return wxT("Debug");
-
     case FileLogger::Error:
         return wxT("Error");
-
     case FileLogger::Warning:
         return wxT("Warning");
-
-    case FileLogger::Developer:
-        return wxT("Developer");
-
+    case FileLogger::Info:
+        return wxT("Info");
+    case FileLogger::Trace:
+        return wxT("Trace");
     case FileLogger::System:
         return wxT("System");
-
     default:
         return wxT("Error");
     }
@@ -190,7 +185,7 @@ wxString FileLogger::Prefix(int verbosity)
         prefix << wxT(" DBG]");
         break;
 
-    case Developer:
+    case Trace:
         prefix << wxT(" DVL]");
         break;
     }

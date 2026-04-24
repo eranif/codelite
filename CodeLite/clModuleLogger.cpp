@@ -61,7 +61,7 @@ wxString clModuleLogger::Prefix()
     case FileLogger::Dbg:
         prefix << wxT(" DEBUG]");
         break;
-    case FileLogger::Developer:
+    case FileLogger::Trace:
         prefix << wxT(" TRACE]");
         break;
     }

@@ -48,7 +48,7 @@ static const wxString kDefaultSettings = R"#({
 INITIALISE_MODULE_LOG(LLOG, "LLM", "assistant.log")
 #define LLOG_ERROR() LLOG().SetCurrentLogLevel(FileLogger::Error) << LLOG().Prefix()
 #define LLOG_DEBUG() LLOG().SetCurrentLogLevel(FileLogger::Dbg) << LLOG().Prefix()
-#define LLOG_TRACE() LLOG().SetCurrentLogLevel(FileLogger::Developer) << LLOG().Prefix()
+#define LLOG_TRACE() LLOG().SetCurrentLogLevel(FileLogger::Trace) << LLOG().Prefix()
 #define LLOG_WARN() LLOG().SetCurrentLogLevel(FileLogger::Warning) << LLOG().Prefix()
 
 namespace llm

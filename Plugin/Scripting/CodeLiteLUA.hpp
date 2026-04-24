@@ -352,7 +352,7 @@ protected:
      *
      * @param msg The message to log.
      */
-    static inline void log_trace(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Developer); }
+    static inline void log_trace(const std::string& msg) { log_message(msg, FileLogger::LogLevel::Trace); }
 
     /**
      * @brief Replaces all occurrences of a substring within a string with another substring.

@@ -754,8 +754,6 @@ void Manager::Start(std::shared_ptr<assistant::ClientBase> client)
     m_client_config = MakeConfig();
 
     // MakeClient that accepts a Config object can not fail.
-    bool is_claude =
-        m_client_config.GetEndpoint() && m_client_config.GetEndpoint()->type_ == assistant::EndpointKind::anthropic;
     m_client = client == nullptr ? assistant::MakeClient(m_client_config).value_or(nullptr) : client;
     CHECK_PTR_RET(m_client);
 
@@ -899,7 +897,7 @@ std::optional<std::pair<wxString, wxArrayString>> Manager::GetEndpointModels(con
             result.second.Add(result.first);
         }
         return result;
-    } catch (const std::exception& e) {
+    } catch (const std::exception&) {
         return std::nullopt;
     }
 }

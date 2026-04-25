@@ -173,12 +173,7 @@ bool clSystemSettings::IsDark()
 #if wxCHECK_VERSION(3, 3, 0)
     return GetAppearance().IsDark();
 #else
-    static bool isDark = false;
-    static bool once = true;
-    if (once) {
-        once = false;
-        isDark = DrawingUtils::IsDark(GetDefaultPanelColour());
-    }
+    static const bool isDark = DrawingUtils::IsDark(GetDefaultPanelColour());
     return isDark;
 #endif
 }

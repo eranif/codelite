@@ -33,9 +33,20 @@
 
 #if STANDALONE_BUILD
 
+#include "fileutils.h"
+
+#include <wx/filefn.h>
+
 static const wxCmdLineEntryDesc cmdLineDesc[] = {
     {wxCMD_LINE_SWITCH, "v", "version", "Print current version", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_SWITCH, "h", "help", "Print usage", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_SWITCH,
+     "g",
+     "generate",
+     "Generate code from input files and close",
+     wxCMD_LINE_VAL_NONE,
+     wxCMD_LINE_PARAM_OPTIONAL},
+    {wxCMD_LINE_OPTION, "o", "output", "Overwrite output directory", wxCMD_LINE_VAL_STRING, wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_SWITCH,
      "s",
      "server",
@@ -43,12 +54,12 @@ static const wxCmdLineEntryDesc cmdLineDesc[] = {
      wxCMD_LINE_VAL_STRING,
      wxCMD_LINE_PARAM_OPTIONAL},
     {wxCMD_LINE_PARAM,
-     NULL,
-     NULL,
+     nullptr,
+     nullptr,
      "Input file",
      wxCMD_LINE_VAL_STRING,
      wxCMD_LINE_PARAM_MULTIPLE | wxCMD_LINE_PARAM_OPTIONAL},
-    {wxCMD_LINE_NONE}};
+    wxCMD_LINE_DESC_END};
 
 IMPLEMENT_APP(wxcApp)
 
@@ -153,6 +164,35 @@ bool wxcApp::OnInit()
 
     m_wxcPlugin = new wxCrafterPlugin(NULL, false);
     SetTopWindow(m_wxcPlugin->GetMainFrame());
+
+    if (parser.FoundSwitch("g") == wxCMD_SWITCH_ON) {
+        wxString outputDirStr;
+        if (parser.Found("o", &outputDirStr)) {
+            wxFileName outputDir(outputDirStr);
+            outputDir.MakeAbsolute();
+            outputDirStr = outputDir.GetFullPath();
+            wxMkdir(outputDirStr);
+            clDEBUG() << "Set output directory to" << outputDirStr << endl;
+        }
+
+        auto wxcView = m_wxcPlugin->GetMainFrame()->GetWxcView();
+        for (size_t i = 0; i != parser.GetParamCount(); ++i) {
+            wxString filename = parser.GetParam(i);
+            clDEBUG() << "Generate from file" << filename << endl;
+            wxString fileContent;
+            if (FileUtils::ReadFileContent(filename, fileContent)) {
+                wxcView->LoadProject(filename, fileContent);
+                if (!outputDirStr.empty()) {
+                    wxcProjectMetadata::Get().SetGeneratedFilesDir(outputDirStr);
+                }
+                wxcView->DoGenerateCode(true);
+            } else {
+                return false;
+            }
+        }
+        exit(0);
+    }
+
     if (false) {
         // Don't show the top window
         return true;

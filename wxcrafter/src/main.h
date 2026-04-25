@@ -92,6 +92,8 @@ public:
 
     wxWindow* GetDesignerParent() { return m_splitterPageDesigner; }
 
+    GUICraftMainPanel* GetWxcView() { return m_wxcView; }
+
     void DisplayDesigner();
     void MinimizeDesigner();
     void HideDesigner();

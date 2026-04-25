@@ -37,7 +37,6 @@ enum StatusBarIndex {
 ChatAIWindow::ChatAIWindow(wxWindow* parent)
     : AssistanceAIChatWindowBase(parent)
 {
-    const auto& conf = llm::Manager::GetInstance().GetConfig();
     auto images = clGetManager()->GetStdIcons();
 
     m_inputEditHelper = std::make_unique<clEditEventsHandler>(m_stcInput);

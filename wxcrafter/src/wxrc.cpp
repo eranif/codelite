@@ -281,51 +281,6 @@ void wxcXmlResourceCmp::MakePackageCPP(const wxArrayString& flist)
     file.Write("}\n");
 }
 
-
-static wxString FileToPythonArray(wxString filename, int num)
-{
-    wxString output;
-    wxString tmp;
-    wxString snum;
-    wxFFile file(filename, wxT("rb"));
-    wxFileOffset offset = file.Length();
-    wxASSERT_MSG(offset >= 0, wxT("Invalid file length"));
-
-    const size_t lng = wx_truncate_cast(size_t, offset);
-    wxASSERT_MSG(static_cast<wxFileOffset>(lng) == offset, wxT("Huge file not supported"));
-
-    snum.Printf(wxT("%i"), num);
-    output = "    xml_res_file_" + snum + " = '''\\\n";
-
-    unsigned char* buffer = new unsigned char[lng];
-    file.Read(buffer, lng);
-
-    for (size_t i = 0, linelng = 0; i < lng; i++) {
-        unsigned char c = buffer[i];
-        if (c == '\n') {
-            tmp = (wxChar)c;
-            linelng = 0;
-        } else if (c < 32 || c > 127 || c == '\'')
-            tmp.Printf(wxT("\\x%02x"), c);
-        else if (c == '\\')
-            tmp = wxT("\\\\");
-        else
-            tmp = (wxChar)c;
-        if (linelng > 70) {
-            linelng = 0;
-            output << wxT("\\\n");
-        }
-        output << tmp;
-        linelng += tmp.Length();
-    }
-
-    delete[] buffer;
-
-    output += wxT("'''\n\n");
-
-    return output;
-}
-
 ExtractedStrings wxcXmlResourceCmp::FindStrings()
 {
     ExtractedStrings arr, a2;

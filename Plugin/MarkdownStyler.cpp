@@ -476,7 +476,6 @@ wxString MarkdownStyler::GetUrlFromPosition(int pos)
     }
 
     for (int i = pos - 1; pos >= start_pos; --i) {
-        char c = m_ctrl->GetCharAt(i);
         if (m_ctrl->GetStyleAt(i) == MarkdownStyles::kUrl) {
             prefix.Prepend(static_cast<wxChar>(m_ctrl->GetCharAt(i)));
         } else {
@@ -800,7 +799,6 @@ void MarkdownStyler::OnStyle(AccessorBase& accessor)
             // Check for actor: ❰ACTOR_NAME❱
             if (accessor.IsAtLineStartIgnoringWhitespace() && accessor.StartsWith({226, 157, 176}) &&
                 accessor.Contains({226, 157, 177}) != wxNOT_FOUND) {
-                int actor_end = accessor.Contains({226, 157, 177}, 1);
                 accessor.SetStyleUntilEndOfLine(MarkdownStyles::kActor);
                 accessor.SetStyle(MarkdownStyles::kDefault, 1);
                 break;

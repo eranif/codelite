@@ -250,8 +250,7 @@ IProcess* CreateAsyncProcess(wxEvtHandler* parent,
 
     // sanity:
     // Check that we have SSH executable
-    wxFileName sshpath;
-    if ((flags & IProcessCreateSSH) && !FileUtils::FindExe("ssh", sshpath)) {
+    if ((flags & IProcessCreateSSH) && !FileUtils::FindExe("ssh")) {
         return nullptr;
     }
 

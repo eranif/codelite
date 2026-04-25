@@ -330,12 +330,11 @@ const wxString& __uname()
 
     if (firstTime) {
         firstTime = false;
-        wxFileName uname;
-        if (FileUtils::FindExe("uname", uname)) {
+        if (auto uname = FileUtils::FindExe("uname")) {
             firstTime = false;
             clDEBUG() << "Running `uname -s`..." << endl;
             wxString cmd;
-            cmd << uname.GetFullPath();
+            cmd << uname->GetFullPath();
             StringUtils::WrapWithQuotes(cmd);
             cmd << " -s";
             uname_output = ProcUtils::SafeExecuteCommand(cmd);

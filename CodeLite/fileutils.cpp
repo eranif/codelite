@@ -573,12 +573,12 @@ clEnvList_t FileUtils::CreateEnvironment(const wxString& envstr)
 }
 namespace
 {
-bool DoFindExe(const wxString& name, wxFileName& exepath, const wxArrayString& hint)
+std::optional<wxFileName> DoFindExe(const wxString& name, const wxArrayString& hint)
 {
     wxString path;
     if (!::wxGetEnv("PATH", &path)) {
         clWARNING() << "Could not read environment variable PATH" << clEndl;
-        return false;
+        return std::nullopt;
     }
 
     wxArrayString mergedPaths = hint;
@@ -592,8 +592,7 @@ bool DoFindExe(const wxString& name, wxFileName& exepath, const wxArrayString& h
 
         wxFileName fnPath(curpath, name);
         if (fnPath.FileExists()) {
-            exepath = fnPath;
-            return true;
+            return fnPath;
         }
 #ifdef __WXMSW__
         wxFileName fullname("", name);
@@ -614,20 +613,17 @@ bool DoFindExe(const wxString& name, wxFileName& exepath, const wxArrayString& h
             wxFileName fnFileWithExt(curpath, name);
             fnFileWithExt.SetExt(ext);
             if (fnFileWithExt.FileExists()) {
-                exepath = fnFileWithExt;
-                return true;
+                return fnFileWithExt;
             }
         }
 #endif
     }
-    return false;
+    return std::nullopt;
 }
 } // namespace
 
-bool FileUtils::FindExe(const wxString& name,
-                        wxFileName& exepath,
-                        const wxArrayString& hint,
-                        const wxArrayString& suffix_list)
+std::optional<wxFileName>
+FileUtils::FindExe(const wxString& name, const wxArrayString& hint, const wxArrayString& suffix_list)
 {
     wxArrayString possible_suffix;
     possible_suffix.Add(wxEmptyString);
@@ -636,11 +632,11 @@ bool FileUtils::FindExe(const wxString& name,
         possible_suffix.insert(possible_suffix.end(), suffix_list.begin(), suffix_list.end());
     }
     for (const wxString& suffix : possible_suffix) {
-        if (DoFindExe(name + suffix, exepath, hint)) {
-            return true;
+        if (auto exePath = DoFindExe(name + suffix, hint)) {
+            return exePath;
         }
     }
-    return false;
+    return std::nullopt;
 }
 
 wxFileName FileUtils::CreateTempFileName(const wxString& folder, const wxString& prefix, const wxString& ext)

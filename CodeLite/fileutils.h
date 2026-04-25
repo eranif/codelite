@@ -29,7 +29,12 @@
 #include "codelite_exports.h"
 
 #include <optional>
+#include <string>
+#include <vector>
+#include <wx/arrstr.h>
+#include <wx/filefn.h>
 #include <wx/filename.h>
+#include <wx/strconv.h>
 #include <wx/string.h>
 
 #define clRemoveFile(filename) FileUtils::RemoveFile(filename, (wxString() << __FILE__ << ":" << __LINE__))
@@ -239,16 +244,13 @@ public:
     /**
      * @brief locate an executable on the system using the PATH environment variable
      * @param name the exe name to locate (you can omit the .exe on Windows, it will be added automatically)
-     * @param exepath [output] will contain its filepath if successfully located
      * @param hint extra paths to search
      * @param list of suffixes. On Linux, some files may have number attached to them like: lldb-10, lldb-9
      * passing suffix_list = {"-10", "-9"...} will also check for these files (in order)
-     * @return true if a filepath was found
+     * @return the found filepath else std::nullopt
      */
-    static bool FindExe(const wxString& name,
-                        wxFileName& exepath,
-                        const wxArrayString& hint = {},
-                        const wxArrayString& suffix_list = {});
+    static std::optional<wxFileName>
+    FindExe(const wxString& name, const wxArrayString& hint = {}, const wxArrayString& suffix_list = {});
 
     /**
      * @brief create a temporary file *name* in a given folder with a given name prefix and an extension

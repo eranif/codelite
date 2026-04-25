@@ -35,12 +35,8 @@ EditorSettingsTerminal::EditorSettingsTerminal(wxWindow* parent, OptionsConfigPt
 {
     wxArrayString terminals = clConsoleBase::GetAvailableTerminals();
 #if defined(__WXGTK__)
-    wxString where; // GetAvailableTerminals() doesn't, it gets a list of supported ones; so check for existence
-    for(size_t t = terminals.GetCount(); t > 0; --t) {
-        if(!ExeLocator::Locate(terminals.Item(t - 1), where)) {
-            terminals.RemoveAt(t - 1);
-        }
-    }
+    // GetAvailableTerminals() doesn't, it gets a list of supported ones; so check for existence
+    std::erase_if(terminals, [](const auto& terminal) { return !ExeLocator::Locate(terminal); });
 #endif
     AddHeader(_("Terminals"));
 

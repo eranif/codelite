@@ -4,13 +4,11 @@
 
 #ifdef __WXMSW__
 #include <wx/msw/registry.h>
-#include <wx/volume.h>
 #endif
 
 void NodeJSLocator::Locate(const wxArrayString& hints)
 {
     wxArrayString paths = hints;
-    wxFileName fn_npm;
 #if defined(__WXGTK__) || defined(__WXOSX__)
     // Linux
 
@@ -51,20 +49,19 @@ void NodeJSLocator::Locate(const wxArrayString& hints)
     }
 
     // On Windows, first try to locate npm.cmd
-    if (m_npm.IsEmpty() && ::FileUtils::FindExe("npm.cmd", fn_npm, paths)) {
-        m_npm = fn_npm.GetFullPath();
+    if (m_npm.IsEmpty()) {
+        m_npm = ::FileUtils::FindExe("npm.cmd", paths).value_or(wxFileName{}).GetFullPath();
     }
 #endif
 
     // Still could not find it, try the PATH environment variable
-    wxFileName fn_node;
-    if (m_nodejs.empty() && ::FileUtils::FindExe("node", fn_node, paths)) {
-        m_nodejs = fn_node.GetFullPath();
+    if (m_nodejs.empty()) {
+        m_nodejs = ::FileUtils::FindExe("node", paths).value_or(wxFileName{}).GetFullPath();
     }
 
     // No luck? locate npm
-    if (m_npm.empty() && ::FileUtils::FindExe("npm", fn_npm, paths)) {
-        m_npm = fn_npm.GetFullPath();
+    if (m_npm.empty()) {
+        m_npm = ::FileUtils::FindExe("npm", paths).value_or(wxFileName{}).GetFullPath();
     }
 }
 

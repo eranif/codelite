@@ -54,9 +54,8 @@ const wxString& clRemoteTerminal::ReadTty()
 {
     static wxString empty_string;
     // wrap the command in ssh
-    wxFileName ssh_exe;
     EnvSetter setter;
-    if (!FileUtils::FindExe("ssh", ssh_exe)) {
+    if (!FileUtils::FindExe("ssh")) {
         clERROR() << "Could not locate ssh executable in your PATH!" << endl;
         return empty_string;
     }

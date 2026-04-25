@@ -27,34 +27,32 @@
 #include <wx/filename.h>
 #include <wx/tokenzr.h>
 
-bool ExeLocator::Locate(const wxString& name, wxString& where)
+std::optional<wxString> ExeLocator::Locate(const wxString& name)
 {
     wxString filename = name;
     filename.Trim().Trim(false);
-    if(filename.StartsWith("\"")) {
+    if (filename.StartsWith("\"")) {
         filename = filename.Mid(1);
     }
 
-    if(filename.EndsWith("\"")) {
+    if (filename.EndsWith("\"")) {
         filename = filename.RemoveLast();
     }
 
     // Incase the name is a full path, just test for the file existence
     wxFileName fn(filename);
-    if(fn.IsAbsolute() && fn.FileExists()) {
-        where = name;
-        return true;
+    if (fn.IsAbsolute() && fn.FileExists()) {
+        return name;
     }
 
     // Check the path
     wxString path = wxGetenv("PATH");
     wxArrayString paths = ::wxStringTokenize(path, wxPATH_SEP, wxTOKEN_STRTOK);
-    for(size_t i = 0; i < paths.size(); ++i) {
-        wxFileName fnExe(paths.Item(i), fn.GetFullName());
-        if(fnExe.FileExists()) {
-            where = fnExe.GetFullPath();
-            return true;
+    for (const auto& path : paths) {
+        wxFileName fnExe(path, fn.GetFullName());
+        if (fnExe.FileExists()) {
+            return fnExe.GetFullPath();
         }
     }
-    return false;
+    return std::nullopt;
 }

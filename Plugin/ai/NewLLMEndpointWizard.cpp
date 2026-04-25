@@ -37,20 +37,20 @@ void NewLLMEndpointWizard::OnProviderChanged(wxCommandEvent& event)
     wxString provider = m_choiceProviders->GetStringSelection();
     if (provider == kProviderAnthropic) {
         m_textCtrlBaseURL->ChangeValue("https://api.anthropic.com");
-        m_spinCtrlContextSizeKB->SetValue(256);
-        m_spinCtrlContextSizeKB->SetValue(64);
-    } else if (provider == kProviderOllamaCloud) {
-        m_textCtrlBaseURL->ChangeValue("https://ollama.com");
-        m_spinCtrlContextSizeKB->SetValue(32);
-        m_spinCtrlContextSizeKB->SetValue(32);
-    } else if (provider == kProviderOllamaLocal) {
-        m_textCtrlBaseURL->ChangeValue("http://127.0.0.1:11434");
-        m_spinCtrlContextSizeKB->SetValue(4);
-        m_spinCtrlMaxTokensKB->SetValue(4);
+        m_spinCtrlContextSizeKB->SetValue(200);
+        m_spinCtrlMaxTokensKB->SetValue(64);
     } else if (provider == kProviderOpenAI) {
         m_textCtrlBaseURL->ChangeValue("https://api.openai.com");
         m_spinCtrlContextSizeKB->SetValue(400);
         m_spinCtrlMaxTokensKB->SetValue(64);
+    } else if (provider == kProviderOllamaCloud) {
+        m_textCtrlBaseURL->ChangeValue("https://ollama.com");
+        m_spinCtrlContextSizeKB->SetValue(32);
+        m_spinCtrlMaxTokensKB->SetValue(32);
+    } else if (provider == kProviderOllamaLocal) {
+        m_textCtrlBaseURL->ChangeValue("http://127.0.0.1:11434");
+        m_spinCtrlContextSizeKB->SetValue(4);
+        m_spinCtrlMaxTokensKB->SetValue(4);
     } else if (provider == kProviderMoonshotAI) {
         m_textCtrlBaseURL->ChangeValue("https://api.moonshot.ai");
         m_spinCtrlContextSizeKB->SetValue(256);

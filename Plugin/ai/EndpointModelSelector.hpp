@@ -4,6 +4,7 @@
 #include "codelite_exports.h"
 #include "wx/aui/auibar.h"
 
+#include <functional>
 #include <memory>
 #include <wx/choice.h>
 #include <wx/control.h>
@@ -24,6 +25,8 @@ public:
     wxString GetModel() const { return m_choiceModels->GetStringSelection(); }
     wxString GetEndpoint() const { return m_choiceEndpoints->GetStringSelection(); }
 
+    void SetOnEndpointChangedCallback(std::function<void()> cb) { m_onEndpointChanged = std::move(cb); }
+
 private:
     void UpdateModelsForEndpoint(const wxString& endpoint);
     void OnModelChanged(wxCommandEvent& event);
@@ -34,7 +37,7 @@ private:
     wxChoice* m_choiceEndpoints{nullptr};
     wxChoice* m_choiceModels{nullptr};
     wxAuiToolBar* m_parent{nullptr};
-
+    std::function<void()> m_onEndpointChanged{nullptr};
     /**
      * @brief Internal helper to calculate a reasonable control width
      * @param reference_text Text used to calculate the width

@@ -244,6 +244,9 @@ void CodeLiteLUA::log_message(const std::string& msg, FileLogger::LogLevel level
     case FileLogger::LogLevel::System:
         clSYSTEM() << wxString::FromUTF8(msg) << endl;
         break;
+    case FileLogger::LogLevel::Info:
+        clINFO() << wxString::FromUTF8(msg) << endl;
+        break;
     case FileLogger::LogLevel::Error:
         clERROR() << wxString::FromUTF8(msg) << endl;
         break;

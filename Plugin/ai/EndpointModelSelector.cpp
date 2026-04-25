@@ -100,6 +100,9 @@ void EndpointModelSelector::OnEndpointChanged(wxCommandEvent& event)
     wxUnusedVar(event);
     llm::Manager::GetInstance().SetActiveEndpoint(m_choiceEndpoints->GetStringSelection());
     UpdateModelsForEndpoint(m_choiceEndpoints->GetStringSelection());
+    if (m_onEndpointChanged) {
+        m_onEndpointChanged();
+    }
 }
 
 void EndpointModelSelector::OnBusyUI(wxUpdateUIEvent& event)

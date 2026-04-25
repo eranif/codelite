@@ -15,6 +15,7 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/splitter.h>
+#include <wx/gauge.h>
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
 #include <wx/pen.h>
@@ -59,6 +60,7 @@ class AssistanceAIChatWindowBase : public wxPanel
 protected:
     wxSplitterWindow* m_mainSplitter;
     wxPanel* m_splitterPageTop;
+    wxGauge* m_gaugeContextUsed;
     clThemedSTC* m_stcOutput;
     wxPanel* m_splitterPageBottom;
     wxAuiToolBar* m_toolbar;
@@ -68,6 +70,7 @@ protected:
     virtual void OnInputUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxGauge* GetGaugeContextUsed() { return m_gaugeContextUsed; }
     clThemedSTC* GetStcOutput() { return m_stcOutput; }
     wxPanel* GetSplitterPageTop() { return m_splitterPageTop; }
     wxAuiToolBar* GetToolbar() { return m_toolbar; }

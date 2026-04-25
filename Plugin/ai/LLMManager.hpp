@@ -145,6 +145,23 @@ struct WXDLLIMPEXP_SDK ThreadTask {
     inline wxEvtHandler* GetEventSink() { return collector ? collector : owner; }
 };
 
+struct WXDLLIMPEXP_SDK TokenUsage {
+    size_t context_size{0};
+    size_t used{0};
+    inline size_t GetPercentage() const
+    {
+        if (context_size == 0 || used == 0) {
+            return 0;
+        }
+
+        if (used >= context_size) {
+            return 100;
+        }
+        return static_cast<size_t>((static_cast<double>(used) / static_cast<double>(context_size)) * 100);
+    }
+};
+
+//
 // Type of providers.
 constexpr const char* kClientTypeAnthropic = "anthropic";
 constexpr const char* kClientTypeOllama = "ollama";
@@ -533,6 +550,20 @@ public:
     {
         CHECK_COND_RET_VAL(m_client, 0.0);
         return m_client->GetTotalCost();
+    }
+
+    inline std::optional<llm::TokenUsage> GetUsage() const
+    {
+        CHECK_COND_RET_VAL(m_client, std::nullopt);
+        auto usage = m_client->GetTokenUsageStats();
+        if (!usage) {
+            return std::nullopt;
+        }
+
+        return llm::TokenUsage{
+            .context_size = usage->context_size,
+            .used = static_cast<size_t>(usage->total_tokens_used),
+        };
     }
 
     /**

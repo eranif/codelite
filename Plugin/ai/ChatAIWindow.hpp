@@ -155,6 +155,7 @@ protected:
 
     void ShowIndicator(bool show);
     void UpdateStatusBar();
+    void UpdateContextWindowUsage();
 
 private:
     std::unique_ptr<MarkdownStyler> m_markdownStyler;

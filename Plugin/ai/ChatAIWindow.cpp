@@ -38,7 +38,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     : AssistanceAIChatWindowBase(parent)
 {
     auto images = clGetManager()->GetStdIcons();
-
+    m_gaugeContextUsed->SetSizeHints(-1, 10);
     m_inputEditHelper = std::make_unique<clEditEventsHandler>(m_stcInput);
     m_outputEditHelper = std::make_unique<clEditEventsHandler>(m_stcOutput);
 
@@ -46,6 +46,11 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     clAuiToolBarArt::AddTool(m_toolbar, wxID_SAVE, _("Save Chat"), images->LoadBitmap("file_save"));
     m_toolbar->AddSeparator();
     m_model_selector = std::make_unique<EndpointModelSelector>(m_toolbar);
+    m_model_selector->SetOnEndpointChangedCallback([this]() {
+        DoClearOutputView();
+        UpdateStatusBar();
+    });
+
     clAuiToolBarArt::AddTool(m_toolbar, wxID_EXECUTE, _("Submit"), images->LoadBitmap("fold"));
     clAuiToolBarArt::AddTool(m_toolbar, wxID_STOP, _("Stop"), images->LoadBitmap("execute_stop"));
     m_toolbar->AddSeparator();
@@ -435,6 +440,7 @@ void ChatAIWindow::DoClearOutputView()
         ::wxLaunchDefaultBrowser(url);
     });
     llm::Manager::GetInstance().ClearHistory();
+    UpdateContextWindowUsage();
 }
 
 void ChatAIWindow::OnClearSession(wxCommandEvent& event)
@@ -554,23 +560,20 @@ void ChatAIWindow::ShowIndicator(bool show)
 void ChatAIWindow::UpdateStatusBar()
 {
     auto& llm = llm::Manager::GetInstance();
-    if (!llm.HasPricing()) {
-        m_statusBar->SetStatusText(wxEmptyString, StatusBarIndex::kCost);
-        m_statusBar->SetStatusText(wxEmptyString, StatusBarIndex::kUsage);
-        return;
-    }
     wxString str;
-    str << _("Total cost: $") << llm.GetTotalCost() << _(", Last Request cost: $") << llm.GetLastRequestCost();
-    m_statusBar->SetStatusText(str, StatusBarIndex::kCost);
-    str.Clear();
-    if (llm.GetLastRequestUsage().has_value()) {
-        auto usage = llm.GetLastRequestUsage().value();
-        str << _("Output tokens: ") << usage.output_tokens << _(", Input tokens: ") << usage.input_tokens
-            << _(", Cached tokens read: ") << usage.cache_read_input_tokens;
-        m_statusBar->SetStatusText(str, StatusBarIndex::kUsage);
-    } else {
-        m_statusBar->SetStatusText(wxEmptyString, StatusBarIndex::kUsage);
+    if (llm.HasPricing()) {
+        str << _("Total cost: $") << llm.GetTotalCost() << _(", Last Request cost: $") << llm.GetLastRequestCost();
     }
+    m_statusBar->SetStatusText(str, StatusBarIndex::kCost);
+
+    str.Clear();
+    if (llm.GetLastRequestUsage()) {
+        auto usage = llm.GetLastRequestUsage();
+        str << _("Output tokens: ") << usage->output_tokens << _(", Input tokens: ") << usage->input_tokens
+            << _(", Cached tokens read: ") << usage->cache_read_input_tokens;
+    }
+    m_statusBar->SetStatusText(str, StatusBarIndex::kUsage);
+    UpdateContextWindowUsage();
 }
 
 void ChatAIWindow::OnLLMConfigUpdate(clLLMEvent& event)
@@ -784,6 +787,7 @@ void ChatAIWindow::OnLLMWorkerIdle(clLLMEvent& event)
     m_state = ChatState::kReady;
     ShowIndicator(false);
     StyleOutput();
+    UpdateContextWindowUsage();
 }
 
 void ChatAIWindow::OnLLMWorkerBusy(clLLMEvent& event)
@@ -852,4 +856,14 @@ void ChatAIWindow::OnSaveSessionUI(wxUpdateUIEvent& event)
 {
     wxString active_endpoint = m_model_selector->GetEndpoint();
     event.Enable(!active_endpoint.empty() && !m_stcOutput->IsEmpty());
+}
+
+void ChatAIWindow::UpdateContextWindowUsage()
+{
+    int pos{0};
+    if (llm::Manager::GetInstance().GetUsage()) {
+        pos = static_cast<int>(llm::Manager::GetInstance().GetUsage()->GetPercentage());
+    }
+    m_gaugeContextUsed->SetValue(pos);
+    m_gaugeContextUsed->SetToolTip(wxString() << _("Context Window Used: ") << pos << "%");
 }

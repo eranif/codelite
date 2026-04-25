@@ -51,6 +51,16 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
     wxBoxSizer* boxSizer35 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageTop->SetSizer(boxSizer35);
 
+    m_gaugeContextUsed = new wxGauge(m_splitterPageTop,
+                                     wxID_ANY,
+                                     100,
+                                     wxDefaultPosition,
+                                     wxDLG_UNIT(m_splitterPageTop, wxSize(-1, 5)),
+                                     wxGA_HORIZONTAL);
+    m_gaugeContextUsed->SetValue(0);
+
+    boxSizer35->Add(m_gaugeContextUsed, 0, wxEXPAND, WXC_FROM_DIP(5));
+
     m_stcOutput = new clThemedSTC(
         m_splitterPageTop, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageTop, wxSize(700, 500)), 0);
     // Configure the fold margin

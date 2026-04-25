@@ -847,6 +847,7 @@ void Manager::ClearHistory()
 {
     CHECK_PTR_RET(m_client);
     m_client->ClearHistoryMessages();
+    m_client->SetLastRequestUsage({});
 }
 
 std::optional<llm::Conversation> Manager::NewConversation(const wxString& conversation_text,

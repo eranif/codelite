@@ -1075,7 +1075,7 @@ bool DebugAdapterClient::StartSocketDap()
 {
     m_dap_server.reset();
     const DapEntry& dap_server = m_session.dap_server;
-    wxString command = ReplacePlaceholders(dap_server.GetCommand());
+    wxString command = ReplacePlaceholders(dap_server.GetCommand(m_session.debug_over_ssh));
 
     DAP_DEBUG() << "starting dap with command:" << command << endl;
 
@@ -1107,7 +1107,7 @@ dap::Transport* DebugAdapterClient::StartStdioDap()
 {
     m_dap_server.reset();
     const DapEntry& dap_server = m_session.dap_server;
-    wxString command = ReplacePlaceholders(dap_server.GetCommand());
+    wxString command = ReplacePlaceholders(dap_server.GetCommand(m_session.debug_over_ssh));
 
     DAP_DEBUG() << "starting dap with command:" << command << endl;
 
@@ -1211,7 +1211,7 @@ void DebugAdapterClient::StartAndConnectToDapServer()
         auto socket_transport = new dap::SocketTransport();
         DAP_DEBUG() << "Connecting to dap server:" << m_session.dap_server.GetConnectionString() << endl;
         if (!socket_transport->Connect(m_session.dap_server.GetConnectionString().ToStdString(), 10)) {
-            wxMessageBox(
+            clMessageBox(
                 "Failed to connect to DAP server using socket", DAP_MESSAGE_BOX_TITLE, wxICON_ERROR | wxOK | wxCENTRE);
             wxDELETE(socket_transport);
             m_client.Reset();

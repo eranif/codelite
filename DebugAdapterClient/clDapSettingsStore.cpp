@@ -1,5 +1,6 @@
 #include "clDapSettingsStore.hpp"
 
+#include "StringUtils.h"
 #include "fileutils.h"
 
 JSONItem DapEntry::To() const
@@ -105,4 +106,20 @@ void clDapSettingsStore::Update(const std::vector<DapEntry>& entries)
         m_entries.erase(d.GetName());
         m_entries.insert({d.GetName(), d});
     }
+}
+
+wxString DapEntry::GetCommand(bool for_remote) const
+{
+    if (!for_remote) {
+        return m_command;
+    }
+
+    auto commands = StringUtils::BuildCommandArrayFromString(m_command);
+    if (commands.empty()) {
+        return wxEmptyString;
+    }
+
+    wxFileName fn{commands[0]};
+    commands[0] = fn.GetName(); // Remove extension gdb.exe -> gdb
+    return StringUtils::BuildCommandStringFromArray(commands);
 }

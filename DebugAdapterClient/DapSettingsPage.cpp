@@ -30,7 +30,7 @@ DapSettingsPage::DapSettingsPage(wxWindow* win, clDapSettingsStore& store, const
     , m_entry(entry)
 {
     AddHeader(_("General"));
-    AddProperty(_("Command"), m_entry.GetCommand(), UPDATE_TEXT_CB(SetCommand));
+    AddProperty(_("Command"), m_entry.GetCommand(false), UPDATE_TEXT_CB(SetCommand));
     AddProperty(_("Connection string"), m_entry.GetConnectionString(), UPDATE_TEXT_CB(SetConnectionString));
 
     const std::vector<wxString> launch_choices = {"Launch", "Attach"};

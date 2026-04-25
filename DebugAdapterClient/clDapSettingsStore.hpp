@@ -35,7 +35,7 @@ class DapEntry
 private:
     void SetFlag(DapPathFormat flag, bool b)
     {
-        if(b) {
+        if (b) {
             m_flags |= (size_t)flag;
         } else {
             m_flags &= ~(size_t)flag;
@@ -55,7 +55,7 @@ public:
     void SetName(const wxString& name) { this->m_name = name; }
     void SetConnectionString(const wxString& connection_string) { this->m_connection_string = connection_string; }
 
-    const wxString& GetCommand() const { return m_command; }
+    wxString GetCommand(bool for_remote) const;
     const wxString& GetName() const { return m_name; }
     const wxString& GetConnectionString() const { return m_connection_string; }
 

@@ -13,14 +13,12 @@ DapDebuggerSettingsDlg::DapDebuggerSettingsDlg(wxWindow* parent, clDapSettingsSt
     : DapDebuggerSettingsDlgBase(parent)
     , m_store(store)
 {
-    auto image_list = new clBitmapList;
-
-    m_toolbar->AddTool(wxID_NEW, _("New"), image_list->Add("file_new"));
-    m_toolbar->AddTool(wxID_DELETE, _("Delete"), image_list->Add("clean"));
+    auto image_list = clGetManager()->GetStdIcons();
+    m_toolbar->AddTool(wxID_NEW, _("New"), image_list->LoadBitmap("file_new"));
+    m_toolbar->AddTool(wxID_DELETE, _("Delete"), image_list->LoadBitmap("clean"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(wxID_FIND, _("Scan"), image_list->Add("find"));
-    m_toolbar->AddTool(wxID_HELP, _("Help"), image_list->Add("help"));
-    m_toolbar->AssignBitmaps(image_list);
+    m_toolbar->AddTool(wxID_FIND, _("Scan"), image_list->LoadBitmap("find"));
+    m_toolbar->AddTool(wxID_HELP, _("Help"), image_list->LoadBitmap("help"));
 
     m_toolbar->Realize();
 

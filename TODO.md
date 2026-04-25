@@ -19,9 +19,6 @@ others:
 High:
 -----
 
-- DAP: Support remote debugging
-    - DAP: Auto-configure remote gdb & remote lldb that can be used on a remote machines.
-    - DAP: In case of a remote workspace, make sure we can open the files by using the SFTP manager.
 - GDB: use the new terminal to launch and avoid opening custom terminals for this purpose.
 
 Medium:
@@ -31,7 +28,6 @@ Medium:
 - Implement `code_symbols` tool for AI.
 - AI: Extend all the tools with a "Purpose" mandatory field, so each model will be forced to report the reason for the invocation.
 - AI: Add a system-message that instruct the model to NEVER create a summary file
-- AI: Add token usage
 - AI: Add "compact" or "summary" button to when the AI is losing it and needs a fresh start :)
 - Terminal: when changing a terminal theme, apply it to newly opened terminals only.
 - Terminal: remember, on per terminal type, the last theme used for it.

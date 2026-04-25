@@ -440,7 +440,7 @@ void ChatAIWindow::DoClearOutputView()
         ::wxLaunchDefaultBrowser(url);
     });
     llm::Manager::GetInstance().ClearHistory();
-    UpdateContextWindowUsage();
+    UpdateStatusBar();
 }
 
 void ChatAIWindow::OnClearSession(wxCommandEvent& event)

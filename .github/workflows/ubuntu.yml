@@ -60,6 +60,15 @@ jobs:
       with:
         submodules: recursive
 
+    - name: Build, test and install CodeLite
+      run: |
+        mkdir build-release
+        cd build-release
+        cmake .. -DCMAKE_BUILD_TYPE=Release ${{matrix.codelite-options}} -DCOPY_WX_LIBS=1 -DBUILD_TESTING=1
+        make -j$(nproc)
+        sudo make install
+        ctest --output-on-failure
+
     - name: Update codelite.pot
       if: matrix.codelite-variant == 'All'
       run: |
@@ -76,15 +85,6 @@ jobs:
         name: codelite-pot-wx-${{matrix.wx-version}}
         path: |
           translations/codelite.pot
-
-    - name: Build, test and install CodeLite
-      run: |
-        mkdir build-release
-        cd build-release
-        cmake .. -DCMAKE_BUILD_TYPE=Release ${{matrix.codelite-options}} -DCOPY_WX_LIBS=1 -DBUILD_TESTING=1
-        make -j$(nproc)
-        sudo make install
-        ctest --output-on-failure
 
     - name: codelite --version
       run: xvfb-run -a codelite --version || exit 0 # codelite --version returns -1

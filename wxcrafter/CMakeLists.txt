@@ -1,30 +1,22 @@
-if(WXC_APP)
-  message("-- Building wxCrafter as a standalone executable ")
-  add_compile_definitions(STANDALONE_BUILD=1)
-  add_compile_definitions(INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
-else()
-  message("-- Building wxCrafter as codelite plugin ")
-  add_compile_definitions(WXCAPP=0)
-endif(WXC_APP)
-
-# set the plugin name here
-if(WXC_APP)
-  set(PLUGIN_NAME "wxcrafter")
-else()
-  set(PLUGIN_NAME "wxCrafter")
-endif()
-
 if(NOT CL_SRC_ROOT)
   message(FATAL_ERROR "Missing CL_SRC_ROOT")
 endif()
+
+if(WXC_APP)
+  message("-- Building wxCrafter as a standalone executable")
+else()
+  message("-- Building wxCrafter as codelite plugin")
+endif(WXC_APP)
+
+set(APP_NAME "wxcrafter")
+set(PLUGIN_NAME "wxCrafter")
 
 set(WXC_DIR "${CL_SRC_ROOT}/wxcrafter")
 
 message("-- Generating makefile for wxCrafter")
 
-# Our project is called 'plugin' this is how it will be called in visual studio,
-# and in our makefiles.
-project(${PLUGIN_NAME})
+# Our project is called 'plugin' this is how it will be called in visual studio, and in our makefiles.
+project(wxCrafter)
 
 # wxWidgets include (this will do all the magic to configure everything)
 include("${wxWidgets_USE_FILE}")
@@ -50,7 +42,7 @@ if(NOT MINGW)
       endif()
     endif(NOT PREFIX)
     set(WXC_LIBS_DIR
-        "${CMAKE_INSTALL_PREFIX}/${WXC_INSTALL_LIBDIR}/${PLUGIN_NAME}")
+        "${CMAKE_INSTALL_PREFIX}/${WXC_INSTALL_LIBDIR}/${APP_NAME}")
     set(LINKER_OPTIONS -Wl,-rpath,"${WXC_LIBS_DIR}")
   else(WXC_APP)
     if(NOT OFFICIAL_CL_BUILD)
@@ -100,61 +92,68 @@ if(MINGW)
 endif()
 
 # Define the output
-if(NOT WXC_APP)
-  # plugin mode
-  add_library(${PLUGIN_NAME} SHARED ${SRCS})
+add_library(wxCrafterPlugin SHARED ${SRCS})
+add_executable(wxcrafter ${SRCS} ${RES_FILES})
+if (WXC_APP)
+  set_target_properties(wxCrafterPlugin PROPERTIES EXCLUDE_FROM_ALL ON)
 else()
-  # executable
-  add_executable(${PLUGIN_NAME} ${SRCS} ${RES_FILES})
+  set_target_properties(wxcrafter PROPERTIES EXCLUDE_FROM_ALL ON)
 endif()
+
+#target_compile_definitions(wxCrafterPlugin PRIVATE WXCAPP=0)
+target_compile_definitions(wxcrafter PRIVATE STANDALONE_BUILD=1 INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
 
 if(UNIX OR APPLE)
-  set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  set_target_properties(wxCrafterPlugin PROPERTIES POSITION_INDEPENDENT_CODE ON)
+  set_target_properties(wxcrafter PROPERTIES POSITION_INDEPENDENT_CODE ON)
 endif()
 
-if(NOT WXC_APP AND USE_PCH)
-  target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)
+if(USE_PCH)
+  target_precompile_headers(wxCrafterPlugin REUSE_FROM PCH)
 endif()
 
 # Remove the "lib" prefix from the plugin name
-set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
+set_target_properties(wxCrafterPlugin PROPERTIES OUTPUT_NAME "wxCrafter" PREFIX "")
 
-if(NOT WXC_APP)
-  if(NOT OFFICIAL_CL_BUILD)
-    target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} wxsqlite3
-                          ${SQLite3_LIBRARIES} libcodelite plugin)
-  else(OFFICIAL_CL_BUILD)
-    target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS})
-  endif(NOT OFFICIAL_CL_BUILD)
-else()
-  set(WXC_EXTRA_LIBS "")
-  if(NOT MINGW)
-    set(WXC_EXTRA_LIBS "-lutil")
-  else()
-    set(WXC_EXTRA_LIBS "-mwindows")
-  endif()
+if(NOT OFFICIAL_CL_BUILD)
+  target_link_libraries(wxCrafterPlugin ${LINKER_OPTIONS} wxsqlite3 ${SQLite3_LIBRARIES} libcodelite plugin)
+else(OFFICIAL_CL_BUILD)
+  target_link_libraries(wxCrafterPlugin ${LINKER_OPTIONS})
+endif(NOT OFFICIAL_CL_BUILD)
 
-  target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} wxsqlite3 libcodelite
-                        plugin ${WXC_EXTRA_LIBS})
-endif()
+target_link_libraries(wxcrafter ${LINKER_OPTIONS} wxsqlite3 libcodelite plugin $<IF:$<BOOL:${MINGW}>,-mwindows,-lutil>)
+
+if(UNIX AND NOT APPLE)
+  set_target_properties(wxcrafter PROPERTIES
+    SKIP_BUILD_RPATH FALSE
+    BUILD_WITH_INSTALL_RPATH FALSE)
+endif(UNIX AND NOT APPLE)
+
+if(MINGW)
+  # Copy dlls near the executable
+  add_custom_command(TARGET wxcrafter
+    POST_BUILD
+    COMMAND cmake -E copy_if_different $<TARGET_RUNTIME_DLLS:wxcrafter> $<TARGET_FILE_DIR:wxcrafter>
+    COMMAND_EXPAND_LISTS)
+endif(MINGW)
 
 if(NOT WXC_APP)
   # wxCrafter as CodeLite's plugin
-  cl_install_plugin(${PLUGIN_NAME})
+  cl_install_plugin(wxCrafterPlugin)
   cl_install_file_shared(${WXC_DIR}/wxgui.zip)
 elseif(NOT MINGW)
   set(CPACK_DEB_COMPONENT_INSTALL 1)
 
   # Installing an application
   install(
-    TARGETS ${PLUGIN_NAME}
+    TARGETS wxcrafter
     DESTINATION ${CL_INSTALL_BIN}
     PERMISSIONS ${EXE_PERM}
     COMPONENT standalone)
 
   install(
     FILES "${WXC_DIR}/wxgui.zip"
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/${PLUGIN_NAME}
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/${APP_NAME}
     COMPONENT standalone)
 
   install(
@@ -171,11 +170,11 @@ elseif(NOT MINGW)
     COMPONENT standalone)
   install(
     FILES "${CL_SRC_ROOT}/wxcrafter/resources/wxc-logo-64.png"
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/${PLUGIN_NAME}
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/${APP_NAME}
     COMPONENT standalone)
   install(
     FILES "${CL_SRC_ROOT}/Runtime/config/codelite.xml.default.gtk"
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/${PLUGIN_NAME}/config
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/${APP_NAME}/config
     RENAME codelite.xml.default
     COMPONENT standalone)
 
@@ -192,7 +191,7 @@ elseif(NOT MINGW)
   # Install codelite lexer files
   install(
     DIRECTORY ${CL_SRC_ROOT}/Runtime/lexers
-    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/${PLUGIN_NAME}
+    DESTINATION ${CMAKE_INSTALL_PREFIX}/share/${APP_NAME}
     COMPONENT standalone
     USE_SOURCE_PERMISSIONS
     PATTERN ".svn" EXCLUDE
@@ -261,7 +260,18 @@ elseif(NOT MINGW)
 endif()
 
 if(WXC_APP AND MINGW)
-  install(TARGETS ${PLUGIN_NAME} DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/")
+  install(TARGETS wxcrafter DESTINATION "${CMAKE_INSTALL_PREFIX}")
 endif()
+
+macro(wxcrafter_target Name Input OutputDir OutputCpp OutputH OutputBitmaps)
+  add_custom_command(OUTPUT ${OutputDir}/${OutputCpp} ${OutputDir}/${OutputH} ${OutputDir}/${OutputBitmaps}
+    COMMAND $<TARGET_FILE:wxcrafter> -o ${OutputDir} -g ${Input}
+    VERBATIM
+    DEPENDS ${Input}
+    COMMENT "[WxCrafter][${Name}] Building code")
+
+  set(WXCRAFTER_${Name}_OUTPUTS ${OutputCpp} ${OutputH} ${OutputBitmaps})
+  set(WXCRAFTER_${Name}_OUTPUTDIR ${OutputDir})
+endmacro()
 
 message(STATUS "wxCrafter - Done")

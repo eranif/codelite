@@ -13,11 +13,13 @@
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "wx/wupdlock.h"
 #include "wxCustomControls.hpp"
 
 #include <algorithm>
+#include <wx/filedlg.h>
 #include <wx/msgdlg.h>
 
 namespace
@@ -97,7 +99,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     m_stcOutput->SetReadOnly(true);
 
     m_commandDispatchTable.emplace("/clear", [this]() { CallAfter(&ChatAIWindow::DoCommandClear); });
-    //m_commandDispatchTable.emplace("/context", [this]() { CallAfter(&ChatAIWindow::DoCommandContext); });
+    m_commandDispatchTable.emplace("/context", [this]() { CallAfter(&ChatAIWindow::DoCommandContext); });
     m_commandDispatchTable.emplace("/save", [this]() { CallAfter(&ChatAIWindow::DoCommandSave); });
 
     Bind(wxEVT_MENU, &ChatAIWindow::OnSaveSession, this, wxID_SAVE);
@@ -447,6 +449,7 @@ void ChatAIWindow::DoClearOutputView()
         ::wxLaunchDefaultBrowser(url);
     });
     llm::Manager::GetInstance().ClearHistory();
+    llm::Manager::GetInstance().ClearSystemMessages();
     UpdateStatusBar();
 }
 
@@ -900,4 +903,36 @@ void ChatAIWindow::DoCommandSave()
     OnSaveSession(dummy);
 }
 
-void ChatAIWindow::DoCommandContext() {}
+void ChatAIWindow::DoCommandContext()
+{
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+#if USE_SFTP
+    if (workspace && workspace->IsRemote()) {
+        return;
+    }
+#endif
+
+    // Local mode: load markdown files per user request and update the system message.
+    auto frame = EventNotifier::Get()->TopFrame();
+    wxString wildcard = wxT("Markdown files (*.md)|*.md|All files (*)|*");
+    wxFileDialog openFileDialog(frame,
+                                _("Choose Context Files"),
+                                workspace ? workspace->GetDir() : wxString{},
+                                "",
+                                wildcard,
+                                wxFD_OPEN | wxFD_FILE_MUST_EXIST | wxFD_MULTIPLE);
+    if (openFileDialog.ShowModal() != wxID_OK) {
+        return;
+    }
+
+    wxArrayString paths;
+    openFileDialog.GetPaths(paths);
+
+    // Read the local files content
+    for (const auto& path : paths) {
+        wxString data;
+        if (FileUtils::ReadFileContent(path, data)) {
+            llm::Manager::GetInstance().AddSystemMessage(data);
+        }
+    }
+}

@@ -279,6 +279,31 @@ public:
     void ClearHistory();
 
     /**
+     * Adds a system message to the active client.
+     *
+     * This method belongs to Manager and forwards the message to the associated client
+     * after converting it from wxString to a UTF-8 std::string. If the client pointer
+     * is null, the method returns immediately without performing any action.
+     *
+     * @param msg wxString The system message to add.
+     * @return void This function does not return a value.
+     */
+    void AddSystemMessage(const wxString& msg);
+
+    /**
+     * Clears all system messages through the associated client.
+     *
+     * This manager method forwards the request to its underlying client after verifying
+     * that the client pointer is valid.
+     *
+     * @return void
+     *         This function returns nothing.
+     * @throws None
+     *         If the client pointer is null, the function returns early and performs no action.
+     */
+    void ClearSystemMessages();
+
+    /**
      * @brief Extracts the first non-empty, non-markdown line from a conversation text and builds a Conversation.
      *
      * This method tokenizes the provided text by newline, skips blank lines and lines starting with "**",

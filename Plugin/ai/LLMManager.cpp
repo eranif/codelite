@@ -253,7 +253,7 @@ void Manager::OnEditorContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
     CEHCK_SHUTDOWN_IN_PROGRESS();
-    
+
     if (IsAvailable()) {
         // Load the LLM generation sub-menu
         wxMenu* menu = event.GetMenu();
@@ -848,6 +848,19 @@ void Manager::ClearHistory()
     CHECK_PTR_RET(m_client);
     m_client->ClearHistoryMessages();
     m_client->SetLastRequestUsage({});
+}
+
+void Manager::ClearSystemMessages()
+{
+    CHECK_PTR_RET(m_client);
+    m_client->ClearSystemMessages();
+    m_client->AddSystemMessage(kSystemMessageRetryProtocol);
+}
+
+void Manager::AddSystemMessage(const wxString& msg)
+{
+    CHECK_PTR_RET(m_client);
+    m_client->AddSystemMessage(msg.ToStdString(wxConvUTF8));
 }
 
 std::optional<llm::Conversation> Manager::NewConversation(const wxString& conversation_text,

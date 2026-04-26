@@ -655,6 +655,15 @@ CanInvokeToolResult ToolShellExecuteConfirm(const std::string& tool_name, const 
     // Check if this command was already in the store.
     static constexpr const char* kShellExecute = "ShellExecute";
     wxString command_string = wxString::FromUTF8(command.value());
+    command_string.Trim().Trim(false);
+
+    if (command_string.empty()) {
+        return CanInvokeToolResult{
+            .can_invoke = false,
+            .reason = "Missing or empty mandatory field 'command'",
+        };
+    }
+
     wxString working_dir = wxString::FromUTF8(working_directory.value());
     bool is_trusted =
         llm::Manager::GetInstance().CheckIfShellCommandAllowed(kShellExecute, command_string, working_dir) ||

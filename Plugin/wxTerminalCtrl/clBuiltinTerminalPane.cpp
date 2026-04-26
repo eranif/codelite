@@ -118,7 +118,17 @@ clBuiltinTerminalPane::clBuiltinTerminalPane(wxWindow* parent, wxWindowID id)
         wxID_ANY,
         wxDefaultPosition,
         wxDefaultSize,
-        wxAUI_NB_TAB_MOVE | wxAUI_NB_TAB_FIXED_WIDTH | wxAUI_NB_TAB_SPLIT | wxAUI_NB_CLOSE_ON_ACTIVE_TAB);
+        wxAUI_NB_TAB_MOVE | wxAUI_NB_TAB_FIXED_WIDTH | wxAUI_NB_TAB_SPLIT | wxAUI_NB_CLOSE_ON_ALL_TABS);
+
+    m_book->Bind(wxEVT_AUINOTEBOOK_TAB_MIDDLE_UP, [this](wxAuiNotebookEvent& event) {
+        // Close the hovered tab
+        wxUnusedVar(event);
+        int sel = event.GetSelection();
+        if (sel == wxNOT_FOUND) {
+            return;
+        }
+        CallAfter([sel, this]() { m_book->DeletePage(sel); });
+    });
 
     wxFont font = clTabRenderer::GetTabFont(false);
     auto art = new clAuiFlatTabArt();

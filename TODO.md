@@ -20,9 +20,6 @@ High:
 -----
 
 - GDB: use the new terminal to launch and avoid opening custom terminals for this purpose.
-- Terminal tabs: close button is not working on Linux and hardly clickable on Windows
-    - Add option to close with mouse middle size
-    - Add option to close with context menu
 - Integrate https://github.com/strands-agents/agent-sop into the ChatAI.
 
 Medium:

@@ -24,10 +24,8 @@ void PHPRefactoringOptions::FromJSON(const JSONItem& json)
 
 JSONItem PHPRefactoringOptions::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject();
-    element.addProperty("phprefactoringPhar", m_phprefactoringPhar);
-    element.addProperty("skipPreview", m_skipPreview);
-    return element;
+    return nlohmann::json{
+        {"phprefactoringPhar", m_phprefactoringPhar.ToStdString(wxConvUTF8)}, {"skipPreview", m_skipPreview}};
 }
 
 PHPRefactoringOptions& PHPRefactoringOptions::Load()

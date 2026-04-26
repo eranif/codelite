@@ -17,11 +17,9 @@ void SSHWorkspaceSettings::FromJSON(const JSONItem& json)
 
 JSONItem SSHWorkspaceSettings::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("m_account", m_account);
-    json.addProperty("m_remoteFolder", m_remoteFolder);
-    json.addProperty("m_remoteUploadEnabled", m_remoteUploadEnabled);
-    return json;
+    return nlohmann::json{{"m_account", m_account.ToStdString(wxConvUTF8)},
+                          {"m_remoteFolder", m_remoteFolder.ToStdString(wxConvUTF8)},
+                          {"m_remoteUploadEnabled", m_remoteUploadEnabled}};
 }
 
 void SSHWorkspaceSettings::Load()

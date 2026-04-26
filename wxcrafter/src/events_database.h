@@ -40,13 +40,11 @@ public:
 
     JSONItem ToJSON() const
     {
-        JSONItem element = JSONItem::createObject();
-        element.addProperty(wxT("m_eventName"), m_eventName);
-        element.addProperty(wxT("m_eventClass"), m_eventClass);
-        element.addProperty(wxT("m_functionNameAndSignature"), m_functionNameAndSignature);
-        element.addProperty(wxT("m_description"), m_description);
-        element.addProperty(wxT("m_noBody"), m_noBody);
-        return element;
+        return nlohmann::json{{"m_eventName", m_eventName.ToStdString(wxConvUTF8)},
+                              {"m_eventClass", m_eventClass.ToStdString(wxConvUTF8)},
+                              {"m_functionNameAndSignature", m_functionNameAndSignature.ToStdString(wxConvUTF8)},
+                              {"m_description", m_description.ToStdString(wxConvUTF8)},
+                              {"m_noBody", m_noBody}};
     }
 
     void FromJSON(const JSONItem& json)

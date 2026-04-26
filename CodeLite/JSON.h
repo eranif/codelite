@@ -27,6 +27,7 @@
 #define ZJSONNODE_H
 
 #include "codelite_exports.h"
+#include "json_utils.h"
 #include "macros.h"
 
 #include <assistant/common/json.hpp>
@@ -52,6 +53,9 @@ class WXDLLIMPEXP_CL JSONItem
 
 public:
     explicit JSONItem(std::nullptr_t) {}
+    JSONItem(const nlohmann::json&);
+    JSONItem(const nlohmann::ordered_json&);
+
     JSONItem() = default;
     virtual ~JSONItem() = default;
 

@@ -65,11 +65,9 @@ void PhpOptions::FromJSON(const JSONItem& json)
 
 JSONItem PhpOptions::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject();
-    element.addProperty("m_phpExe", m_phpExe);
-    element.addProperty("m_errorReporting", m_errorReporting);
-    element.addProperty("m_includePaths", m_includePaths);
-    return element;
+    return nlohmann::json{{"m_phpExe", m_phpExe.ToStdString(wxConvUTF8)},
+                          {"m_errorReporting", m_errorReporting.ToStdString(wxConvUTF8)},
+                          {"m_includePaths", JsonUtils::ToJson(m_includePaths)}};
 }
 
 PhpOptions& PhpOptions::Load()

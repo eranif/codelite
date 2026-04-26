@@ -101,19 +101,17 @@ void clDebuggerBreakpoint::Serialize(Archive& arch)
 
 JSONItem clDebuggerBreakpoint::ToJSON() const
 {
-    auto json = JSONItem::createObject();
-    json.addProperty("file", file);
-    json.addProperty("lineno", lineno);
-    json.addProperty("function_name", function_name);
-    json.addProperty("bp_type", (int)bp_type);
-    json.addProperty("watchpoint_type", (int)watchpoint_type);
-    json.addProperty("watchpt_data", watchpt_data);
     wxString command_list(commandlist);
     command_list.Trim(false).Trim(true);
-    json.addProperty("commandlist", command_list);
-    json.addProperty("ignore_number", ignore_number);
-    json.addProperty("conditions", conditions);
-    return json;
+    return nlohmann::json{{"file", file.ToStdString(wxConvUTF8)},
+                          {"lineno", lineno},
+                          {"function_name", function_name.ToStdString(wxConvUTF8)},
+                          {"bp_type", bp_type},
+                          {"watchpoint_type", watchpoint_type},
+                          {"watchpt_data", watchpt_data.ToStdString(wxConvUTF8)},
+                          {"commandlist", command_list.ToStdString(wxConvUTF8)},
+                          {"ignore_number", ignore_number},
+                          {"conditions", conditions.ToStdString(wxConvUTF8)}};
 }
 
 void clDebuggerBreakpoint::FromJSON(const JSONItem& json)

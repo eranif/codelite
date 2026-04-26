@@ -575,18 +575,18 @@ SearchThread* SearchThreadST::Get()
 
 JSONItem SearchResult::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("file", m_fileName);
-    json.addProperty("line", m_lineNumber);
-    json.addProperty("col", m_column);
-    json.addProperty("pos", m_position);
-    json.addProperty("pattern", m_pattern);
-    json.addProperty("len", m_len);
-    json.addProperty("flags", m_flags);
-    json.addProperty("columnInChars", m_columnInChars);
-    json.addProperty("lenInChars", m_lenInChars);
-    json.addProperty("regexCaptures", m_regexCaptures);
-    return json;
+    return nlohmann::json{
+        {"file", m_fileName.ToStdString(wxConvUTF8)},
+        {"line", m_lineNumber},
+        {"col", m_column},
+        {"pos", m_position},
+        {"pattern", m_pattern.ToStdString(wxConvUTF8)},
+        {"len", m_len},
+        {"flags", m_flags},
+        {"columnInChars", m_columnInChars},
+        {"lenInChars", m_lenInChars},
+        {"regexCaptures", JsonUtils::ToJson(m_regexCaptures)},
+    };
 }
 
 void SearchResult::FromJSON(const JSONItem& json)
@@ -605,14 +605,14 @@ void SearchResult::FromJSON(const JSONItem& json)
 
 JSONItem SearchSummary::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("filesScanned", m_fileScanned);
-    json.addProperty("matchesFound", m_matchesFound);
-    json.addProperty("elapsed", m_elapsed);
-    json.addProperty("failedFiles", m_failedFiles);
-    json.addProperty("findWhat", m_findWhat);
-    json.addProperty("replaceWith", m_replaceWith);
-    return json;
+    return nlohmann::json{
+        {"filesScanned", m_fileScanned},
+        {"matchesFound", m_matchesFound},
+        {"elapsed", m_elapsed},
+        {"failedFiles", JsonUtils::ToJson(m_failedFiles)},
+        {"findWhat", m_findWhat.ToStdString(wxConvUTF8)},
+        {"replaceWith", m_replaceWith.ToStdString(wxConvUTF8)},
+    };
 }
 
 void SearchSummary::FromJSON(const JSONItem& json)

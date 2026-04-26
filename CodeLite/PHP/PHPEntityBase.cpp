@@ -91,16 +91,16 @@ void PHPEntityBase::RemoveChild(PHPEntityBase::Ptr_t child)
 
 JSONItem PHPEntityBase::BaseToJSON(const wxString& entityType) const
 {
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("type", entityType);
-    json.addProperty("file", m_filename.GetFullPath());
-    json.addProperty("name", m_shortName);
-    json.addProperty("fullname", m_fullname);
-    json.addProperty("doc", m_docComment);
-    json.addProperty("line", m_line);
-    json.addProperty("col", m_column);
-    json.addProperty("flags", m_flags);
-    return json;
+    return nlohmann::json{
+        {"type", entityType.ToStdString(wxConvUTF8)},
+        {"file", m_filename.GetFullPath().ToStdString(wxConvUTF8)},
+        {"name", m_shortName.ToStdString(wxConvUTF8)},
+        {"fullname", m_fullname.ToStdString(wxConvUTF8)},
+        {"doc", m_docComment.ToStdString(wxConvUTF8)},
+        {"line", m_line},
+        {"col", m_column},
+        {"flags", m_flags},
+    };
 }
 
 void PHPEntityBase::BaseFromJSON(const JSONItem& json)

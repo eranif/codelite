@@ -125,15 +125,13 @@ DbConnectionInfo::DbConnectionInfo()
 
 JSONItem DbConnectionInfo::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject();
-    element.addProperty("m_connectionName", m_connectionName);
-    element.addProperty("m_connectionType", m_connectionType);
-    element.addProperty("m_defaultDatabase", m_defaultDatabase);
-    element.addProperty("m_password", m_password);
-    element.addProperty("m_server", m_server);
-    element.addProperty("m_port", m_port);
-    element.addProperty("m_username", m_username);
-    return element;
+    return nlohmann::json{{"m_connectionName", m_connectionName.ToStdString(wxConvUTF8)},
+                          {"m_connectionType", m_connectionType},
+                          {"m_defaultDatabase", m_defaultDatabase.ToStdString(wxConvUTF8)},
+                          {"m_password", m_password.ToStdString(wxConvUTF8)},
+                          {"m_server", m_server.ToStdString(wxConvUTF8)},
+                          {"m_port", m_port},
+                          {"m_username", m_username.ToStdString(wxConvUTF8)}};
 }
 
 void DbConnectionInfo::FromJSON(const JSONItem& json)

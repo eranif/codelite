@@ -33,18 +33,16 @@ void LanguageServerEntry::FromJSON(const JSONItem& json)
 
 JSONItem LanguageServerEntry::ToJSON() const
 {
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("name", m_name);
-    json.addProperty("exepath", m_exepath);
-    json.addProperty("args", m_args);
-    json.addProperty("languages", m_languages);
-    json.addProperty("enabled", m_enabled);
-    json.addProperty("workingDirectory", m_workingDirectory);
-    json.addProperty("connectionString", m_connectionString);
-    json.addProperty("displayDiagnostics", m_displayDiagnostics);
-    json.addProperty("command", m_command);
-    json.addProperty("initOptions", m_initOptions);
-    return json;
+    return nlohmann::json{{"name", m_name.ToStdString(wxConvUTF8)},
+                          {"exepath", m_exepath.ToStdString(wxConvUTF8)},
+                          {"args", m_args.ToStdString(wxConvUTF8)},
+                          {"languages", JsonUtils::ToJson(m_languages)},
+                          {"enabled", m_enabled},
+                          {"workingDirectory", m_workingDirectory.ToStdString(wxConvUTF8)},
+                          {"connectionString", m_connectionString.ToStdString(wxConvUTF8)},
+                          {"displayDiagnostics", m_displayDiagnostics},
+                          {"command", m_command.ToStdString(wxConvUTF8)},
+                          {"initOptions", m_initOptions.ToStdString(wxConvUTF8)}};
 }
 
 eNetworkType LanguageServerEntry::GetNetType() const

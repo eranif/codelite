@@ -45,17 +45,15 @@ void ValgrindSettings::FromJSON(const JSONItem& json)
 
 JSONItem ValgrindSettings::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject();
-    element.addProperty("m_binary", m_binary);
-    element.addProperty("m_outputInPrivateFolder", m_outputInPrivateFolder);
-    element.addProperty("m_outputFile", m_outputFile);
-    element.addProperty("m_mandatoryOptions", m_mandatoryOptions);
-    element.addProperty("m_outputFileOption", m_outputFileOption);
-    element.addProperty("m_suppressionFileOption", m_suppressionFileOption);
-    element.addProperty("m_options", m_options);
-    element.addProperty("m_suppFileInPrivateFolder", m_suppFileInPrivateFolder);
-    element.addProperty("m_suppFiles", m_suppFiles);
-    return element;
+    return nlohmann::json{{"m_binary", m_binary.ToStdString(wxConvUTF8)},
+                          {"m_outputInPrivateFolder", m_outputInPrivateFolder},
+                          {"m_outputFile", m_outputFile.ToStdString(wxConvUTF8)},
+                          {"m_mandatoryOptions", m_mandatoryOptions.ToStdString(wxConvUTF8)},
+                          {"m_outputFileOption", m_outputFileOption.ToStdString(wxConvUTF8)},
+                          {"m_suppressionFileOption", m_suppressionFileOption.ToStdString(wxConvUTF8)},
+                          {"m_options", m_options.ToStdString(wxConvUTF8)},
+                          {"m_suppFileInPrivateFolder", m_suppFileInPrivateFolder},
+                          {"m_suppFiles", JsonUtils::ToJson(m_suppFiles)}};
 }
 
 MemCheckSettings::MemCheckSettings()

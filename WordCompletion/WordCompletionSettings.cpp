@@ -15,10 +15,10 @@ void WordCompletionSettings::FromJSON(const JSONItem& json)
 
 JSONItem WordCompletionSettings::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject();
-    element.addProperty("m_comparisonMethod", m_comparisonMethod);
-    element.addProperty("m_enabled", m_enabled);
-    return element;
+    return nlohmann::json{
+        {"m_comparisonMethod", m_comparisonMethod},
+        {"m_enabled", m_enabled},
+    };
 }
 
 WordCompletionSettings& WordCompletionSettings::Load()

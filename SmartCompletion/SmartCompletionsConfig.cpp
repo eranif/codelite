@@ -29,9 +29,4 @@ void SmartCompletionsConfig::FromJSON(const JSONItem& json)
     m_flags = e.namedObject("m_flags").toSize_t(m_flags);
 }
 
-JSONItem SmartCompletionsConfig::ToJSON() const
-{
-    JSONItem json = JSONItem::createObject();
-    json.addProperty("m_flags", m_flags);
-    return json;
-}
+JSONItem SmartCompletionsConfig::ToJSON() const { return nlohmann::json{{"m_flags", m_flags}}; }

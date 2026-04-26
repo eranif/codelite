@@ -17,14 +17,12 @@ void SourceFormatterBase::FromJSON(const JSONItem& json)
 
 JSONItem SourceFormatterBase::ToJSON() const
 {
-    JSONItem ele = JSONItem::createObject();
-    ele.addProperty("languages", m_languages);
-    ele.addProperty("flags", m_flags);
-    ele.addProperty("config_file", m_configFile);
-    ele.addProperty("name", m_name);
-    ele.addProperty("description", m_description);
-    ele.addProperty("short_description", m_shortDescription);
-    return ele;
+    return nlohmann::json{{"languages", JsonUtils::ToJson(m_languages)},
+                          {"flags", m_flags},
+                          {"config_file", m_configFile.ToStdString(wxConvUTF8)},
+                          {"name", m_name.ToStdString(wxConvUTF8)},
+                          {"description", m_description.ToStdString(wxConvUTF8)},
+                          {"short_description", m_shortDescription.ToStdString(wxConvUTF8)}};
 }
 
 bool SourceFormatterBase::CanHandle(FileExtManager::FileType file_type) const

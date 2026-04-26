@@ -50,19 +50,17 @@ void PHPProjectSettingsData::FromJSON(const JSONItem& ele)
 
 JSONItem PHPProjectSettingsData::ToJSON() const
 {
-    JSONItem settings = JSONItem::createObject();
-    settings.addProperty("m_runAs", m_runAs);
-    settings.addProperty("m_phpExe", m_phpExe);
-    settings.addProperty("m_indexFile", m_indexFile);
-    settings.addProperty("m_args", m_args);
-    settings.addProperty("m_workingDirectory", m_workingDirectory);
-    settings.addProperty("m_projectURL", m_projectURL);
-    settings.addProperty("m_includePath", m_includePath);
-    settings.addProperty("m_ccIncludePath", m_ccIncludePath);
-    settings.addProperty("m_flags", m_flags);
-    settings.addProperty("m_phpIniFile", m_phpIniFile);
-    settings.addProperty("m_fileMapping", m_fileMapping);
-    return settings;
+    return nlohmann::json{{"m_runAs", m_runAs},
+                          {"m_phpExe", m_phpExe.ToStdString(wxConvUTF8)},
+                          {"m_indexFile", m_indexFile.ToStdString(wxConvUTF8)},
+                          {"m_args", m_args.ToStdString(wxConvUTF8)},
+                          {"m_workingDirectory", m_workingDirectory.ToStdString(wxConvUTF8)},
+                          {"m_projectURL", m_projectURL.ToStdString(wxConvUTF8)},
+                          {"m_includePath", m_includePath.ToStdString(wxConvUTF8)},
+                          {"m_ccIncludePath", m_ccIncludePath.ToStdString(wxConvUTF8)},
+                          {"m_flags", m_flags},
+                          {"m_phpIniFile", m_phpIniFile.ToStdString(wxConvUTF8)},
+                          {"m_fileMapping", JsonUtils::ToJson(m_fileMapping)}};
 }
 
 void PHPProjectSettingsData::MergeWithGlobalSettings()

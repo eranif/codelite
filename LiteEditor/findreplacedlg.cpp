@@ -102,16 +102,14 @@ void FindReplaceData::FromJSON(const JSONItem& json)
 
 JSONItem FindReplaceData::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject();
-    element.addProperty("m_findString", m_findString);
-    element.addProperty("m_replaceString", m_replaceString);
-    element.addProperty("m_flags", m_flags);
-    element.addProperty("m_findWhere", m_findWhere);
-    element.addProperty("m_encoding", m_encoding);
-    element.addProperty("m_fileMask", m_fileMask);
-    element.addProperty("m_selectedMask", m_selectedMask);
-    element.addProperty("m_file_scanner_flags", m_file_scanner_flags);
-    return element;
+    return nlohmann::json{{"m_findString", JsonUtils::ToJson(m_findString)},
+                          {"m_replaceString", JsonUtils::ToJson(m_replaceString)},
+                          {"m_flags", m_flags},
+                          {"m_findWhere", JsonUtils::ToJson(m_findWhere)},
+                          {"m_encoding", m_encoding.ToStdString(wxConvUTF8)},
+                          {"m_fileMask", JsonUtils::ToJson(m_fileMask)},
+                          {"m_selectedMask", m_selectedMask.ToStdString(wxConvUTF8)},
+                          {"m_file_scanner_flags", m_file_scanner_flags}};
 }
 
 wxArrayString FindReplaceData::GetFindStringArr() const

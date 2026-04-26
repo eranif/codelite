@@ -41,10 +41,10 @@ void znConfigItem::FromJSON(const JSONItem& json)
 
 JSONItem znConfigItem::ToJSON() const
 {
-    JSONItem element = JSONItem::createObject();
-    element.addProperty("m_highlightColour", m_highlightColour);
-    element.addProperty("m_enabled", m_enabled);
-    element.addProperty("m_zoomFactor", m_zoomFactor);
-    element.addProperty("m_useScrollbar", m_useScrollbar);
-    return element;
+    return nlohmann::json{
+        {"m_highlightColour", m_highlightColour},
+        {"m_enabled", m_enabled},
+        {"m_zoomFactor", m_zoomFactor},
+        {"m_useScrollbar", m_useScrollbar},
+    };
 }

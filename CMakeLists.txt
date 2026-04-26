@@ -1032,9 +1032,8 @@ set(ASSISTANTLIB_WITH_OPENSSL
     CACHE BOOL "Assistant lib is buil with TLS support")
 add_subdirectory("${CL_SRC_ROOT}/submodules/assistant")
 
-if(WXC_APP)
-  add_subdirectory(wxcrafter)
-else()
+add_subdirectory(wxcrafter)
+if(NOT WXC_APP)
   if(NOT NO_CORE_PLUGINS)
     add_subdirectory(abbreviation)
     if(NOT DISABLE_CXX)
@@ -1097,7 +1096,6 @@ else()
     endif()
     add_subdirectory(CallGraph)
   endif(NOT NO_CORE_PLUGINS)
-  add_subdirectory(wxcrafter)
 
   # Executables
   add_subdirectory(codelite_make)

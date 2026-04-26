@@ -10,6 +10,8 @@
 #include "codelite_exports.h"
 
 #include <future>
+#include <functional>
+#include <unordered_map>
 #include <thread>
 #include <vector>
 #include <wx/activityindicator.h>
@@ -104,6 +106,7 @@ public:
 protected:
     bool CurrentEndpointHasHistory() const;
     void OnCharAdded(wxStyledTextEvent& event);
+    void OnSelection(wxStyledTextEvent& event);
     void OnAutoScroll(wxCommandEvent& event);
     void OnAutoScrollUI(wxUpdateUIEvent& event);
     void OnSize(wxSizeEvent& event);
@@ -153,9 +156,19 @@ protected:
     /// Clear the view (input & output) and reset the client.
     void DoRestart();
 
+    void DoCommandClear();
+    void DoCommandContext();
+    void DoCommandSave();
+
     void ShowIndicator(bool show);
     void UpdateStatusBar();
     void UpdateContextWindowUsage();
+
+private:
+    using CommandHandler = std::function<void()>;
+    using CommandDispatchTable = std::unordered_map<wxString, CommandHandler>;
+
+    CommandDispatchTable m_commandDispatchTable;
 
 private:
     std::unique_ptr<MarkdownStyler> m_markdownStyler;
@@ -171,4 +184,5 @@ private:
     std::unique_ptr<EndpointModelSelector> m_model_selector{nullptr};
     std::mutex m_promises_mutex;
     std::vector<PromisePtr> m_promises;
+    int m_ccInsertPos{wxNOT_FOUND};
 };

@@ -42,6 +42,8 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     m_inputEditHelper = std::make_unique<clEditEventsHandler>(m_stcInput);
     m_outputEditHelper = std::make_unique<clEditEventsHandler>(m_stcOutput);
 
+    m_stcInput->SetToolTip(_("Hit Ctrl-ENTER to submit.\nType / to see list of commands"));
+
     clAuiToolBarArt::AddTool(m_toolbar, wxID_OPEN, _("Load Chat"), images->LoadBitmap("file_open"));
     clAuiToolBarArt::AddTool(m_toolbar, wxID_SAVE, _("Save Chat"), images->LoadBitmap("file_save"));
     m_toolbar->AddSeparator();
@@ -94,6 +96,10 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     m_stcInput->SetCodePage(wxSTC_CP_UTF8);
     m_stcOutput->SetReadOnly(true);
 
+    m_commandDispatchTable.emplace("/clear", [this]() { CallAfter(&ChatAIWindow::DoCommandClear); });
+    //m_commandDispatchTable.emplace("/context", [this]() { CallAfter(&ChatAIWindow::DoCommandContext); });
+    m_commandDispatchTable.emplace("/save", [this]() { CallAfter(&ChatAIWindow::DoCommandSave); });
+
     Bind(wxEVT_MENU, &ChatAIWindow::OnSaveSession, this, wxID_SAVE);
     Bind(wxEVT_MENU, &ChatAIWindow::OnLoadSession, this, wxID_OPEN);
     Bind(wxEVT_UPDATE_UI, &ChatAIWindow::OnSaveSessionUI, this, wxID_SAVE);
@@ -113,6 +119,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
 
     m_stcInput->CmdKeyClear('R', wxSTC_KEYMOD_CTRL);
     m_stcInput->Bind(wxEVT_STC_CHARADDED, &ChatAIWindow::OnCharAdded, this);
+    m_stcInput->Bind(wxEVT_STC_AUTOCOMP_SELECTION, &ChatAIWindow::OnSelection, this);
     Bind(wxEVT_SIZE, &ChatAIWindow::OnSize, this);
 
     m_markdownStyler = std::make_unique<MarkdownStyler>(m_stcOutput);
@@ -752,24 +759,41 @@ void ChatAIWindow::Chat(const wxString& prompt)
     DoSendPrompt();
 }
 
+void ChatAIWindow::OnSelection(wxStyledTextEvent& event)
+{
+    wxUnusedVar(event);
+    int current_pos = m_stcInput->GetCurrentPos();
+    if (current_pos > m_ccInsertPos && m_ccInsertPos != wxNOT_FOUND) {
+        // Delete whatever text the user typed
+        m_stcInput->DeleteRange(m_ccInsertPos, current_pos - m_ccInsertPos);
+        m_ccInsertPos = wxNOT_FOUND;
+    }
+    m_stcInput->AutoCompCancel();
+
+    const wxString command = event.GetString();
+    if (const auto it = m_commandDispatchTable.find(command); it != m_commandDispatchTable.end()) {
+        it->second();
+    }
+}
+
 void ChatAIWindow::OnCharAdded(wxStyledTextEvent& event)
 {
     event.Skip();
-    auto strings = llm::Manager::GetInstance().GetAvailablePlaceHolders();
-    std::sort(strings.begin(), strings.end());
-    static const wxString candidates = StringUtils::Join(strings, " ");
-    auto current_pos = m_stcInput->GetCurrentPos();
-    auto prev_pos = m_stcInput->PositionBefore(current_pos);
-    auto prev_prev_pos = m_stcInput->PositionBefore(prev_pos);
-
-    if (prev_prev_pos == prev_pos) {
-        return;
+    if (!m_stcInput->AutoCompActive()) {
+        m_ccInsertPos = wxNOT_FOUND;
     }
 
-    wxChar prev_char = m_stcInput->GetCharAt(prev_prev_pos);
-    if (event.GetKey() == '{' && prev_char == '{') {
-        // user typed "{{"
-        m_stcInput->AutoCompShow(2, candidates);
+    std::vector<wxString> commands;
+    commands.reserve(m_commandDispatchTable.size());
+    for (const auto& [cmdname, _func] : m_commandDispatchTable) {
+        commands.push_back(cmdname);
+    }
+
+    std::sort(commands.begin(), commands.end());
+    static const wxString candidates = StringUtils::Join(commands, " ");
+    if (event.GetKey() == '/') {
+        m_ccInsertPos = m_stcInput->PositionBefore(m_stcInput->GetCurrentPos());
+        m_stcInput->AutoCompShow(1, candidates);
     }
 }
 
@@ -867,3 +891,13 @@ void ChatAIWindow::UpdateContextWindowUsage()
     m_gaugeContextUsed->SetValue(pos);
     m_gaugeContextUsed->SetToolTip(wxString() << _("Context Window Used: ") << pos << "%");
 }
+
+void ChatAIWindow::DoCommandClear() { DoClearOutputView(); }
+
+void ChatAIWindow::DoCommandSave()
+{
+    wxCommandEvent dummy;
+    OnSaveSession(dummy);
+}
+
+void ChatAIWindow::DoCommandContext() {}

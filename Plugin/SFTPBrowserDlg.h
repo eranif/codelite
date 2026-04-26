@@ -28,7 +28,6 @@
 
 #if USE_SFTP
 
-#include "bitmap_loader.h"
 #include "sftp_ui.h"
 #include "ssh/cl_sftp.h"
 
@@ -37,9 +36,24 @@ class FloatingTextCtrl;
 
 class WXDLLIMPEXP_SDK SFTPBrowserDlg : public SFTPBrowserBaseDlg
 {
-    clSFTP::Ptr_t m_sftp;
-    wxString m_filter;
-    size_t m_flags;
+public:
+    SFTPBrowserDlg(wxWindow* parent,
+                   const wxString& title,
+                   const wxString& filter,
+                   size_t flags = clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS,
+                   const wxString& selectedAccount = wxEmptyString);
+    ~SFTPBrowserDlg() override;
+
+    void SetMultiSelect(bool b);
+    bool IsMultiSelect() const { return GetWindowStyle() & wxDV_MULTIPLE; }
+
+    void Initialize(const wxString& account, const wxString& path);
+    wxString GetPath() const;
+    wxArrayString GetPaths() const;
+    wxString GetAccount() const;
+
+    void OnInlineSearch();
+    void OnInlineSearchEnter();
 
 protected:
     void OnSSHAccountManager(wxCommandEvent& event);
@@ -61,22 +75,13 @@ protected:
     void DoBrowse();
     void DoSetLocationFocus();
 
-public:
-    SFTPBrowserDlg(wxWindow* parent, const wxString& title, const wxString& filter,
-                   size_t flags = clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS,
-                   const wxString& selectedAccount = wxEmptyString);
-    virtual ~SFTPBrowserDlg();
-
-    void Initialize(const wxString& account, const wxString& path);
-    wxString GetPath() const;
-    wxString GetAccount() const;
-
-    void OnInlineSearch();
-    void OnInlineSearchEnter();
-
-protected:
     virtual void OnRefresh(wxCommandEvent& event);
     virtual void OnRefreshUI(wxUpdateUIEvent& event);
+
+private:
+    clSFTP::Ptr_t m_sftp;
+    wxString m_filter;
+    size_t m_flags;
 };
 #endif // USE_SFTP
 

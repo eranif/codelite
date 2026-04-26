@@ -1,6 +1,6 @@
 #ifndef TAILFRAME_H
 #define TAILFRAME_H
-#include "TailUI.h"
+#include "TailUI.hpp"
 
 class Tail;
 class TailFrame : public TailFrameBase

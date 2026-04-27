@@ -30,6 +30,7 @@
 #include "SSHAccountManagerDlg.h"
 #include "bitmap_loader.h"
 #include "environmentconfig.h"
+#include "event_notifier.h"
 #include "fileextmanager.h"
 #include "globals.h"
 #include "imanager.h"
@@ -264,7 +265,9 @@ void SFTPBrowserDlg::OnTextEnter(wxCommandEvent& event)
         ClearView();
         DoDisplayEntriesForPath();
     }
+    m_dataview->CallAfter(&wxWindow::SetFocus);
 }
+
 void SFTPBrowserDlg::OnOKUI(wxUpdateUIEvent& event)
 {
     wxString selection = m_textCtrlRemoteFolder->GetValue();
@@ -293,41 +296,28 @@ SFTPBrowserEntryClientData* SFTPBrowserDlg::DoGetItemData(const wxDataViewItem& 
 
 wxString SFTPBrowserDlg::GetPath() const
 {
-    if (IsMultiSelect()) {
-        auto paths = GetPaths();
-        if (paths.empty()) {
-            return wxEmptyString;
-        }
-        return paths[0];
+    auto paths = GetPaths();
+    if (paths.empty()) {
+        return wxEmptyString;
     }
-
-    auto item = m_dataview->GetSelection();
-    CHECK_ITEM_RET_EMPTY_STRING(item);
-    auto cd = DoGetItemData(item);
-    CHECK_PTR_RET_EMPTY_STRING(cd);
-    return cd->GetFullpath();
+    return paths[0];
 }
 
 wxArrayString SFTPBrowserDlg::GetPaths() const
 {
     wxArrayString paths;
-    if (IsMultiSelect()) {
-        wxDataViewItemArray items;
-        m_dataview->GetSelections(items);
-        if (items.empty()) {
-            return {};
-        }
-
-        for (const auto& item : items) {
-            auto cd = DoGetItemData(item);
-            if (cd) {
-                paths.Add(cd->GetFullpath());
-            }
-        }
-        return paths;
+    wxDataViewItemArray items;
+    m_dataview->GetSelections(items);
+    if (items.empty()) {
+        return {};
     }
 
-    paths.Add(GetPath());
+    for (auto item : items) {
+        auto cd = DoGetItemData(item);
+        if (cd) {
+            paths.Add(cd->GetFullpath());
+        }
+    }
     return paths;
 }
 
@@ -347,6 +337,7 @@ void SFTPBrowserDlg::Initialize(const wxString& account, const wxString& path)
     int where = m_choiceAccount->FindString(account);
     if (where != wxNOT_FOUND) {
         m_choiceAccount->SetSelection(where);
+        m_textCtrlRemoteFolder->CallAfter(&wxWindow::SetFocus);
     }
 }
 
@@ -502,15 +493,25 @@ void SFTPBrowserDlg::OnNewFolder(wxCommandEvent& event)
     }
 }
 
-void SFTPBrowserDlg::SetMultiSelect(bool b)
+std::optional<wxArrayString> SFTPBrowserDlg::ShowPicker(const wxString& title,
+                                                        const wxString& selectedAccount,
+                                                        const wxString& initialPath,
+                                                        wxWindow* parent)
 {
-    long window_style = m_dataview->GetWindowStyle();
-    if (b) {
-        m_dataview->SetWindowStyle(window_style & ~wxDV_SINGLE);
-        m_dataview->SetWindowStyle(window_style | wxDV_MULTIPLE);
-    } else {
-        m_dataview->SetWindowStyle(window_style & ~wxDV_MULTIPLE);
-        m_dataview->SetWindowStyle(window_style | wxDV_SINGLE);
+    SFTPBrowserDlg dlg(parent == nullptr ? EventNotifier::Get()->TopFrame() : parent,
+                       title,
+                       wxEmptyString,
+                       clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS,
+                       selectedAccount);
+    dlg.Initialize(selectedAccount, initialPath);
+    if (dlg.ShowModal() != wxID_OK) {
+        return std::nullopt;
     }
+
+    auto paths = dlg.GetPaths();
+    if (paths.empty()) {
+        return std::nullopt;
+    }
+    return paths;
 }
 #endif // USE_SFTP

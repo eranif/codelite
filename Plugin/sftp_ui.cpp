@@ -403,7 +403,7 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(
                                         wxID_ANY,
                                         wxDefaultPosition,
                                         wxDLG_UNIT(m_panel149, wxSize(500, 300)),
-                                        wxDV_ROW_LINES | wxDV_SINGLE);
+                                        wxDV_ROW_LINES | wxDV_MULTIPLE);
 
     boxSizer151->Add(m_dataview, 1, wxALL | wxEXPAND, WXC_FROM_DIP(5));
 

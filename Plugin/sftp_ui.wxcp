@@ -4905,7 +4905,7 @@
                       "gbPosition": "0,0",
                       "m_styles": [
                         "wxDV_ROW_LINES",
-                        "wxDV_SINGLE"
+                        "wxDV_MULTIPLE"
                       ],
                       "m_sizerFlags": [
                         "wxALL",

@@ -4,6 +4,10 @@
 #include "ChatHistoryDialog.hpp"
 #include "ColoursAndFontsManager.h"
 #include "MarkdownStyler.hpp"
+#if USE_SFTP
+#include "SFTPBrowserDlg.h"
+#include "clSFTPManager.hpp"
+#endif
 #include "ai/EndpointModelSelector.hpp"
 #include "ai/LLMManager.hpp"
 #include "aui/clAuiToolBarArt.h"
@@ -905,15 +909,35 @@ void ChatAIWindow::DoCommandSave()
 
 void ChatAIWindow::DoCommandContext()
 {
+    auto frame = EventNotifier::Get()->TopFrame();
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
 #if USE_SFTP
     if (workspace && workspace->IsRemote()) {
+        auto paths =
+            SFTPBrowserDlg::ShowPicker(_("Choose Context Files"), workspace->GetSshAccount(), workspace->GetDir());
+        if (!paths) {
+            return;
+        }
+
+        size_t count{0};
+        wxBusyCursor bc{};
+        wxArrayString files = std::move(paths.value());
+        clINFO() << "Loading context files:" << files << endl;
+        for (const auto& file : files) {
+            wxMemoryBuffer content;
+            if (clSFTPManager::Get().AwaitReadFile(file, workspace->GetSshAccount(), &content)) {
+                wxString data{(const unsigned char*)content.GetData(), wxConvUTF8, content.GetDataLen()};
+                llm::Manager::GetInstance().AddSystemMessage(data);
+                ++count;
+            }
+        }
+        clGetManager()->SetStatusMessage(wxString() << _("Added ") << count << _(" files to the context"));
+        // Read all the files and add them to the context.
         return;
     }
 #endif
 
     // Local mode: load markdown files per user request and update the system message.
-    auto frame = EventNotifier::Get()->TopFrame();
     wxString wildcard = wxT("Markdown files (*.md)|*.md|All files (*)|*");
     wxFileDialog openFileDialog(frame,
                                 _("Choose Context Files"),
@@ -929,10 +953,15 @@ void ChatAIWindow::DoCommandContext()
     openFileDialog.GetPaths(paths);
 
     // Read the local files content
+    wxBusyCursor bc{};
+    size_t count{0};
     for (const auto& path : paths) {
         wxString data;
         if (FileUtils::ReadFileContent(path, data)) {
             llm::Manager::GetInstance().AddSystemMessage(data);
         }
+        ++count;
     }
+
+    clGetManager()->SetStatusMessage(wxString() << _("Added ") << count << _(" files to the context"));
 }

@@ -44,9 +44,6 @@ public:
                    const wxString& selectedAccount = wxEmptyString);
     ~SFTPBrowserDlg() override;
 
-    void SetMultiSelect(bool b);
-    bool IsMultiSelect() const { return GetWindowStyle() & wxDV_MULTIPLE; }
-
     void Initialize(const wxString& account, const wxString& path);
     wxString GetPath() const;
     wxArrayString GetPaths() const;
@@ -54,29 +51,33 @@ public:
 
     void OnInlineSearch();
     void OnInlineSearchEnter();
+    static std::optional<wxArrayString> ShowPicker(const wxString& title,
+                                                   const wxString& selectedAccount,
+                                                   const wxString& initialPath = wxEmptyString,
+                                                   wxWindow* parent = nullptr);
 
 protected:
+    void OnEnter(wxCommandEvent& event) override;
+    void OnFocusLost(wxFocusEvent& event) override;
+    void OnTextUpdated(wxCommandEvent& event) override;
+    void OnItemSelected(wxDataViewEvent& event) override;
+    void OnOKUI(wxUpdateUIEvent& event) override;
+    void OnTextEnter(wxCommandEvent& event) override;
+    void OnItemActivated(wxDataViewEvent& event) override;
+    void OnRefresh(wxCommandEvent& event) override;
+    void OnRefreshUI(wxUpdateUIEvent& event) override;
+
     void OnSSHAccountManager(wxCommandEvent& event);
     void OnConnectedUI(wxUpdateUIEvent& event);
     void OnNewFolder(wxCommandEvent& event);
     void OnCdUp(wxCommandEvent& event);
-    void OnEnter(wxCommandEvent& event);
-    void OnFocusLost(wxFocusEvent& event);
-    void OnTextUpdated(wxCommandEvent& event);
     void OnKeyDown(wxKeyEvent& event);
-    void OnItemSelected(wxDataViewEvent& event);
-    void OnOKUI(wxUpdateUIEvent& event);
-    void OnTextEnter(wxCommandEvent& event);
-    void OnItemActivated(wxDataViewEvent& event);
     void DoCloseSession();
     void DoDisplayEntriesForPath(const wxString& path = "");
     void ClearView();
     SFTPBrowserEntryClientData* DoGetItemData(const wxDataViewItem& item) const;
     void DoBrowse();
     void DoSetLocationFocus();
-
-    virtual void OnRefresh(wxCommandEvent& event);
-    virtual void OnRefreshUI(wxUpdateUIEvent& event);
 
 private:
     clSFTP::Ptr_t m_sftp;

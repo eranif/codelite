@@ -217,8 +217,8 @@ void SFTPBrowserDlg::DoDisplayEntriesForPath(const wxString& path)
                     imgid = loader->GetMimeImageId(fn.GetFullName());
                 }
             }
-            cols.push_back(
-                ::MakeIconText(attr->GetName(), bitmaps->size() > imgid ? bitmaps->at(imgid) : wxNullBitmap));
+            cols.push_back(::MakeIconText(
+                attr->GetName(), static_cast<int>(bitmaps->size()) > imgid ? bitmaps->at(imgid) : wxNullBitmap));
             cols.push_back(attr->GetTypeAsString());
             cols.push_back(wxString() << attr->GetSize());
 

@@ -36,7 +36,8 @@ public:
     wxTerminalViewCtrl* OpenNewTerminalTab(const wxString& workingDirectory,
                                            const std::optional<SSHAccountInfo>& sshAccount = std::nullopt,
                                            const wxString& tabTitle = wxEmptyString,
-                                           bool makeVisible = true);
+                                           bool makeVisible = true,
+                                           std::optional<wxString> terminal_cmd = std::nullopt);
 
     /**
      * @brief Find an existing terminal tab by its title
@@ -46,6 +47,18 @@ public:
      */
     wxTerminalViewCtrl* FindTerminalByTitle(const wxString& tabTitle, bool makeVisible = false);
 
+    /**
+     * @brief Closes the first terminal tab whose title matches the given text.
+     *
+     * Searches the associated notebook control for a page with a matching title and
+     * deletes that page if found. Only the first matching tab is removed; if no
+     * matching title exists, the method does nothing.
+     *
+     * @param tabTitle const wxString& The title of the terminal tab to close.
+     *
+     * @return void This function does not return a value.
+     */
+    void CloseTerminalByTitle(const wxString& tabTitle);
     wxTerminalViewCtrl* GetActiveTerminal();
 
 protected:

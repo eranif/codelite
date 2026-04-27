@@ -87,6 +87,7 @@ wxString GetDirFromPath(const wxString& path)
     p.Replace("\\", "/");
     return p.BeforeLast('/');
 }
+const wxString kGitTerminalTitle = _("Git");
 
 class MockProcess : public IProcess
 {
@@ -569,7 +570,6 @@ void GitPlugin::UnPlug()
 
 wxTerminalViewCtrl* GitPlugin::GetOrCreateGitTerminal()
 {
-    const wxString kGitTerminalTitle = _("Git");
     auto terminal = clGetManager()->GetTerminalManager()->FindTerminalByTitle(kGitTerminalTitle, true);
     if (!terminal) {
         std::optional<SSHAccountInfo> account_info{std::nullopt};
@@ -584,8 +584,15 @@ wxTerminalViewCtrl* GitPlugin::GetOrCreateGitTerminal()
             });
         }
 #endif
+
+#ifdef __WXMSW__
+        wxString terminal_cmd = "cmd.exe";
+#else
+        wxString terminal_cmd = "/bin/bash --login -i";
+#endif
+
         terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
-            m_repositoryDirectory, account_info, kGitTerminalTitle);
+            m_repositoryDirectory, account_info, kGitTerminalTitle, true, terminal_cmd);
     }
     return terminal;
 }
@@ -2032,6 +2039,8 @@ void GitPlugin::OnWorkspaceClosed(clWorkspaceEvent& e)
 #if USE_SFTP
     m_ssh.reset();
 #endif
+    // Close any "Git" terminal opened by this plugin
+    clGetManager()->GetTerminalManager()->CloseTerminalByTitle(kGitTerminalTitle);
 }
 
 void GitPlugin::DoCleanup()

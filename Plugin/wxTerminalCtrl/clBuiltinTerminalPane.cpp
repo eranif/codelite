@@ -303,26 +303,31 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::DoCreateTerminal(const wxString& shel
 wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& workingDirectory,
                                                               const std::optional<SSHAccountInfo>& sshAccount,
                                                               const wxString& tabTitle,
-                                                              bool makeVisible)
+                                                              bool makeVisible,
+                                                              std::optional<wxString> terminal_cmd)
 {
     // Validate that we have at least one terminal type available
-    if (m_terminal_types->IsEmpty()) {
+    if (m_terminal_types->IsEmpty() && !terminal_cmd) {
         return nullptr;
     }
 
-    int selection = m_terminal_types->GetSelection();
-    if (selection == wxNOT_FOUND) {
-        // If no selection, use the first one
-        selection = 0;
-        m_terminal_types->SetSelection(selection);
-    }
+    wxString cmd;
+    if (!terminal_cmd) {
+        int selection = m_terminal_types->GetSelection();
+        if (selection == wxNOT_FOUND) {
+            // If no selection, use the first one
+            selection = 0;
+            m_terminal_types->SetSelection(selection);
+        }
 
-    wxStringClientData* cd = dynamic_cast<wxStringClientData*>(m_terminal_types->GetClientObject(selection));
-    if (!cd) {
-        return nullptr;
+        wxStringClientData* cd = dynamic_cast<wxStringClientData*>(m_terminal_types->GetClientObject(selection));
+        if (!cd) {
+            return nullptr;
+        }
+        cmd = cd->GetData();
+    } else {
+        cmd = terminal_cmd.value();
     }
-
-    const wxString& cmd = cd->GetData();
 
     // Determine the tab title
     wxString finalTabTitle = tabTitle.IsEmpty() ? cmd : tabTitle;
@@ -381,6 +386,16 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::OpenNewTerminalTab(const wxString& wo
         clGetManager()->ShowOutputPane(TERMINAL_TAB);
     }
     return ctrl;
+}
+
+void clBuiltinTerminalPane::CloseTerminalByTitle(const wxString& tabTitle)
+{
+    for (size_t i = 0; i < m_book->GetPageCount(); ++i) {
+        if (m_book->GetPageText(i) == tabTitle) {
+            m_book->DeletePage(i);
+            break;
+        }
+    }
 }
 
 wxTerminalViewCtrl* clBuiltinTerminalPane::FindTerminalByTitle(const wxString& tabTitle, bool makeVisible)

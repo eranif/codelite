@@ -8,15 +8,21 @@ BuildTargetDlg::BuildTargetDlg(wxWindow* parent, const wxString& name, const wxS
 {
     m_textCtrlaName->ChangeValue(name);
     m_textCtrlValue->ChangeValue(command);
-    if(name == "build" || name == "clean") {
+    if (name == "build" || name == "clean") {
         m_textCtrlaName->Enable(false);
     }
 
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
+    if (lexer) {
         lexer->Apply(m_textCtrlValue);
     }
 
+    m_textCtrlValue->SetText(command);
+    m_textCtrlValue->SetMultiPaste(true);
+    m_textCtrlValue->SetMultipleSelection(true);
+    m_textCtrlValue->SetAdditionalSelectionTyping(true);
+    m_textCtrlValue->SetWrapMode(wxSTC_WRAP_WORD);
+    m_editHelper = std::make_unique<clEditEventsHandler>(m_textCtrlValue);
     ::clSetDialogBestSizeAndPosition(this);
 }
 

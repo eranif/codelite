@@ -914,7 +914,7 @@ void ChatAIWindow::DoCommandContext()
 #if USE_SFTP
     if (workspace && workspace->IsRemote()) {
         auto paths =
-            SFTPBrowserDlg::ShowPicker(_("Choose Context Files"), workspace->GetSshAccount(), workspace->GetDir());
+            SFTPBrowserDlg::ShowFilePicker(_("Choose Context Files"), workspace->GetSshAccount(), workspace->GetDir());
         if (!paths) {
             return;
         }

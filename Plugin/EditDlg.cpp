@@ -41,6 +41,7 @@ EditDlg::EditDlg(wxWindow* parent, const wxString& text, LexerConf::Ptr_t lexer)
     m_stc10->SetMultipleSelection(true);
     m_stc10->SetAdditionalSelectionTyping(true);
     m_stc10->SetWrapMode(wxSTC_WRAP_WORD);
+    m_editHelper = std::make_unique<clEditEventsHandler>(m_stc10);
     SetName("EditDlg");
     ::clSetDialogBestSizeAndPosition(this);
 }

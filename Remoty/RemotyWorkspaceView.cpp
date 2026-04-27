@@ -6,6 +6,7 @@
 #include "FileSystemWorkspace/clFileSystemWorkspaceDlg.h"
 #include "RemotyWorkspace.hpp"
 #include "SFTPClientData.hpp"
+#include "clAuiToolBarArt.h"
 #include "clRemoteFindDialog.h"
 #include "clSFTPManager.hpp"
 #include "codelite_events.h"
@@ -14,7 +15,6 @@
 #include "globals.h"
 #include "ieditor.h"
 #include "imanager.h"
-#include "search_thread.h"
 #include "ssh/ssh_account_info.h"
 
 #include <wx/arrstr.h>
@@ -29,7 +29,35 @@ RemotyWorkspaceView::RemotyWorkspaceView(wxWindow* parent, RemotyWorkspace* work
     , m_workspace(workspace)
 {
     m_tree = new clRemoteDirCtrl(this);
+    m_toolbar = new wxAuiToolBar(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, wxAUI_TB_DEFAULT_STYLE);
+    auto icons = clGetManager()->GetStdIcons();
+
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("remoty-wsp-settings"), _("Workspace Settings"), icons->LoadBitmap("cog"));
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("edit-codelite-remote"), _("Editor codelite-remote.json"), icons->LoadBitmap("json"));
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("build-menu"), _("Build"), icons->LoadBitmap("build"), _("Build"), wxITEM_DROPDOWN);
+    m_configs =
+        new wxChoice(m_toolbar, wxID_ANY, wxDefaultPosition, wxSize{GetTextExtent("RELEASE_RELEASE").GetWidth(), -1});
+
+#ifdef __WXMAC__
+    m_configs->SetWindowVariant(wxWINDOW_VARIANT_MINI);
+#else
+    m_configs->SetWindowVariant(wxWINDOW_VARIANT_SMALL);
+#endif
+
+    m_toolbar->AddControl(m_configs);
+    m_toolbar->Realize();
+
+    m_configs->Bind(wxEVT_CHOICE, &RemotyWorkspaceView::OnConfigSelected, this);
+    m_toolbar->Bind(wxEVT_TOOL, &RemotyWorkspaceView::OnEditWorkspaceSettings, this, XRCID("remoty-wsp-settings"));
+    m_toolbar->Bind(
+        wxEVT_TOOL, &RemotyWorkspaceView::OnEditCodeLiteRemoteJsonFile, this, XRCID("edit-codelite-remote"));
+    m_toolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &RemotyWorkspaceView::OnBuildMenu, this, XRCID("build-menu"));
+    GetSizer()->Add(m_toolbar, 0, wxEXPAND);
     GetSizer()->Add(m_tree, 1, wxEXPAND);
+
     GetSizer()->Fit(this);
 
     m_tree->Bind(wxEVT_REMOTEDIR_DIR_CONTEXT_MENU_SHOWING, &RemotyWorkspaceView::OnDirContextMenu, this);
@@ -38,6 +66,7 @@ RemotyWorkspaceView::RemotyWorkspaceView(wxWindow* parent, RemotyWorkspace* work
     EventNotifier::Get()->Bind(wxEVT_FINDINFILES_OPEN_MATCH, &RemotyWorkspaceView::OnOpenFindInFilesMatch, this);
     EventNotifier::Get()->Bind(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, &RemotyWorkspaceView::OnRemoteFileSaved, this);
     EventNotifier::Get()->Bind(wxEVT_WORKSPACE_LOADED, &RemotyWorkspaceView::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &RemotyWorkspaceView::OnWorkspaceClosed, this);
 }
 
 RemotyWorkspaceView::~RemotyWorkspaceView()
@@ -48,6 +77,7 @@ RemotyWorkspaceView::~RemotyWorkspaceView()
     EventNotifier::Get()->Unbind(wxEVT_FINDINFILES_OPEN_MATCH, &RemotyWorkspaceView::OnOpenFindInFilesMatch, this);
     EventNotifier::Get()->Unbind(wxEVT_SFTP_ASYNC_SAVE_COMPLETED, &RemotyWorkspaceView::OnRemoteFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_LOADED, &RemotyWorkspaceView::OnWorkspaceLoaded, this);
+    EventNotifier::Get()->Unbind(wxEVT_WORKSPACE_CLOSED, &RemotyWorkspaceView::OnWorkspaceClosed, this);
 }
 
 void RemotyWorkspaceView::OpenWorkspace(const wxString& path, const wxString& accountName)
@@ -120,30 +150,10 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
 
     menu->AppendSeparator();
     menu->Append(XRCID("remoty-wsp-settings"), _("Workspace settings..."));
-
-    menu->Bind(
-        wxEVT_MENU,
-        [this](wxCommandEvent& e) {
-            // load the remote workspace settings
-            clFileSystemWorkspaceDlg dlg(EventNotifier::Get()->TopFrame(), &m_workspace->GetSettings());
-            dlg.SetUseRemoteBrowsing(true, m_workspace->GetAccount().GetAccountName());
-            if (dlg.ShowModal() != wxID_OK) {
-                return;
-            }
-            // save workspace settings to the remote server
-            m_workspace->CallAfter(&RemotyWorkspace::SaveSettings);
-        },
-        XRCID("remoty-wsp-settings"));
-
     menu->Append(XRCID("edit-codelite-remote"), _("Edit codelite-remote.json..."));
 
-    menu->Bind(
-        wxEVT_MENU,
-        [this](wxCommandEvent& e) {
-            wxUnusedVar(e);
-            m_workspace->CallAfter(&RemotyWorkspace::OpenAndEditCodeLiteRemoteJson);
-        },
-        XRCID("edit-codelite-remote"));
+    menu->Bind(wxEVT_MENU, &RemotyWorkspaceView::OnEditWorkspaceSettings, this, XRCID("remoty-wsp-settings"));
+    menu->Bind(wxEVT_MENU, &RemotyWorkspaceView::OnEditCodeLiteRemoteJsonFile, this, XRCID("edit-codelite-remote"));
 
     menu->AppendSeparator();
     menu->Append(XRCID("reload-workspace"), _("Reload workspace"));
@@ -242,6 +252,10 @@ void RemotyWorkspaceView::OnOpenFindInFilesMatch(clFindInFilesEvent& event)
 void RemotyWorkspaceView::SetBuildConfiguration(const wxString& config)
 {
     m_workspace->GetSettings().SetSelectedConfig(config);
+    wxString current_sel = m_configs->GetStringSelection();
+    if (current_sel != config) {
+        m_configs->SetStringSelection(config);
+    }
 }
 
 void RemotyWorkspaceView::BuildTarget(const wxString& name) { m_workspace->BuildTarget(name); }
@@ -317,21 +331,93 @@ size_t RemotyWorkspaceView::GetWorkspaceRemoteFilesOpened(wxArrayString* paths) 
     return paths->size();
 }
 
+void RemotyWorkspaceView::OnWorkspaceClosed(clWorkspaceEvent& event)
+{
+    event.Skip();
+    UpdateConfigChoices();
+}
+
 void RemotyWorkspaceView::OnWorkspaceLoaded(clWorkspaceEvent& event)
 {
     event.Skip();
-    //    if(!m_workspace || !m_workspace->IsOpened() || m_filesToRestore.empty())
-    //        return;
-    //
-    //    // restore files
-    //    clGetManager()->SetStatusMessage(_("Restoring files..."));
-    //    wxBusyCursor bc;
-    //
-    //    clSYSTEM() << "will restore the following files:" << m_filesToRestore << endl;
-    //    for(const wxString& path : m_filesToRestore) {
-    //        auto editor = m_workspace->OpenFile(path);
-    //        if(!editor)
-    //            wxMessageBox("nullptr!");
-    //    }
-    //    m_filesToRestore.clear();
+    UpdateConfigChoices();
+}
+
+void RemotyWorkspaceView::OnConfigSelected(wxCommandEvent& event)
+{
+    CallAfter(&RemotyWorkspaceView::SetBuildConfiguration, event.GetString());
+}
+
+void RemotyWorkspaceView::OnEditWorkspaceSettings(wxCommandEvent& event)
+{
+    CHECK_PTR_RET(m_workspace);
+    wxUnusedVar(event); // load the remote workspace settings
+    clFileSystemWorkspaceDlg dlg(EventNotifier::Get()->TopFrame(), &m_workspace->GetSettings());
+    dlg.SetUseRemoteBrowsing(true, m_workspace->GetAccount().GetAccountName());
+    if (dlg.ShowModal() != wxID_OK) {
+        return;
+    }
+    // save workspace settings to the remote server
+    m_workspace->CallAfter(&RemotyWorkspace::SaveSettings);
+}
+
+void RemotyWorkspaceView::OnEditCodeLiteRemoteJsonFile(wxCommandEvent& event)
+{
+    CHECK_PTR_RET(m_workspace);
+    wxUnusedVar(event);
+    m_workspace->CallAfter(&RemotyWorkspace::OpenAndEditCodeLiteRemoteJson);
+}
+
+void RemotyWorkspaceView::OnBuildMenu(wxAuiToolBarEvent& event)
+{
+    CHECK_PTR_RET(m_workspace);
+    if (!event.IsDropDownClicked()) {
+        CallAfter(&RemotyWorkspaceView::BuildTarget, "build");
+        return;
+    }
+
+    auto id = event.GetId();
+    // Show the menu
+    wxMenu menu;
+    auto& settings = m_workspace->GetSettings();
+    auto conf = m_workspace->GetSettings().GetSelectedConfig();
+    const auto& targets = settings.GetSelectedConfig()->GetBuildTargets();
+    for (const auto& [target_name, _] : targets) {
+        wxString xrcid_str;
+        xrcid_str << "wsp-build-" << target_name;
+        int xrcid = wxXmlResource::GetXRCID(xrcid_str);
+        menu.Append(xrcid, target_name, wxEmptyString, wxITEM_NORMAL);
+        menu.Bind(
+            wxEVT_MENU,
+            [this, target_name](wxCommandEvent& event) {
+                wxUnusedVar(event);
+                CallAfter(&RemotyWorkspaceView::BuildTarget, target_name);
+            },
+            xrcid);
+    }
+
+    m_toolbar->SetToolSticky(id, true);
+
+    // line up our menu with the button
+    wxRect rect = m_toolbar->GetToolRect(id);
+    wxPoint pt = m_toolbar->ClientToScreen(rect.GetBottomLeft());
+    pt = ScreenToClient(pt);
+
+    PopupMenu(&menu, pt);
+
+    // make sure the button is "un-stuck"
+    m_toolbar->SetToolSticky(id, false);
+}
+
+void RemotyWorkspaceView::UpdateConfigChoices()
+{
+    m_configs->Clear();
+    CHECK_PTR_RET(m_workspace);
+
+    auto& settings = m_workspace->GetSettings();
+    auto conf = m_workspace->GetSettings().GetSelectedConfig();
+
+    wxArrayString configs = settings.GetConfigs();
+    m_configs->Append(configs);
+    m_configs->SetStringSelection(conf->GetName());
 }

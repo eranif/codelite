@@ -476,15 +476,36 @@ void SFTPBrowserDlg::OnNewFolder(wxCommandEvent& event)
     }
 }
 
-std::optional<wxArrayString> SFTPBrowserDlg::ShowPicker(const wxString& title,
-                                                        const wxString& selectedAccount,
-                                                        const wxString& initialPath,
-                                                        wxWindow* parent)
+std::optional<wxArrayString> SFTPBrowserDlg::ShowFilePicker(const wxString& title,
+                                                            const wxString& selectedAccount,
+                                                            const wxString& initialPath,
+                                                            wxWindow* parent)
 {
     SFTPBrowserDlg dlg(parent == nullptr ? EventNotifier::Get()->TopFrame() : parent,
                        title,
                        wxEmptyString,
                        clSFTP::SFTP_BROWSE_FILES | clSFTP::SFTP_BROWSE_FOLDERS,
+                       selectedAccount);
+    dlg.Initialize(selectedAccount, initialPath);
+    if (dlg.ShowModal() != wxID_OK) {
+        return std::nullopt;
+    }
+
+    auto paths = dlg.GetPaths();
+    if (paths.empty()) {
+        return std::nullopt;
+    }
+    return paths;
+}
+std::optional<wxArrayString> SFTPBrowserDlg::ShowDirPicker(const wxString& title,
+                                                           const wxString& selectedAccount,
+                                                           const wxString& initialPath,
+                                                           wxWindow* parent)
+{
+    SFTPBrowserDlg dlg(parent == nullptr ? EventNotifier::Get()->TopFrame() : parent,
+                       title,
+                       wxEmptyString,
+                       clSFTP::SFTP_BROWSE_FOLDERS,
                        selectedAccount);
     dlg.Initialize(selectedAccount, initialPath);
     if (dlg.ShowModal() != wxID_OK) {

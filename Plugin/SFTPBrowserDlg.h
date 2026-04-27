@@ -51,10 +51,15 @@ public:
 
     void OnInlineSearch();
     void OnInlineSearchEnter();
-    static std::optional<wxArrayString> ShowPicker(const wxString& title,
-                                                   const wxString& selectedAccount,
-                                                   const wxString& initialPath = wxEmptyString,
-                                                   wxWindow* parent = nullptr);
+    static std::optional<wxArrayString> ShowFilePicker(const wxString& title,
+                                                       const wxString& selectedAccount,
+                                                       const wxString& initialPath = wxEmptyString,
+                                                       wxWindow* parent = nullptr);
+
+    static std::optional<wxArrayString> ShowDirPicker(const wxString& title,
+                                                      const wxString& selectedAccount,
+                                                      const wxString& initialPath = wxEmptyString,
+                                                      wxWindow* parent = nullptr);
 
 protected:
     void OnItemSelected(wxDataViewEvent& event) override;

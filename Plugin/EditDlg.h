@@ -26,6 +26,7 @@
 #ifndef EDITDLG_H
 #define EDITDLG_H
 
+#include "clEditorEditEventsHandler.h"
 #include "lexer_configuration.h"
 #include "wxcrafter_plugin.h"
 
@@ -36,6 +37,9 @@ public:
     virtual ~EditDlg();
 
     wxString GetText() const { return m_stc10->GetText(); }
+
+private:
+    std::unique_ptr<clEditEventsHandler> m_editHelper{nullptr};
 };
 
 /**

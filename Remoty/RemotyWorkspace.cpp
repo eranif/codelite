@@ -12,6 +12,7 @@
 #include "RemotyNewWorkspaceDlg.h"
 #include "RemotySwitchToWorkspaceDlg.h"
 #include "RemotyWorkspaceView.hpp"
+#include "SFTPClientData.hpp"
 #include "StringUtils.h"
 #include "clCodeLiteRemoteProcess.hpp"
 #include "clRemoteHost.hpp"

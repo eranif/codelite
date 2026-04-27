@@ -1,17 +1,20 @@
-#ifndef BUILDTARGETDLG_H
-#define BUILDTARGETDLG_H
+#pragma once
+
+#include "clEditorEditEventsHandler.h"
 #include "clFileSystemWorkspaceDlgBase.h"
 
 class BuildTargetDlg : public BuildTargetDlgBase
 {
 public:
     BuildTargetDlg(wxWindow* parent, const wxString& name, const wxString& command);
-    virtual ~BuildTargetDlg();
+    ~BuildTargetDlg() override;
 
     wxString GetTargetName() const;
     wxString GetTargetCommand() const;
 
 protected:
-    virtual void OnOK_UI(wxUpdateUIEvent& event);
+    void OnOK_UI(wxUpdateUIEvent& event) override;
+
+private:
+    std::unique_ptr<clEditEventsHandler> m_editHelper{nullptr};
 };
-#endif // BUILDTARGETDLG_H

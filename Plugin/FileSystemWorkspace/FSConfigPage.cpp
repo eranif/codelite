@@ -147,7 +147,7 @@ void FSConfigPage::Save()
         wxDataViewItem item = m_dvListCtrlTargets->RowToItem(i);
         wxString name = m_dvListCtrlTargets->GetItemText(item, 0);
         wxString command = m_dvListCtrlTargets->GetItemText(item, 1);
-        targets.insert({ name, command });
+        targets.insert({name, command});
     }
 
     m_config->SetBuildTargets(targets);
@@ -199,7 +199,8 @@ void FSConfigPage::DoTargetActivated()
     wxDataViewItem item = m_dvListCtrlTargets->GetSelection();
     CHECK_ITEM_RET(item);
 
-    BuildTargetDlg dlg(::wxGetTopLevelParent(this), m_dvListCtrlTargets->GetItemText(item, 0),
+    BuildTargetDlg dlg(::wxGetTopLevelParent(this),
+                       m_dvListCtrlTargets->GetItemText(item, 0),
                        m_dvListCtrlTargets->GetItemText(item, 1));
     if (dlg.ShowModal() == wxID_OK) {
         m_dvListCtrlTargets->SetItemText(item, dlg.GetTargetName(), 0);
@@ -295,17 +296,18 @@ void FSConfigPage::OnEditExcludePaths(wxCommandEvent& event)
 }
 void FSConfigPage::OnBrowseExec(wxCommandEvent& event)
 {
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
     wxString path;
-    if (m_useRemoteBrowsing) {
-        auto p = ::clRemoteFileSelector(_("Select a directory"), m_sshAccount);
-        if (p.first != m_sshAccount) {
-            ::wxMessageBox(_("Wrong account selected!"), "CodeLite", wxOK | wxICON_WARNING);
+    if (workspace && workspace->IsRemote()) {
+        auto selection = SFTPBrowserDlg::ShowFilePicker(_("Choose a file"), m_sshAccount, workspace->GetDir());
+        if (!selection) {
             return;
         }
-        path = p.second;
+        path = selection->Item(0);
     } else {
         path = ::wxFileSelector();
     }
+
     if (path.empty()) {
         return;
     }
@@ -314,14 +316,15 @@ void FSConfigPage::OnBrowseExec(wxCommandEvent& event)
 
 void FSConfigPage::OnBrowseWD(wxCommandEvent& event)
 {
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
     wxString path;
-    if (m_useRemoteBrowsing) {
-        auto p = ::clRemoteFolderSelector(_("Select a directory"), m_sshAccount);
-        if (p.first != m_sshAccount) {
-            ::wxMessageBox(_("Wrong account selected!"), "CodeLite", wxOK | wxICON_WARNING);
+    if (workspace && workspace->IsRemote()) {
+        auto selection =
+            SFTPBrowserDlg::ShowDirPicker(_("Choose a working directory"), m_sshAccount, workspace->GetDir());
+        if (!selection) {
             return;
         }
-        path = p.second;
+        path = selection->Item(0);
     } else {
         path = ::wxDirSelector();
     }
@@ -333,14 +336,15 @@ void FSConfigPage::OnBrowseWD(wxCommandEvent& event)
 
 void FSConfigPage::OnBrowseForGDB(wxCommandEvent& event)
 {
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
     wxString path;
-    if (m_useRemoteBrowsing) {
-        auto p = ::clRemoteFileSelector(_("Select debugger executable:"), m_sshAccount);
-        if (p.first != m_sshAccount) {
-            ::wxMessageBox(_("Wrong account selected!"), "CodeLite", wxOK | wxICON_WARNING);
+    if (workspace && workspace->IsRemote()) {
+        auto selection =
+            SFTPBrowserDlg::ShowFilePicker(_("Choose a debugger executable"), m_sshAccount, workspace->GetDir());
+        if (!selection) {
             return;
         }
-        path = p.second;
+        path = selection->Item(0);
     } else {
         path = ::wxFileSelector();
     }

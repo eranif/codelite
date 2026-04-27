@@ -688,15 +688,6 @@ GitCommitListDlgBase::GitCommitListDlgBase(
     wxBoxSizer* boxSizer208 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage795->SetSizer(boxSizer208);
 
-    m_staticText210 = new wxStaticText(m_splitterPage795,
-                                       wxID_ANY,
-                                       _("Modified files:"),
-                                       wxDefaultPosition,
-                                       wxDLG_UNIT(m_splitterPage795, wxSize(-1, -1)),
-                                       0);
-
-    boxSizer208->Add(m_staticText210, 0, wxALL, WXC_FROM_DIP(5));
-
     wxArrayString m_fileListBoxArr;
     m_fileListBox = new wxListBox(m_splitterPage795,
                                   wxID_ANY,
@@ -713,15 +704,6 @@ GitCommitListDlgBase::GitCommitListDlgBase(
 
     wxBoxSizer* boxSizer218 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage799->SetSizer(boxSizer218);
-
-    m_staticText220 = new wxStaticText(m_splitterPage799,
-                                       wxID_ANY,
-                                       _("Commit message:"),
-                                       wxDefaultPosition,
-                                       wxDLG_UNIT(m_splitterPage799, wxSize(-1, -1)),
-                                       0);
-
-    boxSizer218->Add(m_staticText220, 0, wxALL, WXC_FROM_DIP(5));
 
     m_stcCommitMessage = new clThemedSTC(m_splitterPage799,
                                          wxID_ANY,
@@ -772,11 +754,6 @@ GitCommitListDlgBase::GitCommitListDlgBase(
     wxBoxSizer* boxSizer184 = new wxBoxSizer(wxVERTICAL);
     m_splitterPage182->SetSizer(boxSizer184);
 
-    m_staticText217 = new wxStaticText(
-        m_splitterPage182, wxID_ANY, _("Diff:"), wxDefaultPosition, wxDLG_UNIT(m_splitterPage182, wxSize(-1, -1)), 0);
-
-    boxSizer184->Add(m_staticText217, 0, wxALL, WXC_FROM_DIP(5));
-
     m_stcDiff = new clThemedSTC(m_splitterPage182,
                                 wxID_ANY,
                                 wxDefaultPosition,
@@ -809,7 +786,7 @@ GitCommitListDlgBase::GitCommitListDlgBase(
     m_stcDiff->SetLexer(wxSTC_LEX_DIFF);
     // Set default font / styles
     m_stcDiff->StyleClearAll();
-    m_stcDiff->SetWrapMode(0);
+    m_stcDiff->SetWrapMode(2);
     m_stcDiff->SetIndentationGuides(0);
     m_stcDiff->SetKeyWords(0, wxT(""));
     m_stcDiff->SetKeyWords(1, wxT(""));

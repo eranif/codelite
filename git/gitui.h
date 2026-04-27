@@ -201,13 +201,10 @@ protected:
     wxPanel* m_splitterPage785;
     clThemedSplitterWindow* m_splitter791;
     wxPanel* m_splitterPage795;
-    wxStaticText* m_staticText210;
     wxListBox* m_fileListBox;
     wxPanel* m_splitterPage799;
-    wxStaticText* m_staticText220;
     clThemedSTC* m_stcCommitMessage;
     wxPanel* m_splitterPage182;
-    wxStaticText* m_staticText217;
     clThemedSTC* m_stcDiff;
     wxButton* m_buttonClose;
 
@@ -231,17 +228,14 @@ public:
     wxCheckBox* GetCheckBoxIgnoreCase() { return m_checkBoxIgnoreCase; }
     clThemedListCtrl* GetDvListCtrlCommitList() { return m_dvListCtrlCommitList; }
     wxPanel* GetSplitterPage781() { return m_splitterPage781; }
-    wxStaticText* GetStaticText210() { return m_staticText210; }
     wxListBox* GetFileListBox() { return m_fileListBox; }
     wxPanel* GetSplitterPage795() { return m_splitterPage795; }
-    wxStaticText* GetStaticText220() { return m_staticText220; }
     clThemedSTC* GetStcCommitMessage() { return m_stcCommitMessage; }
     wxPanel* GetSplitterPage799() { return m_splitterPage799; }
     clThemedSplitterWindow* GetSplitter791() { return m_splitter791; }
     wxPanel* GetSplitterPage785() { return m_splitterPage785; }
     clThemedSplitterWindow* GetSplitter777() { return m_splitter777; }
     wxPanel* GetSplitterPage178() { return m_splitterPage178; }
-    wxStaticText* GetStaticText217() { return m_staticText217; }
     clThemedSTC* GetStcDiff() { return m_stcDiff; }
     wxPanel* GetSplitterPage182() { return m_splitterPage182; }
     clThemedSplitterWindow* GetSplitter174() { return m_splitter174; }

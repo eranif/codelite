@@ -170,19 +170,16 @@ protected:
     wxButton* m_buttonRefresh;
     wxStaticText* m_staticText82;
     wxChoice* m_choiceAccount;
-    wxTextCtrl* m_textCtrlInlineSearch;
     wxButton* m_button59;
     wxButton* m_button61;
 
 protected:
-    virtual void OnItemSelected(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnItemActivated(wxDataViewEvent& event) { event.Skip(); }
+    virtual void OnKeyDown(wxKeyEvent& event) { event.Skip(); }
+    virtual void OnItemSelected(wxDataViewEvent& event) { event.Skip(); }
     virtual void OnTextEnter(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRefresh(wxCommandEvent& event) { event.Skip(); }
     virtual void OnRefreshUI(wxUpdateUIEvent& event) { event.Skip(); }
-    virtual void OnTextUpdated(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnEnter(wxCommandEvent& event) { event.Skip(); }
-    virtual void OnFocusLost(wxFocusEvent& event) { event.Skip(); }
     virtual void OnOKUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
@@ -193,7 +190,6 @@ public:
     wxButton* GetButtonRefresh() { return m_buttonRefresh; }
     wxStaticText* GetStaticText82() { return m_staticText82; }
     wxChoice* GetChoiceAccount() { return m_choiceAccount; }
-    wxTextCtrl* GetTextCtrlInlineSearch() { return m_textCtrlInlineSearch; }
     wxButton* GetButton59() { return m_button59; }
     wxButton* GetButton61() { return m_button61; }
     wxPanel* GetPanel149() { return m_panel149; }

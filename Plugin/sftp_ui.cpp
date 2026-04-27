@@ -453,19 +453,6 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(
 
     flexGridSizer147->Add(0, 0, 1, wxALL, WXC_FROM_DIP(5));
 
-    wxBoxSizer* boxSizer94 = new wxBoxSizer(wxVERTICAL);
-
-    boxSizer151->Add(boxSizer94, 0, wxEXPAND | wxRESERVE_SPACE_EVEN_IF_HIDDEN, WXC_FROM_DIP(5));
-
-    m_textCtrlInlineSearch = new wxTextCtrl(
-        m_panel149, wxID_ANY, wxT(""), wxDefaultPosition, wxDLG_UNIT(m_panel149, wxSize(-1, -1)), wxTE_PROCESS_ENTER);
-    m_textCtrlInlineSearch->Hide();
-#if wxVERSION_NUMBER >= 3000
-    m_textCtrlInlineSearch->SetHint(wxT(""));
-#endif
-
-    boxSizer94->Add(m_textCtrlInlineSearch, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
-
     wxBoxSizer* boxSizer57 = new wxBoxSizer(wxHORIZONTAL);
 
     boxSizer151->Add(boxSizer57, 0, wxALL | wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
@@ -497,27 +484,23 @@ SFTPBrowserBaseDlg::SFTPBrowserBaseDlg(
         wxPersistenceManager::Get().Restore(this);
     }
     // Connect events
-    m_dataview->Bind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &SFTPBrowserBaseDlg::OnItemSelected, this);
     m_dataview->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &SFTPBrowserBaseDlg::OnItemActivated, this);
+    m_dataview->Bind(wxEVT_KEY_DOWN, &SFTPBrowserBaseDlg::OnKeyDown, this);
+    m_dataview->Bind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &SFTPBrowserBaseDlg::OnItemSelected, this);
     m_textCtrlRemoteFolder->Bind(wxEVT_COMMAND_TEXT_ENTER, &SFTPBrowserBaseDlg::OnTextEnter, this);
     m_buttonRefresh->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &SFTPBrowserBaseDlg::OnRefresh, this);
     m_buttonRefresh->Bind(wxEVT_UPDATE_UI, &SFTPBrowserBaseDlg::OnRefreshUI, this);
-    m_textCtrlInlineSearch->Bind(wxEVT_COMMAND_TEXT_UPDATED, &SFTPBrowserBaseDlg::OnTextUpdated, this);
-    m_textCtrlInlineSearch->Bind(wxEVT_COMMAND_TEXT_ENTER, &SFTPBrowserBaseDlg::OnEnter, this);
-    m_textCtrlInlineSearch->Bind(wxEVT_KILL_FOCUS, &SFTPBrowserBaseDlg::OnFocusLost, this);
     m_button59->Bind(wxEVT_UPDATE_UI, &SFTPBrowserBaseDlg::OnOKUI, this);
 }
 
 SFTPBrowserBaseDlg::~SFTPBrowserBaseDlg()
 {
-    m_dataview->Unbind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &SFTPBrowserBaseDlg::OnItemSelected, this);
     m_dataview->Unbind(wxEVT_COMMAND_DATAVIEW_ITEM_ACTIVATED, &SFTPBrowserBaseDlg::OnItemActivated, this);
+    m_dataview->Unbind(wxEVT_KEY_DOWN, &SFTPBrowserBaseDlg::OnKeyDown, this);
+    m_dataview->Unbind(wxEVT_COMMAND_DATAVIEW_SELECTION_CHANGED, &SFTPBrowserBaseDlg::OnItemSelected, this);
     m_textCtrlRemoteFolder->Unbind(wxEVT_COMMAND_TEXT_ENTER, &SFTPBrowserBaseDlg::OnTextEnter, this);
     m_buttonRefresh->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &SFTPBrowserBaseDlg::OnRefresh, this);
     m_buttonRefresh->Unbind(wxEVT_UPDATE_UI, &SFTPBrowserBaseDlg::OnRefreshUI, this);
-    m_textCtrlInlineSearch->Unbind(wxEVT_COMMAND_TEXT_UPDATED, &SFTPBrowserBaseDlg::OnTextUpdated, this);
-    m_textCtrlInlineSearch->Unbind(wxEVT_COMMAND_TEXT_ENTER, &SFTPBrowserBaseDlg::OnEnter, this);
-    m_textCtrlInlineSearch->Unbind(wxEVT_KILL_FOCUS, &SFTPBrowserBaseDlg::OnFocusLost, this);
     m_button59->Unbind(wxEVT_UPDATE_UI, &SFTPBrowserBaseDlg::OnOKUI, this);
 }
 

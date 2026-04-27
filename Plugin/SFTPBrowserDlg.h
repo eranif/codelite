@@ -57,9 +57,6 @@ public:
                                                    wxWindow* parent = nullptr);
 
 protected:
-    void OnEnter(wxCommandEvent& event) override;
-    void OnFocusLost(wxFocusEvent& event) override;
-    void OnTextUpdated(wxCommandEvent& event) override;
     void OnItemSelected(wxDataViewEvent& event) override;
     void OnOKUI(wxUpdateUIEvent& event) override;
     void OnTextEnter(wxCommandEvent& event) override;
@@ -71,9 +68,9 @@ protected:
     void OnConnectedUI(wxUpdateUIEvent& event);
     void OnNewFolder(wxCommandEvent& event);
     void OnCdUp(wxCommandEvent& event);
-    void OnKeyDown(wxKeyEvent& event);
+    void OnKeyDown(wxKeyEvent& event) override;
     void DoCloseSession();
-    void DoDisplayEntriesForPath(const wxString& path = "");
+    void DoDisplayEntriesForPath(const wxString& path);
     void ClearView();
     SFTPBrowserEntryClientData* DoGetItemData(const wxDataViewItem& item) const;
     void DoBrowse();

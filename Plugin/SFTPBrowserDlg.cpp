@@ -172,7 +172,7 @@ void SFTPBrowserDlg::DoDisplayEntriesForPath(const wxString& path)
             if (folder.IsEmpty()) {
                 folder = "/";
             } else {
-                // if the path contains file name, remmove it
+                // if the path contains file name, remove it
                 wxFileName fn(folder);
                 if (fn.GetFullName().Contains(".")) {
                     folder = fn.GetPath(wxPATH_UNIX);
@@ -225,7 +225,6 @@ void SFTPBrowserDlg::DoDisplayEntriesForPath(const wxString& path)
             SFTPBrowserEntryClientData* cd = new SFTPBrowserEntryClientData(attr, fullname);
             m_dataview->AppendItem(cols, (wxUIntPtr)cd);
         }
-        m_dataview->SetFocus();
 
     } catch (const clException& e) {
         ::clMessageBox(e.What(), "SFTP", wxICON_ERROR | wxOK);
@@ -250,7 +249,12 @@ void SFTPBrowserDlg::OnItemActivated(wxDataViewEvent& event)
     if (cd && cd->GetAttribute()->IsFolder()) {
         m_textCtrlRemoteFolder->ChangeValue(cd->GetFullpath());
         ClearView();
-        DoDisplayEntriesForPath();
+        DoDisplayEntriesForPath(cd->GetFullpath());
+        if (m_dataview->GetItemCount() != 0) {
+            m_dataview->SelectRow(0);
+            m_dataview->CallAfter(&wxWindow::SetFocus);
+        }
+
     } else if (cd && cd->GetAttribute()->IsFile()) {
         m_textCtrlRemoteFolder->ChangeValue(cd->GetFullpath());
         CallAfter(&wxDialog::EndModal, wxID_OK);
@@ -263,7 +267,7 @@ void SFTPBrowserDlg::OnTextEnter(wxCommandEvent& event)
         OnRefresh(event);
     } else {
         ClearView();
-        DoDisplayEntriesForPath();
+        DoDisplayEntriesForPath(m_textCtrlRemoteFolder->GetValue());
     }
     m_dataview->CallAfter(&wxWindow::SetFocus);
 }
@@ -344,19 +348,9 @@ void SFTPBrowserDlg::Initialize(const wxString& account, const wxString& path)
 void SFTPBrowserDlg::OnKeyDown(wxKeyEvent& event)
 {
     event.Skip();
-    wxChar ch = (wxChar)event.GetKeyCode();
-
-    if (::wxIsprint(ch)) {
-        if (!m_textCtrlInlineSearch->IsShown()) {
-            m_textCtrlInlineSearch->SetFocus();
-            m_textCtrlInlineSearch->Clear();
-#ifdef __WXMSW__
-            m_textCtrlInlineSearch->ChangeValue(wxString() << (wxChar)event.GetKeyCode());
-#endif
-            m_textCtrlInlineSearch->SetInsertionPoint(m_textCtrlInlineSearch->GetLastPosition());
-            m_textCtrlInlineSearch->Show();
-            GetSizer()->Layout();
-        }
+    if (event.GetKeyCode() == WXK_BACK) {
+        wxCommandEvent dummy{};
+        OnCdUp(dummy);
     }
 }
 
@@ -364,29 +358,14 @@ void SFTPBrowserDlg::OnInlineSearch() {}
 
 void SFTPBrowserDlg::OnInlineSearchEnter() {}
 
-void SFTPBrowserDlg::OnEnter(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    CallAfter(&SFTPBrowserDlg::OnInlineSearchEnter);
-}
-
-void SFTPBrowserDlg::OnFocusLost(wxFocusEvent& event)
-{
-    event.Skip();
-    m_textCtrlInlineSearch->Hide();
-    GetSizer()->Layout();
-}
-
-void SFTPBrowserDlg::OnTextUpdated(wxCommandEvent& event)
-{
-    wxUnusedVar(event);
-    CallAfter(&SFTPBrowserDlg::OnInlineSearch);
-}
-
 void SFTPBrowserDlg::OnCdUp(wxCommandEvent& event)
 {
     ClearView();
     DoDisplayEntriesForPath("..");
+    if (m_dataview->GetItemCount() != 0) {
+        m_dataview->SelectRow(0);
+        m_dataview->CallAfter(&wxWindow::SetFocus);
+    }
 }
 
 void SFTPBrowserDlg::OnConnectedUI(wxUpdateUIEvent& event) { event.Enable(m_sftp.get()); }
@@ -464,7 +443,7 @@ void SFTPBrowserDlg::DoBrowse()
         m_sftp.reset(new clSFTP(ssh));
         m_sftp->Initialize();
 
-        DoDisplayEntriesForPath();
+        DoDisplayEntriesForPath(m_textCtrlRemoteFolder->GetValue());
 
     } catch (const clException& e) {
         ::wxMessageBox(e.What(), "CodeLite", wxICON_ERROR | wxOK, this);
@@ -484,10 +463,14 @@ void SFTPBrowserDlg::OnNewFolder(wxCommandEvent& event)
 
     try {
         wxString path;
-        path << m_sftp->GetCurrentFolder() << "/" << name;
+        wxString curdir = m_sftp->GetCurrentFolder();
+        path << curdir << "/" << name;
         m_sftp->CreateDir(path);
         ClearView();
-        DoDisplayEntriesForPath();
+
+        // Refresh the current dir
+        DoDisplayEntriesForPath(curdir);
+
     } catch (const clException& e) {
         ::wxMessageBox(e.What(), "CodeLite", wxICON_ERROR | wxOK, this);
     }

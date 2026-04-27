@@ -55,7 +55,8 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
     if (lex) {
         lex->Apply(m_stcDiff, true);
     }
-
+    m_stcDiff->SetWrapStartIndent(2);
+    m_stcDiff->SetWrapVisualFlags(wxSTC_WRAPVISUALFLAG_END);
     m_dvListCtrlCommitList->Connect(ID_COPY_COMMIT_HASH,
                                     wxEVT_COMMAND_MENU_SELECTED,
                                     wxCommandEventHandler(GitCommitListDlg::OnCopyCommitHashToClipboard),
@@ -207,10 +208,14 @@ void GitCommitListDlg::DoLoadCommits(const wxString& filter)
             cols.clear();
             cols.reserve(4);
 
-            cols.push_back(gitCommit.Item(0));
-            cols.push_back(gitCommit.Item(1));
-            cols.push_back(gitCommit.Item(2));
-            cols.push_back(gitCommit.Item(3));
+            const wxString& hash = gitCommit[0];
+            const wxString& author = gitCommit[1];
+            const wxString& date = gitCommit[2];
+            const wxString& subject = gitCommit[3];
+            cols.push_back(hash);
+            cols.push_back(author);
+            cols.push_back(date);
+            cols.push_back(subject);
             m_dvListCtrlCommitList->AppendItem(cols);
         }
     }

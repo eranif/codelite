@@ -585,14 +585,8 @@ wxTerminalViewCtrl* GitPlugin::GetOrCreateGitTerminal()
         }
 #endif
 
-#ifdef __WXMSW__
-        wxString terminal_cmd = "cmd.exe";
-#else
-        wxString terminal_cmd = "/bin/bash --login -i";
-#endif
-
-        terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(
-            m_repositoryDirectory, account_info, kGitTerminalTitle, true, terminal_cmd);
+        terminal = clGetManager()->GetTerminalManager()->OpenNewDefaultTerminalTab(
+            m_repositoryDirectory, account_info, kGitTerminalTitle);
     }
     return terminal;
 }

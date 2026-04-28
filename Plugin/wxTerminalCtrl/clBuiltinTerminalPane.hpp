@@ -19,6 +19,12 @@
 
 class wxTerminalViewCtrl;
 
+#ifdef __WXMSW__
+inline constexpr const char kTerminalCommand[] = "cmd.exe";
+#else
+inline constexpr const char kTerminalCommand[] = "/bin/bash --login -i";
+#endif
+
 class WXDLLIMPEXP_SDK clBuiltinTerminalPane : public wxPanel
 {
 public:
@@ -38,6 +44,20 @@ public:
                                            const wxString& tabTitle = wxEmptyString,
                                            bool makeVisible = true,
                                            std::optional<wxString> terminal_cmd = std::nullopt);
+
+    /**
+     * @brief Open a new terminal tab using the platform default shell.
+     * @param workingDirectory The working directory for the terminal.
+     * @param sshAccount Optional SSH account for remote connections.
+     * @param tabTitle Optional custom title for the tab (defaults to the shell name).
+     * @return pointer to the created terminal control, or nullptr on failure.
+     */
+    wxTerminalViewCtrl* OpenNewDefaultTerminalTab(const wxString& workingDirectory,
+                                                  const std::optional<SSHAccountInfo>& sshAccount = std::nullopt,
+                                                  const wxString& tabTitle = wxEmptyString)
+    {
+        return OpenNewTerminalTab(workingDirectory, sshAccount, tabTitle, true, kTerminalCommand);
+    }
 
     /**
      * @brief Find an existing terminal tab by its title

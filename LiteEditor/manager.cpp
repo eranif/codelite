@@ -85,6 +85,7 @@
 #include "sessionmanager.h"
 #include "simpletable.h"
 #include "tabgroupmanager.h"
+#include "terminal_view.h"
 #include "threadlistpanel.h"
 #include "workspacetab.h"
 #include "wxCodeCompletionBoxManager.h"
@@ -1569,36 +1570,33 @@ void Manager::ExecuteNoDebug(const wxString& projectName)
     if (bldConf) {
         configName = bldConf->GetName();
     }
-    EnvSetter env(NULL, NULL, projectName, configName);
-
-    // call it again here to get the actual exection line - we do it here since
-    // the environment has been applied
-    size_t createProcessFlags = IProcessCreateDefault;
-    if (!bldConf->IsGUIProgram()) {
-        createProcessFlags = IProcessNoRedirect | IProcessCreateConsole;
-    }
+    EnvSetter env{NULL, NULL, projectName, configName};
 
     wxString dummy;
-    execLine = GetProjectExecutionCommand(projectName, dummy, bldConf->GetPauseWhenExecEnds());
+    execLine = GetProjectExecutionCommand(projectName, dummy, false);
     wxUnusedVar(dummy);
     clEnvList_t env_list;
     bldConf->GetCompiler()->CreatePathEnv(&env_list);
 
-    m_programProcess = ::CreateAsyncProcess(this, execLine, createProcessFlags, wd, &env_list);
-    if (m_programProcess) {
-        if (clConfig::Get().Read(kConfigClearOutputOnLaunch, false)) {
-            clGetManager()->ClearOutputTab(kOutputTab_Output);
+    // call it again here to get the actual exection line - we do it here since
+    // the environment has been applied
+    if (bldConf->IsGUIProgram()) {
+        m_programProcess = ::CreateAsyncProcess(this, execLine, IProcessCreateDefault, wd, &env_list);
+        if (m_programProcess) {
+            // Notify about program execution
+            clExecuteEvent startEvent(wxEVT_PROGRAM_STARTED);
+            EventNotifier::Get()->AddPendingEvent(startEvent);
         }
-        clGetManager()->AppendOutputTabText(
-            kOutputTab_Output, wxString() << _("Working directory is set to: ") << wd << "\n", false);
-        clGetManager()->AppendOutputTabText(
-            kOutputTab_Output, wxString() << _("Executing: ") << execLine << "\n", false);
-        if (clConfig::Get().Read(kConfigShowOutputOnLaunch, false)) {
-            clGetManager()->ShowOutputPane("Output");
-        }
-        // Notify about program execution
-        clExecuteEvent startEvent(wxEVT_PROGRAM_STARTED);
-        EventNotifier::Get()->AddPendingEvent(startEvent);
+    } else {
+        // Use a built-in terminal for this purpose
+        EnvSetter compiler_env{&env_list};
+        auto arr = StringUtils::BuildCommandArrayFromString(execLine);
+        wxString terminal_title = arr.empty() ? wxString{} : arr[0];
+        auto terminal =
+            clGetManager()->GetTerminalManager()->OpenNewDefaultTerminalTab(wd, std::nullopt, terminal_title);
+        CHECK_PTR_RET(terminal);
+        terminal->SendCommand(execLine);
+        terminal->CallAfter(&wxWindow::SetFocus);
     }
 }
 

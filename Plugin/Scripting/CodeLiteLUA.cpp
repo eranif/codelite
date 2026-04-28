@@ -33,6 +33,11 @@ enum class MessageType {
 
 }
 
+#define CEHCK_SHUTDOWN_IN_PROGRESS()              \
+    if (clGetManager()->IsShutdownInProgress()) { \
+        return;                                   \
+    }
+
 CodeLiteLUA& CodeLiteLUA::Get()
 {
     static CodeLiteLUA codelite_lua;
@@ -417,7 +422,7 @@ void CodeLiteLUA::UpdateMenu(const wxString& menu_name, wxMenu* menu)
 void CodeLiteLUA::OnFileSaved(clCommandEvent& event)
 {
     event.Skip(); // Always call this.
-
+    CEHCK_SHUTDOWN_IN_PROGRESS();
     CHECK_PTR_RET(clGetManager()->GetActiveEditor());
 
     const WriteOptions opts{.converter = nullptr, .ignore_workspace = true};

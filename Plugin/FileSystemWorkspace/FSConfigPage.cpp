@@ -294,16 +294,53 @@ void FSConfigPage::OnEditExcludePaths(wxCommandEvent& event)
         m_textCtrlExcludePaths->ChangeValue(value);
     }
 }
+
+namespace
+{
+/**
+ * @brief Opens a remote SFTP file or directory picker and returns the selected path.
+ *
+ * This helper only works when SFTP support is enabled and the current workspace is remote.
+ * It shows either a file picker or a directory picker depending on the "dir_picker" flag,
+ * and returns the first selected item as a wxString.
+ *
+ * @param account const wxString& The account name used to access the remote picker.
+ * @param dir_picker bool Optional flag indicating whether to open a directory picker
+ *        (true) or a file picker (false).
+ *
+ * @return std::optional<wxString> The selected remote path if the user makes a selection;
+ *         std::nullopt if SFTP is disabled, there is no remote workspace, the picker is
+ *         cancelled, or no selection is returned.
+ */
+std::optional<wxString> TryRemotePicker(const wxString& account, bool dir_picker = false)
+{
+#if !USE_SFTP
+    return std::nullopt;
+#else
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if (!workspace || !workspace->IsRemote()) {
+        return std::nullopt;
+    }
+    std::optional<wxArrayString> result{std::nullopt};
+    if (dir_picker) {
+        result = SFTPBrowserDlg::ShowDirPicker(_("Choose a directory"), account, workspace->GetDir());
+    } else {
+        result = SFTPBrowserDlg::ShowFilePicker(_("Choose a file"), account, workspace->GetDir());
+    }
+    if (!result) {
+        return std::nullopt;
+    }
+    return result->Item(0);
+#endif
+}
+} // namespace
+
 void FSConfigPage::OnBrowseExec(wxCommandEvent& event)
 {
-    auto workspace = clWorkspaceManager::Get().GetWorkspace();
     wxString path;
-    if (workspace && workspace->IsRemote()) {
-        auto selection = SFTPBrowserDlg::ShowFilePicker(_("Choose a file"), m_sshAccount, workspace->GetDir());
-        if (!selection) {
-            return;
-        }
-        path = selection->Item(0);
+    auto result = TryRemotePicker(m_sshAccount);
+    if (result) {
+        path = *result;
     } else {
         path = ::wxFileSelector();
     }
@@ -316,18 +353,14 @@ void FSConfigPage::OnBrowseExec(wxCommandEvent& event)
 
 void FSConfigPage::OnBrowseWD(wxCommandEvent& event)
 {
-    auto workspace = clWorkspaceManager::Get().GetWorkspace();
     wxString path;
-    if (workspace && workspace->IsRemote()) {
-        auto selection =
-            SFTPBrowserDlg::ShowDirPicker(_("Choose a working directory"), m_sshAccount, workspace->GetDir());
-        if (!selection) {
-            return;
-        }
-        path = selection->Item(0);
+    auto result = TryRemotePicker(m_sshAccount, true);
+    if (result) {
+        path = *result;
     } else {
         path = ::wxDirSelector();
     }
+
     if (path.empty()) {
         return;
     }
@@ -336,15 +369,10 @@ void FSConfigPage::OnBrowseWD(wxCommandEvent& event)
 
 void FSConfigPage::OnBrowseForGDB(wxCommandEvent& event)
 {
-    auto workspace = clWorkspaceManager::Get().GetWorkspace();
     wxString path;
-    if (workspace && workspace->IsRemote()) {
-        auto selection =
-            SFTPBrowserDlg::ShowFilePicker(_("Choose a debugger executable"), m_sshAccount, workspace->GetDir());
-        if (!selection) {
-            return;
-        }
-        path = selection->Item(0);
+    auto result = TryRemotePicker(m_sshAccount);
+    if (result) {
+        path = *result;
     } else {
         path = ::wxFileSelector();
     }

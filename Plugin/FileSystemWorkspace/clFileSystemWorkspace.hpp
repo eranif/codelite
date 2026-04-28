@@ -2,7 +2,6 @@
 #define CLFILESYSTEMWORKSPACE_HPP
 
 #include "AsyncProcess/asyncprocess.h"
-#include "builder/clRemoteBuilder.hpp"
 #include "clBacktickCache.hpp"
 #include "clDebuggerTerminal.h"
 #include "clFileCache.hpp"
@@ -33,7 +32,6 @@ class WXDLLIMPEXP_SDK clFileSystemWorkspace : public LocalWorkspaceCommon
     clFileSystemWorkspaceView* m_view = nullptr;
     bool m_initialized = false;
     std::unordered_map<int, wxString> m_buildTargetMenuIdToName;
-    clRemoteBuilder::Ptr_t m_remoteBuilder;
     clDebuggerTerminalPOSIX m_debuggerTerminal;
     int m_execPID = wxNOT_FOUND;
     clBacktickCache::ptr_t m_backtickCache;

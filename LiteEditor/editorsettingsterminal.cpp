@@ -35,15 +35,21 @@ EditorSettingsTerminal::EditorSettingsTerminal(wxWindow* parent, OptionsConfigPt
 {
     wxArrayString terminals = clConsoleBase::GetAvailableTerminals();
 #if defined(__WXGTK__)
-    // GetAvailableTerminals() doesn't, it gets a list of supported ones; so check for existence
-    std::erase_if(terminals, [](const auto& terminal) { return !ExeLocator::Locate(terminal); });
+    wxArrayString tmp_terminals;
+    tmp_terminals.reserve(terminals.size());
+    for (const auto& terminal : terminals) {
+        if (ExeLocator::Locate(terminal)) {
+            tmp_terminals.Add(terminal);
+        }
+    }
+    terminals.swap(tmp_terminals);
 #endif
     AddHeader(_("Terminals"));
 
     wxString selection = clConsoleBase::GetSelectedTerminalName();
     AddProperty(_("Choose your terminal"), terminals, selection, [&](const wxString& label, const wxAny& value) {
         wxString value_str;
-        if(value.GetAs(&value_str)) {
+        if (value.GetAs(&value_str)) {
             clConfig::Get().Write("Terminal", value_str);
         }
     });

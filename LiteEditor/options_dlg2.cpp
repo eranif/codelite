@@ -73,7 +73,8 @@ void PreferencesDialog::DoSave()
     EditorConfigST::Get()->Save();
 
     // Notify plugins about settings changed
-    PostCmdEvent(wxEVT_EDITOR_SETTINGS_CHANGED);
+    wxCommandEvent event(wxEVT_EDITOR_CONFIG_CHANGED);
+    EventNotifier::Get()->ProcessEvent(event);
 }
 
 void PreferencesDialog::Initialize()
@@ -92,9 +93,9 @@ void PreferencesDialog::Initialize()
     AddPage(new EditorSettingsBookmarksPanel(m_treeBook, m_options), _("Bookmarks"));
     AddPage(new EditorSettingsTerminal(m_treeBook, m_options), _("Terminal"));
     AddPage(new EditorSettingsMiscPanel(m_treeBook, m_options), _("Misc"));
-    for(size_t i = 0; i < m_treeBook->GetPageCount(); ++i) {
+    for (size_t i = 0; i < m_treeBook->GetPageCount(); ++i) {
         OptionsConfigPage* p = dynamic_cast<OptionsConfigPage*>(m_treeBook->GetPage(i));
-        if(p) {
+        if (p) {
             p->Finalize();
         }
     }

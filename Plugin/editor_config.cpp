@@ -175,7 +175,7 @@ void EditorConfig::SetOptions(OptionsConfigPtr opts)
     DoSave();
     wxCommandEvent evt(wxEVT_EDITOR_CONFIG_CHANGED);
     evt.SetString(nodeName);
-    EventNotifier::Get()->AddPendingEvent(evt);
+    EventNotifier::Get()->ProcessEvent(evt);
 }
 
 int clSortStringsFunc(const wxString& first, const wxString& second)
@@ -246,7 +246,7 @@ void EditorConfig::SetRecentItems(const wxArrayString& files, const wxString& no
     DoSave();
     wxCommandEvent evt(wxEVT_EDITOR_CONFIG_CHANGED);
     evt.SetString(nodeName);
-    EventNotifier::Get()->AddPendingEvent(evt);
+    EventNotifier::Get()->ProcessEvent(evt);
 }
 
 bool EditorConfig::WriteObject(const wxString& name, SerializedObject* obj)
@@ -258,7 +258,7 @@ bool EditorConfig::WriteObject(const wxString& name, SerializedObject* obj)
     bool res = DoSave();
     wxCommandEvent evt(wxEVT_EDITOR_CONFIG_CHANGED);
     evt.SetString(name);
-    EventNotifier::Get()->AddPendingEvent(evt);
+    EventNotifier::Get()->ProcessEvent(evt);
     return res;
 }
 
@@ -334,7 +334,7 @@ bool EditorConfig::DoSave() const
 
     // Notify that the editor configuration was modified
     wxCommandEvent event(wxEVT_EDITOR_CONFIG_CHANGED);
-    EventNotifier::Get()->AddPendingEvent(event);
+    EventNotifier::Get()->ProcessEvent(event);
     return XmlUtils::SaveXmlToFile(m_doc, m_fileName.GetFullPath());
 }
 

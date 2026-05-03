@@ -670,7 +670,11 @@ void ChatAIWindow::StyleOutput()
     }
 }
 
-void ChatAIWindow::OnWorkspaceLoaded(clWorkspaceEvent& event) { event.Skip(); }
+void ChatAIWindow::OnWorkspaceLoaded(clWorkspaceEvent& event)
+{
+    event.Skip();
+    CallAfter(&ChatAIWindow::ScanForAgents);
+}
 
 void ChatAIWindow::OnWorkspaceClosed(clWorkspaceEvent& event) { event.Skip(); }
 
@@ -964,4 +968,57 @@ void ChatAIWindow::DoCommandContext()
     }
 
     clGetManager()->SetStatusMessage(wxString() << _("Added ") << count << _(" files to the context"));
+}
+
+void ChatAIWindow::LoadSummaryContent()
+{
+    switch (CreateSummaryFolder()) {
+    case CreateResult::kAlreadyExists:
+    case CreateResult::kCreateOk:
+        break;
+    default:
+        return;
+    }
+
+    // Load it to context.
+}
+
+void ChatAIWindow::ScanForAgents()
+{
+    if (!llm::Manager::GetInstance().IsAvailable()) {
+        return;
+    }
+    LoadSummaryContent();
+}
+
+ChatAIWindow::CreateResult ChatAIWindow::CreateSummaryFolder()
+{
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    wxFileName codebase_summary_sop{clStandardPaths::Get().GetDataDir(), "codebase-summary.sop.md"};
+    codebase_summary_sop.AppendDir("agent-sops");
+    if (!workspace) {
+        return CreateResult::kNoWorkspace;
+    }
+
+    bool summary_dir_exists{false};
+    wxString summary_folder = workspace->GetDir();
+    summary_folder << "/" << ".agents/summary";
+    if (workspace->IsRemote()) {
+#if USE_SFTP
+        summary_dir_exists = clSFTPManager::Get().IsDirExists(summary_folder, workspace->GetSshAccount());
+#endif
+    } else {
+        summary_dir_exists = wxFileName::DirExists(summary_folder);
+    }
+    if (summary_dir_exists) {
+        return CreateResult::kAlreadyExists;
+    }
+
+    wxStandardID answer = ::PromptForYesNoDialogWithCheckbox(
+        _("Would you like to create a codebase summary for AI?"), "codebase-summary");
+    if (answer != wxStandardID::wxID_YES) {
+        return CreateResult::kUserDeclined;
+    }
+
+    return CreateResult::kCreateOk;
 }

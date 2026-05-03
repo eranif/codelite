@@ -263,6 +263,7 @@ public:
      * @brief check if a directory with a given path exists
      */
     bool IsDirExists(const wxString& fullpath, const SSHAccountInfo& accountInfo);
+    bool IsDirExists(const wxString& fullpath, const wxString& accountInfo);
 
     /**
      * @brief return the remote path for a local file

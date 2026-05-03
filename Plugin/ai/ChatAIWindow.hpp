@@ -9,10 +9,10 @@
 #include "cl_command_event.h"
 #include "codelite_exports.h"
 
-#include <future>
 #include <functional>
-#include <unordered_map>
+#include <future>
 #include <thread>
+#include <unordered_map>
 #include <vector>
 #include <wx/activityindicator.h>
 #include <wx/checkbox.h>
@@ -139,6 +139,15 @@ protected:
     void OnWorkspaceClosed(clWorkspaceEvent& event);
     void LoadGlobalConfig();
     void RestoreUI();
+    void ScanForAgents();
+    void LoadSummaryContent();
+    enum class CreateResult {
+        kAlreadyExists,
+        kCreateOk,
+        kUserDeclined,
+        kNoWorkspace,
+    };
+    CreateResult CreateSummaryFolder();
 
     /// LLM events
     void OnLLMConfigUpdate(clLLMEvent& event);

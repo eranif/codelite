@@ -46,3 +46,6 @@
 [submodule "submodules/wxTerminalEmulator"]
 	path = submodules/wxTerminalEmulator
 	url = https://github.com/eranif/wxTerminalEmulator.git
+[submodule "submodules/agent-sop"]
+	path = submodules/agent-sop
+	url = https://github.com/strands-agents/agent-sop.git

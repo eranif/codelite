@@ -134,3 +134,10 @@ else()
 endif()
 
 codelite_install_terminal_themes()
+
+install(
+  DIRECTORY ${CL_SRC_ROOT}/submodules/agent-sop/agent-sops
+  DESTINATION ${CL_RESOURCES_DIR}
+  USE_SOURCE_PERMISSIONS
+  PATTERN ".svn" EXCLUDE
+  PATTERN ".git" EXCLUDE)

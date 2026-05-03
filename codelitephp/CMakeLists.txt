@@ -72,6 +72,13 @@ if(UNIX AND NOT APPLE)
         SKIP_BUILD_RPATH FALSE
         BUILD_WITH_INSTALL_RPATH FALSE)
 endif(UNIX AND NOT APPLE)
+if(MINGW)
+  # Copy dlls near the executable
+  add_custom_command(TARGET PHPUnitTests
+    POST_BUILD
+    COMMAND cmake -E copy_if_different $<TARGET_RUNTIME_DLLS:PHPUnitTests> $<TARGET_FILE_DIR:PHPUnitTests>
+    COMMAND_EXPAND_LISTS)
+endif(MINGW)
     doctest_discover_tests(PHPUnitTests WORKING_DIRECTORY ${PROJECT_SOURCE_DIR}/PHPParserUnitTests/Tests)
 endif(BUILD_TESTING)
 

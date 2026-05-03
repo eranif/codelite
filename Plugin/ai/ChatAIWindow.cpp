@@ -972,15 +972,10 @@ void ChatAIWindow::DoCommandContext()
 
 void ChatAIWindow::LoadSummaryContent()
 {
-    switch (CreateSummaryFolder()) {
-    case CreateResult::kAlreadyExists:
-    case CreateResult::kCreateOk:
-        break;
-    default:
+    auto result = CreateSummaryFolder();
+    if (!result.ok()) {
         return;
     }
-
-    // Load it to context.
 }
 
 void ChatAIWindow::ScanForAgents()
@@ -991,13 +986,11 @@ void ChatAIWindow::ScanForAgents()
     LoadSummaryContent();
 }
 
-ChatAIWindow::CreateResult ChatAIWindow::CreateSummaryFolder()
+clStatusOr<wxString> ChatAIWindow::CreateSummaryFolder()
 {
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
-    wxFileName codebase_summary_sop{clStandardPaths::Get().GetDataDir(), "codebase-summary.sop.md"};
-    codebase_summary_sop.AppendDir("agent-sops");
     if (!workspace) {
-        return CreateResult::kNoWorkspace;
+        return StatusOther("No workspace is opened");
     }
 
     bool summary_dir_exists{false};
@@ -1010,15 +1003,29 @@ ChatAIWindow::CreateResult ChatAIWindow::CreateSummaryFolder()
     } else {
         summary_dir_exists = wxFileName::DirExists(summary_folder);
     }
+
     if (summary_dir_exists) {
-        return CreateResult::kAlreadyExists;
+        return summary_folder;
     }
 
     wxStandardID answer = ::PromptForYesNoDialogWithCheckbox(
         _("Would you like to create a codebase summary for AI?"), "codebase-summary");
     if (answer != wxStandardID::wxID_YES) {
-        return CreateResult::kUserDeclined;
+        return StatusOther("User declined");
     }
 
-    return CreateResult::kCreateOk;
+    // Tell the model to run the SOP.
+    wxFileName codebase_summary_sop{clStandardPaths::Get().GetDataDir(), "codebase-summary.sop.md"};
+    codebase_summary_sop.AppendDir("agent-sops");
+
+    wxString content;
+    if (!FileUtils::ReadFileContent(codebase_summary_sop, content)) {
+        // Error.
+        return StatusIOError("Could not read codebase summary SOP. A broken installation?");
+    }
+
+    // User chose to create a summary folder.
+    llm::Manager::GetInstance().ShowChatWindow();
+    llm::Manager::GetInstance().Chat(this, content, nullptr, assistant::ChatOptions::kNoHistory);
+    return summary_folder;
 }

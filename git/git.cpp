@@ -3101,11 +3101,10 @@ bool GitPlugin::GenerateCommitMessage(const wxString& prompt)
         }
     });
 
-    auto cancel_token = std::make_shared<llm::CancellationToken>(10000);
     llm::ChatOptions chat_options{llm::ChatOptions::kDefault};
     llm::AddFlagSet(chat_options, llm::ChatOptions::kNoTools);
     llm::AddFlagSet(chat_options, llm::ChatOptions::kNoHistory);
-    llm::Manager::GetInstance().Chat(collector, prompt, cancel_token, chat_options);
+    llm::Manager::GetInstance().Chat(collector, prompt, nullptr, chat_options);
     return true;
 }
 

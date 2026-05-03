@@ -137,13 +137,6 @@ struct TaskDropper {
     }
 };
 
-struct SharedState {
-    /// used for detecting loops in the model.
-    std::vector<std::string> last_tokens;
-    size_t total_batch_count{1};
-    size_t current_batch{1};
-};
-
 void NotifyDoneWithError(wxEvtHandler* owner, const std::string& message)
 {
     CHECK_PTR_RET(owner);
@@ -208,6 +201,22 @@ static std::vector<wxString> kPlaceHolders = {kPlaceHolderEditorSelection,
                                               kPlaceHolderCurrentFileContent,
                                               kPlaceHolderWorkspacePath,
                                               kPlaceHolderTempDir};
+
+void CompletionHandler::RunSuccessCallback()
+{
+    if (!m_successCallback) {
+        return;
+    }
+    EventNotifier::Get()->RunOnMain<void>(m_successCallback);
+}
+
+void CompletionHandler::RunErrorCallback()
+{
+    if (!m_errorCallback) {
+        return;
+    }
+    EventNotifier::Get()->RunOnMain<void>(m_errorCallback);
+}
 
 // ==---------------------
 // Client
@@ -298,7 +307,7 @@ void Manager::WorkerMain()
             continue;
         }
 
-        clDEBUG() << "Handling chat request:" << TruncateText(task.prompt_array[0]) << endl;
+        clDEBUG() << "Handling chat request:" << TruncateText(task.prompt) << endl;
         m_worker_busy.store(true);
         TaskDropper dropper{task};
 
@@ -312,131 +321,115 @@ void Manager::WorkerMain()
         clLLMEvent busy_event{wxEVT_LLM_WORKER_BUSY};
         AddPendingEvent(busy_event);
 
-        SharedState shared_state;
-        shared_state.total_batch_count = task.prompt_array.size();
-        shared_state.current_batch = 1;
-
-        bool abort_loop{false};
         auto cancellation_token = task.cancellation_token;
-        for (std::string prompt : task.prompt_array) {
-            if (abort_loop) {
-                break;
-            }
+        auto completion_handler = task.completion_handler;
 
-            try {
-                clDEBUG() << "Client (URL:" << client->GetUrl() << ", Model:" << client->GetModel()
-                          << ") is processing the request" << endl;
-                client->Chat(
-                    std::move(prompt),
-                    [client, cancellation_token, &abort_loop, &shared_state, &saved_thinking_state, owner](
-                        std::string message, assistant::Reason reason, bool thinking) -> bool {
-                        // Check various options that the chat was cancelled.
-                        if (client->IsInterrupted() || (cancellation_token && cancellation_token->IsCancelled())) {
-                            NotifyRequestCancelled(owner, "\n\n** Request cancelled by the user. **\n\n");
-                            abort_loop = true;
-                            return false;
+        try {
+            clDEBUG() << "Client (URL:" << client->GetUrl() << ", Model:" << client->GetModel()
+                      << ") is processing the request" << endl;
+            std::string prompt = task.prompt;
+            client->Chat(
+                std::move(prompt),
+                [client, cancellation_token, &saved_thinking_state, owner, completion_handler](
+                    std::string message, assistant::Reason reason, bool thinking) -> bool {
+                    // Check various options that the chat was cancelled.
+                    if (client->IsInterrupted() || (cancellation_token && cancellation_token->IsCancelled())) {
+                        NotifyRequestCancelled(owner, "\n\n** Request cancelled by the user. **\n\n");
+                        if (completion_handler) {
+                            completion_handler->RunErrorCallback();
                         }
+                        return false;
+                    }
 
-                        if (saved_thinking_state != thinking) {
-                            // we switched state
-                            if (thinking) {
-                                // the new state is "thinking"
-                                clLLMEvent think_started{wxEVT_LLM_THINK_SATRTED};
-                                owner->AddPendingEvent(think_started);
-                            } else {
-                                clLLMEvent think_ended{wxEVT_LLM_THINK_ENDED};
-                                owner->AddPendingEvent(think_ended);
-                            }
+                    if (saved_thinking_state != thinking) {
+                        // we switched state
+                        if (thinking) {
+                            // the new state is "thinking"
+                            clLLMEvent think_started{wxEVT_LLM_THINK_SATRTED};
+                            owner->AddPendingEvent(think_started);
+                        } else {
+                            clLLMEvent think_ended{wxEVT_LLM_THINK_ENDED};
+                            owner->AddPendingEvent(think_ended);
                         }
+                    }
 
-                        saved_thinking_state = thinking;
-                        switch (reason) {
-                        case assistant::Reason::kToolAllowed: {
-                            clLLMEvent event{wxEVT_LLM_OUTPUT};
-                            event.SetOutputReason(reason);
-                            event.SetResponseRaw(message);
-                            owner->AddPendingEvent(event);
-                        } break;
-                        case assistant::Reason::kMaxTokensReached: {
-                            clLLMEvent event{wxEVT_LLM_MAX_GENERATED_TOKENS};
-                            event.SetOutputReason(reason);
-                            event.SetResponseRaw(message);
-                            owner->AddPendingEvent(event);
-                            abort_loop = true;
-                        } break;
-                        case assistant::Reason::kToolDenied: {
-                            clLLMEvent event{wxEVT_LLM_OUTPUT};
-                            event.SetOutputReason(reason);
-                            event.SetResponseRaw(message);
-                            owner->AddPendingEvent(event);
-                        } break;
-                        case assistant::Reason::kFatalError: {
-                            clERROR() << "LLM response ended with an error:" << wxString::FromUTF8(message) << endl;
-                            NotifyDoneWithError(owner, message);
-                            abort_loop = true;
-                            return false;
-                        } break;
-                        case assistant::Reason::kDone: {
-                            if (cancellation_token && !cancellation_token->Incr()) {
-                                NotifyDoneWithError(owner, "\n\n** Maximum number of tokens reached. **\n\n");
-                                abort_loop = true;
-                                return false;
-                            }
-                            if (shared_state.current_batch == shared_state.total_batch_count) {
-                                // No more batches to process, fire the DONE event.
-                                clLLMEvent event{wxEVT_LLM_OUTPUT_DONE};
-                                event.SetOutputReason(reason);
-                                event.SetResponseRaw(message);
-                                owner->AddPendingEvent(event);
-                            } else {
-                                // We have more batches to process, treat this as a
-                                // normal "output" event.
-                                shared_state.current_batch++;
-                                clLLMEvent event{wxEVT_LLM_OUTPUT};
-                                event.SetOutputReason(reason);
-                                event.SetResponseRaw(message);
-                                owner->AddPendingEvent(event);
-                            }
-                        } break;
-                        case assistant::Reason::kLogNotice:
-                            clDEBUG1() << message << endl;
-                            break;
-                        case assistant::Reason::kCancelled: {
-                            NotifyRequestCancelled(owner, "\n\n** Request cancelled by caller. **\n\n");
-                            abort_loop = true;
-                            return false;
-                        } break;
-                        case assistant::Reason::kLogDebug:
-                            clDEBUG() << message << endl;
-                            break;
-                        case assistant::Reason::kRequestCost:
-                            clDEBUG() << message << endl;
-                            break;
-                        case assistant::Reason::kPartialResult: {
-                            clLLMEvent event{wxEVT_LLM_OUTPUT};
-                            event.SetOutputReason(reason);
-                            event.SetResponseRaw(message);
-                            owner->AddPendingEvent(event);
-                            if (cancellation_token && !cancellation_token->Incr()) {
-                                NotifyDoneWithError(owner, "\n\n** Maximum number of tokens reached. **\n\n");
-                                abort_loop = true;
-                                return false;
-                            }
-                        } break;
+                    saved_thinking_state = thinking;
+                    switch (reason) {
+                    case assistant::Reason::kToolAllowed: {
+                        clLLMEvent event{wxEVT_LLM_OUTPUT};
+                        event.SetOutputReason(reason);
+                        event.SetResponseRaw(message);
+                        owner->AddPendingEvent(event);
+                    } break;
+                    case assistant::Reason::kToolDenied: {
+                        clLLMEvent event{wxEVT_LLM_OUTPUT};
+                        event.SetOutputReason(reason);
+                        event.SetResponseRaw(message);
+                        owner->AddPendingEvent(event);
+                    } break;
+                    case assistant::Reason::kMaxTokensReached: {
+                        clLLMEvent event{wxEVT_LLM_MAX_GENERATED_TOKENS};
+                        event.SetOutputReason(reason);
+                        event.SetResponseRaw(message);
+                        owner->AddPendingEvent(event);
+                        if (completion_handler) {
+                            completion_handler->RunErrorCallback();
                         }
-                        // continue
-                        return true;
-                    },
-                    task.options);
-            } catch (std::exception& e) {
-                clERROR() << "LLM worker that got an exception." << e.what() << endl;
-                wxString errmsg;
-                errmsg << "\n\n** Request ended with an error. " << e.what() << " **\n\n";
-                NotifyDoneWithError(owner, errmsg.ToStdString(wxConvUTF8));
-                cont = false;
-                break;
-            }
-        } // Prompt loop
+                        return false;
+                    } break;
+                    case assistant::Reason::kFatalError: {
+                        clERROR() << "LLM response ended with an error:" << wxString::FromUTF8(message) << endl;
+                        NotifyDoneWithError(owner, message);
+                        if (completion_handler) {
+                            completion_handler->RunErrorCallback();
+                        }
+                        return false;
+                    } break;
+                    case assistant::Reason::kDone: {
+                        // No more batches to process, fire the DONE event.
+                        clLLMEvent event{wxEVT_LLM_OUTPUT_DONE};
+                        event.SetOutputReason(reason);
+                        event.SetResponseRaw(message);
+                        owner->AddPendingEvent(event);
+                        if (completion_handler) {
+                            completion_handler->RunSuccessCallback();
+                        }
+                    } break;
+                    case assistant::Reason::kLogNotice:
+                        clDEBUG1() << message << endl;
+                        break;
+                    case assistant::Reason::kCancelled: {
+                        NotifyRequestCancelled(owner, "\n\n** Request cancelled by caller. **\n\n");
+                        if (completion_handler) {
+                            completion_handler->RunErrorCallback();
+                        }
+                        return false;
+                    } break;
+                    case assistant::Reason::kLogDebug:
+                        clDEBUG() << message << endl;
+                        break;
+                    case assistant::Reason::kRequestCost:
+                        clDEBUG() << message << endl;
+                        break;
+                    case assistant::Reason::kPartialResult: {
+                        clLLMEvent event{wxEVT_LLM_OUTPUT};
+                        event.SetOutputReason(reason);
+                        event.SetResponseRaw(message);
+                        owner->AddPendingEvent(event);
+                    } break;
+                    }
+                    // continue
+                    return true;
+                },
+                task.options);
+        } catch (std::exception& e) {
+            clERROR() << "LLM worker that got an exception." << e.what() << endl;
+            wxString errmsg;
+            errmsg << "\n\n** Request ended with an error. " << e.what() << " **\n\n";
+            NotifyDoneWithError(owner, errmsg.ToStdString(wxConvUTF8));
+            cont = false;
+            break;
+        }
 
         clLLMEvent idle_event{wxEVT_LLM_WORKER_IDLE};
         AddPendingEvent(idle_event);
@@ -584,62 +577,43 @@ void Manager::ReplacePlaceHolders(ThreadTask& task)
         [](wxString& prompt) { prompt.Replace(kPlaceHolderTempDir, clStandardPaths::Get().GetTempDir()); }};
 
     // Apply the manipulators on the prompt
-    for (auto& p : task.prompt_array) {
-        wxString prompt = wxString::FromUTF8(p);
-        for (auto& manipulator : kManipulators) {
-            manipulator(prompt);
-            p = prompt.ToStdString(wxConvUTF8);
-        }
+    auto& p = task.prompt;
+    wxString prompt = wxString::FromUTF8(p);
+    for (auto& manipulator : kManipulators) {
+        manipulator(prompt);
     }
-}
-
-void Manager::Chat(wxEvtHandler* owner,
-                   const wxArrayString& prompts,
-                   std::shared_ptr<CancellationToken> cancel_token,
-                   ChatOptions options)
-{
-    // Post 1 job with multiple prompts.
-    ThreadTask task{.options = options, .owner = owner, .cancellation_token = cancel_token};
-    for (const auto& prompt : prompts) {
-        task.prompt_array.push_back(prompt.ToStdString(wxConvUTF8));
-    }
-    PostTask(std::move(task));
-}
-
-void Manager::Chat(ResponseCollector* collector,
-                   const wxArrayString& prompts,
-                   std::shared_ptr<CancellationToken> cancel_token,
-                   ChatOptions options)
-{
-    // Post 1 job with multiple prompts.
-    ThreadTask task{.options = options, .cancellation_token = cancel_token, .collector = collector};
-    for (const auto& prompt : prompts) {
-        task.prompt_array.push_back(prompt.ToStdString(wxConvUTF8));
-    }
-    PostTask(std::move(task));
+    p = prompt.ToStdString(wxConvUTF8);
 }
 
 void Manager::Chat(wxEvtHandler* owner,
                    const wxString& prompt,
                    std::shared_ptr<CancellationToken> cancel_token,
-                   ChatOptions options)
+                   ChatOptions options,
+                   std::shared_ptr<CompletionHandler> completion_handler)
 {
-    ThreadTask task{.prompt_array = {prompt.ToStdString(wxConvUTF8)},
-                    .options = options,
-                    .owner = owner,
-                    .cancellation_token = cancel_token};
+    ThreadTask task{
+        .prompt = prompt.ToStdString(wxConvUTF8),
+        .options = options,
+        .owner = owner,
+        .cancellation_token = cancel_token,
+        .completion_handler = completion_handler,
+    };
     PostTask(std::move(task));
 }
 
 void Manager::Chat(ResponseCollector* collector,
                    const wxString& prompt,
                    std::shared_ptr<CancellationToken> cancel_token,
-                   ChatOptions options)
+                   ChatOptions options,
+                   std::shared_ptr<CompletionHandler> completion_handler)
 {
-    ThreadTask task{.prompt_array = {prompt.ToStdString(wxConvUTF8)},
-                    .options = options,
-                    .cancellation_token = cancel_token,
-                    .collector = collector};
+    ThreadTask task{
+        .prompt = prompt.ToStdString(wxConvUTF8),
+        .options = options,
+        .cancellation_token = cancel_token,
+        .collector = collector,
+        .completion_handler = completion_handler,
+    };
     PostTask(std::move(task));
 }
 

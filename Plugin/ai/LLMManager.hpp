@@ -134,14 +134,27 @@ struct WXDLLIMPEXP_SDK SSEMcp {
     std::map<std::string, std::string> headers;
 };
 
+struct WXDLLIMPEXP_SDK CompletionHandler {
+public:
+    CompletionHandler() = default;
+    ~CompletionHandler() = default;
+
+    void RunSuccessCallback();
+    void RunErrorCallback();
+
+private:
+    std::function<void()> m_successCallback{nullptr};
+    std::function<void()> m_errorCallback{nullptr};
+};
+
 struct WXDLLIMPEXP_SDK ThreadTask {
-    std::vector<std::string> prompt_array;
+    std::string prompt;
     ChatOptions options{assistant::ChatOptions::kDefault};
     wxEvtHandler* owner{nullptr};
     std::shared_ptr<CancellationToken> cancellation_token;
     /// An optional collector object, if provided it wil be deleted by this class
     ResponseCollector* collector{nullptr};
-
+    std::shared_ptr<CompletionHandler> completion_handler{nullptr};
     inline wxEvtHandler* GetEventSink() { return collector ? collector : owner; }
 };
 
@@ -213,7 +226,8 @@ public:
     void Chat(wxEvtHandler* owner,
               const wxString& prompt,
               std::shared_ptr<CancellationToken> cancel_token,
-              ChatOptions options);
+              ChatOptions options,
+              std::shared_ptr<CompletionHandler> completion_handler = nullptr);
 
     /**
      * @brief Sends a single prompt to the LLM while events are collected by a
@@ -229,37 +243,8 @@ public:
     void Chat(ResponseCollector* collector,
               const wxString& prompt,
               std::shared_ptr<CancellationToken> cancel_token,
-              ChatOptions options);
-
-    /**
-     * @brief Sends multiple prompts to the LLM.  Each prompt in the array is processed
-     * sequentially (or concurrently depending on the LLM implementation) and
-     * responses are reported via the {@link wxEvtHandler} supplied in {@code owner}.
-     *
-     * @param owner         the event handler that will receive the result events
-     * @param prompts       collection of prompts to send
-     * @param cancel_token  token that can be signaled to cancel the request
-     * @param options       additional options controlling the chat behaviour
-     */
-    void Chat(wxEvtHandler* owner,
-              const wxArrayString& prompts,
-              std::shared_ptr<CancellationToken> cancel_token,
-              ChatOptions options);
-
-    /**
-     * @brief Sends multiple prompts to the LLM while events are collected by a
-     * {@link ResponseCollector}.  This is analogous to the {@link #Chat(wxEvtHandler*, const wxArrayString&,
-     * std::shared_ptr<CancellationToken>, ChatOptions)} overload.
-     *
-     * @param collector     collector object that will receive the response events
-     * @param prompts       collection of prompts to send
-     * @param cancel_token  token that can be signaled to cancel the request
-     * @param options       additional options controlling the chat behaviour
-     */
-    void Chat(ResponseCollector* collector,
-              const wxArrayString& prompts,
-              std::shared_ptr<CancellationToken> cancel_token,
-              ChatOptions options);
+              ChatOptions options,
+              std::shared_ptr<CompletionHandler> completion_handler = nullptr);
 
     void ShowChatWindow(const wxString& prompt = wxEmptyString);
 

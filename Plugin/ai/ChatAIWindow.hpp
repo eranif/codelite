@@ -5,6 +5,7 @@
 #include "ai/Common.hpp"
 #include "ai/ProgressToken.hpp"
 #include "clEditorEditEventsHandler.h"
+#include "clResult.hpp"
 #include "clWorkspaceEvent.hpp"
 #include "cl_command_event.h"
 #include "codelite_exports.h"
@@ -141,13 +142,7 @@ protected:
     void RestoreUI();
     void ScanForAgents();
     void LoadSummaryContent();
-    enum class CreateResult {
-        kAlreadyExists,
-        kCreateOk,
-        kUserDeclined,
-        kNoWorkspace,
-    };
-    CreateResult CreateSummaryFolder();
+    clStatusOr<wxString> CreateSummaryFolder();
 
     /// LLM events
     void OnLLMConfigUpdate(clLLMEvent& event);

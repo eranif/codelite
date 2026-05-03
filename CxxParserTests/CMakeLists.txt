@@ -23,8 +23,15 @@ if(UNIX AND NOT APPLE)
         BUILD_WITH_INSTALL_RPATH FALSE)
 endif(UNIX AND NOT APPLE)
 
-# Remove the "lib" prefix from the plugin name
 target_link_libraries(CxxLocalVariables ${LINKER_OPTIONS} libcodelite plugin wxsqlite3 doctest)
+if(MINGW)
+  # Copy dlls near the executable
+  add_custom_command(TARGET CxxLocalVariables
+    POST_BUILD
+    COMMAND cmake -E copy_if_different $<TARGET_RUNTIME_DLLS:CxxLocalVariables> $<TARGET_FILE_DIR:CxxLocalVariables>
+    COMMAND_EXPAND_LISTS)
+endif(MINGW)
+
 add_compile_definitions(CXX_TEST_DIR=\"${CL_SRC_ROOT}/CxxParserTests/Test/\")
 cl_install_executable(CxxLocalVariables)
 

@@ -8,6 +8,14 @@ add_executable(CodeliteTest ${UNIT_TESTS_SRC})
 
 target_link_libraries(CodeliteTest ${LINKER_OPTIONS} doctest libcodelite plugin)
 
+if(MINGW)
+  # Copy dlls near the executable
+  add_custom_command(TARGET CodeliteTest
+    POST_BUILD
+    COMMAND cmake -E copy_if_different $<TARGET_RUNTIME_DLLS:CodeliteTest> $<TARGET_FILE_DIR:CodeliteTest>
+    COMMAND_EXPAND_LISTS)
+endif(MINGW)
+
 if(UNIX AND NOT APPLE)
   set_target_properties(CodeliteTest PROPERTIES SKIP_BUILD_RPATH FALSE
                                                 BUILD_WITH_INSTALL_RPATH FALSE)

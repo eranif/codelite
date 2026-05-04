@@ -23,6 +23,7 @@
 #include "wxCustomControls.hpp"
 
 #include <algorithm>
+#include <wx/dir.h>
 #include <wx/filedlg.h>
 #include <wx/msgdlg.h>
 
@@ -38,6 +39,43 @@ enum StatusBarIndex {
     kLast,
 };
 
+/**
+ * @brief Adds the contents of multiple files to the LLM context as system messages.
+ *
+ * This function reads each file specified in the paths array and, if successful,
+ * adds the file content as a system message via the LLM manager. A busy cursor
+ * is displayed during the operation and a status message is shown upon completion.
+ *
+ * @param paths A wxArrayString containing the file paths to read and add to the context.
+ *
+ * @return None.
+ *
+ * @note If a file cannot be read, it is silently skipped and processing continues
+ * with the remaining files.
+ */
+void AddFilesToContext(const wxArrayString& paths)
+{
+    // Read the local files content
+    std::thread thr(
+        [](const wxArrayString& paths) {
+            size_t count{0};
+            for (const auto& path : paths) {
+                wxString data;
+                if (FileUtils::ReadFileContent(path, data)) {
+                    llm::Manager::GetInstance().AddSystemMessage(data);
+                }
+                ++count;
+            }
+
+            if (count == 0) {
+                return;
+            }
+            llm::Manager::GetInstance().PrintMessage(
+                wxString() << _("Successfully added ") << count << _(" files to the context"), IconType::kSuccess);
+        },
+        paths);
+    thr.detach();
+}
 } // namespace
 
 ChatAIWindow::ChatAIWindow(wxWindow* parent)
@@ -955,25 +993,14 @@ void ChatAIWindow::DoCommandContext()
 
     wxArrayString paths;
     openFileDialog.GetPaths(paths);
-
-    // Read the local files content
-    wxBusyCursor bc{};
-    size_t count{0};
-    for (const auto& path : paths) {
-        wxString data;
-        if (FileUtils::ReadFileContent(path, data)) {
-            llm::Manager::GetInstance().AddSystemMessage(data);
-        }
-        ++count;
-    }
-
-    clGetManager()->SetStatusMessage(wxString() << _("Added ") << count << _(" files to the context"));
+    AddFilesToContext(paths);
 }
 
 void ChatAIWindow::LoadSummaryContent()
 {
     auto result = CreateSummaryFolder();
     if (!result.ok()) {
+        clWARNING() << result.message();
         return;
     }
 }
@@ -986,7 +1013,7 @@ void ChatAIWindow::ScanForAgents()
     LoadSummaryContent();
 }
 
-clStatusOr<wxString> ChatAIWindow::CreateSummaryFolder()
+clStatus ChatAIWindow::CreateSummaryFolder()
 {
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     if (!workspace) {
@@ -1005,11 +1032,11 @@ clStatusOr<wxString> ChatAIWindow::CreateSummaryFolder()
     }
 
     if (summary_dir_exists) {
-        return summary_folder;
+        return StatusOk();
     }
 
     wxStandardID answer = ::PromptForYesNoDialogWithCheckbox(
-        _("Would you like to create a codebase summary for AI?"), "codebase-summary");
+        _("Would you like to generate a codebase summary optimized for AI assistance?"), "codebase-summary");
     if (answer != wxStandardID::wxID_YES) {
         return StatusOther("User declined");
     }
@@ -1024,8 +1051,24 @@ clStatusOr<wxString> ChatAIWindow::CreateSummaryFolder()
         return StatusIOError("Could not read codebase summary SOP. A broken installation?");
     }
 
-    // User chose to create a summary folder.
-    llm::Manager::GetInstance().ShowChatWindow();
-    llm::Manager::GetInstance().Chat(this, content, nullptr, assistant::ChatOptions::kNoHistory);
-    return summary_folder;
+    auto completion_handler = std::make_shared<llm::CompletionHandler>();
+    completion_handler->SetSuccessCallback([summary_folder]() {
+        wxString msg;
+        msg << _("Successfully created codebase summary folder: ") << summary_folder
+            << _("\n\nYou can now load it into the AI context window by:\n")
+            << _("1. Typing /context in the AI chat box\n") << _("2. Selecting the generated markdown files.");
+
+        ::clMessageBox(msg);
+    });
+
+    llm::Manager::GetInstance().RunSOP(this,
+                                       content,
+                                       {
+                                           {"codebase_path", workspace->GetDir()},
+                                           {"output_dir", wxString() << workspace->GetDir() << "/.agents/summary"},
+                                       },
+                                       nullptr,
+                                       assistant::ChatOptions::kDefault,
+                                       completion_handler);
+    return StatusOk();
 }

@@ -21,11 +21,11 @@ High:
 
 - GDB: use the new terminal to launch and avoid opening custom terminals for this purpose.
 - Integrate https://github.com/strands-agents/agent-sop into the ChatAI.
+- BUG: Filter duplicate entries in the "Persist" tools dialog.
 
 Medium:
 -----
 
-- Support auto reading `AGENTS.md` file and convert it into System-Messages.
 - Implement `code_symbols` tool for AI.
 - AI: Extend all the tools with a "Purpose" mandatory field, so each model will be forced to report the reason for the invocation.
 - AI: Add a system-message that instruct the model to NEVER create a summary file

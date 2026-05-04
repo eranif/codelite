@@ -324,20 +324,19 @@ void Manager::WorkerMain()
         auto cancellation_token = task.cancellation_token;
         auto completion_handler = task.completion_handler;
 
+        bool exit_with_success{true};
         try {
             clDEBUG() << "Client (URL:" << client->GetUrl() << ", Model:" << client->GetModel()
                       << ") is processing the request" << endl;
             std::string prompt = task.prompt;
             client->Chat(
                 std::move(prompt),
-                [client, cancellation_token, &saved_thinking_state, owner, completion_handler](
+                [client, cancellation_token, &saved_thinking_state, owner, &exit_with_success](
                     std::string message, assistant::Reason reason, bool thinking) -> bool {
                     // Check various options that the chat was cancelled.
                     if (client->IsInterrupted() || (cancellation_token && cancellation_token->IsCancelled())) {
                         NotifyRequestCancelled(owner, "\n\n** Request cancelled by the user. **\n\n");
-                        if (completion_handler) {
-                            completion_handler->RunErrorCallback();
-                        }
+                        exit_with_success = false;
                         return false;
                     }
 
@@ -372,17 +371,13 @@ void Manager::WorkerMain()
                         event.SetOutputReason(reason);
                         event.SetResponseRaw(message);
                         owner->AddPendingEvent(event);
-                        if (completion_handler) {
-                            completion_handler->RunErrorCallback();
-                        }
+                        exit_with_success = false;
                         return false;
                     } break;
                     case assistant::Reason::kFatalError: {
                         clERROR() << "LLM response ended with an error:" << wxString::FromUTF8(message) << endl;
                         NotifyDoneWithError(owner, message);
-                        if (completion_handler) {
-                            completion_handler->RunErrorCallback();
-                        }
+                        exit_with_success = false;
                         return false;
                     } break;
                     case assistant::Reason::kDone: {
@@ -391,18 +386,14 @@ void Manager::WorkerMain()
                         event.SetOutputReason(reason);
                         event.SetResponseRaw(message);
                         owner->AddPendingEvent(event);
-                        if (completion_handler) {
-                            completion_handler->RunSuccessCallback();
-                        }
+                        exit_with_success = true;
                     } break;
                     case assistant::Reason::kLogNotice:
                         clDEBUG1() << message << endl;
                         break;
                     case assistant::Reason::kCancelled: {
                         NotifyRequestCancelled(owner, "\n\n** Request cancelled by caller. **\n\n");
-                        if (completion_handler) {
-                            completion_handler->RunErrorCallback();
-                        }
+                        exit_with_success = false;
                         return false;
                     } break;
                     case assistant::Reason::kLogDebug:
@@ -431,6 +422,10 @@ void Manager::WorkerMain()
             break;
         }
 
+        if (task.completion_handler) {
+            exit_with_success ? task.completion_handler->RunSuccessCallback()
+                              : task.completion_handler->RunErrorCallback();
+        }
         clLLMEvent idle_event{wxEVT_LLM_WORKER_IDLE};
         AddPendingEvent(idle_event);
 
@@ -593,6 +588,33 @@ void Manager::Chat(wxEvtHandler* owner,
 {
     ThreadTask task{
         .prompt = prompt.ToStdString(wxConvUTF8),
+        .options = options,
+        .owner = owner,
+        .cancellation_token = cancel_token,
+        .completion_handler = completion_handler,
+    };
+    PostTask(std::move(task));
+}
+
+void Manager::RunSOP(wxEvtHandler* owner,
+                     const wxString& prompt,
+                     const std::vector<std::pair<wxString, wxString>>& params,
+                     std::shared_ptr<CancellationToken> cancel_token,
+                     ChatOptions options,
+                     std::shared_ptr<CompletionHandler> completion_handler)
+{
+    wxString fixed_prompt;
+    fixed_prompt << "Execute the below SOP. Use the following as the input parameters:\n";
+    for (const auto& [name, value] : params) {
+        fixed_prompt << "- " << name << " = " << value << "\n";
+    }
+    fixed_prompt
+        << "If any input parameter is missing, use the default value for that parameter as described by the SOP.\n\n";
+    fixed_prompt << "The SOP:\n";
+    fixed_prompt << prompt;
+
+    ThreadTask task{
+        .prompt = fixed_prompt.ToStdString(wxConvUTF8),
         .options = options,
         .owner = owner,
         .cancellation_token = cancel_token,

@@ -142,6 +142,9 @@ public:
     void RunSuccessCallback();
     void RunErrorCallback();
 
+    void SetSuccessCallback(std::function<void()> cb) { m_successCallback = std::move(cb); }
+    void SetErrorCallback(std::function<void()> cb) { m_errorCallback = std::move(cb); }
+
 private:
     std::function<void()> m_successCallback{nullptr};
     std::function<void()> m_errorCallback{nullptr};
@@ -228,6 +231,13 @@ public:
               std::shared_ptr<CancellationToken> cancel_token,
               ChatOptions options,
               std::shared_ptr<CompletionHandler> completion_handler = nullptr);
+
+    void RunSOP(wxEvtHandler* owner,
+                const wxString& prompt,
+                const std::vector<std::pair<wxString, wxString>>& params,
+                std::shared_ptr<CancellationToken> cancel_token,
+                ChatOptions options,
+                std::shared_ptr<CompletionHandler> completion_handler = nullptr);
 
     /**
      * @brief Sends a single prompt to the LLM while events are collected by a

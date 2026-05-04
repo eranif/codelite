@@ -142,7 +142,7 @@ protected:
     void RestoreUI();
     void ScanForAgents();
     void LoadSummaryContent();
-    clStatusOr<wxString> CreateSummaryFolder();
+    clStatus CreateSummaryFolder();
 
     /// LLM events
     void OnLLMConfigUpdate(clLLMEvent& event);

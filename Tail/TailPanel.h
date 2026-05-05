@@ -2,7 +2,7 @@
 #define TAILPANEL_H
 
 #include "TailData.h"
-#include "TailUI.h"
+#include "TailUI.hpp"
 #include "clEditorEditEventsHandler.h"
 #include "clFileSystemEvent.h"
 #include "clFileSystemWatcher.h"

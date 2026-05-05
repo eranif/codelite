@@ -42,15 +42,10 @@ namespace
 {
 constexpr float kConfigVersion = 1.0;
 constexpr const char* kConfigVersionProperty = "_version";
-static const std::string kSystemMessageRetryProtocol = R"#(**ERROR HANDLING PROTOCOL**
-
-When encountering errors:
-
-1. **First error:** Analyze, attempt one fix, retry once
-2. **Second error (same type):** Try one alternative approach if available
-3. **Third error:** **STOP**. Report the issue. Ask user for guidance.**
-Apply to: permission denied, tool failures, file errors, invalid parameters, command failures.
-**Never** loop indefinitely on repeated failures. Three attempts maximum before escalating to user.)#";
+static const std::string kSystemMessageAgenticLoop = R"#(You are operating in an autonomous agentic loop. "
+    "After every tool result, you MUST continue working toward the original goal. "
+    "Do NOT stop and respond to the user until the entire task is fully complete. "
+    "If you have more steps to perform, call the next tool immediately.")#";
 
 /**
  * @brief RAII guard that restores an atomic boolean to a specified value upon destruction.
@@ -774,7 +769,7 @@ void Manager::Start(std::shared_ptr<assistant::ClientBase> client)
     m_client->SetCachingPolicy(GetConfig().GetCachePolicy());
     m_client->SetToolInvokeCallback(&Manager::CanRunTool);
     m_client->ClearSystemMessages();
-    m_client->AddSystemMessage(kSystemMessageRetryProtocol);
+    m_client->AddSystemMessage(kSystemMessageAgenticLoop);
 
     // Start the worker thread
     m_worker_thread = std::make_unique<std::thread>([this]() { WorkerMain(); });
@@ -850,7 +845,7 @@ void Manager::ClearSystemMessages()
 {
     CHECK_PTR_RET(m_client);
     m_client->ClearSystemMessages();
-    m_client->AddSystemMessage(kSystemMessageRetryProtocol);
+    m_client->AddSystemMessage(kSystemMessageAgenticLoop);
 }
 
 void Manager::AddSystemMessage(const wxString& msg)

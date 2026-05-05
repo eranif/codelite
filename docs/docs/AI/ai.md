@@ -66,64 +66,164 @@ or to instruct the model to perform tasks.
 
 ---
 
+## Slash Commands
+
+Typing `/` in the chat input box opens an auto-complete popup listing all available commands.
+Select a command with the arrow keys and press ++enter++, or continue typing to filter the list.
+The `/` character and any partial text you typed are automatically removed once a command is selected —
+the command executes immediately without sending anything to the model.
+
+| Command | What it does |
+|---------|-------------|
+| `/clear` | Clears the chat output view and resets the full conversation history (including system messages). The model starts fresh on the next prompt. |
+| `/context` | Opens a file picker to load one or more files into the model's system context. On a remote workspace the remote file browser is shown instead. Supported file types include Markdown and any plain-text file. |
+| `/save` | Prompts you for a name and saves the current conversation to CodeLite's session store, where it can be reloaded later via **AI → Load Session**. |
+
+### `/clear`
+
+Wipes the chat output window and calls `ClearHistory()` + `ClearSystemMessages()` on the active session.
+Use this when you want to start a completely new conversation without any memory of the previous exchange.
+
+> **Note:** `/clear` is permanent — there is no undo. Save the session first with `/save` if you want to keep it.
+
+### `/context`
+
+Lets you inject additional files directly into the model's system prompt so it has background knowledge before
+you ask your first question. Typical use cases:
+
+- Load a project's `README.md` or architecture document so the model understands the codebase.
+- Feed in a coding-standards file to influence generated code style.
+- Supply a reference API document for a library you are working with.
+
+On a **remote workspace** (Remoty plugin) the remote SFTP file browser is shown so you can pick files
+directly from the SSH host without downloading them first.
+
+### `/save`
+
+Saves the current conversation under a name you choose. Saved sessions are stored per-endpoint and can be
+reloaded at any time from the **AI → Load Session** menu entry (or the toolbar button).
+This is useful for bookmarking a long debugging session or preserving a generated design document.
+
+---
+
 ## Built-in Model Tools
 
 CodeLite exposes the following built-in tools for the model:
 
 ### File & Workspace Management
-- **CreateNewFile** - Create a new file at the specified path with optional content
-    - `filepath` (string): The path where the new file should be created
-    - `file_content` (string): The initial content to write to the file
 
-- **CreateWorkspace** - Create a new workspace at the given path with the provided name
-    - `path` (string): The directory path where the workspace should be created
-    - `name` (string): The name of the workspace to create
-    - `host` (string): The SSH host for creating a remote workspace
+| Tool | Description | Requires Approval |
+|------|-------------|:-----------------:|
+| `CreateNewFile` | Create a new file at the specified path with optional content | ✅ |
+| `CreateWorkspace` | Create a new local or remote (SSH/SFTP) workspace | — |
+| `ReadFileContent` | Read a block of lines from a file (local or remote) | ✅ |
+| `ReadFileMetadata` | Read metadata (full path, size, line count) of a file | ✅ |
+| `OpenFileInEditor` | Open a file in the CodeLite editor | — |
+| `GetActiveEditorFilePath` | Return the file path of the currently active editor tab | — |
+| `GetActiveEditorText` | Return a range of lines from the active editor tab | — |
+| `ApplyPatch` | Apply a git-style unified diff patch to a file | ✅ |
+| `FindInFiles` | Search for a pattern across files using `grep` | — |
+| `ShellExecute` | Execute a shell command and return its output | ✅ |
+| `ReadCompilerOutput` | Fetch the build log from the most recent build | — |
+| `GetWorkingDirectory` | Return the current workspace directory (or process CWD) | — |
+| `GetOS` | Return the active operating system (`Windows`, `macOS`, `Linux`) | — |
 
-- **ReadFileContent** - Read the content of a file from the disk
-    - `filepath` (string): The path of the file to read
-    - `from_line` (number, optional): Starting line number (1-based) to read from
-    - `line_count` (number, optional): Number of lines to read
+> **Requires Approval** — Tools marked ✅ will pause and ask for your confirmation before they run.
+> You can permanently trust a tool or a specific path/command to skip future prompts.
 
-- **OpenFileInEditor** - Try to open a file and load it into the editor for editing or viewing
-    - `filepath` (string): The path of the file to open inside the editor
+---
 
-- **GetActiveEditorFilePath** - Retrieves the file path of the currently active editor
-    - (no parameters)
+### Tool Reference
 
-- **GetActiveEditorText** - Return the text of the active tab inside the editor
-    - `from_line` (number, optional): Optional starting line (1-based)
-    - `count` (number, optional): Number of lines to read
+#### `CreateNewFile`
+Creates a new file on disk. If the file already exists the tool returns an error rather than overwriting it.
 
-### Git Operations
-- **ApplyPatch** - Apply a git style diff patch to a file
-    - `patch_content` (string): The git style diff patch content to apply
-    - `file_path` (string): The path to the file that should be patched
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `filepath` | string | ✅ | Path where the new file should be created |
+| `file_content` | string | — | Initial content to write to the file (empty file created if omitted) |
 
-- **GetLogInRangeCommit** - Return git history of commits between a range of commits
-    - `start_commit` (string): The first commit in the range
-    - `end_commit` (string): The second commit in the range
+#### `CreateWorkspace`
+Creates a new CodeLite workspace. Pass a `host` to create a remote workspace over SSH/SFTP (requires the **Remoty** plugin).
 
-### Search & Exploration
-- **FindInFiles** - Search for a given pattern within files in a directory (using `grep`)
-    - `root_folder` (string): The root directory where the search begins
-    - `find_what` (string): The text pattern to search for
-    - `file_pattern` (string): The file pattern to match
-    - `case_sensitive` (boolean, optional): When enabled, performs case-sensitive matching
-    - `whole_word` (boolean, optional): When enabled, matches only complete words
-    - `is_regex` (boolean, optional): When enabled, treats find_what as a regular expression pattern
-    - `context_lines_before` (number, optional): Number of lines to display before each match
-    - `context_lines_after` (number, optional): Number of lines to display after each match
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `path` | string | ✅ | Directory path where the workspace should be created |
+| `name` | string | — | Workspace name (defaults to the directory name) |
+| `host` | string | — | SSH host for a remote workspace |
 
-### System & Execution
-- **GetOS** - Return the current active OS
-    - (no parameters)
+#### `ReadFileContent`
+Reads up to 200 lines from a file. Works with both local and remote (SFTP) files.
 
-- **ShellExecute** - Execute a shell command and return its output
-    - `command` (string): The shell command to execute
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `filepath` | string | ✅ | Path of the file to read |
+| `from_line` | number | ✅ | Starting line number (1-based) |
+| `line_count` | number | ✅ | Number of lines to read (1–200) |
 
-- **ReadCompilerOutput** - Read and fetches the compiler build log output of the most recent build command executed by the user
-    - (no parameters)
+#### `ReadFileMetadata`
+Returns a JSON object with the file's full path, size in bytes, and total line count. Works with local and remote files.
+
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `filepath` | string | ✅ | Path of the file to inspect |
+
+#### `OpenFileInEditor`
+Opens a file in the CodeLite editor. If a workspace is open, the file is resolved relative to the workspace root.
+
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `filepath` | string | ✅ | Path of the file to open |
+
+#### `GetActiveEditorFilePath`
+Returns the full path of the file currently open in the active editor tab. No parameters.
+
+#### `GetActiveEditorText`
+Returns a range of lines from the active editor tab without touching the disk.
+
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `from_line` | number | — | Starting line (1-based). Defaults to `1` |
+| `count` | number | — | Number of lines to read (1–200). Defaults to `200` |
+
+#### `ApplyPatch`
+Applies a git-style unified diff patch to a file. The tool uses a fuzzy matcher so minor context drift is tolerated, but for best results always call `ReadFileContent` first to verify the exact current content.
+
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `file_path` | string | ✅ | Path of the file to patch |
+| `patch_content` | string | ✅ | The unified diff patch to apply |
+
+#### `FindInFiles`
+Searches for a text pattern across a directory tree using `grep`. On remote workspaces the search runs on the SSH host.
+
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `root_folder` | string | ✅ | Root directory to search in |
+| `find_what` | string | ✅ | Pattern to search for |
+| `file_pattern` | string | ✅ | Semicolon-separated glob patterns, e.g. `*.cpp;*.h` (plain `*` is not allowed) |
+| `recursive` | boolean | ✅ | Recurse into subdirectories |
+| `whole_word` | boolean | — | Match whole words only. Default: `true` |
+| `case_sensitive` | boolean | — | Case-sensitive matching. Default: `true` |
+| `is_regex` | boolean | — | Treat `find_what` as an extended regular expression. Default: `false` |
+
+#### `ShellExecute`
+Runs an arbitrary shell command and returns its combined stdout/stderr. On remote workspaces the command executes on the SSH host. Always call `GetOS` first so the model can build OS-appropriate commands.
+
+| Parameter | Type | Required | Description |
+|-----------|------|:--------:|-------------|
+| `command` | string | ✅ | Shell command to execute |
+| `working_directory` | string | ✅ | Directory in which to run the command |
+
+#### `ReadCompilerOutput`
+Returns the full build log produced by the most recent build invoked from within CodeLite. No parameters.
+
+#### `GetWorkingDirectory`
+Returns the workspace directory if a workspace is open, otherwise the process current working directory. No parameters.
+
+#### `GetOS`
+Returns the operating system on which CodeLite (or the remote SSH host) is running: `Windows`, `macOS`, or `Linux`.
+No parameters. Always call this before `ShellExecute` to ensure OS-appropriate commands are generated.
 
 ### Quick Example
 

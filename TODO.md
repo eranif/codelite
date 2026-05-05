@@ -20,8 +20,7 @@ High:
 -----
 
 - GDB: use the new terminal to launch and avoid opening custom terminals for this purpose.
-- Integrate https://github.com/strands-agents/agent-sop into the ChatAI.
-- BUG: Filter duplicate entries in the "Persist" tools dialog.
+- Add new /sop command.
 
 Medium:
 -----

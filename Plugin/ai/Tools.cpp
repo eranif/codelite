@@ -59,7 +59,8 @@ FunctionResult CreateNewFile(const assistant::json& args)
             return Err(msg);
         }
 
-        if (!file_content.empty() && !FileManager::WriteContent(filepath, wxString::FromUTF8(file_content), false)) {
+        // Always write to disk (even empty content) so the file physically exists after this call.
+        if (!FileManager::WriteContent(filepath, wxString::FromUTF8(file_content), false)) {
             msg << "Error while writing file: '" << filepath << "' to disk.";
             return Err(msg);
         }
@@ -106,16 +107,7 @@ CanInvokeToolResult ReadFileContentConfirm(const std::string& tool_name, assista
     }
 
     static constexpr const char* kReadFileContent = "ReadFileContent";
-    return ConfirmPathTool(
-        kReadFileContent, _("The model wants to read the file:"), _("Reading file:"), filepath, [&]() {
-            if (line_count > 200) {
-                return CanInvokeToolResult{
-                    .can_invoke = false,
-                    .reason = "The line count must be between 1 and 200, inclusive.",
-                };
-            }
-            return CanInvokeToolResult{.can_invoke = true};
-        });
+    return ConfirmPathTool(kReadFileContent, _("The model wants to read the file:"), _("Reading file:"), filepath);
 }
 
 FunctionResult ReadFileContent(const assistant::json& args)
@@ -199,6 +191,7 @@ FunctionResult ReadFileMetadata(const assistant::json& args)
     auto cb = [=]() -> FunctionResult {
         auto& llm = llm::Manager::GetInstance();
         wxString fullpath = FileManager::GetFullPath(wxString::FromUTF8(filepath));
+
         std::optional<wxString> content = FileManager::ReadContent(fullpath);
         if (!content.has_value()) {
             wxString logmsg;
@@ -267,9 +260,9 @@ FunctionResult GetCurrentEditorText([[maybe_unused]] const assistant::json& args
 {
     VERIFY_WORKER_THREAD();
 
-    // Check for optional parameters
-    ASSIGN_FUNC_ARG_OR_RETURN(int from_line, ::assistant::GetFunctionArg<int>(args, "from_line"));
-    ASSIGN_FUNC_ARG_OR_RETURN(int line_count, ::assistant::GetFunctionArg<int>(args, "count"));
+    // Optional parameters: default to reading the entire editor content (up to 200 lines from line 1).
+    int from_line = ::assistant::GetFunctionArg<int>(args, "from_line").value_or(1);
+    int line_count = ::assistant::GetFunctionArg<int>(args, "count").value_or(200);
 
     auto cb = [=]() -> FunctionResult {
         auto active_editor = clGetManager()->GetActiveEditor();
@@ -407,7 +400,7 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
         return Err("'file_pattern' can not be only '*', it must be more specific. For example '*.cpp;*.h;*.rs'");
     }
 
-    bool recursive = assistant::GetFunctionArg<int>(args, "recursive").value_or(false);
+    bool recursive = assistant::GetFunctionArg<bool>(args, "recursive").value_or(false);
     bool whole_word = assistant::GetFunctionArg<bool>(args, "whole_word").value_or(true);
     bool case_sensitive = assistant::GetFunctionArg<bool>(args, "case_sensitive").value_or(true);
     bool is_regex = assistant::GetFunctionArg<bool>(args, "is_regex").value_or(false);
@@ -507,7 +500,9 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
     }
 #endif
 
-    // Local command execution (only if not remote)
+    // Local command execution. When USE_SFTP is defined and is_remote is true the block above already
+    // returned or populated output_arr, so this branch is intentionally skipped for remote workspaces.
+    // When USE_SFTP is not defined, is_remote is always false and we always reach this branch.
     if (!is_remote) {
         EnvSetter env;
         ProcUtils::SafeExecuteCommand(cmd, output_arr, termination_flag.GetFlag());
@@ -521,9 +516,9 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
         return Ok("No matches found");
     }
 
-    constexpr size_t kMaxGrepReponses = 10;
+    constexpr size_t kMaxGrepResponses = 10;
     wxString report_message = wxString::Format("Found %u matches", output_arr.size());
-    if (output_arr.size() <= kMaxGrepReponses) {
+    if (output_arr.size() <= kMaxGrepResponses) {
         wxString result = StringUtils::Join(output_arr);
         llm::Manager::GetInstance().PrintMessage(report_message, IconType::kSuccess);
         return Ok(result);
@@ -632,7 +627,7 @@ CanInvokeToolResult ToolShellExecuteConfirm(const std::string& tool_name, const 
         return CanInvokeToolResult{.can_invoke = false, .reason = "Internal Error."};
     }
 
-    if (args.size() != 2) {
+    if (args.size() < 2) {
         return CanInvokeToolResult{.can_invoke = false, .reason = "Invalid number of arguments"};
     }
 
@@ -685,16 +680,23 @@ CanInvokeToolResult ToolShellExecuteConfirm(const std::string& tool_name, const 
     return llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message, [command_string]() {
         auto commands_array = StringUtils::SplitShellCommand(command_string);
 
-        // Build a "Trust" options.
+        // Build the "Trust" options.
         std::vector<std::pair<wxString, wxString>> options = {
             {wxString::Format(_("Exact command: %s"), command_string), command_string}};
         if (!commands_array.empty()) {
             wxString command_list = "[";
+
+            std::unordered_set<wxString> unique_commands;
             for (const auto& commands : commands_array) {
                 if (commands.empty())
                     continue;
+
+                if (!unique_commands.insert(commands[0]).second)
+                    continue;
+
                 command_list << commands[0] << " *;";
             }
+
             if (command_list.size() > 1) {
                 command_list.RemoveLast();
             }
@@ -784,7 +786,8 @@ FunctionResult GetOS([[maybe_unused]] const assistant::json& args)
 
     auto is_remote = EventNotifier::Get()->RunOnMain<bool>(std::move(is_remote_workspace_cb));
     if (is_remote) {
-        return Ok("Linux"); // Remote workspace detected, return "Linux"
+        // Remote workspaces are always accessed over SSH, which means the target host runs Linux.
+        return Ok("Linux");
     }
 
     wxString os_name;
@@ -863,12 +866,13 @@ void PopulateBuiltInFunctions(FunctionTable& table)
                   .SetCallback(GetCompilerOutput)
                   .Build());
 
-    table.Add(FunctionBuilder("GetActiveEditorText")
-                  .SetDescription("Return the text of the active tab inside the editor.")
-                  .AddRequiredParam("from_line", "Optional starting line (1-based)", "number")
-                  .AddRequiredParam("count", "Number of lines to read", "number")
-                  .SetCallback(GetCurrentEditorText)
-                  .Build());
+    table.Add(
+        FunctionBuilder("GetActiveEditorText")
+            .SetDescription("Return the text of the active tab inside the editor.")
+            .AddOptionalParam("from_line", "Starting line to read from (1-based). Defaults to 1.", "number")
+            .AddOptionalParam("count", "Number of lines to read. Must be between 1 and 200. Defaults to 200.", "number")
+            .SetCallback(GetCurrentEditorText)
+            .Build());
     table.Add(
         FunctionBuilder("CreateWorkspace")
             .SetDescription(" This function attempts to create a new workspace at the given path with the "

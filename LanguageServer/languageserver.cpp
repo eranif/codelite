@@ -12,6 +12,7 @@
 #include "ai/LLMManager.hpp"
 #include "clEditorBar.h"
 #include "clInfoBar.h"
+#include "clSTCHelper.hpp"
 #include "event_notifier.h"
 #include "file_logger.h"
 #include "globals.h"
@@ -336,41 +337,33 @@ void LanguageServerPlugin::OnLSPShowSettingsDlg(clLanguageServerEvent& event)
 
 wxString LanguageServerPlugin::GetEditorFilePath(IEditor* editor) const { return editor->GetRemotePathOrLocal(); }
 
-void LanguageServerPlugin::LogMessage(const wxString& server_name, const wxString& message, int log_leve)
+void LanguageServerPlugin::LogMessage(const wxString& server_name, const wxString& message, int log_level)
 {
-    auto& builder = m_logView->GetDvListCtrl()->GetBuilder(true);
-
-    int ansi_colour_code = AnsiColours::NormalText();
+    wxString log_message;
     wxString label = "T "; // trace
-    switch (log_leve) {
+    switch (log_level) {
     case 1:
-        ansi_colour_code = AnsiColours::Red(); // error
         label = "E ";
         break;
     case 2:
-        ansi_colour_code = AnsiColours::Yellow(); // warning
         label = "W ";
         break;
     case 3:
-        ansi_colour_code = AnsiColours::Green(); // info
         label = "I ";
     default:
         break;
     }
 
-    builder.Add(label, ansi_colour_code);
-    builder.Add(wxDateTime::Now().FormatISOTime() + " ", AnsiColours::Gray());
-    builder.Add(server_name + " ", AnsiColours::Magenta());
-    builder.Add(message, AnsiColours::NormalText());
-    m_logView->GetDvListCtrl()->AddLine(builder.GetString(), false);
-    m_logView->GetDvListCtrl()->ScrollToBottom();
+    log_message << label << wxDateTime::Now().FormatISOTime() << " " << message;
+    log_message.Trim();
+    auto stc = m_logView->GetStcLog();
+    stc->SetReadOnly(false);
+    stc->AppendText(log_message + "\n");
+    stc->SetReadOnly(true);
+    clSTCHelper::SetCaretAt(stc, stc->GetLastPosition());
 }
 
-void LanguageServerPlugin::OnWorkspaceClosed(clWorkspaceEvent& event)
-{
-    event.Skip();
-    m_logView->GetDvListCtrl()->DeleteAllItems();
-}
+void LanguageServerPlugin::OnWorkspaceClosed(clWorkspaceEvent& event) { event.Skip(); }
 
 void LanguageServerPlugin::OnFixLSPPaths(wxCommandEvent& event)
 {

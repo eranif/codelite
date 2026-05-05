@@ -4,6 +4,7 @@
 #include "UI.hpp"
 #include "ai/Common.hpp"
 #include "ai/ProgressToken.hpp"
+#include "ai/SopParser.hpp"
 #include "clEditorEditEventsHandler.h"
 #include "clResult.hpp"
 #include "clWorkspaceEvent.hpp"
@@ -163,10 +164,12 @@ protected:
     void DoCommandClear();
     void DoCommandContext();
     void DoCommandSave();
+    void DoRunSop();
 
     void ShowIndicator(bool show);
     void UpdateStatusBar();
     void UpdateContextWindowUsage();
+    std::vector<SopInfo> ListSOPs();
 
 private:
     using CommandHandler = std::function<void()>;

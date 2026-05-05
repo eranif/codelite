@@ -4,6 +4,8 @@
 #include "ChatHistoryDialog.hpp"
 #include "ColoursAndFontsManager.h"
 #include "MarkdownStyler.hpp"
+#include "ai/SopParser.hpp"
+#include "wx/dir.h"
 #if USE_SFTP
 #include "SFTPBrowserDlg.h"
 #include "clSFTPManager.hpp"
@@ -143,6 +145,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     m_commandDispatchTable.emplace("/clear", [this]() { CallAfter(&ChatAIWindow::DoCommandClear); });
     m_commandDispatchTable.emplace("/context", [this]() { CallAfter(&ChatAIWindow::DoCommandContext); });
     m_commandDispatchTable.emplace("/save", [this]() { CallAfter(&ChatAIWindow::DoCommandSave); });
+    m_commandDispatchTable.emplace("/run-sop", [this]() { CallAfter(&ChatAIWindow::DoRunSop); });
 
     Bind(wxEVT_MENU, &ChatAIWindow::OnSaveSession, this, wxID_SAVE);
     Bind(wxEVT_MENU, &ChatAIWindow::OnLoadSession, this, wxID_OPEN);
@@ -949,6 +952,14 @@ void ChatAIWindow::DoCommandSave()
     OnSaveSession(dummy);
 }
 
+void ChatAIWindow::DoRunSop()
+{
+    auto sops = ListSOPs();
+    if (sops.empty()) {
+        return;
+    }
+}
+
 void ChatAIWindow::DoCommandContext()
 {
     auto frame = EventNotifier::Get()->TopFrame();
@@ -1071,4 +1082,33 @@ clStatus ChatAIWindow::CreateSummaryFolder()
                                        assistant::ChatOptions::kDefault,
                                        completion_handler);
     return StatusOk();
+}
+
+std::vector<SopInfo> ChatAIWindow::ListSOPs()
+{
+    // Tell the model to run the SOP.
+    wxFileName codebase_summary_sop{clStandardPaths::Get().GetDataDir(), wxEmptyString};
+    codebase_summary_sop.AppendDir("agent-sops");
+
+    wxArrayString files;
+    if (wxDir::GetAllFiles(codebase_summary_sop.GetPath(), &files, "*.md", wxDIR_FILES) == 0) {
+        return {};
+    }
+
+    std::vector<SopInfo> sops;
+    for (const wxString& file : files) {
+        wxString content;
+        if (!FileUtils::ReadFileContent(file, content)) {
+            clWARNING() << "Failed to read SOP file:" << file << endl;
+            continue;
+        }
+        auto sop_info = SopInfo::Parse(content);
+        if (!sop_info) {
+            clWARNING() << "Failed to parse SOP file:" << file << endl;
+            continue;
+        }
+
+        sops.push_back(*sop_info);
+    }
+    return sops;
 }

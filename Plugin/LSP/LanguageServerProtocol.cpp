@@ -641,7 +641,7 @@ void LanguageServerProtocol::DrainOutputBuffer()
     int processed = 0;
 
     __PERF_IF_ENABLED(BlockTimer timer{"LSP->DrainOutputBuffer"})
-    
+
     bool schedule_another_try{true};
     while (!m_outputBuffer.empty() && processed < MAX_MESSAGES_PER_BATCH) {
         // attempt to consume a complete JSON payload from the aggregated network buffer
@@ -708,8 +708,11 @@ void LanguageServerProtocol::DrainOutputBuffer()
             // Progress notifications associated with work-done progress tokens.
             // For now just log them, so they do not get treated as unknown messages.
             auto progress = LSP::Progress::FromJSON(json_item);
-            LSP_DEBUG() << GetLogPrefix() << "Received $/progress: " << json_item.format(false) << endl;
-            if (progress.has_value()) {
+            LOG_IF_DEBUG
+            {
+                LSP_DEBUG() << GetLogPrefix() << "Received $/progress: " << json_item.format(false) << endl;
+            }
+            if (progress) {
                 LSP::Manager::GetInstance().LogMessage(
                     GetName(), progress.value().GetMessage(), LSP::Manager::LogLevel::Info);
             } else {

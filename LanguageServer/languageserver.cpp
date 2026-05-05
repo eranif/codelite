@@ -76,13 +76,13 @@ LanguageServerPlugin::LanguageServerPlugin(IManager* manager)
         [this](const wxString& server, const wxString& message, LSP::Manager::LogLevel log_level) {
             switch (log_level) {
             case LSP::Manager::LogLevel::Info:
-                CallAfter(&LanguageServerPlugin::LogMessageInfo, server, message);
+                LogMessageInfo(server, message);
                 break;
             case LSP::Manager::LogLevel::Warning:
-                CallAfter(&LanguageServerPlugin::LogMessageWarn, server, message);
+                LogMessageWarn(server, message);
                 break;
             case LSP::Manager::LogLevel::Error:
-                CallAfter(&LanguageServerPlugin::LogMessageError, server, message);
+                LogMessageError(server, message);
                 break;
             }
         });

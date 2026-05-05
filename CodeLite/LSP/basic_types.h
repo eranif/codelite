@@ -711,9 +711,18 @@ struct WXDLLIMPEXP_CL Progress {
     inline wxString GetMessage() const
     {
         wxString message;
-        message << "(" << m_token << ") " << m_message;
-        if (m_kind == LSP::ProgressKind::report) {
+        message.reserve(256);
+        message << "[" << m_token << "] " << m_message;
+        switch (m_kind) {
+        case LSP::ProgressKind::report:
             message << ". Progress: " << m_percentage << "%";
+            break;
+        case LSP::ProgressKind::end:
+            message << ". Completed.";
+            break;
+        case LSP::ProgressKind::begin:
+            message << ". Started...";
+            break;
         }
         return message;
     }

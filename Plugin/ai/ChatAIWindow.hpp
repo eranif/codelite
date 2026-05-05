@@ -164,12 +164,13 @@ protected:
     void DoCommandClear();
     void DoCommandContext();
     void DoCommandSave();
-    void DoRunSop();
+    void DoRunSop(const SopInfo& sop);
 
     void ShowIndicator(bool show);
     void UpdateStatusBar();
     void UpdateContextWindowUsage();
     std::vector<SopInfo> ListSOPs();
+    void RegisterSopCommands(std::vector<SopInfo> sops);
 
 private:
     using CommandHandler = std::function<void()>;

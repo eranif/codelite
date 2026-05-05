@@ -145,7 +145,16 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     m_commandDispatchTable.emplace("/clear", [this]() { CallAfter(&ChatAIWindow::DoCommandClear); });
     m_commandDispatchTable.emplace("/context", [this]() { CallAfter(&ChatAIWindow::DoCommandContext); });
     m_commandDispatchTable.emplace("/save", [this]() { CallAfter(&ChatAIWindow::DoCommandSave); });
-    m_commandDispatchTable.emplace("/run-sop", [this]() { CallAfter(&ChatAIWindow::DoRunSop); });
+
+    // TODO: scan for all SOPs and register each as a separate command in the dispatch table.
+    std::thread thr([this]() {
+        auto sops = ListSOPs();
+        if (sops.empty()) {
+            return;
+        }
+        CallAfter(&ChatAIWindow::RegisterSopCommands, sops);
+    });
+    thr.detach();
 
     Bind(wxEVT_MENU, &ChatAIWindow::OnSaveSession, this, wxID_SAVE);
     Bind(wxEVT_MENU, &ChatAIWindow::OnLoadSession, this, wxID_OPEN);
@@ -952,12 +961,10 @@ void ChatAIWindow::DoCommandSave()
     OnSaveSession(dummy);
 }
 
-void ChatAIWindow::DoRunSop()
+void ChatAIWindow::DoRunSop(const SopInfo& sop)
 {
-    auto sops = ListSOPs();
-    if (sops.empty()) {
-        return;
-    }
+    clDEBUG() << "Running SOP:" << sop.title << endl;
+    // TODO: build Sop Parameters dialogue with the selected SOP dialogue and present it to the user.
 }
 
 void ChatAIWindow::DoCommandContext()
@@ -1111,4 +1118,12 @@ std::vector<SopInfo> ChatAIWindow::ListSOPs()
         sops.push_back(*sop_info);
     }
     return sops;
+}
+
+void ChatAIWindow::RegisterSopCommands(std::vector<SopInfo> sops)
+{
+    for (const auto& sop : sops) {
+        wxString command = "/run-sop:" + FileUtils::NormaliseName(sop.title);
+        m_commandDispatchTable.emplace(command, [this, sop]() { CallAfter(&ChatAIWindow::DoRunSop, sop); });
+    }
 }

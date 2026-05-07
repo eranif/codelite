@@ -337,6 +337,7 @@ void ChatAIWindow::OnSend(wxCommandEvent& event)
 void ChatAIWindow::DoSendPrompt()
 {
     wxBusyCursor bc{};
+    HidePromptPanel();
 
     if (!m_model_selector->IsOk()) {
         ::clMessageBox(_("Please choose an endpoint/model."), "CodeLite", wxICON_WARNING | wxOK | wxCENTRE);
@@ -1029,4 +1030,57 @@ void ChatAIWindow::RegisterSopCommands(std::vector<SopInfo> sops)
         wxString command = "/run-sop:" + FileUtils::NormaliseName(sop.title);
         m_commandDispatchTable.emplace(command, [this, sop]() { CallAfter(&ChatAIWindow::DoRunSop, sop); });
     }
+}
+
+void ChatAIWindow::DoSendQuestionResponse(const std::string& answer)
+{
+    HidePromptPanel();
+    // Check if someone is waiting for this message
+    auto promise = PopPromise();
+    if (promise.has_value()) {
+        promise.value()->set_value(answer);
+    }
+    m_stcInput->CallAfter(&wxStyledTextCtrl::SetFocus);
+}
+
+void ChatAIWindow::OnNo(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    HidePromptPanel();
+    DoSendQuestionResponse("no");
+}
+
+void ChatAIWindow::OnTrust(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    HidePromptPanel();
+    DoSendQuestionResponse("trust");
+}
+
+void ChatAIWindow::OnYes(wxCommandEvent& event)
+{
+    wxUnusedVar(event);
+    HidePromptPanel();
+    DoSendQuestionResponse("yes");
+}
+
+void ChatAIWindow::ShowPromptPanel()
+{
+    if (m_panelConfirmation->IsShown()) {
+        return;
+    }
+    m_panelConfirmation->Show();
+    m_buttonYes->CallAfter(&wxButton::SetFocus);
+    m_splitterPageTop->GetSizer()->Layout();
+    SendSizeEvent();
+}
+
+void ChatAIWindow::HidePromptPanel()
+{
+    if (!m_panelConfirmation->IsShown()) {
+        return;
+    }
+    m_panelConfirmation->Hide();
+    m_splitterPageTop->GetSizer()->Layout();
+    SendSizeEvent();
 }

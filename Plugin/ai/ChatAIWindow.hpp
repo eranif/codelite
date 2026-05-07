@@ -105,7 +105,13 @@ public:
         return ptr;
     }
 
+    void ShowPromptPanel();
+    void HidePromptPanel();
+
 protected:
+    void OnNo(wxCommandEvent& event) override;
+    void OnTrust(wxCommandEvent& event) override;
+    void OnYes(wxCommandEvent& event) override;
     bool CurrentEndpointHasHistory() const;
     void OnCharAdded(wxStyledTextEvent& event);
     void OnSelection(wxStyledTextEvent& event);
@@ -141,6 +147,7 @@ protected:
     void OnWorkspaceClosed(clWorkspaceEvent& event);
     void LoadGlobalConfig();
     void RestoreUI();
+    void DoSendQuestionResponse(const std::string& answer);
 
     /// LLM events
     void OnLLMConfigUpdate(clLLMEvent& event);

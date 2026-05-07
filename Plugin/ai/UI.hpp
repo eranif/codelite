@@ -18,6 +18,8 @@
 #include <wx/gauge.h>
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
+#include <wx/stattext.h>
+#include <wx/button.h>
 #include <wx/pen.h>
 #include <wx/aui/auibar.h>
 #include <map>
@@ -26,14 +28,12 @@
 #include <wx/iconbndl.h>
 #include <wx/wizard.h>
 #include <vector>
-#include <wx/stattext.h>
 #include <wx/choice.h>
 #include <wx/arrstr.h>
 #include <wx/textctrl.h>
 #include <wx/spinctrl.h>
 #include <wx/dialog.h>
 #include <wx/choicebk.h>
-#include <wx/button.h>
 #include <wx/statline.h>
 #include <wx/dataview.h>
 #include <wx/checkbox.h>
@@ -62,16 +62,29 @@ protected:
     wxPanel* m_splitterPageTop;
     wxGauge* m_gaugeContextUsed;
     clThemedSTC* m_stcOutput;
+    wxPanel* m_panelConfirmation;
+    wxStaticText* m_staticText237;
+    wxButton* m_buttonYes;
+    wxButton* m_buttonNo;
+    wxButton* m_buttonTrust;
     wxPanel* m_splitterPageBottom;
     wxAuiToolBar* m_toolbar;
     clThemedSTC* m_stcInput;
 
 protected:
+    virtual void OnYes(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnNo(wxCommandEvent& event) { event.Skip(); }
+    virtual void OnTrust(wxCommandEvent& event) { event.Skip(); }
     virtual void OnInputUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
     wxGauge* GetGaugeContextUsed() { return m_gaugeContextUsed; }
     clThemedSTC* GetStcOutput() { return m_stcOutput; }
+    wxStaticText* GetStaticText237() { return m_staticText237; }
+    wxButton* GetButtonYes() { return m_buttonYes; }
+    wxButton* GetButtonNo() { return m_buttonNo; }
+    wxButton* GetButtonTrust() { return m_buttonTrust; }
+    wxPanel* GetPanelConfirmation() { return m_panelConfirmation; }
     wxPanel* GetSplitterPageTop() { return m_splitterPageTop; }
     wxAuiToolBar* GetToolbar() { return m_toolbar; }
     clThemedSTC* GetStcInput() { return m_stcInput; }

@@ -101,6 +101,48 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
 
     boxSizer35->Add(m_stcOutput, 1, wxEXPAND, WXC_FROM_DIP(5));
 
+    m_panelConfirmation = new wxPanel(
+        m_splitterPageTop, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageTop, wxSize(-1, -1)), wxTAB_TRAVERSAL);
+    m_panelConfirmation->Hide();
+
+    boxSizer35->Add(m_panelConfirmation, 0, wxALIGN_CENTER_HORIZONTAL, WXC_FROM_DIP(5));
+
+    wxFlexGridSizer* flexGridSizer233 = new wxFlexGridSizer(0, 4, 0, 0);
+    flexGridSizer233->SetFlexibleDirection(wxBOTH);
+    flexGridSizer233->SetNonFlexibleGrowMode(wxFLEX_GROWMODE_SPECIFIED);
+    m_panelConfirmation->SetSizer(flexGridSizer233);
+
+    m_staticText237 = new wxStaticText(m_panelConfirmation,
+                                       wxID_ANY,
+                                       _("Allow this action?"),
+                                       wxDefaultPosition,
+                                       wxDLG_UNIT(m_panelConfirmation, wxSize(-1, -1)),
+                                       0);
+    wxFont m_staticText237Font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+    m_staticText237Font.SetWeight(wxFONTWEIGHT_BOLD);
+    m_staticText237->SetFont(m_staticText237Font);
+
+    flexGridSizer233->Add(m_staticText237, 0, wxALL | wxALIGN_RIGHT | wxALIGN_CENTER_VERTICAL, WXC_FROM_DIP(5));
+
+    m_buttonYes = new wxButton(
+        m_panelConfirmation, wxID_ANY, _("Yes"), wxDefaultPosition, wxDLG_UNIT(m_panelConfirmation, wxSize(-1, -1)), 0);
+
+    flexGridSizer233->Add(m_buttonYes, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonNo = new wxButton(
+        m_panelConfirmation, wxID_ANY, _("No"), wxDefaultPosition, wxDLG_UNIT(m_panelConfirmation, wxSize(-1, -1)), 0);
+
+    flexGridSizer233->Add(m_buttonNo, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
+    m_buttonTrust = new wxButton(m_panelConfirmation,
+                                 wxID_ANY,
+                                 _("Trust"),
+                                 wxDefaultPosition,
+                                 wxDLG_UNIT(m_panelConfirmation, wxSize(-1, -1)),
+                                 0);
+
+    flexGridSizer233->Add(m_buttonTrust, 0, wxALL | wxEXPAND, WXC_FROM_DIP(5));
+
     m_splitterPageBottom = new wxPanel(
         m_mainSplitter, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_mainSplitter, wxSize(-1, -1)), wxTAB_TRAVERSAL);
     m_mainSplitter->SplitHorizontally(m_splitterPageTop, m_splitterPageBottom, 200);
@@ -166,11 +208,17 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
         GetSizer()->Fit(this);
     }
     // Connect events
+    m_buttonYes->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnYes, this);
+    m_buttonNo->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnNo, this);
+    m_buttonTrust->Bind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnTrust, this);
     m_stcInput->Bind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnInputUI, this);
 }
 
 AssistanceAIChatWindowBase::~AssistanceAIChatWindowBase()
 {
+    m_buttonYes->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnYes, this);
+    m_buttonNo->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnNo, this);
+    m_buttonTrust->Unbind(wxEVT_COMMAND_BUTTON_CLICKED, &AssistanceAIChatWindowBase::OnTrust, this);
     m_stcInput->Unbind(wxEVT_UPDATE_UI, &AssistanceAIChatWindowBase::OnInputUI, this);
 }
 

@@ -5,7 +5,7 @@ wxString IconType_ToString(IconType type)
     wxString symbol;
     switch (type) {
     case IconType::kQuestion:
-        symbol = wxT("?");
+        symbol = wxT("‣");
         break;
     case IconType::kInfo:
         symbol = wxT("⋮");

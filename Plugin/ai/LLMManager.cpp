@@ -1396,17 +1396,13 @@ CanInvokeToolResult Manager::PromptUserYesNoTrustQuestion(const wxString& text, 
 {
     const wxString kTrust = wxT("⟪t⟫");
     const wxString kTriplet = wxT("⟪y/n/t⟫");
-    wxString message;
-    message << text;
+    wxString prompt_message;
+    prompt_message << text;
     if (!text.EndsWith("\n")) {
-        message << "\n";
+        prompt_message << "\n";
     }
 
-    wxString question_message;
-    question_message << _("Allow this action? use ") << kTrust
-                     << _(" to trust (always allow this tool for the session). ") << kTriplet;
-    message << question_message;
-    auto fut = GetInstance().PromptUser(message, IconType::kNoIcon);
+    auto fut = GetInstance().PromptUser(prompt_message, IconType::kQuestion);
 
     // Avoid blocking the worker thread forever
     auto& mgr = GetInstance();
@@ -1476,8 +1472,7 @@ Manager::PromptFuture Manager::PromptUser(const wxString& msg, IconType icon)
             message_to_add << "\n";
         }
         chat_win->AppendText(message_to_add);
-        // Switch the focus to the answer window.
-        chat_win->GetStcInput()->CallAfter(&wxStyledTextCtrl::SetFocus);
+        chat_win->ShowPromptPanel();
         auto response_promise = std::make_shared<std::promise<std::string>>();
         auto fut = response_promise->get_future();
         chat_win->PushPromise(response_promise);

@@ -23,7 +23,7 @@ cd .build-release
 cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Release \
          -DwxBUILD_DEBUG_LEVEL=0 \
          -DwxBUILD_MONOLITHIC=1 -DwxBUILD_SAMPLES=ALL -DwxUSE_STL=1 \
-         -DCMAKE_INSTALL_PREFIX=$HOME/root
+         -DCMAKE_INSTALL_PREFIX=$HOME/root -DCMAKE_TLS_VERIFY=OFF
 mingw32-make -j$(nproc) install
 ```
 
@@ -34,7 +34,7 @@ mkdir .build-debug
 cd .build-debug
 cmake .. -G"MinGW Makefiles" -DCMAKE_BUILD_TYPE=Debug -DwxBUILD_DEBUG_LEVEL=1 \
          -DwxBUILD_SAMPLES=ALL -DwxBUILD_MONOLITHIC=1 -DwxUSE_STL=1 \
-         -DCMAKE_INSTALL_PREFIX=$HOME/root
+         -DCMAKE_INSTALL_PREFIX=$HOME/root -DCMAKE_TLS_VERIFY=OFF
 mingw32-make -j$(nproc) install
 ```
 

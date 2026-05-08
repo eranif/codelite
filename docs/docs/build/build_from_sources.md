@@ -37,25 +37,39 @@ mingw32-make -j$(nproc) install
 - Build CodeLite (in `Release` mode):
 - Set the environment variable `MSYS2_BASE` to point to `MSYS2` root installation folder (e.g. `C:/msys64`)
 
+**Building in Release mode**
+
 ```bash
 git clone https://github.com/eranif/codelite.git
 cd codelite
 git submodule update --init --recursive
-mkdir build-release
+mkdir .build-release
 cd $_
 cmake .. -DCMAKE_BUILD_TYPE=Release -G"MinGW Makefiles" -DWXWIN="$HOME/root" -Wno-dev
 mingw32-make -j$(nproc) install
 ```
 
+**Building CodeLite in Debug mode**
+
+```bash
+git clone https://github.com/eranif/codelite.git
+cd codelite
+git submodule update --init --recursive
+mkdir .build-debug
+cd $_
+cmake .. -DCMAKE_BUILD_TYPE=Debug -G"MinGW Makefiles" -DWXWIN="$HOME/root" -Wno-dev
+mingw32-make -j$(nproc) install
+```
+
 !!! Note
-    To build CodeLite in debug mode, replace `CMake` argument from:
-    `-DCMAKE_BUILD_TYPE=Release` into `-DCMAKE_BUILD_TYPE=Debug`
+    CMake will attempt to use the **Debug** version of wxWidgets. If that version is unavailable, it will default to the **Release** version.
+    As a result, CodeLite will be built in **Debug** mode while linking against a **Release** version of wxWidgets.
 
 - To run the new CodeLite:
 
 ```bash
-cd build-release/install
-./codelite
+cd .build-release/install/bin
+./codelite.exe
 ```
 
 ## Linux

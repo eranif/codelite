@@ -492,7 +492,18 @@ if(MINGW)
   if(NOT WXWIN)
     message(FATAL_ERROR "Missing -DWXWIN=<wxWidgets/root/install/dir>")
   endif()
-  if(NOT WXCFG)
+
+  if(CMAKE_BUILD_TYPE MATCHES Release)
+    set(WXCFG "clang_x64_dll/mswu")
+  else()
+    set(WXCFG "clang_x64_dll/mswud")
+  endif()
+
+  if(NOT EXISTS "${WXWIN}/lib/${WXCFG}")
+    message(
+      WARNING
+        "Could not find path: ${WXWIN}/lib/${WXCFG}, defaulting to: ${WXWIN}/lib/clang_x64_dll/mswu"
+    )
     set(WXCFG "clang_x64_dll/mswu")
   endif()
 

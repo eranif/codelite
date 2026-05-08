@@ -75,6 +75,7 @@ public:
      * @brief load a specific account from configuration
      */
     static SSHAccountInfo LoadAccount(const wxString& accountName);
+    static std::optional<SSHAccountInfo> FindAccount(const wxString& accountName);
 
     /**
      * @brief return user defined SSH client

@@ -4688,7 +4688,43 @@ void clMainFrame::OnIncrementalReplace(wxCommandEvent& event)
 void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    clGetManager()->ToggleOutputPane(_("Terminal"));
+    auto create_new_terminal = []() {
+        wxString working_dir;
+        auto workspace = clWorkspaceManager::Get().GetWorkspace();
+        if (workspace) {
+            working_dir = workspace->GetDir();
+        }
+
+        std::optional<SSHAccountInfo> account{std::nullopt};
+        if (workspace->IsRemote()) {
+            account = SSHAccountInfo::FindAccount(workspace->GetSshAccount());
+        }
+        auto active_terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(working_dir, account);
+        active_terminal->SetFocus();
+    };
+
+    auto& mgr = ManagerST::Get()->GetPerspectiveManager();
+    if (mgr.IsPaneVisible(PANE_OUTPUT)) {
+        auto active_terminal = clGetManager()->GetTerminalManager()->GetActiveTerminal();
+        if (active_terminal == nullptr) {
+            create_new_terminal();
+            return;
+        } else if (active_terminal->HasFocus()) {
+            // Hide it.
+            clGetManager()->ToggleOutputPane(_("Terminal"));
+            return;
+        }
+
+        // Move the focus to the active terminal
+        active_terminal->SetFocus();
+    } else {
+        // Show the terminal
+        clGetManager()->ToggleOutputPane(_("Terminal"));
+        auto active_terminal = clGetManager()->GetTerminalManager()->GetActiveTerminal();
+        if (active_terminal == nullptr) {
+            create_new_terminal();
+        }
+    }
 }
 
 void clMainFrame::OnShowFullScreen(wxCommandEvent& e)

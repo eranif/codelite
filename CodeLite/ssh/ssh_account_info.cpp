@@ -120,6 +120,15 @@ SSHAccountInfo SSHAccountInfo::LoadAccount(const wxString& accountName)
     return {};
 }
 
+std::optional<SSHAccountInfo> SSHAccountInfo::FindAccount(const wxString& accountName)
+{
+    auto res = Load([&](const SSHAccountInfo& ai) { return ai.GetAccountName() == accountName; });
+    if (res.size() == 1) {
+        return res[0];
+    }
+    return std::nullopt;
+}
+
 wxString SSHAccountInfo::GetSSHClient()
 {
     wxFileName jsonfile(clStandardPaths::Get().GetUserDataDir(), "sftp-settings.conf");

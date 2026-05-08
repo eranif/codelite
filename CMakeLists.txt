@@ -510,6 +510,7 @@ if(MINGW)
   message(STATUS "WXWIN is set to ${WXWIN}")
   message(STATUS "WXCFG is set to ${WXCFG}")
 
+  message(STATUS "Running: ${CL_WX_CONFIG} --cmake --prefix=${WXWIN} --wxcfg=${WXCFG}")
   execute_process(
     COMMAND ${CL_WX_CONFIG} --cmake --prefix=${WXWIN} --wxcfg=${WXCFG}
     OUTPUT_VARIABLE wxWidgets_USE_FILE

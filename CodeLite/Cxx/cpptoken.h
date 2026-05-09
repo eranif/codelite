@@ -120,30 +120,4 @@ public:
     bool operator<(const CppToken& rhs) { return filename < rhs.filename; }
 };
 
-class WXDLLIMPEXP_CL CppTokensMap
-{
-    std::unordered_map<wxString, std::vector<CppToken>*> m_tokens;
-
-public:
-    CppTokensMap() = default;
-    ~CppTokensMap();
-
-    /**
-     * @brief add token to the map. if token with same name already exists, it will be appended so multiple tokens with
-     * same name is allowed
-     * @param token token to add
-     */
-    void addToken(const CppToken& token);
-
-    /**
-     * @brief clear all token
-     */
-    void clear();
-
-    /**
-     * @brief return true if no tokens were found
-     */
-    bool is_empty();
-};
-
 #endif // __cpptoken__

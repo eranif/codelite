@@ -46,34 +46,3 @@ CppToken::CppToken(wxSQLite3ResultSet& res)
     setOffset(res.GetInt(2));
     setLineNumber(res.GetInt(4));
 }
-
-//-----------------------------------------------------------------
-// CppTokensMap
-//-----------------------------------------------------------------
-
-CppTokensMap::~CppTokensMap() { clear(); }
-
-void CppTokensMap::addToken(const CppToken& token)
-{
-    // try to locate an entry with this name
-    std::unordered_map<wxString, std::vector<CppToken>*>::iterator iter = m_tokens.find(token.getName());
-    std::vector<CppToken>* tokensList(NULL);
-    if (iter != m_tokens.end()) {
-        tokensList = iter->second;
-    } else {
-        // create new list and add it to the map
-        tokensList = new std::vector<CppToken>;
-        m_tokens[token.getName()] = tokensList;
-    }
-    tokensList->push_back(token);
-}
-
-void CppTokensMap::clear()
-{
-    for (auto& [_, p] : m_tokens) {
-        delete p;
-    }
-    m_tokens.clear();
-}
-
-bool CppTokensMap::is_empty() { return m_tokens.empty(); }

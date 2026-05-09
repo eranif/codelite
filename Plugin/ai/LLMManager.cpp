@@ -6,6 +6,7 @@
 #include "ai/ToolTrustLevelDlg.hpp"
 #include "assistant/EnvExpander.hpp"
 #include "assistant/assistant.hpp"
+#include "clSFTPManager.hpp"
 #include "clWorkspaceManager.h"
 #include "cl_command_event.h"
 #include "cl_standard_paths.h"
@@ -228,6 +229,7 @@ Manager::~Manager()
     Stop();
     EventNotifier::Get()->Unbind(wxEVT_FILE_SAVED, &Manager::OnFileSaved, this);
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &Manager::OnEditorContextMenu, this);
+    EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_FILE, &Manager::OnFileViewFileContextMenu, this);
 }
 
 void Manager::Initialise()
@@ -253,21 +255,60 @@ bool Manager::IsAvailable()
     return GetActiveEndpoint().has_value();
 }
 
+void Manager::OnFileViewFileContextMenu(clContextMenuEvent& event)
+{
+    event.Skip();
+    CEHCK_SHUTDOWN_IN_PROGRESS();
+
+    if (!IsAvailable()) {
+        return;
+    }
+
+    const auto& files = event.GetStrings();
+    wxArrayString markdown_files;
+    markdown_files.reserve(files.size());
+    for (const auto& file : files) {
+        if (wxFileName(file).GetExt().Lower() == "md") {
+            markdown_files.Add(file);
+        }
+    }
+
+    if (markdown_files.empty()) {
+        return;
+    }
+
+    // Load the LLM generation sub-menu
+    wxMenu* menu = event.GetMenu();
+    wxMenu* ai_menu = clXmlResource::Get().LoadMenu("file_view_context_menu_llm");
+    menu->PrependSeparator();
+
+    auto item = menu->Prepend(wxID_ANY, _("AI Options"), ai_menu);
+    item->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("wand"));
+    ai_menu->Bind(
+        wxEVT_MENU,
+        [markdown_files = std::move(markdown_files)](wxCommandEvent& event) {
+            llm::Manager::GetInstance().AddFilesToContext(markdown_files);
+        },
+        XRCID("ai-add-file-context"));
+}
+
 void Manager::OnEditorContextMenu(clContextMenuEvent& event)
 {
     event.Skip();
     CEHCK_SHUTDOWN_IN_PROGRESS();
 
-    if (IsAvailable()) {
-        // Load the LLM generation sub-menu
-        wxMenu* menu = event.GetMenu();
-        wxMenu* ai_menu = clXmlResource::Get().LoadMenu("editor_context_menu_llm_generation");
-        menu->PrependSeparator();
-
-        auto item = menu->Prepend(wxID_ANY, _("AI-Powered Options"), ai_menu);
-        item->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("wand"));
-        ai_menu->Bind(wxEVT_MENU, &Manager::OnGenerateDocString, this, XRCID("lsp_document_scope"));
+    if (!IsAvailable()) {
+        return;
     }
+
+    // Load the LLM generation sub-menu
+    wxMenu* menu = event.GetMenu();
+    wxMenu* ai_menu = clXmlResource::Get().LoadMenu("editor_context_menu_llm_generation");
+    menu->PrependSeparator();
+
+    auto item = menu->Prepend(wxID_ANY, _("AI-Powered Options"), ai_menu);
+    item->SetBitmap(clGetManager()->GetStdIcons()->LoadBitmap("wand"));
+    ai_menu->Bind(wxEVT_MENU, &Manager::OnGenerateDocString, this, XRCID("lsp_document_scope"));
 }
 
 void Manager::DeleteCollector(ResponseCollector* collector) { wxDELETE(collector); }
@@ -1583,6 +1624,7 @@ void Manager::CompleteInitialisation()
 
     wxTheApp->Bind(wxEVT_MENU, &Manager::OnGenerateDocString, this, XRCID("lsp_document_scope"));
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &Manager::OnEditorContextMenu, this);
+    EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_FILE, &Manager::OnFileViewFileContextMenu, this);
 }
 
 void Manager::OnWorkspaceOpened(clWorkspaceEvent& event) { event.Skip(); }
@@ -1682,5 +1724,59 @@ bool Manager::CheckIfShellCommandAllowed(const wxString& toolname,
     }
     // All commands are allowed.
     return true;
+}
+
+void Manager::AddFilesToContext(const wxArrayString& files)
+{
+    wxBusyCursor bc{};
+
+    std::vector<std::pair<wxString, wxString>> files_to_add;
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    auto ReadFilesContent = [workspace, &files_to_add](const wxArrayString& files) {
+        if (workspace && workspace->IsRemote()) {
+#if USE_SFTP
+            for (const auto& file : files) {
+                if (wxFileName{file}.GetExt().Lower() != "md") {
+                    continue;
+                }
+                wxMemoryBuffer content;
+                if (clSFTPManager::Get().AwaitReadFile(file, workspace->GetSshAccount(), &content)) {
+                    wxString data{(const unsigned char*)content.GetData(), wxConvUTF8, content.GetDataLen()};
+                    files_to_add.push_back(std::make_pair(file, data));
+                }
+            }
+#endif
+            return;
+        }
+
+        // Local
+        for (const auto& file : files) {
+            if (wxFileName{file}.GetExt().Lower() != "md") {
+                continue;
+            }
+            wxString data;
+            if (FileUtils::ReadFileContent(file, data)) {
+                files_to_add.push_back(std::make_pair(file, data));
+            }
+        }
+    };
+
+    ReadFilesContent(files);
+    if (files_to_add.empty()) {
+        return;
+    }
+
+    auto& llm_mgr = llm::Manager::GetInstance();
+    for (const auto& [_, file_content] : files_to_add) {
+        llm_mgr.AddSystemMessage(file_content);
+    }
+
+    wxString text_message;
+    text_message << _("Successfully added the following files to the context:\n\n");
+    for (const auto& [file_path, _] : files_to_add) {
+        text_message << "- `" << file_path << "`\n";
+    }
+    text_message << "\n";
+    llm_mgr.PrintMessage(text_message, IconType::kSuccess);
 }
 } // namespace llm

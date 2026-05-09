@@ -20,7 +20,7 @@ High:
 -----
 
 - GDB: use the new terminal to launch and avoid opening custom terminals for this purpose.
-
+- Add context menu "AI -> Add Selected Markdown Files to Context" for Remote workspace.
 Medium:
 -----
 

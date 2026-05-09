@@ -776,6 +776,23 @@ public:
     std::optional<std::pair<wxString, bool>>
     ShowTrustLevelDialog(const wxString& toolname, const std::vector<std::pair<wxString, wxString>>& options);
 
+    /**
+     * @brief Adds Markdown files from a list of paths to the LLM context.
+     *
+     * This method filters the provided file paths to ".md" files, reads each file's
+     * contents, and adds the content as a system message to the shared LLM manager.
+     * It then prints a success message listing the files that were processed.
+     *
+     * @param files wxArrayString The file paths to consider for addition to the context.
+     *               Only files with a ".md" extension are processed.
+     *
+     * @return void This function does not return a value.
+     *
+     * @note This is a Manager class method and operates on the global LLM manager
+     *       instance obtained via llm::Manager::GetInstance().
+     */
+    void AddFilesToContext(const wxArrayString& files);
+
 private:
     Manager() = default;
     ~Manager();
@@ -820,6 +837,7 @@ private:
     void HandleConfigFileUpdated();
     void HandleGlobalConfigFileUpdated();
     void OnEditorContextMenu(clContextMenuEvent& event);
+    void OnFileViewFileContextMenu(clContextMenuEvent& event);
 
     void PostTask(ThreadTask task);
     void WorkerMain();

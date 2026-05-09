@@ -41,44 +41,6 @@ enum StatusBarIndex {
     kProgress,
     kLast,
 };
-
-/**
- * @brief Adds the contents of multiple files to the LLM context as system messages.
- *
- * This function reads each file specified in the paths array and, if successful,
- * adds the file content as a system message via the LLM manager. A busy cursor
- * is displayed during the operation and a status message is shown upon completion.
- *
- * @param paths A wxArrayString containing the file paths to read and add to the context.
- *
- * @return None.
- *
- * @note If a file cannot be read, it is silently skipped and processing continues
- * with the remaining files.
- */
-void AddFilesToContext(const wxArrayString& paths)
-{
-    // Read the local files content
-    std::thread thr(
-        [](const wxArrayString& paths) {
-            size_t count{0};
-            for (const auto& path : paths) {
-                wxString data;
-                if (FileUtils::ReadFileContent(path, data)) {
-                    llm::Manager::GetInstance().AddSystemMessage(data);
-                }
-                ++count;
-            }
-
-            if (count == 0) {
-                return;
-            }
-            llm::Manager::GetInstance().PrintMessage(
-                wxString() << _("Successfully added ") << count << _(" files to the context"), IconType::kSuccess);
-        },
-        paths);
-    thr.detach();
-}
 } // namespace
 
 ChatAIWindow::ChatAIWindow(wxWindow* parent)
@@ -960,20 +922,7 @@ void ChatAIWindow::DoCommandContext()
             return;
         }
 
-        size_t count{0};
-        wxBusyCursor bc{};
-        wxArrayString files = std::move(paths.value());
-        clINFO() << "Loading context files:" << files << endl;
-        for (const auto& file : files) {
-            wxMemoryBuffer content;
-            if (clSFTPManager::Get().AwaitReadFile(file, workspace->GetSshAccount(), &content)) {
-                wxString data{(const unsigned char*)content.GetData(), wxConvUTF8, content.GetDataLen()};
-                llm::Manager::GetInstance().AddSystemMessage(data);
-                ++count;
-            }
-        }
-        clGetManager()->SetStatusMessage(wxString() << _("Added ") << count << _(" files to the context"));
-        // Read all the files and add them to the context.
+        llm::Manager::GetInstance().AddFilesToContext(*paths);
         return;
     }
 #endif
@@ -992,7 +941,7 @@ void ChatAIWindow::DoCommandContext()
 
     wxArrayString paths;
     openFileDialog.GetPaths(paths);
-    AddFilesToContext(paths);
+    llm::Manager::GetInstance().AddFilesToContext(paths);
 }
 
 std::vector<SopInfo> ChatAIWindow::ListSOPs()

@@ -1212,4 +1212,9 @@
       <label>Generate docstring for the current scope</label>
     </object>
   </object>
+  <object class="wxMenu" name="file_view_context_menu_llm">
+    <object class="wxMenuItem" name="ai-add-file-context">
+      <label>Add Selected Markdown Files to Context</label>
+    </object>
+  </object>
 </resource>

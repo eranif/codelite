@@ -221,6 +221,13 @@ void Config::AddTrustedTool(const wxString& toolname, const wxString& pattern, b
     }
 }
 
+void Config::DeleteAllTrustedTools()
+{
+    std::scoped_lock lk{m_mutex};
+    m_persistingTrustedTools.clear();
+    m_transientTrustedTools.clear();
+}
+
 void Config::DeleteTrustedTool(const wxString& toolname)
 {
     std::scoped_lock lk{m_mutex};

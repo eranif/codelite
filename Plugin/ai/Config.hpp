@@ -214,6 +214,7 @@ public:
 
     void AddTrustedTool(const wxString& toolname, const wxString& pattern, bool persist);
     void DeleteTrustedTool(const wxString& toolname);
+    void DeleteAllTrustedTools();
     using OnTrustPattern = std::function<bool(const wxString&)>;
     bool IsToolTrustedFor(const wxString& toolname, OnTrustPattern check_pattern_cb) const;
     static wxString GetFullPath();

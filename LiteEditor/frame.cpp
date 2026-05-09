@@ -600,6 +600,7 @@ EVT_MENU(XRCID("ai_show_chat_window"), clMainFrame::OnAiShowChatBox)
 EVT_MENU(XRCID("ai_configure_endpoint"), clMainFrame::OnAiConfigureEndpoint)
 EVT_MENU(XRCID("ai_new_mcp_server"), clMainFrame::OnAiAddNewMCPServer)
 EVT_MENU(XRCID("ai_new_sse_mcp_server"), clMainFrame::OnAiAddNewSseMCPServer)
+EVT_MENU(XRCID("ai_reset_permissions"), clMainFrame::OnAiResetPermissions)
 EVT_MENU(XRCID("ai_change_active_endpoint"), clMainFrame::OnAiChooseEndpoint)
 EVT_UPDATE_UI(XRCID("ai_prompt_editor"), clMainFrame::OnAiAvailableUI)
 EVT_UPDATE_UI(XRCID("ai_show_chat_window"), clMainFrame::OnAiAvailableUI)
@@ -6330,6 +6331,19 @@ void clMainFrame::OnAiConfigureEndpoint(wxCommandEvent& e)
     auto endpoint_data = wizard.GetData();
     llm::Manager::GetInstance().AddNewEndpoint(endpoint_data);
     llm::Manager::GetInstance().ReloadConfig(std::nullopt, false);
+}
+
+void clMainFrame::OnAiResetPermissions(wxCommandEvent& e)
+{
+    wxUnusedVar(e);
+    wxString message;
+    message << _("This will reset the tool permissions to their default state, requiring confirmation before each "
+                 "invocation.\nContinue?");
+    if (::clMessageBox(message, "CodeLite", wxICON_QUESTION | wxYES_NO | wxYES_DEFAULT | wxCANCEL) != wxYES) {
+        return;
+    }
+    llm::Manager::GetInstance().GetConfig().DeleteAllTrustedTools();
+    llm::Manager::GetInstance().GetConfig().Save(false);
 }
 
 void clMainFrame::OnAiAddNewSseMCPServer(wxCommandEvent& e)

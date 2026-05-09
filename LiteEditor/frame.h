@@ -661,6 +661,7 @@ protected:
     void OnAiConfigureEndpoint(wxCommandEvent& e);
     void OnAiAddNewMCPServer(wxCommandEvent& e);
     void OnAiAddNewSseMCPServer(wxCommandEvent& e);
+    void OnAiResetPermissions(wxCommandEvent& e);
     void OnAiChooseEndpoint(wxCommandEvent& e);
     void OnAiAvailableUI(wxUpdateUIEvent& e);
 

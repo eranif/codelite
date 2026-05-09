@@ -4690,15 +4690,15 @@ void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
     wxUnusedVar(e);
     auto create_new_terminal = []() {
         wxString working_dir;
+        std::optional<SSHAccountInfo> account{std::nullopt};
         auto workspace = clWorkspaceManager::Get().GetWorkspace();
         if (workspace) {
             working_dir = workspace->GetDir();
+            if (workspace->IsRemote()) {
+                account = SSHAccountInfo::FindAccount(workspace->GetSshAccount());
+            }
         }
 
-        std::optional<SSHAccountInfo> account{std::nullopt};
-        if (workspace->IsRemote()) {
-            account = SSHAccountInfo::FindAccount(workspace->GetSshAccount());
-        }
         auto active_terminal = clGetManager()->GetTerminalManager()->OpenNewTerminalTab(working_dir, account);
         active_terminal->SetFocus();
     };
@@ -4709,7 +4709,9 @@ void clMainFrame::OnShowBuiltInTerminal(wxCommandEvent& e)
         if (active_terminal == nullptr) {
             create_new_terminal();
             return;
-        } else if (active_terminal->HasFocus()) {
+        }
+
+        if (active_terminal->HasFocus()) {
             // Hide it.
             clGetManager()->ToggleOutputPane(_("Terminal"));
             return;

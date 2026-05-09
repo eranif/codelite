@@ -263,12 +263,23 @@ if(WXC_APP AND MINGW)
   install(TARGETS wxcrafter DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/")
 endif()
 
+option(WXCRAFTER_USE_XVFB_RUN "Run wxcrafter under xvfb-run (for CI)" OFF)
+
 macro(wxcrafter_target Name Input OutputDir OutputCpp OutputH OutputBitmaps)
+  if(WXCRAFTER_USE_XVFB_RUN)
   add_custom_command(OUTPUT ${OutputDir}/${OutputCpp} ${OutputDir}/${OutputH} ${OutputDir}/${OutputBitmaps}
-    COMMAND $<TARGET_FILE:wxcrafter> -o ${OutputDir} -g ${Input}
+    COMMAND xvfb-run -a $<TARGET_FILE:wxcrafter> -o ${OutputDir} -g ${Input}
     VERBATIM
     DEPENDS ${Input}
     COMMENT "[WxCrafter][${Name}] Building code")
+  else()
+    add_custom_command(OUTPUT ${OutputDir}/${OutputCpp} ${OutputDir}/${OutputH} ${OutputDir}/${OutputBitmaps}
+      COMMAND $<TARGET_FILE:wxcrafter> -o ${OutputDir} -g ${Input}
+      VERBATIM
+      DEPENDS ${Input}
+      COMMENT "[WxCrafter][${Name}] Building code")
+  endif()
+
 
   set(WXCRAFTER_${Name}_OUTPUTS ${OutputCpp} ${OutputH} ${OutputBitmaps})
   set(WXCRAFTER_${Name}_OUTPUTDIR ${OutputDir})

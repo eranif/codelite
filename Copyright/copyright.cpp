@@ -30,8 +30,10 @@
 #include "copyrights_options_dlg.h"
 #include "copyrights_proj_sel_dlg.h"
 #include "copyrightsconfigdata.h"
+#include "editor_config.h"
 #include "event_notifier.h"
 #include "file_logger.h"
+#include "fileutils.h"
 #include "globals.h"
 #include "macromanager.h"
 #include "progress_dialog.h"
@@ -40,12 +42,8 @@
 
 #include <vector>
 #include <wx/app.h>
-#include <wx/ffile.h>
-#include <wx/filefn.h>
-#include <wx/log.h>
 #include <wx/menu.h>
 #include <wx/msgdlg.h>
-#include <wx/progdlg.h>
 #include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
 
@@ -353,7 +351,11 @@ void Copyright::MassUpdate(const std::vector<wxFileName>& filtered_files, const 
                 }
 
                 file_content.Prepend(_content);
-                WriteFileWithBackup(fn.GetFullPath(), file_content, data.GetBackupFiles());
+                if (data.GetBackupFiles() && !FileUtils::Backup(fn.GetFullPath())) {
+                    continue;
+                }
+                wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
+                FileUtils::WriteFileContent(fn.GetFullPath(), file_content, fontEncConv);
             }
         }
     }

@@ -95,6 +95,17 @@ const char ELF_STR[] = {0x7f, 'E', 'L', 'F'};
 #endif
 } // namespace
 
+bool FileUtils::Backup(const wxString& file_name)
+{
+    wxString backup_name(file_name);
+    backup_name << ".bak";
+    if (!wxCopyFile(file_name, backup_name, true)) {
+        clWARNING() << wxString::Format("Failed to backup file %s", file_name);
+        return false;
+    }
+    return true;
+}
+
 void FileUtils::OpenFileExplorer(const wxString& path)
 {
     // Wrap the path with quotes if needed

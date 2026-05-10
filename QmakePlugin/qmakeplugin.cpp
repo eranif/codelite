@@ -462,7 +462,7 @@ void QMakePlugin::OnNewQmakeBasedProject(wxCommandEvent& event)
                 wxSetWorkingDirectory(name);
             }
 
-            if (!WriteFileWithBackup(name + wxT(".project"), content, false)) {
+            if (!FileUtils::WriteFileContent(name + wxT(".project"), content)) {
                 wxMessageBox(wxString::Format(
                                  _("Failed to create .project file '%s'"), wxString(name + wxT(".project")).c_str()),
                              wxT("CodeLite"),

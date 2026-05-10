@@ -23,11 +23,14 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#include <wx/tokenzr.h>
-#include "globals.h"
+#include "batchbuilddlg.h"
+
+#include "editor_config.h"
+#include "fileutils.h"
 #include "manager.h"
 #include "workspace.h"
-#include "batchbuilddlg.h"
+
+#include <wx/tokenzr.h>
 
 BatchBuildDlg::BatchBuildDlg( wxWindow* parent )
     : BatchBuildBaseDlg( parent )
@@ -274,6 +277,6 @@ void BatchBuildDlg::DoSaveBatchBuildOrder()
             content << m_checkListConfigurations->GetString(i) << wxT("\n");
         }
     }
-
-    WriteFileWithBackup(fn.GetFullPath(), content, false);
+    wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
+    FileUtils::WriteFileContent(fn.GetFullPath(), content, fontEncConv);
 }

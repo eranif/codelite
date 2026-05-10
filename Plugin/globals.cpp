@@ -22,6 +22,8 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
+#include "precompiled_header.h"
+
 #include "globals.h"
 
 #include "Debugger/debuggermanager.h"
@@ -39,7 +41,6 @@
 #include "imanager.h"
 #include "macros.h"
 #include "md5/wxmd5.h"
-#include "precompiled_header.h"
 #include "procutils.h"
 #include "workspace.h"
 
@@ -289,13 +290,6 @@ bool CompareFileWithString(const wxString& filePath, const wxString& str)
     wxString diskMD5 = wxMD5::GetDigest(content);
     wxString mem_MD5 = wxMD5::GetDigest(str);
     return diskMD5 == mem_MD5;
-}
-
-bool WriteFileWithBackup(const wxString& file_name, const wxString& content, bool backup)
-{
-    wxUnusedVar(backup);
-    wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
-    return FileUtils::WriteFileContent(file_name, content, fontEncConv);
 }
 
 bool CopyToClipboard(const wxString& text)

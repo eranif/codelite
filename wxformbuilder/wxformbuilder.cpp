@@ -262,7 +262,7 @@ void wxFormBuilder::DoCreateWxFormBuilderProject(const wxFBItemInfo& data)
         content.Replace(wxT("$(Title)"), data.title);
         content.Replace(wxT("$(ClassName)"), data.className);
 
-        if (!WriteFileWithBackup(fbpFile.GetFullPath().c_str(), content, false)) {
+        if (!FileUtils::WriteFileContent(fbpFile.GetFullPath(), content)) {
             wxMessageBox(wxString::Format(_("Failed to write file '%s'"), fbpFile.GetFullPath().c_str()),
                          wxT("CodeLite"),
                          wxOK | wxCENTER | wxICON_WARNING);

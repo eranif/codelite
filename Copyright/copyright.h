@@ -50,7 +50,6 @@ public:
     void OnOptions(wxCommandEvent& e);
     void OnInsertCopyrights(wxCommandEvent& e);
     void OnBatchInsertCopyrights(wxCommandEvent& e);
-    void OnProjectInsertCopyrights(wxCommandEvent& e);
     void OnEditorContextMenu(clContextMenuEvent& event);
 };
 

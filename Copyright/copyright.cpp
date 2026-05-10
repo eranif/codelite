@@ -47,11 +47,6 @@
 #include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
 
-// Internal events used by this plugin
-const wxEventType CR_copyrights_options = wxNewEventType();
-const wxEventType CR_insert_copyrights = wxNewEventType();
-const wxEventType CR_insert_prj_copyrights = wxNewEventType();
-
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new Copyright(manager); }
 
@@ -78,13 +73,13 @@ Copyright::Copyright(IManager* manager)
     wxTheApp->Bind(wxEVT_MENU, &Copyright::OnOptions, this, XRCID("CR_copyrights_options"));
     wxTheApp->Bind(wxEVT_MENU, &Copyright::OnInsertCopyrights, this, XRCID("CR_insert_copyrights"));
     wxTheApp->Bind(wxEVT_MENU, &Copyright::OnBatchInsertCopyrights, this, XRCID("CR_batch_insert_copyrights"));
-    wxTheApp->Bind(wxEVT_MENU, &Copyright::OnProjectInsertCopyrights, this, XRCID("CR_insert_prj_copyrights"));
+
     EventNotifier::Get()->Bind(wxEVT_CONTEXT_MENU_EDITOR, &Copyright::OnEditorContextMenu, this);
 
     clKeyboardManager::Get()->AddAccelerator(_("Copyright"),
-                                             {{"copyrights_options", _("Insert Copyright Block")},
-                                              {"insert_copyrights", _("Batch Insert of Copyright Block")},
-                                              {"batch_insert_copyrights", _("Settings...")}});
+                                             {{"CR_copyrights_options", _("Settings...")},
+                                              {"CR_insert_copyrights", _("Insert Copyright Block")},
+                                              {"CR_batch_insert_copyrights", _("Batch Insert of Copyright Block")}});
 }
 
 void Copyright::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar); }
@@ -92,23 +87,16 @@ void Copyright::CreateToolBar(clToolBarGeneric* toolbar) { wxUnusedVar(toolbar);
 void Copyright::CreatePluginMenu(wxMenu* pluginsMenu)
 {
     wxMenu* menu = new wxMenu();
-    wxMenuItem* item(NULL);
 
-    item = new wxMenuItem(
-        menu, XRCID("CR_insert_copyrights"), _("Insert Copyright Block"), _("Insert Copyright Block"), wxITEM_NORMAL);
-    menu->Append(item);
-
-    item = new wxMenuItem(menu,
-                          XRCID("CR_batch_insert_copyrights"),
-                          _("Batch Insert of Copyright Block"),
-                          _("Batch Insert of Copyright Block"),
-                          wxITEM_NORMAL);
-    menu->Append(item);
-
+    menu->Append(new wxMenuItem(
+        menu, XRCID("CR_insert_copyrights"), _("Insert Copyright Block"), _("Insert Copyright Block"), wxITEM_NORMAL));
+    menu->Append(new wxMenuItem(menu,
+                                XRCID("CR_batch_insert_copyrights"),
+                                _("Batch Insert of Copyright Block"),
+                                _("Batch Insert of Copyright Block"),
+                                wxITEM_NORMAL));
     menu->AppendSeparator();
-    item = new wxMenuItem(menu, XRCID("CR_copyrights_options"), _("Settings..."), wxEmptyString, wxITEM_NORMAL);
-
-    menu->Append(item);
+    menu->Append(new wxMenuItem(menu, XRCID("CR_copyrights_options"), _("Settings..."), wxEmptyString, wxITEM_NORMAL));
     pluginsMenu->Append(wxID_ANY, _("Copyrights"), menu);
 }
 
@@ -117,7 +105,6 @@ void Copyright::UnPlug()
     wxTheApp->Unbind(wxEVT_MENU, &Copyright::OnOptions, this, XRCID("CR_copyrights_options"));
     wxTheApp->Unbind(wxEVT_MENU, &Copyright::OnInsertCopyrights, this, XRCID("CR_insert_copyrights"));
     wxTheApp->Unbind(wxEVT_MENU, &Copyright::OnBatchInsertCopyrights, this, XRCID("CR_batch_insert_copyrights"));
-    wxTheApp->Unbind(wxEVT_MENU, &Copyright::OnProjectInsertCopyrights, this, XRCID("CR_insert_prj_copyrights"));
     EventNotifier::Get()->Unbind(wxEVT_CONTEXT_MENU_EDITOR, &Copyright::OnEditorContextMenu, this);
 }
 
@@ -245,63 +232,6 @@ void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
         if (filtered_files.empty() == false) {
             MassUpdate(filtered_files, content);
         }
-    }
-}
-
-void Copyright::OnProjectInsertCopyrights(wxCommandEvent& e)
-{
-    // pop up the projects selection dialog
-    if (m_mgr->IsWorkspaceOpen() == false) {
-        wxMessageBox(_("Batch insert requires a workspace to be opened"), wxT("CodeLite"), wxICON_WARNING | wxOK);
-        return;
-    }
-
-    if (!m_mgr->SaveAll()) {
-        return;
-    }
-
-    // read configuration
-    CopyrightsConfigData data;
-    m_mgr->GetConfigTool()->ReadObject("CopyrightsConfig", &data);
-
-    wxString content;
-    if (!Validate(content)) {
-        return;
-    }
-
-    // get the project to work on
-    TreeItemInfo info = m_mgr->GetSelectedTreeItemInfo(TreeFileView);
-    wxString project_name = info.m_text;
-
-    wxString err_msg;
-    std::vector<wxFileName> files;
-    std::vector<wxFileName> filtered_files;
-    // loop over the project and collect list of files to work with
-    ProjectPtr p = m_mgr->GetWorkspace()->GetProject(project_name);
-    if (!p) {
-        return;
-    }
-
-    p->GetFilesAsVectorOfFileName(files);
-
-    // filter non matched files
-    wxString mask(data.GetFileMasking());
-    mask.Replace("*.", wxEmptyString);
-    mask = mask.Trim().Trim(false);
-
-    wxArrayString exts = wxStringTokenize(mask, ";");
-
-    // filter out non-matching files (according to masking)
-    for (const auto& filename : files) {
-        if (exts.Index(filename.GetExt(), false) != wxNOT_FOUND) {
-            // valid file
-            filtered_files.push_back(filename);
-        }
-    }
-
-    // update files
-    if (filtered_files.empty() == false) {
-        MassUpdate(filtered_files, content);
     }
 }
 

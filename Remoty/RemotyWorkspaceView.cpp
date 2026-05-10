@@ -6,6 +6,7 @@
 #include "FileSystemWorkspace/clFileSystemWorkspaceDlg.h"
 #include "RemotyWorkspace.hpp"
 #include "SFTPClientData.hpp"
+#include "ai/LLMManager.hpp"
 #include "clAuiToolBarArt.h"
 #include "clRemoteFindDialog.h"
 #include "clSFTPManager.hpp"
@@ -175,7 +176,11 @@ void RemotyWorkspaceView::OnDirContextMenu(clContextMenuEvent& event)
         wxID_CLOSE);
 }
 
-void RemotyWorkspaceView::OnFileContextMenu(clContextMenuEvent& event) { event.Skip(); }
+void RemotyWorkspaceView::OnFileContextMenu(clContextMenuEvent& event)
+{
+    event.Skip();
+    llm::Manager::GetInstance().UpdateFileContextMenu(event);
+}
 
 void RemotyWorkspaceView::OnFindInFilesShowing(clFindInFilesEvent& event)
 {

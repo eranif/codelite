@@ -340,12 +340,24 @@ void clRemoteDirCtrl::OnContextMenu(wxContextMenuEvent& event)
             clGetManager()->SetStatusMessage(_("Path copied to clipboard"));
         },
         XRCID("copy-path"));
+
+    wxArrayString files, dirs;
+    for (auto d : items) {
+        clRemoteDirCtrlItemData* cd = GetItemData(d);
+        if (cd && cd->IsFile()) {
+            files.push_back(cd->GetFullPath());
+        } else if (cd && cd->IsFolder()) {
+            dirs.push_back(cd->GetFullPath());
+        }
+    }
+
     // let others know that we are about to show the context menu for this control
     clContextMenuEvent menuEvent(cd->IsFolder() ? wxEVT_REMOTEDIR_DIR_CONTEXT_MENU_SHOWING
                                                 : wxEVT_REMOTEDIR_FILE_CONTEXT_MENU_SHOWING);
     menuEvent.SetMenu(&menu);
     menuEvent.SetEventObject(this);
     menuEvent.SetClientData(item);
+    menuEvent.SetStrings(cd->IsFolder() ? dirs : files);
     m_treeCtrl->GetEventHandler()->ProcessEvent(menuEvent);
 
     m_treeCtrl->PopupMenu(&menu);

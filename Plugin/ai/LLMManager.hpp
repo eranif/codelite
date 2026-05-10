@@ -793,6 +793,11 @@ public:
      */
     void AddFilesToContext(const wxArrayString& files);
 
+    /**
+     * @brief a wrapper around OnFileViewFileContextMenu to allow external caller to invoke the event handler.
+     */
+    void UpdateFileContextMenu(clContextMenuEvent& event) { OnFileViewFileContextMenu(event); }
+
 private:
     Manager() = default;
     ~Manager();

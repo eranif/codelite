@@ -29,6 +29,8 @@ namespace llm
 {
 using assistant::CanInvokeToolResult;
 
+constexpr int kMaxLinesToRead = 500;
+
 CanInvokeToolResult CreateNewFileConfirm(const std::string& tool_name, assistant::json args)
 {
     CONFIRM_ARG(std::string,
@@ -55,12 +57,17 @@ FunctionResult CreateNewFile(const assistant::json& args)
         wxString msg;
         wxString fullpath = FileManager::GetFullPath(wxString::FromUTF8(filepath));
         if (FileManager::FileExists(fullpath)) {
-            msg << _("The file: ") << fullpath << _(" already exists");
-            return Err(msg);
+            wxString prompt_message;
+            prompt_message << _("The file '") << fullpath << _("' already exists.\nOverride it?");
+            if (::clMessageBox(prompt_message, "CodeLite", wxYES_NO | wxCANCEL | wxCANCEL_DEFAULT | wxICON_QUESTION) !=
+                wxYES) {
+                msg << _("The file: ") << fullpath << _(" already exists");
+                return Err(msg);
+            }
         }
 
         // Always write to disk (even empty content) so the file physically exists after this call.
-        if (!FileManager::WriteContent(filepath, wxString::FromUTF8(file_content), false)) {
+        if (!FileManager::WriteContent(filepath, wxString::FromUTF8(file_content), true)) {
             msg << "Error while writing file: '" << filepath << "' to disk.";
             return Err(msg);
         }
@@ -99,10 +106,11 @@ CanInvokeToolResult ReadFileContentConfirm(const std::string& tool_name, assista
                 ::assistant::GetFunctionArg<int>(args, "line_count"),
                 "Missing or invalid value for mandatory field 'line_count'");
 
-    if (line_count > 200) {
+    if (line_count > kMaxLinesToRead) {
         return CanInvokeToolResult{
             .can_invoke = false,
-            .reason = "The line count must be between 1 and 200, inclusive.",
+            .reason = wxString::Format("The line count must be between 1 and %d, inclusive.", kMaxLinesToRead)
+                          .ToStdString(wxConvUTF8),
         };
     }
 
@@ -260,9 +268,9 @@ FunctionResult GetCurrentEditorText([[maybe_unused]] const assistant::json& args
 {
     VERIFY_WORKER_THREAD();
 
-    // Optional parameters: default to reading the entire editor content (up to 200 lines from line 1).
+    // Optional parameters: default to reading the entire editor content (up to kMaxLinesToRead lines from line 1).
     int from_line = ::assistant::GetFunctionArg<int>(args, "from_line").value_or(1);
-    int line_count = ::assistant::GetFunctionArg<int>(args, "count").value_or(200);
+    int line_count = ::assistant::GetFunctionArg<int>(args, "count").value_or(kMaxLinesToRead);
 
     auto cb = [=]() -> FunctionResult {
         auto active_editor = clGetManager()->GetActiveEditor();
@@ -280,8 +288,9 @@ FunctionResult GetCurrentEditorText([[maybe_unused]] const assistant::json& args
             return Err("'count' must be >= 1");
         }
 
-        if (line_count > 200) {
-            return Err("The line count must be between 1 and 200, inclusive.");
+        if (line_count > kMaxLinesToRead) {
+            return Err(wxString::Format("The line count must be between 1 and %d, inclusive.", kMaxLinesToRead)
+                           .ToStdString(wxConvUTF8));
         }
 
         // Split content into lines
@@ -745,18 +754,38 @@ FunctionResult ToolShellExecute(const assistant::json& args)
     wxString wd = wxString::FromUTF8(working_directory);
     FunctionResult func_result{.isError = false};
 
+    auto commands = StringUtils::SplitShellCommand(cmd);
+    if (commands.empty() || commands[0].empty()) {
+        return FunctionResult{
+            .isError = true,
+            .text = "Missing mandatory command",
+        };
+    }
+
+    wxString main_command = commands[0][0].Lower();
+    bool apply_output_check_len = (main_command == "ls" || main_command == "dir" || main_command == "grep" ||
+                                   main_command == "find" || main_command == "cat");
 #if USE_SFTP
     auto workspace = clWorkspaceManager::Get().GetWorkspace();
     bool is_remote = workspace && workspace->IsRemote();
     if (is_remote) {
         auto result = clSFTPManager::Get().AwaitExecute(workspace->GetSshAccount(), cmd, wd);
-        std::string out = std::get<0>(result);
-        std::string err = std::get<1>(result);
-        func_result.isError = false;
-        func_result.text = out;
-        if (!err.empty()) {
-            func_result.text += "\n" + err;
+        wxString out = wxString::FromUTF8(std::get<0>(result));
+        wxString err = wxString::FromUTF8(std::get<1>(result));
+
+        wxString combined_output = out + "\n" + err;
+        auto lines = wxStringTokenize(combined_output, "\n", wxTOKEN_STRTOK);
+        if (apply_output_check_len && lines.size() > kMaxLinesToRead) {
+            wxString message;
+            message << _("The output for the command: `") << cmd << _("` is too large.");
+            llm::Manager::GetInstance().PrintMessage(message, IconType::kError);
+            return FunctionResult{
+                .isError = true,
+                .text = "The tool output is too large. Please refine your command.",
+            };
         }
+        func_result.isError = false;
+        func_result.text = combined_output.ToStdString(wxConvUTF8);
         llm::Manager::GetInstance().PrintMessage(
             _("Command output:\n```bash\n") + func_result.text + "\n```\n", IconType::kInfo);
         return func_result;
@@ -777,8 +806,7 @@ FunctionResult ToolShellExecute(const assistant::json& args)
     }
 
     size_t lines_count = output_arr.size();
-    constexpr size_t kMaxLinesOutput = 200;
-    if (lines_count > kMaxLinesOutput) {
+    if (apply_output_check_len && lines_count > kMaxLinesToRead) {
         wxString message;
         message << _("The output for the command: `") << cmd << _("` is too large.");
         llm::Manager::GetInstance().PrintMessage(message, IconType::kError);
@@ -847,14 +875,21 @@ void PopulateBuiltInFunctions(FunctionTable& table)
 {
     table.Add(
         FunctionBuilder("ReadFileContent")
-            .SetDescription(
-                "Retrieves a block of text from a file. Requires a filepath, a 1-indexed starting line (from_line), "
-                "and a line_count (must be between 1 and 200). Returns the specified file content if successful.")
+            .SetDescription(wxString::Format("Retrieves a block of text from a file. Requires a filepath, a 1-indexed "
+                                             "starting line (from_line), and a line_count (must be between 1 and %d). "
+                                             "Returns the specified file content if successful.",
+                                             kMaxLinesToRead)
+                                .ToStdString(wxConvUTF8))
             .AddRequiredParam("filepath", "The path of the file to read.", "string")
             .AddRequiredParam("from_line", "The starting line number to read from (1-based indexing).", "number")
-            .AddRequiredParam("line_count",
-                              "The number of lines to read from the starting line. Must be between 1 and 200.",
-                              "number")
+            .AddRequiredParam(
+                "line_count",
+                wxString::Format(
+                    "The number of lines to read from the starting line. Must be between 1 and %d.", kMaxLinesToRead)
+                    .ToStdString(wxConvUTF8),
+                "number")
+            // Force the limit using schema validation parameter
+            .AddMinMaxValidation("line_count", 1, kMaxLinesToRead)
             .SetCallback(ReadFileContent)
             .SetHumanInTheLoopCallabck(ReadFileContentConfirm)
             .Build());
@@ -892,8 +927,13 @@ void PopulateBuiltInFunctions(FunctionTable& table)
     table.Add(
         FunctionBuilder("GetActiveEditorText")
             .SetDescription("Return the text of the active tab inside the editor.")
-            .AddOptionalParam("from_line", "Starting line to read from (1-based). Defaults to 1.", "number")
-            .AddOptionalParam("count", "Number of lines to read. Must be between 1 and 200. Defaults to 200.", "number")
+            .AddRequiredParam("from_line", "Starting line to read from (1-based). Defaults to 1.", "number")
+            .AddRequiredParam(
+                "count",
+                wxString::Format("Number of lines to read. Must be between 1 and %d. Defaults to %d.", kMaxLinesToRead)
+                    .ToStdString(wxConvUTF8),
+                "number")
+            .AddMinMaxValidation("count", 1, kMaxLinesToRead)
             .SetCallback(GetCurrentEditorText)
             .Build());
     table.Add(

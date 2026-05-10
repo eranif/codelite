@@ -2,7 +2,7 @@
 
 // clang-format off
 #include <wx/app.h>
-#include "assistant/function_base.hpp"
+#include "assistant/function.hpp"
 // clang-format on
 
 #include "codelite_exports.h"

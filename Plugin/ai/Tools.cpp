@@ -102,11 +102,11 @@ FunctionResult FileSystemWrite(const assistant::json& args)
         msg << "file '" << path << "' successfully written to disk!.";
 
         if (clFileSystemWorkspace::Get().IsOpen()) {
-            // refresh the entire view
             clFileSystemWorkspace::Get().GetView()->RefreshTree();
-            // notify update
             clFileSystemWorkspace::Get().FileSystemUpdated();
         }
+
+        EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
         return Ok(msg);
     };
 
@@ -136,6 +136,7 @@ FunctionResult FileSystemWrite(const assistant::json& args)
             clFileSystemWorkspace::Get().GetView()->RefreshTree();
             clFileSystemWorkspace::Get().FileSystemUpdated();
         }
+        EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
         return Ok(msg);
     };
 

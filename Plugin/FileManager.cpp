@@ -212,3 +212,63 @@ bool FileManager::RemoveFile(const wxString& filepath, const WriteOptions& optio
 #endif
     return FileUtils::RemoveFile(fullpath);
 }
+
+wxString FileManager::GetDirFullPath(const wxString& dir, const WriteOptions& options)
+{
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if (workspace == nullptr || options.ignore_workspace) {
+        // No workspace is opened, assume local.
+        wxFileName fn{dir, wxEmptyString};
+        if (fn.IsRelative()) {
+            fn.MakeAbsolute();
+        }
+        return fn.GetPath();
+    }
+
+    if (workspace && workspace->IsRemote()) {
+        // Remote workspace
+        bool is_relative = !dir.StartsWith("/");
+        if (is_relative) {
+            wxString fullpath;
+            fullpath << workspace->GetDir() << "/" << dir;
+            return fullpath;
+        }
+        return dir;
+    }
+
+    // Local workspace
+    wxFileName fn{dir, wxEmptyString};
+    if (fn.IsRelative()) {
+        wxString full_path = workspace->GetDir() + "/" + dir;
+        return wxFileName{full_path, wxEmptyString}.GetPath();
+    }
+    return fn.GetPath();
+}
+
+bool FileManager::DirExists(const wxString& dir, const WriteOptions& options)
+{
+    wxString dir_fullpath = GetDirectoryFullPath(dir, options);
+#if USE_SFTP
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if (!options.ignore_workspace && workspace && workspace->IsRemote()) {
+        return clSFTPManager::Get().IsDirExists(dir_fullpath, workspace->GetSshAccount());
+    }
+#endif
+    return wxFileName::DirExists(dir_fullpath);
+}
+
+bool FileManager::CreateDir(const wxString& dir, const WriteOptions& options)
+{
+    wxString dir_fullpath = GetDirectoryFullPath(dir, options);
+#if USE_SFTP
+    auto workspace = clWorkspaceManager::Get().GetWorkspace();
+    if (!options.ignore_workspace && workspace && workspace->IsRemote()) {
+        auto account = SSHAccountInfo::FindAccount(workspace->GetSshAccount());
+        if (!account) {
+            return false;
+        }
+        return clSFTPManager::Get().NewFolder(dir_fullpath, *account);
+    }
+#endif
+    return wxFileName::Mkdir(dir_fullpath, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+}

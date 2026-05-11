@@ -469,6 +469,7 @@ void ChatAIWindow::DoClearOutputView()
     llm::Manager::GetInstance().ClearHistory();
     llm::Manager::GetInstance().ClearSystemMessages();
     UpdateStatusBar();
+    HidePromptPanel();
 }
 
 void ChatAIWindow::OnClearSession(wxCommandEvent& event)

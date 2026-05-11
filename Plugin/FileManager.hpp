@@ -74,6 +74,7 @@ public:
     /// the path returned is in the workspace private folder .codelite, otherwise, we return the global settings path:
     /// ~/.codelite/config/<NAME>
     static wxString GetSettingFileFullPath(const wxString& name, const WriteOptions& options = {});
+    static wxString GetDirFullPath(const wxString& dir, const WriteOptions& options = {});
 
     /// Create file with a given path. If the path is relative, it is converted to full path by using the method:
     /// `GetFullPath`.
@@ -84,6 +85,39 @@ public:
 
     /// Check if a file exists.
     static bool FileExists(const wxString& filepath, const WriteOptions& options = {});
+
+    /**
+     * Checks whether a directory exists, optionally resolving it relative to the current workspace.
+     *
+     * If the current workspace is remote and workspace checks are enabled, the lookup is performed
+     * through the SFTP manager against the remote SSH account. Otherwise, the function falls back to
+     * the local filesystem using the resolved full path.
+     *
+     * @param dir const wxString& The directory path to test. This may be relative or absolute, depending on the active
+     * write options.
+     * @param options const WriteOptions& Options that control how the path is resolved, including whether
+     * workspace-relative handling should be ignored.
+     * @return bool True if the directory exists, false otherwise.
+     */
+    static bool DirExists(const wxString& dir, const WriteOptions& options = {});
+
+    /**
+     * @brief Creates a directory at the resolved path for the given location.
+     *
+     * Resolves the requested directory using the provided write options, then creates
+     * the directory locally or, when applicable, through SFTP for a remote workspace.
+     * When the workspace is remote and workspace handling is not ignored, the function
+     * attempts to locate the associated SSH account before creating the remote folder.
+     *
+     * @param dir const wxString& - The directory path or name to create.
+     * @param options const WriteOptions& - Options controlling path resolution and
+     *        whether workspace-specific handling should be ignored.
+     *
+     * @return bool - true if the directory was created successfully; false otherwise.
+     *
+     * @throws None explicitly. The function reports failure by returning false.
+     */
+    static bool CreateDir(const wxString& dir, const WriteOptions& options = {});
 
     static std::optional<wxString> ReadContent(const wxString& filepath, const WriteOptions& options = {});
     static std::optional<wxString> ReadSettingsFileContent(const wxString& name, const WriteOptions& options = {});

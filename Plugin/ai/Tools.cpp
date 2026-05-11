@@ -31,31 +31,45 @@ using assistant::CanInvokeToolResult;
 
 constexpr int kMaxLinesToRead = 500;
 
-CanInvokeToolResult CreateNewFileConfirm(const std::string& tool_name, assistant::json args)
+CanInvokeToolResult FileSystemNewConfirm(const std::string& tool_name, assistant::json args)
 {
     CONFIRM_ARG(std::string,
-                filepath,
+                path,
                 "",
-                ::assistant::GetFunctionArg<std::string>(args, "filepath"),
-                "Missing or empty mandatory field 'filepath'");
+                ::assistant::GetFunctionArg<std::string>(args, "path"),
+                "Missing or empty mandatory field 'path'");
 
-    static constexpr const char kCreateNewFile[] = "CreateNewFile";
-    return ConfirmPathTool(kCreateNewFile, _("The model wants to create the file:"), _("Creating new file:"), filepath);
+    auto is_dir = ::assistant::GetFunctionArg<bool>(args, "is_dir");
+    if (!is_dir.has_value()) {
+        return CanInvokeToolResult{
+            .can_invoke = false,
+            .reason = "Missing mandatory field 'is_dir'",
+        };
+    }
+
+    static constexpr const char kFileSystemNew[] = "FileSystemNew";
+    if (is_dir.value()) {
+        return ConfirmPathTool(
+            kFileSystemNew, _("The model wants to create the directory:"), _("Creating new directory:"), path);
+    }
+    return ConfirmPathTool(kFileSystemNew, _("The model wants to create the file:"), _("Creating new file:"), path);
 }
 
-FunctionResult CreateNewFile(const assistant::json& args)
+FunctionResult FileSystemNew(const assistant::json& args)
 {
     VERIFY_WORKER_THREAD();
-    if (args.size() != 2) {
+    if (args.size() < 2) {
         return Err("Invalid number of arguments");
     }
 
-    ASSIGN_FUNC_ARG_OR_RETURN(std::string filepath, ::assistant::GetFunctionArg<std::string>(args, "filepath"));
+    ASSIGN_FUNC_ARG_OR_RETURN(std::string path, ::assistant::GetFunctionArg<std::string>(args, "path"));
+    ASSIGN_FUNC_ARG_OR_RETURN(bool is_dir, ::assistant::GetFunctionArg<bool>(args, "is_dir"));
+
     std::string file_content = ::assistant::GetFunctionArg<std::string>(args, "file_content").value_or("");
 
-    auto cb = [=]() -> FunctionResult {
+    auto fs_new_file = [=]() -> FunctionResult {
         wxString msg;
-        wxString fullpath = FileManager::GetFullPath(wxString::FromUTF8(filepath));
+        wxString fullpath = FileManager::GetFullPath(wxString::FromUTF8(path));
         if (FileManager::FileExists(fullpath)) {
             wxString prompt_message;
             prompt_message << _("The file '") << fullpath << _("' already exists.\nOverride it?");
@@ -67,12 +81,12 @@ FunctionResult CreateNewFile(const assistant::json& args)
         }
 
         // Always write to disk (even empty content) so the file physically exists after this call.
-        if (!FileManager::WriteContent(filepath, wxString::FromUTF8(file_content), true)) {
-            msg << "Error while writing file: '" << filepath << "' to disk.";
+        if (!FileManager::WriteContent(path, wxString::FromUTF8(file_content), true)) {
+            msg << "Error while writing file: '" << path << "' to disk.";
             return Err(msg);
         }
 
-        msg << "file '" << filepath << "' successfully written to disk!.";
+        msg << "file '" << path << "' successfully written to disk!.";
 
         if (clFileSystemWorkspace::Get().IsOpen()) {
             // refresh the entire view
@@ -82,7 +96,34 @@ FunctionResult CreateNewFile(const assistant::json& args)
         }
         return Ok(msg);
     };
-    return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(cb));
+
+    auto fs_new_dir = [=]() -> FunctionResult {
+        wxString msg;
+        wxString fullpath = FileManager::GetDirectoryFullPath(wxString::FromUTF8(path));
+        if (FileManager::DirExists(fullpath)) {
+            return Ok(std::nullopt);
+        }
+
+        if (!FileManager::CreateDir(fullpath)) {
+            msg << "Failed to create directory: " << fullpath
+                << ". Make sure you have enough permissions and that the parent folder(s) exist";
+            return Err(msg);
+        }
+
+        if (clFileSystemWorkspace::Get().IsOpen()) {
+            clFileSystemWorkspace::Get().GetView()->RefreshTree();
+            clFileSystemWorkspace::Get().FileSystemUpdated();
+        }
+
+        msg << "Successfully created directory '" << path << "'";
+        return Ok(msg);
+    };
+
+    if (is_dir) {
+        return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(fs_new_dir));
+    } else {
+        return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(fs_new_file));
+    }
 }
 
 /// Will be invoked by the library before calling to the "ReadFileContent"
@@ -979,11 +1020,12 @@ ALWAYS RESPOND WITH A GIT-STYLE DIFF THAT CAN BE APPLIED DIRECTLY. NEVER PROVIDE
                   .SetCallback(ApplyPatch)
                   .SetHumanInTheLoopCallabck(ApplyPatchConfirm)
                   .Build());
-    table.Add(FunctionBuilder("CreateNewFile")
-                  .SetDescription(R"(Create a new file at the specified path with optional content)")
-                  .SetCallback(CreateNewFile)
-                  .SetHumanInTheLoopCallabck(CreateNewFileConfirm)
-                  .AddRequiredParam("filepath", "The path where the new file should be created", "string")
+    table.Add(FunctionBuilder("FileSystemNew")
+                  .SetDescription(R"(Create a new file or directory at the specified path with optional content)")
+                  .SetCallback(FileSystemNew)
+                  .SetHumanInTheLoopCallabck(FileSystemNewConfirm)
+                  .AddRequiredParam("path", "The path where the new file should be created", "string")
+                  .AddRequiredParam("is_dir", "If true, 'path' is a directory, otherwise, a file", "boolean")
                   .AddOptionalParam("file_content", "The initial content to write to the file", "string")
                   .Build());
     table.Add(FunctionBuilder("ShellExecute")

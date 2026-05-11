@@ -1,7 +1,7 @@
 #include "clAuiFlatTabArt.hpp"
 
 #if wxCHECK_VERSION(3, 3, 0)
-#ifndef __WXMAC__
+#if defined(__WXGTK__) || defined(__WXMSW__)
 #include "drawingutils.h"
 
 #include <wx/app.h>

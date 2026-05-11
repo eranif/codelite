@@ -106,7 +106,10 @@ FunctionResult FileSystemWrite(const assistant::json& args)
             clFileSystemWorkspace::Get().FileSystemUpdated();
         }
 
-        EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
+        auto editor = clGetManager()->FindEditor(fullpath);
+        if (editor) {
+            editor->ReloadFromDisk();
+        }
         return Ok(msg);
     };
 
@@ -136,7 +139,11 @@ FunctionResult FileSystemWrite(const assistant::json& args)
             clFileSystemWorkspace::Get().GetView()->RefreshTree();
             clFileSystemWorkspace::Get().FileSystemUpdated();
         }
-        EventNotifier::Get()->PostReloadExternallyModifiedEvent(false);
+
+        auto editor = clGetManager()->FindEditor(fullpath);
+        if (editor) {
+            editor->ReloadFromDisk();
+        }
         return Ok(msg);
     };
 

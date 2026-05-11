@@ -249,8 +249,15 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
     dc.SetTextForeground(textColour);
 
     const wxString& text = wxControl::Ellipsize(page.caption, dc, wxELLIPSIZE_END, xEnd - xStart);
-    const int textHeight = dc.GetTextExtent(text).y;
-    dc.DrawText(text, xStart, rect.y + (size.y - textHeight - 1) / 2);
+    const wxSize text_size = dc.GetTextExtent(text);
+    const int textHeight = text_size.y;
+    const int textWidth = text_size.x;
+    wxRect text_rect{xStart, rect.y + (size.y - textHeight - 1) / 2, textWidth, textHeight};
+    if (buttonsWidth == 0) {
+        // No buttons, centre the text
+        text_rect = text_rect.CenterIn(tab_rect);
+    }
+    dc.DrawText(text, text_rect.GetTopLeft());
     return xExtent;
 }
 

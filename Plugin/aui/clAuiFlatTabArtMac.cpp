@@ -141,24 +141,25 @@ void clAuiFlatTabArt::DoDrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& re
         dc.SetPen(*wxTRANSPARENT_PEN);
         dc.DrawRectangle(rect);
     }
-
-    bool bottom_tabs = (m_flags & wxAUI_NB_BOTTOM);
-    wxColour dark_pen = GetDarkBorderColour(m_data->m_bgWindow);
-    {
-        dc.SetPen(dark_pen);
-        dc.SetBrush(m_data->m_bgActive);
-        wxRect thin_rect = rect;
-        thin_rect.SetHeight(kThickness);
-        thin_rect.y -= 1;
-        thin_rect.x -= 2;
-        thin_rect.width += 4;
-        dc.DrawRectangle(thin_rect);
-    }
-    {
-        int y = GetThinRectTo(rect, bottom_tabs);
-        dc.SetPen(wxPen(dark_pen, 1));
-        dc.DrawLine(rect.GetLeft(), y, rect.GetRight(), y);
-    }
+    /*
+        bool bottom_tabs = (m_flags & wxAUI_NB_BOTTOM);
+        wxColour dark_pen = GetDarkBorderColour(m_data->m_bgWindow);
+        {
+            dc.SetPen(dark_pen);
+            dc.SetBrush(m_data->m_bgActive);
+            wxRect thin_rect = rect;
+            thin_rect.SetHeight(kThickness);
+            thin_rect.y -= 1;
+            thin_rect.x -= 2;
+            thin_rect.width += 4;
+            dc.DrawRectangle(thin_rect);
+        }
+        {
+            int y = GetThinRectTo(rect, bottom_tabs);
+            dc.SetPen(wxPen(dark_pen, 1));
+            dc.DrawLine(rect.GetLeft(), y, rect.GetRight(), y);
+        }
+    */
 }
 
 void clAuiFlatTabArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
@@ -188,30 +189,19 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
     wxColour bg = page.active ? m_data->m_bgActive : m_data->m_bgNormal;
     wxColour textColour = page.active ? m_data->m_fgActive : m_data->m_fgNormal;
 
+    wxRect tab_rect = page.rect;
+    tab_rect.Deflate(1);
+
     if (page.active) {
         bool is_dark = DrawingUtils::IsDark(m_data->m_bgWindow);
         // --- Fill the tab ---
         dc.SetBrush(bg);
-        dc.SetPen(*wxTRANSPARENT_PEN);
-        dc.DrawRectangle(page.rect);
 
-        // Light border on both left and right edges (iTerm2 style).
-        // Stop above the bottom underline.
         wxColour bar = m_data->m_bgActive;
-        wxColour left_edge = bar.ChangeLightness(dark ? 110 : 90);
-        dc.SetPen(left_edge);
-        bool bottom_tabs = m_flags & wxAUI_NB_BOTTOM;
-        int y1 = GetThinRectY(page.rect, bottom_tabs);
-        int y2 = GetThinRectTo(page.rect, bottom_tabs);
-        dc.DrawLine(page.rect.GetLeft(), y1, page.rect.GetLeft(), y2);
+        wxColour pen_colour = bar.ChangeLightness(dark ? 110 : 90);
 
-        wxColour right_edge = bar.ChangeLightness(dark ? 115 : 70);
-        dc.SetPen(right_edge);
-        dc.DrawLine(page.rect.GetRight(), y1, page.rect.GetRight(), y2);
-
-        dc.SetPen(wxPen{m_data->m_fgHilite, m_data->m_HilitePenWidth});
-        int x_offset = is_dark ? 0 : 1;
-        dc.DrawLine(page.rect.GetLeft() + x_offset, y2, page.rect.GetRight() - x_offset, y2);
+        dc.SetPen(pen_colour);
+        dc.DrawRoundedRectangle(tab_rect, static_cast<double>(tab_rect.GetHeight()) / 2.0);
     }
 
     // --- Close / action buttons ---
@@ -230,6 +220,7 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
         xEnd -= buttonsWidth;
         wxRect all_buttons_rect(xEnd, rect.GetY(), buttonsWidth, rect.GetHeight());
         all_buttons_rect.SetWidth(all_buttons_rect.GetWidth() + Data::PADDING_X + Data::MARGIN);
+        all_buttons_rect = all_buttons_rect.CenterIn(tab_rect, wxVERTICAL);
 
         int buttonX = xEnd;
         for (auto& button : page.buttons) {
@@ -245,7 +236,8 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
             button.rect.height = buttonSize.y;
 
             auto button_rect = button.rect.CentreIn(all_buttons_rect, wxBOTH);
-            button_rect.y += 2;
+            button_rect.y += 1;
+
             dc.DrawBitmap(bmp, button_rect.GetPosition(), true);
             buttonX += buttonSize.x;
         }

@@ -31,7 +31,7 @@ using assistant::CanInvokeToolResult;
 
 constexpr int kMaxLinesToRead = 500;
 
-CanInvokeToolResult FileSystemNewConfirm(const std::string& tool_name, assistant::json args)
+CanInvokeToolResult FileSystemWriteConfirm(const std::string& tool_name, assistant::json args)
 {
     CONFIRM_ARG(std::string,
                 path,
@@ -39,23 +39,36 @@ CanInvokeToolResult FileSystemNewConfirm(const std::string& tool_name, assistant
                 ::assistant::GetFunctionArg<std::string>(args, "path"),
                 "Missing or empty mandatory field 'path'");
 
-    auto is_dir = ::assistant::GetFunctionArg<bool>(args, "is_dir");
-    if (!is_dir.has_value()) {
+    auto action = ::assistant::GetFunctionArg<std::string>(args, "action");
+    if (!action.has_value() || action->empty()) {
         return CanInvokeToolResult{
             .can_invoke = false,
-            .reason = "Missing mandatory field 'is_dir'",
+            .reason = "Missing mandatory field 'action'",
         };
     }
 
-    static constexpr const char kFileSystemNew[] = "FileSystemNew";
-    if (is_dir.value()) {
+    static constexpr const char kFileSystemWrite[] = "FileSystemWrite";
+    if (action.value() == "create_dir") {
         return ConfirmPathTool(
-            kFileSystemNew, _("The model wants to create the directory:"), _("Creating new directory:"), path);
+            kFileSystemWrite, _("The model wants to create the directory:"), _("Creating new directory:"), path);
     }
-    return ConfirmPathTool(kFileSystemNew, _("The model wants to create the file:"), _("Creating new file:"), path);
+    if (action.value() == "create_file") {
+        return ConfirmPathTool(
+            kFileSystemWrite, _("The model wants to create the file:"), _("Creating new file:"), path);
+    }
+    if (action.value() == "append_file") {
+        return ConfirmPathTool(
+            kFileSystemWrite, _("The model wants to append to the file:"), _("Appending file:"), path);
+    }
+
+    return CanInvokeToolResult{
+        .can_invoke = false,
+        .reason = "Invalid value for mandatory field 'action'. Expected one of: 'create_file', "
+                  "'create_dir', 'append_file'",
+    };
 }
 
-FunctionResult FileSystemNew(const assistant::json& args)
+FunctionResult FileSystemWrite(const assistant::json& args)
 {
     VERIFY_WORKER_THREAD();
     if (args.size() < 2) {
@@ -63,11 +76,11 @@ FunctionResult FileSystemNew(const assistant::json& args)
     }
 
     ASSIGN_FUNC_ARG_OR_RETURN(std::string path, ::assistant::GetFunctionArg<std::string>(args, "path"));
-    ASSIGN_FUNC_ARG_OR_RETURN(bool is_dir, ::assistant::GetFunctionArg<bool>(args, "is_dir"));
+    ASSIGN_FUNC_ARG_OR_RETURN(std::string action, ::assistant::GetFunctionArg<std::string>(args, "action"));
 
-    std::string file_content = ::assistant::GetFunctionArg<std::string>(args, "file_content").value_or("");
+    std::string file_content = ::assistant::GetFunctionArg<std::string>(args, "content").value_or("");
 
-    auto fs_new_file = [=]() -> FunctionResult {
+    auto fs_create_file = [=]() -> FunctionResult {
         wxString msg;
         wxString fullpath = FileManager::GetFullPath(wxString::FromUTF8(path));
         if (FileManager::FileExists(fullpath)) {
@@ -97,6 +110,35 @@ FunctionResult FileSystemNew(const assistant::json& args)
         return Ok(msg);
     };
 
+    auto fs_append_file = [=]() -> FunctionResult {
+        wxString msg;
+        wxString fullpath = FileManager::GetFullPath(wxString::FromUTF8(path));
+        if (!FileManager::FileExists(fullpath)) {
+            msg << "The file: " << fullpath << " does not exist";
+            return Err(msg);
+        }
+
+        wxString existing_content;
+        {
+            auto content = FileManager::ReadContent(fullpath);
+            if (content.has_value()) {
+                existing_content = content.value();
+            }
+        }
+
+        if (!FileManager::WriteContent(path, existing_content + wxString::FromUTF8(file_content), true)) {
+            msg << "Error while appending file: '" << path << "' to disk.";
+            return Err(msg);
+        }
+
+        msg << "file '" << path << "' successfully appended to disk!.";
+        if (clFileSystemWorkspace::Get().IsOpen()) {
+            clFileSystemWorkspace::Get().GetView()->RefreshTree();
+            clFileSystemWorkspace::Get().FileSystemUpdated();
+        }
+        return Ok(msg);
+    };
+
     auto fs_new_dir = [=]() -> FunctionResult {
         wxString msg;
         wxString fullpath = FileManager::GetDirectoryFullPath(wxString::FromUTF8(path));
@@ -119,10 +161,14 @@ FunctionResult FileSystemNew(const assistant::json& args)
         return Ok(msg);
     };
 
-    if (is_dir) {
+    if (action == "create_dir") {
         return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(fs_new_dir));
+    } else if (action == "create_file") {
+        return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(fs_create_file));
+    } else if (action == "append_file") {
+        return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(fs_append_file));
     } else {
-        return EventNotifier::Get()->RunOnMain<FunctionResult>(std::move(fs_new_file));
+        return Err("Invalid value for 'action'. Expected one of: create_file, create_dir, append_file");
     }
 }
 
@@ -1020,14 +1066,17 @@ ALWAYS RESPOND WITH A GIT-STYLE DIFF THAT CAN BE APPLIED DIRECTLY. NEVER PROVIDE
                   .SetCallback(ApplyPatch)
                   .SetHumanInTheLoopCallabck(ApplyPatchConfirm)
                   .Build());
-    table.Add(FunctionBuilder("FileSystemNew")
-                  .SetDescription(R"(Create a new file or directory at the specified path with optional content)")
-                  .SetCallback(FileSystemNew)
-                  .SetHumanInTheLoopCallabck(FileSystemNewConfirm)
-                  .AddRequiredParam("path", "The path where the new file should be created", "string")
-                  .AddRequiredParam("is_dir", "If true, 'path' is a directory, otherwise, a file", "boolean")
-                  .AddOptionalParam("file_content", "The initial content to write to the file", "string")
-                  .Build());
+    table.Add(
+        FunctionBuilder("FileSystemWrite")
+            .SetDescription(
+                R"(Create a new file, append to an existing file, or create a directory at the specified path with optional content)")
+            .SetCallback(FileSystemWrite)
+            .SetHumanInTheLoopCallabck(FileSystemWriteConfirm)
+            .AddRequiredParam("path", "The path where the new file should be created", "string")
+            .AddRequiredParam("action", "The action to perform: create_file, create_dir, append_file", "string")
+            .AddStringEnumValidation("action", {"create_file", "create_dir", "append_file"})
+            .AddOptionalParam("content", "The content to write or append to the file", "string")
+            .Build());
     table.Add(FunctionBuilder("ShellExecute")
                   .SetDescription(R"(Execute a shell command and return its output.
 IMPORTANT: Before using this tool, you should call the GetOS tool first to determine the host operating system.

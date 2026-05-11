@@ -114,7 +114,7 @@ CodeLite exposes the following built-in tools for the model:
 
 | Tool | Description | Requires Approval |
 |------|-------------|:-----------------:|
-| `CreateNewFile` | Create a new file at the specified path with optional content | ✅ |
+| `FileSystemWrite` | Create a new file, append to an existing file, or create a directory | ✅ |
 | `CreateWorkspace` | Create a new local or remote (SSH/SFTP) workspace | — |
 | `ReadFileContent` | Read a block of lines from a file (local or remote) | ✅ |
 | `ReadFileMetadata` | Read metadata (full path, size, line count) of a file | ✅ |
@@ -135,13 +135,18 @@ CodeLite exposes the following built-in tools for the model:
 
 ### Tool Reference
 
-#### `CreateNewFile`
-Creates a new file on disk. If the file already exists the tool returns an error rather than overwriting it.
+#### `FileSystemWrite`
+Creates a new file, appends content to an existing file, or creates a directory.
 
 | Parameter | Type | Required | Description |
 |-----------|------|:--------:|-------------|
-| `filepath` | string | ✅ | Path where the new file should be created |
-| `file_content` | string | — | Initial content to write to the file (empty file created if omitted) |
+| `action` | string | ✅ | One of: `create_file`, `create_dir`, `append_file` |
+| `path` | string | ✅ | File path for `create_file`/`append_file`, or directory path for `create_dir` |
+| `content` | string | — | Content to write or append when `action` is `create_file` or `append_file` |
+
+When `action` is `create_file`, the tool creates the file and writes the provided content if any.
+When `action` is `append_file`, the tool appends the provided content to the existing file.
+When `action` is `create_dir`, the tool creates the directory if it does not already exist.
 
 #### `CreateWorkspace`
 Creates a new CodeLite workspace. Pass a `host` to create a remote workspace over SSH/SFTP (requires the **Remoty** plugin).

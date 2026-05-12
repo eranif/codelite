@@ -54,7 +54,7 @@ TEST_CASE("StringUtils::SplitShellCommand - single command")
 TEST_CASE("StringUtils::SplitShellCommand - happy path with &&")
 {
     const auto result = StringUtils::SplitShellCommand(R"(git diff && ls -l && echo "hello && world")");
-    RequireSplitEq(result, ToSplitResult({{"git", "diff"}, {"ls", "-l"}, {"echo", "hello && world"}}));
+    RequireSplitEq(result, ToSplitResult({{"git", "diff"}, {"ls", "-l"}, {"echo", R"#("hello && world")#"}}));
 }
 
 TEST_CASE("StringUtils::SplitShellCommand - mixed separators")
@@ -67,7 +67,7 @@ TEST_CASE("StringUtils::SplitShellCommand - quoted separators are preserved")
 {
     const auto result = StringUtils::SplitShellCommand(R"(echo "a && b" ; echo 'c || d' ; echo `e ; f`)");
     // BuildArgv preserves quoting characters for single quotes and backticks.
-    RequireSplitEq(result, ToSplitResult({{"echo", "a && b"}, {"echo", "'c || d'"}, {"echo", "`e ; f`"}}));
+    RequireSplitEq(result, ToSplitResult({{"echo", R"#("a && b")#"}, {"echo", "'c || d'"}, {"echo", "`e ; f`"}}));
 }
 
 TEST_CASE("StringUtils::SplitShellCommand - escaped separator outside quotes")
@@ -101,7 +101,7 @@ TEST_CASE("StringUtils::SplitShellCommand - complex command with nesting style t
 {
     const wxString command = R"RAW(python -c "print('a && b')" && echo ok)RAW";
     const auto result = StringUtils::SplitShellCommand(command);
-    RequireSplitEq(result, ToSplitResult({{"python", "-c", "print('a && b')"}, {"echo", "ok"}}));
+    RequireSplitEq(result, ToSplitResult({{"python", "-c", R"#("print('a && b')")#"}, {"echo", "ok"}}));
 }
 
 TEST_CASE("StringUtils::SplitShellCommand - consecutive separators do not create empty commands")

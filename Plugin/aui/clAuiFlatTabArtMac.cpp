@@ -191,6 +191,7 @@ int clAuiFlatTabArt::DrawPageTab(wxDC& dc, wxWindow* wnd, wxAuiNotebookPage& pag
 
     wxRect tab_rect = page.rect;
     tab_rect.Deflate(1);
+    tab_rect.SetY(tab_rect.GetY() - 1);
 
     if (page.active) {
         bool is_dark = DrawingUtils::IsDark(m_data->m_bgWindow);

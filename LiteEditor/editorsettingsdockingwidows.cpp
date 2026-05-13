@@ -51,6 +51,7 @@ EditorSettingsDockingWindows::EditorSettingsDockingWindows(wxWindow* parent, Opt
                     wxString value_str;
                     if (value.GetAs(&value_str)) {
                         m_options->SetNotebookTabHeight(tab_height_map.find(value_str)->second);
+                        m_isRestartRequired = true;
                     }
                 });
 

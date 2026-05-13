@@ -2591,7 +2591,7 @@ void clMainFrame::OnViewOptions(wxCommandEvent& WXUNUSED(event))
     PreferencesDialog dlg(this);
     dlg.ShowModal();
 
-    if (dlg.restartRquired) {
+    if (dlg.IsRestartRequired()) {
         DoSuggestRestart();
     }
 }

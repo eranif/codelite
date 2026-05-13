@@ -23,8 +23,7 @@
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
 
-#ifndef __options_dlg2__
-#define __options_dlg2__
+#pragma once
 
 #include "OptionsConfigPage.hpp"
 #include "options_base_dlg2.h"
@@ -32,25 +31,36 @@
 /** Implementing OptionsBaseDlg2 */
 class PreferencesDialog : public OptionsBaseDlg2
 {
-    OptionsConfigPtr m_options;
+
+public:
+    PreferencesDialog(wxWindow* parent);
+    ~PreferencesDialog() override = default;
+
+    bool IsRestartRequired() const
+    {
+        for (size_t i = 0; i < m_treeBook->GetPageCount(); ++i) {
+            OptionsConfigPage* p = dynamic_cast<OptionsConfigPage*>(m_treeBook->GetPage(i));
+            if (p && p->IsRestartRequired()) {
+                return true;
+            }
+        }
+        return false;
+    }
 
 protected:
-    // Handlers for OptionsBaseDlg2 events.
-    void OnButtonOK(wxCommandEvent& event);
-    void OnButtonCancel(wxCommandEvent& event);
-    void OnButtonApply(wxCommandEvent& event);
+    void OnButtonOK(wxCommandEvent& event) override;
+    void OnButtonCancel(wxCommandEvent& event) override;
+    void OnButtonApply(wxCommandEvent& event) override;
     void Initialize();
     void DoSave();
 
-    template <typename T> void AddPage(T* ptr, wxString const& caption, bool selected = false)
+    template <typename T>
+    void AddPage(T* ptr, wxString const& caption, bool selected = false)
     {
         m_treeBook->AddPage(ptr, caption, selected);
     }
 
-public:
-    PreferencesDialog(wxWindow* parent);
-    virtual ~PreferencesDialog() = default;
+private:
     bool restartRquired = false;
+    OptionsConfigPtr m_options;
 };
-
-#endif // __options_dlg2__

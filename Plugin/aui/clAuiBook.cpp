@@ -29,8 +29,6 @@ int NotebookFlagsToAuiBookStyle(long style_flags, NotebookStyle style, wxAuiNote
 }
 } // namespace
 
-static size_t Y_SPACER = 5;
-
 clAuiBook::clAuiBook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
     long aui_book_style = 0;
@@ -270,23 +268,10 @@ void clAuiBook::UpdatePreferences()
         style &= ~wxAUI_NB_CLOSE_ON_ACTIVE_TAB;
     }
 
-    // update the tab height
-    int tabHeight = options->GetNotebookTabHeight();
-    switch (tabHeight) {
-    case OptionsConfig::nbTabHt_Tiny:
-        Y_SPACER = tabHeight + 2;
-        break;
-    case OptionsConfig::nbTabHt_Short:
-        Y_SPACER = tabHeight + 2;
-        break;
-    default:
-    case OptionsConfig::nbTabHt_Medium:
-        Y_SPACER = tabHeight + 2;
-        break;
-    case OptionsConfig::nbTabHt_Tall:
-        Y_SPACER = tabHeight + 2;
-        break;
-    }
+    // update the tab height: the tab-height preference is read directly by
+    // clAuiFlatTabArt::GetPageTabSize(). Recreating the art provider below
+    // (via SetBookArt) updates the per-tab drawing, and UpdateTabCtrlHeight()
+    // re-measures the tab strip itself so its background grows with the tabs.
 
     // update the art
     SetBookArt();

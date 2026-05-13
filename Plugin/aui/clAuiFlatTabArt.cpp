@@ -3,6 +3,7 @@
 #if wxCHECK_VERSION(3, 3, 0)
 #if defined(__WXGTK__) || defined(__WXMSW__)
 #include "drawingutils.h"
+#include "editor_config.h"
 
 #include <wx/app.h>
 #include <wx/bitmap.h>
@@ -74,7 +75,6 @@ struct clAuiFlatTabArt::Data {
     // Extra space in DIPs.
     static const int MARGIN = 3;
     static const int PADDING_X = 8;
-    static const int PADDING_Y = 5;
 };
 
 clAuiFlatTabArt::clAuiFlatTabArt()
@@ -293,8 +293,12 @@ wxSize clAuiFlatTabArt::GetPageTabSize(wxReadOnlyDC& dc, wxWindow* wnd, const wx
         size.IncTo(bitmapSize);
     }
 
-    // Add padding around the contents.
-    size += wnd->FromDIP(2 * wxSize(Data::PADDING_X, Data::PADDING_Y));
+    // Add padding around the contents. The vertical padding is derived from
+    // the user-configurable "Notebook Tab Height" preference
+    // (Settings -> Preferences -> Tabs) so tabs honour the chosen size.
+    // The formula mirrors clTabRenderer.cpp: ySpacer = option + 2.
+    const int paddingY = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight() + 2;
+    size += wnd->FromDIP(wxSize(2 * Data::PADDING_X, 2 * paddingY));
 
     // After going to all the trouble of computing the fitting size, replace it
     // with fixed width if this is what we're supposed to use (but skipping

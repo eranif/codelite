@@ -286,6 +286,10 @@ void Copyright::MassUpdate(const std::vector<wxFileName>& filtered_files, const 
                 }
                 wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
                 FileUtils::WriteFileContent(fn.GetFullPath(), file_content, fontEncConv);
+
+                if (auto* editor = clGetManager()->FindEditor(fn.GetFullPath())) {
+                    editor->ReloadFromDisk();
+                }
             }
         }
     }

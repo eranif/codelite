@@ -1009,14 +1009,14 @@ void PopulateBuiltInFunctions(FunctionTable& table)
             // Force the limit using schema validation parameter
             .AddMinMaxValidation("line_count", 1, kMaxLinesToRead)
             .SetCallback(ReadFileContent)
-            .SetHumanInTheLoopCallabck(ReadFileContentConfirm)
+            .SetHumanInTheLoopCallback(ReadFileContentConfirm)
             .Build());
 
     table.Add(FunctionBuilder("ReadFileMetadata")
                   .SetDescription("Reads metadata (path, size, and line count) of the file 'filepath' from the disk.")
                   .AddRequiredParam("filepath", "The path of the file to read metadata for.", "string")
                   .SetCallback(ReadFileMetadata)
-                  .SetHumanInTheLoopCallabck(ReadFileMetadataConfirm)
+                  .SetHumanInTheLoopCallback(ReadFileMetadataConfirm)
                   .Build());
 
     table.Add(FunctionBuilder("OpenFileInEditor")
@@ -1107,7 +1107,7 @@ ALWAYS RESPOND WITH A GIT-STYLE DIFF THAT CAN BE APPLIED DIRECTLY. NEVER PROVIDE
                       }
                       return result;
                   })
-                  .SetHumanInTheLoopCallabck(ApplyPatchConfirm)
+                  .SetHumanInTheLoopCallback(ApplyPatchConfirm)
                   .Build());
     table.Add(
         FunctionBuilder("FileSystemWrite")
@@ -1120,7 +1120,7 @@ ALWAYS RESPOND WITH A GIT-STYLE DIFF THAT CAN BE APPLIED DIRECTLY. NEVER PROVIDE
                 }
                 return result;
             })
-            .SetHumanInTheLoopCallabck(FileSystemWriteConfirm)
+            .SetHumanInTheLoopCallback(FileSystemWriteConfirm)
             .AddRequiredParam("path", "The path where the new file should be created", "string")
             .AddRequiredParam("action", "The action to perform: create_file, create_dir, append_file", "string")
             .AddStringEnumValidation("action", {"create_file", "create_dir", "append_file"})
@@ -1131,7 +1131,7 @@ ALWAYS RESPOND WITH A GIT-STYLE DIFF THAT CAN BE APPLIED DIRECTLY. NEVER PROVIDE
 IMPORTANT: Before using this tool, you should call the GetOS tool first to determine the host operating system.
 This ensures you can construct OS-appropriate commands (e.g., 'dir' vs 'ls', backslash vs forward slash paths).)")
                   .SetCallback(ToolShellExecute)
-                  .SetHumanInTheLoopCallabck(ToolShellExecuteConfirm)
+                  .SetHumanInTheLoopCallback(ToolShellExecuteConfirm)
                   .AddRequiredParam("command", "The shell command to execute", "string")
                   .AddRequiredParam("working_directory", "The directory where the command should be executed", "string")
                   .Build());

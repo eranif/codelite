@@ -61,6 +61,5 @@ protected:
     }
 
 private:
-    bool restartRquired = false;
     OptionsConfigPtr m_options;
 };

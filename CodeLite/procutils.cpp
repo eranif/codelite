@@ -517,12 +517,6 @@ int ProcUtils::SafeExecuteCommand(const wxString& command,
 
     int exit_code = assistant::Process::RunProcessAndWait(argv_std, output_cb, use_shell);
     wxString out_str = wxString::FromUTF8(accumlated_output);
-    LOG_IF_TRACE
-    {
-        clDEBUG1() << "process terminated with exit code:" << exit_code << endl;
-        // Read any unread output
-        clDEBUG1() << "reading process output remainder..." << endl;
-    }
     // Convert buff into wxArrayString
     output = ::wxStringTokenize(out_str, "\n", wxTOKEN_STRTOK);
     return exit_code;

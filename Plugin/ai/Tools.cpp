@@ -500,8 +500,24 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
     ASSIGN_FUNC_ARG_OR_RETURN(std::string find_what, ::assistant::GetFunctionArg<std::string>(args, "find_what"));
     ASSIGN_FUNC_ARG_OR_RETURN(std::string file_pattern, ::assistant::GetFunctionArg<std::string>(args, "file_pattern"));
 
-    if (file_pattern == "*") {
-        return Err("'file_pattern' can not be only '*', it must be more specific. For example '*.cpp;*.h;*.rs'");
+    // Parse file patterns (semi-colon separated list)
+    wxString file_patterns_str = wxString::FromUTF8(file_pattern);
+    if (!FileUtils::ValidateFilePattern(file_patterns_str)) {
+        return Err("Invalid file patterns. Pattern must be a semicolon-delimited list. Example: "
+                   "`*.cpp;*.h;CMakeLists.txt;.bashrc`");
+    }
+
+    wxArrayString file_pattern_arr = wxSplit(file_patterns_str, ';', 0);
+    if (file_pattern_arr.IsEmpty()) {
+        return Err("No valid file patterns provided");
+    }
+
+    for (auto& pat : file_pattern_arr) {
+        pat.Trim().Trim(false);
+        if (pat == "*" || pat == "*.*") {
+            return Err(
+                "`file_pattern` can not be only `*` or `*.*`, it must be more specific. For example `*.cpp;*.h;*.rs`");
+        }
     }
 
     bool recursive = assistant::GetFunctionArg<bool>(args, "recursive").value_or(false);
@@ -525,18 +541,6 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
         grep_command = "/usr/bin/grep";
     }
 #endif
-
-    // Parse file patterns (semi-colon separated list)
-    wxString file_patterns_str = wxString::FromUTF8(file_pattern);
-    if (!FileUtils::ValidateFilePattern(file_patterns_str)) {
-        return Err("Invalid file patterns. Pattern must be a semicolon-delimited list. Example: "
-                   "*.cpp;*.h;CMakeLists.txt;.bashrc");
-    }
-
-    wxArrayString file_pattern_arr = wxSplit(file_patterns_str, ';', 0);
-    if (file_pattern_arr.IsEmpty()) {
-        return Err("No valid file patterns provided");
-    }
 
     // Build grep command
     wxString cmd;
@@ -572,9 +576,8 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
 
     // Add include patterns for file types
     for (auto& pattern : file_pattern_arr) {
-        wxString trimmed_pattern = pattern.Trim().Trim(false);
-        if (!trimmed_pattern.IsEmpty()) {
-            cmd << " --include=" << StringUtils::EscapeAndWrapWithDoubleQuotes(trimmed_pattern);
+        if (!pattern.IsEmpty()) {
+            cmd << " --include=" << StringUtils::EscapeAndWrapWithDoubleQuotes(pattern);
         }
     }
 
@@ -593,7 +596,7 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
         std::string err = std::get<1>(result);
 
         if (out.empty() && !err.empty()) {
-            return Err("grep error: " + err);
+            return Err("grep error: ```bash\n" + err + "\n```");
         }
         if (out.empty()) {
             return Ok("No matches found");
@@ -613,26 +616,48 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
     }
 
     if (termination_flag.IsSet()) {
-        return Err("grep terminated by user");
+        return Err("`grep` terminated by user");
     }
 
     if (output_arr.empty()) {
         return Ok("No matches found");
     }
 
-    constexpr size_t kMaxGrepResponses = 10;
-    wxString report_message = wxString::Format("Found %u matches", output_arr.size());
-    if (output_arr.size() <= kMaxGrepResponses) {
-        wxString result = StringUtils::Join(output_arr);
-        llm::Manager::GetInstance().PrintMessage(report_message, IconType::kSuccess);
-        return Ok(result);
+    auto results = ParseGrepOutput(output_arr);
+    constexpr size_t kMaxGrepResponses = 100;
+
+    // Format the output.
+    wxString string_result;
+    size_t count{0};
+    for (const auto& [file, matches] : results.matches) {
+        string_result << file << ":\n";
+        for (const auto& m : matches) {
+            count++;
+            if (count > kMaxGrepResponses) {
+                break;
+            }
+            string_result << "  " << m.line_number << ":" << m.pattern << "\n";
+        }
+
+        if (count > kMaxGrepResponses) {
+            wxString prefix_message;
+            prefix_message << "IMPORTANT NOTE: displaying only " << kMaxGrepResponses
+                           << " matches. The total number of matches exceeded the maximum allowed of: "
+                           << kMaxGrepResponses << ". Please refine your search query\n\n";
+            string_result.Prepend(prefix_message);
+            break;
+        }
     }
 
-    // Parse the grep output and format as JSON
-    std::vector<FileMatchInfo> matches = ParseGrepOutput(output_arr);
-    std::string json_output = FormatGrepMatchesAsJson(output_arr, matches);
+    wxString report_message;
+    report_message << _("Found ") << results.count << _(" matches across ") << results.matches.size() << _(" files. ");
     llm::Manager::GetInstance().PrintMessage(report_message, IconType::kSuccess);
-    return Ok(wxString::FromUTF8(json_output));
+    if (results.count > kMaxGrepResponses) {
+        report_message.clear();
+        report_message << (results.count - kMaxGrepResponses) << _(" results were truncated");
+        llm::Manager::GetInstance().PrintMessage(report_message, IconType::kInfo);
+    }
+    return Ok(string_result);
 }
 
 CanInvokeToolResult ApplyPatchConfirm(const std::string& tool_name, assistant::json args)
@@ -716,7 +741,6 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
         wxString file = wxString::FromUTF8(file_path);
         auto result = PatchApplier::ApplyPatchLoose(file, patch, true);
         if (!result.success) {
-            clDEBUG() << "Failed to apply the patch:" << result.errorMessage.ToStdString(wxConvUTF8) << endl;
             // revert any changes done to the file.
             auto editor = clGetManager()->FindEditor(file);
             if (editor) {
@@ -724,7 +748,6 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
             }
             return Err(result.errorMessage.ToStdString(wxConvUTF8));
         }
-        clDEBUG() << "Patch applied successfully" << endl;
         return Ok("Patch applied successfully");
     });
 }
@@ -1044,7 +1067,13 @@ void PopulateBuiltInFunctions(FunctionTable& table)
     table.Add(
         FunctionBuilder("FindInFiles")
             .SetDescription(R"(Search for a given pattern within files in a directory)")
-            .SetCallback(FindInFiles)
+            .SetCallback([](const assistant::json& args) {
+                auto result = FindInFiles(args);
+                if (result.isError) {
+                    llm::Manager::GetInstance().PrintMessage(result.text, IconType::kError);
+                }
+                return result;
+            })
             .AddRequiredParam("root_folder", "The root directory where the search begins", "string")
             .AddRequiredParam("recursive", "Recurse into subdirectories,default is false", "boolean")
             .AddRequiredParam("find_what", "The text pattern to search for", "string")
@@ -1071,14 +1100,26 @@ To ensure accuracy:
 ALWAYS RESPOND WITH A GIT-STYLE DIFF THAT CAN BE APPLIED DIRECTLY. NEVER PROVIDE PLAIN EXPLANATIONS ALONE; IF YOU NEED TO EXPLAIN, APPEND A BRIEF NOTE AFTER THE DIFF.)")
                   .AddRequiredParam("patch_content", "The git style diff patch content to apply", "string")
                   .AddRequiredParam("file_path", "The path to the file that should be patched", "string")
-                  .SetCallback(ApplyPatch)
+                  .SetCallback([](const assistant::json& args) {
+                      auto result = ApplyPatch(args);
+                      if (result.isError) {
+                          llm::Manager::GetInstance().PrintMessage(result.text, IconType::kError);
+                      }
+                      return result;
+                  })
                   .SetHumanInTheLoopCallabck(ApplyPatchConfirm)
                   .Build());
     table.Add(
         FunctionBuilder("FileSystemWrite")
             .SetDescription(
                 R"(Create a new file, append to an existing file, or create a directory at the specified path with optional content)")
-            .SetCallback(FileSystemWrite)
+            .SetCallback([](const assistant::json& args) {
+                auto result = FileSystemWrite(args);
+                if (result.isError) {
+                    llm::Manager::GetInstance().PrintMessage(result.text, IconType::kError);
+                }
+                return result;
+            })
             .SetHumanInTheLoopCallabck(FileSystemWriteConfirm)
             .AddRequiredParam("path", "The path where the new file should be created", "string")
             .AddRequiredParam("action", "The action to perform: create_file, create_dir, append_file", "string")

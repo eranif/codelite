@@ -27,9 +27,9 @@
 
 namespace llm
 {
-using assistant::CanInvokeToolResult;
 
-constexpr int kMaxLinesToRead = 500;
+using assistant::CanInvokeToolResult;
+constexpr int kMaxLinesToRead = 1000;
 
 CanInvokeToolResult FileSystemWriteConfirm(const std::string& tool_name, assistant::json args)
 {

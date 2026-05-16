@@ -403,9 +403,9 @@ WXDLLIMPEXP_SDK void clSetSmallDialogBestSizeAndPosition(wxDialog& win);
 
 /**
  * @brief set a dialog size and position. Ratio is the size of the dialog compared to its parent
- * ration <= 0.0 the same size as the parent
+ * ratio <= 0.0 the same size as the parent
  */
-WXDLLIMPEXP_SDK void clSetDialogSizeAndPosition(wxDialog* win, double ratio);
+WXDLLIMPEXP_SDK void clSetDialogSizeAndPosition(wxDialog& win, double ratio);
 
 /**
  * @brief return true if a C++ workspace is opened

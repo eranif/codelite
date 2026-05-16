@@ -201,7 +201,7 @@ void SetColumnText(wxListCtrl* list, long indx, long column, const wxString& rTe
     list->SetItem(list_item);
 }
 
-wxString GetColumnText(wxListCtrl* list, long index, long column)
+wxString GetColumnText(const wxListCtrl* list, long index, long column)
 {
     wxListItem list_item;
     list_item.SetId(index);
@@ -753,7 +753,7 @@ void clSetEditorFontEncoding(const wxString& encoding)
     EditorConfigST::Get()->SetOptions(options);
 }
 
-int clFindMenuItemPosition(wxMenu* menu, int menuItemId)
+int clFindMenuItemPosition(const wxMenu* menu, int menuItemId)
 {
     if (!menu) {
         return wxNOT_FOUND;

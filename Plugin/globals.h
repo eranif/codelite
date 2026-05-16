@@ -109,7 +109,7 @@ SetColumnText(wxListCtrl* list, long indx, long column, const wxString& rText, i
  * \param column the column ID
  * \return the column's text
  */
-WXDLLIMPEXP_SDK wxString GetColumnText(wxListCtrl* list, long index, long column);
+WXDLLIMPEXP_SDK wxString GetColumnText(const wxListCtrl* list, long index, long column);
 
 /**
  * \brief append row to list control
@@ -378,7 +378,7 @@ WXDLLIMPEXP_SDK void clSetEditorFontEncoding(const wxString& encoding);
  * @brief given a menu and an item ID, return its position
  * @return return the position or wxNOT_FOUND
  */
-WXDLLIMPEXP_SDK int clFindMenuItemPosition(wxMenu* menu, int menuItemId);
+WXDLLIMPEXP_SDK int clFindMenuItemPosition(const wxMenu* menu, int menuItemId);
 
 /**
  * @brief return the screen size, taking dual or more screens into account

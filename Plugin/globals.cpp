@@ -839,13 +839,7 @@ static void DoSetDialogSize(wxDialog& win, double factor)
         parent = wxTheApp->GetTopWindow();
     }
     if (parent) {
-        wxSize parentSize = parent->GetSize();
-
-        double dlgWidth = (double)parentSize.GetWidth() * factor;
-        double dlgHeight = (double)parentSize.GetHeight() * factor;
-        parentSize.SetWidth(dlgWidth);
-        parentSize.SetHeight(dlgHeight);
-        win.SetSize(parentSize);
+        win.SetSize(parent->GetSize() * factor);
         win.GetSizer()->Layout();
         win.CentreOnParent();
 #if defined(__WXMAC__) || defined(__WXMSW__)

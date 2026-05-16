@@ -972,13 +972,13 @@ Notebook* FindNotebookParentOf(wxWindow* child)
     return nullptr;
 }
 
-bool IsChildOf(wxWindow* child, wxWindow* parent)
+bool IsChildOf(const wxWindow* child, const wxWindow* parent)
 {
     if (child == nullptr || parent == nullptr) {
         return false;
     }
 
-    wxWindow* curparent = child->GetParent();
+    const wxWindow* curparent = child->GetParent();
     while (curparent) {
         if (curparent == parent) {
             return true;

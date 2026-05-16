@@ -430,7 +430,7 @@ WXDLLIMPEXP_SDK bool SetBestFocus(wxWindow* win);
 WXDLLIMPEXP_SDK Notebook* FindNotebookParentOf(wxWindow* child);
 
 /// Return true if `child` is a child (does not have to be a direct child) of `parent`
-WXDLLIMPEXP_SDK bool IsChildOf(wxWindow* child, wxWindow* parent);
+WXDLLIMPEXP_SDK bool IsChildOf(const wxWindow* child, const wxWindow* parent);
 
 /// Return the selected text in a wxSTC. This function ensures that only
 /// visible text is returned (for example, if the selected text contains

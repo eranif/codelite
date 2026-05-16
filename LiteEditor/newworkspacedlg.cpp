@@ -45,7 +45,7 @@ NewWorkspaceDlg::NewWorkspaceDlg(wxWindow* parent)
     m_comboBoxPath->Append(history);
 
     m_textCtrlWorkspaceName->SetFocus();
-    ::clSetSmallDialogBestSizeAndPosition(this);
+    ::clSetSmallDialogBestSizeAndPosition(*this);
 }
 
 NewWorkspaceDlg::~NewWorkspaceDlg()

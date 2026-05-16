@@ -43,7 +43,7 @@ QMakeSettingsDlg::QMakeSettingsDlg(wxWindow* parent, IManager* manager, QmakeCon
 {
     Initialize();
     SetName("QMakeSettingsDlg");
-    ::clSetSmallDialogBestSizeAndPosition(this);
+    ::clSetSmallDialogBestSizeAndPosition(*this);
 }
 
 void QMakeSettingsDlg::Initialize()

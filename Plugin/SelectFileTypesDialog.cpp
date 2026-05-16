@@ -10,7 +10,7 @@ SelectFileTypesDialog::SelectFileTypesDialog(wxWindow* parent, const wxArrayStri
     InitializeList(initial_selection);
 
     // set the initial size
-    clSetSmallDialogBestSizeAndPosition(this);
+    clSetSmallDialogBestSizeAndPosition(*this);
 
     // load any old size from previous activation
     WindowAttrManager::Load(this);

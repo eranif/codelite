@@ -31,6 +31,6 @@ DbgCommandDlg::DbgCommandDlg(wxWindow* parent)
 {
     m_textCtrlName->ChangeValue("");
     m_textCtrlName->CallAfter(&wxTextCtrl::SetFocus);
-    ::clSetSmallDialogBestSizeAndPosition(this);
+    ::clSetSmallDialogBestSizeAndPosition(*this);
     CentreOnParent();
 }

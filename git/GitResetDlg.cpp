@@ -30,7 +30,7 @@ GitResetDlg::GitResetDlg(wxWindow* parent, const wxArrayString& filesToRevert, c
     m_clToolbarAdded->Bind(wxEVT_TOOL, &GitResetDlg::OnToggleAllRemove, this, XRCID("toggle-all-added"));
     m_clToolbarAdded->Bind(wxEVT_UPDATE_UI, &GitResetDlg::OnToggleAllRemoveUI, this, XRCID("toggle-all-added"));
     m_clToolbarAdded->Realize();
-    ::clSetSmallDialogBestSizeAndPosition(this);
+    ::clSetSmallDialogBestSizeAndPosition(*this);
 }
 
 wxArrayString GitResetDlg::GetItemsToRevert() const

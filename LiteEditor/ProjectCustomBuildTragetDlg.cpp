@@ -40,7 +40,7 @@ ProjectCustomBuildTragetDlg::ProjectCustomBuildTragetDlg(wxWindow* parent, const
     m_textCtrlCommand->ChangeValue( targetCommand );
     m_textCtrlTargetName->ChangeValue( targetName );
     SetName("ProjectCustomBuildTragetDlg");
-    clSetSmallDialogBestSizeAndPosition(this);
+    clSetSmallDialogBestSizeAndPosition(*this);
 }
 
 void ProjectCustomBuildTragetDlg::OnEditTargetNameUI(wxUpdateUIEvent& event)

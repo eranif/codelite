@@ -399,7 +399,7 @@ WXDLLIMPEXP_SDK void clSetDialogBestSizeAndPosition(wxDialog& win);
 /**
  * @brief similar to clSetDialogBestSizeAndPosition but use a smaller default size
  */
-WXDLLIMPEXP_SDK void clSetSmallDialogBestSizeAndPosition(wxDialog* win);
+WXDLLIMPEXP_SDK void clSetSmallDialogBestSizeAndPosition(wxDialog& win);
 
 /**
  * @brief set a dialog size and position. Ratio is the size of the dialog compared to its parent

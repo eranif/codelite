@@ -33,7 +33,7 @@ SFTPManageBookmarkDlg::SFTPManageBookmarkDlg(wxWindow* parent, const wxArrayStri
 {
     m_listBoxBookmarks->Append(bookmarks);
     SetName("SFTPManageBookmarkDlg");
-    ::clSetSmallDialogBestSizeAndPosition(this);
+    ::clSetSmallDialogBestSizeAndPosition(*this);
 }
 
 void SFTPManageBookmarkDlg::OnDelete(wxCommandEvent& event)

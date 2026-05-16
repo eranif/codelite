@@ -79,7 +79,7 @@ public:
             return;
         }
 
-        auto text = ::clGetVisibleSelection(m_stc);
+        auto text = ::clGetVisibleSelection(*m_stc);
         if (text.empty()) {
             return;
         }
@@ -561,7 +561,7 @@ void BuildTabView::OnContextMenu(wxContextMenuEvent& e)
         wxEVT_MENU,
         [this](wxCommandEvent& e) {
             wxUnusedVar(e);
-            auto text = ::clGetVisibleSelection(this);
+            auto text = ::clGetVisibleSelection(*this);
             ::CopyToClipboard(text);
         },
         XRCID("buildtabview_copy"));

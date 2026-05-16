@@ -1867,7 +1867,7 @@ void clMainFrame::DispatchCommandEvent(wxCommandEvent& event)
         wxStyledTextCtrl* stc = dynamic_cast<wxStyledTextCtrl*>(wxWindow::FindFocus());
         if (stc) {
             GetMainBook()->GetFindBar()->SetEditor(stc);
-            GetMainBook()->ShowQuickBar(::clGetVisibleSelection(stc), true);
+            GetMainBook()->ShowQuickBar(::clGetVisibleSelection(*stc), true);
         }
     } else if (editor) {
         editor->OnMenuCommand(event);

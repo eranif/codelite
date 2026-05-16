@@ -435,7 +435,7 @@ WXDLLIMPEXP_SDK bool IsChildOf(const wxWindow* child, const wxWindow* parent);
 /// Return the selected text in a wxSTC. This function ensures that only
 /// visible text is returned (for example, if the selected text contains
 /// ANSI code style hidden - it will be dropped)
-WXDLLIMPEXP_SDK wxString clGetVisibleSelection(wxStyledTextCtrl* ctrl);
+WXDLLIMPEXP_SDK wxString clGetVisibleSelection(const wxStyledTextCtrl& ctrl);
 
 /// Parse `clang_format_content` content and return the property's "name" value.
 WXDLLIMPEXP_SDK int GetClangFormatIntProperty(const wxString& clang_format_content, const wxString& name);

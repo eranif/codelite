@@ -988,20 +988,18 @@ bool IsChildOf(const wxWindow* child, const wxWindow* parent)
     return false;
 }
 
-wxString clGetVisibleSelection(wxStyledTextCtrl* ctrl)
+wxString clGetVisibleSelection(const wxStyledTextCtrl& ctrl)
 {
-    CHECK_PTR_RET_EMPTY_STRING(ctrl);
-
-    int start_pos = ctrl->GetSelectionStart();
-    int end_pos = ctrl->GetSelectionEnd();
+    int start_pos = ctrl.GetSelectionStart();
+    const int end_pos = ctrl.GetSelectionEnd();
     CHECK_COND_RET_EMPTY_STRING(end_pos > start_pos);
 
     // Make sure we only pick visible chars (embedded ANSI colour can break the selected word)
     wxString res;
     res.reserve(end_pos - start_pos + 1);
     for (; start_pos < end_pos; start_pos++) {
-        if (ctrl->StyleGetVisible(ctrl->GetStyleAt(start_pos))) {
-            res << (wxChar)ctrl->GetCharAt(start_pos);
+        if (ctrl.StyleGetVisible(ctrl.GetStyleAt(start_pos))) {
+            res << static_cast<wxChar>(ctrl.GetCharAt(start_pos));
         }
     }
     return res;

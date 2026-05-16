@@ -802,30 +802,25 @@ wxVariant MakeCheckboxVariant(const wxString& label, bool checked, int imgIndex)
     return vr;
 }
 
-void clSetTLWindowBestSizeAndPosition(wxWindow* win)
+void clSetTLWindowBestSizeAndPosition(wxTopLevelWindow& tlw)
 {
-    CHECK_PTR_RET(win);
-
-    // confirm that this window is top level
-    wxTopLevelWindow* tlw = dynamic_cast<wxTopLevelWindow*>(win);
-
     // find its parent
     wxWindow* parent_tlw = EventNotifier::Get()->TopFrame();
 
-    if (!tlw || !parent_tlw) {
+    if (!parent_tlw) {
         return;
     }
 
     wxRect frameSize = parent_tlw->GetSize();
     frameSize.Deflate(100);
-    tlw->SetMinSize(frameSize.GetSize());
-    tlw->SetSize(frameSize.GetSize());
-    tlw->CentreOnParent();
+    tlw.SetMinSize(frameSize.GetSize());
+    tlw.SetSize(frameSize.GetSize());
+    tlw.CentreOnParent();
 
 #if defined(__WXMAC__) || defined(__WXMSW__)
-    tlw->Move(wxNOT_FOUND, parent_tlw->GetPosition().y);
+    tlw.Move(wxNOT_FOUND, parent_tlw->GetPosition().y);
 #endif
-    tlw->PostSizeEvent();
+    tlw.PostSizeEvent();
 }
 
 static void DoSetDialogSize(wxDialog& win, double factor)

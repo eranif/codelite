@@ -1494,7 +1494,7 @@ void clMainFrame::CreateGUIControls()
     // add the managed panel to the AUI manager
     GetSizer()->Add(m_mainPanel, 1, wxEXPAND);
 
-    ::clSetTLWindowBestSizeAndPosition(this);
+    ::clSetTLWindowBestSizeAndPosition(*this);
 
     // This is needed in >=wxGTK-2.9, otherwise the auinotebook doesn't fully expand at first
     SendSizeEvent(wxSEND_EVENT_POST);

@@ -93,7 +93,7 @@ GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& 
     m_toolbar->Bind(wxEVT_TOOL, &GitCommitDlg::OnCommitHistory, this, XRCID("ID_HISTORY"));
     m_toolbar->Bind(wxEVT_TOOL, &GitCommitDlg::OnGenerate, this, XRCID("ID_GENERATE"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &GitCommitDlg::OnGenerateUI, this, XRCID("ID_GENERATE"));
-    ::clSetTLWindowBestSizeAndPosition(this);
+    ::clSetTLWindowBestSizeAndPosition(*this);
     CentreOnParent();
 
     wxFileName temp_commit = GetTempCommitFile();

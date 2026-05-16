@@ -386,9 +386,9 @@ WXDLLIMPEXP_SDK int clFindMenuItemPosition(wxMenu* menu, int menuItemId);
 WXDLLIMPEXP_SDK wxSize clGetDisplaySize();
 
 /**
- * @brief return a top level window best size using its parent's size as reference
+ * @brief set a top level window best size using its parent's size as reference
  */
-WXDLLIMPEXP_SDK void clSetTLWindowBestSizeAndPosition(wxWindow* win);
+WXDLLIMPEXP_SDK void clSetTLWindowBestSizeAndPosition(wxTopLevelWindow& tlw);
 
 /**
  * @brief set dialog best size and position

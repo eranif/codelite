@@ -73,7 +73,7 @@ public:
  * \param clientData any user data. Must NOT be freed by the handler
  * \return same as wxTheApp->ProcessEvent()
  */
-WXDLLIMPEXP_SDK bool SendCmdEvent(int eventId, void* clientData = NULL);
+WXDLLIMPEXP_SDK bool SendCmdEvent(int eventId, void* clientData = nullptr);
 
 /**
  * @brief send command event to the application (wxTheApp),
@@ -89,7 +89,7 @@ WXDLLIMPEXP_SDK bool SendCmdEvent(int eventId, void* clientData, const wxString&
  * \param eventId
  * \param clientData allocated data on the heap. Must be freed by the handler
  */
-WXDLLIMPEXP_SDK void PostCmdEvent(int eventId, void* clientData = NULL);
+WXDLLIMPEXP_SDK void PostCmdEvent(int eventId, void* clientData = nullptr);
 
 /**
  * \brief set column text
@@ -128,7 +128,7 @@ WXDLLIMPEXP_SDK long AppendListCtrlRow(wxListCtrl* list);
 WXDLLIMPEXP_SDK bool ReadFileWithConversion(const wxString& fileName,
                                             wxString& content,
                                             wxFontEncoding encoding = wxFONTENCODING_DEFAULT,
-                                            BOM* bom = NULL);
+                                            BOM* bom = nullptr);
 
 /**
  * \brief compare a file with a wxString using md5
@@ -315,13 +315,13 @@ WXDLLIMPEXP_SDK wxString clGetTextFromUser(const wxString& title,
                                            const wxString& message,
                                            const wxString& initialValue = "",
                                            int charsToSelect = wxNOT_FOUND,
-                                           wxWindow* parent = NULL);
+                                           wxWindow* parent = nullptr);
 
 /**
  * @brief similar to wxDirSelector, but on a remote machine
  */
 WXDLLIMPEXP_SDK std::pair<wxString, wxString>
-clRemoteFolderSelector(const wxString& title, const wxString& accountName = wxEmptyString, wxWindow* parent = NULL);
+clRemoteFolderSelector(const wxString& title, const wxString& accountName = wxEmptyString, wxWindow* parent = nullptr);
 
 /**
  * @brief similar to wxFileSelector, but on a remote machine
@@ -329,7 +329,7 @@ clRemoteFolderSelector(const wxString& title, const wxString& accountName = wxEm
 WXDLLIMPEXP_SDK std::pair<wxString, wxString> clRemoteFileSelector(const wxString& title,
                                                                    const wxString& accountName = wxEmptyString,
                                                                    const wxString& filter = wxEmptyString,
-                                                                   wxWindow* parent = NULL);
+                                                                   wxWindow* parent = nullptr);
 /**
  * @brief return the instance to the plugin manager. A convenience method
  */

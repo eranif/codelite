@@ -388,7 +388,7 @@ wxString clGetUserName()
 void MSWSetNativeTheme(wxWindow* win, const wxString& theme)
 {
 #if defined(__WXMSW__) && defined(_WIN64) && 0
-    SetWindowTheme((HWND)win->GetHWND(), theme.c_str(), NULL);
+    SetWindowTheme((HWND)win->GetHWND(), theme.c_str(), nullptr);
 #endif
 }
 
@@ -676,14 +676,14 @@ wxString clGetTextFromUser(
     const wxString& title, const wxString& message, const wxString& initialValue, int charsToSelect, wxWindow* parent)
 {
     clGetTextFromUserDialog dialog(
-        parent == NULL ? EventNotifier::Get()->TopFrame() : parent, title, message, initialValue, charsToSelect);
+        parent == nullptr ? EventNotifier::Get()->TopFrame() : parent, title, message, initialValue, charsToSelect);
     if (dialog.ShowModal() == wxID_OK) {
         return dialog.GetValue();
     }
     return "";
 }
 
-static IManager* s_pluginManager = NULL;
+static IManager* s_pluginManager = nullptr;
 
 void clSetManager(IManager* manager) { s_pluginManager = manager; }
 IManager* clGetManager() { return s_pluginManager; }
@@ -724,7 +724,7 @@ void clKill(int processID, wxSignal signo, bool kill_whole_group, bool as_superu
 {
 #ifdef __WXMSW__
     wxUnusedVar(as_superuser);
-    ::wxKill(processID, signo, NULL, kill_whole_group ? wxKILL_CHILDREN : wxKILL_NOCHILDREN);
+    ::wxKill(processID, signo, nullptr, kill_whole_group ? wxKILL_CHILDREN : wxKILL_NOCHILDREN);
 #else
     wxString sudoAskpass = ::wxGetenv("SUDO_ASKPASS");
     const char* sudo_path = "/usr/bin/sudo";
@@ -741,7 +741,7 @@ void clKill(int processID, wxSignal signo, bool kill_whole_group, bool as_superu
         int rc = system(cmd.mb_str(wxConvUTF8).data());
         wxUnusedVar(rc);
     } else {
-        ::wxKill(processID, signo, NULL, kill_whole_group ? wxKILL_CHILDREN : wxKILL_NOCHILDREN);
+        ::wxKill(processID, signo, nullptr, kill_whole_group ? wxKILL_CHILDREN : wxKILL_NOCHILDREN);
     }
 #endif
 }

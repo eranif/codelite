@@ -33,13 +33,13 @@ class PreferencesDialog : public OptionsBaseDlg2
 {
 
 public:
-    PreferencesDialog(wxWindow* parent);
+    explicit PreferencesDialog(wxWindow* parent);
     ~PreferencesDialog() override = default;
 
     bool IsRestartRequired() const
     {
         for (size_t i = 0; i < m_treeBook->GetPageCount(); ++i) {
-            OptionsConfigPage* p = dynamic_cast<OptionsConfigPage*>(m_treeBook->GetPage(i));
+            const OptionsConfigPage* p = dynamic_cast<OptionsConfigPage*>(m_treeBook->GetPage(i));
             if (p && p->IsRestartRequired()) {
                 return true;
             }
@@ -61,6 +61,5 @@ protected:
     }
 
 private:
-    bool restartRquired = false;
     OptionsConfigPtr m_options;
 };

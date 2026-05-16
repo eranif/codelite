@@ -828,17 +828,13 @@ void clSetTLWindowBestSizeAndPosition(wxWindow* win)
     tlw->PostSizeEvent();
 }
 
-static void DoSetDialogSize(wxDialog* win, double factor)
+static void DoSetDialogSize(wxDialog& win, double factor)
 {
-    if (!win) {
-        return;
-    }
-
     if (factor <= 0.0) {
         factor = 1.0;
     }
 
-    wxWindow* parent = win->GetParent();
+    wxWindow* parent = win.GetParent();
     if (!parent) {
         parent = wxTheApp->GetTopWindow();
     }
@@ -849,11 +845,11 @@ static void DoSetDialogSize(wxDialog* win, double factor)
         double dlgHeight = (double)parentSize.GetHeight() * factor;
         parentSize.SetWidth(dlgWidth);
         parentSize.SetHeight(dlgHeight);
-        win->SetSize(parentSize);
-        win->GetSizer()->Layout();
-        win->CentreOnParent();
+        win.SetSize(parentSize);
+        win.GetSizer()->Layout();
+        win.CentreOnParent();
 #if defined(__WXMAC__) || defined(__WXMSW__)
-        win->Move(wxNOT_FOUND, parent->GetPosition().y);
+        win.Move(wxNOT_FOUND, parent->GetPosition().y);
 #endif
     }
 }
@@ -886,11 +882,11 @@ clRemoteFileSelector(const wxString& title, const wxString& accountName, const w
 #endif
 }
 
-void clSetDialogBestSizeAndPosition(wxDialog& win) { DoSetDialogSize(&win, 0.66); }
+void clSetDialogBestSizeAndPosition(wxDialog& win) { DoSetDialogSize(win, 0.66); }
 
-void clSetSmallDialogBestSizeAndPosition(wxDialog& win) { DoSetDialogSize(&win, 0.5); }
+void clSetSmallDialogBestSizeAndPosition(wxDialog& win) { DoSetDialogSize(win, 0.5); }
 
-void clSetDialogSizeAndPosition(wxDialog& win, double ratio) { DoSetDialogSize(&win, ratio); }
+void clSetDialogSizeAndPosition(wxDialog& win, double ratio) { DoSetDialogSize(win, ratio); }
 
 bool clIsCxxWorkspaceOpened() { return clCxxWorkspaceST::Get()->IsOpen() || clFileSystemWorkspace::Get().IsOpen(); }
 

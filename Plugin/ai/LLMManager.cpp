@@ -390,12 +390,8 @@ void Manager::WorkerMain()
 
                     saved_thinking_state = thinking;
                     switch (reason) {
-                    case assistant::Reason::kToolAllowed: {
-                        clLLMEvent event{wxEVT_LLM_OUTPUT};
-                        event.SetOutputReason(reason);
-                        event.SetResponseRaw(message);
-                        owner->AddPendingEvent(event);
-                    } break;
+                    case assistant::Reason::kServerCompaction:
+                    case assistant::Reason::kToolAllowed:
                     case assistant::Reason::kToolDenied: {
                         clLLMEvent event{wxEVT_LLM_OUTPUT};
                         event.SetOutputReason(reason);

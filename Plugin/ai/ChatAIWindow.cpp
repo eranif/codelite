@@ -532,17 +532,26 @@ void ChatAIWindow::OnChatAIOutput(clLLMEvent& event)
     case ChatState::kReady: {
         bool reported{false};
         if (event.GetOutputReason().has_value()) {
-            if (event.GetOutputReason().value() == assistant::Reason::kToolDenied) {
+            switch (event.GetOutputReason().value()) {
+            case assistant::Reason::kToolDenied:
                 content.Trim().Trim(false).Append("\n");
                 AppendTextWithLF(IconType_ToString(IconType::kError) + " " + content);
                 reported = true;
-            } else if (event.GetOutputReason().value() == assistant::Reason::kToolAllowed) {
+                break;
+            case assistant::Reason::kToolAllowed:
                 content.Trim().Trim(false).Append("\n");
                 AppendTextWithLF(IconType_ToString(IconType::kSuccess) + " " + content);
                 reported = true;
+                break;
+            case assistant::Reason::kServerCompaction:
+                content.Trim().Trim(false).Append("\n");
+                AppendTextWithLF(IconType_ToString(IconType::kInfo) + " " + content);
+                reported = true;
+                break;
+            default:
+                break;
             }
         }
-
         if (!reported) {
             AppendOutput(content);
         }

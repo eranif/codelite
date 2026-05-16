@@ -394,7 +394,7 @@ WXDLLIMPEXP_SDK void clSetTLWindowBestSizeAndPosition(wxWindow* win);
  * @brief set dialog best size and position
  * @param win
  */
-WXDLLIMPEXP_SDK void clSetDialogBestSizeAndPosition(wxDialog* win);
+WXDLLIMPEXP_SDK void clSetDialogBestSizeAndPosition(wxDialog& win);
 
 /**
  * @brief similar to clSetDialogBestSizeAndPosition but use a smaller default size

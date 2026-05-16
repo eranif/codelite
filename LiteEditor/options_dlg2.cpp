@@ -100,5 +100,5 @@ void PreferencesDialog::Initialize()
         }
     }
     Thaw();
-    clSetDialogBestSizeAndPosition(this);
+    clSetDialogBestSizeAndPosition(*this);
 }

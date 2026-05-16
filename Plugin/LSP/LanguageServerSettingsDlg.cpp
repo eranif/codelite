@@ -18,7 +18,7 @@ LanguageServerSettingsDlg::LanguageServerSettingsDlg(wxWindow* parent, bool trig
     , m_scanOnStartup(triggerScan)
 {
     DoInitialize();
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
     if (m_scanOnStartup) {
         CallAfter(&LanguageServerSettingsDlg::DoScan);
     }

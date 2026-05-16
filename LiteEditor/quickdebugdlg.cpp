@@ -62,7 +62,7 @@ QuickDebugDlg::QuickDebugDlg(wxWindow* parent)
             SetComboBoxValue(m_WD, eventShowing.GetWorkingDirectory());
         }
     }
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
     if(lexer) {
         lexer->Apply(m_stcRemoteStartupCommands);

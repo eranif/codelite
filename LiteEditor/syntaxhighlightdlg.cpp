@@ -171,7 +171,7 @@ SyntaxHighlightDlg::SyntaxHighlightDlg(wxWindow* parent)
 #endif
 
     // Use a default big size for this dialog
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 
     // Theme handling
     CentreOnParent();

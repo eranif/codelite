@@ -50,7 +50,7 @@ PHPProjectSettingsDlg::PHPProjectSettingsDlg(wxWindow* parent, const wxString& p
 
     SetDirty(false);
     GetSizer()->Fit(this);
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 
     m_dvListCtrlFileMapping->Bind(
         wxEVT_COMMAND_MENU_SELECTED, &PHPProjectSettingsDlg::OnNewFileMapping, this, wxID_NEW);

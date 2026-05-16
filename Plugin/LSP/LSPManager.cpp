@@ -1041,7 +1041,7 @@ void Manager::ShowQuickOutlineDialog(const LSPEvent& event)
     if (!m_quick_outline_dlg->IsShown()) {
         m_quick_outline_dlg->Show();
         // reposition the window
-        ::clSetDialogBestSizeAndPosition(m_quick_outline_dlg);
+        ::clSetDialogBestSizeAndPosition(*m_quick_outline_dlg);
     }
 }
 

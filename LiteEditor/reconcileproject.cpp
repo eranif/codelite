@@ -91,7 +91,7 @@ ReconcileProjectDlg::ReconcileProjectDlg(wxWindow* parent, const wxString& projn
 {
     m_dvListCtrl1Unassigned->Bind(wxEVT_COMMAND_DATAVIEW_ITEM_CONTEXT_MENU,
                                   wxDataViewEventHandler(ReconcileProjectDlg::OnDVLCContextMenu), this);
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 bool ReconcileProjectDlg::LoadData()
@@ -636,7 +636,7 @@ ReconcileProjectFiletypesDlg::ReconcileProjectFiletypesDlg(wxWindow* parent, con
     m_listCtrlRegexes->AppendColumn(_("Regex"));
     m_listCtrlRegexes->AppendColumn(_("Virtual Directory"));
 
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 void ReconcileProjectFiletypesDlg::SetData()

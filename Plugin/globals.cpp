@@ -886,7 +886,7 @@ clRemoteFileSelector(const wxString& title, const wxString& accountName, const w
 #endif
 }
 
-void clSetDialogBestSizeAndPosition(wxDialog* win) { DoSetDialogSize(win, 0.66); }
+void clSetDialogBestSizeAndPosition(wxDialog& win) { DoSetDialogSize(&win, 0.66); }
 
 void clSetSmallDialogBestSizeAndPosition(wxDialog* win) { DoSetDialogSize(win, 0.5); }
 

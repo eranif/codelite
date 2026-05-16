@@ -92,7 +92,7 @@ AddIncludeFileDlg::AddIncludeFileDlg(wxWindow* parent, const wxString& fullpath,
         firstVisibleLine = 0;
     }
     m_textCtrlPreview->SetFirstVisibleLine(firstVisibleLine);
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 AddIncludeFileDlg::~AddIncludeFileDlg() {}

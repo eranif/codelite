@@ -84,7 +84,7 @@ WorkspaceSettingsDlg::WorkspaceSettingsDlg(wxWindow* parent, LocalWorkspace* loc
     envvars.Trim().Trim(false);
 
     m_textCtrlWspEnvVars->SetValue(envvars);
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 wxArrayString WorkspaceSettingsDlg::GetIncludePaths() const { return m_ccPage->GetIncludePaths(); }

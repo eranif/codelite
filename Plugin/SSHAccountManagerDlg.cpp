@@ -45,7 +45,7 @@ SSHAccountManagerDlg::SSHAccountManagerDlg(wxWindow* parent)
         DoAddAccount(account);
     }
     SetName("SSHAccountManagerDlg");
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 SSHAccountManagerDlg::~SSHAccountManagerDlg()

@@ -68,7 +68,7 @@ GitCommitListDlg::GitCommitListDlg(wxWindow* parent, const wxString& workingDir,
                                     NULL,
                                     this);
 
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
     CenterOnParent();
 }
 

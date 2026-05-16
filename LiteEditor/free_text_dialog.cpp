@@ -70,5 +70,5 @@ FreeTextDialog::FreeTextDialog(wxWindow* parent, const wxString& value, int id, 
     this->SetSizer(bSizer23);
     this->Layout();
     m_text->SetFocus();
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }

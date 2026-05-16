@@ -60,7 +60,7 @@ GitDiffDlg::GitDiffDlg(wxWindow* parent, const wxString& workingDir, GitPlugin* 
     Bind(wxEVT_ASYNC_PROCESS_TERMINATED, &GitDiffDlg::OnProcessTerminated, this);
 
     CreateDiff();
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 /*******************************************************************************/

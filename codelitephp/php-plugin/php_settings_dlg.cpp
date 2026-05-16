@@ -30,7 +30,7 @@ PHPSettingsDlg::PHPSettingsDlg(wxWindow* parent)
     strPort << data.GetXdebugPort();
     m_textCtrlXDebugPort->ChangeValue(strPort);
     m_textCtrlHost->ChangeValue(data.GetXdebugHost());
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 void PHPSettingsDlg::OnBrowseForIncludePath(wxCommandEvent& event)

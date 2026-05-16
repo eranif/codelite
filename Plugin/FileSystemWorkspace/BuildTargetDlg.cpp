@@ -23,7 +23,7 @@ BuildTargetDlg::BuildTargetDlg(wxWindow* parent, const wxString& name, const wxS
     m_textCtrlValue->SetAdditionalSelectionTyping(true);
     m_textCtrlValue->SetWrapMode(wxSTC_WRAP_WORD);
     m_editHelper = std::make_unique<clEditEventsHandler>(m_textCtrlValue);
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 BuildTargetDlg::~BuildTargetDlg() {}

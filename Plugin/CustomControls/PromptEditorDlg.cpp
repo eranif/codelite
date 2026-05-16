@@ -36,7 +36,7 @@ PromptEditorDlg::PromptEditorDlg(wxWindow* parent)
     LoadPrompts();
     SendSizeEvent();
     m_splitter->SetSashPosition(FromDIP(250));
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 PromptEditorDlg::~PromptEditorDlg() {}

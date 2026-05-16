@@ -7,7 +7,7 @@ CppCheckSettingsDialog::CppCheckSettingsDialog(wxWindow* parent)
     : CppCheckSettingsDialogBase(parent)
 {
     m_stcCommand->SetText(clConfig::Get().Read("cppcheck/command", CPPCHECK_DEFAULT_COMMAND));
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
     m_stcCommand->CallAfter(&wxStyledTextCtrl::SetFocus);
 }
 

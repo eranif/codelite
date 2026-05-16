@@ -42,7 +42,7 @@ BuildOrderDialog::BuildOrderDialog(wxWindow* parent, const wxString& projectName
         m_current_configuration = config_name;
         Initialise(config_name);
     }
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 void BuildOrderDialog::OnApplyButton(wxCommandEvent& event)

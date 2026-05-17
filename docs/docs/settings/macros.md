@@ -24,6 +24,7 @@ Below is a list of supported macros by CodeLite:
  `$(CurrentFileFullPath)`|The current file full path: `/path/to/file.cpp` &#8594; `/path/to/file.cpp`
  `$(User)`| The current user (e.g. Linux login id)
  `$(Date)`| The current date
+ `$(Year)`| The current year
  `$(CodeLitePath)`| CodeLite installation folder
  `$(CurrentSelection)`| Returns the selected string in the editor
  `$(OutputDirectory)`| An alias to `$(OutDir)`

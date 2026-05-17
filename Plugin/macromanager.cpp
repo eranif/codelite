@@ -181,6 +181,7 @@ const std::unordered_set<wxString> CODELITE_MACROS = {
     "Program",
     "User",
     "Date",
+    "Year",
     "CodeLitePath",
     "CC",
     "CFLAGS",
@@ -393,6 +394,7 @@ wxString MacroManager::DoExpand(
         wxDateTime now = wxDateTime::Now();
         expandedString.Replace("$(User)", wxGetUserId());
         expandedString.Replace("$(Date)", now.FormatDate());
+        expandedString.Replace("$(Year)", StringUtils::wxIntToString(now.GetCurrentYear()));
 
         // ssh related
         expandedString.Replace("$(SSH_AccountName)", account_name);
@@ -567,6 +569,7 @@ static wxString DoExpandAllVariables(const wxString& expression,
         wxDateTime now = wxDateTime::Now();
         output.Replace("$(User)", wxGetUserId());
         output.Replace("$(Date)", now.FormatDate());
+        output.Replace("$(Year)", StringUtils::wxIntToString(now.GetCurrentYear()));
 
         if (workspace) {
             output.Replace("$(CodeLitePath)", workspace->GetStartupDir());

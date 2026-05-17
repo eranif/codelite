@@ -40,6 +40,7 @@
 #include "project.h"
 #include "workspace.h"
 
+#include <algorithm>
 #include <vector>
 #include <wx/app.h>
 #include <wx/menu.h>
@@ -156,7 +157,7 @@ void Copyright::OnInsertCopyrights(wxCommandEvent& e)
 
     // expand constants
     wxString _content = ExpandAllVariables(
-        content, m_mgr->GetWorkspace(), wxEmptyString, wxEmptyString, editor->GetFileName().GetFullPath());
+        content, m_mgr->GetWorkspace(), editor->GetProjectName(), wxEmptyString, editor->GetFileName().GetFullPath());
 
     // we are good to go :)
     wxString ignoreString = data.GetIgnoreString();
@@ -204,14 +205,13 @@ void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
         wxArrayString projects;
         dlg.GetProjects(projects);
 
-        // expand constants
-        std::vector<wxFileName> files;
-        std::vector<wxFileName> filtered_files;
+        std::vector<std::pair<wxString, std::vector<wxFileName>>> filenamesByProject;
         // loop over the project and collect list of files to work with
         for (const auto& projectName : projects) {
             ProjectPtr p = m_mgr->GetWorkspace()->GetProject(projectName);
             if (p) {
-                p->GetFilesAsVectorOfFileName(files);
+                filenamesByProject.push_back({projectName, {}});
+                p->GetFilesAsVectorOfFileName(filenamesByProject.back().second);
             }
         }
 
@@ -219,76 +219,80 @@ void Copyright::OnBatchInsertCopyrights(wxCommandEvent& e)
         mask.Replace("*.", wxEmptyString);
         mask = mask.Trim().Trim(false);
 
-        wxArrayString exts = ::wxStringTokenize(mask, ";");
-
+        const wxArrayString exts = ::wxStringTokenize(mask, ";");
+        const auto noMatchingExtension = [&](const wxFileName& filename) {
+            return exts.Index(filename.GetExt(), false) == wxNOT_FOUND;
+        };
         // filter out non-matching files (according to masking)
-        for (const auto& filename : files) {
-            if (exts.Index(filename.GetExt(), false) != wxNOT_FOUND) {
-                // valid file
-                filtered_files.push_back(filename);
-            }
+        for (auto& [_, filenames] : filenamesByProject) {
+            std::erase_if(filenames, noMatchingExtension);
         }
+        std::erase_if(filenamesByProject, [](const auto& p) { return p.second.empty(); });
 
-        if (filtered_files.empty() == false) {
-            MassUpdate(filtered_files, content);
+        if (filenamesByProject.empty() == false) {
+            MassUpdate(filenamesByProject, content);
         }
     }
 }
 
-void Copyright::MassUpdate(const std::vector<wxFileName>& filtered_files, const wxString& content)
+void Copyright::MassUpdate(const std::vector<std::pair<wxString, std::vector<wxFileName>>>& filenamesByProject,
+                           const wxString& content)
 {
+    const auto totalFileCount =
+        std::accumulate(filenamesByProject.begin(), filenamesByProject.end(), 0u, [](unsigned acc, const auto& p) {
+            return acc + p.second.size();
+        });
     // last confirmation from the user
-    if (wxMessageBox(
-            wxString::Format(_("You are about to modify %u files. Continue?"), (unsigned int)filtered_files.size()),
-            wxT("CodeLite"),
-            wxYES_NO | wxICON_QUESTION) == wxNO) {
+    if (wxMessageBox(wxString::Format(_("You are about to modify %u files. Continue?"), totalFileCount),
+                     wxT("CodeLite"),
+                     wxYES_NO | wxICON_QUESTION) == wxNO) {
         return;
     }
 
-    clProgressDlg* prgDlg = NULL;
-    prgDlg = new clProgressDlg(NULL, _("Processing file ..."), "", (int)filtered_files.size());
+    clProgressDlg* prgDlg = new clProgressDlg(nullptr, _("Processing file ..."), "", static_cast<int>(totalFileCount));
 
     CopyrightsConfigData data;
     m_mgr->GetConfigTool()->ReadObject("CopyrightsConfig", &data);
 
     // now loop over the files and add copyrights block
-    for (size_t i = 0; i < filtered_files.size(); i++) {
-        wxFileName fn = filtered_files.at(i);
+    int progression = 0;
+    for (const auto& [projectName, filenames] : filenamesByProject) {
+        for (const auto& fn : filenames) {
+            wxString file_content;
+            wxString _content =
+                ExpandAllVariables(content, m_mgr->GetWorkspace(), projectName, wxEmptyString, fn.GetFullPath());
+            if (ReadFileWithConversion(fn.GetFullPath(), file_content)) {
 
-        wxString file_content;
-        wxString _content =
-            ExpandAllVariables(content, m_mgr->GetWorkspace(), wxEmptyString, wxEmptyString, fn.GetFullPath());
-        if (ReadFileWithConversion(fn.GetFullPath(), file_content)) {
+                wxString msg;
 
-            wxString msg;
+                // if the file contains the ignore string, skip this file
+                wxString ignoreString = data.GetIgnoreString();
+                ignoreString = ignoreString.Trim().Trim(false);
 
-            // if the file contains the ignore string, skip this file
-            wxString ignoreString = data.GetIgnoreString();
-            ignoreString = ignoreString.Trim().Trim(false);
+                if (ignoreString.IsEmpty() == false && file_content.Find(data.GetIgnoreString()) != wxNOT_FOUND) {
+                    msg << _("File contains ignore string, skipping it: ") << fn.GetFullName();
+                    if (!prgDlg->Update(progression++, msg)) {
+                        prgDlg->Destroy();
+                        return;
+                    }
+                } else {
 
-            if (ignoreString.IsEmpty() == false && file_content.Find(data.GetIgnoreString()) != wxNOT_FOUND) {
-                msg << _("File contains ignore string, skipping it: ") << fn.GetFullName();
-                if (!prgDlg->Update(i, msg)) {
-                    prgDlg->Destroy();
-                    return;
-                }
-            } else {
+                    msg << _("Inserting comment to file: ") << fn.GetFullName();
+                    if (!prgDlg->Update(progression++, msg)) {
+                        prgDlg->Destroy();
+                        return;
+                    }
 
-                msg << _("Inserting comment to file: ") << fn.GetFullName();
-                if (!prgDlg->Update(i, msg)) {
-                    prgDlg->Destroy();
-                    return;
-                }
+                    file_content.Prepend(_content);
+                    if (data.GetBackupFiles() && !FileUtils::Backup(fn.GetFullPath())) {
+                        continue;
+                    }
+                    wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
+                    FileUtils::WriteFileContent(fn.GetFullPath(), file_content, fontEncConv);
 
-                file_content.Prepend(_content);
-                if (data.GetBackupFiles() && !FileUtils::Backup(fn.GetFullPath())) {
-                    continue;
-                }
-                wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
-                FileUtils::WriteFileContent(fn.GetFullPath(), file_content, fontEncConv);
-
-                if (auto* editor = clGetManager()->FindEditor(fn.GetFullPath())) {
-                    editor->ReloadFromDisk();
+                    if (auto* editor = clGetManager()->FindEditor(fn.GetFullPath())) {
+                        editor->ReloadFromDisk();
+                    }
                 }
             }
         }

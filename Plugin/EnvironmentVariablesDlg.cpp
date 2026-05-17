@@ -59,7 +59,7 @@ EnvironmentVariablesDlg::EnvironmentVariablesDlg(wxWindow* parent)
             ctrl->EmptyUndoBuffer();
         }
     }
-    ::clSetSmallDialogBestSizeAndPosition(this);
+    ::clSetSmallDialogBestSizeAndPosition(*this);
 }
 
 EnvironmentVariablesDlg::~EnvironmentVariablesDlg() {}

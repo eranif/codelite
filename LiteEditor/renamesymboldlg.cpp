@@ -67,7 +67,7 @@ RenameSymbol::RenameSymbol(wxWindow* parent, const CppToken::Vec_t& candidates, 
 
     m_textCtrlNewName->SetValue(oldname);
     m_textCtrlNewName->SetFocus();
-    ::clSetTLWindowBestSizeAndPosition(this);
+    ::clSetTLWindowBestSizeAndPosition(*this);
 }
 
 void RenameSymbol::AddMatch(const CppToken& token, bool check)

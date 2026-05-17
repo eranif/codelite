@@ -62,7 +62,7 @@ BuildSettingsDialog::BuildSettingsDialog(
 
     m_rightclickMenu = clXmlResource::Get().LoadMenu(wxT("delete_compiler_menu"));
     LoadCompilers();
-    clSetDialogBestSizeAndPosition(this);
+    clSetDialogBestSizeAndPosition(*this);
 }
 
 void BuildSettingsDialog::LoadCompilers() { m_compilersPage->LoadCompilers(); }

@@ -26,7 +26,7 @@ wxcAboutDlg::wxcAboutDlg(wxWindow* parent)
     m_stcLicense->SetText(WXC_LICENSE_GPL2);
     m_stcLicense->SetReadOnly(true);
 
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 void wxcAboutDlg::OnSize(wxSizeEvent& event)

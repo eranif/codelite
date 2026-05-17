@@ -12,7 +12,7 @@ clSingleChoiceDialog::clSingleChoiceDialog(wxWindow* parent, const wxArrayString
         m_dvListCtrl->Select(m_dvListCtrl->RowToItem(initialSelection));
         m_dvListCtrl->EnsureVisible(m_dvListCtrl->RowToItem(initialSelection));
     }
-    ::clSetSmallDialogBestSizeAndPosition(this);
+    ::clSetSmallDialogBestSizeAndPosition(*this);
 }
 
 clSingleChoiceDialog::~clSingleChoiceDialog() {}

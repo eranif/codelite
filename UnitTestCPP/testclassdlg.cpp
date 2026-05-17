@@ -57,7 +57,7 @@ TestClassDlg::TestClassDlg(wxWindow* parent, IManager* mgr, UnitTestPP* plugin)
     if (m_choiceProjects->IsEmpty() == false) {
         m_choiceProjects->SetSelection(0);
     }
-    ::clSetSmallDialogBestSizeAndPosition(this);
+    ::clSetSmallDialogBestSizeAndPosition(*this);
 }
 
 void TestClassDlg::OnUseActiveEditor(wxCommandEvent& event)

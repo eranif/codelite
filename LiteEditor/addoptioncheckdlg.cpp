@@ -50,7 +50,7 @@ AddOptionCheckDlg::AddOptionCheckDlg(wxWindow* parent, const wxString& title,
     // Update controls
     SetValue(value);
 
-    clSetSmallDialogBestSizeAndPosition(this);
+    clSetSmallDialogBestSizeAndPosition(*this);
 }
 
 void AddOptionCheckDlg::SetValue(const wxString& value)

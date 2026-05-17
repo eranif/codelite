@@ -15,7 +15,7 @@ GotoAnythingDlg::GotoAnythingDlg(wxWindow* parent, const std::vector<clGotoEntry
 {
     DoPopulate(m_allEntries);
 
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 GotoAnythingDlg::~GotoAnythingDlg() {}

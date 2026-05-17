@@ -30,7 +30,7 @@ DapDebuggerSettingsDlg::DapDebuggerSettingsDlg(wxWindow* parent, clDapSettingsSt
 
     Initialise();
 
-    ::clSetDialogSizeAndPosition(this, 0.25);
+    ::clSetDialogSizeAndPosition(*this, 0.25);
     WindowAttrManager::Load(this);
 }
 

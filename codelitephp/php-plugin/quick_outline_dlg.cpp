@@ -21,7 +21,7 @@ PHPQuickOutlineDlg::PHPQuickOutlineDlg(wxWindow* parent, IEditor* editor, IManag
     m_treeCtrlLayout->SetFocus();
     m_treeCtrlLayout->Bind(wxEVT_KEY_DOWN, &PHPQuickOutlineDlg::OnKeyDown, this);
     SetName("PHPQuickOutlineDlg");
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 PHPQuickOutlineDlg::~PHPQuickOutlineDlg()

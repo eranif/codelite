@@ -231,7 +231,7 @@ wxArrayString NewKeyShortcutDlg::GetSuggestions() const
 void NewKeyShortcutDlg::OnSuggest(wxCommandEvent& event)
 {
     clSingleChoiceDialog dlg(this, GetSuggestions(), 0);
-    ::clSetDialogSizeAndPosition(&dlg, 1.2); // give it a reasonable size
+    ::clSetDialogSizeAndPosition(dlg, 1.2); // give it a reasonable size
     dlg.SetLabel(_("Select a Keyboard Shortcut"));
     if(dlg.ShowModal() == wxID_OK) {
         Initialise(dlg.GetSelection());

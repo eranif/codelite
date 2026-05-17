@@ -64,7 +64,7 @@ AddFunctionsImpDlg::AddFunctionsImpDlg(wxWindow* parent, const TagEntryPtrVector
         m_dvListCtrl->AppendItem(cols, (wxUIntPtr)&m_implArr.Item(i));
     }
     m_filePicker->SetPath(targetFile);
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 wxString AddFunctionsImpDlg::GetFileName() const { return m_filePicker->GetPath(); }

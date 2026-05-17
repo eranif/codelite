@@ -42,7 +42,7 @@ CompilersFoundDlg::CompilersFoundDlg(wxWindow* parent, const ICompilerLocator::C
         cols.push_back(m_allCompilers[i]->GetInstallationPath());
         m_dataview->AppendItem(cols, (wxUIntPtr)i);
     }
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 size_t CompilersFoundDlg::GetSelectedCompilers(ICompilerLocator::CompilerVec_t& compilers)

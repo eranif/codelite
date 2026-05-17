@@ -22,7 +22,7 @@ const wxString ENUMERATOR_SYMBOL = wxT("#");
 LSPOutlineViewDlg::LSPOutlineViewDlg(wxWindow* parent)
     : LSPOutlineViewDlgBase(parent)
 {
-    clSetDialogBestSizeAndPosition(this);
+    clSetDialogBestSizeAndPosition(*this);
     DoInitialise();
 }
 

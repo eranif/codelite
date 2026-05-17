@@ -39,7 +39,7 @@ clFileSystemWorkspaceDlg::clFileSystemWorkspaceDlg(wxWindow* parent, clFileSyste
         CallAfter(&clFileSystemWorkspaceDlg::SelectConfig, selConf);
     }
 
-    ::clSetSmallDialogBestSizeAndPosition(this);
+    ::clSetSmallDialogBestSizeAndPosition(*this);
     CenterOnParent();
 }
 

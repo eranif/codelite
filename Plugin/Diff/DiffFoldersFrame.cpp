@@ -41,7 +41,7 @@ DiffFoldersFrame::DiffFoldersFrame(wxWindow* parent)
     m_toolbar->Bind(wxEVT_TOOL, &DiffFoldersFrame::OnUpFolder, this, XRCID("diff-up-folder"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &DiffFoldersFrame::OnUpFolderUI, this, XRCID("diff-up-folder"));
 
-    ::clSetTLWindowBestSizeAndPosition(this);
+    ::clSetTLWindowBestSizeAndPosition(*this);
 
     // Load persistent items
     m_showSimilarItems = clConfig::Get().Read("DiffFolders/ShowSimilarItems", false);

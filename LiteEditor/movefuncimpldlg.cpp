@@ -54,7 +54,7 @@ MoveFuncImplDlg::MoveFuncImplDlg(wxWindow* parent, const wxString& text, const w
         m_preview->SetText(text);
     }
     m_preview->CallAfter(&wxStyledTextCtrl::SetFocus);
-    ::clSetSmallDialogBestSizeAndPosition(this);
+    ::clSetSmallDialogBestSizeAndPosition(*this);
 }
 
 void MoveFuncImplDlg::SetText(const wxString& text) { m_preview->SetText(text); }

@@ -37,7 +37,7 @@ CodeFormatterDlg::CodeFormatterDlg(wxWindow* parent, CodeFormatterManager& mgr)
     boxSizerFormatter->Add(m_page, wxSizerFlags(1).Expand().Border(wxALL, 5));
 
     InitDialog();
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 CodeFormatterDlg::~CodeFormatterDlg()

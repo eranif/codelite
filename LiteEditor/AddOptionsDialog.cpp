@@ -24,7 +24,7 @@ AddOptionsDialog::AddOptionsDialog(wxWindow* parent, const wxString& value)
         content.RemoveLast();
     }
     m_stc->SetText(content);
-    clSetSmallDialogBestSizeAndPosition(this);
+    clSetSmallDialogBestSizeAndPosition(*this);
 }
 
 wxString AddOptionsDialog::GetValue() const

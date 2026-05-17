@@ -4,7 +4,7 @@
 EditCmpTemplateDialog::EditCmpTemplateDialog(wxWindow* parent)
     : EditCmpTemplateDialogBase(parent)
 {
-    clSetDialogBestSizeAndPosition(this);
+    clSetDialogBestSizeAndPosition(*this);
 }
 
 void EditCmpTemplateDialog::SetPattern(const wxString& pattern) { m_stc->SetText(pattern); }

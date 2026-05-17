@@ -90,7 +90,7 @@ ProjectSettingsDlg::ProjectSettingsDlg(wxWindow* parent, WorkspaceTab* workspace
     // No effects plz
     m_infobar->SetShowHideEffects(wxSHOW_EFFECT_NONE, wxSHOW_EFFECT_NONE);
     ShowHideDisabledMessage();
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 void ProjectSettingsDlg::BuildTree()

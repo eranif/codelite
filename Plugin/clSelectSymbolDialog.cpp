@@ -11,7 +11,7 @@ clSelectSymbolDialog::clSelectSymbolDialog(wxWindow* parent, const clSelectSymbo
     : clSelectSymbolDialogBase(parent)
 {
     Initialise(entries);
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 clSelectSymbolDialog::~clSelectSymbolDialog()

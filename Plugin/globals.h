@@ -73,7 +73,7 @@ public:
  * \param clientData any user data. Must NOT be freed by the handler
  * \return same as wxTheApp->ProcessEvent()
  */
-WXDLLIMPEXP_SDK bool SendCmdEvent(int eventId, void* clientData = NULL);
+WXDLLIMPEXP_SDK bool SendCmdEvent(int eventId, void* clientData = nullptr);
 
 /**
  * @brief send command event to the application (wxTheApp),
@@ -89,7 +89,7 @@ WXDLLIMPEXP_SDK bool SendCmdEvent(int eventId, void* clientData, const wxString&
  * \param eventId
  * \param clientData allocated data on the heap. Must be freed by the handler
  */
-WXDLLIMPEXP_SDK void PostCmdEvent(int eventId, void* clientData = NULL);
+WXDLLIMPEXP_SDK void PostCmdEvent(int eventId, void* clientData = nullptr);
 
 /**
  * \brief set column text
@@ -109,7 +109,7 @@ SetColumnText(wxListCtrl* list, long indx, long column, const wxString& rText, i
  * \param column the column ID
  * \return the column's text
  */
-WXDLLIMPEXP_SDK wxString GetColumnText(wxListCtrl* list, long index, long column);
+WXDLLIMPEXP_SDK wxString GetColumnText(const wxListCtrl* list, long index, long column);
 
 /**
  * \brief append row to list control
@@ -128,7 +128,7 @@ WXDLLIMPEXP_SDK long AppendListCtrlRow(wxListCtrl* list);
 WXDLLIMPEXP_SDK bool ReadFileWithConversion(const wxString& fileName,
                                             wxString& content,
                                             wxFontEncoding encoding = wxFONTENCODING_DEFAULT,
-                                            BOM* bom = NULL);
+                                            BOM* bom = nullptr);
 
 /**
  * \brief compare a file with a wxString using md5
@@ -315,13 +315,13 @@ WXDLLIMPEXP_SDK wxString clGetTextFromUser(const wxString& title,
                                            const wxString& message,
                                            const wxString& initialValue = "",
                                            int charsToSelect = wxNOT_FOUND,
-                                           wxWindow* parent = NULL);
+                                           wxWindow* parent = nullptr);
 
 /**
  * @brief similar to wxDirSelector, but on a remote machine
  */
 WXDLLIMPEXP_SDK std::pair<wxString, wxString>
-clRemoteFolderSelector(const wxString& title, const wxString& accountName = wxEmptyString, wxWindow* parent = NULL);
+clRemoteFolderSelector(const wxString& title, const wxString& accountName = wxEmptyString, wxWindow* parent = nullptr);
 
 /**
  * @brief similar to wxFileSelector, but on a remote machine
@@ -329,7 +329,7 @@ clRemoteFolderSelector(const wxString& title, const wxString& accountName = wxEm
 WXDLLIMPEXP_SDK std::pair<wxString, wxString> clRemoteFileSelector(const wxString& title,
                                                                    const wxString& accountName = wxEmptyString,
                                                                    const wxString& filter = wxEmptyString,
-                                                                   wxWindow* parent = NULL);
+                                                                   wxWindow* parent = nullptr);
 /**
  * @brief return the instance to the plugin manager. A convenience method
  */
@@ -378,7 +378,7 @@ WXDLLIMPEXP_SDK void clSetEditorFontEncoding(const wxString& encoding);
  * @brief given a menu and an item ID, return its position
  * @return return the position or wxNOT_FOUND
  */
-WXDLLIMPEXP_SDK int clFindMenuItemPosition(wxMenu* menu, int menuItemId);
+WXDLLIMPEXP_SDK int clFindMenuItemPosition(const wxMenu* menu, int menuItemId);
 
 /**
  * @brief return the screen size, taking dual or more screens into account
@@ -386,26 +386,26 @@ WXDLLIMPEXP_SDK int clFindMenuItemPosition(wxMenu* menu, int menuItemId);
 WXDLLIMPEXP_SDK wxSize clGetDisplaySize();
 
 /**
- * @brief return a top level window best size using its parent's size as reference
+ * @brief set a top level window best size using its parent's size as reference
  */
-WXDLLIMPEXP_SDK void clSetTLWindowBestSizeAndPosition(wxWindow* win);
+WXDLLIMPEXP_SDK void clSetTLWindowBestSizeAndPosition(wxTopLevelWindow& tlw);
 
 /**
  * @brief set dialog best size and position
  * @param win
  */
-WXDLLIMPEXP_SDK void clSetDialogBestSizeAndPosition(wxDialog* win);
+WXDLLIMPEXP_SDK void clSetDialogBestSizeAndPosition(wxDialog& win);
 
 /**
  * @brief similar to clSetDialogBestSizeAndPosition but use a smaller default size
  */
-WXDLLIMPEXP_SDK void clSetSmallDialogBestSizeAndPosition(wxDialog* win);
+WXDLLIMPEXP_SDK void clSetSmallDialogBestSizeAndPosition(wxDialog& win);
 
 /**
  * @brief set a dialog size and position. Ratio is the size of the dialog compared to its parent
- * ration <= 0.0 the same size as the parent
+ * ratio <= 0.0 the same size as the parent
  */
-WXDLLIMPEXP_SDK void clSetDialogSizeAndPosition(wxDialog* win, double ratio);
+WXDLLIMPEXP_SDK void clSetDialogSizeAndPosition(wxDialog& win, double ratio);
 
 /**
  * @brief return true if a C++ workspace is opened
@@ -430,12 +430,12 @@ WXDLLIMPEXP_SDK bool SetBestFocus(wxWindow* win);
 WXDLLIMPEXP_SDK Notebook* FindNotebookParentOf(wxWindow* child);
 
 /// Return true if `child` is a child (does not have to be a direct child) of `parent`
-WXDLLIMPEXP_SDK bool IsChildOf(wxWindow* child, wxWindow* parent);
+WXDLLIMPEXP_SDK bool IsChildOf(const wxWindow* child, const wxWindow* parent);
 
 /// Return the selected text in a wxSTC. This function ensures that only
 /// visible text is returned (for example, if the selected text contains
 /// ANSI code style hidden - it will be dropped)
-WXDLLIMPEXP_SDK wxString clGetVisibleSelection(wxStyledTextCtrl* ctrl);
+WXDLLIMPEXP_SDK wxString clGetVisibleSelection(const wxStyledTextCtrl& ctrl);
 
 /// Parse `clang_format_content` content and return the property's "name" value.
 WXDLLIMPEXP_SDK int GetClangFormatIntProperty(const wxString& clang_format_content, const wxString& name);

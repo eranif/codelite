@@ -20,7 +20,7 @@ DbExplorerFrame::DbExplorerFrame(wxWindow* parent, wxWindow* page, const wxStrin
     if (parent) {
         CentreOnParent();
     }
-    ::clSetTLWindowBestSizeAndPosition(this);
+    ::clSetTLWindowBestSizeAndPosition(*this);
 }
 
 DbExplorerFrame::~DbExplorerFrame() { Unbind(wxEVT_CLOSE_WINDOW, &DbExplorerFrame::OnClose, this); }

@@ -42,7 +42,7 @@ SelectProjectsDlg::SelectProjectsDlg(wxWindow* parent)
     
     SetName("SelectProjectsDlg");
     WindowAttrManager::Load(this);
-    ::clSetSmallDialogBestSizeAndPosition(this);
+    ::clSetSmallDialogBestSizeAndPosition(*this);
 }
 
 void SelectProjectsDlg::OnSelectAll(wxCommandEvent& event)

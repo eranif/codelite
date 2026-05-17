@@ -201,7 +201,7 @@ void SetColumnText(wxListCtrl* list, long indx, long column, const wxString& rTe
     list->SetItem(list_item);
 }
 
-wxString GetColumnText(wxListCtrl* list, long index, long column)
+wxString GetColumnText(const wxListCtrl* list, long index, long column)
 {
     wxListItem list_item;
     list_item.SetId(index);
@@ -388,7 +388,7 @@ wxString clGetUserName()
 void MSWSetNativeTheme(wxWindow* win, const wxString& theme)
 {
 #if defined(__WXMSW__) && defined(_WIN64) && 0
-    SetWindowTheme((HWND)win->GetHWND(), theme.c_str(), NULL);
+    SetWindowTheme((HWND)win->GetHWND(), theme.c_str(), nullptr);
 #endif
 }
 
@@ -676,14 +676,14 @@ wxString clGetTextFromUser(
     const wxString& title, const wxString& message, const wxString& initialValue, int charsToSelect, wxWindow* parent)
 {
     clGetTextFromUserDialog dialog(
-        parent == NULL ? EventNotifier::Get()->TopFrame() : parent, title, message, initialValue, charsToSelect);
+        parent == nullptr ? EventNotifier::Get()->TopFrame() : parent, title, message, initialValue, charsToSelect);
     if (dialog.ShowModal() == wxID_OK) {
         return dialog.GetValue();
     }
     return "";
 }
 
-static IManager* s_pluginManager = NULL;
+static IManager* s_pluginManager = nullptr;
 
 void clSetManager(IManager* manager) { s_pluginManager = manager; }
 IManager* clGetManager() { return s_pluginManager; }
@@ -724,7 +724,7 @@ void clKill(int processID, wxSignal signo, bool kill_whole_group, bool as_superu
 {
 #ifdef __WXMSW__
     wxUnusedVar(as_superuser);
-    ::wxKill(processID, signo, NULL, kill_whole_group ? wxKILL_CHILDREN : wxKILL_NOCHILDREN);
+    ::wxKill(processID, signo, nullptr, kill_whole_group ? wxKILL_CHILDREN : wxKILL_NOCHILDREN);
 #else
     wxString sudoAskpass = ::wxGetenv("SUDO_ASKPASS");
     const char* sudo_path = "/usr/bin/sudo";
@@ -741,7 +741,7 @@ void clKill(int processID, wxSignal signo, bool kill_whole_group, bool as_superu
         int rc = system(cmd.mb_str(wxConvUTF8).data());
         wxUnusedVar(rc);
     } else {
-        ::wxKill(processID, signo, NULL, kill_whole_group ? wxKILL_CHILDREN : wxKILL_NOCHILDREN);
+        ::wxKill(processID, signo, nullptr, kill_whole_group ? wxKILL_CHILDREN : wxKILL_NOCHILDREN);
     }
 #endif
 }
@@ -753,7 +753,7 @@ void clSetEditorFontEncoding(const wxString& encoding)
     EditorConfigST::Get()->SetOptions(options);
 }
 
-int clFindMenuItemPosition(wxMenu* menu, int menuItemId)
+int clFindMenuItemPosition(const wxMenu* menu, int menuItemId)
 {
     if (!menu) {
         return wxNOT_FOUND;
@@ -802,58 +802,43 @@ wxVariant MakeCheckboxVariant(const wxString& label, bool checked, int imgIndex)
     return vr;
 }
 
-void clSetTLWindowBestSizeAndPosition(wxWindow* win)
+void clSetTLWindowBestSizeAndPosition(wxTopLevelWindow& tlw)
 {
-    CHECK_PTR_RET(win);
-
-    // confirm that this window is top level
-    wxTopLevelWindow* tlw = dynamic_cast<wxTopLevelWindow*>(win);
-
     // find its parent
     wxWindow* parent_tlw = EventNotifier::Get()->TopFrame();
 
-    if (!tlw || !parent_tlw) {
+    if (!parent_tlw) {
         return;
     }
 
     wxRect frameSize = parent_tlw->GetSize();
     frameSize.Deflate(100);
-    tlw->SetMinSize(frameSize.GetSize());
-    tlw->SetSize(frameSize.GetSize());
-    tlw->CentreOnParent();
+    tlw.SetMinSize(frameSize.GetSize());
+    tlw.SetSize(frameSize.GetSize());
+    tlw.CentreOnParent();
 
 #if defined(__WXMAC__) || defined(__WXMSW__)
-    tlw->Move(wxNOT_FOUND, parent_tlw->GetPosition().y);
+    tlw.Move(wxNOT_FOUND, parent_tlw->GetPosition().y);
 #endif
-    tlw->PostSizeEvent();
+    tlw.PostSizeEvent();
 }
 
-static void DoSetDialogSize(wxDialog* win, double factor)
+static void DoSetDialogSize(wxDialog& win, double factor)
 {
-    if (!win) {
-        return;
-    }
-
     if (factor <= 0.0) {
         factor = 1.0;
     }
 
-    wxWindow* parent = win->GetParent();
+    wxWindow* parent = win.GetParent();
     if (!parent) {
         parent = wxTheApp->GetTopWindow();
     }
     if (parent) {
-        wxSize parentSize = parent->GetSize();
-
-        double dlgWidth = (double)parentSize.GetWidth() * factor;
-        double dlgHeight = (double)parentSize.GetHeight() * factor;
-        parentSize.SetWidth(dlgWidth);
-        parentSize.SetHeight(dlgHeight);
-        win->SetSize(parentSize);
-        win->GetSizer()->Layout();
-        win->CentreOnParent();
+        win.SetSize(parent->GetSize() * factor);
+        win.GetSizer()->Layout();
+        win.CentreOnParent();
 #if defined(__WXMAC__) || defined(__WXMSW__)
-        win->Move(wxNOT_FOUND, parent->GetPosition().y);
+        win.Move(wxNOT_FOUND, parent->GetPosition().y);
 #endif
     }
 }
@@ -886,11 +871,11 @@ clRemoteFileSelector(const wxString& title, const wxString& accountName, const w
 #endif
 }
 
-void clSetDialogBestSizeAndPosition(wxDialog* win) { DoSetDialogSize(win, 0.66); }
+void clSetDialogBestSizeAndPosition(wxDialog& win) { DoSetDialogSize(win, 0.66); }
 
-void clSetSmallDialogBestSizeAndPosition(wxDialog* win) { DoSetDialogSize(win, 0.5); }
+void clSetSmallDialogBestSizeAndPosition(wxDialog& win) { DoSetDialogSize(win, 0.5); }
 
-void clSetDialogSizeAndPosition(wxDialog* win, double ratio) { DoSetDialogSize(win, ratio); }
+void clSetDialogSizeAndPosition(wxDialog& win, double ratio) { DoSetDialogSize(win, ratio); }
 
 bool clIsCxxWorkspaceOpened() { return clCxxWorkspaceST::Get()->IsOpen() || clFileSystemWorkspace::Get().IsOpen(); }
 
@@ -987,13 +972,13 @@ Notebook* FindNotebookParentOf(wxWindow* child)
     return nullptr;
 }
 
-bool IsChildOf(wxWindow* child, wxWindow* parent)
+bool IsChildOf(const wxWindow* child, const wxWindow* parent)
 {
     if (child == nullptr || parent == nullptr) {
         return false;
     }
 
-    wxWindow* curparent = child->GetParent();
+    const wxWindow* curparent = child->GetParent();
     while (curparent) {
         if (curparent == parent) {
             return true;
@@ -1003,20 +988,18 @@ bool IsChildOf(wxWindow* child, wxWindow* parent)
     return false;
 }
 
-wxString clGetVisibleSelection(wxStyledTextCtrl* ctrl)
+wxString clGetVisibleSelection(const wxStyledTextCtrl& ctrl)
 {
-    CHECK_PTR_RET_EMPTY_STRING(ctrl);
-
-    int start_pos = ctrl->GetSelectionStart();
-    int end_pos = ctrl->GetSelectionEnd();
+    int start_pos = ctrl.GetSelectionStart();
+    const int end_pos = ctrl.GetSelectionEnd();
     CHECK_COND_RET_EMPTY_STRING(end_pos > start_pos);
 
     // Make sure we only pick visible chars (embedded ANSI colour can break the selected word)
     wxString res;
     res.reserve(end_pos - start_pos + 1);
     for (; start_pos < end_pos; start_pos++) {
-        if (ctrl->StyleGetVisible(ctrl->GetStyleAt(start_pos))) {
-            res << (wxChar)ctrl->GetCharAt(start_pos);
+        if (ctrl.StyleGetVisible(ctrl.GetStyleAt(start_pos))) {
+            res << static_cast<wxChar>(ctrl.GetCharAt(start_pos));
         }
     }
     return res;

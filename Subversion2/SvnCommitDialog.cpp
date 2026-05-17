@@ -131,7 +131,7 @@ void SvnCommitDialog::DoCommonInit()
     if (textLexer) {
         textLexer->Apply(m_stcMessage);
     }
-    ::clSetTLWindowBestSizeAndPosition(this);
+    ::clSetTLWindowBestSizeAndPosition(*this);
 }
 
 SvnCommitDialog::~SvnCommitDialog()

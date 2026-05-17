@@ -38,7 +38,7 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, const ResourceVector_t& items
 
     DoInitialize();
     DoPopulateListCtrl(m_resources);
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
@@ -79,7 +79,7 @@ OpenResourceDlg::OpenResourceDlg(wxWindow* parent, IManager* manager)
         m_textCtrlFilter->SelectAll();
     }
 
-    ::clSetDialogBestSizeAndPosition(this);
+    ::clSetDialogBestSizeAndPosition(*this);
 }
 
 void OpenResourceDlg::DoInitialize()

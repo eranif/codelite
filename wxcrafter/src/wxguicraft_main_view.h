@@ -149,13 +149,13 @@ protected:
     wxArrayString GetCustomControlsUsed() const;
     wxTreeItemId DoFindItemByWxcWidget(wxcWidget* widget, const wxTreeItemId& item) const;
 
+public:
     /**
      * @brief generate the code for the current project
      * @param silent if set to true, disable all dialog messages
      */
     void DoGenerateCode(bool silent);
 
-public:
     GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, clTreeCtrl* treeView);
     ~GUICraftMainPanel() override;
     /**

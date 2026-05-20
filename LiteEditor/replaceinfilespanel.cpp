@@ -169,7 +169,8 @@ void ReplaceInFilesPanel::DoSaveResults(wxStyledTextCtrl* sci, MatchInfo_t::iter
     bool ok = true;
     if (dynamic_cast<clEditor*>(sci) == NULL) {
         // it's a temp editor, check if we have any changes to save
-        if (sci->GetModify() && !WriteFileWithBackup(begin->second.GetFileName(), sci->GetText(), false)) {
+        wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
+        if (sci->GetModify() && !FileUtils::WriteFileContent(begin->second.GetFileName(), sci->GetText(), fontEncConv)) {
             wxMessageBox(_("Failed to save file:\n") + begin->second.GetFileName(),
                          _("CodeLite - Replace"),
                          wxICON_ERROR | wxOK);

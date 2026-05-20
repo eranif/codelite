@@ -144,15 +144,6 @@ WXDLLIMPEXP_SDK bool CompareFileWithString(const wxString& filePath, const wxStr
 WXDLLIMPEXP_SDK bool IsValidCppIdentifier(const wxString& id);
 
 /**
- * \brief write file content with optional backup
- * \param file_name
- * \param content
- * \param backup
- * \return true on success, false otherwise
- */
-WXDLLIMPEXP_SDK bool WriteFileWithBackup(const wxString& file_name, const wxString& content, bool backup);
-
-/**
  * \brief copy text to the clipboard
  * \return true on success false otherwise
  */

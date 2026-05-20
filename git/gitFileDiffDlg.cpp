@@ -25,8 +25,9 @@
 
 #include "gitFileDiffDlg.h"
 
+#include "editor_config.h"
+#include "fileutils.h"
 #include "gitCommitEditor.h"
-#include "globals.h"
 #include "windowattrmanager.h"
 
 #include <wx/filedlg.h>
@@ -51,7 +52,8 @@ void GitFileDiffDlg::OnSaveAsPatch(wxCommandEvent& event)
     wxString path = ::wxFileSelector(
         _("Save as"), "", "untitled", "patch", wxFileSelectorDefaultWildcardStr, wxFD_SAVE | wxFD_OVERWRITE_PROMPT);
     if (!path.IsEmpty()) {
-        ::WriteFileWithBackup(path, m_editor->GetText(), false);
+        wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
+        FileUtils::WriteFileContent(path, m_editor->GetText(), fontEncConv);
         ::wxMessageBox("Diff written to:\n" + path, "CodeLite");
         // Close the dialog
         CallAfter(&GitFileDiffDlg::EndModal, wxID_CLOSE);

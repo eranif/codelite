@@ -27,8 +27,9 @@
 
 #include "cl_command_event.h"
 #include "codelite_events.h"
+#include "editor_config.h"
 #include "event_notifier.h"
-#include "globals.h"
+#include "fileutils.h"
 
 #include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
@@ -107,8 +108,9 @@ bool ClassGenerateDialog::GenerateClass(Table* pTab, const wxString& path)
     FormatFile(hFile, fnHeaderFileName);
     FormatFile(cFile, fnCppFileName);
 
-    ::WriteFileWithBackup(fnCppFileName.GetFullPath(), cFile, false);
-    ::WriteFileWithBackup(fnHeaderFileName.GetFullPath(), hFile, false);
+    wxCSConv fontEncConv(EditorConfigST::Get()->GetOptions()->GetFileFontEncoding());
+    FileUtils::WriteFileContent(fnCppFileName.GetFullPath(), cFile, fontEncConv);
+    FileUtils::WriteFileContent(fnHeaderFileName.GetFullPath(), hFile, fontEncConv);
 
     // add files to the workspace
     wxArrayString arrString;

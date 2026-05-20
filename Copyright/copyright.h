@@ -33,7 +33,7 @@ class Copyright : public IPlugin
 {
 protected:
     bool Validate(wxString& content);
-    void MassUpdate(const std::vector<wxFileName>& filtered_files, const wxString& content);
+    void MassUpdate(const std::vector<std::pair<wxString, std::vector<wxFileName>>>& filenamesByProject, const wxString& content);
 
 public:
     Copyright(IManager* manager);
@@ -50,7 +50,6 @@ public:
     void OnOptions(wxCommandEvent& e);
     void OnInsertCopyrights(wxCommandEvent& e);
     void OnBatchInsertCopyrights(wxCommandEvent& e);
-    void OnProjectInsertCopyrights(wxCommandEvent& e);
     void OnEditorContextMenu(clContextMenuEvent& event);
 };
 

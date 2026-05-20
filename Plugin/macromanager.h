@@ -63,6 +63,7 @@ public:
      * $(CurrentFileFullPath)
      * $(User)
      * $(Date)
+     * $(Year)
      * $(CodeLitePath)
      * $(CurrentSelection)
      * $(OutputDirectory)

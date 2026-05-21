@@ -94,6 +94,7 @@ void MacrosDlg::Initialize()
         AddMacro("$(CurrentFileFullName)", _("Expands to current file full name (name and extension)"));
         AddMacro("$(User)", _("Expands to logged-in user as defined by the OS"));
         AddMacro("$(Date)", _("Expands to current date"));
+        AddMacro("$(Year)", _("Expands to current year"));
         AddMacro("$(CodeLitePath)",
                  _("Expands to CodeLite's startup directory on (e.g. on Unix it expands to ~/.codelite/)"));
         AddMacro(

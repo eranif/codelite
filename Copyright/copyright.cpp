@@ -24,8 +24,8 @@
 //////////////////////////////////////////////////////////////////////////////
 #include "copyright.h"
 
-#include "Cxx/cpptoken.h"
-#include "Cxx/cppwordscanner.h"
+#include "Cxx/cpp_scanner.h"
+#include "Cxx/y.tab.h"
 #include "Keyboard/clKeyboardManager.h"
 #include "copyrights_options_dlg.h"
 #include "copyrights_proj_sel_dlg.h"
@@ -47,6 +47,22 @@
 #include <wx/msgdlg.h>
 #include <wx/tokenzr.h>
 #include <wx/xrc/xmlres.h>
+
+namespace
+{
+bool ContentIsOnlyComment(const wxString& content)
+{
+    CppScanner scanner;
+    scanner.SetText(content.mb_str(wxConvUTF8));
+    for (int token = scanner.yylex(); token; token = scanner.yylex()) {
+        if (token != CPPComment && token != CComment) {
+            return false;
+        }
+    }
+    return true;
+}
+
+} // namespace
 
 // Define the plugin entry point
 CL_PLUGIN_API IPlugin* CreatePlugin(IManager* manager) { return new Copyright(manager); }
@@ -142,12 +158,7 @@ void Copyright::OnInsertCopyrights(wxCommandEvent& e)
     }
 
     // verify that the file consist only with comment code
-    CppWordScanner scanner(data.GetTemplateFilename().mb_str().data());
-
-    CppTokensMap l;
-    scanner.FindAll(l);
-
-    if (!l.is_empty()) {
+    if (!ContentIsOnlyComment(content)) {
         if (wxMessageBox(_("Template file contains text which is not comment, continue anyway?"),
                          wxT("CodeLite"),
                          wxICON_QUESTION | wxYES_NO) == wxNO) {
@@ -323,19 +334,13 @@ bool Copyright::Validate(wxString& content)
     }
 
     // verify that the file consist only with comment code
-    CppWordScanner scanner(data.GetTemplateFilename().mb_str().data());
-
-    CppTokensMap l;
-    scanner.FindAll(l);
-
-    if (!l.is_empty()) {
+    if (!ContentIsOnlyComment(content)) {
         if (wxMessageBox(_("Template file contains text which is not comment, continue anyways?"),
                          wxT("CodeLite"),
                          wxICON_QUESTION | wxYES_NO) == wxNO) {
             return false;
         }
     }
-    content.Replace("`", "'");
     return true;
 }
 

@@ -12,4 +12,5 @@ TEST_CASE("wxStringMap_t")
 {
     const wxStringMap_t map = {{"hello", "world"}, {"key", "value"}};
     CHECK(map == JsonUtils::ToStringMap(JsonUtils::ToJson(map)));
+    CHECK(map == JsonUtils::ToStringMap(nlohmann::json{nlohmann::json{{"key", "hello"}, {"value", "world"}}, nlohmann::json{{"key", "key"}, {"value", "value"}}}));
 }

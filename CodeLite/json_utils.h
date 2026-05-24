@@ -57,11 +57,25 @@ inline wxSize ToSize(const nlohmann::json& json)
 
 inline wxStringMap_t ToStringMap(const nlohmann::json& json)
 {
-    wxStringMap_t res;
-    for (const auto& [key, item] : json.items()) {
-        res[wxString::FromUTF8(key)] = wxString::FromUTF8(item);
+    if (json.is_object()) {
+        wxStringMap_t res;
+        for (const auto& [key, item] : json.items()) {
+            res[wxString::FromUTF8(key)] = wxString::FromUTF8(item);
+        }
+        return res;
+    } else if (json.is_array()) {
+        wxStringMap_t res;
+        for (const auto& child : json) {
+            if (!child.is_object() || !child.contains("key") || !child.contains("value")) {
+                continue;
+            }
+            res[wxString::FromUTF8(child["key"].get<std::string>())] =
+                wxString::FromUTF8(child["value"].get<std::string>());
+        }
+        return res;
+    } else {
+        return {};
     }
-    return res;
 }
 
 inline std::string ToJsonValue(const wxSize& sz) { return std::to_string(sz.x) + "," + std::to_string(sz.y); }

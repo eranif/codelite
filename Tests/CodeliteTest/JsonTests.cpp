@@ -361,6 +361,7 @@ TEST_CASE("toStringMap") {
     root.toElement().addProperty("map", map);
 
     CHECK(map == root.toElement()["map"].toStringMap());
+    CHECK(map == JSONItem{JsonUtils::ToJson(map)}.toStringMap());
 }
 
 TEST_CASE("GetAsVector") {

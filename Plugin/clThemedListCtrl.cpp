@@ -17,8 +17,8 @@
 #define LIST_STYLE wxDV_ENABLE_SEARCH | wxBORDER_NONE | wxDV_ROW_LINES
 #endif
 
-clThemedListCtrlBase::clThemedListCtrlBase(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                           long style)
+clThemedListCtrlBase::clThemedListCtrlBase(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : clDataViewListCtrl(parent, id, pos, size, (style | LIST_STYLE))
 {
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedListCtrlBase::OnThemeChanged, this);
@@ -48,13 +48,9 @@ void clThemedListCtrlBase::ApplyTheme()
 
 clThemedListCtrl::clThemedListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : clThemedListCtrlBase(parent, id, pos, size, (style | LIST_STYLE))
-{
-    SetSortFunction(nullptr);
-}
+{ SetSortFunction(nullptr); }
 
-clThemedOrderedListCtrl::clThemedOrderedListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos,
-                                                 const wxSize& size, long style)
+clThemedOrderedListCtrl::clThemedOrderedListCtrl(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : clThemedListCtrlBase(parent, id, pos, size, (style | LIST_STYLE))
-{
-    SetSortFunction(nullptr);
-}
+{ SetSortFunction(nullptr); }

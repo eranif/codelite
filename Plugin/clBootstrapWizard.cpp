@@ -235,9 +235,7 @@ clBootstrapData clBootstrapWizard::GetData()
 }
 
 void clBootstrapWizard::OnInstallCompiler(wxCommandEvent& event)
-{
-    CompilersDetectorManager::MSWSuggestToDownloadMinGW(false);
-}
+{ CompilersDetectorManager::MSWSuggestToDownloadMinGW(false); }
 
 void clBootstrapWizard::OnInstallCompilerUI(wxUpdateUIEvent& event)
 {
@@ -266,9 +264,7 @@ wxArrayString clBootstrapWizard::GetSelectedPlugins()
 }
 
 bool clBootstrapWizard::IsRestartRequired()
-{
-    return m_firstTime || (m_developmentProfile != m_radioBoxProfile->GetSelection()) || m_globalThemeChanged;
-}
+{ return m_firstTime || (m_developmentProfile != m_radioBoxProfile->GetSelection()) || m_globalThemeChanged; }
 
 void clBootstrapWizard::OnFinish(wxWizardEvent& event)
 {
@@ -285,8 +281,10 @@ void clBootstrapWizard::OnFinish(wxWizardEvent& event)
 
 void clBootstrapWizard::OnCancelWizard(wxCommandEvent& event)
 {
-    ::wxMessageBox(_("You can always run this setup wizard from the menu:\nHelp -> Run the Setup Wizard"), "CodeLite",
-                   wxOK | wxCENTER | wxICON_INFORMATION, this);
+    ::wxMessageBox(_("You can always run this setup wizard from the menu:\nHelp -> Run the Setup Wizard"),
+                   "CodeLite",
+                   wxOK | wxCENTER | wxICON_INFORMATION,
+                   this);
     CallAfter(&clBootstrapWizard::EndModal, wxID_CANCEL);
 }
 

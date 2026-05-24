@@ -14,9 +14,7 @@ clEditEventsHandler::clEditEventsHandler(wxStyledTextCtrl* wnd, const wxString& 
     , m_combo(nullptr)
     , m_noUnbind(false)
     , m_name(name)
-{
-    DoInitialize();
-}
+{ DoInitialize(); }
 
 clEditEventsHandler::clEditEventsHandler(wxTextCtrl* wnd, const wxString& name)
     : m_stc(nullptr)
@@ -24,9 +22,7 @@ clEditEventsHandler::clEditEventsHandler(wxTextCtrl* wnd, const wxString& name)
     , m_combo(nullptr)
     , m_noUnbind(false)
     , m_name(name)
-{
-    DoInitialize();
-}
+{ DoInitialize(); }
 
 clEditEventsHandler::clEditEventsHandler(wxComboBox* wnd, const wxString& name)
     : m_stc(nullptr)
@@ -34,13 +30,11 @@ clEditEventsHandler::clEditEventsHandler(wxComboBox* wnd, const wxString& name)
     , m_combo(wnd)
     , m_noUnbind(false)
     , m_name(name)
-{
-    DoInitialize();
-}
+{ DoInitialize(); }
 
 clEditEventsHandler::~clEditEventsHandler()
 {
-    if(!m_noUnbind && (m_stc || m_textCtrl || m_combo)) {
+    if (!m_noUnbind && (m_stc || m_textCtrl || m_combo)) {
         wxTheApp->Unbind(wxEVT_MENU, &clEditEventsHandler::OnCopy, this, wxID_COPY);
         wxTheApp->Unbind(wxEVT_MENU, &clEditEventsHandler::OnPaste, this, wxID_PASTE);
         wxTheApp->Unbind(wxEVT_MENU, &clEditEventsHandler::OnCut, this, wxID_CUT);
@@ -88,7 +82,7 @@ void clEditEventsHandler::OnRedo(wxCommandEvent& event)
 
 void clEditEventsHandler::DoInitialize()
 {
-    if(m_textCtrl || m_stc || m_combo) {
+    if (m_textCtrl || m_stc || m_combo) {
         wxTheApp->Bind(wxEVT_MENU, &clEditEventsHandler::OnCopy, this, wxID_COPY);
         wxTheApp->Bind(wxEVT_MENU, &clEditEventsHandler::OnPaste, this, wxID_PASTE);
         wxTheApp->Bind(wxEVT_MENU, &clEditEventsHandler::OnCut, this, wxID_CUT);

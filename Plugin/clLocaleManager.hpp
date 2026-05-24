@@ -30,9 +30,7 @@ public:
 
     void SetCachedLocales(const wxArrayString& cached_locales) { this->m_cached_locales = cached_locales; }
     void SetCachedLocalesCanonicalName(const wxArrayString& cached_locales_CanonicalName)
-    {
-        this->m_cached_locales_CanonicalName = cached_locales_CanonicalName;
-    }
+    { this->m_cached_locales_CanonicalName = cached_locales_CanonicalName; }
     void SetSystemDefaultLocale(int system_default_locale) { this->m_system_default_locale = system_default_locale; }
     const wxArrayString& GetCachedLocales() const { return m_cached_locales; }
     const wxArrayString& GetCachedLocalesCanonicalName() const { return m_cached_locales_CanonicalName; }

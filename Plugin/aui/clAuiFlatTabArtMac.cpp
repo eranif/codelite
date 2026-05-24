@@ -163,9 +163,7 @@ void clAuiFlatTabArt::DoDrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& re
 }
 
 void clAuiFlatTabArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
-{
-    DoDrawBackground(dc, wnd, rect, true);
-}
+{ DoDrawBackground(dc, wnd, rect, true); }
 
 void clAuiFlatTabArt::DrawBorder(wxDC& dc, wxWindow* WXUNUSED(wnd), const wxRect& rect)
 {

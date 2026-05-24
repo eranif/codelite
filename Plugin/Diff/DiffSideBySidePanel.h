@@ -174,7 +174,10 @@ public:
     void DoDrawSequenceMarkers(int firstLine, int lastLine, wxStyledTextCtrl* ctrl);
     void DoCopyCurrentSequence(wxStyledTextCtrl* from, wxStyledTextCtrl* to);
     void DoCopyFileContent(wxStyledTextCtrl* from, wxStyledTextCtrl* to);
-    void DoGetPositionsToCopy(wxStyledTextCtrl* stc, int& startPos, int& endPos, int& placeHolderMarkerFirstLine,
+    void DoGetPositionsToCopy(wxStyledTextCtrl* stc,
+                              int& startPos,
+                              int& endPos,
+                              int& placeHolderMarkerFirstLine,
                               int& placeHolderMarkerLastLine);
     void DoSave(wxStyledTextCtrl* stc, const wxFileName& fn);
 

@@ -10,7 +10,7 @@ LexerConf::Ptr_t ThemeImporterYAML::Import(const wxFileName& theme_file)
 {
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_YAML);
     wxString errorColour;
-    if(lexer->IsDark()) {
+    if (lexer->IsDark()) {
         errorColour = "PINK";
     } else {
         errorColour = "RED";

@@ -38,9 +38,7 @@ public:
                             const wxPoint& pos = wxDefaultPosition,
                             const wxSize& size = wxDefaultSize,
                             long style = 0)
-    {
-        Create(parent, edit, id, pos, size, style);
-    }
+    { Create(parent, edit, id, pos, size, style); }
 
     bool Create(wxWindow* parent,
                 wxStyledTextCtrl* edit,

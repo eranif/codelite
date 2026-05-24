@@ -59,8 +59,10 @@ public:
     bool IsProject() const { return m_itemType == ProjectItem::TypeProject; }
 };
 
-VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg(wxWindow* parent, clCxxWorkspace* wsp,
-                                                         const wxString& initialPath, const wxString& projectname)
+VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg(wxWindow* parent,
+                                                         clCxxWorkspace* wsp,
+                                                         const wxString& initialPath,
+                                                         const wxString& projectname)
     : VirtualDirectorySelectorDlgBaseClass(parent)
     , m_workspace(wsp)
     , m_projectName(projectname)
@@ -76,16 +78,14 @@ VirtualDirectorySelectorDlg::VirtualDirectorySelectorDlg(wxWindow* parent, clCxx
 VirtualDirectorySelectorDlg::~VirtualDirectorySelectorDlg() {}
 
 void VirtualDirectorySelectorDlg::OnItemSelected(wxTreeEvent& event)
-{
-    m_staticTextPreview->SetLabel(DoGetPath(m_treeCtrl, event.GetItem(), true));
-}
+{ m_staticTextPreview->SetLabel(DoGetPath(m_treeCtrl, event.GetItem(), true)); }
 
 void VirtualDirectorySelectorDlg::OnButtonOK(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     EndModal(wxID_OK);
 
-    if(m_reloadTreeNeeded) {
+    if (m_reloadTreeNeeded) {
         m_reloadTreeNeeded = false;
         wxCommandEvent buildTree(wxEVT_REBUILD_WORKSPACE_TREE);
         EventNotifier::Get()->AddPendingEvent(buildTree);
@@ -98,7 +98,7 @@ void VirtualDirectorySelectorDlg::OnButtonCancel(wxCommandEvent& event)
     EndModal(wxID_CANCEL);
 
     // Even though the user cancelled,  we still need to reload if a new VDir was created
-    if(m_reloadTreeNeeded) {
+    if (m_reloadTreeNeeded) {
         m_reloadTreeNeeded = false;
         wxCommandEvent buildTree(wxEVT_REBUILD_WORKSPACE_TREE);
         EventNotifier::Get()->AddPendingEvent(buildTree);
@@ -107,12 +107,12 @@ void VirtualDirectorySelectorDlg::OnButtonCancel(wxCommandEvent& event)
 
 wxString VirtualDirectorySelectorDlg::DoGetPath(clTreeCtrl* tree, const wxTreeItemId& item, bool validateFolder)
 {
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         return wxEmptyString;
     }
-    if(validateFolder) {
+    if (validateFolder) {
         MyVdTreeItemData* cd = dynamic_cast<MyVdTreeItemData*>(tree->GetItemData(item));
-        if(!(cd && cd->IsFolder())) {
+        if (!(cd && cd->IsFolder())) {
             return "";
         }
     }
@@ -122,13 +122,13 @@ wxString VirtualDirectorySelectorDlg::DoGetPath(clTreeCtrl* tree, const wxTreeIt
     queue.push_front(text);
 
     wxTreeItemId p = tree->GetItemParent(item);
-    while(true) {
+    while (true) {
 
-        if(!p.IsOk() || p == tree->GetRootItem())
+        if (!p.IsOk() || p == tree->GetRootItem())
             break;
 
         FilewViewTreeItemData* data = dynamic_cast<FilewViewTreeItemData*>(tree->GetItemData(p));
-        if(data && (data->GetData().GetKind() == ProjectItem::TypeWorkspaceFolder)) {
+        if (data && (data->GetData().GetKind() == ProjectItem::TypeWorkspaceFolder)) {
             // We reached the top level
             break;
         }
@@ -140,13 +140,13 @@ wxString VirtualDirectorySelectorDlg::DoGetPath(clTreeCtrl* tree, const wxTreeIt
 
     wxString path;
     size_t count = queue.size();
-    for(size_t i = 0; i < count; i++) {
+    for (size_t i = 0; i < count; i++) {
         path += queue.front();
         path += wxT(":");
         queue.pop_front();
     }
 
-    if(!queue.empty()) {
+    if (!queue.empty()) {
         path += queue.front();
     } else {
         path = path.BeforeLast(wxT(':'));
@@ -165,7 +165,7 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
     int projectImgId = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeProject);
     int projectImgIdExpanded = clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeProjectExpanded);
 
-    if(m_workspace) {
+    if (m_workspace) {
         wxArrayString projects;
         m_workspace->GetProjectList(projects);
 
@@ -176,41 +176,41 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
         TreeNode<wxString, VisualWorkspaceNode>* tree =
             new TreeNode<wxString, VisualWorkspaceNode>(m_workspace->GetName(), nodeData);
 
-        for(size_t i = 0; i < projects.GetCount(); i++) {
-            if(!m_projectName.empty() && projects.Item(i) != m_projectName) {
+        for (size_t i = 0; i < projects.GetCount(); i++) {
+            if (!m_projectName.empty() && projects.Item(i) != m_projectName) {
                 // If we were passed a specific project, display only that one
                 continue;
             }
 
             wxString err;
             ProjectPtr p = m_workspace->FindProjectByName(projects.Item(i), err);
-            if(p) {
+            if (p) {
                 p->GetVirtualDirectories(tree);
             }
         }
 
         // create the tree
-        wxTreeItemId root = m_treeCtrl->AddRoot(nodeData.name, workspaceImgId, workspaceImgId,
-                                                new MyVdTreeItemData(ProjectItem::TypeWorkspace));
+        wxTreeItemId root = m_treeCtrl->AddRoot(
+            nodeData.name, workspaceImgId, workspaceImgId, new MyVdTreeItemData(ProjectItem::TypeWorkspace));
         tree->GetData().itemId = root;
         TreeWalker<wxString, VisualWorkspaceNode> walker(tree);
 
-        for(; !walker.End(); walker++) {
+        for (; !walker.End(); walker++) {
             // Add the item to the tree
             TreeNode<wxString, VisualWorkspaceNode>* node = walker.GetNode();
 
             // Skip root node
-            if(node->IsRoot())
+            if (node->IsRoot())
                 continue;
 
             wxTreeItemId parentHti = node->GetParent()->GetData().itemId;
-            if(parentHti.IsOk() == false) {
+            if (parentHti.IsOk() == false) {
                 parentHti = root;
             }
 
             int imgId; // Virtual folder
             int imgIdExpanded;
-            switch(node->GetData().type) {
+            switch (node->GetData().type) {
             case ProjectItem::TypeWorkspace:
                 imgId = 0;
                 imgIdExpanded = 0;
@@ -233,13 +233,13 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
                                                             imgIdExpanded,        // selected item image
                                                             new MyVdTreeItemData(node->GetData().type));
         }
-        if(root.IsOk() && m_treeCtrl->ItemHasChildren(root)) {
+        if (root.IsOk() && m_treeCtrl->ItemHasChildren(root)) {
             m_treeCtrl->Expand(root);
         }
         wxDELETE(tree);
     }
     // if a initialPath was provided, try to find and select it
-    if(SelectPath(m_initialPath)) {
+    if (SelectPath(m_initialPath)) {
         m_treeCtrl->Expand(m_treeCtrl->GetSelection());
     }
 }
@@ -247,7 +247,7 @@ void VirtualDirectorySelectorDlg::DoBuildTree()
 void VirtualDirectorySelectorDlg::OnButtonOkUI(wxUpdateUIEvent& event)
 {
     wxTreeItemId id = m_treeCtrl->GetSelection();
-    if(!id.IsOk()) {
+    if (!id.IsOk()) {
         event.Enable(false);
     } else {
         MyVdTreeItemData* cd = dynamic_cast<MyVdTreeItemData*>(m_treeCtrl->GetItemData(id));
@@ -257,32 +257,32 @@ void VirtualDirectorySelectorDlg::OnButtonOkUI(wxUpdateUIEvent& event)
 
 wxTreeItemId VirtualDirectorySelectorDlg::FindItemForPath(const wxString& path)
 {
-    if(path.empty()) {
+    if (path.empty()) {
         return wxTreeItemId();
     }
 
     wxArrayString tokens = wxStringTokenize(path, wxT(":"), wxTOKEN_STRTOK);
     wxTreeItemId item = m_treeCtrl->GetRootItem();
-    if(m_treeCtrl->GetWindowStyle() & wxTR_HIDE_ROOT) {
-        if(!item.IsOk() || !m_treeCtrl->HasChildren(item)) {
+    if (m_treeCtrl->GetWindowStyle() & wxTR_HIDE_ROOT) {
+        if (!item.IsOk() || !m_treeCtrl->HasChildren(item)) {
             return wxTreeItemId();
         }
     }
     // We need to pump-prime with the first token, otherwise the loop is never entered
     wxTreeItemIdValue cookie;
     item = m_treeCtrl->GetFirstChild(item, cookie);
-    if(m_treeCtrl->GetItemText(item) == path) {
+    if (m_treeCtrl->GetItemText(item) == path) {
         return item; // Root's first child, the top VDir, was the item to find
     }
 
-    for(size_t i = 1; i < tokens.GetCount(); ++i) {
-        if(item.IsOk() && m_treeCtrl->HasChildren(item)) {
+    for (size_t i = 1; i < tokens.GetCount(); ++i) {
+        if (item.IsOk() && m_treeCtrl->HasChildren(item)) {
             // loop over the children of this node, and search for a match
             wxTreeItemId child = m_treeCtrl->GetFirstChild(item, cookie);
-            while(child.IsOk()) {
-                if(m_treeCtrl->GetItemText(child) == tokens.Item(i)) {
+            while (child.IsOk()) {
+                if (m_treeCtrl->GetItemText(child) == tokens.Item(i)) {
                     item = child;
-                    if(i + 1 == tokens.GetCount()) {
+                    if (i + 1 == tokens.GetCount()) {
                         return item; // Success!
                     }
                     break;
@@ -298,12 +298,12 @@ wxTreeItemId VirtualDirectorySelectorDlg::FindItemForPath(const wxString& path)
 bool VirtualDirectorySelectorDlg::SelectPath(const wxString& path)
 {
     wxTreeItemId item = FindItemForPath(path);
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         // No match, so try to find a sensible default
         // Start with the root, but this will fail for a hidden root...
         item = m_treeCtrl->GetRootItem();
-        if(m_treeCtrl->GetWindowStyle() & wxTR_HIDE_ROOT) {
-            if(!item.IsOk() || !m_treeCtrl->HasChildren(item)) {
+        if (m_treeCtrl->GetWindowStyle() & wxTR_HIDE_ROOT) {
+            if (!item.IsOk() || !m_treeCtrl->HasChildren(item)) {
                 return false;
             }
 
@@ -312,7 +312,7 @@ bool VirtualDirectorySelectorDlg::SelectPath(const wxString& path)
         }
     }
 
-    if(item.IsOk()) {
+    if (item.IsOk()) {
         m_treeCtrl->EnsureVisible(item);
         m_treeCtrl->SelectItem(item);
         return true;
@@ -327,31 +327,31 @@ void VirtualDirectorySelectorDlg::OnNewVD(wxCommandEvent& event)
 {
     static int counter = 0;
     wxTreeItemId id = m_treeCtrl->GetSelection();
-    if(id.IsOk() == false)
+    if (id.IsOk() == false)
         return;
 
     wxString curpath = DoGetPath(m_treeCtrl, id, false);
     wxTreeItemId item = FindItemForPath(m_projectName + ':' + m_suggestedName);
     wxString name;
 
-    if(!item.IsOk()) { // We don't want to suggest an already-existing path!
+    if (!item.IsOk()) { // We don't want to suggest an already-existing path!
         name = m_suggestedName;
         wxString rest;
-        if(name.StartsWith(curpath.AfterFirst(':'), &rest)) {
+        if (name.StartsWith(curpath.AfterFirst(':'), &rest)) {
             name = rest;
-            if(!name.empty() && (name.GetChar(0) == ':')) { // Which it probably will be
+            if (!name.empty() && (name.GetChar(0) == ':')) { // Which it probably will be
                 name = name.AfterFirst(':');
             }
         }
     }
 
-    if(name.empty()) {
+    if (name.empty()) {
         name << "Folder" << ++counter;
     }
     wxString newname = wxGetTextFromUser(_("New Virtual Folder Name:"), _("New Virtual Folder"), name);
     newname.Trim().Trim(false);
 
-    if(newname.IsEmpty())
+    if (newname.IsEmpty())
         return;
 
     /*    if ( newname.Contains(":") ) { // No, don't check this: we may have been passed a multi-segment path, or be
@@ -362,8 +362,9 @@ void VirtualDirectorySelectorDlg::OnNewVD(wxCommandEvent& event)
 
     curpath << ":" << newname;
     wxString errmsg;
-    if(!clCxxWorkspaceST::Get()->CreateVirtualDirectory(curpath, errmsg, true)) {
-        wxMessageBox(_("Error occurred while creating virtual folder:\n") + errmsg, "CodeLite",
+    if (!clCxxWorkspaceST::Get()->CreateVirtualDirectory(curpath, errmsg, true)) {
+        wxMessageBox(_("Error occurred while creating virtual folder:\n") + errmsg,
+                     "CodeLite",
                      wxOK | wxICON_WARNING | wxCENTER);
         return;
     }
@@ -376,7 +377,7 @@ void VirtualDirectorySelectorDlg::OnNewVD(wxCommandEvent& event)
 void VirtualDirectorySelectorDlg::OnNewVDUI(wxUpdateUIEvent& event)
 {
     wxTreeItemId id = m_treeCtrl->GetSelection();
-    if(id.IsOk() == false) {
+    if (id.IsOk() == false) {
         event.Enable(false);
         return;
     }

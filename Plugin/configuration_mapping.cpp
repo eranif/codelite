@@ -98,9 +98,7 @@ wxString BuildMatrix::GetProjectSelectedConf(const wxString& configName, const w
 }
 
 WorkspaceConfigurationPtr BuildMatrix::GetConfigurationByName(const wxString& name) const
-{
-    return FindConfiguration(name);
-}
+{ return FindConfiguration(name); }
 
 WorkspaceConfigurationPtr BuildMatrix::FindConfiguration(const wxString& name) const
 {

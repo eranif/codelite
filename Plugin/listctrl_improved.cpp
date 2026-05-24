@@ -33,26 +33,67 @@ const wxEventType wxEVT_CMD_CHECKLIST_ITEM_CHECKED = 349375;
 /* XPM */
 static const char* Checkbox_unchecked_xpm[] = {
     /* columns rows colors chars-per-pixel */
-    "16 16 11 1", "$ c #F7F7F7", "% c #FFFFFF", ". c #E7E7DE", "  c #185284", "X c #DEDEDE", "o c #E7E7DE",
-    "@ c #E7E7E7", "O c #EFEFE7", "+ c #EFEFEF", "# c #F7F7EF", "& c None",
+    "16 16 11 1",
+    "$ c #F7F7F7",
+    "% c #FFFFFF",
+    ". c #E7E7DE",
+    "  c #185284",
+    "X c #DEDEDE",
+    "o c #E7E7DE",
+    "@ c #E7E7E7",
+    "O c #EFEFE7",
+    "+ c #EFEFEF",
+    "# c #F7F7EF",
+    "& c None",
     /* pixels */
-    "&&&&&&&&&&&&&&&&", "                ", " ......XooOO+.. ", " ....XXo@O++#.. ", " ...XXo@O+++#.. ",
-    " ..Xoo@@++#$$.. ", " ..Xo@O++#+$$.. ", " .oo@@+++$$$$.. ", " .o@O++#+$$%%.. ", " .oO+++$$$$%%.. ",
-    " .O++#$#$$%%%.. ", " .O++$$$$%%%%.. ", " .+#$#$$%%%%%.. ", " .............. ", "                ",
-    "&&&&&&&&&&&&&&&&"
-};
+    "&&&&&&&&&&&&&&&&",
+    "                ",
+    " ......XooOO+.. ",
+    " ....XXo@O++#.. ",
+    " ...XXo@O+++#.. ",
+    " ..Xoo@@++#$$.. ",
+    " ..Xo@O++#+$$.. ",
+    " .oo@@+++$$$$.. ",
+    " .o@O++#+$$%%.. ",
+    " .oO+++$$$$%%.. ",
+    " .O++#$#$$%%%.. ",
+    " .O++$$$$%%%%.. ",
+    " .+#$#$$%%%%%.. ",
+    " .............. ",
+    "                ",
+    "&&&&&&&&&&&&&&&&"};
 
 /* XPM */
 static const char* Checkbox_checked_xpm[] = {
     /* columns rows colors chars-per-pixel */
-    "16 16 10 1", "# c #F7F7F7", "$ c #FFFFFF", "@ c #21A521", "  c #185284", ". c #E7E7DE", "X c #E7E7E7",
-    "o c #EFEFE7", "O c #EFEFEF", "+ c #F7F7EF", "& c None",
+    "16 16 10 1",
+    "# c #F7F7F7",
+    "$ c #FFFFFF",
+    "@ c #21A521",
+    "  c #185284",
+    ". c #E7E7DE",
+    "X c #E7E7E7",
+    "o c #EFEFE7",
+    "O c #EFEFEF",
+    "+ c #F7F7EF",
+    "& c None",
     /* pixels */
-    "&&&&&&&&&&&&&&&&", "                ", " .......XooO+.. ", " .....XXooO+O.. ", " ....XXXOO@+#.. ",
-    " ...XXXoO@@##.. ", " ...@XOO@@@##.. ", " ..X@@O@@@##$.. ", " .Xo@@@@@##$#.. ", " .ooO@@@##$$$.. ",
-    " .oO+O@##$#$$.. ", " .O+O###$$$$$.. ", " .++###$$#$$$.. ", " .............. ", "                ",
-    "&&&&&&&&&&&&&&&&"
-};
+    "&&&&&&&&&&&&&&&&",
+    "                ",
+    " .......XooO+.. ",
+    " .....XXooO+O.. ",
+    " ....XXXOO@+#.. ",
+    " ...XXXoO@@##.. ",
+    " ...@XOO@@@##.. ",
+    " ..X@@O@@@##$.. ",
+    " .Xo@@@@@##$#.. ",
+    " .ooO@@@##$$$.. ",
+    " .oO+O@##$#$$.. ",
+    " .O+O###$$$$$.. ",
+    " .++###$$#$$$.. ",
+    " .............. ",
+    "                ",
+    "&&&&&&&&&&&&&&&&"};
 
 BEGIN_EVENT_TABLE(ListCtrlImproved, wxListCtrl)
 EVT_LEFT_DOWN(ListCtrlImproved::OnLeftDown)
@@ -60,15 +101,13 @@ END_EVENT_TABLE()
 
 ListCtrlImproved::ListCtrlImproved(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxListCtrl(parent, id, pos, size, style | wxLC_REPORT)
-{
-    DoInitialize();
-}
+{ DoInitialize(); }
 
 ListCtrlImproved::~ListCtrlImproved()
 {
-    for(int i = 0; i < GetItemCount(); i++) {
+    for (int i = 0; i < GetItemCount(); i++) {
         wxClientData* data = (wxClientData*)GetItemData(i);
-        if(data) {
+        if (data) {
             delete data;
         }
     }
@@ -117,7 +156,7 @@ long ListCtrlImproved::AppendRow()
     info.SetColumn(0);
     info.SetId(item);
 
-    if(GetItemCount() % 2 && HasFlag(wxLC_COLOUR_BACKGROUND))
+    if (GetItemCount() % 2 && HasFlag(wxLC_COLOUR_BACKGROUND))
         info.SetBackgroundColour(wxSystemSettings::GetColour(wxSYS_COLOUR_BTNFACE));
 
     item = InsertItem(info);
@@ -151,7 +190,7 @@ void ListCtrlImproved::OnLeftDown(wxMouseEvent& event)
 
     int flags(0);
     int item = HitTest(pt, flags);
-    if((item != wxNOT_FOUND) && (flags & wxLIST_HITTEST_ONITEMICON)) {
+    if ((item != wxNOT_FOUND) && (flags & wxLIST_HITTEST_ONITEMICON)) {
         // toggle the current line selection mode
         Check(item, !IsChecked(item));
 
@@ -165,9 +204,7 @@ void ListCtrlImproved::OnLeftDown(wxMouseEvent& event)
 }
 
 bool ListCtrlImproved::SetItemClientData(long item, wxClientData* clientData)
-{
-    return SetItemPtrData(item, (wxUIntPtr)clientData);
-}
+{ return SetItemPtrData(item, (wxUIntPtr)clientData); }
 
 void ListCtrlImproved::SetCheckboxRow(long item, bool checked)
 {

@@ -125,9 +125,7 @@ public:
     void SetRect(const wxRect& rect) { this->m_rect = rect; }
     template <typename T>
     T* Cast() const
-    {
-        return dynamic_cast<T*>(const_cast<wxCustomStatusBarField*>(this));
-    }
+    { return dynamic_cast<T*>(const_cast<wxCustomStatusBarField*>(this)); }
 };
 
 //================---------------
@@ -318,9 +316,7 @@ public:
 
     template <typename T>
     T* GetControl() const
-    {
-        return dynamic_cast<T*>(m_control);
-    }
+    { return dynamic_cast<T*>(m_control); }
 };
 
 //================---------------
@@ -354,9 +350,7 @@ public:
     void AnimationClicked(wxCustomStatusBarField* field);
 
     void SetLastArtNameUsedForPaint(const wxString& lastArtNameUsedForPaint)
-    {
-        this->m_lastArtNameUsedForPaint = lastArtNameUsedForPaint;
-    }
+    { this->m_lastArtNameUsedForPaint = lastArtNameUsedForPaint; }
     const wxString& GetLastArtNameUsedForPaint() const { return m_lastArtNameUsedForPaint; }
 
     /// Add field to the status bar, returns its index

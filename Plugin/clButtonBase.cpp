@@ -53,21 +53,37 @@ void DrawLabel(wxDC& dc, const wxRect& rr, const wxString& text, const wxColour&
 } // namespace
 
 #if wxUSE_NATIVE_BUTTON
-clButtonBase::clButtonBase(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos,
-                           const wxSize& size, long style, const wxValidator& validator, const wxString& name)
+clButtonBase::clButtonBase(wxWindow* parent,
+                           wxWindowID id,
+                           const wxString& label,
+                           const wxPoint& pos,
+                           const wxSize& size,
+                           long style,
+                           const wxValidator& validator,
+                           const wxString& name)
     : wxButton(parent, id, label, pos, size, style, validator, name)
 {
 }
 
-bool clButtonBase::Create(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos,
-                          const wxSize& size, long style, const wxValidator& validator, const wxString& name)
-{
-    return wxButton::Create(parent, id, label, pos, size, style, validator, name);
-}
+bool clButtonBase::Create(wxWindow* parent,
+                          wxWindowID id,
+                          const wxString& label,
+                          const wxPoint& pos,
+                          const wxSize& size,
+                          long style,
+                          const wxValidator& validator,
+                          const wxString& name)
+{ return wxButton::Create(parent, id, label, pos, size, style, validator, name); }
 clButtonBase::~clButtonBase() {}
 #else
-clButtonBase::clButtonBase(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos,
-                           const wxSize& size, long style, const wxValidator& validator, const wxString& name)
+clButtonBase::clButtonBase(wxWindow* parent,
+                           wxWindowID id,
+                           const wxString& label,
+                           const wxPoint& pos,
+                           const wxSize& size,
+                           long style,
+                           const wxValidator& validator,
+                           const wxString& name)
     : wxControl(parent, id, pos, size, wxTAB_TRAVERSAL | wxNO_BORDER | wxWANTS_CHARS)
     , m_buttonStyle(style)
 {
@@ -77,8 +93,14 @@ clButtonBase::clButtonBase(wxWindow* parent, wxWindowID id, const wxString& labe
     Initialise();
 }
 
-bool clButtonBase::Create(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos,
-                          const wxSize& size, long style, const wxValidator& validator, const wxString& name)
+bool clButtonBase::Create(wxWindow* parent,
+                          wxWindowID id,
+                          const wxString& label,
+                          const wxPoint& pos,
+                          const wxSize& size,
+                          long style,
+                          const wxValidator& validator,
+                          const wxString& name)
 {
     wxUnusedVar(name);
     wxUnusedVar(validator);
@@ -681,7 +703,7 @@ void clButtonBase::PostClickEvent()
 void clButtonBase::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
-    static clIdleEventThrottler event_throttler{ 200 };
+    static clIdleEventThrottler event_throttler{200};
     if (!event_throttler.CanHandle()) {
         return;
     }

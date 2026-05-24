@@ -90,9 +90,7 @@ public:
     EnvSetter();
     explicit EnvSetter(wxStringMap_t* om)
         : m_env(EnvironmentConfig::Instance())
-    {
-        m_env->ApplyEnv(om, wxEmptyString, wxEmptyString);
-    }
+    { m_env->ApplyEnv(om, wxEmptyString, wxEmptyString); }
 
     explicit EnvSetter(const clEnvList_t* envlist)
         : m_env(EnvironmentConfig::Instance())

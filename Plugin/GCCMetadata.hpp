@@ -45,8 +45,8 @@ class WXDLLIMPEXP_SDK GCCMetadata
     wxArrayString m_macros;
 
 private:
-    wxString RunCommand(const wxString& command, const wxString& working_directory = wxEmptyString,
-                        clEnvList_t* env = nullptr);
+    wxString
+    RunCommand(const wxString& command, const wxString& working_directory = wxEmptyString, clEnvList_t* env = nullptr);
     static void GetMetadataFromCache(const wxString& tool, const wxString& rootDir, bool is_cygwin, GCCMetadata* md);
     void DoLoad(const wxString& tool, const wxString& rootDir, bool is_cygwin = false);
 

@@ -21,7 +21,7 @@ LexerConf::Ptr_t ThemeImporterRust::Import(const wxFileName& theme_file)
     AddProperty(lexer, wxSTC_RUST_DEFAULT, "Default", m_editor);
 
     wxString errorColour;
-    if(lexer->IsDark()) {
+    if (lexer->IsDark()) {
         errorColour = "PINK";
     } else {
         errorColour = "RED";

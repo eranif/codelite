@@ -49,7 +49,10 @@ protected:
     void OnPaint(wxPaintEvent& e);
 
 public:
-    DockablePane(wxWindow* parent, PaneId pane_id, const wxString& title, bool initialFloat = true,
+    DockablePane(wxWindow* parent,
+                 PaneId pane_id,
+                 const wxString& title,
+                 bool initialFloat = true,
                  const wxSize& size = wxDefaultSize);
     virtual ~DockablePane();
     wxString GetName() { return m_text; }

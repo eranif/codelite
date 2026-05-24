@@ -16,16 +16,22 @@ protected:
     void Initialise(bool disableSorting);
 
 public:
-    clThemedListCtrlBase(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                         const wxSize& size = wxDefaultSize, long style = 0);
+    clThemedListCtrlBase(wxWindow* parent,
+                         wxWindowID id = wxID_ANY,
+                         const wxPoint& pos = wxDefaultPosition,
+                         const wxSize& size = wxDefaultSize,
+                         long style = 0);
     virtual ~clThemedListCtrlBase();
 };
 
 class WXDLLIMPEXP_SDK clThemedListCtrl : public clThemedListCtrlBase
 {
 public:
-    clThemedListCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& size = wxDefaultSize, long style = 0);
+    clThemedListCtrl(wxWindow* parent,
+                     wxWindowID id = wxID_ANY,
+                     const wxPoint& pos = wxDefaultPosition,
+                     const wxSize& size = wxDefaultSize,
+                     long style = 0);
     virtual ~clThemedListCtrl() = default;
 };
 
@@ -34,8 +40,11 @@ class WXDLLIMPEXP_SDK clThemedOrderedListCtrl : public clThemedListCtrlBase
     size_t m_sortedColumn = 0;
 
 public:
-    clThemedOrderedListCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                            const wxSize& size = wxDefaultSize, long style = 0);
+    clThemedOrderedListCtrl(wxWindow* parent,
+                            wxWindowID id = wxID_ANY,
+                            const wxPoint& pos = wxDefaultPosition,
+                            const wxSize& size = wxDefaultSize,
+                            long style = 0);
     virtual ~clThemedOrderedListCtrl() = default;
 
     void SetSortedColumn(size_t sortedColumn) { this->m_sortedColumn = sortedColumn; }

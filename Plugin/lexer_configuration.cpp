@@ -269,9 +269,7 @@ void LexerConf::Apply(wxStyledTextCtrl* ctrl, bool applyKeywords)
                     style_id = ctrl->GetSubStylesStart(GetSubStyleBase()) + sp.GetId();
                     LOG_IF_TRACE { clDEBUG1() << "* Found Substyle" << endl; }
                     LOG_IF_TRACE
-                    {
-                        clDEBUG1() << "* Setting style:" << style_id << ". Is substyle?" << sp.IsSubstyle() << endl;
-                    }
+                    { clDEBUG1() << "* Setting style:" << style_id << ". Is substyle?" << sp.IsSubstyle() << endl; }
                     LOG_IF_TRACE { clDEBUG1() << "* Parent style:" << sp.GetId() << endl; }
                 }
 

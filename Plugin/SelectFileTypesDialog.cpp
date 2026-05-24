@@ -27,7 +27,7 @@ void SelectFileTypesDialog::InitializeList(const wxArrayString& selected_items)
 {
     m_dvListCtrl->DeleteAllItems();
     wxVector<wxVariant> cols;
-    for(const auto& vt : m_all) {
+    for (const auto& vt : m_all) {
         // include this entry
         clDataViewCheckbox item(selected_items.Index(vt.first) != wxNOT_FOUND, wxNOT_FOUND, vt.first);
         wxVariant v;
@@ -40,13 +40,13 @@ void SelectFileTypesDialog::InitializeList(const wxArrayString& selected_items)
 
 void SelectFileTypesDialog::Search(const wxString& filter)
 {
-    if(filter.empty()) {
+    if (filter.empty()) {
         return;
     }
-    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         auto item = m_dvListCtrl->RowToItem(i);
         wxString text = m_dvListCtrl->GetItemText(item);
-        if(text.Contains(filter)) {
+        if (text.Contains(filter)) {
             m_dvListCtrl->SelectRow(i);
             m_dvListCtrl->EnsureVisible(item);
             break;
@@ -58,9 +58,9 @@ wxArrayString SelectFileTypesDialog::GetValue() const
 {
     // collect checked items
     wxArrayString result;
-    for(size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
+    for (size_t i = 0; i < m_dvListCtrl->GetItemCount(); ++i) {
         auto item = m_dvListCtrl->RowToItem(i);
-        if(m_dvListCtrl->IsItemChecked(item)) {
+        if (m_dvListCtrl->IsItemChecked(item)) {
             wxString text = m_dvListCtrl->GetItemText(item);
             result.Add(text);
         }

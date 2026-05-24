@@ -64,9 +64,7 @@ public:
     void SetWorkspaceName(const wxString& workspaceName) { this->m_workspaceName = workspaceName; }
     void SetTabInfoArr(const std::vector<TabInfo>& _vTabInfoArr) { m_vTabInfoArr = _vTabInfoArr; }
     void SetBreakpoints(const std::vector<clDebuggerBreakpoint>& breakpoints)
-    {
-        m_breakpoints.SetBreakpoints(breakpoints);
-    }
+    { m_breakpoints.SetBreakpoints(breakpoints); }
 
     // Getters
     int GetSelectedTab() const { return m_selectedTab; }

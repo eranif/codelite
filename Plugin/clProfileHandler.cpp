@@ -61,9 +61,7 @@ void clProfileHandler::HandleWorkspaceTabs([[maybe_unused]] bool show) {}
 void clProfileHandler::HandleOutputTabs([[maybe_unused]] bool show) {}
 
 bool clProfileHandler::IsPageExistsInBook(PaneId pane_id, const wxString& label) const
-{
-    return clGetManager()->BookGetPage(pane_id, label) != nullptr;
-}
+{ return clGetManager()->BookGetPage(pane_id, label) != nullptr; }
 
 void clProfileHandler::RestoreTabs(wxStringSet_t& tabs, wxEventType eventType)
 {

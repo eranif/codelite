@@ -190,9 +190,7 @@ public:
     clProjectFolder(const wxString& fullpath, wxXmlNode* node)
         : m_fullpath(fullpath)
         , m_xmlNode(node)
-    {
-        m_name = fullpath.AfterLast(':');
-    }
+    { m_name = fullpath.AfterLast(':'); }
 
     void SetFiles(const wxStringSet_t& files) { this->m_files = files; }
     void SetFullpath(const wxString& fullpath) { this->m_fullpath = fullpath; }

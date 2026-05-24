@@ -16,8 +16,8 @@ bool FileContentTracker::exists(const wxString& filepath)
 
 void FileContentTracker::erase(const wxString& filepath)
 {
-    for(size_t i = 0; i < m_files.size(); ++i) {
-        if(m_files[i].file_path == filepath) {
+    for (size_t i = 0; i < m_files.size(); ++i) {
+        if (m_files[i].file_path == filepath) {
             m_files.erase(m_files.begin() + i);
             break;
         }
@@ -32,7 +32,7 @@ std::vector<LSP::TextDocumentContentChangeEvent> FileContentTracker::changes_fro
 
     LOG_IF_DEBUG
     {
-        if(!steps.empty()) {
+        if (!steps.empty()) {
             auto escap_crlf = [](const wxString& s) -> wxString {
                 wxString ss = s;
                 ss.Replace("\r", "\\r");
@@ -40,7 +40,7 @@ std::vector<LSP::TextDocumentContentChangeEvent> FileContentTracker::changes_fro
                 return ss;
             };
 
-            for(auto c : steps) {
+            for (auto c : steps) {
                 LSP_DEBUG() << escap_crlf(c.to_string()) << endl;
             }
         }
@@ -48,14 +48,14 @@ std::vector<LSP::TextDocumentContentChangeEvent> FileContentTracker::changes_fro
 
     // convert the patch into ranges
     std::vector<LSP::TextDocumentContentChangeEvent> result;
-    for(const auto& step : steps) {
+    for (const auto& step : steps) {
         LSP::TextDocumentContentChangeEvent event;
         LSP::Range range;
         LSP::Position start_pos;
         LSP::Position end_pos;
         start_pos.SetCharacter(0);
         end_pos.SetCharacter(0);
-        switch(step.action) {
+        switch (step.action) {
         case PatchAction::ADD_LINE: {
             start_pos.SetLine(step.line_number);
             end_pos.SetLine(step.line_number);
@@ -81,8 +81,8 @@ std::vector<LSP::TextDocumentContentChangeEvent> FileContentTracker::changes_fro
 
 bool FileContentTracker::find(const wxString& filepath, FileState** state)
 {
-    for(size_t i = 0; i < m_files.size(); ++i) {
-        if(m_files[i].file_path == filepath) {
+    for (size_t i = 0; i < m_files.size(); ++i) {
+        if (m_files[i].file_path == filepath) {
             *state = &m_files[i];
             return true;
         }
@@ -93,7 +93,7 @@ bool FileContentTracker::find(const wxString& filepath, FileState** state)
 void FileContentTracker::update_content(const wxString& filepath, const wxString& content)
 {
     FileState* statePtr = nullptr;
-    if(find(filepath, &statePtr)) {
+    if (find(filepath, &statePtr)) {
         statePtr->content = content;
     } else {
         FileState state;
@@ -106,7 +106,7 @@ void FileContentTracker::update_content(const wxString& filepath, const wxString
 bool FileContentTracker::get_last_content(const wxString& filepath, wxString* content)
 {
     FileState* state = nullptr;
-    if(find(filepath, &state)) {
+    if (find(filepath, &state)) {
         *content = state->content;
         return true;
     }

@@ -42,7 +42,7 @@ struct wxArrayStringAppender {
 
     void operator()(wxString& str)
     {
-        if(m_prepending) {
+        if (m_prepending) {
             str.Prepend(m_strToAppend);
         } else {
             str.Append(m_strToAppend);

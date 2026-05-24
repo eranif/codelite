@@ -27,7 +27,7 @@ public:
     wxTerminalCtrlEvent& operator=(const wxTerminalCtrlEvent&) = delete;
     ~wxTerminalCtrlEvent() override = default;
 
-    //wxClientData* GetClientObject() const;
+    // wxClientData* GetClientObject() const;
     wxEvent* Clone() const override;
 
     wxTerminalCtrlEvent& SetLineNumber(int lineNumber)

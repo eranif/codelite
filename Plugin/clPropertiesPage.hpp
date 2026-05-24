@@ -61,15 +61,11 @@ public:
     void AddProperty(const wxString& label, bool checked, clPropertiesPage::Callback_t update_cb);
     void AddProperty(const wxString& label, const wxString& value, clPropertiesPage::Callback_t update_cb);
     void AddProperty(const wxString& label, const char* value, clPropertiesPage::Callback_t update_cb)
-    {
-        AddProperty(label, wxString(value), std::move(update_cb));
-    }
+    { AddProperty(label, wxString(value), std::move(update_cb)); }
     void AddProperty(const wxString& label, const wxColour& value, clPropertiesPage::Callback_t update_cb);
     void AddProperty(const wxString& label, long value, clPropertiesPage::Callback_t update_cb);
     void AddProperty(const wxString& label, int value, clPropertiesPage::Callback_t update_cb)
-    {
-        AddProperty(label, (long)value, std::move(update_cb));
-    }
+    { AddProperty(label, (long)value, std::move(update_cb)); }
 
     void AddPropertyFilePicker(const wxString& label, const wxString& path, clPropertiesPage::Callback_t update_cb);
     void AddPropertyDirPicker(const wxString& label, const wxString& path, clPropertiesPage::Callback_t update_cb);

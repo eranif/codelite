@@ -66,9 +66,7 @@ public:
     const wxArrayString& GetStartCmds() const { return m_startCmds; }
     const wxArrayString& GetWds() const { return m_wds; }
     void SetAlternateDebuggerExec(const wxString& alternateDebuggerExec)
-    {
-        this->m_alternateDebuggerExec = alternateDebuggerExec;
-    }
+    { this->m_alternateDebuggerExec = alternateDebuggerExec; }
     const wxString& GetAlternateDebuggerExec() const { return m_alternateDebuggerExec; }
     void SetDebugOverSSH(bool debugOverSSH) { this->m_debugOverSSH = debugOverSSH; }
     void SetSshAccount(const wxString& sshAccount) { this->m_sshAccount = sshAccount; }

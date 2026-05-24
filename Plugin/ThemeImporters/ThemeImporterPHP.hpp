@@ -36,4 +36,3 @@ public:
 public:
     virtual LexerConf::Ptr_t Import(const wxFileName& theme_file);
 };
-

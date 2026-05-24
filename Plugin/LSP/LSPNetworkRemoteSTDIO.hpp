@@ -4,8 +4,8 @@
 #if USE_SFTP
 
 #include "LSP/LSPNetwork.h"
-#include "ssh/clSSHInteractiveChannel.hpp"
 #include "codelite_exports.h"
+#include "ssh/clSSHInteractiveChannel.hpp"
 
 class WXDLLIMPEXP_SDK LSPNetworkRemoteSTDIO : public LSPNetwork
 {

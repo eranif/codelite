@@ -151,9 +151,7 @@ public:
      * @brief return the image associated with a filename
      */
     const wxBitmap& GetBitmapForFile(const wxFileName& filename, bool disabled) const
-    {
-        return GetBitmapForFile(filename.GetFullName(), disabled);
-    }
+    { return GetBitmapForFile(filename.GetFullName(), disabled); }
     const wxBitmap& GetBitmapForFile(const wxString& filename, bool disabled) const;
 
     /**

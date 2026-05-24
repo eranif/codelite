@@ -39,7 +39,7 @@ ConsoleFinder::~ConsoleFinder() { FreeConsole(); }
 
 void ConsoleFinder::FreeConsole()
 {
-    if(m_nConsolePid) {
+    if (m_nConsolePid) {
         wxKill(m_nConsolePid, wxSIGKILL, NULL, wxKILL_CHILDREN);
         m_nConsolePid = 0;
     }
@@ -61,7 +61,7 @@ int ConsoleFinder::RunConsole(const wxString& title)
     clDEBUG() << "Launching console:" << cmd;
 
     m_nConsolePid = wxExecute(cmd, wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER);
-    if(m_nConsolePid <= 0) {
+    if (m_nConsolePid <= 0) {
         return -1;
     }
 
@@ -69,7 +69,7 @@ int ConsoleFinder::RunConsole(const wxString& title)
     // First, wait for the xterm to settle down, else PS won't see the sleep task
     wxSleep(1);
     m_ConsoleTty = GetConsoleTty(m_nConsolePid);
-    if(m_ConsoleTty.IsEmpty()) {
+    if (m_ConsoleTty.IsEmpty()) {
         FreeConsole();
         return -1;
     }
@@ -101,7 +101,7 @@ wxString ConsoleFinder::GetConsoleTty(int ConsolePid)
     uniqueSleepTimeStr << wxT("sleep ") << wxString::Format(wxT("%lu"), 80000 + ::wxGetProcessId());
     // search the output of "ps pid" command
     int knt = psOutput.GetCount();
-    for(int i = knt - 1; i > -1; --i) {
+    for (int i = knt - 1; i > -1; --i) {
         psCmd = psOutput.Item(i);
         // find the pts/# or tty/# or whatever it's called
         // by seaching the output of "ps x -o tty,pid,command" command.
@@ -115,15 +115,15 @@ wxString ConsoleFinder::GetConsoleTty(int ConsolePid)
         // ?        13365 /home/pecan/proj/conio/conio
         // pts/1    13370 ps x -o tty,pid,command
 
-        if(psCmd.Contains(uniqueSleepTimeStr))
+        if (psCmd.Contains(uniqueSleepTimeStr))
             do { // check for correct "sleep" line
-                if(psCmd.Contains(wxT("-T")))
+                if (psCmd.Contains(wxT("-T")))
                     break; // error;wrong sleep line.
                 // found "sleep 93343" string, extract tty field
                 ConsTtyStr = wxT("/dev/") + psCmd.BeforeFirst(' ');
                 return ConsTtyStr;
-            } while(0); // if do
-    }                   // for
+            } while (0); // if do
+    } // for
     return wxEmptyString;
 #else
     wxUnusedVar(ConsolePid);
@@ -134,7 +134,7 @@ wxString ConsoleFinder::GetConsoleTty(int ConsolePid)
 bool ConsoleFinder::FindConsole(const wxString& title, wxString& consoleName)
 {
     int pid = RunConsole(title);
-    if(pid > 0) {
+    if (pid > 0) {
         consoleName = m_ConsoleTty;
         return true;
     }

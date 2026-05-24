@@ -12,7 +12,7 @@ clEditorColouriseLocker::clEditorColouriseLocker(wxStyledTextCtrl* stc)
 
 clEditorColouriseLocker::~clEditorColouriseLocker()
 {
-    if(m_firstPos > m_lastPos) {
+    if (m_firstPos > m_lastPos) {
         m_stc->Colourise(m_firstPos, m_lastPos);
     }
 }

@@ -90,26 +90,30 @@ wxString GetTextForRendering(const wxString& text)
 
 namespace
 {
-    void draw_rectangle(wxDC& dc, const wxRect& rect, const wxColour& pen_colour, const wxColour& brush_colour,
-                        double radius = 0)
-    {
-        wxBrush brush(brush_colour);
-        wxPen pen(pen_colour);
+void draw_rectangle(
+    wxDC& dc, const wxRect& rect, const wxColour& pen_colour, const wxColour& brush_colour, double radius = 0)
+{
+    wxBrush brush(brush_colour);
+    wxPen pen(pen_colour);
 
-        wxDCBrushChanger brush_changer(dc, brush);
-        wxDCPenChanger pen_changer(dc, pen);
+    wxDCBrushChanger brush_changer(dc, brush);
+    wxDCPenChanger pen_changer(dc, pen);
 
-        dc.SetPen(pen);
-        dc.SetBrush(brush);
-        dc.DrawRoundedRectangle(rect, radius);
-    }
+    dc.SetPen(pen);
+    dc.SetBrush(brush);
+    dc.DrawRoundedRectangle(rect, radius);
+}
 
-    void draw_item_selected_rect(wxWindow* win, wxDC& dc, const wxRect& rect, const wxColour& pen_colour,
-                                 const wxColour& brush_colour, double radius = 0)
-    {
-        wxUnusedVar(win);
-        draw_rectangle(dc, rect, pen_colour, brush_colour, radius);
-    }
+void draw_item_selected_rect(wxWindow* win,
+                             wxDC& dc,
+                             const wxRect& rect,
+                             const wxColour& pen_colour,
+                             const wxColour& brush_colour,
+                             double radius = 0)
+{
+    wxUnusedVar(win);
+    draw_rectangle(dc, rect, pen_colour, brush_colour, radius);
+}
 } // namespace
 
 void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const clColours& colours)
@@ -130,8 +134,8 @@ void DoDrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const cl
 
 void DrawButton(wxWindow* win, wxDC& dc, const wxRect& button_rect, const clCellValue& cell)
 {
-    DrawingUtils::DrawButton(dc, win, button_rect, cell.GetButtonUnicodeSymbol(), wxNullBitmap, eButtonKind::kNormal,
-                             cell.GetButtonState());
+    DrawingUtils::DrawButton(
+        dc, win, button_rect, cell.GetButtonUnicodeSymbol(), wxNullBitmap, eButtonKind::kNormal, cell.GetButtonState());
 }
 } // namespace
 
@@ -167,9 +171,7 @@ int clRowEntry::Y_SPACER = 2;
 #endif
 
 void clRowEntry::DrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const clColours& colours)
-{
-    DoDrawSimpleSelection(win, dc, rect, colours);
-}
+{ DoDrawSimpleSelection(win, dc, rect, colours); }
 
 clRowEntry::clRowEntry(clTreeCtrl* tree, const wxString& label, int bitmapIndex, int bitmapSelectedIndex)
     : m_tree(tree)
@@ -745,8 +747,8 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
             wxRect button_rect = cellRect;
             button_rect.Deflate(1);
             button_rect = button_rect.CenterIn(cellRect);
-            DrawingUtils::DrawButton(dc, win, button_rect, cell.GetValueString(), wxNullBitmap, eButtonKind::kNormal,
-                                     cell.GetButtonState());
+            DrawingUtils::DrawButton(
+                dc, win, button_rect, cell.GetValueString(), wxNullBitmap, eButtonKind::kNormal, cell.GetButtonState());
             cell.SetButtonRect(button_rect);
         } else if (cell.IsControl()) {
             // controls are only displayed if the line has focus
@@ -782,14 +784,12 @@ void clRowEntry::Render(wxWindow* win, wxDC& dc, const clColours& c, int row_ind
     }
 }
 
-void clRowEntry::RenderText(wxWindow* win, wxDC& dc, const clColours& colours, const wxString& text, int x, int y,
-                            size_t col)
-{
-    RenderTextSimple(win, dc, colours, text, x, y, col);
-}
+void clRowEntry::RenderText(
+    wxWindow* win, wxDC& dc, const clColours& colours, const wxString& text, int x, int y, size_t col)
+{ RenderTextSimple(win, dc, colours, text, x, y, col); }
 
-void clRowEntry::RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colours, const wxString& text, int x, int y,
-                                  size_t col)
+void clRowEntry::RenderTextSimple(
+    wxWindow* win, wxDC& dc, const clColours& colours, const wxString& text, int x, int y, size_t col)
 {
     wxUnusedVar(win);
     wxDCTextColourChanger changer(dc);

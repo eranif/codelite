@@ -15,33 +15,33 @@ clKeyboardBindingConfig& clKeyboardBindingConfig::Load()
 {
     wxFileName fn(clStandardPaths::Get().GetUserDataDir(), "keybindings.conf");
     fn.AppendDir("config");
-    if(!fn.Exists()) {
+    if (!fn.Exists()) {
         return *this;
     }
 
     m_bindings.clear();
     JSON root(fn);
-    if(!root.isOk()) {
+    if (!root.isOk()) {
         return *this;
     }
 
     // Check the version
     auto root_item = root.toElement();
-    if(!root_item.isOk() || !root_item.hasNamedObject("version")) {
+    if (!root_item.isOk() || !root_item.hasNamedObject("version")) {
         return *this;
     }
 
     auto version = root_item["version"].toInt();
-    if(version != BINDING_VERSION) {
+    if (version != BINDING_VERSION) {
         // delete this file and return
-        FileUtils::Deleter d{ fn };
+        FileUtils::Deleter d{fn};
         return *this;
     }
 
     {
         JSONItem menus = root_item.namedObject("menus");
         int arrSize = menus.arraySize();
-        for(int i = 0; i < arrSize; ++i) {
+        for (int i = 0; i < arrSize; ++i) {
             JSONItem item = menus.arrayItem(i);
             MenuItemData binding;
             binding.resourceID = item.namedObject("resourceID").toString();
@@ -81,10 +81,10 @@ clKeyboardBindingConfig& clKeyboardBindingConfig::Save()
 
 void clKeyboardBindingConfig::MigrateOldResourceID(wxString& resourceID) const
 {
-    if(resourceID == "text_word_complete") {
+    if (resourceID == "text_word_complete") {
         // This entry was moved from Word Completion plugin to CodeLite Edit menu entry
         resourceID = "simple_word_completion";
-    } else if(resourceID == "word_complete") {
+    } else if (resourceID == "word_complete") {
         resourceID = "complete_word";
     }
 }

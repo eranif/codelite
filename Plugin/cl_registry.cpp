@@ -34,24 +34,24 @@ clRegistry::clRegistry()
 {
     // m_filename is set in the static method SetFilename()
     m_fp.Open(m_filename.c_str(), wxT("rb"));
-    if(m_fp.IsOpened()) {
+    if (m_fp.IsOpened()) {
         wxString fileContent;
         m_fp.ReadAll(&fileContent, wxConvUTF8);
 
         wxArrayString entries = wxStringTokenize(fileContent, wxT("\n\r"), wxTOKEN_STRTOK);
-        for(size_t i = 0; i < entries.GetCount(); i++) {
+        for (size_t i = 0; i < entries.GetCount(); i++) {
             entries.Item(i).Trim().Trim(false);
 
             // Empty line?
-            if(entries.Item(i).IsEmpty())
+            if (entries.Item(i).IsEmpty())
                 continue;
 
             // Comment line?
-            if(entries.Item(i).StartsWith(wxT(";"))) {
+            if (entries.Item(i).StartsWith(wxT(";"))) {
                 continue;
             }
 
-            if(entries.Item(i).StartsWith(wxT("["))) {
+            if (entries.Item(i).StartsWith(wxT("["))) {
                 // Section
                 continue;
             }
@@ -67,7 +67,7 @@ clRegistry::clRegistry()
 bool clRegistry::Read(const wxString& key, wxString& val)
 {
     std::map<wxString, wxString>::iterator iter = m_entries.find(key);
-    if(iter == m_entries.end()) {
+    if (iter == m_entries.end()) {
         return false;
     }
     val = iter->second;

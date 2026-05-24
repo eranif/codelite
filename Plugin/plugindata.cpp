@@ -57,33 +57,31 @@ PluginInfoArray::PluginInfoArray()
 }
 
 bool PluginInfoArray::CanLoad(const PluginInfo& plugin) const
-{
-    return m_enabledPlugins.Index(plugin.GetName()) != wxNOT_FOUND;
-}
+{ return m_enabledPlugins.Index(plugin.GetName()) != wxNOT_FOUND; }
 
 void PluginInfoArray::FromJSON(const JSONItem& json)
 {
     m_enabledPlugins.Clear();
-    if(json.hasNamedObject("enabledPlugins")) {
+    if (json.hasNamedObject("enabledPlugins")) {
         m_enabledPlugins = json.namedObject("enabledPlugins").toArrayString();
-    } else if(json.hasNamedObject("disabledPlugins")) {
+    } else if (json.hasNamedObject("disabledPlugins")) {
         // first time, merge old settings
         wxArrayString disabledPlugins = json.namedObject("disabledPlugins").toArrayString();
         std::unordered_set<wxString> all_plugins;
         JSONItem arr = json.namedObject("installed-plugins");
         size_t count = arr.arraySize();
-        for(size_t i = 0; i < count; ++i) {
+        for (size_t i = 0; i < count; ++i) {
             all_plugins.insert(arr.arrayItem(i).namedObject("name").toString());
         }
 
-        for(const auto& disabledPlugin : disabledPlugins) {
-            if(all_plugins.count(disabledPlugin)) {
+        for (const auto& disabledPlugin : disabledPlugins) {
+            if (all_plugins.count(disabledPlugin)) {
                 all_plugins.erase(disabledPlugin);
             }
         }
 
         m_enabledPlugins.reserve(all_plugins.size());
-        for(const auto& enabledPlugin : all_plugins) {
+        for (const auto& enabledPlugin : all_plugins) {
             m_enabledPlugins.Add(enabledPlugin);
         }
     }
@@ -94,7 +92,7 @@ JSONItem PluginInfoArray::ToJSON() const
 
 void PluginInfoArray::EnablePlugin(const wxString& plugin)
 {
-    if(m_enabledPlugins.Index(plugin) == wxNOT_FOUND) {
+    if (m_enabledPlugins.Index(plugin) == wxNOT_FOUND) {
         m_enabledPlugins.Add(plugin);
     }
 }
@@ -102,7 +100,7 @@ void PluginInfoArray::EnablePlugin(const wxString& plugin)
 void PluginInfoArray::DisablePlugin(const wxString& plugin)
 {
     int where = m_enabledPlugins.Index(plugin);
-    if(where != wxNOT_FOUND) {
+    if (where != wxNOT_FOUND) {
         m_enabledPlugins.RemoveAt(where);
     }
 }

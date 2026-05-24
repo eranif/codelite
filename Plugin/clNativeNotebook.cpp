@@ -129,9 +129,7 @@ static gboolean button_press_event(GtkWidget* widget, GdkEventButton* gdk_event,
 clNativeNotebook::clNativeNotebook(
     wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
     : wxNotebook(parent, id, pos, size, wxBK_DEFAULT | (style & kNotebook_FixedWidth ? wxNB_FIXEDWIDTH : 0), name)
-{
-    Initialise(style);
-}
+{ Initialise(style); }
 
 clNativeNotebook::~clNativeNotebook()
 {

@@ -62,7 +62,7 @@ void LSPOutlineViewDlg::DoInitialise()
     for (const SymbolInformation& si : m_symbols) {
         const wxString& symbol_container = si.GetContainerName();
         if (symbol_container.empty()) {
-            containers.push_back({ si.GetName(), 1 });
+            containers.push_back({si.GetName(), 1});
         } else {
             int parent_depth = 0;
             while (!containers.empty()) {
@@ -72,7 +72,7 @@ void LSPOutlineViewDlg::DoInitialise()
                 }
                 containers.pop_back();
             }
-            containers.push_back({ si.GetName(), parent_depth + 1 });
+            containers.push_back({si.GetName(), parent_depth + 1});
         }
 
         builder.Clear();
@@ -143,7 +143,7 @@ void LSPOutlineViewDlg::OnTextUpdated(wxCommandEvent& event)
 
     wxString filter_text = m_textCtrlFilter->GetValue();
     wxDataViewItem starting_item =
-        m_dvTreeCtrll->GetSelection().IsOk() ? m_dvTreeCtrll->GetSelection() : wxDataViewItem{ nullptr };
+        m_dvTreeCtrll->GetSelection().IsOk() ? m_dvTreeCtrll->GetSelection() : wxDataViewItem{nullptr};
     auto match = m_dvTreeCtrll->FindNext(starting_item, filter_text, 0, wxTR_SEARCH_DEFAULT);
     if (match.IsOk()) {
         m_dvTreeCtrll->Select(match);

@@ -15,23 +15,45 @@ protected:
     /**
      * @brief do the actual tab drawing. Return the rect used to round the tab
      */
-    wxRect DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, size_t tabIndex,
-                  size_t activeTabIndex, const clTabColours& colors, size_t style, eButtonState tabState,
+    wxRect DoDraw(wxWindow* parent,
+                  wxDC& dc,
+                  wxDC& fontDC,
+                  const clTabInfo& tabInfo,
+                  size_t tabIndex,
+                  size_t activeTabIndex,
+                  const clTabColours& colors,
+                  size_t style,
+                  eButtonState tabState,
                   eButtonState xButtonState);
 
 public:
     clTabRendererMinimal(const wxWindow* parent);
     virtual ~clTabRendererMinimal() = default;
-    void Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, size_t tabIndex,
-              size_t activeTabIndex, const clTabColours& colours, size_t style, eButtonState tabState,
+    void Draw(wxWindow* parent,
+              wxDC& dc,
+              wxDC& fontDC,
+              const clTabInfo& tabInfo,
+              size_t tabIndex,
+              size_t activeTabIndex,
+              const clTabColours& colours,
+              size_t style,
+              eButtonState tabState,
               eButtonState xButtonState) override;
-    void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tabInfo, const wxRect& clientRect, wxDC& dc,
-                        const clTabColours& colours, size_t style) override;
-    void DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
+    void DrawBottomRect(wxWindow* parent,
+                        clTabInfo::Ptr_t tabInfo,
+                        const wxRect& clientRect,
+                        wxDC& dc,
+                        const clTabColours& colours,
                         size_t style) override;
+    void
+    DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours, size_t style) override;
     clTabRenderer* New(const wxWindow* parent) const override { return new clTabRendererMinimal(parent); }
     bool IsVerticalTabSupported() const override { return true; }
-    void FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const wxRect& activeTabRect,
-                            const clTabColours& colours, size_t style) override;
+    void FinaliseBackground(wxWindow* parent,
+                            wxDC& dc,
+                            const wxRect& clientRect,
+                            const wxRect& activeTabRect,
+                            const clTabColours& colours,
+                            size_t style) override;
 };
 #endif // CLTABRENDERERCLASSIC_H

@@ -131,9 +131,7 @@ public:
         }
 
         bool operator()(LexerConf::Ptr_t lexer) const
-        {
-            return lexer->GetName() == m_name && lexer->GetThemeName() == m_theme;
-        }
+        { return lexer->GetName() == m_name && lexer->GetThemeName() == m_theme; }
     };
 
 public:

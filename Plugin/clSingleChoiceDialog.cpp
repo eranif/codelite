@@ -8,7 +8,7 @@ clSingleChoiceDialog::clSingleChoiceDialog(wxWindow* parent, const wxArrayString
     , m_options(options)
 {
     DoInitialise();
-    if(initialSelection >= 0 && initialSelection < (int)options.size()) {
+    if (initialSelection >= 0 && initialSelection < (int)options.size()) {
         m_dvListCtrl->Select(m_dvListCtrl->RowToItem(initialSelection));
         m_dvListCtrl->EnsureVisible(m_dvListCtrl->RowToItem(initialSelection));
     }
@@ -26,7 +26,7 @@ void clSingleChoiceDialog::OnOKUI(wxUpdateUIEvent& event)
 wxString clSingleChoiceDialog::GetSelection() const
 {
     wxDataViewItem item = m_dvListCtrl->GetSelection();
-    if(item.IsOk()) {
+    if (item.IsOk()) {
         wxStringClientData* cd = (wxStringClientData*)m_dvListCtrl->GetItemData(item);
         return cd->GetData();
     }
@@ -42,7 +42,7 @@ void clSingleChoiceDialog::DoInitialise()
         wxDELETE(cd);
     });
 
-    for(size_t i = 0; i < m_options.size(); ++i) {
+    for (size_t i = 0; i < m_options.size(); ++i) {
         wxVector<wxVariant> cols;
         wxString displayString = m_options.Item(i).BeforeFirst('\n');
         displayString.Trim().Trim(false);

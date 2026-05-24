@@ -11,14 +11,12 @@ clAuiCaptionEnabler::clAuiCaptionEnabler()
     , m_timer(NULL)
     , m_captionAdded(false)
     , m_ensureCaptionsVisible(false)
-{
-    EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &clAuiCaptionEnabler::OnEditorSettingsChanged, this);
-}
+{ EventNotifier::Get()->Bind(wxEVT_EDITOR_CONFIG_CHANGED, &clAuiCaptionEnabler::OnEditorSettingsChanged, this); }
 
 clAuiCaptionEnabler::~clAuiCaptionEnabler()
 {
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_CONFIG_CHANGED, &clAuiCaptionEnabler::OnEditorSettingsChanged, this);
-    if(m_timer) {
+    if (m_timer) {
         m_timer->Stop();
         Unbind(wxEVT_TIMER, &clAuiCaptionEnabler::OnTimer, this, m_timer->GetId());
     }
@@ -45,25 +43,25 @@ void clAuiCaptionEnabler::Initialize(wxWindow* window, const wxString& windowCap
 
 void clAuiCaptionEnabler::OnTimer(wxTimerEvent& event)
 {
-    if(m_ensureCaptionsVisible) {
+    if (m_ensureCaptionsVisible) {
         // Do the logic here
         // mousePt in screen coords
         wxPoint mousePt = ::wxGetMousePosition();
         wxAuiPaneInfo& pi = m_aui->GetPane(m_caption);
-        if(pi.IsOk() && !pi.IsFloating() && !pi.HasCaption()) {
+        if (pi.IsOk() && !pi.IsFloating() && !pi.HasCaption()) {
             // rect in screen coords
             wxRect rect = m_window->GetScreenRect();
             // No caption, make it visible
-            if(rect.Contains(mousePt)) {
+            if (rect.Contains(mousePt)) {
                 pi.CaptionVisible();
                 m_aui->Update();
                 m_captionAdded = true;
             }
-        } else if(m_captionAdded && pi.IsOk() && !pi.IsFloating() && pi.HasCaption()) {
+        } else if (m_captionAdded && pi.IsOk() && !pi.IsFloating() && pi.HasCaption()) {
             wxRect rect = m_window->GetScreenRect();
             rect.Inflate(30); // Incase the mouse is at the top of the window
             // Remove the caption if needed
-            if(!rect.Contains(mousePt)) {
+            if (!rect.Contains(mousePt)) {
                 m_captionAdded = false;
                 pi.CaptionVisible(false);
                 m_aui->Update();

@@ -51,7 +51,7 @@ void SFTPSettings::FromJSON(const JSONItem& json)
     m_sshClient = json.namedObject("sshClient").toString(m_sshClient);
     JSONItem arrAccounts = json.namedObject("accounts");
     int size = arrAccounts.arraySize();
-    for(int i = 0; i < size; ++i) {
+    for (int i = 0; i < size; ++i) {
         SSHAccountInfo account;
         account.FromJSON(arrAccounts.arrayItem(i));
         m_accounts.push_back(account);
@@ -63,7 +63,7 @@ JSONItem SFTPSettings::ToJSON() const
     JSONItem element = JSONItem::createObject();
     element.addProperty("sshClient", m_sshClient);
     JSONItem arrAccounts = JSONItem::createArray();
-    for(size_t i = 0; i < m_accounts.size(); ++i) {
+    for (size_t i = 0; i < m_accounts.size(); ++i) {
         arrAccounts.arrayAppend(m_accounts.at(i).ToJSON());
     }
     element.addProperty("accounts", arrAccounts);
@@ -87,9 +87,9 @@ SFTPSettings& SFTPSettings::Save()
 
 bool SFTPSettings::GetAccount(const wxString& name, SSHAccountInfo& account) const
 {
-    for(size_t i = 0; i < m_accounts.size(); ++i) {
+    for (size_t i = 0; i < m_accounts.size(); ++i) {
         const SSHAccountInfo& currentAccount = m_accounts.at(i);
-        if(name == currentAccount.GetAccountName()) {
+        if (name == currentAccount.GetAccountName()) {
             account = currentAccount;
             return true;
         }
@@ -99,9 +99,9 @@ bool SFTPSettings::GetAccount(const wxString& name, SSHAccountInfo& account) con
 
 bool SFTPSettings::UpdateAccount(const SSHAccountInfo& account)
 {
-    for(size_t i = 0; i < m_accounts.size(); ++i) {
+    for (size_t i = 0; i < m_accounts.size(); ++i) {
         SSHAccountInfo& currentAccount = m_accounts.at(i);
-        if(account.GetAccountName() == currentAccount.GetAccountName()) {
+        if (account.GetAccountName() == currentAccount.GetAccountName()) {
             currentAccount = account;
             return true;
         }
@@ -117,24 +117,24 @@ void SFTPSettings::MSWImportPuTTYAccounts()
         // 64 bit version
         // HKEY_CURRENT_USER\Software\SimonTatham\\PuTTY\Sessions
         wxRegKey regPutty(wxRegKey::HKCU, "Software\\SimonTatham\\PuTTY\\Sessions");
-        if(regPutty.Exists()) {
+        if (regPutty.Exists()) {
             long index = wxNOT_FOUND;
             wxString strKeyName;
             bool res = regPutty.GetFirstKey(strKeyName, index);
-            while(res) {
+            while (res) {
                 wxString hostname;
                 wxString username;
                 long port = wxNOT_FOUND;
                 wxRegKey rk(wxRegKey::HKCU, "Software\\SimonTatham\\PuTTY\\Sessions\\" + strKeyName);
-                if(rk.Exists()) {
+                if (rk.Exists()) {
                     rk.QueryValue("HostName", hostname);
                     int where = hostname.Find('@');
-                    if(where != wxNOT_FOUND) {
+                    if (where != wxNOT_FOUND) {
                         hostname = hostname.Mid(where + 1);
                         username = hostname.Mid(where);
                     }
                     rk.QueryValue("PortNumber", &port);
-                    if(!hostname.IsEmpty() && port != wxNOT_FOUND) {
+                    if (!hostname.IsEmpty() && port != wxNOT_FOUND) {
                         SSHAccountInfo acc;
                         acc.SetAccountName(StringUtils::DecodeURI(strKeyName));
                         acc.SetHost(hostname);
@@ -152,24 +152,24 @@ void SFTPSettings::MSWImportPuTTYAccounts()
         // 32 bit version
         // HKEY_CURRENT_USER\Software\SimonTatham\\PuTTY\Sessions
         wxRegKey regPutty(wxRegKey::HKCU, "Software\\Wow6432Node\\SimonTatham\\PuTTY\\Sessions");
-        if(regPutty.Exists()) {
+        if (regPutty.Exists()) {
             long index = wxNOT_FOUND;
             wxString strKeyName;
             bool res = regPutty.GetFirstKey(strKeyName, index);
-            while(res) {
+            while (res) {
                 wxString hostname;
                 wxString username;
                 long port = wxNOT_FOUND;
                 wxRegKey rk(wxRegKey::HKCU, "Software\\Wow6432Node\\SimonTatham\\PuTTY\\Sessions\\" + strKeyName);
-                if(rk.Exists()) {
+                if (rk.Exists()) {
                     rk.QueryValue("HostName", hostname);
                     int where = hostname.Find('@');
-                    if(where != wxNOT_FOUND) {
+                    if (where != wxNOT_FOUND) {
                         hostname = hostname.Mid(where + 1);
                         username = hostname.Mid(where);
                     }
                     rk.QueryValue("PortNumber", &port);
-                    if(!hostname.IsEmpty() && port != wxNOT_FOUND) {
+                    if (!hostname.IsEmpty() && port != wxNOT_FOUND) {
                         SSHAccountInfo acc;
                         acc.SetAccountName(StringUtils::DecodeURI(strKeyName));
                         acc.SetHost(hostname);
@@ -185,9 +185,10 @@ void SFTPSettings::MSWImportPuTTYAccounts()
 
     for (const SSHAccountInfo& acc : puttyAccounts) {
         SSHAccountInfo::Vect_t::iterator iter =
-            std::find_if(m_accounts.begin(), m_accounts.end(),
-                         [&](const SSHAccountInfo& a) { return a.GetAccountName() == acc.GetAccountName(); });
-        if(iter == m_accounts.end()) {
+            std::find_if(m_accounts.begin(), m_accounts.end(), [&](const SSHAccountInfo& a) {
+                return a.GetAccountName() == acc.GetAccountName();
+            });
+        if (iter == m_accounts.end()) {
             // No such account
             // add it
             m_accounts.push_back(acc);

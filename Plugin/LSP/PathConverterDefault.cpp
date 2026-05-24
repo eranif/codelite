@@ -12,14 +12,14 @@ LSP::FilePath PathConverterDefault::ConvertFrom(const wxString& path) const
 {
     // convert network path to local path
     wxString decodedPath = StringUtils::DecodeURI(path);
-    if(decodedPath.StartsWith("file://")) {
+    if (decodedPath.StartsWith("file://")) {
         decodedPath.Remove(0, wxStrlen("file://"));
     }
 
 #ifdef __WXMSW__
     // On Windows, path is now set to
     // /C:/src/path/to/file/a.cpp, the following code removes the leading slash
-    if(decodedPath.length() >= 3 && decodedPath[0] == '/' && decodedPath[2] == ':') {
+    if (decodedPath.length() >= 3 && decodedPath[0] == '/' && decodedPath[2] == ':') {
         decodedPath.Remove(0, 1); // remove the leading slash
     }
 #endif
@@ -27,17 +27,17 @@ LSP::FilePath PathConverterDefault::ConvertFrom(const wxString& path) const
     LSP::FilePath fp(decodedPath);
 
 #ifdef __WXMSW__
-    if(decodedPath.StartsWith("/")) {
+    if (decodedPath.StartsWith("/")) {
         // UNIX path on Windows !?
         // Check for open SFTP files
         IEditor::List_t editors;
         clGetManager()->GetAllEditors(editors);
-        for(auto editor : editors) {
-            if(editor->GetClientData("sftp")) {
+        for (auto editor : editors) {
+            if (editor->GetClientData("sftp")) {
                 SFTPClientData* pcd = dynamic_cast<SFTPClientData*>(editor->GetClientData("sftp"));
-                if(pcd) {
+                if (pcd) {
                     const wxString& remotePath = pcd->GetRemotePath();
-                    if(decodedPath == remotePath) {
+                    if (decodedPath == remotePath) {
                         // it's a remote file
                         return pcd->GetLocalPath();
                     }
@@ -48,7 +48,7 @@ LSP::FilePath PathConverterDefault::ConvertFrom(const wxString& path) const
     }
 #else
     // if the path does not exist on our file system, assume a remote file
-    if(!wxFileName::FileExists(decodedPath)) {
+    if (!wxFileName::FileExists(decodedPath)) {
         fp.SetIsRemoteFile(true);
     }
 #endif
@@ -63,7 +63,7 @@ LSP::FilePath PathConverterDefault::ConvertTo(const wxString& path) const
 
     // Locate an editor with this file path and check to see if it is a remote file
     IEditor* editor = clGetManager()->FindEditor(fn.GetFullPath());
-    if(editor && editor->IsRemoteFile()) {
+    if (editor && editor->IsRemoteFile()) {
         wxString url = editor->GetRemotePath();
         url.Prepend("file://");
         LSP_DEBUG() << path << "->" << url;

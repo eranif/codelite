@@ -16,7 +16,7 @@ wxSize clToolBarStretchableSpace::CalculateSize(wxDC& dc) const
 
 void clToolBarStretchableSpace::Render(wxDC& dc, const wxRect& rect)
 {
-    if(GetWidth() == 0) {
+    if (GetWidth() == 0) {
         return;
     }
     wxColour colour = clSystemSettings::GetDefaultPanelColour();

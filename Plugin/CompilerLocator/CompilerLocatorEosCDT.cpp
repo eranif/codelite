@@ -9,7 +9,7 @@
 bool CompilerLocatorEosCDT::Locate()
 {
     clDEBUG() << "CompilerLocatorEosCDT locate..." << endl;
-    std::vector<wxString> possiblePaths{ "/usr/bin", "/usr/local/bin" };
+    std::vector<wxString> possiblePaths{"/usr/bin", "/usr/local/bin"};
     for (const wxString& path : possiblePaths) {
         wxString foundPath;
         if (CheckExists(path, foundPath)) {
@@ -24,7 +24,7 @@ CompilerPtr CompilerLocatorEosCDT::Locate(const wxString& folder)
 {
     m_compilers.clear();
     wxString foundPath;
-    if(!CheckExists(folder, foundPath)) {
+    if (!CheckExists(folder, foundPath)) {
         return NULL;
     }
 
@@ -32,12 +32,14 @@ CompilerPtr CompilerLocatorEosCDT::Locate(const wxString& folder)
     return m_compilers[0];
 }
 
-void CompilerLocatorEosCDT::AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& path,
+void CompilerLocatorEosCDT::AddTool(CompilerPtr compiler,
+                                    const wxString& toolname,
+                                    const wxString& path,
                                     const wxString& args) const
 {
     wxString tool = path;
     StringUtils::WrapWithQuotes(tool);
-    if(!args.IsEmpty()) {
+    if (!args.IsEmpty()) {
         tool << " " << args;
     }
     compiler->SetTool(toolname, tool);
@@ -52,11 +54,11 @@ bool CompilerLocatorEosCDT::CheckExists(const wxString& path, wxString& foundPat
 #endif
 
     bool found = eosio_tool.FileExists();
-    if(!found) {
+    if (!found) {
         // try to see if we have a bin folder here
         eosio_tool.AppendDir("bin");
         found = eosio_tool.FileExists();
-        if(found) {
+        if (found) {
             foundPath = eosio_tool.GetPath();
         }
     } else {
@@ -94,7 +96,7 @@ CompilerPtr CompilerLocatorEosCDT::CreateCompiler(const wxString& path) const
     eosio_tool.SetName("ar");
     AddTool(compiler, "AR", eosio_tool.GetFullPath(), "rcu");
     wxString makeExtraArgs;
-    if(wxThread::GetCPUCount() > 1) {
+    if (wxThread::GetCPUCount() > 1) {
         makeExtraArgs << "-j" << wxThread::GetCPUCount();
     }
 

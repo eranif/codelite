@@ -193,9 +193,7 @@ WindowStack::WindowStack(wxWindow* parent, wxWindowID id, bool useNativeThemeCol
 }
 
 WindowStack::~WindowStack()
-{
-    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &WindowStack::OnColoursChanged, this);
-}
+{ EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &WindowStack::OnColoursChanged, this); }
 
 bool WindowStack::Add(wxWindow* win, bool select)
 {

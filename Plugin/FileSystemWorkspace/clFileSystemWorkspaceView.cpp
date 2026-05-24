@@ -339,6 +339,4 @@ void clFileSystemWorkspaceView::OnThemeChanged(clCommandEvent& event)
 }
 
 void clFileSystemWorkspaceView::OnRefreshViewUI(wxUpdateUIEvent& event)
-{
-    event.Enable(clFileSystemWorkspace::Get().IsOpen());
-}
+{ event.Enable(clFileSystemWorkspace::Get().IsOpen()); }

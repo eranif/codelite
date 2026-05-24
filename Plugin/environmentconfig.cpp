@@ -259,9 +259,7 @@ wxArrayString EnvironmentConfig::GetActiveSetEnvNames(bool includeWorkspace, con
 
 DollarEscaper::DollarEscaper(wxString& str)
     : m_str(str)
-{
-    m_str.Replace("$$", "@@ESC_DOLLAR@@");
-}
+{ m_str.Replace("$$", "@@ESC_DOLLAR@@"); }
 
 DollarEscaper::~DollarEscaper()
 {

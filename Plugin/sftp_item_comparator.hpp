@@ -54,7 +54,7 @@ public:
         : m_path(path)
     {
         m_path.Replace("\\", "/");
-        while(m_path.Replace("//", "/")) {}
+        while (m_path.Replace("//", "/")) {}
     }
 
     virtual ~clRemoteDirCtrlItemData() = default;

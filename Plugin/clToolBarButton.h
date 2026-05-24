@@ -7,7 +7,9 @@
 class WXDLLIMPEXP_SDK clToolBarButton : public clToolBarButtonBase
 {
 public:
-    clToolBarButton(clToolBarGeneric* parent, wxWindowID winid, size_t bitmapId = INVALID_BITMAP_ID,
+    clToolBarButton(clToolBarGeneric* parent,
+                    wxWindowID winid,
+                    size_t bitmapId = INVALID_BITMAP_ID,
                     const wxString& label = "");
     virtual ~clToolBarButton() = default;
 

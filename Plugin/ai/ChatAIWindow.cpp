@@ -350,9 +350,7 @@ void ChatAIWindow::DoSendPrompt()
 }
 
 void ChatAIWindow::OnClearOutputViewUI(wxUpdateUIEvent& event)
-{
-    event.Enable(!m_stcOutput->IsEmpty() && !llm::Manager::GetInstance().IsBusy());
-}
+{ event.Enable(!m_stcOutput->IsEmpty() && !llm::Manager::GetInstance().IsBusy()); }
 
 void ChatAIWindow::OnSendUI(wxUpdateUIEvent& event)
 {
@@ -718,9 +716,7 @@ void ChatAIWindow::OnAutoScroll(wxCommandEvent& event) { m_autoScroll = event.Is
 void ChatAIWindow::OnAutoScrollUI(wxUpdateUIEvent& event) { event.Check(m_autoScroll); }
 
 void ChatAIWindow::OnBusyUI(wxUpdateUIEvent& event)
-{
-    event.Enable(llm::Manager::GetInstance().IsAvailable() && !llm::Manager::GetInstance().IsBusy());
-}
+{ event.Enable(llm::Manager::GetInstance().IsAvailable() && !llm::Manager::GetInstance().IsBusy()); }
 
 void ChatAIWindow::OnDetachView(wxCommandEvent& event) { wxUnusedVar(event); }
 

@@ -20,7 +20,7 @@ void clHeaderItem::Render(wxDC& dc, const clColours& colours, int flags)
     wxSize textSize = dc.GetTextExtent(GetLabel());
     int textY = m_rect.GetY() + (m_rect.GetHeight() - textSize.GetHeight()) / 2;
 
-    if(flags & kHeaderNative) {
+    if (flags & kHeaderNative) {
         wxRendererNative::Get().DrawHeaderButton(m_parent, dc, m_rect, 0);
 
     } else {
@@ -36,7 +36,7 @@ void clHeaderItem::Render(wxDC& dc, const clColours& colours, int flags)
 
 void clHeaderItem::SetWidthValue(int width)
 {
-    switch(width) {
+    switch (width) {
     case wxCOL_WIDTH_AUTOSIZE:
         EnableFlag(kHeaderColWidthMask, false);
         EnableFlag(kHeaderColWidthFitData, true);
@@ -46,7 +46,7 @@ void clHeaderItem::SetWidthValue(int width)
         EnableFlag(kHeaderColWidthFitHeader, true);
         return;
     default:
-        if(width < 0) {
+        if (width < 0) {
             return;
         }
         EnableFlag(kHeaderColWidthMask, false);
@@ -58,7 +58,7 @@ void clHeaderItem::SetWidthValue(int width)
 
 void clHeaderItem::UpdateWidth(int width)
 {
-    if(width >= 0) {
+    if (width >= 0) {
         m_rect.SetWidth(width);
     }
 }

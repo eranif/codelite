@@ -25,8 +25,8 @@ clFileSystemWorkspaceConfig::clFileSystemWorkspaceConfig()
     : m_fileExtensions(DEFAULT_FILE_EXTENSIONS)
     , m_excludeFilesPattern(DEFAULT_EXCLUDE_FILE_PATTERN)
 {
-    m_buildTargets.insert({ "build", "" });
-    m_buildTargets.insert({ "clean", "" });
+    m_buildTargets.insert({"build", ""});
+    m_buildTargets.insert({"clean", ""});
     m_debugger = DebuggerMgr::Get().GetActiveDebuggerName();
     CompilerPtr compiler = BuildSettingsConfigST::Get()->GetDefaultCompiler(COMPILER_DEFAULT_FAMILY);
     if (compiler) {
@@ -73,15 +73,15 @@ std::pair<JSONItem, JSONItem> clFileSystemWorkspaceConfig::ToJSON() const
     local.addProperty("workingDirectory", m_workingDirectory);
     local.addProperty("debuggerPath", m_debuggerPath);
     local.addProperty("debuggerCommands", m_debuggerCommands);
-    
-    local.addProperty("debuggerRemoteEnabled",  m_debuggerRemoteEnabled);
+
+    local.addProperty("debuggerRemoteEnabled", m_debuggerRemoteEnabled);
     local.addProperty("debuggerRemoteExtended", m_debuggerRemoteExtended);
-    local.addProperty("debuggerRemoteHost",     m_debuggerRemoteHost);
-    local.addProperty("debuggerRemotePort",     m_debuggerRemotePort);
+    local.addProperty("debuggerRemoteHost", m_debuggerRemoteHost);
+    local.addProperty("debuggerRemotePort", m_debuggerRemotePort);
     local.addProperty("debuggerRemoteCommands", m_debuggerRemoteCommands);
-    
+
     local.addProperty("last_executables", m_lastExecutables);
-    return { shared, local };
+    return {shared, local};
 }
 
 void clFileSystemWorkspaceConfig::FromSharedJSON(const JSONItem& json)
@@ -95,7 +95,7 @@ void clFileSystemWorkspaceConfig::FromSharedJSON(const JSONItem& json)
         if (target.arraySize() != 2) {
             continue;
         }
-        m_buildTargets.insert({ target[0].toString(), target[1].toString() });
+        m_buildTargets.insert({target[0].toString(), target[1].toString()});
     }
     m_fileExtensions = json.namedObject("file_extensions").toString(m_fileExtensions);
     m_excludeFilesPattern = json.namedObject("excludeFilesPattern").toString(m_excludeFilesPattern);
@@ -120,15 +120,15 @@ void clFileSystemWorkspaceConfig::FromLocalJSON(const JSONItem& json)
     m_remoteFolder = json["remoteFolder"].toString();
     m_remoteAccount = json["remoteAccount"].toString();
     m_workingDirectory = json["workingDirectory"].toString();
-    
-    m_debuggerPath              = json["debuggerPath"].toString();
-    m_debuggerCommands          = json["debuggerCommands"].toString();
-    
-    m_debuggerRemoteEnabled     = json["debuggerRemoteEnabled"].toBool();
-    m_debuggerRemoteExtended    = json["debuggerRemoteExtended"].toBool(true);
-    m_debuggerRemoteHost        = json["debuggerRemoteHost"].toString();
-    m_debuggerRemotePort        = json["debuggerRemotePort"].toString();
-    m_debuggerRemoteCommands    = json["debuggerRemoteCommands"].toString();
+
+    m_debuggerPath = json["debuggerPath"].toString();
+    m_debuggerCommands = json["debuggerCommands"].toString();
+
+    m_debuggerRemoteEnabled = json["debuggerRemoteEnabled"].toBool();
+    m_debuggerRemoteExtended = json["debuggerRemoteExtended"].toBool(true);
+    m_debuggerRemoteHost = json["debuggerRemoteHost"].toString();
+    m_debuggerRemotePort = json["debuggerRemotePort"].toString();
+    m_debuggerRemoteCommands = json["debuggerRemoteCommands"].toString();
 }
 
 wxString clFileSystemWorkspaceConfig::GetCompileFlagsAsString() const
@@ -143,9 +143,7 @@ wxString clFileSystemWorkspaceConfig::GetCompileFlagsAsString() const
 }
 
 clFileSystemWorkspaceConfig::Ptr_t clFileSystemWorkspaceConfig::Clone() const
-{
-    return clFileSystemWorkspaceConfig::Ptr_t(new clFileSystemWorkspaceConfig(*this));
-}
+{ return clFileSystemWorkspaceConfig::Ptr_t(new clFileSystemWorkspaceConfig(*this)); }
 
 static wxArrayString GetExtraFlags(CompilerPtr compiler)
 {
@@ -231,8 +229,8 @@ wxArrayString clFileSystemWorkspaceConfig::ExpandUserCompletionFlags(const wxStr
 
         // Get the include paths (-I)
         if (withPrefix) {
-            searchPaths.insert(searchPaths.end(), cclp.GetIncludesWithPrefix().begin(),
-                               cclp.GetIncludesWithPrefix().end());
+            searchPaths.insert(
+                searchPaths.end(), cclp.GetIncludesWithPrefix().begin(), cclp.GetIncludesWithPrefix().end());
         } else {
             searchPaths.insert(searchPaths.end(), cclp.GetIncludes().begin(), cclp.GetIncludes().end());
         }
@@ -329,7 +327,7 @@ void clFileSystemWorkspaceSettings::FromJSON(const JSONItem& shared, const JSONI
     int localCount = localConfigs.arraySize();
     for (int i = 0; i < localCount; ++i) {
         auto c = localConfigs[i];
-        localConfigsMap.insert({ c["name"].toString(), c });
+        localConfigsMap.insert({c["name"].toString(), c});
     }
 
     int nCount = sharedConfigs.arraySize();
@@ -350,7 +348,7 @@ void clFileSystemWorkspaceSettings::FromJSON(const JSONItem& shared, const JSONI
         if (!selectedConfigFound && (conf->GetName() == m_selectedConfig)) {
             selectedConfigFound = true;
         }
-        m_configsMap.insert({ conf->GetName(), conf });
+        m_configsMap.insert({conf->GetName(), conf});
     }
 
     if (!selectedConfigFound && !firstConfig.IsEmpty()) {
@@ -434,7 +432,7 @@ bool clFileSystemWorkspaceSettings::AddConfig(const wxString& name, const wxStri
         conf.reset(new clFileSystemWorkspaceConfig());
     }
     conf->SetName(name);
-    m_configsMap.insert({ name, conf });
+    m_configsMap.insert({name, conf});
     if (m_configsMap.size() == 1) {
         m_selectedConfig = conf->GetName();
     }

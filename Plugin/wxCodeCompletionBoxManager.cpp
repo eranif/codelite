@@ -15,9 +15,9 @@
 
 namespace
 {
-std::unordered_set<wxChar> delimiters = { ':', '@',  '!', ' ', '\t', '.', '\\', '+', '*', '-', '<',
-                                          '>', '[',  ']', '(', ')',  '{', '}',  '=', '%', '#', '^',
-                                          '&', '\'', '"', '/', '|',  ',', '~',  ';', '`' };
+std::unordered_set<wxChar> delimiters = {':', '@',  '!', ' ', '\t', '.', '\\', '+', '*', '-', '<',
+                                         '>', '[',  ']', '(', ')',  '{', '}',  '=', '%', '#', '^',
+                                         '&', '\'', '"', '/', '|',  ',', '~',  ';', '`'};
 
 int GetWordStartPos(wxStyledTextCtrl* ctrl, int from, const std::unordered_set<wxChar>& allowed_delims = {})
 {
@@ -118,8 +118,8 @@ bool CheckCtrlPosition(wxStyledTextCtrl* ctrl, int startPos, size_t flags)
     return false;
 }
 
-wxCodeCompletionBox* InitialiseBox(wxCodeCompletionBox* box, size_t flags, int startPos, wxEvtHandler* eventObject,
-                                   const wxSize& control_size)
+wxCodeCompletionBox* InitialiseBox(
+    wxCodeCompletionBox* box, size_t flags, int startPos, wxEvtHandler* eventObject, const wxSize& control_size)
 {
     if (box) {
         box->Reset(eventObject);
@@ -137,8 +137,11 @@ wxCodeCompletionBox* InitialiseBox(wxCodeCompletionBox* box, size_t flags, int s
 } // namespace
 
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
-                                                   const LSP::CompletionItem::Vec_t& completions, size_t flags,
-                                                   int startPos, wxEvtHandler* eventObject, const wxSize& control_size)
+                                                   const LSP::CompletionItem::Vec_t& completions,
+                                                   size_t flags,
+                                                   int startPos,
+                                                   wxEvtHandler* eventObject,
+                                                   const wxSize& control_size)
 {
     if (!ctrl || completions.empty() || !CheckCtrlPosition(ctrl, startPos, flags)) {
         DestroyCurrent();
@@ -149,8 +152,11 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
     CallAfter(&wxCodeCompletionBoxManager::DoShowCCBoxLSPItems, completions);
 }
 
-void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags,
-                                                   size_t flags, int startPos, wxEvtHandler* eventObject,
+void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
+                                                   const TagEntryPtrVector_t& tags,
+                                                   size_t flags,
+                                                   int startPos,
+                                                   wxEvtHandler* eventObject,
                                                    const wxSize& control_size)
 {
     if (!ctrl || tags.empty() || !CheckCtrlPosition(ctrl, startPos, flags)) {
@@ -164,8 +170,11 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl, const
 }
 
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
-                                                   const wxCodeCompletionBoxEntry::Vec_t& entries, size_t flags,
-                                                   int startPos, wxEvtHandler* eventObject, const wxSize& control_size)
+                                                   const wxCodeCompletionBoxEntry::Vec_t& entries,
+                                                   size_t flags,
+                                                   int startPos,
+                                                   wxEvtHandler* eventObject,
+                                                   const wxSize& control_size)
 {
     if (!ctrl || entries.empty() || !CheckCtrlPosition(ctrl, startPos, flags)) {
         DestroyCurrent();
@@ -179,8 +188,11 @@ void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
 
 void wxCodeCompletionBoxManager::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                                    const wxCodeCompletionBoxEntry::Vec_t& entries,
-                                                   const wxCodeCompletionBox::BmpVec_t& bitmaps, size_t flags,
-                                                   int startPos, wxEvtHandler* eventObject, const wxSize& control_size)
+                                                   const wxCodeCompletionBox::BmpVec_t& bitmaps,
+                                                   size_t flags,
+                                                   int startPos,
+                                                   wxEvtHandler* eventObject,
+                                                   const wxSize& control_size)
 {
     if (!ctrl || entries.empty() || !CheckCtrlPosition(ctrl, startPos, flags)) {
         DestroyCurrent();
@@ -243,8 +255,9 @@ void wxCodeCompletionBoxManager::InsertSelection(wxCodeCompletionBoxEntry::Ptr_t
             int nEnd = ctrl->GetSelectionNCaret(i);
             ranges.push_back(std::make_pair(nStart, nEnd));
         }
-        std::sort(ranges.begin(), ranges.end(),
-                  [&](const std::pair<int, int>& e1, const std::pair<int, int>& e2) { return e1.first < e2.first; });
+        std::sort(ranges.begin(), ranges.end(), [&](const std::pair<int, int>& e1, const std::pair<int, int>& e2) {
+            return e1.first < e2.first;
+        });
     } else {
         // Default behaviour: remove the partial text from the editor and replace it
         // with the selection

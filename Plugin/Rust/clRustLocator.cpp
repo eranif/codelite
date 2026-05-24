@@ -18,7 +18,7 @@ bool clRustLocator::Locate()
 
 wxString clRustLocator::GetRustTool(const wxString& name) const
 {
-    if(m_binDir.empty()) {
+    if (m_binDir.empty()) {
         return wxEmptyString;
     }
 
@@ -26,7 +26,7 @@ wxString clRustLocator::GetRustTool(const wxString& name) const
 #ifdef __WXMSW__
     toolpath.SetExt("exe");
 #endif
-    if(toolpath.FileExists()) {
+    if (toolpath.FileExists()) {
         return toolpath.GetFullPath();
     }
     return wxEmptyString;

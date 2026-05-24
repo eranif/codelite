@@ -9,9 +9,7 @@
 
 clWorkspaceManager::clWorkspaceManager()
     : m_workspace(NULL)
-{
-    EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clWorkspaceManager::OnWorkspaceClosed, this);
-}
+{ EventNotifier::Get()->Bind(wxEVT_WORKSPACE_CLOSED, &clWorkspaceManager::OnWorkspaceClosed, this); }
 
 clWorkspaceManager::~clWorkspaceManager()
 {

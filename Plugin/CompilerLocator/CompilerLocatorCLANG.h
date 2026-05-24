@@ -42,10 +42,13 @@ public:
 
 protected:
     void AddTools(CompilerPtr compiler, const wxFileName& clang);
-    void AddTool(CompilerPtr compiler, const wxString& name, const wxFileName& fntool,
+    void AddTool(CompilerPtr compiler,
+                 const wxString& name,
+                 const wxFileName& fntool,
                  const wxString& extraArgs = wxEmptyString);
     wxString GetCompilerFullName(const wxString& clangBinary);
-    void CheckUninstRegKey(const wxString& displayName, const wxString& installFolder,
+    void CheckUninstRegKey(const wxString& displayName,
+                           const wxString& installFolder,
                            const wxString& displayVersion) override;
     CompilerPtr AddCompiler(const wxFileName& clang);
 };

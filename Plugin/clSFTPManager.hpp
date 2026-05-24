@@ -299,9 +299,7 @@ public:
                               std::span<const wxString> commands,
                               const wxString& wd,
                               clEnvList_t* env = nullptr)
-    {
-        return AwaitExecute(accountName, StringUtils::BuildCommandStringFromArray(commands), wd, env);
-    }
+    { return AwaitExecute(accountName, StringUtils::BuildCommandStringFromArray(commands), wd, env); }
 
     /**
      * @brief execute a remote command
@@ -321,9 +319,7 @@ public:
                       std::span<const wxString> commands,
                       const wxString& wd,
                       clEnvList_t* env = nullptr)
-    {
-        return AsyncExecute(sink, accountName, StringUtils::BuildCommandStringFromArray(commands), wd, env);
-    }
+    { return AsyncExecute(sink, accountName, StringUtils::BuildCommandStringFromArray(commands), wd, env); }
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_SDK, wxEVT_SFTP_ASYNC_SAVE_COMPLETED, clCommandEvent);

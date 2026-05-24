@@ -14,7 +14,7 @@ class WXDLLIMPEXP_SDK wxTerminalAnsiRendererInterface
 protected:
     wxTextAttr m_defaultAttr;
     wxTextAttr m_curAttr;
-    wxPoint m_pos = { 0, 0 };
+    wxPoint m_pos = {0, 0};
     bool m_useDarkThemeColours = false;
     wxString m_windowTitle;
 
@@ -25,7 +25,7 @@ public:
     virtual void Clear()
     {
         m_curAttr = m_defaultAttr;
-        m_pos = { 0, 0 };
+        m_pos = {0, 0};
     }
 
     /// Makes an audible noise.

@@ -3,14 +3,14 @@
 void clTreeNodeVisitor::Visit(clRowEntry* item, bool expandedItemsOnly, std::function<bool(clRowEntry*, bool)>& func)
 {
     clRowEntry* current = item;
-    while(current) {
+    while (current) {
         bool isVisible = current->IsVisible();
-        if(expandedItemsOnly && isVisible) {
-            if(!func(current, isVisible)) {
+        if (expandedItemsOnly && isVisible) {
+            if (!func(current, isVisible)) {
                 return;
             }
-        } else if(!expandedItemsOnly) {
-            if(!func(current, isVisible)) {
+        } else if (!expandedItemsOnly) {
+            if (!func(current, isVisible)) {
                 return;
             }
         }

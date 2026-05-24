@@ -45,8 +45,8 @@ public:
 
 private:
     void AddTools(const wxString& binFolder, const wxString& name, const wxString& suffix);
-    void AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath,
-                 const wxString& extraArgs = "");
+    void
+    AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath, const wxString& extraArgs = "");
 
 public:
     virtual bool Locate();

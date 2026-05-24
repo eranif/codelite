@@ -72,7 +72,7 @@ public:
 
     bool IsSplitVertical() const
     {
-        if(!(m_viewFlags & kAllViewModes)) {
+        if (!(m_viewFlags & kAllViewModes)) {
             // none of the modes is selected, select the default "Vertical"
             return true;
         }
@@ -87,7 +87,7 @@ public:
     void SetShowLineNumbers(bool flag)
     {
         m_flags &= ~kShowLineNumbers;
-        if(flag) {
+        if (flag) {
             m_flags |= kShowLineNumbers;
         }
     }
@@ -96,7 +96,7 @@ public:
     void SetOverviewBarShow(bool b)
     {
         m_flags &= ~kHideOverviewBar;
-        if(!b) {
+        if (!b) {
             m_flags |= kHideOverviewBar;
         }
     }
@@ -107,7 +107,7 @@ public:
     void SetIgnoreWhitespace(bool b)
     {
         m_flags &= ~kIgnoreWhitespace;
-        if(b) {
+        if (b) {
             m_flags |= kIgnoreWhitespace;
         }
     }

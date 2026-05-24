@@ -2,7 +2,7 @@
 
 void clFileCache::Add(const wxFileName& fn)
 {
-    if(Contains(fn)) {
+    if (Contains(fn)) {
         return;
     }
     m_files.push_back(fn);

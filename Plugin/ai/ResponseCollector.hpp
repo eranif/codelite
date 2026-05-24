@@ -29,9 +29,7 @@ public:
 
     /// The stream callbacl: message, is_done, is_thinking
     inline void SetStreamCallback(std::function<void(const std::string&, StreamCallbackReason)> cb)
-    {
-        m_stream_callback = std::move(cb);
-    }
+    { m_stream_callback = std::move(cb); }
     inline bool IsEndedWithError() const { return m_ended_with_error; }
 
     inline void SetWantThinkingTokens(bool wantThinkingTokens) { this->m_wantThinkingTokens = wantThinkingTokens; }

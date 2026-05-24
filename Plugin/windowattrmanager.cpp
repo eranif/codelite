@@ -34,12 +34,12 @@
 
 void WindowAttrManager::Load(wxTopLevelWindow* win)
 {
-    if(win->GetName().IsEmpty()) {
+    if (win->GetName().IsEmpty()) {
         return;
     }
 
     // Check if this object is registered with our persistency manager
-    if(!wxPersistenceManager::Get().Find(win)) {
+    if (!wxPersistenceManager::Get().Find(win)) {
         // register it
         wxPersistenceManager::Get().Register(win);
     }
@@ -48,7 +48,7 @@ void WindowAttrManager::Load(wxTopLevelWindow* win)
     // note that we do not do this linux due to bug
     // the on some DE, the restored window gets
     // larger and larger...
-    if(wxPersistenceManager::Get().Find(win)) {
+    if (wxPersistenceManager::Get().Find(win)) {
         wxPersistenceManager::Get().Restore(win);
     }
 
@@ -57,28 +57,28 @@ void WindowAttrManager::Load(wxTopLevelWindow* win)
 
 void WindowAttrManager::DoLoad(wxWindow* win, const wxString& parentName, int depth)
 {
-    if(!win) {
+    if (!win) {
         return;
     }
 
     int childIndex(0);
     wxWindowList::compatibility_iterator pclNode = win->GetChildren().GetFirst();
-    while(pclNode) {
+    while (pclNode) {
         ++childIndex;
         wxWindow* pclChild = pclNode->GetData();
-        if(pclChild) {
+        if (pclChild) {
             // Load the state of a notebook
             wxBookCtrlBase* bookbase = dynamic_cast<wxBookCtrlBase*>(pclChild);
-            if(bookbase) {
+            if (bookbase) {
                 // Make sure that the book control has a name (which is needed by the wxPersistenceManager)
                 wxString controlName;
-                if(bookbase->GetName().IsEmpty()) {
+                if (bookbase->GetName().IsEmpty()) {
                     controlName << parentName << "_book_" << depth << "_" << childIndex;
                     bookbase->SetName(controlName);
                 } else {
                     controlName = bookbase->GetName();
                 }
-                if(wxPersistenceManager::Get().Find(bookbase)) {
+                if (wxPersistenceManager::Get().Find(bookbase)) {
                     wxPersistenceManager::Get().Restore(bookbase);
                 } else {
                     // Register and restore the object and recurse into its children

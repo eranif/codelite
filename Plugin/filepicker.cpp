@@ -28,8 +28,14 @@
 
 #include <wx/sizer.h>
 
-FilePicker::FilePicker(wxWindow* parent, wxWindowID id, const wxString& defaultFile, const wxString& message,
-                       const wxString& wildCard, const wxString& buttonCaption, const wxPoint& pos, const wxSize& size,
+FilePicker::FilePicker(wxWindow* parent,
+                       wxWindowID id,
+                       const wxString& defaultFile,
+                       const wxString& message,
+                       const wxString& wildCard,
+                       const wxString& buttonCaption,
+                       const wxPoint& pos,
+                       const wxSize& size,
                        long style)
     : wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL | wxNO_BORDER)
     , m_buttonCaption(buttonCaption)
@@ -40,7 +46,7 @@ FilePicker::FilePicker(wxWindow* parent, wxWindowID id, const wxString& defaultF
 {
 
 #if defined(__WXGTK__) || defined(__WXMAC__)
-    if(m_wildCard == wxT("*.*")) {
+    if (m_wildCard == wxT("*.*")) {
         m_wildCard = wxT("*");
     }
 #endif
@@ -71,7 +77,7 @@ void FilePicker::OnButtonClicked(wxCommandEvent& event)
 {
     wxUnusedVar(event);
     wxFileDialog* dlg = new wxFileDialog(this, m_dlgCaption, wxEmptyString, m_defaultFile, m_wildCard, m_dlgStyle);
-    if(dlg->ShowModal() == wxID_OK) {
+    if (dlg->ShowModal() == wxID_OK) {
         // Get the dirname
         wxString path = dlg->GetPath();
         m_path->SetValue(path);

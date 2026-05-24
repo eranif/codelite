@@ -35,7 +35,7 @@ ConfFileLocator* ConfFileLocator::ms_instance = 0;
 
 ConfFileLocator* ConfFileLocator::Instance()
 {
-    if(ms_instance == 0) {
+    if (ms_instance == 0) {
         ms_instance = new ConfFileLocator();
     }
     return ms_instance;
@@ -43,7 +43,7 @@ ConfFileLocator* ConfFileLocator::Instance()
 
 void ConfFileLocator::Release()
 {
-    if(ms_instance) {
+    if (ms_instance) {
         delete ms_instance;
     }
     ms_instance = 0;
@@ -60,7 +60,7 @@ wxString ConfFileLocator::Locate(const wxString& baseName)
     wxFileName privateFile(GetLocalCopy(baseName));
     wxFileName defaultFile(GetDefaultCopy(baseName));
 
-    if(privateFile.FileExists()) {
+    if (privateFile.FileExists()) {
         return privateFile.GetFullPath();
     } else {
         return defaultFile.GetFullPath();
@@ -70,7 +70,7 @@ wxString ConfFileLocator::Locate(const wxString& baseName)
 void ConfFileLocator::DeleteLocalCopy(const wxString& basename)
 {
     wxFileName privateFile(GetLocalCopy(basename));
-    if(privateFile.FileExists()) {
+    if (privateFile.FileExists()) {
         clRemoveFile(privateFile.GetFullPath());
     }
 }

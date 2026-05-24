@@ -126,7 +126,7 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
                 wxString type = XmlUtils::ReadString(child, "ProjectType");
                 wxString line = XmlUtils::ReadString(child, "Pattern");
                 wxString lineFromFile = XmlUtils::ReadString(child, "PatternWithFile");
-                m_linkerLines.insert({ type, { lineFromFile, line } });
+                m_linkerLines.insert({type, {lineFromFile, line}});
 
             } else if (child->GetName() == wxT("Pattern")) {
                 if (XmlUtils::ReadString(child, wxT("Name")) == wxT("Error")) {
@@ -334,18 +334,18 @@ Compiler::Compiler(wxXmlNode* node, Compiler::eRegexType regexType)
 
     // Set linker lines
     if (m_linkerLines.empty()) {
-        m_linkerLines.insert({ PROJECT_TYPE_STATIC_LIBRARY,
-                               { "$(AR) $(ArchiveOutputSwitch)$(OutputFile) @$(ObjectsFileList)",
-                                 "$(AR) $(ArchiveOutputSwitch)$(OutputFile) $(Objects)" } });
-        m_linkerLines.insert({ PROJECT_TYPE_DYNAMIC_LIBRARY,
-                               { "$(SharedObjectLinkerName) $(OutputSwitch)$(OutputFile) @$(ObjectsFileList) "
-                                 "$(LibPath) $(Libs) $(LinkOptions)",
-                                 "$(SharedObjectLinkerName) $(OutputSwitch)$(OutputFile) $(Objects) $(LibPath) $(Libs) "
-                                 "$(LinkOptions)" } });
+        m_linkerLines.insert({PROJECT_TYPE_STATIC_LIBRARY,
+                              {"$(AR) $(ArchiveOutputSwitch)$(OutputFile) @$(ObjectsFileList)",
+                               "$(AR) $(ArchiveOutputSwitch)$(OutputFile) $(Objects)"}});
+        m_linkerLines.insert({PROJECT_TYPE_DYNAMIC_LIBRARY,
+                              {"$(SharedObjectLinkerName) $(OutputSwitch)$(OutputFile) @$(ObjectsFileList) "
+                               "$(LibPath) $(Libs) $(LinkOptions)",
+                               "$(SharedObjectLinkerName) $(OutputSwitch)$(OutputFile) $(Objects) $(LibPath) $(Libs) "
+                               "$(LinkOptions)"}});
         m_linkerLines.insert(
-            { PROJECT_TYPE_EXECUTABLE,
-              { "$(LinkerName) $(OutputSwitch)$(OutputFile) @$(ObjectsFileList) $(LibPath) $(Libs) $(LinkOptions)",
-                "$(LinkerName) $(OutputSwitch)$(OutputFile) $(Objects) $(LibPath) $(Libs) $(LinkOptions)" } });
+            {PROJECT_TYPE_EXECUTABLE,
+             {"$(LinkerName) $(OutputSwitch)$(OutputFile) @$(ObjectsFileList) $(LibPath) $(Libs) $(LinkOptions)",
+              "$(LinkerName) $(OutputSwitch)$(OutputFile) $(Objects) $(LibPath) $(Libs) $(LinkOptions)"}});
     }
 
     // Add support for assembler file
@@ -560,7 +560,7 @@ void Compiler::AddCompilerOption(const wxString& name, const wxString& desc)
     option.help = desc;
     option.name = name;
     m_compilerOptions.erase(name);
-    m_compilerOptions.insert({ name, option });
+    m_compilerOptions.insert({name, option});
 }
 
 void Compiler::AddLinkerOption(const wxString& name, const wxString& desc)
@@ -569,7 +569,7 @@ void Compiler::AddLinkerOption(const wxString& name, const wxString& desc)
     option.help = desc;
     option.name = name;
     m_linkerOptions.erase(name);
-    m_linkerOptions.insert({ name, option });
+    m_linkerOptions.insert({name, option});
 }
 
 void Compiler::AddCompilerLinkerOption(const wxString& name, const wxString& desc)
@@ -585,9 +585,11 @@ void Compiler::AddCompilerLinkerOption(const wxString& name, const wxString& des
 
 bool Compiler::IsGnuCompatibleCompiler() const
 {
-    static wxStringSet_t gnu_compilers = {
-        COMPILER_FAMILY_CLANG, COMPILER_FAMILY_MINGW, COMPILER_FAMILY_GCC, COMPILER_FAMILY_CYGWIN, COMPILER_FAMILY_MSYS2
-    };
+    static wxStringSet_t gnu_compilers = {COMPILER_FAMILY_CLANG,
+                                          COMPILER_FAMILY_MINGW,
+                                          COMPILER_FAMILY_GCC,
+                                          COMPILER_FAMILY_CYGWIN,
+                                          COMPILER_FAMILY_MSYS2};
     return !m_compilerFamily.IsEmpty() && gnu_compilers.count(m_compilerFamily);
 }
 
@@ -609,8 +611,8 @@ void Compiler::AddDefaultGnuCompilerOptions()
     AddCompilerOption("-Wzero-as-null-pointer-constant", "Warn if '0' is used as a null pointer constant");
     AddCompilerOption("-Wnon-virtual-dtor", "Warn if a class has virtual functions but no virtual destructor");
     AddCompilerOption("-Winline", "Warn if an inline function can not be inlined");
-    AddCompilerOption("-Wmissing-declarations",
-                      "Warn if a global function definition does not have a forward declaration");
+    AddCompilerOption(
+        "-Wmissing-declarations", "Warn if a global function definition does not have a forward declaration");
     AddCompilerOption("-Wundef", "Warn if an undefined macro is evaluated in an '#if' directive");
     AddCompilerOption("-Wredundant-decls", "Warn if there are redundant declarations in the same scope");
     AddCompilerOption("-Wfloat-equal", "Warn about floating point equality/inequality comparisons");
@@ -619,8 +621,8 @@ void Compiler::AddDefaultGnuCompilerOptions()
     AddCompilerOption("-Wshadow", "Warn about shadowed scoped identifiers");
     AddCompilerOption("-Wswitch-default", "Warn about missing default case in switch statements");
     AddCompilerOption("-Wswitch-enum", "Warn if an enumeration based switch statement lacks any enumerator");
-    AddCompilerOption("-ansi",
-                      "In C mode, this is equivalent to -std=c90. In C++ mode, it is equivalent to -std=c++98");
+    AddCompilerOption(
+        "-ansi", "In C mode, this is equivalent to -std=c90. In C++ mode, it is equivalent to -std=c++98");
     AddCompilerOption("-fPIC", "Position Independent Code");
     AddCompilerOption("-fPIE", "Position Independent Executable");
     AddCompilerOption("-fexpensive-optimizations", "Expensive optimizations");
@@ -669,8 +671,8 @@ void Compiler::AddDefaultGnuCompilerLinkerOptions()
     // Compiler and Linker options
     AddCompilerLinkerOption("-m32", "Target x86 (32bit)");
     AddCompilerLinkerOption("-m64", "Target x86_64 (64bit)");
-    AddCompilerLinkerOption("-flto",
-                            "Link-Time Optimization (Eliminates duplicate template functions and unused code)");
+    AddCompilerLinkerOption(
+        "-flto", "Link-Time Optimization (Eliminates duplicate template functions and unused code)");
 }
 
 wxArrayString Compiler::GetDefaultIncludePaths()
@@ -696,7 +698,7 @@ void Compiler::SetLinkLine(const wxString& type, const wxString& line, bool inpu
 {
     auto where = m_linkerLines.find(type);
     if (where == m_linkerLines.end()) {
-        m_linkerLines.insert({ type, { "", "" } });
+        m_linkerLines.insert({type, {"", ""}});
         where = m_linkerLines.find(type);
     }
     if (inputFromFile) {
@@ -717,7 +719,7 @@ void Compiler::CreatePathEnv(clEnvList_t* env_list)
     }
     wxString env_path;
     wxGetEnv("PATH", &env_path);
-    env_list->push_back({ "PATH", compiler_path.GetPath() + clPATH_SEPARATOR + env_path });
+    env_list->push_back({"PATH", compiler_path.GetPath() + clPATH_SEPARATOR + env_path});
 }
 
 GCCMetadata Compiler::GetMetadata() const

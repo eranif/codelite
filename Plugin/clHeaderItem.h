@@ -29,7 +29,7 @@ class WXDLLIMPEXP_SDK clHeaderItem
 protected:
     void EnableFlag(int flag, bool b)
     {
-        if(b) {
+        if (b) {
             m_flags |= flag;
         } else {
             m_flags &= ~flag;

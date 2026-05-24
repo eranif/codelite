@@ -18,9 +18,7 @@ public:
 
     void UpdateChoices();
     inline bool IsOk() const
-    {
-        return m_choiceModels->GetSelection() != wxNOT_FOUND && m_choiceEndpoints->GetSelection() != wxNOT_FOUND;
-    }
+    { return m_choiceModels->GetSelection() != wxNOT_FOUND && m_choiceEndpoints->GetSelection() != wxNOT_FOUND; }
 
     wxString GetModel() const { return m_choiceModels->GetStringSelection(); }
     wxString GetEndpoint() const { return m_choiceEndpoints->GetStringSelection(); }

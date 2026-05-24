@@ -382,8 +382,8 @@ void DiffSideBySidePanel::PrepareViews()
 
         // Show number margins if desired
         stc->SetMarginType(NUMBER_MARGIN_ID, wxSTC_MARGIN_NUMBER);
-        stc->SetMarginMask(NUMBER_MARGIN_ID,
-                           ~(mmt_folds | mmt_all_bookmarks | mmt_indicator | mmt_compiler | mmt_all_breakpoints));
+        stc->SetMarginMask(
+            NUMBER_MARGIN_ID, ~(mmt_folds | mmt_all_bookmarks | mmt_indicator | mmt_compiler | mmt_all_breakpoints));
         int pixelWidth = 4 + 5 * stc->TextWidth(wxSTC_STYLE_LINENUMBER, wxT("9"));
         stc->SetMarginWidth(NUMBER_MARGIN_ID, m_config.ShowLineNumbers() ? pixelWidth : 0);
     }
@@ -633,14 +633,10 @@ void DiffSideBySidePanel::OnNextDiffUI(wxUpdateUIEvent& event) { event.Enable(Ca
 void DiffSideBySidePanel::OnPrevDiffUI(wxUpdateUIEvent& event) { event.Enable(CanPrevDiff()); }
 
 void DiffSideBySidePanel::OnCopyLeftToRightUI(wxUpdateUIEvent& event)
-{
-    event.Enable(!IsRightReadOnly() && !m_config.IsSingleViewMode());
-}
+{ event.Enable(!IsRightReadOnly() && !m_config.IsSingleViewMode()); }
 
 void DiffSideBySidePanel::OnCopyRightToLeftUI(wxUpdateUIEvent& event)
-{
-    event.Enable(!IsLeftReadOnly() && !m_config.IsSingleViewMode());
-}
+{ event.Enable(!IsLeftReadOnly() && !m_config.IsSingleViewMode()); }
 
 void DiffSideBySidePanel::OnCopyLeftToRight(wxCommandEvent& event)
 {
@@ -794,9 +790,7 @@ void DiffSideBySidePanel::OnSaveChanges(wxCommandEvent& event)
 }
 
 void DiffSideBySidePanel::OnSaveChangesUI(wxUpdateUIEvent& event)
-{
-    event.Enable((m_stcLeft->IsModified() || m_stcRight->IsModified()) && !m_config.IsSingleViewMode());
-}
+{ event.Enable((m_stcLeft->IsModified() || m_stcRight->IsModified()) && !m_config.IsSingleViewMode()); }
 
 bool DiffSideBySidePanel::CanNextDiff()
 {

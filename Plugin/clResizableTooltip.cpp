@@ -18,7 +18,7 @@ clResizableTooltip::clResizableTooltip(wxEvtHandler* owner)
     int height = clConfig::Get().Read("Tooltip/Height", 200);
     int width = clConfig::Get().Read("Tooltip/Width", 300);
     wxSize toolsize(width, height);
-    if((toolsize.GetWidth() < 300) || (toolsize.GetHeight() < 200)) {
+    if ((toolsize.GetWidth() < 300) || (toolsize.GetHeight() < 200)) {
         toolsize = wxSize(300, 200);
     }
     SetSize(toolsize);
@@ -44,7 +44,7 @@ void clResizableTooltip::ShowTip()
 void clResizableTooltip::OnKeyDown(wxTreeEvent& event)
 {
     event.Skip();
-    if(event.GetKeyCode() == WXK_ESCAPE) {
+    if (event.GetKeyCode() == WXK_ESCAPE) {
         //  Cancel this tip
         clCommandEvent destroyEvent(wxEVT_TOOLTIP_DESTROY);
         EventNotifier::Get()->AddPendingEvent(destroyEvent);
@@ -54,7 +54,7 @@ void clResizableTooltip::OnKeyDown(wxTreeEvent& event)
 void clResizableTooltip::DoSetFocus()
 {
     Show(true);
-    if(!m_treeCtrl->IsEmpty()) {
+    if (!m_treeCtrl->IsEmpty()) {
         m_treeCtrl->SetFocus();
         m_treeCtrl->SelectItem(m_treeCtrl->GetRootItem());
     }

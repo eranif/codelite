@@ -20,7 +20,7 @@ protected:
 private:
     int GetImageId(const clFilesScanner::EntryData& d) const
     {
-        if(d.flags & clFilesScanner::kIsFolder) {
+        if (d.flags & clFilesScanner::kIsFolder) {
             return clGetManager()->GetStdIcons()->GetMimeImageId(FileExtManager::TypeFolder);
         } else {
             return clGetManager()->GetStdIcons()->GetMimeImageId(d.fullpath);
@@ -36,7 +36,7 @@ public:
 
     wxString GetFullName() const
     {
-        if(m_existsInLeft) {
+        if (m_existsInLeft) {
             return wxFileName(GetLeft().fullpath).GetFullName();
         } else {
             return wxFileName(GetRight().fullpath).GetFullName();
@@ -67,18 +67,18 @@ public:
     void CreateEntry(const clFilesScanner::EntryData& d, bool left)
     {
         DiffViewEntry entry;
-        if(left) {
+        if (left) {
             entry.SetLeft(d);
         } else {
             entry.SetRight(d);
         }
-        m_table.insert({ entry.GetFullName(), entry });
+        m_table.insert({entry.GetFullName(), entry});
     }
 
     DiffViewEntry& GetEntry(const wxString& filename)
     {
         static DiffViewEntry nullEntry;
-        if(HasFile(filename)) {
+        if (HasFile(filename)) {
             return m_table[filename];
         }
         return nullEntry;
@@ -114,6 +114,7 @@ public:
     ~DiffFoldersFrame() override;
 
     void OnChecksum(int callId, const wxArrayString& checksumArray);
+
 protected:
     void BuildTrees(const wxString& left, const wxString& right);
     void DoOpenDiff(const wxDataViewItem& item);

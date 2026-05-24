@@ -8,8 +8,8 @@
 #include <wx/dataview.h>
 #include <wx/sizer.h>
 
-clTableWithPagination::clTableWithPagination(wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size,
-                                             long style, const wxString& name)
+clTableWithPagination::clTableWithPagination(
+    wxWindow* parent, wxWindowID winid, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
     : wxPanel(parent, wxID_ANY, pos, size, style, name)
     , m_linesPerPage(100)
     , m_currentPage(0)
@@ -56,7 +56,7 @@ void clTableWithPagination::SetColumns(const wxArrayString& columns)
 {
     m_columns = columns;
     ClearAll();
-    for(size_t i = 0; i < m_columns.size(); ++i) {
+    for (size_t i = 0; i < m_columns.size(); ++i) {
         m_ctrl->AppendTextColumn(m_columns.Item(i), wxDATAVIEW_CELL_INERT, -2, wxALIGN_LEFT, wxDATAVIEW_COL_RESIZABLE);
     }
 }
@@ -78,19 +78,19 @@ void clTableWithPagination::ClearAll()
 void clTableWithPagination::ShowPage(int nPage)
 {
     m_ctrl->DeleteAllItems();
-    if(m_data.empty())
+    if (m_data.empty())
         return;
     int startIndex = (nPage * m_linesPerPage);
     int lastIndex = startIndex + m_linesPerPage - 1; // last index, including
-    if(lastIndex >= (int)m_data.size()) {
+    if (lastIndex >= (int)m_data.size()) {
         lastIndex = (m_data.size() - 1);
     }
     m_currentPage = nPage;
     m_ctrl->Begin();
-    for(int i = startIndex; i <= lastIndex; ++i) {
+    for (int i = startIndex; i <= lastIndex; ++i) {
         wxVector<wxVariant> cols;
         const wxArrayString& items = m_data[i];
-        for(size_t j = 0; j < items.size(); ++j) {
+        for (size_t j = 0; j < items.size(); ++j) {
             const wxString& cellContent = items.Item(j);
             cols.push_back(wxVariant(MakeDisplayString(cellContent)));
         }
@@ -118,7 +118,7 @@ void clTableWithPagination::ClearAllItems()
 wxString clTableWithPagination::MakeDisplayString(const wxString& str) const
 {
     wxString truncatedString = str;
-    if(truncatedString.Length() > 100) {
+    if (truncatedString.Length() > 100) {
         truncatedString = truncatedString.Mid(0, 100);
         truncatedString.Append(wxT("..."));
     }

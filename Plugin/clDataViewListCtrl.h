@@ -278,9 +278,7 @@ public:
     int GetBitmapIndex() const { return m_bitmapIndex; }
 
     bool IsSameAs(const clDataViewTextBitmap& other) const
-    {
-        return m_text == other.m_text && m_bitmapIndex == other.m_bitmapIndex;
-    }
+    { return m_text == other.m_text && m_bitmapIndex == other.m_bitmapIndex; }
 
     bool operator==(const clDataViewTextBitmap& other) const { return IsSameAs(other); }
 
@@ -327,9 +325,7 @@ public:
     int GetBitmapIndex() const { return m_bitmapIndex; }
 
     bool IsSameAs(const clDataViewCheckbox& other) const
-    {
-        return m_label == other.m_label && m_bitmapIndex == other.m_bitmapIndex && m_checked == other.m_checked;
-    }
+    { return m_label == other.m_label && m_bitmapIndex == other.m_bitmapIndex && m_checked == other.m_checked; }
 
     bool operator==(const clDataViewCheckbox& other) const { return IsSameAs(other); }
 
@@ -369,9 +365,7 @@ public:
     const wxString& GetButtonUnicodeSymbol() const;
 
     bool IsSameAs(const clDataViewTextWithButton& other) const
-    {
-        return m_label == other.m_label && m_bitmapIndex == other.m_bitmapIndex;
-    }
+    { return m_label == other.m_label && m_bitmapIndex == other.m_bitmapIndex; }
     bool operator==(const clDataViewTextWithButton& other) const { return IsSameAs(other); }
     bool operator!=(const clDataViewTextWithButton& other) const { return !IsSameAs(other); }
     wxDECLARE_DYNAMIC_CLASS(clDataViewTextWithButton);
@@ -403,9 +397,7 @@ public:
     const wxString& GetLabel() const { return m_label; }
 
     bool IsSameAs(const clDataViewButton& other) const
-    {
-        return m_label == other.m_label && m_bitmapIndex == other.m_bitmapIndex;
-    }
+    { return m_label == other.m_label && m_bitmapIndex == other.m_bitmapIndex; }
 
     bool operator==(const clDataViewButton& other) const { return IsSameAs(other); }
     bool operator!=(const clDataViewButton& other) const { return !IsSameAs(other); }

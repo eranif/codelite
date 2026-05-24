@@ -18,7 +18,7 @@ private:
     void DoRenderBackground(wxDC& dc, const wxRect& rect, const clColours& colours)
     {
         wxColour bg_colour = colours.GetBgColour();
-        if(clSystemSettings::IsDark() && DrawingUtils::IsDark(colours.GetBgColour())) {
+        if (clSystemSettings::IsDark() && DrawingUtils::IsDark(colours.GetBgColour())) {
             bg_colour = clSystemSettings::GetColour(wxSYS_COLOUR_LISTBOX);
         }
 
@@ -30,9 +30,7 @@ private:
 public:
     MyAnsiCodeRenderer(clDataViewListCtrl* ctrl)
         : m_ctrl(ctrl)
-    {
-        wxUnusedVar(m_ctrl);
-    }
+    { wxUnusedVar(m_ctrl); }
 
     void SetFont(const wxFont& f) { this->m_font = f; }
 
@@ -43,8 +41,8 @@ public:
     }
 
     /// just the draw the item background
-    void RenderItemBackground(wxDC& dc, long tree_style, const clColours& colours, int row_index,
-                              clRowEntry* entry) override
+    void
+    RenderItemBackground(wxDC& dc, long tree_style, const clColours& colours, int row_index, clRowEntry* entry) override
     {
         wxUnusedVar(dc);
         wxUnusedVar(tree_style);
@@ -69,7 +67,7 @@ public:
         clRenderDefaultStyle ds;
         ds.font = m_font;
 
-        if(entry->IsSelected()) {
+        if (entry->IsSelected()) {
             ds.bg_colour = colours.GetSelItemBgColour();
             ds.fg_colour = colours.GetSelItemTextColour();
 
@@ -86,8 +84,8 @@ public:
 };
 } // namespace
 
-clTerminalViewCtrl::clTerminalViewCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                       long style)
+clTerminalViewCtrl::clTerminalViewCtrl(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : clDataViewListCtrl(parent, id, pos, size, style)
 {
     SetRendererType(eRendererType::RENDERER_DIRECT2D);
@@ -102,9 +100,7 @@ clTerminalViewCtrl::clTerminalViewCtrl(wxWindow* parent, wxWindowID id, const wx
 }
 
 clTerminalViewCtrl::~clTerminalViewCtrl()
-{
-    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clTerminalViewCtrl::OnSysColourChanged, this);
-}
+{ EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clTerminalViewCtrl::OnSysColourChanged, this); }
 
 void clTerminalViewCtrl::OnSysColourChanged(clCommandEvent& e)
 {
@@ -116,10 +112,10 @@ void clTerminalViewCtrl::OnSysColourChanged(clCommandEvent& e)
 void clTerminalViewCtrl::ApplyStyle()
 {
     auto lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
+    if (lexer) {
         MyAnsiCodeRenderer* r = static_cast<MyAnsiCodeRenderer*>(m_renderer);
         wxFont f = m_rendererFont;
-        if(!f.IsOk()) {
+        if (!f.IsOk()) {
             f = lexer->GetFontForStyle(0, this);
         }
 
@@ -135,19 +131,19 @@ void clTerminalViewCtrl::ApplyStyle()
 
 void clTerminalViewCtrl::AddLine(const wxString& text, bool text_ends_with_cr, wxUIntPtr data)
 {
-    if(IsEmpty()) {
+    if (IsEmpty()) {
         m_overwriteLastLine = false;
     }
 
     // if we need to overwrite the last item, delete the last item and
     // then call append
-    if(m_overwriteLastLine) {
+    if (m_overwriteLastLine) {
         DeleteItem(GetItemCount() - 1);
         m_overwriteLastLine = false;
     }
 
     AppendItem(text, wxNOT_FOUND, wxNOT_FOUND, data);
-    if(m_scroll_to_bottom) {
+    if (m_scroll_to_bottom) {
         ScrollToBottom();
     }
     m_overwriteLastLine = text_ends_with_cr;
@@ -156,7 +152,7 @@ void clTerminalViewCtrl::AddLine(const wxString& text, bool text_ends_with_cr, w
 clAnsiEscapeCodeColourBuilder& clTerminalViewCtrl::GetBuilder(bool clear_it)
 {
     m_builder.SetTheme(GetColours().IsLightTheme() ? eColourTheme::LIGHT : eColourTheme::DARK);
-    if(clear_it) {
+    if (clear_it) {
         m_builder.Clear();
     }
     return m_builder;

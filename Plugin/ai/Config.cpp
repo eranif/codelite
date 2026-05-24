@@ -193,9 +193,7 @@ wxString Config::GetFullPath()
 }
 
 bool Config::IsBuiltInPrompt(const wxString& prompt) const
-{
-    return builtin_prompts.contains(prompt.ToStdString(wxConvUTF8));
-}
+{ return builtin_prompts.contains(prompt.ToStdString(wxConvUTF8)); }
 
 void Config::AddTrustedTool(const wxString& toolname, const wxString& pattern, bool persist)
 {

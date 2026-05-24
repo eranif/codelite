@@ -15,9 +15,7 @@ clSTCContainerStylerBase::clSTCContainerStylerBase(wxStyledTextCtrl* ctrl)
 }
 
 clSTCContainerStylerBase::~clSTCContainerStylerBase()
-{
-    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clSTCContainerStylerBase::OnThemChanged, this);
-}
+{ EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clSTCContainerStylerBase::OnThemChanged, this); }
 
 void clSTCContainerStylerBase::OnThemChanged(wxCommandEvent& event)
 {

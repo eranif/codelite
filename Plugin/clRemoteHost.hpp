@@ -59,20 +59,27 @@ public:
     void AddSshSession(clSSH::Ptr_t ssh_session);
 
     /// Execute a command with callback. we return the output as raw string (un-converted)
-    void run_command_with_callback(const std::vector<wxString>& command, const wxString& wd, const clEnvList_t& env,
+    void run_command_with_callback(const std::vector<wxString>& command,
+                                   const wxString& wd,
+                                   const clEnvList_t& env,
                                    execute_callback&& cb);
 
     /// An overloaded version
-    void run_command_with_callback(const wxString& command, const wxString& wd, const clEnvList_t& env,
+    void run_command_with_callback(const wxString& command,
+                                   const wxString& wd,
+                                   const clEnvList_t& env,
                                    execute_callback&& cb);
 
     /// start an interactive remote process
-    IProcess::Ptr_t run_interactive_process(wxEvtHandler* parent, const wxString& command, size_t flags,
-                                            const wxString& wd, const clEnvList_t& env = {});
+    IProcess::Ptr_t run_interactive_process(
+        wxEvtHandler* parent, const wxString& command, size_t flags, const wxString& wd, const clEnvList_t& env = {});
 
     /// An overloaded version
-    IProcess::Ptr_t run_interactive_process(wxEvtHandler* parent, const wxArrayString& command, size_t flags,
-                                            const wxString& wd, const clEnvList_t& env = {});
+    IProcess::Ptr_t run_interactive_process(wxEvtHandler* parent,
+                                            const wxArrayString& command,
+                                            size_t flags,
+                                            const wxString& wd,
+                                            const clEnvList_t& env = {});
 
     const wxString& GetActiveAccount() const { return m_activeAccount; }
 

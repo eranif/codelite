@@ -127,9 +127,7 @@ void FSConfigPage::OnEditTarget(wxCommandEvent& event)
 }
 
 void FSConfigPage::OnEditTargetUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_dvListCtrlTargets->GetSelectedItemsCount());
-}
+{ event.Enable(m_dvListCtrlTargets->GetSelectedItemsCount()); }
 
 void FSConfigPage::OnNewTarget(wxCommandEvent& event)
 {

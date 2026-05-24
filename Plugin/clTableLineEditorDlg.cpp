@@ -7,7 +7,7 @@ clTableLineEditorDlg::clTableLineEditorDlg(wxWindow* parent, const wxArrayString
     , m_columns(columns)
     , m_data(data)
 {
-    if(!m_columns.IsEmpty()) {
+    if (!m_columns.IsEmpty()) {
         m_listBoxColumns->Append(m_columns);
         m_listBoxColumns->SetSelection(0);
         DoItemSelected(0);
@@ -22,7 +22,7 @@ void clTableLineEditorDlg::OnColumnSelected(wxCommandEvent& event) { DoItemSelec
 
 void clTableLineEditorDlg::DoItemSelected(int index)
 {
-    if((index != wxNOT_FOUND) && (index < (int)m_data.size())) {
+    if ((index != wxNOT_FOUND) && (index < (int)m_data.size())) {
         m_stc->SetReadOnly(false);
         m_stc->SetText(m_data[index]);
         m_stc->SetReadOnly(true);

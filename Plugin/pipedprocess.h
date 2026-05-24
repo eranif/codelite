@@ -68,11 +68,10 @@ public:
     virtual bool HasInput(wxString& input);
 
     /**
-	 * \brief read all input from the process output stream
-	 * \param input
-	 * \return true if some data was
-     * read, false otherwise
-	 */
+     * \brief read all input from the process output stream
+     * \param input
+     * \return true if some data was read, false otherwise
+     */
     virtual bool ReadAll(wxString& input);
 };
 

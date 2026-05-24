@@ -30,9 +30,13 @@ private:
             return;
         }
 
-        wxTreeItemId where = next ? tree->FindNext(tree->GetSelection(), m_textCtrl->GetValue(), 0,
+        wxTreeItemId where = next ? tree->FindNext(tree->GetSelection(),
+                                                   m_textCtrl->GetValue(),
+                                                   0,
                                                    wxTR_SEARCH_DEFAULT & ~wxTR_SEARCH_INCLUDE_CURRENT_ITEM)
-                                  : tree->FindPrev(tree->GetSelection(), m_textCtrl->GetValue(), 0,
+                                  : tree->FindPrev(tree->GetSelection(),
+                                                   m_textCtrl->GetValue(),
+                                                   0,
                                                    wxTR_SEARCH_DEFAULT & ~wxTR_SEARCH_INCLUDE_CURRENT_ITEM);
         if (where.IsOk()) {
             clRowEntry* row = reinterpret_cast<clRowEntry*>(where.GetID());
@@ -138,12 +142,10 @@ public:
     }
 };
 
-clControlWithItems::clControlWithItems(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                       long style)
+clControlWithItems::clControlWithItems(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : clScrolledPanel(parent, id, pos, size, style)
-{
-    DoInitialize();
-}
+{ DoInitialize(); }
 
 bool clControlWithItems::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {
@@ -255,8 +257,8 @@ void clControlWithItems::RenderItems(wxDC& dc, long tree_style, const clRowEntry
     int fake_items_count = max_items - lines_drawn;
     if (fake_items_count > 0) {
         for (size_t i = 0; i < (size_t)fake_items_count; ++i) {
-            wxRect fake_entry_rect{ 0, cury, width, m_lineHeight };
-            clRowEntry fake_entry{ nullptr, false, wxEmptyString };
+            wxRect fake_entry_rect{0, cury, width, m_lineHeight};
+            clRowEntry fake_entry{nullptr, false, wxEmptyString};
             fake_entry.SetRects(fake_entry_rect, {});
             if (m_customRenderer) {
                 m_customRenderer->RenderItemBackground(dc, tree_style, m_colours, row_index, &fake_entry);
@@ -395,8 +397,8 @@ void clControlWithItems::DoUpdateHeader(clRowEntry* row)
 
     wxBitmap tmpBmp;
     tmpBmp.CreateWithDIPSize(1, 1, GetDPIScaleFactor());
-    wxMemoryDC mem_dc{ tmpBmp };
-    wxGCDC dc{ mem_dc };
+    wxMemoryDC mem_dc{tmpBmp};
+    wxGCDC dc{mem_dc};
     dc.SetFont(GetDefaultFont());
 
     // Null row means: set the header bar to fit the column's label
@@ -422,8 +424,8 @@ wxSize clControlWithItems::GetTextSize(const wxString& label) const
 {
     wxBitmap tmpBmp;
     tmpBmp.CreateWithDIPSize(1, 1, GetDPIScaleFactor());
-    wxMemoryDC mem_dc{ tmpBmp };
-    wxGCDC dc{ mem_dc };
+    wxMemoryDC mem_dc{tmpBmp};
+    wxGCDC dc{mem_dc};
 
     wxFont font = GetDefaultFont();
     dc.SetFont(font);
@@ -604,9 +606,7 @@ void clControlWithItems::SetColours(const clColours& colours)
 }
 
 void clControlWithItems::SetCustomRenderer(clControlWithItemsRowRenderer* renderer)
-{
-    m_customRenderer.reset(renderer);
-}
+{ m_customRenderer.reset(renderer); }
 
 void clControlWithItems::SetDefaultFont(const wxFont& font)
 {
@@ -632,8 +632,8 @@ wxFont clControlWithItems::GetDefaultFont() const
 // clSearchText
 //===---------------------------------------------------
 
-bool clSearchText::Matches(const wxString& findWhat, size_t col, const wxString& text, size_t searchFlags,
-                           clMatchResult* matches)
+bool clSearchText::Matches(
+    const wxString& findWhat, size_t col, const wxString& text, size_t searchFlags, clMatchResult* matches)
 {
     wxString haystack = searchFlags & wxTR_SEARCH_ICASE ? text.Lower() : text;
     wxString needle = searchFlags & wxTR_SEARCH_ICASE ? findWhat.Lower() : findWhat;

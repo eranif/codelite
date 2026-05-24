@@ -50,7 +50,7 @@ NameAndDescDlg::NameAndDescDlg(wxWindow* parent, IManager* manager, const wxStri
 
     // Select the 'Console' to be the default
     int where = m_choiceType->FindString(wxT("Console"));
-    if(where == wxNOT_FOUND) {
+    if (where == wxNOT_FOUND) {
         where = 0;
     }
     m_choiceType->SetSelection(where);

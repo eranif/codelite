@@ -6,11 +6,17 @@
 #include "codelite_events.h"
 #include "event_notifier.h"
 
-bool clThemedButton::Create(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos,
-                            const wxSize& size, long style, const wxValidator& validator, const wxString& name)
+bool clThemedButton::Create(wxWindow* parent,
+                            wxWindowID id,
+                            const wxString& label,
+                            const wxPoint& pos,
+                            const wxSize& size,
+                            long style,
+                            const wxValidator& validator,
+                            const wxString& name)
 {
     bool res = clButton::Create(parent, id, label, pos, size, style, validator, name);
-    if(res) {
+    if (res) {
         EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedButton::OnThemeChanged, this);
         ApplyTheme();
     }
@@ -18,16 +24,28 @@ bool clThemedButton::Create(wxWindow* parent, wxWindowID id, const wxString& lab
     return res;
 }
 
-clThemedButton::clThemedButton(wxWindow* parent, wxWindowID id, const wxString& label, const wxPoint& pos,
-                               const wxSize& size, long style, const wxValidator& validator, const wxString& name)
+clThemedButton::clThemedButton(wxWindow* parent,
+                               wxWindowID id,
+                               const wxString& label,
+                               const wxPoint& pos,
+                               const wxSize& size,
+                               long style,
+                               const wxValidator& validator,
+                               const wxString& name)
     : clButton(parent, id, label, pos, size, style, validator, name)
 {
     EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clThemedButton::OnThemeChanged, this);
     ApplyTheme();
 }
 
-clThemedButton::clThemedButton(wxWindow* parent, wxWindowID id, const wxString& label, const wxString& note,
-                               const wxPoint& pos, const wxSize& size, long style, const wxValidator& validator,
+clThemedButton::clThemedButton(wxWindow* parent,
+                               wxWindowID id,
+                               const wxString& label,
+                               const wxString& note,
+                               const wxPoint& pos,
+                               const wxSize& size,
+                               long style,
+                               const wxValidator& validator,
                                const wxString& name)
     : clButton(parent, id, label, pos, size, style, validator, name)
 {
@@ -37,9 +55,7 @@ clThemedButton::clThemedButton(wxWindow* parent, wxWindowID id, const wxString& 
 }
 
 clThemedButton::~clThemedButton()
-{
-    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedButton::OnThemeChanged, this);
-}
+{ EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedButton::OnThemeChanged, this); }
 
 void clThemedButton::OnThemeChanged(clCommandEvent& event)
 {

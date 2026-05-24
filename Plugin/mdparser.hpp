@@ -104,27 +104,27 @@ public:
         font_strikethrough = has_flag(T_STRIKE);
         horizontal_rule = has_flag(T_HR);
 
-        if(has_flag(T_CODE) || has_flag(T_CODEBLOCK)) {
+        if (has_flag(T_CODE) || has_flag(T_CODEBLOCK)) {
             font_family = FONTFAMILY_CODE;
         }
 
-        if(has_flag(T_ITALIC)) {
+        if (has_flag(T_ITALIC)) {
             font_style = FONTSTYLE_ITALIC;
         }
 
-        if(has_flag(T_BOLD)) {
+        if (has_flag(T_BOLD)) {
             font_weight = FONTWEIGHT_BOLD;
         }
 
-        if(has_flag(T_H1)) {
+        if (has_flag(T_H1)) {
             font_size = FONTSIZE_H1;
         }
 
-        if(has_flag(T_H2)) {
+        if (has_flag(T_H2)) {
             font_size = FONTSIZE_H2;
         }
 
-        if(has_flag(T_H3)) {
+        if (has_flag(T_H3)) {
             font_size = FONTSIZE_H3;
         }
     }
@@ -133,25 +133,25 @@ public:
     {
         wxString str;
         str << "{FONT";
-        if(font_flags & mdparser::T_CODE || font_flags & mdparser::T_CODEBLOCK) {
+        if (font_flags & mdparser::T_CODE || font_flags & mdparser::T_CODEBLOCK) {
             str << ":CODE";
         }
-        if(font_flags & mdparser::T_ITALIC) {
+        if (font_flags & mdparser::T_ITALIC) {
             str << ":ITALIC";
         }
-        if(font_flags & mdparser::T_BOLD) {
+        if (font_flags & mdparser::T_BOLD) {
             str << ":BOLD";
         }
-        if(font_flags & mdparser::T_STRIKE) {
+        if (font_flags & mdparser::T_STRIKE) {
             str << ":STRIKE";
         }
-        if(font_flags & mdparser::T_H1) {
+        if (font_flags & mdparser::T_H1) {
             str << ":H1";
         }
-        if(font_flags & mdparser::T_H2) {
+        if (font_flags & mdparser::T_H2) {
             str << ":H2";
         }
-        if(font_flags & mdparser::T_H3) {
+        if (font_flags & mdparser::T_H3) {
             str << ":H3";
         }
         str << "}";

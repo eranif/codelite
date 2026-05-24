@@ -88,8 +88,8 @@ void clGenericNotebook::PositionControls()
     Layout();
 }
 
-clGenericNotebook::clGenericNotebook(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                     long style, const wxString& name)
+clGenericNotebook::clGenericNotebook(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style, const wxString& name)
     : wxPanel(parent, id, pos, size, wxWANTS_CHARS | wxTAB_TRAVERSAL | (style & wxWINDOW_STYLE_MASK), name)
 {
     static bool once = false;
@@ -116,16 +116,14 @@ clGenericNotebook::~clGenericNotebook()
     EventNotifier::Get()->Unbind(wxEVT_EDITOR_SETTINGS_CHANGED, &clGenericNotebook::OnPreferencesChanged, this);
 }
 
-void clGenericNotebook::AddPage(wxWindow* page, const wxString& label, bool selected, int bitmapId,
-                                const wxString& shortLabel)
-{
-    InsertPage(GetPageCount(), page, label, selected, bitmapId, shortLabel);
-}
+void clGenericNotebook::AddPage(
+    wxWindow* page, const wxString& label, bool selected, int bitmapId, const wxString& shortLabel)
+{ InsertPage(GetPageCount(), page, label, selected, bitmapId, shortLabel); }
 
 void clGenericNotebook::DoChangeSelection(wxWindow* page) { m_windows->Select(page); }
 
-bool clGenericNotebook::InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected, int bitmapId,
-                                   const wxString& shortLabel)
+bool clGenericNotebook::InsertPage(
+    size_t index, wxWindow* page, const wxString& label, bool selected, int bitmapId, const wxString& shortLabel)
 {
     clTabInfo::Ptr_t tab(new clTabInfo(m_tabCtrl, GetStyle(), page, label, bitmapId));
     tab->SetShortLabel(shortLabel.IsEmpty() ? label : shortLabel);
@@ -176,9 +174,7 @@ void clGenericNotebook::SetTabDirection(wxDirection d)
 }
 
 bool clGenericNotebook::MoveActivePage(int newIndex)
-{
-    return m_tabCtrl->MoveActiveToIndex(newIndex, GetSelection() > newIndex ? eDirection::kLeft : eDirection::kRight);
-}
+{ return m_tabCtrl->MoveActiveToIndex(newIndex, GetSelection() > newIndex ? eDirection::kLeft : eDirection::kRight); }
 
 void clGenericNotebook::OnSize(wxSizeEvent& event) { event.Skip(); }
 
@@ -262,7 +258,7 @@ void clTabCtrl::OnActivateApp(wxActivateEvent& e)
 
 void clTabCtrl::DoSetBestSize()
 {
-    wxBitmap bmp{ 1, 1 };
+    wxBitmap bmp{1, 1};
     wxMemoryDC memDC(bmp);
     wxGCDC gcdc;
     wxDC& dc = DrawingUtils::GetGCDC(memDC, gcdc);
@@ -441,8 +437,16 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
         clTabColours* pColours = &m_colours;
         clTabColours user_colours;
 
-        m_art->Draw(this, gcdc, gcdc, *tab.get(), i, activeTabIndex, (*pColours), m_style,
-                    tabHit == i ? eButtonState::kHover : eButtonState::kNormal, tab->m_xButtonState);
+        m_art->Draw(this,
+                    gcdc,
+                    gcdc,
+                    *tab.get(),
+                    i,
+                    activeTabIndex,
+                    (*pColours),
+                    m_style,
+                    tabHit == i ? eButtonState::kHover : eButtonState::kNormal,
+                    tab->m_xButtonState);
     }
 
     if (!activeTab) {
@@ -452,8 +456,16 @@ void clTabCtrl::OnPaint(wxPaintEvent& e)
     }
 
     // Redraw the active tab
-    m_art->Draw(this, gcdc, gcdc, *activeTab.get(), activeTabIndex, activeTabIndex, activeTabColours, m_style,
-                eButtonState::kNormal, activeTab->m_xButtonState);
+    m_art->Draw(this,
+                gcdc,
+                gcdc,
+                *activeTab.get(),
+                activeTabIndex,
+                activeTabIndex,
+                activeTabColours,
+                m_style,
+                eButtonState::kNormal,
+                activeTab->m_xButtonState);
     gcdc.DestroyClippingRegion();
     m_art->FinaliseBackground(this, gcdc, clientRect, activeTab->GetRect(), m_colours, m_style);
 }
@@ -1073,8 +1085,9 @@ void clTabCtrl::DoShowTabList()
     }
 
     if (EditorConfigST::Get()->GetOptions()->IsSortTabsDropdownAlphabetically()) {
-        std::sort(sortedIndexes.begin(), sortedIndexes.end(),
-                  [this](size_t i1, size_t i2) { return m_tabs[i1]->m_label.CmpNoCase(m_tabs[i2]->m_label) < 0; });
+        std::sort(sortedIndexes.begin(), sortedIndexes.end(), [this](size_t i1, size_t i2) {
+            return m_tabs[i1]->m_label.CmpNoCase(m_tabs[i2]->m_label) < 0;
+        });
     }
 
     for (auto sortedIndex : sortedIndexes) {
@@ -1286,11 +1299,11 @@ void clTabCtrl::OnLeftDClick(wxMouseEvent& event)
     }
 }
 
-void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
+void clTabCtrl::DoDrawBottomBox(clTabInfo::Ptr_t activeTab,
+                                const wxRect& clientRect,
+                                wxDC& dc,
                                 const clTabColours& colours)
-{
-    GetArt()->DrawBottomRect(this, activeTab, clientRect, dc, colours, GetStyle());
-}
+{ GetArt()->DrawBottomRect(this, activeTab, clientRect, dc, colours, GetStyle()); }
 
 bool clTabCtrl::IsVerticalTabs() const { return false; }
 
@@ -1352,7 +1365,7 @@ size_t clTabCtrl::GetLabelFixedWidth(wxDC& dc) const
 
 size_t clTabCtrl::GetLabelFixedWidth() const
 {
-    wxBitmap bmp{ 1, 1 };
+    wxBitmap bmp{1, 1};
     wxMemoryDC memDC(bmp);
     wxGCDC gcdc;
     wxDC& dc = DrawingUtils::GetGCDC(memDC, gcdc);
@@ -1386,7 +1399,7 @@ void clTabCtrl::PositionFilelistButton()
         return;
     }
 
-    wxBitmap bmp{ 1, 1 };
+    wxBitmap bmp{1, 1};
     wxMemoryDC memDC(bmp);
     wxGCDC gcdc;
     wxDC& cdc = DrawingUtils::GetGCDC(memDC, gcdc);
@@ -1427,7 +1440,7 @@ void clTabCtrl::PositionFilelistButton()
     m_fileListButton->SetColours(colours);
 #if wxUSE_NATIVE_BUTTON
     m_fileListButton->SetSize(wxNOT_FOUND, GetClientRect().GetHeight());
-    wxPoint pos{ GetClientRect().GetWidth() - m_fileListButton->GetSize().GetWidth(), 0 };
+    wxPoint pos{GetClientRect().GetWidth() - m_fileListButton->GetSize().GetWidth(), 0};
     m_fileListButton->Move(pos);
 #else
     m_fileListButton->SetSize(button_rect.GetSize());
@@ -1486,8 +1499,8 @@ bool clTabCtrlDropTarget::OnDropText(wxCoord x, wxCoord y, const wxString& data)
         if (realPos == wxNOT_FOUND) {
             targetBook->AddPage(movingTab->GetWindow(), movingTab->GetLabel(), true, movingTab->GetBitmap());
         } else {
-            targetBook->InsertPage(realPos, movingTab->GetWindow(), movingTab->GetLabel(), true,
-                                   movingTab->GetBitmap());
+            targetBook->InsertPage(
+                realPos, movingTab->GetWindow(), movingTab->GetLabel(), true, movingTab->GetBitmap());
         }
         return true;
     } else if (m_notebook) {

@@ -251,9 +251,7 @@ public:
     }
 
     void SetLogSink(std::function<void(const wxString, const wxString&, Manager::LogLevel)> logsink)
-    {
-        m_logsink = std::move(logsink);
-    }
+    { m_logsink = std::move(logsink); }
 
 protected:
     void OnSignatureHelp(LSPEvent& event);

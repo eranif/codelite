@@ -37,7 +37,7 @@ Builder::Builder(const wxString& name)
 {
     // Override values from configuration file
     BuilderConfigPtr config = BuildSettingsConfigST::Get()->GetBuilderConfig(m_name);
-    if(config) {
+    if (config) {
         m_isActive = config->GetIsActive();
 
     } else {
@@ -70,7 +70,7 @@ Builder::OptimalBuildConfig Builder::GetOptimalBuildConfig(const wxString& proje
     conf.outputFile = "$(IntermediateDirectory)/";
     conf.command = "$(OutputFile)";
 
-    if(projectType == PROJECT_TYPE_STATIC_LIBRARY || projectType == PROJECT_TYPE_DYNAMIC_LIBRARY) {
+    if (projectType == PROJECT_TYPE_STATIC_LIBRARY || projectType == PROJECT_TYPE_DYNAMIC_LIBRARY) {
         conf.outputFile << "lib";
     }
     conf.outputFile << "$(ProjectName)" << GetOutputFileSuffix(projectType);
@@ -80,13 +80,13 @@ Builder::OptimalBuildConfig Builder::GetOptimalBuildConfig(const wxString& proje
 
 wxString Builder::GetOutputFileSuffix(const wxString& projectType) const
 {
-    if(projectType == PROJECT_TYPE_EXECUTABLE) {
+    if (projectType == PROJECT_TYPE_EXECUTABLE) {
 #ifdef __WXMSW__
         return ".exe";
 #endif
-    } else if(projectType == PROJECT_TYPE_STATIC_LIBRARY) {
+    } else if (projectType == PROJECT_TYPE_STATIC_LIBRARY) {
         return GetStaticLibSuffix();
-    } else if(projectType == PROJECT_TYPE_DYNAMIC_LIBRARY) {
+    } else if (projectType == PROJECT_TYPE_DYNAMIC_LIBRARY) {
 #ifdef __WXMSW__
         return ".dll";
 #elif defined(__WXGTK__)

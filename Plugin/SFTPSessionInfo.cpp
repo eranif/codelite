@@ -42,7 +42,7 @@ void SFTPSessionInfo::RemoveFile(const wxString& path)
 {
     std::vector<wxString>::iterator iter =
         std::find_if(m_files.begin(), m_files.end(), [&](const wxString& file) { return path == file; });
-    if(iter != m_files.end()) {
+    if (iter != m_files.end()) {
         clDEBUG() << "SFTP session: removing file:" << path << "from session:" << GetAccount();
         m_files.erase(iter);
     }
@@ -52,7 +52,7 @@ void SFTPSessionInfo::AddFile(const wxString& path)
 {
     std::vector<wxString>::iterator iter =
         std::find_if(m_files.begin(), m_files.end(), [&](const wxString& file) { return path == file; });
-    if(iter == m_files.end()) {
+    if (iter == m_files.end()) {
         clDEBUG() << "SFTP session: adding file:" << path << "to session:" << GetAccount();
         m_files.push_back(path);
     }
@@ -70,7 +70,7 @@ void SFTPSessionInfoList::FromJSON(const JSONItem& json)
 {
     m_sessions.clear();
     int arrSize = json.arraySize();
-    for(int i = 0; i < arrSize; ++i) {
+    for (int i = 0; i < arrSize; ++i) {
         JSONItem o = json.arrayItem(i);
         SFTPSessionInfo sess;
         sess.FromJSON(o);
@@ -104,7 +104,7 @@ SFTPSessionInfoList& SFTPSessionInfoList::Save()
 SFTPSessionInfo& SFTPSessionInfoList::GetSession(const wxString& accountName)
 {
     SFTPSessionInfo::Map_t::iterator iter = m_sessions.find(accountName);
-    if(iter == m_sessions.end()) {
+    if (iter == m_sessions.end()) {
         static SFTPSessionInfo NullSession;
         return NullSession;
     }
@@ -113,10 +113,10 @@ SFTPSessionInfo& SFTPSessionInfoList::GetSession(const wxString& accountName)
 
 SFTPSessionInfoList& SFTPSessionInfoList::SetSession(const SFTPSessionInfo& sess)
 {
-    if(sess.GetAccount().IsEmpty()) {
+    if (sess.GetAccount().IsEmpty()) {
         return *this;
     }
-    if(m_sessions.count(sess.GetAccount())) {
+    if (m_sessions.count(sess.GetAccount())) {
         m_sessions.erase(sess.GetAccount());
     }
     m_sessions[sess.GetAccount()] = sess;

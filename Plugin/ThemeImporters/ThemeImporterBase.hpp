@@ -133,33 +133,59 @@ private:
     };
 
 protected:
-    void AddProperty(LexerConf::Ptr_t lexer, const wxString& id, const wxString& name, const wxString& colour,
-                     const wxString& bgColour, bool bold = false, bool italic = false, bool isEOLFilled = false);
+    void AddProperty(LexerConf::Ptr_t lexer,
+                     const wxString& id,
+                     const wxString& name,
+                     const wxString& colour,
+                     const wxString& bgColour,
+                     bool bold = false,
+                     bool italic = false,
+                     bool isEOLFilled = false);
 
     void AddPropertySubstyle(LexerConf::Ptr_t lexer, int id, const wxString& name, const Property& prop);
 
     void AddProperty(LexerConf::Ptr_t lexer, const wxString& id, const wxString& name, const Property& prop)
     {
-        AddProperty(lexer, id, name, prop.fg_colour, prop.bg_colour.empty() ? m_editor.bg_colour : prop.bg_colour,
-                    prop.isBold, prop.isItalic, false);
+        AddProperty(lexer,
+                    id,
+                    name,
+                    prop.fg_colour,
+                    prop.bg_colour.empty() ? m_editor.bg_colour : prop.bg_colour,
+                    prop.isBold,
+                    prop.isItalic,
+                    false);
     }
 
     void AddProperty(LexerConf::Ptr_t lexer, int id, const wxString& name, const Property& prop)
-    {
-        AddProperty(lexer, wxString() << id, name, prop);
-    }
+    { AddProperty(lexer, wxString() << id, name, prop); }
 
-    void AddProperty(LexerConf::Ptr_t lexer, int id, const wxString& name, const wxString& colour,
-                     const wxString& bgColour, bool bold = false, bool italic = false, bool isEOLFilled = false)
-    {
-        AddProperty(lexer, wxString() << id, name, colour, bgColour, bold, italic, isEOLFilled);
-    }
+    void AddProperty(LexerConf::Ptr_t lexer,
+                     int id,
+                     const wxString& name,
+                     const wxString& colour,
+                     const wxString& bgColour,
+                     bool bold = false,
+                     bool italic = false,
+                     bool isEOLFilled = false)
+    { AddProperty(lexer, wxString() << id, name, colour, bgColour, bold, italic, isEOLFilled); }
 
-    void AddProperty(LexerConf::Ptr_t lexer, int id, const wxString& name, const wxColour& colour,
-                     const wxColour& bgColour, bool bold = false, bool italic = false, bool isEOLFilled = false)
+    void AddProperty(LexerConf::Ptr_t lexer,
+                     int id,
+                     const wxString& name,
+                     const wxColour& colour,
+                     const wxColour& bgColour,
+                     bool bold = false,
+                     bool italic = false,
+                     bool isEOLFilled = false)
     {
-        AddProperty(lexer, wxString() << id, name, colour.GetAsString(wxC2S_HTML_SYNTAX),
-                    bgColour.GetAsString(wxC2S_HTML_SYNTAX), bold, italic, isEOLFilled);
+        AddProperty(lexer,
+                    wxString() << id,
+                    name,
+                    colour.GetAsString(wxC2S_HTML_SYNTAX),
+                    bgColour.GetAsString(wxC2S_HTML_SYNTAX),
+                    bold,
+                    italic,
+                    isEOLFilled);
     }
 
     void AddBaseProperties(LexerConf::Ptr_t lexer, const wxString& lang, const wxString& id);
@@ -170,18 +196,21 @@ protected:
     LexerConf::Ptr_t ImportVSCodeJSON(const wxFileName& theme_file, const wxString& langName, int langId);
     LexerConf::Ptr_t ImportAlacrittyThemeYAML(const wxFileName& theme_file, const wxString& langName, int langId);
     LexerConf::Ptr_t ImportAlacrittyThemeToml(const wxFileName& theme_file, const wxString& langName, int langId);
-    void GetVSCodeColour(const std::unordered_map<wxString, VSCodeScope>& lookup, const std::vector<wxString>& scopes,
+    void GetVSCodeColour(const std::unordered_map<wxString, VSCodeScope>& lookup,
+                         const std::vector<wxString>& scopes,
                          Property& colour);
-    void GetEditorVSCodeColour(const std::unordered_map<std::string_view, JSONItem>& colours, const wxString& bg_prop,
-                               const wxString& fg_prop, Property& colour);
+    void GetEditorVSCodeColour(const std::unordered_map<std::string_view, JSONItem>& colours,
+                               const wxString& bg_prop,
+                               const wxString& fg_prop,
+                               Property& colour);
 
 private:
     /**
      * @brief read the background / foreground properties from the XML into `prop`
      * if a property is not found, we use the `m_editor` proprties
      */
-    void GetEclipseXmlProperty(const wxString& bg_prop, const wxString& fg_prop,
-                               ThemeImporterBase::Property& prop) const;
+    void
+    GetEclipseXmlProperty(const wxString& bg_prop, const wxString& fg_prop, ThemeImporterBase::Property& prop) const;
 
     LexerConf::Ptr_t ImportAlacrittyThemeBase(AlacrittyColours& colours, const wxString& langName, int langId);
 

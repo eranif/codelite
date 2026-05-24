@@ -10,7 +10,7 @@ LSPNetworkSocketClient::~LSPNetworkSocketClient() { Close(); }
 
 void LSPNetworkSocketClient::Close()
 {
-    if(m_lspServer) {
+    if (m_lspServer) {
         m_lspServer->Detach();
     }
     wxDELETE(m_lspServer);
@@ -23,15 +23,15 @@ void LSPNetworkSocketClient::Open(const LSPStartupInfo& info)
 {
     m_startupInfo = info;
     // Start the process
-    if(m_startupInfo.GetFlags() & LSPStartupInfo::kAutoStart) {
+    if (m_startupInfo.GetFlags() & LSPStartupInfo::kAutoStart) {
         wxString cmd = BuildCommand(m_startupInfo.GetLspServerCommand());
         // if remote is enabled for this LSP, start it on the remote machine
-        if(m_startupInfo.GetFlags() & LSPStartupInfo::kRemoteLSP) {
+        if (m_startupInfo.GetFlags() & LSPStartupInfo::kRemoteLSP) {
             throw clException("Executing LSP over SSH is enabled only for STDIO based LSPs");
         } else {
             m_lspServer = ::CreateAsyncProcess(this, cmd, IProcessCreateDefault, m_startupInfo.GetWorkingDirectory());
         }
-        if(!m_lspServer) {
+        if (!m_lspServer) {
             throw clException(wxString() << "Failed to execute process: " << cmd);
         }
 
@@ -53,7 +53,7 @@ void LSPNetworkSocketClient::Open(const LSPStartupInfo& info)
 
 void LSPNetworkSocketClient::Send(const std::string& data)
 {
-    if(m_socket) {
+    if (m_socket) {
         m_socket->Send(data);
     } else {
         LSP_DEBUG() << "LSP socket: no socket !?";

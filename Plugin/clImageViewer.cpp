@@ -9,7 +9,7 @@ clImageViewer::clImageViewer(wxWindow* parent, const wxFileName& filename)
 {
     // Construct a bitmap
     wxBitmap bmp;
-    if(bmp.LoadFile(filename.GetFullPath(), wxBITMAP_TYPE_ANY)) {
+    if (bmp.LoadFile(filename.GetFullPath(), wxBITMAP_TYPE_ANY)) {
         m_bitmap = bmp;
         m_staticBitmap->SetBitmap(m_bitmap);
     }

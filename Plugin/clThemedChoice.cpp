@@ -8,9 +8,7 @@
 #endif
 
 clThemedChoice::~clThemedChoice()
-{
-    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedChoice::OnThemeChanged, this);
-}
+{ EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clThemedChoice::OnThemeChanged, this); }
 
 bool clThemedChoice::Create(wxWindow* parent,
                             wxWindowID id,

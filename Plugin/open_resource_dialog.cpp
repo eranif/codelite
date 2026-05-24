@@ -506,8 +506,6 @@ void OpenResourceDialog::GetLineAndColumnFromFilter(const wxString& filter,
 }
 
 OpenResourceDialogItemData* OpenResourceDialog::GetItemData(const wxDataViewItem& item) const
-{
-    return reinterpret_cast<OpenResourceDialogItemData*>(m_dataview->GetItemData(item));
-}
+{ return reinterpret_cast<OpenResourceDialogItemData*>(m_dataview->GetItemData(item)); }
 
 void OpenResourceDialog::OnSelectAllText() { m_textCtrlResourceName->SelectAll(); }

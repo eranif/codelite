@@ -61,7 +61,7 @@ long PipedProcess::Start(bool hide)
 {
     Redirect();
     long flags = wxEXEC_ASYNC | wxEXEC_MAKE_GROUP_LEADER;
-    if(!hide) {
+    if (!hide) {
         flags |= wxEXEC_NOHIDE;
     }
 
@@ -74,16 +74,16 @@ bool PipedProcess::HasInput(wxString& input)
 {
     bool hasInput = false;
     bool cont1(true), cont2(true);
-    while(cont1 || cont2) {
+    while (cont1 || cont2) {
         cont1 = false;
         cont2 = false;
-        while(IsInputAvailable()) {
+        while (IsInputAvailable()) {
             wxTextInputStream tis(*GetInputStream());
             // this assumes that the output is always line buffered
             wxChar ch = tis.GetChar();
             input << ch;
             hasInput = true;
-            if(ch == wxT('\n')) {
+            if (ch == wxT('\n')) {
                 cont1 = false;
                 break;
             } else {
@@ -91,13 +91,13 @@ bool PipedProcess::HasInput(wxString& input)
             }
         }
 
-        while(IsErrorAvailable()) {
+        while (IsErrorAvailable()) {
             wxTextInputStream tis(*GetErrorStream());
             // this assumes that the output is always line buffered
             wxChar ch = tis.GetChar();
             input << ch;
             hasInput = true;
-            if(ch == wxT('\n')) {
+            if (ch == wxT('\n')) {
                 cont2 = false;
                 break;
             } else {
@@ -115,10 +115,10 @@ bool PipedProcess::ReadAll(wxString& input)
 
     wxTextInputStream tis(*GetInputStream());
     wxTextInputStream tie(*GetErrorStream());
-    while(cont1 || cont2) {
+    while (cont1 || cont2) {
         cont1 = false;
         cont2 = false;
-        while(IsInputAvailable()) {
+        while (IsInputAvailable()) {
             // this assumes that the output is always line buffered
             wxChar ch = tis.GetChar();
             input << ch;
@@ -126,7 +126,7 @@ bool PipedProcess::ReadAll(wxString& input)
             cont1 = true;
         }
 
-        while(IsErrorAvailable()) {
+        while (IsErrorAvailable()) {
             // this assumes that the output is always line buffered
             wxChar ch = tie.GetChar();
             input << ch;

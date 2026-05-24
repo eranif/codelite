@@ -31,7 +31,7 @@ clTreeCtrlModel::~clTreeCtrlModel()
 
 void clTreeCtrlModel::GetNextItems(clRowEntry* from, int count, clRowEntry::Vec_t& items, bool selfIncluded) const
 {
-    if(count < 0) {
+    if (count < 0) {
         count = 0;
     }
     items.reserve(count);
@@ -39,18 +39,16 @@ void clTreeCtrlModel::GetNextItems(clRowEntry* from, int count, clRowEntry::Vec_
 }
 
 void clTreeCtrlModel::GetPrevItems(clRowEntry* from, int count, clRowEntry::Vec_t& items, bool selfIncluded) const
-{
-    return from->GetPrevItems(count, items, selfIncluded);
-}
+{ return from->GetPrevItems(count, items, selfIncluded); }
 
 wxTreeItemId clTreeCtrlModel::AddRoot(const wxString& text, int image, int selImage, wxTreeItemData* data)
 {
-    if(m_root) {
+    if (m_root) {
         return wxTreeItemId(m_root);
     }
     m_root = new clRowEntry(m_tree, text, image, selImage);
     m_root->SetClientData(data);
-    if(m_tree->GetTreeStyle() & wxTR_HIDE_ROOT) {
+    if (m_tree->GetTreeStyle() & wxTR_HIDE_ROOT) {
         m_root->SetHidden(true);
         m_root->SetExpanded(true);
     }
@@ -59,7 +57,7 @@ wxTreeItemId clTreeCtrlModel::AddRoot(const wxString& text, int image, int selIm
 
 wxTreeItemId clTreeCtrlModel::GetRootItem() const
 {
-    if(!m_root) {
+    if (!m_root) {
         return wxTreeItemId();
     }
     return wxTreeItemId(const_cast<clRowEntry*>(m_root));
@@ -67,7 +65,7 @@ wxTreeItemId clTreeCtrlModel::GetRootItem() const
 
 void clTreeCtrlModel::UnselectAll()
 {
-    for(size_t i = 0; i < m_selectedItems.size(); ++i) {
+    for (size_t i = 0; i < m_selectedItems.size(); ++i) {
         m_selectedItems[i]->SetSelected(false);
     }
     m_selectedItems.clear();
@@ -76,22 +74,22 @@ void clTreeCtrlModel::UnselectAll()
 void clTreeCtrlModel::SelectItem(const wxTreeItemId& item, bool select_it, bool addSelection, bool clear_old_selection)
 {
     clRowEntry* child = ToPtr(item);
-    if(!child)
+    if (!child)
         return;
 
-    if(child->IsHidden()) {
-        return;
-    }
-
-    if(clear_old_selection && !ClearSelections(item != GetSingleSelection())) {
+    if (child->IsHidden()) {
         return;
     }
 
-    if(select_it) {
+    if (clear_old_selection && !ClearSelections(item != GetSingleSelection())) {
+        return;
+    }
+
+    if (select_it) {
         clRowEntry::Vec_t::iterator iter =
             std::find_if(m_selectedItems.begin(), m_selectedItems.end(), [&](clRowEntry* p) { return (p == child); });
         // If the item is already selected, don't select it again
-        if(iter != m_selectedItems.end()) {
+        if (iter != m_selectedItems.end()) {
             return;
         }
     }
@@ -99,27 +97,27 @@ void clTreeCtrlModel::SelectItem(const wxTreeItemId& item, bool select_it, bool 
     // Fire an event only if there was no selection prior to this item
     bool fire_event = (m_selectedItems.empty() && select_it);
 
-    if(IsMultiSelection() && addSelection) {
+    if (IsMultiSelection() && addSelection) {
         // If we are unselecting it, remove it from the array
-        if(!select_it) {
-            auto iter = std::find_if(m_selectedItems.begin(), m_selectedItems.end(),
-                                     [&](clRowEntry* p) { return (p == child); });
-            if(iter != m_selectedItems.end()) {
+        if (!select_it) {
+            auto iter = std::find_if(
+                m_selectedItems.begin(), m_selectedItems.end(), [&](clRowEntry* p) { return (p == child); });
+            if (iter != m_selectedItems.end()) {
                 m_selectedItems.erase(iter);
             }
         }
     } else {
         // user might veto the "unselect" operation
-        if(!ClearSelections(item != GetSingleSelection())) {
+        if (!ClearSelections(item != GetSingleSelection())) {
             return;
         }
     }
     child->SetSelected(select_it);
-    if(select_it) {
+    if (select_it) {
         m_selectedItems.push_back(child);
     }
 
-    if(fire_event) {
+    if (fire_event) {
         wxTreeEvent evt(wxEVT_TREE_SEL_CHANGED);
         evt.SetEventObject(m_tree);
         evt.SetItem(wxTreeItemId(child));
@@ -130,7 +128,7 @@ void clTreeCtrlModel::SelectItem(const wxTreeItemId& item, bool select_it, bool 
 void clTreeCtrlModel::Clear()
 {
     m_selectedItems.clear();
-    for(size_t i = 0; i < m_onScreenItems.size(); ++i) {
+    for (size_t i = 0; i < m_onScreenItems.size(); ++i) {
         m_onScreenItems[i]->ClearRects();
     }
     m_onScreenItems.clear();
@@ -139,11 +137,11 @@ void clTreeCtrlModel::Clear()
 void clTreeCtrlModel::SetOnScreenItems(const clRowEntry::Vec_t& items)
 {
     // Clear the old visible items. But only, if the item does not appear in both lists
-    for(size_t i = 0; i < m_onScreenItems.size(); ++i) {
+    for (size_t i = 0; i < m_onScreenItems.size(); ++i) {
         clRowEntry* visibleItem = m_onScreenItems[i];
         clRowEntry::Vec_t::const_iterator iter =
             std::find_if(items.begin(), items.end(), [&](clRowEntry* item) { return item == visibleItem; });
-        if(iter == items.end()) {
+        if (iter == items.end()) {
             m_onScreenItems[i]->ClearRects();
         }
     }
@@ -153,13 +151,13 @@ void clTreeCtrlModel::SetOnScreenItems(const clRowEntry::Vec_t& items)
 bool clTreeCtrlModel::ExpandToItem(const wxTreeItemId& item)
 {
     clRowEntry* child = ToPtr(item);
-    if(!child) {
+    if (!child) {
         return false;
     }
 
     clRowEntry* parent = child->GetParent();
-    while(parent) {
-        if(!parent->SetExpanded(true)) {
+    while (parent) {
+        if (!parent->SetExpanded(true)) {
             return false;
         }
         parent = parent->GetParent();
@@ -167,11 +165,11 @@ bool clTreeCtrlModel::ExpandToItem(const wxTreeItemId& item)
     return true;
 }
 
-wxTreeItemId clTreeCtrlModel::AppendItem(const wxTreeItemId& parent, const wxString& text, int image, int selImage,
-                                         wxTreeItemData* data)
+wxTreeItemId clTreeCtrlModel::AppendItem(
+    const wxTreeItemId& parent, const wxString& text, int image, int selImage, wxTreeItemData* data)
 {
     clRowEntry* parentNode = nullptr;
-    if(!parent.IsOk()) {
+    if (!parent.IsOk()) {
         return wxTreeItemId();
     }
     parentNode = ToPtr(parent);
@@ -180,14 +178,14 @@ wxTreeItemId clTreeCtrlModel::AppendItem(const wxTreeItemId& parent, const wxStr
     child->SetClientData(data);
     // Find the best insertion point
     clRowEntry* prevItem = nullptr;
-    if(!parentNode->IsRoot() && (m_tree->GetTreeStyle() & wxTR_SORT_TOP_LEVEL)) {
+    if (!parentNode->IsRoot() && (m_tree->GetTreeStyle() & wxTR_SORT_TOP_LEVEL)) {
         // We have been requested to sort top level items only
         parentNode->AddChild(child);
-    } else if(m_shouldInsertBeforeFunc != nullptr) {
+    } else if (m_shouldInsertBeforeFunc != nullptr) {
         const clRowEntry::Vec_t& children = parentNode->GetChildren();
         // Loop over the parent's children and add execute the compare function
-        for(int i = ((int)children.size() - 1); i >= 0; --i) {
-            if(!m_shouldInsertBeforeFunc(child, children[i])) {
+        for (int i = ((int)children.size() - 1); i >= 0; --i) {
+            if (!m_shouldInsertBeforeFunc(child, children[i])) {
                 // Our item should be placed _after_ children[i]s
                 prevItem = ToPtr(children[i]);
                 break;
@@ -200,19 +198,23 @@ wxTreeItemId clTreeCtrlModel::AppendItem(const wxTreeItemId& parent, const wxStr
     return wxTreeItemId(child);
 }
 
-wxTreeItemId clTreeCtrlModel::InsertItem(const wxTreeItemId& parent, const wxTreeItemId& previous, const wxString& text,
-                                         int image, int selImage, wxTreeItemData* data)
+wxTreeItemId clTreeCtrlModel::InsertItem(const wxTreeItemId& parent,
+                                         const wxTreeItemId& previous,
+                                         const wxString& text,
+                                         int image,
+                                         int selImage,
+                                         wxTreeItemData* data)
 {
-    if(!parent.IsOk()) {
+    if (!parent.IsOk()) {
         return wxTreeItemId();
     }
-    if(!previous.IsOk()) {
+    if (!previous.IsOk()) {
         return wxTreeItemId();
     }
 
     clRowEntry* pPrev = ToPtr(previous);
     clRowEntry* parentNode = ToPtr(parent);
-    if(pPrev != parentNode && pPrev->GetParent() != parentNode) {
+    if (pPrev != parentNode && pPrev->GetParent() != parentNode) {
         return wxTreeItemId();
     }
 
@@ -229,14 +231,14 @@ void clTreeCtrlModel::CollapseAllChildren(const wxTreeItemId& item) { DoExpandAl
 void clTreeCtrlModel::DoExpandAllChildren(const wxTreeItemId& item, bool expand)
 {
     clRowEntry* p = ToPtr(item);
-    if(!p) {
+    if (!p) {
         return;
     }
-    while(p) {
-        if(p->HasChildren()) {
-            if(expand && !p->IsExpanded()) {
+    while (p) {
+        if (p->HasChildren()) {
+            if (expand && !p->IsExpanded()) {
                 p->SetExpanded(true);
-            } else if(!expand && p->IsExpanded()) {
+            } else if (!expand && p->IsExpanded()) {
                 p->SetExpanded(false);
             }
         }
@@ -245,19 +247,15 @@ void clTreeCtrlModel::DoExpandAllChildren(const wxTreeItemId& item, bool expand)
 }
 
 wxTreeItemId clTreeCtrlModel::GetItemBefore(const wxTreeItemId& item, bool visibleItem) const
-{
-    return wxTreeItemId(GetRowBefore(ToPtr(item), visibleItem));
-}
+{ return wxTreeItemId(GetRowBefore(ToPtr(item), visibleItem)); }
 
 wxTreeItemId clTreeCtrlModel::GetItemAfter(const wxTreeItemId& item, bool visibleItem) const
-{
-    return wxTreeItemId(GetRowAfter(ToPtr(item), visibleItem));
-}
+{ return wxTreeItemId(GetRowAfter(ToPtr(item), visibleItem)); }
 
 void clTreeCtrlModel::DeleteItem(const wxTreeItemId& item)
 {
     clRowEntry* node = ToPtr(item);
-    if(!node) {
+    if (!node) {
         return;
     }
     node->DeleteAllChildren();
@@ -269,7 +267,7 @@ void clTreeCtrlModel::DeleteItem(const wxTreeItemId& item)
     SendEvent(event);
 
     // Delete the item itself
-    if(node->GetParent()) {
+    if (node->GetParent()) {
         node->GetParent()->DeleteChild(node);
     } else {
         // The root item
@@ -283,11 +281,11 @@ void clTreeCtrlModel::NodeDeleted(clRowEntry* node)
     {
         clRowEntry::Vec_t::iterator iter =
             std::find_if(m_selectedItems.begin(), m_selectedItems.end(), [&](clRowEntry* n) { return n == node; });
-        if(iter != m_selectedItems.end()) {
+        if (iter != m_selectedItems.end()) {
             m_selectedItems.erase(iter);
-            if(m_selectedItems.empty()) {
+            if (m_selectedItems.empty()) {
                 // Don't leave the tree without a selected item
-                if(node->GetNext()) {
+                if (node->GetNext()) {
                     SelectItem(wxTreeItemId(node->GetNext()));
                 }
             }
@@ -297,17 +295,17 @@ void clTreeCtrlModel::NodeDeleted(clRowEntry* node)
     {
         clRowEntry::Vec_t::iterator iter =
             std::find_if(m_onScreenItems.begin(), m_onScreenItems.end(), [&](clRowEntry* n) { return n == node; });
-        if(iter != m_onScreenItems.end()) {
+        if (iter != m_onScreenItems.end()) {
             m_onScreenItems.erase(iter);
         }
     }
     {
-        if(m_firstItemOnScreen == node) {
+        if (m_firstItemOnScreen == node) {
             m_firstItemOnScreen = nullptr;
         }
     }
     {
-        if(m_root == node) {
+        if (m_root == node) {
             m_root = nullptr;
         }
     }
@@ -336,7 +334,7 @@ bool clTreeCtrlModel::IsMultiSelection() const { return m_tree && (m_tree->GetTr
 
 bool clTreeCtrlModel::SendEvent(wxEvent& event)
 {
-    if(m_shutdown) {
+    if (m_shutdown) {
         return false;
     }
     return m_tree->GetEventHandler()->ProcessEvent(event);
@@ -344,7 +342,7 @@ bool clTreeCtrlModel::SendEvent(wxEvent& event)
 
 wxTreeItemId clTreeCtrlModel::GetSingleSelection() const
 {
-    if(m_selectedItems.empty()) {
+    if (m_selectedItems.empty()) {
         return wxTreeItemId();
     }
     return wxTreeItemId(m_selectedItems.back());
@@ -352,19 +350,19 @@ wxTreeItemId clTreeCtrlModel::GetSingleSelection() const
 
 int clTreeCtrlModel::GetItemIndex(clRowEntry* item) const
 {
-    if(item == NULL) {
+    if (item == NULL) {
         return wxNOT_FOUND;
     }
-    if(!m_root) {
+    if (!m_root) {
         return wxNOT_FOUND;
     }
     int counter = 0;
     clRowEntry* current = m_root;
-    while(current) {
-        if(current == item) {
+    while (current) {
+        if (current == item) {
             return counter;
         }
-        if(current->IsVisible()) {
+        if (current->IsVisible()) {
             ++counter;
         }
         current = current->GetNext();
@@ -375,18 +373,18 @@ int clTreeCtrlModel::GetItemIndex(clRowEntry* item) const
 bool clTreeCtrlModel::GetRange(clRowEntry* from, clRowEntry* to, clRowEntry::Vec_t& items) const
 {
     items.clear();
-    if(from == nullptr && to == nullptr) {
+    if (from == nullptr && to == nullptr) {
         return false;
     }
-    if(from == nullptr) {
+    if (from == nullptr) {
         items.push_back(to);
         return true;
     }
-    if(to == nullptr) {
+    if (to == nullptr) {
         items.push_back(from);
         return true;
     }
-    if(from == to) {
+    if (from == to) {
         items.push_back(from);
         return true;
     }
@@ -397,12 +395,12 @@ bool clTreeCtrlModel::GetRange(clRowEntry* from, clRowEntry* to, clRowEntry::Vec
     clRowEntry* start_item = index1 > index2 ? to : from;
     clRowEntry* end_item = index1 > index2 ? from : to;
     clRowEntry* current = start_item;
-    while(current) {
-        if(current == end_item) {
+    while (current) {
+        if (current == end_item) {
             items.push_back(current);
             break;
         }
-        if(current->IsVisible()) {
+        if (current->IsVisible()) {
             items.push_back(current);
         }
         current = current->GetNext();
@@ -412,7 +410,7 @@ bool clTreeCtrlModel::GetRange(clRowEntry* from, clRowEntry* to, clRowEntry::Vec
 
 size_t clTreeCtrlModel::GetExpandedLines() const
 {
-    if(!GetRoot()) {
+    if (!GetRoot()) {
         return 0;
     }
     return m_root->GetExpandedLines();
@@ -420,19 +418,19 @@ size_t clTreeCtrlModel::GetExpandedLines() const
 
 clRowEntry* clTreeCtrlModel::GetItemFromIndex(int index) const
 {
-    if(index < 0) {
+    if (index < 0) {
         return nullptr;
     }
-    if(!m_root) {
+    if (!m_root) {
         return nullptr;
     }
     int curIndex = -1;
     clRowEntry* current = m_root;
-    while(current) {
-        if(current->IsVisible()) {
+    while (current) {
+        if (current->IsVisible()) {
             ++curIndex;
         }
-        if(curIndex == index) {
+        if (curIndex == index) {
             return current;
         }
         current = current->GetNext();
@@ -443,11 +441,11 @@ clRowEntry* clTreeCtrlModel::GetItemFromIndex(int index) const
 void clTreeCtrlModel::SelectChildren(const wxTreeItemId& item)
 {
     clRowEntry* parent = ToPtr(item);
-    if(!parent) {
+    if (!parent) {
         return;
     }
 
-    if(!ClearSelections(true)) {
+    if (!ClearSelections(true)) {
         return;
     }
     for (clRowEntry* child : parent->GetChildren()) {
@@ -457,11 +455,11 @@ void clTreeCtrlModel::SelectChildren(const wxTreeItemId& item)
 
 clRowEntry* clTreeCtrlModel::GetNextSibling(clRowEntry* item) const
 {
-    if(!item->GetParent()) {
+    if (!item->GetParent()) {
         return nullptr;
     }
     const clRowEntry::Vec_t& children = item->GetParent()->GetChildren();
-    if(children.empty()) {
+    if (children.empty()) {
         return nullptr;
     }
     // if we couldn't find 'item' in the children list or if it's the last child
@@ -473,11 +471,11 @@ clRowEntry* clTreeCtrlModel::GetNextSibling(clRowEntry* item) const
 
 clRowEntry* clTreeCtrlModel::GetPrevSibling(clRowEntry* item) const
 {
-    if(!item->GetParent()) {
+    if (!item->GetParent()) {
         return nullptr;
     }
     const clRowEntry::Vec_t& children = item->GetParent()->GetChildren();
-    if(children.empty()) {
+    if (children.empty()) {
         return nullptr;
     }
     // if we couldn't find item in the children list or if it's the first child
@@ -490,16 +488,16 @@ clRowEntry* clTreeCtrlModel::GetPrevSibling(clRowEntry* item) const
 void clTreeCtrlModel::AddSelection(const wxTreeItemId& item)
 {
     clRowEntry* child = ToPtr(item);
-    if(!child)
+    if (!child)
         return;
-    if(child->IsHidden()) {
+    if (child->IsHidden()) {
         return;
     }
 
     clRowEntry::Vec_t::iterator iter =
         std::find_if(m_selectedItems.begin(), m_selectedItems.end(), [&](clRowEntry* p) { return (p == child); });
     // If the item is already selected, don't select it again
-    if(iter != m_selectedItems.end()) {
+    if (iter != m_selectedItems.end()) {
         return;
     }
 
@@ -515,7 +513,7 @@ void clTreeCtrlModel::AddSelection(const wxTreeItemId& item)
     child->SetSelected(true);
     // Send 'SEL_CHANGED' event
     m_selectedItems.push_back(child);
-    if(m_selectedItems.size() == 1) {
+    if (m_selectedItems.size() == 1) {
         wxTreeEvent evt(wxEVT_TREE_SEL_CHANGED);
         evt.SetEventObject(m_tree);
         evt.SetItem(wxTreeItemId(child));
@@ -525,17 +523,17 @@ void clTreeCtrlModel::AddSelection(const wxTreeItemId& item)
 
 bool clTreeCtrlModel::ClearSelections(bool notify)
 {
-    if(m_selectedItems.empty()) {
+    if (m_selectedItems.empty()) {
         return true;
     }
 
-    if(notify) {
+    if (notify) {
         // Check if we can proceed with this operation
         wxTreeEvent evt(wxEVT_TREE_SEL_CHANGING);
         evt.SetEventObject(m_tree);
         evt.SetOldItem(GetSingleSelection());
         SendEvent(evt);
-        if(!evt.IsAllowed()) {
+        if (!evt.IsAllowed()) {
             return false;
         }
     }
@@ -545,10 +543,10 @@ bool clTreeCtrlModel::ClearSelections(bool notify)
 
 bool clTreeCtrlModel::IsItemSelected(const clRowEntry* item) const
 {
-    if(item == nullptr) {
+    if (item == nullptr) {
         return false;
     }
-    if(m_selectedItems.empty()) {
+    if (m_selectedItems.empty()) {
         return false;
     }
     clRowEntry::Vec_t::const_iterator iter =
@@ -558,7 +556,7 @@ bool clTreeCtrlModel::IsItemSelected(const clRowEntry* item) const
 
 bool clTreeCtrlModel::IsVisible(const wxTreeItemId& item) const
 {
-    if(!item.IsOk()) {
+    if (!item.IsOk()) {
         return false;
     }
     clRowEntry* entry = ToPtr(item);
@@ -570,12 +568,12 @@ bool clTreeCtrlModel::IsVisible(const wxTreeItemId& item) const
 clRowEntry* clTreeCtrlModel::GetRowBefore(clRowEntry* item, bool visibleItem) const
 {
     clRowEntry* curp = item;
-    if(!curp) {
+    if (!curp) {
         return nullptr;
     }
     curp = curp->GetPrev();
-    while(curp) {
-        if(visibleItem && !curp->IsVisible()) {
+    while (curp) {
+        if (visibleItem && !curp->IsVisible()) {
             curp = curp->GetPrev();
             continue;
         }
@@ -587,12 +585,12 @@ clRowEntry* clTreeCtrlModel::GetRowBefore(clRowEntry* item, bool visibleItem) co
 clRowEntry* clTreeCtrlModel::GetRowAfter(clRowEntry* item, bool visibleItem) const
 {
     clRowEntry* curp = item;
-    if(!curp) {
+    if (!curp) {
         return nullptr;
     }
     curp = curp->GetNext();
-    while(curp) {
-        if(visibleItem && !curp->IsVisible()) {
+    while (curp) {
+        if (visibleItem && !curp->IsVisible()) {
             curp = curp->GetNext();
             continue;
         }
@@ -604,12 +602,12 @@ clRowEntry* clTreeCtrlModel::GetRowAfter(clRowEntry* item, bool visibleItem) con
 clRowEntry* clTreeCtrlModel::GetLastVisibleItem() const
 {
     auto item = GetRoot();
-    if(!item) {
+    if (!item) {
         return nullptr;
     }
 
     // get the last child
-    while(item && item->HasChildren() && item->IsExpanded()) {
+    while (item && item->HasChildren() && item->IsExpanded()) {
         item = item->GetLastChild();
     }
     return item;

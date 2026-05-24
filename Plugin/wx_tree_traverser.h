@@ -26,8 +26,9 @@
 #ifndef WXTREETRAVERSER_H
 #define WXTREETRAVERSER_H
 
-#include "codelite_exports.h"
 #include "precompiled_header.h"
+
+#include "codelite_exports.h"
 
 class WXDLLIMPEXP_SDK wxTreeTraverser
 {

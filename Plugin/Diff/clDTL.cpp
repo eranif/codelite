@@ -35,7 +35,7 @@
 void clDTL::Diff(const wxFileName& fnLeft, const wxFileName& fnRight, DiffMode mode)
 {
     wxString leftFile, rightFile;
-    if(!FileUtils::ReadFileContent(fnLeft, leftFile) || !FileUtils::ReadFileContent(fnRight, rightFile))
+    if (!FileUtils::ReadFileContent(fnLeft, leftFile) || !FileUtils::ReadFileContent(fnRight, rightFile))
         return;
     DiffStrings(leftFile, rightFile, mode);
 }
@@ -61,12 +61,12 @@ void clDTL::DiffStrings(const wxString& before, const wxString& after, DiffMode 
     diff.onHuge();
     diff.compose();
 
-    if(0 == diff.getEditDistance()) {
+    if (0 == diff.getEditDistance()) {
         // nothing to be done - files are identical
         return;
     }
 
-    if(mode & clDTL::kTwoPanes) {
+    if (mode & clDTL::kTwoPanes) {
 
         ///////////////////////////////////////////////////////////////////
         // Two panes diff
@@ -89,10 +89,10 @@ void clDTL::DiffStrings(const wxString& before, const wxString& after, DiffMode 
         LineInfoVec_t tmpSeqLeft;
         LineInfoVec_t tmpSeqRight;
 
-        for(size_t i = 0; i < seq.size(); ++i) {
-            switch(seq.at(i).second.type) {
+        for (size_t i = 0; i < seq.size(); ++i) {
+            switch (seq.at(i).second.type) {
             case dtl::SES_COMMON: {
-                if(state == STATE_IN_SEQ) {
+                if (state == STATE_IN_SEQ) {
 
                     // set the sequence size
                     seqSize = ::wxMax(tmpSeqLeft.size(), tmpSeqRight.size());
@@ -121,7 +121,7 @@ void clDTL::DiffStrings(const wxString& before, const wxString& after, DiffMode 
                 clDTL::LineInfo lineRight(seq.at(i).first, LINE_ADDED);
                 tmpSeqRight.push_back(lineRight);
 
-                if(state == STATE_NONE) {
+                if (state == STATE_NONE) {
                     seqStartLine = m_resultLeft.size();
                     state = STATE_IN_SEQ;
                 }
@@ -131,7 +131,7 @@ void clDTL::DiffStrings(const wxString& before, const wxString& after, DiffMode 
                 clDTL::LineInfo lineLeft(seq.at(i).first, LINE_REMOVED);
                 tmpSeqLeft.push_back(lineLeft);
 
-                if(state == STATE_NONE) {
+                if (state == STATE_NONE) {
                     seqStartLine = m_resultLeft.size();
                     state = STATE_IN_SEQ;
                 }
@@ -140,10 +140,10 @@ void clDTL::DiffStrings(const wxString& before, const wxString& after, DiffMode 
             }
         }
 
-        if(state == STATE_IN_SEQ) {
+        if (state == STATE_IN_SEQ) {
             // set the sequence size
             seqSize = ::wxMax(tmpSeqLeft.size(), tmpSeqRight.size());
-            if(seqSize) {
+            if (seqSize) {
                 m_sequences.push_back(std::make_pair(seqStartLine, seqStartLine + seqSize));
                 seqStartLine = wxNOT_FOUND;
                 state = STATE_NONE;
@@ -168,10 +168,10 @@ void clDTL::DiffStrings(const wxString& before, const wxString& after, DiffMode 
         std::vector<sesElem> seq = diff.getSes().getSequence();
         m_resultLeft.reserve(seq.size());
         int seqStartLine = wxNOT_FOUND;
-        for(size_t i = 0; i < seq.size(); ++i) {
-            switch(seq.at(i).second.type) {
+        for (size_t i = 0; i < seq.size(); ++i) {
+            switch (seq.at(i).second.type) {
             case dtl::SES_COMMON: {
-                if(seqStartLine != wxNOT_FOUND) {
+                if (seqStartLine != wxNOT_FOUND) {
                     m_sequences.push_back(std::make_pair(seqStartLine, m_resultLeft.size()));
                     seqStartLine = wxNOT_FOUND;
                 }
@@ -180,7 +180,7 @@ void clDTL::DiffStrings(const wxString& before, const wxString& after, DiffMode 
                 break;
             }
             case dtl::SES_ADD: {
-                if(seqStartLine == wxNOT_FOUND) {
+                if (seqStartLine == wxNOT_FOUND) {
                     seqStartLine = m_resultLeft.size();
                 }
                 clDTL::LineInfo line(seq.at(i).first, LINE_ADDED);
@@ -188,7 +188,7 @@ void clDTL::DiffStrings(const wxString& before, const wxString& after, DiffMode 
                 break;
             }
             case dtl::SES_DELETE: {
-                if(seqStartLine == wxNOT_FOUND) {
+                if (seqStartLine == wxNOT_FOUND) {
                     seqStartLine = m_resultLeft.size();
                 }
                 clDTL::LineInfo line(seq.at(i).first, LINE_REMOVED);
@@ -198,7 +198,7 @@ void clDTL::DiffStrings(const wxString& before, const wxString& after, DiffMode 
             }
         }
 
-        if(seqStartLine != wxNOT_FOUND) {
+        if (seqStartLine != wxNOT_FOUND) {
             m_sequences.push_back(std::make_pair(seqStartLine, m_resultLeft.size()));
             seqStartLine = wxNOT_FOUND;
         }
@@ -227,14 +227,14 @@ std::vector<PatchStep> clDTL::CreatePatch(const wxString& before, const wxString
     int line = 0;
     std::vector<PatchStep> steps;
     steps.reserve(sesSeq.size() * 2);
-    for(auto sesIt = sesSeq.begin(); sesIt != sesSeq.end(); ++sesIt, ++line) {
-        switch(sesIt->second.type) {
+    for (auto sesIt = sesSeq.begin(); sesIt != sesSeq.end(); ++sesIt, ++line) {
+        switch (sesIt->second.type) {
         case dtl::SES_ADD: {
-            steps.push_back({ line, PatchAction::ADD_LINE, sesIt->first });
+            steps.push_back({line, PatchAction::ADD_LINE, sesIt->first});
             break;
         }
         case dtl::SES_DELETE: {
-            steps.push_back({ line, PatchAction::DELETE_LINE, wxEmptyString });
+            steps.push_back({line, PatchAction::DELETE_LINE, wxEmptyString});
             --line;
             break;
         }

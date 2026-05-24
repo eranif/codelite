@@ -10,12 +10,12 @@ clSnippetManager& clSnippetManager::Get()
 
 void clSnippetManager::Insert(wxStyledTextCtrl* ctrl, const wxString& snippet)
 {
-    if(!ctrl) {
+    if (!ctrl) {
         return;
     }
     // Support | for indicating where the caret should be placed
     int caret = snippet.Index('|');
-    if(caret != wxNOT_FOUND) {
+    if (caret != wxNOT_FOUND) {
         wxString before = snippet.Mid(0, caret);
         wxString after = snippet.Mid(caret + 1); // Skip the |
         caret = InsertTextSimple(ctrl, before);
@@ -30,12 +30,12 @@ void clSnippetManager::Insert(wxStyledTextCtrl* ctrl, const wxString& snippet)
 int clSnippetManager::InsertTextSimple(wxStyledTextCtrl* ctrl, const wxString& text)
 {
     int curpos = wxNOT_FOUND;
-    if(!ctrl->HasSelection()) {
+    if (!ctrl->HasSelection()) {
         curpos = ctrl->GetCurrentPos();
     } else {
         curpos = std::min(ctrl->GetSelectionStart(), ctrl->GetSelectionEnd());
     }
-    if(ctrl->HasSelection()) {
+    if (ctrl->HasSelection()) {
         ctrl->ReplaceSelection(text);
     } else {
         ctrl->InsertText(curpos, text);

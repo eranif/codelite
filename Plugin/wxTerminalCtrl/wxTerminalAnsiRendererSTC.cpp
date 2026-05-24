@@ -9,9 +9,7 @@ struct EditorEnabler {
     wxStyledTextCtrl* m_ctrl = nullptr;
     EditorEnabler(wxStyledTextCtrl* ctrl)
         : m_ctrl(ctrl)
-    {
-        m_ctrl->SetEditable(true);
-    }
+    { m_ctrl->SetEditable(true); }
     ~EditorEnabler() { m_ctrl->SetEditable(false); }
 };
 } // namespace
@@ -30,7 +28,7 @@ void wxTerminalAnsiRendererSTC::Bell() {}
 
 void wxTerminalAnsiRendererSTC::Backspace()
 {
-    if(m_pos.x > 0) {
+    if (m_pos.x > 0) {
         SetInsertionPoint();
         m_ctrl->ClearSelections(); // ensure 1 char is deleted
         m_ctrl->DeleteBack();
@@ -41,7 +39,7 @@ void wxTerminalAnsiRendererSTC::Backspace()
 
 void wxTerminalAnsiRendererSTC::InsertText(const wxString& str)
 {
-    EditorEnabler d{ m_ctrl };
+    EditorEnabler d{m_ctrl};
     SetInsertionPoint();
     int curpos = m_ctrl->GetCurrentPos();
     m_ctrl->InsertText(curpos, str);
@@ -63,15 +61,15 @@ void wxTerminalAnsiRendererSTC::LineFeed() { InsertText("\n"); }
 
 void wxTerminalAnsiRendererSTC::FormFeed()
 {
-    EditorEnabler d{ m_ctrl };
-    m_pos = { 0, 0 };
+    EditorEnabler d{m_ctrl};
+    m_pos = {0, 0};
     SetInsertionPoint();
     m_ctrl->ClearAll();
 }
 
 void wxTerminalAnsiRendererSTC::CarriageReturn()
 {
-    EditorEnabler d{ m_ctrl };
+    EditorEnabler d{m_ctrl};
     m_pos.x = 0;
     SetInsertionPoint();
 }
@@ -80,29 +78,29 @@ void wxTerminalAnsiRendererSTC::AddString(wxStringView str) { InsertText(wxStrin
 
 void wxTerminalAnsiRendererSTC::MoveCaret(long n, wxDirection direction)
 {
-    switch(direction) {
+    switch (direction) {
     case wxRIGHT: {
         int line_last_pos = m_ctrl->LineLength(m_pos.y);
-        if(m_pos.x + n <= line_last_pos) {
+        if (m_pos.x + n <= line_last_pos) {
             m_pos.x += n;
         }
         SetInsertionPoint();
     } break;
     case wxLEFT:
         m_pos.x -= n;
-        if(m_pos.x < 0) {
+        if (m_pos.x < 0) {
             m_pos.x = 0;
         }
         break;
     case wxUP:
         m_pos.y -= n;
-        if(m_pos.y < 0) {
+        if (m_pos.y < 0) {
             m_pos.y = 0;
         }
         break;
     case wxDOWN:
         m_pos.y += n;
-        if(m_pos.y >= m_ctrl->GetLineCount()) {
+        if (m_pos.y >= m_ctrl->GetLineCount()) {
             m_pos.y = m_ctrl->GetLineCount() - 1;
         }
         break;
@@ -117,8 +115,8 @@ void wxTerminalAnsiRendererSTC::SetCaretY(long n) { m_pos.y = wxMax(n - 1, 0); }
 
 void wxTerminalAnsiRendererSTC::ClearLine(size_t dir)
 {
-    EditorEnabler d{ m_ctrl };
-    if(dir & wxRIGHT && dir & wxLEFT) {
+    EditorEnabler d{m_ctrl};
+    if (dir & wxRIGHT && dir & wxLEFT) {
         // clear entire line
         SetInsertionPoint();
         int curpos = m_ctrl->GetCurrentPos();
@@ -128,14 +126,14 @@ void wxTerminalAnsiRendererSTC::ClearLine(size_t dir)
         m_pos.x = 0;
         SetInsertionPoint();
 
-    } else if(dir & wxRIGHT) {
+    } else if (dir & wxRIGHT) {
         SetInsertionPoint();
         int curpos = m_ctrl->GetCurrentPos();
         int curline = m_ctrl->LineFromPosition(curpos);
         int end_pos = m_ctrl->LineLength(curline);
         m_ctrl->DeleteRange(curpos, end_pos - curpos);
 
-    } else if(dir & wxLEFT) {
+    } else if (dir & wxLEFT) {
         SetInsertionPoint();
         int curpos = m_ctrl->GetCurrentPos();
         int curline = m_ctrl->LineFromPosition(curpos);
@@ -146,16 +144,14 @@ void wxTerminalAnsiRendererSTC::ClearLine(size_t dir)
 
 void wxTerminalAnsiRendererSTC::ClearDisplay(size_t dir)
 {
-    EditorEnabler d{ m_ctrl };
-    if(dir & wxUP && dir & wxDOWN) {
+    EditorEnabler d{m_ctrl};
+    if (dir & wxUP && dir & wxDOWN) {
         FormFeed();
     }
 }
 
 void wxTerminalAnsiRendererSTC::SetWindowTitle(wxStringView window_title)
-{
-    m_windowTitle = wxString(window_title.data(), window_title.length());
-}
+{ m_windowTitle = wxString(window_title.data(), window_title.length()); }
 
 int wxTerminalAnsiRendererSTC::GetInsertionPoint() const
 {
@@ -204,7 +200,7 @@ void wxTerminalAnsiRendererSTC::Clear()
 
 void wxTerminalAnsiRendererSTC::EraseCharacter(int n)
 {
-    if(n <= 0) {
+    if (n <= 0) {
         return;
     }
 
@@ -217,12 +213,12 @@ void wxTerminalAnsiRendererSTC::EraseCharacter(int n)
     int n_replace = 0;
     int n_insert = n;
     // if we have buffer on the right overwrite what we can
-    if(cols_until_line_edge > 0) {
+    if (cols_until_line_edge > 0) {
         n_replace = wxMin(cols_until_line_edge, n);
         n_insert = n - n_replace;
     }
 
-    if(n_replace) {
+    if (n_replace) {
         m_ctrl->Replace(curpos, curpos + n_replace, wxString(' ', n_replace));
     }
     m_ctrl->InsertText(curpos + n_replace, wxString(' ', n_insert));

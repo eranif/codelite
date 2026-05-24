@@ -23,10 +23,10 @@ wxChar mdparser::Tokenizer::safe_get_char(size_t pos) const
     if (m_text_sequence >= WORD_WRAP_AT_COL && (wxStrncmp(STR, " ", 1) == 0 || wxStrncmp(STR, "\t", 1) == 0)) { \
         m_text_sequence = 0;                                                                                    \
         --m_pos;                                                                                                \
-        return { T_EOL, "" };                                                                                   \
+        return {T_EOL, ""};                                                                                     \
     } else {                                                                                                    \
         m_pos += INCR_POS;                                                                                      \
-        return { TYPE, STR };                                                                                   \
+        return {TYPE, STR};                                                                                     \
     }
 
 #define IS_ONE_OF2(c, C1, C2) (c == C1 || c == C2)

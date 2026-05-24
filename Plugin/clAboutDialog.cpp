@@ -18,7 +18,7 @@ clAboutDialog::clAboutDialog(wxWindow* parent, const wxString& version)
     wxString fileContent;
     FileUtils::ReadFileContent(license, fileContent);
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("text");
-    if(lexer) {
+    if (lexer) {
         lexer->Apply(m_stcLicense);
         lexer->Apply(m_stcCredits);
     }

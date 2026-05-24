@@ -36,9 +36,7 @@ void ChatHistoryDialog::OnClear(wxCommandEvent& event)
 }
 
 void ChatHistoryDialog::OnClearUI(wxUpdateUIEvent& event)
-{
-    event.Enable(GetActivePage() && GetActivePage()->GetListView() && GetActivePage()->GetListView()->GetItemCount());
-}
+{ event.Enable(GetActivePage() && GetActivePage()->GetListView() && GetActivePage()->GetListView()->GetItemCount()); }
 
 void ChatHistoryDialog::OnDelete(wxCommandEvent& event)
 {

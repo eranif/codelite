@@ -57,8 +57,11 @@ public:
      * @param singleImageSize the size of a single bitmap within the map
      * @param id the control ID
      */
-    wxPNGAnimation(wxWindow* parent, const wxBitmap& pngSprite, wxOrientation spriteOrientation,
-                   const wxSize& singleImageSize, wxWindowID id = wxID_ANY);
+    wxPNGAnimation(wxWindow* parent,
+                   const wxBitmap& pngSprite,
+                   wxOrientation spriteOrientation,
+                   const wxSize& singleImageSize,
+                   wxWindowID id = wxID_ANY);
     virtual ~wxPNGAnimation();
 
     /**

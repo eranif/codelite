@@ -42,6 +42,4 @@ wxString BuildTargetDlg::GetTargetCommand() const
     return s;
 }
 void BuildTargetDlg::OnOK_UI(wxUpdateUIEvent& event)
-{
-    event.Enable(!GetTargetCommand().IsEmpty() && !GetTargetName().IsEmpty());
-}
+{ event.Enable(!GetTargetCommand().IsEmpty() && !GetTargetName().IsEmpty()); }

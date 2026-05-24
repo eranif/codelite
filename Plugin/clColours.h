@@ -62,21 +62,15 @@ public:
     void SetHeaderBgColour(const wxColour& headerBgColour) { this->headerBgColour = headerBgColour; }
     const wxColour& GetHeaderBgColour() const { return headerBgColour; }
     void SetHeaderHBorderColour(const wxColour& headerHBorderColour)
-    {
-        this->headerHBorderColour = headerHBorderColour;
-    }
+    { this->headerHBorderColour = headerHBorderColour; }
     void SetHeaderVBorderColour(const wxColour& headerVBorderColour)
-    {
-        this->headerVBorderColour = headerVBorderColour;
-    }
+    { this->headerVBorderColour = headerVBorderColour; }
     const wxColour& GetHeaderHBorderColour() const { return headerHBorderColour; }
     const wxColour& GetHeaderVBorderColour() const { return headerVBorderColour; }
     void SetSelbuttonColour(const wxColour& selbuttonColour) { this->selbuttonColour = selbuttonColour; }
     const wxColour& GetSelbuttonColour() const { return selbuttonColour; }
     void SetSelItemBgColourNoFocus(const wxColour& selItemBgColourNoFocus)
-    {
-        this->selItemBgColourNoFocus = selItemBgColourNoFocus;
-    }
+    { this->selItemBgColourNoFocus = selItemBgColourNoFocus; }
     const wxColour& GetSelItemBgColourNoFocus() const { return selItemBgColourNoFocus; }
     void SetMatchedItemBgText(const wxColour& matchedItemBgText) { this->matchedItemBgText = matchedItemBgText; }
     void SetMatchedItemText(const wxColour& matchedItemText) { this->matchedItemText = matchedItemText; }
@@ -89,9 +83,7 @@ public:
     void SetGrayText(const wxColour& grayText) { this->grayText = grayText; }
     const wxColour& GetGrayText() const { return grayText; }
     void SetSelItemTextColourNoFocus(const wxColour& selItemTextColourNoFocus)
-    {
-        this->selItemTextColourNoFocus = selItemTextColourNoFocus;
-    }
+    { this->selItemTextColourNoFocus = selItemTextColourNoFocus; }
     const wxColour& GetSelItemTextColourNoFocus() const { return selItemTextColourNoFocus; }
 
     // Return common colours suitable for dark or light theme

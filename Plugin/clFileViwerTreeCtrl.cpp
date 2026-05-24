@@ -20,8 +20,8 @@ size_t GetItemScore(clTreeCtrlData* item)
 }
 } // namespace
 
-clFileViewerTreeCtrl::clFileViewerTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                           long style)
+clFileViewerTreeCtrl::clFileViewerTreeCtrl(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : clThemedTreeCtrl(parent, id, pos, size, (style & ~wxTR_FULL_ROW_HIGHLIGHT))
 {
     std::function<bool(const wxTreeItemId&, const wxTreeItemId&)> SortFunc = [&](const wxTreeItemId& itemA,
@@ -68,7 +68,7 @@ void clTreeNodeIndex::Add(const wxString& path, const wxTreeItemId& item)
         path
 #endif
             ,
-        item });
+        item});
 }
 
 void clTreeNodeIndex::Delete(const wxString& name)

@@ -52,7 +52,7 @@ BuildConfig::BuildConfig(wxXmlNode* node)
     , m_pchPolicy(BuildConfig::kPCHPolicyReplace)
     , m_buildSystem("Default")
 {
-    if(node) {
+    if (node) {
         m_name = XmlUtils::ReadString(node, "Name");
         m_compilerType = XmlUtils::ReadString(node, "CompilerType");
         m_debuggerType = XmlUtils::ReadString(node, "DebuggerType");
@@ -65,42 +65,42 @@ BuildConfig::BuildConfig(wxXmlNode* node)
             XmlUtils::ReadString(node, "BuildResWithGlobalSettings", APPEND_TO_GLOBAL_SETTINGS);
 
         wxXmlNode* buildSystem = XmlUtils::FindFirstByTagName(node, "BuildSystem");
-        if(buildSystem) {
+        if (buildSystem) {
             m_buildSystem = XmlUtils::ReadString(buildSystem, "Name", m_buildSystem);
-            if(m_buildSystem == "CodeLite Make Generator") {
+            if (m_buildSystem == "CodeLite Make Generator") {
                 m_buildSystem = "CodeLite Makefile Generator";
             }
             m_buildSystemArguments = buildSystem->GetNodeContent();
         }
 
         wxXmlNode* completion = XmlUtils::FindFirstByTagName(node, "Completion");
-        if(completion) {
+        if (completion) {
             wxXmlNode* search_paths = XmlUtils::FindFirstByTagName(completion, "SearchPaths");
-            if(search_paths) {
+            if (search_paths) {
                 m_ccSearchPaths = search_paths->GetNodeContent();
                 m_ccSearchPaths.Trim().Trim(false);
             }
 
             wxXmlNode* clang_pp = XmlUtils::FindFirstByTagName(completion, "ClangPP");
-            if(clang_pp) {
+            if (clang_pp) {
                 m_clangPPFlags = clang_pp->GetNodeContent();
                 m_clangPPFlags.Trim().Trim(false);
             }
 
             wxXmlNode* clang_cmp_flags = XmlUtils::FindFirstByTagName(completion, "ClangCmpFlags");
-            if(clang_cmp_flags) {
+            if (clang_cmp_flags) {
                 m_clangCmpFlags = clang_cmp_flags->GetNodeContent();
                 m_clangCmpFlags.Trim().Trim(false);
             }
 
             wxXmlNode* clang_c_cmp_flags = XmlUtils::FindFirstByTagName(completion, "ClangCmpFlagsC");
-            if(clang_c_cmp_flags) {
+            if (clang_c_cmp_flags) {
                 m_clangCmpFlagsC = clang_c_cmp_flags->GetNodeContent();
                 m_clangCmpFlagsC.Trim().Trim(false);
             }
 
             wxXmlNode* clang_pch = XmlUtils::FindFirstByTagName(completion, "ClangPCH");
-            if(clang_pch) {
+            if (clang_pch) {
                 m_ccPCH = clang_pch->GetNodeContent();
                 m_ccPCH.Trim().Trim(false);
             }
@@ -110,7 +110,7 @@ BuildConfig::BuildConfig(wxXmlNode* node)
         }
 
         wxXmlNode* compile = XmlUtils::FindFirstByTagName(node, "Compiler");
-        if(compile) {
+        if (compile) {
             m_compilerRequired = XmlUtils::ReadBool(compile, "Required", true);
             m_precompiledHeader = XmlUtils::ReadString(compile, "PreCompiledHeader");
             m_pchInCommandLine = XmlUtils::ReadBool(compile, "PCHInCommandLine", false);
@@ -119,12 +119,12 @@ BuildConfig::BuildConfig(wxXmlNode* node)
         }
 
         wxXmlNode* linker = XmlUtils::FindFirstByTagName(node, "Linker");
-        if(linker) {
+        if (linker) {
             m_linkerRequired = XmlUtils::ReadBool(linker, "Required", true);
         }
 
         wxXmlNode* resCmp = XmlUtils::FindFirstByTagName(node, "ResourceCompiler");
-        if(resCmp) {
+        if (resCmp) {
             m_isResCmpNeeded = XmlUtils::ReadBool(resCmp, "Required", true);
         }
 
@@ -132,7 +132,7 @@ BuildConfig::BuildConfig(wxXmlNode* node)
         wxXmlNode* debugger = XmlUtils::FindFirstByTagName(node, "Debugger");
         m_isDbgRemoteTarget = false;
 
-        if(debugger) {
+        if (debugger) {
             m_isDbgRemoteTarget = XmlUtils::ReadBool(debugger, "IsRemote");
             m_dbgHostName = XmlUtils::ReadString(debugger, "RemoteHostName");
             m_dbgHostPort = XmlUtils::ReadString(debugger, "RemoteHostPort");
@@ -140,14 +140,14 @@ BuildConfig::BuildConfig(wxXmlNode* node)
             m_isDbgRemoteExtended = XmlUtils::ReadBool(debugger, "IsExtended");
 
             wxXmlNode* child = debugger->GetChildren();
-            while(child) {
-                if(child->GetName() == "StartupCommands") {
+            while (child) {
+                if (child->GetName() == "StartupCommands") {
                     m_debuggerStartupCmds = child->GetNodeContent();
 
-                } else if(child->GetName() == "PostConnectCommands") {
+                } else if (child->GetName() == "PostConnectCommands") {
                     m_debuggerPostRemoteConnectCmds = child->GetNodeContent();
 
-                } else if(child->GetName() == "DebuggerSearchPaths") {
+                } else if (child->GetName() == "DebuggerSearchPaths") {
                     wxArrayString searchPaths = ::wxStringTokenize(child->GetNodeContent(), "\r\n", wxTOKEN_STRTOK);
                     m_debuggerSearchPaths.swap(searchPaths);
                 }
@@ -158,14 +158,14 @@ BuildConfig::BuildConfig(wxXmlNode* node)
 
         // read the prebuild commands
         wxXmlNode* preBuild = XmlUtils::FindFirstByTagName(node, "PreBuild");
-        if(preBuild) {
+        if (preBuild) {
             wxXmlNode* child = preBuild->GetChildren();
-            while(child) {
-                if(child->GetName() == "Command") {
+            while (child) {
+                if (child->GetName() == "Command") {
                     bool enabled = XmlUtils::ReadBool(child, "Enabled");
 
                     BuildCommand cmd(child->GetNodeContent(), enabled);
-                    if(cmd.IsOk()) {
+                    if (cmd.IsOk()) {
                         m_preBuildCommands.push_back(cmd);
                     }
                 }
@@ -174,13 +174,13 @@ BuildConfig::BuildConfig(wxXmlNode* node)
         }
         // read the postbuild commands
         wxXmlNode* postBuild = XmlUtils::FindFirstByTagName(node, "PostBuild");
-        if(postBuild) {
+        if (postBuild) {
             wxXmlNode* child = postBuild->GetChildren();
-            while(child) {
-                if(child->GetName() == "Command") {
+            while (child) {
+                if (child->GetName() == "Command") {
                     bool enabled = XmlUtils::ReadBool(child, "Enabled");
                     BuildCommand cmd(child->GetNodeContent(), enabled);
-                    if(cmd.IsOk()) {
+                    if (cmd.IsOk()) {
                         m_postBuildCommands.push_back(cmd);
                     }
                 }
@@ -193,37 +193,37 @@ BuildConfig::BuildConfig(wxXmlNode* node)
 
         // read the environment page
         wxXmlNode* envNode = XmlUtils::FindFirstByTagName(node, "Environment");
-        if(envNode) {
+        if (envNode) {
             SetEnvVarSet(XmlUtils::ReadString(envNode, "EnvVarSetName"));
             SetDbgEnvSet(XmlUtils::ReadString(envNode, "DbgSetName"));
             m_envvars = envNode->GetNodeContent();
         }
 
         wxXmlNode* customBuild = XmlUtils::FindFirstByTagName(node, "CustomBuild");
-        if(customBuild) {
+        if (customBuild) {
             m_enableCustomBuild = XmlUtils::ReadBool(customBuild, "Enabled", false);
             wxXmlNode* child = customBuild->GetChildren();
-            while(child) {
-                if(child->GetName() == "BuildCommand") {
+            while (child) {
+                if (child->GetName() == "BuildCommand") {
                     m_customBuildCmd = child->GetNodeContent();
-                } else if(child->GetName() == "CleanCommand") {
+                } else if (child->GetName() == "CleanCommand") {
                     m_customCleanCmd = child->GetNodeContent();
-                } else if(child->GetName() == "RebuildCommand") {
+                } else if (child->GetName() == "RebuildCommand") {
                     m_customRebuildCmd = child->GetNodeContent();
-                } else if(child->GetName() == "SingleFileCommand") {
+                } else if (child->GetName() == "SingleFileCommand") {
                     m_singleFileBuildCommand = child->GetNodeContent();
-                } else if(child->GetName() == "PreprocessFileCommand") {
+                } else if (child->GetName() == "PreprocessFileCommand") {
                     m_preprocessFileCommand = child->GetNodeContent();
-                } else if(child->GetName() == "WorkingDirectory") {
+                } else if (child->GetName() == "WorkingDirectory") {
                     m_customBuildWorkingDir = child->GetNodeContent();
-                } else if(child->GetName() == "ThirdPartyToolName") {
+                } else if (child->GetName() == "ThirdPartyToolName") {
                     m_toolName = child->GetNodeContent();
-                } else if(child->GetName() == "MakefileGenerationCommand") {
+                } else if (child->GetName() == "MakefileGenerationCommand") {
                     m_makeGenerationCommand = child->GetNodeContent();
-                } else if(child->GetName() == "Target") {
+                } else if (child->GetName() == "Target") {
                     wxString target_name = child->GetAttribute("Name", "");
                     wxString target_cmd = child->GetNodeContent();
-                    if(target_name.IsEmpty() == false) {
+                    if (target_name.IsEmpty() == false) {
                         m_customTargets[target_name] = target_cmd;
                     }
                 }
@@ -234,14 +234,14 @@ BuildConfig::BuildConfig(wxXmlNode* node)
         }
 
         wxXmlNode* customPreBuild = XmlUtils::FindFirstByTagName(node, "AdditionalRules");
-        if(customPreBuild) {
+        if (customPreBuild) {
             wxXmlNode* child = customPreBuild->GetChildren();
-            while(child) {
-                if(child->GetName() == "CustomPreBuild") {
+            while (child) {
+                if (child->GetName() == "CustomPreBuild") {
                     m_customPreBuildRule = child->GetNodeContent();
                     m_customPreBuildRule.Trim().Trim(false);
 
-                } else if(child->GetName() == "CustomPostBuild") {
+                } else if (child->GetName() == "CustomPostBuild") {
                     m_customPostBuildRule = child->GetNodeContent();
                     m_customPostBuildRule.Trim().Trim(false);
                 }
@@ -250,7 +250,7 @@ BuildConfig::BuildConfig(wxXmlNode* node)
         }
 
         wxXmlNode* general = XmlUtils::FindFirstByTagName(node, "General");
-        if(general) {
+        if (general) {
             m_outputFile = XmlUtils::ReadString(general, "OutputFile");
             m_intermediateDirectory = XmlUtils::ReadString(general, "IntermediateDirectory", ".");
             m_command = XmlUtils::ReadString(general, "Command");
@@ -298,11 +298,11 @@ BuildConfig::BuildConfig(wxXmlNode* node)
 
         BuildSettingsConfigCookie cookie;
         CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
-        if(cmp) {
+        if (cmp) {
             m_compilerType = cmp->GetName();
         }
         wxArrayString dbgs = DebuggerMgr::Get().GetAvailableDebuggers();
-        if(dbgs.GetCount() > 0) {
+        if (dbgs.GetCount() > 0) {
             m_debuggerType = dbgs.Item(0);
         }
         m_buildCmpWithGlobalSettings = APPEND_TO_GLOBAL_SETTINGS;
@@ -333,7 +333,7 @@ wxXmlNode* BuildConfig::ToXml() const
     node->AddAttribute("BuildResWithGlobalSettings", m_buildResWithGlobalSettings);
 
     wxXmlNode* compile = XmlUtils::FindFirstByTagName(node, "Compiler");
-    if(compile) {
+    if (compile) {
         compile->AddAttribute("Required", BoolToString(m_compilerRequired));
         compile->AddAttribute("PreCompiledHeader", m_precompiledHeader);
         compile->AddAttribute("PCHInCommandLine", BoolToString(m_pchInCommandLine));
@@ -342,12 +342,12 @@ wxXmlNode* BuildConfig::ToXml() const
     }
 
     wxXmlNode* link = XmlUtils::FindFirstByTagName(node, "Linker");
-    if(link) {
+    if (link) {
         link->AddAttribute("Required", BoolToString(m_linkerRequired));
     }
 
     wxXmlNode* resCmp = XmlUtils::FindFirstByTagName(node, "ResourceCompiler");
-    if(resCmp) {
+    if (resCmp) {
         resCmp->AddAttribute("Required", BoolToString(m_isResCmpNeeded));
     }
 
@@ -400,8 +400,8 @@ wxXmlNode* BuildConfig::ToXml() const
     wxXmlNode* preBuild = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "PreBuild");
     node->AddChild(preBuild);
 
-    for(const auto& cmd : m_preBuildCommands) {
-        if(!cmd.IsOk()) {
+    for (const auto& cmd : m_preBuildCommands) {
+        if (!cmd.IsOk()) {
             continue;
         }
 
@@ -415,8 +415,8 @@ wxXmlNode* BuildConfig::ToXml() const
     wxXmlNode* postBuild = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, "PostBuild");
     node->AddChild(postBuild);
 
-    for(const auto& cmd : m_postBuildCommands) {
-        if(!cmd.IsOk()) {
+    for (const auto& cmd : m_postBuildCommands) {
+        if (!cmd.IsOk()) {
             continue;
         }
 
@@ -530,15 +530,15 @@ namespace
 {
 bool is_env_variable(const wxString& str, wxString* env_name)
 {
-    if(str.empty() || str[0] != '$') {
+    if (str.empty() || str[0] != '$') {
         return false;
     }
     env_name->reserve(str.length());
 
     // start from 1 to skip the prefix $
-    for(size_t i = 1; i < str.length(); ++i) {
+    for (size_t i = 1; i < str.length(); ++i) {
         wxChar ch = str[i];
-        if(ch == '(' || ch == ')' || ch == '{' || ch == '}')
+        if (ch == '(' || ch == ')' || ch == '{' || ch == '}')
             continue;
         env_name->Append(ch);
     }
@@ -550,19 +550,21 @@ bool is_env_variable(const wxString& str, wxString* env_name)
  * accepting value in the form of (one example):
  * $PATH;C:\bin;$(LD_LIBRARY_PATH);${PYTHONPATH}
  */
-wxString expand_env_variable(const wxString& value, const wxEnvVariableHashMap& env_map, const wxString& project_name,
+wxString expand_env_variable(const wxString& value,
+                             const wxEnvVariableHashMap& env_map,
+                             const wxString& project_name,
                              const wxString& config_name)
 {
     // split the value into its parts
     wxArrayString parts = wxStringTokenize(value, wxPATH_SEP, wxTOKEN_STRTOK);
     wxString resolved;
-    for(const wxString& part : parts) {
+    for (const wxString& part : parts) {
         wxString env_name;
-        if(is_env_variable(part, &env_name)) {
+        if (is_env_variable(part, &env_name)) {
             // try the environment variables first
-            if(env_map.find(env_name) != env_map.end()) {
+            if (env_map.find(env_name) != env_map.end()) {
                 resolved << env_map.find(env_name)->second;
-            } else if(MacroManager::Instance()->IsCodeLiteMacro(env_name)) {
+            } else if (MacroManager::Instance()->IsCodeLiteMacro(env_name)) {
                 // try to resolve it using the macro manager
                 resolved << MacroManager::Instance()->ExpandNoEnv(part, project_name, config_name);
             }
@@ -572,7 +574,7 @@ wxString expand_env_variable(const wxString& value, const wxEnvVariableHashMap& 
         }
         resolved << wxPATH_SEP;
     }
-    if(!resolved.empty()) {
+    if (!resolved.empty()) {
         resolved.RemoveLast();
     }
     return resolved;
@@ -587,7 +589,7 @@ clEnvList_t BuildConfig::GetEnvironment(Project* project) const
 
     wxString config_name;
     wxString project_name;
-    if(project) {
+    if (project) {
         config_name = GetName();
         project_name = project->GetName();
     }
@@ -603,13 +605,13 @@ clEnvList_t BuildConfig::GetEnvironment(Project* project) const
     EnvMap envMap = env.GetVariables(env.GetActiveSet(), false, project_name, config_name);
 
     // expand the global environments variables first
-    for(size_t i = 0; i < envMap.GetCount(); ++i) {
+    for (size_t i = 0; i < envMap.GetCount(); ++i) {
         wxString key, value;
-        if(!envMap.Get(i, key, value))
+        if (!envMap.Get(i, key, value))
             continue;
         value = expand_env_variable(value, current_env_map, project_name, config_name);
         current_env_map.erase(key);
-        current_env_map.insert({ key, value });
+        current_env_map.insert({key, value});
         interesting_env_set.insert(key);
     }
 
@@ -617,12 +619,12 @@ clEnvList_t BuildConfig::GetEnvironment(Project* project) const
     wxString workspace_env = clCxxWorkspaceST::Get()->GetEnvironmentVariables();
     {
         auto arr = StringUtils::BuildEnvFromString(workspace_env);
-        for(auto& p : arr) {
+        for (auto& p : arr) {
             wxString key = p.first;
             wxString value = p.second;
             value = expand_env_variable(value, current_env_map, project_name, config_name);
             current_env_map.erase(key);
-            current_env_map.insert({ key, value });
+            current_env_map.insert({key, value});
             interesting_env_set.insert(key);
         }
     }
@@ -631,12 +633,12 @@ clEnvList_t BuildConfig::GetEnvironment(Project* project) const
     wxString config_env = GetEnvvars();
     {
         auto arr = StringUtils::BuildEnvFromString(config_env);
-        for(auto& p : arr) {
+        for (auto& p : arr) {
             wxString key = p.first;
             wxString value = p.second;
             value = expand_env_variable(value, current_env_map, project_name, config_name);
             current_env_map.erase(key);
-            current_env_map.insert({ key, value });
+            current_env_map.insert({key, value});
             interesting_env_set.insert(key);
         }
     }
@@ -644,9 +646,9 @@ clEnvList_t BuildConfig::GetEnvironment(Project* project) const
     // Serialize it
     clEnvList_t result;
     result.reserve(current_env_map.size());
-    for(const auto& vt : current_env_map) {
-        if(interesting_env_set.count(vt.first))
-            result.push_back({ vt.first, vt.second });
+    for (const auto& vt : current_env_map) {
+        if (interesting_env_set.count(vt.first))
+            result.push_back({vt.first, vt.second});
     }
     return result;
 }

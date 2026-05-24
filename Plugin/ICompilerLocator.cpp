@@ -39,7 +39,7 @@
 wxArrayString ICompilerLocator::GetPaths() const
 {
     wxString path;
-    if(!::wxGetEnv("PATH", &path)) {
+    if (!::wxGetEnv("PATH", &path)) {
         clWARNING() << "Could not read environment variable PATH";
         return {};
     }
@@ -54,14 +54,13 @@ void ICompilerLocator::ScanUninstRegKeys()
 #ifdef __WXMSW__
     static const std::array<wxString, 2> unInstKey = {
         "SOFTWARE\\Microsoft\\Windows\\CurrentVersion\\Uninstall",
-        "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall"
-    };
-    static const std::array<wxRegKey::StdKey, 2> regBase = { wxRegKey::HKCU, wxRegKey::HKLM };
+        "SOFTWARE\\Wow6432Node\\Microsoft\\Windows\\CurrentVersion\\Uninstall"};
+    static const std::array<wxRegKey::StdKey, 2> regBase = {wxRegKey::HKCU, wxRegKey::HKLM};
 
-    for(size_t i = 0; i < regBase.size(); ++i) {
-        for(size_t j = 0; j < unInstKey.size(); ++j) {
+    for (size_t i = 0; i < regBase.size(); ++i) {
+        for (size_t j = 0; j < unInstKey.size(); ++j) {
             wxRegKey regKey(regBase[i], unInstKey[j]);
-            if(!regKey.Exists() || !regKey.Open(wxRegKey::Read))
+            if (!regKey.Exists() || !regKey.Open(wxRegKey::Read))
                 continue;
 
             size_t subkeys = 0;
@@ -70,16 +69,16 @@ void ICompilerLocator::ScanUninstRegKeys()
             long keyIndex = 0;
             regKey.GetFirstKey(keyName, keyIndex);
 
-            for(size_t k = 0; k < subkeys; ++k) {
+            for (size_t k = 0; k < subkeys; ++k) {
                 wxRegKey subKey(regKey, keyName);
-                if(!subKey.Exists() || !subKey.Open(wxRegKey::Read))
+                if (!subKey.Exists() || !subKey.Open(wxRegKey::Read))
                     continue;
 
                 wxString displayName, installFolder, displayVersion;
-                if(subKey.HasValue("DisplayName") && subKey.HasValue("InstallLocation") &&
-                   subKey.HasValue("DisplayVersion") && subKey.QueryValue("DisplayName", displayName) &&
-                   subKey.QueryValue("InstallLocation", installFolder) &&
-                   subKey.QueryValue("DisplayVersion", displayVersion)) {
+                if (subKey.HasValue("DisplayName") && subKey.HasValue("InstallLocation") &&
+                    subKey.HasValue("DisplayVersion") && subKey.QueryValue("DisplayName", displayName) &&
+                    subKey.QueryValue("InstallLocation", installFolder) &&
+                    subKey.QueryValue("DisplayVersion", displayVersion)) {
                     CheckUninstRegKey(displayName, installFolder, displayVersion);
                 }
 

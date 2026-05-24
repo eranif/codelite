@@ -64,10 +64,15 @@ public:
      * \param buttonCaption the browse button caption
      * \param style control style, same as wxFileDialog styles
      */
-    FilePicker(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& defaultFile = wxEmptyString,
-               const wxString& message = _("Select a file:"), const wxString& wildCard = wxT("*.*"),
-               const wxString& buttonCaption = _("Browse"), const wxPoint& pos = wxDefaultPosition,
-               const wxSize& size = wxDefaultSize, long style = wxFD_DEFAULT_STYLE);
+    FilePicker(wxWindow* parent,
+               wxWindowID id = wxID_ANY,
+               const wxString& defaultFile = wxEmptyString,
+               const wxString& message = _("Select a file:"),
+               const wxString& wildCard = wxT("*.*"),
+               const wxString& buttonCaption = _("Browse"),
+               const wxPoint& pos = wxDefaultPosition,
+               const wxSize& size = wxDefaultSize,
+               long style = wxFD_DEFAULT_STYLE);
 
     virtual ~FilePicker() = default;
 

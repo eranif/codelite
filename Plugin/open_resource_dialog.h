@@ -62,8 +62,8 @@ public:
     {
     }
 
-    OpenResourceDialogItemData(const wxString& file, int line, const wxString& pattern, const wxString& name,
-                               const wxString& scope)
+    OpenResourceDialogItemData(
+        const wxString& file, int line, const wxString& pattern, const wxString& name, const wxString& scope)
         : m_file(file)
         , m_line(line)
         , m_pattern(pattern)
@@ -80,7 +80,8 @@ public:
 
 namespace std
 {
-template <> struct hash<LSP::eSymbolKind> {
+template <>
+struct hash<LSP::eSymbolKind> {
     std::size_t operator()(LSP::eSymbolKind sk) const { return static_cast<size_t>(sk); }
 };
 } // namespace std
@@ -111,8 +112,11 @@ protected:
     void DoPopulateTags(const std::vector<LSP::SymbolInformation>& symbols);
     void DoSelectItem(const wxDataViewItem& item);
     void Clear();
-    void DoAppendLine(const wxString& name, const wxString& fullname, bool boldFont,
-                      OpenResourceDialogItemData* clientData, int imgid);
+    void DoAppendLine(const wxString& name,
+                      const wxString& fullname,
+                      bool boldFont,
+                      OpenResourceDialogItemData* clientData,
+                      int imgid);
     int DoGetTagImg(const LSP::SymbolInformation& symbol);
     OpenResourceDialogItemData* GetItemData(const wxDataViewItem& item) const;
     void OnSelectAllText();

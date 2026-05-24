@@ -62,9 +62,7 @@ BitmapLoader::BitmapLoader(wxWindow* win, bool darkTheme)
 }
 
 std::unordered_map<wxString, wxBitmapBundle>* BitmapLoader::GetBundles(bool darkTheme) const
-{
-    return darkTheme ? &DARK_THEME_BMPBUNLES : &LIGHT_THEME_BMPBUNLES;
-}
+{ return darkTheme ? &DARK_THEME_BMPBUNLES : &LIGHT_THEME_BMPBUNLES; }
 
 const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize)
 {
@@ -82,9 +80,7 @@ const wxBitmap& BitmapLoader::LoadBitmap(const wxString& name, int requestedSize
 int BitmapLoader::GetMimeImageId(int type, bool disabled) { return GetMimeBitmaps().GetIndex(type, disabled); }
 
 int BitmapLoader::GetMimeImageId(const wxString& filename, bool disabled)
-{
-    return GetMimeBitmaps().GetIndex(filename, disabled);
-}
+{ return GetMimeBitmaps().GetIndex(filename, disabled); }
 
 wxIcon BitmapLoader::GetIcon(const wxBitmap& bmp) const
 {
@@ -350,9 +346,7 @@ wxDEFINE_EVENT(wxEVT_BITMAPS_UPDATED, clCommandEvent);
 clBitmaps::clBitmaps() { EventNotifier::Get()->Bind(wxEVT_SYS_COLOURS_CHANGED, &clBitmaps::OnSysColoursChanged, this); }
 
 clBitmaps::~clBitmaps()
-{
-    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clBitmaps::OnSysColoursChanged, this);
-}
+{ EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clBitmaps::OnSysColoursChanged, this); }
 
 static clBitmaps* pBitmaps = nullptr;
 void clBitmaps::Initialise(wxWindow* win)
@@ -437,9 +431,7 @@ clBitmapList::clBitmapList()
 }
 
 clBitmapList::~clBitmapList()
-{
-    EventNotifier::Get()->Unbind(wxEVT_BITMAPS_UPDATED, &clBitmapList::OnBitmapsUpdated, this);
-}
+{ EventNotifier::Get()->Unbind(wxEVT_BITMAPS_UPDATED, &clBitmapList::OnBitmapsUpdated, this); }
 
 const wxBitmap& clBitmapList::Get(size_t index, bool disabledBmp)
 {
@@ -491,9 +483,7 @@ void clBitmapList::Delete(size_t index)
 void clBitmapList::Delete(const wxString& name) { Delete(FindIdByName(name)); }
 
 const wxBitmap& clBitmapList::Get(const wxString& name, bool disabledBmp)
-{
-    return Get(FindIdByName(name), disabledBmp);
-}
+{ return Get(FindIdByName(name), disabledBmp); }
 
 size_t clBitmapList::FindIdByName(const wxString& name) const
 {

@@ -34,8 +34,11 @@ class WXDLLIMPEXP_SDK clSearchText
     bool m_enabled = false;
 
 public:
-    static bool Matches(const wxString& findWhat, size_t col, const wxString& text,
-                        size_t searchFlags = wxTR_SEARCH_DEFAULT, clMatchResult* matches = nullptr);
+    static bool Matches(const wxString& findWhat,
+                        size_t col,
+                        const wxString& text,
+                        size_t searchFlags = wxTR_SEARCH_DEFAULT,
+                        clMatchResult* matches = nullptr);
     clSearchText() = default;
     virtual ~clSearchText() = default;
     void SetEnabled(bool enabled) { this->m_enabled = enabled; }
@@ -59,8 +62,8 @@ public:
     /**
      * @brief draw the background of a given entry
      */
-    virtual void RenderItemBackground(wxDC& dc, long tree_style, const clColours& colours, int row_index,
-                                      clRowEntry* entry) = 0;
+    virtual void
+    RenderItemBackground(wxDC& dc, long tree_style, const clColours& colours, int row_index, clRowEntry* entry) = 0;
 
     /**
      * @brief render the list background
@@ -112,8 +115,11 @@ protected:
     void DoPositionVScrollbar();
 
 public:
-    clControlWithItems(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                       const wxSize& size = wxDefaultSize, long style = 0);
+    clControlWithItems(wxWindow* parent,
+                       wxWindowID id = wxID_ANY,
+                       const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxDefaultSize,
+                       long style = 0);
     virtual ~clControlWithItems();
     clControlWithItems() = default;
 
@@ -134,8 +140,11 @@ public:
 
     void SetNativeTheme(bool nativeTheme);
     bool IsNativeTheme() const { return m_nativeTheme; }
-    bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                const wxSize& size = wxDefaultSize, long style = 0);
+    bool Create(wxWindow* parent,
+                wxWindowID id = wxID_ANY,
+                const wxPoint& pos = wxDefaultPosition,
+                const wxSize& size = wxDefaultSize,
+                long style = 0);
     virtual int GetIndent() const { return m_indent; }
 
     virtual void SetFirstColumn(int firstColumn) { this->m_firstColumn = firstColumn; }

@@ -22,7 +22,9 @@ clSelectSymbolDialog::~clSelectSymbolDialog()
     });
 }
 
-void clSelectSymbolDialog::AddSymbol(const wxString& name, const wxBitmap& bmp, const wxString& help,
+void clSelectSymbolDialog::AddSymbol(const wxString& name,
+                                     const wxBitmap& bmp,
+                                     const wxString& help,
                                      wxClientData* clientData)
 {
     wxVector<wxVariant> cols;
@@ -36,7 +38,7 @@ void clSelectSymbolDialog::OnOKUI(wxUpdateUIEvent& event) { event.Enable(m_dvLis
 wxClientData* clSelectSymbolDialog::GetSelection() const
 {
     wxDataViewItem item = m_dvListCtrl->GetSelection();
-    if(!item)
+    if (!item)
         return NULL;
 
     wxClientData* cd = reinterpret_cast<wxClientData*>(m_dvListCtrl->GetItemData(item));
@@ -55,12 +57,12 @@ void clSelectSymbolDialog::Initialise(const clSelectSymbolDialogEntry::List_t& e
     wxFont f = lexer->GetFontForStyle(0, m_dvListCtrl);
     m_dvListCtrl->SetDefaultFont(f);
     m_dvListCtrl->Begin();
-    for(const auto& entry : entries) {
+    for (const auto& entry : entries) {
         AddSymbol(entry.name, entry.bmp, entry.help, entry.clientData);
     }
 
     m_dvListCtrl->Commit();
-    if(m_dvListCtrl->GetItemCount()) {
+    if (m_dvListCtrl->GetItemCount()) {
         m_dvListCtrl->Select(m_dvListCtrl->RowToItem(0));
     }
 }

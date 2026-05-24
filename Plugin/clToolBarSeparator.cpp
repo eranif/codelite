@@ -6,9 +6,7 @@ clToolBarSeparator::clToolBarSeparator(clToolBarGeneric* parent)
 }
 
 wxSize clToolBarSeparator::CalculateSize(wxDC& dc) const
-{
-    return wxSize(m_toolbar->GetXSpacer() + 1 + m_toolbar->GetXSpacer(), -1);
-}
+{ return wxSize(m_toolbar->GetXSpacer() + 1 + m_toolbar->GetXSpacer(), -1); }
 
 void clToolBarSeparator::Render(wxDC& dc, const wxRect& rect)
 {

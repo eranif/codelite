@@ -43,7 +43,7 @@
 /// Find in files entries
 bool FindInFilesSession::From(const wxString& content)
 {
-    JSON root{ content };
+    JSON root{content};
     if (!root.isOk()) {
         return false;
     }

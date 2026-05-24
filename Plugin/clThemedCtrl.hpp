@@ -12,7 +12,8 @@
 
 namespace cl
 {
-template <typename T> void ApplyTheme(T* ctrl)
+template <typename T>
+void ApplyTheme(T* ctrl)
 {
     // When not using custom colours, use system defaults
     clColours colours;

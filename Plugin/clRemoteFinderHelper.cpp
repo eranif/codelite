@@ -106,11 +106,11 @@ void clRemoteFinderHelper::NotifySearchCancelled()
 {
     CHECK_PTR_RET(GetSearchTab());
     // Notify that the search is cancelled
-    wxCommandEvent event_cacnelled{ wxEVT_SEARCH_THREAD_SEARCHCANCELED };
+    wxCommandEvent event_cacnelled{wxEVT_SEARCH_THREAD_SEARCHCANCELED};
     GetSearchTab()->GetEventHandler()->AddPendingEvent(event_cacnelled);
 
     // the UI is also expecting the wxEVT_SEARCH_THREAD_SEARCHEND event
-    wxCommandEvent end_event{ wxEVT_SEARCH_THREAD_SEARCHEND };
+    wxCommandEvent end_event{wxEVT_SEARCH_THREAD_SEARCHEND};
     end_event.SetClientData(nullptr);
     GetSearchTab()->GetEventHandler()->AddPendingEvent(end_event);
 }

@@ -73,6 +73,4 @@ void NewSseMCPDlg::OnHeaders(wxCommandEvent& event)
 }
 
 void NewSseMCPDlg::OnOkUI(wxUpdateUIEvent& event)
-{
-    event.Enable(!m_textCtrlBaseURL->IsEmpty() && !m_textCtrlEndpoint->IsEmpty() && !m_textCtrlName->IsEmpty());
-}
+{ event.Enable(!m_textCtrlBaseURL->IsEmpty() && !m_textCtrlEndpoint->IsEmpty() && !m_textCtrlName->IsEmpty()); }

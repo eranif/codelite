@@ -14,7 +14,7 @@ LexerConf::Ptr_t ThemeImporterDockerfile::Import(const wxFileName& theme_file)
     LexerConf::Ptr_t lexer = InitializeImport(theme_file, GetLangName(), wxSTC_LEX_BASH);
     AddProperty(lexer, wxSTC_SH_DEFAULT, "Default", m_editor);
     wxString errorColour;
-    if(lexer->IsDark()) {
+    if (lexer->IsDark()) {
         errorColour = "PINK";
     } else {
         errorColour = "RED";

@@ -70,7 +70,7 @@ void ProgressCtrl::OnPaint(wxPaintEvent& e)
     dc.DrawRectangle(rect);
 
     // fill it with progress range
-    if(m_currValue > m_maxRange) {
+    if (m_currValue > m_maxRange) {
         m_currValue = m_maxRange;
     }
 

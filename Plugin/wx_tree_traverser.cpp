@@ -32,17 +32,17 @@ wxTreeTraverser::wxTreeTraverser(wxTreeCtrl* tree)
 
 void wxTreeTraverser::DoTraverse(const wxTreeItemId& item)
 {
-    if(item.IsOk() == false)
+    if (item.IsOk() == false)
         return;
 
     // Call the user callback
     OnItem(item);
 
     // Recurse the children
-    if(m_tree->ItemHasChildren(item)) {
+    if (m_tree->ItemHasChildren(item)) {
         wxTreeItemIdValue cookie;
         wxTreeItemId child = m_tree->GetFirstChild(item, cookie);
-        while(child.IsOk()) {
+        while (child.IsOk()) {
             DoTraverse(child);
             child = m_tree->GetNextChild(item, cookie);
         }

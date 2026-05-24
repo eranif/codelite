@@ -21,15 +21,15 @@ bool BorlandCppBuilderImporter::OpenWorkspace(const wxString& filename, const wx
 bool BorlandCppBuilderImporter::isSupportedWorkspace()
 {
     wxXmlDocument projectDoc;
-    if(projectDoc.Load(wsInfo.GetFullPath())) {
+    if (projectDoc.Load(wsInfo.GetFullPath())) {
         wxXmlNode* root = projectDoc.GetRoot();
-        if(root) {
+        if (root) {
             wxXmlNode* projectChild = root->GetChildren();
-            if(projectChild) {
+            if (projectChild) {
                 wxXmlNode* macrosChild = projectChild->GetChildren();
-                if(macrosChild && macrosChild->GetName() == wxT("VERSION")) {
+                if (macrosChild && macrosChild->GetName() == wxT("VERSION")) {
                     wxString value = macrosChild->GetAttribute("value");
-                    if(value == wxT("BCB.06.00"))
+                    if (value == wxT("BCB.06.00"))
                         return true;
                 }
             }
@@ -64,52 +64,52 @@ GenericWorkspacePtr BorlandCppBuilderImporter::PerformImport()
     genericWorkspace->projects.push_back(genericProject);
 
     wxXmlDocument projectDoc;
-    if(projectDoc.Load(wsInfo.GetFullPath())) {
+    if (projectDoc.Load(wsInfo.GetFullPath())) {
         wxXmlNode* root = projectDoc.GetRoot();
 
-        if(root) {
+        if (root) {
             wxXmlNode* projectChild = root->GetChildren();
-            while(projectChild) {
-                if(projectChild->GetName() == wxT("MACROS")) {
+            while (projectChild) {
+                if (projectChild->GetName() == wxT("MACROS")) {
                     wxXmlNode* macrosChild = projectChild->GetChildren();
-                    while(macrosChild) {
-                        if(macrosChild->GetName() == wxT("INCLUDEPATH")) {
+                    while (macrosChild) {
+                        if (macrosChild->GetName() == wxT("INCLUDEPATH")) {
                             wxString projectIncludes = macrosChild->GetAttribute(wxT("value"));
 
                             genericProjectCfgDebug->includePath = projectIncludes;
                             genericProjectCfgRelease->includePath = projectIncludes;
                         }
 
-                        if(macrosChild->GetName() == wxT("LIBPATH")) {
+                        if (macrosChild->GetName() == wxT("LIBPATH")) {
                             wxString projectLibs = macrosChild->GetAttribute(wxT("value"));
 
                             genericProjectCfgDebug->libPath = projectLibs;
                             genericProjectCfgRelease->libPath = projectLibs;
                         }
 
-                        if(macrosChild->GetName() == wxT("USERDEFINES")) {
+                        if (macrosChild->GetName() == wxT("USERDEFINES")) {
                             wxString projectUserDefines = macrosChild->GetAttribute(wxT("value"));
 
                             genericProjectCfgDebug->preprocessor = projectUserDefines;
                             genericProjectCfgRelease->preprocessor = projectUserDefines;
                         }
 
-                        if(macrosChild->GetName() == wxT("MAINSOURCE")) {
+                        if (macrosChild->GetName() == wxT("MAINSOURCE")) {
                             wxString projectMainSource = macrosChild->GetAttribute(wxT("value"));
                             projectMainSource.Replace(wxT("\""), wxT(""));
 
                             wxFileName fnMainSource(wsInfo.GetPath() + wxFileName::GetPathSeparator() +
                                                     projectMainSource);
 
-                            if(fnMainSource.GetExt().Lower() == wxT("bpf")) {
+                            if (fnMainSource.GetExt().Lower() == wxT("bpf")) {
                                 wxFileInputStream fis(fnMainSource.GetFullPath());
                                 wxTextInputStream tis(fis);
 
-                                while(!fis.Eof()) {
+                                while (!fis.Eof()) {
                                     wxString line = tis.ReadLine();
 
                                     int index = line.Find(wxT("USEUNIT(\""));
-                                    if(index != wxNOT_FOUND) {
+                                    if (index != wxNOT_FOUND) {
                                         int begin = index + 9;
                                         int end = line.Find(wxT("\");")) - 1;
 
@@ -129,10 +129,10 @@ GenericWorkspacePtr BorlandCppBuilderImporter::PerformImport()
                     }
                 }
 
-                if(projectChild->GetName() == wxT("LINKER")) {
+                if (projectChild->GetName() == wxT("LINKER")) {
                     wxXmlNode* linkerChild = projectChild->GetChildren();
-                    while(linkerChild) {
-                        if(linkerChild->GetName() == wxT("ALLLIB")) {
+                    while (linkerChild) {
+                        if (linkerChild->GetName() == wxT("ALLLIB")) {
                             wxString projectLibraries = linkerChild->GetAttribute(wxT("value"));
                             projectLibraries.Replace(wxT(" "), wxT(";"));
 
@@ -144,10 +144,10 @@ GenericWorkspacePtr BorlandCppBuilderImporter::PerformImport()
                     }
                 }
 
-                if(projectChild->GetName() == wxT("FILELIST")) {
+                if (projectChild->GetName() == wxT("FILELIST")) {
                     wxXmlNode* fileListChild = projectChild->GetChildren();
-                    while(fileListChild) {
-                        if(fileListChild->GetName() == wxT("FILE")) {
+                    while (fileListChild) {
+                        if (fileListChild->GetName() == wxT("FILE")) {
                             wxString projectFilename = fileListChild->GetAttribute(wxT("FILENAME"));
                             projectFilename.Replace(wxT("\\"), wxT("/"));
 

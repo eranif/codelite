@@ -81,7 +81,7 @@ void clGenericSTCStyler::AddStyle(const wxArrayString& words, clGenericSTCStyler
         return;
     }
     for (size_t i = 0; i < words.size(); ++i) {
-        m_words.push_back({ words.Item(i).Lower(), (int)style });
+        m_words.push_back({words.Item(i).Lower(), (int)style});
     }
 }
 
@@ -92,7 +92,7 @@ void clGenericSTCStyler::AddUserStyle(const wxArrayString& words, const wxColour
     }
     m_styleInfo.push_back(std::make_tuple(m_nextAvailStyle, fgColour, bgColour));
     for (size_t i = 0; i < words.size(); ++i) {
-        m_words.push_back({ words.Item(i).Lower(), m_nextAvailStyle });
+        m_words.push_back({words.Item(i).Lower(), m_nextAvailStyle});
     }
     ++m_nextAvailStyle;
 }

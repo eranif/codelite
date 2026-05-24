@@ -5,7 +5,6 @@
 #include "globals.h"
 #include "macros.h"
 
-
 NewLanguageServerDlg::NewLanguageServerDlg(wxWindow* parent)
     : NewLanguageServerDlgBase(parent)
 {

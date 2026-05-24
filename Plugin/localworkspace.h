@@ -116,9 +116,7 @@ public:
     int GetTabWidth() const { return m_localtabWidth.value_or(wxNOT_FOUND); }
 
     wxFontEncoding GetFileFontEncoding() const
-    {
-        return m_localfileFontEncoding.value_or(static_cast<wxFontEncoding>(wxFONTENCODING_MAX + 1));
-    }
+    { return m_localfileFontEncoding.value_or(static_cast<wxFontEncoding>(wxFONTENCODING_MAX + 1)); }
     void SetFileFontEncoding(const wxString& strFileFontEncoding);
 
     void SetShowWhitespaces(int showWhitespaces) { m_localshowWhitspaces = showWhitespaces; }

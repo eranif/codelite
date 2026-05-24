@@ -16,9 +16,7 @@
 #endif
 
 clThemedTreeCtrl::clThemedTreeCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
-{
-    Create(parent, id, pos, size, style);
-}
+{ Create(parent, id, pos, size, style); }
 
 bool clThemedTreeCtrl::Create(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
 {

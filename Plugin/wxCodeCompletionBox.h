@@ -55,8 +55,8 @@ public:
         kInsertSingleMatch = (1 << 0),
         kRefreshOnKeyType = (1 << 1),
         kNoShowingEvent = (1 << 2), // Don't send the wxEVT_CCBOX_SHOWING event
-        kAlwaysShow = (1 << 3),    // internally, the CC box does some checking to see if the box can be shown. Use this
-                                   // flag to force it to show
+        kAlwaysShow = (1 << 3),  // internally, the CC box does some checking to see if the box can be shown. Use this
+                                 // flag to force it to show
         kTriggerUser = (1 << 4), // CC box was invoked by user typing Ctrl-Space
     };
 
@@ -123,19 +123,22 @@ public:
     /**
      * @brief show the completion box
      */
-    void ShowCompletionBox(wxStyledTextCtrl* ctrl, const wxCodeCompletionBoxEntry::Vec_t& entries,
+    void ShowCompletionBox(wxStyledTextCtrl* ctrl,
+                           const wxCodeCompletionBoxEntry::Vec_t& entries,
                            const wxSize& control_size = wxDefaultSize);
 
     /**
      * @brief show the completion box
      */
-    void ShowCompletionBox(wxStyledTextCtrl* ctrl, const TagEntryPtrVector_t& tags,
+    void ShowCompletionBox(wxStyledTextCtrl* ctrl,
+                           const TagEntryPtrVector_t& tags,
                            const wxSize& control_size = wxDefaultSize);
 
     /**
      * @brief show the completion box  (Language Server Protocol support)
      */
-    void ShowCompletionBox(wxStyledTextCtrl* ctrl, const LSP::CompletionItem::Vec_t& completions,
+    void ShowCompletionBox(wxStyledTextCtrl* ctrl,
+                           const LSP::CompletionItem::Vec_t& completions,
                            const wxSize& control_size = wxDefaultSize);
 
     void SetBitmaps(const wxCodeCompletionBox::BmpVec_t& bitmaps) { this->m_bitmaps = bitmaps; }

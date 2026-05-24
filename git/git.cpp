@@ -108,9 +108,7 @@ public:
               [[maybe_unused]] wxString& buffErr,
               [[maybe_unused]] std::string& raw_buff,
               [[maybe_unused]] std::string& raw_buff_err) override
-    {
-        return false;
-    }
+    { return false; }
 
     // Write to the process stdin
     // This version add LF to the buffer
@@ -2157,9 +2155,7 @@ void GitPlugin::ShowExternalDiff(const wxString& file, const wxString& tool)
 }
 
 void GitPlugin::OnStartGitkUI(wxUpdateUIEvent& e)
-{
-    e.Enable(!m_repositoryDirectory.IsEmpty() && !m_pathGITKExecutable.IsEmpty());
-}
+{ e.Enable(!m_repositoryDirectory.IsEmpty() && !m_pathGITKExecutable.IsEmpty()); }
 
 void GitPlugin::ApplyPatch(const wxString& filename, const wxString& extraFlags)
 {

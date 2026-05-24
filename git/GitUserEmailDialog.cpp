@@ -6,6 +6,4 @@ GitUserEmailDialog::GitUserEmailDialog(wxWindow* parent)
 }
 
 void GitUserEmailDialog::OnOKUI(wxUpdateUIEvent& event)
-{
-    event.Enable(!m_textCtrlEmail->IsEmpty() && !m_textCtrlName->IsEmpty());
-}
+{ event.Enable(!m_textCtrlEmail->IsEmpty() && !m_textCtrlName->IsEmpty()); }

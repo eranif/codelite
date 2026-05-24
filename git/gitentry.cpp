@@ -425,14 +425,10 @@ void GitCommandsEntries::ToJSON(JSONItem& arr) const
 }
 
 const wxString GitWorkspace::GetProjectUserEnteredRepoPath(const wxString& projectName)
-{
-    return m_userEnteredRepoPath[projectName];
-}
+{ return m_userEnteredRepoPath[projectName]; }
 
 void GitWorkspace::SetProjectUserEnteredRepoPath(const wxString& projectName, const wxString& userEnteredRepoPath)
-{
-    m_userEnteredRepoPath[projectName] = userEnteredRepoPath;
-}
+{ m_userEnteredRepoPath[projectName] = userEnteredRepoPath; }
 
 void GitWorkspace::FromJSON(const JSONItem& json)
 {

@@ -1049,7 +1049,8 @@ void Manager::AddNewEndpoint(const llm::EndpointData& d)
             http_headers["x-api-key"] = d.api_key.value_or("<INSERT_API_KEY>");
             new_endpoint["http_headers"] = http_headers;
             new_endpoint["verify_server_ssl"] = false;
-
+            new_endpoint["server_compaction"]["enabled"] = true;
+            new_endpoint["server_compaction"]["trigger_input_tokens"] = 100000;
         } else if (d.client_type == kClientTypeMoonshotAI) {
             // MoonshotAI
             llm::json http_headers;
@@ -1074,6 +1075,7 @@ void Manager::AddNewEndpoint(const llm::EndpointData& d)
             http_headers["Authorization"] = "Bearer " + d.api_key.value_or("<INSERT_API_KEY>");
             new_endpoint["http_headers"] = http_headers;
             new_endpoint["verify_server_ssl"] = false;
+            new_endpoint["compaction_threshold"] = 100000;
         }
 
         new_endpoint["type"] = d.client_type;

@@ -317,15 +317,22 @@ std::unordered_map<std::string_view, JSONItem> JSONItem::GetAsMap() const
 
 wxStringMap_t JSONItem::toStringMap(const wxStringMap_t& default_map) const
 {
-    if (!m_json || !isArray()) {
+    if (!m_json || (!isArray() && !isObject())) {
         return default_map;
     }
     wxStringMap_t res;
-
-    for (int i = 0; i < arraySize(); ++i) {
-        wxString key = arrayItem(i).namedObject("key").toString();
-        wxString val = arrayItem(i).namedObject("value").toString();
-        res.emplace(key, val);
+    if (isArray()) {
+        for (int i = 0; i < arraySize(); ++i) {
+            wxString key = arrayItem(i).namedObject("key").toString();
+            wxString val = arrayItem(i).namedObject("value").toString();
+            res.emplace(key, val);
+        }
+    } else {
+        for (auto& [key, child] : m_json->items()) {
+            if (child.is_string()) {
+                res.emplace(key, wxString::FromUTF8(child.get<std::string>()));
+            }
+        }
     }
     return res;
 }

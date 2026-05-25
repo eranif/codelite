@@ -6,12 +6,12 @@
 #include <sstream>
 #include <wx/string.h>
 
-JSONItem LSP::MessageWithParams::ToJSON() const
+nlohmann::json LSP::MessageWithParams::ToJSON() const
 {
-    JSONItem json = Message::ToJSON();
-    json.addProperty("method", GetMethod());
+    auto json = Message::ToJSON();
+    json["method"] = GetMethod().ToStdString(wxConvUTF8);
     if (m_params) {
-        json.addProperty("params", m_params->ToJSON());
+        json["params"] = m_params->ToJSON();
     }
     return json;
 }

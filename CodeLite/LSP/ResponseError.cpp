@@ -22,4 +22,4 @@ void LSP::ResponseError::FromJSON(const JSONItem& json)
 
 std::string LSP::ResponseError::ToString() const { return ""; }
 
-JSONItem LSP::ResponseError::ToJSON() const { return JSONItem(nullptr); }
+nlohmann::json LSP::ResponseError::ToJSON() const { return nullptr; }

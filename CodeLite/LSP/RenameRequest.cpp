@@ -37,7 +37,7 @@ std::optional<LSPEvent> LSP::RenameRequest::OnResponse(const LSP::ResponseMessag
         for (const auto& [filepath, changes] : modifications) {
             LSP_DEBUG() << "  " << filepath << modifications.size() << "changes:" << endl;
             for (const auto& change : changes) {
-                LSP_DEBUG() << "    " << change.ToJSON().format(false) << endl;
+                LSP_DEBUG() << "    " << wxString::FromUTF8(change.ToJSON().dump(0)) << endl;
             }
         }
     }

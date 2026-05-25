@@ -25,7 +25,7 @@ protected:
 public:
     MessageWithParams() = default;
     ~MessageWithParams() override = default;
-    JSONItem ToJSON() const override;
+    nlohmann::json ToJSON() const override;
     void FromJSON(const JSONItem& json) override;
     std::string ToString() const override;
 

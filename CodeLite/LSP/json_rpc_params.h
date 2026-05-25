@@ -22,6 +22,7 @@ public:
 public:
     Params() = default;
     virtual ~Params() = default;
+    bool operator==(const Params&) const = default;
     template <typename T>
     T* As() const
     {
@@ -41,8 +42,10 @@ public:
     TextDocumentPositionParams() = default;
     ~TextDocumentPositionParams() override = default;
 
+    bool operator==(const TextDocumentPositionParams&) const = default;
+
     void FromJSON(const JSONItem& json) override;
-    JSONItem ToJSON() const override;
+    nlohmann::json ToJSON() const override;
 
     void SetPosition(const Position& position) { this->m_position = position; }
     void SetTextDocument(const TextDocumentIdentifier& textDocument) { this->m_textDocument = textDocument; }
@@ -65,9 +68,10 @@ class WXDLLIMPEXP_CL RenameParams : public TextDocumentPositionParams
 public:
     RenameParams() = default;
     ~RenameParams() override = default;
+    bool operator==(const RenameParams&) const = default;
 
     void FromJSON(const JSONItem& json) override;
-    JSONItem ToJSON() const override;
+    nlohmann::json ToJSON() const override;
     void SetNewName(const wxString& newName) { this->m_newName = newName; }
     const wxString& GetNewName() const { return m_newName; }
 };
@@ -82,9 +86,10 @@ class WXDLLIMPEXP_CL ReferenceParams : public TextDocumentPositionParams
 public:
     ReferenceParams(bool includeDeclaration);
     ~ReferenceParams() override = default;
+    bool operator==(const ReferenceParams&) const = default;
 
     void FromJSON(const JSONItem& json) override;
-    JSONItem ToJSON() const override;
+    nlohmann::json ToJSON() const override;
     void SetIncludeDeclaration(bool includeDeclaration) { this->m_includeDeclaration = includeDeclaration; }
     bool IsIncludeDeclaration() const { return m_includeDeclaration; }
 };
@@ -99,9 +104,10 @@ class WXDLLIMPEXP_CL SemanticTokensParams : public Params
 public:
     SemanticTokensParams() = default;
     ~SemanticTokensParams() override = default;
+    bool operator==(const SemanticTokensParams&) const = default;
 
     void FromJSON(const JSONItem& json) override;
-    JSONItem ToJSON() const override;
+    nlohmann::json ToJSON() const override;
 
     void SetTextDocument(const TextDocumentIdentifier& textDocument) { this->m_textDocument = textDocument; }
     const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
@@ -124,9 +130,10 @@ class WXDLLIMPEXP_CL DocumentSymbolParams : public Params
 public:
     DocumentSymbolParams() = default;
     ~DocumentSymbolParams() override = default;
+    bool operator==(const DocumentSymbolParams&) const = default;
 
     void FromJSON(const JSONItem& json) override;
-    JSONItem ToJSON() const override;
+    nlohmann::json ToJSON() const override;
 
     void SetTextDocument(const TextDocumentIdentifier& textDocument) { this->m_textDocument = textDocument; }
     const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
@@ -140,9 +147,10 @@ class WXDLLIMPEXP_CL CompletionParams : public TextDocumentPositionParams
 public:
     CompletionParams() = default;
     ~CompletionParams() override = default;
+    bool operator==(const CompletionParams&) const = default;
 
     void FromJSON(const JSONItem& json) override;
-    JSONItem ToJSON() const override;
+    nlohmann::json ToJSON() const override;
 };
 
 //===----------------------------------------------------------------------------------
@@ -156,9 +164,10 @@ class WXDLLIMPEXP_CL ExecuteCommandParams : public Params
 public:
     ExecuteCommandParams(const wxString& command, const wxString& arguments);
     ~ExecuteCommandParams() = default;
+    bool operator==(const ExecuteCommandParams&) const = default;
 
     void FromJSON(const JSONItem& json) override;
-    JSONItem ToJSON() const override;
+    nlohmann::json ToJSON() const override;
 };
 
 //===----------------------------------------------------------------------------------
@@ -173,9 +182,10 @@ class WXDLLIMPEXP_CL CodeActionParams : public Params
 public:
     CodeActionParams() = default;
     virtual ~CodeActionParams() = default;
+    bool operator==(const CodeActionParams&) const = default;
 
     void FromJSON(const JSONItem& json) override;
-    JSONItem ToJSON() const override;
+    nlohmann::json ToJSON() const override;
 
     void SetTextDocument(const TextDocumentIdentifier& textDocument) { this->m_textDocument = textDocument; }
     const TextDocumentIdentifier& GetTextDocument() const { return m_textDocument; }
@@ -197,9 +207,10 @@ class WXDLLIMPEXP_CL DidOpenTextDocumentParams : public Params
 public:
     DidOpenTextDocumentParams() = default;
     ~DidOpenTextDocumentParams() override = default;
+    bool operator==(const DidOpenTextDocumentParams&) const = default;
 
     void FromJSON(const JSONItem& json) override;
-    JSONItem ToJSON() const override;
+    nlohmann::json ToJSON() const override;
 
     DidOpenTextDocumentParams& SetTextDocument(const TextDocumentItem& textDocument)
     {
@@ -219,9 +230,10 @@ class WXDLLIMPEXP_CL DidCloseTextDocumentParams : public Params
 public:
     DidCloseTextDocumentParams() = default;
     ~DidCloseTextDocumentParams() override = default;
+    bool operator==(const DidCloseTextDocumentParams&) const = default;
 
     void FromJSON(const JSONItem& json) override;
-    JSONItem ToJSON() const override;
+    nlohmann::json ToJSON() const override;
     DidCloseTextDocumentParams& SetTextDocument(const TextDocumentIdentifier& textDocument)
     {
         this->m_textDocument = textDocument;
@@ -241,9 +253,10 @@ class WXDLLIMPEXP_CL DidChangeTextDocumentParams : public Params
 public:
     DidChangeTextDocumentParams() = default;
     ~DidChangeTextDocumentParams() override = default;
+    bool operator==(const DidChangeTextDocumentParams&) const = default;
 
     void FromJSON(const JSONItem& json) override;
-    JSONItem ToJSON() const override;
+    nlohmann::json ToJSON() const override;
     DidChangeTextDocumentParams& SetContentChanges(const std::vector<TextDocumentContentChangeEvent>& contentChanges)
     {
         this->m_contentChanges = contentChanges;
@@ -269,9 +282,10 @@ class WXDLLIMPEXP_CL DidSaveTextDocumentParams : public Params
 public:
     DidSaveTextDocumentParams() = default;
     ~DidSaveTextDocumentParams() override = default;
+    bool operator==(const DidSaveTextDocumentParams&) const = default;
 
     void FromJSON(const JSONItem& json) override;
-    JSONItem ToJSON() const override;
+    nlohmann::json ToJSON() const override;
     DidSaveTextDocumentParams& SetTextDocument(const TextDocumentIdentifier& textDocument)
     {
         this->m_textDocument = textDocument;

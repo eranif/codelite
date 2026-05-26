@@ -290,12 +290,6 @@ void DocumentSymbol::FromJSON(const JSONItem& json)
     }
 }
 
-nlohmann::json DocumentSymbol::ToJSON() const
-{
-    wxASSERT_MSG(false, "DocumentSymbol::ToJSON(): is not implemented");
-    return nullptr;
-}
-
 //===----------------------------------------------------------------------------------
 // DocumentSymbol
 //===----------------------------------------------------------------------------------
@@ -406,9 +400,6 @@ void Command::FromJSON(const JSONItem& json)
     // raw JSON
     m_arguments = json["arguments"].format(false);
 }
-
-// unimplemented
-nlohmann::json Command::ToJSON() const { return nullptr; }
 
 std::unordered_map<wxString, std::vector<LSP::TextEdit>> ParseWorkspaceEdit(const JSONItem& result)
 {

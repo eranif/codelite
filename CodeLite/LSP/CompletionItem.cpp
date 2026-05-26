@@ -1,7 +1,5 @@
 #include "CompletionItem.h"
 
-nlohmann::json LSP::CompletionItem::ToJSON() const { return nullptr; }
-
 void LSP::CompletionItem::FromJSON(const JSONItem& json)
 {
     m_label = json.namedObject("label").toString();

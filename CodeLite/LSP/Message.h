@@ -2,7 +2,6 @@
 #define MESSAGE_H
 
 #include "JSON.h"
-#include "JSONObject.h"
 #include "codelite_exports.h"
 
 #include <memory>
@@ -10,7 +9,7 @@
 
 namespace LSP
 {
-class WXDLLIMPEXP_CL Message : public LSP::Serializable
+class WXDLLIMPEXP_CL Message
 {
     wxString m_jsonrpc = "2.0";
 
@@ -19,9 +18,9 @@ public:
 
 public:
     Message() = default;
-    ~Message() override = default;
-    nlohmann::json ToJSON() const override;
-    void FromJSON(const JSONItem& json) override;
+    virtual ~Message() = default;
+    virtual nlohmann::json ToJSON() const;
+    virtual void FromJSON(const JSONItem& json);
 
     /**
      * @brief serialize this message into string

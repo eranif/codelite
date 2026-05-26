@@ -19,11 +19,11 @@ clPatch::clPatch()
 void clPatch::Patch(const wxFileName& patchFile, const wxString& workingDirectory, const wxString& args)
 {
     // Sanity
-    if(!m_patch.FileExists()) {
+    if (!m_patch.FileExists()) {
         throw clException("Could not locate patch executable");
     }
 
-    if(!patchFile.FileExists()) {
+    if (!patchFile.FileExists()) {
         throw clException("Patch failed. File: '" + patchFile.GetFullPath() + "' does not exist");
     }
 
@@ -33,7 +33,7 @@ void clPatch::Patch(const wxFileName& patchFile, const wxString& workingDirector
 
     StringUtils::WrapWithQuotes(command);
 
-    if(!args.IsEmpty()) {
+    if (!args.IsEmpty()) {
         command << " " << args;
     }
 

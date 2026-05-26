@@ -19,24 +19,24 @@ void clLocaleManager::load()
         unordered_set<wxString> visited;
 
         int system_lang = wxLocale::GetSystemLanguage();
-        if(system_lang == wxLANGUAGE_UNKNOWN) {
+        if (system_lang == wxLANGUAGE_UNKNOWN) {
             // Least-stupid fallback value
             system_lang = wxLANGUAGE_ENGLISH_US;
         }
 
         // this operation takes time to perform, cache the locales
-        for(int n = 0, lang = wxLANGUAGE_UNKNOWN + 1; lang < wxLANGUAGE_USER_DEFINED; ++lang) {
+        for (int n = 0, lang = wxLANGUAGE_UNKNOWN + 1; lang < wxLANGUAGE_USER_DEFINED; ++lang) {
             const wxLanguageInfo* info = wxLocale::GetLanguageInfo(lang);
             // Check there *is* a Canonical name, as empty strings return a valid locale :/
-            if((info && !info->CanonicalName.IsEmpty()) && wxLocale::IsAvailable(lang)) {
+            if ((info && !info->CanonicalName.IsEmpty()) && wxLocale::IsAvailable(lang)) {
 
                 // Check we haven't already seen this item: we may find the system default twice
-                if(visited.insert(info->CanonicalName).second) {
+                if (visited.insert(info->CanonicalName).second) {
                     // Display the name as e.g. "en_GB: English (U.K.)"
                     cached_locales.Add(info->CanonicalName + ": " + info->Description);
                     cached_locales_CanonicalName.Add(info->CanonicalName);
 
-                    if(lang == system_lang) {
+                    if (lang == system_lang) {
                         // Use this as the selection if preferred_locale isn't found
                         system_default_locale = n;
                     }

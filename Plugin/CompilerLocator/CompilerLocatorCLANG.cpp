@@ -124,7 +124,9 @@ CompilerPtr CompilerLocatorCLANG::Locate(const wxString& folder)
     return NULL;
 }
 
-void CompilerLocatorCLANG::AddTool(CompilerPtr compiler, const wxString& name, const wxFileName& fntool,
+void CompilerLocatorCLANG::AddTool(CompilerPtr compiler,
+                                   const wxString& name,
+                                   const wxFileName& fntool,
                                    const wxString& extraArgs)
 {
     wxString tool = fntool.GetFullPath();
@@ -182,7 +184,8 @@ void CompilerLocatorCLANG::AddTools(CompilerPtr compiler, const wxFileName& clan
 
 wxString CompilerLocatorCLANG::GetCompilerFullName(const wxString& clangBinary) { return clangBinary; }
 
-void CompilerLocatorCLANG::CheckUninstRegKey(const wxString& displayName, const wxString& installFolder,
+void CompilerLocatorCLANG::CheckUninstRegKey(const wxString& displayName,
+                                             const wxString& installFolder,
                                              const wxString& displayVersion)
 {
     wxUnusedVar(displayVersion);

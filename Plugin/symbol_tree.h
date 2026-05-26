@@ -102,8 +102,11 @@ public:
      * \param size Window size
      * \param style Window style
      */
-    SymbolTree(wxWindow* parent, const wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-               const wxSize& size = wxDefaultSize, long style = 0);
+    SymbolTree(wxWindow* parent,
+               const wxWindowID id,
+               const wxPoint& pos = wxDefaultPosition,
+               const wxSize& size = wxDefaultSize,
+               long style = 0);
 
     /**
      * @brief clear the tree content
@@ -123,8 +126,11 @@ public:
      * \param size Window size
      * \param style Window style
      */
-    virtual void Create(wxWindow* parent, const wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-                        const wxSize& size = wxDefaultSize, long style = wxTR_HIDE_ROOT);
+    virtual void Create(wxWindow* parent,
+                        const wxWindowID id,
+                        const wxPoint& pos = wxDefaultPosition,
+                        const wxSize& size = wxDefaultSize,
+                        long style = wxTR_HIDE_ROOT);
 
     /**
      * Construct a outline tree for fileName

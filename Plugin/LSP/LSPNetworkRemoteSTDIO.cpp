@@ -39,7 +39,7 @@ void LSPNetworkRemoteSTDIO::DoStartRemoteProcess()
     for (const auto& p : m_startupInfo.GetEnv()) {
         auto key = p.first;
         auto value = MacroManager::Instance()->ExpandNoEnv(p.second, wxEmptyString, wxEmptyString);
-        expanded_env.push_back({ key, value });
+        expanded_env.push_back({key, value});
         LOG_DEBUG(LOG()) << key << "=" << value << endl;
     }
 

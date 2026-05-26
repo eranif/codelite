@@ -84,7 +84,7 @@ public:
     bool DoHover(const wxPoint& pt)
     {
         auto old_state = m_state;
-        if(m_rect.Contains(pt)) {
+        if (m_rect.Contains(pt)) {
             m_state = wxCAPTION_BUTTON_STATE_HOVER;
         } else {
             m_state = wxCAPTION_BUTTON_STATE_NORMAL;

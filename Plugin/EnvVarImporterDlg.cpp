@@ -1,14 +1,18 @@
 #include "EnvVarImporterDlg.h"
 
-EnvVarImporterDlg::EnvVarImporterDlg(wxWindow* parent, const wxString& projectName, const wxString& cfgName,
-                                     std::set<wxString> listEnvVar, BuildConfigPtr le_conf, bool* showDlg)
+EnvVarImporterDlg::EnvVarImporterDlg(wxWindow* parent,
+                                     const wxString& projectName,
+                                     const wxString& cfgName,
+                                     std::set<wxString> listEnvVar,
+                                     BuildConfigPtr le_conf,
+                                     bool* showDlg)
     : EnvVarImporterDlgBase(parent)
     , le_conf(le_conf)
     , showDlg(showDlg)
 {
     wxString value = wxT("");
 
-    for(wxString envVar : listEnvVar) {
+    for (wxString envVar : listEnvVar) {
         value += envVar + wxT("=?") + wxT("\n");
     }
 

@@ -168,7 +168,7 @@ void clTabInfo::CalculateOffsets(size_t style, size_t max_width, wxDC& dc)
 void clTabInfo::CalculateOffsets(size_t style, size_t max_width)
 {
     if (m_tabCtrl) {
-        wxBitmap bmp{ 1, 1 };
+        wxBitmap bmp{1, 1};
         wxMemoryDC memDC(bmp);
         wxGCDC gcdc;
         wxDC& dc = DrawingUtils::GetGCDC(memDC, gcdc);
@@ -216,9 +216,7 @@ const wxBitmap& clTabInfo::GetBitmap(int index, bool disabled) const
 }
 
 bool clTabInfo::HasDisableBitmap() const
-{
-    return m_tabCtrl && m_tabCtrl->GetBitmaps()->Get(m_disabledBitmp, true).IsOk();
-}
+{ return m_tabCtrl && m_tabCtrl->GetBitmaps()->Get(m_disabledBitmp, true).IsOk(); }
 bool clTabInfo::HasBitmap() const { return m_tabCtrl && m_tabCtrl->GetBitmaps()->Get(m_bitmap, false).IsOk(); }
 
 std::unordered_map<wxString, clTabRenderer*> clTabRenderer::ms_Renderers;
@@ -226,9 +224,7 @@ std::unordered_map<wxString, clTabRenderer*> clTabRenderer::ms_Renderers;
 clTabRenderer::clTabRenderer(const wxString& name, const wxWindow* parent)
     : bottomAreaHeight(0)
     , m_name(name)
-{
-    ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight() + 2;
-}
+{ ySpacer = EditorConfigST::Get()->GetOptions()->GetNotebookTabHeight() + 2; }
 
 wxFont clTabRenderer::GetTabFont(bool bold)
 {
@@ -245,7 +241,9 @@ wxFont clTabRenderer::GetTabFont(bool bold)
     dc.DrawLine(__p1, __p2);  \
     dc.DrawLine(__p1, __p2);
 
-void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc, const clTabColours& colours,
+void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab,
+                                            wxDC& dc,
+                                            const clTabColours& colours,
                                             size_t style)
 {
     wxPoint pt1, pt2;
@@ -278,12 +276,14 @@ void clTabRenderer::ClearActiveTabExtraLine(clTabInfo::Ptr_t activeTab, wxDC& dc
     }
 }
 
-void clTabRenderer::DrawButton(wxWindow* win, wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours,
-                               eButtonState state)
+void clTabRenderer::DrawButton(
+    wxWindow* win, wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, eButtonState state)
 {
     // Draw the X button
     wxRect buttonRect = wxRect(tabInfo.m_bmpCloseX + tabInfo.GetRect().GetX(),
-                               tabInfo.m_bmpCloseY + tabInfo.GetRect().GetY(), X_BUTTON_SIZE, X_BUTTON_SIZE);
+                               tabInfo.m_bmpCloseY + tabInfo.GetRect().GetY(),
+                               X_BUTTON_SIZE,
+                               X_BUTTON_SIZE);
     buttonRect = buttonRect.CenterIn(tabInfo.GetRect(), wxVERTICAL);
 
     wxColour text_colour = colours.activeTabTextColour;
@@ -304,8 +304,12 @@ void clTabRenderer::DrawButton(wxWindow* win, wxDC& dc, const clTabInfo& tabInfo
     buttonRect.y -= 1;
 #endif
 
-    DrawingUtils::DrawButtonX(dc, win, buttonRect, text_colour,
-                              tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour, state,
+    DrawingUtils::DrawButtonX(dc,
+                              win,
+                              buttonRect,
+                              text_colour,
+                              tabInfo.IsActive() ? colours.activeTabBgColour : colours.inactiveTabBgColour,
+                              state,
                               unicode_symbol);
 }
 
@@ -367,8 +371,8 @@ int clTabRenderer::GetMarkerWidth()
 #endif
 }
 
-void clTabRenderer::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours,
-                                   size_t style)
+void clTabRenderer::DrawBackground(
+    wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours, size_t style)
 {
     wxUnusedVar(parent);
     wxUnusedVar(colours);
@@ -397,8 +401,12 @@ void clTabRenderer::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& cli
 #endif
 }
 
-void clTabRenderer::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,
-                                       const wxRect& activeTabRect, const clTabColours& colours, size_t style)
+void clTabRenderer::FinaliseBackground(wxWindow* parent,
+                                       wxDC& dc,
+                                       const wxRect& clientRect,
+                                       const wxRect& activeTabRect,
+                                       const clTabColours& colours,
+                                       size_t style)
 {
     wxUnusedVar(parent);
     wxUnusedVar(activeTabRect);
@@ -525,7 +533,7 @@ void clTabRenderer::RegisterRenderer(clTabRenderer* renderer)
     if (ms_Renderers.count(renderer->GetName())) {
         return;
     }
-    ms_Renderers.insert({ renderer->GetName(), renderer });
+    ms_Renderers.insert({renderer->GetName(), renderer});
 }
 
 clTabRenderer* clTabRenderer::Create(const wxWindow* parent, const wxString& name)

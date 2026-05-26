@@ -70,14 +70,14 @@ clEditorTipWindow::clEditorTipWindow(wxStyledTextCtrl* parent)
     SetBackgroundStyle(wxBG_STYLE_PAINT);
     m_font = ColoursAndFontsManager::Get().GetFixedFont(true);
     Hide();
-    EventNotifier::Get()->Connect(wxEVT_CMD_COLOURS_FONTS_UPDATED,
-                                  clCommandEventHandler(clEditorTipWindow::OnEditoConfigChanged), NULL, this);
+    EventNotifier::Get()->Connect(
+        wxEVT_CMD_COLOURS_FONTS_UPDATED, clCommandEventHandler(clEditorTipWindow::OnEditoConfigChanged), NULL, this);
 }
 
 clEditorTipWindow::~clEditorTipWindow()
 {
-    EventNotifier::Get()->Disconnect(wxEVT_CMD_COLOURS_FONTS_UPDATED,
-                                     clCommandEventHandler(clEditorTipWindow::OnEditoConfigChanged), NULL, this);
+    EventNotifier::Get()->Disconnect(
+        wxEVT_CMD_COLOURS_FONTS_UPDATED, clCommandEventHandler(clEditorTipWindow::OnEditoConfigChanged), NULL, this);
 }
 
 void clEditorTipWindow::OnEraseBg(wxEraseEvent& e) { wxUnusedVar(e); }

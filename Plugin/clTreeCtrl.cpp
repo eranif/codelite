@@ -1446,14 +1446,10 @@ wxTreeItemId clTreeCtrl::GetNextItem(const wxTreeItemId& item) const { return m_
 wxTreeItemId clTreeCtrl::GetPrevItem(const wxTreeItemId& item) const { return m_model.GetItemBefore(item, true); }
 
 wxTreeItemId clTreeCtrl::FindNext(const wxTreeItemId& from, const wxString& what, size_t col, size_t searchFlags)
-{
-    return wxTreeItemId(DoFind(m_model.ToPtr(from), what, col, searchFlags, true));
-}
+{ return wxTreeItemId(DoFind(m_model.ToPtr(from), what, col, searchFlags, true)); }
 
 wxTreeItemId clTreeCtrl::FindPrev(const wxTreeItemId& from, const wxString& what, size_t col, size_t searchFlags)
-{
-    return wxTreeItemId(DoFind(m_model.ToPtr(from), what, col, searchFlags, false));
-}
+{ return wxTreeItemId(DoFind(m_model.ToPtr(from), what, col, searchFlags, false)); }
 
 void clTreeCtrl::HighlightText(const wxTreeItemId& item, bool b)
 {

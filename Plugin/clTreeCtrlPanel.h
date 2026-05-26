@@ -84,9 +84,7 @@ public:
      * @param excludeFilePatterns
      */
     void SetExcludeFilePatterns(const wxString& excludeFilePatterns)
-    {
-        this->m_excludeFilePatterns = excludeFilePatterns;
-    }
+    { this->m_excludeFilePatterns = excludeFilePatterns; }
 
     const wxString& GetExcludeFilePatterns() const { return m_excludeFilePatterns; }
 

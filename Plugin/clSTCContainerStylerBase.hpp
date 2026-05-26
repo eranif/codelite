@@ -24,15 +24,11 @@ public:
 
     template <typename T>
     T GetCurrentChar() const
-    {
-        return static_cast<T>(GetCurrentCharAsInt());
-    }
+    { return static_cast<T>(GetCurrentCharAsInt()); }
 
     template <typename T>
     T GetCharAt(size_t at) const
-    {
-        return static_cast<T>(GetCharAtAsInt(at));
-    }
+    { return static_cast<T>(GetCharAtAsInt(at)); }
 
     virtual bool IsEofInNSteps(size_t n = 0) const = 0;
     virtual int GetPosition() const = 0;
@@ -247,9 +243,7 @@ public:
 
     /// Check if we can peek ahead 'count' characters from the current position
     bool CanPeek(size_t count) const override
-    {
-        return (m_ctrl->GetEndStyled() + static_cast<int>(count)) <= m_ctrl->GetLastPosition();
-    }
+    { return (m_ctrl->GetEndStyled() + static_cast<int>(count)) <= m_ctrl->GetLastPosition(); }
 
     bool HasReachedEnd() const override { return m_ctrl->GetEndStyled() >= m_ctrl->GetLastPosition(); }
     bool CanNext() const override { return !HasReachedEnd(); }

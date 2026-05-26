@@ -8,9 +8,15 @@
 #include <wx/icon.h>
 #include <wx/xrc/xmlres.h>
 
-clDiffFrame::clDiffFrame(wxWindow* parent, const DiffSideBySidePanel::FileInfo& left,
-                         const DiffSideBySidePanel::FileInfo& right, bool originSourceControl)
-    : wxFrame(parent, wxID_ANY, _("CodeLite - Diff View"), wxDefaultPosition, wxDefaultSize,
+clDiffFrame::clDiffFrame(wxWindow* parent,
+                         const DiffSideBySidePanel::FileInfo& left,
+                         const DiffSideBySidePanel::FileInfo& right,
+                         bool originSourceControl)
+    : wxFrame(parent,
+              wxID_ANY,
+              _("CodeLite - Diff View"),
+              wxDefaultPosition,
+              wxDefaultSize,
               wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT)
 {
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
@@ -18,14 +24,14 @@ clDiffFrame::clDiffFrame(wxWindow* parent, const DiffSideBySidePanel::FileInfo& 
     m_diffView = new DiffSideBySidePanel(this);
     m_diffView->SetFilesDetails(left, right);
     m_diffView->Diff();
-    if(originSourceControl) {
+    if (originSourceControl) {
         m_diffView->SetOriginSourceControl();
     }
     sz->Add(m_diffView, 1, wxEXPAND, 0);
     WindowAttrManager::Load(this);
 
     wxIconBundle b;
-    if(clGetManager()->GetStdIcons()->GetIconBundle("diff", &b)) {
+    if (clGetManager()->GetStdIcons()->GetIconBundle("diff", &b)) {
         SetIcons(b);
     }
     CreateMenuBar();
@@ -33,7 +39,11 @@ clDiffFrame::clDiffFrame(wxWindow* parent, const DiffSideBySidePanel::FileInfo& 
 }
 
 clDiffFrame::clDiffFrame(wxWindow* parent)
-    : wxFrame(parent, wxID_ANY, _("CodeLite - Diff View"), wxDefaultPosition, wxDefaultSize,
+    : wxFrame(parent,
+              wxID_ANY,
+              _("CodeLite - Diff View"),
+              wxDefaultPosition,
+              wxDefaultSize,
               wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT)
 {
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
@@ -54,14 +64,18 @@ clDiffFrame::clDiffFrame(wxWindow* parent)
 }
 
 clDiffFrame::clDiffFrame(wxWindow* parent, const wxFileName& left, const wxFileName& right, bool isTempFile)
-    : wxFrame(parent, wxID_ANY, _("CodeLite - Diff View"), wxDefaultPosition, wxDefaultSize,
+    : wxFrame(parent,
+              wxID_ANY,
+              _("CodeLite - Diff View"),
+              wxDefaultPosition,
+              wxDefaultSize,
               wxDEFAULT_FRAME_STYLE | wxFRAME_FLOAT_ON_PARENT)
 {
     wxBoxSizer* sz = new wxBoxSizer(wxVERTICAL);
     SetSizer(sz);
     m_diffView = new DiffSideBySidePanel(this);
     sz->Add(m_diffView, 1, wxEXPAND, 0);
-    if(isTempFile) {
+    if (isTempFile) {
         m_diffView->SetSaveFilepaths(false);
     }
 
@@ -94,9 +108,13 @@ void clDiffFrame::CreateMenuBar()
     Bind(wxEVT_MENU, &DiffSideBySidePanel::OnCopyRightToLeft, m_diffView, XRCID("ID_DIFF_TOOL_COPY_LEFT"));
     Bind(wxEVT_UPDATE_UI, &DiffSideBySidePanel::OnCopyRightToLeftUI, m_diffView, XRCID("ID_DIFF_TOOL_COPY_LEFT"));
 
-    Bind(wxEVT_MENU, &DiffSideBySidePanel::OnCopyFileLeftToRight, m_diffView,
+    Bind(wxEVT_MENU,
+         &DiffSideBySidePanel::OnCopyFileLeftToRight,
+         m_diffView,
          XRCID("ID_DIFF_TOOL_COPY_ALL_LEFT_TO_RIGHT"));
-    Bind(wxEVT_MENU, &DiffSideBySidePanel::OnCopyFileFromRight, m_diffView,
+    Bind(wxEVT_MENU,
+         &DiffSideBySidePanel::OnCopyFileFromRight,
+         m_diffView,
          XRCID("ID_DIFF_TOOL_COPY_ALL_RIGHT_TO_LEFT"));
 
     Bind(wxEVT_MENU, &clDiffFrame::OnClose, this, wxID_CLOSE);
@@ -114,7 +132,7 @@ void clDiffFrame::OnClose(wxCommandEvent& event)
 void clDiffFrame::OnCharHook(wxKeyEvent& event)
 {
     event.Skip();
-    if(event.GetKeyCode() == WXK_ESCAPE && !m_diffView->HasFindBarFocus()) {
+    if (event.GetKeyCode() == WXK_ESCAPE && !m_diffView->HasFindBarFocus()) {
         Close();
     }
 }

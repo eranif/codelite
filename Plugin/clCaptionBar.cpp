@@ -17,7 +17,7 @@ constexpr int SPACER = 5;
 }
 
 #define check_ptr_return(ptr) \
-    if(!ptr) {                \
+    if (!ptr) {               \
         return;               \
     }
 
@@ -36,17 +36,17 @@ clCaptionBar::clCaptionBar(wxWindow* parent, wxTopLevelWindow* topLevelFrame)
     m_colours.InitDefaults();
     // initialise the callbacks
     m_leftDownCallbacks = {
-        { wxCAPTION_HT_ACTIONBUTTON, { &m_buttonAction, &clCaptionButton::LeftDown } },
-        { wxCAPTION_HT_CLOSEBUTTON, { &m_buttonClose, &clCaptionButton::LeftDown } },
-        { wxCAPTION_HT_MINIMIZEBUTTON, { &m_buttonMinimize, &clCaptionButton::LeftDown } },
-        { wxCAPTION_HT_MAXMIZEBUTTON, { &m_buttonMaximize, &clCaptionButton::LeftDown } },
+        {wxCAPTION_HT_ACTIONBUTTON, {&m_buttonAction, &clCaptionButton::LeftDown}},
+        {wxCAPTION_HT_CLOSEBUTTON, {&m_buttonClose, &clCaptionButton::LeftDown}},
+        {wxCAPTION_HT_MINIMIZEBUTTON, {&m_buttonMinimize, &clCaptionButton::LeftDown}},
+        {wxCAPTION_HT_MAXMIZEBUTTON, {&m_buttonMaximize, &clCaptionButton::LeftDown}},
     };
 
     m_leftUpCallbacks = {
-        { wxCAPTION_HT_ACTIONBUTTON, { &m_buttonAction, &clCaptionButton::LeftUp } },
-        { wxCAPTION_HT_CLOSEBUTTON, { &m_buttonClose, &clCaptionButton::LeftUp } },
-        { wxCAPTION_HT_MINIMIZEBUTTON, { &m_buttonMinimize, &clCaptionButton::LeftUp } },
-        { wxCAPTION_HT_MAXMIZEBUTTON, { &m_buttonMaximize, &clCaptionButton::LeftUp } },
+        {wxCAPTION_HT_ACTIONBUTTON, {&m_buttonAction, &clCaptionButton::LeftUp}},
+        {wxCAPTION_HT_CLOSEBUTTON, {&m_buttonClose, &clCaptionButton::LeftUp}},
+        {wxCAPTION_HT_MINIMIZEBUTTON, {&m_buttonMinimize, &clCaptionButton::LeftUp}},
+        {wxCAPTION_HT_MAXMIZEBUTTON, {&m_buttonMaximize, &clCaptionButton::LeftUp}},
     };
 
     Bind(wxEVT_PAINT, &clCaptionBar::OnPaint, this);
@@ -80,15 +80,15 @@ clCaptionBar::~clCaptionBar()
 
 wxCaptionHitTest clCaptionBar::HitTest(const wxPoint& pt) const
 {
-    if(m_bitmapRect.Contains(pt)) {
+    if (m_bitmapRect.Contains(pt)) {
         return wxCAPTION_HT_ICON;
-    } else if(m_buttonClose.Contains(pt)) {
+    } else if (m_buttonClose.Contains(pt)) {
         return wxCAPTION_HT_CLOSEBUTTON;
-    } else if(m_buttonMaximize.Contains(pt)) {
+    } else if (m_buttonMaximize.Contains(pt)) {
         return wxCAPTION_HT_MAXMIZEBUTTON;
-    } else if(m_buttonMinimize.Contains(pt)) {
+    } else if (m_buttonMinimize.Contains(pt)) {
         return wxCAPTION_HT_MINIMIZEBUTTON;
-    } else if(m_buttonAction.Contains(pt)) {
+    } else if (m_buttonAction.Contains(pt)) {
         return wxCAPTION_HT_ACTIONBUTTON;
     }
     return wxCAPTION_HT_NOWHERE;
@@ -110,20 +110,20 @@ void clCaptionBar::OnPaint(wxPaintEvent& e)
     int total_buttons_width = 0;
     int button_width = rect.GetHeight();
 
-    if(HasOption(wxCAPTION_STYLE_CLOSE_BUTTON)) {
-        m_buttonClose.SetRect({ right - button_width, 0, button_width, button_width });
+    if (HasOption(wxCAPTION_STYLE_CLOSE_BUTTON)) {
+        m_buttonClose.SetRect({right - button_width, 0, button_width, button_width});
         total_buttons_width += button_width;
         right = m_buttonClose.GetRect().GetLeft();
     }
 
-    if(HasOption(wxCAPTION_STYLE_MAXIMIZE_BUTTON)) {
-        m_buttonMaximize.SetRect({ right - button_width, 0, button_width, button_width });
+    if (HasOption(wxCAPTION_STYLE_MAXIMIZE_BUTTON)) {
+        m_buttonMaximize.SetRect({right - button_width, 0, button_width, button_width});
         total_buttons_width += button_width;
         right = m_buttonMaximize.GetRect().GetLeft();
     }
 
-    if(HasOption(wxCAPTION_STYLE_MINIMIZE_BUTTON)) {
-        m_buttonMinimize.SetRect({ right - button_width, 0, button_width, button_width });
+    if (HasOption(wxCAPTION_STYLE_MINIMIZE_BUTTON)) {
+        m_buttonMinimize.SetRect({right - button_width, 0, button_width, button_width});
         total_buttons_width += button_width;
         right = m_buttonMinimize.GetRect().GetLeft();
     }
@@ -136,7 +136,7 @@ void clCaptionBar::OnPaint(wxPaintEvent& e)
 
     dc.SetTextForeground(m_colours.GetItemTextColour());
     auto font = DrawingUtils::GetDefaultGuiFont();
-    if(HasOption(wxCAPTION_STYLE_BOLD_FONT)) {
+    if (HasOption(wxCAPTION_STYLE_BOLD_FONT)) {
         font.SetWeight(wxFONTWEIGHT_BOLD);
     }
     dc.SetFont(font);
@@ -147,16 +147,16 @@ void clCaptionBar::OnPaint(wxPaintEvent& e)
     int xx = FromDIP(SPACER);
 
     // Check if we need to draw a menu button
-    if(HasOption(wxCAPTION_STYLE_ACTION_BUTTON) && m_actionButtonBitmap.IsOk()) {
-        m_buttonAction.SetRect({ xx, 0, button_width, button_width });
-        if(m_menu_is_up) {
+    if (HasOption(wxCAPTION_STYLE_ACTION_BUTTON) && m_actionButtonBitmap.IsOk()) {
+        m_buttonAction.SetRect({xx, 0, button_width, button_width});
+        if (m_menu_is_up) {
             m_buttonAction.SetState(wxCAPTION_BUTTON_STATE_PRESSED);
         }
         m_buttonAction.Render(dc, wxCAPTION_HT_ACTIONBUTTON);
         xx += m_buttonAction.GetRect().GetWidth() + FromDIP(SPACER);
     }
     // draw the bitmap
-    if(GetBitmap().IsOk()) {
+    if (GetBitmap().IsOk()) {
         int width = GetBitmap().GetScaledWidth();
         int height = GetBitmap().GetScaledHeight();
         wxRect bound_rect(xx, 0, width, height);
@@ -181,15 +181,15 @@ void clCaptionBar::OnPaint(wxPaintEvent& e)
 
     // draw buttons (if any)
     dc.SetPen(m_colours.GetItemTextColour());
-    if(HasOption(wxCAPTION_STYLE_CLOSE_BUTTON)) {
+    if (HasOption(wxCAPTION_STYLE_CLOSE_BUTTON)) {
         m_buttonClose.Render(dc, wxCAPTION_HT_CLOSEBUTTON);
     }
 
-    if(HasOption(wxCAPTION_STYLE_MAXIMIZE_BUTTON)) {
+    if (HasOption(wxCAPTION_STYLE_MAXIMIZE_BUTTON)) {
         m_buttonMaximize.Render(dc, wxCAPTION_HT_MAXMIZEBUTTON);
     }
 
-    if(HasOption(wxCAPTION_STYLE_MINIMIZE_BUTTON)) {
+    if (HasOption(wxCAPTION_STYLE_MINIMIZE_BUTTON)) {
         m_buttonMinimize.Render(dc, wxCAPTION_HT_MINIMIZEBUTTON);
     }
 }
@@ -202,7 +202,7 @@ void clCaptionBar::OnLeftDown(wxMouseEvent& e)
     check_ptr_return(m_topLevelWindow);
 
     auto ht = HitTest(e.GetPosition());
-    if(ProcessCallback(m_leftDownCallbacks, ht)) {
+    if (ProcessCallback(m_leftDownCallbacks, ht)) {
         return;
     }
 
@@ -218,7 +218,7 @@ void clCaptionBar::OnLeftDown(wxMouseEvent& e)
 void clCaptionBar::OnLeftUp(wxMouseEvent& e)
 {
     wxUnusedVar(e);
-    if(HasCapture()) {
+    if (HasCapture()) {
         SetCursor(wxCURSOR_ARROW);
         ReleaseMouse();
         wxCommandEvent move_event(wxEVT_CAPTION_MOVE_END);
@@ -226,7 +226,7 @@ void clCaptionBar::OnLeftUp(wxMouseEvent& e)
         GetEventHandler()->ProcessEvent(move_event);
     } else {
         auto ht = HitTest(e.GetPosition());
-        if(ProcessCallback(m_leftUpCallbacks, ht)) {
+        if (ProcessCallback(m_leftUpCallbacks, ht)) {
             return;
         }
     }
@@ -236,18 +236,18 @@ void clCaptionBar::OnMotion(wxMouseEvent& e)
 {
     wxUnusedVar(e);
     check_ptr_return(m_topLevelWindow);
-    if(!HasCapture()) {
+    if (!HasCapture()) {
         bool refresh_needed = false;
         refresh_needed = refresh_needed || m_buttonClose.DoHover(e.GetPosition());
         refresh_needed = refresh_needed || m_buttonMaximize.DoHover(e.GetPosition());
         refresh_needed = refresh_needed || m_buttonMinimize.DoHover(e.GetPosition());
         refresh_needed = refresh_needed || m_buttonAction.DoHover(e.GetPosition());
 
-        if(refresh_needed) {
+        if (refresh_needed) {
             Refresh();
         }
     } else {
-        if(e.Dragging() && e.LeftIsDown()) {
+        if (e.Dragging() && e.LeftIsDown()) {
             wxPoint pt = e.GetPosition();
             wxPoint pos = m_topLevelWindow->ClientToScreen(pt);
             wxPoint new_pos = wxPoint(pos.x - m_delta.x, pos.y - m_delta.y);
@@ -289,11 +289,11 @@ void clCaptionBar::DoSetBestSize()
         buttonHeight = wxMax(buttonHeight, textSize.GetHeight());
     }
 
-    if(GetBitmap().IsOk()) {
+    if (GetBitmap().IsOk()) {
         int bmpHeight = GetBitmap().GetScaledHeight();
         buttonHeight = wxMax(buttonHeight, bmpHeight);
     }
-    if(m_actionButtonBitmap.IsOk()) {
+    if (m_actionButtonBitmap.IsOk()) {
         int bmpHeight = m_actionButtonBitmap.GetScaledHeight();
         buttonHeight = wxMax(buttonHeight, bmpHeight);
     }
@@ -325,10 +325,10 @@ void clCaptionBar::SetCaption(const wxString& caption)
 void clCaptionBar::OnMouseDoubleClick(wxMouseEvent& e)
 {
     wxUnusedVar(e);
-    if(HitTest(e.GetPosition()) == wxCAPTION_HT_NOWHERE) {
+    if (HitTest(e.GetPosition()) == wxCAPTION_HT_NOWHERE) {
         wxWindowUpdateLocker locker(m_topLevelWindow);
         check_ptr_return(m_topLevelWindow);
-        if(m_topLevelWindow->IsMaximized()) {
+        if (m_topLevelWindow->IsMaximized()) {
             m_topLevelWindow->Restore();
         } else {
 #ifdef __WXMSW__
@@ -342,7 +342,7 @@ void clCaptionBar::OnMouseDoubleClick(wxMouseEvent& e)
 
 void clCaptionBar::SetOption(wxCaptionStyle option, bool enabled)
 {
-    if(enabled) {
+    if (enabled) {
         m_flags |= option;
     } else {
         m_flags &= ~option;
@@ -369,12 +369,12 @@ void clCaptionBar::ClearRects()
 
 bool clCaptionBar::ProcessCallback(const CallbackMap_t& map, wxCaptionHitTest where)
 {
-    if(map.count(where)) {
+    if (map.count(where)) {
         const auto& p = map.find(where);
         auto This = p->second.first;
         auto cb = p->second.second;
 
-        if(This && cb) {
+        if (This && cb) {
             (This->*cb)(where);
         }
         return true;
@@ -385,7 +385,7 @@ bool clCaptionBar::ProcessCallback(const CallbackMap_t& map, wxCaptionHitTest wh
 
 void clCaptionBar::ShowMenuForActionButton(wxMenu* menu)
 {
-    if(!menu) {
+    if (!menu) {
         return;
     }
 
@@ -401,7 +401,7 @@ void clCaptionBar::ShowMenuForActionButton(wxMenu* menu)
 
 void clCaptionBar::ShowActionButton(const wxBitmap& bitmap)
 {
-    if(!bitmap.IsOk()) {
+    if (!bitmap.IsOk()) {
         HideActionButton();
     } else {
         m_actionButtonBitmap = bitmap;
@@ -430,12 +430,12 @@ void clCaptionButton::LeftDown(wxCaptionHitTest where)
 void clCaptionButton::LeftUp(wxCaptionHitTest where)
 {
     auto frame = m_captionBar->m_topLevelWindow;
-    switch(where) {
+    switch (where) {
     case wxCAPTION_HT_CLOSEBUTTON:
         frame->Close();
         break;
     case wxCAPTION_HT_MAXMIZEBUTTON:
-        if(!frame->IsMaximized()) {
+        if (!frame->IsMaximized()) {
             frame->Maximize();
         } else {
             frame->Restore();
@@ -465,16 +465,16 @@ void clCaptionButton::Render(wxDC& dc, wxCaptionHitTest ht)
     wxColour pen_colour = m_captionBar->m_colours.GetItemTextColour();
 
     bool draw_background = true;
-    if(m_state == wxCAPTION_BUTTON_STATE_HOVER) {
-        if(ht == wxCAPTION_HT_CLOSEBUTTON) {
+    if (m_state == wxCAPTION_BUTTON_STATE_HOVER) {
+        if (ht == wxCAPTION_HT_CLOSEBUTTON) {
             bg_colour = *wxRED;
             pen_colour = *wxWHITE;
         } else {
             bool is_dark = DrawingUtils::IsDark(bg_colour);
             bg_colour = bg_colour.ChangeLightness(is_dark ? 110 : 90);
         }
-    } else if(m_state == wxCAPTION_BUTTON_STATE_PRESSED) {
-        if(ht == wxCAPTION_HT_CLOSEBUTTON) {
+    } else if (m_state == wxCAPTION_BUTTON_STATE_PRESSED) {
+        if (ht == wxCAPTION_HT_CLOSEBUTTON) {
             bg_colour = wxColour(*wxRED).ChangeLightness(80);
             pen_colour = wxColour(*wxWHITE).ChangeLightness(80);
         } else {
@@ -486,7 +486,7 @@ void clCaptionButton::Render(wxDC& dc, wxCaptionHitTest ht)
     }
 
 #define PREPARE_BUTTON_DRAW()     \
-    if(draw_background) {         \
+    if (draw_background) {        \
         dc.SetPen(bg_colour);     \
         dc.SetBrush(bg_colour);   \
         dc.DrawRectangle(m_rect); \
@@ -495,7 +495,7 @@ void clCaptionButton::Render(wxDC& dc, wxCaptionHitTest ht)
     dc.SetBrush(bg_colour);
 
     // draw button per type
-    switch(ht) {
+    switch (ht) {
     case wxCAPTION_HT_CLOSEBUTTON: {
         PREPARE_BUTTON_DRAW();
         dc.DrawLine(m_innerRect.GetTopLeft(), m_innerRect.GetBottomRight());
@@ -508,7 +508,7 @@ void clCaptionButton::Render(wxDC& dc, wxCaptionHitTest ht)
     case wxCAPTION_HT_ACTIONBUTTON: {
         PREPARE_BUTTON_DRAW();
         // draw 3 lines
-        wxRect bitmap_rect = wxRect({ 0, 0 }, m_captionBar->m_actionButtonBitmap.GetScaledSize());
+        wxRect bitmap_rect = wxRect({0, 0}, m_captionBar->m_actionButtonBitmap.GetScaledSize());
         bitmap_rect = bitmap_rect.CenterIn(m_rect);
         dc.DrawBitmap(m_captionBar->m_actionButtonBitmap, bitmap_rect.GetTopLeft());
 

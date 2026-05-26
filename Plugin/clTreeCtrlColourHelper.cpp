@@ -9,14 +9,15 @@ clTreeCtrlColourHelper::clTreeCtrlColourHelper(clThemedTreeCtrl* tree)
 {
 }
 
-void clTreeCtrlColourHelper::DoSetBgColour(const wxTreeItemId& item, const wxColour& currentBgColour,
+void clTreeCtrlColourHelper::DoSetBgColour(const wxTreeItemId& item,
+                                           const wxColour& currentBgColour,
                                            const FolderColour::Map_t& coloursMap) const
 {
     CHECK_ITEM_RET(item);
     wxString path = GetItemPath(item);
     wxColour bgColour = currentBgColour;
     FolderColour::Map_t::const_iterator iter = coloursMap.find(path);
-    if(iter != coloursMap.end()) {
+    if (iter != coloursMap.end()) {
         bgColour = iter->second.GetColour();
     }
 
@@ -24,30 +25,31 @@ void clTreeCtrlColourHelper::DoSetBgColour(const wxTreeItemId& item, const wxCol
     // colouring
     m_tree->SetItemBackgroundColour(item, bgColour);
 
-    if(m_tree->ItemHasChildren(item)) {
+    if (m_tree->ItemHasChildren(item)) {
         wxTreeItemIdValue cookie;
         wxTreeItemId child = m_tree->GetFirstChild(item, cookie);
-        while(child.IsOk()) {
+        while (child.IsOk()) {
             DoSetBgColour(child, bgColour, coloursMap);
             child = m_tree->GetNextChild(item, cookie);
         }
     }
 }
 
-void clTreeCtrlColourHelper::DoClearBgColour(const wxTreeItemId& item, const wxColour& colourToSet,
+void clTreeCtrlColourHelper::DoClearBgColour(const wxTreeItemId& item,
+                                             const wxColour& colourToSet,
                                              FolderColour::Map_t& coloursMap) const
 {
     CHECK_ITEM_RET(item);
     wxString path = GetItemPath(item);
     FolderColour::Map_t::const_iterator iter = coloursMap.find(path);
-    if(iter != coloursMap.end()) {
+    if (iter != coloursMap.end()) {
         coloursMap.erase(iter);
     }
     m_tree->SetItemBackgroundColour(item, colourToSet);
-    if(m_tree->ItemHasChildren(item)) {
+    if (m_tree->ItemHasChildren(item)) {
         wxTreeItemIdValue cookie;
         wxTreeItemId child = m_tree->GetFirstChild(item, cookie);
-        while(child.IsOk()) {
+        while (child.IsOk()) {
             DoClearBgColour(child, colourToSet, coloursMap);
             child = m_tree->GetNextChild(item, cookie);
         }
@@ -65,12 +67,13 @@ void clTreeCtrlColourHelper::ResetBgColour(const wxTreeItemId& item, FolderColou
     DoClearBgColour(item, col, coloursMap);
 }
 
-void clTreeCtrlColourHelper::SetBgColour(const wxTreeItemId& item, const wxColour& currentBgColour,
+void clTreeCtrlColourHelper::SetBgColour(const wxTreeItemId& item,
+                                         const wxColour& currentBgColour,
                                          FolderColour::Map_t& coloursMap) const
 {
     wxString path = GetItemPath(item);
     FolderColour vdc(path, currentBgColour);
-    if(coloursMap.count(path)) {
+    if (coloursMap.count(path)) {
         coloursMap.erase(path);
     }
     coloursMap.insert(std::make_pair(path, vdc));
@@ -84,19 +87,19 @@ wxString clTreeCtrlColourHelper::GetItemPath(clThemedTreeCtrl* tree, const wxTre
     queue.push_front(text);
 
     wxTreeItemId p = tree->GetItemParent(item);
-    while(p.IsOk()) {
+    while (p.IsOk()) {
         text = tree->GetItemText(p);
         queue.push_front(text);
         p = tree->GetItemParent(p);
     }
 
     wxString path;
-    while(!queue.empty()) {
+    while (!queue.empty()) {
         path << queue.front() << "/";
         queue.pop_front();
     }
 
-    if(!path.IsEmpty()) {
+    if (!path.IsEmpty()) {
         path.RemoveLast();
     }
     return path;

@@ -15,8 +15,11 @@ protected:
     int m_range_size = 0;
 
 public:
-    clScrollBar(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-                const wxSize& size = wxDefaultSize, long style = wxSB_VERTICAL);
+    clScrollBar(wxWindow* parent,
+                wxWindowID id,
+                const wxPoint& pos = wxDefaultPosition,
+                const wxSize& size = wxDefaultSize,
+                long style = wxSB_VERTICAL);
     virtual ~clScrollBar() = default;
     void SetScrollbar(int position, int thumbSize, int range, int pageSize, bool refresh = true);
     bool ShouldShow() const { return (m_thumb_size < m_range_size); }

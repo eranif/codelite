@@ -52,9 +52,7 @@ void clTabTogglerHelper::OnToggleOutputTab(clCommandEvent& event)
 void clTabTogglerHelper::OnToggleWorkspaceTab(clCommandEvent& event) { wxUnusedVar(event); }
 
 bool clTabTogglerHelper::IsTabInNotebook(PaneId pane_id, const wxString& tabname)
-{
-    return clGetManager()->BookGetPage(pane_id, tabname) != nullptr;
-}
+{ return clGetManager()->BookGetPage(pane_id, tabname) != nullptr; }
 
 void clTabTogglerHelper::DoShowTab(bool show, PaneId pane_id, wxWindow* tab, const wxString& label)
 {

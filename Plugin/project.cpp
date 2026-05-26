@@ -215,9 +215,7 @@ bool Project::AddFile(const wxString& fileName, const wxString& virtualDirPath)
 }
 
 bool Project::CreateVirtualDir(const wxString& vdFullPath, bool mkpath)
-{
-    return CreateVD(vdFullPath, mkpath) != nullptr;
-}
+{ return CreateVD(vdFullPath, mkpath) != nullptr; }
 
 bool Project::DeleteVirtualDir(const wxString& vdFullPath)
 {
@@ -713,9 +711,7 @@ void Project::SetDependencies(wxArrayString& deps, const wxString& configuration
 }
 
 bool Project::FastAddFile(const wxString& fileName, const wxString& virtualDir)
-{
-    return AddFile(fileName, virtualDir);
-}
+{ return AddFile(fileName, virtualDir); }
 
 void Project::DoGetVirtualDirectories(wxXmlNode* parent, TreeNode<wxString, VisualWorkspaceNode>* tree)
 {
@@ -1458,9 +1454,7 @@ void Project::ReplaceCompilers(const wxStringMap_t& compilers)
 }
 
 void Project::DoUpdateProjectSettings()
-{
-    m_settings = std::make_shared<ProjectSettings>(XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "Settings"));
-}
+{ m_settings = std::make_shared<ProjectSettings>(XmlUtils::FindFirstByTagName(m_doc.GetRoot(), "Settings")); }
 
 wxArrayString Project::GetPreProcessors()
 {
@@ -1503,14 +1497,10 @@ wxArrayString Project::GetPreProcessors()
 }
 
 wxArrayString Project::GetCXXCompilerOptions(bool noDefines, bool noIncludePaths)
-{
-    return DoGetCompilerOptions(true, noDefines, noIncludePaths);
-}
+{ return DoGetCompilerOptions(true, noDefines, noIncludePaths); }
 
 wxArrayString Project::GetCCompilerOptions(bool noDefines, bool noIncludePaths)
-{
-    return DoGetCompilerOptions(false, noDefines, noIncludePaths);
-}
+{ return DoGetCompilerOptions(false, noDefines, noIncludePaths); }
 
 wxArrayString Project::DoGetCompilerOptions(bool cxxOptions, bool noDefines, bool noIncludePaths)
 {

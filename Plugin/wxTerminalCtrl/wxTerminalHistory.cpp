@@ -27,7 +27,7 @@ void wxTerminalHistory::Load()
     FileUtils::ReadFileContent(history, data);
 
     if (const auto homedir = ThePlatform->FindHomeDir()) {
-        wxFileName bash_history{ *homedir, ".bash_history" };
+        wxFileName bash_history{*homedir, ".bash_history"};
         wxString bash_content;
         if (bash_history.FileExists() && FileUtils::ReadFileContent(bash_history, bash_content)) {
             data << "\n" << bash_content;

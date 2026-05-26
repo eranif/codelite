@@ -38,18 +38,18 @@ const int FIRST_MENU_ID = 10000;
 wxString GetBestLabel(CLCommand::Ptr_t command)
 {
     wxString label, text;
-    if(command) {
-        if(!command->GetUserLabel().empty()) {
+    if (command) {
+        if (!command->GetUserLabel().empty()) {
             label = command->GetUserLabel();
         } else {
             label = command->GetName();
             text = command->GetText();
             size_t len = text.Len();
-            if(len) {
+            if (len) {
                 text.Replace("\r\n", "\\n"); // Otherwise newlines result in a multiline display!
                 text.Replace("\n", "\\n");
                 // Truncate long pastes
-                if(len > 70) {
+                if (len > 70) {
                     wxString shorter = text.Left(34);
                     shorter << " ... " << text.Right(34);
                     text = shorter;
@@ -89,7 +89,7 @@ CLCommand::Ptr_t CommandProcessorBase::GetOpenCommand()
     CLCommand::Ptr_t command(NULL);
 
     size_t size = GetCommands().size();
-    if(size && GetCommands().at(size - 1)->IsOpen()) {
+    if (size && GetCommands().at(size - 1)->IsOpen()) {
         command = GetCommands().at(size - 1);
     }
 
@@ -116,7 +116,7 @@ void CommandProcessorBase::DecrementCurrentCommand()
 
     // Close any open command. That makes sense anyway if we're undoing and, if we don't, the command doesn't get a
     // sensible label when it's displayed in the dropdown menu
-    if(GetOpenCommand()) {
+    if (GetOpenCommand()) {
         ProcessOpenCommand();
     }
 
@@ -125,21 +125,19 @@ void CommandProcessorBase::DecrementCurrentCommand()
 
 void CommandProcessorBase::SetUserLabel(const wxString& label)
 {
-    if(GetOpenCommand()) {
+    if (GetOpenCommand()) {
         ProcessOpenCommand(); // We need to make it non-pending, otherwise it may change after the label is set; which
                               // probably won't be what the user expects
     }
 
     CLCommand::Ptr_t command = GetActiveCommand();
-    if(command) {
+    if (command) {
         command->SetUserLabel(label);
     }
 }
 
 void CommandProcessorBase::OnTBUnRedo(wxCommandEvent& event)
-{
-    PopulateUnRedoMenu(dynamic_cast<clToolBar*>(event.GetEventObject()), event.GetId());
-}
+{ PopulateUnRedoMenu(dynamic_cast<clToolBar*>(event.GetEventObject()), event.GetId()); }
 
 void CommandProcessorBase::PopulateUnRedoMenu(clToolBar* tb, wxWindowID toolId)
 {
@@ -147,7 +145,7 @@ void CommandProcessorBase::PopulateUnRedoMenu(clToolBar* tb, wxWindowID toolId)
     wxMenu menu;
     DoPopulateUnRedoMenu(menu, (toolId == wxID_UNDO));
 
-    if(toolId == wxID_UNDO) {
+    if (toolId == wxID_UNDO) {
         menu.Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnUndoDropdownItem), this);
         tb->ShowMenuForButton(toolId, &menu);
         menu.Unbind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnUndoDropdownItem), this);
@@ -165,20 +163,21 @@ void CommandProcessorBase::DoPopulateUnRedoMenu(wxMenu& menu, bool undoing)
     int id = FIRST_MENU_ID;
     int count = 0;
 
-    if(undoing) {
-        if(GetCommands().size() > 0) {
-            for(CLCommand::Vec_t::const_reverse_iterator iter = GetCommands().rbegin() + GetNextUndoCommand();
-                iter != GetCommands().rend(); ++iter) {
+    if (undoing) {
+        if (GetCommands().size() > 0) {
+            for (CLCommand::Vec_t::const_reverse_iterator iter = GetCommands().rbegin() + GetNextUndoCommand();
+                 iter != GetCommands().rend();
+                 ++iter) {
                 CLCommand::Ptr_t command = *iter;
-                if(command) {
+                if (command) {
                     wxString label;
-                    if(!command->GetUserLabel().empty()) {
-                        if(command->GetName().Contains(":")) {
+                    if (!command->GetUserLabel().empty()) {
+                        if (command->GetName().Contains(":")) {
                             label = command->GetName().BeforeFirst(':') + ": ";
                         }
                         label << command->GetUserLabel();
                     } else {
-                        if(command == GetOpenCommand()) {
+                        if (command == GetOpenCommand()) {
                             label = GetBestLabel(
                                 command); // If the command's still open, there won't otherwise be a name string
                         } else {
@@ -190,13 +189,14 @@ void CommandProcessorBase::DoPopulateUnRedoMenu(wxMenu& menu, bool undoing)
             }
         }
     } else {
-        for(CLCommand::Vec_t::const_iterator iter = GetCommands().begin() + GetCurrentCommand() + 1;
-            iter != GetCommands().end(); ++iter) {
+        for (CLCommand::Vec_t::const_iterator iter = GetCommands().begin() + GetCurrentCommand() + 1;
+             iter != GetCommands().end();
+             ++iter) {
             CLCommand::Ptr_t command = *iter;
-            if(command) {
+            if (command) {
                 wxString label;
-                if(!command->GetUserLabel().empty()) {
-                    if(command->GetName().Contains(":")) {
+                if (!command->GetUserLabel().empty()) {
+                    if (command->GetName().Contains(":")) {
                         label = command->GetName().BeforeFirst(':') + ": ";
                     }
                     label << command->GetUserLabel();
@@ -213,7 +213,7 @@ void CommandProcessorBase::PrepareLabelledStatesMenu(wxMenu* editmenu)
 {
     // First remove any current labelled-state submenu, which will almost certainly hold stale data
     wxMenuItem* menuitem = editmenu->FindItem(XRCID("goto_labelled_state"));
-    if(menuitem) {
+    if (menuitem) {
         editmenu->Delete(menuitem);
     }
 
@@ -222,17 +222,17 @@ void CommandProcessorBase::PrepareLabelledStatesMenu(wxMenu* editmenu)
     menuitem = editmenu->FindChildItem(XRCID("label_current_state"), &pos);
     wxCHECK_RET(menuitem && (int)pos > wxNOT_FOUND, "Failed to find the 'label_current_state' item");
     int kludge = 0;
-    if(pos == 2) { // For some reason, the insertion point of the CL edit menu is otherwise off-by-1. The wxC frame one
-                   // isn't :/
+    if (pos == 2) { // For some reason, the insertion point of the CL edit menu is otherwise off-by-1. The wxC frame one
+                    // isn't :/
         kludge = 1;
     }
 
     // Get any labelled undo/redo states into the submenu. If none, abort.
     wxMenu* submenu = new wxMenu;
     PopulateLabelledStatesMenu(submenu);
-    if(submenu->GetMenuItemCount()) {
-        editmenu->Insert(pos + 1 + kludge, XRCID("goto_labelled_state"), _("Undo/Redo to a pre&viously labelled state"),
-                         submenu);
+    if (submenu->GetMenuItemCount()) {
+        editmenu->Insert(
+            pos + 1 + kludge, XRCID("goto_labelled_state"), _("Undo/Redo to a pre&viously labelled state"), submenu);
     } else {
         delete submenu;
     }
@@ -242,14 +242,15 @@ void CommandProcessorBase::PopulateLabelledStatesMenu(wxMenu* menu)
 {
     wxCHECK_RET(menu, "NULL menu");
 
-    for(size_t n = menu->GetMenuItemCount(); n > 0; --n) { // We need to delete any items left over from a previous call
+    for (size_t n = menu->GetMenuItemCount(); n > 0;
+         --n) { // We need to delete any items left over from a previous call
         wxMenuItem* item = menu->FindItemByPosition(n - 1);
-        if(item) {
+        if (item) {
             menu->Delete(item);
         }
     }
 
-    if(!GetInitialCommand()->GetUserLabel().empty()) { // First any initial label
+    if (!GetInitialCommand()->GetUserLabel().empty()) { // First any initial label
         menu->Append(FIRST_MENU_ID - 1,
                      GetInitialCommand()->GetUserLabel()); // (Ab)use an out-of-range id to avoid confusion
     }
@@ -262,8 +263,8 @@ void CommandProcessorBase::PopulateLabelledStatesMenu(wxMenu* menu)
         ++id; // It's easier in the handler if the event id is the GetCommands() index, rather than a menu index
     }
 
-    menu->Bind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnLabelledStatesMenuItem),
-               this);
+    menu->Bind(
+        wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnLabelledStatesMenuItem), this);
 }
 
 void CommandProcessorBase::UnBindLabelledStatesMenu(wxMenu* menu)
@@ -276,13 +277,13 @@ void CommandProcessorBase::UnBindLabelledStatesMenu(wxMenu* menu)
 void CommandProcessorBase::DoUnBindLabelledStatesMenu(wxMenu* menu)
 {
     wxCHECK_RET(menu, "NULL menu");
-    menu->Unbind(wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnLabelledStatesMenuItem),
-                 this);
+    menu->Unbind(
+        wxEVT_COMMAND_MENU_SELECTED, wxCommandEventHandler(CommandProcessorBase::OnLabelledStatesMenuItem), this);
 }
 
 void CommandProcessorBase::OnLabelledStatesMenuItem(wxCommandEvent& event)
 {
-    if(GetOpenCommand()) {
+    if (GetOpenCommand()) {
         ProcessOpenCommand();
     }
 
@@ -290,17 +291,17 @@ void CommandProcessorBase::OnLabelledStatesMenuItem(wxCommandEvent& event)
                                                // This will always mean *un*dos (or nothing)
     wxCHECK_RET(index < (int)GetCommands().size(), "An ID that overruns the command-list");
 
-    if(index < GetCurrentCommand()) {
+    if (index < GetCurrentCommand()) {
         const int count = GetCurrentCommand() - index;
-        for(int n = 0; n < count; ++n) {
-            if(DoUndo()) {
+        for (int n = 0; n < count; ++n) {
+            if (DoUndo()) {
                 DecrementCurrentCommand();
             }
         }
     } else {
         const int count = index - GetCurrentCommand();
-        for(int n = 0; n < count; ++n) {
-            if(DoRedo()) {
+        for (int n = 0; n < count; ++n) {
+            if (DoRedo()) {
                 IncrementCurrentCommand();
             }
         }
@@ -309,13 +310,13 @@ void CommandProcessorBase::OnLabelledStatesMenuItem(wxCommandEvent& event)
 
 void CommandProcessorBase::OnUndoDropdownItem(wxCommandEvent& event)
 {
-    if(GetOpenCommand()) {
+    if (GetOpenCommand()) {
         ProcessOpenCommand();
     }
 
     const int count = event.GetId() - FIRST_MENU_ID + 1;
-    for(int n = 0; n < count; ++n) {
-        if(DoUndo()) {
+    for (int n = 0; n < count; ++n) {
+        if (DoUndo()) {
             DecrementCurrentCommand();
         }
     }
@@ -324,8 +325,8 @@ void CommandProcessorBase::OnUndoDropdownItem(wxCommandEvent& event)
 void CommandProcessorBase::OnRedoDropdownItem(wxCommandEvent& event)
 {
     const int count = event.GetId() - FIRST_MENU_ID + 1;
-    for(int n = 0; n < count; ++n) {
-        if(DoRedo()) {
+    for (int n = 0; n < count; ++n) {
+        if (DoRedo()) {
             IncrementCurrentCommand();
         }
     }
@@ -335,10 +336,10 @@ CLCommand::Ptr_t CommandProcessorBase::GetActiveCommand() const
 {
     CLCommand::Ptr_t command(NULL);
 
-    if(GetCurrentCommand() == -1) {
+    if (GetCurrentCommand() == -1) {
         command = GetInitialCommand();
 
-    } else if(GetCommands().size() > 0) {
+    } else if (GetCommands().size() > 0) {
         command = GetCommands().at(GetCurrentCommand());
     }
 

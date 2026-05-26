@@ -15,7 +15,7 @@ PhpOptions::PhpOptions()
 {
     wxFileName newConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
                                wxFileName::GetPathSeparator() + "php-general.conf";
-    if(!newConfigFile.FileExists()) {
+    if (!newConfigFile.FileExists()) {
         wxFileName oldConfigFile = clStandardPaths::Get().GetUserDataDir() + wxFileName::GetPathSeparator() + "config" +
                                    wxFileName::GetPathSeparator() + "php.conf";
         // first time, copy the values from the old settings
@@ -23,7 +23,7 @@ PhpOptions::PhpOptions()
         JSONItem oldJson = root.toElement().namedObject("PHPConfigurationData");
 
         m_phpExe = oldJson.namedObject("m_phpExe").toString();
-        if(m_phpExe.empty()) {
+        if (m_phpExe.empty()) {
             if (const auto fnPHP = ::FileUtils::FindExe("php")) {
                 m_phpExe = fnPHP->GetFullPath();
             }
@@ -34,11 +34,11 @@ PhpOptions::PhpOptions()
 
         // Save it
         wxString buf;
-        if(FileUtils::ReadBufferFromFile(newConfigFile, buf, 1) && (buf == "[")) {
+        if (FileUtils::ReadBufferFromFile(newConfigFile, buf, 1) && (buf == "[")) {
             FileUtils::WriteFileContent(newConfigFile, "{}");
         }
 
-        if(!newConfigFile.FileExists()) {
+        if (!newConfigFile.FileExists()) {
             FileUtils::WriteFileContent(newConfigFile, "{}");
         }
 
@@ -55,7 +55,7 @@ PhpOptions::PhpOptions()
 void PhpOptions::FromJSON(const JSONItem& json)
 {
     m_phpExe = json.namedObject("m_phpExe").toString(m_phpExe);
-    if(m_phpExe.IsEmpty()) {
+    if (m_phpExe.IsEmpty()) {
         m_phpExe = FileUtils::FindExe("php").value_or(wxFileName{}).GetFullPath();
     }
 

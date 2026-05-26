@@ -21,9 +21,9 @@ wxString SwitchToWorkspaceDlg::GetPath() const { return m_comboBoxFiles->GetValu
 void SwitchToWorkspaceDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(!m_comboBoxFiles->GetValue().IsEmpty()); }
 void SwitchToWorkspaceDlg::OnBrowse(wxCommandEvent& event)
 {
-    wxString path = ::wxFileSelector(_("Open workspace"), wxEmptyString, wxEmptyString, "workspace",
-                                     "CodeLite workspace file|*.cbp;*.workspace");
-    if(path.empty()) {
+    wxString path = ::wxFileSelector(
+        _("Open workspace"), wxEmptyString, wxEmptyString, "workspace", "CodeLite workspace file|*.cbp;*.workspace");
+    if (path.empty()) {
         return;
     }
     m_comboBoxFiles->SetValue(path);

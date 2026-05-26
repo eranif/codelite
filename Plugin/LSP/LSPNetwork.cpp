@@ -7,7 +7,7 @@ wxDEFINE_EVENT(wxEVT_LSP_NET_LOGMSG, clCommandEvent);
 
 wxString& LSPNetwork::wrap_with_quotes(wxString& str)
 {
-    if(!str.empty() && str.Contains(" ") && !str.StartsWith("\"") && !str.EndsWith("\"")) {
+    if (!str.empty() && str.Contains(" ") && !str.StartsWith("\"") && !str.EndsWith("\"")) {
         str.Prepend("\"").Append("\"");
     }
     return str;
@@ -15,7 +15,7 @@ wxString& LSPNetwork::wrap_with_quotes(wxString& str)
 
 wxString LSPNetwork::BuildCommand(const wxArrayString& args)
 {
-    if(args.empty()) {
+    if (args.empty()) {
         return "";
     }
     // Build command line from the array
@@ -23,7 +23,7 @@ wxString LSPNetwork::BuildCommand(const wxArrayString& args)
     command << args[0];
 
     wrap_with_quotes(command);
-    for(size_t i = 1; i < args.size(); ++i) {
+    for (size_t i = 1; i < args.size(); ++i) {
         wxString argument = args[i];
         wrap_with_quotes(argument);
         command << " " << argument;
@@ -33,7 +33,7 @@ wxString LSPNetwork::BuildCommand(const wxArrayString& args)
 
 void LSPNetwork::LogMessage(int sev, const wxString& msg)
 {
-    clCommandEvent log_error_event{ wxEVT_LSP_NET_LOGMSG };
+    clCommandEvent log_error_event{wxEVT_LSP_NET_LOGMSG};
     log_error_event.SetString(msg);
     log_error_event.SetInt(sev);
     AddPendingEvent(log_error_event);
@@ -41,7 +41,7 @@ void LSPNetwork::LogMessage(int sev, const wxString& msg)
 
 void LSPNetwork::NotifyError(const wxString& reason)
 {
-    clCommandEvent error_event{ wxEVT_LSP_NET_ERROR };
+    clCommandEvent error_event{wxEVT_LSP_NET_ERROR};
     error_event.SetString(reason);
     AddPendingEvent(error_event);
 }

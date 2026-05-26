@@ -111,4 +111,3 @@ public:
     int SetSelection(size_t nPage) override;
     int ChangeSelection(size_t nPage) override;
 };
-

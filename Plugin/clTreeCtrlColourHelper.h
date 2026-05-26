@@ -19,7 +19,8 @@ public:
 protected:
     wxString GetItemPath(const wxTreeItemId& item) const;
 
-    void DoSetBgColour(const wxTreeItemId& item, const wxColour& currentBgColour,
+    void DoSetBgColour(const wxTreeItemId& item,
+                       const wxColour& currentBgColour,
                        const FolderColour::Map_t& coloursMap) const;
 
     void DoClearBgColour(const wxTreeItemId& item, const wxColour& colourToSet, FolderColour::Map_t& coloursMap) const;

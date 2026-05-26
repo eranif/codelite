@@ -38,8 +38,11 @@ class WXDLLIMPEXP_SDK ProgressCtrl : public wxPanel
     wxColour m_fillCol;
 
 public:
-    ProgressCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                 const wxSize& size = wxDefaultSize, long style = wxBORDER_NONE);
+    ProgressCtrl(wxWindow* parent,
+                 wxWindowID id = wxID_ANY,
+                 const wxPoint& pos = wxDefaultPosition,
+                 const wxSize& size = wxDefaultSize,
+                 long style = wxBORDER_NONE);
     virtual ~ProgressCtrl();
 
     void Update(size_t value, const wxString& msg);

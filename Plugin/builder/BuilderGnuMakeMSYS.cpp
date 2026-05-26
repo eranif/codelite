@@ -7,7 +7,8 @@ BuilderGnuMakeMSYS::BuilderGnuMakeMSYS()
     m_isMSYSEnv = true;
 }
 
-BuilderGnuMakeMSYS::BuilderGnuMakeMSYS(const wxString& name, const wxString& buildTool,
+BuilderGnuMakeMSYS::BuilderGnuMakeMSYS(const wxString& name,
+                                       const wxString& buildTool,
                                        const wxString& buildToolOptions)
     : BuilderGnuMake(name, buildTool, buildToolOptions)
 {

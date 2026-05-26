@@ -47,7 +47,7 @@ BuildManager::~BuildManager() { m_builders.clear(); }
 
 void BuildManager::AddBuilder(BuilderPtr builder)
 {
-    if(!builder) {
+    if (!builder) {
         return;
     }
     m_builders[builder->GetName()] = builder;
@@ -56,7 +56,7 @@ void BuildManager::AddBuilder(BuilderPtr builder)
 void BuildManager::RemoveBuilder(const wxString& name)
 {
     auto iter = m_builders.find(name);
-    if(iter != m_builders.end()) {
+    if (iter != m_builders.end()) {
         m_builders.erase(iter);
     }
 }
@@ -81,7 +81,7 @@ BuilderPtr BuildManager::GetBuilder(const wxString& name)
 static BuildManager* gs_BuildManager = nullptr;
 void BuildManagerST::Free()
 {
-    if(gs_BuildManager) {
+    if (gs_BuildManager) {
         delete gs_BuildManager;
         gs_BuildManager = nullptr;
     }
@@ -89,7 +89,7 @@ void BuildManagerST::Free()
 
 BuildManager* BuildManagerST::Get()
 {
-    if(gs_BuildManager == nullptr)
+    if (gs_BuildManager == nullptr)
         gs_BuildManager = new BuildManager;
     return gs_BuildManager;
 }

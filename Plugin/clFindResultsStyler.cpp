@@ -23,7 +23,7 @@ clFindResultsStyler::clFindResultsStyler(wxStyledTextCtrl* stc)
 
 clFindResultsStyler::~clFindResultsStyler()
 {
-    if(m_stc) {
+    if (m_stc) {
         m_stc->Unbind(wxEVT_STC_STYLENEEDED, &clFindResultsStyler::OnStyleNeeded, this);
     }
 }
@@ -31,14 +31,14 @@ clFindResultsStyler::~clFindResultsStyler()
 void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
 {
     LexerConf::Ptr_t lexer = ColoursAndFontsManager::Get().GetLexer("c++");
-    if(!lexer) {
+    if (!lexer) {
         lexer = ColoursAndFontsManager::Get().GetLexer("text");
     }
 
     const StyleProperty& defaultStyle = lexer->GetProperty(0);
     wxFont defaultFont = lexer->GetFontForStyle(0, sci);
 
-    for(size_t i = 0; i < wxSTC_STYLE_MAX; ++i) {
+    for (size_t i = 0; i < wxSTC_STYLE_MAX; ++i) {
         sci->StyleSetForeground(i, defaultStyle.GetFgColour());
         sci->StyleSetBackground(i, defaultStyle.GetBgColour());
         sci->StyleSetFont(i, defaultFont);
@@ -108,7 +108,7 @@ void clFindResultsStyler::SetStyles(wxStyledTextCtrl* sci)
     sci->SetUseTabs(options->GetIndentUsesTabs());
     sci->SetTabWidth(options->GetIndentWidth());
     sci->SetIndent(options->GetIndentWidth());
-    for(int i = 0; i <= 4; ++i) { // there are 5 margins defined from 0 -> 4 (including)
+    for (int i = 0; i <= 4; ++i) { // there are 5 margins defined from 0 -> 4 (including)
         sci->SetMarginCursor(i, wxSTC_CURSORARROW);
     }
     sci->Refresh();
@@ -130,22 +130,22 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
     size_t i = 0;
     for (const wxUniChar& ch : text) {
         size_t chWidth = 1;
-        if(!ch.IsAscii()) {
+        if (!ch.IsAscii()) {
             chWidth = wxString(ch).mb_str(wxConvUTF8).length();
         }
 
-        switch(m_curstate) {
+        switch (m_curstate) {
         default:
             break;
         case kStartOfLine:
-            if(ch == '=') {
+            if (ch == '=') {
                 m_curstate = kHeader;
                 headerStyleLen = 1;
-            } else if(ch == ' ') {
+            } else if (ch == ' ') {
                 // start of a line number
                 lineNumberStyleLen = 1;
                 m_curstate = kLineNumber;
-            } else if(ch == '\n') {
+            } else if (ch == '\n') {
                 ctrl->SetStyling(1, LEX_FIF_DEFAULT);
             } else {
                 // File name
@@ -155,10 +155,10 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
             break;
         case kLineNumber:
             ++lineNumberStyleLen;
-            if(ch == ':') {
+            if (ch == ':') {
                 ctrl->SetStyling(lineNumberStyleLen, LEX_FIF_LINE_NUMBER);
                 lineNumberStyleLen = 0;
-                if(hasSope) {
+                if (hasSope) {
                     // the scope showed by displayed after the line number
                     m_curstate = kScope;
                 } else {
@@ -169,7 +169,7 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
             break;
         case kScope:
             scopeStyleLen += chWidth;
-            if(ch == ']') {
+            if (ch == ']') {
                 // end of scope
                 ctrl->SetStyling(scopeStyleLen, LEX_FIF_SCOPE);
                 scopeStyleLen = 0;
@@ -178,7 +178,7 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
             break;
         case kMatch:
             matchStyleLen += chWidth;
-            if(ch == '\n') {
+            if (ch == '\n') {
                 m_curstate = kStartOfLine;
                 ctrl->SetStyling(matchStyleLen, LEX_FIF_MATCH);
                 matchStyleLen = 0;
@@ -186,7 +186,7 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
             break;
         case kFile:
             filenameStyleLen += chWidth;
-            if(ch == '\n') {
+            if (ch == '\n') {
                 m_curstate = kStartOfLine;
                 ctrl->SetFoldLevel(ctrl->LineFromPosition(startPos + i), 2 | wxSTC_FOLDLEVELHEADERFLAG);
                 ctrl->SetStyling(filenameStyleLen, LEX_FIF_FILE);
@@ -195,7 +195,7 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
             break;
         case kHeader:
             headerStyleLen += chWidth;
-            if(ch == '\n') {
+            if (ch == '\n') {
                 m_curstate = kStartOfLine;
                 ctrl->SetFoldLevel(ctrl->LineFromPosition(startPos + i), 1 | wxSTC_FOLDLEVELHEADERFLAG);
                 ctrl->SetStyling(headerStyleLen, LEX_FIF_HEADER);
@@ -207,24 +207,24 @@ void clFindResultsStyler::StyleText(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
     }
 
     // Left overs...
-    if(headerStyleLen) {
+    if (headerStyleLen) {
         ctrl->SetFoldLevel(ctrl->LineFromPosition(startPos + i), 1 | wxSTC_FOLDLEVELHEADERFLAG);
         ctrl->SetStyling(headerStyleLen, LEX_FIF_HEADER);
         headerStyleLen = 0;
     }
 
-    if(filenameStyleLen) {
+    if (filenameStyleLen) {
         ctrl->SetFoldLevel(ctrl->LineFromPosition(startPos + i), 2 | wxSTC_FOLDLEVELHEADERFLAG);
         ctrl->SetStyling(filenameStyleLen, LEX_FIF_FILE);
         filenameStyleLen = 0;
     }
 
-    if(matchStyleLen) {
+    if (matchStyleLen) {
         ctrl->SetStyling(matchStyleLen, LEX_FIF_MATCH);
         matchStyleLen = 0;
     }
 
-    if(lineNumberStyleLen) {
+    if (lineNumberStyleLen) {
         ctrl->SetStyling(lineNumberStyleLen, LEX_FIF_LINE_NUMBER);
         lineNumberStyleLen = 0;
     }
@@ -243,7 +243,7 @@ int clFindResultsStyler::TestToggle(wxStyledTextCtrl* ctrl, wxStyledTextEvent& e
 {
     int line = wxNOT_FOUND;
     int style = HitTest(ctrl, e, line);
-    if(style == LEX_FIF_FILE || style == LEX_FIF_HEADER) {
+    if (style == LEX_FIF_FILE || style == LEX_FIF_HEADER) {
         return line;
     } else {
         return wxNOT_FOUND;

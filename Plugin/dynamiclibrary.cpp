@@ -22,9 +22,9 @@
 //
 //////////////////////////////////////////////////////////////////////////////
 //////////////////////////////////////////////////////////////////////////////
-#include "dynamiclibrary.h"
-
 #include "precompiled_header.h"
+
+#include "dynamiclibrary.h"
 
 #if defined(__WXMAC__) || defined(__WXGTK__)
 #include <dlfcn.h>
@@ -40,7 +40,7 @@ clDynamicLibrary::clDynamicLibrary()
 clDynamicLibrary::~clDynamicLibrary()
 {
 #if defined(__WXMAC__) || defined(__WXGTK__)
-    if(m_dllhandle) {
+    if (m_dllhandle) {
         dlclose(m_dllhandle);
         m_dllhandle = NULL;
     }
@@ -54,14 +54,14 @@ bool clDynamicLibrary::Load(const wxString& name)
     return m_lib.Load(name, wxDL_NOSHARE);
 #else
     // open the library
-    //#if defined(__WXGTK__) && defined (ON_64_BIT)
+    // #if defined(__WXGTK__) && defined (ON_64_BIT)
     //	// on GTK we need to pass RTLD_DEEPBIND otherwise symbols clashes
     //	m_dllhandle = dlopen(_C(name), RTLD_LAZY| RTLD_LOCAL | RTLD_DEEPBIND);
-    //#else
+    // #else
     m_dllhandle = dlopen(_C(name), RTLD_LAZY);
-    //#endif
+    // #endif
 
-    if(!m_dllhandle) {
+    if (!m_dllhandle) {
         m_error = wxString(dlerror(), wxConvUTF8);
         return false;
     }
@@ -75,7 +75,7 @@ void clDynamicLibrary::Detach()
 #if defined(__WXMSW__)
     m_lib.Detach();
 #else
-    if(m_dllhandle) {
+    if (m_dllhandle) {
         dlclose(m_dllhandle);
         m_dllhandle = NULL;
     }
@@ -95,7 +95,7 @@ void* clDynamicLibrary::GetSymbol(const wxString& name, bool* success)
 
     // load the symbol
     void* symb = dlsym(m_dllhandle, _C(name));
-    if(symb) {
+    if (symb) {
         *success = true;
     } else {
         *success = false;

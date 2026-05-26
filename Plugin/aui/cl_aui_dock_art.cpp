@@ -116,9 +116,7 @@ clAuiDockArt::clAuiDockArt([[maybe_unused]] IManager* manager)
 }
 
 clAuiDockArt::~clAuiDockArt()
-{
-    EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clAuiDockArt::OnSettingsChanged, this);
-}
+{ EventNotifier::Get()->Unbind(wxEVT_SYS_COLOURS_CHANGED, &clAuiDockArt::OnSettingsChanged, this); }
 
 void clAuiDockArt::DrawPaneButton(
     wxDC& dc, wxWindow* window, int button, int button_state, const wxRect& _rect, wxAuiPaneInfo& pane)

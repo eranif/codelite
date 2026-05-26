@@ -462,9 +462,7 @@ void clSFTPManager::OnFileSaved(clCommandEvent& event)
 }
 
 bool clSFTPManager::AwaitSaveFile(const wxString& localPath, const wxString& remotePath, const wxString& accountName)
-{
-    return DoSyncSaveFile(localPath, remotePath, accountName, false);
-}
+{ return DoSyncSaveFile(localPath, remotePath, accountName, false); }
 
 bool clSFTPManager::AwaitWriteFile(const wxString& content, const wxString& remotePath, const wxString& accountName)
 {
@@ -741,9 +739,7 @@ bool clSFTPManager::IsFileExists(const wxString& fullpath, const wxString& accou
 }
 
 bool clSFTPManager::IsFileExists(const wxString& fullpath, const SSHAccountInfo& accountInfo)
-{
-    return IsFileExists(fullpath, accountInfo.GetAccountName());
-}
+{ return IsFileExists(fullpath, accountInfo.GetAccountName()); }
 
 bool clSFTPManager::IsDirExists(const wxString& fullpath, const wxString& accountName)
 {
@@ -767,9 +763,7 @@ bool clSFTPManager::IsDirExists(const wxString& fullpath, const wxString& accoun
 }
 
 bool clSFTPManager::IsDirExists(const wxString& fullpath, const SSHAccountInfo& accountInfo)
-{
-    return IsDirExists(fullpath, accountInfo.GetAccountName());
-}
+{ return IsDirExists(fullpath, accountInfo.GetAccountName()); }
 
 wxFileName clSFTPManager::Download(const wxString& path, const wxString& accountName, const wxString& localFileName)
 {
@@ -862,9 +856,7 @@ void clSFTPManager::StartWorkerThread()
 }
 
 void clSFTPManager::OnSaveCompleted(clCommandEvent& e)
-{
-    clGetManager()->SetStatusMessage("SFTP: " + e.GetFileName() + _(" saved"), 3);
-}
+{ clGetManager()->SetStatusMessage("SFTP: " + e.GetFileName() + _(" saved"), 3); }
 
 void clSFTPManager::OnSaveError(clCommandEvent& e)
 {
@@ -905,14 +897,10 @@ size_t clSFTPManager::GetAllConnectionsPtr(std::vector<clSFTP::Ptr_t>& connectio
 }
 
 void clSFTPManager::AsyncReadFile(const wxString& remotePath, const wxString& accountName, wxEvtHandler* sink)
-{
-    DoAsyncReadFile(remotePath, accountName, sink);
-}
+{ DoAsyncReadFile(remotePath, accountName, sink); }
 
 bool clSFTPManager::AwaitReadFile(const wxString& remotePath, const wxString& accountName, wxMemoryBuffer* content)
-{
-    return DoSyncReadFile(remotePath, accountName, content);
-}
+{ return DoSyncReadFile(remotePath, accountName, content); }
 
 #define QUEUE_ERROR_EVENT(msg)                                \
     {                                                         \

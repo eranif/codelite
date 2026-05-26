@@ -101,7 +101,7 @@ OverlayTool& OverlayTool::Get()
 
 wxBitmap OverlayTool::CreateBitmap(const wxBitmap& orig, OverlayTool::BmpType type) const
 {
-    switch(type) {
+    switch (type) {
     case Bmp_Conflict:
         return DoAddBitmap(orig, "RED");
     case Bmp_OK:

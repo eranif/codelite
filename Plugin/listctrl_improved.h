@@ -43,8 +43,11 @@ protected:
     void DoInitialize();
 
 public:
-    ListCtrlImproved(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                     const wxSize& size = wxDefaultSize, long style = wxLC_REPORT);
+    ListCtrlImproved(wxWindow* parent,
+                     wxWindowID id = wxID_ANY,
+                     const wxPoint& pos = wxDefaultPosition,
+                     const wxSize& size = wxDefaultSize,
+                     long style = wxLC_REPORT);
     virtual ~ListCtrlImproved();
 
     ////////////////////////////////////////////////

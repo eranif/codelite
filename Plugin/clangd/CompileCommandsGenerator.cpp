@@ -26,7 +26,7 @@ CompileCommandsGenerator::~CompileCommandsGenerator()
     // If the child process is still running, detach from it. i.e. OnProcessTerminated() event is not called
     Unbind(wxEVT_ASYNC_PROCESS_TERMINATED, &CompileCommandsGenerator::OnProcessTerminated, this);
     Unbind(wxEVT_ASYNC_PROCESS_OUTPUT, &CompileCommandsGenerator::OnProcessOutput, this);
-    if(m_process) {
+    if (m_process) {
         m_process->Detach();
     }
     wxDELETE(m_process);
@@ -57,12 +57,12 @@ void CompileCommandsGenerator::OnProcessTerminated(clProcessEvent& event)
         [=](const wxArrayString& paths) {
             clDEBUG() << "Checking paths for changes:" << paths << endl;
             bool event_is_needed = false;
-            for(const wxString& path : paths) {
+            for (const wxString& path : paths) {
                 // Calculate the new file checksum
                 CheckSum_t ck = ComputeFileCheckSum(path);
                 CheckSum_t oldCk;
                 clDEBUG() << "New checksum is: [" << ck << "]" << endl;
-                if(m_checksumCache.count(path)) {
+                if (m_checksumCache.count(path)) {
                     oldCk = m_checksumCache.find(path)->second;
                 } else {
                     clDEBUG() << "File:" << path << "is not found in the cache";
@@ -71,16 +71,16 @@ void CompileCommandsGenerator::OnProcessTerminated(clProcessEvent& event)
                 bool file_exists = wxFileName::FileExists(path);
                 clDEBUG() << "File:" << path << "exists:" << file_exists << endl;
 
-                if(ck != oldCk || !file_exists) {
+                if (ck != oldCk || !file_exists) {
                     event_is_needed = true;
                 }
 
                 // update the checksum in the cache
                 m_checksumCache.erase(path);
-                m_checksumCache.insert({ path, ck });
+                m_checksumCache.insert({path, ck});
             }
 
-            if(!event_is_needed) {
+            if (!event_is_needed) {
                 clDEBUG() << "No changes detected for paths:" << paths << endl;
                 // We fire this event with empty content. This ensures that
                 // a LSP restart will take place
@@ -101,15 +101,15 @@ void CompileCommandsGenerator::OnProcessTerminated(clProcessEvent& event)
 void CompileCommandsGenerator::GenerateCompileCommands()
 {
     // Kill any previous process running
-    if(m_process) {
+    if (m_process) {
         m_process->Detach();
     }
     wxDELETE(m_process);
 
-    if(!clCxxWorkspaceST::Get()->IsOpen()) {
+    if (!clCxxWorkspaceST::Get()->IsOpen()) {
         return;
     }
-    if(!clCxxWorkspaceST::Get()->GetActiveProject()) {
+    if (!clCxxWorkspaceST::Get()->GetActiveProject()) {
         return;
     }
 
@@ -118,7 +118,7 @@ void CompileCommandsGenerator::GenerateCompileCommands()
     codeliteMake.SetExt("exe");
 #endif
 
-    if(!codeliteMake.FileExists()) {
+    if (!codeliteMake.FileExists()) {
         clWARNING() << "Could not find" << codeliteMake;
         return;
     }
@@ -140,7 +140,7 @@ void CompileCommandsGenerator::GenerateCompileCommands()
 
     // if we are required to generate compile_commands.json, pass the --json flags
     // not passing it means only compile_flags.txt files are generated
-    if(generateCompileCommands) {
+    if (generateCompileCommands) {
         command << " --json ";
     } else {
         command << " --compile-flags ";

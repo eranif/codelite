@@ -25,8 +25,8 @@
 
 #include "opentypevlistctrl.h"
 
-OpenTypeVListCtrl::OpenTypeVListCtrl(wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size,
-                                     long style)
+OpenTypeVListCtrl::OpenTypeVListCtrl(
+    wxWindow* parent, wxWindowID id, const wxPoint& pos, const wxSize& size, long style)
     : wxListView(parent, id, pos, size, style)
 {
 }
@@ -35,61 +35,61 @@ wxListItemAttr* OpenTypeVListCtrl::OnGetItemAttr(long item) const { return NULL;
 
 int OpenTypeVListCtrl::OnGetItemColumnImage(long item, long column) const
 {
-    if(item >= (long)m_tags.size()) {
+    if (item >= (long)m_tags.size()) {
         return wxNOT_FOUND;
     }
 
-    if(column > 0) {
+    if (column > 0) {
         return wxNOT_FOUND;
     }
 
     wxString kind = m_tags.at(item)->GetKind();
-    if(kind == wxT("namespace"))
+    if (kind == wxT("namespace"))
         return 0;
-    if(kind == wxT("class"))
+    if (kind == wxT("class"))
         return 1;
-    if(kind == wxT("struct"))
+    if (kind == wxT("struct"))
         return 2;
-    if(kind == wxT("typedef"))
+    if (kind == wxT("typedef"))
         return 3;
-    if(kind == wxT("enum"))
+    if (kind == wxT("enum"))
         return 4;
-    if(kind == wxT("union"))
+    if (kind == wxT("union"))
         return 2;
     return 1;
 }
 
 int OpenTypeVListCtrl::OnGetItemImage(long item) const
 {
-    if(item >= (long)m_tags.size()) {
+    if (item >= (long)m_tags.size()) {
         return wxNOT_FOUND;
     }
 
     wxString kind = m_tags.at(item)->GetKind();
 
-    if(kind == wxT("namespace"))
+    if (kind == wxT("namespace"))
         return 0;
-    if(kind == wxT("class"))
+    if (kind == wxT("class"))
         return 1;
-    if(kind == wxT("struct"))
+    if (kind == wxT("struct"))
         return 2;
-    if(kind == wxT("typedef"))
+    if (kind == wxT("typedef"))
         return 3;
-    if(kind == wxT("enum"))
+    if (kind == wxT("enum"))
         return 4;
-    if(kind == wxT("union"))
+    if (kind == wxT("union"))
         return 2;
     return 1;
 }
 
 wxString OpenTypeVListCtrl::OnGetItemText(long item, long column) const
 {
-    if(item >= (long)m_tags.size()) {
+    if (item >= (long)m_tags.size()) {
         return wxEmptyString;
     }
     TagEntryPtr t = m_tags.at(item);
 
-    switch(column) {
+    switch (column) {
     case 0: // name
         return t->GetName();
     case 1: // scope
@@ -114,23 +114,23 @@ int OpenTypeVListCtrl::FindMatch(const wxString& word)
     int possible_match(wxNOT_FOUND);
 
     // full match
-    for(size_t i = 0; i < m_tags.size(); i++) {
+    for (size_t i = 0; i < m_tags.size(); i++) {
         TagEntryPtr t = m_tags.at(i);
 
         wxString s1(word);
         wxString s2(t->GetName());
 
         // first try full match
-        if(s2.StartsWith(s1)) {
-            if(possible_match == wxNOT_FOUND) {
+        if (s2.StartsWith(s1)) {
+            if (possible_match == wxNOT_FOUND) {
                 possible_match = (int)i;
             }
 
-            if(s2 == s1) {
+            if (s2 == s1) {
                 return (int)i;
             }
         } else {
-            if(possible_match != wxNOT_FOUND) {
+            if (possible_match != wxNOT_FOUND) {
                 // since the tags are sorted, we will not find any matches beyond this point
                 return possible_match;
             }
@@ -138,7 +138,7 @@ int OpenTypeVListCtrl::FindMatch(const wxString& word)
     }
 
     // if we reached this part, possible_match is wxNOT_FOUND
-    for(size_t i = 0; i < m_tags.size(); i++) {
+    for (size_t i = 0; i < m_tags.size(); i++) {
         TagEntryPtr t = m_tags.at(i);
 
         wxString s1(word);
@@ -147,16 +147,16 @@ int OpenTypeVListCtrl::FindMatch(const wxString& word)
         s2.MakeLower();
 
         // first try full match
-        if(s2.StartsWith(s1)) {
-            if(possible_match == wxNOT_FOUND) {
+        if (s2.StartsWith(s1)) {
+            if (possible_match == wxNOT_FOUND) {
                 possible_match = (int)i;
             }
 
-            if(s2 == s1) {
+            if (s2 == s1) {
                 return (int)i;
             }
         } else {
-            if(possible_match != wxNOT_FOUND) {
+            if (possible_match != wxNOT_FOUND) {
                 // we will not find any matches beyond this point
                 return possible_match;
             }
@@ -168,7 +168,7 @@ int OpenTypeVListCtrl::FindMatch(const wxString& word)
 
 TagEntryPtr OpenTypeVListCtrl::GetTagAt(long item)
 {
-    if(item >= (long)m_tags.size()) {
+    if (item >= (long)m_tags.size()) {
         return NULL;
     }
     return m_tags.at(item);

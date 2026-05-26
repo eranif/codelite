@@ -6,7 +6,7 @@
 clNotebookTheme clNotebookTheme::GetTheme(clNotebookTheme::eNotebookTheme theme)
 {
     clNotebookTheme notebookTheme;
-    switch(theme) {
+    switch (theme) {
     case kDefault:
         notebookTheme.m_penColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DDKSHADOW);
         notebookTheme.m_activeTabPenColour = wxSystemSettings::GetColour(wxSYS_COLOUR_3DSHADOW);

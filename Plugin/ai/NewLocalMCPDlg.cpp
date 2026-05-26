@@ -73,6 +73,4 @@ llm::LocalMcp NewLocalMCPDlg::GetData() const
 }
 
 void NewLocalMCPDlg::OnOkUI(wxUpdateUIEvent& event)
-{
-    event.Enable(!m_textCtrlName->IsEmpty() && !m_textCtrlCommand->IsEmpty());
-}
+{ event.Enable(!m_textCtrlName->IsEmpty() && !m_textCtrlCommand->IsEmpty()); }

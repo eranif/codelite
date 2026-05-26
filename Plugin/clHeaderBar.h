@@ -38,7 +38,7 @@ public:
      */
     void SetNative(bool b)
     {
-        if(b) {
+        if (b) {
             m_flags |= kHeaderNative;
         } else {
             m_flags &= ~kHeaderNative;

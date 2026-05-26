@@ -85,7 +85,7 @@ void MD5::update(uint1* input, uint4 input_length)
     uint4 input_index, buffer_index;
     uint4 buffer_space; // how much space is left in buffer
 
-    if(finalized) { // so we can't update!
+    if (finalized) { // so we can't update!
         std::cerr << "MD5::update:  Can't update a finalized digest!" << std::endl;
         return;
     }
@@ -94,7 +94,7 @@ void MD5::update(uint1* input, uint4 input_length)
     buffer_index = (unsigned int)((count[0] >> 3) & 0x3F);
 
     // Update number of bits
-    if((count[0] += ((uint4)input_length << 3)) < ((uint4)input_length << 3)) {
+    if ((count[0] += ((uint4)input_length << 3)) < ((uint4)input_length << 3)) {
         count[1]++;
     }
 
@@ -103,13 +103,13 @@ void MD5::update(uint1* input, uint4 input_length)
     buffer_space = 64 - buffer_index; // how much space is left in buffer
 
     // Transform as many times as possible.
-    if(input_length >= buffer_space) { // ie. we have enough to fill the buffer
+    if (input_length >= buffer_space) { // ie. we have enough to fill the buffer
         // fill the rest of the buffer and transform
         memcpy(buffer + buffer_index, input, buffer_space);
         transform(buffer);
 
         // now, transform each 64-byte piece of the input, bypassing the buffer
-        for(input_index = buffer_space; input_index + 63 < input_length; input_index += 64) {
+        for (input_index = buffer_space; input_index + 63 < input_length; input_index += 64) {
             transform(input + input_index);
         }
 
@@ -130,7 +130,7 @@ void MD5::update(FILE* file)
     unsigned char buffer[BUF_SIZE];
     int len;
 
-    while((len = fread(buffer, 1, BUF_SIZE, file))) {
+    while ((len = fread(buffer, 1, BUF_SIZE, file))) {
         update(buffer, len);
     }
 
@@ -146,7 +146,7 @@ void MD5::update(std::istream& stream)
     char buffer[BUF_SIZE];
     int len;
 
-    while(stream.good()) {
+    while (stream.good()) {
         stream.read(buffer, BUF_SIZE); // note that return value of read is unusable.
         len = stream.gcount();
         update((unsigned char*)buffer, len);
@@ -161,7 +161,7 @@ void MD5::update(std::ifstream& stream)
     char buffer[BUF_SIZE];
     int len;
 
-    while(stream.good()) {
+    while (stream.good()) {
         stream.read(buffer, BUF_SIZE); // note that return value of read is unusable.
         len = stream.gcount();
         update((unsigned char*)buffer, len);
@@ -176,11 +176,11 @@ void MD5::finalize()
 
     unsigned char bits[8];
     unsigned int index, padLen;
-    static uint1 PADDING[64] = { 0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
-                                 0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 };
+    static uint1 PADDING[64] = {0x80, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
+                                0,    0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
 
-    if(finalized) {
+    if (finalized) {
         std::cerr << "MD5::finalize:  Already finalized this digest!" << std::endl;
         return;
     }
@@ -253,13 +253,13 @@ const char* MD5::hex_digest()
 
     ::memset(hex_digest_buff, 0, sizeof(hex_digest_buff));
 
-    if(!finalized) {
+    if (!finalized) {
         std::cerr << "MD5::hex_digest:  Can't get digest if you haven't "
                   << "finalized the digest!" << std::endl;
         return hex_digest_buff;
     }
 
-    for(int i = 0; i < 16; i++) {
+    for (int i = 0; i < 16; i++) {
         sprintf(hex_digest_buff + (i * 2), "%02x", digest[i]);
     }
 
@@ -411,7 +411,7 @@ void MD5::encode(uint1* output, uint4* input, uint4 len)
 
     unsigned int i, j;
 
-    for(i = 0, j = 0; j < len; i++, j += 4) {
+    for (i = 0, j = 0; j < len; i++, j += 4) {
         output[j] = (uint1)(input[i] & 0xff);
         output[j + 1] = (uint1)((input[i] >> 8) & 0xff);
         output[j + 2] = (uint1)((input[i] >> 16) & 0xff);
@@ -426,7 +426,7 @@ void MD5::decode(uint4* output, uint1* input, uint4 len)
 
     unsigned int i, j;
 
-    for(i = 0, j = 0; j < len; i++, j += 4) {
+    for (i = 0, j = 0; j < len; i++, j += 4) {
         output[i] = ((uint4)input[j]) | (((uint4)input[j + 1]) << 8) | (((uint4)input[j + 2]) << 16) |
                     (((uint4)input[j + 3]) << 24);
     }
@@ -438,7 +438,7 @@ void MD5::memcpy(uint1* output, uint1* input, uint4 len)
 
     unsigned int i;
 
-    for(i = 0; i < len; i++) {
+    for (i = 0; i < len; i++) {
         output[i] = input[i];
     }
 }
@@ -449,7 +449,7 @@ void MD5::memset(uint1* output, uint1 value, uint4 len)
 
     unsigned int i;
 
-    for(i = 0; i < len; i++) {
+    for (i = 0; i < len; i++) {
         output[i] = value;
     }
 }

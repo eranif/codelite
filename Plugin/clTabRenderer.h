@@ -220,11 +220,22 @@ protected:
 public:
     clTabRenderer(const wxString& name, const wxWindow* parent);
     virtual ~clTabRenderer() = default;
-    virtual void Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, size_t tabIndex,
-                      size_t activeTabIndex, const clTabColours& colours, size_t style, eButtonState tabState,
+    virtual void Draw(wxWindow* parent,
+                      wxDC& dc,
+                      wxDC& fontDC,
+                      const clTabInfo& tabInfo,
+                      size_t tabIndex,
+                      size_t activeTabIndex,
+                      const clTabColours& colours,
+                      size_t style,
+                      eButtonState tabState,
                       eButtonState xButtonState) = 0;
-    virtual void DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t activeTab, const wxRect& clientRect, wxDC& dc,
-                                const clTabColours& colours, size_t style) = 0;
+    virtual void DrawBottomRect(wxWindow* parent,
+                                clTabInfo::Ptr_t activeTab,
+                                const wxRect& clientRect,
+                                wxDC& dc,
+                                const clTabColours& colours,
+                                size_t style) = 0;
 
     void SetUseBoldFont(bool use_bold_font) { this->use_bold_font = use_bold_font; }
     bool IsUseBoldFont() const { return use_bold_font; }
@@ -232,15 +243,19 @@ public:
     /**
      * @brief draw the tab area background
      */
-    virtual void DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours,
-                                size_t style);
+    virtual void
+    DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const clTabColours& colours, size_t style);
 
     /**
      * @brief finalise the background after all elements have been drawn on the tab area colour. Default is
      * to do nothing
      */
-    virtual void FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect, const wxRect& activeTabRect,
-                                    const clTabColours& colours, size_t style);
+    virtual void FinaliseBackground(wxWindow* parent,
+                                    wxDC& dc,
+                                    const wxRect& clientRect,
+                                    const wxRect& activeTabRect,
+                                    const clTabColours& colours,
+                                    size_t style);
     /**
      * @brief return font suitable for drawing the tab label
      */
@@ -249,8 +264,8 @@ public:
     /**
      * @brief draw a button in a given state at a give location
      */
-    static void DrawButton(wxWindow* win, wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours,
-                           eButtonState state);
+    static void
+    DrawButton(wxWindow* win, wxDC& dc, const clTabInfo& tabInfo, const clTabColours& colours, eButtonState state);
 
     /**
      * @brief draw chevron button

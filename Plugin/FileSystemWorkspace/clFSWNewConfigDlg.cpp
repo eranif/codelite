@@ -10,9 +10,9 @@ clFSWNewConfigDlg::clFSWNewConfigDlg(wxWindow* parent)
     configs.Insert("-- None --", 0);
     m_choiceCopyFrom->Append(configs);
     auto conf = s.GetSelectedConfig();
-    if(conf && m_choiceCopyFrom->FindString(conf->GetName())) {
+    if (conf && m_choiceCopyFrom->FindString(conf->GetName())) {
         m_choiceCopyFrom->SetStringSelection(conf->GetName());
-    } else if(!m_choiceCopyFrom->IsEmpty()) {
+    } else if (!m_choiceCopyFrom->IsEmpty()) {
         m_choiceCopyFrom->SetSelection(0);
     }
 }

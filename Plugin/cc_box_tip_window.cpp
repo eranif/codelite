@@ -174,10 +174,7 @@ void CCBoxTipWindow_ShrinkTip(wxString& str, bool strip_html_tags)
  * @brief return the display for a given window
  * this function never fails
  */
-std::unique_ptr<wxDisplay> GetDisplay(const wxWindow* win)
-{
-    return std::make_unique<wxDisplay>(win);
-}
+std::unique_ptr<wxDisplay> GetDisplay(const wxWindow* win) { return std::make_unique<wxDisplay>(win); }
 } // namespace
 
 CCBoxTipWindow::CCBoxTipWindow(wxWindow* parent, const wxString& tip, bool strip_html_tags)

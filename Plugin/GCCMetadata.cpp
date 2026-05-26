@@ -46,7 +46,7 @@ void GCCMetadata::GetMetadataFromCache(const wxString& tool, const wxString& roo
     if (s_cache.count(tool) == 0) {
         GCCMetadata tmp(md->m_basename);
         tmp.DoLoad(tool, rootDir, is_cygwin);
-        s_cache.insert({ tool, tmp });
+        s_cache.insert({tool, tmp});
     }
 
     const auto& cachedEntry = s_cache[tool];
@@ -85,7 +85,7 @@ void GCCMetadata::DoLoad(const wxString& tool, const wxString& rootDir, bool is_
     wxString pathenv;
     ::wxGetEnv("PATH", &pathenv);
     pathenv.Prepend(cxx.GetPath() + clPATH_SEPARATOR);
-    envlist.push_back({ "PATH", pathenv });
+    envlist.push_back({"PATH", pathenv});
 
 #ifdef __WXMSW__
     if (::clIsCygwinEnvironment()) {

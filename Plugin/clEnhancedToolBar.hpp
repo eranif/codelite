@@ -40,15 +40,21 @@ protected:
     void OnButtonClicked(wxCommandEvent& event);
 
 public:
-    clEnhancedToolBar(wxWindow* parent, wxWindowID winid = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                      const wxSize& size = wxDefaultSize, long style = wxTAB_TRAVERSAL | wxNO_BORDER,
+    clEnhancedToolBar(wxWindow* parent,
+                      wxWindowID winid = wxID_ANY,
+                      const wxPoint& pos = wxDefaultPosition,
+                      const wxSize& size = wxDefaultSize,
+                      long style = wxTAB_TRAVERSAL | wxNO_BORDER,
                       const wxString& name = "clEnhancedToolBar");
     virtual ~clEnhancedToolBar() = default;
 
     /**
      * @brief add a button that changes its state per click. The initial state is 'button1'
      */
-    void Add2StatesTool(wxWindowID id, wxEvtHandler* sink, const Button& button1, const Button& button2,
+    void Add2StatesTool(wxWindowID id,
+                        wxEvtHandler* sink,
+                        const Button& button1,
+                        const Button& button2,
                         wxItemKind kind = wxITEM_NORMAL);
 
     /**

@@ -95,8 +95,8 @@ public:
     using CmpListInfoPattern = std::list<CmpInfoPattern>;
 
 private:
-    void AddPattern(int type, const wxString& pattern, int fileNameIndex, int lineNumberIndex,
-                    int colIndex = wxNOT_FOUND);
+    void
+    AddPattern(int type, const wxString& pattern, int fileNameIndex, int lineNumberIndex, int colIndex = wxNOT_FOUND);
     void AddDefaultGnuCompilerOptions();
     void AddDefaultGnuLinkerOptions();
     void AddDefaultGnuCompilerLinkerOptions();
@@ -125,7 +125,9 @@ protected:
     std::map<wxString, LinkLine> m_linkerLines;
 
 private:
-    bool IsMatchesPattern(CmpInfoPattern& pattern, eSeverity severity, const wxString& line,
+    bool IsMatchesPattern(CmpInfoPattern& pattern,
+                          eSeverity severity,
+                          const wxString& line,
                           PatternMatch* match_result) const;
 
 public:
@@ -223,21 +225,15 @@ public:
     void SetLinkerOptions(const CmpCmdLineOptions& cmpOptions) { m_linkerOptions = cmpOptions; }
 
     void SetGenerateDependenciesFile(bool generateDependenciesFile)
-    {
-        this->m_generateDependenciesFile = generateDependenciesFile;
-    }
+    { this->m_generateDependenciesFile = generateDependenciesFile; }
     bool GetGenerateDependenciesFile() const { return IsGnuCompatibleCompiler() && m_generateDependenciesFile; }
     void SetReadObjectFilesFromList(bool readObjectFilesFromList)
-    {
-        this->m_readObjectFilesFromList = readObjectFilesFromList;
-    }
+    { this->m_readObjectFilesFromList = readObjectFilesFromList; }
     bool GetReadObjectFilesFromList() const { return m_readObjectFilesFromList; }
     void AddCmpFileType(const wxString& extension, CmpFileKind type, const wxString& compile_line);
     bool GetCmpFileType(const wxString& extension, Compiler::CmpFileTypeInfo& ft);
     void SetObjectNameIdenticalToFileName(bool objectNameIdenticalToFileName)
-    {
-        this->m_objectNameIdenticalToFileName = objectNameIdenticalToFileName;
-    }
+    { this->m_objectNameIdenticalToFileName = objectNameIdenticalToFileName; }
     bool GetObjectNameIdenticalToFileName() const { return m_objectNameIdenticalToFileName; }
     /**
      * @brief return the compiler metadata info

@@ -27,7 +27,7 @@ clHeaderBar::clHeaderBar(clControlWithItems* parent, const clColours& colours)
 {
     Hide();
     SetBackgroundStyle(wxBG_STYLE_CUSTOM);
-    if(!wxPanel::Create(parent)) {
+    if (!wxPanel::Create(parent)) {
         return;
     }
     Bind(wxEVT_PAINT, &clHeaderBar::OnPaint, this);
@@ -40,7 +40,7 @@ clHeaderBar::clHeaderBar(clControlWithItems* parent, const clColours& colours)
 
 size_t clHeaderBar::GetHeight() const
 {
-    if(m_columns.empty()) {
+    if (m_columns.empty()) {
         return 0;
     }
     return m_columns[0].GetRect().GetHeight();
@@ -49,7 +49,7 @@ size_t clHeaderBar::GetHeight() const
 void clHeaderBar::OnSize(wxSizeEvent& event)
 {
     event.Skip();
-    if(!GetParent()) {
+    if (!GetParent()) {
         return;
     }
     clControlWithItems* parent = dynamic_cast<clControlWithItems*>(GetParent());
@@ -69,10 +69,12 @@ void clHeaderBar::DoUpdateSize()
 {
     wxSize fixedText = GetTextSize("Tp");
     int xx = 0;
-    for(size_t i = 0; i < m_columns.size(); ++i) {
+    for (size_t i = 0; i < m_columns.size(); ++i) {
         clHeaderItem& item = m_columns[i];
         wxSize textSize = GetTextSize(item.GetLabel());
-        wxRect headerRect(xx, 0, textSize.GetWidth() + (2 * clHeaderItem::X_SPACER),
+        wxRect headerRect(xx,
+                          0,
+                          textSize.GetWidth() + (2 * clHeaderItem::X_SPACER),
                           fixedText.GetHeight() + (2 * clHeaderItem::Y_SPACER));
         item.SetRect(headerRect);
         xx += item.GetRect().GetWidth();
@@ -99,22 +101,22 @@ void clHeaderBar::Render(wxDC& dc, const clColours& colours)
     _colours.SetBgColour(_colours.GetHeaderBgColour());
 
     bool useNativeHeader = (m_flags & kHeaderNative);
-    if(useNativeHeader) {
+    if (useNativeHeader) {
         wxRendererNative::Get().DrawHeaderButton(this, dc, rect, 0);
     }
 
     // Set the DC origin to reflect the h-scrollbar
     clControlWithItems* parent = dynamic_cast<clControlWithItems*>(GetParent());
     dc.SetDeviceOrigin(-parent->GetFirstColumn(), 0);
-    if(parent->IsDisabled()) {
+    if (parent->IsDisabled()) {
         _colours.SetItemTextColour(_colours.GetGrayText());
         _colours.SetSelItemTextColour(_colours.GetGrayText());
     }
 
-    for(size_t i = 0; i < size(); ++i) {
+    for (size_t i = 0; i < size(); ++i) {
         bool is_last = (i == (size() - 1));
         Item(i).Render(dc, _colours, m_flags);
-        if(!is_last && !useNativeHeader) {
+        if (!is_last && !useNativeHeader) {
             dc.SetPen(wxPen(_colours.GetHeaderVBorderColour(), 1, PEN_STYLE));
             dc.DrawLine(Item(i).GetRect().GetTopRight(), Item(i).GetRect().GetBottomRight());
         }
@@ -122,7 +124,7 @@ void clHeaderBar::Render(wxDC& dc, const clColours& colours)
 
     // Restore the DC origin
     dc.SetDeviceOrigin(0, 0);
-    if(!useNativeHeader) {
+    if (!useNativeHeader) {
         dc.SetPen(_colours.GetHeaderHBorderColour());
         dc.DrawLine(rect.GetBottomLeft(), rect.GetBottomRight());
     }
@@ -130,7 +132,7 @@ void clHeaderBar::Render(wxDC& dc, const clColours& colours)
 
 void clHeaderBar::UpdateColWidthIfNeeded(size_t col, int width, bool force)
 {
-    if(col >= m_columns.size()) {
+    if (col >= m_columns.size()) {
         return;
     }
     clHeaderItem& column = m_columns[col];
@@ -138,7 +140,7 @@ void clHeaderBar::UpdateColWidthIfNeeded(size_t col, int width, bool force)
 
     // Update the offsets
     int xx = 0;
-    for(size_t i = 0; i < m_columns.size(); ++i) {
+    for (size_t i = 0; i < m_columns.size(); ++i) {
         clHeaderItem& column = m_columns[i];
         column.SetX(xx);
         xx += column.GetWidth();
@@ -152,7 +154,7 @@ void clHeaderBar::OnMouseLeftDown(wxMouseEvent& event)
     clControlWithItems* parent = dynamic_cast<clControlWithItems*>(GetParent());
     int x = event.GetX() + parent->GetFirstColumn();
     m_draggedCol = HitBorder(x);
-    if(m_draggedCol > wxNOT_FOUND) {
+    if (m_draggedCol > wxNOT_FOUND) {
         // Get ready to drag
         m_previousCursor = GetCursor();
         SetCursor(wxCursor(wxCURSOR_SIZEWE));
@@ -166,12 +168,12 @@ void clHeaderBar::OnMotion(wxMouseEvent& event)
     event.Skip();
     clControlWithItems* parent = dynamic_cast<clControlWithItems*>(GetParent());
     int x = event.GetX() + parent->GetFirstColumn();
-    if(m_isDragging) {
+    if (m_isDragging) {
         wxCHECK_RET(m_draggedCol > -1 && m_draggedCol < (int)m_columns.size(), "Dragging but the column is invalid");
         int delta = x - Item(m_draggedCol).GetRect().GetRight();
         // Compare with COL_MIN_SIZE as we don't want to shrink the col to nothing (or beyond!)
         const static int COL_MIN_SIZE = 7;
-        if((int)(Item(m_draggedCol).GetWidth()) + delta > COL_MIN_SIZE) {
+        if ((int)(Item(m_draggedCol).GetWidth()) + delta > COL_MIN_SIZE) {
             parent->SetColumnWidth(m_draggedCol, Item(m_draggedCol).GetWidth() + delta);
         }
     }
@@ -186,9 +188,9 @@ void clHeaderBar::OnMouseLeftUp(wxMouseEvent& event)
 int clHeaderBar::HitBorder(int x) const // Returns the column whose *right*-hand edge contains the cursor
 {
     int xpos(0);
-    for(size_t i = 0; i < size(); ++i) {
+    for (size_t i = 0; i < size(); ++i) {
         xpos += Item(i).GetWidth();
-        if(abs(x - xpos) < 5) {
+        if (abs(x - xpos) < 5) {
             return i;
         }
     }
@@ -199,7 +201,7 @@ int clHeaderBar::HitBorder(int x) const // Returns the column whose *right*-hand
 size_t clHeaderBar::GetWidth() const
 {
     size_t w = 0;
-    for(size_t i = 0; i < m_columns.size(); ++i) {
+    for (size_t i = 0; i < m_columns.size(); ++i) {
         w += m_columns[i].GetWidth();
     }
     return w;
@@ -207,7 +209,7 @@ size_t clHeaderBar::GetWidth() const
 
 const clHeaderItem& clHeaderBar::Last() const
 {
-    if(IsEmpty()) {
+    if (IsEmpty()) {
         static clHeaderItem emptyItem;
         return emptyItem;
     }
@@ -216,7 +218,7 @@ const clHeaderItem& clHeaderBar::Last() const
 
 clHeaderItem& clHeaderBar::Last()
 {
-    if(IsEmpty()) {
+    if (IsEmpty()) {
         static clHeaderItem emptyItem;
         return emptyItem;
     }
@@ -236,7 +238,7 @@ void clHeaderBar::OnPaint(wxPaintEvent& event)
 
 bool clHeaderBar::Show(bool show)
 {
-    if(!GetParent()) {
+    if (!GetParent()) {
         return false;
     }
     SetSize(GetParent()->GetSize().GetWidth(), GetHeight());
@@ -249,19 +251,19 @@ void clHeaderBar::DoCancelDrag()
     m_draggedCol = -1;
     SetCursor(m_previousCursor);
     m_previousCursor = wxCursor();
-    if(HasCapture()) {
+    if (HasCapture()) {
         ReleaseMouse();
     }
 }
 
 void clHeaderBar::SetColumnsWidth(const std::vector<size_t>& v_width)
 {
-    if(v_width.size() != m_columns.size()) {
+    if (v_width.size() != m_columns.size()) {
         return;
     }
 
     size_t x = 0;
-    for(size_t i = 0; i < m_columns.size(); ++i) {
+    for (size_t i = 0; i < m_columns.size(); ++i) {
         auto& column = m_columns[i];
         column.SetX(x);
         column.SetWidthValue(v_width[i]);

@@ -69,16 +69,22 @@ protected:
     virtual wxTreeItemId GetRow(const wxPoint& WXUNUSED(pt)) const { return wxTreeItemId(); }
 
 public:
-    clScrolledPanel(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                    const wxSize& size = wxDefaultSize, long style = 0);
+    clScrolledPanel(wxWindow* parent,
+                    wxWindowID id = wxID_ANY,
+                    const wxPoint& pos = wxDefaultPosition,
+                    const wxSize& size = wxDefaultSize,
+                    long style = 0);
     clScrolledPanel() = default;
     virtual ~clScrolledPanel();
 
     ScrollBar_t* GetHScrollBar() { return m_hsb; }
     ScrollBar_t* GetVScrollBar() { return m_vsb; }
 
-    bool Create(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                const wxSize& size = wxDefaultSize, long style = 0);
+    bool Create(wxWindow* parent,
+                wxWindowID id = wxID_ANY,
+                const wxPoint& pos = wxDefaultPosition,
+                const wxSize& size = wxDefaultSize,
+                long style = 0);
     /**
      * @brief return the system default font
      */

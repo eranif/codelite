@@ -9,9 +9,7 @@ class CallThrottler
 public:
     explicit CallThrottler(std::chrono::milliseconds minInterval = std::chrono::milliseconds(50))
         : m_minInterval(minInterval)
-    {
-        m_lastExecution = std::chrono::steady_clock::now();
-    }
+    { m_lastExecution = std::chrono::steady_clock::now(); }
 
     /**
      * @brief Executes the provided function if the minimum interval has passed since the last execution.

@@ -15,9 +15,7 @@ NewFileSystemWorkspaceDialog::NewFileSystemWorkspaceDialog(wxWindow* parent, boo
 NewFileSystemWorkspaceDialog::~NewFileSystemWorkspaceDialog() {}
 
 void NewFileSystemWorkspaceDialog::OnOKUI(wxUpdateUIEvent& event)
-{
-    event.Enable(!m_textCtrlName->GetValue().IsEmpty() && wxFileName::DirExists(m_dirPickerPath->GetPath()));
-}
+{ event.Enable(!m_textCtrlName->GetValue().IsEmpty() && wxFileName::DirExists(m_dirPickerPath->GetPath())); }
 
 wxString NewFileSystemWorkspaceDialog::GetWorkspaceName() const { return m_textCtrlName->GetValue(); }
 
@@ -28,10 +26,10 @@ void NewFileSystemWorkspaceDialog::OnDirSelected(wxFileDirPickerEvent& event)
     event.Skip();
     wxString path = event.GetPath();
     wxFileName fndir(path, "");
-    if(fndir.GetDirCount() == 0) {
+    if (fndir.GetDirCount() == 0) {
         return;
     }
-    if(m_textCtrlName->IsEmpty() && m_autoSetNameFromPath) {
+    if (m_textCtrlName->IsEmpty() && m_autoSetNameFromPath) {
         m_textCtrlName->ChangeValue(fndir.GetDirs().Last());
     }
 }

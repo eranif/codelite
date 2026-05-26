@@ -71,9 +71,7 @@ TextGenerationPreviewFrame::TextGenerationPreviewFrame(PreviewKind kind, wxWindo
 }
 
 TextGenerationPreviewFrame::~TextGenerationPreviewFrame()
-{
-    clDEBUG() << "~TextGenerationPreviewFrame() destructor has been called" << endl;
-}
+{ clDEBUG() << "~TextGenerationPreviewFrame() destructor has been called" << endl; }
 
 /**
  * @brief Handles the copy event by copying the editor's text content to the clipboard.

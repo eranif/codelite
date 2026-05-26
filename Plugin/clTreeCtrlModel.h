@@ -50,10 +50,14 @@ public:
     void GetNextItems(clRowEntry* from, int count, clRowEntry::Vec_t& items, bool selfIncluded = true) const;
     void GetPrevItems(clRowEntry* from, int count, clRowEntry::Vec_t& items, bool selfIncluded = true) const;
     wxTreeItemId AddRoot(const wxString& text, int image, int selImage, wxTreeItemData* data);
-    wxTreeItemId AppendItem(const wxTreeItemId& parent, const wxString& text, int image, int selImage,
+    wxTreeItemId
+    AppendItem(const wxTreeItemId& parent, const wxString& text, int image, int selImage, wxTreeItemData* data);
+    wxTreeItemId InsertItem(const wxTreeItemId& parent,
+                            const wxTreeItemId& previous,
+                            const wxString& text,
+                            int image,
+                            int selImage,
                             wxTreeItemData* data);
-    wxTreeItemId InsertItem(const wxTreeItemId& parent, const wxTreeItemId& previous, const wxString& text, int image,
-                            int selImage, wxTreeItemData* data);
     wxTreeItemId GetRootItem() const;
 
     void SetIndentSize(int indentSize) { this->m_indentSize = indentSize; }
@@ -70,7 +74,7 @@ public:
     clRowEntry* GetRowAfter(clRowEntry* item, bool visibleItem) const;
     clRowEntry* ToPtr(const wxTreeItemId& item) const
     {
-        if(!m_root || !item.IsOk()) {
+        if (!m_root || !item.IsOk()) {
             return nullptr;
         }
         return reinterpret_cast<clRowEntry*>(item.GetID());
@@ -79,7 +83,9 @@ public:
     /**
      * @brief select a given item
      */
-    void SelectItem(const wxTreeItemId& item, bool select = true, bool addSelection = false,
+    void SelectItem(const wxTreeItemId& item,
+                    bool select = true,
+                    bool addSelection = false,
                     bool clear_old_selection = false);
     /**
      * @brief add an item to the selection list

@@ -59,21 +59,32 @@ void clTabRendererMinimal::InitLightColours(clTabColours& colours, const wxColou
     wxUnusedVar(activeTabBGColour);
 }
 
-void clTabRendererMinimal::Draw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, size_t tabIndex,
-                                size_t activeTabIndex, const clTabColours& colors, size_t style, eButtonState tabState,
+void clTabRendererMinimal::Draw(wxWindow* parent,
+                                wxDC& dc,
+                                wxDC& fontDC,
+                                const clTabInfo& tabInfo,
+                                size_t tabIndex,
+                                size_t activeTabIndex,
+                                const clTabColours& colors,
+                                size_t style,
+                                eButtonState tabState,
                                 eButtonState xButtonState)
-{
-    DoDraw(parent, dc, fontDC, tabInfo, tabIndex, activeTabIndex, colors, style, tabState, xButtonState);
-}
+{ DoDraw(parent, dc, fontDC, tabInfo, tabIndex, activeTabIndex, colors, style, tabState, xButtonState); }
 
-void clTabRendererMinimal::FinaliseBackground(wxWindow* parent, wxDC& dc, const wxRect& clientRect,
-                                              const wxRect& activeTabRect, const clTabColours& colours, size_t style)
-{
-    clTabRenderer::FinaliseBackground(parent, dc, clientRect, activeTabRect, colours, style);
-}
+void clTabRendererMinimal::FinaliseBackground(wxWindow* parent,
+                                              wxDC& dc,
+                                              const wxRect& clientRect,
+                                              const wxRect& activeTabRect,
+                                              const clTabColours& colours,
+                                              size_t style)
+{ clTabRenderer::FinaliseBackground(parent, dc, clientRect, activeTabRect, colours, style); }
 
-void clTabRendererMinimal::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tabInfo, const wxRect& clientRect,
-                                          wxDC& dc, const clTabColours& colors, size_t style)
+void clTabRendererMinimal::DrawBottomRect(wxWindow* parent,
+                                          clTabInfo::Ptr_t tabInfo,
+                                          const wxRect& clientRect,
+                                          wxDC& dc,
+                                          const clTabColours& colors,
+                                          size_t style)
 {
     wxUnusedVar(parent);
     wxUnusedVar(tabInfo);
@@ -83,17 +94,24 @@ void clTabRendererMinimal::DrawBottomRect(wxWindow* parent, clTabInfo::Ptr_t tab
     wxUnusedVar(style);
 }
 
-void clTabRendererMinimal::DrawBackground(wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours,
-                                          size_t style)
+void clTabRendererMinimal::DrawBackground(
+    wxWindow* parent, wxDC& dc, const wxRect& rect, const clTabColours& colours, size_t style)
 {
     wxUnusedVar(style);
     wxUnusedVar(colours);
     DrawingUtils::DrawTabBackgroundArea(dc, parent, rect);
 }
 
-wxRect clTabRendererMinimal::DoDraw(wxWindow* parent, wxDC& dc, wxDC& fontDC, const clTabInfo& tabInfo, size_t tabIndex,
-                                    size_t activeTabIndex, const clTabColours& colors, size_t style,
-                                    eButtonState tabState, eButtonState xButtonState)
+wxRect clTabRendererMinimal::DoDraw(wxWindow* parent,
+                                    wxDC& dc,
+                                    wxDC& fontDC,
+                                    const clTabInfo& tabInfo,
+                                    size_t tabIndex,
+                                    size_t activeTabIndex,
+                                    const clTabColours& colors,
+                                    size_t style,
+                                    eButtonState tabState,
+                                    eButtonState xButtonState)
 {
     wxRect tabRect = tabInfo.GetRect();
     if (tabIndex == 0) {

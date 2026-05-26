@@ -138,14 +138,10 @@ void clRemoteFindDialog::OnReplace(wxCommandEvent& event)
     EndModal(wxID_OK);
 }
 void clRemoteFindDialog::OnFindUI(wxUpdateUIEvent& event)
-{
-    event.Enable(!m_comboBoxFindWhat->GetValue().empty() && !m_comboBoxTypes->GetValue().empty());
-}
+{ event.Enable(!m_comboBoxFindWhat->GetValue().empty() && !m_comboBoxTypes->GetValue().empty()); }
 
 void clRemoteFindDialog::OnReplaceUI(wxUpdateUIEvent& event)
-{
-    event.Enable(!m_comboBoxFindWhat->GetValue().empty() && !m_comboBoxTypes->GetValue().empty());
-}
+{ event.Enable(!m_comboBoxFindWhat->GetValue().empty() && !m_comboBoxTypes->GetValue().empty()); }
 void clRemoteFindDialog::DoShowControls()
 {
     switch (m_choiceTool->GetSelection()) {

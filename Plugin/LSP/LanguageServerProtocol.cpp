@@ -709,9 +709,7 @@ void LanguageServerProtocol::DrainOutputBuffer()
             // For now just log them, so they do not get treated as unknown messages.
             auto progress = LSP::Progress::FromJSON(json_item);
             LOG_IF_DEBUG
-            {
-                LSP_DEBUG() << GetLogPrefix() << "Received $/progress: " << json_item.format(false) << endl;
-            }
+            { LSP_DEBUG() << GetLogPrefix() << "Received $/progress: " << json_item.format(false) << endl; }
             if (progress) {
                 LSP::Manager::GetInstance().LogMessage(
                     GetName(), progress.value().GetMessage(), LSP::Manager::LogLevel::Info);
@@ -1053,24 +1051,16 @@ bool LanguageServerProtocol::CheckCapability(const LSP::ResponseMessage& res,
 bool LanguageServerProtocol::IsCapabilitySupported(const wxString& name) const { return m_providers.count(name) > 0; }
 
 bool LanguageServerProtocol::IsDocumentSymbolsSupported() const
-{
-    return IsCapabilitySupported("textDocument/documentSymbol");
-}
+{ return IsCapabilitySupported("textDocument/documentSymbol"); }
 
 bool LanguageServerProtocol::IsDeclarationSupported() const
-{
-    return IsCapabilitySupported("textDocument/declaration");
-}
+{ return IsCapabilitySupported("textDocument/declaration"); }
 
 bool LanguageServerProtocol::IsSemanticTokensSupported() const
-{
-    return IsCapabilitySupported("textDocument/semanticTokens/full");
-}
+{ return IsCapabilitySupported("textDocument/semanticTokens/full"); }
 
 void LanguageServerProtocol::SetStartedCallback(LSPOnConnectedCallback_t&& cb)
-{
-    m_onServerStartedCallback = std::move(cb);
-}
+{ m_onServerStartedCallback = std::move(cb); }
 
 //===------------------------------------------------------------------
 // LSPRequestMessageQueue

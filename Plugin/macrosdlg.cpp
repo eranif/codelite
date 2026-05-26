@@ -65,11 +65,11 @@ void MacrosDlg::Initialize()
     m_listCtrlMacros->InsertColumn(1, _("Description"));
 
     // Only show third column if we can expand the macros
-    if(m_project && m_editor) {
+    if (m_project && m_editor) {
         m_listCtrlMacros->InsertColumn(2, _("Value"));
     }
 
-    switch(m_content) {
+    switch (m_content) {
     case MacrosExternalTools:
         AddMacro("$(CurrentSelection)", _("Expands to the selected text in the active editor"));
         AddMacro("$(CurrentSelectionRange)",
@@ -133,16 +133,17 @@ void MacrosDlg::Initialize()
         AddMacro("$(OutputSwitch)", _("The output switch (e.g. -o)"));
         AddMacro("$(LibraryPathSwitch)", _("Library switch (e.g. -L)"));
         AddMacro("$(PreprocessorSwitch)", _("Preprocessor switch (e.g. -D)"));
-        AddMacro("$(Preprocessors)", _("Expands to all preprocessors set in the project setting where each entry "
-                                       "is prefixed with $(PreprocessorSwitch)"));
+        AddMacro("$(Preprocessors)",
+                 _("Expands to all preprocessors set in the project setting where each entry "
+                   "is prefixed with $(PreprocessorSwitch)"));
         AddMacro("$(ArchiveOutputSwitch)", _("Archive switch, usually not needed (VC compiler sets it to /OUT:)"));
         AddMacro("$(PreprocessOnlySwitch)", _("The compiler preprocess-only switch (e.g. -E)"));
         AddMacro("$(LinkOptions)", _("The linker options as set in the project settings"));
         AddMacro("$(IncludePath)", _("All include paths prefixed with $(IncludeSwitch)"));
         AddMacro("$(RcIncludePath)", _("Resource compiler include path as set in the project settings"));
         AddMacro("$(Libs)", _("List of libraries to link with. Each library is prefixed with $(LibrarySwitch)"));
-        AddMacro("$(LibPath)",
-                 _("List of library paths to link with. Each library is prefixed with $(LibraryPathSwitch)"));
+        AddMacro(
+            "$(LibPath)", _("List of library paths to link with. Each library is prefixed with $(LibraryPathSwitch)"));
         AddMacro("$(OutputDirectory)", _("The directory part of $(ProjectOutputFile)"));
         AddMacro("$(ProjectOutputFile)", _("The output file"));
         AddMacro("$(OutputFile)", _("The output file, same as $(ProjectOutputFile)"));
@@ -154,7 +155,7 @@ void MacrosDlg::Initialize()
     m_listCtrlMacros->SetColumnWidth(1, wxLIST_AUTOSIZE);
 
     // Only resize third column if we can and may expand the macros
-    if(m_project && m_editor) {
+    if (m_project && m_editor) {
         // Do not autosize this column as it may grow very, very wide
         m_listCtrlMacros->SetColumnWidth(2, 220);
     }
@@ -167,7 +168,7 @@ void MacrosDlg::AddMacro(const wxString& name, const wxString& desc)
     SetColumnText(m_listCtrlMacros, row, 1, desc);
 
     // Only fill third column if we can and may expand the macros
-    if(m_project && m_editor && name != "$(ProjectFiles)" && name != "$(ProjectFilesAbs)") {
+    if (m_project && m_editor && name != "$(ProjectFiles)" && name != "$(ProjectFilesAbs)") {
         wxString value = MacroManager::Instance()->Expand(name, clGetManager(), m_project->GetName());
         SetColumnText(m_listCtrlMacros, row, 2, value);
     }
@@ -177,7 +178,7 @@ MacrosDlg::~MacrosDlg() {}
 
 void MacrosDlg::OnCopy(wxCommandEvent& e)
 {
-    if(m_item != wxNOT_FOUND) {
+    if (m_item != wxNOT_FOUND) {
         wxString value = GetColumnText(m_listCtrlMacros, m_item, 0);
         ::CopyToClipboard(value);
     }

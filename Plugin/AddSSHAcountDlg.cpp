@@ -122,9 +122,7 @@ void AddSSHAcountDlg::OnTestConnection(wxCommandEvent& event)
     }
 }
 void AddSSHAcountDlg::OnTestConnectionUI(wxUpdateUIEvent& event)
-{
-    event.Enable(!m_textCtrlHost->IsEmpty() && !m_textCtrlPort->IsEmpty() && !m_textCtrlUsername->IsEmpty());
-}
+{ event.Enable(!m_textCtrlHost->IsEmpty() && !m_textCtrlPort->IsEmpty() && !m_textCtrlUsername->IsEmpty()); }
 
 void AddSSHAcountDlg::OnHomeFolderUpdated(wxCommandEvent& event)
 {

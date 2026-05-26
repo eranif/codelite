@@ -50,8 +50,8 @@ public:
     };
 
 public:
-    clToolBarButtonBase(clToolBarGeneric* parent, wxWindowID id, int bmpId = wxNOT_FOUND, const wxString& label = "",
-                        size_t flags = 0);
+    clToolBarButtonBase(
+        clToolBarGeneric* parent, wxWindowID id, int bmpId = wxNOT_FOUND, const wxString& label = "", size_t flags = 0);
     virtual ~clToolBarButtonBase();
 
 public:
@@ -142,8 +142,6 @@ public:
 
     template <typename T>
     T* Cast()
-    {
-        return dynamic_cast<T*>(this);
-    }
+    { return dynamic_cast<T*>(this); }
 };
 #endif // CLTOOLBARBUTTONBASE_H

@@ -119,8 +119,8 @@ void CodeLiteRemoteHelper::ProcessCodeLiteRemoteJSON(const wxString& filepath)
             add_formatter_tool(tools_arr, "clang-format", "clang-format $(CurrentFileFullPath)", "$(WorkspacePath)");
             add_formatter_tool(tools_arr, "cmake-format", "cmake-format -i $(CurrentFileFullPath)", "$(WorkspacePath)");
             add_formatter_tool(tools_arr, "xmllint", "xmllint --format $(CurrentFileRelPath)", "$(WorkspacePath)");
-            add_formatter_tool(tools_arr, "rustfmt", "rustfmt --edition 2021 $(CurrentFileRelPath)",
-                               "$(WorkspacePath)");
+            add_formatter_tool(
+                tools_arr, "rustfmt", "rustfmt --edition 2021 $(CurrentFileRelPath)", "$(WorkspacePath)");
             add_formatter_tool(tools_arr, "black", "black --line-length 80 $(CurrentFileRelPath)", "$(WorkspacePath)");
 
             // store the file
@@ -128,8 +128,7 @@ void CodeLiteRemoteHelper::ProcessCodeLiteRemoteJSON(const wxString& filepath)
         }
     }
 
-    for (auto [plugin_name, child] : json.GetAsMap())
-    {
+    for (auto [plugin_name, child] : json.GetAsMap()) {
         m_plugins_configs.emplace(wxString::FromUTF8(std::string(plugin_name)), new JSON(child.format(false)));
     }
 }

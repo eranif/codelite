@@ -288,49 +288,31 @@ void clDataViewListCtrl::SetItemData(const wxDataViewItem& item, wxUIntPtr data)
 }
 
 void clDataViewListCtrl::SetItemBackgroundColour(const wxDataViewItem& item, const wxColour& colour, size_t col)
-{
-    clTreeCtrl::SetItemBackgroundColour(TREE_ITEM(item), colour, col);
-}
+{ clTreeCtrl::SetItemBackgroundColour(TREE_ITEM(item), colour, col); }
 
 wxColour clDataViewListCtrl::GetItemBackgroundColour(const wxDataViewItem& item, size_t col) const
-{
-    return clTreeCtrl::GetItemBackgroundColour(TREE_ITEM(item), col);
-}
+{ return clTreeCtrl::GetItemBackgroundColour(TREE_ITEM(item), col); }
 
 void clDataViewListCtrl::SetItemTextColour(const wxDataViewItem& item, const wxColour& colour, size_t col)
-{
-    clTreeCtrl::SetItemTextColour(TREE_ITEM(item), colour, col);
-}
+{ clTreeCtrl::SetItemTextColour(TREE_ITEM(item), colour, col); }
 
 wxColour clDataViewListCtrl::GetItemTextColour(const wxDataViewItem& item, size_t col) const
-{
-    return clTreeCtrl::GetItemTextColour(TREE_ITEM(item), col);
-}
+{ return clTreeCtrl::GetItemTextColour(TREE_ITEM(item), col); }
 
 void clDataViewListCtrl::SetItemText(const wxDataViewItem& item, const wxString& text, size_t col)
-{
-    clTreeCtrl::SetItemText(TREE_ITEM(item), text, col);
-}
+{ clTreeCtrl::SetItemText(TREE_ITEM(item), text, col); }
 
 wxString clDataViewListCtrl::GetItemText(const wxDataViewItem& item, size_t col) const
-{
-    return clTreeCtrl::GetItemText(TREE_ITEM(item), col);
-}
+{ return clTreeCtrl::GetItemText(TREE_ITEM(item), col); }
 
 void clDataViewListCtrl::SetItemBold(const wxDataViewItem& item, bool bold, size_t col)
-{
-    clTreeCtrl::SetItemBold(TREE_ITEM(item), bold, col);
-}
+{ clTreeCtrl::SetItemBold(TREE_ITEM(item), bold, col); }
 
 void clDataViewListCtrl::SetItemFont(const wxDataViewItem& item, const wxFont& font, size_t col)
-{
-    clTreeCtrl::SetItemFont(TREE_ITEM(item), font, col);
-}
+{ clTreeCtrl::SetItemFont(TREE_ITEM(item), font, col); }
 
 wxFont clDataViewListCtrl::GetItemFont(const wxDataViewItem& item, size_t col) const
-{
-    return clTreeCtrl::GetItemFont(TREE_ITEM(item), col);
-}
+{ return clTreeCtrl::GetItemFont(TREE_ITEM(item), col); }
 
 void clDataViewListCtrl::EnableStyle(int style, bool enable, bool refresh)
 {
@@ -528,20 +510,14 @@ void clDataViewListCtrl::Select(const wxDataViewItem& item)
 
 wxDataViewItem
 clDataViewListCtrl::FindNext(const wxDataViewItem& from, const wxString& what, size_t col, size_t searchFlags)
-{
-    return DV_ITEM(clTreeCtrl::FindNext(TREE_ITEM(from), what, col, searchFlags));
-}
+{ return DV_ITEM(clTreeCtrl::FindNext(TREE_ITEM(from), what, col, searchFlags)); }
 
 wxDataViewItem
 clDataViewListCtrl::FindPrev(const wxDataViewItem& from, const wxString& what, size_t col, size_t searchFlags)
-{
-    return DV_ITEM(clTreeCtrl::FindPrev(TREE_ITEM(from), what, col, searchFlags));
-}
+{ return DV_ITEM(clTreeCtrl::FindPrev(TREE_ITEM(from), what, col, searchFlags)); }
 
 void clDataViewListCtrl::HighlightText(const wxDataViewItem& item, bool b)
-{
-    clTreeCtrl::HighlightText(TREE_ITEM(item), b);
-}
+{ clTreeCtrl::HighlightText(TREE_ITEM(item), b); }
 
 void clDataViewListCtrl::ClearHighlight(const wxDataViewItem& item) { clTreeCtrl::ClearHighlight(TREE_ITEM(item)); }
 
@@ -550,14 +526,10 @@ void clDataViewListCtrl::EnsureVisible(const wxDataViewItem& item) { clTreeCtrl:
 void clDataViewListCtrl::ClearColumns() { GetHeader()->Clear(); }
 
 void clDataViewListCtrl::SetItemChecked(const wxDataViewItem& item, bool checked, size_t col)
-{
-    clTreeCtrl::Check(TREE_ITEM(item), checked, col);
-}
+{ clTreeCtrl::Check(TREE_ITEM(item), checked, col); }
 
 bool clDataViewListCtrl::IsItemChecked(const wxDataViewItem& item, size_t col) const
-{
-    return clTreeCtrl::IsChecked(TREE_ITEM(item), col);
-}
+{ return clTreeCtrl::IsChecked(TREE_ITEM(item), col); }
 
 void clDataViewListCtrl::ShowMenuForItem(const wxDataViewItem& item, wxMenu& menu, size_t col)
 {
@@ -686,9 +658,7 @@ void clDataViewListCtrl::CenterRow(size_t row)
 }
 
 CellType clDataViewListCtrl::GetCellDataType(size_t row, size_t col) const
-{
-    return GetCellDataType(RowToItem(row), col);
-}
+{ return GetCellDataType(RowToItem(row), col); }
 
 CellType clDataViewListCtrl::GetCellDataType(const wxDataViewItem& item, size_t col) const
 {

@@ -37,8 +37,14 @@ BEGIN_EVENT_TABLE(DirPicker, wxPanel)
 EVT_TEXT(wxID_ANY, DirPicker::OnText)
 END_EVENT_TABLE()
 
-DirPicker::DirPicker(wxWindow* parent, wxWindowID id, const wxString& buttonCaption, const wxString& defaultPos,
-                     const wxString& message, const wxPoint& pos, const wxSize& size, long style)
+DirPicker::DirPicker(wxWindow* parent,
+                     wxWindowID id,
+                     const wxString& buttonCaption,
+                     const wxString& defaultPos,
+                     const wxString& message,
+                     const wxPoint& pos,
+                     const wxSize& size,
+                     long style)
     : wxPanel(parent, id, pos, size, wxTAB_TRAVERSAL | wxNO_BORDER)
     , m_path(NULL)
     , m_combo(NULL)
@@ -60,7 +66,7 @@ void DirPicker::CreateControls()
 
     size_t flags = wxRIGHT | wxTOP | wxBOTTOM | wxEXPAND;
 
-    if(m_style & wxDP_USE_TEXTCTRL) {
+    if (m_style & wxDP_USE_TEXTCTRL) {
         m_path = new wxTextCtrl(this, wxID_ANY, wxEmptyString, wxDefaultPosition, wxDefaultSize);
         mainSizer->Add(m_path, 1, flags, 5);
     } else {
@@ -85,8 +91,8 @@ void DirPicker::OnButtonClicked(wxCommandEvent& event)
     // try to take it from the text control
     wxString work_dir = GetPath();
     m_defaultPos.Empty();
-    if(work_dir.IsEmpty() == false) {
-        if(wxDir::Exists(work_dir)) {
+    if (work_dir.IsEmpty() == false) {
+        if (wxDir::Exists(work_dir)) {
             wxFileName fn(work_dir, wxEmptyString);
             clLogMessage(work_dir + wxT(" exists"));
             fn.MakeAbsolute();
@@ -94,14 +100,14 @@ void DirPicker::OnButtonClicked(wxCommandEvent& event)
         }
     }
 
-    if(m_defaultPos.IsEmpty()) {
+    if (m_defaultPos.IsEmpty()) {
         m_defaultPos = wxGetCwd();
     }
 
     clLogMessage(wxT("setting working dir to : ") + m_defaultPos);
 
     wxDirDialog* dlg = new wxDirDialog(this, m_dlgCaption, m_defaultPos);
-    if(dlg->ShowModal() == wxID_OK) {
+    if (dlg->ShowModal() == wxID_OK) {
         // Get the dirname
         wxString path = dlg->GetPath();
         SetPath(path);
@@ -111,12 +117,12 @@ void DirPicker::OnButtonClicked(wxCommandEvent& event)
 
 wxString DirPicker::GetPath()
 {
-    if(m_style & wxDP_USE_TEXTCTRL)
+    if (m_style & wxDP_USE_TEXTCTRL)
         return m_path->GetValue();
     else {
         wxString path(m_combo->GetValue());
         // if the path is not whitin the combobox list, add it
-        if(m_combo->FindString(path) == wxNOT_FOUND) {
+        if (m_combo->FindString(path) == wxNOT_FOUND) {
             SetPath(path);
         }
         return path;
@@ -125,11 +131,11 @@ wxString DirPicker::GetPath()
 
 void DirPicker::SetPath(const wxString& path)
 {
-    if(m_style & wxDP_USE_TEXTCTRL)
+    if (m_style & wxDP_USE_TEXTCTRL)
         m_path->SetValue(path);
     else {
         int where = m_combo->FindString(path);
-        if(where != wxNOT_FOUND) {
+        if (where != wxNOT_FOUND) {
             m_combo->SetSelection(where);
         } else {
             where = m_combo->Append(path);
@@ -148,7 +154,7 @@ void DirPicker::SetValues(const wxArrayString& values, int sel)
 wxArrayString DirPicker::GetValues() const
 {
     wxArrayString dummy;
-    if(m_style & wxDP_USE_COMBOBOX) {
+    if (m_style & wxDP_USE_COMBOBOX) {
         return m_combo->GetStrings();
     } else {
         return dummy;
@@ -157,12 +163,13 @@ wxArrayString DirPicker::GetValues() const
 
 int DirPicker::GetCurrentSelection() const
 {
-    wxCHECK_MSG(m_style & wxDP_USE_COMBOBOX, wxNOT_FOUND,
+    wxCHECK_MSG(m_style & wxDP_USE_COMBOBOX,
+                wxNOT_FOUND,
                 wxT("GetCurrentSelection is available only for wxDP_USE_COMBOBOX style"));
 
     int index = wxNOT_FOUND;
     wxString stringsel = m_combo->GetValue();
-    if(!stringsel.empty()) {
+    if (!stringsel.empty()) {
         index = m_combo->FindString(stringsel);
     }
 

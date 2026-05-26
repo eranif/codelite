@@ -176,9 +176,7 @@ public:
     void SetIsGUIProgram(bool isGUIProgram) { this->m_isGUIProgram = isGUIProgram; }
     bool IsGUIProgram() const { return m_isGUIProgram; }
     void SetDebuggerSearchPaths(const wxArrayString& debuggerSearchPaths)
-    {
-        this->m_debuggerSearchPaths = debuggerSearchPaths;
-    }
+    { this->m_debuggerSearchPaths = debuggerSearchPaths; }
     const wxArrayString& GetDebuggerSearchPaths() const { return m_debuggerSearchPaths; }
     void SetClangC11(bool clangC11) { this->m_clangC11 = clangC11; }
     bool IsClangC11() const { return m_clangC11; }
@@ -286,42 +284,32 @@ public:
     void SetPostBuildCustom(const wxString& rule) { m_customPostBuildRule = rule; }
 
     void SetCustomBuildWorkingDir(const wxString& customBuildWorkingDir)
-    {
-        this->m_customBuildWorkingDir = customBuildWorkingDir;
-    }
+    { this->m_customBuildWorkingDir = customBuildWorkingDir; }
     const wxString& GetCustomBuildWorkingDir() const { return m_customBuildWorkingDir; }
 
     void SetPauseWhenExecEnds(bool pauseWhenExecEnds) { this->m_pauseWhenExecEnds = pauseWhenExecEnds; }
     bool GetPauseWhenExecEnds() const { return m_pauseWhenExecEnds; }
 
     void SetMakeGenerationCommand(const wxString& makeGenerationCommand)
-    {
-        this->m_makeGenerationCommand = makeGenerationCommand;
-    }
+    { this->m_makeGenerationCommand = makeGenerationCommand; }
     void SetToolName(const wxString& toolName) { this->m_toolName = toolName; }
 
     const wxString& GetMakeGenerationCommand() const { return m_makeGenerationCommand; }
     const wxString& GetToolName() const { return m_toolName; }
 
     void SetSingleFileBuildCommand(const wxString& singleFileBuildCommand)
-    {
-        this->m_singleFileBuildCommand = singleFileBuildCommand;
-    }
+    { this->m_singleFileBuildCommand = singleFileBuildCommand; }
     const wxString& GetSingleFileBuildCommand() const { return m_singleFileBuildCommand; }
 
     void SetPreprocessFileCommand(const wxString& preprocessFileCommand)
-    {
-        this->m_preprocessFileCommand = preprocessFileCommand;
-    }
+    { this->m_preprocessFileCommand = preprocessFileCommand; }
     const wxString& GetPreprocessFileCommand() const { return m_preprocessFileCommand; }
 
     const wxString& GetProjectType() const { return m_projectType; }
     void SetProjectType(const wxString& projectType) { m_projectType = projectType; }
 
     void SetDebuggerStartupCmds(const wxString& debuggerStartupCmds)
-    {
-        this->m_debuggerStartupCmds = debuggerStartupCmds;
-    }
+    { this->m_debuggerStartupCmds = debuggerStartupCmds; }
     const wxString& GetDebuggerStartupCmds() const { return m_debuggerStartupCmds; }
 
     void SetIsDbgRemoteTarget(bool isDbgRemoteTarget) { this->m_isDbgRemoteTarget = isDbgRemoteTarget; }
@@ -342,9 +330,7 @@ public:
     const wxString& GetDebuggerPath() const { return m_debuggerPath; }
 
     void SetDebuggerPostRemoteConnectCmds(const wxString& debuggerPostRemoteConnectCmds)
-    {
-        this->m_debuggerPostRemoteConnectCmds = debuggerPostRemoteConnectCmds;
-    }
+    { this->m_debuggerPostRemoteConnectCmds = debuggerPostRemoteConnectCmds; }
     const wxString& GetDebuggerPostRemoteConnectCmds() const { return m_debuggerPostRemoteConnectCmds; }
 
     const wxString& GetBuildCmpWithGlobalSettings() const { return m_buildCmpWithGlobalSettings; }
@@ -368,9 +354,7 @@ public:
     void SetBuildSystem(const wxString& buildSystem) { this->m_buildSystem = buildSystem; }
     const wxString& GetBuildSystem() const { return m_buildSystem; }
     void SetBuildSystemArguments(const wxString& buildSystemArguments)
-    {
-        this->m_buildSystemArguments = buildSystemArguments;
-    }
+    { this->m_buildSystemArguments = buildSystemArguments; }
     const wxString& GetBuildSystemArguments() const { return m_buildSystemArguments; }
 
     /**

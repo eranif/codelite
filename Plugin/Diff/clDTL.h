@@ -52,7 +52,7 @@ struct WXDLLIMPEXP_SDK PatchStep {
     wxString to_string() const
     {
         wxString s;
-        switch(action) {
+        switch (action) {
         case PatchAction::DELETE_LINE:
             s << "DEL line: " << line_number;
             break;

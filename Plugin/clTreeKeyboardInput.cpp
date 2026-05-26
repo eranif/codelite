@@ -27,7 +27,7 @@ void clTreeKeyboardInput::OnSearch(wxTreeEvent& event)
     wxString find_what = event.GetString();
     m_tree->ClearAllHighlights();
     wxTreeItemId item = m_tree->FindNext(m_tree->GetFocusedItem(), find_what, 0, wxTR_SEARCH_DEFAULT);
-    if(item.IsOk()) {
+    if (item.IsOk()) {
         m_tree->SelectItem(item);
         m_tree->HighlightText(item, true);
         m_tree->EnsureVisible(item);

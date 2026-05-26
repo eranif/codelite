@@ -473,9 +473,7 @@ int wxCodeCompletionBox::GetImageId(TagEntryPtr entry)
 void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                             const TagEntryPtrVector_t& tags,
                                             const wxSize& control_size)
-{
-    ShowCompletionBox(ctrl, TagsToEntries(tags), control_size);
-}
+{ ShowCompletionBox(ctrl, TagsToEntries(tags), control_size); }
 
 void wxCodeCompletionBox::DoUpdateList()
 {
@@ -701,9 +699,7 @@ wxString wxCodeCompletionBox::GetFilter()
 void wxCodeCompletionBox::ShowCompletionBox(wxStyledTextCtrl* ctrl,
                                             const LSP::CompletionItem::Vec_t& completions,
                                             const wxSize& control_size)
-{
-    ShowCompletionBox(ctrl, LSPCompletionsToEntries(completions), control_size);
-}
+{ ShowCompletionBox(ctrl, LSPCompletionsToEntries(completions), control_size); }
 
 wxCodeCompletionBoxEntry::Vec_t
 wxCodeCompletionBox::LSPCompletionsToEntries(const LSP::CompletionItem::Vec_t& completions)

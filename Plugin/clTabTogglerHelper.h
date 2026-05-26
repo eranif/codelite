@@ -58,7 +58,9 @@ public:
     using Ptr_t = std::shared_ptr<clTabTogglerHelper>;
 
 public:
-    clTabTogglerHelper(const wxString& outputTabName, wxWindow* outputTab, const wxString& workspaceTabName,
+    clTabTogglerHelper(const wxString& outputTabName,
+                       wxWindow* outputTab,
+                       const wxString& workspaceTabName,
                        wxWindow* workspaceTab);
     virtual ~clTabTogglerHelper();
 

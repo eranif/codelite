@@ -2,18 +2,21 @@
 
 #include <wx/dcbuffer.h>
 
-wxPNGAnimation::wxPNGAnimation(wxWindow* parent, const wxBitmap& pngSprite, wxOrientation spriteOrientation,
-                               const wxSize& singleImageSize, wxWindowID id)
+wxPNGAnimation::wxPNGAnimation(wxWindow* parent,
+                               const wxBitmap& pngSprite,
+                               wxOrientation spriteOrientation,
+                               const wxSize& singleImageSize,
+                               wxWindowID id)
     : wxPanel(parent, id)
     , m_index(0)
 {
     m_bgColour = GetParent()->GetBackgroundColour();
     Hide();
     m_timer = new wxTimer(this);
-    if(spriteOrientation == wxVERTICAL) {
+    if (spriteOrientation == wxVERTICAL) {
         int numImages = pngSprite.GetHeight() / singleImageSize.GetHeight();
         wxPoint copyFromPt;
-        for(int i = 0; i < numImages; ++i) {
+        for (int i = 0; i < numImages; ++i) {
             copyFromPt.x = 0;
             copyFromPt.y = i * singleImageSize.GetHeight();
             wxBitmap bmp = pngSprite.GetSubBitmap(wxRect(copyFromPt, singleImageSize));
@@ -22,7 +25,7 @@ wxPNGAnimation::wxPNGAnimation(wxWindow* parent, const wxBitmap& pngSprite, wxOr
     } else {
         int numImages = pngSprite.GetWidth() / singleImageSize.GetWidth();
         wxPoint copyFromPt;
-        for(int i = 0; i < numImages; ++i) {
+        for (int i = 0; i < numImages; ++i) {
             copyFromPt.x = i * singleImageSize.GetWidth();
             copyFromPt.y = 0;
             wxBitmap bmp = pngSprite.GetSubBitmap(wxRect(copyFromPt, singleImageSize));
@@ -67,7 +70,7 @@ void wxPNGAnimation::OnPaint(wxPaintEvent& event)
 void wxPNGAnimation::OnTimer(wxTimerEvent& event)
 {
     ++m_index;
-    if(m_index >= m_bitmaps.size()) {
+    if (m_index >= m_bitmaps.size()) {
         m_index = 0;
     }
     Refresh();

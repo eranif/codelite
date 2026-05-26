@@ -12,7 +12,7 @@ clZipReader::clZipReader(const wxFileName& zipfile)
 {
     // Read the entire content into memory
     wxFile fp(zipfile.GetFullPath(), wxFile::read);
-    if(!fp.IsOpened()) {
+    if (!fp.IsOpened()) {
         clERROR() << "Failed to open file:" << zipfile;
         return;
     }
@@ -39,13 +39,13 @@ void clZipReader::Close()
 
 void clZipReader::Extract(const wxString& filename, const wxString& directory)
 {
-    if(!m_zip) {
+    if (!m_zip) {
         return;
     }
     wxZipEntry* entry(NULL);
     entry = m_zip->GetNextEntry();
-    while(entry) {
-        if(::wxMatchWild(filename, entry->GetName())) {
+    while (entry) {
+        if (::wxMatchWild(filename, entry->GetName())) {
             DoExtractEntry(entry, directory);
         }
         wxDELETE(entry);
@@ -55,18 +55,18 @@ void clZipReader::Extract(const wxString& filename, const wxString& directory)
 
 void clZipReader::ExtractAll(const wxString& directory)
 {
-    if(!m_zip) {
+    if (!m_zip) {
         return;
     }
 
     wxZipEntry* entry(NULL);
     wxString basedir = directory;
-    if(basedir.IsEmpty()) {
+    if (basedir.IsEmpty()) {
         basedir = ".";
     }
 
     entry = m_zip->GetNextEntry();
-    while(entry) {
+    while (entry) {
         DoExtractEntry(entry, directory);
         wxDELETE(entry);
         entry = m_zip->GetNextEntry();
@@ -82,9 +82,9 @@ void clZipReader::DoExtractEntry(wxZipEntry* entry, const wxString& directory)
     // Change to posix style
     fullpath.Replace("\\", "/");
     // Remove any duplicate double slashes
-    while(fullpath.Replace("//", "/")) {}
+    while (fullpath.Replace("//", "/")) {}
 
-    if(entry->IsDir()) {
+    if (entry->IsDir()) {
         // a folder
         wxFileName::Mkdir(fullpath, wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
     } else {
@@ -92,7 +92,7 @@ void clZipReader::DoExtractEntry(wxZipEntry* entry, const wxString& directory)
         // ensure that the path to the file exists
         outfile.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
         wxFileOutputStream out(outfile.GetFullPath());
-        if(out.IsOk()) {
+        if (out.IsOk()) {
             m_zip->Read(out);
             out.Close();
         }
@@ -102,22 +102,22 @@ void clZipReader::DoExtractEntry(wxZipEntry* entry, const wxString& directory)
 void clZipReader::ExtractAll(std::unordered_map<wxString, Entry>& buffers)
 {
     // Incase the entry name has a directory prefix, remove it
-    if(!m_zip) {
+    if (!m_zip) {
         return;
     }
     wxZipEntry* entry(NULL);
 
     entry = m_zip->GetNextEntry();
-    while(entry) {
-        if(!entry->IsDir()) {
+    while (entry) {
+        if (!entry->IsDir()) {
             wxMemoryOutputStream out;
-            if(out.IsOk()) {
+            if (out.IsOk()) {
                 m_zip->Read(out);
                 Entry e;
                 e.len = out.GetLength();
                 e.buffer = malloc(e.len);
                 out.CopyTo(e.buffer, e.len);
-                buffers.insert({ entry->GetName(), e });
+                buffers.insert({entry->GetName(), e});
             }
         }
         wxDELETE(entry);

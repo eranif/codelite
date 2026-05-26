@@ -33,7 +33,7 @@ clRemoteExecutor::~clRemoteExecutor()
 IProcess::Ptr_t clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
 {
     auto ssh_session = clRemoteHost::Instance()->TakeSession();
-    if(!ssh_session) {
+    if (!ssh_session) {
         LOG_WARNING(LOG()) << "SSH session is not opened" << endl;
         return nullptr;
     }
@@ -43,7 +43,7 @@ IProcess::Ptr_t clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
     IProcess::Ptr_t proc = clSSHChannel::Execute(
         ssh_session, [](clSSH::Ptr_t ssh) { clRemoteHost::Instance()->AddSshSession(ssh); }, this, command, true);
 
-    if(!proc) {
+    if (!proc) {
         LOG_ERROR(LOG()) << "failed to start remote command:" << command << endl;
         return nullptr;
     }
@@ -52,7 +52,7 @@ IProcess::Ptr_t clRemoteExecutor::try_execute(const clRemoteExecutor::Cmd& cmd)
 
 void clRemoteExecutor::OnChannelStdout(clCommandEvent& event)
 {
-    clProcessEvent output_event{ wxEVT_ASYNC_PROCESS_OUTPUT };
+    clProcessEvent output_event{wxEVT_ASYNC_PROCESS_OUTPUT};
     output_event.SetStringRaw(event.GetStringRaw());
     LOG_DEBUG(LOG()) << "stdout read:" << event.GetStringRaw().size() << "bytes" << endl;
     ProcessEvent(output_event);
@@ -60,7 +60,7 @@ void clRemoteExecutor::OnChannelStdout(clCommandEvent& event)
 
 void clRemoteExecutor::OnChannelStderr(clCommandEvent& event)
 {
-    clProcessEvent output_event{ wxEVT_ASYNC_PROCESS_STDERR };
+    clProcessEvent output_event{wxEVT_ASYNC_PROCESS_STDERR};
     output_event.SetStringRaw(event.GetStringRaw());
     LOG_DEBUG(LOG()) << "stderr read:" << event.GetStringRaw().size() << "bytes" << endl;
     ProcessEvent(output_event);
@@ -70,7 +70,7 @@ void clRemoteExecutor::OnChannelClosed(clCommandEvent& event)
 {
     LOG_DEBUG(LOG()) << "remote channel closed" << endl;
 
-    clProcessEvent output_event{ wxEVT_ASYNC_PROCESS_TERMINATED };
+    clProcessEvent output_event{wxEVT_ASYNC_PROCESS_TERMINATED};
     output_event.SetInt(event.GetInt());
     ProcessEvent(output_event);
 }
@@ -78,7 +78,7 @@ void clRemoteExecutor::OnChannelClosed(clCommandEvent& event)
 void clRemoteExecutor::OnChannelError(clCommandEvent& event)
 {
     wxUnusedVar(event);
-    clProcessEvent command_ended{ wxEVT_ASYNC_PROCESS_TERMINATED };
+    clProcessEvent command_ended{wxEVT_ASYNC_PROCESS_TERMINATED};
     command_ended.SetInt(event.GetInt()); // exit code
     ProcessEvent(command_ended);
 }

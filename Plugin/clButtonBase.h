@@ -31,7 +31,7 @@ protected:
     wxString m_text;
     eButtonState m_state = eButtonState::kNormal;
 
-    enum eDrawingFlags{
+    enum eDrawingFlags {
         kDrawingFlagEnabled = (1 << 0),
         kDrawingFlagChecked = (1 << 1),
     };
@@ -72,12 +72,22 @@ protected:
 
 public:
     clButtonBase() = default;
-    clButtonBase(wxWindow* parent, wxWindowID id, const wxString& label = wxEmptyString,
-                 const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0,
-                 const wxValidator& validator = wxDefaultValidator, const wxString& name = "button");
-    bool Create(wxWindow* parent, wxWindowID id, const wxString& label = wxEmptyString,
-                const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize, long style = 0,
-                const wxValidator& validator = wxDefaultValidator, const wxString& name = "button");
+    clButtonBase(wxWindow* parent,
+                 wxWindowID id,
+                 const wxString& label = wxEmptyString,
+                 const wxPoint& pos = wxDefaultPosition,
+                 const wxSize& size = wxDefaultSize,
+                 long style = 0,
+                 const wxValidator& validator = wxDefaultValidator,
+                 const wxString& name = "button");
+    bool Create(wxWindow* parent,
+                wxWindowID id,
+                const wxString& label = wxEmptyString,
+                const wxPoint& pos = wxDefaultPosition,
+                const wxSize& size = wxDefaultSize,
+                long style = 0,
+                const wxValidator& validator = wxDefaultValidator,
+                const wxString& name = "button");
     virtual ~clButtonBase();
 
 #if !wxUSE_NATIVE_BUTTON

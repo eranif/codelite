@@ -33,7 +33,8 @@
 /**
  * A thread safe queue implementation
  */
-template <class T> class WXDLLIMPEXP_SDK SyncQueue
+template <class T>
+class WXDLLIMPEXP_SDK SyncQueue
 {
     std::deque<T> m_queue;
     wxMutex m_mutex;
@@ -65,7 +66,7 @@ public:
         wxMutexLocker lk(m_mutex);
         // wait until 10 ms or something is in the queue
         m_cv.WaitTimeout(10);
-        if(m_queue.empty()) {
+        if (m_queue.empty()) {
             return nullptr;
         }
         T e = std::move(m_queue.front());
@@ -91,7 +92,7 @@ public:
         wxMutexLocker lk(m_mutex);
         // wait until 10 ms or something is in the queue
         m_cv.WaitTimeout(10);
-        if(m_queue.empty()) {
+        if (m_queue.empty()) {
             return nullptr;
         }
 

@@ -91,9 +91,7 @@ public:
     void SetName(const wxString& name) { m_name = name; }
     const wxString& GetEnvironmentVariables() const { return m_environmentVariables; }
     void SetEnvironmentVariables(const wxString& environmentVariables)
-    {
-        this->m_environmentVariables = environmentVariables;
-    }
+    { this->m_environmentVariables = environmentVariables; }
 };
 
 using WorkspaceConfigurationPtr = std::shared_ptr<WorkspaceConfiguration>;

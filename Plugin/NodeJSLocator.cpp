@@ -18,11 +18,11 @@ void NodeJSLocator::Locate(const wxArrayString& hints)
 
     wxFileName nodejs;
     wxFileName npm;
-    if(TryPaths(paths, "node", nodejs) || TryPaths(paths, "nodejs", nodejs) || TryPaths(paths, "node.osx", nodejs)) {
+    if (TryPaths(paths, "node", nodejs) || TryPaths(paths, "nodejs", nodejs) || TryPaths(paths, "node.osx", nodejs)) {
         m_nodejs = nodejs.GetFullPath();
     }
 
-    if(TryPaths(paths, "npm", npm)) {
+    if (TryPaths(paths, "npm", npm)) {
         m_npm = npm.GetFullPath();
     }
 
@@ -32,8 +32,8 @@ void NodeJSLocator::Locate(const wxArrayString& hints)
         // HKEY_LOCAL_MACHINE\SOFTWARE\Node.js
         wxRegKey regKeyNodeJS(wxRegKey::HKLM, "SOFTWARE\\Node.js");
         wxString clInstallFolder;
-        if(regKeyNodeJS.Exists() && regKeyNodeJS.QueryValue("InstallPath", clInstallFolder) &&
-           wxDirExists(clInstallFolder)) {
+        if (regKeyNodeJS.Exists() && regKeyNodeJS.QueryValue("InstallPath", clInstallFolder) &&
+            wxDirExists(clInstallFolder)) {
             paths.Add(clInstallFolder);
         }
     }
@@ -42,8 +42,8 @@ void NodeJSLocator::Locate(const wxArrayString& hints)
         // HKEY_LOCAL_MACHINE\SOFTWARE\Node.js
         wxRegKey regKeyNodeJS(wxRegKey::HKLM, "SOFTWARE\\Wow6432Node\\Node.js");
         wxString clInstallFolder;
-        if(regKeyNodeJS.Exists() && regKeyNodeJS.QueryValue("InstallPath", clInstallFolder) &&
-           wxDirExists(clInstallFolder)) {
+        if (regKeyNodeJS.Exists() && regKeyNodeJS.QueryValue("InstallPath", clInstallFolder) &&
+            wxDirExists(clInstallFolder)) {
             paths.Add(clInstallFolder);
         }
     }
@@ -67,9 +67,9 @@ void NodeJSLocator::Locate(const wxArrayString& hints)
 
 bool NodeJSLocator::TryPaths(const wxArrayString& paths, const wxString& fullname, wxFileName& fullpath)
 {
-    for(size_t i = 0; i < paths.size(); ++i) {
+    for (size_t i = 0; i < paths.size(); ++i) {
         wxFileName fn(paths.Item(i), fullname);
-        if(fn.FileExists()) {
+        if (fn.FileExists()) {
             fullpath = fn;
             return true;
         }

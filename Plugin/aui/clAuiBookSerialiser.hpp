@@ -119,9 +119,7 @@ public:
 
     virtual ~clAuiDeserializer() {}
     virtual std::vector<wxAuiTabLayoutInfo> LoadNotebookTabs(const wxString& name) override
-    {
-        return LoadNotebookTabs(m_book);
-    }
+    { return LoadNotebookTabs(m_book); }
 
 private:
     int GetInt(const wxString& str)

@@ -36,14 +36,10 @@
 #include <wx/settings.h>
 
 clAuiToolBarArt::clAuiToolBarArt()
-{
-    EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clAuiToolBarArt::OnThemeChanged, this);
-}
+{ EventNotifier::Get()->Bind(wxEVT_CL_THEME_CHANGED, &clAuiToolBarArt::OnThemeChanged, this); }
 
 clAuiToolBarArt::~clAuiToolBarArt()
-{
-    EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clAuiToolBarArt::OnThemeChanged, this);
-}
+{ EventNotifier::Get()->Unbind(wxEVT_CL_THEME_CHANGED, &clAuiToolBarArt::OnThemeChanged, this); }
 
 void clAuiToolBarArt::DrawPlainBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
 {
@@ -64,26 +60,18 @@ void clAuiToolBarArt::DrawPlainBackground(wxDC& dc, wxWindow* wnd, const wxRect&
 }
 
 void clAuiToolBarArt::DrawBackground(wxDC& dc, wxWindow* wnd, const wxRect& rect)
-{
-    DrawPlainBackground(dc, wnd, rect);
-}
+{ DrawPlainBackground(dc, wnd, rect); }
 
 void clAuiToolBarArt::DrawButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect)
-{
-    wxAuiDefaultToolBarArt::DrawButton(dc, wnd, item, rect);
-}
+{ wxAuiDefaultToolBarArt::DrawButton(dc, wnd, item, rect); }
 
 void clAuiToolBarArt::DrawDropDownButton(wxDC& dc, wxWindow* wnd, const wxAuiToolBarItem& item, const wxRect& rect)
-{
-    wxAuiDefaultToolBarArt::DrawDropDownButton(dc, wnd, item, rect);
-}
+{ wxAuiDefaultToolBarArt::DrawDropDownButton(dc, wnd, item, rect); }
 
 void clAuiToolBarArt::OnThemeChanged(wxCommandEvent& event) { event.Skip(); }
 
 void clAuiToolBarArt::DrawGripper(wxDC& dc, wxWindow* wnd, const wxRect& rect)
-{
-    wxAuiDefaultToolBarArt::DrawGripper(dc, wnd, rect);
-}
+{ wxAuiDefaultToolBarArt::DrawGripper(dc, wnd, rect); }
 
 void clAuiToolBarArt::AddTool(wxAuiToolBar* toolbar,
                               int toolId,

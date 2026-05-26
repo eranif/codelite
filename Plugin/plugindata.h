@@ -63,7 +63,7 @@ public:
     void SetVersion(const wxString& version) { this->m_version = version; }
     void EnableFlag(PluginInfo::eFlags flag, bool b)
     {
-        if(b) {
+        if (b) {
             m_flags |= flag;
         } else {
             m_flags &= ~flag;

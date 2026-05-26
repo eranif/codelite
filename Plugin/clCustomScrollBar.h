@@ -51,8 +51,11 @@ protected:
     int GetPositionFromPoint(const wxPoint& pt) const;
 
 public:
-    clCustomScrollBar(wxWindow* parent, wxWindowID id, const wxPoint& pos = wxDefaultPosition,
-                      const wxSize& size = wxDefaultSize, long style = wxSB_VERTICAL);
+    clCustomScrollBar(wxWindow* parent,
+                      wxWindowID id,
+                      const wxPoint& pos = wxDefaultPosition,
+                      const wxSize& size = wxDefaultSize,
+                      long style = wxSB_VERTICAL);
     virtual ~clCustomScrollBar();
 
     bool ShouldShow() const;

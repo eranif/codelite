@@ -32,9 +32,9 @@
 BuilderConfig::BuilderConfig(wxXmlNode* node)
     : m_isActive(false)
 {
-    if(node) {
+    if (node) {
         m_name = XmlUtils::ReadString(node, wxT("Name"));
-        if(m_name == "CodeLite Make Generator") {
+        if (m_name == "CodeLite Make Generator") {
             m_name = "CodeLite Makefile Generator";
         }
         m_toolPath = XmlUtils::ReadString(node, wxT("ToolPath"));

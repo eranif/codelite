@@ -55,9 +55,7 @@ public:
     wxTerminalViewCtrl* OpenNewDefaultTerminalTab(const wxString& workingDirectory,
                                                   const std::optional<SSHAccountInfo>& sshAccount = std::nullopt,
                                                   const wxString& tabTitle = wxEmptyString)
-    {
-        return OpenNewTerminalTab(workingDirectory, sshAccount, tabTitle, true, kTerminalCommand);
-    }
+    { return OpenNewTerminalTab(workingDirectory, sshAccount, tabTitle, true, kTerminalCommand); }
 
     /**
      * @brief Find an existing terminal tab by its title

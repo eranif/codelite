@@ -26,7 +26,7 @@ void LSPNetworkSTDIO::Open(const LSPStartupInfo& siInfo)
 
 void LSPNetworkSTDIO::Send(const std::string& data)
 {
-    if(m_server) {
+    if (m_server) {
         m_server->Write(data);
         LOG_IF_TRACE { LSP_TRACE() << data << endl; }
     } else {
@@ -58,9 +58,7 @@ void LSPNetworkSTDIO::OnProcessOutput(clProcessEvent& event)
 }
 
 void LSPNetworkSTDIO::OnProcessStderr(clProcessEvent& event)
-{
-    LSP_TRACE() << "[**STDERR**]" << event.GetOutput() << endl;
-}
+{ LSP_TRACE() << "[**STDERR**]" << event.GetOutput() << endl; }
 
 void LSPNetworkSTDIO::DoStartLocalProcess()
 {
@@ -68,7 +66,7 @@ void LSPNetworkSTDIO::DoStartLocalProcess()
     BindEvents();
 
     DirSaver ds;
-    if(!m_startupInfo.GetWorkingDirectory().IsEmpty() && wxFileName::DirExists(m_startupInfo.GetWorkingDirectory())) {
+    if (!m_startupInfo.GetWorkingDirectory().IsEmpty() && wxFileName::DirExists(m_startupInfo.GetWorkingDirectory())) {
         ::wxSetWorkingDirectory(m_startupInfo.GetWorkingDirectory());
     }
 

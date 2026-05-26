@@ -101,7 +101,7 @@ bool CompilerLocatorGCC::Locate()
                 wxString acceptableName = "gcc" + reGcc.GetMatch(fullname, 1);
                 if (fullname == acceptableName) {
                     // keep unique paths only + the suffix
-                    map.insert({ d.fullpath, reGcc.GetMatch(fullname, 1) });
+                    map.insert({d.fullpath, reGcc.GetMatch(fullname, 1)});
                 }
             }
         }
@@ -203,7 +203,9 @@ void CompilerLocatorGCC::AddTools(CompilerPtr compiler, const wxFileName& gcc)
     }
 }
 
-void CompilerLocatorGCC::AddTool(CompilerPtr compiler, const wxString& toolname, const wxFileName& toolpath,
+void CompilerLocatorGCC::AddTool(CompilerPtr compiler,
+                                 const wxString& toolname,
+                                 const wxFileName& toolpath,
                                  const wxString& extraArgs)
 {
     wxString tool = toolpath.GetFullPath();

@@ -5,7 +5,7 @@
 void clTabHistory::Compact(const std::vector<wxWindow*>& windows, bool add_missing)
 {
     // convert the list into set
-    std::unordered_set<wxWindow*> windows_to_keep{ windows.begin(), windows.end() };
+    std::unordered_set<wxWindow*> windows_to_keep{windows.begin(), windows.end()};
 
     // Temporary list that holds the history that we want to keep
     std::vector<wxWindow*> new_list;

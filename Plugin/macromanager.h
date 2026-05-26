@@ -40,7 +40,10 @@ private:
     MacroManager() = default;
     virtual ~MacroManager() = default;
 
-    wxString DoExpand(const wxString& expression, IManager* manager, const wxString& project, bool applyEnv,
+    wxString DoExpand(const wxString& expression,
+                      IManager* manager,
+                      const wxString& project,
+                      bool applyEnv,
                       const wxString& confToBuild = wxEmptyString);
 
 public:
@@ -70,7 +73,9 @@ public:
      * $(ProjectOutputFile)
      * $(Selection)
      */
-    wxString Expand(const wxString& expression, IManager* manager, const wxString& project,
+    wxString Expand(const wxString& expression,
+                    IManager* manager,
+                    const wxString& project,
                     const wxString& confToBuild = wxEmptyString);
 
     /**
@@ -87,8 +92,8 @@ public:
     /**
      * @brief same as above, but don't apply environment variables
      */
-    wxString ExpandNoEnv(const wxString& expression, const wxString& project,
-                         const wxString& confToBuild = wxEmptyString);
+    wxString
+    ExpandNoEnv(const wxString& expression, const wxString& project, const wxString& confToBuild = wxEmptyString);
 
     /**
      * @brief search for variableName and replace all its occurrence with 'replaceWith'
@@ -98,7 +103,9 @@ public:
      * $(variableName)
      * %variableName%
      */
-    wxString Replace(const wxString& inString, const wxString& variableName, const wxString& replaceWith,
+    wxString Replace(const wxString& inString,
+                     const wxString& variableName,
+                     const wxString& replaceWith,
                      bool bIgnoreCase = false);
 
     /**
@@ -143,6 +150,5 @@ WXDLLIMPEXP_SDK wxString ExpandAllVariables(const wxString& expression,
                                             const wxString& fileName);
 
 #endif
-
 
 #endif // MACROMANAGER_H

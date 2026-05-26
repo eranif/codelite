@@ -33,23 +33,23 @@
 BuildConfigCommon::BuildConfigCommon(wxXmlNode* node, wxString confType)
     : m_confType(confType)
 {
-    if(node) {
+    if (node) {
         // read the compile options
         wxXmlNode* compile = XmlUtils::FindFirstByTagName(node, wxT("Compiler"));
-        if(compile) {
+        if (compile) {
             m_compileOptions = XmlUtils::ReadString(compile, wxT("Options"));
             m_assemblerOptions = XmlUtils::ReadString(compile, "Assembler");
-            if(!compile->GetAttribute(wxT("C_Options"), &m_cCompileOptions)) {
+            if (!compile->GetAttribute(wxT("C_Options"), &m_cCompileOptions)) {
                 // the attribute "C_Options" does not exist,
                 // copy the values from the "Options" attribute
                 m_cCompileOptions = m_compileOptions;
             }
 
             wxXmlNode* child = compile->GetChildren();
-            while(child) {
-                if(child->GetName() == wxT("IncludePath")) {
+            while (child) {
+                if (child->GetName() == wxT("IncludePath")) {
                     m_includePath.Add(XmlUtils::ReadString(child, wxT("Value")));
-                } else if(child->GetName() == wxT("Preprocessor")) {
+                } else if (child->GetName() == wxT("Preprocessor")) {
                     m_preprocessor.Add(XmlUtils::ReadString(child, wxT("Value")));
                 }
                 child = child->GetNext();
@@ -58,13 +58,13 @@ BuildConfigCommon::BuildConfigCommon(wxXmlNode* node, wxString confType)
 
         // read the linker options
         wxXmlNode* linker = XmlUtils::FindFirstByTagName(node, wxT("Linker"));
-        if(linker) {
+        if (linker) {
             m_linkOptions = XmlUtils::ReadString(linker, wxT("Options"));
             wxXmlNode* child = linker->GetChildren();
-            while(child) {
-                if(child->GetName() == wxT("Library")) {
+            while (child) {
+                if (child->GetName() == wxT("Library")) {
                     m_libs.Add(XmlUtils::ReadString(child, wxT("Value")));
-                } else if(child->GetName() == wxT("LibraryPath")) {
+                } else if (child->GetName() == wxT("LibraryPath")) {
                     m_libPath.Add(XmlUtils::ReadString(child, wxT("Value")));
                 }
                 child = child->GetNext();
@@ -73,11 +73,11 @@ BuildConfigCommon::BuildConfigCommon(wxXmlNode* node, wxString confType)
 
         // read the resource compile options
         wxXmlNode* resCmp = XmlUtils::FindFirstByTagName(node, wxT("ResourceCompiler"));
-        if(resCmp) {
+        if (resCmp) {
             m_resCompileOptions = XmlUtils::ReadString(resCmp, wxT("Options"));
             wxXmlNode* child = resCmp->GetChildren();
-            while(child) {
-                if(child->GetName() == wxT("IncludePath")) {
+            while (child) {
+                if (child->GetName() == wxT("IncludePath")) {
                     m_resCmpIncludePath << XmlUtils::ReadString(child, wxT("Value")) << wxT(";");
                 }
                 child = child->GetNext();
@@ -101,13 +101,13 @@ wxXmlNode* BuildConfigCommon::ToXml() const
     node->AddChild(compile);
 
     size_t i = 0;
-    for(i = 0; i < m_includePath.GetCount(); i++) {
+    for (i = 0; i < m_includePath.GetCount(); i++) {
         wxXmlNode* option = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("IncludePath"));
         option->AddAttribute(wxT("Value"), m_includePath.Item(i));
         compile->AddChild(option);
     }
 
-    for(i = 0; i < m_preprocessor.GetCount(); i++) {
+    for (i = 0; i < m_preprocessor.GetCount(); i++) {
         wxXmlNode* prep = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Preprocessor"));
         prep->AddAttribute(wxT("Value"), m_preprocessor.Item(i));
         compile->AddChild(prep);
@@ -118,13 +118,13 @@ wxXmlNode* BuildConfigCommon::ToXml() const
     link->AddAttribute(wxT("Options"), m_linkOptions);
     node->AddChild(link);
 
-    for(i = 0; i < m_libPath.GetCount(); i++) {
+    for (i = 0; i < m_libPath.GetCount(); i++) {
         wxXmlNode* option = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("LibraryPath"));
         option->AddAttribute(wxT("Value"), m_libPath.Item(i));
         link->AddChild(option);
     }
 
-    for(i = 0; i < m_libs.GetCount(); i++) {
+    for (i = 0; i < m_libs.GetCount(); i++) {
         wxXmlNode* option = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("Library"));
         option->AddAttribute(wxT("Value"), m_libs.Item(i));
         link->AddChild(option);
@@ -136,7 +136,7 @@ wxXmlNode* BuildConfigCommon::ToXml() const
     node->AddChild(resCmp);
 
     wxStringTokenizer tok(m_resCmpIncludePath, wxT(";"));
-    while(tok.HasMoreTokens()) {
+    while (tok.HasMoreTokens()) {
         wxXmlNode* option = new wxXmlNode(NULL, wxXML_ELEMENT_NODE, wxT("IncludePath"));
         option->AddAttribute(wxT("Value"), tok.NextToken());
         resCmp->AddChild(option);
@@ -155,10 +155,10 @@ void BuildConfigCommon::SetLibPath(const wxString& paths) { m_libPath = StringUt
 static wxString ConvertToSemiColonString(const wxArrayString& array)
 {
     wxString result;
-    for(size_t i = 0; i < array.GetCount(); i++) {
+    for (size_t i = 0; i < array.GetCount(); i++) {
         wxString tmp = array.Item(i);
         tmp.Trim().Trim(false);
-        if(!tmp.IsEmpty()) {
+        if (!tmp.IsEmpty()) {
             result += array.Item(i);
             result += ";";
         }
@@ -175,15 +175,15 @@ wxString BuildConfigCommon::GetIncludePath() const { return ConvertToSemiColonSt
 wxString BuildConfigCommon::GetPreprocessor() const
 {
     wxString asString;
-    for(size_t i = 0; i < m_preprocessor.GetCount(); i++) {
+    for (size_t i = 0; i < m_preprocessor.GetCount(); i++) {
         wxString tmp = m_preprocessor.Item(i);
         tmp.Trim().Trim(false);
-        if(tmp.IsEmpty())
+        if (tmp.IsEmpty())
             continue;
 
         asString << tmp << wxT(";");
     }
-    if(asString.IsEmpty() == false)
+    if (asString.IsEmpty() == false)
         asString.RemoveLast();
 
     return asString;

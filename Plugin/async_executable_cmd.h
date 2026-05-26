@@ -75,7 +75,7 @@ public:
 
     wxOutputStream* GetOutputStream()
     {
-        if(m_proc) {
+        if (m_proc) {
             return m_proc->GetOutputStream();
         }
         return NULL;

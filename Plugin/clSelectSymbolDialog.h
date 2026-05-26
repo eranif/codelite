@@ -56,7 +56,9 @@ public:
     virtual ~clSelectSymbolDialog();
 
 protected:
-    void AddSymbol(const wxString& name, const wxBitmap& bmp = wxNullBitmap, const wxString& help = "",
+    void AddSymbol(const wxString& name,
+                   const wxBitmap& bmp = wxNullBitmap,
+                   const wxString& help = "",
                    wxClientData* clientData = NULL);
     void Initialise(const clSelectSymbolDialogEntry::List_t& entries);
 

@@ -23,7 +23,7 @@ public:
 
         static Cmd from(const std::vector<wxString>& cmd, const wxString& working_dir, const clEnvList_t& envlist = {})
         {
-            Cmd c{ cmd, working_dir, envlist };
+            Cmd c{cmd, working_dir, envlist};
             return c;
         }
     };

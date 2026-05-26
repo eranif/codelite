@@ -47,7 +47,7 @@ bool CompilerLocatorCygwin::Locate()
     {
         wxRegKey regkey(wxRegKey::HKLM, "SOFTWARE\\Cygwin\\setup");
         wxString cygwinInstallDir;
-        if(regkey.QueryValue("rootdir", cygwinInstallDir) && wxDirExists(cygwinInstallDir)) {
+        if (regkey.QueryValue("rootdir", cygwinInstallDir) && wxDirExists(cygwinInstallDir)) {
             Locate(cygwinInstallDir);
         }
     }
@@ -56,7 +56,7 @@ bool CompilerLocatorCygwin::Locate()
         // Wow6432Node
         wxRegKey regkey(wxRegKey::HKLM, "SOFTWARE\\Wow6432Node\\Cygwin\\setup");
         wxString cygwinInstallDir;
-        if(regkey.QueryValue("rootdir", cygwinInstallDir) && wxDirExists(cygwinInstallDir)) {
+        if (regkey.QueryValue("rootdir", cygwinInstallDir) && wxDirExists(cygwinInstallDir)) {
             Locate(cygwinInstallDir);
         }
     }
@@ -100,28 +100,30 @@ void CompilerLocatorCygwin::AddTools(const wxString& binFolder, const wxString& 
 
     toolFile.SetFullName("make.exe");
     wxString makeExtraArgs;
-    if(wxThread::GetCPUCount() > 1) {
+    if (wxThread::GetCPUCount() > 1) {
         makeExtraArgs << "-j" << wxThread::GetCPUCount();
     }
 
-    if(toolFile.FileExists()) {
+    if (toolFile.FileExists()) {
         AddTool(compiler, "MAKE", toolFile.GetFullPath(), makeExtraArgs);
 
     } else {
         toolFile.SetFullName("mingw32-make.exe");
-        if(toolFile.FileExists()) {
+        if (toolFile.FileExists()) {
             AddTool(compiler, "MAKE", toolFile.GetFullPath(), makeExtraArgs);
         }
     }
     AddTool(compiler, "MakeDirCommand", "mkdir", "-p");
 
     toolFile.SetFullName("gdb.exe");
-    if(toolFile.FileExists()) {
+    if (toolFile.FileExists()) {
         AddTool(compiler, "Debugger", toolFile.GetFullPath());
     }
 }
 
-void CompilerLocatorCygwin::AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath,
+void CompilerLocatorCygwin::AddTool(CompilerPtr compiler,
+                                    const wxString& toolname,
+                                    const wxString& toolpath,
                                     const wxString& extraArgs)
 {
     wxString tool = toolpath;
@@ -129,7 +131,7 @@ void CompilerLocatorCygwin::AddTool(CompilerPtr compiler, const wxString& toolna
 
     // Cygwin does not like backslash... replace the tools to use /
     tool.Replace("\\", "/");
-    if(!extraArgs.IsEmpty()) {
+    if (!extraArgs.IsEmpty()) {
         tool << " " << extraArgs;
     }
     compiler->SetTool(toolname, tool);
@@ -141,7 +143,7 @@ wxString CompilerLocatorCygwin::GetGCCVersion(const wxString& gccBinary)
     wxString command;
     command << gccBinary << " --version";
     wxString versionString = ProcUtils::SafeExecuteCommand(command);
-    if(!versionString.IsEmpty() && reVersion.Matches(versionString)) {
+    if (!versionString.IsEmpty() && reVersion.Matches(versionString)) {
         return reVersion.GetMatch(versionString);
     }
     return wxEmptyString;
@@ -153,29 +155,29 @@ CompilerPtr CompilerLocatorCygwin::Locate(const wxString& folder)
 
     wxString binFolder;
     wxFileName gcc(folder, "gcc.exe");
-    if(gcc.FileExists()) {
+    if (gcc.FileExists()) {
         binFolder = gcc.GetPath();
     } else {
         gcc.AppendDir("bin");
-        if(gcc.FileExists()) {
+        if (gcc.FileExists()) {
             binFolder = gcc.GetPath();
         }
     }
 
-    if(binFolder.IsEmpty())
+    if (binFolder.IsEmpty())
         return NULL;
 
     wxArrayString suffixes = GetSuffixes(binFolder);
-    if(suffixes.IsEmpty())
+    if (suffixes.IsEmpty())
         return NULL;
 
-    for(size_t i = 0; i < suffixes.GetCount(); ++i) {
+    for (size_t i = 0; i < suffixes.GetCount(); ++i) {
         gcc.SetFullName("gcc-" + suffixes.Item(i) + ".exe");
         wxString gccVer = GetGCCVersion(gcc.GetFullPath());
 
         wxString compilerName;
         compilerName << "Cygwin";
-        if(!gccVer.IsEmpty()) {
+        if (!gccVer.IsEmpty()) {
             compilerName << " - " << gccVer;
         }
         // Add the tools (use the bin folder)
@@ -191,11 +193,11 @@ wxArrayString CompilerLocatorCygwin::GetSuffixes(const wxString& binFolder)
     wxFileName gcc5(binFolder, "gcc-5.exe");
 
     wxArrayString arr;
-    if(gcc3.FileExists())
+    if (gcc3.FileExists())
         arr.Add("3");
-    if(gcc4.FileExists())
+    if (gcc4.FileExists())
         arr.Add("4");
-    if(gcc5.FileExists())
+    if (gcc5.FileExists())
         arr.Add("5");
     return arr;
 }

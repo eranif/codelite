@@ -28,7 +28,7 @@ void LanguageServerSettingsDlg::OnAddServer(wxCommandEvent& event)
 {
     NewLanguageServerDlg dlg(this);
     if (dlg.ShowModal() == wxID_OK) {
-        wxWindowUpdateLocker lk{ m_notebook };
+        wxWindowUpdateLocker lk{m_notebook};
         LanguageServerEntry server = dlg.GetData();
         // Update the configuration
         LanguageServerConfig::Get().AddServer(server);
@@ -71,7 +71,8 @@ void LanguageServerSettingsDlg::OnOKUI(wxUpdateUIEvent& event) { event.Enable(tr
 void LanguageServerSettingsDlg::OnScan(wxCommandEvent& event)
 {
     event.Skip();
-    if (::wxMessageBox(_("This will reconfigure your language servers\nContinue?"), "CodeLite",
+    if (::wxMessageBox(_("This will reconfigure your language servers\nContinue?"),
+                       "CodeLite",
                        wxICON_QUESTION | wxYES_NO | wxCANCEL | wxYES_DEFAULT) != wxYES) {
         return;
     }
@@ -80,7 +81,7 @@ void LanguageServerSettingsDlg::OnScan(wxCommandEvent& event)
 
 void LanguageServerSettingsDlg::DoInitialize()
 {
-    wxWindowUpdateLocker locker{ m_notebook };
+    wxWindowUpdateLocker locker{m_notebook};
     m_notebook->DeleteAllPages();
     const auto& servers = LanguageServerConfig::Get().GetServers();
     for (const auto& [name, server] : servers) {
@@ -101,7 +102,7 @@ void LanguageServerSettingsDlg::DoScan()
         for (const auto& match : matches) {
             LanguageServerEntry entry;
             match->GetLanguageServerEntry(entry);
-            servers.insert({ entry.GetName(), entry });
+            servers.insert({entry.GetName(), entry});
         }
         conf.SetServers(servers);
         conf.Save();

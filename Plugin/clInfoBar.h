@@ -17,7 +17,8 @@ public:
     clInfoBar(wxWindow* parent, wxWindowID winid = wxID_ANY);
     virtual ~clInfoBar() = default;
 
-    void DisplayMessage(const wxString& message, int flags = wxICON_INFORMATION,
+    void DisplayMessage(const wxString& message,
+                        int flags = wxICON_INFORMATION,
                         const std::vector<std::pair<wxWindowID, wxString>>& buttons = {});
 };
 

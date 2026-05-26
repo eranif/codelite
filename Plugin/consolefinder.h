@@ -25,8 +25,9 @@
 #ifndef CONSOLEFINDER_H
 #define CONSOLEFINDER_H
 
-#include "codelite_exports.h"
 #include "precompiled_header.h"
+
+#include "codelite_exports.h"
 
 /**
  * \ingroup SDK

@@ -62,8 +62,8 @@ protected:
      * @brief windows only: scan registry for uninstall information
      */
     void ScanUninstRegKeys();
-    virtual void CheckUninstRegKey(const wxString& displayName, const wxString& installFolder,
-                                   const wxString& displayVersion)
+    virtual void
+    CheckUninstRegKey(const wxString& displayName, const wxString& installFolder, const wxString& displayVersion)
     {
         wxUnusedVar(displayName);
         wxUnusedVar(installFolder);

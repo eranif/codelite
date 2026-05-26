@@ -60,7 +60,7 @@ AsyncExeCmd::~AsyncExeCmd()
 
 void AsyncExeCmd::AppendLine(const wxString& line, bool isErr)
 {
-    if(!m_owner)
+    if (!m_owner)
         return;
 
     wxCommandEvent event(isErr ? wxEVT_ASYNC_PROC_ADDERRLINE : wxEVT_ASYNC_PROC_ADDLINE);
@@ -73,14 +73,14 @@ void AsyncExeCmd::Stop()
 {
     m_stop = true;
     // kill the build process
-    if(m_proc) {
+    if (m_proc) {
         m_proc->Terminate();
     }
 }
 
 void AsyncExeCmd::SendStartMsg()
 {
-    if(!m_owner)
+    if (!m_owner)
         return;
 
     wxCommandEvent event(wxEVT_ASYNC_PROC_STARTED);
@@ -95,7 +95,7 @@ void AsyncExeCmd::SendStartMsg()
 
 void AsyncExeCmd::SendEndMsg(int exitCode)
 {
-    if(!m_owner)
+    if (!m_owner)
         return;
 
     wxCommandEvent event(wxEVT_ASYNC_PROC_ENDED);
@@ -109,7 +109,7 @@ void AsyncExeCmd::SendEndMsg(int exitCode)
 void AsyncExeCmd::OnTimer(wxTimerEvent& event)
 {
     wxUnusedVar(event);
-    if(m_stop) {
+    if (m_stop) {
         m_proc->Terminate();
         return;
     }
@@ -118,7 +118,7 @@ void AsyncExeCmd::OnTimer(wxTimerEvent& event)
 
 void AsyncExeCmd::PrintOutput()
 {
-    if(m_proc->GetRedirect()) {
+    if (m_proc->GetRedirect()) {
         wxString data, errors;
         m_proc->HasInput(data, errors);
         DoPrintOutput(data, errors);
@@ -127,16 +127,16 @@ void AsyncExeCmd::PrintOutput()
 
 void AsyncExeCmd::DoPrintOutput(const wxString& out, const wxString& err)
 {
-    if(!out.IsEmpty()) {
+    if (!out.IsEmpty()) {
         wxStringTokenizer tt(out, wxT("\n"));
-        while(tt.HasMoreTokens()) {
+        while (tt.HasMoreTokens()) {
             AppendLine(tt.NextToken() + wxT("\n"));
         }
     }
 
-    if(!err.IsEmpty()) {
+    if (!err.IsEmpty()) {
         wxStringTokenizer tt(err, wxT("\n"));
-        while(tt.HasMoreTokens()) {
+        while (tt.HasMoreTokens()) {
             AppendLine(tt.NextToken() + wxT("\n"), true);
         }
     }
@@ -145,8 +145,8 @@ void AsyncExeCmd::DoPrintOutput(const wxString& out, const wxString& err)
 void AsyncExeCmd::ProcessEnd(wxProcessEvent& event)
 {
     // read all input before stopping the timer
-    if(!m_stop) {
-        if(m_proc->GetRedirect()) {
+    if (!m_stop) {
+        if (m_proc->GetRedirect()) {
             wxString err;
             wxString out;
             m_proc->ReadAll(out, err);
@@ -157,7 +157,7 @@ void AsyncExeCmd::ProcessEnd(wxProcessEvent& event)
     }
 
     // stop the timer if needed
-    if(m_proc->GetRedirect()) {
+    if (m_proc->GetRedirect()) {
         m_timer->Stop();
     }
 
@@ -174,14 +174,14 @@ void AsyncExeCmd::Execute(const wxString& cmdLine, bool hide, bool redirect)
     SendStartMsg();
 
     m_proc = std::make_unique<clProcess>(wxNewId(), m_cmdLine, redirect);
-    if(m_proc) {
-        if(m_proc->Start(hide) == 0) {
+    if (m_proc) {
+        if (m_proc->Start(hide) == 0) {
             m_proc.reset();
             SetBusy(false);
 
         } else {
             // process started successfully, start timer if needed
-            if(m_proc->GetRedirect()) {
+            if (m_proc->GetRedirect()) {
                 m_timer->Start(10);
             }
         }
@@ -194,7 +194,7 @@ void AsyncExeCmd::Terminate() { m_proc->Terminate(); }
 void AsyncExeCmd::OnZombieReaperProcessTerminated(wxProcessEvent& event)
 {
     event.Skip();
-    if(m_proc && (event.GetPid() == m_proc->GetPid())) {
+    if (m_proc && (event.GetPid() == m_proc->GetPid())) {
         ProcessEnd(event);
         event.Skip(false);
     }

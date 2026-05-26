@@ -11,11 +11,23 @@ protected:
 
 public:
     clThemedComboBox() = default;
-    clThemedComboBox(wxWindow* parent, wxWindowID id, const wxString& value, const wxPoint& pos, const wxSize& size,
-                     const wxArrayString& choices, long style = 0, const wxValidator& validator = wxDefaultValidator,
+    clThemedComboBox(wxWindow* parent,
+                     wxWindowID id,
+                     const wxString& value,
+                     const wxPoint& pos,
+                     const wxSize& size,
+                     const wxArrayString& choices,
+                     long style = 0,
+                     const wxValidator& validator = wxDefaultValidator,
                      const wxString& name = wxChoiceNameStr);
-    bool Create(wxWindow* parent, wxWindowID id, const wxString& value, const wxPoint& pos, const wxSize& size,
-                const wxArrayString& choices, long style = 0, const wxValidator& validator = wxDefaultValidator,
+    bool Create(wxWindow* parent,
+                wxWindowID id,
+                const wxString& value,
+                const wxPoint& pos,
+                const wxSize& size,
+                const wxArrayString& choices,
+                long style = 0,
+                const wxValidator& validator = wxDefaultValidator,
                 const wxString& name = wxChoiceNameStr);
     virtual ~clThemedComboBox();
 };

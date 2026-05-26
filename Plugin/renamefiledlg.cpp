@@ -32,7 +32,7 @@ RenameFileDlg::RenameFileDlg(wxWindow* parent, const wxString& replaceWith, std:
 {
     m_textCtrlReplaceWith->SetValue(replaceWith);
 
-    for(size_t i = 0; i < matches.size(); i++) {
+    for (size_t i = 0; i < matches.size(); i++) {
         wxString displayString;
         IncludeStatement is = matches.at(i);
 
@@ -44,7 +44,7 @@ RenameFileDlg::RenameFileDlg(wxWindow* parent, const wxString& replaceWith, std:
         m_checkListMatches->Check(idx);
     }
 
-    if(m_checkListMatches->GetCount()) {
+    if (m_checkListMatches->GetCount()) {
         m_checkListMatches->Select(0);
         DoSelectItem(0);
     }
@@ -59,7 +59,7 @@ RenameFileDlg::~RenameFileDlg() {}
 void RenameFileDlg::DoSelectItem(int idx)
 {
     std::map<int, IncludeStatement>::iterator iter = m_entries.find(idx);
-    if(iter != m_entries.end()) {
+    if (iter != m_entries.end()) {
         IncludeStatement ise = iter->second;
         wxString line;
         line << ise.line;
@@ -74,10 +74,10 @@ void RenameFileDlg::DoSelectItem(int idx)
 std::vector<IncludeStatement> RenameFileDlg::GetMatches() const
 {
     std::vector<IncludeStatement> matches;
-    for(unsigned int i = 0; i < m_checkListMatches->GetCount(); i++) {
-        if(m_checkListMatches->IsChecked(i)) {
+    for (unsigned int i = 0; i < m_checkListMatches->GetCount(); i++) {
+        if (m_checkListMatches->IsChecked(i)) {
             std::map<int, IncludeStatement>::const_iterator iter = m_entries.find((int)i);
-            if(iter != m_entries.end()) {
+            if (iter != m_entries.end()) {
                 matches.push_back(iter->second);
             }
         }

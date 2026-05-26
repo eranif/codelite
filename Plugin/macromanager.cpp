@@ -49,9 +49,7 @@ wxString MacroManager::Expand(const wxString& expression,
                               IManager* manager,
                               const wxString& project,
                               const wxString& confToBuild)
-{
-    return DoExpand(expression, manager, project, true, confToBuild);
-}
+{ return DoExpand(expression, manager, project, true, confToBuild); }
 
 wxString MacroManager::Replace(const wxString& inString,
                                const wxString& variableName,
@@ -205,9 +203,7 @@ const std::unordered_set<wxString> CODELITE_MACROS = {
 } // namespace
 
 wxString MacroManager::ExpandNoEnv(const wxString& expression, const wxString& project, const wxString& confToBuild)
-{
-    return DoExpand(expression, NULL, project, false, confToBuild);
-}
+{ return DoExpand(expression, NULL, project, false, confToBuild); }
 
 wxString MacroManager::DoExpand(
     const wxString& expression, IManager* manager, const wxString& project, bool applyEnv, const wxString& confToBuild)
@@ -432,7 +428,7 @@ wxString MacroManager::ExpandFileMacros(const wxString& expression, const wxStri
     wxString filedir;
     wxString fullpath = filepath;
 
-    wxFileName fn{ filepath };
+    wxFileName fn{filepath};
     if (!wsp_dir.empty()) {
         fn.MakeRelativeTo(wsp_dir);
     }

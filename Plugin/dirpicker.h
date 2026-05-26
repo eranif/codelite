@@ -61,9 +61,13 @@ protected:
     virtual void OnText(wxCommandEvent& event);
 
 public:
-    DirPicker(wxWindow* parent, wxWindowID id = wxID_ANY, const wxString& buttonCaption = wxT("..."),
-              const wxString& defaultPos = wxEmptyString, const wxString& message = _("Select a folder:"),
-              const wxPoint& pos = wxDefaultPosition, const wxSize& size = wxDefaultSize,
+    DirPicker(wxWindow* parent,
+              wxWindowID id = wxID_ANY,
+              const wxString& buttonCaption = wxT("..."),
+              const wxString& defaultPos = wxEmptyString,
+              const wxString& message = _("Select a folder:"),
+              const wxPoint& pos = wxDefaultPosition,
+              const wxSize& size = wxDefaultSize,
               long style = wxDP_USE_TEXTCTRL);
 
     virtual ~DirPicker() = default;

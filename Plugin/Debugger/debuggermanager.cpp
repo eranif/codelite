@@ -206,14 +206,10 @@ IDebugger* DebuggerMgr::GetActiveDebugger()
 void DebuggerMgr::SetActiveDebugger(const wxString& name) { m_activeDebuggerName = name; }
 
 void DebuggerMgr::SetDebuggerInformation(const wxString& name, const DebuggerInformation& info)
-{
-    DebuggerConfigTool::Get()->WriteObject(name, (SerializedObject*)&info);
-}
+{ DebuggerConfigTool::Get()->WriteObject(name, (SerializedObject*)&info); }
 
 bool DebuggerMgr::GetDebuggerInformation(const wxString& name, DebuggerInformation& info)
-{
-    return DebuggerConfigTool::Get()->ReadObject(name, &info);
-}
+{ return DebuggerConfigTool::Get()->ReadObject(name, &info); }
 
 bool DebuggerMgr::IsNativeDebuggerRunning() const
 {

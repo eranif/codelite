@@ -74,8 +74,8 @@ void LanguageServerPage::OnSuggestLanguages(wxCommandEvent& event)
     }
 
     wxArrayInt selections;
-    int count = ::wxGetSelectedChoices(selections, _("Select the supported languages by this server:"), wxT("CodeLite"),
-                                       arrLang, GetParent());
+    int count = ::wxGetSelectedChoices(
+        selections, _("Select the supported languages by this server:"), wxT("CodeLite"), arrLang, GetParent());
     if (count == wxNOT_FOUND) {
         return;
     }
@@ -108,7 +108,7 @@ bool LanguageServerPage::ValidateData(wxString* message) const
         return true;
     }
 
-    JSON root{ init_options };
+    JSON root{init_options};
     if (!root.isOk()) {
         (*message) << m_textCtrlName->GetValue() << ": invalid JSON input in `initializationOptions`";
         return false;

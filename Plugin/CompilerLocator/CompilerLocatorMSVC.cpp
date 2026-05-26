@@ -33,7 +33,7 @@
 CompilerLocatorMSVC::CompilerLocatorMSVC()
     : // We only deal with x86/x64 Native Tools here for simplicity
       // Other platforms (such as ARM64 Cross Tools) can be added manually by cloning the compiler
-    m_vcPlatforms({ "x86", "x64" })
+    m_vcPlatforms({"x86", "x64"})
 {
 }
 
@@ -62,24 +62,25 @@ bool CompilerLocatorMSVC::Locate()
     return !m_compilers.empty();
 }
 
-void CompilerLocatorMSVC::CheckUninstRegKey(const wxString& displayName, const wxString& installFolder,
+void CompilerLocatorMSVC::CheckUninstRegKey(const wxString& displayName,
+                                            const wxString& installFolder,
                                             const wxString& displayVersion)
 {
     static const wxRegEx reName("^Visual Studio (Community|Professional|Enterprise) ([0-9]{4})( (Current|Preview))?$"),
         reVersion("^([0-9]+).*$");
-    if(reName.Matches(displayName) && reVersion.Matches(displayVersion)) {
+    if (reName.Matches(displayName) && reVersion.Matches(displayVersion)) {
         wxString vcEdition = reName.GetMatch(displayName, 1);
         wxString vcChannel = reName.GetMatch(displayName, 4);
         wxString vcVersion = reVersion.GetMatch(displayVersion, 1);
         long lvcVersion;
-        if(!vcVersion.ToLong(&lvcVersion) || lvcVersion < 15) {
+        if (!vcVersion.ToLong(&lvcVersion) || lvcVersion < 15) {
             // This detection is valid for Visual Studio 2017 (version 15)+ only
             return;
         }
-        for(size_t i = 0; i < m_vcPlatforms.GetCount(); ++i) {
+        for (size_t i = 0; i < m_vcPlatforms.GetCount(); ++i) {
             wxString compilerName = "Visual C++ ";
             compilerName << vcVersion << " " << vcEdition << " ";
-            if(!vcChannel.IsEmpty() && vcChannel != "Current") {
+            if (!vcChannel.IsEmpty() && vcChannel != "Current") {
                 compilerName << vcChannel << " ";
             }
             compilerName << "(" << m_vcPlatforms[i] << ")";
@@ -88,8 +89,11 @@ void CompilerLocatorMSVC::CheckUninstRegKey(const wxString& displayName, const w
     }
 }
 
-void CompilerLocatorMSVC::AddTools(const wxString& name, const wxString& platform, const wxFileName& installPath,
-                                   const wxFileName& fnVCvars, const wxFileName& fnIdeFolder)
+void CompilerLocatorMSVC::AddTools(const wxString& name,
+                                   const wxString& platform,
+                                   const wxFileName& installPath,
+                                   const wxFileName& fnVCvars,
+                                   const wxFileName& fnIdeFolder)
 {
     CompilerPtr compiler(new Compiler(NULL, Compiler::kRegexVC));
     compiler->SetCompilerFamily(COMPILER_FAMILY_VC);
@@ -116,7 +120,8 @@ void CompilerLocatorMSVC::AddTools(const wxString& name, const wxString& platfor
 
     // Resource
     AddTool("rc.exe", "/nologo", "ResourceCompiler", compiler);
-    compiler->AddCmpFileType("rc", Compiler::CmpFileKindResource,
+    compiler->AddCmpFileType("rc",
+                             Compiler::CmpFileKindResource,
                              "$(RcCompilerName) $(RcCmpOptions) "
                              "$(ObjectSwitch)$(IntermediateDirectory)/"
                              "$(ObjectName)$(ObjectSuffix) $(RcIncludePath) \"$(FileFullPath)\"");
@@ -149,14 +154,14 @@ void CompilerLocatorMSVC::AddTools(const wxString& name, const wxString& platfor
     wxArrayString errors;
     wxExecute(command, output, errors);
 
-    if(output.size() >= 2) {
+    if (output.size() >= 2) {
         wxString includePath = output[0];
-        if(includePath.Trim().Trim(false) != "!INCLUDE!") {
+        if (includePath.Trim().Trim(false) != "!INCLUDE!") {
             compiler->SetGlobalIncludePath(includePath);
         }
 
         wxString libPath = output[1];
-        if(libPath.Trim().Trim(false) != "!LIB!") {
+        if (libPath.Trim().Trim(false) != "!LIB!") {
             compiler->SetGlobalLibPath(libPath);
         }
     }
@@ -165,7 +170,7 @@ void CompilerLocatorMSVC::AddTools(const wxString& name, const wxString& platfor
     AddLinkerOptions(compiler);
 
     // cl.exe exists
-    if(errors.IsEmpty()) {
+    if (errors.IsEmpty()) {
         m_compilers.push_back(compiler);
     }
 }
@@ -206,13 +211,15 @@ void CompilerLocatorMSVC::AddToolsVC2017(const wxString& masterFolder, const wxS
     AddTools(name, platform, installPath, fnVCvars, fnIdeFolder);
 }
 
-void CompilerLocatorMSVC::AddTool(const wxString& toolpath, const wxString& extraArgs, const wxString& toolname,
+void CompilerLocatorMSVC::AddTool(const wxString& toolpath,
+                                  const wxString& extraArgs,
+                                  const wxString& toolname,
                                   CompilerPtr compiler)
 {
     wxString tool = toolpath;
     StringUtils::WrapWithQuotes(tool);
 
-    if(!extraArgs.IsEmpty()) {
+    if (!extraArgs.IsEmpty()) {
         tool << " " << extraArgs;
     }
     compiler->SetTool(toolname, tool);
@@ -224,8 +231,9 @@ void CompilerLocatorMSVC::AddCompilerOptions(CompilerPtr compiler)
     compiler->AddCompilerOption(
         "/MD",
         "Causes the application to use the multithread-specific and DLL-specific version of the run-time library");
-    compiler->AddCompilerOption("/MDd", "Causes the application to use the debug multithread-specific and DLL-specific "
-                                        "version of the run-time library");
+    compiler->AddCompilerOption("/MDd",
+                                "Causes the application to use the debug multithread-specific and DLL-specific "
+                                "version of the run-time library");
     compiler->AddCompilerOption(
         "/MT", "Causes the application to use the multithread, static version of the run-time library");
     compiler->AddCompilerOption(
@@ -239,10 +247,10 @@ void CompilerLocatorMSVC::AddCompilerOptions(CompilerPtr compiler)
 
     compiler->AddCompilerOption("/MP", "Compiles multiple source files by using multiple processes");
     compiler->AddCompilerOption("/sdl", "Enables additional security features and warnings");
-    compiler->AddCompilerOption("/errorReport:none",
-                                "Reports about internal compiler errors will not be collected or sent to Microsoft");
-    compiler->AddCompilerOption("/errorReport:prompt",
-                                "Prompts you to send a report when you receive an internal compiler error");
+    compiler->AddCompilerOption(
+        "/errorReport:none", "Reports about internal compiler errors will not be collected or sent to Microsoft");
+    compiler->AddCompilerOption(
+        "/errorReport:prompt", "Prompts you to send a report when you receive an internal compiler error");
     compiler->AddCompilerOption(
         "/FS", "Forces writes to the program database (PDB) file to be serialized through MSPDBSRV.EXE");
     compiler->AddCompilerOption("/Zs", "Checks syntax only");
@@ -256,8 +264,9 @@ void CompilerLocatorMSVC::AddCompilerOptions(CompilerPtr compiler)
 
     compiler->AddCompilerOption(
         "/Z7", "Produces an .obj file containing full symbolic debugging information for use with the debugger");
-    compiler->AddCompilerOption("/Zi", "Produces a program database (PDB) that contains type information and symbolic "
-                                       "debugging information for use with the debugger");
+    compiler->AddCompilerOption("/Zi",
+                                "Produces a program database (PDB) that contains type information and symbolic "
+                                "debugging information for use with the debugger");
     compiler->AddCompilerOption(
         "/ZI",
         "Produces a program database, as described above, in a format that supports the Edit and Continue feature");
@@ -267,8 +276,9 @@ void CompilerLocatorMSVC::AddCompilerOptions(CompilerPtr compiler)
     compiler->AddCompilerOption("/W1", "Displays level 1 (severe) warnings");
     compiler->AddCompilerOption("/W2", "Displays level 1 and level 2 (significant) warnings");
     compiler->AddCompilerOption("/W3", "Displays level 1, level 2 and level 3 (production quality) warnings");
-    compiler->AddCompilerOption("/W4", "Displays level 1, level 2, and level 3 warnings, and all level 4 "
-                                       "(informational) warnings that are not turned off by default");
+    compiler->AddCompilerOption("/W4",
+                                "Displays level 1, level 2, and level 3 warnings, and all level 4 "
+                                "(informational) warnings that are not turned off by default");
     compiler->AddCompilerOption(
         "/Wall", "Displays all warnings displayed by /W4 and all other warnings that /W4 does not include");
     compiler->AddCompilerOption("/WX", "Treats all compiler warnings as errors");
@@ -285,14 +295,14 @@ void CompilerLocatorMSVC::AddLinkerOptions(CompilerPtr compiler)
     compiler->AddLinkerOption("/DEBUG", "Creates debugging information");
     compiler->AddLinkerOption("/DYNAMICBASE", "Use address space layout randomization");
     compiler->AddLinkerOption("/DYNAMICBASE:NO", "Don't use address space layout randomizatio");
-    compiler->AddLinkerOption("/ERRORREPORT:NONE",
-                              "Reports about internal compiler errors will not be collected or sent to Microsoft");
-    compiler->AddLinkerOption("/ERRORREPORT:PROMPT",
-                              "Prompts you to send a report when you receive an internal compiler error");
+    compiler->AddLinkerOption(
+        "/ERRORREPORT:NONE", "Reports about internal compiler errors will not be collected or sent to Microsoft");
+    compiler->AddLinkerOption(
+        "/ERRORREPORT:PROMPT", "Prompts you to send a report when you receive an internal compiler error");
     compiler->AddLinkerOption("/INCREMENTAL", "Enables incremental linking");
     compiler->AddLinkerOption("/INCREMENTAL:NO", "Disables incremental linking");
-    compiler->AddLinkerOption("/LARGEADDRESSAWARE",
-                              "Tells the compiler that the application supports addresses larger than two gigabytes");
+    compiler->AddLinkerOption(
+        "/LARGEADDRESSAWARE", "Tells the compiler that the application supports addresses larger than two gigabytes");
     compiler->AddLinkerOption(
         "/LARGEADDRESSAWARE:NO",
         "Tells the compiler that the application does not support addresses larger than two gigabytes");
@@ -314,8 +324,8 @@ void CompilerLocatorMSVC::AddLinkerOptions(CompilerPtr compiler)
     compiler->AddLinkerOption("/OPT:LBR", "Controls LINK optimizations");
     compiler->AddLinkerOption("/OPT:NOLBR", "Controls LINK optimizations");
 
-    compiler->AddLinkerOption("/PROFILE",
-                              "Produces an output file that can be used with the Performance Tools profiler");
+    compiler->AddLinkerOption(
+        "/PROFILE", "Produces an output file that can be used with the Performance Tools profiler");
     compiler->AddLinkerOption("/SAFESEH", "Image has Safe Exception Handlers");
     compiler->AddLinkerOption("/SAFESEH:NO", "Image does not have Safe Exception Handler");
     compiler->AddLinkerOption("/SUBSYSTEM:CONSOLE", "Tells the operating system how to run the .exe file");

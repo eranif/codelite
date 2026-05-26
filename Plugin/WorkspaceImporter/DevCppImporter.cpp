@@ -22,10 +22,10 @@ bool DevCppImporter::isSupportedWorkspace()
     wxFileInputStream fis(wsInfo.GetFullPath());
     wxTextInputStream tis(fis);
 
-    while(!fis.Eof()) {
+    while (!fis.Eof()) {
         wxString line = tis.ReadLine();
 
-        if(line.Contains(wxT("[Project]"))) {
+        if (line.Contains(wxT("[Project]"))) {
             return true;
         }
     }
@@ -46,17 +46,17 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
     GenericProjectCfgPtr genericProjectCfgDebug;
     GenericProjectCfgPtr genericProjectCfgRelease;
 
-    while(!fis.Eof()) {
+    while (!fis.Eof()) {
         wxString line = tis.ReadLine();
 
-        if(line.Contains(wxT("[Project]"))) {
-            while(!line.IsEmpty()) {
+        if (line.Contains(wxT("[Project]"))) {
+            while (!line.IsEmpty()) {
                 line = tis.ReadLine();
                 wxStringTokenizer part(line, wxT("="));
                 wxString tagName = part.GetNextToken().Trim().Trim(false);
                 wxString tagValue = part.GetNextToken().Trim().Trim(false);
 
-                if(tagName == wxT("Name")) {
+                if (tagName == wxT("Name")) {
                     wxString projectName = tagValue;
 
                     genericProject = std::make_shared<GenericProject>();
@@ -78,12 +78,12 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
                     genericWorkspace->projects.push_back(genericProject);
                 }
 
-                if(tagName == wxT("Type")) {
+                if (tagName == wxT("Type")) {
                     wxString projectType = tagValue;
 
-                    if(projectType == wxT("2")) {
+                    if (projectType == wxT("2")) {
                         genericProject->cfgType = GenericCfgType::STATIC_LIBRARY;
-                    } else if(projectType == wxT("3")) {
+                    } else if (projectType == wxT("3")) {
                         genericProject->cfgType = GenericCfgType::DYNAMIC_LIBRARY;
                     } else {
                         genericProject->cfgType = GenericCfgType::EXECUTABLE;
@@ -93,7 +93,7 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
                     genericProjectCfgRelease->type = genericProject->cfgType;
                 }
 
-                if(tagName == wxT("Includes")) {
+                if (tagName == wxT("Includes")) {
                     wxString projectIncludes = tagValue;
                     projectIncludes.Replace(wxT("\""), wxT(""));
                     projectIncludes.Replace(wxT("_@@_"), wxT(" "));
@@ -102,7 +102,7 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
                     genericProjectCfgRelease->includePath = projectIncludes;
                 }
 
-                if(tagName == wxT("Libs")) {
+                if (tagName == wxT("Libs")) {
                     wxString projectLibs = tagValue;
                     projectLibs.Replace(wxT("\""), wxT(""));
                     projectLibs.Replace(wxT("_@@_"), wxT(" "));
@@ -111,7 +111,7 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
                     genericProjectCfgRelease->libPath = projectLibs;
                 }
 
-                if(tagName == wxT("Compiler")) {
+                if (tagName == wxT("Compiler")) {
                     wxString projectCompiler = tagValue;
                     projectCompiler.Replace(wxT("_@@_"), wxT(" "));
 
@@ -121,7 +121,7 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
                     genericProjectCfgRelease->cppCompilerOptions = projectCompiler;
                 }
 
-                if(tagName == wxT("CppCompiler")) {
+                if (tagName == wxT("CppCompiler")) {
                     wxString projectCppCompiler = tagValue;
                     projectCppCompiler.Replace(wxT("_@@_"), wxT(" "));
 
@@ -129,7 +129,7 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
                     genericProjectCfgRelease->cppCompilerOptions = projectCppCompiler;
                 }
 
-                if(tagName == wxT("Linker")) {
+                if (tagName == wxT("Linker")) {
                     wxString projectLinker = tagValue;
                     projectLinker.Replace(wxT("_@@_"), wxT(" "));
 
@@ -139,24 +139,24 @@ GenericWorkspacePtr DevCppImporter::PerformImport()
             }
         }
 
-        if(line.Contains(wxT("[Unit"))) {
+        if (line.Contains(wxT("[Unit"))) {
             GenericProjectFilePtr genericProjectFile = std::make_shared<GenericProjectFile>();
 
-            while(!line.IsEmpty()) {
+            while (!line.IsEmpty()) {
                 line = tis.ReadLine();
 
                 wxStringTokenizer part(line, wxT("="));
                 wxString tagName = part.GetNextToken().Trim().Trim(false);
                 wxString tagValue = part.GetNextToken().Trim().Trim(false);
 
-                if(tagName == wxT("FileName")) {
+                if (tagName == wxT("FileName")) {
                     wxString fileName = tagValue;
                     fileName.Replace(wxT("\\"), wxT("/"));
 
                     genericProjectFile->name = fileName;
                 }
 
-                if(tagName == wxT("Folder")) {
+                if (tagName == wxT("Folder")) {
                     wxString fileFolder = tagValue;
                     genericProjectFile->vpath = fileFolder;
                 }

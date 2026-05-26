@@ -19,14 +19,14 @@ bool SetChoiceOptions(wxChoice* choice, const wxArrayString& values, const wxStr
 {
     int match = wxNOT_FOUND;
     choice->Clear();
-    for(const wxString& v : values) {
+    for (const wxString& v : values) {
         int where = choice->Append(v);
-        if(v == defaultValue) {
+        if (v == defaultValue) {
             match = where;
         }
     }
 
-    if(match != wxNOT_FOUND) {
+    if (match != wxNOT_FOUND) {
         choice->SetSelection(match);
     }
     return (match != wxNOT_FOUND);
@@ -47,7 +47,7 @@ NewProjectDialog::NewProjectDialog(wxWindow* parent)
     , m_list(::GetProjectTemplateList())
 {
     // If we have a workspace, set the project path in the workspace path
-    if(clWorkspaceManager::Get().IsWorkspaceOpened()) {
+    if (clWorkspaceManager::Get().IsWorkspaceOpened()) {
         const wxFileName& fn = clWorkspaceManager::Get().GetWorkspace()->GetFileName();
         m_dirPicker->SetPath(fn.GetPath());
         m_textCtrlName->ChangeValue(fn.GetDirs().Last());
@@ -60,7 +60,7 @@ NewProjectDialog::NewProjectDialog(wxWindow* parent)
     wxString lastDebugger;
 
     lastBuildSystem = clConfig::Get().Read(CONFIG_LAST_BUILD_SYSTEM, lastBuildSystem);
-    if(lastBuildSystem.CmpNoCase("default") == 0) {
+    if (lastBuildSystem.CmpNoCase("default") == 0) {
         // the last used compiler is "Default"
         // force the "CodeLite Makefile Generator" instead
         lastBuildSystem = GENERATOR_DEFAULT;
@@ -75,28 +75,28 @@ NewProjectDialog::NewProjectDialog(wxWindow* parent)
     // Populate the project type choices
     std::unordered_set<wxString> S;
     wxArrayString categories;
-    for(const auto& proj : m_list) {
-        if(S.count(proj->GetName()) == 0) {
+    for (const auto& proj : m_list) {
+        if (S.count(proj->GetName()) == 0) {
             S.insert(proj->GetName());
         } else {
             continue;
         }
 
-        m_projectsMap.insert({ proj->GetName(), proj });
+        m_projectsMap.insert({proj->GetName(), proj});
         wxString internalType = proj->GetProjectInternalType();
-        if(internalType.IsEmpty()) {
+        if (internalType.IsEmpty()) {
             internalType = "General";
         }
 
-        if(m_categories.count(internalType) == 0) {
-            m_categories.insert({ internalType, wxArrayString() });
+        if (m_categories.count(internalType) == 0) {
+            m_categories.insert({internalType, wxArrayString()});
             categories.Add(internalType);
         }
         wxArrayString& arr = m_categories[internalType];
         arr.Add(proj->GetName());
     }
 
-    if(SetChoiceOptions(m_choiceCategory, categories, lastCategory)) {
+    if (SetChoiceOptions(m_choiceCategory, categories, lastCategory)) {
         // Load all the projects belong to this category
         wxArrayString types = GetProjectsTypesForCategory(lastCategory);
         SetChoiceOptions(m_choiceType, types, lastType);
@@ -108,7 +108,7 @@ NewProjectDialog::NewProjectDialog(wxWindow* parent)
     // Get list of compilers from configuration file
     BuildSettingsConfigCookie cookie;
     CompilerPtr cmp = BuildSettingsConfigST::Get()->GetFirstCompiler(cookie);
-    while(cmp) {
+    while (cmp) {
         compilerChoices.Add(cmp->GetName());
         cmp = BuildSettingsConfigST::Get()->GetNextCompiler(cookie);
     }
@@ -125,8 +125,8 @@ NewProjectDialog::NewProjectDialog(wxWindow* parent)
     std::list<wxString> builders;
     wxArrayString knownBuilders;
     BuildManagerST::Get()->GetBuilders(builders);
-    for(const wxString& builderName : builders) {
-        if(builderName.Lower() != "default") {
+    for (const wxString& builderName : builders) {
+        if (builderName.Lower() != "default") {
             // we no longer want people to use the "Default" build system
             // our default is "CodeLite Makefile Generator"
             knownBuilders.Add(builderName);
@@ -151,7 +151,7 @@ NewProjectDialog::~NewProjectDialog()
 
 wxArrayString NewProjectDialog::GetProjectsTypesForCategory(const wxString& category)
 {
-    if(m_categories.count(category) == 0) {
+    if (m_categories.count(category) == 0) {
         return wxArrayString();
     }
     const wxArrayString& projects = m_categories[category];
@@ -167,10 +167,10 @@ void NewProjectDialog::OnOKUI(wxUpdateUIEvent& event)
 ProjectData NewProjectDialog::GetProjectData() const
 {
     wxString sel = m_choiceType->GetStringSelection();
-    if(sel.IsEmpty()) {
+    if (sel.IsEmpty()) {
         return ProjectData();
     }
-    if(m_projectsMap.count(sel) == 0) {
+    if (m_projectsMap.count(sel) == 0) {
         return ProjectData();
     }
 
@@ -181,7 +181,7 @@ ProjectData NewProjectDialog::GetProjectData() const
     data.m_debuggerType = m_choiceDebugger->GetStringSelection();
 
     wxFileName path(m_dirPicker->GetPath(), "");
-    if(m_checkBoxSepFolder->IsChecked()) {
+    if (m_checkBoxSepFolder->IsChecked()) {
         path.AppendDir(data.m_name);
     }
     data.m_path = path.GetPath();
@@ -193,9 +193,9 @@ ProjectData NewProjectDialog::GetProjectData() const
 void NewProjectDialog::OnPathSelected(wxFileDirPickerEvent& event)
 {
     wxUnusedVar(event);
-    if(!m_userTypeName) {
+    if (!m_userTypeName) {
         wxFileName path(m_dirPicker->GetPath(), "");
-        if(path.GetDirCount()) {
+        if (path.GetDirCount()) {
             m_textCtrlName->ChangeValue(path.GetDirs().Last());
         }
     }
@@ -210,7 +210,7 @@ void NewProjectDialog::OnNameTyped(wxCommandEvent& event)
 void NewProjectDialog::OnCategoryChanged(wxCommandEvent& event)
 {
     wxString sel = m_choiceCategory->GetStringSelection();
-    if(sel.IsEmpty()) {
+    if (sel.IsEmpty()) {
         return;
     }
     wxArrayString a = GetProjectsTypesForCategory(sel);
@@ -218,7 +218,7 @@ void NewProjectDialog::OnCategoryChanged(wxCommandEvent& event)
 }
 void NewProjectDialog::OnOK(wxCommandEvent& event)
 {
-    if(m_textCtrlName->GetValue().Contains(" ")) {
+    if (m_textCtrlName->GetValue().Contains(" ")) {
         ::wxMessageBox(_("Project name must not contain spaces"), "CodeLite", wxICON_WARNING);
         return;
     }
@@ -239,14 +239,15 @@ void NewProjectDialog::OnCompilerChanged(wxCommandEvent& event)
     static const wxRegEx re("(clang(arm)?|mingw|ucrt)(32|64)", wxRE_DEFAULT | wxRE_NOSUB);
     bool isUnixGeneratorRequired = newCompiler.Contains("MSYS") && !re.Matches(cxx);
 
-    if(isUnixGeneratorRequired && m_choiceBuild->GetStringSelection() != GENERATOR_UNIX) {
-        if(::wxMessageBox(
-               _("MSYS based compiler requires a UNIX Makefile Generator\nWould like CodeLite to fix this for you?"),
-               "CodeLite", wxICON_QUESTION | wxYES_NO | wxYES_DEFAULT) != wxYES) {
+    if (isUnixGeneratorRequired && m_choiceBuild->GetStringSelection() != GENERATOR_UNIX) {
+        if (::wxMessageBox(
+                _("MSYS based compiler requires a UNIX Makefile Generator\nWould like CodeLite to fix this for you?"),
+                "CodeLite",
+                wxICON_QUESTION | wxYES_NO | wxYES_DEFAULT) != wxYES) {
             return;
         }
         int unixMakefiles = m_choiceBuild->FindString(GENERATOR_UNIX);
-        if(unixMakefiles != wxNOT_FOUND) {
+        if (unixMakefiles != wxNOT_FOUND) {
             m_choiceBuild->SetSelection(unixMakefiles);
         }
         return;
@@ -255,14 +256,15 @@ void NewProjectDialog::OnCompilerChanged(wxCommandEvent& event)
     // Suggest NMake generator for Visual C++ family compilers
     bool isNMakeGeneratorRequired = compiler->GetCompilerFamily() == COMPILER_FAMILY_VC;
 
-    if(isNMakeGeneratorRequired && m_choiceBuild->GetStringSelection() != GENERATOR_NMAKE) {
-        if(::wxMessageBox(
-               _("Visual C++ compiler requires an NMake generator\nWould like CodeLite to fix this for you?"),
-               "CodeLite", wxICON_QUESTION | wxYES_NO | wxYES_DEFAULT) != wxYES) {
+    if (isNMakeGeneratorRequired && m_choiceBuild->GetStringSelection() != GENERATOR_NMAKE) {
+        if (::wxMessageBox(
+                _("Visual C++ compiler requires an NMake generator\nWould like CodeLite to fix this for you?"),
+                "CodeLite",
+                wxICON_QUESTION | wxYES_NO | wxYES_DEFAULT) != wxYES) {
             return;
         }
         int nMakefiles = m_choiceBuild->FindString(GENERATOR_NMAKE);
-        if(nMakefiles != wxNOT_FOUND) {
+        if (nMakefiles != wxNOT_FOUND) {
             m_choiceBuild->SetSelection(nMakefiles);
         }
         return;

@@ -35,7 +35,7 @@ struct WXDLLIMPEXP_SDK clMatchResult {
 
     bool Get(size_t col, Str3Arr_t& arr) const
     {
-        if(matches.count(col) == 0) {
+        if (matches.count(col) == 0) {
             return false;
         }
         arr = matches.find(col)->second;
@@ -76,7 +76,7 @@ protected:
 protected:
     void SetFlag(clTreeCtrlNodeFlags flag, bool b)
     {
-        if(b) {
+        if (b) {
             m_flags |= flag;
         } else {
             m_flags &= ~flag;
@@ -91,8 +91,8 @@ protected:
     clRowEntry* GetVisibleItem(int index);
     void DrawSimpleSelection(wxWindow* win, wxDC& dc, const wxRect& rect, const clColours& colours);
     void RenderText(wxWindow* win, wxDC& dc, const clColours& colours, const wxString& text, int x, int y, size_t col);
-    void RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colours, const wxString& text, int x, int y,
-                          size_t col);
+    void
+    RenderTextSimple(wxWindow* win, wxDC& dc, const clColours& colours, const wxString& text, int x, int y, size_t col);
     void RenderCheckBox(wxWindow* win, wxDC& dc, const clColours& colours, const wxRect& rect, bool checked);
     int GetCheckBoxWidth(wxWindow* win);
 
@@ -104,9 +104,14 @@ public:
 
     const clCellValue& GetColumn(size_t col = 0) const;
     clCellValue& GetColumn(size_t col = 0);
-    clRowEntry(clTreeCtrl* tree, const wxString& label, int bitmapIndex = wxNOT_FOUND,
+    clRowEntry(clTreeCtrl* tree,
+               const wxString& label,
+               int bitmapIndex = wxNOT_FOUND,
                int bitmapSelectedIndex = wxNOT_FOUND);
-    clRowEntry(clTreeCtrl* tree, bool checked, const wxString& label, int bitmapIndex = wxNOT_FOUND,
+    clRowEntry(clTreeCtrl* tree,
+               bool checked,
+               const wxString& label,
+               int bitmapIndex = wxNOT_FOUND,
                int bitmapSelectedIndex = wxNOT_FOUND);
     ~clRowEntry();
     /**

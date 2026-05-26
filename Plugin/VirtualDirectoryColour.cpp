@@ -19,7 +19,7 @@ const FolderColour& FolderColour::FindForPath(const FolderColour::List_t& sorted
     static FolderColour nullValue;
     FolderColour::List_t::const_iterator iter = std::find_if(
         sortedList.begin(), sortedList.end(), [&](const FolderColour& vdc) { return path.StartsWith(vdc.GetPath()); });
-    if(iter == sortedList.end()) {
+    if (iter == sortedList.end()) {
         return nullValue;
     } else {
         return (*iter);

@@ -15,7 +15,7 @@ void clTerminalHistory::Add(const wxString& command)
 {
     std::vector<wxString>::iterator iter =
         std::find_if(m_history.begin(), m_history.end(), [&](const wxString& str) { return str == command; });
-    if(iter != m_history.end()) {
+    if (iter != m_history.end()) {
         m_history.erase(iter);
     }
     m_history.insert(m_history.begin(), command);
@@ -24,7 +24,7 @@ void clTerminalHistory::Add(const wxString& command)
 
 const wxString& clTerminalHistory::ArrowUp()
 {
-    if((m_where + 1) < (int)m_history.size()) {
+    if ((m_where + 1) < (int)m_history.size()) {
         ++m_where;
         return m_history[m_where];
     }
@@ -33,7 +33,7 @@ const wxString& clTerminalHistory::ArrowUp()
 
 const wxString& clTerminalHistory::ArrowDown()
 {
-    if(m_where > 0 && m_where < (int)m_history.size()) {
+    if (m_where > 0 && m_where < (int)m_history.size()) {
         m_where--;
         return m_history[m_where];
     }
@@ -52,7 +52,7 @@ wxArrayString clTerminalHistory::GetItems() const
 void clTerminalHistory::SetItems(const wxArrayString& items)
 {
     m_history.clear();
-    for(size_t i = 0; i < items.GetCount(); ++i) {
+    for (size_t i = 0; i < items.GetCount(); ++i) {
         Add(items.Item(i));
     }
 }

@@ -34,7 +34,9 @@
 class WXDLLIMPEXP_SDK clBoostrapWizardPageCompilers : public wxWizardPageSimple
 {
 public:
-    clBoostrapWizardPageCompilers(wxWizard* parent, wxWizardPage* prev = NULL, wxWizardPage* next = NULL,
+    clBoostrapWizardPageCompilers(wxWizard* parent,
+                                  wxWizardPage* prev = NULL,
+                                  wxWizardPage* next = NULL,
                                   const wxBitmap& bitmap = wxNullBitmap);
     ~clBoostrapWizardPageCompilers() override = default;
 };
@@ -42,7 +44,9 @@ public:
 class WXDLLIMPEXP_SDK clBoostrapWizardPageColours : public wxWizardPageSimple
 {
 public:
-    clBoostrapWizardPageColours(wxWizard* parent, wxWizardPage* prev = NULL, wxWizardPage* next = NULL,
+    clBoostrapWizardPageColours(wxWizard* parent,
+                                wxWizardPage* prev = NULL,
+                                wxWizardPage* next = NULL,
                                 const wxBitmap& bitmap = wxNullBitmap);
     ~clBoostrapWizardPageColours() override = default;
 };
@@ -50,7 +54,9 @@ public:
 class WXDLLIMPEXP_SDK clBoostrapWizardPageWhitespace : public wxWizardPageSimple
 {
 public:
-    clBoostrapWizardPageWhitespace(wxWizard* parent, wxWizardPage* prev = NULL, wxWizardPage* next = NULL,
+    clBoostrapWizardPageWhitespace(wxWizard* parent,
+                                   wxWizardPage* prev = NULL,
+                                   wxWizardPage* next = NULL,
                                    const wxBitmap& bitmap = wxNullBitmap);
     ~clBoostrapWizardPageWhitespace() override = default;
 };
@@ -58,7 +64,9 @@ public:
 class WXDLLIMPEXP_SDK clBoostrapWizardPageWelcome : public wxWizardPageSimple
 {
 public:
-    clBoostrapWizardPageWelcome(wxWizard* parent, wxWizardPage* prev = NULL, wxWizardPage* next = NULL,
+    clBoostrapWizardPageWelcome(wxWizard* parent,
+                                wxWizardPage* prev = NULL,
+                                wxWizardPage* next = NULL,
                                 const wxBitmap& bitmap = wxNullBitmap);
     ~clBoostrapWizardPageWelcome() override = default;
 };
@@ -66,7 +74,9 @@ public:
 class WXDLLIMPEXP_SDK clBoostrapWizardPagePlugins : public wxWizardPageSimple
 {
 public:
-    clBoostrapWizardPagePlugins(wxWizard* parent, wxWizardPage* prev = NULL, wxWizardPage* next = NULL,
+    clBoostrapWizardPagePlugins(wxWizard* parent,
+                                wxWizardPage* prev = NULL,
+                                wxWizardPage* next = NULL,
                                 const wxBitmap& bitmap = wxNullBitmap);
     ~clBoostrapWizardPagePlugins() override = default;
 };

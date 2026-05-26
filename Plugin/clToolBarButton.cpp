@@ -11,14 +11,14 @@ wxSize clToolBarButton::CalculateSize(wxDC& dc) const
     sz.y = 0;
     sz.x += m_toolbar->GetXSpacer();
     const wxBitmap& bmp = GetBitmap();
-    if(bmp.IsOk()) {
+    if (bmp.IsOk()) {
         sz.x += bmp.GetScaledWidth();
         sz.x += m_toolbar->GetXSpacer();
 
         int height = bmp.GetScaledHeight();
         sz.y = wxMax(sz.GetHeight(), height);
     }
-    if(!m_label.IsEmpty() && m_toolbar->IsShowLabels()) {
+    if (!m_label.IsEmpty() && m_toolbar->IsShowLabels()) {
         wxSize textSize = dc.GetTextExtent(m_label);
         sz.x += textSize.GetWidth();
         sz.x += m_toolbar->GetXSpacer();

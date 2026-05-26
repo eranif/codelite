@@ -13,7 +13,7 @@ clZipWriter::~clZipWriter() { Close(); }
 
 void clZipWriter::Add(const wxFileName& file)
 {
-    if(!file.FileExists()) {
+    if (!file.FileExists()) {
         return;
     }
     wxZipEntry* entry = new wxZipEntry(file.GetFullName());
@@ -30,14 +30,14 @@ void clZipWriter::AddDirectory(const wxString& path, const wxString& pattern)
     wxArrayString files;
     wxDir::GetAllFiles(path, &files, pattern);
 
-    for(size_t i = 0; i < files.GetCount(); ++i) {
+    for (size_t i = 0; i < files.GetCount(); ++i) {
         Add(wxFileName(files.Item(i)));
     }
 }
 
 void clZipWriter::Close()
 {
-    if(m_zip) {
+    if (m_zip) {
         m_zip->Close();
     }
     wxDELETE(m_zip);

@@ -17,7 +17,9 @@ protected:
     void OnCharHook(wxKeyEvent& event);
 
 public:
-    clDiffFrame(wxWindow* parent, const DiffSideBySidePanel::FileInfo& left, const DiffSideBySidePanel::FileInfo& right,
+    clDiffFrame(wxWindow* parent,
+                const DiffSideBySidePanel::FileInfo& left,
+                const DiffSideBySidePanel::FileInfo& right,
                 bool originSourceControl);
     clDiffFrame(wxWindow* parent);
     clDiffFrame(wxWindow* parent, const wxFileName& left, const wxFileName& right, bool isTempFile);

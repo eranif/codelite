@@ -185,9 +185,7 @@ static bool ReadFile8BitData(const char* file_name, wxString& content)
 bool SendCmdEvent(int eventId, void* clientData) { return EventNotifier::Get()->SendCommandEvent(eventId, clientData); }
 
 bool SendCmdEvent(int eventId, void* clientData, const wxString& str)
-{
-    return EventNotifier::Get()->SendCommandEvent(eventId, clientData, str);
-}
+{ return EventNotifier::Get()->SendCommandEvent(eventId, clientData, str); }
 
 void PostCmdEvent(int eventId, void* clientData) { EventNotifier::Get()->PostCommandEvent(eventId, clientData); }
 
@@ -683,9 +681,7 @@ void clSetManager(IManager* manager) { s_pluginManager = manager; }
 IManager* clGetManager() { return s_pluginManager; }
 
 bool clIsValidProjectName(const wxString& name)
-{
-    return name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-") == wxString::npos;
-}
+{ return name.find_first_not_of("abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789_-") == wxString::npos; }
 
 double clGetContentScaleFactor()
 {

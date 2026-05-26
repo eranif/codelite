@@ -21,8 +21,11 @@ protected:
     void ApplyStyle();
 
 public:
-    clTerminalViewCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                       const wxSize& size = wxDefaultSize, long style = wxDV_MULTIPLE | wxDV_NO_HEADER);
+    clTerminalViewCtrl(wxWindow* parent,
+                       wxWindowID id = wxID_ANY,
+                       const wxPoint& pos = wxDefaultPosition,
+                       const wxSize& size = wxDefaultSize,
+                       long style = wxDV_MULTIPLE | wxDV_NO_HEADER);
     virtual ~clTerminalViewCtrl();
 
     /**

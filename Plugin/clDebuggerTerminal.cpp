@@ -106,16 +106,10 @@ void clDebuggerTerminalPOSIX::Clear()
 }
 
 wxString clDebuggerTerminalPOSIX::MakeExeTitle(const wxString& exePath, const wxString& args)
-{
-    return wxString(wxT("Debugging: ")) << exePath << wxT(" ") << args;
-}
+{ return wxString(wxT("Debugging: ")) << exePath << wxT(" ") << args; }
 
 wxString clDebuggerTerminalPOSIX::MakeCoreTitle(const wxString& coreFile)
-{
-    return wxString(wxT("Debugging core: ")) << coreFile;
-}
+{ return wxString(wxT("Debugging core: ")) << coreFile; }
 
 wxString clDebuggerTerminalPOSIX::MakePidTitle(const int pid)
-{
-    return wxString(wxT("Debugging console pid: ")) << pid;
-}
+{ return wxString(wxT("Debugging console pid: ")) << pid; }

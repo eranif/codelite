@@ -35,14 +35,14 @@ void LanguageServerConfig::FromJSON(const JSONItem& json)
 {
     m_servers.clear();
     m_flags = json.namedObject("flags").toSize_t(m_flags);
-    if(json.hasNamedObject("servers")) {
+    if (json.hasNamedObject("servers")) {
         JSONItem servers = json.namedObject("servers");
         size_t count = servers.arraySize();
-        for(size_t i = 0; i < count; ++i) {
+        for (size_t i = 0; i < count; ++i) {
             JSONItem server = servers.arrayItem(i);
             LanguageServerEntry entry;
             entry.FromJSON(server);
-            m_servers.insert({ entry.GetName(), entry });
+            m_servers.insert({entry.GetName(), entry});
         }
     }
 }
@@ -62,12 +62,12 @@ JSONItem LanguageServerConfig::ToJSON() const
 void LanguageServerConfig::AddServer(const LanguageServerEntry& server)
 {
     RemoveServer(server.GetName());
-    m_servers.insert({ server.GetName(), server });
+    m_servers.insert({server.GetName(), server});
 }
 
 void LanguageServerConfig::RemoveServer(const wxString& name)
 {
-    if(m_servers.count(name)) {
+    if (m_servers.count(name)) {
         m_servers.erase(name);
     }
 }
@@ -75,7 +75,7 @@ void LanguageServerConfig::RemoveServer(const wxString& name)
 const LanguageServerEntry& LanguageServerConfig::GetServer(const wxString& name) const
 {
     static LanguageServerEntry NullEntry;
-    if(m_servers.count(name) == 0) {
+    if (m_servers.count(name) == 0) {
         return NullEntry;
     }
     return m_servers.find(name)->second;
@@ -84,7 +84,7 @@ const LanguageServerEntry& LanguageServerConfig::GetServer(const wxString& name)
 LanguageServerEntry& LanguageServerConfig::GetServer(const wxString& name)
 {
     static LanguageServerEntry NullEntry;
-    if(m_servers.count(name) == 0) {
+    if (m_servers.count(name) == 0) {
         return NullEntry;
     }
     return m_servers[name];

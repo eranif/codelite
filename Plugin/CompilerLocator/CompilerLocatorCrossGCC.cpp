@@ -36,7 +36,7 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder) { return Loc
 
 CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
 {
-    if(clear) {
+    if (clear) {
         m_compilers.clear();
     }
 
@@ -51,20 +51,20 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
     clFilesScanner scanner;
     clFilesScanner::EntryData::Vec_t results;
     size_t count = scanner.ScanNoRecurse(fnFolder.GetPath(), results, pattern);
-    if(count == 0) {
+    if (count == 0) {
         // try to see if we have a 'bin' folder under 'folder'
         fnFolder.AppendDir("bin");
-        if(wxFileName::DirExists(fnFolder.GetPath())) {
+        if (wxFileName::DirExists(fnFolder.GetPath())) {
             count = scanner.ScanNoRecurse(fnFolder.GetPath(), results, pattern);
         }
     }
 
-    if(count == 0)
+    if (count == 0)
         return nullptr;
 
     wxArrayString matches;
     matches.reserve(results.size());
-    for(const auto& entry : results) {
+    for (const auto& entry : results) {
         matches.Add(entry.fullpath);
     }
 
@@ -73,12 +73,12 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
         // Check if this is a script
         char sha[2];
         wxFile(match).Read(sha, 2);
-        if(strncmp(sha, "#!", 2) == 0) {
+        if (strncmp(sha, "#!", 2) == 0) {
             continue;
         }
 #endif
         wxFileName filename(match);
-        if(!IsCrossGCC(filename.GetName())) {
+        if (!IsCrossGCC(filename.GetName())) {
             continue;
         }
 
@@ -94,7 +94,7 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
         AddTools(compiler, filename.GetPath(), filename.GetName().BeforeLast('-'), filename.GetExt());
     }
 
-    if(m_compilers.empty()) {
+    if (m_compilers.empty()) {
         return NULL;
     } else {
         return *m_compilers.begin();
@@ -104,24 +104,24 @@ CompilerPtr CompilerLocatorCrossGCC::Locate(const wxString& folder, bool clear)
 bool CompilerLocatorCrossGCC::IsCrossGCC(const wxString& name) const
 {
 #ifdef __WXMSW__
-    if(name == "mingw32-gcc" || name == "i686-w64-mingw32-gcc" || name == "x86_64-w64-mingw32-gcc") {
+    if (name == "mingw32-gcc" || name == "i686-w64-mingw32-gcc" || name == "x86_64-w64-mingw32-gcc") {
         // Don't include standard mingw32-gcc (32 and 64 bit) binaries
         // they will be picked up later by the MinGW locator
         return false;
     }
 #elif defined(__WXGTK__)
-    if(name == "i686-linux-gnu-gcc" || name == "x86_64-linux-gnu-gcc" || name == "i686-pc-linux-gnu-gcc" ||
-       name == "x86_64-pc-linux-gnu-gcc" || name == "i686-redhat-linux-gcc" || name == "x86_64-redhat-linux-gcc") {
+    if (name == "i686-linux-gnu-gcc" || name == "x86_64-linux-gnu-gcc" || name == "i686-pc-linux-gnu-gcc" ||
+        name == "x86_64-pc-linux-gnu-gcc" || name == "i686-redhat-linux-gcc" || name == "x86_64-redhat-linux-gcc") {
         // Standard gcc will be picked up later by the GCC locator
         return false;
     }
 #ifdef __CYGWIN__
 #ifdef __i386__
-    if(name == "i686-pc-cygwin-gcc")
+    if (name == "i686-pc-cygwin-gcc")
         // Standard gcc will be picked up later by the GCC locator
         return false;
 #elif defined(__x86_64__)
-    if(name == "x86_64-pc-cygwin-gcc")
+    if (name == "x86_64-pc-cygwin-gcc")
         // Standard gcc will be picked up later by the GCC locator
         return false;
 #endif // __x86_64__
@@ -140,10 +140,10 @@ bool CompilerLocatorCrossGCC::Locate()
     wxGetEnv("PATH", &pathValues);
     wxStringSet_t tried;
 
-    if(!pathValues.IsEmpty()) {
+    if (!pathValues.IsEmpty()) {
         wxArrayString pathArray = ::wxStringTokenize(pathValues, wxPATH_SEP, wxTOKEN_STRTOK);
-        for(size_t i = 0; i < pathArray.GetCount(); ++i) {
-            if(tried.count(pathArray[i]))
+        for (size_t i = 0; i < pathArray.GetCount(); ++i) {
+            if (tried.count(pathArray[i]))
                 continue;
             Locate(pathArray[i], false);
             tried.insert(pathArray[i]);
@@ -153,7 +153,9 @@ bool CompilerLocatorCrossGCC::Locate()
     return !m_compilers.empty();
 }
 
-void CompilerLocatorCrossGCC::AddTools(CompilerPtr compiler, const wxString& binFolder, const wxString& prefix,
+void CompilerLocatorCrossGCC::AddTools(CompilerPtr compiler,
+                                       const wxString& binFolder,
+                                       const wxString& prefix,
                                        const wxString& suffix)
 {
     compiler->SetName("Cross GCC ( " + prefix + " )");
@@ -178,7 +180,7 @@ void CompilerLocatorCrossGCC::AddTools(CompilerPtr compiler, const wxString& bin
 
     toolFile.SetFullName(prefix + "-windres");
     toolFile.SetExt(suffix);
-    if(toolFile.FileExists())
+    if (toolFile.FileExists())
         AddTool(compiler, "ResourceCompiler", toolFile.GetFullPath());
 
     toolFile.SetFullName(prefix + "-as");
@@ -192,7 +194,7 @@ void CompilerLocatorCrossGCC::AddTools(CompilerPtr compiler, const wxString& bin
     toolFile.SetFullName("make");
     toolFile.SetExt(suffix);
     wxString makeExtraArgs;
-    if(wxThread::GetCPUCount() > 1) {
+    if (wxThread::GetCPUCount() > 1) {
         makeExtraArgs << "-j" << wxThread::GetCPUCount();
     }
 
@@ -200,16 +202,18 @@ void CompilerLocatorCrossGCC::AddTools(CompilerPtr compiler, const wxString& bin
     // makeExtraArgs <<  " SHELL=cmd.exe ";
 
     // What to do if there's no make here? (on Windows)
-    if(toolFile.FileExists())
+    if (toolFile.FileExists())
         AddTool(compiler, "MAKE", toolFile.GetFullPath(), makeExtraArgs);
 }
 
-void CompilerLocatorCrossGCC::AddTool(CompilerPtr compiler, const wxString& toolname, const wxString& toolpath,
+void CompilerLocatorCrossGCC::AddTool(CompilerPtr compiler,
+                                      const wxString& toolname,
+                                      const wxString& toolpath,
                                       const wxString& extraArgs)
 {
     wxString tool = toolpath;
     StringUtils::WrapWithQuotes(tool);
-    if(!extraArgs.IsEmpty()) {
+    if (!extraArgs.IsEmpty()) {
         tool << " " << extraArgs;
     }
     compiler->SetTool(toolname, tool);

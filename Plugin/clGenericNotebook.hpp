@@ -243,8 +243,12 @@ public:
     /**
      * Constructor
      */
-    clGenericNotebook(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
-                      const wxSize& size = wxDefaultSize, long style = 0, const wxString& name = wxEmptyString);
+    clGenericNotebook(wxWindow* parent,
+                      wxWindowID id = wxID_ANY,
+                      const wxPoint& pos = wxDefaultPosition,
+                      const wxSize& size = wxDefaultSize,
+                      long style = 0,
+                      const wxString& name = wxEmptyString);
 
     /// bitmaps mangement
     clBitmapList* GetBitmaps() const { return m_tabCtrl->GetBitmaps(); }
@@ -283,14 +287,21 @@ public:
     /**
      * @brief append page to the notebook
      */
-    void AddPage(wxWindow* page, const wxString& label, bool selected = false, int bitmapId = wxNOT_FOUND,
+    void AddPage(wxWindow* page,
+                 const wxString& label,
+                 bool selected = false,
+                 int bitmapId = wxNOT_FOUND,
                  const wxString& shortLabel = wxEmptyString);
 
     /**
      * @brief insert page at a specified position
      */
-    bool InsertPage(size_t index, wxWindow* page, const wxString& label, bool selected = false,
-                    int bitmapId = wxNOT_FOUND, const wxString& shortLabel = wxEmptyString);
+    bool InsertPage(size_t index,
+                    wxWindow* page,
+                    const wxString& label,
+                    bool selected = false,
+                    int bitmapId = wxNOT_FOUND,
+                    const wxString& shortLabel = wxEmptyString);
 
     /**
      * @brief return the currently selected page or null

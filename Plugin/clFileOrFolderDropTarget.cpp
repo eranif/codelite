@@ -18,23 +18,23 @@ bool clFileOrFolderDropTarget::OnDropFiles(wxCoord x, wxCoord y, const wxArraySt
 
     // Split the list into 2: files and folders
     wxArrayString files, folders;
-    for(size_t i = 0; i < filenames.size(); ++i) {
-        if(wxFileName::DirExists(filenames.Item(i))) {
+    for (size_t i = 0; i < filenames.size(); ++i) {
+        if (wxFileName::DirExists(filenames.Item(i))) {
             folders.Add(filenames.Item(i));
         } else {
             files.Add(filenames.Item(i));
         }
     }
 
-    if(m_sink) {
+    if (m_sink) {
         // fire the events, folders before files
-        if(!folders.IsEmpty()) {
+        if (!folders.IsEmpty()) {
             clCommandEvent eventFolders(wxEVT_DND_FOLDER_DROPPED);
             eventFolders.SetStrings(folders);
             m_sink->AddPendingEvent(eventFolders);
         }
 
-        if(!files.IsEmpty()) {
+        if (!files.IsEmpty()) {
             clCommandEvent eventFiles(wxEVT_DND_FILE_DROPPED);
             eventFiles.SetStrings(files);
             m_sink->AddPendingEvent(eventFiles);

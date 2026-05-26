@@ -75,7 +75,7 @@ public:
     clTreeCtrlData(eKind kind)
         : m_kind(kind)
     {
-        if(IsFolder()) {
+        if (IsFolder()) {
             m_index = std::make_unique<clTreeNodeIndex>();
         }
     }
@@ -92,14 +92,14 @@ public:
     void SetPath(const wxString& path)
     {
         this->m_path = path;
-        if(IsFolder()) {
+        if (IsFolder()) {
             wxFileName fn(m_path, "");
-            if(fn.GetDirCount()) {
+            if (fn.GetDirCount()) {
                 m_name = fn.GetDirs().Last();
             } else {
                 m_name = m_path;
             }
-        } else if(IsFile()) {
+        } else if (IsFile()) {
             wxFileName fn(m_path);
             m_name = fn.GetFullName();
         } else {
@@ -127,7 +127,9 @@ public:
 class WXDLLIMPEXP_SDK clFileViewerTreeCtrl : public clThemedTreeCtrl
 {
 public:
-    clFileViewerTreeCtrl(wxWindow* parent, wxWindowID id = wxID_ANY, const wxPoint& pos = wxDefaultPosition,
+    clFileViewerTreeCtrl(wxWindow* parent,
+                         wxWindowID id = wxID_ANY,
+                         const wxPoint& pos = wxDefaultPosition,
                          const wxSize& size = wxDefaultSize,
                          long style = wxTR_DEFAULT_STYLE | wxTR_MULTIPLE | wxTR_HIDE_ROOT | wxBORDER_STATIC);
     virtual ~clFileViewerTreeCtrl() = default;

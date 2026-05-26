@@ -44,9 +44,7 @@ void wxTerminalAnsiRendererInterface::ClearDisplay(size_t dir)
 void wxTerminalAnsiRendererInterface::SetWindowTitle(wxStringView window_title)
 {
     LOG_IF_DEBUG
-    {
-        LOG_DEBUG(LOG()) << "SetWindowTitle(" << wxString(window_title.data(), window_title.length()) << ")" << endl;
-    }
+    { LOG_DEBUG(LOG()) << "SetWindowTitle(" << wxString(window_title.data(), window_title.length()) << ")" << endl; }
 }
 
 void wxTerminalAnsiRendererInterface::ResetStyle()
@@ -57,7 +55,7 @@ void wxTerminalAnsiRendererInterface::ResetStyle()
 
 void wxTerminalAnsiRendererInterface::SetTextColour(const wxColour& col)
 {
-    if(col.IsOk()) {
+    if (col.IsOk()) {
         LOG_IF_DEBUG { LOG_DEBUG(LOG()) << "SetTextColour(" << col << ")" << endl; }
         m_curAttr.SetTextColour(col);
     } else {

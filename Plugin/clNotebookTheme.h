@@ -44,9 +44,7 @@ public:
     void SetActiveTabBgColour(const wxColour& activeTabBgColour) { this->m_activeTabBgColour = activeTabBgColour; }
     void SetActiveTabPenColour(const wxColour& activeTabPenColour) { this->m_activeTabPenColour = activeTabPenColour; }
     void SetActiveTabTextColour(const wxColour& activeTabTextColour)
-    {
-        this->m_activeTabTextColour = activeTabTextColour;
-    }
+    { this->m_activeTabTextColour = activeTabTextColour; }
     void SetBgColour(const wxColour& bgColour) { this->m_bgColour = bgColour; }
     void SetInnerPenColour(const wxColour& innerPenColour) { this->m_innerPenColour = innerPenColour; }
     void SetPenColour(const wxColour& penColour) { this->m_penColour = penColour; }

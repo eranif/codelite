@@ -48,7 +48,7 @@ AddIncludeFileDlg::AddIncludeFileDlg(wxWindow* parent, const wxString& fullpath,
     , m_text(text)
     , m_line(lineNo)
 {
-    if(m_fullpath.StartsWith("\"") || m_fullpath.StartsWith("<")) {
+    if (m_fullpath.StartsWith("\"") || m_fullpath.StartsWith("<")) {
         m_lineToAdd = "#include " + m_fullpath;
         m_isLineToAddProvided = true;
     }
@@ -88,7 +88,7 @@ AddIncludeFileDlg::AddIncludeFileDlg(wxWindow* parent, const wxString& fullpath,
 
     int numOfLinesVisible = m_textCtrlPreview->LinesOnScreen();
     int firstVisibleLine = m_line - (numOfLinesVisible / 2);
-    if(firstVisibleLine < 0) {
+    if (firstVisibleLine < 0) {
         firstVisibleLine = 0;
     }
     m_textCtrlPreview->SetFirstVisibleLine(firstVisibleLine);
@@ -99,7 +99,7 @@ AddIncludeFileDlg::~AddIncludeFileDlg() {}
 
 void AddIncludeFileDlg::UpdateLineToAdd()
 {
-    if(m_isLineToAddProvided) {
+    if (m_isLineToAddProvided) {
         m_textCtrlFullPath->ChangeValue(m_fullpath);
         return;
     }
@@ -113,36 +113,36 @@ void AddIncludeFileDlg::UpdateLineToAdd()
     pp.Replace(wxT("\\"), wxT("/"));
 
     wxString rest;
-    for(size_t i = 0; i < m_includePath.GetCount(); i++) {
-        if(pp.StartsWith(m_includePath.Item(i), &rest)) {
+    for (size_t i = 0; i < m_includePath.GetCount(); i++) {
+        if (pp.StartsWith(m_includePath.Item(i), &rest)) {
             break;
         }
     }
 
-    if(rest.IsEmpty()) {
+    if (rest.IsEmpty()) {
         rest = fn.GetFullName();
     }
 
     wxString errMsg;
     wxString projectName = clGetManager()->GetActiveEditor()->GetProjectName();
     ProjectPtr proj = clCxxWorkspaceST::Get()->FindProjectByName(projectName, errMsg);
-    if(proj) {
+    if (proj) {
         wxArrayString incls = proj->GetIncludePaths();
         std::sort(incls.begin(), incls.end(), SAscendingSort());
 
-        for(size_t i = 0; i < incls.GetCount(); i++) {
+        for (size_t i = 0; i < incls.GetCount(); i++) {
             wxString path = incls.Item(i);
 #ifdef __WXMSW__
             path.MakeLower();
 #endif
-            if(m_fullpath.StartsWith(path, &rest)) {
+            if (m_fullpath.StartsWith(path, &rest)) {
                 break;
             }
         }
     }
 
     rest.Replace(wxT("\\"), wxT("/"));
-    if(rest.StartsWith(wxT("/"))) {
+    if (rest.StartsWith(wxT("/"))) {
         rest.Remove(0, 1);
     }
 
@@ -167,7 +167,7 @@ void AddIncludeFileDlg::SetAndMarkLine()
     // Make the line to add at the center of the display
     int numOfLinesVisible = m_textCtrlPreview->LinesOnScreen();
     int firstVisibleLine = m_line - (numOfLinesVisible / 2);
-    if(firstVisibleLine < 0) {
+    if (firstVisibleLine < 0) {
         firstVisibleLine = 0;
     }
 
@@ -193,7 +193,7 @@ void AddIncludeFileDlg::OnTextUpdated(wxCommandEvent& e)
 void AddIncludeFileDlg::OnButtonDown(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(m_line + 2 >= m_textCtrlPreview->GetLineCount()) {
+    if (m_line + 2 >= m_textCtrlPreview->GetLineCount()) {
         return;
     }
     m_line++;
@@ -203,7 +203,7 @@ void AddIncludeFileDlg::OnButtonDown(wxCommandEvent& event)
 void AddIncludeFileDlg::OnButtonUp(wxCommandEvent& event)
 {
     wxUnusedVar(event);
-    if(m_line - 1 < 0) {
+    if (m_line - 1 < 0) {
         return;
     }
     m_line--;
@@ -218,7 +218,7 @@ void AddIncludeFileDlg::OnButtonOK(wxCommandEvent& e)
     static wxRegEx reIncludeFile(wxT("include *[\\\"\\<]{1}([a-zA-Z0-9_/\\.]*)"));
     wxString relativePath;
 
-    if(reIncludeFile.Matches(m_lineToAdd)) {
+    if (reIncludeFile.Matches(m_lineToAdd)) {
         relativePath = reIncludeFile.GetMatch(m_lineToAdd, 1);
     }
 
@@ -227,9 +227,9 @@ void AddIncludeFileDlg::OnButtonOK(wxCommandEvent& e)
     wxFileName fn(fullpath);
 
     wxString inclPath;
-    if(fullpath.EndsWith(relativePath, &inclPath) &&
-       fullpath != relativePath &&         // don't save the '.' path this is done by default
-       fn.GetFullName() != relativePath) { // if the relative path is only file name, nothing to cache
+    if (fullpath.EndsWith(relativePath, &inclPath) &&
+        fullpath != relativePath &&         // don't save the '.' path this is done by default
+        fn.GetFullName() != relativePath) { // if the relative path is only file name, nothing to cache
         m_includePath.Add(inclPath);
     }
     EndModal(wxID_OK);
@@ -249,19 +249,19 @@ void AddIncludeFileDlg::OnPreviewKeyDown(wxKeyEvent& event)
     m_textCtrlPreview->SetEditable(false);
     bool isOnMarkerLine = m_line == m_textCtrlPreview->GetCurrentLine();
     wxCommandEvent dummy;
-    if(event.GetKeyCode() == WXK_DOWN) {
+    if (event.GetKeyCode() == WXK_DOWN) {
         // update the line to add string and move the line down
         // m_lineToAdd = m_textCtrlPreview->GetLine(m_line);
         OnButtonDown(dummy);
 
-    } else if(event.GetKeyCode() == WXK_UP) {
+    } else if (event.GetKeyCode() == WXK_UP) {
         // update the line to add string and move the line up
         // m_lineToAdd = m_textCtrlPreview->GetLine(m_line);
         OnButtonUp(dummy);
-    } else if(event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER) {
+    } else if (event.GetKeyCode() == WXK_RETURN || event.GetKeyCode() == WXK_NUMPAD_ENTER) {
         OnButtonOK(dummy);
 
-    } else if(isOnMarkerLine) {
+    } else if (isOnMarkerLine) {
         m_textCtrlPreview->SetEditable(true);
         event.Skip();
     }
@@ -270,12 +270,12 @@ void AddIncludeFileDlg::OnPreviewKeyDown(wxKeyEvent& event)
 void AddIncludeFileDlg::OnIdle(wxIdleEvent& event)
 {
     event.Skip();
-    if(m_textCtrlPreview->MarkerNext(wxNOT_FOUND, (1 << 0x7)) != wxNOT_FOUND) {
+    if (m_textCtrlPreview->MarkerNext(wxNOT_FOUND, (1 << 0x7)) != wxNOT_FOUND) {
         // we have a marker
         m_lineToAdd = m_textCtrlPreview->GetLine(m_line);
         m_lineToAdd.Trim();
 
-        if(m_staticTextPreview->GetLabel() != m_lineToAdd) {
+        if (m_staticTextPreview->GetLabel() != m_lineToAdd) {
             m_staticTextPreview->CallAfter(&wxStaticText::SetLabel, m_lineToAdd);
         }
     }

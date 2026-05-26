@@ -50,16 +50,12 @@ BuilderGnuMake::BuilderGnuMake()
     : Builder("CodeLite Makefile Generator")
     , m_objectChunks(1)
     , m_projectFilesMetadata(nullptr)
-{
-    m_isWindows = wxGetOsVersion() & wxOS_WINDOWS ? true : false;
-}
+{ m_isWindows = wxGetOsVersion() & wxOS_WINDOWS ? true : false; }
 
 BuilderGnuMake::BuilderGnuMake(const wxString& name, const wxString& buildTool, const wxString& buildToolOptions)
     : Builder(name)
     , m_projectFilesMetadata(nullptr)
-{
-    m_isWindows = wxGetOsVersion() & wxOS_WINDOWS ? true : false;
-}
+{ m_isWindows = wxGetOsVersion() & wxOS_WINDOWS ? true : false; }
 
 wxString BuilderGnuMake::MakeDir(const wxString& path)
 {
@@ -1845,9 +1841,7 @@ wxString BuilderGnuMake::DoGetTargetPrefix(const wxFileName& filename, const wxS
 }
 
 wxString BuilderGnuMake::GetRelinkMarkerForProject(const wxString& projectName) const
-{
-    return "$(IntermediateDirectory)/" + projectName + ".relink";
-}
+{ return "$(IntermediateDirectory)/" + projectName + ".relink"; }
 
 bool BuilderGnuMake::HasPostbuildCommands(BuildConfigPtr bldConf) const
 {
@@ -1870,9 +1864,7 @@ bool BuilderGnuMake::SendBuildEvent(int eventId, const wxString& projectName, co
 bool BuilderGnuMake::HandleResourceFiles() const { return m_isMSYSEnv || m_isWindows; }
 
 bool BuilderGnuMake::IsResourceFile(const Compiler::CmpFileTypeInfo& file_type) const
-{
-    return file_type.kind == Compiler::CmpFileKindResource;
-}
+{ return file_type.kind == Compiler::CmpFileKindResource; }
 
 Builder::OptimalBuildConfig BuilderGnuMake::GetOptimalBuildConfig(const wxString& projectType) const
 {

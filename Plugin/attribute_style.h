@@ -136,15 +136,15 @@ protected:
     bool HasFlag(eStyleFlags flag) const { return m_flags & flag; }
 
 private:
-    int m_id{ 0 };
+    int m_id{0};
     wxString m_name;
     wxString m_fontDesc;
     wxString m_fgColour;
     wxString m_bgColour;
     int m_fontSize = wxNOT_FOUND;
     size_t m_flags = 0;
-    bool m_isBold{ false };
-    bool m_isItalic{ false };
-    bool m_isUnderlined{ false };
+    bool m_isBold{false};
+    bool m_isItalic{false};
+    bool m_isUnderlined{false};
 };
 #endif

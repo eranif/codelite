@@ -39,6 +39,6 @@ public:
 
 protected:
     void AddTools(CompilerPtr compiler, const wxFileName& gcc);
-    void AddTool(CompilerPtr compiler, const wxString& toolname, const wxFileName& toolpath,
-                 const wxString& extraArgs = "");
+    void
+    AddTool(CompilerPtr compiler, const wxString& toolname, const wxFileName& toolpath, const wxString& extraArgs = "");
 };

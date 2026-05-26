@@ -10,7 +10,7 @@ bool clShellHelper::ProcessCommand(const wxString& cmd)
 {
     // Check if multiline command
     auto lines = ::wxStringTokenize(cmd, "\r\n", wxTOKEN_STRTOK);
-    if(lines.size() == 1) {
+    if (lines.size() == 1) {
         return false;
     }
 
@@ -21,7 +21,7 @@ bool clShellHelper::ProcessCommand(const wxString& cmd)
 #ifdef __WXMSW__
     wxString script_content;
     script_content << "@echo off\r\n";
-    for(auto& line : lines) {
+    for (auto& line : lines) {
         line.Trim().Trim(false);
         script_content << line << "\r\n";
     }
@@ -31,9 +31,9 @@ bool clShellHelper::ProcessCommand(const wxString& cmd)
     m_out_command = script_file.GetFullPath();
     m_cleanup_scripts.Add(script_file.GetFullPath());
 #else
-    for(auto& line : lines) {
+    for (auto& line : lines) {
         line.Trim().Trim(false);
-        if(!m_out_command.empty()) {
+        if (!m_out_command.empty()) {
             m_out_command << " && ";
         }
         m_out_command << line;
@@ -45,7 +45,7 @@ bool clShellHelper::ProcessCommand(const wxString& cmd)
 
 void clShellHelper::Cleanup()
 {
-    for(const auto& file : m_cleanup_scripts) {
+    for (const auto& file : m_cleanup_scripts) {
         FileUtils::RemoveFile(file);
     }
     m_cleanup_scripts.clear();

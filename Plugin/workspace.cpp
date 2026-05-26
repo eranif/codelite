@@ -882,9 +882,7 @@ void clCxxWorkspace::ReloadWorkspace()
 }
 
 time_t clCxxWorkspace::GetFileLastModifiedTime() const
-{
-    return FileUtils::GetFileModificationTime(GetWorkspaceFileName());
-}
+{ return FileUtils::GetFileModificationTime(GetWorkspaceFileName()); }
 
 // Singleton access
 static clCxxWorkspace* gs_Workspace = NULL;

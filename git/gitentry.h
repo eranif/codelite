@@ -225,14 +225,10 @@ public:
     void SetGitConsoleSashPos(int gitConsoleSashPos) { this->m_gitConsoleSashPos = gitConsoleSashPos; }
     int GetGitConsoleSashPos() const { return m_gitConsoleSashPos; }
     void SetGitBlameShowLogControls(bool gitBlameShowLogControls)
-    {
-        this->m_gitBlameShowLogControls = gitBlameShowLogControls;
-    }
+    { this->m_gitBlameShowLogControls = gitBlameShowLogControls; }
     bool GetGitBlameShowLogControls() const { return m_gitBlameShowLogControls; }
     void SetGitBlameShowParentCommit(bool gitBlameShowParentCommit)
-    {
-        this->m_gitBlameShowParentCommit = gitBlameShowParentCommit;
-    }
+    { this->m_gitBlameShowParentCommit = gitBlameShowParentCommit; }
     bool GetGitBlameShowParentCommit() const { return m_gitBlameShowParentCommit; }
     void SetGitBlameDlgMainSashPos(int MainSashPos) { this->m_gitBlameDlgMainSashPos = MainSashPos; }
     void SetGitBlameDlgHSashPos(int HSashPos) { this->m_gitBlameDlgHSashPos = HSashPos; }

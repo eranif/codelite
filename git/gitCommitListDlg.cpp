@@ -321,8 +321,6 @@ void GitCommitListDlg::OnPrevious(wxCommandEvent& event)
 void GitCommitListDlg::OnPreviousUI(wxUpdateUIEvent& event) { event.Enable(m_skip >= 100); }
 
 void GitCommitListDlg::OnNextUpdateUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_dvListCtrlCommitList->GetItemCount() >= 100);
-}
+{ event.Enable(m_dvListCtrlCommitList->GetItemCount() >= 100); }
 
 void GitCommitListDlg::OnBtnClose(wxCommandEvent& event) { Destroy(); }

@@ -154,13 +154,9 @@ void GitDiffChooseCommitishDlg::OnUpdateUIBranch2(wxUpdateUIEvent& event) { even
 void GitDiffChooseCommitishDlg::OnUpdateUICommit1(wxUpdateUIEvent& event) { event.Enable(m_radioCommit1->GetValue()); }
 void GitDiffChooseCommitishDlg::OnUpdateUICommit2(wxUpdateUIEvent& event) { event.Enable(m_radioCommit2->GetValue()); }
 void GitDiffChooseCommitishDlg::OnUpdateUICommitish1(wxUpdateUIEvent& event)
-{
-    event.Enable(m_radioUserEntered1->GetValue());
-}
+{ event.Enable(m_radioUserEntered1->GetValue()); }
 void GitDiffChooseCommitishDlg::OnUpdateUICommitish2(wxUpdateUIEvent& event)
-{
-    event.Enable(m_radioUserEntered2->GetValue());
-}
+{ event.Enable(m_radioUserEntered2->GetValue()); }
 void GitDiffChooseCommitishDlg::OnUpdateUITags1(wxUpdateUIEvent& event) { event.Enable(m_radioTag1->GetValue()); }
 void GitDiffChooseCommitishDlg::OnUpdateUITags2(wxUpdateUIEvent& event) { event.Enable(m_radioTag2->GetValue()); }
 void GitDiffChooseCommitishDlg::OnRadioBranch1Selected(wxCommandEvent& WXUNUSED(event))

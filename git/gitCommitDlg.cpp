@@ -41,9 +41,7 @@
 namespace
 {
 wxString GetTempCommitFile()
-{
-    return wxFileName{clStandardPaths::Get().GetTempDir(), "commit-message.tmp"}.GetFullPath();
-}
+{ return wxFileName{clStandardPaths::Get().GetTempDir(), "commit-message.tmp"}.GetFullPath(); }
 } // namespace
 
 GitCommitDlg::GitCommitDlg(wxWindow* parent, GitPlugin* plugin, const wxString& workingDir)

@@ -101,9 +101,7 @@ wxVariant MakeFileBitmapLabel(const wxString& filename)
 }
 
 wxVariant MakeStdFileBitmapLabel(const wxString& filename)
-{
-    return ::MakeIconText(filename, clGetManager()->GetStdIcons()->GetBitmapForFile(filename, false));
-}
+{ return ::MakeIconText(filename, clGetManager()->GetStdIcons()->GetBitmapForFile(filename, false)); }
 
 struct ToolBarItem {
     wxString label;
@@ -119,9 +117,7 @@ struct GitFileEntry {
     GitFileEntry(const wxString& rawpath, const wxString& prefix, const wxString& repopath)
         : path(rawpath)
         , prefix(prefix)
-    {
-        fullname = rawpath.AfterLast('/');
-    }
+    { fullname = rawpath.AfterLast('/'); }
 };
 
 IEditor* CreateAndOpenTempFile(const wxString& path)
@@ -310,9 +306,7 @@ void GitView::OnStopGitProcess(wxCommandEvent& event)
 }
 
 void GitView::OnStopGitProcessUI(wxUpdateUIEvent& event)
-{
-    event.Enable(m_git->GetProcess() || m_git->GetFolderProcess());
-}
+{ event.Enable(m_git->GetProcess() || m_git->GetFolderProcess()); }
 
 void GitView::OnClearGitLogUI(wxUpdateUIEvent& event) { event.Enable(!m_log_view->IsEmpty()); }
 
@@ -697,9 +691,7 @@ void GitView::HideProgress() { m_statusBar->Stop(_("Ready")); }
 void GitView::ShowProgress(const wxString& message) { m_statusBar->Start(message); }
 
 void GitView::UpdateProgress([[maybe_unused]] unsigned long current, const wxString& message)
-{
-    m_statusBar->SetMessage(message);
-}
+{ m_statusBar->SetMessage(message); }
 
 bool GitView::IsProgressShown() const { return m_statusBar->IsRunning(); }
 

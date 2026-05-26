@@ -16,9 +16,7 @@ GitReleaseNotesGenerationDlg::GitReleaseNotesGenerationDlg(wxWindow* parent)
 GitReleaseNotesGenerationDlg::~GitReleaseNotesGenerationDlg() {}
 
 void GitReleaseNotesGenerationDlg::OnButtonokUpdateUi(wxUpdateUIEvent& event)
-{
-    event.Enable(!m_textCtrlFirstCommit->GetValue().IsEmpty() && !m_textCtrlSecondCommit->GetValue().IsEmpty());
-}
+{ event.Enable(!m_textCtrlFirstCommit->GetValue().IsEmpty() && !m_textCtrlSecondCommit->GetValue().IsEmpty()); }
 
 void GitReleaseNotesGenerationDlg::OnChoiceProviders(wxCommandEvent& event)
 {

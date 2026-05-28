@@ -130,7 +130,21 @@ if(UNIX AND NOT APPLE)
 endif(UNIX AND NOT APPLE)
 
 if(MINGW)
+  execute_process(
+    COMMAND sh -c
+            'ls ${WXWIN}/lib/clang_x64_dll/wxmsw*u_clang*custom.dll|tail -1'
+    OUTPUT_VARIABLE WXDLL
+    OUTPUT_STRIP_TRAILING_WHITESPACE)
+
+  if(NOT WXDLL)
+    message(FATAL_ERROR "Could not locate wxWidgets DLL")
+  endif()
+
   # Copy dlls near the executable
+  add_custom_command(TARGET wxcrafter
+    POST_BUILD
+    COMMAND cmake -E copy_if_different ${WXDLL} $<TARGET_FILE_DIR:wxcrafter>
+    COMMAND_EXPAND_LISTS)
   add_custom_command(TARGET wxcrafter
     POST_BUILD
     COMMAND cmake -E copy_if_different $<TARGET_RUNTIME_DLLS:wxcrafter> $<TARGET_FILE_DIR:wxcrafter>

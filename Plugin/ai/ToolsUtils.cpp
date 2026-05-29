@@ -16,7 +16,8 @@ CanInvokeToolResult ConfirmPathTool(const std::string& tool_name,
                                     const wxString& prompt_text,
                                     const wxString& trusted_text,
                                     const std::string& filepath_utf8,
-                                    std::function<CanInvokeToolResult()> validator)
+                                    std::function<CanInvokeToolResult()> validator,
+                                    const wxString& purpose)
 {
     if (wxIsMainThread()) {
         return CanInvokeToolResult{.can_invoke = false, .reason = "Internal Error."};
@@ -33,6 +34,9 @@ CanInvokeToolResult ConfirmPathTool(const std::string& tool_name,
 
     if (!is_trusted) {
         wxString message;
+        if (!purpose.IsEmpty()) {
+            message << _("**Purpose:** ") << purpose << "\n\n";
+        }
         message << prompt_text << "\n```\n" << fullpath << "\n```\n";
         return llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message, [tool_name, fullpath]() {
             auto& config = llm::Manager::GetInstance().GetConfig();
@@ -53,6 +57,9 @@ CanInvokeToolResult ConfirmPathTool(const std::string& tool_name,
         });
     } else {
         wxString message;
+        if (!purpose.IsEmpty()) {
+            message << _("**Purpose:** ") << purpose << "\n\n";
+        }
         message << trusted_text << "\n```\n" << fullpath << "\n```\n";
         llm::Manager::GetInstance().PrintMessage(message, IconType::kInfo);
         return CanInvokeToolResult{.can_invoke = true};

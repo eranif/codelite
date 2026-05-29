@@ -34,6 +34,13 @@ constexpr int kMaxLinesToRead = 1000;
 CanInvokeToolResult FileSystemWriteConfirm(const std::string& tool_name, assistant::json args)
 {
     CONFIRM_ARG(std::string,
+                purpose,
+                "",
+                ::assistant::GetFunctionArg<std::string>(args, "purpose"),
+                "Missing or empty mandatory field 'purpose'. Please provide a brief description of why this tool is "
+                "being called.");
+
+    CONFIRM_ARG(std::string,
                 path,
                 "",
                 ::assistant::GetFunctionArg<std::string>(args, "path"),
@@ -49,16 +56,28 @@ CanInvokeToolResult FileSystemWriteConfirm(const std::string& tool_name, assista
 
     static constexpr const char kFileSystemWrite[] = "FileSystemWrite";
     if (action.value() == "create_dir") {
-        return ConfirmPathTool(
-            kFileSystemWrite, _("The model wants to create the directory:"), _("Creating new directory:"), path);
+        return ConfirmPathTool(kFileSystemWrite,
+                               _("The model wants to create the directory:"),
+                               _("Creating new directory:"),
+                               path,
+                               nullptr,
+                               wxString::FromUTF8(purpose));
     }
     if (action.value() == "create_file") {
-        return ConfirmPathTool(
-            kFileSystemWrite, _("The model wants to create the file:"), _("Creating new file:"), path);
+        return ConfirmPathTool(kFileSystemWrite,
+                               _("The model wants to create the file:"),
+                               _("Creating new file:"),
+                               path,
+                               nullptr,
+                               wxString::FromUTF8(purpose));
     }
     if (action.value() == "append_file") {
-        return ConfirmPathTool(
-            kFileSystemWrite, _("The model wants to append to the file:"), _("Appending file:"), path);
+        return ConfirmPathTool(kFileSystemWrite,
+                               _("The model wants to append to the file:"),
+                               _("Appending file:"),
+                               path,
+                               nullptr,
+                               wxString::FromUTF8(purpose));
     }
 
     return CanInvokeToolResult{
@@ -184,6 +203,13 @@ FunctionResult FileSystemWrite(const assistant::json& args)
 CanInvokeToolResult ReadFileContentConfirm(const std::string& tool_name, assistant::json args)
 {
     CONFIRM_ARG(std::string,
+                purpose,
+                "",
+                ::assistant::GetFunctionArg<std::string>(args, "purpose"),
+                "Missing or empty mandatory field 'purpose'. Please provide a brief description of why this tool is "
+                "being called.");
+
+    CONFIRM_ARG(std::string,
                 filepath,
                 "",
                 ::assistant::GetFunctionArg<std::string>(args, "filepath"),
@@ -210,7 +236,12 @@ CanInvokeToolResult ReadFileContentConfirm(const std::string& tool_name, assista
     }
 
     static constexpr const char* kReadFileContent = "ReadFileContent";
-    return ConfirmPathTool(kReadFileContent, _("The model wants to read the file:"), _("Reading file:"), filepath);
+    return ConfirmPathTool(kReadFileContent,
+                           _("The model wants to read the file:"),
+                           _("Reading file:"),
+                           filepath,
+                           nullptr,
+                           wxString::FromUTF8(purpose));
 }
 
 FunctionResult ReadFileContent(const assistant::json& args)
@@ -272,14 +303,25 @@ FunctionResult ReadFileContent(const assistant::json& args)
 CanInvokeToolResult ReadFileMetadataConfirm(const std::string& tool_name, assistant::json args)
 {
     CONFIRM_ARG(std::string,
+                purpose,
+                "",
+                ::assistant::GetFunctionArg<std::string>(args, "purpose"),
+                "Missing or empty mandatory field 'purpose'. Please provide a brief description of why this tool is "
+                "being called.");
+
+    CONFIRM_ARG(std::string,
                 filepath,
                 "",
                 ::assistant::GetFunctionArg<std::string>(args, "filepath"),
                 "Missing mandatory field 'filepath'");
 
     static constexpr const char* kReadFileMetadata = "ReadFileMetadata";
-    return ConfirmPathTool(
-        kReadFileMetadata, _("The model wants to read metadata for the file:"), _("Reading file metadata:"), filepath);
+    return ConfirmPathTool(kReadFileMetadata,
+                           _("The model wants to read metadata for the file:"),
+                           _("Reading file metadata:"),
+                           filepath,
+                           nullptr,
+                           wxString::FromUTF8(purpose));
 }
 
 FunctionResult ReadFileMetadata(const assistant::json& args)
@@ -662,6 +704,13 @@ FunctionResult FindInFiles([[maybe_unused]] const assistant::json& args)
 
 CanInvokeToolResult ApplyPatchConfirm(const std::string& tool_name, assistant::json args)
 {
+    CONFIRM_ARG(std::string,
+                purpose,
+                "",
+                ::assistant::GetFunctionArg<std::string>(args, "purpose"),
+                "Missing or empty mandatory field 'purpose'. Please provide a brief description of why this tool is "
+                "being called.");
+
     if (wxIsMainThread()) {
         return CanInvokeToolResult{
             .can_invoke = false,
@@ -697,6 +746,8 @@ CanInvokeToolResult ApplyPatchConfirm(const std::string& tool_name, assistant::j
         wxString message;
         message << _("Will apply the following patch:") << "\n```diff\n" << patch << "\n```\n";
         llm::Manager::GetInstance().PrintMessage(message, IconType::kInfo);
+        llm::Manager::GetInstance().PrintMessage(
+            wxString() << _("**Purpose:** ") << wxString::FromUTF8(purpose) << "\n", IconType::kInfo);
         return CanInvokeToolResult{
             .can_invoke = true,
         };
@@ -704,6 +755,7 @@ CanInvokeToolResult ApplyPatchConfirm(const std::string& tool_name, assistant::j
 
     wxString message;
     message << _("Will apply the following patch:") << "\n```diff\n" << patch << "\n```\n";
+    message << _("**Purpose:** ") << wxString::FromUTF8(purpose) << "\n";
     return llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message, [&config, &fullpath]() {
         // User trusts the tool for this path,add it to the trust store.
         wxString dirpath = FileUtils::GetPath(fullpath);
@@ -754,6 +806,13 @@ FunctionResult ApplyPatch([[maybe_unused]] const assistant::json& args)
 
 CanInvokeToolResult ToolShellExecuteConfirm(const std::string& tool_name, const assistant::json& args)
 {
+    CONFIRM_ARG(std::string,
+                purpose,
+                "",
+                ::assistant::GetFunctionArg<std::string>(args, "purpose"),
+                "Missing or empty mandatory field 'purpose'. Please provide a brief description of why this tool is "
+                "being called.");
+
     if (wxIsMainThread()) {
         return CanInvokeToolResult{.can_invoke = false, .reason = "Internal Error."};
     }
@@ -810,6 +869,7 @@ CanInvokeToolResult ToolShellExecuteConfirm(const std::string& tool_name, const 
     message << _("The model wants to run the following shell command:\n```bash\n") << _("# Working directory\n")
             << working_dir << "\n\n"
             << _("# Command\n") << command_string << "\n```\n";
+    message << _("**Purpose:** ") << wxString::FromUTF8(purpose) << "\n";
 
     return llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message, [command_string]() {
         auto commands_array = StringUtils::SplitShellCommand(command_string);
@@ -1000,6 +1060,9 @@ void PopulateBuiltInFunctions(FunctionTable& table)
                                 .ToStdString(wxConvUTF8))
             .AddRequiredParam("filepath", "The path of the file to read.", "string")
             .AddRequiredParam("from_line", "The starting line number to read from (1-based indexing).", "number")
+            .AddRequiredParam("purpose",
+                              "A brief description of why this tool is being called and what it aims to achieve.",
+                              "string")
             .AddRequiredParam(
                 "line_count",
                 wxString::Format(
@@ -1015,6 +1078,9 @@ void PopulateBuiltInFunctions(FunctionTable& table)
     table.Add(FunctionBuilder("ReadFileMetadata")
                   .SetDescription("Reads metadata (path, size, and line count) of the file 'filepath' from the disk.")
                   .AddRequiredParam("filepath", "The path of the file to read metadata for.", "string")
+                  .AddRequiredParam("purpose",
+                                    "A brief description of why this tool is being called and what it aims to achieve.",
+                                    "string")
                   .SetCallback(ReadFileMetadata)
                   .SetHumanInTheLoopCallback(ReadFileMetadataConfirm)
                   .Build());
@@ -1022,6 +1088,9 @@ void PopulateBuiltInFunctions(FunctionTable& table)
     table.Add(FunctionBuilder("OpenFileInEditor")
                   .SetDescription("Try to open file 'filepath' and load it into the "
                                   "editor for editing or viewing.")
+                  .AddRequiredParam("purpose",
+                                    "A brief description of why this tool is being called and what it aims to achieve.",
+                                    "string")
                   .AddRequiredParam("filepath", "The path of the file to open inside the editor.", "string")
                   .SetCallback(OpenFileInEditor)
                   .Build());
@@ -1029,6 +1098,9 @@ void PopulateBuiltInFunctions(FunctionTable& table)
     table.Add(FunctionBuilder("GetActiveEditorFilePath")
                   .SetDescription(R"#(Retrieves the file path of the currently active editor)#")
                   .SetCallback(GetCurrentEditorPath)
+                  .AddRequiredParam("purpose",
+                                    "A brief description of why this tool is being called and what it aims to achieve.",
+                                    "string")
                   .Build());
 
     table.Add(FunctionBuilder("ReadCompilerOutput")
@@ -1039,12 +1111,18 @@ void PopulateBuiltInFunctions(FunctionTable& table)
                                   "useful for helping explaining and resolving build "
                                   "issues. On success read, this function return "
                                   "the complete build log output.")
+                  .AddRequiredParam("purpose",
+                                    "A brief description of why this tool is being called and what it aims to achieve.",
+                                    "string")
                   .SetCallback(GetCompilerOutput)
                   .Build());
 
     table.Add(
         FunctionBuilder("GetActiveEditorText")
             .SetDescription("Return the text of the active tab inside the editor.")
+            .AddRequiredParam("purpose",
+                              "A brief description of why this tool is being called and what it aims to achieve.",
+                              "string")
             .AddRequiredParam("from_line", "Starting line to read from (1-based). Defaults to 1.", "number")
             .AddRequiredParam(
                 "count",
@@ -1060,6 +1138,9 @@ void PopulateBuiltInFunctions(FunctionTable& table)
                             "provided name. If a host is specified, it creates a remote workspace using SSH/SFTP; "
                             "otherwise, it creates a local filesystem workspace")
             .SetCallback(CreateWorkspace)
+            .AddRequiredParam("purpose",
+                              "A brief description of why this tool is being called and what it aims to achieve.",
+                              "string")
             .AddRequiredParam("path", " The directory path where the workspace should be created", "string")
             .AddOptionalParam("name", "The name of the workspace to create", "string")
             .AddOptionalParam("host", "The SSH host for creating a remote workspace", "string")
@@ -1067,6 +1148,9 @@ void PopulateBuiltInFunctions(FunctionTable& table)
     table.Add(
         FunctionBuilder("FindInFiles")
             .SetDescription(R"(Search for a given pattern within files in a directory)")
+            .AddRequiredParam("purpose",
+                              "A brief description of why this tool is being called and what it aims to achieve.",
+                              "string")
             .SetCallback([](const assistant::json& args) {
                 auto result = FindInFiles(args);
                 if (result.isError) {
@@ -1099,6 +1183,9 @@ To ensure accuracy:
 5. Use sufficient context to make the location unique within the file
 ALWAYS RESPOND WITH A GIT-STYLE DIFF THAT CAN BE APPLIED DIRECTLY. NEVER PROVIDE PLAIN EXPLANATIONS ALONE; IF YOU NEED TO EXPLAIN, APPEND A BRIEF NOTE AFTER THE DIFF.)")
                   .AddRequiredParam("patch_content", "The git style diff patch content to apply", "string")
+                  .AddRequiredParam("purpose",
+                                    "A brief description of why this tool is being called and what it aims to achieve.",
+                                    "string")
                   .AddRequiredParam("file_path", "The path to the file that should be patched", "string")
                   .SetCallback([](const assistant::json& args) {
                       auto result = ApplyPatch(args);
@@ -1113,6 +1200,9 @@ ALWAYS RESPOND WITH A GIT-STYLE DIFF THAT CAN BE APPLIED DIRECTLY. NEVER PROVIDE
         FunctionBuilder("FileSystemWrite")
             .SetDescription(
                 R"(Create a new file, append to an existing file, or create a directory at the specified path with optional content)")
+            .AddRequiredParam("purpose",
+                              "A brief description of why this tool is being called and what it aims to achieve.",
+                              "string")
             .SetCallback([](const assistant::json& args) {
                 auto result = FileSystemWrite(args);
                 if (result.isError) {
@@ -1130,6 +1220,9 @@ ALWAYS RESPOND WITH A GIT-STYLE DIFF THAT CAN BE APPLIED DIRECTLY. NEVER PROVIDE
                   .SetDescription(R"(Execute a shell command and return its output.
 IMPORTANT: Before using this tool, you should call the GetOS tool first to determine the host operating system.
 This ensures you can construct OS-appropriate commands (e.g., 'dir' vs 'ls', backslash vs forward slash paths).)")
+                  .AddRequiredParam("purpose",
+                                    "A brief description of why this tool is being called and what it aims to achieve.",
+                                    "string")
                   .SetCallback(ToolShellExecute)
                   .SetHumanInTheLoopCallback(ToolShellExecuteConfirm)
                   .AddRequiredParam("command", "The shell command to execute", "string")
@@ -1139,6 +1232,9 @@ This ensures you can construct OS-appropriate commands (e.g., 'dir' vs 'ls', bac
         FunctionBuilder("GetWorkingDirectory")
             .SetDescription(
                 R"(Return the current working directory. If a workspace is open, returns the workspace directory; otherwise returns the process current directory.)")
+            .AddRequiredParam("purpose",
+                              "A brief description of why this tool is being called and what it aims to achieve.",
+                              "string")
             .SetCallback(GetWorkingDirectory)
             .Build());
     table.Add(
@@ -1146,6 +1242,9 @@ This ensures you can construct OS-appropriate commands (e.g., 'dir' vs 'ls', bac
             .SetDescription(
                 R"(Return the current active OS. The purpose of this tool is to suggest the LLM on which host the MCP server is running so it can
 adjust the commands it runs)")
+            .AddRequiredParam("purpose",
+                              "A brief description of why this tool is being called and what it aims to achieve.",
+                              "string")
             .SetCallback(GetOS)
             .Build());
 }

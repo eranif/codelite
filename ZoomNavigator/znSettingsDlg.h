@@ -26,7 +26,7 @@
 #ifndef ZNSETTINGSDLG_H
 #define ZNSETTINGSDLG_H
 
-#include "zoom_navigator.h"
+#include "zoom_navigator.hpp"
 
 wxDECLARE_EVENT(wxEVT_ZN_SETTINGS_UPDATED, wxCommandEvent);
 

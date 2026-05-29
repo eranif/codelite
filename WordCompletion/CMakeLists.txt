@@ -17,10 +17,18 @@ flex_target(WordFlex "WordTokenizer.l" "${CMAKE_CURRENT_BINARY_DIR}/WordTokenize
 
 set(FlexSrcs "${FLEX_WordFlex_OUTPUTS}")
 
+wxcrafter_target(
+    WordCompletion
+    "${CMAKE_CURRENT_SOURCE_DIR}/UI.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "UI.cpp"
+    "UI.hpp"
+    "UI_wordcompletion_bitmaps.cpp")
+
 file(GLOB SRCS "*.cpp")
 
 # Define the output
-add_library(${PLUGIN_NAME} SHARED ${SRCS} ${FlexSrcs})
+add_library(${PLUGIN_NAME} SHARED ${SRCS} ${FlexSrcs} ${WXCRAFTER_WordCompletion_OUTPUTS})
 
 if(UNIX OR APPLE)
     set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -30,7 +38,7 @@ if(USE_PCH)
     target_precompile_headers(${PLUGIN_NAME} REUSE_FROM PCH)
 endif()
 
-target_include_directories(${PLUGIN_NAME} PRIVATE .)
+target_include_directories(${PLUGIN_NAME} PRIVATE "${WXCRAFTER_WordCompletion_OUTPUTDIR}" .)
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")

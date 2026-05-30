@@ -33,7 +33,7 @@ CanInvokeToolResult ConfirmPathTool(const std::string& tool_name,
 
     if (!is_trusted) {
         wxString message;
-        message << prompt_text << "\n```\n" << fullpath << "\n```\n";
+        message << prompt_text << " `" << fullpath << "`\n";
         return llm::Manager::GetInstance().PromptUserYesNoTrustQuestion(message, [tool_name, fullpath]() {
             auto& config = llm::Manager::GetInstance().GetConfig();
             wxString dirpath = FileUtils::GetPath(fullpath);
@@ -53,7 +53,7 @@ CanInvokeToolResult ConfirmPathTool(const std::string& tool_name,
         });
     } else {
         wxString message;
-        message << trusted_text << "\n```\n" << fullpath << "\n```\n";
+        message << trusted_text << " `" << fullpath << "`\n";
         llm::Manager::GetInstance().PrintMessage(message, IconType::kInfo);
         return CanInvokeToolResult{.can_invoke = true};
     }

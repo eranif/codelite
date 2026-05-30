@@ -189,19 +189,8 @@ CanInvokeToolResult ReadFileContentConfirm(const std::string& tool_name, assista
                 ::assistant::GetFunctionArg<std::string>(args, "filepath"),
                 "Missing mandatory field 'filepath'");
 
-    CONFIRM_ARG(int,
-                from_line,
-                -1,
-                ::assistant::GetFunctionArg<int>(args, "from_line"),
-                "Missing or invalid value for mandatory field 'from_line'");
-
-    CONFIRM_ARG(int,
-                line_count,
-                -1,
-                ::assistant::GetFunctionArg<int>(args, "line_count"),
-                "Missing or invalid value for mandatory field 'line_count'");
-
-    if (line_count > kMaxLinesToRead) {
+    auto line_count = ::assistant::GetFunctionArg<int>(args, "line_count");
+    if (line_count.has_value() && line_count.value() > kMaxLinesToRead) {
         return CanInvokeToolResult{
             .can_invoke = false,
             .reason = wxString::Format("The line count must be between 1 and %d, inclusive.", kMaxLinesToRead)
@@ -216,13 +205,14 @@ CanInvokeToolResult ReadFileContentConfirm(const std::string& tool_name, assista
 FunctionResult ReadFileContent(const assistant::json& args)
 {
     VERIFY_WORKER_THREAD();
-    if (args.size() != 3) {
-        return Err("Invalid number of arguments");
+    if (args.size() < 1) {
+        return Err("Invalid number of arguments: 'filepath' is required");
     }
 
     ASSIGN_FUNC_ARG_OR_RETURN(std::string filepath, ::assistant::GetFunctionArg<std::string>(args, "filepath"));
-    ASSIGN_FUNC_ARG_OR_RETURN(int from_line, ::assistant::GetFunctionArg<int>(args, "from_line"));
-    ASSIGN_FUNC_ARG_OR_RETURN(int line_count, ::assistant::GetFunctionArg<int>(args, "line_count"));
+    int from_line = ::assistant::GetFunctionArg<int>(args, "from_line").value_or(0);
+    int line_count = ::assistant::GetFunctionArg<int>(args, "line_count").value_or(0);
+    bool read_all = (from_line == 0 && line_count == 0);
 
     auto cb = [=]() -> FunctionResult {
         auto& llm = llm::Manager::GetInstance();
@@ -235,11 +225,20 @@ FunctionResult ReadFileContent(const assistant::json& args)
             return Err(logmsg);
         }
 
-        // Validate parameters
-        if (from_line < 1) {
+        // If both from_line and line_count are omitted, return the entire file
+        if (read_all) {
+            wxString logmsg;
+            logmsg << "Successfully read file: " << filepath << ". " << content->size() << " bytes.";
+            llm.PrintMessage(logmsg, IconType::kSuccess);
+            return Ok(content.value());
+        }
+
+        // Validate provided parameters
+        int effective_from_line = (from_line == 0) ? 1 : from_line;
+        if (effective_from_line < 1) {
             return Err("'from_line' must be >= 1");
         }
-        if (line_count < 1) {
+        if (line_count != 0 && line_count < 1) {
             return Err("'line_count' must be >= 1");
         }
 
@@ -247,21 +246,23 @@ FunctionResult ReadFileContent(const assistant::json& args)
         wxArrayString lines = wxStringTokenize(content.value(), "\n", wxTOKEN_RET_DELIMS);
 
         // Check if from_line is within bounds
-        if (from_line > (int)lines.size()) {
-            return Err(wxString::Format("'from_line' (%d) exceeds total file lines (%zu)", from_line, lines.size()));
+        if (effective_from_line > (int)lines.size()) {
+            return Err(
+                wxString::Format("'from_line' (%d) exceeds total file lines (%zu)", effective_from_line, lines.size()));
         }
 
         // Extract the requested lines (from_line is 1-based)
-        int start_idx = from_line - 1;
-        int end_idx = wxMin(start_idx + line_count, static_cast<int>(lines.size()));
+        int start_idx = effective_from_line - 1;
+        int end_idx = (line_count == 0) ? static_cast<int>(lines.size())
+                                        : wxMin(start_idx + line_count, static_cast<int>(lines.size()));
         wxString partial_content;
         for (int i = start_idx; i < end_idx; ++i) {
             partial_content << lines[i];
         }
 
         wxString logmsg;
-        logmsg << "Successfully read file: " << filepath << " (lines " << from_line << "-" << (end_idx) << "). "
-               << partial_content.size() << " bytes.";
+        logmsg << "Successfully read file: " << filepath << " (lines " << effective_from_line << "-" << (end_idx)
+               << "). " << partial_content.size() << " bytes.";
         llm.PrintMessage(logmsg, IconType::kSuccess);
         return Ok(partial_content);
     };
@@ -993,17 +994,23 @@ void PopulateBuiltInFunctions(FunctionTable& table)
 {
     table.Add(
         FunctionBuilder("ReadFileContent")
-            .SetDescription(wxString::Format("Retrieves a block of text from a file. Requires a filepath, a 1-indexed "
-                                             "starting line (from_line), and a line_count (must be between 1 and %d). "
-                                             "Returns the specified file content if successful.",
-                                             kMaxLinesToRead)
-                                .ToStdString(wxConvUTF8))
+            .SetDescription(
+                wxString::Format("Retrieves a block of text from a file. Requires a filepath. "
+                                 "Optionally accepts from_line (1-based starting line, defaults to 1) "
+                                 "and line_count (number of lines to read, must be between 1 and %d; "
+                                 "omit to read until end of file). "
+                                 "If both from_line and line_count are omitted, the entire file is returned.",
+                                 kMaxLinesToRead)
+                    .ToStdString(wxConvUTF8))
             .AddRequiredParam("filepath", "The path of the file to read.", "string")
-            .AddRequiredParam("from_line", "The starting line number to read from (1-based indexing).", "number")
-            .AddRequiredParam(
+            .AddOptionalParam("from_line",
+                              "The starting line number to read from (1-based indexing). Defaults to 1 when omitted.",
+                              "number")
+            .AddOptionalParam(
                 "line_count",
-                wxString::Format(
-                    "The number of lines to read from the starting line. Must be between 1 and %d.", kMaxLinesToRead)
+                wxString::Format("The number of lines to read from the starting line. Must be between 1 and %d. "
+                                 "Omit to read from from_line until the end of the file.",
+                                 kMaxLinesToRead)
                     .ToStdString(wxConvUTF8),
                 "number")
             // Force the limit using schema validation parameter

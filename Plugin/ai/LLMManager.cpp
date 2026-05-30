@@ -367,10 +367,13 @@ void Manager::WorkerMain()
             clDEBUG() << "Client (URL:" << client->GetUrl() << ", Model:" << client->GetModel()
                       << ") is processing the request" << endl;
             std::string prompt = task.prompt;
+            GetInstance().CompactIfNeeded(client, prompt);
             client->Chat(
                 std::move(prompt),
                 [client, cancellation_token, &saved_thinking_state, owner, &exit_with_success](
-                    std::string message, assistant::Reason reason, bool thinking) -> bool {
+                    std::string msg, assistant::Reason reason, bool thinking) -> bool {
+                    GetInstance().CompactIfNeeded(client, msg);
+
                     // Check various options that the chat was cancelled.
                     if (client->IsInterrupted() || (cancellation_token && cancellation_token->IsCancelled())) {
                         NotifyRequestCancelled(owner, "\n\n** Request cancelled by the user. **\n\n");
@@ -397,21 +400,20 @@ void Manager::WorkerMain()
                     case assistant::Reason::kToolDenied: {
                         clLLMEvent event{wxEVT_LLM_OUTPUT};
                         event.SetOutputReason(reason);
-                        event.SetResponseRaw(message);
+                        event.SetResponseRaw(msg);
                         owner->AddPendingEvent(event);
-                        client->Compact(kToolsResponseToKeep);
                     } break;
                     case assistant::Reason::kMaxTokensReached: {
                         clLLMEvent event{wxEVT_LLM_MAX_GENERATED_TOKENS};
                         event.SetOutputReason(reason);
-                        event.SetResponseRaw(message);
+                        event.SetResponseRaw(msg);
                         owner->AddPendingEvent(event);
                         exit_with_success = false;
                         return false;
                     } break;
                     case assistant::Reason::kFatalError: {
-                        clERROR() << "LLM response ended with an error:" << wxString::FromUTF8(message) << endl;
-                        NotifyDoneWithError(owner, message);
+                        clERROR() << "LLM response ended with an error:" << wxString::FromUTF8(msg) << endl;
+                        NotifyDoneWithError(owner, msg);
                         exit_with_success = false;
                         return false;
                     } break;
@@ -419,13 +421,12 @@ void Manager::WorkerMain()
                         // No more batches to process, fire the DONE event.
                         clLLMEvent event{wxEVT_LLM_OUTPUT_DONE};
                         event.SetOutputReason(reason);
-                        event.SetResponseRaw(message);
+                        event.SetResponseRaw(msg);
                         owner->AddPendingEvent(event);
                         exit_with_success = true;
-                        client->Compact(kToolsResponseToKeep);
                     } break;
                     case assistant::Reason::kLogNotice:
-                        clDEBUG1() << message << endl;
+                        clDEBUG1() << msg << endl;
                         break;
                     case assistant::Reason::kCancelled: {
                         NotifyRequestCancelled(owner, "\n\n** Request cancelled by caller. **\n\n");
@@ -433,15 +434,15 @@ void Manager::WorkerMain()
                         return false;
                     } break;
                     case assistant::Reason::kLogDebug:
-                        clDEBUG() << message << endl;
+                        clDEBUG() << msg << endl;
                         break;
                     case assistant::Reason::kRequestCost:
-                        clDEBUG() << message << endl;
+                        clDEBUG() << msg << endl;
                         break;
                     case assistant::Reason::kPartialResult: {
                         clLLMEvent event{wxEVT_LLM_OUTPUT};
                         event.SetOutputReason(reason);
-                        event.SetResponseRaw(message);
+                        event.SetResponseRaw(msg);
                         owner->AddPendingEvent(event);
                     } break;
                     }
@@ -464,7 +465,6 @@ void Manager::WorkerMain()
         }
         clLLMEvent idle_event{wxEVT_LLM_WORKER_IDLE};
         AddPendingEvent(idle_event);
-        client->Compact(kToolsResponseToKeep);
     } // Main Loop
 
     clDEBUG() << "LLM worker thread exited" << endl;
@@ -631,6 +631,16 @@ void Manager::Chat(wxEvtHandler* owner,
         .completion_handler = completion_handler,
     };
     PostTask(std::move(task));
+}
+
+void Manager::Compact()
+{
+    CHECK_PTR_RET(m_client);
+    static constexpr size_t kToolResponseToKeep = 3;
+    size_t trimmed = m_client->Compact(kToolResponseToKeep);
+    if (m_tokens > trimmed) {
+        m_tokens -= trimmed;
+    }
 }
 
 void Manager::RunSOP(wxEvtHandler* owner,
@@ -881,6 +891,7 @@ void Manager::ClearHistory()
     CHECK_PTR_RET(m_client);
     m_client->ClearHistoryMessages();
     m_client->SetLastRequestUsage({});
+    m_tokens = 0;
 }
 
 void Manager::ClearSystemMessages()
@@ -1781,5 +1792,12 @@ void Manager::AddFilesToContext(const wxArrayString& files)
     }
     text_message << "\n";
     llm_mgr.PrintMessage(text_message, IconType::kSuccess);
+}
+
+void Manager::CompactIfNeeded(std::shared_ptr<assistant::ClientBase> client, const std::string& msg)
+{
+    wxUnusedVar(client);
+    CHECK_PTR_RET(client);
+    m_tokens += assistant::CountTokens(msg);
 }
 } // namespace llm

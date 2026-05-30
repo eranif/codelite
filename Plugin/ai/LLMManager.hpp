@@ -232,6 +232,8 @@ public:
               ChatOptions options,
               std::shared_ptr<CompletionHandler> completion_handler = nullptr);
 
+    void Compact();
+
     void RunSOP(wxEvtHandler* owner,
                 const wxString& prompt,
                 const std::vector<std::pair<wxString, wxString>>& params,
@@ -601,6 +603,18 @@ public:
         return m_client->GetModel();
     }
 
+    size_t GetContextUsedTokens() const
+    {
+        CHECK_COND_RET_VAL(m_client, 0);
+        return m_tokens;
+    }
+
+    size_t GetTotalContextSize() const
+    {
+        CHECK_COND_RET_VAL(m_client, 0);
+        return m_client->GetContextSize();
+    }
+
     inline bool HasPricing() const { return m_client && m_client->GetPricing().has_value(); }
 
     /**
@@ -807,6 +821,8 @@ private:
     clStatusOr<wxString> CreateOrOpenConfig();
     clStatus ValidateConfigFile(std::optional<wxString> content = std::nullopt) const;
 
+    void CompactIfNeeded(std::shared_ptr<assistant::ClientBase> m_client, const std::string& msg);
+
     /**
      * @brief Replaces placeholder tokens in a ThreadTask's prompt array with their corresponding runtime values.
      *
@@ -873,6 +889,7 @@ private:
     std::atomic_bool m_initialise_called{false};
     TextGenerationPreviewFrame* m_commentGenerationView{nullptr};
     std::atomic_bool m_clientStopInProgress{false};
+    std::atomic_size_t m_tokens{0};
 };
 
 /**

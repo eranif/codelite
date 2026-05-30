@@ -108,6 +108,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     m_commandDispatchTable.emplace("/clear", [this]() { CallAfter(&ChatAIWindow::DoCommandClear); });
     m_commandDispatchTable.emplace("/context", [this]() { CallAfter(&ChatAIWindow::DoCommandContext); });
     m_commandDispatchTable.emplace("/save", [this]() { CallAfter(&ChatAIWindow::DoCommandSave); });
+    m_commandDispatchTable.emplace("/compact", [this]() { CallAfter(&ChatAIWindow::DoCompact); });
 
     // TODO: scan for all SOPs and register each as a separate command in the dispatch table.
     std::thread thr([this]() {
@@ -605,10 +606,9 @@ void ChatAIWindow::UpdateStatusBar()
     m_statusBar->SetStatusText(str, StatusBarIndex::kCost);
 
     str.Clear();
-    if (llm.GetLastRequestUsage()) {
-        auto usage = llm.GetLastRequestUsage();
-        str << _("Output tokens: ") << usage->output_tokens << _(", Input tokens: ") << usage->input_tokens
-            << _(", Cached tokens read: ") << usage->cache_read_input_tokens;
+    if (llm.GetContextUsedTokens() != 0 && llm.GetTotalContextSize() != 0) {
+        str << _("Used tokens: ") << llm.GetContextUsedTokens() << _(", Total context size: ")
+            << llm.GetTotalContextSize();
     }
     m_statusBar->SetStatusText(str, StatusBarIndex::kUsage);
     UpdateContextWindowUsage();
@@ -892,10 +892,19 @@ void ChatAIWindow::OnSaveSessionUI(wxUpdateUIEvent& event)
 
 void ChatAIWindow::UpdateContextWindowUsage()
 {
+    auto& llm = llm::Manager::GetInstance();
     int pos{0};
-    if (llm::Manager::GetInstance().GetUsage()) {
-        pos = static_cast<int>(llm::Manager::GetInstance().GetUsage()->GetPercentage());
-    }
+    auto CalcPercentage = [](size_t context_size, size_t used) -> size_t {
+        if (context_size == 0 || used == 0) {
+            return 0;
+        }
+
+        if (used >= context_size) {
+            return 100;
+        }
+        return static_cast<size_t>((static_cast<double>(used) / static_cast<double>(context_size)) * 100);
+    };
+    pos = CalcPercentage(llm.GetTotalContextSize(), llm.GetContextUsedTokens());
     m_gaugeContextUsed->SetValue(pos);
     m_gaugeContextUsed->SetToolTip(wxString() << _("Context Window Used: ") << pos << "%");
 }
@@ -906,6 +915,12 @@ void ChatAIWindow::DoCommandSave()
 {
     wxCommandEvent dummy;
     OnSaveSession(dummy);
+}
+
+void ChatAIWindow::DoCompact()
+{
+    llm::Manager::GetInstance().Compact();
+    UpdateStatusBar();
 }
 
 void ChatAIWindow::DoRunSop(const SopInfo& sop)

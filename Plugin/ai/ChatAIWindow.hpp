@@ -168,6 +168,7 @@ protected:
     void DoCommandClear();
     void DoCommandContext();
     void DoCommandSave();
+    void DoCompact();
     void DoRunSop(const SopInfo& sop);
 
     void ShowIndicator(bool show);

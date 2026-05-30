@@ -51,8 +51,7 @@ WXDLLIMPEXP_SDK CanInvokeToolResult ConfirmPathTool(const std::string& tool_name
                                                     const wxString& prompt_text,
                                                     const wxString& trusted_text,
                                                     const std::string& filepath_utf8,
-                                                    std::function<CanInvokeToolResult()> validator = nullptr,
-                                                    const wxString& purpose = wxEmptyString);
+                                                    std::function<CanInvokeToolResult()> validator = nullptr);
 
 /**
  * Truncates a stdout string to a specified maximum number of lines.

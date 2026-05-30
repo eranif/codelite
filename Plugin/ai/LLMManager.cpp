@@ -1383,6 +1383,21 @@ void Manager::EnableFunctionByName(const wxString& name, bool b)
     m_client->GetFunctionTable().EnableFunction(name.ToStdString(wxConvUTF8), b);
 }
 
+std::vector<std::pair<wxString, bool>> Manager::GetAllFunctions() const
+{
+    std::vector<std::pair<wxString, bool>> result;
+    if (!m_client) {
+        return result;
+    }
+
+    auto functions = m_client->GetFunctionTable().GetAllFunctions();
+    result.reserve(functions.size());
+    for (const auto& [name, enabled] : functions) {
+        result.emplace_back(wxString::FromUTF8(name), enabled);
+    }
+    return result;
+}
+
 void Manager::ShowChatWindow(const wxString& prompt) { m_chatAI->ShowChatWindow(prompt); }
 
 void Manager::ShowTextGenerationDialog(const wxString& prompt,

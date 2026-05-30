@@ -137,6 +137,7 @@ protected:
     void OnSaveSessionUI(wxUpdateUIEvent& event);
     void OnLoadSessionUI(wxUpdateUIEvent& event);
     void OnRestartClient(wxCommandEvent& event);
+    void ShowToolsDialog(wxCommandEvent& event);
     void UpdateTheme();
     void DoSendPrompt();
     void SetFocusToActiveEditor();

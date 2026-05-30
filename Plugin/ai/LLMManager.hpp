@@ -523,6 +523,16 @@ public:
     void EnableFunctionByName(const wxString& name, bool b);
 
     /**
+     * @brief Returns a list of all registered function names and their enabled states.
+     *
+     * This method retrieves all functions from the client's function table and returns
+     * a vector of pairs containing each function's name and its current enabled state.
+     *
+     * @return A vector of pairs (name, enabled) for all registered functions.
+     */
+    std::vector<std::pair<wxString, bool>> GetAllFunctions() const;
+
+    /**
      * @brief Shows a text generation dialog and streams AI-generated text to a preview frame.
      *
      * This method initiates an asynchronous chat session with the AI assistant, displays a progress

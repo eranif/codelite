@@ -185,7 +185,7 @@ bool wxcApp::OnInit()
                 if (!outputDirStr.empty()) {
                     wxcProjectMetadata::Get().SetGeneratedFilesDir(outputDirStr);
                 }
-                wxcView->DoGenerateCode(true);
+                wxcView->DoGenerateCode(InteractionMode::HideDialogs, SaveMode::DontSave);
             } else {
                 return false;
             }

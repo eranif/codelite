@@ -46,6 +46,9 @@ extern const wxEventType wxEVT_TREE_ITEM_SELECTED;
 extern const wxEventType wxEVT_SHOW_CONTEXT_MENU;
 extern const wxEventType wxEVT_DELETE_CONTROL;
 
+enum class InteractionMode : bool { HideDialogs, ShowDialogs };
+enum class SaveMode : bool { SaveBeforeGeneration, DontSave };
+
 class GUICraftItemData : public wxTreeItemData
 {
 public:
@@ -150,11 +153,13 @@ protected:
     wxTreeItemId DoFindItemByWxcWidget(wxcWidget* widget, const wxTreeItemId& item) const;
 
 public:
+
     /**
      * @brief generate the code for the current project
-     * @param silent if set to true, disable all dialog messages
+     * @param interactionMode disable or show all dialog messages
+     * @param save if set to On, save before generation
      */
-    void DoGenerateCode(bool silent);
+    void DoGenerateCode(InteractionMode interactionMode, SaveMode save);
 
     GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, clTreeCtrl* treeView);
     ~GUICraftMainPanel() override;

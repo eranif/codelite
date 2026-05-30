@@ -42,6 +42,8 @@ namespace llm
 namespace
 {
 constexpr float kConfigVersion = 1.0;
+constexpr size_t kToolsResponseToKeep = 5;
+
 constexpr const char* kConfigVersionProperty = "_version";
 static const std::string kSystemMessageAgenticLoop = R"#(You are operating in an autonomous agentic loop. "
     "After every tool result, you MUST continue working toward the original goal. "
@@ -397,6 +399,7 @@ void Manager::WorkerMain()
                         event.SetOutputReason(reason);
                         event.SetResponseRaw(message);
                         owner->AddPendingEvent(event);
+                        client->Compact(kToolsResponseToKeep);
                     } break;
                     case assistant::Reason::kMaxTokensReached: {
                         clLLMEvent event{wxEVT_LLM_MAX_GENERATED_TOKENS};
@@ -419,6 +422,7 @@ void Manager::WorkerMain()
                         event.SetResponseRaw(message);
                         owner->AddPendingEvent(event);
                         exit_with_success = true;
+                        client->Compact(kToolsResponseToKeep);
                     } break;
                     case assistant::Reason::kLogNotice:
                         clDEBUG1() << message << endl;
@@ -460,8 +464,9 @@ void Manager::WorkerMain()
         }
         clLLMEvent idle_event{wxEVT_LLM_WORKER_IDLE};
         AddPendingEvent(idle_event);
-
+        client->Compact(kToolsResponseToKeep);
     } // Main Loop
+
     clDEBUG() << "LLM worker thread exited" << endl;
     worker_thread_running->store(false);
     m_worker_busy.store(false);

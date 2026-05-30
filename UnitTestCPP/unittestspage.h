@@ -28,7 +28,7 @@
 
 #include "clWorkspaceEvent.hpp"
 #include "unittestcppoutputparser.h"
-#include "unittestreport.h"
+#include "unittestreport.hpp"
 
 class IManager;
 

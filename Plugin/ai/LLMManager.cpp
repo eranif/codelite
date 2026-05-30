@@ -807,6 +807,19 @@ void Manager::Start(std::shared_ptr<assistant::ClientBase> client)
     // Add external MCP tools.
     m_client->GetFunctionTable().ReloadMCPServers(&m_client_config);
 
+    // Apply saved per-tool states from config
+    auto& config = GetConfig();
+    auto tool_states = config.GetAllToolStates();
+    if (!tool_states.empty()) {
+        for (const auto& [name, enabled] : tool_states) {
+            m_client->GetFunctionTable().EnableFunction(name, enabled);
+        }
+    }
+    // If the global tools flag is disabled, disable all functions
+    if (!config.AreToolsEnabled()) {
+        m_client->GetFunctionTable().EnableAll(false);
+    }
+
     // Check if this is a stock model and associate the pricing for it.
     auto active_endpoint = m_client_config.GetEndpoint();
     if (active_endpoint) {

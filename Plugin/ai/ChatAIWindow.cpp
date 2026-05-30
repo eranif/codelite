@@ -26,9 +26,9 @@
 #include "wxCustomControls.hpp"
 
 #include <algorithm>
+#include <wx/checklst.h>
 #include <wx/dir.h>
 #include <wx/filedlg.h>
-#include <wx/checklst.h>
 #include <wx/msgdlg.h>
 
 namespace
@@ -216,9 +216,7 @@ void ChatAIWindow::OnOptions(wxAuiToolBarEvent& event)
     auto functions = llm_manager.GetAllFunctions();
     if (!functions.empty()) {
         menu.Append(XRCID("wxID_TOOLS_CONFIGURE"), _("Configure MCP Tools..."));
-        menu.Bind(
-            wxEVT_MENU, &ChatAIWindow::ShowToolsDialog, this,
-            XRCID("wxID_TOOLS_CONFIGURE"));
+        menu.Bind(wxEVT_MENU, &ChatAIWindow::ShowToolsDialog, this, XRCID("wxID_TOOLS_CONFIGURE"));
     } else {
         // Fallback to the old behavior if no functions are available
         menu.Append(XRCID("wxID_TOOLS_ENABLED"), _("Enable MCP Tools"), wxEmptyString, wxITEM_CHECK)
@@ -315,7 +313,11 @@ void ChatAIWindow::ShowToolsDialog(wxCommandEvent& event)
     }
 
     // Create the dialog
-    wxDialog dlg(this, wxID_ANY, _("Configure MCP Tools"), wxDefaultPosition, wxDefaultSize,
+    wxDialog dlg(this,
+                 wxID_ANY,
+                 _("Configure MCP Tools"),
+                 wxDefaultPosition,
+                 wxDefaultSize,
                  wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -383,18 +385,19 @@ void ChatAIWindow::ShowToolsDialog(wxCommandEvent& event)
     if (dlg.ShowModal() == wxID_OK) {
         // Apply individual tool changes
         bool any_enabled = false;
+        auto& conf = llm_manager.GetConfig();
         for (size_t i = 0; i < functions.size(); ++i) {
             bool is_checked = check_list->IsChecked(i);
             if (is_checked) {
                 any_enabled = true;
             }
+            conf.SetToolEnabled(functions[i].first, is_checked);
             if (functions[i].second != is_checked) {
                 llm_manager.EnableFunctionByName(functions[i].first, is_checked);
             }
         }
 
         // Update the global "tools enabled" flag based on whether any tool is enabled
-        auto& conf = llm_manager.GetConfig();
         conf.SetToolsEnabled(any_enabled);
         conf.Save(false);
     }

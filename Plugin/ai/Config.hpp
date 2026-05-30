@@ -205,6 +205,32 @@ public:
     inline bool AreToolsEnabled() const { return m_enableTools.load(); }
     inline void SetToolsEnabled(bool b) { m_enableTools.store(b); }
 
+    /**
+     * @brief Checks whether a specific tool is enabled in the configuration.
+     *
+     * If the tool has no explicit state stored, returns the default value.
+     *
+     * @param toolname The name of the tool to check.
+     * @param default_value The value to return if no state is stored for this tool.
+     * @return bool The enabled state of the tool.
+     */
+    bool IsToolEnabled(const wxString& toolname, bool default_value = true) const;
+
+    /**
+     * @brief Sets the enabled state for a specific tool.
+     *
+     * @param toolname The name of the tool.
+     * @param enabled The new enabled state.
+     */
+    void SetToolEnabled(const wxString& toolname, bool enabled);
+
+    /**
+     * @brief Returns all stored tool enabled states.
+     *
+     * @return std::map<std::string, bool> Map of tool names to their enabled states.
+     */
+    std::map<std::string, bool> GetAllToolStates() const;
+
     bool IsBuiltInPrompt(const wxString& prompt) const;
     bool IsPromptExists(const wxString& prompt) const
     {
@@ -234,6 +260,7 @@ private:
     std::map<std::string, std::vector<std::string>> m_persistingTrustedTools GUARDED_BY(m_mutex);
     std::map<std::string, std::vector<std::string>> m_transientTrustedTools GUARDED_BY(m_mutex);
     std::atomic_bool m_enableTools{true};
+    std::map<std::string, bool> m_toolStates GUARDED_BY(m_mutex);
     wxString m_cachingPolicy GUARDED_BY(m_mutex){llm::kCacheAuto};
 };
 } // namespace llm

@@ -92,6 +92,7 @@ clStatus Config::Load()
         m_cachingPolicy = ReadValue<std::string>(json, "caching_policy", llm::kCacheAuto.ToStdString(wxConvUTF8));
         m_persistingTrustedTools = ReadValue(json, "trusted_tools", decltype(m_persistingTrustedTools){});
         m_enableTools = ReadValue<bool>(json, "enable_tools", true);
+        m_toolStates = ReadValue(json, "tool_states", decltype(m_toolStates){});
 
     } catch (const std::exception& e) {
         wxString errmsg;
@@ -135,6 +136,7 @@ void Config::Save(bool save_prompts)
     j["enable_tools"] = m_enableTools.load();
     j["caching_policy"] = m_cachingPolicy.ToStdString(wxConvUTF8);
     j["trusted_tools"] = m_persistingTrustedTools;
+    j["tool_states"] = m_toolStates;
 
     wxString content = wxString::FromUTF8(j.dump(2));
     if (FileUtils::WriteFileContent(GetFullPath(), content, wxConvUTF8)) {
@@ -304,6 +306,28 @@ clStatusOr<wxString> Config::ReadPromptFromFile(const wxString& label) const
         return StatusIOError("Read error");
     }
     return content;
+}
+
+bool Config::IsToolEnabled(const wxString& toolname, bool default_value) const
+{
+    std::scoped_lock lk{m_mutex};
+    auto it = m_toolStates.find(toolname.ToStdString(wxConvUTF8));
+    if (it == m_toolStates.end()) {
+        return default_value;
+    }
+    return it->second;
+}
+
+void Config::SetToolEnabled(const wxString& toolname, bool enabled)
+{
+    std::scoped_lock lk{m_mutex};
+    m_toolStates[toolname.ToStdString(wxConvUTF8)] = enabled;
+}
+
+std::map<std::string, bool> Config::GetAllToolStates() const
+{
+    std::scoped_lock lk{m_mutex};
+    return m_toolStates;
 }
 
 } // namespace llm

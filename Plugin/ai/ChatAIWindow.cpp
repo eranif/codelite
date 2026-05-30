@@ -315,7 +315,7 @@ void ChatAIWindow::ShowToolsDialog(wxCommandEvent& event)
     }
 
     // Create the dialog
-    wxDialog dlg(this, wxID_ANY, _("Configure MCP Tools"), wxDefaultPosition, wxSize(500, 450),
+    wxDialog dlg(this, wxID_ANY, _("Configure MCP Tools"), wxDefaultPosition, wxDefaultSize,
                  wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
     wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
 
@@ -377,8 +377,8 @@ void ChatAIWindow::ShowToolsDialog(wxCommandEvent& event)
     main_sizer->Add(btn_sizer, 0, wxALL | wxALIGN_CENTER, 5);
 
     dlg.SetSizer(main_sizer);
-    dlg.Layout();
-    dlg.CenterOnParent();
+    main_sizer->Fit(&dlg);
+    clSetDialogBestSizeAndPosition(dlg);
 
     if (dlg.ShowModal() == wxID_OK) {
         // Apply individual tool changes

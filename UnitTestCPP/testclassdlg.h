@@ -27,7 +27,7 @@
 #define __testclassdlg__
 
 #include "database/entry.h"
-#include "testclassbasedlg.h"
+#include "testclassbasedlg.hpp"
 
 #include <unordered_map>
 #include <vector>

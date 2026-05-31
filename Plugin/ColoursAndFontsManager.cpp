@@ -608,18 +608,19 @@ void ColoursAndFontsManager::RestoreDefaults()
     wxFont font = GetGlobalFont();
     wxString globalTheme = GetGlobalTheme();
 
-    // First we delete the user settings
-    {
+    wxFileName fnInstallLexers(clStandardPaths::Get().GetDataDir(), "lexers.json");
+    fnInstallLexers.AppendDir("lexers");
+
+    if (!fnInstallLexers.FileExists()) {
+        clWARNING() << "Could not locate default lexers JSON file. A broken installation?" << endl;
+
+    } else {
         wxLogNull noLog;
         wxFileName fnLexersJSON(clStandardPaths::Get().GetUserLexersDir(), "lexers.json");
         if (fnLexersJSON.Exists()) {
             clINFO() << "Deleting user setting file:" << fnLexersJSON.GetFullPath() << endl;
             clRemoveFile(fnLexersJSON.GetFullPath());
         }
-
-        // Copy the global settings to be the new local file.
-        wxFileName fnInstallLexers(clStandardPaths::Get().GetDataDir(), "lexers.json");
-        fnInstallLexers.AppendDir("lexers");
 
         bool result = ::wxCopyFile(fnInstallLexers.GetFullPath(), fnLexersJSON.GetFullPath(), true);
         if (result) {

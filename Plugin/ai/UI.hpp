@@ -15,15 +15,15 @@
 #include <wx/artprov.h>
 #include <wx/sizer.h>
 #include <wx/splitter.h>
+#include <wx/pen.h>
+#include <wx/aui/auibar.h>
+#include <map>
+#include <wx/menu.h>
 #include <wx/gauge.h>
 #include <wx/stc/stc.h>
 #include "clThemedSTC.hpp"
 #include <wx/stattext.h>
 #include <wx/button.h>
-#include <wx/pen.h>
-#include <wx/aui/auibar.h>
-#include <map>
-#include <wx/menu.h>
 #include <wx/frame.h>
 #include <wx/iconbndl.h>
 #include <wx/wizard.h>
@@ -60,6 +60,7 @@ class AssistanceAIChatWindowBase : public wxPanel
 protected:
     wxSplitterWindow* m_mainSplitter;
     wxPanel* m_splitterPageTop;
+    wxAuiToolBar* m_toolbar;
     wxGauge* m_gaugeContextUsed;
     clThemedSTC* m_stcOutput;
     wxPanel* m_panelConfirmation;
@@ -68,7 +69,6 @@ protected:
     wxButton* m_buttonNo;
     wxButton* m_buttonTrust;
     wxPanel* m_splitterPageBottom;
-    wxAuiToolBar* m_toolbar;
     clThemedSTC* m_stcInput;
 
 protected:
@@ -78,6 +78,7 @@ protected:
     virtual void OnInputUI(wxUpdateUIEvent& event) { event.Skip(); }
 
 public:
+    wxAuiToolBar* GetToolbar() { return m_toolbar; }
     wxGauge* GetGaugeContextUsed() { return m_gaugeContextUsed; }
     clThemedSTC* GetStcOutput() { return m_stcOutput; }
     wxStaticText* GetStaticText237() { return m_staticText237; }
@@ -86,7 +87,6 @@ public:
     wxButton* GetButtonTrust() { return m_buttonTrust; }
     wxPanel* GetPanelConfirmation() { return m_panelConfirmation; }
     wxPanel* GetSplitterPageTop() { return m_splitterPageTop; }
-    wxAuiToolBar* GetToolbar() { return m_toolbar; }
     clThemedSTC* GetStcInput() { return m_stcInput; }
     wxPanel* GetSplitterPageBottom() { return m_splitterPageBottom; }
     wxSplitterWindow* GetMainSplitter() { return m_mainSplitter; }

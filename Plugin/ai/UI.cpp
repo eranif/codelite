@@ -51,6 +51,15 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
     wxBoxSizer* boxSizer35 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageTop->SetSizer(boxSizer35);
 
+    m_toolbar = new wxAuiToolBar(m_splitterPageTop,
+                                 wxID_ANY,
+                                 wxDefaultPosition,
+                                 wxDLG_UNIT(m_splitterPageTop, wxSize(-1, -1)),
+                                 wxAUI_TB_DEFAULT_STYLE);
+    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
+
+    boxSizer35->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
+
     m_gaugeContextUsed = new wxGauge(m_splitterPageTop,
                                      wxID_ANY,
                                      100,
@@ -149,15 +158,6 @@ AssistanceAIChatWindowBase::AssistanceAIChatWindowBase(
 
     wxBoxSizer* boxSizer43 = new wxBoxSizer(wxVERTICAL);
     m_splitterPageBottom->SetSizer(boxSizer43);
-
-    m_toolbar = new wxAuiToolBar(m_splitterPageBottom,
-                                 wxID_ANY,
-                                 wxDefaultPosition,
-                                 wxDLG_UNIT(m_splitterPageBottom, wxSize(-1, -1)),
-                                 wxAUI_TB_DEFAULT_STYLE);
-    m_toolbar->SetToolBitmapSize(wxSize(16, 16));
-
-    boxSizer43->Add(m_toolbar, 0, wxEXPAND, WXC_FROM_DIP(5));
 
     m_stcInput = new clThemedSTC(
         m_splitterPageBottom, wxID_ANY, wxDefaultPosition, wxDLG_UNIT(m_splitterPageBottom, wxSize(-1, -1)), 0);

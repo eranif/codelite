@@ -142,7 +142,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     m_inputEditHelper = std::make_unique<clEditEventsHandler>(m_stcInput);
     m_outputEditHelper = std::make_unique<clEditEventsHandler>(m_stcOutput);
 
-    m_stcInput->SetToolTip(_("Hit Ctrl-ENTER to submit.\nType / to see list of commands"));
+    m_stcInput->SetToolTip(_("Hit Shift+ENTER to submit.\nType / to see list of commands"));
 
     clAuiToolBarArt::AddTool(m_toolbar, wxID_OPEN, _("Load Chat"), images->LoadBitmap("file_open"));
     clAuiToolBarArt::AddTool(m_toolbar, wxID_SAVE, _("Save Chat"), images->LoadBitmap("file_save"));

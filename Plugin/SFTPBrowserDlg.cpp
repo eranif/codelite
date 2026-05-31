@@ -404,7 +404,7 @@ void SFTPBrowserDlg::OnSSHAccountManager(wxCommandEvent& event)
 
 void SFTPBrowserDlg::ClearView()
 {
-    for (size_t i = 0; i < m_dataview->GetItemCount(); ++i) {
+    for (size_t i = 0; i < static_cast<size_t>(m_dataview->GetItemCount()); ++i) {
         SFTPBrowserEntryClientData* cd = DoGetItemData(m_dataview->RowToItem(i));
         wxDELETE(cd);
     }

@@ -1106,9 +1106,9 @@ void Manager::AddNewEndpoint(const llm::EndpointData& d)
             http_headers["Authorization"] = "Bearer " + d.api_key.value_or("<INSERT_API_KEY>");
             new_endpoint["http_headers"] = http_headers;
             new_endpoint["verify_server_ssl"] = false;
-            new_endpoint["auto_compact_threshold"] = 100000;
         }
 
+        new_endpoint["auto_compact_threshold"] = 50000; // Client side compaction.
         new_endpoint["type"] = d.client_type;
         new_endpoint["model"] = d.model;
         new_endpoint["models"] = std::vector{d.model};

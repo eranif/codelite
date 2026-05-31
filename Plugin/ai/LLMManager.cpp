@@ -33,9 +33,9 @@
         return;                   \
     }
 
-#define CEHCK_SHUTDOWN_IN_PROGRESS()              \
-    if (clGetManager()->IsShutdownInProgress()) { \
-        return;                                   \
+#define CEHCK_SHUTDOWN_IN_PROGRESS() \
+    if (::IsShutdownInProgress()) {  \
+        return;                      \
     }
 
 namespace llm
@@ -1217,14 +1217,18 @@ void Manager::OnFileSaved(clCommandEvent& event)
 {
     event.Skip();
     CEHCK_SHUTDOWN_IN_PROGRESS();
-    CHECK_PTR_RET(clGetManager()->GetActiveEditor());
+
+    auto* mgr = clGetManager();
+    CHECK_PTR_RET(mgr);
+    CHECK_PTR_RET(mgr->GetActiveEditor());
+
+    wxString filepath = mgr->GetActiveEditor()->GetRemotePathOrLocal();
 
     {
         // assistant.json file.?
         wxString llm_config_file =
             FileManager::GetSettingFileFullPath(kAssistantConfigFile, WriteOptions{.ignore_workspace = true});
 
-        wxString filepath = clGetManager()->GetActiveEditor()->GetRemotePathOrLocal();
         if (filepath == llm_config_file) {
             HandleConfigFileUpdated();
         }
@@ -1234,7 +1238,6 @@ void Manager::OnFileSaved(clCommandEvent& event)
         // ~/.codelite/config/assistant-global-settings.json file.?
         wxFileName global_agent_config{llm::Config::GetFullPath()};
 
-        wxString filepath = clGetManager()->GetActiveEditor()->GetRemotePathOrLocal();
         if (filepath == global_agent_config.GetFullPath()) {
             // Add validation
             llm::Config tmp_config;
@@ -1248,7 +1251,7 @@ void Manager::OnFileSaved(clCommandEvent& event)
         }
     }
 
-    clGetManager()->GetActiveEditor()->GetCtrl()->CallAfter(&wxWindow::SetFocus);
+    mgr->GetActiveEditor()->GetCtrl()->CallAfter(&wxWindow::SetFocus);
 }
 
 /**

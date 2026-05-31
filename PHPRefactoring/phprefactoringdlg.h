@@ -1,6 +1,6 @@
 #ifndef PHPREFACTORINGDLG_H
 #define PHPREFACTORINGDLG_H
-#include "phprefactoringdlgbase.h"
+#include "phprefactoringdlgbase.hpp"
 #include "phprefactoringoptions.h"
 
 class IManager;

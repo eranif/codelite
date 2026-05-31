@@ -817,7 +817,7 @@ void GUICraftMainPanel::OnStyleChanged(wxPropertyGridEvent& event)
 void GUICraftMainPanel::OnGenerateCode(wxCommandEvent& e)
 {
     wxUnusedVar(e);
-    DoGenerateCode(false);
+    DoGenerateCode(InteractionMode::ShowDialogs, SaveMode::SaveBeforeGeneration);
 }
 
 bool GUICraftMainPanel::GenerateCppOutput(
@@ -3085,10 +3085,10 @@ void GUICraftMainPanel::OnAuiPaneInfoChanged(wxPropertyGridEvent& event)
     m_auiPaneInfo.Changed(m_pgMgrAuiProperties->GetGrid(), event);
 }
 
-void GUICraftMainPanel::DoGenerateCode(bool silent)
+void GUICraftMainPanel::DoGenerateCode(InteractionMode interactionMode, SaveMode saveMode)
 {
     if (!wxcProjectMetadata::Get().GetGenerateCPPCode() && !wxcProjectMetadata::Get().GetGenerateXRC()) {
-        if (silent) {
+        if (interactionMode == InteractionMode::HideDialogs) {
             return;
         }
         wxString msg;
@@ -3100,7 +3100,7 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
     wxFileName outputDir(wxcProjectMetadata::Get().GetGeneratedFilesDir(), "");
     wxCrafter::MakeAbsToProject(outputDir);
     if (!outputDir.DirExists()) {
-        if (silent) {
+        if (interactionMode == InteractionMode::HideDialogs) {
             return;
         }
         wxString msg;
@@ -3111,7 +3111,7 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
     }
 
     if (wxcProjectMetadata::Get().GetProjectFile().IsEmpty()) {
-        if (silent) {
+        if (interactionMode == InteractionMode::HideDialogs) {
             return;
         }
         wxString msg;
@@ -3120,10 +3120,12 @@ void GUICraftMainPanel::DoGenerateCode(bool silent)
         return;
     }
 
-    // Always save the project when generating code
-    // even if its not modified
-    wxCommandEvent dummy;
-    OnSaveProject(dummy);
+    if (saveMode == SaveMode::SaveBeforeGeneration)
+    {
+        // save the project when generating code even if its not modified
+        wxCommandEvent dummy;
+        OnSaveProject(dummy);
+    }
 
     // Loop over the top level windows and generate their base classes
     wxArrayString headers;
@@ -3324,7 +3326,7 @@ void GUICraftMainPanel::BatchGenerate(const wxArrayString& files)
             wxString fileContent;
             if (FileUtils::ReadFileContent(filename, fileContent)) {
                 LoadProject(filename, fileContent);
-                DoGenerateCode(true);
+                DoGenerateCode(InteractionMode::HideDialogs, SaveMode::SaveBeforeGeneration);
                 projectsGenerated.Add(filename);
             }
         }

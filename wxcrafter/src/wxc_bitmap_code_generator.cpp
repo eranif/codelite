@@ -103,7 +103,6 @@ bool wxcCodeGeneratorHelper::CreateXRC()
         EventNotifier::Get()->AddPendingEvent(evtUpdateDesigner);
     }
 
-#if !defined(__WXMAC__)
     if (wxCrafter::IsTheSame(outputString, m_xrcFile) && m_destCPP.FileExists() && !isBitmapModifiedOutside) {
         // the XRC used to generate the file is the same as the new one
         // and we got a CPP file - skip the code generation
@@ -112,7 +111,7 @@ bool wxcCodeGeneratorHelper::CreateXRC()
         EventNotifier::Get()->AddPendingEvent(eventEnd);
         return true;
     }
-#endif
+
     if (!doc.Save(m_xrcFile.GetFullPath())) {
         return false;
     }

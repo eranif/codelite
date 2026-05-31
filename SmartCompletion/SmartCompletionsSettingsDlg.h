@@ -1,7 +1,7 @@
 #ifndef SMARTCOMPLETIONSSETTINGSDLG_H
 #define SMARTCOMPLETIONSSETTINGSDLG_H
 #include "SmartCompletionsConfig.h"
-#include "SmartCompletionsUI.h"
+#include "SmartCompletionsUI.hpp"
 
 class SmartCompletionsSettingsDlg : public SmartCompletionsSettingsBaseDlg
 {

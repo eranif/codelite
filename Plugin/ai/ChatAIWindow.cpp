@@ -42,6 +42,96 @@ enum StatusBarIndex {
     kProgress,
     kLast,
 };
+
+class MCPSelectorDialog : public wxDialog
+{
+public:
+    MCPSelectorDialog()
+        : wxDialog(EventNotifier::Get()->TopFrame(),
+                   wxID_ANY,
+                   _("Configure MCP Tools"),
+                   wxDefaultPosition,
+                   wxDefaultSize,
+                   wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER)
+    {
+        wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
+
+        // Add "Enable All" checkbox at the top
+        wxCheckBox* chk_enable_all = new wxCheckBox(this, wxID_ANY, _("Enable All Tools"));
+        auto functions = llm::Manager::GetInstance().GetAllFunctions();
+        // Set initial state based on whether all items are currently enabled
+        bool all_enabled = true;
+        for (const auto& [name, enabled] : functions) {
+            if (!enabled) {
+                all_enabled = false;
+                break;
+            }
+        }
+        chk_enable_all->SetValue(all_enabled);
+        main_sizer->Add(chk_enable_all, 0, wxALL | wxEXPAND, 5);
+        // Add separator line
+        main_sizer->Add(new wxStaticLine(this), 0, wxALL | wxEXPAND, 5);
+
+        // Add check list box for individual tools
+        wxArrayString choices;
+        wxArrayInt checked_indices;
+        for (size_t i = 0; i < functions.size(); ++i) {
+            choices.Add(functions[i].first);
+            if (functions[i].second) {
+                checked_indices.Add(i);
+            }
+        }
+
+        m_checkList = new wxCheckListBox(this, wxID_ANY, wxDefaultPosition, wxDefaultSize, choices);
+        for (size_t i = 0; i < checked_indices.size(); ++i) {
+            m_checkList->Check(checked_indices[i]);
+        }
+        main_sizer->Add(m_checkList, 1, wxALL | wxEXPAND, 5);
+
+        // When "Enable All" is toggled, check/uncheck all items in the list
+        chk_enable_all->Bind(wxEVT_CHECKBOX, [this, chk_enable_all](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            bool enable = chk_enable_all->GetValue();
+            for (size_t i = 0; i < m_checkList->GetCount(); ++i) {
+                m_checkList->Check(i, enable);
+            }
+        });
+
+        // When an individual item is toggled, update "Enable All" checkbox accordingly
+        m_checkList->Bind(wxEVT_CHECKLISTBOX, [this, chk_enable_all](wxCommandEvent& e) {
+            wxUnusedVar(e);
+            bool all_checked = true;
+            for (size_t i = 0; i < m_checkList->GetCount(); ++i) {
+                all_checked &= m_checkList->IsChecked(i);
+            }
+            chk_enable_all->SetValue(all_checked);
+        });
+
+        // Add OK/Cancel buttons
+        wxStdDialogButtonSizer* btn_sizer = new wxStdDialogButtonSizer();
+        m_buttonOk = new wxButton(this, wxID_OK);
+        m_buttonCancel = new wxButton(this, wxID_CANCEL);
+        btn_sizer->AddButton(m_buttonOk);
+        btn_sizer->AddButton(m_buttonCancel);
+        btn_sizer->Realize();
+        main_sizer->Add(btn_sizer, 0, wxALL | wxALIGN_CENTER, 5);
+        m_buttonOk->SetDefault();
+
+        SetSizer(main_sizer);
+        main_sizer->Fit(this);
+        m_checkList->CallAfter(&wxCheckListBox::SetFocus);
+        clSetDialogBestSizeAndPosition(*this);
+    }
+
+    ~MCPSelectorDialog() override = default;
+
+    wxCheckListBox* GetCheckList() { return m_checkList; }
+
+private:
+    wxCheckListBox* m_checkList{nullptr};
+    wxButton* m_buttonOk{nullptr};
+    wxButton* m_buttonCancel{nullptr};
+};
 } // namespace
 
 ChatAIWindow::ChatAIWindow(wxWindow* parent)
@@ -312,95 +402,28 @@ void ChatAIWindow::ShowToolsDialog(wxCommandEvent& event)
         return;
     }
 
-    // Create the dialog
-    wxDialog dlg(this,
-                 wxID_ANY,
-                 _("Configure MCP Tools"),
-                 wxDefaultPosition,
-                 wxDefaultSize,
-                 wxDEFAULT_DIALOG_STYLE | wxRESIZE_BORDER);
-    wxBoxSizer* main_sizer = new wxBoxSizer(wxVERTICAL);
-
-    // Add "Enable All" checkbox at the top
-    wxCheckBox* chk_enable_all = new wxCheckBox(&dlg, wxID_ANY, _("Enable All Tools"));
-    // Set initial state based on whether all items are currently enabled
-    bool all_enabled = true;
-    for (const auto& [name, enabled] : functions) {
-        if (!enabled) {
-            all_enabled = false;
-            break;
-        }
+    MCPSelectorDialog dlg{};
+    if (dlg.ShowModal() != wxID_OK) {
+        return;
     }
-    chk_enable_all->SetValue(all_enabled);
-    main_sizer->Add(chk_enable_all, 0, wxALL | wxEXPAND, 5);
-    // Add separator line
-    main_sizer->Add(new wxStaticLine(&dlg), 0, wxALL | wxEXPAND, 5);
 
-    // Add check list box for individual tools
-    wxArrayString choices;
-    wxArrayInt checked_indices;
+    // Apply individual tool changes
+    bool any_enabled = false;
+    auto& conf = llm_manager.GetConfig();
     for (size_t i = 0; i < functions.size(); ++i) {
-        choices.Add(functions[i].first);
-        if (functions[i].second) {
-            checked_indices.Add(i);
+        bool is_checked = dlg.GetCheckList()->IsChecked(i);
+        if (is_checked) {
+            any_enabled = true;
+        }
+        conf.SetToolEnabled(functions[i].first, is_checked);
+        if (functions[i].second != is_checked) {
+            llm_manager.EnableFunctionByName(functions[i].first, is_checked);
         }
     }
 
-    wxCheckListBox* check_list = new wxCheckListBox(&dlg, wxID_ANY, wxDefaultPosition, wxDefaultSize, choices);
-    for (size_t i = 0; i < checked_indices.size(); ++i) {
-        check_list->Check(checked_indices[i]);
-    }
-    main_sizer->Add(check_list, 1, wxALL | wxEXPAND, 5);
-
-    // When "Enable All" is toggled, check/uncheck all items in the list
-    chk_enable_all->Bind(wxEVT_CHECKBOX, [check_list, chk_enable_all](wxCommandEvent& e) {
-        wxUnusedVar(e);
-        bool enable = chk_enable_all->GetValue();
-        for (size_t i = 0; i < check_list->GetCount(); ++i) {
-            check_list->Check(i, enable);
-        }
-    });
-
-    // When an individual item is toggled, update "Enable All" checkbox accordingly
-    check_list->Bind(wxEVT_CHECKLISTBOX, [check_list, chk_enable_all](wxCommandEvent& e) {
-        wxUnusedVar(e);
-        bool all_checked = true;
-        for (size_t i = 0; i < check_list->GetCount(); ++i) {
-            all_checked &= check_list->IsChecked(i);
-        }
-        chk_enable_all->SetValue(all_checked);
-    });
-
-    // Add OK/Cancel buttons
-    wxStdDialogButtonSizer* btn_sizer = new wxStdDialogButtonSizer();
-    btn_sizer->AddButton(new wxButton(&dlg, wxID_OK));
-    btn_sizer->AddButton(new wxButton(&dlg, wxID_CANCEL));
-    btn_sizer->Realize();
-    main_sizer->Add(btn_sizer, 0, wxALL | wxALIGN_CENTER, 5);
-
-    dlg.SetSizer(main_sizer);
-    main_sizer->Fit(&dlg);
-    clSetDialogBestSizeAndPosition(dlg);
-
-    if (dlg.ShowModal() == wxID_OK) {
-        // Apply individual tool changes
-        bool any_enabled = false;
-        auto& conf = llm_manager.GetConfig();
-        for (size_t i = 0; i < functions.size(); ++i) {
-            bool is_checked = check_list->IsChecked(i);
-            if (is_checked) {
-                any_enabled = true;
-            }
-            conf.SetToolEnabled(functions[i].first, is_checked);
-            if (functions[i].second != is_checked) {
-                llm_manager.EnableFunctionByName(functions[i].first, is_checked);
-            }
-        }
-
-        // Update the global "tools enabled" flag based on whether any tool is enabled
-        conf.SetToolsEnabled(any_enabled);
-        conf.Save(false);
-    }
+    // Update the global "tools enabled" flag based on whether any tool is enabled
+    conf.SetToolsEnabled(any_enabled);
+    conf.Save(false);
 }
 
 void ChatAIWindow::OnSend(wxCommandEvent& event)

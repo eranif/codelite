@@ -3,6 +3,7 @@
 #include "CTags.hpp"
 #include "FileManager.hpp"
 #include "Keyboard/clKeyboardManager.h"
+#include "ai/LLMEvents.hpp"
 #include "ai/ToolTrustLevelDlg.hpp"
 #include "assistant/EnvExpander.hpp"
 #include "assistant/assistant.hpp"
@@ -633,14 +634,15 @@ void Manager::Chat(wxEvtHandler* owner,
     PostTask(std::move(task));
 }
 
-void Manager::Compact()
+size_t Manager::Compact()
 {
-    CHECK_PTR_RET(m_client);
+    CHECK_COND_RET_VAL(m_client, 0);
     static constexpr size_t kToolResponseToKeep = 3;
     size_t trimmed = m_client->Compact(kToolResponseToKeep);
     if (m_tokens > trimmed) {
         m_tokens -= trimmed;
     }
+    return trimmed;
 }
 
 void Manager::RunSOP(wxEvtHandler* owner,
@@ -1104,7 +1106,7 @@ void Manager::AddNewEndpoint(const llm::EndpointData& d)
             http_headers["Authorization"] = "Bearer " + d.api_key.value_or("<INSERT_API_KEY>");
             new_endpoint["http_headers"] = http_headers;
             new_endpoint["verify_server_ssl"] = false;
-            new_endpoint["compaction_threshold"] = 100000;
+            new_endpoint["auto_compact_threshold"] = 100000;
         }
 
         new_endpoint["type"] = d.client_type;
@@ -1824,8 +1826,34 @@ void Manager::AddFilesToContext(const wxArrayString& files)
 
 void Manager::CompactIfNeeded(std::shared_ptr<assistant::ClientBase> client, const std::string& msg)
 {
-    wxUnusedVar(client);
     CHECK_PTR_RET(client);
+
+    // Accumulate token count for every message passing through.
     m_tokens += assistant::CountTokens(msg);
+
+    // Determine the threshold: use the client's configured auto-compact threshold.
+    const size_t threshold = client->GetAutoCompactThreshold();
+    if (threshold == 0) {
+        // 0 means "disabled" — skip auto-compaction.
+        return;
+    }
+
+    if (m_tokens.load() < threshold) {
+        return;
+    }
+
+    // Threshold reached — perform compaction on the caller's thread (worker thread).
+    static constexpr size_t kToolResponseToKeep = 3;
+    size_t trimmed = client->Compact(kToolResponseToKeep);
+    if (trimmed > 0 && m_tokens >= trimmed) {
+        m_tokens -= trimmed;
+    } else {
+        m_tokens.store(0);
+    }
+
+    // AddPendingEvent is thread-safe: fire the auto-compacted notification directly.
+    clLLMEvent event{wxEVT_LLM_AUTO_COMPACTED};
+    event.SetInt(static_cast<int>(trimmed));
+    AddPendingEvent(event);
 }
 } // namespace llm

@@ -160,6 +160,7 @@ protected:
     void OnChatAIOutputDone(clLLMEvent& event);
     void OnThinkingStart(clLLMEvent& event);
     void OnThinkingEnd(clLLMEvent& event);
+    void OnAutoCompacted(clLLMEvent& event);
 
     /// Clears the output view, does not change the model history.
     void DoClearOutputView();

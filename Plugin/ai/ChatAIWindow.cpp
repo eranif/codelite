@@ -190,6 +190,7 @@ ChatAIWindow::ChatAIWindow(wxWindow* parent)
     llm::Manager::GetInstance().Bind(wxEVT_LLM_STARTED, &ChatAIWindow::OnLLMConfigUpdate, this);
     llm::Manager::GetInstance().Bind(wxEVT_LLM_WORKER_IDLE, &ChatAIWindow::OnLLMWorkerIdle, this);
     llm::Manager::GetInstance().Bind(wxEVT_LLM_WORKER_BUSY, &ChatAIWindow::OnLLMWorkerBusy, this);
+    llm::Manager::GetInstance().Bind(wxEVT_LLM_AUTO_COMPACTED, &ChatAIWindow::OnAutoCompacted, this);
     m_stcInput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->Bind(wxEVT_KEY_DOWN, &ChatAIWindow::OnKeyDown, this);
     m_stcOutput->SetCodePage(wxSTC_CP_UTF8);
@@ -274,6 +275,7 @@ ChatAIWindow::~ChatAIWindow()
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_STARTED, &ChatAIWindow::OnLLMConfigUpdate, this);
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_WORKER_IDLE, &ChatAIWindow::OnLLMWorkerIdle, this);
     llm::Manager::GetInstance().Unbind(wxEVT_LLM_WORKER_BUSY, &ChatAIWindow::OnLLMWorkerBusy, this);
+    llm::Manager::GetInstance().Unbind(wxEVT_LLM_AUTO_COMPACTED, &ChatAIWindow::OnAutoCompacted, this);
 
     Unbind(wxEVT_SIZE, &ChatAIWindow::OnSize, this);
 
@@ -1052,9 +1054,35 @@ void ChatAIWindow::DoCommandSave()
     OnSaveSession(dummy);
 }
 
+namespace
+{
+void AppendCompactedNotice(ChatAIWindow* window, const wxString& reason, size_t trimmed)
+{
+    wxString notice;
+    notice << "\n"
+           << IconType_ToString(IconType::kInfo) << " **Context history " << reason << " compacted** (freed ~"
+           << trimmed << " tokens)\n\n";
+    window->AppendTextWithLF(notice);
+}
+} // namespace
+
 void ChatAIWindow::DoCompact()
 {
-    llm::Manager::GetInstance().Compact();
+    const size_t trimmed = llm::Manager::GetInstance().Compact();
+
+    if (trimmed > 0) {
+        AppendCompactedNotice(this, "manually", trimmed);
+    }
+
+    UpdateStatusBar();
+}
+
+void ChatAIWindow::OnAutoCompacted(clLLMEvent& event)
+{
+    event.Skip();
+    // Show a brief notice in the chat output so the user can see that the
+    // history was automatically compacted to free up context-window space.
+    AppendCompactedNotice(this, "automatically", static_cast<size_t>(event.GetInt()));
     UpdateStatusBar();
 }
 

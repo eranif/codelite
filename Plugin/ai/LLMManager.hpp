@@ -232,7 +232,7 @@ public:
               ChatOptions options,
               std::shared_ptr<CompletionHandler> completion_handler = nullptr);
 
-    void Compact();
+    size_t Compact();
 
     void RunSOP(wxEvtHandler* owner,
                 const wxString& prompt,

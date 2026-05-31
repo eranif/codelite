@@ -882,7 +882,9 @@ void clCxxWorkspace::ReloadWorkspace()
 }
 
 time_t clCxxWorkspace::GetFileLastModifiedTime() const
-{ return FileUtils::GetFileModificationTime(GetWorkspaceFileName()); }
+{
+    return FileUtils::GetFileModificationTime(GetWorkspaceFileName());
+}
 
 // Singleton access
 static clCxxWorkspace* gs_Workspace = NULL;
@@ -1596,8 +1598,12 @@ clEnvList_t clCxxWorkspace::GetEnvironment() const
 {
     clEnvList_t env_list;
     auto active_project = GetActiveProject();
-    if (active_project && active_project->GetBuildConfiguration()) {
-        const wxString& envstr = active_project->GetBuildConfiguration()->GetEnvvars();
+    if (active_project) {
+        auto build_config = active_project->GetBuildConfiguration();
+        if (!build_config) {
+            return env_list;
+        }
+        const wxString& envstr = build_config->GetEnvvars();
         env_list = StringUtils::BuildEnvFromString(envstr);
     }
     return env_list;

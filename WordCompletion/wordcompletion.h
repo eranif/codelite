@@ -26,10 +26,7 @@
 #ifndef __WordCompletion__
 #define __WordCompletion__
 
-#include "UI.h"
-#include "WordCompletionRequestReply.h"
 #include "cl_command_event.h"
-#include "macros.h"
 #include "plugin.h"
 
 class WordCompletionDictionary;

@@ -25,7 +25,7 @@
 
 #ifndef WORDCOMPLETIONSETTINGSDLG_H
 #define WORDCOMPLETIONSETTINGSDLG_H
-#include "UI.h"
+#include "UI.hpp"
 
 class WordCompletionSettingsDlg : public WordCompletionSettingsBaseDlg
 {

@@ -5,7 +5,7 @@
 #include <wx/wx.h>
 // clang-format on
 
-#include "UI.h"
+#include "UI.hpp"
 #include "ssh/ssh_account_info.h"
 
 class SFTPQuickConnectDlg : public SFTPQuickConnectBaseDlg

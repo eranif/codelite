@@ -1,6 +1,6 @@
 #ifndef SFTPGREP_H
 #define SFTPGREP_H
-#include "UI.h"
+#include "UI.hpp"
 
 class GrepData
 {

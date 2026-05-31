@@ -25,7 +25,7 @@
 
 #ifndef SFTPUPLOADDIALOG_H
 #define SFTPUPLOADDIALOG_H
-#include "UI.h"
+#include "UI.hpp"
 
 class SFTPUploadDialog : public SFTPUploadDialogBase
 {

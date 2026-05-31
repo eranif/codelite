@@ -27,7 +27,7 @@
 #define SFTPSTATUSPAGE_H
 
 #include "SFTPGrepStyler.h"
-#include "UI.h"
+#include "UI.hpp"
 #include "cl_command_event.h"
 
 #include <wx/menu.h>

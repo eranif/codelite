@@ -25,7 +25,7 @@
 
 #ifndef SFTPMANAGEBOOKMARKDLG_H
 #define SFTPMANAGEBOOKMARKDLG_H
-#include "UI.h"
+#include "UI.hpp"
 
 class SFTPManageBookmarkDlg : public SFTPManageBookmarkDlgBase
 {

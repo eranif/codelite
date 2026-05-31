@@ -170,10 +170,6 @@ GUICraftMainPanel::GUICraftMainPanel(wxWindow* parent, wxCrafterPlugin* plugin, 
     wxToolTip::SetDelay(100);
 #endif
 
-#if STANDALONE_BUILD
-    FileLogger::OpenLog("wxcrafter.log", FileLogger::Dbg);
-#endif
-
     wxcSettings::Get().Load();
     wxCrafter::ResourceLoader bmps;
     wxLog::EnableLogging(false);

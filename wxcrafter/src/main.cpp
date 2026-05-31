@@ -154,13 +154,13 @@ bool wxcApp::OnInit()
     // Initialize the edit manager
     wxcEditManager::Get();
 
+    // Open log file
+    FileLogger::OpenLog("wxcrafter.log", FileLogger::System);
+    clDEBUG() << "wxCrafter started" << endl;
+
     // Initialize the colours and font manager
     ColoursAndFontsManager::Get().Load();
     ColoursAndFontsManager::Get().RestoreDefaults();
-
-    // Open log file
-    FileLogger::OpenLog("wxcrafter.log", FileLogger::Dbg);
-    clDEBUG() << "wxCrafter started" << endl;
 
     m_wxcPlugin = new wxCrafterPlugin(NULL, false);
     SetTopWindow(m_wxcPlugin->GetMainFrame());

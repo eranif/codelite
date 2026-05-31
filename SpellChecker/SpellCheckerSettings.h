@@ -36,7 +36,7 @@
 #ifndef __SpellCheckerSettings__
 #define __SpellCheckerSettings__
 // ------------------------------------------------------------
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 // ------------------------------------------------------------
 class IHunSpell;
 // ------------------------------------------------------------

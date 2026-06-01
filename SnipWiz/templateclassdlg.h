@@ -26,7 +26,7 @@
 #ifndef __templateclassdlg__
 #define __templateclassdlg__
 
-#include "templateclassbasedlg.h"
+#include "templateclassbasedlg.hpp"
 
 class SnipWiz;
 class swStringDb;

@@ -27,7 +27,7 @@
 #define SFTPTREEVIEW_H
 
 #include "SFTPSessionInfo.h"
-#include "UI.h"
+#include "UI.hpp"
 #include "bitmap_loader.h"
 #include "clRemoteDirCtrl.hpp"
 #include "clSSHChannel.hpp"

@@ -25,7 +25,7 @@
 
 #ifndef SFTPSETTINGSDIALOG_H
 #define SFTPSETTINGSDIALOG_H
-#include "UI.h"
+#include "UI.hpp"
 
 class SFTPSettingsDialog : public SFTPSettingsDialogBase
 {

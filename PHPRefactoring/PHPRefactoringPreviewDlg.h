@@ -1,6 +1,6 @@
 #ifndef PHPREFACTORINGPREVIEWDLG_H
 #define PHPREFACTORINGPREVIEWDLG_H
-#include "phprefactoringdlgbase.h"
+#include "phprefactoringdlgbase.hpp"
 
 class PHPRefactoringPreviewDlg : public PHPRefactoringPreviewBaseDlg
 {

@@ -1,7 +1,7 @@
 #ifndef PHPLINTDLG_H
 #define PHPLINTDLG_H
 #include "lintoptions.h"
-#include "phplintdlgbase.h"
+#include "phplintdlgbase.hpp"
 
 class IManager;
 class PHPLintDlg : public PHPLintBaseDlg

@@ -38,10 +38,18 @@ else()
         add_definitions(-Winvalid-pch)
     endif()
 
+    wxcrafter_target(
+        SpellChecker
+        "${CMAKE_CURRENT_SOURCE_DIR}/wxcrafter.wxcp"
+        "${CMAKE_CURRENT_BINARY_DIR}"
+        "wxcrafter.cpp"
+        "wxcrafter.hpp"
+        "wxcrafter_bitmaps.cpp")
+
     file(GLOB SRCS "*.cpp")
 
     # Define the output
-    add_library(${PLUGIN_NAME} SHARED ${SRCS})
+    add_library(${PLUGIN_NAME} SHARED ${SRCS} ${WXCRAFTER_SpellChecker_OUTPUTS})
 
     if(UNIX OR APPLE)
         set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -53,6 +61,7 @@ else()
 
     # CodeLite plugins doesn't use the "lib" prefix.
     set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
+    target_include_directories(${PLUGIN_NAME} PUBLIC "${WXCRAFTER_SpellChecker_OUTPUTDIR}")
     target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${LIBHUNSPELL} libcodelite plugin)
 
     # Installation destination

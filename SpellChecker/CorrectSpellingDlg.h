@@ -36,7 +36,7 @@
 #ifndef __CorrectSpellingDlg__
 #define __CorrectSpellingDlg__
 // ------------------------------------------------------------
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 // ------------------------------------------------------------
 #define SC_CHANGE 20
 #define SC_IGNORE 21

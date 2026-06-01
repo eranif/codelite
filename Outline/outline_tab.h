@@ -3,7 +3,7 @@
 
 #include "LSP/LSPEvent.h"
 #include "LSP/basic_types.h"
-#include "wxcrafter.h"
+#include "wxcrafter.hpp"
 
 #include <vector>
 

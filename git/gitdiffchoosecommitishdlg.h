@@ -24,7 +24,7 @@
 //////////////////////////////////////////////////////////////////////////////
 #ifndef GITDIFFCHOOSECOMMITISHDLG_H
 #define GITDIFFCHOOSECOMMITISHDLG_H
-#include "gitui.h"
+#include "gitui.hpp"
 
 class GitPlugin;
 class IProcess;

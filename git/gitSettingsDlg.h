@@ -34,7 +34,7 @@
 #define __gitSettingsDlg__
 
 #include "git.h"
-#include "gitui.h"
+#include "gitui.hpp"
 
 class GitSettingsDlg : public GitSettingsDlgBase
 {

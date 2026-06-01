@@ -31,7 +31,7 @@
 #include "clGenericSTCStyler.h"
 #include "clToolBar.h"
 #include "clWorkspaceEvent.hpp"
-#include "gitui.h"
+#include "gitui.hpp"
 #include "wxTerminalCtrl/wxTerminalOutputCtrl.hpp"
 
 #include <wx/dataview.h>

@@ -1,6 +1,6 @@
 #ifndef GITRESETDLG_H
 #define GITRESETDLG_H
-#include "gitui.h"
+#include "gitui.hpp"
 
 class GitResetDlg : public GitResetDlgBase
 {

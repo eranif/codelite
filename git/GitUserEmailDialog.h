@@ -1,6 +1,6 @@
 #ifndef GITUSEREMAILDIALOG_H
 #define GITUSEREMAILDIALOG_H
-#include "gitui.h"
+#include "gitui.hpp"
 
 class GitUserEmailDialog : public GitUserEmailDialogBase
 {

@@ -37,7 +37,7 @@
 #include "ai/EndpointModelSelector.hpp"
 #include "ai/ResponseCollector.hpp"
 #include "clEditorEditEventsHandler.h"
-#include "gitui.h"
+#include "gitui.hpp"
 #include "macros.h"
 
 #include <map>

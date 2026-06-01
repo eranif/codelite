@@ -41,7 +41,7 @@
 #include "clTabTogglerHelper.h"
 #include "cl_command_event.h"
 #include "gitentry.h"
-#include "gitui.h"
+#include "gitui.hpp"
 #include "ieditor.h"
 #include "plugin.h"
 #include "project.h" // wxStringSet_t

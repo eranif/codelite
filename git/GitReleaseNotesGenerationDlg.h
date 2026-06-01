@@ -1,6 +1,6 @@
 #pragma once
 
-#include "gitui.h"
+#include "gitui.hpp"
 
 class GitReleaseNotesGenerationDlg : public GitReleaseNotesGenerationBaseDlg
 {

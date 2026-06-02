@@ -26,7 +26,7 @@
 #ifndef HELPPLUGINMESSAGEDLG_H
 #define HELPPLUGINMESSAGEDLG_H
 
-#include "HelpPluginUI.h"
+#include "HelpPluginUI.hpp"
 
 class HelpPluginMessageDlg : public HelpPluginMessageBaseDlg
 {

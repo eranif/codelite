@@ -26,7 +26,7 @@
 #ifndef HELPPLUGINSETTINGSDLG_H
 #define HELPPLUGINSETTINGSDLG_H
 
-#include "HelpPluginUI.h"
+#include "HelpPluginUI.hpp"
 
 class HelpPluginSettingsDlg : public HelpPluginSettingsDlgBase
 {

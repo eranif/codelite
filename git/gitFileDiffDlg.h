@@ -33,7 +33,7 @@
 #ifndef __GitFileDiffDlg__
 #define __GitFileDiffDlg__
 
-#include "gitui.h"
+#include "gitui.hpp"
 
 class GitFileDiffDlg : public GitFileDiffDlgBase
 {

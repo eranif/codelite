@@ -25,7 +25,7 @@
 
 #ifndef GITAPPLYPATCHDLG_H
 #define GITAPPLYPATCHDLG_H
-#include "gitui.h"
+#include "gitui.hpp"
 
 class GitApplyPatchDlg : public GitApplyPatchDlgBase
 {

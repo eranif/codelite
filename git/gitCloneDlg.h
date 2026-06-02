@@ -26,7 +26,7 @@
 #ifndef GITCLONEDLG_H
 #define GITCLONEDLG_H
 
-#include "gitui.h"
+#include "gitui.hpp"
 
 class gitCloneDlg : public gitCloneDlgBaseClass
 {

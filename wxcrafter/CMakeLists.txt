@@ -484,10 +484,6 @@ if(WXC_APP AND MINGW)
     PATTERN ".git" EXCLUDE)
 endif()
 
-# wxcrafter_target: generate source files from a .wxcp project file at build time.
-# Always uses wxcgen (headless, no DISPLAY required).
-option(WXCRAFTER_USE_XVFB_RUN "(legacy) Run wxcrafter under xvfb-run for CI" OFF)
-
 macro(
   wxcrafter_target
   Name

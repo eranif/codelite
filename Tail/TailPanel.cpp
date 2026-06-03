@@ -121,7 +121,7 @@ void TailPanel::OnClose(wxCommandEvent& event) { DoClear(); }
 
 void TailPanel::OnCloseUI(wxUpdateUIEvent& event) { event.Enable(m_file.IsOk()); }
 
-void TailPanel::OnOpen(wxCommandEvent& event)
+void TailPanel::OnOpen()
 {
     wxString filepath = ::wxFileSelector();
     if (filepath.IsEmpty() || !wxFileName::Exists(filepath)) {
@@ -132,16 +132,20 @@ void TailPanel::OnOpen(wxCommandEvent& event)
     DoOpen(filepath);
 }
 
-void TailPanel::OnOpenMenu(wxCommandEvent& event)
+void TailPanel::OnOpenMenu(wxAuiToolBarEvent& event)
 {
-    wxMenu menu;
-    DoPrepareRecentItemsMenu(menu);
-    clAuiToolStickness stickness{m_toolbar, event.GetId()};
-    // line up our menu with the button
-    wxRect rect = m_toolbar->GetToolRect(event.GetId());
-    wxPoint pt = m_toolbar->ClientToScreen(rect.GetBottomLeft());
-    pt = ScreenToClient(pt);
-    PopupMenu(&menu, pt);
+    if (event.IsDropDownClicked()) {
+        wxMenu menu;
+        DoPrepareRecentItemsMenu(menu);
+        clAuiToolStickness stickness{m_toolbar, event.GetId()};
+        // line up our menu with the button
+        wxRect rect = m_toolbar->GetToolRect(event.GetId());
+        wxPoint pt = m_toolbar->ClientToScreen(rect.GetBottomLeft());
+        pt = ScreenToClient(pt);
+        PopupMenu(&menu, pt);
+        return;
+    }
+    OnOpen();
 }
 
 void TailPanel::DoOpen(const wxString& filename)
@@ -253,7 +257,6 @@ void TailPanel::DoBuildToolbar()
     clAuiToolBarArt::AddTool(m_toolbar, XRCID("tail_detach"), _("Detach window"), images->LoadBitmap("windows"));
 
     // Bind events
-    m_toolbar->Bind(wxEVT_TOOL, &TailPanel::OnOpen, this, XRCID("tail_open"));
     m_toolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &TailPanel::OnOpenMenu, this, XRCID("tail_open"));
     m_toolbar->Bind(wxEVT_TOOL, &TailPanel::OnClose, this, XRCID("tail_close"));
     m_toolbar->Bind(wxEVT_TOOL, &TailPanel::OnClear, this, XRCID("tail_clear"));

@@ -28,8 +28,8 @@ class TailPanel : public TailPanelBase
 protected:
     virtual void OnDetachWindow(wxCommandEvent& event);
     virtual void OnDetachWindowUI(wxUpdateUIEvent& event);
-    virtual void OnOpen(wxCommandEvent& event);
-    virtual void OnOpenMenu(wxCommandEvent& event);
+    virtual void OnOpen();
+    virtual void OnOpenMenu(wxAuiToolBarEvent& event);
     virtual void OnClear(wxCommandEvent& event);
     virtual void OnClearUI(wxUpdateUIEvent& event);
     virtual void OnClose(wxCommandEvent& event);

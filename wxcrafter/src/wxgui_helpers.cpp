@@ -1,11 +1,13 @@
 #include "wxgui_helpers.h"
 
+#include "JSON.h"
 #include "macros.h"
-#include "main.h"
 #include "map"
 #include "project.h"
 #include "workspace.h"
+#include "wxc_bitmap_code_generator.h"
 #include "wxc_project_metadata.h"
+#include "wxc_runtime.h"
 #include "xml/xmlutils.h"
 
 #include <wx/app.h>
@@ -1001,12 +1003,9 @@ wxString wxCrafter::GetUserDataDir()
 
 void wxCrafter::SetStatusMessage(const wxString& msg)
 {
-    if (TopFrame()) {
-        MainFrame* frame = dynamic_cast<MainFrame*>(TopFrame());
-        if (frame) {
-            frame->SetStatusMessage(msg);
-        }
-    }
+    // Forwards to the per-target runtime shim — keeps wxgui_helpers.cpp free
+    // of MainFrame symbols so it can compile into the headless wxcgen target.
+    wxc_runtime::SetStatusMessage(msg);
 }
 
 wxString wxCrafter::GetConfigFile()
@@ -1372,3 +1371,164 @@ wxWindow* wxCrafter::TopFrame()
 }
 
 void wxCrafter::SetTopFrame(wxWindow* frame) { sTopFrame = frame; }
+
+const wxString& wxCrafter::SimpleBorderCode()
+{
+    static const wxString s_code = R"(
+namespace {
+// return the wxBORDER_SIMPLE that matches the current application theme
+[[maybe_unused]]
+wxBorder get_border_simple_theme_aware_bit() {
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // get_border_simple_theme_aware_bit
+bool bBitmapLoaded = false;
+} // namespace
+)";
+    return s_code;
+}
+
+wxCrafter::BmpTextList wxCrafter::ParseBmpTextOptions(const wxString& text)
+{
+    BmpTextList vec;
+    if (text.IsEmpty()) {
+        return vec;
+    }
+    JSON root(text);
+    int size = root.toElement().arraySize();
+    vec.reserve(size);
+    for (int i = 0; i < size; ++i) {
+        JSONItem item = root.toElement().arrayItem(i);
+        wxString bitmap = item.namedObject("bmp").toString();
+        wxString label = item.namedObject("label").toString();
+        vec.emplace_back(bitmap, label);
+    }
+    return vec;
+}
+
+wxString wxCrafter::FormatBmpTextOptions(const BmpTextList& vec)
+{
+    JSON root(JsonType::Array);
+    for (const auto& [bmp, label] : vec) {
+        JSONItem element = JSONItem::createObject();
+        element.addProperty("bmp", bmp);
+        element.addProperty("label", label);
+        root.toElement().arrayAppend(std::move(element));
+    }
+    wxString asString(root.toElement().format());
+    asString.Replace("\n", "");
+    return asString;
+}
+
+void wxCrafter::WriteGeneratedOutput(const wxString& baseCpp,
+                                     const wxString& baseHeader,
+                                     const wxArrayString& headersIn,
+                                     const wxStringMap_t& additionalFiles,
+                                     const wxString& autoGenComment)
+{
+    if (wxcProjectMetadata::Get().GetGenerateCPPCode() && !baseCpp.IsEmpty()) {
+        wxFileName projectFile(wxcProjectMetadata::Get().GetProjectFile());
+        wxCrafter::MakeAbsToProject(projectFile);
+
+        wxFileName headerFile = wxcProjectMetadata::Get().BaseHeaderFile();
+        wxCrafter::MakeAbsToProject(headerFile);
+
+        wxFileName sourceFile = wxcProjectMetadata::Get().BaseCppFile();
+        wxCrafter::MakeAbsToProject(sourceFile);
+
+        // Build include guard
+        wxString blockGuard = "_"; // must not start with a digit
+        wxArrayString dirs = projectFile.GetDirs();
+        if (!dirs.IsEmpty()) {
+            if (dirs.size() > 2) {
+                blockGuard << dirs.Item(dirs.size() - 2) << "_";
+            }
+            blockGuard << dirs.Last() << "_";
+        }
+        blockGuard << projectFile.GetName();
+        blockGuard.Replace("-", "_");
+        blockGuard.Replace(".", "_");
+        blockGuard.Replace("+", "_");
+        blockGuard.Replace(":", "_");
+        blockGuard << "_BASE_CLASSES";
+        blockGuard << "_" << wxcProjectMetadata::Get().GetHeaderFileExt();
+        blockGuard.MakeUpper();
+
+        wxArrayString headers = wxCrafter::MakeUnique(headersIn);
+
+        wxString prefix;
+        prefix << autoGenComment;
+        prefix << "#ifndef " << blockGuard << "\n";
+        prefix << "#define " << blockGuard << "\n\n";
+        prefix << "// clang-format off\n";
+        prefix << wxCrafter::Join(headers, "\n") << "\n";
+
+        // wxPersistence support
+        prefix << wxCrafter::WX29_BLOCK_START();
+        prefix << "#include <wx/persist.h>\n";
+        prefix << "#include <wx/persist/toplevel.h>\n";
+        prefix << "#include <wx/persist/bookctrl.h>\n";
+        prefix << "#include <wx/persist/treebook.h>\n";
+        prefix << "#endif\n";
+
+        prefix << "\n";
+        prefix << "#ifdef WXC_FROM_DIP\n";
+        prefix << "#undef WXC_FROM_DIP\n";
+        prefix << "#endif\n";
+        prefix << wxCrafter::WX31_BLOCK_START();
+        prefix << "#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)\n";
+        prefix << "#else\n";
+        prefix << "#define WXC_FROM_DIP(x) x\n";
+        prefix << "#endif\n\n";
+
+        wxString projectIncludes;
+        const wxArrayString& includes = wxcProjectMetadata::Get().GetIncludeFiles();
+        for (size_t i = 0; i < includes.GetCount(); i++) {
+            projectIncludes << "#include " << wxCrafter::AddQuotes(includes.Item(i)) << "\n";
+        }
+        prefix << projectIncludes;
+        prefix << "// clang-format on\n";
+
+        wxString headerOut = baseHeader;
+        headerOut.Prepend(prefix);
+        headerOut.Append("#endif\n");
+
+        if (wxCrafter::IsTheSame(headerOut, headerFile) == false) {
+            wxCrafter::WriteFile(headerFile, headerOut, true);
+            wxCrafter::FormatFile(headerFile);
+            wxCrafter::NotifyFileSaved(headerFile);
+        }
+
+        wxString cppPrefix;
+        cppPrefix << autoGenComment;
+        cppPrefix << "#include \"" << headerFile.GetFullName() << "\"\n";
+        cppPrefix << projectIncludes << "\n\n";
+        cppPrefix << "// Declare the bitmap loading function\n";
+        cppPrefix << wxcCodeGeneratorHelper::Get().GenerateExternCode() << "\n";
+        cppPrefix << wxCrafter::SimpleBorderCode();
+
+        wxString cppOut = baseCpp;
+        cppOut.Prepend(cppPrefix);
+        if (wxCrafter::IsTheSame(cppOut, sourceFile) == false) {
+            wxCrafter::WriteFile(sourceFile, cppOut, true);
+            wxCrafter::FormatFile(sourceFile);
+            wxCrafter::NotifyFileSaved(sourceFile);
+        }
+    }
+
+    if (wxcProjectMetadata::Get().GetGenerateCPPCode() && !additionalFiles.empty()) {
+        for (const auto& p : additionalFiles) {
+            wxFileName af = wxcProjectMetadata::Get().BaseHeaderFile();
+            af.SetFullName(p.first);
+            wxCrafter::MakeAbsToProject(af);
+            if (wxCrafter::IsTheSame(p.second, af) == false) {
+                wxCrafter::WriteFile(af, p.second, true);
+                wxCrafter::FormatFile(af);
+                wxCrafter::NotifyFileSaved(af);
+            }
+        }
+    }
+}

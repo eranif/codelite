@@ -3,14 +3,12 @@
 #include "event_notifier.h"
 #include "top_level_win_wrapper.h"
 #include "wxc_project_metadata.h"
+#include "wxc_runtime.h"
 #include "wxgui_helpers.h"
-#include "wxguicraft_main_view.h"
 #include "wxrc.h"
 
-#include <wx/frame.h>
 #include <wx/log.h>
 #include <wx/sstream.h>
-#include <wx/utils.h>
 #include <wx/xml/xml.h>
 
 const wxEventType wxEVT_BITMAP_CODE_GENERATION_DONE = ::wxNewEventType();
@@ -98,9 +96,7 @@ bool wxcCodeGeneratorHelper::CreateXRC()
     bool isBitmapModifiedOutside = IsGenerateNeeded();
 
     if (isBitmapModifiedOutside) {
-        // Request for update
-        wxCommandEvent evtUpdateDesigner(wxEVT_REFRESH_DESIGNER);
-        EventNotifier::Get()->AddPendingEvent(evtUpdateDesigner);
+        wxc_runtime::RequestDesignerRefresh();
     }
 
     if (wxCrafter::IsTheSame(outputString, m_xrcFile) && m_destCPP.FileExists() && !isBitmapModifiedOutside) {
@@ -117,12 +113,10 @@ bool wxcCodeGeneratorHelper::CreateXRC()
     }
 
     {
-        wxFrame* topFrame = EventNotifier::Get()->TopFrame();
-
-        topFrame->SetStatusText("Generating bitmap code...");
-        wxBusyCursor bc;
         wxString cppFile = m_destCPP.GetFullPath();
         wxLogNull nl;
+        wxc_runtime::BitmapGenStatusScope statusScope;
+
         wxcXmlResourceCmp cmp;
         cmp.Run(m_xrcFile.GetFullPath(),                        // Input XRC file
                 cppFile,                                        // Output file (our CPP file)
@@ -132,7 +126,6 @@ bool wxcCodeGeneratorHelper::CreateXRC()
         wxCommandEvent eventEnd(wxEVT_BITMAP_CODE_GENERATION_DONE);
         eventEnd.SetString(cppFile);
         EventNotifier::Get()->AddPendingEvent(eventEnd);
-        topFrame->SetStatusText("Ready");
     }
 
     // m_bmpGenThread.AddMessage( req );

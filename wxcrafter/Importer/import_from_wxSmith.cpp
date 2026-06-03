@@ -23,6 +23,11 @@ ImportFromwxSmith::ImportFromwxSmith(wxWindow* parent)
 
 bool ImportFromwxSmith::ImportProject(ImportDlg::ImportFileData& data, const wxString& sourceFile) const
 {
+#ifdef WXCGEN_BUILD
+    wxUnusedVar(data);
+    wxUnusedVar(sourceFile);
+    return false;
+#else
     ImportDlg dlg(ImportDlg::IPD_Smith, m_Parent, sourceFile);
 
     if (dlg.ShowModal() != wxID_OK) {
@@ -47,6 +52,7 @@ bool ImportFromwxSmith::ImportProject(ImportDlg::ImportFileData& data, const wxS
         return true;
     }
     return false;
+#endif
 }
 
 bool ImportFromwxSmith::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels) const

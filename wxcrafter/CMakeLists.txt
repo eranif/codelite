@@ -77,6 +77,61 @@ file(
   "xrc_handlers/*.cpp"
   "${CMAKE_BINARY_DIR}/generated/wxcversion.cpp")
 
+# wxc_runtime_gui.cpp / wxc_runtime_headless.cpp are picked per target — exclude
+# them from the shared SRCS list so each consumer can pick the right one.
+list(FILTER SRCS EXCLUDE REGEX ".*/src/wxc_runtime_(gui|headless)\\.cpp$")
+
+# Sources for the headless wxcgen tool: drop the files whose translation units
+# *define* code that requires a display / event loop (MainFrame, the codelite
+# plugin entry, the GUI designer panel, all UI dialogs/preview, and the
+# wxFormBuilder-generated GUI base classes in src/gui.cpp / src/wxcrafter.cpp /
+# src/wxcrafter_gui.cpp). The widget wrappers in controls/, sizers/, etc. are
+# kept — they may #include GUI headers but don't pull GUI-only symbols at link
+# time.
+set(LIB_SRCS ${SRCS})
+# Files in src/ whose translation units pull GUI-only symbols (MainFrame,
+# wxCrafterPlugin, GUICraftMainPanel) or are GUI dialogs/widgets/preview that
+# wxcgen never reaches. The widget wrappers in controls/, sizers/, etc. are
+# kept — they're pure data + codegen.
+set(WXCGEN_EXCLUDE_FILES
+    "src/main.cpp"
+    "src/wxcrafter_plugin.cpp"
+    "src/wxguicraft_main_view.cpp"
+    "src/gui.cpp"
+    "src/gui_wxcrafter_bitmaps.cpp"
+    "src/wxcrafter.cpp"
+    "src/wxcrafter_gui.cpp"
+    "src/wxcrafter_gui_wxcrafter_bitmaps.cpp"
+    "src/wxcrafter_wxcrafter_bitmaps.cpp"
+    "src/AboutDlg.cpp"
+    "src/BitmapSelectorDlg.cpp"
+    "src/designer_panel.cpp"
+    "src/duplicateTLWdlg.cpp"
+    "src/enter_strings_dlg.cpp"
+    "src/EventsEditorDlg.cpp"
+    "src/file_picker_ctrl.cpp"
+    "src/MediaCtrl.cpp"
+    "src/my_dialog.cpp"
+    "src/my_frame.cpp"
+    "src/my_panel.cpp"
+    "src/OpenGLCanvas.cpp"
+    "src/output_nbook.cpp"
+    "src/wxc_aui_manager.cpp"
+    "src/wxc_aui_tool_stickiness.cpp"
+    "src/wxc_edit_manager.cpp"
+    "src/wxcLicenseGPL2.cpp"
+    "Importer/import_dlg.cpp")
+foreach(f ${WXCGEN_EXCLUDE_FILES})
+  list(REMOVE_ITEM LIB_SRCS "${CMAKE_CURRENT_LIST_DIR}/${f}")
+endforeach()
+# UI/, UI/PropertiesView/ and Preview/ are entirely GUI; xrc_handlers/ are
+# only used to render live previews in the designer. None reachable from the
+# headless XRC_LIVE codegen path. The Importer/import_from_*.cpp files (kept
+# above) are needed because widget wrappers call their static helpers.
+list(FILTER LIB_SRCS EXCLUDE REGEX "/UI/.*\\.cpp$")
+list(FILTER LIB_SRCS EXCLUDE REGEX "/Preview/.*\\.cpp$")
+list(FILTER LIB_SRCS EXCLUDE REGEX "/xrc_handlers/.*\\.cpp$")
+
 include_directories(
   "${CMAKE_CURRENT_LIST_DIR}"
   "${CMAKE_CURRENT_LIST_DIR}/aui"
@@ -92,19 +147,36 @@ if(MINGW)
   set(RES_FILES "resources/wxcapp_resources.rc")
 endif()
 
-# Define the output
-add_library(wxCrafterPlugin SHARED ${SRCS})
-add_executable(wxcrafter ${SRCS} ${RES_FILES})
+# wxCrafter as a CodeLite plugin (shared library) — uses GUI runtime shim
+add_library(wxCrafterPlugin SHARED ${SRCS}
+                                   "${CMAKE_CURRENT_LIST_DIR}/src/wxc_runtime_gui.cpp")
+
+# wxCrafter as a standalone GUI application — uses GUI runtime shim
+add_executable(wxcrafter ${SRCS}
+                         "${CMAKE_CURRENT_LIST_DIR}/src/wxc_runtime_gui.cpp"
+                         ${RES_FILES})
+target_compile_definitions(
+  wxcrafter PRIVATE STANDALONE_BUILD=1
+                    INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
+
+# Headless CLI code-generator (no DISPLAY required) — uses headless runtime shim.
+# WXCGEN_BUILD is a narrow flavor flag used only to stub out a handful of
+# method bodies that would otherwise pull GUI-only symbols (e.g.
+# ImportFromwxFB::ImportProject which constructs an ImportDlg). The bulk of
+# the GUI/headless split is handled by linking different runtime-shim TUs.
+add_executable(wxcgen ${LIB_SRCS}
+                      "${CMAKE_CURRENT_LIST_DIR}/wxcgen/main.cpp"
+                      "${CMAKE_CURRENT_LIST_DIR}/src/wxc_runtime_headless.cpp")
+target_compile_definitions(
+  wxcgen PRIVATE STANDALONE_BUILD=1
+                 WXCGEN_BUILD=1
+                 INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
+
 if(WXC_APP)
   set_target_properties(wxCrafterPlugin PROPERTIES EXCLUDE_FROM_ALL ON)
 else()
   set_target_properties(wxcrafter PROPERTIES EXCLUDE_FROM_ALL ON)
 endif()
-
-# target_compile_definitions(wxCrafterPlugin PRIVATE WXCAPP=0)
-target_compile_definitions(
-  wxcrafter PRIVATE STANDALONE_BUILD=1
-                    INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
 
 if(UNIX OR APPLE)
   set_target_properties(wxCrafterPlugin PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -116,22 +188,26 @@ if(USE_PCH)
 endif()
 
 # Remove the "lib" prefix from the plugin name
-set_target_properties(wxCrafterPlugin PROPERTIES OUTPUT_NAME "wxCrafter" PREFIX
-                                                                         "")
+set_target_properties(wxCrafterPlugin PROPERTIES OUTPUT_NAME "wxCrafter" PREFIX "")
 
 if(NOT OFFICIAL_CL_BUILD)
-  target_link_libraries(wxCrafterPlugin ${LINKER_OPTIONS} wxsqlite3
+  target_link_libraries(wxCrafterPlugin PRIVATE ${LINKER_OPTIONS} wxsqlite3
                         ${SQLite3_LIBRARIES} libcodelite plugin)
 else(OFFICIAL_CL_BUILD)
-  target_link_libraries(wxCrafterPlugin ${LINKER_OPTIONS})
+  target_link_libraries(wxCrafterPlugin PRIVATE ${LINKER_OPTIONS})
 endif(NOT OFFICIAL_CL_BUILD)
 
-target_link_libraries(wxcrafter ${LINKER_OPTIONS} wxsqlite3 libcodelite plugin
+target_link_libraries(wxcrafter PRIVATE ${LINKER_OPTIONS} wxsqlite3 libcodelite plugin
                       $<IF:$<BOOL:${MINGW}>,-mwindows,-lutil>)
+
+target_link_libraries(wxcgen PRIVATE ${LINKER_OPTIONS} wxsqlite3 libcodelite plugin
+                      $<IF:$<BOOL:${MINGW}>,-mconsole,-lutil>)
 
 if(UNIX AND NOT APPLE)
   set_target_properties(wxcrafter PROPERTIES SKIP_BUILD_RPATH FALSE
                                              BUILD_WITH_INSTALL_RPATH FALSE)
+  set_target_properties(wxcgen PROPERTIES SKIP_BUILD_RPATH FALSE
+                                          BUILD_WITH_INSTALL_RPATH FALSE)
 endif(UNIX AND NOT APPLE)
 
 if(MINGW)
@@ -167,9 +243,9 @@ if(NOT WXC_APP)
 elseif(NOT MINGW)
   set(CPACK_DEB_COMPONENT_INSTALL 1)
 
-  # Installing an application
+  # Installing the applications
   install(
-    TARGETS wxcrafter
+    TARGETS wxcrafter wxcgen
     DESTINATION ${CL_INSTALL_BIN}
     PERMISSIONS ${EXE_PERM}
     COMPONENT standalone)
@@ -283,7 +359,7 @@ elseif(NOT MINGW)
 endif()
 
 if(WXC_APP AND MINGW)
-  install(TARGETS wxcrafter DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/")
+  install(TARGETS wxcrafter wxcgen DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/")
   # Install codelite lexer files
   install(
     DIRECTORY ${CL_SRC_ROOT}/Runtime/lexers
@@ -294,7 +370,9 @@ if(WXC_APP AND MINGW)
     PATTERN ".git" EXCLUDE)
 endif()
 
-option(WXCRAFTER_USE_XVFB_RUN "Run wxcrafter under xvfb-run (for CI)" OFF)
+# wxcrafter_target: generate source files from a .wxcp project file at build time.
+# Always uses wxcgen (headless, no DISPLAY required).
+option(WXCRAFTER_USE_XVFB_RUN "(legacy) Run wxcrafter under xvfb-run for CI" OFF)
 
 macro(
   wxcrafter_target
@@ -304,23 +382,13 @@ macro(
   OutputCpp
   OutputH
   OutputBitmaps)
-  if(WXCRAFTER_USE_XVFB_RUN)
-    add_custom_command(
-      OUTPUT ${OutputDir}/${OutputCpp} ${OutputDir}/${OutputH}
-             ${OutputDir}/${OutputBitmaps}
-      COMMAND xvfb-run -a $<TARGET_FILE:wxcrafter> -o ${OutputDir} -g ${Input}
-      VERBATIM
-      DEPENDS ${Input}
-      COMMENT "[WxCrafter][${Name}] Building code")
-  else()
-    add_custom_command(
-      OUTPUT ${OutputDir}/${OutputCpp} ${OutputDir}/${OutputH}
-             ${OutputDir}/${OutputBitmaps}
-      COMMAND $<TARGET_FILE:wxcrafter> -o ${OutputDir} -g ${Input}
-      VERBATIM
-      DEPENDS ${Input}
-      COMMENT "[WxCrafter][${Name}] Building code")
-  endif()
+  add_custom_command(
+    OUTPUT ${OutputDir}/${OutputCpp} ${OutputDir}/${OutputH}
+           ${OutputDir}/${OutputBitmaps}
+    COMMAND $<TARGET_FILE:wxcgen> -o ${OutputDir} ${Input}
+    VERBATIM
+    DEPENDS ${Input} wxcgen
+    COMMENT "[WxCrafter][${Name}] Building code (wxcgen)")
 
   set(WXCRAFTER_${Name}_OUTPUTS ${OutputCpp} ${OutputH} ${OutputBitmaps})
   set(WXCRAFTER_${Name}_OUTPUTDIR ${OutputDir})

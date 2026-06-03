@@ -12,10 +12,18 @@ if(USE_PCH AND NOT MINGW)
     add_definitions(-Winvalid-pch)
 endif()
 
+wxcrafter_target(
+    EditorConfigPlugin
+    "${CMAKE_CURRENT_SOURCE_DIR}/EditorConfigUI.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "EditorConfigUI.cpp"
+    "EditorConfigUI.hpp"
+    "EditorConfigUI_editorconfigplugin_bitmaps.cpp")
+
 file(GLOB SRCS "*.cpp")
 
 # Define the output
-add_library(${PLUGIN_NAME} SHARED ${SRCS})
+add_library(${PLUGIN_NAME} SHARED ${SRCS} ${WXCRAFTER_EditorConfigPlugin_OUTPUTS})
 
 if(UNIX OR APPLE)
     set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -27,6 +35,7 @@ endif()
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
+target_include_directories(${PLUGIN_NAME} PUBLIC "${WXCRAFTER_EditorConfigPlugin_OUTPUTDIR}")
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} libcodelite plugin)
 
 # Use CodeLite's macro: CL_INSTALL_PLUGIN which handles both OSX and Linux installation

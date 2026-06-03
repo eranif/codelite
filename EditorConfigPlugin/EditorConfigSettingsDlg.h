@@ -1,6 +1,6 @@
 #ifndef EDITORCONFIGSETTINGSDLG_H
 #define EDITORCONFIGSETTINGSDLG_H
-#include "EditorConfigUI.h"
+#include "EditorConfigUI.hpp"
 
 class EditorConfigSettingsDlg : public EditorConfigSettingsDlgBase
 {

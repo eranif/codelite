@@ -2,7 +2,7 @@
 #define DAPMAINVIEW_H
 
 #include "DAPOutputPane.hpp"
-#include "UI.h"
+#include "UI.hpp"
 #include "dap/dap.hpp"
 
 #include <wx/timer.h>

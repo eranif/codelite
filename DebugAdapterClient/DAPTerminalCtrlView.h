@@ -1,7 +1,7 @@
 #ifndef DAPOUTPUTVIEW_H
 #define DAPOUTPUTVIEW_H
 
-#include "UI.h"
+#include "UI.hpp"
 #include "clModuleLogger.hpp"
 #include "clTerminalViewCtrl.hpp"
 #include "dap/dap.hpp"

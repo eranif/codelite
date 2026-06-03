@@ -1,6 +1,6 @@
 #ifndef NEWDOCKERWORKSPACEDLG_H
 #define NEWDOCKERWORKSPACEDLG_H
-#include "UI.h"
+#include "UI.hpp"
 
 #include <wx/filename.h>
 

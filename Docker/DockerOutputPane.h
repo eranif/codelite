@@ -1,7 +1,7 @@
 #ifndef DOCKEROUTPUTPANE_H
 #define DOCKEROUTPUTPANE_H
 
-#include "UI.h"
+#include "UI.hpp"
 #include "clDockerContainer.h"
 #include "clDockerDriver.h"
 #include "clDockerImage.h"

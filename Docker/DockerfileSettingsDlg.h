@@ -1,7 +1,7 @@
 #ifndef DOCKERFILESETTINGSDLG_H
 #define DOCKERFILESETTINGSDLG_H
 
-#include "UI.h"
+#include "UI.hpp"
 #include "clDockerBuildableFile.h"
 #include "clDockerWorkspaceSettings.h"
 

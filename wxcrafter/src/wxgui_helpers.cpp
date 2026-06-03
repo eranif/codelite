@@ -1373,7 +1373,7 @@ namespace {
 [[maybe_unused]]
 wxBorder get_border_simple_theme_aware_bit() {
 #if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
-    return wxc_runtime::IsDarkAppearance() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
 #else
     return wxBORDER_DEFAULT;
 #endif

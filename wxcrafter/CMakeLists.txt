@@ -58,7 +58,7 @@ configure_file(${CL_SRC_ROOT}/wxcrafter/wxcversion.cpp.in
 
 file(
   GLOB
-  SRCS
+  ALL_SRCS
   "Importer/*.cpp"
   "Preview/*.cpp"
   "Properties/*.cpp"
@@ -77,32 +77,94 @@ file(
   "xrc_handlers/*.cpp"
   "${CMAKE_BINARY_DIR}/generated/wxcversion.cpp")
 
-# wxc_runtime_gui.cpp / wxc_runtime_headless.cpp are picked per target — exclude
-# them from the shared SRCS list so each consumer can pick the right one.
-list(FILTER SRCS EXCLUDE REGEX ".*/src/wxc_runtime_(gui|headless)\\.cpp$")
+# ----------------------------------------------------------------------------
+# Source bucketing
+# ----------------------------------------------------------------------------
+# We have three target flavors that differ only in two preprocessor symbols:
+#
+#   target            STANDALONE_BUILD   WXCGEN_BUILD
+#   ----------------- ----------------   ------------
+#   wxCrafterPlugin   undefined          undefined
+#   wxcrafter (exe)   1                  undefined
+#   wxcgen (exe)      1                  1
+#
+# Most TUs don't reference either macro; their object files are bit-identical
+# across all flavors and can be compiled once, into a shared static library.
+# Only a handful of TUs actually #if on the macros and must be compiled per
+# flavor.
+#
+# Bucket the files into:
+#   MACRO_SENSITIVE_SRCS — TUs whose object code depends on the defines above.
+#                          Compiled per target with the right defines.
+#   GUI_ONLY_SRCS        — TUs that pull GUI-only symbols (MainFrame, etc.).
+#                          NOT linked into wxcgen.
+#   COMMON_GUI_SRCS      — define-agnostic but GUI-coupled. Compiled into
+#                          wxCrafterCommonGui (linked by GUI targets only).
+#   COMMON_SRCS          — define-agnostic AND headless-safe. Compiled into
+#                          wxCrafterCommon (linked by all three targets).
 
-# Sources for the headless wxcgen tool: drop the files whose translation units
-# *define* code that requires a display / event loop (MainFrame, the codelite
-# plugin entry, the GUI designer panel, all UI dialogs/preview, and the
-# wxFormBuilder-generated GUI base classes in src/gui.cpp / src/wxcrafter.cpp /
-# src/wxcrafter_gui.cpp). The widget wrappers in controls/, sizers/, etc. are
-# kept — they may #include GUI headers but don't pull GUI-only symbols at link
-# time.
-set(LIB_SRCS ${SRCS})
-# Files in src/ whose translation units pull GUI-only symbols (MainFrame,
-# wxCrafterPlugin, GUICraftMainPanel) or are GUI dialogs/widgets/preview that
-# wxcgen never reaches. The widget wrappers in controls/, sizers/, etc. are
-# kept — they're pure data + codegen.
-set(WXCGEN_EXCLUDE_FILES
+# wxc_runtime_gui.cpp / wxc_runtime_headless.cpp are picked per target — they
+# don't belong in any common library.
+list(FILTER ALL_SRCS EXCLUDE REGEX ".*/src/wxc_runtime_(gui|headless)\\.cpp$")
+
+# The 11 .cpp files that #if on STANDALONE_BUILD or WXCGEN_BUILD (verified by
+# `grep -l "STANDALONE_BUILD\|WXCGEN_BUILD" **/*.cpp`).
+set(MACRO_SENSITIVE_FILES
+    "src/main.cpp"
+    "src/allocator_mgr.cpp"
+    "src/wxcrafter_plugin.cpp"
+    "src/wxguicraft_main_view.cpp"
+    "src/wxgui_helpers.cpp"
+    "UI/NewFormWizard.cpp"
+    "UI/wxcSettingsDlg.cpp"
+    "Importer/import_dlg.cpp"
+    "Importer/import_from_wxFB.cpp"
+    "Importer/import_from_wxSmith.cpp"
+    "Importer/import_from_xrc.cpp")
+
+# Of the macro-sensitive files, these are GUI-only (define MainFrame,
+# GUICraftMainPanel, plugin glue, GUI dialogs) and must NOT be linked into
+# the headless wxcgen executable.
+set(MACRO_SENSITIVE_GUI_ONLY_FILES
     "src/main.cpp"
     "src/wxcrafter_plugin.cpp"
     "src/wxguicraft_main_view.cpp"
+    "UI/NewFormWizard.cpp"
+    "UI/wxcSettingsDlg.cpp"
+    "Importer/import_dlg.cpp")
+
+# The macro-sensitive files that wxcgen does compile (with WXCGEN_BUILD=1).
+set(MACRO_SENSITIVE_HEADLESS_FILES ${MACRO_SENSITIVE_FILES})
+foreach(f ${MACRO_SENSITIVE_GUI_ONLY_FILES})
+  list(REMOVE_ITEM MACRO_SENSITIVE_HEADLESS_FILES "${f}")
+endforeach()
+
+# Build absolute-path source lists.
+set(MACRO_SENSITIVE_SRCS)
+foreach(f ${MACRO_SENSITIVE_FILES})
+  list(APPEND MACRO_SENSITIVE_SRCS "${CMAKE_CURRENT_LIST_DIR}/${f}")
+endforeach()
+set(MACRO_SENSITIVE_GUI_ONLY_SRCS)
+foreach(f ${MACRO_SENSITIVE_GUI_ONLY_FILES})
+  list(APPEND MACRO_SENSITIVE_GUI_ONLY_SRCS "${CMAKE_CURRENT_LIST_DIR}/${f}")
+endforeach()
+set(MACRO_SENSITIVE_HEADLESS_SRCS)
+foreach(f ${MACRO_SENSITIVE_HEADLESS_FILES})
+  list(APPEND MACRO_SENSITIVE_HEADLESS_SRCS "${CMAKE_CURRENT_LIST_DIR}/${f}")
+endforeach()
+
+# Define-agnostic files split into headless-safe (COMMON_SRCS) and GUI-only
+# (COMMON_GUI_SRCS). The split is based on whether the TU pulls GUI-only
+# symbols (MainFrame, GUICraftMainPanel, wxDialog subclasses, etc.).
+set(COMMON_GUI_ONLY_FILES
+    # generated wxFormBuilder GUI base classes
     "src/gui.cpp"
     "src/gui_wxcrafter_bitmaps.cpp"
     "src/wxcrafter.cpp"
     "src/wxcrafter_gui.cpp"
     "src/wxcrafter_gui_wxcrafter_bitmaps.cpp"
     "src/wxcrafter_wxcrafter_bitmaps.cpp"
+    # GUI dialogs / widgets defined in src/
     "src/AboutDlg.cpp"
     "src/BitmapSelectorDlg.cpp"
     "src/designer_panel.cpp"
@@ -119,18 +181,38 @@ set(WXCGEN_EXCLUDE_FILES
     "src/wxc_aui_manager.cpp"
     "src/wxc_aui_tool_stickiness.cpp"
     "src/wxc_edit_manager.cpp"
-    "src/wxcLicenseGPL2.cpp"
-    "Importer/import_dlg.cpp")
-foreach(f ${WXCGEN_EXCLUDE_FILES})
-  list(REMOVE_ITEM LIB_SRCS "${CMAKE_CURRENT_LIST_DIR}/${f}")
+    "src/wxcLicenseGPL2.cpp")
+
+# Start with everything except the macro-sensitive files (they're handled
+# separately per target).
+set(COMMON_SRCS ${ALL_SRCS})
+list(REMOVE_ITEM COMMON_SRCS ${MACRO_SENSITIVE_SRCS})
+
+# COMMON_GUI_SRCS: take from COMMON_SRCS the explicitly-listed src/ GUI files
+# plus the wholesale GUI-only directories (UI/, UI/PropertiesView/, Preview/,
+# xrc_handlers/).
+set(COMMON_GUI_SRCS)
+foreach(f ${COMMON_GUI_ONLY_FILES})
+  set(absf "${CMAKE_CURRENT_LIST_DIR}/${f}")
+  list(REMOVE_ITEM COMMON_SRCS "${absf}")
+  list(APPEND COMMON_GUI_SRCS "${absf}")
 endforeach()
-# UI/, UI/PropertiesView/ and Preview/ are entirely GUI; xrc_handlers/ are
-# only used to render live previews in the designer. None reachable from the
-# headless XRC_LIVE codegen path. The Importer/import_from_*.cpp files (kept
-# above) are needed because widget wrappers call their static helpers.
-list(FILTER LIB_SRCS EXCLUDE REGEX "/UI/.*\\.cpp$")
-list(FILTER LIB_SRCS EXCLUDE REGEX "/Preview/.*\\.cpp$")
-list(FILTER LIB_SRCS EXCLUDE REGEX "/xrc_handlers/.*\\.cpp$")
+foreach(prefix "/UI/" "/Preview/" "/xrc_handlers/")
+  set(matched ${COMMON_SRCS})
+  list(FILTER matched INCLUDE REGEX "${prefix}.*\\.cpp$")
+  list(REMOVE_ITEM COMMON_SRCS ${matched})
+  list(APPEND COMMON_GUI_SRCS ${matched})
+endforeach()
+
+list(LENGTH COMMON_SRCS _n_common)
+list(LENGTH COMMON_GUI_SRCS _n_common_gui)
+list(LENGTH MACRO_SENSITIVE_SRCS _n_sens)
+list(LENGTH MACRO_SENSITIVE_HEADLESS_SRCS _n_sens_headless)
+message(STATUS "wxCrafter source bucketing:")
+message(STATUS "  wxCrafterCommon    (compiled once, all targets):    ${_n_common} files")
+message(STATUS "  wxCrafterCommonGui (compiled once, GUI targets):    ${_n_common_gui} files")
+message(STATUS "  macro-sensitive    (compiled per-target, all):      ${_n_sens} files")
+message(STATUS "  macro-sensitive    (compiled per-target, headless): ${_n_sens_headless} files")
 
 include_directories(
   "${CMAKE_CURRENT_LIST_DIR}"
@@ -147,30 +229,62 @@ if(MINGW)
   set(RES_FILES "resources/wxcapp_resources.rc")
 endif()
 
+# ----------------------------------------------------------------------------
+# Shared static libraries
+# ----------------------------------------------------------------------------
+# wxCrafterCommon: define-agnostic, headless-safe TUs. Compiled once, linked
+# into all three targets (wxcrafter, wxCrafterPlugin, wxcgen).
+add_library(wxCrafterCommon STATIC ${COMMON_SRCS})
+set_target_properties(wxCrafterCommon PROPERTIES POSITION_INDEPENDENT_CODE ON)
+# Link the CodeLite internal libs so the static lib picks up their INTERFACE
+# include directories (JSON.h, plugin.h, wxsqlite3, etc.). Static libs don't
+# actually link against other libs at archive time, but CMake will propagate
+# include dirs and compile features.
+target_link_libraries(wxCrafterCommon PUBLIC libcodelite plugin wxsqlite3)
+if(USE_PCH)
+  target_precompile_headers(wxCrafterCommon REUSE_FROM PCH)
+endif()
+
+# wxCrafterCommonGui: define-agnostic but GUI-coupled TUs. Compiled once,
+# linked into wxcrafter and wxCrafterPlugin only — NOT into wxcgen.
+add_library(wxCrafterCommonGui STATIC ${COMMON_GUI_SRCS})
+set_target_properties(wxCrafterCommonGui PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(wxCrafterCommonGui PUBLIC libcodelite plugin wxsqlite3)
+if(USE_PCH)
+  target_precompile_headers(wxCrafterCommonGui REUSE_FROM PCH)
+endif()
+
+# ----------------------------------------------------------------------------
+# Per-flavor targets
+# ----------------------------------------------------------------------------
+# Each target compiles the macro-sensitive sources itself (with the right
+# defines) and links the common static libs above.
+
 # wxCrafter as a CodeLite plugin (shared library) — uses GUI runtime shim
-add_library(wxCrafterPlugin SHARED ${SRCS}
+add_library(wxCrafterPlugin SHARED ${MACRO_SENSITIVE_SRCS}
                                    "${CMAKE_CURRENT_LIST_DIR}/src/wxc_runtime_gui.cpp")
+target_link_libraries(wxCrafterPlugin PRIVATE wxCrafterCommon wxCrafterCommonGui)
 
 # wxCrafter as a standalone GUI application — uses GUI runtime shim
-add_executable(wxcrafter ${SRCS}
+add_executable(wxcrafter ${MACRO_SENSITIVE_SRCS}
                          "${CMAKE_CURRENT_LIST_DIR}/src/wxc_runtime_gui.cpp"
                          ${RES_FILES})
 target_compile_definitions(
   wxcrafter PRIVATE STANDALONE_BUILD=1
                     INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
+target_link_libraries(wxcrafter PRIVATE wxCrafterCommon wxCrafterCommonGui)
 
-# Headless CLI code-generator (no DISPLAY required) — uses headless runtime shim.
-# WXCGEN_BUILD is a narrow flavor flag used only to stub out a handful of
-# method bodies that would otherwise pull GUI-only symbols (e.g.
-# ImportFromwxFB::ImportProject which constructs an ImportDlg). The bulk of
-# the GUI/headless split is handled by linking different runtime-shim TUs.
-add_executable(wxcgen ${LIB_SRCS}
+# Headless CLI code-generator (no DISPLAY required) — uses headless runtime
+# shim and a subset of the macro-sensitive sources (the GUI-only ones are
+# excluded; what remains is compiled with WXCGEN_BUILD=1).
+add_executable(wxcgen ${MACRO_SENSITIVE_HEADLESS_SRCS}
                       "${CMAKE_CURRENT_LIST_DIR}/wxcgen/main.cpp"
                       "${CMAKE_CURRENT_LIST_DIR}/src/wxc_runtime_headless.cpp")
 target_compile_definitions(
   wxcgen PRIVATE STANDALONE_BUILD=1
                  WXCGEN_BUILD=1
                  INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
+target_link_libraries(wxcgen PRIVATE wxCrafterCommon)
 
 if(WXC_APP)
   set_target_properties(wxCrafterPlugin PROPERTIES EXCLUDE_FROM_ALL ON)

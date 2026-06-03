@@ -4,7 +4,9 @@
 #include "macros.h"
 
 #include <set>
+#include <utility>
 #include <vector>
+#include <wx/arrstr.h>
 #include <wx/colour.h>
 #include <wx/filename.h>
 #include <wx/frame.h>
@@ -242,6 +244,45 @@ wxWindow* TopFrame();
  * @brief set the top frame
  */
 void SetTopFrame(wxWindow* frame);
+
+/**
+ * @brief return the C++ snippet emitted at the top of every generated .cpp file
+ * (anonymous namespace with border and bitmap-loaded helpers)
+ */
+const wxString& SimpleBorderCode();
+
+using BmpTextPair = std::pair<wxString, wxString>;
+using BmpTextList = std::vector<BmpTextPair>;
+
+/**
+ * @brief parse a JSON-encoded "bitmap + label" array used by wxBitmapComboBox /
+ * BitmapTextArrayProperty. Pure data — no GUI dependency.
+ */
+BmpTextList ParseBmpTextOptions(const wxString& text);
+
+/**
+ * @brief inverse of ParseBmpTextOptions — encode a "bitmap + label" array as
+ * a JSON string suitable for storing in a .wxcp project.
+ */
+wxString FormatBmpTextOptions(const BmpTextList& vec);
+
+/**
+ * @brief write the generated C++/XRC files for a loaded project.
+ *
+ * This is the shared output-writing kernel used by both GUICraftMainPanel::DoGenerateCode
+ * (interactive GUI path) and wxcgen (headless CLI path).
+ *
+ * @param baseCpp       Accumulated generated .cpp body
+ * @param baseHeader    Accumulated generated .h body
+ * @param headers       #include lines to inject into the header
+ * @param additionalFiles  Extra per-class files (keyed by filename)
+ * @param autoGenComment  Auto-generated file banner to prepend
+ */
+void WriteGeneratedOutput(const wxString& baseCpp,
+                          const wxString& baseHeader,
+                          const wxArrayString& headers,
+                          const wxStringMap_t& additionalFiles,
+                          const wxString& autoGenComment);
 } // namespace wxCrafter
 
 #endif // _WXGUI_HELPERS_H_

@@ -58,7 +58,7 @@ configure_file(${CL_SRC_ROOT}/wxcrafter/wxcversion.cpp.in
 
 file(
   GLOB
-  SRCS
+  ALL_SRCS
   "Importer/*.cpp"
   "Preview/*.cpp"
   "Properties/*.cpp"
@@ -77,6 +77,143 @@ file(
   "xrc_handlers/*.cpp"
   "${CMAKE_BINARY_DIR}/generated/wxcversion.cpp")
 
+# ----------------------------------------------------------------------------
+# Source bucketing
+# ----------------------------------------------------------------------------
+# We have three target flavors that differ only in two preprocessor symbols:
+#
+#   target            STANDALONE_BUILD   WXCGEN_BUILD
+#   ----------------- ----------------   ------------
+#   wxCrafterPlugin   undefined          undefined
+#   wxcrafter (exe)   1                  undefined
+#   wxcgen (exe)      1                  1
+#
+# Most TUs don't reference either macro; their object files are bit-identical
+# across all flavors and can be compiled once, into a shared static library.
+# Only a handful of TUs actually #if on the macros and must be compiled per
+# flavor.
+#
+# Bucket the files into:
+#   MACRO_SENSITIVE_SRCS — TUs whose object code depends on the defines above.
+#                          Compiled per target with the right defines.
+#   GUI_ONLY_SRCS        — TUs that pull GUI-only symbols (MainFrame, etc.).
+#                          NOT linked into wxcgen.
+#   COMMON_GUI_SRCS      — define-agnostic but GUI-coupled. Compiled into
+#                          wxCrafterCommonGui (linked by GUI targets only).
+#   COMMON_SRCS          — define-agnostic AND headless-safe. Compiled into
+#                          wxCrafterCommon (linked by all three targets).
+
+# wxc_runtime_gui.cpp / wxc_runtime_headless.cpp are picked per target — they
+# don't belong in any common library.
+list(FILTER ALL_SRCS EXCLUDE REGEX ".*/src/wxc_runtime_(gui|headless)\\.cpp$")
+
+# The 11 .cpp files that #if on STANDALONE_BUILD or WXCGEN_BUILD (verified by
+# `grep -l "STANDALONE_BUILD\|WXCGEN_BUILD" **/*.cpp`).
+set(MACRO_SENSITIVE_FILES
+    "src/main.cpp"
+    "src/allocator_mgr.cpp"
+    "src/wxcrafter_plugin.cpp"
+    "src/wxguicraft_main_view.cpp"
+    "src/wxgui_helpers.cpp"
+    "UI/NewFormWizard.cpp"
+    "UI/wxcSettingsDlg.cpp"
+    "Importer/import_dlg.cpp"
+    "Importer/import_from_wxFB.cpp"
+    "Importer/import_from_wxSmith.cpp"
+    "Importer/import_from_xrc.cpp")
+
+# Of the macro-sensitive files, these are GUI-only (define MainFrame,
+# GUICraftMainPanel, plugin glue, GUI dialogs) and must NOT be linked into
+# the headless wxcgen executable.
+set(MACRO_SENSITIVE_GUI_ONLY_FILES
+    "src/main.cpp"
+    "src/wxcrafter_plugin.cpp"
+    "src/wxguicraft_main_view.cpp"
+    "UI/NewFormWizard.cpp"
+    "UI/wxcSettingsDlg.cpp"
+    "Importer/import_dlg.cpp")
+
+# The macro-sensitive files that wxcgen does compile (with WXCGEN_BUILD=1).
+set(MACRO_SENSITIVE_HEADLESS_FILES ${MACRO_SENSITIVE_FILES})
+foreach(f ${MACRO_SENSITIVE_GUI_ONLY_FILES})
+  list(REMOVE_ITEM MACRO_SENSITIVE_HEADLESS_FILES "${f}")
+endforeach()
+
+# Build absolute-path source lists.
+set(MACRO_SENSITIVE_SRCS)
+foreach(f ${MACRO_SENSITIVE_FILES})
+  list(APPEND MACRO_SENSITIVE_SRCS "${CMAKE_CURRENT_LIST_DIR}/${f}")
+endforeach()
+set(MACRO_SENSITIVE_GUI_ONLY_SRCS)
+foreach(f ${MACRO_SENSITIVE_GUI_ONLY_FILES})
+  list(APPEND MACRO_SENSITIVE_GUI_ONLY_SRCS "${CMAKE_CURRENT_LIST_DIR}/${f}")
+endforeach()
+set(MACRO_SENSITIVE_HEADLESS_SRCS)
+foreach(f ${MACRO_SENSITIVE_HEADLESS_FILES})
+  list(APPEND MACRO_SENSITIVE_HEADLESS_SRCS "${CMAKE_CURRENT_LIST_DIR}/${f}")
+endforeach()
+
+# Define-agnostic files split into headless-safe (COMMON_SRCS) and GUI-only
+# (COMMON_GUI_SRCS). The split is based on whether the TU pulls GUI-only
+# symbols (MainFrame, GUICraftMainPanel, wxDialog subclasses, etc.).
+set(COMMON_GUI_ONLY_FILES
+    # generated wxFormBuilder GUI base classes
+    "src/gui.cpp"
+    "src/gui_wxcrafter_bitmaps.cpp"
+    "src/wxcrafter.cpp"
+    "src/wxcrafter_gui.cpp"
+    "src/wxcrafter_gui_wxcrafter_bitmaps.cpp"
+    "src/wxcrafter_wxcrafter_bitmaps.cpp"
+    # GUI dialogs / widgets defined in src/
+    "src/AboutDlg.cpp"
+    "src/BitmapSelectorDlg.cpp"
+    "src/designer_panel.cpp"
+    "src/duplicateTLWdlg.cpp"
+    "src/enter_strings_dlg.cpp"
+    "src/EventsEditorDlg.cpp"
+    "src/file_picker_ctrl.cpp"
+    "src/MediaCtrl.cpp"
+    "src/my_dialog.cpp"
+    "src/my_frame.cpp"
+    "src/my_panel.cpp"
+    "src/OpenGLCanvas.cpp"
+    "src/output_nbook.cpp"
+    "src/wxc_aui_manager.cpp"
+    "src/wxc_aui_tool_stickiness.cpp"
+    "src/wxc_edit_manager.cpp"
+    "src/wxcLicenseGPL2.cpp")
+
+# Start with everything except the macro-sensitive files (they're handled
+# separately per target).
+set(COMMON_SRCS ${ALL_SRCS})
+list(REMOVE_ITEM COMMON_SRCS ${MACRO_SENSITIVE_SRCS})
+
+# COMMON_GUI_SRCS: take from COMMON_SRCS the explicitly-listed src/ GUI files
+# plus the wholesale GUI-only directories (UI/, UI/PropertiesView/, Preview/,
+# xrc_handlers/).
+set(COMMON_GUI_SRCS)
+foreach(f ${COMMON_GUI_ONLY_FILES})
+  set(absf "${CMAKE_CURRENT_LIST_DIR}/${f}")
+  list(REMOVE_ITEM COMMON_SRCS "${absf}")
+  list(APPEND COMMON_GUI_SRCS "${absf}")
+endforeach()
+foreach(prefix "/UI/" "/Preview/" "/xrc_handlers/")
+  set(matched ${COMMON_SRCS})
+  list(FILTER matched INCLUDE REGEX "${prefix}.*\\.cpp$")
+  list(REMOVE_ITEM COMMON_SRCS ${matched})
+  list(APPEND COMMON_GUI_SRCS ${matched})
+endforeach()
+
+list(LENGTH COMMON_SRCS _n_common)
+list(LENGTH COMMON_GUI_SRCS _n_common_gui)
+list(LENGTH MACRO_SENSITIVE_SRCS _n_sens)
+list(LENGTH MACRO_SENSITIVE_HEADLESS_SRCS _n_sens_headless)
+message(STATUS "wxCrafter source bucketing:")
+message(STATUS "  wxCrafterCommon    (compiled once, all targets):    ${_n_common} files")
+message(STATUS "  wxCrafterCommonGui (compiled once, GUI targets):    ${_n_common_gui} files")
+message(STATUS "  macro-sensitive    (compiled per-target, all):      ${_n_sens} files")
+message(STATUS "  macro-sensitive    (compiled per-target, headless): ${_n_sens_headless} files")
+
 include_directories(
   "${CMAKE_CURRENT_LIST_DIR}"
   "${CMAKE_CURRENT_LIST_DIR}/aui"
@@ -92,19 +229,68 @@ if(MINGW)
   set(RES_FILES "resources/wxcapp_resources.rc")
 endif()
 
-# Define the output
-add_library(wxCrafterPlugin SHARED ${SRCS})
-add_executable(wxcrafter ${SRCS} ${RES_FILES})
+# ----------------------------------------------------------------------------
+# Shared static libraries
+# ----------------------------------------------------------------------------
+# wxCrafterCommon: define-agnostic, headless-safe TUs. Compiled once, linked
+# into all three targets (wxcrafter, wxCrafterPlugin, wxcgen).
+add_library(wxCrafterCommon STATIC ${COMMON_SRCS})
+set_target_properties(wxCrafterCommon PROPERTIES POSITION_INDEPENDENT_CODE ON)
+# Link the CodeLite internal libs so the static lib picks up their INTERFACE
+# include directories (JSON.h, plugin.h, wxsqlite3, etc.). Static libs don't
+# actually link against other libs at archive time, but CMake will propagate
+# include dirs and compile features.
+target_link_libraries(wxCrafterCommon PUBLIC libcodelite plugin wxsqlite3)
+if(USE_PCH)
+  target_precompile_headers(wxCrafterCommon REUSE_FROM PCH)
+endif()
+
+# wxCrafterCommonGui: define-agnostic but GUI-coupled TUs. Compiled once,
+# linked into wxcrafter and wxCrafterPlugin only — NOT into wxcgen.
+add_library(wxCrafterCommonGui STATIC ${COMMON_GUI_SRCS})
+set_target_properties(wxCrafterCommonGui PROPERTIES POSITION_INDEPENDENT_CODE ON)
+target_link_libraries(wxCrafterCommonGui PUBLIC libcodelite plugin wxsqlite3)
+if(USE_PCH)
+  target_precompile_headers(wxCrafterCommonGui REUSE_FROM PCH)
+endif()
+
+# ----------------------------------------------------------------------------
+# Per-flavor targets
+# ----------------------------------------------------------------------------
+# Each target compiles the macro-sensitive sources itself (with the right
+# defines) and links the common static libs above.
+
+# wxCrafter as a CodeLite plugin (shared library) — uses GUI runtime shim
+add_library(wxCrafterPlugin SHARED ${MACRO_SENSITIVE_SRCS}
+                                   "${CMAKE_CURRENT_LIST_DIR}/src/wxc_runtime_gui.cpp")
+target_link_libraries(wxCrafterPlugin PRIVATE wxCrafterCommon wxCrafterCommonGui)
+
+# wxCrafter as a standalone GUI application — uses GUI runtime shim
+add_executable(wxcrafter ${MACRO_SENSITIVE_SRCS}
+                         "${CMAKE_CURRENT_LIST_DIR}/src/wxc_runtime_gui.cpp"
+                         ${RES_FILES})
+target_compile_definitions(
+  wxcrafter PRIVATE STANDALONE_BUILD=1
+                    INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
+target_link_libraries(wxcrafter PRIVATE wxCrafterCommon wxCrafterCommonGui)
+
+# Headless CLI code-generator (no DISPLAY required) — uses headless runtime
+# shim and a subset of the macro-sensitive sources (the GUI-only ones are
+# excluded; what remains is compiled with WXCGEN_BUILD=1).
+add_executable(wxcgen ${MACRO_SENSITIVE_HEADLESS_SRCS}
+                      "${CMAKE_CURRENT_LIST_DIR}/wxcgen/main.cpp"
+                      "${CMAKE_CURRENT_LIST_DIR}/src/wxc_runtime_headless.cpp")
+target_compile_definitions(
+  wxcgen PRIVATE STANDALONE_BUILD=1
+                 WXCGEN_BUILD=1
+                 INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
+target_link_libraries(wxcgen PRIVATE wxCrafterCommon)
+
 if(WXC_APP)
   set_target_properties(wxCrafterPlugin PROPERTIES EXCLUDE_FROM_ALL ON)
 else()
   set_target_properties(wxcrafter PROPERTIES EXCLUDE_FROM_ALL ON)
 endif()
-
-# target_compile_definitions(wxCrafterPlugin PRIVATE WXCAPP=0)
-target_compile_definitions(
-  wxcrafter PRIVATE STANDALONE_BUILD=1
-                    INSTALL_PREFIX=\"${CMAKE_INSTALL_PREFIX}\")
 
 if(UNIX OR APPLE)
   set_target_properties(wxCrafterPlugin PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -116,22 +302,26 @@ if(USE_PCH)
 endif()
 
 # Remove the "lib" prefix from the plugin name
-set_target_properties(wxCrafterPlugin PROPERTIES OUTPUT_NAME "wxCrafter" PREFIX
-                                                                         "")
+set_target_properties(wxCrafterPlugin PROPERTIES OUTPUT_NAME "wxCrafter" PREFIX "")
 
 if(NOT OFFICIAL_CL_BUILD)
-  target_link_libraries(wxCrafterPlugin ${LINKER_OPTIONS} wxsqlite3
+  target_link_libraries(wxCrafterPlugin PRIVATE ${LINKER_OPTIONS} wxsqlite3
                         ${SQLite3_LIBRARIES} libcodelite plugin)
 else(OFFICIAL_CL_BUILD)
-  target_link_libraries(wxCrafterPlugin ${LINKER_OPTIONS})
+  target_link_libraries(wxCrafterPlugin PRIVATE ${LINKER_OPTIONS})
 endif(NOT OFFICIAL_CL_BUILD)
 
-target_link_libraries(wxcrafter ${LINKER_OPTIONS} wxsqlite3 libcodelite plugin
+target_link_libraries(wxcrafter PRIVATE ${LINKER_OPTIONS} wxsqlite3 libcodelite plugin
                       $<IF:$<BOOL:${MINGW}>,-mwindows,-lutil>)
+
+target_link_libraries(wxcgen PRIVATE ${LINKER_OPTIONS} wxsqlite3 libcodelite plugin
+                      $<IF:$<BOOL:${MINGW}>,-mconsole,-lutil>)
 
 if(UNIX AND NOT APPLE)
   set_target_properties(wxcrafter PROPERTIES SKIP_BUILD_RPATH FALSE
                                              BUILD_WITH_INSTALL_RPATH FALSE)
+  set_target_properties(wxcgen PROPERTIES SKIP_BUILD_RPATH FALSE
+                                          BUILD_WITH_INSTALL_RPATH FALSE)
 endif(UNIX AND NOT APPLE)
 
 if(MINGW)
@@ -167,9 +357,9 @@ if(NOT WXC_APP)
 elseif(NOT MINGW)
   set(CPACK_DEB_COMPONENT_INSTALL 1)
 
-  # Installing an application
+  # Installing the applications
   install(
-    TARGETS wxcrafter
+    TARGETS wxcrafter wxcgen
     DESTINATION ${CL_INSTALL_BIN}
     PERMISSIONS ${EXE_PERM}
     COMPONENT standalone)
@@ -283,7 +473,7 @@ elseif(NOT MINGW)
 endif()
 
 if(WXC_APP AND MINGW)
-  install(TARGETS wxcrafter DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/")
+  install(TARGETS wxcrafter wxcgen DESTINATION "${CMAKE_INSTALL_PREFIX}/bin/")
   # Install codelite lexer files
   install(
     DIRECTORY ${CL_SRC_ROOT}/Runtime/lexers
@@ -294,8 +484,6 @@ if(WXC_APP AND MINGW)
     PATTERN ".git" EXCLUDE)
 endif()
 
-option(WXCRAFTER_USE_XVFB_RUN "Run wxcrafter under xvfb-run (for CI)" OFF)
-
 macro(
   wxcrafter_target
   Name
@@ -304,23 +492,13 @@ macro(
   OutputCpp
   OutputH
   OutputBitmaps)
-  if(WXCRAFTER_USE_XVFB_RUN)
-    add_custom_command(
-      OUTPUT ${OutputDir}/${OutputCpp} ${OutputDir}/${OutputH}
-             ${OutputDir}/${OutputBitmaps}
-      COMMAND xvfb-run -a $<TARGET_FILE:wxcrafter> -o ${OutputDir} -g ${Input}
-      VERBATIM
-      DEPENDS ${Input}
-      COMMENT "[WxCrafter][${Name}] Building code")
-  else()
-    add_custom_command(
-      OUTPUT ${OutputDir}/${OutputCpp} ${OutputDir}/${OutputH}
-             ${OutputDir}/${OutputBitmaps}
-      COMMAND $<TARGET_FILE:wxcrafter> -o ${OutputDir} -g ${Input}
-      VERBATIM
-      DEPENDS ${Input}
-      COMMENT "[WxCrafter][${Name}] Building code")
-  endif()
+  add_custom_command(
+    OUTPUT ${OutputDir}/${OutputCpp} ${OutputDir}/${OutputH}
+           ${OutputDir}/${OutputBitmaps}
+    COMMAND $<TARGET_FILE:wxcgen> -o ${OutputDir} ${Input}
+    VERBATIM
+    DEPENDS ${Input} wxcgen
+    COMMENT "[WxCrafter][${Name}] Building code (wxcgen)")
 
   set(WXCRAFTER_${Name}_OUTPUTS ${OutputCpp} ${OutputH} ${OutputBitmaps})
   set(WXCRAFTER_${Name}_OUTPUTDIR ${OutputDir})

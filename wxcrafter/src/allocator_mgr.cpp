@@ -111,6 +111,7 @@
 #include "tree_list_ctrl_wrapper.h"
 #include "web_view_wrapper.h"
 #include "wizard_wrapper.h"
+#include "wxc_runtime.h"
 #include "wxc_widget.h"
 #include "wxcrafter_plugin.h"
 #include "wxgui_bitmaploader.h"
@@ -171,10 +172,10 @@ FLAGS_t MT_INSERT_INTO_SIZER = __ONE__ << 37;      // Top
 #define MENU_SEPARATOR() menu->AppendSeparator();
 
 Allocator::Allocator()
-    : m_imageList(new wxImageList(16, 16, true))
+    : m_imageList(wxc_runtime::CreateAllocatorImageList())
 {
-    // Add the tree control images
-    m_imageList->Add(m_bmpLoader.Bitmap(wxT("wxgui"))); // 0
+    // Add the tree control images (no-op under headless wxcgen)
+    wxc_runtime::AddImageToAllocator(m_imageList, m_bmpLoader, wxT("wxgui")); // 0
 
     Register(new BoxSizerWrapper(), "wxboxsizer_v");
     Register(new FlexGridSizerWrapper(), "wxflexgridsizer");
@@ -417,7 +418,7 @@ void Allocator::Register(wxcWidget* obj, const wxString& bmpname, int id)
         objId = obj->GetType();
     }
     m_objs[objId] = obj;
-    m_imageIds[objId] = m_imageList->Add(m_bmpLoader.Bitmap(bmpname));
+    m_imageIds[objId] = wxc_runtime::AddImageToAllocator(m_imageList, m_bmpLoader, bmpname);
 }
 
 int Allocator::GetImageId(int controlId) const

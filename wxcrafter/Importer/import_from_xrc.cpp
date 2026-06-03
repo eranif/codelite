@@ -20,6 +20,10 @@ ImportFromXrc::ImportFromXrc(wxWindow* parent)
 
 bool ImportFromXrc::ImportProject(ImportDlg::ImportFileData& data) const
 {
+#ifdef WXCGEN_BUILD
+    wxUnusedVar(data);
+    return false;
+#else
     ImportDlg dlg(ImportDlg::IPD_XRC, m_Parent);
     if (dlg.ShowModal() != wxID_OK) {
         return false;
@@ -44,6 +48,7 @@ bool ImportFromXrc::ImportProject(ImportDlg::ImportFileData& data) const
         return true;
     }
     return false;
+#endif
 }
 
 bool ImportFromXrc::ParseFile(wxXmlDocument& doc, wxcWidget::List_t& toplevels) const

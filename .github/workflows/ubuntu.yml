@@ -64,7 +64,7 @@ jobs:
       run: |
         mkdir build-release
         cd build-release
-        cmake .. -DCMAKE_BUILD_TYPE=Release ${{matrix.codelite-options}} -DCOPY_WX_LIBS=1 -DBUILD_TESTING=1 -DWXCRAFTER_USE_XVFB_RUN=1
+        cmake .. -DCMAKE_BUILD_TYPE=Release ${{matrix.codelite-options}} -DCOPY_WX_LIBS=1 -DBUILD_TESTING=1
         make -j$(nproc)
         sudo make install
         ctest --output-on-failure

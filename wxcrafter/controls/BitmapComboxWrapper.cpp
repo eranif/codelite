@@ -2,7 +2,6 @@
 
 #include "Properties/BitmapTextArrayProperty.h"
 #include "Properties/string_property.h"
-#include "UI/PropertiesView/BmpTextSelectorDlg.h"
 #include "allocator_mgr.h"
 #include "wxc_bitmap_code_generator.h"
 #include "wxgui_defs.h"
@@ -41,7 +40,7 @@ wxString BitmapComboxWrapper::CppCtorCode() const
 {
     wxArrayString labels, bitmaps;
     wxString options = PropertyString(PROP_CB_CHOICES);
-    BmpTextVec_t arr = BmpTextSelectorDlg::FromString(options);
+    auto arr = wxCrafter::ParseBmpTextOptions(options);
     for (const auto& [bitmapFile, label] : arr) {
         wxcCodeGeneratorHelper::Get().AddBitmap(bitmapFile);
         bitmaps.Add(wxcCodeGeneratorHelper::Get().BitmapCode(bitmapFile));
@@ -75,7 +74,7 @@ void BitmapComboxWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 {
     wxString options = PropertyString(PROP_CB_CHOICES);
     text << XRCPrefix() << XRCStyle() << XRCSize() << XRCCommonAttributes();
-    BmpTextVec_t arr = BmpTextSelectorDlg::FromString(options);
+    auto arr = wxCrafter::ParseBmpTextOptions(options);
     for (const auto& [bmp, label] : arr) {
         text << "<object class=\"ownerdrawnitem\">";
         text << "<text>" << wxCrafter::CDATA(label) << "</text>";

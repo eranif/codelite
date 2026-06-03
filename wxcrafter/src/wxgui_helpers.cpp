@@ -1,11 +1,13 @@
 #include "wxgui_helpers.h"
 
+#include "JSON.h"
 #include "macros.h"
-#include "main.h"
 #include "map"
 #include "project.h"
 #include "workspace.h"
+#include "wxc_bitmap_code_generator.h"
 #include "wxc_project_metadata.h"
+#include "wxc_runtime.h"
 #include "xml/xmlutils.h"
 
 #include <wx/app.h>
@@ -29,65 +31,53 @@
 
 namespace
 {
+// Map a wxSystemFont id onto a stand-in wxFontFamily so we can build a wxFont
+// without calling wxSystemSettings::GetFont (which on wxGTK probes the live
+// theme via pango and crashes when wxcgen runs without a DISPLAY). Codegen
+// never reads back the face/size — only style/weight/underlined, which we
+// set explicitly below.
+wxFontFamily SystemFontFamilyFor(const wxString& sysName)
+{
+    if (sysName == wxT("wxSYS_OEM_FIXED_FONT") || sysName == wxT("wxSYS_ANSI_FIXED_FONT")
+        || sysName == wxT("wxSYS_SYSTEM_FIXED_FONT")) {
+        return wxFONTFAMILY_TELETYPE;
+    }
+    if (sysName == wxT("wxSYS_ANSI_VAR_FONT") || sysName == wxT("wxSYS_SYSTEM_FONT")
+        || sysName == wxT("wxSYS_DEVICE_DEFAULT_FONT") || sysName == wxT("wxSYS_DEFAULT_GUI_FONT")) {
+        return wxFONTFAMILY_DEFAULT;
+    }
+    return wxFONTFAMILY_MAX; // sentinel: not a wxSYS_* token
+}
+
 wxFont GetSystemFont(const wxString& name)
 {
     // name is in the format of name,style,weight,underlined
-    if (!name.IsEmpty()) {
-        wxArrayString parts = ::wxStringTokenize(name, wxT(","), wxTOKEN_STRTOK);
-        if (parts.IsEmpty())
-            return wxNullFont;
-
-        wxFont font;
-        wxString name, style, weight, underlined;
-        name = parts.Item(0);
-
-        if (parts.GetCount() > 1)
-            style = parts.Item(1);
-
-        if (parts.GetCount() > 2)
-            weight = parts.Item(2);
-
-        if (parts.GetCount() > 3)
-            underlined = parts.Item(3);
-
-        if (name == wxT("wxSYS_OEM_FIXED_FONT"))
-            font = wxSystemSettings::GetFont(wxSYS_OEM_FIXED_FONT);
-
-        else if (name == wxT("wxSYS_ANSI_FIXED_FONT")) {
-            font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-            font.SetFamily(wxFONTFAMILY_TELETYPE);
-        }
-
-        else if (name == wxT("wxSYS_ANSI_VAR_FONT"))
-            font = wxSystemSettings::GetFont(wxSYS_ANSI_VAR_FONT);
-        else if (name == wxT("wxSYS_SYSTEM_FONT"))
-            font = wxSystemSettings::GetFont(wxSYS_SYSTEM_FONT);
-        else if (name == wxT("wxSYS_DEVICE_DEFAULT_FONT"))
-            font = wxSystemSettings::GetFont(wxSYS_DEVICE_DEFAULT_FONT);
-        else if (name == wxT("wxSYS_SYSTEM_FIXED_FONT"))
-            font = wxSystemSettings::GetFont(wxSYS_SYSTEM_FIXED_FONT);
-        else if (name == wxT("wxSYS_DEFAULT_GUI_FONT"))
-            font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
-        else
-            return wxNullFont;
-
-        if (style == wxT("italic"))
-            font.SetStyle(wxFONTSTYLE_ITALIC);
-        else
-            font.SetStyle(wxFONTSTYLE_NORMAL);
-
-        if (weight == wxT("bold"))
-            font.SetWeight(wxFONTWEIGHT_BOLD);
-        else
-            font.SetWeight(wxFONTWEIGHT_NORMAL);
-
-        if (underlined == wxT("underlined"))
-            font.SetUnderlined(true);
-        else
-            font.SetUnderlined(false);
-        return font;
+    if (name.IsEmpty()) {
+        return wxNullFont;
     }
-    return wxNullFont;
+    wxArrayString parts = ::wxStringTokenize(name, wxT(","), wxTOKEN_STRTOK);
+    if (parts.IsEmpty())
+        return wxNullFont;
+
+    wxString sysName = parts.Item(0);
+    wxFontFamily family = SystemFontFamilyFor(sysName);
+    if (family == wxFONTFAMILY_MAX) {
+        return wxNullFont;
+    }
+
+    wxString style = parts.GetCount() > 1 ? parts.Item(1) : wxString{};
+    wxString weight = parts.GetCount() > 2 ? parts.Item(2) : wxString{};
+    wxString underlined = parts.GetCount() > 3 ? parts.Item(3) : wxString{};
+
+    // Construct the font with attributes baked in (gives it a valid
+    // wxFontRefData) so subsequent SetStyle/SetWeight/SetUnderlined calls
+    // mutate existing refData instead of allocating fresh refData via
+    // pango/GTK.
+    wxFontStyle fstyle = (style == wxT("italic")) ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL;
+    wxFontWeight fweight = (weight == wxT("bold")) ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL;
+    bool funderlined = (underlined == wxT("underlined"));
+
+    return wxFont(wxFontInfo(10).Family(family).Style(fstyle).Weight(fweight).Underlined(funderlined));
 }
 
 wxFontFamily StringToFontFamily(const wxString& str)
@@ -142,7 +132,7 @@ wxFontWeight StringToFontWeight(const wxString& str)
 wxBorder wxCrafter::GetControlBorder()
 {
 #if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
-    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
+    return wxc_runtime::IsDarkAppearance() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
 #else
     return wxBORDER_DEFAULT;
 #endif
@@ -229,7 +219,6 @@ wxFileName wxCrafter::LoadXRC(
     wxStringInputStream inStr(xrcString);
 
     if (!doc.Load(inStr)) {
-        ::wxMessageBox(_("Invalid XRC! could not save DesignerPreview.xrc"), wxT("wxCrafter"), wxOK | wxICON_WARNING);
         return wxFileName(GetUserDataDir(), filename);
     }
     doc.Save(str);
@@ -626,8 +615,11 @@ wxString wxCrafter::XRCToFontstring(const wxXmlNode* node)
     }
 
     if (!font.IsOk()) {
-        // No preferred font, so use the standard one
-        font = wxSystemSettings::GetFont(wxSYS_SYSTEM_FONT);
+        // No preferred font, so use a generic stand-in. We deliberately avoid
+        // wxSystemSettings::GetFont here so this path is safe under the
+        // headless wxcgen build (no DISPLAY). The face/size are unused
+        // downstream — only the attributes set explicitly below matter.
+        font = wxFont(wxFontInfo(10).Family(wxFONTFAMILY_DEFAULT));
         if (!font.IsOk()) {
             return "";
         }
@@ -691,7 +683,10 @@ wxString wxCrafter::FBToFontstring(const wxString& FBstr)
     // wxFB uses a value of -1 as (presumably) a default size if the user didn't specify.
     // This is the same as (the valid) wxFONTSIZE_SMALL but, at least on my system, results in a size of 12 pts which is
     // too large so use the system font size instead
-    static int defaultfontsize = wxSystemSettings::GetFont(wxSYS_SYSTEM_FONT).GetPointSize();
+    // 10 is a reasonable default; the precise value isn't important — wxFB
+    // import never runs in the headless wxcgen build, and the GUI path
+    // overrides this when the user picks a font in the designer.
+    static int defaultfontsize = 10;
     if (sz == "-1") {
         sz = wxString::Format("%d", defaultfontsize);
     }
@@ -1001,12 +996,9 @@ wxString wxCrafter::GetUserDataDir()
 
 void wxCrafter::SetStatusMessage(const wxString& msg)
 {
-    if (TopFrame()) {
-        MainFrame* frame = dynamic_cast<MainFrame*>(TopFrame());
-        if (frame) {
-            frame->SetStatusMessage(msg);
-        }
-    }
+    // Forwards to the per-target runtime shim — keeps wxgui_helpers.cpp free
+    // of MainFrame symbols so it can compile into the headless wxcgen target.
+    wxc_runtime::SetStatusMessage(msg);
 }
 
 wxString wxCrafter::GetConfigFile()
@@ -1372,3 +1364,164 @@ wxWindow* wxCrafter::TopFrame()
 }
 
 void wxCrafter::SetTopFrame(wxWindow* frame) { sTopFrame = frame; }
+
+const wxString& wxCrafter::SimpleBorderCode()
+{
+    static const wxString s_code = R"(
+namespace {
+// return the wxBORDER_SIMPLE that matches the current application theme
+[[maybe_unused]]
+wxBorder get_border_simple_theme_aware_bit() {
+#if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
+    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
+#else
+    return wxBORDER_DEFAULT;
+#endif
+} // get_border_simple_theme_aware_bit
+bool bBitmapLoaded = false;
+} // namespace
+)";
+    return s_code;
+}
+
+wxCrafter::BmpTextList wxCrafter::ParseBmpTextOptions(const wxString& text)
+{
+    BmpTextList vec;
+    if (text.IsEmpty()) {
+        return vec;
+    }
+    JSON root(text);
+    int size = root.toElement().arraySize();
+    vec.reserve(size);
+    for (int i = 0; i < size; ++i) {
+        JSONItem item = root.toElement().arrayItem(i);
+        wxString bitmap = item.namedObject("bmp").toString();
+        wxString label = item.namedObject("label").toString();
+        vec.emplace_back(bitmap, label);
+    }
+    return vec;
+}
+
+wxString wxCrafter::FormatBmpTextOptions(const BmpTextList& vec)
+{
+    JSON root(JsonType::Array);
+    for (const auto& [bmp, label] : vec) {
+        JSONItem element = JSONItem::createObject();
+        element.addProperty("bmp", bmp);
+        element.addProperty("label", label);
+        root.toElement().arrayAppend(std::move(element));
+    }
+    wxString asString(root.toElement().format());
+    asString.Replace("\n", "");
+    return asString;
+}
+
+void wxCrafter::WriteGeneratedOutput(const wxString& baseCpp,
+                                     const wxString& baseHeader,
+                                     const wxArrayString& headersIn,
+                                     const wxStringMap_t& additionalFiles,
+                                     const wxString& autoGenComment)
+{
+    if (wxcProjectMetadata::Get().GetGenerateCPPCode() && !baseCpp.IsEmpty()) {
+        wxFileName projectFile(wxcProjectMetadata::Get().GetProjectFile());
+        wxCrafter::MakeAbsToProject(projectFile);
+
+        wxFileName headerFile = wxcProjectMetadata::Get().BaseHeaderFile();
+        wxCrafter::MakeAbsToProject(headerFile);
+
+        wxFileName sourceFile = wxcProjectMetadata::Get().BaseCppFile();
+        wxCrafter::MakeAbsToProject(sourceFile);
+
+        // Build include guard
+        wxString blockGuard = "_"; // must not start with a digit
+        wxArrayString dirs = projectFile.GetDirs();
+        if (!dirs.IsEmpty()) {
+            if (dirs.size() > 2) {
+                blockGuard << dirs.Item(dirs.size() - 2) << "_";
+            }
+            blockGuard << dirs.Last() << "_";
+        }
+        blockGuard << projectFile.GetName();
+        blockGuard.Replace("-", "_");
+        blockGuard.Replace(".", "_");
+        blockGuard.Replace("+", "_");
+        blockGuard.Replace(":", "_");
+        blockGuard << "_BASE_CLASSES";
+        blockGuard << "_" << wxcProjectMetadata::Get().GetHeaderFileExt();
+        blockGuard.MakeUpper();
+
+        wxArrayString headers = wxCrafter::MakeUnique(headersIn);
+
+        wxString prefix;
+        prefix << autoGenComment;
+        prefix << "#ifndef " << blockGuard << "\n";
+        prefix << "#define " << blockGuard << "\n\n";
+        prefix << "// clang-format off\n";
+        prefix << wxCrafter::Join(headers, "\n") << "\n";
+
+        // wxPersistence support
+        prefix << wxCrafter::WX29_BLOCK_START();
+        prefix << "#include <wx/persist.h>\n";
+        prefix << "#include <wx/persist/toplevel.h>\n";
+        prefix << "#include <wx/persist/bookctrl.h>\n";
+        prefix << "#include <wx/persist/treebook.h>\n";
+        prefix << "#endif\n";
+
+        prefix << "\n";
+        prefix << "#ifdef WXC_FROM_DIP\n";
+        prefix << "#undef WXC_FROM_DIP\n";
+        prefix << "#endif\n";
+        prefix << wxCrafter::WX31_BLOCK_START();
+        prefix << "#define WXC_FROM_DIP(x) wxWindow::FromDIP(x, NULL)\n";
+        prefix << "#else\n";
+        prefix << "#define WXC_FROM_DIP(x) x\n";
+        prefix << "#endif\n\n";
+
+        wxString projectIncludes;
+        const wxArrayString& includes = wxcProjectMetadata::Get().GetIncludeFiles();
+        for (size_t i = 0; i < includes.GetCount(); i++) {
+            projectIncludes << "#include " << wxCrafter::AddQuotes(includes.Item(i)) << "\n";
+        }
+        prefix << projectIncludes;
+        prefix << "// clang-format on\n";
+
+        wxString headerOut = baseHeader;
+        headerOut.Prepend(prefix);
+        headerOut.Append("#endif\n");
+
+        if (wxCrafter::IsTheSame(headerOut, headerFile) == false) {
+            wxCrafter::WriteFile(headerFile, headerOut, true);
+            wxCrafter::FormatFile(headerFile);
+            wxCrafter::NotifyFileSaved(headerFile);
+        }
+
+        wxString cppPrefix;
+        cppPrefix << autoGenComment;
+        cppPrefix << "#include \"" << headerFile.GetFullName() << "\"\n";
+        cppPrefix << projectIncludes << "\n\n";
+        cppPrefix << "// Declare the bitmap loading function\n";
+        cppPrefix << wxcCodeGeneratorHelper::Get().GenerateExternCode() << "\n";
+        cppPrefix << wxCrafter::SimpleBorderCode();
+
+        wxString cppOut = baseCpp;
+        cppOut.Prepend(cppPrefix);
+        if (wxCrafter::IsTheSame(cppOut, sourceFile) == false) {
+            wxCrafter::WriteFile(sourceFile, cppOut, true);
+            wxCrafter::FormatFile(sourceFile);
+            wxCrafter::NotifyFileSaved(sourceFile);
+        }
+    }
+
+    if (wxcProjectMetadata::Get().GetGenerateCPPCode() && !additionalFiles.empty()) {
+        for (const auto& p : additionalFiles) {
+            wxFileName af = wxcProjectMetadata::Get().BaseHeaderFile();
+            af.SetFullName(p.first);
+            wxCrafter::MakeAbsToProject(af);
+            if (wxCrafter::IsTheSame(p.second, af) == false) {
+                wxCrafter::WriteFile(af, p.second, true);
+                wxCrafter::FormatFile(af);
+                wxCrafter::NotifyFileSaved(af);
+            }
+        }
+    }
+}

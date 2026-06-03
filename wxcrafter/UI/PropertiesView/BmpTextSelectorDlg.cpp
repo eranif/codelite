@@ -1,8 +1,8 @@
 #include "BmpTextSelectorDlg.h"
 
-#include "JSON.h"
 #include "SingleBitmapAndTextDlg.h"
 #include "windowattrmanager.h"
+#include "wxgui_helpers.h"
 
 BmpTextSelectorDlg::BmpTextSelectorDlg(wxWindow* parent, const wxString& initialValue)
     : BmpTextSelectorDlgBase(parent)
@@ -58,30 +58,12 @@ void BmpTextSelectorDlg::OnNew(wxCommandEvent& event)
 
 BmpTextVec_t BmpTextSelectorDlg::FromString(const wxString& text)
 {
-    BmpTextVec_t vec;
-    JSON root(text);
-    int size = root.toElement().arraySize();
-    for (int i = 0; i < size; ++i) {
-        JSONItem item = root.toElement().arrayItem(i);
-        wxString bitmap = item.namedObject("bmp").toString();
-        wxString label = item.namedObject("label").toString();
-        vec.push_back(std::make_pair(bitmap, label));
-    }
-    return vec;
+    return wxCrafter::ParseBmpTextOptions(text);
 }
 
 wxString BmpTextSelectorDlg::ToString(const BmpTextVec_t& vec)
 {
-    JSON root(JsonType::Array);
-    for (const auto& [bmp, label] : vec) {
-        JSONItem element = JSONItem::createObject();
-        element.addProperty("bmp", bmp);
-        element.addProperty("label", label);
-        root.toElement().arrayAppend(std::move(element));
-    }
-    wxString asString(root.toElement().format());
-    asString.Replace("\n", "");
-    return asString;
+    return wxCrafter::FormatBmpTextOptions(vec);
 }
 
 wxString BmpTextSelectorDlg::GetValue()

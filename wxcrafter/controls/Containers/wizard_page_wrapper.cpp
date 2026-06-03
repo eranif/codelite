@@ -6,8 +6,8 @@
 #include "allocator_mgr.h"
 #include "wizard_wrapper.h"
 #include "wxc_bitmap_code_generator.h"
+#include "wxc_runtime.h"
 #include "wxgui_defs.h"
-#include "wxguicraft_main_view.h"
 #include "xml/xmlutils.h"
 
 WizardPageWrapper::WizardPageWrapper()
@@ -60,7 +60,7 @@ void WizardPageWrapper::ToXRC(wxString& text, XRC_TYPE type) const
 
     if (type == XRC_DESIGNER) {
         // HACK: Only display the active page
-        if (GUICraftMainPanel::m_MainPanel->GetActiveWizardPage() != this)
+        if (!wxc_runtime::IsActiveWizardPage(this))
             return;
 
         text << XRCCommonAttributes() << XRCSize() << XRCStyle() << XRCBitmap();

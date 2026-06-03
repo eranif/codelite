@@ -31,65 +31,53 @@
 
 namespace
 {
+// Map a wxSystemFont id onto a stand-in wxFontFamily so we can build a wxFont
+// without calling wxSystemSettings::GetFont (which on wxGTK probes the live
+// theme via pango and crashes when wxcgen runs without a DISPLAY). Codegen
+// never reads back the face/size — only style/weight/underlined, which we
+// set explicitly below.
+wxFontFamily SystemFontFamilyFor(const wxString& sysName)
+{
+    if (sysName == wxT("wxSYS_OEM_FIXED_FONT") || sysName == wxT("wxSYS_ANSI_FIXED_FONT")
+        || sysName == wxT("wxSYS_SYSTEM_FIXED_FONT")) {
+        return wxFONTFAMILY_TELETYPE;
+    }
+    if (sysName == wxT("wxSYS_ANSI_VAR_FONT") || sysName == wxT("wxSYS_SYSTEM_FONT")
+        || sysName == wxT("wxSYS_DEVICE_DEFAULT_FONT") || sysName == wxT("wxSYS_DEFAULT_GUI_FONT")) {
+        return wxFONTFAMILY_DEFAULT;
+    }
+    return wxFONTFAMILY_MAX; // sentinel: not a wxSYS_* token
+}
+
 wxFont GetSystemFont(const wxString& name)
 {
     // name is in the format of name,style,weight,underlined
-    if (!name.IsEmpty()) {
-        wxArrayString parts = ::wxStringTokenize(name, wxT(","), wxTOKEN_STRTOK);
-        if (parts.IsEmpty())
-            return wxNullFont;
-
-        wxFont font;
-        wxString name, style, weight, underlined;
-        name = parts.Item(0);
-
-        if (parts.GetCount() > 1)
-            style = parts.Item(1);
-
-        if (parts.GetCount() > 2)
-            weight = parts.Item(2);
-
-        if (parts.GetCount() > 3)
-            underlined = parts.Item(3);
-
-        if (name == wxT("wxSYS_OEM_FIXED_FONT"))
-            font = wxc_runtime::GetSystemFont(wxSYS_OEM_FIXED_FONT);
-
-        else if (name == wxT("wxSYS_ANSI_FIXED_FONT")) {
-            font = wxc_runtime::GetSystemFont(wxSYS_DEFAULT_GUI_FONT);
-            font.SetFamily(wxFONTFAMILY_TELETYPE);
-        }
-
-        else if (name == wxT("wxSYS_ANSI_VAR_FONT"))
-            font = wxc_runtime::GetSystemFont(wxSYS_ANSI_VAR_FONT);
-        else if (name == wxT("wxSYS_SYSTEM_FONT"))
-            font = wxc_runtime::GetSystemFont(wxSYS_SYSTEM_FONT);
-        else if (name == wxT("wxSYS_DEVICE_DEFAULT_FONT"))
-            font = wxc_runtime::GetSystemFont(wxSYS_DEVICE_DEFAULT_FONT);
-        else if (name == wxT("wxSYS_SYSTEM_FIXED_FONT"))
-            font = wxc_runtime::GetSystemFont(wxSYS_SYSTEM_FIXED_FONT);
-        else if (name == wxT("wxSYS_DEFAULT_GUI_FONT"))
-            font = wxc_runtime::GetSystemFont(wxSYS_DEFAULT_GUI_FONT);
-        else
-            return wxNullFont;
-
-        if (style == wxT("italic"))
-            font.SetStyle(wxFONTSTYLE_ITALIC);
-        else
-            font.SetStyle(wxFONTSTYLE_NORMAL);
-
-        if (weight == wxT("bold"))
-            font.SetWeight(wxFONTWEIGHT_BOLD);
-        else
-            font.SetWeight(wxFONTWEIGHT_NORMAL);
-
-        if (underlined == wxT("underlined"))
-            font.SetUnderlined(true);
-        else
-            font.SetUnderlined(false);
-        return font;
+    if (name.IsEmpty()) {
+        return wxNullFont;
     }
-    return wxNullFont;
+    wxArrayString parts = ::wxStringTokenize(name, wxT(","), wxTOKEN_STRTOK);
+    if (parts.IsEmpty())
+        return wxNullFont;
+
+    wxString sysName = parts.Item(0);
+    wxFontFamily family = SystemFontFamilyFor(sysName);
+    if (family == wxFONTFAMILY_MAX) {
+        return wxNullFont;
+    }
+
+    wxString style = parts.GetCount() > 1 ? parts.Item(1) : wxString{};
+    wxString weight = parts.GetCount() > 2 ? parts.Item(2) : wxString{};
+    wxString underlined = parts.GetCount() > 3 ? parts.Item(3) : wxString{};
+
+    // Construct the font with attributes baked in (gives it a valid
+    // wxFontRefData) so subsequent SetStyle/SetWeight/SetUnderlined calls
+    // mutate existing refData instead of allocating fresh refData via
+    // pango/GTK.
+    wxFontStyle fstyle = (style == wxT("italic")) ? wxFONTSTYLE_ITALIC : wxFONTSTYLE_NORMAL;
+    wxFontWeight fweight = (weight == wxT("bold")) ? wxFONTWEIGHT_BOLD : wxFONTWEIGHT_NORMAL;
+    bool funderlined = (underlined == wxT("underlined"));
+
+    return wxFont(wxFontInfo(10).Family(family).Style(fstyle).Weight(fweight).Underlined(funderlined));
 }
 
 wxFontFamily StringToFontFamily(const wxString& str)
@@ -231,7 +219,6 @@ wxFileName wxCrafter::LoadXRC(
     wxStringInputStream inStr(xrcString);
 
     if (!doc.Load(inStr)) {
-        ::wxMessageBox(_("Invalid XRC! could not save DesignerPreview.xrc"), wxT("wxCrafter"), wxOK | wxICON_WARNING);
         return wxFileName(GetUserDataDir(), filename);
     }
     doc.Save(str);
@@ -628,8 +615,11 @@ wxString wxCrafter::XRCToFontstring(const wxXmlNode* node)
     }
 
     if (!font.IsOk()) {
-        // No preferred font, so use the standard one
-        font = wxc_runtime::GetSystemFont(wxSYS_SYSTEM_FONT);
+        // No preferred font, so use a generic stand-in. We deliberately avoid
+        // wxSystemSettings::GetFont here so this path is safe under the
+        // headless wxcgen build (no DISPLAY). The face/size are unused
+        // downstream — only the attributes set explicitly below matter.
+        font = wxFont(wxFontInfo(10).Family(wxFONTFAMILY_DEFAULT));
         if (!font.IsOk()) {
             return "";
         }
@@ -693,7 +683,10 @@ wxString wxCrafter::FBToFontstring(const wxString& FBstr)
     // wxFB uses a value of -1 as (presumably) a default size if the user didn't specify.
     // This is the same as (the valid) wxFONTSIZE_SMALL but, at least on my system, results in a size of 12 pts which is
     // too large so use the system font size instead
-    static int defaultfontsize = wxc_runtime::GetSystemFont(wxSYS_SYSTEM_FONT).GetPointSize();
+    // 10 is a reasonable default; the precise value isn't important — wxFB
+    // import never runs in the headless wxcgen build, and the GUI path
+    // overrides this when the user picks a font in the designer.
+    static int defaultfontsize = 10;
     if (sz == "-1") {
         sz = wxString::Format("%d", defaultfontsize);
     }

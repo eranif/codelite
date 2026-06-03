@@ -70,8 +70,6 @@ void RequestDesignerRefresh()
     EventNotifier::Get()->AddPendingEvent(evt);
 }
 
-wxFont GetSystemFont(wxSystemFont index) { return wxSystemSettings::GetFont(index); }
-
 bool IsDarkAppearance() { return wxSystemSettings::GetAppearance().IsDark(); }
 
 void LoadImages(const wxString& skin, std::map<wxString, wxBitmap>& bitmaps, std::map<wxString, wxString>& files)

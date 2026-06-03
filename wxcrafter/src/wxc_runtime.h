@@ -11,6 +11,8 @@
 #ifndef WXC_RUNTIME_H
 #define WXC_RUNTIME_H
 
+#include <map>
+#include <wx/bitmap.h>
 #include <wx/string.h>
 
 class wxImageList;
@@ -61,6 +63,23 @@ bool IsActiveWizardPage(const wxcWidget* page);
 // GUI: posts wxEVT_REFRESH_DESIGNER on EventNotifier. Headless: no-op.
 void RequestDesignerRefresh();
 
+/**
+ * @brief Loads bitmap images and text files from a skin ZIP archive into the provided maps.
+ *
+ * This function locates a "{skin}.zip" archive, extracts all entries, and stores PNG images as
+ * wxBitmap objects in bitmaps while storing other file contents as strings in files. On Windows,
+ * the archive is resolved relative to the application executable; on other platforms, it is
+ * resolved relative to the application's data directory.
+ *
+ * @param skin const wxString& The skin name used to build the ZIP archive name.
+ * @param bitmaps std::map<wxString, wxBitmap>& Output map that receives bitmap entries keyed by
+ *        the file base name without extension.
+ * @param files std::map<wxString, wxString>& Output map that receives non-PNG file contents keyed
+ *        by the full file name.
+ *
+ * @return void
+ */
+void LoadImages(const wxString& skin, std::map<wxString, wxBitmap>& bitmaps, std::map<wxString, wxString>& files);
 } // namespace wxc_runtime
 
 #endif // WXC_RUNTIME_H

@@ -8,8 +8,7 @@ namespace wxc_runtime
 
 wxImageList* CreateAllocatorImageList() { return nullptr; }
 
-int AddImageToAllocator(wxImageList* /*list*/, const wxCrafter::ResourceLoader& /*loader*/,
-                        const wxString& /*bmpName*/)
+int AddImageToAllocator(wxImageList* /*list*/, const wxCrafter::ResourceLoader& /*loader*/, const wxString& /*bmpName*/)
 {
     return -1;
 }
@@ -30,5 +29,7 @@ void RequestDesignerRefresh()
     // No designer to refresh in the headless build, and no event loop to drain
     // the pending event — drop it on the floor.
 }
+
+void LoadImages(const wxString&, std::map<wxString, wxBitmap>&, std::map<wxString, wxString>&) {}
 
 } // namespace wxc_runtime

@@ -2,6 +2,7 @@
 
 #include "Zip/clZipReader.h"
 #include "wxc_project_metadata.h"
+#include "wxc_runtime.h"
 
 #include <unordered_map>
 #include <wx/filename.h>
@@ -17,47 +18,7 @@ std::map<wxString, wxString> wxCrafter::ResourceLoader::m_files;
 wxCrafter::ResourceLoader::ResourceLoader(const wxString& skin)
 {
     if (m_bitmaps.empty()) {
-        wxString zipFile;
-#ifdef __WXMSW__
-        wxFileName zip_path{wxStandardPaths::Get().GetExecutablePath()};
-        zip_path.SetName(skin);
-        zip_path.SetExt("zip");
-        zip_path.RemoveLastDir();
-        zipFile = zip_path.GetFullPath();
-#else
-        zipFile << wxStandardPaths::Get().GetDataDir() << wxFileName::GetPathSeparator() << skin << wxT(".zip");
-#endif
-        clZipReader zip(zipFile);
-
-        std::unordered_map<wxString, clZipReader::Entry> entries;
-        zip.ExtractAll(entries);
-        if (entries.empty()) {
-            return;
-        }
-
-        // Loop over the files
-        for (const auto& entry : entries) {
-            wxFileName fn = wxFileName(entry.first);
-            wxString name = fn.GetName();
-            clZipReader::Entry d = entry.second;
-            if (d.len && d.buffer) {
-                // Avoid wxAsserts by checking it's likely to be a png before creating the image
-                if (fn.GetExt() == "png") {
-                    wxMemoryInputStream is(d.buffer, d.len);
-                    wxImage img(is, wxBITMAP_TYPE_PNG);
-                    wxBitmap bmp(img);
-                    if (bmp.IsOk()) {
-                        m_bitmaps[name] = bmp;
-                    }
-                } else {
-                    wxString fileContent((const char*)d.buffer, d.len);
-                    m_files.insert({fn.GetFullName(), fileContent});
-                }
-                // release the memory
-                free(d.buffer);
-            }
-        }
-        entries.clear();
+        wxc_runtime::LoadImages(skin, m_bitmaps, m_files);
     }
 }
 

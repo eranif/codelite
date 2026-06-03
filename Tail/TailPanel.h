@@ -6,24 +6,23 @@
 #include "clEditorEditEventsHandler.h"
 #include "clFileSystemEvent.h"
 #include "clFileSystemWatcher.h"
-#include "clToolBar.h"
 
 #include <map>
-#include <vector>
+#include <wx/aui/auibar.h>
 #include <wx/filename.h>
 
 class TailFrame;
 class Tail;
 class TailPanel : public TailPanelBase
 {
-    clFileSystemWatcher::Ptr_t m_fileWatcher;
+    std::unique_ptr<clLocalFileSystemWatcher> m_fileWatcher;
     wxFileName m_file;
     size_t m_lastPos;
     clEditEventsHandler::Ptr_t m_editEvents;
     std::map<int, wxString> m_recentItemsMap;
     Tail* m_plugin;
     bool m_isDetached;
-    clToolBarGeneric* m_toolbar;
+    wxAuiToolBar* m_toolbar{nullptr};
     TailFrame* m_frame;
 
 protected:

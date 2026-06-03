@@ -1,7 +1,9 @@
 #include "TailPanel.h"
 
 #include "ColoursAndFontsManager.h"
+#include "aui/clAuiToolBarArt.h"
 #include "bitmap_loader.h"
+#include "cl_aui_tool_stickness.h"
 #include "cl_config.h"
 #include "codelite_events.h"
 #include "event_notifier.h"
@@ -22,7 +24,7 @@ TailPanel::TailPanel(wxWindow* parent, Tail* plugin)
     , m_frame(NULL)
 {
     DoBuildToolbar();
-    m_fileWatcher.reset(new clFileSystemWatcher());
+    m_fileWatcher = std::make_unique<clLocalFileSystemWatcher>();
     m_fileWatcher->SetOwner(this);
     Bind(wxEVT_FILE_MODIFIED, &TailPanel::OnFileModified, this);
 
@@ -134,7 +136,12 @@ void TailPanel::OnOpenMenu(wxCommandEvent& event)
 {
     wxMenu menu;
     DoPrepareRecentItemsMenu(menu);
-    m_toolbar->ShowMenuForButton(XRCID("tail_open"), &menu);
+    clAuiToolStickness stickness{m_toolbar, event.GetId()};
+    // line up our menu with the button
+    wxRect rect = m_toolbar->GetToolRect(event.GetId());
+    wxPoint pt = m_toolbar->ClientToScreen(rect.GetBottomLeft());
+    pt = ScreenToClient(pt);
+    PopupMenu(&menu, pt);
 }
 
 void TailPanel::DoOpen(const wxString& filename)
@@ -151,11 +158,10 @@ void TailPanel::DoOpen(const wxString& filename)
     }
 
     // Stop the current watcher
-    m_fileWatcher->SetFile(m_file);
+    m_fileWatcher->SetFile(m_file.GetFullPath());
     m_fileWatcher->Start();
     m_staticTextFileName->SetLabel(m_file.GetFullPath());
     SetFrameTitle();
-
     Layout();
 }
 
@@ -234,20 +240,21 @@ void TailPanel::SetFrameTitle()
 
 void TailPanel::DoBuildToolbar()
 {
-    m_toolbar = new clToolBarGeneric(this);
-    auto images = m_toolbar->GetBitmapsCreateIfNeeded();
-    m_toolbar->AddTool(XRCID("tail_open"), _("Open file"), images->Add("folder-yellow"), "", wxITEM_DROPDOWN);
-    m_toolbar->AddTool(XRCID("tail_close"), _("Close file"), images->Add("file_close"));
-    m_toolbar->AddTool(XRCID("tail_clear"), _("Clear"), images->Add("clear"));
+    m_toolbar = new wxAuiToolBar(this);
+    auto images = clGetManager()->GetStdIcons();
+    clAuiToolBarArt::AddTool(
+        m_toolbar, XRCID("tail_open"), _("Open file"), images->LoadBitmap("folder-yellow"), "", wxITEM_DROPDOWN);
+    clAuiToolBarArt::AddTool(m_toolbar, XRCID("tail_close"), _("Close file"), images->LoadBitmap("file_close"));
+    clAuiToolBarArt::AddTool(m_toolbar, XRCID("tail_clear"), _("Clear"), images->LoadBitmap("clear"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("tail_pause"), _("Pause"), images->Add("interrupt"));
-    m_toolbar->AddTool(XRCID("tail_play"), _("Play"), images->Add("debugger_start"));
+    clAuiToolBarArt::AddTool(m_toolbar, XRCID("tail_pause"), _("Pause"), images->LoadBitmap("interrupt"));
+    clAuiToolBarArt::AddTool(m_toolbar, XRCID("tail_play"), _("Play"), images->LoadBitmap("debugger_start"));
     m_toolbar->AddSeparator();
-    m_toolbar->AddTool(XRCID("tail_detach"), _("Detach window"), images->Add("windows"));
+    clAuiToolBarArt::AddTool(m_toolbar, XRCID("tail_detach"), _("Detach window"), images->LoadBitmap("windows"));
 
     // Bind events
     m_toolbar->Bind(wxEVT_TOOL, &TailPanel::OnOpen, this, XRCID("tail_open"));
-    m_toolbar->Bind(wxEVT_TOOL_DROPDOWN, &TailPanel::OnOpenMenu, this, XRCID("tail_open"));
+    m_toolbar->Bind(wxEVT_AUITOOLBAR_TOOL_DROPDOWN, &TailPanel::OnOpenMenu, this, XRCID("tail_open"));
     m_toolbar->Bind(wxEVT_TOOL, &TailPanel::OnClose, this, XRCID("tail_close"));
     m_toolbar->Bind(wxEVT_TOOL, &TailPanel::OnClear, this, XRCID("tail_clear"));
     m_toolbar->Bind(wxEVT_TOOL, &TailPanel::OnPause, this, XRCID("tail_pause"));
@@ -259,7 +266,7 @@ void TailPanel::DoBuildToolbar()
     m_toolbar->Bind(wxEVT_UPDATE_UI, &TailPanel::OnPauseUI, this, XRCID("tail_pause"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &TailPanel::OnPlayUI, this, XRCID("tail_play"));
     m_toolbar->Bind(wxEVT_UPDATE_UI, &TailPanel::OnDetachWindowUI, this, XRCID("tail_detach"));
+    clAuiToolBarArt::Finalise(m_toolbar);
     m_toolbar->Realize();
-
     GetSizer()->Insert(0, m_toolbar, 0, wxEXPAND);
 }

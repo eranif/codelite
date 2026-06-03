@@ -1,64 +1,55 @@
-#ifndef CLFILESYSTEMWATCHER_H
-#define CLFILESYSTEMWATCHER_H
+#pragma once
 
 #include "clFileSystemEvent.h"
 #include "codelite_exports.h"
 
 #include <map>
-#include <memory>
 #include <wx/filename.h>
 #include <wx/timer.h>
 
-#ifdef __WXMSW__
-#define CL_FSW_USE_TIMER 1
-#else
-#define CL_FSW_USE_TIMER 1
-#endif
+struct WXDLLIMPEXP_CL clWatchedFile {
+    wxFileName filename;
+    time_t lastModified;
+    size_t file_size;
+};
+using WatchedFilesMap = std::map<wxString, clWatchedFile>;
 
-#if !CL_FSW_USE_TIMER
-#include <wx/fswatcher.h>
-#endif
-
-class WXDLLIMPEXP_CL clFileSystemWatcher : public wxEvtHandler
+class WXDLLIMPEXP_CL clLocalFileSystemWatcher : public wxEvtHandler
 {
 public:
-    struct File {
-        wxFileName filename;
-        time_t lastModified;
-        size_t file_size;
-        using Map_t = std::map<wxString, File>;
-    };
+    /**
+     * @brief Construct a new file-system watcher (timer-based).
+     */
+    clLocalFileSystemWatcher();
 
-    wxEvtHandler* m_owner;
-#if CL_FSW_USE_TIMER
-    clFileSystemWatcher::File::Map_t m_files;
-    wxTimer* m_timer;
-#else
-    wxFileSystemWatcher m_watcher;
-    wxFileName m_watchedFile;
-#endif
+    /**
+     * @brief Destructor. Automatically stops the watcher and unbinds the timer event.
+     */
+    virtual ~clLocalFileSystemWatcher();
 
-public:
-    using Ptr_t = std::shared_ptr<clFileSystemWatcher>;
-
-protected:
-#if CL_FSW_USE_TIMER
-    void OnTimer(wxTimerEvent& event);
-#else
-    void OnFileModified(wxFileSystemWatcherEvent& event);
-#endif
-
-public:
-    clFileSystemWatcher();
-    virtual ~clFileSystemWatcher();
-
+    /**
+     * @brief Set the event handler that will receive wxEVT_FILE_MODIFIED / wxEVT_FILE_NOT_FOUND events.
+     * @param owner the wxEvtHandler to notify, or nullptr
+     */
     void SetOwner(wxEvtHandler* owner) { this->m_owner = owner; }
+
+    /**
+     * @brief Get the currently assigned event handler.
+     * @return the wxEvtHandler that receives file-system events, or nullptr
+     */
     wxEvtHandler* GetOwner() { return m_owner; }
 
     /**
-     * @brief add a file to watch
+     * @brief Set a single file to watch. Clears any previously watched files.
+     * @param filename full path to the file to watch
      */
-    void SetFile(const wxFileName& filename);
+    void SetFile(const wxString& filename);
+
+    /**
+     * @brief Add a file to the watch list. Previously watched files are preserved.
+     * @param filename full path to the file to watch. If the file does not exist, it is ignored.
+     */
+    void AddFile(const wxString& filename);
 
     /**
      * @brief remove file from the watch list
@@ -86,9 +77,15 @@ public:
      * @brief is the watcher running?
      */
     bool IsRunning() const;
+
+protected:
+    void OnTimer(wxTimerEvent& event);
+
+private:
+    wxEvtHandler* m_owner{nullptr};
+    WatchedFilesMap m_files;
+    wxTimer m_timer;
 };
 
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_MODIFIED, clFileSystemEvent);
 wxDECLARE_EXPORTED_EVENT(WXDLLIMPEXP_CL, wxEVT_FILE_NOT_FOUND, clFileSystemEvent);
-
-#endif // CLFILESYSTEMWATCHER_H

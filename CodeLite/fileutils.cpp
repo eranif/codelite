@@ -433,8 +433,8 @@ time_t FileUtils::GetFileModificationTime(const wxFileName& filename)
 time_t FileUtils::GetFileModificationTime(const wxString& filename)
 {
     struct stat buff;
-    const wxCharBuffer cname = filename.mb_str(wxConvUTF8);
-    if (stat(cname.data(), &buff) < 0) {
+    const std::string s = filename.ToStdString(wxConvUTF8);
+    if (::stat(s.c_str(), &buff) < 0) {
         return 0;
     }
     return buff.st_mtime;
@@ -444,8 +444,8 @@ size_t FileUtils::GetFileSize(const wxFileName& filename)
 {
     struct stat b;
     wxString file_name = filename.GetFullPath();
-    const char* cfile = file_name.mb_str(wxConvUTF8).data();
-    if (::stat(cfile, &b) == 0) {
+    const std::string s = file_name.ToStdString(wxConvUTF8);
+    if (::stat(s.c_str(), &b) == 0) {
         return b.st_size;
     } else {
         clERROR() << "Failed to open file:" << file_name << "." << strerror(errno);
@@ -1050,7 +1050,7 @@ std::optional<FileUtils::Triplet> FileUtils::ParseTriplet(const wxString& line)
     }
 
     wxString input = line;
-    input.Trim(false);  // Only trim leading whitespace, preserve trailing in matched_text
+    input.Trim(false); // Only trim leading whitespace, preserve trailing in matched_text
 
     if (input.empty()) {
         return std::nullopt;
@@ -1116,7 +1116,7 @@ std::optional<FileUtils::GrepMatch> FileUtils::ParseGrepLine(const wxString& lin
     }
 
     wxString input = line;
-    input.Trim(false);  // Only trim leading whitespace, preserve trailing in matched_text
+    input.Trim(false); // Only trim leading whitespace, preserve trailing in matched_text
 
     if (input.empty()) {
         return std::nullopt;

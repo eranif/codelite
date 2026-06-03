@@ -53,23 +53,23 @@ wxFont GetSystemFont(const wxString& name)
             underlined = parts.Item(3);
 
         if (name == wxT("wxSYS_OEM_FIXED_FONT"))
-            font = wxSystemSettings::GetFont(wxSYS_OEM_FIXED_FONT);
+            font = wxc_runtime::GetSystemFont(wxSYS_OEM_FIXED_FONT);
 
         else if (name == wxT("wxSYS_ANSI_FIXED_FONT")) {
-            font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+            font = wxc_runtime::GetSystemFont(wxSYS_DEFAULT_GUI_FONT);
             font.SetFamily(wxFONTFAMILY_TELETYPE);
         }
 
         else if (name == wxT("wxSYS_ANSI_VAR_FONT"))
-            font = wxSystemSettings::GetFont(wxSYS_ANSI_VAR_FONT);
+            font = wxc_runtime::GetSystemFont(wxSYS_ANSI_VAR_FONT);
         else if (name == wxT("wxSYS_SYSTEM_FONT"))
-            font = wxSystemSettings::GetFont(wxSYS_SYSTEM_FONT);
+            font = wxc_runtime::GetSystemFont(wxSYS_SYSTEM_FONT);
         else if (name == wxT("wxSYS_DEVICE_DEFAULT_FONT"))
-            font = wxSystemSettings::GetFont(wxSYS_DEVICE_DEFAULT_FONT);
+            font = wxc_runtime::GetSystemFont(wxSYS_DEVICE_DEFAULT_FONT);
         else if (name == wxT("wxSYS_SYSTEM_FIXED_FONT"))
-            font = wxSystemSettings::GetFont(wxSYS_SYSTEM_FIXED_FONT);
+            font = wxc_runtime::GetSystemFont(wxSYS_SYSTEM_FIXED_FONT);
         else if (name == wxT("wxSYS_DEFAULT_GUI_FONT"))
-            font = wxSystemSettings::GetFont(wxSYS_DEFAULT_GUI_FONT);
+            font = wxc_runtime::GetSystemFont(wxSYS_DEFAULT_GUI_FONT);
         else
             return wxNullFont;
 
@@ -144,7 +144,7 @@ wxFontWeight StringToFontWeight(const wxString& str)
 wxBorder wxCrafter::GetControlBorder()
 {
 #if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
-    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
+    return wxc_runtime::IsDarkAppearance() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
 #else
     return wxBORDER_DEFAULT;
 #endif
@@ -629,7 +629,7 @@ wxString wxCrafter::XRCToFontstring(const wxXmlNode* node)
 
     if (!font.IsOk()) {
         // No preferred font, so use the standard one
-        font = wxSystemSettings::GetFont(wxSYS_SYSTEM_FONT);
+        font = wxc_runtime::GetSystemFont(wxSYS_SYSTEM_FONT);
         if (!font.IsOk()) {
             return "";
         }
@@ -693,7 +693,7 @@ wxString wxCrafter::FBToFontstring(const wxString& FBstr)
     // wxFB uses a value of -1 as (presumably) a default size if the user didn't specify.
     // This is the same as (the valid) wxFONTSIZE_SMALL but, at least on my system, results in a size of 12 pts which is
     // too large so use the system font size instead
-    static int defaultfontsize = wxSystemSettings::GetFont(wxSYS_SYSTEM_FONT).GetPointSize();
+    static int defaultfontsize = wxc_runtime::GetSystemFont(wxSYS_SYSTEM_FONT).GetPointSize();
     if (sz == "-1") {
         sz = wxString::Format("%d", defaultfontsize);
     }
@@ -1380,7 +1380,7 @@ namespace {
 [[maybe_unused]]
 wxBorder get_border_simple_theme_aware_bit() {
 #if wxVERSION_NUMBER >= 3300 && defined(__WXMSW__)
-    return wxSystemSettings::GetAppearance().IsDark() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
+    return wxc_runtime::IsDarkAppearance() ? wxBORDER_SIMPLE : wxBORDER_DEFAULT;
 #else
     return wxBORDER_DEFAULT;
 #endif

@@ -30,6 +30,17 @@ void RequestDesignerRefresh()
     // the pending event — drop it on the floor.
 }
 
+wxFont GetSystemFont(wxSystemFont /*index*/)
+{
+    // Avoid wxSystemSettings::GetFont, which on GTK probes the live theme
+    // (gtk_init / pango). Return a default-constructed wxFont — codegen sets
+    // the attributes it cares about (style/weight/underlined) explicitly
+    // afterwards from the project string.
+    return wxFont();
+}
+
+bool IsDarkAppearance() { return false; }
+
 void LoadImages(const wxString&, std::map<wxString, wxBitmap>&, std::map<wxString, wxString>&) {}
 
 } // namespace wxc_runtime

@@ -13,6 +13,8 @@
 
 #include <map>
 #include <wx/bitmap.h>
+#include <wx/font.h>
+#include <wx/settings.h>
 #include <wx/string.h>
 
 class wxImageList;
@@ -62,6 +64,19 @@ bool IsActiveWizardPage(const wxcWidget* page);
 // Notify the GUI designer that bitmaps changed and the preview should refresh.
 // GUI: posts wxEVT_REFRESH_DESIGNER on EventNotifier. Headless: no-op.
 void RequestDesignerRefresh();
+
+// Look up a wxSystemSettings font (wxSYS_DEFAULT_GUI_FONT etc.).
+// GUI: forwards to wxSystemSettings::GetFont. Headless: returns a default-
+//      constructed wxFont so the caller doesn't trigger gtk_init / pango
+//      lookups that fail without a DISPLAY. Codegen only inspects style/
+//      weight/underlined attributes which it sets explicitly afterwards
+//      from the project string — the system-derived face/size are discarded.
+wxFont GetSystemFont(wxSystemFont index);
+
+// True iff the OS-level dark-mode appearance is active.
+// GUI: forwards to wxSystemSettings::GetAppearance().IsDark().
+// Headless: returns false (codegen falls back to the light-theme branch).
+bool IsDarkAppearance();
 
 /**
  * @brief Loads bitmap images and text files from a skin ZIP archive into the provided maps.

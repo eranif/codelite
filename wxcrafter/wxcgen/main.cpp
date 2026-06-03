@@ -14,12 +14,12 @@
 
 #include <memory>
 #include <vector>
+#include <wx/app.h>
 #include <wx/arrstr.h>
 #include <wx/cmdline.h>
 #include <wx/filefn.h>
 #include <wx/filename.h>
 #include <wx/image.h>
-#include <wx/init.h>
 #include <wx/sstream.h>
 #include <wx/stdpaths.h>
 #include <wx/string.h>
@@ -143,13 +143,27 @@ GenerateFromProject(const wxString& filename, const wxString& fileContent, const
     return true;
 }
 
-int main(int argc, char** argv)
+// wxcgen is a console application: declaring a wxAppConsole subclass tells
+// wxWidgets to use the console traits and skip GUI initialisation entirely.
+// On GTK builds this avoids gtk_init being called without a DISPLAY, which
+// would emit "GLib-GObject-CRITICAL: invalid (NULL) pointer instance" before
+// failing.
+class wxcgenApp : public wxAppConsole
 {
-    wxInitializer init(argc, argv);
-    if (!init.IsOk()) {
-        wxFprintf(stderr, "wxcgen: failed to initialise wxWidgets\n");
-        return 1;
-    }
+public:
+    bool OnInit() override { return true; }
+    int OnRun() override;
+};
+
+wxIMPLEMENT_APP_CONSOLE(wxcgenApp);
+
+int wxcgenApp::OnRun()
+{
+    // Silence wxLog. EditorConfig's first-run path probes for files that may
+    // not exist yet ("can't open .../wxcrafter.conf"); we don't want that
+    // (or any other framework log) on a CLI tool's stderr — wxcgen prints
+    // its own diagnostics directly with wxFprintf.
+    wxLog::EnableLogging(false);
 
     wxImage::AddHandler(new wxPNGHandler);
 
@@ -186,10 +200,13 @@ int main(int argc, char** argv)
         }
     }
 
-    FileLogger::OpenLog("wxcgen.log", FileLogger::System);
+    // Ensure the user data dir exists before anything tries to write into
+    // it (FileLogger / EditorConfig both expect it).
     wxFileName user_data_dir{wxStandardPaths::Get().GetUserDataDir(), wxEmptyString};
     user_data_dir.AppendDir("wxcrafter");
     user_data_dir.Mkdir(wxS_DIR_DEFAULT, wxPATH_MKDIR_FULL);
+
+    FileLogger::OpenLog("wxcgen.log", FileLogger::System);
 
 #ifdef __WXGTK__
     wxString installPrefix = INSTALL_PREFIX;

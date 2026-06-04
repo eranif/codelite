@@ -27,7 +27,7 @@
 
 #include "CodeFormatterManager.hpp"
 #include "FormatterPage.hpp"
-#include "codeformatterdlgbase.h"
+#include "codeformatterdlgbase.hpp"
 
 class IManager;
 class CodeFormatter;

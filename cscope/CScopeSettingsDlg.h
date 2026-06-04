@@ -25,7 +25,7 @@
 
 #ifndef CSCOPESETTINGSDLG_H
 #define CSCOPESETTINGSDLG_H
-#include "CscopeTabBase.h"
+#include "CscopeTabBase.hpp"
 
 class CScopeSettingsDlg : public CScopeSettingsDlgBase
 {

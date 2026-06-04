@@ -26,7 +26,7 @@
 #ifndef __qmakesettingsdlg__
 #define __qmakesettingsdlg__
 
-#include "qmakesettingsbasedlg.h"
+#include "qmakesettingsbasedlg.hpp"
 
 class QmakeConf;
 class IManager;

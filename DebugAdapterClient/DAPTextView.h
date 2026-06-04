@@ -1,7 +1,7 @@
 #ifndef DAPTEXTVIEW_H
 #define DAPTEXTVIEW_H
 
-#include "UI.h"
+#include "UI.hpp"
 #include "cl_command_event.h"
 #include "dap/dap.hpp"
 

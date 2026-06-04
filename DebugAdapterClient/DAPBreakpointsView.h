@@ -2,7 +2,7 @@
 #define DAPBREAKPOINTSVIEW_H
 
 #include "SessionBreakpoints.hpp"
-#include "UI.h"
+#include "UI.hpp"
 #include "dap/dap.hpp"
 
 class DebugAdapterClient;

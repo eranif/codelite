@@ -2,7 +2,7 @@
 #define DAPWATCHESVIEW_H
 
 #include "DAPVariableListCtrl.hpp"
-#include "UI.h"
+#include "UI.hpp"
 
 class DebugAdapterClient;
 class DAPWatchesView : public DAPWatchesViewBase

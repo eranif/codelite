@@ -1,6 +1,6 @@
 #ifndef DAPDEBUGGERSETTINGSDLG_H
 #define DAPDEBUGGERSETTINGSDLG_H
-#include "UI.h"
+#include "UI.hpp"
 #include "clDapSettingsStore.hpp"
 
 class clPropertiesPage;

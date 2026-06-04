@@ -27,7 +27,7 @@
 #define DBSETTINGDIALOG_H
 
 #include "DbViewerPanel.h"
-#include "GUI.h" // Base class: _DBSettingsDialog
+#include "GUI.hpp" // Base class: _DBSettingsDialog
 #include "db_explorer_settings.h"
 
 #include <wx/wx.h>

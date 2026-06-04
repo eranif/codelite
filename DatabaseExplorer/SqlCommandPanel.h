@@ -26,7 +26,7 @@
 #ifndef SQLCOMMANDPANEL_H
 #define SQLCOMMANDPANEL_H
 
-#include "GUI.h" // Base class: _SqlCommandPanel
+#include "GUI.hpp" // Base class: _SqlCommandPanel
 #include "IDbAdapter.h"
 #include "clEditorEditEventsHandler.h"
 #include "clToolBar.h"

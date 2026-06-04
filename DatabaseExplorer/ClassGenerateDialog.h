@@ -30,7 +30,7 @@
 #include "../Plugin/VirtualDirectorySelectorDlg.h"
 #include "../Plugin/project.h"
 #include "../Plugin/workspace.h"
-#include "GUI.h" // Base class: _ClassGenerateDialog
+#include "GUI.hpp" // Base class: _ClassGenerateDialog
 #include "IDbAdapter.h"
 #include "table.h"
 #include "wx/wxxmlserializer/XmlSerializer.h"

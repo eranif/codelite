@@ -82,10 +82,18 @@ include_directories("${CL_SRC_ROOT}/sdk/databaselayer/include")
 
 add_compile_definitions(DBL_USE_SQLITE)
 
+wxcrafter_target(
+    DatabaseExplorer
+    "${CMAKE_CURRENT_SOURCE_DIR}/GUI.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "GUI.cpp"
+    "GUI.hpp"
+    "GUI_databaseexplorer_bitmaps.cpp")
+
 file(GLOB SRCS "*.cpp")
 
 # Define the output
-add_library(${PLUGIN_NAME} SHARED ${SRCS})
+add_library(${PLUGIN_NAME} SHARED ${SRCS} ${WXCRAFTER_DatabaseExplorer_OUTPUTS})
 
 if(UNIX OR APPLE)
   set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -106,5 +114,5 @@ endif()
 
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} ${GTK_LIBS} libcodelite
                       plugin databaselayersqlite)
-target_include_directories(${PLUGIN_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR})
+target_include_directories(${PLUGIN_NAME} PUBLIC ${CMAKE_CURRENT_LIST_DIR} "${WXCRAFTER_DatabaseExplorer_OUTPUTDIR}")
 cl_install_plugin(${PLUGIN_NAME})

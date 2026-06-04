@@ -1,7 +1,7 @@
 #ifndef DOCKERSETTINGSDLG_H
 #define DOCKERSETTINGSDLG_H
 
-#include "UI.h"
+#include "UI.hpp"
 
 class DockerSettingsDlg : public DockerSettingsBaseDlg
 {

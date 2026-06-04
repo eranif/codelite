@@ -58,7 +58,7 @@
 
 // UI
 #include "CMake.h"
-#include "CMakePluginUi.h"
+#include "CMakePluginUi.hpp"
 
 /* ************************************************************************ */
 /* FORWARD DECLARATIONS                                                     */

@@ -27,7 +27,7 @@
 #define DBEXPLORERPANEL_H
 
 #include "../Interfaces/imanager.h"
-#include "GUI.h" // Base class: _DbExplorerPanel
+#include "GUI.hpp" // Base class: _DbExplorerPanel
 #include "clToolBar.h"
 // database
 #include <wx/dblayer/include/DatabaseLayer.h>

@@ -26,7 +26,7 @@
 #ifndef LOGDIALOG_H
 #define LOGDIALOG_H
 
-#include "GUI.h" // Base class: _LogDialog
+#include "GUI.hpp" // Base class: _LogDialog
 
 #include <wx/utils.h>
 

@@ -1,6 +1,6 @@
 #ifndef DBEXPLORERFRAME_H
 #define DBEXPLORERFRAME_H
-#include "GUI.h"
+#include "GUI.hpp"
 
 class DbViewerPanel;
 class DbExplorerFrame : public DbExplorerFrameBase

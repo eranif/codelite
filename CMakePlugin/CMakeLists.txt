@@ -21,11 +21,19 @@ if(USE_PCH AND NOT MINGW)
     add_definitions(-Winvalid-pch)
 endif()
 
+wxcrafter_target(
+    CMakePlugin
+    "${CMAKE_CURRENT_SOURCE_DIR}/CMakePlugin.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "CMakePluginUi.cpp"
+    "CMakePluginUi.hpp"
+    "CMakePluginUi_bitmaps.cpp")
+
 # Add all CPP files
 file(GLOB SRCS "*.cpp")
 
 # Define the output - shared library
-add_library(${PLUGIN_NAME} SHARED ${SRCS})
+add_library(${PLUGIN_NAME} SHARED ${SRCS} ${WXCRAFTER_CMakePlugin_OUTPUTS})
 
 if(UNIX OR APPLE)
     set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -37,6 +45,7 @@ endif()
 
 # CodeLite plugins doesn't use the "lib" prefix.
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
+target_include_directories(${PLUGIN_NAME} PUBLIC "${WXCRAFTER_CMakePlugin_OUTPUTDIR}")
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} libcodelite plugin)
 
 cl_install_plugin(${PLUGIN_NAME})

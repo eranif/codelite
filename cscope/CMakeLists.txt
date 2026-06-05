@@ -12,10 +12,18 @@ if(USE_PCH AND NOT MINGW)
     add_definitions(-Winvalid-pch)
 endif()
 
+wxcrafter_target(
+    Cscope
+    "${CMAKE_CURRENT_SOURCE_DIR}/CscopeTabBase.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "CscopeTabBase.cpp"
+    "CscopeTabBase.hpp"
+    "CscopeTabBase_cscope_bitmaps.cpp")
+
 file(GLOB SRCS "*.cpp")
 
 # Define the output
-add_library(${PLUGIN_NAME} SHARED ${SRCS})
+add_library(${PLUGIN_NAME} SHARED ${SRCS} ${WXCRAFTER_Cscope_OUTPUTS})
 
 if(UNIX OR APPLE)
     set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -27,5 +35,6 @@ endif()
 
 # Remove the "lib" prefix from the plugin name
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
+target_include_directories(${PLUGIN_NAME} PUBLIC "${WXCRAFTER_Cscope_OUTPUTDIR}")
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} libcodelite plugin)
 cl_install_plugin(${PLUGIN_NAME})

@@ -26,7 +26,7 @@
 #ifndef NEWPHPCLASS_H
 #define NEWPHPCLASS_H
 
-#include "new_class.h"
+#include "new_class.hpp"
 
 #include <wx/filename.h>
 

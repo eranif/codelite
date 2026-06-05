@@ -26,7 +26,7 @@
 #ifndef PHPDEBUGSTARTDLG_H
 #define PHPDEBUGSTARTDLG_H
 #include "php_project.h"
-#include "php_ui.h"
+#include "php_ui.hpp"
 
 class PHPDebugStartDlg : public PHPDebugStartDlgBase
 {

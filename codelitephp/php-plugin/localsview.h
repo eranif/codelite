@@ -27,7 +27,7 @@
 #define LOCALSVIEW_H
 
 #include "macros.h"
-#include "php_ui.h"
+#include "php_ui.hpp"
 #include "xdebugevent.h"
 
 class clThemedTreeCtrl;

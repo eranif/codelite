@@ -25,7 +25,7 @@
 
 #ifndef PHPXDEBUGSETUPWIZARD_H
 #define PHPXDEBUGSETUPWIZARD_H
-#include "php_ui.h"
+#include "php_ui.hpp"
 
 class PHPXDebugSetupWizard : public PHPXDebugSetupWizardBase
 {

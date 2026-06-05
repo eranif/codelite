@@ -29,7 +29,7 @@
 #include "PHP/PHPEntityBase.h"
 #include "PHP/PHPEntityVariable.h"
 #include "PHP/PHPLookupTable.h"
-#include "php_ui.h"
+#include "php_ui.hpp"
 
 #include <memory>
 #include <vector>

@@ -1,7 +1,7 @@
 #ifndef REMOTYSWITCHTOWORKSPACEDLG_H
 #define REMOTYSWITCHTOWORKSPACEDLG_H
 #include "RemotyConfig.hpp"
-#include "RemotyUI.h"
+#include "RemotyUI.hpp"
 
 #include <unordered_map>
 #include <vector>

@@ -12,10 +12,18 @@ if(USE_PCH AND NOT MINGW)
     add_definitions(-Winvalid-pch)
 endif()
 
+wxcrafter_target(
+    Remoty
+    "${CMAKE_CURRENT_SOURCE_DIR}/RemotyUI.wxcp"
+    "${CMAKE_CURRENT_BINARY_DIR}"
+    "RemotyUI.cpp"
+    "RemotyUI.hpp"
+    "RemotyUI_remoty_bitmaps.cpp")
+
 file(GLOB SRCS "*.cpp")
 
 # Define the output
-add_library(${PLUGIN_NAME} SHARED ${SRCS})
+add_library(${PLUGIN_NAME} SHARED ${SRCS} ${WXCRAFTER_Remoty_OUTPUTS})
 
 if(UNIX OR APPLE)
     set_target_properties(${PLUGIN_NAME} PROPERTIES POSITION_INDEPENDENT_CODE ON)
@@ -27,6 +35,7 @@ endif()
 
 # CodeLite plugins doesn't use the "lib" prefix.
 set_target_properties(${PLUGIN_NAME} PROPERTIES PREFIX "")
+target_include_directories(${PLUGIN_NAME} PUBLIC "${WXCRAFTER_Remoty_OUTPUTDIR}")
 target_link_libraries(${PLUGIN_NAME} ${LINKER_OPTIONS} libcodelite plugin)
 # Installation destination
 cl_install_plugin(${PLUGIN_NAME})

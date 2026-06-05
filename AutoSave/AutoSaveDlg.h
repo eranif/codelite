@@ -25,7 +25,7 @@
 
 #ifndef AUTOSAVEDLG_H
 #define AUTOSAVEDLG_H
-#include "AutoSaveUI.h"
+#include "AutoSaveUI.hpp"
 
 class AutoSaveDlg : public AutoSaveDlgBase
 {

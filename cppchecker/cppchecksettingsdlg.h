@@ -26,7 +26,7 @@
 #ifndef CPPCHECH_SETTINGS_DLG_H_INCLUDED
 #define CPPCHECH_SETTINGS_DLG_H_INCLUDED
 
-#include "cppchecksettingsdlgbase.h"
+#include "cppchecksettingsdlgbase.hpp"
 
 const wxString CPPCHECK_DEFAULT_COMMAND =
     R"=(#

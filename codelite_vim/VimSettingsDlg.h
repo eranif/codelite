@@ -1,6 +1,6 @@
 #ifndef VIMSETTINGSDLG_H
 #define VIMSETTINGSDLG_H
-#include "VIM.h"
+#include "VIM.hpp"
 
 class VimSettingsDlg : public VimSettingsDlgBase
 {

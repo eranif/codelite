@@ -242,11 +242,18 @@ wxTerminalViewCtrl* clBuiltinTerminalPane::DoCreateTerminal(const wxString& shel
         if (persistTabTitle) {
             return;
         }
-        int where = m_book->FindPage(ctrl);
-        if (where != wxNOT_FOUND) {
-            m_book->SetPageText(where, event.GetTitle());
+        wxString new_title = event.GetTitle();
+        new_title.Trim().Trim(false);
+
+        if (new_title.empty()) {
+            new_title = _("Terminal");
+        }
+        int index = m_book->FindPage(ctrl);
+        if (index != wxNOT_FOUND) {
+            m_book->SetPageText(index, new_title);
         }
     });
+
     ctrl->Bind(wxEVT_TERMINAL_TERMINATED, [ctrl, this](wxTerminalEvent& event) {
         wxUnusedVar(event);
         int where = m_book->FindPage(ctrl);
@@ -440,24 +447,6 @@ void clBuiltinTerminalPane::OnNew(wxCommandEvent& event)
 
     // Create the terminal using the helper method (tab title = shell command, makeActive = true)
     DoCreateTerminal(cmd, cmd, true, false);
-}
-
-void clBuiltinTerminalPane::OnSetTitle(wxTerminalEvent& event)
-{
-    event.Skip();
-    wxWindow* win = dynamic_cast<wxWindow*>(event.GetEventObject());
-    CHECK_PTR_RET(win);
-
-    wxString new_title = event.GetTitle();
-    new_title.Trim().Trim(false);
-
-    if (new_title.empty()) {
-        new_title = _("Terminal");
-    }
-    int index = m_book->FindPage(win);
-    if (index != wxNOT_FOUND) {
-        m_book->SetPageText(index, new_title);
-    }
 }
 
 void clBuiltinTerminalPane::OnPageChanged(wxBookCtrlEvent& event)

@@ -55,7 +55,9 @@ public:
     wxTerminalViewCtrl* OpenNewDefaultTerminalTab(const wxString& workingDirectory,
                                                   const std::optional<SSHAccountInfo>& sshAccount = std::nullopt,
                                                   const wxString& tabTitle = wxEmptyString)
-    { return OpenNewTerminalTab(workingDirectory, sshAccount, tabTitle, true, kTerminalCommand); }
+    {
+        return OpenNewTerminalTab(workingDirectory, sshAccount, tabTitle, true, kTerminalCommand);
+    }
 
     /**
      * @brief Find an existing terminal tab by its title
@@ -83,7 +85,6 @@ protected:
     void OnWorkspaceLoaded(clWorkspaceEvent& event);
     void OnInitDone(wxCommandEvent& e);
     void OnPageChanged(wxBookCtrlEvent& event);
-    void OnSetTitle(wxTerminalEvent& event);
     void OnLinkClicked(wxTerminalEvent& event);
     void OnNew(wxCommandEvent& event);
     void DetectTerminals(std::vector<std::pair<wxString, wxString>>& terminals);

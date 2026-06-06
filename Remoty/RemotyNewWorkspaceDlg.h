@@ -1,6 +1,6 @@
 #ifndef REMOTYNEWWORKSPACEDLG_H
 #define REMOTYNEWWORKSPACEDLG_H
-#include "RemotyUI.h"
+#include "RemotyUI.hpp"
 
 class RemotyNewWorkspaceDlg : public RemotyNewWorkspaceDlgBase
 {

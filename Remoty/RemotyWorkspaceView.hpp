@@ -1,7 +1,7 @@
 #ifndef REMOTYWORKSPACEVIEW_H
 #define REMOTYWORKSPACEVIEW_H
 
-#include "RemotyUI.h"
+#include "RemotyUI.hpp"
 #include "clRemoteDirCtrl.hpp"
 #include "cl_command_event.h"
 
